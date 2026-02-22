@@ -472,7 +472,6 @@ def epistemicAsGradable (cr : AgentCredence E W) (entry : EpistemicEntry)
   form := entry.name
   μ := fun ⟨a, φ⟩ => cr a φ
   boundedness := epistemicBoundedness
-  polarity := .positive
 
 /-- The degree-threshold identity: `meetsThreshold` is `positiveSem`
     instantiated on the epistemic scale.
@@ -569,5 +568,91 @@ theorem moreCredent_iff_degree (cr : AgentCredence E W)
     (a : E) (φ ψ : BProp W) :
     moreCredent cr a φ ψ ↔ degree cr a ψ < degree cr a φ := by
   rfl
+
+-- ============================================================================
+-- §10. Lassiter (2017) Degree-Semantic Bridges
+-- ============================================================================
+
+/-!
+### Kennedy's Reduction: Comparative from Positive
+
+The central formal insight of Kennedy (2007) — applied to epistemic modality
+by Lassiter (2017) Ch. 4 — is that the comparative is not an independent
+primitive but *reduces to* the positive form via existential quantification
+over thresholds:
+
+    "φ more likely than ψ"  ↔  ∃θ. likely_θ(φ) ∧ ¬likely_θ(ψ)
+
+In words: φ is more likely than ψ iff there is some threshold that φ's
+credence meets but ψ's doesn't. This means the comparative ordering on
+propositions is *determined by* the family of positive-form predicates
+{meetsThreshold θ | θ ∈ ℚ}. The same reduction works for adjectives:
+
+    "A taller than B"  ↔  ∃θ. tall_θ(A) ∧ ¬tall_θ(B)
+
+The non-trivial part is that this is a *biconditional*: not only does
+a separating threshold imply the comparative (easy direction), but the
+comparative implies a separating threshold exists (uses the witness
+θ = cr(a, φ), which meets for φ by reflexivity and fails for ψ by
+the comparative hypothesis). This is a genuine mathematical fact about
+the structure of threshold semantics on a linear order.
+-/
+
+/-- **Kennedy's reduction**: the comparative reduces to the positive form.
+
+    "φ more likely than ψ" iff there exists a threshold that φ meets
+    and ψ fails. This is THE structural theorem connecting comparative
+    and positive-form degree semantics.
+
+    - Forward: if cr(a,ψ) < cr(a,φ), witness θ = cr(a,φ).
+    - Backward: if θ separates, then cr(a,ψ) < θ ≤ cr(a,φ).
+
+    Kennedy (2007) §3; Lassiter (2017) §4.2: the same reduction applies
+    to epistemic modals because credence IS a measure function. -/
+theorem comparative_from_positive (cr : AgentCredence E W)
+    (a : E) (φ ψ : BProp W) :
+    moreCredent cr a φ ψ ↔
+    ∃ θ : ℚ, meetsThreshold cr θ a φ ∧ ¬meetsThreshold cr θ a ψ := by
+  constructor
+  · intro h
+    exact ⟨cr a φ, le_refl _, not_le.mpr h⟩
+  · intro ⟨θ, hφ, hψ⟩
+    exact lt_of_lt_of_le (not_le.mp hψ) hφ
+
+/-- Polarity duality: `meetsThreshold` (positive) ↔ ¬`failsThreshold`.
+
+    On a linear order, cr(a,φ) ≥ θ iff ¬(cr(a,φ) < θ). This is not
+    `rfl` — it requires `not_lt` on `ℚ`'s linear order.
+
+    Lassiter (2017): positive and negative epistemic modals are
+    contradictories on the probability scale, not contraries. The
+    same threshold θ separates "likely" from "unlikely." -/
+theorem meetsThreshold_iff_not_failsThreshold (cr : AgentCredence E W)
+    (θ : ℚ) (a : E) (φ : BProp W) :
+    meetsThreshold cr θ a φ ↔ ¬failsThreshold cr θ a φ := by
+  simp [meetsThreshold, failsThreshold, not_lt]
+
+/-- **Antonymy from polarity**: the comparative holds iff there exists a
+    threshold where the *positive* predicate holds for φ and the
+    *negative* predicate holds for ψ.
+
+    This is the formal content of "antonymy = scale reversal": the
+    comparative "more likely" decomposes into a threshold that is
+    simultaneously *met* by φ (positive: likely_θ) and *failed* by ψ
+    (negative: unlikely_θ). Unlike the `rfl`-level type coincidence,
+    this *derives* the antonymy connection from `comparative_from_positive`
+    + `meetsThreshold_iff_not_failsThreshold`.
+
+    Lassiter (2017) §4.3: likely/unlikely parallel tall/short. -/
+theorem antonymy_from_polarity (cr : AgentCredence E W)
+    (a : E) (φ ψ : BProp W) :
+    moreCredent cr a φ ψ ↔
+    ∃ θ : ℚ, meetsThreshold cr θ a φ ∧ failsThreshold cr θ a ψ := by
+  rw [comparative_from_positive]
+  constructor
+  · intro ⟨θ, hφ, hψ⟩
+    exact ⟨θ, hφ, not_le.mp hψ⟩
+  · intro ⟨θ, hφ, hψ⟩
+    exact ⟨θ, hφ, not_le.mpr hψ⟩
 
 end Semantics.Attitudes.EpistemicThreshold

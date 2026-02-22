@@ -1,5 +1,5 @@
 import Lean
-import Linglib.Theories.Pragmatics.RSA.Core.Verified
+import Linglib.Theories.Pragmatics.RSA.Core.Config
 
 set_option autoImplicit false
 

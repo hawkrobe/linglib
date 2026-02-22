@@ -16,7 +16,7 @@ The two pillars are independently motivated:
 This file bridges them at four levels:
 
 - **Annotation bridge** (§1): QUA ↔ `Boundedness.closed`, CUM ↔ `Boundedness.open_`
-- **Constructor bridge** (§2): `ExtMeasure` → `MIPDomain`
+- **Constructor bridge** (§2): `ExtMeasure` → `DirectedMeasure`
 - **Structural bridge** (§3–4): `singleton_qua` ↔ `.closed`, CUM sum extensibility
 - **Categorical bridge** (§11): `MereoDim` → `Monotone`, `ExtMeasure` → `Monotone μ`
 
@@ -80,51 +80,53 @@ theorem qua_boundedness_licensed : quaBoundedness.isLicensed = true := rfl
 theorem cum_boundedness_blocked : cumBoundedness.isLicensed = false := rfl
 
 -- ════════════════════════════════════════════════════
--- § 2. ExtMeasure → MIPDomain Constructor
+-- § 2. ExtMeasure → DirectedMeasure Constructor
 -- ════════════════════════════════════════════════════
 
-/-- An extensive measure induces a Kennedy-style MIP domain.
+/-- An extensive measure induces a Kennedy-style directed measure.
 
     The measure function μ : α → ℚ from `ExtMeasure` becomes the
-    measure function of a `MIPDomain`, with `atLeastDeg` as the degree
-    property (Kennedy 2007/2015: "at least n" with type-shift to exact).
-    The boundedness annotation comes from the mereological property
-    of the source predicate: QUA → `.closed`, CUM → `.open_`.
+    measure function of a `DirectedMeasure` (positive direction),
+    with `atLeastDeg` as the derived degree property (Kennedy 2007/2015:
+    "at least n" with type-shift to exact). The boundedness annotation
+    comes from the mereological property of the source predicate:
+    QUA → `.closed`, CUM → `.open_`.
 
-    See also `extMeasure_rouillardMIP` for the Rouillard (2026)
-    direction (`atMostDeg`). -/
-def extMeasure_kennedyMIP {α : Type*} [SemilatticeSup α]
+    See also `extMeasure_rouillard` for the Rouillard (2026)
+    direction (negative → `atMostDeg`). -/
+def extMeasure_kennedy {α : Type*} [SemilatticeSup α]
     {μ : α → ℚ} (_hμ : ExtMeasure α μ) (b : Core.Scale.Boundedness) :
-    Core.Scale.MIPDomain ℚ α :=
-  { boundedness := b, measure := μ, degProp := Core.Scale.atLeastDeg μ }
+    Core.Scale.DirectedMeasure ℚ α :=
+  { boundedness := b, μ := μ }
 
-/-- An extensive measure induces a Rouillard-style MIP domain.
+/-- An extensive measure induces a Rouillard-style directed measure.
 
-    Same measure function, but with `atMostDeg` as the degree property
-    (Rouillard 2026: E-TIA semantics uses "at most n" for runtime bounds).
+    Same measure function, but with negative direction (deriving
+    `atMostDeg` as the degree property). Rouillard 2026: E-TIA
+    semantics uses "at most n" for runtime bounds.
     Boundedness again from the mereological source predicate. -/
-def extMeasure_rouillardMIP {α : Type*} [SemilatticeSup α]
+def extMeasure_rouillard {α : Type*} [SemilatticeSup α]
     {μ : α → ℚ} (_hμ : ExtMeasure α μ) (b : Core.Scale.Boundedness) :
-    Core.Scale.MIPDomain ℚ α :=
-  { boundedness := b, measure := μ, degProp := Core.Scale.atMostDeg μ }
+    Core.Scale.DirectedMeasure ℚ α :=
+  { boundedness := b, μ := μ, direction := .negative }
 
-/-- QUA predicates yield licensed Kennedy MIPDomains. -/
-theorem qua_kennedyMIP_licensed {α : Type*} [SemilatticeSup α]
+/-- QUA predicates yield licensed Kennedy directed measures. -/
+theorem qua_kennedy_licensed {α : Type*} [SemilatticeSup α]
     {μ : α → ℚ} (hμ : ExtMeasure α μ) :
-    (extMeasure_kennedyMIP hμ quaBoundedness).licensed = true := rfl
+    (extMeasure_kennedy hμ quaBoundedness).licensed = true := rfl
 
-/-- CUM predicates yield blocked Kennedy MIPDomains. -/
-theorem cum_kennedyMIP_blocked {α : Type*} [SemilatticeSup α]
+/-- CUM predicates yield blocked Kennedy directed measures. -/
+theorem cum_kennedy_blocked {α : Type*} [SemilatticeSup α]
     {μ : α → ℚ} (hμ : ExtMeasure α μ) :
-    (extMeasure_kennedyMIP hμ cumBoundedness).licensed = false := rfl
+    (extMeasure_kennedy hμ cumBoundedness).licensed = false := rfl
 
 /-- The Kennedy–Rouillard direction invariance for mereological domains:
-    a QUA-induced MIPDomain is licensed regardless of whether we use
-    Kennedy's `atLeastDeg` or Rouillard's `atMostDeg`. -/
+    a QUA-induced directed measure is licensed regardless of whether we
+    use Kennedy's `atLeastDeg` or Rouillard's `atMostDeg`. -/
 theorem qua_direction_invariant {α : Type*} [SemilatticeSup α]
     {μ : α → ℚ} (hμ : ExtMeasure α μ) :
-    (extMeasure_kennedyMIP hμ quaBoundedness).licensed =
-    (extMeasure_rouillardMIP hμ quaBoundedness).licensed := rfl
+    (extMeasure_kennedy hμ quaBoundedness).licensed =
+    (extMeasure_rouillard hμ quaBoundedness).licensed := rfl
 
 -- ════════════════════════════════════════════════════
 -- § 3. singleton_qua ↔ Boundedness.closed
@@ -393,7 +395,7 @@ The forgetful functor from AdditiveScale morphisms (IsSumHom) to
 ComparativeScale morphisms (Monotone) is just `IsSumHom.monotone`.
 
 Together with the boundedness annotations (§1: QUA → `.closed`, CUM → `.open_`)
-and the `MIPDomain` constructors (§2), the entire mereological pipeline
+and the `DirectedMeasure` constructors (§2), the entire mereological pipeline
 factors through `ComparativeScale`:
 
 ```

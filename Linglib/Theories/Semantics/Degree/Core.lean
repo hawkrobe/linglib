@@ -30,7 +30,7 @@ interface they share.
 ## Connection to Core.Scale
 
 `Core.Scale` defines the algebraic infrastructure (boundedness, MAX,
-MIPDomain, degree/threshold types for computation). This module adds
+DirectedMeasure, degree/threshold types for computation). This module adds
 the linguistic interface: gradable predicates, DegP composition, and
 standard-of-comparison structure.
 
@@ -54,21 +54,20 @@ open Core.Scale (Boundedness ComparativeScale Degree Threshold)
 /-- Minimal interface for a gradable predicate: a measure function
     mapping entities to degrees on a scale with known boundedness.
 
+    Extends `DirectedMeasure D Entity` with a lexical `form` field.
     Every degree framework (Kennedy, Heim, Schwarzschild, Rett) provides
     an instance. Klein's delineation approach does not use degrees, so
     it does not instantiate this interface.
 
+    The algebraic content (μ, boundedness, direction) comes from
+    `DirectedMeasure`. `GradablePredicate` adds only the lexical identity.
+
     The `D` parameter is the degree type (e.g., `ℚ`, `Degree max`,
     or an abstract `LinearOrder`). -/
-structure GradablePredicate (Entity D : Type*) [LinearOrder D] where
+structure GradablePredicate (Entity D : Type*) [LinearOrder D]
+    extends Core.Scale.DirectedMeasure D Entity where
   /-- The adjective's lexical form (for identification) -/
   form : String
-  /-- Measure function: maps an entity to its degree -/
-  μ : Entity → D
-  /-- Scale boundedness classification -/
-  boundedness : Boundedness
-  /-- Is this a positive or negative polarity adjective? -/
-  polarity : Core.Scale.ScalePolarity := .positive
 
 -- ════════════════════════════════════════════════════
 -- § 2. DegP Compositional Structure

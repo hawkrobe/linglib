@@ -195,4 +195,13 @@ theorem logInterval_containsReal {I : QInterval} {x : ℝ}
   · exact le_trans hlog_lo.1 (Real.log_le_log (by exact_mod_cast hI) hx.1)
   · exact le_trans (Real.log_le_log hx_pos hx.2) hlog_hi.2
 
+/-- When the argument is known to be zero (from interval [0,0]),
+    `Real.log x = Real.log 0 = 0`, contained in `exact 0`. -/
+theorem log_zero_containsReal {I : QInterval} {x : ℝ}
+    (hx : I.containsReal x) (hlo : 0 ≤ I.lo) (hhi : I.hi ≤ 0) :
+    (QInterval.exact 0).containsReal (Real.log x) := by
+  have : x = 0 := QInterval.eq_zero_of_contained_nonneg hx hlo hhi
+  rw [this, Real.log_zero]
+  exact QInterval.exact_zero_containsReal
+
 end Linglib.Interval

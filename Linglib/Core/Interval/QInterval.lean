@@ -318,6 +318,14 @@ theorem gt_of_separated {a b : QInterval} {x y : ℝ}
     _ > ↑b.hi := by exact_mod_cast hsep
     _ ≥ y := hy.2
 
+/-- If a.hi ≤ b.lo, then x ≤ y. Dual of `gt_of_separated`. -/
+theorem le_of_separated {a b : QInterval} {x y : ℝ}
+    (hx : a.containsReal x) (hy : b.containsReal y)
+    (hsep : a.hi ≤ b.lo) : x ≤ y :=
+  calc x ≤ ↑a.hi := hx.2
+    _ ≤ ↑b.lo := by exact_mod_cast hsep
+    _ ≤ y := hy.1
+
 /-- Interval separation implies ≥. -/
 theorem ge_of_le_lo {a b : QInterval} {x y : ℝ}
     (hx : a.containsReal x) (hy : b.containsReal y)
@@ -383,6 +391,12 @@ theorem ne_zero_of_lo_pos {a : QInterval} {x : ℝ}
     (hx : a.containsReal x) (hlo : 0 < a.lo) : x ≠ 0 :=
   ne_of_gt (pos_of_lo_pos hx hlo)
 
+/-- If an interval has nonneg lower bound and nonpos upper bound, the value is zero.
+    Used by the tactic to prove `x = 0` when the interval is `[0, 0]`. -/
+theorem eq_zero_of_contained_nonneg {I : QInterval} {x : ℝ}
+    (hx : I.containsReal x) (hlo : 0 ≤ I.lo) (hhi : I.hi ≤ 0) : x = 0 :=
+  le_antisymm (le_trans hx.2 (by exact_mod_cast hhi)) (le_trans (by exact_mod_cast hlo) hx.1)
+
 -- ============================================================================
 -- Inverse (positive case)
 -- ============================================================================
@@ -434,6 +448,44 @@ theorem zero_div_containsReal {a : QInterval} {x y : ℝ}
     (exact 0).containsReal (x / y) := by
   have := eq_zero_of_bounds hx hlo hhi
   subst this; simp [exact, containsReal]
+
+-- ============================================================================
+-- Transport along equality
+-- ============================================================================
+
+/-- Transport containment along a real-valued equality.
+    If `y = x` and the interval contains `x`, it contains `y`. -/
+theorem containsReal_of_eq {I : QInterval} {x y : ℝ}
+    (h : y = x) (hx : I.containsReal x) : I.containsReal y :=
+  h ▸ hx
+
+-- ============================================================================
+-- Natural-number rpow
+-- ============================================================================
+
+/-- Interval for nonneg base raised to a natural power: [lo^n, hi^n]. -/
+def rpowNat (a : QInterval) (n : ℕ) (ha : 0 ≤ a.lo) : QInterval where
+  lo := a.lo ^ n
+  hi := a.hi ^ n
+  valid := pow_le_pow_left₀ ha a.valid n
+
+/-- Containment for `x ^ n` (nat power) with nonneg base. -/
+theorem powNat_containsReal {a : QInterval} {x : ℝ} (n : ℕ)
+    (ha : 0 ≤ a.lo) (hx : a.containsReal x) :
+    (a.rpowNat n ha).containsReal (x ^ n) := by
+  have hx_nn : (0 : ℝ) ≤ x := le_trans (by exact_mod_cast ha) hx.1
+  simp only [rpowNat, containsReal]
+  push_cast
+  exact ⟨pow_le_pow_left₀ (by exact_mod_cast ha) hx.1 n,
+         pow_le_pow_left₀ hx_nn hx.2 n⟩
+
+/-- If a real value is contained in an interval with lo = 0 and hi = 0,
+    the value equals zero. -/
+theorem eq_zero_of_containsReal {I : QInterval} {x : ℝ}
+    (h : I.containsReal x) (hlo : I.lo = 0) (hhi : I.hi = 0) : x = 0 := by
+  simp only [containsReal, hlo, hhi] at h
+  push_cast at h
+  linarith [h.1, h.2]
 
 end QInterval
 

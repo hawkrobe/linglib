@@ -1,5 +1,5 @@
 import Lean
-import Linglib.Theories.Pragmatics.RSA.Core.Verified
+import Linglib.Theories.Pragmatics.RSA.Core.Config
 import Linglib.Tactics.RSAPredict.Helpers
 import Linglib.Tactics.RSAPredict.Reify
 
@@ -84,6 +84,16 @@ def buildChainAdd (proofs : Array CProof) : MetaM CProof := do
   let mut result ← buildExact 0
   for i in (List.range proofs.size).reverse do
     result ← buildCAdd proofs[i]! result
+  return result
+
+/-- Build left-associated sum without trailing zero, matching explicit addition goals.
+    For elements [p₁, p₂, p₃], builds ((p₁ + p₂) + p₃).
+    For a single element, returns it directly (no addition node). -/
+def buildLeftAdd (proofs : Array CProof) : MetaM CProof := do
+  if proofs.isEmpty then return ← buildExact 0
+  let mut result := proofs[0]!
+  for i in List.range (proofs.size - 1) do
+    result ← buildCAdd result proofs[i + 1]!
   return result
 
 /-- Build CProof for x * y (nonneg intervals). -/
@@ -176,8 +186,18 @@ def buildCLog (p : CProof) : TacticM CProof := do
   return ⟨iExpr, proof, lo, hi⟩
 
 -- ============================================================================
--- Recursive Real Expression Proof Builder
+-- L0 Policy Cache (Lazy)
 -- ============================================================================
+
+/-- Context for lazy L0 policy caching. Contains a builder callback so we
+    avoid forward-reference issues. The cache map is populated on first access. -/
+structure L0CacheCtx where
+  build : Expr → Expr → Expr → TacticM CProof  -- (l, u, w) → CProof
+
+/-- Global lazy L0 cache. When `ctx` is `some`, L0 policy expressions are
+    intercepted in `buildRealExprProof` and built/cached on first encounter. -/
+initialize l0CacheCtxRef : IO.Ref (Option L0CacheCtx) ← IO.mkRef none
+initialize l0CacheMapRef : IO.Ref (Std.HashMap UInt64 CProof) ← IO.mkRef {}
 
 /-- Build CProof for an ℝ expression by recursively decomposing arithmetic structure.
     Handles fractions (like `1/3 : ℝ`), exp, log, ite, and other expressions that
@@ -188,6 +208,7 @@ def buildCLog (p : CProof) : TacticM CProof := do
     The kernel accepts these because unfolded expressions are definitionally equal
     to the originals. -/
 partial def buildRealExprProof (e : Expr) : TacticM CProof := do
+  let go := buildRealExprProof
   -- 1. Try nat literals (0, 1, 2, ...)
   if let some n := getNat? e then
     return ← buildExact (n : ℚ)
@@ -203,39 +224,39 @@ partial def buildRealExprProof (e : Expr) : TacticM CProof := do
       if isEq then return ← buildExact (n : ℚ)
   -- 2. HDiv.hDiv a b (6 args: T₁ T₂ T₃ inst a b)
   if isAppOfMin e ``HDiv.hDiv 6 then
-    let pa ← buildRealExprProof e.getAppArgs[4]!
-    let pb ← buildRealExprProof e.getAppArgs[5]!
+    let pa ← go e.getAppArgs[4]!
+    let pb ← go e.getAppArgs[5]!
     if pa.lo ≥ 0 && pb.lo > 0 then
       return ← buildCDivPos pa pb
   -- Div.div a b (4 args)
   if isAppOfMin e ``Div.div 4 then
-    let pa ← buildRealExprProof e.getAppArgs[2]!
-    let pb ← buildRealExprProof e.getAppArgs[3]!
+    let pa ← go e.getAppArgs[2]!
+    let pb ← go e.getAppArgs[3]!
     if pa.lo ≥ 0 && pb.lo > 0 then
       return ← buildCDivPos pa pb
   -- 3. HMul.hMul a b (6 args)
   if isAppOfMin e ``HMul.hMul 6 then
-    let pa ← buildRealExprProof e.getAppArgs[4]!
-    let pb ← buildRealExprProof e.getAppArgs[5]!
+    let pa ← go e.getAppArgs[4]!
+    let pb ← go e.getAppArgs[5]!
     return ← buildCMulSafe pa pb
   -- Mul.mul a b (4 args)
   if isAppOfMin e ``Mul.mul 4 then
-    let pa ← buildRealExprProof e.getAppArgs[2]!
-    let pb ← buildRealExprProof e.getAppArgs[3]!
+    let pa ← go e.getAppArgs[2]!
+    let pb ← go e.getAppArgs[3]!
     return ← buildCMulSafe pa pb
   -- 4. HAdd.hAdd a b (6 args)
   if isAppOfMin e ``HAdd.hAdd 6 then
-    let pa ← buildRealExprProof e.getAppArgs[4]!
-    let pb ← buildRealExprProof e.getAppArgs[5]!
+    let pa ← go e.getAppArgs[4]!
+    let pb ← go e.getAppArgs[5]!
     return ← buildCAdd pa pb
   -- Add.add a b (4 args)
   if isAppOfMin e ``Add.add 4 then
-    let pa ← buildRealExprProof e.getAppArgs[2]!
-    let pb ← buildRealExprProof e.getAppArgs[3]!
+    let pa ← go e.getAppArgs[2]!
+    let pb ← go e.getAppArgs[3]!
     return ← buildCAdd pa pb
   -- 4b. Neg.neg (3 args: T inst a) — handles negation
   if isAppOfMin e ``Neg.neg 3 then
-    let pa ← buildRealExprProof e.getAppArgs[2]!
+    let pa ← go e.getAppArgs[2]!
     return ← buildCNeg pa
   -- 5. isDefEq-based matching (handles internal Real.mul, Real.add after whnf)
   let eType ← inferType e
@@ -247,21 +268,21 @@ partial def buildRealExprProof (e : Expr) : TacticM CProof := do
       let isMul ← withNewMCtxDepth do
         try isDefEq e (← mkAppM ``HMul.hMul #[a, b]) catch _ => return false
       if isMul then
-        let pa ← buildRealExprProof a
-        let pb ← buildRealExprProof b
+        let pa ← go a
+        let pb ← go b
         return ← buildCMulSafe pa pb
       let isDiv ← withNewMCtxDepth do
         try isDefEq e (← mkAppM ``HDiv.hDiv #[a, b]) catch _ => return false
       if isDiv then
-        let pa ← buildRealExprProof a
-        let pb ← buildRealExprProof b
+        let pa ← go a
+        let pb ← go b
         if pa.lo ≥ 0 && pb.lo > 0 then
           return ← buildCDivPos pa pb
       let isAdd ← withNewMCtxDepth do
         try isDefEq e (← mkAppM ``HAdd.hAdd #[a, b]) catch _ => return false
       if isAdd then
-        let pa ← buildRealExprProof a
-        let pb ← buildRealExprProof b
+        let pa ← go a
+        let pb ← go b
         return ← buildCAdd pa pb
     -- Unary ops: Inv.inv (a⁻¹)
     if e.getAppNumArgs ≥ 1 then
@@ -269,7 +290,7 @@ partial def buildRealExprProof (e : Expr) : TacticM CProof := do
       let isInv ← withNewMCtxDepth do
         try isDefEq e (← mkAppM ``Inv.inv #[a]) catch _ => return false
       if isInv then
-        let pa ← buildRealExprProof a
+        let pa ← go a
         if pa.lo > 0 then
           -- Build 1/a proof, then convert to a⁻¹ via one_div
           let one ← buildExact 1
@@ -283,13 +304,13 @@ partial def buildRealExprProof (e : Expr) : TacticM CProof := do
       let isNeg ← withNewMCtxDepth do
         try isDefEq e (← mkAppM ``Neg.neg #[a]) catch _ => return false
       if isNeg then
-        let pa ← buildRealExprProof a
+        let pa ← go a
         return ← buildCNeg pa
   -- 6. Real.exp (direct or as (Complex.exp ↑x).re after unfolding)
   let fn := e.getAppFn
   if fn.isConstOf ``Real.exp && e.getAppNumArgs ≥ 1 then
     let inner := e.getAppArgs[0]!
-    let innerProof ← buildRealExprProof inner
+    let innerProof ← go inner
     return ← buildCExp innerProof
   -- 6b. (Complex.exp ↑x).re — unfolded form of Real.exp x
   --     e = Expr.proj ``Complex 0 (Complex.exp (Complex.ofReal x))
@@ -316,12 +337,12 @@ partial def buildRealExprProof (e : Expr) : TacticM CProof := do
       let argType ← inferType realArg
       unless argType.isConstOf ``Real do
         throwError "rsa_predict: Complex.exp handler: expected ℝ arg, got {← ppExpr argType}\n  realArg = {← ppExpr realArg}\n  cArg = {← ppExpr cArg}"
-      let innerProof ← buildRealExprProof realArg
+      let innerProof ← go realArg
       return ← buildCExp innerProof
   -- 7. Real.log (positive argument only; log(0) = 0 handled via whnf fallback)
   if fn.isConstOf ``Real.log && e.getAppNumArgs ≥ 1 then
     let inner := e.getAppArgs[0]!
-    let innerProof ← buildRealExprProof inner
+    let innerProof ← go inner
     if innerProof.lo > 0 then
       return ← buildCLog innerProof
     else if innerProof.lo == 0 && innerProof.hi == 0 then
@@ -354,7 +375,7 @@ partial def buildRealExprProof (e : Expr) : TacticM CProof := do
         if (lhsIsTrue && rhsIsTrue) || (lhsIsFalse && rhsIsFalse) then
           -- Condition is true: prove it via native_decide, take then branch
           let hc ← proveQPropND cond
-          let brProof ← buildRealExprProof thenBr
+          let brProof ← go thenBr
           -- ite_pos needs y (else branch) explicitly since it's free
           let proof ← mkAppOptM ``QInterval.ite_pos_containsReal
             #[none, none, none, none, some elseBr, some hc, some brProof.proof]
@@ -363,7 +384,7 @@ partial def buildRealExprProof (e : Expr) : TacticM CProof := do
           -- Condition is false: prove ¬c via native_decide, take else branch
           let notCond ← mkAppM ``Not #[cond]
           let hc ← proveQPropND notCond
-          let brProof ← buildRealExprProof elseBr
+          let brProof ← go elseBr
           -- ite_neg needs x (then branch) explicitly since it's free
           let proof ← mkAppOptM ``QInterval.ite_neg_containsReal
             #[none, none, none, some thenBr, none, some hc, some brProof.proof]
@@ -372,7 +393,7 @@ partial def buildRealExprProof (e : Expr) : TacticM CProof := do
     -- Fallback: reduce the ite via whnf
     let e' ← whnf e
     if !e'.equal e then
-      return ← buildRealExprProof e'
+      return ← go e'
   -- 8b. Decidable.rec (from whnf'd ite with non-computable Decidable instance, e.g. over ℝ)
   if fn.isConstOf ``Decidable.rec && e.getAppNumArgs ≥ 5 then
     let args := e.getAppArgs
@@ -386,7 +407,7 @@ partial def buildRealExprProof (e : Expr) : TacticM CProof := do
       let rhs := propArgs[2]!
       if let some 0 := getOfNat? rhs then
         let lhs := propArgs[1]!
-        let lhsProof ← buildRealExprProof lhs
+        let lhsProof ← go lhs
         if lhsProof.lo > 0 then
           -- x > 0 so x ≠ 0: take isFalse branch
           let zeroQ ← mkAppOptM ``OfNat.ofNat #[mkConst ``Rat, mkRawNatLit 0, none]
@@ -396,7 +417,7 @@ partial def buildRealExprProof (e : Expr) : TacticM CProof := do
           -- ne_of_gt : a > b → a ≠ b; 0 < x means x > 0, gives x ≠ 0 = ¬(x = 0)
           let hnc ← mkAppM ``ne_of_gt #[hpos]
           let branchExpr := (Expr.app isFalseBr hnc).headBeta
-          let brProof ← buildRealExprProof branchExpr
+          let brProof ← go branchExpr
           let proof ← mkAppOptM ``QInterval.decidable_rec_neg_containsReal
             #[none, some inst, none, some isFalseBr, some isTrueBr, some hnc, some brProof.proof]
           return ⟨brProof.iExpr, proof, brProof.lo, brProof.hi⟩
@@ -410,7 +431,7 @@ partial def buildRealExprProof (e : Expr) : TacticM CProof := do
           let hc ← mkAppM ``QInterval.eq_zero_of_contained_nonneg
             #[lhsProof.proof, hlo, hhi]
           let branchExpr := (Expr.app isTrueBr hc).headBeta
-          let brProof ← buildRealExprProof branchExpr
+          let brProof ← go branchExpr
           let proof ← mkAppOptM ``QInterval.decidable_rec_pos_containsReal
             #[none, some inst, none, some isFalseBr, some isTrueBr, some hc, some brProof.proof]
           return ⟨brProof.iExpr, proof, brProof.lo, brProof.hi⟩
@@ -422,18 +443,38 @@ partial def buildRealExprProof (e : Expr) : TacticM CProof := do
      fnName == some ``Quot.lift then
     let e' ← whnf e
     if !e'.equal e then
-      return ← buildRealExprProof e'
+      return ← go e'
+  -- 9b. Lazy L0 cache: if this is RationalAction.policy applied to an L0 agent,
+  -- look up or build the CProof and cache it for reuse
+  if let some ctx ← l0CacheCtxRef.get then
+    let fn := e.getAppFn
+    if fn.isConstOf ``Core.RationalAction.policy then
+      let args := e.getAppArgs
+      if args.size ≥ 3 then
+        let ra := args[args.size - 3]!
+        if ra.getAppFn.isConstOf ``RSA.RSAConfig.L0agent then
+          let key := hash e
+          let cache ← l0CacheMapRef.get
+          if let some result := cache[key]? then
+            return result
+          -- Cache miss: build via callback and store
+          let u := args[args.size - 2]!
+          let w := args[args.size - 1]!
+          let l := ra.getAppArgs.back!
+          let result ← ctx.build l u w
+          l0CacheMapRef.modify fun m => m.insert key result
+          return result
   -- 10. Try incremental unfolding (preserves operator structure)
   if let some e' ← unfoldDefinition? e then
-    return ← buildRealExprProof e'.headBeta
+    return ← go e'.headBeta
   -- 11. Try reducible whnf (stops at noncomputable defs like Real.exp, Real.log)
   let eR ← withReducible do whnf e
   if !eR.equal e then
-    return ← buildRealExprProof eR
+    return ← go eR
   -- 12. Try full whnf (handles structure projections, ite reduction, etc.)
   let e' ← whnf e
   if !e'.equal e then
-    return ← buildRealExprProof e'
+    return ← go e'
   -- 13. Cauchy sequence form: { cauchy := ↑n } — search for nat literals in
   --     the reduced expression and check isDefEq against @OfNat.ofNat ℝ n _
   if (← inferType e).isConstOf ``Real then
@@ -619,13 +660,64 @@ def buildForallScoreZero (agent s : Expr)
         fun acc br => mkApp acc br
       mkLambdaFVars #[x, h] (mkApp withBranches h)
 
-/-- Build CProof for cfg.S1 l w u = (cfg.S1agent l).policy w u. -/
+/-- S1 score CProof cache indexed by (lIdx, wIdx, uIdx). -/
+abbrev S1Cache := Array (Array (Array CProof))
+
+/-- Build all S1 score CProofs once. Returns cache indexed [l][w][u].
+    When `s1Bounds` is provided (from the reify pass), entries known to be zero
+    are given a trivial zero CProof, skipping expensive whnf + buildRealExprProof.
+    The kernel verifies `score = 0` definitionally during final type-checking. -/
+def buildAllS1ScoreCProofs (cfg : Expr)
+    (allUElems allWElems allLElems : Array Expr) (αNat : ℕ) (isBeliefBased : Bool)
+    (s1Bounds : Option (Array MetaBounds) := none) :
+    TacticM S1Cache := do
+  let zeroBase ← buildExact 0
+  let zeroCProof : CProof := ⟨zeroBase.iExpr, mkConst ``QInterval.exact_zero_containsReal, 0, 0⟩
+  let mut cache : S1Cache := #[]
+  let mut idx : ℕ := 0
+  let mut skipped : ℕ := 0
+  for l in allLElems do
+    let mut wArr : Array (Array CProof) := #[]
+    for w in allWElems do
+      let mut uArr : Array CProof := #[]
+      for u' in allUElems do
+        let isKnownZero := match s1Bounds with
+          | some bounds => bounds[idx]!.lo == 0 && bounds[idx]!.hi == 0
+          | none => false
+        if isKnownZero then
+          uArr := uArr.push zeroCProof
+          skipped := skipped + 1
+        else
+          uArr := uArr.push (← buildS1ScoreCProof cfg l w u' allWElems αNat isBeliefBased)
+        idx := idx + 1
+      wArr := wArr.push uArr
+    cache := cache.push wArr
+  if skipped > 0 then
+    logInfo m!"rsa_predict: skipped {skipped}/{idx} zero S1 scores (fast path)"
+  return cache
+
+/-- Retrieve or build S1 score CProofs for a given (l, w) pair. -/
+private def getS1ScoreProofs (cfg l w : Expr)
+    (allWElems allUElems allLElems : Array Expr) (αNat : ℕ)
+    (isBeliefBased : Bool) (s1Cache : Option S1Cache) : TacticM (Array CProof) := do
+  if s1Cache.isSome then
+    let cache := s1Cache.get!
+    let lIdx ← findElemIdx allLElems l
+    let wIdx ← findElemIdx allWElems w
+    let lArr := cache[lIdx]!
+    return lArr[wIdx]!
+  else
+    let mut sp : Array CProof := #[]
+    for u' in allUElems do
+      sp := sp.push (← buildS1ScoreCProof cfg l w u' allWElems αNat isBeliefBased)
+    return sp
+
+/-- Build CProof for cfg.S1 l w u = (cfg.S1agent l).policy w u.
+    Uses pre-built S1 score CProofs from cache if provided. -/
 def buildS1PolicyCProof (cfg l w : Expr)
-    (allWElems allUElems : Array Expr) (uIdx : ℕ) (αNat : ℕ)
-    (isBeliefBased : Bool) : TacticM CProof := do
-  let mut scoreProofs : Array CProof := #[]
-  for u' in allUElems do
-    scoreProofs := scoreProofs.push (← buildS1ScoreCProof cfg l w u' allWElems αNat isBeliefBased)
+    (allWElems allUElems allLElems : Array Expr) (uIdx : ℕ) (αNat : ℕ)
+    (isBeliefBased : Bool) (s1Cache : Option S1Cache := none) : TacticM CProof := do
+  let scoreProofs ← getS1ScoreProofs cfg l w allWElems allUElems allLElems αNat isBeliefBased s1Cache
   let totalProof ← buildChainAdd scoreProofs
   let scoreProof := scoreProofs[uIdx]!
   -- Check for self-cancellation: all non-target scores are zero, target is positive.
@@ -679,7 +771,8 @@ def buildS1PolicyCProof (cfg l w : Expr)
     worldPrior(w) * ∑ l, latentPrior(w,l) * S1(l,w,u). -/
 def buildL1ScoreCProof (cfg u w : Expr)
     (allUElems allWElems allLElems : Array Expr)
-    (wpValues lpValues : Array ℚ) (αNat : ℕ) (isBeliefBased : Bool) : TacticM CProof := do
+    (wpValues lpValues : Array ℚ) (αNat : ℕ) (isBeliefBased : Bool)
+    (s1Cache : Option S1Cache := none) : TacticM CProof := do
   let wIdx ← findElemIdx allWElems w
   let uIdx ← findElemIdx allUElems u
   let nL := allLElems.size
@@ -691,10 +784,80 @@ def buildL1ScoreCProof (cfg u w : Expr)
     let lpQ := lpValues[wIdx * nL + lIdx]!
     let lpExpr ← mkAppM ``RSA.RSAConfig.latentPrior #[cfg, w, l]
     let lpProof ← buildLeaf lpQ lpExpr
-    let s1Proof ← buildS1PolicyCProof cfg l w allWElems allUElems uIdx αNat isBeliefBased
+    let s1Proof ← buildS1PolicyCProof cfg l w allWElems allUElems allLElems uIdx αNat isBeliefBased s1Cache
     let termProof ← buildCMulNN lpProof s1Proof
     latentTermProofs := latentTermProofs.push termProof
   let latentSumProof ← buildChainAdd latentTermProofs
   buildCMulNN wpProof latentSumProof
+
+/-- Build all L1 score CProofs for a given utterance u (one per world).
+    Returns the array of CProofs and the totalScore CProof. -/
+def buildAllL1ScoreCProofs (cfg u : Expr)
+    (allUElems allWElems allLElems : Array Expr)
+    (wpValues lpValues : Array ℚ) (αNat : ℕ) (isBeliefBased : Bool)
+    (s1Cache : Option S1Cache := none) :
+    TacticM (Array CProof × CProof) := do
+  let mut allScoreProofs : Array CProof := #[]
+  for w' in allWElems do
+    allScoreProofs := allScoreProofs.push
+      (← buildL1ScoreCProof cfg u w' allUElems allWElems allLElems wpValues lpValues αNat isBeliefBased s1Cache)
+  let totalProof ← buildChainAdd allScoreProofs
+  return (allScoreProofs, totalProof)
+
+/-- Build L1 policy CProof from pre-computed L1 score CProofs. -/
+def buildL1PolicyFromScores (cfg u w : Expr) (allWElems : Array Expr)
+    (allScoreProofs : Array CProof) (totalProof : CProof) : TacticM CProof := do
+  let wIdx ← findElemIdx allWElems w
+  let scoreProof := allScoreProofs[wIdx]!
+  if totalProof.lo > 0 then
+    buildPolicyProof scoreProof totalProof
+  else if scoreProof.hi == 0 then
+    let zeroQ ← mkAppOptM ``OfNat.ofNat #[mkConst ``Rat, mkRawNatLit 0, none]
+    let sloExpr ← mkAppM ``QInterval.lo #[scoreProof.iExpr]
+    let shiExpr ← mkAppM ``QInterval.hi #[scoreProof.iExpr]
+    let hlo ← proveQPropND (← mkEq sloExpr zeroQ)
+    let hhi ← proveQPropND (← mkEq shiExpr zeroQ)
+    let scoreEqZero ← mkAppM ``QInterval.eq_zero_of_containsReal #[scoreProof.proof, hlo, hhi]
+    let l1Agent ← mkAppM ``RSA.RSAConfig.L1agent #[cfg]
+    let policyEqZero ← mkAppM ``Core.RationalAction.policy_eq_zero_of_score_eq_zero
+      #[l1Agent, u, w, scoreEqZero]
+    let zeroProof := mkConst ``QInterval.exact_zero_containsReal
+    let proof ← mkAppM ``QInterval.containsReal_of_eq #[policyEqZero, zeroProof]
+    return ⟨(← buildExact 0).iExpr, proof, 0, 0⟩
+  else
+    throwError "rsa_predict: L1 policy proof failed: total.lo={totalProof.lo}, score≠0"
+
+/-- Build CProof for cfg.L1 u w = cfg.L1agent.policy u w (the normalized L1 policy).
+    Computes L1 scores for ALL worlds, sums them, then divides. -/
+def buildL1PolicyCProof (cfg u w : Expr)
+    (allUElems allWElems allLElems : Array Expr)
+    (wpValues lpValues : Array ℚ) (αNat : ℕ) (isBeliefBased : Bool)
+    (s1Cache : Option S1Cache := none) : TacticM CProof := do
+  let (allScoreProofs, totalProof) ← buildAllL1ScoreCProofs cfg u
+    allUElems allWElems allLElems wpValues lpValues αNat isBeliefBased s1Cache
+  buildL1PolicyFromScores cfg u w allWElems allScoreProofs totalProof
+
+/-- Build CProof for (cfg.L1_latent_agent u).score () l =
+    Σ_w worldPrior(w) · latentPrior(w,l) · S1(l,w,u). -/
+def buildL1LatentScoreCProof (cfg u l : Expr)
+    (allUElems allWElems allLElems : Array Expr)
+    (wpValues lpValues : Array ℚ) (αNat : ℕ) (isBeliefBased : Bool)
+    (s1Cache : Option S1Cache := none) : TacticM CProof := do
+  let lIdx ← findElemIdx allLElems l
+  let uIdx ← findElemIdx allUElems u
+  let nL := allLElems.size
+  let mut termProofs : Array CProof := #[]
+  for wIdx in List.range allWElems.size do
+    let w := allWElems[wIdx]!
+    let wpExpr ← mkAppM ``RSA.RSAConfig.worldPrior #[cfg, w]
+    let wpProof ← buildLeaf wpValues[wIdx]! wpExpr
+    let lpQ := lpValues[wIdx * nL + lIdx]!
+    let lpExpr ← mkAppM ``RSA.RSAConfig.latentPrior #[cfg, w, l]
+    let lpProof ← buildLeaf lpQ lpExpr
+    let s1Proof ← buildS1PolicyCProof cfg l w allWElems allUElems allLElems uIdx αNat isBeliefBased s1Cache
+    let wpLp ← buildCMulNN wpProof lpProof
+    let termProof ← buildCMulNN wpLp s1Proof
+    termProofs := termProofs.push termProof
+  buildChainAdd termProofs
 
 end Linglib.Tactics.RSAPredict

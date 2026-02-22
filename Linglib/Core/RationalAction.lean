@@ -108,6 +108,15 @@ theorem RationalAction.policy_monotone (ra : RationalAction S A) (s : S)
       lt_of_le_of_ne (ra.totalScore_nonneg s) (Ne.symm hne)
     exact div_le_div_of_nonneg_right h (le_of_lt hpos)
 
+/-- Zero score implies zero policy, regardless of whether totalScore is zero. -/
+theorem RationalAction.policy_eq_zero_of_score_eq_zero (ra : RationalAction S A) (s : S)
+    (a : A) (h : ra.score s a = 0) :
+    ra.policy s a = 0 := by
+  simp only [policy]
+  split
+  · rfl
+  · simp [h]
+
 /-- Policy respects score equality: equal scores → equal probabilities.
     Follows directly from the Luce rule: both sides are `score / totalScore`
     with the same denominator. -/
@@ -115,6 +124,21 @@ theorem RationalAction.policy_eq_of_score_eq (ra : RationalAction S A) (s : S)
     (a₁ a₂ : A) (h : ra.score s a₁ = ra.score s a₂) :
     ra.policy s a₁ = ra.policy s a₂ := by
   simp only [policy, h]
+
+/-- When totalScore equals the score of action `a`, the policy for `a` is 1.
+    Used by the compositional proof builder when all other scores are zero,
+    so `totalScore = score a + 0 + ... + 0 = score a`, making `policy = 1`. -/
+theorem RationalAction.policy_eq_one_of_totalScore_eq (ra : RationalAction S A) (s : S)
+    (a : A) (h_sum : ra.totalScore s = ra.score s a) (h_pos : 0 < ra.score s a) :
+    ra.policy s a = 1 := by
+  simp only [policy, h_sum, ne_of_gt h_pos, ↓reduceIte, div_self (ne_of_gt h_pos)]
+
+/-- Score ordering implies ¬(policy strict ordering). Used by compositional proof
+    builder for ¬(L1 w₁ > L1 w₂) goals. -/
+theorem RationalAction.policy_not_gt_of_score_le (ra : RationalAction S A) (s : S)
+    (a₁ a₂ : A) (h : ra.score s a₁ ≤ ra.score s a₂) :
+    ¬(ra.policy s a₁ > ra.policy s a₂) :=
+  not_lt_of_ge (ra.policy_monotone s a₁ a₂ h)
 
 /-- Strict policy monotonicity: strictly higher score → strictly higher probability.
 
@@ -132,6 +156,25 @@ theorem RationalAction.policy_gt_of_score_gt (ra : RationalAction S A) (s : S)
       (Finset.single_le_sum (fun a _ => ra.score_nonneg s a) (Finset.mem_univ a₁))
   simp only [policy, ne_of_gt htot_pos, ↓reduceIte]
   exact div_lt_div_of_pos_right hgt htot_pos
+
+/-- Score-sum ordering implies policy-sum ordering when both sides share the same
+    state (same denominator). Used by `rsa_predict` for marginal L1 comparisons
+    where the worlds being summed differ but the utterance and config are shared. -/
+theorem RationalAction.policy_list_sum_gt (ra : RationalAction S A) (s : S)
+    (as₁ as₂ : List A)
+    (h : (as₁.map (ra.score s)).sum > (as₂.map (ra.score s)).sum)
+    (htot : 0 < ra.totalScore s) :
+    (as₁.map (ra.policy s)).sum > (as₂.map (ra.policy s)).sum := by
+  have htot_ne : ra.totalScore s ≠ 0 := ne_of_gt htot
+  have hpol : ∀ a, ra.policy s a = ra.score s a / ra.totalScore s := by
+    intro a; simp only [policy, htot_ne, ↓reduceIte]
+  have hconv : ∀ (as : List A),
+      (as.map (ra.policy s)).sum = (as.map (ra.score s)).sum / ra.totalScore s := by
+    intro as; induction as with
+    | nil => simp
+    | cons a tl ih => simp [hpol, ih, add_div]
+  rw [hconv, hconv]
+  exact div_lt_div_of_pos_right h htot
 
 -- ============================================================================
 -- §1a. Luce's Choice Axiom (IIA)

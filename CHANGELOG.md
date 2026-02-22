@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.226.14] - 2026-02-22
+
+### Changed
+- **`Tactics/RSAPredict/ProofBuilder.lean`**: Add `buildLeftAdd` for left-associated sums (fixes cross-utterance proof assignment); add zero-skip fast path in `buildAllS1ScoreCProofs` — when reify bounds show S1 score is zero, build trivial CProof instead of expensive whnf+decomposition (680/1000 scores skipped for KaoEtAl2014); add L0 cache lifecycle (`enableL0Cache`/`disableL0Cache`)
+- **`Tactics/RSAPredict.lean`**: Cross-utterance and cross-config branches use `buildLeftAdd` for policy sums (fixes `a + (b + 0)` vs `a + b` mismatch); pass `s1Bounds` to `buildAllS1ScoreCProofs` for zero-skip optimization; add timing instrumentation for L1 compare and cross-utterance branches; replace `RSA.Verified` axiom fallbacks with compositional CProof paths throughout
+- **`Tactics/RSAPredict/GoalParsing.lean`**: Import fix (`Config` instead of `Verified`)
+- **`Tactics/RSAPredict/Reify.lean`**: Import fix
+- **`Core/RationalAction.lean`**: Add `policy_list_sum_gt`, `policy_eq_one_of_totalScore_eq`, `policy_eq_zero_of_score_eq_zero` lemmas for compositional proof construction
+- **`Core/Interval/QInterval.lean`**: Add `exact_natCast_containsReal`, `ne_zero_of_lo_pos`, `eq_zero_of_containsReal`, `ite_neg_containsReal`, `pos_of_lo_pos`, `containsReal_of_eq`, `gt_of_separated`, `le_of_separated` lemmas
+- **`Core/Interval/LogInterval.lean`**: Add `rpowOne_containsReal` for belief-based S1 scoring
+- **`Phenomena/Nonliteral/Hyperbole/KaoEtAl2014.lean`**: Bump heartbeats for cross-utterance theorems
+
 ## [0.226.13] - 2026-02-22
 
 ### Added

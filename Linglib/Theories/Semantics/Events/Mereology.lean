@@ -52,7 +52,7 @@ export _root_.Mereology (AlgClosure CUM DIV QUA Atom
   -- §1–4 from Core/MereoDim.lean (Mereology ↔ MeasurementScale bridge):
   quaBoundedness cumBoundedness
   qua_boundedness_licensed cum_boundedness_blocked
-  extMeasure_kennedyMIP extMeasure_rouillardMIP
+  extMeasure_kennedy extMeasure_rouillard
   cum_sum_exceeds cum_sum_exceeds_both
   -- §5–8 from Core/MereoDim.lean (MereoDim typeclass):
   MereoDim instMereoDimOfExtMeasure MereoDim.ofInjSumHom MereoDim.comp

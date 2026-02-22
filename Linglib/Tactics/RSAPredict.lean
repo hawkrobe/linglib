@@ -1,5 +1,5 @@
 import Lean
-import Linglib.Theories.Pragmatics.RSA.Core.Verified
+import Linglib.Theories.Pragmatics.RSA.Core.Config
 import Linglib.Core.Interval.ReflectInterval
 import Linglib.Tactics.RSAPredict.Helpers
 import Linglib.Tactics.RSAPredict.Reify
@@ -37,6 +37,24 @@ namespace Linglib.Tactics
 open Lean Meta Elab Tactic
 open Linglib.Interval
 open Linglib.Tactics.RSAPredict
+
+-- ============================================================================
+-- L0 Cache Lifecycle
+-- ============================================================================
+
+/-- Enable lazy L0 caching for action-based models. No-op for belief-based. -/
+private def enableL0Cache (cfg : Expr) (allWElems : Array Expr)
+    (isBeliefBased : Bool) : TacticM Unit := do
+  if isBeliefBased then return
+  let build (l u w : Expr) : TacticM CProof := do
+    let wIdx ← findElemIdx allWElems w
+    buildL0PolicyCProof cfg l u allWElems wIdx
+  l0CacheCtxRef.set (some { build })
+  l0CacheMapRef.set {}
+
+private def disableL0Cache : TacticM Unit := do
+  l0CacheCtxRef.set none
+  l0CacheMapRef.set {}
 
 -- ============================================================================
 -- Proof Construction Helpers (tactic-level)
@@ -151,8 +169,10 @@ elab "rsa_predict" : tactic => do
         | throwError "rsa_predict: cannot extract α as ℕ"
       let isBeliefBased ← detectBeliefBased cfg
       logInfo m!"rsa_predict: building compositional proof (α={αNat}, {if isBeliefBased then "belief" else "action"})..."
+      enableL0Cache cfg allWElems isBeliefBased
       let score1 ← buildL1ScoreCProof cfg u w₁ allUElems allWElems allLElems wpValues lpValues αNat isBeliefBased
       let score2 ← buildL1ScoreCProof cfg u w₂ allUElems allWElems allLElems wpValues lpValues αNat isBeliefBased
+      disableL0Cache
       -- Prove score₁ ≤ score₂ from interval bounds
       if score1.hi ≤ score2.lo then
         let hi1E ← mkAppM ``QInterval.hi #[score1.iExpr]
@@ -219,8 +239,10 @@ elab "rsa_predict" : tactic => do
         | throwError "rsa_predict: cannot extract α as ℕ"
       let isBeliefBased ← detectBeliefBased cfg
       logInfo m!"rsa_predict: building compositional proof (α={αNat}, {if isBeliefBased then "belief" else "action"})..."
+      enableL0Cache cfg allWElems isBeliefBased
       let score1 ← buildS1ScoreCProof cfg l w u₁ allWElems αNat isBeliefBased
       let score2 ← buildS1ScoreCProof cfg l w u₂ allWElems αNat isBeliefBased
+      disableL0Cache
       let s1Agent ← mkAppM ``RSA.RSAConfig.S1agent #[cfg, l]
       -- Prove score₁ ≤ score₂ from interval bounds
       if score1.hi ≤ score2.lo then
@@ -257,14 +279,7 @@ elab "rsa_predict" : tactic => do
             assignWithCastFallback goal proof
             logInfo m!"rsa_predict: ✓ proved via whnf score equality (¬S1 comparison)"
           else
-            -- Last resort: axiom fallback (for equal scores with imprecise exp/log intervals)
-            let hi1Q ← mkRatExpr s1_u1.hi
-            let lo2Q ← mkRatExpr s1_u2.lo
-            let leProof ← proveQPropND (← mkAppM ``LE.le #[hi1Q, lo2Q])
-            let proof ← mkAppM ``RSA.Verified.S1_not_gt_of_precomputed
-              #[cfg, l, w, u₁, u₂, hi1Q, lo2Q, leProof]
-            assignWithCastFallback goal proof
-            logInfo m!"rsa_predict: ✓ proved via S1_not_gt_of_precomputed (axiom fallback)"
+            throwError "rsa_predict: cannot prove ¬(S1 u₁ > S1 u₂): compositional bounds overlap [{score1.lo}, {score1.hi}] vs [{score2.lo}, {score2.hi}], and scores are not defEq"
       return
     | _ => throwError "rsa_predict: ¬(_ > _) only supported for L1 and S1 comparisons, got: {← ppExpr goalType}"
 
@@ -283,8 +298,11 @@ elab "rsa_predict" : tactic => do
   match goalForm with
   | .l1Compare cfg u w₁ w₂ => do
     logInfo m!"rsa_predict: parsed goal as L1 comparison"
+    let t0 ← IO.monoMsNow
     let (_, _, _, allUElems, allWElems, allLElems, s1Bounds, wpValues, lpValues) ←
       reifyS1Scores cfg
+    let t1 ← IO.monoMsNow
+    logInfo m!"rsa_predict: [timing] reify: {t1 - t0}ms"
 
     let uIdx ← findElemIdx allUElems u
     let w1Idx ← findElemIdx allWElems w₁
@@ -308,8 +326,15 @@ elab "rsa_predict" : tactic => do
     -- Build compositional proof terms for L1 scores
     let isBeliefBased ← detectBeliefBased cfg
     logInfo m!"rsa_predict: building compositional proof (α={αNat}, {if isBeliefBased then "belief" else "action"})..."
+    let t2 ← IO.monoMsNow
+    enableL0Cache cfg allWElems isBeliefBased
     let score1 ← buildL1ScoreCProof cfg u w₁ allUElems allWElems allLElems wpValues lpValues αNat isBeliefBased
+    let t3 ← IO.monoMsNow
+    logInfo m!"rsa_predict: [timing] L1 score w₁: {t3 - t2}ms"
     let score2 ← buildL1ScoreCProof cfg u w₂ allUElems allWElems allLElems wpValues lpValues αNat isBeliefBased
+    let t4 ← IO.monoMsNow
+    logInfo m!"rsa_predict: [timing] L1 score w₂: {t4 - t3}ms"
+    disableL0Cache
     logInfo m!"rsa_predict: compositional bounds: w₁ ∈ [{score1.lo}, {score1.hi}], w₂ ∈ [{score2.lo}, {score2.hi}]"
     -- Prove separation using actual interval bounds
     let hi2E ← mkAppM ``QInterval.hi #[score2.iExpr]
@@ -320,7 +345,11 @@ elab "rsa_predict" : tactic => do
     -- policy_gt_of_score_gt lifts to L1 policy comparison
     let l1Agent ← mkAppM ``RSA.RSAConfig.L1agent #[cfg]
     let proof ← mkAppM ``Core.RationalAction.policy_gt_of_score_gt #[l1Agent, u, w₁, w₂, hgt]
+    let t5 ← IO.monoMsNow
+    logInfo m!"rsa_predict: [timing] separation+compose: {t5 - t4}ms"
     assignWithCastFallback goal proof
+    let t6 ← IO.monoMsNow
+    logInfo m!"rsa_predict: [timing] assign: {t6 - t5}ms, total: {t6 - t0}ms"
     logInfo m!"rsa_predict: ✓ proved via compositional proof (L1 comparison)"
 
   | .l1Marginal cfg u ws₁ ws₂ => do
@@ -353,17 +382,53 @@ elab "rsa_predict" : tactic => do
     unless marg2.hi < marg1.lo do
       throwError "rsa_predict: marginal scores not separated: hi₂ = {marg2.hi} ≥ lo₁ = {marg1.lo}"
 
-    let sepProof ← proveQSeparation marg2.hi marg1.lo
-    let hi2Expr ← mkRatExpr marg2.hi
-    let lo1Expr ← mkRatExpr marg1.lo
-    -- Build world lists as Lean exprs
+    -- Build compositional L1 score CProofs (all worlds at once, reused)
+    let αExpr ← mkAppM ``RSA.RSAConfig.α #[cfg]
+    let some αNat ← resolveNat? αExpr
+      | throwError "rsa_predict: cannot extract α as ℕ"
+    let isBeliefBased ← detectBeliefBased cfg
+    logInfo m!"rsa_predict: building compositional proof (α={αNat}, {if isBeliefBased then "belief" else "action"})..."
+    enableL0Cache cfg allWElems isBeliefBased
+
+    -- Build all L1 scores once, reuse for both sides and total
+    let (allScoreProofs, totalProof) ← buildAllL1ScoreCProofs cfg u
+      allUElems allWElems allLElems wpValues lpValues αNat isBeliefBased
+    disableL0Cache
+
+    -- Sum scores for each side
+    let mut side1 : Array CProof := #[]
+    for w in ws₁ do
+      let wIdx ← findElemIdx allWElems w
+      side1 := side1.push allScoreProofs[wIdx]!
+    let sum1 ← buildChainAdd side1
+
+    let mut side2 : Array CProof := #[]
+    for w in ws₂ do
+      let wIdx ← findElemIdx allWElems w
+      side2 := side2.push allScoreProofs[wIdx]!
+    let sum2 ← buildChainAdd side2
+
+    -- Prove score-sum separation
+    let hi2E ← mkAppM ``QInterval.hi #[sum2.iExpr]
+    let lo1E ← mkAppM ``QInterval.lo #[sum1.iExpr]
+    let sepProof ← proveQPropND (← mkAppM ``LT.lt #[hi2E, lo1E])
+    let hgt ← mkAppM ``QInterval.gt_of_separated #[sum1.proof, sum2.proof, sepProof]
+
+    -- Prove totalScore > 0
+    let l1Agent ← mkAppM ``RSA.RSAConfig.L1agent #[cfg]
+    let zeroQ ← mkAppOptM ``OfNat.ofNat #[mkConst ``Rat, mkRawNatLit 0, none]
+    let totLo ← mkAppM ``QInterval.lo #[totalProof.iExpr]
+    let htotLoPos ← proveQPropND (← mkAppM ``LT.lt #[zeroQ, totLo])
+    let htotPos ← mkAppM ``QInterval.pos_of_lo_pos #[totalProof.proof, htotLoPos]
+
+    -- Apply policy_list_sum_gt
     let W ← inferType ws₁[0]!
     let ws1ListExpr ← mkListLit W ws₁.toList
     let ws2ListExpr ← mkListLit W ws₂.toList
-    let proof ← mkAppM ``RSA.Verified.L1_sum_gt_of_precomputed
-      #[cfg, cfg, u, ws1ListExpr, u, ws2ListExpr, hi2Expr, lo1Expr, sepProof]
+    let proof ← mkAppM ``Core.RationalAction.policy_list_sum_gt
+      #[l1Agent, u, ws1ListExpr, ws2ListExpr, hgt, htotPos]
     assignWithCastFallback goal proof
-    logInfo m!"rsa_predict: ✓ proved via L1_sum_gt_of_precomputed (marginal)"
+    logInfo m!"rsa_predict: ✓ proved via compositional proof (marginal)"
 
   | .l1Latent cfg u l₁ l₂ => do
     logInfo m!"rsa_predict: parsed goal as L1_latent comparison"
@@ -385,24 +450,56 @@ elab "rsa_predict" : tactic => do
     unless score2.hi < score1.lo do
       throwError "rsa_predict: latent scores not separated: hi₂ = {score2.hi} ≥ lo₁ = {score1.lo}"
 
-    let sepProof ← proveQSeparation score2.hi score1.lo
-    let hi2Expr ← mkRatExpr score2.hi
-    let lo1Expr ← mkRatExpr score1.lo
-    let proof ← mkAppM ``RSA.Verified.L1_latent_gt_of_precomputed
-      #[cfg, u, l₁, l₂, hi2Expr, lo1Expr, sepProof]
+    -- Build compositional latent score CProofs
+    let αExpr ← mkAppM ``RSA.RSAConfig.α #[cfg]
+    let some αNat ← resolveNat? αExpr
+      | throwError "rsa_predict: cannot extract α as ℕ"
+    let isBeliefBased ← detectBeliefBased cfg
+    logInfo m!"rsa_predict: building compositional proof (α={αNat}, {if isBeliefBased then "belief" else "action"})..."
+    enableL0Cache cfg allWElems isBeliefBased
+
+    let cproof1 ← buildL1LatentScoreCProof cfg u l₁ allUElems allWElems allLElems wpValues lpValues αNat isBeliefBased
+    let cproof2 ← buildL1LatentScoreCProof cfg u l₂ allUElems allWElems allLElems wpValues lpValues αNat isBeliefBased
+    disableL0Cache
+
+    -- Prove score separation
+    let hi2E ← mkAppM ``QInterval.hi #[cproof2.iExpr]
+    let lo1E ← mkAppM ``QInterval.lo #[cproof1.iExpr]
+    let sepProof ← proveQPropND (← mkAppM ``LT.lt #[hi2E, lo1E])
+    let hgt ← mkAppM ``QInterval.gt_of_separated #[cproof1.proof, cproof2.proof, sepProof]
+
+    -- policy_gt_of_score_gt on L1_latent_agent
+    let latentAgent ← mkAppM ``RSA.RSAConfig.L1_latent_agent #[cfg, u]
+    let unitVal ← mkAppOptM ``Unit.unit #[]
+    let policyGt ← mkAppM ``Core.RationalAction.policy_gt_of_score_gt
+      #[latentAgent, unitVal, l₁, l₂, hgt]
+
+    -- Rewrite via L1_latent_eq_policy to match goal
+    -- eq1: L1_latent u l₁ = policy () l₁
+    -- eq2: L1_latent u l₂ = policy () l₂
+    -- policyGt : policy () l₁ > policy () l₂ (i.e. policy () l₂ < policy () l₁)
+    -- Goal: L1_latent u l₁ > L1_latent u l₂ (i.e. L1_latent u l₂ < L1_latent u l₁)
+    let eq1 ← mkAppM ``RSA.RSAConfig.L1_latent_eq_policy #[cfg, u, l₁]
+    let eq2 ← mkAppM ``RSA.RSAConfig.L1_latent_eq_policy #[cfg, u, l₂]
+    let eq1sym ← mkAppM ``Eq.symm #[eq1]
+    let inner ← mkAppM ``lt_of_lt_of_eq #[policyGt, eq1sym]
+    let proof ← mkAppM ``lt_of_eq_of_lt #[eq2, inner]
     assignWithCastFallback goal proof
-    logInfo m!"rsa_predict: ✓ proved via L1_latent_gt_of_precomputed"
+    logInfo m!"rsa_predict: ✓ proved via compositional proof (L1_latent)"
 
   | .l1CrossUtterance cfg u₁ ws₁ u₂ ws₂ => do
     logInfo m!"rsa_predict: parsed goal as cross-utterance L1 sum ({ws₁.size} vs {ws₂.size})"
+    let t0 ← IO.monoMsNow
     let (_, _, _, allUElems, allWElems, allLElems, s1Bounds, wpValues, lpValues) ←
       reifyS1Scores cfg
+    let t1 ← IO.monoMsNow
+    logInfo m!"rsa_predict: [timing] reify: {t1 - t0}ms"
 
     let nL := allLElems.size
     let nW := allWElems.size
     let nU := allUElems.size
 
-    -- Compute policy bounds for each utterance
+    -- Compute policy bounds for each utterance (meta-level check)
     let allWIndices := Array.range nW
 
     let u1Idx ← findElemIdx allUElems u₁
@@ -427,16 +524,66 @@ elab "rsa_predict" : tactic => do
     unless psum2.hi < psum1.lo do
       throwError "rsa_predict: policy sums not separated: hi₂ = {psum2.hi} ≥ lo₁ = {psum1.lo}"
 
-    let sepProof ← proveQSeparation psum2.hi psum1.lo
-    let hi2Expr ← mkRatExpr psum2.hi
-    let lo1Expr ← mkRatExpr psum1.lo
-    let W ← inferType ws₁[0]!
-    let ws1ListExpr ← mkListLit W ws₁.toList
-    let ws2ListExpr ← mkListLit W ws₂.toList
-    let proof ← mkAppM ``RSA.Verified.L1_sum_gt_of_precomputed
-      #[cfg, cfg, u₁, ws1ListExpr, u₂, ws2ListExpr, hi2Expr, lo1Expr, sepProof]
+    -- Build compositional L1 policy CProofs (cached per utterance)
+    let αExpr ← mkAppM ``RSA.RSAConfig.α #[cfg]
+    let some αNat ← resolveNat? αExpr
+      | throwError "rsa_predict: cannot extract α as ℕ"
+    let isBeliefBased ← detectBeliefBased cfg
+    logInfo m!"rsa_predict: building compositional proof (α={αNat}, {if isBeliefBased then "belief" else "action"})..."
+    enableL0Cache cfg allWElems isBeliefBased
+
+    -- Phase 1: Pre-build S1 cache once, shared across both utterances
+    let tp1 ← IO.monoMsNow
+    logInfo m!"rsa_predict: [phase 1/5] building S1 score cache ({allLElems.size}×{allWElems.size}×{allUElems.size} = {allLElems.size * allWElems.size * allUElems.size} entries)..."
+    let s1Cache ← buildAllS1ScoreCProofs cfg allUElems allWElems allLElems αNat isBeliefBased s1Bounds
+    let tp1e ← IO.monoMsNow
+    logInfo m!"rsa_predict: [timing] phase 1 (S1 cache): {tp1e - tp1}ms"
+
+    -- Phase 2: Build all L1 scores for u₁ (with shared S1 cache)
+    let tp2 ← IO.monoMsNow
+    logInfo m!"rsa_predict: [phase 2/5] building L1 scores for u₁ ({allWElems.size} worlds)..."
+    let (allScores1, total1) ← buildAllL1ScoreCProofs cfg u₁
+      allUElems allWElems allLElems wpValues lpValues αNat isBeliefBased (some s1Cache)
+    let tp2e ← IO.monoMsNow
+    logInfo m!"rsa_predict: [timing] phase 2 (L1 u₁): {tp2e - tp2}ms"
+
+    -- Phase 3: Build all L1 scores for u₂ (with shared S1 cache)
+    let tp3 ← IO.monoMsNow
+    logInfo m!"rsa_predict: [phase 3/5] building L1 scores for u₂ ({allWElems.size} worlds)..."
+    let (allScores2, total2) ← buildAllL1ScoreCProofs cfg u₂
+      allUElems allWElems allLElems wpValues lpValues αNat isBeliefBased (some s1Cache)
+    let tp3e ← IO.monoMsNow
+    logInfo m!"rsa_predict: [timing] phase 3 (L1 u₂): {tp3e - tp3}ms"
+    disableL0Cache
+
+    -- Phase 4: Build L1 policy CProofs per world per side
+    let tp4 ← IO.monoMsNow
+    logInfo m!"rsa_predict: [phase 4/5] building L1 policy CProofs ({ws₁.size}+{ws₂.size} worlds)..."
+    let mut policyProofs1 : Array CProof := #[]
+    for w in ws₁ do
+      policyProofs1 := policyProofs1.push
+        (← buildL1PolicyFromScores cfg u₁ w allWElems allScores1 total1)
+    let sum1 ← buildLeftAdd policyProofs1
+
+    let mut policyProofs2 : Array CProof := #[]
+    for w in ws₂ do
+      policyProofs2 := policyProofs2.push
+        (← buildL1PolicyFromScores cfg u₂ w allWElems allScores2 total2)
+    let sum2 ← buildLeftAdd policyProofs2
+    let tp4e ← IO.monoMsNow
+    logInfo m!"rsa_predict: [timing] phase 4 (policies): {tp4e - tp4}ms"
+
+    -- Phase 5: Prove policy-sum separation and assign
+    let tp5 ← IO.monoMsNow
+    logInfo m!"rsa_predict: [phase 5/5] proving separation and assigning..."
+    let hi2E ← mkAppM ``QInterval.hi #[sum2.iExpr]
+    let lo1E ← mkAppM ``QInterval.lo #[sum1.iExpr]
+    let sepProof ← proveQPropND (← mkAppM ``LT.lt #[hi2E, lo1E])
+    let proof ← mkAppM ``QInterval.gt_of_separated #[sum1.proof, sum2.proof, sepProof]
     assignWithCastFallback goal proof
-    logInfo m!"rsa_predict: ✓ proved via L1_sum_gt_of_precomputed (cross-utterance)"
+    let tp5e ← IO.monoMsNow
+    logInfo m!"rsa_predict: [timing] phase 5 (sep+assign): {tp5e - tp5}ms, total: {tp5e - t0}ms"
+    logInfo m!"rsa_predict: ✓ proved via compositional proof (cross-utterance)"
 
   | .l1CrossConfig cfg₁ u₁ ws₁ cfg₂ u₂ ws₂ => do
     logInfo m!"rsa_predict: parsed goal as cross-config L1 sum ({ws₁.size} vs {ws₂.size})"
@@ -475,16 +622,48 @@ elab "rsa_predict" : tactic => do
     unless psum2.hi < psum1.lo do
       throwError "rsa_predict: cross-config policy sums not separated: hi₂ = {psum2.hi} ≥ lo₁ = {psum1.lo}"
 
-    let sepProof ← proveQSeparation psum2.hi psum1.lo
-    let hi2Expr ← mkRatExpr psum2.hi
-    let lo1Expr ← mkRatExpr psum1.lo
-    let W ← inferType ws₁[0]!
-    let ws1ListExpr ← mkListLit W ws₁.toList
-    let ws2ListExpr ← mkListLit W ws₂.toList
-    let proof ← mkAppM ``RSA.Verified.L1_sum_gt_of_precomputed
-      #[cfg₁, cfg₂, u₁, ws1ListExpr, u₂, ws2ListExpr, hi2Expr, lo1Expr, sepProof]
+    -- Build compositional L1 policy CProofs for each config (cached per utterance)
+    let αExpr1 ← mkAppM ``RSA.RSAConfig.α #[cfg₁]
+    let some αNat1 ← resolveNat? αExpr1
+      | throwError "rsa_predict: cannot extract α as ℕ (config 1)"
+    let isBeliefBased1 ← detectBeliefBased cfg₁
+    let αExpr2 ← mkAppM ``RSA.RSAConfig.α #[cfg₂]
+    let some αNat2 ← resolveNat? αExpr2
+      | throwError "rsa_predict: cannot extract α as ℕ (config 2)"
+    let isBeliefBased2 ← detectBeliefBased cfg₂
+    logInfo m!"rsa_predict: building compositional proof..."
+
+    -- Config 1: build with L0 cache
+    enableL0Cache cfg₁ allWElems1 isBeliefBased1
+    let s1Cache1 ← buildAllS1ScoreCProofs cfg₁ allUElems1 allWElems1 allLElems1 αNat1 isBeliefBased1 s1Bounds1
+    let (allScores1, total1) ← buildAllL1ScoreCProofs cfg₁ u₁
+      allUElems1 allWElems1 allLElems1 wpValues1 lpValues1 αNat1 isBeliefBased1 (some s1Cache1)
+    disableL0Cache
+    let mut policyProofs1 : Array CProof := #[]
+    for w in ws₁ do
+      policyProofs1 := policyProofs1.push
+        (← buildL1PolicyFromScores cfg₁ u₁ w allWElems1 allScores1 total1)
+    let sum1 ← buildLeftAdd policyProofs1
+
+    -- Config 2: build with L0 cache
+    enableL0Cache cfg₂ allWElems2 isBeliefBased2
+    let s1Cache2 ← buildAllS1ScoreCProofs cfg₂ allUElems2 allWElems2 allLElems2 αNat2 isBeliefBased2 s1Bounds2
+    let (allScores2, total2) ← buildAllL1ScoreCProofs cfg₂ u₂
+      allUElems2 allWElems2 allLElems2 wpValues2 lpValues2 αNat2 isBeliefBased2 (some s1Cache2)
+    disableL0Cache
+    let mut policyProofs2 : Array CProof := #[]
+    for w in ws₂ do
+      policyProofs2 := policyProofs2.push
+        (← buildL1PolicyFromScores cfg₂ u₂ w allWElems2 allScores2 total2)
+    let sum2 ← buildLeftAdd policyProofs2
+
+    -- Prove policy-sum separation
+    let hi2E ← mkAppM ``QInterval.hi #[sum2.iExpr]
+    let lo1E ← mkAppM ``QInterval.lo #[sum1.iExpr]
+    let sepProof ← proveQPropND (← mkAppM ``LT.lt #[hi2E, lo1E])
+    let proof ← mkAppM ``QInterval.gt_of_separated #[sum1.proof, sum2.proof, sepProof]
     assignWithCastFallback goal proof
-    logInfo m!"rsa_predict: ✓ proved via L1_sum_gt_of_precomputed (cross-config)"
+    logInfo m!"rsa_predict: ✓ proved via compositional proof (cross-config)"
 
   | .s1Compare cfg l w u₁ u₂ => do
     logInfo m!"rsa_predict: parsed goal as S1 comparison"
@@ -515,8 +694,10 @@ elab "rsa_predict" : tactic => do
       | throwError "rsa_predict: cannot extract α as ℕ"
     let isBeliefBased ← detectBeliefBased cfg
     logInfo m!"rsa_predict: building compositional proof (α={αNat}, {if isBeliefBased then "belief" else "action"})..."
+    enableL0Cache cfg allWElems isBeliefBased
     let score1 ← buildS1ScoreCProof cfg l w u₁ allWElems αNat isBeliefBased
     let score2 ← buildS1ScoreCProof cfg l w u₂ allWElems αNat isBeliefBased
+    disableL0Cache
     -- Prove separation
     let hi2E ← mkAppM ``QInterval.hi #[score2.iExpr]
     let lo1E ← mkAppM ``QInterval.lo #[score1.iExpr]

@@ -21,9 +21,9 @@ The file defines a category of scales with two levels of enrichment:
 ```
                     ComparativeScale (α, ≤, boundedness)
                     ╱              ╲
-          (+ join, ⊥, FA)    (linear, μ)
+          (+ join, ⊥, FA)    (linear, μ, direction)
               ╱                      ╲
-      AdditiveScale              MIPDomain
+      AdditiveScale              DirectedMeasure
         ╱        ╲                    │
 MereoScale   EpistemicScale (†)      │
     │              │                  │
@@ -46,8 +46,9 @@ MereoScale   EpistemicScale (†)      │
   - Mereological: `ExtMeasure.additive` (Krifka 1989)
   - Epistemic: `EpistemicSystemFA` + `FinAddMeasure` (Holliday & Icard 2013, § 14)
 
-**Linear specialization**: `MIPDomain` — comparative scale with a linear order
-  and measure function. Instances: Kennedy adjectives, Rouillard TIAs.
+**Linear specialization**: `DirectedMeasure` — comparative scale with a linear
+  order, measure function, and direction. Instances: Kennedy adjectives,
+  Rouillard TIAs, epistemic vocabulary.
 
 The commutative diagram: both additive arms (mereological, epistemic) land in
 (ℚ, ≤) via additive representation morphisms. The MIP arm also lands in (ℚ, ≤)
@@ -269,6 +270,81 @@ structure ScaleRepresentation (S : Type*) [Preorder S] (D : Type*) [Preorder D] 
   μ : S → D
   /-- Order-preservation -/
   monotone : Monotone μ
+
+-- ════════════════════════════════════════════════════
+-- § 1g. Directed Measure (Root Algebraic Primitive)
+-- ════════════════════════════════════════════════════
+
+/-- A directed measurement on a bounded scale: the algebraic primitive
+    underlying degree semantics, modal semantics, and epistemic scales.
+
+    A `DirectedMeasure D E` packages:
+    - A degree type `D` with a linear order (the scale)
+    - An entity type `E` (what gets measured)
+    - A measure function `μ : E → D` (the measurement)
+    - Boundedness classification (from `ComparativeScale`)
+    - A direction/polarity (positive or negative)
+
+    This is the common algebraic core of `GradablePredicate` (degree
+    semantics), MIP domain constructors (maximal informativity), and
+    `epistemicAsGradable` (epistemic threshold semantics). Each of
+    these extends or instantiates `DirectedMeasure`:
+
+    - `GradablePredicate E D` extends `DirectedMeasure D E` with `form`
+    - `kennedyNumeral`, `rouillardETIA`, etc. produce `DirectedMeasure` instances
+    - Epistemic vocabulary: `DirectedMeasure ℚ (E × BProp W)`
+
+    The degree property (`atLeastDeg` for positive, `atMostDeg` for
+    negative) is **derived** from direction, not stored. This captures
+    the insight from Lassiter (2017) that the binary direction choice
+    (which side of the threshold counts as "satisfying the predicate")
+    is the fundamental parameter, and the degree property follows.
+
+    References:
+    - Kennedy, C. (2007). Vagueness and grammar.
+    - Lassiter, D. (2017). Graded modality. OUP.
+    - Rouillard, V. (2026). Maximal informativity and temporal in-adverbials.
+    - Krantz, D. et al. (1971). Foundations of measurement, Vol. 1. -/
+structure DirectedMeasure (D : Type*) [LinearOrder D] (E : Type*) extends ComparativeScale D where
+  /-- Measure function: maps entities to degrees on the scale -/
+  μ : E → D
+  /-- Scale direction: positive (μ(x) ≥ θ) or negative (μ(x) ≤ θ).
+      Determines which side of a threshold counts as satisfying the
+      predicate. Positive: tall, likely, full. Negative: short,
+      unlikely, empty. -/
+  direction : ScalePolarity := .positive
+
+namespace DirectedMeasure
+
+variable {D : Type*} [LinearOrder D] {E : Type*}
+
+/-- The degree property derived from direction:
+    - positive → μ(x) ≥ d (upward: meets threshold)
+    - negative → μ(x) ≤ d (downward: at most threshold)
+
+    This replaces a stored `degProp` field with a derived one.
+    The degree property is not independent data — it is determined by
+    the direction choice. Definitionally equal to `atLeastDeg dm.μ`
+    (positive) and `atMostDeg dm.μ` (negative), proved in §8b. -/
+def degProp (dm : DirectedMeasure D E) : D → E → Prop :=
+  match dm.direction with
+  | .positive => fun d e => dm.μ e ≥ d
+  | .negative => fun d e => dm.μ e ≤ d
+
+/-- Licensing: licensed iff the bounded scale admits an optimum. -/
+def licensed (dm : DirectedMeasure D E) : Bool := dm.boundedness.isLicensed
+
+/-- Blocking: blocked iff open scale → information collapse. -/
+def blocked (dm : DirectedMeasure D E) : Bool := !dm.licensed
+
+/-- Licensing is determined solely by boundedness, regardless of
+    domain, measure function, or direction. -/
+theorem licensing_from_boundedness (d₁ d₂ : DirectedMeasure D E)
+    (h : d₁.boundedness = d₂.boundedness) :
+    d₁.licensed = d₂.licensed := by
+  simp [licensed, Boundedness.isLicensed, h]
+
+end DirectedMeasure
 
 -- ════════════════════════════════════════════════════
 -- § 2. Measurement Scales (via Mathlib)
@@ -716,51 +792,32 @@ The `isMaxInf_atLeast_iff_eq` and `isMaxInf_atMost_iff_eq` theorems prove this
 for both monotonicity directions. The Kennedy type-shift is not a separate
 mechanism — it IS the MIP applied to "at least n". -/
 
-/-- A maximal informativity domain: the abstract pattern shared by
-    Kennedy (2007/2015) degree semantics and Rouillard (2026) temporal
-    measurement.
+namespace DirectedMeasure
 
-    Given a measure function μ and a degree property P, the MIP determines
-    licensing based on the scale's boundedness. Both Kennedy's Interpretive
-    Economy and Rouillard's MIP are instances. -/
-structure MIPDomain (α : Type*) [LinearOrder α] (W : Type*) extends ComparativeScale α where
-  /-- Measure function from worlds/events to scale values -/
-  measure : W → α
-  /-- Degree property: P(d, w) iff measure at w relates to threshold d -/
-  degProp : α → W → Prop
-
-namespace MIPDomain
+-- ── MIP Domain Constructors ────────────────────────
 
 variable {α : Type*} [LinearOrder α] {W : Type*}
-
-/-- MIP licensing: licensed iff bounded scale admits an optimum. -/
-def licensed (d : MIPDomain α W) : Bool := d.boundedness.isLicensed
-
-/-- MIP blocking: blocked iff open scale → information collapse. -/
-def blocked (d : MIPDomain α W) : Bool := !d.licensed
-
--- ── Instances ──────────────────────────────────────
 
 /-- Kennedy (2015) numeral domain: "at least n" over cardinality.
     Closed scale (ℕ well-ordered) → always licensed.
     Type-shift to exact = MIP applied to atLeastDeg. -/
-def kennedyNumeral (μ : W → α) : MIPDomain α W :=
-  { boundedness := .closed, measure := μ, degProp := atLeastDeg μ }
+def kennedyNumeral (μ : W → α) : DirectedMeasure α W :=
+  { boundedness := .closed, μ := μ }
 
 /-- Kennedy (2007) gradable adjective domain.
     Boundedness varies by adjective class (tall: open, full: closed). -/
-def kennedyAdjective (μ : W → α) (b : Boundedness) : MIPDomain α W :=
-  { boundedness := b, measure := μ, degProp := atLeastDeg μ }
+def kennedyAdjective (μ : W → α) (b : Boundedness) : DirectedMeasure α W :=
+  { boundedness := b, μ := μ }
 
 /-- Rouillard (2026) E-TIA domain: event runtime ≤ interval size.
     Boundedness determined by Vendler class (telic → closed, atelic → open). -/
-def rouillardETIA (μ : W → α) (b : Boundedness) : MIPDomain α W :=
-  { boundedness := b, measure := μ, degProp := atMostDeg μ }
+def rouillardETIA (μ : W → α) (b : Boundedness) : DirectedMeasure α W :=
+  { boundedness := b, μ := μ, direction := .negative }
 
 /-- Rouillard (2026) G-TIA domain: PTS extent on open intervals.
     Always open → always blocked (information collapse). -/
-def rouillardGTIA (μ : W → α) : MIPDomain α W :=
-  { boundedness := .open_, measure := μ, degProp := atMostDeg μ }
+def rouillardGTIA (μ : W → α) : DirectedMeasure α W :=
+  { boundedness := .open_, μ := μ, direction := .negative }
 
 -- ── Licensing Theorems ──────────────────────────────
 
@@ -788,20 +845,11 @@ theorem eTIA_atelic_blocked (μ : W → α) :
 theorem gTIA_blocked (μ : W → α) :
     (rouillardGTIA μ).licensed = false := rfl
 
--- ── The Isomorphism ────────────────────────────────
-
-/-- The Kennedy–Rouillard isomorphism: licensing is determined solely
-    by boundedness, regardless of domain, measure function, or
-    monotonicity direction. Two MIPDomains with the same boundedness
-    have the same licensing prediction. -/
-theorem licensing_from_boundedness (d₁ d₂ : MIPDomain α W)
-    (h : d₁.boundedness = d₂.boundedness) :
-    d₁.licensed = d₂.licensed := by
-  simp [licensed, Boundedness.isLicensed, h]
+-- ── The Kennedy–Rouillard Isomorphism ───────────────
 
 /-- The deep isomorphism: a Kennedy numeral domain and a Rouillard E-TIA
     domain on a closed scale have identical licensing, despite using
-    opposite monotonicity directions (atLeastDeg vs atMostDeg). -/
+    opposite directions (positive vs negative). -/
 theorem kennedy_rouillard_same_licensing (μ₁ μ₂ : W → α) :
     (kennedyNumeral μ₁).licensed = (rouillardETIA μ₂ .closed).licensed := rfl
 
@@ -813,10 +861,10 @@ theorem kennedy_rouillard_same_licensing (μ₁ μ₂ : W → α) :
     All four route through Boundedness.isLicensed. -/
 theorem four_frameworks_agree
     (b : Boundedness) {W : Type*} (μ₁ μ₂ : W → α) :
-    (MIPDomain.kennedyAdjective μ₁ b).licensed =
-    (MIPDomain.rouillardETIA μ₂ b).licensed := rfl
+    (kennedyAdjective μ₁ b).licensed =
+    (rouillardETIA μ₂ b).licensed := rfl
 
-end MIPDomain
+end DirectedMeasure
 
 -- ════════════════════════════════════════════════════
 -- § 9. MIP = Kennedy's Type-Shift
@@ -863,7 +911,7 @@ Discretized scale types for gradable adjective RSA computations.
 `Degree max` wraps `Fin (max + 1)` with `LinearOrder`, `BoundedOrder`, `Fintype`.
 `Threshold max` wraps `Fin max` with coercion to `Degree max`.
 
-These participate in the abstract `MIPDomain` infrastructure above via their
+These participate in the abstract `DirectedMeasure` infrastructure above via their
 `LinearOrder` and `BoundedOrder` instances. -/
 
 /-- A degree on a scale from 0 to max. Represents discretized continuous

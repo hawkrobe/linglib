@@ -337,7 +337,7 @@ theorem contrary_double_neg_differs :
 open Core.Scale
 
 structure GradableMLScale (α : Type*) [LinearOrder α] (W : Type*) extends
-    Core.Scale.MIPDomain α W where
+    Core.Scale.DirectedMeasure α W where
   ml : Semantics.Lexical.Adjective.MLScale α
 
 def marginalityPositive {α : Type*} [LinearOrder α]
@@ -350,30 +350,30 @@ theorem marginality_entails_standard {α : Type*} [LinearOrder α]
   h.1
 
 -- ════════════════════════════════════════════════════
--- Degree ↔ MIPDomain Bridge
+-- Degree ↔ DirectedMeasure Bridge
 -- ════════════════════════════════════════════════════
 
-/-! ### Connecting concrete `Degree max` to abstract `MIPDomain`
+/-! ### Connecting concrete `Degree max` to abstract `DirectedMeasure`
 
 `Degree max` has `LinearOrder` and `BoundedOrder` (from `Core.MeasurementScale`),
 so the abstract theorems in `MeasurementScale.lean` apply directly to concrete
 RSA degree computations. -/
 
-def adjMIPDomain {max : Nat} {W : Type*} (μ : W → Degree max)
-    (entry : GradableAdjEntry) : MIPDomain (Degree max) W :=
-  MIPDomain.kennedyAdjective μ entry.scaleType
+def adjMeasure {max : Nat} {W : Type*} (μ : W → Degree max)
+    (entry : GradableAdjEntry) : DirectedMeasure (Degree max) W :=
+  DirectedMeasure.kennedyAdjective μ entry.scaleType
 
 theorem closedAdj_licensed {max : Nat} {W : Type*} (μ : W → Degree max)
     (entry : GradableAdjEntry) (h : entry.scaleType = .closed) :
-    (adjMIPDomain μ entry).licensed = true := by
-  simp [adjMIPDomain, MIPDomain.kennedyAdjective, MIPDomain.licensed, h,
-        Boundedness.isLicensed]
+    (adjMeasure μ entry).licensed = true := by
+  simp [adjMeasure, DirectedMeasure.kennedyAdjective,
+        DirectedMeasure.licensed, Boundedness.isLicensed, h]
 
 theorem openAdj_blocked {max : Nat} {W : Type*} (μ : W → Degree max)
     (entry : GradableAdjEntry) (h : entry.scaleType = .open_) :
-    (adjMIPDomain μ entry).licensed = false := by
-  simp [adjMIPDomain, MIPDomain.kennedyAdjective, MIPDomain.licensed, h,
-        Boundedness.isLicensed]
+    (adjMeasure μ entry).licensed = false := by
+  simp [adjMeasure, DirectedMeasure.kennedyAdjective,
+        DirectedMeasure.licensed, Boundedness.isLicensed, h]
 
 theorem degree_nontrivial {max : Nat} (h : 1 ≤ max) :
     ∃ x : Degree max, x ≠ ⊤ := by
@@ -389,7 +389,7 @@ theorem degree_admits_optimum {max : Nat} (h : 1 ≤ max) :
   upperBound_admits_optimum (degree_nontrivial h)
 
 theorem degree_measure_is_id {max : Nat} {W : Type*} (μ : W → Degree max) :
-    (MIPDomain.kennedyNumeral μ).measure = μ :=
+    (DirectedMeasure.kennedyNumeral μ).μ = μ :=
   rfl
 
 -- ════════════════════════════════════════════════════

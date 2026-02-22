@@ -208,6 +208,29 @@ noncomputable def L1_latent (cfg : RSAConfig U W) (u : U) (l : cfg.Latent) : ℝ
   let total := ∑ l' : cfg.Latent, ∑ w : W, cfg.worldPrior w * cfg.latentPrior w l' * cfg.S1 l' w u
   if total = 0 then 0 else score / total
 
+/-- L1 latent inference as a RationalAction.
+
+The pragmatic listener's posterior over latent variables, viewed as a
+Luce choice rule. Score for latent value l is:
+  Σ_w worldPrior(w) · latentPrior(w,l) · S1(l,w,u)
+
+This mirrors `L1_latent` but packages the computation as a `RationalAction`,
+enabling `policy_gt_of_score_gt` for compositional proofs. -/
+noncomputable def L1_latent_agent (cfg : RSAConfig U W) (u : U) :
+    RationalAction Unit cfg.Latent where
+  score _ l := ∑ w : W, cfg.worldPrior w * cfg.latentPrior w l * cfg.S1 l w u
+  score_nonneg _ l := Finset.sum_nonneg fun w _ =>
+    mul_nonneg (mul_nonneg (cfg.worldPrior_nonneg w) (cfg.latentPrior_nonneg w l))
+      (cfg.S1_nonneg l w u)
+
+/-- Bridge: `L1_latent` equals `L1_latent_agent.policy`.
+
+Both sides unfold to `if total = 0 then 0 else score / total` with the
+same score function, so equality is definitional up to unfolding. -/
+theorem L1_latent_eq_policy (cfg : RSAConfig U W) (u : U) (l : cfg.Latent) :
+    cfg.L1_latent u l = (cfg.L1_latent_agent u).policy () l := by
+  simp only [L1_latent, L1_latent_agent, RationalAction.policy, RationalAction.totalScore]
+
 end RSAConfig
 
 end RSA
