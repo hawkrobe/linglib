@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.226.16] - 2026-02-22
+
+### Added
+- **`Tactics/RSAPredict/AutoDetect.lean`**: Tier 2 auto-detection — pattern-matches raw `s1Score` lambdas (rpow, exp+log, etc.) to classify into `S1ScoreSpec` variants, extracts ℚ parameters pointwise, builds `RSAConfigData` via ite-chains + sorryAx proofs, verifies via `native_decide`; enables fast reflection path for raw `RSAConfig` without user-written `RSAConfigData`
+- **`Core/Interval/RSAVerify.lean`**: `_ext` bridge theorems (`l1_gt_of_check_ext`, `l1_not_gt_of_check_ext`, `l1_score_gt_of_check_ext`, `s1_gt_of_check_ext`, `s1_not_gt_of_check_ext`) — take both user's `cfg` and auto-built `d`, so proof type mentions `cfg.L1` directly without requiring `isDefEq` bridge
+
+### Changed
+- **`Tactics/RSAPredict/ReflectBridge.lean`**: Wire Tier 2 as fallback — each `tryReflect*` function calls corresponding `tryAutoDetect*` when `extractConfigData?` returns none; import `AutoDetect`
+- **`Tactics/RSAPredict.lean`**: Add reflection fast path for ¬(L1), S1, ¬(S1) handlers (tries `tryReflect*` before CProof pipeline)
+- **`Phenomena/Reference/Studies/FrankGoodman2012.lean`**: Migrate to `RSAConfigData` with detailed SM equations in docstring
+
 ## [0.226.15] - 2026-02-22
 
 ### Added

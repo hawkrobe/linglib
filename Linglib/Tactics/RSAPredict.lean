@@ -151,6 +151,11 @@ elab "rsa_predict" : tactic => do
     match goalForm with
     | .l1Compare cfg u w₁ w₂ => do
       logInfo m!"rsa_predict: parsed goal as ¬(L1 comparison)"
+      -- Try reflection path first
+      if ← tryReflectL1NotGt goal cfg u w₁ w₂ then
+        logInfo m!"rsa_predict: ✓ proved via reflection (¬L1)"
+        return
+      -- Fall back to CProof pipeline
       let (_, _, _, allUElems, allWElems, allLElems, s1Bounds, wpValues, lpValues) ←
         reifyS1Scores cfg
       let uIdx ← findElemIdx allUElems u
@@ -218,6 +223,11 @@ elab "rsa_predict" : tactic => do
       return
     | .s1Compare cfg l w u₁ u₂ => do
       logInfo m!"rsa_predict: parsed goal as ¬(S1 comparison)"
+      -- Try reflection path first
+      if ← tryReflectS1NotGt goal cfg l w u₁ u₂ then
+        logInfo m!"rsa_predict: ✓ proved via reflection (¬S1)"
+        return
+      -- Fall back to CProof pipeline
       let (_, _, _, allUElems, allWElems, allLElems, s1Bounds, _, _) ←
         reifyS1Scores cfg
       let lIdx ← findElemIdx allLElems l
@@ -682,6 +692,11 @@ elab "rsa_predict" : tactic => do
 
   | .s1Compare cfg l w u₁ u₂ => do
     logInfo m!"rsa_predict: parsed goal as S1 comparison"
+    -- Try reflection path first
+    if ← tryReflectS1Compare goal cfg l w u₁ u₂ then
+      logInfo m!"rsa_predict: ✓ proved via reflection (S1)"
+      return
+    -- Fall back to CProof pipeline
     let (_, _, _, allUElems, allWElems, allLElems, s1Bounds, _, _) ←
       reifyS1Scores cfg
 

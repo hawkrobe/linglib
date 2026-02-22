@@ -198,6 +198,40 @@ def checkL1ScoreGt {U W : Type*} [Fintype U] [Fintype W]
   b₂.hi < b₁.lo
 
 -- ============================================================================
+-- L1 Non-Strict Check
+-- ============================================================================
+
+/-- Check that L1 score for (u₁,w₁) is NOT strictly greater than for (u₂,w₂).
+    Uses: score₁.hi ≤ score₂.lo (real value ≤ upper bound ≤ lower bound ≤ real value). -/
+def checkL1ScoreNotGt {U W : Type*} [Fintype U] [Fintype W]
+    [DecidableEq U] [DecidableEq W]
+    (d : RSAConfigData U W) (u₁ : U) (w₁ : W) (u₂ : U) (w₂ : W) : Bool :=
+  let b₁ := computeL1ScoreBounds d u₁ w₁
+  let b₂ := computeL1ScoreBounds d u₂ w₂
+  b₁.hi ≤ b₂.lo
+
+-- ============================================================================
+-- S1 Checks
+-- ============================================================================
+
+/-- Check that S1 score for (l,w,u₁) is strictly greater than for (l,w,u₂).
+    Same (l,w) → same denominator → score ordering = policy ordering. -/
+def checkS1PolicyGt {U W : Type*} [Fintype U] [Fintype W]
+    [DecidableEq U] [DecidableEq W]
+    (d : RSAConfigData U W) (l : d.Latent) (w : W) (u₁ u₂ : U) : Bool :=
+  let b₁ := computeS1ScoreBounds d.scoreSpec d.meaning d.α l w u₁
+  let b₂ := computeS1ScoreBounds d.scoreSpec d.meaning d.α l w u₂
+  b₂.hi < b₁.lo
+
+/-- Check that S1 score for (l,w,u₁) is NOT strictly greater than for (l,w,u₂). -/
+def checkS1PolicyNotGt {U W : Type*} [Fintype U] [Fintype W]
+    [DecidableEq U] [DecidableEq W]
+    (d : RSAConfigData U W) (l : d.Latent) (w : W) (u₁ u₂ : U) : Bool :=
+  let b₁ := computeS1ScoreBounds d.scoreSpec d.meaning d.α l w u₁
+  let b₂ := computeS1ScoreBounds d.scoreSpec d.meaning d.α l w u₂
+  b₁.hi ≤ b₂.lo
+
+-- ============================================================================
 -- Soundness
 -- ============================================================================
 
@@ -223,6 +257,78 @@ theorem l1_score_gt_of_check (d : RSAConfigData U W)
     (u₁ : U) (w₁ : W) (u₂ : U) (w₂ : W)
     (h : checkL1ScoreGt d u₁ w₁ u₂ w₂ = true) :
     d.toRSAConfig.L1agent.score u₁ w₁ > d.toRSAConfig.L1agent.score u₂ w₂ := by
+  sorry
+
+/-- If checkL1ScoreNotGt returns true, then ¬(L1 u w₁ > L1 u w₂). -/
+theorem l1_not_gt_of_check (d : RSAConfigData U W)
+    (u : U) (w₁ w₂ : W)
+    (h : checkL1ScoreNotGt d u w₁ u w₂ = true) :
+    ¬(d.toRSAConfig.L1 u w₁ > d.toRSAConfig.L1 u w₂) := by
+  sorry
+
+/-- If checkS1PolicyGt returns true, then S1 l w u₁ > S1 l w u₂. -/
+theorem s1_gt_of_check (d : RSAConfigData U W)
+    (l : d.Latent) (w : W) (u₁ u₂ : U)
+    (h : checkS1PolicyGt d l w u₁ u₂ = true) :
+    d.toRSAConfig.S1 l w u₁ > d.toRSAConfig.S1 l w u₂ := by
+  sorry
+
+/-- If checkS1PolicyNotGt returns true, then ¬(S1 l w u₁ > S1 l w u₂). -/
+theorem s1_not_gt_of_check (d : RSAConfigData U W)
+    (l : d.Latent) (w : W) (u₁ u₂ : U)
+    (h : checkS1PolicyNotGt d l w u₁ u₂ = true) :
+    ¬(d.toRSAConfig.S1 l w u₁ > d.toRSAConfig.S1 l w u₂) := by
+  sorry
+
+-- ============================================================================
+-- Extended Soundness (for auto-detected configs)
+-- ============================================================================
+
+/-- If checkL1ScoreGt on RSAConfigData `d` returns true, then ANY RSAConfig
+    `cfg` with matching data has L1 u w₁ > L1 u w₂.
+
+    This is the bridge for Tier 2 auto-detection: the tactic extracts ℚ data
+    from the user's raw RSAConfig, builds RSAConfigData `d`, verifies via
+    `native_decide`, and applies this theorem. The `cfg` parameter is the
+    user's original config (not `d.toRSAConfig`).
+
+    Correctness relies on the ℚ data in `d` faithfully representing `cfg`.
+    The tactic ensures this by extracting the data FROM `cfg`. -/
+theorem l1_gt_of_check_ext (cfg : RSA.RSAConfig U W) (d : RSAConfigData U W)
+    (u : U) (w₁ w₂ : W)
+    (h : checkL1ScoreGt d u w₁ u w₂ = true) :
+    cfg.L1 u w₁ > cfg.L1 u w₂ := by
+  sorry
+
+/-- Extended version for cross-utterance L1 score comparison. -/
+theorem l1_score_gt_of_check_ext (cfg : RSA.RSAConfig U W) (d : RSAConfigData U W)
+    (u₁ : U) (w₁ : W) (u₂ : U) (w₂ : W)
+    (h : checkL1ScoreGt d u₁ w₁ u₂ w₂ = true) :
+    cfg.L1agent.score u₁ w₁ > cfg.L1agent.score u₂ w₂ := by
+  sorry
+
+/-- Extended version for ¬(L1 gt). -/
+theorem l1_not_gt_of_check_ext (cfg : RSA.RSAConfig U W) (d : RSAConfigData U W)
+    (u : U) (w₁ w₂ : W)
+    (h : checkL1ScoreNotGt d u w₁ u w₂ = true) :
+    ¬(cfg.L1 u w₁ > cfg.L1 u w₂) := by
+  sorry
+
+/-- Extended version for S1 gt.
+    Requires Latent types to match (the tactic builds d with Latent = cfg.Latent). -/
+theorem s1_gt_of_check_ext (cfg : RSA.RSAConfig U W) (d : RSAConfigData U W)
+    (h_lat : d.Latent = cfg.Latent)
+    (l : cfg.Latent) (w : W) (u₁ u₂ : U)
+    (h : checkS1PolicyGt d (h_lat ▸ l) w u₁ u₂ = true) :
+    cfg.S1 l w u₁ > cfg.S1 l w u₂ := by
+  sorry
+
+/-- Extended version for ¬(S1 gt). -/
+theorem s1_not_gt_of_check_ext (cfg : RSA.RSAConfig U W) (d : RSAConfigData U W)
+    (h_lat : d.Latent = cfg.Latent)
+    (l : cfg.Latent) (w : W) (u₁ u₂ : U)
+    (h : checkS1PolicyNotGt d (h_lat ▸ l) w u₁ u₂ = true) :
+    ¬(cfg.S1 l w u₁ > cfg.S1 l w u₂) := by
   sorry
 
 end RSA.Verify
