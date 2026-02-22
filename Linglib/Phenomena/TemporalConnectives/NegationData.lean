@@ -1,6 +1,6 @@
 /-!
 # Negation × Temporal Connective Interaction Data
-@cite{giannakidou-2002} @cite{greco-2020}
+@cite{giannakidou-2002} @cite{greco-2020} @cite{rett-2026} @cite{jin-koenig-2021}
 
 Theory-neutral empirical data on the interaction between negation and
 temporal connectives, focusing on:
@@ -8,7 +8,7 @@ temporal connectives, focusing on:
 1. **The two-*until* hypothesis** (Giannakidou 2002): Greek lexicalizes the
    distinction between NPI-*until* (= ¬*before*) and durative *until*.
 
-2. **Expletive negation** (Greco 2019): *before*-clauses license truth-
+2. **Expletive negation** (Greco 2020): *before*-clauses license truth-
    conditionally vacuous negation cross-linguistically, explained by
    ambidirectionality (Rett 2026).
 
@@ -40,14 +40,25 @@ namespace Phenomena.TemporalConnectives.NegationData
 -- ============================================================================
 
 /-- A judgment about the two-*until* distinction, encoding Giannakidou's
-    (2002) cross-linguistic evidence. -/
+    (2002) cross-linguistic evidence.
+
+    `semanticType` classifies connectives into the **before-type** (non-veridical,
+    NPI-licensing, no durative restriction) vs **endpoint-type** (veridical,
+    no NPI-licensing, durative restriction). This is the two-way distinction
+    Giannakidou argues is lexicalized cross-linguistically.
+
+    Note: Greek has a THIRD element — *para monon* (§§4.2, 6) — which is the
+    true NPI-*until* (requires negation, entails actualization). *Prin* shares
+    NPI-licensing and non-veridicality with NPI-*until* but differs in that
+    it does NOT entail actualization (Giannakidou 2002, ex. 72–73, 77). -/
 structure TwoUntilDatum where
   /-- Language -/
   language : String
   /-- Connective form -/
   form : String
-  /-- Semantic type: NPI-until (= ¬before) or durative until -/
-  semanticType : String  -- "NPI" or "durative"
+  /-- Semantic type: before-type (non-veridical, NPI-licensing) or
+      endpoint-type (veridical, durative). -/
+  semanticType : String  -- "before" or "endpoint"
   /-- Required mood of complement (if applicable) -/
   moodRestriction : Option String
   /-- Does it require a DE (downward-entailing) licensor? -/
@@ -66,15 +77,17 @@ structure TwoUntilDatum where
 -- § 2: Greek Data (Giannakidou 2002, §§2–4)
 -- ============================================================================
 
-/-- Greek *prin* (πριν): NPI-*until* / *before* type.
+/-- Greek *prin* (πριν): before-type.
     Requires subjunctive, does not require DE context (unlike English
-    NPI-*until*), non-veridical complement, licenses NPIs.
+    NPI-*until* or Greek *para monon*), non-veridical complement, licenses NPIs.
+    No actualization entailment: "Efije prin na erthi o Janis" is compatible
+    with Janis never coming (Giannakidou 2002, §6, ex. 72).
     "Efije prin na erthi o Janis."
     'She left before Janis came.' -/
 def greek_prin : TwoUntilDatum where
   language := "Greek"
   form := "prin (πριν)"
-  semanticType := "NPI"
+  semanticType := "before"
   moodRestriction := some "subjunctive"
   requiresDE := false
   complementVeridical := false
@@ -82,15 +95,16 @@ def greek_prin : TwoUntilDatum where
   licensesNPIs := true
   example_ := "Efije prin na erthi o Janis (She left before Janis came)"
 
-/-- Greek *mexri* (μέχρι): durative *until* type.
+/-- Greek *mexri* (μέχρι): endpoint-type.
     Requires indicative, veridical complement, requires imperfective/stative
-    main clause, does NOT license NPIs.
+    main clause, does NOT license NPIs. Actualization is a conversational
+    implicature, not an entailment (Giannakidou 2002, §2.1).
     "I Maria perimine mexri irthi o Janis."
     'Maria waited until Janis came.' -/
 def greek_mexri : TwoUntilDatum where
   language := "Greek"
   form := "mexri (μέχρι)"
-  semanticType := "durative"
+  semanticType := "endpoint"
   moodRestriction := some "indicative"
   requiresDE := false
   complementVeridical := true
@@ -98,12 +112,17 @@ def greek_mexri : TwoUntilDatum where
   licensesNPIs := false
   example_ := "I Maria perimine mexri irthi o Janis (Maria waited until Janis came)"
 
-/-- English NPI-*until*: requires DE licensor (negation).
+/-- English NPI-*until*: before-type (Karttunen: NPI-*until* = ¬*before*).
+    Requires DE licensor (negation). Unlike Greek *prin*, English collapses
+    both types under the single lexeme *until*, disambiguated by context.
+    The actualization entailment of "not...until" comes from the presupposition
+    (A BEFORE T ∨ A WHEN T) + assertion ¬(A BEFORE T) → A WHEN T, not from
+    *until* itself being veridical.
     "The princess didn't wake up until the prince kissed her." -/
 def english_npi_until : TwoUntilDatum where
   language := "English"
   form := "until (NPI)"
-  semanticType := "NPI"
+  semanticType := "before"
   moodRestriction := none
   requiresDE := true
   complementVeridical := false
@@ -111,13 +130,13 @@ def english_npi_until : TwoUntilDatum where
   licensesNPIs := true
   example_ := "The princess didn't wake up until the prince kissed her"
 
-/-- English durative *until*: no DE requirement, veridical complement,
-    durative main clause required.
+/-- English durative *until*: endpoint-type. No DE requirement, veridical
+    complement, durative main clause required.
     "John slept until 3pm." -/
 def english_dur_until : TwoUntilDatum where
   language := "English"
   form := "until (durative)"
-  semanticType := "durative"
+  semanticType := "endpoint"
   moodRestriction := none
   requiresDE := false
   complementVeridical := true
@@ -159,20 +178,20 @@ theorem npi_licensing_diagnostic :
 
 /-- All four diagnostics consistently distinguish the two types. -/
 theorem diagnostics_aligned :
-    -- NPI type
-    greek_prin.semanticType = "NPI" ∧
+    -- before-type
+    greek_prin.semanticType = "before" ∧
     greek_prin.complementVeridical = false ∧
     greek_prin.requiresDurativeMain = false ∧
     greek_prin.licensesNPIs = true ∧
-    -- durative type
-    greek_mexri.semanticType = "durative" ∧
+    -- endpoint-type
+    greek_mexri.semanticType = "endpoint" ∧
     greek_mexri.complementVeridical = true ∧
     greek_mexri.requiresDurativeMain = true ∧
     greek_mexri.licensesNPIs = false :=
   ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
 
 -- ============================================================================
--- § 4: Expletive Negation Data (Greco 2019)
+-- § 4: Expletive Negation Data (Greco 2020)
 -- ============================================================================
 
 /-- An attested instance of expletive negation (EN) in a temporal clause.

@@ -94,7 +94,11 @@ structure TemporalExprEntry where
   complementVeridical : Bool
   /-- Does this expression force a punctual (point-like) reading? -/
   forcesPunctual : Bool
-  /-- Which coercion operator is triggered (if any) -/
+  /-- Which coercion operator is *mandatorily* triggered (if any).
+      `some "INCHOAT"` or `some "COMPLET"` for modifiers that force coercion
+      (e.g. *within*, *at*). `none` for connectives like *before*/*after* where
+      coercion is optional — those use `coercedReading` to record the
+      alternative reading available through voluntary coercion. -/
   triggeredCoercion : Option String
   deriving Repr, BEq
 

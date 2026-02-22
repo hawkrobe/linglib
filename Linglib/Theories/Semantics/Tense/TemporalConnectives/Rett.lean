@@ -6,7 +6,7 @@ import Linglib.Theories.Semantics.Lexical.Verb.ViewpointAspect
 
 /-!
 # Rett (2020): Antonymy + Aspectual Coercion
-@cite{rett-2020}
+@cite{rett-2020} @cite{rett-2026}
 
 *before* and *after* are antonyms on converse scales, with strong defaults
 (before-start, after-finish). Non-default readings require aspectual coercion:
@@ -45,8 +45,8 @@ linguistically. *after* and *while* are not ambidirectional.
   *after*. *Proceedings of Sinn und Bedeutung* 24, 201–218.
 - Rett, J. (2026). Semantic ambivalence and expletive negation. Ms.
 - Krifka, M. (2010). *Before* and *after* without coercion. *NLLT* 28, 911–929.
-- Jin, M. & Koenig, J.-P. (2021). A cross-linguistic survey of expletive
-  negation. *Glossa* 6(1):25.
+- Jin, Y. & Koenig, J.-P. (2021). A cross-linguistic study of expletive
+  negation. *Linguistic Typology* 25(1), 39–78.
 -/
 
 namespace Semantics.Tense.TemporalConnectives

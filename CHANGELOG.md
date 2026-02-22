@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.226.10] - 2026-02-22
+
+### Changed
+- **`Phenomena/TemporalConnectives/NegationData.lean`**: Fix `semanticType` labels from "NPI"/"durative" to "before"/"endpoint" per Giannakidou (2002) §6 (*prin* ≠ *para monon*); fix "Greco 2019" → "Greco 2020"; add `@cite{rett-2026}` and `@cite{jin-koenig-2021}` tags; enrich docstrings with Giannakidou example/section references and actualization entailment notes
+- **`Theories/Semantics/Tense/TemporalConnectives/Rett.lean`**: Fix Jin & Koenig reference ("Jin, M." → "Jin, Y.", "Glossa" → "Linguistic Typology"); add `@cite{rett-2026}` tag
+- **`Phenomena/Negation/ExpletiveNegationBridge.lean`**: Fix Jin & Koenig reference (same corrections)
+- **`Fragments/English/TemporalExpressions.lean`**: Clarify `triggeredCoercion` field docs (mandatory vs optional coercion)
+- **`Fragments/Greek/TemporalConnectives.lean`**: Remove duplicate theorem `only_prin_nonveridical` (= `veridicality_asymmetry`)
+- **`blog/data/references.bib`**: Add `rett-2026` entry (Ms., UCLA, with URL); add DOI `10.18148/sub/2020.v24i2.893` to `rett-2020`
+
 ## [0.226.9] - 2026-02-22
 
 ### Added

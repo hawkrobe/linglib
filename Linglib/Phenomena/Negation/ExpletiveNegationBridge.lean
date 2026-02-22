@@ -34,8 +34,8 @@ Two types of EN with different syntactic positions and licensing:
 ## References
 
 - Rett, J. (2026). Semantic ambivalence and expletive negation. Ms.
-- Jin, M. & Koenig, J.-P. (2021). A cross-linguistic survey of expletive
-  negation. *Glossa* 6(1):25.
+- Jin, Y. & Koenig, J.-P. (2021). A cross-linguistic study of expletive
+  negation. *Linguistic Typology* 25(1), 39–78.
 - Greco, C. (2018). Negative Polarity Items and Expletive Negation.
 - Greco, C. (2019). The structure of expletive negation.
 - Halm, T. & Huszár, B. (2021). High and low expletive negation.

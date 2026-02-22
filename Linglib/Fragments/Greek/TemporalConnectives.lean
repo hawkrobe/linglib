@@ -140,15 +140,6 @@ theorem veridicality_asymmetry :
     otan.complementVeridical = true :=
   ⟨rfl, rfl, rfl, rfl⟩
 
-/-- Only *prin* (before-type) is non-veridical; all others are veridical.
-    This mirrors the English pattern (only *before* is non-veridical). -/
-theorem only_prin_nonveridical :
-    prin.complementVeridical = false ∧
-    afou.complementVeridical = true ∧
-    mexri.complementVeridical = true ∧
-    otan.complementVeridical = true :=
-  veridicality_asymmetry
-
 -- ============================================================================
 -- § 4: NPI Licensing Pattern
 -- ============================================================================
