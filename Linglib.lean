@@ -864,6 +864,7 @@ import Linglib.Theories.Pragmatics.NeoGricean.Constraints.Wang2025
 import Linglib.Theories.Pragmatics.NeoGricean.ScalarImplicatures.Operations
 
 -- Theories: RSA
+import Linglib.Theories.Pragmatics.RSA.Core.BToMGrounding
 import Linglib.Theories.Pragmatics.RSA.Core.CombinedUtility
 import Linglib.Theories.Pragmatics.RSA.Core.Config
 import Linglib.Theories.Pragmatics.RSA.Core.CompositionalRSA

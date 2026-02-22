@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.226.3] - 2026-02-22
+
+### Changed
+- **`Core/BToM.lean`**: Reshaped as domain-general social cognition model (Baker et al. 2017) — `LatentCategory` (mental/shared/medium), `MentalKind` (belief/desire/percept), `BToMModel` parameterized by score type `F` with full generative model (W→P→B, B×D×S×M→Plan→A), `sharedUpdate` for discourse dynamics, six marginals
+
+### Added
+- **`Theories/Pragmatics/RSA/Core/BToMGrounding.lean`**: RSA-BToM bridge — `LatentClassification` for cognitive-level ontological commitments (Gricean vs channel-theoretic vs Clarkian), `RSAConfig.toBToM` structural mapping, `L1_eq_btom_worldMarginal` (sorry), `classification_behavioral_equivalence` (rfl)
+
 ## [0.226.2] - 2026-02-22
 
 ### Added
