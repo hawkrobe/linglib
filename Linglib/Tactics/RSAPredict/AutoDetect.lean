@@ -346,21 +346,38 @@ partial def findCostSubExpr (e : Expr) (wFvar uFvar : FVarId) : Option Expr :=
     -- Recurse into sub-expressions
     e.getAppArgs.findSome? (findCostSubExpr · wFvar uFvar)
 
-/-- Extract cost values by evaluating the S1 score at each utterance
-    with a known L0 output, and reverse-engineering the cost.
+/-- Extract cost values by structurally finding the cost sub-expression in
+    the s1Score body.
     For beliefAction: s1Score l0 α l w u = if l0(u,w) = 0 then 0 else exp(α*(log(l0(u,w)) - cost(u)))
     For actionBased: s1Score l0 α l w u = exp(α*(l0(u,w) - cost(u)))
 
-    Alternative approach: unfold s1Score body, find the sub-expression that
-    depends on u but not w, and evaluate it at each u.
-    For now, we use a simpler approach: evaluate the s1Score with a carefully
-    chosen L0 that makes cost extraction easy. -/
+    Uses `withLocalDecl` for lambda peeling (matching `extractBeliefAndQuality`)
+    so that fvars have proper types in the local context. This ensures `whnf`
+    can fully reduce match expressions in the body (e.g., `beliefGoalScore`/
+    `actionGoalScore` pattern matches). Without registered fvars, the match
+    doesn't evaluate and `findCostSubExpr` fails to find the subtraction. -/
 def extractCostFromScore (cfg : Expr) (_U _W _L : Expr)
     (allUElems _allWElems _allLElems : Array Expr) (_pattern : DetectedPattern) :
     MetaM (Option (Array ℚ)) := do
-  let some (body, fvars) ← peelS1ScoreBody cfg | return none
-  let wFvar := fvars[3]!
-  let uFvar := fvars[4]!
+  let s1ScoreExpr ← mkAppM ``RSA.RSAConfig.s1Score #[cfg]
+  -- Peel 5 lambdas with proper withLocalDecl so fvars have types in lctx
+  let some (n1, t1, b1, bi1) ← peelOneLam s1ScoreExpr | return none
+  withLocalDecl n1 bi1 t1 fun _l0Var => do
+  let some (n2, t2, b2, bi2) ← peelOneLam (b1.instantiate1 _l0Var) | return none
+  withLocalDecl n2 bi2 t2 fun _αVar => do
+  let some (n3, t3, b3, bi3) ← peelOneLam (b2.instantiate1 _αVar) | return none
+  withLocalDecl n3 bi3 t3 fun _lVar => do
+  let some (n4, t4, b4, bi4) ← peelOneLam (b3.instantiate1 _lVar) | return none
+  withLocalDecl n4 bi4 t4 fun wVar => do
+  let some (n5, t5, b5, bi5) ← peelOneLam (b4.instantiate1 wVar) | return none
+  withLocalDecl n5 bi5 t5 fun uVar => do
+  -- Use withReducible to prevent ite → Decidable.rec reduction.
+  -- Without this, whnf reduces ite to Decidable.rec which wraps the
+  -- subtraction inside lambdas that findCostSubExpr can't traverse.
+  let body ← withReducible do whnf (b5.instantiate1 uVar)
+
+  let wFvar := wVar.fvarId!
+  let uFvar := uVar.fvarId!
 
   let costExpr? := findCostSubExpr body wFvar uFvar
   match costExpr? with
@@ -368,7 +385,7 @@ def extractCostFromScore (cfg : Expr) (_U _W _L : Expr)
     -- Evaluate cost at each utterance
     let mut costs : Array ℚ := #[]
     for u in allUElems do
-      let specialized := costExpr.replaceFVar (mkFVar uFvar) u
+      let specialized := costExpr.replaceFVar uVar u
       try
         let q ← extractRat specialized
         costs := costs.push q
@@ -579,6 +596,153 @@ def buildConfigData (U W L : Expr)
     return none
 
 -- ============================================================================
+-- Config Equality Bridge — Structural Tree-Diff Prover
+-- ============================================================================
+
+/-- Try closing `lhs = rhs` via `norm_num` on a fresh goal.
+    Used for ℚ→ℝ cast leaves like `↑(1/2 : ℚ) = (1/2 : ℝ)`. -/
+private def tryNormNumLeaf (lhs rhs : Expr) : TacticM (Option Expr) := do
+  let eqType ← mkEq lhs rhs
+  let mvar ← mkFreshExprMVar eqType
+  let savedGoals ← getGoals
+  setGoals [mvar.mvarId!]
+  try
+    evalTactic (← `(tactic| norm_num))
+    setGoals savedGoals
+    return some mvar
+  catch _ =>
+    setGoals savedGoals
+    return none
+
+/-- Recursively prove `lhs = rhs` by structural tree-diff.
+
+    Walks two expression trees in parallel. At each node:
+    1. `isDefEq` on raw exprs — short-circuits identical subtrees (~0 cost).
+       Uses default transparency, so it sees through `ite`, user defs, etc.
+    2. `whnfR` (reducible transparency) only when raw `isDefEq` fails —
+       exposes structure (lambdas, applications) without producing
+       `Decidable.rec` or other dependent eliminators.
+    3. `isDefEq` again after `whnfR` — catches reducible unfolding.
+    4. Binary application decomposition (`appFn!`/`appArg!`) with
+       `mkCongrArg`/`mkCongrFun`/`mkCongr`.
+    5. Lambda: `withLocalDecl` + recurse + `funext`.
+    6. Leaf: `norm_num` for ℚ→ℝ casts.
+
+    Key insight: `isDefEq` at default transparency handles `ite` evaluation,
+    user-def unfolding, etc. internally. `whnfR` only needs to expose enough
+    structure for the tree-diff to decompose. Reducible transparency is
+    sufficient and avoids turning `ite` into `Decidable.rec` (a dependent
+    eliminator that `mkCongr` can't handle). -/
+private partial def proveExprEq (lhs rhs : Expr) (depth : Nat) : TacticM Expr := do
+  if depth = 0 then
+    throwError "proveExprEq: depth limit reached at{indentExpr lhs}\n=?={indentExpr rhs}"
+
+  -- Tier 0: pointer/structural equality — O(1), catches identical subexprs
+  if lhs.eqv rhs then
+    return ← mkEqRefl lhs
+
+  -- Tier 1: kernel defeq — handles cast equalities, def unfolding
+  if ← isDefEq lhs rhs then
+    return ← mkEqRefl lhs
+
+  -- Tier 2: reducible whnf — exposes structure without Decidable.rec
+  let lhs' ← whnfR lhs
+  let rhs' ← whnfR rhs
+
+  -- Re-check after reduction
+  if lhs'.eqv rhs' then
+    return ← mkEqRefl lhs
+  if ← isDefEq lhs' rhs' then
+    return ← mkEqRefl lhs
+
+  -- Lambda: funext + recurse on bodies
+  if let (.lam n t b bi, .lam _ _ b' _) := (lhs', rhs') then
+    let proof ← withLocalDecl n bi t fun x => do
+      let bodyL := b.instantiate1 x
+      let bodyR := b'.instantiate1 x
+      let hBody ← proveExprEq bodyL bodyR (depth - 1)
+      mkLambdaFVars #[x] hBody
+    return ← mkAppM ``funext #[proof]
+
+  -- Application: binary decomposition, one arg at a time
+  if lhs'.isApp && rhs'.isApp then
+    let fL := lhs'.appFn!
+    let aL := lhs'.appArg!
+    let fR := rhs'.appFn!
+    let aR := rhs'.appArg!
+    -- congrArg: same fn prefix, different last arg (the common case)
+    if fL.eqv fR || (← isDefEq fL fR) then
+      let hArg ← proveExprEq aL aR (depth - 1)
+      return ← mkCongrArg fL hArg
+    -- congrFun: different fn prefix, same last arg
+    if aL.eqv aR || (← isDefEq aL aR) then
+      let hFn ← proveExprEq fL fR (depth - 1)
+      return ← mkCongrFun hFn aL
+    -- Full congr: both differ
+    let hFn ← proveExprEq fL fR (depth - 1)
+    let hArg ← proveExprEq aL aR (depth - 1)
+    return ← mkCongr hFn hArg
+
+  -- Leaf: norm_num for ℚ→ℝ casts
+  match ← tryNormNumLeaf lhs rhs with
+  | some proof => return proof
+  | none =>
+    throwError "proveExprEq: leaf failed at{indentExpr lhs}\n=?={indentExpr rhs}"
+
+/-- Prove `d.toRSAConfig = cfg` for the Tier 2 bridge.
+
+    **Tier 1 fast path**: if `cfg` was defined via `RSAConfigData.toRSAConfig`,
+    both sides are definitionally equal → `rfl` (~0ms).
+
+    **Tier 2 structural tree-diff**: applies `RSAConfigData.toRSAConfig_eq` to
+    decompose into 6 per-field goals, then uses `proveExprEq` (recursive
+    congruence closure with `whnf`) to prove each. No `fin_cases`, `split_ifs`,
+    or `simp` — the recursive descent with `whnf` handles enumeration and
+    reduction implicitly. -/
+private def proveConfigEq (d cfg : Expr) : TacticM (Option Expr) := do
+  let dToRSA ← mkAppM ``RSA.RSAConfigData.toRSAConfig #[d]
+  let eqType ← mkEq dToRSA cfg
+  let eqMVar ← mkFreshExprMVar eqType
+  -- Tier 1 fast path: definitional equality → rfl
+  if ← isDefEq dToRSA cfg then
+    eqMVar.mvarId!.assign (← mkEqRefl dToRSA)
+    return some eqMVar
+  -- Tier 2: apply toRSAConfig_eq and prove each field via tree-diff
+  let savedGoals ← getGoals
+  setGoals [eqMVar.mvarId!]
+  try
+    evalTactic (← `(tactic| apply RSA.RSAConfigData.toRSAConfig_eq))
+    let goals ← getGoals
+    unless goals.length = 6 do
+      setGoals savedGoals
+      logInfo m!"rsa_predict: [auto-detect] toRSAConfig_eq produced {goals.length} goals, expected 6"
+      return none
+    let fieldNames := #["h_lat", "h_meaning", "h_s1", "h_α", "h_wp", "h_lp"]
+    for i in [:6] do
+      let goal := goals[i]!
+      let goalType ← goal.getType
+      -- For HEq goals (h_meaning, h_s1, h_lp): prove Eq version, wrap with heq_of_eq
+      -- For Eq goals (h_lat, h_α, h_wp): prove directly
+      let proof ← try
+        match goalType with
+        | .app (.app (.app (.app (.const ``HEq _) _) lhsExpr) _) rhsExpr =>
+          let eqProof ← proveExprEq lhsExpr rhsExpr 50
+          mkAppM ``heq_of_eq #[eqProof]
+        | _ =>
+          let some (_, lhsExpr, rhsExpr) := goalType.eq?
+            | throwError "proveConfigEq: goal {i} ({fieldNames[i]!}) is not Eq or HEq"
+          proveExprEq lhsExpr rhsExpr 50
+      catch e =>
+        throwError "proveConfigEq: field {fieldNames[i]!} failed: {e.toMessageData}"
+      goal.assign proof
+    setGoals savedGoals
+    return some eqMVar
+  catch e =>
+    setGoals savedGoals
+    logInfo m!"rsa_predict: [auto-detect] config equality failed: {e.toMessageData}"
+    return none
+
+-- ============================================================================
 -- Full Auto-Detect Pipeline
 -- ============================================================================
 
@@ -698,9 +862,12 @@ def tryAutoDetectL1Compare (goal : MVarId) (cfg u w₁ w₂ : Expr) : TacticM Bo
     let t2 ← IO.monoMsNow
     logInfo m!"rsa_predict: [auto-detect] native_decide succeeded ({t2 - t1}ms)"
 
-    -- Bridge: l1_gt_of_check_ext cfg d u w₁ w₂ eqProof
-    -- Uses _ext variant: proof type mentions cfg.L1, not d.toRSAConfig.L1
-    let proof ← mkAppM ``RSA.Verify.l1_gt_of_check_ext #[cfg, d, u, w₁, w₂, eqMVar]
+    -- Bridge: verify d.toRSAConfig = cfg, then apply _ext theorem.
+    -- This ensures soundness: the ℚ data in d faithfully represents cfg.
+    let some h_eq ← proveConfigEq d cfg | do
+      logInfo m!"rsa_predict: [auto-detect] config equality proof failed"
+      return false
+    let proof ← mkAppM ``RSA.Verify.l1_gt_of_check_ext #[cfg, d, h_eq, u, w₁, w₂, eqMVar]
     goal.assign proof
     let t3 ← IO.monoMsNow
     logInfo m!"rsa_predict: [auto-detect] ✓ succeeded ({t3 - t0}ms)"
@@ -794,7 +961,10 @@ def tryAutoDetectL1NotGt (goal : MVarId) (cfg u w₁ w₂ : Expr) : TacticM Bool
       logInfo m!"rsa_predict: [auto-detect/¬L1] native_decide failed: {e.toMessageData}"
       return false
     setGoals savedGoals
-    let proof ← mkAppM ``RSA.Verify.l1_not_gt_of_check_ext #[cfg, d, u, w₁, w₂, eqMVar]
+    let some h_eq ← proveConfigEq d cfg | do
+      logInfo m!"rsa_predict: [auto-detect/¬L1] config equality proof failed"
+      return false
+    let proof ← mkAppM ``RSA.Verify.l1_not_gt_of_check_ext #[cfg, d, h_eq, u, w₁, w₂, eqMVar]
     goal.assign proof
     logInfo m!"rsa_predict: [auto-detect/¬L1] ✓ succeeded"
     return true
@@ -802,9 +972,10 @@ def tryAutoDetectL1NotGt (goal : MVarId) (cfg u w₁ w₂ : Expr) : TacticM Bool
     logInfo m!"rsa_predict: [auto-detect/¬L1] bridge failed: {e.toMessageData}"
     return false
 
-/-- Shared helper: extract ℚ data, detect pattern, build RSAConfigData for S1 goals. -/
+/-- Shared helper: extract ℚ data, detect pattern, build RSAConfigData for S1 goals.
+    Returns `(d, L, hLat, hEq)` where `hEq : d.toRSAConfig = cfg`. -/
 private def buildS1ConfigData (cfg : Expr) :
-    TacticM (Option (Expr × Expr × Expr)) := do
+    TacticM (Option (Expr × Expr × Expr × Expr)) := do
   let cfgType ← whnf (← inferType cfg)
   let cfgArgs := cfgType.getAppArgs
   unless cfgArgs.size ≥ 2 do return none
@@ -864,13 +1035,18 @@ private def buildS1ConfigData (cfg : Expr) :
     logInfo m!"rsa_predict: [auto-detect/S1] Latent type proof failed"
     return none
 
-  return some (d, L, hLat)
+  -- Build h_eq : d.toRSAConfig = cfg
+  let some hEq ← proveConfigEq d cfg | do
+    logInfo m!"rsa_predict: [auto-detect/S1] config equality proof failed"
+    return none
+
+  return some (d, L, hLat, hEq)
 
 /-- Tier 2 pipeline for S1 comparison. -/
 def tryAutoDetectS1Compare (goal : MVarId) (cfg l w u₁ u₂ : Expr) : TacticM Bool := do
   logInfo m!"rsa_predict: [auto-detect/S1] trying pattern detection..."
 
-  let some (d, _L, hLat) ← buildS1ConfigData cfg | do
+  let some (d, _L, hLat, hEq) ← buildS1ConfigData cfg | do
     logInfo m!"rsa_predict: [auto-detect/S1] setup failed"
     return false
 
@@ -890,7 +1066,7 @@ def tryAutoDetectS1Compare (goal : MVarId) (cfg l w u₁ u₂ : Expr) : TacticM 
       logInfo m!"rsa_predict: [auto-detect/S1] native_decide failed: {e.toMessageData}"
       return false
     setGoals savedGoals
-    let proof ← mkAppM ``RSA.Verify.s1_gt_of_check_ext #[cfg, d, hLat, l, w, u₁, u₂, eqMVar]
+    let proof ← mkAppM ``RSA.Verify.s1_gt_of_check_ext #[cfg, d, hEq, hLat, l, w, u₁, u₂, eqMVar]
     goal.assign proof
     logInfo m!"rsa_predict: [auto-detect/S1] ✓ succeeded"
     return true
@@ -902,7 +1078,7 @@ def tryAutoDetectS1Compare (goal : MVarId) (cfg l w u₁ u₂ : Expr) : TacticM 
 def tryAutoDetectS1NotGt (goal : MVarId) (cfg l w u₁ u₂ : Expr) : TacticM Bool := do
   logInfo m!"rsa_predict: [auto-detect/¬S1] trying pattern detection..."
 
-  let some (d, _L, hLat) ← buildS1ConfigData cfg | do
+  let some (d, _L, hLat, hEq) ← buildS1ConfigData cfg | do
     logInfo m!"rsa_predict: [auto-detect/¬S1] setup failed"
     return false
 
@@ -921,7 +1097,7 @@ def tryAutoDetectS1NotGt (goal : MVarId) (cfg l w u₁ u₂ : Expr) : TacticM Bo
       logInfo m!"rsa_predict: [auto-detect/¬S1] native_decide failed: {e.toMessageData}"
       return false
     setGoals savedGoals
-    let proof ← mkAppM ``RSA.Verify.s1_not_gt_of_check_ext #[cfg, d, hLat, l, w, u₁, u₂, eqMVar]
+    let proof ← mkAppM ``RSA.Verify.s1_not_gt_of_check_ext #[cfg, d, hEq, hLat, l, w, u₁, u₂, eqMVar]
     goal.assign proof
     logInfo m!"rsa_predict: [auto-detect/¬S1] ✓ succeeded"
     return true
@@ -989,7 +1165,8 @@ def tryAutoDetectL1ScoreGt (goal : MVarId) (cfg u₁ w₁ u₂ w₂ : Expr) : Ta
       setGoals savedGoals
       return false
     setGoals savedGoals
-    let proof ← mkAppM ``RSA.Verify.l1_score_gt_of_check_ext #[cfg, d, u₁, w₁, u₂, w₂, eqMVar]
+    let some h_eq ← proveConfigEq d cfg | return false
+    let proof ← mkAppM ``RSA.Verify.l1_score_gt_of_check_ext #[cfg, d, h_eq, u₁, w₁, u₂, w₂, eqMVar]
     goal.assign proof
     logInfo m!"rsa_predict: [auto-detect/score] ✓ succeeded"
     return true

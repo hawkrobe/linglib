@@ -215,25 +215,137 @@ def checkL1ScoreNotGt {U W : Type*} [Fintype U] [Fintype W]
   b₁.hi ≤ b₂.lo
 
 -- ============================================================================
+-- Symbolic S1 Score Comparison (exact ℚ shortcuts)
+-- ============================================================================
+
+/-- Symbolic S1 score comparison: score(u₁) > score(u₂) via algebraic identity.
+
+    Reduces S1 score comparisons to exact ℚ arithmetic by exploiting the
+    structure of each scoring spec, bypassing interval approximation entirely.
+
+    - **actionBased**: exp is monotone, so compare arguments directly (ℚ exact).
+    - **beliefAction**: factor as `L0^α · exp(-α·c)`, then:
+      - Equal L0: cancel L0^α → cost comparison (ℚ exact)
+      - Equal cost: cancel exp → L0 comparison (ℚ exact)
+      - Dominance: L0₁ ≥ L0₂ ∧ c₁ ≤ c₂ with one strict → score₁ > score₂
+      - General: compare `L0₁^α / L0₂^α` against `expBounds(α·(c₁-c₂))`
+    - **qudAction**: same as actionBased but on projected L0.
+    - **beliefBased/qudBelief**: already exact (no exp), no shortcut needed.
+    - **beliefWeighted**: no simple shortcut, fall back to intervals. -/
+def trySymbolicS1ScoreGt {U W L : Type*} [Fintype W] [DecidableEq W] [DecidableEq L]
+    (spec : S1ScoreSpec U W L)
+    (meaning : L → U → W → ℚ) (α : ℕ)
+    (l : L) (w : W) (u₁ u₂ : U) : Bool :=
+  match spec with
+  | .actionBased cost =>
+    -- exp(α·(L0₁ - c₁)) > exp(α·(L0₂ - c₂)) iff L0₁ - c₁ > L0₂ - c₂
+    let p₁ := computeL0Rat meaning l u₁ w
+    let p₂ := computeL0Rat meaning l u₂ w
+    p₁ - cost u₁ > p₂ - cost u₂
+  | .beliefAction cost =>
+    let p₁ := computeL0Rat meaning l u₁ w
+    let p₂ := computeL0Rat meaning l u₂ w
+    let c₁ := cost u₁; let c₂ := cost u₂
+    if p₁ = 0 then false  -- score₁ = 0, can't be greater
+    else if p₂ = 0 then true  -- score₂ = 0, score₁ > 0
+    else if p₁ = p₂ then
+      -- L0^α cancels: exp(-α·c₁) > exp(-α·c₂) iff c₁ < c₂
+      c₁ < c₂
+    else if c₁ = c₂ then
+      -- exp terms cancel: L0₁^α > L0₂^α iff L0₁ > L0₂ (for positive L0, α > 0)
+      p₁ > p₂
+    else if p₁ ≥ p₂ && c₁ ≤ c₂ then
+      -- Dominance: both factors favor u₁ (one strictly)
+      p₁ > p₂ || c₁ < c₂
+    else if p₁ ≤ p₂ && c₁ ≥ c₂ then
+      -- Reverse dominance: both factors favor u₂
+      false
+    else
+      -- General case: L0₁^α / L0₂^α > exp(α·(c₁-c₂))
+      -- L0₁^α / L0₂^α is exact ℚ; one Padé evaluation for exp
+      let l0Ratio := (p₁ ^ α) / (p₂ ^ α)
+      let expB := expBounds (↑α * (c₁ - c₂))
+      l0Ratio > expB.hi
+  | .qudAction cost project =>
+    -- Same as actionBased but on projected L0
+    let l0 : W → ℚ := computeL0Rat meaning l u₁
+    let proj₁ := (Finset.univ.filter (fun w' => project w' l = project w l)).sum l0
+    let l0₂ : W → ℚ := computeL0Rat meaning l u₂
+    let proj₂ := (Finset.univ.filter (fun w' => project w' l = project w l)).sum l0₂
+    if proj₁ = 0 && proj₂ = 0 then false
+    else if proj₂ = 0 then proj₁ > 0
+    else if proj₁ = 0 then false
+    else proj₁ - cost u₁ > proj₂ - cost u₂
+  | _ => false  -- beliefBased/qudBelief are already exact; beliefWeighted no shortcut
+
+/-- Symbolic S1 score comparison: ¬(score(u₁) > score(u₂)). -/
+def trySymbolicS1ScoreNotGt {U W L : Type*} [Fintype W] [DecidableEq W] [DecidableEq L]
+    (spec : S1ScoreSpec U W L)
+    (meaning : L → U → W → ℚ) (α : ℕ)
+    (l : L) (w : W) (u₁ u₂ : U) : Bool :=
+  match spec with
+  | .actionBased cost =>
+    let p₁ := computeL0Rat meaning l u₁ w
+    let p₂ := computeL0Rat meaning l u₂ w
+    p₁ - cost u₁ ≤ p₂ - cost u₂
+  | .beliefAction cost =>
+    let p₁ := computeL0Rat meaning l u₁ w
+    let p₂ := computeL0Rat meaning l u₂ w
+    let c₁ := cost u₁; let c₂ := cost u₂
+    if p₁ = 0 then true  -- score₁ = 0, not greater
+    else if p₂ = 0 then false  -- score₂ = 0, score₁ > 0, so IS greater
+    else if p₁ = p₂ then c₁ ≥ c₂
+    else if c₁ = c₂ then p₁ ≤ p₂
+    else if p₁ ≤ p₂ && c₁ ≥ c₂ then true  -- both factors favor u₂
+    else if p₁ ≥ p₂ && c₁ ≤ c₂ then
+      -- Both favor u₁ — IS greater unless equal
+      p₁ = p₂ && c₁ = c₂
+    else
+      -- General case: check L0₁^α / L0₂^α ≤ exp(α·(c₁-c₂)).lo
+      let l0Ratio := (p₁ ^ α) / (p₂ ^ α)
+      let expB := expBounds (↑α * (c₁ - c₂))
+      l0Ratio ≤ expB.lo
+  | .qudAction cost project =>
+    let l0 : W → ℚ := computeL0Rat meaning l u₁
+    let proj₁ := (Finset.univ.filter (fun w' => project w' l = project w l)).sum l0
+    let l0₂ : W → ℚ := computeL0Rat meaning l u₂
+    let proj₂ := (Finset.univ.filter (fun w' => project w' l = project w l)).sum l0₂
+    if proj₁ = 0 then true
+    else if proj₂ = 0 then false
+    else proj₁ - cost u₁ ≤ proj₂ - cost u₂
+  | _ => false
+
+-- ============================================================================
 -- S1 Checks
 -- ============================================================================
 
 /-- Check that S1 score for (l,w,u₁) is strictly greater than for (l,w,u₂).
-    Same (l,w) → same denominator → score ordering = policy ordering. -/
+    Same (l,w) → same denominator → score ordering = policy ordering.
+
+    Tries symbolic comparison first (exact ℚ, no interval approximation),
+    then falls back to interval bound separation. -/
 def checkS1PolicyGt {U W : Type*} [Fintype U] [Fintype W]
     [DecidableEq U] [DecidableEq W]
     (d : RSAConfigData U W) (l : d.Latent) (w : W) (u₁ u₂ : U) : Bool :=
-  let b₁ := computeS1ScoreBounds d.scoreSpec d.meaning d.α l w u₁
-  let b₂ := computeS1ScoreBounds d.scoreSpec d.meaning d.α l w u₂
-  b₂.hi < b₁.lo
+  -- Try symbolic comparison first (exact ℚ, no interval approximation)
+  if trySymbolicS1ScoreGt d.scoreSpec d.meaning d.α l w u₁ u₂ then true
+  else
+    -- Fall back to interval comparison
+    let b₁ := computeS1ScoreBounds d.scoreSpec d.meaning d.α l w u₁
+    let b₂ := computeS1ScoreBounds d.scoreSpec d.meaning d.α l w u₂
+    b₂.hi < b₁.lo
 
-/-- Check that S1 score for (l,w,u₁) is NOT strictly greater than for (l,w,u₂). -/
+/-- Check that S1 score for (l,w,u₁) is NOT strictly greater than for (l,w,u₂).
+
+    Tries symbolic comparison first, then falls back to interval bounds. -/
 def checkS1PolicyNotGt {U W : Type*} [Fintype U] [Fintype W]
     [DecidableEq U] [DecidableEq W]
     (d : RSAConfigData U W) (l : d.Latent) (w : W) (u₁ u₂ : U) : Bool :=
-  let b₁ := computeS1ScoreBounds d.scoreSpec d.meaning d.α l w u₁
-  let b₂ := computeS1ScoreBounds d.scoreSpec d.meaning d.α l w u₂
-  b₁.hi ≤ b₂.lo
+  if trySymbolicS1ScoreNotGt d.scoreSpec d.meaning d.α l w u₁ u₂ then true
+  else
+    let b₁ := computeS1ScoreBounds d.scoreSpec d.meaning d.α l w u₁
+    let b₂ := computeS1ScoreBounds d.scoreSpec d.meaning d.α l w u₂
+    b₁.hi ≤ b₂.lo
 
 -- ============================================================================
 -- Soundness
@@ -288,51 +400,53 @@ theorem s1_not_gt_of_check (d : RSAConfigData U W)
 -- Extended Soundness (for auto-detected configs)
 -- ============================================================================
 
-/-- If checkL1ScoreGt on RSAConfigData `d` returns true, then ANY RSAConfig
-    `cfg` with matching data has L1 u w₁ > L1 u w₂.
+/-- Bridge for auto-detected configs: if `d.toRSAConfig = cfg` (verified via
+    `isDefEq` by the tactic) and the computable check passes on `d`, then
+    `cfg` has the corresponding inequality.
 
-    This is the bridge for Tier 2 auto-detection: the tactic extracts ℚ data
-    from the user's raw RSAConfig, builds RSAConfigData `d`, verifies via
-    `native_decide`, and applies this theorem. The `cfg` parameter is the
-    user's original config (not `d.toRSAConfig`).
-
-    Correctness relies on the ℚ data in `d` faithfully representing `cfg`.
-    The tactic ensures this by extracting the data FROM `cfg`. -/
+    The `h_eq` hypothesis makes the theorem statement sound: the ℚ data in `d`
+    must actually represent `cfg`. Once `l1_gt_of_check` is proved, the `_ext`
+    version follows immediately from `h_eq ▸`. -/
 theorem l1_gt_of_check_ext (cfg : RSA.RSAConfig U W) (d : RSAConfigData U W)
+    (h_eq : d.toRSAConfig = cfg)
     (u : U) (w₁ w₂ : W)
     (h : checkL1ScoreGt d u w₁ u w₂ = true) :
-    cfg.L1 u w₁ > cfg.L1 u w₂ := by
-  sorry
+    cfg.L1 u w₁ > cfg.L1 u w₂ :=
+  h_eq ▸ l1_gt_of_check d u w₁ w₂ h
 
 /-- Extended version for cross-utterance L1 score comparison. -/
 theorem l1_score_gt_of_check_ext (cfg : RSA.RSAConfig U W) (d : RSAConfigData U W)
+    (h_eq : d.toRSAConfig = cfg)
     (u₁ : U) (w₁ : W) (u₂ : U) (w₂ : W)
     (h : checkL1ScoreGt d u₁ w₁ u₂ w₂ = true) :
-    cfg.L1agent.score u₁ w₁ > cfg.L1agent.score u₂ w₂ := by
-  sorry
+    cfg.L1agent.score u₁ w₁ > cfg.L1agent.score u₂ w₂ :=
+  h_eq ▸ l1_score_gt_of_check d u₁ w₁ u₂ w₂ h
 
 /-- Extended version for ¬(L1 gt). -/
 theorem l1_not_gt_of_check_ext (cfg : RSA.RSAConfig U W) (d : RSAConfigData U W)
+    (h_eq : d.toRSAConfig = cfg)
     (u : U) (w₁ w₂ : W)
     (h : checkL1ScoreNotGt d u w₁ u w₂ = true) :
-    ¬(cfg.L1 u w₁ > cfg.L1 u w₂) := by
-  sorry
+    ¬(cfg.L1 u w₁ > cfg.L1 u w₂) :=
+  h_eq ▸ l1_not_gt_of_check d u w₁ w₂ h
 
 /-- Extended version for S1 gt.
-    Requires Latent types to match (the tactic builds d with Latent = cfg.Latent). -/
+    Requires both config equality and Latent type match. -/
 theorem s1_gt_of_check_ext (cfg : RSA.RSAConfig U W) (d : RSAConfigData U W)
+    (h_eq : d.toRSAConfig = cfg)
     (h_lat : d.Latent = cfg.Latent)
     (l : cfg.Latent) (w : W) (u₁ u₂ : U)
     (h : checkS1PolicyGt d (h_lat ▸ l) w u₁ u₂ = true) :
     cfg.S1 l w u₁ > cfg.S1 l w u₂ := by
-  sorry
+  subst h_eq; exact s1_gt_of_check d (h_lat ▸ l) w u₁ u₂ h
 
 /-- Extended version for ¬(S1 gt). -/
 theorem s1_not_gt_of_check_ext (cfg : RSA.RSAConfig U W) (d : RSAConfigData U W)
+    (h_eq : d.toRSAConfig = cfg)
     (h_lat : d.Latent = cfg.Latent)
     (l : cfg.Latent) (w : W) (u₁ u₂ : U)
     (h : checkS1PolicyNotGt d (h_lat ▸ l) w u₁ u₂ = true) :
     ¬(cfg.S1 l w u₁ > cfg.S1 l w u₂) := by
-  sorry
+  subst h_eq; exact s1_not_gt_of_check d (h_lat ▸ l) w u₁ u₂ h
 
 end RSA.Verify

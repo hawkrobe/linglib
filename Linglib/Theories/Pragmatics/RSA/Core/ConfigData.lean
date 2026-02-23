@@ -195,4 +195,40 @@ noncomputable def RSAConfigData.toRSAConfig [DecidableEq U] [DecidableEq W]
   latentPrior w l := ↑(d.latentPrior w l)
   latentPrior_nonneg w l := by exact_mod_cast d.latentPrior_nonneg w l
 
+/-- Decompose `d.toRSAConfig = cfg` into per-field hypotheses.
+
+    Used by the `rsa_predict` tactic's Tier 2 bridge: after building an
+    `RSAConfigData` with matching ℚ data, this theorem reduces the config
+    equality to field-by-field proofs that the tactic constructs individually.
+
+    Requires `d.Latent` and `cfg.Latent` to be definitionally equal (always
+    true in practice since both are the same concrete type).
+
+    Fields use `HEq` where their types depend on `Latent` (meaning, s1Score,
+    latentPrior). Proof fields (meaning_nonneg, s1Score_nonneg, α_pos,
+    worldPrior_nonneg, latentPrior_nonneg) are handled by proof irrelevance.
+    The `Fintype Latent` instance is handled by `Subsingleton.elim`. -/
+theorem RSAConfigData.toRSAConfig_eq [DecidableEq U] [DecidableEq W]
+    (d : RSAConfigData U W) (cfg : RSAConfig U W)
+    (h_lat : d.Latent = cfg.Latent)
+    (h_meaning : @HEq (d.Latent → U → W → ℝ) d.toRSAConfig.meaning
+                       (cfg.Latent → U → W → ℝ) cfg.meaning)
+    (h_s1 : @HEq ((U → W → ℝ) → ℝ → d.Latent → W → U → ℝ) d.toRSAConfig.s1Score
+                  ((U → W → ℝ) → ℝ → cfg.Latent → W → U → ℝ) cfg.s1Score)
+    (h_α : d.toRSAConfig.α = cfg.α)
+    (h_wp : d.toRSAConfig.worldPrior = cfg.worldPrior)
+    (h_lp : @HEq (W → d.Latent → ℝ) d.toRSAConfig.latentPrior
+                  (W → cfg.Latent → ℝ) cfg.latentPrior)
+    : d.toRSAConfig = cfg := by
+  cases cfg with
+  | mk L m mnn s snn a ap lp lpnn wp wpnn =>
+    subst h_lat
+    replace h_meaning := eq_of_heq h_meaning
+    replace h_s1 := eq_of_heq h_s1
+    replace h_lp := eq_of_heq h_lp
+    subst h_meaning h_s1 h_α h_lp h_wp
+    simp only [toRSAConfig]
+    congr 1
+    all_goals first | rfl | exact Subsingleton.elim _ _
+
 end RSA

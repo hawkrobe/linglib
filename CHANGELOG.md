@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.226.20] - 2026-02-22
+
+### Changed
+- **`Tactics/RSAPredict/AutoDetect.lean`**: Replace tactic-based `proveConfigEq` with structural tree-diff prover (`proveExprEq`) — recursive congruence closure using `Expr.eqv`/`isDefEq`/`whnfR`/`mkCongr`/`mkCongrArg`/`mkCongrFun`/`funext` constructs proof terms directly without `fin_cases`/`split_ifs`/`simp`; uses `whnfR` (reducible transparency) to avoid `Decidable.rec` dependent eliminators; fix `extractCostFromScore` to use `withLocalDecl` for proper fvar registration so `whnf` fully reduces match expressions
+- **`Core/Interval/RSAVerify.lean`**: Symbolic S1 score comparison shortcuts (`trySymbolicS1ScoreGt`/`trySymbolicS1ScoreNotGt`) — exact ℚ arithmetic via algebraic identities for `actionBased` (exp monotonicity), `beliefAction` (equal-L0, equal-cost, dominance, and general factorization), `qudAction`; `_ext` bridge theorems now take `h_eq : d.toRSAConfig = cfg` and prove via `h_eq ▸` (removing sorry)
+- **`Theories/Pragmatics/RSA/Core/ConfigData.lean`**: Add `toRSAConfig_eq` decomposition theorem for field-by-field config equality proofs
+
 ## [0.226.19] - 2026-02-22
 
 ### Changed
