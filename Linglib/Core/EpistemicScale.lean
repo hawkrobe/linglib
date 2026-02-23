@@ -54,6 +54,14 @@ def T {W : Type*} (ge : Set W → Set W → Prop) : Prop :=
 def F {W : Type*} (ge : Set W → Set W → Prop) : Prop :=
   ge Set.univ ∅
 
+/-- Axiom BT: ¬(∅ ≿ Ω) — contradiction is NOT at least as likely as tautology.
+    The non-triviality condition from Holliday & Icard (2013, Figure 6).
+    Without this, the degenerate ordering (all sets equivalent) would satisfy
+    FA but admit no finitely additive measure representation (since μ(∅) = 0
+    but μ(Ω) = 1). -/
+def BT {W : Type*} (ge : Set W → Set W → Prop) : Prop :=
+  ¬ge ∅ Set.univ
+
 /-- Axiom S: supplementation — A ≿ B → Bᶜ ≿ Aᶜ. -/
 def S {W : Type*} (ge : Set W → Set W → Prop) : Prop :=
   ∀ A B, ge A B → ge Bᶜ Aᶜ
@@ -78,9 +86,12 @@ structure EpistemicSystemW (W : Type*) where
   refl : EpistemicAxiom.R ge
   mono : EpistemicAxiom.T ge
 
-/-- System F: System W + Ω ≿ ∅. -/
+/-- System F: System W + Bot + BT.
+    Bot (Ω ≿ ∅) is redundant with monotonicity. BT (¬(∅ ≿ Ω)) is the
+    non-triviality condition that excludes degenerate orderings. -/
 structure EpistemicSystemF (W : Type*) extends EpistemicSystemW W where
   bottom : EpistemicAxiom.F ge
+  nonTrivial : EpistemicAxiom.BT ge
 
 /-- System FA: System F + totality + transitivity + qualitative additivity.
     Sound and complete for **qualitatively additive** measure semantics
@@ -148,6 +159,15 @@ def toSystemFA (m : FinAddMeasure W) : EpistemicSystemFA W where
       have h : m.mu ∅ + m.mu ∅ = m.mu ∅ + 0 := by rw [add_zero]; exact hempty.symm
       exact add_left_cancel h
     rw [hzero]; exact m.nonneg Set.univ
+  nonTrivial := by
+    show ¬(m.mu ∅ ≥ m.mu Set.univ)
+    have hempty : m.mu (∅ ∪ ∅) = m.mu ∅ + m.mu ∅ :=
+      m.additive ∅ ∅ (fun x hx => hx.elim)
+    simp only [Set.empty_union] at hempty
+    have hzero : m.mu ∅ = 0 := by
+      have h : m.mu ∅ + m.mu ∅ = m.mu ∅ + 0 := by rw [add_zero]; exact hempty.symm
+      exact add_left_cancel h
+    rw [hzero, m.total]; exact not_le.mpr one_pos
   total := fun A B => le_total (m.mu B) (m.mu A)
   trans := fun _ _ _ hab hbc => le_trans hbc hab
   additive := by
@@ -341,6 +361,9 @@ private noncomputable def kpsSystemFA : EpistemicSystemFA (Fin 5) where
   bottom := by
     simp only [EpistemicAxiom.F, kpsGe, kpsRankSet, toFS_univ, toFS_empty]
     exact kps_bottom_finset
+  nonTrivial := by
+    simp only [EpistemicAxiom.BT, kpsGe, kpsRankSet, toFS_univ, toFS_empty]
+    native_decide
   total := λ A B => le_total (kpsRankSet B) (kpsRankSet A)
   trans := λ {_ _ _} hab hbc => le_trans hbc hab
   additive := by

@@ -257,7 +257,12 @@ partial def reifyToRExpr (cache : ReifyCache) (e : Expr) (depth : ℕ) :
               else ⟨(Linglib.Interval.expPoint lo_arg).lo,
                     (Linglib.Interval.expPoint hi_arg).hi⟩
             let bounds := metaEvalMul xPowBounds expFactorBounds
-            -- Build RExpr preserving original structure (α and/or c from original)
+            -- Use expMulLogSub when both α and c are from the original expression
+            -- (denote matches exactly; eval uses algebraic identity for speed)
+            if αExprOpt.isSome && cExprOpt.isSome then
+              let rexpr ← mkAppM ``RExpr.expMulLogSub #[αRExpr, xRExpr, cRExpr]
+              return ← cacheReturn cache key (rexpr, bounds)
+            -- Otherwise preserve original structure for rfl bridge
             let logR ← mkAppM ``RExpr.rlog #[xRExpr]
             let withSub ← match cExprOpt with
               | some _ => mkAppM ``RExpr.sub #[logR, cRExpr]

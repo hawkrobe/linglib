@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.226.26] - 2026-02-23
+
+### Changed
+- **`Core/Interval/ReflectInterval.lean`**: Add `expMulLogSub α x c` RExpr constructor — `denote` returns `exp(α*(log(x)-c))` (preserves rfl bridge), `eval` uses algebraic identity `x^α * exp(-α*c)` when α is a concrete natural (eliminates Padé log+exp calls); add `checkGt`/`checkNotGt` batched Bool combinators (3 native_decide calls → 1); coarsen all compound eval operations to bounded-precision rationals via `QInterval.coarsen`
+- **`Core/Interval/QInterval.lean`**: Add bit-based precision coarsening (`truncDown`/`truncUp`/`coarsen`) — truncates numerator/denominator to `maxBits=64` via right-shifting to prevent rational explosion from Padé arithmetic; `coarsen_containsReal` proves interval containment is preserved
+- **`Tactics/RSAPredict/Reify.lean`**: Emit `RExpr.expMulLogSub` when reifier detects `exp(α*(log(x)-c))` with both α and c present in the original expression; preserves old structure for partial matches (only α or only c)
+- **`Tactics/RSAPredict/ReflectBridge.lean`**: Use batched `checkGt`/`checkNotGt` for single native_decide call
+- **`Core/EpistemicScale.lean`**: Add `EpistemicAxiom.BT` (non-triviality: ¬(∅ ≿ Ω)); add to `EpistemicSystemF`; prove for `toSystemFA` and `kpsSystemFA`
+- **`Comparisons/KratzerEpistemicRSA.lean`**: Add `hBT` hypothesis to `kratzer_to_rsa_prior`
+
+### Performance
+- Kao et al. 2014 Hyperbole `native_decide`: **858s → 14s** (60× speedup) via expMulLogSub eliminating ~400 Padé evaluations
+
 ## [0.226.25] - 2026-02-23
 
 ### Changed

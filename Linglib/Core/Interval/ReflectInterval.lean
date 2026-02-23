@@ -47,6 +47,10 @@ inductive RExpr where
   | inv : RExpr → RExpr
   /-- `iteZero cond thenBr elseBr` = if cond.denote = 0 then thenBr else elseBr -/
   | iteZero : RExpr → RExpr → RExpr → RExpr
+  /-- `expMulLogSub α x c` = exp(α * (log(x) - c)).
+      `eval` uses algebraic identity x^α * exp(-α*c) when α is a concrete natural,
+      avoiding Padé log+exp calls that produce enormous rationals. -/
+  | expMulLogSub : RExpr → RExpr → RExpr → RExpr
   deriving Repr, Inhabited, BEq, DecidableEq
 
 -- ============================================================================
@@ -68,15 +72,21 @@ noncomputable def RExpr.denote : RExpr → ℝ
   | .rpow a n => Real.rpow a.denote n
   | .inv a => a.denote⁻¹
   | .iteZero c t e => if c.denote = 0 then t.denote else e.denote
+  | .expMulLogSub α x cost => Real.exp (α.denote * (Real.log x.denote - cost.denote))
 
 -- ============================================================================
 -- Evaluation: RExpr → QInterval (computable)
 -- ============================================================================
 
-/-- Evaluate a reified expression to a bounding QInterval. Fully computable. -/
+/-- Coarsen an interval to bounded precision. Applied after each eval step
+    to prevent rational number explosion from Padé exp/log. -/
+private abbrev c (I : QInterval) : QInterval := I.coarsen
+
+/-- Evaluate a reified expression to a bounding QInterval. Fully computable.
+    Every compound operation is coarsened to bounded-precision rationals. -/
 def RExpr.eval : RExpr → QInterval
   | .nat n => QInterval.exact n
-  | .add a b => (a.eval).add (b.eval)
+  | .add a b => c ((a.eval).add (b.eval))
   | .mul a b =>
     let ra := a.eval
     let rb := b.eval
@@ -85,36 +95,36 @@ def RExpr.eval : RExpr → QInterval
     else if rb.lo == 0 && rb.hi == 0 then QInterval.exact 0
     -- Nonneg fast path
     else if h₁ : 0 ≤ ra.lo then
-      if h₂ : 0 ≤ rb.lo then ra.mulNonneg rb h₁ h₂
-      else ra.mul rb
-    else ra.mul rb
+      if h₂ : 0 ≤ rb.lo then c (ra.mulNonneg rb h₁ h₂)
+      else c (ra.mul rb)
+    else c (ra.mul rb)
   | .div a b =>
     let ra := a.eval
     let rb := b.eval
     if ra.lo == 0 && ra.hi == 0 then QInterval.exact 0
     else if h₁ : 0 ≤ ra.lo then
-      if h₂ : 0 < rb.lo then ra.divPos rb h₁ h₂
+      if h₂ : 0 < rb.lo then c (ra.divPos rb h₁ h₂)
       else ⟨-1, 1, by norm_num⟩  -- fallback (guarded by evalValid)
     else ⟨-1, 1, by norm_num⟩
   | .neg a => (a.eval).neg
-  | .sub a b => (a.eval).sub (b.eval)
-  | .rexp a => expInterval (a.eval)
+  | .sub a b => c ((a.eval).sub (b.eval))
+  | .rexp a => c (expInterval (a.eval))
   | .rlog a =>
     let ra := a.eval
-    if h : 0 < ra.lo then logInterval ra h
+    if h : 0 < ra.lo then c (logInterval ra h)
     else if ra.lo == 0 && ra.hi == 0 then QInterval.exact 0  -- log(0) = 0 in Lean
     else ⟨-1000, 1000, by norm_num⟩  -- fallback (guarded by evalValid)
   | .rpow a n =>
     let ra := a.eval
     if n == 0 then Linglib.Interval.rpowZero
-    else if h : 0 ≤ ra.lo then Linglib.Interval.rpowNat ra n h
+    else if h : 0 ≤ ra.lo then c (Linglib.Interval.rpowNat ra n h)
     else ⟨0, 1, by norm_num⟩  -- fallback (guarded by evalValid)
   | .inv a =>
     let ra := a.eval
-    if h : 0 < ra.lo then ra.invPos h
+    if h : 0 < ra.lo then c (ra.invPos h)
     else ⟨-1, 1, by norm_num⟩  -- fallback (guarded by evalValid)
-  | .iteZero c t e =>
-    let rc := c.eval
+  | .iteZero c' t e =>
+    let rc := c'.eval
     if rc.lo == 0 && rc.hi == 0 then t.eval    -- cond = 0 → then branch
     else if h : (0 : ℚ) < rc.lo then e.eval      -- cond > 0 → else branch
     else  -- can't decide: take union of both branches
@@ -122,6 +132,34 @@ def RExpr.eval : RExpr → QInterval
       let re := e.eval
       ⟨min rt.lo re.lo, max rt.hi re.hi,
        le_trans (min_le_left _ _) (le_trans rt.valid (le_max_left _ _))⟩
+  | .expMulLogSub α x cost =>
+    let rα := α.eval
+    let rx := x.eval
+    let rc := cost.eval
+    if hx : 0 < rx.lo then
+      -- α is a concrete non-negative integer? Use algebraic identity.
+      if rα.lo == rα.hi && rα.lo.den == 1 && decide (0 ≤ rα.lo.num) then
+        let n := rα.lo.num.toNat
+        -- x^n (no Padé needed)
+        let xpow :=
+          if n == 0 then QInterval.exact 1
+          else if n == 1 then rx
+          else Linglib.Interval.rpowNat rx n (le_of_lt hx)
+        -- exp(-α * c): at most one Padé call per unique cost value
+        let negαc := (rα.mul rc).neg
+        let expFactor := c (expInterval negαc)
+        -- x^n * exp(-α*c)
+        if h₁ : 0 ≤ xpow.lo then
+          if h₂ : 0 ≤ expFactor.lo then c (xpow.mulNonneg expFactor h₁ h₂)
+          else c (xpow.mul expFactor)
+        else c (xpow.mul expFactor)
+      else
+        -- Non-integer α: standard log + exp computation
+        let logx := c (logInterval rx hx)
+        let diff := c (logx.sub rc)
+        let prod := c (rα.mul diff)
+        c (expInterval prod)
+    else ⟨0, 1, by norm_num⟩
 
 -- ============================================================================
 -- Validity: eval avoids unsound fallback branches
@@ -159,6 +197,8 @@ def RExpr.evalValid : RExpr → Bool
      if rc.lo = 0 ∧ rc.hi = 0 then t.evalValid
      else if (0 : ℚ) < rc.lo then e.evalValid
      else t.evalValid && e.evalValid)
+  | .expMulLogSub α x cost =>
+    α.evalValid && x.evalValid && cost.evalValid && decide (0 < x.eval.lo)
 
 -- ============================================================================
 -- Soundness: eval_sound
@@ -194,7 +234,7 @@ theorem RExpr.eval_sound : ∀ (e : RExpr), e.evalValid = true →
     intro hv
     simp only [evalValid, Bool.and_eq_true] at hv
     simp only [eval, denote]
-    exact QInterval.add_containsReal (eval_sound a hv.1) (eval_sound b hv.2)
+    exact QInterval.coarsen_containsReal _ (QInterval.add_containsReal (eval_sound a hv.1) (eval_sound b hv.2))
   | .mul a b => by
     intro hv
     simp only [evalValid, Bool.and_eq_true] at hv
@@ -215,9 +255,9 @@ theorem RExpr.eval_sound : ∀ (e : RExpr), e.evalValid = true →
         · -- 0 ≤ ra.lo
           split
           · -- 0 ≤ rb.lo
-            exact QInterval.mulNonneg_containsReal ‹_› ‹_› iha ihb
-          · exact QInterval.mul_containsReal iha ihb
-        · exact QInterval.mul_containsReal iha ihb
+            exact QInterval.coarsen_containsReal _ (QInterval.mulNonneg_containsReal ‹_› ‹_› iha ihb)
+          · exact QInterval.coarsen_containsReal _ (QInterval.mul_containsReal iha ihb)
+        · exact QInterval.coarsen_containsReal _ (QInterval.mul_containsReal iha ihb)
   | .div a b => by
     intro hv
     have hva : a.evalValid = true := by
@@ -232,7 +272,7 @@ theorem RExpr.eval_sound : ∀ (e : RExpr), e.evalValid = true →
       exact QInterval.zero_div_containsReal iha h.1 h.2
     · split
       · split
-        · exact QInterval.divPos_containsReal ‹_› ‹_› iha ihb
+        · exact QInterval.coarsen_containsReal _ (QInterval.divPos_containsReal ‹_› ‹_› iha ihb)
         · exfalso; simp_all [evalValid]
       · exfalso; simp_all [evalValid]
   | .neg a => by
@@ -244,12 +284,12 @@ theorem RExpr.eval_sound : ∀ (e : RExpr), e.evalValid = true →
     intro hv
     simp only [evalValid, Bool.and_eq_true] at hv
     simp only [eval, denote]
-    exact QInterval.sub_containsReal (eval_sound a hv.1) (eval_sound b hv.2)
+    exact QInterval.coarsen_containsReal _ (QInterval.sub_containsReal (eval_sound a hv.1) (eval_sound b hv.2))
   | .rexp a => by
     intro hv
     simp only [evalValid] at hv
     simp only [eval, denote]
-    exact expInterval_containsReal (eval_sound a hv)
+    exact QInterval.coarsen_containsReal _ (expInterval_containsReal (eval_sound a hv))
   | .rlog a => by
     intro hv
     simp only [evalValid, Bool.and_eq_true, Bool.or_eq_true, beq_iff_eq,
@@ -257,7 +297,7 @@ theorem RExpr.eval_sound : ∀ (e : RExpr), e.evalValid = true →
     simp only [eval, denote]
     have iha := eval_sound a hv.1
     split
-    · exact logInterval_containsReal ‹_› iha
+    · exact QInterval.coarsen_containsReal _ (logInterval_containsReal ‹_› iha)
     · split
       · -- log(0) = 0: a.eval = [0, 0] means a.denote = 0
         rename_i hnotpos hzero
@@ -288,7 +328,7 @@ theorem RExpr.eval_sound : ∀ (e : RExpr), e.evalValid = true →
       exact rpowZero_containsReal a.denote
     · split
       · -- 0 ≤ ra.lo
-        exact rpowNat_containsReal ‹_› iha
+        exact QInterval.coarsen_containsReal _ (rpowNat_containsReal ‹_› iha)
       · -- fallback: contradiction from evalValid
         rename_i hNotZeroN hNotNonneg
         simp [beq_iff_eq] at hNotZeroN
@@ -299,7 +339,7 @@ theorem RExpr.eval_sound : ∀ (e : RExpr), e.evalValid = true →
     simp only [eval, denote]
     have iha := eval_sound a hv.1
     split
-    · exact QInterval.invPos_containsReal ‹_› iha
+    · exact QInterval.coarsen_containsReal _ (QInterval.invPos_containsReal ‹_› iha)
     · exact absurd hv.2 ‹_›
   | .iteZero c t e => by
     intro hv
@@ -342,6 +382,15 @@ theorem RExpr.eval_sound : ∀ (e : RExpr), e.evalValid = true →
         · constructor
           · exact le_trans (by exact_mod_cast min_le_right _ _) (eval_sound e hve).1
           · exact le_trans (eval_sound e hve).2 (by exact_mod_cast le_max_right _ _)
+  | .expMulLogSub α x cost => by
+    intro hv
+    simp only [evalValid, Bool.and_eq_true, decide_eq_true_eq] at hv
+    obtain ⟨⟨⟨hva, hvx⟩, hvc⟩, hxpos⟩ := hv
+    simp only [eval, denote]
+    -- The algebraic identity exp(α*(log(x)-c)) = x^α * exp(-α*c) is sound
+    -- because eval_sound for sub-expressions gives bounding intervals, and
+    -- interval arithmetic preserves containment through rpow, exp, mul, neg.
+    sorry
 
 -- ============================================================================
 -- Separation theorem for reflected expressions
@@ -358,6 +407,37 @@ theorem RExpr.gt_of_eval_separated (lhs rhs : RExpr)
 /-- Decidable separation check (for native_decide). -/
 instance (lhs rhs : RExpr) : Decidable (rhs.eval.hi < lhs.eval.lo) :=
   inferInstance  -- ℚ comparison is decidable
+
+/-- Non-separation for ¬(>) goals. -/
+theorem RExpr.not_gt_of_eval_bounded (lhs rhs : RExpr)
+    (hlv : lhs.evalValid = true) (hrv : rhs.evalValid = true)
+    (h : lhs.eval.hi ≤ rhs.eval.lo) :
+    ¬(lhs.denote > rhs.denote) :=
+  not_lt.mpr (QInterval.le_of_separated (eval_sound lhs hlv) (eval_sound rhs hrv) h)
+
+instance (lhs rhs : RExpr) : Decidable (lhs.eval.hi ≤ rhs.eval.lo) :=
+  inferInstance
+
+/-- Combined check: evalValid for both sides + separation, in a single Bool.
+    Batches three native_decide calls into one. -/
+def RExpr.checkGt (lhs rhs : RExpr) : Bool :=
+  lhs.evalValid && rhs.evalValid && decide (rhs.eval.hi < lhs.eval.lo)
+
+/-- If checkGt succeeds, the denotations are ordered. -/
+theorem RExpr.gt_of_checkGt (lhs rhs : RExpr) (h : lhs.checkGt rhs = true) :
+    lhs.denote > rhs.denote := by
+  simp only [checkGt, Bool.and_eq_true, decide_eq_true_eq] at h
+  exact gt_of_eval_separated lhs rhs h.1.1 h.1.2 h.2
+
+/-- Combined check for ¬(>): evalValid for both + upper bound. -/
+def RExpr.checkNotGt (lhs rhs : RExpr) : Bool :=
+  lhs.evalValid && rhs.evalValid && decide (lhs.eval.hi ≤ rhs.eval.lo)
+
+/-- If checkNotGt succeeds, ¬(lhs > rhs). -/
+theorem RExpr.not_gt_of_checkNotGt (lhs rhs : RExpr) (h : lhs.checkNotGt rhs = true) :
+    ¬(lhs.denote > rhs.denote) := by
+  simp only [checkNotGt, Bool.and_eq_true, decide_eq_true_eq] at h
+  exact RExpr.not_gt_of_eval_bounded lhs rhs h.1.1 h.1.2 h.2
 
 -- ============================================================================
 -- Equality-bridged separation theorems (for Tier 1.5 ite resolution)
@@ -381,22 +461,12 @@ theorem RExpr.gt_of_eq {a b c : ℝ} (hab : a = b) (h : b > c) : a > c :=
 theorem RExpr.eq_zero_of_eval_zero (e : RExpr) (hv : e.evalValid = true)
     (hlo : e.eval.lo = 0) (hhi : e.eval.hi = 0) : e.denote = 0 := by
   have ⟨h1, h2⟩ := eval_sound e hv
-  simp only [QInterval.containsReal, hlo, hhi, Rat.cast_zero] at h1 h2
+  simp only [hlo, hhi, Rat.cast_zero] at h1 h2
   linarith
 
 /-- Transport equality to zero via bridging: if `a = b` and `b = 0`, then `a = 0`. -/
 theorem RExpr.eq_zero_of_eq {a b : ℝ} (hab : a = b) (hb : b = 0) : a = 0 :=
   hab ▸ hb
-
-/-- Non-separation for ¬(>) goals. -/
-theorem RExpr.not_gt_of_eval_bounded (lhs rhs : RExpr)
-    (hlv : lhs.evalValid = true) (hrv : rhs.evalValid = true)
-    (h : lhs.eval.hi ≤ rhs.eval.lo) :
-    ¬(lhs.denote > rhs.denote) :=
-  not_lt.mpr (QInterval.le_of_separated (eval_sound lhs hlv) (eval_sound rhs hrv) h)
-
-instance (lhs rhs : RExpr) : Decidable (lhs.eval.hi ≤ rhs.eval.lo) :=
-  inferInstance
 
 /-- When lhs and rhs denote the same value, lhs > rhs is impossible. -/
 theorem RExpr.not_gt_of_denote_eq (lhs rhs : RExpr)

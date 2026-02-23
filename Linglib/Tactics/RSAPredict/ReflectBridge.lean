@@ -279,22 +279,16 @@ def tryDirectRExprCompare (goal : MVarId) (lhsExpr rhsExpr : Expr) : TacticM Boo
   logInfo m!"rsa_predict: [direct] reified ({t1 - t0}ms)"
 
   try
-    -- native_decide proofs
-    let hvl ← nativeDecideProof
-      (← mkEq (← mkAppM ``RExpr.evalValid #[lhsRExpr]) (mkConst ``Bool.true))
-    let hvr ← nativeDecideProof
-      (← mkEq (← mkAppM ``RExpr.evalValid #[rhsRExpr]) (mkConst ``Bool.true))
-    let rhsEval ← mkAppM ``RExpr.eval #[rhsRExpr]
-    let lhsEval ← mkAppM ``RExpr.eval #[lhsRExpr]
-    let rhsHi := mkProj ``Linglib.Interval.QInterval 1 rhsEval
-    let lhsLo := mkProj ``Linglib.Interval.QInterval 0 lhsEval
-    let hsep ← nativeDecideProof (← mkAppM ``LT.lt #[rhsHi, lhsLo])
+    -- Single batched native_decide: evalValid₁ && evalValid₂ && separation
+    let checkExpr ← mkAppM ``RExpr.checkGt #[lhsRExpr, rhsRExpr]
+    let checkType ← mkEq checkExpr (mkConst ``Bool.true)
+    let hcheck ← nativeDecideProof checkType
 
     let t2 ← IO.monoMsNow
     logInfo m!"rsa_predict: [direct] native_decide ({t2 - t1}ms)"
 
-    let intervalProof ← mkAppM ``RExpr.gt_of_eval_separated
-      #[lhsRExpr, rhsRExpr, hvl, hvr, hsep]
+    let intervalProof ← mkAppM ``RExpr.gt_of_checkGt
+      #[lhsRExpr, rhsRExpr, hcheck]
 
     -- Check if denote(rexpr) is definitionally equal to the goal sides (no stuck ites)
     let denLhs ← mkAppM ``RExpr.denote #[lhsRExpr]
@@ -360,18 +354,12 @@ def tryDirectRExprNotGt (goal : MVarId) (lhsExpr rhsExpr : Expr) : TacticM Bool 
       logInfo m!"rsa_predict: [direct/not-gt] bounds don't prove le"
       return false
 
-    let hvl ← nativeDecideProof
-      (← mkEq (← mkAppM ``RExpr.evalValid #[lhsRExpr]) (mkConst ``Bool.true))
-    let hvr ← nativeDecideProof
-      (← mkEq (← mkAppM ``RExpr.evalValid #[rhsRExpr]) (mkConst ``Bool.true))
-    let lhsEval ← mkAppM ``RExpr.eval #[lhsRExpr]
-    let rhsEval ← mkAppM ``RExpr.eval #[rhsRExpr]
-    let lhsHi := mkProj ``Linglib.Interval.QInterval 1 lhsEval
-    let rhsLo := mkProj ``Linglib.Interval.QInterval 0 rhsEval
-    let hbound ← nativeDecideProof (← mkAppM ``LE.le #[lhsHi, rhsLo])
+    let checkExpr ← mkAppM ``RExpr.checkNotGt #[lhsRExpr, rhsRExpr]
+    let checkType ← mkEq checkExpr (mkConst ``Bool.true)
+    let hcheck ← nativeDecideProof checkType
 
-    let intervalProof ← mkAppM ``RExpr.not_gt_of_eval_bounded
-      #[lhsRExpr, rhsRExpr, hvl, hvr, hbound]
+    let intervalProof ← mkAppM ``RExpr.not_gt_of_checkNotGt
+      #[lhsRExpr, rhsRExpr, hcheck]
 
     let denLhs ← mkAppM ``RExpr.denote #[lhsRExpr]
     let denRhs ← mkAppM ``RExpr.denote #[rhsRExpr]

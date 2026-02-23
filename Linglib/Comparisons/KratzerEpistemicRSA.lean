@@ -90,7 +90,8 @@ theorem kratzer_to_rsa_prior
     (hTrans : ∀ (A' B' C' : Set World),
       (kratzerToSystemW A).ge A' B' → (kratzerToSystemW A).ge B' C' →
       (kratzerToSystemW A).ge A' C')
-    (hAdd : EpistemicAxiom.A (kratzerToSystemW A).ge) :
+    (hAdd : EpistemicAxiom.A (kratzerToSystemW A).ge)
+    (hBT : EpistemicAxiom.BT (kratzerToSystemW A).ge) :
     ∃ (prior : World → ℚ), ∀ w, 0 ≤ prior w :=
   sorry -- Combine: kratzerToSystemW → EpistemicSystemFA → theorem8a → toWorldPrior
 

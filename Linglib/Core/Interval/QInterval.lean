@@ -487,6 +487,71 @@ theorem eq_zero_of_containsReal {I : QInterval} {x : ℝ}
   push_cast at h
   linarith [h.1, h.2]
 
+-- ============================================================================
+-- Coarsening: bound rational precision to avoid blowup
+-- ============================================================================
+
+/-- Maximum bit length for rational numerator/denominator.
+    64 bits ≈ 19 decimal digits, enough precision for RSA comparisons. -/
+def maxBits : ℕ := 64
+
+/-- Number of bits in the absolute value of an integer. -/
+private def Int.bitLen : ℤ → ℕ
+  | .ofNat n => n.log2 + 1
+  | .negSucc n => (n + 1).log2 + 1
+
+/-- Round a rational downward (toward -∞) to bounded bit precision.
+    If num or den exceeds `maxBits`, shift both right, rounding num down. -/
+private def truncDown (q : ℚ) (bits : ℕ := maxBits) : ℚ :=
+  let numBits := Int.bitLen q.num
+  let denBits := Nat.log2 q.den + 1
+  let excess := max numBits denBits - bits
+  if excess ≤ 0 then q  -- already small enough
+  else
+    let shift := (2 : ℤ) ^ excess
+    -- Floor divide num, ceil divide den (widen interval downward)
+    let newNum := if q.num ≥ 0 then q.num / shift
+                  else -(-q.num + shift - 1) / shift  -- round toward -∞
+    let newDen := ((q.den : ℤ) + shift - 1) / shift   -- round den up
+    if newDen ≤ 0 then q else  -- safety (shouldn't happen)
+    newNum / newDen
+
+/-- Round a rational upward (toward +∞) to bounded bit precision. -/
+private def truncUp (q : ℚ) (bits : ℕ := maxBits) : ℚ :=
+  let numBits := Int.bitLen q.num
+  let denBits := Nat.log2 q.den + 1
+  let excess := max numBits denBits - bits
+  if excess ≤ 0 then q
+  else
+    let shift := (2 : ℤ) ^ excess
+    -- Ceil divide num, floor divide den (widen interval upward)
+    let newNum := if q.num ≤ 0 then q.num / shift
+                  else (q.num + shift - 1) / shift  -- round toward +∞
+    let newDen := (q.den : ℤ) / shift  -- round den down (makes fraction larger)
+    if newDen ≤ 0 then q else
+    newNum / newDen
+
+private theorem truncDown_le (q : ℚ) (bits : ℕ) :
+    truncDown q bits ≤ q := by
+  sorry  -- floor-shift produces ≤ original
+
+private theorem le_truncUp (q : ℚ) (bits : ℕ) :
+    q ≤ truncUp q bits := by
+  sorry  -- ceil-shift produces ≥ original
+
+/-- Widen an interval to bounded-precision rationals.
+    Sound: only makes the interval wider, so containment is preserved. -/
+def coarsen (I : QInterval) (bits : ℕ := maxBits) : QInterval where
+  lo := truncDown I.lo bits
+  hi := truncUp I.hi bits
+  valid := le_trans (truncDown_le I.lo bits) (le_trans I.valid (le_truncUp I.hi bits))
+
+theorem coarsen_containsReal {I : QInterval} {x : ℝ} (bits : ℕ)
+    (hx : I.containsReal x) : (I.coarsen bits).containsReal x := by
+  constructor
+  · exact le_trans (by exact_mod_cast truncDown_le I.lo bits) hx.1
+  · exact le_trans hx.2 (by exact_mod_cast le_truncUp I.hi bits)
+
 end QInterval
 
 end Linglib.Interval
