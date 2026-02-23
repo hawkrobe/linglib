@@ -1,4 +1,7 @@
 import Linglib.Core.Scale
+import Mathlib.Data.Fintype.Powerset
+import Mathlib.Algebra.BigOperators.Group.Finset.Basic
+import Mathlib.Tactic.Linarith
 
 /-!
 # Epistemic Comparative Likelihood (Holliday & Icard 2013)
@@ -262,6 +265,164 @@ def halpernSystemW {W : Type*} (ge_w : W → W → Prop)
   refl := halpernLift_axiomR hRefl
   mono := halpernLift_axiomT hRefl
 
+-- ── KPS Counterexample Infrastructure ──────────────
+
+/-- Convert a Finset (Fin 5) to a bitmask index. -/
+private def finsetIdx (s : Finset (Fin 5)) : ℕ :=
+  s.sum (λ i => 2 ^ i.val)
+
+/-- The KPS rank table: maps bitmask index to rank (0–31).
+    Ordering from Kraft, Pratt & Seidenberg (1959), Section 4.
+    Elements: p=0, q=1, r=2, s=3, t=4.
+    ∅ < q < r < s < qr < qs < p < pq < rs < t < qrs < rp < ps < tq < qrp < rt
+    and complements in reverse (by supplementation, from axiom A). -/
+private def kpsRankNat (idx : ℕ) : ℕ :=
+  match idx with
+  |  0 =>  0 |  1 =>  6 |  2 =>  1 |  3 =>  7
+  |  4 =>  2 |  5 => 11 |  6 =>  4 |  7 => 14
+  |  8 =>  3 |  9 => 12 | 10 =>  5 | 11 => 16
+  | 12 =>  8 | 13 => 18 | 14 => 10 | 15 => 22
+  | 16 =>  9 | 17 => 21 | 18 => 13 | 19 => 23
+  | 20 => 15 | 21 => 26 | 22 => 19 | 23 => 28
+  | 24 => 17 | 25 => 27 | 26 => 20 | 27 => 29
+  | 28 => 24 | 29 => 30 | 30 => 25 | 31 => 31
+  |  _ =>  0
+
+/-- KPS rank of a finset. -/
+private def kpsRank (s : Finset (Fin 5)) : ℕ :=
+  kpsRankNat (finsetIdx s)
+
+private theorem kps_mono_finset :
+    ∀ (a b : Finset (Fin 5)), a ⊆ b → kpsRank b ≥ kpsRank a := by
+  native_decide
+
+private theorem kps_additive_finset :
+    ∀ (a b : Finset (Fin 5)),
+      (kpsRank a ≥ kpsRank b) ↔ (kpsRank (a \ b) ≥ kpsRank (b \ a)) := by
+  native_decide
+
+private theorem kps_bottom_finset :
+    kpsRank Finset.univ ≥ kpsRank ∅ := by native_decide
+
+section KPSSystem
+
+attribute [local instance] Classical.propDecidable
+
+private noncomputable def toFS (A : Set (Fin 5)) : Finset (Fin 5) :=
+  Finset.univ.filter (λ x => x ∈ A)
+
+private theorem toFS_mem (A : Set (Fin 5)) (x : Fin 5) :
+    x ∈ toFS A ↔ x ∈ A := by
+  simp only [toFS, Finset.mem_filter, Finset.mem_univ, true_and]
+
+private theorem toFS_univ : toFS (Set.univ : Set (Fin 5)) = Finset.univ := by
+  ext x; simp only [toFS_mem, Set.mem_univ, Finset.mem_univ]
+
+private theorem toFS_empty : toFS (∅ : Set (Fin 5)) = ∅ := by
+  ext x; simp [toFS_mem]
+
+private theorem toFS_diff (A B : Set (Fin 5)) :
+    toFS (A \ B) = toFS A \ toFS B := by
+  ext x; simp only [toFS_mem, Set.mem_diff, Finset.mem_sdiff]
+
+private theorem toFS_subset (A B : Set (Fin 5)) :
+    A ⊆ B ↔ toFS A ⊆ toFS B := by
+  constructor
+  · intro h x hx; rw [toFS_mem] at hx ⊢; exact h hx
+  · intro h x hx; exact (toFS_mem B x).mp (h ((toFS_mem A x).mpr hx))
+
+private noncomputable def kpsRankSet (A : Set (Fin 5)) : ℕ := kpsRank (toFS A)
+private noncomputable def kpsGe (A B : Set (Fin 5)) : Prop := kpsRankSet A ≥ kpsRankSet B
+
+private noncomputable def kpsSystemFA : EpistemicSystemFA (Fin 5) where
+  ge := kpsGe
+  refl := λ A => le_refl (kpsRankSet A)
+  mono := λ {A B} hAB => kps_mono_finset _ _ ((toFS_subset A B).mp hAB)
+  bottom := by
+    simp only [EpistemicAxiom.F, kpsGe, kpsRankSet, toFS_univ, toFS_empty]
+    exact kps_bottom_finset
+  total := λ A B => le_total (kpsRankSet B) (kpsRankSet A)
+  trans := λ {_ _ _} hab hbc => le_trans hbc hab
+  additive := by
+    intro A B
+    show kpsRank (toFS A) ≥ kpsRank (toFS B) ↔
+         kpsRank (toFS (A \ B)) ≥ kpsRank (toFS (B \ A))
+    rw [toFS_diff, toFS_diff]
+    exact kps_additive_finset (toFS A) (toFS B)
+
+private theorem mu_pair (m : FinAddMeasure (Fin 5)) (a b : Fin 5) (hab : a ≠ b) :
+    m.mu ({a, b} : Set (Fin 5)) = m.mu {a} + m.mu {b} := by
+  have hunion : ({a, b} : Set (Fin 5)) = {a} ∪ {b} := Set.insert_eq a {b}
+  rw [hunion, m.additive {a} {b} (λ x hx hxb => by
+    rw [Set.mem_singleton_iff] at hx hxb; exact hab (hx ▸ hxb))]
+
+private theorem mu_triple (m : FinAddMeasure (Fin 5)) (a b c : Fin 5)
+    (hab : a ≠ b) (hac : a ≠ c) (hbc : b ≠ c) :
+    m.mu ({a, b, c} : Set (Fin 5)) = m.mu {a} + m.mu {b} + m.mu {c} := by
+  have hunion : ({a, b, c} : Set (Fin 5)) = {a} ∪ ({b, c} : Set (Fin 5)) := by
+    ext x; simp only [Set.mem_insert_iff, Set.mem_singleton_iff, Set.mem_union]
+  rw [hunion, m.additive {a} {b, c} (λ x hx hxbc => by
+    rw [Set.mem_singleton_iff] at hx
+    simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hxbc
+    subst hx; rcases hxbc with rfl | rfl
+    · exact absurd rfl hab
+    · exact absurd rfl hac)]
+  rw [mu_pair m b c hbc, add_assoc]
+
+private theorem kps_not_representable :
+    ¬∃ (m : FinAddMeasure (Fin 5)), ∀ A B, kpsSystemFA.ge A B ↔ m.inducedGe A B := by
+  intro ⟨m, hm⟩
+  set P := m.mu ({(0 : Fin 5)} : Set (Fin 5))
+  set Q := m.mu ({(1 : Fin 5)} : Set (Fin 5))
+  set R := m.mu ({(2 : Fin 5)} : Set (Fin 5))
+  set S := m.mu ({(3 : Fin 5)} : Set (Fin 5))
+  set T := m.mu ({(4 : Fin 5)} : Set (Fin 5))
+  -- Ordering facts: three strict (rank <), one weak (rank ≥)
+  have hord1 : ¬ kpsGe ({1, 3} : Set (Fin 5)) {0} := by
+    unfold kpsGe kpsRankSet
+    have h1 : toFS ({1, 3} : Set (Fin 5)) = {1, 3} := by ext x; simp [toFS_mem]
+    have h2 : toFS ({(0 : Fin 5)} : Set (Fin 5)) = {0} := by ext x; simp [toFS_mem]
+    rw [h1, h2]; native_decide
+  have hord2 : ¬ kpsGe ({0, 1} : Set (Fin 5)) {2, 3} := by
+    unfold kpsGe kpsRankSet
+    have h1 : toFS ({0, 1} : Set (Fin 5)) = {0, 1} := by ext x; simp [toFS_mem]
+    have h2 : toFS ({2, 3} : Set (Fin 5)) = {2, 3} := by ext x; simp [toFS_mem]
+    rw [h1, h2]; native_decide
+  have hord3 : ¬ kpsGe ({0, 3} : Set (Fin 5)) {1, 4} := by
+    unfold kpsGe kpsRankSet
+    have h1 : toFS ({0, 3} : Set (Fin 5)) = {0, 3} := by ext x; simp [toFS_mem]
+    have h2 : toFS ({1, 4} : Set (Fin 5)) = {1, 4} := by ext x; simp [toFS_mem]
+    rw [h1, h2]; native_decide
+  have hord4 : kpsGe ({0, 1, 3} : Set (Fin 5)) {2, 4} := by
+    unfold kpsGe kpsRankSet
+    have h1 : toFS ({0, 1, 3} : Set (Fin 5)) = {0, 1, 3} := by ext x; simp [toFS_mem]
+    have h2 : toFS ({2, 4} : Set (Fin 5)) = {2, 4} := by ext x; simp [toFS_mem]
+    rw [h1, h2]; native_decide
+  -- Convert to measure inequalities via the representation isomorphism
+  have hmeas1 : m.mu ({1, 3} : Set _) < m.mu ({(0 : Fin 5)} : Set _) :=
+    not_le.mp (λ h => hord1 ((hm _ _).mpr h))
+  have hmeas2 : m.mu ({0, 1} : Set _) < m.mu ({2, 3} : Set _) :=
+    not_le.mp (λ h => hord2 ((hm _ _).mpr h))
+  have hmeas3 : m.mu ({0, 3} : Set _) < m.mu ({1, 4} : Set _) :=
+    not_le.mp (λ h => hord3 ((hm _ _).mpr h))
+  have hmeas4 : m.mu ({0, 1, 3} : Set _) ≥ m.mu ({2, 4} : Set _) :=
+    (hm _ _).mp hord4
+  -- Decompose pairs/triples using finite additivity
+  rw [mu_pair m 1 3 (by decide)] at hmeas1
+  rw [mu_pair m 0 1 (by decide), mu_pair m 2 3 (by decide)] at hmeas2
+  rw [mu_pair m 0 3 (by decide), mu_pair m 1 4 (by decide)] at hmeas3
+  rw [mu_triple m 0 1 3 (by decide) (by decide) (by decide),
+      mu_pair m 2 4 (by decide)] at hmeas4
+  -- hmeas1: Q + S < P      hmeas2: P + Q < R + S
+  -- hmeas3: P + S < Q + T   hmeas4: P + Q + S ≥ R + T
+  -- Summing the three strict inequalities (Scott cancellation):
+  --   (Q+S) + (P+Q) + (P+S) < P + (R+S) + (Q+T)
+  --   P + Q + S < R + T
+  -- contradicts hmeas4.
+  linarith
+
+end KPSSystem
+
 -- ── Theorem 8 (Kraft, Pratt & Seidenberg 1959) ───
 
 /-- **Theorem 8a** (Kraft, Pratt & Seidenberg 1959): for |W| < 5,
@@ -276,12 +437,20 @@ theorem theorem8a {W : Type*} [Fintype W]
     FA is strictly weaker than FP∞ — there exists a 5-element type
     with an FA ordering admitting no finitely additive measure
     representation. The FP∞ axioms (Scott schemata) are strictly
-    stronger than qualitative additivity alone. -/
+    stronger than qualitative additivity alone.
+
+    Proof: the KPS 5-world counterexample. We construct an explicit
+    total ordering on subsets of Fin 5 satisfying FA axioms (verified
+    by `native_decide` over all 1024 pairs), then prove no finitely
+    additive measure can represent it via Scott cancellation:
+    three strict ordering facts {q,s} < {p}, {p,q} < {r,s}, {p,s} < {t,q}
+    plus one weak {p,q,s} ≥ {r,t} yield balanced element counts but
+    contradictory measure sums. -/
 theorem theorem8b :
     ∃ (W : Type) (_ : Fintype W) (sys : EpistemicSystemFA W),
       Fintype.card W = 5 ∧
       ¬∃ (m : FinAddMeasure W), ∀ A B, sys.ge A B ↔ m.inducedGe A B :=
-  sorry -- Kraft, Pratt & Seidenberg (1959); 5-world counterexample
+  ⟨Fin 5, inferInstance, kpsSystemFA, Fintype.card_fin 5, kps_not_representable⟩
 
 -- ── Completeness (Theorems 6–7) ──────────────────
 
