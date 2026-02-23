@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.226.24] - 2026-02-23
+
+### Changed
+- **`Core/Interval/ReflectInterval.lean`**: Condition-aware `evalValid` for `iteZero` — only checks the branch that `eval` uses (matching `eval`'s branching logic with Prop conditions and `if_pos`/`if_neg` manipulation); special-case `denote` for `.nat 0` and `.nat 1` for faster kernel reduction; add `BEq`/`DecidableEq` deriving for `RExpr`; add `not_gt_of_denote_eq` theorem
+- **`Tactics/RSAPredict/Reify.lean`**: `Decidable.rec` handler emits `iteZero` nodes instead of resolving branches at meta level — extracts both branches via dummy proofs, reifies all three sub-expressions, creates iteZero; fix `Real.exp` handler to not synthesize `α = 1`/`c = 0` when absent in the original expression (preserves rfl bridge)
+- **`Tactics/RSAPredict/ReflectBridge.lean`**: Tier 1.5 direct RExpr reification pipeline with rfl bridge — `tryDirectRExprCompare` and `tryDirectRExprNotGt` use `gt_of_eval_separated`/`not_gt_of_eval_bounded` with `native_decide`; `buildIteResolutionProof` for stuck `Decidable.rec` resolution via `if_neg`/`if_pos` chains; structural equality fast path for `¬(>)` cases; all 4 FG2012 L1 predictions and 2 S1 predictions proved via rfl bridge at ~1.8s each (L1) / ~0.6s each (S1)
+
 ## [0.226.20] - 2026-02-22
 
 ### Changed

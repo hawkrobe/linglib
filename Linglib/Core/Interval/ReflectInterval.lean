@@ -47,7 +47,7 @@ inductive RExpr where
   | inv : RExpr → RExpr
   /-- `iteZero cond thenBr elseBr` = if cond.denote = 0 then thenBr else elseBr -/
   | iteZero : RExpr → RExpr → RExpr → RExpr
-  deriving Repr, Inhabited
+  deriving Repr, Inhabited, BEq, DecidableEq
 
 -- ============================================================================
 -- Denotation: RExpr → ℝ
@@ -55,6 +55,8 @@ inductive RExpr where
 
 /-- Map a reified expression to its real value. Noncomputable (uses Real.exp, etc.). -/
 noncomputable def RExpr.denote : RExpr → ℝ
+  | .nat 0 => (0 : ℝ)
+  | .nat 1 => (1 : ℝ)
   | .nat n => (n : ℝ)  -- Nat.cast n
   | .add a b => a.denote + b.denote
   | .mul a b => a.denote * b.denote
@@ -149,7 +151,12 @@ def RExpr.evalValid : RExpr → Bool
   | .rlog a => a.evalValid && decide (0 < a.eval.lo)
   | .rpow a n => a.evalValid && (n == 0 || decide (0 ≤ a.eval.lo))
   | .inv a => a.evalValid && decide (0 < a.eval.lo)
-  | .iteZero c t e => c.evalValid && t.evalValid && e.evalValid
+  | .iteZero c t e =>
+    c.evalValid &&
+    (let rc := c.eval
+     if rc.lo = 0 ∧ rc.hi = 0 then t.evalValid
+     else if (0 : ℚ) < rc.lo then e.evalValid
+     else t.evalValid && e.evalValid)
 
 -- ============================================================================
 -- Soundness: eval_sound
@@ -175,8 +182,12 @@ theorem RExpr.eval_sound : ∀ (e : RExpr), e.evalValid = true →
     (e.eval).containsReal e.denote
   | .nat n => by
     intro _
-    simp only [eval, denote]
-    exact QInterval.exact_containsReal n
+    match n with
+    | 0 => exact QInterval.exact_zero_containsReal
+    | 1 => exact QInterval.exact_one_containsReal
+    | n + 2 =>
+      simp only [eval, denote]
+      exact QInterval.exact_natCast_containsReal (n + 2)
   | .add a b => by
     intro hv
     simp only [evalValid, Bool.and_eq_true] at hv
@@ -274,37 +285,45 @@ theorem RExpr.eval_sound : ∀ (e : RExpr), e.evalValid = true →
     · exact absurd hv.2 ‹_›
   | .iteZero c t e => by
     intro hv
-    simp only [evalValid, Bool.and_eq_true] at hv
-    obtain ⟨⟨hvc, hvt⟩, hve⟩ := hv
-    simp only [eval, denote]
+    -- Extract c.evalValid and the branch-conditional validity
+    have hvc : c.evalValid = true := by
+      simp only [evalValid, Bool.and_eq_true] at hv; exact hv.1
+    have hbv : (if c.eval.lo = 0 ∧ c.eval.hi = 0 then t.evalValid
+                else if (0 : ℚ) < c.eval.lo then e.evalValid
+                else t.evalValid && e.evalValid) = true := by
+      simp only [evalValid, Bool.and_eq_true] at hv; exact hv.2
     have ihc := eval_sound c hvc
-    have iht := eval_sound t hvt
-    have ihe := eval_sound e hve
+    simp only [eval, denote]
     split
     · -- rc.lo == 0 && rc.hi == 0 → cond = 0 → then branch
-      rename_i h; simp [beq_iff_eq] at h
-      have hzero := interval_eq_zero ihc h.1 h.2
-      simp [hzero]
-      exact iht
+      rename_i heq; simp [beq_iff_eq] at heq
+      rw [if_pos heq] at hbv
+      have hzero := interval_eq_zero ihc heq.1 heq.2
+      simp [hzero]; exact eval_sound t hbv
     · split
       · -- 0 < rc.lo → cond > 0 → cond ≠ 0 → else branch
-        rename_i _ hpos
-        have hcond_pos := interval_pos ihc (by exact hpos)
-        have hcond_ne : c.denote ≠ 0 := ne_of_gt hcond_pos
-        simp [hcond_ne]
-        exact ihe
+        rename_i hne hpos
+        have hpne : ¬(c.eval.lo = 0 ∧ c.eval.hi = 0) := by
+          intro ⟨hlo, _⟩; linarith
+        rw [if_neg hpne, if_pos hpos] at hbv
+        have hcond_pos := interval_pos ihc hpos
+        simp [ne_of_gt hcond_pos]; exact eval_sound e hbv
       · -- can't decide: union covers both branches
-        rename_i h1 h2
+        rename_i hne hle
+        have hpne : ¬(c.eval.lo = 0 ∧ c.eval.hi = 0) := by
+          simp [beq_iff_eq, Bool.and_eq_true] at hne
+          intro ⟨a, b⟩; exact hne a b
+        rw [if_neg hpne, if_neg hle] at hbv
+        simp only [Bool.and_eq_true] at hbv
+        obtain ⟨hvt, hve⟩ := hbv
         simp only [QInterval.containsReal]
         split
-        · -- cond = 0 → then branch, need t.denote ∈ [min .., max ..]
-          constructor
-          · exact le_trans (by exact_mod_cast min_le_left _ _) iht.1
-          · exact le_trans iht.2 (by exact_mod_cast le_max_left _ _)
-        · -- cond ≠ 0 → else branch
-          constructor
-          · exact le_trans (by exact_mod_cast min_le_right _ _) ihe.1
-          · exact le_trans ihe.2 (by exact_mod_cast le_max_right _ _)
+        · constructor
+          · exact le_trans (by exact_mod_cast min_le_left _ _) (eval_sound t hvt).1
+          · exact le_trans (eval_sound t hvt).2 (by exact_mod_cast le_max_left _ _)
+        · constructor
+          · exact le_trans (by exact_mod_cast min_le_right _ _) (eval_sound e hve).1
+          · exact le_trans (eval_sound e hve).2 (by exact_mod_cast le_max_right _ _)
 
 -- ============================================================================
 -- Separation theorem for reflected expressions
@@ -321,5 +340,75 @@ theorem RExpr.gt_of_eval_separated (lhs rhs : RExpr)
 /-- Decidable separation check (for native_decide). -/
 instance (lhs rhs : RExpr) : Decidable (rhs.eval.hi < lhs.eval.lo) :=
   inferInstance  -- ℚ comparison is decidable
+
+-- ============================================================================
+-- Equality-bridged separation theorems (for Tier 1.5 ite resolution)
+-- ============================================================================
+
+/-- If `a = c`, `b = d`, and `c > d`, then `a > b`. -/
+theorem RExpr.gt_of_eq_gt_eq {a b c d : ℝ} (hac : a = c) (hbd : b = d)
+    (h : c > d) : a > b :=
+  hac ▸ hbd ▸ h
+
+/-- Dual for `¬(>)` goals. -/
+theorem RExpr.not_gt_of_eq_not_gt_eq {a b c d : ℝ} (hac : a = c) (hbd : b = d)
+    (h : ¬(c > d)) : ¬(a > b) :=
+  hac ▸ hbd ▸ h
+
+/-- Transport `b > c` to `a > c` via `a = b`. -/
+theorem RExpr.gt_of_eq {a b c : ℝ} (hab : a = b) (h : b > c) : a > c :=
+  hab ▸ h
+
+/-- If eval gives [0, 0], the denoted value is 0. -/
+theorem RExpr.eq_zero_of_eval_zero (e : RExpr) (hv : e.evalValid = true)
+    (hlo : e.eval.lo = 0) (hhi : e.eval.hi = 0) : e.denote = 0 := by
+  have ⟨h1, h2⟩ := eval_sound e hv
+  simp only [QInterval.containsReal, hlo, hhi, Rat.cast_zero] at h1 h2
+  linarith
+
+/-- Transport equality to zero via bridging: if `a = b` and `b = 0`, then `a = 0`. -/
+theorem RExpr.eq_zero_of_eq {a b : ℝ} (hab : a = b) (hb : b = 0) : a = 0 :=
+  hab ▸ hb
+
+/-- Non-separation for ¬(>) goals. -/
+theorem RExpr.not_gt_of_eval_bounded (lhs rhs : RExpr)
+    (hlv : lhs.evalValid = true) (hrv : rhs.evalValid = true)
+    (h : lhs.eval.hi ≤ rhs.eval.lo) :
+    ¬(lhs.denote > rhs.denote) :=
+  not_lt.mpr (QInterval.le_of_separated (eval_sound lhs hlv) (eval_sound rhs hrv) h)
+
+instance (lhs rhs : RExpr) : Decidable (lhs.eval.hi ≤ rhs.eval.lo) :=
+  inferInstance
+
+/-- When lhs and rhs denote the same value, lhs > rhs is impossible. -/
+theorem RExpr.not_gt_of_denote_eq (lhs rhs : RExpr)
+    (h : lhs.denote = rhs.denote) : ¬(lhs.denote > rhs.denote) :=
+  h ▸ lt_irrefl _
+
+
+-- ============================================================================
+-- Congruence lemmas for ite resolution structural descent
+-- ============================================================================
+
+theorem RExpr.congr_add {a₁ a₂ b₁ b₂ : ℝ} (h₁ : a₁ = a₂) (h₂ : b₁ = b₂) :
+    a₁ + b₁ = a₂ + b₂ := h₁ ▸ h₂ ▸ rfl
+
+theorem RExpr.congr_mul {a₁ a₂ b₁ b₂ : ℝ} (h₁ : a₁ = a₂) (h₂ : b₁ = b₂) :
+    a₁ * b₁ = a₂ * b₂ := h₁ ▸ h₂ ▸ rfl
+
+theorem RExpr.congr_div {a₁ a₂ b₁ b₂ : ℝ} (h₁ : a₁ = a₂) (h₂ : b₁ = b₂) :
+    a₁ / b₁ = a₂ / b₂ := h₁ ▸ h₂ ▸ rfl
+
+theorem RExpr.congr_sub {a₁ a₂ b₁ b₂ : ℝ} (h₁ : a₁ = a₂) (h₂ : b₁ = b₂) :
+    a₁ - b₁ = a₂ - b₂ := h₁ ▸ h₂ ▸ rfl
+
+theorem RExpr.congr_exp {a₁ a₂ : ℝ} (h : a₁ = a₂) :
+    Real.exp a₁ = Real.exp a₂ := congrArg _ h
+
+theorem RExpr.congr_log {a₁ a₂ : ℝ} (h : a₁ = a₂) :
+    Real.log a₁ = Real.log a₂ := congrArg _ h
+
+theorem RExpr.congr_neg {a₁ a₂ : ℝ} (h : a₁ = a₂) :
+    -a₁ = -a₂ := congrArg _ h
 
 end Linglib.Interval

@@ -228,39 +228,45 @@ partial def reifyToRExpr (cache : ReifyCache) (e : Expr) (depth : ℕ) :
     -- Check if logCandidate is Real.log(x)
     if logCandidate.getAppFn.isConstOf ``Real.log && logCandidate.getAppNumArgs ≥ 1 then
       let xExpr := logCandidate.getAppArgs[0]!
-      -- Reify sub-parts (none of these trigger logPoint)
-      let (αRExpr, αBounds) ← match αExprOpt with
-        | some e => reifyToRExpr cache e (depth - 1)
-        | none => do
-          let r ← mkAppM ``RExpr.nat #[mkRawNatLit 1]
-          pure (r, (⟨1, 1⟩ : MetaBounds))
-      if αBounds.lo == αBounds.hi && αBounds.lo > 0 && αBounds.lo.den == 1 then
-        let α := αBounds.lo
-        let n := α.num.toNat
-        let (xRExpr, xBounds) ← reifyToRExpr cache xExpr (depth - 1)
-        if xBounds.lo ≥ 0 then
-          let (cRExpr, cBounds) ← match cExprOpt with
-            | some e => reifyToRExpr cache e (depth - 1)
-            | none => do
-              let r ← mkAppM ``RExpr.nat #[mkRawNatLit 0]
-              pure (r, (⟨0, 0⟩ : MetaBounds))
-          -- x^n bounds (nonneg x, positive integer n → monotone increasing)
-          let xPowBounds : MetaBounds :=
-            if n == 1 then xBounds else ⟨xBounds.lo ^ n, xBounds.hi ^ n⟩
-          -- exp(-n*c) bounds (exp monotone: use lo_arg for lo, hi_arg for hi)
-          let expFactorBounds : MetaBounds :=
-            let lo_arg := -(α * cBounds.hi)
-            let hi_arg := -(α * cBounds.lo)
-            if lo_arg == 0 && hi_arg == 0 then ⟨1, 1⟩
-            else ⟨(Linglib.Interval.expPoint lo_arg).lo,
-                  (Linglib.Interval.expPoint hi_arg).hi⟩
-          let bounds := metaEvalMul xPowBounds expFactorBounds
-          -- Build RExpr preserving original structure
-          let logR ← mkAppM ``RExpr.rlog #[xRExpr]
-          let subR ← mkAppM ``RExpr.sub #[logR, cRExpr]
-          let mulR ← mkAppM ``RExpr.mul #[αRExpr, subR]
-          let rexpr ← mkAppM ``RExpr.rexp #[mulR]
-          return ← cacheReturn cache key (rexpr, bounds)
+      -- Only do algebraic decomposition if α or c are actually present in the original
+      -- (don't synthesize 1* or -0 wrappers that break the rfl bridge)
+      if αExprOpt.isSome || cExprOpt.isSome then
+        let (αRExpr, αBounds) ← match αExprOpt with
+          | some e => reifyToRExpr cache e (depth - 1)
+          | none => do
+            let r ← mkAppM ``RExpr.nat #[mkRawNatLit 1]
+            pure (r, (⟨1, 1⟩ : MetaBounds))
+        if αBounds.lo == αBounds.hi && αBounds.lo > 0 && αBounds.lo.den == 1 then
+          let α := αBounds.lo
+          let n := α.num.toNat
+          let (xRExpr, xBounds) ← reifyToRExpr cache xExpr (depth - 1)
+          if xBounds.lo ≥ 0 then
+            let (cRExpr, cBounds) ← match cExprOpt with
+              | some e => reifyToRExpr cache e (depth - 1)
+              | none => do
+                let r ← mkAppM ``RExpr.nat #[mkRawNatLit 0]
+                pure (r, (⟨0, 0⟩ : MetaBounds))
+            -- x^n bounds (nonneg x, positive integer n → monotone increasing)
+            let xPowBounds : MetaBounds :=
+              if n == 1 then xBounds else ⟨xBounds.lo ^ n, xBounds.hi ^ n⟩
+            -- exp(-n*c) bounds (exp monotone: use lo_arg for lo, hi_arg for hi)
+            let expFactorBounds : MetaBounds :=
+              let lo_arg := -(α * cBounds.hi)
+              let hi_arg := -(α * cBounds.lo)
+              if lo_arg == 0 && hi_arg == 0 then ⟨1, 1⟩
+              else ⟨(Linglib.Interval.expPoint lo_arg).lo,
+                    (Linglib.Interval.expPoint hi_arg).hi⟩
+            let bounds := metaEvalMul xPowBounds expFactorBounds
+            -- Build RExpr preserving original structure (α and/or c from original)
+            let logR ← mkAppM ``RExpr.rlog #[xRExpr]
+            let withSub ← match cExprOpt with
+              | some _ => mkAppM ``RExpr.sub #[logR, cRExpr]
+              | none => pure logR
+            let withMul ← match αExprOpt with
+              | some _ => mkAppM ``RExpr.mul #[αRExpr, withSub]
+              | none => pure withSub
+            let rexpr ← mkAppM ``RExpr.rexp #[withMul]
+            return ← cacheReturn cache key (rexpr, bounds)
     -- Fallback: reify argument normally and compute expPoint bounds
     let (ra, ba) ← reifyToRExpr cache args[0]! (depth - 1)
     let rexpr ← mkAppM ``RExpr.rexp #[ra]
@@ -288,14 +294,15 @@ partial def reifyToRExpr (cache : ReifyCache) (e : Expr) (depth : ℕ) :
       if let some 0 := getOfNat? rhsC then
         let lhsC := cArgs[1]!
         let (rc, bc) ← reifyToRExpr cache lhsC (depth - 1)
-        if bc.lo > 0 then
-          let (re, be) ← reifyToRExpr cache elseBr (depth - 1)
-          let rexpr ← mkAppM ``RExpr.iteZero #[rc, ← mkAppM ``RExpr.nat #[mkRawNatLit 0], re]
-          return ← cacheReturn cache key (rexpr, be)
-        else if bc.lo == 0 && bc.hi == 0 then
-          let (rt, bt) ← reifyToRExpr cache thenBr (depth - 1)
-          let rexpr ← mkAppM ``RExpr.iteZero #[rc, rt, ← mkAppM ``RExpr.nat #[mkRawNatLit 0]]
-          return ← cacheReturn cache key (rexpr, bt)
+        -- Always create iteZero to preserve expression structure for rfl bridge.
+        -- Meta-level bounds determine which branch's bounds to use.
+        let (rt, bt) ← reifyToRExpr cache thenBr (depth - 1)
+        let (re, be) ← reifyToRExpr cache elseBr (depth - 1)
+        let rexpr ← mkAppM ``RExpr.iteZero #[rc, rt, re]
+        let bounds := if bc.lo > 0 then be
+                      else if bc.lo == 0 && bc.hi == 0 then bt
+                      else ⟨min bt.lo be.lo, max bt.hi be.hi⟩
+        return ← cacheReturn cache key (rexpr, bounds)
       -- Bool condition: ite ((expr) = true) or ite ((expr) = false)
       -- Handles common RSA pattern `if (u == w.1) then ... else 0` which produces
       -- `ite ((u == w.1) = true) ...`. Cheap Bool whnf avoids expensive full-expr whnf.
@@ -326,19 +333,19 @@ partial def reifyToRExpr (cache : ReifyCache) (e : Expr) (depth : ℕ) :
       let rhsC := propArgs[2]!
       if let some 0 := getOfNat? rhsC then
         let (rc, bc) ← reifyToRExpr cache lhsC (depth - 1)
-        if bc.lo > 0 then
-          let negProp ← mkAppM ``Not #[prop]
-          let dummyProof := mkApp2 (mkConst ``sorryAx [levelZero]) negProp (toExpr true)
-          let elseBody := (Expr.app isFalseBr dummyProof).headBeta
-          let (re, be) ← reifyToRExpr cache elseBody (depth - 1)
-          let rexpr ← mkAppM ``RExpr.iteZero #[rc, ← mkAppM ``RExpr.nat #[mkRawNatLit 0], re]
-          return ← cacheReturn cache key (rexpr, be)
-        else if bc.lo == 0 && bc.hi == 0 then
-          let dummyProof := mkApp2 (mkConst ``sorryAx [levelZero]) prop (toExpr true)
-          let thenBody := (Expr.app isTrueBr dummyProof).headBeta
-          let (rt, bt) ← reifyToRExpr cache thenBody (depth - 1)
-          let rexpr ← mkAppM ``RExpr.iteZero #[rc, rt, ← mkAppM ``RExpr.nat #[mkRawNatLit 0]]
-          return ← cacheReturn cache key (rexpr, bt)
+        -- Always create iteZero to preserve expression structure for rfl bridge.
+        let dummyTrueProof := mkApp2 (mkConst ``sorryAx [levelZero]) prop (toExpr true)
+        let thenBody := (Expr.app isTrueBr dummyTrueProof).headBeta
+        let negProp ← mkAppM ``Not #[prop]
+        let dummyFalseProof := mkApp2 (mkConst ``sorryAx [levelZero]) negProp (toExpr true)
+        let elseBody := (Expr.app isFalseBr dummyFalseProof).headBeta
+        let (rt, bt) ← reifyToRExpr cache thenBody (depth - 1)
+        let (re, be) ← reifyToRExpr cache elseBody (depth - 1)
+        let rexpr ← mkAppM ``RExpr.iteZero #[rc, rt, re]
+        let bounds := if bc.lo > 0 then be
+                      else if bc.lo == 0 && bc.hi == 0 then bt
+                      else ⟨min bt.lo be.lo, max bt.hi be.hi⟩
+        return ← cacheReturn cache key (rexpr, bounds)
 
   -- Fast-path for summation forms
   let fnName := fn.constName?
