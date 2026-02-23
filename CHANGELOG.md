@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.226.19] - 2026-02-22
+
+### Changed
+- **`Core/Interval/RSAVerify.lean`**: Sole-utterance cancellation shortcut in `computeS1PolicyBounds` — when total score bounds equal the target utterance's bounds (all others are `[0,0]`), return `Bounds.exact 1` instead of `divPos`, avoiding Padé interval widening; completes 11/11 GS2013 proofs via auto-detect reflection
+
+## [0.226.18] - 2026-02-22
+
+### Changed
+- **`Tactics/RSAPredict/AutoDetect.lean`**: Tier 2 auto-detect for `beliefWeighted` S1ScoreSpec pattern — extends pattern matching to handle belief-weighted scores with latent belief states
+- **`Phenomena/ScalarImplicatures/GoodmanStuhlmuller2013/Bridge.lean`**: 10/11 proofs now via auto-detect reflection
+
 ## [0.226.17] - 2026-02-22
 
 ### Changed

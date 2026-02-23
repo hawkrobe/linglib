@@ -162,8 +162,12 @@ def computeS1PolicyBounds {U W L : Type*} [Fintype U] [Fintype W]
   -- Total bounds: lo of total = Σ lo_i, hi of total = Σ hi_i
   let totalLo := Finset.univ.sum fun u' => (computeS1ScoreBounds spec meaning α l w u').lo
   let totalHi := Finset.univ.sum fun u' => (computeS1ScoreBounds spec meaning α l w u').hi
-  let total : Bounds := ⟨totalLo, totalHi⟩
-  Bounds.divPos myScore total
+  -- Sole-utterance shortcut: if total = myScore (all others are [0,0]),
+  -- policy = score/score = 1. Avoids divPos interval widening from Padé.
+  if myScore.lo > 0 && totalLo == myScore.lo && totalHi == myScore.hi then
+    Bounds.exact 1
+  else
+    Bounds.divPos myScore ⟨totalLo, totalHi⟩
 
 -- ============================================================================
 -- L1 Score Bounds
