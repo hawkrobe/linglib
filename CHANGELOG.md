@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.226.27] - 2026-02-23
+
+### Changed
+- **`Core/EpistemicScale.lean`**: Prove `theorem8a` (KPS 1959) for |W| ≤ 3 — sorry-free per-cardinality proofs for `Fin 0` (vacuous), `Fin 1`, `Fin 2`, `Fin 3`; add `reduce_to_disjoint` lemma reducing arbitrary set comparisons to disjoint via FA axiom A; `measure_fin3` parametric measure with 8 value lemmas; `fin3_dispatch` handling all 64 (C,D) disjoint pairs via 21 ordering ↔ hypotheses; 6 `nge_*` helper lemmas for singleton-vs-pair ¬ge derivation; remaining sorry narrowed to Fin 4 case + equiv transfer
+
 ## [0.226.26] - 2026-02-23
 
 ### Changed
