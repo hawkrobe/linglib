@@ -784,8 +784,10 @@ import Linglib.Theories.Semantics.Conditionals.Counterfactual
 import Linglib.Theories.Semantics.Conditionals.Exhaustivity
 import Linglib.Theories.Semantics.Conditionals.Iatridou
 import Linglib.Theories.Semantics.Conditionals.LeftNested
+import Linglib.Theories.Semantics.Conditionals.Restrictor
 import Linglib.Theories.Semantics.Modality.Basic
 import Linglib.Theories.Semantics.Modality.Compare
+import Linglib.Theories.Semantics.Modality.Directive
 import Linglib.Theories.Semantics.Modality.Disjunction
 import Linglib.Theories.Semantics.Modality.BiasedPQ
 import Linglib.Theories.Semantics.Modality.Kratzer
@@ -794,6 +796,7 @@ import Linglib.Theories.Semantics.Modality.ProbabilityOrdering
 import Linglib.Theories.Semantics.Modality.SatisfactionOrdering
 import Linglib.Theories.Semantics.Modality.Ability
 import Linglib.Theories.Semantics.Modality.Simple
+import Linglib.Theories.Semantics.Modality.Temporal
 import Linglib.Theories.Semantics.Modality.Typology
 import Linglib.Theories.Semantics.Mood.Basic
 import Linglib.Theories.Semantics.Reference.Basic

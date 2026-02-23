@@ -405,4 +405,48 @@ def ConcordType.fromModalForce : ModalForce → ConcordType
   | .necessity  => .modalNecessity
   | .possibility => .modalPossibility
 
+/-! ## Modal Decomposability
+
+Werner (2006), Condoravdi (2002): some modals resist the standard
+force × flavor decomposition. "Will" and other temporal-modal elements
+do not factor cleanly into a modal force and a conversational background
+flavor. This annotation distinguishes decomposable modals (standard
+Kratzerian analysis) from unitary ones. -/
+
+/-- Whether a modal meaning decomposes into independent force and flavor
+    dimensions (Kratzer 1981) or is a unitary, non-decomposable operator
+    (Werner 2006, Condoravdi 2002). -/
+inductive ModalDecomposition where
+  | decomposable  -- ⟦m⟧ = fo(m) × fl(m)
+  | unitary       -- ⟦m⟧ ≠ fo(m) × fl(m)
+  deriving DecidableEq, BEq, Repr
+
+/-- Classify a modal item by whether its meaning set equals the Cartesian
+    product of its force and flavor projections. A modal is decomposable
+    iff every combination of its attested forces and flavors is also
+    attested — the two dimensions are independent. -/
+def ModalItem.decomposition (m : ModalItem) : ModalDecomposition :=
+  let forces := (m.meaning.map (·.force)).eraseDups
+  let flavors := (m.meaning.map (·.flavor)).eraseDups
+  if (ForceFlavor.cartesianProduct forces flavors).all (m.meaning.contains ·) then
+    .decomposable
+  else
+    .unitary
+
+/-- A modal item is unitary (non-decomposable into force × flavor). -/
+def ModalItem.isUnitary (m : ModalItem) : Bool :=
+  m.decomposition == .unitary
+
+/-- Singleton meanings are trivially decomposable: a modal with exactly
+    one force-flavor pair always satisfies IFF. -/
+theorem singleton_decomposable (ff : ForceFlavor) :
+    (({ form := "m", meaning := [ff] } : ModalItem)).isUnitary = false := by
+  cases ff with | mk f fl => cases f <;> cases fl <;> native_decide
+
+/-- A non-IFF meaning is unitary: necessity-epistemic + possibility-deontic
+    without the cross-product pairs. -/
+theorem cross_cutting_is_unitary :
+    (({ form := "m", meaning := [⟨.necessity, .epistemic⟩, ⟨.possibility, .deontic⟩] } : ModalItem)).isUnitary = true := by
+  native_decide
+
 end Core.ModalLogic
