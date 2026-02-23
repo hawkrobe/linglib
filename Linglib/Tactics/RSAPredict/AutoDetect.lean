@@ -153,6 +153,178 @@ def extractLatentPriorValues (cfg : Expr) (allWElems allLElems : Array Expr) :
         return none
   return some values
 
+/-- Peel 5 lambdas from a reduced s1Score expression to expose the body.
+    Returns (body, fvars) where fvars = [l0, α, l, w, u]. -/
+def peelS1ScoreBody (cfg : Expr) : MetaM (Option (Expr × Array FVarId)) := do
+  let s1ScoreExpr ← mkAppM ``RSA.RSAConfig.s1Score #[cfg]
+  let mut body ← whnf s1ScoreExpr
+  let mut fvars : Array FVarId := #[]
+  for _ in List.range 5 do
+    match body with
+    | .lam _name _ty lamBody _bi =>
+      let fvar ← mkFreshFVarId
+      fvars := fvars.push fvar
+      body := lamBody.instantiate1 (mkFVar fvar)
+      -- whnf may fail if the body has computable Decidable instances that
+      -- try to evaluate unregistered fvars (e.g., beliefWeighted's Bool ite).
+      -- In that case, keep the unreduced body.
+      body ← try whnf body catch _ => pure body
+    | _ =>
+      body ← try whnf body catch _ => pure body
+      match body with
+      | .lam _name _ty lamBody _bi =>
+        let fvar ← mkFreshFVarId
+        fvars := fvars.push fvar
+        body := lamBody.instantiate1 (mkFVar fvar)
+        body ← try whnf body catch _ => pure body
+      | _ => return none
+  if fvars.size < 5 then return none
+  return some (body, fvars)
+
+/-- Peel a single lambda: if `e` is `fun (x : T) => body`, return
+    `(T, binderInfo, body)` after whnf. Returns none if not a lambda. -/
+private def peelOneLam (e : Expr) : MetaM (Option (Name × Expr × Expr × BinderInfo)) := do
+  let e' ← whnf e
+  match e' with
+  | .lam n t b bi => return some (n, t, b, bi)
+  | _ => return none
+
+/-- Extract belief and quality values from a `beliefWeighted` s1Score.
+    The expected pattern is:
+      `if quality(l, u) then exp(α * Σ_s belief(l,s) * log(l0 u s)) else 0`
+    Also handles the KL divergence form where the sum body includes
+    `- Σ_s belief(l,s) * log(belief(l,s))` (constant w.r.t. u, so stripped).
+
+    Uses `withLocalDecl` for lambda peeling so fvars are properly registered
+    in the local context (required for `whnf`/`isDefEq` to work).
+
+    Returns `(beliefVals, qualityVals)` where:
+    - `beliefVals` is indexed as `[lIdx * nW + wIdx]`
+    - `qualityVals` is indexed as `[lIdx * nU + uIdx]` -/
+def extractBeliefAndQuality (cfg : Expr)
+    (allLElems allUElems allWElems : Array Expr) :
+    MetaM (Option (Array ℚ × Array Bool)) := do
+  let s1ScoreExpr ← mkAppM ``RSA.RSAConfig.s1Score #[cfg]
+  -- Peel 5 lambdas with proper withLocalDecl so fvars have types in lctx
+  let some (n1, t1, b1, bi1) ← peelOneLam s1ScoreExpr | return none
+  withLocalDecl n1 bi1 t1 fun l0Var => do
+  let some (n2, t2, b2, bi2) ← peelOneLam (b1.instantiate1 l0Var) | return none
+  withLocalDecl n2 bi2 t2 fun _αVar => do
+  let some (n3, t3, b3, bi3) ← peelOneLam (b2.instantiate1 _αVar) | return none
+  withLocalDecl n3 bi3 t3 fun lVar => do
+  let some (n4, t4, b4, bi4) ← peelOneLam (b3.instantiate1 lVar) | return none
+  withLocalDecl n4 bi4 t4 fun _wVar => do
+  let some (n5, t5, b5, bi5) ← peelOneLam (b4.instantiate1 _wVar) | return none
+  withLocalDecl n5 bi5 t5 fun uVar => do
+  -- Use withReducible to prevent ite → Decidable.rec and HMul → Mul reduction
+  let body ← withReducible do whnf (b5.instantiate1 uVar)
+
+  let l0Fvar := l0Var.fvarId!
+  let lFvar := lVar.fvarId!
+  let uFvar := uVar.fvarId!
+  let nL := allLElems.size
+  let nU := allUElems.size
+  let nW := allWElems.size
+
+  -- Step 1: Detect ite and extract condition + then-branch
+  let hasIte := isAppOfMin body ``ite 5
+  let thenBranch := if hasIte then body.getAppArgs[3]! else body
+
+  -- Step 2: Extract quality values.
+  -- The ite condition is `f(l, u) = true` (from Bool if-then-else desugaring).
+  -- Extract the Bool sub-expression f(l, u), substitute concrete values, and
+  -- whnf to Bool.true or Bool.false.
+  let mut qualityVals : Array Bool := #[]
+  if hasIte then
+    let condExpr := body.getAppArgs[1]!
+    -- The condition is `@Eq Bool (f l u) true` — extract the Bool expression
+    let condBoolExpr :=
+      if condExpr.isAppOfArity ``Eq 3 then condExpr.getAppArgs[1]!
+      else condExpr
+    for l in allLElems do
+      for u in allUElems do
+        let specialized := condBoolExpr.replaceFVar lVar l
+                                       |>.replaceFVar uVar u
+        let reduced ← whnf specialized
+        qualityVals := qualityVals.push (reduced.isConstOf ``Bool.true)
+  else
+    qualityVals := Array.replicate (nL * nU) true
+
+  -- Step 3: Extract belief values from the then-branch.
+  -- Navigate structurally: exp(arg) → arg = α * sum → sum body.
+
+  -- 3a. Navigate: exp → arg
+  unless thenBranch.getAppFn.isConstOf ``Real.exp do return none
+  let expArg := thenBranch.getAppArgs.back!
+
+  -- 3b. Strip HMul (α * ...) to get the sum expression
+  let sumExpr :=
+    if isAppOfMin expArg ``HMul.hMul 6 then
+      expArg.getAppArgs[5]!
+    else
+      expArg
+
+  -- 3c. Handle KL divergence: strip constant entropy term (- Σ belief·log(belief))
+  let sumExpr :=
+    if isAppOfMin sumExpr ``HSub.hSub 6 then
+      let lhs := sumExpr.getAppArgs[4]!
+      let rhs := sumExpr.getAppArgs[5]!
+      if !rhs.containsFVar l0Fvar then lhs else sumExpr
+    else if isAppOfMin sumExpr ``Sub.sub 4 then
+      let lhs := sumExpr.getAppArgs[2]!
+      let rhs := sumExpr.getAppArgs[3]!
+      if !rhs.containsFVar l0Fvar then lhs else sumExpr
+    else
+      sumExpr
+
+  -- 3d. Find Finset.sum and extract its body function
+  let bodyFn :=
+    if sumExpr.getAppFn.isConstOf ``Finset.sum && sumExpr.getAppNumArgs ≥ 5 then
+      some sumExpr.getAppArgs[4]!
+    else
+      sumExpr.getAppArgs.findSome? fun arg =>
+        if arg.getAppFn.isConstOf ``Finset.sum && arg.getAppNumArgs ≥ 5 then
+          some arg.getAppArgs[4]!
+        else none
+  let some bodyFn := bodyFn | return none
+
+  -- 3e. Instantiate the lambda body with fresh fvar for sum variable (s : W)
+  -- Use withLocalDecl so the fvar is properly registered
+  let some (sn, st, sb, sbi) ← peelOneLam bodyFn | return none
+  withLocalDecl sn sbi st fun sVar => do
+  let sumBody ← withReducible do whnf (sb.instantiate1 sVar)
+
+  -- 3f. Find HMul: belief(l,s) * log(l0 u s)
+  --     The factor containing l0Fvar is log(l0), the other is belief
+  let beliefFactor :=
+    if isAppOfMin sumBody ``HMul.hMul 6 then
+      let lhs := sumBody.getAppArgs[4]!
+      let rhs := sumBody.getAppArgs[5]!
+      if rhs.containsFVar l0Fvar then some lhs
+      else if lhs.containsFVar l0Fvar then some rhs
+      else none
+    else
+      none
+  let some beliefFactor := beliefFactor | return none
+
+  -- 3g. Evaluate belief at each (l, s) pair.
+  -- After substituting concrete l and s, the belief expression is fully
+  -- concrete, so extractRat's whnf works.
+  let mut beliefVals : Array ℚ := #[]
+  for l in allLElems do
+    for w in allWElems do
+      let specialized := beliefFactor.replaceFVar lVar l
+                                     |>.replaceFVar sVar w
+      try
+        beliefVals := beliefVals.push (← extractRat specialized)
+      catch _ =>
+        return none
+
+  if beliefVals.size != nL * nW || qualityVals.size != nL * nU then
+    return none
+
+  return some (beliefVals, qualityVals)
+
 /-- Find a sub-expression that looks like a cost term:
     - Appears as the RHS of a subtraction (... - cost)
     - Does NOT mention wFvar (cost depends on utterance, not world)
@@ -186,45 +358,10 @@ partial def findCostSubExpr (e : Expr) (wFvar uFvar : FVarId) : Option Expr :=
 def extractCostFromScore (cfg : Expr) (_U _W _L : Expr)
     (allUElems _allWElems _allLElems : Array Expr) (_pattern : DetectedPattern) :
     MetaM (Option (Array ℚ)) := do
-  -- For beliefAction/qudAction: s1Score at a world where L0 = 1
-  -- gives exp(α * (log 1 - cost u)) = exp(α * (0 - cost u)) = exp(-α * cost u)
-  -- We'd need to solve for cost from the score, which requires log.
-  -- Instead, let's parse the s1Score body to find the cost sub-expression.
-
-  -- Unfold s1Score and find cost term
-  let s1ScoreExpr ← mkAppM ``RSA.RSAConfig.s1Score #[cfg]
-  let mut body ← whnf s1ScoreExpr
-
-  -- Peel off 5 lambdas: l0, α, l, w, u
-  let mut fvars : Array FVarId := #[]
-  for _ in List.range 5 do
-    match body with
-    | .lam _name _ty lamBody _bi =>
-      let fvar ← mkFreshFVarId
-      fvars := fvars.push fvar
-      body := lamBody.instantiate1 (mkFVar fvar)
-      -- Reduce after instantiation
-      body ← whnf body
-    | _ =>
-      body ← whnf body
-      match body with
-      | .lam _name _ty lamBody _bi =>
-        let fvar ← mkFreshFVarId
-        fvars := fvars.push fvar
-        body := lamBody.instantiate1 (mkFVar fvar)
-        body ← whnf body
-      | _ => return none
-
-  if fvars.size < 5 then return none
-  let _l0Fvar := fvars[0]!
-  let _αFvar := fvars[1]!
-  let _lFvar := fvars[2]!
+  let some (body, fvars) ← peelS1ScoreBody cfg | return none
   let wFvar := fvars[3]!
   let uFvar := fvars[4]!
 
-  -- For beliefAction/actionBased, the cost sub-expression is the part that
-  -- mentions uFvar but NOT wFvar. Walk the expression tree to find it.
-  -- This is heuristic: look for HSub.hSub where the RHS doesn't mention wFvar.
   let costExpr? := findCostSubExpr body wFvar uFvar
   match costExpr? with
   | some costExpr =>
@@ -275,6 +412,26 @@ def buildBinaryQFn (T₁ T₂ : Expr) (elems₁ elems₂ : Array Expr) (values :
         let cond₂ ← mkAppM ``Eq #[x₂, elems₂[j]!]
         let cond ← mkAppM ``And #[cond₁, cond₂]
         let val ← mkRatExpr values[idx]!
+        body ← mkAppM ``ite #[cond, val, body]
+      mkLambdaFVars #[x₁, x₂] body
+
+/-- Build `fun (x₁ : T₁) (x₂ : T₂) => <ite chain>` returning `Bool`.
+    values indexed as [i * n₂ + j]. -/
+def buildBinaryBoolFn (T₁ T₂ : Expr) (elems₁ elems₂ : Array Expr) (values : Array Bool) :
+    MetaM Expr := do
+  let n₂ := elems₂.size
+  withLocalDecl `x₁ .default T₁ fun x₁ => do
+    withLocalDecl `x₂ .default T₂ fun x₂ => do
+      let nTotal := elems₁.size * n₂
+      let lastVal := if values[nTotal - 1]! then mkConst ``Bool.true else mkConst ``Bool.false
+      let mut body := lastVal
+      for idx in List.range (nTotal - 1) |>.reverse do
+        let i := idx / n₂
+        let j := idx % n₂
+        let cond₁ ← mkAppM ``Eq #[x₁, elems₁[i]!]
+        let cond₂ ← mkAppM ``Eq #[x₂, elems₂[j]!]
+        let cond ← mkAppM ``And #[cond₁, cond₂]
+        let val := if values[idx]! then mkConst ``Bool.true else mkConst ``Bool.false
         body ← mkAppM ``ite #[cond, val, body]
       mkLambdaFVars #[x₁, x₂] body
 
@@ -361,7 +518,9 @@ def buildConfigData (U W L : Expr)
     (allUElems allWElems allLElems : Array Expr)
     (meaningVals : Array ℚ) (wpVals : Array ℚ) (lpVals : Array ℚ)
     (αNat : ℕ) (pattern : DetectedPattern)
-    (costVals : Option (Array ℚ) := none) : MetaM (Option Expr) := do
+    (costVals : Option (Array ℚ) := none)
+    (beliefVals : Option (Array ℚ) := none)
+    (qualityVals : Option (Array Bool) := none) : MetaM (Option Expr) := do
 
   -- Build meaning function: L → U → W → ℚ
   let meaningFn ← buildTernaryQFn L U W allLElems allUElems allWElems meaningVals
@@ -378,8 +537,14 @@ def buildConfigData (U W L : Expr)
       let some costs := costVals | return none
       let costFn ← buildUnaryQFn U allUElems costs
       mkAppOptM ``RSA.S1ScoreSpec.beliefAction #[U, W, L, costFn]
+    | .beliefWeighted => do
+      let some bv := beliefVals | return none
+      let some qv := qualityVals | return none
+      let beliefFn ← buildBinaryQFn L W allLElems allWElems bv
+      let qualityFn ← buildBinaryBoolFn L U allLElems allUElems qv
+      mkAppOptM ``RSA.S1ScoreSpec.beliefWeighted #[U, W, L, beliefFn, qualityFn]
     | _ => do
-      -- TODO: implement qudBelief, qudAction, beliefWeighted
+      -- TODO: implement qudBelief, qudAction
       return none
 
   -- Build α
@@ -496,9 +661,18 @@ def tryAutoDetectL1Compare (goal : MVarId) (cfg u w₁ w₂ : Expr) : TacticM Bo
       | none => pure (pattern, cv)
     | _ => pure (pattern, none)
 
+  -- Extract belief/quality for beliefWeighted
+  let (beliefVals, qualityVals) ← match pattern with
+    | .beliefWeighted => do
+      let some (bv, qv) ← extractBeliefAndQuality cfg allLElems allUElems allWElems | do
+        logInfo m!"rsa_predict: [auto-detect] belief/quality extraction failed"
+        return false
+      pure (some bv, some qv)
+    | _ => pure (none, none)
+
   -- Build RSAConfigData
   let some d ← buildConfigData U W L allUElems allWElems allLElems
-      meaningVals wpVals lpVals αNat pattern costVals | do
+      meaningVals wpVals lpVals αNat pattern costVals beliefVals qualityVals | do
     logInfo m!"rsa_predict: [auto-detect] RSAConfigData construction failed (cost={costVals.isSome})"
     return false
 
@@ -593,8 +767,16 @@ def tryAutoDetectL1NotGt (goal : MVarId) (cfg u w₁ w₂ : Expr) : TacticM Bool
       | none => pure (pattern, cv)
     | _ => pure (pattern, none)
 
+  let (beliefVals, qualityVals) ← match pattern with
+    | .beliefWeighted => do
+      let some (bv, qv) ← extractBeliefAndQuality cfg allLElems allUElems allWElems | do
+        logInfo m!"rsa_predict: [auto-detect/¬L1] failed: belief/quality extraction"
+        return false
+      pure (some bv, some qv)
+    | _ => pure (none, none)
+
   let some d ← buildConfigData U W L allUElems allWElems allLElems
-      meaningVals wpVals lpVals αNat pattern costVals | do
+      meaningVals wpVals lpVals αNat pattern costVals beliefVals qualityVals | do
     logInfo m!"rsa_predict: [auto-detect/¬L1] failed: buildConfigData"
     return false
 
@@ -657,8 +839,14 @@ private def buildS1ConfigData (cfg : Expr) :
       | none => pure (pattern, cv)
     | _ => pure (pattern, none)
 
+  let (beliefVals, qualityVals) ← match pattern with
+    | .beliefWeighted => do
+      let some (bv, qv) ← extractBeliefAndQuality cfg allLElems allUElems allWElems | return none
+      pure (some bv, some qv)
+    | _ => pure (none, none)
+
   let some d ← buildConfigData U W L allUElems allWElems allLElems
-      meaningVals wpVals lpVals αNat pattern costVals | return none
+      meaningVals wpVals lpVals αNat pattern costVals beliefVals qualityVals | return none
 
   -- Build h_lat : d.Latent = cfg.Latent proof (should be rfl since d.Latent = L = cfg.Latent)
   let dLatent ← whnf (← mkAppM ``RSA.RSAConfigData.Latent #[d])
@@ -779,8 +967,14 @@ def tryAutoDetectL1ScoreGt (goal : MVarId) (cfg u₁ w₁ u₂ w₂ : Expr) : Ta
       | none => pure (pattern, cv)
     | _ => pure (pattern, none)
 
+  let (beliefVals, qualityVals) ← match pattern with
+    | .beliefWeighted => do
+      let some (bv, qv) ← extractBeliefAndQuality cfg allLElems allUElems allWElems | return false
+      pure (some bv, some qv)
+    | _ => pure (none, none)
+
   let some d ← buildConfigData U W L allUElems allWElems allLElems
-      meaningVals wpVals lpVals αNat pattern costVals | return false
+      meaningVals wpVals lpVals αNat pattern costVals beliefVals qualityVals | return false
 
   try
     let checkExpr ← mkAppM ``RSA.Verify.checkL1ScoreGt #[d, u₁, w₁, u₂, w₂]

@@ -8,17 +8,30 @@ import Linglib.Theories.Semantics.Lexical.Numeral.Semantics
 # Goodman & Stuhlmuller (2013): RSA Bridge
 @cite{goodman-stuhlmuller-2013}
 
-The paper's own RSA model applied to the experimental data. A single
-`gsCfg` constructor parametric in the meaning function serves both
-experiments (quantifiers and lower-bound numerals). They share the same
-observation model, speaker belief, and S1 structure — the only thing that
-varies is the utterance type and literal semantics.
+The paper's RSA model applied to the experimental data. A single `gsCfg`
+constructor parametric in the meaning function serves both experiments
+(quantifiers and lower-bound numerals). They share the same observation
+model, speaker belief, and S1 structure — the only thing that varies is
+the utterance type and literal semantics.
 
-S1(u | obs) ∝ exp(α · E_belief[log L0(s | u)])
+## Architecture (Eq. 1–5)
 
-The quality filter (utterances must be true at all believed worlds) is
-explicit because `Real.log 0 = 0` in Lean/Mathlib, unlike WebPPL where
-`log(0) = -∞` makes quality emerge from the expected utility computation.
+    F_w : s → {0, 1}          truth function for utterance w            (§1)
+    P_lex(s | w) ∝ δ_{F_w(s)}  literal interpretation                   (§1)
+    U(w; s) = ln P_lex(s | w)  informativity (negative surprisal)        (Eq. 3)
+    P(s | o, a)                speaker's belief state                    (hypergeometric)
+    S1(w | o, a) ∝ exp(α · E_{P(s|o,a)}[U(w; s)])                       (Eq. 2)
+                 = exp(α · Σ_s P(s | o, a) · ln P_lex(s | w))
+    S1(w | s, a) = Σ_o S1(w | o, a) · P(o | a, s)                      (Eq. 4)
+    L1(s | w, a) ∝ S1(w | s, a) · P(s)                                  (Eq. 1)
+
+The speaker observes a subset of objects (hypergeometric sampling), forms
+a belief P(s | o, a), and soft-max optimizes expected informativity under
+that belief. L1 marginalizes over observations weighted by P(o | a, s).
+
+The quality filter (utterance must be true at all worlds the speaker
+considers possible) is explicit because `Real.log 0 = 0` in Lean/Mathlib,
+unlike WebPPL where `log(0) = -∞` makes quality emerge from the score.
 
 The model reproduces all 11 findings. All proofs use `rsa_predict`.
 
@@ -137,36 +150,37 @@ def qualityOk {U : Type*} (meaning : U → WorldState → Bool)
 -- §6. RSA Config
 -- ============================================================================
 
-open RSA in
+open RSA Real in
 /-- GS2013 model parametric in utterance type and meaning function.
 
-    Both experiments (quantifiers, numerals) share identical S1 structure:
+    Eq. 1–4 from the paper:
+    P_lex(s | w)    ∝  ⟦w⟧(s)                                     (literal listener)
+    U(w; s)          =  ln P_lex(s | w)                             (Eq. 3)
+    S1(w | o, a)    ∝  exp(α · Σ_s P(s | o, a) · U(w; s))         (Eq. 2)
+    S1(w | s, a)     =  Σ_o S1(w | o, a) · P(o | a, s)            (Eq. 4)
+    L1(s | w, a)    ∝  S1(w | s, a) · P(s)                         (Eq. 1)
 
-        S1(u | obs) ∝ exp(α · Σ_s belief(obs, s) · log L0(s | u))
-
-    The speaker optimizes expected log-informativity under their belief state.
-    The quality filter ensures the speaker only considers utterances true at all
-    worlds they consider possible.
-
-    The `_w` parameter in `s1Score` is unused: the speaker's utility depends on
-    the observation (latent variable), not the world directly. S1 is indexed by
-    observation, and L1 marginalizes over observations weighted by the
-    hypergeometric prior. -/
+    The quality filter ensures the speaker only considers utterances true at
+    all worlds compatible with their observation. L1 marginalizes over
+    observations via `latentPrior w obs = P(obs | a, w)`. -/
 noncomputable def gsCfg {U : Type*} [Fintype U]
     (meaning : U → WorldState → Bool) (a : Access) : RSAConfig U WorldState where
   Latent := Obs
+  -- P_lex(s | w) ∝ ⟦w⟧(s) — literal interpretation
   meaning _obs u w := if meaning u w then 1 else 0
   meaning_nonneg _ _ _ := by split <;> positivity
+  -- Eq. 2+3: S1(w | o, a) ∝ exp(α · Σ_s P(s|o,a) · ln P_lex(s|w))
   s1Score l0 α obs _w u :=
     if qualityOk meaning obs u then
-      Real.exp (α * ∑ s : WorldState, speakerBelief obs s * Real.log (l0 u s))
+      exp (α * ∑ s : WorldState, speakerBelief obs s * log (l0 u s))
     else 0
   s1Score_nonneg _ _ _ _ _ _ _ := by
     split
-    · exact le_of_lt (Real.exp_pos _)
+    · exact le_of_lt (exp_pos _)
     · exact le_refl 0
   α := 1
   α_pos := one_pos
+  -- Eq. 4: P(o | a, s) — hypergeometric observation model
   latentPrior w obs := obsPriorTable a w obs
   latentPrior_nonneg w obs := by
     unfold obsPriorTable
