@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.226.25] - 2026-02-23
+
+### Changed
+- **`Core/Interval/ReflectInterval.lean`**: `eval`/`evalValid` for `rlog` handle `log(0) = 0` — when argument interval is `[0, 0]`, return `QInterval.exact 0` instead of fallback `[-1000, 1000]`; enables evalValid to pass for GS2013 belief-weighted models where `belief(s) * log(l0 u s)` has `l0 u s = 0` for some (utterance, world) pairs; all 5 GS2013 `>` theorems now pass kernel via rfl bridge at ~12-15s each
+
 ## [0.226.24] - 2026-02-23
 
 ### Changed

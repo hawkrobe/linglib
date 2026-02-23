@@ -102,6 +102,7 @@ def RExpr.eval : RExpr → QInterval
   | .rlog a =>
     let ra := a.eval
     if h : 0 < ra.lo then logInterval ra h
+    else if ra.lo == 0 && ra.hi == 0 then QInterval.exact 0  -- log(0) = 0 in Lean
     else ⟨-1000, 1000, by norm_num⟩  -- fallback (guarded by evalValid)
   | .rpow a n =>
     let ra := a.eval
@@ -148,7 +149,8 @@ def RExpr.evalValid : RExpr → Bool
   | .neg a => a.evalValid
   | .sub a b => a.evalValid && b.evalValid
   | .rexp a => a.evalValid
-  | .rlog a => a.evalValid && decide (0 < a.eval.lo)
+  | .rlog a => a.evalValid && (decide (0 < a.eval.lo) ||
+    (a.eval.lo == 0 && a.eval.hi == 0))  -- log(0) = 0 in Lean
   | .rpow a n => a.evalValid && (n == 0 || decide (0 ≤ a.eval.lo))
   | .inv a => a.evalValid && decide (0 < a.eval.lo)
   | .iteZero c t e =>
@@ -250,12 +252,28 @@ theorem RExpr.eval_sound : ∀ (e : RExpr), e.evalValid = true →
     exact expInterval_containsReal (eval_sound a hv)
   | .rlog a => by
     intro hv
-    simp only [evalValid, Bool.and_eq_true, decide_eq_true_eq] at hv
+    simp only [evalValid, Bool.and_eq_true, Bool.or_eq_true, beq_iff_eq,
+               decide_eq_true_eq] at hv
     simp only [eval, denote]
     have iha := eval_sound a hv.1
     split
     · exact logInterval_containsReal ‹_› iha
-    · exact absurd hv.2 ‹_›
+    · split
+      · -- log(0) = 0: a.eval = [0, 0] means a.denote = 0
+        rename_i hnotpos hzero
+        simp only [Bool.and_eq_true, beq_iff_eq] at hzero
+        have haz := interval_eq_zero iha hzero.1 hzero.2
+        rw [haz, Real.log_zero]
+        have := QInterval.exact_containsReal (0 : ℚ)
+        simp [Rat.cast_zero] at this
+        exact this
+      · -- fallback: contradiction with evalValid
+        rename_i hnotpos hnotzero
+        exfalso
+        rcases hv.2 with hpos | hboth
+        · exact hnotpos hpos
+        · simp only [Bool.and_eq_true, beq_iff_eq] at hboth hnotzero
+          exact hnotzero hboth
   | .rpow a n => by
     intro hv
     simp only [evalValid, Bool.and_eq_true, Bool.or_eq_true, beq_iff_eq,
