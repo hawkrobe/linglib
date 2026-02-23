@@ -97,13 +97,12 @@ theorem restricted_accessible_eq (f : ModalBase) (α : BProp World) (w : World) 
 
     ∀w' ∈ Best(f+α, ∅, w). β(w')  ⟺  ∀w' ∈ ∩f(w). α(w') → β(w')
 
-    This connects `Modality/Kratzer.lean` (749 lines) to
-    `Conditionals/Basic.lean` (436 lines). -/
+    This connects `Modality/Kratzer.lean` to `Conditionals/Basic.lean`. -/
 theorem restrictor_eq_strict (f : ModalBase) (α β : BProp World) (w : World) :
     conditionalNecessity f emptyBackground α β w =
     strictImpFinite (accessibleWorlds f) α β w := by
-  unfold conditionalNecessity strictImpFinite necessity emptyBackground
-  rw [empty_ordering_simple]
+  unfold conditionalNecessity strictImpFinite necessity
+  rw [empty_ordering_emptyBackground]
   rw [restricted_accessible_eq]
   exact filter_all_eq_all_imp (accessibleWorlds f w) α β
 

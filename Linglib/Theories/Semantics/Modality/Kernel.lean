@@ -337,7 +337,7 @@ theorem kernelMust_eq_simpleNecessity (k : Kernel) (φ : BProp World) (w : World
 /-- Kernel must assertion = full Kratzer necessity with empty ordering.
 
     This extends `kernelMust_eq_simpleNecessity` by connecting through
-    `simple_eq_empty_ordering`: simpleNecessity f = necessity f emptyBackground. -/
+    `kernelMust_eq_simpleNecessity`: kernel must = simple necessity. -/
 theorem kernelMust_eq_necessity (k : Kernel) (φ : BProp World) (w : World) :
     (kernelMust k φ).assertion w = necessity k.toModalBase emptyBackground φ w := by
   rw [kernelMust_eq_simpleNecessity]

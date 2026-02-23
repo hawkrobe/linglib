@@ -290,6 +290,12 @@ theorem empty_ordering_simple (f : ModalBase) (w : World) :
   intro w'' _
   exact (empty_ordering_all_equivalent w' w'').1
 
+/-- Variant of `empty_ordering_simple` matching `emptyBackground` by name.
+    Avoids the `unfold emptyBackground` workaround needed before `rw [empty_ordering_simple]`. -/
+theorem empty_ordering_emptyBackground (f : ModalBase) (w : World) :
+    bestWorlds f emptyBackground w = accessibleWorlds f w := by
+  unfold emptyBackground
+  exact empty_ordering_simple f w
 
 /--
 **Simple f-necessity** (Kratzer p. 32): p is true at ALL accessible worlds.

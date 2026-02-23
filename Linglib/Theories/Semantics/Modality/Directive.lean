@@ -168,28 +168,31 @@ theorem weak_not_entails_strong :
 
 /-- A deontic scenario with strong and weak norms.
 
-    - Primary norms g: legal/institutional obligations
+    Contains a `DeonticFlavor` (circumstantial base + primary norms) and adds
+    a secondary ordering source for weak necessity. This makes the structural
+    relationship to Kratzer's framework explicit: strong necessity IS the
+    primary `DeonticFlavor`; weak necessity refines it.
+
+    - Primary norms g (via `DeonticFlavor`): legal/institutional obligations
     - Secondary norms g': social expectations, stereotypical behavior
 
     "Must" quantifies over worlds satisfying legal obligations;
     "ought" further refines by social expectations. -/
 structure DeonticStrength where
-  /-- The circumstantial modal base -/
-  circumstances : ModalBase
-  /-- Primary norms (legal, institutional) -/
-  primaryNorms : OrderingSource
+  /-- The primary deontic scenario (circumstantial base + primary norms) -/
+  primary : DeonticFlavor
   /-- Secondary norms (social, stereotypical) -/
   secondaryNorms : OrderingSource
 
 /-- Strong deontic necessity: "You must do X" (legal obligation). -/
 def DeonticStrength.must (d : DeonticStrength)
     (p : BProp World) (w : World) : Bool :=
-  strongNecessity d.circumstances d.primaryNorms p w
+  strongNecessity d.primary.circumstances d.primary.norms p w
 
 /-- Weak deontic necessity: "You ought to do X" (refined by social norms). -/
 def DeonticStrength.ought (d : DeonticStrength)
     (p : BProp World) (w : World) : Bool :=
-  weakNecessity d.circumstances d.primaryNorms d.secondaryNorms p w
+  weakNecessity d.primary.circumstances d.primary.norms d.secondaryNorms p w
 
 /-- Bridge to Kratzer's DeonticFlavor: strong necessity with DeonticFlavor
     is exactly standard Kratzer necessity. -/
@@ -203,7 +206,7 @@ theorem deontic_must_entails_ought (d : DeonticStrength)
     (p : BProp World) (w : World)
     (h : d.must p w = true) :
     d.ought p w = true :=
-  strong_entails_weak d.circumstances d.primaryNorms d.secondaryNorms p w h
+  strong_entails_weak d.primary.circumstances d.primary.norms d.secondaryNorms p w h
 
 /-- With no secondary norms, weak necessity reduces to strong necessity. -/
 theorem weak_eq_strong_no_secondary (f : ModalBase) (g : OrderingSource)

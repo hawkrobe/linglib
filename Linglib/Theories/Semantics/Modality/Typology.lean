@@ -272,4 +272,32 @@ def canonicalAssignment
     | .deontic => deont.toKratzerParams
     | .circumstantial => teleo.toKratzerParams
 
+/-! ## Bridge: ModalItem.decomposition ↔ satisfiesIFF
+
+`ModalItem.decomposition` (Core/ModalLogic.lean) and `satisfiesIFF` (this file)
+compute the same property through different algorithms:
+- `decomposition` projects forces/flavors, builds the Cartesian product, checks containment
+- `satisfiesIFF` checks the closure property directly on the meaning list
+
+Both reduce to: ∀ fo ∈ forces(m), ∀ fl ∈ flavors(m), ⟨fo, fl⟩ ∈ m. -/
+
+open Core.ModalLogic (ModalItem ModalDecomposition)
+
+/-- `ModalItem.decomposition` agrees with `satisfiesIFF`:
+    a modal is decomposable iff its meaning satisfies IFF.
+
+    TODO: Structural proof. Both sides reduce to checking that
+    `m.meaning` is closed under force-flavor recombination:
+    - Forward: if the Cartesian product of projected forces/flavors
+      is contained in `m.meaning`, then for any two pairs `(fo₁, fl₁)`
+      and `(fo₂, fl₂)` in `m.meaning`, `(fo₁, fl₂)` is in the product
+      (since `fo₁ ∈ forces` and `fl₂ ∈ flavors`), hence in `m.meaning`.
+    - Backward: if IFF holds, take any `(fo, fl)` in the Cartesian product.
+      Then `fo ∈ forces` means `∃ (fo, fl₁) ∈ m.meaning`, and
+      `fl ∈ flavors` means `∃ (fo₂, fl) ∈ m.meaning`.
+      By IFF closure, `(fo, fl) ∈ m.meaning`. -/
+theorem decomposition_eq_satisfiesIFF (m : ModalItem) :
+    (m.decomposition == .decomposable) = satisfiesIFF m.meaning := by
+  sorry
+
 end Semantics.Modality.Typology

@@ -1,5 +1,4 @@
 import Linglib.Theories.Semantics.Modality.Kratzer
-import Linglib.Core.Time
 
 /-!
 # Temporal Modal Evaluation
@@ -12,7 +11,7 @@ with time-indexed conversational backgrounds and derives the static
 ## Core Extension
 
 Kratzer.lean defines `ConvBackground := World → List (BProp World)`.
-The book's Ch 5 argues that this should be `World → Time → List (BProp World)`:
+Kratzer (2012) Ch. 4 argues that this should be `World → Time → List (BProp World)`:
 the modal base and ordering source can vary with the temporal perspective.
 
 This distinction matters for:
@@ -26,8 +25,7 @@ This distinction matters for:
 ## Key Result
 
 `temporal_eq_static`: temporal modal evaluation reduces to standard Kratzer
-evaluation when the conversational backgrounds are time-independent. This
-bridges `Core/Time.lean` (443 lines) to `Modality/Kratzer.lean` (749 lines).
+evaluation when the conversational backgrounds are time-independent.
 
 ## References
 
@@ -111,59 +109,20 @@ theorem temporal_duality {Time : Type*}
      !temporalPossibility f g t (λ w' => !p w') w) = true :=
   duality (f.atTime t) (g.atTime t) p w
 
-/-! ## Temporal perspective -/
-
-/-- The time at which the modal base is evaluated.
-
-    - **Speech time**: typical for epistemic modals ("it must be raining")
-    - **Event time**: typical for root modals ("John can swim")
-    - **Reference time**: for retrospective modals ("John must have left") -/
-inductive TemporalPerspective where
-  | speechTime
-  | eventTime
-  | referenceTime
-  deriving DecidableEq, BEq, Repr
-
-/-- Temporal orientation of the prejacent relative to the temporal perspective.
-
-    - **Past**: "must have left" — the prejacent event precedes the perspective
-    - **Present**: "must be raining" — the prejacent overlaps the perspective
-    - **Future**: "will leave" — the prejacent follows the perspective
-    - **Neutral**: no temporal constraint -/
-inductive TemporalOrientation where
-  | past
-  | present
-  | future
-  | neutral
-  deriving DecidableEq, BEq, Repr
-
-/-- A temporal modal profile: perspective + orientation + flavor. -/
-structure TemporalModalProfile where
-  perspective : TemporalPerspective
-  orientation : TemporalOrientation
-  deriving DecidableEq, BEq, Repr
-
 /-! ## Historical accessibility (Condoravdi 2002)
 
 Worlds share history up to time t: they agree on all facts prior to t.
 This gives the "branching futures" model: the past is settled, the future
 is open. -/
 
-/-- A history function assigns to each (world, time) pair the set of
-    propositions encoding settled facts through that time. -/
-abbrev HistoryFunction (Time : Type*) := World → Time → List (BProp World)
+/-- Historical necessity: p holds at all worlds sharing w's history up to t.
 
-/-- Historical modal base: accessible worlds share the evaluation world's
-    history up to time t. -/
-def historicalBase {Time : Type*}
-    (history : HistoryFunction Time) : TemporalModalBase Time :=
-  history
-
-/-- Historical necessity: p holds at all worlds sharing w's history up to t. -/
+    The history function (a `TemporalConvBackground`) serves as the modal base;
+    the ordering source is empty (pure accessibility, no ranking). -/
 def historicalNecessity {Time : Type*}
-    (history : HistoryFunction Time)
+    (history : TemporalConvBackground Time)
     (t : Time) (p : BProp World) (w : World) : Bool :=
-  temporalNecessity (historicalBase history)
+  temporalNecessity history
     (λ _ _ => ([] : List (BProp World))) t p w
 
 /-- With empty history (no shared past), all worlds are accessible:
@@ -193,8 +152,8 @@ theorem evidence_monotone {Time : Type*}
   unfold temporalNecessity TemporalConvBackground.atTime at hNec ⊢
   change necessity (λ w => f w t₁) emptyBackground p w = true at hNec
   change necessity (λ w => f w t₂) emptyBackground p w = true
-  unfold necessity emptyBackground at hNec ⊢
-  rw [empty_ordering_simple] at hNec ⊢
+  unfold necessity at hNec ⊢
+  rw [empty_ordering_emptyBackground] at hNec ⊢
   unfold accessibleWorlds propIntersection at hNec ⊢
   simp only [List.all_eq_true, List.mem_filter] at hNec ⊢
   intro w' ⟨hw'_mem, hw'_all⟩
@@ -217,7 +176,7 @@ theorem future_eq_simple_necessity
     (circumstantial : ModalBase) (p : BProp World) (w : World) :
     futureAsModal circumstantial p w =
     simpleNecessity circumstantial p w := by
-  unfold futureAsModal simpleNecessity necessity emptyBackground
-  rw [empty_ordering_simple]
+  unfold futureAsModal simpleNecessity necessity
+  rw [empty_ordering_emptyBackground]
 
 end Semantics.Modality.Temporal
