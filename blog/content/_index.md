@@ -1,3 +1,3 @@
 ---
-title: "LEANguistics"
+title: "lingliblog"
 ---

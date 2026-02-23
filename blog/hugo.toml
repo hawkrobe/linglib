@@ -1,6 +1,6 @@
 baseURL = "https://hawkrobe.github.io/linglib/"
 languageCode = "en-us"
-title = "LEANguistics"
+title = "lingliblog"
 theme = "PaperMod"
 
 [params]
@@ -13,7 +13,7 @@ theme = "PaperMod"
   defaultTheme = "auto"
 
 [params.homeInfoParams]
-  Title = "LEANguistics"
+  Title = "lingliblog"
   Content = "Development notes from Linglib."
 
 [[params.socialIcons]]
