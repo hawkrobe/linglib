@@ -3261,13 +3261,297 @@ private theorem fin4_dirac_repr (sys : EpistemicSystemFA (Fin 4))
       · intro _; exact sys.trans C ∅ D
           (sys.mono _ _ (Set.empty_subset C)) (ge_null D hjD))⟩
 
--- ── Card 4: Canonical proofs (sorry — to be filled) ──
+-- ── Card 4: Canonical proofs ──
+
+set_option maxHeartbeats 6400000 in
+private theorem theorem8a_fin4_2null_01_core (sys : EpistemicSystemFA (Fin 4))
+    (hn0 : sys.ge ∅ {(0 : Fin 4)}) (hn1 : sys.ge ∅ {(1 : Fin 4)})
+    (hn2 : ¬sys.ge ∅ {(2 : Fin 4)}) (hn3 : ¬sys.ge ∅ {(3 : Fin 4)})
+    (c : ℚ) (hc0 : 0 < c) (hc1 : c < 1)
+    (h23_iff : sys.ge {(2 : Fin 4)} {3} ↔ c ≥ 1 - c)
+    (h32_iff : sys.ge {(3 : Fin 4)} {2} ↔ 1 - c ≥ c) :
+    ∃ (m : FinAddMeasure (Fin 4)), ∀ A B, sys.ge A B ↔ m.inducedGe A B := by
+  -- ── Null pair: ge ∅ {0,1} ──
+  have hge01 : sys.ge ∅ ({0, 1} : Set (Fin 4)) := by
+    have : sys.ge {(0 : Fin 4)} ({0, 1} : Set _) := by
+      rw [sys.additive]
+      convert hn1 using 2 <;> ext x <;> fin_cases x <;> simp_all
+    exact sys.trans _ _ _ hn0 this
+  -- ── Null beats null ──
+  have hge_0_1 : sys.ge {(0 : Fin 4)} {1} :=
+    sys.trans _ _ _ (sys.mono _ _ (Set.empty_subset _)) hn1
+  have hge_1_0 : sys.ge {(1 : Fin 4)} {0} :=
+    sys.trans _ _ _ (sys.mono _ _ (Set.empty_subset _)) hn0
+  -- ── Null can't beat non-null ──
+  have hng_0_2 : ¬sys.ge {(0 : Fin 4)} {2} := fun h => hn2 (sys.trans _ _ _ hn0 h)
+  have hng_0_3 : ¬sys.ge {(0 : Fin 4)} {3} := fun h => hn3 (sys.trans _ _ _ hn0 h)
+  have hng_1_2 : ¬sys.ge {(1 : Fin 4)} {2} := fun h => hn2 (sys.trans _ _ _ hn1 h)
+  have hng_1_3 : ¬sys.ge {(1 : Fin 4)} {3} := fun h => hn3 (sys.trans _ _ _ hn1 h)
+  -- ── Non-null beats null (totality) ──
+  have hge_2_0 := (sys.total {(2 : Fin 4)} {0}).resolve_right hng_0_2
+  have hge_2_1 := (sys.total {(2 : Fin 4)} {1}).resolve_right hng_1_2
+  have hge_3_0 := (sys.total {(3 : Fin 4)} {0}).resolve_right hng_0_3
+  have hge_3_1 := (sys.total {(3 : Fin 4)} {1}).resolve_right hng_1_3
+  -- ── Null pair can't beat non-null ──
+  have hng_01_2 : ¬sys.ge ({0, 1} : Set (Fin 4)) {2} :=
+    fun h => hn2 (sys.trans _ _ _ hge01 h)
+  have hng_01_3 : ¬sys.ge ({0, 1} : Set (Fin 4)) {3} :=
+    fun h => hn3 (sys.trans _ _ _ hge01 h)
+  -- ── Non-null beats null pair ──
+  have hge_2_01 := (sys.total {(2 : Fin 4)} ({0, 1} : Set _)).resolve_right hng_01_2
+  have hge_3_01 := (sys.total {(3 : Fin 4)} ({0, 1} : Set _)).resolve_right hng_01_3
+  -- ── ¬ge ∅ {set-with-nonnull} ──
+  have hng_e_02 : ¬sys.ge ∅ ({0, 2} : Set (Fin 4)) :=
+    fun h => hn2 (sys.trans _ _ _ h (sys.mono _ _
+      (show ({2} : Set (Fin 4)) ⊆ {0, 2} by intro x hx; fin_cases x <;> simp_all)))
+  have hng_e_03 : ¬sys.ge ∅ ({0, 3} : Set (Fin 4)) :=
+    fun h => hn3 (sys.trans _ _ _ h (sys.mono _ _
+      (show ({3} : Set (Fin 4)) ⊆ {0, 3} by intro x hx; fin_cases x <;> simp_all)))
+  have hng_e_12 : ¬sys.ge ∅ ({1, 2} : Set (Fin 4)) :=
+    fun h => hn2 (sys.trans _ _ _ h (sys.mono _ _
+      (show ({2} : Set (Fin 4)) ⊆ {1, 2} by intro x hx; fin_cases x <;> simp_all)))
+  have hng_e_13 : ¬sys.ge ∅ ({1, 3} : Set (Fin 4)) :=
+    fun h => hn3 (sys.trans _ _ _ h (sys.mono _ _
+      (show ({3} : Set (Fin 4)) ⊆ {1, 3} by intro x hx; fin_cases x <;> simp_all)))
+  have hng_e_23 : ¬sys.ge ∅ ({2, 3} : Set (Fin 4)) :=
+    fun h => hn2 (sys.trans _ _ _ h (sys.mono _ _
+      (show ({2} : Set (Fin 4)) ⊆ {2, 3} by intro x hx; fin_cases x <;> simp_all)))
+  have hng_e_012 : ¬sys.ge ∅ ({0, 1, 2} : Set (Fin 4)) :=
+    fun h => hn2 (sys.trans _ _ _ h (sys.mono _ _
+      (show ({2} : Set (Fin 4)) ⊆ {0, 1, 2} by intro x hx; fin_cases x <;> simp_all)))
+  have hng_e_013 : ¬sys.ge ∅ ({0, 1, 3} : Set (Fin 4)) :=
+    fun h => hn3 (sys.trans _ _ _ h (sys.mono _ _
+      (show ({3} : Set (Fin 4)) ⊆ {0, 1, 3} by intro x hx; fin_cases x <;> simp_all)))
+  have hng_e_023 : ¬sys.ge ∅ ({0, 2, 3} : Set (Fin 4)) :=
+    fun h => hn2 (sys.trans _ _ _ h (sys.mono _ _
+      (show ({2} : Set (Fin 4)) ⊆ {0, 2, 3} by intro x hx; fin_cases x <;> simp_all)))
+  have hng_e_123 : ¬sys.ge ∅ ({1, 2, 3} : Set (Fin 4)) :=
+    fun h => hn2 (sys.trans _ _ _ h (sys.mono _ _
+      (show ({2} : Set (Fin 4)) ⊆ {1, 2, 3} by intro x hx; fin_cases x <;> simp_all)))
+  -- ── ¬ge {null} {pair/triple-with-nonnull} ──
+  have hng_0_12 : ¬sys.ge {(0 : Fin 4)} ({1, 2} : Set _) :=
+    fun h => hng_e_12 (sys.trans _ _ _ hn0 h)
+  have hng_0_13 : ¬sys.ge {(0 : Fin 4)} ({1, 3} : Set _) :=
+    fun h => hng_e_13 (sys.trans _ _ _ hn0 h)
+  have hng_0_23 : ¬sys.ge {(0 : Fin 4)} ({2, 3} : Set _) :=
+    fun h => hng_e_23 (sys.trans _ _ _ hn0 h)
+  have hng_1_02 : ¬sys.ge {(1 : Fin 4)} ({0, 2} : Set _) :=
+    fun h => hng_e_02 (sys.trans _ _ _ hn1 h)
+  have hng_1_03 : ¬sys.ge {(1 : Fin 4)} ({0, 3} : Set _) :=
+    fun h => hng_e_03 (sys.trans _ _ _ hn1 h)
+  have hng_1_23 : ¬sys.ge {(1 : Fin 4)} ({2, 3} : Set _) :=
+    fun h => hng_e_23 (sys.trans _ _ _ hn1 h)
+  have hng_0_123 : ¬sys.ge {(0 : Fin 4)} ({1, 2, 3} : Set _) :=
+    fun h => hng_e_123 (sys.trans _ _ _ hn0 h)
+  have hng_1_023 : ¬sys.ge {(1 : Fin 4)} ({0, 2, 3} : Set _) :=
+    fun h => hng_e_023 (sys.trans _ _ _ hn1 h)
+  have hng_01_23 : ¬sys.ge ({0, 1} : Set (Fin 4)) ({2, 3} : Set _) :=
+    fun h => hng_e_23 (sys.trans _ _ _ hge01 h)
+  -- ── ge {set-with-nonnull} {null} (totality) ──
+  have hge_12_0 := (sys.total ({1, 2} : Set (Fin 4)) {0}).resolve_right hng_0_12
+  have hge_13_0 := (sys.total ({1, 3} : Set (Fin 4)) {0}).resolve_right hng_0_13
+  have hge_02_1 := (sys.total ({0, 2} : Set (Fin 4)) {1}).resolve_right hng_1_02
+  have hge_03_1 := (sys.total ({0, 3} : Set (Fin 4)) {1}).resolve_right hng_1_03
+  have hge_23_0 := (sys.total ({2, 3} : Set (Fin 4)) {0}).resolve_right hng_0_23
+  have hge_23_1 := (sys.total ({2, 3} : Set (Fin 4)) {1}).resolve_right hng_1_23
+  have hge_123_0 := (sys.total ({1, 2, 3} : Set (Fin 4)) {0}).resolve_right hng_0_123
+  have hge_023_1 := (sys.total ({0, 2, 3} : Set (Fin 4)) {1}).resolve_right hng_1_023
+  have hge_23_01 := (sys.total ({2, 3} : Set (Fin 4)) ({0, 1} : Set _)).resolve_right hng_01_23
+  -- ── Null absorption via additivity ──
+  -- ge {nonnull} {null, nonnull}: by additive ↔ ge ∅ {null}
+  have hge_3_03 : sys.ge {(3 : Fin 4)} ({0, 3} : Set _) := by
+    rw [sys.additive]
+    convert hn0 using 2 <;> ext x <;> fin_cases x <;> simp_all
+  have hge_2_02 : sys.ge {(2 : Fin 4)} ({0, 2} : Set _) := by
+    rw [sys.additive]
+    convert hn0 using 2 <;> ext x <;> fin_cases x <;> simp_all
+  have hge_3_13 : sys.ge {(3 : Fin 4)} ({1, 3} : Set _) := by
+    rw [sys.additive]
+    convert hn1 using 2 <;> ext x <;> fin_cases x <;> simp_all
+  have hge_2_12 : sys.ge {(2 : Fin 4)} ({1, 2} : Set _) := by
+    rw [sys.additive]
+    convert hn1 using 2 <;> ext x <;> fin_cases x <;> simp_all
+  -- ge {nonnull} {null_pair, nonnull}: by additive ↔ ge ∅ {null_pair}
+  have hge_2_012 : sys.ge {(2 : Fin 4)} ({0, 1, 2} : Set _) := by
+    rw [sys.additive]
+    rw [show ({2} : Set (Fin 4)) \ {0, 1, 2} = ∅ from by ext x; fin_cases x <;> simp_all]
+    rw [show ({0, 1, 2} : Set (Fin 4)) \ {2} = {0, 1} from by ext x; fin_cases x <;> simp_all]
+    exact hge01
+  have hge_3_013 : sys.ge {(3 : Fin 4)} ({0, 1, 3} : Set _) := by
+    rw [sys.additive]
+    rw [show ({3} : Set (Fin 4)) \ {0, 1, 3} = ∅ from by ext x; fin_cases x <;> simp_all]
+    rw [show ({0, 1, 3} : Set (Fin 4)) \ {3} = {0, 1} from by ext x; fin_cases x <;> simp_all]
+    exact hge01
+  -- ── Construct measure and dispatch ──
+  have hc_le : 0 + 0 + c ≤ 1 := by linarith
+  refine ⟨measure_fin4 0 0 c le_rfl le_rfl hc0.le hc_le,
+    reduce_to_disjoint sys _ (fin4_dispatch sys 0 0 c le_rfl le_rfl hc0.le hc_le
+      (mf4_empty ..) (mf4_s0 ..) (mf4_s1 ..) (mf4_s2 ..) (mf4_s3 ..)
+      (mf4_p01 ..) (mf4_p02 ..) (mf4_p03 ..) (mf4_p12 ..) (mf4_p13 ..) (mf4_p23 ..)
+      (mf4_t012 ..) (mf4_t013 ..) (mf4_t023 ..) (mf4_t123 ..) (mf4_univ ..)
+      -- he0..he3: ge ∅ {i} ↔ weight_i ≤ 0
+      ⟨fun _ => le_refl _, fun _ => hn0⟩
+      ⟨fun _ => le_refl _, fun _ => hn1⟩
+      ⟨fun h => (hn2 h).elim, fun h => by exfalso; linarith⟩
+      ⟨fun h => (hn3 h).elim, fun h => by exfalso; linarith⟩
+      -- he01..he123: ge ∅ {pair/triple} ↔ sum ≤ 0
+      ⟨fun _ => by linarith, fun _ => hge01⟩
+      ⟨fun h => (hng_e_02 h).elim, fun h => by exfalso; linarith⟩
+      ⟨fun h => (hng_e_03 h).elim, fun h => by exfalso; linarith⟩
+      ⟨fun h => (hng_e_12 h).elim, fun h => by exfalso; linarith⟩
+      ⟨fun h => (hng_e_13 h).elim, fun h => by exfalso; linarith⟩
+      ⟨fun h => (hng_e_23 h).elim, fun h => by exfalso; linarith⟩
+      ⟨fun h => (hng_e_012 h).elim, fun h => by exfalso; linarith⟩
+      ⟨fun h => (hng_e_013 h).elim, fun h => by exfalso; linarith⟩
+      ⟨fun h => (hng_e_023 h).elim, fun h => by exfalso; linarith⟩
+      ⟨fun h => (hng_e_123 h).elim, fun h => by exfalso; linarith⟩
+      -- h01, h10: ge {0} {1} ↔ 0 ≥ 0, ge {1} {0} ↔ 0 ≥ 0
+      ⟨fun _ => le_refl _, fun _ => hge_0_1⟩
+      ⟨fun _ => le_refl _, fun _ => hge_1_0⟩
+      -- h02, h20
+      ⟨fun h => (hng_0_2 h).elim, fun h => by exfalso; linarith⟩
+      ⟨fun _ => hc0.le, fun _ => hge_2_0⟩
+      -- h03, h30
+      ⟨fun h => (hng_0_3 h).elim, fun h => by exfalso; linarith⟩
+      ⟨fun _ => by linarith, fun _ => hge_3_0⟩
+      -- h12, h21
+      ⟨fun h => (hng_1_2 h).elim, fun h => by exfalso; linarith⟩
+      ⟨fun _ => hc0.le, fun _ => hge_2_1⟩
+      -- h13, h31
+      ⟨fun h => (hng_1_3 h).elim, fun h => by exfalso; linarith⟩
+      ⟨fun _ => by linarith, fun _ => hge_3_1⟩
+      -- h23, h32 [CASE-DEPENDENT]
+      ⟨fun h => by have := h23_iff.mp h; linarith, fun h => h23_iff.mpr (by linarith)⟩
+      ⟨fun h => by have := h32_iff.mp h; linarith, fun h => h32_iff.mpr (by linarith)⟩
+      -- h0_12, h12_0
+      ⟨fun h => (hng_0_12 h).elim, fun h => by exfalso; linarith⟩
+      ⟨fun _ => by linarith, fun _ => hge_12_0⟩
+      -- h0_13, h13_0
+      ⟨fun h => (hng_0_13 h).elim, fun h => by exfalso; linarith⟩
+      ⟨fun _ => by linarith, fun _ => hge_13_0⟩
+      -- h0_23, h23_0
+      ⟨fun h => (hng_0_23 h).elim, fun h => by exfalso; linarith⟩
+      ⟨fun _ => by linarith, fun _ => hge_23_0⟩
+      -- h1_02, h02_1
+      ⟨fun h => (hng_1_02 h).elim, fun h => by exfalso; linarith⟩
+      ⟨fun _ => by linarith, fun _ => hge_02_1⟩
+      -- h1_03, h03_1
+      ⟨fun h => (hng_1_03 h).elim, fun h => by exfalso; linarith⟩
+      ⟨fun _ => by linarith, fun _ => hge_03_1⟩
+      -- h1_23, h23_1
+      ⟨fun h => (hng_1_23 h).elim, fun h => by exfalso; linarith⟩
+      ⟨fun _ => by linarith, fun _ => hge_23_1⟩
+      -- h2_01, h01_2
+      ⟨fun _ => by linarith, fun _ => hge_2_01⟩
+      ⟨fun h => (hng_01_2 h).elim, fun h => by exfalso; linarith⟩
+      -- h2_03 [CASE-DEPENDENT]: ge {2} {0,3} ↔ c ≥ 1-c
+      ⟨fun h => by have := h23_iff.mp (sys.trans _ _ _ h (sys.mono _ _
+          (show ({3} : Set (Fin 4)) ⊆ {0, 3} by intro x hx; fin_cases x <;> simp_all))); linarith,
+       fun h => sys.trans _ _ _ (h23_iff.mpr (by linarith)) hge_3_03⟩
+      -- h03_2 [CASE-DEPENDENT]: ge {0,3} {2} ↔ 1-c ≥ c
+      ⟨fun h => by have := h32_iff.mp (sys.trans _ _ _ hge_3_03 h); linarith,
+       fun h => sys.trans _ _ _ (sys.mono _ _
+          (show ({3} : Set (Fin 4)) ⊆ {0, 3} by intro x hx; fin_cases x <;> simp_all))
+          (h32_iff.mpr (by linarith))⟩
+      -- h2_13 [CASE-DEPENDENT]: ge {2} {1,3} ↔ c ≥ 1-c
+      ⟨fun h => by have := h23_iff.mp (sys.trans _ _ _ h (sys.mono _ _
+          (show ({3} : Set (Fin 4)) ⊆ {1, 3} by intro x hx; fin_cases x <;> simp_all))); linarith,
+       fun h => sys.trans _ _ _ (h23_iff.mpr (by linarith)) hge_3_13⟩
+      -- h13_2 [CASE-DEPENDENT]: ge {1,3} {2} ↔ 1-c ≥ c
+      ⟨fun h => by have := h32_iff.mp (sys.trans _ _ _ hge_3_13 h); linarith,
+       fun h => sys.trans _ _ _ (sys.mono _ _
+          (show ({3} : Set (Fin 4)) ⊆ {1, 3} by intro x hx; fin_cases x <;> simp_all))
+          (h32_iff.mpr (by linarith))⟩
+      -- h3_01, h01_3
+      ⟨fun _ => by linarith, fun _ => hge_3_01⟩
+      ⟨fun h => (hng_01_3 h).elim, fun h => by exfalso; linarith⟩
+      -- h3_02 [CASE-DEPENDENT]: ge {3} {0,2} ↔ 1-c ≥ c
+      ⟨fun h => by have := h32_iff.mp (sys.trans _ _ _ h (sys.mono _ _
+          (show ({2} : Set (Fin 4)) ⊆ {0, 2} by intro x hx; fin_cases x <;> simp_all))); linarith,
+       fun h => sys.trans _ _ _ (h32_iff.mpr (by linarith)) hge_2_02⟩
+      -- h02_3 [CASE-DEPENDENT]: ge {0,2} {3} ↔ c ≥ 1-c
+      ⟨fun h => by have := h23_iff.mp (sys.trans _ _ _ hge_2_02 h); linarith,
+       fun h => sys.trans _ _ _ (sys.mono _ _
+          (show ({2} : Set (Fin 4)) ⊆ {0, 2} by intro x hx; fin_cases x <;> simp_all))
+          (h23_iff.mpr (by linarith))⟩
+      -- h3_12 [CASE-DEPENDENT]: ge {3} {1,2} ↔ 1-c ≥ c
+      ⟨fun h => by have := h32_iff.mp (sys.trans _ _ _ h (sys.mono _ _
+          (show ({2} : Set (Fin 4)) ⊆ {1, 2} by intro x hx; fin_cases x <;> simp_all))); linarith,
+       fun h => sys.trans _ _ _ (h32_iff.mpr (by linarith)) hge_2_12⟩
+      -- h12_3 [CASE-DEPENDENT]: ge {1,2} {3} ↔ c ≥ 1-c
+      ⟨fun h => by have := h23_iff.mp (sys.trans _ _ _ hge_2_12 h); linarith,
+       fun h => sys.trans _ _ _ (sys.mono _ _
+          (show ({2} : Set (Fin 4)) ⊆ {1, 2} by intro x hx; fin_cases x <;> simp_all))
+          (h23_iff.mpr (by linarith))⟩
+      -- h0_123, h123_0
+      ⟨fun h => (hng_0_123 h).elim, fun h => by exfalso; linarith⟩
+      ⟨fun _ => by linarith, fun _ => hge_123_0⟩
+      -- h1_023, h023_1
+      ⟨fun h => (hng_1_023 h).elim, fun h => by exfalso; linarith⟩
+      ⟨fun _ => by linarith, fun _ => hge_023_1⟩
+      -- h2_013 [CASE-DEPENDENT]: ge {2} {0,1,3} ↔ c ≥ 1-c
+      ⟨fun h => by have := h23_iff.mp (sys.trans _ _ _ h (sys.mono _ _
+          (show ({3} : Set (Fin 4)) ⊆ {0, 1, 3} by intro x hx; fin_cases x <;> simp_all))); linarith,
+       fun h => sys.trans _ _ _ (h23_iff.mpr (by linarith)) hge_3_013⟩
+      -- h013_2 [CASE-DEPENDENT]: ge {0,1,3} {2} ↔ 1-c ≥ c
+      ⟨fun h => by have := h32_iff.mp (sys.trans _ _ _ hge_3_013 h); linarith,
+       fun h => sys.trans _ _ _ (sys.mono _ _
+          (show ({3} : Set (Fin 4)) ⊆ {0, 1, 3} by intro x hx; fin_cases x <;> simp_all))
+          (h32_iff.mpr (by linarith))⟩
+      -- h3_012 [CASE-DEPENDENT]: ge {3} {0,1,2} ↔ 1-c ≥ c
+      ⟨fun h => by have := h32_iff.mp (sys.trans _ _ _ h (sys.mono _ _
+          (show ({2} : Set (Fin 4)) ⊆ {0, 1, 2} by intro x hx; fin_cases x <;> simp_all))); linarith,
+       fun h => sys.trans _ _ _ (h32_iff.mpr (by linarith)) hge_2_012⟩
+      -- h012_3 [CASE-DEPENDENT]: ge {0,1,2} {3} ↔ c ≥ 1-c
+      ⟨fun h => by have := h23_iff.mp (sys.trans _ _ _ hge_2_012 h); linarith,
+       fun h => sys.trans _ _ _ (sys.mono _ _
+          (show ({2} : Set (Fin 4)) ⊆ {0, 1, 2} by intro x hx; fin_cases x <;> simp_all))
+          (h23_iff.mpr (by linarith))⟩
+      -- h01_23: ge {0,1} {2,3} ↔ 0 ≥ 1
+      ⟨fun h => (hng_01_23 h).elim, fun h => by exfalso; linarith⟩
+      -- h23_01: ge {2,3} {0,1} ↔ 1 ≥ 0
+      ⟨fun _ => by linarith, fun _ => hge_23_01⟩
+      -- h02_13 [CASE-DEPENDENT]: ge {0,2} {1,3} ↔ c ≥ 1-c
+      ⟨fun h => by have := h23_iff.mp (sys.trans _ _ _ hge_2_02 (sys.trans _ _ _ h (sys.mono _ _
+          (show ({3} : Set (Fin 4)) ⊆ {1, 3} by intro x hx; fin_cases x <;> simp_all)))); linarith,
+       fun h => sys.trans _ _ _ (sys.mono _ _
+          (show ({2} : Set (Fin 4)) ⊆ {0, 2} by intro x hx; fin_cases x <;> simp_all))
+          (sys.trans _ _ _ (h23_iff.mpr (by linarith)) hge_3_13)⟩
+      -- h13_02 [CASE-DEPENDENT]: ge {1,3} {0,2} ↔ 1-c ≥ c
+      ⟨fun h => by have := h32_iff.mp (sys.trans _ _ _ hge_3_13 (sys.trans _ _ _ h (sys.mono _ _
+          (show ({2} : Set (Fin 4)) ⊆ {0, 2} by intro x hx; fin_cases x <;> simp_all)))); linarith,
+       fun h => sys.trans _ _ _ (sys.mono _ _
+          (show ({3} : Set (Fin 4)) ⊆ {1, 3} by intro x hx; fin_cases x <;> simp_all))
+          (sys.trans _ _ _ (h32_iff.mpr (by linarith)) hge_2_02)⟩
+      -- h03_12 [CASE-DEPENDENT]: ge {0,3} {1,2} ↔ 1-c ≥ c
+      ⟨fun h => by have := h32_iff.mp (sys.trans _ _ _ hge_3_03 (sys.trans _ _ _ h (sys.mono _ _
+          (show ({2} : Set (Fin 4)) ⊆ {1, 2} by intro x hx; fin_cases x <;> simp_all)))); linarith,
+       fun h => sys.trans _ _ _ (sys.mono _ _
+          (show ({3} : Set (Fin 4)) ⊆ {0, 3} by intro x hx; fin_cases x <;> simp_all))
+          (sys.trans _ _ _ (h32_iff.mpr (by linarith)) hge_2_12)⟩
+      -- h12_03 [CASE-DEPENDENT]: ge {1,2} {0,3} ↔ c ≥ 1-c
+      ⟨fun h => by have := h23_iff.mp (sys.trans _ _ _ hge_2_12 (sys.trans _ _ _ h (sys.mono _ _
+          (show ({3} : Set (Fin 4)) ⊆ {0, 3} by intro x hx; fin_cases x <;> simp_all)))); linarith,
+       fun h => sys.trans _ _ _ (sys.mono _ _
+          (show ({2} : Set (Fin 4)) ⊆ {1, 2} by intro x hx; fin_cases x <;> simp_all))
+          (sys.trans _ _ _ (h23_iff.mpr (by linarith)) hge_3_03)⟩
+    )⟩
 
 private theorem theorem8a_fin4_2null_01 (sys : EpistemicSystemFA (Fin 4))
     (hn0 : sys.ge ∅ {(0 : Fin 4)}) (hn1 : sys.ge ∅ {(1 : Fin 4)})
     (hn2 : ¬sys.ge ∅ {(2 : Fin 4)}) (hn3 : ¬sys.ge ∅ {(3 : Fin 4)}) :
     ∃ (m : FinAddMeasure (Fin 4)), ∀ A B, sys.ge A B ↔ m.inducedGe A B := by
-  sorry
+  by_cases h23 : sys.ge {(2 : Fin 4)} {3}
+  · by_cases h32 : sys.ge {(3 : Fin 4)} {2}
+    · exact theorem8a_fin4_2null_01_core sys hn0 hn1 hn2 hn3 (1/2) (by norm_num) (by norm_num)
+        ⟨fun _ => by norm_num, fun _ => h23⟩ ⟨fun _ => by norm_num, fun _ => h32⟩
+    · exact theorem8a_fin4_2null_01_core sys hn0 hn1 hn2 hn3 (3/4) (by norm_num) (by norm_num)
+        ⟨fun _ => by norm_num, fun _ => h23⟩
+        ⟨fun h => absurd h h32, fun h => by exfalso; linarith⟩
+  · have h32 : sys.ge {(3 : Fin 4)} {2} := (sys.total _ _).resolve_left h23
+    exact theorem8a_fin4_2null_01_core sys hn0 hn1 hn2 hn3 (1/4) (by norm_num) (by norm_num)
+      ⟨fun h => absurd h h23, fun h => by exfalso; linarith⟩
+      ⟨fun _ => by norm_num, fun _ => h32⟩
 
 private theorem theorem8a_fin4_1null_0 (sys : EpistemicSystemFA (Fin 4))
     (hn0 : sys.ge ∅ {(0 : Fin 4)}) (hn1 : ¬sys.ge ∅ {(1 : Fin 4)})

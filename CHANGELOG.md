@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.226.38] - 2026-02-24
+
+### Changed
+- **EpistemicScale Card 4 2-null canonical proof**: prove `theorem8a_fin4_2null_01` (2 null singletons on Fin 4). Parameterized helper `_core` takes measure weight c ∈ (0,1) with 3-way case split (c = 1/2, 3/4, 1/4). Derives ~40 intermediate ge facts via null absorption + additivity, provides all 64 biconditionals to `fin4_dispatch`. Sorry count: 3 → 2 canonical stubs remaining.
+
 ## [0.226.37] - 2026-02-24
 
 ### Changed
