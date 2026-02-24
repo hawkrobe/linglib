@@ -281,7 +281,7 @@ Attested aspectual data for sample verbs.
 -/
 structure VerbAspectData where
   /-- Verb lemma -/
-  lemma : String
+  verbLemma : String
   /-- Assigned Vendler class -/
   vendlerClass : VendlerClass
   /-- Example sentence for "for X" -/
@@ -292,49 +292,49 @@ structure VerbAspectData where
 
 /-- "run" — activity -/
 def runData : VerbAspectData :=
-  { lemma := "run"
+  { verbLemma :="run"
   , vendlerClass := .activity
   , forXExample := "John ran for an hour"
   , forXJudgment := .accept }
 
 /-- "know" — state -/
 def knowData : VerbAspectData :=
-  { lemma := "know"
+  { verbLemma :="know"
   , vendlerClass := .state
   , forXExample := "John knew French for ten years"
   , forXJudgment := .accept }
 
 /-- "build" — accomplishment -/
 def buildData : VerbAspectData :=
-  { lemma := "build"
+  { verbLemma :="build"
   , vendlerClass := .accomplishment
   , forXExample := "John built houses for ten years"
   , forXJudgment := .coerced }
 
 /-- "arrive" — achievement -/
 def arriveData : VerbAspectData :=
-  { lemma := "arrive"
+  { verbLemma :="arrive"
   , vendlerClass := .achievement
   , forXExample := "*John arrived for an hour"
   , forXJudgment := .reject }
 
 /-- "recognize" — achievement -/
 def recognizeData : VerbAspectData :=
-  { lemma := "recognize"
+  { verbLemma :="recognize"
   , vendlerClass := .achievement
   , forXExample := "*John recognized Mary for an hour"
   , forXJudgment := .reject }
 
 /-- "love" — state -/
 def loveData : VerbAspectData :=
-  { lemma := "love"
+  { verbLemma :="love"
   , vendlerClass := .state
   , forXExample := "John loved Mary for ten years"
   , forXJudgment := .accept }
 
 /-- "write" — accomplishment (with bounded object) -/
 def writeData : VerbAspectData :=
-  { lemma := "write"
+  { verbLemma :="write"
   , vendlerClass := .accomplishment
   , forXExample := "John wrote the book in two years"
   , forXJudgment := .coerced }
