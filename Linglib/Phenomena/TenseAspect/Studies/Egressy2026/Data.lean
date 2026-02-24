@@ -1,5 +1,5 @@
-import Linglib.Core.Tense
-import Linglib.Core.Reichenbach
+import Linglib.Core.Temporal.Tense
+import Linglib.Core.Temporal.Reichenbach
 
 /-!
 # Egressy (2026): Size-Sensitive Sequence of Tense in Hungarian

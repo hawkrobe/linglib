@@ -1,9 +1,9 @@
-import Linglib.Core.Proposition
-import Linglib.Core.Intension
-import Linglib.Core.CommonGround
+import Linglib.Core.Semantics.Proposition
+import Linglib.Core.Semantics.Intension
+import Linglib.Core.Semantics.CommonGround
 import Linglib.Core.Grammar
-import Linglib.Core.Presupposition
-import Linglib.Core.ModalLogic
+import Linglib.Core.Semantics.Presupposition
+import Linglib.Core.Logic.ModalLogic
 
 /-!
 # Type Theory with Records — Core Foundations

@@ -1,4 +1,4 @@
-import Linglib.Core.InformationStructure
+import Linglib.Core.Discourse.InformationStructure
 
 /-!
 # Arnold, Wasow, Losongco & Ginstrom (2000) @cite{arnold-wasow-losongco-ginstrom-2000}

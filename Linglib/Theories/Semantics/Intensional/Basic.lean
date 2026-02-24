@@ -43,7 +43,7 @@ L0(u, w) = ⟦u⟧(w)  -- where ⟦u⟧ : World → Bool
 import Linglib.Theories.Semantics.Montague.Basic
 import Linglib.Theories.Semantics.Montague.Derivation
 import Linglib.Theories.Semantics.Lexical.Determiner.Quantifier
-import Linglib.Core.Intension
+import Linglib.Core.Semantics.Intension
 
 namespace Semantics.Intensional
 

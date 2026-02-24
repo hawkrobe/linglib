@@ -1,6 +1,6 @@
-import Linglib.Core.Intension
-import Linglib.Core.Time
-import Linglib.Core.Reichenbach
+import Linglib.Core.Semantics.Intension
+import Linglib.Core.Temporal.Time
+import Linglib.Core.Temporal.Reichenbach
 import Linglib.Core.Context.Tower
 import Linglib.Core.Context.Shifts
 

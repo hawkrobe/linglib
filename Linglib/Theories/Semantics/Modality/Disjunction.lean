@@ -37,8 +37,8 @@ Three innovations over Zimmermann:
 - Yagi, Y. (2025). Conflicting presuppositions in disjunction. S&P 18:7.
 -/
 
-import Linglib.Core.Proposition
-import Linglib.Core.Presupposition
+import Linglib.Core.Semantics.Proposition
+import Linglib.Core.Semantics.Presupposition
 
 namespace Semantics.Modality.Disjunction
 

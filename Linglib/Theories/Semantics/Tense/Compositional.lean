@@ -33,7 +33,7 @@ they introduce or retrieve temporal reference points.
 - Mendes, A. (2025). Indefiniteness in future reference. S&P 18(10).
 -/
 
-import Linglib.Core.Tense
+import Linglib.Core.Temporal.Tense
 
 namespace Semantics.Tense
 

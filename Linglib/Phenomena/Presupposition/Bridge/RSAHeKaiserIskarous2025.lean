@@ -1,5 +1,5 @@
 import Linglib.Phenomena.Presupposition.Studies.HeKaiserIskarous2025
-import Linglib.Core.Proposition
+import Linglib.Core.Semantics.Proposition
 import Linglib.Theories.Semantics.Montague.Basic
 import Linglib.Theories.Semantics.Entailment.Polarity
 

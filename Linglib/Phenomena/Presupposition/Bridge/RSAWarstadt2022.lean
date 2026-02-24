@@ -1,5 +1,5 @@
 import Linglib.Phenomena.Presupposition.Studies.Warstadt2022
-import Linglib.Core.CommonGround
+import Linglib.Core.Semantics.CommonGround
 
 /-!
 # Bridge: RSA Presupposition Accommodation → Warstadt (2022)

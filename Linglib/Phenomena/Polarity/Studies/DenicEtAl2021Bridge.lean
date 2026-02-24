@@ -1,5 +1,5 @@
 import Linglib.Phenomena.Polarity.Studies.DenicEtAl2021
-import Linglib.Core.NaturalLogic
+import Linglib.Core.Logic.NaturalLogic
 import Linglib.Fragments.English.PolarityItems
 
 /-!

@@ -1,4 +1,4 @@
-import Linglib.Core.InformationStructure
+import Linglib.Core.Discourse.InformationStructure
 
 /-!
 # Dutch Polarity Particles

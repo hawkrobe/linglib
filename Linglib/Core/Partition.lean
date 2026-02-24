@@ -1,4 +1,4 @@
-import Linglib.Core.QUD
+import Linglib.Core.Discourse.QUD
 import Linglib.Core.Agent.DecisionTheory
 import Mathlib.Order.Partition.Finpartition
 import Mathlib.Algebra.Order.BigOperators.Group.Finset

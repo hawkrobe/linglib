@@ -1,5 +1,5 @@
 import Linglib.Theories.Semantics.Dynamic.Core.CCP
-import Linglib.Core.Mereology
+import Linglib.Core.Scales.Mereology
 
 /-!
 # Update-Theoretic Dynamic Generalized Quantifiers

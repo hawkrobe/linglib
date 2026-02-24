@@ -1,4 +1,4 @@
-import Linglib.Core.Reichenbach
+import Linglib.Core.Temporal.Reichenbach
 import Linglib.Theories.Semantics.Tense.TsiliaEtAl2026
 import Linglib.Fragments.English.TemporalDeictic
 import Linglib.Fragments.German.TemporalDeictic

@@ -1,5 +1,5 @@
 import Linglib.Core.Partition
-import Linglib.Core.NaturalLogic
+import Linglib.Core.Logic.NaturalLogic
 
 /-!
 # Polarity–Partition Bridge

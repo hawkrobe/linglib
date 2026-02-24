@@ -1,5 +1,5 @@
-import Linglib.Core.QUD
-import Linglib.Core.InformationStructure
+import Linglib.Core.Discourse.QUD
+import Linglib.Core.Discourse.InformationStructure
 
 /-!
 # Backgrounded Constituents Are Islands

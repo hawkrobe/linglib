@@ -1,8 +1,8 @@
 import Linglib.Core.Lexical.Word
 import Linglib.Theories.Semantics.Events.ThematicRoles
-import Linglib.Core.Presupposition
+import Linglib.Core.Semantics.Presupposition
 import Linglib.Core.RootDimensions
-import Linglib.Core.NaturalLogic
+import Linglib.Core.Logic.NaturalLogic
 import Linglib.Theories.Semantics.Lexical.Verb.ChangeOfState.Theory
 import Linglib.Theories.Semantics.Probabilistic.Measurement.Basic
 import Linglib.Theories.Semantics.Attitudes.Doxastic

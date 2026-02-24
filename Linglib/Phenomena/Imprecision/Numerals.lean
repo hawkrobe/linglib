@@ -1,4 +1,4 @@
-import Linglib.Core.Roundness
+import Linglib.Core.Scales.Roundness
 
 /-
 # Numeral Imprecision: Empirical Data

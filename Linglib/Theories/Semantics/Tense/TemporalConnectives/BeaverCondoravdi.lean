@@ -1,5 +1,5 @@
 import Linglib.Theories.Semantics.Tense.TemporalConnectives.Basic
-import Linglib.Core.Scale
+import Linglib.Core.Scales.Scale
 
 /-!
 # Beaver & Condoravdi (2003): Uniform Analysis with `earliest`

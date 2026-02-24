@@ -1,5 +1,5 @@
-import Linglib.Core.Presupposition
-import Linglib.Core.Reichenbach
+import Linglib.Core.Semantics.Presupposition
+import Linglib.Core.Temporal.Reichenbach
 import Linglib.Theories.Semantics.Tense.Basic
 
 /-!

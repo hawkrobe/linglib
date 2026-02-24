@@ -1,6 +1,6 @@
 import Linglib.Theories.Syntax.ConstructionGrammar.Basic
-import Linglib.Core.Presupposition
-import Linglib.Core.HornScale
+import Linglib.Core.Semantics.Presupposition
+import Linglib.Core.Scales.HornScale
 
 /-!
 # Fillmore, Kay & O'Connor (1988): Let Alone

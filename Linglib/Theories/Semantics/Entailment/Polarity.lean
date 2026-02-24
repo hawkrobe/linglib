@@ -38,7 +38,7 @@ The polarity composition rules are a homomorphic image of the
 -/
 
 import Mathlib.Order.Monotone.Defs
-import Linglib.Core.NaturalLogic
+import Linglib.Core.Logic.NaturalLogic
 import Linglib.Theories.Semantics.Entailment.Basic
 
 namespace Semantics.Entailment.Polarity

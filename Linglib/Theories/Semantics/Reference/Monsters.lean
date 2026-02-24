@@ -1,4 +1,4 @@
-import Linglib.Core.Intension
+import Linglib.Core.Semantics.Intension
 import Linglib.Theories.Semantics.Reference.Kaplan
 
 /-!

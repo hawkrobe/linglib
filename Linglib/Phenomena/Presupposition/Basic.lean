@@ -35,8 +35,8 @@ Following Karttunen (1974) and Heim (1983):
 - Kracht (2003). Mathematics of Language, Section 4.7.
 -/
 
-import Linglib.Core.Presupposition
-import Linglib.Core.Proposition
+import Linglib.Core.Semantics.Presupposition
+import Linglib.Core.Semantics.Proposition
 
 namespace Phenomena.Presupposition
 

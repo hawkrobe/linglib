@@ -44,10 +44,10 @@ are the result of default prosody.
 - Beaver, D. et al. (2007). When semantics meets phonetics. Language 83: 245-276.
 -/
 
-import Linglib.Core.InformationStructure
+import Linglib.Core.Discourse.InformationStructure
 import Linglib.Core.Prosody
 import Linglib.Theories.Semantics.Lexical.Expressives.Basic
-import Linglib.Core.Presupposition
+import Linglib.Core.Semantics.Presupposition
 
 open Core.InformationStructure
 open Core.Prosody

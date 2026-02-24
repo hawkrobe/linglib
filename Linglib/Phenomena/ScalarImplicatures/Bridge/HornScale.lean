@@ -1,5 +1,5 @@
 import Linglib.Phenomena.ScalarImplicatures.Basic
-import Linglib.Core.HornScale
+import Linglib.Core.Scales.HornScale
 
 /-!
 # Horn Scale Bridge

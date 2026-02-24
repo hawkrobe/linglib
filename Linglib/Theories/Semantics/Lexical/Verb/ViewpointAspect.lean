@@ -36,7 +36,7 @@ Equations (Knick & Sharf 2026):
 - Pancheva, R. (2003). The aspectual makeup of perfect participles.
 -/
 
-import Linglib.Core.Time
+import Linglib.Core.Temporal.Time
 import Linglib.Theories.Semantics.Lexical.Verb.Aspect
 
 -- ════════════════════════════════════════════════════

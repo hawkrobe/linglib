@@ -1,4 +1,4 @@
-import Linglib.Core.ModalLogic
+import Linglib.Core.Logic.ModalLogic
 import Linglib.Theories.Semantics.Modality.Kratzer
 
 /-!

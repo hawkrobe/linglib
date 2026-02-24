@@ -37,8 +37,8 @@ with existing RSA infrastructure.
 - Lewis (1979). Scorekeeping in a Language Game.
 -/
 
-import Linglib.Core.Proposition
-import Linglib.Core.CommonGround
+import Linglib.Core.Semantics.Proposition
+import Linglib.Core.Semantics.CommonGround
 import Mathlib.Data.Rat.Defs
 import Mathlib.Data.Fintype.Basic
 

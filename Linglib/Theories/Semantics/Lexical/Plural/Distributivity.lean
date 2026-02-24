@@ -29,7 +29,7 @@ This parallels how QUDs partition propositions in `Core/QUD.lean`.
 
 import Mathlib.Data.Finset.Basic
 import Mathlib.Data.Finset.Powerset
-import Linglib.Core.QUD
+import Linglib.Core.Discourse.QUD
 
 namespace Semantics.Lexical.Plural.Distributivity
 

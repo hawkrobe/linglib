@@ -1,7 +1,7 @@
 import Linglib.Theories.Semantics.Events.TemporalDecomposition
 import Linglib.Theories.Semantics.Lexical.Verb.ViewpointAspect
-import Linglib.Core.Time
-import Linglib.Core.Reichenbach
+import Linglib.Core.Temporal.Time
+import Linglib.Core.Temporal.Reichenbach
 import Linglib.Theories.Semantics.Tense.Compositional
 
 /-!

@@ -2,7 +2,7 @@ import Linglib.Theories.Semantics.Tense.Compositional
 import Linglib.Theories.Semantics.Tense.Kratzer
 import Linglib.Theories.Semantics.Reference.KaplanLD
 import Linglib.Theories.Semantics.Intensional.Situations.Elbourne
-import Linglib.Core.Intension
+import Linglib.Core.Semantics.Intension
 
 /-!
 # Tenses and Pronouns: Partee's Structural Analogy

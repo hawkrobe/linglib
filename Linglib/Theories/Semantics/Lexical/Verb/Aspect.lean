@@ -1,4 +1,4 @@
-import Linglib.Core.Scale
+import Linglib.Core.Scales.Scale
 
 /-
 Aspectual categories following Vendler (1957) and Dowty (1979).

@@ -1,6 +1,6 @@
 import Mathlib.Order.Lattice
 import Mathlib.Order.Monotone.Defs
-import Linglib.Core.NaturalLogic
+import Linglib.Core.Logic.NaturalLogic
 import Linglib.Tactics.OntSort
 
 /-!

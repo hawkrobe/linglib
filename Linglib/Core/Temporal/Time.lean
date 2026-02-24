@@ -1,7 +1,7 @@
 import Mathlib.Order.Basic
 import Mathlib.Data.Set.Basic
-import Linglib.Core.Scale
-import Linglib.Core.Situation
+import Linglib.Core.Scales.Scale
+import Linglib.Core.Temporal.Situation
 import Linglib.Tactics.OntSort
 
 export Core (Situation)

@@ -1,5 +1,5 @@
 import Linglib.Theories.Semantics.Montague.Basic
-import Linglib.Core.Quantification
+import Linglib.Core.Logic.Quantification
 import Mathlib.Data.List.Perm.Basic
 
 /-!

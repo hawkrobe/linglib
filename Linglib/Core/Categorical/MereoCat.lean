@@ -1,5 +1,5 @@
 import Mathlib.CategoryTheory.Category.Basic
-import Linglib.Core.MereoDim
+import Linglib.Core.Scales.MereoDim
 
 /-!
 # Category of Mereological Domains

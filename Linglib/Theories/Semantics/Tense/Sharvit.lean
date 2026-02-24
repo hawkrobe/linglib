@@ -1,5 +1,5 @@
 import Linglib.Theories.Semantics.Tense.Basic
-import Linglib.Core.Tense
+import Linglib.Core.Temporal.Tense
 
 /-!
 # Sharvit (2003): Simultaneous Tense as a Genuine Tense

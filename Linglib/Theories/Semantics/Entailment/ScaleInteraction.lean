@@ -5,7 +5,7 @@ Reference: van Benthem (1986), Ladusaw (1980), Barwise & Cooper (1981).
 -/
 
 import Linglib.Theories.Semantics.Entailment.Basic
-import Linglib.Core.HornScale
+import Linglib.Core.Scales.HornScale
 
 namespace Semantics.Entailment.ScaleInteraction
 

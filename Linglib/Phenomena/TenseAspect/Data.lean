@@ -1,6 +1,6 @@
-import Linglib.Core.Reichenbach
-import Linglib.Core.Time
-import Linglib.Core.Tense
+import Linglib.Core.Temporal.Reichenbach
+import Linglib.Core.Temporal.Time
+import Linglib.Core.Temporal.Tense
 
 /-!
 # Tense Phenomena: Empirical Data

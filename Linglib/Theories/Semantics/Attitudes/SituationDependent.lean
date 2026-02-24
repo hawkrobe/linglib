@@ -1,4 +1,4 @@
-import Linglib.Core.Time
+import Linglib.Core.Temporal.Time
 import Linglib.Theories.Semantics.Attitudes.Doxastic
 
 /-!

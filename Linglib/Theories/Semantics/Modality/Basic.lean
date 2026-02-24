@@ -9,7 +9,7 @@ semantics with Simple/Kripke (1963) primitive-accessibility semantics.
 -/
 
 import Linglib.Theories.Semantics.Attitudes.Intensional
-import Linglib.Core.ModalLogic
+import Linglib.Core.Logic.ModalLogic
 
 namespace Semantics.Modality
 

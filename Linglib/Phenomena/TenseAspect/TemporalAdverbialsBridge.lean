@@ -1,7 +1,7 @@
 import Linglib.Theories.Semantics.Tense.MaximalInformativity
 import Linglib.Theories.Semantics.Events.DimensionBridge
-import Linglib.Core.Scale
-import Linglib.Core.Time
+import Linglib.Core.Scales.Scale
+import Linglib.Core.Temporal.Time
 import Linglib.Fragments.English.TemporalAdverbials
 
 /-!

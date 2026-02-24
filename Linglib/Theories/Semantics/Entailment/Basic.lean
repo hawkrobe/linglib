@@ -4,7 +4,7 @@ A |= B iff every model satisfying A also satisfies B.
 Reference: van Benthem (1986), Ladusaw (1980), Barwise & Cooper (1981).
 -/
 
-import Linglib.Core.Proposition
+import Linglib.Core.Semantics.Proposition
 
 namespace Semantics.Entailment
 

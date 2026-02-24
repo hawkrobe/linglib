@@ -1,5 +1,5 @@
 import Linglib.Theories.Semantics.Modality.Kratzer
-import Linglib.Core.Presupposition
+import Linglib.Core.Semantics.Presupposition
 /-!
 # Kernel Semantics for Epistemic Modals
 

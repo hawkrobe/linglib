@@ -1,4 +1,4 @@
-import Linglib.Core.ModalLogic
+import Linglib.Core.Logic.ModalLogic
 
 /-!
 # German Modal Verb Fragment

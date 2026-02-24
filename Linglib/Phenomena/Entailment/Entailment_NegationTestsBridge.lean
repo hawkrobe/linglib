@@ -5,7 +5,7 @@ from `Phenomena.Negation.Basic`. Tests DE, not-UE, and DE-comp-DE = UE.
 
 import Linglib.Theories.Semantics.Entailment.Basic
 import Linglib.Theories.Semantics.Entailment.Polarity
-import Linglib.Core.Proposition
+import Linglib.Core.Semantics.Proposition
 import Linglib.Phenomena.Negation.Basic
 
 namespace Semantics.Entailment.NegationTests

@@ -1,4 +1,4 @@
-import Linglib.Core.SatisfactionOrdering
+import Linglib.Core.Logic.SatisfactionOrdering
 
 /-!
 # Satisfaction Ordering (Linguistic Instantiations)

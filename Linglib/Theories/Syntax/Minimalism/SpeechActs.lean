@@ -30,7 +30,7 @@ c-commands content.
 
 import Linglib.Theories.Syntax.Minimalism.Core.Basic
 import Linglib.Theories.Syntax.Minimalism.Core.Phase
-import Linglib.Core.Context
+import Linglib.Core.Temporal.Context
 import Linglib.Fragments.English.Pronouns
 
 namespace Minimalism.Phenomena.SpeechActs

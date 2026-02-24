@@ -1,4 +1,4 @@
-import Linglib.Core.InformationStructure
+import Linglib.Core.Discourse.InformationStructure
 import Linglib.Theories.Semantics.Questions.Hamblin
 import Linglib.Fragments.Turkish.QuestionParticles
 import Linglib.Phenomena.Questions.PolarAnswers

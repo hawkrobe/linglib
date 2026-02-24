@@ -1,7 +1,7 @@
 import Linglib.Theories.Semantics.Tense.Basic
 import Linglib.Theories.Syntax.Minimalism.Core.Agree
 import Linglib.Theories.Syntax.Minimalism.Formal.ExtendedProjection.Basic
-import Linglib.Core.Tense
+import Linglib.Core.Temporal.Tense
 
 /-!
 # Zeijlstra (2012): SOT as Upward Agree

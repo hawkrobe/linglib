@@ -10,7 +10,7 @@ follows from scale structure (min{d : small(d)} = d0, making "small" vacuous).
 
 import Mathlib.Data.Rat.Defs
 import Mathlib.Tactic.Linarith
-import Linglib.Core.Scale
+import Linglib.Core.Scales.Scale
 
 namespace Semantics.Lexical.Noun.GradableNouns
 

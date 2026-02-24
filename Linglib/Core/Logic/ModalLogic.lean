@@ -1,7 +1,7 @@
 import Mathlib.Data.Finset.Basic
 import Mathlib.Order.Lattice
 import Mathlib.Order.BoundedOrder.Basic
-import Linglib.Core.Proposition
+import Linglib.Core.Semantics.Proposition
 import Linglib.Core.Register
 
 /-!

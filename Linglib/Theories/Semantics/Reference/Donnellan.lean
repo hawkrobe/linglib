@@ -26,7 +26,7 @@ content that varies across worlds.
 -/
 
 import Linglib.Theories.Semantics.Reference.Basic
-import Linglib.Core.Presupposition
+import Linglib.Core.Semantics.Presupposition
 
 namespace Semantics.Reference.Donnellan
 

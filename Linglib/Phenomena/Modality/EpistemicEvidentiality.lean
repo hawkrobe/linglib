@@ -1,4 +1,4 @@
-import Linglib.Core.Evidence
+import Linglib.Core.Discourse.Evidence
 
 /-!
 # Epistemic Evidentiality — Empirical Data

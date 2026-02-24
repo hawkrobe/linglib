@@ -10,8 +10,8 @@ If a conjecture is proved, promote it to a `theorem` in the appropriate module.
 If refuted, replace the body with `False` and add a counterexample comment.
 -/
 
-import Linglib.Core.Intension
-import Linglib.Core.ModalLogic
+import Linglib.Core.Semantics.Intension
+import Linglib.Core.Logic.ModalLogic
 import Mathlib.Data.Rat.Defs
 
 namespace Core.Conjectures

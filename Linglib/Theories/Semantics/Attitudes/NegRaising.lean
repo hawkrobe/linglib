@@ -1,5 +1,5 @@
 import Linglib.Theories.Semantics.Attitudes.Doxastic
-import Linglib.Core.SquareOfOpposition
+import Linglib.Core.Logic.SquareOfOpposition
 
 /-!
 # Neg-Raising as O→E Pragmatic Strengthening

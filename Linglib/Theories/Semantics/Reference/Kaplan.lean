@@ -21,7 +21,7 @@ indexicals and the theory of singular propositions (Almog 2014, Ch 2).
 -/
 
 import Linglib.Theories.Semantics.Reference.Basic
-import Linglib.Core.ModalLogic
+import Linglib.Core.Logic.ModalLogic
 import Linglib.Core.Context.Tower
 import Linglib.Core.Context.Shifts
 

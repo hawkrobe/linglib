@@ -26,7 +26,7 @@ later module.
 -/
 
 import Mathlib.Order.Basic
-import Linglib.Core.Time
+import Linglib.Core.Temporal.Time
 import Linglib.Tactics.OntSort
 import Linglib.Theories.Semantics.Lexical.Verb.Aspect
 import Linglib.Theories.Semantics.Lexical.Verb.ViewpointAspect

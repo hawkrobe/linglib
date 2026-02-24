@@ -1,4 +1,4 @@
-import Linglib.Core.Presupposition
+import Linglib.Core.Semantics.Presupposition
 import Linglib.Theories.Semantics.Presupposition.LocalContext
 
 /-!

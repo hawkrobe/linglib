@@ -33,7 +33,7 @@ Open Mind: Discoveries in Cognitive Science, 4, 71-87.
 
 import Linglib.Theories.Pragmatics.RSA.Core.CombinedUtility
 import Linglib.Theories.Semantics.Entailment.Polarity
-import Linglib.Core.Proposition
+import Linglib.Core.Semantics.Proposition
 
 namespace RSA.Implementations.YoonEtAl2020
 

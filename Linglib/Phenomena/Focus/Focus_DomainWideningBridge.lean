@@ -20,7 +20,7 @@ alternatives, explaining why it substitutes in only 2 of the 7 flavors.
 - Rooth, M. (1992). A theory of focus interpretation.
 -/
 
-import Linglib.Core.QUD
+import Linglib.Core.Discourse.QUD
 import Linglib.Theories.Semantics.Questions.Partition
 import Linglib.Phenomena.Focus.Exclusives
 

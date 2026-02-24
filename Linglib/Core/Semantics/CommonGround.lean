@@ -1,4 +1,4 @@
-import Linglib.Core.Proposition
+import Linglib.Core.Semantics.Proposition
 
 /-!
 # Common Ground

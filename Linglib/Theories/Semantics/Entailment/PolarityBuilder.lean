@@ -1,5 +1,5 @@
 import Linglib.Theories.Semantics.Entailment.StrawsonEntailment
-import Linglib.Core.NaturalLogic
+import Linglib.Core.Logic.NaturalLogic
 import Linglib.Fragments.English.PolarityItems
 
 /-!

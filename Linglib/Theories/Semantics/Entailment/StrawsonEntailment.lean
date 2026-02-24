@@ -27,7 +27,7 @@ import Mathlib.Order.Monotone.Defs
 import Linglib.Theories.Semantics.Entailment.Basic
 import Linglib.Theories.Semantics.Entailment.AntiAdditivity
 import Linglib.Theories.Semantics.Entailment.Polarity
-import Linglib.Core.Presupposition
+import Linglib.Core.Semantics.Presupposition
 
 namespace Semantics.Entailment.StrawsonEntailment
 

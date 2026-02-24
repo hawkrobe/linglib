@@ -52,7 +52,7 @@ exclusivity theorems remain with `sorry` for future reimplementation.
 - Goodman, N. D. & Frank, M. C. (2016). Pragmatic language interpretation as probabilistic inference.
 -/
 
-import Linglib.Core.Proposition
+import Linglib.Core.Semantics.Proposition
 import Mathlib.Data.Rat.Defs
 
 namespace SauerlandRSA

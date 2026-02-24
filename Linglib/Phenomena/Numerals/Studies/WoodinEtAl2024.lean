@@ -1,4 +1,4 @@
-import Linglib.Core.Roundness
+import Linglib.Core.Scales.Roundness
 import Mathlib.Data.Rat.Defs
 
 /-!

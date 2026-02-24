@@ -1,4 +1,4 @@
-import Linglib.Core.Time
+import Linglib.Core.Temporal.Time
 
 /-!
 # Mandarin Cross-Domain Particles (Zhao 2026, Ch. 6) @cite{zhao-2026}

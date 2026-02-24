@@ -38,7 +38,7 @@ Goodman's result: "threshold semantics + uncertainty = graded semantics".
 - Lassiter & Goodman (2017). Adjectival vagueness in a Bayesian model.
 -/
 
-import Linglib.Core.Proposition
+import Linglib.Core.Semantics.Proposition
 import Linglib.Theories.Semantics.Probabilistic.Graded.GradedProposition
 import Mathlib.Data.Rat.Defs
 import Mathlib.Data.Fintype.Basic

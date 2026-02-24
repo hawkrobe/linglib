@@ -1,4 +1,4 @@
-import Linglib.Core.Roundness
+import Linglib.Core.Scales.Roundness
 import Linglib.Phenomena.Numerals.Studies.WoodinEtAl2024
 import Linglib.Theories.Semantics.Lexical.Numeral.Precision
 import Linglib.Theories.Pragmatics.NeoGricean.Constraints.NumericalExpressions

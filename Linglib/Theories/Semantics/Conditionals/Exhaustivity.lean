@@ -1,5 +1,5 @@
-import Linglib.Core.Proposition
-import Linglib.Core.QUD
+import Linglib.Core.Semantics.Proposition
+import Linglib.Core.Discourse.QUD
 import Linglib.Theories.Pragmatics.NeoGricean.Exhaustivity.Basic
 import Linglib.Theories.Semantics.Conditionals.Basic
 

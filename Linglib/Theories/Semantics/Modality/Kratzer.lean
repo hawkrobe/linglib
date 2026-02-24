@@ -11,7 +11,7 @@ w ≤_A z iff {p in A : z in p} ⊆ {p in A : w in p}.
 
 import Linglib.Theories.Semantics.Attitudes.Intensional
 import Linglib.Theories.Semantics.Modality.Basic
-import Linglib.Core.Proposition
+import Linglib.Core.Semantics.Proposition
 import Linglib.Theories.Semantics.Modality.SatisfactionOrdering
 import Mathlib.Order.Basic
 

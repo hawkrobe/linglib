@@ -1,7 +1,7 @@
 import Linglib.Phenomena.Gradability.Data
 import Linglib.Theories.Semantics.Lexical.Adjective.Theory
 import Linglib.Fragments.English.Predicates.Adjectival
-import Linglib.Core.Scale
+import Linglib.Core.Scales.Scale
 
 /-!
 # Kennedy (2007) Adjective Licensing Bridge

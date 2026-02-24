@@ -1,5 +1,5 @@
-import Linglib.Core.MereoDim
-import Linglib.Core.Time
+import Linglib.Core.Scales.MereoDim
+import Linglib.Core.Temporal.Time
 import Linglib.Theories.Semantics.Events.SpatialTrace
 import Linglib.Theories.Semantics.Tense.MaximalInformativity
 

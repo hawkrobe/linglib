@@ -14,7 +14,7 @@ and `RSA/` — any module that needs world-parameterized meanings.
 - SEP, "Intensional Logic".
 -/
 
-import Linglib.Core.Proposition
+import Linglib.Core.Semantics.Proposition
 import Linglib.Tactics.OntSort
 
 namespace Core.Intension

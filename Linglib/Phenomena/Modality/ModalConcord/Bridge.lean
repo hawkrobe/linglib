@@ -1,6 +1,6 @@
 import Linglib.Phenomena.Modality.ModalConcord.Data
 import Linglib.Fragments.English.FunctionWords
-import Linglib.Core.ModalLogic
+import Linglib.Core.Logic.ModalLogic
 import Linglib.Core.Register
 import Linglib.Theories.Semantics.Modality.Typology
 

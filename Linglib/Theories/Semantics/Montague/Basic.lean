@@ -15,7 +15,7 @@ Function application: if α has type σ → τ and β has type σ, then ⟦α β
 -/
 
 import Linglib.Core.Lexical.Word
-import Linglib.Core.Proposition
+import Linglib.Core.Semantics.Proposition
 import Mathlib.Data.Set.Basic
 import Mathlib.Data.Fintype.Basic
 

@@ -1,5 +1,5 @@
 import Mathlib.Data.Fintype.Basic
-import Linglib.Core.Quantification
+import Linglib.Core.Logic.Quantification
 
 /-
 # Possessives and Relational Nouns (Barker 2011)

@@ -41,7 +41,7 @@ This module adds adjective-specific infrastructure:
 -/
 
 import Linglib.Theories.Semantics.Montague.Basic
-import Linglib.Core.Scale
+import Linglib.Core.Scales.Scale
 import Linglib.Theories.Semantics.Lexical.Adjective.MLScale
 
 namespace Semantics.Lexical.Adjective

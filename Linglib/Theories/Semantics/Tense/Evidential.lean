@@ -1,6 +1,6 @@
 import Linglib.Theories.Semantics.Tense.Compositional
-import Linglib.Core.Evidence
-import Linglib.Core.Presupposition
+import Linglib.Core.Discourse.Evidence
+import Linglib.Core.Semantics.Presupposition
 import Linglib.Theories.Semantics.Mood.Basic
 import Linglib.Core.Context.Shifts
 

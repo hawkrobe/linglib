@@ -47,8 +47,8 @@ Belief-Predicate Test (for OLE):
 - Simons et al. (2010). What projects and why.
 -/
 
-import Linglib.Core.Presupposition
-import Linglib.Core.Proposition
+import Linglib.Core.Semantics.Presupposition
+import Linglib.Core.Semantics.Proposition
 
 namespace Phenomena.Presupposition.ProjectiveContent
 

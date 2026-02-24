@@ -1,5 +1,5 @@
-import Linglib.Core.CommonGround
-import Linglib.Core.Proposition
+import Linglib.Core.Semantics.CommonGround
+import Linglib.Core.Semantics.Proposition
 import Linglib.Theories.Semantics.Modality.Kratzer
 
 /-!

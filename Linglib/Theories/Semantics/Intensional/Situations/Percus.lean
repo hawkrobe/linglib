@@ -1,5 +1,5 @@
-import Linglib.Core.Intension
-import Linglib.Core.Tense
+import Linglib.Core.Semantics.Intension
+import Linglib.Core.Temporal.Tense
 import Linglib.Core.Context.Tower
 
 /-!

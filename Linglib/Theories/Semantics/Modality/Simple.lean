@@ -9,7 +9,7 @@ Accessibility is a primitive relation, unlike Kratzer's derived approach.
 -/
 
 import Linglib.Theories.Semantics.Modality.Basic
-import Linglib.Core.ModalLogic
+import Linglib.Core.Logic.ModalLogic
 
 namespace Semantics.Modality
 

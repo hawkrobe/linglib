@@ -1,6 +1,6 @@
 import Linglib.Phenomena.Gradability.Data
 import Linglib.Fragments.English.Predicates.Adjectival
-import Linglib.Core.Scale
+import Linglib.Core.Scales.Scale
 
 /-!
 # Gradability Typology Bridge

@@ -35,7 +35,7 @@ This is NOT C-distributive because worry-about-Q involves global uncertainty.
 -/
 
 import Mathlib.Data.Rat.Defs
-import Linglib.Core.Proposition
+import Linglib.Core.Semantics.Proposition
 
 namespace Semantics.Attitudes.CDistributivity
 

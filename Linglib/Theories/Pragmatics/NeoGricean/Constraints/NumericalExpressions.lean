@@ -1,5 +1,5 @@
-import Linglib.Core.Roundness
-import Linglib.Core.SatisfactionOrdering
+import Linglib.Core.Scales.Roundness
+import Linglib.Core.Logic.SatisfactionOrdering
 import Linglib.Theories.Pragmatics.NeoGricean.Core.Markedness
 import Mathlib.Data.Rat.Defs
 

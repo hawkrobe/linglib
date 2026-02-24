@@ -1,4 +1,4 @@
-import Linglib.Core.InformationStructure
+import Linglib.Core.Discourse.InformationStructure
 import Linglib.Theories.Semantics.Focus.Interpretation
 import Linglib.Theories.Semantics.Questions.Hamblin
 import Linglib.Theories.Semantics.Montague.Composition

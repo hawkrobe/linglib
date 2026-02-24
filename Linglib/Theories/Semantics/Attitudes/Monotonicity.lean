@@ -1,4 +1,4 @@
-import Linglib.Core.NaturalLogic
+import Linglib.Core.Logic.NaturalLogic
 import Linglib.Theories.Semantics.Truthmaker.Basic
 import Linglib.Theories.Semantics.Attitudes.NegRaising
 

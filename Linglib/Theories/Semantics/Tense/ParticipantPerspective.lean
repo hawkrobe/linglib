@@ -1,6 +1,6 @@
 import Linglib.Theories.Semantics.Tense.Evidential
-import Linglib.Core.DiscourseRole
-import Linglib.Core.Context
+import Linglib.Core.Discourse.DiscourseRole
+import Linglib.Core.Temporal.Context
 import Linglib.Theories.Morphology.Core.Exponence
 
 /-!

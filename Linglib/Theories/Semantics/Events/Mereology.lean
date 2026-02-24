@@ -1,5 +1,5 @@
-import Linglib.Core.Mereology
-import Linglib.Core.MereoDim
+import Linglib.Core.Scales.Mereology
+import Linglib.Core.Scales.MereoDim
 import Linglib.Theories.Semantics.Events.Basic
 import Linglib.Theories.Semantics.Lexical.Verb.Aspect
 

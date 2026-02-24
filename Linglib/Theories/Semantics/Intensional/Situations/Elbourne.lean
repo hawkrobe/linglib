@@ -1,9 +1,9 @@
-import Linglib.Core.Presupposition
+import Linglib.Core.Semantics.Presupposition
 import Linglib.Core.Definiteness
-import Linglib.Core.Intension
+import Linglib.Core.Semantics.Intension
 import Linglib.Theories.Semantics.Lexical.Determiner.Definite
 import Linglib.Theories.Semantics.Reference.Donnellan
-import Linglib.Core.QUD
+import Linglib.Core.Discourse.QUD
 
 /-!
 # Elbourne (2013): Situation-Semantic Definite Descriptions @cite{elbourne-2013}

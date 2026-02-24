@@ -1,6 +1,6 @@
 import Mathlib.CategoryTheory.Category.Basic
 import Mathlib.Order.Hom.Basic
-import Linglib.Core.Scale
+import Linglib.Core.Scales.Scale
 
 /-!
 # Category of Comparative Scales

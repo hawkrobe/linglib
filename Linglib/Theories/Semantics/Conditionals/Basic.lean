@@ -29,7 +29,7 @@ conditionals assert high conditional probability, not material implication.
   communication with conditionals.
 -/
 
-import Linglib.Core.Proposition
+import Linglib.Core.Semantics.Proposition
 
 namespace Semantics.Conditionals
 

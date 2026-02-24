@@ -1,5 +1,5 @@
-import Linglib.Core.Mereology
-import Linglib.Core.MereoDim
+import Linglib.Core.Scales.Mereology
+import Linglib.Core.Scales.MereoDim
 import Linglib.Theories.Semantics.Lexical.Verb.Aspect
 import Linglib.Theories.Semantics.Lexical.Adjective.StatesBased
 import Linglib.Theories.Semantics.Lexical.Noun.Kind.Dayal2004

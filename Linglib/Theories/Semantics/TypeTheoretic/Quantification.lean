@@ -1,5 +1,5 @@
 import Linglib.Theories.Semantics.TypeTheoretic.Modality
-import Linglib.Core.Quantification
+import Linglib.Core.Logic.Quantification
 import Mathlib.Data.Finset.Card
 
 /-!

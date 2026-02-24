@@ -1,4 +1,4 @@
-import Linglib.Core.Quantification
+import Linglib.Core.Logic.Quantification
 
 /-!
 # Square of Opposition

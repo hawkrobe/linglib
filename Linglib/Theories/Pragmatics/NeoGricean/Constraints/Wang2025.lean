@@ -1,6 +1,6 @@
-import Linglib.Core.Presupposition
-import Linglib.Core.CommonGround
-import Linglib.Core.ModalLogic
+import Linglib.Core.Semantics.Presupposition
+import Linglib.Core.Semantics.CommonGround
+import Linglib.Core.Logic.ModalLogic
 import Linglib.Core.Interface
 import Linglib.Theories.Pragmatics.NeoGricean.Presuppositions
 import Linglib.Theories.Semantics.Lexical.Expressives.Basic

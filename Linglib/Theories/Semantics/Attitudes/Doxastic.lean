@@ -27,8 +27,8 @@ Doxastic attitudes can embed questions via exhaustive interpretation:
 - Karttunen (1977). Syntax and semantics of questions.
 -/
 
-import Linglib.Core.Proposition
-import Linglib.Core.ModalLogic
+import Linglib.Core.Semantics.Proposition
+import Linglib.Core.Logic.ModalLogic
 import Linglib.Theories.Semantics.Questions.Hamblin
 
 namespace Semantics.Attitudes.Doxastic

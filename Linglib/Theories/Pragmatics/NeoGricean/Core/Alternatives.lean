@@ -42,7 +42,7 @@ From Horn (1984), Rett (2015):
 
 import Linglib.Theories.Pragmatics.NeoGricean.Core.Basic
 import Linglib.Theories.Pragmatics.NeoGricean.Core.Markedness
-import Linglib.Core.HornScale
+import Linglib.Core.Scales.HornScale
 import Linglib.Theories.Semantics.Montague.Derivation
 import Linglib.Theories.Semantics.Lexical.Adjective.Theory
 import Mathlib.Data.Rat.Defs

@@ -1,5 +1,5 @@
-import Linglib.Core.QUD
-import Linglib.Core.Proposition
+import Linglib.Core.Discourse.QUD
+import Linglib.Core.Semantics.Proposition
 import Linglib.Theories.Semantics.Questions.Partition
 
 /-!

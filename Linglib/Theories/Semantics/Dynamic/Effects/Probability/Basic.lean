@@ -28,7 +28,7 @@ The PDS framework shows that:
 import Mathlib.Data.Rat.Defs
 import Mathlib.Data.Fintype.Basic
 import Mathlib.Data.Fintype.BigOperators
-import Linglib.Core.Proposition
+import Linglib.Core.Semantics.Proposition
 
 namespace Semantics.Dynamic.Probabilistic
 

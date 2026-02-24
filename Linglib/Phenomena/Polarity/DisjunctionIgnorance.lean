@@ -1,4 +1,4 @@
-import Linglib.Core.NaturalLogic
+import Linglib.Core.Logic.NaturalLogic
 
 /-
 # Disjunction Ignorance: Empirical Data

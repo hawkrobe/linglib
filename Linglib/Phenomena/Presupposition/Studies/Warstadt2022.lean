@@ -1,6 +1,6 @@
 import Mathlib.Data.Rat.Defs
 import Mathlib.Data.Fintype.Basic
-import Linglib.Core.Presupposition
+import Linglib.Core.Semantics.Presupposition
 
 /-!
 # Warstadt (2022): Presupposition Triggering and Utterance Utility @cite{warstadt-2022}

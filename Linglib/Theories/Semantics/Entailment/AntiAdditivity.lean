@@ -5,7 +5,7 @@ Reference: Zwarts (1996), Chierchia (2013) section 1.4.3, Ladusaw (1980).
 
 import Mathlib.Order.Monotone.Defs
 import Mathlib.Data.List.Basic
-import Linglib.Core.NaturalLogic
+import Linglib.Core.Logic.NaturalLogic
 import Linglib.Theories.Semantics.Entailment.Basic
 import Linglib.Theories.Semantics.Entailment.Polarity
 

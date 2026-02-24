@@ -1,4 +1,4 @@
-import Linglib.Core.Proposition
+import Linglib.Core.Semantics.Proposition
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.Ring
 import Mathlib.Tactic.FieldSimp

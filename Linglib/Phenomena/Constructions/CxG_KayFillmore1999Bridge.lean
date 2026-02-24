@@ -1,6 +1,6 @@
 import Linglib.Theories.Syntax.ConstructionGrammar.Basic
-import Linglib.Core.Presupposition
-import Linglib.Core.CommonGround
+import Linglib.Core.Semantics.Presupposition
+import Linglib.Core.Semantics.CommonGround
 import Linglib.Theories.Semantics.Lexical.Expressives.Basic
 import Linglib.Theories.Semantics.Lexical.Verb.Aspect
 import Linglib.Phenomena.Focus.Focus_DomainWideningBridge

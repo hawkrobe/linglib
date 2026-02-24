@@ -43,7 +43,7 @@ Ramotowska et al. find experimental support for the SELECTIONAL theory.
 
 import Linglib.Theories.Semantics.Conditionals.Basic
 import Linglib.Core.StructuralEquationModel
-import Linglib.Core.Duality
+import Linglib.Core.Logic.Duality
 
 namespace Semantics.Conditionals.Counterfactual
 

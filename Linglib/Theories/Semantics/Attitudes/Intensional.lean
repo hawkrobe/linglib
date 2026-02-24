@@ -14,8 +14,8 @@ Reference: Montague, R. (1973). The Proper Treatment of Quantification in Ordina
 -/
 
 import Linglib.Theories.Semantics.Montague.Basic
-import Linglib.Core.Proposition
-import Linglib.Core.Intension
+import Linglib.Core.Semantics.Proposition
+import Linglib.Core.Semantics.Intension
 -- Re-export modular attitude theories
 import Linglib.Theories.Semantics.Attitudes.Doxastic
 import Linglib.Theories.Semantics.Attitudes.Preferential

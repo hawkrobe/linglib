@@ -1,7 +1,7 @@
 import Linglib.Phenomena.Politeness.Studies.YoonEtAl2020
-import Linglib.Core.Scale
+import Linglib.Core.Scales.Scale
 import Linglib.Theories.Semantics.Entailment.Polarity
-import Linglib.Core.Proposition
+import Linglib.Core.Semantics.Proposition
 import Mathlib.Tactic.Ring
 import Mathlib.Tactic.Linarith
 

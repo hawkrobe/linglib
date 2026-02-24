@@ -1,7 +1,7 @@
 import Linglib.Phenomena.WordOrder.Studies.ArnoldEtAl2000
 import Linglib.Theories.Syntax.DependencyGrammar.Formal.DependencyLength
 import Linglib.Theories.Syntax.CCG.Core.Combinators
-import Linglib.Core.InformationStructure
+import Linglib.Core.Discourse.InformationStructure
 
 /-!
 # Arnold et al. (2000): Competing Accounts and Their Derived Limitations
@@ -18,7 +18,7 @@ Each limitation is proved, not stipulated: it follows from the function
 signatures and type structure already present in the theory files.
 -/
 
-namespace Phenomena.WordOrder.Studies.ArnoldEtAl2000Bridge
+namespace Phenomena.WordOrder.Bridge.ArnoldEtAl2000
 
 open DepGrammar DepGrammar.DependencyLength
 open Phenomena.WordOrder.Studies.ArnoldEtAl2000
@@ -213,4 +213,4 @@ status, encoding Arnold et al.'s central finding that neither factor
 alone suffices. -/
 abbrev OrderingModel := Nat → DiscourseStatus → Nat
 
-end Phenomena.WordOrder.Studies.ArnoldEtAl2000Bridge
+end Phenomena.WordOrder.Bridge.ArnoldEtAl2000

@@ -28,7 +28,7 @@ Pure intension algebra (`varying_not_rigid`, `rigid_neq_nonrigid`,
 - Kripke, S. (1980). Naming and Necessity. Harvard University Press.
 -/
 
-import Linglib.Core.Intension
+import Linglib.Core.Semantics.Intension
 import Linglib.Theories.Semantics.Reference.Basic
 import Linglib.Theories.Semantics.Reference.KaplanLD
 

@@ -1,4 +1,4 @@
-import Linglib.Core.Time
+import Linglib.Core.Temporal.Time
 
 /-!
 # Branching Time and Temporal Propositions

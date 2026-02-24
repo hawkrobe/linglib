@@ -16,7 +16,7 @@ import Linglib.Theories.Semantics.Entailment.Polarity
 import Linglib.Theories.Semantics.Montague.Basic
 import Linglib.Theories.Semantics.Montague.Lexicon
 import Linglib.Theories.Semantics.Lexical.Determiner.Quantifier
-import Linglib.Core.HornScale
+import Linglib.Core.Scales.HornScale
 
 namespace Semantics.Montague.Derivation
 

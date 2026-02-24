@@ -39,7 +39,7 @@ See `RSAExhMonad/LocalRSA/Unification.lean` for the Local RSA account.
 -/
 
 import Mathlib.Data.Set.Basic
-import Linglib.Core.Proposition
+import Linglib.Core.Semantics.Proposition
 
 namespace Semantics.FocusParticles
 

@@ -1,4 +1,4 @@
-import Linglib.Core.InformationStructure
+import Linglib.Core.Discourse.InformationStructure
 import Linglib.Fragments.Dutch.Particles
 import Linglib.Fragments.German.PolarityMarking
 

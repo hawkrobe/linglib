@@ -2,8 +2,8 @@ import Linglib.Theories.Semantics.Events.DimensionBridge
 import Linglib.Theories.Semantics.Lexical.Adjective.Theory
 import Linglib.Theories.Semantics.Attitudes.EpistemicThreshold
 import Linglib.Fragments.English.Predicates.Adjectival
-import Linglib.Core.Scale
-import Linglib.Core.Time
+import Linglib.Core.Scales.Scale
+import Linglib.Core.Temporal.Time
 
 /-!
 # Cross-Domain Licensing Agreement Bridge

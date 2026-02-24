@@ -15,7 +15,7 @@ Montague (1973)
 import Linglib.Core.Lexical.Word
 import Linglib.Theories.Semantics.Montague.Basic
 import Linglib.Theories.Semantics.Lexical.Determiner.Quantifier
-import Linglib.Core.HornScale
+import Linglib.Core.Scales.HornScale
 import Linglib.Theories.Morphology.Core.Exponence
 
 namespace Semantics.Montague

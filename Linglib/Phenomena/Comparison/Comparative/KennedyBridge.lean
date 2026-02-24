@@ -2,7 +2,7 @@ import Linglib.Phenomena.Comparison.Comparative.Data
 import Linglib.Phenomena.Comparison.Comparative.Differential
 import Linglib.Theories.Semantics.Degree.Frameworks.Kennedy
 import Linglib.Theories.Semantics.Degree.Comparative
-import Linglib.Core.Scale
+import Linglib.Core.Scales.Scale
 
 /-!
 # Kennedy Framework on Comparative Data

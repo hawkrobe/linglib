@@ -23,7 +23,7 @@ demonstrative has no content.
 - Kaplan, D. (1989). Demonstratives, §IX, XV, XVI.
 -/
 
-import Linglib.Core.Context
+import Linglib.Core.Temporal.Context
 import Linglib.Theories.Semantics.Reference.Basic
 import Linglib.Theories.Semantics.Reference.KaplanLD
 

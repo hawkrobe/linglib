@@ -1,8 +1,9 @@
-import Linglib.Core.Scale
+import Linglib.Core.Scales.Scale
 import Mathlib.Data.Fintype.Powerset
 import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.FinCases
+import Mathlib.Tactic.IntervalCases
 
 /-!
 # Epistemic Comparative Likelihood (Holliday & Icard 2013)
@@ -3321,20 +3322,546 @@ private theorem theorem8a_fin3 (sys : EpistemicSystemFA (Fin 3)) :
                     ⟨fun _ => by linarith, fun _ => hge_02_1⟩
                     ⟨fun _ => by linarith, fun _ => hge_12_0⟩)⟩
 
+-- ── Card 4: Infrastructure ──────────────────────────
+
+private noncomputable def measure_fin4 (a b c : ℚ) (ha : 0 ≤ a) (hb : 0 ≤ b) (hc : 0 ≤ c)
+    (habc : a + b + c ≤ 1) : FinAddMeasure (Fin 4) where
+  mu := fun A =>
+    (if (0 : Fin 4) ∈ A then a else 0) +
+    (if (1 : Fin 4) ∈ A then b else 0) +
+    (if (2 : Fin 4) ∈ A then c else 0) +
+    (if (3 : Fin 4) ∈ A then 1 - a - b - c else 0)
+  nonneg := fun A => by
+    apply add_nonneg; apply add_nonneg; apply add_nonneg
+    · split <;> [exact ha; exact le_refl _]
+    · split <;> [exact hb; exact le_refl _]
+    · split <;> [exact hc; exact le_refl _]
+    · split <;> [linarith; exact le_refl _]
+  additive := fun A B hdisj => by
+    by_cases h0A : (0 : Fin 4) ∈ A <;> by_cases h0B : (0 : Fin 4) ∈ B <;>
+    by_cases h1A : (1 : Fin 4) ∈ A <;> by_cases h1B : (1 : Fin 4) ∈ B <;>
+    by_cases h2A : (2 : Fin 4) ∈ A <;> by_cases h2B : (2 : Fin 4) ∈ B <;>
+    by_cases h3A : (3 : Fin 4) ∈ A <;> by_cases h3B : (3 : Fin 4) ∈ B <;>
+    simp_all [Set.mem_union] <;> linarith
+  total := by simp only [Set.mem_univ, ite_true]; linarith
+
+private theorem measure_fin4_mu (a b c : ℚ) (ha : 0 ≤ a) (hb : 0 ≤ b) (hc : 0 ≤ c)
+    (habc : a + b + c ≤ 1) (A : Set (Fin 4)) :
+    (measure_fin4 a b c ha hb hc habc).mu A =
+    (if (0 : Fin 4) ∈ A then a else 0) +
+    (if (1 : Fin 4) ∈ A then b else 0) +
+    (if (2 : Fin 4) ∈ A then c else 0) +
+    (if (3 : Fin 4) ∈ A then 1 - a - b - c else 0) := rfl
+
+private theorem set_fin4_eq (A : Set (Fin 4)) :
+    A = ∅ ∨ A = {0} ∨ A = {1} ∨ A = {2} ∨ A = {3} ∨
+    A = {0,1} ∨ A = {0,2} ∨ A = {0,3} ∨ A = {1,2} ∨ A = {1,3} ∨ A = {2,3} ∨
+    A = {0,1,2} ∨ A = {0,1,3} ∨ A = {0,2,3} ∨ A = {1,2,3} ∨
+    A = Set.univ := by
+  by_cases h0 : (0 : Fin 4) ∈ A <;> by_cases h1 : (1 : Fin 4) ∈ A <;>
+  by_cases h2 : (2 : Fin 4) ∈ A <;> by_cases h3 : (3 : Fin 4) ∈ A
+  · right; right; right; right; right; right; right; right; right; right
+    right; right; right; right; right; ext x; fin_cases x <;> simp_all
+  · right; right; right; right; right; right; right; right; right; right
+    right; left; ext x; fin_cases x <;> simp_all
+  · right; right; right; right; right; right; right; right; right; right
+    right; right; left; ext x; fin_cases x <;> simp_all
+  · right; right; right; right; right; left; ext x; fin_cases x <;> simp_all
+  · right; right; right; right; right; right; right; right; right; right
+    right; right; right; left; ext x; fin_cases x <;> simp_all
+  · right; right; right; right; right; right; left; ext x; fin_cases x <;> simp_all
+  · right; right; right; right; right; right; right; left; ext x; fin_cases x <;> simp_all
+  · right; left; ext x; fin_cases x <;> simp_all
+  · right; right; right; right; right; right; right; right; right; right
+    right; right; right; right; left; ext x; fin_cases x <;> simp_all
+  · right; right; right; right; right; right; right; right; left
+    ext x; fin_cases x <;> simp_all
+  · right; right; right; right; right; right; right; right; right; left
+    ext x; fin_cases x <;> simp_all
+  · right; right; left; ext x; fin_cases x <;> simp_all
+  · right; right; right; right; right; right; right; right; right; right; left
+    ext x; fin_cases x <;> simp_all
+  · right; right; right; left; ext x; fin_cases x <;> simp_all
+  · right; right; right; right; left; ext x; fin_cases x <;> simp_all
+  · left; ext x; fin_cases x <;> simp_all
+
+private theorem mf4_val (a b c : ℚ) (ha : 0 ≤ a) (hb : 0 ≤ b) (hc : 0 ≤ c)
+    (habc : a + b + c ≤ 1) (S : Set (Fin 4)) (v : ℚ)
+    (hv : (if (0 : Fin 4) ∈ S then a else 0) +
+          (if (1 : Fin 4) ∈ S then b else 0) +
+          (if (2 : Fin 4) ∈ S then c else 0) +
+          (if (3 : Fin 4) ∈ S then 1 - a - b - c else 0) = v) :
+    (measure_fin4 a b c ha hb hc habc).mu S = v := hv
+
+private theorem mf4_empty (a b c : ℚ) (ha : 0 ≤ a) (hb : 0 ≤ b) (hc : 0 ≤ c)
+    (habc : a + b + c ≤ 1) :
+    (measure_fin4 a b c ha hb hc habc).mu ∅ = 0 := by
+  rw [measure_fin4_mu]; simp
+
+private theorem mf4_univ (a b c : ℚ) (ha : 0 ≤ a) (hb : 0 ≤ b) (hc : 0 ≤ c)
+    (habc : a + b + c ≤ 1) :
+    (measure_fin4 a b c ha hb hc habc).mu (Set.univ : Set (Fin 4)) = 1 := by
+  rw [measure_fin4_mu]; simp only [Set.mem_univ, ite_true]; linarith
+
+set_option maxHeartbeats 800000 in
+private theorem mf4_s0 (a b c : ℚ) (ha : 0 ≤ a) (hb : 0 ≤ b) (hc : 0 ≤ c)
+    (habc : a + b + c ≤ 1) :
+    (measure_fin4 a b c ha hb hc habc).mu {(0 : Fin 4)} = a := by
+  rw [measure_fin4_mu]; split_ifs <;>
+  simp_all [Set.mem_singleton_iff, Fin.ext_iff] <;> linarith
+
+set_option maxHeartbeats 800000 in
+private theorem mf4_s1 (a b c : ℚ) (ha : 0 ≤ a) (hb : 0 ≤ b) (hc : 0 ≤ c)
+    (habc : a + b + c ≤ 1) :
+    (measure_fin4 a b c ha hb hc habc).mu {(1 : Fin 4)} = b := by
+  rw [measure_fin4_mu]; split_ifs <;>
+  simp_all [Set.mem_singleton_iff, Fin.ext_iff] <;> linarith
+
+set_option maxHeartbeats 800000 in
+private theorem mf4_s2 (a b c : ℚ) (ha : 0 ≤ a) (hb : 0 ≤ b) (hc : 0 ≤ c)
+    (habc : a + b + c ≤ 1) :
+    (measure_fin4 a b c ha hb hc habc).mu {(2 : Fin 4)} = c := by
+  rw [measure_fin4_mu]; split_ifs <;>
+  simp_all [Set.mem_singleton_iff, Fin.ext_iff] <;> linarith
+
+set_option maxHeartbeats 800000 in
+private theorem mf4_s3 (a b c : ℚ) (ha : 0 ≤ a) (hb : 0 ≤ b) (hc : 0 ≤ c)
+    (habc : a + b + c ≤ 1) :
+    (measure_fin4 a b c ha hb hc habc).mu {(3 : Fin 4)} = 1 - a - b - c := by
+  rw [measure_fin4_mu]; split_ifs <;>
+  simp_all [Set.mem_singleton_iff, Fin.ext_iff] <;> linarith
+
+set_option maxHeartbeats 800000 in
+private theorem mf4_p01 (a b c : ℚ) (ha : 0 ≤ a) (hb : 0 ≤ b) (hc : 0 ≤ c)
+    (habc : a + b + c ≤ 1) :
+    (measure_fin4 a b c ha hb hc habc).mu ({0, 1} : Set (Fin 4)) = a + b := by
+  rw [measure_fin4_mu]; split_ifs <;>
+  simp_all [Set.mem_insert_iff, Set.mem_singleton_iff, Fin.ext_iff] <;> linarith
+
+set_option maxHeartbeats 800000 in
+private theorem mf4_p02 (a b c : ℚ) (ha : 0 ≤ a) (hb : 0 ≤ b) (hc : 0 ≤ c)
+    (habc : a + b + c ≤ 1) :
+    (measure_fin4 a b c ha hb hc habc).mu ({0, 2} : Set (Fin 4)) = a + c := by
+  rw [measure_fin4_mu]; split_ifs <;>
+  simp_all [Set.mem_insert_iff, Set.mem_singleton_iff, Fin.ext_iff] <;> linarith
+
+set_option maxHeartbeats 800000 in
+private theorem mf4_p03 (a b c : ℚ) (ha : 0 ≤ a) (hb : 0 ≤ b) (hc : 0 ≤ c)
+    (habc : a + b + c ≤ 1) :
+    (measure_fin4 a b c ha hb hc habc).mu ({0, 3} : Set (Fin 4)) = 1 - b - c := by
+  rw [measure_fin4_mu]; split_ifs <;>
+  simp_all [Set.mem_insert_iff, Set.mem_singleton_iff, Fin.ext_iff] <;> linarith
+
+set_option maxHeartbeats 800000 in
+private theorem mf4_p12 (a b c : ℚ) (ha : 0 ≤ a) (hb : 0 ≤ b) (hc : 0 ≤ c)
+    (habc : a + b + c ≤ 1) :
+    (measure_fin4 a b c ha hb hc habc).mu ({1, 2} : Set (Fin 4)) = b + c := by
+  rw [measure_fin4_mu]; split_ifs <;>
+  simp_all [Set.mem_insert_iff, Set.mem_singleton_iff, Fin.ext_iff] <;> linarith
+
+set_option maxHeartbeats 800000 in
+private theorem mf4_p13 (a b c : ℚ) (ha : 0 ≤ a) (hb : 0 ≤ b) (hc : 0 ≤ c)
+    (habc : a + b + c ≤ 1) :
+    (measure_fin4 a b c ha hb hc habc).mu ({1, 3} : Set (Fin 4)) = 1 - a - c := by
+  rw [measure_fin4_mu]; split_ifs <;>
+  simp_all [Set.mem_insert_iff, Set.mem_singleton_iff, Fin.ext_iff] <;> linarith
+
+set_option maxHeartbeats 800000 in
+private theorem mf4_p23 (a b c : ℚ) (ha : 0 ≤ a) (hb : 0 ≤ b) (hc : 0 ≤ c)
+    (habc : a + b + c ≤ 1) :
+    (measure_fin4 a b c ha hb hc habc).mu ({2, 3} : Set (Fin 4)) = 1 - a - b := by
+  rw [measure_fin4_mu]; split_ifs <;>
+  simp_all [Set.mem_insert_iff, Set.mem_singleton_iff, Fin.ext_iff] <;> linarith
+
+set_option maxHeartbeats 1600000 in
+private theorem mf4_t012 (a b c : ℚ) (ha : 0 ≤ a) (hb : 0 ≤ b) (hc : 0 ≤ c)
+    (habc : a + b + c ≤ 1) :
+    (measure_fin4 a b c ha hb hc habc).mu ({0, 1, 2} : Set (Fin 4)) = a + b + c := by
+  rw [measure_fin4_mu]; split_ifs <;>
+  simp_all [Set.mem_insert_iff, Set.mem_singleton_iff, Fin.ext_iff] <;> linarith
+
+set_option maxHeartbeats 1600000 in
+private theorem mf4_t013 (a b c : ℚ) (ha : 0 ≤ a) (hb : 0 ≤ b) (hc : 0 ≤ c)
+    (habc : a + b + c ≤ 1) :
+    (measure_fin4 a b c ha hb hc habc).mu ({0, 1, 3} : Set (Fin 4)) = 1 - c := by
+  rw [measure_fin4_mu]; split_ifs <;>
+  simp_all [Set.mem_insert_iff, Set.mem_singleton_iff, Fin.ext_iff] <;> linarith
+
+set_option maxHeartbeats 1600000 in
+private theorem mf4_t023 (a b c : ℚ) (ha : 0 ≤ a) (hb : 0 ≤ b) (hc : 0 ≤ c)
+    (habc : a + b + c ≤ 1) :
+    (measure_fin4 a b c ha hb hc habc).mu ({0, 2, 3} : Set (Fin 4)) = 1 - b := by
+  rw [measure_fin4_mu]; split_ifs <;>
+  simp_all [Set.mem_insert_iff, Set.mem_singleton_iff, Fin.ext_iff] <;> linarith
+
+set_option maxHeartbeats 1600000 in
+private theorem mf4_t123 (a b c : ℚ) (ha : 0 ≤ a) (hb : 0 ≤ b) (hc : 0 ≤ c)
+    (habc : a + b + c ≤ 1) :
+    (measure_fin4 a b c ha hb hc habc).mu ({1, 2, 3} : Set (Fin 4)) = 1 - a := by
+  rw [measure_fin4_mu]; split_ifs <;>
+  simp_all [Set.mem_insert_iff, Set.mem_singleton_iff, Fin.ext_iff] <;> linarith
+
+private theorem not_all_null_fin4 (sys : EpistemicSystemFA (Fin 4)) :
+    ¬(sys.ge ∅ {0} ∧ sys.ge ∅ {1} ∧ sys.ge ∅ {2} ∧ sys.ge ∅ {3}) := by
+  intro ⟨h0, h1, h2, h3⟩
+  have h01 : sys.ge ∅ ({0, 1} : Set (Fin 4)) := by
+    have : sys.ge {1} ({0, 1} : Set (Fin 4)) := by
+      rw [sys.additive {1} {0, 1}]
+      rw [show ({1} : Set (Fin 4)) \ {0, 1} = ∅ from by ext x; fin_cases x <;> simp_all]
+      rw [show ({0, 1} : Set (Fin 4)) \ {1} = {0} from by ext x; fin_cases x <;> simp_all]
+      exact h0
+    exact sys.trans _ _ _ h1 this
+  have h012 : sys.ge ∅ ({0, 1, 2} : Set (Fin 4)) := by
+    have : sys.ge {2} ({0, 1, 2} : Set (Fin 4)) := by
+      rw [sys.additive {2} {0, 1, 2}]
+      rw [show ({2} : Set (Fin 4)) \ {0, 1, 2} = ∅ from by ext x; fin_cases x <;> simp_all]
+      rw [show ({0, 1, 2} : Set (Fin 4)) \ {2} = {0, 1} from by ext x; fin_cases x <;> simp_all]
+      exact h01
+    exact sys.trans _ _ _ h2 this
+  have huniv : sys.ge ∅ Set.univ := by
+    have : sys.ge {3} (Set.univ : Set (Fin 4)) := by
+      rw [sys.additive {3} Set.univ]
+      rw [show ({3} : Set (Fin 4)) \ Set.univ = ∅ from by ext x; simp]
+      rw [show (Set.univ : Set (Fin 4)) \ {3} = {0, 1, 2} from by
+        ext x; fin_cases x <;> simp_all]
+      exact h012
+    exact sys.trans _ _ _ h3 this
+  exact sys.nonTrivial huniv
+
+set_option maxHeartbeats 6400000 in
+private theorem fin4_dispatch (sys : EpistemicSystemFA (Fin 4))
+    (a b c : ℚ) (ha : 0 ≤ a) (hb : 0 ≤ b) (hc : 0 ≤ c) (habc : a + b + c ≤ 1)
+    (hme : (measure_fin4 a b c ha hb hc habc).mu ∅ = 0)
+    (hm0 : (measure_fin4 a b c ha hb hc habc).mu {(0 : Fin 4)} = a)
+    (hm1 : (measure_fin4 a b c ha hb hc habc).mu {(1 : Fin 4)} = b)
+    (hm2 : (measure_fin4 a b c ha hb hc habc).mu {(2 : Fin 4)} = c)
+    (hm3 : (measure_fin4 a b c ha hb hc habc).mu {(3 : Fin 4)} = 1 - a - b - c)
+    (hm01 : (measure_fin4 a b c ha hb hc habc).mu ({0, 1} : Set (Fin 4)) = a + b)
+    (hm02 : (measure_fin4 a b c ha hb hc habc).mu ({0, 2} : Set (Fin 4)) = a + c)
+    (hm03 : (measure_fin4 a b c ha hb hc habc).mu ({0, 3} : Set (Fin 4)) = 1 - b - c)
+    (hm12 : (measure_fin4 a b c ha hb hc habc).mu ({1, 2} : Set (Fin 4)) = b + c)
+    (hm13 : (measure_fin4 a b c ha hb hc habc).mu ({1, 3} : Set (Fin 4)) = 1 - a - c)
+    (hm23 : (measure_fin4 a b c ha hb hc habc).mu ({2, 3} : Set (Fin 4)) = 1 - a - b)
+    (hm012 : (measure_fin4 a b c ha hb hc habc).mu ({0, 1, 2} : Set (Fin 4)) = a + b + c)
+    (hm013 : (measure_fin4 a b c ha hb hc habc).mu ({0, 1, 3} : Set (Fin 4)) = 1 - c)
+    (hm023 : (measure_fin4 a b c ha hb hc habc).mu ({0, 2, 3} : Set (Fin 4)) = 1 - b)
+    (hm123 : (measure_fin4 a b c ha hb hc habc).mu ({1, 2, 3} : Set (Fin 4)) = 1 - a)
+    (hmu : (measure_fin4 a b c ha hb hc habc).mu (Set.univ : Set (Fin 4)) = 1)
+    (he0 : sys.ge ∅ {(0 : Fin 4)} ↔ a ≤ 0)
+    (he1 : sys.ge ∅ {(1 : Fin 4)} ↔ b ≤ 0)
+    (he2 : sys.ge ∅ {(2 : Fin 4)} ↔ c ≤ 0)
+    (he3 : sys.ge ∅ {(3 : Fin 4)} ↔ 1 - a - b - c ≤ 0)
+    (he01 : sys.ge ∅ ({0, 1} : Set (Fin 4)) ↔ a + b ≤ 0)
+    (he02 : sys.ge ∅ ({0, 2} : Set (Fin 4)) ↔ a + c ≤ 0)
+    (he03 : sys.ge ∅ ({0, 3} : Set (Fin 4)) ↔ 1 - b - c ≤ 0)
+    (he12 : sys.ge ∅ ({1, 2} : Set (Fin 4)) ↔ b + c ≤ 0)
+    (he13 : sys.ge ∅ ({1, 3} : Set (Fin 4)) ↔ 1 - a - c ≤ 0)
+    (he23 : sys.ge ∅ ({2, 3} : Set (Fin 4)) ↔ 1 - a - b ≤ 0)
+    (he012 : sys.ge ∅ ({0, 1, 2} : Set (Fin 4)) ↔ a + b + c ≤ 0)
+    (he013 : sys.ge ∅ ({0, 1, 3} : Set (Fin 4)) ↔ 1 - c ≤ 0)
+    (he023 : sys.ge ∅ ({0, 2, 3} : Set (Fin 4)) ↔ 1 - b ≤ 0)
+    (he123 : sys.ge ∅ ({1, 2, 3} : Set (Fin 4)) ↔ 1 - a ≤ 0)
+    (h01 : sys.ge {(0 : Fin 4)} {1} ↔ a ≥ b)
+    (h10 : sys.ge {(1 : Fin 4)} {0} ↔ b ≥ a)
+    (h02 : sys.ge {(0 : Fin 4)} {2} ↔ a ≥ c)
+    (h20 : sys.ge {(2 : Fin 4)} {0} ↔ c ≥ a)
+    (h03 : sys.ge {(0 : Fin 4)} {3} ↔ a ≥ 1 - a - b - c)
+    (h30 : sys.ge {(3 : Fin 4)} {0} ↔ 1 - a - b - c ≥ a)
+    (h12 : sys.ge {(1 : Fin 4)} {2} ↔ b ≥ c)
+    (h21 : sys.ge {(2 : Fin 4)} {1} ↔ c ≥ b)
+    (h13 : sys.ge {(1 : Fin 4)} {3} ↔ b ≥ 1 - a - b - c)
+    (h31 : sys.ge {(3 : Fin 4)} {1} ↔ 1 - a - b - c ≥ b)
+    (h23 : sys.ge {(2 : Fin 4)} {3} ↔ c ≥ 1 - a - b - c)
+    (h32 : sys.ge {(3 : Fin 4)} {2} ↔ 1 - a - b - c ≥ c)
+    (h0_12 : sys.ge {(0 : Fin 4)} ({1, 2} : Set _) ↔ a ≥ b + c)
+    (h12_0 : sys.ge ({1, 2} : Set (Fin 4)) {0} ↔ b + c ≥ a)
+    (h0_13 : sys.ge {(0 : Fin 4)} ({1, 3} : Set _) ↔ a ≥ 1 - a - c)
+    (h13_0 : sys.ge ({1, 3} : Set (Fin 4)) {0} ↔ 1 - a - c ≥ a)
+    (h0_23 : sys.ge {(0 : Fin 4)} ({2, 3} : Set _) ↔ a ≥ 1 - a - b)
+    (h23_0 : sys.ge ({2, 3} : Set (Fin 4)) {0} ↔ 1 - a - b ≥ a)
+    (h1_02 : sys.ge {(1 : Fin 4)} ({0, 2} : Set _) ↔ b ≥ a + c)
+    (h02_1 : sys.ge ({0, 2} : Set (Fin 4)) {1} ↔ a + c ≥ b)
+    (h1_03 : sys.ge {(1 : Fin 4)} ({0, 3} : Set _) ↔ b ≥ 1 - b - c)
+    (h03_1 : sys.ge ({0, 3} : Set (Fin 4)) {1} ↔ 1 - b - c ≥ b)
+    (h1_23 : sys.ge {(1 : Fin 4)} ({2, 3} : Set _) ↔ b ≥ 1 - a - b)
+    (h23_1 : sys.ge ({2, 3} : Set (Fin 4)) {1} ↔ 1 - a - b ≥ b)
+    (h2_01 : sys.ge {(2 : Fin 4)} ({0, 1} : Set _) ↔ c ≥ a + b)
+    (h01_2 : sys.ge ({0, 1} : Set (Fin 4)) {2} ↔ a + b ≥ c)
+    (h2_03 : sys.ge {(2 : Fin 4)} ({0, 3} : Set _) ↔ c ≥ 1 - b - c)
+    (h03_2 : sys.ge ({0, 3} : Set (Fin 4)) {2} ↔ 1 - b - c ≥ c)
+    (h2_13 : sys.ge {(2 : Fin 4)} ({1, 3} : Set _) ↔ c ≥ 1 - a - c)
+    (h13_2 : sys.ge ({1, 3} : Set (Fin 4)) {2} ↔ 1 - a - c ≥ c)
+    (h3_01 : sys.ge {(3 : Fin 4)} ({0, 1} : Set _) ↔ 1 - a - b - c ≥ a + b)
+    (h01_3 : sys.ge ({0, 1} : Set (Fin 4)) {3} ↔ a + b ≥ 1 - a - b - c)
+    (h3_02 : sys.ge {(3 : Fin 4)} ({0, 2} : Set _) ↔ 1 - a - b - c ≥ a + c)
+    (h02_3 : sys.ge ({0, 2} : Set (Fin 4)) {3} ↔ a + c ≥ 1 - a - b - c)
+    (h3_12 : sys.ge {(3 : Fin 4)} ({1, 2} : Set _) ↔ 1 - a - b - c ≥ b + c)
+    (h12_3 : sys.ge ({1, 2} : Set (Fin 4)) {3} ↔ b + c ≥ 1 - a - b - c)
+    (h0_123 : sys.ge {(0 : Fin 4)} ({1, 2, 3} : Set _) ↔ a ≥ 1 - a)
+    (h123_0 : sys.ge ({1, 2, 3} : Set (Fin 4)) {0} ↔ 1 - a ≥ a)
+    (h1_023 : sys.ge {(1 : Fin 4)} ({0, 2, 3} : Set _) ↔ b ≥ 1 - b)
+    (h023_1 : sys.ge ({0, 2, 3} : Set (Fin 4)) {1} ↔ 1 - b ≥ b)
+    (h2_013 : sys.ge {(2 : Fin 4)} ({0, 1, 3} : Set _) ↔ c ≥ 1 - c)
+    (h013_2 : sys.ge ({0, 1, 3} : Set (Fin 4)) {2} ↔ 1 - c ≥ c)
+    (h3_012 : sys.ge {(3 : Fin 4)} ({0, 1, 2} : Set _) ↔ 1 - a - b - c ≥ a + b + c)
+    (h012_3 : sys.ge ({0, 1, 2} : Set (Fin 4)) {3} ↔ a + b + c ≥ 1 - a - b - c)
+    (h01_23 : sys.ge ({0, 1} : Set (Fin 4)) ({2, 3} : Set _) ↔ a + b ≥ 1 - a - b)
+    (h23_01 : sys.ge ({2, 3} : Set (Fin 4)) ({0, 1} : Set _) ↔ 1 - a - b ≥ a + b)
+    (h02_13 : sys.ge ({0, 2} : Set (Fin 4)) ({1, 3} : Set _) ↔ a + c ≥ 1 - a - c)
+    (h13_02 : sys.ge ({1, 3} : Set (Fin 4)) ({0, 2} : Set _) ↔ 1 - a - c ≥ a + c)
+    (h03_12 : sys.ge ({0, 3} : Set (Fin 4)) ({1, 2} : Set _) ↔ 1 - b - c ≥ b + c)
+    (h12_03 : sys.ge ({1, 2} : Set (Fin 4)) ({0, 3} : Set _) ↔ b + c ≥ 1 - b - c) :
+    ∀ C D : Set (Fin 4), (∀ x, x ∈ C → x ∉ D) →
+      (sys.ge C D ↔ (measure_fin4 a b c ha hb hc habc).inducedGe C D) := by
+  intro C D hdisj
+  simp only [FinAddMeasure.inducedGe]
+  rcases set_fin4_eq C with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl |
+    rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl <;>
+  rcases set_fin4_eq D with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl |
+    rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl
+  all_goals try (exfalso; first
+    | (apply hdisj 0; all_goals (simp; done))
+    | (apply hdisj 1; all_goals (simp; done))
+    | (apply hdisj 2; all_goals (simp; done))
+    | (apply hdisj 3; all_goals (simp; done)))
+  all_goals simp only [hme, hm0, hm1, hm2, hm3, hm01, hm02, hm03, hm12, hm13, hm23,
+    hm012, hm013, hm023, hm123, hmu]
+  all_goals first
+    | exact ⟨fun _ => le_refl _, fun _ => sys.refl _⟩
+    | exact ⟨fun h => absurd h sys.nonTrivial, fun h => by linarith⟩
+    | exact ⟨fun _ => by linarith, fun _ => sys.mono _ _ (Set.empty_subset _)⟩
+    | exact he0 | exact he1 | exact he2 | exact he3
+    | exact he01 | exact he02 | exact he03 | exact he12 | exact he13 | exact he23
+    | exact he012 | exact he013 | exact he023 | exact he123
+    | exact h01 | exact h10 | exact h02 | exact h20 | exact h03 | exact h30
+    | exact h12 | exact h21 | exact h13 | exact h31 | exact h23 | exact h32
+    | exact h0_12 | exact h12_0 | exact h0_13 | exact h13_0
+    | exact h0_23 | exact h23_0
+    | exact h1_02 | exact h02_1 | exact h1_03 | exact h03_1
+    | exact h1_23 | exact h23_1
+    | exact h2_01 | exact h01_2 | exact h2_03 | exact h03_2
+    | exact h2_13 | exact h13_2
+    | exact h3_01 | exact h01_3 | exact h3_02 | exact h02_3
+    | exact h3_12 | exact h12_3
+    | exact h0_123 | exact h123_0 | exact h1_023 | exact h023_1
+    | exact h2_013 | exact h013_2 | exact h3_012 | exact h012_3
+    | exact h01_23 | exact h23_01 | exact h02_13 | exact h13_02
+    | exact h03_12 | exact h12_03
+
+-- ── Card 4: Dirac helper (3-null cases) ──────────────
+
+set_option maxHeartbeats 800000 in
+private theorem fin4_dirac_repr (sys : EpistemicSystemFA (Fin 4))
+    (j : Fin 4)
+    (ge_null : ∀ D : Set (Fin 4), j ∉ D → sys.ge ∅ D)
+    (hn_j : ¬sys.ge ∅ {j}) :
+    ∃ (m : FinAddMeasure (Fin 4)), ∀ A B, sys.ge A B ↔ m.inducedGe A B := by
+  -- Construct Dirac measure at j
+  have ⟨m, hmu⟩ : ∃ m : FinAddMeasure (Fin 4), ∀ C, m.mu C = if j ∈ C then 1 else 0 := by
+    fin_cases j
+    · exact ⟨measure_fin4 1 0 0 (by linarith) le_rfl le_rfl (by linarith),
+        fun C => by rw [measure_fin4_mu]; simp⟩
+    · exact ⟨measure_fin4 0 1 0 le_rfl (by linarith) le_rfl (by linarith),
+        fun C => by rw [measure_fin4_mu]; simp⟩
+    · exact ⟨measure_fin4 0 0 1 le_rfl le_rfl (by linarith) (by linarith),
+        fun C => by rw [measure_fin4_mu]; simp⟩
+    · exact ⟨measure_fin4 0 0 0 le_rfl le_rfl le_rfl (by linarith),
+        fun C => by rw [measure_fin4_mu]; simp⟩
+  exact ⟨m, reduce_to_disjoint sys m (fun C D hdisj => by
+    simp only [FinAddMeasure.inducedGe, hmu]
+    by_cases hjC : j ∈ C <;> by_cases hjD : j ∈ D
+    · exact absurd hjD (hdisj j hjC)
+    · rw [if_pos hjC, if_neg hjD]; constructor
+      · intro _; linarith
+      · intro _; exact sys.trans C {j} D
+          (sys.mono _ _ (Set.singleton_subset_iff.mpr hjC))
+          (sys.trans {j} ∅ D (sys.mono _ _ (Set.empty_subset {j})) (ge_null D hjD))
+    · rw [if_neg hjC, if_pos hjD]; constructor
+      · intro h; exfalso; exact hn_j (sys.trans ∅ C {j}
+          (ge_null C hjC) (sys.trans C D {j} h
+            (sys.mono _ _ (Set.singleton_subset_iff.mpr hjD))))
+      · intro h; linarith
+    · rw [if_neg hjC, if_neg hjD]; constructor
+      · intro _; linarith
+      · intro _; exact sys.trans C ∅ D
+          (sys.mono _ _ (Set.empty_subset C)) (ge_null D hjD))⟩
+
+-- ── Card 4: Main theorem ────────────────────────────
+set_option maxHeartbeats 3200000 in
+private theorem theorem8a_fin4 (sys : EpistemicSystemFA (Fin 4)) :
+    ∃ (m : FinAddMeasure (Fin 4)), ∀ A B, sys.ge A B ↔ m.inducedGe A B := by
+  by_cases hn0 : sys.ge ∅ {(0 : Fin 4)}
+  · by_cases hn1 : sys.ge ∅ {(1 : Fin 4)}
+    · by_cases hn2 : sys.ge ∅ {(2 : Fin 4)}
+      · by_cases hn3 : sys.ge ∅ {(3 : Fin 4)}
+        · -- All null: impossible
+          exact absurd ⟨hn0, hn1, hn2, hn3⟩ (not_all_null_fin4 sys)
+        · -- 3 null ({0},{1},{2}), {3} non-null
+          have hd1 : ({0} : Set (Fin 4)) \ {0, 1} = ∅ := by ext x; fin_cases x <;> simp_all
+          have hd2 : ({0, 1} : Set (Fin 4)) \ {0} = {1} := by ext x; fin_cases x <;> simp_all
+          have hd3 : ({2} : Set (Fin 4)) \ {0, 1, 2} = ∅ := by ext x; fin_cases x <;> simp_all
+          have hd4 : ({0, 1, 2} : Set (Fin 4)) \ {2} = {0, 1} := by ext x; fin_cases x <;> simp_all
+          have ge_01 : sys.ge ∅ ({0, 1} : Set (Fin 4)) :=
+            sys.trans _ _ _ hn0 (by rw [sys.additive {0} {0, 1}, hd1, hd2]; exact hn1)
+          have ge_012 : sys.ge ∅ ({0, 1, 2} : Set (Fin 4)) :=
+            sys.trans _ _ _ hn2 (by rw [sys.additive {2} {0, 1, 2}, hd3, hd4]; exact ge_01)
+          exact fin4_dirac_repr sys 3
+            (fun D hD => sys.trans _ _ _ ge_012
+              (sys.mono _ _ (fun x hx => by fin_cases x <;> simp_all)))
+            hn3
+      · by_cases hn3 : sys.ge ∅ {(3 : Fin 4)}
+        · -- 3 null ({0},{1},{3}), {2} non-null
+          have hd1 : ({0} : Set (Fin 4)) \ {0, 1} = ∅ := by ext x; fin_cases x <;> simp_all
+          have hd2 : ({0, 1} : Set (Fin 4)) \ {0} = {1} := by ext x; fin_cases x <;> simp_all
+          have hd3 : ({3} : Set (Fin 4)) \ {0, 1, 3} = ∅ := by ext x; fin_cases x <;> simp_all
+          have hd4 : ({0, 1, 3} : Set (Fin 4)) \ {3} = {0, 1} := by ext x; fin_cases x <;> simp_all
+          have ge_01 : sys.ge ∅ ({0, 1} : Set (Fin 4)) :=
+            sys.trans _ _ _ hn0 (by rw [sys.additive {0} {0, 1}, hd1, hd2]; exact hn1)
+          have ge_013 : sys.ge ∅ ({0, 1, 3} : Set (Fin 4)) :=
+            sys.trans _ _ _ hn3 (by rw [sys.additive {3} {0, 1, 3}, hd3, hd4]; exact ge_01)
+          exact fin4_dirac_repr sys 2
+            (fun D hD => sys.trans _ _ _ ge_013
+              (sys.mono _ _ (fun x hx => by fin_cases x <;> simp_all)))
+            hn2
+        · -- 2 null ({0},{1}), {2},{3} non-null
+          sorry
+    · by_cases hn2 : sys.ge ∅ {(2 : Fin 4)}
+      · by_cases hn3 : sys.ge ∅ {(3 : Fin 4)}
+        · -- 3 null ({0},{2},{3}), {1} non-null
+          have hd1 : ({0} : Set (Fin 4)) \ {0, 2} = ∅ := by ext x; fin_cases x <;> simp_all
+          have hd2 : ({0, 2} : Set (Fin 4)) \ {0} = {2} := by ext x; fin_cases x <;> simp_all
+          have hd3 : ({3} : Set (Fin 4)) \ {0, 2, 3} = ∅ := by ext x; fin_cases x <;> simp_all
+          have hd4 : ({0, 2, 3} : Set (Fin 4)) \ {3} = {0, 2} := by ext x; fin_cases x <;> simp_all
+          have ge_02 : sys.ge ∅ ({0, 2} : Set (Fin 4)) :=
+            sys.trans _ _ _ hn0 (by rw [sys.additive {0} {0, 2}, hd1, hd2]; exact hn2)
+          have ge_023 : sys.ge ∅ ({0, 2, 3} : Set (Fin 4)) :=
+            sys.trans _ _ _ hn3 (by rw [sys.additive {3} {0, 2, 3}, hd3, hd4]; exact ge_02)
+          exact fin4_dirac_repr sys 1
+            (fun D hD => sys.trans _ _ _ ge_023
+              (sys.mono _ _ (fun x hx => by fin_cases x <;> simp_all)))
+            hn1
+        · -- 2 null ({0},{2}), {1},{3} non-null
+          sorry
+      · by_cases hn3 : sys.ge ∅ {(3 : Fin 4)}
+        · -- 2 null ({0},{3}), {1},{2} non-null
+          sorry
+        · -- 1 null ({0}), {1},{2},{3} non-null
+          sorry
+  · by_cases hn1 : sys.ge ∅ {(1 : Fin 4)}
+    · by_cases hn2 : sys.ge ∅ {(2 : Fin 4)}
+      · by_cases hn3 : sys.ge ∅ {(3 : Fin 4)}
+        · -- 3 null ({1},{2},{3}), {0} non-null
+          have hd1 : ({1} : Set (Fin 4)) \ {1, 2} = ∅ := by ext x; fin_cases x <;> simp_all
+          have hd2 : ({1, 2} : Set (Fin 4)) \ {1} = {2} := by ext x; fin_cases x <;> simp_all
+          have hd3 : ({3} : Set (Fin 4)) \ {1, 2, 3} = ∅ := by ext x; fin_cases x <;> simp_all
+          have hd4 : ({1, 2, 3} : Set (Fin 4)) \ {3} = {1, 2} := by ext x; fin_cases x <;> simp_all
+          have ge_12 : sys.ge ∅ ({1, 2} : Set (Fin 4)) :=
+            sys.trans _ _ _ hn1 (by rw [sys.additive {1} {1, 2}, hd1, hd2]; exact hn2)
+          have ge_123 : sys.ge ∅ ({1, 2, 3} : Set (Fin 4)) :=
+            sys.trans _ _ _ hn3 (by rw [sys.additive {3} {1, 2, 3}, hd3, hd4]; exact ge_12)
+          exact fin4_dirac_repr sys 0
+            (fun D hD => sys.trans _ _ _ ge_123
+              (sys.mono _ _ (fun x hx => by fin_cases x <;> simp_all)))
+            hn0
+        · -- 2 null ({1},{2}), {0},{3} non-null
+          sorry
+      · by_cases hn3 : sys.ge ∅ {(3 : Fin 4)}
+        · -- 2 null ({1},{3}), {0},{2} non-null
+          sorry
+        · -- 1 null ({1}), {0},{2},{3} non-null
+          sorry
+    · by_cases hn2 : sys.ge ∅ {(2 : Fin 4)}
+      · by_cases hn3 : sys.ge ∅ {(3 : Fin 4)}
+        · -- 2 null ({2},{3}), {0},{1} non-null
+          sorry
+        · -- 1 null ({2}), {0},{1},{3} non-null
+          sorry
+      · by_cases hn3 : sys.ge ∅ {(3 : Fin 4)}
+        · -- 1 null ({3}), {0},{1},{2} non-null
+          sorry
+        · -- 0 null: all non-null
+          sorry
+
+-- ── Transfer infrastructure ────────────────────────
+
+private noncomputable def transportFA {W α : Type*} (e : W ≃ α)
+    (sys : EpistemicSystemFA W) : EpistemicSystemFA α where
+  ge := fun A B => sys.ge (e.symm '' A) (e.symm '' B)
+  refl := fun A => sys.refl _
+  mono := fun A B hAB => sys.mono _ _ (Set.image_mono hAB)
+  bottom := by
+    show sys.ge (e.symm '' Set.univ) (e.symm '' ∅)
+    rw [Set.image_univ_of_surjective e.symm.surjective, Set.image_empty]
+    exact sys.bottom
+  nonTrivial := by
+    show ¬sys.ge (e.symm '' ∅) (e.symm '' Set.univ)
+    rw [Set.image_empty, Set.image_univ_of_surjective e.symm.surjective]
+    exact sys.nonTrivial
+  total := fun A B => sys.total _ _
+  trans := fun A B C h1 h2 => sys.trans _ _ _ h1 h2
+  additive := fun A B => by
+    show sys.ge (e.symm '' A) (e.symm '' B) ↔
+         sys.ge (e.symm '' (A \ B)) (e.symm '' (B \ A))
+    rw [Set.image_diff e.symm.injective, Set.image_diff e.symm.injective]
+    exact sys.additive _ _
+
+private noncomputable def transportMeasure {W α : Type*}
+    (e : W ≃ α) (m : FinAddMeasure α) : FinAddMeasure W where
+  mu := fun A => m.mu (e '' A)
+  nonneg := fun A => m.nonneg _
+  additive := fun A B hdisj => by
+    rw [Set.image_union]
+    exact m.additive _ _ (fun x ⟨a, ha, hea⟩ ⟨b, hb, heb⟩ =>
+      hdisj a ha (e.injective (hea ▸ heb) ▸ hb))
+  total := by
+    rw [Set.image_univ_of_surjective e.surjective]
+    exact m.total
+
+private theorem transfer_repr {W α : Type*}
+    (e : W ≃ α) (sys : EpistemicSystemFA W) (m : FinAddMeasure α)
+    (hm : ∀ A B : Set α, (transportFA e sys).ge A B ↔ m.inducedGe A B) :
+    ∀ A B : Set W, sys.ge A B ↔ (transportMeasure e m).inducedGe A B := by
+  intro A B
+  have h := hm (e '' A) (e '' B)
+  simp only [transportFA, Equiv.symm_image_image] at h
+  exact h
 
 -- ── Theorem 8 (Kraft, Pratt & Seidenberg 1959) ───
 
+set_option maxHeartbeats 1600000 in
 /-- **Theorem 8a** (Kraft, Pratt & Seidenberg 1959): for |W| < 5,
     every FA model is representable by a finitely additive probability
     measure. Below 5 worlds, the logics FA and FP∞ coincide.
 
-    The per-cardinality proofs for `Fin n` (n = 0,1,2,3) are complete above.
-    TODO: prove the `Fin 4` case, then transfer all cases to arbitrary `W`
-    via `Fintype.equivFin`. -/
+    The proof transfers an arbitrary `Fintype W` to `Fin n` via
+    `Fintype.equivFin`, applies the per-cardinality proof for n ∈ {0,1,2,3,4},
+    and transports the resulting measure back.
+
+    TODO: the `Fin 4` case (`theorem8a_fin4`) is sorry — the dispatch
+    infrastructure is in place but the case analysis is pending. -/
 theorem theorem8a {W : Type*} [Fintype W]
     (sys : EpistemicSystemFA W) (hcard : Fintype.card W < 5) :
-    ∃ (m : FinAddMeasure W), ∀ A B, sys.ge A B ↔ m.inducedGe A B :=
-  sorry -- TODO: Fin 4 case + transfer via Fintype.equivFin
+    ∃ (m : FinAddMeasure W), ∀ A B, sys.ge A B ↔ m.inducedGe A B := by
+  haveI : DecidableEq W := Classical.typeDecidableEq W
+  let e := Fintype.equivFin W
+  set n := Fintype.card W with hn_def
+  interval_cases n
+  · -- n = 0: impossible
+    exfalso
+    have : (∅ : Set (Fin 0)) = Set.univ := by ext x; exact Fin.elim0 x
+    exact (transportFA e sys).nonTrivial (this ▸ (transportFA e sys).refl ∅)
+  · -- n = 1
+    obtain ⟨m', hm'⟩ := theorem8a_fin1 (transportFA e sys)
+    exact ⟨transportMeasure e m', transfer_repr e sys m' hm'⟩
+  · -- n = 2
+    obtain ⟨m', hm'⟩ := theorem8a_fin2 (transportFA e sys)
+    exact ⟨transportMeasure e m', transfer_repr e sys m' hm'⟩
+  · -- n = 3
+    obtain ⟨m', hm'⟩ := theorem8a_fin3 (transportFA e sys)
+    exact ⟨transportMeasure e m', transfer_repr e sys m' hm'⟩
+  · -- n = 4
+    obtain ⟨m', hm'⟩ := theorem8a_fin4 (transportFA e sys)
+    exact ⟨transportMeasure e m', transfer_repr e sys m' hm'⟩
 
 /-- **Theorem 8b** (Kraft, Pratt & Seidenberg 1959): for |W| ≥ 5,
     FA is strictly weaker than FP∞ — there exists a 5-element type

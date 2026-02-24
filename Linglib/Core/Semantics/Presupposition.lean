@@ -1,5 +1,5 @@
-import Linglib.Core.Kleene
-import Linglib.Core.Proposition
+import Linglib.Core.Semantics.Kleene
+import Linglib.Core.Semantics.Proposition
 
 /-!
 # Presupposition

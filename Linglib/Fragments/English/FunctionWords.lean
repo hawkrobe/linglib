@@ -9,7 +9,7 @@ Lexical entries for English closed-class function words:
 -/
 
 import Linglib.Core.Lexical.Word
-import Linglib.Core.ModalLogic
+import Linglib.Core.Logic.ModalLogic
 import Linglib.Core.Register
 
 namespace Fragments.English.FunctionWords

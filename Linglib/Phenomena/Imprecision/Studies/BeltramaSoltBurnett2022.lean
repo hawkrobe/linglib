@@ -1,4 +1,4 @@
-import Linglib.Core.Roundness
+import Linglib.Core.Scales.Roundness
 import Linglib.Core.SocialMeaning
 import Linglib.Theories.Semantics.Lexical.Numeral.Precision
 import Linglib.Theories.Sociolinguistics.SCM

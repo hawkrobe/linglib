@@ -1,5 +1,5 @@
 import Linglib.Theories.Semantics.Tense.Basic
-import Linglib.Core.Tense
+import Linglib.Core.Temporal.Tense
 
 /-!
 # Wurmbrand (2014): Tense and Aspect in English Infinitives

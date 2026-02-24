@@ -1,7 +1,7 @@
 import Linglib.Theories.Semantics.Lexical.Determiner.Quantifier
 import Linglib.Theories.Semantics.Lexical.Noun.TypeShifting
 import Linglib.Theories.Semantics.Reference.Donnellan
-import Linglib.Core.Presupposition
+import Linglib.Core.Semantics.Presupposition
 import Linglib.Core.Definiteness
 import Linglib.Fragments.English.Determiners
 

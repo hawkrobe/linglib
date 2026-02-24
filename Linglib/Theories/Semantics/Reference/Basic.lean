@@ -24,9 +24,9 @@ These mechanisms are independent: a term can exhibit any subset.
 - Donnellan, K. (1966). Reference and Definite Descriptions. Philosophical Review.
 -/
 
-import Linglib.Core.Intension
-import Linglib.Core.Proposition
-import Linglib.Core.Context
+import Linglib.Core.Semantics.Intension
+import Linglib.Core.Semantics.Proposition
+import Linglib.Core.Temporal.Context
 
 namespace Semantics.Reference.Basic
 

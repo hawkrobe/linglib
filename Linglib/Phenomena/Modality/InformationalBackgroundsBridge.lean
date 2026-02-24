@@ -1,5 +1,5 @@
 import Linglib.Theories.Semantics.Modality.Kratzer
-import Linglib.Core.Evidence
+import Linglib.Core.Discourse.Evidence
 
 /-!
 # Informational Backgrounds — Kratzer 2012 §2.3d

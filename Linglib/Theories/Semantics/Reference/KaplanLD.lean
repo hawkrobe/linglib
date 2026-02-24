@@ -24,8 +24,8 @@ and metatheorems.
   Themes from Kaplan. Oxford University Press, §VIII-XIX.
 -/
 
-import Linglib.Core.Context
-import Linglib.Core.Intension
+import Linglib.Core.Temporal.Context
+import Linglib.Core.Semantics.Intension
 import Linglib.Theories.Semantics.Reference.Basic
 
 namespace Semantics.Reference.KaplanLD

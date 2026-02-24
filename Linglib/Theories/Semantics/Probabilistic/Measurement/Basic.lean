@@ -1,4 +1,4 @@
-import Linglib.Core.Scale
+import Linglib.Core.Scales.Scale
 import Mathlib.Data.Rat.Defs
 import Mathlib.Algebra.Order.Field.Rat
 

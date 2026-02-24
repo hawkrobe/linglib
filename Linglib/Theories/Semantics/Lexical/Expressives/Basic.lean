@@ -34,8 +34,8 @@ Key CI expressions:
 -/
 
 import Mathlib.Data.Rat.Defs
-import Linglib.Core.Proposition
-import Linglib.Core.Presupposition
+import Linglib.Core.Semantics.Proposition
+import Linglib.Core.Semantics.Presupposition
 
 namespace Semantics.Lexical.Expressives
 

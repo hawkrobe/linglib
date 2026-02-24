@@ -33,8 +33,8 @@ It then shows `PrProp.orFlex` (flexible accommodation) handles both observations
 - Aloni, M. (2022). Logic and conversation.
 -/
 
-import Linglib.Core.Presupposition
-import Linglib.Core.Kleene
+import Linglib.Core.Semantics.Presupposition
+import Linglib.Core.Semantics.Kleene
 
 namespace Phenomena.Presupposition.Studies.Yagi2025
 

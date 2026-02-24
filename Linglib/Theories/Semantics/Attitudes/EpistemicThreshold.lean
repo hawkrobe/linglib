@@ -1,5 +1,5 @@
-import Linglib.Core.Proposition
-import Linglib.Core.EpistemicScale
+import Linglib.Core.Semantics.Proposition
+import Linglib.Core.Scales.EpistemicScale
 import Linglib.Core.Agent.BToM
 import Linglib.Theories.Semantics.Degree.Core
 import Mathlib.Tactic.NormNum
