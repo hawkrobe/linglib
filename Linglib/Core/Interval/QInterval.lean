@@ -479,6 +479,13 @@ theorem powNat_containsReal {a : QInterval} {x : ℝ} (n : ℕ)
   exact ⟨pow_le_pow_left₀ (by exact_mod_cast ha) hx.1 n,
          pow_le_pow_left₀ hx_nn hx.2 n⟩
 
+/-- Raise an interval to a natural power. No proof obligation — checks nonneg
+    at runtime and uses `rpowNat` for sound computation, fallback otherwise. -/
+def powNat (iv : QInterval) (n : ℕ) : QInterval :=
+  if n == 0 then exact 1
+  else if h : 0 ≤ iv.lo then iv.rpowNat n h
+  else ⟨0, 1, by norm_num⟩
+
 /-- If a real value is contained in an interval with lo = 0 and hi = 0,
     the value equals zero. -/
 theorem eq_zero_of_containsReal {I : QInterval} {x : ℝ}

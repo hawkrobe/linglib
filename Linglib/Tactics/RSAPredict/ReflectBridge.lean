@@ -13,18 +13,18 @@ Direct RExpr reification for all RSA comparison goals.
 
 ## Design
 
-The proof-emitting reifier merges reification and bridge construction into a single pass:
+The proof-free reifier builds RExpr AST nodes whose `denote` is definitionally
+equal to the original expression. The kernel verifies this via iota-reduction
+of `denote` (structural recursion, O(1) per node).
 
-1. **Reify + prove**: Convert both sides of the comparison to `RExpr` AST,
-   emitting a proof `goalExpr = denote(rexpr)` alongside each `RExpr` node.
-   Transparent steps (unfold, whnf) pass proofs through unchanged; structural
-   steps (HAdd, Real.exp, ite) compose sub-proofs via congruence lemmas.
+1. **Reify**: Convert both sides of the comparison to `RExpr` AST + meta-level bounds.
+   No congruence proof trees — the kernel handles definitional equality.
 2. **Check**: `native_decide` on batched `checkGt`/`checkNotGt` (evalValid + separation).
-3. **Assign**: Combine equality proofs + interval proof to close the goal.
+3. **Assign**: Directly assign `gt_of_checkGt lhsRExpr rhsRExpr hcheck` — the kernel
+   verifies `denote(lhsRExpr) ≡ lhsExpr` and `denote(rhsRExpr) ≡ rhsExpr`.
 
-This eliminates the old two-phase approach (reify, then rebuild equality proof via
-`buildIteResolutionProof`) and avoids the kernel `Decidable` synthesis failure
-that occurred when `isDefEq` tried to unfold `Real.log` inside `denote(rexpr)`.
+This eliminates the congruence proof tree (O(n) nodes → O(1) proof term) and the
+equality bridge (`gt_of_eq_gt_eq`), reducing both reification time and proof term size.
 -/
 
 namespace Linglib.Tactics.RSAPredict
@@ -46,12 +46,13 @@ private def nativeDecideProof (propType : Expr) : TacticM Expr := do
   return mvar
 
 /-- Direct RExpr reification for `lhs > rhs` goals.
-    Uses proof-emitting reifier — no rfl bridge or ite-resolution bridge needed. -/
+    Assigns `gt_of_checkGt lhsRExpr rhsRExpr hcheck` directly — the kernel
+    verifies `denote(lhsRExpr) ≡ lhsExpr` via iota-reduction of `denote`. -/
 def tryDirectRExprCompare (goal : MVarId) (lhsExpr rhsExpr : Expr) : TacticM Bool := do
   let t0 ← IO.monoMsNow
-  let cache ← IO.mkRef (∅ : Std.HashMap UInt64 (Expr × MetaBounds × Expr))
-  let (lhsRExpr, lhsBounds, lhsProof) ← reifyToRExpr cache lhsExpr maxDepth
-  let (rhsRExpr, rhsBounds, rhsProof) ← reifyToRExpr cache rhsExpr maxDepth
+  let cache ← IO.mkRef (∅ : Std.HashMap UInt64 (Expr × MetaBounds))
+  let (lhsRExpr, lhsBounds) ← reifyToRExpr cache lhsExpr maxDepth
+  let (rhsRExpr, rhsBounds) ← reifyToRExpr cache rhsExpr maxDepth
 
   unless lhsBounds.lo > rhsBounds.hi do
     logInfo m!"rsa_predict: [direct] bounds don't separate"
@@ -62,27 +63,17 @@ def tryDirectRExprCompare (goal : MVarId) (lhsExpr rhsExpr : Expr) : TacticM Boo
 
   try
     -- Single batched native_decide: evalBoth + separation
-    let checkExpr ← mkAppM ``RExpr.checkGt #[lhsRExpr, rhsRExpr]
+    let checkExpr ← mkAppM ``RExpr.checkGtOpt #[lhsRExpr, rhsRExpr]
     let checkType ← mkEq checkExpr (mkConst ``Bool.true)
     let hcheck ← nativeDecideProof checkType
 
     let t2 ← IO.monoMsNow
     logInfo m!"rsa_predict: [direct] native_decide ({t2 - t1}ms)"
 
-    -- Build proof with explicit arguments to avoid mkAppM isDefEq overhead.
-    -- gt_of_checkGt : (lhs rhs : RExpr) → checkGt lhs rhs = true → denote lhs > denote rhs
-    let intervalProof := mkApp3 (mkConst ``RExpr.gt_of_checkGt) lhsRExpr rhsRExpr hcheck
-    -- gt_of_eq_gt_eq {a b c d : ℝ} (hac : a = c) (hbd : b = d) (h : c > d) : a > b
-    let denoteLhs := mkApp (mkConst ``RExpr.denote) lhsRExpr
-    let denoteRhs := mkApp (mkConst ``RExpr.denote) rhsRExpr
-    let finalProof := Lean.mkApp7 (mkConst ``RExpr.gt_of_eq_gt_eq)
-      lhsExpr rhsExpr denoteLhs denoteRhs
-      lhsProof rhsProof intervalProof
-
-    let t2b ← IO.monoMsNow
-    logInfo m!"rsa_predict: [direct] proof built ({t2b - t2}ms)"
-
-    goal.assign finalProof
+    -- Nuclear option: assign directly, kernel verifies denote ≡ original
+    -- gt_of_checkGtOpt : (lhs rhs : RExpr) → checkGtOpt lhs rhs = true → denote lhs > denote rhs
+    let proof := mkApp3 (mkConst ``RExpr.gt_of_checkGtOpt) lhsRExpr rhsRExpr hcheck
+    goal.assign proof
 
     let t3 ← IO.monoMsNow
     logInfo m!"rsa_predict: [direct] assigned ({t3 - t0}ms)"
@@ -92,31 +83,27 @@ def tryDirectRExprCompare (goal : MVarId) (lhsExpr rhsExpr : Expr) : TacticM Boo
     return false
 
 /-- Direct RExpr reification for `not (lhs > rhs)` goals.
-    Uses proof-emitting reifier — no rfl bridge or ite-resolution bridge needed. -/
+    Assigns proofs directly — the kernel verifies denote ≡ original. -/
 def tryDirectRExprNotGt (goal : MVarId) (lhsExpr rhsExpr : Expr) : TacticM Bool := do
   let t0 ← IO.monoMsNow
-  let cache ← IO.mkRef (∅ : Std.HashMap UInt64 (Expr × MetaBounds × Expr))
-  let (lhsRExpr, lhsBounds, lhsProof) ← reifyToRExpr cache lhsExpr maxDepth
-  let (rhsRExpr, rhsBounds, rhsProof) ← reifyToRExpr cache rhsExpr maxDepth
+  let cache ← IO.mkRef (∅ : Std.HashMap UInt64 (Expr × MetaBounds))
+  let (lhsRExpr, lhsBounds) ← reifyToRExpr cache lhsExpr maxDepth
+  let (rhsRExpr, rhsBounds) ← reifyToRExpr cache rhsExpr maxDepth
 
   let t1 ← IO.monoMsNow
   logInfo m!"rsa_predict: [direct/not-gt] reified ({t1 - t0}ms)"
 
   try
-    let denoteLhs := mkApp (mkConst ``RExpr.denote) lhsRExpr
-    let denoteRhs := mkApp (mkConst ``RExpr.denote) rhsRExpr
-
     -- Fast path: structurally equal RExpr → ¬(x > x) by irrefl
     let eqType ← mkEq lhsRExpr rhsRExpr
     if let some heq ← try? (nativeDecideProof eqType) then
       let denoteFn := mkConst ``RExpr.denote
       let denoteCongr ← mkAppM ``congrArg #[denoteFn, heq]
-      let denoteLevelProof := mkApp3 (mkConst ``RExpr.not_gt_of_denote_eq)
+      -- not_gt_of_denote_eq : (lhs rhs : RExpr) → lhs.denote = rhs.denote → ¬(lhs.denote > rhs.denote)
+      -- Kernel verifies denote lhsRExpr ≡ lhsExpr, denote rhsRExpr ≡ rhsExpr
+      let proof := mkApp3 (mkConst ``RExpr.not_gt_of_denote_eq)
         lhsRExpr rhsRExpr denoteCongr
-      let finalProof := Lean.mkApp7 (mkConst ``RExpr.not_gt_of_eq_not_gt_eq)
-        lhsExpr rhsExpr denoteLhs denoteRhs
-        lhsProof rhsProof denoteLevelProof
-      goal.assign finalProof
+      goal.assign proof
       let t2 ← IO.monoMsNow
       logInfo m!"rsa_predict: [direct/not-gt] assigned via structural equality ({t2 - t0}ms)"
       return true
@@ -126,12 +113,10 @@ def tryDirectRExprNotGt (goal : MVarId) (lhsExpr rhsExpr : Expr) : TacticM Bool 
     let exactCheckExpr ← mkAppM ``RExpr.checkExactNotGt #[lhsRExpr, rhsRExpr]
     let exactCheckType ← mkEq exactCheckExpr (mkConst ``Bool.true)
     if let some hexact ← try? (nativeDecideProof exactCheckType) then
-      let exactProof := mkApp3 (mkConst ``RExpr.not_gt_of_checkExactNotGt)
+      -- not_gt_of_checkExactNotGt : (lhs rhs : RExpr) → checkExactNotGt lhs rhs = true → ¬(lhs.denote > rhs.denote)
+      let proof := mkApp3 (mkConst ``RExpr.not_gt_of_checkExactNotGt)
         lhsRExpr rhsRExpr hexact
-      let finalProof := Lean.mkApp7 (mkConst ``RExpr.not_gt_of_eq_not_gt_eq)
-        lhsExpr rhsExpr denoteLhs denoteRhs
-        lhsProof rhsProof exactProof
-      goal.assign finalProof
+      goal.assign proof
       let t2 ← IO.monoMsNow
       logInfo m!"rsa_predict: [direct/not-gt] assigned via exact ℚ ({t2 - t0}ms)"
       return true
@@ -141,16 +126,14 @@ def tryDirectRExprNotGt (goal : MVarId) (lhsExpr rhsExpr : Expr) : TacticM Bool 
       logInfo m!"rsa_predict: [direct/not-gt] bounds don't prove le, exact ℚ not available"
       return false
 
-    let checkExpr ← mkAppM ``RExpr.checkNotGt #[lhsRExpr, rhsRExpr]
+    let checkExpr ← mkAppM ``RExpr.checkNotGtOpt #[lhsRExpr, rhsRExpr]
     let checkType ← mkEq checkExpr (mkConst ``Bool.true)
     let hcheck ← nativeDecideProof checkType
 
-    let intervalProof := mkApp3 (mkConst ``RExpr.not_gt_of_checkNotGt)
+    -- not_gt_of_checkNotGtOpt : (lhs rhs : RExpr) → checkNotGtOpt lhs rhs = true → ¬(lhs.denote > rhs.denote)
+    let proof := mkApp3 (mkConst ``RExpr.not_gt_of_checkNotGtOpt)
       lhsRExpr rhsRExpr hcheck
-    let finalProof := Lean.mkApp7 (mkConst ``RExpr.not_gt_of_eq_not_gt_eq)
-      lhsExpr rhsExpr denoteLhs denoteRhs
-      lhsProof rhsProof intervalProof
-    goal.assign finalProof
+    goal.assign proof
 
     let t2 ← IO.monoMsNow
     logInfo m!"rsa_predict: [direct/not-gt] assigned via interval ({t2 - t0}ms)"

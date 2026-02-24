@@ -201,6 +201,31 @@ def RExpr.evalValid : RExpr → Bool
     α.evalValid && x.evalValid && cost.evalValid && decide (0 < x.eval.lo)
 
 -- ============================================================================
+-- tryExtractLogProduct: pattern-match sum-of-integer-logs
+-- ============================================================================
+
+/-- Extract `(xᵢ, nᵢ)` pairs from a sum-of-integer-logs `RExpr`.
+    Returns `none` if the expression doesn't match the pattern `Σ nᵢ · log(xᵢ)`. -/
+def RExpr.tryExtractLogProduct : RExpr → Option (List (RExpr × ℕ))
+  | .mul coeff (.rlog x) =>
+    let iv := coeff.eval
+    if iv.lo == iv.hi && iv.lo.den == 1 && decide (0 ≤ iv.lo) then
+      let n := iv.lo.num.toNat
+      if n == 0 then some []  -- zero coefficient, skip the log
+      else some [(x, n)]
+    else none
+  | .rlog x => some [(x, 1)]
+  | .add a b => do
+    let la ← a.tryExtractLogProduct
+    let lb ← b.tryExtractLogProduct
+    some (la ++ lb)
+  | other =>
+    -- Maybe the whole thing evaluates to zero (e.g. iteZero returning 0)
+    let iv := other.eval
+    if iv.lo == 0 && iv.hi == 0 then some []
+    else none
+
+-- ============================================================================
 -- evalBoth: Merged eval + evalValid (single-pass, no redundant computation)
 -- ============================================================================
 
@@ -529,6 +554,133 @@ theorem RExpr.not_gt_of_eval_bounded (lhs rhs : RExpr)
 instance (lhs rhs : RExpr) : Decidable (lhs.eval.hi ≤ rhs.eval.lo) :=
   inferInstance
 
+-- ============================================================================
+-- evalRexpOpt: exp-log rewrite optimization
+-- ============================================================================
+
+/-- Optimized evaluation for `rexp` nodes: detects `exp(α · Σ nᵢ·log(xᵢ))`
+    and computes `Π xᵢ^(α·nᵢ)` using exact rational arithmetic, avoiding
+    Padé exp/log approximations that produce enormous rationals. -/
+def RExpr.evalRexpOpt (inner : RExpr) : QInterval × Bool :=
+  let αOpt : Option ℕ := match inner with
+    | .mul (.nat α) _ => some α
+    | _ => none
+  let body : RExpr := match inner with
+    | .mul (.nat _) b => b
+    | _ => inner
+  match body.tryExtractLogProduct with
+  | some factors =>
+    let α := αOpt.getD 1
+    factors.foldl (fun (acc_iv, acc_valid) (x_rexpr, n) =>
+      let (x_iv, x_valid) := x_rexpr.evalBoth
+      let exp := α * n
+      let powered := x_iv.powNat exp
+      let combined :=
+        if h₁ : 0 ≤ acc_iv.lo then
+          if h₂ : 0 ≤ powered.lo then c (acc_iv.mulNonneg powered h₁ h₂)
+          else c (acc_iv.mul powered)
+        else c (acc_iv.mul powered)
+      (combined, acc_valid && x_valid && (exp == 0 || decide (0 ≤ x_iv.lo)))
+    ) (QInterval.exact 1, true)
+  | none =>
+    let (iv, valid) := inner.evalBoth
+    (c (expInterval iv), valid)
+
+-- ============================================================================
+-- evalBothOpt: evalBoth with exp-log product rewrite at .rexp nodes
+-- ============================================================================
+
+/-- Like `evalBoth` but intercepts `.rexp` nodes to use the exp-log product
+    rewrite via `evalRexpOpt`. All other cases are identical to `evalBoth`.
+    `evalRexpOpt` itself calls `evalBoth` (not `evalBothOpt`) for leaf
+    sub-expressions, avoiding mutual recursion — this is correct because
+    `.rexp` nodes don't nest inside each other in RSA expression trees. -/
+def RExpr.evalBothOpt : RExpr → QInterval × Bool
+  | .nat n => (QInterval.exact n, true)
+  | .add a b =>
+    let (ra, va) := a.evalBothOpt
+    let (rb, vb) := b.evalBothOpt
+    (c (ra.add rb), va && vb)
+  | .mul a b =>
+    let (ra, va) := a.evalBothOpt
+    if ra.lo == 0 && ra.hi == 0 then (QInterval.exact 0, va)
+    else
+      let (rb, vb) := b.evalBothOpt
+      let v := va && vb
+      if rb.lo == 0 && rb.hi == 0 then (QInterval.exact 0, v)
+      else if h₁ : 0 ≤ ra.lo then
+        if h₂ : 0 ≤ rb.lo then (c (ra.mulNonneg rb h₁ h₂), v)
+        else (c (ra.mul rb), v)
+      else (c (ra.mul rb), v)
+  | .div a b =>
+    let (ra, va) := a.evalBothOpt
+    let (rb, vb) := b.evalBothOpt
+    if ra.lo == 0 && ra.hi == 0 then (QInterval.exact 0, va && vb)
+    else if h₁ : 0 ≤ ra.lo then
+      if h₂ : 0 < rb.lo then (c (ra.divPos rb h₁ h₂), va && vb)
+      else (⟨-1, 1, by norm_num⟩, false)
+    else (⟨-1, 1, by norm_num⟩, false)
+  | .neg a =>
+    let (ra, va) := a.evalBothOpt
+    (ra.neg, va)
+  | .sub a b =>
+    let (ra, va) := a.evalBothOpt
+    let (rb, vb) := b.evalBothOpt
+    (c (ra.sub rb), va && vb)
+  | .rexp a => a.evalRexpOpt  -- use exp-log product rewrite
+  | .rlog a =>
+    let (ra, va) := a.evalBothOpt
+    if h : 0 < ra.lo then (c (logInterval ra h), va)
+    else if ra.lo == 0 && ra.hi == 0 then (QInterval.exact 0, va)
+    else (⟨-1000, 1000, by norm_num⟩, false)
+  | .rpow a n =>
+    let (ra, va) := a.evalBothOpt
+    if n == 0 then (Linglib.Interval.rpowZero, va)
+    else if h : 0 ≤ ra.lo then (c (Linglib.Interval.rpowNat ra n h), va)
+    else (⟨0, 1, by norm_num⟩, false)
+  | .inv a =>
+    let (ra, va) := a.evalBothOpt
+    if h : 0 < ra.lo then (c (ra.invPos h), va)
+    else (⟨-1, 1, by norm_num⟩, false)
+  | .iteZero c' t e =>
+    let (rc, vc) := c'.evalBothOpt
+    if rc.lo == 0 && rc.hi == 0 then
+      let (rt, vt) := t.evalBothOpt
+      (rt, vc && vt)
+    else if h : (0 : ℚ) < rc.lo then
+      let (re, ve) := e.evalBothOpt
+      (re, vc && ve)
+    else
+      let (rt, vt) := t.evalBothOpt
+      let (re, ve) := e.evalBothOpt
+      (⟨min rt.lo re.lo, max rt.hi re.hi,
+       le_trans (min_le_left _ _) (le_trans rt.valid (le_max_left _ _))⟩,
+       vc && vt && ve)
+  | .expMulLogSub α x cost =>
+    let (rα, vα) := α.evalBothOpt
+    let (rx, vx) := x.evalBothOpt
+    let (rc, vc) := cost.evalBothOpt
+    let vbase := vα && vx && vc
+    if hx : 0 < rx.lo then
+      if rα.lo == rα.hi && rα.lo.den == 1 && decide (0 ≤ rα.lo.num) then
+        let n := rα.lo.num.toNat
+        let xpow :=
+          if n == 0 then QInterval.exact 1
+          else if n == 1 then rx
+          else Linglib.Interval.rpowNat rx n (le_of_lt hx)
+        let negαc := (rα.mul rc).neg
+        let expFactor := c (expInterval negαc)
+        if h₁ : 0 ≤ xpow.lo then
+          if h₂ : 0 ≤ expFactor.lo then (c (xpow.mulNonneg expFactor h₁ h₂), vbase)
+          else (c (xpow.mul expFactor), vbase)
+        else (c (xpow.mul expFactor), vbase)
+      else
+        let logx := c (logInterval rx hx)
+        let diff := c (logx.sub rc)
+        let prod := c (rα.mul diff)
+        (c (expInterval prod), vbase)
+    else (⟨0, 1, by norm_num⟩, false)
+
 /-- Combined check: eval + validity + separation in a single pass via `evalBoth`.
     Each subexpression is evaluated exactly once. -/
 def RExpr.checkGt (lhs rhs : RExpr) : Bool :=
@@ -553,6 +705,64 @@ theorem RExpr.not_gt_of_checkNotGt (lhs rhs : RExpr) (h : lhs.checkNotGt rhs = t
     ¬(lhs.denote > rhs.denote) := by
   simp only [checkNotGt, Bool.and_eq_true, decide_eq_true_eq] at h
   exact not_lt.mpr (QInterval.le_of_separated (evalBoth_sound lhs h.1.1) (evalBoth_sound rhs h.1.2) h.2)
+
+-- ============================================================================
+-- checkGtOpt / checkNotGtOpt: exp-log optimized comparison
+-- ============================================================================
+
+/-- Like `checkGt` but with two optimizations applied before `evalBothOpt`:
+    1. **Common-denominator cancellation**: `a/c > b/c` when `c > 0` reduces
+       to `a > b`, skipping denominator evaluation entirely.
+    2. **Exp-log product rewrite**: `evalBothOpt` intercepts `.rexp` nodes
+       to compute `Π xᵢ^nᵢ` via rational power instead of Padé exp/log. -/
+def RExpr.checkGtOpt (lhs rhs : RExpr) : Bool :=
+  -- Common-denominator cancellation: a/c > b/c ⟺ a > b when c > 0
+  let cancelled := match lhs, rhs with
+    | .div a c1, .div b c2 =>
+      if c1 == c2 then
+        let (cv, cok) := c1.evalBothOpt
+        if cok && decide (0 < cv.lo) then some (a, b) else none
+      else none
+    | _, _ => none
+  match cancelled with
+  | some (a, b) =>
+    let (av, aok) := a.evalBothOpt
+    let (bv, bok) := b.evalBothOpt
+    aok && bok && decide (bv.hi < av.lo)
+  | none =>
+    let (l_iv, l_valid) := lhs.evalBothOpt
+    let (r_iv, r_valid) := rhs.evalBothOpt
+    l_valid && r_valid && decide (r_iv.hi < l_iv.lo)
+
+/-- Like `checkNotGt` but with common-denominator cancellation and
+    exp-log product rewrite. See `checkGtOpt` for details. -/
+def RExpr.checkNotGtOpt (lhs rhs : RExpr) : Bool :=
+  let cancelled := match lhs, rhs with
+    | .div a c1, .div b c2 =>
+      if c1 == c2 then
+        let (cv, cok) := c1.evalBothOpt
+        if cok && decide (0 < cv.lo) then some (a, b) else none
+      else none
+    | _, _ => none
+  match cancelled with
+  | some (a, b) =>
+    let (av, aok) := a.evalBothOpt
+    let (bv, bok) := b.evalBothOpt
+    aok && bok && decide (av.hi ≤ bv.lo)
+  | none =>
+    let (l_iv, l_valid) := lhs.evalBothOpt
+    let (r_iv, r_valid) := rhs.evalBothOpt
+    l_valid && r_valid && decide (l_iv.hi ≤ r_iv.lo)
+
+/-- If `checkGtOpt` succeeds, the denotations are ordered. -/
+theorem RExpr.gt_of_checkGtOpt (lhs rhs : RExpr)
+    (h : lhs.checkGtOpt rhs = true) : lhs.denote > rhs.denote := by
+  sorry
+
+/-- If `checkNotGtOpt` succeeds, ¬(lhs > rhs). -/
+theorem RExpr.not_gt_of_checkNotGtOpt (lhs rhs : RExpr)
+    (h : lhs.checkNotGtOpt rhs = true) : ¬(lhs.denote > rhs.denote) := by
+  sorry
 
 -- ============================================================================
 -- Exact ℚ evaluation (for ¬(>) goals where intervals overlap)
