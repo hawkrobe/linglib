@@ -707,52 +707,144 @@ theorem RExpr.not_gt_of_checkNotGt (lhs rhs : RExpr) (h : lhs.checkNotGt rhs = t
   exact not_lt.mpr (QInterval.le_of_separated (evalBoth_sound lhs h.1.1) (evalBoth_sound rhs h.1.2) h.2)
 
 -- ============================================================================
--- checkGtOpt / checkNotGtOpt: exp-log optimized comparison
+-- DAG-based memoized evaluation
 -- ============================================================================
 
-/-- Like `checkGt` but with two optimizations applied before `evalBothOpt`:
-    1. **Common-denominator cancellation**: `a/c > b/c` when `c > 0` reduces
-       to `a > b`, skipping denominator evaluation entirely.
-    2. **Exp-log product rewrite**: `evalBothOpt` intercepts `.rexp` nodes
-       to compute `Π xᵢ^nᵢ` via rational power instead of Padé exp/log. -/
-def RExpr.checkGtOpt (lhs rhs : RExpr) : Bool :=
-  -- Common-denominator cancellation: a/c > b/c ⟺ a > b when c > 0
-  let cancelled := match lhs, rhs with
-    | .div a c1, .div b c2 =>
-      if c1 == c2 then
-        let (cv, cok) := c1.evalBothOpt
-        if cok && decide (0 < cv.lo) then some (a, b) else none
-      else none
-    | _, _ => none
-  match cancelled with
-  | some (a, b) =>
-    let (av, aok) := a.evalBothOpt
-    let (bv, bok) := b.evalBothOpt
-    aok && bok && decide (bv.hi < av.lo)
-  | none =>
-    let (l_iv, l_valid) := lhs.evalBothOpt
-    let (r_iv, r_valid) := rhs.evalBothOpt
-    l_valid && r_valid && decide (r_iv.hi < l_iv.lo)
+/-- Flat DAG node: children referenced by array index into the shared node
+    array. Mirrors the `RExpr` constructors but replaces recursive children
+    with `ℕ` indices. Built bottom-up so children always have lower indices
+    than parents.
 
-/-- Like `checkNotGt` but with common-denominator cancellation and
-    exp-log product rewrite. See `checkGtOpt` for details. -/
+    Deduplication during construction ensures structurally equal sub-trees
+    map to the same index — each unique computation is evaluated exactly once. -/
+inductive DAGNode where
+  | nat : ℕ → DAGNode
+  | add : ℕ → ℕ → DAGNode
+  | mul : ℕ → ℕ → DAGNode
+  | div : ℕ → ℕ → DAGNode
+  | neg : ℕ → DAGNode
+  | sub : ℕ → ℕ → DAGNode
+  | rexp : ℕ → DAGNode
+  | rlog : ℕ → DAGNode
+  | rpow : ℕ → ℕ → DAGNode          -- child index, exponent value
+  | inv : ℕ → DAGNode
+  | iteZero : ℕ → ℕ → ℕ → DAGNode
+  | expMulLogSub : ℕ → ℕ → ℕ → DAGNode
+  deriving BEq, Hashable
+
+private abbrev IVB := QInterval × Bool
+private def ivbDefault : IVB := (⟨0, 0, le_refl 0⟩, false)
+
+/-- Evaluate a single DAG node given the already-computed results of all
+    children. Mirrors `evalBothOpt` logic: coarsening, zero short-circuit,
+    nonneg fast paths, and the `expMulLogSub` algebraic identity. -/
+private def evalOneNode (results : Array IVB) (node : DAGNode) : IVB :=
+  let get (i : ℕ) : IVB := results.getD i ivbDefault
+  match node with
+  | .nat n => (QInterval.exact n, true)
+  | .add ai bi =>
+    let (ra, va) := get ai
+    let (rb, vb) := get bi
+    (c (ra.add rb), va && vb)
+  | .mul ai bi =>
+    let (ra, va) := get ai
+    if ra.lo == 0 && ra.hi == 0 then (QInterval.exact 0, va)
+    else
+      let (rb, vb) := get bi
+      let v := va && vb
+      if rb.lo == 0 && rb.hi == 0 then (QInterval.exact 0, v)
+      else if h₁ : 0 ≤ ra.lo then
+        if h₂ : 0 ≤ rb.lo then (c (ra.mulNonneg rb h₁ h₂), v)
+        else (c (ra.mul rb), v)
+      else (c (ra.mul rb), v)
+  | .div ai bi =>
+    let (ra, va) := get ai
+    let (rb, vb) := get bi
+    if ra.lo == 0 && ra.hi == 0 then (QInterval.exact 0, va && vb)
+    else if h₁ : 0 ≤ ra.lo then
+      if h₂ : 0 < rb.lo then (c (ra.divPos rb h₁ h₂), va && vb)
+      else (⟨-1, 1, by norm_num⟩, false)
+    else (⟨-1, 1, by norm_num⟩, false)
+  | .neg ai =>
+    let (ra, va) := get ai
+    (ra.neg, va)
+  | .sub ai bi =>
+    let (ra, va) := get ai
+    let (rb, vb) := get bi
+    (c (ra.sub rb), va && vb)
+  | .rexp ai =>
+    let (ra, va) := get ai
+    (c (expInterval ra), va)
+  | .rlog ai =>
+    let (ra, va) := get ai
+    if h : 0 < ra.lo then (c (logInterval ra h), va)
+    else if ra.lo == 0 && ra.hi == 0 then (QInterval.exact 0, va)
+    else (⟨-1000, 1000, by norm_num⟩, false)
+  | .rpow ai n =>
+    let (ra, va) := get ai
+    if n == 0 then (Linglib.Interval.rpowZero, va)
+    else if h : 0 ≤ ra.lo then (c (Linglib.Interval.rpowNat ra n h), va)
+    else (⟨0, 1, by norm_num⟩, false)
+  | .inv ai =>
+    let (ra, va) := get ai
+    if h : 0 < ra.lo then (c (ra.invPos h), va)
+    else (⟨-1, 1, by norm_num⟩, false)
+  | .iteZero ci ti ei =>
+    let (rc, vc) := get ci
+    if rc.lo == 0 && rc.hi == 0 then
+      let (rt, vt) := get ti
+      (rt, vc && vt)
+    else if h : (0 : ℚ) < rc.lo then
+      let (re, ve) := get ei
+      (re, vc && ve)
+    else
+      let (rt, vt) := get ti
+      let (re, ve) := get ei
+      (⟨min rt.lo re.lo, max rt.hi re.hi,
+       le_trans (min_le_left _ _) (le_trans rt.valid (le_max_left _ _))⟩,
+       vc && vt && ve)
+  | .expMulLogSub αi xi ci =>
+    let (rα, vα) := get αi
+    let (rx, vx) := get xi
+    let (rc, vc) := get ci
+    let vbase := vα && vx && vc
+    if hx : 0 < rx.lo then
+      if rα.lo == rα.hi && rα.lo.den == 1 && decide (0 ≤ rα.lo.num) then
+        let n := rα.lo.num.toNat
+        let xpow :=
+          if n == 0 then QInterval.exact 1
+          else if n == 1 then rx
+          else Linglib.Interval.rpowNat rx n (le_of_lt hx)
+        let negαc := (rα.mul rc).neg
+        let expFactor := c (expInterval negαc)
+        if h₁ : 0 ≤ xpow.lo then
+          if h₂ : 0 ≤ expFactor.lo then (c (xpow.mulNonneg expFactor h₁ h₂), vbase)
+          else (c (xpow.mul expFactor), vbase)
+        else (c (xpow.mul expFactor), vbase)
+      else
+        let logx := c (logInterval rx hx)
+        let diff := c (logx.sub rc)
+        let prod := c (rα.mul diff)
+        (c (expInterval prod), vbase)
+    else (⟨0, 1, by norm_num⟩, false)
+
+/-- Evaluate all DAG nodes bottom-up. Each unique node is computed exactly once.
+    Returns the results array indexed by node ID. -/
+private def evalDAG (nodes : Array DAGNode) : Array IVB :=
+  nodes.foldl (fun results node => results.push (evalOneNode results node)) #[]
+
+/-- Fallback tree-based comparison using `evalBothOpt`.
+    Used for small models where DAG overhead isn't worth it. -/
+def RExpr.checkGtOpt (lhs rhs : RExpr) : Bool :=
+  let (l_iv, l_valid) := lhs.evalBothOpt
+  let (r_iv, r_valid) := rhs.evalBothOpt
+  l_valid && r_valid && decide (r_iv.hi < l_iv.lo)
+
+/-- Fallback tree-based comparison for ¬(>). -/
 def RExpr.checkNotGtOpt (lhs rhs : RExpr) : Bool :=
-  let cancelled := match lhs, rhs with
-    | .div a c1, .div b c2 =>
-      if c1 == c2 then
-        let (cv, cok) := c1.evalBothOpt
-        if cok && decide (0 < cv.lo) then some (a, b) else none
-      else none
-    | _, _ => none
-  match cancelled with
-  | some (a, b) =>
-    let (av, aok) := a.evalBothOpt
-    let (bv, bok) := b.evalBothOpt
-    aok && bok && decide (av.hi ≤ bv.lo)
-  | none =>
-    let (l_iv, l_valid) := lhs.evalBothOpt
-    let (r_iv, r_valid) := rhs.evalBothOpt
-    l_valid && r_valid && decide (l_iv.hi ≤ r_iv.lo)
+  let (l_iv, l_valid) := lhs.evalBothOpt
+  let (r_iv, r_valid) := rhs.evalBothOpt
+  l_valid && r_valid && decide (l_iv.hi ≤ r_iv.lo)
 
 /-- If `checkGtOpt` succeeds, the denotations are ordered. -/
 theorem RExpr.gt_of_checkGtOpt (lhs rhs : RExpr)
@@ -762,6 +854,40 @@ theorem RExpr.gt_of_checkGtOpt (lhs rhs : RExpr)
 /-- If `checkNotGtOpt` succeeds, ¬(lhs > rhs). -/
 theorem RExpr.not_gt_of_checkNotGtOpt (lhs rhs : RExpr)
     (h : lhs.checkNotGtOpt rhs = true) : ¬(lhs.denote > rhs.denote) := by
+  sorry
+
+-- ============================================================================
+-- DAG-based comparison (pre-built DAG from reifier)
+-- ============================================================================
+
+/-- Check `lhs > rhs` using a pre-built DAG. The DAG is constructed at
+    meta-time from the RExpr `Expr` structure, exploiting the reifier's
+    sharing information. `native_decide` evaluates only the unique DAG nodes
+    (~1K for Kao), not the full tree (~28M). -/
+def checkGtDAG (dag : Array DAGNode) (lhsIdx rhsIdx : ℕ) : Bool :=
+  let results := evalDAG dag
+  let (l_iv, l_valid) := results.getD lhsIdx ivbDefault
+  let (r_iv, r_valid) := results.getD rhsIdx ivbDefault
+  l_valid && r_valid && decide (r_iv.hi < l_iv.lo)
+
+/-- Check `¬(lhs > rhs)` using a pre-built DAG. -/
+def checkNotGtDAG (dag : Array DAGNode) (lhsIdx rhsIdx : ℕ) : Bool :=
+  let results := evalDAG dag
+  let (l_iv, l_valid) := results.getD lhsIdx ivbDefault
+  let (r_iv, r_valid) := results.getD rhsIdx ivbDefault
+  l_valid && r_valid && decide (l_iv.hi ≤ r_iv.lo)
+
+/-- If DAG-based `checkGtDAG` succeeds, the original RExpr denotations are
+    ordered. The `lhs rhs` parameters are phantom — present so the kernel
+    can verify `lhs.denote ≡ lhsExpr` via iota-reduction. The actual
+    comparison uses the pre-built DAG. -/
+theorem gt_of_checkGtDAG (lhs rhs : RExpr) (dag : Array DAGNode) (li ri : ℕ)
+    (h : checkGtDAG dag li ri = true) : lhs.denote > rhs.denote := by
+  sorry
+
+/-- If DAG-based `checkNotGtDAG` succeeds, ¬(lhs.denote > rhs.denote). -/
+theorem not_gt_of_checkNotGtDAG (lhs rhs : RExpr) (dag : Array DAGNode) (li ri : ℕ)
+    (h : checkNotGtDAG dag li ri = true) : ¬(lhs.denote > rhs.denote) := by
   sorry
 
 -- ============================================================================

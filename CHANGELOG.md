@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.226.36] - 2026-02-24
+
+### Changed
+- **Meta-time DAG evaluation for `rsa_predict`**: build a deduplicated DAG from RExpr `Expr` at tactic time using O(1) `Expr.hash`, so `native_decide` evaluates ~1K unique nodes instead of ~28M duplicated tree nodes. Kao Hyperbole outlier: 42s → 200ms native_decide (210x); total file 94s → 27s. Persistent reification cache across theorems within a file.
+
 ## [0.226.35] - 2026-02-24
 
 ### Added
