@@ -300,26 +300,8 @@ set_option maxHeartbeats 800000 in
 /-- Nonliteral interpretation: the listener infers the weather is NOT terrible.
     P(state ≠ terrible | "terrible", pleasant) > P(state = terrible | "terrible", pleasant). -/
 theorem ironic_nonliteral :
-    pleasantCfg.L1 .terrible (.bad, false, false) +
-    pleasantCfg.L1 .terrible (.bad, false, true) +
-    pleasantCfg.L1 .terrible (.bad, true, false) +
-    pleasantCfg.L1 .terrible (.bad, true, true) +
-    pleasantCfg.L1 .terrible (.ok, false, false) +
-    pleasantCfg.L1 .terrible (.ok, false, true) +
-    pleasantCfg.L1 .terrible (.ok, true, false) +
-    pleasantCfg.L1 .terrible (.ok, true, true) +
-    pleasantCfg.L1 .terrible (.good, false, false) +
-    pleasantCfg.L1 .terrible (.good, false, true) +
-    pleasantCfg.L1 .terrible (.good, true, false) +
-    pleasantCfg.L1 .terrible (.good, true, true) +
-    pleasantCfg.L1 .terrible (.amazing, false, false) +
-    pleasantCfg.L1 .terrible (.amazing, false, true) +
-    pleasantCfg.L1 .terrible (.amazing, true, false) +
-    pleasantCfg.L1 .terrible (.amazing, true, true) >
-    pleasantCfg.L1 .terrible (.terrible, false, false) +
-    pleasantCfg.L1 .terrible (.terrible, false, true) +
-    pleasantCfg.L1 .terrible (.terrible, true, false) +
-    pleasantCfg.L1 .terrible (.terrible, true, true) := by
+    pleasantCfg.L1_marginal .terrible (fun w => w.1 != .terrible) >
+    pleasantCfg.L1_marginal .terrible (fun w => w.1 == .terrible) := by
   rsa_predict
 
 set_option maxHeartbeats 800000 in
@@ -328,52 +310,16 @@ set_option maxHeartbeats 800000 in
     context infers that the speaker actually feels *positively*.
     This is the paper's central prediction (Figure 5, Figure 6). -/
 theorem ironic_valence_flip :
-    pleasantCfg.L1 .terrible (.terrible, true, false) +
-    pleasantCfg.L1 .terrible (.terrible, true, true) +
-    pleasantCfg.L1 .terrible (.bad, true, false) +
-    pleasantCfg.L1 .terrible (.bad, true, true) +
-    pleasantCfg.L1 .terrible (.ok, true, false) +
-    pleasantCfg.L1 .terrible (.ok, true, true) +
-    pleasantCfg.L1 .terrible (.good, true, false) +
-    pleasantCfg.L1 .terrible (.good, true, true) +
-    pleasantCfg.L1 .terrible (.amazing, true, false) +
-    pleasantCfg.L1 .terrible (.amazing, true, true) >
-    pleasantCfg.L1 .terrible (.terrible, false, false) +
-    pleasantCfg.L1 .terrible (.terrible, false, true) +
-    pleasantCfg.L1 .terrible (.bad, false, false) +
-    pleasantCfg.L1 .terrible (.bad, false, true) +
-    pleasantCfg.L1 .terrible (.ok, false, false) +
-    pleasantCfg.L1 .terrible (.ok, false, true) +
-    pleasantCfg.L1 .terrible (.good, false, false) +
-    pleasantCfg.L1 .terrible (.good, false, true) +
-    pleasantCfg.L1 .terrible (.amazing, false, false) +
-    pleasantCfg.L1 .terrible (.amazing, false, true) := by
+    pleasantCfg.L1_marginal .terrible (fun w => w.2.1 == true) >
+    pleasantCfg.L1_marginal .terrible (fun w => w.2.1 == false) := by
   rsa_predict
 
 set_option maxHeartbeats 800000 in
 /-- Ironic speech carries high arousal — the speaker is emotionally
     engaged, not flat (Colston & O'Brien 2000). -/
 theorem ironic_high_arousal :
-    pleasantCfg.L1 .terrible (.terrible, false, true) +
-    pleasantCfg.L1 .terrible (.terrible, true, true) +
-    pleasantCfg.L1 .terrible (.bad, false, true) +
-    pleasantCfg.L1 .terrible (.bad, true, true) +
-    pleasantCfg.L1 .terrible (.ok, false, true) +
-    pleasantCfg.L1 .terrible (.ok, true, true) +
-    pleasantCfg.L1 .terrible (.good, false, true) +
-    pleasantCfg.L1 .terrible (.good, true, true) +
-    pleasantCfg.L1 .terrible (.amazing, false, true) +
-    pleasantCfg.L1 .terrible (.amazing, true, true) >
-    pleasantCfg.L1 .terrible (.terrible, false, false) +
-    pleasantCfg.L1 .terrible (.terrible, true, false) +
-    pleasantCfg.L1 .terrible (.bad, false, false) +
-    pleasantCfg.L1 .terrible (.bad, true, false) +
-    pleasantCfg.L1 .terrible (.ok, false, false) +
-    pleasantCfg.L1 .terrible (.ok, true, false) +
-    pleasantCfg.L1 .terrible (.good, false, false) +
-    pleasantCfg.L1 .terrible (.good, true, false) +
-    pleasantCfg.L1 .terrible (.amazing, false, false) +
-    pleasantCfg.L1 .terrible (.amazing, true, false) := by
+    pleasantCfg.L1_marginal .terrible (fun w => w.2.2 == true) >
+    pleasantCfg.L1_marginal .terrible (fun w => w.2.2 == false) := by
   rsa_predict
 
 -- --------------------------------------------------------------------------
@@ -389,26 +335,8 @@ set_option maxHeartbeats 800000 in
     central argument: arousal is the mechanism that enables the pragmatic
     pathway from negative to positive valence (Table 1). -/
 theorem no_irony_without_arousal :
-    pleasantValenceOnlyCfg.L1 .terrible (.terrible, false, false) +
-    pleasantValenceOnlyCfg.L1 .terrible (.terrible, false, true) +
-    pleasantValenceOnlyCfg.L1 .terrible (.bad, false, false) +
-    pleasantValenceOnlyCfg.L1 .terrible (.bad, false, true) +
-    pleasantValenceOnlyCfg.L1 .terrible (.ok, false, false) +
-    pleasantValenceOnlyCfg.L1 .terrible (.ok, false, true) +
-    pleasantValenceOnlyCfg.L1 .terrible (.good, false, false) +
-    pleasantValenceOnlyCfg.L1 .terrible (.good, false, true) +
-    pleasantValenceOnlyCfg.L1 .terrible (.amazing, false, false) +
-    pleasantValenceOnlyCfg.L1 .terrible (.amazing, false, true) >
-    pleasantValenceOnlyCfg.L1 .terrible (.terrible, true, false) +
-    pleasantValenceOnlyCfg.L1 .terrible (.terrible, true, true) +
-    pleasantValenceOnlyCfg.L1 .terrible (.bad, true, false) +
-    pleasantValenceOnlyCfg.L1 .terrible (.bad, true, true) +
-    pleasantValenceOnlyCfg.L1 .terrible (.ok, true, false) +
-    pleasantValenceOnlyCfg.L1 .terrible (.ok, true, true) +
-    pleasantValenceOnlyCfg.L1 .terrible (.good, true, false) +
-    pleasantValenceOnlyCfg.L1 .terrible (.good, true, true) +
-    pleasantValenceOnlyCfg.L1 .terrible (.amazing, true, false) +
-    pleasantValenceOnlyCfg.L1 .terrible (.amazing, true, true) := by
+    pleasantValenceOnlyCfg.L1_marginal .terrible (fun w => w.2.1 == false) >
+    pleasantValenceOnlyCfg.L1_marginal .terrible (fun w => w.2.1 == true) := by
   rsa_predict
 
 -- --------------------------------------------------------------------------
@@ -420,26 +348,8 @@ set_option maxHeartbeats 800000 in
     correctly infers the weather IS terrible. The same utterance that is
     ironic in pleasant weather (theorem 1) is literal here. -/
 theorem literal_state :
-    terribleCfg.L1 .terrible (.terrible, false, false) +
-    terribleCfg.L1 .terrible (.terrible, false, true) +
-    terribleCfg.L1 .terrible (.terrible, true, false) +
-    terribleCfg.L1 .terrible (.terrible, true, true) >
-    terribleCfg.L1 .terrible (.bad, false, false) +
-    terribleCfg.L1 .terrible (.bad, false, true) +
-    terribleCfg.L1 .terrible (.bad, true, false) +
-    terribleCfg.L1 .terrible (.bad, true, true) +
-    terribleCfg.L1 .terrible (.ok, false, false) +
-    terribleCfg.L1 .terrible (.ok, false, true) +
-    terribleCfg.L1 .terrible (.ok, true, false) +
-    terribleCfg.L1 .terrible (.ok, true, true) +
-    terribleCfg.L1 .terrible (.good, false, false) +
-    terribleCfg.L1 .terrible (.good, false, true) +
-    terribleCfg.L1 .terrible (.good, true, false) +
-    terribleCfg.L1 .terrible (.good, true, true) +
-    terribleCfg.L1 .terrible (.amazing, false, false) +
-    terribleCfg.L1 .terrible (.amazing, false, true) +
-    terribleCfg.L1 .terrible (.amazing, true, false) +
-    terribleCfg.L1 .terrible (.amazing, true, true) := by
+    terribleCfg.L1_marginal .terrible (fun w => w.1 == .terrible) >
+    terribleCfg.L1_marginal .terrible (fun w => w.1 != .terrible) := by
   rsa_predict
 
 set_option maxHeartbeats 800000 in
@@ -448,26 +358,8 @@ set_option maxHeartbeats 800000 in
     `ironic_valence_flip` where the same utterance produces the opposite
     inference in pleasant weather. -/
 theorem literal_no_flip :
-    terribleCfg.L1 .terrible (.terrible, false, false) +
-    terribleCfg.L1 .terrible (.terrible, false, true) +
-    terribleCfg.L1 .terrible (.bad, false, false) +
-    terribleCfg.L1 .terrible (.bad, false, true) +
-    terribleCfg.L1 .terrible (.ok, false, false) +
-    terribleCfg.L1 .terrible (.ok, false, true) +
-    terribleCfg.L1 .terrible (.good, false, false) +
-    terribleCfg.L1 .terrible (.good, false, true) +
-    terribleCfg.L1 .terrible (.amazing, false, false) +
-    terribleCfg.L1 .terrible (.amazing, false, true) >
-    terribleCfg.L1 .terrible (.terrible, true, false) +
-    terribleCfg.L1 .terrible (.terrible, true, true) +
-    terribleCfg.L1 .terrible (.bad, true, false) +
-    terribleCfg.L1 .terrible (.bad, true, true) +
-    terribleCfg.L1 .terrible (.ok, true, false) +
-    terribleCfg.L1 .terrible (.ok, true, true) +
-    terribleCfg.L1 .terrible (.good, true, false) +
-    terribleCfg.L1 .terrible (.good, true, true) +
-    terribleCfg.L1 .terrible (.amazing, true, false) +
-    terribleCfg.L1 .terrible (.amazing, true, true) := by
+    terribleCfg.L1_marginal .terrible (fun w => w.2.1 == false) >
+    terribleCfg.L1_marginal .terrible (fun w => w.2.1 == true) := by
   rsa_predict
 
 end Theorems

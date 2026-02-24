@@ -125,7 +125,10 @@ private def assignWithCastFallback (goal : MVarId) (proof : Expr) : TacticM Unit
     - `cfg.L1_latent u l₁ > cfg.L1_latent u l₂` — latent inference
     - `cfg.S1 l w u₁ > cfg.S1 l w u₂` — S1 speaker comparison
     - `¬(cfg.S1 l w u₁ > cfg.S1 l w u₂)` — S1 non-strict
+    - `cfg.S1 l w u₁ = cfg.S1 l w u₂` — S1 equality (score symmetry)
+    - `cfg.L1 u w₁ = cfg.L1 u w₂` — L1 equality (score symmetry)
     - `Σ s, cfg.L1 u (s, a₁) > Σ s, cfg.L1 u (s, a₂)` — marginal comparison
+    - `cfg.L1_marginal u P₁ > cfg.L1_marginal u P₂` — marginal via predicate
     - `cfg.L1 u₁ w₁ + ... > cfg.L1 u₂ w₃ + ...` — cross-utterance sum
     - `cfg₁.L1 u₁ w₁ + ... > cfg₂.L1 u₂ w₃ + ...` — cross-config sum -/
 elab "rsa_predict" : tactic => do
@@ -225,7 +228,16 @@ elab "rsa_predict" : tactic => do
             assignWithCastFallback goal proof
             logInfo m!"rsa_predict: ✓ proved via whnf score equality (¬L1 comparison)"
           else
-            throwError "rsa_predict: cannot prove ¬(L1 w₁ > L1 w₂): compositional bounds overlap [{score1.lo}, {score1.hi}] vs [{score2.lo}, {score2.hi}], and scores are not defEq"
+            -- Try exact ℚ evaluation on scores via RExpr
+            let scoreEqGoal ← mkFreshExprMVar (← mkEq scoreExpr1 scoreExpr2)
+            if ← tryDirectRExprEq scoreEqGoal.mvarId! scoreExpr1 scoreExpr2 then
+              let hle ← mkAppM ``le_of_eq #[scoreEqGoal]
+              let proof ← mkAppM ``Core.RationalAction.policy_not_gt_of_score_le
+                #[l1Agent, u, w₁, w₂, hle]
+              assignWithCastFallback goal proof
+              logInfo m!"rsa_predict: ✓ proved via RExpr score equality (¬L1 comparison)"
+            else
+              throwError "rsa_predict: cannot prove ¬(L1 w₁ > L1 w₂): compositional bounds overlap [{score1.lo}, {score1.hi}] vs [{score2.lo}, {score2.hi}], and scores are not defEq"
       return
     | .s1Compare cfg l w u₁ u₂ => do
       logInfo m!"rsa_predict: parsed goal as ¬(S1 comparison)"
@@ -296,16 +308,69 @@ elab "rsa_predict" : tactic => do
             assignWithCastFallback goal proof
             logInfo m!"rsa_predict: ✓ proved via whnf score equality (¬S1 comparison)"
           else
-            throwError "rsa_predict: cannot prove ¬(S1 u₁ > S1 u₂): compositional bounds overlap [{score1.lo}, {score1.hi}] vs [{score2.lo}, {score2.hi}], and scores are not defEq"
+            -- Try exact ℚ evaluation on scores via RExpr
+            let scoreEqGoal ← mkFreshExprMVar (← mkEq scoreExpr1 scoreExpr2)
+            if ← tryDirectRExprEq scoreEqGoal.mvarId! scoreExpr1 scoreExpr2 then
+              let hle ← mkAppM ``le_of_eq #[scoreEqGoal]
+              let proof ← mkAppM ``Core.RationalAction.policy_not_gt_of_score_le
+                #[s1Agent, w, u₁, u₂, hle]
+              assignWithCastFallback goal proof
+              logInfo m!"rsa_predict: ✓ proved via RExpr score equality (¬S1 comparison)"
+            else
+              throwError "rsa_predict: cannot prove ¬(S1 u₁ > S1 u₂): compositional bounds overlap [{score1.lo}, {score1.hi}] vs [{score2.lo}, {score2.hi}], and scores are not defEq"
       return
     | _ => throwError "rsa_predict: ¬(_ > _) only supported for L1 and S1 comparisons, got: {← ppExpr goalType}"
+
+  -- Eq goal: lhs = rhs (handles S1/L1 score equality)
+  if goalTypeWhnf.isAppOf ``Eq then
+    let eqArgs := goalTypeWhnf.getAppArgs
+    if eqArgs.size ≥ 3 then
+      let lhs := eqArgs[1]!
+      let rhs := eqArgs[2]!
+
+      -- Try direct RExpr equality on the raw expressions
+      if ← tryDirectRExprEq goal lhs rhs then
+        logInfo m!"rsa_predict: ✓ proved equality via reflection"
+        return
+
+      -- Try parsing as L1 equality → score equality → policy_eq_of_score_eq
+      if let some (cfg, u, w₁) ← parseL1Policy lhs then
+        if let some (cfg₂, _u₂, w₂) ← parseL1Policy rhs then
+          if ← isDefEq cfg cfg₂ then
+            let l1Agent ← mkAppM ``RSA.RSAConfig.L1agent #[cfg]
+            let scoreExpr1 ← mkAppM ``Core.RationalAction.score #[l1Agent, u, w₁]
+            let scoreExpr2 ← mkAppM ``Core.RationalAction.score #[l1Agent, u, w₂]
+            let scoreEqGoal ← mkFreshExprMVar (← mkEq scoreExpr1 scoreExpr2)
+            if ← tryDirectRExprEq scoreEqGoal.mvarId! scoreExpr1 scoreExpr2 then
+              let proof ← mkAppM ``Core.RationalAction.policy_eq_of_score_eq
+                #[l1Agent, u, w₁, w₂, scoreEqGoal]
+              goal.assign proof
+              logInfo m!"rsa_predict: ✓ proved L1 equality via score equality"
+              return
+
+      -- Try parsing as S1 equality → score equality → policy_eq_of_score_eq
+      if let some (cfg, l, w, u₁) ← parseS1Policy lhs then
+        if let some (cfg₂, _l₂, _w₂, u₂) ← parseS1Policy rhs then
+          if ← isDefEq cfg cfg₂ then
+            let s1Agent ← mkAppM ``RSA.RSAConfig.S1agent #[cfg, l]
+            let scoreExpr1 ← mkAppM ``Core.RationalAction.score #[s1Agent, w, u₁]
+            let scoreExpr2 ← mkAppM ``Core.RationalAction.score #[s1Agent, w, u₂]
+            let scoreEqGoal ← mkFreshExprMVar (← mkEq scoreExpr1 scoreExpr2)
+            if ← tryDirectRExprEq scoreEqGoal.mvarId! scoreExpr1 scoreExpr2 then
+              let proof ← mkAppM ``Core.RationalAction.policy_eq_of_score_eq
+                #[s1Agent, w, u₁, u₂, scoreEqGoal]
+              goal.assign proof
+              logInfo m!"rsa_predict: ✓ proved S1 equality via score equality"
+              return
+
+      throwError "rsa_predict: cannot prove equality goal: {← ppExpr goalType}"
 
   let fn := goalType.getAppFn
   let args := goalType.getAppArgs
 
   -- GT.gt: lhs > rhs
   unless fn.isConstOf ``GT.gt && args.size ≥ 4 do
-    throwError "rsa_predict: expected goal of the form `_ > _` or `¬(_ > _)`, got: {← ppExpr goalType}"
+    throwError "rsa_predict: expected goal of the form `_ > _`, `_ = _`, or `¬(_ > _)`, got: {← ppExpr goalType}"
 
   let lhs := args[2]!
   let rhs := args[3]!

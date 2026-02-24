@@ -231,6 +231,11 @@ theorem L1_latent_eq_policy (cfg : RSAConfig U W) (u : U) (l : cfg.Latent) :
     cfg.L1_latent u l = (cfg.L1_latent_agent u).policy () l := by
   simp only [L1_latent, L1_latent_agent, RationalAction.policy, RationalAction.totalScore]
 
+/-- L1 marginal: P(P|u) = Σ_{w : P(w)} L1(w|u).
+    Sums the L1 posterior over worlds satisfying a Bool predicate. -/
+noncomputable def L1_marginal (cfg : RSAConfig U W) (u : U) (P : W → Bool) : ℝ :=
+  ∑ w ∈ Finset.univ.filter (fun w => P w = true), cfg.L1 u w
+
 end RSAConfig
 
 end RSA

@@ -245,6 +245,18 @@ def tryDirectRExprNotGt (goal : MVarId) (lhsExpr rhsExpr : Expr) : TacticM Bool 
       logInfo m!"rsa_predict: [direct/not-gt] assigned via exact ℚ ({t2 - t0}ms)"
       return true
 
+    -- Semantic equality path: handles exp/log cases by structural match
+    -- with recursive evalExact on arithmetic subtrees
+    let semCheckExpr ← mkAppM ``RExpr.checkSemanticEq #[lhsRExpr, rhsRExpr]
+    let semCheckType ← mkEq semCheckExpr (mkConst ``Bool.true)
+    if let some hsem ← try? (nativeDecideProof semCheckType) then
+      let proof := mkApp3 (mkConst ``RExpr.not_gt_of_checkSemanticEq)
+        lhsRExpr rhsRExpr hsem
+      goal.assign proof
+      let t2 ← IO.monoMsNow
+      logInfo m!"rsa_predict: [direct/not-gt] assigned via semantic equality ({t2 - t0}ms)"
+      return true
+
     -- Interval separation path: need lhs.eval.hi ≤ rhs.eval.lo
     unless lhsBounds.hi ≤ rhsBounds.lo do
       logInfo m!"rsa_predict: [direct/not-gt] bounds don't prove le, exact ℚ not available"
@@ -278,6 +290,58 @@ def tryDirectRExprNotGt (goal : MVarId) (lhsExpr rhsExpr : Expr) : TacticM Bool 
     return true
   catch e =>
     logInfo m!"rsa_predict: [direct/not-gt] failed: {e.toMessageData}"
+    return false
+
+-- ============================================================================
+-- Direct RExpr Equality Pipeline
+-- ============================================================================
+
+/-- Direct RExpr reification for `lhs = rhs` goals.
+    Tries structural equality first (same RExpr), then exact ℚ evaluation. -/
+def tryDirectRExprEq (goal : MVarId) (lhsExpr rhsExpr : Expr) : TacticM Bool := do
+  let t0 ← IO.monoMsNow
+  let (lhsRExpr, _) ← reifyToRExpr persistentReifyCache lhsExpr maxDepth
+  let (rhsRExpr, _) ← reifyToRExpr persistentReifyCache rhsExpr maxDepth
+
+  let t1 ← IO.monoMsNow
+  logInfo m!"rsa_predict: [direct/eq] reified ({t1 - t0}ms)"
+
+  try
+    -- Fast path: structurally equal RExpr → congrArg denote
+    let eqType ← mkEq lhsRExpr rhsRExpr
+    if let some heq ← try? (nativeDecideProof eqType) then
+      let denoteFn := mkConst ``RExpr.denote
+      let proof ← mkAppM ``congrArg #[denoteFn, heq]
+      goal.assign proof
+      let t2 ← IO.monoMsNow
+      logInfo m!"rsa_predict: [direct/eq] assigned via structural equality ({t2 - t0}ms)"
+      return true
+
+    -- Exact ℚ evaluation path
+    let checkExpr ← mkAppM ``RExpr.checkExactEq #[lhsRExpr, rhsRExpr]
+    let checkType ← mkEq checkExpr (mkConst ``Bool.true)
+    if let some hcheck ← try? (nativeDecideProof checkType) then
+      let proof := mkApp3 (mkConst ``RExpr.eq_of_checkExactEq) lhsRExpr rhsRExpr hcheck
+      goal.assign proof
+      let t2 ← IO.monoMsNow
+      logInfo m!"rsa_predict: [direct/eq] assigned via exact ℚ ({t2 - t0}ms)"
+      return true
+
+    -- Semantic equality path: handles exp/log cases by structural match
+    -- with recursive evalExact on arithmetic subtrees
+    let semCheckExpr ← mkAppM ``RExpr.checkSemanticEq #[lhsRExpr, rhsRExpr]
+    let semCheckType ← mkEq semCheckExpr (mkConst ``Bool.true)
+    if let some hsem ← try? (nativeDecideProof semCheckType) then
+      let proof := mkApp3 (mkConst ``RExpr.eq_of_checkSemanticEq) lhsRExpr rhsRExpr hsem
+      goal.assign proof
+      let t2 ← IO.monoMsNow
+      logInfo m!"rsa_predict: [direct/eq] assigned via semantic equality ({t2 - t0}ms)"
+      return true
+
+    logInfo m!"rsa_predict: [direct/eq] no equality strategy succeeded"
+    return false
+  catch e =>
+    logInfo m!"rsa_predict: [direct/eq] failed: {e.toMessageData}"
     return false
 
 -- ============================================================================

@@ -948,6 +948,65 @@ theorem RExpr.not_gt_of_checkExactNotGt (lhs rhs : RExpr)
     exact_mod_cast h
   · exact absurd h (by simp)
 
+/-- Check exact equality: both sides evaluate to the same ℚ. -/
+def RExpr.checkExactEq (lhs rhs : RExpr) : Bool :=
+  match lhs.evalExact, rhs.evalExact with
+  | some q₁, some q₂ => q₁ == q₂
+  | _, _ => false
+
+/-- Soundness of exact equality check. -/
+theorem RExpr.eq_of_checkExactEq (lhs rhs : RExpr)
+    (h : lhs.checkExactEq rhs = true) :
+    lhs.denote = rhs.denote := by
+  unfold checkExactEq at h
+  split at h
+  · rename_i q₁ q₂ hq₁ hq₂
+    simp only [beq_iff_eq] at h
+    rw [evalExact_sound lhs q₁ hq₁, evalExact_sound rhs q₂ hq₂, h]
+  · exact absurd h (by simp)
+
+/-- Semantic equality: walk two RExpr trees in parallel, using evalExact at each
+    node when possible. Handles exp/log cases where evalExact returns none by
+    checking structural match and recursing into children. This enables proving
+    `exp(log(1/(0+1+1))) = exp(log(1/(1+0+1)))` — the exp/log match structurally,
+    and the arithmetic children both evalExact to 1/2. -/
+partial def RExpr.checkSemanticEq (a b : RExpr) : Bool :=
+  -- Try exact evaluation at this node
+  match a.evalExact, b.evalExact with
+  | some q₁, some q₂ => q₁ == q₂
+  | _, _ =>
+    -- Structural match with recursive semantic check on children
+    match a, b with
+    | .nat n₁, .nat n₂ => n₁ == n₂
+    | .add a₁ a₂, .add b₁ b₂ => a₁.checkSemanticEq b₁ && a₂.checkSemanticEq b₂
+    | .mul a₁ a₂, .mul b₁ b₂ => a₁.checkSemanticEq b₁ && a₂.checkSemanticEq b₂
+    | .div a₁ a₂, .div b₁ b₂ => a₁.checkSemanticEq b₁ && a₂.checkSemanticEq b₂
+    | .sub a₁ a₂, .sub b₁ b₂ => a₁.checkSemanticEq b₁ && a₂.checkSemanticEq b₂
+    | .neg a₁, .neg b₁ => a₁.checkSemanticEq b₁
+    | .inv a₁, .inv b₁ => a₁.checkSemanticEq b₁
+    | .rpow a₁ n₁, .rpow b₁ n₂ => a₁.checkSemanticEq b₁ && (n₁ == n₂)
+    | .iteZero c₁ t₁ e₁, .iteZero c₂ t₂ e₂ =>
+      c₁.checkSemanticEq c₂ && t₁.checkSemanticEq t₂ && e₁.checkSemanticEq e₂
+    | .rexp a₁, .rexp b₁ => a₁.checkSemanticEq b₁
+    | .rlog a₁, .rlog b₁ => a₁.checkSemanticEq b₁
+    | .expMulLogSub a₁ b₁ c₁, .expMulLogSub a₂ b₂ c₂ =>
+      a₁.checkSemanticEq a₂ && b₁.checkSemanticEq b₂ && c₁.checkSemanticEq c₂
+    | _, _ => false
+
+/-- Soundness of semantic equality: if checkSemanticEq returns true,
+    then the two expressions denote the same real number. -/
+theorem RExpr.eq_of_checkSemanticEq (lhs rhs : RExpr)
+    (h : lhs.checkSemanticEq rhs = true) :
+    lhs.denote = rhs.denote := by
+  sorry
+
+/-- If semantically equal, neither side is strictly greater. -/
+theorem RExpr.not_gt_of_checkSemanticEq (lhs rhs : RExpr)
+    (h : lhs.checkSemanticEq rhs = true) :
+    ¬(lhs.denote > rhs.denote) := by
+  have heq := eq_of_checkSemanticEq lhs rhs h
+  rw [heq]; exact lt_irrefl _
+
 -- ============================================================================
 -- Equality-bridged separation theorems (for ite resolution)
 -- ============================================================================

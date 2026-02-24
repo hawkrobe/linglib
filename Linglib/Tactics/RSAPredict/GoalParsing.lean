@@ -1,5 +1,6 @@
 import Lean
 import Linglib.Theories.Pragmatics.RSA.Core.Config
+import Linglib.Tactics.RSAPredict.Helpers
 
 set_option autoImplicit false
 
@@ -88,6 +89,39 @@ inductive GoalForm where
   | s1Compare (cfg l w u₁ u₂ : Expr)
 
 -- ============================================================================
+-- L1_marginal Parsing
+-- ============================================================================
+
+/-- Try to parse an expression as `cfg.L1_marginal u P`.
+    If successful, evaluates `P w` for each `w : W` at meta level,
+    returning `(cfg, u, #[w₁, w₂, ...])` for matching worlds. -/
+def parseL1Marginal (e : Expr) : MetaM (Option (Expr × Expr × Array Expr)) := do
+  let mut current := e
+  for _ in List.range 5 do
+    let fn := current.getAppFn
+    let args := current.getAppArgs
+    if fn.isConstOf ``RSA.RSAConfig.L1_marginal && args.size ≥ 7 then
+      -- args layout: U, W, instFintypeU, instFintypeW, cfg, u, P
+      let W := args[1]!
+      let cfg := args[4]!
+      let u := args[5]!
+      let P := args[6]!
+      -- Enumerate all W elements
+      let (_, allWElems) ← Linglib.Tactics.RSAPredict.getFiniteElems W
+      -- Evaluate P w for each w
+      let mut matching : Array Expr := #[]
+      for w in allWElems do
+        let pw := mkApp P w
+        let pw' ← whnf pw
+        if pw'.isConstOf ``Bool.true then
+          matching := matching.push w
+      return some (cfg, u, matching)
+    if let some e' ← unfoldDefinition? current then
+      current := e'.headBeta
+    else break
+  return none
+
+-- ============================================================================
 -- Goal Form Parsing Helpers
 -- ============================================================================
 
@@ -104,13 +138,13 @@ def parseL1Latent (e : Expr) : MetaM (Option (Expr × Expr × Expr)) := do
     else break
   return none
 
-private def isAppOfMin (e : Expr) (name : Name) (minArgs : ℕ) : Bool :=
-  e.getAppFn.isConstOf name && e.getAppNumArgs ≥ minArgs
-
 /-- Collect L1 policy summands from an expression.
     Returns (cfg, u, ws) where ws are the world arguments, or none.
     Handles Finset.sum, List.sum of map, and nested HAdd of L1 terms. -/
 partial def collectL1Summands (e : Expr) : MetaM (Option (Expr × Expr × Array Expr)) := do
+  -- Try L1_marginal first (most specific)
+  if let some (cfg, u, ws) ← parseL1Marginal e then
+    return some (cfg, u, ws)
   -- Try single L1 term first
   if let some (cfg, u, w) ← parseL1Policy e then
     return some (cfg, u, #[w])
@@ -145,6 +179,9 @@ partial def collectL1Summands (e : Expr) : MetaM (Option (Expr × Expr × Array 
     may have different u values. -/
 partial def collectL1SummandsAnyU (e : Expr) :
     MetaM (Option (Expr × Array (Expr × Array Expr))) := do
+  -- Try L1_marginal first
+  if let some (cfg, u, ws) ← parseL1Marginal e then
+    return some (cfg, #[(u, ws)])
   -- Try single L1 term first
   if let some (cfg, u, w) ← parseL1Policy e then
     return some (cfg, #[(u, #[w])])

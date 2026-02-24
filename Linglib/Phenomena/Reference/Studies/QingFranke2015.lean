@@ -419,31 +419,10 @@ theorem green_ambiguous :
     Utterance.appliesTo .green .blue_circle = false :=
   ⟨rfl, rfl, rfl⟩
 
--- Auxiliary: expand finite sums for manual score-equality proofs
-
-@[simp] private theorem Object.sum_expand {f : Object → ℝ} :
-    ∑ x : Object, f x = f .green_square + f .blue_circle + f .green_circle := by
-  change (Finset.univ : Finset Object).sum f = _
-  have : (Finset.univ : Finset Object) = {.green_square, .blue_circle, .green_circle} :=
-    by native_decide
-  rw [this]
-  simp [Finset.sum_insert, Finset.sum_singleton, Finset.mem_insert, Finset.mem_singleton]
-  ring
-
-@[simp] private theorem Utterance.sum_expand {f : Utterance → ℝ} :
-    ∑ x : Utterance, f x = f .square + f .circle + f .green + f .blue := by
-  change (Finset.univ : Finset Utterance).sum f = _
-  have : (Finset.univ : Finset Utterance) = {.square, .circle, .green, .blue} :=
-    by native_decide
-  rw [this]
-  simp [Finset.sum_insert, Finset.sum_singleton, Finset.mem_insert, Finset.mem_singleton]
-  ring
-
 -- ============================================================================
 -- §11. Speaker Predictions (Findings 1–4)
 -- ============================================================================
 
-set_option maxHeartbeats 400000 in
 /-- Finding 1: For green_square, S1 prefers "square" (unique, cost=0) over "green"
     (ambiguous, cost=1/2). Both informativity and cost favor "square".
     Evidence: 40/42 speakers chose "square" (Table 3). -/
@@ -451,7 +430,6 @@ theorem speaker_prefers_unique_shape :
     costCfg.S1 () .green_square .square > costCfg.S1 () .green_square .green := by
   rsa_predict
 
-set_option maxHeartbeats 400000 in
 /-- Finding 2: For blue_circle, S1 prefers "blue" (unique, cost=1/2) over "circle"
     (ambiguous, cost=0). Informativity dominates cost.
     Evidence: 36/42 speakers chose "blue" (Table 3). -/
@@ -459,7 +437,6 @@ theorem speaker_prefers_unique_color :
     costCfg.S1 () .blue_circle .blue > costCfg.S1 () .blue_circle .circle := by
   rsa_predict
 
-set_option maxHeartbeats 400000 in
 /-- Finding 3: For green_circle, cost breaks the tie between the two ambiguous
     words: S1 prefers "circle" (cost=0) over "green" (cost=1/2). Both are equally
     informative (each applies to 2 objects), so cost is the tiebreaker.
@@ -468,28 +445,12 @@ theorem cost_breaks_symmetry :
     costCfg.S1 () .green_circle .circle > costCfg.S1 () .green_circle .green := by
   rsa_predict
 
-/-- The S1 scores for "circle" and "green" at green_circle are exactly equal
-    under zero cost. Both apply to exactly 2 objects with uniform L0, so
-    L0(green_circ|"circle") = L0(green_circ|"green") = 1/2, and with zero cost
-    the scores are exp(log(1/2)) = exp(log(1/2)). -/
-private theorem zeroCost_score_circle_eq_green :
-    (zeroCostCfg.S1agent ()).score .green_circle .circle =
-    (zeroCostCfg.S1agent ()).score .green_circle .green := by
-  simp only [RSAConfig.S1agent, beliefGoalScore,
-             RSAConfig.L0agent, RationalAction.policy, RationalAction.totalScore,
-             uniformPrior, Utterance.appliesTo,
-             Object.sum_expand]
-  norm_num
-
 /-- Finding 4: Without cost, the symmetry is unbroken — neither ambiguous word
     dominates for green_circle. Both "circle" and "green" apply to exactly 2 objects,
     so L0 assigns equal probability, and S1 assigns equal weight. -/
 theorem no_cost_symmetry :
     ¬(zeroCostCfg.S1 () .green_circle .circle > zeroCostCfg.S1 () .green_circle .green) := by
-  have heq : zeroCostCfg.S1 () .green_circle .circle =
-      zeroCostCfg.S1 () .green_circle .green :=
-    RationalAction.policy_eq_of_score_eq _ _ _ _ zeroCost_score_circle_eq_green
-  exact fun h => absurd heq (ne_of_gt h)
+  rsa_predict
 
 -- ============================================================================
 -- §12. Listener Predictions (Findings 5–6): Salience Reversal
@@ -511,7 +472,6 @@ prior — exactly the comparison the paper runs (Table 4 rows for ρ_bU vs ρ_bS
 -- Uniform: green_circle > blue_circle (pragmatic narrowing)
 -- Salience: blue_circle > green_circle (salience override; matches human 66%)
 
-set_option maxHeartbeats 400000 in
 /-- Uniform L1 for "circle": green_circle > blue_circle.
     Pragmatic reasoning: a speaker wanting blue_circle would say "blue" (unique),
     so saying "circle" signals green_circle. -/
@@ -519,7 +479,6 @@ theorem uniform_circle_green_circ :
     costCfg.L1 .circle .green_circle > costCfg.L1 .circle .blue_circle := by
   rsa_predict
 
-set_option maxHeartbeats 400000 in
 /-- Salience L1 for "circle": blue_circle > green_circle.
     Salience (139 vs 30) overrides pragmatic narrowing. Matches human data (66%). -/
 theorem salience_circle_blue_circ :
@@ -537,7 +496,6 @@ theorem salience_reversal_circle :
 -- Uniform: green_circle > green_square (pragmatic narrowing)
 -- Salience: green_square > green_circle (salience override; matches human 56%)
 
-set_option maxHeartbeats 400000 in
 /-- Uniform L1 for "green": green_circle > green_square.
     Pragmatic reasoning: a speaker wanting green_square would say "square" (unique),
     so saying "green" signals green_circle. -/
@@ -545,7 +503,6 @@ theorem uniform_green_green_circ :
     costCfg.L1 .green .green_circle > costCfg.L1 .green .green_square := by
   rsa_predict
 
-set_option maxHeartbeats 400000 in
 /-- Salience L1 for "green": green_square > green_circle.
     Salience (71 vs 30) overrides pragmatic narrowing. Matches human data (56%). -/
 theorem salience_green_green_sq :
@@ -607,33 +564,15 @@ noncomputable def σ_aS_cfg : RSAConfig Utterance Object :=
 -- score(blue) = exp(1 * (1 - 1/2)) = exp(1/2)
 -- score(circle) = exp(1 * (1/2 - 0)) = exp(1/2)
 
-set_option maxHeartbeats 800000 in
 /-- σ_aU agrees: "square" > "green" for green_square. -/
 theorem σ_aU_green_sq :
     σ_aU_cfg.S1 () .green_square .square > σ_aU_cfg.S1 () .green_square .green := by
   rsa_predict
 
-set_option maxHeartbeats 800000 in
 /-- σ_aU agrees: "circle" > "green" for green_circle (cost breaks symmetry). -/
 theorem σ_aU_green_circ :
     σ_aU_cfg.S1 () .green_circle .circle > σ_aU_cfg.S1 () .green_circle .green := by
   rsa_predict
-
-set_option maxHeartbeats 800000 in
-/-- The S1 scores for "blue" and "circle" at blue_circle are exactly equal under σ_aU.
-    Both compute to exp(1/2): "blue" has L0 = 1 and cost = 1/2 (so arg = 1 - 1/2),
-    while "circle" has L0 = 1/2 and cost = 0 (so arg = 1/2 - 0).
-    This is why `rsa_predict` cannot handle this case — interval arithmetic
-    approximates exp(1/2) independently for each utterance, yielding overlapping
-    intervals. The proof instead shows exact score equality and lifts to policy. -/
-private theorem σ_aU_score_blue_eq_circle :
-    (σ_aU_cfg.S1agent ()).score .blue_circle .blue =
-    (σ_aU_cfg.S1agent ()).score .blue_circle .circle := by
-  simp only [RSAConfig.S1agent, actionGoalScore,
-             RSAConfig.L0agent, RationalAction.policy, RationalAction.totalScore,
-             adjCost, uniformPrior, Utterance.appliesTo,
-             Object.sum_expand, Utterance.sum_expand]
-  norm_num
 
 /-- σ_aU fails: "blue" and "circle" are tied for blue_circle.
     This is the key prediction that distinguishes σ_aU from σ_bU.
@@ -643,16 +582,13 @@ private theorem σ_aU_score_blue_eq_circle :
     offset by cost. -/
 theorem σ_aU_blue_circ_tie :
     ¬(σ_aU_cfg.S1 () .blue_circle .blue > σ_aU_cfg.S1 () .blue_circle .circle) ∧
-    ¬(σ_aU_cfg.S1 () .blue_circle .circle > σ_aU_cfg.S1 () .blue_circle .blue) := by
-  have heq : σ_aU_cfg.S1 () .blue_circle .blue = σ_aU_cfg.S1 () .blue_circle .circle :=
-    RationalAction.policy_eq_of_score_eq _ _ _ _ σ_aU_score_blue_eq_circle
-  exact ⟨fun h => absurd heq (ne_of_gt h), fun h => absurd heq.symm (ne_of_gt h)⟩
+    ¬(σ_aU_cfg.S1 () .blue_circle .circle > σ_aU_cfg.S1 () .blue_circle .blue) :=
+  ⟨by rsa_predict, by rsa_predict⟩
 
 -- §13b. σ_bS: Belief-oriented, salience belief
 -- Agrees on green_sq; reverses on both blue_circ and green_circ.
 -- Worst speaker model (1/3).
 
-set_option maxHeartbeats 800000 in
 /-- σ_bS agrees: "square" > "green" for green_square.
     The unique shape word wins regardless of speaker belief, since "square"
     applies to only one object while "green" is ambiguous. -/
@@ -660,7 +596,6 @@ theorem σ_bS_green_sq :
     σ_bS_cfg.S1 () .green_square .square > σ_bS_cfg.S1 () .green_square .green := by
   rsa_predict
 
-set_option maxHeartbeats 800000 in
 /-- σ_bS reverses blue_circle: predicts "circle" > "blue".
     With salience-weighted L0, blue_circle has the highest salience (139),
     so L0(blue_circ|"circle") = 139/169 ≈ 0.82, making "circle" quite
@@ -670,7 +605,6 @@ theorem σ_bS_blue_circ_reversal :
     σ_bS_cfg.S1 () .blue_circle .circle > σ_bS_cfg.S1 () .blue_circle .blue := by
   rsa_predict
 
-set_option maxHeartbeats 800000 in
 /-- σ_bS reverses green_circle: predicts "green" > "circle".
     With salience weights, L0(green_circ|"green") = 30/101 ≈ 0.30 and
     L0(green_circ|"circle") = 30/169 ≈ 0.18. "green" has higher L0 posterior
@@ -683,13 +617,11 @@ theorem σ_bS_green_circ_reversal :
 -- §13c. σ_aS: Action-oriented, salience belief
 -- Agrees on green_sq and green_circ; reverses on blue_circ.
 
-set_option maxHeartbeats 800000 in
 /-- σ_aS agrees: "square" > "green" for green_square. -/
 theorem σ_aS_green_sq :
     σ_aS_cfg.S1 () .green_square .square > σ_aS_cfg.S1 () .green_square .green := by
   rsa_predict
 
-set_option maxHeartbeats 800000 in
 /-- σ_aS reverses blue_circle: predicts "circle" > "blue".
     Same mechanism as σ_bS: salience inflates L0(blue_circ|"circle") = 139/169.
     Under action-oriented scoring, this raw probability advantage
@@ -698,7 +630,6 @@ theorem σ_aS_blue_circ_reversal :
     σ_aS_cfg.S1 () .blue_circle .circle > σ_aS_cfg.S1 () .blue_circle .blue := by
   rsa_predict
 
-set_option maxHeartbeats 800000 in
 /-- σ_aS agrees: "circle" > "green" for green_circle.
     Unlike σ_bS, the action-oriented scoring doesn't amplify the L0
     advantage of "green" via log, so cost wins for green_circle. -/
@@ -790,9 +721,8 @@ theorem all_findings_verified : ∀ f : Finding, formalize f := by
 
 6. **Model comparison**: All 4 speaker models instantiate the same RSAConfig
    API with different `s1Score` and `meaning` choices. `rsa_predict` handles
-   most comparisons; the σ_aU tie requires manual score-equality proof
-   (exp/log don't cancel in action-oriented scoring). The capstone theorem
-   shows σ_bU uniquely predicts the blue_circle observation.
+   all comparisons including score-equality ties (σ_aU, zeroCost). The
+   capstone theorem shows σ_bU uniquely predicts the blue_circle observation.
 -/
 
 end Phenomena.Reference.Studies.QingFranke2015
