@@ -40,7 +40,7 @@ Identity is strictly stronger (§3 below).
 - Chandra, Goodman, Meylan, Hawkins et al. (2025). memo.
 -/
 
-namespace Core.BToM
+namespace Core
 
 open Core.Proposition
 
@@ -129,4 +129,4 @@ theorem ContentIndividual.entails_not_implies_eq :
   -- But identity would require (λ_ => false) = (λ_ => true)
   exact absurd (congr_fun this true) Bool.noConfusion
 
-end Core.BToM
+end Core

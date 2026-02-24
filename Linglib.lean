@@ -378,6 +378,7 @@ import Linglib.Phenomena.Presupposition.Studies.DegenTonhauser2021
 import Linglib.Phenomena.Presupposition.Studies.HeKaiserIskarous2025
 import Linglib.Phenomena.Presupposition.Studies.LoGuercio2025
 import Linglib.Phenomena.Presupposition.Studies.ScontrasTonhauser2025
+import Linglib.Phenomena.Presupposition.Studies.ScontrasTonhauser2025BToMBridge
 import Linglib.Phenomena.Presupposition.Studies.Wang2025
 import Linglib.Phenomena.Presupposition.Studies.Warstadt2022
 import Linglib.Phenomena.Presupposition.Studies.Yagi2025
@@ -766,6 +767,8 @@ import Linglib.Theories.Semantics.Attitudes.Preferential
 import Linglib.Theories.Semantics.Attitudes.SituationDependent
 import Linglib.Theories.Semantics.Attitudes.NegRaising
 import Linglib.Theories.Semantics.Attitudes.Monotonicity
+import Linglib.Theories.Semantics.Attitudes.Factivity
+import Linglib.Theories.Semantics.Attitudes.EpistemicThreshold
 import Linglib.Theories.Semantics.Truthmaker.Basic
 import Linglib.Theories.Semantics.Causation.Basic
 import Linglib.Theories.Semantics.Causation.Builder

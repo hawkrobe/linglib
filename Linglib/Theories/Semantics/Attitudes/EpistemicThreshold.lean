@@ -1,5 +1,6 @@
 import Linglib.Core.Proposition
 import Linglib.Core.EpistemicScale
+import Linglib.Core.BToM
 import Linglib.Theories.Semantics.Degree.Core
 import Mathlib.Tactic.NormNum
 
@@ -416,6 +417,30 @@ See `BToMModel.beliefExpectation` in `Core.BToM` for the generic
 belief-weighted sum, and `L1_eq_btom_worldMarginal` in
 `RSA.Core.BToMGrounding` for the RSA-BToM identity.
 -/
+
+open Core.BToM in
+/-- Agent credence derived from BToM belief-marginal inference.
+
+    Given a BToM model with belief type `B` and an evaluation function
+    `eval : B → BProp W → ℚ` that computes how belief state `b` rates
+    proposition `φ`, the observer estimates the agent's credence after
+    observing action `a`:
+
+        Pr_obs(Agent, φ | a) = Σ_b P(b | a) · eval(b, φ)
+
+    This is `BToMModel.beliefExpectation` applied to `fun b => eval b φ`,
+    grounding the abstract `AgentCredence` in concrete BToM inference.
+
+    When `B = W` and `eval b φ = if φ b then 1 else 0` (the RSA-BToM
+    bridge's perfect-knowledge assumption), this reduces to the L1
+    listener's expected truth-value under their world posterior. -/
+noncomputable def btomCredence
+    {A P B D S M W : Type*}
+    [Fintype P] [Fintype B] [Fintype D] [Fintype S] [Fintype M] [Fintype W]
+    (model : BToMModel ℚ A P B D S M W)
+    (eval : B → BProp W → ℚ)
+    (a : A) (φ : BProp W) : ℚ :=
+  model.beliefExpectation (λ b => eval b φ) a
 
 -- ============================================================================
 -- §8. Degree-Threshold Bridge

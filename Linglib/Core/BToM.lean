@@ -115,16 +115,6 @@ inductive LatentCategory where
   | medium
   deriving DecidableEq, Repr
 
-/-- Decomposition of the mental category per Baker et al. (2017). -/
-inductive MentalKind where
-  /-- Epistemic state: what the agent takes to be true about the world. -/
-  | belief
-  /-- Goal state: what the agent wants to achieve or communicate. -/
-  | desire
-  /-- Perceptual state: what the agent directly observes. -/
-  | percept
-  deriving DecidableEq, Repr
-
 /-- Temporal dynamics of a latent factor.
 
 Orthogonal to `LatentCategory`: a belief can be episodic (specific to one

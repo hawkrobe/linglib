@@ -53,7 +53,9 @@ namespace RSA.BToMGrounding
 
 This is a cognitive-level commitment: it says what *kind* of thing each
 latent variable represents. The classification does not affect behavioral
-predictions (see `classification_behavioral_equivalence`). -/
+predictions: the classify function is never called by `toBToM` or the
+inference machinery, so different classifications yield identical BToM
+world marginals. -/
 structure LatentClassification (Latent : Type*) where
   /-- Assign each latent variable value to a BToM category. -/
   classify : Latent → LatentCategory
@@ -141,27 +143,5 @@ theorem L1_eq_btom_worldMarginal [DecidableEq W]
   simp [Finset.sum_ite_eq']
   rw [Finset.mul_sum]
   exact Finset.sum_congr rfl fun x _ => by ring
-
--- ============================================================================
--- §4. Behavioral Equivalence of Classifications
--- ============================================================================
-
-/-- Classifications are cognitive-level claims, not behavioral ones.
-
-Any two classifications of the same RSAConfig yield identical BToM world
-marginals (and hence identical L1 predictions), because the classification
-is metadata that doesn't enter the computation. Whether you call a latent
-variable a "belief" or a "medium property" doesn't change the sum `Σ_l f(l)`.
-
-This is both trivially true (the classification function is never called
-by `toBToM` or the inference machinery) and theoretically important: it says
-that the cognitive interpretation of RSA's listener (Theory of Mind vs.
-signal disambiguation) is an empirical question that cannot be settled by
-behavioral data alone. -/
-theorem classification_behavioral_equivalence [DecidableEq W]
-    (cfg : RSAConfig U W)
-    (_c1 _c2 : RSA.BToMGrounding.LatentClassification cfg.Latent) :
-    ∀ (u : U) (w : W), (cfg.toBToM).worldMarginal u w = (cfg.toBToM).worldMarginal u w :=
-  λ _ _ => rfl
 
 end RSA.RSAConfig

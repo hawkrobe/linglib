@@ -44,7 +44,7 @@ closure:
 namespace Semantics.Attitudes.ContentComposition
 
 open Core.Proposition
-open Core.BToM
+open Core (ContentIndividual)
 
 -- ════════════════════════════════════════════════════
 -- § 1. Complementizer Semantics

@@ -1,4 +1,6 @@
 import Mathlib.Data.Rat.Defs
+import Linglib.Core.BToM
+import Linglib.Theories.Semantics.Attitudes.Factivity
 
 /-!
 # Scontras & Tonhauser (2025) @cite{scontras-tonhauser-2025}
@@ -8,132 +10,42 @@ presupposition. L1 infers what speaker takes for granted (dcS in F&B terms).
 
 This is a BToM model (Baker et al. 2017): L1 inverts S1's generative model
 to jointly infer the speaker's belief state and the world state.
+
+## Factive Semantics
+
+Literal truth conditions derive from `Semantics.Attitudes.Factivity`:
+know = `factivePos` (BEL ∧ C), think = `nonFactivePos` (BEL). This makes
+the entailment properties (factivity, know ⊃ think) follow directly from
+the generic theory rather than requiring per-model bridge theorems.
 -/
-
-namespace RSA.BToM
-
-/-- World type has a complement dimension (C: whether the complement is true). -/
-class HasComplement (W : Type*) where
-  c : W → Bool
-
-/-- World type has a belief dimension (BEL: whether the holder believes C). -/
-class HasBelief (W : Type*) where
-  bel : W → Bool
-
-/-- World type has an antecedent dimension (A: whether the conditional antecedent holds). -/
-class HasAntecedent (W : Type*) where
-  a : W → Bool
-
-variable {W : Type*}
-
-/-- Factive positive: "X knows C" = BEL ∧ C (veridical). -/
-def factivePos [HasBelief W] [HasComplement W] (w : W) : Bool :=
-  HasBelief.bel w && HasComplement.c w
-
-/-- Factive negative: "X doesn't know C" = not(BEL ∧ C). -/
-def factiveNeg [HasBelief W] [HasComplement W] (w : W) : Bool :=
-  !(HasBelief.bel w && HasComplement.c w)
-
-/-- Non-factive positive: "X thinks C" = BEL (non-veridical). -/
-def nonFactivePos [HasBelief W] (w : W) : Bool :=
-  HasBelief.bel w
-
-/-- Non-factive negative: "X doesn't think C" = not-BEL. -/
-def nonFactiveNeg [HasBelief W] (w : W) : Bool :=
-  !HasBelief.bel w
-
-/-- Factive positive entails C (the defining property of factivity). -/
-theorem factivePos_entails_c [HasBelief W] [HasComplement W] (w : W) :
-    factivePos w = true → HasComplement.c w = true := by
-  simp only [factivePos, Bool.and_eq_true]
-  intro ⟨_, h⟩; exact h
-
-/-- Factive positive entails BEL. -/
-theorem factivePos_entails_bel [HasBelief W] [HasComplement W] (w : W) :
-    factivePos w = true → HasBelief.bel w = true := by
-  simp only [factivePos, Bool.and_eq_true]
-  intro ⟨h, _⟩; exact h
-
-/-- Non-factive does NOT entail C (given a world where BEL ∧ not-C is possible). -/
-theorem nonFactivePos_not_entails_c [HasBelief W] [HasComplement W]
-    (h : ∃ w : W, HasBelief.bel w = true ∧ HasComplement.c w = false) :
-    ∃ w, nonFactivePos (W := W) w = true ∧ HasComplement.c w = false := by
-  obtain ⟨w, hb, hc⟩ := h; exact ⟨w, hb, hc⟩
-
-/-- Know entails think (factivity is stronger than belief). -/
-theorem factive_entails_nonfactive [HasBelief W] [HasComplement W] (w : W) :
-    factivePos w = true → nonFactivePos w = true := by
-  simp only [factivePos, nonFactivePos, Bool.and_eq_true]
-  intro ⟨h, _⟩; exact h
-
-/-- QUD for BToM models: question about belief or complement truth. -/
-inductive QUD where
-  | bel   -- "Does X believe C?"
-  | c     -- "Is C true?"
-  deriving DecidableEq, Repr, BEq, Inhabited
-
-/-- All QUDs. -/
-def allQUDs : List QUD := [.bel, .c]
-
-/-- QUD equivalence: two worlds agree on the relevant dimension. -/
-def qudProject [HasBelief W] [HasComplement W] : QUD → W → W → Bool
-  | .bel, w1, w2 => HasBelief.bel w1 == HasBelief.bel w2
-  | .c, w1, w2 => HasComplement.c w1 == HasComplement.c w2
-
-/-- Whether a belief state (given as membership over worlds) entails C.
-    A speaker "assumes C" iff C holds at every world they consider possible. -/
-def assumesComplement [HasComplement W] (membership : W → Bool) (allWorlds : List W) : Bool :=
-  allWorlds.all λ w => !membership w || HasComplement.c w
-
-/-- Material conditional operator: ⟦if⟧ = λp.λq.λw. not-p(w) ∨ q(w). -/
-def condOp (antecedent consequent : W → Bool) : W → Bool :=
-  λ w => !antecedent w || consequent w
-
-/-- Composed "if A, X knows C". -/
-def composeCondFactive [HasAntecedent W] [HasBelief W] [HasComplement W] : W → Bool :=
-  condOp (HasAntecedent.a) (factivePos)
-
-/-- Composed "if A, X thinks C". -/
-def composeCondNonFactive [HasAntecedent W] [HasBelief W] : W → Bool :=
-  condOp (HasAntecedent.a) (nonFactivePos)
-
-/-- Composed "if A, X doesn't know C". -/
-def composeCondFactiveNeg [HasAntecedent W] [HasBelief W] [HasComplement W] : W → Bool :=
-  condOp (HasAntecedent.a) (factiveNeg)
-
-/-- Composed "if A, X doesn't think C". -/
-def composeCondNonFactiveNeg [HasAntecedent W] [HasBelief W] : W → Bool :=
-  condOp (HasAntecedent.a) (nonFactiveNeg)
-
-end RSA.BToM
 
 namespace RSA.ScontrasTonhauser2025
 
+open Semantics.Attitudes.Factivity
 
-/--
-World state: tracks belief and complement truth.
+-- ============================================================================
+-- §1. World and Utterance Types
+-- ============================================================================
 
-(BEL, C) where:
-- BEL: Cole believes the complement
-- C: The complement is actually true
--/
+/-- World state: tracks belief and complement truth.
+
+    (BEL, C) where:
+    - BEL: Cole believes the complement
+    - C: The complement is actually true -/
 structure WorldState where
-  bel : Bool  -- Cole believes C
-  c : Bool    -- C is true
+  bel : Bool
+  c : Bool
   deriving DecidableEq, Repr, BEq, Inhabited
 
-/-- All four world states -/
+/-- All four world states. -/
 def allWorlds : List WorldState := [
-  ⟨true, true⟩,   -- Cole believes C, C is true
-  ⟨true, false⟩,  -- Cole believes C, C is false
-  ⟨false, true⟩,  -- Cole doesn't believe C, C is true
-  ⟨false, false⟩  -- Cole doesn't believe C, C is false
+  ⟨true, true⟩, ⟨true, false⟩, ⟨false, true⟩, ⟨false, false⟩
 ]
 
+instance : HasComplement WorldState where c := WorldState.c
+instance : HasBelief WorldState where bel := WorldState.bel
 
-/--
-Attitude verb utterances about Cole's mental state.
--/
+/-- Attitude verb utterances about Cole's mental state. -/
 inductive Utterance where
   | knowPos     -- "Cole knows that C"
   | knowNeg     -- "Cole doesn't know that C"
@@ -143,70 +55,49 @@ inductive Utterance where
 
 def allUtterances : List Utterance := [.knowPos, .knowNeg, .thinkPos, .thinkNeg]
 
+-- ============================================================================
+-- §2. Literal Truth Conditions (derived from Factivity)
+-- ============================================================================
 
-/--
-Literal truth conditions.
+/-- Literal truth conditions derived from factive/non-factive semantics.
 
-"know" is factive: requires both belief AND truth
-"think" is non-factive: requires only belief
--/
+    "know" is factive: `factivePos` = BEL ∧ C
+    "think" is non-factive: `nonFactivePos` = BEL
+
+    This makes the entailment properties (factivity, know ⊃ think) follow
+    directly from the generic theory — no per-model bridge theorems needed. -/
 def literalMeaning : Utterance → WorldState → Bool
-  -- "Cole knows C" = Cole believes C AND C is true
-  | .knowPos, w => w.bel && w.c
-  -- "Cole doesn't know C" = NOT (Cole believes C AND C is true)
-  | .knowNeg, w => !(w.bel && w.c)
-  -- "Cole thinks C" = Cole believes C
-  | .thinkPos, w => w.bel
-  -- "Cole doesn't think C" = Cole doesn't believe C
-  | .thinkNeg, w => !w.bel
+  | .knowPos  => factivePos
+  | .knowNeg  => factiveNeg
+  | .thinkPos => nonFactivePos
+  | .thinkNeg => nonFactiveNeg
 
-/-- "know" entails C -/
-theorem know_entails_c : ∀ w, literalMeaning .knowPos w = true → w.c = true := by
-  intro ⟨bel, c⟩ h
-  simp [literalMeaning] at h
-  exact h.2
+/-- "know" entails C (follows from `factivePos_entails_c`). -/
+theorem know_entails_c : ∀ w, literalMeaning .knowPos w = true → w.c = true :=
+  factivePos_entails_c
 
-/-- "think" does NOT entail C -/
-theorem think_not_entails_c : ∃ w, literalMeaning .thinkPos w = true ∧ w.c = false := by
-  use ⟨true, false⟩
-  simp [literalMeaning]
+/-- "think" does NOT entail C. -/
+theorem think_not_entails_c :
+    ∃ w, literalMeaning .thinkPos w = true ∧ w.c = false :=
+  ⟨⟨true, false⟩, rfl, rfl⟩
 
+-- ============================================================================
+-- §3. Speaker Belief States
+-- ============================================================================
 
-/--
-Two possible QUDs:
-- BEL?: Is Cole's belief state the question?
-- C?: Is the complement truth the question?
--/
-inductive QUD where
-  | bel   -- "Does Cole believe C?"
-  | c     -- "Is C true?"
-  deriving DecidableEq, Repr, BEq, Inhabited
+/-- Speaker's private assumptions: a non-empty subset of worlds.
 
-def allQUDs : List QUD := [.bel, .c]
-
-/--
-QUD projection: two worlds are equivalent if they agree on the QUD dimension.
--/
-def qudProject : QUD → WorldState → WorldState → Bool
-  | .bel, w1, w2 => w1.bel == w2.bel  -- Same belief state
-  | .c, w1, w2 => w1.c == w2.c        -- Same complement truth
-
-
-/--
-Speaker's private assumptions: a non-empty subset of worlds.
-
-We represent this as a named subset for efficiency.
-In the paper, A ranges over all non-empty subsets of W.
--/
+    We represent this as a named subset for efficiency.
+    In the paper, A ranges over all non-empty subsets of W. -/
 inductive BeliefState where
-  | all           -- Speaker considers all worlds possible
-  | cTrue         -- Speaker assumes C is true: {(1,1), (0,1)}
-  | cFalse        -- Speaker assumes C is false: {(1,0), (0,0)}
-  | belTrue       -- Speaker assumes Cole believes: {(1,1), (1,0)}
-  | belFalse      -- Speaker assumes Cole doesn't believe: {(0,1), (0,0)}
-  | cTrueBelTrue  -- {(1,1)}
-  | cTrueBelFalse -- {(0,1)}
-  | cFalseBelTrue -- {(1,0)}
+  | all            -- Speaker considers all worlds possible
+  | cTrue          -- Speaker assumes C is true: {(1,1), (0,1)}
+  | cFalse         -- Speaker assumes C is false: {(1,0), (0,0)}
+  | belTrue        -- Speaker assumes Cole believes: {(1,1), (1,0)}
+  | belFalse       -- Speaker assumes Cole doesn't believe: {(0,1), (0,0)}
+  | cTrueBelTrue   -- {(1,1)}
+  | cTrueBelFalse  -- {(0,1)}
+  | cFalseBelTrue  -- {(1,0)}
   | cFalseBelFalse -- {(0,0)}
   deriving DecidableEq, Repr, BEq, Inhabited
 
@@ -215,9 +106,7 @@ def allBeliefStates : List BeliefState := [
   .cTrueBelTrue, .cTrueBelFalse, .cFalseBelTrue, .cFalseBelFalse
 ]
 
-/--
-Membership in belief state (as credence).
--/
+/-- Membership in belief state (as credence). -/
 def speakerCredenceBool : BeliefState → WorldState → Bool
   | .all, _ => true
   | .cTrue, w => w.c
@@ -229,69 +118,108 @@ def speakerCredenceBool : BeliefState → WorldState → Bool
   | .cFalseBelTrue, w => !w.c && w.bel
   | .cFalseBelFalse, w => !w.c && !w.bel
 
-/--
-Whether C is true in all worlds of the belief state.
-This is what it means for C to be "assumed" by the speaker.
--/
+/-- Whether C is true in all worlds of the belief state.
+    This is what it means for C to be "assumed" by the speaker. -/
 def assumesC : BeliefState → Bool
   | .cTrue => true
   | .cTrueBelTrue => true
   | .cTrueBelFalse => true
   | _ => false
 
+-- ============================================================================
+-- §4. Priors
+-- ============================================================================
 
-/--
-World prior parameterized by P(C).
+/-- World prior parameterized by P(C).
 
-P(BEL, C) = P(BEL | C) * P(C)
+    P(BEL, C) = P(BEL | C) · P(C)
 
-We assume P(BEL | C) is uniform for simplicity.
--/
+    We assume P(BEL | C) is uniform for simplicity. -/
 def worldPrior (pC : ℚ) : WorldState → ℚ
-  | ⟨_, true⟩ => pC / 2      -- C true, split between bel/not-bel
-  | ⟨_, false⟩ => (1 - pC) / 2  -- C false, split between bel/not-bel
+  | ⟨_, true⟩ => pC / 2
+  | ⟨_, false⟩ => (1 - pC) / 2
 
-/--
-Belief state prior following Section 4 of Scontras & Tonhauser (2025):
-- Knowledge of C is 4x as likely as knowledge of BEL
-- Full knowledge (singletons) is 0.5x as likely as knowledge of BEL
-- No beliefs (all) is 0.5x as likely as singletons
+/-- Belief state prior following Section 4 of Scontras & Tonhauser (2025):
+    - Knowledge of C is 4x as likely as knowledge of BEL
+    - Full knowledge (singletons) is 0.5x as likely as knowledge of BEL
+    - No beliefs (all) is 0.5x as likely as singletons
 
-This captures that speakers more often have knowledge about C than about BEL.
--/
+    This captures that speakers more often have knowledge about C than
+    about BEL. -/
 def beliefStatePrior : BeliefState → ℚ
-  | .all => 1/4           -- No beliefs: 0.25 (half of singletons)
-  | .cTrue => 4           -- Knowledge of C: 4x base
-  | .cFalse => 4          -- Knowledge of C: 4x base
-  | .belTrue => 1         -- Knowledge of BEL: 1 (base)
-  | .belFalse => 1        -- Knowledge of BEL: 1 (base)
-  | _ => 1/2              -- Singletons: 0.5 (half of knowledge of BEL)
+  | .all => 1/4
+  | .cTrue => 4
+  | .cFalse => 4
+  | .belTrue => 1
+  | .belFalse => 1
+  | _ => 1/2
 
+-- ============================================================================
+-- §5. Bridge: Pattern-Matched assumesC vs Generic assumesComplement
+-- ============================================================================
 
--- BToM Typeclass Instances
-
-instance : RSA.BToM.HasComplement WorldState where c := WorldState.c
-instance : RSA.BToM.HasBelief WorldState where bel := WorldState.bel
-
-/-- The literal meaning of "know" agrees with the generic factive semantics. -/
-theorem know_is_factive : ∀ w : WorldState,
-    literalMeaning .knowPos w = RSA.BToM.factivePos w := by
-  intro ⟨_, _⟩; rfl
-
-/-- The literal meaning of "think" agrees with the generic non-factive semantics. -/
-theorem think_is_nonFactive : ∀ w : WorldState,
-    literalMeaning .thinkPos w = RSA.BToM.nonFactivePos w := by
-  intro ⟨_, _⟩; rfl
-
-/-- The local QUD projection agrees with the generic BToM projection. -/
-theorem qud_matches_btom : ∀ (q : QUD) (w1 w2 : WorldState),
-    qudProject q w1 w2 = RSA.BToM.qudProject (W := WorldState)
-      (match q with | .bel => .bel | .c => .c) w1 w2 := by
-  intro q ⟨_, _⟩ ⟨_, _⟩; cases q <;> rfl
-
-/-- The `assumesC` predicate agrees with the generic `assumesComplement`. -/
+/-- The pattern-matched `assumesC` agrees with the generic
+    `assumesComplement` from `Factivity`. This verifies the hand-written
+    classification against the derived-from-membership computation. -/
 theorem assumesC_matches_generic : ∀ bs : BeliefState,
-    assumesC bs = RSA.BToM.assumesComplement (speakerCredenceBool bs) allWorlds := by
+    assumesC bs = assumesComplement (speakerCredenceBool bs) allWorlds := by
   intro bs; cases bs <;> decide
+
+-- ============================================================================
+-- §6. BToM Structural Mapping
+-- ============================================================================
+
+open Core.BToM in
+/-- Classification of BeliefState in BToM terms.
+
+    The speaker's private assumptions are a mental state — what Baker et al.
+    (2017) call the agent's epistemic state. The L1 listener inverts S1's
+    generative model to jointly infer this belief state and the world, making
+    presupposition projection an instance of BToM observer inference. -/
+def beliefStateCategory : LatentCategory := .mental
+
+open Core.BToM in
+/-- Classification of QUD in BToM terms.
+
+    The QUD is intersubjective — maintained between speaker and listener.
+    This is Clark's (1996) shared state: both interlocutors track what
+    question is under discussion, and the speaker optimizes informativity
+    with respect to it. -/
+def qudCategory : LatentCategory := .shared
+
+/-- Characteristic function for BToM belief-expectation: does the speaker
+    assume C?
+
+    The listener's posterior probability that the speaker assumes C is a
+    `BToMModel.beliefExpectation` with this indicator function:
+
+        P_obs(assumes C | u) ∝ Σ_bs P(bs | u) · assumesCIndicator(bs)
+
+    where P(bs | u) is the BToM belief marginal. -/
+def assumesCIndicator : BeliefState → ℚ :=
+  fun bs => if assumesC bs then 1 else 0
+
+/-- Belief states that assume C have indicator 1. -/
+theorem assumesCIndicator_pos (bs : BeliefState) (h : assumesC bs = true) :
+    assumesCIndicator bs = 1 := by
+  simp [assumesCIndicator, h]
+
+/-- Belief states that don't assume C have indicator 0. -/
+theorem assumesCIndicator_neg (bs : BeliefState) (h : assumesC bs = false) :
+    assumesCIndicator bs = 0 := by
+  simp [assumesCIndicator, h]
+
+/-- The three C-entailing belief states are exactly those with indicator 1. -/
+theorem assumesCIndicator_classification :
+    assumesCIndicator .cTrue = 1 ∧
+    assumesCIndicator .cTrueBelTrue = 1 ∧
+    assumesCIndicator .cTrueBelFalse = 1 ∧
+    assumesCIndicator .all = 0 ∧
+    assumesCIndicator .cFalse = 0 ∧
+    assumesCIndicator .belTrue = 0 ∧
+    assumesCIndicator .belFalse = 0 ∧
+    assumesCIndicator .cFalseBelTrue = 0 ∧
+    assumesCIndicator .cFalseBelFalse = 0 := by
+  refine ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
 
 end RSA.ScontrasTonhauser2025
