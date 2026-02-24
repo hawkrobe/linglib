@@ -52,6 +52,9 @@ inductive CaseVal where
   | dat    -- dative
   | gen    -- genitive
   | obl    -- oblique (default)
+  | abl    -- ablative (source: Japanese *kara*, Latin *ab*)
+  | erg    -- ergative (transitive subject: Basque, Hindi)
+  | abs    -- absolutive (intransitive subject / transitive object)
   deriving Repr, DecidableEq
 
 /-- Honorific level: social ordering between speaker and referent.

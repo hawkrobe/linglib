@@ -23,6 +23,13 @@ Connects the empirical data from Ozaki (2025) to:
 - Standard Agree-based case faces a gap: no phase head (v*) to assign
   structural ACC, yet ACC is grammatical
 
+## The Accusative Unaccusative Paradox
+
+Under Agree, unaccusatives should never take ACC arguments — there is
+no v* to assign it. Yet these verbs grammatically do. Dependent case
+dissolves this paradox: ACC is configural, arising whenever two caseless
+NPs share a Spell-Out domain, regardless of Voice/v flavor.
+
 ## References
 
 - Ozaki, S. (2025). Dependent case in Japanese accusative/ablative
@@ -47,7 +54,9 @@ open Phenomena.Case.Ozaki2025.Data
 
     Non-thematic Voice introduces no external argument. The leaver NP
     originates as an internal argument (Spec-vP or second complement)
-    and raises to Spec-TP for EPP. -/
+    and raises to Spec-TP for EPP. Both arguments are VP-internal;
+    `hasTheme` is `false` because the theme (leaver) raises out of VP,
+    matching the pattern of other anticausative/unaccusative derivations. -/
 
 /-- Derivation for departure verbs: non-thematic Voice, inchoative,
     two internal arguments (leaver + source), no external argument. -/
@@ -57,7 +66,7 @@ def departureVerbDerivation : VoiceApplDerivation where
   verbHeads := [.vGO, .vBE]
   hasExternalArg := false
   hasAppliedArg := false
-  hasTheme := true
+  hasTheme := false
 
 /-- Departure verbs predict no external argument. -/
 theorem departure_no_external :
@@ -70,6 +79,14 @@ theorem departure_is_inchoative :
 /-- Non-thematic Voice assigns no θ-role. -/
 theorem departure_voice_no_theta :
     voiceAnticausative.assignsTheta = false := rfl
+
+/-- Departure verb derivation matches the anticausative pattern:
+    same Voice, same verbal heads, same predictions. The only
+    difference is that departure verbs have two internal arguments
+    (leaver + source) rather than one. -/
+theorem departure_matches_anticausative_core :
+    departureVerbDerivation.voice = anticausative_break.voice ∧
+    departureVerbDerivation.verbHeads = anticausative_break.verbHeads := ⟨rfl, rfl⟩
 
 -- ============================================================================
 -- § 2: Dependent Case Derivation
@@ -84,9 +101,9 @@ theorem acc_derivation_correct :
     getCaseOf "source" accVariantResult = some .acc ∧
     getCaseOf "leaver" accVariantResult = some .nom := by native_decide
 
-/-- ABL variant produces lexical OBL on source, unmarked NOM on leaver. -/
+/-- ABL variant produces lexical ABL on source, unmarked NOM on leaver. -/
 theorem abl_derivation_correct :
-    getCaseOf "source" ablVariantResult = some .obl ∧
+    getCaseOf "source" ablVariantResult = some .abl ∧
     getCaseOf "leaver" ablVariantResult = some .nom := by native_decide
 
 /-- In the ACC variant, source case is dependent — it arises from
@@ -100,7 +117,7 @@ theorem abl_source_from_lexical_p :
     getSourceOf "source" ablVariantResult = some .lexical := by native_decide
 
 -- ============================================================================
--- § 3: Agree Contrast
+-- § 3: Agree Contrast — The Accusative Unaccusative Paradox
 -- ============================================================================
 
 /-! Standard Agree-based case assignment faces a puzzle with these verbs.
@@ -110,8 +127,8 @@ theorem abl_source_from_lexical_p :
 
     This means Agree predicts no ACC assigner for unaccusatives, yet
     *hanareru* and *deru* grammatically take ACC *-o* on the source.
-    Dependent case theory resolves this: ACC arises from the configuration
-    of two caseless NPs, independent of Voice flavor. -/
+    Dependent case theory dissolves this paradox: ACC arises from the
+    configuration of two caseless NPs, independent of Voice flavor. -/
 
 /-- Anticausative Voice is not a phase head — standard Agree-based ACC
     has no assigner in this configuration. -/
@@ -123,11 +140,20 @@ theorem agree_acc_needs_phase_head :
 theorem agentive_has_phase_head :
     voiceAgent.phaseHead = true := rfl
 
-/-- The contrast: transitives have a phase head for ACC; departure verbs
-    do not. Dependent case fills the gap. -/
-theorem phase_head_contrast :
-    voiceAgent.phaseHead = true ∧
-    voiceAnticausative.phaseHead = false := ⟨rfl, rfl⟩
+/-- The accusative unaccusative paradox: these verbs are unaccusative
+    (no θ-assigning Voice, no phase head) yet grammatically take ACC.
+    Under Agree, this is contradictory. Under dependent case, it follows
+    from configuration alone. -/
+theorem accusative_unaccusative_paradox :
+    -- Voice is non-thematic (no agent θ-role)
+    voiceAnticausative.assignsTheta = false ∧
+    -- Voice is not a phase head (no v* for structural ACC under Agree)
+    voiceAnticausative.phaseHead = false ∧
+    -- Yet dependent case correctly assigns ACC to the source
+    getCaseOf "source" accVariantResult = some .acc ∧
+    -- And the ACC is dependent (configural), not from any head
+    getSourceOf "source" accVariantResult = some .dependent := by
+  exact ⟨rfl, rfl, by native_decide, by native_decide⟩
 
 -- ============================================================================
 -- § 4: Per-Datum Verification
@@ -188,5 +214,26 @@ theorem hanareru_form_matches :
 
 theorem deru_form_matches :
     deru_acc.verb = Fragments.Japanese.Predicates.deru.form := rfl
+
+-- ============================================================================
+-- § 5: Source is an Argument in Both Variants
+-- ============================================================================
+
+/-! A key empirical claim: the source is an *argument* (not an adjunct)
+    regardless of whether it surfaces with ACC or ABL. The argumenthood
+    diagnostics (ellipsis, scrambling) succeed in both case frames.
+    This is what makes dependent case the right analysis — if ABL *kara*
+    made the source an adjunct, it would fail argumenthood tests. -/
+
+/-- All argumenthood diagnostics succeed: ellipsis and scrambling work
+    for both ACC and ABL sources. -/
+theorem source_is_argument_both_frames :
+    argumenthoodData.all (·.grammatical) = true := by native_decide
+
+/-- The source's θ-role (from fragment) is invariant across case frames:
+    it is `.source` regardless of morphological case realization. -/
+theorem source_theta_invariant :
+    Fragments.Japanese.Predicates.hanareru.objectTheta = some .source ∧
+    Fragments.Japanese.Predicates.deru.objectTheta = some .source := ⟨rfl, rfl⟩
 
 end Phenomena.Case.Ozaki2025.Bridge

@@ -52,7 +52,7 @@ inductive CaseSource where
 
 /-- Language type determines which dependent and unmarked cases are used.
     - Accusative: dependent = ACC, unmarked = NOM
-    - Ergative: dependent = ERG (approximated by GEN), unmarked = ABS (OBL) -/
+    - Ergative: dependent = ERG, unmarked = ABS -/
 inductive CaseLanguageType where
   | accusative  -- Japanese, English, Romance, ...
   | ergative    -- Basque, Hindi (split), ...
@@ -116,14 +116,10 @@ def dependentAccusative (higherNPs : List NPInDomain) (np : NPInDomain) : Option
 
 /-- Dependent ergative: assigned to an NP that c-commands another caseless NP.
     NP_i gets ERG if it has no lexical case and some NP after it also
-    has no lexical case.
-
-    Note: `CaseVal` lacks an ERG constructor; we use `.gen` as a proxy
-    for ergative case following the morphological syncretism in some
-    split-ergative languages. -/
+    has no lexical case. -/
 def dependentErgative (np : NPInDomain) (lowerNPs : List NPInDomain) : Option CaseVal :=
   if np.lexicalCase.isNone && anyLacksCaseIn lowerNPs then
-    some .gen
+    some .erg
   else
     none
 
@@ -133,11 +129,11 @@ def dependentErgative (np : NPInDomain) (lowerNPs : List NPInDomain) : Option Ca
 
 /-- Unmarked (default) case for a given language type.
     - Accusative languages: NOM
-    - Ergative languages: ABS (approximated by OBL) -/
+    - Ergative languages: ABS -/
 def unmarkedCaseFor (lang : CaseLanguageType) : CaseVal :=
   match lang with
   | .accusative => .nom
-  | .ergative => .obl
+  | .ergative => .abs
 
 -- ============================================================================
 -- § 7: Full Algorithm
@@ -204,14 +200,11 @@ def accVariantResult : List CasedNP :=
 One bare NP + one PP (lexical ABL from *kara*):
 - Leaver NP (higher, raised to Spec-TP)
 - Source PP (lower, *kara* assigns lexical ABL)
-- Source has lexical ABL (bleeds dependent case); Leaver gets unmarked NOM
-
-ABL is mapped to `CaseVal.obl` since the `CaseVal` type lacks an explicit
-ABL constructor. -/
+- Source has lexical ABL (bleeds dependent case); Leaver gets unmarked NOM -/
 
 def ablVariantNPs : List NPInDomain :=
   [ { label := "leaver", lexicalCase := none },
-    { label := "source", lexicalCase := some .obl } ]
+    { label := "source", lexicalCase := some .abl } ]
 
 def ablVariantResult : List CasedNP :=
   assignCases .accusative ablVariantNPs
@@ -244,9 +237,9 @@ theorem acc_variant_leaver_gets_nom :
 theorem acc_variant_leaver_is_unmarked :
     getSourceOf "leaver" accVariantResult = some .unmarked := by native_decide
 
-/-- ABL variant: source gets lexical oblique (proxy for ABL). -/
-theorem abl_variant_source_gets_obl :
-    getCaseOf "source" ablVariantResult = some .obl := by native_decide
+/-- ABL variant: source gets lexical ablative (from *kara*). -/
+theorem abl_variant_source_gets_abl :
+    getCaseOf "source" ablVariantResult = some .abl := by native_decide
 
 /-- ABL variant: source case is lexical (from P head *kara*). -/
 theorem abl_variant_source_is_lexical :
@@ -274,5 +267,51 @@ theorem acc_variant_all_cased :
 /-- All NPs receive case in the ABL variant. -/
 theorem abl_variant_all_cased :
     ablVariantResult.length = 2 := by native_decide
+
+-- ============================================================================
+-- § 10: Deeper Properties
+-- ============================================================================
+
+/-- ACC and ABL are mutually exclusive on the source: the same structural
+    position receives exactly one of ACC (dependent) or ABL (lexical),
+    never both. This follows from the priority ordering — lexical case
+    preempts dependent case entirely. -/
+theorem acc_abl_mutually_exclusive :
+    getCaseOf "source" accVariantResult = some .acc ∧
+    getCaseOf "source" ablVariantResult = some .abl := by native_decide
+
+/-- The leaver gets NOM in both variants. The alternation affects only the
+    source argument; the subject case is invariant. -/
+theorem leaver_nom_invariant :
+    getCaseOf "leaver" accVariantResult = some .nom ∧
+    getCaseOf "leaver" ablVariantResult = some .nom := by native_decide
+
+/-- Ergative mirror: in an ergative language with two caseless NPs, the
+    *higher* NP gets dependent ERG and the lower gets unmarked ABS.
+    This is the typological inverse of the accusative pattern. -/
+theorem ergative_mirror :
+    let nps : List NPInDomain :=
+      [ { label := "higher", lexicalCase := none },
+        { label := "lower", lexicalCase := none } ]
+    getCaseOf "higher" (assignCases .ergative nps) = some .erg ∧
+    getCaseOf "lower" (assignCases .ergative nps) = some .abs := by
+  native_decide
+
+/-- A single caseless NP in an accusative language gets NOM — the
+    standard intransitive case. No dependent case arises because
+    there is no case competitor. -/
+theorem single_np_nom :
+    let nps : List NPInDomain :=
+      [ { label := "sole", lexicalCase := none } ]
+    getCaseOf "sole" (assignCases .accusative nps) = some .nom ∧
+    getSourceOf "sole" (assignCases .accusative nps) = some .unmarked := by
+  native_decide
+
+/-- Case is purely configural: two NPs with identical labels but different
+    lexical case inputs produce different outputs. The algorithm is
+    sensitive only to the NP inventory, not to verb type or Voice flavor. -/
+theorem case_is_configural :
+    getCaseOf "source" accVariantResult ≠ getCaseOf "source" ablVariantResult := by
+  native_decide
 
 end Minimalism

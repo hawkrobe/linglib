@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.226.35] - 2026-02-24
+
+### Added
+- **Dependent case theory** (`Theories/Syntax/Minimalism/Core/DependentCase.lean`): Baker (2015) / Marantz (1991) alternative to Agree-based case; `CaseSource`, `CaseLanguageType`, `NPInDomain`, `assignCases` algorithm with lexical→dependent→unmarked priority; ACC/ABL worked derivations; `lexical_bleeds_dependent`, `acc_abl_mutually_exclusive`, `ergative_mirror`, `case_is_configural` theorems
+- **Ozaki (2025) data** (`Phenomena/Case/Studies/Ozaki2025/Data.lean`): Japanese ACC/ABL alternation on departure verbs; 11 data points across alternation, argumenthood, and unaccusativity diagnostics
+- **Ozaki (2025) bridge** (`Phenomena/Case/Studies/Ozaki2025/Bridge.lean`): `departureVerbDerivation` (inchoative, non-thematic Voice), dependent case derivation for both variants, `accusative_unaccusative_paradox` theorem, per-datum fragment verification, `source_is_argument_both_frames`
+- **Case theories comparison** (`Comparisons/CaseTheories.lean`): Agree vs. dependent case predictions for unaccusatives, transitives, and intransitives
+- **Fragment entries** (`Fragments/Japanese/Predicates.lean`): *hanareru* 'leave', *deru* 'exit' — dyadic unaccusatives with theme subject and source object
+
+### Changed
+- **`CaseVal` extended** (`Theories/Syntax/Minimalism/Core/Agree.lean`): Added `.abl` (ablative), `.erg` (ergative), `.abs` (absolutive) constructors for proper typological coverage
+
 ## [0.226.33] - 2026-02-24
 
 ### Added
