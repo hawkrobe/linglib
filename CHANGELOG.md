@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.226.40] - 2026-02-24
+
+### Changed
+- **EpistemicScale null_elem_reduce generalization**: extract general `null_elem_reduce` lemma for removing null elements at position 0 on `Fin (n+2)`, applicable to any cardinality. All 4 null-case proofs (fin3_2null, fin3_1null, fin4_2null, fin4_1null) reduced to one-liners. File: 4027 → 3225 lines (−802).
+
 ## [0.226.39] - 2026-02-24
 
 ### Changed

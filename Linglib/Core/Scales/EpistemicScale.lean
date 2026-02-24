@@ -479,6 +479,100 @@ private theorem reduce_to_disjoint {W : Type*} (sys : EpistemicSystemFA W)
   rw [sys.additive A B, measure_axiomA m A B]
   exact h _ _ (fun x ⟨_, hxnB⟩ ⟨_, hxnA⟩ => hxnA (by assumption))
 
+-- ── Null element reduction ────────────────────────────
+
+/-- Removing a null element from both sides of a disjoint comparison preserves `ge`.
+    When `sys.ge ∅ {j}` (j is null) and C, D are disjoint, `sys.ge C D ↔ sys.ge (C\{j}) (D\{j})`. -/
+private theorem null_removal_disjoint {W : Type*} (sys : EpistemicSystemFA W)
+    (j : W) (hj : sys.ge ∅ {j})
+    (C D : Set W) (hdisj : ∀ x, x ∈ C → x ∉ D) :
+    sys.ge C D ↔ sys.ge (C \ {j}) (D \ {j}) := by
+  have null_sub : ∀ S : Set W, sys.ge (S \ {j}) S := by
+    intro S
+    by_cases hj_in : j ∈ S
+    · rw [sys.additive (S \ {j}) S]
+      have h1 : (S \ {j}) \ S = ∅ := by
+        ext x; constructor
+        · intro ⟨⟨_, _⟩, hns⟩; exact absurd (by assumption) hns
+        · intro h; exact h.elim
+      have h2 : S \ (S \ {j}) = {j} := by
+        ext x; simp only [Set.mem_diff, Set.mem_singleton_iff]
+        constructor
+        · intro ⟨hx, hn⟩; by_contra hne; exact hn ⟨hx, hne⟩
+        · intro hx; subst hx; exact ⟨hj_in, fun ⟨_, h⟩ => h rfl⟩
+      rw [h1, h2]; exact hj
+    · rw [Set.diff_singleton_eq_self hj_in]; exact sys.refl S
+  by_cases hjC : j ∈ C
+  · have hjnD : j ∉ D := fun h => hdisj j hjC h
+    rw [Set.diff_singleton_eq_self hjnD]
+    exact ⟨fun h => sys.trans _ _ _ (null_sub C) h,
+           fun h => sys.trans _ _ _ (sys.mono _ _ Set.diff_subset) h⟩
+  · rw [Set.diff_singleton_eq_self hjC]
+    by_cases hjD : j ∈ D
+    · exact ⟨fun h => sys.trans _ _ _ h (sys.mono _ _ Set.diff_subset),
+             fun h => sys.trans _ _ _ h (null_sub D)⟩
+    · rw [Set.diff_singleton_eq_self hjD]
+
+/-- `Fin.succ '' (Fin.succ ⁻¹' S) = S \ {0}` for `S : Set (Fin (n+1))`.
+    The image of `Fin.succ` covers exactly the non-zero elements. -/
+private theorem succ_image_preimage {n : ℕ} (S : Set (Fin (n + 1))) :
+    Fin.succ '' (Fin.succ ⁻¹' S) = S \ {(0 : Fin (n + 1))} := by
+  rw [Set.image_preimage_eq_range_inter, Fin.range_succ]
+  ext x; simp only [Set.mem_inter_iff, Set.mem_compl_iff, Set.mem_singleton_iff,
+    Set.mem_diff]; exact And.comm
+
+set_option maxHeartbeats 3200000 in
+/-- Null element reduction: if element 0 is null in an FA system on Fin (n+2), reduce
+    to Fin (n+1) via Fin.succ and delegate to a sub-theorem. -/
+private theorem null_elem_reduce {n : ℕ} (sys : EpistemicSystemFA (Fin (n + 2)))
+    (hn0 : sys.ge ∅ {(0 : Fin (n + 2))})
+    (hnn : ∃ i : Fin (n + 1), ¬sys.ge ∅ {Fin.succ i})
+    (sub_repr : ∀ sys' : EpistemicSystemFA (Fin (n + 1)),
+      ∃ m : FinAddMeasure (Fin (n + 1)), ∀ A B, sys'.ge A B ↔ m.inducedGe A B) :
+    ∃ m : FinAddMeasure (Fin (n + 2)), ∀ A B, sys.ge A B ↔ m.inducedGe A B := by
+  -- Step 1: Build restricted system on Fin (n+1)
+  let sys_r : EpistemicSystemFA (Fin (n + 1)) := {
+    ge := fun A B => sys.ge (Fin.succ '' A) (Fin.succ '' B)
+    refl := fun A => sys.refl _
+    mono := fun A B hAB => sys.mono _ _ (Set.image_mono hAB)
+    bottom := by
+      show sys.ge (Fin.succ '' Set.univ) (Fin.succ '' ∅)
+      simp only [Set.image_empty]
+      exact sys.mono _ _ (Set.empty_subset _)
+    nonTrivial := by
+      show ¬sys.ge (Fin.succ '' ∅) (Fin.succ '' Set.univ)
+      simp only [Set.image_empty]
+      obtain ⟨i, hi⟩ := hnn
+      intro h
+      exact hi (sys.trans _ _ _ h (sys.mono _ _
+        (Set.singleton_subset_iff.mpr ⟨i, Set.mem_univ _, rfl⟩)))
+    total := fun A B => sys.total _ _
+    trans := fun A B C h1 h2 => sys.trans _ _ _ h1 h2
+    additive := fun A B => by
+      show sys.ge (Fin.succ '' A) (Fin.succ '' B) ↔
+           sys.ge (Fin.succ '' (A \ B)) (Fin.succ '' (B \ A))
+      rw [Set.image_diff (Fin.succ_injective (n + 1)),
+          Set.image_diff (Fin.succ_injective (n + 1))]
+      exact sys.additive _ _
+  }
+  -- Step 2: Get sub-measure
+  obtain ⟨m_r, hm_r⟩ := sub_repr sys_r
+  -- Step 3: Lift measure (null element gets weight 0)
+  refine ⟨{
+    mu := fun A => m_r.mu (Fin.succ ⁻¹' A)
+    nonneg := fun A => m_r.nonneg _
+    additive := fun A B hdisj => by
+      rw [Set.preimage_union]
+      exact m_r.additive _ _ (fun x hxA hxB => hdisj (Fin.succ x) hxA hxB)
+    total := by
+      show m_r.mu (Fin.succ ⁻¹' Set.univ) = 1
+      rw [Set.preimage_univ]; exact m_r.total
+  }, reduce_to_disjoint sys _ (fun C D hdisj => ?_)⟩
+  -- Step 4: Prove representation for disjoint C, D
+  rw [null_removal_disjoint sys 0 hn0 C D hdisj]
+  rw [← succ_image_preimage C, ← succ_image_preimage D]
+  exact hm_r (Fin.succ ⁻¹' C) (Fin.succ ⁻¹' D)
+
 -- ── Card 0: impossible ─────────────────────────────
 
 private theorem no_fa_empty (sys : EpistemicSystemFA (Fin 0)) : False := by
@@ -1093,489 +1187,19 @@ private theorem nge_2_01' (sys : EpistemicSystemFA (Fin 3))
   rw [show ({1, 2} : Set (Fin 3)) \ {2} = {1} from by ext x; fin_cases x <;> simp_all] at h1
   exact hn1 h1
 
-set_option maxHeartbeats 400000 in
 private theorem theorem8a_fin3_2null_01 (sys : EpistemicSystemFA (Fin 3))
-    (hn0 : sys.ge ∅ {(0 : Fin 3)}) (hn1 : sys.ge ∅ {(1 : Fin 3)})
+    (hn0 : sys.ge ∅ {(0 : Fin 3)}) (_hn1 : sys.ge ∅ {(1 : Fin 3)})
     (hn2 : ¬sys.ge ∅ {(2 : Fin 3)}) :
-    ∃ (m : FinAddMeasure (Fin 3)), ∀ A B, sys.ge A B ↔ m.inducedGe A B := by
-  have hge01 := derive_null_pair sys hn0 hn1
-  have mono0 := sys.mono _ _ (Set.empty_subset ({0} : Set (Fin 3)))
-  have mono1 := sys.mono _ _ (Set.empty_subset ({1} : Set (Fin 3)))
-  -- ge {i} {j} for null singletons
-  have hge_0_1 : sys.ge {0} {1} := sys.trans _ _ _ mono0 hn1
-  have hge_1_0 : sys.ge {1} {0} := sys.trans _ _ _ mono1 hn0
-  -- ¬ge {null} {2}: would give ge ∅ {2} by trans with null hyp
-  have hng_0_2 : ¬sys.ge {(0 : Fin 3)} {2} :=
-    fun h => hn2 (sys.trans _ _ _ hn0 h)
-  have hng_1_2 : ¬sys.ge {(1 : Fin 3)} {2} :=
-    fun h => hn2 (sys.trans _ _ _ hn1 h)
-  have hge_2_0 : sys.ge {(2 : Fin 3)} {0} :=
-    (sys.total _ _).resolve_right hng_0_2
-  have hge_2_1 : sys.ge {(2 : Fin 3)} {1} :=
-    (sys.total _ _).resolve_right hng_1_2
-  -- ¬ge {0,1} {2}: would give ge ∅ {2} by trans with hge01
-  have hng_01_2 : ¬sys.ge ({0, 1} : Set (Fin 3)) {2} :=
-    fun h => hn2 (sys.trans _ _ _ hge01 h)
-  have hge_2_01 : sys.ge {(2 : Fin 3)} ({0, 1} : Set _) :=
-    (sys.total _ _).resolve_right hng_01_2
-  -- ¬ge {null} {pair_with_2}: mono + trans gives ge ∅ {2}
-  have hng_0_12 : ¬sys.ge {(0 : Fin 3)} ({1, 2} : Set _) :=
-    fun h => hn2 (sys.trans _ _ _ hn0 (sys.trans _ _ _ h
-      (sys.mono _ _ (Set.subset_insert (1 : Fin 3) {2}))))
-  have hng_1_02 : ¬sys.ge {(1 : Fin 3)} ({0, 2} : Set _) :=
-    fun h => hn2 (sys.trans _ _ _ hn1 (sys.trans _ _ _ h
-      (sys.mono _ _ (Set.subset_insert (0 : Fin 3) {2}))))
-  -- ¬ge ∅ {pair_with_2}: mono + trans gives ge ∅ {2}
-  have hng_e_02 : ¬sys.ge ∅ ({0, 2} : Set (Fin 3)) :=
-    fun h => hn2 (sys.trans _ _ _ h
-      (sys.mono _ _ (Set.subset_insert (0 : Fin 3) {2})))
-  have hng_e_12 : ¬sys.ge ∅ ({1, 2} : Set (Fin 3)) :=
-    fun h => hn2 (sys.trans _ _ _ h
-      (sys.mono _ _ (Set.subset_insert (1 : Fin 3) {2})))
-  -- ge {0,2} {1} and ge {1,2} {0}: by totality
-  have hge_02_1 : sys.ge ({0, 2} : Set (Fin 3)) {1} :=
-    (sys.total _ _).resolve_right hng_1_02
-  have hge_12_0 : sys.ge ({1, 2} : Set (Fin 3)) {0} :=
-    (sys.total _ _).resolve_right hng_0_12
-  refine ⟨measure_fin3 0 0 le_rfl le_rfl (by linarith),
-    reduce_to_disjoint sys _ (fin3_dispatch sys 0 0 le_rfl le_rfl (by linarith)
-      (mf3_empty ..) (mf3_s0 ..) (mf3_s1 ..) (mf3_s2 ..)
-      (mf3_p01 ..) (mf3_p02 ..) (mf3_p12 ..) (mf3_univ ..)
-      ⟨fun _ => le_refl _, fun _ => hn0⟩
-      ⟨fun _ => le_refl _, fun _ => hn1⟩
-      ⟨fun h => (hn2 h).elim, fun h => by linarith⟩
-      ⟨fun _ => by linarith, fun _ => hge01⟩
-      ⟨fun h => (hng_e_02 h).elim, fun h => by linarith⟩
-      ⟨fun h => (hng_e_12 h).elim, fun h => by linarith⟩
-      ⟨fun _ => by linarith, fun _ => hge_0_1⟩
-      ⟨fun _ => by linarith, fun _ => hge_1_0⟩
-      ⟨fun h => (hng_0_2 h).elim, fun h => by linarith⟩
-      ⟨fun _ => by linarith, fun _ => hge_2_0⟩
-      ⟨fun h => (hng_1_2 h).elim, fun h => by linarith⟩
-      ⟨fun _ => by linarith, fun _ => hge_2_1⟩
-      ⟨fun h => (hng_0_12 h).elim, fun h => by linarith⟩
-      ⟨fun h => (hng_1_02 h).elim, fun h => by linarith⟩
-      ⟨fun _ => by linarith, fun _ => hge_2_01⟩
-      ⟨fun h => (hng_01_2 h).elim, fun h => by linarith⟩
-      ⟨fun _ => by linarith, fun _ => hge_02_1⟩
-      ⟨fun _ => by linarith, fun _ => hge_12_0⟩)⟩
+    ∃ (m : FinAddMeasure (Fin 3)), ∀ A B, sys.ge A B ↔ m.inducedGe A B :=
+  -- Fin.succ (1 : Fin 2) = (2 : Fin 3), non-null by hn2
+  null_elem_reduce sys hn0 ⟨1, hn2⟩ theorem8a_fin2
 
-set_option maxHeartbeats 1600000 in
 private theorem theorem8a_fin3_1null_0 (sys : EpistemicSystemFA (Fin 3))
     (hn0 : sys.ge ∅ {(0 : Fin 3)}) (hn1 : ¬sys.ge ∅ {(1 : Fin 3)})
-    (hn2 : ¬sys.ge ∅ {(2 : Fin 3)}) :
-    ∃ (m : FinAddMeasure (Fin 3)), ∀ A B, sys.ge A B ↔ m.inducedGe A B := by
-  have mono0 := sys.mono _ _ (Set.empty_subset ({0} : Set (Fin 3)))
-  -- {0} is null, so ge {0} {i} iff ge ∅ {i}
-  have hng_0_1 : ¬sys.ge {(0 : Fin 3)} {1} :=
-    fun h => hn1 (sys.trans _ _ _ hn0 h)
-  have hng_0_2 : ¬sys.ge {(0 : Fin 3)} {2} :=
-    fun h => hn2 (sys.trans _ _ _ hn0 h)
-  have hge_1_0 : sys.ge {(1 : Fin 3)} {0} := (sys.total _ _).resolve_right hng_0_1
-  have hge_2_0 : sys.ge {(2 : Fin 3)} {0} := (sys.total _ _).resolve_right hng_0_2
-  -- ¬ge ∅ {pair}: mono gives ge {pair} {singleton_in_pair}
-  have hng_e_01 : ¬sys.ge ∅ ({0, 1} : Set (Fin 3)) :=
-    fun h => hn1 (sys.trans _ _ _ h
-      (sys.mono _ _ (Set.subset_insert (0 : Fin 3) {1})))
-  have hng_e_02 : ¬sys.ge ∅ ({0, 2} : Set (Fin 3)) :=
-    fun h => hn2 (sys.trans _ _ _ h
-      (sys.mono _ _ (Set.subset_insert (0 : Fin 3) {2})))
-  have hng_e_12 : ¬sys.ge ∅ ({1, 2} : Set (Fin 3)) :=
-    fun h => hn1 (sys.trans _ _ _ h
-      (sys.mono _ _ (Set.singleton_subset_iff.mpr (Set.mem_insert (1 : Fin 3) ({2} : Set _)))))
-  -- ¬ge {0} {pair_without_0}: trans with null gives ge ∅ {pair}
-  have hng_0_12 : ¬sys.ge {(0 : Fin 3)} ({1, 2} : Set _) :=
-    fun h => hn1 (sys.trans _ _ _ hn0 (sys.trans _ _ _ h
-      (sys.mono _ _ (Set.singleton_subset_iff.mpr (Set.mem_insert (1 : Fin 3) ({2} : Set _))))))
-  have hge_12_0 : sys.ge ({1, 2} : Set (Fin 3)) {0} := (sys.total _ _).resolve_right hng_0_12
-  -- Wait, hn1 is ¬sys.ge ∅ {1}, so we can't derive_null_pair with it.
-  -- Instead: {0,1}\{2} reduces via additivity.
-  -- Actually for {0,1} vs {2}: by additivity, ge {0,1} {2} ↔ ge ({0,1}\{2}) ({2}\{0,1})
-  -- = ge {0,1} {2} (already disjoint). So we need direct reasoning.
-  -- ge {0,1} {2} → ge {0} {2} by... no, that's wrong direction.
-  -- Actually we need to sub-case on ge {1} {2}.
-  by_cases h12 : sys.ge {(1 : Fin 3)} {2}
-  · by_cases h21 : sys.ge {(2 : Fin 3)} {1}
-    · -- Tie: b = 1/2
-      -- ge {0,1} {2}: by additivity {0,1}\{2}={0,1}, {2}\{0,1}={2}
-      -- so ge {0,1} {2} ↔ ge {0,1} {2}. Need: ge {0,1} {2}?
-      -- {1} ≥ {2} and {0,1} ⊇ {1}, so ge {0,1} {1} by mono, then trans
-      have hge_01_2 : sys.ge ({0, 1} : Set (Fin 3)) {2} :=
-        sys.trans _ _ _ (sys.mono _ _ (Set.subset_insert (0 : Fin 3) {1})) h12
-      have hge_02_1 : sys.ge ({0, 2} : Set (Fin 3)) {1} :=
-        sys.trans _ _ _ (sys.mono _ _ (Set.subset_insert (0 : Fin 3) {2})) h21
-      -- ge {1} {0,2}? totality: ge {1} {0,2} or ge {0,2} {1}
-      -- ge {0,2} {1} is true (above). ge {1} {0,2}?
-      -- If ge {1} {0,2}, then ge {1} {2} (mono) — already true. Not helpful.
-      -- Need: does ge {1} {0,2} hold? mu({1})=1/2, mu({0,2})=1/2, so ↔ should be true
-      -- ge {1} {0,2} iff b ≥ 1-b iff 1/2 ≥ 1/2, true.
-      -- Derive: {0,2} ⊇ {2}, ge {1} {2} (h12), ge {0,2} {2} (mono).
-      -- But we need ge {1} {0,2}, not ge {0,2} {1}.
-      -- Hmm, can't directly derive ge {1} {0,2} from ge {1} {2}.
-      -- By additivity: ge {1} {0,2} ↔ ge ({1}\{0,2}) ({0,2}\{1}) = ge {1} {0,2}
-      -- (already disjoint). So this is the original question.
-      -- Actually: ge {2} {0} (hge_2_0). By additivity on {1,2} vs {0,2}:
-      -- Nah, let's just use totality and check both directions.
-      -- If ¬ge {1} {0,2}, then ge {0,2} {1} (true above). That's consistent.
-      -- The ↔ for h1_02 needs: sys.ge {1} {0,2} ↔ b ≥ 1-b = 1/2 ≥ 1/2, i.e. true.
-      -- So we need ge {1} {0,2} to be true for the ↔ to work.
-      -- Derive via additivity: ge {1} {0,2} ↔ ge ({1}\{0,2}) ({0,2}\{1})
-      -- {1}\{0,2} = {1} (disjoint), {0,2}\{1} = {0,2}. So ge {1} {0,2} directly.
-      -- Can we derive it? ge {1} {2} and ge {2} {0} → ge {1} {0} by trans.
-      -- Then ge {1} {0} and ge {1} {2}... hmm we need ge {1} {0,2}.
-      -- By FA: ge {1} {0,2} ↔ ge {1} ({0,2}\{1}) = ge {1} {0,2} (disjoint, same).
-      -- Not helpful. Let's try: ge {1,2} {0,2} by additivity:
-      -- ge {1,2} {0,2} ↔ ge ({1,2}\{0,2}) ({0,2}\{1,2}) = ge {1} {0}.
-      -- ge {1} {0} = hge_1_0. So ge {1,2} {0,2}.
-      -- Then ge {1} {0,2}... still can't get there directly.
-      -- Let me think differently. ge {0} ∅ (mono). ge {1} {0} (hge_1_0).
-      -- By additivity: ge {0,1} {0} ↔ ge ({0,1}\{0}) ({0}\{0,1}) = ge {1} ∅. True by mono.
-      -- So ge {0,1} {0}. Not helpful.
-      -- OK let me just try: sys.ge {1} {0} (hge_1_0), sys.ge {1} {2} (h12).
-      -- I want sys.ge {1} {0,2}.
-      -- By additivity: ge {1} {0,2} ↔ ge ({1}\{0,2}) ({0,2}\{1}) = ge {1} {0,2} (already disjoint).
-      -- Hmm, {1} and {0,2} are disjoint, so additivity is trivial here.
-      -- Actually wait, additivity says ge A B ↔ ge (A\B) (B\A). If A and B are already disjoint, then A\B=A and B\A=B. So it's just ge A B ↔ ge A B. Tautological.
-      -- So I can't use additivity to derive ge {1} {0,2} from simpler facts.
-      -- Can I derive it from FA axioms at all?
-      -- Actually I think for the tie case we might need to use a different approach.
-      -- Let me think about what the FA axioms give us.
-      --
-      -- Actually, I realize the issue. In the 1-null case with a tie between {1} and {2},
-      -- we might NOT always have ge {1} {0,2}. Consider:
-      -- ge {1} {2} and ge {2} {1} (tie). {0} is null.
-      -- ge {1} {0,2}: since {0} has "zero weight" and {2} has same weight as {1},
-      -- {0,2} should have same weight as {2} = same as {1}. So ge {1} {0,2} should hold (tie).
-      -- But can we prove this from the axioms?
-      --
-      -- By additivity on {1} vs {0,2}: already disjoint, no help.
-      -- By additivity on {1,0} vs {0,2}: ge {0,1} {0,2} ↔ ge ({0,1}\{0,2}) ({0,2}\{0,1})
-      --   = ge {1} {2}. So ge {0,1} {0,2} ↔ ge {1} {2}. Since h12, ge {0,1} {0,2}.
-      -- By additivity on {0,1} vs {1}: ge {0,1} {1} ↔ ge {0} ∅. True by mono.
-      -- So ge {0,1} {1}.
-      -- Now: ge {0,1} {0,2} and ge {1} {0,1} (by mono, {0,1} ⊇ {1}).
-      -- Wait, mono gives ge {0,1} {1}, not ge {1} {0,1}.
-      -- Do we have ge {1} {0,1}? By additivity: ge {1} {0,1} ↔ ge ({1}\{0,1}) ({0,1}\{1})
-      --   = ge ∅ {0} = hn0. So ge {1} {0,1} ↔ hn0. Since hn0 is true, ge {1} {0,1}.
-      --
-      -- OK so: ge {1} {0,1} (from hn0 via additivity).
-      -- ge {0,1} {0,2} (from h12 via additivity).
-      -- By trans: ge {1} {0,2}.
-      --
-      -- Similarly: ge {2} {0,2} (from hn0 via additivity on {2} vs {0,2}).
-      -- Actually: ge {2} {0,2} ↔ ge ({2}\{0,2}) ({0,2}\{2}) = ge ∅ {0} = hn0.
-      -- So ge {2} {0,2} iff hn0. True.
-      -- And ge {0,2} {0,1} ↔ ge ({0,2}\{0,1}) ({0,1}\{0,2}) = ge {2} {1} = h21. True.
-      -- By trans: ge {2} {0,1}. Good.
-      --
-      -- OK this is getting complex. Let me just write the code and see what happens.
-      -- I'll derive the needed facts step by step.
-
-      -- ge {1} {0,1}: additivity gives ↔ ge ∅ {0} = hn0
-      have hge_1_01 : sys.ge {(1 : Fin 3)} ({0, 1} : Set _) := by
-        rw [sys.additive {1} {0, 1}]
-        rw [show ({1} : Set (Fin 3)) \ {0, 1} = ∅ from by ext x; fin_cases x <;> simp_all]
-        rw [show ({0, 1} : Set (Fin 3)) \ {1} = {0} from by ext x; fin_cases x <;> simp_all]
-        exact hn0
-      -- ge {0,1} {0,2}: additivity gives ↔ ge {1} {2} = h12
-      have hge_01_02 : sys.ge ({0, 1} : Set (Fin 3)) ({0, 2} : Set _) := by
-        rw [sys.additive ({0, 1} : Set (Fin 3)) {0, 2}]
-        rw [show ({0, 1} : Set (Fin 3)) \ {0, 2} = {1} from by ext x; fin_cases x <;> simp_all]
-        rw [show ({0, 2} : Set (Fin 3)) \ {0, 1} = {2} from by ext x; fin_cases x <;> simp_all]
-        exact h12
-      have hge_1_02 : sys.ge {(1 : Fin 3)} ({0, 2} : Set _) :=
-        sys.trans _ _ _ hge_1_01 hge_01_02
-      -- Similarly: ge {2} {0,2} via additivity ↔ ge ∅ {0} = hn0
-      have hge_2_02 : sys.ge {(2 : Fin 3)} ({0, 2} : Set _) := by
-        rw [sys.additive {2} {0, 2}]
-        rw [show ({2} : Set (Fin 3)) \ {0, 2} = ∅ from by ext x; fin_cases x <;> simp_all]
-        rw [show ({0, 2} : Set (Fin 3)) \ {2} = {0} from by ext x; fin_cases x <;> simp_all]
-        exact hn0
-      -- ge {0,2} {0,1} via additivity ↔ ge {2} {1} = h21
-      have hge_02_01 : sys.ge ({0, 2} : Set (Fin 3)) ({0, 1} : Set _) := by
-        rw [sys.additive ({0, 2} : Set (Fin 3)) {0, 1}]
-        rw [show ({0, 2} : Set (Fin 3)) \ {0, 1} = {2} from by ext x; fin_cases x <;> simp_all]
-        rw [show ({0, 1} : Set (Fin 3)) \ {0, 2} = {1} from by ext x; fin_cases x <;> simp_all]
-        exact h21
-      have hge_2_01 : sys.ge {(2 : Fin 3)} ({0, 1} : Set _) :=
-        sys.trans _ _ _ hge_2_02 hge_02_01
-      refine ⟨measure_fin3 0 (1/2) le_rfl (by linarith) (by linarith),
-        reduce_to_disjoint sys _ (fin3_dispatch sys 0 (1/2) le_rfl (by linarith) (by linarith)
-          (mf3_empty ..) (mf3_s0 ..) (mf3_s1 ..) (mf3_s2 ..)
-          (mf3_p01 ..) (mf3_p02 ..) (mf3_p12 ..) (mf3_univ ..)
-          ⟨fun _ => le_refl _, fun _ => hn0⟩
-          ⟨fun h => (hn1 h).elim, fun h => by linarith⟩
-          ⟨fun h => (hn2 h).elim, fun h => by linarith⟩
-          ⟨fun h => (hng_e_01 h).elim, fun h => by linarith⟩
-          ⟨fun h => (hng_e_02 h).elim, fun h => by linarith⟩
-          ⟨fun h => (hng_e_12 h).elim, fun h => by linarith⟩
-          ⟨fun h => (hng_0_1 h).elim, fun h => by linarith⟩
-          ⟨fun _ => by linarith, fun _ => hge_1_0⟩
-          ⟨fun h => (hng_0_2 h).elim, fun h => by linarith⟩
-          ⟨fun _ => by linarith, fun _ => hge_2_0⟩
-          ⟨fun _ => by linarith, fun _ => h12⟩
-          ⟨fun _ => by linarith, fun _ => h21⟩
-          ⟨fun h => (hng_0_12 h).elim, fun h => by linarith⟩
-          ⟨fun _ => by linarith, fun _ => hge_1_02⟩
-          ⟨fun _ => by linarith, fun _ => hge_2_01⟩
-          ⟨fun _ => by linarith, fun _ => hge_01_2⟩
-          ⟨fun _ => by linarith, fun _ => hge_02_1⟩
-          ⟨fun _ => by linarith, fun _ => hge_12_0⟩)⟩
-    · -- Strict {1} > {2}: b = 2/3
-      have hge_01_2 : sys.ge ({0, 1} : Set (Fin 3)) {2} :=
-        sys.trans _ _ _ (sys.mono _ _ (Set.subset_insert (0 : Fin 3) {1})) h12
-      -- ¬ge {0,2} {1}: by additivity ↔ ge ({0,2}\{1}) ({1}\{0,2}) = ge {0,2} {1}
-      -- Actually {0,2} and {1} are disjoint so additivity is trivial.
-      -- Instead: ¬ge {2} {1} (h21). ge {0,2} {1} → ge {2} {1} by...
-      -- No, ge {0,2} {1} does NOT imply ge {2} {1}. {0,2} is bigger.
-      -- By additivity: ge {0,2} {1} ↔ ge ({0,2}\{1}) ({1}\{0,2}) = ge {0,2} {1} (disjoint).
-      -- Hmm. ge {0,2} {0,1} ↔ ge {2} {1} (by additivity, as above). ¬h21 means ¬ge {0,2} {0,1}.
-      -- ge {0,1} {0,2} (by additivity ↔ ge {1} {2} = h12). True.
-      -- But does ge {0,2} {1} hold? mu({0,2})=1/3, mu({1})=2/3. So ¬ge {0,2} {1}.
-      -- Derive: ¬ge {0,2} {1} from ¬ge {2} {1}?
-      -- If ge {0,2} {1}, then by additivity on {0,2} vs {0,1}:
-      --   ge {0,2} {0,1} ↔ ge {2} {1}. If ¬ge {2} {1}, then ¬ge {0,2} {0,1}.
-      -- But ge {0,2} {1} doesn't directly give ge {0,2} {0,1}.
-      -- Hmm. Let's try: if ge {0,2} {1}, and ge ∅ {0} (hn0), then by additivity on {0,2} vs {0,1}:
-      -- Actually I need a cleaner approach.
-      --
-      -- ge {0,2} {1}: additivity on {0,2} vs {1} is trivial (disjoint).
-      -- Need to determine: does sys.ge ({0,2}) {1} hold?
-      -- By totality: either ge {0,2} {1} or ge {1} {0,2}.
-      -- If ge {0,2} {1}, then by additivity {0,2} vs {0,1}:
-      --   ge {0,2} {0,1} ↔ ge {2} {1}. Since ¬h21, ¬ge {0,2} {0,1}.
-      --   But ge {0,2} {1} doesn't give ge {0,2} {0,1} directly.
-      --   Actually it does via mono: {0,1} ⊇ {1}, so ge {0,1} {1}, hence if ge {0,2} {1}
-      --   we can't get ge {0,2} {0,1} without more.
-      --
-      -- OK I think the issue is that ge {0,2} {1} CAN be true even when ¬ge {2} {1},
-      -- because {0,2} has more "weight" than {2} alone (even though {0} is null,
-      -- null means ge ∅ {0}, not that {0} contributes nothing to pairs).
-      --
-      -- Wait, actually: {0} IS null (ge ∅ {0}). By FA:
-      -- ge {0,2} {2} ↔ ge ({0,2}\{2}) ({2}\{0,2}) = ge {0} ∅. True by mono.
-      -- So ge {0,2} {2}. And ge {2} {0,2} (derived above via additivity ↔ hn0).
-      -- So {0,2} ~ {2} in the ordering. And ¬ge {2} {1} → ¬ge {0,2} {1}?
-      -- ge {0,2} {1}: suppose true. ge {2} {0,2} (true). By trans: ge {2} {1}. Contradiction with ¬h21.
-      -- YES! So ¬ge {0,2} {1}.
-
-      have hge_2_02 : sys.ge {(2 : Fin 3)} ({0, 2} : Set _) := by
-        rw [sys.additive {2} {0, 2}]
-        rw [show ({2} : Set (Fin 3)) \ {0, 2} = ∅ from by ext x; fin_cases x <;> simp_all]
-        rw [show ({0, 2} : Set (Fin 3)) \ {2} = {0} from by ext x; fin_cases x <;> simp_all]
-        exact hn0
-      have hng_02_1 : ¬sys.ge ({0, 2} : Set (Fin 3)) {1} :=
-        fun h => h21 (sys.trans _ _ _ hge_2_02 h)
-      have hge_1_02 : sys.ge {(1 : Fin 3)} ({0, 2} : Set _) := (sys.total _ _).resolve_right hng_02_1
-      -- ge {2} {0,1}? ge {2} {0,2} and ge {0,2} {0,1} ↔ ge {2} {1} (¬h21). So ¬ge {0,2} {0,1}.
-      -- But {2} vs {0,1}: by additivity, disjoint, so no simplification.
-      -- Totality: ge {2} {0,1} or ge {0,1} {2}. ge {0,1} {2} is true (hge_01_2).
-      -- Does ge {2} {0,1} hold? mu({2})=1/3, mu({0,1})=2/3. No.
-      -- Derive ¬ge {2} {0,1}: if ge {2} {0,1}, then ge {2} {1} by mono on {0,1}⊇{1}...
-      -- No, mono gives ge {0,1} {1}, not ge {1} {0,1}. We need:
-      -- ge {2} {0,1} → ? Can we get ge {2} {1}?
-      -- ge {2} {0,1} and mono {0,1} ⊇ {1} gives ge {0,1} {1}. Not helpful.
-      -- By additivity: ge {2} {0,1} ↔ ge ({2}\{0,1}) ({0,1}\{2}) = ge {2} {0,1} (disjoint). Trivial.
-      -- Hmm. What about: ge {2} {0,1}. By additivity on {0,2} vs {0,1}:
-      --   ge {0,2} {0,1} ↔ ge {2} {1}. ¬h21 gives ¬ge {0,2} {0,1}.
-      -- But ge {2} {0,1} doesn't give ge {0,2} {0,1}.
-      --
-      -- Actually: if ge {2} {0,1}, and ge ∅ {0} (hn0), then:
-      --   By additivity on {2} vs {0}: ge {2} {0} ↔ ge ({2}\{0}) ({0}\{2}) = ge {2} {0} (disjoint). Trivial.
-      --   By additivity on {0,2} vs {0,1}: ge {0,2} {0,1} ↔ ge {2} {1}. ¬h21.
-      --   So ¬ge {0,2} {0,1}. But we want to show ¬ge {2} {0,1}.
-      --
-      -- Alternative: if ge {2} {0,1}, by additivity on {1,2} vs {0,1}:
-      --   ge {1,2} {0,1} ↔ ge ({1,2}\{0,1}) ({0,1}\{1,2}) = ge {2} {0}.
-      --   ge {2} {0} is true (hge_2_0). So ge {1,2} {0,1}.
-      --   Hmm, that's just consistent, doesn't give a contradiction.
-      --
-      -- What if ge {2} {0,1}? Then ge {2} {0} (mono on {0,1}⊇{0}... no).
-      -- Actually ge {2} {0,1}: this means {2} is at least as likely as {0,1}.
-      -- {0} is null, so {0,1} ~ {1}. So ge {2} {0,1} ↔ ge {2} {1}.
-      -- Can we formalize "{0,1} ~ {1}"?
-      -- ge {0,1} {1} (mono). ge {1} {0,1} (by additivity ↔ ge ∅ {0} = hn0).
-      -- So ge {2} {0,1} + ge {0,1} {1} (mono) → ... that gives ge {0,1} {1}, not ge {2} {1}.
-      -- ge {2} {0,1} + trans with ge {0,1} → need ge {0,1} {something}.
-      --
-      -- Try: ge {1} {0,1} (proved above from hn0 via additivity).
-      -- ge {0,1} {1} (mono). So {0,1} ~ {1}.
-      -- If ge {2} {0,1}, then ge {2} {0,1} + ge {0,1} = ge {0,1} {1}... NO.
-      -- Trans: ge {2} {0,1} and ge {0,1} {1} → ge {2} {1}. But ¬h21. Contradiction!
-      -- YES!
-
-      have hge_01_1 : sys.ge ({0, 1} : Set (Fin 3)) {1} :=
-        sys.mono _ _ (Set.subset_insert (0 : Fin 3) {1})
-      have hng_2_01 : ¬sys.ge {(2 : Fin 3)} ({0, 1} : Set _) :=
-        fun h => h21 (sys.trans _ _ _ h hge_01_1)
-      have hge_01_2' : sys.ge ({0, 1} : Set (Fin 3)) {2} := (sys.total _ _).resolve_right hng_2_01
-      -- Now we still need hge_12_0 and hng_0_12
-      have hge_1_01 : sys.ge {(1 : Fin 3)} ({0, 1} : Set _) := by
-        rw [sys.additive {1} {0, 1}]
-        rw [show ({1} : Set (Fin 3)) \ {0, 1} = ∅ from by ext x; fin_cases x <;> simp_all]
-        rw [show ({0, 1} : Set (Fin 3)) \ {1} = {0} from by ext x; fin_cases x <;> simp_all]
-        exact hn0
-      refine ⟨measure_fin3 0 (2/3) le_rfl (by linarith) (by linarith),
-        reduce_to_disjoint sys _ (fin3_dispatch sys 0 (2/3) le_rfl (by linarith) (by linarith)
-          (mf3_empty ..) (mf3_s0 ..) (mf3_s1 ..) (mf3_s2 ..)
-          (mf3_p01 ..) (mf3_p02 ..) (mf3_p12 ..) (mf3_univ ..)
-          ⟨fun _ => le_refl _, fun _ => hn0⟩
-          ⟨fun h => (hn1 h).elim, fun h => by linarith⟩
-          ⟨fun h => (hn2 h).elim, fun h => by linarith⟩
-          ⟨fun h => (hng_e_01 h).elim, fun h => by linarith⟩
-          ⟨fun h => (hng_e_02 h).elim, fun h => by linarith⟩
-          ⟨fun h => (hng_e_12 h).elim, fun h => by linarith⟩
-          ⟨fun h => (hng_0_1 h).elim, fun h => by linarith⟩
-          ⟨fun _ => by linarith, fun _ => hge_1_0⟩
-          ⟨fun h => (hng_0_2 h).elim, fun h => by linarith⟩
-          ⟨fun _ => by linarith, fun _ => hge_2_0⟩
-          ⟨fun _ => by linarith, fun _ => h12⟩
-          ⟨fun h => (h21 h).elim, fun h => by linarith⟩
-          ⟨fun h => (hng_0_12 h).elim, fun h => by linarith⟩
-          ⟨fun _ => by linarith, fun _ => hge_1_02⟩
-          ⟨fun h => (hng_2_01 h).elim, fun h => by linarith⟩
-          ⟨fun _ => by linarith, fun _ => hge_01_2⟩
-          ⟨fun h => (hng_02_1 h).elim, fun h => by linarith⟩
-          ⟨fun _ => by linarith, fun _ => hge_12_0⟩)⟩
-  · -- ¬ge {1} {2} → ge {2} {1} by totality: b = 1/3
-    have h21 : sys.ge {(2 : Fin 3)} {1} := (sys.total _ _).resolve_right h12
-    have hge_02_1 : sys.ge ({0, 2} : Set (Fin 3)) {1} :=
-      sys.trans _ _ _ (sys.mono _ _ (Set.subset_insert (0 : Fin 3) {2})) h21
-    -- ge {1} {0,2}? mu=1/3 vs 2/3. No.
-    -- Derive ¬ge {1} {0,2}: ge {0,2} {0,1} ↔ ge {2} {1} (h21). So ge {0,2} {0,1}.
-    -- ge {1} {0,1} (from hn0 via additivity).
-    -- If ge {1} {0,2}, trans with ge {0,2} {0,1}: ge {1} {0,1}.
-    -- That's already true, no contradiction.
-    -- Better: ge {0,2} {2} (mono). ge {2} {0,2} (from hn0 via additivity).
-    -- If ge {1} {0,2}, trans with ge {0,2} {2}: ge {1} {2}... wait, that gives ge {0,2} {2},
-    -- and if ge {1} {0,2} then ge {1} {0,2} trans ge {0,2} {2}... no that's wrong direction.
-    -- ge {1} {0,2} and ge {0,2} {2} = mono, gives ge {0,2} {2}. Trans: ge {1} {0,2} + ...
-    -- Hmm, I need ge {something} {something} where {1} ends up ≥ {2}.
-    -- OK simpler: ge {0,2} {2} (mono: {0,2} ⊇ {2}).
-    -- If ge {1} {0,2}, then ge {1} {0,2} and {0,2} ⊇ {2} doesn't give ge {1} {2} directly.
-    -- But wait, mono gives ge {0,2} {2}, not ge {2} {0,2}.
-    -- Actually if I want ge {1} {2}, I'd need ge {1} {0,2} and then... I can't decompose {0,2}.
-    --
-    -- Alternative approach: ge {0,2} {0,2} (refl). By additivity {0,2} vs {0,1}:
-    --   ge {0,2} {0,1} ↔ ge {2} {1} = h21. True.
-    -- ge {0,1} {1} (mono). Trans: ge {0,2} {0,1} and ge {0,1} {1} → ge {0,2} {1}.
-    -- Already have that. Not helpful for ¬ge {1} {0,2}.
-    --
-    -- Try: if ge {1} {0,2}, then ge {1} {0,2} and ge {0,2} {0,1} (from h21 via additivity):
-    --   trans: ge {1} {0,1}. Already true. No contradiction.
-    --
-    -- Hmm, what about: if ge {1} {0,2}, then by additivity on {1,2} vs {0,2}:
-    --   ge {1,2} {0,2} ↔ ge ({1,2}\{0,2}) ({0,2}\{1,2}) = ge {1} {0}.
-    --   ge {1} {0} = hge_1_0. True. So ge {1,2} {0,2}. Already consistent.
-    --
-    -- What about ge {1} {0}? That's hge_1_0 (true).
-    -- And ge {1} {2}? That's h12 (false).
-    -- Can we derive ¬ge {1} {0,2} from ¬ge {1} {2}?
-    -- If ge {1} {0,2}: By additivity on {1} vs {0,2}: disjoint, trivial.
-    -- Hmm.
-    --
-    -- Wait, let me reconsider. With {0} null:
-    -- ge {2} {0,2} (from hn0 via additivity: ge {2} {0,2} ↔ ge ∅ {0} = hn0).
-    -- So {2} ~ {0,2}. Then ge {1} {0,2} ↔ ge {1} {2} by transitivity through the equivalence.
-    -- Specifically: if ge {1} {0,2}, then ge {1} {0,2} and ge {0,2} {2} (mono: {0,2} ⊇ {2}).
-    -- Wait, ge {0,2} {2} is mono (supset), but I need ge {2} {0,2} for the other direction.
-    -- I have ge {2} {0,2} (from hn0). If ge {1} {0,2}, then I can't directly get ge {1} {2}.
-    -- But: if ge {1} {0,2}, then... hmm let me think about this differently.
-    --
-    -- Actually: ge {2} {0,2} means {0,2} ≤ {2}. ge {0,2} {2} (mono) means {2} ≤ {0,2}.
-    -- So {2} ~ {0,2}. ge {1} {0,2} with {0,2} ~ {2} should give ge {1} {2}.
-    -- Formally: ge {1} {0,2} and ge {0,2} {2} (mono) → ge {1} {2} by trans? No!
-    -- Trans takes ge A B and ge B C → ge A C. So ge {1} {0,2} and ge {0,2} {2} → ge {1} {2}.
-    -- Wait, but mono gives ge (superset) (subset), so ge {0,2} {2}.
-    -- Hmm, is that right? mono : A ⊆ B → ge B A. So {2} ⊆ {0,2} → ge {0,2} {2}. Yes.
-    -- So ge {1} {0,2} (hypothesis) and ge {0,2} {2} (mono) → by trans, ge {1} {2}.
-    -- But ¬ge {1} {2} (h12). Contradiction!
-    --
-    -- Great! So ¬ge {1} {0,2}.
-
-    have hng_1_02 : ¬sys.ge {(1 : Fin 3)} ({0, 2} : Set _) :=
-      fun h => h12 (sys.trans _ _ _ h (sys.mono _ _ (Set.subset_insert (0 : Fin 3) {2})))
-    -- ge {2} {0,1}: same as tie case. ge {0,1} {1} (mono).
-    -- If ge {2} {0,1}, trans with ge {0,1} {1}: ge {2} {1}. True (h21). Consistent.
-    -- ¬ge {2} {0,1}: if ge {2} {0,1}, trans ge {0,1} {0} (mono)... no, mono gives ge {0,1} {0}, trans: ge {2} {0}. True. Consistent.
-    -- Hmm, mu({2})=2/3 > mu({0,1})=1/3, so ge {2} {0,1} should be true.
-    -- Derive: ge {2} {1} (h21) and ge {1} {0} (hge_1_0), so ge {2} {0} (trans).
-    -- ge {2} {0} and ge {2} {1}. Can we get ge {2} {0,1}?
-    -- By additivity on {0,2} vs {0,1}: ge {0,2} {0,1} ↔ ge {2} {1} = h21. True.
-    -- ge {2} {0,2} (from hn0 via additivity). Trans: ge {2} {0,2} and ge {0,2} {0,1}: ge {2} {0,1}.
-
-    have hge_2_02 : sys.ge {(2 : Fin 3)} ({0, 2} : Set _) := by
-      rw [sys.additive {2} {0, 2}]
-      rw [show ({2} : Set (Fin 3)) \ {0, 2} = ∅ from by ext x; fin_cases x <;> simp_all]
-      rw [show ({0, 2} : Set (Fin 3)) \ {2} = {0} from by ext x; fin_cases x <;> simp_all]
-      exact hn0
-    have hge_02_01 : sys.ge ({0, 2} : Set (Fin 3)) ({0, 1} : Set _) := by
-      rw [sys.additive ({0, 2} : Set (Fin 3)) {0, 1}]
-      rw [show ({0, 2} : Set (Fin 3)) \ {0, 1} = {2} from by ext x; fin_cases x <;> simp_all]
-      rw [show ({0, 1} : Set (Fin 3)) \ {0, 2} = {1} from by ext x; fin_cases x <;> simp_all]
-      exact h21
-    have hge_2_01 : sys.ge {(2 : Fin 3)} ({0, 1} : Set _) :=
-      sys.trans _ _ _ hge_2_02 hge_02_01
-    -- ge {0,1} {2}: totality. ¬ge {2} {0,1} → ... no, we proved ge {2} {0,1}.
-    -- Does ge {0,1} {2} hold? mu=1/3 vs 1/3. Tie. So yes.
-    -- Derive: ge {0,1} {2} ← mono {0,1} ⊇ {1}? No, that gives ge {0,1} {1}, not ge {0,1} {2}.
-    -- ge {0,1} {0,2} ↔ ge {1} {2}. ¬h12. So ¬ge {0,1} {0,2}.
-    -- But ge {0,1} {2}? Additivity: disjoint, trivial. Need direct.
-    -- ge {0,1} {0} (mono, {0,1}⊇{0}). ge {0} {2}? ¬hng_0_2. So ¬ge {0} {2}.
-    -- ge {1} {2}? ¬h12.
-    -- Totality: ge {0,1} {2} or ge {2} {0,1}. We proved ge {2} {0,1}.
-    -- Does ge {0,1} {2} also hold? By FA, consistent with ge {2} {0,1} only if tie.
-    -- Can we derive ge {0,1} {2}?
-    -- ge {0,1} {0} (mono). ge {0} {0}... not helpful.
-    -- ge {0,1} {2}: by additivity on {0,1,2}=univ vs {2}:
-    --   ge univ {2} ↔ ge (univ\{2}) ({2}\univ) = ge {0,1} ∅. True by mono.
-    --   But that gives ge univ {2}, not ge {0,1} {2}.
-    -- Hmm. Let me try: ge {1,2} {0,1} ↔ ge ({1,2}\{0,1}) ({0,1}\{1,2}) = ge {2} {0}.
-    --   ge {2} {0} = hge_2_0. So ge {1,2} {0,1}.
-    -- ge {0,1} {1,2}? ↔ ge {0} {2}. ¬hng_0_2. So ¬ge {0,1} {1,2}.
-    -- Hmm.
-    -- Actually, maybe ge {0,1} {2} DOESN'T hold in general. We just need it for the ↔.
-    -- The ↔ says: ge {0,1} {2} ↔ a+b ≥ 1-a-b = 0+1/3 ≥ 2/3. That's 1/3 ≥ 2/3 = false!
-    -- So we need ¬ge {0,1} {2} and the measure inequality to also be false.
-    -- mu({0,1})=0+1/3=1/3, mu({2})=2/3. 1/3 ≥ 2/3 is false. Good.
-    -- So we need ¬ge {0,1} {2}.
-    -- If ge {0,1} {2}, trans with ge {2} {1} (h21): ge {0,1} {1}. True by mono. Consistent. No contradiction.
-    -- If ge {0,1} {2}, trans with ge {2} {0} (hge_2_0): ge {0,1} {0}. True by mono. Consistent.
-    -- Hmm, hard to get ¬ge {0,1} {2} directly.
-    --
-    -- Wait, by additivity on {0,1} vs {2}: disjoint, trivial.
-    -- By additivity on {0,1} vs {0,2}: ge {0,1} {0,2} ↔ ge {1} {2}. ¬h12. So ¬ge {0,1} {0,2}.
-    -- If ge {0,1} {2}, and ge {2} {0,2} (proved above), then trans: ge {0,1} {0,2}. But ¬ge {0,1} {0,2}. Contradiction!
-
-    have hng_01_02 : ¬sys.ge ({0, 1} : Set (Fin 3)) ({0, 2} : Set _) := by
-      rw [sys.additive ({0, 1} : Set (Fin 3)) {0, 2}]
-      rw [show ({0, 1} : Set (Fin 3)) \ {0, 2} = {1} from by ext x; fin_cases x <;> simp_all]
-      rw [show ({0, 2} : Set (Fin 3)) \ {0, 1} = {2} from by ext x; fin_cases x <;> simp_all]
-      exact h12
-    have hng_01_2 : ¬sys.ge ({0, 1} : Set (Fin 3)) {2} :=
-      fun h => hng_01_02 (sys.trans _ _ _ h hge_2_02)
-    refine ⟨measure_fin3 0 (1/3) le_rfl (by linarith) (by linarith),
-      reduce_to_disjoint sys _ (fin3_dispatch sys 0 (1/3) le_rfl (by linarith) (by linarith)
-        (mf3_empty ..) (mf3_s0 ..) (mf3_s1 ..) (mf3_s2 ..)
-        (mf3_p01 ..) (mf3_p02 ..) (mf3_p12 ..) (mf3_univ ..)
-        ⟨fun _ => le_refl _, fun _ => hn0⟩
-        ⟨fun h => (hn1 h).elim, fun h => by linarith⟩
-        ⟨fun h => (hn2 h).elim, fun h => by linarith⟩
-        ⟨fun h => (hng_e_01 h).elim, fun h => by linarith⟩
-        ⟨fun h => (hng_e_02 h).elim, fun h => by linarith⟩
-        ⟨fun h => (hng_e_12 h).elim, fun h => by linarith⟩
-        ⟨fun h => (hng_0_1 h).elim, fun h => by linarith⟩
-        ⟨fun _ => by linarith, fun _ => hge_1_0⟩
-        ⟨fun h => (hng_0_2 h).elim, fun h => by linarith⟩
-        ⟨fun _ => by linarith, fun _ => hge_2_0⟩
-        ⟨fun h => (h12 h).elim, fun h => by linarith⟩
-        ⟨fun _ => by linarith, fun _ => h21⟩
-        ⟨fun h => (hng_0_12 h).elim, fun h => by linarith⟩
-        ⟨fun h => (hng_1_02 h).elim, fun h => by linarith⟩
-        ⟨fun _ => by linarith, fun _ => hge_2_01⟩
-        ⟨fun h => (hng_01_2 h).elim, fun h => by linarith⟩
-        ⟨fun _ => by linarith, fun _ => hge_02_1⟩
-        ⟨fun _ => by linarith, fun _ => hge_12_0⟩)⟩
+    (_hn2 : ¬sys.ge ∅ {(2 : Fin 3)}) :
+    ∃ (m : FinAddMeasure (Fin 3)), ∀ A B, sys.ge A B ↔ m.inducedGe A B :=
+  -- Fin.succ (0 : Fin 2) = (1 : Fin 3), non-null by hn1
+  null_elem_reduce sys hn0 ⟨0, hn1⟩ theorem8a_fin2
 
 set_option maxHeartbeats 3200000 in
 private theorem theorem8a_fin3_0null (sys : EpistemicSystemFA (Fin 3))
@@ -3263,412 +2887,19 @@ private theorem fin4_dirac_repr (sys : EpistemicSystemFA (Fin 4))
 
 -- ── Card 4: Canonical proofs ──
 
-set_option maxHeartbeats 6400000 in
-private theorem theorem8a_fin4_2null_01_core (sys : EpistemicSystemFA (Fin 4))
-    (hn0 : sys.ge ∅ {(0 : Fin 4)}) (hn1 : sys.ge ∅ {(1 : Fin 4)})
-    (hn2 : ¬sys.ge ∅ {(2 : Fin 4)}) (hn3 : ¬sys.ge ∅ {(3 : Fin 4)})
-    (c : ℚ) (hc0 : 0 < c) (hc1 : c < 1)
-    (h23_iff : sys.ge {(2 : Fin 4)} {3} ↔ c ≥ 1 - c)
-    (h32_iff : sys.ge {(3 : Fin 4)} {2} ↔ 1 - c ≥ c) :
-    ∃ (m : FinAddMeasure (Fin 4)), ∀ A B, sys.ge A B ↔ m.inducedGe A B := by
-  -- ── Null pair: ge ∅ {0,1} ──
-  have hge01 : sys.ge ∅ ({0, 1} : Set (Fin 4)) := by
-    have : sys.ge {(0 : Fin 4)} ({0, 1} : Set _) := by
-      rw [sys.additive]
-      convert hn1 using 2 <;> ext x <;> fin_cases x <;> simp_all
-    exact sys.trans _ _ _ hn0 this
-  -- ── Null beats null ──
-  have hge_0_1 : sys.ge {(0 : Fin 4)} {1} :=
-    sys.trans _ _ _ (sys.mono _ _ (Set.empty_subset _)) hn1
-  have hge_1_0 : sys.ge {(1 : Fin 4)} {0} :=
-    sys.trans _ _ _ (sys.mono _ _ (Set.empty_subset _)) hn0
-  -- ── Null can't beat non-null ──
-  have hng_0_2 : ¬sys.ge {(0 : Fin 4)} {2} := fun h => hn2 (sys.trans _ _ _ hn0 h)
-  have hng_0_3 : ¬sys.ge {(0 : Fin 4)} {3} := fun h => hn3 (sys.trans _ _ _ hn0 h)
-  have hng_1_2 : ¬sys.ge {(1 : Fin 4)} {2} := fun h => hn2 (sys.trans _ _ _ hn1 h)
-  have hng_1_3 : ¬sys.ge {(1 : Fin 4)} {3} := fun h => hn3 (sys.trans _ _ _ hn1 h)
-  -- ── Non-null beats null (totality) ──
-  have hge_2_0 := (sys.total {(2 : Fin 4)} {0}).resolve_right hng_0_2
-  have hge_2_1 := (sys.total {(2 : Fin 4)} {1}).resolve_right hng_1_2
-  have hge_3_0 := (sys.total {(3 : Fin 4)} {0}).resolve_right hng_0_3
-  have hge_3_1 := (sys.total {(3 : Fin 4)} {1}).resolve_right hng_1_3
-  -- ── Null pair can't beat non-null ──
-  have hng_01_2 : ¬sys.ge ({0, 1} : Set (Fin 4)) {2} :=
-    fun h => hn2 (sys.trans _ _ _ hge01 h)
-  have hng_01_3 : ¬sys.ge ({0, 1} : Set (Fin 4)) {3} :=
-    fun h => hn3 (sys.trans _ _ _ hge01 h)
-  -- ── Non-null beats null pair ──
-  have hge_2_01 := (sys.total {(2 : Fin 4)} ({0, 1} : Set _)).resolve_right hng_01_2
-  have hge_3_01 := (sys.total {(3 : Fin 4)} ({0, 1} : Set _)).resolve_right hng_01_3
-  -- ── ¬ge ∅ {set-with-nonnull} ──
-  have hng_e_02 : ¬sys.ge ∅ ({0, 2} : Set (Fin 4)) :=
-    fun h => hn2 (sys.trans _ _ _ h (sys.mono _ _
-      (show ({2} : Set (Fin 4)) ⊆ {0, 2} by intro x hx; fin_cases x <;> simp_all)))
-  have hng_e_03 : ¬sys.ge ∅ ({0, 3} : Set (Fin 4)) :=
-    fun h => hn3 (sys.trans _ _ _ h (sys.mono _ _
-      (show ({3} : Set (Fin 4)) ⊆ {0, 3} by intro x hx; fin_cases x <;> simp_all)))
-  have hng_e_12 : ¬sys.ge ∅ ({1, 2} : Set (Fin 4)) :=
-    fun h => hn2 (sys.trans _ _ _ h (sys.mono _ _
-      (show ({2} : Set (Fin 4)) ⊆ {1, 2} by intro x hx; fin_cases x <;> simp_all)))
-  have hng_e_13 : ¬sys.ge ∅ ({1, 3} : Set (Fin 4)) :=
-    fun h => hn3 (sys.trans _ _ _ h (sys.mono _ _
-      (show ({3} : Set (Fin 4)) ⊆ {1, 3} by intro x hx; fin_cases x <;> simp_all)))
-  have hng_e_23 : ¬sys.ge ∅ ({2, 3} : Set (Fin 4)) :=
-    fun h => hn2 (sys.trans _ _ _ h (sys.mono _ _
-      (show ({2} : Set (Fin 4)) ⊆ {2, 3} by intro x hx; fin_cases x <;> simp_all)))
-  have hng_e_012 : ¬sys.ge ∅ ({0, 1, 2} : Set (Fin 4)) :=
-    fun h => hn2 (sys.trans _ _ _ h (sys.mono _ _
-      (show ({2} : Set (Fin 4)) ⊆ {0, 1, 2} by intro x hx; fin_cases x <;> simp_all)))
-  have hng_e_013 : ¬sys.ge ∅ ({0, 1, 3} : Set (Fin 4)) :=
-    fun h => hn3 (sys.trans _ _ _ h (sys.mono _ _
-      (show ({3} : Set (Fin 4)) ⊆ {0, 1, 3} by intro x hx; fin_cases x <;> simp_all)))
-  have hng_e_023 : ¬sys.ge ∅ ({0, 2, 3} : Set (Fin 4)) :=
-    fun h => hn2 (sys.trans _ _ _ h (sys.mono _ _
-      (show ({2} : Set (Fin 4)) ⊆ {0, 2, 3} by intro x hx; fin_cases x <;> simp_all)))
-  have hng_e_123 : ¬sys.ge ∅ ({1, 2, 3} : Set (Fin 4)) :=
-    fun h => hn2 (sys.trans _ _ _ h (sys.mono _ _
-      (show ({2} : Set (Fin 4)) ⊆ {1, 2, 3} by intro x hx; fin_cases x <;> simp_all)))
-  -- ── ¬ge {null} {pair/triple-with-nonnull} ──
-  have hng_0_12 : ¬sys.ge {(0 : Fin 4)} ({1, 2} : Set _) :=
-    fun h => hng_e_12 (sys.trans _ _ _ hn0 h)
-  have hng_0_13 : ¬sys.ge {(0 : Fin 4)} ({1, 3} : Set _) :=
-    fun h => hng_e_13 (sys.trans _ _ _ hn0 h)
-  have hng_0_23 : ¬sys.ge {(0 : Fin 4)} ({2, 3} : Set _) :=
-    fun h => hng_e_23 (sys.trans _ _ _ hn0 h)
-  have hng_1_02 : ¬sys.ge {(1 : Fin 4)} ({0, 2} : Set _) :=
-    fun h => hng_e_02 (sys.trans _ _ _ hn1 h)
-  have hng_1_03 : ¬sys.ge {(1 : Fin 4)} ({0, 3} : Set _) :=
-    fun h => hng_e_03 (sys.trans _ _ _ hn1 h)
-  have hng_1_23 : ¬sys.ge {(1 : Fin 4)} ({2, 3} : Set _) :=
-    fun h => hng_e_23 (sys.trans _ _ _ hn1 h)
-  have hng_0_123 : ¬sys.ge {(0 : Fin 4)} ({1, 2, 3} : Set _) :=
-    fun h => hng_e_123 (sys.trans _ _ _ hn0 h)
-  have hng_1_023 : ¬sys.ge {(1 : Fin 4)} ({0, 2, 3} : Set _) :=
-    fun h => hng_e_023 (sys.trans _ _ _ hn1 h)
-  have hng_01_23 : ¬sys.ge ({0, 1} : Set (Fin 4)) ({2, 3} : Set _) :=
-    fun h => hng_e_23 (sys.trans _ _ _ hge01 h)
-  -- ── ge {set-with-nonnull} {null} (totality) ──
-  have hge_12_0 := (sys.total ({1, 2} : Set (Fin 4)) {0}).resolve_right hng_0_12
-  have hge_13_0 := (sys.total ({1, 3} : Set (Fin 4)) {0}).resolve_right hng_0_13
-  have hge_02_1 := (sys.total ({0, 2} : Set (Fin 4)) {1}).resolve_right hng_1_02
-  have hge_03_1 := (sys.total ({0, 3} : Set (Fin 4)) {1}).resolve_right hng_1_03
-  have hge_23_0 := (sys.total ({2, 3} : Set (Fin 4)) {0}).resolve_right hng_0_23
-  have hge_23_1 := (sys.total ({2, 3} : Set (Fin 4)) {1}).resolve_right hng_1_23
-  have hge_123_0 := (sys.total ({1, 2, 3} : Set (Fin 4)) {0}).resolve_right hng_0_123
-  have hge_023_1 := (sys.total ({0, 2, 3} : Set (Fin 4)) {1}).resolve_right hng_1_023
-  have hge_23_01 := (sys.total ({2, 3} : Set (Fin 4)) ({0, 1} : Set _)).resolve_right hng_01_23
-  -- ── Null absorption via additivity ──
-  -- ge {nonnull} {null, nonnull}: by additive ↔ ge ∅ {null}
-  have hge_3_03 : sys.ge {(3 : Fin 4)} ({0, 3} : Set _) := by
-    rw [sys.additive]
-    convert hn0 using 2 <;> ext x <;> fin_cases x <;> simp_all
-  have hge_2_02 : sys.ge {(2 : Fin 4)} ({0, 2} : Set _) := by
-    rw [sys.additive]
-    convert hn0 using 2 <;> ext x <;> fin_cases x <;> simp_all
-  have hge_3_13 : sys.ge {(3 : Fin 4)} ({1, 3} : Set _) := by
-    rw [sys.additive]
-    convert hn1 using 2 <;> ext x <;> fin_cases x <;> simp_all
-  have hge_2_12 : sys.ge {(2 : Fin 4)} ({1, 2} : Set _) := by
-    rw [sys.additive]
-    convert hn1 using 2 <;> ext x <;> fin_cases x <;> simp_all
-  -- ge {nonnull} {null_pair, nonnull}: by additive ↔ ge ∅ {null_pair}
-  have hge_2_012 : sys.ge {(2 : Fin 4)} ({0, 1, 2} : Set _) := by
-    rw [sys.additive]
-    rw [show ({2} : Set (Fin 4)) \ {0, 1, 2} = ∅ from by ext x; fin_cases x <;> simp_all]
-    rw [show ({0, 1, 2} : Set (Fin 4)) \ {2} = {0, 1} from by ext x; fin_cases x <;> simp_all]
-    exact hge01
-  have hge_3_013 : sys.ge {(3 : Fin 4)} ({0, 1, 3} : Set _) := by
-    rw [sys.additive]
-    rw [show ({3} : Set (Fin 4)) \ {0, 1, 3} = ∅ from by ext x; fin_cases x <;> simp_all]
-    rw [show ({0, 1, 3} : Set (Fin 4)) \ {3} = {0, 1} from by ext x; fin_cases x <;> simp_all]
-    exact hge01
-  -- ── Construct measure and dispatch ──
-  have hc_le : 0 + 0 + c ≤ 1 := by linarith
-  refine ⟨measure_fin4 0 0 c le_rfl le_rfl hc0.le hc_le,
-    reduce_to_disjoint sys _ (fin4_dispatch sys 0 0 c le_rfl le_rfl hc0.le hc_le
-      (mf4_empty ..) (mf4_s0 ..) (mf4_s1 ..) (mf4_s2 ..) (mf4_s3 ..)
-      (mf4_p01 ..) (mf4_p02 ..) (mf4_p03 ..) (mf4_p12 ..) (mf4_p13 ..) (mf4_p23 ..)
-      (mf4_t012 ..) (mf4_t013 ..) (mf4_t023 ..) (mf4_t123 ..) (mf4_univ ..)
-      -- he0..he3: ge ∅ {i} ↔ weight_i ≤ 0
-      ⟨fun _ => le_refl _, fun _ => hn0⟩
-      ⟨fun _ => le_refl _, fun _ => hn1⟩
-      ⟨fun h => (hn2 h).elim, fun h => by exfalso; linarith⟩
-      ⟨fun h => (hn3 h).elim, fun h => by exfalso; linarith⟩
-      -- he01..he123: ge ∅ {pair/triple} ↔ sum ≤ 0
-      ⟨fun _ => by linarith, fun _ => hge01⟩
-      ⟨fun h => (hng_e_02 h).elim, fun h => by exfalso; linarith⟩
-      ⟨fun h => (hng_e_03 h).elim, fun h => by exfalso; linarith⟩
-      ⟨fun h => (hng_e_12 h).elim, fun h => by exfalso; linarith⟩
-      ⟨fun h => (hng_e_13 h).elim, fun h => by exfalso; linarith⟩
-      ⟨fun h => (hng_e_23 h).elim, fun h => by exfalso; linarith⟩
-      ⟨fun h => (hng_e_012 h).elim, fun h => by exfalso; linarith⟩
-      ⟨fun h => (hng_e_013 h).elim, fun h => by exfalso; linarith⟩
-      ⟨fun h => (hng_e_023 h).elim, fun h => by exfalso; linarith⟩
-      ⟨fun h => (hng_e_123 h).elim, fun h => by exfalso; linarith⟩
-      -- h01, h10: ge {0} {1} ↔ 0 ≥ 0, ge {1} {0} ↔ 0 ≥ 0
-      ⟨fun _ => le_refl _, fun _ => hge_0_1⟩
-      ⟨fun _ => le_refl _, fun _ => hge_1_0⟩
-      -- h02, h20
-      ⟨fun h => (hng_0_2 h).elim, fun h => by exfalso; linarith⟩
-      ⟨fun _ => hc0.le, fun _ => hge_2_0⟩
-      -- h03, h30
-      ⟨fun h => (hng_0_3 h).elim, fun h => by exfalso; linarith⟩
-      ⟨fun _ => by linarith, fun _ => hge_3_0⟩
-      -- h12, h21
-      ⟨fun h => (hng_1_2 h).elim, fun h => by exfalso; linarith⟩
-      ⟨fun _ => hc0.le, fun _ => hge_2_1⟩
-      -- h13, h31
-      ⟨fun h => (hng_1_3 h).elim, fun h => by exfalso; linarith⟩
-      ⟨fun _ => by linarith, fun _ => hge_3_1⟩
-      -- h23, h32 [CASE-DEPENDENT]
-      ⟨fun h => by have := h23_iff.mp h; linarith, fun h => h23_iff.mpr (by linarith)⟩
-      ⟨fun h => by have := h32_iff.mp h; linarith, fun h => h32_iff.mpr (by linarith)⟩
-      -- h0_12, h12_0
-      ⟨fun h => (hng_0_12 h).elim, fun h => by exfalso; linarith⟩
-      ⟨fun _ => by linarith, fun _ => hge_12_0⟩
-      -- h0_13, h13_0
-      ⟨fun h => (hng_0_13 h).elim, fun h => by exfalso; linarith⟩
-      ⟨fun _ => by linarith, fun _ => hge_13_0⟩
-      -- h0_23, h23_0
-      ⟨fun h => (hng_0_23 h).elim, fun h => by exfalso; linarith⟩
-      ⟨fun _ => by linarith, fun _ => hge_23_0⟩
-      -- h1_02, h02_1
-      ⟨fun h => (hng_1_02 h).elim, fun h => by exfalso; linarith⟩
-      ⟨fun _ => by linarith, fun _ => hge_02_1⟩
-      -- h1_03, h03_1
-      ⟨fun h => (hng_1_03 h).elim, fun h => by exfalso; linarith⟩
-      ⟨fun _ => by linarith, fun _ => hge_03_1⟩
-      -- h1_23, h23_1
-      ⟨fun h => (hng_1_23 h).elim, fun h => by exfalso; linarith⟩
-      ⟨fun _ => by linarith, fun _ => hge_23_1⟩
-      -- h2_01, h01_2
-      ⟨fun _ => by linarith, fun _ => hge_2_01⟩
-      ⟨fun h => (hng_01_2 h).elim, fun h => by exfalso; linarith⟩
-      -- h2_03 [CASE-DEPENDENT]: ge {2} {0,3} ↔ c ≥ 1-c
-      ⟨fun h => by have := h23_iff.mp (sys.trans _ _ _ h (sys.mono _ _
-          (show ({3} : Set (Fin 4)) ⊆ {0, 3} by intro x hx; fin_cases x <;> simp_all))); linarith,
-       fun h => sys.trans _ _ _ (h23_iff.mpr (by linarith)) hge_3_03⟩
-      -- h03_2 [CASE-DEPENDENT]: ge {0,3} {2} ↔ 1-c ≥ c
-      ⟨fun h => by have := h32_iff.mp (sys.trans _ _ _ hge_3_03 h); linarith,
-       fun h => sys.trans _ _ _ (sys.mono _ _
-          (show ({3} : Set (Fin 4)) ⊆ {0, 3} by intro x hx; fin_cases x <;> simp_all))
-          (h32_iff.mpr (by linarith))⟩
-      -- h2_13 [CASE-DEPENDENT]: ge {2} {1,3} ↔ c ≥ 1-c
-      ⟨fun h => by have := h23_iff.mp (sys.trans _ _ _ h (sys.mono _ _
-          (show ({3} : Set (Fin 4)) ⊆ {1, 3} by intro x hx; fin_cases x <;> simp_all))); linarith,
-       fun h => sys.trans _ _ _ (h23_iff.mpr (by linarith)) hge_3_13⟩
-      -- h13_2 [CASE-DEPENDENT]: ge {1,3} {2} ↔ 1-c ≥ c
-      ⟨fun h => by have := h32_iff.mp (sys.trans _ _ _ hge_3_13 h); linarith,
-       fun h => sys.trans _ _ _ (sys.mono _ _
-          (show ({3} : Set (Fin 4)) ⊆ {1, 3} by intro x hx; fin_cases x <;> simp_all))
-          (h32_iff.mpr (by linarith))⟩
-      -- h3_01, h01_3
-      ⟨fun _ => by linarith, fun _ => hge_3_01⟩
-      ⟨fun h => (hng_01_3 h).elim, fun h => by exfalso; linarith⟩
-      -- h3_02 [CASE-DEPENDENT]: ge {3} {0,2} ↔ 1-c ≥ c
-      ⟨fun h => by have := h32_iff.mp (sys.trans _ _ _ h (sys.mono _ _
-          (show ({2} : Set (Fin 4)) ⊆ {0, 2} by intro x hx; fin_cases x <;> simp_all))); linarith,
-       fun h => sys.trans _ _ _ (h32_iff.mpr (by linarith)) hge_2_02⟩
-      -- h02_3 [CASE-DEPENDENT]: ge {0,2} {3} ↔ c ≥ 1-c
-      ⟨fun h => by have := h23_iff.mp (sys.trans _ _ _ hge_2_02 h); linarith,
-       fun h => sys.trans _ _ _ (sys.mono _ _
-          (show ({2} : Set (Fin 4)) ⊆ {0, 2} by intro x hx; fin_cases x <;> simp_all))
-          (h23_iff.mpr (by linarith))⟩
-      -- h3_12 [CASE-DEPENDENT]: ge {3} {1,2} ↔ 1-c ≥ c
-      ⟨fun h => by have := h32_iff.mp (sys.trans _ _ _ h (sys.mono _ _
-          (show ({2} : Set (Fin 4)) ⊆ {1, 2} by intro x hx; fin_cases x <;> simp_all))); linarith,
-       fun h => sys.trans _ _ _ (h32_iff.mpr (by linarith)) hge_2_12⟩
-      -- h12_3 [CASE-DEPENDENT]: ge {1,2} {3} ↔ c ≥ 1-c
-      ⟨fun h => by have := h23_iff.mp (sys.trans _ _ _ hge_2_12 h); linarith,
-       fun h => sys.trans _ _ _ (sys.mono _ _
-          (show ({2} : Set (Fin 4)) ⊆ {1, 2} by intro x hx; fin_cases x <;> simp_all))
-          (h23_iff.mpr (by linarith))⟩
-      -- h0_123, h123_0
-      ⟨fun h => (hng_0_123 h).elim, fun h => by exfalso; linarith⟩
-      ⟨fun _ => by linarith, fun _ => hge_123_0⟩
-      -- h1_023, h023_1
-      ⟨fun h => (hng_1_023 h).elim, fun h => by exfalso; linarith⟩
-      ⟨fun _ => by linarith, fun _ => hge_023_1⟩
-      -- h2_013 [CASE-DEPENDENT]: ge {2} {0,1,3} ↔ c ≥ 1-c
-      ⟨fun h => by have := h23_iff.mp (sys.trans _ _ _ h (sys.mono _ _
-          (show ({3} : Set (Fin 4)) ⊆ {0, 1, 3} by intro x hx; fin_cases x <;> simp_all))); linarith,
-       fun h => sys.trans _ _ _ (h23_iff.mpr (by linarith)) hge_3_013⟩
-      -- h013_2 [CASE-DEPENDENT]: ge {0,1,3} {2} ↔ 1-c ≥ c
-      ⟨fun h => by have := h32_iff.mp (sys.trans _ _ _ hge_3_013 h); linarith,
-       fun h => sys.trans _ _ _ (sys.mono _ _
-          (show ({3} : Set (Fin 4)) ⊆ {0, 1, 3} by intro x hx; fin_cases x <;> simp_all))
-          (h32_iff.mpr (by linarith))⟩
-      -- h3_012 [CASE-DEPENDENT]: ge {3} {0,1,2} ↔ 1-c ≥ c
-      ⟨fun h => by have := h32_iff.mp (sys.trans _ _ _ h (sys.mono _ _
-          (show ({2} : Set (Fin 4)) ⊆ {0, 1, 2} by intro x hx; fin_cases x <;> simp_all))); linarith,
-       fun h => sys.trans _ _ _ (h32_iff.mpr (by linarith)) hge_2_012⟩
-      -- h012_3 [CASE-DEPENDENT]: ge {0,1,2} {3} ↔ c ≥ 1-c
-      ⟨fun h => by have := h23_iff.mp (sys.trans _ _ _ hge_2_012 h); linarith,
-       fun h => sys.trans _ _ _ (sys.mono _ _
-          (show ({2} : Set (Fin 4)) ⊆ {0, 1, 2} by intro x hx; fin_cases x <;> simp_all))
-          (h23_iff.mpr (by linarith))⟩
-      -- h01_23: ge {0,1} {2,3} ↔ 0 ≥ 1
-      ⟨fun h => (hng_01_23 h).elim, fun h => by exfalso; linarith⟩
-      -- h23_01: ge {2,3} {0,1} ↔ 1 ≥ 0
-      ⟨fun _ => by linarith, fun _ => hge_23_01⟩
-      -- h02_13 [CASE-DEPENDENT]: ge {0,2} {1,3} ↔ c ≥ 1-c
-      ⟨fun h => by have := h23_iff.mp (sys.trans _ _ _ hge_2_02 (sys.trans _ _ _ h (sys.mono _ _
-          (show ({3} : Set (Fin 4)) ⊆ {1, 3} by intro x hx; fin_cases x <;> simp_all)))); linarith,
-       fun h => sys.trans _ _ _ (sys.mono _ _
-          (show ({2} : Set (Fin 4)) ⊆ {0, 2} by intro x hx; fin_cases x <;> simp_all))
-          (sys.trans _ _ _ (h23_iff.mpr (by linarith)) hge_3_13)⟩
-      -- h13_02 [CASE-DEPENDENT]: ge {1,3} {0,2} ↔ 1-c ≥ c
-      ⟨fun h => by have := h32_iff.mp (sys.trans _ _ _ hge_3_13 (sys.trans _ _ _ h (sys.mono _ _
-          (show ({2} : Set (Fin 4)) ⊆ {0, 2} by intro x hx; fin_cases x <;> simp_all)))); linarith,
-       fun h => sys.trans _ _ _ (sys.mono _ _
-          (show ({3} : Set (Fin 4)) ⊆ {1, 3} by intro x hx; fin_cases x <;> simp_all))
-          (sys.trans _ _ _ (h32_iff.mpr (by linarith)) hge_2_02)⟩
-      -- h03_12 [CASE-DEPENDENT]: ge {0,3} {1,2} ↔ 1-c ≥ c
-      ⟨fun h => by have := h32_iff.mp (sys.trans _ _ _ hge_3_03 (sys.trans _ _ _ h (sys.mono _ _
-          (show ({2} : Set (Fin 4)) ⊆ {1, 2} by intro x hx; fin_cases x <;> simp_all)))); linarith,
-       fun h => sys.trans _ _ _ (sys.mono _ _
-          (show ({3} : Set (Fin 4)) ⊆ {0, 3} by intro x hx; fin_cases x <;> simp_all))
-          (sys.trans _ _ _ (h32_iff.mpr (by linarith)) hge_2_12)⟩
-      -- h12_03 [CASE-DEPENDENT]: ge {1,2} {0,3} ↔ c ≥ 1-c
-      ⟨fun h => by have := h23_iff.mp (sys.trans _ _ _ hge_2_12 (sys.trans _ _ _ h (sys.mono _ _
-          (show ({3} : Set (Fin 4)) ⊆ {0, 3} by intro x hx; fin_cases x <;> simp_all)))); linarith,
-       fun h => sys.trans _ _ _ (sys.mono _ _
-          (show ({2} : Set (Fin 4)) ⊆ {1, 2} by intro x hx; fin_cases x <;> simp_all))
-          (sys.trans _ _ _ (h23_iff.mpr (by linarith)) hge_3_03)⟩
-    )⟩
-
 private theorem theorem8a_fin4_2null_01 (sys : EpistemicSystemFA (Fin 4))
-    (hn0 : sys.ge ∅ {(0 : Fin 4)}) (hn1 : sys.ge ∅ {(1 : Fin 4)})
-    (hn2 : ¬sys.ge ∅ {(2 : Fin 4)}) (hn3 : ¬sys.ge ∅ {(3 : Fin 4)}) :
-    ∃ (m : FinAddMeasure (Fin 4)), ∀ A B, sys.ge A B ↔ m.inducedGe A B := by
-  by_cases h23 : sys.ge {(2 : Fin 4)} {3}
-  · by_cases h32 : sys.ge {(3 : Fin 4)} {2}
-    · exact theorem8a_fin4_2null_01_core sys hn0 hn1 hn2 hn3 (1/2) (by norm_num) (by norm_num)
-        ⟨fun _ => by norm_num, fun _ => h23⟩ ⟨fun _ => by norm_num, fun _ => h32⟩
-    · exact theorem8a_fin4_2null_01_core sys hn0 hn1 hn2 hn3 (3/4) (by norm_num) (by norm_num)
-        ⟨fun _ => by norm_num, fun _ => h23⟩
-        ⟨fun h => absurd h h32, fun h => by exfalso; linarith⟩
-  · have h32 : sys.ge {(3 : Fin 4)} {2} := (sys.total _ _).resolve_left h23
-    exact theorem8a_fin4_2null_01_core sys hn0 hn1 hn2 hn3 (1/4) (by norm_num) (by norm_num)
-      ⟨fun h => absurd h h23, fun h => by exfalso; linarith⟩
-      ⟨fun _ => by norm_num, fun _ => h32⟩
+    (hn0 : sys.ge ∅ {(0 : Fin 4)}) (_hn1 : sys.ge ∅ {(1 : Fin 4)})
+    (hn2 : ¬sys.ge ∅ {(2 : Fin 4)}) (_hn3 : ¬sys.ge ∅ {(3 : Fin 4)}) :
+    ∃ (m : FinAddMeasure (Fin 4)), ∀ A B, sys.ge A B ↔ m.inducedGe A B :=
+  -- Fin.succ (1 : Fin 3) = (2 : Fin 4), non-null by hn2
+  null_elem_reduce sys hn0 ⟨1, hn2⟩ theorem8a_fin3
 
--- ── Helpers for 1-null reduction to Card 3 ──────────────
-
-/-- Removing a null element from both sides of a disjoint comparison preserves `ge`.
-    When `sys.ge ∅ {j}` (j is null) and C, D are disjoint, `sys.ge C D ↔ sys.ge (C\{j}) (D\{j})`. -/
-private theorem null_removal_disjoint (sys : EpistemicSystemFA (Fin 4))
-    (j : Fin 4) (hj : sys.ge ∅ {j})
-    (C D : Set (Fin 4)) (hdisj : ∀ x, x ∈ C → x ∉ D) :
-    sys.ge C D ↔ sys.ge (C \ {j}) (D \ {j}) := by
-  -- Key helper: S \ {j} ≿ S when j is null (removing a null element preserves strength)
-  have null_sub : ∀ S : Set (Fin 4), sys.ge (S \ {j}) S := by
-    intro S
-    by_cases hj_in : j ∈ S
-    · rw [sys.additive (S \ {j}) S]
-      have h1 : (S \ {j}) \ S = ∅ := by
-        ext x; constructor
-        · intro ⟨⟨_, _⟩, hns⟩; exact absurd (by assumption) hns
-        · intro h; exact h.elim
-      have h2 : S \ (S \ {j}) = {j} := by
-        ext x; simp only [Set.mem_diff, Set.mem_singleton_iff]
-        constructor
-        · intro ⟨hx, hn⟩; by_contra hne; exact hn ⟨hx, hne⟩
-        · intro hx; subst hx; exact ⟨hj_in, fun ⟨_, h⟩ => h rfl⟩
-      rw [h1, h2]; exact hj
-    · rw [Set.diff_singleton_eq_self hj_in]; exact sys.refl S
-  by_cases hjC : j ∈ C
-  · have hjnD : j ∉ D := fun h => hdisj j hjC h
-    rw [Set.diff_singleton_eq_self hjnD]
-    exact ⟨fun h => sys.trans _ _ _ (null_sub C) h,
-           fun h => sys.trans _ _ _ (sys.mono _ _ Set.diff_subset) h⟩
-  · rw [Set.diff_singleton_eq_self hjC]
-    by_cases hjD : j ∈ D
-    · exact ⟨fun h => sys.trans _ _ _ h (sys.mono _ _ Set.diff_subset),
-             fun h => sys.trans _ _ _ h (null_sub D)⟩
-    · rw [Set.diff_singleton_eq_self hjD]
-
-/-- `Fin.succ '' (Fin.succ ⁻¹' S) = S \ {0}` for `S : Set (Fin 4)`.
-    The image of `Fin.succ : Fin 3 → Fin 4` covers exactly the non-zero elements. -/
-private theorem succ_image_preimage (S : Set (Fin 4)) :
-    Fin.succ '' (Fin.succ ⁻¹' S) = S \ {(0 : Fin 4)} := by
-  rw [Set.image_preimage_eq_range_inter, Fin.range_succ]
-  ext x; simp only [Set.mem_inter_iff, Set.mem_compl_iff, Set.mem_singleton_iff,
-    Set.mem_diff]; exact And.comm
-
-/-- Preimage of `Fin.succ` is insensitive to `{0}`: `Fin.succ ⁻¹' S = Fin.succ ⁻¹' (S \ {0})`.
-    This is because 0 is never in the range of `Fin.succ`. -/
-private theorem succ_preimage_sdiff_zero (S : Set (Fin 4)) :
-    Fin.succ ⁻¹' S = Fin.succ ⁻¹' (S \ {(0 : Fin 4)}) := by
-  ext x; simp only [Set.mem_preimage, Set.mem_diff, Set.mem_singleton_iff]
-  exact ⟨fun h => ⟨h, Fin.succ_ne_zero x⟩, fun ⟨h, _⟩ => h⟩
-
--- ── Card 4: 1 null element at position 0 ───────────────
-
-set_option maxHeartbeats 3200000 in
 private theorem theorem8a_fin4_1null_0 (sys : EpistemicSystemFA (Fin 4))
     (hn0 : sys.ge ∅ {(0 : Fin 4)}) (hn1 : ¬sys.ge ∅ {(1 : Fin 4)})
     (_hn2 : ¬sys.ge ∅ {(2 : Fin 4)}) (_hn3 : ¬sys.ge ∅ {(3 : Fin 4)}) :
-    ∃ (m : FinAddMeasure (Fin 4)), ∀ A B, sys.ge A B ↔ m.inducedGe A B := by
-  -- Step 1: Build restricted system on Fin 3 via Fin.succ : Fin 3 → Fin 4 (maps 0↦1, 1↦2, 2↦3)
-  let sys3 : EpistemicSystemFA (Fin 3) := {
-    ge := fun A B => sys.ge (Fin.succ '' A) (Fin.succ '' B)
-    refl := fun A => sys.refl _
-    mono := fun A B hAB => sys.mono _ _ (Set.image_mono hAB)
-    bottom := by
-      show sys.ge (Fin.succ '' Set.univ) (Fin.succ '' ∅)
-      simp only [Set.image_empty]
-      exact sys.mono _ _ (Set.empty_subset _)
-    nonTrivial := by
-      show ¬sys.ge (Fin.succ '' ∅) (Fin.succ '' Set.univ)
-      simp only [Set.image_empty]
-      intro h
-      exact hn1 (sys.trans _ _ _ h (sys.mono _ _
-        (Set.singleton_subset_iff.mpr ⟨0, Set.mem_univ _, rfl⟩)))
-    total := fun A B => sys.total _ _
-    trans := fun A B C h1 h2 => sys.trans _ _ _ h1 h2
-    additive := fun A B => by
-      show sys.ge (Fin.succ '' A) (Fin.succ '' B) ↔
-           sys.ge (Fin.succ '' (A \ B)) (Fin.succ '' (B \ A))
-      rw [Set.image_diff (Fin.succ_injective 3), Set.image_diff (Fin.succ_injective 3)]
-      exact sys.additive _ _
-  }
-  -- Step 2: Apply Card 3 theorem to get a measure on Fin 3
-  obtain ⟨m3, hm3⟩ := theorem8a_fin3 sys3
-  -- Step 3: Lift measure to Fin 4 via preimage (gives weight 0 to element 0)
-  let m4 : FinAddMeasure (Fin 4) := {
-    mu := fun A => m3.mu (Fin.succ ⁻¹' A)
-    nonneg := fun A => m3.nonneg _
-    additive := fun A B hdisj => by
-      have : Fin.succ ⁻¹' (A ∪ B) = Fin.succ ⁻¹' A ∪ Fin.succ ⁻¹' B := Set.preimage_union
-      rw [this]
-      exact m3.additive _ _ (fun x hxA hxB => hdisj (Fin.succ x) hxA hxB)
-    total := by
-      show m3.mu (Fin.succ ⁻¹' Set.univ) = 1
-      rw [Set.preimage_univ]; exact m3.total
-  }
-  -- Step 4: Prove representation using reduce_to_disjoint
-  refine ⟨m4, reduce_to_disjoint sys m4 (fun C D hdisj => ?_)⟩
-  -- Goal: sys.ge C D ↔ m4.inducedGe C D
-  -- m4.inducedGe C D = (m3.mu (succ⁻¹' C) ≥ m3.mu (succ⁻¹' D))
-  -- Strategy:
-  --   sys.ge C D ↔ sys.ge (C\{0}) (D\{0})           [null_removal_disjoint]
-  --             ↔ sys3.ge (succ⁻¹' C) (succ⁻¹' D)   [image-preimage identity]
-  --             ↔ m3.inducedGe (succ⁻¹' C) (succ⁻¹' D) [hm3]
-  --             = m4.inducedGe C D                    [definition]
-  -- Step 4a: null removal
-  rw [null_removal_disjoint sys 0 hn0 C D hdisj]
-  -- Goal: sys.ge (C \ {0}) (D \ {0}) ↔ m4.inducedGe C D
-  -- Step 4b: rewrite C\{0} and D\{0} as Fin.succ images
-  rw [← succ_image_preimage C, ← succ_image_preimage D]
-  -- Goal: sys.ge (succ '' (succ⁻¹' C)) (succ '' (succ⁻¹' D)) ↔ m4.inducedGe C D
-  -- The LHS is exactly sys3.ge (succ⁻¹' C) (succ⁻¹' D)
-  -- Step 4c: apply hm3
-  have hsys3 := hm3 (Fin.succ ⁻¹' C) (Fin.succ ⁻¹' D)
-  -- hsys3 : sys3.ge (succ⁻¹' C) (succ⁻¹' D) ↔ m3.inducedGe (succ⁻¹' C) (succ⁻¹' D)
-  -- sys3.ge A B = sys.ge (succ '' A) (succ '' B), so LHS matches
-  -- m3.inducedGe (succ⁻¹' C) (succ⁻¹' D) = m4.inducedGe C D by definition
-  exact hsys3
+    ∃ (m : FinAddMeasure (Fin 4)), ∀ A B, sys.ge A B ↔ m.inducedGe A B :=
+  -- Fin.succ (0 : Fin 3) = (1 : Fin 4), non-null by hn1
+  null_elem_reduce sys hn0 ⟨0, hn1⟩ theorem8a_fin3
 
 private theorem theorem8a_fin4_0null (sys : EpistemicSystemFA (Fin 4))
     (hn0 : ¬sys.ge ∅ {(0 : Fin 4)}) (hn1 : ¬sys.ge ∅ {(1 : Fin 4)})
