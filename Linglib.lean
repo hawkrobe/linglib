@@ -7,13 +7,13 @@ and their interfaces. See README.md for documentation links.
 
 -- Core
 import Linglib.Core.Situation
-import Linglib.Core.Word
+import Linglib.Core.Lexical.Word
 import Linglib.Core.Grammar
-import Linglib.Core.Pronouns
+import Linglib.Core.Lexical.Pronouns
 import Linglib.Core.Kleene
 import Linglib.Core.Empirical
 import Linglib.Core.Proposition
-import Linglib.Core.UD
+import Linglib.Core.Lexical.UD
 import Linglib.Core.Duality
 import Linglib.Core.Quantification
 import Linglib.Core.SquareOfOpposition
@@ -26,7 +26,7 @@ import Linglib.Core.Conjectures
 import Linglib.Core.CommonGround
 import Linglib.Core.Parse
 import Linglib.Core.Presupposition
-import Linglib.Core.ProductOfExperts
+import Linglib.Core.Agent.ProductOfExperts
 import Linglib.Core.Partition
 import Linglib.Core.PolarityPartition
 import Linglib.Core.QUD
@@ -36,9 +36,9 @@ import Linglib.Core.CausalBayesNet
 import Linglib.Core.RootDimensions
 import Linglib.Theories.Semantics.Lexical.Verb.VerbEntry
 import Linglib.Core.NaturalLogic
-import Linglib.Core.DecisionTheory
-import Linglib.Core.RationalAction
-import Linglib.Core.UtilityTheory
+import Linglib.Core.Agent.DecisionTheory
+import Linglib.Core.Agent.RationalAction
+import Linglib.Core.Agent.UtilityTheory
 import Linglib.Core.Evidence
 import Linglib.Core.Epistemicity
 import Linglib.Core.ProcessingModel
@@ -52,16 +52,16 @@ import Linglib.Core.Context.Rich
 import Linglib.Core.InformationStructure
 import Linglib.Core.Prosody
 import Linglib.Core.Definiteness
-import Linglib.Core.NounCategorization
+import Linglib.Core.Lexical.NounCategorization
 import Linglib.Core.Roundness
 import Linglib.Core.Mereology
 import Linglib.Core.MereoDim
 import Linglib.Core.ContentIndividual
-import Linglib.Core.BToM
+import Linglib.Core.Agent.BToM
 import Linglib.Core.Path
 import Linglib.Core.Continuation
-import Linglib.Core.PersonCategory
-import Linglib.Core.MorphRule
+import Linglib.Core.Lexical.PersonCategory
+import Linglib.Core.Lexical.MorphRule
 import Linglib.Core.InformationTheory
 import Linglib.Theories.Morphology.Core.Circumfix
 import Linglib.Theories.Morphology.Core.Exponence
@@ -121,6 +121,7 @@ import Linglib.Fragments.Japanese.Determiners
 import Linglib.Fragments.Japanese.Classifiers
 import Linglib.Fragments.Japanese.Nouns
 import Linglib.Fragments.Korean.Evidentials
+import Linglib.Fragments.Korean.MedialVerbs
 import Linglib.Fragments.Korean.Predicates
 import Linglib.Fragments.Japanese.TemporalConnectives
 import Linglib.Fragments.Japanese.TemporalDeictic
@@ -134,8 +135,11 @@ import Linglib.Fragments.Mandarin.Particles
 import Linglib.Fragments.Mandarin.TemporalDeictic
 import Linglib.Fragments.Mandarin.AspectComparison
 import Linglib.Fragments.Mandarin.Predicates
+import Linglib.Fragments.Turkish.MedialVerbs
 import Linglib.Fragments.Turkish.Predicates
 import Linglib.Fragments.Turkish.QuestionParticles
+import Linglib.Fragments.Manambu.MedialVerbs
+import Linglib.Fragments.Nungon.MedialVerbs
 import Linglib.Fragments.Basque.Pronouns
 import Linglib.Fragments.Magahi.Pronouns
 import Linglib.Fragments.Korean.Pronouns
@@ -168,6 +172,10 @@ import Linglib.Phenomena.Case.Data
 import Linglib.Phenomena.Case.Typology
 import Linglib.Phenomena.Case.Studies.Ozaki2025.Data
 import Linglib.Phenomena.Case.Studies.Ozaki2025.Bridge
+import Linglib.Phenomena.ClauseChaining.Typology
+import Linglib.Phenomena.ClauseChaining.Data
+import Linglib.Phenomena.ClauseChaining.Bridge.FragmentBridge
+import Linglib.Phenomena.ClauseChaining.Bridge.TowerBridge
 import Linglib.Phenomena.Copulas.Typology
 import Linglib.Phenomena.Complementation.Attitudes.IntensionalExamplesBridge
 import Linglib.Phenomena.Complementation.Attitudes.IntentionalIdentity.Data
@@ -221,6 +229,7 @@ import Linglib.Phenomena.Conditionals.Studies.EvcenBaleBarner2026.Data
 import Linglib.Phenomena.Conditionals.Studies.EvcenBaleBarner2026.Bridge
 import Linglib.Phenomena.Conditionals.Studies.Iatridou2000.Data
 import Linglib.Phenomena.Conditionals.Studies.Iatridou2000.Bridge
+import Linglib.Phenomena.Conditionals.Studies.Iatridou2000.TowerBridge
 import Linglib.Phenomena.Conditionals.Studies.Mizuno2024.Data
 import Linglib.Phenomena.Conditionals.Studies.Mizuno2024.Bridge
 import Linglib.Phenomena.Complementation.Attitudes.ConjunctionDistribution.Data
@@ -397,6 +406,7 @@ import Linglib.Phenomena.Presupposition.Bridge.RSAHeKaiserIskarous2025
 import Linglib.Phenomena.Presupposition.Bridge.RSAWarstadt2022
 import Linglib.Phenomena.Presupposition.Bridge.RSAComparison
 import Linglib.Phenomena.Presupposition.Bridge.ScontrasTonhauser2025BToM
+import Linglib.Phenomena.Presupposition.Bridge.TowerBridge
 import Linglib.Phenomena.Modality.OutlookMarkers
 import Linglib.Phenomena.Agreement.NounCategorization
 import Linglib.Phenomena.Agreement.Bridge.NounCategorization
@@ -429,6 +439,7 @@ import Linglib.Phenomena.Questions.Studies.HawkinsEtAl2025
 import Linglib.Phenomena.Questions.WhComplement
 import Linglib.Phenomena.Questions.Compare
 import Linglib.Phenomena.Questions.Studies.TurkHirschInce2026Bridge
+import Linglib.Phenomena.Reference.Bridge.TowerBridge
 import Linglib.Phenomena.Reference.DirectReference
 import Linglib.Phenomena.Reference.Studies.FrankGoodman2012
 import Linglib.Phenomena.Reference.Studies.HawkinsGweonGoodman2021
@@ -448,6 +459,7 @@ import Linglib.Phenomena.ScalarImplicatures.Studies.VanTielEtAl2021
 import Linglib.Phenomena.TenseAspect.Data
 import Linglib.Phenomena.TenseAspect.Bridge
 import Linglib.Phenomena.TenseAspect.ThenPresentBridge
+import Linglib.Phenomena.TenseAspect.TowerBridge
 import Linglib.Phenomena.TemporalConnectives.Compare
 import Linglib.Phenomena.TemporalConnectives.NegationData
 import Linglib.Phenomena.TemporalConnectives.VeridicalityBridge

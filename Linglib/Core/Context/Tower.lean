@@ -47,6 +47,7 @@ inductive ShiftLabel where
   | evidential  -- evidential perspective shift (Cumming 2026)
   | mood        -- mood operator (SUBJ situation introduction)
   | quotation   -- direct quotation
+  | clauseChain -- clause chain scope (final verb TAM scopes over medial clauses)
   | generic     -- unclassified shift
   deriving DecidableEq, Repr, BEq, Inhabited
 
@@ -109,6 +110,8 @@ def push (t : ContextTower C) (σ : ContextShift C) : ContextTower C :=
 -- ════════════════════════════════════════════════════════════════
 -- § Algebraic Properties
 -- ════════════════════════════════════════════════════════════════
+
+@[simp] theorem root_origin (c : C) : (root c).origin = c := rfl
 
 @[simp] theorem root_innermost (c : C) : (root c).innermost = c := rfl
 
