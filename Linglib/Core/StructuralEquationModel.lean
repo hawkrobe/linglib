@@ -59,6 +59,7 @@ def mkVar (name : String) : Variable := ⟨name⟩
     undetermined.  Situations are *partial* functions — crucial for
     modeling what's "given" vs what's computed, and for counterfactual
     reasoning (removing a cause = setting it to false). -/
+@[ext]
 structure Situation where
   /-- The partial valuation: Variable → Option Bool -/
   valuation : Variable → Option Bool
@@ -99,6 +100,16 @@ instance : Inhabited Situation := ⟨Situation.empty⟩
 @[simp] theorem extend_hasValue_diff {s : Situation} {v w : Variable} {val bval : Bool}
     (h : w ≠ v) : (s.extend v val).hasValue w bval = s.hasValue w bval := by
   simp [hasValue, extend, h]
+
+/-- Extending at a value already present is identity. -/
+theorem extend_eq_self {s : Situation} {v : Variable} {val : Bool}
+    (h : s.hasValue v val = true) : s.extend v val = s := by
+  unfold hasValue at h; simp only [beq_iff_eq] at h
+  apply Situation.ext; funext w
+  simp only [extend]
+  by_cases hw : w = v
+  · subst hw; simp [h]
+  · simp [hw]
 
 end Situation
 
@@ -302,6 +313,51 @@ theorem normalDevelopment_fixpoint_at (dyn : CausalDynamics) (s : Situation)
       (fun k hk => hnfix (k + 1) (by omega))
       hfix
 
+/-- If a law's fixpoint condition holds (preconditions unmet or effect present),
+    applying the law is a no-op. -/
+theorem CausalLaw.apply_of_fixpoint {law : CausalLaw} {s : Situation}
+    (h : (!law.preconditionsMet s || s.hasValue law.effect law.effectValue) = true) :
+    law.apply s = s := by
+  by_cases hMet : law.preconditionsMet s = true
+  · simp only [hMet, Bool.not_true, Bool.false_or] at h
+    rw [apply_of_met hMet]
+    exact Situation.extend_eq_self h
+  · have : law.preconditionsMet s = false := by
+      cases hb : law.preconditionsMet s <;> simp_all
+    exact apply_of_not_met this
+
+/-- Folding law application over a fixpoint is identity. -/
+private theorem foldl_apply_fixpoint (laws : List CausalLaw) (s : Situation)
+    (h : ∀ l, l ∈ laws →
+      (!l.preconditionsMet s || s.hasValue l.effect l.effectValue) = true) :
+    laws.foldl (fun s' l => l.apply s') s = s := by
+  revert h
+  induction laws with
+  | nil => intro _; rfl
+  | cons hd tl ih =>
+    intro h
+    simp only [List.forall_mem_cons] at h
+    simp only [List.foldl_cons]
+    rw [CausalLaw.apply_of_fixpoint h.1]
+    exact ih h.2
+
+/-- Applying all laws to a fixpoint situation is a no-op. -/
+theorem applyLawsOnce_of_fixpoint {dyn : CausalDynamics} {s : Situation}
+    (h : isFixpoint dyn s = true) : applyLawsOnce dyn s = s := by
+  simp only [isFixpoint, List.all_eq_true] at h
+  exact foldl_apply_fixpoint dyn.laws s h
+
+/-- Normal development from a fixpoint is a no-op regardless of fuel. -/
+theorem normalDevelopment_of_fixpoint {dyn : CausalDynamics} {s : Situation}
+    (h : isFixpoint dyn s = true) (fuel : Nat) :
+    normalDevelopment dyn s fuel = s := by
+  induction fuel with
+  | zero => rfl
+  | succ n ih =>
+    have hApp : applyLawsOnce dyn s = s := applyLawsOnce_of_fixpoint h
+    have hFix : isFixpoint dyn (applyLawsOnce dyn s) = true := hApp.symm ▸ h
+    rw [normalDevelopment_succ_fix hFix, hApp]
+
 /-- Empty dynamics: any situation is a fixpoint. -/
 theorem empty_dynamics_fixpoint (s : Situation) :
     isFixpoint CausalDynamics.empty s = true := by
@@ -436,6 +492,38 @@ private theorem positive_foldl_absorbed
     simp only [List.foldl_cons, List.all_cons, Bool.and_eq_true] at *
     exact ih (law.apply s₁) hPos.2
       (positive_law_apply_absorbed law s₁ s₂ hPos.1.1 hPos.1.2 hLE hFix.1) hFix.2
+
+-- § Foldl sets witness effect (for convergence)
+
+/-- If a law `l` is in the list and its preconditions are met in `s`,
+    then after folding all positive laws, `l`'s effect is set.
+    Key helper for proving normalDevelopment convergence. -/
+private theorem foldl_sets_witness_effect :
+    ∀ (laws : List CausalLaw) (s : Situation) (l : CausalLaw),
+    laws.all (fun law => law.preconditions.all (·.2) && law.effectValue) = true →
+    l ∈ laws →
+    l.effectValue = true →
+    l.preconditionsMet s = true →
+    (laws.foldl (fun s' law => law.apply s') s).hasValue l.effect true = true
+  | [], _, _, _, hMem, _, _ => by simp at hMem
+  | hd :: tl, s, l, hPos, hMem, hPosEff, hMet => by
+    simp only [List.foldl_cons]
+    have hPosAll := hPos
+    simp only [List.all_cons, Bool.and_eq_true] at hPos
+    cases List.mem_cons.mp hMem with
+    | inl heq =>
+      subst heq
+      rw [CausalLaw.apply_of_met hMet]
+      have hSet : (s.extend l.effect l.effectValue).hasValue l.effect true = true := by
+        simp [Situation.hasValue, Situation.extend, hPosEff]
+      exact positive_foldl_grows tl (s.extend l.effect l.effectValue) hPos.2
+        l.effect hSet
+    | inr hmem =>
+      have hLE := positive_law_apply_grows hd s hPos.1.2
+      have hLPos := List.all_eq_true.mp hPos.2 l hmem
+      simp only [Bool.and_eq_true] at hLPos
+      have hMet' := positive_preconditions_monotone l s (hd.apply s) hLPos.1 hLE hMet
+      exact foldl_sets_witness_effect tl (hd.apply s) l hPos.2 hmem hPosEff hMet'
 
 -- § applyLawsOnce / normalDevelopment monotonicity
 
