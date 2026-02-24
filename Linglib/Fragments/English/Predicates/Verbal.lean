@@ -620,13 +620,14 @@ def worry : VerbEntry where
 -- § Verb Entries — Raising
 -- ════════════════════════════════════════════════════
 
-/-- "seem" — raising verb (no theta role for subject) -/
+/-- "seem" — raising verb (no theta role for subject, unaccusative) -/
 def seem : VerbEntry := .mkRegular {
   form := "seem"
   complementType := .infinitival
   subjectTheta := none
   controlType := .raising
-  passivizable := false }
+  passivizable := false
+  unaccusative := true }
 
 -- ════════════════════════════════════════════════════
 -- § Verb Entries — Causative (Periphrastic)
@@ -918,6 +919,82 @@ def claim : VerbEntry := .mkRegular {
   levinClass := some .say }
 
 -- ════════════════════════════════════════════════════
+-- § Verb Entries — Manner of Speaking (Levin 37.3)
+-- ════════════════════════════════════════════════════
+
+/-! Manner-of-speaking (MoS) verbs specify *how* something is said.
+    Storment (2026, NLLT) shows these divide into two classes:
+    - **QI-permitting** (unaccusative): whisper, murmur, shout, cry, scream
+    - **Non-QI** (unergative): speak, talk -/
+
+/-- "whisper" — MoS verb, permits quotative inversion (unaccusative) -/
+def whisper : VerbEntry := .mkRegular {
+  form := "whisper"
+  speechActVerb := true
+  complementType := .finiteClause
+  subjectTheta := some .theme
+  unaccusative := true
+  levinClass := some .mannerOfSpeaking }
+
+/-- "murmur" — MoS verb, permits quotative inversion (unaccusative) -/
+def murmur : VerbEntry := .mkRegular {
+  form := "murmur"
+  speechActVerb := true
+  complementType := .finiteClause
+  subjectTheta := some .theme
+  unaccusative := true
+  levinClass := some .mannerOfSpeaking }
+
+/-- "shout" — MoS verb, permits quotative inversion (unaccusative) -/
+def shout : VerbEntry := .mkRegular {
+  form := "shout"
+  speechActVerb := true
+  complementType := .finiteClause
+  subjectTheta := some .theme
+  unaccusative := true
+  levinClass := some .mannerOfSpeaking }
+
+/-- "cry" — MoS verb, permits quotative inversion (unaccusative) -/
+def cry : VerbEntry := .mkRegular {
+  form := "cry"
+  speechActVerb := true
+  complementType := .finiteClause
+  subjectTheta := some .theme
+  unaccusative := true
+  levinClass := some .mannerOfSpeaking }
+
+/-- "scream" — MoS verb, permits quotative inversion (unaccusative) -/
+def scream : VerbEntry := .mkRegular {
+  form := "scream"
+  speechActVerb := true
+  complementType := .finiteClause
+  subjectTheta := some .theme
+  unaccusative := true
+  levinClass := some .mannerOfSpeaking }
+
+/-- "speak" — agentive communication verb, blocks quotative inversion (unergative) -/
+def speak : VerbEntry where
+  form := "speak"
+  form3sg := "speaks"
+  formPast := "spoke"
+  formPastPart := "spoken"
+  formPresPart := "speaking"
+  speechActVerb := true
+  complementType := .none
+  subjectTheta := some .agent
+  passivizable := false
+  levinClass := some .mannerOfSpeaking
+
+/-- "talk" — agentive communication verb, blocks quotative inversion (unergative) -/
+def talk : VerbEntry := .mkRegular {
+  form := "talk"
+  speechActVerb := true
+  complementType := .none
+  subjectTheta := some .agent
+  passivizable := false
+  levinClass := some .mannerOfSpeaking }
+
+-- ════════════════════════════════════════════════════
 -- § Verb Entries — Question-Embedding
 -- ════════════════════════════════════════════════════
 
@@ -1010,6 +1087,8 @@ def allVerbs : List VerbEntry := [
   kill, break_, tear_, burn, destroy, melt,
   -- Communication
   say, tell, claim,
+  -- Manner of Speaking (Storment 2026)
+  whisper, murmur, shout, cry, scream, speak, talk,
   -- Question-embedding (Dayal 2025)
   wonder, ask, investigate, depend_on,
   -- Factive question-embedding senses
