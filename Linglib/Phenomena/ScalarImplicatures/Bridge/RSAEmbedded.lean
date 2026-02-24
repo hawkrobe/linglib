@@ -14,7 +14,7 @@ to empirical data from `Phenomena.ScalarImplicatures.Basic`.
 -/
 
 
-namespace RSA.EmbeddedScalars.Bridge
+namespace Phenomena.ScalarImplicatures.Bridge.RSAEmbedded
 
 open RSA.EmbeddedScalars
 open Phenomena.ScalarImplicatures
@@ -35,4 +35,4 @@ theorem empirical_pattern_documented :
     someAllBlocking.implicatureInUE = true := by
   native_decide
 
-end RSA.EmbeddedScalars.Bridge
+end Phenomena.ScalarImplicatures.Bridge.RSAEmbedded

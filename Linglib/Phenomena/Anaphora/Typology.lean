@@ -39,6 +39,8 @@ context counts, and strength-level counts.
 
 namespace Phenomena.Anaphora.Typology
 
+open Phenomena.Anaphora.Coreference
+
 open Core.Definiteness (ArticleType DefiniteUseType BridgingSubtype WeakArticleStrategy
   useTypeToPresupType bridgingPresupType DefPresupType)
 
@@ -561,8 +563,6 @@ theorem semantic_mapping_parallel :
 -- ============================================================================
 
 /-! ### Bridge 1: PronounClass ↔ AnaphorType (Coreference.lean) -/
-
--- AnaphorType is at root level from Coreference.lean (no namespace)
 
 /-- PER pronouns correspond to `AnaphorType.pronoun` in Coreference.lean.
 DEM pronouns have no direct AnaphorType counterpart — they are structurally

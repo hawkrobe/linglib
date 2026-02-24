@@ -28,7 +28,7 @@ possibleNecessaryDatum), we prove:
 - Horn, L. (1972). On the Semantic Properties of Logical Operators in English.
 -/
 
-namespace Phenomena.ScalarImplicatures.HornScaleBridge
+namespace Phenomena.ScalarImplicatures.Bridge.HornScale
 
 open Core.Scale
 open Phenomena.ScalarImplicatures
@@ -116,4 +116,4 @@ theorem entailment_reflexive :
     Connectives.entails .or_ .or_ = true ∧
     Modals.entails .possible .possible = true := by native_decide
 
-end Phenomena.ScalarImplicatures.HornScaleBridge
+end Phenomena.ScalarImplicatures.Bridge.HornScale

@@ -13,7 +13,7 @@ Lo Guercio, N. (2025). Maximize Conventional Implicatures!
 Semantics & Pragmatics, 18(9). https://doi.org/10.3765/sp.18.9
 -/
 
-namespace Phenomena.LoGuercio2025
+namespace Phenomena.Presupposition.Studies.LoGuercio2025
 
 
 /--
@@ -277,4 +277,4 @@ def expressionTypeCoverage : List (CIExpressionType × String × Bool) :=
   , (.supplementaryAdverb, "§3.2.3", true)                 -- "Luckily"
   , (.emotiveMarker, "§3.2.3", true) ]                     -- "Alas"
 
-end Phenomena.LoGuercio2025
+end Phenomena.Presupposition.Studies.LoGuercio2025

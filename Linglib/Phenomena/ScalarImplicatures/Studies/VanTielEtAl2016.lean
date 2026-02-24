@@ -34,7 +34,7 @@ https://doi.org/10.1093/jos/ffu017
 
 import Mathlib.Data.Rat.Defs
 
-namespace Phenomena.VanTielEtAl2016
+namespace Phenomena.ScalarImplicatures.Studies.VanTielEtAl2016
 
 
 /--
@@ -745,4 +745,4 @@ def mainConclusion : String :=
 - Complements Ronai (2024) embedded SI data
 -/
 
-end Phenomena.VanTielEtAl2016
+end Phenomena.ScalarImplicatures.Studies.VanTielEtAl2016

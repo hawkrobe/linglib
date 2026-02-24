@@ -54,7 +54,7 @@ with predictable cross-scale variation.
 
 import Mathlib.Data.Rat.Defs
 
-namespace Phenomena.Ronai2024
+namespace Phenomena.ScalarImplicatures.Studies.Ronai2024
 
 
 /--
@@ -702,4 +702,4 @@ theorem comprehensive_test :
     exp2Design.nScales = 42 := by
   native_decide
 
-end Phenomena.Ronai2024
+end Phenomena.ScalarImplicatures.Studies.Ronai2024

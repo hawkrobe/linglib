@@ -11,10 +11,11 @@ Proves that the CRDC analysis captures all reflexive coreference patterns,
 complementary distribution, and pronominal disjoint reference.
 -/
 
-namespace DepGrammar.CRDC.Bridge
+namespace Phenomena.Anaphora.Bridge.DGCRDC
 
 open DepGrammar.CRDC
 open DepGrammar.Nominal
+open Phenomena.Anaphora.Coreference
 
 -- ============================================================================
 -- Tests
@@ -84,4 +85,4 @@ theorem reflexive_pairs_captured :
      grammaticalForCoreference [they, see, himself] = false) := by
   native_decide
 
-end DepGrammar.CRDC.Bridge
+end Phenomena.Anaphora.Bridge.DGCRDC

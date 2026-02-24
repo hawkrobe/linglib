@@ -37,7 +37,7 @@ comparisons need to be re-derived using the new RSAConfig framework.
 `scalar_implicature_agreement`: Both theories derive "not all" from "some"
 -/
 
-namespace Phenomena.ScalarImplicatures.CompareAgreement
+namespace Phenomena.ScalarImplicatures.Bridge.TheoryAgreement
 
 open NeoGricean.ScalarImplicatures
 
@@ -89,4 +89,4 @@ The frameworks differ in mechanism but agree on predictions:
 RSA-side theorems are sorry'd pending RSAConfig re-implementation.
 -/
 
-end Phenomena.ScalarImplicatures.CompareAgreement
+end Phenomena.ScalarImplicatures.Bridge.TheoryAgreement

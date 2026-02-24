@@ -24,7 +24,7 @@ Cremers, A., Wilcox, E., & Spector, B. (2023). Exhaustivity and Anti-Exhaustivit
 in the RSA Framework. Semantics & Pragmatics.
 -/
 
-namespace RSA.Implementations.CremersWilcoxSpector2023
+namespace Phenomena.ScalarImplicatures.Bridge.RSACremersWilcoxSpector2023
 
 open Phenomena.ScalarImplicatures.Studies.CremersWilcoxSpector2023
 
@@ -68,4 +68,4 @@ theorem wonky_goals_count : allWonkyGoals.length = 2 := rfl
 theorem exh_meaning_blocks_wab :
     exhMeaning .w_ab .A = false := by rfl
 
-end RSA.Implementations.CremersWilcoxSpector2023
+end Phenomena.ScalarImplicatures.Bridge.RSACremersWilcoxSpector2023

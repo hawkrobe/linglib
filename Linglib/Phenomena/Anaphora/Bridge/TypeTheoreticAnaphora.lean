@@ -21,10 +21,11 @@ Phenomena files against TTR predictions.
 - Kanazawa (1994). Weak vs. Strong Readings of Donkey Sentences.
 -/
 
-namespace Phenomena.Anaphora.TypeTheoreticBridge
+namespace Phenomena.Anaphora.Bridge.TypeTheoreticAnaphora
 
 open Semantics.TypeTheoretic
 open Phenomena.Anaphora.DonkeyAnaphora
+open Phenomena.Anaphora.Coreference
 
 -- ============================================================================
 -- Bridge: TTR donkey predictions -> Phenomena/Anaphora/DonkeyAnaphora
@@ -149,4 +150,4 @@ theorem reflexive_predicts_binding :
     pronounPattern.antecedentDomain = some .nonlocal :=
   ⟨fun _ _ => rfl, fun _ _ => rfl, rfl, rfl, rfl, rfl, rfl⟩
 
-end Phenomena.Anaphora.TypeTheoreticBridge
+end Phenomena.Anaphora.Bridge.TypeTheoreticAnaphora

@@ -35,7 +35,7 @@ functions, and PrProp connection theorems are preserved. RSA computation
 stubs remain with `sorry` for future reimplementation.
 -/
 
-namespace Phenomena.Presupposition.Warstadt2022Bridge
+namespace Phenomena.Presupposition.Bridge.RSAWarstadt2022
 
 open Phenomena.Presupposition.Studies.Warstadt2022
 open Core.CommonGround
@@ -143,4 +143,4 @@ theorem notGreenCard_is_boolean_negation (w : GCWorld) :
     gcMeaning .notGreenCard w = !gcMeaning .greenCard w :=
   gcMeaning_notGreenCard_eq_neg w
 
-end Phenomena.Presupposition.Warstadt2022Bridge
+end Phenomena.Presupposition.Bridge.RSAWarstadt2022

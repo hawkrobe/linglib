@@ -34,7 +34,7 @@ to the BToM-grounded RSA model (`Theories.Pragmatics.RSA.Implementations`).
    always satisfy C, which biases the belief marginal toward C-assuming states.
 -/
 
-namespace Phenomena.Presupposition.Studies.ScontrasTonhauser2025BToMBridge
+namespace Phenomena.Presupposition.Bridge.ScontrasTonhauser2025BToM
 
 open RSA.ScontrasTonhauser2025
 open Core.BToM
@@ -115,4 +115,4 @@ theorem qud_effect_direction_matches :
       .qud = true := by
   native_decide
 
-end Phenomena.Presupposition.Studies.ScontrasTonhauser2025BToMBridge
+end Phenomena.Presupposition.Bridge.ScontrasTonhauser2025BToM

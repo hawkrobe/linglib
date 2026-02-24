@@ -19,9 +19,10 @@ formalization in `Theories.Pragmatics.NeoGricean.Core`.
    assumed by default, validated by Bale et al. as a *processing* default
 -/
 
-namespace Phenomena.ScalarImplicatures.Studies.BaleEtAl2025
+namespace Phenomena.ScalarImplicatures.Bridge.BaleEtAl2025
 
 open NeoGricean NeoGricean.Competence
+open Phenomena.ScalarImplicatures.Studies.BaleEtAl2025
 
 
 /-! ## Section 1: Speaker Knowledge → Belief State -/
@@ -174,4 +175,4 @@ theorem competence_default_is_simpleAssertion :
   exact ⟨rfl, rfl⟩
 
 
-end Phenomena.ScalarImplicatures.Studies.BaleEtAl2025
+end Phenomena.ScalarImplicatures.Bridge.BaleEtAl2025

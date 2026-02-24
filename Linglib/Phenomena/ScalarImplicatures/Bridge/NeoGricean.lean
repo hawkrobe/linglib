@@ -22,7 +22,7 @@ Geurts & Pouscoulous (2009) and the basic scalar implicature phenomena.
 - Geurts, B. (2010). Quantity Implicatures. Cambridge University Press.
 -/
 
-namespace Phenomena.ScalarImplicatures.NeoGriceanBridge
+namespace Phenomena.ScalarImplicatures.Bridge.NeoGricean
 
 open NeoGricean.ScalarImplicatures
 open NeoGricean.Alternatives
@@ -161,7 +161,7 @@ They share the Standard Recipe but differ on WHEN SIs get triggered.
 Here we derive predictions from each variant's parameters and compare to data.
 -/
 
-open NeoGricean
+open _root_.NeoGricean
 
 /--
 Derived: Defaultism predicts high neutral rate
@@ -290,4 +290,4 @@ theorem bothThenOr_prediction_matches_data :
   · intro _; exact bothThenOr_not_predicted_felicitous
 
 
-end Phenomena.ScalarImplicatures.NeoGriceanBridge
+end Phenomena.ScalarImplicatures.Bridge.NeoGricean

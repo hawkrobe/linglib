@@ -19,6 +19,8 @@ Empirical data on coreference constraints for reflexives, pronouns, and full nom
 
 import Linglib.Core.Grammar
 
+namespace Phenomena.Anaphora.Coreference
+
 private def john : Word := ⟨"John", .PROPN, { number := some .sg, person := some .third }⟩
 private def sees : Word := ⟨"sees", .VERB, { valence := some .transitive, number := some .sg, person := some .third }⟩
 private def himself : Word := ⟨"himself", .PRON, { person := some .third, number := some .sg }⟩
@@ -168,3 +170,5 @@ def namePattern : CoreferencePattern := {
 #eval wordsToString [john, sees, himself]
 #eval wordsToString [mary, sees, herself]
 #eval wordsToString [they, see, themselves]
+
+end Phenomena.Anaphora.Coreference

@@ -12,10 +12,11 @@ Proves that the DG analysis captures all reflexive coreference patterns,
 complementary distribution, and pronominal disjoint reference.
 -/
 
-namespace DepGrammar.Coreference.Bridge
+namespace Phenomena.Anaphora.Bridge.DGCoreference
 
 open DepGrammar.Coreference
 open DepGrammar.Nominal
+open Phenomena.Anaphora.Coreference
 
 -- ============================================================================
 -- Tests - Matching Phenomena/Anaphora/Coreference data
@@ -93,4 +94,4 @@ theorem reflexive_pairs_captured :
      grammaticalForCoreference [they, see, himself] = false) := by
   native_decide
 
-end DepGrammar.Coreference.Bridge
+end Phenomena.Anaphora.Bridge.DGCoreference

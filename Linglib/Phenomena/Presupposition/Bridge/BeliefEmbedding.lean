@@ -17,7 +17,7 @@ under belief predicates, and verifies trigger-specific predictions.
   Projective Content. Language 89(1).
 -/
 
-namespace Phenomena.Presupposition.BeliefEmbeddingBridge
+namespace Phenomena.Presupposition.Bridge.BeliefEmbedding
 
 open Semantics.Presupposition.BeliefEmbedding
 open Phenomena.Presupposition.ProjectiveContent
@@ -70,4 +70,4 @@ Class B triggers (expressives, appositives) have OLE=no.
 example : ProjectiveTrigger.expressive.toClass.ole = .notObligatory := rfl
 example : ProjectiveTrigger.appositive.toClass.ole = .notObligatory := rfl
 
-end Phenomena.Presupposition.BeliefEmbeddingBridge
+end Phenomena.Presupposition.Bridge.BeliefEmbedding

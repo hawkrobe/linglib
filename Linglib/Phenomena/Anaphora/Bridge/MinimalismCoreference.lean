@@ -15,9 +15,10 @@ coreference data in `Phenomena.Anaphora.Coreference`.
 - `reflexive_pairs_captured`: Per-pair verification
 -/
 
-namespace Phenomena.Anaphora.MinimalismBridge
+namespace Phenomena.Anaphora.Bridge.MinimalismCoreference
 
 open Minimalism.Phenomena.Coreference
+open Phenomena.Anaphora.Coreference
 
 /-- Check if Minimalism correctly predicts a minimal pair for coreference.
 
@@ -70,4 +71,4 @@ theorem reflexive_pairs_captured :
      grammaticalForCoreference [they, see, himself] = false) := by
   native_decide
 
-end Phenomena.Anaphora.MinimalismBridge
+end Phenomena.Anaphora.Bridge.MinimalismCoreference

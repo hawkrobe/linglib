@@ -19,7 +19,7 @@ examples from Phenomena for NeoGricean SI computation.
 -/
 
 
-namespace Phenomena.Presupposition.NeoGriceanBridge
+namespace Phenomena.Presupposition.Bridge.NeoGricean
 
 open Core.Presupposition
 open NeoGricean.Presuppositions
@@ -70,4 +70,4 @@ involving that trigger may behave differently.
 theorem filtering_removes_trigger :
     ifKingThenBaldDerivation.triggers = [] := rfl
 
-end Phenomena.Presupposition.NeoGriceanBridge
+end Phenomena.Presupposition.Bridge.NeoGricean

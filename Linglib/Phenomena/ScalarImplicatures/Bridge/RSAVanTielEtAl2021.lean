@@ -8,13 +8,12 @@ Connects the RSA quantity-word production model to empirical
 monotonicity classifications from `Phenomena.ScalarImplicatures.Studies.VanTielEtAl2021`.
 -/
 
-namespace RSA.VanTielEtAl2021.Bridge
+namespace Phenomena.ScalarImplicatures.Bridge.RSAVanTielEtAl2021
 
 open RSA.VanTielEtAl2021
-open VanTielQuantity
 
 /-- Convert our QuantityWord to Phenomena type -/
-def toDataWord : VanTielQuantity.Utterance → Phenomena.VanTielEtAl2021.QuantityWord
+def toDataWord : VanTielQuantity.Utterance → Phenomena.ScalarImplicatures.Studies.VanTielEtAl2021.QuantityWord
   | .none_ => .none_
   | .few   => .few
   | .some_ => .some_
@@ -31,13 +30,15 @@ inferences, while we add a third category for non-monotonic quantifiers.
 -/
 theorem monotonicity_matches_data_increasing (q : VanTielQuantity.Utterance) :
     q ≠ .half →
-    (monotonicity q = .increasing) ↔
-    (Phenomena.VanTielEtAl2021.monotonicity (toDataWord q) = .increasing) := by
+    (monotonicity q = Fragments.English.Determiners.Monotonicity.increasing) ↔
+    (Phenomena.ScalarImplicatures.Studies.VanTielEtAl2021.monotonicity (toDataWord q) =
+      Phenomena.ScalarImplicatures.Studies.VanTielEtAl2021.Monotonicity.increasing) := by
   cases q <;> native_decide
 
 theorem monotonicity_matches_data_decreasing (q : VanTielQuantity.Utterance) :
-    (monotonicity q = .decreasing) ↔
-    (Phenomena.VanTielEtAl2021.monotonicity (toDataWord q) = .decreasing) := by
+    (monotonicity q = Fragments.English.Determiners.Monotonicity.decreasing) ↔
+    (Phenomena.ScalarImplicatures.Studies.VanTielEtAl2021.monotonicity (toDataWord q) =
+      Phenomena.ScalarImplicatures.Studies.VanTielEtAl2021.Monotonicity.decreasing) := by
   cases q <;> native_decide
 
-end RSA.VanTielEtAl2021.Bridge
+end Phenomena.ScalarImplicatures.Bridge.RSAVanTielEtAl2021

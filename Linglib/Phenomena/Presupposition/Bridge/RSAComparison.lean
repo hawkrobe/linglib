@@ -71,10 +71,10 @@ Qing/Warstadt argue "common ground" is appropriate because:
 
 import Linglib.Theories.Pragmatics.RSA.Implementations.QingEtAl2016
 import Linglib.Theories.Pragmatics.RSA.Implementations.ScontrasTonhauser2025
-import Linglib.Phenomena.Presupposition.RSA_Warstadt2022Bridge
+import Linglib.Phenomena.Presupposition.Bridge.RSAWarstadt2022
 import Linglib.Theories.Semantics.Dynamic.State
 
-namespace Phenomena.Presupposition.Compare
+namespace Phenomena.Presupposition.Bridge.RSAComparison
 
 
 /-!
@@ -612,4 +612,4 @@ The computation is **identical**; only the types differ.
 -/
 
 
-end Phenomena.Presupposition.Compare
+end Phenomena.Presupposition.Bridge.RSAComparison

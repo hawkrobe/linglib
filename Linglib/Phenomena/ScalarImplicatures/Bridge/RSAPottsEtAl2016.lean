@@ -8,7 +8,7 @@ Connects the Potts et al. (2016) lexical uncertainty RSA model
 to empirical DE/UE blocking data from `Phenomena.ScalarImplicatures.Basic`.
 -/
 
-namespace RSA.PottsLU.Bridge
+namespace Phenomena.ScalarImplicatures.Bridge.RSAPottsEtAl2016
 
 open Phenomena.ScalarImplicatures
 
@@ -22,4 +22,4 @@ theorem potts_model_ue_prediction :
     someAllBlocking.implicatureInUE = true := by
   native_decide
 
-end RSA.PottsLU.Bridge
+end Phenomena.ScalarImplicatures.Bridge.RSAPottsEtAl2016

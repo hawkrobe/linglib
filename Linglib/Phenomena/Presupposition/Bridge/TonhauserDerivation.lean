@@ -16,7 +16,7 @@ Schlenker derives Tonhauser.
 - Schlenker (2009). Local Contexts. Semantics & Pragmatics 2:3.
 -/
 
-namespace Phenomena.Presupposition.TonhauserDerivationBridge
+namespace Phenomena.Presupposition.Bridge.TonhauserDerivation
 
 open Core.Presupposition
 open Core.Proposition
@@ -237,4 +237,4 @@ Prediction: Referent existence attributed to Mary (OLE=yes).
 theorem pronoun_shifts_under_belief :
     ProjectiveTrigger.pronoun_existence.toClass.ole = .obligatory := rfl
 
-end Phenomena.Presupposition.TonhauserDerivationBridge
+end Phenomena.Presupposition.Bridge.TonhauserDerivation

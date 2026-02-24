@@ -26,7 +26,7 @@ GQ-pragmatic model explains gradience as well as prototype-based models.
 
 import Mathlib.Data.Rat.Defs
 
-namespace Phenomena.VanTielEtAl2021
+namespace Phenomena.ScalarImplicatures.Studies.VanTielEtAl2021
 
 -- Quantity Words Used in Experiments
 
@@ -264,4 +264,4 @@ def exp4_participants : Nat := 200
 /-- These 17 quantity words account for 87% of production data -/
 def coveragePercent : Nat := 87
 
-end Phenomena.VanTielEtAl2021
+end Phenomena.ScalarImplicatures.Studies.VanTielEtAl2021

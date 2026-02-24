@@ -25,7 +25,7 @@ Fuzzy interpretations in a possibly wonky world". SCiL 2025.
 -/
 
 
-namespace Phenomena.Presupposition.HeKaiserIskarous2025Bridge
+namespace Phenomena.Presupposition.Bridge.RSAHeKaiserIskarous2025
 
 open Phenomena.Presupposition.Studies.HeKaiserIskarous2025
 
@@ -324,4 +324,4 @@ The He et al. model is now grounded in Montague semantics:
 This connects the RSA pragmatic model to compositional formal semantics.
 -/
 
-end Phenomena.Presupposition.HeKaiserIskarous2025Bridge
+end Phenomena.Presupposition.Bridge.RSAHeKaiserIskarous2025

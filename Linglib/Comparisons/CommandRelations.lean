@@ -47,10 +47,10 @@ import Linglib.Theories.Syntax.Minimalism.Coreference
 import Linglib.Theories.Syntax.HPSG.Coreference
 import Linglib.Theories.Syntax.DependencyGrammar.Coreference
 import Linglib.Theories.Syntax.DependencyGrammar.CRDC
-import Linglib.Phenomena.Anaphora.MinimalismBridge
-import Linglib.Phenomena.Anaphora.HPSGBridge
-import Linglib.Phenomena.Anaphora.DG_CoreferenceBridge
-import Linglib.Phenomena.Anaphora.DG_CRDCBridge
+import Linglib.Phenomena.Anaphora.Bridge.MinimalismCoreference
+import Linglib.Phenomena.Anaphora.Bridge.HPSGCoreference
+import Linglib.Phenomena.Anaphora.Bridge.DGCoreference
+import Linglib.Phenomena.Anaphora.Bridge.DGCRDC
 import Linglib.Core.Interface
 import Mathlib.Data.Set.Basic
 import Mathlib.Order.GaloisConnection.Basic
@@ -73,6 +73,7 @@ private abbrev them := Fragments.English.Pronouns.them.toWord
 namespace Comparisons.CommandRelations
 
 open Set
+open Phenomena.Anaphora.Coreference
 
 -- PART A: BARKER & PULLUM (1990) ABSTRACT FRAMEWORK
 
@@ -492,49 +493,49 @@ the command relations must agree.
 All four theories correctly predict the reflexive coreference patterns.
 -/
 theorem all_theories_capture_reflexive_coreference :
-    Phenomena.Anaphora.MinimalismBridge.capturesCoreferenceData reflexiveCoreferenceData = true ∧
-    Phenomena.Anaphora.HPSGBridge.capturesCoreferenceData reflexiveCoreferenceData = true ∧
-    DepGrammar.Coreference.Bridge.capturesCoreferenceData reflexiveCoreferenceData = true ∧
-    DepGrammar.CRDC.Bridge.capturesCoreferenceData reflexiveCoreferenceData = true := by
+    Phenomena.Anaphora.Bridge.MinimalismCoreference.capturesCoreferenceData reflexiveCoreferenceData = true ∧
+    Phenomena.Anaphora.Bridge.HPSGCoreference.capturesCoreferenceData reflexiveCoreferenceData = true ∧
+    Phenomena.Anaphora.Bridge.DGCoreference.capturesCoreferenceData reflexiveCoreferenceData = true ∧
+    Phenomena.Anaphora.Bridge.DGCRDC.capturesCoreferenceData reflexiveCoreferenceData = true := by
   constructor
-  · exact Phenomena.Anaphora.MinimalismBridge.captures_reflexive_coreference
+  · exact Phenomena.Anaphora.Bridge.MinimalismCoreference.captures_reflexive_coreference
   constructor
-  · exact Phenomena.Anaphora.HPSGBridge.captures_reflexive_coreference
+  · exact Phenomena.Anaphora.Bridge.HPSGCoreference.captures_reflexive_coreference
   constructor
-  · exact DepGrammar.Coreference.Bridge.captures_reflexive_coreference
-  · exact DepGrammar.CRDC.Bridge.captures_reflexive_coreference
+  · exact Phenomena.Anaphora.Bridge.DGCoreference.captures_reflexive_coreference
+  · exact Phenomena.Anaphora.Bridge.DGCRDC.captures_reflexive_coreference
 
 /--
 **Main Agreement Theorem: Complementary Distribution**
 -/
 theorem all_theories_capture_complementary_distribution :
-    Phenomena.Anaphora.MinimalismBridge.capturesCoreferenceData complementaryDistributionData = true ∧
-    Phenomena.Anaphora.HPSGBridge.capturesCoreferenceData complementaryDistributionData = true ∧
-    DepGrammar.Coreference.Bridge.capturesCoreferenceData complementaryDistributionData = true ∧
-    DepGrammar.CRDC.Bridge.capturesCoreferenceData complementaryDistributionData = true := by
+    Phenomena.Anaphora.Bridge.MinimalismCoreference.capturesCoreferenceData complementaryDistributionData = true ∧
+    Phenomena.Anaphora.Bridge.HPSGCoreference.capturesCoreferenceData complementaryDistributionData = true ∧
+    Phenomena.Anaphora.Bridge.DGCoreference.capturesCoreferenceData complementaryDistributionData = true ∧
+    Phenomena.Anaphora.Bridge.DGCRDC.capturesCoreferenceData complementaryDistributionData = true := by
   constructor
-  · exact Phenomena.Anaphora.MinimalismBridge.captures_complementary_distribution
+  · exact Phenomena.Anaphora.Bridge.MinimalismCoreference.captures_complementary_distribution
   constructor
-  · exact Phenomena.Anaphora.HPSGBridge.captures_complementary_distribution
+  · exact Phenomena.Anaphora.Bridge.HPSGCoreference.captures_complementary_distribution
   constructor
-  · exact DepGrammar.Coreference.Bridge.captures_complementary_distribution
-  · exact DepGrammar.CRDC.Bridge.captures_complementary_distribution
+  · exact Phenomena.Anaphora.Bridge.DGCoreference.captures_complementary_distribution
+  · exact Phenomena.Anaphora.Bridge.DGCRDC.captures_complementary_distribution
 
 /--
 **Main Agreement Theorem: Pronominal Disjoint Reference**
 -/
 theorem all_theories_capture_pronominal_disjoint_reference :
-    Phenomena.Anaphora.MinimalismBridge.capturesCoreferenceData pronominalDisjointReferenceData = true ∧
-    Phenomena.Anaphora.HPSGBridge.capturesCoreferenceData pronominalDisjointReferenceData = true ∧
-    DepGrammar.Coreference.Bridge.capturesCoreferenceData pronominalDisjointReferenceData = true ∧
-    DepGrammar.CRDC.Bridge.capturesCoreferenceData pronominalDisjointReferenceData = true := by
+    Phenomena.Anaphora.Bridge.MinimalismCoreference.capturesCoreferenceData pronominalDisjointReferenceData = true ∧
+    Phenomena.Anaphora.Bridge.HPSGCoreference.capturesCoreferenceData pronominalDisjointReferenceData = true ∧
+    Phenomena.Anaphora.Bridge.DGCoreference.capturesCoreferenceData pronominalDisjointReferenceData = true ∧
+    Phenomena.Anaphora.Bridge.DGCRDC.capturesCoreferenceData pronominalDisjointReferenceData = true := by
   constructor
-  · exact Phenomena.Anaphora.MinimalismBridge.captures_pronominal_disjoint_reference
+  · exact Phenomena.Anaphora.Bridge.MinimalismCoreference.captures_pronominal_disjoint_reference
   constructor
-  · exact Phenomena.Anaphora.HPSGBridge.captures_pronominal_disjoint_reference
+  · exact Phenomena.Anaphora.Bridge.HPSGCoreference.captures_pronominal_disjoint_reference
   constructor
-  · exact DepGrammar.Coreference.Bridge.captures_pronominal_disjoint_reference
-  · exact DepGrammar.CRDC.Bridge.captures_pronominal_disjoint_reference
+  · exact Phenomena.Anaphora.Bridge.DGCoreference.captures_pronominal_disjoint_reference
+  · exact Phenomena.Anaphora.Bridge.DGCRDC.captures_pronominal_disjoint_reference
 
 -- D.2: Interface-Based Comparison
 

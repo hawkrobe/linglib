@@ -20,7 +20,7 @@ Parameter from `Theories.Semantics.Lexical.Noun.Kind.Chierchia1998`.
 - English [+arg, +pred] prediction (no system) not yet connected to data
 -/
 
-namespace Phenomena.Agreement.NounCategorization.Bridge
+namespace Phenomena.Agreement.Bridge.NounCategorization
 
 open Core.NounCategorization
 open Semantics.Lexical.Noun.Kind.Chierchia1998 (NominalMapping)
@@ -73,4 +73,4 @@ theorem french_chierchia_consistent :
     some french.classifierType =
       nominalMappingToClassifierType Fragments.French.Nouns.frenchMapping := rfl
 
-end Phenomena.Agreement.NounCategorization.Bridge
+end Phenomena.Agreement.Bridge.NounCategorization

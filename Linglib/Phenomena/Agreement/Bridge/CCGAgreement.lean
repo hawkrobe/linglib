@@ -27,7 +27,7 @@ CCG.DerivStep                    ← Syntactic derivation
 ```
 -/
 
-namespace CCG.Bridge.Agreement
+namespace Phenomena.Agreement.Bridge.CCGAgreement
 
 open CCG
 open CCG.FromFragments
@@ -117,4 +117,4 @@ This requires:
 - The lexicon to assign correct features
 -/
 
-end CCG.Bridge.Agreement
+end Phenomena.Agreement.Bridge.CCGAgreement
