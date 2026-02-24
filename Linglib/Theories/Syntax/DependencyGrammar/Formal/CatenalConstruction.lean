@@ -144,45 +144,6 @@ theorem CatenalCx.singleton_isContiguous (cx : Construction) (tree : DepTree)
 -- §5: Constituent–Catena Relationship
 -- ============================================================================
 
-/-- Append a step to the end of a bidirectional path. -/
-private theorem bidir_step_append {deps : List Dependency} {allowed : List Nat}
-    {u v w : Nat}
-    (h : BidirReachable deps allowed u v) (hv : v ∈ allowed) (hw : w ∈ allowed)
-    (hedge : ∃ d ∈ deps, (d.headIdx = v ∧ d.depIdx = w) ∨
-                          (d.depIdx = v ∧ d.headIdx = w)) :
-    BidirReachable deps allowed u w := by
-  revert hv hedge
-  induction h with
-  | here _ hq =>
-    intro hqmem hedge
-    exact .step _ _ w hqmem hw hedge (.here w hw)
-  | step a b _ ha hb hedgeAB _ ih =>
-    intro hcmem hedge
-    exact .step a b w ha hb hedgeAB (ih hcmem hedge)
-
-/-- Bidirectional reachability is symmetric (reverse the path, flip edges). -/
-private theorem bidir_symm {deps : List Dependency} {allowed : List Nat}
-    {u v : Nat} (h : BidirReachable deps allowed u v) :
-    BidirReachable deps allowed v u := by
-  induction h with
-  | here w hw => exact .here w hw
-  | step a b _ ha hb hedge _ ih =>
-    have hedge' : ∃ d ∈ deps, (d.headIdx = b ∧ d.depIdx = a) ∨
-                                (d.depIdx = b ∧ d.headIdx = a) := by
-      obtain ⟨d, hd, hor⟩ := hedge
-      exact ⟨d, hd, hor.elim (fun ⟨h1, h2⟩ => Or.inr ⟨h2, h1⟩)
-                              (fun ⟨h1, h2⟩ => Or.inl ⟨h2, h1⟩)⟩
-    exact bidir_step_append ih hb ha hedge'
-
-/-- Bidirectional reachability is transitive. -/
-private theorem bidir_trans {deps : List Dependency} {allowed : List Nat}
-    {u v w : Nat} (h1 : BidirReachable deps allowed u v)
-    (h2 : BidirReachable deps allowed v w) :
-    BidirReachable deps allowed u w := by
-  induction h1 with
-  | here _ _ => exact h2
-  | step a b _ ha hb hedge _ ih => exact .step a b w ha hb hedge (ih h2)
-
 /-- Lift bidirectional reachability to a superset of allowed nodes. -/
 private theorem bidir_lift {deps : List Dependency} {allowed allowed' : List Nat}
     {u v : Nat} (hsub : ∀ x, x ∈ allowed → x ∈ allowed')

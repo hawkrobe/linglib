@@ -371,6 +371,45 @@ inductive BidirReachable (deps : List Dependency) (allowed : List Nat) :
                     (d.depIdx = u ∧ d.headIdx = v)) →
       BidirReachable deps allowed v w → BidirReachable deps allowed u w
 
+/-- Append a step to the end of a bidirectional path. -/
+theorem bidir_step_append {deps : List Dependency} {allowed : List Nat}
+    {u v w : Nat}
+    (h : BidirReachable deps allowed u v) (hv : v ∈ allowed) (hw : w ∈ allowed)
+    (hedge : ∃ d ∈ deps, (d.headIdx = v ∧ d.depIdx = w) ∨
+                          (d.depIdx = v ∧ d.headIdx = w)) :
+    BidirReachable deps allowed u w := by
+  revert hv hedge
+  induction h with
+  | here _ hq =>
+    intro hqmem hedge
+    exact .step _ _ w hqmem hw hedge (.here w hw)
+  | step a b _ ha hb hedgeAB _ ih =>
+    intro hcmem hedge
+    exact .step a b w ha hb hedgeAB (ih hcmem hedge)
+
+/-- Bidirectional reachability is symmetric (reverse the path, flip edges). -/
+theorem bidir_symm {deps : List Dependency} {allowed : List Nat}
+    {u v : Nat} (h : BidirReachable deps allowed u v) :
+    BidirReachable deps allowed v u := by
+  induction h with
+  | here w hw => exact .here w hw
+  | step a b _ ha hb hedge _ ih =>
+    have hedge' : ∃ d ∈ deps, (d.headIdx = b ∧ d.depIdx = a) ∨
+                                (d.depIdx = b ∧ d.headIdx = a) := by
+      obtain ⟨d, hd, hor⟩ := hedge
+      exact ⟨d, hd, hor.elim (fun ⟨h1, h2⟩ => Or.inr ⟨h2, h1⟩)
+                              (fun ⟨h1, h2⟩ => Or.inl ⟨h2, h1⟩)⟩
+    exact bidir_step_append ih hb ha hedge'
+
+/-- Bidirectional reachability is transitive. -/
+theorem bidir_trans {deps : List Dependency} {allowed : List Nat}
+    {u v w : Nat} (h1 : BidirReachable deps allowed u v)
+    (h2 : BidirReachable deps allowed v w) :
+    BidirReachable deps allowed u w := by
+  induction h1 with
+  | here _ _ => exact h2
+  | step a b _ ha hb hedge _ ih => exact .step a b w ha hb hedge (ih h2)
+
 /-- The start node is always in the `bfsReachable` output. -/
 private theorem start_mem_bfsReachable (deps : List Dependency) (allowed : List Nat)
     (start : Nat) : start ∈ bfsReachable deps allowed start := by
@@ -663,38 +702,292 @@ theorem IsCatena_singleton {n : Nat} (G : SimpleGraph (Fin n)) (v : Fin n) :
 -- Bridge: isCatena (Bool) ↔ IsCatena (Prop)
 -- ============================================================================
 
+-- Abbreviation for the filterMap/toFinset construction used in isCatena_iff_IsCatena.
+private abbrev nodesToFinset (n : Nat) (nodes : List Nat) : Finset (Fin n) :=
+  (nodes.filterMap (fun i => if h : i < n then some ⟨i, h⟩ else none)).toFinset
+
+/-- A natural number `v` with `v < n` is in the filterMap/toFinset construction
+    iff `v` is in the original `nodes` list. -/
+private theorem mem_nodesToFinset_iff {n : Nat} {nodes : List Nat}
+    (_hbounds : ∀ i ∈ nodes, i < n) (v : Fin n) :
+    v ∈ nodesToFinset n nodes ↔ v.val ∈ nodes := by
+  simp only [nodesToFinset, List.mem_toFinset, List.mem_filterMap]
+  constructor
+  · rintro ⟨i, hi, hif⟩
+    split at hif
+    · simp only [Option.some.injEq] at hif; subst hif; exact hi
+    · exact absurd hif (by simp)
+  · intro hv
+    exact ⟨v.val, hv, by simp [v.isLt]⟩
+
+/-- If `nodes` is non-empty and all elements are `< n`, then the finset is non-empty. -/
+private theorem nodesToFinset_nonempty {n : Nat} {nodes : List Nat}
+    (hbounds : ∀ i ∈ nodes, i < n) (hne : nodes ≠ []) :
+    (nodesToFinset n nodes).Nonempty := by
+  obtain ⟨x, hx⟩ := List.exists_mem_of_ne_nil nodes hne
+  exact ⟨⟨x, hbounds x hx⟩, (mem_nodesToFinset_iff hbounds _).mpr hx⟩
+
+/-- Converse of `mem_neighbors_of_edge`: if `c` appears in the BFS neighbor
+    filterMap for `node`, then there is a dependency edge witness. -/
+private theorem edge_of_mem_neighbors (deps : List Dependency) (allowed : List Nat)
+    (node c : Nat)
+    (hc : c ∈ (deps.filterMap fun d =>
+      if d.headIdx == node && allowed.contains d.depIdx then some d.depIdx
+      else if d.depIdx == node && allowed.contains d.headIdx then some d.headIdx
+      else none)) :
+    c ∈ allowed ∧ ∃ d ∈ deps, (d.headIdx = node ∧ d.depIdx = c) ∨
+                                (d.depIdx = node ∧ d.headIdx = c) := by
+  induction deps with
+  | nil => exact absurd hc (by simp)
+  | cons d ds ih =>
+    simp only [List.filterMap_cons] at hc
+    by_cases h1 : (d.headIdx == node && allowed.contains d.depIdx) = true
+    · rw [if_pos h1] at hc
+      rcases List.mem_cons.mp hc with rfl | hc
+      · rw [Bool.and_eq_true] at h1
+        exact ⟨List.mem_of_elem_eq_true h1.2,
+               d, List.mem_cons_self,
+               Or.inl ⟨beq_iff_eq.mp h1.1, rfl⟩⟩
+      · obtain ⟨hmem, d', hd', hor⟩ := ih hc
+        exact ⟨hmem, d', List.mem_cons_of_mem _ hd', hor⟩
+    · simp only [Bool.eq_false_iff.mpr h1] at hc
+      by_cases h2 : (d.depIdx == node && allowed.contains d.headIdx) = true
+      · rw [if_pos h2] at hc
+        rcases List.mem_cons.mp hc with rfl | hc
+        · rw [Bool.and_eq_true] at h2
+          exact ⟨List.mem_of_elem_eq_true h2.2,
+                 d, List.mem_cons_self,
+                 Or.inr ⟨beq_iff_eq.mp h2.1, rfl⟩⟩
+        · obtain ⟨hmem, d', hd', hor⟩ := ih hc
+          exact ⟨hmem, d', List.mem_cons_of_mem _ hd', hor⟩
+      · simp only [Bool.eq_false_iff.mpr h2] at hc
+        obtain ⟨hmem, d', hd', hor⟩ := ih hc
+        exact ⟨hmem, d', List.mem_cons_of_mem _ hd', hor⟩
+
+/-- BFS soundness for `go`: every element in the output is either in the initial
+    `visited` set, or is `BidirReachable` from some element in the initial `queue`.
+    Requires queue elements to be in `allowed` (invariant maintained by BFS). -/
+private theorem go_sound (deps : List Dependency) (allowed : List Nat)
+    (queue visited : List Nat) (fuel : Nat)
+    (hqueue : ∀ x ∈ queue, x ∈ allowed) :
+    ∀ x ∈ bfsReachable.go deps allowed queue visited fuel,
+      x ∈ visited ∨ ∃ q ∈ queue, BidirReachable deps allowed q x := by
+  induction fuel generalizing queue visited with
+  | zero => intro x hx; exact Or.inl hx
+  | succ fuel' ih =>
+    match queue with
+    | [] => intro x hx; exact Or.inl hx
+    | node :: rest =>
+      intro x hx
+      show x ∈ visited ∨ ∃ q ∈ (node :: rest), BidirReachable deps allowed q x
+      unfold bfsReachable.go at hx
+      have hnode_allowed : node ∈ allowed :=
+        hqueue node (List.mem_cons.mpr (Or.inl rfl))
+      have hrest_sub : ∀ y ∈ rest, y ∈ allowed :=
+        fun y hy => hqueue y (List.mem_cons.mpr (Or.inr hy))
+      by_cases hcont : (visited.contains node) = true
+      · -- Skip: node already visited
+        simp only [hcont, ↓reduceIte] at hx
+        rcases ih rest visited hrest_sub x hx with h | ⟨q, hq, hreach⟩
+        · exact Or.inl h
+        · exact Or.inr ⟨q, List.mem_cons.mpr (Or.inr hq), hreach⟩
+      · -- Process: node not visited
+        simp only [hcont] at hx
+        set nbrs := deps.filterMap fun d =>
+          if d.headIdx == node && allowed.contains d.depIdx then some d.depIdx
+          else if d.depIdx == node && allowed.contains d.headIdx then some d.headIdx
+          else none with nbrs_def
+        have hqueue' : ∀ y ∈ rest ++ nbrs, y ∈ allowed := by
+          intro y hy
+          rcases List.mem_append.mp hy with hr | hn
+          · exact hrest_sub y hr
+          · exact nbrs_subset_allowed deps allowed node y (nbrs_def ▸ hn)
+        rcases ih (rest ++ nbrs) (node :: visited) hqueue' x hx with h | ⟨q, hq, hreach⟩
+        · -- x ∈ node :: visited
+          rcases List.mem_cons.mp h with rfl | hv
+          · exact Or.inr ⟨x, List.mem_cons.mpr (Or.inl rfl),
+              .here x hnode_allowed⟩
+          · exact Or.inl hv
+        · -- q ∈ rest ++ nbrs
+          rcases List.mem_append.mp hq with hr | hn
+          · exact Or.inr ⟨q, List.mem_cons.mpr (Or.inr hr), hreach⟩
+          · -- q is a neighbor of node: BidirReachable node q, compose with hreach
+            have hinfo := edge_of_mem_neighbors deps allowed node q (nbrs_def ▸ hn)
+            exact Or.inr ⟨node, List.mem_cons.mpr (Or.inl rfl),
+              .step node q x hnode_allowed hinfo.1 hinfo.2 hreach⟩
+
+/-- BFS soundness: every node in `bfsReachable` output is `BidirReachable`
+    from `start` within `allowed`. -/
+private theorem bfsReachable_sound (deps : List Dependency) (allowed : List Nat)
+    (start : Nat) (hstart : start ∈ allowed) :
+    ∀ x ∈ bfsReachable deps allowed start,
+      BidirReachable deps allowed start x := by
+  intro x hx
+  unfold bfsReachable at hx
+  rcases go_sound deps allowed [start] [] _
+    (fun y hy => by rwa [List.mem_singleton.mp hy]) x hx with habs | ⟨q, hq, hreach⟩
+  · exact nomatch habs
+  · have hq_eq := List.mem_singleton.mp hq; subst hq_eq; exact hreach
+
+-- Abbreviation for induced subgraph vertex type.
+private abbrev IV (n : Nat) (nodes : List Nat) :=
+  { x : Fin n // x ∈ (↑(nodesToFinset n nodes) : Set (Fin n)) }
+
+/-- Extract node membership from an induced vertex. -/
+private def ivMem {n : Nat} {nodes : List Nat} (hbounds : ∀ i ∈ nodes, i < n)
+    (x : IV n nodes) : x.val.val ∈ nodes :=
+  (mem_nodesToFinset_iff hbounds x.val).mp (Finset.mem_coe.mp x.property)
+
+set_option maxHeartbeats 800000 in
+/-- Bridge: `BidirReachable` on `Nat` indices implies `SimpleGraph.Reachable`
+    on the induced subgraph vertices. Universally quantified over subtype
+    witnesses to ensure the IH is properly parameterized. -/
+private theorem bidirReachable_to_reachable {n : Nat} (deps : List Dependency)
+    (nodes : List Nat) (hbounds : ∀ i ∈ nodes, i < n) :
+    ∀ {u v : Nat}, BidirReachable deps nodes u v →
+    ∀ (u' v' : IV n nodes),
+    u'.val.val = u → v'.val.val = v →
+    ((depsToSimpleGraph n deps).induce
+      (↑(nodesToFinset n nodes) : Set (Fin n))).Reachable u' v' := by
+  intro u v h
+  induction h with
+  | here _ _ =>
+    intro u' v' hu' hv'
+    exact (Subtype.ext (Fin.ext (hu'.trans hv'.symm))) ▸ SimpleGraph.Reachable.refl _
+  | step a b _ ha hb hedge _ ih =>
+    intro u' v' hu' hv'
+    by_cases hab : a = b
+    · subst hab; exact ih u' v' hu' hv'
+    · let b' : IV n nodes :=
+        ⟨⟨b, hbounds b hb⟩, (mem_nodesToFinset_iff hbounds _).mpr hb⟩
+      have hadj_ind : ((depsToSimpleGraph n deps).induce
+          (↑(nodesToFinset n nodes) : Set (Fin n))).Adj u' b' := by
+        show (depsToSimpleGraph n deps).Adj u'.val b'.val
+        exact ⟨fun heq => hab (hu' ▸ congrArg Fin.val heq),
+               hedge.elim fun d hd => ⟨d, hd.1, hd.2.elim
+                 (fun ⟨h1, h2⟩ => Or.inl ⟨hu'.symm ▸ h1, h2⟩)
+                 (fun ⟨h1, h2⟩ => Or.inr ⟨h2, hu'.symm ▸ h1⟩)⟩⟩
+      exact SimpleGraph.Reachable.trans
+        ⟨SimpleGraph.Walk.cons hadj_ind SimpleGraph.Walk.nil⟩
+        (ih b' v' rfl hv')
+
+set_option maxHeartbeats 800000 in
+/-- Bridge: `SimpleGraph.Reachable` on induced subgraph implies `BidirReachable`
+    on `Nat` indices. Uses `ReflTransGen.head_induction_on` for clean
+    variable handling (avoids dependent-type issues with `induction`). -/
+private theorem reachable_to_bidirReachable {n : Nat} (deps : List Dependency)
+    (nodes : List Nat) (hbounds : ∀ i ∈ nodes, i < n)
+    (u' v' : IV n nodes)
+    (h : ((depsToSimpleGraph n deps).induce
+      (↑(nodesToFinset n nodes) : Set (Fin n))).Reachable u' v') :
+    BidirReachable deps nodes u'.val.val v'.val.val := by
+  rw [SimpleGraph.reachable_iff_reflTransGen] at h
+  exact h.head_induction_on
+    (motive := fun (a : IV n nodes) _ => BidirReachable deps nodes a.val.val v'.val.val)
+    (.here _ (ivMem hbounds v'))
+    (fun {a b} (hadj : ((depsToSimpleGraph n deps).induce _).Adj a b)
+         (_ : Relation.ReflTransGen _ b v')
+         (ih : BidirReachable deps nodes b.val.val v'.val.val) => by
+      have gadj : (depsToSimpleGraph n deps).Adj a.val b.val := hadj
+      obtain ⟨_, d, hd, hor⟩ := gadj
+      exact .step a.val.val b.val.val v'.val.val (ivMem hbounds a) (ivMem hbounds b)
+        ⟨d, hd, hor.elim
+          (fun ⟨h1, h2⟩ => Or.inl ⟨h1, h2⟩)
+          (fun ⟨h1, h2⟩ => Or.inr ⟨h2, h1⟩)⟩
+        ih)
+
+set_option maxHeartbeats 800000 in
 /-- The computable `isCatena` agrees with the Prop-level `IsCatena`.
 
-    ## Proof Sketch
-
     **Forward** (`isCatena = true → IsCatena`): BFS from the start node
-    reaches all nodes in the list, so for any two nodes u, v in the set,
-    there is a BFS path u → ... → v using only edges within the set.
-    Each BFS step corresponds to a `SimpleGraph.Walk` step in the induced
-    subgraph, giving `SimpleGraph.Reachable u v`, hence `Preconnected`.
+    reaches all nodes in the list. BFS soundness gives `BidirReachable`
+    from start to every node; symmetry + transitivity gives connectivity
+    between any pair; the bridge converts to `SimpleGraph.Reachable`.
 
     **Backward** (`IsCatena → isCatena = true`): `Preconnected` gives
-    `Reachable start v` for every v in the set. Each `Walk` step is an
-    edge in the induced subgraph, which corresponds to a dependency edge
-    with both endpoints in `allowed`. BFS will therefore discover v.
-
-    ## Blockers
-
-    Formalizing this requires a BFS correctness proof for `bfsReachable`:
-    - **Soundness**: every node in `bfsReachable` output is reachable via
-      edges within `allowed` from `start`
-    - **Completeness**: every node reachable via edges within `allowed`
-      from `start` appears in `bfsReachable` output
-    - **Bridge**: `bfsReachable` edge steps correspond to `SimpleGraph.Adj`
-      in `depsToSimpleGraph` restricted to the node set
-
-    Low downstream value: all current catena theorems use `native_decide`. -/
+    `Reachable start v` for every v in the set. The bridge converts each
+    `Reachable` path to `BidirReachable`, and BFS completeness ensures
+    every such node appears in the output. -/
 theorem isCatena_iff_IsCatena {n : Nat} (deps : List Dependency)
     (nodes : List Nat) (hbounds : ∀ i ∈ nodes, i < n) (hnodup : nodes.Nodup) :
     isCatena deps nodes = true ↔
     IsCatena (depsToSimpleGraph n deps) (nodes.filterMap (fun i =>
       if h : i < n then some ⟨i, h⟩ else none) |>.toFinset) := by
-  sorry
+  change _ ↔ IsCatena (depsToSimpleGraph n deps) (nodesToFinset n nodes)
+  constructor
+  · -- Forward: isCatena = true → IsCatena
+    intro hcat
+    unfold isCatena at hcat
+    have hne : nodes ≠ [] := by
+      intro hemp; rw [hemp] at hcat; simp at hcat
+    have hconn : isConnected deps nodes = true := by
+      cases nodes with
+      | nil => exact absurd rfl hne
+      | cons _ _ => simp only [Bool.not_eq_eq_eq_not, Bool.not_true, List.isEmpty_cons,
+          Bool.and_eq_true] at hcat; exact hcat.2
+    -- Decompose nodes = start :: rest
+    obtain ⟨start, rest, hm⟩ : ∃ s r, nodes = s :: r := by
+      cases nodes with
+      | nil => exact absurd rfl hne
+      | cons s r => exact ⟨s, r, rfl⟩
+    refine ⟨nodesToFinset_nonempty hbounds hne, fun u' v' => ?_⟩
+    have hu_mem := ivMem hbounds u'
+    have hv_mem := ivMem hbounds v'
+    -- All nodes are reached by BFS from start
+    have hall : ∀ x ∈ nodes, x ∈ bfsReachable deps nodes start := by
+      rw [hm] at hconn ⊢
+      unfold isConnected at hconn
+      intro x hx
+      exact List.mem_of_elem_eq_true (List.all_eq_true.mp hconn x hx)
+    have hstart_mem : start ∈ nodes := hm ▸ List.mem_cons_self
+    -- BFS soundness: both u and v are BidirReachable from start
+    have hu_bidir := bfsReachable_sound deps nodes start hstart_mem
+      u'.val.val (hall u'.val.val hu_mem)
+    have hv_bidir := bfsReachable_sound deps nodes start hstart_mem
+      v'.val.val (hall v'.val.val hv_mem)
+    -- Combine: u ← start → v gives u → v
+    have huv_bidir : BidirReachable deps nodes u'.val.val v'.val.val :=
+      bidir_trans (bidir_symm hu_bidir) hv_bidir
+    exact bidirReachable_to_reachable deps nodes hbounds huv_bidir u' v' rfl rfl
+  · -- Backward: IsCatena → isCatena = true
+    intro ⟨hne_S, hpreconn⟩
+    -- S.Nonempty → nodes ≠ []
+    have hne : nodes ≠ [] := by
+      intro hemp
+      obtain ⟨v, hv⟩ := hne_S
+      have := (mem_nodesToFinset_iff hbounds v).mp hv
+      rw [hemp] at this; exact nomatch this
+    -- Decompose nodes = start :: rest
+    obtain ⟨start, rest, hm⟩ : ∃ s r, nodes = s :: r := by
+      cases nodes with
+      | nil => exact absurd rfl hne
+      | cons s r => exact ⟨s, r, rfl⟩
+    -- isCatena = !isEmpty && isConnected
+    unfold isCatena
+    have hempty : nodes.isEmpty = false := by cases nodes <;> simp_all
+    simp only [hempty, Bool.not_false, Bool.true_and]
+    -- isConnected: all nodes in BFS from start
+    unfold isConnected
+    rw [hm]
+    simp only [List.all_eq_true]
+    intro x hx
+    -- Construct induced vertices for start and x
+    have hstart_mem : start ∈ nodes := hm ▸ List.mem_cons_self
+    have hx_nodes : x ∈ nodes := hm ▸ hx
+    let start' : IV n nodes :=
+      ⟨⟨start, hbounds start hstart_mem⟩,
+       (mem_nodesToFinset_iff hbounds _).mpr hstart_mem⟩
+    let x' : IV n nodes :=
+      ⟨⟨x, hbounds x hx_nodes⟩,
+       (mem_nodesToFinset_iff hbounds _).mpr hx_nodes⟩
+    -- Preconnected gives Reachable start' x'
+    have hreach := hpreconn start' x'
+    -- Convert to BidirReachable
+    have hbidir := reachable_to_bidirReachable deps nodes hbounds start' x' hreach
+    -- Lift to start :: rest and apply BFS completeness
+    have hbidir' : BidirReachable deps (start :: rest) start x := hm ▸ hbidir
+    exact List.elem_eq_true_of_mem
+      (bfsReachable_complete deps (start :: rest) start x hbidir')
 
 -- ============================================================================
 -- Catena Dependency Length
