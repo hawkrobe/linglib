@@ -156,13 +156,17 @@ The semantic uncertainty creates an **avoidance pattern**:
 - Disjunction is "safe" (always allows both options)
 -/
 
-/-- Champollion et al.: FCI probability > 99% at L1
-TODO: re-derive with RSAConfig -/
-theorem champollion_derives_fc : True := trivial
+/-- Champollion et al.: L1 assigns majority probability to FCI states for Or. -/
+theorem champollion_derives_fc :
+    RSA.FreeChoice.uniformCfg.L1_marginal .or_ hasFCI >
+    RSA.FreeChoice.uniformCfg.L1_marginal .or_ (fun w => !hasFCI w) :=
+  RSA.FreeChoice.fci_derived
 
-/-- Champollion et al.: Non-FCI states get < 1% probability
-TODO: re-derive with RSAConfig -/
-theorem champollion_suppresses_non_fc : True := trivial
+/-- Champollion et al.: FCI is robust to prior manipulation. -/
+theorem champollion_fc_robust :
+    RSA.FreeChoice.biasedCfg.L1_marginal .or_ hasFCI >
+    RSA.FreeChoice.biasedCfg.L1_marginal .or_ (fun w => !hasFCI w) :=
+  RSA.FreeChoice.fci_robust_to_prior
 
 -- ============================================================================
 -- SECTION 3b: Alsop (2024) - RSA + Global Intentions for *any*
@@ -197,17 +201,23 @@ using the Global Intentions model from Franke & Bergen (2020).
 | Ambiguity | Interpretation (I₁/I₂) | Parse (Szabolcsi/Dayal) |
 -/
 
-/-- Alsop: Exclusiveness probability > 99% at L1
-TODO: re-derive with RSAConfig -/
-theorem alsop_derives_exclusiveness : True := trivial
+/-- Alsop: L1 assigns majority probability to exclusiveness states for "may any". -/
+theorem alsop_derives_exclusiveness :
+    RSA.FCIAny.uniformCfg.L1_marginal .mayAny hasExclusiveness >
+    RSA.FCIAny.uniformCfg.L1_marginal .mayAny (fun w => !hasExclusiveness w) :=
+  RSA.FCIAny.exclusiveness_derived
 
-/-- Alsop: Exclusiveness is robust to prior manipulation
-TODO: re-derive with RSAConfig -/
-theorem alsop_exclusiveness_robust : True := trivial
+/-- Alsop: Exclusiveness is robust to prior manipulation. -/
+theorem alsop_exclusiveness_robust :
+    RSA.FCIAny.biasedCfg.L1_marginal .mayAny hasExclusiveness >
+    RSA.FCIAny.biasedCfg.L1_marginal .mayAny (fun w => !hasExclusiveness w) :=
+  RSA.FCIAny.exclusiveness_robust
 
-/-- Alsop: Not-every is prior-sensitive (unlike exclusiveness)
-TODO: re-derive with RSAConfig -/
-theorem alsop_not_every_sensitive : True := trivial
+/-- Alsop: Not-every is prior-sensitive (unlike exclusiveness). -/
+theorem alsop_not_every_sensitive :
+    ¬(RSA.FCIAny.biasedCfg.L1_marginal .mayAny hasNotEvery >
+      RSA.FCIAny.biasedCfg.L1_marginal .mayAny (fun w => !hasNotEvery w)) :=
+  RSA.FCIAny.not_every_weakened
 
 -- ============================================================================
 -- SECTION 3c: Aloni (2022) - BSML Team Semantics

@@ -28,6 +28,10 @@ Parameters: α = 2, uniform interpretation prior, configurable world prior.
 | 2 | Exclusiveness robust to prior | `exclusiveness_robust` |
 | 3 | Not-every holds under uniform prior | `not_every_uniform` |
 | 4 | Not-every weakened under biased prior | `not_every_weakened` |
+| 5 | Hearing "may S" → S is permitted | `literal_s_correct` |
+| 6 | Hearing "may every" → both permitted | `every_permBoth` |
+| 7 | Ambiguity essential for FC | `exclusiveness_requires_ambiguity` |
+| 8 | No FC under negation | `no_fc_under_negation` |
 
 ## References
 
@@ -258,16 +262,120 @@ theorem not_every_weakened :
       biasedCfg.L1_marginal .mayAny (fun w => !hasNotEvery w)) := by
   rsa_predict
 
+/-- Hearing "may S", the listener infers S is (strictly) permitted. -/
+theorem literal_s_correct :
+    uniformCfg.L1_marginal .mayS (fun w => permS w) >
+    uniformCfg.L1_marginal .mayS (fun w => !permS w) := by
+  rsa_predict
+
+/-- Hearing "may every", the listener infers both are permitted. -/
+theorem every_permBoth :
+    uniformCfg.L1_marginal .mayEvery (fun w => permBoth w) >
+    uniformCfg.L1_marginal .mayEvery (fun w => !permBoth w) := by
+  rsa_predict
+
 -- ============================================================================
--- §8. Verification
+-- §8. Ambiguity is Essential
 -- ============================================================================
 
-/-- The 4 qualitative findings from Alsop (2024). -/
+/-- Counterfactual: both interpretations use weak meaning (no ambiguity).
+    Without the informativity gap between weak (7 states for "may any") and
+    strong (2 states), S1 cannot discriminate exclusiveness states. -/
+noncomputable def weakOnlyCfg : RSA.RSAConfig Utterance FCIState where
+  Latent := Interp
+  meaning _i u w := if weakMeaning u w then 1 else 0
+  meaning_nonneg _ _ _ := by split <;> positivity
+  s1Score l0 α _i w u := rpow (l0 u w) α
+  s1Score_nonneg _ _ _ _ u hl _ := rpow_nonneg (hl u _) _
+  α := 2
+  α_pos := by positivity
+  latentPrior_nonneg := fun _ _ => le_of_lt one_pos
+  worldPrior_nonneg := fun _ => le_of_lt one_pos
+
+/-- Without interpretation ambiguity, exclusiveness is NOT derived.
+    The informativity gap between weak (7 states) and strong (2 states) is
+    what drives L1 toward exclusiveness states. Without a strong parse,
+    "may any" is uninformative and the prior dominates: 2/7 exclusiveness
+    states vs 5/7 non-exclusiveness states. -/
+theorem exclusiveness_requires_ambiguity :
+    ¬(weakOnlyCfg.L1_marginal .mayAny hasExclusiveness >
+      weakOnlyCfg.L1_marginal .mayAny (fun w => !hasExclusiveness w)) := by
+  rsa_predict
+
+-- ============================================================================
+-- §9. FC Under Negation
+-- ============================================================================
+
+/-- Extended utterances including negation of "may any". -/
+inductive UtteranceNeg where
+  | mayS | mayP | mayAny | mayEvery | mayNotAny
+  deriving DecidableEq, BEq, Repr, Inhabited
+
+instance : Fintype UtteranceNeg where
+  elems := {.mayS, .mayP, .mayAny, .mayEvery, .mayNotAny}
+  complete := fun x => by cases x <;> simp
+
+/-- Weak meaning extended with negation.
+    "May not any" under weak = ¬∃x[◇take(x)] = false everywhere,
+    since the weak existential meaning is trivially true at all states. -/
+def weakMeaningNeg : UtteranceNeg → FCIState → Bool
+  | .mayS, w => permS_liberal w
+  | .mayP, w => permP_liberal w
+  | .mayAny, _ => true
+  | .mayEvery, w => permBoth w
+  | .mayNotAny, _ => false
+
+/-- Strong meaning extended with negation.
+    "May not any" under strong = ¬∀x[◇take(x)_strict] = ¬hasExclusiveness.
+    True at 5 of 7 states (all except only1 and anyNum). -/
+def strongMeaningNeg : UtteranceNeg → FCIState → Bool
+  | .mayS, .onlyS => true
+  | .mayP, .onlyP => true
+  | .mayAny, .only1 | .mayAny, .anyNum => true
+  | .mayEvery, .only2 => true
+  | .mayNotAny, w => !hasExclusiveness w
+  | _, _ => false
+
+/-- Combined meaning for the extended model. -/
+def interpMeaningNeg : Interp → UtteranceNeg → FCIState → Bool
+  | .weak => weakMeaningNeg
+  | .strong => strongMeaningNeg
+
+/-- RSAConfig for the extended model with negation. -/
+noncomputable def negCfg : RSA.RSAConfig UtteranceNeg FCIState where
+  Latent := Interp
+  meaning i u w := if interpMeaningNeg i u w then 1 else 0
+  meaning_nonneg _ _ _ := by split <;> positivity
+  s1Score l0 α _i w u := rpow (l0 u w) α
+  s1Score_nonneg _ _ _ _ u hl _ := rpow_nonneg (hl u _) _
+  α := 2
+  α_pos := by positivity
+  latentPrior_nonneg := fun _ _ => le_of_lt one_pos
+  worldPrior_nonneg := fun _ => le_of_lt one_pos
+
+/-- Free choice does NOT emerge under negation.
+    Under negation, the weak interpretation is vacuous (false everywhere) and
+    the strong interpretation supports only non-exclusiveness states. The
+    informativity gap that drives FC in the positive case disappears. -/
+theorem no_fc_under_negation :
+    ¬(negCfg.L1_marginal .mayNotAny hasExclusiveness >
+      negCfg.L1_marginal .mayNotAny (fun w => !hasExclusiveness w)) := by
+  rsa_predict
+
+-- ============================================================================
+-- §10. Verification
+-- ============================================================================
+
+/-- The 8 qualitative findings from Alsop (2024). -/
 inductive Finding where
   | exclusiveness_derived
   | exclusiveness_robust
   | not_every_uniform
   | not_every_weakened
+  | literal_s_correct
+  | every_permBoth
+  | exclusiveness_requires_ambiguity
+  | no_fc_under_negation
   deriving DecidableEq, BEq, Repr
 
 /-- Map each finding to its RSA formalization. -/
@@ -284,13 +392,29 @@ noncomputable def formalize : Finding → Prop
   | .not_every_weakened =>
       ¬(biasedCfg.L1_marginal .mayAny hasNotEvery >
         biasedCfg.L1_marginal .mayAny (fun w => !hasNotEvery w))
+  | .literal_s_correct =>
+      uniformCfg.L1_marginal .mayS (fun w => permS w) >
+      uniformCfg.L1_marginal .mayS (fun w => !permS w)
+  | .every_permBoth =>
+      uniformCfg.L1_marginal .mayEvery (fun w => permBoth w) >
+      uniformCfg.L1_marginal .mayEvery (fun w => !permBoth w)
+  | .exclusiveness_requires_ambiguity =>
+      ¬(weakOnlyCfg.L1_marginal .mayAny hasExclusiveness >
+        weakOnlyCfg.L1_marginal .mayAny (fun w => !hasExclusiveness w))
+  | .no_fc_under_negation =>
+      ¬(negCfg.L1_marginal .mayNotAny hasExclusiveness >
+        negCfg.L1_marginal .mayNotAny (fun w => !hasExclusiveness w))
 
-/-- The RSA model accounts for all 4 findings from Alsop (2024). -/
+/-- The RSA model accounts for all 8 findings from Alsop (2024). -/
 theorem all_findings_verified : ∀ f : Finding, formalize f := by
   intro f; cases f
   · exact exclusiveness_derived
   · exact exclusiveness_robust
   · exact not_every_uniform
   · exact not_every_weakened
+  · exact literal_s_correct
+  · exact every_permBoth
+  · exact exclusiveness_requires_ambiguity
+  · exact no_fc_under_negation
 
 end RSA.FCIAny
