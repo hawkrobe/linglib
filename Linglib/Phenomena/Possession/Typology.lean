@@ -1,4 +1,4 @@
-import Linglib.Core.Word
+import Linglib.Core.Lexical.Word
 
 /-!
 # Cross-Linguistic Typology of Possession (WALS Chapters 58--59)

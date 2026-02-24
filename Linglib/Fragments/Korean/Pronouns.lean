@@ -16,7 +16,7 @@ on null reference and demonstratives.
   honorifics.
 -/
 
-import Linglib.Core.Pronouns
+import Linglib.Core.Lexical.Pronouns
 
 namespace Fragments.Korean.Pronouns
 

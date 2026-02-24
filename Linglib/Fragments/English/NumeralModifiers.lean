@@ -26,7 +26,7 @@ from "up to" (positive), predicting divergent framing effects.
 - Solt, S. (2014). An alternative theory of imprecision.
 -/
 
-import Linglib.Core.Word
+import Linglib.Core.Lexical.Word
 import Linglib.Theories.Semantics.Lexical.Numeral.Semantics
 import Mathlib.Data.Rat.Defs
 

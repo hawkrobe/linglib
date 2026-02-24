@@ -22,7 +22,7 @@ Foundation module for the Minimalist Program formalization.
 -/
 
 import Mathlib.Data.Set.Basic
-import Linglib.Core.UD
+import Linglib.Core.Lexical.UD
 
 namespace Minimalism
 

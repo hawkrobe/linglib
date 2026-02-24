@@ -1,6 +1,6 @@
 import Linglib.Theories.Pragmatics.RSA.Core.Config
 import Linglib.Theories.Pragmatics.RSA.Core.Noise
-import Linglib.Core.ProductOfExperts
+import Linglib.Core.Agent.ProductOfExperts
 
 /-!
 # Degen, Hawkins, Graf, Kreiss & Goodman (2020)

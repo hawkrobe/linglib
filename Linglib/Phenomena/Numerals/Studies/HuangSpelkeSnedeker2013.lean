@@ -1,5 +1,7 @@
 import Linglib.Core.Empirical
 
+open Core.Empirical
+
 /-!
 # Huang, Spelke & Snedeker (2013) — Covered-Box Paradigm
 

@@ -39,7 +39,7 @@ This file records the phenomena; theories belong in Theories/.
 - van Rooy, R. & Šafářová, M. (2003). On Polar Questions.
 -/
 
-import Linglib.Core.Word
+import Linglib.Core.Lexical.Word
 
 namespace Phenomena.Questions.NegativeQuestions
 

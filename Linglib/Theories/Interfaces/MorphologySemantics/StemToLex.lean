@@ -1,4 +1,4 @@
-import Linglib.Core.MorphRule
+import Linglib.Core.Lexical.MorphRule
 import Linglib.Theories.Semantics.Montague.Lexicon
 
 /-!

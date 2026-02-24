@@ -1,4 +1,4 @@
-import Linglib.Core.RationalAction
+import Linglib.Core.Agent.RationalAction
 import Mathlib.Order.Filter.Basic
 import Mathlib.Topology.Order.Basic
 import Mathlib.Topology.Order.Real

@@ -13,7 +13,7 @@ freely embeddable.
   honorifics.
 -/
 
-import Linglib.Core.Pronouns
+import Linglib.Core.Lexical.Pronouns
 
 namespace Fragments.Hindi.Pronouns
 

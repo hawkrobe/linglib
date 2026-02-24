@@ -1,4 +1,4 @@
-import Linglib.Core.Word
+import Linglib.Core.Lexical.Word
 
 /-!
 # Fillmore, Kay & O'Connor (1988): *Let Alone* — Empirical Data

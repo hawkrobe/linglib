@@ -1,4 +1,4 @@
-import Linglib.Core.Word
+import Linglib.Core.Lexical.Word
 
 /-!
 # Cross-Linguistic Typology of Articles and Demonstratives (WALS)

@@ -49,6 +49,8 @@ The M&S decomposition maps directly onto Montague/Conjunction.lean:
 
 import Linglib.Core.Empirical
 
+open Core.Empirical
+
 namespace Phenomena.Coordination.Studies.BillEtAl2025
 
 open Phenomena

@@ -14,7 +14,7 @@ forms (*i* proximal / *ũ* distal). AA is Fin-based and freely embeddable.
   honorifics.
 -/
 
-import Linglib.Core.Pronouns
+import Linglib.Core.Lexical.Pronouns
 
 namespace Fragments.Magahi.Pronouns
 

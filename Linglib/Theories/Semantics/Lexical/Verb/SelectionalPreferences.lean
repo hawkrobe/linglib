@@ -8,7 +8,7 @@ Integrates with Erk & Herbelot (2024) Product of Experts for disambiguation.
 -/
 
 import Mathlib.Data.Rat.Defs
-import Linglib.Core.ProductOfExperts
+import Linglib.Core.Agent.ProductOfExperts
 
 namespace Semantics.Lexical.Verb.SelectionalPreferences
 

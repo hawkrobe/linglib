@@ -1,4 +1,4 @@
-import Linglib.Core.UD
+import Linglib.Core.Lexical.UD
 
 /-!
 # Core.InformationStructure

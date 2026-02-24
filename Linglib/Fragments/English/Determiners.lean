@@ -1,4 +1,4 @@
-import Linglib.Core.Word
+import Linglib.Core.Lexical.Word
 import Linglib.Theories.Semantics.Lexical.Determiner.Quantifier
 import Mathlib.Data.Rat.Defs
 import Mathlib.Data.Fintype.Basic

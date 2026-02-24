@@ -1,4 +1,4 @@
-import Linglib.Core.Word
+import Linglib.Core.Lexical.Word
 
 /-!
 # Cross-Linguistic Typology of Valence and Voice (WALS Chapters 106--111)

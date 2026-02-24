@@ -1,4 +1,4 @@
-import Linglib.Core.Word
+import Linglib.Core.Lexical.Word
 
 /-!
 # Anand, Hardt & McCloskey (2021) — Corpus Data

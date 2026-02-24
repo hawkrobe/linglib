@@ -44,7 +44,7 @@ U_Combined(u|w,A) = λ·U_Relevance + (1-λ)·U_Truthfulness + C(u)
 - Blackwell, D. (1953). Equivalent Comparisons of Experiments.
 -/
 
-import Linglib.Core.DecisionTheory
+import Linglib.Core.Agent.DecisionTheory
 import Linglib.Core.Partition
 import Linglib.Theories.Semantics.Questions.Partition
 import Linglib.Theories.Semantics.Questions.GSVanRooyBridge

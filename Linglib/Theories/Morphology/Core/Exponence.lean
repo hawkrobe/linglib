@@ -1,4 +1,4 @@
-import Linglib.Core.MorphRule
+import Linglib.Core.Lexical.MorphRule
 
 /-!
 # Morphological Exponence Rules

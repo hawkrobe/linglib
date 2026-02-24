@@ -1,4 +1,4 @@
-import Linglib.Core.BToM
+import Linglib.Core.Agent.BToM
 import Linglib.Theories.Pragmatics.RSA.Core.Config
 
 /-!

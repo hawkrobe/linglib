@@ -26,7 +26,7 @@ Theory-neutral lexical entries for polarity-sensitive items:
 - Giannakidou (1998). Polarity Sensitivity as (Non)Veridical Dependency.
 -/
 
-import Linglib.Core.Word
+import Linglib.Core.Lexical.Word
 
 namespace Fragments.English.PolarityItems
 

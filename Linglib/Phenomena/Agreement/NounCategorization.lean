@@ -1,4 +1,4 @@
-import Linglib.Core.NounCategorization
+import Linglib.Core.Lexical.NounCategorization
 import Linglib.Fragments.French.Nouns
 import Linglib.Fragments.Mandarin.Classifiers
 import Linglib.Fragments.Mandarin.Nouns

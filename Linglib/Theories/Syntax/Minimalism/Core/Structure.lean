@@ -13,7 +13,7 @@ Basic phrase structure and linearization for the Minimalist Program.
 - Chomsky, N. (1995). "The Minimalist Program"
 -/
 
-import Linglib.Core.Word
+import Linglib.Core.Lexical.Word
 
 namespace Minimalism
 

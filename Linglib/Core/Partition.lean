@@ -1,5 +1,5 @@
 import Linglib.Core.QUD
-import Linglib.Core.DecisionTheory
+import Linglib.Core.Agent.DecisionTheory
 import Mathlib.Order.Partition.Finpartition
 import Mathlib.Algebra.Order.BigOperators.Group.Finset
 import Mathlib.Algebra.BigOperators.Ring.Finset

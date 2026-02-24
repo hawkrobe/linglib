@@ -4,6 +4,8 @@ import Linglib.Theories.Pragmatics.RSA.Core.Config
 import Linglib.Theories.Semantics.Montague.Modification
 import Mathlib.Analysis.SpecialFunctions.Log.Basic
 
+open Core.Empirical
+
 /-!
 # Frank & Goodman (2012) @cite{frank-goodman-2012}
 

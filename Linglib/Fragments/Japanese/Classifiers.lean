@@ -1,4 +1,4 @@
-import Linglib.Core.NounCategorization
+import Linglib.Core.Lexical.NounCategorization
 
 /-!
 # Japanese Classifier Lexicon

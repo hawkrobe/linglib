@@ -1,4 +1,4 @@
-import Linglib.Core.DecisionTheory
+import Linglib.Core.Agent.DecisionTheory
 import Linglib.Theories.Semantics.Questions.PragmaticAnswerhood
 import Linglib.Theories.Semantics.Questions.MentionSome
 import Linglib.Theories.Semantics.Questions.Polarity

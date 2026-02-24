@@ -1,5 +1,5 @@
 import Mathlib.Data.Rat.Defs
-import Linglib.Core.BToM
+import Linglib.Core.Agent.BToM
 import Linglib.Theories.Semantics.Attitudes.Factivity
 
 /-!

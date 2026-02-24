@@ -15,7 +15,7 @@ private distributions. The LU limitation (Appendix A) proves standard
 LU models cannot derive the triangular shape.
 -/
 
-import Linglib.Core.RationalAction
+import Linglib.Core.Agent.RationalAction
 import Linglib.Theories.Pragmatics.RSA.Extensions.InformationTheory.Basic
 import Mathlib.Data.Rat.Defs
 import Mathlib.Data.Fintype.BigOperators

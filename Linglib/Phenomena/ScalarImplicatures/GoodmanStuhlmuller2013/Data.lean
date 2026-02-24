@@ -1,5 +1,7 @@
 import Linglib.Core.Empirical
 
+open Core.Empirical
+
 /-!
 # Goodman & Stuhlmuller (2013): Empirical Data
 @cite{goodman-stuhlmuller-2013}

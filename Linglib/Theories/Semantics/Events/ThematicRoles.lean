@@ -21,7 +21,7 @@ to events (Parsons 1990). This module provides:
 -/
 
 import Linglib.Theories.Semantics.Events.Basic
-import Linglib.Core.Word
+import Linglib.Core.Lexical.Word
 
 -- ════════════════════════════════════════════════════
 -- Thematic Roles (Language-Independent)

@@ -1,5 +1,5 @@
 import Linglib.Core.Categorical.PartitionCat
-import Linglib.Core.DecisionTheory
+import Linglib.Core.Agent.DecisionTheory
 
 /-!
 # Partition-Decision Adjunction

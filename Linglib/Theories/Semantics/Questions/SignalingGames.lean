@@ -1,4 +1,4 @@
-import Linglib.Core.DecisionTheory
+import Linglib.Core.Agent.DecisionTheory
 
 /-!
 # Questions/SignalingGames.lean

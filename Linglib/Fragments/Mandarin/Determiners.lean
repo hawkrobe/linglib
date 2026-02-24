@@ -1,5 +1,5 @@
-import Linglib.Core.Word
-import Linglib.Core.NounCategorization
+import Linglib.Core.Lexical.Word
+import Linglib.Core.Lexical.NounCategorization
 import Linglib.Fragments.English.Determiners
 import Linglib.Fragments.Mandarin.Classifiers
 

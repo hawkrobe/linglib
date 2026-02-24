@@ -15,7 +15,7 @@ plural *zuek* is distinct from formal singular *zu*.
   honorifics.
 -/
 
-import Linglib.Core.Pronouns
+import Linglib.Core.Lexical.Pronouns
 
 namespace Fragments.Basque.Pronouns
 

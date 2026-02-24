@@ -1,5 +1,5 @@
 import Linglib.Core.InformationTheory
-import Linglib.Core.MorphRule
+import Linglib.Core.Lexical.MorphRule
 
 /-!
 # The Low Conditional Entropy Conjecture @cite{ackerman-malouf-2013}

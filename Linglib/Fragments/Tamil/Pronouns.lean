@@ -14,7 +14,7 @@ exclusive (*naangaL*). 3rd person distinguishes masculine (*avan*), feminine
   honorifics.
 -/
 
-import Linglib.Core.Pronouns
+import Linglib.Core.Lexical.Pronouns
 
 namespace Fragments.Tamil.Pronouns
 

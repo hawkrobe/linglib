@@ -1,5 +1,7 @@
 import Linglib.Core.Empirical
 
+open Core.Empirical
+
 /-!
 # Bale et al. (2025) — Competence by Default @cite{bale-etal-2025}
 

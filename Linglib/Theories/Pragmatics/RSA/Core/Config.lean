@@ -1,4 +1,4 @@
-import Linglib.Core.RationalAction
+import Linglib.Core.Agent.RationalAction
 
 /-!
 # RSAConfig — Unified RSA Configuration

@@ -1,4 +1,4 @@
-import Linglib.Core.DecisionTheory
+import Linglib.Core.Agent.DecisionTheory
 import Linglib.Theories.Semantics.Questions.Partition
 import Mathlib.Analysis.SpecialFunctions.Log.NegMulLog
 

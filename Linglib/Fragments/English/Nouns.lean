@@ -1,4 +1,4 @@
-import Linglib.Core.Word
+import Linglib.Core.Lexical.Word
 import Linglib.Theories.Morphology.Core.Exponence
 import Linglib.Theories.Semantics.Lexical.Noun.Kind.Chierchia1998
 

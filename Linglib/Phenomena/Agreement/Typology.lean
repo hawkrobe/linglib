@@ -1,4 +1,4 @@
-import Linglib.Core.PersonCategory
+import Linglib.Core.Lexical.PersonCategory
 
 /-!
 # Paradigmatic Structure of Person Marking (Cysouw 2009)

@@ -17,7 +17,7 @@ traditional Japanese relies heavily on null reference.
   honorifics.
 -/
 
-import Linglib.Core.Pronouns
+import Linglib.Core.Lexical.Pronouns
 
 namespace Fragments.Japanese.Pronouns
 

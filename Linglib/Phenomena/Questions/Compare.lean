@@ -45,7 +45,7 @@ All three frameworks share the insight that question choice is informative:
 - Hawkins, R.D., et al. (2025). Relevant answers to polar questions.
 -/
 
-import Linglib.Core.DecisionTheory
+import Linglib.Core.Agent.DecisionTheory
 import Linglib.Theories.Semantics.Questions.Polarity
 import Linglib.Theories.Semantics.Questions.VerumFocus
 import Linglib.Theories.Pragmatics.RSA.Questions.PolarQuestions

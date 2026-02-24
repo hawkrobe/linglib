@@ -34,7 +34,7 @@ import Linglib.Core.Empirical
 
 namespace Phenomena.ScalarImplicatures.Studies.GeurtsPouscoulous2009
 
-open Phenomena
+open Core.Empirical
 
 
 /-- Citation for this study -/

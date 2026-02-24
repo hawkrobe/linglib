@@ -1,5 +1,5 @@
 import Linglib.Theories.Pragmatics.RSA.Questions.Basic
-import Linglib.Core.DecisionTheory
+import Linglib.Core.Agent.DecisionTheory
 
 /-!
 # Decision Problems for Polar Questions (Stub)

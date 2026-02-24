@@ -1,5 +1,7 @@
 import Linglib.Core.Empirical
 
+open Core.Empirical
+
 /-!
 # Khoo (2015): Modal Disagreements
 

@@ -12,7 +12,7 @@ forms (*uh* for both sg and pl). AA is Fin-based with limited embeddability.
   honorifics.
 -/
 
-import Linglib.Core.Pronouns
+import Linglib.Core.Lexical.Pronouns
 
 namespace Fragments.Punjabi.Pronouns
 

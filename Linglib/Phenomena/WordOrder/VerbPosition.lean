@@ -10,9 +10,9 @@ Theory-neutral empirical data on verb position alternations.
 - Vikner (1995:32, (11d)): German V2
 -/
 
-import Linglib.Core.Word
+import Linglib.Core.Lexical.Word
 
-namespace Phenomena.WordOrderAlternations.VerbPosition
+namespace Phenomena.WordOrder.VerbPosition
 
 -- Bulgarian Participle Fronting (Lambova 2004c, Harizanov 2019)
 
@@ -90,4 +90,4 @@ structure GermanV2Data where
 
 def germanExample : GermanV2Data := {}
 
-end Phenomena.WordOrderAlternations.VerbPosition
+end Phenomena.WordOrder.VerbPosition

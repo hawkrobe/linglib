@@ -4,9 +4,9 @@
 Scale and task types for specifying empirical measures in phenomena data.
 -/
 
-import Linglib.Core.Word
+import Linglib.Core.Lexical.Word
 
-namespace Phenomena
+namespace Core.Empirical
 
 /-- Scale type for empirical measures. -/
 inductive ScaleType where
@@ -77,4 +77,4 @@ structure ProcessingObservation where
   description : String
   deriving Repr
 
-end Phenomena
+end Core.Empirical

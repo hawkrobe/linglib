@@ -1,6 +1,6 @@
 import Linglib.Phenomena.Presupposition.Studies.ScontrasTonhauser2025
 import Linglib.Theories.Pragmatics.RSA.Implementations.ScontrasTonhauser2025
-import Linglib.Core.BToM
+import Linglib.Core.Agent.BToM
 
 /-!
 # S&T 2025 BToM Bridge

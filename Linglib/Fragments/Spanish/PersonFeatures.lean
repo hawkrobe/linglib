@@ -1,4 +1,4 @@
-import Linglib.Core.PersonCategory
+import Linglib.Core.Lexical.PersonCategory
 
 /-!
 # Person Feature Decomposition for Spanish Clitics

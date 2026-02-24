@@ -1,6 +1,8 @@
 import Linglib.Core.Empirical
 import Linglib.Fragments.English.TemporalExpressions
 
+open Core.Empirical
+
 /-!
 # Alstott & Aravind (2026): Aspectual Coercion in *before*/*after*-Clauses
 

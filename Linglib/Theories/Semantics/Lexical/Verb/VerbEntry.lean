@@ -1,4 +1,4 @@
-import Linglib.Core.Word
+import Linglib.Core.Lexical.Word
 import Linglib.Theories.Semantics.Events.ThematicRoles
 import Linglib.Core.Presupposition
 import Linglib.Core.RootDimensions

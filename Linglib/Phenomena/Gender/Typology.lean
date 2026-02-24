@@ -1,4 +1,4 @@
-import Linglib.Core.Word
+import Linglib.Core.Lexical.Word
 
 /-!
 # Gender and Noun Class Typology (WALS Chapters 30--32)

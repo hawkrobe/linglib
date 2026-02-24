@@ -29,7 +29,7 @@ to depend on it for its reference.
 - Kanazawa, M. (1994). Weak vs. Strong Readings of Donkey Sentences.
 -/
 
-import Linglib.Core.Word
+import Linglib.Core.Lexical.Word
 
 namespace Phenomena.Anaphora.DonkeyAnaphora
 

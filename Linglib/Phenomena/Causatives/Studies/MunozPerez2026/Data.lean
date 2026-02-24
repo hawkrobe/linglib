@@ -1,5 +1,7 @@
 import Linglib.Core.Empirical
 
+open Core.Empirical
+
 /-!
 # Muñoz Pérez (2026) — Empirical Data
 

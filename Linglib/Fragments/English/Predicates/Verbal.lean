@@ -1,5 +1,5 @@
 import Linglib.Theories.Semantics.Lexical.Verb.VerbEntry
-import Linglib.Core.MorphRule
+import Linglib.Core.Lexical.MorphRule
 
 /-! # Verbal Predicate Lexicon Fragment
 

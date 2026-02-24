@@ -1,6 +1,6 @@
 import Mathlib.Data.Rat.Defs
 import Mathlib.Data.List.Basic
-import Linglib.Core.DecisionTheory
+import Linglib.Core.Agent.DecisionTheory
 import Linglib.Phenomena.Questions.Studies.HawkinsEtAl2025
 
 /-!

@@ -4,7 +4,7 @@
 Lexical entries for English pronouns (personal, reflexive, wh-).
 -/
 
-import Linglib.Core.Word
+import Linglib.Core.Lexical.Word
 
 namespace Fragments.English.Pronouns
 

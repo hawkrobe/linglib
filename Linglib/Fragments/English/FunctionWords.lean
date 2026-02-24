@@ -8,7 +8,7 @@ Lexical entries for English closed-class function words:
 - Conjunctions
 -/
 
-import Linglib.Core.Word
+import Linglib.Core.Lexical.Word
 import Linglib.Core.ModalLogic
 import Linglib.Core.Register
 

@@ -1,5 +1,7 @@
 import Linglib.Core.Empirical
 
+open Core.Empirical
+
 /-!
 # Sikos et al. (2021) @cite{sikos-etal-2021}
 
