@@ -1,85 +1,764 @@
-/-
-# Subject-Auxiliary Inversion in English
+import Linglib.Core.Grammar
+
+/-!
+# Subject-Auxiliary Inversion: Empirical Data
+
+Theory-neutral data on subject-auxiliary inversion (SAI) in English and beyond.
 
 ## The Phenomenon
 
-Matrix questions in English require the finite auxiliary to precede the subject;
-embedded questions do not.
+In English, finite auxiliaries invert with the subject in matrix questions
+but not in embedded questions. This basic pattern interacts with negation,
+conditionals, exclamatives, and shows systematic dialectal variation.
 
-## The Data
+## Classic Data
 
-  (1a)  What can John eat?              ✓  matrix wh-question
-  (1b) *What John can eat?              ✗  (as matrix question)
+The core SAI pattern has been a central case study in generative syntax
+since Chomsky (1957). Textbook presentations: Radford (2009) Ch. 5,
+Adger (2003) Ch. 8, Sag, Wasow & Bender (2003) Ch. 3.
 
-  (2a)  Can John eat pizza?             ✓  matrix yes-no question
-  (2b) *John can eat pizza?             ✗  (as yes-no question)
+## Boundary Cases
 
-  (3a)  I wonder what John can eat.     ✓  embedded question
-  (3b) *I wonder what can John eat.     ✗
+Several phenomena push beyond the textbook treatment:
+- Negative inversion (Klima 1964)
+- Conditional inversion
+- Embedded inversion in non-standard varieties (Henry 1995, McCloskey 2006)
+- Do-support and verb movement (Pollock 1989, Arregi & Pietraszko 2021)
+- Verb-specific acquisition of inversion (Westergaard 2009)
+
+## References
+
+- Klima, E. (1964). Negation in English. In Fodor & Katz (eds.),
+  The Structure of Language, 246-323. @cite{klima-1964}
+- Pollock, J.-Y. (1989). Verb Movement, Universal Grammar, and the Structure
+  of IP. Linguistic Inquiry 20(3):365-424. @cite{pollock-1989}
+- Henry, A. (1995). Belfast English and Standard English: Dialect Variation
+  and Parameter Setting. Oxford University Press. @cite{henry-1995}
+- Adger, D. (2003). Core Syntax. OUP. @cite{adger-2003}
+- Sag, I., Wasow, T. & Bender, E. (2003). Syntactic Theory. 2nd ed.
+  CSLI. @cite{sag-wasow-bender-2003}
+- McCloskey, J. (2006). Questions and Questioning in a Local English.
+  Crosslinguistic Research in Syntax and Semantics, 87-126.
+  @cite{mccloskey-2006}
+- Radford, A. (2009). Analysing English Sentences. CUP. @cite{radford-2009}
+- Westergaard, M. (2009). The Acquisition of Word Order. John Benjamins.
+  @cite{westergaard-2009}
+- Arregi, K. & Pietraszko, A. (2021). The Ups and Downs of Head
+  Displacement. Linguistic Inquiry 52(2):241-290.
+  @cite{arregi-pietraszko-2021}
 -/
 
-import Linglib.Core.Grammar
+namespace Phenomena.WordOrder.SubjectAuxInversion
 
-private def what : Word := ⟨"what", .PRON, { wh := true }⟩
-private def can : Word := ⟨"can", .AUX, {}⟩
-private def john : Word := ⟨"John", .PROPN, { number := some .sg, person := some .third }⟩
-private def eat : Word := ⟨"eat", .VERB, { valence := some .transitive, number := some .pl }⟩
-private def pizza : Word := ⟨"pizza", .NOUN, { number := some .sg }⟩
-private def i : Word := ⟨"I", .PRON, { person := some .first, number := some .sg, case_ := some .nom }⟩
-private def wonder : Word := ⟨"wonder", .VERB, { valence := some .transitive, number := some .pl }⟩
+-- ============================================================================
+-- Types
+-- ============================================================================
 
--- The Empirical Data
+/-- The syntactic context in which SAI does or does not occur. -/
+inductive SAIContext where
+  /-- Matrix wh-question: "What can John eat?" -/
+  | matrixWh
+  /-- Matrix yes/no question: "Can John eat pizza?" -/
+  | matrixYN
+  /-- Embedded question: "I wonder what John can eat" -/
+  | embedded
+  /-- Echo question: "John can eat WHAT?" -/
+  | echo
+  /-- Negative fronting: "Never have I seen such a thing" -/
+  | negativeInversion
+  /-- Conditional inversion: "Had I known, I would have come" -/
+  | conditionalInversion
+  /-- Exclamative: "Boy, is it hot!" -/
+  | exclamative
+  /-- So/neither inversion: "So did I" / "Neither can she" -/
+  | soNeither
+  /-- Embedded inversion (dialectal): "I asked could he come" -/
+  | embeddedDialectal
+  /-- Sentential negation (parallel to SAI for do-support):
+      "Sue does not eat fish" / "Sue is not eating fish" -/
+  | sententialNegation
+  /-- Verb raising diagnostic (adverb/quantifier placement):
+      "Jean embrasse souvent Marie" vs "*John kisses often Mary" -/
+  | verbRaising
+  deriving DecidableEq, Repr, BEq
 
-/-- The core inversion data -/
-def inversionData : PhenomenonData := {
-  name := "Subject-Auxiliary Inversion"
-  generalization := "Matrix questions require aux-subject order; embedded questions require subject-aux order"
-  pairs := [
-    { grammatical := [what, can, john, eat]
-      ungrammatical := [what, john, can, eat]
-      clauseType := .matrixQuestion
-      description := "Matrix wh-question requires inversion" },
+/-- Acceptability judgment. -/
+inductive Acceptability where
+  | grammatical
+  | ungrammatical
+  | marginal
+  /-- Grammatical in some dialects but not Standard American/British English -/
+  | dialectal
+  deriving DecidableEq, Repr, BEq
 
-    { grammatical := [can, john, eat, pizza]
-      ungrammatical := [john, can, eat, pizza]
-      clauseType := .matrixQuestion
-      description := "Matrix yes-no question requires inversion" },
+/-- A single SAI judgment. -/
+structure SAIDatum where
+  /-- The example sentence -/
+  sentence : String
+  /-- Whether the sentence shows auxiliary/verb-before-subject order -/
+  inverted : Bool
+  /-- The syntactic context -/
+  context : SAIContext
+  /-- Acceptability judgment -/
+  acceptability : Acceptability
+  /-- Language (default: English) -/
+  language : String := "English"
+  /-- Description of what this datum tests -/
+  description : String := ""
+  /-- Citation for the datum -/
+  citation : String := ""
+  deriving Repr, BEq
 
-    { grammatical := [i, wonder, what, john, can, eat]
-      ungrammatical := [i, wonder, what, can, john, eat]
-      clauseType := .embeddedQuestion
-      description := "Embedded question prohibits inversion" }
-  ]
-}
+-- ============================================================================
+-- § 1  Core Minimal Pairs (Classic)
+-- ============================================================================
 
--- Specification Typeclass
+/-! ### Matrix wh-questions
 
-/-- A grammar captures subject-aux inversion -/
-class CapturesInversion (G : Type) [Grammar G] where
-  grammar : G
-  captures : Grammar.capturesPhenomenon G grammar inversionData
+Wh-questions in root clauses require SAI in Standard English.
+The auxiliary must precede the subject. -/
 
--- Helper Functions
+def ex01 : SAIDatum :=
+  { sentence := "What can John eat?"
+    inverted := true
+    context := .matrixWh
+    acceptability := .grammatical
+    description := "Matrix wh-question with inversion" }
 
-/-- Check if a word list has aux-before-subject order -/
-def hasAuxSubjectOrder (ws : List Word) : Option (Nat × Nat) :=
-  let auxPos := ws.findIdx? (·.cat == .AUX)
-  let subjPos := ws.findIdx? (·.cat == .DET)
-  match auxPos, subjPos with
-  | some a, some s => if a < s then some (a, s) else none
-  | _, _ => none
+def ex02 : SAIDatum :=
+  { sentence := "What John can eat?"
+    inverted := false
+    context := .matrixWh
+    acceptability := .ungrammatical
+    description := "Matrix wh-question without inversion" }
 
-/-- Check if a word list has subject-before-aux order -/
-def hasSubjectAuxOrder (ws : List Word) : Option (Nat × Nat) :=
-  let auxPos := ws.findIdx? (·.cat == .AUX)
-  let subjPos := ws.findIdx? (·.cat == .DET)
-  match auxPos, subjPos with
-  | some a, some s => if s < a then some (s, a) else none
-  | _, _ => none
+def ex03 : SAIDatum :=
+  { sentence := "Where has Mary gone?"
+    inverted := true
+    context := .matrixWh
+    acceptability := .grammatical
+    description := "Matrix wh-question with 'have' auxiliary" }
 
--- Examples
+/-! ### Matrix yes/no questions
 
-#eval wordsToString (inversionData.pairs[0]?.map (·.grammatical) |>.getD [])
-#eval wordsToString (inversionData.pairs[0]?.map (·.ungrammatical) |>.getD [])
-#eval hasAuxSubjectOrder [what, can, john, eat]  -- some (1, 2)
-#eval hasSubjectAuxOrder [what, john, can, eat]  -- some (1, 2)
+Polar questions also require SAI. -/
+
+def ex04 : SAIDatum :=
+  { sentence := "Can John eat pizza?"
+    inverted := true
+    context := .matrixYN
+    acceptability := .grammatical
+    description := "Polar question with inversion" }
+
+def ex05 : SAIDatum :=
+  { sentence := "John can eat pizza?"
+    inverted := false
+    context := .matrixYN
+    acceptability := .ungrammatical
+    description := "Polar question without inversion"
+    citation := "Radford (2009) Ch. 5" }
+
+def ex06 : SAIDatum :=
+  { sentence := "Is the cat sleeping?"
+    inverted := true
+    context := .matrixYN
+    acceptability := .grammatical
+    description := "Polar question with copula 'be'" }
+
+/-! ### Embedded questions
+
+Embedded questions in Standard English prohibit SAI.
+The complementizer or wh-word alone marks the clause as interrogative. -/
+
+def ex07 : SAIDatum :=
+  { sentence := "I wonder what John can eat"
+    inverted := false
+    context := .embedded
+    acceptability := .grammatical
+    description := "Embedded question without inversion" }
+
+def ex08 : SAIDatum :=
+  { sentence := "I wonder what can John eat"
+    inverted := true
+    context := .embedded
+    acceptability := .ungrammatical
+    description := "Embedded question with inversion (Standard English)"
+    citation := "Radford (2009)" }
+
+def ex09 : SAIDatum :=
+  { sentence := "She asked whether John had left"
+    inverted := false
+    context := .embedded
+    acceptability := .grammatical
+    description := "Whether-complement without inversion" }
+
+/-! ### Echo questions
+
+Echo questions preserve declarative word order with prosodic focus
+on the wh-element. No SAI occurs. -/
+
+def ex10 : SAIDatum :=
+  { sentence := "John can eat WHAT?"
+    inverted := false
+    context := .echo
+    acceptability := .grammatical
+    description := "Echo question — wh-in-situ, no inversion" }
+
+-- ============================================================================
+-- § 2  Core Minimal Pairs as StringPhenomenonData
+-- ============================================================================
+
+/-! For compatibility with the Grammar.capturesPhenomenon interface and
+existing bridge modules, the core data is also available as minimal pairs. -/
+
+def coreData : StringPhenomenonData :=
+  { name := "Subject-Auxiliary Inversion"
+    generalization := "Matrix questions require aux-subject order; " ++
+      "embedded questions require subject-aux order"
+    pairs :=
+      [ { grammatical := "What can John eat?"
+          ungrammatical := "What John can eat?"
+          clauseType := .matrixQuestion
+          description := "Matrix wh-question requires inversion" }
+      , { grammatical := "Can John eat pizza?"
+          ungrammatical := "John can eat pizza?"
+          clauseType := .matrixQuestion
+          description := "Matrix yes-no question requires inversion" }
+      , { grammatical := "I wonder what John can eat"
+          ungrammatical := "I wonder what can John eat"
+          clauseType := .embeddedQuestion
+          description := "Embedded question prohibits inversion" } ] }
+
+-- ============================================================================
+-- § 3  Negative Inversion (Klima 1964)
+-- ============================================================================
+
+/-! When a negative or restrictive adverbial is fronted, SAI is obligatory.
+This is surprising on a purely interrogative analysis of inversion — negative
+inversion occurs in declaratives, not questions. It is a key argument for
+treating SAI as a structural phenomenon (head movement to C or feature-driven)
+rather than an illocutionary one. -/
+
+def ex11 : SAIDatum :=
+  { sentence := "Never have I seen such a thing"
+    inverted := true
+    context := .negativeInversion
+    acceptability := .grammatical
+    description := "Fronted negative adverb triggers inversion"
+    citation := "Klima (1964)" }
+
+def ex12 : SAIDatum :=
+  { sentence := "Never I have seen such a thing"
+    inverted := false
+    context := .negativeInversion
+    acceptability := .ungrammatical
+    description := "Fronted negative adverb without inversion" }
+
+def ex13 : SAIDatum :=
+  { sentence := "Rarely does she complain"
+    inverted := true
+    context := .negativeInversion
+    acceptability := .grammatical
+    description := "Fronted restrictive adverb triggers inversion" }
+
+def ex14 : SAIDatum :=
+  { sentence := "Not only did he leave, but he slammed the door"
+    inverted := true
+    context := .negativeInversion
+    acceptability := .grammatical
+    description := "Not only ... but also with inversion" }
+
+def ex15 : SAIDatum :=
+  { sentence := "Under no circumstances will I agree"
+    inverted := true
+    context := .negativeInversion
+    acceptability := .grammatical
+    description := "Fronted negative PP triggers inversion" }
+
+-- ============================================================================
+-- § 4  Conditional Inversion
+-- ============================================================================
+
+/-! Counterfactual conditionals allow omission of 'if' with obligatory SAI.
+This is restricted to 'had', 'were', and 'should', suggesting it is a
+lexically specific rather than fully productive process. -/
+
+def ex16 : SAIDatum :=
+  { sentence := "Had I known, I would have come"
+    inverted := true
+    context := .conditionalInversion
+    acceptability := .grammatical
+    description := "Conditional inversion with 'had'" }
+
+def ex17 : SAIDatum :=
+  { sentence := "Were she here, she would help"
+    inverted := true
+    context := .conditionalInversion
+    acceptability := .grammatical
+    description := "Conditional inversion with subjunctive 'were'" }
+
+def ex18 : SAIDatum :=
+  { sentence := "Should you need anything, please ask"
+    inverted := true
+    context := .conditionalInversion
+    acceptability := .grammatical
+    description := "Conditional inversion with 'should'" }
+
+def ex19 : SAIDatum :=
+  { sentence := "Could she swim, she would cross the river"
+    inverted := true
+    context := .conditionalInversion
+    acceptability := .marginal
+    description := "Conditional inversion with 'could' — degraded vs had/were/should" }
+
+-- ============================================================================
+-- § 5  Exclamative and So/Neither Inversion
+-- ============================================================================
+
+/-! SAI also occurs in exclamatives and in 'so'/'neither' constructions.
+These extend the phenomenon beyond interrogatives. -/
+
+def ex20 : SAIDatum :=
+  { sentence := "Boy, is it hot!"
+    inverted := true
+    context := .exclamative
+    acceptability := .grammatical
+    description := "Exclamative inversion" }
+
+def ex21 : SAIDatum :=
+  { sentence := "So did I"
+    inverted := true
+    context := .soNeither
+    acceptability := .grammatical
+    description := "So-inversion (VP anaphora)" }
+
+def ex22 : SAIDatum :=
+  { sentence := "Neither can she"
+    inverted := true
+    context := .soNeither
+    acceptability := .grammatical
+    description := "Neither-inversion (negative VP anaphora)" }
+
+-- ============================================================================
+-- § 6  Embedded Inversion in Non-Standard Varieties
+-- ============================================================================
+
+/-! Standard English prohibits SAI in embedded questions, but several dialects
+productively allow it. This is a key testing ground for syntactic theory:
+
+- **Belfast English** (Henry 1995): Embedded inversion with specific verbs
+  (wonder, ask, know) but not others (tell).
+- **Hiberno-English** (McCloskey 2006): More general embedded inversion,
+  including with 'if' complements.
+The dialectal data challenges any analysis that categorically ties SAI to
+root CP structure. It suggests the [+Q] or [+wh] feature can license
+T-to-C in embedded clauses under the right parametric conditions. -/
+
+def ex23 : SAIDatum :=
+  { sentence := "I wonder could he come"
+    inverted := true
+    context := .embeddedDialectal
+    acceptability := .dialectal
+    description := "Belfast English embedded inversion with 'wonder'"
+    citation := "Henry (1995)" }
+
+def ex24 : SAIDatum :=
+  { sentence := "I asked would she help"
+    inverted := true
+    context := .embeddedDialectal
+    acceptability := .dialectal
+    description := "Belfast English embedded inversion with 'ask'"
+    citation := "Henry (1995)" }
+
+def ex25 : SAIDatum :=
+  { sentence := "I don't know is he coming"
+    inverted := true
+    context := .embeddedDialectal
+    acceptability := .dialectal
+    description := "Hiberno-English embedded inversion"
+    citation := "McCloskey (2006)" }
+
+def ex26 : SAIDatum :=
+  { sentence := "I told him could he come"
+    inverted := true
+    context := .embeddedDialectal
+    acceptability := .ungrammatical
+    description := "Embedded inversion with 'tell' blocked even in Belfast English"
+    citation := "Henry (1995)" }
+
+-- ============================================================================
+-- § 7  The French/English Verb Movement Contrast (Pollock 1989)
+-- ============================================================================
+
+/-! Pollock (1989) established that French and English differ fundamentally in
+verb movement. French lexical verbs obligatorily raise to I (T), placing them
+before adverbs, negation, and floating quantifiers. English lexical verbs
+stay in situ, below adverbs and negation.
+
+This contrast is the *reason* English has do-support and restricts SAI to
+auxiliaries: English lexical verbs cannot raise to T (let alone to C), so
+when T must be spelled out in C (for SAI) or above negation, a dummy 'do'
+is inserted instead.
+
+  (Pollock 2) Negation:
+    a. *John likes not Mary.          (English: V cannot raise past negation)
+    b.  Jean n'aime pas Marie.        (French: V raises past negation)
+
+  (Pollock 3) Questions / SAI:
+    a. *Likes he Mary?                (English: lexical V cannot invert)
+    b.  Aime-t-il Marie?             (French: lexical V inverts)
+
+  (Pollock 4) Adverb placement:
+    a. *John kisses often Mary.       (English: V cannot raise past adverb)
+    b.  Jean embrasse souvent Marie.  (French: V raises past adverb)
+    c.  John often kisses Mary.       (English: adverb precedes V)
+    d. *Jean souvent embrasse Marie.  (French: adverb cannot precede V)
+
+  (Pollock 5) Floating quantifiers:
+    a. *My friends love all Mary.     (English: V cannot raise past FQ)
+    b.  Mes amis aiment tous Marie.   (French: V raises past FQ)
+    c.  My friends all love Mary.     (English: FQ precedes V)
+    d. *Mes amis tous aiment Marie.   (French: FQ cannot precede V)
+
+The four diagnostics converge: French V raises, English V does not. English
+auxiliaries *do* raise (hence "John has often eaten" is grammatical), which
+is why they can participate in SAI while lexical verbs cannot. -/
+
+/-- Pollock (3): French lexical verb inversion -/
+
+def ex_p01 : SAIDatum :=
+  { sentence := "Aime-t-il Marie?"
+    inverted := true
+    context := .matrixYN
+    acceptability := .grammatical
+    language := "French"
+    description := "French lexical verb inverts (V-to-I-to-C)"
+    citation := "Pollock (1989) (3b)" }
+
+def ex_p02 : SAIDatum :=
+  { sentence := "Likes he Mary?"
+    inverted := true
+    context := .matrixYN
+    acceptability := .ungrammatical
+    description := "English lexical verb cannot invert (*V-to-C)"
+    citation := "Pollock (1989) (3a)" }
+
+/-- Pollock (4): Adverb placement diagnostic -/
+
+def ex_p03 : SAIDatum :=
+  { sentence := "Jean embrasse souvent Marie"
+    inverted := false
+    context := .verbRaising
+    acceptability := .grammatical
+    language := "French"
+    description := "French V raises past adverb (V > Adv)"
+    citation := "Pollock (1989) (4b)" }
+
+def ex_p04 : SAIDatum :=
+  { sentence := "John kisses often Mary"
+    inverted := false
+    context := .verbRaising
+    acceptability := .ungrammatical
+    description := "English V cannot raise past adverb (*V > Adv)"
+    citation := "Pollock (1989) (4a)" }
+
+def ex_p05 : SAIDatum :=
+  { sentence := "John often kisses Mary"
+    inverted := false
+    context := .verbRaising
+    acceptability := .grammatical
+    description := "English Adv precedes V (Adv > V)"
+    citation := "Pollock (1989) (4c)" }
+
+def ex_p06 : SAIDatum :=
+  { sentence := "Jean souvent embrasse Marie"
+    inverted := false
+    context := .verbRaising
+    acceptability := .ungrammatical
+    language := "French"
+    description := "French Adv cannot precede V (*Adv > V, V must raise)"
+    citation := "Pollock (1989) (4d)" }
+
+/-- Pollock (2): Negation diagnostic -/
+
+def ex_p07 : SAIDatum :=
+  { sentence := "Jean n'aime pas Marie"
+    inverted := false
+    context := .sententialNegation
+    acceptability := .grammatical
+    language := "French"
+    description := "French V raises past negation (V > Neg)"
+    citation := "Pollock (1989) (2b)" }
+
+def ex_p08 : SAIDatum :=
+  { sentence := "John likes not Mary"
+    inverted := false
+    context := .sententialNegation
+    acceptability := .ungrammatical
+    description := "English V cannot raise past negation (*V > Neg)"
+    citation := "Pollock (1989) (2a)" }
+
+/-- Pollock (5): Floating quantifier diagnostic -/
+
+def ex_p09 : SAIDatum :=
+  { sentence := "Mes amis aiment tous Marie"
+    inverted := false
+    context := .verbRaising
+    acceptability := .grammatical
+    language := "French"
+    description := "French V raises past floating quantifier (V > FQ)"
+    citation := "Pollock (1989) (5b)" }
+
+def ex_p10 : SAIDatum :=
+  { sentence := "My friends love all Mary"
+    inverted := false
+    context := .verbRaising
+    acceptability := .ungrammatical
+    description := "English V cannot raise past floating quantifier (*V > FQ)"
+    citation := "Pollock (1989) (5a)" }
+
+/-- English auxiliaries DO raise (unlike lexical verbs) — same diagnostic -/
+
+def ex_p11 : SAIDatum :=
+  { sentence := "John has often eaten pizza"
+    inverted := false
+    context := .verbRaising
+    acceptability := .grammatical
+    description := "English auxiliary raises past adverb (Aux > Adv)"
+    citation := "Pollock (1989)" }
+
+def ex_p12 : SAIDatum :=
+  { sentence := "John often has eaten pizza"
+    inverted := false
+    context := .verbRaising
+    acceptability := .marginal
+    description := "English adverb before auxiliary — marginal (Aux should raise)"
+    citation := "Pollock (1989)" }
+
+-- ============================================================================
+-- § 8  Do-Support and Generalized Head Movement
+--      (Pollock 1989, Arregi & Pietraszko 2021)
+-- ============================================================================
+
+/-! SAI interacts with do-support: when no auxiliary is present, 'do' is
+inserted to host tense and carry out inversion.
+
+Arregi & Pietraszko (2021) unify upward displacement (T-to-C in SAI) and
+downward displacement (T-to-V lowering) as a single operation: Generalized
+Head Movement (GenHM). Under GenHM, the same mechanism of M-value sharing
+drives both. The crucial empirical support is that lexical verbs trigger
+do-support in *all three* contexts where tense cannot lower — negation,
+verum focus, and SAI — while auxiliaries invert directly in all three.
+This parallel is predicted if SAI and T-lowering are the same operation
+(displacement of T) with spelling out at the highest strong terminal.
+
+  (A&P 36)  Lexical verbs — do-support in negation / verum / SAI:
+    a. Sue does not eat fish.      (*Sue not eats fish)
+    b. Sue DOES eat fish.          (*Sue EATS fish [verum])
+    c. Where does Sue eat fish?    (*Where eats Sue fish?)
+
+  (A&P 37)  Auxiliaries — direct displacement, no do-support:
+    a. Sue is not eating fish.     (*Sue does not be eating fish)
+    b. Sue IS eating fish.         (*Sue DOES be eating fish [verum])
+    c. Where is Sue eating fish?   (*Where does Sue be eating fish?)
+
+The do-support facts raise a puzzle for T-to-C analyses: if T moves to C,
+why is a dummy 'do' needed rather than affix-lowering simply being blocked?
+Arregi & Pietraszko resolve this by treating the spell-out position as a PF
+decision, independent of the syntactic feature-sharing operation. -/
+
+/-- Do-support with lexical verbs in SAI -/
+
+def ex27 : SAIDatum :=
+  { sentence := "Does John eat pizza?"
+    inverted := true
+    context := .matrixYN
+    acceptability := .grammatical
+    description := "Do-support in polar question (lexical verb)"
+    citation := "Arregi & Pietraszko (2021) (36c)" }
+
+def ex28 : SAIDatum :=
+  { sentence := "Eats John pizza?"
+    inverted := true
+    context := .matrixYN
+    acceptability := .ungrammatical
+    description := "Lexical verb cannot invert directly (*V-to-C)" }
+
+def ex29 : SAIDatum :=
+  { sentence := "What did Mary buy?"
+    inverted := true
+    context := .matrixWh
+    acceptability := .grammatical
+    description := "Do-support with wh-movement (lexical verb)" }
+
+/-- Auxiliaries invert without do-support -/
+
+def ex30 : SAIDatum :=
+  { sentence := "Where is Sue eating fish?"
+    inverted := true
+    context := .matrixWh
+    acceptability := .grammatical
+    description := "Auxiliary inverts directly — no do-support"
+    citation := "Arregi & Pietraszko (2021) (37c)" }
+
+def ex31 : SAIDatum :=
+  { sentence := "Where does Sue be eating fish?"
+    inverted := true
+    context := .matrixWh
+    acceptability := .ungrammatical
+    description := "Do-support with auxiliary is ungrammatical"
+    citation := "Arregi & Pietraszko (2021) (37c)" }
+
+/-- The negation/verum parallel (same auxiliary vs lexical verb contrast) -/
+
+def ex32 : SAIDatum :=
+  { sentence := "Sue does not eat fish"
+    inverted := false
+    context := .sententialNegation
+    acceptability := .grammatical
+    description := "Do-support in sentential negation (lexical verb)"
+    citation := "Arregi & Pietraszko (2021) (36a)" }
+
+def ex33 : SAIDatum :=
+  { sentence := "Sue not eats fish"
+    inverted := false
+    context := .sententialNegation
+    acceptability := .ungrammatical
+    description := "Lexical verb cannot raise past negation"
+    citation := "Arregi & Pietraszko (2021) (36a)" }
+
+def ex34 : SAIDatum :=
+  { sentence := "Sue is not eating fish"
+    inverted := false
+    context := .sententialNegation
+    acceptability := .grammatical
+    description := "Auxiliary raises past negation — no do-support"
+    citation := "Arregi & Pietraszko (2021) (37a)" }
+
+def ex35 : SAIDatum :=
+  { sentence := "Sue does not be eating fish"
+    inverted := false
+    context := .sententialNegation
+    acceptability := .ungrammatical
+    description := "Do-support with auxiliary is ungrammatical even in negation"
+    citation := "Arregi & Pietraszko (2021) (37a)" }
+
+-- ============================================================================
+-- § 9  Verb-Specific Acquisition (Westergaard 2009)
+-- ============================================================================
+
+/-! Westergaard (2009) shows that children acquiring English learn SAI on a
+verb-by-verb basis rather than as a single abstract rule. Children produce
+inversion with 'is' and 'can' before 'does' and 'has', suggesting
+item-specific learning.
+
+This has implications for both constructionist (usage-based) and generative
+accounts: if SAI were a single parameter or rule, we would expect uniform
+acquisition across auxiliaries.
+
+Experimental work on frequency effects confirms this: children's inversion
+errors are inversely correlated with input frequency of specific
+auxiliary+wh combinations. -/
+
+/-- Auxiliaries ordered by approximate acquisition timeline -/
+def acquisitionOrder : List (String × String) :=
+  [ ("is",    "early — high frequency, salient copula")
+  , ("can",   "early — high frequency modal")
+  , ("will",  "intermediate — medium frequency")
+  , ("does",  "late — low frequency, requires do-support")
+  , ("has",   "late — low frequency, less salient") ]
+
+-- ============================================================================
+-- Aggregate Collections
+-- ============================================================================
+
+/-- All individual SAI data points. -/
+def allData : List SAIDatum :=
+  [ ex01, ex02, ex03, ex04, ex05, ex06, ex07, ex08, ex09, ex10
+  , ex11, ex12, ex13, ex14, ex15
+  , ex16, ex17, ex18, ex19
+  , ex20, ex21, ex22
+  , ex23, ex24, ex25, ex26
+  , ex_p01, ex_p02, ex_p03, ex_p04, ex_p05, ex_p06
+  , ex_p07, ex_p08, ex_p09, ex_p10, ex_p11, ex_p12
+  , ex27, ex28, ex29, ex30, ex31, ex32, ex33, ex34, ex35 ]
+
+/-- Classic core data (matrix + embedded questions only). -/
+def classicData : List SAIDatum :=
+  allData.filter λ d => d.context == .matrixWh
+    || d.context == .matrixYN
+    || d.context == .embedded
+    || d.context == .echo
+
+/-- Non-interrogative SAI contexts (negative, conditional, exclamative). -/
+def nonInterrogativeData : List SAIDatum :=
+  allData.filter λ d => d.context == .negativeInversion
+    || d.context == .conditionalInversion
+    || d.context == .exclamative
+    || d.context == .soNeither
+
+/-- Dialectal variation data. -/
+def dialectalData : List SAIDatum :=
+  allData.filter λ d => d.context == .embeddedDialectal
+
+/-- French/English verb movement contrast (Pollock 1989). -/
+def pollockData : List SAIDatum :=
+  [ex_p01, ex_p02, ex_p03, ex_p04, ex_p05, ex_p06,
+   ex_p07, ex_p08, ex_p09, ex_p10, ex_p11, ex_p12]
+
+/-- Cross-linguistic data (non-English). -/
+def crossLinguisticData : List SAIDatum :=
+  allData.filter (·.language != "English")
+
+/-- Do-support interaction data (Arregi & Pietraszko 2021). -/
+def doSupportData : List SAIDatum :=
+  [ex27, ex28, ex29, ex30, ex31, ex32, ex33, ex34, ex35]
+
+-- ============================================================================
+-- Empirical Generalizations
+-- ============================================================================
+
+-- Core paradigm: inverted matrix questions with a legitimate auxiliary
+-- are grammatical; non-inverted matrix questions are ungrammatical.
+-- (The do-support cases ex28/ex31 are inverted but ungrammatical for
+-- independent reasons — wrong head type — which is exactly what
+-- Arregi & Pietraszko's account predicts.)
+#guard ex01.acceptability == .grammatical   -- What can John eat?
+#guard ex02.acceptability == .ungrammatical -- *What John can eat?
+#guard ex04.acceptability == .grammatical   -- Can John eat pizza?
+#guard ex05.acceptability == .ungrammatical -- *John can eat pizza?
+
+-- Embedded questions with inversion are ungrammatical in Standard English.
+#guard ex08.acceptability == .ungrammatical -- *I wonder what can John eat
+
+-- Negative inversion: fronted negative triggers obligatory SAI.
+#guard ex11.acceptability == .grammatical   -- Never have I seen...
+#guard ex12.acceptability == .ungrammatical -- *Never I have seen...
+
+-- Belfast English embedded inversion is dialectal, not ungrammatical.
+#guard ex23.acceptability == .dialectal     -- I wonder could he come
+#guard ex24.acceptability == .dialectal     -- I asked would she help
+
+-- Arregi & Pietraszko: do-support with auxiliary is always ungrammatical
+-- (auxiliaries displace directly, not via do).
+#guard ex31.acceptability == .ungrammatical -- *Where does Sue be eating fish?
+#guard ex35.acceptability == .ungrammatical -- *Sue does not be eating fish
+
+-- Lexical verbs cannot invert or raise past negation directly.
+#guard ex28.acceptability == .ungrammatical -- *Eats John pizza?
+#guard ex33.acceptability == .ungrammatical -- *Sue not eats fish
+
+-- Do-support is the grammatical alternative for lexical verbs.
+#guard ex27.acceptability == .grammatical   -- Does John eat pizza?
+#guard ex32.acceptability == .grammatical   -- Sue does not eat fish
+
+-- Pollock: French lexical verbs raise; English lexical verbs do not.
+#guard ex_p01.acceptability == .grammatical   -- Aime-t-il Marie? (French V inverts)
+#guard ex_p02.acceptability == .ungrammatical -- *Likes he Mary? (English V can't)
+#guard ex_p03.acceptability == .grammatical   -- Jean embrasse souvent Marie (V > Adv)
+#guard ex_p04.acceptability == .ungrammatical -- *John kisses often Mary (*V > Adv)
+
+-- Pollock: English auxiliaries pattern with French lexical verbs (they raise).
+#guard ex_p11.acceptability == .grammatical   -- John has often eaten pizza
+
+end Phenomena.WordOrder.SubjectAuxInversion

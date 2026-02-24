@@ -200,31 +200,21 @@ def pronounCoreferenceBlocked (ws : List Word) : Bool :=
 -- Tests
 -- ============================================================================
 
--- reflexiveCoreferenceData pairs:
--- Pair 1: john sees himself ✓ vs himself sees john ✗
-#eval reflexiveLicensedInSentence [john, sees, himself]     -- true ✓
-#eval grammaticalForCoreference [himself, sees, john]       -- false ✓
+-- Reflexive coreference: licensed when c-commanded, agreement matches
+#guard reflexiveLicensedInSentence [john, sees, himself]     -- ✓
+#guard !grammaticalForCoreference [himself, sees, john]      -- ✗ reflexive in subject
+#guard reflexiveLicensedInSentence [mary, sees, herself]     -- ✓
+#guard !grammaticalForCoreference [herself, sees, mary]      -- ✗
+#guard reflexiveLicensedInSentence [they, see, themselves]   -- ✓
+#guard !grammaticalForCoreference [themselves, see, them]    -- ✗
 
--- Pair 2: mary sees herself ✓ vs herself sees mary ✗
-#eval reflexiveLicensedInSentence [mary, sees, herself]     -- true ✓
-#eval grammaticalForCoreference [herself, sees, mary]       -- false ✓
+-- Agreement mismatches
+#guard !reflexiveLicensedInSentence [john, sees, herself]    -- ✗ gender mismatch
+#guard !reflexiveLicensedInSentence [they, see, himself]     -- ✗ number mismatch
 
--- Pair 3: they see themselves ✓ vs themselves see them ✗
-#eval reflexiveLicensedInSentence [they, see, themselves]   -- true ✓
-#eval grammaticalForCoreference [themselves, see, them]     -- false ✓
-
--- Pair 4: john sees himself ✓ vs john sees herself ✗ (gender)
-#eval reflexiveLicensedInSentence [john, sees, himself]     -- true ✓
-#eval reflexiveLicensedInSentence [john, sees, herself]     -- false ✓
-
--- Pair 5: they see themselves ✓ vs they see himself ✗ (number)
-#eval reflexiveLicensedInSentence [they, see, themselves]   -- true ✓
-#eval reflexiveLicensedInSentence [they, see, himself]      -- false ✓
-
--- pronominalDisjointReferenceData pairs:
--- Pronouns resist local coreference
-#eval pronounCoreferenceBlocked [john, sees, him]           -- true ✓
-#eval pronounCoreferenceBlocked [mary, sees, her]           -- true ✓
+-- Pronominal disjoint reference (Principle B)
+#guard pronounCoreferenceBlocked [john, sees, him]           -- ✓
+#guard pronounCoreferenceBlocked [mary, sees, her]           -- ✓
 
 -- ============================================================================
 -- Capturing Phenomena Data

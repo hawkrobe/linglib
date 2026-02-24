@@ -263,7 +263,7 @@ def exampleDP : XBarPhrase := {
   specifier := none
 }
 
-#eval exampleDP.isWellFormed  -- true
+#guard exampleDP.isWellFormed
 
 /-- Example: "John saw Mary" as a simple clause sketch
 
@@ -276,6 +276,6 @@ def exampleVP : XBarPhrase := {
   specifier := none  -- Subject would be in Spec,vP or Spec,TP
 }
 
-#eval exampleVP.isWellFormed  -- true
+#guard exampleVP.isWellFormed
 
 end Minimalism

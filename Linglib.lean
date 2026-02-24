@@ -522,6 +522,8 @@ import Linglib.Theories.Syntax.DependencyGrammar.Coordination
 import Linglib.Theories.Syntax.DependencyGrammar.Coreference
 import Linglib.Theories.Syntax.DependencyGrammar.CRDC
 import Linglib.Phenomena.WordOrder.DG_InversionBridge
+import Linglib.Phenomena.WordOrder.HPSGBridge
+import Linglib.Phenomena.WordOrder.Minimalism_InversionBridge
 import Linglib.Theories.Syntax.DependencyGrammar.LongDistance
 
 -- Theories: Dynamic Semantics

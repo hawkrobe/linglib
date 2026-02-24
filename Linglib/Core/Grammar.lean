@@ -38,15 +38,6 @@ class Grammar (G : Type) where
   /-- Whether the grammar can produce *some* derivation for a string -/
   derives : G → List Word → ClauseType → Prop
 
-/-- If two grammars both derive the same string, they agree on that string. -/
-theorem derives_agreement
-    {G₁ G₂ : Type} [Grammar G₁] [Grammar G₂]
-    (g₁ : G₁) (g₂ : G₂) (ws : List Word) (ct : ClauseType)
-    (h₁ : Grammar.derives g₁ ws ct)
-    (h₂ : Grammar.derives g₂ ws ct) :
-    Grammar.derives g₁ ws ct ∧ Grammar.derives g₂ ws ct :=
-  ⟨h₁, h₂⟩
-
 -- ============================================================================
 -- Minimal Pairs (Word-Based)
 -- ============================================================================

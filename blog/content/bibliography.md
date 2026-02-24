@@ -434,9 +434,17 @@ cited in: [ProjectionMechanisms](https://github.com/hawkrobe/linglib/blob/main/L
 
 ## Syntax
 
+**Adger, D.** (2003). Core Syntax: A Minimalist Approach. *Oxford University Press*.\
+[foundational] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/WordOrder/SubjectAuxInversion.lean)\
+cited in: [SubjectAuxInversion](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/WordOrder/SubjectAuxInversion.lean)
+
 **Anand, P., Hardt, D. & McCloskey, J.** (2021). The Santa Cruz Sluicing Data Set. *Language, 97(1), e68–e88*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Ellipsis/Studies/AnandHardtMcCloskey2021/Data.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Ellipsis/Studies/AnandHardtMcCloskey2021/Bridge.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/Basic.lean)\
 cited in: [Bridge](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Ellipsis/Studies/AnandHardtMcCloskey2021/Bridge.lean), [Data](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Ellipsis/Studies/AnandHardtMcCloskey2021/Data.lean)
+
+**Arregi, K. & Pietraszko, A.** (2021). The Ups and Downs of Head Displacement. *Linguistic Inquiry, 52(2), 241–290*.\
+[formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/WordOrder/SubjectAuxInversion.lean)\
+cited in: [SubjectAuxInversion](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/WordOrder/SubjectAuxInversion.lean)
 
 **Cacchioli, G.** (2025). The Syntax of Clausal Prefixes in Tigrinya. *PhD dissertation, Université de Gen\`eve*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Fragments/Tigrinya/ClausePrefixes.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Complementation/Studies/Cacchioli2025/Data.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Complementation/Studies/Cacchioli2025/Bridge.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Complementation/Studies/Cacchioli2025/SelectionBridge.lean)\
@@ -451,11 +459,23 @@ cited in: [ClausePrefixes](https://github.com/hawkrobe/linglib/blob/main/Linglib
 **Hahn, M., Degen, J. & Futrell, R.** (2021). Modeling Word and Morpheme Order in Natural Language as an Efficient Trade-Off of Memory and Surprisal. *Psychological Review, 128(4), 726–756*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/DependencyGrammar/Formal/MemorySurprisal/Basic.lean)
 
+**Henry, A.** (1995). Belfast English and Standard English: Dialect Variation and Parameter Setting. *Oxford University Press*.\
+[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/WordOrder/SubjectAuxInversion.lean)\
+cited in: [SubjectAuxInversion](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/WordOrder/SubjectAuxInversion.lean)
+
 **Kayne, R. S.** (1994). The Antisymmetry of Syntax. *MIT Press*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/Minimalism/Formal/Linearization/LCA.lean)
 
+**Klima, E. S.** (1964). Negation in English. *The Structure of Language, 246–323*.\
+[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/WordOrder/SubjectAuxInversion.lean)\
+cited in: [SubjectAuxInversion](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/WordOrder/SubjectAuxInversion.lean)
+
 **Marcolli, M., Chomsky, N. & Berwick, R. C.** (2023). Mathematical Structure of Syntactic Merge. *arXiv:2305.18278*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/Minimalism/Formal/MCB2023/Coproduct.lean)
+
+**McCloskey, J.** (2006). Questions and Questioning in a Local English. *Crosslinguistic Research in Syntax and Semantics: Negation, Tense, and Clausal Architecture, 87–126*.\
+[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/WordOrder/SubjectAuxInversion.lean)\
+cited in: [SubjectAuxInversion](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/WordOrder/SubjectAuxInversion.lean)
 
 **Osborne, T. & Groß, T.** (2012). Constructions Are Catenae: Construction Grammar Meets Dependency Grammar. *Cognitive Linguistics, 23(1), 165–216*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/DependencyGrammar/Formal/CatenalConstruction.lean)\
@@ -464,8 +484,24 @@ cited in: [CatenalConstruction](https://github.com/hawkrobe/linglib/blob/main/Li
 **Pollard, C. & Sag, I. A.** (1994). Head-Driven Phrase Structure Grammar. *University of Chicago Press*.\
 [foundational] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/HPSG/Core/Basic.lean)
 
+**Pollock, J.** (1989). Verb Movement, Universal Grammar, and the Structure of IP. *Linguistic Inquiry, 20(3), 365–424*.\
+[formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/WordOrder/SubjectAuxInversion.lean)\
+cited in: [SubjectAuxInversion](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/WordOrder/SubjectAuxInversion.lean)
+
+**Radford, A.** (2009). Analysing English Sentences. *Cambridge University Press*.\
+[foundational] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/WordOrder/SubjectAuxInversion.lean)\
+cited in: [SubjectAuxInversion](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/WordOrder/SubjectAuxInversion.lean)
+
+**Sag, I. A., Wasow, T. & Bender, E. M.** (2003). Syntactic Theory: A Formal Introduction. *CSLI Publications*.\
+[foundational] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/WordOrder/SubjectAuxInversion.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/HPSG/Inversion.lean)\
+cited in: [SubjectAuxInversion](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/WordOrder/SubjectAuxInversion.lean)
+
 **Steedman, M.** (2000). The Syntactic Process. *MIT Press*.\
 [foundational] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/CCG/Core/Basic.lean)
+
+**Westergaard, M.** (2009). The Acquisition of Word Order: Micro-Cues, Information Structure, and Economy. *John Benjamins*.\
+[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/WordOrder/SubjectAuxInversion.lean)\
+cited in: [SubjectAuxInversion](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/WordOrder/SubjectAuxInversion.lean)
 
 **Zeijlstra, H.** (2012). There Is Only One Way to Agree. *The Linguistic Review, 29(3), 491–539*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/Minimalism/Tense/Zeijlstra.lean)

@@ -277,14 +277,14 @@ def detThe : LIToken := ⟨.simple .D [.N], 3⟩
 /-- Build: [D the] merges with [N pizza] → D projects (D selects N) -/
 def theDP : SyntacticObject := .node (.leaf detThe) (.leaf nounPizza)
 
-#eval selectsB (.leaf detThe) (.leaf nounPizza)  -- true: D selects N
-#eval labelCat theDP  -- some .D (the determiner projects)
+#guard selectsB (.leaf detThe) (.leaf nounPizza)     -- D selects N
+#guard labelCat theDP == some .D                      -- the determiner projects
 
 /-- Build: [V eat] merges with [DP the pizza] → V projects (V selects D) -/
 def eatPizzaVP : SyntacticObject := .node (.leaf verbEat) theDP
 
-#eval selectsB (.leaf verbEat) theDP  -- true: V selects D
-#eval labelCat eatPizzaVP  -- some .V (the verb projects)
+#guard selectsB (.leaf verbEat) theDP               -- V selects D
+#guard labelCat eatPizzaVP == some .V                -- the verb projects
 
 -- Part 8: Understanding Min/Max with Examples
 
@@ -336,11 +336,11 @@ Status of V in eatPizzaVP:
 The key insight: a HEAD is an LI that projects. A PHRASE is a maximal projection.
 -/
 
--- Verify with computation
-#eval projectsInB (.leaf detThe) theDP        -- true: D projects in DP
-#eval projectsInB (.leaf nounPizza) theDP     -- false: N doesn't project
-#eval projectsInB (.leaf verbEat) eatPizzaVP  -- true: V projects in VP
-#eval projectsInB theDP eatPizzaVP            -- false: DP doesn't project in VP
+-- Verify projection assignments
+#guard projectsInB (.leaf detThe) theDP             -- D projects in DP
+#guard !projectsInB (.leaf nounPizza) theDP         -- N doesn't project
+#guard projectsInB (.leaf verbEat) eatPizzaVP       -- V projects in VP
+#guard !projectsInB theDP eatPizzaVP                -- DP doesn't project in VP
 
 -- Part 9: Position-Indexed Maximality (Collins & Stabler 2016)
 

@@ -299,7 +299,7 @@ def theCatNumeration : Numeration :=
     |>.add detThe 1 (by omega)
     |>.add nounCat 1 (by omega)
 
-#eval theCatNumeration.totalCount  -- 2
+#guard theCatNumeration.totalCount == 2
 
 -- ============================================================================
 -- MinimalistGrammar: Grammar Instance Using Formal Types

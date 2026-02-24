@@ -158,11 +158,6 @@ private abbrev can := Fragments.English.FunctionWords.can.toWord
 private abbrev john := Fragments.English.Nouns.john.toWordSg
 private abbrev eat := Fragments.English.Predicates.Verbal.eat.toWordPl
 
-#eval wordsHaveTBeforeSubject [what, can, john, eat]   -- true
-#eval wordsHaveTBeforeSubject [what, john, can, eat]   -- false
-#eval wordsHaveSubjectBeforeT [john, can, eat]         -- true
-#eval wordsHaveSubjectBeforeT [can, john, eat]         -- false
-
 example : licenses [what, can, john, eat] .matrixQuestion :=
   licenses_matrix_t_first _ rfl
 

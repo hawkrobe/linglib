@@ -135,11 +135,6 @@ private abbrev john := Fragments.English.Nouns.john.toWordSg
 private abbrev eat := Fragments.English.Predicates.Verbal.eat.toWordPl
 private abbrev pizza := Fragments.English.Nouns.pizza.toWordSg
 
-#eval auxPrecedesSubject [what, can, john, eat]   -- true
-#eval auxPrecedesSubject [what, john, can, eat]   -- false
-#eval subjectPrecedesAux [john, can, eat]         -- true
-#eval subjectPrecedesAux [can, john, eat]         -- false
-
 example : licenses [what, can, john, eat] .matrixQuestion :=
   licenses_matrix_aux_first _ rfl
 
@@ -167,14 +162,6 @@ instance : Grammar HPSGInversionGrammar where
 -- ============================================================================
 -- Proofs for Inversion Minimal Pairs
 -- ============================================================================
-
--- Pair 1: Matrix wh-question
-#eval auxPrecedesSubject [what, can, john, eat]  -- true (grammatical)
-#eval auxPrecedesSubject [what, john, can, eat]  -- false (ungrammatical)
-
--- Pair 2: Matrix yes-no question
-#eval auxPrecedesSubject [can, john, eat, pizza]  -- true (grammatical)
-#eval auxPrecedesSubject [john, can, eat, pizza]  -- false (ungrammatical)
 
 /-- "What can John eat?" is licensed as a matrix question -/
 theorem pair1_grammatical : licenses [what, can, john, eat] .matrixQuestion :=

@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.226.32] - 2026-02-23
+
+### Changed
+- **SAI Data rewrite** (`Phenomena/WordOrder/SubjectAuxInversion.lean`): Redesigned from 86-line `PhenomenonData` stub to ~760-line theory-neutral Data file with custom `SAIDatum`/`SAIContext`/`Acceptability` types; 35 English examples + 12 cross-linguistic examples across 9 sections: core minimal pairs, `StringPhenomenonData` bridge compat, negative inversion (Klima 1964), conditional inversion, exclamative/so/neither, dialectal embedded inversion (Henry 1995, McCloskey 2006), French/English verb movement (Pollock 1989), do-support + GenHM (Arregi & Pietraszko 2021), verb-specific acquisition (Westergaard 2009); per-datum `#guard` verification
+- **Bridge deduplication** (`Phenomena/WordOrder/HPSGBridge.lean`, `Minimalism_InversionBridge.lean`): Rewrote from complete duplicates of Theory files into proper bridges — import `Theories/Syntax/{HPSG,Minimalism}/Inversion.lean`, remove all redefined types/theorems, add bridge theorems pairing Data judgments with Theory licensing results
+- **#eval removal**: Replaced all `#eval` with `#guard` assertions or removed redundant ones across 10 files: `HPSG/Coreference.lean`, `HPSG/Inversion.lean`, `Minimalism/Core/Labeling.lean`, `Minimalism/Formal/Workspace.lean`, `Minimalism/Formal/XBar.lean`, `Minimalism/Inversion.lean`, `HPSGBridge.lean`, `Minimalism_InversionBridge.lean`, `DG_InversionBridge.lean`
+- **Dead code removal** (`Core/Grammar.lean`): Removed trivial `derives_agreement` theorem (restated hypotheses as conjunction, never used)
+- **Bibliography** (`blog/data/references.bib`, `blog/content/bibliography.md`): Added 9 syntax references: Klima 1964, Pollock 1989, Henry 1995, Adger 2003, Sag/Wasow/Bender 2003, McCloskey 2006, Radford 2009, Westergaard 2009, Arregi & Pietraszko 2021
+- **Linglib.lean**: Added missing imports for `HPSGBridge` and `Minimalism_InversionBridge`
+
 ## [0.226.29] - 2026-02-23
 
 ### Changed
