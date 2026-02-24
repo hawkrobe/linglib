@@ -2,6 +2,8 @@ import Linglib.Core.Empirical
 import Linglib.Tactics.RSAPredict
 import Linglib.Theories.Pragmatics.RSA.Core.Config
 
+open Core.Empirical
+
 /-!
 # Qing & Franke (2015) @cite{qing-franke-2015}
 
@@ -417,6 +419,26 @@ theorem green_ambiguous :
     Utterance.appliesTo .green .blue_circle = false :=
   ⟨rfl, rfl, rfl⟩
 
+-- Auxiliary: expand finite sums for manual score-equality proofs
+
+@[simp] private theorem Object.sum_expand {f : Object → ℝ} :
+    ∑ x : Object, f x = f .green_square + f .blue_circle + f .green_circle := by
+  change (Finset.univ : Finset Object).sum f = _
+  have : (Finset.univ : Finset Object) = {.green_square, .blue_circle, .green_circle} :=
+    by native_decide
+  rw [this]
+  simp [Finset.sum_insert, Finset.sum_singleton, Finset.mem_insert, Finset.mem_singleton]
+  ring
+
+@[simp] private theorem Utterance.sum_expand {f : Utterance → ℝ} :
+    ∑ x : Utterance, f x = f .square + f .circle + f .green + f .blue := by
+  change (Finset.univ : Finset Utterance).sum f = _
+  have : (Finset.univ : Finset Utterance) = {.square, .circle, .green, .blue} :=
+    by native_decide
+  rw [this]
+  simp [Finset.sum_insert, Finset.sum_singleton, Finset.mem_insert, Finset.mem_singleton]
+  ring
+
 -- ============================================================================
 -- §11. Speaker Predictions (Findings 1–4)
 -- ============================================================================
@@ -446,13 +468,28 @@ theorem cost_breaks_symmetry :
     costCfg.S1 () .green_circle .circle > costCfg.S1 () .green_circle .green := by
   rsa_predict
 
-set_option maxHeartbeats 400000 in
+/-- The S1 scores for "circle" and "green" at green_circle are exactly equal
+    under zero cost. Both apply to exactly 2 objects with uniform L0, so
+    L0(green_circ|"circle") = L0(green_circ|"green") = 1/2, and with zero cost
+    the scores are exp(log(1/2)) = exp(log(1/2)). -/
+private theorem zeroCost_score_circle_eq_green :
+    (zeroCostCfg.S1agent ()).score .green_circle .circle =
+    (zeroCostCfg.S1agent ()).score .green_circle .green := by
+  simp only [RSAConfig.S1agent, beliefGoalScore,
+             RSAConfig.L0agent, RationalAction.policy, RationalAction.totalScore,
+             uniformPrior, Utterance.appliesTo,
+             Object.sum_expand]
+  norm_num
+
 /-- Finding 4: Without cost, the symmetry is unbroken — neither ambiguous word
     dominates for green_circle. Both "circle" and "green" apply to exactly 2 objects,
     so L0 assigns equal probability, and S1 assigns equal weight. -/
 theorem no_cost_symmetry :
     ¬(zeroCostCfg.S1 () .green_circle .circle > zeroCostCfg.S1 () .green_circle .green) := by
-  rsa_predict
+  have heq : zeroCostCfg.S1 () .green_circle .circle =
+      zeroCostCfg.S1 () .green_circle .green :=
+    RationalAction.policy_eq_of_score_eq _ _ _ _ zeroCost_score_circle_eq_green
+  exact fun h => absurd heq (ne_of_gt h)
 
 -- ============================================================================
 -- §12. Listener Predictions (Findings 5–6): Salience Reversal
@@ -543,26 +580,6 @@ The discriminating observation is **blue_circle**: only σ_bU predicts "blue" > 
 Salience in the speaker is harmful: it inflates L0's posterior for blue_circle given
 "circle" (since blue_circle has the highest salience, 139 vs 30), which raises S1's
 score for "circle" enough to match or exceed "blue". -/
-
--- Auxiliary: expand finite sums for manual score-equality proofs
-
-@[simp] private theorem Object.sum_expand {f : Object → ℝ} :
-    ∑ x : Object, f x = f .green_square + f .blue_circle + f .green_circle := by
-  change (Finset.univ : Finset Object).sum f = _
-  have : (Finset.univ : Finset Object) = {.green_square, .blue_circle, .green_circle} :=
-    by native_decide
-  rw [this]
-  simp [Finset.sum_insert, Finset.sum_singleton, Finset.mem_insert, Finset.mem_singleton]
-  ring
-
-@[simp] private theorem Utterance.sum_expand {f : Utterance → ℝ} :
-    ∑ x : Utterance, f x = f .square + f .circle + f .green + f .blue := by
-  change (Finset.univ : Finset Utterance).sum f = _
-  have : (Finset.univ : Finset Utterance) = {.square, .circle, .green, .blue} :=
-    by native_decide
-  rw [this]
-  simp [Finset.sum_insert, Finset.sum_singleton, Finset.mem_insert, Finset.mem_singleton]
-  ring
 
 -- Concrete configs: all use adjCost 1/2 and uniform listener prior.
 -- (Listener prior doesn't affect S1, so any prior works for speaker comparison.)
