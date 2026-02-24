@@ -1,4 +1,4 @@
-import Linglib.Theories.Pragmatics.RSA.Implementations.Alsop2024
+import Linglib.Phenomena.Modality.Studies.Alsop2024
 import Linglib.Phenomena.Modality.FreeChoice
 
 /-!

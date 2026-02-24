@@ -346,6 +346,8 @@ import Linglib.Phenomena.Modality.PracticalReasoningBridge
 import Linglib.Phenomena.Modality.InformationalBackgroundsBridge
 import Linglib.Phenomena.Modality.DegreeCollapse
 import Linglib.Phenomena.Modality.GermanModalsBridge
+import Linglib.Phenomena.Modality.Studies.Alsop2024
+import Linglib.Phenomena.Modality.Studies.ChampollionAlsopGrosu2019
 import Linglib.Phenomena.Modality.Studies.FreeChoiceFarsi
 import Linglib.Phenomena.Modality.Studies.Khoo2015
 import Linglib.Phenomena.Modality.Studies.Khoo2015Bridge
@@ -940,11 +942,9 @@ import Linglib.Theories.Pragmatics.RSA.Extensions.InformationTheory.UtilityDynam
 import Linglib.Theories.Pragmatics.RSA.Extensions.InformationTheory.UtilityNonMonotonicity
 import Linglib.Theories.Pragmatics.RSA.Extensions.LexicalUncertainty.Basic
 import Linglib.Theories.Pragmatics.RSA.Extensions.LexicalUncertainty.Compositional
-import Linglib.Theories.Pragmatics.RSA.Implementations.Alsop2024
 import Linglib.Theories.Pragmatics.RSA.Implementations.BarnettEtAl2022
 import Linglib.Theories.Pragmatics.RSA.Implementations.BellerGerstenberg2025
 import Linglib.Theories.Pragmatics.RSA.Implementations.BergenGoodman2015
-import Linglib.Theories.Pragmatics.RSA.Implementations.ChampollionAlsopGrosu2019
 import Linglib.Theories.Pragmatics.RSA.Implementations.CremersWilcoxSpector2023
 import Linglib.Theories.Pragmatics.RSA.Implementations.CumminsFranke2021
 import Linglib.Theories.Pragmatics.RSA.Implementations.EgreEtAl2023

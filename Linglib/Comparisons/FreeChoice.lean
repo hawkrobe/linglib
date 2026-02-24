@@ -1,6 +1,6 @@
 import Linglib.Theories.Pragmatics.NeoGricean.Implementations.BarLevFox2020
-import Linglib.Theories.Pragmatics.RSA.Implementations.ChampollionAlsopGrosu2019
-import Linglib.Theories.Pragmatics.RSA.Implementations.Alsop2024
+import Linglib.Phenomena.Modality.Studies.ChampollionAlsopGrosu2019
+import Linglib.Phenomena.Modality.Studies.Alsop2024
 import Linglib.Theories.Semantics.Dynamic.Effects.Bilateral.FreeChoice
 import Linglib.Theories.Semantics.Dynamic.Systems.BSML.FreeChoice
 import Linglib.Phenomena.Modality.Studies.Aloni2022Bridge

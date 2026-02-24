@@ -1,4 +1,4 @@
-import Linglib.Theories.Pragmatics.RSA.Implementations.ChampollionAlsopGrosu2019
+import Linglib.Phenomena.Modality.Studies.ChampollionAlsopGrosu2019
 import Linglib.Phenomena.Modality.FreeChoice
 
 /-!
