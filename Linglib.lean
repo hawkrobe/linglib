@@ -166,6 +166,8 @@ import Linglib.Phenomena.Agreement.Basic
 import Linglib.Phenomena.Agreement.DetNoun
 import Linglib.Phenomena.Case.Data
 import Linglib.Phenomena.Case.Typology
+import Linglib.Phenomena.Case.Studies.Ozaki2025.Data
+import Linglib.Phenomena.Case.Studies.Ozaki2025.Bridge
 import Linglib.Phenomena.Copulas.Typology
 import Linglib.Phenomena.Complementation.Attitudes.IntensionalExamplesBridge
 import Linglib.Phenomena.Complementation.Attitudes.IntentionalIdentity.Data
@@ -469,7 +471,7 @@ import Linglib.Theories.Syntax.CCG.Bridge.Derivation
 import Linglib.Phenomena.Agreement.CCGBridge
 import Linglib.Phenomena.Coordination.CCGBridge
 import Linglib.Theories.Syntax.CCG.CrossSerial
-import Linglib.Phenomena.WordOrder.CCG_DerivationsBridge
+import Linglib.Phenomena.WordOrder.Bridge.CCGDerivations
 import Linglib.Theories.Syntax.CCG.Gapping
 import Linglib.Phenomena.Entailment.CCGBridge
 import Linglib.Theories.Syntax.CCG.Formal.Equivalence
@@ -494,6 +496,7 @@ import Linglib.Comparisons.TenseTheories
 import Linglib.Comparisons.VaguenessTheories
 import Linglib.Comparisons.ProjectionMechanisms
 import Linglib.Comparisons.KratzerEpistemicRSA
+import Linglib.Comparisons.CaseTheories
 
 -- Theories: Dependency Grammar
 import Linglib.Theories.Syntax.DependencyGrammar.Core.Basic
@@ -516,14 +519,22 @@ import Linglib.Theories.Syntax.DependencyGrammar.Formal.Islands
 import Linglib.Theories.Syntax.DependencyGrammar.Formal.CoordinationParallelism
 import Linglib.Theories.Syntax.DependencyGrammar.Formal.MemorySurprisal.Basic
 import Linglib.Theories.Syntax.DependencyGrammar.Formal.MemorySurprisal.FedzechkinaEtAl2017
-import Linglib.Phenomena.WordOrder.DG_MemorySurprisalBridge
+import Linglib.Phenomena.WordOrder.Bridge.DGMemorySurprisal
 import Linglib.Theories.Syntax.DependencyGrammar.Formal.MemorySurprisal.MorphemeOrder
 import Linglib.Theories.Syntax.DependencyGrammar.Coordination
 import Linglib.Theories.Syntax.DependencyGrammar.Coreference
 import Linglib.Theories.Syntax.DependencyGrammar.CRDC
-import Linglib.Phenomena.WordOrder.DG_InversionBridge
-import Linglib.Phenomena.WordOrder.HPSGBridge
-import Linglib.Phenomena.WordOrder.Minimalism_InversionBridge
+import Linglib.Phenomena.WordOrder.Bridge.DGInversion
+import Linglib.Phenomena.WordOrder.Bridge.DGHarmonicOrder
+import Linglib.Phenomena.WordOrder.Bridge.DGNonProjective
+import Linglib.Phenomena.WordOrder.Bridge.HPSGInversion
+import Linglib.Phenomena.WordOrder.Bridge.MinimalismInversion
+import Linglib.Phenomena.WordOrder.Bridge.MinimalismVerbMovement
+import Linglib.Phenomena.WordOrder.Bridge.MinimalismBulgarianLHM
+import Linglib.Phenomena.WordOrder.Bridge.MinimalismGermanicV2
+import Linglib.Phenomena.WordOrder.Bridge.MinimalismDerivations
+import Linglib.Phenomena.WordOrder.Bridge.ArnoldEtAl2000
+import Linglib.Phenomena.WordOrder.Studies.ArnoldEtAl2000
 import Linglib.Theories.Syntax.DependencyGrammar.LongDistance
 
 -- Theories: Dynamic Semantics
@@ -613,12 +624,14 @@ import Linglib.Theories.Semantics.Focus.KratzerSelkirk2020
 
 -- Theories: Minimalism
 import Linglib.Theories.Syntax.Minimalism.Core.Agree
+import Linglib.Theories.Syntax.Minimalism.Core.DependentCase
 import Linglib.Theories.Syntax.Minimalism.Formal.Amalgamation
 import Linglib.Theories.Syntax.Minimalism.Formal.Constraints.HMC
 import Linglib.Theories.Syntax.Minimalism.Coreference
 import Linglib.Theories.Syntax.Minimalism.Derivations
 import Linglib.Theories.Syntax.Minimalism.Core.FromFragments
 import Linglib.Theories.Syntax.Minimalism.Formal.HeadMovement.Basic
+import Linglib.Theories.Syntax.Minimalism.Formal.HeadMovement.VerbMovement
 import Linglib.Theories.Syntax.Minimalism.HeadMovement.BulgarianLHM
 import Linglib.Theories.Syntax.Minimalism.HeadMovement.GermanicV2
 import Linglib.Phenomena.Politeness.Minimalism_AllocutivityBridge

@@ -117,7 +117,42 @@ def tabe_sase : JapaneseVerbEntry where
 theorem ik_ase_is_make :
     ik_ase.causativeBuilder = some .make := rfl
 
-def allVerbs : List JapaneseVerbEntry := [tanosimi, osore, kitai, shinpai, ik_ase, tabe_sase]
+/-! ## Accusative/Ablative Alternation Verbs (Ozaki 2025)
+
+Departure verbs that allow source marking with ACC *-o* or ABL *kara*.
+These are dyadic unaccusatives: two internal arguments, no thematic Voice.
+-/
+
+/-- 離れる "hanareru" — leave (dyadic unaccusative, ACC/ABL alternation).
+    Leaver = theme (raised to subject), Source = source of departure. -/
+def hanareru : JapaneseVerbEntry where
+  form := "hanareru"
+  form3sg := "hanareru"
+  formPast := "hanareta"
+  formGerund := "hanarete"
+  formProgressive := "hanareteiru"
+  complementType := .np
+  subjectTheta := some .theme
+  objectTheta := some .source
+  unaccusative := true
+  passivizable := false
+
+/-- 出る "deru" — exit (dyadic unaccusative, ACC/ABL alternation).
+    Leaver = theme (raised to subject), Source = source of departure. -/
+def deru : JapaneseVerbEntry where
+  form := "deru"
+  form3sg := "deru"
+  formPast := "deta"
+  formGerund := "dete"
+  formProgressive := "deteiru"
+  complementType := .np
+  subjectTheta := some .theme
+  objectTheta := some .source
+  unaccusative := true
+  passivizable := false
+
+def allVerbs : List JapaneseVerbEntry :=
+  [tanosimi, osore, kitai, shinpai, ik_ase, tabe_sase, hanareru, deru]
 
 def lookup (form : String) : Option JapaneseVerbEntry :=
   allVerbs.find? (·.form == form)
