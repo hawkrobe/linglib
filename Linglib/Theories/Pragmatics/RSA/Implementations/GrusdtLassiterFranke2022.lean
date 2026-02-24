@@ -48,12 +48,14 @@ L0_conditional_meaning = conditionalSemantics
 -/
 
 import Mathlib.Data.Rat.Defs
-import Linglib.Core.Causation
+import Linglib.Core.StructuralEquationModel
+import Linglib.Core.CausalBayesNet
 import Linglib.Theories.Semantics.Conditionals.Assertability
 
 namespace RSA.GrusdtLassiterFranke2022
 
-open Core.Causation
+open Core.StructuralEquationModel
+open Core.CausalBayesNet
 open Semantics.Conditionals.Assertability
 
 -- Local helper functions (previously from RSA.Eval)

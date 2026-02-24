@@ -39,7 +39,7 @@ variable (degree ≥ threshold). This means:
 
 namespace Nadathur2023.DegreeCausation
 
-open Core.Causation
+open Core.StructuralEquationModel
 open Semantics.Lexical.Verb.ViewpointAspect (ViewpointAspectB)
 open Semantics.Attitudes.Intensional (World allWorlds)
 open CausalVerb (CausalFrame ActualizationMode)

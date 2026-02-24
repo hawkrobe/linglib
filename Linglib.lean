@@ -31,7 +31,8 @@ import Linglib.Core.Partition
 import Linglib.Core.PolarityPartition
 import Linglib.Core.QUD
 import Linglib.Core.Interface
-import Linglib.Core.Causation
+import Linglib.Core.StructuralEquationModel
+import Linglib.Core.CausalBayesNet
 import Linglib.Core.RootDimensions
 import Linglib.Theories.Semantics.Lexical.Verb.VerbEntry
 import Linglib.Core.NaturalLogic

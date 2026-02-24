@@ -38,7 +38,7 @@ import Linglib.Theories.Semantics.Causation.Necessity
 
 namespace NadathurLauer2020.Examples
 
-open Core.Causation
+open Core.StructuralEquationModel
 open NadathurLauer2020.Sufficiency
 open NadathurLauer2020.Necessity
 

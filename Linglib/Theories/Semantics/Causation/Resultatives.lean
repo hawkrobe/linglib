@@ -46,7 +46,7 @@ open ConstructionGrammar.Studies.GoldbergJackendoff2004
 open Semantics.Lexical.Verb.Aspect
 open Semantics.Lexical.Verb.ChangeOfState
 open Core.Interfaces
-open Core.Causation
+open Core.StructuralEquationModel
 open NadathurLauer2020.Sufficiency
 open NadathurLauer2020.Necessity
 open NadathurLauer2020.Builder (CausativeBuilder)

@@ -45,12 +45,13 @@ These can come apart in overdetermination cases:
 - Lewis (1973). Counterfactuals.
 -/
 
-import Linglib.Core.Causation
+import Linglib.Core.StructuralEquationModel
+import Mathlib.Tactic.Use
 
 namespace NadathurLauer2020.Necessity
 
-open Core.Causation
-export Core.Causation (causallyNecessary)
+open Core.StructuralEquationModel
+export Core.StructuralEquationModel (causallyNecessary)
 
 /-- Semantics of "cause": effect occurred AND cause was necessary (N&L 2020 §5.2). -/
 def causeSem (dyn : CausalDynamics) (background : Situation)

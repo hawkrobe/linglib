@@ -42,6 +42,8 @@ distinguishes it from both *cause* and *force*.
 - Frankfurt, H. G. (1969). Alternate possibilities and moral responsibility.
 -/
 
+import Mathlib.Data.Rat.Defs
+import Mathlib.Tactic.NormNum
 import Linglib.Theories.Semantics.Causation.Sufficiency
 import Linglib.Theories.Semantics.Causation.Necessity
 import Linglib.Theories.Semantics.Causation.CoerciveImplication
@@ -49,7 +51,7 @@ import Linglib.Theories.Semantics.Causation.Builder
 
 namespace CaoWhiteLassiter2025
 
-open Core.Causation
+open Core.StructuralEquationModel
 open NadathurLauer2020.Sufficiency
 open NadathurLauer2020.Necessity
 open NadathurLauer2020.CoerciveImplication (ActionType)

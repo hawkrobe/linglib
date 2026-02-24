@@ -1,4 +1,4 @@
-import Linglib.Core.Causation
+import Linglib.Core.StructuralEquationModel
 import Linglib.Theories.Semantics.Causation.Sufficiency
 
 /-!
@@ -39,7 +39,7 @@ in `Fragments/English/Predicates/Verbal.lean` is **grounded** by
 
 namespace Nadathur2023.Implicative
 
-open Core.Causation
+open Core.StructuralEquationModel
 
 /-- A scenario for implicative verbs: a causal model linking a prerequisite
     action to a complement outcome.

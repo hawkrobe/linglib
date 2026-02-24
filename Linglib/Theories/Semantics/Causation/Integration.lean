@@ -38,14 +38,16 @@ This module proves that:
 - Pearl (2000). Causality.
 -/
 
-import Linglib.Core.Causation
+import Linglib.Core.StructuralEquationModel
+import Linglib.Core.CausalBayesNet
 import Linglib.Theories.Semantics.Conditionals.Assertability
 import Linglib.Theories.Semantics.Causation.Sufficiency
 import Linglib.Theories.Semantics.Causation.Necessity
 
 namespace NadathurLauer2020.Integration
 
-open Core.Causation
+open Core.StructuralEquationModel
+open Core.CausalBayesNet
 open NadathurLauer2020.Sufficiency
 open NadathurLauer2020.Necessity
 open Semantics.Conditionals.Assertability

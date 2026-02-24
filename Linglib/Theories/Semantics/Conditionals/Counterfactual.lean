@@ -42,13 +42,13 @@ Ramotowska et al. find experimental support for the SELECTIONAL theory.
 -/
 
 import Linglib.Theories.Semantics.Conditionals.Basic
-import Linglib.Core.Causation
+import Linglib.Core.StructuralEquationModel
 import Linglib.Core.Duality
 
 namespace Semantics.Conditionals.Counterfactual
 
 open Semantics.Conditionals
-open Core.Causation
+open Core.StructuralEquationModel
 
 
 /--
@@ -692,6 +692,6 @@ This connects Stalnaker selection to Lewis/Nadathur-Lauer counterfactual depende
 theorem causal_counterfactual_necessity (dyn : CausalDynamics) (s : Situation)
     (cause effect : Variable) :
     causalCounterfactual dyn s cause effect =
-    Core.Causation.developsToTrue dyn (s.extend cause true) effect := rfl
+    Core.StructuralEquationModel.developsToTrue dyn (s.extend cause true) effect := rfl
 
 end Semantics.Conditionals.Counterfactual

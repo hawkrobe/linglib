@@ -18,7 +18,7 @@ how-causation (H), and sufficient-causation (S).
 
 import Linglib.Theories.Pragmatics.RSA.Core.Config
 import Mathlib.Analysis.SpecialFunctions.Pow.Real
-import Linglib.Core.Causation
+import Linglib.Core.StructuralEquationModel
 import Linglib.Theories.Semantics.Causation.Sufficiency
 import Linglib.Theories.Semantics.Causation.Necessity
 
@@ -54,7 +54,7 @@ are computed from structural causal models via counterfactual simulation.
 Here we treat them as primitive Boolean features to focus on the
 RSA pragmatic reasoning over expression choice.
 
-See `Core.Causation` and `NadathurLauer2020` for full causal machinery.
+See `Core.StructuralEquationModel` and `NadathurLauer2020` for full causal machinery.
 -/
 structure CausalWorld where
   /-- Whether-causation: was cause necessary? (but-for test) -/
@@ -268,7 +268,7 @@ implicate the presence of stronger causal aspects.
 
 Beller & Gerstenberg's W, H, S dimensions can be COMPUTED from
 structural causal models, grounding the primitive Boolean features
-in the counterfactual reasoning machinery of `Core.Causation`.
+in the counterfactual reasoning machinery of `Core.StructuralEquationModel`.
 
 | B&G dimension | Structural definition |
 |---------------|---------------------|
@@ -291,11 +291,11 @@ which RSA pragmatics then sharpens.
 
 section StructuralBridge
 
-open Core.Causation
+open Core.StructuralEquationModel
 
 /-- Compute a `CausalWorld` from a structural causal model.
 
-    Grounds B&G's W-H-S Booleans in `Core.Causation`:
+    Grounds B&G's W-H-S Booleans in `Core.StructuralEquationModel`:
     W = necessity, H = direct law, S = sufficiency. -/
 def causalWorldFromModel (dyn : CausalDynamics) (bg : Situation)
     (cause effect : Variable) : CausalWorld :=

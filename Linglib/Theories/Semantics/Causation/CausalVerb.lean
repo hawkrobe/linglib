@@ -1,4 +1,4 @@
-import Linglib.Core.Causation
+import Linglib.Core.StructuralEquationModel
 import Linglib.Theories.Semantics.Causation.Sufficiency
 import Linglib.Theories.Semantics.Causation.Implicative
 import Linglib.Theories.Semantics.Modality.Ability
@@ -57,7 +57,7 @@ This is the deep structural reason that all three phenomena work the same way.
 
 namespace CausalVerb
 
-open Core.Causation
+open Core.StructuralEquationModel
 open Semantics.Lexical.Verb.ViewpointAspect (ViewpointAspectB)
 
 -- ════════════════════════════════════════════════════

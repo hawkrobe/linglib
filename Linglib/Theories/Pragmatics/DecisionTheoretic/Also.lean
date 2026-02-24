@@ -394,11 +394,11 @@ enforces presuppositional independence of the antecedent ("Kim fell"),
 removing the default causal reading that plain "and" would carry
 ("Kim fell and [as a result] broke her arm").
 
-This connects to `Core.Causation` — the causal reading arises from
+This connects to `Core.StructuralEquationModel` — the causal reading arises from
 non-independence of the conjuncts, and "also" explicitly marks the
 antecedent as presupposed (hence independent).
 
--- TODO: Formalize using CausalDynamics from Core.Causation -/
+-- TODO: Formalize using CausalDynamics from Core.StructuralEquationModel -/
 
 end Theorems
 
