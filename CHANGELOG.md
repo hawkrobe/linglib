@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.226.39] - 2026-02-24
+
+### Changed
+- **EpistemicScale Card 4 1-null canonical proof**: prove `theorem8a_fin4_1null_0` by reducing to `theorem8a_fin3` via restriction to non-null elements. `Fin.succ : Fin 3 → Fin 4` embeds the 3 non-null singletons; `null_removal_disjoint` + `succ_image_preimage` chain the equivalence. 116 lines vs ~900+ for direct case analysis. Sorry count: 2 → 1 canonical stub remaining (`theorem8a_fin4_0null`).
+
 ## [0.226.38] - 2026-02-24
 
 ### Changed

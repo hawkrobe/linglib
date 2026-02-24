@@ -3553,11 +3553,122 @@ private theorem theorem8a_fin4_2null_01 (sys : EpistemicSystemFA (Fin 4))
       ⟨fun h => absurd h h23, fun h => by exfalso; linarith⟩
       ⟨fun _ => by norm_num, fun _ => h32⟩
 
+-- ── Helpers for 1-null reduction to Card 3 ──────────────
+
+/-- Removing a null element from both sides of a disjoint comparison preserves `ge`.
+    When `sys.ge ∅ {j}` (j is null) and C, D are disjoint, `sys.ge C D ↔ sys.ge (C\{j}) (D\{j})`. -/
+private theorem null_removal_disjoint (sys : EpistemicSystemFA (Fin 4))
+    (j : Fin 4) (hj : sys.ge ∅ {j})
+    (C D : Set (Fin 4)) (hdisj : ∀ x, x ∈ C → x ∉ D) :
+    sys.ge C D ↔ sys.ge (C \ {j}) (D \ {j}) := by
+  -- Key helper: S \ {j} ≿ S when j is null (removing a null element preserves strength)
+  have null_sub : ∀ S : Set (Fin 4), sys.ge (S \ {j}) S := by
+    intro S
+    by_cases hj_in : j ∈ S
+    · rw [sys.additive (S \ {j}) S]
+      have h1 : (S \ {j}) \ S = ∅ := by
+        ext x; constructor
+        · intro ⟨⟨_, _⟩, hns⟩; exact absurd (by assumption) hns
+        · intro h; exact h.elim
+      have h2 : S \ (S \ {j}) = {j} := by
+        ext x; simp only [Set.mem_diff, Set.mem_singleton_iff]
+        constructor
+        · intro ⟨hx, hn⟩; by_contra hne; exact hn ⟨hx, hne⟩
+        · intro hx; subst hx; exact ⟨hj_in, fun ⟨_, h⟩ => h rfl⟩
+      rw [h1, h2]; exact hj
+    · rw [Set.diff_singleton_eq_self hj_in]; exact sys.refl S
+  by_cases hjC : j ∈ C
+  · have hjnD : j ∉ D := fun h => hdisj j hjC h
+    rw [Set.diff_singleton_eq_self hjnD]
+    exact ⟨fun h => sys.trans _ _ _ (null_sub C) h,
+           fun h => sys.trans _ _ _ (sys.mono _ _ Set.diff_subset) h⟩
+  · rw [Set.diff_singleton_eq_self hjC]
+    by_cases hjD : j ∈ D
+    · exact ⟨fun h => sys.trans _ _ _ h (sys.mono _ _ Set.diff_subset),
+             fun h => sys.trans _ _ _ h (null_sub D)⟩
+    · rw [Set.diff_singleton_eq_self hjD]
+
+/-- `Fin.succ '' (Fin.succ ⁻¹' S) = S \ {0}` for `S : Set (Fin 4)`.
+    The image of `Fin.succ : Fin 3 → Fin 4` covers exactly the non-zero elements. -/
+private theorem succ_image_preimage (S : Set (Fin 4)) :
+    Fin.succ '' (Fin.succ ⁻¹' S) = S \ {(0 : Fin 4)} := by
+  rw [Set.image_preimage_eq_range_inter, Fin.range_succ]
+  ext x; simp only [Set.mem_inter_iff, Set.mem_compl_iff, Set.mem_singleton_iff,
+    Set.mem_diff]; exact And.comm
+
+/-- Preimage of `Fin.succ` is insensitive to `{0}`: `Fin.succ ⁻¹' S = Fin.succ ⁻¹' (S \ {0})`.
+    This is because 0 is never in the range of `Fin.succ`. -/
+private theorem succ_preimage_sdiff_zero (S : Set (Fin 4)) :
+    Fin.succ ⁻¹' S = Fin.succ ⁻¹' (S \ {(0 : Fin 4)}) := by
+  ext x; simp only [Set.mem_preimage, Set.mem_diff, Set.mem_singleton_iff]
+  exact ⟨fun h => ⟨h, Fin.succ_ne_zero x⟩, fun ⟨h, _⟩ => h⟩
+
+-- ── Card 4: 1 null element at position 0 ───────────────
+
+set_option maxHeartbeats 3200000 in
 private theorem theorem8a_fin4_1null_0 (sys : EpistemicSystemFA (Fin 4))
     (hn0 : sys.ge ∅ {(0 : Fin 4)}) (hn1 : ¬sys.ge ∅ {(1 : Fin 4)})
-    (hn2 : ¬sys.ge ∅ {(2 : Fin 4)}) (hn3 : ¬sys.ge ∅ {(3 : Fin 4)}) :
+    (_hn2 : ¬sys.ge ∅ {(2 : Fin 4)}) (_hn3 : ¬sys.ge ∅ {(3 : Fin 4)}) :
     ∃ (m : FinAddMeasure (Fin 4)), ∀ A B, sys.ge A B ↔ m.inducedGe A B := by
-  sorry
+  -- Step 1: Build restricted system on Fin 3 via Fin.succ : Fin 3 → Fin 4 (maps 0↦1, 1↦2, 2↦3)
+  let sys3 : EpistemicSystemFA (Fin 3) := {
+    ge := fun A B => sys.ge (Fin.succ '' A) (Fin.succ '' B)
+    refl := fun A => sys.refl _
+    mono := fun A B hAB => sys.mono _ _ (Set.image_mono hAB)
+    bottom := by
+      show sys.ge (Fin.succ '' Set.univ) (Fin.succ '' ∅)
+      simp only [Set.image_empty]
+      exact sys.mono _ _ (Set.empty_subset _)
+    nonTrivial := by
+      show ¬sys.ge (Fin.succ '' ∅) (Fin.succ '' Set.univ)
+      simp only [Set.image_empty]
+      intro h
+      exact hn1 (sys.trans _ _ _ h (sys.mono _ _
+        (Set.singleton_subset_iff.mpr ⟨0, Set.mem_univ _, rfl⟩)))
+    total := fun A B => sys.total _ _
+    trans := fun A B C h1 h2 => sys.trans _ _ _ h1 h2
+    additive := fun A B => by
+      show sys.ge (Fin.succ '' A) (Fin.succ '' B) ↔
+           sys.ge (Fin.succ '' (A \ B)) (Fin.succ '' (B \ A))
+      rw [Set.image_diff (Fin.succ_injective 3), Set.image_diff (Fin.succ_injective 3)]
+      exact sys.additive _ _
+  }
+  -- Step 2: Apply Card 3 theorem to get a measure on Fin 3
+  obtain ⟨m3, hm3⟩ := theorem8a_fin3 sys3
+  -- Step 3: Lift measure to Fin 4 via preimage (gives weight 0 to element 0)
+  let m4 : FinAddMeasure (Fin 4) := {
+    mu := fun A => m3.mu (Fin.succ ⁻¹' A)
+    nonneg := fun A => m3.nonneg _
+    additive := fun A B hdisj => by
+      have : Fin.succ ⁻¹' (A ∪ B) = Fin.succ ⁻¹' A ∪ Fin.succ ⁻¹' B := Set.preimage_union
+      rw [this]
+      exact m3.additive _ _ (fun x hxA hxB => hdisj (Fin.succ x) hxA hxB)
+    total := by
+      show m3.mu (Fin.succ ⁻¹' Set.univ) = 1
+      rw [Set.preimage_univ]; exact m3.total
+  }
+  -- Step 4: Prove representation using reduce_to_disjoint
+  refine ⟨m4, reduce_to_disjoint sys m4 (fun C D hdisj => ?_)⟩
+  -- Goal: sys.ge C D ↔ m4.inducedGe C D
+  -- m4.inducedGe C D = (m3.mu (succ⁻¹' C) ≥ m3.mu (succ⁻¹' D))
+  -- Strategy:
+  --   sys.ge C D ↔ sys.ge (C\{0}) (D\{0})           [null_removal_disjoint]
+  --             ↔ sys3.ge (succ⁻¹' C) (succ⁻¹' D)   [image-preimage identity]
+  --             ↔ m3.inducedGe (succ⁻¹' C) (succ⁻¹' D) [hm3]
+  --             = m4.inducedGe C D                    [definition]
+  -- Step 4a: null removal
+  rw [null_removal_disjoint sys 0 hn0 C D hdisj]
+  -- Goal: sys.ge (C \ {0}) (D \ {0}) ↔ m4.inducedGe C D
+  -- Step 4b: rewrite C\{0} and D\{0} as Fin.succ images
+  rw [← succ_image_preimage C, ← succ_image_preimage D]
+  -- Goal: sys.ge (succ '' (succ⁻¹' C)) (succ '' (succ⁻¹' D)) ↔ m4.inducedGe C D
+  -- The LHS is exactly sys3.ge (succ⁻¹' C) (succ⁻¹' D)
+  -- Step 4c: apply hm3
+  have hsys3 := hm3 (Fin.succ ⁻¹' C) (Fin.succ ⁻¹' D)
+  -- hsys3 : sys3.ge (succ⁻¹' C) (succ⁻¹' D) ↔ m3.inducedGe (succ⁻¹' C) (succ⁻¹' D)
+  -- sys3.ge A B = sys.ge (succ '' A) (succ '' B), so LHS matches
+  -- m3.inducedGe (succ⁻¹' C) (succ⁻¹' D) = m4.inducedGe C D by definition
+  exact hsys3
 
 private theorem theorem8a_fin4_0null (sys : EpistemicSystemFA (Fin 4))
     (hn0 : ¬sys.ge ∅ {(0 : Fin 4)}) (hn1 : ¬sys.ge ∅ {(1 : Fin 4)})
