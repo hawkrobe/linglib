@@ -111,14 +111,12 @@ noncomputable abbrev gsCfgK (m : Nat) (a : Access) : RSAConfig KennedyUtt WorldS
 -- §15. Kennedy "two" — Findings 4–5
 -- ============================================================================
 
-set_option maxHeartbeats 8000000 in
 /-- Full access: Kennedy exact semantics → bare "two" gets exact reading (s2 > s3).
     The exact interpretation is viable and more informative, so L1 selects it. -/
 theorem kennedy_two_full_exact :
     (gsCfgK 2 .a3).L1 .bare .s2 > (gsCfgK 2 .a3).L1 .bare .s3 := by
   rsa_predict
 
-set_option maxHeartbeats 8000000 in
 /-- Partial access: exact interpretation is quality-blocked → lower-bound only.
     The quality filter blocks bare "two" under exact semantics when the speaker
     considers worlds with count ≠ 2. Only the type-lowered reading survives. -/
@@ -130,37 +128,31 @@ theorem kennedy_two_partial_weakened :
 -- §16. Kennedy "one" — Findings 6–11
 -- ============================================================================
 
-set_option maxHeartbeats 8000000 in
 /-- Full access: bare "one" → s1 > s2 (exact interpretation dominates). -/
 theorem kennedy_one_full_1v2 :
     (gsCfgK 1 .a3).L1 .bare .s1 > (gsCfgK 1 .a3).L1 .bare .s2 := by
   rsa_predict
 
-set_option maxHeartbeats 8000000 in
 /-- Full access: bare "one" → s1 > s3. -/
 theorem kennedy_one_full_1v3 :
     (gsCfgK 1 .a3).L1 .bare .s1 > (gsCfgK 1 .a3).L1 .bare .s3 := by
   rsa_predict
 
-set_option maxHeartbeats 8000000 in
 /-- Minimal access (a=1): s1 does not exceed s2 (exact blocked, lower-bound only). -/
 theorem kennedy_one_minimal_1v2_canceled :
     ¬((gsCfgK 1 .a1).L1 .bare .s1 > (gsCfgK 1 .a1).L1 .bare .s2) := by
   rsa_predict
 
-set_option maxHeartbeats 8000000 in
 /-- Minimal access (a=1): s1 does not exceed s3. -/
 theorem kennedy_one_minimal_1v3_canceled :
     ¬((gsCfgK 1 .a1).L1 .bare .s1 > (gsCfgK 1 .a1).L1 .bare .s3) := by
   rsa_predict
 
-set_option maxHeartbeats 8000000 in
 /-- Partial access (a=2): s1 > s3 (partial implicature persists). -/
 theorem kennedy_one_partial_1v3 :
     (gsCfgK 1 .a2).L1 .bare .s1 > (gsCfgK 1 .a2).L1 .bare .s3 := by
   rsa_predict
 
-set_option maxHeartbeats 8000000 in
 /-- Partial access (a=2): s1 does not exceed s2 (still canceled). -/
 theorem kennedy_one_partial_1v2_canceled :
     ¬((gsCfgK 1 .a2).L1 .bare .s1 > (gsCfgK 1 .a2).L1 .bare .s2) := by

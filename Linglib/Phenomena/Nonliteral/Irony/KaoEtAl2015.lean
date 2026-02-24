@@ -296,7 +296,6 @@ open RSA.RSAConfig
 -- Ironic interpretation: "terrible" in pleasant weather
 -- --------------------------------------------------------------------------
 
-set_option maxHeartbeats 800000 in
 /-- Nonliteral interpretation: the listener infers the weather is NOT terrible.
     P(state ≠ terrible | "terrible", pleasant) > P(state = terrible | "terrible", pleasant). -/
 theorem ironic_nonliteral :
@@ -304,7 +303,6 @@ theorem ironic_nonliteral :
     pleasantCfg.L1_marginal .terrible (fun w => w.1 == .terrible) := by
   rsa_predict
 
-set_option maxHeartbeats 800000 in
 /-- Valence flip — the hallmark of irony. Despite "terrible" literally
     conveying negative affect, the pragmatic listener in a pleasant weather
     context infers that the speaker actually feels *positively*.
@@ -314,7 +312,6 @@ theorem ironic_valence_flip :
     pleasantCfg.L1_marginal .terrible (fun w => w.2.1 == false) := by
   rsa_predict
 
-set_option maxHeartbeats 800000 in
 /-- Ironic speech carries high arousal — the speaker is emotionally
     engaged, not flat (Colston & O'Brien 2000). -/
 theorem ironic_high_arousal :
@@ -326,7 +323,6 @@ theorem ironic_high_arousal :
 -- Core mechanistic claim: arousal enables irony (Table 1)
 -- --------------------------------------------------------------------------
 
-set_option maxHeartbeats 800000 in
 /-- Without arousal as a communicative goal, "terrible" does NOT flip
     valence — the listener infers negative affect (matching the literal
     content). The model produces hyperbole but not irony.
@@ -343,7 +339,6 @@ theorem no_irony_without_arousal :
 -- Context-dependence: "terrible" in terrible weather is literal
 -- --------------------------------------------------------------------------
 
-set_option maxHeartbeats 800000 in
 /-- In terrible weather, "terrible" is interpreted literally — the listener
     correctly infers the weather IS terrible. The same utterance that is
     ironic in pleasant weather (theorem 1) is literal here. -/
@@ -352,7 +347,6 @@ theorem literal_state :
     terribleCfg.L1_marginal .terrible (fun w => w.1 != .terrible) := by
   rsa_predict
 
-set_option maxHeartbeats 800000 in
 /-- In terrible weather, "terrible" does NOT flip valence — the listener
     infers negative affect, matching the literal content. Contrast with
     `ironic_valence_flip` where the same utterance produces the opposite

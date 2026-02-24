@@ -195,136 +195,46 @@ noncomputable abbrev specificCfg :=
 
 -- Nonliteral interpretation: P(person | "whale") > P(whale | "whale")
 
-set_option maxHeartbeats 400000 in
 /-- The listener infers the referent is a person, not literally a whale. -/
 theorem nonliteral :
-    vagueCfg.L1 .whale (.person, true, true, true) +
-    vagueCfg.L1 .whale (.person, true, true, false) +
-    vagueCfg.L1 .whale (.person, true, false, true) +
-    vagueCfg.L1 .whale (.person, true, false, false) +
-    vagueCfg.L1 .whale (.person, false, true, true) +
-    vagueCfg.L1 .whale (.person, false, true, false) +
-    vagueCfg.L1 .whale (.person, false, false, true) +
-    vagueCfg.L1 .whale (.person, false, false, false) >
-    vagueCfg.L1 .whale (.whale, true, true, true) +
-    vagueCfg.L1 .whale (.whale, true, true, false) +
-    vagueCfg.L1 .whale (.whale, true, false, true) +
-    vagueCfg.L1 .whale (.whale, true, false, false) +
-    vagueCfg.L1 .whale (.whale, false, true, true) +
-    vagueCfg.L1 .whale (.whale, false, true, false) +
-    vagueCfg.L1 .whale (.whale, false, false, true) +
-    vagueCfg.L1 .whale (.whale, false, false, false) := by
+    vagueCfg.L1_marginal .whale (fun w => w.1 == .person) >
+    vagueCfg.L1_marginal .whale (fun w => w.1 == .whale) := by
   rsa_predict
 
 -- Feature elevation: metaphor raises all three features
 
-set_option maxHeartbeats 400000 in
 /-- P(large=T | "whale") > P(large=F | "whale"). -/
 theorem feature_large :
-    vagueCfg.L1 .whale (.whale, true, true, true) +
-    vagueCfg.L1 .whale (.whale, true, true, false) +
-    vagueCfg.L1 .whale (.whale, true, false, true) +
-    vagueCfg.L1 .whale (.whale, true, false, false) +
-    vagueCfg.L1 .whale (.person, true, true, true) +
-    vagueCfg.L1 .whale (.person, true, true, false) +
-    vagueCfg.L1 .whale (.person, true, false, true) +
-    vagueCfg.L1 .whale (.person, true, false, false) >
-    vagueCfg.L1 .whale (.whale, false, true, true) +
-    vagueCfg.L1 .whale (.whale, false, true, false) +
-    vagueCfg.L1 .whale (.whale, false, false, true) +
-    vagueCfg.L1 .whale (.whale, false, false, false) +
-    vagueCfg.L1 .whale (.person, false, true, true) +
-    vagueCfg.L1 .whale (.person, false, true, false) +
-    vagueCfg.L1 .whale (.person, false, false, true) +
-    vagueCfg.L1 .whale (.person, false, false, false) := by
+    vagueCfg.L1_marginal .whale (fun w => w.2.1 == true) >
+    vagueCfg.L1_marginal .whale (fun w => w.2.1 == false) := by
   rsa_predict
 
-set_option maxHeartbeats 400000 in
 /-- P(graceful=T | "whale") > P(graceful=F | "whale"). -/
 theorem feature_graceful :
-    vagueCfg.L1 .whale (.whale, true, true, true) +
-    vagueCfg.L1 .whale (.whale, true, true, false) +
-    vagueCfg.L1 .whale (.whale, false, true, true) +
-    vagueCfg.L1 .whale (.whale, false, true, false) +
-    vagueCfg.L1 .whale (.person, true, true, true) +
-    vagueCfg.L1 .whale (.person, true, true, false) +
-    vagueCfg.L1 .whale (.person, false, true, true) +
-    vagueCfg.L1 .whale (.person, false, true, false) >
-    vagueCfg.L1 .whale (.whale, true, false, true) +
-    vagueCfg.L1 .whale (.whale, true, false, false) +
-    vagueCfg.L1 .whale (.whale, false, false, true) +
-    vagueCfg.L1 .whale (.whale, false, false, false) +
-    vagueCfg.L1 .whale (.person, true, false, true) +
-    vagueCfg.L1 .whale (.person, true, false, false) +
-    vagueCfg.L1 .whale (.person, false, false, true) +
-    vagueCfg.L1 .whale (.person, false, false, false) := by
+    vagueCfg.L1_marginal .whale (fun w => w.2.2.1 == true) >
+    vagueCfg.L1_marginal .whale (fun w => w.2.2.1 == false) := by
   rsa_predict
 
-set_option maxHeartbeats 400000 in
 /-- P(majestic=T | "whale") > P(majestic=F | "whale"). -/
 theorem feature_majestic :
-    vagueCfg.L1 .whale (.whale, true, true, true) +
-    vagueCfg.L1 .whale (.whale, true, false, true) +
-    vagueCfg.L1 .whale (.whale, false, true, true) +
-    vagueCfg.L1 .whale (.whale, false, false, true) +
-    vagueCfg.L1 .whale (.person, true, true, true) +
-    vagueCfg.L1 .whale (.person, true, false, true) +
-    vagueCfg.L1 .whale (.person, false, true, true) +
-    vagueCfg.L1 .whale (.person, false, false, true) >
-    vagueCfg.L1 .whale (.whale, true, true, false) +
-    vagueCfg.L1 .whale (.whale, true, false, false) +
-    vagueCfg.L1 .whale (.whale, false, true, false) +
-    vagueCfg.L1 .whale (.whale, false, false, false) +
-    vagueCfg.L1 .whale (.person, true, true, false) +
-    vagueCfg.L1 .whale (.person, true, false, false) +
-    vagueCfg.L1 .whale (.person, false, true, false) +
-    vagueCfg.L1 .whale (.person, false, false, false) := by
+    vagueCfg.L1_marginal .whale (fun w => w.2.2.2 == true) >
+    vagueCfg.L1_marginal .whale (fun w => w.2.2.2 == false) := by
   rsa_predict
 
 -- Context sensitivity: cross-cfg comparison
 
-set_option maxHeartbeats 800000 in
 /-- Under specific QUD, P(large=T | "whale") is higher than under vague QUD. -/
 theorem context_sensitivity :
-    specificCfg.L1 .whale (.whale, true, true, true) +
-    specificCfg.L1 .whale (.whale, true, true, false) +
-    specificCfg.L1 .whale (.whale, true, false, true) +
-    specificCfg.L1 .whale (.whale, true, false, false) +
-    specificCfg.L1 .whale (.person, true, true, true) +
-    specificCfg.L1 .whale (.person, true, true, false) +
-    specificCfg.L1 .whale (.person, true, false, true) +
-    specificCfg.L1 .whale (.person, true, false, false) >
-    vagueCfg.L1 .whale (.whale, true, true, true) +
-    vagueCfg.L1 .whale (.whale, true, true, false) +
-    vagueCfg.L1 .whale (.whale, true, false, true) +
-    vagueCfg.L1 .whale (.whale, true, false, false) +
-    vagueCfg.L1 .whale (.person, true, true, true) +
-    vagueCfg.L1 .whale (.person, true, true, false) +
-    vagueCfg.L1 .whale (.person, true, false, true) +
-    vagueCfg.L1 .whale (.person, true, false, false) := by
+    specificCfg.L1_marginal .whale (fun w => w.2.1 == true) >
+    vagueCfg.L1_marginal .whale (fun w => w.2.1 == true) := by
   rsa_predict
 
 -- Literal: P(person | "person") > P(whale | "person")
 
-set_option maxHeartbeats 400000 in
 /-- Hearing "person", the listener correctly infers the referent is a person. -/
 theorem literal_correct :
-    vagueCfg.L1 .person (.person, true, true, true) +
-    vagueCfg.L1 .person (.person, true, true, false) +
-    vagueCfg.L1 .person (.person, true, false, true) +
-    vagueCfg.L1 .person (.person, true, false, false) +
-    vagueCfg.L1 .person (.person, false, true, true) +
-    vagueCfg.L1 .person (.person, false, true, false) +
-    vagueCfg.L1 .person (.person, false, false, true) +
-    vagueCfg.L1 .person (.person, false, false, false) >
-    vagueCfg.L1 .person (.whale, true, true, true) +
-    vagueCfg.L1 .person (.whale, true, true, false) +
-    vagueCfg.L1 .person (.whale, true, false, true) +
-    vagueCfg.L1 .person (.whale, true, false, false) +
-    vagueCfg.L1 .person (.whale, false, true, true) +
-    vagueCfg.L1 .person (.whale, false, true, false) +
-    vagueCfg.L1 .person (.whale, false, false, true) +
-    vagueCfg.L1 .person (.whale, false, false, false) := by
+    vagueCfg.L1_marginal .person (fun w => w.1 == .person) >
+    vagueCfg.L1_marginal .person (fun w => w.1 == .whale) := by
   rsa_predict
 
 -- ============================================================================
@@ -334,107 +244,23 @@ theorem literal_correct :
 /-- Map each empirical finding to the RSA model prediction that accounts for it. -/
 noncomputable def formalize : Finding → Prop
   | .nonliteral =>
-      vagueCfg.L1 .whale (.person, true, true, true) +
-      vagueCfg.L1 .whale (.person, true, true, false) +
-      vagueCfg.L1 .whale (.person, true, false, true) +
-      vagueCfg.L1 .whale (.person, true, false, false) +
-      vagueCfg.L1 .whale (.person, false, true, true) +
-      vagueCfg.L1 .whale (.person, false, true, false) +
-      vagueCfg.L1 .whale (.person, false, false, true) +
-      vagueCfg.L1 .whale (.person, false, false, false) >
-      vagueCfg.L1 .whale (.whale, true, true, true) +
-      vagueCfg.L1 .whale (.whale, true, true, false) +
-      vagueCfg.L1 .whale (.whale, true, false, true) +
-      vagueCfg.L1 .whale (.whale, true, false, false) +
-      vagueCfg.L1 .whale (.whale, false, true, true) +
-      vagueCfg.L1 .whale (.whale, false, true, false) +
-      vagueCfg.L1 .whale (.whale, false, false, true) +
-      vagueCfg.L1 .whale (.whale, false, false, false)
+      vagueCfg.L1_marginal .whale (fun w => w.1 == .person) >
+      vagueCfg.L1_marginal .whale (fun w => w.1 == .whale)
   | .feature_large =>
-      vagueCfg.L1 .whale (.whale, true, true, true) +
-      vagueCfg.L1 .whale (.whale, true, true, false) +
-      vagueCfg.L1 .whale (.whale, true, false, true) +
-      vagueCfg.L1 .whale (.whale, true, false, false) +
-      vagueCfg.L1 .whale (.person, true, true, true) +
-      vagueCfg.L1 .whale (.person, true, true, false) +
-      vagueCfg.L1 .whale (.person, true, false, true) +
-      vagueCfg.L1 .whale (.person, true, false, false) >
-      vagueCfg.L1 .whale (.whale, false, true, true) +
-      vagueCfg.L1 .whale (.whale, false, true, false) +
-      vagueCfg.L1 .whale (.whale, false, false, true) +
-      vagueCfg.L1 .whale (.whale, false, false, false) +
-      vagueCfg.L1 .whale (.person, false, true, true) +
-      vagueCfg.L1 .whale (.person, false, true, false) +
-      vagueCfg.L1 .whale (.person, false, false, true) +
-      vagueCfg.L1 .whale (.person, false, false, false)
+      vagueCfg.L1_marginal .whale (fun w => w.2.1 == true) >
+      vagueCfg.L1_marginal .whale (fun w => w.2.1 == false)
   | .feature_graceful =>
-      vagueCfg.L1 .whale (.whale, true, true, true) +
-      vagueCfg.L1 .whale (.whale, true, true, false) +
-      vagueCfg.L1 .whale (.whale, false, true, true) +
-      vagueCfg.L1 .whale (.whale, false, true, false) +
-      vagueCfg.L1 .whale (.person, true, true, true) +
-      vagueCfg.L1 .whale (.person, true, true, false) +
-      vagueCfg.L1 .whale (.person, false, true, true) +
-      vagueCfg.L1 .whale (.person, false, true, false) >
-      vagueCfg.L1 .whale (.whale, true, false, true) +
-      vagueCfg.L1 .whale (.whale, true, false, false) +
-      vagueCfg.L1 .whale (.whale, false, false, true) +
-      vagueCfg.L1 .whale (.whale, false, false, false) +
-      vagueCfg.L1 .whale (.person, true, false, true) +
-      vagueCfg.L1 .whale (.person, true, false, false) +
-      vagueCfg.L1 .whale (.person, false, false, true) +
-      vagueCfg.L1 .whale (.person, false, false, false)
+      vagueCfg.L1_marginal .whale (fun w => w.2.2.1 == true) >
+      vagueCfg.L1_marginal .whale (fun w => w.2.2.1 == false)
   | .feature_majestic =>
-      vagueCfg.L1 .whale (.whale, true, true, true) +
-      vagueCfg.L1 .whale (.whale, true, false, true) +
-      vagueCfg.L1 .whale (.whale, false, true, true) +
-      vagueCfg.L1 .whale (.whale, false, false, true) +
-      vagueCfg.L1 .whale (.person, true, true, true) +
-      vagueCfg.L1 .whale (.person, true, false, true) +
-      vagueCfg.L1 .whale (.person, false, true, true) +
-      vagueCfg.L1 .whale (.person, false, false, true) >
-      vagueCfg.L1 .whale (.whale, true, true, false) +
-      vagueCfg.L1 .whale (.whale, true, false, false) +
-      vagueCfg.L1 .whale (.whale, false, true, false) +
-      vagueCfg.L1 .whale (.whale, false, false, false) +
-      vagueCfg.L1 .whale (.person, true, true, false) +
-      vagueCfg.L1 .whale (.person, true, false, false) +
-      vagueCfg.L1 .whale (.person, false, true, false) +
-      vagueCfg.L1 .whale (.person, false, false, false)
+      vagueCfg.L1_marginal .whale (fun w => w.2.2.2 == true) >
+      vagueCfg.L1_marginal .whale (fun w => w.2.2.2 == false)
   | .context_sensitivity =>
-      specificCfg.L1 .whale (.whale, true, true, true) +
-      specificCfg.L1 .whale (.whale, true, true, false) +
-      specificCfg.L1 .whale (.whale, true, false, true) +
-      specificCfg.L1 .whale (.whale, true, false, false) +
-      specificCfg.L1 .whale (.person, true, true, true) +
-      specificCfg.L1 .whale (.person, true, true, false) +
-      specificCfg.L1 .whale (.person, true, false, true) +
-      specificCfg.L1 .whale (.person, true, false, false) >
-      vagueCfg.L1 .whale (.whale, true, true, true) +
-      vagueCfg.L1 .whale (.whale, true, true, false) +
-      vagueCfg.L1 .whale (.whale, true, false, true) +
-      vagueCfg.L1 .whale (.whale, true, false, false) +
-      vagueCfg.L1 .whale (.person, true, true, true) +
-      vagueCfg.L1 .whale (.person, true, true, false) +
-      vagueCfg.L1 .whale (.person, true, false, true) +
-      vagueCfg.L1 .whale (.person, true, false, false)
+      specificCfg.L1_marginal .whale (fun w => w.2.1 == true) >
+      vagueCfg.L1_marginal .whale (fun w => w.2.1 == true)
   | .literal_correct =>
-      vagueCfg.L1 .person (.person, true, true, true) +
-      vagueCfg.L1 .person (.person, true, true, false) +
-      vagueCfg.L1 .person (.person, true, false, true) +
-      vagueCfg.L1 .person (.person, true, false, false) +
-      vagueCfg.L1 .person (.person, false, true, true) +
-      vagueCfg.L1 .person (.person, false, true, false) +
-      vagueCfg.L1 .person (.person, false, false, true) +
-      vagueCfg.L1 .person (.person, false, false, false) >
-      vagueCfg.L1 .person (.whale, true, true, true) +
-      vagueCfg.L1 .person (.whale, true, true, false) +
-      vagueCfg.L1 .person (.whale, true, false, true) +
-      vagueCfg.L1 .person (.whale, true, false, false) +
-      vagueCfg.L1 .person (.whale, false, true, true) +
-      vagueCfg.L1 .person (.whale, false, true, false) +
-      vagueCfg.L1 .person (.whale, false, false, true) +
-      vagueCfg.L1 .person (.whale, false, false, false)
+      vagueCfg.L1_marginal .person (fun w => w.1 == .person) >
+      vagueCfg.L1_marginal .person (fun w => w.1 == .whale)
 
 /-- The RSA model accounts for all 6 empirical findings from Kao et al. (2014). -/
 theorem all_findings_verified : ∀ f : Finding, formalize f := by

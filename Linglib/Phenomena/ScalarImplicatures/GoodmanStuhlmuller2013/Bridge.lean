@@ -245,19 +245,16 @@ theorem lb_meaning_grounded (u : NumUtt) (s : WorldState) :
 -- §10. Experiment 1: "some" x access
 -- ============================================================================
 
-set_option maxHeartbeats 4000000 in
 /-- Full access: L1 infers state 2 over state 3 — scalar implicature present. -/
 theorem some_full_implicature :
     (gsCfgQ .a3).L1 .some_ .s2 > (gsCfgQ .a3).L1 .some_ .s3 := by
   rsa_predict
 
-set_option maxHeartbeats 4000000 in
 /-- Minimal access (a=1): implicature canceled — state 2 does not exceed state 3. -/
 theorem some_minimal_canceled :
     ¬((gsCfgQ .a1).L1 .some_ .s2 > (gsCfgQ .a1).L1 .some_ .s3) := by
   rsa_predict
 
-set_option maxHeartbeats 4000000 in
 /-- Partial access (a=2): implicature canceled — state 2 does not exceed state 3. -/
 theorem some_partial_canceled :
     ¬((gsCfgQ .a2).L1 .some_ .s2 > (gsCfgQ .a2).L1 .some_ .s3) := by
@@ -267,13 +264,11 @@ theorem some_partial_canceled :
 -- §11. Experiment 2: "two" x access
 -- ============================================================================
 
-set_option maxHeartbeats 4000000 in
 /-- Full access: "two" → upper-bounded reading, state 2 > state 3. -/
 theorem two_full_upper_bounded :
     (gsCfgN .a3).L1 .two .s2 > (gsCfgN .a3).L1 .two .s3 := by
   rsa_predict
 
-set_option maxHeartbeats 4000000 in
 /-- Partial access (a=2): upper bound weakened — state 2 does not exceed state 3. -/
 theorem two_partial_weakened :
     ¬((gsCfgN .a2).L1 .two .s2 > (gsCfgN .a2).L1 .two .s3) := by
@@ -283,37 +278,31 @@ theorem two_partial_weakened :
 -- §12. Experiment 2: "one" x access
 -- ============================================================================
 
-set_option maxHeartbeats 4000000 in
 /-- Full access: "one" → state 1 preferred over state 2. -/
 theorem one_full_1v2 :
     (gsCfgN .a3).L1 .one .s1 > (gsCfgN .a3).L1 .one .s2 := by
   rsa_predict
 
-set_option maxHeartbeats 4000000 in
 /-- Full access: "one" → state 1 preferred over state 3. -/
 theorem one_full_1v3 :
     (gsCfgN .a3).L1 .one .s1 > (gsCfgN .a3).L1 .one .s3 := by
   rsa_predict
 
-set_option maxHeartbeats 4000000 in
 /-- Minimal access (a=1): canceled — state 1 does not exceed state 2. -/
 theorem one_minimal_1v2_canceled :
     ¬((gsCfgN .a1).L1 .one .s1 > (gsCfgN .a1).L1 .one .s2) := by
   rsa_predict
 
-set_option maxHeartbeats 4000000 in
 /-- Minimal access (a=1): canceled — state 1 does not exceed state 3. -/
 theorem one_minimal_1v3_canceled :
     ¬((gsCfgN .a1).L1 .one .s1 > (gsCfgN .a1).L1 .one .s3) := by
   rsa_predict
 
-set_option maxHeartbeats 4000000 in
 /-- Partial access (a=2): state 1 > state 3 (partial implicature persists). -/
 theorem one_partial_1v3 :
     (gsCfgN .a2).L1 .one .s1 > (gsCfgN .a2).L1 .one .s3 := by
   rsa_predict
 
-set_option maxHeartbeats 4000000 in
 /-- Partial access (a=2): state 1 does not exceed state 2 (still canceled). -/
 theorem one_partial_1v2_canceled :
     ¬((gsCfgN .a2).L1 .one .s1 > (gsCfgN .a2).L1 .one .s2) := by

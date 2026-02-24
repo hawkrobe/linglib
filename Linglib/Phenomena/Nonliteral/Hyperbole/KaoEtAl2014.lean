@@ -274,7 +274,6 @@ noncomputable abbrev kettleCfg := cfg .electricKettle
 
 -- Hyperbole: "$10,000" for an electric kettle
 
-set_option maxHeartbeats 2000000 in
 /-- At the modal price ($10K), notable affect > no affect.
     The speaker saying "$10K" about a kettle signals frustration. -/
 theorem hyperbole_affect_at_modal :
@@ -282,23 +281,13 @@ theorem hyperbole_affect_at_modal :
     kettleCfg.L1 .s10000 (.s10000, .none) := by
   rsa_predict
 
-set_option maxHeartbeats 4000000 in
 /-- Marginal: notable affect dominates overall for "$10K".
     Σ_s L1(s, notable | "$10K") > Σ_s L1(s, none | "$10K"). -/
 theorem hyperbole_affect :
-    kettleCfg.L1 .s10000 (.s50, .notable) + kettleCfg.L1 .s10000 (.s51, .notable) +
-    kettleCfg.L1 .s10000 (.s500, .notable) + kettleCfg.L1 .s10000 (.s501, .notable) +
-    kettleCfg.L1 .s10000 (.s1000, .notable) + kettleCfg.L1 .s10000 (.s1001, .notable) +
-    kettleCfg.L1 .s10000 (.s5000, .notable) + kettleCfg.L1 .s10000 (.s5001, .notable) +
-    kettleCfg.L1 .s10000 (.s10000, .notable) + kettleCfg.L1 .s10000 (.s10001, .notable) >
-    kettleCfg.L1 .s10000 (.s50, .none) + kettleCfg.L1 .s10000 (.s51, .none) +
-    kettleCfg.L1 .s10000 (.s500, .none) + kettleCfg.L1 .s10000 (.s501, .none) +
-    kettleCfg.L1 .s10000 (.s1000, .none) + kettleCfg.L1 .s10000 (.s1001, .none) +
-    kettleCfg.L1 .s10000 (.s5000, .none) + kettleCfg.L1 .s10000 (.s5001, .none) +
-    kettleCfg.L1 .s10000 (.s10000, .none) + kettleCfg.L1 .s10000 (.s10001, .none) := by
+    kettleCfg.L1_marginal .s10000 (fun w => w.2 == .notable) >
+    kettleCfg.L1_marginal .s10000 (fun w => w.2 == .none) := by
   rsa_predict
 
-set_option maxHeartbeats 4000000 in
 /-- The listener infers valence QUD over price QUD. -/
 theorem hyperbole_qud :
     kettleCfg.L1_latent .s10000 .valence >
@@ -307,14 +296,12 @@ theorem hyperbole_qud :
 
 -- Literal: "$50" for an electric kettle
 
-set_option maxHeartbeats 2000000 in
 /-- Hearing "$50", the listener infers $50 > $500. -/
 theorem literal_correct :
     kettleCfg.L1 .s50 (.s50, .none) >
     kettleCfg.L1 .s50 (.s500, .none) := by
   rsa_predict
 
-set_option maxHeartbeats 2000000 in
 /-- Literal utterances are not interpreted hyperbolically. -/
 theorem literal_not_hyperbolic :
     kettleCfg.L1 .s50 (.s50, .none) >
@@ -323,11 +310,10 @@ theorem literal_not_hyperbolic :
 
 -- Pragmatic halo: round vs sharp numbers
 
-set_option maxHeartbeats 4000000 in
 /-- Sharp "$501" is interpreted more precisely than round "$500". -/
 theorem halo_sharp_500 :
-    kettleCfg.L1 .s501 (.s501, .none) + kettleCfg.L1 .s501 (.s501, .notable) >
-    kettleCfg.L1 .s500 (.s500, .none) + kettleCfg.L1 .s500 (.s500, .notable) := by
+    kettleCfg.L1_marginal .s501 (fun w => w.1 == .s501) >
+    kettleCfg.L1_marginal .s500 (fun w => w.1 == .s500) := by
   rsa_predict
 
 -- ============================================================================
@@ -340,16 +326,8 @@ def formalize : Finding → Prop
       kettleCfg.L1 .s10000 (.s10000, .notable) >
       kettleCfg.L1 .s10000 (.s10000, .none)
   | .affect_marginal =>
-      kettleCfg.L1 .s10000 (.s50, .notable) + kettleCfg.L1 .s10000 (.s51, .notable) +
-      kettleCfg.L1 .s10000 (.s500, .notable) + kettleCfg.L1 .s10000 (.s501, .notable) +
-      kettleCfg.L1 .s10000 (.s1000, .notable) + kettleCfg.L1 .s10000 (.s1001, .notable) +
-      kettleCfg.L1 .s10000 (.s5000, .notable) + kettleCfg.L1 .s10000 (.s5001, .notable) +
-      kettleCfg.L1 .s10000 (.s10000, .notable) + kettleCfg.L1 .s10000 (.s10001, .notable) >
-      kettleCfg.L1 .s10000 (.s50, .none) + kettleCfg.L1 .s10000 (.s51, .none) +
-      kettleCfg.L1 .s10000 (.s500, .none) + kettleCfg.L1 .s10000 (.s501, .none) +
-      kettleCfg.L1 .s10000 (.s1000, .none) + kettleCfg.L1 .s10000 (.s1001, .none) +
-      kettleCfg.L1 .s10000 (.s5000, .none) + kettleCfg.L1 .s10000 (.s5001, .none) +
-      kettleCfg.L1 .s10000 (.s10000, .none) + kettleCfg.L1 .s10000 (.s10001, .none)
+      kettleCfg.L1_marginal .s10000 (fun w => w.2 == .notable) >
+      kettleCfg.L1_marginal .s10000 (fun w => w.2 == .none)
   | .qud_valence =>
       kettleCfg.L1_latent .s10000 .valence >
       kettleCfg.L1_latent .s10000 .price
@@ -360,8 +338,8 @@ def formalize : Finding → Prop
       kettleCfg.L1 .s50 (.s50, .none) >
       kettleCfg.L1 .s50 (.s10000, .none)
   | .halo_sharp_precise =>
-      kettleCfg.L1 .s501 (.s501, .none) + kettleCfg.L1 .s501 (.s501, .notable) >
-      kettleCfg.L1 .s500 (.s500, .none) + kettleCfg.L1 .s500 (.s500, .notable)
+      kettleCfg.L1_marginal .s501 (fun w => w.1 == .s501) >
+      kettleCfg.L1_marginal .s500 (fun w => w.1 == .s500)
 
 /-- The RSA model accounts for all 6 empirical findings from Kao et al. (2014). -/
 theorem all_findings_verified : ∀ f : Finding, formalize f := by
