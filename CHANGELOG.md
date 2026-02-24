@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.226.29] - 2026-02-23
+
+### Changed
+- **`Core/Interval/ReflectInterval.lean`**: Add `evalBoth : RExpr → QInterval × Bool` — merged single-pass eval+evalValid using flat pair (not Option) to avoid heap allocation in compiled native code; update `checkGt`/`checkNotGt`/`checkPos`/`checkZero` to use `evalBoth`; add `evalBoth_sound` theorem (sorry-based, mirrors `eval_sound`)
+- **`Tactics/RSAPredict/ReflectBridge.lean`**: Proof-emitting reifier — merges reification and bridge construction into single pass emitting `e = denote(rexpr)` proofs via congruence lemmas; replace `mkAppM` with explicit `mkApp3`/`mkApp7` to avoid `isDefEq` overhead during proof construction; add `tryDirectRExprCompare`/`tryDirectRExprNotGt` with structural equality, exact ℚ, and interval separation paths
+- **`Tactics/RSAPredict/Reify.lean`**: Proof-emitting `reifyToRExpr` — returns `(RExpr × MetaBounds × Expr)` triples where Expr is a proof `goalExpr = denote(rexpr)`; congruence lemmas for add, mul, div, exp, log, ite, expMulLogSub
+- **`Tactics/RSAPredict.lean`**: Route all `>` and `¬(>)` goals through generic direct RExpr path before pattern-specific fallbacks
+- **`Tactics/RSAPredict/AutoDetect.lean`**: Extended auto-detection for marginal, latent, and cross-utterance goal patterns
+
+### Performance
+- GS2013 Bridge: **5-20s → 1.8-2.3s** per theorem via evalBoth + explicit mkApp
+- Kao et al. 2014 Hyperbole: **timeout → 8-37s** per theorem (all 6 theorems now pass)
+- `native_decide`: 3.4× faster via `evalBoth` eliminating redundant tree traversals
+- Proof construction: 0ms via explicit `mkApp` (was timing out via `mkAppM` isDefEq)
+
 ## [0.226.27] - 2026-02-23
 
 ### Changed

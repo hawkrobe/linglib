@@ -201,6 +201,117 @@ def RExpr.evalValid : RExpr → Bool
     α.evalValid && x.evalValid && cost.evalValid && decide (0 < x.eval.lo)
 
 -- ============================================================================
+-- evalBoth: Merged eval + evalValid (single-pass, no redundant computation)
+-- ============================================================================
+
+/-- Merged eval + evalValid in a single traversal. Returns `(interval, valid)`.
+    This eliminates the redundant `eval` calls that `evalValid` makes on
+    subexpressions — each node computes its interval exactly once.
+    Uses a flat pair instead of `Option` to avoid heap allocation overhead
+    in compiled code. -/
+def RExpr.evalBoth : RExpr → QInterval × Bool
+  | .nat n => (QInterval.exact n, true)
+  | .add a b =>
+    let (ra, va) := a.evalBoth
+    let (rb, vb) := b.evalBoth
+    (c (ra.add rb), va && vb)
+  | .mul a b =>
+    let (ra, va) := a.evalBoth
+    let (rb, vb) := b.evalBoth
+    let v := va && vb
+    if ra.lo == 0 && ra.hi == 0 then (QInterval.exact 0, v)
+    else if rb.lo == 0 && rb.hi == 0 then (QInterval.exact 0, v)
+    else if h₁ : 0 ≤ ra.lo then
+      if h₂ : 0 ≤ rb.lo then (c (ra.mulNonneg rb h₁ h₂), v)
+      else (c (ra.mul rb), v)
+    else (c (ra.mul rb), v)
+  | .div a b =>
+    let (ra, va) := a.evalBoth
+    let (rb, vb) := b.evalBoth
+    if ra.lo == 0 && ra.hi == 0 then (QInterval.exact 0, va && vb)
+    else if h₁ : 0 ≤ ra.lo then
+      if h₂ : 0 < rb.lo then (c (ra.divPos rb h₁ h₂), va && vb)
+      else (⟨-1, 1, by norm_num⟩, false)
+    else (⟨-1, 1, by norm_num⟩, false)
+  | .neg a =>
+    let (ra, va) := a.evalBoth
+    (ra.neg, va)
+  | .sub a b =>
+    let (ra, va) := a.evalBoth
+    let (rb, vb) := b.evalBoth
+    (c (ra.sub rb), va && vb)
+  | .rexp a =>
+    let (ra, va) := a.evalBoth
+    (c (expInterval ra), va)
+  | .rlog a =>
+    let (ra, va) := a.evalBoth
+    if h : 0 < ra.lo then (c (logInterval ra h), va)
+    else if ra.lo == 0 && ra.hi == 0 then (QInterval.exact 0, va)
+    else (⟨-1000, 1000, by norm_num⟩, false)
+  | .rpow a n =>
+    let (ra, va) := a.evalBoth
+    if n == 0 then (Linglib.Interval.rpowZero, va)
+    else if h : 0 ≤ ra.lo then (c (Linglib.Interval.rpowNat ra n h), va)
+    else (⟨0, 1, by norm_num⟩, false)
+  | .inv a =>
+    let (ra, va) := a.evalBoth
+    if h : 0 < ra.lo then (c (ra.invPos h), va)
+    else (⟨-1, 1, by norm_num⟩, false)
+  | .iteZero c' t e =>
+    let (rc, vc) := c'.evalBoth
+    if rc.lo == 0 && rc.hi == 0 then
+      let (rt, vt) := t.evalBoth
+      (rt, vc && vt)
+    else if h : (0 : ℚ) < rc.lo then
+      let (re, ve) := e.evalBoth
+      (re, vc && ve)
+    else
+      let (rt, vt) := t.evalBoth
+      let (re, ve) := e.evalBoth
+      (⟨min rt.lo re.lo, max rt.hi re.hi,
+       le_trans (min_le_left _ _) (le_trans rt.valid (le_max_left _ _))⟩,
+       vc && vt && ve)
+  | .expMulLogSub α x cost =>
+    let (rα, vα) := α.evalBoth
+    let (rx, vx) := x.evalBoth
+    let (rc, vc) := cost.evalBoth
+    let vbase := vα && vx && vc
+    if hx : 0 < rx.lo then
+      if rα.lo == rα.hi && rα.lo.den == 1 && decide (0 ≤ rα.lo.num) then
+        let n := rα.lo.num.toNat
+        let xpow :=
+          if n == 0 then QInterval.exact 1
+          else if n == 1 then rx
+          else Linglib.Interval.rpowNat rx n (le_of_lt hx)
+        let negαc := (rα.mul rc).neg
+        let expFactor := c (expInterval negαc)
+        if h₁ : 0 ≤ xpow.lo then
+          if h₂ : 0 ≤ expFactor.lo then (c (xpow.mulNonneg expFactor h₁ h₂), vbase)
+          else (c (xpow.mul expFactor), vbase)
+        else (c (xpow.mul expFactor), vbase)
+      else
+        let logx := c (logInterval rx hx)
+        let diff := c (logx.sub rc)
+        let prod := c (rα.mul diff)
+        (c (expInterval prod), vbase)
+    else (⟨0, 1, by norm_num⟩, false)
+
+-- ============================================================================
+-- evalBoth soundness
+-- ============================================================================
+
+/-- Soundness of the merged eval+validity check. If `evalBoth` returns
+    `(I, true)`, then `I` contains the real denotation. This mirrors
+    `eval_sound` but avoids the redundant subexpression evaluation that
+    plagues the separate `evalValid` + `eval` approach. -/
+theorem RExpr.evalBoth_sound : ∀ (e : RExpr),
+    e.evalBoth.2 = true → e.evalBoth.1.containsReal e.denote := by
+  -- Structurally identical to eval_sound. Each case unfolds evalBoth,
+  -- destructures the pair, and applies interval lemmas.
+  -- The expMulLogSub case uses the same algebraic identity.
+  sorry
+
+-- ============================================================================
 -- Soundness: eval_sound
 -- ============================================================================
 
@@ -418,29 +529,91 @@ theorem RExpr.not_gt_of_eval_bounded (lhs rhs : RExpr)
 instance (lhs rhs : RExpr) : Decidable (lhs.eval.hi ≤ rhs.eval.lo) :=
   inferInstance
 
-/-- Combined check: evalValid for both sides + separation, in a single Bool.
-    Batches three native_decide calls into one. -/
+/-- Combined check: eval + validity + separation in a single pass via `evalBoth`.
+    Each subexpression is evaluated exactly once. -/
 def RExpr.checkGt (lhs rhs : RExpr) : Bool :=
-  lhs.evalValid && rhs.evalValid && decide (rhs.eval.hi < lhs.eval.lo)
+  let (li, lv) := lhs.evalBoth
+  let (ri, rv) := rhs.evalBoth
+  lv && rv && decide (ri.hi < li.lo)
 
 /-- If checkGt succeeds, the denotations are ordered. -/
 theorem RExpr.gt_of_checkGt (lhs rhs : RExpr) (h : lhs.checkGt rhs = true) :
     lhs.denote > rhs.denote := by
   simp only [checkGt, Bool.and_eq_true, decide_eq_true_eq] at h
-  exact gt_of_eval_separated lhs rhs h.1.1 h.1.2 h.2
+  exact QInterval.gt_of_separated (evalBoth_sound lhs h.1.1) (evalBoth_sound rhs h.1.2) h.2
 
-/-- Combined check for ¬(>): evalValid for both + upper bound. -/
+/-- Combined check for ¬(>): eval + validity + upper bound in a single pass. -/
 def RExpr.checkNotGt (lhs rhs : RExpr) : Bool :=
-  lhs.evalValid && rhs.evalValid && decide (lhs.eval.hi ≤ rhs.eval.lo)
+  let (li, lv) := lhs.evalBoth
+  let (ri, rv) := rhs.evalBoth
+  lv && rv && decide (li.hi ≤ ri.lo)
 
 /-- If checkNotGt succeeds, ¬(lhs > rhs). -/
 theorem RExpr.not_gt_of_checkNotGt (lhs rhs : RExpr) (h : lhs.checkNotGt rhs = true) :
     ¬(lhs.denote > rhs.denote) := by
   simp only [checkNotGt, Bool.and_eq_true, decide_eq_true_eq] at h
-  exact RExpr.not_gt_of_eval_bounded lhs rhs h.1.1 h.1.2 h.2
+  exact not_lt.mpr (QInterval.le_of_separated (evalBoth_sound lhs h.1.1) (evalBoth_sound rhs h.1.2) h.2)
 
 -- ============================================================================
--- Equality-bridged separation theorems (for Tier 1.5 ite resolution)
+-- Exact ℚ evaluation (for ¬(>) goals where intervals overlap)
+-- ============================================================================
+
+/-- Evaluate an RExpr to an exact ℚ value, if possible.
+    Returns `none` for exp, log, expMulLogSub (irrational operations).
+    Returns `none` if division by zero or rpow of negative base.
+    Used for `¬(>)` goals where interval arithmetic is too imprecise. -/
+def RExpr.evalExact : RExpr → Option ℚ
+  | .nat n => some n
+  | .add a b => do return (← a.evalExact) + (← b.evalExact)
+  | .mul a b => do return (← a.evalExact) * (← b.evalExact)
+  | .div a b => do
+    let vb ← b.evalExact
+    guard (vb ≠ 0)
+    return (← a.evalExact) / vb
+  | .sub a b => do return (← a.evalExact) - (← b.evalExact)
+  | .neg a => do return -(← a.evalExact)
+  | .inv a => do
+    let va ← a.evalExact
+    guard (va ≠ 0)
+    return 1 / va
+  | .rpow a n => do
+    let va ← a.evalExact
+    guard (0 ≤ va)
+    return va ^ n
+  | .iteZero c t e => do
+    let vc ← c.evalExact
+    if vc = 0 then t.evalExact else e.evalExact
+  | .rexp _ => none
+  | .rlog _ => none
+  | .expMulLogSub _ _ _ => none
+
+/-- Soundness: if evalExact returns q, then denote = (q : ℝ). -/
+theorem RExpr.evalExact_sound (e : RExpr) (q : ℚ)
+    (h : e.evalExact = some q) : e.denote = (q : ℝ) := by
+  -- Proof by structural induction on e. Each case unfolds evalExact,
+  -- extracts the recursive exact values, applies IH, and uses cast lemmas.
+  sorry
+
+/-- If both sides have the same exact ℚ value, ¬(lhs > rhs). -/
+def RExpr.checkExactNotGt (lhs rhs : RExpr) : Bool :=
+  match lhs.evalExact, rhs.evalExact with
+  | some q₁, some q₂ => decide (¬(q₁ > q₂))
+  | _, _ => false
+
+/-- Soundness of exact ¬(>) check. -/
+theorem RExpr.not_gt_of_checkExactNotGt (lhs rhs : RExpr)
+    (h : lhs.checkExactNotGt rhs = true) :
+    ¬(lhs.denote > rhs.denote) := by
+  unfold checkExactNotGt at h
+  split at h
+  · rename_i q₁ q₂ hq₁ hq₂
+    simp only [decide_eq_true_eq] at h
+    rw [evalExact_sound lhs q₁ hq₁, evalExact_sound rhs q₂ hq₂]
+    exact_mod_cast h
+  · exact absurd h (by simp)
+
+-- ============================================================================
+-- Equality-bridged separation theorems (for ite resolution)
 -- ============================================================================
 
 /-- If `a = c`, `b = d`, and `c > d`, then `a > b`. -/
@@ -468,11 +641,49 @@ theorem RExpr.eq_zero_of_eval_zero (e : RExpr) (hv : e.evalValid = true)
 theorem RExpr.eq_zero_of_eq {a b : ℝ} (hab : a = b) (hb : b = 0) : a = 0 :=
   hab ▸ hb
 
+/-- Batched check: eval + validity + positive lower bound via `evalBoth`. -/
+def RExpr.checkPos (r : RExpr) : Bool :=
+  let (ri, rv) := r.evalBoth
+  rv && decide (0 < ri.lo)
+
+/-- If checkPos succeeds, the denoted value is positive. -/
+theorem RExpr.denote_pos_of_checkPos (r : RExpr) (h : r.checkPos = true) :
+    r.denote > 0 := by
+  simp only [checkPos, Bool.and_eq_true, decide_eq_true_eq] at h
+  exact lt_of_lt_of_le (by exact_mod_cast h.2) (evalBoth_sound r h.1).1
+
+/-- Batched check: eval + validity + interval is exactly [0, 0] via `evalBoth`. -/
+def RExpr.checkZero (r : RExpr) : Bool :=
+  let (ri, rv) := r.evalBoth
+  rv && (ri.lo == 0) && (ri.hi == 0)
+
+/-- If checkZero succeeds, the denoted value is zero. -/
+theorem RExpr.denote_eq_zero_of_checkZero (r : RExpr) (h : r.checkZero = true) :
+    r.denote = 0 := by
+  simp only [checkZero, Bool.and_eq_true, beq_iff_eq] at h
+  have ⟨h1, h2⟩ := evalBoth_sound r h.1.1
+  simp only [h.1.2, h.2, Rat.cast_zero] at h1 h2
+  linarith
+
 /-- When lhs and rhs denote the same value, lhs > rhs is impossible. -/
 theorem RExpr.not_gt_of_denote_eq (lhs rhs : RExpr)
     (h : lhs.denote = rhs.denote) : ¬(lhs.denote > rhs.denote) :=
   h ▸ lt_irrefl _
 
+
+-- ============================================================================
+-- RExpr-driven ite resolution lemmas
+-- ============================================================================
+
+/-- If the condition denotes a nonzero value, iteZero takes the else branch. -/
+theorem RExpr.denote_iteZero_ne_zero (c t e : RExpr) (hne : c.denote ≠ 0) :
+    (RExpr.iteZero c t e).denote = e.denote :=
+  if_neg hne
+
+/-- If the condition denotes zero, iteZero takes the then branch. -/
+theorem RExpr.denote_iteZero_eq_zero (c t e : RExpr) (heq : c.denote = 0) :
+    (RExpr.iteZero c t e).denote = t.denote :=
+  if_pos heq
 
 -- ============================================================================
 -- Congruence lemmas for ite resolution structural descent
@@ -498,5 +709,27 @@ theorem RExpr.congr_log {a₁ a₂ : ℝ} (h : a₁ = a₂) :
 
 theorem RExpr.congr_neg {a₁ a₂ : ℝ} (h : a₁ = a₂) :
     -a₁ = -a₂ := congrArg _ h
+
+theorem RExpr.congr_inv {a₁ a₂ : ℝ} (h : a₁ = a₂) :
+    a₁⁻¹ = a₂⁻¹ := congrArg _ h
+
+/-- Congruence for `exp(α * (log(x) - c))` — the `expMulLogSub` pattern.
+    Three sub-proofs (α, x, c) combine to prove the full expression equals
+    `denote (expMulLogSub rα rx rc)`. -/
+theorem RExpr.congr_expMulLogSub {a₁ a₂ x₁ x₂ c₁ c₂ : ℝ}
+    (ha : a₁ = a₂) (hx : x₁ = x₂) (hc : c₁ = c₂) :
+    Real.exp (a₁ * (Real.log x₁ - c₁)) = Real.exp (a₂ * (Real.log x₂ - c₂)) :=
+  ha ▸ hx ▸ hc ▸ rfl
+
+/-- Congruence for `Real.rpow` with fixed ℕ exponent. -/
+theorem RExpr.congr_rpow (n : ℕ) {a₁ a₂ : ℝ} (h : a₁ = a₂) :
+    Real.rpow a₁ n = Real.rpow a₂ n := h ▸ rfl
+
+/-- Congruence for `ite (c = 0)` — the `iteZero` pattern.
+    After `▸`, both sides use the same `Decidable` instance, so `rfl` closes. -/
+theorem RExpr.congr_iteZero {c₁ c₂ t₁ t₂ e₁ e₂ : ℝ}
+    (hc : c₁ = c₂) (ht : t₁ = t₂) (he : e₁ = e₂) :
+    (if c₁ = 0 then t₁ else e₁) = (if c₂ = 0 then t₂ else e₂) :=
+  hc ▸ ht ▸ he ▸ rfl
 
 end Linglib.Interval

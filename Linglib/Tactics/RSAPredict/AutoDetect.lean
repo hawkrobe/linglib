@@ -706,39 +706,32 @@ private def proveConfigEq (d cfg : Expr) : TacticM (Option Expr) := do
   -- Tier 1 fast path: definitional equality → rfl
   if ← isDefEq dToRSA cfg then
     eqMVar.mvarId!.assign (← mkEqRefl dToRSA)
-    return some eqMVar
-  -- Tier 2: apply toRSAConfig_eq and prove each field via tree-diff
+    return some (← instantiateMVars eqMVar)
+  -- Tier 2: prove d.toRSAConfig = cfg via single tactic block
+  -- Using evalTactic ensures proper metavar resolution by the tactic framework
+  -- (individual mkAppM/isDefEq calls can leak unresolved metavars)
   let savedGoals ← getGoals
   setGoals [eqMVar.mvarId!]
   try
-    evalTactic (← `(tactic| apply RSA.RSAConfigData.toRSAConfig_eq))
-    let goals ← getGoals
-    unless goals.length = 6 do
-      setGoals savedGoals
-      logInfo m!"rsa_predict: [auto-detect] toRSAConfig_eq produced {goals.length} goals, expected 6"
-      return none
-    let fieldNames := #["h_lat", "h_meaning", "h_s1", "h_α", "h_wp", "h_lp"]
-    for i in [:6] do
-      let goal := goals[i]!
-      let goalType ← goal.getType
-      -- For HEq goals (h_meaning, h_s1, h_lp): prove Eq version, wrap with heq_of_eq
-      -- For Eq goals (h_lat, h_α, h_wp): prove directly
-      let proof ← try
-        match goalType with
-        | .app (.app (.app (.app (.const ``HEq _) _) lhsExpr) _) rhsExpr =>
-          let eqProof ← proveExprEq lhsExpr rhsExpr 50
-          mkAppM ``heq_of_eq #[eqProof]
-        | _ =>
-          let some (_, lhsExpr, rhsExpr) := goalType.eq?
-            | throwError "proveConfigEq: goal {i} ({fieldNames[i]!}) is not Eq or HEq"
-          proveExprEq lhsExpr rhsExpr 50
-      catch e =>
-        throwError "proveConfigEq: field {fieldNames[i]!} failed: {e.toMessageData}"
-      goal.assign proof
+    evalTactic (← `(tactic|
+      apply RSA.RSAConfigData.toRSAConfig_eq <;>
+        first
+          | rfl
+          | exact heq_of_eq rfl
+          | exact heq_of_eq (funext (fun a => rfl))
+          | exact heq_of_eq (funext (fun a => funext (fun b => rfl)))
+          | exact heq_of_eq (funext (fun a => funext (fun b => funext (fun c => rfl))))
+          | (funext a; rfl)
+          | (funext a b; rfl)
+          | (funext a b c; rfl)
+          | (funext a; norm_num)
+          | (funext a b; norm_num)
+          | (funext a b c; norm_num)
+          | norm_num))
     setGoals savedGoals
-    return some eqMVar
+    let result ← instantiateMVars eqMVar
+    return some result
   catch e =>
-    setGoals savedGoals
     logInfo m!"rsa_predict: [auto-detect] config equality failed: {e.toMessageData}"
     return none
 
@@ -868,7 +861,7 @@ def tryAutoDetectL1Compare (goal : MVarId) (cfg u w₁ w₂ : Expr) : TacticM Bo
       logInfo m!"rsa_predict: [auto-detect] config equality proof failed"
       return false
     let proof ← mkAppM ``RSA.Verify.l1_gt_of_check_ext #[cfg, d, h_eq, u, w₁, w₂, eqMVar]
-    goal.assign proof
+    goal.assign (← instantiateMVars proof)
     let t3 ← IO.monoMsNow
     logInfo m!"rsa_predict: [auto-detect] ✓ succeeded ({t3 - t0}ms)"
     return true
@@ -965,7 +958,7 @@ def tryAutoDetectL1NotGt (goal : MVarId) (cfg u w₁ w₂ : Expr) : TacticM Bool
       logInfo m!"rsa_predict: [auto-detect/¬L1] config equality proof failed"
       return false
     let proof ← mkAppM ``RSA.Verify.l1_not_gt_of_check_ext #[cfg, d, h_eq, u, w₁, w₂, eqMVar]
-    goal.assign proof
+    goal.assign (← instantiateMVars proof)
     logInfo m!"rsa_predict: [auto-detect/¬L1] ✓ succeeded"
     return true
   catch e =>
@@ -1067,7 +1060,7 @@ def tryAutoDetectS1Compare (goal : MVarId) (cfg l w u₁ u₂ : Expr) : TacticM 
       return false
     setGoals savedGoals
     let proof ← mkAppM ``RSA.Verify.s1_gt_of_check_ext #[cfg, d, hEq, hLat, l, w, u₁, u₂, eqMVar]
-    goal.assign proof
+    goal.assign (← instantiateMVars proof)
     logInfo m!"rsa_predict: [auto-detect/S1] ✓ succeeded"
     return true
   catch e =>
@@ -1098,7 +1091,7 @@ def tryAutoDetectS1NotGt (goal : MVarId) (cfg l w u₁ u₂ : Expr) : TacticM Bo
       return false
     setGoals savedGoals
     let proof ← mkAppM ``RSA.Verify.s1_not_gt_of_check_ext #[cfg, d, hEq, hLat, l, w, u₁, u₂, eqMVar]
-    goal.assign proof
+    goal.assign (← instantiateMVars proof)
     logInfo m!"rsa_predict: [auto-detect/¬S1] ✓ succeeded"
     return true
   catch e =>
@@ -1167,7 +1160,7 @@ def tryAutoDetectL1ScoreGt (goal : MVarId) (cfg u₁ w₁ u₂ w₂ : Expr) : Ta
     setGoals savedGoals
     let some h_eq ← proveConfigEq d cfg | return false
     let proof ← mkAppM ``RSA.Verify.l1_score_gt_of_check_ext #[cfg, d, h_eq, u₁, w₁, u₂, w₂, eqMVar]
-    goal.assign proof
+    goal.assign (← instantiateMVars proof)
     logInfo m!"rsa_predict: [auto-detect/score] ✓ succeeded"
     return true
   catch _ => return false

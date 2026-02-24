@@ -147,6 +147,12 @@ elab "rsa_predict" : tactic => do
       throwError "rsa_predict: expected goal of the form `¬(_ > _)`, got: {← ppExpr goalType}"
     let lhs := innerArgs[2]!
     let rhs := innerArgs[3]!
+
+    -- Try generic direct RExpr approach on raw goal (handles all patterns)
+    if ← tryDirectRExprNotGt goal lhs rhs then
+      logInfo m!"rsa_predict: ✓ proved via reflection (¬gt, generic)"
+      return
+
     let goalForm ← parseGoalForm lhs rhs
     match goalForm with
     | .l1Compare cfg u w₁ w₂ => do
@@ -303,6 +309,13 @@ elab "rsa_predict" : tactic => do
 
   let lhs := args[2]!
   let rhs := args[3]!
+
+  -- Try generic direct RExpr approach on raw goal (handles all patterns)
+  let t0_generic ← IO.monoMsNow
+  if ← tryDirectRExprCompare goal lhs rhs then
+    let t1_generic ← IO.monoMsNow
+    logInfo m!"rsa_predict: ✓ proved via reflection (generic, {t1_generic - t0_generic}ms)"
+    return
 
   let goalForm ← parseGoalForm lhs rhs
 
