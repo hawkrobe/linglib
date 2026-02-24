@@ -1,7 +1,5 @@
 import Linglib.Theories.Semantics.Modality.Kratzer
 import Linglib.Core.Presupposition
-import Linglib.Core.CommonGround
-
 /-!
 # Kernel Semantics for Epistemic Modals
 
@@ -28,8 +26,6 @@ open Semantics.Attitudes.Intensional
 open Semantics.Modality.Kratzer
 open Core.Presupposition
 open Core.Proposition
-open Core.CommonGround
-
 /-! ## Helpers -/
 
 /-- `(L.filter f).isEmpty = L.all (λ x => !f x)`: a filtered list is empty
@@ -80,10 +76,6 @@ def followsFrom (k : Kernel) (φ : BProp World) : Bool :=
 def toEpistemicFlavor (k : Kernel) : EpistemicFlavor where
   evidence := k.toModalBase
   ordering := emptyBackground
-
-/-- View a common ground as a kernel. -/
-def ofCG (cg : CG World) : Kernel where
-  props := cg.propositions
 
 end Kernel
 

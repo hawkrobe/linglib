@@ -266,7 +266,8 @@ This creates the "dense web" where changes propagate and get caught.
 
 /-- All English attitude verbs for batch verification -/
 def englishAttitudeVerbs : List VerbEntry :=
-  [believe, think, want, hope, expect, wish, fear, dread, worry]
+  [know, realize, discover, notice,
+   believe, think, want, hope, expect, wish, fear, dread, worry]
 
 /-- Verify all English attitude verbs have valid derived CG requirements.
 
@@ -279,6 +280,20 @@ theorem all_english_verbs_valid :
 
 -- English verbs: CG requirements are DERIVED from veridicality
 
+-- Factive verbs → factive CG requirement (CG ⊨ p)
+theorem know_cg_factive :
+    deriveCGReqFromVerb know.toVerbCore = some CGRequirement.factive := by native_decide
+
+theorem realize_cg_factive :
+    deriveCGReqFromVerb realize.toVerbCore = some CGRequirement.factive := by native_decide
+
+theorem discover_cg_factive :
+    deriveCGReqFromVerb discover.toVerbCore = some CGRequirement.factive := by native_decide
+
+theorem notice_cg_factive :
+    deriveCGReqFromVerb notice.toVerbCore = some CGRequirement.factive := by native_decide
+
+-- Non-factive verbs → no CG requirement
 theorem believe_cg_none :
     deriveCGReqFromVerb believe.toVerbCore = none := by native_decide
 
@@ -290,6 +305,86 @@ theorem hope_cg_none :
 
 theorem fear_cg_none :
     deriveCGReqFromVerb fear.toVerbCore = none := by native_decide
+
+-- ============================================================================
+-- Exercising CGRequirement.satisfied
+-- ============================================================================
+
+/-!
+## CGRequirement.satisfied: Concrete Evaluation
+
+The derivation chain is:
+  `attitudeBuilder → veridicality → deriveCGRequirement → CGRequirement → satisfied`
+
+This section exercises the final link: given a concrete context set and
+proposition, does the CG requirement hold?
+
+We construct a minimal 2-world model: `w₀` where p is true, `w₁` where p is
+false. A factive context (where all interlocutors take p for granted) contains
+only `w₀`. A neutral context contains both.
+-/
+
+/-- Minimal world: just a proposition value. -/
+private inductive MiniWorld | w0 | w1
+
+/-- The complement proposition: true at w0, false at w1. -/
+private def prop : MiniWorld → Bool
+  | .w0 => true
+  | .w1 => false
+
+/-- Factive context: all worlds satisfy p (speaker takes p for granted). -/
+private def factiveCtx : List MiniWorld := [.w0]
+
+/-- Neutral context: p is open (some worlds have p, some don't). -/
+private def neutralCtx : List MiniWorld := [.w0, .w1]
+
+/-- Counter-factive context: no world satisfies p. -/
+private def contrafactiveCtx : List MiniWorld := [.w1]
+
+/-- Factive requirement is satisfied in a factive context (CG ⊨ p). -/
+theorem factive_satisfied_in_factive_ctx :
+    CGRequirement.factive.satisfied factiveCtx prop = true := rfl
+
+/-- Factive requirement fails in a neutral context (some worlds lack p). -/
+theorem factive_fails_in_neutral_ctx :
+    CGRequirement.factive.satisfied neutralCtx prop = false := rfl
+
+/-- Weak contrafactive requirement (◇¬p) is satisfied in neutral context. -/
+theorem weakContrafactive_satisfied_in_neutral_ctx :
+    CGRequirement.weakContrafactive.satisfied neutralCtx prop = true := rfl
+
+/-- Weak contrafactive requirement fails in factive context (no ¬p worlds). -/
+theorem weakContrafactive_fails_in_factive_ctx :
+    CGRequirement.weakContrafactive.satisfied factiveCtx prop = false := rfl
+
+/-- Strong contrafactive requirement (CG ⊨ ¬p) is satisfied only in
+    counter-factive context. This requirement type is UNATTESTED. -/
+theorem strongContrafactive_satisfied_in_contrafactive_ctx :
+    CGRequirement.strongContrafactive.satisfied contrafactiveCtx prop = true := rfl
+
+/-- Strong contrafactive fails in neutral context. -/
+theorem strongContrafactive_fails_in_neutral_ctx :
+    CGRequirement.strongContrafactive.satisfied neutralCtx prop = false := rfl
+
+/-- End-to-end: derive "know"'s CG requirement from its Fragment data,
+    then verify it's satisfied in a factive context.
+
+    This closes the full chain:
+    `know.attitudeBuilder → .veridical → deriveCGRequirement → .factive → satisfied`
+-/
+theorem know_factive_satisfied_endtoend :
+    (deriveCGReqFromVerb know.toVerbCore).map
+      (·.satisfied factiveCtx prop) = some true := by native_decide
+
+/-- End-to-end: "know"'s requirement fails in a neutral context. -/
+theorem know_factive_fails_endtoend :
+    (deriveCGReqFromVerb know.toVerbCore).map
+      (·.satisfied neutralCtx prop) = some false := by native_decide
+
+/-- End-to-end: "believe" has no CG requirement, so satisfaction is vacuously none. -/
+theorem believe_no_requirement_endtoend :
+    (deriveCGReqFromVerb believe.toVerbCore).map
+      (·.satisfied neutralCtx prop) = none := by native_decide
 
 /-!
 ## Handling yǐwéi's Exception

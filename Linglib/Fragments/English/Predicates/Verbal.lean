@@ -297,6 +297,7 @@ def know : VerbEntry where
   factivePresup := true
   takesQuestionBase := true
   complementSig := some .mono
+  attitudeBuilder := some (.doxastic .veridical)
 
 /-- "regret" — factive, presupposes complement is true -/
 def regret : VerbEntry where
@@ -318,7 +319,8 @@ def realize : VerbEntry := .mkRegular {
   subjectTheta := some .experiencer
   passivizable := false
   presupType := some .softTrigger
-  factivePresup := true }
+  factivePresup := true
+  attitudeBuilder := some (.doxastic .veridical) }
 
 /-- "discover" — semifactive, weaker projection -/
 def discover : VerbEntry := .mkRegular {
@@ -328,7 +330,8 @@ def discover : VerbEntry := .mkRegular {
   passivizable := false
   presupType := some .softTrigger
   factivePresup := true
-  takesQuestionBase := true }
+  takesQuestionBase := true
+  attitudeBuilder := some (.doxastic .veridical) }
 
 /-- "notice" — semifactive -/
 def notice : VerbEntry := .mkRegular {
@@ -337,7 +340,8 @@ def notice : VerbEntry := .mkRegular {
   subjectTheta := some .experiencer
   passivizable := false
   presupType := some .softTrigger
-  factivePresup := true }
+  factivePresup := true
+  attitudeBuilder := some (.doxastic .veridical) }
 
 -- ════════════════════════════════════════════════════
 -- § Verb Entries — Change of State

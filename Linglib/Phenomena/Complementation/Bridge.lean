@@ -42,7 +42,7 @@ This follows the `deriveSelectionClass` pattern from LeftPeriphery.lean. -/
     The mapping uses `objectTheta`, `factivePresup`, `causativeBuilder`,
     `implicativeBuilder`, `cosType`, `speechActVerb`, and `attitudeBuilder`:
     - objectTheta == .stimulus → perception (see)
-    - factivePresup && no attitudeBuilder → knowledge (know, regret, realize)
+    - factivePresup → knowledge (know, realize, regret)
     - causativeBuilder.isSome → manipulative (cause, make, force)
     - implicativeBuilder.isSome → achievement (manage, fail)
     - cosType.isSome → phasal (stop, start, continue)
@@ -53,7 +53,7 @@ This follows the `deriveSelectionClass` pattern from LeftPeriphery.lean. -/
     - Otherwise → none -/
 def deriveCTPClass (v : VerbEntry) : Option CTPClass :=
   if v.objectTheta == some .stimulus then some .perception
-  else if v.factivePresup && v.attitudeBuilder.isNone then some .knowledge
+  else if v.factivePresup then some .knowledge
   else if v.causativeBuilder.isSome then some .manipulative
   else if v.implicativeBuilder.isSome then some .achievement
   else if v.cosType.isSome then some .phasal
