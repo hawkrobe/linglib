@@ -179,7 +179,7 @@ def assignCases (lang : CaseLanguageType) (nps : List NPInDomain) : List CasedNP
 
 /-! ## ACC Variant
 
-"Taro-ga Tokyo-o hanareru" (Taro-NOM Tokyo-ACC leave)
+"Taro-ga mura-o hanare-ta" (Taro-NOM village-ACC leave-PAST)
 
 Two bare NPs in the TP Spell-Out domain:
 - Leaver NP (higher, raised to Spec-TP)
@@ -195,7 +195,7 @@ def accVariantResult : List CasedNP :=
 
 /-! ## ABL Variant
 
-"Taro-ga Tokyo-kara hanareru" (Taro-NOM Tokyo-ABL leave)
+"Taro-ga mura-kara hanare-ta" (Taro-NOM village-from leave-PAST)
 
 One bare NP + one PP (lexical ABL from *kara*):
 - Leaver NP (higher, raised to Spec-TP)

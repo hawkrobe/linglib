@@ -9,7 +9,7 @@ import Linglib.Fragments.Japanese.Predicates
 Connects the empirical data from Ozaki (2025) to:
 1. **Dependent case theory** (Marantz 1991; Baker 2015) — explains the
    ACC/ABL alternation without appealing to a transitive Voice head
-2. **Minimalist Voice decomposition** (Kratzer 1996; Schäfer 2008) —
+2. **Minimalist Voice decomposition** (Kratzer 1996; Schäfer 2025) —
    departure verbs select non-thematic Voice (no agent, no phase head)
 3. **Fragment entries** — Japanese verb entries in `Fragments.Japanese.Predicates`
 

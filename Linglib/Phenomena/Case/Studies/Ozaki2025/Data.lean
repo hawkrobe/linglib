@@ -9,8 +9,8 @@ on the source argument.
 
 1. **Alternation**: Departure verbs like *hanareru* 'leave' and *deru*
    'exit' allow both ACC and ABL on the source:
-   - "Taro-ga Tokyo-**o** hanareta" (ACC)
-   - "Taro-ga Tokyo-**kara** hanareta" (ABL)
+   - "Taro-ga mura-**o** hanare-ta" (ACC)
+   - "Taro-ga mura-**kara** hanare-ta" (ABL)
 
 2. **Argumenthood of source**: The source behaves as an argument regardless
    of case — it can undergo VP ellipsis and long-distance scrambling.
@@ -100,37 +100,42 @@ structure ArgumenthoodDatum where
 -- § 3: Alternation Data
 -- ============================================================================
 
-/-! ### *hanareru* 'leave' — ACC/ABL alternation (ex. 1) -/
+/-! ### *hanareru* 'leave' — ACC/ABL alternation (ex. 1)
+
+"Taro-ga mura-{o/kara} hanare-ta." (Taro-NOM village-{ACC/from} leave-PAST) -/
 
 def hanareru_acc : AlternationDatum where
   verb := "hanareru"
   sourceCase := .accusative
   grammatical := true
-  sentence := "Taro-ga Tokyo-o hanareta"
-  exampleNum := "1a"
+  sentence := "Taro-ga mura-o hanare-ta"
+  exampleNum := "1"
 
 def hanareru_abl : AlternationDatum where
   verb := "hanareru"
   sourceCase := .ablative
   grammatical := true
-  sentence := "Taro-ga Tokyo-kara hanareta"
-  exampleNum := "1b"
+  sentence := "Taro-ga mura-kara hanare-ta"
+  exampleNum := "1"
 
-/-! ### *deru* 'exit' — ACC/ABL alternation (ex. 9) -/
+/-! ### *deru* 'exit' — ACC/ABL alternation (implicit in ex. 9)
+
+The paper uses *deru* with "eki" (station) in the ellipsis diagnostic
+(ex. 9). The basic alternation is implicit: "Taro-ga eki-{o/kara} deta." -/
 
 def deru_acc : AlternationDatum where
   verb := "deru"
   sourceCase := .accusative
   grammatical := true
-  sentence := "Taro-ga heya-o deta"
-  exampleNum := "9a"
+  sentence := "Taro-ga eki-o deta"
+  exampleNum := "9"
 
 def deru_abl : AlternationDatum where
   verb := "deru"
   sourceCase := .ablative
   grammatical := true
-  sentence := "Taro-ga heya-kara deta"
-  exampleNum := "9b"
+  sentence := "Taro-ga eki-kara deta"
+  exampleNum := "9"
 
 def alternationData : List AlternationDatum :=
   [hanareru_acc, hanareru_abl, deru_acc, deru_abl]
@@ -139,14 +144,20 @@ def alternationData : List AlternationDatum :=
 -- § 4: Argumenthood Data
 -- ============================================================================
 
-/-! ### VP ellipsis — source elides as argument (ex. 9–10) -/
+/-! ### VP ellipsis — source elides as argument (ex. 9–10)
+
+Funakoshi's (2016) generalization: adjuncts can only be elided if no
+other VP-internal elements are present. The source of *deru* elides
+even with an overt adverb *suguni* 'quickly', confirming argumenthood.
+The continuation (10) is non-contradictory, showing the elided reading
+is available. -/
 
 def deru_ellipsis_acc : ArgumenthoodDatum where
   verb := "deru"
   sourceCase := .accusative
   diagnostic := .ellipsis
   grammatical := true
-  sentence := "Taro-ga heya-o deta. Hanako-mo soo shita."
+  sentence := "Taro-wa suguni eki-o deta ga, Hanako-wa suguni denakatta"
   exampleNum := "9"
 
 def deru_ellipsis_abl : ArgumenthoodDatum where
@@ -154,42 +165,51 @@ def deru_ellipsis_abl : ArgumenthoodDatum where
   sourceCase := .ablative
   diagnostic := .ellipsis
   grammatical := true
-  sentence := "Taro-ga heya-kara deta. Hanako-mo soo shita."
-  exampleNum := "10"
+  sentence := "Taro-wa suguni eki-kara deta ga, Hanako-wa suguni denakatta"
+  exampleNum := "9"
 
-/-! ### Long-distance scrambling — source scrambles freely (ex. 13) -/
+/-! ### Long-distance scrambling — source scrambles freely (ex. 13)
 
-def deru_scrambling_acc : ArgumenthoodDatum where
-  verb := "deru"
+Saito (1985): arguments can undergo long-distance scrambling, adjuncts
+cannot. The source of *hanareru* scrambles out of the embedded clause,
+confirming argumenthood regardless of case marking. -/
+
+def hanareru_scrambling_acc : ArgumenthoodDatum where
+  verb := "hanareru"
   sourceCase := .accusative
   diagnostic := .longDistanceScrambling
   grammatical := true
-  sentence := "heya-o Hanako-ga [Taro-ga __ deta to] omotta"
-  exampleNum := "13a"
+  sentence := "Mura-o Taro-wa [Hanako-ga __ hanareta to] itta"
+  exampleNum := "13"
 
-def deru_scrambling_abl : ArgumenthoodDatum where
-  verb := "deru"
+def hanareru_scrambling_abl : ArgumenthoodDatum where
+  verb := "hanareru"
   sourceCase := .ablative
   diagnostic := .longDistanceScrambling
   grammatical := true
-  sentence := "heya-kara Hanako-ga [Taro-ga __ deta to] omotta"
-  exampleNum := "13b"
+  sentence := "Mura-kara Taro-wa [Hanako-ga __ hanareta to] itta"
+  exampleNum := "13"
 
 def argumenthoodData : List ArgumenthoodDatum :=
-  [deru_ellipsis_acc, deru_ellipsis_abl, deru_scrambling_acc, deru_scrambling_abl]
+  [deru_ellipsis_acc, deru_ellipsis_abl, hanareru_scrambling_acc, hanareru_scrambling_abl]
 
 -- ============================================================================
 -- § 5: Unaccusativity Data
 -- ============================================================================
 
-/-! ### Passive — only indirect passive available (ex. 14, 20) -/
+/-! ### Passive — only indirect passive available (ex. 14, 20)
+
+Japanese has two passives: indirect (*-rare-*, adversative, available
+to all verbs including unaccusatives) and direct (*-niyotte*, requires
+thematic Voice). If alternation verbs had thematic Voice, direct passive
+should be possible — but it is not (ex. 20). -/
 
 def hanareru_indirect_passive : UnaccusativityDatum where
   verb := "hanareru"
   diagnostic := .passivization
   passiveType := some .indirect
   grammatical := true
-  sentence := "Hanako-ga Taro-ni hanare-rare-ta"
+  sentence := "Sono mura-ga Taro-ni hanare-rare-ta"
   exampleNum := "14"
 
 def hanareru_direct_passive : UnaccusativityDatum where
@@ -197,17 +217,21 @@ def hanareru_direct_passive : UnaccusativityDatum where
   diagnostic := .passivization
   passiveType := some .direct
   grammatical := false
-  sentence := "*Tokyo-ga Taro-niyotte hanare-rare-ta"
+  sentence := "*Sono mura-ga Taro-niyotte hanare-rare-ta"
   exampleNum := "20"
 
-/-! ### *nani-o* wh-adjunct — blocked with unaccusatives (ex. 26) -/
+/-! ### *nani-o* wh-adjunct — blocked with unaccusatives (ex. 26)
+
+Kurafuji (1997): *nani-o* 'what-ACC' can mean 'why' with unergatives
+and transitives, but not with unaccusatives. Alternation verbs block
+this reading, patterning with unaccusatives. -/
 
 def hanareru_nanio : UnaccusativityDatum where
   verb := "hanareru"
   diagnostic := .naniOWhAdjunct
   passiveType := none
   grammatical := false
-  sentence := "*Taro-ga nani-o Tokyo-o hanareta no"
+  sentence := "*Nani-o Taro-wa mura-o hanare-teiru no"
   exampleNum := "26"
 
 def unaccusativityData : List UnaccusativityDatum :=
