@@ -4,6 +4,7 @@
 
 ### Changed
 - **EpistemicScale Card 3 permutation refactoring**: replace 5 duplicate case branches in `theorem8a_fin3` with permutation dispatches via `Equiv.swap` + transport infrastructure (`transportFA`, `perm_null_convert`, `perm_repr`). Extract 3 canonical proofs as standalone lemmas. File: 4015 → 3547 lines (−468); `maxHeartbeats` 3200000 → 800000.
+- **EpistemicScale Card 4 permutation consolidation**: consolidate 11 inline `sorry` cases in `theorem8a_fin4` into 3 canonical stub lemmas (`theorem8a_fin4_2null_01`, `theorem8a_fin4_1null_0`, `theorem8a_fin4_0null`) + 8 permutation dispatches. Uses composed `Equiv.swap` for non-trivial permutations on `Fin 4`.
 
 ## [0.226.36] - 2026-02-24
 

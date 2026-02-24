@@ -3261,6 +3261,26 @@ private theorem fin4_dirac_repr (sys : EpistemicSystemFA (Fin 4))
       · intro _; exact sys.trans C ∅ D
           (sys.mono _ _ (Set.empty_subset C)) (ge_null D hjD))⟩
 
+-- ── Card 4: Canonical proofs (sorry — to be filled) ──
+
+private theorem theorem8a_fin4_2null_01 (sys : EpistemicSystemFA (Fin 4))
+    (hn0 : sys.ge ∅ {(0 : Fin 4)}) (hn1 : sys.ge ∅ {(1 : Fin 4)})
+    (hn2 : ¬sys.ge ∅ {(2 : Fin 4)}) (hn3 : ¬sys.ge ∅ {(3 : Fin 4)}) :
+    ∃ (m : FinAddMeasure (Fin 4)), ∀ A B, sys.ge A B ↔ m.inducedGe A B := by
+  sorry
+
+private theorem theorem8a_fin4_1null_0 (sys : EpistemicSystemFA (Fin 4))
+    (hn0 : sys.ge ∅ {(0 : Fin 4)}) (hn1 : ¬sys.ge ∅ {(1 : Fin 4)})
+    (hn2 : ¬sys.ge ∅ {(2 : Fin 4)}) (hn3 : ¬sys.ge ∅ {(3 : Fin 4)}) :
+    ∃ (m : FinAddMeasure (Fin 4)), ∀ A B, sys.ge A B ↔ m.inducedGe A B := by
+  sorry
+
+private theorem theorem8a_fin4_0null (sys : EpistemicSystemFA (Fin 4))
+    (hn0 : ¬sys.ge ∅ {(0 : Fin 4)}) (hn1 : ¬sys.ge ∅ {(1 : Fin 4)})
+    (hn2 : ¬sys.ge ∅ {(2 : Fin 4)}) (hn3 : ¬sys.ge ∅ {(3 : Fin 4)}) :
+    ∃ (m : FinAddMeasure (Fin 4)), ∀ A B, sys.ge A B ↔ m.inducedGe A B := by
+  sorry
+
 -- ── Card 4: Main theorem ────────────────────────────
 set_option maxHeartbeats 3200000 in
 private theorem theorem8a_fin4 (sys : EpistemicSystemFA (Fin 4)) :
@@ -3299,7 +3319,7 @@ private theorem theorem8a_fin4 (sys : EpistemicSystemFA (Fin 4)) :
               (sys.mono _ _ (fun x hx => by fin_cases x <;> simp_all)))
             hn2
         · -- 2 null ({0},{1}), {2},{3} non-null
-          sorry
+          exact theorem8a_fin4_2null_01 sys hn0 hn1 hn2 hn3
     · by_cases hn2 : sys.ge ∅ {(2 : Fin 4)}
       · by_cases hn3 : sys.ge ∅ {(3 : Fin 4)}
         · -- 3 null ({0},{2},{3}), {1} non-null
@@ -3316,12 +3336,20 @@ private theorem theorem8a_fin4 (sys : EpistemicSystemFA (Fin 4)) :
               (sys.mono _ _ (fun x hx => by fin_cases x <;> simp_all)))
             hn1
         · -- 2 null ({0},{2}), {1},{3} non-null
-          sorry
+          exact perm_repr (Equiv.swap 1 2) sys (theorem8a_fin4_2null_01 _
+            ((perm_null_convert _ _ 0 0 (by decide)).mpr hn0)
+            ((perm_null_convert _ _ 1 2 (by decide)).mpr hn2)
+            (fun h => hn1 ((perm_null_convert _ _ 2 1 (by decide)).mp h))
+            (fun h => hn3 ((perm_null_convert _ _ 3 3 (by decide)).mp h)))
       · by_cases hn3 : sys.ge ∅ {(3 : Fin 4)}
         · -- 2 null ({0},{3}), {1},{2} non-null
-          sorry
+          exact perm_repr (Equiv.swap 1 3) sys (theorem8a_fin4_2null_01 _
+            ((perm_null_convert _ _ 0 0 (by decide)).mpr hn0)
+            ((perm_null_convert _ _ 1 3 (by decide)).mpr hn3)
+            (fun h => hn2 ((perm_null_convert _ _ 2 2 (by decide)).mp h))
+            (fun h => hn1 ((perm_null_convert _ _ 3 1 (by decide)).mp h)))
         · -- 1 null ({0}), {1},{2},{3} non-null
-          sorry
+          exact theorem8a_fin4_1null_0 sys hn0 hn1 hn2 hn3
   · by_cases hn1 : sys.ge ∅ {(1 : Fin 4)}
     · by_cases hn2 : sys.ge ∅ {(2 : Fin 4)}
       · by_cases hn3 : sys.ge ∅ {(3 : Fin 4)}
@@ -3339,23 +3367,47 @@ private theorem theorem8a_fin4 (sys : EpistemicSystemFA (Fin 4)) :
               (sys.mono _ _ (fun x hx => by fin_cases x <;> simp_all)))
             hn0
         · -- 2 null ({1},{2}), {0},{3} non-null
-          sorry
+          exact perm_repr ((Equiv.swap 0 1).trans (Equiv.swap 1 2)) sys (theorem8a_fin4_2null_01 _
+            ((perm_null_convert _ _ 0 1 (by decide)).mpr hn1)
+            ((perm_null_convert _ _ 1 2 (by decide)).mpr hn2)
+            (fun h => hn0 ((perm_null_convert _ _ 2 0 (by decide)).mp h))
+            (fun h => hn3 ((perm_null_convert _ _ 3 3 (by decide)).mp h)))
       · by_cases hn3 : sys.ge ∅ {(3 : Fin 4)}
         · -- 2 null ({1},{3}), {0},{2} non-null
-          sorry
+          exact perm_repr ((Equiv.swap 0 1).trans (Equiv.swap 1 3)) sys (theorem8a_fin4_2null_01 _
+            ((perm_null_convert _ _ 0 1 (by decide)).mpr hn1)
+            ((perm_null_convert _ _ 1 3 (by decide)).mpr hn3)
+            (fun h => hn2 ((perm_null_convert _ _ 2 2 (by decide)).mp h))
+            (fun h => hn0 ((perm_null_convert _ _ 3 0 (by decide)).mp h)))
         · -- 1 null ({1}), {0},{2},{3} non-null
-          sorry
+          exact perm_repr (Equiv.swap 0 1) sys (theorem8a_fin4_1null_0 _
+            ((perm_null_convert _ _ 0 1 (by decide)).mpr hn1)
+            (fun h => hn0 ((perm_null_convert _ _ 1 0 (by decide)).mp h))
+            (fun h => hn2 ((perm_null_convert _ _ 2 2 (by decide)).mp h))
+            (fun h => hn3 ((perm_null_convert _ _ 3 3 (by decide)).mp h)))
     · by_cases hn2 : sys.ge ∅ {(2 : Fin 4)}
       · by_cases hn3 : sys.ge ∅ {(3 : Fin 4)}
         · -- 2 null ({2},{3}), {0},{1} non-null
-          sorry
+          exact perm_repr ((Equiv.swap 0 2).trans (Equiv.swap 1 3)) sys (theorem8a_fin4_2null_01 _
+            ((perm_null_convert _ _ 0 2 (by decide)).mpr hn2)
+            ((perm_null_convert _ _ 1 3 (by decide)).mpr hn3)
+            (fun h => hn0 ((perm_null_convert _ _ 2 0 (by decide)).mp h))
+            (fun h => hn1 ((perm_null_convert _ _ 3 1 (by decide)).mp h)))
         · -- 1 null ({2}), {0},{1},{3} non-null
-          sorry
+          exact perm_repr (Equiv.swap 0 2) sys (theorem8a_fin4_1null_0 _
+            ((perm_null_convert _ _ 0 2 (by decide)).mpr hn2)
+            (fun h => hn1 ((perm_null_convert _ _ 1 1 (by decide)).mp h))
+            (fun h => hn0 ((perm_null_convert _ _ 2 0 (by decide)).mp h))
+            (fun h => hn3 ((perm_null_convert _ _ 3 3 (by decide)).mp h)))
       · by_cases hn3 : sys.ge ∅ {(3 : Fin 4)}
         · -- 1 null ({3}), {0},{1},{2} non-null
-          sorry
+          exact perm_repr (Equiv.swap 0 3) sys (theorem8a_fin4_1null_0 _
+            ((perm_null_convert _ _ 0 3 (by decide)).mpr hn3)
+            (fun h => hn1 ((perm_null_convert _ _ 1 1 (by decide)).mp h))
+            (fun h => hn2 ((perm_null_convert _ _ 2 2 (by decide)).mp h))
+            (fun h => hn0 ((perm_null_convert _ _ 3 0 (by decide)).mp h)))
         · -- 0 null: all non-null
-          sorry
+          exact theorem8a_fin4_0null sys hn0 hn1 hn2 hn3
 
 
 -- ── Theorem 8 (Kraft, Pratt & Seidenberg 1959) ───
