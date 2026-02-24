@@ -144,6 +144,83 @@ theorem CatenalCx.singleton_isContiguous (cx : Construction) (tree : DepTree)
 -- §5: Constituent–Catena Relationship
 -- ============================================================================
 
+/-- Append a step to the end of a bidirectional path. -/
+private theorem bidir_step_append {deps : List Dependency} {allowed : List Nat}
+    {u v w : Nat}
+    (h : BidirReachable deps allowed u v) (hv : v ∈ allowed) (hw : w ∈ allowed)
+    (hedge : ∃ d ∈ deps, (d.headIdx = v ∧ d.depIdx = w) ∨
+                          (d.depIdx = v ∧ d.headIdx = w)) :
+    BidirReachable deps allowed u w := by
+  revert hv hedge
+  induction h with
+  | here _ hq =>
+    intro hqmem hedge
+    exact .step _ _ w hqmem hw hedge (.here w hw)
+  | step a b _ ha hb hedgeAB _ ih =>
+    intro hcmem hedge
+    exact .step a b w ha hb hedgeAB (ih hcmem hedge)
+
+/-- Bidirectional reachability is symmetric (reverse the path, flip edges). -/
+private theorem bidir_symm {deps : List Dependency} {allowed : List Nat}
+    {u v : Nat} (h : BidirReachable deps allowed u v) :
+    BidirReachable deps allowed v u := by
+  induction h with
+  | here w hw => exact .here w hw
+  | step a b _ ha hb hedge _ ih =>
+    have hedge' : ∃ d ∈ deps, (d.headIdx = b ∧ d.depIdx = a) ∨
+                                (d.depIdx = b ∧ d.headIdx = a) := by
+      obtain ⟨d, hd, hor⟩ := hedge
+      exact ⟨d, hd, hor.elim (fun ⟨h1, h2⟩ => Or.inr ⟨h2, h1⟩)
+                              (fun ⟨h1, h2⟩ => Or.inl ⟨h2, h1⟩)⟩
+    exact bidir_step_append ih hb ha hedge'
+
+/-- Bidirectional reachability is transitive. -/
+private theorem bidir_trans {deps : List Dependency} {allowed : List Nat}
+    {u v w : Nat} (h1 : BidirReachable deps allowed u v)
+    (h2 : BidirReachable deps allowed v w) :
+    BidirReachable deps allowed u w := by
+  induction h1 with
+  | here _ _ => exact h2
+  | step a b _ ha hb hedge _ ih => exact .step a b w ha hb hedge (ih h2)
+
+/-- Lift bidirectional reachability to a superset of allowed nodes. -/
+private theorem bidir_lift {deps : List Dependency} {allowed allowed' : List Nat}
+    {u v : Nat} (hsub : ∀ x, x ∈ allowed → x ∈ allowed')
+    (h : BidirReachable deps allowed u v) :
+    BidirReachable deps allowed' u v := by
+  induction h with
+  | here w hw => exact .here w (hsub w hw)
+  | step a b _ ha hb hedge _ ih =>
+    exact .step a b _ (hsub a ha) (hsub b hb) hedge ih
+
+/-- If `Dominates deps root x`, then `x` is bidirectionally reachable from
+    `root` within `projection deps root`. -/
+private theorem bidir_of_dominates (deps : List Dependency) (root x : Nat)
+    (hdom : Dominates deps root x) :
+    BidirReachable deps (projection deps root) root x := by
+  induction hdom with
+  | refl v => exact .here v (root_mem_projection deps v)
+  | step v w _ hedge hdomWX ih =>
+    -- ih is about (projection deps w), lift to (projection deps v)
+    have hsubset : ∀ z, z ∈ projection deps w → z ∈ projection deps v := by
+      intro z hz
+      exact mem_projection_of_dominates
+        (Dominates.trans (Dominates.edge hedge) (dominates_of_mem_projection hz))
+    have hv_mem := root_mem_projection deps v
+    have hw_mem := child_mem_projection deps v w hedge
+    have hedge' : ∃ d ∈ deps, (d.headIdx = v ∧ d.depIdx = w) ∨
+                                (d.depIdx = v ∧ d.headIdx = w) := by
+      obtain ⟨d, hd, h1, h2⟩ := hedge
+      exact ⟨d, hd, Or.inl ⟨h1, h2⟩⟩
+    exact .step v w _ hv_mem hw_mem hedge' (bidir_lift hsubset ih)
+
+/-- Any two nodes in a projection are bidirectionally reachable via the root. -/
+private theorem bidir_in_projection (deps : List Dependency) (root u v : Nat)
+    (hu : u ∈ projection deps root) (hv : v ∈ projection deps root) :
+    BidirReachable deps (projection deps root) u v :=
+  bidir_trans (bidir_symm (bidir_of_dominates deps root u (dominates_of_mem_projection hu)))
+    (bidir_of_dominates deps root v (dominates_of_mem_projection hv))
+
 /-- **Constituent → Catena** (Osborne et al. 2012, p. 360): every constituent
     is a catena. Constituents are complete subtrees (projections rooted at some
     node), and complete subtrees are connected in the dependency tree.
@@ -151,23 +228,43 @@ theorem CatenalCx.singleton_isContiguous (cx : Construction) (tree : DepTree)
     This is the fundamental containment result establishing that catenae
     strictly generalize constituents: {constituents} ⊂ {catenae} ⊂ {subsets}.
 
-    ## Proof Sketch
-
-    A constituent `nodes` equals `projection deps r` for some root `r`.
-    For any node `v ∈ nodes`, `Dominates deps r v` (by
-    `dominates_of_mem_projection`). The catena BFS from any start node `s`
-    can walk up parent edges to `r` (since edges are bidirectional in the
-    catena graph) and then down child edges to any other node `v`. So every
-    node is BFS-reachable from `s`.
-
-    ## Blockers
-
-    Requires the `isCatena_iff_IsCatena` bridge (currently sorry'd in
-    Catena.lean) or an independent BFS correctness proof for subtrees.
-    All per-tree instances are verified via `native_decide` in the bridge. -/
+    Proof: a constituent `nodes` equals `projection deps r` for some root `r`.
+    Every node in the projection is dominated by `r`, giving downward paths.
+    The catena BFS traverses edges bidirectionally, so any start node can
+    walk up to `r` (reversed dominance edges) then down to any target. -/
 theorem constituent_implies_catena (deps : List Dependency) (n : Nat)
     (nodes : List Nat) (h : Catena.isConstituent deps n nodes = true) :
     isCatena deps nodes = true := by
-  sorry
+  -- Extract root from isConstituent
+  simp only [isConstituent] at h
+  obtain ⟨root, _, hroot⟩ := List.any_eq_true.mp h
+  simp only [Bool.and_eq_true, beq_iff_eq] at hroot
+  obtain ⟨⟨hlen, hnodes_sub⟩, hsub_nodes⟩ := hroot
+  -- Mutual containment between nodes and projection
+  have h_n2p : ∀ x, x ∈ nodes → x ∈ projection deps root := by
+    intro x hx; exact List.mem_of_elem_eq_true (List.all_eq_true.mp hnodes_sub x hx)
+  have h_p2n : ∀ x, x ∈ projection deps root → x ∈ nodes := by
+    intro x hx; exact List.mem_of_elem_eq_true (List.all_eq_true.mp hsub_nodes x hx)
+  -- Non-emptiness: projection is non-empty, so nodes is non-empty
+  have hne : nodes ≠ [] := by
+    intro hemp
+    have : (projection deps root).length = 0 := by
+      rw [hemp] at hlen; simp at hlen; exact hlen.symm
+    exact projection_nonempty deps root (List.eq_nil_of_length_eq_zero this)
+  -- isCatena = !isEmpty && isConnected
+  unfold isCatena
+  have : nodes.isEmpty = false := by cases nodes <;> simp_all
+  simp only [this, Bool.not_false, Bool.true_and]
+  -- Connectivity: BFS from nodes.head reaches all of nodes
+  unfold isConnected
+  match hm : nodes, hne with
+  | start :: rest, _ =>
+    simp only [List.all_eq_true]
+    intro x hx
+    -- Both start and x are in nodes, hence in the projection, hence bidir reachable
+    have hbidir : BidirReachable deps (start :: rest) start x :=
+      bidir_lift h_p2n (bidir_in_projection deps root start x
+        (h_n2p start List.mem_cons_self) (h_n2p x hx))
+    exact List.elem_eq_true_of_mem (bfsReachable_complete deps _ start x hbidir)
 
 end DepGrammar.CatenalConstruction
