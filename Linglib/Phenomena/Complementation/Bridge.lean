@@ -1,6 +1,7 @@
 import Linglib.Phenomena.Complementation.Typology
 import Linglib.Theories.Semantics.Questions.LeftPeriphery
 import Linglib.Theories.Semantics.Mood.Basic
+import Linglib.Theories.Syntax.Minimalism.Formal.ExtendedProjection.Basic
 
 /-! # Complementation Bridge Theorems
 
@@ -435,5 +436,84 @@ theorem ask_triple_consistency :
     deriveCTPClass ask = some .utterance ∧
     deriveSelectionClass ask = .rogativeSAP ∧
     deriveMoodSelector ask = .moodNeutral := by native_decide
+
+-- ============================================================================
+-- G. Bridge 5: CTPClass → ComplementSize (Egressy 2026)
+-- ============================================================================
+
+/-! ## G1. Complement size by CTP class
+
+Egressy (2026) shows that complement size determines SOT availability
+in Hungarian. This bridge maps Noonan's CTP classes to their typical
+complement sizes, connecting the complementation typology to the
+clause-size infrastructure.
+
+These are **default** sizes — individual languages may override
+(e.g., in Hungarian, *hogy* forces CP regardless of CTP class). -/
+
+open Minimalism (ComplementSize)
+
+/-- Default complement size for a CTP class.
+
+    Finite declarative complements are typically CP-sized.
+    Restructuring predicates select smaller complements.
+
+    - utterance → CP (full finite with complementizer)
+    - propAttitude → CP (full finite *that*-clause)
+    - knowledge → CP (factive *that*-clause)
+    - perception → TP (small clause / reduced complement)
+    - desiderative → TP (subjunctive / infinitival)
+    - manipulative → TP (ECM / small clause)
+    - phasal → vP (restructuring)
+    - achievement → vP (restructuring)
+    - modal → TP (functional, shares T domain)
+    - commentative → CP (factive *that*-clause)
+    - pretence → CP (finite complement)
+    - negative → vP (restructuring) -/
+def ctpDefaultComplementSize : CTPClass → ComplementSize
+  | .utterance    => .cP
+  | .propAttitude => .cP
+  | .knowledge    => .cP
+  | .commentative => .cP
+  | .pretence     => .cP
+  | .perception   => .tP
+  | .desiderative => .tP
+  | .manipulative => .tP
+  | .modal        => .tP
+  | .phasal       => .vP
+  | .achievement  => .vP
+  | .negative     => .vP
+
+-- ── Per-class verification ──
+
+/-- Utterance CTPs default to CP. -/
+theorem utterance_default_cp :
+    ctpDefaultComplementSize .utterance = .cP := rfl
+
+/-- Propositional attitude CTPs default to CP. -/
+theorem propAttitude_default_cp :
+    ctpDefaultComplementSize .propAttitude = .cP := rfl
+
+/-- Perception CTPs default to TP (small clause). -/
+theorem perception_default_tp :
+    ctpDefaultComplementSize .perception = .tP := rfl
+
+/-- Phasal CTPs default to vP (restructuring). -/
+theorem phasal_default_vp :
+    ctpDefaultComplementSize .phasal = .vP := rfl
+
+/-- CP-selecting CTPs are opaque to tense Agree. -/
+theorem cp_ctps_opaque :
+    (ctpDefaultComplementSize .utterance).transparentToTenseAgree = false ∧
+    (ctpDefaultComplementSize .propAttitude).transparentToTenseAgree = false ∧
+    (ctpDefaultComplementSize .knowledge).transparentToTenseAgree = false := by
+  decide
+
+/-- TP-selecting and vP-selecting CTPs are transparent to tense Agree. -/
+theorem small_ctps_transparent :
+    (ctpDefaultComplementSize .perception).transparentToTenseAgree = true ∧
+    (ctpDefaultComplementSize .desiderative).transparentToTenseAgree = true ∧
+    (ctpDefaultComplementSize .phasal).transparentToTenseAgree = true := by
+  decide
 
 end Phenomena.Complementation.Bridge

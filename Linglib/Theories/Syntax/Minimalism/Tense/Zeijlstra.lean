@@ -1,5 +1,6 @@
 import Linglib.Theories.Semantics.Tense.Basic
 import Linglib.Theories.Syntax.Minimalism.Core.Agree
+import Linglib.Theories.Syntax.Minimalism.Formal.ExtendedProjection.Basic
 import Linglib.Core.Tense
 
 /-!
@@ -294,10 +295,131 @@ theorem zeijlstra_simultaneousFrame {Time : Type*}
 
 
 -- ════════════════════════════════════════════════════════════════
+-- § Phase-Bounded Upward Agree (Egressy 2026)
+-- ════════════════════════════════════════════════════════════════
+
+/-! ### Size-Sensitive SOT
+
+Egressy (2026) shows that Hungarian is a partial SOT language:
+the simultaneous reading is available in TP complements but blocked
+in CP complements. This follows from PIC blocking upward Agree for
+[uPAST] across the CP phase boundary.
+
+The key insight: Zeijlstra's `UpwardAgree` succeeds only when no
+phase boundary intervenes between probe ([uPAST] on embedded T)
+and goal ([iPAST] on matrix T). CP is a phase (Phase.lean), so
+[uPAST] inside a CP complement cannot reach matrix [iPAST]. -/
+
+/-- Available embedded tense readings given complement size.
+
+    In a size-sensitive SOT language (Egressy 2026):
+    - Small complements (< CP): both shifted and simultaneous
+    - Large complements (≥ CP): shifted only (simultaneous blocked) -/
+def availableReadingsBySize (cs : ComplementSize) :
+    List EmbeddedTenseReading :=
+  if cs.transparentToTenseAgree then
+    [.shifted, .simultaneous]
+  else
+    [.shifted]
+
+/-- TP complements yield both readings. -/
+theorem tp_both_readings :
+    availableReadingsBySize .tP = [.shifted, .simultaneous] := by
+  simp [availableReadingsBySize, ComplementSize.transparentToTenseAgree,
+    ComplementSize.fLevel, ComplementSize.tP, fValue]
+
+/-- CP complements yield only the shifted reading. -/
+theorem cp_shifted_only :
+    availableReadingsBySize .cP = [.shifted] := by
+  simp [availableReadingsBySize, ComplementSize.transparentToTenseAgree,
+    ComplementSize.fLevel, ComplementSize.cP, fValue]
+
+/-- The simultaneous reading is available in TP complements. -/
+theorem simultaneous_available_in_tp :
+    EmbeddedTenseReading.simultaneous ∈ availableReadingsBySize .tP := by
+  simp [availableReadingsBySize, ComplementSize.transparentToTenseAgree,
+    ComplementSize.fLevel, ComplementSize.tP, fValue]
+
+/-- The simultaneous reading is blocked in CP complements. -/
+theorem simultaneous_blocked_in_cp :
+    EmbeddedTenseReading.simultaneous ∉ availableReadingsBySize .cP := by
+  simp [availableReadingsBySize, ComplementSize.transparentToTenseAgree,
+    ComplementSize.fLevel, ComplementSize.cP, fValue]
+
+
+-- ════════════════════════════════════════════════════════════════
+-- § Williams Cycle Configuration
+-- ════════════════════════════════════════════════════════════════
+
+/-! ### The Williams Cycle
+
+The Williams Cycle (van Gelderen 2004, 2011) is the diachronic process
+by which formerly transparent clause boundaries become opaque. A language
+at stage N of the cycle has some complement types that are transparent
+to tense Agree and others that are opaque.
+
+- **Stage 0** (non-SOT, e.g., Japanese): all boundaries opaque
+- **Stage 1** (partial SOT, e.g., Hungarian): CP opaque, TP transparent
+- **Stage 2** (full SOT, e.g., English): all boundaries transparent
+
+Egressy (2026) argues Hungarian is at Stage 1: mid-cycle, with the
+CP boundary having become opaque while TP remains transparent. -/
+
+/-- Williams Cycle stage for SOT.
+
+    Classifies a language by how many complement boundaries are
+    transparent to upward tense Agree. -/
+inductive WilliamsCycleStage where
+  /-- No SOT: all boundaries opaque (Japanese) -/
+  | noSOT
+  /-- Partial SOT: CP opaque, TP transparent (Hungarian) -/
+  | partialSOT
+  /-- Full SOT: all boundaries transparent (English) -/
+  | fullSOT
+  deriving DecidableEq, Repr, BEq
+
+/-- Map Williams Cycle stage to available readings by complement size. -/
+def readingsByStage (stage : WilliamsCycleStage) (cs : ComplementSize) :
+    List EmbeddedTenseReading :=
+  match stage with
+  | .noSOT => [.shifted]
+  | .partialSOT => availableReadingsBySize cs
+  | .fullSOT => [.shifted, .simultaneous]
+
+/-- Full-SOT languages get both readings regardless of complement size. -/
+theorem fullSOT_both_readings (cs : ComplementSize) :
+    readingsByStage .fullSOT cs = [.shifted, .simultaneous] := rfl
+
+/-- Non-SOT languages get only shifted regardless of complement size. -/
+theorem noSOT_shifted_only (cs : ComplementSize) :
+    readingsByStage .noSOT cs = [.shifted] := rfl
+
+/-- Partial-SOT languages show size sensitivity. -/
+theorem partialSOT_size_sensitive :
+    readingsByStage .partialSOT .tP = [.shifted, .simultaneous] ∧
+    readingsByStage .partialSOT .cP = [.shifted] := by
+  constructor
+  · simp [readingsByStage, availableReadingsBySize,
+      ComplementSize.transparentToTenseAgree, ComplementSize.fLevel,
+      ComplementSize.tP, fValue]
+  · simp [readingsByStage, availableReadingsBySize,
+      ComplementSize.transparentToTenseAgree, ComplementSize.fLevel,
+      ComplementSize.cP, fValue]
+
+/-- Bridge to SOTParameter: full SOT = .relative, no SOT = .absolute.
+    Partial SOT has no SOTParameter equivalent — it is genuinely a
+    third option that the binary parameter cannot express. -/
+theorem williams_bridges_sotparam :
+    allowsUninterpretableTense .relative = true ∧
+    allowsUninterpretableTense .absolute = false := ⟨rfl, rfl⟩
+
+
+-- ════════════════════════════════════════════════════════════════
 -- § Identity Card
 -- ════════════════════════════════════════════════════════════════
 
-/-- Zeijlstra (2012) identity card. -/
+/-- Zeijlstra (2012) identity card, extended with Egressy (2026)
+    size-sensitive SOT prediction. -/
 def Zeijlstra : TenseTheory where
   name := "Zeijlstra 2012"
   citation := "Zeijlstra, H. (2012). There is only one way to agree. The Linguistic Review 29(3): 491-539."
@@ -306,6 +428,7 @@ def Zeijlstra : TenseTheory where
   hasZeroTense := false
   hasSOTDeletion := false
   hasAgreeBasedSOT := true
+  hasSizeSensitiveSOT := true
   simultaneousMechanism := "uninterpretable [uPAST] Agrees upward with [iPAST]"
 
 

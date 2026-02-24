@@ -374,4 +374,74 @@ theorem new_heads_verbal :
     catFamily .Mod = .verbal ∧ catFamily .Rel = .verbal ∧
     catFamily .Pol = .verbal := by decide
 
+-- ═══════════════════════════════════════════════════════════════
+-- Part 9: Complement Size (Egressy 2026, Wurmbrand 2014)
+-- ═══════════════════════════════════════════════════════════════
+
+/-- The structural size of a clausal complement, determined by the
+    highest functional head projected.
+
+    Complement size matters for tense Agree locality (Egressy 2026):
+    a CP complement constitutes a phase boundary that blocks upward
+    Agree for [uPAST], while a TP complement is transparent.
+
+    Also relevant for Wurmbrand's (2014) three-way infinitival
+    classification (restructuring ≈ vP, propositional ≈ TP,
+    full finite ≈ CP). -/
+structure ComplementSize where
+  /-- The highest functional head in the complement -/
+  highestHead : Cat
+  deriving DecidableEq, BEq, Repr
+
+/-- The F-level of a complement (derived from `fValue`). -/
+def ComplementSize.fLevel (cs : ComplementSize) : Nat :=
+  fValue cs.highestHead
+
+/-- A complement is phase-sized (≥ CP) if its highest head is at or
+    above the C level in the functional sequence. -/
+def ComplementSize.isPhaseSized (cs : ComplementSize) : Bool :=
+  fValue .C ≤ cs.fLevel
+
+/-- A complement is transparent to tense Agree if it is smaller than
+    a full CP — i.e., the highest head is below C in the fseq.
+
+    Egressy (2026): TP complements (fValue 2) are transparent;
+    CP complements (fValue 6) are opaque. -/
+def ComplementSize.transparentToTenseAgree (cs : ComplementSize) : Bool :=
+  cs.fLevel < fValue .C
+
+/-- Standard complement sizes. -/
+def ComplementSize.vP : ComplementSize := ⟨.v⟩
+def ComplementSize.tP : ComplementSize := ⟨.T⟩
+def ComplementSize.finP : ComplementSize := ⟨.Fin⟩
+def ComplementSize.cP : ComplementSize := ⟨.C⟩
+def ComplementSize.forceP : ComplementSize := ⟨.Force⟩
+def ComplementSize.saP : ComplementSize := ⟨.SA⟩
+
+-- ── Bridge theorems ──
+
+/-- vP complements are transparent to tense Agree. -/
+theorem vP_transparent : ComplementSize.vP.transparentToTenseAgree = true := by decide
+
+/-- TP complements are transparent to tense Agree. -/
+theorem tP_transparent : ComplementSize.tP.transparentToTenseAgree = true := by decide
+
+/-- FinP complements are transparent to tense Agree. -/
+theorem finP_transparent : ComplementSize.finP.transparentToTenseAgree = true := by decide
+
+/-- CP complements are opaque to tense Agree. -/
+theorem cP_opaque : ComplementSize.cP.transparentToTenseAgree = false := by decide
+
+/-- ForceP complements are opaque to tense Agree. -/
+theorem forceP_opaque : ComplementSize.forceP.transparentToTenseAgree = false := by decide
+
+/-- SAP complements are opaque to tense Agree. -/
+theorem saP_opaque : ComplementSize.saP.transparentToTenseAgree = false := by decide
+
+/-- Size ordering: vP < TP < FinP < CP. -/
+theorem complement_size_ordering :
+    ComplementSize.vP.fLevel < ComplementSize.tP.fLevel ∧
+    ComplementSize.tP.fLevel < ComplementSize.finP.fLevel ∧
+    ComplementSize.finP.fLevel < ComplementSize.cP.fLevel := by decide
+
 end Minimalism

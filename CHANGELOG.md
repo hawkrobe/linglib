@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.226.33] - 2026-02-24
+
+### Added
+- **Egressy (2026) formalization**: Size-sensitive sequence of tense in Hungarian
+  - `Fragments/Hungarian/Predicates.lean`: `HungarianVerbEntry` (definite/indefinite conjugation paradigm); entries for *tud* 'know', *mond* 'say', *hisz* 'believe'
+  - `Fragments/Hungarian/FunctionWords.lean`: complementizer *hogy* 'that' with `ComplementSize` link
+  - `Fragments/Hungarian/TemporalDeictic.lean`: *akkor* 'then' (`ThenAdverb`), *aznap* 'that day', *előző nap* 'the day before' (`TemporalFrameAdverb` diagnostics)
+  - `Phenomena/TenseAspect/Studies/Egressy2026/Data.lean`: 4 SOT judgments (exx. 9, 10, 11a-b)
+  - `Phenomena/TenseAspect/Studies/Egressy2026/Bridge.lean`: fragment grounding, complement size predictions, Williams Cycle staging, temporal adverb diagnostics, definite conjugation diagnostic
+  - `Theories/Syntax/Minimalism/Formal/ExtendedProjection/Basic.lean`: `ComplementSize` type with `fLevel`, `isPhaseSized`, `transparentToTenseAgree`
+  - `Theories/Syntax/Minimalism/Tense/Zeijlstra.lean`: `availableReadingsBySize`, `WilliamsCycleStage`, `readingsByStage`; phase-bounded upward Agree
+  - `Theories/Semantics/Tense/Basic.lean`: `sizeSensitiveSOT` phenomenon, `hasSizeSensitiveSOT` field on `TenseTheory`
+  - `Comparisons/TenseTheories.lean`: `size_sensitivity_requires_agree` — Egressy's core argument that only Agree-based theories predict size-sensitive SOT
+  - `Phenomena/Complementation/Bridge.lean`: `ctpDefaultComplementSize` mapping CTPClass → ComplementSize
+  - `Phenomena/TenseAspect/ThenPresentBridge.lean`: Hungarian *akkor* added to cross-linguistic "then" inventory (8 languages)
+
 ## [0.226.32] - 2026-02-23
 
 ### Changed

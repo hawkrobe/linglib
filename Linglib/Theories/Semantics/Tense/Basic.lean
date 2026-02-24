@@ -126,6 +126,11 @@ inductive TensePhenomenon where
       with deleted tense — derived from tense presuppositions anchored to π
       (Tsilia, Zhao & Sharvit 2026) -/
   | thenPresentIncompatibility
+  /-- Hungarian-type size-sensitive SOT: simultaneous reading available in
+      TP complements but blocked in CP complements. Clause size determines
+      whether [uPAST] can Agree upward across the complement boundary
+      (Egressy 2026) -/
+  | sizeSensitiveSOT
   deriving DecidableEq, Repr, BEq, Inhabited
 
 
@@ -159,6 +164,8 @@ structure TenseTheory where
   hasAgreeBasedSOT : Bool := false
   /-- Does the theory treat tenses as presupposition triggers? -/
   hasPresuppositionalTense : Bool := false
+  /-- Does the theory predict size-sensitive SOT (Egressy 2026)? -/
+  hasSizeSensitiveSOT : Bool := false
   /-- How the theory derives the simultaneous reading -/
   simultaneousMechanism : String
   deriving Repr
@@ -234,6 +241,7 @@ def TensePhenomenon.isExtended : TensePhenomenon → Bool
   | .optionalSOT => true
   | .dependentVsIndependentTense => true
   | .thenPresentIncompatibility => true
+  | .sizeSensitiveSOT => true
   | _ => false
 
 /-- Every phenomenon falls into exactly one of the five categories. -/

@@ -359,4 +359,46 @@ theorem all_ten_theories_distinct :
         Sharvit, TsiliaEtAl2026, Zeijlstra, Wurmbrand]
 
 
+-- ════════════════════════════════════════════════════════════════
+-- § 7. Size-Sensitive SOT (Egressy 2026)
+-- ════════════════════════════════════════════════════════════════
+
+/-! Only Zeijlstra's Agree-based account predicts size-sensitive SOT.
+    All semantic theories (Abusch, Von Stechow, Kratzer, Ogihara, etc.)
+    treat SOT as a whole-language parameter, not as structurally conditioned.
+    Egressy (2026) argues this is evidence for the syntactic (Agree-based)
+    approach over purely semantic ones. -/
+
+/-- Only Zeijlstra predicts size-sensitive SOT. -/
+theorem only_zeijlstra_predicts_size_sensitive_sot :
+    Zeijlstra.hasSizeSensitiveSOT = true ∧
+    Abusch.hasSizeSensitiveSOT = false ∧
+    VonStechow.hasSizeSensitiveSOT = false ∧
+    KratzerTense.hasSizeSensitiveSOT = false ∧
+    Ogihara.hasSizeSensitiveSOT = false ∧
+    Klecha.hasSizeSensitiveSOT = false ∧
+    Deal.hasSizeSensitiveSOT = false ∧
+    Sharvit.hasSizeSensitiveSOT = false ∧
+    TsiliaEtAl2026.hasSizeSensitiveSOT = false ∧
+    Wurmbrand.hasSizeSensitiveSOT = false :=
+  ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
+
+/-- Egressy's (2026) core argument: among the ten implemented theories,
+    the only theory that predicts size-sensitive SOT is one that uses
+    Agree-based SOT. All purely semantic theories (which lack structurally-
+    local SOT mechanisms) predict uniform SOT within a language.
+
+    This captures the paper's argument structure:
+    1. Semantic SOT is not locality-constrained → predicts uniform SOT
+    2. Agree-based SOT is locality-constrained → interacts with PIC
+    3. Hungarian shows non-uniform (size-sensitive) SOT
+    4. Therefore: data favors Agree-based (syntactic) approach -/
+theorem size_sensitivity_requires_agree :
+    ∀ t ∈ [Abusch, VonStechow, KratzerTense, Ogihara, Klecha, Deal,
+           Sharvit, TsiliaEtAl2026, Zeijlstra, Wurmbrand],
+      t.hasSizeSensitiveSOT = true → t.hasAgreeBasedSOT = true := by
+  simp [Abusch, VonStechow, KratzerTense, Ogihara, Klecha, Deal,
+        Sharvit, TsiliaEtAl2026, Zeijlstra, Wurmbrand]
+
+
 end Comparisons.TenseTheories

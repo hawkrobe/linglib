@@ -7,6 +7,7 @@ import Linglib.Fragments.Japanese.TemporalDeictic
 import Linglib.Fragments.Greek.TemporalDeictic
 import Linglib.Fragments.Russian.TemporalDeictic
 import Linglib.Fragments.Hebrew.TemporalDeictic
+import Linglib.Fragments.Hungarian.TemporalDeictic
 
 /-!
 # Then-Present Puzzle (Zhao 2026, Tsilia, Zhao & Sharvit 2026)
@@ -35,6 +36,7 @@ eval).
 | Greek    | τότε tóte         | yes                 |
 | Russian  | тогда togda       | yes                 |
 | Hebrew   | אז az             | yes                 |
+| Hungarian| akkor             | yes                 |
 
 ## Key theorem
 
@@ -71,7 +73,8 @@ def thenAdverbs : List ThenAdverb :=
   , Fragments.Japanese.TemporalDeictic.sonotoki
   , Fragments.Greek.TemporalDeictic.tote
   , Fragments.Russian.TemporalDeictic.togda
-  , Fragments.Hebrew.TemporalDeictic.az ]
+  , Fragments.Hebrew.TemporalDeictic.az
+  , Fragments.Hungarian.TemporalDeictic.akkor ]
 
 -- ════════════════════════════════════════════════════
 -- § 2. Per-Datum Verification
@@ -82,7 +85,7 @@ theorem all_then_shift_perspective :
     ∀ a ∈ thenAdverbs, a.shiftsPerspective = true := by
   intro a ha
   simp only [thenAdverbs, List.mem_cons, List.mem_nil_iff, or_false] at ha
-  rcases ha with rfl | rfl | rfl | rfl | rfl | rfl | rfl <;> rfl
+  rcases ha with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl <;> rfl
 
 -- ════════════════════════════════════════════════════
 -- § 3. The Then-Present Incompatibility
