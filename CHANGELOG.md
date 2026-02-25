@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.226.52] - 2026-02-25
+
+### Added
+- **RootTypology bridge** (`Phenomena/Causatives/Bridge/RootTypology.lean`): connects `Theories/Morphology/RootTypology.lean` predictions to `Phenomena/Causatives/Studies/BeaversEtAl2021.lean` empirical data. Proves: classification isomorphism (`RootType` ↔ `CoSRootClass` roundtrip), diagnostic alignment (`changeDenialTest` ↔ `entailsChange`, `restitutiveAgainTest` ↔ `allowsRestitutiveAgain`), simple stative prediction matches attestation, markedness prediction matches statistics, unattested language type matches complementarity, Chuj fragment roots satisfy `grand_unification`.
+
 ## [0.226.51] - 2026-02-25
 
 ### Changed

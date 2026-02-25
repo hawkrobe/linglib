@@ -259,6 +259,7 @@ import Linglib.Phenomena.Causatives.StructuralCausationBridge
 import Linglib.Phenomena.Causatives.Studies.MunozPerez2026.Data
 import Linglib.Phenomena.Causatives.Studies.MunozPerez2026.Bridge
 import Linglib.Phenomena.Causatives.Compare
+import Linglib.Phenomena.Causatives.Bridge.RootTypology
 import Linglib.Phenomena.Coordination.Data
 import Linglib.Phenomena.Coordination.Studies.BillEtAl2025
 import Linglib.Phenomena.Coordination.Studies.BillEtAl2025Bridge
