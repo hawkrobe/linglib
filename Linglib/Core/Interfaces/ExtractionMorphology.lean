@@ -111,6 +111,19 @@ def ArgumentRole.defaultPosition : ArgumentRole → ExtractionTarget
   | .patient => .directObject
   | .oblique => .oblique
 
+/-- What is being extracted: a DP argument (which has a thematic role
+    and needs Case licensing) or a non-DP adjunct (which has no
+    thematic role and is Case-exempt).
+
+    This distinction drives the DP/non-DP extraction asymmetry: in
+    predicate-fronting languages like Toba Batak, only DP extraction
+    is restricted to the pivot; adjuncts extract freely (Erlewine
+    2018, §4.6). -/
+inductive Extractee where
+  | dpArg : ArgumentRole → Extractee
+  | adjunct : Extractee
+  deriving DecidableEq, BEq, Repr
+
 -- ============================================================================
 -- § 3: Extraction Profile
 -- ============================================================================

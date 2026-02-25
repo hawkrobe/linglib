@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.226.45] - 2026-02-25
+
+### Added
+- **DP/non-DP extraction asymmetry (Erlewine 2018, §4.6)**: add `Extractee` sum type (`.dpArg`/`.adjunct`) to `ExtractionMorphology.lean`. Toba Batak extraction data now 8 points (was 6): 2 adjunct data showing unrestricted extraction regardless of voice. `predictExtraction` is category-sensitive: DPs restricted to pivot, adjuncts always grammatical. Descriptive generalizations split into `dp_extraction_iff_pivot` and `adjunct_always_grammatical`. Key theorem `nonDP_unrestricted` derives free adjunct extraction for all voices from nominal licensing analysis.
+
 ## [0.226.44] - 2026-02-25
 
 ### Added

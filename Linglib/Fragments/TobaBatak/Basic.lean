@@ -65,21 +65,24 @@ inductive ExtractionJudgment where
 -- § 3: Extraction Data Type
 -- ============================================================================
 
-/-- A Toba Batak extraction datum: voice choice + extracted role + judgment. -/
+/-- A Toba Batak extraction datum: voice choice + extracted element + judgment. -/
 structure ExtractionDatum where
   /-- Which voice the clause is in -/
   voice : Voice
-  /-- Which argument role is being extracted -/
-  extracted : Interfaces.ArgumentRole
+  /-- What is being extracted (DP argument or adjunct) -/
+  extracted : Interfaces.Extractee
   /-- Whether the extraction is grammatical -/
   judgment : ExtractionJudgment
   /-- Description -/
   description : String := ""
   deriving Repr
 
-/-- Is the extracted element the pivot for the given voice? -/
+/-- Is the extracted element the pivot for the given voice?
+    Adjuncts are never pivots (they don't participate in Case licensing). -/
 def ExtractionDatum.extractsPivot (d : ExtractionDatum) : Bool :=
-  d.extracted == d.voice.pivotRole
+  match d.extracted with
+  | .dpArg role => role == d.voice.pivotRole
+  | .adjunct => false
 
 -- ============================================================================
 -- § 4: Monoclausal Data (Erlewine 2018, §2)
@@ -87,38 +90,49 @@ def ExtractionDatum.extractsPivot (d : ExtractionDatum) : Bool :=
 
 /-- AV + agent extraction: grammatical (agent is pivot in AV). -/
 def avAgentExtraction : ExtractionDatum :=
-  { voice := .av, extracted := .agent, judgment := .grammatical
+  { voice := .av, extracted := .dpArg .agent, judgment := .grammatical
     description := "AV + agent (pivot): 'Ise mang-uhor buku i?' (Who bought the book?)" }
 
 /-- AV + patient extraction: ungrammatical (patient is not pivot in AV). -/
 def avPatientExtraction : ExtractionDatum :=
-  { voice := .av, extracted := .patient, judgment := .ungrammatical
+  { voice := .av, extracted := .dpArg .patient, judgment := .ungrammatical
     description := "AV + patient (non-pivot): *'Aha mang-uhor si Poltak?' (*What did Poltak buy?)" }
 
 /-- AV + oblique extraction: ungrammatical (oblique is never pivot). -/
 def avObliqueExtraction : ExtractionDatum :=
-  { voice := .av, extracted := .oblique, judgment := .ungrammatical
+  { voice := .av, extracted := .dpArg .oblique, judgment := .ungrammatical
     description := "AV + oblique (non-pivot) [predicted, not directly tested in §2]" }
 
 /-- OV + patient extraction: grammatical (patient is pivot in OV). -/
 def ovPatientExtraction : ExtractionDatum :=
-  { voice := .ov, extracted := .patient, judgment := .grammatical
+  { voice := .ov, extracted := .dpArg .patient, judgment := .grammatical
     description := "OV + patient (pivot): 'Aha di-uhor si Poltak?' (What did Poltak buy?)" }
 
 /-- OV + agent extraction: ungrammatical (agent is not pivot in OV). -/
 def ovAgentExtraction : ExtractionDatum :=
-  { voice := .ov, extracted := .agent, judgment := .ungrammatical
+  { voice := .ov, extracted := .dpArg .agent, judgment := .ungrammatical
     description := "OV + agent (non-pivot): *'Ise di-uhor buku i?' (*Who bought the book?)" }
 
 /-- OV + oblique extraction: ungrammatical (oblique is never pivot). -/
 def ovObliqueExtraction : ExtractionDatum :=
-  { voice := .ov, extracted := .oblique, judgment := .ungrammatical
+  { voice := .ov, extracted := .dpArg .oblique, judgment := .ungrammatical
     description := "OV + oblique (non-pivot) [predicted, not directly tested in §2]" }
+
+/-- AV + adjunct extraction: grammatical (adjuncts don't need Case). -/
+def avAdjunctExtraction : ExtractionDatum :=
+  { voice := .av, extracted := .adjunct, judgment := .grammatical
+    description := "AV + adjunct: 'Andigan mang-ida si Poltak si Ria?' (When did Poltak see Ria?) (§4.6, (36))" }
+
+/-- OV + adjunct extraction: grammatical (adjuncts don't need Case). -/
+def ovAdjunctExtraction : ExtractionDatum :=
+  { voice := .ov, extracted := .adjunct, judgment := .grammatical
+    description := "OV + adjunct: manner/temporal adverb extraction in OV — unrestricted (§4.6)" }
 
 /-- All monoclausal extraction data. -/
 def extractionData : List ExtractionDatum :=
   [ avAgentExtraction, avPatientExtraction, avObliqueExtraction
-  , ovPatientExtraction, ovAgentExtraction, ovObliqueExtraction ]
+  , ovPatientExtraction, ovAgentExtraction, ovObliqueExtraction
+  , avAdjunctExtraction, ovAdjunctExtraction ]
 
 -- ============================================================================
 -- § 5: Extraction Profile

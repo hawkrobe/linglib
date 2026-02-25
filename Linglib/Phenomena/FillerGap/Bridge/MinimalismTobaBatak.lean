@@ -57,15 +57,20 @@ open Fragments.TobaBatak
 -- § 1: Prediction Function
 -- ============================================================================
 
-/-- Predict whether extraction is grammatical from voice + extracted role.
+/-- Predict whether extraction is grammatical from voice + extractee.
 
-    The nominal licensing analysis predicts: extraction of a DP argument
-    is grammatical iff it is the pivot, because only the pivot is
-    Case-licensed (by T's [PROBE:D] in Spec,TP) before Ā-extraction. -/
-def predictExtraction (voice : Fragments.TobaBatak.Voice) (extracted : Interfaces.ArgumentRole) :
+    The nominal licensing analysis predicts:
+    - DP arguments: extraction is grammatical iff the DP is the pivot,
+      because only the pivot is Case-licensed (by T's [PROBE:D] in
+      Spec,TP) before Ā-extraction (§2–4).
+    - Non-DP adjuncts: always grammatical, because adjuncts don't need
+      Case licensing (§4.6). -/
+def predictExtraction (voice : Fragments.TobaBatak.Voice) (extractee : Interfaces.Extractee) :
     ExtractionJudgment :=
-  if extracted == voice.pivotRole then .grammatical
-  else .ungrammatical
+  match extractee with
+  | .adjunct => .grammatical
+  | .dpArg role =>
+    if role == voice.pivotRole then .grammatical else .ungrammatical
 
 -- ============================================================================
 -- § 2: Per-Datum Bridge Theorems
@@ -73,33 +78,43 @@ def predictExtraction (voice : Fragments.TobaBatak.Voice) (extracted : Interface
 
 /-- AV + agent (pivot): Case-licensed in Spec,TP → extractable. -/
 theorem bridge_av_agent :
-    predictExtraction .av .agent = .grammatical ∧
+    predictExtraction .av (.dpArg .agent) = .grammatical ∧
     avAgentExtraction.judgment = .grammatical := ⟨rfl, rfl⟩
 
 /-- AV + patient (non-pivot): no Case licensor in Spec,CP. -/
 theorem bridge_av_patient :
-    predictExtraction .av .patient = .ungrammatical ∧
+    predictExtraction .av (.dpArg .patient) = .ungrammatical ∧
     avPatientExtraction.judgment = .ungrammatical := ⟨rfl, rfl⟩
 
 /-- AV + oblique (non-pivot): no Case licensor in Spec,CP. -/
 theorem bridge_av_oblique :
-    predictExtraction .av .oblique = .ungrammatical ∧
+    predictExtraction .av (.dpArg .oblique) = .ungrammatical ∧
     avObliqueExtraction.judgment = .ungrammatical := ⟨rfl, rfl⟩
 
 /-- OV + patient (pivot): Case-licensed in Spec,TP → extractable. -/
 theorem bridge_ov_patient :
-    predictExtraction .ov .patient = .grammatical ∧
+    predictExtraction .ov (.dpArg .patient) = .grammatical ∧
     ovPatientExtraction.judgment = .grammatical := ⟨rfl, rfl⟩
 
 /-- OV + agent (non-pivot): no Case licensor in Spec,CP. -/
 theorem bridge_ov_agent :
-    predictExtraction .ov .agent = .ungrammatical ∧
+    predictExtraction .ov (.dpArg .agent) = .ungrammatical ∧
     ovAgentExtraction.judgment = .ungrammatical := ⟨rfl, rfl⟩
 
 /-- OV + oblique (non-pivot): no Case licensor in Spec,CP. -/
 theorem bridge_ov_oblique :
-    predictExtraction .ov .oblique = .ungrammatical ∧
+    predictExtraction .ov (.dpArg .oblique) = .ungrammatical ∧
     ovObliqueExtraction.judgment = .ungrammatical := ⟨rfl, rfl⟩
+
+/-- AV + adjunct: no Case needed → freely extractable (§4.6). -/
+theorem bridge_av_adjunct :
+    predictExtraction .av .adjunct = .grammatical ∧
+    avAdjunctExtraction.judgment = .grammatical := ⟨rfl, rfl⟩
+
+/-- OV + adjunct: no Case needed → freely extractable (§4.6). -/
+theorem bridge_ov_adjunct :
+    predictExtraction .ov .adjunct = .grammatical ∧
+    ovAdjunctExtraction.judgment = .grammatical := ⟨rfl, rfl⟩
 
 -- ============================================================================
 -- § 3: Completeness
@@ -111,29 +126,43 @@ theorem all_predictions_match :
       predictExtraction d.voice d.extracted == d.judgment) = true := by
   native_decide
 
-/-- The prediction function agrees with extractsPivot: extraction is
-    grammatical iff the extracted element is the voice-determined pivot.
-    This is the descriptive generalization that the nominal licensing
-    analysis (predicate fronting + Case on T) derives. -/
+/-- For DP arguments, the prediction function agrees with extractsPivot:
+    extraction is grammatical iff the extracted element is the voice-
+    determined pivot. This is the descriptive generalization that the
+    nominal licensing analysis (predicate fronting + Case on T) derives. -/
 theorem prediction_matches_pivot :
     extractionData.all (λ d =>
-      (predictExtraction d.voice d.extracted == .grammatical)
-        == d.extractsPivot) = true := by
+      match d.extracted with
+      | .dpArg _ =>
+        (predictExtraction d.voice d.extracted == .grammatical)
+          == d.extractsPivot
+      | .adjunct => true) = true := by
   native_decide
 
 -- ============================================================================
 -- § 4: Structural Grounding
 -- ============================================================================
 
-/-- The prediction function IS the pivot check — they agree extensionally
-    on the extraction data. This grounds the descriptive generalization
-    ("only pivots extract") in the licensing analysis ("only
-    Case-licensed DPs can be Ā-extracted, and only the pivot is
-    Case-licensed"). -/
+/-- For DP arguments, the prediction function IS the pivot check — they
+    agree extensionally on the extraction data. This grounds the
+    descriptive generalization ("only pivots extract") in the licensing
+    analysis ("only Case-licensed DPs can be Ā-extracted, and only the
+    pivot is Case-licensed"). -/
 theorem structural_grounding :
     extractionData.all (λ d =>
-      predictExtraction d.voice d.extracted ==
-        if d.extractsPivot then .grammatical else .ungrammatical) = true := by
+      match d.extracted with
+      | .dpArg _ =>
+        predictExtraction d.voice d.extracted ==
+          if d.extractsPivot then .grammatical else .ungrammatical
+      | .adjunct => true) = true := by
   native_decide
+
+/-- The nominal licensing analysis predicts non-DPs extract freely:
+    since non-DPs don't need Case, the Case-based restriction doesn't
+    apply. This is the distinguishing prediction of §4.6. -/
+theorem nonDP_unrestricted :
+    ∀ v : Fragments.TobaBatak.Voice,
+      predictExtraction v .adjunct = .grammatical := by
+  intro v; rfl
 
 end Phenomena.FillerGap.Bridge.MinimalismTobaBatak
