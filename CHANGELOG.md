@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.226.42] - 2026-02-24
+
+### Changed
+- **SP2021 RSA compositional grounding**: deepen §3 to use `every_sem` from `Quantifier.lean`, `Model`/`FiniteModel` from `Montague/Basic.lean`, and `ScopeConfig`/`ScopeDerivation` from `Montague/Scope.lean`. Horse model as proper Montague `Model` + `FiniteModel` instance. Grounding theorems (`surface_from_every_sem`, `inverse_from_every_sem`) connect `scopeTruth` to compositional quantifier application. `ScopeDerivation` packages both scope readings; `rsa_meaning_from_scope_derivation` proves RSA meaning is grounded in the derivation.
+
 ## [0.226.41] - 2026-02-24
 
 ### Added
