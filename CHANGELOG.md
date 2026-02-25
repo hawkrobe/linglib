@@ -3,6 +3,7 @@
 ## [0.226.42] - 2026-02-24
 
 ### Changed
+- **MinimalismSmallClause rewrite against paper**: delete unsound `primingRequiresSharedShape` axiom (universal quantification over all SOs), unused `DP_mary`/`DativeAlternation` import, fabricated `doc_flat`. Fix `pvc_complexPred` to use `LexicalItem.combine` (composite terminal, not binary merge). Add PD control structure, explicit shape theorems (`rfl`), exhaustive 10-way `sc_unique_isomorphism`, three `PrimingContrast` entries with actual β/p from paper (baseline, PVC→DOC, PVC≡DOC magnitude), `sc_predicts_equal_magnitude`.
 - **SP2021 RSA compositional grounding**: deepen §3 to use `every_sem` from `Quantifier.lean`, `Model`/`FiniteModel` from `Montague/Basic.lean`, and `ScopeConfig`/`ScopeDerivation` from `Montague/Scope.lean`. Horse model as proper Montague `Model` + `FiniteModel` instance. Grounding theorems (`surface_from_every_sem`, `inverse_from_every_sem`) connect `scopeTruth` to compositional quantifier application. `ScopeDerivation` packages both scope readings; `rsa_meaning_from_scope_derivation` proves RSA meaning is grounded in the derivation.
 
 ## [0.226.41] - 2026-02-24
