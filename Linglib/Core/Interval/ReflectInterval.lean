@@ -69,7 +69,9 @@ noncomputable def RExpr.denote : RExpr → ℝ
   | .sub a b => a.denote - b.denote
   | .rexp a => Real.exp a.denote
   | .rlog a => Real.log a.denote
-  | .rpow a n => Real.rpow a.denote n
+  | .rpow a 0 => Real.rpow a.denote (0 : ℝ)
+  | .rpow a 1 => Real.rpow a.denote (1 : ℝ)
+  | .rpow a n => Real.rpow a.denote n  -- Nat.cast n
   | .inv a => a.denote⁻¹
   | .iteZero c t e => if c.denote = 0 then t.denote else e.denote
   | .expMulLogSub α x cost => Real.exp (α.denote * (Real.log x.denote - cost.denote))
@@ -450,25 +452,34 @@ theorem RExpr.eval_sound : ∀ (e : RExpr), e.evalValid = true →
         · exact hnotpos hpos
         · simp only [Bool.and_eq_true, beq_iff_eq] at hboth hnotzero
           exact hnotzero hboth
-  | .rpow a n => by
+  | .rpow a 0 => by
+    intro _; simp only [eval, denote]
+    exact rpowZero_containsReal a.denote
+  | .rpow a 1 => by
     intro hv
     simp only [evalValid, Bool.and_eq_true, Bool.or_eq_true, beq_iff_eq,
                decide_eq_true_eq] at hv
-    obtain ⟨hva, hcond⟩ := hv
+    have iha := eval_sound a hv.1
     simp only [eval, denote]
-    have iha := eval_sound a hva
     split
-    · -- n == 0
-      rename_i h; simp [beq_iff_eq] at h; subst h
-      simp only [Nat.cast_zero]
-      exact rpowZero_containsReal a.denote
+    · rename_i h; simp at h
     · split
-      · -- 0 ≤ ra.lo
-        exact QInterval.coarsen_containsReal _ (rpowNat_containsReal ‹_› iha)
-      · -- fallback: contradiction from evalValid
-        rename_i hNotZeroN hNotNonneg
-        simp [beq_iff_eq] at hNotZeroN
-        exact absurd (hcond.resolve_left hNotZeroN) hNotNonneg
+      · rename_i hlo
+        have h := rpowNat_containsReal (n := 1) hlo iha
+        simp only [Nat.cast_one] at h
+        exact QInterval.coarsen_containsReal _ h
+      · exact absurd (hv.2.resolve_left (by decide)) ‹_›
+  | .rpow a (n + 2) => by
+    intro hv
+    simp only [evalValid, Bool.and_eq_true, Bool.or_eq_true, beq_iff_eq,
+               decide_eq_true_eq] at hv
+    have iha := eval_sound a hv.1
+    simp only [eval, denote]
+    split
+    · rename_i h; simp at h
+    · split
+      · exact QInterval.coarsen_containsReal _ (rpowNat_containsReal ‹_› iha)
+      · exact absurd (hv.2.resolve_left (by omega)) ‹_›
   | .inv a => by
     intro hv
     simp only [evalValid, Bool.and_eq_true, decide_eq_true_eq] at hv
