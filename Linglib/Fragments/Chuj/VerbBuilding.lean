@@ -1,5 +1,5 @@
 import Linglib.Theories.Syntax.Minimalism.Core.Voice
-import Linglib.Theories.Semantics.Events.RootTypology
+import Linglib.Theories.Morphology.RootTypology
 
 /-!
 # Chuj Verb Building Fragment (Coon 2019) @cite{coon-2019}
@@ -52,7 +52,7 @@ stems show -aj (the theme can be implicit), not √ITV.
 ## References
 
 - Coon, J. (2019). Building verbs in Chuj: Consequences for the nature
-  of roots. *Glossa* 4(1): 74.
+  of roots. *Journal of Linguistics* 55(1): 35–81.
 - Davis, H. (1997). Deep unaccusativity and zero syntax in St'at'imcets.
   In A. Mendikoetxea & M. Uribe-Etxebarria (eds.), *Theoretical Issues
   at the Morphology-Syntax Interface*, 55–96.
@@ -61,7 +61,6 @@ stems show -aj (the theme can be implicit), not √ITV.
 namespace Fragments.Chuj
 
 open Minimalism
-open Semantics.Events.RootTypology
 
 -- ============================================================================
 -- § 1: Chuj Voice Heads
@@ -107,35 +106,41 @@ def v_j : VoiceHead :=
     Semantic type ⟨e, ⟨s,t⟩⟩ (Coon 2019, (3)).
     Examples: mak' "hit", tek' "kick". -/
 def rootTV_pc : Root :=
-  { arity := .selectsTheme, changeType := .propertyConcept }
+  { arity := .selectsTheme, changeType := .propertyConcept,
+    denotationType := some .eventPred }
 
 /-- √TV root (result): selects theme, entails change-of-state.
     Semantic type ⟨e, ⟨s,t⟩⟩ (Coon 2019, (3)).
     Examples: jatz' "hit (breaking)", tzak' "wrap". -/
 def rootTV_res : Root :=
-  { arity := .selectsTheme, changeType := .result }
+  { arity := .selectsTheme, changeType := .result,
+    denotationType := some .eventPred }
 
 /-- √ITV root: semantic type ⟨e, ⟨s,t⟩⟩ (same as √TV per Davis 1997),
     but does NOT project a complement — the entity argument becomes the
     subject. The class is morphologically defined: roots that appear
     with null v/Voice⁰ in intransitive stems (p. 40).
     Examples: way "sleep", ok' "cry", jaw "arrive", b'at "go".
-    Shares Root coordinates with √POS and √NOM because all three
-    lack a syntactic complement; the distinction is categorical origin. -/
+    Distinguished from √POS and √NOM by `denotationType`: all three
+    lack a syntactic complement, but √ITV is an event predicate,
+    √POS a measure function, and √NOM an entity predicate. -/
 def rootITV : Root :=
-  { arity := .noTheme, changeType := .propertyConcept }
+  { arity := .noTheme, changeType := .propertyConcept,
+    denotationType := some .eventPred }
 
 /-- √POS root: positional/stative. Semantic type ⟨e, ⟨s,d⟩⟩ — a
     measure function, not a truth-value predicate (Henderson 2017).
     Examples: chot "sit", kot "on all fours", watz "lie face down". -/
 def rootPOS : Root :=
-  { arity := .noTheme, changeType := .propertyConcept }
+  { arity := .noTheme, changeType := .propertyConcept,
+    denotationType := some .measureFn }
 
 /-- √NOM root: nominal base. Semantic type ⟨e,t⟩ — entity predicate
     with no event argument (Coon 2019, (3)).
     Examples: a' "water", ixim "corn", chanhal "dance". -/
 def rootNOM : Root :=
-  { arity := .noTheme, changeType := .propertyConcept }
+  { arity := .noTheme, changeType := .propertyConcept,
+    denotationType := some .entityPred }
 
 -- ============================================================================
 -- § 3: Root Lower Event Structures
@@ -318,5 +323,42 @@ theorem chuj_causative_alternation_result :
     isCausative (buildDecomposition v_ch resultLower) = v_ch.assignsTheta ∧
     isCausative (buildDecomposition v_j resultLower) = v_j.assignsTheta :=
   ⟨by native_decide, by native_decide, by native_decide, by native_decide⟩
+
+-- ============================================================================
+-- § 9: Four-Way Root Classification Recovery (Coon 2019, (3))
+-- ============================================================================
+
+/-- Coon's four root classes are recovered as (arity × denotationType) pairs.
+    This is the formal content of the claim that arity and denotation type
+    jointly determine root class:
+    √TV = selectsTheme + eventPred, √ITV = noTheme + eventPred,
+    √POS = noTheme + measureFn, √NOM = noTheme + entityPred. -/
+theorem four_way_classification :
+    -- √TV: selects theme, event predicate
+    rootTV_res.arity = .selectsTheme ∧
+    rootTV_res.denotationType = some .eventPred ∧
+    -- √ITV: no theme, event predicate (same semantic type as √TV)
+    rootITV.arity = .noTheme ∧
+    rootITV.denotationType = some .eventPred ∧
+    -- √POS: no theme, measure function
+    rootPOS.arity = .noTheme ∧
+    rootPOS.denotationType = some .measureFn ∧
+    -- √NOM: no theme, entity predicate
+    rootNOM.arity = .noTheme ∧
+    rootNOM.denotationType = some .entityPred := by
+  exact ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
+
+/-- The four root classes are pairwise distinguishable: no two share
+    both arity and denotationType. -/
+theorem root_classes_pairwise_distinct :
+    -- √TV ≠ √ITV (different arity)
+    (rootTV_res.arity ≠ rootITV.arity) ∧
+    -- √ITV ≠ √POS (different denotationType)
+    (rootITV.denotationType ≠ rootPOS.denotationType) ∧
+    -- √ITV ≠ √NOM (different denotationType)
+    (rootITV.denotationType ≠ rootNOM.denotationType) ∧
+    -- √POS ≠ √NOM (different denotationType)
+    (rootPOS.denotationType ≠ rootNOM.denotationType) := by
+  exact ⟨by decide, by decide, by decide, by decide⟩
 
 end Fragments.Chuj

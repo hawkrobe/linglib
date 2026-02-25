@@ -1,5 +1,8 @@
-/-
-# Root Typology: States and Changes of State (Beavers et al. 2021)
+import Linglib.Theories.Semantics.Events.EventStructure
+import Linglib.Core.Root
+
+/-!
+# Root Typology: States and Changes of State (Beavers et al. 2021) @cite{beavers-etal-2021} @cite{coon-2019}
 
 Beavers, Everdell, Jerro, Kauhanen, Koontz-Garboden, LeBovidge & Nichols (2021)
 "States and changes of state: A crosslinguistic study of the roots of verbal
@@ -56,18 +59,12 @@ change-entailment dimension. The two axes cross-classify orthogonally
 you nothing about whether it entails change, and vice versa.
 
 - Coon, J. (2019). Building verbs in Chuj: Consequences for the nature of
-  roots. In *The Oxford Handbook of the Languages of Mesoamerica*, ed. J.
-  Aissen, N. C. England & R. Zavala Maldonado. OUP.
+  roots. *Journal of Linguistics* 55(1): 35–81.
 - Hale, K. & Keyser, S.J. (2002). *Prolegomenon to a Theory of Argument
   Structure*. MIT Press.
 - Harley, H. (2014). On the identity of roots. *Theoretical Linguistics*
   40, 225–276.
 -/
-
-import Linglib.Theories.Semantics.Events.EventStructure
-import Linglib.Core.RootDimensions
-
-namespace Semantics.Events.RootTypology
 
 open Semantics.Events.EventStructure
 open Semantics.Events.ProtoRoles
@@ -75,22 +72,10 @@ open Semantics.Lexical.Verb.ChangeOfState
 open Semantics.Lexical.Verb.Aspect
 
 -- ════════════════════════════════════════════════════
--- § 1. Root Type Classification (Beavers et al. 2021 §3.1)
+-- § 1. Root Type Subclasses (Beavers et al. 2021 §3.1)
 -- ════════════════════════════════════════════════════
 
-/-- Two types of change-of-state verb roots (Beavers et al. 2021 §3.1).
-
-    **Property concept (PC) roots** (Dixon 1982, Thompson 1988): underlie
-    deadjectival CoS verbs. The root describes a gradable property
-    (dimension, color, value, etc.). Examples: flat, red, long, warm.
-
-    **Result roots**: underlie non-deadjectival CoS verbs. The root describes
-    a specific result state that arises from a particular kind of event
-    (breaking, cooking, killing, etc.). Examples: crack, break, shatter. -/
-inductive RootType where
-  | propertyConcept  -- flat, red, long — deadjectival CoS (flatten, redden)
-  | result           -- crack, break, shatter — non-deadjectival CoS
-  deriving DecidableEq, Repr, BEq
+-- RootType, RootArity, RootDenotationType, and Root are defined in Core/Root.lean.
 
 /-- Property concept root subclasses (Dixon 1982; Beavers et al. 2021 ex. 5). -/
 inductive PCClass where
@@ -115,28 +100,7 @@ inductive ResultClass where
   deriving DecidableEq, Repr, BEq
 
 -- ════════════════════════════════════════════════════
--- § 2. The Key Semantic Distinction (§3.3, §3.6)
--- ════════════════════════════════════════════════════
-
-/-- Whether a root lexically entails prior change (Beavers et al. 2021 §3.6).
-
-    This is the central semantic distinction. PC roots denote simple states
-    that can hold without any prior change event:
-      ⟦√FLAT⟧ = λx.λs[flat'(x, s)]       — (eq. 20a)
-
-    Result roots denote states that entail a prior change event:
-      ⟦√CRACK⟧ = λx.λs[cracked'(x, s)]   — (eq. 21a)
-        where ∀x.∀s[cracked'(x, s) → ∃e'[become'(e', s)]]
-
-    Evidence: "The bright photo has never brightened" is fine (PC root, no
-    change entailed), but "#The shattered vase has never shattered" is
-    contradictory (result root, change is entailed). -/
-def RootType.entailsChange : RootType → Bool
-  | .propertyConcept => false
-  | .result => true
-
--- ════════════════════════════════════════════════════
--- § 3. Morphosyntactic Correlates (§§3.2–3.5, 6–7)
+-- § 2. Morphosyntactic Correlates (§§3.2–3.5, 6–7)
 -- ════════════════════════════════════════════════════
 
 /-- PC roots have simple (unmarked) stative forms; result roots lack them.
@@ -568,74 +532,16 @@ theorem grand_unification (rt : RootType) :
     verbalMarkedness, stativeMarkedness]
 
 -- ════════════════════════════════════════════════════
--- § 15. Root Arity: Internal Argument Selection (Coon 2019)
+-- § 15. Root Extension: Markedness Functions
 -- ════════════════════════════════════════════════════
-
-/-- Whether a root selects an internal (theme) argument.
-
-    Coon (2019) §2, (77): the central division of labor in verbal
-    structure is that **roots determine internal arguments** while
-    **functional heads (v/Voice⁰) determine external arguments**.
-
-    In Chuj (Mayan), √TV roots are of semantic type ⟨e, ⟨s,t⟩⟩ — they
-    obligatorily take an internal argument (theme/patient), and this
-    argument persists across ALL voice alternations (transitive, passive,
-    antipassive). √ITV, √NOM, and √POS roots do not select themes.
-
-    This classification is orthogonal to `RootType` (Beavers et al. 2021):
-    a root can independently be [±theme] and [±change]. -/
-inductive RootArity where
-  | selectsTheme  -- ⟨e, ⟨s,t⟩⟩: root obligatorily takes internal argument (Coon's √TV)
-  | noTheme       -- No internal argument selection (Coon's √ITV, √NOM, √POS)
-  deriving DecidableEq, Repr, BEq
-
-/-- Does this root arity entail an obligatory internal argument? -/
-def RootArity.hasInternalArg : RootArity → Bool
-  | .selectsTheme => true
-  | .noTheme => false
-
--- ════════════════════════════════════════════════════
--- § 16. Unified Root Structure
--- ════════════════════════════════════════════════════
-
-/-- Unified root characterization bundling all classification dimensions.
-
-    A root is characterized along four independent axes:
-    1. **Arity** (Coon 2019): does it select an internal argument?
-    2. **Change entailment** (Beavers et al. 2021): does it lexically
-       entail a prior change event?
-    3. **Quality dimensions** (Spalek & McNally): within-class root content
-       (force, patient robustness, result type, volition, control)
-    4. **Class membership** (Levin 1993): verb class taxonomy
-
-    Axes 1 and 2 cross-classify orthogonally (§17): knowing whether a root
-    selects a theme tells you nothing about whether it entails change.
-
-    The `changeType` field uses Beavers et al.'s `RootType`. For non-CoS
-    roots (activities, contact verbs), interpret `.propertyConcept` broadly
-    as "does not lexically entail change" — the formal content
-    (`entailsChange`) is correct for all roots. -/
-structure Root where
-  /-- Does this root select an internal argument? (Coon 2019) -/
-  arity : RootArity
-  /-- Does this root lexically entail prior change? (Beavers et al. 2021) -/
-  changeType : RootType
-  /-- Within-class quality dimensions (Spalek & McNally) -/
-  profile : RootProfile := {}
-  /-- Verb class membership (Levin 1993) -/
-  levinClass : Option LevinClass := none
-  deriving BEq, Repr
-
-/-- Does this root lexically entail prior change? -/
-def Root.entailsChange (r : Root) : Bool := r.changeType.entailsChange
 
 /-- Predicted verbal markedness from change entailment. -/
 def Root.verbalMarkedness (r : Root) : Markedness :=
-  RootTypology.verbalMarkedness r.changeType
+  _root_.verbalMarkedness r.changeType
 
 /-- Predicted stative markedness from change entailment. -/
 def Root.stativeMarkedness (r : Root) : Markedness :=
-  RootTypology.stativeMarkedness r.changeType
+  _root_.stativeMarkedness r.changeType
 
 -- ════════════════════════════════════════════════════
 -- § 17. Cross-Classification: Arity × Change Entailment
@@ -647,7 +553,8 @@ def Root.stativeMarkedness (r : Root) : Markedness :=
     "Break X" — the root obligatorily takes a patient that undergoes
     breaking, and the root lexically entails a prior change event. -/
 def Root.break_ : Root :=
-  { arity := .selectsTheme, changeType := .result, levinClass := some .break_ }
+  { arity := .selectsTheme, changeType := .result,
+    denotationType := some .eventPred, levinClass := some .break_ }
 
 /-- √HIT: selects theme + does not entail change (Levin 18.1).
     "Hit X" — the root takes a contactee, but hitting does not entail
@@ -656,21 +563,22 @@ def Root.break_ : Root :=
     (`entailsChange = false`) is what matters, not the label. -/
 def Root.hit : Root :=
   { arity := .selectsTheme, changeType := .propertyConcept,
-    levinClass := some .hit }
+    denotationType := some .eventPred, levinClass := some .hit }
 
 /-- √DIE: no theme + entails change.
     "Die" — intransitive; the dying entity is introduced by functional
     structure (unaccusative vGO/vBE), not selected by the root. Dying
     lexically entails a prior change event (becoming dead). -/
 def Root.die : Root :=
-  { arity := .noTheme, changeType := .result }
+  { arity := .noTheme, changeType := .result,
+    denotationType := some .eventPred }
 
 /-- √SIT: no theme + does not entail change (positional root).
     "Sit" — Coon's √POS class: denotes a spatial configuration state.
     No internal argument, no entailed change. -/
 def Root.sit : Root :=
   { arity := .noTheme, changeType := .propertyConcept,
-    levinClass := some .assumePosition }
+    denotationType := some .measureFn, levinClass := some .assumePosition }
 
 /-- **Orthogonality of arity and change entailment.**
 
@@ -716,9 +624,9 @@ theorem theme_persistence (r : Root) (h : r.arity = .selectsTheme) :
 /-- Change entailment determines markedness in the unified Root. -/
 theorem root_markedness_from_change (r : Root) :
     r.verbalMarkedness = .unmarked ↔ r.entailsChange = true := by
-  cases r with | mk arity changeType _ _ =>
+  cases r with | mk arity changeType _ _ _ =>
   cases changeType <;> simp [Root.verbalMarkedness, Root.entailsChange,
-    RootTypology.verbalMarkedness, RootType.entailsChange]
+    verbalMarkedness, RootType.entailsChange]
 
 /-- Roots with the same change type have identical morphosyntactic
     behavior regardless of arity — markedness, stative forms, and
@@ -730,4 +638,3 @@ theorem same_change_same_morphosyntax (r₁ r₂ : Root)
     r₁.entailsChange = r₂.entailsChange := by
   simp [Root.verbalMarkedness, Root.stativeMarkedness, Root.entailsChange, h]
 
-end Semantics.Events.RootTypology

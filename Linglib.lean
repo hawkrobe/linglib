@@ -33,6 +33,7 @@ import Linglib.Core.Discourse.QUD
 import Linglib.Core.Interface
 import Linglib.Core.StructuralEquationModel
 import Linglib.Core.CausalBayesNet
+import Linglib.Core.Root
 import Linglib.Core.RootDimensions
 import Linglib.Theories.Semantics.Lexical.Verb.VerbEntry
 import Linglib.Core.Logic.NaturalLogic
@@ -689,6 +690,7 @@ import Linglib.Theories.Syntax.Minimalism.Core.Voice
 import Linglib.Theories.Syntax.Minimalism.Core.Applicative
 import Linglib.Theories.Syntax.Minimalism.Bridge.EventStructureBridge
 import Linglib.Theories.Morphology.DM.Fission
+import Linglib.Theories.Morphology.DM.Categorizer
 import Linglib.Theories.Morphology.Core.CliticVsAffix
 import Linglib.Theories.Morphology.WP.LCEC
 import Linglib.Theories.Syntax.Minimalism.VoiceAppl
@@ -803,7 +805,7 @@ import Linglib.Theories.Semantics.Events.Krifka1998
 import Linglib.Theories.Semantics.Events.Agentivity
 import Linglib.Theories.Semantics.Events.ProtoRoles
 import Linglib.Theories.Semantics.Events.EventStructure
-import Linglib.Theories.Semantics.Events.RootTypology
+import Linglib.Theories.Morphology.RootTypology
 import Linglib.Theories.Semantics.Events.SpatialTrace
 import Linglib.Theories.Semantics.Events.DimensionBridge
 import Linglib.Theories.Semantics.Events.TemporalDecomposition

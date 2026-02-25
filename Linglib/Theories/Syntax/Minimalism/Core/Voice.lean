@@ -41,7 +41,7 @@ Voice_nonThematic + [vGO, vBE] = inchoative [vGO, vBE].
   John Benjamins.
 - Harley, H. (2014). On the identity of roots. *Theoretical Linguistics*
   40(3/4): 225–276.
-- Coon, J. (2019). Building verbs in Chuj. *Glossa* 4(1): 74.
+- Coon, J. (2019). Building verbs in Chuj. *Journal of Linguistics* 55(1): 35–81.
 - Muñoz Pérez, C. (2026). Stylistic applicatives: A lens into the
   nature of anticausative SE. *Glossa* 11(1).
 -/
@@ -60,7 +60,7 @@ namespace Minimalism
 inductive VoiceFlavor where
   | agentive     -- Introduces external argument with agent θ-role (Kratzer 1996)
   | causer       -- Introduces causer (Schäfer 2008: Voice_CAUSE)
-  | nonThematic  -- Semantically vacuous, [D] feature only (anticausative SE)
+  | nonThematic  -- Semantically vacuous, no θ-role (anticausative SE, Chuj -j)
   | expletive    -- No specifier, no semantics (middle voice)
   deriving DecidableEq, BEq, Repr
 

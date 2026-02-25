@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.226.50] - 2026-02-25
+
+### Changed
+- **Split Root types to Core**: `RootType`, `RootArity`, `RootDenotationType`, `Root` moved from `Theories/Semantics/Events/RootTypology.lean` to `Core/Root.lean` — framework-agnostic infrastructure used by Semantics, Syntax, and Morphology.
+- **Move RootTypology to Morphology**: `Theories/Semantics/Events/RootTypology.lean` → `Theories/Morphology/RootTypology.lean` — root typology theory (Beavers et al. 2021) is morphological, not event-semantic.
+- **Fix Coon (2019) citation**: corrected journal from *Glossa*/*Oxford Handbook* to *Journal of Linguistics* 55(1): 35–81 across all files.
+- **Fix Voice.lean nonThematic docstring**: removed misleading "[D] feature only" (hasD is independent of flavor).
+
+### Added
+- **RootDenotationType** (Coon 2019, (3)): `eventPred`/`measureFn`/`entityPred` on `Root` recovers Coon's 4-way classification (√TV/√ITV/√POS/√NOM) as (arity × denotationType) pairs.
+- **Four-way recovery theorem** in Chuj fragment: `four_way_classification`, `root_classes_pairwise_distinct`.
+- **Categorizer.isPhaseHead**: definition + `categorizer_never_phase`, `phase_boundary_at_voice_not_categorizer` (Harley 2014 §4).
+- **Bibliography**: add `beavers-etal-2021`, `coon-2019`, `harley-2014` to `references.bib`.
+
 ## [0.226.49] - 2026-02-25
 
 ### Added
