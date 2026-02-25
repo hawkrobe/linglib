@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.226.53] - 2026-02-25
+
+### Added
+- **Coon 2019 Chuj phenomena** (`Phenomena/Causatives/Studies/Coon2019/Data.lean`): theory-neutral empirical data from Coon (2019) — four root classes (√TV/√ITV/√POS/√NOM), four voice suffixes (Ø/-ch/-j/-w), paradigm grammaticality, -aj distribution, agent diagnostics (adverbs, by-phrases), 20 example verbs, 10 glossed paradigm examples.
+- **Coon 2019 bridge** (`Phenomena/Causatives/Studies/Coon2019/Bridge.lean`): connects Chuj fragment to phenomena data. Proves: root class ↔ arity alignment (`formsBareTransitive ↔ hasInternalArg`), voice suffix ↔ VoiceHead properties (theta, D feature, phase head), agent adverb ↔ `assignsTheta`, -aj distribution ↔ `hasImplicitExternal`/`triggersAj`, event decomposition predictions, division of labor, denotation type alignment, -w cross-class verbalization.
+
+### Changed
+- **Bibliography**: update `coon-2019` and `beavers-etal-2021` sources paths (RootTypology moved to Morphology, add new phenomena/bridge files).
+
 ## [0.226.52] - 2026-02-25
 
 ### Added
