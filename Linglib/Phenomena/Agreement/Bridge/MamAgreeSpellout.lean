@@ -5,41 +5,56 @@ import Linglib.Fragments.Mam.Agreement
 
 @cite{scott-2023}
 
-Connects the Agree operation (feature valuation, closest-goal locality) to
-the empirical distribution of overt vs. null pronouns in SJA Mam.
+Connects the Agree operation (feature valuation) and probe restriction
+(Deal 2021, Keine 2019) to the empirical distribution of overt vs.
+reduced pronouns in SJA Mam.
 
 ## The Derivation
 
 In a Mam transitive clause with a 3SG agent and 3SG patient:
 
-1. **v probes for φ**: v has [uPerson, uNumber]. Its c-command domain
-   contains the agent (Spec,vP) and the patient (complement of V). The
-   agent is *closer* (higher in the structure). v Agrees with the agent,
-   valuing [Person:3, Number:sg]. This is spelled out as Set A "t-" on v.
+1. **Voice probes for φ**: Voice has [uPerson, uNumber]. It Agrees with
+   the agent in Spec,VoiceP, valuing [Person:3, Number:sg]. Voice also
+   assigns inherent ERG case to the agent. The valued φ-features spell
+   out as Set A "t-" on Voice.
 
-2. **T probes for φ**: T has [uPerson, uNumber, EPP]. After the subject
-   moves to Spec,TP (triggered by EPP), T Agrees with it, valuing
-   [Person:3, Number:sg]. This is spelled out as Set B "∅" on T.
+2. **Infl probes for φ**: Infl has a φ-probe with a disjunctive
+   satisfaction condition [SAT: φ or Voice_TR] (Deal 2021, Keine 2019).
+   In a transitive clause, the probe encounters transitive Voice and
+   **stops** — no φ-features are copied to Infl. The Set B slot is
+   filled by the Elsewhere form "∅" (default 2/3SG).
 
-3. **Patient is not φ-Agreed-with**: v's φ-probe has already targeted
-   the agent (closest goal). No other head probes for φ in the patient's
-   domain. The patient gets ACC from v (case assignment) but no φ-agreement.
+3. **Object is case-licensed by Voice**: The patient receives structural
+   ACC from Voice (low-abs syntax; Scott 2023, §3.4). Infl's probe
+   never reaches the object because it was satisfied by Voice_TR.
 
-4. **Pronoun realization follows**: Agreed-with arguments (agent, S) can
-   be null — agreement morphology recovers their content. The patient,
-   lacking φ-agreement, must be an overt pronoun.
+4. **Pronoun realization follows**: Agreed-with arguments (agent, S)
+   undergo pronoun reduction — agreement morphology redundantly
+   expresses their φ-features, triggering deletion of the pronominal
+   base (Scott 2023, ch. 4). The patient, lacking φ-agreement, must
+   be a full overt pronoun.
 
-## What This Bridge Demonstrates
+## Two Paths to Set B "∅"
 
-This is the first derivation in linglib that connects `applyAgree` (narrow
-syntax) → `spellout` (PF vocabulary insertion) → pronoun realization
-(morphological consequence) in a single pipeline, grounded in a concrete
-empirical phenomenon.
+A key insight of Scott's analysis is that the same Set B form "∅" arises
+via two distinct mechanisms:
+
+- **Intransitive**: Infl's probe succeeds, copies S's φ-features
+  (e.g., [3SG]) → no more specific Set B entry matches → Elsewhere
+  "∅" is selected.
+- **Transitive**: Infl's probe is blocked by Voice_TR → no φ-features
+  on Infl → Elsewhere "∅" is selected.
+
+Both yield "∅", but the intransitive case involves real agreement while
+the transitive case involves probe failure. This bridge demonstrates
+both paths.
 
 ## References
 
 - Scott, T. (2023). Pronouns and agreement in San Juan Atitán Mam.
   UC Berkeley dissertation.
+- Deal, A. M. (2015, 2021). Interaction and satisfaction in φ-agreement.
+- Keine, S. (2019, 2020). Selective opacity and horizons.
 -/
 
 namespace Phenomena.Agreement.Bridge.MamAgreeSpellout
@@ -50,15 +65,16 @@ open Minimalism Fragments.Mam
 -- § 1: Probe Feature Bundles
 -- ============================================================================
 
-/-- v's probe features: [uPerson, uNumber].
+/-- Voice's probe features: [uPerson, uNumber].
     Placeholder values (0, false) are irrelevant — `sameType` matching
     ensures any Person/Number goal is found regardless. -/
-def vProbe : FeatureBundle :=
+def voiceProbe : FeatureBundle :=
   [.unvalued (.phi (.person 0)), .unvalued (.phi (.number false))]
 
-/-- T's probe features: [uPerson, uNumber].
-    Same as v — both probe for the full φ-set. -/
-def tProbe : FeatureBundle :=
+/-- Infl's probe features: [uPerson, uNumber].
+    In intransitives, these are valued by S. In transitives, the probe
+    is blocked by Voice_TR before reaching any DP. -/
+def inflProbe : FeatureBundle :=
   [.unvalued (.phi (.person 0)), .unvalued (.phi (.number false))]
 
 -- ============================================================================
@@ -70,186 +86,237 @@ def dp3sg : FeatureBundle :=
   [.valued (.phi (.person 3)), .valued (.phi (.number false))]
 
 -- ============================================================================
--- § 3: Agree Valuation — v agrees with agent
+-- § 3: Agree Valuation — Voice agrees with agent
 -- ============================================================================
 
-/-- v's [uPerson] is valued as [Person:3] from a 3SG agent. -/
-theorem v_agrees_person :
-    applyAgree vProbe dp3sg (.phi (.person 0)) =
+/-- Voice's [uPerson] is valued as [Person:3] from a 3SG agent. -/
+theorem voice_agrees_person :
+    applyAgree voiceProbe dp3sg (.phi (.person 0)) =
     some [.valued (.phi (.person 3)), .unvalued (.phi (.number false))] := by
   native_decide
 
-/-- After person agreement, v's [uNumber] is valued as [Number:sg].
+/-- After person agreement, Voice's [uNumber] is valued as [Number:sg].
     This is the second step of φ-Agree: person first, then number. -/
-theorem v_agrees_number :
+theorem voice_agrees_number :
     let afterPerson := [.valued (.phi (.person 3)), .unvalued (.phi (.number false))]
     applyAgree afterPerson dp3sg (.phi (.number false)) =
     some [.valued (.phi (.person 3)), .valued (.phi (.number false))] := by
   native_decide
 
-/-- Full φ-valuation of v by a 3SG agent: both person and number valued. -/
-def vFullyAgreed : FeatureBundle :=
+/-- Full φ-valuation of Voice by a 3SG agent: both person and number valued. -/
+def voiceFullyAgreed : FeatureBundle :=
   [.valued (.phi (.person 3)), .valued (.phi (.number false))]
 
 /-- The two-step Agree pipeline produces a fully valued bundle. -/
-theorem v_agree_pipeline :
-    (applyAgree vProbe dp3sg (.phi (.person 0))).bind
+theorem voice_agree_pipeline :
+    (applyAgree voiceProbe dp3sg (.phi (.person 0))).bind
       (λ fb => applyAgree fb dp3sg (.phi (.number false))) =
-    some vFullyAgreed := by
+    some voiceFullyAgreed := by
   native_decide
 
 -- ============================================================================
--- § 4: Agree Valuation — T agrees with subject
+-- § 4: Set A Spellout — Voice → agreement morphology
 -- ============================================================================
 
-/-- T's full φ-valuation by a 3SG subject: same result as v. -/
-theorem t_agree_pipeline :
-    (applyAgree tProbe dp3sg (.phi (.person 0))).bind
-      (λ fb => applyAgree fb dp3sg (.phi (.number false))) =
-    some vFullyAgreed := by
-  native_decide
-
--- ============================================================================
--- § 5: Spellout — Valued features → agreement morphology
--- ============================================================================
-
-/-- Set A spellout: v's valued [Person:3, Number:sg] yields "t-" (A2/3SG). -/
+/-- Set A spellout: Voice's valued [Person:3, Number:sg] yields "t-" (A2/3SG). -/
 theorem setA_spellout_3sg :
-    spellout setAVocab vFullyAgreed (some .v) = some "t-" := by
+    spellout setAVocab voiceFullyAgreed (some .v) = some "t-" := by
   native_decide
 
-/-- Set B spellout: T's valued [Person:3, Number:sg] yields "∅" (B2/3SG). -/
-theorem setB_spellout_3sg :
-    spellout setBVocab vFullyAgreed (some .T) = some "∅" := by
-  native_decide
-
-/-- Set A spellout for 1SG: v with [Person:1, Number:sg] yields A1SG marker. -/
+/-- Set A spellout for 1SG: Voice with [Person:1, Number:sg] yields A1SG marker. -/
 theorem setA_spellout_1sg :
     let v1sg : FeatureBundle :=
       [.valued (.phi (.person 1)), .valued (.phi (.number false))]
     spellout setAVocab v1sg (some .v) = some "n-/w-" := by
   native_decide
 
-/-- Set B spellout for 1SG: T with [Person:1, Number:sg] yields B1SG marker. -/
-theorem setB_spellout_1sg :
+-- ============================================================================
+-- § 5: Set B — Two Paths to "∅"
+-- ============================================================================
+
+/-- **Intransitive path**: Infl Agrees with a 3SG intransitive S, copies
+    [Person:3, Number:sg]. No Set B entry is specified for these features
+    (1SG=chin, 1PL=qo, 2/3PL=chi — none match 3SG), so the Elsewhere
+    entry is selected: "∅". -/
+theorem setB_intransitive_3sg :
+    let inflAgreed : FeatureBundle :=
+      [.valued (.phi (.person 3)), .valued (.phi (.number false))]
+    spellout setBVocab inflAgreed (some .T) = some "∅" := by
+  native_decide
+
+/-- **Transitive path**: Infl's probe is blocked by Voice_TR → no
+    φ-features are copied → the Infl node has an empty feature bundle.
+    The Elsewhere entry matches (empty features are a subset of anything)
+    and "∅" is selected.
+
+    This is the DEFAULT Set B — it appears in transitives regardless of
+    the object's person/number features. -/
+theorem setB_transitive_default :
+    let inflBlocked : FeatureBundle := []
+    spellout setBVocab inflBlocked (some .T) = some "∅" := by
+  native_decide
+
+/-- The two paths produce the same exponent — the surface form is
+    identical even though the underlying mechanism differs (real agreement
+    vs. probe failure). -/
+theorem setB_same_surface :
+    let inflAgreed3sg : FeatureBundle :=
+      [.valued (.phi (.person 3)), .valued (.phi (.number false))]
+    let inflBlocked : FeatureBundle := []
+    spellout setBVocab inflAgreed3sg (some .T) =
+    spellout setBVocab inflBlocked (some .T) := by
+  native_decide
+
+/-- Set B spellout for 1SG intransitive: Infl copies [Person:1, Number:sg]
+    from S, yielding "chin" — NOT the Elsewhere form. This is real
+    agreement, producing a distinct exponent. -/
+theorem setB_intransitive_1sg :
     let t1sg : FeatureBundle :=
       [.valued (.phi (.person 1)), .valued (.phi (.number false))]
     spellout setBVocab t1sg (some .T) = some "chin" := by
   native_decide
 
--- ============================================================================
--- § 6: Locality — v targets agent, not patient
--- ============================================================================
-
-/-- In a transitive vP, both agent and patient have valued φ-features.
-    The agent is structurally higher (Spec,vP vs. complement of V).
-
-    We model this via list position: in a probe's c-command domain,
-    earlier = closer to the probe. The agent appears before the patient. -/
-def vDomain : List FeatureBundle := [dp3sg, dp3sg]
-  -- [agent (closer), patient (farther)]
-
-/-- v's φ-probe finds the first (closest) goal with valued person. -/
-theorem v_finds_closest_person :
-    let closestGoal := vDomain.head?
-    closestGoal.bind (λ fb => getValuedFeature fb (.phi (.person 0))) =
-    some (.valued (.phi (.person 3))) := by
-  native_decide
-
-/-- The agent has valued φ-features, so it IS a valid goal. -/
-theorem agent_is_valid_goal :
-    hasValuedFeature dp3sg (.phi (.person 0)) = true := by native_decide
-
-/-- The patient ALSO has valued φ-features — it COULD be a goal.
-    But locality blocks it: the agent is closer. -/
-theorem patient_could_be_goal :
-    hasValuedFeature dp3sg (.phi (.person 0)) = true := by native_decide
-
-/-- The agent has matching features for v's probe → it intervenes
-    between v and the patient. Therefore v cannot Agree with the patient
-    for φ (even though the patient has the right features).
-
-    This is the closest-goal / Relativized Minimality effect that
-    explains why objects lack φ-agreement in Mam. -/
-theorem agent_intervenes :
-    -- Agent is first in the domain (closest to probe)
-    vDomain.head? = some dp3sg ∧
-    -- Agent has matching valued φ
-    hasValuedFeature dp3sg (.phi (.person 0)) = true ∧
-    -- Therefore: v Agrees with agent, patient is blocked
-    MamArgPosition.patient.isPhiAgreed = false := by
-  exact ⟨rfl, by native_decide, rfl⟩
+/-- In a transitive with a 1SG object, the default "∅" still appears —
+    NOT "chin". This is because Infl's probe was blocked by Voice_TR,
+    so the object's 1SG features are never copied to Infl. -/
+theorem setB_transitive_ignores_object :
+    -- Even though the object is 1SG, Infl shows default "∅", not "chin"
+    let inflBlocked : FeatureBundle := []
+    spellout setBVocab inflBlocked (some .T) = some "∅" ∧
+    -- Compare: a 1SG intransitive S would trigger "chin"
+    let inflAgreed1sg : FeatureBundle :=
+      [.valued (.phi (.person 1)), .valued (.phi (.number false))]
+    spellout setBVocab inflAgreed1sg (some .T) = some "chin" := by
+  exact ⟨by native_decide, by native_decide⟩
 
 -- ============================================================================
--- § 7: The Full Pipeline — Agree → Spellout → Pronoun Realization
+-- § 6: Probe Restriction — Why objects lack φ-agreement
+-- ============================================================================
+
+/-- Infl's probe has a disjunctive satisfaction condition [SAT: φ or
+    Voice_TR]. In transitives, the probe encounters transitive Voice and
+    stops before reaching any DP. This is modeled by the fact that the
+    Infl node ends up with an empty feature bundle (no φ-features copied).
+
+    In intransitives, Voice is not transitive → the probe continues →
+    finds S → copies φ.
+
+    This mechanism (Deal 2021, Keine 2019) replaces the older
+    "closest-goal intervention" account: it is NOT that the agent
+    intervenes between Infl and the object, but that the probe is
+    STOPPED by the VoiceP phase boundary. -/
+theorem probe_restriction_yields_default :
+    -- Transitive: probe blocked → empty → Elsewhere
+    spellout setBVocab ([] : FeatureBundle) (some .T) = some "∅" ∧
+    -- Intransitive 1SG: probe succeeds → "chin" (not default)
+    spellout setBVocab
+      [.valued (.phi (.person 1)), .valued (.phi (.number false))]
+      (some .T) = some "chin" := by
+  exact ⟨by native_decide, by native_decide⟩
+
+-- ============================================================================
+-- § 7: Intransitive Pipeline — Infl Agrees with S
+-- ============================================================================
+
+/-- In an intransitive clause, Infl probes for φ and Agrees with S.
+    This is REAL agreement — the probe copies S's φ-features.
+    The resulting valued features spell out as Set B. -/
+theorem intransitive_pipeline_1sg :
+    -- Infl Agrees with 1SG S
+    (applyAgree inflProbe
+      [.valued (.phi (.person 1)), .valued (.phi (.number false))]
+      (.phi (.person 0))).bind
+      (λ fb => applyAgree fb
+        [.valued (.phi (.person 1)), .valued (.phi (.number false))]
+        (.phi (.number false))) =
+    some [.valued (.phi (.person 1)), .valued (.phi (.number false))] ∧
+    -- Spells out as "chin" (not default "∅")
+    spellout setBVocab
+      [.valued (.phi (.person 1)), .valued (.phi (.number false))]
+      (some .T) = some "chin" := by
+  exact ⟨by native_decide, by native_decide⟩
+
+-- ============================================================================
+-- § 8: Transitive Pipeline — Voice Agrees, Infl Blocked
 -- ============================================================================
 
 /-- The complete prediction for a 3SG transitive clause:
 
-    1. v Agrees with agent → [Person:3, Number:sg] on v
-    2. [Person:3, Number:sg] on v spells out as Set A "t-"
-    3. T Agrees with subject → [Person:3, Number:sg] on T
-    4. [Person:3, Number:sg] on T spells out as Set B "∅"
+    1. Voice Agrees with agent → [Person:3, Number:sg] on Voice
+    2. [Person:3, Number:sg] on Voice spells out as Set A "t-"
+    3. Infl's probe is blocked by Voice_TR → empty bundle on Infl
+    4. Empty Infl spells out as Elsewhere Set B "∅"
     5. Patient is not φ-Agreed-with → overt pronoun required -/
 theorem full_pipeline_3sg_transitive :
-    -- Step 1-2: v Agrees and spells out as Set A
-    (applyAgree vProbe dp3sg (.phi (.person 0))).bind
-      (λ fb => applyAgree fb dp3sg (.phi (.number false))) = some vFullyAgreed ∧
-    spellout setAVocab vFullyAgreed (some .v) = some "t-" ∧
-    -- Step 3-4: T Agrees and spells out as Set B
-    (applyAgree tProbe dp3sg (.phi (.person 0))).bind
-      (λ fb => applyAgree fb dp3sg (.phi (.number false))) = some vFullyAgreed ∧
-    spellout setBVocab vFullyAgreed (some .T) = some "∅" ∧
+    -- Step 1-2: Voice Agrees and spells out as Set A
+    (applyAgree voiceProbe dp3sg (.phi (.person 0))).bind
+      (λ fb => applyAgree fb dp3sg (.phi (.number false))) = some voiceFullyAgreed ∧
+    spellout setAVocab voiceFullyAgreed (some .v) = some "t-" ∧
+    -- Step 3-4: Infl probe blocked → default Set B
+    spellout setBVocab ([] : FeatureBundle) (some .T) = some "∅" ∧
     -- Step 5: patient requires overt pronoun
     MamArgPosition.patient.canBeNull = false := by
-  exact ⟨by native_decide, by native_decide, by native_decide,
-         by native_decide, rfl⟩
+  exact ⟨by native_decide, by native_decide, by native_decide, rfl⟩
 
 /-- The pipeline generalizes: for every argument position, the predicted
-    pronoun overtness matches the observed pattern. -/
+    pronoun reduction matches the observed pattern. -/
 theorem all_positions_match :
     mamArgPositions.all (λ pos => pos.canBeNull == pos.isPhiAgreed) = true := by
   native_decide
 
 -- ============================================================================
--- § 8: Cross-Paradigm Spellout
+-- § 9: Cross-Paradigm Spellout
 -- ============================================================================
 
-/-- Set A and Set B have different contexts: Set A on v, Set B on T.
-    The same valued features produce different exponents depending on
-    which head hosts them. -/
+/-- Set A and Set B have different contexts: Set A on Voice (.v), Set B
+    on Infl (.T). The same valued features produce different exponents
+    depending on which head hosts them. -/
 theorem setA_setB_differ_by_context :
-    spellout setAVocab vFullyAgreed (some .v) ≠
-    spellout setBVocab vFullyAgreed (some .v) := by
+    spellout setAVocab voiceFullyAgreed (some .v) ≠
+    spellout setBVocab voiceFullyAgreed (some .v) := by
   native_decide
 
-/-- Set A vocabulary does NOT match T context. -/
+/-- Set A vocabulary does NOT match Infl context. -/
 theorem setA_wrong_context :
-    spellout setAVocab vFullyAgreed (some .T) = none := by
+    spellout setAVocab voiceFullyAgreed (some .T) = none := by
   native_decide
 
-/-- Set B vocabulary does NOT match v context. -/
+/-- Set B vocabulary does NOT match Voice context (for specified entries).
+    Only the Elsewhere entry could match (it has no features), but it
+    requires Infl context. -/
 theorem setB_wrong_context :
-    spellout setBVocab vFullyAgreed (some .v) = none := by
+    spellout setBVocab voiceFullyAgreed (some .v) = none := by
   native_decide
 
 -- ============================================================================
--- § 9: Connection to Tripartite Case
+-- § 10: The Tripartite Agreement Pattern
 -- ============================================================================
 
-/-- The agreement asymmetry mirrors the case system: the two positions
-    that get φ-agreement (A, S) are exactly the two that get dependent
-    case or unmarked case (ERG, ABS). The position that lacks
-    φ-agreement (P) is the one that gets ACC — the "orphan" case
-    with no corresponding agreement paradigm. -/
-theorem agreement_mirrors_case :
-    -- Agreed-with positions: agent (ERG) and S (ABS)
+/-- The three argument positions each have distinct agreement marking
+    patterns, yielding morphological tripartite alignment (Scott p. 113):
+
+    - Agent (ERG): Set A agreement from Voice
+    - Intransitive S (ABS): Set B agreement from Infl
+    - Patient (ACC): default Set B (Infl probe blocked)
+
+    These three cases each have distinct underlying syntactic case values,
+    assigned by different heads (Voice for ERG/ACC, Infl for ABS). -/
+theorem agreement_is_tripartite :
+    -- Agreed-with positions: agent (ERG, by Voice) and S (ABS, by Infl)
     MamArgPosition.agent.isPhiAgreed = true ∧
     MamArgPosition.agent.case = .erg ∧
     MamArgPosition.intranS.isPhiAgreed = true ∧
     MamArgPosition.intranS.case = .abs ∧
-    -- Not agreed-with: patient (ACC)
+    -- Not agreed-with: patient (ACC, from Voice but no φ-Agree)
     MamArgPosition.patient.isPhiAgreed = false ∧
     MamArgPosition.patient.case = .acc := ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
+
+/-- Agreement probes are on different heads: Voice for Set A, Infl for
+    Set B. The patient's lack of agreement is NOT because both heads
+    target the agent — it's because Infl's probe is blocked by VoiceP. -/
+theorem different_probe_heads :
+    MamArgPosition.agent.agreeProbe = some .v ∧
+    MamArgPosition.intranS.agreeProbe = some .T ∧
+    MamArgPosition.patient.agreeProbe = none := ⟨rfl, rfl, rfl⟩
 
 end Phenomena.Agreement.Bridge.MamAgreeSpellout

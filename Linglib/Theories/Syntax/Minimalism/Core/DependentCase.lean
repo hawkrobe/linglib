@@ -17,14 +17,19 @@ the structural configuration of NPs within a Spell-Out domain:
    - Ergative languages: ABS
    - Tripartite languages: ABS
 
-## Tripartite Alignment (Scott 2023)
+## Tripartite Alignment
 
-In tripartite systems (SJA Mam, Nez Perce), intransitive subjects (S),
-transitive agents (A), and transitive patients (P) each receive distinct
-case. Under dependent case, this follows from applying *both* dependent
-ergative (to the higher NP) and dependent accusative (to the lower NP)
-in the same domain, with ABS as the unmarked default (surfacing only
-when no case competitor exists — i.e., intransitives).
+In tripartite systems (e.g., Nez Perce; Deal 2010), intransitive subjects
+(S), transitive agents (A), and transitive patients (P) each receive
+distinct case. Under dependent case, this follows from applying *both*
+dependent ergative (to the higher NP) and dependent accusative (to the
+lower NP) in the same domain, with ABS as the unmarked default (surfacing
+only when no case competitor exists — i.e., intransitives).
+
+**Note**: Not all tripartite systems use dependent case. SJA Mam (Scott 2023)
+achieves tripartite alignment via inherent case from Voice (ERG for agents,
+ACC for objects) plus structural case from Infl (ABS for intransitive S).
+See `Fragments.Mam.Agreement` for the Agree-based analysis.
 
 ## Key Application: Ozaki (2025)
 
@@ -38,8 +43,8 @@ dependent accusative.
 
 - Marantz, A. (1991). Case and licensing. *ESCOL* 1991, 234–253.
 - Baker, M. (2015). *Case: Its Principles and Its Parameters*. CUP.
-- Scott, T. (2023). Pronouns and agreement in San Juan Atitán Mam.
-  UC Berkeley dissertation.
+- Deal, A. M. (2010). Ergative case and the transitive subject: A view
+  from Nez Perce. *NLLT* 28(1), 73–120.
 - Ozaki, S. (2025). Dependent case in Japanese accusative/ablative
   alternation verbs. *CLS 61*.
 -/
@@ -71,7 +76,7 @@ inductive CaseSource where
 inductive CaseLanguageType where
   | accusative  -- Japanese, English, Romance, ...
   | ergative    -- Basque, Hindi (split), ...
-  | tripartite  -- SJA Mam (Scott 2023), Nez Perce, ...
+  | tripartite  -- Nez Perce (Deal 2010), Warlpiri, ...
   deriving DecidableEq, BEq, Repr
 
 -- ============================================================================
