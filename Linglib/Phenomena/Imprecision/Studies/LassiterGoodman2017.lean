@@ -1,6 +1,7 @@
 import Linglib.Core.Scales.Scale
 import Linglib.Tactics.RSAPredict
 import Linglib.Theories.Pragmatics.RSA.Core.Config
+import Linglib.Theories.Semantics.Lexical.Adjective.Theory
 import Mathlib.Data.Rat.Defs
 import Mathlib.Tactic.DeriveFintype
 import Mathlib.Data.Fintype.Prod
@@ -97,20 +98,22 @@ inductive Utterance where
 -- Semantics (Section 3.2, Eqs. 21–22)
 -- ============================================================================
 
-/-- ⟦tall⟧(θ)(x) = 1 iff height(x) > θ -/
-def tallMeaning (θ : Threshold) (h : Height) : Bool :=
-  h.toNat > θ.toNat
+open Semantics.Lexical.Adjective (positiveMeaning negativeMeaning)
 
-/-- ⟦short⟧(θ)(x) = 1 iff height(x) < θ -/
+/-- ⟦tall⟧(θ)(x) = 1 iff height(x) > θ (Kennedy 2007, positive form). -/
+def tallMeaning (θ : Threshold) (h : Height) : Bool :=
+  positiveMeaning h θ
+
+/-- ⟦short⟧(θ)(x) = 1 iff height(x) < θ (Kennedy 2007, negative form). -/
 def shortMeaning (θ : Threshold) (h : Height) : Bool :=
-  h.toNat < θ.toNat
+  negativeMeaning h θ
 
 /-- Full meaning function: utterance × threshold → height → Bool.
     Silent is vacuously true (compatible with all heights). -/
 def meaning (u : Utterance) (θ : Threshold) (h : Height) : Bool :=
   match u with
-  | .tall => tallMeaning θ h
-  | .short => shortMeaning θ h
+  | .tall => positiveMeaning h θ
+  | .short => negativeMeaning h θ
   | .silent => true
 
 -- ============================================================================

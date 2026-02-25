@@ -26,7 +26,7 @@ Linglib is a Lean 4 library for formalizing linguistic theories and connecting t
 
 ### Core Principle: Compositional Grounding
 
-RSA implementations should derive meaning from Montague semantics:
+RSA implementations should **directly import and use** meaning functions from compositional semantics (`Theories/Semantics/`), not stipulate their own. The grounding is structural — by construction, not by theorem.
 
 ```
 Semantics/Montague/ + Semantics/Lexical/ →  Adjective/Numeral/Modal/Attitude semantics
@@ -35,16 +35,22 @@ Semantics/Lexical/Determiner/Quantifier → ⟦some⟧, ⟦all⟧, ⟦most⟧
     ↓
 Fragments/                →  Reusable RSA domains (Quantities, Scales, Degrees)
     ↓
-Phenomena/X/Studies/  →  Paper replications with grounding theorems
+Phenomena/X/Studies/  →  Paper replications that USE theory-layer semantics
 ```
 
 Example grounding pattern:
 ```lean
--- In Phenomena/ScalarImplicatures/GoodmanStuhlmuller2013/Bridge.lean
--- RSA uses compositional quantifier semantics, doesn't stipulate its own
-theorem rsa_some_meaning_from_montague :
-    quantityMeaning .some_ = Quantifiers.existsSome := ...
+-- In Phenomena/Imprecision/Studies/LassiterGoodman2017.lean
+-- RSA imports and uses adjective theory semantics directly
+import Linglib.Theories.Semantics.Lexical.Adjective.Theory
+
+open Semantics.Lexical.Adjective (positiveMeaning negativeMeaning)
+
+def tallMeaning (θ : Threshold) (h : Height) : Bool :=
+  positiveMeaning h θ   -- grounded by construction, not by bridge theorem
 ```
+
+**Anti-pattern**: stipulating meaning functions inline and then proving equivalence in a Bridge file. If the RSA model's meaning is the same as a theory-layer function, import and call it directly.
 
 ### Dependency Discipline: Theories → Fragments → Phenomena
 
