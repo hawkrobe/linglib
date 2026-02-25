@@ -11,9 +11,20 @@ the structural configuration of NPs within a Spell-Out domain:
    relation with another caseless NP in the same domain
    - Accusative languages: lower NP gets ACC
    - Ergative languages: higher NP gets ERG
+   - Tripartite languages: higher NP gets ERG *and* lower gets ACC
 3. **Unmarked case**: Default for any NP still without case
    - Accusative languages: NOM
    - Ergative languages: ABS
+   - Tripartite languages: ABS
+
+## Tripartite Alignment (Scott 2023)
+
+In tripartite systems (SJA Mam, Nez Perce), intransitive subjects (S),
+transitive agents (A), and transitive patients (P) each receive distinct
+case. Under dependent case, this follows from applying *both* dependent
+ergative (to the higher NP) and dependent accusative (to the lower NP)
+in the same domain, with ABS as the unmarked default (surfacing only
+when no case competitor exists — i.e., intransitives).
 
 ## Key Application: Ozaki (2025)
 
@@ -27,6 +38,8 @@ dependent accusative.
 
 - Marantz, A. (1991). Case and licensing. *ESCOL* 1991, 234–253.
 - Baker, M. (2015). *Case: Its Principles and Its Parameters*. CUP.
+- Scott, T. (2023). Pronouns and agreement in San Juan Atitán Mam.
+  UC Berkeley dissertation.
 - Ozaki, S. (2025). Dependent case in Japanese accusative/ablative
   alternation verbs. *CLS 61*.
 -/
@@ -51,11 +64,14 @@ inductive CaseSource where
 -- ============================================================================
 
 /-- Language type determines which dependent and unmarked cases are used.
-    - Accusative: dependent = ACC, unmarked = NOM
-    - Ergative: dependent = ERG, unmarked = ABS -/
+    - Accusative: dependent = ACC (on lower NP), unmarked = NOM
+    - Ergative: dependent = ERG (on higher NP), unmarked = ABS
+    - Tripartite: dependent = ERG (on higher) + ACC (on lower), unmarked = ABS
+      (Scott 2023: SJA Mam; cf. Nez Perce) -/
 inductive CaseLanguageType where
   | accusative  -- Japanese, English, Romance, ...
   | ergative    -- Basque, Hindi (split), ...
+  | tripartite  -- SJA Mam (Scott 2023), Nez Perce, ...
   deriving DecidableEq, BEq, Repr
 
 -- ============================================================================
@@ -129,11 +145,13 @@ def dependentErgative (np : NPInDomain) (lowerNPs : List NPInDomain) : Option Ca
 
 /-- Unmarked (default) case for a given language type.
     - Accusative languages: NOM
-    - Ergative languages: ABS -/
+    - Ergative languages: ABS
+    - Tripartite languages: ABS (only intransitive S gets unmarked case) -/
 def unmarkedCaseFor (lang : CaseLanguageType) : CaseVal :=
   match lang with
   | .accusative => .nom
   | .ergative => .abs
+  | .tripartite => .abs
 
 -- ============================================================================
 -- § 7: Full Algorithm
@@ -155,6 +173,16 @@ def assignOneCase (lang : CaseLanguageType) (higherNPs lowerNPs : List NPInDomai
       match dependentErgative np lowerNPs with
       | some c => { label := np.label, case := c, source := .dependent }
       | none => { label := np.label, case := unmarkedCaseFor lang, source := .unmarked }
+    | .tripartite =>
+      -- Tripartite: both dependent ERG and ACC are active. An NP that
+      -- c-commands a caseless NP gets ERG; an NP c-commanded by a caseless
+      -- NP gets ACC. An NP with neither competitor gets unmarked ABS.
+      match dependentErgative np lowerNPs with
+      | some c => { label := np.label, case := c, source := .dependent }
+      | none =>
+        match dependentAccusative higherNPs np with
+        | some c => { label := np.label, case := c, source := .dependent }
+        | none => { label := np.label, case := unmarkedCaseFor lang, source := .unmarked }
 
 /-- Assign case to all NPs in a Spell-Out domain.
     Processes the list left-to-right, maintaining context of higher NPs
@@ -219,7 +247,7 @@ theorem lexical_bleeds_dependent (lang : CaseLanguageType) (c : CaseVal)
     (higherNPs lowerNPs : List NPInDomain) :
     (assignOneCase lang higherNPs lowerNPs
       { label := "x", lexicalCase := some c }).source = .lexical := by
-  cases lang <;> rfl
+  cases lang <;> simp [assignOneCase]
 
 /-- ACC variant: source (lower NP) gets dependent accusative. -/
 theorem acc_variant_source_gets_acc :
@@ -267,6 +295,62 @@ theorem acc_variant_all_cased :
 /-- All NPs receive case in the ABL variant. -/
 theorem abl_variant_all_cased :
     ablVariantResult.length = 2 := by native_decide
+
+-- ============================================================================
+-- § 9b: Tripartite Alignment Properties
+-- ============================================================================
+
+/-! ## Tripartite: Theory-Level Properties
+
+In a tripartite system, both dependent ergative and dependent accusative
+are active simultaneously: the higher NP gets ERG, the lower gets ACC,
+and an NP with no case competitor gets unmarked ABS. These are properties
+of the algorithm, not of any particular language. Language-specific
+derivations (e.g., SJA Mam) belong in `Phenomena/Case/Bridge/`. -/
+
+/-- Tripartite transitive: higher NP gets dependent ERG. -/
+theorem tripartite_higher_gets_erg :
+    let nps : List NPInDomain :=
+      [ { label := "higher", lexicalCase := none },
+        { label := "lower", lexicalCase := none } ]
+    getCaseOf "higher" (assignCases .tripartite nps) = some .erg := by native_decide
+
+/-- Tripartite transitive: lower NP gets dependent ACC. -/
+theorem tripartite_lower_gets_acc :
+    let nps : List NPInDomain :=
+      [ { label := "higher", lexicalCase := none },
+        { label := "lower", lexicalCase := none } ]
+    getCaseOf "lower" (assignCases .tripartite nps) = some .acc := by native_decide
+
+/-- Tripartite intransitive: sole NP gets unmarked ABS. -/
+theorem tripartite_sole_gets_abs :
+    let nps : List NPInDomain :=
+      [ { label := "sole", lexicalCase := none } ]
+    getCaseOf "sole" (assignCases .tripartite nps) = some .abs := by native_decide
+
+/-- All three cases are distinct — the defining property of tripartite.
+    ERG ≠ ACC ≠ ABS, derived purely from the algorithm. -/
+theorem tripartite_three_distinct :
+    let tr := assignCases .tripartite
+          [ { label := "higher", lexicalCase := none },
+            { label := "lower", lexicalCase := none } ]
+    let intr := assignCases .tripartite
+          [ { label := "sole", lexicalCase := none } ]
+    getCaseOf "higher" tr ≠ getCaseOf "lower" tr ∧
+    getCaseOf "higher" tr ≠ getCaseOf "sole" intr ∧
+    getCaseOf "lower" tr ≠ getCaseOf "sole" intr := by native_decide
+
+/-- Tripartite subsumes both ergative and accusative dependent case:
+    ERG on the higher NP matches pure ergative; ACC on the lower NP
+    matches pure accusative. -/
+theorem tripartite_subsumes_both :
+    let nps : List NPInDomain :=
+      [ { label := "higher", lexicalCase := none },
+        { label := "lower", lexicalCase := none } ]
+    getCaseOf "higher" (assignCases .tripartite nps) =
+    getCaseOf "higher" (assignCases .ergative nps) ∧
+    getCaseOf "lower" (assignCases .tripartite nps) =
+    getCaseOf "lower" (assignCases .accusative nps) := by native_decide
 
 -- ============================================================================
 -- § 10: Deeper Properties

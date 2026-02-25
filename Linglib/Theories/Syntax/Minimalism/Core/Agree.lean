@@ -82,6 +82,32 @@ inductive FeatureVal where
   | oblique : Bool → FeatureVal     -- [±oblique] (extraction tracking, Elkins et al. 2026)
   deriving Repr, DecidableEq
 
+/-- Do two feature values have the same type, ignoring specific values?
+
+    This is the correct matching predicate for Agree: a probe with
+    [uPerson] should match any goal with [Person:x], regardless of
+    the specific person value x. In contrast, `DecidableEq` (`==`)
+    compares both type and value, which is wrong for Agree matching
+    where the probe carries a placeholder value. -/
+def FeatureVal.sameType : FeatureVal → FeatureVal → Bool
+  | .phi p1, .phi p2 => match p1, p2 with
+    | .person _, .person _ => true
+    | .number _, .number _ => true
+    | .gender _, .gender _ => true
+    | _, _ => false
+  | .case _, .case _ => true
+  | .wh _, .wh _ => true
+  | .q _, .q _ => true
+  | .epp _, .epp _ => true
+  | .tense _, .tense _ => true
+  | .hon _, .hon _ => true
+  | .finite _, .finite _ => true
+  | .factive _, .factive _ => true
+  | .neg _, .neg _ => true
+  | .rel _, .rel _ => true
+  | .oblique _, .oblique _ => true
+  | _, _ => false
+
 /-- A grammatical feature: either valued or unvalued
 
     - Valued (interpretable): contributes to meaning, can be a goal
@@ -106,43 +132,30 @@ def GramFeature.featureType : GramFeature → FeatureVal
   | .valued v => v
   | .unvalued v => v
 
-/-- Do two features match in type? (for Agree) -/
+/-- Do two features match in type? (for Agree)
+    Delegates to `FeatureVal.sameType`, ignoring specific values. -/
 def featuresMatch (f1 f2 : GramFeature) : Bool :=
-  match f1.featureType, f2.featureType with
-  | .phi p1, .phi p2 => match p1, p2 with
-    | .person _, .person _ => true
-    | .number _, .number _ => true
-    | .gender _, .gender _ => true
-    | _, _ => false
-  | .case _, .case _ => true
-  | .wh _, .wh _ => true
-  | .q _, .q _ => true
-  | .epp _, .epp _ => true
-  | .tense _, .tense _ => true
-  | .hon _, .hon _ => true
-  | .finite _, .finite _ => true
-  | .factive _, .factive _ => true
-  | .neg _, .neg _ => true
-  | .rel _, .rel _ => true
-  | .oblique _, .oblique _ => true
-  | _, _ => false
+  f1.featureType.sameType f2.featureType
 
 -- Part 2: Feature Bundles on Syntactic Objects
 
 /-- A feature bundle: list of grammatical features -/
 abbrev FeatureBundle := List GramFeature
 
-/-- Does the bundle have an unvalued feature of a given type? -/
+/-- Does the bundle have an unvalued feature of a given type?
+    Uses `sameType` so that e.g. [uPerson:0] matches ftype [Person:3]. -/
 def hasUnvaluedFeature (fb : FeatureBundle) (ftype : FeatureVal) : Bool :=
-  fb.any λ f => f.isUnvalued && (f.featureType == ftype)
+  fb.any λ f => f.isUnvalued && f.featureType.sameType ftype
 
-/-- Does the bundle have a valued feature of a given type? -/
+/-- Does the bundle have a valued feature of a given type?
+    Uses `sameType` so that e.g. [Person:3] matches ftype [Person:0]. -/
 def hasValuedFeature (fb : FeatureBundle) (ftype : FeatureVal) : Bool :=
-  fb.any λ f => f.isValued && (f.featureType == ftype)
+  fb.any λ f => f.isValued && f.featureType.sameType ftype
 
-/-- Get the valued feature of a given type (if present) -/
+/-- Get the valued feature of a given type (if present).
+    Uses `sameType` for type-level matching. -/
 def getValuedFeature (fb : FeatureBundle) (ftype : FeatureVal) : Option GramFeature :=
-  fb.find? λ f => f.isValued && (f.featureType == ftype)
+  fb.find? λ f => f.isValued && f.featureType.sameType ftype
 
 -- Part 3: Extended Lexical Items with Features
 
@@ -223,14 +236,17 @@ def valueFeature (unvalued valued : GramFeature) : Option GramFeature :=
   | .unvalued _, .valued v => some (.valued v)
   | _, _ => none
 
-/-- Apply Agree: value the probe's feature from the goal -/
+/-- Apply Agree: value the probe's feature from the goal.
+    Uses `sameType` for matching, so a probe with [uPerson:0] will
+    be valued by a goal with [Person:3] — the placeholder value is
+    irrelevant, only the feature type matters. -/
 def applyAgree (probeFeats goalFeats : FeatureBundle) (ftype : FeatureVal) :
     Option FeatureBundle :=
   match getValuedFeature goalFeats ftype with
   | none => none
   | some goalFeat =>
     some (probeFeats.map λ f =>
-      if f.isUnvalued && (f.featureType == ftype) then
+      if f.isUnvalued && f.featureType.sameType ftype then
         match valueFeature f goalFeat with
         | some v => v
         | none => f

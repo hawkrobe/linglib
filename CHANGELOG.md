@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.226.44] - 2026-02-25
+
+### Added
+- **Scott (2023) SJA Mam agreement**: tripartite alignment (`CaseLanguageType.tripartite` in `DependentCase.lean`) with ERG/ACC/ABS derived from dependent case algorithm; `tripartite_three_distinct`, `tripartite_subsumes_both` theorems. Mam agreement fragment (`Fragments/Mam/Agreement.lean`): Set A/B vocabulary entries, argument positions, `null_iff_phi_agreed` theorem. Agree-to-Spellout bridge (`Phenomena/Agreement/Bridge/MamAgreeSpellout.lean`): first pipeline connecting `applyAgree` → `spellout` → pronoun realization for a concrete phenomenon; per-person spellout theorems, locality/intervention argument, `full_pipeline_3sg_transitive`, `agreement_mirrors_case`.
+- **`FeatureVal.sameType` in Agree.lean**: type-level feature matching that ignores placeholder values. Fixes `applyAgree`, `hasUnvaluedFeature`, `hasValuedFeature`, `getValuedFeature` to use `sameType` instead of `==`, so a probe with [uPerson:0] correctly matches a goal with [Person:3]. `featuresMatch` refactored to delegate to `sameType`.
+
 ## [0.226.43] - 2026-02-25
 
 ### Added
