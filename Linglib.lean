@@ -205,6 +205,7 @@ import Linglib.Phenomena.ArgumentStructure.Bridge.CCGSubcategorization
 import Linglib.Phenomena.ArgumentStructure.Bridge.MinimalismSubcategorization
 import Linglib.Phenomena.ArgumentStructure.Bridge.DGValency
 import Linglib.Phenomena.ArgumentStructure.Bridge.TheoryComparison
+import Linglib.Phenomena.ArgumentStructure.Bridge.MinimalismSmallClause
 import Linglib.Phenomena.ScalarImplicatures.ArgumentativeFraming
 import Linglib.Phenomena.Modality.ActualityInferencesBridge
 import Linglib.Phenomena.TenseAspect.CrossDomainBridge
@@ -244,6 +245,7 @@ import Linglib.Phenomena.Constructions.Studies.GoldbergShirtz2025
 import Linglib.Phenomena.Constructions.Studies.KayFillmore1999
 import Linglib.Phenomena.Constructions.Studies.OsborneGross2012.Data
 import Linglib.Phenomena.Constructions.Resultatives.Data
+import Linglib.Phenomena.Constructions.ParticleVerbs.Data
 import Linglib.Phenomena.Causatives.Studies.BeaversEtAl2021
 import Linglib.Phenomena.Causatives.Data
 import Linglib.Phenomena.Causatives.Typology
@@ -420,6 +422,7 @@ import Linglib.Phenomena.Quantification.Typology
 import Linglib.Phenomena.Quantification.Bridge
 import Linglib.Phenomena.Quantification.Studies.FrankeBergen2020
 import Linglib.Phenomena.Quantification.Studies.ScontrasPearl2021
+import Linglib.Phenomena.Quantification.Studies.ScontrasPearl2021RSA
 import Linglib.Phenomena.Quantification.Compare
 import Linglib.Phenomena.Questions.Basic
 import Linglib.Phenomena.Questions.Typology
@@ -957,7 +960,6 @@ import Linglib.Theories.Pragmatics.RSA.Implementations.HawkinsGweonGoodman2021
 import Linglib.Phenomena.Gradability.RSA_Nouwen2024Bridge
 import Linglib.Theories.Pragmatics.RSA.Implementations.PottsEtAl2016
 import Linglib.Theories.Pragmatics.RSA.Implementations.QingEtAl2016
-import Linglib.Theories.Pragmatics.RSA.Implementations.ScontrasPearl2021
 import Linglib.Theories.Pragmatics.RSA.Implementations.ScontrasTonhauser2025
 import Linglib.Theories.Pragmatics.RSA.Implementations.ScopeFreezing
 import Linglib.Theories.Pragmatics.RSA.Implementations.SumersEtAl2023

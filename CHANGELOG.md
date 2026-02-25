@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.226.41] - 2026-02-24
+
+### Added
+- **PVC–DOC structural priming (Haddican et al. 2026)**: formalize Small Clause analysis where PVCs and DOCs share `V [SC DP XP]` structure. `TreeShape` infrastructure on `SyntacticObject` for label-erased tree comparison. 3 DOC analyses (SC, ApplP, flat VP) × 2 PVC analyses (SC, complex predicate) with 5 isomorphism theorems. SC analysis consistent with observed cross-construction priming; ApplP + complex predicate inconsistent.
+- **Particle verb construction data**: theory-neutral `ParticleVerbs/Data.lean` with PVC inventory, particle shift alternation (continuous/split order), and constraints (pronoun forces split, heavy NP forces continuous).
+
 ## [0.226.40] - 2026-02-24
 
 ### Changed

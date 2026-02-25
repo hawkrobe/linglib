@@ -497,4 +497,24 @@ def cCommandsIn (root x y : SyntacticObject) : Prop :=
 def asymCCommandsIn (root x y : SyntacticObject) : Prop :=
   cCommandsIn root x y ∧ ¬cCommandsIn root y x
 
+/-! ## Tree Shape — abstract geometry ignoring terminal labels -/
+
+/-- Abstract tree geometry: the shape of a `SyntacticObject` with all
+    terminal labels erased. Two SOs are structurally isomorphic iff
+    they have the same `TreeShape`. -/
+inductive TreeShape where
+  | leaf : TreeShape
+  | node : TreeShape → TreeShape → TreeShape
+  deriving Repr, DecidableEq, BEq
+
+/-- Strip labels from a syntactic object, yielding its abstract shape. -/
+def SyntacticObject.shape : SyntacticObject → TreeShape
+  | .leaf _ => .leaf
+  | .node l r => .node l.shape r.shape
+
+/-- Two syntactic objects are structurally isomorphic iff they have
+    the same tree shape (ignoring all terminal labels). -/
+def structurallyIsomorphic (x y : SyntacticObject) : Bool :=
+  x.shape == y.shape
+
 end Minimalism
