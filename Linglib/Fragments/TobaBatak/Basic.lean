@@ -1,0 +1,138 @@
+import Linglib.Core.Interfaces.ExtractionMorphology
+
+/-!
+# Toba Batak Fragment @cite{erlewine-2018}
+
+Morphosyntactic data for Toba Batak (Austronesian, Sumatra) relevant
+to the extraction restriction and pivot system.
+
+Toba Batak has predicate-initial word order (derived by predicate
+fronting) and an extraction restriction: only the "pivot" — the
+voice-determined, clause-peripheral argument — can undergo Ā-movement.
+
+## Voice System
+
+Unlike Philippine-type Austronesian languages (Tagalog, Seediq), Toba
+Batak does not have a full voice/Case system with multiple voices. Two
+voice morphemes determine which argument is the pivot (= subject):
+
+- **Actor Voice (AV)**: agent is the pivot
+- **Object Voice (OV)**: patient/theme is the pivot
+
+The restriction on extraction follows from nominal licensing: only the
+pivot (Case-licensed by T's [PROBE:D] in Spec,TP) can undergo
+Ā-movement; a non-pivot DP fronted to Spec,CP would lack a Case
+licensor (Erlewine 2018, §4). This is NOT a voice-as-Case system in
+the Philippine sense; it is a structural consequence of how probing
+and Case assignment interact with predicate fronting.
+
+## References
+
+- Erlewine, M. Y. (2018). Extraction and licensing in Toba Batak.
+  Language 94(3): 662–697.
+-/
+
+namespace Fragments.TobaBatak
+
+-- ============================================================================
+-- § 1: Voice
+-- ============================================================================
+
+/-- Toba Batak voice: determines which argument is the pivot. -/
+inductive Voice where
+  /-- Actor voice: the agent is the pivot (clause-final) -/
+  | av
+  /-- Object voice: the patient/theme is the pivot -/
+  | ov
+  deriving Repr, DecidableEq, BEq
+
+/-- Which argument role is the pivot for a given voice? -/
+def Voice.pivotRole : Voice → Interfaces.ArgumentRole
+  | .av => .agent
+  | .ov => .patient
+
+-- ============================================================================
+-- § 2: Extraction Judgment
+-- ============================================================================
+
+/-- Whether extraction of a given argument is grammatical. -/
+inductive ExtractionJudgment where
+  | grammatical
+  | ungrammatical
+  deriving Repr, DecidableEq, BEq
+
+-- ============================================================================
+-- § 3: Extraction Data Type
+-- ============================================================================
+
+/-- A Toba Batak extraction datum: voice choice + extracted role + judgment. -/
+structure ExtractionDatum where
+  /-- Which voice the clause is in -/
+  voice : Voice
+  /-- Which argument role is being extracted -/
+  extracted : Interfaces.ArgumentRole
+  /-- Whether the extraction is grammatical -/
+  judgment : ExtractionJudgment
+  /-- Description -/
+  description : String := ""
+  deriving Repr
+
+/-- Is the extracted element the pivot for the given voice? -/
+def ExtractionDatum.extractsPivot (d : ExtractionDatum) : Bool :=
+  d.extracted == d.voice.pivotRole
+
+-- ============================================================================
+-- § 4: Monoclausal Data (Erlewine 2018, §2)
+-- ============================================================================
+
+/-- AV + agent extraction: grammatical (agent is pivot in AV). -/
+def avAgentExtraction : ExtractionDatum :=
+  { voice := .av, extracted := .agent, judgment := .grammatical
+    description := "AV + agent (pivot): 'Ise mang-uhor buku i?' (Who bought the book?)" }
+
+/-- AV + patient extraction: ungrammatical (patient is not pivot in AV). -/
+def avPatientExtraction : ExtractionDatum :=
+  { voice := .av, extracted := .patient, judgment := .ungrammatical
+    description := "AV + patient (non-pivot): *'Aha mang-uhor si Poltak?' (*What did Poltak buy?)" }
+
+/-- AV + oblique extraction: ungrammatical (oblique is never pivot). -/
+def avObliqueExtraction : ExtractionDatum :=
+  { voice := .av, extracted := .oblique, judgment := .ungrammatical
+    description := "AV + oblique (non-pivot) [predicted, not directly tested in §2]" }
+
+/-- OV + patient extraction: grammatical (patient is pivot in OV). -/
+def ovPatientExtraction : ExtractionDatum :=
+  { voice := .ov, extracted := .patient, judgment := .grammatical
+    description := "OV + patient (pivot): 'Aha di-uhor si Poltak?' (What did Poltak buy?)" }
+
+/-- OV + agent extraction: ungrammatical (agent is not pivot in OV). -/
+def ovAgentExtraction : ExtractionDatum :=
+  { voice := .ov, extracted := .agent, judgment := .ungrammatical
+    description := "OV + agent (non-pivot): *'Ise di-uhor buku i?' (*Who bought the book?)" }
+
+/-- OV + oblique extraction: ungrammatical (oblique is never pivot). -/
+def ovObliqueExtraction : ExtractionDatum :=
+  { voice := .ov, extracted := .oblique, judgment := .ungrammatical
+    description := "OV + oblique (non-pivot) [predicted, not directly tested in §2]" }
+
+/-- All monoclausal extraction data. -/
+def extractionData : List ExtractionDatum :=
+  [ avAgentExtraction, avPatientExtraction, avObliqueExtraction
+  , ovPatientExtraction, ovAgentExtraction, ovObliqueExtraction ]
+
+-- ============================================================================
+-- § 5: Extraction Profile
+-- ============================================================================
+
+/-- Toba Batak extraction profile: structural restriction (pivot-only). -/
+def tbExtractionProfile : Interfaces.ExtractionProfile :=
+  { language := "Toba Batak"
+    strategy := .structuralRestriction
+    markedPositions := [.subject, .directObject]
+    distinguishesPosition := true
+    notes := "Only the pivot (voice-determined) can be extracted; " ++
+             "restriction derived from predicate fronting + " ++
+             "nominal licensing: non-pivot DPs in Spec,CP lack " ++
+             "a Case licensor (Erlewine 2018, §4)" }
+
+end Fragments.TobaBatak

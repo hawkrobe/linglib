@@ -56,6 +56,12 @@ inductive ExtractionMarkingStrategy where
   /-- The complementizer changes form depending on whether extraction has
       occurred through its clause. E.g., Irish *aL* (direct) vs. *aN* (indirect). -/
   | complementizerChange
+  /-- Extraction is structurally restricted to a designated position (the
+      "pivot"), not by surface morphology but by clause-structural factors
+      such as predicate fronting + anti-locality. Voice morphology determines
+      *which* argument occupies the pivot, but the restriction itself is
+      structural. E.g., Toba Batak (Erlewine 2018). -/
+  | structuralRestriction
   deriving DecidableEq, BEq, Repr
 
 -- ============================================================================
@@ -79,6 +85,31 @@ inductive ExtractionTarget where
   /-- Possessor extraction -/
   | possessor
   deriving DecidableEq, BEq, Repr
+
+/-- The thematic category of an argument being extracted: agent
+    (external argument), patient (internal argument), or oblique.
+
+    Coarser than `ThetaRole` (which distinguishes agent/experiencer/
+    causer, patient/theme, goal/source/instrument). Used when the
+    relevant distinction is which macro-role is extracted, not fine-
+    grained thematic relations or structural positions.
+
+    Complements `ExtractionTarget` (structural position): ArgumentRole
+    identifies *what* is extracted; ExtractionTarget identifies *where*
+    it was extracted from. The two coincide in simple active clauses
+    (agent = subject, patient = object) but diverge under voice
+    alternation (in OV, the patient becomes the subject). -/
+inductive ArgumentRole where
+  | agent    -- external argument (agent, experiencer, causer)
+  | patient  -- internal argument (patient, theme)
+  | oblique  -- oblique argument (instrument, goal, source, etc.)
+  deriving DecidableEq, BEq, Repr
+
+/-- Default structural position for a given argument role (active voice). -/
+def ArgumentRole.defaultPosition : ArgumentRole → ExtractionTarget
+  | .agent => .subject
+  | .patient => .directObject
+  | .oblique => .oblique
 
 -- ============================================================================
 -- § 3: Extraction Profile
