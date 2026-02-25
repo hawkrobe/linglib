@@ -79,6 +79,7 @@ inductive FeatureVal where
   | factive : Bool → FeatureVal      -- [±factive] (clause-typing)
   | neg : Bool → FeatureVal          -- [±neg] (NegP, Pollock 1989)
   | rel : Bool → FeatureVal          -- [±rel] (relative clause typing, Rizzi 2001)
+  | oblique : Bool → FeatureVal     -- [±oblique] (extraction tracking, Elkins et al. 2026)
   deriving Repr, DecidableEq
 
 /-- A grammatical feature: either valued or unvalued
@@ -123,6 +124,7 @@ def featuresMatch (f1 f2 : GramFeature) : Bool :=
   | .factive _, .factive _ => true
   | .neg _, .neg _ => true
   | .rel _, .rel _ => true
+  | .oblique _, .oblique _ => true
   | _, _ => false
 
 -- Part 2: Feature Bundles on Syntactic Objects

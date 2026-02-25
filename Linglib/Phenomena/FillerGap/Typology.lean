@@ -665,11 +665,27 @@ def yoruba : RelativizationProfile :=
   , notes := "Mixed on subject (gap + retention); resumptive on obliques; " ++
              "complementizer ti; Niger-Congo" }
 
+/--
+Mam (SJO): gap strategy on subjects via Agent Focus (AF) voice alternation.
+Obliques can be extracted with dedicated morphology (=(y)a'), but oblique
+relativization is limited. Extraction is tracked by =(y)a' on Voice⁰/Dir⁰.
+Elkins, Imanishi & Coon (2026).
+-/
+def mam : RelativizationProfile :=
+  { language := "Mam (SJO)"
+  , iso := "mam"
+  , subjStrategy := .gap
+  , oblStrategy := .gap
+  , rcPosition := .postNominal
+  , lowestRelativizable := .oblique
+  , notes := "Agent Focus for subject extraction; =(y)a' marks oblique " ++
+             "extraction; Mayan; Elkins, Imanishi & Coon (2026)" }
+
 /-- All relativization profiles in the sample. -/
 def allLanguages : List RelativizationProfile :=
   [ english, german, french, russian, arabic, hebrew, japanese, korean
   , mandarin, turkish, hindiUrdu, bambara, swahili, tagalog, malagasy
-  , finnish, welsh, navajo, yoruba ]
+  , finnish, welsh, navajo, yoruba, mam ]
 
 -- ============================================================================
 -- Helper Functions
@@ -733,7 +749,7 @@ example : hebrew.oblStrategy == .pronounRetention := by native_decide
 -- ============================================================================
 
 /-- Number of languages in our sample. -/
-theorem sample_size : allLanguages.length = 19 := by native_decide
+theorem sample_size : allLanguages.length = 20 := by native_decide
 
 -- ============================================================================
 -- Typological Generalization 1: Gap Is the Most Common Subject Strategy
@@ -922,13 +938,13 @@ theorem all_can_relativize_subjects :
 -- ============================================================================
 
 /-- Subject strategy distribution in our sample. -/
-theorem sample_subj_gap : countBySubjStrategy allLanguages .gap = 10 := by native_decide
+theorem sample_subj_gap : countBySubjStrategy allLanguages .gap = 11 := by native_decide
 theorem sample_subj_relPron : countBySubjStrategy allLanguages .relativePronoun = 5 := by native_decide
 theorem sample_subj_mixed : countBySubjStrategy allLanguages .mixed = 3 := by native_decide
 theorem sample_subj_nonReduction : countBySubjStrategy allLanguages .nonReduction = 1 := by native_decide
 
 /-- Oblique strategy distribution in our sample. -/
-theorem sample_obl_gap : countByOblStrategy allLanguages .gap = 4 := by native_decide
+theorem sample_obl_gap : countByOblStrategy allLanguages .gap = 5 := by native_decide
 theorem sample_obl_retention : countByOblStrategy allLanguages .pronounRetention = 5 := by native_decide
 theorem sample_obl_relPron : countByOblStrategy allLanguages .relativePronoun = 5 := by native_decide
 theorem sample_obl_notRelativizable : countByOblStrategy allLanguages .notRelativizable = 4 := by native_decide
@@ -936,7 +952,7 @@ theorem sample_obl_mixed : countByOblStrategy allLanguages .mixed = 1 := by nati
 
 /-- RC position distribution in our sample. -/
 theorem sample_postnominal :
-    (allLanguages.filter (·.isPostNominal)).length = 12 := by native_decide
+    (allLanguages.filter (·.isPostNominal)).length = 13 := by native_decide
 theorem sample_prenominal :
     (allLanguages.filter (·.isPreNominal)).length = 5 := by native_decide
 

@@ -1,4 +1,5 @@
 import Linglib.Theories.Syntax.Minimalism.Core.Basic
+import Linglib.Theories.Syntax.Minimalism.Core.Agree
 
 /-!
 # Voice Head Flavors (Kratzer 1996; Schäfer 2008)
@@ -58,6 +59,9 @@ structure VoiceHead where
   hasD : Bool
   /-- Is this Voice head a phase head? (v* = agentive Voice) -/
   phaseHead : Bool
+  /-- Agree-relevant features on Voice (e.g., [uOblique] for Mam =(y)a').
+      Default empty — most Voice heads carry no probe features. -/
+  features : FeatureBundle := []
   deriving DecidableEq, BEq, Repr
 
 /-- Does this Voice head introduce a θ-role? -/
