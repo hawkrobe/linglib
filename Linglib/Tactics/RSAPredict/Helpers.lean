@@ -30,7 +30,7 @@ def getNatCast? (e : Expr) : Option ℕ := do
   e.getAppArgs[2]!.rawNatLit?
 
 def getNat? (e : Expr) : Option ℕ :=
-  getOfNat? e <|> getNatCast? e
+  e.rawNatLit? <|> getOfNat? e <|> getNatCast? e
 
 def isAppOfMin (e : Expr) (name : Name) (minArgs : ℕ) : Bool :=
   e.getAppFn.isConstOf name && e.getAppNumArgs ≥ minArgs
@@ -222,22 +222,60 @@ partial def getFiniteElems (T : Expr) : MetaM (Expr × Array Expr) := do
         elems := elems.push pair
     let listExpr ← mkListLit T elems.toList
     return (listExpr, elems)
-  -- Try: enumerate constructors of an inductive type (enum with no fields)
+  -- Handle Fin n: enumerate ⟨0, proof⟩, ⟨1, proof⟩, ..., ⟨n-1, proof⟩
+  if T'.isAppOfArity ``Fin 1 then
+    let nExpr := T'.getAppArgs[0]!
+    let some n ← resolveNat? nExpr
+      | throwError "rsa_predict: Fin argument is not a concrete natural number"
+    if n == 0 then
+      let listExpr ← mkListLit T []
+      return (listExpr, #[])
+    let nExprR ← whnf nExpr  -- reduce e.g. 10 + 1 → 11
+    let mut elems : Array Expr := #[]
+    for i in List.range n do
+      let iLit := mkRawNatLit i
+      let ltProp ← mkAppOptM ``LT.lt #[mkConst ``Nat, none, iLit, nExprR]
+      let proof ← mkDecideProof ltProp
+      let finElem := mkApp3 (mkConst ``Fin.mk []) nExprR iLit proof
+      elems := elems.push finElem
+    let listExpr ← mkListLit T elems.toList
+    return (listExpr, elems)
+  -- Try: enumerate constructors of an inductive type
   if let .const name _ := T'.getAppFn then
     if let some info := (← getEnv).find? name then
       if let .inductInfo iv := info then
         let env ← getEnv
+        let tArgs := T'.getAppArgs
+        let levels := if let .const _ ls := T'.getAppFn then ls else []
+        -- Case 1: all nullary constructors (enum with no fields)
         let allNullary := iv.ctors.all fun c =>
           match env.find? c with
           | some (.ctorInfo ci) => ci.numParams + ci.numFields == iv.numParams
           | _ => false
         if allNullary then
-          let tArgs := T'.getAppArgs
-          let levels := if let .const _ ls := T'.getAppFn then ls else []
           let elems := iv.ctors.toArray.map fun c =>
             mkAppN (mkConst c levels) tArgs
           let listExpr ← mkListLit T elems.toList
           return (listExpr, elems)
+        -- Case 2: single constructor with exactly one field (wrapper structure).
+        -- Recursively enumerate the field type and wrap in the constructor.
+        -- Handles Degree, Threshold, and similar Fin-wrapping structures.
+        if iv.ctors.length == 1 then
+          let ctorName := iv.ctors.head!
+          if let some (.ctorInfo ci) := env.find? ctorName then
+            if ci.numFields == 1 then
+              let ctorApplied := mkAppN (mkConst ctorName levels) tArgs
+              let ctorType ← inferType ctorApplied
+              -- Extract the single field's type
+              let fieldType ← forallTelescopeReducing ctorType fun fvars _ => do
+                if fvars.size ≥ 1 then
+                  inferType fvars[0]!
+                else
+                  throwError "rsa_predict: expected at least one field in constructor"
+              let (_, fieldElems) ← getFiniteElems fieldType
+              let elems := fieldElems.map fun fe => mkApp ctorApplied fe
+              let listExpr ← mkListLit T elems.toList
+              return (listExpr, elems)
   -- Fallback: try Finset.univ.toList with aggressive reduction
   let univExpr ← mkAppOptM ``Finset.univ #[T, none]
   let toListExpr ← mkAppM ``Finset.toList #[univExpr]

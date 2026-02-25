@@ -36,6 +36,11 @@ The `denote` function maps back to ℝ; the `eval` function computes a `QInterva
 bounding the value. -/
 inductive RExpr where
   | nat : ℕ → RExpr
+  /-- ℚ→ℝ cast leaf. `denote` produces `↑q : ℝ` via `Rat.cast`, matching
+      goal expressions that originated from ℚ→ℝ coercions (e.g., `↑(prior h)`).
+      Using `nat` for these would produce `Nat.cast n` which is not definitionally
+      equal to `Rat.cast (n : ℚ)` in the kernel. -/
+  | ratCast : ℚ → RExpr
   | add : RExpr → RExpr → RExpr
   | mul : RExpr → RExpr → RExpr
   | div : RExpr → RExpr → RExpr
@@ -62,6 +67,7 @@ noncomputable def RExpr.denote : RExpr → ℝ
   | .nat 0 => (0 : ℝ)
   | .nat 1 => (1 : ℝ)
   | .nat n => (n : ℝ)  -- Nat.cast n
+  | .ratCast q => (↑q : ℝ)  -- Rat.cast q
   | .add a b => a.denote + b.denote
   | .mul a b => a.denote * b.denote
   | .div a b => a.denote / b.denote
@@ -88,6 +94,7 @@ private abbrev c (I : QInterval) : QInterval := I.coarsen
     Every compound operation is coarsened to bounded-precision rationals. -/
 def RExpr.eval : RExpr → QInterval
   | .nat n => QInterval.exact n
+  | .ratCast q => QInterval.exact q
   | .add a b => c ((a.eval).add (b.eval))
   | .mul a b =>
     let ra := a.eval
@@ -180,6 +187,7 @@ In practice, `rsa_decide` only builds `RExpr` values from RSA computations
 The tactic verifies this via `native_decide` as a precondition. -/
 def RExpr.evalValid : RExpr → Bool
   | .nat _ => true
+  | .ratCast _ => true
   | .add a b => a.evalValid && b.evalValid
   | .mul a b => a.evalValid && b.evalValid
   | .div a b =>
@@ -238,6 +246,7 @@ def RExpr.tryExtractLogProduct : RExpr → Option (List (RExpr × ℕ))
     in compiled code. -/
 def RExpr.evalBoth : RExpr → QInterval × Bool
   | .nat n => (QInterval.exact n, true)
+  | .ratCast q => (QInterval.exact q, true)
   | .add a b =>
     let (ra, va) := a.evalBoth
     let (rb, vb) := b.evalBoth
@@ -368,6 +377,9 @@ theorem RExpr.eval_sound : ∀ (e : RExpr), e.evalValid = true →
     | n + 2 =>
       simp only [eval, denote]
       exact QInterval.exact_natCast_containsReal (n + 2)
+  | .ratCast q => by
+    intro _; simp only [eval, denote]
+    exact QInterval.exact_containsReal q
   | .add a b => by
     intro hv
     simp only [evalValid, Bool.and_eq_true] at hv
@@ -608,6 +620,7 @@ def RExpr.evalRexpOpt (inner : RExpr) : QInterval × Bool :=
     `.rexp` nodes don't nest inside each other in RSA expression trees. -/
 def RExpr.evalBothOpt : RExpr → QInterval × Bool
   | .nat n => (QInterval.exact n, true)
+  | .ratCast q => (QInterval.exact q, true)
   | .add a b =>
     let (ra, va) := a.evalBothOpt
     let (rb, vb) := b.evalBothOpt
@@ -730,6 +743,7 @@ theorem RExpr.not_gt_of_checkNotGt (lhs rhs : RExpr) (h : lhs.checkNotGt rhs = t
     map to the same index — each unique computation is evaluated exactly once. -/
 inductive DAGNode where
   | nat : ℕ → DAGNode
+  | ratCast : ℚ → DAGNode
   | add : ℕ → ℕ → DAGNode
   | mul : ℕ → ℕ → DAGNode
   | div : ℕ → ℕ → DAGNode
@@ -753,6 +767,7 @@ private def evalOneNode (results : Array IVB) (node : DAGNode) : IVB :=
   let get (i : ℕ) : IVB := results.getD i ivbDefault
   match node with
   | .nat n => (QInterval.exact n, true)
+  | .ratCast q => (QInterval.exact q, true)
   | .add ai bi =>
     let (ra, va) := get ai
     let (rb, vb) := get bi
@@ -911,6 +926,7 @@ theorem not_gt_of_checkNotGtDAG (lhs rhs : RExpr) (dag : Array DAGNode) (li ri :
     Used for `¬(>)` goals where interval arithmetic is too imprecise. -/
 def RExpr.evalExact : RExpr → Option ℚ
   | .nat n => some n
+  | .ratCast q => some q
   | .add a b => do return (← a.evalExact) + (← b.evalExact)
   | .mul a b => do return (← a.evalExact) * (← b.evalExact)
   | .div a b => do

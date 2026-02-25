@@ -62,7 +62,13 @@ def extractIntExpr (e : Expr) : MetaM (Option ℤ) := do
 def extractRatFromCauchy (e : Expr) : MetaM (Option ℚ) := do
   let args := e.getAppArgs
   if args.isEmpty then return none
-  let seq := args.back!
+  let mut seq := args.back!
+  -- The CauSeq.Completion.Cauchy type is a Quotient, so seq may be
+  -- Quot.mk rel causeq_val. Unwrap to get the CauSeq (Subtype) value.
+  let seqW ← whnf seq
+  let seqFn := seqW.getAppFn
+  if seqFn.isConstOf ``Quot.mk || seqFn.isConstOf ``Quotient.mk then
+    seq := seqW.getAppArgs.back!
   -- Project Subtype.val (field 0), apply to 0, and reduce
   let fAtZero ← whnf (mkApp (mkProj ``Subtype 0 seq) (mkRawNatLit 0))
   -- Project Rat.num (field 0) and Rat.den (field 1)
@@ -122,22 +128,15 @@ partial def reifyToRExpr (cache : ReifyCache) (e : Expr) (depth : ℕ) :
   let fn := e.getAppFn
   let args := e.getAppArgs
 
-  -- Cauchy-form ℝ literal: Real.ofCauchy wraps a constant Cauchy sequence.
-  -- Extract the ℚ value by evaluating the sequence at index 0.
-  -- Kernel verifies e ≡ denote(rexpr) since both whnf to same Cauchy form.
+  -- Cauchy-form ℝ literal: Real.ofCauchy wraps a constant Cauchy sequence
+  -- from a ℚ→ℝ cast. Use RExpr.ratCast so denote produces Rat.cast,
+  -- matching the goal expression. (RExpr.nat would produce Nat.cast which
+  -- is not definitionally equal to Rat.cast for the kernel.)
   if fn.isConstOf ``Real.ofCauchy then
     if let some q ← extractRatFromCauchy e then
-      if q.den == 1 && q.num ≥ 0 then
-        let n := q.num.toNat
-        let rexpr := mkApp (mkConst ``RExpr.nat) (mkRawNatLit n)
-        return ← cacheReturn cache key (rexpr, ⟨n, n⟩)
-      else
-        -- Fraction or negative: build RExpr.div (possibly with RExpr.neg)
-        let numE := mkApp (mkConst ``RExpr.nat) (mkRawNatLit q.num.natAbs)
-        let denE := mkApp (mkConst ``RExpr.nat) (mkRawNatLit q.den)
-        let divE := mkApp2 (mkConst ``RExpr.div) numE denE
-        let rexpr := if q.num < 0 then mkApp (mkConst ``RExpr.neg) divE else divE
-        return ← cacheReturn cache key (rexpr, ⟨q, q⟩)
+      let qE ← mkRatExpr q
+      let rexpr := mkApp (mkConst ``RExpr.ratCast) qE
+      return ← cacheReturn cache key (rexpr, ⟨q, q⟩)
     -- Fallback: scan for embedded nat (handles cases where Cauchy structure is unusual)
     if let some n := findEmbeddedNat e then
       let rexpr := mkApp (mkConst ``RExpr.nat) (mkRawNatLit n)
@@ -392,16 +391,9 @@ partial def reifyToRExpr (cache : ReifyCache) (e : Expr) (depth : ℕ) :
     -- Fast path: check Cauchy form before the isDefEq loop
     if e.getAppFn.isConstOf ``Real.ofCauchy then
       if let some q ← extractRatFromCauchy e then
-        if q.den == 1 && q.num ≥ 0 then
-          let n := q.num.toNat
-          let rexpr := mkApp (mkConst ``RExpr.nat) (mkRawNatLit n)
-          return ← cacheReturn cache key (rexpr, ⟨n, n⟩)
-        else
-          let numE := mkApp (mkConst ``RExpr.nat) (mkRawNatLit q.num.natAbs)
-          let denE := mkApp (mkConst ``RExpr.nat) (mkRawNatLit q.den)
-          let divE := mkApp2 (mkConst ``RExpr.div) numE denE
-          let rexpr := if q.num < 0 then mkApp (mkConst ``RExpr.neg) divE else divE
-          return ← cacheReturn cache key (rexpr, ⟨q, q⟩)
+        let qE ← mkRatExpr q
+        let rexpr := mkApp (mkConst ``RExpr.ratCast) qE
+        return ← cacheReturn cache key (rexpr, ⟨q, q⟩)
       if let some n := findEmbeddedNat e then
         let rexpr := mkApp (mkConst ``RExpr.nat) (mkRawNatLit n)
         return ← cacheReturn cache key (rexpr, ⟨n, n⟩)

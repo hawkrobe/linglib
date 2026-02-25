@@ -527,9 +527,25 @@ partial def buildRealExprProof (e : Expr) : TacticM CProof := do
   let e' ← whnf e
   if !e'.equal e then
     return ← go e'
-  -- 13. Cauchy sequence form: { cauchy := ↑n } — search for nat literals in
-  --     the reduced expression and check isDefEq against @OfNat.ofNat ℝ n _
+  -- 13. Cauchy sequence form: extract concrete ℚ or ℕ value
   if (← inferType e).isConstOf ``Real then
+    -- 13a. Try extracting a concrete ℚ from Real.ofCauchy form (handles ℚ→ℝ casts).
+    -- Always use exact_containsReal (Rat.cast path), never exact_natCast_containsReal
+    -- (Nat.cast path), because the goal expression came from a ℚ→ℝ coercion and
+    -- Nat.cast n ≢ Rat.cast (n : ℚ) definitionally for the kernel.
+    if e.getAppFn.isConstOf ``Real.ofCauchy then
+      if let some q ← extractRatFromCauchy e then
+        let qE ← mkRatExpr q
+        let iExpr ← mkAppM ``QInterval.exact #[qE]
+        let proof ← mkAppM ``QInterval.exact_containsReal #[qE]
+        return ⟨iExpr, proof, q, q⟩
+      -- extractRatFromCauchy failed; try extractRat as fallback
+      if let some q ← try some <$> extractRat e catch _ => pure none then
+        let qE ← mkRatExpr q
+        let iExpr ← mkAppM ``QInterval.exact #[qE]
+        let proof ← mkAppM ``QInterval.exact_containsReal #[qE]
+        return ⟨iExpr, proof, q, q⟩
+    -- 13b. Search for nat literals and check isDefEq against @OfNat.ofNat ℝ n _
     let rec collectNatLits (e : Expr) : Array ℕ :=
       match e.rawNatLit? with
       | some n => #[n]

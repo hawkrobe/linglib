@@ -69,6 +69,7 @@ private partial def rexprExprToDAGAux (ref : IO.Ref DAGMetaState) (e : Expr) : M
 
   let dagNodeExpr ← match name with
     | ``RExpr.nat => pure (mkApp (mkConst ``DAGNode.nat) args[0]!)
+    | ``RExpr.ratCast => pure (mkApp (mkConst ``DAGNode.ratCast) args[0]!)
     | ``RExpr.add => do
       pure (mkApp2 (mkConst ``DAGNode.add)
         (mkRawNatLit (← rexprExprToDAGAux ref args[0]!))

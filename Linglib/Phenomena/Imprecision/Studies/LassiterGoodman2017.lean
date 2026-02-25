@@ -1,37 +1,63 @@
 import Linglib.Core.Scales.Scale
+import Linglib.Tactics.RSAPredict
+import Linglib.Theories.Pragmatics.RSA.Core.Config
 import Mathlib.Data.Rat.Defs
 import Mathlib.Tactic.DeriveFintype
 import Mathlib.Data.Fintype.Prod
 
 /-!
-# Lassiter & Goodman (2017) -- Threshold RSA for Vague Adjectives
+# Lassiter & Goodman (2017) @cite{lassiter-goodman-2017}
 
-"Adjectival vagueness in a Bayesian model of interpretation"
-Synthese 194:3801-3836
+Adjectival vagueness in a Bayesian model of interpretation.
+Synthese 194:3801–3836.
 
 ## Innovation
 
-Standard RSA: `P_L1(w | u) ∝ P_S1(u | w) × P(w)`
+Standard RSA models fix the literal meaning of each utterance. Threshold RSA
+introduces a free semantic variable — the threshold θ — that the pragmatic
+listener L1 jointly infers alongside the world state:
 
-Threshold RSA: `P_L1(w, θ | u) ∝ P_S1(u | w, θ) × P(w) × P(θ)`
+  P_L1(s, θ | u) ∝ P_S1(u | s, θ) · P(s) · P(θ)        (Eq. 24)
 
-The listener jointly infers:
-- The world state (e.g., the height of the person being described)
-- The threshold value (e.g., what counts as "tall")
+This yields three key predictions (Section 4.3):
+1. **Information transmission**: hearing "tall"/"short" shifts the height
+   posterior above/below the prior mean despite vague semantics
+2. **Pragmatic sweet spot**: the threshold posterior peaks at an intermediate
+   value, not at extremes — low θ makes "tall" uninformative (high cost,
+   low information gain); high θ makes it implausible
+3. **Context sensitivity**: shifting the reference class prior (e.g., from
+   the general population to basketball players) shifts both the height
+   and threshold posteriors (Section 5, Figure 7)
 
-## Semantics
+## Semantics (Section 3.2)
 
-Scalar adjectives have a free threshold variable:
-- ⟦tall⟧ = λθ.λx. height(x) > θ
-- ⟦short⟧ = λθ.λx. height(x) < θ
+Scalar adjectives have a free threshold variable (Eqs. 21–22):
+- ⟦tall⟧(θ)(x) = 1 iff height(x) > θ
+- ⟦short⟧(θ)(x) = 1 iff height(x) < θ
 
-## Status
+## RSAConfig Mapping
 
-RSA evaluation infrastructure (basicL0, basicL1, basicS1, getScore,
-normalize, marginalize, boolToRat) has been removed. Domain types, meaning
-functions, priors, cost structure, graded semantics, and algebraic properties
-are preserved. RSA computation stubs and prediction theorems remain with
-`sorry` for future reimplementation.
+- **U** = `Utterance` (tall, short, silent)
+- **W** = `Height` (Degree 10, 11 values: h0–h10)
+- **Latent** = `Threshold` (Threshold 10, 10 values: θ0–θ9)
+- **meaning(θ, u, h)** = `prior(h)` if ⟦u⟧_θ(h), else 0
+  (Eq. 20: L0 includes the world prior)
+- **s1Score** = `exp(α · (log L0(h|u,θ) − C(u)))` (Eq. 23)
+- **worldPrior(h)** = `prior(h)` (Eq. 24)
+- **latentPrior** = uniform (Section 4.2: "P(V) is thus uniform")
+- **α** = 4 (Section 4.4: optimal value from simulation)
+- **C(tall) = C(short) = 2** (Section 4.4: C(u) = 2/3 × |u| in words,
+  |"Sam is tall"| = 3), **C(∅) = 0**
+
+The prior enters at both L0 (baked into `meaning`) and L1 (`worldPrior`),
+matching the paper's Eqs. 20 and 24 where P_{L0}(s) = P_{L1}(s).
+
+## Verified Predictions
+
+1. Hearing "tall" shifts height posterior upward (Section 4.3, Figure 5)
+2. Hearing "short" shifts height posterior downward (Section 4.3, Figure 6)
+3. Threshold posterior peaks at intermediate θ given "tall" (Section 4.3)
+4. Basketball prior shifts L1("tall") toward taller heights (Section 5)
 -/
 
 namespace RSA.LassiterGoodman2017
@@ -40,24 +66,19 @@ open Core.Scale (Degree Threshold Degree.toNat Threshold.toNat
   deg thr allDegrees allThresholds)
 
 -- ============================================================================
--- Domain: Heights and Thresholds (Discretized)
+-- Domain: Heights and Thresholds
 -- ============================================================================
 
-/--
-Discretized height values (in inches, scaled).
+/-- Discretized height values (h0–h10).
 
-We use a discrete approximation to the continuous model in the paper.
-Heights range from "short" (0) to "tall" (10) in discrete steps.
-Now backed by the canonical `Degree 10` type with `LinearOrder` and `BoundedOrder`.
--/
+    The paper uses a continuous normal distribution over heights; we discretize
+    to 11 values (Degree 10). -/
 abbrev Height := Degree 10
 
-/--
-Threshold values for "tall".
+/-- Threshold values (θ0–θ9).
 
-The threshold θ determines the cutoff: x is tall iff height(x) > θ.
-Now backed by the canonical `Threshold 10` type.
--/
+    The threshold θ determines the cutoff: x is tall iff height(x) > θ
+    (Eq. 21). -/
 instance : NeZero (10 : Nat) := ⟨by omega⟩
 abbrev Threshold := Core.Scale.Threshold 10
 
@@ -65,69 +86,41 @@ abbrev Threshold := Core.Scale.Threshold 10
 -- Utterances
 -- ============================================================================
 
-/-- Utterances about height -/
+/-- The speaker can say "tall," "short," or stay silent. -/
 inductive Utterance where
-  | tall    -- "x is tall"
-  | short   -- "x is short"
-  | silent  -- say nothing
+  | tall    -- "Sam is tall"
+  | short   -- "Sam is short"
+  | silent  -- null utterance ∅
   deriving Repr, DecidableEq, BEq, Fintype
 
 -- ============================================================================
--- Semantics with Free Threshold Variable
+-- Semantics (Section 3.2, Eqs. 21–22)
 -- ============================================================================
 
-/--
-Literal meaning of "tall" given a threshold.
-
-⟦tall⟧(θ)(x) = 1 iff height(x) > θ
-
-This captures the free-variable semantics from the paper (Eq. 21-22).
--/
+/-- ⟦tall⟧(θ)(x) = 1 iff height(x) > θ -/
 def tallMeaning (θ : Threshold) (h : Height) : Bool :=
   h.toNat > θ.toNat
 
-/--
-Literal meaning of "short" given a threshold.
-
-⟦short⟧(θ)(x) = 1 iff height(x) < θ
--/
+/-- ⟦short⟧(θ)(x) = 1 iff height(x) < θ -/
 def shortMeaning (θ : Threshold) (h : Height) : Bool :=
   h.toNat < θ.toNat
 
-/--
-Full meaning function: utterance × threshold → height → Bool
--/
+/-- Full meaning function: utterance × threshold → height → Bool.
+    Silent is vacuously true (compatible with all heights). -/
 def meaning (u : Utterance) (θ : Threshold) (h : Height) : Bool :=
   match u with
   | .tall => tallMeaning θ h
   | .short => shortMeaning θ h
-  | .silent => true  -- Silent is always "true" (vacuously)
+  | .silent => true
 
 -- ============================================================================
--- Joint State: (Height, Threshold)
+-- Priors (Section 4.2)
 -- ============================================================================
 
-/--
-Joint state space: pairs of (Height, Threshold).
+/-- Height prior: discretized normal distribution centered at h5.
 
-This is the space over which L1 reasons jointly.
--/
-abbrev JointState := Height × Threshold
-
-instance : Fintype JointState := inferInstance
-instance : DecidableEq JointState := inferInstance
-instance : BEq JointState := inferInstance
-
--- ============================================================================
--- Priors
--- ============================================================================
-
-/--
-Height prior: approximates a normal distribution centered at h5.
-
-This models the reference class distribution (e.g., adult male heights).
-The paper uses a continuous normal; we discretize.
--/
+    The paper assumes a continuous normal P(s) over heights. We approximate
+    with unnormalized weights [1,2,5,10,15,20,15,10,5,2,1] peaked at h5. -/
 def heightPrior (h : Height) : ℚ :=
   match h.toNat with
   | 0 => 1    -- tails
@@ -142,92 +135,17 @@ def heightPrior (h : Height) : ℚ :=
   | 9 => 2
   | _ => 1    -- tails
 
-/--
-Threshold prior: uniform over all thresholds.
+/-- Threshold prior: uniform over all thresholds (Section 4.2).
 
-The paper assumes uniform priors on semantic variables (Section 4.2):
-"P_{L_{0/1}}(V) is thus uniform for all possible combinations of values
-for the elements of V."
--/
-def thresholdPrior : Threshold → ℚ := λ _ => 1
+    "P(V) is thus uniform for all possible combinations of values
+    for the elements of V." -/
+def thresholdPrior : Threshold → ℚ := fun _ => 1
 
-/--
-Joint prior: P(h, θ) = P(h) × P(θ)
+/-- Basketball player height prior: peak shifted to h7 (Section 5, Figure 7).
 
-The paper assumes independence (Eq. 29).
--/
-def jointPrior (state : JointState) : ℚ :=
-  heightPrior state.1 * thresholdPrior state.2
-
--- ============================================================================
--- Utterance Costs (Full Paper Model)
--- ============================================================================
-
-/--
-Utterance costs from the full paper model.
-
-The paper (Section 4.2, Eq. 23) includes utterance costs:
-- C(tall) = C(short) = costWord (saying something has a cost)
-- C(silent) = 0 (staying silent is free)
-
-This creates the "pragmatic sweet spot" for thresholds.
--/
-def utteranceCost (costWord : ℚ) : Utterance → ℚ
-  | .tall => costWord
-  | .short => costWord
-  | .silent => 0
-
-/-- Default word cost (calibrated to approximate exp(-α×C) behavior) -/
-def defaultWordCost : ℚ := 1
-
--- ============================================================================
--- Lists
--- ============================================================================
-
-/-- List of all utterances -/
-def allUtterances : List Utterance := [.tall, .short, .silent]
-
-/-- List of all heights -/
-def allHeights : List Height := allDegrees 10
-
-/-- List of all thresholds -/
-def allThresholds : List Threshold := Core.Scale.allThresholds 10
-
--- ============================================================================
--- Sweet Spot Conditions (Section 4.3)
--- ============================================================================
-
-/--
-Conditions under which the pragmatic sweet spot exists.
-
-The sweet spot (where middle thresholds beat both extremes) requires:
-1. Non-trivial height prior (variance > 0)
-2. Positive costs for speaking
-3. Costs not so high that silence dominates
-
-This structure captures the analytical conditions from Section 4.3.
--/
-structure SweetSpotConditions where
-  /-- Cost for producing an utterance (C > 0 for non-silent) -/
-  utteranceCost : ℚ
-  /-- Cost must be positive to penalize uninformative utterances -/
-  cost_positive : utteranceCost > 0
-  /-- The threshold where the sweet spot peaks -/
-  peakThreshold : Threshold
-  /-- Prior must assign non-zero probability to heights above and below peak -/
-  prior_has_spread : Bool  -- simplified; could be more precise
-
--- ============================================================================
--- Context-Sensitivity (Section 4.2)
--- ============================================================================
-
-/--
-Height prior for a different reference class (e.g., basketball players).
-
-The distribution is shifted right compared to the general population:
-- General population: peak at h5 (average height)
-- Basketball players: peak at h7 (taller on average)
--/
+    The paper uses "two input priors with different means" to demonstrate
+    context sensitivity. We shift the same bell shape rightward by 2 steps,
+    truncating the left tail at zero. -/
 def basketballPrior (h : Height) : ℚ :=
   match h.toNat with
   | 0 => 0
@@ -243,51 +161,171 @@ def basketballPrior (h : Height) : ℚ :=
   | _ => 5
 
 -- ============================================================================
--- Threshold vs Graded Semantics
+-- Utterance Costs (Section 4.2, Eq. 23; Section 4.4)
 -- ============================================================================
 
-/--
-Graded meaning: degree of "tall" as a function of height.
+/-- Utterance cost function (Eq. 23).
 
-This represents the alternative graded semantics approach where
-"tall" has degrees of truth directly, without threshold variables.
--/
-def gradedTallness (h : Height) : ℚ :=
-  -- Degree = proportion of thresholds below h
-  -- With uniform threshold prior, this is h/10
-  h.toNat / 10
+    C(u) = 2/3 × length(u) in words.
+    C("Sam is tall") = C("Sam is short") = 2/3 × 3 = 2.
+    C(∅) = 0 (null utterance is free). -/
+def utteranceCost (costWord : ℚ) : Utterance → ℚ
+  | .tall => costWord
+  | .short => costWord
+  | .silent => 0
 
-/--
-Marginalized threshold meaning: P(θ < h) with uniform prior.
+/-- Fitted cost value from Section 4.4: C = 2/3 × 3 = 2 for content words. -/
+def paperCost : ℚ := 2
 
-This computes the probability that height h exceeds a randomly
-chosen threshold, which equals the CDF of the threshold prior.
--/
-def marginalizedThresholdMeaning (h : Height) : ℚ :=
-  -- Count thresholds below h, divide by total thresholds
-  let belowCount := (allThresholds.filter λ θ => h.toNat > θ.toNat).length
-  belowCount / 10
+-- ============================================================================
+-- RSAConfig (Section 4.2, Eqs. 20–24)
+-- ============================================================================
 
-/-- Graded meaning function -/
-def gradedMeaning (u : Utterance) (h : Height) : ℚ :=
-  match u with
-  | .tall => gradedTallness h
-  | .short => 1 - gradedTallness h
-  | .silent => 1
+open Real (rpow rpow_nonneg exp log exp_pos)
 
-/-- The degree of tallness increases with height. -/
-theorem graded_monotonic :
-    gradedTallness (deg 3) < gradedTallness (deg 5) ∧
-    gradedTallness (deg 5) < gradedTallness (deg 8) := by
-  native_decide
+/-- Height prior as ℝ. -/
+noncomputable def heightPriorR (h : Height) : ℝ := heightPrior h
 
-/-- Every height has a non-trivial degree (except h0),
-capturing the "no sharp boundary" property of graded semantics. -/
-theorem graded_no_sharp_boundary :
-    gradedTallness (deg 1) > 0 ∧
-    gradedTallness (deg 1) < 1 ∧
-    gradedTallness (deg 9) > 0 ∧
-    gradedTallness (deg 9) < 1 := by
-  native_decide
+theorem heightPriorR_nonneg : ∀ h : Height, 0 ≤ heightPriorR h := by
+  intro h; simp only [heightPriorR]
+  exact_mod_cast (by
+    unfold heightPrior
+    split <;> norm_num : (0 : ℚ) ≤ heightPrior h)
+
+/-- Basketball height prior as ℝ. -/
+noncomputable def basketballPriorR (h : Height) : ℝ := basketballPrior h
+
+theorem basketballPriorR_nonneg : ∀ h : Height, 0 ≤ basketballPriorR h := by
+  intro h; simp only [basketballPriorR]
+  exact_mod_cast (by
+    unfold basketballPrior
+    split <;> norm_num : (0 : ℚ) ≤ basketballPrior h)
+
+/-- Utterance cost as ℝ. -/
+noncomputable def utteranceCostR (u : Utterance) : ℝ := utteranceCost paperCost u
+
+/-- S1 belief-based score with utterance costs (Eq. 23):
+
+    S1(u|s,V) ∝ exp(α · (log P_{L0}(s|u,V) − C(u)))
+
+    Gated on `l0 u w = 0` because Lean's `log 0 = 0`, which would make
+    `exp(α · (0 − C))` positive for false utterances. -/
+noncomputable def beliefScore :
+    (Utterance → Height → ℝ) → ℝ → Threshold → Height → Utterance → ℝ :=
+  fun l0 α _ w u =>
+    if l0 u w = 0 then 0
+    else exp (α * (log (l0 u w) - utteranceCostR u))
+
+theorem beliefScore_nonneg :
+    ∀ (l0 : Utterance → Height → ℝ) (α : ℝ) (l : Threshold) (w : Height) (u : Utterance),
+    (∀ u' w', 0 ≤ l0 u' w') → 0 < α → 0 ≤ beliefScore l0 α l w u := by
+  intro _ _ _ _ _ _ _; simp only [beliefScore]; split
+  · exact le_refl 0
+  · exact le_of_lt (exp_pos _)
+
+/-- Parametric RSAConfig for threshold models.
+
+    Decouples the reference class prior from model structure so that
+    `defaultCfg` and `basketballCfg` share the same architecture.
+
+    Both L0 and L1 use the same prior (Eqs. 20, 24):
+    - L0: P_{L0}(s|u,V) ∝ P(s) · ⟦u⟧_V(s)
+    - L1: P_{L1}(s,V|u) ∝ P_{S1}(u|s,V) · P(s) · P(V)
+
+    α = 4 is the optimal value from Section 4.4. -/
+@[reducible]
+noncomputable def mkThresholdCfg
+    (prior : Height → ℝ) (hp : ∀ h, 0 ≤ prior h) :
+    RSA.RSAConfig Utterance Height where
+  Latent := Threshold
+  meaning θ u h := if meaning u θ h then prior h else 0
+  meaning_nonneg θ u h := by split <;> [exact hp h; exact le_refl 0]
+  s1Score := beliefScore
+  s1Score_nonneg := beliefScore_nonneg
+  α := 4
+  α_pos := by norm_num
+  worldPrior := prior
+  worldPrior_nonneg := hp
+  latentPrior_nonneg _ _ := by positivity
+
+/-- Default config: general population prior (peak at h5). -/
+@[reducible]
+noncomputable def defaultCfg : RSA.RSAConfig Utterance Height :=
+  mkThresholdCfg heightPriorR heightPriorR_nonneg
+
+/-- Basketball config: basketball player prior (peak at h7).
+    Tests context sensitivity (Section 5, Figure 7). -/
+@[reducible]
+noncomputable def basketballCfg : RSA.RSAConfig Utterance Height :=
+  mkThresholdCfg basketballPriorR basketballPriorR_nonneg
+
+-- ============================================================================
+-- L1 Height Inference (Section 4.3, Figure 5)
+-- ============================================================================
+
+/-! ### Hearing "tall" shifts height posterior upward
+
+The pragmatic listener L1, upon hearing "tall," infers that the speaker's
+height is above average. The prior peaks at h5; L1("tall") shifts
+probability mass toward higher heights (Figure 5, left panel). -/
+
+theorem tall_shifts_upward :
+    defaultCfg.L1 .tall (deg 8) > defaultCfg.L1 .tall (deg 2) := by
+  rsa_predict
+
+theorem tall_shifts_upward' :
+    defaultCfg.L1 .tall (deg 7) > defaultCfg.L1 .tall (deg 3) := by
+  rsa_predict
+
+/-! ### Hearing "short" shifts height posterior downward
+
+Mirror image: "short" shifts probability toward lower heights
+(Section 4.3, Figure 6). -/
+
+theorem short_shifts_downward :
+    defaultCfg.L1 .short (deg 2) > defaultCfg.L1 .short (deg 8) := by
+  rsa_predict
+
+theorem short_shifts_downward' :
+    defaultCfg.L1 .short (deg 3) > defaultCfg.L1 .short (deg 7) := by
+  rsa_predict
+
+-- ============================================================================
+-- L1 Threshold Inference (Section 4.3, Figure 5)
+-- ============================================================================
+
+/-! ### Pragmatic sweet spot for thresholds
+
+Given "tall," the listener infers a threshold that balances informativity and
+plausibility (Figure 5, right panel). Very low thresholds (θ ≈ 0) make "tall"
+uninformative (everything is tall), so the cost of speaking outweighs the
+information gain. Very high thresholds (θ ≈ 9) make "tall" implausible
+(almost nothing is tall). The posterior peaks at an intermediate θ.
+
+This sweet spot requires utterance costs (Section 4.4: α=4, C(tall)=2);
+without costs, L1_latent monotonically prefers lower thresholds. -/
+
+theorem tall_threshold_peak_gt_low :
+    defaultCfg.L1_latent .tall (thr 7) > defaultCfg.L1_latent .tall (thr 4) := by
+  rsa_predict
+
+theorem tall_threshold_peak_gt_high :
+    defaultCfg.L1_latent .tall (thr 7) > defaultCfg.L1_latent .tall (thr 9) := by
+  rsa_predict
+
+-- ============================================================================
+-- Context Sensitivity (Section 5, Figure 7)
+-- ============================================================================
+
+/-! ### Basketball context shifts height inference
+
+When the reference class prior shifts right (basketball players: peak at h7
+vs general population: peak at h5), L1 hearing "tall" assigns more probability
+to taller heights (Figure 7). At h10, the basketball prior is 5× the general
+prior (5 vs 1), which dominates the normalization penalty. -/
+
+theorem basketball_tall_favors_taller :
+    basketballCfg.L1 .tall (deg 10) > defaultCfg.L1 .tall (deg 10) := by
+  rsa_predict
 
 end RSA.LassiterGoodman2017

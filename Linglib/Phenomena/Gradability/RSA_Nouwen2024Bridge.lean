@@ -42,9 +42,9 @@ RSA computation stubs remain with `sorry` for future reimplementation.
 
 namespace RSA.Nouwen2024
 
-open RSA.LassiterGoodman2017 (Height Threshold allHeights allThresholds
+open RSA.LassiterGoodman2017 (Height Threshold
   heightPrior thresholdPrior tallMeaning)
-open Core.Scale (deg thr)
+open Core.Scale (deg thr allDegrees allThresholds)
 open Semantics.Lexical.Adjective.Intensification (EvaluativeValence)
 open Phenomena.Gradability.Intensifiers (IntensifierClass)
 
@@ -117,9 +117,9 @@ Joint state for the intensifier model: (Height, θ_adj, θ_eval).
 abbrev JointState := Height × Threshold × Threshold
 
 def allJointStates : List JointState :=
-  allHeights.flatMap λ h =>
-    allThresholds.flatMap λ θ =>
-      allThresholds.map λ θ_e => (h, θ, θ_e)
+  (allDegrees 10).flatMap λ h =>
+    (allThresholds 10).flatMap λ θ =>
+      (allThresholds 10).map λ θ_e => (h, θ, θ_e)
 
 /--
 Full meaning function (Nouwen 2024, eq. 45).
@@ -169,7 +169,7 @@ def adverbUpdate (evalMu : Height → ℚ) (θ_e : Threshold) : Height → ℚ :
 Normalize a height distribution.
 -/
 def normalizeHeightDist (f : Height → ℚ) : Height → ℚ :=
-  let total := (allHeights.map f).foldl (· + ·) 0
+  let total := ((allDegrees 10).map f).foldl (· + ·) 0
   λ h => if total ≠ 0 then f h / total else 0
 
 -- Zwicky Vacuity
