@@ -17,7 +17,7 @@ import Linglib.Fragments.English.FunctionWords
 import Linglib.Theories.Syntax.DependencyGrammar.Core.LexicalRules
 import Linglib.Phenomena.WordOrder.SubjectAuxInversion
 
-namespace DepGrammar.Inversion
+namespace Phenomena.WordOrder.Bridge.DGInversion
 
 open DepGrammar
 
@@ -174,4 +174,4 @@ The key insight from Gibson: Inversion is captured by the lexical rule that
 changes the subject's direction from LEFT to RIGHT in the argument structure.
 -/
 
-end DepGrammar.Inversion
+end Phenomena.WordOrder.Bridge.DGInversion

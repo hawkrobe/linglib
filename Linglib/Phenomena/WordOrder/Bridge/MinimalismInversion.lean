@@ -17,7 +17,7 @@ licensing result, verifying that the theory's predictions match the
 empirical pattern.
 -/
 
-namespace Phenomena.WordOrder.SAI_Minimalism
+namespace Phenomena.WordOrder.Bridge.MinimalismInversion
 
 open Phenomena.WordOrder.SubjectAuxInversion
 
@@ -79,4 +79,4 @@ ground as HPSG but through different formal machinery (derivational
 movement vs. declarative feature constraint).
 -/
 
-end Phenomena.WordOrder.SAI_Minimalism
+end Phenomena.WordOrder.Bridge.MinimalismInversion

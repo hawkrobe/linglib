@@ -28,7 +28,7 @@ AUC values computed from <https://github.com/m-hahn/memory-surprisal>
 - Futrell, R., Levy, R. & Gibson, E. (2020). Dependency locality. Language 96(2).
 -/
 
-namespace DepGrammar.MemorySurprisal.CrossLinguistic
+namespace Phenomena.WordOrder.Bridge.DGMemorySurprisal
 
 open Phenomena.WordOrder.Studies.HahnDegenFutrell2021
 open Phenomena.WordOrder.DependencyLength.FutrellEtAl2020
@@ -141,4 +141,4 @@ theorem high_entropy_not_sufficient :
     (allLanguages.filter (·.branchDirEntropy1000 ≥ 720)).any (·.moreEfficient) = true := by
   native_decide
 
-end DepGrammar.MemorySurprisal.CrossLinguistic
+end Phenomena.WordOrder.Bridge.DGMemorySurprisal

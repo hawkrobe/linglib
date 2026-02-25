@@ -148,12 +148,11 @@ theorem belief_shifts_world :
 theorem belief_origin_preserved :
     beliefTowerConcrete.origin.world = .kingExists := rfl
 
-/-- The belief tower depth matches the generic `beliefTower_depth` from
-    LocalContext.lean. This is the end-to-end bridge: concrete tower ↔
-    abstract local context depth. -/
-theorem belief_depth_matches_local_context :
-    beliefTowerConcrete.depth = 1 ∧ (localCtxNegation initialLC).depth = 1 :=
-  ⟨rfl, rfl⟩
+/-- The concrete belief tower depth matches the generic `beliefTower`
+    construction from LocalContext.lean. Both have depth 1. -/
+theorem belief_depth_matches_generic :
+    beliefTowerConcrete.depth =
+    (beliefTower speechCtx (attitudeShift () .noKing)).depth := rfl
 
 -- ============================================================================
 -- § Conditional Filtering via Tower Origin

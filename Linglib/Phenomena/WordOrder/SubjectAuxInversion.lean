@@ -80,6 +80,12 @@ inductive SAIContext where
   /-- Verb raising diagnostic (adverb/quantifier placement):
       "Jean embrasse souvent Marie" vs "*John kisses often Mary" -/
   | verbRaising
+  /-- Tag question: "She likes him, doesn't she?" -/
+  | tagQuestion
+  /-- VP ellipsis (stranded tense): "She runs faster than he does" -/
+  | vpEllipsis
+  /-- Emphatic/verum focus: "She DOES like him" -/
+  | emphatic
   deriving DecidableEq, Repr, BEq
 
 /-- Acceptability judgment. -/
@@ -644,6 +650,61 @@ def ex35 : SAIDatum :=
     citation := "Arregi & Pietraszko (2021) (37a)" }
 
 -- ============================================================================
+-- § 8b  Additional Do-Support Contexts (Tag Questions, VP Ellipsis, Verum)
+-- ============================================================================
+
+/-! Three further contexts where tense needs overt support, completing
+the paradigm of environments that trigger do-insertion with lexical verbs. -/
+
+/-- Tag question with do-support -/
+def ex36 : SAIDatum :=
+  { sentence := "She likes him, doesn't she?"
+    inverted := true
+    context := .tagQuestion
+    acceptability := .grammatical
+    description := "Tag question with do-support (lexical verb)" }
+
+def ex37 : SAIDatum :=
+  { sentence := "She likes him, likesn't she?"
+    inverted := true
+    context := .tagQuestion
+    acceptability := .ungrammatical
+    description := "Tag question without do-support — lexical verb cannot host negation" }
+
+/-- VP ellipsis with stranded tense -/
+def ex38 : SAIDatum :=
+  { sentence := "She runs faster than he does"
+    inverted := false
+    context := .vpEllipsis
+    acceptability := .grammatical
+    description := "VP ellipsis — do-support strands tense (lexical verb)" }
+
+/-- Verum focus (emphatic 'do') -/
+def ex39 : SAIDatum :=
+  { sentence := "She DOES like him"
+    inverted := false
+    context := .emphatic
+    acceptability := .grammatical
+    description := "Verum focus with do-support (lexical verb)"
+    citation := "Arregi & Pietraszko (2021) (36b)" }
+
+def ex40 : SAIDatum :=
+  { sentence := "She IS eating fish"
+    inverted := false
+    context := .emphatic
+    acceptability := .grammatical
+    description := "Verum focus with auxiliary — no do-support needed"
+    citation := "Arregi & Pietraszko (2021) (37b)" }
+
+def ex41 : SAIDatum :=
+  { sentence := "She DOES be eating fish"
+    inverted := false
+    context := .emphatic
+    acceptability := .ungrammatical
+    description := "Do-support with auxiliary is ungrammatical even for verum"
+    citation := "Arregi & Pietraszko (2021) (37b)" }
+
+-- ============================================================================
 -- § 9  Verb-Specific Acquisition (Westergaard 2009)
 -- ============================================================================
 
@@ -681,7 +742,8 @@ def allData : List SAIDatum :=
   , ex23, ex24, ex25, ex26
   , ex_p01, ex_p02, ex_p03, ex_p04, ex_p05, ex_p06
   , ex_p07, ex_p08, ex_p09, ex_p10, ex_p11, ex_p12
-  , ex27, ex28, ex29, ex30, ex31, ex32, ex33, ex34, ex35 ]
+  , ex27, ex28, ex29, ex30, ex31, ex32, ex33, ex34, ex35
+  , ex36, ex37, ex38, ex39, ex40, ex41 ]
 
 /-- Classic core data (matrix + embedded questions only). -/
 def classicData : List SAIDatum :=
@@ -712,7 +774,8 @@ def crossLinguisticData : List SAIDatum :=
 
 /-- Do-support interaction data (Arregi & Pietraszko 2021). -/
 def doSupportData : List SAIDatum :=
-  [ex27, ex28, ex29, ex30, ex31, ex32, ex33, ex34, ex35]
+  [ex27, ex28, ex29, ex30, ex31, ex32, ex33, ex34, ex35,
+   ex36, ex37, ex38, ex39, ex40, ex41]
 
 -- ============================================================================
 -- Empirical Generalizations
@@ -760,5 +823,17 @@ def doSupportData : List SAIDatum :=
 
 -- Pollock: English auxiliaries pattern with French lexical verbs (they raise).
 #guard ex_p11.acceptability == .grammatical   -- John has often eaten pizza
+
+-- Tag questions require do-support with lexical verbs.
+#guard ex36.acceptability == .grammatical     -- She likes him, doesn't she?
+#guard ex37.acceptability == .ungrammatical   -- *She likes him, likesn't she?
+
+-- VP ellipsis strands tense, requiring do-support.
+#guard ex38.acceptability == .grammatical     -- She runs faster than he does
+
+-- Verum focus: do-support for lexical verbs, direct auxiliary for auxiliaries.
+#guard ex39.acceptability == .grammatical     -- She DOES like him
+#guard ex40.acceptability == .grammatical     -- She IS eating fish
+#guard ex41.acceptability == .ungrammatical   -- *She DOES be eating fish
 
 end Phenomena.WordOrder.SubjectAuxInversion

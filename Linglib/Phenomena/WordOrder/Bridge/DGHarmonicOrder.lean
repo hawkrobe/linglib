@@ -22,9 +22,9 @@ example trees from `HarmonicOrder.lean`.
 - Dryer, M. (1992). The Greenbergian word order correlations. Language 68.
 -/
 
-namespace DepGrammar.HarmonicOrder
+namespace Phenomena.WordOrder.Bridge.DGHarmonicOrder
 
-open DepGrammar DependencyLength
+open DepGrammar DependencyLength DepGrammar.HarmonicOrder
 open Phenomena.WordOrder.Typology
 
 -- ============================================================================
@@ -82,4 +82,4 @@ example : oberstesGesetz harmonicHF 2 = true := by native_decide
 example : oberstesGesetz disharmonicHF 2 = false := by native_decide
 example : oberstesGesetz disharmonicFH 2 = false := by native_decide
 
-end DepGrammar.HarmonicOrder
+end Phenomena.WordOrder.Bridge.DGHarmonicOrder

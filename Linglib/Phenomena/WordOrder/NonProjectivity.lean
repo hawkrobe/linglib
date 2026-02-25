@@ -11,7 +11,7 @@ Empirical data on non-projective structures in dependency treebanks.
   Computational Linguistics 39(2), Tables 3-4.
 -/
 
-namespace DepGrammar.Phenomena
+namespace Phenomena.WordOrder.NonProjectivity
 
 -- ============================================================================
 -- §1: Treebank Coverage (Kuhlmann & Nivre 2006, Table 1)
@@ -106,4 +106,4 @@ def turkish : LCFRSCoverage :=
     rulesLostFanout2 := 54, treesLostFanout2 := 33
     rulesLostWN := 68, treesLostWN := 43 }
 
-end DepGrammar.Phenomena
+end Phenomena.WordOrder.NonProjectivity

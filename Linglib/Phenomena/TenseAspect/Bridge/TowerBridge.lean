@@ -39,7 +39,7 @@ Phenomena.TenseAspect.Data (matrixSaid, embeddedSickSimultaneous, etc.)
 - Schlenker, P. (2003). A Plea for Monsters. L&P.
 -/
 
-namespace Phenomena.TenseAspect.TowerBridge
+namespace Phenomena.TenseAspect.Bridge.TowerBridge
 
 open Core.Context
 open Phenomena.TenseAspect
@@ -190,4 +190,4 @@ theorem nested_double_access :
     presentAccess.resolve nestedTower = 0 := by
   exact presentAccess.origin_stable rfl sotTower (temporalShift (-4))
 
-end Phenomena.TenseAspect.TowerBridge
+end Phenomena.TenseAspect.Bridge.TowerBridge

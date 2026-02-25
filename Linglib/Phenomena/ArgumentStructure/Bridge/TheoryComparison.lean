@@ -29,7 +29,7 @@ Goldberg, A. E. & Jackendoff, R. (2004). The English Resultative as a
 Family of Constructions. Language, 80(3), 532–568.
 -/
 
-namespace Phenomena.ArgumentStructure.Compare
+namespace Phenomena.ArgumentStructure.Bridge.TheoryComparison
 
 open ConstructionGrammar
 open ConstructionGrammar.Studies.GoldbergJackendoff2004
@@ -304,4 +304,4 @@ All three predict the same surface frame [Agent, V, Patient, Result],
 but CxG handles argument augmentation via construction-licensed roles
 while Minimalism requires special mechanisms for fake reflexives. -/
 
-end Phenomena.ArgumentStructure.Compare
+end Phenomena.ArgumentStructure.Bridge.TheoryComparison

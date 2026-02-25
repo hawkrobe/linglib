@@ -53,7 +53,7 @@ Phenomena data match                   ← grammaticality predictions
 - Tesnière, L. (1959). *Éléments de syntaxe structurale*. Paris: Klincksieck.
 -/
 
-namespace DepGrammar.ValencyBridge
+namespace Phenomena.ArgumentStructure.Bridge.DGValency
 
 open DepGrammar Catena
 
@@ -373,4 +373,4 @@ propagates through valence, trees, verification, and breaks exactly
 the affected theorems.
 -/
 
-end DepGrammar.ValencyBridge
+end Phenomena.ArgumentStructure.Bridge.DGValency

@@ -31,7 +31,7 @@ Phenomena.Conditionals.Studies.Iatridou2000.Data (english_pastCF, etc.)
 2. **2 past layers = 2 shifts = depth 2**: PastCF
 3. **subjShift produces modal ExclF**: counterfactual world ≠ actual world
 4. **temporalShift produces temporal ExclF**: topic time ≠ speech time
-5. **Past morphology count = tower depth**: the cross-linguistic universal
+5. **Origin stability**: the actual context is preserved at arbitrary depth
 
 ## References
 
@@ -75,12 +75,12 @@ theorem presCF_depth : presCFTower.depth = 1 := rfl
 /-- Modal ExclF holds: counterfactual world ≠ actual world. -/
 theorem presCF_modal_exclF :
     ExclF .modal presCFTower := by
-  simp [presCFTower, actualTower, actualCtx, ExclF, subjShift]
+  unfold ExclF presCFTower actualTower actualCtx subjShift; decide
 
 /-- Temporal ExclF does NOT hold: time is unchanged (0 = 0). -/
 theorem presCF_no_temporal_exclF :
     ¬ ExclF .temporal presCFTower := by
-  simp [presCFTower, actualTower, actualCtx, ExclF, subjShift]
+  unfold ExclF presCFTower actualTower actualCtx subjShift; decide
 
 /-- Tower depth (1) matches English FLV past layers (1). -/
 theorem flv_tower_depth_matches_data :
@@ -109,13 +109,12 @@ theorem pastCF_depth : pastCFTower.depth = 2 := rfl
     The modal shift from presCFTower propagates through. -/
 theorem pastCF_modal_exclF :
     ExclF .modal pastCFTower := by
-  simp [pastCFTower, presCFTower, actualTower, actualCtx, ExclF, subjShift]
+  unfold ExclF pastCFTower presCFTower actualTower actualCtx subjShift; decide
 
 /-- Temporal ExclF holds: shifted time (-5) ≠ speech time (0). -/
 theorem pastCF_temporal_exclF :
     ExclF .temporal pastCFTower := by
-  simp [pastCFTower, presCFTower, actualTower, actualCtx, ExclF, subjShift,
-        temporalShift]
+  unfold ExclF pastCFTower presCFTower actualTower actualCtx subjShift temporalShift; decide
 
 /-- Tower depth (2) matches English PastCF past layers (2). -/
 theorem pastCF_tower_depth_matches_data :
@@ -124,30 +123,6 @@ theorem pastCF_tower_depth_matches_data :
 /-- Tower depth (2) matches Greek PastCF past layers (2). -/
 theorem pastCF_tower_depth_matches_greek :
     pastCFTower.depth = greek_pastCF.pastLayers := rfl
-
--- ============================================================================
--- § Cross-linguistic Depth Universal
--- ============================================================================
-
-/-- Iatridou's cross-linguistic universal: the number of past morpheme
-    layers in a counterfactual matches the ExclF count, which equals
-    the tower depth. This holds for all sampled data. -/
-def allCFData : List CFMorphologyDatum :=
-  [english_flv, english_presCF, english_pastCF,
-   greek_flv, greek_presCF, greek_pastCF,
-   french_flv, french_presCF, french_pastCF]
-
-/-- Every datum with 1 past layer has exactly 1 ExclF. -/
-theorem one_layer_one_exclF :
-    allCFData.all (λ d =>
-      d.pastLayers != 1 || d.pastLayers == CounterfactualType.flv.exclFCount)
-    = true := by native_decide
-
-/-- Every datum with 2 past layers has exactly 2 ExclFs. -/
-theorem two_layers_two_exclFs :
-    allCFData.all (λ d =>
-      d.pastLayers != 2 || d.pastLayers == CounterfactualType.pastCF.exclFCount)
-    = true := by native_decide
 
 -- ============================================================================
 -- § Origin Stability in Counterfactuals

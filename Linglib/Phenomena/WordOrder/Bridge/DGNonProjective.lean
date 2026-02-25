@@ -21,9 +21,9 @@ well-nestedness, gap degree, and fan-out constraints.
 - Kuhlmann, M. (2013). Mildly Non-Projective Dependency Grammar.
 -/
 
-namespace DepGrammar
+namespace Phenomena.WordOrder.Bridge.DGNonProjective
 
-open DepGrammar.Phenomena
+open Phenomena.WordOrder.NonProjectivity
 
 -- ============================================================================
 -- Empirical Data Verification
@@ -58,4 +58,4 @@ theorem fanout2_good_coverage :
   exact ⟨by native_decide, by native_decide, by native_decide,
          by native_decide, by native_decide⟩
 
-end DepGrammar
+end Phenomena.WordOrder.Bridge.DGNonProjective
