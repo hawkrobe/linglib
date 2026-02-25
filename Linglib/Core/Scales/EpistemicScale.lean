@@ -1,4 +1,5 @@
 import Linglib.Core.Scales.EpistemicScale.Defs
+import Linglib.Core.Scales.EpistemicScale.Entailments
 import Linglib.Core.Scales.EpistemicScale.Fin4
 
 /-!
