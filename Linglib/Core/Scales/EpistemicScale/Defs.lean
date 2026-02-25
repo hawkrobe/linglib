@@ -8,7 +8,7 @@ import Mathlib.Tactic.IntervalCases
 /-!
 # Epistemic Comparative Likelihood (Holliday & Icard 2013)
 
-@cite{holliday-icard-2013}
+@cite{holliday-icard-2013} @cite{halpern-2003}
 
 Epistemic likelihood scales: the `EpistemicScale` arm of the categorical
 diagram in `Core/Scale.lean`. Extracted here because this domain-specific
@@ -73,9 +73,16 @@ def S {W : Type*} (ge : Set W → Set W → Prop) : Prop :=
 def A {W : Type*} (ge : Set W → Set W → Prop) : Prop :=
   ∀ A B, ge A B ↔ ge (A \ B) (B \ A)
 
-/-- Axiom J: join — A ≿ C ∧ B ≿ C ∧ A ∩ B = ∅ → A ∪ B ≿ C. -/
+/-- Axiom J (Holliday & Icard 2013, Figure 4): right-union —
+    φ ≿ ψ ∧ φ ≿ χ → φ ≿ (ψ ∨ χ). -/
 def J {W : Type*} (ge : Set W → Set W → Prop) : Prop :=
-  ∀ A B C, ge A C → ge B C → (∀ x, x ∈ A → x ∉ B) → ge (A ∪ B) C
+  ∀ A B C, ge A B → ge A C → ge A (B ∪ C)
+
+/-- Axiom DS: determination by singletons (Halpern 2003, Theorem 2.7.2) —
+    A ≿ {b} → ∃ a ∈ A, {a} ≿ {b}. The comparison can be witnessed
+    by a single element of the dominating set. -/
+def DS {W : Type*} (ge : Set W → Set W → Prop) : Prop :=
+  ∀ (A : Set W) (b : W), ge A {b} → ∃ a ∈ A, ge {a} {b}
 
 end EpistemicAxiom
 
@@ -286,6 +293,21 @@ def halpernSystemW {W : Type*} (ge_w : W → W → Prop)
   ge := halpernLift ge_w
   refl := halpernLift_axiomR hRefl
   mono := halpernLift_axiomT hRefl
+
+/-- Halpern lift satisfies Axiom J (right-union).
+    If every b ∈ B is dominated and every c ∈ C is dominated, then
+    every element of B ∪ C is dominated. -/
+theorem halpernLift_axiomJ {W : Type*} {ge_w : W → W → Prop} :
+    EpistemicAxiom.J (halpernLift ge_w) :=
+  fun _ _ _ hAB hAC b hb => hb.elim (hAB b) (hAC b)
+
+/-- Halpern lift satisfies Axiom DS (determination by singletons).
+    If A ≿ {b} via the lift, some a ∈ A has ge_w a b, so {a} ≿ {b}. -/
+theorem halpernLift_axiomDS {W : Type*} {ge_w : W → W → Prop} :
+    EpistemicAxiom.DS (halpernLift ge_w) :=
+  fun _ b hAb =>
+    let ⟨a, ha, hab⟩ := hAb b rfl
+    ⟨a, ha, fun _b' hb' => ⟨a, rfl, hb' ▸ hab⟩⟩
 
 -- ── KPS Counterexample Infrastructure ──────────────
 

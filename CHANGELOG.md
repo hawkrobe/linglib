@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.226.48] - 2026-02-25
+
+### Changed
+- **Theorem 7 completeness (Halpern l-lifting representation)**: prove `theorem7_completeness` — an epistemic system with R, T, Tran, J (right-union), and DS (determination by singletons) is representable by Lewis's l-lifting from a reflexive preorder. Construction: `ge_w u v := sys.ge {u} {v}`. Fix `EpistemicAxiom.J` from left-union to right-union (H&I Figure 4). Add `EpistemicAxiom.DS`, soundness lemmas `halpernLift_axiomJ`/`halpernLift_axiomDS`. Helper `ge_of_forall_singleton` via Finset induction.
+
+### Added
+- **Bibliography**: add Halpern (2003) *Reasoning about Uncertainty* and Ackerman & Malouf (2013) *Morphological Organization: The Low Conditional Entropy Conjecture* to `references.bib`.
+
 ## [0.226.46] - 2026-02-25
 
 ### Changed

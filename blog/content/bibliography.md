@@ -11,7 +11,7 @@ Papers referenced, cited, or formalized in Linglib. Each entry links to the corr
 
 **Baker, C. L., Jara-Ettinger, J., Saxe, R. & Tenenbaum, J. B.** (2017). Rational Quantitative Attribution of Beliefs, Desires and Percepts in Human Mentalizing. *Nature Human Behaviour, 1, 0064*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/BToM.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Comparisons/ProjectionMechanisms.lean)\
-cited in: [ProjectionMechanisms](https://github.com/hawkrobe/linglib/blob/main/Linglib/Comparisons/ProjectionMechanisms.lean), [BToM](https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/BToM.lean)
+cited in: [ProjectionMechanisms](https://github.com/hawkrobe/linglib/blob/main/Linglib/Comparisons/ProjectionMechanisms.lean), [BToM](https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/Agent/BToM.lean)
 
 **Barnett, S. A., Griffiths, T. L. & Hawkins, R. D.** (2022). A Pragmatic Account of the Weak Evidence Effect. *Open Mind, 6, 169–182*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/RSA/Implementations/BarnettEtAl2022.lean)
@@ -26,7 +26,8 @@ cited in: [ProjectionMechanisms](https://github.com/hawkrobe/linglib/blob/main/L
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/RSA/Extensions/LexicalUncertainty/Basic.lean)
 
 **Champollion, L., Alsop, A. & Grosu, I.** (2019). Free Choice Disjunction as a Rational Speech Act. *Proceedings of SALT, 29, 238–257*.\
-[formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/RSA/Implementations/ChampollionAlsopGrosu2019.lean)
+[formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/RSA/Implementations/ChampollionAlsopGrosu2019.lean)\
+cited in: [ChampollionAlsopGrosu2019](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Modality/Studies/ChampollionAlsopGrosu2019.lean)
 
 **Cremers, A., Wilcox, E. G. & Spector, B.** (2023). Exhaustivity and Anti-Exhaustivity in the RSA Framework: Testing the Effect of Prior Beliefs. *Cognitive Science, 47(5), e13286*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/RSA/Implementations/CremersWilcoxSpector2023.lean)
@@ -82,7 +83,8 @@ cited in: [KaoEtAl2015](https://github.com/hawkrobe/linglib/blob/main/Linglib/Ph
 cited in: [KaoEtAl2014](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Nonliteral/Hyperbole/KaoEtAl2014.lean)
 
 **Lassiter, D. & Goodman, N. D.** (2017). Adjectival Vagueness in a Bayesian Model of Interpretation. *Synthese, 194(10), 3801–3836*.\
-[formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Gradability/Imprecision/Studies/LassiterGoodman2017.lean)
+[formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Gradability/Imprecision/Studies/LassiterGoodman2017.lean)\
+cited in: [LassiterGoodman2017](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Imprecision/Studies/LassiterGoodman2017.lean)
 
 **Nouwen, R.** (2024). The Semantics and Probabilistic Pragmatics of Deadjectival Intensifiers. *Semantics and Pragmatics*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Gradability/RSA_Nouwen2024Bridge.lean)
@@ -100,7 +102,7 @@ cited in: [QingFranke2015](https://github.com/hawkrobe/linglib/blob/main/Linglib
 
 **Scontras, G. & Pearl, L. S.** (2021). When Pragmatics Matters More for Truth-Value Judgments: An Investigation of Quantifier Scope Ambiguity. *Glossa, 6(1), 110*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/RSA/Implementations/ScontrasPearl2021.lean)\
-cited in: [ScontrasPearl2021](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/RSA/Implementations/ScontrasPearl2021.lean)
+cited in: [ScontrasPearl2021RSA](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Quantification/Studies/ScontrasPearl2021RSA.lean)
 
 **Scontras, G. & Tonhauser, J.** (2025). Projection without Lexically-Specified Presupposition: A Model for “Know”. *Proceedings of Sinn und Bedeutung, 29, 1431–1448*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/RSA/Implementations/ScontrasTonhauser2025.lean)\
@@ -202,9 +204,13 @@ cited in: [BaleEtAl2025](https://github.com/hawkrobe/linglib/blob/main/Linglib/P
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Comparisons/FreeChoice/Aloni2022.lean)\
 cited in: [Aloni2022Bridge](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Modality/Studies/Aloni2022Bridge.lean), [Basic](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Dynamic/Systems/BSML/Basic.lean), [FreeChoice](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Dynamic/Systems/BSML/FreeChoice.lean)
 
+**Halpern, J. Y.** (2003). Reasoning about Uncertainty. *MIT Press*.\
+[formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/Scales/EpistemicScale/Defs.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/Scales/EpistemicScale.lean)\
+cited in: [EpistemicScale](https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/Scales/EpistemicScale.lean), [Defs](https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/Scales/EpistemicScale/Defs.lean)
+
 **Holliday, W. H. & Icard, I. T. F.** (2013). Measure Semantics and Qualitative Semantics for Epistemic Modals. *Semantics and Linguistic Theory, 23, 514–534*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/Scale.lean)\
-cited in: [EpistemicScale](https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/EpistemicScale.lean)
+cited in: [EpistemicScale](https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/Scales/EpistemicScale.lean), [Defs](https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/Scales/EpistemicScale/Defs.lean), [Entailments](https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/Scales/EpistemicScale/Entailments.lean)
 
 **Kratzer, A.** (1981). The Notional Category of Modality. *Words, Worlds, and Contexts, 38–74*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Modality/Kratzer.lean)
@@ -434,6 +440,9 @@ cited in: [ProjectionMechanisms](https://github.com/hawkrobe/linglib/blob/main/L
 
 ## Syntax
 
+**Abels, K.** (2012). Phases: An Essay on Cyclicity in Syntax. *De Gruyter Mouton*.\
+[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/Minimalism/Core/Phase.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/Minimalism/Core/Position.lean)
+
 **Adger, D.** (2003). Core Syntax: A Minimalist Approach. *Oxford University Press*.\
 [foundational] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/WordOrder/SubjectAuxInversion.lean)\
 cited in: [SubjectAuxInversion](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/WordOrder/SubjectAuxInversion.lean)
@@ -444,7 +453,7 @@ cited in: [Bridge](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenome
 
 **Arregi, K. & Pietraszko, A.** (2021). The Ups and Downs of Head Displacement. *Linguistic Inquiry, 52(2), 241–290*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/WordOrder/SubjectAuxInversion.lean)\
-cited in: [SubjectAuxInversion](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/WordOrder/SubjectAuxInversion.lean)
+cited in: [MinimalismVerbMovement](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/WordOrder/Bridge/MinimalismVerbMovement.lean), [SubjectAuxInversion](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/WordOrder/SubjectAuxInversion.lean)
 
 **Cacchioli, G.** (2025). The Syntax of Clausal Prefixes in Tigrinya. *PhD dissertation, Université de Gen\`eve*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Fragments/Tigrinya/ClausePrefixes.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Complementation/Studies/Cacchioli2025/Data.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Complementation/Studies/Cacchioli2025/Bridge.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Complementation/Studies/Cacchioli2025/SelectionBridge.lean)\
@@ -452,6 +461,13 @@ cited in: [ClausePrefixes](https://github.com/hawkrobe/linglib/blob/main/Linglib
 
 **Chomsky, N.** (1995). The Minimalist Program. *MIT Press*.\
 [foundational] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/Minimalism/Core/Basic.lean)
+
+**Erlewine, M. Y.** (2016). Anti-locality and Optimality in Kaqchikel Agent Focus. *Natural Language \& Linguistic Theory, 34, 923–972*.\
+[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/Minimalism/Core/Position.lean)
+
+**Erlewine, M. Y.** (2018). Extraction and Licensing in Toba Batak. *Language, 94(3), 662–697*.\
+[formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/Minimalism/Core/Position.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Fragments/TobaBatak/Basic.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/FillerGap/TobaBatak.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/FillerGap/Bridge/MinimalismTobaBatak.lean)\
+cited in: [Basic](https://github.com/hawkrobe/linglib/blob/main/Linglib/Fragments/TobaBatak/Basic.lean), [MinimalismTobaBatak](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/FillerGap/Bridge/MinimalismTobaBatak.lean), [TobaBatak](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/FillerGap/TobaBatak.lean)
 
 **Goldberg, A. E.** (1995). Constructions: A Construction Grammar Approach to Argument Structure. *University of Chicago Press*.\
 [foundational] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/ConstructionGrammar/Basic.lean)
@@ -486,7 +502,7 @@ cited in: [CatenalConstruction](https://github.com/hawkrobe/linglib/blob/main/Li
 
 **Pollock, J.** (1989). Verb Movement, Universal Grammar, and the Structure of IP. *Linguistic Inquiry, 20(3), 365–424*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/WordOrder/SubjectAuxInversion.lean)\
-cited in: [SubjectAuxInversion](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/WordOrder/SubjectAuxInversion.lean)
+cited in: [MinimalismVerbMovement](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/WordOrder/Bridge/MinimalismVerbMovement.lean), [SubjectAuxInversion](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/WordOrder/SubjectAuxInversion.lean), [VerbMovement](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/Minimalism/Formal/HeadMovement/VerbMovement.lean)
 
 **Radford, A.** (2009). Analysing English Sentences. *Cambridge University Press*.\
 [foundational] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/WordOrder/SubjectAuxInversion.lean)\

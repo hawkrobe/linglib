@@ -5,6 +5,8 @@ import Linglib.Core.Scales.EpistemicScale.Fin4
 /-!
 # Epistemic Comparative Likelihood — Main Theorems
 
+@cite{holliday-icard-2013} @cite{halpern-2003}
+
 Re-exports `EpistemicScale.Defs` (core definitions, Fin 1/2/3/5) and
 `EpistemicScale.Fin4` (Fin 4 representation theorem), then states the
 top-level KPS theorems (8a, 8b) and completeness results.
@@ -65,14 +67,61 @@ theorem theorem6_completeness {W : Type*} [Fintype W]
     ∃ (m : QualAddMeasure W), ∀ A B, sys.ge A B ↔ m.inducedGe A B :=
   sorry -- van der Hoek (1996); linear extension of qualitative probability
 
-/-- **Theorem 2 completeness** (Halpern 2003; Holliday & Icard 2013 §3):
-    every system satisfying R, T, BT, Tran, J, Mon (System WJR) is
-    representable by Lewis's l-lifting from a reflexive preorder on worlds. -/
+/-- Helper: if ge A {b} for every b ∈ B, then ge A B, given monotonicity (T)
+    and right-union (J). Proved by Finset induction on B.toFinset. -/
+private lemma ge_of_forall_singleton {W : Type*} [Fintype W]
+    {ge : Set W → Set W → Prop}
+    (hT : EpistemicAxiom.T ge)
+    (hJ : EpistemicAxiom.J ge)
+    (A B : Set W) (h : ∀ b ∈ B, ge A {b}) : ge A B := by
+  classical
+  suffices ∀ (s : Finset W), (∀ b, b ∈ s → ge A {b}) → ge A (↑s) by
+    rw [← Set.coe_toFinset B]
+    exact this B.toFinset (fun b hb => h b (Set.mem_toFinset.mp hb))
+  intro s
+  induction s using Finset.induction_on with
+  | empty =>
+    intro _
+    simp only [Finset.coe_empty]
+    exact hT ∅ A (Set.empty_subset A)
+  | @insert b s hbs ih =>
+    intro hsub
+    rw [Finset.coe_insert]
+    exact hJ A _ _ (hsub _ (Finset.mem_insert_self _ _))
+      (ih (fun c hc => hsub c (Finset.mem_insert_of_mem hc)))
+
+/-- **Theorem 2 completeness** (Halpern 2003, Thm 2.7.2; Holliday & Icard 2013,
+    Thm 2, Figure 4): an epistemic system satisfying R, T, Tran, J (right-union),
+    and DS (determination by singletons) is representable by Lewis's l-lifting
+    from a reflexive preorder on worlds.
+
+    Construction: `ge_w u v := sys.ge {u} {v}`. -/
 theorem theorem7_completeness {W : Type*} [Fintype W]
-    (sys : EpistemicSystemW W) :
+    (sys : EpistemicSystemW W)
+    (hTran : ∀ A B C : Set W, sys.ge A B → sys.ge B C → sys.ge A C)
+    (hJ : EpistemicAxiom.J sys.ge)
+    (hDS : EpistemicAxiom.DS sys.ge) :
     ∃ (ge_w : W → W → Prop) (_ : ∀ w, ge_w w w),
-      ∀ A B, sys.ge A B ↔ halpernLift ge_w A B :=
-  sorry -- Halpern (2003); requires WJR axioms for completeness
+      ∀ A B, sys.ge A B ↔ halpernLift ge_w A B := by
+  refine ⟨fun u v => sys.ge {u} {v}, fun w => sys.refl {w}, fun A B => ?_⟩
+  constructor
+  · -- Forward: sys.ge A B → halpernLift (fun u v => sys.ge {u} {v}) A B
+    intro hAB b hbB
+    -- {b} ⊆ B, so sys.ge B {b} by monotonicity (Axiom T)
+    have hBb : sys.ge B {b} := sys.mono {b} B (Set.singleton_subset_iff.mpr hbB)
+    -- Transitivity: sys.ge A B → sys.ge B {b} → sys.ge A {b}
+    have hAb : sys.ge A {b} := hTran A B {b} hAB hBb
+    -- DS: sys.ge A {b} → ∃ a ∈ A, sys.ge {a} {b}
+    exact hDS A b hAb
+  · -- Backward: halpernLift → sys.ge A B
+    intro hLift
+    apply ge_of_forall_singleton sys.mono hJ A B
+    intro b hbB
+    obtain ⟨a, haA, hab⟩ := hLift b hbB
+    -- {a} ⊆ A, so sys.ge A {a} by monotonicity
+    have hAa : sys.ge A {a} := sys.mono {a} A (Set.singleton_subset_iff.mpr haA)
+    -- Transitivity: sys.ge A {a} → sys.ge {a} {b} → sys.ge A {b}
+    exact hTran A {a} {b} hAa hab
 
 -- ── Bridge: Axiom A ↔ FA ────────────────────────
 
