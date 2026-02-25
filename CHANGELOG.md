@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.226.46] - 2026-02-25
+
+### Changed
+- **Theorem 8a Fin 4 rewrite**: replace broken merge-and-split approach with direct case-split using explicit rational witnesses, paralleling Fin 3 proof. Infrastructure: `set_fin4_eq` (16 subsets), 16 `mf4_*` measure lemmas, `fin4_dispatch` (core verification over ~80 ordering biconditionals), `perm_ge_singleton`. Sorting network and 8-case partition tree skeletons with sorrys for WIP.
+
 ## [0.226.45] - 2026-02-25
 
 ### Added
