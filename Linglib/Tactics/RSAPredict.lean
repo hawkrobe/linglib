@@ -14,10 +14,10 @@ set_option autoImplicit false
 
 The `rsa_predict` tactic proves ℝ comparison goals on RSA models by:
 
-1. Pattern-matching the goal to identify the comparison form (L1, L1_latent, sums)
+1. Pattern-matching the goal to identify the comparison form (L1, L1_latent, S2, sums)
 2. Reifying each S1 score individually via RExpr → ℚ interval arithmetic
-3. Computing L1/L1_latent/marginal bounds entirely at meta level
-4. Applying a bridge axiom from `RSA.Verified` with the computed ℚ separation
+3. Computing L1/L1_latent/S2/marginal bounds entirely at meta level
+4. Building compositional QInterval containment proofs with ℚ separation
 
 ## Supported Goal Forms
 
@@ -114,6 +114,18 @@ private def assignWithCastFallback (goal : MVarId) (proof : Expr) : TacticM Unit
       catch _ => evalTactic (← `(tactic| norm_cast at *; assumption))
 
 -- ============================================================================
+-- Options
+-- ============================================================================
+
+/-- When true, skip the RExpr reflection path and use only the compositional
+    CProof pipeline. Useful for large models (>4 latent variables) where
+    the kernel cannot reduce deeply nested `RExpr.denote` terms. -/
+register_option rsa_predict.skipReflection : Bool := {
+  defValue := false
+  descr := "Skip RExpr reflection path in rsa_predict (use CProof pipeline only)"
+}
+
+-- ============================================================================
 -- Main Tactic
 -- ============================================================================
 
@@ -125,6 +137,7 @@ private def assignWithCastFallback (goal : MVarId) (proof : Expr) : TacticM Unit
     - `cfg.L1_latent u l₁ > cfg.L1_latent u l₂` — latent inference
     - `cfg.S1 l w u₁ > cfg.S1 l w u₂` — S1 speaker comparison
     - `¬(cfg.S1 l w u₁ > cfg.S1 l w u₂)` — S1 non-strict
+    - `cfg.S2 w₁ u > cfg.S2 w₂ u` — S2 cross-world endorsement
     - `cfg.S1 l w u₁ = cfg.S1 l w u₂` — S1 equality (score symmetry)
     - `cfg.L1 u w₁ = cfg.L1 u w₂` — L1 equality (score symmetry)
     - `Σ s, cfg.L1 u (s, a₁) > Σ s, cfg.L1 u (s, a₂)` — marginal comparison
@@ -376,11 +389,13 @@ elab "rsa_predict" : tactic => do
   let rhs := args[3]!
 
   -- Try generic direct RExpr approach on raw goal (handles all patterns)
-  let t0_generic ← IO.monoMsNow
-  if ← tryDirectRExprCompare goal lhs rhs then
-    let t1_generic ← IO.monoMsNow
-    logInfo m!"rsa_predict: ✓ proved via reflection (generic, {t1_generic - t0_generic}ms)"
-    return
+  let skipReflection := rsa_predict.skipReflection.get (← getOptions)
+  unless skipReflection do
+    let t0_generic ← IO.monoMsNow
+    if ← tryDirectRExprCompare goal lhs rhs then
+      let t1_generic ← IO.monoMsNow
+      logInfo m!"rsa_predict: ✓ proved via reflection (generic, {t1_generic - t0_generic}ms)"
+      return
 
   let goalForm ← parseGoalForm lhs rhs
 
@@ -389,10 +404,11 @@ elab "rsa_predict" : tactic => do
     logInfo m!"rsa_predict: parsed goal as L1 comparison"
     let t0 ← IO.monoMsNow
     -- Try reflection path first (fast, <5s vs ~39s for CProof)
-    if ← tryReflectL1Compare goal cfg u w₁ w₂ then
-      let t1 ← IO.monoMsNow
-      logInfo m!"rsa_predict: ✓ proved via reflection ({t1 - t0}ms)"
-      return
+    unless skipReflection do
+      if ← tryReflectL1Compare goal cfg u w₁ w₂ then
+        let t1 ← IO.monoMsNow
+        logInfo m!"rsa_predict: ✓ proved via reflection ({t1 - t0}ms)"
+        return
     -- Fall back to CProof pipeline
     let (_, _, _, allUElems, allWElems, allLElems, s1Bounds, wpValues, lpValues) ←
       reifyS1Scores cfg
@@ -816,5 +832,105 @@ elab "rsa_predict" : tactic => do
     let proof ← mkAppM ``Core.RationalAction.policy_gt_of_score_gt #[s1Agent, w, u₁, u₂, hgt]
     assignWithCastFallback goal proof
     logInfo m!"rsa_predict: ✓ proved via compositional proof (S1 comparison)"
+
+  | .s2Compare cfg w₁ w₂ u => do
+    logInfo m!"rsa_predict: parsed goal as S2 cross-world comparison"
+    -- Try reflection path first
+    unless skipReflection do
+      let lhs ← mkAppM ``RSA.RSAConfig.S2 #[cfg, w₁, u]
+      let rhs ← mkAppM ``RSA.RSAConfig.S2 #[cfg, w₂, u]
+      if ← tryDirectRExprCompare goal lhs rhs then
+        logInfo m!"rsa_predict: ✓ proved via reflection (S2)"
+        return
+    -- CProof pipeline for S2 cross-world comparison
+    let (_, _, _, allUElems, allWElems, allLElems, s1Bounds, wpValues, lpValues) ←
+      reifyS1Scores cfg
+
+    let uIdx ← findElemIdx allUElems u
+    let w1Idx ← findElemIdx allWElems w₁
+    let w2Idx ← findElemIdx allWElems w₂
+
+    let nL := allLElems.size
+    let nW := allWElems.size
+    let nU := allUElems.size
+    let allUIndices := Array.range nU
+
+    -- Meta-level check: compute S2 bounds for both worlds
+    let s2_w1 := metaS2Score nL nW nU s1Bounds wpValues lpValues allUIndices uIdx w1Idx
+    let s2_w2 := metaS2Score nL nW nU s1Bounds wpValues lpValues allUIndices uIdx w2Idx
+
+    logInfo m!"rsa_predict: S2(u, w₁) ∈ [{s2_w1.lo}, {s2_w1.hi}]"
+    logInfo m!"rsa_predict: S2(u, w₂) ∈ [{s2_w2.lo}, {s2_w2.hi}]"
+
+    unless s2_w2.hi < s2_w1.lo do
+      throwError "rsa_predict: S2 policy bounds not separated: w₂.hi = {s2_w2.hi} ≥ w₁.lo = {s2_w1.lo}"
+
+    -- Build compositional CProofs
+    let αExpr ← mkAppM ``RSA.RSAConfig.α #[cfg]
+    let some αNat ← resolveNat? αExpr
+      | throwError "rsa_predict: cannot extract α as ℕ"
+    let isBeliefBased ← detectBeliefBased cfg
+    logInfo m!"rsa_predict: building compositional proof (α={αNat}, {if isBeliefBased then "belief" else "action"})..."
+
+    -- Phase 1: Build S1 cache and leaf cache (shared across all utterances)
+    enableL0Cache cfg allWElems isBeliefBased
+    let s1Cache ← buildAllS1ScoreCProofs cfg allUElems allWElems allLElems αNat isBeliefBased s1Bounds
+    let leafCache ← buildLeafCache cfg allWElems allLElems wpValues lpValues
+
+    -- Phase 2: For each utterance u', build L1 policy CProofs at w₁ and w₂.
+    -- S2agent.score(w, u) = cfg.L1(u, w) = L1agent.policy(u, w) [normalized].
+    -- Each L1 policy requires L1 scores at ALL worlds (for normalization).
+    let mut policiesW1 : Array CProof := #[]
+    let mut policiesW2 : Array CProof := #[]
+    for u' in allUElems do
+      let (allScoreProofs, totalProof) ← buildAllL1ScoreCProofs cfg u'
+        allUElems allWElems allLElems wpValues lpValues αNat isBeliefBased
+        (some s1Cache) (some leafCache)
+      let policyW1 ← buildL1PolicyFromScores cfg u' w₁ allWElems allScoreProofs totalProof
+      let policyW2 ← buildL1PolicyFromScores cfg u' w₂ allWElems allScoreProofs totalProof
+      policiesW1 := policiesW1.push policyW1
+      policiesW2 := policiesW2.push policyW2
+
+    -- Phase 3: Sum L1 policies per world → S2 totalScore per world
+    let totalW1 ← buildChainAdd policiesW1
+    let totalW2 ← buildChainAdd policiesW2
+    let scoreW1U := policiesW1[uIdx]!
+    let scoreW2U := policiesW2[uIdx]!
+    disableL0Cache
+
+    logInfo m!"rsa_predict: S2 score(w₁,u) ∈ [{scoreW1U.lo}, {scoreW1U.hi}], total(w₁) ∈ [{totalW1.lo}, {totalW1.hi}]"
+    logInfo m!"rsa_predict: S2 score(w₂,u) ∈ [{scoreW2U.lo}, {scoreW2U.hi}], total(w₂) ∈ [{totalW2.lo}, {totalW2.hi}]"
+
+    -- Phase 4: Build cross products and prove separation
+    -- score(w₁,u) * total(w₂) > score(w₂,u) * total(w₁)
+    let cross1 ← buildCMulNN scoreW1U totalW2
+    let cross2 ← buildCMulNN scoreW2U totalW1
+
+    logInfo m!"rsa_predict: cross₁ ∈ [{cross1.lo}, {cross1.hi}], cross₂ ∈ [{cross2.lo}, {cross2.hi}]"
+
+    unless cross2.hi < cross1.lo do
+      throwError "rsa_predict: S2 cross products not separated: cross₂.hi = {cross2.hi} ≥ cross₁.lo = {cross1.lo}"
+
+    let hi2E ← mkAppM ``QInterval.hi #[cross2.iExpr]
+    let lo1E ← mkAppM ``QInterval.lo #[cross1.iExpr]
+    let sepProof ← proveQPropND (← mkAppM ``LT.lt #[hi2E, lo1E])
+    let hcross ← mkAppM ``QInterval.gt_of_separated #[cross1.proof, cross2.proof, sepProof]
+
+    -- Phase 5: Prove totalScore > 0 for both worlds
+    let zeroQ ← mkAppOptM ``OfNat.ofNat #[mkConst ``Rat, mkRawNatLit 0, none]
+    let totLo1 ← mkAppM ``QInterval.lo #[totalW1.iExpr]
+    let htotLo1Pos ← proveQPropND (← mkAppM ``LT.lt #[zeroQ, totLo1])
+    let htot1Pos ← mkAppM ``QInterval.pos_of_lo_pos #[totalW1.proof, htotLo1Pos]
+
+    let totLo2 ← mkAppM ``QInterval.lo #[totalW2.iExpr]
+    let htotLo2Pos ← proveQPropND (← mkAppM ``LT.lt #[zeroQ, totLo2])
+    let htot2Pos ← mkAppM ``QInterval.pos_of_lo_pos #[totalW2.proof, htotLo2Pos]
+
+    -- Phase 6: Apply policy_gt_cross
+    let s2Agent ← mkAppM ``RSA.RSAConfig.S2agent #[cfg]
+    let proof ← mkAppM ``Core.RationalAction.policy_gt_cross
+      #[s2Agent, w₁, w₂, u, htot1Pos, htot2Pos, hcross]
+    assignWithCastFallback goal proof
+    logInfo m!"rsa_predict: ✓ proved via compositional proof (S2 cross-world)"
 
 end Linglib.Tactics

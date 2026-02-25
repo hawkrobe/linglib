@@ -69,6 +69,22 @@ def parseS1Policy (e : Expr) : MetaM (Option (Expr × Expr × Expr × Expr)) := 
       else break
   return none
 
+/-- Extract RSA config and arguments from an S2 policy expression.
+    Returns (cfg, w, u) where the expression is `cfg.S2 w u`. -/
+def parseS2Policy (e : Expr) : MetaM (Option (Expr × Expr × Expr)) := do
+  if let some (ra, w, u) := ← unfoldToPolicy e then
+    let mut raC := ra
+    for _ in List.range 5 do
+      let fn := raC.getAppFn
+      let args := raC.getAppArgs
+      if fn.isConstOf ``RSA.RSAConfig.S2agent && args.size ≥ 5 then
+        let cfg := args[4]!
+        return some (cfg, w, u)
+      if let some ra' ← unfoldDefinition? raC then
+        raC := ra'.headBeta
+      else break
+  return none
+
 -- ============================================================================
 -- Goal Form
 -- ============================================================================
@@ -87,6 +103,8 @@ inductive GoalForm where
   | l1CrossConfig (cfg₁ u₁ : Expr) (ws₁ : Array Expr) (cfg₂ u₂ : Expr) (ws₂ : Array Expr)
   /-- cfg.S1 l w u₁ > cfg.S1 l w u₂ -/
   | s1Compare (cfg l w u₁ u₂ : Expr)
+  /-- cfg.S2 w₁ u > cfg.S2 w₂ u -/
+  | s2Compare (cfg : Expr) (w₁ w₂ u : Expr)
 
 -- ============================================================================
 -- L1_marginal Parsing
@@ -247,6 +265,12 @@ def parseGoalForm (lhs rhs : Expr) : MetaM GoalForm := do
       if ← isDefEq cfg cfg₂ then
         return .s1Compare cfg l w u₁ u₂
 
+  -- Path B3: cfg.S2 w₁ u > cfg.S2 w₂ u
+  if let some (cfg, w₁, u) ← parseS2Policy lhs then
+    if let some (cfg₂, w₂, _u₂) ← parseS2Policy rhs then
+      if ← isDefEq cfg cfg₂ then
+        return .s2Compare cfg w₁ w₂ u
+
   -- Path C/D: sums of L1 terms
   if let some (cfg1, groups1) ← collectL1SummandsAnyU lhs then
     if let some (cfg2, groups2) ← collectL1SummandsAnyU rhs then
@@ -277,6 +301,7 @@ def parseGoalForm (lhs rhs : Expr) : MetaM GoalForm := do
     • cfg.L1 u w₁ > cfg.L1 u w₂\n\
     • cfg.L1_latent u l₁ > cfg.L1_latent u l₂\n\
     • cfg.S1 l w u₁ > cfg.S1 l w u₂\n\
+    • cfg.S2 w₁ u > cfg.S2 w₂ u\n\
     • Σ ... cfg.L1 u ... > Σ ... cfg.L1 u ...\n\
     • (cfg.L1 u₁ w₁ + ...) > (cfg.L1 u₂ w₃ + ...)\n\
     • (cfg₁.L1 u₁ w₁ + ...) > (cfg₂.L1 u₂ w₃ + ...)"

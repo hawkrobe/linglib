@@ -339,6 +339,41 @@ partial def buildRealExprProof (e : Expr) : TacticM CProof := do
         throwError "rsa_predict: Complex.exp handler: expected ℝ arg, got {← ppExpr argType}\n  realArg = {← ppExpr realArg}\n  cArg = {← ppExpr cArg}"
       let innerProof ← go realArg
       return ← buildCExp innerProof
+    -- 6c. (↑base ^ ↑exp).re — unfolded form of Real.rpow base exp
+    --     projExpr = HPow.hPow (↑base) (↑exp) or Complex.cpow (↑base) (↑exp)
+    --     Extract real base and exp, then handle as rpow.
+    let extractOfReal (c : Expr) : MetaM (Option Expr) := do
+      if c.getAppFn.isConstOf ``Complex.ofReal then
+        return some c.getAppArgs.back!
+      let mut cur := c
+      for _ in List.range 5 do
+        if cur.getAppFn.isConstOf ``Complex.ofReal then
+          return some cur.getAppArgs.back!
+        if let some cur' ← unfoldDefinition? cur then
+          cur := cur'.headBeta
+        else break
+      return none
+    -- Try to find two Complex.ofReal arguments in projExpr
+    let projArgs := projExpr.getAppArgs
+    if projArgs.size ≥ 2 then
+      let cBase := projArgs[projArgs.size - 2]!
+      let cExp := projArgs[projArgs.size - 1]!
+      if let some realBase ← extractOfReal cBase then
+        if let some realExp ← extractOfReal cExp then
+          let baseType ← inferType realBase
+          let expType ← inferType realExp
+          if baseType.isConstOf ``Real && expType.isConstOf ``Real then
+            let baseProof ← go realBase
+            if baseProof.lo ≥ 0 then
+              let oneR ← mkAppOptM ``OfNat.ofNat #[mkConst ``Real, mkRawNatLit 1, none]
+              let expIsOne ← withNewMCtxDepth do
+                try isDefEq realExp oneR catch _ => return false
+              if expIsOne then
+                let zeroQ ← mkAppOptM ``OfNat.ofNat #[mkConst ``Rat, mkRawNatLit 0, none]
+                let lo ← mkAppM ``QInterval.lo #[baseProof.iExpr]
+                let ha ← proveQPropND (← mkAppM ``LE.le #[zeroQ, lo])
+                let proof ← mkAppM ``Linglib.Interval.rpowOne_containsReal #[ha, baseProof.proof]
+                return ⟨baseProof.iExpr, proof, baseProof.lo, baseProof.hi⟩
   -- 7. Real.log (positive argument only; log(0) = 0 handled via whnf fallback)
   if fn.isConstOf ``Real.log && e.getAppNumArgs ≥ 1 then
     let inner := e.getAppArgs[0]!
@@ -356,6 +391,23 @@ partial def buildRealExprProof (e : Expr) : TacticM CProof := do
         #[innerProof.proof, hlo, hhi]
       let zeroQExpr ← mkAppOptM ``OfNat.ofNat #[mkConst ``Rat, mkRawNatLit 0, none]
       return ⟨← mkAppM ``QInterval.exact #[zeroQExpr], proof, 0, 0⟩
+  -- 7b. Real.rpow base exp (handles rpow for belief-based RSA models with custom s1Score)
+  if fn.isConstOf ``Real.rpow && e.getAppNumArgs ≥ 2 then
+    let base := e.getAppArgs[0]!
+    let exp := e.getAppArgs[1]!
+    let baseProof ← go base
+    if baseProof.lo ≥ 0 then
+      -- Check if exponent is 1 (most common case: α = 1)
+      let oneR ← mkAppOptM ``OfNat.ofNat #[mkConst ``Real, mkRawNatLit 1, none]
+      let expIsOne ← withNewMCtxDepth do
+        try isDefEq exp oneR catch _ => return false
+      if expIsOne then
+        let zeroQ ← mkAppOptM ``OfNat.ofNat #[mkConst ``Rat, mkRawNatLit 0, none]
+        let lo ← mkAppM ``QInterval.lo #[baseProof.iExpr]
+        let ha ← proveQPropND (← mkAppM ``LE.le #[zeroQ, lo])
+        let proof ← mkAppM ``Linglib.Interval.rpowOne_containsReal #[ha, baseProof.proof]
+        return ⟨baseProof.iExpr, proof, baseProof.lo, baseProof.hi⟩
+    -- Other exponents or negative base: fall through to whnf/unfold
   -- 8. ite (if-then-else)
   if fn.isConstOf ``ite && e.getAppNumArgs ≥ 5 then
     let args := e.getAppArgs
@@ -562,29 +614,46 @@ def detectBeliefBased (cfg : Expr) : TacticM Bool := do
   return exprContainsConst ``Real.rpow reduced
 
 /-- Build CProof for (cfg.S1agent l).score w u.
-    Fast path: belief-based scoring (rpow(L0,α)) — uses rpowOne_containsReal.
-    Slow path: generic decomposition via buildRealExprProof for action-based
-    scoring (exp/log/sum, as in GoodmanStuhlmuller2013). -/
+    Fast path: belief-based scoring with standard s1Score = rpow(L0,α).
+    Fallback: generic decomposition via buildRealExprProof (handles custom
+    s1Score like QUD projection, and action-based exp/log scoring). -/
 def buildS1ScoreCProof (cfg l w u : Expr)
     (allWElems : Array Expr) (αNat : ℕ) (isBeliefBased : Bool) : TacticM CProof := do
-  -- Belief-based rpow path (works for FG2012-style models)
-  if isBeliefBased then
-    let wIdx ← findElemIdx allWElems w
-    let l0Proof ← buildL0PolicyCProof cfg l u allWElems wIdx
-    if αNat == 1 then
+  -- Belief-based rpow shortcut: only works when s1Score = rpow(L0_policy u w, α)
+  if isBeliefBased && αNat == 1 then
+    let shortcutResult ← try
+      let wIdx ← findElemIdx allWElems w
+      let l0Proof ← buildL0PolicyCProof cfg l u allWElems wIdx
       let zeroQ ← mkAppOptM ``OfNat.ofNat #[mkConst ``Rat, mkRawNatLit 0, none]
       let lo ← mkAppM ``QInterval.lo #[l0Proof.iExpr]
       let ha ← proveQPropND (← mkAppM ``LE.le #[zeroQ, lo])
       let proof ← mkAppM ``Linglib.Interval.rpowOne_containsReal #[ha, l0Proof.proof]
-      return ⟨l0Proof.iExpr, proof, l0Proof.lo, l0Proof.hi⟩
-    else
-      throwError "rsa_predict: belief-based with α≠1 not yet supported"
-  -- Action-based: decompose the actual S1 score expression
+      -- Verify proof type matches actual S1 score (catches custom s1Score like QUD projection)
+      let s1Agent ← mkAppM ``RSA.RSAConfig.S1agent #[cfg, l]
+      let scoreExpr ← mkAppM ``Core.RationalAction.score #[s1Agent, w, u]
+      let ok ← withNewMCtxDepth do
+        withTheReader Core.Context (fun ctx => { ctx with maxRecDepth := max ctx.maxRecDepth 8192 }) do
+          try
+            let proofType ← inferType proof
+            let expectedType ← mkAppM ``QInterval.containsReal #[l0Proof.iExpr, scoreExpr]
+            isDefEq proofType expectedType
+          catch _ => return false
+      if ok then pure (some ⟨l0Proof.iExpr, proof, l0Proof.lo, l0Proof.hi⟩)
+      else pure none
+    catch _ => pure none
+    if let some result := shortcutResult then return result
+    logInfo "rsa_predict: belief-based L0 shortcut mismatch, using generic rpow decomposition"
+  -- Generic path: decompose the actual S1 score expression
   let s1Agent ← mkAppM ``RSA.RSAConfig.S1agent #[cfg, l]
   let scoreExpr ← mkAppM ``Core.RationalAction.score #[s1Agent, w, u]
-  -- Pre-whnf so buildRealExprProof's structural checks work immediately
-  let reduced ← whnf scoreExpr
-  buildRealExprProof reduced
+  -- For action-based: pre-whnf to expose exp/log structure.
+  -- For belief-based fallback: skip full whnf (would unfold rpow to Complex arithmetic);
+  -- buildRealExprProof handles rpow via incremental unfolding + step 7b.
+  if !isBeliefBased then
+    let reduced ← whnf scoreExpr
+    buildRealExprProof reduced
+  else
+    buildRealExprProof scoreExpr
 
 /-- Build `∀ a', a' ≠ target → agent.score s a' = 0` from individual zero CProofs.
     Uses the inductive type's `casesOn` recursor to case-split on `a'`,
@@ -665,14 +734,40 @@ abbrev S1Cache := Array (Array (Array CProof))
 
 /-- Build all S1 score CProofs once. Returns cache indexed [l][w][u].
     When `s1Bounds` is provided (from the reify pass), entries known to be zero
-    are given a trivial zero CProof, skipping expensive whnf + buildRealExprProof.
-    The kernel verifies `score = 0` definitionally during final type-checking. -/
+    are given a trivial zero CProof if the kernel can verify `score ≡ 0`
+    definitionally. Otherwise (e.g., QUD-projection models where the reduction
+    chain is too deep), full CProofs are built. -/
 def buildAllS1ScoreCProofs (cfg : Expr)
     (allUElems allWElems allLElems : Array Expr) (αNat : ℕ) (isBeliefBased : Bool)
     (s1Bounds : Option (Array MetaBounds) := none) :
     TacticM S1Cache := do
   let zeroBase ← buildExact 0
   let zeroCProof : CProof := ⟨zeroBase.iExpr, mkConst ``QInterval.exact_zero_containsReal, 0, 0⟩
+  -- Pre-check: can the kernel verify isDefEq 0 ≡ S1agent.score for zero entries?
+  -- For standard rpow(L0,α) models this works; for custom s1Score (QUD projection) it may not.
+  let zeroR ← mkAppOptM ``OfNat.ofNat #[mkConst ``Real, mkRawNatLit 0, none]
+  let useZeroHack ← if s1Bounds.isNone then pure false else do
+    -- Test on the first zero entry
+    let bounds := s1Bounds.get!
+    let mut firstZeroIdx : Option (ℕ × ℕ × ℕ) := none
+    for lIdx in [:allLElems.size] do
+      for wIdx in [:allWElems.size] do
+        for uIdx in [:allUElems.size] do
+          let idx := lIdx * allWElems.size * allUElems.size + wIdx * allUElems.size + uIdx
+          if bounds[idx]!.lo == 0 && bounds[idx]!.hi == 0 then
+            firstZeroIdx := some (lIdx, wIdx, uIdx)
+            break
+        if firstZeroIdx.isSome then break
+      if firstZeroIdx.isSome then break
+    match firstZeroIdx with
+    | none => pure true  -- no zero entries, hack is vacuously fine
+    | some (lIdx, wIdx, uIdx) =>
+      let s1Agent ← mkAppM ``RSA.RSAConfig.S1agent #[cfg, allLElems[lIdx]!]
+      let scoreExpr ← mkAppM ``Core.RationalAction.score
+        #[s1Agent, allWElems[wIdx]!, allUElems[uIdx]!]
+      withNewMCtxDepth do
+        withTheReader Core.Context (fun ctx => { ctx with maxRecDepth := max ctx.maxRecDepth 8192 }) do
+          try isDefEq scoreExpr zeroR catch _ => return false
   let mut cache : S1Cache := #[]
   let mut idx : ℕ := 0
   let mut skipped : ℕ := 0
@@ -684,7 +779,7 @@ def buildAllS1ScoreCProofs (cfg : Expr)
         let isKnownZero := match s1Bounds with
           | some bounds => bounds[idx]!.lo == 0 && bounds[idx]!.hi == 0
           | none => false
-        if isKnownZero then
+        if isKnownZero && useZeroHack then
           uArr := uArr.push zeroCProof
           skipped := skipped + 1
         else

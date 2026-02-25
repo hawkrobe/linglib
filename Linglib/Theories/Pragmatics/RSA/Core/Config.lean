@@ -236,6 +236,35 @@ theorem L1_latent_eq_policy (cfg : RSAConfig U W) (u : U) (l : cfg.Latent) :
 noncomputable def L1_marginal (cfg : RSAConfig U W) (u : U) (P : W → Bool) : ℝ :=
   ∑ w ∈ Finset.univ.filter (fun w => P w = true), cfg.L1 u w
 
+-- ============================================================================
+-- S2: Pragmatic Speaker (endorsement)
+-- ============================================================================
+
+/-- S2 agent: pragmatic speaker conditioning on observed world.
+
+    S2 inverts L1 via Bayes' rule over utterances (eq 8, Scontras & Pearl 2021):
+    S2(u|w) ∝ P_{L1}(w|u) = L1(u, w)   [the normalized L1 posterior]
+
+    Used for endorsement tasks: "would you endorse utterance u given that
+    you observed world w?" This differs from L1 because L1 conditions on
+    the heard utterance (shared denominator across worlds), while S2
+    conditions on the observed world (different denominator per world).
+
+    The score is the **normalized** L1 posterior P(w|u), not the unnormalized
+    L1 score. This matters: worldPrior enters through L1's normalization
+    denominator, so different worldPriors produce different S2 values. -/
+noncomputable def S2agent (cfg : RSAConfig U W) : RationalAction W U where
+  score w u := cfg.L1 u w
+  score_nonneg w u := cfg.L1agent.policy_nonneg u w
+
+/-- S2 policy: P(u|w) = L1(u,w) / Σ_{u'} L1(u',w). -/
+noncomputable def S2 (cfg : RSAConfig U W) (w : W) (u : U) : ℝ :=
+  cfg.S2agent.policy w u
+
+theorem S2_nonneg (cfg : RSAConfig U W) (w : W) (u : U) :
+    0 ≤ cfg.S2 w u :=
+  cfg.S2agent.policy_nonneg w u
+
 end RSAConfig
 
 end RSA

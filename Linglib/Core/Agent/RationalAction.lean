@@ -157,6 +157,20 @@ theorem RationalAction.policy_gt_of_score_gt (ra : RationalAction S A) (s : S)
   simp only [policy, ne_of_gt htot_pos, ↓reduceIte]
   exact div_lt_div_of_pos_right hgt htot_pos
 
+/-- Cross-state policy comparison: compares policy values at different states
+    (different denominators). Used for S2 cross-world comparisons where
+    S2(u|w₁) vs S2(u|w₂) have different normalization constants.
+
+    The cross-product condition `score(s₁,a) * total(s₂) > score(s₂,a) * total(s₁)`
+    is equivalent to `score(s₁,a)/total(s₁) > score(s₂,a)/total(s₂)` when both
+    totals are positive. -/
+theorem RationalAction.policy_gt_cross (ra : RationalAction S A) (s₁ s₂ : S) (a : A)
+    (h_pos₁ : 0 < ra.totalScore s₁) (h_pos₂ : 0 < ra.totalScore s₂)
+    (h_cross : ra.score s₁ a * ra.totalScore s₂ > ra.score s₂ a * ra.totalScore s₁) :
+    ra.policy s₁ a > ra.policy s₂ a := by
+  simp only [policy, ne_of_gt h_pos₁, ne_of_gt h_pos₂, ↓reduceIte]
+  exact (div_lt_div_iff₀ h_pos₂ h_pos₁).mpr h_cross
+
 /-- Score-sum ordering implies policy-sum ordering when both sides share the same
     state (same denominator). Used by `rsa_predict` for marginal L1 comparisons
     where the worlds being summed differ but the utterance and config are shared. -/

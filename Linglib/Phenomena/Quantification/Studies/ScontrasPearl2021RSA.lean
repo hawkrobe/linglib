@@ -37,10 +37,12 @@ Three QUD partitions over worlds:
 
 ## S2 vs L1 (eq 8)
 
-The paper models endorsement as S2, not L1. S2(u|w) normalizes L1(w|u)
-over utterances *per observed world*. This matters because L1 conditions
-on the heard utterance (same normalizer for all worlds), while S2
-conditions on the observed world (different normalizer per world).
+The paper models endorsement as S2, not L1. S2(u|w) ∝ P_{L1}(w|u),
+using the **normalized** L1 posterior. This matters because:
+- L1 conditions on the heard utterance (same normalizer for all worlds)
+- S2 conditions on the observed world (different normalizer per world)
+- worldPrior enters S2 through L1's normalization denominator, so
+  different worldPriors produce different S2 values
 
 The S2 ordering S2(everyNot|w0) > S2(everyNot|w1) > S2(everyNot|w2)
 is **robust** across all prior configurations, even when L1 orderings
@@ -66,6 +68,9 @@ S2 endorsement for "every horse didn't jump" in the partial world (w=1):
 | b_suc=0.1 (baseline) | 0.288 | ~0.29 |
 | b_suc=0.5 (default) | 0.506 | ~0.48 |
 | b_suc=0.9 (high base rate) | 0.796 | ~0.80 |
+
+The S2 ordering w0 > w1 > w2 is **robust** across all prior configurations,
+even when L1 orderings vary (e.g., highBaseCfg reverses L1 ordering).
 
 ## References
 
@@ -363,19 +368,13 @@ noncomputable abbrev surfaceOnlyCfg :=
 -- §7. S2 Endorsement (eq 8)
 -- ============================================================================
 
-/-- S2 endorsement (eq 8): P(endorse u | w) = L1_score(u,w) / Σ_{u'} L1_score(u',w).
+/-! S2 endorsement (eq 8) uses the generic `RSAConfig.S2` from
+    `Theories/Pragmatics/RSA/Core/Config.lean`:
+    S2(u|w) = S2agent.policy(w, u) where S2agent.score(w, u) = cfg.L1(u, w)
+    (the **normalized** L1 posterior).
 
-    S2 normalizes L1's unnormalized score over utterances per observed world.
-    The paper uses S2 — not L1 — as the endorsement probability because
-    endorsement conditions on the OBSERVED world (denominator varies per w),
-    whereas L1 conditions on the HEARD utterance (denominator varies per u).
-
-    This distinction matters: L1 orderings across worlds can reverse under
-    prior manipulation (e.g., highBaseCfg), but S2 orderings are robust. -/
-noncomputable def S2 (c : RSA.RSAConfig Utt JumpOutcome) (u : Utt) (w : JumpOutcome) : ℝ :=
-  let score_u := c.L1agent.score u w
-  let total := ∑ u' : Utt, c.L1agent.score u' w
-  if total = 0 then 0 else score_u / total
+    The `rsa_predict` tactic handles S2 cross-world goals via `policy_gt_cross`,
+    building compositional QInterval proofs for the cross-product comparison. -/
 
 -- ============================================================================
 -- §8. L1-Level Theorems
@@ -419,48 +418,65 @@ theorem ambiguity_boosts_partial :
 -- highBaseCfg reverses the ordering (w1 > w2 > w0), but S2 normalizing
 -- per world restores the correct ordering.
 --
--- These theorems require comparing S2 = L1_score(u,w) / Σ_{u'} L1_score(u',w)
--- across different worlds, where the denominator varies per w. This is not
--- directly handled by rsa_predict (which compares L1 within a single
--- normalizer). TODO: extend rsa_predict to handle cross-world S2 comparisons.
+-- S2 compares L1(u,w) / Σ_{u'} L1(u',w) across different worlds
+-- (different denominators). worldPrior enters through L1's normalization
+-- denominator, so different worldPriors produce different S2 values.
+-- The `rsa_predict` tactic handles S2 cross-world goals via
+-- `policy_gt_cross`, building compositional QInterval proofs.
 
+set_option rsa_predict.skipReflection true in
+set_option maxHeartbeats 800000 in
 /-- Baseline S2: w0 > w1 (matches 92% > 59% in Experiment 1). -/
 theorem baseline_S2_w0_gt_w1 :
-    S2 baselineCfg .everyNot .zero > S2 baselineCfg .everyNot .one := by
-  sorry
+    baselineCfg.S2 .zero .everyNot > baselineCfg.S2 .one .everyNot := by
+  rsa_predict
 
+set_option rsa_predict.skipReflection true in
+set_option maxHeartbeats 800000 in
 /-- Baseline S2: w1 > w2 (matches 59% > 18% in Experiment 1). -/
 theorem baseline_S2_w1_gt_w2 :
-    S2 baselineCfg .everyNot .one > S2 baselineCfg .everyNot .two := by
-  sorry
+    baselineCfg.S2 .one .everyNot > baselineCfg.S2 .two .everyNot := by
+  rsa_predict
 
+set_option rsa_predict.skipReflection true in
+set_option maxHeartbeats 800000 in
 /-- S2 ordering robust to high base rate (b_suc = 0.9).
     Even when L1 reverses (w1 > w2 > w0 at L1), S2 still orders w0 > w1. -/
 theorem highBase_S2_w0_gt_w1 :
-    S2 highBaseCfg .everyNot .zero > S2 highBaseCfg .everyNot .one := by
-  sorry
+    highBaseCfg.S2 .zero .everyNot > highBaseCfg.S2 .one .everyNot := by
+  rsa_predict
 
+set_option rsa_predict.skipReflection true in
+set_option maxHeartbeats 800000 in
 /-- S2 ordering robust to high base rate: w1 > w2. -/
 theorem highBase_S2_w1_gt_w2 :
-    S2 highBaseCfg .everyNot .one > S2 highBaseCfg .everyNot .two := by
-  sorry
+    highBaseCfg.S2 .one .everyNot > highBaseCfg.S2 .two .everyNot := by
+  rsa_predict
 
+set_option rsa_predict.skipReflection true in
+set_option maxHeartbeats 800000 in
 /-- S2 ordering robust to symmetric prior (b_suc = 0.5). -/
 theorem default_S2_w0_gt_w1 :
-    S2 defaultCfg .everyNot .zero > S2 defaultCfg .everyNot .one := by
-  sorry
+    defaultCfg.S2 .zero .everyNot > defaultCfg.S2 .one .everyNot := by
+  rsa_predict
 
+set_option rsa_predict.skipReflection true in
+set_option maxHeartbeats 800000 in
 theorem default_S2_w1_gt_w2 :
-    S2 defaultCfg .everyNot .one > S2 defaultCfg .everyNot .two := by
-  sorry
+    defaultCfg.S2 .one .everyNot > defaultCfg.S2 .two .everyNot := by
+  rsa_predict
 
+set_option rsa_predict.skipReflection true in
+set_option maxHeartbeats 800000 in
 /-- S2 ordering robust under supportive context (b_suc = 0.9, all?-biased QUD). -/
 theorem supportive_S2_w0_gt_w1 :
-    S2 supportiveCfg .everyNot .zero > S2 supportiveCfg .everyNot .one := by
-  sorry
+    supportiveCfg.S2 .zero .everyNot > supportiveCfg.S2 .one .everyNot := by
+  rsa_predict
 
+set_option rsa_predict.skipReflection true in
+set_option maxHeartbeats 800000 in
 theorem supportive_S2_w1_gt_w2 :
-    S2 supportiveCfg .everyNot .one > S2 supportiveCfg .everyNot .two := by
-  sorry
+    supportiveCfg.S2 .one .everyNot > supportiveCfg.S2 .two .everyNot := by
+  rsa_predict
 
 end Phenomena.Quantification.Studies.ScontrasPearl2021RSA

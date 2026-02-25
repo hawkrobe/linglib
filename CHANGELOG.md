@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.226.43] - 2026-02-25
+
+### Added
+- **S2 pragmatic speaker in RSA core**: add `S2agent`/`S2`/`S2_nonneg` to `Config.lean` as first-class RSA definitions. S2(u|w) ∝ L1(u,w) [normalized posterior], used for endorsement tasks (Scontras & Pearl 2021 eq 8). Add `policy_gt_cross` theorem to `RationalAction.lean` for cross-state (cross-denominator) policy comparison. Extend `rsa_predict` tactic to handle S2 cross-world goals via CProof pipeline. All 8 SP2021 S2 theorems now proved by `rsa_predict` (was `sorry`). Delete unused `Verified.lean` bridge axioms.
+
 ## [0.226.42] - 2026-02-24
 
 ### Changed

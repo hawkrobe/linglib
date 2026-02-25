@@ -165,6 +165,21 @@ def metaL1Policy
   let targetScore := metaL1Score nL nW nU s1Bounds wpValues lpValues uIdx targetWIdx
   roundBounds (metaQIDivPosSafe targetScore totalBounds)
 
+/-- Compute S2 policy bounds at meta level (cross-world comparison).
+    S2(u|w) = L1(u,w) / Σ_{u'} L1(u',w), where L1 is the **normalized** posterior.
+    S2agent.score(w,u) = cfg.L1(u,w) = L1agent.policy(u,w). -/
+def metaS2Score
+    (nL nW nU : ℕ)
+    (s1Bounds : Array MetaBounds)
+    (wpValues : Array ℚ) (lpValues : Array ℚ)
+    (allUIndices : Array ℕ) (targetUIdx wIdx : ℕ) : MetaBounds :=
+  let allWIndices := Array.range nW
+  let scores := allUIndices.map fun uIdx =>
+    metaL1Policy nL nW nU s1Bounds wpValues lpValues uIdx allWIndices wIdx
+  let totalBounds := metaQISumMap scores
+  let targetScore := metaL1Policy nL nW nU s1Bounds wpValues lpValues targetUIdx allWIndices wIdx
+  roundBounds (metaQIDivPosSafe targetScore totalBounds)
+
 -- ============================================================================
 -- Utility Functions
 -- ============================================================================
