@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.226.51] - 2026-02-25
+
+### Changed
+- **Theorem 8a Fin 4 complete**: all 8 partition cases proved with explicit rational witnesses, 0 sorry warnings. Split into parallel files (`Fin4/Defs.lean` + 8 case files) for ~2x build speedup.
+
+### Added
+- **Fin4 case helpers**: `nge_empty_of_elem`, `ge_superset`, `nge_superset` derivation helpers in `Fin4/Defs.lean`.
+- **8 case files**: `Case4`, `Case31`, `Case22`, `Case211`, `Case13`, `Case121`, `Case112`, `Case1111` — each proves representability for one partition type of the sorted singleton ordering.
+
 ## [0.226.50] - 2026-02-25
 
 ### Changed
