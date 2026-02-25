@@ -46,9 +46,26 @@ between functional head and root.
   Linguistic Inquiry 35, 355–392.
 - Arad, M. (2005). Roots and Patterns. Dordrecht: Springer.
 - Dixon, R.M.W. (1982). Where Have All the Adjectives Gone? The Hague: Mouton.
+
+## Unified Root (§§15–17)
+
+Extends the file with the `Root` structure (§16) bundling Coon's (2019) arity
+dimension (does the root select an internal argument?) with Beavers et al.'s
+change-entailment dimension. The two axes cross-classify orthogonally
+(`arity_changeType_orthogonal`): knowing whether a root selects a theme tells
+you nothing about whether it entails change, and vice versa.
+
+- Coon, J. (2019). Building verbs in Chuj: Consequences for the nature of
+  roots. In *The Oxford Handbook of the Languages of Mesoamerica*, ed. J.
+  Aissen, N. C. England & R. Zavala Maldonado. OUP.
+- Hale, K. & Keyser, S.J. (2002). *Prolegomenon to a Theory of Argument
+  Structure*. MIT Press.
+- Harley, H. (2014). On the identity of roots. *Theoretical Linguistics*
+  40, 225–276.
 -/
 
 import Linglib.Theories.Semantics.Events.EventStructure
+import Linglib.Core.RootDimensions
 
 namespace Semantics.Events.RootTypology
 
@@ -549,5 +566,168 @@ theorem grand_unification (rt : RootType) :
     RootType.verbalFormIsMarked, RootType.allowsRestitutiveAgain,
     RootType.requiresBECOME, RootType.admitsBasicStative,
     verbalMarkedness, stativeMarkedness]
+
+-- ════════════════════════════════════════════════════
+-- § 15. Root Arity: Internal Argument Selection (Coon 2019)
+-- ════════════════════════════════════════════════════
+
+/-- Whether a root selects an internal (theme) argument.
+
+    Coon (2019) §2, (77): the central division of labor in verbal
+    structure is that **roots determine internal arguments** while
+    **functional heads (v/Voice⁰) determine external arguments**.
+
+    In Chuj (Mayan), √TV roots are of semantic type ⟨e, ⟨s,t⟩⟩ — they
+    obligatorily take an internal argument (theme/patient), and this
+    argument persists across ALL voice alternations (transitive, passive,
+    antipassive). √ITV, √NOM, and √POS roots do not select themes.
+
+    This classification is orthogonal to `RootType` (Beavers et al. 2021):
+    a root can independently be [±theme] and [±change]. -/
+inductive RootArity where
+  | selectsTheme  -- ⟨e, ⟨s,t⟩⟩: root obligatorily takes internal argument (Coon's √TV)
+  | noTheme       -- No internal argument selection (Coon's √ITV, √NOM, √POS)
+  deriving DecidableEq, Repr, BEq
+
+/-- Does this root arity entail an obligatory internal argument? -/
+def RootArity.hasInternalArg : RootArity → Bool
+  | .selectsTheme => true
+  | .noTheme => false
+
+-- ════════════════════════════════════════════════════
+-- § 16. Unified Root Structure
+-- ════════════════════════════════════════════════════
+
+/-- Unified root characterization bundling all classification dimensions.
+
+    A root is characterized along four independent axes:
+    1. **Arity** (Coon 2019): does it select an internal argument?
+    2. **Change entailment** (Beavers et al. 2021): does it lexically
+       entail a prior change event?
+    3. **Quality dimensions** (Spalek & McNally): within-class root content
+       (force, patient robustness, result type, volition, control)
+    4. **Class membership** (Levin 1993): verb class taxonomy
+
+    Axes 1 and 2 cross-classify orthogonally (§17): knowing whether a root
+    selects a theme tells you nothing about whether it entails change.
+
+    The `changeType` field uses Beavers et al.'s `RootType`. For non-CoS
+    roots (activities, contact verbs), interpret `.propertyConcept` broadly
+    as "does not lexically entail change" — the formal content
+    (`entailsChange`) is correct for all roots. -/
+structure Root where
+  /-- Does this root select an internal argument? (Coon 2019) -/
+  arity : RootArity
+  /-- Does this root lexically entail prior change? (Beavers et al. 2021) -/
+  changeType : RootType
+  /-- Within-class quality dimensions (Spalek & McNally) -/
+  profile : RootProfile := {}
+  /-- Verb class membership (Levin 1993) -/
+  levinClass : Option LevinClass := none
+  deriving BEq, Repr
+
+/-- Does this root lexically entail prior change? -/
+def Root.entailsChange (r : Root) : Bool := r.changeType.entailsChange
+
+/-- Predicted verbal markedness from change entailment. -/
+def Root.verbalMarkedness (r : Root) : Markedness :=
+  RootTypology.verbalMarkedness r.changeType
+
+/-- Predicted stative markedness from change entailment. -/
+def Root.stativeMarkedness (r : Root) : Markedness :=
+  RootTypology.stativeMarkedness r.changeType
+
+-- ════════════════════════════════════════════════════
+-- § 17. Cross-Classification: Arity × Change Entailment
+-- ════════════════════════════════════════════════════
+
+-- Witnesses for all four cells of the 2×2 cross-classification.
+
+/-- √BREAK: selects theme + entails change (result root, Levin 45.1).
+    "Break X" — the root obligatorily takes a patient that undergoes
+    breaking, and the root lexically entails a prior change event. -/
+def Root.break_ : Root :=
+  { arity := .selectsTheme, changeType := .result, levinClass := some .break_ }
+
+/-- √HIT: selects theme + does not entail change (Levin 18.1).
+    "Hit X" — the root takes a contactee, but hitting does not entail
+    that the patient undergoes a change of state (Levin 1993 pp. 5–8).
+    `.propertyConcept` is used broadly here: the formal content
+    (`entailsChange = false`) is what matters, not the label. -/
+def Root.hit : Root :=
+  { arity := .selectsTheme, changeType := .propertyConcept,
+    levinClass := some .hit }
+
+/-- √DIE: no theme + entails change.
+    "Die" — intransitive; the dying entity is introduced by functional
+    structure (unaccusative vGO/vBE), not selected by the root. Dying
+    lexically entails a prior change event (becoming dead). -/
+def Root.die : Root :=
+  { arity := .noTheme, changeType := .result }
+
+/-- √SIT: no theme + does not entail change (positional root).
+    "Sit" — Coon's √POS class: denotes a spatial configuration state.
+    No internal argument, no entailed change. -/
+def Root.sit : Root :=
+  { arity := .noTheme, changeType := .propertyConcept,
+    levinClass := some .assumePosition }
+
+/-- **Orthogonality of arity and change entailment.**
+
+    All four cells of the 2×2 cross-classification are inhabited.
+    This proves the two dimensions are genuinely independent:
+    knowing that a root selects a theme tells you nothing about
+    whether it entails change, and vice versa. -/
+theorem arity_changeType_orthogonal :
+    (∃ r : Root, r.arity = .selectsTheme ∧ r.changeType = .result) ∧
+    (∃ r : Root, r.arity = .selectsTheme ∧ r.changeType = .propertyConcept) ∧
+    (∃ r : Root, r.arity = .noTheme ∧ r.changeType = .result) ∧
+    (∃ r : Root, r.arity = .noTheme ∧ r.changeType = .propertyConcept) :=
+  ⟨⟨.break_, rfl, rfl⟩, ⟨.hit, rfl, rfl⟩, ⟨.die, rfl, rfl⟩, ⟨.sit, rfl, rfl⟩⟩
+
+/-- **Change entailment does not determine arity** (and vice versa).
+
+    Beavers et al.'s grand unification (§14) shows that `entailsChange`
+    determines ALL morphosyntactic correlates (markedness, simple stative,
+    again readings, template requirements). But it determines NOTHING
+    about internal argument selection. Coon's arity adds an independent
+    dimension of prediction: whether the root will surface with an
+    internal argument across voice alternations. -/
+theorem change_does_not_determine_arity :
+    (∃ r : Root, r.entailsChange = true ∧ r.arity = .selectsTheme) ∧
+    (∃ r : Root, r.entailsChange = true ∧ r.arity = .noTheme) ∧
+    (∃ r : Root, r.entailsChange = false ∧ r.arity = .selectsTheme) ∧
+    (∃ r : Root, r.entailsChange = false ∧ r.arity = .noTheme) :=
+  ⟨⟨.break_, rfl, rfl⟩, ⟨.die, rfl, rfl⟩, ⟨.hit, rfl, rfl⟩, ⟨.sit, rfl, rfl⟩⟩
+
+/-- **Theme persistence** (Coon 2019 main empirical claim).
+
+    If a root selects a theme, the internal argument persists regardless
+    of what v/Voice⁰ head combines with it. In Chuj, √TV roots surface
+    with an internal argument in transitive (Ø), passive (-ch, -j),
+    and antipassive (-w) constructions alike.
+
+    This is expressed by design: `arity` is a field of `Root`, not of
+    the derived verb. No functional head modifies it. -/
+theorem theme_persistence (r : Root) (h : r.arity = .selectsTheme) :
+    r.arity.hasInternalArg = true := by
+  simp [h, RootArity.hasInternalArg]
+
+/-- Change entailment determines markedness in the unified Root. -/
+theorem root_markedness_from_change (r : Root) :
+    r.verbalMarkedness = .unmarked ↔ r.entailsChange = true := by
+  cases r with | mk arity changeType _ _ =>
+  cases changeType <;> simp [Root.verbalMarkedness, Root.entailsChange,
+    RootTypology.verbalMarkedness, RootType.entailsChange]
+
+/-- Roots with the same change type have identical morphosyntactic
+    behavior regardless of arity — markedness, stative forms, and
+    again readings are orthogonal to internal argument selection. -/
+theorem same_change_same_morphosyntax (r₁ r₂ : Root)
+    (h : r₁.changeType = r₂.changeType) :
+    r₁.verbalMarkedness = r₂.verbalMarkedness ∧
+    r₁.stativeMarkedness = r₂.stativeMarkedness ∧
+    r₁.entailsChange = r₂.entailsChange := by
+  simp [Root.verbalMarkedness, Root.stativeMarkedness, Root.entailsChange, h]
 
 end Semantics.Events.RootTypology

@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.226.49] - 2026-02-25
+
+### Added
+- **Unified Root structure (Coon 2019, Beavers et al. 2021)**: `RootArity` (selectsTheme/noTheme) and `Root` structure in `RootTypology.lean` (§§15–17) cross-classifying arity × change entailment. Four witness roots (`break_`, `hit`, `die`, `sit`) prove `arity_changeType_orthogonal`. Theorems: `change_does_not_determine_arity`, `theme_persistence`, `root_markedness_from_change`, `same_change_same_morphosyntax`.
+- **Voice–VerbHead bridge (Kratzer 1996 in Cuervo 2003 terms)**: `VoiceFlavor.eventContribution` and `buildDecomposition` in `Voice.lean` (§§5–6) connecting Voice (argument introduction) to VerbHead (event decomposition). Agentive/causer Voice contributes vDO; non-thematic/expletive contributes nothing. Key theorem `voice_determines_causativity_go_be`: for [vGO, vBE] roots, causativity = assignsTheta (∀ VoiceHead).
+- **Chuj verb building fragment (Coon 2019)**: `Fragments/Chuj/VerbBuilding.lean` — four Voice heads (Ø, -w, -ch, -j), root classes (√TV, √ITV, √POS, √NOM), event decomposition via `buildDecomposition`, existential closure (-aj) predicate, division-of-labor theorems, `chuj_causative_alternation_result`.
+- Add Mam and Chuj fragments to `Linglib.lean` imports.
+
 ## [0.226.48] - 2026-02-25
 
 ### Changed

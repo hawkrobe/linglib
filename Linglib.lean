@@ -155,6 +155,10 @@ import Linglib.Fragments.Tagalog.TemporalConnectives
 import Linglib.Fragments.Spanish.Clitics
 import Linglib.Fragments.Spanish.Predicates
 import Linglib.Fragments.Spanish.PersonFeatures
+import Linglib.Fragments.Mam.VoiceSystem
+import Linglib.Fragments.Mam.Agreement
+import Linglib.Fragments.Mam.ExtractionMorphology
+import Linglib.Fragments.Chuj.VerbBuilding
 
 -- Phenomena
 import Linglib.Phenomena.Causatives.Studies.SpalekMcNally.Data
