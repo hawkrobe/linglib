@@ -9,16 +9,25 @@ Consequences for the nature of roots."
 
 ## Key Claims
 
-1. **Four root classes** (√TV, √ITV, √POS, √NOM) distinguished by arity:
-   √TV selects a theme (⟨e, ⟨s,t⟩⟩); the others do not (⟨s,t⟩).
+1. **Four root classes** (√TV, √ITV, √POS, √NOM) distinguished primarily
+   by complement projection. √TV projects a complement DP; the others
+   do not. Semantically, Coon (2019, (3)) assigns:
+   √TV ⟨e, ⟨s,t⟩⟩, √ITV ⟨e, ⟨s,t⟩⟩, √POS ⟨e, ⟨s,d⟩⟩, √NOM ⟨e,t⟩.
+   Note: √TV and √ITV share the same semantic type following Davis (1997),
+   but differ in whether their entity argument surfaces as a complement (√TV)
+   or becomes the subject (√ITV).
 2. **Four v/Voice⁰ heads** (Ø, -w, -ch, -j) distinguished by whether
    they assign a θ-role and whether the external argument is overt,
    implicit, or absent.
-3. **Division of labor**: Roots determine internal arguments (theme
-   selection); Voice heads determine external arguments. The causative
-   alternation follows from this split.
-4. **-aj as Existential Closure**: The suffix -aj is the overt
+3. **Division of labor** (Table (2)/(77)): Roots determine internal
+   arguments (complement selection); Voice heads determine external
+   arguments. The causative alternation follows from this split.
+4. **-aj as Existential Closure** (p. 76): The suffix -aj is the overt
    morphological reflex of existential binding of an implicit argument.
+5. **Voice alternations are root-derived** (p. 77, citing Alexiadou et al.
+   2006): each voice form is built independently from root + v/Voice⁰,
+   not derived from another voice form (e.g., passive is not derived
+   from active).
 
 ## Chuj Voice Morphology (Table 58)
 
@@ -29,10 +38,24 @@ Consequences for the nature of roots."
 | -ch    | Passive           | ✓      | Implicit (x∃) | —          |
 | -j     | Agentless passive | ✗      | None          | —          |
 
+## Modeling Notes
+
+**RootArity captures complement projection, not semantic type.**
+Coon's semantic types (3) group {√TV, √ITV} together as ⟨e, ⟨s,t⟩⟩ — both
+compose with an entity argument per Davis (1997). But syntactically, only
+√TV projects a complement DP that persists across voice alternations; √ITV's
+entity argument becomes the subject. Our `RootArity.selectsTheme` captures
+the syntactic complement projection, giving {√TV} vs {√ITV, √POS, √NOM}.
+This matches the -aj diagnostic: -aj marks implicit arguments, and only √TV
+stems show -aj (the theme can be implicit), not √ITV.
+
 ## References
 
 - Coon, J. (2019). Building verbs in Chuj: Consequences for the nature
   of roots. *Glossa* 4(1): 74.
+- Davis, H. (1997). Deep unaccusativity and zero syntax in St'at'imcets.
+  In A. Mendikoetxea & M. Uribe-Etxebarria (eds.), *Theoretical Issues
+  at the Morphology-Syntax Interface*, 55–96.
 -/
 
 namespace Fragments.Chuj
@@ -50,53 +73,67 @@ def vØ : VoiceHead :=
   { flavor := .agentive, hasD := true, phaseHead := true }
 
 /-- Agentive intransitive v/Voice⁰ (-w): introduces overt agent in
-    Spec,VoiceP but assigns absolutive (not ergative) case.
+    Spec,VoiceP but assigns absolutive (not ergative) case (p. 54).
+    Merges directly with root — cannot attach to derived stems (p. 55, (34a)).
     Used with √NOM and √POS to verbalize roots, and with √TV
-    in incorporation antipassives (where the theme is a bare NP). -/
+    in incorporation antipassives (where the theme is a bare NP).
+    Also models the null intransitive v/Voice⁰ for √ITV roots (p. 40):
+    both introduce an agent and assign absolutive, differing only in
+    overt (-w) vs null morphological realization. -/
 def v_w : VoiceHead :=
   { flavor := .agentive, hasD := true, phaseHead := false }
 
 /-- Passive v/Voice⁰ (-ch): assigns θ-role to an implicit (existentially
-    bound) external argument. Agent-oriented adverbs and by-phrases
-    are licensed, confirming semantic presence of agent.
+    bound) external argument (p. 68–69). Agent-oriented adverbs and
+    by-phrases are licensed, confirming semantic presence of agent.
     Only combines with √TV roots. -/
 def v_ch : VoiceHead :=
   { flavor := .agentive, hasD := false, phaseHead := false }
 
 /-- Agentless passive v/Voice⁰ (-j): verbalizes stem but introduces
-    no external argument — neither overt nor implicit. No agent-oriented
-    adverbs, no agentive by-phrases. Used with √TV (agentless passive)
-    and non-transitive roots (inchoative/stative readings). -/
+    no external argument — neither overt nor implicit (p. 70:
+    "does not assign a thematic role and does not merge an external
+    argument"). No agent-oriented adverbs, no agentive by-phrases.
+    Used with √TV (agentless passive) and non-transitive roots
+    (inchoative/stative readings). -/
 def v_j : VoiceHead :=
-  { flavor := .expletive, hasD := false, phaseHead := false }
+  { flavor := .nonThematic, hasD := false, phaseHead := false }
 
 -- ============================================================================
 -- § 2: Chuj Root Classes
 -- ============================================================================
 
 /-- √TV root (PC): selects theme, no entailed change-of-state.
+    Semantic type ⟨e, ⟨s,t⟩⟩ (Coon 2019, (3)).
     Examples: mak' "hit", tek' "kick". -/
 def rootTV_pc : Root :=
   { arity := .selectsTheme, changeType := .propertyConcept }
 
 /-- √TV root (result): selects theme, entails change-of-state.
+    Semantic type ⟨e, ⟨s,t⟩⟩ (Coon 2019, (3)).
     Examples: jatz' "hit (breaking)", tzak' "wrap". -/
 def rootTV_res : Root :=
   { arity := .selectsTheme, changeType := .result }
 
-/-- √ITV root: no theme, activity. Examples: way "sleep", ok' "cry".
-    Same Root coordinates as √POS and √NOM — the distinction is
-    categorical (verbal base) not arity/change. -/
+/-- √ITV root: semantic type ⟨e, ⟨s,t⟩⟩ (same as √TV per Davis 1997),
+    but does NOT project a complement — the entity argument becomes the
+    subject. The class is morphologically defined: roots that appear
+    with null v/Voice⁰ in intransitive stems (p. 40).
+    Examples: way "sleep", ok' "cry", jaw "arrive", b'at "go".
+    Shares Root coordinates with √POS and √NOM because all three
+    lack a syntactic complement; the distinction is categorical origin. -/
 def rootITV : Root :=
   { arity := .noTheme, changeType := .propertyConcept }
 
-/-- √POS root: no theme, positional/stative. Examples: chot "sit",
-    kot "on all fours", watz "lie face down". -/
+/-- √POS root: positional/stative. Semantic type ⟨e, ⟨s,d⟩⟩ — a
+    measure function, not a truth-value predicate (Henderson 2017).
+    Examples: chot "sit", kot "on all fours", watz "lie face down". -/
 def rootPOS : Root :=
   { arity := .noTheme, changeType := .propertyConcept }
 
-/-- √NOM root: no theme, nominal base. Examples: a' "water",
-    ixim "corn", chanhal "dance". -/
+/-- √NOM root: nominal base. Semantic type ⟨e,t⟩ — entity predicate
+    with no event argument (Coon 2019, (3)).
+    Examples: a' "water", ixim "corn", chanhal "dance". -/
 def rootNOM : Root :=
   { arity := .noTheme, changeType := .propertyConcept }
 
@@ -127,7 +164,7 @@ theorem agentive_voices_assign_theta :
     v_w.assignsTheta = true ∧
     v_ch.assignsTheta = true := ⟨rfl, rfl, rfl⟩
 
-/-- -j does NOT assign a θ-role: agentless. -/
+/-- -j does NOT assign a θ-role: agentless (p. 70). -/
 theorem v_j_no_theta : v_j.assignsTheta = false := rfl
 
 /-- Only Ø is a phase head (assigns ergative case). -/
@@ -150,7 +187,9 @@ theorem v_j_no_event : v_j.flavor.eventContribution = none := rfl
 -- § 5: Verb Building (buildDecomposition)
 -- ============================================================================
 
--- Core combinations from Coon (2019) §4–5:
+-- Core combinations from Coon (2019) §4–5.
+-- Each voice form is built independently from root + v/Voice⁰ (p. 77,
+-- citing Alexiadou et al. 2006): passive is not derived from active.
 
 /-- √TV result + Ø → causative [vDO, vGO, vBE] (active transitive). -/
 theorem tv_res_active :
@@ -162,19 +201,23 @@ theorem tv_res_passive_ch :
     isCausative (buildDecomposition v_ch resultLower) = true := by native_decide
 
 /-- √TV result + -j → inchoative [vGO, vBE] (agentless passive / anticausative).
-    No agent at all — the event is a pure change-of-state. -/
+    No agent at all — the event is a pure change-of-state (p. 70). -/
 theorem tv_res_agentless :
     isInchoative (buildDecomposition v_j resultLower) = true := by native_decide
 
-/-- √ITV + Ø → activity [vDO] (unergative intransitive). -/
-theorem itv_active :
-    isActivity (buildDecomposition vØ activityLower) = true := by native_decide
+/-- √ITV + v/Voice⁰ → activity [vDO] (intransitive).
+    Uses v_w, which shares formal properties with the null intransitive
+    v/Voice⁰ for √ITV (both are agentive, non-ERG-assigning; p. 40). -/
+theorem itv_intransitive :
+    isActivity (buildDecomposition v_w activityLower) = true := by native_decide
 
-/-- √POS + -w → [vDO, vBE]: agent assumes a position (agentive stative). -/
+/-- √POS + -w → [vDO, vBE]: agent assumes a position (agentive stative).
+    (p. 52, (23b)): chot-w-i "hopped along crouched-down". -/
 theorem pos_agentive :
     buildDecomposition v_w positionalLower = [.vDO, .vBE] := by native_decide
 
-/-- √NOM + -w → activity [vDO] (denominal agentive intransitive). -/
+/-- √NOM + -w → activity [vDO] (denominal agentive intransitive).
+    (p. 46, (16b)): chanhal-w-i "danced". -/
 theorem nom_agentive :
     isActivity (buildDecomposition v_w activityLower) = true := by native_decide
 
@@ -196,48 +239,69 @@ def hasImplicitExternal (v : VoiceHead) : Bool :=
 def triggersAj (v : VoiceHead) (implicitInternal : Bool) : Bool :=
   hasImplicitExternal v || implicitInternal
 
-/-- -ch always triggers -aj (implicit external agent). -/
+/-- -ch always triggers -aj (implicit external agent; p. 69). -/
 theorem ch_triggers_aj : hasImplicitExternal v_ch = true := by native_decide
 
 /-- Ø never has an implicit external (agent is overt ERG DP). -/
 theorem vØ_no_implicit : hasImplicitExternal vØ = false := by native_decide
 
-/-- -w never has an implicit external (agent is overt ABS DP). -/
+/-- -w never has an implicit external (agent is overt ABS DP; p. 54). -/
 theorem v_w_no_implicit : hasImplicitExternal v_w = false := by native_decide
 
-/-- -j has no implicit external (there is no agent at all, not even implicit). -/
+/-- -j has no implicit external (there is no agent at all, not even
+    implicit; p. 70: "no thematic agent, implicit or otherwise"). -/
 theorem v_j_no_implicit : hasImplicitExternal v_j = false := by native_decide
 
-/-- -ch-aj: passive of √TV with implicit agent. -/
+/-- -ch-aj: passive of √TV with implicit agent (Table 58). -/
 theorem ch_aj_passive :
     triggersAj v_ch false = true := by native_decide
 
-/-- -w-aj: absolutive antipassive (√TV theme is implicit). -/
+/-- -w-aj: absolutive antipassive (√TV theme is implicit; Table 58). -/
 theorem w_aj_antipassive :
     triggersAj v_w true = true := by native_decide
 
-/-- -w incorporation antipassive: theme is overt bare NP → no -aj. -/
+/-- -w incorporation antipassive: theme is overt bare NP → no -aj
+    (Table 58; p. 56, (26b)). -/
 theorem w_incorporation_no_aj :
     triggersAj v_w false = false := by native_decide
 
 -- ============================================================================
--- § 7: Division of Labor Theorems
+-- § 7: -w Cross-Class Generalization
 -- ============================================================================
 
-/-- Division of labor (Coon 2019, core claim): the root determines whether
-    a theme is present; Voice determines whether an agent is present.
-    Same root with different Voice → different argument count. -/
+/-- -w serves the same structural function across three root classes:
+    it merges directly with the root, verbalizes it, and introduces an
+    agent without assigning ERG (p. 54–56). The only difference is the
+    root's lower event structure. -/
+theorem w_cross_class :
+    -- √TV (incorporation antipassive): activity
+    isActivity (buildDecomposition v_w activityLower) = true ∧
+    -- √POS (positional verbalization): agent + state
+    buildDecomposition v_w positionalLower = [.vDO, .vBE] ∧
+    -- √NOM (denominal verbalization): activity
+    isActivity (buildDecomposition v_w activityLower) = true := by
+  exact ⟨by native_decide, by native_decide, by native_decide⟩
+
+-- ============================================================================
+-- § 8: Division of Labor Theorems
+-- ============================================================================
+
+/-- Division of labor (Coon 2019, Table (2)/(77), p. 76): the root
+    determines whether a theme is present; Voice determines whether an
+    agent is present. Same root with different Voice → different event type;
+    same Voice with different root → same external argument status. -/
 theorem division_of_labor :
     -- Same result root: Ø gives causative, -j gives inchoative
     isCausative (buildDecomposition vØ resultLower) = true ∧
     isInchoative (buildDecomposition v_j resultLower) = true ∧
-    -- Root's arity is invariant across voice alternations
-    rootTV_res.arity = .selectsTheme ∧
-    rootTV_res.arity = .selectsTheme := ⟨by native_decide, by native_decide, rfl, rfl⟩
+    -- √TV has theme, √ITV does not — root determines internal arg
+    rootTV_res.arity.hasInternalArg = true ∧
+    rootITV.arity.hasInternalArg = false := ⟨by native_decide, by native_decide, rfl, rfl⟩
 
-/-- Theme persistence: a root's internal argument selection does not change
-    under voice alternation. Whether the theme surfaces as a full DP, bare NP,
-    or is existentially closed, the root still selects it. -/
+/-- Theme persistence (p. 76: "there is no option in which the transitive
+    root selects no complement"): a root's complement projection is invariant
+    across voice alternation. By construction, `arity` is a field on `Root`,
+    not on the root+voice combination, so this is structural. -/
 theorem theme_persistence :
     rootTV_res.arity.hasInternalArg = true ∧
     rootTV_pc.arity.hasInternalArg = true ∧
@@ -246,7 +310,7 @@ theorem theme_persistence :
     rootNOM.arity.hasInternalArg = false := ⟨rfl, rfl, rfl, rfl, rfl⟩
 
 /-- The causative alternation in Chuj is determined by Voice, not by the root
-    (generalization of `voice_determines_causativity_go_be` to Chuj heads).
+    (instantiation of `voice_determines_causativity_go_be` for Chuj heads).
     For result roots, causativity tracks exactly with θ-assignment. -/
 theorem chuj_causative_alternation_result :
     isCausative (buildDecomposition vØ resultLower) = vØ.assignsTheta ∧
