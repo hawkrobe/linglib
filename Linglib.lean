@@ -1043,6 +1043,7 @@ import Linglib.Theories.Pragmatics.RSA.ScalarImplicatures.Hurford
 import Linglib.Theories.Phonology.Features
 import Linglib.Theories.Phonology.FeatureGeometry
 import Linglib.Theories.Phonology.OT.Core
+import Linglib.Theories.Phonology.Autosegmental.Defs
 
 -- Theories: Sociolinguistics
 import Linglib.Theories.Sociolinguistics.PropertySpace

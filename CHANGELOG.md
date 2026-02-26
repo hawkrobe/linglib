@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.226.76] - 2026-02-25
+
+### Added
+- **Autosegmental representations** (`Theories/Phonology/Autosegmental/Defs.lean`): feature sharing and tier-based representations building on the feature geometry. `AssocLine` with `noCrossing` constraint, `agreeAt` feature agreement predicate (`placeAssimilation`, `totalAssimilation`), `Sharing` structure linking adjacent segments under a geometric node, `AutosegRep` with `inBounds`/`consistent` checks, `spread`/`delink`/`delinkAll` operations, `ocpViolations` counter (returns `Nat` matching OT constraint interface). Verification: `agreeAt_refl`, feature count consumption from geometry (place = 12, supralaryngeal = 13), `spread_delink_not_present` round-trip.
+
+## [0.226.75] - 2026-02-25
+
+### Changed
+- **DOMProfile unified into DifferentialMarkingProfile**: `DOMProfile` is now an abbreviation for `DifferentialMarkingProfile` (P + flagging), eliminating the duplicate structure. `isMonotone`, `isAnimacyOnly`, `isDefinitenessOnly` live on the general type in `Core/Prominence.lean`. Deleted 12 per-language theorems in `DependentCaseDOM.lean` subsumed by `full_pipeline_faithful_and_monotone`. Deleted `domToDMP` bridge (now identity). ~100 lines removed, 1 type eliminated.
+
 ## [0.226.74] - 2026-02-25
 
 ### Changed
