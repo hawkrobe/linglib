@@ -206,7 +206,7 @@ cited in: [Aloni2022Bridge](https://github.com/hawkrobe/linglib/blob/main/Lingli
 
 **Halpern, J. Y.** (2003). Reasoning about Uncertainty. *MIT Press*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/Scales/EpistemicScale/Defs.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/Scales/EpistemicScale.lean)\
-cited in: [EpistemicScale](https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/Scales/EpistemicScale.lean), [Defs](https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/Scales/EpistemicScale/Defs.lean)
+cited in: [BeliefRevision](https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/Logic/BeliefRevision.lean), [EpistemicScale](https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/Scales/EpistemicScale.lean), [Conditional](https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/Scales/EpistemicScale/Conditional.lean), [Defs](https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/Scales/EpistemicScale/Defs.lean), [CommonGround](https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/Semantics/CommonGround.lean)
 
 **Holliday, W. H. & Icard, I. T. F.** (2013). Measure Semantics and Qualitative Semantics for Epistemic Modals. *Semantics and Linguistic Theory, 23, 514–534*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/Scale.lean)\
@@ -463,7 +463,8 @@ cited in: [ClausePrefixes](https://github.com/hawkrobe/linglib/blob/main/Linglib
 [foundational] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/Minimalism/Core/Basic.lean)
 
 **Erlewine, M. Y.** (2016). Anti-locality and Optimality in Kaqchikel Agent Focus. *Natural Language \& Linguistic Theory, 34, 923–972*.\
-[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/Minimalism/Core/Position.lean)
+[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/Minimalism/Core/Position.lean)\
+cited in: [AgentFocus](https://github.com/hawkrobe/linglib/blob/main/Linglib/Fragments/Kaqchikel/AgentFocus.lean), [MinimalismAgentFocus](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/FillerGap/Bridge/MinimalismAgentFocus.lean)
 
 **Erlewine, M. Y.** (2018). Extraction and Licensing in Toba Batak. *Language, 94(3), 662–697*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/Minimalism/Core/Position.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Fragments/TobaBatak/Basic.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/FillerGap/TobaBatak.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/FillerGap/Bridge/MinimalismTobaBatak.lean)\
@@ -503,6 +504,10 @@ cited in: [CatenalConstruction](https://github.com/hawkrobe/linglib/blob/main/Li
 **Pollock, J.** (1989). Verb Movement, Universal Grammar, and the Structure of IP. *Linguistic Inquiry, 20(3), 365–424*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/WordOrder/SubjectAuxInversion.lean)\
 cited in: [MinimalismVerbMovement](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/WordOrder/Bridge/MinimalismVerbMovement.lean), [SubjectAuxInversion](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/WordOrder/SubjectAuxInversion.lean), [VerbMovement](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/Minimalism/Formal/HeadMovement/VerbMovement.lean)
+
+**Preminger, O.** (2014). Agreement and Its Failures. *MIT Press*.\
+[formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Fragments/Kaqchikel/Agreement.lean)\
+cited in: [Agreement](https://github.com/hawkrobe/linglib/blob/main/Linglib/Fragments/Kaqchikel/Agreement.lean)
 
 **Radford, A.** (2009). Analysing English Sentences. *Cambridge University Press*.\
 [foundational] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/WordOrder/SubjectAuxInversion.lean)\

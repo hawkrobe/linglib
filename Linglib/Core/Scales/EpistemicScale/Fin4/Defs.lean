@@ -579,10 +579,44 @@ noncomputable def fin4_witness (sys : EpistemicSystemFA (Fin 4))
    reduce_to_disjoint sys _ biconditionals⟩
 
 -- ═══════════════════════════════════════════════════════════════
--- § 6c. All-non-null case tree
+-- § 6c. Compact helpers for leaf proofs
+-- ═══════════════════════════════════════════════════════════════
+
+/-- Tactic for closing set-difference/equality goals on Fin 4 sets. -/
+macro "sdiff" : tactic => `(tactic| (ext x; fin_cases x <;> simp_all))
+
+/-- Positive biconditional: both sides hold. -/
+theorem bp {P Q : Prop} (hp : P) (hq : Q) : P ↔ Q := ⟨fun _ => hq, fun _ => hp⟩
+
+/-- Negative biconditional: neither side holds. -/
+theorem bn {P Q : Prop} (hnp : ¬P) (hnq : ¬Q) : P ↔ Q :=
+  ⟨fun h => absurd h hnp, fun h => absurd h hnq⟩
+
+/-- Derive ge P Q via intermediate set M using two singleton orderings and transitivity. -/
+theorem ge_pair_via_mid (sys : EpistemicSystemFA (Fin 4))
+    (P Q M : Set (Fin 4)) {j k i l : Fin 4}
+    (h1 : sys.ge {j} {k}) (h2 : sys.ge {i} {l})
+    (hdPM : P \ M = {j}) (hdMP : M \ P = {k})
+    (hdMQ : M \ Q = {i}) (hdQM : Q \ M = {l}) :
+    sys.ge P Q := by
+  have hPM : sys.ge P M := by rw [sys.additive P M, hdPM, hdMP]; exact h1
+  have hMQ : sys.ge M Q := by rw [sys.additive M Q, hdMQ, hdQM]; exact h2
+  exact sys.trans _ _ _ hPM hMQ
+
+/-- Derive ¬ge P Q by contradiction via intermediate set M. -/
+theorem nge_pair_via_contra (sys : EpistemicSystemFA (Fin 4))
+    (P Q M : Set (Fin 4)) {j k i l : Fin 4}
+    (hge : sys.ge {j} {k}) (hnge : ¬sys.ge {i} {l})
+    (hdQM : Q \ M = {j}) (hdMQ : M \ Q = {k})
+    (hdPM : P \ M = {i}) (hdMP : M \ P = {l}) :
+    ¬sys.ge P Q := fun h => by
+  have hQM : sys.ge Q M := by rw [sys.additive Q M, hdQM, hdMQ]; exact hge
+  have hPM := sys.trans _ _ _ h hQM
+  rw [sys.additive P M, hdPM, hdMP] at hPM
+  exact hnge hPM
 
 -- ═══════════════════════════════════════════════════════════════
--- § 6c. Case theorems for the 8 partition types
+-- § 6d. Case theorems for the 8 partition types
 -- ═══════════════════════════════════════════════════════════════
 
 

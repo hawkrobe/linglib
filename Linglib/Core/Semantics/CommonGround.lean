@@ -1,9 +1,36 @@
 import Linglib.Core.Semantics.Proposition
+import Linglib.Core.Logic.ModalLogic
+import Linglib.Core.Scales.EpistemicScale.Defs
 
 /-!
-# Common Ground
+# Common Ground and Common Knowledge
 
-Conversational common ground following Stalnaker (1974, 2002).
+@cite{halpern-2003}
+
+Conversational common ground following Stalnaker (1974, 2002), with
+multi-agent epistemic operators from Halpern (2003, Ch. 7).
+
+Common ground IS common knowledge (Stalnaker 2002): a proposition is
+in the common ground iff it is common knowledge among the discourse
+participants. This file connects Stalnaker's informal notion to the
+formal fixed-point characterization from epistemic logic.
+
+## Multi-Agent Operators
+
+| Operator | Symbol | Definition |
+|----------|--------|------------|
+| Individual knowledge | Kᵢ(φ) | φ at all i-accessible worlds |
+| Everyone knows | E_G(φ) | ∧ᵢ∈G Kᵢ(φ) |
+| Common knowledge | C_G(φ) | φ ∧ E(φ) ∧ E(E(φ)) ∧ ... |
+| Distributed knowledge | D_G(φ) | φ at all (∩ᵢ Rᵢ)-accessible worlds |
+
+## References
+
+- Stalnaker, R. (1974). Pragmatic Presuppositions.
+- Stalnaker, R. (2002). Common Ground. L&P 25: 701–721.
+- Halpern, J. (2003). Reasoning about Uncertainty. Ch. 7.
+- Fagin, R., Halpern, J., Moses, Y. & Vardi, M. (1995). Reasoning
+  about Knowledge. MIT Press.
 -/
 
 namespace Core.CommonGround
@@ -186,3 +213,161 @@ theorem update_toProp (c : BContextSet W) (p : W → Bool) :
 end BContextSet
 
 end Core.CommonGround
+
+-- ══════════════════════════════════════════════════════════════════════
+-- Multi-Agent Epistemic Operators (Halpern 2003, Ch. 7)
+-- ══════════════════════════════════════════════════════════════════════
+
+namespace Core.CommonGround.MultiAgent
+
+open Core.Proposition (BProp FiniteWorlds)
+open Core.ModalLogic (AccessRel AgentAccessRel kripkeEval)
+
+/-! ## Individual Knowledge
+
+Agent i knows φ at world w iff φ holds at all worlds accessible to i.
+This re-uses `kripkeEval` from `ModalLogic.lean` with agent-indexed
+accessibility relations. -/
+
+/-- Agent i knows φ at world w: Kᵢ(φ)(w) = □ᵢ φ(w). -/
+def knows {W E : Type*} [FiniteWorlds W]
+    (Rs : AgentAccessRel W E) (i : E) (φ : BProp W) (w : W) : Bool :=
+  kripkeEval (Rs i) .necessity φ w
+
+/-! ## Everyone Knows
+
+E_G(φ) holds at w iff every agent in group G knows φ at w.
+E_G(φ) = ∧ᵢ∈G Kᵢ(φ). -/
+
+/-- Everyone in group G knows φ at w. -/
+def everyoneKnows {W E : Type*} [FiniteWorlds W]
+    (Rs : AgentAccessRel W E) (group : List E) (φ : BProp W) (w : W) : Bool :=
+  group.all fun i => knows Rs i φ w
+
+/-- Everyone knows implies each individual knows. -/
+theorem everyoneKnows_implies_knows {W E : Type*} [FiniteWorlds W]
+    (Rs : AgentAccessRel W E) (group : List E) (φ : BProp W) (w : W)
+    (i : E) (hi : i ∈ group)
+    (h : everyoneKnows Rs group φ w = true) :
+    knows Rs i φ w = true := by
+  unfold everyoneKnows at h
+  exact List.all_eq_true.mp h i hi
+
+/-! ## Common Knowledge
+
+C_G(φ) is the greatest fixed point of X = φ ∧ E_G(X). Equivalently,
+C_G(φ) = φ ∧ E_G(φ) ∧ E_G(E_G(φ)) ∧ ... (infinite conjunction).
+
+For computation on finite worlds, we iterate E_G until fixpoint. Since
+there are finitely many truth assignments, this terminates. -/
+
+/-- Iterate "everyone knows" n times: E^n_G(φ). -/
+def everyoneKnowsIter {W E : Type*} [FiniteWorlds W]
+    (Rs : AgentAccessRel W E) (group : List E) (φ : BProp W) : ℕ → BProp W
+  | .zero => φ
+  | .succ n => everyoneKnows Rs group (everyoneKnowsIter Rs group φ n)
+
+/-- Common knowledge as a finite approximation: C_G(φ)(w) iff
+    E^n_G(φ)(w) for all n up to the iteration bound.
+
+    For finite W with |W| = k, the fixed point is reached within
+    2^k iterations (since each iteration can only shrink the set
+    of satisfying worlds). -/
+def commonKnowledge {W E : Type*} [FiniteWorlds W]
+    (Rs : AgentAccessRel W E) (group : List E) (φ : BProp W)
+    (bound : ℕ) (w : W) : Bool :=
+  (List.range (bound + 1)).all fun n => everyoneKnowsIter Rs group φ n w
+
+/-- Common knowledge implies everyone knows (at depth 1). -/
+theorem commonKnowledge_implies_everyoneKnows {W E : Type*} [FiniteWorlds W]
+    (Rs : AgentAccessRel W E) (group : List E) (φ : BProp W)
+    (bound : ℕ) (w : W) (_hbound : 0 < bound)
+    (h : commonKnowledge Rs group φ bound w = true) :
+    everyoneKnows Rs group φ w = true := by
+  unfold commonKnowledge at h
+  exact List.all_eq_true.mp h 1 (List.mem_range.mpr (by omega))
+
+/-- Common knowledge implies the proposition itself (depth 0). -/
+theorem commonKnowledge_implies_prop {W E : Type*} [FiniteWorlds W]
+    (Rs : AgentAccessRel W E) (group : List E) (φ : BProp W)
+    (bound : ℕ) (w : W)
+    (h : commonKnowledge Rs group φ bound w = true) :
+    φ w = true := by
+  unfold commonKnowledge at h
+  exact List.all_eq_true.mp h 0 (List.mem_range.mpr (Nat.zero_lt_succ bound))
+
+/-! ## Distributed Knowledge
+
+D_G(φ) holds at w iff φ holds at all worlds accessible to EVERY agent
+in G simultaneously. The accessibility relation is the intersection:
+R_D = ∩ᵢ∈G Rᵢ.
+
+Distributed knowledge is what the group WOULD know if they pooled all
+their information. It is stronger than individual knowledge but weaker
+than common knowledge in the opposite direction:
+D_G(φ) → Kᵢ(φ) for each i, but C_G(φ) → E_G(φ) → Kᵢ(φ). -/
+
+/-- Intersection of accessibility relations for a group. -/
+def groupAccessRel {W E : Type*}
+    (Rs : AgentAccessRel W E) (group : List E) : AccessRel W :=
+  fun w v => group.all fun i => Rs i w v
+
+/-- Distributed knowledge: D_G(φ)(w) = □_{∩R} φ(w). -/
+def distributedKnowledge {W E : Type*} [FiniteWorlds W]
+    (Rs : AgentAccessRel W E) (group : List E) (φ : BProp W) (w : W) : Bool :=
+  kripkeEval (groupAccessRel Rs group) .necessity φ w
+
+/-- Individual knowledge implies distributed knowledge: the intersection
+    of accessibility relations is a subset of each component, so every
+    group-accessible world is also i-accessible. Therefore if φ holds
+    at all i-accessible worlds, it holds at all group-accessible worlds. -/
+theorem knows_implies_distributedKnowledge {W E : Type*} [FiniteWorlds W]
+    (Rs : AgentAccessRel W E) (group : List E) (φ : BProp W) (w : W)
+    (i : E) (hi : i ∈ group)
+    (h : knows Rs i φ w = true) :
+    distributedKnowledge Rs group φ w = true := by
+  -- Kᵢ(φ) → D_G(φ): every group-accessible world is i-accessible
+  unfold distributedKnowledge knows kripkeEval at *
+  rw [List.all_eq_true] at h ⊢
+  intro v hv
+  apply h
+  rw [List.mem_filter] at hv ⊢
+  exact ⟨hv.1, List.all_eq_true.mp hv.2 i hi⟩
+
+/-! ## Common Ground as Common Knowledge
+
+Stalnaker (2002): the common ground is the set of propositions that
+are common knowledge among the discourse participants. -/
+
+/-- A common ground is grounded in common knowledge when its context
+    set equals the intersection of what is commonly known. -/
+def CG.groundedIn {W E : Type*} [FiniteWorlds W]
+    (cg : CG W) (Rs : AgentAccessRel W E) (group : List E)
+    (bound : ℕ) : Prop :=
+  ∀ w, cg.contextSet w ↔
+    (cg.propositions.all fun p =>
+      commonKnowledge Rs group p bound w) = true
+
+/-! ## Bridge to EpistemicScale
+
+An S5 frame (reflexive + Euclidean accessibility) induces an
+`EpistemicSystemW` via Lewis's l-lifting. This connects the
+syntactic side (Kripke frames, correspondence theorems in
+`ModalLogic.lean`) to the algebraic side (plausibility measures,
+representation theorems in `EpistemicScale/`). -/
+
+/-- An S5 accessibility relation induces a world ordering for
+    `halpernLift`: w ≥ v iff w is accessible from v. -/
+def s5ToWorldOrder {W : Type*} (R : AccessRel W) (w v : W) : Prop :=
+  R v w = true
+
+/-- An S5 frame yields an `EpistemicSystemW` via l-lifting.
+
+    The reflexivity of R gives reflexivity of the world ordering;
+    `halpernSystemW` does the rest. -/
+def s5ToSystemW {W : Type*}
+    (R : AccessRel W) (hRefl : Core.ModalLogic.Refl R) :
+    Core.Scale.EpistemicSystemW W :=
+  Core.Scale.halpernSystemW (s5ToWorldOrder R) (fun w => hRefl w)
+
+end Core.CommonGround.MultiAgent

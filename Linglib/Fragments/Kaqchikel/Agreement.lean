@@ -1,0 +1,445 @@
+import Linglib.Theories.Syntax.Minimalism.Core.Agree
+import Linglib.Theories.Syntax.Minimalism.Core.Spellout
+import Linglib.Fragments.Kaqchikel.AgentFocus
+
+/-!
+# Kaqchikel Agreement Fragment @cite{preminger-2014}
+
+Agreement morphology for Kaqchikel (K'ichean, Mayan), formalizing
+Preminger (2014) *Agreement and Its Failures*, Chapters 3-4 and
+Appendix 9.A.
+
+## The System (Preminger 2014, Ch. 3)
+
+Kaqchikel has two agreement paradigms on the verb:
+- **Set A** (ERG): prefixes on Voice/v cross-referencing the transitive agent
+- **Set B** (ABS): preverbal markers on Infl/T cross-referencing the
+  absolutive argument (transitive patient or intransitive S)
+
+Morpheme order on the verb (276): `aspect - ABS - ERG - stem`.
+Set B (ABS) precedes Set A (ERG).
+
+| Position | Case | Agreement |
+|----------|------|-----------|
+| A (transitive agent)   | ERG | Set A |
+| P (transitive patient) | ABS | Set B |
+| S (intransitive subj)  | ABS | Set B |
+
+Unlike Mam, where Infl's φ-probe is blocked in transitives and the
+patient goes unagreed, Kaqchikel cross-references *both* transitive
+arguments (Preminger 2014, Ch. 3 vs. Scott 2023 for Mam).
+
+## Agent Focus Agreement (Preminger 2014, §3.3, table 22)
+
+In AF constructions (clause-local agent extraction), the normal two-slot
+agreement collapses to a **single marker** drawn from the absolutive
+(Set B) paradigm. The target is chosen by an *omnivorous* hierarchy:
+
+    [+participant] > [+plural] > default (3SG = ∅)
+
+The probe does not distinguish subject from object — AF agreement is
+**commutative**: ⟨1SG subj, 3SG obj⟩ = ⟨3SG subj, 1SG obj⟩ → *in-*.
+This follows from Preminger's analysis: the probe (π⁰) seeks the
+closest [+participant]-bearing DP regardless of its thematic role.
+
+### Person Restriction (Preminger 2014, (25))
+
+At most one core argument can bear [+participant]. Combinations like
+⟨1SG, 2SG⟩ are ungrammatical regardless of subject/object assignment.
+
+## Feature Geometry (Preminger 2014, §4.3, (55))
+
+Person features decompose as:
+- [φ] → [PERSON] → [participant] → [author]
+- [φ] → [NUMBER] → [plural]
+
+Two probes in the AF clause:
+- **π⁰**: seeks [participant], triggers clitic doubling of full φ-set
+- **#⁰**: seeks [plural], triggers number agreement
+
+## Obligatory Operations (Preminger 2014, Ch. 5)
+
+Preminger's central theoretical claim: φ-agreement is **obligatory** —
+the grammar must attempt it — but can **fail without crashing**. When
+the probe finds no suitable goal, no agreement obtains and a default
+(3SG = ∅) surfaces. This contrasts with the standard Minimalist view
+(Chomsky 2001) where unvalued features cause the derivation to crash.
+
+## References
+
+- Preminger, O. (2014). Agreement and Its Failures. MIT Press.
+  (Linguistic Inquiry Monographs 68.)
+-/
+
+namespace Fragments.Kaqchikel
+
+open Minimalism
+
+-- ============================================================================
+-- § 1: Person-Number Inventory
+-- ============================================================================
+
+/-- Person-number combinations for Kaqchikel agreement paradigms.
+    Six cells: three persons × two numbers. -/
+inductive PersonNumber where
+  | p1sg | p2sg | p3sg | p1pl | p2pl | p3pl
+  deriving DecidableEq, BEq, Repr
+
+/-- All six person-number values. -/
+def personNumbers : List PersonNumber :=
+  [.p1sg, .p2sg, .p3sg, .p1pl, .p2pl, .p3pl]
+
+-- ============================================================================
+-- § 2: Feature Decomposition (Preminger 2014, §4.3, (55))
+-- ============================================================================
+
+/-- Is this person-number [+participant]? (1st or 2nd person)
+    Preminger's (55): [participant] ⊂ [PERSON] ⊂ [φ]. -/
+def PersonNumber.isParticipant : PersonNumber → Bool
+  | .p1sg => true
+  | .p2sg => true
+  | .p3sg => false
+  | .p1pl => true
+  | .p2pl => true
+  | .p3pl => false
+
+/-- Is this person-number [+author]? (1st person only)
+    Preminger's (55): [author] ⊂ [participant] ⊂ [PERSON]. -/
+def PersonNumber.isAuthor : PersonNumber → Bool
+  | .p1sg => true
+  | .p1pl => true
+  | .p2sg => false
+  | .p2pl => false
+  | .p3sg => false
+  | .p3pl => false
+
+/-- Is this person-number [+plural]? -/
+def PersonNumber.isPlural : PersonNumber → Bool
+  | .p1pl => true
+  | .p2pl => true
+  | .p3pl => true
+  | .p1sg => false
+  | .p2sg => false
+  | .p3sg => false
+
+/-- Convert to PhiFeature list for the Agree infrastructure. -/
+def PersonNumber.toPhiFeatures : PersonNumber → List PhiFeature
+  | .p1sg => [.person 1, .number false]
+  | .p2sg => [.person 2, .number false]
+  | .p3sg => [.person 3, .number false]
+  | .p1pl => [.person 1, .number true]
+  | .p2pl => [.person 2, .number true]
+  | .p3pl => [.person 3, .number true]
+
+-- ============================================================================
+-- § 3: Set A (ERG) Vocabulary
+-- ============================================================================
+
+/-- Set A (ERG) markers: prefixes on Voice/v cross-referencing the
+    transitive agent (Preminger 2014, Ch. 3). -/
+def setAExponent : PersonNumber → String
+  | .p1sg => "in-"
+  | .p2sg => "a-"
+  | .p3sg => "u-/r-"
+  | .p1pl => "qa-"
+  | .p2pl => "i-"
+  | .p3pl => "ki-"
+
+/-- Set A as Vocabulary entries for Spellout, contextualized to Voice/v. -/
+def setAVocab : Vocabulary :=
+  personNumbers.map λ pn =>
+    { features := pn.toPhiFeatures.map (λ p => .valued (.phi p))
+    , exponent := setAExponent pn
+    , context := some .v }
+
+-- ============================================================================
+-- § 4: Set B (ABS) Vocabulary
+-- ============================================================================
+
+/-- Set B (ABS) markers: preverbal markers on Infl/T cross-referencing
+    the absolutive argument (Preminger 2014, Ch. 3). The 3SG form (∅) is
+    also the Elsewhere entry — the default when no more specific entry
+    matches, as in the failure case of obligatory agreement (Ch. 5). -/
+def setBExponent : PersonNumber → String
+  | .p1sg => "in-"
+  | .p2sg => "at-"
+  | .p3sg => "∅"
+  | .p1pl => "oj-"
+  | .p2pl => "ix-"
+  | .p3pl => "e-"
+
+/-- Set B as Vocabulary entries for Spellout, contextualized to Infl/T. -/
+def setBVocab : Vocabulary :=
+  personNumbers.map λ pn =>
+    { features := pn.toPhiFeatures.map (λ p => .valued (.phi p))
+    , exponent := setBExponent pn
+    , context := some .T }
+
+-- ============================================================================
+-- § 5: Argument Positions
+-- ============================================================================
+
+/-- Argument positions in a Kaqchikel clause (Preminger 2014, Ch. 3). -/
+inductive KaqArgPosition where
+  /-- A: transitive agent (external argument, Spec,vP → Spec,TP) -/
+  | agent
+  /-- P: transitive patient (internal argument, complement of V) -/
+  | patient
+  /-- S: intransitive subject (sole argument) -/
+  | intranS
+  deriving DecidableEq, BEq, Repr
+
+/-- Case assignment: ergative-absolutive alignment.
+    Agent gets ERG (from Voice/v); patient and intranS both get ABS
+    (from Infl/T). -/
+def KaqArgPosition.case : KaqArgPosition → CaseVal
+  | .agent   => .erg
+  | .patient => .abs
+  | .intranS => .abs
+
+/-- Is this position φ-Agreed-with?
+    In Kaqchikel, ALL three argument positions trigger agreement:
+    agent via Set A on Voice/v, patient and intranS via Set B on
+    Infl/T. This contrasts with Mam, where the patient is NOT
+    agreed with (Infl's probe is blocked by VoiceP; Scott 2023). -/
+def KaqArgPosition.isPhiAgreed : KaqArgPosition → Bool
+  | .agent   => true
+  | .patient => true
+  | .intranS => true
+
+/-- Which head agrees with this position? -/
+def KaqArgPosition.agreeProbe : KaqArgPosition → Cat
+  | .agent   => .v   -- Voice/v probes for agent φ → Set A
+  | .patient => .T   -- Infl/T probes for patient φ → Set B
+  | .intranS => .T   -- Infl/T probes for intranS φ → Set B
+
+/-- The three argument positions. -/
+def kaqArgPositions : List KaqArgPosition :=
+  [.agent, .patient, .intranS]
+
+-- ============================================================================
+-- § 6: AF Agreement — Omnivorous Hierarchy
+-- ============================================================================
+
+/-- The omnivorous agreement hierarchy for AF (Preminger 2014, §3.3).
+
+    Rank determines which argument the single AF marker tracks:
+    - Rank 2: [+participant] (1st or 2nd person)
+    - Rank 1: [-participant, +plural] (3PL)
+    - Rank 0: [-participant, -plural] (3SG, default/Elsewhere)
+
+    The hierarchy reflects the activity of two probes: π⁰ (seeks
+    [participant]) outranks #⁰ (seeks [plural]). If π⁰ succeeds, its
+    result determines the marker; if it fails, #⁰ provides the number
+    result; if both fail, the default 3SG surfaces. -/
+def PersonNumber.afRank : PersonNumber → Nat
+  | .p1sg => 2
+  | .p2sg => 2
+  | .p1pl => 2
+  | .p2pl => 2
+  | .p3pl => 1
+  | .p3sg => 0
+
+/-- Person restriction (Preminger 2014, (25)): at most one core
+    argument can be [+participant]. Returns `true` if the combination
+    is licit. -/
+def personRestrictionOk (subj obj : PersonNumber) : Bool :=
+  !(subj.isParticipant && obj.isParticipant)
+
+/-- Compute the AF agreement target: whichever argument has the higher
+    rank in the omnivorous hierarchy. When both have the same rank, the
+    subject is chosen (both yield the same marker, so the choice is
+    observationally inert). Returns `none` if the person restriction
+    is violated. -/
+def afAgreementTarget (subj obj : PersonNumber) : Option PersonNumber :=
+  if !personRestrictionOk subj obj then none
+  else if subj.afRank ≥ obj.afRank then some subj
+  else some obj
+
+/-- The AF agreement marker for a given subject-object combination.
+    Returns the Set B exponent of the omnivorous target, or `none`
+    if the person restriction is violated. -/
+def afMarker (subj obj : PersonNumber) : Option String :=
+  (afAgreementTarget subj obj).map setBExponent
+
+-- ============================================================================
+-- § 7: AF Agreement Paradigm (Preminger 2014, table 22)
+-- ============================================================================
+
+/-- An AF agreement datum: subject φ, object φ, and the resulting
+    single agreement marker (or `none` for person-restriction
+    violations). -/
+structure AFAgreementDatum where
+  subject : PersonNumber
+  object : PersonNumber
+  marker : Option String
+  deriving Repr
+
+/-- The empirical AF agreement paradigm (Preminger 2014, table 22).
+    Each row records the observed agreement marker for a given
+    subject-object combination in clause-local agent extraction. -/
+def afParadigm : List AFAgreementDatum :=
+  [ -- Both 3rd person: number determines marker
+    ⟨.p3sg, .p3sg, some "∅"⟩         -- default: 3SG×3SG → ∅
+  , ⟨.p3sg, .p3pl, some "e-"⟩        -- [+plural] obj
+  , ⟨.p3pl, .p3sg, some "e-"⟩        -- [+plural] subj
+  , ⟨.p3pl, .p3pl, some "e-"⟩        -- [+plural] both
+    -- One [+participant] argument: participant determines marker
+  , ⟨.p1sg, .p3sg, some "in-"⟩       -- [+participant] subj
+  , ⟨.p2sg, .p3sg, some "at-"⟩       -- [+participant] subj
+  , ⟨.p3sg, .p1sg, some "in-"⟩       -- [+participant] obj (commutativity)
+  , ⟨.p3sg, .p2sg, some "at-"⟩       -- [+participant] obj (commutativity)
+    -- [+participant] outranks [+plural]
+  , ⟨.p1sg, .p3pl, some "in-"⟩       -- participant > plural
+  , ⟨.p3pl, .p2sg, some "at-"⟩       -- participant > plural
+    -- Person restriction violations (Preminger 2014, (25))
+  , ⟨.p1sg, .p2sg, none⟩             -- *two [+participant] args
+  , ⟨.p2sg, .p1sg, none⟩             -- *two [+participant] args
+  ]
+
+-- ============================================================================
+-- § 8: Agreement Slot Count
+-- ============================================================================
+
+/-- Number of agreement slots for each verb form.
+    Transitive: two slots (Set A + Set B).
+    AF: one slot (single omnivorous marker from the ABS paradigm). -/
+def VerbForm.agreementSlots : VerbForm → Nat
+  | .transitive => 2
+  | .agentFocus => 1
+
+-- ============================================================================
+-- § 9: Obligatory Operations (Preminger 2014, Ch. 5)
+-- ============================================================================
+
+/-- The result of an obligatory agreement operation.
+
+    Preminger's key insight: the probe *must* attempt to Agree
+    (agreement is obligatory), but if it finds no suitable goal,
+    the derivation does NOT crash — it continues with the probe's
+    features unvalued, and the Elsewhere vocabulary entry (3SG ∅)
+    surfaces at PF. -/
+inductive AgreeOutcome where
+  /-- Probe successfully valued by a goal's φ-features. -/
+  | success : PersonNumber → AgreeOutcome
+  /-- Probe attempted but found no suitable goal; default surfaces. -/
+  | failure : AgreeOutcome
+  deriving DecidableEq, BEq, Repr
+
+/-- The morphological exponent for an agreement outcome.
+    Success: Set B form of the agreed-with argument.
+    Failure: Elsewhere entry (3SG ∅). -/
+def AgreeOutcome.exponent : AgreeOutcome → String
+  | .success pn => setBExponent pn
+  | .failure    => "∅"
+
+/-- Failed agreement surfaces as 3SG — the Elsewhere entry
+    (Preminger 2014, §5.2). -/
+theorem failed_agreement_is_3sg :
+    AgreeOutcome.failure.exponent = setBExponent .p3sg := rfl
+
+-- ============================================================================
+-- § 10: Verification Theorems — Argument Positions
+-- ============================================================================
+
+/-- Agent gets ERG (from Voice). -/
+theorem agent_case : KaqArgPosition.agent.case = .erg := rfl
+
+/-- Patient gets ABS (from Infl). -/
+theorem patient_case : KaqArgPosition.patient.case = .abs := rfl
+
+/-- Intransitive S gets ABS (from Infl). -/
+theorem intranS_case : KaqArgPosition.intranS.case = .abs := rfl
+
+/-- Ergative-absolutive alignment: the agent is distinguished (ERG)
+    while patient and intranS share a case value (ABS). -/
+theorem erg_abs_alignment :
+    KaqArgPosition.agent.case ≠ KaqArgPosition.patient.case ∧
+    KaqArgPosition.patient.case = KaqArgPosition.intranS.case :=
+  ⟨by decide, rfl⟩
+
+/-- All three argument positions trigger φ-agreement. -/
+theorem all_positions_agreed :
+    kaqArgPositions.all (λ p => p.isPhiAgreed) = true := by native_decide
+
+-- ============================================================================
+-- § 11: Verification Theorems — Feature Decomposition
+-- ============================================================================
+
+/-- [+author] entails [+participant] (Preminger 2014, (55)):
+    [author] ⊂ [participant] in the feature geometry. -/
+theorem author_entails_participant :
+    personNumbers.all (λ pn =>
+      if pn.isAuthor then pn.isParticipant else true) = true := by
+  native_decide
+
+/-- 3rd person is [-participant]. -/
+theorem third_not_participant :
+    PersonNumber.p3sg.isParticipant = false ∧
+    PersonNumber.p3pl.isParticipant = false := ⟨rfl, rfl⟩
+
+-- ============================================================================
+-- § 12: Verification Theorems — AF Agreement
+-- ============================================================================
+
+/-- The entire AF paradigm (table 22) is correctly predicted by the
+    omnivorous hierarchy computation. Each empirical datum matches
+    the output of `afMarker`. -/
+theorem af_paradigm_correct :
+    afParadigm.all (λ d => afMarker d.subject d.object == d.marker) = true := by
+  native_decide
+
+/-- AF agreement is commutative: swapping subject and object yields the
+    same marker for ALL person-number combinations (Preminger 2014,
+    §3.3, (67)). This follows from the omnivorous hierarchy — the
+    probe sees both arguments symmetrically. -/
+theorem af_commutative :
+    personNumbers.all (λ s => personNumbers.all (λ o =>
+      afMarker s o == afMarker o s)) = true := by
+  native_decide
+
+/-- [+participant] outranks [+plural]: when one argument is 1st/2nd
+    person and the other is 3PL, the marker reflects the participant,
+    not the plural. -/
+theorem participant_over_plural :
+    afMarker .p1sg .p3pl = some "in-" ∧
+    afMarker .p3pl .p2sg = some "at-" := ⟨rfl, rfl⟩
+
+/-- Person restriction blocks two [+participant] arguments. -/
+theorem person_restriction_blocks :
+    afMarker .p1sg .p2sg = none ∧
+    afMarker .p2sg .p1sg = none := ⟨rfl, rfl⟩
+
+/-- Person restriction is symmetric. -/
+theorem person_restriction_symmetric :
+    personNumbers.all (λ s => personNumbers.all (λ o =>
+      personRestrictionOk s o == personRestrictionOk o s)) = true := by
+  native_decide
+
+/-- Default 3SG: when both arguments are 3SG, the Elsewhere entry
+    (∅) surfaces — the least specified vocabulary item. -/
+theorem default_3sg : afMarker .p3sg .p3sg = some "∅" := rfl
+
+-- ============================================================================
+-- § 13: Verification Theorems — Verb Form Connection
+-- ============================================================================
+
+/-- AF has a single agreement slot (one marker from the ABS paradigm). -/
+theorem af_single_slot : VerbForm.agentFocus.agreementSlots = 1 := rfl
+
+/-- Transitive has dual agreement slots (Set A + Set B). -/
+theorem trans_dual_slots : VerbForm.transitive.agreementSlots = 2 := rfl
+
+/-- AF loses ergative (Set A) agreement: the single AF marker is drawn
+    from the absolutive paradigm, not the ergative. Cross-references
+    `VerbForm.hasSetA` from AgentFocus.lean. -/
+theorem af_no_ergative :
+    VerbForm.agentFocus.hasSetA = false ∧
+    VerbForm.agentFocus.agreementSlots = 1 := ⟨rfl, rfl⟩
+
+/-- Transitive retains ergative (Set A) agreement. -/
+theorem trans_has_ergative :
+    VerbForm.transitive.hasSetA = true ∧
+    VerbForm.transitive.agreementSlots = 2 := ⟨rfl, rfl⟩
+
+end Fragments.Kaqchikel

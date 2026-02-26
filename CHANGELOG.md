@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.226.56] - 2026-02-25
+
+### Added
+- **Belief revision and preferential reasoning** (`Core/Logic/BeliefRevision.lean`): Halpern (2003, Ch. 8). AGM revision postulates (K\*1–K\*5) with fixed prior beliefs and logical-consequence formulation. System P preferential consequence (reflexivity, left equivalence, right weakening, and, or, cautious monotonicity). `PlausibilityOrder` with smoothness condition, `kratzerPlausibility` bridge from ordering source. `RegularCondMeasure` with `toAGM` proving all 5 AGM postulates from conditional plausibility — 0 sorry.
+- **Conditional plausibility measures** (`Core/Scales/EpistemicScale/Conditional.lean`): Halpern (2003, Ch. 3). `CondMeasure` (Popper space axioms Cond1–Cond4), chain rule, ratio construction `FinAddMeasure.toCondMeasure`, Jeffrey conditionalization. Proves `jeffreyUpdate_nonneg`, `jeffreyUpdate_total` — 0 sorry.
+- **Multi-agent epistemic operators** (`Core/Semantics/CommonGround.lean`): Halpern (2003, Ch. 7). `knows`, `everyoneKnows`, `commonKnowledge` (bounded iteration), `distributedKnowledge` (intersection of accessibility). Proves `commonKnowledge_implies_prop`, `commonKnowledge_implies_everyoneKnows`, `knows_implies_distributedKnowledge` — 0 sorry.
+- **Fin4 proof compression**: compact helpers (`sdiff` tactic, `bp`/`bn` biconditional shortcuts, `ge_pair_via_mid`/`nge_pair_via_contra` transitivity helpers) reducing Case files by ~3600 lines net.
+- **Bibliography**: Halpern (2003) entry.
+
+## [0.226.55] - 2026-02-25
+
+### Added
+- **Kaqchikel agreement fragment** (`Fragments/Kaqchikel/Agreement.lean`): Preminger (2014) *Agreement and Its Failures*. `PersonNumber` (6 cells), feature decomposition ([participant], [author], [plural]), Set A (ERG) and Set B (ABS) vocabulary entries with exponents, `KaqArgPosition` (agent/patient/intranS) with ergative-absolutive case alignment. AF omnivorous agreement hierarchy (`afRank`, `afAgreementTarget`, `afMarker`), person restriction, `AFAgreementDatum` paradigm (12 data points from table 22). `AgreeOutcome` for obligatory-but-failable agreement. Key theorems: `af_paradigm_correct` (entire paradigm verified against hierarchy computation), `af_commutative` (swapping subj/obj yields same marker), `participant_over_plural`, `person_restriction_symmetric`, `erg_abs_alignment`, `all_positions_agreed`, `author_entails_participant`.
+- **Bibliography**: Preminger (2014) entry.
+
 ## [0.226.54] - 2026-02-25
 
 ### Added

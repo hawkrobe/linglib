@@ -162,6 +162,7 @@ import Linglib.Fragments.Mam.VoiceSystem
 import Linglib.Fragments.Mam.Agreement
 import Linglib.Fragments.Mam.ExtractionMorphology
 import Linglib.Fragments.Kaqchikel.AgentFocus
+import Linglib.Fragments.Kaqchikel.Agreement
 import Linglib.Fragments.Chuj.VerbBuilding
 
 -- Phenomena
@@ -213,6 +214,7 @@ import Linglib.Phenomena.ArgumentStructure.Bridge.CCGSubcategorization
 import Linglib.Phenomena.ArgumentStructure.Bridge.MinimalismSubcategorization
 import Linglib.Phenomena.ArgumentStructure.Bridge.DGValency
 import Linglib.Phenomena.ArgumentStructure.Bridge.TheoryComparison
+import Linglib.Phenomena.ArgumentStructure.Studies.HaddicanEtAl2026
 import Linglib.Phenomena.ArgumentStructure.Bridge.MinimalismSmallClause
 import Linglib.Phenomena.ScalarImplicatures.ArgumentativeFraming
 import Linglib.Phenomena.Modality.ActualityInferencesBridge
