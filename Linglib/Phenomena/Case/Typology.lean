@@ -839,47 +839,22 @@ open Core.Prominence
 -- DOM Profiles: Bidimensional Marking Grids
 -- ============================================================================
 
-/-- A DOM (Differential Object Marking) profile: which cells in the
-animacy × definiteness grid receive overt case marking.
+/-- A DOM (Differential Object Marking) profile: a `DifferentialMarkingProfile`
+specialized to role P + channel flagging.
 
 Each cell `(a, d)` records whether an object with animacy level `a`
 and definiteness level `d` obligatorily receives an overt DOM marker
-(e.g., Spanish `a`, Turkish `-(y)I`, Hindi `-ko`). -/
-structure DOMProfile where
-  /-- Language name -/
-  name : String
-  /-- Whether cell (a, d) receives overt DOM marking -/
-  marks : AnimacyLevel → DefinitenessLevel → Bool
+(e.g., Spanish `a`, Turkish `-(y)I`, Hindi `-ko`).
 
-/-- The monotonicity (upper-set) property: if a cell is marked, then all
-cells at least as prominent on BOTH dimensions are also marked.
+DOM is the P-flagging instance of Just's (2024) general differential
+marking framework. Monotonicity (`isMonotone`), `isAnimacyOnly`, and
+`isDefinitenessOnly` are all inherited from `DifferentialMarkingProfile`. -/
+abbrev DOMProfile := DifferentialMarkingProfile
 
-This is Aissen's central prediction: DOM cutoffs form a "staircase"
-in the bidimensional grid, never marking a less-prominent cell while
-leaving a more-prominent one unmarked. -/
-def DOMProfile.isMonotone (p : DOMProfile) : Bool :=
-  AnimacyLevel.all.all λ a =>
-    DefinitenessLevel.all.all λ d =>
-      if p.marks a d then
-        AnimacyLevel.all.all λ a' =>
-          DefinitenessLevel.all.all λ d' =>
-            if a'.rank ≥ a.rank && d'.rank ≥ d.rank then p.marks a' d'
-            else true
-      else true
-
-/-- Whether a DOM profile depends only on animacy (definiteness is irrelevant). -/
-def DOMProfile.isAnimacyOnly (p : DOMProfile) : Bool :=
-  DefinitenessLevel.all.all λ d₁ =>
-    DefinitenessLevel.all.all λ d₂ =>
-      AnimacyLevel.all.all λ a =>
-        p.marks a d₁ == p.marks a d₂
-
-/-- Whether a DOM profile depends only on definiteness (animacy is irrelevant). -/
-def DOMProfile.isDefinitenessOnly (p : DOMProfile) : Bool :=
-  AnimacyLevel.all.all λ a₁ =>
-    AnimacyLevel.all.all λ a₂ =>
-      DefinitenessLevel.all.all λ d =>
-        p.marks a₁ d == p.marks a₂ d
+/-- Convenience constructor for DOMProfiles (P + flagging). -/
+def DOMProfile.mk' (name : String) (marks : AnimacyLevel → DefinitenessLevel → Bool)
+    : DOMProfile :=
+  { name, role := .P, channel := .flagging, marks }
 
 -- ============================================================================
 -- Cutoff Constructors for One-Dimensional DOM
@@ -889,24 +864,13 @@ def DOMProfile.isDefinitenessOnly (p : DOMProfile) : Bool :=
 above the cutoff animacy level are marked, regardless of definiteness.
 Example: Spanish marks human objects (cutoff = .human). -/
 def DOMProfile.animacyCutoff (name : String) (cutoff : AnimacyLevel) : DOMProfile :=
-  { name, marks := λ a _ => a.rank ≥ cutoff.rank }
+  DifferentialMarkingProfile.animacyCutoffP name .flagging cutoff
 
 /-- Construct a one-dimensional definiteness-based DOM profile: objects at
 or above the cutoff definiteness level are marked, regardless of animacy.
 Example: Turkish marks definite+ objects (cutoff = .definite). -/
 def DOMProfile.definitenessCutoff (name : String) (cutoff : DefinitenessLevel) : DOMProfile :=
-  { name, marks := λ _ d => d.rank ≥ cutoff.rank }
-
-/-- Animacy-cutoff DOM is always monotone, for any cutoff level.
-One-dimensional patterns are automatically upper sets. -/
-theorem animacy_cutoff_monotone (cutoff : AnimacyLevel) :
-    (DOMProfile.animacyCutoff "" cutoff).isMonotone = true := by
-  cases cutoff <;> native_decide
-
-/-- Definiteness-cutoff DOM is always monotone, for any cutoff level. -/
-theorem definiteness_cutoff_monotone (cutoff : DefinitenessLevel) :
-    (DOMProfile.definitenessCutoff "" cutoff).isMonotone = true := by
-  cases cutoff <;> native_decide
+  DifferentialMarkingProfile.definitenessCutoffP name .flagging cutoff
 
 -- ============================================================================
 -- Language DOM Profiles
@@ -960,18 +924,16 @@ Two-dimensional DOM with a staircase cutoff (Aissen 2003, §5, Table 12):
 This captures the obligatory marking core. Optional/variable marking
 extends further down the staircase at the boundary cells. -/
 def hindiDOM : DOMProfile :=
-  { name := "Hindi-Urdu"
-    marks := λ a d =>
-      match a with
-      | .human     => d.rank ≥ DefinitenessLevel.indefiniteSpecific.rank
-      | .animate   => d.rank ≥ DefinitenessLevel.definite.rank
-      | .inanimate => false }
+  DOMProfile.mk' "Hindi-Urdu" λ a d =>
+    match a with
+    | .human     => d.rank ≥ DefinitenessLevel.indefiniteSpecific.rank
+    | .animate   => d.rank ≥ DefinitenessLevel.definite.rank
+    | .inanimate => false
 
 /-- No DOM: no differential marking (either no case at all, or uniform
 case on all objects). Trivially monotone. -/
 def noDOMProfile : DOMProfile :=
-  { name := "No DOM"
-    marks := λ _ _ => false }
+  DOMProfile.mk' "No DOM" λ _ _ => false
 
 end DOMLanguages
 

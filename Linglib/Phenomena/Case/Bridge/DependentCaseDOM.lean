@@ -128,63 +128,8 @@ theorem subject_always_nom :
 -- ============================================================================
 
 /-! Since the object always gets ACC, overt marking reduces entirely to the
-    DOM filter. We verify this per attested language. -/
-
-/-- Spanish: overt marking matches DOMProfile exactly. -/
-theorem spanish_overt_eq_dom :
-    AnimacyLevel.all.all (λ a =>
-      DefinitenessLevel.all.all (λ d =>
-        objectOvert .accusative spanishDOM (mkTrans a d) =
-        spanishDOM.marks a d)) = true := by native_decide
-
-/-- Russian: overt marking matches DOMProfile exactly. -/
-theorem russian_overt_eq_dom :
-    AnimacyLevel.all.all (λ a =>
-      DefinitenessLevel.all.all (λ d =>
-        objectOvert .accusative russianDOM (mkTrans a d) =
-        russianDOM.marks a d)) = true := by native_decide
-
-/-- Turkish: overt marking matches DOMProfile exactly. -/
-theorem turkish_overt_eq_dom :
-    AnimacyLevel.all.all (λ a =>
-      DefinitenessLevel.all.all (λ d =>
-        objectOvert .accusative turkishDOM (mkTrans a d) =
-        turkishDOM.marks a d)) = true := by native_decide
-
-/-- Hebrew: overt marking matches DOMProfile exactly. -/
-theorem hebrew_overt_eq_dom :
-    AnimacyLevel.all.all (λ a =>
-      DefinitenessLevel.all.all (λ d =>
-        objectOvert .accusative hebrewDOM (mkTrans a d) =
-        hebrewDOM.marks a d)) = true := by native_decide
-
-/-- Persian: overt marking matches DOMProfile exactly. -/
-theorem persian_overt_eq_dom :
-    AnimacyLevel.all.all (λ a =>
-      DefinitenessLevel.all.all (λ d =>
-        objectOvert .accusative persianDOM (mkTrans a d) =
-        persianDOM.marks a d)) = true := by native_decide
-
-/-- Catalan: overt marking matches DOMProfile exactly. -/
-theorem catalan_overt_eq_dom :
-    AnimacyLevel.all.all (λ a =>
-      DefinitenessLevel.all.all (λ d =>
-        objectOvert .accusative catalanDOM (mkTrans a d) =
-        catalanDOM.marks a d)) = true := by native_decide
-
-/-- Hindi: overt marking matches DOMProfile exactly. -/
-theorem hindi_overt_eq_dom :
-    AnimacyLevel.all.all (λ a =>
-      DefinitenessLevel.all.all (λ d =>
-        objectOvert .accusative hindiDOM (mkTrans a d) =
-        hindiDOM.marks a d)) = true := by native_decide
-
-/-- No-DOM baseline: nothing overtly marked. -/
-theorem nodom_overt_eq_dom :
-    AnimacyLevel.all.all (λ a =>
-      DefinitenessLevel.all.all (λ d =>
-        objectOvert .accusative noDOMProfile (mkTrans a d) =
-        noDOMProfile.marks a d)) = true := by native_decide
+    DOM filter. The universal theorem `full_pipeline_faithful_and_monotone`
+    (§ 8) proves this for all 8 attested DOM profiles at once. -/
 
 -- ============================================================================
 -- § 6: Layer 3 — OT Constrains the Pipeline
@@ -193,8 +138,7 @@ theorem nodom_overt_eq_dom :
 /-- The overt marking profile produced by running the full pipeline
     (dependent case + DOM filter). -/
 def overtProfile (lang : CaseLanguageType) (dom : DOMProfile) : DOMProfile :=
-  { name := dom.name ++ " (pipeline)"
-    marks := λ a d => objectOvert lang dom (mkTrans a d) }
+  DOMProfile.mk' (dom.name ++ " (pipeline)") λ a d => objectOvert lang dom (mkTrans a d)
 
 /-- Every OT-predicted animacy type, run through the full pipeline,
     produces a monotone overt marking profile. -/
@@ -210,43 +154,7 @@ theorem attested_pipeline_monotone :
       (overtProfile .accusative dom).isMonotone) = true := by native_decide
 
 -- ============================================================================
--- § 7: Cross-Layer Agreement
--- ============================================================================
-
-/-! The three layers produce consistent results: the overt marking profile
-    from the pipeline agrees with the DOMProfile input, and the OT-generated
-    types match the attested language profiles. -/
-
-/-- Spanish pipeline profile agrees with the directly-defined DOMProfile. -/
-theorem spanish_pipeline_agrees :
-    AnimacyLevel.all.all (λ a =>
-      DefinitenessLevel.all.all (λ d =>
-        (overtProfile .accusative spanishDOM).marks a d =
-        spanishDOM.marks a d)) = true := by native_decide
-
-/-- Russian pipeline profile agrees with the directly-defined DOMProfile. -/
-theorem russian_pipeline_agrees :
-    AnimacyLevel.all.all (λ a =>
-      DefinitenessLevel.all.all (λ d =>
-        (overtProfile .accusative russianDOM).marks a d =
-        russianDOM.marks a d)) = true := by native_decide
-
-/-- Turkish pipeline profile agrees with the directly-defined DOMProfile. -/
-theorem turkish_pipeline_agrees :
-    AnimacyLevel.all.all (λ a =>
-      DefinitenessLevel.all.all (λ d =>
-        (overtProfile .accusative turkishDOM).marks a d =
-        turkishDOM.marks a d)) = true := by native_decide
-
-/-- Hindi pipeline profile agrees with the directly-defined DOMProfile. -/
-theorem hindi_pipeline_agrees :
-    AnimacyLevel.all.all (λ a =>
-      DefinitenessLevel.all.all (λ d =>
-        (overtProfile .accusative hindiDOM).marks a d =
-        hindiDOM.marks a d)) = true := by native_decide
-
--- ============================================================================
--- § 8: End-to-End Summary
+-- § 7: End-to-End Summary
 -- ============================================================================
 
 /-! Summary of the end-to-end chain:
@@ -255,17 +163,15 @@ theorem hindi_pipeline_agrees :
        Dependent case assigns ACC to all objects in accusative transitives.
        Prominence is irrelevant at this layer.
 
-    2. `*_overt_eq_dom` (7 languages):
-       Since all objects get ACC, overt realization reduces to the DOM filter.
-       `objectOvert = dom.marks` for every attested language.
+    2. `full_pipeline_faithful_and_monotone`:
+       For all 8 attested DOM profiles: the pipeline output exactly matches
+       the DOM input (faithful) AND the overt marking pattern is monotone.
+       Subsumes the per-language `*_overt_eq_dom` and `*_pipeline_agrees`
+       theorems.
 
     3. `ot_pipeline_monotone`:
        OT factorial typology generates only monotone DOMProfiles. The full
        pipeline (dependent case → DOM) inherits this monotonicity.
-
-    4. `*_pipeline_agrees` (4 languages):
-       The pipeline output exactly matches the input DOMProfile, confirming
-       that the case algorithm introduces no distortion.
 
     Changing any component — the case algorithm, the DOM profile, or the
     OT constraint families — breaks theorems at every layer downstream. -/

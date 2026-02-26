@@ -237,6 +237,20 @@ def DifferentialMarkingProfile.isMonotone (p : DifferentialMarkingProfile) : Boo
   | .P => p.isMonotoneP
   | .A => p.isMonotoneA
 
+/-- Whether a marking profile depends only on animacy (definiteness is irrelevant). -/
+def DifferentialMarkingProfile.isAnimacyOnly (p : DifferentialMarkingProfile) : Bool :=
+  DefinitenessLevel.all.all λ d₁ =>
+    DefinitenessLevel.all.all λ d₂ =>
+      AnimacyLevel.all.all λ a =>
+        p.marks a d₁ == p.marks a d₂
+
+/-- Whether a marking profile depends only on definiteness (animacy is irrelevant). -/
+def DifferentialMarkingProfile.isDefinitenessOnly (p : DifferentialMarkingProfile) : Bool :=
+  AnimacyLevel.all.all λ a₁ =>
+    AnimacyLevel.all.all λ a₂ =>
+      DefinitenessLevel.all.all λ d =>
+        p.marks a₁ d == p.marks a₂ d
+
 -- ============================================================================
 -- § 7: Constructors for One-Dimensional Profiles
 -- ============================================================================

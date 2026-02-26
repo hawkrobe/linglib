@@ -46,25 +46,11 @@ open Fragments.Kaqchikel
 -- § 1: DOM ↔ DifferentialMarkingProfile Structural Isomorphism
 -- ============================================================================
 
-/-! A `DOMProfile` (Aissen 2003) is structurally a `DifferentialMarkingProfile`
-    specialized to role P + channel flagging. We prove that both formulations
-    agree on monotonicity over the same animacy × definiteness grid. -/
-
-/-- Convert a DOMProfile to a DifferentialMarkingProfile (P + flagging). -/
-def domToDMP (d : DOMProfile) : DifferentialMarkingProfile :=
-  { name := d.name
-    role := .P
-    channel := .flagging
-    marks := d.marks }
-
-/-- DOM monotonicity = DifferentialMarkingProfile P-monotonicity.
-    Both check the same upper-set condition on the same grid. -/
-theorem dom_monotone_iff_dmp_monotone (d : DOMProfile) :
-    d.isMonotone = (domToDMP d).isMonotoneP := rfl
-
-/-- Aissen's DOM profiles are monotone as DifferentialMarkingProfiles. -/
-theorem allDOM_monotone_as_DMP :
-    allDOMProfiles.all (λ d => (domToDMP d).isMonotone) = true := by native_decide
+/-! Since `DOMProfile` is now an abbreviation for `DifferentialMarkingProfile`
+    (specialized to role P + channel flagging), the isomorphism between DOM
+    and DMP is definitional — no conversion or bridge theorems needed.
+    The monotonicity universal `dom_monotonicity_universal` in Typology.lean
+    directly proves that all DOM profiles are monotone as DMPs. -/
 
 -- ============================================================================
 -- § 2: PersonGeometry ↔ PersonLevel Connection

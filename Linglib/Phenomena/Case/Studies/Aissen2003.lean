@@ -265,12 +265,11 @@ theorem no_in_only :
 
 /-- Convert an AnimCand to a one-dimensional animacy DOMProfile. -/
 def animCandToDOM (c : AnimCand) : DOMProfile :=
-  { name := "OT-predicted"
-    marks := λ a _ =>
-      match a with
-      | .human => c.hu
-      | .animate => c.an
-      | .inanimate => c.inan }
+  DOMProfile.mk' "OT-predicted" λ a _ =>
+    match a with
+    | .human => c.hu
+    | .animate => c.an
+    | .inanimate => c.inan
 
 /-- Every OT-generated animacy type produces a monotone DOMProfile. -/
 theorem ot_types_are_monotone_dom :
@@ -309,11 +308,10 @@ theorem nodom_matches_type4 :
 /-- Convert a Scale2Cand to a definiteness-based DOMProfile.
     High = personalPronoun, Low = properName + definite (i.e., ≥ definite). -/
 def defCandToDOM (c : Scale2Cand) : DOMProfile :=
-  { name := "OT-predicted"
-    marks := λ _ d =>
-      if d.rank ≥ DefinitenessLevel.personalPronoun.rank then c.high
-      else if d.rank ≥ DefinitenessLevel.definite.rank then c.low
-      else false }
+  DOMProfile.mk' "OT-predicted" λ _ d =>
+    if d.rank ≥ DefinitenessLevel.personalPronoun.rank then c.high
+    else if d.rank ≥ DefinitenessLevel.definite.rank then c.low
+    else false
 
 /-- Catalan DOM (pronouns only) matches 2-element Type 2 (High only). -/
 theorem catalan_matches_high_only :
