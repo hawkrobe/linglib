@@ -1,25 +1,27 @@
 import Linglib.Theories.Phonology.Features
 
 /-!
-# Feature Geometry
+# Feature Geometry @cite{clements-1985}
 
-Hierarchical organization of phonological features following the feature geometry
-model (Clements 1985; Sagey 1986; Clements & Hume 1995). Class nodes organize
-terminal features into groups whose members pattern together under phonological
-processes (spreading, delinking, assimilation).
+Hierarchical organization of phonological features following the standard
+feature geometry model. The tree synthesizes three sources:
 
-Tree structure (Clements & Hume 1995, "The Internal Structure of Speech Sounds"):
+- **Clements (1985)**: root, laryngeal, supralaryngeal, and place nodes
+- **Sagey (1986)**: articulator sub-nodes under Place (labial, coronal, dorsal)
+- **Standard post-1995 consensus** (Hayes 2009, §4.6): [nasal] under root,
+  [lateral] and [strident] under coronal, [continuant] under supralaryngeal
 
-    Root [±cons, ±son]
+    Root [±cons, ±son, ±nas]
     ├── Laryngeal [±voice, ±s.g., ±c.g.]
-    ├── Manner [±cont, ±nas, ±lat, ±strid]
-    └── Place
-        ├── Labial [±lab, ±round]
-        ├── Coronal [±cor, ±ant, ±dist]
-        └── Dorsal [±dor, ±high, ±low, ±back, ±atr]
+    └── Supralaryngeal [±cont]
+        └── Place
+            ├── Labial [±lab, ±round]
+            ├── Coronal [±cor, ±ant, ±dist, ±lat, ±strid]
+            └── Dorsal [±dor, ±high, ±low, ±back, ±atr]
 
-This module subsumes the flat classification predicates in `Features.lean`
-(`isMajorClass`, `isLaryngeal`, `isPlace`, `isDorsal`) and proves equivalence.
+The flat classification predicates in `Features.lean` (`isMajorClass`, `isPlace`)
+predate this geometry and do not exactly correspond to any single node —
+see the subsumption theorems below.
 -/
 
 namespace Theories.Phonology.FeatureGeometry
@@ -28,35 +30,35 @@ namespace Theories.Phonology.FeatureGeometry
 -- § 1: Geometric Nodes
 -- ============================================================================
 
-/-- Class nodes in the feature geometry tree. Organizational nodes that
-    dominate terminal features. -/
+/-- Class nodes in the feature geometry tree. -/
 inductive GeomNode where
-  | root        -- Root node (dominates everything)
-  | laryngeal   -- Laryngeal node
-  | manner      -- Manner node (continuant, nasal, lateral, strident)
-  | place       -- Supralaryngeal Place node
-  | labial      -- Labial articulator
-  | coronal     -- Coronal articulator
-  | dorsal      -- Dorsal articulator
+  | root           -- Root node (dominates everything)
+  | laryngeal      -- Laryngeal node (Clements 1985)
+  | supralaryngeal -- Supralaryngeal node (Clements 1985)
+  | place          -- Place node (Clements 1985)
+  | labial         -- Labial articulator (Sagey 1986)
+  | coronal        -- Coronal articulator (Sagey 1986)
+  | dorsal         -- Dorsal articulator (Sagey 1986)
   deriving DecidableEq, BEq, Repr
 
 -- ============================================================================
 -- § 2: Tree Structure
 -- ============================================================================
 
-/-- Parent of each node in the geometry tree. -/
+/-- Parent of each node in the geometry tree. The supralaryngeal node
+    (Clements 1985, diagram (4)) mediates between root and place. -/
 def GeomNode.parent : GeomNode → Option GeomNode
-  | .root      => none
-  | .laryngeal => some .root
-  | .manner    => some .root
-  | .place     => some .root
-  | .labial    => some .place
-  | .coronal   => some .place
-  | .dorsal    => some .place
+  | .root           => none
+  | .laryngeal      => some .root
+  | .supralaryngeal => some .root
+  | .place          => some .supralaryngeal
+  | .labial         => some .place
+  | .coronal        => some .place
+  | .dorsal         => some .place
 
 /-- All geometric nodes. -/
 def GeomNode.allNodes : List GeomNode :=
-  [.root, .laryngeal, .manner, .place, .labial, .coronal, .dorsal]
+  [.root, .laryngeal, .supralaryngeal, .place, .labial, .coronal, .dorsal]
 
 /-- Children of a node: nodes whose parent is `n`. -/
 def GeomNode.children (n : GeomNode) : List GeomNode :=
@@ -65,21 +67,24 @@ def GeomNode.children (n : GeomNode) : List GeomNode :=
 /-- Depth of a node in the tree (root = 0). -/
 def GeomNode.depth : GeomNode → Nat
   | .root => 0
-  | .laryngeal | .manner | .place => 1
-  | .labial | .coronal | .dorsal => 2
+  | .laryngeal | .supralaryngeal => 1
+  | .place => 2
+  | .labial | .coronal | .dorsal => 3
 
 -- ============================================================================
 -- § 4: Dominance
 -- ============================================================================
 
 /-- Does node `n` dominate node `m`? Reflexive-transitive closure of the
-    parent relation, unrolled to depth 2 (the tree's maximum depth). -/
+    parent relation, unrolled to depth 3 (the tree's maximum depth). -/
 def GeomNode.dominates (n m : GeomNode) : Bool :=
   n == m || match m.parent with
     | none => false
     | some p => n == p || match p.parent with
       | none => false
-      | some pp => n == pp
+      | some pp => n == pp || match pp.parent with
+        | none => false
+        | some ppp => n == ppp
 
 end Theories.Phonology.FeatureGeometry
 
@@ -90,15 +95,17 @@ end Theories.Phonology.FeatureGeometry
 namespace Theories.Phonology
 
 open FeatureGeometry in
-/-- Each terminal feature is dominated by exactly one class node.
-    `Feature.labial` maps to `GeomNode.labial`, `Feature.coronal` to
-    `GeomNode.coronal`, `Feature.dorsal` to `GeomNode.dorsal`. -/
+/-- Each terminal feature maps to its dominating class node.
+
+    - Root: [consonantal], [sonorant], [nasal] (nasal under root per C&H 1995)
+    - Supralaryngeal: [continuant]
+    - Coronal: includes [lateral], [strident] (Hayes 2009, §4.6.2) -/
 def Feature.node : Feature → GeomNode
-  | .consonantal | .sonorant => .root
+  | .consonantal | .sonorant | .nasal => .root
   | .voice | .spreadGlottis | .constrGlottis => .laryngeal
-  | .continuant | .nasal | .lateral | .strident => .manner
+  | .continuant => .supralaryngeal
   | .labial | .round => .labial
-  | .coronal | .anterior | .distributed => .coronal
+  | .coronal | .anterior | .distributed | .lateral | .strident => .coronal
   | .dorsal | .high | .low | .back | .atr => .dorsal
 
 open FeatureGeometry in
@@ -141,37 +148,50 @@ theorem allNodes_complete (n : GeomNode) : n ∈ GeomNode.allNodes := by
 -- Depth
 
 theorem root_depth : GeomNode.root.depth = 0 := rfl
-theorem labial_depth : GeomNode.labial.depth = 2 := rfl
-theorem coronal_depth : GeomNode.coronal.depth = 2 := rfl
-theorem dorsal_depth : GeomNode.dorsal.depth = 2 := rfl
+theorem supralaryngeal_depth : GeomNode.supralaryngeal.depth = 1 := rfl
+theorem place_depth : GeomNode.place.depth = 2 := rfl
+theorem labial_depth : GeomNode.labial.depth = 3 := rfl
+theorem coronal_depth : GeomNode.coronal.depth = 3 := rfl
+theorem dorsal_depth : GeomNode.dorsal.depth = 3 := rfl
 
 -- Natural class counts
 
 theorem root_features_count : GeomNode.root.features.length = 19 := by native_decide
 theorem laryngeal_features_count : GeomNode.laryngeal.features.length = 3 := by native_decide
-theorem manner_features_count : GeomNode.manner.features.length = 4 := by native_decide
-theorem place_features_count : GeomNode.place.features.length = 10 := by native_decide
+theorem supralaryngeal_features_count :
+    GeomNode.supralaryngeal.features.length = 13 := by native_decide
+theorem place_features_count : GeomNode.place.features.length = 12 := by native_decide
 theorem labial_features_count : GeomNode.labial.features.length = 2 := by native_decide
-theorem coronal_features_count : GeomNode.coronal.features.length = 3 := by native_decide
+theorem coronal_features_count : GeomNode.coronal.features.length = 5 := by native_decide
 theorem dorsal_features_count : GeomNode.dorsal.features.length = 5 := by native_decide
 
--- Subsumption of existing predicates
+-- Subsumption of existing flat predicates
+--
+-- isLaryngeal and isDorsal match the geometry exactly.
+-- isPlace undercounts: it misses [lateral] and [strident], which are
+-- geometrically under coronal (hence under place) per Hayes 2009.
+-- isMajorClass has no single geometric counterpart: its features are
+-- distributed across root ([cons, son, nas]), supralaryngeal ([cont]),
+-- and coronal ([lat, strid]).
 
-theorem isPlace_iff_place_dominates (f : Feature) :
-    f.isPlace = f.dominatedBy .place := by
+theorem isLaryngeal_iff_laryngeal_dominates (f : Feature) :
+    f.isLaryngeal = f.dominatedBy .laryngeal := by
   cases f <;> rfl
 
 theorem isDorsal_iff_dorsal_dominates (f : Feature) :
     f.isDorsal = f.dominatedBy .dorsal := by
   cases f <;> rfl
 
-theorem isLaryngeal_iff_laryngeal_dominates (f : Feature) :
-    f.isLaryngeal = f.dominatedBy .laryngeal := by
-  cases f <;> rfl
+-- isPlace is a strict subset of geometric place dominance
+theorem isPlace_implies_place_dominates (f : Feature) :
+    f.isPlace = true → f.dominatedBy .place = true := by
+  cases f <;> decide
 
-theorem isMajorClass_iff_root_or_manner (f : Feature) :
-    f.isMajorClass = (f.node == GeomNode.root || f.node == GeomNode.manner) := by
-  cases f <;> rfl
+theorem lateral_geometrically_under_place :
+    Feature.lateral.dominatedBy .place = true := by rfl
+
+theorem strident_geometrically_under_place :
+    Feature.strident.dominatedBy .place = true := by rfl
 
 -- ============================================================================
 -- § 7: Spreading / Delinking Predicates

@@ -37,6 +37,8 @@ SUBFIELD_LABELS = {
     "semantics/presupposition": "Semantics — Presupposition & Entailment",
     "semantics/dynamic": "Semantics — Dynamic Semantics",
     "syntax": "Syntax",
+    "morphology": "Morphology",
+    "phonology": "Phonology",
     "comparative": "Cross-Framework Comparisons",
 }
 

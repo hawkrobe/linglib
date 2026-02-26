@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.226.74] - 2026-02-25
+
+### Changed
+- **Feature geometry restructured to standard post-1995 consensus**: removed Manner node; [nasal] moved to root (C&H 1995 diagram (62)); [lateral] and [strident] moved to coronal (Hayes 2009 §4.6.2); [continuant] under supralaryngeal. Place now dominates 12 features (was 10), coronal dominates 5 (was 3). Flat predicates `isPlace`/`isMajorClass` no longer exactly match the geometry — `isPlace_implies_place_dominates` replaces the old biconditional. `isLaryngeal` and `isDorsal` still match exactly.
+
 ## [0.226.73] - 2026-02-25
 
 ### Added
