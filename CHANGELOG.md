@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.226.73] - 2026-02-25
+
+### Added
+- **Aissen (2003) OT factorial typology** (`Phenomena/Case/Studies/Aissen2003.lean`): Harmonic Alignment derives iconicity (*Ø) and economy (*!) constraint families from prominence scales. Consistent interleavings (fixed ranking within families, free between) yield factorial typology: 2-element scale → 3 types from 6 rankings, 3-element animacy scale → 4 types from 20 rankings. All generated types are monotone; non-monotone patterns (mark less prominent without more prominent) are provably impossible. Bridge theorems match OT-predicted types to attested DOMProfiles (Spanish ↔ Hu-only, Russian ↔ Hu+An, Turkish/Hebrew ↔ both, Catalan ↔ Pro-only, no-DOM ↔ none).
+- **End-to-end case pipeline bridge** (`Phenomena/Case/Bridge/DependentCaseDOM.lean`): chains dependent case assignment → DOM morphological realization → OT factorial typology. `object_always_acc` proves the algorithm assigns ACC to all objects regardless of prominence. Per-language `*_overt_eq_dom` theorems prove overt marking reduces to the DOM filter. `ot_pipeline_monotone` proves OT-generated types stay monotone through the full pipeline. `full_pipeline_faithful_and_monotone` proves all 8 attested DOM profiles are both faithful and monotone end-to-end.
+- **Bibliography**: added `aissen-2003` entry.
+
+## [0.226.72] - 2026-02-25
+
+### Changed
+- **Feature geometry audit against Clements (1985)**: added `supralaryngeal` node (Clements 1985, diagram (4)) mediating between root and {manner, place}. Tree is now 8 nodes / depth 3 (was 7 / depth 2). Updated docstring to attribute each node and feature to its source paper (Clements 1985 vs Sagey 1986 vs Clements & Hume 1995). Added `supralaryngeal_features_count` (= 14) and `supralaryngeal_plus_laryngeal` partition theorem.
+- **Bibliography**: added `clements-1985` entry.
+
 ## [0.226.71] - 2026-02-25
 
 ### Added

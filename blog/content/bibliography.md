@@ -307,6 +307,10 @@ cited in: [NegationData](https://github.com/hawkrobe/linglib/blob/main/Linglib/P
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Tense/TemporalConnectives/Karttunen.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Fragments/English/TemporalExpressions.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Fragments/Finnish/TemporalConnectives.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/TemporalConnectives/Bridge.lean)\
 cited in: [Karttunen](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Tense/TemporalConnectives/Karttunen.lean)
 
+**Izvorski, R.** (1997). The Present Perfect as an Epistemic Modal. *Proceedings of SALT, 7, 222–239*.\
+[formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/TenseAspect/Studies/Izvorski1997/Data.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/TenseAspect/Studies/Izvorski1997/Bridge.lean)\
+cited in: [Bridge](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/TenseAspect/Studies/Izvorski1997/Bridge.lean), [Data](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/TenseAspect/Studies/Izvorski1997/Data.lean)
+
 **Jin, Y. & Koenig, J.** (2021). A Cross-Linguistic Study of Expletive Negation. *Linguistic Typology, 25(1), 39–78*.\
 [cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/TemporalConnectives/NegationData.lean)\
 cited in: [NegationData](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/TemporalConnectives/NegationData.lean)
@@ -317,6 +321,10 @@ cited in: [Giannakidou](https://github.com/hawkrobe/linglib/blob/main/Linglib/Th
 
 **Klecha, P.** (2016). Modality and Embedded Temporal Operators. *Semantics and Pragmatics, 9(9), 1–55*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Tense/Klecha.lean)
+
+**Koev, T.** (2017). Evidentiality, Learning Events, and Spatiotemporal Distance. *Journal of Semantics, 34(1), 1–38*.\
+[formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/TenseAspect/Studies/Koev2017/Data.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/TenseAspect/Studies/Koev2017/Bridge.lean)\
+cited in: [Bridge](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/TenseAspect/Studies/Koev2017/Bridge.lean), [Data](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/TenseAspect/Studies/Koev2017/Data.lean), [SpatiotemporalDistance](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Events/SpatiotemporalDistance.lean)
 
 **Kratzer, A.** (1998). More Structural Analogies between Pronouns and Tenses. *Proceedings of SALT, 8*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Tense/Kratzer.lean)\
@@ -456,6 +464,10 @@ cited in: [SubjectAuxInversion](https://github.com/hawkrobe/linglib/blob/main/Li
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Fragments/Manambu/MedialVerbs.lean)\
 cited in: [MedialVerbs](https://github.com/hawkrobe/linglib/blob/main/Linglib/Fragments/Manambu/MedialVerbs.lean)
 
+**Aissen, J.** (2003). Differential Object Marking: Iconicity vs.\ Economy. *Natural Language \& Linguistic Theory, 21(3), 435–483*.\
+[formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/Prominence.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Case/Typology.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Case/Studies/Aissen2003.lean)\
+cited in: [Aissen2003](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Case/Studies/Aissen2003.lean)
+
 **Anand, P., Hardt, D. & McCloskey, J.** (2021). The Santa Cruz Sluicing Data Set. *Language, 97(1), e68–e88*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Ellipsis/Studies/AnandHardtMcCloskey2021/Data.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Ellipsis/Studies/AnandHardtMcCloskey2021/Bridge.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/Basic.lean)\
 cited in: [Bridge](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Ellipsis/Studies/AnandHardtMcCloskey2021/Bridge.lean), [Data](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Ellipsis/Studies/AnandHardtMcCloskey2021/Data.lean)
@@ -555,6 +567,26 @@ cited in: [SubjectAuxInversion](https://github.com/hawkrobe/linglib/blob/main/Li
 
 **Zeijlstra, H.** (2012). There Is Only One Way to Agree. *The Linguistic Review, 29(3), 491–539*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/Minimalism/Tense/Zeijlstra.lean)
+
+## Morphology
+
+**Ackerman, F. & Malouf, R.** (2013). Morphological Organization: The Low Conditional Entropy Conjecture. *Language, 89(3), 429–464*.\
+[formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Morphology/WP/LCEC.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Morphology/Studies/AckermanMalouf2013/Bridge.lean)\
+cited in: [Bridge](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Morphology/Studies/AckermanMalouf2013/Bridge.lean), [LCEC](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Morphology/WP/LCEC.lean)
+
+**Harley, H.** (2014). On the Identity of Roots. *Theoretical Linguistics, 40*.\
+[formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Morphology/DM/Categorizer.lean)\
+cited in: [Categorizer](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Morphology/DM/Categorizer.lean)
+
+## Phonology
+
+**Clements, G. N.** (1985). The Geometry of Phonological Features. *Phonology Yearbook, 2, 225–252*.\
+[foundational] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Phonology/FeatureGeometry.lean)\
+cited in: [FeatureGeometry](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Phonology/FeatureGeometry.lean)
+
+**Stojkovi\'c, J.** (2026). Same Form, Different Grammars: The Slavic [ov]\textasciitilde[u] Alternation. *Advances in Formal Slavic Linguistics 2023*.\
+[formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Allomorphy/SlavicVerbalizer/Data.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Allomorphy/SlavicVerbalizer/Bridge/OTAnalysis.lean)\
+cited in: [OTAnalysis](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Allomorphy/SlavicVerbalizer/Bridge/OTAnalysis.lean), [Data](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Allomorphy/SlavicVerbalizer/Data.lean)
 
 ## Cross-Framework Comparisons
 

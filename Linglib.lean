@@ -210,6 +210,8 @@ import Linglib.Phenomena.Case.Typology
 import Linglib.Phenomena.Case.Studies.Ozaki2025.Data
 import Linglib.Phenomena.Case.Studies.Ozaki2025.Bridge
 import Linglib.Phenomena.Case.Bridge.DependentCaseInventories
+import Linglib.Phenomena.Case.Studies.Aissen2003
+import Linglib.Phenomena.Case.Bridge.DependentCaseDOM
 import Linglib.Phenomena.ClauseChaining.Typology
 import Linglib.Phenomena.ClauseChaining.Data
 import Linglib.Phenomena.ClauseChaining.Bridge.FragmentBridge
