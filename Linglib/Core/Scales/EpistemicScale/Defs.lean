@@ -886,6 +886,92 @@ theorem perm_repr {n : ℕ} (σ : Fin n ≃ Fin n) (sys : EpistemicSystemFA (Fin
   obtain ⟨m, hm⟩ := h
   exact ⟨transportMeasure σ m, transfer_repr σ sys m hm⟩
 
+-- Permutation helper for singleton orderings
+theorem perm_singleton_iff {n : ℕ} (σ : Fin n ≃ Fin n)
+    (sys : EpistemicSystemFA (Fin n)) (i j : Fin n) :
+    (transportFA σ sys).ge {i} {j} ↔ sys.ge {σ.symm i} {σ.symm j} := by
+  show sys.ge (σ.symm '' {i}) (σ.symm '' {j}) ↔ _
+  simp only [Set.image_singleton]
+
+-- ══════════════════════════════════════════════════════
+-- Merge infrastructure (used for Fin 3 and Fin 4)
+-- ══════════════════════════════════════════════════════
+
+/-- Merge the last two elements of Fin (n+2) into one element of Fin (n+1).
+    Elements 0..n map to themselves; element n+1 maps to n. -/
+def mergeLast {n : ℕ} (i : Fin (n + 2)) : Fin (n + 1) :=
+  ⟨min i.val n, by omega⟩
+
+@[simp] theorem mergeLast_val {n : ℕ} (i : Fin (n + 2)) :
+    (mergeLast i : Fin (n + 1)).val = min i.val n := rfl
+
+/-- Merging the last two elements preserves FA.
+    ge_merged(A, B) := ge(mergeLast⁻¹(A), mergeLast⁻¹(B)). -/
+def mergeLastFA {n : ℕ} (sys : EpistemicSystemFA (Fin (n + 2))) :
+    EpistemicSystemFA (Fin (n + 1)) where
+  ge := fun A B => sys.ge (mergeLast ⁻¹' A) (mergeLast ⁻¹' B)
+  refl := fun A => sys.refl _
+  mono := fun A B hAB => sys.mono _ _ (Set.preimage_mono hAB)
+  bottom := by
+    show sys.ge (mergeLast ⁻¹' Set.univ) (mergeLast ⁻¹' ∅)
+    simp only [Set.preimage_univ, Set.preimage_empty]
+    exact sys.bottom
+  nonTrivial := by
+    show ¬sys.ge (mergeLast ⁻¹' ∅) (mergeLast ⁻¹' Set.univ)
+    simp only [Set.preimage_univ, Set.preimage_empty]
+    exact sys.nonTrivial
+  total := fun A B => sys.total _ _
+  trans := fun A B C h1 h2 => sys.trans _ _ _ h1 h2
+  additive := fun A B => by
+    show sys.ge (mergeLast ⁻¹' A) (mergeLast ⁻¹' B) ↔
+         sys.ge (mergeLast ⁻¹' (A \ B)) (mergeLast ⁻¹' (B \ A))
+    rw [Set.preimage_diff, Set.preimage_diff]
+    exact sys.additive _ _
+
+-- Preimage computation for Fin 3 (n=1): mergeLast maps 0↦0, 1↦1, 2↦1
+
+@[simp] private theorem ml3_0 : mergeLast (n := 1) (0 : Fin 3) = (0 : Fin 2) := by
+  ext; simp [mergeLast]
+
+@[simp] private theorem ml3_1 : mergeLast (n := 1) (1 : Fin 3) = (1 : Fin 2) := by
+  ext; simp [mergeLast]
+
+@[simp] private theorem ml3_2 : mergeLast (n := 1) (2 : Fin 3) = (1 : Fin 2) := by
+  ext; simp [mergeLast]
+
+private theorem ml3_preimage_0 :
+    (mergeLast (n := 1)) ⁻¹' ({0} : Set (Fin 2)) = ({0} : Set (Fin 3)) := by
+  ext x; fin_cases x <;> simp [mergeLast, Fin.ext_iff]
+
+private theorem ml3_preimage_1 :
+    (mergeLast (n := 1)) ⁻¹' ({1} : Set (Fin 2)) = ({1, 2} : Set (Fin 3)) := by
+  ext x; fin_cases x <;> simp [mergeLast, Fin.ext_iff]
+
+/-- If element i is non-null and mergeLast i = j,
+    then j is non-null in the merged system. -/
+theorem mergeLastFA_nonnull {n : ℕ} (sys : EpistemicSystemFA (Fin (n + 2)))
+    {i : Fin (n + 2)} {j : Fin (n + 1)}
+    (hi : ¬sys.ge ∅ {i}) (hmap : mergeLast i = j) :
+    ¬(mergeLastFA sys).ge ∅ {j} := by
+  show ¬sys.ge (mergeLast ⁻¹' ∅) (mergeLast ⁻¹' {j})
+  simp only [Set.preimage_empty]
+  intro h
+  apply hi
+  have hmem : i ∈ mergeLast ⁻¹' ({j} : Set (Fin (n + 1))) :=
+    Set.mem_preimage.mpr (by rw [Set.mem_singleton_iff]; exact hmap)
+  exact sys.trans _ _ _ h (sys.mono _ _ (Set.singleton_subset_iff.mpr hmem))
+
+/-- μ(∅) = 0 for any finitely additive measure. -/
+private theorem mu_empty {W : Type*} (m : FinAddMeasure W) : m.mu ∅ = 0 := by
+  have h := m.additive ∅ ∅ (fun x hx => hx.elim)
+  simp only [Set.empty_union] at h
+  linarith
+
+/-- The merged system's ge equals the original system's ge on preimages. -/
+theorem mergeLastFA_ge_eq {n : ℕ} (sys : EpistemicSystemFA (Fin (n + 2)))
+    (A B : Set (Fin (n + 1))) :
+    (mergeLastFA sys).ge A B = sys.ge (mergeLast ⁻¹' A) (mergeLast ⁻¹' B) := rfl
+
 -- ── Card 3: Infrastructure ──────────────────────────
 
 private noncomputable def measure_fin3 (a b : ℚ) (ha : 0 ≤ a) (hb : 0 ≤ b)

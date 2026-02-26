@@ -498,6 +498,8 @@ import Linglib.Phenomena.TenseAspect.AgentivityBridge
 import Linglib.Phenomena.TenseAspect.Studies.AlstottAravind2026
 import Linglib.Phenomena.TenseAspect.Studies.OgiharaST2024.Data
 import Linglib.Phenomena.TenseAspect.Studies.OgiharaST2024.Bridge
+import Linglib.Phenomena.TenseAspect.Studies.Koev2017.Data
+import Linglib.Phenomena.TenseAspect.Studies.Koev2017.Bridge
 import Linglib.Phenomena.WordOrder.Basic
 import Linglib.Phenomena.WordOrder.SubjectAuxInversion
 import Linglib.Phenomena.WordOrder.Typology
@@ -833,6 +835,7 @@ import Linglib.Theories.Morphology.RootTypology
 import Linglib.Theories.Semantics.Events.SpatialTrace
 import Linglib.Theories.Semantics.Events.DimensionBridge
 import Linglib.Theories.Semantics.Events.TemporalDecomposition
+import Linglib.Theories.Semantics.Events.SpatiotemporalDistance
 
 -- Theories: Semantics.Intensional (possible-worlds semantics)
 import Linglib.Theories.Semantics.Intensional.Basic
