@@ -78,7 +78,33 @@ def koreanStopNasalization : AlternationDatum where
   alternationType := .featureChange
 
 -- ============================================================================
--- § 4: Verification
+-- § 4: English Nasal Place Assimilation
+-- ============================================================================
+
+/-- English nasal place assimilation (velar): /n/ → [ŋ] before /k/.
+    /ɪnk/ → [ɪŋk] (e.g., "ink") -/
+def englishNasalPlaceAssimilation_nk : AlternationDatum where
+  language := "English"
+  name := "Nasal Place Assimilation (velar)"
+  description := "Alveolar nasal assimilates to velar place before velar stop"
+  underlyingForm := "nk"
+  surfaceForm := "ŋk"
+  environment := "nasal before velar stop"
+  alternationType := .featureChange
+
+/-- English nasal place assimilation (labial): /n/ → [m] before /p/.
+    /ɪnp/ → [ɪmp] (e.g., "input") -/
+def englishNasalPlaceAssimilation_np : AlternationDatum where
+  language := "English"
+  name := "Nasal Place Assimilation (labial)"
+  description := "Alveolar nasal assimilates to labial place before labial stop"
+  underlyingForm := "np"
+  surfaceForm := "mp"
+  environment := "nasal before labial stop"
+  alternationType := .featureChange
+
+-- ============================================================================
+-- § 5: Verification
 -- ============================================================================
 
 /-- All three alternations are classified correctly. -/

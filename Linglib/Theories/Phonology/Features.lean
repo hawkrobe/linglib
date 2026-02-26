@@ -141,4 +141,13 @@ def Feature.allFeatures : List Feature :=
 
 theorem allFeatures_length : Feature.allFeatures.length = 26 := rfl
 
+-- ============================================================================
+-- § 5: Segment Equality
+-- ============================================================================
+
+/-- Segment equality by checking all 26 features.
+    Two segments are BEq-equal iff they agree on every feature value. -/
+instance : BEq Segment where
+  beq s1 s2 := Feature.allFeatures.all λ f => s1.spec f == s2.spec f
+
 end Theories.Phonology

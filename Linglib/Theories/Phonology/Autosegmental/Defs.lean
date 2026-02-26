@@ -101,6 +101,51 @@ def AutosegRep.delinkAll (r : AutosegRep) (n : GeomNode) : AutosegRep :=
   { r with sharing := r.sharing.filter fun s => s.node != n }
 
 -- ============================================================================
+-- § 5b: Feature Spreading
+-- ============================================================================
+
+/-- Replace all features under geometric node `n` in `tgt` with `src`'s values.
+    This models autosegmental node replacement: when a place node spreads,
+    the entire node (including unspecified features) is copied, not just
+    the specified ones. -/
+def copyFeaturesUnder (tgt src : Segment) (n : GeomNode) : Segment where
+  spec f := if f.dominatedBy n then src.spec f else tgt.spec f
+
+/-- Spread node `n` from position `pos + 1` onto position `pos`, replacing
+    the target's features under `n` with the trigger's values and recording
+    the sharing link. -/
+def AutosegRep.spreadFeatures (r : AutosegRep) (pos : Nat) (n : GeomNode) :
+    AutosegRep :=
+  match r.segments[pos]?, r.segments[pos + 1]? with
+  | some tgt, some src =>
+    let newTgt := copyFeaturesUnder tgt src n
+    { segments := r.segments.set pos newTgt
+      sharing := ⟨pos, n⟩ :: r.sharing }
+  | _, _ => r
+
+/-- On a filtered list, if the filter predicate makes the if-branch select the
+    same value being compared, every element passes BEq self-comparison. -/
+private theorem all_filter_if_beq_self {α β : Type} [BEq β] [LawfulBEq β]
+    (l : List α) (p : α → Bool) (g h : α → β) :
+    (l.filter p).all (fun x => (if p x then g x else h x) == g x) = true := by
+  induction l with
+  | nil => rfl
+  | cons a as ih =>
+    simp only [List.filter_cons]
+    split
+    · simp only [List.all_cons, Bool.and_eq_true]
+      exact ⟨by simp_all, ih⟩
+    · exact ih
+
+/-- After copying features under node `n`, the result agrees with the source
+    at that node. -/
+theorem copyFeaturesUnder_agreeAt (tgt src : Segment) (n : GeomNode) :
+    agreeAt (copyFeaturesUnder tgt src n) src n = true := by
+  simp only [agreeAt, copyFeaturesUnder, GeomNode.features]
+  exact all_filter_if_beq_self Feature.allFeatures
+    (fun f => n.dominates f.node) src.spec tgt.spec
+
+-- ============================================================================
 -- § 6: OCP
 -- ============================================================================
 

@@ -20,15 +20,6 @@ open Theories.Phonology
 open Theories.Phonology.RuleBased (derive)
 
 -- ============================================================================
--- § 0: Segment Equality
--- ============================================================================
-
-/-- Segment equality by checking all 26 features.
-    Two segments are BEq-equal iff they agree on every feature value. -/
-instance : BEq Segment where
-  beq s1 s2 := Feature.allFeatures.all λ f => s1.spec f == s2.spec f
-
--- ============================================================================
 -- § 1: English Preglottalization
 -- ============================================================================
 

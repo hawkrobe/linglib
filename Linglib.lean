@@ -556,6 +556,7 @@ import Linglib.Phenomena.ScalarImplicatures.GoodmanStuhlmuller2013.Bridge
 import Linglib.Phenomena.ScalarImplicatures.GoodmanStuhlmuller2013.KennedyExact
 import Linglib.Phenomena.PhonologicalAlternation.Data
 import Linglib.Phenomena.PhonologicalAlternation.Bridge.SPEDerivations
+import Linglib.Phenomena.PhonologicalAlternation.Bridge.AutosegmentalDerivations
 
 -- Theories: CCG
 import Linglib.Theories.Syntax.CCG.Core.Basic

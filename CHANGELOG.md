@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.226.85] - 2026-02-26
+
+### Added
+- **Autosegmental spreading bridge for nasal place assimilation** (`Phenomena/PhonologicalAlternation/Bridge/AutosegmentalDerivations.lean`): first downstream consumer of autosegmental representations. Adds `copyFeaturesUnder` (node-level feature replacement) and `AutosegRep.spreadFeatures` (spreading with segment modification) to `Autosegmental/Defs.lean`, with `copyFeaturesUnder_agreeAt` theorem. Bridge demonstrates English nasal place assimilation: spreading place node from /k/ onto /n/ yields [ŋ] (`spread_nk_equals_ŋ`), from /p/ onto /n/ yields [m] (`spread_np_equals_m`). Moved `BEq Segment` to `Features.lean`. Two new `AlternationDatum` entries for nasal assimilation.
+
 ## [0.226.84] - 2026-02-26
 
 ### Added
