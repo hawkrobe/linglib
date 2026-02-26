@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.226.84] - 2026-02-26
+
+### Added
+- **Xiang 2022 mention-some/mention-all bridge** (`Phenomena/Questions/Studies/Xiang2022/`): first downstream consumer of `Core.Agent.DecisionTheory`. Theory-neutral data (`Data.lean`: 7 data points encoding MS/MA judgments across modal types). Decision-theoretic bridge (`Bridge.lean`): finite committee-service scenario (3 persons, 3 worlds) exercises `DecisionProblem`, `resolves` (5 theorems), `resolvingAnswers`, `isMentionSome`, `isMentionAll`, `questionUtility`, and `completeInformationDP`. Defines Xiang's conditions (A) answer overlap and (B) non-closure-under-conjunction as computable predicates. All 15 theorems verified via `native_decide`.
+
 ## [0.226.83] - 2026-02-26
 
 ### Added
