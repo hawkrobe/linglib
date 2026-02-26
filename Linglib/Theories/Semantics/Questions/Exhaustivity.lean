@@ -185,24 +185,52 @@ def foxNV {W : Type _} (cells : List (W → Bool)) (pIdx : Nat)
     (worlds : List W) : Bool :=
   worlds.any (foxExh cells pIdx worlds)
 
-/-- Count of extensionally distinct exhaustified true answers at world `w`.
-
-|Ans(Q)(w)| in Fox 2018, definition 35: the number of cells whose
-exhaustified meaning is true at `w`. When |Ans| = 1, the question
-receives a mention-all reading; when |Ans| > 1, mention-some. -/
-def foxAnsCount {W : Type _} (cells : List (W → Bool))
+/-- Count of Exh-true cells at world `w`: the number of cells whose
+exhaustified meaning holds at `w`. This is NOT Fox's |Ans| (Definition 35)
+but a simpler diagnostic: how many exclusive readings are true at `w`.
+When = 0, no cell exclusively holds (overlap); when = 1, one cell
+dominates; when > 1, multiple exclusive readings coexist. -/
+def exhTrueCount {W : Type _} (cells : List (W → Bool))
     (worlds : List W) (w : W) : Nat :=
   (List.range cells.length).filter (λ i => foxExh cells i worlds w) |>.length
 
-/-- Question Partition Matching: for every cell that is true at `w`,
-its exhaustified version is non-vacuous (satisfiable).
-
-Fox 2018, definition 34 (CI + NV). QPM holds at `w` iff each true
-answer can be exhaustified without vacuity — guaranteeing a well-defined
-partition of the answerhood space. -/
-def foxQPM {W : Type _} (cells : List (W → Bool))
+/-- Pointwise non-vacuity: every cell true at `w` has a satisfiable
+exhaustified version. This is a necessary condition for Fox's QPM
+(Definition 34) but weaker — it checks NV for true cells at a single
+world, while Fox's QPM requires both CI and NV globally over the
+partition induced by Q. -/
+def pointwiseNV {W : Type _} (cells : List (W → Bool))
     (worlds : List W) (w : W) : Bool :=
   (List.range cells.length).all (λ i =>
     !getCell cells i w || foxNV cells i worlds)
+
+/-- Fox's answer operator (Definition 35). At world `w`, finds the unique
+cell-identifier (the unique `j` where `foxExh(cells, j, worlds)(w) = true`)
+and returns the count of Q-members that are true at `w` AND whose
+denotation entails the cell-identifier's exhaustified meaning.
+
+Returns 0 if no unique cell-identifier exists (zero or multiple Exh-true
+cells at `w`). When `foxAns > 1`, Fox predicts mention-some (the
+cell-identifier is weaker than individual true answers). When `= 1`,
+mention-all (the cell-identifier is the strongest true answer). -/
+def foxAns {W : Type _} (cells : List (W → Bool))
+    (worlds : List W) (w : W) : Nat :=
+  let exhTrue := (List.range cells.length).filter (λ j => foxExh cells j worlds w)
+  match exhTrue with
+  | [j] =>
+    let cellId := foxExh cells j worlds
+    (List.range cells.length).filter (λ i =>
+      getCell cells i w && propEntails (getCell cells i) cellId worlds) |>.length
+  | _ => 0
+
+/-- Schwarzschild's partition test (Fox 2018, (38)): do the exhaustified
+cells {Exh(Q)(p) : p ∈ Q} partition the world set? Holds iff every world
+has exactly one Exh-true cell. When this holds, Fox's QPM (Definition 34)
+is satisfied and `foxAns` is well-defined at every world. -/
+def foxPartition {W : Type _} (cells : List (W → Bool))
+    (worlds : List W) : Bool :=
+  worlds.all (λ (w : W) =>
+    let n := (List.range cells.length).filter (λ i => foxExh cells i worlds w) |>.length
+    n == 1)
 
 end Theories.Semantics.Questions.Exhaustivity

@@ -293,36 +293,50 @@ theorem partCells_no_overlap :
     answersOverlap partCells allWorlds = false := by
   native_decide
 
-/-! ## Part IV: Fox 2018 Exh→EP Bridge @cite{fox-2018}
+/-! ## Part IV: Fox 2018 Exhaustification @cite{fox-2018}
 
 Fox (2018) "Partition by Exhaustification" derives Dayal's EP from the
-exhaustification operator Exh. Here we exercise the Bool-valued Fox definitions
-(foxExh, foxNV, foxAnsCount, foxQPM) from Questions.Exhaustivity on the same
-Xiang 2022 scenario, proving they agree with dayalEP and relExh on the MS/MA
-classification.
+exhaustification operator Exh. We exercise the Bool-valued Exh/IE/MC-set
+machinery from Questions.Exhaustivity on three question denotations:
 
-Key result: for the can-question at w0, Fox's |Ans| = 2 (two exhaustified
-true answers), correctly predicting mention-some. For the partition question,
-|Ans| = 1, correctly predicting mention-all. Both agree with Dayal's EP. -/
+1. **FO cells** {◇a, ◇b}: Exh identifies {w1} and {w2} but not {w0}.
+   No unique cell-identifier at w0 → `foxAns` undefined → FO alone
+   cannot derive MS (consistent with Fox's argument that higher-order
+   quantification is needed).
 
-/-! ### Fox Exh on individual cells -/
+2. **HO cells** {◇a, ◇b, ◇a∨◇b}: Fox's higher-order reading (Section 4.3).
+   Exh(◇a∨◇b) = ◇a∨◇b (IE = ∅ since the two MC-sets {◇a} and {◇b}
+   have empty intersection). At w0, this is the unique Exh-true cell, and
+   both ◇a and ◇b entail ◇a∨◇b, so `foxAns = 3` → **MS**.
+
+3. **Partition cells**: trivially `foxAns = 1` → **MA**.
+-/
+
+/-! ### Higher-order question denotation (Fox 2018, Section 4.3) -/
+
+/-- Higher-order question denotation: adds the disjunctive cell ◇a∨◇b
+to the FO cells. Under Spector's analysis, the wh-variable ranges over
+generalized quantifiers, generating compound cells including disjunctions. -/
+def hoCells : List (XW → Bool) :=
+  [ foQDen chairs abilityMB .a
+  , foQDen chairs abilityMB .b
+  , λ w => foQDen chairs abilityMB .a w || foQDen chairs abilityMB .b w
+  ]
+
+/-! ### Exh on FO cells -/
 
 /-- Exh(◇chair(a)) is false at w0: both a and b can chair, so a's
 exhaustified answer (= only a can chair) doesn't hold at w0. -/
 theorem canQ_foxExh_a_w0 :
     foxExh foCells 0 allWorlds .w0 = false := by native_decide
 
-/-- Exh(◇chair(a)) is true at w1: at w1 only a can chair, so the
-exhaustified answer holds. -/
+/-- Exh(◇chair(a)) is true at w1: at w1 only a can chair. -/
 theorem canQ_foxExh_a_w1 :
     foxExh foCells 0 allWorlds .w1 = true := by native_decide
 
-/-- Exh(◇chair(b)) is true at w2: at w2 only b can chair, so the
-exhaustified answer holds. -/
+/-- Exh(◇chair(b)) is true at w2: at w2 only b can chair. -/
 theorem canQ_foxExh_b_w2 :
     foxExh foCells 1 allWorlds .w2 = true := by native_decide
-
-/-! ### Non-vacuity -/
 
 /-- Exh(◇chair(a)) is satisfiable: true at w1. -/
 theorem canQ_foxNV_a :
@@ -332,55 +346,103 @@ theorem canQ_foxNV_a :
 theorem canQ_foxNV_b :
     foxNV foCells 1 allWorlds = true := by native_decide
 
-/-! ### Answer count → MS/MA classification -/
+/-- No Exh-true FO cell at w0: neither exclusive reading holds where
+both individuals can chair. This is why Fox needs higher-order Q. -/
+theorem canQ_exhTrueCount_w0 :
+    exhTrueCount foCells allWorlds .w0 = 0 := by native_decide
 
-/-- **Two exhaustified answers at w0 → mention-some.**
-At w0, both ◇chair(a) and ◇chair(b) are true. Their exhaustified versions
-(Exh(◇chair(a)) = "only a can", Exh(◇chair(b)) = "only b can") are both
-satisfiable but false at w0. The FO cells at w0 have |Ans| = 0 at w0 itself,
-but the count that matters is how many cells have non-vacuous exhaustifications.
-With 2 satisfiable exhaustified answers, the question is mention-some. -/
-theorem canQ_foxAnsCount :
-    foxAnsCount foCells allWorlds .w0 = 0 := by native_decide
+/-- FO cells don't partition: w0 has no Exh-true cell (Schwarzschild
+test fails). -/
+theorem canQ_fo_no_partition :
+    foxPartition foCells allWorlds = false := by native_decide
 
-/-- QPM holds for the can-question at w0: each true cell's exhaustified
-version is non-vacuous. -/
-theorem canQ_foxQPM :
-    foxQPM foCells allWorlds .w0 = true := by native_decide
+/-- `foxAns` is undefined for FO cells at w0: no unique cell-identifier
+(zero Exh-true cells). FO alone cannot derive Fox's MS prediction. -/
+theorem canQ_fo_foxAns_w0 :
+    foxAns foCells allWorlds .w0 = 0 := by native_decide
 
-/-- For the partition question at w0, exactly one exhaustified answer is
-true → mention-all. The w0-cell is the unique true answer, and its
-exhaustification is trivially satisfied. -/
-theorem partQ_foxAnsCount :
-    foxAnsCount partCells allWorlds .w0 = 1 := by native_decide
+/-! ### Exh on HO cells (Fox's Section 4.3) -/
 
-/-! ### Three-way agreement: Dayal EP ↔ Fox ↔ RelExh -/
+/-- Exh(◇a∨◇b) at w0 under hoQ: the disjunctive cell's IE is empty
+(MC-sets {◇a} and {◇b} have empty intersection), so Exh(◇a∨◇b) = ◇a∨◇b.
+True at w0 since both can chair. -/
+theorem canQ_ho_exh_disj_w0 :
+    foxExh hoCells 2 allWorlds .w0 = true := by native_decide
 
-/-- **Dayal–Fox agreement on MS**: EP fails (no strongest answer) AND
-Fox's QPM holds with multiple satisfiable exhaustified answers.
-Both diagnose the can-question as mention-some. -/
-theorem canQ_ep_fox_agree :
+/-- At w0 under hoQ, exactly one Exh is true: the disjunctive cell.
+The individual cells' Exh (= only-a, only-b) are false at w0. -/
+theorem canQ_ho_exhTrueCount_w0 :
+    exhTrueCount hoCells allWorlds .w0 = 1 := by native_decide
+
+/-- **Fox's Ans gives MS for HO cells at w0.** The unique cell-identifier
+is Exh(◇a∨◇b) = ◇a∨◇b. All three Q-members are true at w0 and entail
+◇a∨◇b (trivially, since ◇a → ◇a∨◇b and ◇b → ◇a∨◇b).
+|Ans| = 3 > 1 → mention-some.
+
+This is Fox's key result: the cell-identifier is weaker than the individual
+true answers, so multiple answers are licensed. -/
+theorem canQ_ho_foxAns_w0 :
+    foxAns hoCells allWorlds .w0 = 3 := by native_decide
+
+/-- HO cells don't partition: at w1 both Exh(◇a) and Exh(◇a∨◇b)
+are true (Exh(◇a) = {w1}, Exh(◇a∨◇b) = {w0,w1,w2}), so the
+Schwarzschild test fails. Fox's Ans requires a unique cell-identifier
+per world; the HO cells with ◇a∨◇b violate this outside w0.
+This reflects the gap between Fox's conceptual argument for MS
+and the formal QPM condition. -/
+theorem canQ_ho_no_partition :
+    foxPartition hoCells allWorlds = false := by native_decide
+
+/-- `foxAns` is undefined at w1 under HO cells: two Exh-true cells
+(Exh(◇a) and Exh(◇a∨◇b)), so no unique cell-identifier. -/
+theorem canQ_ho_foxAns_w1 :
+    foxAns hoCells allWorlds .w1 = 0 := by native_decide
+
+/-! ### Partition question -/
+
+/-- Partition cells form a proper partition: every world has exactly
+one Exh-true cell (Schwarzschild test passes). -/
+theorem partQ_partition :
+    foxPartition partCells allWorlds = true := by native_decide
+
+/-- Fox's Ans = 1 for partition cells at w0 → mention-all. The unique
+true cell is the w0-cell; its Exh is itself. -/
+theorem partQ_foxAns :
+    foxAns partCells allWorlds .w0 = 1 := by native_decide
+
+/-! ### Pointwise NV -/
+
+/-- Pointwise NV holds for FO cells at w0: each true cell's Exh is
+satisfiable (though not true at w0 itself). -/
+theorem canQ_pointwiseNV :
+    pointwiseNV foCells allWorlds .w0 = true := by native_decide
+
+/-! ### Cross-framework agreement -/
+
+/-- **Dayal EP and Fox Exh agree on the FO can-question**: EP fails
+(no strongest answer) and Exh identifies no cell at w0 (no unique
+cell-identifier). Both frameworks flag that the FO denotation alone
+cannot resolve the question at w0. -/
+theorem canQ_ep_exh_agree_fo :
     dayalEP (foQDen chairs) abilityMB [.a, .b] allWorlds .w0 = false ∧
-    foxQPM foCells allWorlds .w0 = true ∧
-    foxNV foCells 0 allWorlds = true ∧
-    foxNV foCells 1 allWorlds = true := by
-  exact ⟨canQ_ep_fails, canQ_foxQPM, canQ_foxNV_a, canQ_foxNV_b⟩
+    foxAns foCells allWorlds .w0 = 0 := by
+  exact ⟨canQ_ep_fails, canQ_fo_foxAns_w0⟩
 
-/-- **Dayal–Fox agreement on MA**: EP holds (strongest answer exists) AND
-Fox's foxAnsCount = 1 (unique exhaustified answer). Both diagnose the
-partition question as mention-all. -/
+/-- **Dayal EP and Fox Ans agree on MA for partition**: EP holds
+(unique strongest answer) and Fox's |Ans| = 1. -/
 theorem partQ_ep_fox_agree :
     dayalEP partQDen abilityMB [.w0, .w1, .w2] allWorlds .w0 = true ∧
-    foxAnsCount partCells allWorlds .w0 = 1 := by
-  exact ⟨partQ_ep_holds, partQ_foxAnsCount⟩
+    foxAns partCells allWorlds .w0 = 1 := by
+  exact ⟨partQ_ep_holds, partQ_foxAns⟩
 
-/-- **Three-way agreement on MS**: RelExh passes, Fox's QPM holds
-(with both NV), and DecisionTheory classifies as mention-some.
-All three frameworks converge on the same finite model. -/
-theorem canQ_three_way_agree :
+/-- **Fox's HO reading derives MS**: with the higher-order Q (including
+◇a∨◇b), `foxAns = 3` at w0 — the exhaustification framework predicts
+mention-some. This agrees with RelExh (which passes for the FO reading)
+and DecisionTheory. -/
+theorem canQ_ho_ms_agree :
+    foxAns hoCells allWorlds .w0 = 3 ∧
     relExh (foQDen chairs) abilityMB [.a, .b] allWorlds .w0 = true ∧
-    foxQPM foCells allWorlds .w0 = true ∧
     isMentionSome findChairDP allWorlds allIndividuals foCells = true := by
-  exact ⟨canQ_relExh_passes, canQ_foxQPM, canQ_mentionSome⟩
+  exact ⟨canQ_ho_foxAns_w0, canQ_relExh_passes, canQ_mentionSome⟩
 
 end Phenomena.Questions.Studies.Xiang2022.Bridge

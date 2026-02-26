@@ -1,5 +1,32 @@
 # Changelog
 
+## [0.226.92] - 2026-02-26
+
+### Changed
+- **Fox 2018 audit against paper**: verified definitions against Fox's actual formal claims. Renamed `foxAnsCount`→`exhTrueCount` (counts Exh-true cells, not Fox's Ans), `foxQPM`→`pointwiseNV` (pointwise non-vacuity, weaker than Fox's CI∧NV). Added `foxAns` (Fox's Definition 35: true cells entailing the unique cell-identifier), `foxPartition` (Schwarzschild's partition test, (38)). Added `hoCells` (higher-order Q with ◇a∨◇b) to Bridge, proving `foxAns hoCells w0 = 3` (MS via weak cell-identifier) and `foxPartition hoCells = false` (HO cells don't partition — reflects gap between Fox's conceptual MS argument and formal QPM). Fixed all docstrings that overclaimed agreement.
+
+## [0.226.91] - 2026-02-26
+
+### Added
+- **Finnish grammar formalization (Karlsson 2018)**: 6 new files exercising phonology, morphology, case, and syntax infrastructure.
+  - `Fragments/Finnish/VowelHarmony.lean`: Finnish palatal vowel harmony as autosegmental [back] spreading. 8 vowel segments (a/ä, o/ö, u/y, e, i), harmony classification (back/front/neutral), stemHarmony and harmonize functions. 11 theorems via native_decide confirming vowel classes and spreading behavior.
+  - `Fragments/Finnish/ConsonantGradation.lean`: 6 SPE-style PhonRules for quantitative (pp→p, tt→t, kk→k) and qualitative (p→v, t→d, k→∅) gradation. GradationPair data type with classification. 5 verification theorems.
+  - `Fragments/Finnish/Negation.lean`: Full 6-form paradigm of negative auxiliary *ei* (en/et/ei/emme/ette/eivät). Connegative MorphRule with Boolean negation semantics. InflDistribution showing tense+agreement on neg aux vs. stem+aspect on main verb. 7 theorems.
+  - `Fragments/Finnish/Predicates.lean`: FinnishVerb entries (avata, lukea, tulla, haluta) with active and impersonal "passive" forms. Uses new VoiceFlavor.impersonal. 7 theorems proving impersonal is semantically non-vacuous but does not project an agent.
+  - `Phenomena/Case/Bridge/FinnishPartitive.lean`: First case–aspect bridge in linglib. Maps object case to VP telicity (ACC/GEN→telic, PART→atelic). 4 data points with PartitiveLicensor contexts (negation, unbounded quantity, irresultative). 7 theorems.
+  - `Phenomena/Case/Bridge/FinnishSuffixOrder.lean`: Tests Bybee's relevance hierarchy against Finnish nominal suffix order (stem–number–case–possessive–clitic). Documents that case has no Bybee category (verb-centric gap). 7 theorems.
+
+### Changed
+- **`Core/Case/Basic.lean`**: Add 3 new case constructors — `.ess` (essive), `.transl` (translative), `.abess` (abessive) — expanding inventory from 16 to 19. Update `allCases` and `allCases_length`.
+- **`Core/Case/Hierarchy.lean`**: Add essive, translative, abessive at rank 0 (Blake's "others").
+- **`Theories/Syntax/Minimalism/Core/Voice.lean`**: Add `VoiceFlavor.impersonal` for Finnish-type constructions where agent is existentially closed but not syntactically projected. Add `voiceImpersonal` canonical head. Impersonal has semantics (unlike nonThematic) but no θ-role (unlike agentive). 2 new theorems.
+- **`Fragments/Finnish/Case.lean`**: Expand case inventory from 9 to 12 Core.Case values using new ess/transl/abess constructors. Update docstring.
+
+## [0.226.90] - 2026-02-26
+
+### Added
+- **Den Dikken (1995) SC predication integration** (`SmallClause.lean`, `MinimalismParticleSC.lean`, `MinimalismResultativeSC.lean`): new `SmallClause` type in `Theories/Syntax/Minimalism/Core/` with `SCPredCategory` enum (P/A/V/D) parameterizing the SC family. `ApplType.isAffixalParticle` and `ApplType.toSCPredCategory` connect Pylkkänen's low applicatives to den Dikken's affixal particle thesis. PVC bridge connects particle verb data to SC + head movement (`formComplexLI` for P-to-V incorporation), derives pronoun/heavy-NP ordering constraints from `PVCDerivation` type, proves predictions match all 6 empirical judgments. Resultative bridge maps Goldberg & Jackendoff's 5-way typology onto SC predicate categories (A for property, P for path). Extended `MinimalismSmallClause.lean` with SC family categorization (4 categories spanning all 4 constructions), nested SC DOC `V [SC Goal [SC Theme P]]` for den Dikken's Ch. 3 dative alternation analysis, proving it matches ApplP tree shape but differs from flat SC-DOC. 30 new theorems.
+
 ## [0.226.89] - 2026-02-26
 
 ### Added
