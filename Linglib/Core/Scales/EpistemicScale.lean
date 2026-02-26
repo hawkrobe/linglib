@@ -1,6 +1,8 @@
 import Linglib.Core.Scales.EpistemicScale.Defs
 import Linglib.Core.Scales.EpistemicScale.Entailments
+import Linglib.Core.Scales.EpistemicScale.Fin3
 import Linglib.Core.Scales.EpistemicScale.Fin4
+import Linglib.Core.Scales.EpistemicScale.Cancellation
 
 /-!
 # Epistemic Comparative Likelihood — Main Theorems
