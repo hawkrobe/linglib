@@ -259,9 +259,65 @@ private theorem fa_cancellation_fin4_null0 (sys : EpistemicSystemFA (Fin 4))
   obtain ⟨m, hm⟩ := null_elem_reduce sys h0 hnn (fun sys' => theorem8a_fin3 sys')
   exact representable_implies_cancellation sys m hm
 
+-- ── Merge Fin 4 → Fin 3 (all-positive case) ─────
+
+/-- Merge map: Fin 4 → Fin 3, merging elements 2 and 3 into element 2. -/
+private def merge43 : Fin 4 → Fin 3
+  | ⟨0, _⟩ => 0
+  | ⟨1, _⟩ => 1
+  | _ => 2
+
+/-- The merged FA system on Fin 3 via preimage. -/
+private def merge43FA (sys : EpistemicSystemFA (Fin 4)) :
+    EpistemicSystemFA (Fin 3) where
+  ge A B := sys.ge (merge43 ⁻¹' A) (merge43 ⁻¹' B)
+  refl A := sys.refl _
+  mono A B h := sys.mono _ _ (Set.preimage_mono h)
+  bottom := by
+    show sys.ge (merge43 ⁻¹' Set.univ) (merge43 ⁻¹' ∅)
+    rw [Set.preimage_univ, Set.preimage_empty]; exact sys.bottom
+  nonTrivial := by
+    show ¬sys.ge (merge43 ⁻¹' ∅) (merge43 ⁻¹' Set.univ)
+    rw [Set.preimage_empty, Set.preimage_univ]; exact sys.nonTrivial
+  total A B := sys.total _ _
+  trans A B C h1 h2 := sys.trans _ _ _ h1 h2
+  additive A B := by
+    show sys.ge (merge43 ⁻¹' A) (merge43 ⁻¹' B) ↔
+         sys.ge (merge43 ⁻¹' (A \ B)) (merge43 ⁻¹' (B \ A))
+    rw [Set.preimage_diff, Set.preimage_diff]; exact sys.additive _ _
+
+private lemma merge43_pre_2 :
+    merge43 ⁻¹' ({2} : Set (Fin 3)) = ({2, 3} : Set (Fin 4)) := by
+  ext x; fin_cases x <;> simp [merge43]
+
+private lemma merge43_pos (sys : EpistemicSystemFA (Fin 4))
+    {i : Fin 4} {j : Fin 3}
+    (hi : ¬sys.ge ∅ {i}) (hpre : merge43 ⁻¹' {j} ⊇ ({i} : Set (Fin 4))) :
+    ¬(merge43FA sys).ge ∅ {j} := by
+  intro h; change sys.ge (merge43 ⁻¹' ∅) (merge43 ⁻¹' {j}) at h
+  rw [Set.preimage_empty] at h
+  exact hi (sys.trans _ _ _ h (sys.mono _ _ hpre))
+
+/-- All-positive case: merge Fin 4 → Fin 3, get measure, split the merged weight.
+    The split point construction and full 81-pair verification is the core
+    combinatorial content of KPS Theorem 8a for n = 4. -/
+private theorem fa_cancellation_fin4_allpos (sys : EpistemicSystemFA (Fin 4))
+    (h0 : ¬sys.ge ∅ {(0 : Fin 4)}) (h1 : ¬sys.ge ∅ {(1 : Fin 4)})
+    (h2 : ¬sys.ge ∅ {(2 : Fin 4)}) (h3 : ¬sys.ge ∅ {(3 : Fin 4)}) :
+    Cancellation 4 sys.ge := by
+  -- Merge elements 2,3 → get Fin 3 FA system → get measure
+  obtain ⟨m3, hm3⟩ := theorem8a_fin3 (merge43FA sys)
+  -- m3 has positive singleton weights (transferred from non-nullity)
+  -- Split m3.mu {2} = c + (m3.mu {2} - c) to get Fin 4 measure
+  -- Each constraint on c is linear; feasibility follows from FA axioms
+  -- TODO: construct split point c and verify all 81 disjoint pair comparisons.
+  -- The mathematical content is: for n ≤ 4, the constraint polytope on c
+  -- is always non-empty when the system satisfies FA.
+  sorry
+
 /-- FA on Fin 4 implies the cancellation property.
     Null cases: reduce via `null_elem_reduce` + `theorem8a_fin3`.
-    0-null case (all singletons positive): requires direct combinatorial argument. -/
+    All-positive case: merge Fin 4 → Fin 3 + split. -/
 theorem fa_cancellation_fin4 (sys : EpistemicSystemFA (Fin 4)) :
     Cancellation 4 sys.ge := by
   by_cases h0 : sys.ge ∅ {(0 : Fin 4)}
@@ -293,8 +349,8 @@ theorem fa_cancellation_fin4 (sys : EpistemicSystemFA (Fin 4)) :
               ⟨0, fun h => h1 ((perm_null_convert _ _ 1 1 (by decide)).mp h)⟩
               (fun sys' => theorem8a_fin3 sys'))
           exact representable_implies_cancellation sys m hm
-        · -- all singletons positive: hard combinatorial case
-          sorry
+        · -- all singletons positive: merge + split
+          exact fa_cancellation_fin4_allpos sys h0 h1 h2 h3
 
 -- ═══════════════════════════════════════════════════════════════
 -- § 6. KPS Theorem 8a via cancellation

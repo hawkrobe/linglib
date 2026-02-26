@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.226.96] - 2026-02-26
+
+### Changed
+- **Fin 4 all-positive case: merge infrastructure** (`Cancellation.lean`): added `merge43` (Fin 4 → Fin 3 collapsing elements 2,3), `merge43FA` (merged FA system via preimage), `merge43_pos` (non-nullity transfer). Isolated the all-positive case into `fa_cancellation_fin4_allpos` with merge + `theorem8a_fin3` pipeline; split-and-verify sorry remains (81-pair verification). Scratch file `scratch/allpos_fin4.lean` has extended infrastructure: `measure_fin4` constructor, `set_fin4_eq` enumeration, augmentation lemmas.
+
 ## [0.226.95] - 2026-02-26
 
 ### Added
