@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.226.68] - 2026-02-25
+
+### Added
+- **Phonological features** (`Theories/Phonology/Features.lean`): 19-feature inventory (major class, laryngeal, place) with `Segment` representation, feature classification predicates, exhaustive enumeration.
+- **OT core vocabulary** (`Theories/Phonology/OT/Core.lean`): `NamedConstraint` with faithfulness/markedness families, `buildProfile`/`buildTableau` convenience constructors, `permutations` generator, `factorialOptima`/`factorialTypologySize` for computing OT factorial typologies.
+- **Stojković (2026) Slavic verbalizer formalization**: OT analysis of the [ov]∼[ev]∼[uv] alternation in secondary imperfectivisation across Slavic.
+  - `Phenomena/Allomorphy/SlavicVerbalizer/Data.lean`: 12-language `SlavicLang` type, 3-way `VBLZGroup`, `VBLZDatum` structure, `presentStemUniversal` theorem (all groups share present-stem [u]).
+  - `Phenomena/Allomorphy/SlavicVerbalizer/Bridge/OTAnalysis.lean`: 5 candidates (ov/ev/uv/iv/uHiatus), 6 constraints (NOHIATUS, SPECIFY, *SHARE[−back], DEP[+back], DEP[−high], DEP[+high]), 3 group-specific rankings with `native_decide` optimality proofs (`ov_optimal`, `ev_optimal`, `uv_optimal`), factorial typology over 4 variable constraints proving exactly 4 distinct optima ({[ov]}, {[ev]}, {[uv]}, {[iv]}), bridge theorems connecting OT predictions to empirical data.
+
 ## [0.226.67] - 2026-02-25
 
 ### Changed

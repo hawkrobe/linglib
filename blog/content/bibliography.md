@@ -425,7 +425,8 @@ cited in: [Bridge](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenome
 cited in: [ProjectionMechanisms](https://github.com/hawkrobe/linglib/blob/main/Linglib/Comparisons/ProjectionMechanisms.lean)
 
 **Heim, I.** (1992). Presupposition Projection and the Semantics of Attitude Verbs. *Journal of Semantics, 9(3), 183–221*.\
-[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Attitudes/Doxastic.lean)
+[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Attitudes/Doxastic.lean)\
+cited in: [KD45Projection](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Presupposition/Bridge/KD45Projection.lean)
 
 **Schlenker, P.** (2009). Local Contexts. *Semantics and Pragmatics, 2, 1–78*.\
 [cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Comparisons/ProjectionMechanisms.lean)\
@@ -466,6 +467,10 @@ cited in: [ArnoldEtAl2000](https://github.com/hawkrobe/linglib/blob/main/Linglib
 **Arregi, K. & Pietraszko, A.** (2021). The Ups and Downs of Head Displacement. *Linguistic Inquiry, 52(2), 241–290*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/WordOrder/SubjectAuxInversion.lean)\
 cited in: [MinimalismVerbMovement](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/WordOrder/Bridge/MinimalismVerbMovement.lean), [SubjectAuxInversion](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/WordOrder/SubjectAuxInversion.lean)
+
+**Blake, B. J.** (1994). Case. *Cambridge University Press*.\
+[foundational] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/Case/Basic.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/Case/Hierarchy.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/Case/Syncretism.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/Case/SplitConditions.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/Case/LocalExtension.lean)\
+cited in: [Basic](https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/Case/Basic.lean), [Hierarchy](https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/Case/Hierarchy.lean), [LocalExtension](https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/Case/LocalExtension.lean), [SplitConditions](https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/Case/SplitConditions.lean), [Syncretism](https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/Case/Syncretism.lean), [Case](https://github.com/hawkrobe/linglib/blob/main/Linglib/Fragments/Finnish/Case.lean), [Case](https://github.com/hawkrobe/linglib/blob/main/Linglib/Fragments/German/Case.lean), [Case](https://github.com/hawkrobe/linglib/blob/main/Linglib/Fragments/Greek/Case.lean), [Case](https://github.com/hawkrobe/linglib/blob/main/Linglib/Fragments/Hindi/Case.lean), [Case](https://github.com/hawkrobe/linglib/blob/main/Linglib/Fragments/Hungarian/Case.lean), [Case](https://github.com/hawkrobe/linglib/blob/main/Linglib/Fragments/Japanese/Case.lean), [Case](https://github.com/hawkrobe/linglib/blob/main/Linglib/Fragments/Latin/Case.lean), [Case](https://github.com/hawkrobe/linglib/blob/main/Linglib/Fragments/Russian/Case.lean), [Case](https://github.com/hawkrobe/linglib/blob/main/Linglib/Fragments/Turkish/Case.lean)
 
 **Cacchioli, G.** (2025). The Syntax of Clausal Prefixes in Tigrinya. *PhD dissertation, Université de Gen\`eve*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Fragments/Tigrinya/ClausePrefixes.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Complementation/Studies/Cacchioli2025/Data.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Complementation/Studies/Cacchioli2025/Bridge.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Complementation/Studies/Cacchioli2025/SelectionBridge.lean)\

@@ -414,6 +414,8 @@ import Linglib.Phenomena.Morphology.DegreeCompositionBridge
 import Linglib.Phenomena.Morphology.ZwickyPullum1983Bridge
 import Linglib.Phenomena.Morphology.Typology
 import Linglib.Phenomena.Morphology.Studies.AckermanMalouf2013.Bridge
+import Linglib.Phenomena.Allomorphy.SlavicVerbalizer.Data
+import Linglib.Phenomena.Allomorphy.SlavicVerbalizer.Bridge.OTAnalysis
 import Linglib.Phenomena.Negation.Studies.StankovaSimik2024.Data
 import Linglib.Phenomena.Plurals.Basic
 import Linglib.Phenomena.Plurals.Homogeneity
@@ -1031,6 +1033,10 @@ import Linglib.Theories.Pragmatics.RSA.ScalarImplicatures.Embedded.Basic
 import Linglib.Theories.Pragmatics.RSA.ScalarImplicatures.Embedded.Conditionals
 import Linglib.Theories.Pragmatics.RSA.ScalarImplicatures.Embedded.Questions
 import Linglib.Theories.Pragmatics.RSA.ScalarImplicatures.Hurford
+
+-- Theories: Phonology
+import Linglib.Theories.Phonology.Features
+import Linglib.Theories.Phonology.OT.Core
 
 -- Theories: Sociolinguistics
 import Linglib.Theories.Sociolinguistics.PropertySpace
