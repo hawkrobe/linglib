@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.226.71] - 2026-02-25
+
+### Added
+- **Feature geometry** (`Theories/Phonology/FeatureGeometry.lean`): Clements & Hume (1995) hierarchical tree over the 19-feature inventory. `GeomNode` inductive (root, laryngeal, manner, place, labial, coronal, dorsal) with parent-pointer tree structure, `Feature.node` mapping each feature to its dominating class node, `dominates` relation (reflexive-transitive closure of parent), `GeomNode.features` natural class extraction. Verification: tree acyclicity via `parent_decreases_depth`, natural class counts (root = 19, place = 10, dorsal = 5, …), subsumption of flat predicates (`isPlace ↔ dominatedBy .place`, `isDorsal ↔ dominatedBy .dorsal`, `isLaryngeal ↔ dominatedBy .laryngeal`, `isMajorClass ↔ node ∈ {root, manner}`). Spreading/delinking predicates for autosegmental consumption.
+
 ## [0.226.70] - 2026-02-25
 
 ### Added

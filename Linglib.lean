@@ -1039,6 +1039,7 @@ import Linglib.Theories.Pragmatics.RSA.ScalarImplicatures.Hurford
 
 -- Theories: Phonology
 import Linglib.Theories.Phonology.Features
+import Linglib.Theories.Phonology.FeatureGeometry
 import Linglib.Theories.Phonology.OT.Core
 
 -- Theories: Sociolinguistics
