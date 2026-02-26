@@ -158,7 +158,6 @@ import Linglib.Fragments.Maithili.Pronouns
 import Linglib.Fragments.Punjabi.Pronouns
 import Linglib.Fragments.Russian.TemporalDeictic
 import Linglib.Fragments.Serbian.TemporalConnectives
-import Linglib.Fragments.Serbian.LParticiple
 import Linglib.Fragments.Tagalog.TemporalConnectives
 import Linglib.Fragments.Spanish.Clitics
 import Linglib.Fragments.Spanish.Predicates
@@ -493,8 +492,6 @@ import Linglib.Phenomena.TenseAspect.AgentivityBridge
 import Linglib.Phenomena.TenseAspect.Studies.AlstottAravind2026
 import Linglib.Phenomena.TenseAspect.Studies.OgiharaST2024.Data
 import Linglib.Phenomena.TenseAspect.Studies.OgiharaST2024.Bridge
-import Linglib.Phenomena.TenseAspect.Studies.Stojkovic2026.Data
-import Linglib.Phenomena.TenseAspect.Studies.Stojkovic2026.Bridge
 import Linglib.Phenomena.WordOrder.Basic
 import Linglib.Phenomena.WordOrder.SubjectAuxInversion
 import Linglib.Phenomena.WordOrder.Typology
@@ -767,7 +764,6 @@ import Linglib.Theories.Semantics.Probabilistic.Graded.BayesianSemantics
 import Linglib.Theories.Semantics.Probabilistic.Graded.GradedProposition
 import Linglib.Theories.Pragmatics.RSA.Core.SemanticBackend
 import Linglib.Theories.Interfaces.SyntaxSemantics.SyntaxInterface
-import Linglib.Theories.Interfaces.SyntaxSemantics.TAMEComposition
 import Linglib.Theories.Semantics.Montague.Modification
 import Linglib.Theories.Semantics.Lexical.Noun.GradableNouns
 import Linglib.Theories.Semantics.Lexical.Noun.Kind.Carlson1977
