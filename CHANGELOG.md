@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.226.61] - 2026-02-25
+
+### Added
+- **Just (2024) differential indexing**: Core/Prominence.lean (prominence scales, ArgumentRole, MarkingChannel, DifferentialMarkingProfile, monotonicity, mirror image theorem), Phenomena/Agreement/DifferentialIndexing.lean (17 P-indexing + 7 A-indexing language fragments with marking predicates, person dominance, polarity, mirror image theorems), Bridge/DifferentialIndexing.lean (DOM↔DMP isomorphism, PersonGeometry connection, Kaqchikel baseline, Basque/Georgian/Hungarian fragment bridges).
+- **Basque agreement fragment** (Fragments/Basque/Agreement.lean): person-conditioned differential P indexing (SAP indexed, 3rd not).
+- **Georgian agreement fragment** (Fragments/Georgian/Agreement.lean): object prefix morphology (m-, g-, gv-), P indexing derived from prefix presence.
+- **Bibliography**: Just (2024) added to references.bib with correct metadata (Linguistics 62(2): 295–321, DOI 10.1515/ling-2021-0124).
+
+### Changed
+- **Case/Typology.lean refactored**: AnimacyLevel, DefinitenessLevel, scale ordering theorems extracted to Core/Prominence.lean (−100 lines).
+
 ## [0.226.59] - 2026-02-25
 
 ### Fixed

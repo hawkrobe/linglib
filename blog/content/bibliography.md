@@ -210,7 +210,7 @@ cited in: [Aloni2022Bridge](https://github.com/hawkrobe/linglib/blob/main/Lingli
 
 **Halpern, J. Y.** (2003). Reasoning about Uncertainty. *MIT Press*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/Scales/EpistemicScale/Defs.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/Scales/EpistemicScale.lean)\
-cited in: [BeliefRevision](https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/Logic/BeliefRevision.lean), [EpistemicScale](https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/Scales/EpistemicScale.lean), [Conditional](https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/Scales/EpistemicScale/Conditional.lean), [Defs](https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/Scales/EpistemicScale/Defs.lean), [CommonGround](https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/Semantics/CommonGround.lean)
+cited in: [BeliefRevision](https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/Logic/BeliefRevision.lean), [RankingFunction](https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/Logic/RankingFunction.lean), [EpistemicScale](https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/Scales/EpistemicScale.lean), [Conditional](https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/Scales/EpistemicScale/Conditional.lean), [Defs](https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/Scales/EpistemicScale/Defs.lean), [CommonGround](https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/Semantics/CommonGround.lean)
 
 **Holliday, W. H. & Icard, I. T. F.** (2013). Measure Semantics and Qualitative Semantics for Epistemic Modals. *Semantics and Linguistic Theory, 23, 514–534*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/Scale.lean)\
@@ -499,6 +499,10 @@ cited in: [MinimalismSmallClause](https://github.com/hawkrobe/linglib/blob/main/
 **Henry, A.** (1995). Belfast English and Standard English: Dialect Variation and Parameter Setting. *Oxford University Press*.\
 [cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/WordOrder/SubjectAuxInversion.lean)\
 cited in: [SubjectAuxInversion](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/WordOrder/SubjectAuxInversion.lean)
+
+**Just, E.** (2024). A Structural and Functional Comparison of Differential A and P Indexing. *Linguistics, 62(2), 295–321*.\
+[formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/Prominence.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Agreement/DifferentialIndexing.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Agreement/Bridge/DifferentialIndexing.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Fragments/Basque/Agreement.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Fragments/Georgian/Agreement.lean)\
+cited in: [Prominence](https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/Prominence.lean), [Agreement](https://github.com/hawkrobe/linglib/blob/main/Linglib/Fragments/Basque/Agreement.lean), [Agreement](https://github.com/hawkrobe/linglib/blob/main/Linglib/Fragments/Georgian/Agreement.lean), [DifferentialIndexing](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Agreement/DifferentialIndexing.lean)
 
 **Kayne, R. S.** (1994). The Antisymmetry of Syntax. *MIT Press*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/Minimalism/Formal/Linearization/LCA.lean)

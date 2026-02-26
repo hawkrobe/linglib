@@ -1,0 +1,629 @@
+import Linglib.Core.Prominence
+
+/-!
+# Differential Indexing Typology @cite{just-2024}
+
+Formalizes the typological survey from:
+
+- Just, E. (2024). A structural and functional comparison of differential A
+  and P indexing. Linguistics 62(2): 295–321.
+
+## Key Distinction: Flagging vs. Indexing (Haspelmath 2019, Just §2)
+
+**Flagging** = case morphology on the NP (e.g., accusative suffix).
+**Indexing** = verbal agreement / cross-referencing (e.g., Bantu object markers).
+
+These serve different functions (Just 2024, §5):
+- Flagging: disambiguate thematic roles (who did what to whom)
+- Indexing: track prominent referents through discourse
+
+Both channels are governed by the same prominence scales (person, animacy,
+definiteness) but because they serve different functions, the patterns are
+not redundant.
+
+## Core Claim: Same Scales, Opposite Polarity (Just 2024, §4)
+
+The same referential properties condition both differential P and A
+indexing (Just 2024, §4.1, p. 309). The directions form a **mirror
+image** (§4.2, p. 311):
+
+- P indexing targets **prominent** Ps (high person, animacy, definiteness)
+- A indexing targets **non-prominent** As (low person, animacy, definiteness)
+
+This follows from the unified functional principle (§6, p. 315):
+*prominent arguments tend to be indexed more readily, regardless of role*.
+A arguments are prominent by default; P arguments are not. Differential
+marking targets departures from these defaults.
+
+## References
+
+- Just, E. (2024). A structural and functional comparison of differential A
+  and P indexing. Linguistics 62(2): 295–321.
+- Haspelmath, M. (2019). Indexing and flagging, and the definition of
+  "head". Open Linguistics 5: 539–557.
+- Aissen, J. (2003). Differential Object Marking: Iconicity vs. Economy.
+  NLLT 21(3): 435–483.
+- Siewierska, A. (2004). Person. Cambridge University Press.
+-/
+
+namespace Phenomena.Agreement.DifferentialIndexing
+
+open Core.Prominence
+
+-- ============================================================================
+-- § 1: Person Prominence Scale
+-- ============================================================================
+
+/-- Person prominence for differential indexing (Just 2024, §2.1).
+
+    The person scale for indexing is a binary split between speech act
+    participants (SAP: 1st/2nd person) and non-participants (3rd person).
+    This mirrors Preminger's (2014) [±participant] feature decomposition. -/
+inductive PersonLevel where
+  /-- Speech act participants: 1st and 2nd person -/
+  | sap
+  /-- Non-participants: 3rd person -/
+  | third
+  deriving DecidableEq, BEq, Repr, Inhabited
+
+/-- Rank on the person scale: SAP (1) > 3rd (0). -/
+def PersonLevel.rank : PersonLevel → Nat
+  | .sap   => 1
+  | .third => 0
+
+/-- All person levels. -/
+def PersonLevel.all : List PersonLevel := [.sap, .third]
+
+theorem person_sap_gt_third : PersonLevel.sap.rank > PersonLevel.third.rank := by decide
+
+-- ============================================================================
+-- § 2: Indexing Fragment
+-- ============================================================================
+
+/-- A differential indexing fragment for a single language (Just 2024).
+
+    Each language encodes its indexing pattern as **marking predicates** —
+    functions from prominence levels to Bool — specifying which values on
+    each scale trigger indexing. The conditioning factors are then DERIVED
+    from these predicates, not stipulated.
+
+    For P indexing: `true` at a level means "P arguments at this level
+    ARE indexed." The expectation (Just §4.2) is that P indexing targets
+    the prominent end of each scale.
+
+    For A indexing: `true` at a level means "A arguments at this level
+    ARE indexed." The expectation is that A indexing targets the
+    non-prominent end. -/
+structure IndexingFragment where
+  /-- Language name -/
+  name : String
+  /-- ISO 639-3 code -/
+  iso639 : String
+  /-- Language family -/
+  family : String
+  /-- Which argument role is differentially indexed -/
+  role : ArgumentRole
+  /-- Which person levels trigger indexing -/
+  personIndexed : PersonLevel → Bool
+  /-- Which animacy levels trigger indexing -/
+  animacyIndexed : AnimacyLevel → Bool
+  /-- Which definiteness levels trigger indexing -/
+  definitenessIndexed : DefinitenessLevel → Bool
+
+-- ============================================================================
+-- § 3: Derived Conditioning Factors
+-- ============================================================================
+
+/-- A dimension is **conditioning** if the marking predicate is non-uniform:
+    some levels are indexed and some are not. -/
+def IndexingFragment.personConditioned (f : IndexingFragment) : Bool :=
+  PersonLevel.all.any f.personIndexed && !(PersonLevel.all.all f.personIndexed)
+
+def IndexingFragment.animacyConditioned (f : IndexingFragment) : Bool :=
+  AnimacyLevel.all.any f.animacyIndexed && !(AnimacyLevel.all.all f.animacyIndexed)
+
+def IndexingFragment.definitenessConditioned (f : IndexingFragment) : Bool :=
+  DefinitenessLevel.all.any f.definitenessIndexed &&
+    !(DefinitenessLevel.all.all f.definitenessIndexed)
+
+/-- At least one dimension conditions the indexing (i.e., is non-uniform). -/
+def IndexingFragment.isDifferential (f : IndexingFragment) : Bool :=
+  f.personConditioned || f.animacyConditioned || f.definitenessConditioned
+
+-- ============================================================================
+-- § 4: Polarity — Which End of the Scale Is Indexed?
+-- ============================================================================
+
+/-- P indexing has correct polarity if it targets the PROMINENT end:
+    SAP over 3rd, human over inanimate, definite over nonspecific. -/
+def IndexingFragment.pPolarityCorrect (f : IndexingFragment) : Bool :=
+  (if f.personConditioned then
+    f.personIndexed .sap && !f.personIndexed .third else true) &&
+  (if f.animacyConditioned then
+    f.animacyIndexed .human && !f.animacyIndexed .inanimate else true) &&
+  (if f.definitenessConditioned then
+    f.definitenessIndexed .personalPronoun && !f.definitenessIndexed .nonSpecific else true)
+
+/-- A indexing has correct polarity if it targets the NON-PROMINENT end:
+    3rd over SAP, inanimate over human, nonspecific over definite. -/
+def IndexingFragment.aPolarityCorrect (f : IndexingFragment) : Bool :=
+  (if f.personConditioned then
+    f.personIndexed .third && !f.personIndexed .sap else true) &&
+  (if f.animacyConditioned then
+    f.animacyIndexed .inanimate && !f.animacyIndexed .human else true) &&
+  (if f.definitenessConditioned then
+    f.definitenessIndexed .nonSpecific && !f.definitenessIndexed .personalPronoun else true)
+
+/-- Role-appropriate polarity check. -/
+def IndexingFragment.polarityCorrect (f : IndexingFragment) : Bool :=
+  match f.role with
+  | .P => f.pPolarityCorrect
+  | .A => f.aPolarityCorrect
+
+-- ============================================================================
+-- § 5: Differential P Indexing Fragments (Just 2024, Table 1)
+-- ============================================================================
+
+/-! Languages where the P argument is differentially indexed. Prominent Ps
+    (SAP, human, definite) are MORE likely to be indexed.
+
+    Marking predicates encode the actual pattern per scale. For scales that
+    are not conditioning, the predicate is uniformly `true` (all levels
+    indexed). For conditioning scales, the predicate marks the prominent
+    end as `true` and the non-prominent end as `false`.
+
+    Source references are from Just (2024, Table 1). -/
+
+section PIndexing
+
+/-- Abkhaz (NW Caucasian): P indexed only for SAP (Hewitt 1979). -/
+def abkhaz : IndexingFragment :=
+  { name := "Abkhaz", iso639 := "abk", family := "Northwest Caucasian"
+    role := .P
+    personIndexed := λ | .sap => true | .third => false
+    animacyIndexed := λ _ => true
+    definitenessIndexed := λ _ => true }
+
+/-- Amharic (Semitic): P indexed for SAP and definite objects (Amha 2007). -/
+def amharic : IndexingFragment :=
+  { name := "Amharic", iso639 := "amh", family := "Semitic"
+    role := .P
+    personIndexed := λ | .sap => true | .third => false
+    animacyIndexed := λ _ => true
+    definitenessIndexed := λ
+      | .personalPronoun | .properName | .definite => true
+      | .indefiniteSpecific | .nonSpecific => false }
+
+/-- Basque (Isolate): object agreement only for SAP objects
+    (Laka 1996, Preminger 2014). -/
+def basque : IndexingFragment :=
+  { name := "Basque", iso639 := "eus", family := "Isolate"
+    role := .P
+    personIndexed := λ | .sap => true | .third => false
+    animacyIndexed := λ _ => true
+    definitenessIndexed := λ _ => true }
+
+/-- Georgian (Kartvelian): P agreement conditioned by person — indirect
+    objects (dative) are indexed for SAP only (Harris 1981). -/
+def georgian : IndexingFragment :=
+  { name := "Georgian", iso639 := "kat", family := "Kartvelian"
+    role := .P
+    personIndexed := λ | .sap => true | .third => false
+    animacyIndexed := λ _ => true
+    definitenessIndexed := λ _ => true }
+
+/-- Hungarian (Uralic): definite conjugation triggered by definite objects;
+    indefinite conjugation for indefinite objects (Coppock & Wechsler 2012).
+    See also `Fragments.Hungarian.Predicates` for the conjugation split. -/
+def hungarian : IndexingFragment :=
+  { name := "Hungarian", iso639 := "hun", family := "Uralic"
+    role := .P
+    personIndexed := λ _ => true
+    animacyIndexed := λ _ => true
+    definitenessIndexed := λ
+      | .personalPronoun | .properName | .definite => true
+      | .indefiniteSpecific | .nonSpecific => false }
+
+/-- Kagulu (Bantu): object marker for animate+ objects (Petzell 2008). -/
+def kagulu : IndexingFragment :=
+  { name := "Kagulu", iso639 := "kki", family := "Bantu"
+    role := .P
+    personIndexed := λ _ => true
+    animacyIndexed := λ | .human | .animate => true | .inanimate => false
+    definitenessIndexed := λ _ => true }
+
+/-- KiNzadi (Bantu): P indexed for SAP only (Crane et al. 2011). -/
+def kinzadi : IndexingFragment :=
+  { name := "KiNzadi", iso639 := "nzd", family := "Bantu"
+    role := .P
+    personIndexed := λ | .sap => true | .third => false
+    animacyIndexed := λ _ => true
+    definitenessIndexed := λ _ => true }
+
+/-- Koorete (Omotic): P indexed for SAP only (Mendisu 2010). -/
+def koorete : IndexingFragment :=
+  { name := "Koorete", iso639 := "kqy", family := "Omotic"
+    role := .P
+    personIndexed := λ | .sap => true | .third => false
+    animacyIndexed := λ _ => true
+    definitenessIndexed := λ _ => true }
+
+/-- Maltese (Semitic): definite object agreement — verb agrees with definite
+    objects via suffixed object markers (Just & Čéplö 2022). -/
+def maltese : IndexingFragment :=
+  { name := "Maltese", iso639 := "mlt", family := "Semitic"
+    role := .P
+    personIndexed := λ _ => true
+    animacyIndexed := λ _ => true
+    definitenessIndexed := λ
+      | .personalPronoun | .properName | .definite => true
+      | .indefiniteSpecific | .nonSpecific => false }
+
+/-- Nkore-Kiga (Bantu): object marker for SAP objects (Taylor 1985). -/
+def nkoreKiga : IndexingFragment :=
+  { name := "Nkore-Kiga", iso639 := "nyn", family := "Bantu"
+    role := .P
+    personIndexed := λ | .sap => true | .third => false
+    animacyIndexed := λ _ => true
+    definitenessIndexed := λ _ => true }
+
+/-- Romanian (Romance): clitic doubling conditioned by person, animacy, and
+    definiteness (Cojocaru 2004). SAP + human + definite = doubled. -/
+def romanian : IndexingFragment :=
+  { name := "Romanian", iso639 := "ron", family := "Romance"
+    role := .P
+    personIndexed := λ | .sap => true | .third => false
+    animacyIndexed := λ | .human => true | .animate | .inanimate => false
+    definitenessIndexed := λ
+      | .personalPronoun | .properName | .definite => true
+      | .indefiniteSpecific | .nonSpecific => false }
+
+/-- Somali (Cushitic): P indexed for SAP — full paradigm for SAP objects,
+    reduced for 3rd person (Saeed 1984). Focus/topicality also plays a role
+    but is not captured in the prominence grid. -/
+def somali : IndexingFragment :=
+  { name := "Somali", iso639 := "som", family := "Cushitic"
+    role := .P
+    personIndexed := λ | .sap => true | .third => false
+    animacyIndexed := λ _ => true
+    definitenessIndexed := λ _ => true }
+
+/-- Swahili (Bantu): object marker obligatory for human objects, optional/
+    absent for non-human (Morimoto 2000, Riedel 2009). -/
+def swahili : IndexingFragment :=
+  { name := "Swahili", iso639 := "swh", family := "Bantu"
+    role := .P
+    personIndexed := λ _ => true
+    animacyIndexed := λ | .human => true | .animate | .inanimate => false
+    definitenessIndexed := λ _ => true }
+
+/-- Teiwa (Trans-New Guinea): P indexed for animate objects (Klamer 2010). -/
+def teiwa : IndexingFragment :=
+  { name := "Teiwa", iso639 := "twe", family := "Trans-New Guinea"
+    role := .P
+    personIndexed := λ _ => true
+    animacyIndexed := λ | .human | .animate => true | .inanimate => false
+    definitenessIndexed := λ _ => true }
+
+/-- Welsh (Celtic): synthetic agreement only with pronominal (SAP) objects;
+    analytic (no agreement) with 3rd person full NPs (Borsley et al. 2007). -/
+def welsh : IndexingFragment :=
+  { name := "Welsh", iso639 := "cym", family := "Celtic"
+    role := .P
+    personIndexed := λ | .sap => true | .third => false
+    animacyIndexed := λ _ => true
+    definitenessIndexed := λ _ => true }
+
+/-- Zulu (Bantu): object marker for animate objects (Buell 2005). -/
+def zulu : IndexingFragment :=
+  { name := "Zulu", iso639 := "zul", family := "Bantu"
+    role := .P
+    personIndexed := λ _ => true
+    animacyIndexed := λ | .human | .animate => true | .inanimate => false
+    definitenessIndexed := λ _ => true }
+
+/-- Spoken Arabic varieties (Semitic): P indexed for SAP only —
+    object suffixes restricted to pronominal objects (Just 2024). -/
+def spokenArabic : IndexingFragment :=
+  { name := "Spoken Arabic", iso639 := "arb", family := "Semitic"
+    role := .P
+    personIndexed := λ | .sap => true | .third => false
+    animacyIndexed := λ _ => true
+    definitenessIndexed := λ _ => true }
+
+end PIndexing
+
+-- ============================================================================
+-- § 6: Differential A Indexing Fragments (Just 2024, Table 2)
+-- ============================================================================
+
+/-! Languages where the A argument is differentially indexed. Non-prominent
+    As (3rd person, inanimate, indefinite) are MORE likely to be indexed.
+    The polarity is REVERSED relative to P indexing.
+
+    Source references from Just (2024, Table 2). -/
+
+section AIndexing
+
+/-- Jamsay (Dogon): A indexed only for 3rd person agents — SAP agents are
+    not cross-referenced on the verb (Heath 2008). -/
+def jamsay : IndexingFragment :=
+  { name := "Jamsay", iso639 := "djm", family := "Dogon"
+    role := .A
+    personIndexed := λ | .sap => false | .third => true
+    animacyIndexed := λ _ => true
+    definitenessIndexed := λ _ => true }
+
+/-- Kharia (Munda): A indexed for 3rd person agents (Peterson 2011). -/
+def kharia : IndexingFragment :=
+  { name := "Kharia", iso639 := "khr", family := "Austroasiatic (Munda)"
+    role := .A
+    personIndexed := λ | .sap => false | .third => true
+    animacyIndexed := λ _ => true
+    definitenessIndexed := λ _ => true }
+
+/-- Mundari (Munda): A indexed for 3rd person agents (Osada 2008). -/
+def mundari : IndexingFragment :=
+  { name := "Mundari", iso639 := "unr", family := "Austroasiatic (Munda)"
+    role := .A
+    personIndexed := λ | .sap => false | .third => true
+    animacyIndexed := λ _ => true
+    definitenessIndexed := λ _ => true }
+
+/-- Juang (Munda): A indexed for 3rd person agents (Patnaik 2008). -/
+def juang : IndexingFragment :=
+  { name := "Juang", iso639 := "jun", family := "Austroasiatic (Munda)"
+    role := .A
+    personIndexed := λ | .sap => false | .third => true
+    animacyIndexed := λ _ => true
+    definitenessIndexed := λ _ => true }
+
+/-- Anywa (Nilotic): A indexed for 3rd person agents only — SAP agents
+    are not cross-referenced (Reh 1996). -/
+def anywa : IndexingFragment :=
+  { name := "Anywa", iso639 := "anu", family := "Nilotic"
+    role := .A
+    personIndexed := λ | .sap => false | .third => true
+    animacyIndexed := λ _ => true
+    definitenessIndexed := λ _ => true }
+
+/-- Reyesano (Tacanan): A indexed for 3rd person and non-human agents
+    (Guillaume 2009). -/
+def reyesano : IndexingFragment :=
+  { name := "Reyesano", iso639 := "rey", family := "Tacanan"
+    role := .A
+    personIndexed := λ | .sap => false | .third => true
+    animacyIndexed := λ | .human => false | .animate | .inanimate => true
+    definitenessIndexed := λ _ => true }
+
+/-- Eastern Mansi (Uralic): A indexed for indefinite/non-topical agents
+    (Virtanen 2014, 2015). -/
+def easternMansi : IndexingFragment :=
+  { name := "Eastern Mansi", iso639 := "mns", family := "Uralic"
+    role := .A
+    personIndexed := λ _ => true
+    animacyIndexed := λ _ => true
+    definitenessIndexed := λ
+      | .personalPronoun | .properName | .definite => false
+      | .indefiniteSpecific | .nonSpecific => true }
+
+end AIndexing
+
+-- ============================================================================
+-- § 7: Profile Collections
+-- ============================================================================
+
+/-- All differential P indexing languages in the sample (Just 2024, Table 1). -/
+def pIndexingLanguages : List IndexingFragment :=
+  [ abkhaz, amharic, basque, georgian, hungarian, kagulu, kinzadi
+  , koorete, maltese, nkoreKiga, romanian, somali, swahili, teiwa
+  , welsh, zulu, spokenArabic ]
+
+/-- All differential A indexing languages in the sample (Just 2024, Table 2). -/
+def aIndexingLanguages : List IndexingFragment :=
+  [ jamsay, kharia, mundari, juang, anywa, reyesano, easternMansi ]
+
+/-- All differential indexing languages. -/
+def allIndexingLanguages : List IndexingFragment :=
+  pIndexingLanguages ++ aIndexingLanguages
+
+-- ============================================================================
+-- § 8: Consistency Verification
+-- ============================================================================
+
+/-- All P indexing languages have role P. -/
+theorem pIndexing_all_roleP :
+    pIndexingLanguages.all (·.role == .P) = true := by native_decide
+
+/-- All A indexing languages have role A. -/
+theorem aIndexing_all_roleA :
+    aIndexingLanguages.all (·.role == .A) = true := by native_decide
+
+/-- All profiles are genuinely differential (at least one conditioning
+    factor is non-uniform). Derived from the marking predicates. -/
+theorem all_differential :
+    allIndexingLanguages.all (·.isDifferential) = true := by native_decide
+
+-- ============================================================================
+-- § 9: Derived Conditioning Factor Counts
+-- ============================================================================
+
+/-! The counts below are COMPUTED from the marking predicates via
+    `personConditioned`, `animacyConditioned`, `definitenessConditioned`.
+    No hard-coded numbers — if a language's marking predicate changes,
+    the counts update automatically. -/
+
+/-- P indexing languages conditioned by person (derived). -/
+def pPersonConditioned : List IndexingFragment :=
+  pIndexingLanguages.filter (·.personConditioned)
+
+/-- P indexing languages conditioned by animacy (derived). -/
+def pAnimacyConditioned : List IndexingFragment :=
+  pIndexingLanguages.filter (·.animacyConditioned)
+
+/-- P indexing languages conditioned by definiteness (derived). -/
+def pDefinitenessConditioned : List IndexingFragment :=
+  pIndexingLanguages.filter (·.definitenessConditioned)
+
+/-- A indexing languages conditioned by person (derived). -/
+def aPersonConditioned : List IndexingFragment :=
+  aIndexingLanguages.filter (·.personConditioned)
+
+-- ============================================================================
+-- § 10: Just (2024, §4.1) — Person Is the Dominant Conditioning Factor
+-- ============================================================================
+
+/-! "The very same referential properties condition both differential P
+    and differential A indexing." (Just 2024, §4.1, p. 309)
+
+    Person is the most frequent conditioning factor for BOTH P and A
+    indexing. This is derived from the marking predicates. -/
+
+/-- Person is the most common conditioning factor for P indexing:
+    more P-indexing languages are person-conditioned than animacy- or
+    definiteness-conditioned. (Just 2024, §4.1) -/
+theorem person_dominates_P :
+    pPersonConditioned.length > pAnimacyConditioned.length ∧
+    pPersonConditioned.length > pDefinitenessConditioned.length := by
+  native_decide
+
+/-- Person is the most common conditioning factor for A indexing:
+    more A-indexing languages are person-conditioned than animacy- or
+    definiteness-conditioned. (Just 2024, §4.1) -/
+theorem person_dominates_A :
+    aPersonConditioned.length >
+      (aIndexingLanguages.filter (·.animacyConditioned)).length ∧
+    aPersonConditioned.length >
+      (aIndexingLanguages.filter (·.definitenessConditioned)).length := by
+  native_decide
+
+-- ============================================================================
+-- § 11: Just (2024, §4.1) — Same Scales Condition Both P and A
+-- ============================================================================
+
+/-! "The very same referential properties condition both differential P
+    and differential A indexing." (Just 2024, §4.1, p. 309) -/
+
+/-- Person conditions both P and A indexing. -/
+theorem person_conditions_both :
+    pIndexingLanguages.any (·.personConditioned) &&
+    aIndexingLanguages.any (·.personConditioned) = true := by native_decide
+
+/-- Animacy conditions both P and A indexing. -/
+theorem animacy_conditions_both :
+    pIndexingLanguages.any (·.animacyConditioned) &&
+    aIndexingLanguages.any (·.animacyConditioned) = true := by native_decide
+
+/-- Definiteness conditions both P and A indexing. -/
+theorem definiteness_conditions_both :
+    pIndexingLanguages.any (·.definitenessConditioned) &&
+    aIndexingLanguages.any (·.definitenessConditioned) = true := by native_decide
+
+-- ============================================================================
+-- § 12: Just (2024, §4.2) — Mirror Image / Opposite Polarity
+-- ============================================================================
+
+/-! "The directions in which these scales operate form a mirror image:
+    indexing targets prominent P arguments on the one hand and non-prominent
+    A arguments on the other." (Just 2024, §4.2, p. 311) -/
+
+/-- All P indexing languages have correct polarity: they target the
+    prominent end of each conditioning scale. -/
+theorem p_indexing_targets_prominent :
+    pIndexingLanguages.all (·.pPolarityCorrect) = true := by native_decide
+
+/-- All A indexing languages have correct polarity: they target the
+    non-prominent end of each conditioning scale. -/
+theorem a_indexing_targets_nonprominent :
+    aIndexingLanguages.all (·.aPolarityCorrect) = true := by native_decide
+
+/-- The mirror image holds universally across the sample: every language
+    has role-appropriate polarity. (Just 2024, §4.2) -/
+theorem mirror_image_universal :
+    allIndexingLanguages.all (·.polarityCorrect) = true := by native_decide
+
+-- ============================================================================
+-- § 13: DifferentialMarkingProfile Instances (Animacy × Definiteness Grid)
+-- ============================================================================
+
+/-! For languages where animacy and/or definiteness condition indexing,
+    we construct `DifferentialMarkingProfile` instances on the 2D grid
+    and verify monotonicity. These are derived from the fragment's marking
+    predicates — no separate stipulation. -/
+
+/-- Construct a DifferentialMarkingProfile from a fragment's animacy and
+    definiteness predicates. -/
+def IndexingFragment.toDMP (f : IndexingFragment) : DifferentialMarkingProfile :=
+  { name := f.name
+    role := f.role
+    channel := .indexing
+    marks := λ a d => f.animacyIndexed a && f.definitenessIndexed d }
+
+/-- Hungarian P indexing profile (derived from fragment). -/
+def hungarianDMP : DifferentialMarkingProfile := hungarian.toDMP
+
+/-- Swahili P indexing profile (derived from fragment). -/
+def swahiliDMP : DifferentialMarkingProfile := swahili.toDMP
+
+/-- Kagulu P indexing profile (derived from fragment). -/
+def kaguluDMP : DifferentialMarkingProfile := kagulu.toDMP
+
+/-- Eastern Mansi A indexing profile (derived from fragment). -/
+def easternMansiDMP : DifferentialMarkingProfile := easternMansi.toDMP
+
+/-- All animacy/definiteness-conditioned profiles are monotone. -/
+theorem hungarian_monotone : hungarianDMP.isMonotone = true := by native_decide
+theorem swahili_monotone : swahiliDMP.isMonotone = true := by native_decide
+theorem kagulu_monotone : kaguluDMP.isMonotone = true := by native_decide
+theorem easternMansi_monotone : easternMansiDMP.isMonotone = true := by native_decide
+
+-- ============================================================================
+-- § 14: Family Clustering (Just 2024, §2.2, §3.1)
+-- ============================================================================
+
+/-- Bantu languages in the sample all show P indexing. -/
+theorem bantu_all_P :
+    allIndexingLanguages.all (λ p =>
+      if p.family == "Bantu" then p.role == .P else true) = true := by native_decide
+
+/-- Munda languages in the sample all show A indexing. -/
+theorem munda_all_A :
+    allIndexingLanguages.all (λ p =>
+      if p.family == "Austroasiatic (Munda)" then p.role == .A
+      else true) = true := by native_decide
+
+/-- The sample covers at least 10 distinct language families. -/
+theorem family_diversity :
+    (allIndexingLanguages.map (·.family)).eraseDups.length ≥ 10 := by native_decide
+
+-- ============================================================================
+-- § 15: Just (2024, §6) — Unified Principle
+-- ============================================================================
+
+/-! "Prominent arguments, be it A or P (or probably any other role), tend
+    to be indexed more readily than arguments which are low in
+    identifiability, animacy or topicality." (Just 2024, §6, p. 315)
+
+    The mirror image is NOT a coincidence — it follows from a single
+    principle (indexing tracks prominent referents) combined with different
+    default prominence per role (A defaults high, P defaults low). -/
+
+/-- For every person-conditioned P-indexing language, SAP is indexed
+    (= prominent P gets indexed). -/
+theorem prominent_P_indexed :
+    pPersonConditioned.all (·.personIndexed .sap) = true := by native_decide
+
+/-- For every person-conditioned A-indexing language, 3rd person is indexed
+    (= non-prominent A gets indexed, because A's default is prominent). -/
+theorem nonprominent_A_indexed :
+    aPersonConditioned.all (·.personIndexed .third) = true := by native_decide
+
+/-- The unified principle predicts that the COMPLEMENT of "indexed" differs
+    by role: P-indexing excludes 3rd person, A-indexing excludes SAP.
+    Both follow from "index the prominent referent" + role defaults. -/
+theorem complement_differs_by_role :
+    pPersonConditioned.all (λ f => !f.personIndexed .third) = true ∧
+    aPersonConditioned.all (λ f => !f.personIndexed .sap) = true := by
+  exact ⟨by native_decide, by native_decide⟩
+
+end Phenomena.Agreement.DifferentialIndexing

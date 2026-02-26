@@ -1,4 +1,5 @@
 import Linglib.Core.Lexical.Word
+import Linglib.Core.Prominence
 
 /-!
 # Case Typology (WALS Chapters 49--52)
@@ -821,117 +822,18 @@ theorem ch51_same_sample :
 
 /-! ## Aissen (2003) DOM Hierarchy
 
-Formalizes the two prominence scales and bidimensional DOM predictions from:
+Formalizes the bidimensional DOM predictions from:
 
 - Aissen, J. (2003). Differential Object Marking: Iconicity vs. Economy.
   Natural Language & Linguistic Theory 21(3): 435--483.
 
-Aissen proposes that differential object marking (DOM) is conditioned by
-two independently motivated prominence scales — **animacy** and
-**definiteness** — and that the set of marked cells in the animacy ×
-definiteness grid must form an **upper set** (upward-closed in the
-product partial order). This "monotonicity" property predicts that if a
-language marks a less-prominent object, it must also mark all more-prominent
-objects, yielding the attested "staircase" cutoff patterns.
-
-### Scales
-
-- **Animacy**: Human > Animate > Inanimate
-- **Definiteness**: Personal Pronoun > Proper Name > Definite NP >
-  Indefinite Specific NP > Non-specific NP
-
-### Typological prediction
-
-For any attested DOM system, the marking function `marks(a, d)` is
-monotone: if `marks(a, d) = true` then `marks(a', d') = true` for all
-`a'` at least as prominent as `a` and `d'` at least as prominent as `d`.
+The prominence scales (`AnimacyLevel`, `DefinitenessLevel`) and their
+orderings are defined in `Core.Prominence` and re-exported here.
+DOM is the P-flagging specialization of the general differential marking
+framework (Just 2024).
 -/
 
--- ============================================================================
--- Animacy Scale (Aissen 2003, §2)
--- ============================================================================
-
-/-- Levels of the animacy prominence scale (Aissen 2003, §2).
-Human > Animate > Inanimate. -/
-inductive AnimacyLevel where
-  /-- Most prominent: human referents -/
-  | human
-  /-- Non-human animates -/
-  | animate
-  /-- Least prominent: inanimate referents -/
-  | inanimate
-  deriving DecidableEq, BEq, Repr, Inhabited
-
-/-- Numeric rank on the animacy scale: Human (2) > Animate (1) > Inanimate (0). -/
-def AnimacyLevel.rank : AnimacyLevel → Nat
-  | .human     => 2
-  | .animate   => 1
-  | .inanimate => 0
-
-/-- All animacy levels (exhaustive enumeration for finite verification). -/
-def AnimacyLevel.all : List AnimacyLevel := [.human, .animate, .inanimate]
-
-theorem AnimacyLevel.all_length : AnimacyLevel.all.length = 3 := by native_decide
-
--- ============================================================================
--- Definiteness Scale (Aissen 2003, §2)
--- ============================================================================
-
-/-- Levels of the definiteness prominence scale (Aissen 2003, §2).
-Personal Pronoun > Proper Name > Definite NP > Indefinite Specific NP >
-Non-specific NP. -/
-inductive DefinitenessLevel where
-  /-- Most prominent: personal pronouns -/
-  | personalPronoun
-  /-- Proper names -/
-  | properName
-  /-- Definite NPs (with article or demonstrative) -/
-  | definite
-  /-- Indefinite but specific NPs -/
-  | indefiniteSpecific
-  /-- Least prominent: non-specific indefinites -/
-  | nonSpecific
-  deriving DecidableEq, BEq, Repr, Inhabited
-
-/-- Numeric rank on the definiteness scale:
-Pronoun (4) > Proper (3) > Definite (2) > IndSp (1) > NonSp (0). -/
-def DefinitenessLevel.rank : DefinitenessLevel → Nat
-  | .personalPronoun    => 4
-  | .properName         => 3
-  | .definite           => 2
-  | .indefiniteSpecific => 1
-  | .nonSpecific        => 0
-
-/-- All definiteness levels (exhaustive enumeration). -/
-def DefinitenessLevel.all : List DefinitenessLevel :=
-  [.personalPronoun, .properName, .definite, .indefiniteSpecific, .nonSpecific]
-
-theorem DefinitenessLevel.all_length : DefinitenessLevel.all.length = 5 := by
-  native_decide
-
--- ============================================================================
--- Scale Ordering Verification
--- ============================================================================
-
-/-! The rank functions encode the strict ordering of the two scales. -/
-
-theorem animacy_human_gt_animate :
-    AnimacyLevel.human.rank > AnimacyLevel.animate.rank := by decide
-
-theorem animacy_animate_gt_inanimate :
-    AnimacyLevel.animate.rank > AnimacyLevel.inanimate.rank := by decide
-
-theorem definiteness_pronoun_gt_proper :
-    DefinitenessLevel.personalPronoun.rank > DefinitenessLevel.properName.rank := by decide
-
-theorem definiteness_proper_gt_definite :
-    DefinitenessLevel.properName.rank > DefinitenessLevel.definite.rank := by decide
-
-theorem definiteness_definite_gt_indSp :
-    DefinitenessLevel.definite.rank > DefinitenessLevel.indefiniteSpecific.rank := by decide
-
-theorem definiteness_indSp_gt_nonSp :
-    DefinitenessLevel.indefiniteSpecific.rank > DefinitenessLevel.nonSpecific.rank := by decide
+open Core.Prominence
 
 -- ============================================================================
 -- DOM Profiles: Bidimensional Marking Grids
