@@ -19,6 +19,10 @@ cited in: [ProjectionMechanisms](https://github.com/hawkrobe/linglib/blob/main/L
 **Beller, A. & Gerstenberg, T.** (2025). Causation, Meaning, and Communication. *Psychological Review*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/RSA/Implementations/BellerGerstenberg2025.lean)
 
+**Beltrama, A. & Schwarz, F.** (2024). Social Stereotypes Affect Imprecision Resolution across Different Tasks. *Semantics and Pragmatics, 17(10), 1–34*.\
+[formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Imprecision/Studies/BeltramaSchwarz2024/Data.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Imprecision/Studies/BeltramaSchwarz2024/Bridge.lean)\
+cited in: [Bridge](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Imprecision/Studies/BeltramaSchwarz2024/Bridge.lean), [Data](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Imprecision/Studies/BeltramaSchwarz2024/Data.lean)
+
 **Bergen, L. & Goodman, N. D.** (2015). The Strategic Use of Noise in Pragmatic Reasoning. *Topics in Cognitive Science, 7(2), 336–350*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/RSA/Implementations/BergenGoodman2015.lean)
 
@@ -447,9 +451,17 @@ cited in: [ProjectionMechanisms](https://github.com/hawkrobe/linglib/blob/main/L
 [foundational] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/WordOrder/SubjectAuxInversion.lean)\
 cited in: [SubjectAuxInversion](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/WordOrder/SubjectAuxInversion.lean)
 
+**Aikhenvald, A. Y.** (2008). The Manambu Language of East Sepik, Papua New Guinea. *Oxford University Press*.\
+[formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Fragments/Manambu/MedialVerbs.lean)\
+cited in: [MedialVerbs](https://github.com/hawkrobe/linglib/blob/main/Linglib/Fragments/Manambu/MedialVerbs.lean)
+
 **Anand, P., Hardt, D. & McCloskey, J.** (2021). The Santa Cruz Sluicing Data Set. *Language, 97(1), e68–e88*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Ellipsis/Studies/AnandHardtMcCloskey2021/Data.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Ellipsis/Studies/AnandHardtMcCloskey2021/Bridge.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/Basic.lean)\
 cited in: [Bridge](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Ellipsis/Studies/AnandHardtMcCloskey2021/Bridge.lean), [Data](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Ellipsis/Studies/AnandHardtMcCloskey2021/Data.lean)
+
+**Arnold, J. E., Wasow, T., Losongco, A. & Ginstrom, R.** (2000). Heaviness vs.\ Newness: The Effects of Structural Complexity and Discourse Status on Constituent Ordering. *Language, 76(1), 28–55*.\
+[formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/WordOrder/Studies/ArnoldEtAl2000.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/WordOrder/Bridge/ArnoldEtAl2000.lean)\
+cited in: [ArnoldEtAl2000](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/WordOrder/Studies/ArnoldEtAl2000.lean)
 
 **Arregi, K. & Pietraszko, A.** (2021). The Ups and Downs of Head Displacement. *Linguistic Inquiry, 52(2), 241–290*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/WordOrder/SubjectAuxInversion.lean)\
@@ -462,6 +474,10 @@ cited in: [ClausePrefixes](https://github.com/hawkrobe/linglib/blob/main/Linglib
 **Chomsky, N.** (1995). The Minimalist Program. *MIT Press*.\
 [foundational] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/Minimalism/Core/Basic.lean)
 
+**den Dikken, M.** (1995). Particles: On the Syntax of Verb-Particle, Triadic, and Causative Constructions. *Oxford University Press*.\
+[formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/ArgumentStructure/Bridge/MinimalismSmallClause.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Constructions/ParticleVerbs/Data.lean)\
+cited in: [MinimalismSmallClause](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/ArgumentStructure/Bridge/MinimalismSmallClause.lean)
+
 **Erlewine, M. Y.** (2016). Anti-locality and Optimality in Kaqchikel Agent Focus. *Natural Language \& Linguistic Theory, 34, 923–972*.\
 [cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/Minimalism/Core/Position.lean)\
 cited in: [AgentFocus](https://github.com/hawkrobe/linglib/blob/main/Linglib/Fragments/Kaqchikel/AgentFocus.lean), [MinimalismAgentFocus](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/FillerGap/Bridge/MinimalismAgentFocus.lean)
@@ -472,6 +488,10 @@ cited in: [Basic](https://github.com/hawkrobe/linglib/blob/main/Linglib/Fragment
 
 **Goldberg, A. E.** (1995). Constructions: A Construction Grammar Approach to Argument Structure. *University of Chicago Press*.\
 [foundational] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/ConstructionGrammar/Basic.lean)
+
+**Haddican, B., Tamminga, M., den Dikken, M. & Wade, K.** (2026). English Particle Verbs Prime Double Object Constructions in Production. *Linguistic Inquiry*.\
+[formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/ArgumentStructure/Studies/HaddicanEtAl2026.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/ArgumentStructure/Bridge/MinimalismSmallClause.lean)\
+cited in: [MinimalismSmallClause](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/ArgumentStructure/Bridge/MinimalismSmallClause.lean), [HaddicanEtAl2026](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/ArgumentStructure/Studies/HaddicanEtAl2026.lean)
 
 **Hahn, M., Degen, J. & Futrell, R.** (2021). Modeling Word and Morpheme Order in Natural Language as an Efficient Trade-Off of Memory and Surprisal. *Psychological Review, 128(4), 726–756*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/DependencyGrammar/Formal/MemorySurprisal/Basic.lean)
@@ -507,7 +527,7 @@ cited in: [MinimalismVerbMovement](https://github.com/hawkrobe/linglib/blob/main
 
 **Preminger, O.** (2014). Agreement and Its Failures. *MIT Press*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Fragments/Kaqchikel/Agreement.lean)\
-cited in: [Agreement](https://github.com/hawkrobe/linglib/blob/main/Linglib/Fragments/Kaqchikel/Agreement.lean)
+cited in: [Agreement](https://github.com/hawkrobe/linglib/blob/main/Linglib/Fragments/Kaqchikel/Agreement.lean), [CaseDiscrimination](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/Minimalism/Core/CaseDiscrimination.lean), [ObligatoryOperations](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/Minimalism/Core/ObligatoryOperations.lean), [PersonGeometry](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/Minimalism/Core/PersonGeometry.lean)
 
 **Radford, A.** (2009). Analysing English Sentences. *Cambridge University Press*.\
 [foundational] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/WordOrder/SubjectAuxInversion.lean)\

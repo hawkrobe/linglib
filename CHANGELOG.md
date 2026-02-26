@@ -1,5 +1,22 @@
 # Changelog
 
+## [0.226.58] - 2026-02-25
+
+### Changed
+- **Haddican et al. 2026 bridge reorganized**: data/bridge split (new `Studies/HaddicanEtAl2026.lean`), den Dikken (1995) SC family (resultative, causative structures — all four `V [SC Subj Pred]` proved isomorphic), Bruening (2021) process-level vs tree-shape isomorphism, non-PVC transitive control, `complexPred_fails_at_control` argument, connections to `ParticleVerbs.Data` inventory and `Applicative.lean` low ApplP. Renamed `sc_unique_isomorphism` → `sc_unique_among_haddican_analyses`.
+- **Bibliography**: Haddican et al. (2026), den Dikken (1995), Arnold et al. (2000), Aikhenvald (2008), Beltrama & Schwarz (2024) entries added.
+
+## [0.226.57] - 2026-02-25
+
+### Added
+- **Person feature geometry** (`Theories/Syntax/Minimalism/Core/PersonGeometry.lean`): Preminger (2014, §4.3). `DecomposedPerson` (hasParticipant, hasAuthor), `decomposePerson` function, `ProbeTarget` enum (participant, plural), `probeVisible` (relativized probing), `probeResolutionRank` (derives omnivorous hierarchy from two-probe system). Proves: `all_decompositions_wellFormed` (∀ n, [author] entails [participant]), `rank_hierarchy` (π⁰ > #⁰ > default).
+- **Obligatory operations** (`Theories/Syntax/Minimalism/Core/ObligatoryOperations.lean`): Preminger (2014, Ch. 5). `AgreementModel` (crashOnFailure vs obligatoryNocrash), `ProbeOutcome` (valued/unvalued), `PFRealization` (agreement/elsewhere), `ProbePresence` (three-way: present+valued, present+unvalued, absent). Proves: `models_diverge_on_failure` (the two models differ on probe failure), `obligatory_always_converges`, `crash_requires_success`, `present_unvalued_vs_absent` (failed agreement ≠ no agreement).
+- **Case discrimination** (`Theories/Syntax/Minimalism/Core/CaseDiscrimination.lean`): Preminger (2014, Ch. 8) / Bobaljik (2008). `CaseAccessibility` hierarchy (unmarked > dependent > lexical), `CaseAlignment` (nomAcc, ergAbs, tripartite), `agreementFromThreshold`, `DativeInterventionContext`. Typological gap theorem: `nomAcc_no_ergAbs_agreement` (NOM-ACC case can never produce ERG-ABS agreement). Also: `ergAbs_unmarked_yields_abs_agreement`, contiguity theorems, `kaq_abs_agreement` (Kaqchikel's alignment produces correct Set B targeting), dative intervention as failed agreement.
+
+### Changed
+- **Kaqchikel Agreement** grounded in PersonGeometry: `isParticipant` and `isAuthor` now derived from `decomposePerson`, `afRank` derived from `probeResolutionRank` — hierarchy follows from probe targets, not stipulation. Added `af_rank_grounded`, `isParticipant_grounded` verification theorems.
+- **Bibliography**: Preminger (2014) entry added.
+
 ## [0.226.56] - 2026-02-25
 
 ### Added
