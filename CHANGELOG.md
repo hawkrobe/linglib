@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.226.86] - 2026-02-26
+
+### Added
+- **Exhaustivity theory + Xiang 2022 RelExh derivation chain**: New pure theory file (`Theories/Semantics/Questions/Exhaustivity.lean`) formalizing Dayal's EP (definition 90) and Xiang's RelExh (definition 91) as polymorphic decidable predicates, plus `foQDen` and `propEntails`. Rewrites Xiang 2022 Bridge to derive MS licensing from RelExh (not just data-check it): EP fails for FO can-question → RelExh passes → MS licensed, with DecisionTheory independently agreeing (`canQ_semantic_pragmatic_agree`). Partition contrast shows EP holds → MA. 15 theorems via `native_decide`.
+
 ## [0.226.85] - 2026-02-26
 
 ### Added

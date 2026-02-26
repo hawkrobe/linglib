@@ -951,6 +951,7 @@ import Linglib.Theories.Semantics.Questions.Basic
 import Linglib.Theories.Semantics.Questions.Coordination
 import Linglib.Theories.Semantics.Questions.EconomyOddness
 import Linglib.Theories.Semantics.Questions.EntropyNPIs
+import Linglib.Theories.Semantics.Questions.Exhaustivity
 import Linglib.Theories.Semantics.Questions.GSVanRooyBridge
 import Linglib.Theories.Semantics.Questions.Hamblin
 import Linglib.Theories.Semantics.Questions.Inquisitive
