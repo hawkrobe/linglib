@@ -108,6 +108,7 @@ import Linglib.Fragments.English.Tense
 import Linglib.Fragments.English.TemporalDeictic
 import Linglib.Fragments.English.TemporalExpressions
 import Linglib.Fragments.English.Conditionals
+import Linglib.Fragments.English.Phonology
 import Linglib.Fragments.Bulgarian.Evidentials
 import Linglib.Fragments.Czech.Case
 import Linglib.Fragments.Czech.Determiners
@@ -144,6 +145,7 @@ import Linglib.Fragments.Korean.Case
 import Linglib.Fragments.Korean.Evidentials
 import Linglib.Fragments.Korean.MedialVerbs
 import Linglib.Fragments.Korean.Predicates
+import Linglib.Fragments.Korean.Phonology
 import Linglib.Fragments.Japanese.TemporalConnectives
 import Linglib.Fragments.Japanese.TemporalDeictic
 import Linglib.Fragments.Japanese.Particles
@@ -550,6 +552,8 @@ import Linglib.Phenomena.ScalarImplicatures.Bridge.TheoryComparison
 import Linglib.Phenomena.ScalarImplicatures.GoodmanStuhlmuller2013.Data
 import Linglib.Phenomena.ScalarImplicatures.GoodmanStuhlmuller2013.Bridge
 import Linglib.Phenomena.ScalarImplicatures.GoodmanStuhlmuller2013.KennedyExact
+import Linglib.Phenomena.PhonologicalAlternation.Data
+import Linglib.Phenomena.PhonologicalAlternation.Bridge.SPEDerivations
 
 -- Theories: CCG
 import Linglib.Theories.Syntax.CCG.Core.Basic

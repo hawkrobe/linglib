@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.226.83] - 2026-02-26
+
+### Added
+- **Phonological alternation pipeline** (Fragments → Phenomena): first downstream consumers of the SPE rule formalism. English segment inventory (`Fragments/English/Phonology.lean`: /p t k b d m n ŋ s w r æ ɪ ə/) with preglottalization and postnasal /t/ deletion rules. Korean segment inventory (`Fragments/Korean/Phonology.lean`: /p t k m n a u l/) with stop nasalization rule. Theory-neutral alternation data (`Phenomena/PhonologicalAlternation/Data.lean`: `AlternationDatum` with underlying/surface forms). SPE derivation bridge (`Bridge/SPEDerivations.lean`): applies `derive` with Fragment rules and proves output matches expected surface forms via `native_decide` — English preglottalization (/kæt/ → [kætˀ]), postnasal deletion (/wɪntər/ → [wɪnər]), Korean nasalization (/pakmul/ → [paŋmul]).
+
 ## [0.226.82] - 2026-02-26
 
 ### Added
