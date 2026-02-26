@@ -8,19 +8,18 @@ feature geometry model. The tree synthesizes three sources:
 
 - **Clements (1985)**: root, laryngeal, supralaryngeal, and place nodes
 - **Sagey (1986)**: articulator sub-nodes under Place (labial, coronal, dorsal)
-- **Standard post-1995 consensus** (Hayes 2009, §4.6): [nasal] under root,
-  [lateral] and [strident] under coronal, [continuant] under supralaryngeal
+- **Hayes (2009, Ch 4)**: complete 26-feature inventory mapped to geometric nodes
 
-    Root [±cons, ±son, ±nas]
+    Root [±syll, ±cons, ±son, ±approx, ±nas, ±del.rel., ±tap, ±trill]
     ├── Laryngeal [±voice, ±s.g., ±c.g.]
     └── Supralaryngeal [±cont]
         └── Place
-            ├── Labial [±lab, ±round]
+            ├── Labial [±lab, ±round, ±labiodental]
             ├── Coronal [±cor, ±ant, ±dist, ±lat, ±strid]
-            └── Dorsal [±dor, ±high, ±low, ±back, ±atr]
+            └── Dorsal [±dor, ±high, ±low, ±front, ±back, ±tense]
 
 The flat classification predicates in `Features.lean` (`isMajorClass`, `isPlace`)
-predate this geometry and do not exactly correspond to any single node —
+do not exactly correspond to any single geometric node —
 see the subsumption theorems below.
 -/
 
@@ -97,16 +96,21 @@ namespace Theories.Phonology
 open FeatureGeometry in
 /-- Each terminal feature maps to its dominating class node.
 
-    - Root: [consonantal], [sonorant], [nasal] (nasal under root per C&H 1995)
+    - Root: [syllabic], [consonantal], [sonorant], [approximant], [nasal],
+      [delayedRelease], [tap], [trill]
+    - Laryngeal: [voice], [spreadGlottis], [constrGlottis]
     - Supralaryngeal: [continuant]
-    - Coronal: includes [lateral], [strident] (Hayes 2009, §4.6.2) -/
+    - Labial: [labial], [round], [labiodental]
+    - Coronal: [coronal], [anterior], [distributed], [lateral], [strident]
+    - Dorsal: [dorsal], [high], [low], [front], [back], [tense] -/
 def Feature.node : Feature → GeomNode
-  | .consonantal | .sonorant | .nasal => .root
+  | .syllabic | .consonantal | .sonorant | .approximant
+  | .nasal | .delayedRelease | .tap | .trill => .root
   | .voice | .spreadGlottis | .constrGlottis => .laryngeal
   | .continuant => .supralaryngeal
-  | .labial | .round => .labial
+  | .labial | .round | .labiodental => .labial
   | .coronal | .anterior | .distributed | .lateral | .strident => .coronal
-  | .dorsal | .high | .low | .back | .atr => .dorsal
+  | .dorsal | .high | .low | .front | .back | .tense => .dorsal
 
 open FeatureGeometry in
 /-- Does node `n` dominate the node that feature `f` belongs to? -/
@@ -154,25 +158,24 @@ theorem labial_depth : GeomNode.labial.depth = 3 := rfl
 theorem coronal_depth : GeomNode.coronal.depth = 3 := rfl
 theorem dorsal_depth : GeomNode.dorsal.depth = 3 := rfl
 
--- Natural class counts
+-- Natural class counts (Hayes 2009 complete inventory: 26 features)
 
-theorem root_features_count : GeomNode.root.features.length = 19 := by native_decide
+theorem root_features_count : GeomNode.root.features.length = 26 := by native_decide
 theorem laryngeal_features_count : GeomNode.laryngeal.features.length = 3 := by native_decide
 theorem supralaryngeal_features_count :
-    GeomNode.supralaryngeal.features.length = 13 := by native_decide
-theorem place_features_count : GeomNode.place.features.length = 12 := by native_decide
-theorem labial_features_count : GeomNode.labial.features.length = 2 := by native_decide
+    GeomNode.supralaryngeal.features.length = 15 := by native_decide
+theorem place_features_count : GeomNode.place.features.length = 14 := by native_decide
+theorem labial_features_count : GeomNode.labial.features.length = 3 := by native_decide
 theorem coronal_features_count : GeomNode.coronal.features.length = 5 := by native_decide
-theorem dorsal_features_count : GeomNode.dorsal.features.length = 5 := by native_decide
+theorem dorsal_features_count : GeomNode.dorsal.features.length = 6 := by native_decide
 
 -- Subsumption of existing flat predicates
 --
--- isLaryngeal and isDorsal match the geometry exactly.
--- isPlace undercounts: it misses [lateral] and [strident], which are
--- geometrically under coronal (hence under place) per Hayes 2009.
+-- isLaryngeal matches the geometry exactly.
+-- isDorsal matches the geometry exactly.
+-- isPlace now matches the geometry exactly (includes labiodental, front, tense).
 -- isMajorClass has no single geometric counterpart: its features are
--- distributed across root ([cons, son, nas]), supralaryngeal ([cont]),
--- and coronal ([lat, strid]).
+-- distributed across root, supralaryngeal, and coronal.
 
 theorem isLaryngeal_iff_laryngeal_dominates (f : Feature) :
     f.isLaryngeal = f.dominatedBy .laryngeal := by
@@ -183,6 +186,7 @@ theorem isDorsal_iff_dorsal_dominates (f : Feature) :
   cases f <;> rfl
 
 -- isPlace is a strict subset of geometric place dominance
+-- (isMajorClass features like lateral and strident are geometrically under coronal)
 theorem isPlace_implies_place_dominates (f : Feature) :
     f.isPlace = true → f.dominatedBy .place = true := by
   cases f <;> decide

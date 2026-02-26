@@ -126,13 +126,13 @@ theorem agreeAt_refl (s : Segment) (n : GeomNode) :
     agreeAt s s n = true :=
   list_all_beq_self n.features s.spec
 
-/-- Place assimilation checks 12 features (the place node's natural class). -/
-theorem place_assimilation_checks_12 :
-    GeomNode.place.features.length = 12 := by native_decide
+/-- Place assimilation checks 14 features (the place node's natural class). -/
+theorem place_assimilation_checks_14 :
+    GeomNode.place.features.length = 14 := by native_decide
 
-/-- Total assimilation checks 13 features (the supralaryngeal node's natural class). -/
-theorem total_assimilation_checks_13 :
-    GeomNode.supralaryngeal.features.length = 13 := by native_decide
+/-- Total assimilation checks 15 features (the supralaryngeal node's natural class). -/
+theorem total_assimilation_checks_15 :
+    GeomNode.supralaryngeal.features.length = 15 := by native_decide
 
 private theorem filter_all_pass (l : List Sharing) (p : Sharing → Bool)
     (h : l.all p = true) : l.filter p = l := by

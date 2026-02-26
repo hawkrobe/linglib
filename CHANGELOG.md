@@ -1,5 +1,23 @@
 # Changelog
 
+## [0.226.79] - 2026-02-26
+
+### Changed
+- **Complete Hayes (2009) feature inventory** (`Features.lean`): expanded from 21 to 26 segmental features matching Hayes *Introductory Phonology* Ch 4 (Tables 4.7–4.10). Added `delayedRelease` (affricates, §4.4.7), `tap`/`trill` (rhotics, §4.4.6), `labiodental` (f/v vs ɸ/β, §4.6.1), `front` (dorsal, §4.5.1). Replaced `atr` with `tense` (§4.5.3). Prosodic features [stress] and [long] excluded per textbook treatment (Ch 14). Updated geometry node mappings and natural class counts: root 26, supralaryngeal 15, place 14, labial 3, dorsal 6. Sonority function in `Syllable/Defs.lean` now uses Hayes Table 4.1 decomposition ([±sonorant] > [±approximant] > [±consonantal] > [±syllabic]).
+
+## [0.226.78] - 2026-02-26
+
+### Added
+- **De Hoop & Malchukov (2008) case-marking strategies** (`Phenomena/Case/Studies/DeHoopMalchukov2008.lean`): Bidirectional OT derives basic case typology from three constraints — Distinguish (D), Identify (I), Economy (*!). `BiOTTableau` with `speakerOptimal`/`hearerOptimal`/`biOptimal`/`allBiOptimal` added to `Core/Logic/ConstraintEvaluation.lean`. Factorial typology: 3! = 6 rankings → 4 case types (accusative, ergative, tripartite, neutral) verified by `native_decide`. Per-ranking correspondence theorems match Table 1 (p. 573). Voice–case interaction (§3): active+D>>*! → accusative, passive+D>>*! → ergative. Prominence-conditioned extension (§4): animacy-relativized Distinguish derives DOM patterns consistent with Aissen (2003) monotonicity. Bridge theorems: `economy_matches_aissen`, `prominence_monotone_dom`, `no_fifth_pattern`.
+
+### Changed
+- **OT moved to Core** (`Theories/Phonology/OT/Core.lean` → `Core/Logic/OT.lean`): OT is framework-agnostic optimization machinery, not a phonology-specific theory. Namespace changed from `Theories.Phonology.OT` to `Core.OT`. All imports updated (Aissen2003, SlavicVerbalizer/OTAnalysis, Linglib.lean).
+
+## [0.226.77] - 2026-02-26
+
+### Added
+- **Syllable structure** (`Theories/Phonology/Syllable/Defs.lean`): onset–nucleus–coda constituency (Goldsmith 2011 §6.2), Clements (1990) 6-level sonority scale from feature specifications, Sonority Sequencing Principle (rising onset, falling coda), `SyllabifiedForm` for parsed words, moraic weight with Weight-by-Position parameter (Hayes 1989), OT markedness constraints (`onsetViolations`, `noCodaViolations`, `complexOnsetViolations`, `complexCodaViolations`, `sspViolations`) returning `Nat` matching `NamedConstraint.eval` interface. Verification: `monotoneRising/Falling_singleton` by `rfl`, `cv_is_light` and `cvc_is_heavy` weight theorems proved structurally.
+
 ## [0.226.76] - 2026-02-25
 
 ### Added
