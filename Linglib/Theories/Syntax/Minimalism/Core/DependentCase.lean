@@ -403,4 +403,58 @@ theorem case_is_configural :
     getCaseOf "source" accVariantResult ≠ getCaseOf "source" ablVariantResult := by
   native_decide
 
+-- ============================================================================
+-- § 11: Structural Case Inventory
+-- ============================================================================
+
+/-- The structural (non-lexical) cases that the dependent case algorithm
+    can assign for each language type. These are exactly the cases that
+    appear in the `none` (no lexical case) branch of `assignOneCase`. -/
+def structuralCasesFor : CaseLanguageType → List CaseVal
+  | .accusative => [.nom, .acc]
+  | .ergative   => [.abs, .erg]
+  | .tripartite => [.abs, .erg, .acc]
+
+/-- In an accusative language, any NP without lexical case receives
+    either NOM (unmarked) or ACC (dependent). -/
+theorem accusative_nonlexical_cases
+    (higherNPs lowerNPs : List NPInDomain) (np : NPInDomain)
+    (h : np.lexicalCase = none) :
+    let result := assignOneCase .accusative higherNPs lowerNPs np
+    result.case = .nom ∨ result.case = .acc := by
+  simp only [assignOneCase, dependentAccusative, h, Option.isNone, Bool.true_and,
+             unmarkedCaseFor]
+  cases anyLacksCaseIn higherNPs
+  · left; rfl
+  · right; rfl
+
+/-- In an ergative language, any NP without lexical case receives
+    either ABS (unmarked) or ERG (dependent). -/
+theorem ergative_nonlexical_cases
+    (higherNPs lowerNPs : List NPInDomain) (np : NPInDomain)
+    (h : np.lexicalCase = none) :
+    let result := assignOneCase .ergative higherNPs lowerNPs np
+    result.case = .abs ∨ result.case = .erg := by
+  simp only [assignOneCase, dependentErgative, h, Option.isNone, Bool.true_and,
+             unmarkedCaseFor]
+  cases anyLacksCaseIn lowerNPs
+  · left; rfl
+  · right; rfl
+
+/-- In a tripartite language, any NP without lexical case receives
+    ABS (unmarked), ERG (dependent on a lower NP), or ACC (dependent
+    on a higher NP). -/
+theorem tripartite_nonlexical_cases
+    (higherNPs lowerNPs : List NPInDomain) (np : NPInDomain)
+    (h : np.lexicalCase = none) :
+    let result := assignOneCase .tripartite higherNPs lowerNPs np
+    result.case = .abs ∨ result.case = .erg ∨ result.case = .acc := by
+  simp only [assignOneCase, dependentErgative, dependentAccusative, h,
+             Option.isNone, Bool.true_and, unmarkedCaseFor]
+  cases anyLacksCaseIn lowerNPs
+  · cases anyLacksCaseIn higherNPs
+    · left; rfl
+    · right; right; rfl
+  · right; left; rfl
+
 end Minimalism
