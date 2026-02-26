@@ -47,6 +47,8 @@ inductive Cat where
   | Mod   -- modality (Cinque 1999; modal auxiliaries)
   | Rel   -- relative (Rizzi 2001; relativization feature)
   | Pol   -- polarity (Laka 1990; ΣP for affirmation/negation)
+  | Asp   -- aspect (Cinque 1999; inner inflectional, between Voice and T)
+  | Evid  -- evidential (Cinque 1999; outer inflectional, above T below Fin)
   deriving Repr, DecidableEq, Inhabited
 
 /-- Selectional stack consumed left-to-right -/

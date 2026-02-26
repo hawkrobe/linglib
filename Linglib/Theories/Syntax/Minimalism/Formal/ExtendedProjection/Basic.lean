@@ -64,6 +64,8 @@ def catFeatures : Cat → CatFeatures
   | .Mod   => ⟨true,  false⟩   -- [+V, -N] (Cinque 1999)
   | .Rel   => ⟨true,  false⟩   -- [+V, -N] (Rizzi 2001)
   | .Pol   => ⟨true,  false⟩   -- [+V, -N] (Laka 1990)
+  | .Asp   => ⟨true,  false⟩   -- [+V, -N] (Cinque 1999)
+  | .Evid  => ⟨true,  false⟩   -- [+V, -N] (Cinque 1999)
   | .N     => ⟨false, true⟩    -- [-V, +N]
   | .D     => ⟨false, true⟩    -- [-V, +N]
   | .A     => ⟨true,  true⟩    -- [+V, +N]
@@ -90,7 +92,8 @@ def catFeatures : Cat → CatFeatures
 def fValue : Cat → Nat
   | .V | .N | .A | .P          => 0   -- lexical (F0)
   | .v | .D | .Voice | .Appl   => 1   -- first functional (F1)
-  | .T | .Neg | .Mod | .Pol    => 2   -- inflectional domain (F2)
+  | .T | .Neg | .Mod | .Pol
+  | .Asp | .Evid               => 2   -- inflectional domain (F2)
   | .Fin                        => 3   -- finiteness (F3, Rizzi 1997 split-CP)
   | .Foc                        => 4   -- focus (F4, Rizzi 1997 split-CP)
   | .Top | .Rel                 => 5   -- topic field (F5, Rizzi 1997/2001)
@@ -147,7 +150,7 @@ inductive CatFamily where
     This determines which EP it can participate in. -/
 def catFamily : Cat → CatFamily
   | .V | .v | .Voice | .Appl | .T | .Foc | .Top | .Fin | .C | .SA
-  | .Force | .Neg | .Mod | .Rel | .Pol => .verbal
+  | .Force | .Neg | .Mod | .Rel | .Pol | .Asp | .Evid => .verbal
   | .N | .D                            => .nominal
   | .A                                 => .adjectival
   | .P                                 => .adpositional
@@ -272,7 +275,7 @@ theorem f0_iff_lexical (c : Cat) :
 
 /-- F1+ is exactly the functional heads. -/
 theorem fpos_iff_functional (c : Cat) :
-    isFHead c = true ↔ (c = .v ∨ c = .Voice ∨ c = .Appl ∨ c = .D ∨ c = .T ∨ c = .Foc ∨ c = .Top ∨ c = .Fin ∨ c = .C ∨ c = .SA ∨ c = .Force ∨ c = .Neg ∨ c = .Mod ∨ c = .Rel ∨ c = .Pol) := by
+    isFHead c = true ↔ (c = .v ∨ c = .Voice ∨ c = .Appl ∨ c = .D ∨ c = .T ∨ c = .Foc ∨ c = .Top ∨ c = .Fin ∨ c = .C ∨ c = .SA ∨ c = .Force ∨ c = .Neg ∨ c = .Mod ∨ c = .Rel ∨ c = .Pol ∨ c = .Asp ∨ c = .Evid) := by
   cases c <;> simp [isFHead, fValue]
 
 -- Family consistency

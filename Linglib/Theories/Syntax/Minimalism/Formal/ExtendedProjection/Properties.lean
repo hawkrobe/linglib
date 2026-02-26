@@ -52,6 +52,8 @@ def epSemanticType : Cat → EPSemanticType
   | .Neg               => .intermediate   -- F2: negation (Pollock 1989)
   | .Mod               => .intermediate   -- F2: modality (Cinque 1999)
   | .Pol               => .intermediate   -- F2: polarity (Laka 1990)
+  | .Asp               => .intermediate   -- F2: aspect (Cinque 1999)
+  | .Evid              => .intermediate   -- F2: evidential (Cinque 1999)
   | .Foc               => .intermediate   -- F4: focus (Rizzi 1997 split-CP)
   | .Top               => .intermediate   -- F5: topic (Rizzi 1997 split-CP)
   | .Rel               => .intermediate   -- F5: relative (Rizzi 2001)
@@ -145,7 +147,7 @@ def isTruncated (spine : List Cat) : Bool :=
 def argumentDomainCat (topCat : Cat) : Cat :=
   match topCat with
   | .C | .Force | .Fin | .Foc | .Top | .Rel | .SA
-  | .T | .Neg | .Mod | .Pol => .v  -- clausal functional heads → vP is argument domain
+  | .T | .Neg | .Mod | .Pol | .Asp | .Evid => .v  -- clausal functional heads → vP is argument domain
   | _       => topCat  -- small clause / lexical head → the SC itself is argument domain
 
 /-- Is a category within the argument domain of a given top category?

@@ -153,7 +153,67 @@ theorem tP_roundtrips : ClauseSpine.tP.toComplementSize = ComplementSize.tP := b
   native_decide
 
 -- ============================================================================
--- § 6: Size Ordering
+-- § 6: Cartographic Spines (Cinque 1999)
+-- ============================================================================
+
+/-- AspP-sized clause: [V, v, Voice, Asp]. Inner aspect projected.
+    Cinque (1999): Asp sits between Voice and T in the functional hierarchy. -/
+def ClauseSpine.aspP : ClauseSpine :=
+  ⟨[.V, .v, .Voice, .Asp], by decide⟩
+
+/-- Cartographic TP: [V, v, Voice, Asp, T]. Fine-grained TP with inner aspect. -/
+def ClauseSpine.cartographicTP : ClauseSpine :=
+  ⟨[.V, .v, .Voice, .Asp, .T], by decide⟩
+
+/-- EvidP-sized clause: [V, v, Voice, Asp, T, Evid]. Evidential projected above T.
+    Cinque (1999): Evid sits above T, below Fin in the functional hierarchy. -/
+def ClauseSpine.evidP : ClauseSpine :=
+  ⟨[.V, .v, .Voice, .Asp, .T, .Evid], by decide⟩
+
+/-- Cartographic CP: [V, v, Voice, Asp, T, Evid, C]. Full fine-grained spine. -/
+def ClauseSpine.cartographicCP : ClauseSpine :=
+  ⟨[.V, .v, .Voice, .Asp, .T, .Evid, .C], by decide⟩
+
+-- ── Cartographic projection theorems ──
+
+/-- AspP projects Asp. -/
+theorem aspP_has_asp : ClauseSpine.aspP.projects .Asp = true := by native_decide
+
+/-- AspP does not project T. -/
+theorem aspP_lacks_t : ClauseSpine.aspP.projects .T = false := by native_decide
+
+/-- Cartographic TP projects both Asp and T. -/
+theorem cartTP_has_asp_and_t :
+    ClauseSpine.cartographicTP.projects .Asp = true ∧
+    ClauseSpine.cartographicTP.projects .T = true := by native_decide
+
+/-- EvidP projects Evid. -/
+theorem evidP_has_evid : ClauseSpine.evidP.projects .Evid = true := by native_decide
+
+/-- Cartographic TP does not project Evid. -/
+theorem cartTP_lacks_evid : ClauseSpine.cartographicTP.projects .Evid = false := by native_decide
+
+/-- Cartographic CP projects all heads. -/
+theorem cartCP_projects_all :
+    ClauseSpine.cartographicCP.projects .V = true ∧
+    ClauseSpine.cartographicCP.projects .v = true ∧
+    ClauseSpine.cartographicCP.projects .Voice = true ∧
+    ClauseSpine.cartographicCP.projects .Asp = true ∧
+    ClauseSpine.cartographicCP.projects .T = true ∧
+    ClauseSpine.cartographicCP.projects .Evid = true ∧
+    ClauseSpine.cartographicCP.projects .C = true := by native_decide
+
+-- ── Cartographic monotonicity ──
+
+/-- Cartographic spines are subspines of cartographic CP. -/
+theorem cartographic_size_ordering :
+    ClauseSpine.aspP.size < ClauseSpine.cartographicTP.size ∧
+    ClauseSpine.cartographicTP.size < ClauseSpine.evidP.size ∧
+    ClauseSpine.evidP.size < ClauseSpine.cartographicCP.size := by
+  native_decide
+
+-- ============================================================================
+-- § 7: Size Ordering
 -- ============================================================================
 
 /-- Spine sizes are ordered: ApplP < vP < VoiceP < TP < CP. -/
