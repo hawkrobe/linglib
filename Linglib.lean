@@ -21,6 +21,7 @@ import Linglib.Core.Scales.HornScale
 import Linglib.Core.Semantics.Intension
 import Linglib.Core.Logic.ModalLogic
 import Linglib.Core.Logic.BeliefRevision
+import Linglib.Core.Logic.RankingFunction
 import Linglib.Core.Register
 import Linglib.Core.SocialMeaning
 import Linglib.Core.Conjectures
@@ -55,6 +56,7 @@ import Linglib.Core.Context.Rich
 import Linglib.Core.Discourse.InformationStructure
 import Linglib.Core.Prosody
 import Linglib.Core.Definiteness
+import Linglib.Core.Prominence
 import Linglib.Core.Lexical.NounCategorization
 import Linglib.Core.Scales.Roundness
 import Linglib.Core.Scales.Mereology
@@ -110,6 +112,7 @@ import Linglib.Fragments.German.Predicates
 import Linglib.Fragments.German.Predicates.Modal
 import Linglib.Fragments.German.Conditionals
 import Linglib.Fragments.Georgian.Coordination
+import Linglib.Fragments.Georgian.Agreement
 import Linglib.Fragments.Greek.TemporalConnectives
 import Linglib.Fragments.Greek.TemporalDeictic
 import Linglib.Fragments.Hebrew.TemporalDeictic
@@ -144,6 +147,7 @@ import Linglib.Fragments.Turkish.QuestionParticles
 import Linglib.Fragments.Manambu.MedialVerbs
 import Linglib.Fragments.Nungon.MedialVerbs
 import Linglib.Fragments.Basque.Pronouns
+import Linglib.Fragments.Basque.Agreement
 import Linglib.Fragments.Magahi.Pronouns
 import Linglib.Fragments.Korean.Pronouns
 import Linglib.Fragments.Japanese.Pronouns
@@ -518,6 +522,8 @@ import Linglib.Theories.Syntax.CCG.Bridge.Interface
 import Linglib.Theories.Syntax.CCG.Bridge.Homomorphism
 import Linglib.Theories.Syntax.CCG.Bridge.Derivation
 import Linglib.Phenomena.Agreement.Bridge.CCGAgreement
+import Linglib.Phenomena.Agreement.DifferentialIndexing
+import Linglib.Phenomena.Agreement.Bridge.DifferentialIndexing
 import Linglib.Phenomena.Coordination.CCGBridge
 import Linglib.Theories.Syntax.CCG.CrossSerial
 import Linglib.Phenomena.WordOrder.Bridge.CCGDerivations
