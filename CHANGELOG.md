@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.226.80] - 2026-02-26
+
+### Added
+- **Morphological word structure** (`Theories/Morphology/Core/WordStructure.lean`): hierarchical `MorphWord` inductive type representing word-internal structure as a tree of morphemes. Constructors for prefixation, suffixation, infixation, circumfixation, compounding, reduplication (total/partial), and conversion (zero affixation). `surface` linearizes to flat string, `morphemes` flattens to morpheme list, `boundaryPositions` extracts character offsets for the phonology-morphology interface. Bridge function `toCircumfixExponence` connects to existing `CircumfixExponence`. Complementary to `MorphRule` (inflectional processes) — all existing consumers unaffected.
+
 ## [0.226.79] - 2026-02-26
 
 ### Changed

@@ -77,6 +77,7 @@ import Linglib.Core.InformationTheory
 import Linglib.Theories.Morphology.Core.Circumfix
 import Linglib.Theories.Morphology.Core.Exponence
 import Linglib.Theories.Morphology.Core.ScaleFromParadigm
+import Linglib.Theories.Morphology.Core.WordStructure
 import Linglib.Theories.Interfaces.MorphologySemantics.StemToLex
 import Linglib.Core.Discourse.DiscourseRole
 import Linglib.Core.Interval.QInterval
