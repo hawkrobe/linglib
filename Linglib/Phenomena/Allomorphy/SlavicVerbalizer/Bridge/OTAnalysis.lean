@@ -1,5 +1,5 @@
 import Linglib.Theories.Phonology.Features
-import Linglib.Theories.Phonology.OT.Core
+import Linglib.Core.Logic.OT
 import Linglib.Phenomena.Allomorphy.SlavicVerbalizer.Data
 
 /-!
@@ -58,7 +58,7 @@ correspond to attested groups; {[iv]} is unattested.
 
 namespace Phenomena.Allomorphy.SlavicVerbalizer.Bridge.OTAnalysis
 
-open Theories.Phonology.OT Core.ConstraintEvaluation
+open Core.OT Core.ConstraintEvaluation
 open Phenomena.Allomorphy.SlavicVerbalizer.Data
 
 -- ============================================================================

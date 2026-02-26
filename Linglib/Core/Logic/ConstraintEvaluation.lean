@@ -169,4 +169,46 @@ theorem optimal_subset (t : OTTableau Candidate) (c : Candidate) :
     c ∈ t.optimal → c ∈ t.candidates :=
   fun hc => (List.mem_filter.mp hc).1
 
+-- ============================================================================
+-- § 5: Bidirectional OT — Superoptimality (Blutner 2000)
+-- ============================================================================
+
+/-- A pair ⟨f, m⟩ is **blocked** by another pair ⟨f', m'⟩ in set `s` iff:
+    1. They share exactly one dimension (same form or same meaning, not both),
+    2. The blocker is strictly more harmonic (lexicographic <).
+
+    This is the blocking relation for Blutner's (2000) superoptimality,
+    used by de Hoop & Malchukov (2008) for bidirectional case optimization. -/
+private def blocked {F M : Type} [BEq F] [BEq M]
+    (profile : F × M → List Nat)
+    (s : List (F × M)) (p : F × M) : Bool :=
+  s.any λ q =>
+    ((q.1 == p.1 && !(q.2 == p.2)) || (!(q.1 == p.1) && q.2 == p.2)) &&
+    lexLT (profile q) (profile p)
+
+/-- Fixed-point iteration: remove blocked pairs until stable.
+    Fuel is bounded by the initial list length (each round removes ≥ 1). -/
+private def superoptLoop {F M : Type} [BEq F] [BEq M]
+    (profile : F × M → List Nat)
+    : List (F × M) → Nat → List (F × M)
+  | s, 0 => s
+  | s, fuel + 1 =>
+    let s' := s.filter λ p => !blocked profile s p
+    if s'.length == s.length then s else superoptLoop profile s' fuel
+
+/-- Blutner's (2000) **superoptimal** pairs: the largest set S such that
+    no element of S blocks another element of S.
+
+    A pair ⟨f, m⟩ is superoptimal iff:
+    - No other superoptimal ⟨f', m⟩ (same meaning) is strictly more harmonic
+    - No other superoptimal ⟨f, m'⟩ (same form) is strictly more harmonic
+
+    Computed as a fixed point: start with all pairs, iteratively remove
+    blocked pairs until stable. For finite candidate sets this always
+    terminates within |pairs| rounds. -/
+def superoptimal {F M : Type} [BEq F] [BEq M]
+    (pairs : List (F × M))
+    (profile : F × M → List Nat) : List (F × M) :=
+  superoptLoop profile pairs pairs.length
+
 end Core.ConstraintEvaluation

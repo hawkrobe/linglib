@@ -40,6 +40,7 @@ import Linglib.Core.RootDimensions
 import Linglib.Theories.Semantics.Lexical.Verb.VerbEntry
 import Linglib.Core.Logic.NaturalLogic
 import Linglib.Core.Logic.ConstraintEvaluation
+import Linglib.Core.Logic.OT
 import Linglib.Core.Agent.DecisionTheory
 import Linglib.Core.Agent.RationalAction
 import Linglib.Core.Agent.UtilityTheory
@@ -211,6 +212,7 @@ import Linglib.Phenomena.Case.Studies.Ozaki2025.Data
 import Linglib.Phenomena.Case.Studies.Ozaki2025.Bridge
 import Linglib.Phenomena.Case.Bridge.DependentCaseInventories
 import Linglib.Phenomena.Case.Studies.Aissen2003
+import Linglib.Phenomena.Case.Studies.DeHoopMalchukov2008
 import Linglib.Phenomena.Case.Bridge.DependentCaseDOM
 import Linglib.Phenomena.ClauseChaining.Typology
 import Linglib.Phenomena.ClauseChaining.Data
@@ -1042,8 +1044,8 @@ import Linglib.Theories.Pragmatics.RSA.ScalarImplicatures.Hurford
 -- Theories: Phonology
 import Linglib.Theories.Phonology.Features
 import Linglib.Theories.Phonology.FeatureGeometry
-import Linglib.Theories.Phonology.OT.Core
 import Linglib.Theories.Phonology.Autosegmental.Defs
+import Linglib.Theories.Phonology.Syllable.Defs
 
 -- Theories: Sociolinguistics
 import Linglib.Theories.Sociolinguistics.PropertySpace

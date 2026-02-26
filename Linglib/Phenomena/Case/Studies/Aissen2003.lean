@@ -1,5 +1,5 @@
 import Linglib.Core.Prominence
-import Linglib.Theories.Phonology.OT.Core
+import Linglib.Core.Logic.OT
 import Linglib.Phenomena.Case.Typology
 
 /-!
@@ -45,7 +45,7 @@ to a possible OT grammar.
 namespace Phenomena.Case.Studies.Aissen2003
 
 open Core.Prominence
-open Theories.Phonology.OT
+open Core.OT
 open Phenomena.Case.Typology
 
 -- ============================================================================

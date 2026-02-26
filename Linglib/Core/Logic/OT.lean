@@ -16,7 +16,7 @@ families, named constraints, and the factorial typology pattern (enumerate
 all rankings, compute optima, count distinct outcomes).
 -/
 
-namespace Theories.Phonology.OT
+namespace Core.OT
 
 open Core.ConstraintEvaluation
 
@@ -98,4 +98,4 @@ def factorialTypologySize {C : Type} [DecidableEq C]
     (h : candidates ≠ []) : Nat :=
   (factorialOptima candidates constraints h).length
 
-end Theories.Phonology.OT
+end Core.OT
