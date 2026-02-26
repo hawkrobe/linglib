@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.226.94] - 2026-02-26
+
+### Fixed
+- **Fox 2018 `foxAns` entailment target**: Definition 35 says q⊆p (entail the cell-identifier *proposition* p), not q⊆Exh(p). Fixed `foxAns` to use `getCell cells j` instead of `foxExh cells j worlds`. Bug was masked in all existing theorems (cell-identifier is an Exh fixed point in each case) but the definition was wrong in general. Fixed stale section header referencing deleted `foxQPM`.
+
 ## [0.226.93] - 2026-02-26
 
 ### Changed

@@ -111,7 +111,8 @@ for decidable computation via `native_decide`.
 - `cellMCSets` mirrors `isMCSet` from NeoGricean.Exhaustivity
 - `cellIE` mirrors `IE` from NeoGricean.Exhaustivity
 - `foxExh` mirrors `exhIE` from NeoGricean.Exhaustivity
-- `foxQPM` implements Fox 2018, definition 34 (CI + NV)
+- `foxAns` implements Fox 2018, definition 35 (answer operator)
+- `foxPartition` implements Schwarzschild's partition test ((38))
 -/
 
 /-- All sublists (power set) of a list, preserving order.
@@ -207,7 +208,11 @@ def pointwiseNV {W : Type _} (cells : List (W → Bool))
 /-- Fox's answer operator (Definition 35). At world `w`, finds the unique
 cell-identifier (the unique `j` where `foxExh(cells, j, worlds)(w) = true`)
 and returns the count of Q-members that are true at `w` AND whose
-denotation entails the cell-identifier's exhaustified meaning.
+denotation entails the cell-identifier *proposition* `cells[j]`.
+
+Fox's (37): Ans(Q)(w) = {q∈Q : w∈q ∧ q ⊆ (ιp∈Q)[Exh(Q,p,w)=1]}
+The ι picks the unique proposition p whose exhaustification is true at w;
+the entailment check is q ⊆ p (q entails the proposition p, not Exh(p)).
 
 Returns 0 if no unique cell-identifier exists (zero or multiple Exh-true
 cells at `w`). When `foxAns > 1`, Fox predicts mention-some (the
@@ -218,7 +223,7 @@ def foxAns {W : Type _} (cells : List (W → Bool))
   let exhTrue := (List.range cells.length).filter (λ j => foxExh cells j worlds w)
   match exhTrue with
   | [j] =>
-    let cellId := foxExh cells j worlds
+    let cellId := getCell cells j
     (List.range cells.length).filter (λ i =>
       getCell cells i w && propEntails (getCell cells i) cellId worlds) |>.length
   | _ => 0
