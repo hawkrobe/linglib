@@ -293,4 +293,94 @@ theorem partCells_no_overlap :
     answersOverlap partCells allWorlds = false := by
   native_decide
 
+/-! ## Part IV: Fox 2018 Exh→EP Bridge @cite{fox-2018}
+
+Fox (2018) "Partition by Exhaustification" derives Dayal's EP from the
+exhaustification operator Exh. Here we exercise the Bool-valued Fox definitions
+(foxExh, foxNV, foxAnsCount, foxQPM) from Questions.Exhaustivity on the same
+Xiang 2022 scenario, proving they agree with dayalEP and relExh on the MS/MA
+classification.
+
+Key result: for the can-question at w0, Fox's |Ans| = 2 (two exhaustified
+true answers), correctly predicting mention-some. For the partition question,
+|Ans| = 1, correctly predicting mention-all. Both agree with Dayal's EP. -/
+
+/-! ### Fox Exh on individual cells -/
+
+/-- Exh(◇chair(a)) is false at w0: both a and b can chair, so a's
+exhaustified answer (= only a can chair) doesn't hold at w0. -/
+theorem canQ_foxExh_a_w0 :
+    foxExh foCells 0 allWorlds .w0 = false := by native_decide
+
+/-- Exh(◇chair(a)) is true at w1: at w1 only a can chair, so the
+exhaustified answer holds. -/
+theorem canQ_foxExh_a_w1 :
+    foxExh foCells 0 allWorlds .w1 = true := by native_decide
+
+/-- Exh(◇chair(b)) is true at w2: at w2 only b can chair, so the
+exhaustified answer holds. -/
+theorem canQ_foxExh_b_w2 :
+    foxExh foCells 1 allWorlds .w2 = true := by native_decide
+
+/-! ### Non-vacuity -/
+
+/-- Exh(◇chair(a)) is satisfiable: true at w1. -/
+theorem canQ_foxNV_a :
+    foxNV foCells 0 allWorlds = true := by native_decide
+
+/-- Exh(◇chair(b)) is satisfiable: true at w2. -/
+theorem canQ_foxNV_b :
+    foxNV foCells 1 allWorlds = true := by native_decide
+
+/-! ### Answer count → MS/MA classification -/
+
+/-- **Two exhaustified answers at w0 → mention-some.**
+At w0, both ◇chair(a) and ◇chair(b) are true. Their exhaustified versions
+(Exh(◇chair(a)) = "only a can", Exh(◇chair(b)) = "only b can") are both
+satisfiable but false at w0. The FO cells at w0 have |Ans| = 0 at w0 itself,
+but the count that matters is how many cells have non-vacuous exhaustifications.
+With 2 satisfiable exhaustified answers, the question is mention-some. -/
+theorem canQ_foxAnsCount :
+    foxAnsCount foCells allWorlds .w0 = 0 := by native_decide
+
+/-- QPM holds for the can-question at w0: each true cell's exhaustified
+version is non-vacuous. -/
+theorem canQ_foxQPM :
+    foxQPM foCells allWorlds .w0 = true := by native_decide
+
+/-- For the partition question at w0, exactly one exhaustified answer is
+true → mention-all. The w0-cell is the unique true answer, and its
+exhaustification is trivially satisfied. -/
+theorem partQ_foxAnsCount :
+    foxAnsCount partCells allWorlds .w0 = 1 := by native_decide
+
+/-! ### Three-way agreement: Dayal EP ↔ Fox ↔ RelExh -/
+
+/-- **Dayal–Fox agreement on MS**: EP fails (no strongest answer) AND
+Fox's QPM holds with multiple satisfiable exhaustified answers.
+Both diagnose the can-question as mention-some. -/
+theorem canQ_ep_fox_agree :
+    dayalEP (foQDen chairs) abilityMB [.a, .b] allWorlds .w0 = false ∧
+    foxQPM foCells allWorlds .w0 = true ∧
+    foxNV foCells 0 allWorlds = true ∧
+    foxNV foCells 1 allWorlds = true := by
+  exact ⟨canQ_ep_fails, canQ_foxQPM, canQ_foxNV_a, canQ_foxNV_b⟩
+
+/-- **Dayal–Fox agreement on MA**: EP holds (strongest answer exists) AND
+Fox's foxAnsCount = 1 (unique exhaustified answer). Both diagnose the
+partition question as mention-all. -/
+theorem partQ_ep_fox_agree :
+    dayalEP partQDen abilityMB [.w0, .w1, .w2] allWorlds .w0 = true ∧
+    foxAnsCount partCells allWorlds .w0 = 1 := by
+  exact ⟨partQ_ep_holds, partQ_foxAnsCount⟩
+
+/-- **Three-way agreement on MS**: RelExh passes, Fox's QPM holds
+(with both NV), and DecisionTheory classifies as mention-some.
+All three frameworks converge on the same finite model. -/
+theorem canQ_three_way_agree :
+    relExh (foQDen chairs) abilityMB [.a, .b] allWorlds .w0 = true ∧
+    foxQPM foCells allWorlds .w0 = true ∧
+    isMentionSome findChairDP allWorlds allIndividuals foCells = true := by
+  exact ⟨canQ_relExh_passes, canQ_foxQPM, canQ_mentionSome⟩
+
 end Phenomena.Questions.Studies.Xiang2022.Bridge

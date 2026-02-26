@@ -98,4 +98,111 @@ def relExh {W P : Type _}
       qden singletonMB α w && qden mb α w)
     !hasRelevant || dayalEP qden singletonMB answers worlds w)
 
+/-! ### Fox 2018: Partition by Exhaustification @cite{fox-2018}
+
+Fox (2018) "Partition by Exhaustification" derives Dayal's EP from the
+exhaustification operator Exh. The key insight: a question partitions
+the logical space iff every world has exactly one exhaustified true answer.
+
+The definitions below are Bool-valued analogues of the Prop-valued MC-set/IE
+machinery in `NeoGricean.Exhaustivity.Basic`, specialized to question cells
+for decidable computation via `native_decide`.
+
+- `cellMCSets` mirrors `isMCSet` from NeoGricean.Exhaustivity
+- `cellIE` mirrors `IE` from NeoGricean.Exhaustivity
+- `foxExh` mirrors `exhIE` from NeoGricean.Exhaustivity
+- `foxQPM` implements Fox 2018, definition 34 (CI + NV)
+-/
+
+/-- All sublists (power set) of a list, preserving order.
+Used to enumerate candidate MC-sets of cell indices. -/
+def sublists : List Nat → List (List Nat)
+  | [] => [[]]
+  | x :: xs =>
+    let rest := sublists xs
+    rest ++ rest.map (x :: ·)
+
+/-- Safe cell accessor: returns the cell at index `i`, or (λ _ => false) for OOB. -/
+def getCell {W : Type _} (cells : List (W → Bool)) (i : Nat) : W → Bool :=
+  cells.getD i (λ _ => false)
+
+/-- Negation consistency: can cells at `excluded` indices be simultaneously
+negated while cell `pIdx` stays true?
+
+`negConsistent cells pIdx excluded worlds = true` iff
+∃w ∈ worlds. cells[pIdx](w) ∧ ∀j ∈ excluded. ¬cells[j](w)
+
+This is the Bool analogue of `SetConsistent` in NeoGricean.Exhaustivity,
+specialized to the pattern φ ∧ ⋀{¬a : a ∈ excluded}. -/
+def negConsistent {W : Type _} (cells : List (W → Bool)) (pIdx : Nat)
+    (excluded : List Nat) (worlds : List W) : Bool :=
+  worlds.any (λ w =>
+    getCell cells pIdx w &&
+    excluded.all (λ j => !getCell cells j w))
+
+/-- MC-sets (maximal consistent sets) of cell indices for cell `pIdx`.
+
+A subset `S` of alternative indices (excluding `pIdx`) is an MC-set iff:
+1. Negating all cells in `S` is consistent with `pIdx` being true
+2. No proper superset of `S` is also consistent
+
+Bool analogue of `isMCSet` in NeoGricean.Exhaustivity.Basic. -/
+def cellMCSets {W : Type _} (cells : List (W → Bool)) (pIdx : Nat)
+    (worlds : List W) : List (List Nat) :=
+  let altIdxs := (List.range cells.length).filter (· != pIdx)
+  let allSubs := sublists altIdxs
+  let consistent := allSubs.filter (negConsistent cells pIdx · worlds)
+  -- Keep only maximal: S is maximal iff no consistent T ⊃ S
+  consistent.filter (λ s =>
+    !consistent.any (λ t =>
+      t.length > s.length && s.all (t.contains ·)))
+
+/-- Innocently excludable alternatives for cell `pIdx`: the indices
+that appear in *every* MC-set (intersection of all MC-sets).
+
+Bool analogue of `IE` in NeoGricean.Exhaustivity.Basic:
+  IE_(ALT,φ) = {ψ : ψ belongs to every MC_(ALT,φ)-set} -/
+def cellIE {W : Type _} (cells : List (W → Bool)) (pIdx : Nat)
+    (worlds : List W) : List Nat :=
+  let mcs := cellMCSets cells pIdx worlds
+  match mcs with
+  | [] => []
+  | first :: rest =>
+    first.filter (λ i => rest.all (·.contains i))
+
+/-- Fox's exhaustified cell: Exh(Q)(p)(w) = cells[pIdx](w) ∧ ∀j ∈ IE. ¬cells[j](w).
+
+The exhaustified meaning of answer p negates all innocently excludable
+alternatives. Bool analogue of `exhIE` in NeoGricean.Exhaustivity.Basic. -/
+def foxExh {W : Type _} (cells : List (W → Bool)) (pIdx : Nat)
+    (worlds : List W) : W → Bool :=
+  λ w => getCell cells pIdx w &&
+    (cellIE cells pIdx worlds).all (λ j => !getCell cells j w)
+
+/-- Non-vacuity: Exh(Q)(p) is satisfiable (true at some world).
+Fox 2018 requires non-vacuity for QPM. -/
+def foxNV {W : Type _} (cells : List (W → Bool)) (pIdx : Nat)
+    (worlds : List W) : Bool :=
+  worlds.any (foxExh cells pIdx worlds)
+
+/-- Count of extensionally distinct exhaustified true answers at world `w`.
+
+|Ans(Q)(w)| in Fox 2018, definition 35: the number of cells whose
+exhaustified meaning is true at `w`. When |Ans| = 1, the question
+receives a mention-all reading; when |Ans| > 1, mention-some. -/
+def foxAnsCount {W : Type _} (cells : List (W → Bool))
+    (worlds : List W) (w : W) : Nat :=
+  (List.range cells.length).filter (λ i => foxExh cells i worlds w) |>.length
+
+/-- Question Partition Matching: for every cell that is true at `w`,
+its exhaustified version is non-vacuous (satisfiable).
+
+Fox 2018, definition 34 (CI + NV). QPM holds at `w` iff each true
+answer can be exhaustified without vacuity — guaranteeing a well-defined
+partition of the answerhood space. -/
+def foxQPM {W : Type _} (cells : List (W → Bool))
+    (worlds : List W) (w : W) : Bool :=
+  (List.range cells.length).all (λ i =>
+    !getCell cells i w || foxNV cells i worlds)
+
 end Theories.Semantics.Questions.Exhaustivity

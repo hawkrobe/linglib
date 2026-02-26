@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.226.89] - 2026-02-26
+
+### Added
+- **Fox 2018 Exh→EP bridge** (`Exhaustivity.lean`, `Xiang2022/Bridge.lean`): Bool-valued MC-set/IE/Exh definitions (`cellMCSets`, `cellIE`, `foxExh`, `foxNV`, `foxAnsCount`, `foxQPM`) mirroring Prop-valued NeoGricean exhaustivity, specialized to question cells for `native_decide`. Bridge Part IV exercises Fox's definitions on the Xiang 2022 can-question scenario: exhaustified cells verified per-world, QPM holds, partition question yields |Ans|=1 (MA). Three-way agreement theorem: RelExh ∧ Fox QPM ∧ DecisionTheory all converge on MS. 11 new theorems.
+
 ## [0.226.88] - 2026-02-26
 
 ### Changed
