@@ -20,6 +20,7 @@ import Linglib.Core.Logic.SquareOfOpposition
 import Linglib.Core.Scales.HornScale
 import Linglib.Core.Semantics.Intension
 import Linglib.Core.Logic.ModalLogic
+import Linglib.Core.Logic.BeliefRevision
 import Linglib.Core.Register
 import Linglib.Core.SocialMeaning
 import Linglib.Core.Conjectures
@@ -37,6 +38,7 @@ import Linglib.Core.Root
 import Linglib.Core.RootDimensions
 import Linglib.Theories.Semantics.Lexical.Verb.VerbEntry
 import Linglib.Core.Logic.NaturalLogic
+import Linglib.Core.Logic.ConstraintEvaluation
 import Linglib.Core.Agent.DecisionTheory
 import Linglib.Core.Agent.RationalAction
 import Linglib.Core.Agent.UtilityTheory
@@ -159,6 +161,7 @@ import Linglib.Fragments.Spanish.PersonFeatures
 import Linglib.Fragments.Mam.VoiceSystem
 import Linglib.Fragments.Mam.Agreement
 import Linglib.Fragments.Mam.ExtractionMorphology
+import Linglib.Fragments.Kaqchikel.AgentFocus
 import Linglib.Fragments.Chuj.VerbBuilding
 
 -- Phenomena
@@ -334,6 +337,7 @@ import Linglib.Phenomena.Imprecision.RSA_EgreEtAl2023Bridge
 import Linglib.Phenomena.FillerGap.Islands.Data
 import Linglib.Phenomena.FillerGap.Islands.MannerOfSpeaking
 import Linglib.Phenomena.FillerGap.Compare
+import Linglib.Phenomena.FillerGap.Bridge.MinimalismAgentFocus
 import Linglib.Phenomena.Nonliteral.Irony.KaoEtAl2015
 import Linglib.Phenomena.Nonliteral.Irony.Studies.SpinosoDiPiano2025
 import Linglib.Phenomena.Nonliteral.Metaphor.KaoEtAl2014

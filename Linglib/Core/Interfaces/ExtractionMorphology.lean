@@ -62,6 +62,16 @@ inductive ExtractionMarkingStrategy where
       *which* argument occupies the pivot, but the restriction itself is
       structural. E.g., Toba Batak (Erlewine 2018). -/
   | structuralRestriction
+  /-- Clause-local extraction of a specific argument role (typically
+      agent/ergative) triggers an alternation in clause structure — a
+      "repair" that avoids a locality crash. The canonical case is
+      Kaqchikel Agent Focus (Erlewine 2016): clause-local agent extraction
+      crashes the normal transitive because movement from Spec,TP to
+      Spec,CP violates Spec-to-Spec Anti-Locality (SSAL), so the grammar
+      selects an intransitive-like AF structure with distinct verbal
+      morphology (*-Vn*, no Set A). Long-distance agent extraction does
+      NOT trigger AF — the repair is locality-sensitive. -/
+  | agentFocusAlternation
   deriving DecidableEq, BEq, Repr
 
 -- ============================================================================

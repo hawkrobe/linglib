@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.226.54] - 2026-02-25
+
+### Added
+- **OT constraint evaluation** (`Core/Logic/ConstraintEvaluation.lean`): unified framework for lexicographic (OT) and subset-inclusion (satisfaction ordering) candidate evaluation. `lexLE`/`lexLT`, `satLE`, `OTTableau` with `optimal`/`satOptimal`. Proves `lexLE_total`, `satLE_not_total`, reflexivity.
+- **Kaqchikel Agent Focus fragment** (`Fragments/Kaqchikel/AgentFocus.lean`): Erlewine 2016 empirical data and OT competition. `VerbForm`, `AFCandidate`, `AFConstraint` (SSAL >> XRef), violation profiles, `agentExtractionTableau`. Key theorems: `af_is_optimal` (AF wins lexicographically), `satisfaction_ordering_incomparable` (satOptimal = []), `af_locality_sensitive` (long-distance extraction does NOT trigger AF). Mayan AF typology (`MayanAFType`).
+- **Kaqchikel AF bridge** (`Phenomena/FillerGap/Bridge/MinimalismAgentFocus.lean`): connects `specToSpecAntiLocality` (Position.lean) to AF via OT (ConstraintEvaluation.lean). Proves: `af_wins`, `lex_needed`, `transitive_lex_worse`, `antilocality_drives_af`, `extraction_asymmetry`, `locality_sensitivity`, `strategy_is_af`.
+- **`agentFocusAlternation`** constructor on `ExtractionMarkingStrategy` (`Core/Interfaces/ExtractionMorphology.lean`): locality-sensitive repair where clause-local agent extraction triggers AF morphology.
+
 ## [0.226.53] - 2026-02-25
 
 ### Added
