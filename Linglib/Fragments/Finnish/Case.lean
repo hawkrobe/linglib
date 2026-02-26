@@ -84,4 +84,91 @@ def nomAccSyncretism : Core.Syncretism :=
 theorem abl_inst_distinct :
     Core.hierarchyAdjacent .abl .inst = true := by native_decide
 
+-- ============================================================================
+-- § 3: Local Case Matrix (3 × 2)
+-- ============================================================================
+
+/-- Direction of motion/relation in the Finnish local case system.
+    Karlsson (2018, Ch. 13): the three directional dimensions —
+    static location, source of motion, and goal of motion. -/
+inductive Direction where
+  | static   -- at/in/on (no motion)
+  | source   -- from/out of/off (motion away)
+  | goal     -- to/into/onto (motion toward)
+  deriving DecidableEq, BEq, Repr, Inhabited
+
+/-- Location type: whether the spatial relation is conceptualized as
+    internal (containment) or external (surface/proximity).
+    Karlsson (2018, Ch. 13): Finnish systematically distinguishes
+    "inside" (inessive/elative/illative) from "at/on" (adessive/ablative/allative). -/
+inductive LocationType where
+  | internal  -- containment: in, out of, into
+  | external  -- surface/proximity: on/at, off/from, to/onto
+  deriving DecidableEq, BEq, Repr, Inhabited
+
+/-- A cell in the Finnish local case matrix: the case name, suffix,
+    directional coordinates, and mapping to `Core.Case`. -/
+structure LocalCase where
+  name : String
+  suffix : String
+  direction : Direction
+  locationType : LocationType
+  coreCase : Core.Case
+  deriving DecidableEq, BEq, Repr, Inhabited
+
+/-- The 3×2 local case matrix (Karlsson 2018, Ch. 13).
+
+    |           | Internal     | External     |
+    |-----------|-------------|-------------|
+    | Static    | inessive -ssA | adessive -llA |
+    | Source    | elative -stA  | ablative -ltA |
+    | Goal      | illative -Vn  | allative -lle |
+
+    Core.Case collapses each row into a single value (static → .loc,
+    source → .abl, goal → .all). The matrix reveals the full structure. -/
+def localCaseMatrix : Direction → LocationType → LocalCase
+  | .static, .internal => ⟨"inessive",  "-ssA", .static, .internal, .loc⟩
+  | .static, .external => ⟨"adessive",  "-llA", .static, .external, .loc⟩
+  | .source, .internal => ⟨"elative",   "-stA", .source, .internal, .abl⟩
+  | .source, .external => ⟨"ablative",  "-ltA", .source, .external, .abl⟩
+  | .goal,   .internal => ⟨"illative",  "-Vn",  .goal,   .internal, .all⟩
+  | .goal,   .external => ⟨"allative",  "-lle", .goal,   .external, .all⟩
+
+/-- All 6 local cases as a flat list. -/
+def allLocalCases : List LocalCase :=
+  [ localCaseMatrix .static .internal
+  , localCaseMatrix .static .external
+  , localCaseMatrix .source .internal
+  , localCaseMatrix .source .external
+  , localCaseMatrix .goal   .internal
+  , localCaseMatrix .goal   .external ]
+
+/-- The matrix has exactly 6 cells. -/
+theorem localCases_count : allLocalCases.length = 6 := by native_decide
+
+/-- Core.Case collapses each direction row: both internal and external
+    static cases map to .loc. -/
+theorem static_collapses_to_loc :
+    (localCaseMatrix .static .internal).coreCase =
+    (localCaseMatrix .static .external).coreCase := rfl
+
+/-- Both source cases map to .abl. -/
+theorem source_collapses_to_abl :
+    (localCaseMatrix .source .internal).coreCase =
+    (localCaseMatrix .source .external).coreCase := rfl
+
+/-- Both goal cases map to .all. -/
+theorem goal_collapses_to_all :
+    (localCaseMatrix .goal .internal).coreCase =
+    (localCaseMatrix .goal .external).coreCase := rfl
+
+/-- All 6 local cases appear in the full Finnish inventory. -/
+theorem localCases_subset_inventory :
+    allLocalCases.all (fun lc => caseInventory.any (· == lc.coreCase)) = true := by native_decide
+
+/-- Within each direction, internal and external suffixes differ. -/
+theorem internal_external_distinct (d : Direction) :
+    (localCaseMatrix d .internal).suffix ≠ (localCaseMatrix d .external).suffix := by
+  cases d <;> decide
+
 end Fragments.Finnish.Case

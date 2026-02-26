@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.226.97] - 2026-02-26
+
+### Added
+- **3×2 local case matrix** (`Fragments/Finnish/Case.lean`): `Direction` (static/source/goal) × `LocationType` (internal/external) enums, `localCaseMatrix` total function filling all 6 cells (inessive/adessive, elative/ablative, illative/allative), with collapse theorems showing Core.Case merges each row and distinctness theorem for internal vs external suffixes.
+- **Finnish infinitive system** (`Fragments/Finnish/Infinitives.lean`): 4 infinitive classes (I–IV) with 9 total case forms. The III (MA) infinitive takes local case suffixes on verbal stems, with `inf3LocalMappings` proving 4 of 5 forms correspond to local case matrix cells (inessive/elative/illative/adessive) and the 5th (abessive) is outside the matrix. Bridge theorems verify name-level correspondence between verbal and nominal case forms.
+
 ## [0.226.96] - 2026-02-26
 
 ### Changed

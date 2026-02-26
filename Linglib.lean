@@ -132,6 +132,7 @@ import Linglib.Fragments.Hungarian.Case
 import Linglib.Fragments.Hungarian.Coordination
 import Linglib.Fragments.Finnish.Case
 import Linglib.Fragments.Finnish.ConsonantGradation
+import Linglib.Fragments.Finnish.Infinitives
 import Linglib.Fragments.Finnish.Negation
 import Linglib.Fragments.Finnish.Predicates
 import Linglib.Fragments.Finnish.TemporalConnectives
