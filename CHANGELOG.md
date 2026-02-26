@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.226.95] - 2026-02-26
+
+### Added
+- **Finnish in 6 typology files** — derived from Fragment data where possible:
+  - `AuxiliaryVerbs/Typology.lean`: Finnish neg *ei* as split AVC, with bridge theorem deriving the split from `Fragments.Finnish.Negation.finnishNegDistribution`.
+  - `ArgumentStructure/Typology.lean`: Finnish `ValenceProfile` (impersonal passive, accusative, morph causative), with bridge theorems deriving passive semantics from `Fragments.Finnish.Predicates.finnishPassive`.
+  - `Agreement/Typology.lean`: Finnish `ParadigmaticStructure` (Sa singular, Pa unified-we, inflectional), with bridge theorem deriving singular distinctness from `Fragments.Finnish.Negation.negParadigm`.
+  - `Coordination/Typology.lean`: Finnish `ConjunctionSystem` with "ja" (J, free) and "-kin" (MU, bound, additive focus particle).
+  - `Anaphora/Typology.lean`: Finnish `PronounSystemDatum` with "hän" (PER), "se/tämä/tuo" (DEM), no articles, productive DEM use.
+  - `Modality/Typology.lean`: Finnish `EvidentialityProfile` — no grammatical evidentiality.
+
+### Changed
+- Updated count theorems in ArgumentStructure (passive 15→16, noAntipassive 12→13), Modality (noGrammatical 6→7, notApplicable 6→7, sample 17→18), Agreement (paradigms 12→13), Anaphora (allData 11→12, allProfiles 11→12).
+
 ## [0.226.94] - 2026-02-26
 
 ### Fixed

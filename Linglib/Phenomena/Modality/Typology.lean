@@ -449,13 +449,26 @@ def abkhaz : EvidentialityProfile :=
   , markers := ["finite verb (direct)", "nonfinite + copula (indirect)"]
   , notes := "Evidential fused with tense-aspect; Caucasus areal feature" }
 
+/--
+Finnish (Uralic).
+No grammatical evidentiality system. Finnish has modal verbs (*voida* 'can',
+*täytyä* 'must', *saattaa* 'may') but evidential meanings are expressed
+lexically, not as part of obligatory verbal morphology (Karlsson 2018, §10).
+-/
+def finnish : EvidentialityProfile :=
+  { language := "Finnish", iso := "fin", family := "Uralic"
+  , system := .noGrammatical, coding := .notApplicable
+  , markers := []
+  , notes := "No grammatical evidentials; modality via modal verbs " ++
+             "(voida 'can', täytyä 'must', saattaa 'may')" }
+
 /-- All language profiles in the sample. -/
 def allLanguages : List EvidentialityProfile :=
   [ english, french, german, mandarin, japanese, korean
   , turkish, bulgarian, tibetan
   , georgian, westGreenlandic
   , quechua, aymara, tuyuca, kashaya, tariana
-  , abkhaz ]
+  , abkhaz, finnish ]
 
 -- ============================================================================
 -- Helper Predicates
@@ -520,7 +533,10 @@ example : georgian.coding = .partOfTAM := by native_decide
 -- ============================================================================
 
 /-- Number of languages in our sample. -/
-theorem sample_size : allLanguages.length = 17 := by native_decide
+theorem sample_size : allLanguages.length = 18 := by native_decide
+
+example : finnish.system = .noGrammatical := by native_decide
+example : finnish.coding = .notApplicable := by native_decide
 
 -- ============================================================================
 -- Typological Generalization 1: Most Languages Lack Grammatical Evidentials
@@ -538,10 +554,10 @@ theorem no_evidentials_majority : (181 : Nat) > 38 + 71 + 28 := by
   native_decide
 
 /-- In our sample, over a third of languages lack grammatical evidentials
-    (6 out of 17). The sample deliberately overrepresents languages with
+    (7 out of 18). The sample deliberately overrepresents languages with
     evidentials for typological diversity. -/
 theorem sample_no_evidentials_count :
-    countBySystem allLanguages .noGrammatical = 6 := by
+    countBySystem allLanguages .noGrammatical = 7 := by
   native_decide
 
 -- ============================================================================
@@ -724,7 +740,7 @@ theorem system_coding_consistency :
 
 /-- System type distribution in our sample. -/
 theorem sample_system_counts :
-    countBySystem allLanguages .noGrammatical = 6 ∧
+    countBySystem allLanguages .noGrammatical = 7 ∧
     countBySystem allLanguages .indirectOnly = 2 ∧
     countBySystem allLanguages .directAndIndirect = 4 ∧
     countBySystem allLanguages .threeOrMore = 5 := by
@@ -736,7 +752,7 @@ theorem sample_coding_counts :
     countByCoding allLanguages .clitic = 0 ∧
     countByCoding allLanguages .particle = 1 ∧
     countByCoding allLanguages .partOfTAM = 4 ∧
-    countByCoding allLanguages .notApplicable = 6 := by
+    countByCoding allLanguages .notApplicable = 7 := by
   native_decide
 
 /-- Languages with evidentials in our sample. -/

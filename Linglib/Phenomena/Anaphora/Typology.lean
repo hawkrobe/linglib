@@ -242,6 +242,24 @@ def allData : List PronounSystemDatum :=
 
 theorem allData_count : allData.length = 11 := by native_decide
 
+/-- Finnish: "hän" (3sg human, PER, no gender), "he" (3pl human, PER),
+    "se" (3sg non-human / DEM), "tämä" (proximal DEM), "tuo" (distal DEM).
+    No articles. "se" is productively used as 3rd-person reference in
+    colloquial Finnish (Karlsson 2018, §8.1).
+    Not part of PG&G 2017 sample — a counterexample to the article-DEM
+    productivity correlation (2 D-layers, productive DEM, but no articles). -/
+def finnishData : PronounSystemDatum :=
+  { language := "Finnish", isoCode := "fi"
+    forms := [ ⟨"hän",  .per, none, some .sg, [.strong]⟩
+             , ⟨"he",   .per, none, some .pl, [.strong]⟩
+             , ⟨"se",   .dem, none, some .sg, [.strong]⟩
+             , ⟨"tämä", .dem, none, some .sg, [.strong]⟩
+             , ⟨"tuo",  .dem, none, some .sg, [.strong]⟩ ]
+    articleType := .none_
+    dLayers := 2
+    demLicensing := [.deixis, .contrast]
+    demProductive := true }
+
 -- ============================================================================
 -- §D: Gradient Measures (following WordOrder/Gradience.lean pattern)
 -- ============================================================================
@@ -296,6 +314,14 @@ def allProfiles : List PronounComplexityProfile :=
   , kutchiGujaratiProfile, englishProfile ]
 
 theorem allProfiles_count : allProfiles.length = 11 := by native_decide
+
+def finnishProfile : PronounComplexityProfile := finnishData.toProfile
+
+/-- Finnish has productive DEM with no articles — a counterexample to the
+    PG&G sample's dem_productivity_from_article_system generalization. -/
+theorem finnish_counterexample_to_article_dem :
+    finnishData.dLayers == 2 ∧ finnishData.demProductive ∧
+    finnishData.articleType == .none_ := by native_decide
 
 -- ============================================================================
 -- §E: Verified Generalizations

@@ -1,4 +1,5 @@
 import Linglib.Core.Lexical.Word
+import Linglib.Fragments.Finnish.Predicates
 
 /-!
 # Cross-Linguistic Typology of Valence and Voice (WALS Chapters 106--111)
@@ -546,10 +547,25 @@ def german : ValenceProfile :=
   , applicative := .noApplicative
   , causative := .morphologicalOnly }
 
+/-- Finnish: reciprocal distinct from reflexive ("toisiaan" ≠ "itsensä"),
+    impersonal "passive" (present — the Fragment's `finnishPassive` has
+    semantic content but does not project a syntactic agent), no antipassive,
+    accusative alignment, no applicative, morphological causative
+    *-tta-* / *-ttä-* (Karlsson 2018, §10.4). -/
+def finnish : ValenceProfile :=
+  { language := "Finnish"
+  , iso := "fin"
+  , reciprocal := .distinctFromReflexive
+  , passive := .present
+  , antipassive := .noAntipassive
+  , alignment := .accusative
+  , applicative := .noApplicative
+  , causative := .morphologicalOnly }
+
 def allProfiles : List ValenceProfile :=
   [ english, japanese, turkish, swahili, dyirbal, chukchi, indonesian
   , french, russian, arabic, hindi, westGreenlandic, kinyarwanda
-  , lango, chamorro, halkomelem, modernGreek, german ]
+  , lango, chamorro, halkomelem, modernGreek, german, finnish ]
 
 -- ============================================================================
 -- Per-Profile Verification
@@ -572,6 +588,19 @@ example : kinyarwanda.applicative.hasApplicative = true := by native_decide
 
 example : french.causative = .compoundOnly := by native_decide
 example : modernGreek.causative = .neither := by native_decide
+
+example : finnish.passive = .present := by native_decide
+example : finnish.causative = .morphologicalOnly := by native_decide
+
+/-- Finnish impersonal "passive" has semantic content (existential closure
+    over agent) — derived from the Fragment's voice head. -/
+theorem finnish_passive_has_semantics :
+    Fragments.Finnish.Predicates.finnishPassive.hasSemantics = true := rfl
+
+/-- Finnish impersonal "passive" does NOT project a syntactic agent —
+    derived from the Fragment's voice head. -/
+theorem finnish_passive_no_agent :
+    Fragments.Finnish.Predicates.finnishPassive.assignsTheta = false := rfl
 
 -- ============================================================================
 -- Generalization 1: Passives are common (44% of WALS sample)
@@ -862,10 +891,10 @@ def sampleAntipassiveCount (v : AntipassiveType) : Nat :=
 def sampleApplicativeCount : Nat :=
   (allProfiles.filter fun p => p.applicative.hasApplicative).length
 
-example : samplePassiveCount .present = 15 := by native_decide
+example : samplePassiveCount .present = 16 := by native_decide
 example : samplePassiveCount .absent = 3 := by native_decide
 example : sampleAntipassiveCount .obliquePatient = 6 := by native_decide
-example : sampleAntipassiveCount .noAntipassive = 12 := by native_decide
+example : sampleAntipassiveCount .noAntipassive = 13 := by native_decide
 example : sampleApplicativeCount = 4 := by native_decide
 
 end Phenomena.ArgumentStructure.Typology

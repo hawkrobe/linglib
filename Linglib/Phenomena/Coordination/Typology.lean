@@ -415,10 +415,26 @@ def persian : ConjunctionSystem :=
   , patterns := [.a_co_b, .a'co_b'co]
   , iso := "fas" }
 
+/--
+Finnish: "ja" (J, free, prepositive) and "-kin" (MU, bound, additive).
+"-kin" is the additive focus particle "also/too" (Karlsson 2018, §14.5):
+*koira-kin kissa-kin* 'dog-too cat-too' = 'both the dog and the cat'.
+Standard conjunction: *koira ja kissa* 'dog and cat' (monosyndetic medial).
+-/
+def finnish : ConjunctionSystem :=
+  { language := "Finnish"
+  , morphemes :=
+    [ { form := "ja", role := "J", boundness := .free, alsoAdditive := false }
+    , { form := "-kin", role := "MU", boundness := .bound, alsoAdditive := true
+      , source := some .focusParticle } ]
+  , strategies := [.jOnly, .muOnly]
+  , patterns := [.a_co_b, .a'co_b'co]
+  , iso := "fin" }
+
 def allLanguages : List ConjunctionSystem :=
   [ english, japanese, hungarian, georgian, latin, korean, slovenian
   , lango, hausa, yoruba, kannada, martuthunira, classicalTibetan
-  , hindiUrdu, turkish, irish, persian ]
+  , hindiUrdu, turkish, irish, persian, finnish ]
 
 -- ============================================================================
 -- Typological Generalizations: M&S Semantic Decomposition

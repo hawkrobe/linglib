@@ -1,4 +1,5 @@
 import Linglib.Core.Lexical.PersonCategory
+import Linglib.Fragments.Finnish.Negation
 
 /-!
 # Paradigmatic Structure of Person Marking (Cysouw 2009)
@@ -392,15 +393,28 @@ def czechPronouns : ParadigmaticStructure :=
       | .secondGrp => 4 | .thirdGrp => 5  -- vy/oni
     isInflectional := false }
 
+/-- Finnish verbal inflection (Sa type): puhun/puhut/puhuu — all singular
+    distinct (suffixes: *-n*, *-t*, *-V*). No inclusive/exclusive distinction,
+    unified 'we' (Pa): puhumme (*-mme*). Person marking is inflectional.
+    Singular person distinction confirmed by the negative auxiliary paradigm
+    from `Fragments.Finnish.Negation`: en/et/ei are all distinct. -/
+def finnishInflection : ParadigmaticStructure :=
+  { name := "Finnish (inflection)", isoCode := "fi"
+    morphClass := λ
+      | .s1 => 0 | .s2 => 1 | .s3 => 2  -- -n/-t/-V (Sa: all distinct)
+      | .minIncl => 3 | .augIncl => 3 | .excl => 3  -- -mme (Pa: unified-we)
+      | .secondGrp => 4 | .thirdGrp => 5  -- -tte/-vAt
+    isInflectional := true }
+
 end LanguageData
 
 /-- All language data. -/
 def allParadigms : List ParadigmaticStructure :=
   [ latin, englishPronouns, englishInflection, dutchInflection
   , spanishSubjunctive, frenchInflection, mandara, ilocano
-  , maka, piraha, toda, czechPronouns ]
+  , maka, piraha, toda, czechPronouns, finnishInflection ]
 
-theorem allParadigms_count : allParadigms.length = 12 := by native_decide
+theorem allParadigms_count : allParadigms.length = 13 := by native_decide
 
 -- ============================================================================
 -- §10: Verified Classifications
@@ -413,6 +427,7 @@ theorem dutch_is_Sb : dutchInflection.singularType = .Sb := by native_decide
 theorem spanish_subj_is_Sc : spanishSubjunctive.singularType = .Sc := by native_decide
 theorem english_infl_is_Sd : englishInflection.singularType = .Sd := by native_decide
 theorem french_is_Se : frenchInflection.singularType = .Se := by native_decide
+theorem finnish_is_Sa : finnishInflection.singularType = .Sa := by native_decide
 
 /-! ### First person complex type verification -/
 
@@ -422,6 +437,7 @@ theorem maka_Pc : maka.firstPersonComplexType = .Pc := by native_decide
 theorem mandara_Pd : mandara.firstPersonComplexType = .Pd := by native_decide
 theorem ilocano_Pe : ilocano.firstPersonComplexType = .Pe := by native_decide
 theorem piraha_Pb : piraha.firstPersonComplexType = .Pb := by native_decide
+theorem finnish_Pa : finnishInflection.firstPersonComplexType = .Pa := by native_decide
 
 /-! ### Five singular types are exhaustive over our data -/
 
@@ -687,5 +703,11 @@ def ParadigmaticStructure.cognitiveMapPosition
     singularType := s.singularType
     firstPersonComplexType := s.firstPersonComplexType
     weFormCount := s.weFormCount }
+
+/-- Finnish singular person distinction confirmed by the Fragment's negative
+    auxiliary paradigm: the three singular forms (en/et/ei) are all distinct. -/
+theorem finnish_singular_distinct_from_fragment :
+    let sg := (Fragments.Finnish.Negation.negParadigm.filter (·.number == "sg")).map (·.form)
+    sg.eraseDups.length = 3 := by native_decide
 
 end Phenomena.Agreement.Typology

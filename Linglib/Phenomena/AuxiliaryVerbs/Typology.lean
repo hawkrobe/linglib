@@ -1,5 +1,6 @@
 import Linglib.Core.Lexical.UD
 import Linglib.Fragments.English.FunctionWords
+import Linglib.Fragments.Finnish.Negation
 
 /-!
 # Auxiliary Verb Construction Typology (Anderson 2006)
@@ -124,7 +125,17 @@ def pipil : AVCDatum :=
   , inflPattern := .splitDoubled
   , gloss := "1SG-3SG-kill-IPFV" }
 
-def allData : List AVCDatum := [english, doyayo, gorum, jakaltek, pipil]
+/-- Finnish negative auxiliary *ei* — split (person/number on aux, TAM on main verb).
+    The split nature derives from `Fragments.Finnish.Negation.finnishNegDistribution`:
+    the negative auxiliary hosts negation, tense, and agreement, while the lexical verb
+    retains only the stem and aspect (connegative form). Karlsson (2018, Ch. 11). -/
+def finnish : AVCDatum :=
+  { language := "Finnish"
+  , form := "e-n lue"
+  , inflPattern := .split
+  , gloss := "NEG-1SG read.CONNEG" }
+
+def allData : List AVCDatum := [english, doyayo, gorum, jakaltek, pipil, finnish]
 
 /-! ## Invariant theorems -/
 
@@ -175,5 +186,16 @@ theorem doyayo_is_lexHeaded : doyayo.inflPattern = .lexHeaded := rfl
 theorem gorum_is_doubled : gorum.inflPattern = .doubled := rfl
 theorem jakaltek_is_split : jakaltek.inflPattern = .split := rfl
 theorem pipil_is_splitDoubled : pipil.inflPattern = .splitDoubled := rfl
+theorem finnish_is_split : finnish.inflPattern = .split := rfl
+
+/-! ## Bridge to Finnish Fragment -/
+
+/-- The Finnish negative auxiliary construction is a split AVC: the auxiliary
+    hosts some inflectional categories and the lexical verb hosts others, with
+    neither element hosting all categories. Derived from Fragment distribution. -/
+theorem finnish_split_from_fragment :
+    let dist := Fragments.Finnish.Negation.finnishNegDistribution
+    dist.onNegAux ≠ [] ∧ dist.onMainVerb ≠ [] := by
+  exact ⟨by decide, by decide⟩
 
 end Phenomena.AuxiliaryVerbs.Typology
