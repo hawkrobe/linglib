@@ -1,5 +1,6 @@
 import Linglib.Theories.Syntax.Minimalism.Core.Agree
 import Linglib.Theories.Syntax.Minimalism.Core.Spellout
+import Linglib.Core.Case.Hierarchy
 
 /-!
 # Mam Agreement Fragment @cite{scott-2023}
@@ -196,5 +197,21 @@ theorem tripartite :
 theorem reduction_iff_phi_agreed :
     mamArgPositions.all (λ pos => pos.canBeNull == pos.isPhiAgreed) = true := by
   native_decide
+
+-- ============================================================================
+-- § 5: Case Inventory Validation (Blake 1994)
+-- ============================================================================
+
+/-- Mam case inventory, derived from argument position case values. -/
+def caseInventory : List Core.Case := [.erg, .acc, .abs]
+
+/-- The inventory covers all argument positions. -/
+theorem inventory_covers_positions :
+    mamArgPositions.all (λ p => caseInventory.any (· == p.case.toCase)) = true := by
+  native_decide
+
+/-- Mam's {ERG, ACC, ABS} inventory is valid per Blake's case hierarchy
+    (all are core cases at rank 6, trivially no gaps). -/
+theorem inventory_valid : Core.validInventory caseInventory = true := by native_decide
 
 end Fragments.Mam

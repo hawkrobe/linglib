@@ -1,45 +1,46 @@
 import Linglib.Core.Case.Basic
 
 /-!
-# Blake's Case Hierarchy @cite{blake-2001}
+# Blake's Case Hierarchy @cite{blake-1994}
 
-The **case hierarchy** (Blake 2001, Ch. 2) is an implicational universal over
-case inventories:
+The **case hierarchy** (Blake 1994, §5.8, example 68) is an implicational
+tendency over case inventories:
 
-    NOM/ACC  >  GEN  >  DAT  >  LOC  >  ABL/INST  >  COM/ALL/PERL  >  ...
+    NOM  ACC/ERG  GEN  DAT  LOC  ABL/INST  others
 
-If a language has a case at position *n* on the hierarchy, it has all cases at
-positions 1 through *n* − 1. This is the single most important typological
-generalization about case systems.
+If a language has a case at position *n*, it *usually* has at least one case
+from each position to the left (Blake 1994, p. 157). Blake hedges this as
+holding "with overwhelmingly greater than chance frequency" (borrowing Greenberg
+1963). Gaps occur when higher grammatical relations are marked by bound pronouns
+or word order (p. 89).
 
-The hierarchy partitions into three zones:
-- **Core** (rank 6): NOM, ACC, ERG, ABS — grammatical relation marking
-- **Inner peripheral** (ranks 3–5): GEN, DAT, LOC — common obliques
-- **Outer peripheral** (ranks 0–2): ABL, INST, COM, ALL, PERL, etc.
+Ranks 6–2 directly encode Blake's hierarchy. Ranks 1 (COM, ALL, PERL, BEN) and
+0 (VOC, PART, CAUS) are our assignment within Blake's undifferentiated "others"
+— he notes "it is doubtful whether the hierarchy can be developed much further"
+beyond ABL/INST (p. 160).
 
 ## Contiguity
 
-A valid case inventory has **no gaps** among its peripheral cases: if the
-inventory contains cases at ranks *r₁* and *r₂* (with *r₁ < r₂*), then for
-every rank *r* with *r₁ < r < r₂*, at least one case at rank *r* is also
-in the inventory. Core cases (rank 6) are treated as alternatives at the top
-of the hierarchy — a language has NOM/ACC or ERG/ABS (or both in split
-systems), but need not have all four.
+`validInventory` formalizes the hierarchy as a strict no-gaps predicate: an
+idealization of Blake's tendency. Real languages occasionally violate it (e.g.,
+Nanai has NOM ACC DAT LOC ABL INST ALL but no GEN — Blake's example 76,
+p. 160). The predicate is useful for checking well-formedness of idealized
+inventories.
 
 ## References
 
-- Blake, B. J. (2001). *Case* (2nd ed.). Cambridge University Press. Ch. 2.
+- Blake, B. J. (1994). *Case*. Cambridge University Press. §5.8.
 - Moravcsik, E. A. (1974). Object-verb agreement. *WPLU* 15: 25–140.
 - Iggesen, O. A. (2013). Number of Cases. In Dryer & Haspelmath (eds.), WALS.
 -/
 
-namespace Core.Case
+namespace Core
 
 -- ============================================================================
 -- § 1: Hierarchy Rank
 -- ============================================================================
 
-/-- Position on Blake's case hierarchy (Blake 2001, Ch. 2).
+/-- Position on Blake's case hierarchy (Blake 1994, §5.8, ex. 68).
 
     Higher rank = more likely to exist in a language's case inventory.
 
@@ -49,7 +50,8 @@ namespace Core.Case
     - 4: dative
     - 3: locative
     - 2: ablative, instrumental
-    - 1: comitative, allative, perlative, benefactive
+    - 1: comitative, allative, perlative, benefactive (our ranking within
+         Blake's undifferentiated "others")
     - 0: vocative, partitive, causal (sporadic, outside the main hierarchy) -/
 def Case.hierarchyRank : Case → Nat
   | .nom | .acc | .erg | .abs => 6
@@ -67,8 +69,9 @@ def Case.hierarchyRank : Case → Nat
 /-- A case inventory is contiguous (no gaps) on the hierarchy.
 
     For every pair of cases in the inventory, every case at an intermediate
-    rank must also be present. This is Blake's implicational universal: you
-    can't have DAT without GEN, or LOC without DAT.
+    rank must also be present. This idealizes Blake's tendency: you usually
+    can't have DAT without GEN, or LOC without DAT. Real languages
+    occasionally have gaps (e.g., Nanai: Blake 1994, ex. 76).
 
     The check iterates over `Case.allCases` as the universe of possible
     cases. -/
@@ -164,4 +167,4 @@ theorem skip_to_abl_invalid :
 theorem skip_dat_invalid :
     validInventory [.nom, .acc, .gen, .loc] = false := by native_decide
 
-end Core.Case
+end Core

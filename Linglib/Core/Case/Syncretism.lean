@@ -1,37 +1,43 @@
 import Linglib.Core.Case.Hierarchy
 
 /-!
-# Case Syncretism @cite{blake-2001}
+# Case Syncretism @cite{blake-1994}
 
 Syncretism is the systematic neutralization of case distinctions: two or more
 cases share a single morphological exponent in some paradigm cells. Blake
-(2001, Ch. 2) documents that syncretism patterns are constrained by the case
-hierarchy — syncretic cases must be **adjacent** on the hierarchy.
+(1994, Ch. 2, pp. 19–24) documents syncretism patterns in Latin, Greek, and
+other IE languages. He observes that syncretisms cluster into groups
+(NOM+ACC vs. DAT+ABL) that are "significant on other grounds" (p. 22).
+
+The **adjacency constraint** — that syncretic cases must be adjacent on the
+case hierarchy — is a generalization from the Nanosyntax tradition
+(Caha 2009), not an explicit claim by Blake. Blake's data is consistent with
+it, and his ERG/INST syncretism (Australian languages) is the canonical
+exception, which he explains via historical derivation of ERG from INST
+(pp. 174–175).
 
 ## Examples
 
-- NOM/ACC syncretism in neuter nouns (Latin, Greek, Russian): adjacent (rank 6)
-- DAT/ACC syncretism in German, many IE languages: adjacent (ranks 6, 4 —
-  but GEN intervenes, so this requires a refined notion of adjacency within the
-  inventory, not the full hierarchy)
-- ERG/INST syncretism in Australian languages: adjacent (ranks 6, 2 — but
-  this is a known counterexample to strict adjacency; Blake argues it reflects
-  historical derivation of ERG from INST)
+- NOM/ACC syncretism in neuter nouns (Latin, Greek, Russian): same tier (rank 6)
+- ERG/INST syncretism in Australian languages: not strictly adjacent (ranks 6, 2)
+- DAT/ALL syncretism: adjacent (ranks 4, 1)
+- COM/INST syncretism: adjacent (ranks 1, 2)
 
 ## Formalization
 
 We define syncretism as a relation between two cases within a given inventory.
-The **adjacency constraint** says that for two cases to be syncretic, no case
-between them on the hierarchy can be distinctly marked in the same inventory.
+`hierarchyAdjacent` checks strict adjacency (ranks differ by ≤ 1).
+`inventoryAdjacent` checks relaxed adjacency (no intervening case in the
+actual inventory).
 
 ## References
 
-- Blake, B. J. (2001). *Case* (2nd ed.). Cambridge University Press. Ch. 2.
+- Blake, B. J. (1994). *Case*. Cambridge University Press. Ch. 2.
 - Baerman, M. et al. (2005). *The Syntax-Morphology Interface*. CUP.
 - Caha, P. (2009). *The Nanosyntax of Case*. Ph.D. thesis, Tromsø.
 -/
 
-namespace Core.Case
+namespace Core
 
 -- ============================================================================
 -- § 1: Syncretism as a Relation
@@ -48,9 +54,10 @@ structure Syncretism where
 
 /-- Are two cases adjacent on the hierarchy (same rank or ranks differ by 1)?
 
-    This is the strict form of Blake's adjacency constraint. In practice,
-    some syncretisms span larger distances (e.g., ERG/INST in Australian
-    languages), but the generalization is that adjacency is the norm. -/
+    This is the strict form of the adjacency constraint (Caha 2009). In
+    practice, some syncretisms span larger distances (e.g., ERG/INST in
+    Australian languages), but the generalization is that adjacency is the
+    norm. -/
 def hierarchyAdjacent (c1 c2 : Case) : Bool :=
   let r1 := c1.hierarchyRank
   let r2 := c2.hierarchyRank
@@ -78,7 +85,7 @@ def nomAccSyncretism : Syncretism :=
   ⟨.nom, .acc, by decide⟩
 
 /-- ERG/INST syncretism (many Australian languages).
-    Blake (2001) argues ERG historically derives from INST. -/
+    Blake (1994, pp. 174–175) argues ERG historically derives from INST. -/
 def ergInstSyncretism : Syncretism :=
   ⟨.erg, .inst, by decide⟩
 
@@ -127,4 +134,4 @@ theorem same_tier_adjacent (c1 c2 : Case)
     hierarchyAdjacent c1 c2 = true := by
   simp [hierarchyAdjacent, h]
 
-end Core.Case
+end Core

@@ -50,7 +50,7 @@ inductive PhiFeature where
 
     This is the Minimalism-internal case type, covering the 8 values needed
     for Agree-based case assignment. For the full cross-linguistic inventory,
-    see `Core.Case.Case` (Blake 2001). -/
+    see `Core.Case` (Blake 1994). -/
 inductive CaseVal where
   | nom    -- nominative (subject)
   | acc    -- accusative (object)
@@ -62,13 +62,18 @@ inductive CaseVal where
   | abs    -- absolutive (intransitive subject / transitive object)
   deriving Repr, DecidableEq
 
-/-- Convert a Minimalist `CaseVal` to the theory-neutral `Core.Case.Case`. -/
-def CaseVal.toCase : CaseVal → Core.Case.Case
+/-- Convert a Minimalist `CaseVal` to the theory-neutral `Core.Case`.
+
+    `obl` (oblique) is a Minimalism-internal category, not a specific case in
+    Blake's (1994) typology. We map it to `dat` as the highest-ranked
+    peripheral case — this is an approximation, since "oblique" in Minimalism
+    is a cover term for non-core cases, most commonly dative-like. -/
+def CaseVal.toCase : CaseVal → Core.Case
   | .nom => .nom
   | .acc => .acc
   | .dat => .dat
   | .gen => .gen
-  | .obl => .nom  -- oblique maps to nominative (default/unmarked)
+  | .obl => .dat  -- oblique: Minimalism-internal, approx. as highest peripheral
   | .abl => .abl
   | .erg => .erg
   | .abs => .abs

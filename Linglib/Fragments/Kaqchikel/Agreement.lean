@@ -2,6 +2,7 @@ import Linglib.Theories.Syntax.Minimalism.Core.Agree
 import Linglib.Theories.Syntax.Minimalism.Core.Spellout
 import Linglib.Theories.Syntax.Minimalism.Core.PersonGeometry
 import Linglib.Fragments.Kaqchikel.AgentFocus
+import Linglib.Core.Case.Hierarchy
 
 /-!
 # Kaqchikel Agreement Fragment @cite{preminger-2014}
@@ -463,5 +464,22 @@ theorem af_no_ergative :
 theorem trans_has_ergative :
     VerbForm.transitive.hasSetA = true ∧
     VerbForm.transitive.agreementSlots = 2 := ⟨rfl, rfl⟩
+
+-- ============================================================================
+-- § 15: Case Inventory Validation (Blake 1994)
+-- ============================================================================
+
+/-- Kaqchikel case inventory, derived from argument position case values. -/
+def caseInventory : List Core.Case := [.erg, .abs]
+
+/-- The inventory covers all argument positions: every position's case
+    is in the inventory. -/
+theorem inventory_covers_positions :
+    kaqArgPositions.all (λ p => caseInventory.any (· == p.case.toCase)) = true := by
+  native_decide
+
+/-- Kaqchikel's {ERG, ABS} inventory is valid per Blake's case hierarchy
+    (both are core cases at rank 6, trivially no gaps). -/
+theorem inventory_valid : Core.validInventory caseInventory = true := by native_decide
 
 end Fragments.Kaqchikel

@@ -2,26 +2,28 @@ import Linglib.Core.Case.Basic
 import Linglib.Core.Prominence
 
 /-!
-# Split-Ergative Conditioning @cite{blake-2001}
+# Split-Ergative Conditioning @cite{blake-1994}
 
-Blake (2001, Ch. 6) documents that **split-ergative** systems condition the
+Blake (1994, Ch. 4) documents that **split-ergative** systems condition the
 choice between ergative and accusative alignment on one or more of these
 factors:
 
-- **Tense/aspect**: perfective → ergative, imperfective → accusative (Hindi)
-- **Person/animacy**: SAP (1st/2nd) → accusative, 3rd → ergative (Dyirbal)
+- **Tense/aspect**: perfective → ergative, imperfective → accusative (Hindi,
+  pp. 107–110)
+- **Person/animacy**: SAP (1st/2nd) → accusative, 3rd → ergative (Dyirbal,
+  pp. 104–107)
 - **Clause type**: main clause → ergative, subordinate → accusative
 - **NP type**: full NP → ergative, pronoun → accusative (many Australian)
 
 These conditioning factors interact with the prominence scales already
-formalized in `Core.Prominence` (Aissen 2003, Just 2024). The key insight:
-ergative marking correlates with **low prominence** of the A argument
-(non-topical, non-definite, full NP), while accusative marking correlates
-with **high prominence** (topical, definite, pronominal).
+formalized in `Core.Prominence` (Aissen 2003, Just 2024). The key insight
+(Silverstein 1976): ergative marking correlates with **low prominence** of
+the A argument (non-topical, non-definite, full NP), while accusative marking
+correlates with **high prominence** (topical, definite, pronominal).
 
 ## References
 
-- Blake, B. J. (2001). *Case* (2nd ed.). Cambridge University Press. Ch. 6.
+- Blake, B. J. (1994). *Case*. Cambridge University Press. Ch. 4.
 - Silverstein, M. (1976). Hierarchy of features and ergativity. In Dixon, R.
   M. W. (ed.), *Grammatical Categories in Australian Languages*. AIAS.
 - Dixon, R. M. W. (1994). *Ergativity*. Cambridge University Press.
@@ -29,7 +31,7 @@ with **high prominence** (topical, definite, pronominal).
   *NLLT* 21(3): 435–483.
 -/
 
-namespace Core.Case
+namespace Core
 
 open Core.Prominence
 
@@ -148,4 +150,4 @@ theorem silverstein_monotone (threshold p₁ p₂ : Nat)
     · omega
   · contradiction
 
-end Core.Case
+end Core

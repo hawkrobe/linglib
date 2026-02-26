@@ -1,30 +1,34 @@
 import Linglib.Core.Case.Hierarchy
 
 /-!
-# Local Case Extension Paths @cite{blake-2001}
+# Local Case Extension Paths @cite{blake-1994}
 
-Blake (2001, Ch. 5) documents regular paths by which spatial/local cases extend
-to grammatical functions. These are cross-linguistically recurrent patterns of
-polysemy (grammaticalization):
+Blake (1994, Ch. 6) documents how semantic cases — especially local cases —
+extend to cover grammatical functions through grammaticalization (pp. 172–175).
+He shows that this direction is always from spatial/concrete to
+grammatical/abstract: a locative marker may extend to dative function, but
+not vice versa.
+
+The specific polysemy chains below are our synthesis of Blake's scattered
+observations, not his explicit named paths:
 
 - **Ablative** (source) → instrumental (means) → causal (reason)
 - **Locative** (place) → dative (experiencer, temporal)
-- **Allative** (goal) → dative (recipient) → benefactive → purpose
+- **Allative** (goal) → dative (recipient) → benefactive
 
-These paths are implicational: if a language uses a spatial case marker for a
-function further along the path, it also uses it for all earlier functions.
-The direction is always from spatial/concrete to grammatical/abstract — a
-locative marker may extend to dative function, but a dative marker does not
-extend to locative function.
+Blake documents ABL/INST syncretism (p. 175: "Ablative-instrumental syncretism
+occurred in a number of Indo-European languages"), LOC→DAT extension (p. 188,
+note 15), and ALL→DAT overlap (p. 174: "A dative will often express destination
+as well"). We encode these as directed chains for computational use.
 
 ## References
 
-- Blake, B. J. (2001). *Case* (2nd ed.). Cambridge University Press. Ch. 5.
+- Blake, B. J. (1994). *Case*. Cambridge University Press. Ch. 6.
 - Heine, B. (2009). Grammaticalization of cases. In Malchukov, A. & Spencer, A.
   (eds.), *The Oxford Handbook of Case*. OUP.
 -/
 
-namespace Core.Case
+namespace Core
 
 -- ============================================================================
 -- § 1: Extension Paths
@@ -33,9 +37,8 @@ namespace Core.Case
 /-- The grammatical functions that a spatial case marker can extend to cover,
     ordered from most concrete to most abstract.
 
-    Each path represents a cross-linguistically attested polysemy chain.
-    If a language uses case X for function Y, it uses X for all functions
-    before Y on the path (Blake 2001, Ch. 5). -/
+    Each path represents a cross-linguistically attested polysemy chain,
+    synthesized from Blake's (1994, Ch. 6) discussion of case extension. -/
 def localExtension : Case → List Case
   | .abl  => [.inst, .caus]          -- source → instrument → cause
   | .loc  => [.dat]                  -- location → temporal/experiencer
@@ -63,7 +66,7 @@ theorem all_extends_ben : Case.ben ∈ localExtension .all := by simp [localExte
 theorem loc_extends_dat : Case.dat ∈ localExtension .loc := by simp [localExtension]
 
 /-- Core grammatical cases have no extensions — they don't extend to
-    other grammatical functions (Blake 2001: extensions go from
+    other grammatical functions (Blake 1994, Ch. 6: extensions go from
     peripheral/spatial to grammatical, never the reverse). -/
 theorem nom_no_extension : localExtension .nom = [] := rfl
 theorem acc_no_extension : localExtension .acc = [] := rfl
@@ -94,4 +97,4 @@ theorem abl_chain_ordered :
     Case.hierarchyRank .abl ≥ Case.hierarchyRank .inst ∧
     Case.hierarchyRank .inst ≥ Case.hierarchyRank .caus := by decide
 
-end Core.Case
+end Core

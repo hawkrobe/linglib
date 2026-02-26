@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.226.66] - 2026-02-25
+
+### Changed
+- **Blake citation audit**: corrected edition year from Blake (2001, 2nd ed.) to Blake (1994) across all 5 `Core/Case/` files, fixed chapter references (Hierarchy → §5.8, SplitConditions → Ch. 4, LocalExtension → Ch. 6), corrected syncretism adjacency attribution to Caha (2009), noted extension paths as our synthesis vs. Blake's explicit claims, documented hierarchy as tendency ("usually") not absolute.
+- **`CaseVal.toCase`**: `.obl => .nom` changed to `.obl => .dat` (highest-ranked peripheral case) with rationale docstring.
+
+### Added
+- **Fragment inventory validation**: Kaqchikel {ERG, ABS}, Mam {ERG, ACC, ABS}, and Georgian {NOM, ERG, GEN, DAT} inventories validated against Blake's hierarchy via `validInventory` theorems, with `inventory_covers_positions` proving the inventories cover all argument position case values.
+- **Georgian split-ergative instantiation**: `TenseSeries` (present/aorist/evidential), `georgianSplit : Core.SplitErgativity TenseSeries` (aorist → ergative), `subjectCase`/`objectCase` case frame functions, coverage theorems.
+- **Bibliography**: `blake-1994` added to `references.bib` (ISBN 0-521-44114-5, Cambridge Textbooks in Linguistics).
+
 ## [0.226.64] - 2026-02-25
 
 ### Added

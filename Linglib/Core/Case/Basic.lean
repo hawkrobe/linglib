@@ -1,30 +1,30 @@
 /-!
-# Case: Theory-Neutral Inventory @cite{blake-2001}
+# Case: Theory-Neutral Inventory @cite{blake-1994}
 
-A framework-agnostic case inventory drawn from Blake's (2001) cross-linguistic
-survey. These 16 values cover the cases attested across the ~300 languages Blake
-documents (Ch. 2, 5). Every syntactic framework (Minimalism, HPSG, DG, CCG)
+A framework-agnostic case inventory drawn from Blake's (1994) cross-linguistic
+survey. These 16 values cover the cases attested across Blake's typological
+sample (Chs. 2, 5). Every syntactic framework (Minimalism, HPSG, DG, CCG)
 can import this type without committing to a particular theory of case assignment.
 
-The inventory is ordered by Blake's case hierarchy (Ch. 2): if a language has a
-case lower on the hierarchy, it has all cases above it. The formal hierarchy
-itself lives in `Core.Case.Hierarchy`.
+The inventory is ordered by Blake's case hierarchy (§5.8): if a language has a
+case lower on the hierarchy, it usually has all cases above it. The formal
+hierarchy itself lives in `Core.Case.Hierarchy`.
 
 ## Core vs. Peripheral
 
-Blake's most basic distinction: **core** cases (NOM/ACC in accusative systems,
-ERG/ABS in ergative systems) mark grammatical relations determined by argument
-structure. **Peripheral** cases mark semantic roles (source, goal, instrument,
-etc.). The `isCore` predicate encodes this partition, parameterized by alignment
-type.
+Blake's most basic distinction (p. 32): **core** cases (NOM/ACC in accusative
+systems, ERG/ABS in ergative systems) mark grammatical relations determined by
+argument structure. **Peripheral** cases mark semantic roles (source, goal,
+instrument, etc.). The `isCore` predicate encodes this partition, parameterized
+by alignment type.
 
 ## References
 
-- Blake, B. J. (2001). *Case* (2nd ed.). Cambridge University Press.
+- Blake, B. J. (1994). *Case*. Cambridge University Press.
 - Comrie, B. (1978). Ergativity. In Lehmann, W. P. (ed.), *Syntactic Typology*.
 -/
 
-namespace Core.Case
+namespace Core
 
 -- ============================================================================
 -- § 1: Alignment Family
@@ -46,7 +46,7 @@ inductive AlignmentFamily where
 -- § 2: Case Inventory
 -- ============================================================================
 
-/-- Cross-linguistic case inventory (Blake 2001, Chs. 2, 5).
+/-- Cross-linguistic case inventory (Blake 1994, Chs. 2, 5).
 
     The 16 values cover the morphological cases attested across Blake's
     typological sample. Ordered roughly by the Blake hierarchy (formalized
@@ -99,7 +99,7 @@ inductive Case where
     Core cases mark the primary grammatical relations (subject, object) and
     are determined by argument structure rather than semantic role. In
     accusative systems, NOM and ACC are core. In ergative systems, ERG and
-    ABS are core. All other cases are peripheral (Blake 2001, Ch. 2). -/
+    ABS are core. All other cases are peripheral (Blake 1994, p. 32). -/
 def Case.isCore (alignment : AlignmentFamily) : Case → Bool
   | .nom => alignment == .accusative
   | .acc => alignment == .accusative
@@ -156,4 +156,4 @@ def Case.inAllCases (c : Case) : Bool :=
 theorem Case.allCases_complete (c : Case) : c.inAllCases = true := by
   cases c <;> native_decide
 
-end Core.Case
+end Core
