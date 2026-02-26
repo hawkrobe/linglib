@@ -122,14 +122,49 @@ private lemma list_sum_pos {l : List ℚ}
     dot product of singleton measures with the weighted comparison sums.
     Proved by list induction on the portfolio; the key step connects
     comparison vectors to measure differences via `mu_finset_sum`. -/
+private lemma finset_sum_as_univ {n : ℕ} (S : Finset (Fin n)) (f : Fin n → ℚ) :
+    S.sum f = Finset.univ.sum (fun i => if i ∈ S then f i else 0) := by
+  rw [← Finset.sum_filter]; congr 1; ext x; simp
+
+private lemma single_comp_sum {n : ℕ} (m : FinAddMeasure (Fin n))
+    (L R : Finset (Fin n)) (hd : Disjoint L R) :
+    m.mu ↑L - m.mu ↑R =
+    Finset.univ.sum (fun i : Fin n =>
+      m.mu {i} * ((comparisonVec n L R i : ℤ) : ℚ)) := by
+  rw [mu_finset_sum m L, mu_finset_sum m R, finset_sum_as_univ L, finset_sum_as_univ R,
+      ← Finset.sum_sub_distrib]
+  apply Finset.sum_congr rfl; intro i _
+  simp only [comparisonVec]
+  by_cases hL : i ∈ L <;> by_cases hR : i ∈ R <;> simp_all [Finset.disjoint_left.mp hd]
+
+private lemma finset_mul_sum {n : ℕ} (s : Finset (Fin n)) (f : Fin n → ℚ) (c : ℚ) :
+    c * s.sum f = s.sum (fun i => c * f i) := by
+  induction s using Finset.induction_on with
+  | empty => simp
+  | @insert a s ha ih => simp only [Finset.sum_insert ha, mul_add]; rw [ih]
+
 private lemma portfolio_interchange {n : ℕ} (m : FinAddMeasure (Fin n))
     (P : Portfolio n) :
     (P.map (fun wc => wc.weight * (m.mu ↑wc.left - m.mu ↑wc.right))).sum =
-    Finset.univ.sum (fun i => m.mu {i} * P.weightedSum i) := by
-  sorry
-  -- TODO: list induction + indicator algebra connecting comparisonVec to measures.
-  -- Each step uses: Σ_i mu_i * compVec(i) = mu(L) - mu(R) (from mu_finset_sum)
-  -- and Finset.sum_add_distrib for the cons case.
+    Finset.univ.sum (fun i => m.mu {i} * Portfolio.weightedSum P i) := by
+  induction P with
+  | nil =>
+    simp only [List.map_nil, List.sum_nil]
+    symm; apply Finset.sum_eq_zero; intro i _
+    show m.mu {i} * (List.map _ []).sum = 0
+    simp
+  | cons wc tl ih =>
+    simp only [List.map_cons, List.sum_cons]; rw [ih]
+    -- Unfold weightedSum for cons
+    have hwsum : ∀ i, Portfolio.weightedSum (wc :: tl) i =
+        wc.weight * ((comparisonVec n wc.left wc.right i : ℤ) : ℚ) +
+        Portfolio.weightedSum tl i := fun _ => by
+      simp only [Portfolio.weightedSum, List.map_cons, List.sum_cons]
+    simp_rw [hwsum, mul_add, Finset.sum_add_distrib]
+    -- Suffices: w*(mu L - mu R) = Σ mu{i}*(w*compVec i)
+    congr 1
+    rw [single_comp_sum m wc.left wc.right wc.disjoint, finset_mul_sum]
+    apply Finset.sum_congr rfl; intro i _; exact mul_left_comm _ _ _
 
 /-- **Easy direction**: If μ represents the ordering, no neutral portfolio has a
     strict member. Each comparison contributes wⱼ·(μ(Aⱼ)−μ(Bⱼ)) ≥ 0 to the
@@ -192,10 +227,74 @@ theorem fa_cancellation_fin3 (sys : EpistemicSystemFA (Fin 3)) :
   obtain ⟨m, hm⟩ := theorem8a_fin3 sys
   exact representable_implies_cancellation sys m hm
 
-/-- FA on Fin 4 implies the cancellation property. -/
+/-- Not all 4 singletons can be null (non-triviality). -/
+private theorem not_all_null_fin4 (sys : EpistemicSystemFA (Fin 4))
+    (h0 : sys.ge ∅ {(0 : Fin 4)}) (h1 : sys.ge ∅ {(1 : Fin 4)})
+    (h2 : sys.ge ∅ {(2 : Fin 4)}) (h3 : sys.ge ∅ {(3 : Fin 4)}) : False := by
+  have h01 : sys.ge ∅ ({0, 1} : Set (Fin 4)) := by
+    have : sys.ge {1} ({0, 1} : Set (Fin 4)) := by
+      rw [sys.additive {1} {0, 1}]
+      rw [show ({1} : Set (Fin 4)) \ {0, 1} = ∅ from by ext x; fin_cases x <;> simp_all]
+      rw [show ({0, 1} : Set (Fin 4)) \ {1} = {0} from by ext x; fin_cases x <;> simp_all]
+      exact h0
+    exact sys.trans _ _ _ h1 this
+  have h012 : sys.ge ∅ ({0, 1, 2} : Set (Fin 4)) := by
+    have : sys.ge {2} ({0, 1, 2} : Set (Fin 4)) := by
+      rw [sys.additive {2} {0, 1, 2}]
+      rw [show ({2} : Set (Fin 4)) \ {0, 1, 2} = ∅ from by ext x; fin_cases x <;> simp_all]
+      rw [show ({0, 1, 2} : Set (Fin 4)) \ {2} = {0, 1} from by ext x; fin_cases x <;> simp_all]
+      exact h01
+    exact sys.trans _ _ _ h2 this
+  exact sys.nonTrivial (sys.trans _ _ _ h3
+    ((sys.additive {3} Set.univ).mpr
+      (by rw [show ({3} : Set (Fin 4)) \ Set.univ = ∅ from by ext x; simp,
+              show (Set.univ : Set (Fin 4)) \ {3} = {0, 1, 2} from by ext x; fin_cases x <;> simp_all]
+          exact h012)))
+
+/-- Helper: if element 0 is null on Fin 4, derive cancellation via null reduction to Fin 3. -/
+private theorem fa_cancellation_fin4_null0 (sys : EpistemicSystemFA (Fin 4))
+    (h0 : sys.ge ∅ {(0 : Fin 4)})
+    (hnn : ∃ i : Fin 3, ¬sys.ge ∅ {Fin.succ i}) :
+    Cancellation 4 sys.ge := by
+  obtain ⟨m, hm⟩ := null_elem_reduce sys h0 hnn (fun sys' => theorem8a_fin3 sys')
+  exact representable_implies_cancellation sys m hm
+
+/-- FA on Fin 4 implies the cancellation property.
+    Null cases: reduce via `null_elem_reduce` + `theorem8a_fin3`.
+    0-null case (all singletons positive): requires direct combinatorial argument. -/
 theorem fa_cancellation_fin4 (sys : EpistemicSystemFA (Fin 4)) :
     Cancellation 4 sys.ge := by
-  sorry -- TODO: direct combinatorial argument or reduction to Fin 3 via merge
+  by_cases h0 : sys.ge ∅ {(0 : Fin 4)}
+  · -- element 0 null: reduce to Fin 3
+    exact fa_cancellation_fin4_null0 sys h0 (by
+      by_contra hall; push_neg at hall
+      exact not_all_null_fin4 sys h0 (hall 0) (hall 1) (hall 2))
+  · by_cases h1 : sys.ge ∅ {(1 : Fin 4)}
+    · -- element 1 null: permute via swap(0,1) to put null at 0
+      obtain ⟨m, hm⟩ := perm_repr (Equiv.swap 0 1) sys
+        (null_elem_reduce (transportFA (Equiv.swap 0 1) sys)
+          ((perm_null_convert _ _ 0 1 (by decide)).mpr h1)
+          ⟨0, fun h => h0 ((perm_null_convert _ _ 1 0 (by decide)).mp h)⟩
+          (fun sys' => theorem8a_fin3 sys'))
+      exact representable_implies_cancellation sys m hm
+    · by_cases h2 : sys.ge ∅ {(2 : Fin 4)}
+      · -- element 2 null: permute via swap(0,2)
+        obtain ⟨m, hm⟩ := perm_repr (Equiv.swap 0 2) sys
+          (null_elem_reduce (transportFA (Equiv.swap 0 2) sys)
+            ((perm_null_convert _ _ 0 2 (by decide)).mpr h2)
+            ⟨0, fun h => h1 ((perm_null_convert _ _ 1 1 (by decide)).mp h)⟩
+            (fun sys' => theorem8a_fin3 sys'))
+        exact representable_implies_cancellation sys m hm
+      · by_cases h3 : sys.ge ∅ {(3 : Fin 4)}
+        · -- element 3 null: permute via swap(0,3)
+          obtain ⟨m, hm⟩ := perm_repr (Equiv.swap 0 3) sys
+            (null_elem_reduce (transportFA (Equiv.swap 0 3) sys)
+              ((perm_null_convert _ _ 0 3 (by decide)).mpr h3)
+              ⟨0, fun h => h1 ((perm_null_convert _ _ 1 1 (by decide)).mp h)⟩
+              (fun sys' => theorem8a_fin3 sys'))
+          exact representable_implies_cancellation sys m hm
+        · -- all singletons positive: hard combinatorial case
+          sorry
 
 -- ═══════════════════════════════════════════════════════════════
 -- § 6. KPS Theorem 8a via cancellation

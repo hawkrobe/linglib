@@ -122,7 +122,7 @@ end PatternDefs
 
 section MeasureSemantics
 
-private theorem mu_empty (m : FinAddMeasure W) : m.mu ∅ = 0 := by
+private theorem mu_empty' (m : FinAddMeasure W) : m.mu ∅ = 0 := by
   have h : m.mu (∅ ∪ ∅) = m.mu ∅ + m.mu ∅ :=
     m.additive ∅ ∅ (fun x hx => hx.elim)
   simp only [Set.empty_union] at h; linarith
@@ -174,7 +174,7 @@ theorem measure_V3 (m : FinAddMeasure W) : patternV3 m.inducedGe := by
   · intro hc; apply hAnot; rw [mu_compl]; rw [mu_compl] at hc; linarith
 
 theorem measure_V4 (m : FinAddMeasure W) : patternV4 m.inducedGe := by
-  intro A; show m.mu A ≥ m.mu ∅; rw [mu_empty]; exact m.nonneg A
+  intro A; show m.mu A ≥ m.mu ∅; rw [mu_empty']; exact m.nonneg A
 
 theorem measure_V5 (m : FinAddMeasure W) : patternV5 m.inducedGe := by
   intro A; exact mu_mono m (Set.subset_univ A)
@@ -182,14 +182,14 @@ theorem measure_V5 (m : FinAddMeasure W) : patternV5 m.inducedGe := by
 theorem measure_V6 (m : FinAddMeasure W) : patternV6 m.inducedGe := by
   constructor
   · show m.mu Set.univ ≥ m.mu Set.univᶜ
-    rw [Set.compl_univ, mu_empty, m.total]; linarith
+    rw [Set.compl_univ, mu_empty', m.total]; linarith
   · intro h; unfold FinAddMeasure.inducedGe at h
-    rw [Set.compl_univ, mu_empty, m.total] at h; linarith
+    rw [Set.compl_univ, mu_empty', m.total] at h; linarith
 
 theorem measure_V7 (m : FinAddMeasure W) : patternV7 m.inducedGe := by
   intro A ⟨hA, _⟩ hposs
   unfold FinAddMeasure.inducedGe at *
-  rw [mu_empty] at hposs; rw [mu_compl] at hA
+  rw [mu_empty'] at hposs; rw [mu_compl] at hA
   linarith [m.nonneg A]
 
 theorem measure_V11 (m : FinAddMeasure W) : patternV11 m.inducedGe := by
@@ -210,7 +210,7 @@ theorem measure_V12 (m : FinAddMeasure W) : patternV12 m.inducedGe := by
 theorem measure_V13 (m : FinAddMeasure W) : patternV13 m.inducedGe := by
   intro A B ⟨hAB, hABnot⟩
   unfold FinAddMeasure.inducedGe at *
-  rw [mu_empty] at *
+  rw [mu_empty'] at *
   have hd : ∀ x, x ∈ A \ B → x ∉ B := fun x ⟨_, hna⟩ hxB => hna hxB
   have hdecomp : A ∪ B = (A \ B) ∪ B := by rw [Set.diff_union_self]
   constructor

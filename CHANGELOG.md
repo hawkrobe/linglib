@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.226.88] - 2026-02-26
+
+### Changed
+- **Scott cancellation: portfolio interchange proved, Fin 4 routing via null reduction** (`Cancellation.lean`, `Fin4.lean`): proved `portfolio_interchange` (was sorry) — the Fubini-style sum interchange connecting portfolio value to atom-weighted comparison sums, via `single_comp_sum` helper and `finset_sum_as_univ`/`finset_mul_sum` lemmas. Added `fa_cancellation_fin4`: FA → cancellation on Fin 4 via null singleton case analysis with `null_elem_reduce` + `perm_repr` + `perm_null_convert` routing through `theorem8a_fin3`; 0-null case (all singletons positive) remains sorry. Rewrote `Fin4.lean` to route `theorem8a_fin4` through `cancellation_implies_representable ∘ fa_cancellation_fin4` (61→20 lines). Sorry budget: 9 (2 Cancellation, 6 Entailments, 1 EpistemicScale.lean).
+
 ## [0.226.86] - 2026-02-26
 
 ### Added
