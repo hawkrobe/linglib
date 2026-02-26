@@ -131,7 +131,11 @@ import Linglib.Fragments.HindiUrdu.Particles
 import Linglib.Fragments.Hungarian.Case
 import Linglib.Fragments.Hungarian.Coordination
 import Linglib.Fragments.Finnish.Case
+import Linglib.Fragments.Finnish.ConsonantGradation
+import Linglib.Fragments.Finnish.Negation
+import Linglib.Fragments.Finnish.Predicates
 import Linglib.Fragments.Finnish.TemporalConnectives
+import Linglib.Fragments.Finnish.VowelHarmony
 import Linglib.Fragments.French.Nouns
 import Linglib.Fragments.French.Predicates
 import Linglib.Fragments.Irish.Coordination
@@ -217,6 +221,8 @@ import Linglib.Phenomena.Case.Bridge.DependentCaseInventories
 import Linglib.Phenomena.Case.Studies.Aissen2003
 import Linglib.Phenomena.Case.Studies.DeHoopMalchukov2008
 import Linglib.Phenomena.Case.Bridge.DependentCaseDOM
+import Linglib.Phenomena.Case.Bridge.FinnishPartitive
+import Linglib.Phenomena.Case.Bridge.FinnishSuffixOrder
 import Linglib.Phenomena.ClauseChaining.Typology
 import Linglib.Phenomena.ClauseChaining.Data
 import Linglib.Phenomena.ClauseChaining.Bridge.FragmentBridge
@@ -292,6 +298,8 @@ import Linglib.Phenomena.Constructions.Studies.KayFillmore1999
 import Linglib.Phenomena.Constructions.Studies.OsborneGross2012.Data
 import Linglib.Phenomena.Constructions.Resultatives.Data
 import Linglib.Phenomena.Constructions.ParticleVerbs.Data
+import Linglib.Phenomena.Constructions.ParticleVerbs.Bridge.MinimalismParticleSC
+import Linglib.Phenomena.Constructions.Resultatives.Bridge.MinimalismResultativeSC
 import Linglib.Phenomena.Causatives.Studies.BeaversEtAl2021
 import Linglib.Phenomena.Causatives.Data
 import Linglib.Phenomena.Causatives.Typology
@@ -750,6 +758,7 @@ import Linglib.Theories.Syntax.Minimalism.Core.Structure
 import Linglib.Theories.Syntax.Minimalism.Core.Basic
 import Linglib.Theories.Syntax.Minimalism.Core.Voice
 import Linglib.Theories.Syntax.Minimalism.Core.Applicative
+import Linglib.Theories.Syntax.Minimalism.Core.SmallClause
 import Linglib.Theories.Syntax.Minimalism.Bridge.EventStructureBridge
 import Linglib.Theories.Morphology.DM.Fission
 import Linglib.Theories.Morphology.DM.Categorizer

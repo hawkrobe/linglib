@@ -62,6 +62,7 @@ inductive VoiceFlavor where
   | causer       -- Introduces causer (Schäfer 2008: Voice_CAUSE)
   | nonThematic  -- Semantically vacuous, no θ-role (anticausative SE, Chuj -j)
   | expletive    -- No specifier, no semantics (middle voice)
+  | impersonal   -- Demotes agent to implicit generic human (Finnish "passive")
   deriving DecidableEq, BEq, Repr
 
 -- ============================================================================
@@ -85,12 +86,12 @@ structure VoiceHead where
 def VoiceHead.assignsTheta (v : VoiceHead) : Bool :=
   match v.flavor with
   | .agentive | .causer => true
-  | .nonThematic | .expletive => false
+  | .nonThematic | .expletive | .impersonal => false
 
 /-- Does this Voice head have semantic content? -/
 def VoiceHead.hasSemantics (v : VoiceHead) : Bool :=
   match v.flavor with
-  | .agentive | .causer => true
+  | .agentive | .causer | .impersonal => true
   | .nonThematic | .expletive => false
 
 -- ============================================================================
@@ -113,6 +114,12 @@ def voiceAnticausative : VoiceHead :=
 def voiceMiddle : VoiceHead :=
   { flavor := .expletive, hasD := false, phaseHead := false }
 
+/-- Impersonal Voice (Finnish "passive"): demotes agent to an implicit
+    generic human referent. Has semantics (existential closure over agent)
+    but does not assign a θ-role to a syntactic specifier. -/
+def voiceImpersonal : VoiceHead :=
+  { flavor := .impersonal, hasD := false, phaseHead := false }
+
 -- ============================================================================
 -- § 4: Verification Theorems
 -- ============================================================================
@@ -132,6 +139,14 @@ theorem agentive_is_phase : voiceAgent.phaseHead = true := rfl
 
 /-- Non-thematic Voice is NOT a phase head. -/
 theorem anticausative_not_phase : voiceAnticausative.phaseHead = false := rfl
+
+/-- Impersonal Voice does NOT assign a θ-role (agent is existentially closed,
+    not projected to a syntactic specifier). -/
+theorem impersonal_no_theta : voiceImpersonal.assignsTheta = false := rfl
+
+/-- Impersonal Voice HAS semantics: it contributes an existential closure
+    over the agent variable, unlike non-thematic Voice which is vacuous. -/
+theorem impersonal_has_semantics : voiceImpersonal.hasSemantics = true := rfl
 
 /-- Only agentive and causer Voice assign θ-roles. -/
 theorem theta_implies_agentive_or_causer (v : VoiceHead) :
@@ -157,6 +172,7 @@ def VoiceFlavor.eventContribution : VoiceFlavor → Option VerbHead
   | .causer      => some .vDO
   | .nonThematic => none
   | .expletive   => none
+  | .impersonal  => none
 
 /-- Build the full verbal decomposition by combining Voice's contribution
     with the root-determined lower event structure.

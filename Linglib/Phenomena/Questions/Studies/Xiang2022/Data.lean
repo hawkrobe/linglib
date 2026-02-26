@@ -7,36 +7,48 @@ Xiang, Yimei (2022). Relativized Exhaustivity: mention-some and uniqueness.
 
 ## Overview
 
-Theory-neutral data encoding Xiang's empirical generalizations about when
-wh-questions receive mention-some (MS) vs mention-all (MA) interpretations.
-Key factors: modal type in the question, the questioner's decision problem,
-and structural conditions on the answer space (overlap, closure under ∧).
+Xiang 2022 makes three contributions:
 
-## Data Points
+1. MS answers are subject to a "mention-one-only" constraint: they must name
+   a single individual, not a disjunction (ex. 3–4).
+2. MS is primarily *grammatically* licensed by ability *can* inside the
+   question nucleus, not pragmatically by decision problems. The MS/MA
+   ambiguity in *can*-questions reflects structural scope ambiguity of
+   the wh-trace relative to the modal (first-order vs higher-order).
+3. The RelExh presupposition (91) — exhaustivity evaluated relative to
+   singleton modal bases — unifies MS licensing, avoids over-generation
+   for non-*can* questions, and derives local-uniqueness effects in
+   modalized singular wh-questions.
 
-1. *Can*-questions license MS (ex. 32–33)
-2. Bare wh-questions require MA (ex. 2b)
-3. Epistemic *might* blocks MS (ex. 5)
-4. Universal *must* requires MA (ex. 6)
-5. Same question, different goals → MS vs MA (ex. 9–10)
-6. Singular uniqueness: "Who is the chair?" (ex. 44–46)
+## Data points
+
+Empirical generalizations from the paper, with exact example numbers:
+1. "Who can chair the committee?" — MS available (ex. 2)
+2. "Who called?" — MA required (ex. 1)
+3. Mention-one-only constraint (ex. 3–4)
+4. Non-*can* modals block MS: *should*, *might* (ex. 6)
+5. Same question, different contexts → MS vs MA (Section 2.2)
+6. Singular uniqueness effects (Section 4.3, Section 6.3)
+7. Table 3 summary: RelExh vs Dayal's EP predictions
 -/
 
 namespace Phenomena.Questions.Studies.Xiang2022.Data
 
-/-- Whether a question receives mention-some, mention-all, or is ambiguous. -/
+/-- Whether a question receives mention-some, mention-all, or is ambiguous
+between the two readings. -/
 inductive MSMAJudgment where
   | mentionSome
   | mentionAll
   | ambiguous
   deriving DecidableEq, Repr
 
-/-- Type of modal in the question, which affects MS/MA availability. -/
+/-- Type of modal in the question, which affects MS/MA availability.
+Xiang's key claim: only ability *can* grammatically licenses MS. -/
 inductive ModalType where
   | none
-  | abilityCanP
+  | abilityCan
   | epistemicMight
-  | universalMust
+  | deonticShould
   deriving DecidableEq, Repr
 
 /-- A single empirical datum from Xiang 2022. -/
@@ -53,99 +65,246 @@ structure Xiang2022Datum where
   source : String
   deriving Repr
 
-/-! ### Data points -/
+/-! ### Core data: MS licensing by modal type -/
 
-/-- *Can*-question licenses mention-some (Xiang 2022, ex. 32–33).
+/-- Ability *can* licenses mention-some (Xiang 2022, ex. 2).
 
-"Who can chair the committee?" — any single answer suffices when the
-questioner's goal is to find *someone* who can serve. -/
+"Who can chair the committee?" — naming a single individual is a
+sufficient answer. This is the paper's central empirical observation:
+MS is grammatically licensed by *can*. -/
 def canQuestionMS : Xiang2022Datum :=
-  { question := "Who can serve on the committee?"
-  , modalType := .abilityCanP
+  { question := "Who can chair the committee?"
+  , modalType := .abilityCan
   , judgment := .mentionSome
-  , exampleAnswer := "Andy can. (sufficient answer)"
-  , source := "Xiang 2022, ex. 32–33"
+  , exampleAnswer := "Anne can. (sufficient answer)"
+  , source := "Xiang 2022, ex. 2"
   }
 
-/-- Bare wh-question requires mention-all (Xiang 2022, ex. 2b).
+/-- Bare wh-question requires mention-all (Xiang 2022, ex. 1).
 
-"Who called?" — without a modal, the question demands exhaustive listing. -/
+"Who called?" — without a modal, the question demands exhaustive listing.
+Non-modalized questions uniformly receive MA. -/
 def bareQuestionMA : Xiang2022Datum :=
   { question := "Who called?"
   , modalType := .none
   , judgment := .mentionAll
-  , exampleAnswer := "Andy and Billy called. (#Andy called, as a complete answer)"
-  , source := "Xiang 2022, ex. 2b"
+  , exampleAnswer := "Anne and Bill called. (#Anne called, as a complete answer)"
+  , source := "Xiang 2022, ex. 1"
   }
 
-/-- Epistemic *might* blocks mention-some (Xiang 2022, ex. 5).
+/-- Deontic *should* blocks mention-some (Xiang 2022, ex. 6b).
 
-"Who might serve on the committee?" — even though modal, epistemics
-pattern with MA because knowing one possibility doesn't resolve the DP. -/
+"Which students should pass the test?" — even though modal, deontic
+modals pattern with MA. Only ability *can* licenses MS. -/
+def deonticBlocksMS : Xiang2022Datum :=
+  { question := "Which students should pass the test?"
+  , modalType := .deonticShould
+  , judgment := .mentionAll
+  , exampleAnswer := "All students who should. (#Anne should, as a complete answer)"
+  , source := "Xiang 2022, ex. 6b"
+  }
+
+/-- Epistemic *might* blocks mention-some (Xiang 2022, ex. 6c).
+
+"Which students might pass the test?" — epistemics pattern with MA,
+not MS. The question demands the full epistemic picture. -/
 def epistemicBlocksMS : Xiang2022Datum :=
-  { question := "Who might serve on the committee?"
+  { question := "Which students might pass the test?"
   , modalType := .epistemicMight
   , judgment := .mentionAll
-  , exampleAnswer := "Andy might. (#incomplete — need full epistemic picture)"
-  , source := "Xiang 2022, ex. 5"
+  , exampleAnswer := "All students who might. (#Anne might, as a complete answer)"
+  , source := "Xiang 2022, ex. 6c"
   }
 
-/-- Universal *must* requires mention-all (Xiang 2022, ex. 6).
+/-- Non-modalized question requires MA (Xiang 2022, ex. 6a).
 
-"Who must serve?" — universal modals demand exhaustive identification. -/
-def universalMA : Xiang2022Datum :=
-  { question := "Who must serve on the committee?"
-  , modalType := .universalMust
-  , judgment := .mentionAll
-  , exampleAnswer := "Andy and Billy must. (#Andy must, as a complete answer)"
-  , source := "Xiang 2022, ex. 6"
-  }
-
-/-- Goal-driven MS: same question, find-someone goal (Xiang 2022, ex. 9–10).
-
-"Who can serve?" with the goal of recruiting *one* person → MS reading. -/
-def goalDrivenMS : Xiang2022Datum :=
-  { question := "Who can serve on the committee?"
-  , modalType := .abilityCanP
-  , judgment := .mentionSome
-  , exampleAnswer := "Context: We need to recruit one person. → Andy can."
-  , source := "Xiang 2022, ex. 9"
-  }
-
-/-- Goal-driven MA: same question, know-all goal (Xiang 2022, ex. 9–10).
-
-"Who can serve?" with the goal of knowing the *full* list → MA reading. -/
-def goalDrivenMA : Xiang2022Datum :=
-  { question := "Who can serve on the committee?"
-  , modalType := .abilityCanP
-  , judgment := .mentionAll
-  , exampleAnswer := "Context: We need a complete roster. → Andy and Billy can."
-  , source := "Xiang 2022, ex. 10"
-  }
-
-/-- Singular uniqueness: "Who is the chair?" (Xiang 2022, ex. 44–46).
-
-Singular wh-questions with definite predicates have a uniqueness presupposition
-that forces exactly one individual as the answer. -/
-def singularUniqueness : Xiang2022Datum :=
-  { question := "Who is the chair of the committee?"
+"Which students passed the test?" — without a modal, exhaustive. -/
+def nonModalMA : Xiang2022Datum :=
+  { question := "Which students passed the test?"
   , modalType := .none
-  , judgment := .mentionAll  -- uniqueness is a special case of exhaustivity
-  , exampleAnswer := "Andy is. (unique answer presupposed)"
-  , source := "Xiang 2022, ex. 44–46"
+  , judgment := .mentionAll
+  , exampleAnswer := "All students who passed."
+  , source := "Xiang 2022, ex. 6a"
   }
 
-/-- All data points from the paper. -/
-def allData : List Xiang2022Datum :=
-  [ canQuestionMS, bareQuestionMA, epistemicBlocksMS, universalMA
-  , goalDrivenMS, goalDrivenMA, singularUniqueness ]
+/-! ### Context sensitivity (Section 2.2) -/
 
-/-- Number of data points classified as mention-some. -/
+/-- Goal-driven MS: same question, recruit-one goal (Xiang 2022, Section 2.2).
+
+"Who can chair the committee?" with the goal of recruiting *one* person.
+Van Rooij (2003) models this via a decision problem where any single
+committee member resolves the DP. -/
+def goalDrivenMS : Xiang2022Datum :=
+  { question := "Who can chair the committee?"
+  , modalType := .abilityCan
+  , judgment := .mentionSome
+  , exampleAnswer := "Context: We need to recruit one more member. → Anne can."
+  , source := "Xiang 2022, Section 2.2 (cf. van Rooij 2003)"
+  }
+
+/-- Goal-driven MA: same question, know-all goal (Xiang 2022, Section 2.2).
+
+Same question as above, but the goal of knowing the *full* candidate list.
+The DP requires complete information, so all candidates must be named. -/
+def goalDrivenMA : Xiang2022Datum :=
+  { question := "Who can chair the committee?"
+  , modalType := .abilityCan
+  , judgment := .mentionAll
+  , exampleAnswer := "Context: We want a complete roster. → Anne and Bill can."
+  , source := "Xiang 2022, Section 2.2 (cf. van Rooij 2003)"
+  }
+
+/-! ### Mention-one-only constraint (ex. 3–4) -/
+
+/-- Whether an MS answer obeys the mention-one-only constraint. -/
+structure MentionOneOnlyDatum where
+  /-- The question -/
+  question : String
+  /-- The proposed MS answer -/
+  answer : String
+  /-- Is this answer acceptable as an MS answer? -/
+  acceptable : Bool
+  /-- Source -/
+  source : String
+  deriving Repr
+
+/-- Valid MS answer: single individual (Xiang 2022, ex. 3a).
+
+"Anne can." — a single-individual MS answer is acceptable. -/
+def mentionOneValid : MentionOneOnlyDatum :=
+  { question := "Who can chair the committee?"
+  , answer := "Anne can."
+  , acceptable := true
+  , source := "Xiang 2022, ex. 3a"
+  }
+
+/-- Invalid MS answer: disjunction (Xiang 2022, ex. 3b).
+
+"#Anne or Bill can." — a disjunctive MS answer is blocked by
+the mention-one-only constraint. This is NOT predicted by
+van Rooij's decision-theoretic account but IS predicted by
+Xiang's semantic analysis. -/
+def mentionOneInvalid : MentionOneOnlyDatum :=
+  { question := "Who can chair the committee?"
+  , answer := "#Anne or Bill can."
+  , acceptable := false
+  , source := "Xiang 2022, ex. 3b"
+  }
+
+/-! ### Uniqueness effects (Section 4.3, Section 6.3) -/
+
+/-- Types of uniqueness inference observed in singular wh-questions.
+Xiang distinguishes global vs local uniqueness (Table 3). -/
+inductive UniquenessType where
+  | global       -- exactly one individual satisfies P in every accessible world
+  | local        -- in each accessible world, at most one individual satisfies P
+  | existLocal   -- "existential" local uniqueness (weaker, via existential closure)
+  | none
+  deriving DecidableEq, Repr
+
+/-- A datum about uniqueness effects in singular wh-questions. -/
+structure UniquenessDatum where
+  /-- The question -/
+  question : String
+  /-- Modal type -/
+  modalType : ModalType
+  /-- Type of uniqueness inference -/
+  uniqueness : UniquenessType
+  /-- Whether Dayal's EP predicts this -/
+  dayalEPPredicts : Bool
+  /-- Whether RelExh predicts this -/
+  relExhPredicts : Bool
+  /-- Source -/
+  source : String
+  deriving Repr
+
+/-- Non-modalized singular: global uniqueness.
+"Which child came?" — presupposes exactly one child came.
+Both Dayal's EP and RelExh predict this. (Table 3, row 1) -/
+def nonModalUniqueness : UniquenessDatum :=
+  { question := "Which child came?"
+  , modalType := .none
+  , uniqueness := .global
+  , dayalEPPredicts := true
+  , relExhPredicts := true
+  , source := "Xiang 2022, Table 3, ex. 64"
+  }
+
+/-- □-modal singular (have-to), global uniqueness.
+"Which chapter do we have to assign?" — global uniqueness reading.
+Both Dayal's EP and RelExh predict. (Table 3, row 3) -/
+def boxModalGlobalUniq : UniquenessDatum :=
+  { question := "Which chapter do we have to assign?"
+  , modalType := .deonticShould
+  , uniqueness := .global
+  , dayalEPPredicts := true
+  , relExhPredicts := true
+  , source := "Xiang 2022, Table 3, ex. 99/102"
+  }
+
+/-- □-modal singular (have-to), local uniqueness.
+"Which chapter do we have to assign?" — local uniqueness reading.
+Dayal's EP does NOT predict this; RelExh DOES. This is a key
+advantage of RelExh over Dayal's EP. (Table 3, row 4) -/
+def boxModalLocalUniq : UniquenessDatum :=
+  { question := "Which chapter do we have to assign?"
+  , modalType := .deonticShould
+  , uniqueness := .local
+  , dayalEPPredicts := false
+  , relExhPredicts := true
+  , source := "Xiang 2022, Table 3, ex. 99/103"
+  }
+
+/-- ◇-modal singular (can), local uniqueness in MS.
+"Which chapter can we assign?" — existential local uniqueness.
+Dayal's EP does NOT predict; RelExh DOES. (Table 3, row 8) -/
+def canModalLocalUniqMS : UniquenessDatum :=
+  { question := "Which chapter can we assign?"
+  , modalType := .abilityCan
+  , uniqueness := .existLocal
+  , dayalEPPredicts := false
+  , relExhPredicts := true
+  , source := "Xiang 2022, Table 3, ex. 100–101/105b"
+  }
+
+/-- ◇-modal singular (can), global uniqueness.
+"Which chapter can we assign?" — global uniqueness.
+Dayal's EP predicts this but RelExh does NOT — the only cell in
+Table 3 where Dayal's EP has coverage that RelExh lacks. (Table 3, row 7) -/
+def canModalGlobalUniq : UniquenessDatum :=
+  { question := "Which chapter can we assign?"
+  , modalType := .abilityCan
+  , uniqueness := .global
+  , dayalEPPredicts := true
+  , relExhPredicts := false
+  , source := "Xiang 2022, Table 3, row 7"
+  }
+
+def uniquenessData : List UniquenessDatum :=
+  [ nonModalUniqueness, boxModalGlobalUniq, boxModalLocalUniq
+  , canModalLocalUniqMS, canModalGlobalUniq ]
+
+/-! ### Aggregation -/
+
+/-- All MS/MA judgment data points from the paper. -/
+def allData : List Xiang2022Datum :=
+  [ canQuestionMS, bareQuestionMA, deonticBlocksMS, epistemicBlocksMS
+  , nonModalMA, goalDrivenMS, goalDrivenMA ]
+
+/-- Data points classified as mention-some. -/
 def msCount : Nat :=
   allData.filter (λ d => d.judgment == .mentionSome) |>.length
 
-/-- Number of data points classified as mention-all. -/
+/-- Data points classified as mention-all. -/
 def maCount : Nat :=
   allData.filter (λ d => d.judgment == .mentionAll) |>.length
+
+/-- Table 3 cells where RelExh has coverage that Dayal's EP lacks. -/
+def relExhAdvantages : Nat :=
+  uniquenessData.filter (λ d => d.relExhPredicts && !d.dayalEPPredicts) |>.length
+
+/-- Table 3 cells where Dayal's EP has coverage that RelExh lacks. -/
+def dayalAdvantages : Nat :=
+  uniquenessData.filter (λ d => d.dayalEPPredicts && !d.relExhPredicts) |>.length
 
 end Phenomena.Questions.Studies.Xiang2022.Data

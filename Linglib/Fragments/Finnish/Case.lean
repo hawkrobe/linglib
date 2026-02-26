@@ -19,10 +19,11 @@ case systems in Europe:
   abessive (-ttA, 'without'), comitative (-ine-, 'with'),
   instructive (-n, 'by means of')
 
-Our 16-value `Core.Case` cannot represent the full Finnish system: essive,
-translative, and abessive have no equivalent. The internal/external pairs
-(inessive/adessive → LOC, elative/ablative → ABL, illative/allative → ALL)
-are collapsed into a single rank.
+Our 19-value `Core.Case` represents 12 of the 15 Finnish cases. The three
+Finnish-specific semantic cases (essive, translative, abessive) are included
+directly; the internal/external local pairs (inessive/adessive → LOC,
+elative/ablative → ABL, illative/allative → ALL) are collapsed into a
+single rank.
 
 Finnish lacks a dedicated **dative** case — the allative covers recipient
 function (Blake 1994, Ch. 6: ALL → DAT extension). This creates a gap at
@@ -43,14 +44,15 @@ namespace Fragments.Finnish.Case
 
 /-- Finnish case inventory mapped to `Core.Case`.
 
-    15 Finnish cases → 9 Core.Case values (essive, translative, abessive
-    have no equivalent; internal/external local pairs are collapsed):
+    All 15 Finnish cases now have Core.Case equivalents (essive, translative,
+    abessive added to Core.Case; internal/external local pairs collapsed):
     - NOM → .nom, ACC → .acc (pronoun/total-object accusative)
     - GEN → .gen, PART → .part
     - INE/ADE → .loc, ELA/ABL → .abl, ILL/ALL → .all
+    - ESS → .ess, TRANSL → .transl, ABESS → .abess
     - INSTR → .inst, COM → .com -/
 def caseInventory : List Core.Case :=
-  [.nom, .acc, .gen, .part, .loc, .abl, .all, .inst, .com]
+  [.nom, .acc, .gen, .part, .loc, .abl, .all, .ess, .transl, .abess, .inst, .com]
 
 /-- Finnish's mapped inventory **fails** strict contiguity: GEN (rank 5)
     and LOC (rank 3) have no DAT (rank 4) between them. Finnish uses

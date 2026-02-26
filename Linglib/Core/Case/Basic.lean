@@ -88,6 +88,13 @@ inductive Case where
   | ben
   /-- Causal: reason, cause -/
   | caus
+  -- Finnish/Uralic-specific (Karlsson 2018, Blake 1994 "others")
+  /-- Essive: state or role ('as X') — Finnish -nA -/
+  | ess
+  /-- Translative: change of state ('becoming X') — Finnish -ksi -/
+  | transl
+  /-- Abessive: privative ('without X') — Finnish -ttA -/
+  | abess
   deriving DecidableEq, BEq, Repr, Inhabited
 
 -- ============================================================================
@@ -144,9 +151,10 @@ theorem loc_always_peripheral (a : AlignmentFamily) :
 /-- All 16 case values (for finite verification). -/
 def Case.allCases : List Case :=
   [.nom, .acc, .erg, .abs, .gen, .dat, .loc, .abl,
-   .all, .inst, .com, .voc, .part, .perl, .ben, .caus]
+   .all, .inst, .com, .voc, .part, .perl, .ben, .caus,
+   .ess, .transl, .abess]
 
-theorem Case.allCases_length : Case.allCases.length = 16 := by native_decide
+theorem Case.allCases_length : Case.allCases.length = 19 := by native_decide
 
 /-- Check that a case is in the exhaustive list (Bool version for native_decide). -/
 def Case.inAllCases (c : Case) : Bool :=

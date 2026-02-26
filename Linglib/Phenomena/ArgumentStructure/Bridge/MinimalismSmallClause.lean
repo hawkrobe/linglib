@@ -1,5 +1,5 @@
 import Linglib.Theories.Syntax.Minimalism.Core.Basic
-import Linglib.Theories.Syntax.Minimalism.Core.Applicative
+import Linglib.Theories.Syntax.Minimalism.Core.SmallClause
 import Linglib.Phenomena.ArgumentStructure.Studies.HaddicanEtAl2026
 import Linglib.Phenomena.Constructions.ParticleVerbs.Data
 
@@ -318,6 +318,88 @@ theorem sc_family_all_differ_from_pd :
     structurallyIsomorphic resultative_sc pd = false ∧
     structurallyIsomorphic causative_sc pd = false := by
   refine ⟨?_, ?_, ?_⟩ <;> native_decide
+
+/-! ## §6a. SC family categorization (den Dikken 1995)
+
+Each SC construction is tagged with its predicate category from
+`SmallClause.lean`. This connects the geometric analysis (§§5–6) to
+the category-level analysis: constructions share tree shape because
+they share the `V [SC Subj Pred]` template, differing only in the
+category of the predicate head. -/
+
+/-- PVC is a P-predicate SC. -/
+def pvc_category : SCPredCategory := .P
+
+/-- DOC is a P-predicate SC — the dative P "to" is the SC predicate,
+    incorporated into V in the DOC surface form (den Dikken 1995, Ch. 3).
+    This is den Dikken's deep claim: DOC and PVC share category P because
+    dative P is structurally a particle. -/
+def doc_category : SCPredCategory := .P
+
+/-- Resultative is an A-predicate SC (property resultatives). -/
+def resultative_category : SCPredCategory := .A
+
+/-- Causative is a V-predicate SC. -/
+def causative_category : SCPredCategory := .V
+
+/-- Copular/ECM is an N-predicate SC: "consider John a fool."
+    Den Dikken (1995:25, ex. 41a-b). -/
+def copular_category : SCPredCategory := .N
+
+/-- DOC and PVC share SC predicate category P. This is one of
+    den Dikken's central claims: dative P = particle, both are
+    intransitive/ergative P heads mediating SC predication. -/
+theorem doc_pvc_share_P : doc_category = pvc_category := rfl
+
+/-- The SC family spans all four lexical categories {A, N, P, V}
+    (den Dikken 1995:25, ex. 43). -/
+theorem sc_family_covers_all_categories :
+    pvc_category = .P ∧
+    resultative_category = .A ∧
+    causative_category = .V ∧
+    copular_category = .N := by
+  exact ⟨rfl, rfl, rfl, rfl⟩
+
+/-! ## §6b. Nested SC for DOC (den Dikken 1995, Ch. 3)
+
+Den Dikken's DOC analysis: the theme is the SC subject (paralleling
+the object's role in PVCs), and the PP `[PP to Goal]` is the SC
+predicate — a P head with a goal complement:
+
+    `V [SC Theme [PP P Goal]]`   =   `give [SC book [PP to Hsu]]`
+
+P-incorporation into V yields the DOC surface ("give Hsu the book");
+P in situ yields the PP-dative ("give the books to Mary"). This
+derives the dative alternation from a single underlying SC structure,
+exactly as PVC particle shift derives from `V [SC DP Prt]` — see
+`DativeAlternation` for the empirical data.
+
+The nested analysis has more internal structure than the flat
+`V [SC DP DP]` from Kayne (1984), but both share the outermost
+SC template `V [SC Subj XP]`. -/
+
+/-- Nested SC DOC: `give [SC book [PP to Hsu]]`.
+    Den Dikken (1995, Ch. 3): the theme (book) is the SC subject —
+    paralleling PVCs where the object is SC subject — and the PP
+    "to Hsu" is the SC predicate (P head with goal complement).
+    P-incorporation yields DOC; P in situ yields PP-dative. -/
+def doc_nested : SyntacticObject :=
+  merge V_give (merge DP_book (merge P_to DP_hsu))
+
+theorem doc_nested_shape :
+    doc_nested.shape = .node .leaf (.node .leaf (.node .leaf .leaf)) := rfl
+
+/-- The nested SC DOC is NOT isomorphic to the flat SC DOC.
+    More internal structure → different tree geometry. -/
+theorem doc_nested_not_flat :
+    structurallyIsomorphic doc_nested doc_sc = false := by native_decide
+
+/-- The nested SC DOC IS isomorphic to the ApplP analysis — both
+    have a right-branching depth-3 tree `node(leaf, node(leaf, node(leaf, leaf)))`.
+    They differ only in terminal labels: the intermediate head is
+    P ("to") in den Dikken's analysis vs Appl in Marantz's. -/
+theorem doc_nested_matches_appl :
+    structurallyIsomorphic doc_nested doc_appl = true := by native_decide
 
 /-! ## §7. Bruening (2021): process-level vs tree-shape isomorphism
 

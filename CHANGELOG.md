@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.226.93] - 2026-02-26
+
+### Changed
+- **Den Dikken (1995) SC predication corrections**: fix `SCPredCategory.D` → `.N` per den Dikken's explicit {A, N, P, V} (lexical categories, p.25 ex. 43). Fix `doc_category` from `.D` to `.P` — den Dikken's deep claim is that dative P is structurally a particle, so DOC and PVC share category P. Add `copular_category := .N` for copular/ECM constructions. Fix `doc_nested` argument mapping: theme is now SC subject (paralleling PVC), PP `[to Goal]` is SC predicate, matching den Dikken's Ch. 3. Add `doc_pvc_share_P` theorem. Restructure `sc_family_covers_all_categories` to show all four lexical categories are attested.
+
 ## [0.226.92] - 2026-02-26
 
 ### Changed
@@ -25,7 +30,7 @@
 ## [0.226.90] - 2026-02-26
 
 ### Added
-- **Den Dikken (1995) SC predication integration** (`SmallClause.lean`, `MinimalismParticleSC.lean`, `MinimalismResultativeSC.lean`): new `SmallClause` type in `Theories/Syntax/Minimalism/Core/` with `SCPredCategory` enum (P/A/V/D) parameterizing the SC family. `ApplType.isAffixalParticle` and `ApplType.toSCPredCategory` connect Pylkkänen's low applicatives to den Dikken's affixal particle thesis. PVC bridge connects particle verb data to SC + head movement (`formComplexLI` for P-to-V incorporation), derives pronoun/heavy-NP ordering constraints from `PVCDerivation` type, proves predictions match all 6 empirical judgments. Resultative bridge maps Goldberg & Jackendoff's 5-way typology onto SC predicate categories (A for property, P for path). Extended `MinimalismSmallClause.lean` with SC family categorization (4 categories spanning all 4 constructions), nested SC DOC `V [SC Goal [SC Theme P]]` for den Dikken's Ch. 3 dative alternation analysis, proving it matches ApplP tree shape but differs from flat SC-DOC. 30 new theorems.
+- **Den Dikken (1995) SC predication integration** (`SmallClause.lean`, `MinimalismParticleSC.lean`, `MinimalismResultativeSC.lean`): new `SmallClause` type in `Theories/Syntax/Minimalism/Core/` with `SCPredCategory` enum (P/A/V/N) parameterizing the SC family. `ApplType.isAffixalParticle` and `ApplType.toSCPredCategory` connect Pylkkänen's low applicatives to den Dikken's affixal particle thesis. PVC bridge connects particle verb data to SC + head movement (`formComplexLI` for P-to-V incorporation), derives pronoun/heavy-NP ordering constraints from `PVCDerivation` type, proves predictions match all 6 empirical judgments. Resultative bridge maps Goldberg & Jackendoff's 5-way typology onto SC predicate categories (A for property, P for path). Extended `MinimalismSmallClause.lean` with SC family categorization (5 constructions spanning all 4 lexical categories), nested SC DOC `V [SC Theme [PP P Goal]]` for den Dikken's Ch. 3 dative alternation analysis, proving it matches ApplP tree shape but differs from flat SC-DOC. 30+ new theorems.
 
 ## [0.226.89] - 2026-02-26
 

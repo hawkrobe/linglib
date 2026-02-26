@@ -60,7 +60,7 @@ def Case.hierarchyRank : Case → Nat
   | .loc                      => 3
   | .abl | .inst              => 2
   | .com | .all | .perl | .ben => 1
-  | .voc | .part | .caus      => 0
+  | .voc | .part | .caus | .ess | .transl | .abess => 0
 
 -- ============================================================================
 -- § 2: Contiguity / Valid Inventory

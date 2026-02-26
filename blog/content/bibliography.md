@@ -417,6 +417,9 @@ cited in: [Bridge](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenome
 **Ciardelli, I., Groenendijk, J. & Roelofsen, F.** (2018). Inquisitive Semantics. *Oxford University Press*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Questions/Inquisitive.lean)
 
+**Fox, D.** (2018). Partition by Exhaustification: Comments on Dayal 1996. *Proceedings of Sinn und Bedeutung 22, 1, 403–434*.\
+[cited]
+
 **Groenendijk, J. & Stokhof, M.** (1984). Studies on the Semantics of Questions and the Pragmatics of Answers. *PhD dissertation, University of Amsterdam*.\
 [foundational] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Questions/Partition.lean)
 
@@ -425,6 +428,10 @@ cited in: [Bridge](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenome
 
 **Karttunen, L.** (1977). Syntax and Semantics of Questions. *Linguistics and Philosophy, 1(1), 3–44*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Questions/Hamblin.lean)
+
+**Xiang, Y.** (2022). Relativized Exhaustivity: Mention-Some and Uniqueness. *Natural Language Semantics, 30(3), 311–362*.\
+[formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Questions/Exhaustivity.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Questions/Studies/Xiang2022/Bridge.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Questions/Studies/Xiang2022/Data.lean)\
+cited in: [Bridge](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Questions/Studies/Xiang2022/Bridge.lean), [Data](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Questions/Studies/Xiang2022/Data.lean), [Exhaustivity](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Questions/Exhaustivity.lean)
 
 ## Semantics — Presupposition & Entailment
 
@@ -466,7 +473,7 @@ cited in: [MedialVerbs](https://github.com/hawkrobe/linglib/blob/main/Linglib/Fr
 
 **Aissen, J.** (2003). Differential Object Marking: Iconicity vs.\ Economy. *Natural Language \& Linguistic Theory, 21(3), 435–483*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/Prominence.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Case/Typology.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Case/Studies/Aissen2003.lean)\
-cited in: [Aissen2003](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Case/Studies/Aissen2003.lean)
+cited in: [DependentCaseDOM](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Case/Bridge/DependentCaseDOM.lean), [Aissen2003](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Case/Studies/Aissen2003.lean)
 
 **Anand, P., Hardt, D. & McCloskey, J.** (2021). The Santa Cruz Sluicing Data Set. *Language, 97(1), e68–e88*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Ellipsis/Studies/AnandHardtMcCloskey2021/Data.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Ellipsis/Studies/AnandHardtMcCloskey2021/Bridge.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/Basic.lean)\
@@ -582,7 +589,7 @@ cited in: [Categorizer](https://github.com/hawkrobe/linglib/blob/main/Linglib/Th
 
 **Clements, G. N.** (1985). The Geometry of Phonological Features. *Phonology Yearbook, 2, 225–252*.\
 [foundational] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Phonology/FeatureGeometry.lean)\
-cited in: [FeatureGeometry](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Phonology/FeatureGeometry.lean)
+cited in: [AutosegmentalDerivations](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/PhonologicalAlternation/Bridge/AutosegmentalDerivations.lean), [FeatureGeometry](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Phonology/FeatureGeometry.lean)
 
 **Stojkovi\'c, J.** (2026). Same Form, Different Grammars: The Slavic [ov]\textasciitilde[u] Alternation. *Advances in Formal Slavic Linguistics 2023*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Allomorphy/SlavicVerbalizer/Data.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Allomorphy/SlavicVerbalizer/Bridge/OTAnalysis.lean)\
