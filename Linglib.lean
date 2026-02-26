@@ -521,6 +521,8 @@ import Linglib.Phenomena.TenseAspect.Studies.OgiharaST2024.Data
 import Linglib.Phenomena.TenseAspect.Studies.OgiharaST2024.Bridge
 import Linglib.Phenomena.TenseAspect.Studies.Koev2017.Data
 import Linglib.Phenomena.TenseAspect.Studies.Koev2017.Bridge
+import Linglib.Phenomena.TenseAspect.Studies.Izvorski1997.Data
+import Linglib.Phenomena.TenseAspect.Studies.Izvorski1997.Bridge
 import Linglib.Phenomena.WordOrder.Basic
 import Linglib.Phenomena.WordOrder.SubjectAuxInversion
 import Linglib.Phenomena.WordOrder.Typology

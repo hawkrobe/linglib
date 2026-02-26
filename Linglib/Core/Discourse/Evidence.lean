@@ -77,4 +77,12 @@ def MirativityValue.isMirative : MirativityValue → Bool
   | .unexpected => true
   | _ => false
 
+/-- Is this evidence source indirect? Hearsay and inference are indirect;
+    direct observation is not. This is Izvorski's (1997) binary partition
+    of Aikhenvald's three-way classification. -/
+def EvidentialSource.isIndirect : EvidentialSource → Bool
+  | .direct => false
+  | .hearsay => true
+  | .inference => true
+
 end Core.Evidence

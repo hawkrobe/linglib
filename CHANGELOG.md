@@ -1,5 +1,23 @@
 # Changelog
 
+## [0.226.70] - 2026-02-25
+
+### Added
+- **Izvorski (1997) PE as epistemic modal**: EV operator grounded in Kratzer modal semantics, concrete Ev-vs-must World4 scenario, presupposition projection, Izvorski–Koev divergence/collapse bridge theorems.
+  - `Phenomena/TenseAspect/Studies/Izvorski1997/Data.lean`: PE language inventory, Ev/must felicity data ((10)–(13)), presupposition diagnostics ((14)–(16)) with `native_decide` verification.
+  - `Phenomena/TenseAspect/Studies/Izvorski1997/Bridge.lean`: `izvorskiEv` operator (Kratzer necessity + non-empty accessibility presupposition), concrete wine scenario with `evBase`/`mustBase` contrast, `restricted_base_enlarges_access` (extension_antitone applied to evidence bases), `izvorski_koev_diverge`/`izvorski_collapses_to_koev_when_realistic`, presupposition projection via `neg_presup`, `nfutL` compatibility.
+- **`EvidentialSource.isIndirect`** in `Core/Discourse/Evidence.lean`: Izvorski's binary partition of Aikhenvald's three-way classification (hearsay and inference = indirect, direct = not).
+- **Bibliography**: `izvorski-1997`, `koev-2017` entries in `references.bib`.
+
+### Changed
+- **Koev (2017) bridge**: reorganized around the paper's four properties (6i–6iv), added learning-scenario infrastructure, cross-reference to `izvorskiEv`.
+
+## [0.226.69] - 2026-02-25
+
+### Added
+- **Dependent case ↔ inventory bridge** (`Phenomena/Case/Bridge/DependentCaseInventories.lean`): connects `assignCases` algorithm to 18 language-specific case inventories. Per-language coverage theorems prove structural cases (NOM/ACC for accusative, ABS/ERG for ergative, ABS/ERG/ACC for tripartite) are in each language's validated inventory. Concrete derivation examples for German, Turkish, Basque, Hindi (split-ergative), and Georgian (split-ergative). Documents the ABS/NOM mismatch in split-ergative languages.
+- **`structuralCasesFor`** (`DependentCase.lean`): maps `CaseLanguageType` to the list of structural cases the algorithm can assign. Three exhaustiveness theorems (`accusative_nonlexical_cases`, `ergative_nonlexical_cases`, `tripartite_nonlexical_cases`) prove any non-lexical NP receives only these cases.
+
 ## [0.226.68] - 2026-02-25
 
 ### Added
