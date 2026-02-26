@@ -1047,6 +1047,7 @@ import Linglib.Theories.Phonology.Features
 import Linglib.Theories.Phonology.FeatureGeometry
 import Linglib.Theories.Phonology.Autosegmental.Defs
 import Linglib.Theories.Phonology.Syllable.Defs
+import Linglib.Theories.Phonology.RuleBased.Defs
 
 -- Theories: Sociolinguistics
 import Linglib.Theories.Sociolinguistics.PropertySpace

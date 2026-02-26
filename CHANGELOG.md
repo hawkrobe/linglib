@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.226.82] - 2026-02-26
+
+### Added
+- **SPE phonological rules** (`Theories/Phonology/RuleBased/Defs.lean`): core rule-based phonology formalism from Hayes (2009) Ch 6. `PhonRule` structure implements `A → B / C __ D` notation with `Segment` natural class matching, `ContextElem` (segment patterns + word boundaries), and `RuleEffect` (feature change / deletion). `Segment.ofSpecs` constructs segments from feature-value pairs; `matchesPattern` checks natural class membership; `applyChanges` merges feature bundles. Left-to-right rule application (`PhonRule.apply`) and ordered derivation (`derive`). Three Hayes Ch 6 example rules: preglottalization (p.125), Korean stop nasalization (p.132), postnasal /t/ deletion (p.133). Verification: `matchesPattern_refl`, `applyChanges_ofSpecs_nil`, `derive_nil`.
+
 ## [0.226.81] - 2026-02-26
 
 ### Changed
