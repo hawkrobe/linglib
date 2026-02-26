@@ -1,5 +1,6 @@
 import Linglib.Theories.Syntax.Minimalism.Core.Agree
 import Linglib.Theories.Syntax.Minimalism.Core.Spellout
+import Linglib.Theories.Syntax.Minimalism.Core.PersonGeometry
 import Linglib.Fragments.Kaqchikel.AgentFocus
 
 /-!
@@ -90,37 +91,30 @@ def personNumbers : List PersonNumber :=
   [.p1sg, .p2sg, .p3sg, .p1pl, .p2pl, .p3pl]
 
 -- ============================================================================
--- § 2: Feature Decomposition (Preminger 2014, §4.3, (55))
+-- § 2: Feature Decomposition (grounded in PersonGeometry.lean)
 -- ============================================================================
 
-/-- Is this person-number [+participant]? (1st or 2nd person)
-    Preminger's (55): [participant] ⊂ [PERSON] ⊂ [φ]. -/
-def PersonNumber.isParticipant : PersonNumber → Bool
-  | .p1sg => true
-  | .p2sg => true
-  | .p3sg => false
-  | .p1pl => true
-  | .p2pl => true
-  | .p3pl => false
-
-/-- Is this person-number [+author]? (1st person only)
-    Preminger's (55): [author] ⊂ [participant] ⊂ [PERSON]. -/
-def PersonNumber.isAuthor : PersonNumber → Bool
-  | .p1sg => true
-  | .p1pl => true
-  | .p2sg => false
-  | .p2pl => false
-  | .p3sg => false
-  | .p3pl => false
+/-- Person value (1, 2, or 3). -/
+def PersonNumber.person : PersonNumber → Nat
+  | .p1sg | .p1pl => 1
+  | .p2sg | .p2pl => 2
+  | .p3sg | .p3pl => 3
 
 /-- Is this person-number [+plural]? -/
 def PersonNumber.isPlural : PersonNumber → Bool
-  | .p1pl => true
-  | .p2pl => true
-  | .p3pl => true
-  | .p1sg => false
-  | .p2sg => false
-  | .p3sg => false
+  | .p1pl | .p2pl | .p3pl => true
+  | .p1sg | .p2sg | .p3sg => false
+
+/-- Is this person-number [+participant]? Derived from the feature
+    geometry in `PersonGeometry.lean` (Preminger 2014, §4.3, (55)):
+    [participant] ⊂ [PERSON] ⊂ [φ]. -/
+def PersonNumber.isParticipant (pn : PersonNumber) : Bool :=
+  (decomposePerson pn.person).hasParticipant
+
+/-- Is this person-number [+author]? Derived from the feature geometry:
+    [author] ⊂ [participant] ⊂ [PERSON]. -/
+def PersonNumber.isAuthor (pn : PersonNumber) : Bool :=
+  (decomposePerson pn.person).hasAuthor
 
 /-- Convert to PhiFeature list for the Agree infrastructure. -/
 def PersonNumber.toPhiFeatures : PersonNumber → List PhiFeature
@@ -136,14 +130,16 @@ def PersonNumber.toPhiFeatures : PersonNumber → List PhiFeature
 -- ============================================================================
 
 /-- Set A (ERG) markers: prefixes on Voice/v cross-referencing the
-    transitive agent (Preminger 2014, Ch. 3). -/
+    transitive agent (Preminger 2014, Ch. 3, table (29)).
+    Parenthesized segments are dropped in certain phonological
+    contexts; the grapheme *j* represents a voiceless velar fricative. -/
 def setAExponent : PersonNumber → String
-  | .p1sg => "in-"
-  | .p2sg => "a-"
-  | .p3sg => "u-/r-"
-  | .p1pl => "qa-"
-  | .p2pl => "i-"
-  | .p3pl => "ki-"
+  | .p1sg => "n/w-"
+  | .p2sg => "a(w)-"
+  | .p3sg => "r(u)/u-"
+  | .p1pl => "q(a)-"
+  | .p2pl => "i(w)-"
+  | .p3pl => "k(i)-"
 
 /-- Set A as Vocabulary entries for Spellout, contextualized to Voice/v. -/
 def setAVocab : Vocabulary :=
@@ -223,22 +219,16 @@ def kaqArgPositions : List KaqArgPosition :=
 
 /-- The omnivorous agreement hierarchy for AF (Preminger 2014, §3.3).
 
-    Rank determines which argument the single AF marker tracks:
-    - Rank 2: [+participant] (1st or 2nd person)
-    - Rank 1: [-participant, +plural] (3PL)
-    - Rank 0: [-participant, -plural] (3SG, default/Elsewhere)
+    Derived from `probeResolutionRank` (PersonGeometry.lean), which
+    computes rank from the two-probe system:
+    - Rank 2: visible to π⁰ ([+participant])
+    - Rank 1: visible to #⁰ only ([+plural, −participant])
+    - Rank 0: invisible to both probes (3SG, default/Elsewhere)
 
-    The hierarchy reflects the activity of two probes: π⁰ (seeks
-    [participant]) outranks #⁰ (seeks [plural]). If π⁰ succeeds, its
-    result determines the marker; if it fails, #⁰ provides the number
-    result; if both fail, the default 3SG surfaces. -/
-def PersonNumber.afRank : PersonNumber → Nat
-  | .p1sg => 2
-  | .p2sg => 2
-  | .p1pl => 2
-  | .p2pl => 2
-  | .p3pl => 1
-  | .p3sg => 0
+    The hierarchy is not stipulated — it follows from the feature
+    geometry and the probe targets. -/
+def PersonNumber.afRank (pn : PersonNumber) : Nat :=
+  probeResolutionRank pn.person pn.isPlural
 
 /-- Person restriction (Preminger 2014, (25)): at most one core
     argument can be [+participant]. Returns `true` if the combination
@@ -275,24 +265,35 @@ structure AFAgreementDatum where
   marker : Option String
   deriving Repr
 
-/-- The empirical AF agreement paradigm (Preminger 2014, table 22).
+/-- The empirical AF agreement paradigm (Preminger 2014, table (22)).
     Each row records the observed agreement marker for a given
-    subject-object combination in clause-local agent extraction. -/
+    subject-object combination in clause-local agent extraction.
+
+    The first 11 rows reproduce the paper's table exactly. Rows 12–15
+    demonstrate commutativity (§3.2, fn. a): the table uses set notation
+    {φ₁, φ₂}, so swapping subj/obj yields the same marker. Rows 16–17
+    test person restriction violations ((25)). -/
 def afParadigm : List AFAgreementDatum :=
-  [ -- Both 3rd person: number determines marker
+  [ -- Table (22), rows 1–3: both 3rd person, number determines marker
     ⟨.p3sg, .p3sg, some "∅"⟩         -- default: 3SG×3SG → ∅
-  , ⟨.p3sg, .p3pl, some "e-"⟩        -- [+plural] obj
-  , ⟨.p3pl, .p3sg, some "e-"⟩        -- [+plural] subj
-  , ⟨.p3pl, .p3pl, some "e-"⟩        -- [+plural] both
-    -- One [+participant] argument: participant determines marker
-  , ⟨.p1sg, .p3sg, some "in-"⟩       -- [+participant] subj
-  , ⟨.p2sg, .p3sg, some "at-"⟩       -- [+participant] subj
-  , ⟨.p3sg, .p1sg, some "in-"⟩       -- [+participant] obj (commutativity)
-  , ⟨.p3sg, .p2sg, some "at-"⟩       -- [+participant] obj (commutativity)
-    -- [+participant] outranks [+plural]
-  , ⟨.p1sg, .p3pl, some "in-"⟩       -- participant > plural
-  , ⟨.p3pl, .p2sg, some "at-"⟩       -- participant > plural
-    -- Person restriction violations (Preminger 2014, (25))
+  , ⟨.p3pl, .p3sg, some "e-"⟩        -- [+plural] outranks default
+  , ⟨.p3pl, .p3pl, some "e-"⟩        -- [+plural] both → 3PL
+    -- Table (22), rows 4–7: one [+participant] argument with 3SG
+  , ⟨.p1sg, .p3sg, some "in-"⟩       -- 1SG [+participant]
+  , ⟨.p2sg, .p3sg, some "at-"⟩       -- 2SG [+participant]
+  , ⟨.p1pl, .p3sg, some "oj-"⟩       -- 1PL [+participant]
+  , ⟨.p2pl, .p3sg, some "ix-"⟩       -- 2PL [+participant]
+    -- Table (22), rows 8–11: [+participant] outranks [+plural]
+  , ⟨.p1sg, .p3pl, some "in-"⟩       -- 1SG participant > 3PL plural
+  , ⟨.p2sg, .p3pl, some "at-"⟩       -- 2SG participant > 3PL plural
+  , ⟨.p1pl, .p3pl, some "oj-"⟩       -- 1PL participant > 3PL plural
+  , ⟨.p2pl, .p3pl, some "ix-"⟩       -- 2PL participant > 3PL plural
+    -- Commutativity (§3.2, fn. a): swapping subj/obj → same marker
+  , ⟨.p3sg, .p3pl, some "e-"⟩        -- = {3PL, 3SG} swapped
+  , ⟨.p3sg, .p1sg, some "in-"⟩       -- = {1SG, 3SG} swapped
+  , ⟨.p3sg, .p2sg, some "at-"⟩       -- = {2SG, 3SG} swapped
+  , ⟨.p3pl, .p2sg, some "at-"⟩       -- = {2SG, 3PL} swapped
+    -- Person restriction violations (25)
   , ⟨.p1sg, .p2sg, none⟩             -- *two [+participant] args
   , ⟨.p2sg, .p1sg, none⟩             -- *two [+participant] args
   ]
@@ -379,7 +380,28 @@ theorem third_not_participant :
     PersonNumber.p3pl.isParticipant = false := ⟨rfl, rfl⟩
 
 -- ============================================================================
--- § 12: Verification Theorems — AF Agreement
+-- § 12: Verification — Grounding in PersonGeometry
+-- ============================================================================
+
+/-- The AF hierarchy is grounded in the two-probe system: person-number
+    values that bear [+participant] get rank 2 (visible to π⁰), 3PL
+    gets rank 1 (visible to #⁰ only), and 3SG gets rank 0. -/
+theorem af_rank_grounded :
+    PersonNumber.p1sg.afRank = 2 ∧
+    PersonNumber.p2sg.afRank = 2 ∧
+    PersonNumber.p3pl.afRank = 1 ∧
+    PersonNumber.p3sg.afRank = 0 := ⟨rfl, rfl, rfl, rfl⟩
+
+/-- isParticipant is derived from decomposePerson, not stipulated.
+    Verify it gives the expected values. -/
+theorem isParticipant_grounded :
+    PersonNumber.p1sg.isParticipant = true ∧
+    PersonNumber.p2sg.isParticipant = true ∧
+    PersonNumber.p3sg.isParticipant = false ∧
+    PersonNumber.p3pl.isParticipant = false := ⟨rfl, rfl, rfl, rfl⟩
+
+-- ============================================================================
+-- § 13: Verification Theorems — AF Agreement
 -- ============================================================================
 
 /-- The entire AF paradigm (table 22) is correctly predicted by the
@@ -421,7 +443,7 @@ theorem person_restriction_symmetric :
 theorem default_3sg : afMarker .p3sg .p3sg = some "∅" := rfl
 
 -- ============================================================================
--- § 13: Verification Theorems — Verb Form Connection
+-- § 14: Verification Theorems — Verb Form Connection
 -- ============================================================================
 
 /-- AF has a single agreement slot (one marker from the ABS paradigm). -/

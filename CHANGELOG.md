@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.226.59] - 2026-02-25
+
+### Fixed
+- **Set A (ERG) exponents corrected** in Kaqchikel Agreement: 4 of 6 forms were wrong per Preminger (2014) table (29). Most critically, 1sg ERG was `in-` (the Set B/ABS form) — now correctly `n/w-`.
+- **AF paradigm completed**: added 5 missing rows from table (22) — plural participant forms {1PL, 3SG}, {2PL, 3SG}, {2SG, 3PL}, {1PL, 3PL}, {2PL, 3PL}. Paradigm now reproduces all 11 rows from the paper (17 data points total with commutativity and person restriction tests).
+- **Dead import removed** from CaseDiscrimination.lean (imported Agree.lean but used nothing from it).
+- **Privative feature note** added to PersonGeometry.lean docstring: the paper treats [participant]/[author] as privative (p. 46); our Bool encoding documented as design choice.
+
 ## [0.226.58] - 2026-02-25
 
 ### Changed

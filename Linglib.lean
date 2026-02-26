@@ -673,6 +673,9 @@ import Linglib.Theories.Semantics.Focus.KratzerSelkirk2020
 
 -- Theories: Minimalism
 import Linglib.Theories.Syntax.Minimalism.Core.Agree
+import Linglib.Theories.Syntax.Minimalism.Core.PersonGeometry
+import Linglib.Theories.Syntax.Minimalism.Core.ObligatoryOperations
+import Linglib.Theories.Syntax.Minimalism.Core.CaseDiscrimination
 import Linglib.Theories.Syntax.Minimalism.Core.DependentCase
 import Linglib.Theories.Syntax.Minimalism.Formal.Amalgamation
 import Linglib.Theories.Syntax.Minimalism.Formal.Constraints.HMC
