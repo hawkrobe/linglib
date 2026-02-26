@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.226.67] - 2026-02-25
+
+### Changed
+- **`validInventory` weakened to per-rank check**: previously required ALL cases at each intermediate rank; now requires at least one. Matches Blake's implicational tendency (if rank N, usually at least one case at each rank below N) and Greenberg's universal methodology. The old check was too strict: e.g., Hungarian with CAUS (rank 0) would fail because rank 1 has 4 possible cases (COM, ALL, PERL, BEN) and requiring all is typologically unmotivated.
+
+### Added
+- **16 language case inventories**: Finnish (15 cases, 9 mapped — fails contiguity: no DAT), Latin (6+LOC — fails without LOC), Turkish (6), Russian (6), German (4), Hindi (8, split-ergative bridge), Japanese (9), Korean (8), Czech (6), Polish (6), Ukrainian (6), Serbian (6), Slovenian (6), Greek (3 modern + 4 classical), Hungarian (11 of 18), Tamil (8 with COM/INST syncretism). Each file validates inventory against Blake's hierarchy.
+- **Basque case inventory validation**: 11-case full inventory added to existing Agreement.lean.
+- **Slovenian, Polish, Ukrainian QuestionParticles imports** added to Linglib.lean.
+
 ## [0.226.66] - 2026-02-25
 
 ### Changed

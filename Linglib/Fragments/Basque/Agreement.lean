@@ -1,4 +1,6 @@
 import Linglib.Core.Prominence
+import Linglib.Core.Case.Basic
+import Linglib.Core.Case.Hierarchy
 
 /-!
 # Basque Agreement Fragment @cite{just-2024}
@@ -106,5 +108,24 @@ theorem p_indexing_differential :
 /-- A/S indexing is NOT differential: all person-numbers indexed. -/
 theorem as_indexing_uniform :
     allPersonNumbers.all asIsIndexed = true := by native_decide
+
+-- ============================================================================
+-- § 5: Case Inventory Validation (Blake 1994)
+-- ============================================================================
+
+/-- Basque agreement-relevant case inventory: {ERG, ABS, DAT}.
+    The full Basque case system has ~12 cases (ERG, ABS, DAT, GEN, LOC,
+    ABL, ALL, INST, COM, PERL, BEN, and more), but the agreement system
+    only distinguishes these three. -/
+def agreementCaseInventory : List Core.Case := [.erg, .abs, .dat]
+
+/-- The full Basque case inventory (representative selection). -/
+def fullCaseInventory : List Core.Case :=
+  [.erg, .abs, .gen, .dat, .loc, .abl, .all, .inst, .com, .perl, .ben]
+
+/-- The full inventory is valid per Blake's hierarchy (ranks 6 down to 1,
+    all represented). -/
+theorem full_inventory_valid :
+    Core.validInventory fullCaseInventory = true := by native_decide
 
 end Fragments.Basque.Agreement

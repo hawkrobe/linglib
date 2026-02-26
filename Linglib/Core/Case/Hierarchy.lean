@@ -66,25 +66,34 @@ def Case.hierarchyRank : Case → Nat
 -- § 2: Contiguity / Valid Inventory
 -- ============================================================================
 
-/-- A case inventory is contiguous (no gaps) on the hierarchy.
+/-- Whether the inventory has at least one case at the given rank. -/
+def hasRank (inv : List Case) (r : Nat) : Bool :=
+  inv.any fun c => c.hierarchyRank == r
 
-    For every pair of cases in the inventory, every case at an intermediate
-    rank must also be present. This idealizes Blake's tendency: you usually
-    can't have DAT without GEN, or LOC without DAT. Real languages
-    occasionally have gaps (e.g., Nanai: Blake 1994, ex. 76).
+/-- A case inventory is contiguous (no rank gaps) on the hierarchy.
 
-    The check iterates over `Case.allCases` as the universe of possible
-    cases. -/
+    For every pair of cases in the inventory, each intermediate rank must
+    have **at least one** representative in the inventory. This matches
+    Blake's implicational tendency (1994, §5.8): if a language has cases at
+    ranks N and M (N < M), it usually has at least one case at each rank
+    between them.
+
+    The predicate does NOT require all cases at a given rank to be present
+    — Blake's slash notation (ACC/ERG, ABL/INST) signals alternatives, not
+    conjunctions, and a language may have COM without PERL.
+
+    Real languages occasionally violate even this weaker check (e.g.,
+    Nanai: Blake 1994, ex. 76, p. 160). -/
 def validInventory (inv : List Case) : Bool :=
   inv.all fun c =>
     inv.all fun c' =>
       -- For every pair (c, c') where c' ranks strictly higher
       if c'.hierarchyRank > c.hierarchyRank then
-        -- Every case at an intermediate rank must be present
-        Case.allCases.all fun c'' =>
-          if c''.hierarchyRank > c.hierarchyRank &&
-             c''.hierarchyRank < c'.hierarchyRank then
-            inv.any (· == c'')
+        -- At least one case at each intermediate rank must be present
+        let lo := c.hierarchyRank
+        let hi := c'.hierarchyRank
+        List.range hi |>.all fun r =>
+          if r > lo && r < hi then hasRank inv r
           else true
       else true
 
