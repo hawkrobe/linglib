@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.226.81] - 2026-02-26
+
+### Changed
+- **De Hoop & Malchukov (2008) strengthened**: fixed citation (Linguistic Inquiry 39(4): 565–587, not Linguistics). Added symmetrical marking analysis (§6): 3-form system proves symmetrical marking requires Identify (Distinguish cannot discriminate between overt forms — `distinguish_overt_indifferent`, `symmetrical_requires_identify`). Added PaIP and alignment correlation (§7): PaIP >> I/D blocks differential marking of primary actant, deriving DOM ↔ nom-acc and DSM ↔ ergative (`alignment_correlation`). Removed weak voice section, replaced with PaIP-based analysis. Strengthened `distinguish_overt_indifferent` to universal quantification over `Strength`.
+
 ## [0.226.80] - 2026-02-26
 
 ### Added
