@@ -57,6 +57,11 @@ import Linglib.Core.Discourse.InformationStructure
 import Linglib.Core.Prosody
 import Linglib.Core.Definiteness
 import Linglib.Core.Prominence
+import Linglib.Core.Case.Basic
+import Linglib.Core.Case.Hierarchy
+import Linglib.Core.Case.Syncretism
+import Linglib.Core.Case.SplitConditions
+import Linglib.Core.Case.LocalExtension
 import Linglib.Core.Lexical.NounCategorization
 import Linglib.Core.Scales.Roundness
 import Linglib.Core.Scales.Mereology
@@ -430,6 +435,7 @@ import Linglib.Phenomena.Presupposition.Bridge.RSAWarstadt2022
 import Linglib.Phenomena.Presupposition.Bridge.RSAComparison
 import Linglib.Phenomena.Presupposition.Bridge.ScontrasTonhauser2025BToM
 import Linglib.Phenomena.Presupposition.Bridge.TowerBridge
+import Linglib.Phenomena.Presupposition.Bridge.KD45Projection
 import Linglib.Phenomena.Modality.OutlookMarkers
 import Linglib.Phenomena.Agreement.NounCategorization
 import Linglib.Phenomena.Agreement.Bridge.NounCategorization

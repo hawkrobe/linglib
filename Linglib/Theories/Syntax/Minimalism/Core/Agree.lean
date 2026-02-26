@@ -33,6 +33,7 @@ Agree is the mechanism by which features are checked/valued:
 -/
 
 import Linglib.Theories.Syntax.Minimalism.Core.Phase
+import Linglib.Core.Case.Basic
 
 namespace Minimalism
 
@@ -45,7 +46,11 @@ inductive PhiFeature where
   | gender : Nat → PhiFeature        -- language-specific encoding
   deriving Repr, DecidableEq
 
-/-- Case values -/
+/-- Case values used in the Agree system.
+
+    This is the Minimalism-internal case type, covering the 8 values needed
+    for Agree-based case assignment. For the full cross-linguistic inventory,
+    see `Core.Case.Case` (Blake 2001). -/
 inductive CaseVal where
   | nom    -- nominative (subject)
   | acc    -- accusative (object)
@@ -56,6 +61,17 @@ inductive CaseVal where
   | erg    -- ergative (transitive subject: Basque, Hindi)
   | abs    -- absolutive (intransitive subject / transitive object)
   deriving Repr, DecidableEq
+
+/-- Convert a Minimalist `CaseVal` to the theory-neutral `Core.Case.Case`. -/
+def CaseVal.toCase : CaseVal → Core.Case.Case
+  | .nom => .nom
+  | .acc => .acc
+  | .dat => .dat
+  | .gen => .gen
+  | .obl => .nom  -- oblique maps to nominative (default/unmarked)
+  | .abl => .abl
+  | .erg => .erg
+  | .abs => .abs
 
 /-- Honorific level: social ordering between speaker and referent.
     Relational, not absolute (Alok 2020, Portner et al. 2019).

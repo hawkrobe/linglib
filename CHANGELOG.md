@@ -1,5 +1,22 @@
 # Changelog
 
+## [0.226.64] - 2026-02-25
+
+### Added
+- **Heim (1992) know/believe asymmetry** (Phenomena/Presupposition/Bridge/KD45Projection.lean): concrete 2-world model proving S5 reflexivity forces presupposed content to be true at the actual world, while KD45 non-reflexivity permits false presuppositions under belief embedding. Three theorems (`reflexivity_forces_actual_truth`, `non_reflexivity_permits_false_presup`, `heim_know_believe_asymmetry`), 0 sorry.
+- **Bool/Prop bridge in BeliefEmbedding.lean**: `doxOfAccessRel` (converts Bool-valued `AgentAccessRel` to Prop-valued `DoxasticAccessibility`), `beliefLocalCtxOfFrame`/`knowledgeLocalCtxOfFrame` (construct `BeliefLocalCtx` from `KnowledgeBeliefFrame`), `beliefLocal_sub_knowledgeLocal` (R_B ⊆ R_K monotonicity), `knowledge_filtered_implies_belief_filtered`.
+
+## [0.226.62] - 2026-02-25
+
+### Added
+- **Blake (2001) case infrastructure**: 5 new `Core/Case/` modules formalizing the theory-neutral case inventory, hierarchy, syncretism, split-ergative conditioning, and local extension paths from Blake's *Case* (CUP).
+  - `Basic.lean`: 16-value `Core.Case.Case` type (NOM–CAUS), `AlignmentFamily`, `isCore`/`isPeripheral` predicates, exhaustive enumeration.
+  - `Hierarchy.lean`: Blake's case hierarchy (NOM/ACC > GEN > DAT > LOC > ABL/INST > COM/ALL/PERL > ...), `validInventory` contiguity checker with 7 valid/4 invalid inventory theorems.
+  - `Syncretism.lean`: `Syncretism` relation, `hierarchyAdjacent` and `inventoryAdjacent` predicates, 4 attested syncretism patterns (NOM/ACC, ERG/INST, DAT/ALL, COM/INST), Blake's adjacency constraint.
+  - `SplitConditions.lean`: `SplitErgativity` structure parameterized by conditioning factor, `SplitDomain` (tense/aspect, person/animacy, clause type, NP type), `silverstein` function connecting `Core.Prominence` scales, Hindi/Dyirbal examples, monotonicity theorem.
+  - `LocalExtension.lean`: `localExtension` paths (ABL→INST→CAUS, LOC→DAT, ALL→DAT→BEN), `core_cases_no_extension` theorem, directionality verification.
+- **`CaseVal.toCase`** coercion from `Minimalism.CaseVal` to `Core.Case.Case` in `Agree.lean`.
+
 ## [0.226.61] - 2026-02-25
 
 ### Added
