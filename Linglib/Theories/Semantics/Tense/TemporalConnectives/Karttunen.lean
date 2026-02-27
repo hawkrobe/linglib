@@ -372,4 +372,64 @@ theorem by_not_implies_before :
   have hf : iP.finish = 5 := rfl
   omega
 
+-- ============================================================================
+-- § 11: *Whenever* — Universal Temporal Overlap (Heinämäki 1974)
+-- ============================================================================
+
+/-- *Whenever*: universally quantified temporal overlap.
+    "A whenever B" holds when every time point in B is also a time point in A.
+    Equivalent to `while_` with swapped arguments (B ⊆ A in time).
+
+    "Whenever it rains, I carry an umbrella" = every rain-time is an
+    umbrella-time. Implies habitual/generic interpretation.
+
+    Heinämäki (1974) treats *whenever* as a universal quantifier over
+    temporal overlap events, distinguishing it from the existential
+    *when* (∃-overlap). -/
+def Karttunen.whenever (A B : SentDenotation Time) : Prop :=
+  ∀ t ∈ timeTrace B, t ∈ timeTrace A
+
+/-- *Whenever* is *while* with swapped arguments: "A whenever B" ↔ "B while A".
+    Both express temporal containment, but *whenever* puts the containing event
+    as the main clause and the contained event as the subordinate clause. -/
+theorem whenever_iff_while_swap (A B : SentDenotation Time) :
+    Karttunen.whenever A B ↔ Karttunen.while_ B A :=
+  Iff.rfl
+
+/-- *Whenever* implies *when* (when B is nonempty):
+    universal overlap entails existential overlap. -/
+theorem whenever_implies_when (A B : SentDenotation Time)
+    (hne : ∃ t, t ∈ timeTrace B) :
+    Karttunen.whenever A B → Karttunen.when_ A B := by
+  intro hw
+  obtain ⟨t, ht⟩ := hne
+  exact ⟨t, hw t ht, ht⟩
+
+/-- *Whenever* is NOT symmetric: containment is directional.
+    Counterexample: same as `while_not_symmetric` — A ⊂ B gives
+    "A whenever B" false but "B whenever A" true. -/
+theorem whenever_not_symmetric :
+    ¬ ∀ (A B : SentDenotation ℤ),
+      Karttunen.whenever A B → Karttunen.whenever B A := by
+  intro h
+  let iA : Interval ℤ := ⟨1, 10, by omega⟩
+  let iB : Interval ℤ := ⟨5, 5, by omega⟩
+  have hAs : iA.start = 1 := rfl
+  have hAf : iA.finish = 10 := rfl
+  have hBs : iB.start = 5 := rfl
+  have hBf : iB.finish = 5 := rfl
+  -- whenever (stativeDenotation iA) {iB}: every time in {iB} (t=5) is in [1,10] ✓
+  have hw : Karttunen.whenever (stativeDenotation iA) {iB} := by
+    intro t ⟨i, hi, hts, htf⟩
+    simp only [Set.mem_singleton_iff] at hi; subst hi
+    rw [timeTrace_stativeDenotation]
+    constructor <;> omega
+  -- whenever {iB} (stativeDenotation iA): every time in [1,10] is in {5} ✗
+  have hw' := h _ _ hw
+  have h1 : (1 : ℤ) ∈ timeTrace (stativeDenotation iA) := by
+    rw [timeTrace_stativeDenotation]; constructor <;> omega
+  obtain ⟨i, hi, hts, _⟩ := hw' 1 h1
+  simp only [Set.mem_singleton_iff] at hi; subst hi
+  omega
+
 end Semantics.Tense.TemporalConnectives

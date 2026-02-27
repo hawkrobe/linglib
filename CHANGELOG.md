@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.227.19] - 2026-02-27
+
+### Added
+- **Heinämäki (1974) connective coverage expansion**: `Karttunen.whenever` (universal temporal overlap, ∀t∈B, t∈A), `whenever_iff_while_swap`, `whenever_implies_when`, `whenever_not_symmetric` (counterexample proof). `.whenever` added to `TemporalOrder` enum.
+- **English fragment entries**: `asLongAs` (= *while*, Heinämäki Ch. 3), `whenever_conn`, `asSoonAs` (= strengthened *after*). Updated `allEntries`, `all_orders_covered`, `only_before_nonveridical`, `npi_pattern`; `asLongAs_matches_while`, `asSoonAs_matches_after` agreement theorems.
+- **Finnish fragment entries**: `sillä_aikaa_kun` ('while'), `aina_kun` ('whenever'), `heti_kun` ('as soon as') with cross-linguistic agreement theorems and `kun_family_veridical` (morphological transparency).
+- **Veridicality grounding** for new entries: `whenever_veridicality_grounded`, `asSoonAs_veridicality_grounded`, `asLongAs_veridicality_grounded`; extended `veridicality_from_quantifiers`.
+
 ## [0.227.18] - 2026-02-27
 
 ### Added

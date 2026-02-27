@@ -39,6 +39,7 @@ inductive TemporalOrder where
   | until_
   | since_
   | by_
+  | whenever
   deriving DecidableEq, Repr, BEq, Inhabited
 
 /-- Available readings for a temporal clause or modified VP.
@@ -276,12 +277,69 @@ def by_deadline : TemporalExprEntry :=
   , triggeredCoercion := none }
 
 -- ============================================================================
+-- § 4b: Additional Connective Entries (Heinämäki 1974)
+-- ============================================================================
+
+/-- *as long as*: temporal containment, synonymous with *while*.
+    "I'll stay as long as you need me." Same ∀-containment semantics as *while*
+    (Heinämäki 1974, Ch. 3). Carries an additional conditional flavor in many
+    uses ("As long as it rains, we stay inside"), but truth-conditionally
+    equivalent to *while*. -/
+def asLongAs : TemporalExprEntry :=
+  { form := "as long as"
+  , complementType := .clausal
+  , order := .while_
+  , licensesNPI := false
+  , defaultReading := .durative
+  , coercedReading := none
+  , embeddedTelicityEffect := false
+  , crossLinguisticBasic := false
+  , complementVeridical := true
+  , forcesPunctual := false
+  , triggeredCoercion := none }
+
+/-- *whenever*: universally quantified temporal overlap (Heinämäki 1974).
+    "Whenever it rains, I carry an umbrella." Every occasion of B has a
+    corresponding occurrence of A. Truth-conditionally ∀t∈B, t∈A (= while
+    with arguments swapped). Implies habitual/generic interpretation.
+    Veridical for both clauses (given nonempty B). -/
+def whenever_conn : TemporalExprEntry :=
+  { form := "whenever"
+  , complementType := .clausal
+  , order := .whenever
+  , licensesNPI := false
+  , defaultReading := .durative
+  , coercedReading := none
+  , embeddedTelicityEffect := false
+  , crossLinguisticBasic := true
+  , complementVeridical := true
+  , forcesPunctual := false
+  , triggeredCoercion := none }
+
+/-- *as soon as*: strengthened *after* with temporal proximity implicature
+    (Heinämäki 1974). "He left as soon as she arrived." Truth-conditionally
+    equivalent to *after* (∃∃ ordering), but pragmatically implies minimal
+    temporal gap between the two events. Veridical complement. -/
+def asSoonAs : TemporalExprEntry :=
+  { form := "as soon as"
+  , complementType := .clausal
+  , order := .after
+  , licensesNPI := false
+  , defaultReading := .afterFinish
+  , coercedReading := none
+  , embeddedTelicityEffect := true
+  , crossLinguisticBasic := true
+  , complementVeridical := true
+  , forcesPunctual := false
+  , triggeredCoercion := none }
+
+-- ============================================================================
 -- § 5: Entry Lists
 -- ============================================================================
 
 def allEntries : List TemporalExprEntry :=
   [before_, after_, while_conn, until_, when_conn, since_conn, till_conn,
-   within_, at_punct, by_deadline]
+   asLongAs, whenever_conn, asSoonAs, within_, at_punct, by_deadline]
 
 /-- Connective entries only (clausal complement). -/
 def allConnectives : List TemporalExprEntry :=
@@ -305,7 +363,7 @@ theorem after_form_agrees : after_.form = FunctionWords.after.form := rfl
 -- § 7: Coverage — Every TemporalOrder Has an Entry
 -- ============================================================================
 
-/-- All seven temporal orders in the enum have corresponding entries. -/
+/-- All eight temporal orders in the enum have corresponding entries. -/
 theorem all_orders_covered :
     before_.order = .before ∧
     after_.order = .after ∧
@@ -313,8 +371,9 @@ theorem all_orders_covered :
     until_.order = .until_ ∧
     when_conn.order = .when_ ∧
     since_conn.order = .since_ ∧
-    by_deadline.order = .by_ :=
-  ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
+    by_deadline.order = .by_ ∧
+    whenever_conn.order = .whenever :=
+  ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
 
 /-- Veridicality pattern: *before* is the only non-veridical expression.
     This holds across both connectives and modifiers. -/
@@ -326,10 +385,13 @@ theorem only_before_nonveridical :
     when_conn.complementVeridical = true ∧
     since_conn.complementVeridical = true ∧
     till_conn.complementVeridical = true ∧
+    asLongAs.complementVeridical = true ∧
+    whenever_conn.complementVeridical = true ∧
+    asSoonAs.complementVeridical = true ∧
     by_deadline.complementVeridical = true ∧
     within_.complementVeridical = true ∧
     at_punct.complementVeridical = true :=
-  ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
+  ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
 
 /-- NPI licensing pattern: only *before*, *until*, and *till* license NPIs.
     For *before*, this follows from downward entailment of the complement.
@@ -344,10 +406,13 @@ theorem npi_pattern :
     while_conn.licensesNPI = false ∧
     when_conn.licensesNPI = false ∧
     since_conn.licensesNPI = false ∧
+    asLongAs.licensesNPI = false ∧
+    whenever_conn.licensesNPI = false ∧
+    asSoonAs.licensesNPI = false ∧
     by_deadline.licensesNPI = false ∧
     within_.licensesNPI = false ∧
     at_punct.licensesNPI = false :=
-  ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
+  ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
 
 /-- *Till* and *until* agree on all semantic properties. -/
 theorem till_matches_until :
@@ -370,5 +435,21 @@ theorem complement_type_classification :
     within_.complementType = .nominal ∧
     at_punct.complementType = .nominal :=
   ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
+
+/-- *As long as* agrees with *while* on all semantic properties. -/
+theorem asLongAs_matches_while :
+    asLongAs.order = while_conn.order ∧
+    asLongAs.licensesNPI = while_conn.licensesNPI ∧
+    asLongAs.defaultReading = while_conn.defaultReading ∧
+    asLongAs.complementVeridical = while_conn.complementVeridical :=
+  ⟨rfl, rfl, rfl, rfl⟩
+
+/-- *As soon as* agrees with *after* on ordering and veridicality. -/
+theorem asSoonAs_matches_after :
+    asSoonAs.order = after_.order ∧
+    asSoonAs.licensesNPI = after_.licensesNPI ∧
+    asSoonAs.defaultReading = after_.defaultReading ∧
+    asSoonAs.complementVeridical = after_.complementVeridical :=
+  ⟨rfl, rfl, rfl, rfl⟩
 
 end Fragments.English.TemporalExpressions

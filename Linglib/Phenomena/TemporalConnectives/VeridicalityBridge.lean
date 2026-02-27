@@ -174,6 +174,26 @@ theorem before_three_layer :
 -- § 3: Quantifier Structure Determines Veridicality
 -- ============================================================================
 
+/-- *whenever* is veridical w.r.t. its complement (when B is nonempty):
+    ∀t∈B, t∈A requires B-witnesses to exist for a non-vacuous claim.
+    Fragment: `whenever_conn.complementVeridical = true`. -/
+theorem whenever_veridicality_grounded :
+    whenever_conn.complementVeridical = true ∧
+    (∀ (A B : SentDenotation ℤ),
+      (∃ t, t ∈ timeTrace B) →
+      Karttunen.whenever A B → ∃ t, t ∈ timeTrace B) :=
+  ⟨rfl, fun _ _ hne _ => hne⟩
+
+/-- *as soon as* is veridical: truth-conditionally equivalent to *after*.
+    Fragment: `asSoonAs.complementVeridical = true`. -/
+theorem asSoonAs_veridicality_grounded :
+    asSoonAs.complementVeridical = true := rfl
+
+/-- *as long as* is veridical: truth-conditionally equivalent to *while*.
+    Fragment: `asLongAs.complementVeridical = true`. -/
+theorem asLongAs_veridicality_grounded :
+    asLongAs.complementVeridical = true := rfl
+
 /-- The veridicality pattern is determined by quantifier force:
     ∃-based connectives (after, when, until_dur, since) are veridical
     because ∃ requires a witness; ∀-based connectives (before) are
@@ -188,9 +208,12 @@ theorem veridicality_from_quantifiers :
     when_conn.complementVeridical = true ∧     -- ∃-overlap
     until_.complementVeridical = true ∧        -- = when
     since_conn.complementVeridical = true ∧    -- ∃∈B
+    whenever_conn.complementVeridical = true ∧ -- ∀ (non-vacuous by presup)
+    asSoonAs.complementVeridical = true ∧      -- = after
+    asLongAs.complementVeridical = true ∧      -- = while
     -- ∀-based connective: non-veridical
     before_.complementVeridical = false :=     -- ∃∀ (∀ over B)
-  ⟨rfl, rfl, rfl, rfl, rfl⟩
+  ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
 
 -- ============================================================================
 -- § 4: Presupposition Modeling

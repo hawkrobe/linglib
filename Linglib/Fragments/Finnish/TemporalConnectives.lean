@@ -116,6 +116,58 @@ def ennenkuin : TemporalExprEntry :=
   , triggeredCoercion := none }
 
 -- ============================================================================
+-- § 1b: Additional Connective Entries (Heinämäki 1974)
+-- ============================================================================
+
+/-- Finnish *sillä aikaa kun* ('while', literally 'that time when'):
+    temporal containment, mirrors English *while* / *as long as*.
+    Multi-word expression; not a single lexeme. -/
+def sillä_aikaa_kun : TemporalExprEntry :=
+  { form := "sillä aikaa kun"
+  , complementType := .clausal
+  , order := .while_
+  , licensesNPI := false
+  , defaultReading := .durative
+  , coercedReading := none
+  , embeddedTelicityEffect := false
+  , crossLinguisticBasic := false
+  , complementVeridical := true
+  , forcesPunctual := false
+  , triggeredCoercion := none }
+
+/-- Finnish *aina kun* ('whenever', literally 'always when'):
+    universally quantified temporal overlap, mirrors English *whenever*.
+    Multi-word expression. -/
+def aina_kun : TemporalExprEntry :=
+  { form := "aina kun"
+  , complementType := .clausal
+  , order := .whenever
+  , licensesNPI := false
+  , defaultReading := .durative
+  , coercedReading := none
+  , embeddedTelicityEffect := false
+  , crossLinguisticBasic := false
+  , complementVeridical := true
+  , forcesPunctual := false
+  , triggeredCoercion := none }
+
+/-- Finnish *heti kun* ('as soon as', literally 'immediately when'):
+    strengthened *after* with temporal proximity, mirrors English *as soon as*.
+    Multi-word expression. -/
+def heti_kun : TemporalExprEntry :=
+  { form := "heti kun"
+  , complementType := .clausal
+  , order := .after
+  , licensesNPI := false
+  , defaultReading := .afterFinish
+  , coercedReading := none
+  , embeddedTelicityEffect := true
+  , crossLinguisticBasic := false
+  , complementVeridical := true
+  , forcesPunctual := false
+  , triggeredCoercion := none }
+
+-- ============================================================================
 -- § 2: The Two-*Until* Distinction
 -- ============================================================================
 
@@ -208,5 +260,46 @@ theorem kunnes_covers_till :
     This is not a gap in Finnish — it reflects that *since* and *by* are
     typologically less basic than *before*/*after*/*when*/*until* (Rett 2020). -/
 theorem since_by_not_single_lexeme : True := trivial
+
+-- ============================================================================
+-- § 5: Cross-Linguistic Agreement for Additional Connectives
+-- ============================================================================
+
+open Fragments.English.TemporalExpressions in
+/-- Finnish *sillä aikaa kun* and English *while* agree on semantic properties. -/
+theorem sillä_aikaa_kun_matches_while :
+    sillä_aikaa_kun.order = while_conn.order ∧
+    sillä_aikaa_kun.licensesNPI = while_conn.licensesNPI ∧
+    sillä_aikaa_kun.defaultReading = while_conn.defaultReading ∧
+    sillä_aikaa_kun.complementVeridical = while_conn.complementVeridical :=
+  ⟨rfl, rfl, rfl, rfl⟩
+
+open Fragments.English.TemporalExpressions in
+/-- Finnish *aina kun* and English *whenever* agree on semantic properties. -/
+theorem aina_kun_matches_whenever :
+    aina_kun.order = whenever_conn.order ∧
+    aina_kun.licensesNPI = whenever_conn.licensesNPI ∧
+    aina_kun.defaultReading = whenever_conn.defaultReading ∧
+    aina_kun.complementVeridical = whenever_conn.complementVeridical :=
+  ⟨rfl, rfl, rfl, rfl⟩
+
+open Fragments.English.TemporalExpressions in
+/-- Finnish *heti kun* and English *as soon as* agree on semantic properties. -/
+theorem heti_kun_matches_asSoonAs :
+    heti_kun.order = asSoonAs.order ∧
+    heti_kun.licensesNPI = asSoonAs.licensesNPI ∧
+    heti_kun.defaultReading = asSoonAs.defaultReading ∧
+    heti_kun.complementVeridical = asSoonAs.complementVeridical :=
+  ⟨rfl, rfl, rfl, rfl⟩
+
+/-- Finnish morphological transparency: *aina kun* and *heti kun* are
+    compositionally built from *kun* ('when') with adverbial modifiers
+    *aina* ('always') and *heti* ('immediately'). All three share the
+    base connective *kun*'s complement veridicality. -/
+theorem kun_family_veridical :
+    kun.complementVeridical = true ∧
+    aina_kun.complementVeridical = true ∧
+    heti_kun.complementVeridical = true :=
+  ⟨rfl, rfl, rfl⟩
 
 end Fragments.Finnish.TemporalConnectives

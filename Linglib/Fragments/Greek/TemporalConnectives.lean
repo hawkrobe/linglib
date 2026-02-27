@@ -209,13 +209,14 @@ inductive MoodType where
 
 /-- Greek mood selection for temporal connectives. -/
 def moodSelection : TemporalOrder → MoodType
-  | .before => .subjunctive
-  | .after  => .indicative
-  | .until_ => .indicative
-  | .when_  => .indicative
-  | .while_ => .indicative
-  | .since_ => .indicative
-  | .by_    => .indicative
+  | .before   => .subjunctive
+  | .after    => .indicative
+  | .until_   => .indicative
+  | .when_    => .indicative
+  | .while_   => .indicative
+  | .since_   => .indicative
+  | .by_      => .indicative
+  | .whenever => .indicative
 
 /-- Mood selection aligns with veridicality: subjunctive iff non-veridical. -/
 theorem mood_aligns_with_veridicality :
