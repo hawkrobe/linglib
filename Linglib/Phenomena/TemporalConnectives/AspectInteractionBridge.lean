@@ -1,4 +1,5 @@
 import Linglib.Theories.Semantics.Tense.TemporalConnectives
+import Linglib.Theories.Semantics.Events.TemporalDecomposition
 import Linglib.Fragments.English.TemporalExpressions
 import Linglib.Phenomena.TemporalConnectives.AspectInteractionData
 
@@ -244,5 +245,36 @@ theorem iterate_matches_duratize :
     -- After duratize + atelicize: activity
     (achievementProfile.duratize.atelicize).toVendlerClass = .activity :=
   ⟨rfl, rfl, rfl, rfl⟩
+
+-- ============================================================================
+-- § 7: When-Coercion ↔ M&S Event Types
+-- ============================================================================
+
+open Semantics.Events (MoensSteedmanClass WhenTarget)
+
+/-- M&S's unified *when*-semantics agrees with the empirical coercion
+    pattern: *when* needs no coercion iff `whenCompatible` is true.
+    The M&S analysis *explains* the pattern: states are compatible
+    because they're homogeneous; achievements because they already ARE
+    culmination points. Processes and accomplishments require coercion
+    because *when* must access a culmination they don't directly provide. -/
+theorem ms_when_agrees_with_data (c : MoensSteedmanClass) :
+    (c.whenTarget = .directCulmination ∨ c.whenTarget = .homogeneousOverlap) ↔
+    (whenCompatible c.toProfile.toVendlerClass = true) := by
+  cases c <;> simp [MoensSteedmanClass.whenTarget, MoensSteedmanClass.toProfile,
+    stateProfile, activityProfile, achievementProfile, accomplishmentProfile,
+    AspectualProfile.toVendlerClass, whenCompatible] <;> decide
+
+/-- M&S's coercion type matches the data layer: inception coercion
+    targets processes (= Vendler activities), completion coercion targets
+    culminated processes (= Vendler accomplishments). -/
+theorem ms_coercion_type_matches :
+    -- Inception (INCHOAT): process onset
+    (MoensSteedmanClass.process.whenTarget = .inceptionCoercion ∧
+     when_activity.coercionType = some "inception") ∧
+    -- Completion (strip-process): culminated process telos
+    (MoensSteedmanClass.culminatedProcess.whenTarget = .completionCoercion ∧
+     when_accomplishment.coercionType = some "culmination") :=
+  ⟨⟨rfl, rfl⟩, ⟨rfl, rfl⟩⟩
 
 end Phenomena.TemporalConnectives.AspectInteractionBridge

@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.227.14] - 2026-02-27
+
+### Added
+- **Moens & Steedman (1988) formalization**: `MoensSteedmanProfile extends AspectualProfile` with `hasConsequentState`, `MoensSteedmanClass` five-way classification (state/process/culminatedProcess/culmination/point), `Nucleus` tripartite event structure (prep process → culmination → consequent state), `WhenTarget` unified when-clause semantics.
+- **Perfect polysemy refinement**: `msAvailableReadings` — points lack resultative/present-state readings; `resultative_requires_consState`, `ms_refines_vendler_readings`, `point_fewer_readings_than_achievement`.
+- **M&S ↔ data bridge**: `ms_when_agrees_with_data` (unified when-semantics predicts `whenCompatible`), `ms_coercion_type_matches` (inception/completion coercion types match data layer).
+
 ## [0.227.13] - 2026-02-27
 
 ### Added

@@ -311,4 +311,39 @@ theorem existential_available_for_all_classes (c : VendlerClass) :
     PerfectReading.universal ∈ availableReadings c := by
   cases c <;> simp [availableReadings]
 
+-- ════════════════════════════════════════════════════
+-- § 7. M&S Refinement: Readings by Event Type
+-- ════════════════════════════════════════════════════
+
+/-- Available readings refined by M&S event type. The key insight:
+    points lack resultative and present-state readings because they have
+    no consequent state to anchor. @cite{moens-steedman-1988} -/
+def msAvailableReadings : MoensSteedmanClass → List PerfectReading
+  | .state => [.existential, .universal]
+  | .process => [.existential, .universal]
+  | .culminatedProcess => [.existential, .universal, .resultative, .presentState]
+  | .culmination => [.existential, .universal, .resultative, .presentState]
+  | .point => [.existential, .universal]
+
+/-- The resultative reading requires a consequent state (M&S 1988).
+    Points (telic but without consequent state) cannot anchor a result. -/
+theorem resultative_requires_consState (c : MoensSteedmanClass)
+    (h : c.toProfile.hasConsequentState = false) :
+    PerfectReading.resultative ∉ msAvailableReadings c := by
+  cases c <;> simp_all [MoensSteedmanClass.toProfile, msAvailableReadings]
+
+/-- `msAvailableReadings` refines `availableReadings`: every reading available
+    under the finer M&S classification is also available under Vendler. -/
+theorem ms_refines_vendler_readings (c : MoensSteedmanClass) :
+    ∀ r ∈ msAvailableReadings c, r ∈ availableReadings c.toProfile.toVendlerClass := by
+  cases c <;> simp [msAvailableReadings, MoensSteedmanClass.toProfile, availableReadings,
+    stateProfile, activityProfile, achievementProfile, accomplishmentProfile,
+    AspectualProfile.toVendlerClass]
+
+/-- Points are strictly more restrictive than Vendler achievements:
+    achievements have 4 available readings, points have only 2. -/
+theorem point_fewer_readings_than_achievement :
+    (msAvailableReadings .point).length <
+    (availableReadings VendlerClass.achievement).length := by native_decide
+
 end Semantics.Tense.PerfectPolysemy

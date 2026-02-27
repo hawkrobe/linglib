@@ -22,6 +22,9 @@ temporally simple. This module makes that structure explicit via
 - `DecomposedEv`: event enriched with decomposition
 - `phasePred`: converts an interval (event phase) into an `EventPred` for
   ViewpointAspect operators
+- `MoensSteedmanClass`: five-way event classification (Moens & Steedman 1988)
+- `Nucleus`: tripartite event structure (prep process → culmination → cons state)
+- `WhenTarget`: what *when* accesses in each event type
 
 ## ViewpointAspect Bridge (§ 6–7)
 
@@ -39,6 +42,7 @@ consumable by IMPF/PRFV/PERF. Key results:
 
 ## References
 
+- Moens, M. & Steedman, M. (1988). Temporal ontology and temporal reference.
 - Kiparsky, P. (2002). Event structure and the perfect.
 - Rappaport Hovav, M. & Levin, B. (1998). Building verb meanings.
 - Pustejovsky, J. (1991). The syntax of event structure.
@@ -311,5 +315,171 @@ theorem impf_activity_prfv_full_incompatible {Time : Type*} [LinearOrder Time]
   cases h_strict with
   | inl h => exact absurd heq_s (ne_of_lt h)
   | inr h => exact absurd heq_f (ne_of_lt h)
+
+-- ════════════════════════════════════════════════════
+-- § 8. Moens & Steedman (1988) Event Types
+-- ════════════════════════════════════════════════════
+
+/-- Moens & Steedman's (1988) aspectual profile. Extends Vendler's
+    three-feature `AspectualProfile` with ±consequent state, so the
+    Vendler classification is inherited rather than stipulated.
+    @cite{moens-steedman-1988} -/
+structure MoensSteedmanProfile extends AspectualProfile where
+  /-- Whether the event has a persistent result after culmination -/
+  hasConsequentState : Bool
+  deriving DecidableEq, Repr, BEq
+
+/-- Moens & Steedman's (1988) five-way event classification.
+    Refines Vendler by splitting `achievement` along ±consequent state:
+
+    | Class             | Atomic? | +ConsState? | Vendler        |
+    |-------------------|---------|-------------|----------------|
+    | state             | no      | —           | state          |
+    | process           | no      | no          | activity       |
+    | culminatedProcess | no      | yes         | accomplishment |
+    | culmination       | yes     | yes         | achievement    |
+    | point             | yes     | no           | (none)         |
+
+    @cite{moens-steedman-1988} -/
+inductive MoensSteedmanClass where
+  | state             -- know, love
+  | process           -- run, swim
+  | culminatedProcess -- build a house, write a letter
+  | culmination       -- arrive, die, recognize
+  | point             -- hiccup, flash, tap
+  deriving DecidableEq, Repr, BEq
+
+namespace MoensSteedmanClass
+
+/-- Canonical profile for each M&S event type. The `VendlerClass` is
+    inherited from `AspectualProfile` via `extends` — accessible as
+    `c.toProfile.toVendlerClass` without a separate mapping function. -/
+def toProfile : MoensSteedmanClass → MoensSteedmanProfile
+  | .state => { stateProfile with hasConsequentState := false }
+  | .process => { activityProfile with hasConsequentState := false }
+  | .culminatedProcess => { accomplishmentProfile with hasConsequentState := true }
+  | .culmination => { achievementProfile with hasConsequentState := true }
+  | .point => { achievementProfile with hasConsequentState := false }
+
+/-- Whether the event is atomic (instantaneous). -/
+def isAtomic : MoensSteedmanClass → Bool
+  | .culmination | .point => true
+  | .state | .process | .culminatedProcess => false
+
+/-- Points and culminations share a Vendler class (achievement) but differ
+    in ±consequent state — exactly the conflation Moens & Steedman identify. -/
+theorem point_culmination_vendler_collapse :
+    point.toProfile.toVendlerClass = culmination.toProfile.toVendlerClass ∧
+    point.toProfile.hasConsequentState ≠ culmination.toProfile.hasConsequentState :=
+  ⟨rfl, by decide⟩
+
+/-- Points are telic (achievements) but lack consequent states — the reason
+    Vendler's classification is too coarse for the perfect. -/
+theorem point_telic_without_consState :
+    point.toProfile.telicity = .telic ∧ point.toProfile.hasConsequentState = false :=
+  ⟨rfl, rfl⟩
+
+/-- Atomicity matches Vendler's punctuality for dynamic classes. -/
+theorem isAtomic_iff_punctual (c : MoensSteedmanClass) (h : c ≠ .state) :
+    c.isAtomic = (c.toProfile.duration == .punctual) := by
+  cases c <;> first | exact absurd rfl h | rfl
+
+end MoensSteedmanClass
+
+-- ════════════════════════════════════════════════════
+-- § 9. Unified When-Clause Semantics (M&S 1988)
+-- ════════════════════════════════════════════════════
+
+/-- What *when* accesses in each event type. M&S's key claim: *when* has
+    a single meaning (locate the main clause at the culmination), with
+    apparent ambiguity arising from different nucleus structures.
+    @cite{moens-steedman-1988} -/
+inductive WhenTarget where
+  | directCulmination   -- culmination/point: event IS the culmination
+  | completionCoercion  -- culminated process: strip prep, access culmination
+  | inceptionCoercion   -- process: INCHOAT extracts onset as surrogate
+  | homogeneousOverlap  -- state: any subinterval works
+  deriving DecidableEq, Repr, BEq
+
+/-- M&S's unified *when* semantics: one meaning, four behaviors derived
+    from event type. -/
+def MoensSteedmanClass.whenTarget : MoensSteedmanClass → WhenTarget
+  | .culmination | .point => .directCulmination
+  | .culminatedProcess => .completionCoercion
+  | .process => .inceptionCoercion
+  | .state => .homogeneousOverlap
+
+/-- Coercion is needed iff the event type is process or culminated process. -/
+theorem MoensSteedmanClass.when_needs_coercion_iff (c : MoensSteedmanClass) :
+    (c.whenTarget = .completionCoercion ∨ c.whenTarget = .inceptionCoercion) ↔
+    (c = .culminatedProcess ∨ c = .process) := by
+  cases c <;> simp [MoensSteedmanClass.whenTarget]
+
+-- ════════════════════════════════════════════════════
+-- § 10. The Nucleus (Tripartite Event Structure)
+-- ════════════════════════════════════════════════════
+
+/-- The Moens & Steedman (1988) nucleus: tripartite event structure for
+    events with a culmination point. Makes the culmination explicit —
+    it is implicit in `SubeventPhases` as the boundary between
+    activityTrace and resultTrace.
+
+    ```
+    SubeventPhases:  |---activity---|    |---result---|
+    Nucleus:         |---prep-------|•c  |---cons-----|
+                                     ↑
+                             explicit culmination
+    ```
+    @cite{moens-steedman-1988} -/
+structure Nucleus (Time : Type*) [LinearOrder Time] where
+  /-- Preparatory process leading to culmination -/
+  prepProcess : Option (Interval Time)
+  /-- The culmination point: instantaneous transition -/
+  culmination : Time
+  /-- Consequent state persisting after culmination -/
+  consState : Option (Interval Time)
+  /-- Prep process ends at or before culmination -/
+  prep_le_culm : ∀ i, prepProcess = some i → i.finish ≤ culmination
+  /-- Consequent state starts at or after culmination -/
+  culm_le_cons : ∀ i, consState = some i → culmination ≤ i.start
+
+namespace Nucleus
+
+variable {Time : Type*} [LinearOrder Time]
+
+/-- The M&S event type determined by which components are present. -/
+def eventType (n : Nucleus Time) : MoensSteedmanClass :=
+  match n.prepProcess, n.consState with
+  | some _, some _ => .culminatedProcess
+  | none,   some _ => .culmination
+  | _,      none   => .point
+
+/-- A full nucleus (both prep and cons present) yields SubeventPhases.
+    The ordering proof follows from transitivity through the culmination. -/
+def toSubeventPhases (n : Nucleus Time)
+    (prep cons : Interval Time)
+    (h_prep : n.prepProcess = some prep)
+    (h_cons : n.consState = some cons) :
+    SubeventPhases Time where
+  activityTrace := prep
+  resultTrace := cons
+  activity_precedes_result :=
+    le_trans (n.prep_le_culm prep h_prep) (n.culm_le_cons cons h_cons)
+
+/-- A full nucleus has event type culminatedProcess. -/
+theorem full_is_culminatedProcess (n : Nucleus Time)
+    {p c : Interval Time}
+    (hp : n.prepProcess = some p) (hc : n.consState = some c) :
+    n.eventType = .culminatedProcess := by
+  simp [eventType, hp, hc]
+
+/-- A nucleus with consequent state has M&S's consequent state feature. -/
+theorem hasConsState_of_consState (n : Nucleus Time)
+    {c : Interval Time} (hc : n.consState = some c) :
+    n.eventType.toProfile.hasConsequentState = true := by
+  simp only [eventType]
+  split <;> simp_all [MoensSteedmanClass.toProfile]
+
+end Nucleus
 
 end Semantics.Events
