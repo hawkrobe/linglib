@@ -321,27 +321,53 @@ private theorem not_all_null {n : ℕ} (sys : EpistemicSystemFA (Fin n)) :
   by_contra hall; push_neg at hall
   exact sys.nonTrivial (by rw [← Finset.coe_univ]; exact ge_empty_of_all_null sys hall _)
 
--- ── Step 4b. Scott's LP duality ─────────────────
+-- ── Step 4b. Farkas alternative (→ version) ─────
 
-/-- **Scott's LP duality**: either the feasibility polytope `feasibleWeights`
-    is nonempty (a probability measure faithfully representing the ordering
-    exists), or there is a valid portfolio whose weighted comparison sums
-    are strictly negative at every atom (an infeasibility certificate).
+/-- **Farkas alternative for the ordering LP**: either a one-directional
+    probability representation exists, or there is a valid portfolio
+    whose weighted comparison sums are strictly negative at every atom.
 
-    This is LP duality / Farkas' lemma specialized to the ordering LP:
-      {p ≥ 0 : 1ᵀp = 1, sys.ge ↑A ↑B ↔ A.sum p ≥ B.sum p for disjoint A,B}
+    This is standard LP duality / Farkas' lemma: the feasibility polytope
+      {p ≥ 0 : 1ᵀp = 1, sys.ge ↑A ↑B → A.sum p ≥ B.sum p}
+    is nonempty iff no dual certificate of infeasibility exists.
 
-    The ↔ (not just →) is essential: the LP must encode both the ordering
-    constraints AND their contrapositives. A solution with only → could
-    introduce spurious ties (e.g., p = (½,½) represents every ordering
-    as a tie).
+    **Route**: specialize Mathlib's `ConvexCone.hyperplane_separation` or
+    `ProperCone.hyperplane_separation_point` over ℝ, then transfer to ℚ
+    via density / finite-dimensional rationality.
 
-    **Route 1**: specialize Mathlib's `ProperCone.hyperplane_separation_point`
-    by proving finitely generated cones are closed (Carathéodory). -/
-private theorem scott_lp_duality {n : ℕ} (sys : EpistemicSystemFA (Fin n)) :
-    (∃ p, p ∈ feasibleWeights n sys) ∨
+    Note: this gives the **one-directional** (→) condition only.
+    Strengthening to ↔ requires `cancel_strengthens_to_bidir`. -/
+private theorem farkas_ordering_lp {n : ℕ} (sys : EpistemicSystemFA (Fin n)) :
+    (∃ p : Fin n → ℚ, (∀ i, 0 ≤ p i) ∧ Finset.univ.sum p = 1 ∧
+      ∀ (A B : Finset (Fin n)), Disjoint A B →
+        sys.ge ↑A ↑B → A.sum p ≥ B.sum p) ∨
     (∃ P : Portfolio n, P.isValid sys.ge ∧
       ∀ i : Fin n, P.weightedSum i < 0) :=
+  sorry
+
+-- ── Step 4b'. Cancellation strengthens → to ↔ ───
+
+/-- If the one-directional feasibility polytope is nonempty AND
+    cancellation holds, then the bidirectional (↔) polytope
+    `feasibleWeights` is also nonempty.
+
+    Key idea: the → polytope is a convex polytope P. The ↔ polytope
+    is P minus certain faces (one for each strict ordering B ≻ A where
+    we need p(B) > p(A) rather than ≥). Cancellation ensures no strict
+    ordering is "forced tight" on all of P: if compVec(B,A)·p = 0 for
+    all p ∈ P, then (by LP duality) compVec(B,A) is a nonneg combination
+    of constraint normals, yielding a neutral valid portfolio with the
+    strict member (B,A) — contradicting cancellation.
+
+    Therefore, the relative interior of P (which avoids all non-binding
+    faces) satisfies the strict constraints, giving a point in the ↔
+    polytope. -/
+private theorem cancel_strengthens_to_bidir {n : ℕ} (sys : EpistemicSystemFA (Fin n))
+    (hcancel : Cancellation n sys.ge)
+    (hexists : ∃ p : Fin n → ℚ, (∀ i, 0 ≤ p i) ∧ Finset.univ.sum p = 1 ∧
+      ∀ (A B : Finset (Fin n)), Disjoint A B →
+        sys.ge ↑A ↑B → A.sum p ≥ B.sum p) :
+    ∃ p, p ∈ feasibleWeights n sys :=
   sorry
 
 -- ── Step 4c. Certificate → cancellation violation ───
@@ -415,15 +441,16 @@ private theorem certificate_to_violation {n : ℕ} (sys : EpistemicSystemFA (Fin
 -- ── Step 4d. Compose: cancellation → feasible weights ──
 
 /-- The core LP step: cancellation implies the feasibility polytope is nonempty.
-    By `scott_lp_duality`, either feasible weights exist (done) or there is
-    an infeasibility certificate. `certificate_to_violation` converts the
-    certificate into a neutral portfolio with a strict member, which
-    cancellation excludes. -/
+    Three-step proof:
+    1. `farkas_ordering_lp` — either a → solution exists, or a certificate does
+    2. Certificate case: `certificate_to_violation` converts it to a neutral
+       portfolio with strict member, contradicting cancellation
+    3. → solution case: `cancel_strengthens_to_bidir` upgrades → to ↔ -/
 private theorem cancellation_nonempty {n : ℕ} (sys : EpistemicSystemFA (Fin n))
     (hcancel : Cancellation n sys.ge) :
     ∃ p, p ∈ feasibleWeights n sys := by
-  rcases scott_lp_duality sys with h | ⟨P, hV, hNeg⟩
-  · exact h
+  rcases farkas_ordering_lp sys with h | ⟨P, hV, hNeg⟩
+  · exact cancel_strengthens_to_bidir sys hcancel h
   · obtain ⟨Q, hQV, hQN, hQS⟩ := certificate_to_violation sys P hV hNeg
     exact absurd hQS (hcancel Q hQV hQN)
 
