@@ -101,7 +101,7 @@ def french_pfv : ActualityDatum where
   modalForm := "pouvoir"
   aspect := .perfective
   complementEntailed := true
-  gloss := "Elle a pu traverser a la nage (She was-able.PC to swim across)"
+  gloss := "Elle a pu traverser à la nage (She was-able.PC to swim across)"
 
 /-- French *pouvoir* + imparfait (imperfective): "She was-able.IMPF to swim across"
     ↛ She swam across. (Mari & Martin 2007) -/
@@ -110,7 +110,7 @@ def french_impf : ActualityDatum where
   modalForm := "pouvoir"
   aspect := .imperfective
   complementEntailed := false
-  gloss := "Elle pouvait traverser a la nage (She was-able.IMP to swim across)"
+  gloss := "Elle pouvait traverser à la nage (She was-able.IMP to swim across)"
 
 -- ════════════════════════════════════════════════════
 -- English: be able (episodic vs habitual)

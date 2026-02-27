@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.227.33] - 2026-02-27
+
+### Changed
+- **Hacquard (2006) audit: three accessibility types, deontic licensing, embedded epistemic example**. EventRelativity: `EventBinder.hasAddressee` (deontic requires addressee, orthogonal to content licensing), `fullAvailableFlavors` extending `availableFlavors` with deontic (Hacquard 2006, (235)). `three_accessibility_types` theorem: epistemic = content-licensed, circumstantial = always, deontic = addressee-licensed. `speechAct_full_flavors` = [epistemic, circumstantial, deontic]. §9 docstring adds clausal ordering (255): Mod_epis > T > CF > Asp > Mod_circ. §14 new worked example: "Jane thinks Mary might be pregnant" — `embedded_vs_matrix_epistemic` (attitude event provides content → epistemic under embedding, different domain from matrix). Cleaned up `epistemicBg` catch-all. Assert.lean: documented §6 `fDecl`/`fImpr` equivalence to `speechActAnchoring`. French gloss accent fix (à).
+
 ## [0.227.32] - 2026-02-27
 
 ### Added

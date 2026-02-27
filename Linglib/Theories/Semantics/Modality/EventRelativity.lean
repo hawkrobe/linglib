@@ -464,13 +464,47 @@ circumstances — available for any event type. -/
 def EventBinder.canProjectCircumstantial (_ : EventBinder) : Bool :=
   true
 
+/-- Whether an event has an addressee with a to-do list.
+
+Deontic accessibility relations (Hacquard 2006, (235c)) require the
+binding event to have an addressee: `f_deontic(e) = λw. {w' : w'
+compatible with TO-DO-LIST(ADDR(e))}`. Speech acts are directed at
+an addressee; VP events are not.
+
+NB: Whether an attitude event has an addressee depends on the verb:
+*order*, *tell*, *permit* do; *think*, *believe* do not. This field
+captures the default case (non-directive attitude). -/
+def EventBinder.hasAddressee : EventBinder → Bool
+  | .speechAct => true
+  | .attitude  => false
+  | .vpEvent   => false
+
 /-- Available modal flavors DERIVED from content licensing.
 
 Contentful events (speech acts, attitudes): epistemic + circumstantial.
-Contentless events (VP events): circumstantial only. -/
+Contentless events (VP events): circumstantial only.
+
+NB: This captures the epistemic/non-epistemic divide from content
+licensing (Hacquard 2010, §6) but omits deontic. Deontic licensing
+depends on a separate predicate — addressee availability (Hacquard
+2006, (235c)) — not on content. See `hasAddressee` and
+`fullAvailableFlavors` for the complete picture. -/
 def EventBinder.availableFlavors (b : EventBinder) : List ModalFlavor :=
   if b.hasContent then [.epistemic, .circumstantial]
   else [.circumstantial]
+
+/-- Full available flavors including deontic (Hacquard 2006, (235)).
+
+Three accessibility relation types, each with different licensing:
+- **Epistemic** `f_epis(e)`: worlds compatible with CON(e). Requires content.
+- **Circumstantial** `f_circ(e)`: worlds compatible with CIRC(e). Any event.
+- **Deontic** `f_deontic(e)`: worlds compatible with TO-DO-LIST(ADDR(e)).
+  Requires an addressee.
+
+This extends `availableFlavors` with the deontic dimension. -/
+def EventBinder.fullAvailableFlavors (b : EventBinder) : List ModalFlavor :=
+  let base := b.availableFlavors
+  if b.hasAddressee then base ++ [.deontic] else base
 
 -- Content licensing theorems
 
@@ -481,6 +515,37 @@ theorem vpEvent_lacks_content : EventBinder.vpEvent.hasContent = false := rfl
 /-- Content licensing: epistemic availability ↔ content (Hacquard 2010, §6). -/
 theorem epistemic_iff_content (b : EventBinder) :
     b.canProjectEpistemic = b.hasContent := rfl
+
+-- Addressee licensing theorems
+
+theorem speechAct_has_addressee : EventBinder.speechAct.hasAddressee = true := rfl
+theorem vpEvent_no_addressee : EventBinder.vpEvent.hasAddressee = false := rfl
+
+/-- Speech acts license all three accessibility types (Hacquard 2006, (235)):
+epistemic (content), circumstantial (circumstances), and deontic (addressee). -/
+theorem speechAct_full_flavors :
+    EventBinder.speechAct.fullAvailableFlavors =
+      [.epistemic, .circumstantial, .deontic] := rfl
+
+/-- VP events license only circumstantial: no content (→ no epistemic),
+no addressee (→ no deontic). -/
+theorem vpEvent_full_flavors :
+    EventBinder.vpEvent.fullAvailableFlavors = [.circumstantial] := rfl
+
+/-- The three licensing conditions (Hacquard 2006, (235)):
+- Epistemic needs content (CON(e))
+- Circumstantial needs nothing (CIRC(e) is always available)
+- Deontic needs an addressee (TO-DO-LIST(ADDR(e))) -/
+theorem three_accessibility_types :
+    -- Epistemic: content-licensed
+    EventBinder.speechAct.canProjectEpistemic = true ∧
+    EventBinder.vpEvent.canProjectEpistemic = false ∧
+    -- Circumstantial: always available
+    EventBinder.speechAct.canProjectCircumstantial = true ∧
+    EventBinder.vpEvent.canProjectCircumstantial = true ∧
+    -- Deontic: addressee-licensed
+    EventBinder.speechAct.hasAddressee = true ∧
+    EventBinder.vpEvent.hasAddressee = false := ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
 
 /-- High modals (bound to speech act or attitude event) can be epistemic. -/
 theorem high_modal_epistemic :
@@ -566,6 +631,16 @@ modal. Aspect (IMPF/PRFV) existentially quantifies over VP events and
 binds the event variable of any modal in its scope. A modal ABOVE
 AspP is bound by the speech act or attitude event (whichever is
 closest); a modal BELOW AspP is bound by aspect's event quantifier.
+
+The full clausal ordering derived in Hacquard (2006, (255), p.160):
+
+    Mod_epis > T > CF > Asp > Mod_circ
+
+Epistemic modals are above Tense and counterfactual morphology;
+circumstantial/root modals are below Aspect. Our `ModalPosition`
+captures the binary above/below Asp distinction, which is sufficient
+for content licensing and actuality entailments. The finer-grained
+ordering relative to T and CF would require syntactic tree structure.
 
 This connects the clause structure formalized in
 `Theories/Syntax/Minimalism/Core/Voice.lean` and the aspect operators
@@ -807,12 +882,13 @@ inductive TrainWorld where | took | didnt
 private def allTW : List TrainWorld := [.took, .didnt]
 
 /-- Epistemic anchoring (via speech event): the speaker considers both
-worlds possible (no decisive evidence either way). -/
+worlds possible (no decisive evidence either way).
+All (individual, time) combinations yield an empty background here
+because we only evaluate this at the speech event's projection
+(speaker, now), where the speaker has no decisive evidence. -/
 private def epistemicBg : TrainPerson → TrainTime → TrainWorld →
-    List (BProp TrainWorld)
-  | .speaker, .now, _ => []  -- empty background: all worlds accessible
-
-  | _, _, _ => []
+    List (BProp TrainWorld) :=
+  λ _ _ _ => []
 
 /-- Root/goal-oriented anchoring (via VP event): given Jane's
 circumstances at the past time, only the took-world is compatible
@@ -891,6 +967,82 @@ theorem events_richer_than_pairs :
     -- Pairs would conflate them; events distinguish them.
     EventBinder.speechAct.availableFlavors =
       EventBinder.attitude.availableFlavors := ⟨rfl, rfl, rfl, rfl⟩
+
+
+
+-- ════════════════════════════════════════════════════
+-- § 14. Worked Example: Embedded Epistemic
+--       "Jane thinks Mary might be pregnant"
+--       (Hacquard 2006, (247)–(249), pp.155–156)
+-- ════════════════════════════════════════════════════
+
+/-! (248c) "Jane thinks Mary might be pregnant."
+
+*Might* is a high modal (above the embedded AspP) bound to the
+attitude event e₁ of *think*. Since thinking is contentful —
+CON(e₁) = Jane's beliefs — epistemic R is available. The modal
+domain is Jane's belief worlds, not the speaker's.
+
+This contrasts with the matrix case (§12): in "Mary might be
+pregnant" (no embedding), *might* binds to the speech event e₀
+and the modal domain is the speaker's evidence.
+
+| Context | Binding event | CON(e) | Epistemic domain |
+|---------|-------------|--------|-----------------|
+| Matrix | e₀ (speech act) | speaker's evidence | what speaker considers possible |
+| Embedded | e₁ (attitude) | Jane's beliefs | what Jane considers possible |
+
+The embedded case demonstrates that attitude events, like speech
+acts, are contentful (§8) — this is why `attitudes_pattern_with_speech`
+holds. -/
+
+/-- Two worlds for the pregnancy scenario. -/
+inductive PregWorld where | pregnant | notPregnant
+  deriving DecidableEq, BEq, Repr, Inhabited
+
+private def allPW : List PregWorld := [.pregnant, .notPregnant]
+
+/-- Two events: the matrix speech act and Jane's embedded thinking. -/
+inductive BeliefEvent where | speech | thinking
+  deriving DecidableEq, BEq, Repr
+
+/-- Anchoring function for the belief scenario.
+- Speech event: speaker has no decisive evidence (empty background →
+  both worlds accessible).
+- Thinking event: Jane believes Mary is pregnant (only the
+  pregnant-world is compatible with Jane's beliefs). -/
+private def fBelief : AnchoringFn BeliefEvent PregWorld
+  | .speech, _ => []  -- speaker uncertain
+  | .thinking, _ => [λ w => w == .pregnant]  -- Jane believes pregnant
+
+/-- Embedded epistemic: *might* bound to Jane's thinking event.
+Jane's beliefs restrict to the pregnant-world only. Under Jane's
+beliefs, Mary's being pregnant is necessary (Jane is certain). -/
+theorem embedded_epistemic_necessity :
+    necessity fBelief .thinking allPW (· == .pregnant) .notPregnant = true := by
+  native_decide
+
+/-- Matrix epistemic: *might* bound to the speech event.
+The speaker considers both worlds possible, so Mary's NOT being
+pregnant is also possible. -/
+theorem matrix_epistemic_both_possible :
+    possibility fBelief .speech allPW (· == .pregnant) .notPregnant = true ∧
+    possibility fBelief .speech allPW (· == .notPregnant) .notPregnant = true := by
+  constructor <;> native_decide
+
+/-- Same modal (*might*), different event bindings, different epistemic
+domains. Under Jane's beliefs, only the pregnant-world is accessible.
+Under the speaker's evidence, both worlds are accessible.
+
+This demonstrates that attitude events are contentful (§8):
+the thinking event provides CON(e₁) = Jane's beliefs, licensing
+epistemic R for the embedded modal. -/
+theorem embedded_vs_matrix_epistemic :
+    -- Under attitude event: only pregnant-world accessible (Jane's beliefs)
+    (accessible fBelief .thinking allPW .notPregnant).length = 1 ∧
+    -- Under speech event: both worlds accessible (speaker's uncertainty)
+    (accessible fBelief .speech allPW .notPregnant).length = 2 := by
+  constructor <;> native_decide
 
 
 end Semantics.Modality.EventRelativity
