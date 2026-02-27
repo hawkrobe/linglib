@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.227.3] - 2026-02-27
+
+### Changed
+- **Deduplicate eqYaVocab**: moved `eqYaVocab`/`mamVoiceVocab` from MinimalismOblExtraction to `VoiceSystem.lean` §6 (single source of truth). Removed private copy from MamAgreeSpellout.
+- **Derive passive co-occurrence structurally**: replaced stipulated `eqyaCooccursWithPassive : Bool := true` with `mamPassiveVoice` (VoiceSystem §7) showing VoiceHead flavor and features are independent fields. Bridge theorem `eqya_not_agent_focus` now uses structural derivation.
+- **Delete `eqyaMultipleSpellout`**: redundant with existing LD data points.
+- **Strip OblExtraction.lean**: removed all duplicated theorems, aliases (`mamMonoData`/`mamLDData`), and superseded `kicheExtractionProfile`. File now serves as docstring + import entry point.
+
 ## [0.227.2] - 2026-02-27
 
 ### Added

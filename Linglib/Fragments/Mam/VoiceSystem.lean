@@ -1,5 +1,6 @@
 import Linglib.Theories.Syntax.Minimalism.Core.Voice
 import Linglib.Theories.Syntax.Minimalism.Core.ClauseSpine
+import Linglib.Theories.Syntax.Minimalism.Core.Spellout
 
 /-!
 # Mam Voice System Fragment
@@ -139,5 +140,41 @@ theorem mamVoice_is_phase : mamVoice.phaseHead = true := rfl
 
 /-- Mam Voice assigns a θ-role (agentive). -/
 theorem mamVoice_assigns_theta : mamVoice.assignsTheta = true := rfl
+
+-- ============================================================================
+-- § 6: Spellout Vocabulary
+-- ============================================================================
+
+/-- Vocabulary entry for =(y)a': maps [+oblique] on Voice⁰ to the exponent
+    "=(y)a'". This is the Vocabulary Insertion rule in DM terms. -/
+def eqYaVocab : Minimalism.VocabEntry :=
+  { features := [.valued (.oblique true)]
+  , exponent := "=(y)a'"
+  , context := some .Voice }
+
+/-- The Mam Voice vocabulary: just the =(y)a' entry. -/
+def mamVoiceVocab : Minimalism.Vocabulary := [eqYaVocab]
+
+-- ============================================================================
+-- § 7: Passive Voice (Co-occurrence with =(y)a')
+-- ============================================================================
+
+/-- Mam passive Voice head: carries [uOblique] just like agentive Voice.
+    The oblique probe is independent of Voice flavor — changing flavor
+    from agentive to non-thematic does not remove [uOblique]. This is
+    why =(y)a' co-occurs with passive *-njtz* (Elkins et al. §7.2). -/
+def mamPassiveVoice : Minimalism.VoiceHead :=
+  { flavor := .nonThematic
+  , hasD := false
+  , phaseHead := false
+  , features := [.unvalued (.oblique false)] }
+
+/-- Passive and agentive Voice differ in flavor but share the same
+    oblique probe features. =(y)a' (conditioned by features) and
+    *-njtz* (conditioned by flavor) are structurally independent. -/
+theorem passive_voice_same_features :
+    mamPassiveVoice.features = mamVoice.features ∧
+    mamPassiveVoice.flavor ≠ mamVoice.flavor := by
+  exact ⟨rfl, by decide⟩
 
 end Fragments.Mam

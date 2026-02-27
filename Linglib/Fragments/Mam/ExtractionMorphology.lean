@@ -344,19 +344,17 @@ theorem eqya_island_sensitive_derived :
 -- § 8: Against Agent Focus (§7.2)
 -- ============================================================================
 
-/-- =(y)a' co-occurs with passive voice morphology (*-njtz*) because
-    =(y)a' is a feature ([+oblique]) on Voice⁰, not a Voice morpheme
-    slot competitor. Agent Focus (*-a*) IS a Voice morpheme and therefore
-    cannot co-occur with other voice morphology (passive *-njtz*,
-    antipassive *-n*).
+/-- =(y)a' co-occurs with passive voice morphology (*-njtz*).
+    This is encoded as empirical data: `passiveOblExtraction.judgment = .licensed`.
+    The co-occurrence is *derivable* from VoiceHead field independence:
+    passive *-njtz* is conditioned by VoiceFlavor, while =(y)a' is
+    conditioned by features ([+oblique]). These are independent fields
+    in VoiceHead, so changing the flavor does not affect the features.
+    See `MinimalismOblExtraction.eqya_not_agent_focus` for the structural
+    derivation.
     Elkins et al. §7.2, ex. (53)–(54). -/
-def eqyaCooccursWithPassive : Bool := true
-
-/-- Agent Focus (*-a*) is restricted to the embedded clause in
-    long-distance subject extraction. =(y)a' appears on BOTH matrix
-    and embedded predicates in LD oblique extraction. This further
-    distinguishes the two morphemes. Elkins et al. §7.2. -/
-def eqyaMultipleSpellout : Bool := true
+theorem passive_oblique_cooccurrence :
+    passiveOblExtraction.judgment = .licensed := rfl
 
 -- ============================================================================
 -- § 9: Extraction Profile

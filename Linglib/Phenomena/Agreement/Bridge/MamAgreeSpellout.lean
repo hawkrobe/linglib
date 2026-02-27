@@ -383,13 +383,6 @@ theorem both_probes_unvalued :
     voiceOblProbe.all GramFeature.isUnvalued = true := by
   exact ⟨by native_decide, by native_decide⟩
 
-/-- Voice's oblique vocabulary (local copy — canonical definition in
-    `Phenomena.FillerGap.Bridge.MinimalismOblExtraction`). -/
-private def eqYaVocab : VocabEntry :=
-  { features := [.valued (.oblique true)]
-  , exponent := "=(y)a'"
-  , context := some .Voice }
-
 /-- φ-Agree and oblique-Agree are parallel instances of the same
     operation: probe, value, spellout. They differ only in which
     features are probed and which vocabulary entries match.

@@ -1,6 +1,5 @@
-import Linglib.Phenomena.FillerGap.OblExtraction
+import Linglib.Fragments.Mam.ExtractionMorphology
 import Linglib.Fragments.Mam.VoiceSystem
-import Linglib.Theories.Syntax.Minimalism.Core.Spellout
 import Linglib.Theories.Syntax.Minimalism.Core.ClauseSpine
 
 /-!
@@ -47,21 +46,7 @@ namespace Phenomena.FillerGap.Bridge.MinimalismOblExtraction
 open Minimalism Fragments.Mam
 
 -- ============================================================================
--- § 1: Spellout Vocabulary for =(y)a'
--- ============================================================================
-
-/-- Vocabulary entry for =(y)a': maps [+oblique] on Voice⁰ to the exponent
-    "=(y)a'". This is the Vocabulary Insertion rule in DM terms. -/
-def eqYaVocab : VocabEntry :=
-  { features := [.valued (.oblique true)]
-  , exponent := "=(y)a'"
-  , context := some .Voice }
-
-/-- The Mam Voice vocabulary: just the =(y)a' entry. -/
-def mamVoiceVocab : Vocabulary := [eqYaVocab]
-
--- ============================================================================
--- § 2: Spellout Theorems
+-- § 1: Spellout Theorems
 -- ============================================================================
 
 /-- Valued [+oblique] on Voice spells out as =(y)a'. -/
@@ -210,13 +195,22 @@ theorem eqya_not_resumptive :
     =(y)a' co-occurs with passive voice morphology (*-njtz*), while
     Agent Focus (*-a*) is in complementary distribution with other voice
     morphemes. If =(y)a' were AF, it could not co-occur with passive.
-    Additionally, in LD extraction, AF *-a* is restricted to the embedded
-    clause, while =(y)a' appears on both matrix and embedded predicates. -/
+
+    The co-occurrence is *derived* from VoiceHead field independence:
+    passive Voice differs in flavor (.nonThematic) but carries the same
+    [uOblique] features as agentive Voice. =(y)a' is conditioned by
+    features, *-njtz* by flavor — structurally orthogonal. -/
 theorem eqya_not_agent_focus :
-    eqyaCooccursWithPassive = true ∧
+    -- Passive Voice carries the same oblique probe as agentive Voice
+    mamPassiveVoice.features = mamVoice.features ∧
+    -- But differs in flavor (what *-njtz* tracks)
+    mamPassiveVoice.flavor ≠ mamVoice.flavor ∧
+    -- Passive + oblique extraction is licensed (empirical confirmation)
+    passiveOblExtraction.judgment = .licensed ∧
     -- AF targets subjects; =(y)a' targets obliques
     transSubjExtraction.judgment = .blocked ∧
-    transOblExtraction.judgment = .licensed := ⟨rfl, rfl, rfl⟩
+    transOblExtraction.judgment = .licensed := by
+  exact ⟨rfl, by decide, rfl, rfl, rfl⟩
 
 /-- Against copy spellout (cf. K'ichean *wi*):
     =(y)a' is hosted on the probe (Voice⁰/Dir⁰), not the copy. Evidence:
