@@ -1,4 +1,5 @@
 import Linglib.Core.Scales.EpistemicScale.Fin3
+import Linglib.Core.Polyhedral
 import Mathlib.Algebra.BigOperators.Group.Finset.Piecewise
 
 /-!
@@ -323,17 +324,79 @@ private theorem not_all_null {n : ℕ} (sys : EpistemicSystemFA (Fin n)) :
 
 -- ── Step 4b. Farkas alternative (→ version) ─────
 
+private lemma finRange_map_sum {α : Type*} [AddCommMonoid α] {k : ℕ} (f : Fin k → α) :
+    ((List.finRange k).map f).sum = ∑ i : Fin k, f i := by
+  induction k with
+  | zero => simp [List.finRange]
+  | succ k ih =>
+    rw [List.finRange_succ, List.map_cons, List.sum_cons, List.map_map]
+    rw [ih (f ∘ Fin.succ), Fin.sum_univ_succ]; simp [Function.comp]
+
+/-- Split a sum over `Fin ((n + 2) + k)` into nonneg + normUp + normLo + ordering. -/
+private lemma sum_split_n2k {n k : ℕ} (f : Fin ((n + 2) + k) → ℚ) :
+    ∑ i : Fin ((n + 2) + k), f i =
+    (∑ i : Fin n, f ⟨i.val, by omega⟩) +
+    f ⟨n, by omega⟩ + f ⟨n + 1, by omega⟩ +
+    (∑ m : Fin k, f ⟨n + 2 + m.val, by omega⟩) := by
+  simp only [Fin.sum_univ_add, Fin.sum_univ_two, Fin.natAdd, Fin.castAdd, Fin.castLE,
+    Fin.val_zero, Fin.val_one, Nat.add_zero, add_assoc]
+
+/-- The comparison-vector dot product equals the finset-sum difference. -/
+private lemma compVec_as_sum_diff {n : ℕ} (A B : Finset (Fin n)) (x : Fin n → ℚ)
+    (hdisj : Disjoint A B) :
+    ∑ j : Fin n, ((comparisonVec n A B j : ℤ) : ℚ) * x j = A.sum x - B.sum x := by
+  rw [finset_sum_as_univ A x, finset_sum_as_univ B x, ← Finset.sum_sub_distrib]
+  apply Finset.sum_congr rfl; intro j _
+  simp only [comparisonVec]
+  by_cases hA : j ∈ A <;> by_cases hB : j ∈ B
+  · exact absurd hB (Finset.disjoint_left.mp hdisj hA)
+  · simp [hA, hB]
+  · simp [hA, hB]
+  · simp [hA, hB]
+
+/-- Construct a portfolio from Fin-indexed data: pairs with positive weights. -/
+private noncomputable def portfolioOfWeights {n : ℕ}
+    (pairs : List (Finset (Fin n) × Finset (Fin n)))
+    (ws : Fin pairs.length → ℚ)
+    (h_disj : ∀ m : Fin pairs.length, Disjoint (pairs.get m).1 (pairs.get m).2)
+    (h_pos : ∀ m : Fin pairs.length, 0 < ws m) :
+    Portfolio n :=
+  (List.finRange pairs.length).map fun m =>
+    ⟨(pairs.get m).1, (pairs.get m).2, ws m, h_disj m, h_pos m⟩
+
+/-- The weighted sum of `portfolioOfWeights` equals the Fin-indexed sum. -/
+private theorem weightedSum_portfolioOfWeights {n : ℕ}
+    (pairs : List (Finset (Fin n) × Finset (Fin n)))
+    (ws : Fin pairs.length → ℚ)
+    (h_disj : ∀ m, Disjoint (pairs.get m).1 (pairs.get m).2)
+    (h_pos : ∀ m, 0 < ws m) (j : Fin n) :
+    Portfolio.weightedSum (portfolioOfWeights pairs ws h_disj h_pos) j =
+    ∑ m : Fin pairs.length,
+      ws m * ((comparisonVec n (pairs.get m).1 (pairs.get m).2 j : ℤ) : ℚ) := by
+  simp only [portfolioOfWeights, Portfolio.weightedSum, List.map_map, Function.comp]
+  exact finRange_map_sum _
+
+/-- Validity of `portfolioOfWeights`: each entry's pair has `ge`. -/
+private theorem isValid_portfolioOfWeights {n : ℕ}
+    (pairs : List (Finset (Fin n) × Finset (Fin n)))
+    (ws : Fin pairs.length → ℚ)
+    (h_disj : ∀ m, Disjoint (pairs.get m).1 (pairs.get m).2)
+    (h_pos : ∀ m, 0 < ws m)
+    (ge : Set (Fin n) → Set (Fin n) → Prop)
+    (h_ge : ∀ m : Fin pairs.length, ge ↑(pairs.get m).1 ↑(pairs.get m).2) :
+    (portfolioOfWeights pairs ws h_disj h_pos).isValid ge := by
+  intro wc hwc
+  simp only [portfolioOfWeights] at hwc
+  obtain ⟨m, _, rfl⟩ := List.mem_map.mp hwc
+  exact h_ge m
+
 /-- **Farkas alternative for the ordering LP**: either a one-directional
     probability representation exists, or there is a valid portfolio
     whose weighted comparison sums are strictly negative at every atom.
 
-    This is standard LP duality / Farkas' lemma: the feasibility polytope
-      {p ≥ 0 : 1ᵀp = 1, sys.ge ↑A ↑B → A.sum p ≥ B.sum p}
-    is nonempty iff no dual certificate of infeasibility exists.
-
-    **Route**: specialize Mathlib's `ConvexCone.hyperplane_separation` or
-    `ProperCone.hyperplane_separation_point` over ℝ, then transfer to ℚ
-    via density / finite-dimensional rationality.
+    Applies `Polyhedral.farkas` to the system encoding the ordering LP
+    {p ≥ 0, 1ᵀp = 1, compVec(A,B)·p ≥ 0 for each ge-pair}, then maps
+    both Farkas alternatives back to the goal.
 
     Note: this gives the **one-directional** (→) condition only.
     Strengthening to ↔ requires `cancel_strengthens_to_bidir`. -/
@@ -342,8 +405,244 @@ private theorem farkas_ordering_lp {n : ℕ} (sys : EpistemicSystemFA (Fin n)) :
       ∀ (A B : Finset (Fin n)), Disjoint A B →
         sys.ge ↑A ↑B → A.sum p ≥ B.sum p) ∨
     (∃ P : Portfolio n, P.isValid sys.ge ∧
-      ∀ i : Fin n, P.weightedSum i < 0) :=
-  sorry
+      ∀ i : Fin n, P.weightedSum i < 0) := by
+  -- Enumerate all disjoint ge-pairs
+  let gePairs : List (Finset (Fin n) × Finset (Fin n)) :=
+    ((Finset.univ ×ˢ Finset.univ : Finset _).filter
+      (fun ab => Disjoint ab.1 ab.2 ∧ sys.ge ↑ab.1 ↑ab.2)).toList
+  let k := gePairs.length
+  -- Constraint function: n nonnegativity + 1 normUp + 1 normLo + k ordering
+  let ineqFn : Fin ((n + 2) + k) → Polyhedral.Ineq n := fun i =>
+    if h : i.val < n then
+      ⟨fun j => if j = ⟨i.val, h⟩ then -1 else 0, 0⟩
+    else if _ : i.val = n then
+      ⟨fun _ => 1, 1⟩
+    else if _ : i.val = n + 1 then
+      ⟨fun _ => -1, -1⟩
+    else
+      have hm : i.val - (n + 2) < k := by omega
+      let pair := gePairs.get ⟨i.val - (n + 2), hm⟩
+      ⟨fun j => -(((comparisonVec n pair.1 pair.2 j : ℤ) : ℚ)), 0⟩
+  let S : Polyhedral.System n := List.ofFn ineqFn
+  have hget : ∀ i : Fin ((n + 2) + k), ineqFn i ∈ S :=
+    fun i => List.mem_ofFn.mpr ⟨i, rfl⟩
+  have hgePairsMem : ∀ (A B : Finset (Fin n)), Disjoint A B → sys.ge ↑A ↑B →
+      (A, B) ∈ gePairs := by
+    intro A B hd hge
+    simp only [gePairs, Finset.mem_toList, Finset.mem_filter, Finset.mem_product,
+      Finset.mem_univ, true_and]
+    exact ⟨hd, hge⟩
+  have hgePairsDisj : ∀ m : Fin k, Disjoint (gePairs.get m).1 (gePairs.get m).2 := by
+    intro ⟨m, hm⟩
+    have := List.get_mem gePairs ⟨m, hm⟩
+    simp only [gePairs, Finset.mem_toList, Finset.mem_filter] at this
+    exact this.2.1
+  have hgePairsGe : ∀ m : Fin k, sys.ge ↑(gePairs.get m).1 ↑(gePairs.get m).2 := by
+    intro ⟨m, hm⟩
+    have := List.get_mem gePairs ⟨m, hm⟩
+    simp only [gePairs, Finset.mem_toList, Finset.mem_filter] at this
+    exact this.2.2
+  -- Apply Farkas
+  rcases Polyhedral.farkas S with ⟨x, hx⟩ | hcert
+  · -- ═══ Feasible case: extract probability vector ═══
+    left
+    have hsat : ∀ i : Fin ((n + 2) + k), (ineqFn i).sat x := fun i => hx _ (hget i)
+    refine ⟨x, ?_, ?_, ?_⟩
+    · -- Nonnegativity: from constraint -xᵢ ≤ 0
+      intro i
+      have h := hsat ⟨i.val, by omega⟩
+      simp only [ineqFn, dif_pos i.isLt, Polyhedral.Ineq.sat, Polyhedral.dot] at h
+      simp only [ite_mul, neg_one_mul, zero_mul, Finset.sum_ite_eq', Finset.mem_univ,
+        ite_true] at h
+      linarith
+    · -- Normalization: from 1ᵀx ≤ 1 and -1ᵀx ≤ -1
+      have h_up := hsat ⟨n, by omega⟩
+      have h_lo := hsat ⟨n + 1, by omega⟩
+      have hup_eq : ineqFn ⟨n, by omega⟩ = ⟨fun (_ : Fin n) => (1 : ℚ), 1⟩ := by
+        simp [ineqFn]
+      have hlo_eq : ineqFn ⟨n + 1, by omega⟩ = ⟨fun (_ : Fin n) => (-1 : ℚ), -1⟩ := by
+        simp [ineqFn]
+      rw [Polyhedral.Ineq.sat, Polyhedral.dot, hup_eq] at h_up
+      rw [Polyhedral.Ineq.sat, Polyhedral.dot, hlo_eq] at h_lo
+      simp only [one_mul] at h_up
+      simp only [neg_one_mul, Finset.sum_neg_distrib] at h_lo
+      linarith
+    · -- Ordering: from -(compVec · x) ≤ 0
+      intro A B hdisj hge
+      obtain ⟨⟨m, hm⟩, hget_m⟩ := List.mem_iff_get.mp (hgePairsMem A B hdisj hge)
+      have h := hsat ⟨n + 2 + m, by omega⟩
+      have hord_eq : ineqFn ⟨n + 2 + m, by omega⟩ =
+          ⟨fun j => -(((comparisonVec n (gePairs.get ⟨m, hm⟩).1
+            (gePairs.get ⟨m, hm⟩).2 j : ℤ) : ℚ)), 0⟩ := by
+        simp [ineqFn, show ¬(n + 2 + m < n) from by omega,
+          show ¬(n + 2 + m = n) from by omega,
+          show ¬(n + 2 + m = n + 1) from by omega]
+      rw [Polyhedral.Ineq.sat, Polyhedral.dot, hord_eq] at h
+      simp only [hget_m, neg_mul, Finset.sum_neg_distrib] at h
+      linarith [compVec_as_sum_diff A B x hdisj]
+  · -- ═══ Certificate case: build portfolio with negative weighted sums ═══
+    right
+    obtain ⟨cert⟩ := hcert
+    have hlen : S.length = (n + 2) + k := List.length_ofFn
+    have hS_get : ∀ i : Fin S.length,
+        S.get i = ineqFn (i.cast hlen) := fun i => List.get_ofFn ineqFn i
+    -- Cast cert weights to natural indices
+    let ws : Fin ((n + 2) + k) → ℚ := fun i => cert.ws (i.cast hlen.symm)
+    have ws_nn : ∀ i, 0 ≤ ws i := fun i => cert.nonneg _
+    -- Transport: reindex sums from Fin S.length to Fin ((n+2)+k)
+    have hreindex : ∀ f : Fin S.length → ℚ,
+        ∑ i : Fin S.length, f i =
+        ∑ i : Fin ((n + 2) + k), f (i.cast hlen.symm) :=
+      fun f => Fintype.sum_equiv (finCongr hlen) _ _ (fun i => by simp [finCongr])
+    have hcoeffsZero : ∀ j : Fin n,
+        ∑ i : Fin ((n + 2) + k), ws i * (ineqFn i).lhs j = 0 := by
+      intro j
+      have h := cert.coeffsZero j
+      rw [hreindex] at h; simp_rw [hS_get] at h; exact h
+    have hboundNeg :
+        ∑ i : Fin ((n + 2) + k), ws i * (ineqFn i).rhs < 0 := by
+      have h := cert.boundNeg
+      rw [hreindex] at h; simp_rw [hS_get] at h; exact h
+    -- Decompose boundNeg: ws(n) - ws(n+1) < 0
+    have hbound_decomp : ws ⟨n, by omega⟩ - ws ⟨n + 1, by omega⟩ < 0 := by
+      have h := hboundNeg
+      rw [sum_split_n2k] at h
+      have h_nn_zero : ∑ i : Fin n, ws ⟨i.val, by omega⟩ * (ineqFn ⟨i.val, by omega⟩).rhs = 0 :=
+        Finset.sum_eq_zero fun i _ => by simp [ineqFn, dif_pos i.isLt]
+      have h_ord_zero : ∑ m : Fin k, ws ⟨n + 2 + m.val, by omega⟩ *
+          (ineqFn ⟨n + 2 + m.val, by omega⟩).rhs = 0 :=
+        Finset.sum_eq_zero fun m _ => by
+          have : ineqFn ⟨n + 2 + m.val, by omega⟩ =
+              ⟨fun j => -(((comparisonVec n (gePairs.get ⟨m.val, m.isLt⟩).1
+                (gePairs.get ⟨m.val, m.isLt⟩).2 j : ℤ) : ℚ)), 0⟩ := by
+            simp [ineqFn, show ¬(n + 2 + m.val < n) from by omega,
+              show ¬(n + 2 + m.val = n) from by omega,
+              show ¬(n + 2 + m.val = n + 1) from by omega]
+          rw [this]; exact mul_zero _
+      have h_up : (ineqFn ⟨n, by omega⟩).rhs = 1 := by simp [ineqFn]
+      have h_lo : (ineqFn ⟨n + 1, by omega⟩).rhs = -1 := by
+        simp [ineqFn, show ¬(n + 1 < n) from by omega]
+      simp only [h_nn_zero, h_ord_zero, h_up, h_lo, zero_add, add_zero] at h; linarith
+    -- Helper: evaluate ineqFn at nonneg/norm/ordering indices
+    have hineq_nn : ∀ (i : Fin n) (j : Fin n),
+        (ineqFn ⟨i.val, by omega⟩).lhs j = if j = i then -1 else 0 := by
+      intro i _; simp only [ineqFn, dif_pos i.isLt]
+    have hineq_up : ∀ j : Fin n, (ineqFn ⟨n, by omega⟩).lhs j = 1 := by
+      intro _; simp [ineqFn]
+    have hineq_lo : ∀ j : Fin n, (ineqFn ⟨n + 1, by omega⟩).lhs j = -1 := by
+      intro _; simp [ineqFn, show ¬(n + 1 < n) from by omega]
+    have hineq_ord : ∀ (m : Fin k) (j : Fin n),
+        (ineqFn ⟨n + 2 + m.val, by omega⟩).lhs j =
+        -(((comparisonVec n (gePairs.get ⟨m.val, m.isLt⟩).1
+            (gePairs.get ⟨m.val, m.isLt⟩).2 j : ℤ) : ℚ)) := by
+      intro m _
+      simp [ineqFn, show ¬(n + 2 + m.val < n) from by omega,
+        show ¬(n + 2 + m.val = n) from by omega,
+        show ¬(n + 2 + m.val = n + 1) from by omega]
+    -- Decompose coeffsZero: ordering sums = -ws_nn(j) + (ws_up - ws_lo)
+    have hord_sum : ∀ j : Fin n,
+        ∑ m : Fin k, ws ⟨n + 2 + m.val, by omega⟩ *
+          (-(((comparisonVec n (gePairs.get ⟨m.val, m.isLt⟩).1
+               (gePairs.get ⟨m.val, m.isLt⟩).2 j : ℤ) : ℚ))) =
+        ws ⟨j.val, by omega⟩ - (ws ⟨n, by omega⟩ - ws ⟨n + 1, by omega⟩) := by
+      intro j; have h := hcoeffsZero j
+      rw [sum_split_n2k] at h
+      have h_nn : ∑ i : Fin n, ws ⟨i.val, by omega⟩ * (ineqFn ⟨i.val, by omega⟩).lhs j =
+          -ws ⟨j.val, by omega⟩ := by
+        rw [Finset.sum_eq_single j]
+        · rw [hineq_nn j j]; simp
+        · intro i _ hij; rw [hineq_nn i j, if_neg (Ne.symm hij)]; ring
+        · intro h; exact absurd (Finset.mem_univ j) h
+      rw [h_nn, hineq_up, hineq_lo] at h
+      simp_rw [hineq_ord] at h
+      linarith
+    -- Ordering weighted sums are < 0
+    have hord_neg : ∀ j : Fin n,
+        ∑ m : Fin k, ws ⟨n + 2 + m.val, by omega⟩ *
+          ((comparisonVec n (gePairs.get ⟨m.val, m.isLt⟩).1
+            (gePairs.get ⟨m.val, m.isLt⟩).2 j : ℤ) : ℚ) < 0 := by
+      intro j
+      have h := hord_sum j
+      have : ∑ m : Fin k, ws ⟨n + 2 + m.val, by omega⟩ *
+          ((comparisonVec n (gePairs.get ⟨m.val, m.isLt⟩).1
+            (gePairs.get ⟨m.val, m.isLt⟩).2 j : ℤ) : ℚ) =
+        -(∑ m : Fin k, ws ⟨n + 2 + m.val, by omega⟩ *
+          (-(((comparisonVec n (gePairs.get ⟨m.val, m.isLt⟩).1
+            (gePairs.get ⟨m.val, m.isLt⟩).2 j : ℤ) : ℚ)))) := by
+        simp only [mul_neg, Finset.sum_neg_distrib, neg_neg]
+      rw [this, h]
+      linarith [ws_nn ⟨j.val, by omega⟩, hbound_decomp]
+    -- Build portfolio with perturbed weights (ws_ord + ε) to ensure all > 0
+    let ws_ord : Fin k → ℚ := fun m => ws ⟨n + 2 + m.val, by omega⟩
+    by_cases hn : n = 0
+    · subst hn
+      refine ⟨[], ?_, fun j => Fin.elim0 j⟩
+      intro wc h; cases h
+    · -- n ≥ 1: use perturbed weights
+      have hn' : 0 < n := Nat.pos_of_ne_zero hn
+      let neg_sums : Fin n → ℚ := fun j =>
+        ∑ m : Fin k, ws_ord m *
+          ((comparisonVec n (gePairs.get ⟨m.val, m.isLt⟩).1
+            (gePairs.get ⟨m.val, m.isLt⟩).2 j : ℤ) : ℚ)
+      have hns_neg : ∀ j, neg_sums j < 0 := hord_neg
+      let cv_bound : ℚ := ↑k + 1
+      have hcv_pos : 0 < cv_bound := by positivity
+      let min_gap : ℚ := if _ : 0 < k then
+        Finset.univ.inf' ⟨⟨0, hn'⟩, Finset.mem_univ _⟩ (fun j => -neg_sums j)
+      else 1
+      have hmin_pos : 0 < min_gap := by
+        simp only [min_gap]; split
+        · rw [Finset.lt_inf'_iff]; exact fun j _ => neg_pos.mpr (hns_neg j)
+        · exact one_pos
+      let ε : ℚ := min_gap / (2 * cv_bound)
+      have hε_pos : 0 < ε := div_pos hmin_pos (by positivity)
+      let ws_pert : Fin k → ℚ := fun m => ws_ord m + ε
+      have h_pert_pos : ∀ m, 0 < ws_pert m :=
+        fun m => add_pos_of_nonneg_of_pos (ws_nn ⟨n + 2 + m.val, by omega⟩) hε_pos
+      let P := portfolioOfWeights gePairs ws_pert hgePairsDisj h_pert_pos
+      refine ⟨P, isValid_portfolioOfWeights _ _ _ _ _ hgePairsGe, fun j => ?_⟩
+      rw [weightedSum_portfolioOfWeights]
+      -- Perturbed sum = original sum + ε * Σ cv
+      have h_split :
+          ∑ m : Fin k, ws_pert m * ((comparisonVec n (gePairs.get m).1
+            (gePairs.get m).2 j : ℤ) : ℚ) =
+          neg_sums j + ε * ∑ m : Fin k,
+            ((comparisonVec n (gePairs.get m).1
+              (gePairs.get m).2 j : ℤ) : ℚ) := by
+        simp only [ws_pert, add_mul, Finset.sum_add_distrib, Finset.mul_sum]; ring
+      rw [h_split]
+      -- Bound each compVec entry by 1
+      have hcv_le1 : ∀ m : Fin k, ((comparisonVec n (gePairs.get m).1
+          (gePairs.get m).2 j : ℤ) : ℚ) ≤ 1 := by
+        intro m
+        suffices h : (comparisonVec n (gePairs.get m).1 (gePairs.get m).2 j : ℤ) ≤ 1 by
+          exact_mod_cast h
+        simp only [comparisonVec]
+        by_cases hA : j ∈ (gePairs.get m).1 <;> by_cases hB : j ∈ (gePairs.get m).2
+        · exact absurd hB (Finset.disjoint_left.mp (hgePairsDisj m) hA)
+        all_goals simp_all
+      -- Sum of compVec entries ≤ k
+      have hcvs_le : (∑ m : Fin k, ((comparisonVec n (gePairs.get m).1
+          (gePairs.get m).2 j : ℤ) : ℚ)) ≤ ↑k :=
+        le_trans (Finset.sum_le_sum fun m _ => hcv_le1 m)
+          (by simp [Finset.sum_const, Finset.card_univ, Fintype.card_fin, smul_eq_mul])
+      -- ε * cv_bound = min_gap / 2
+      have hε_eq : ε * cv_bound = min_gap / 2 := by
+        simp only [ε]
+        rw [div_mul_eq_mul_div, mul_div_mul_right _ _ (ne_of_gt hcv_pos)]
+      -- min_gap ≤ -neg_sums j
+      have hmin_le : min_gap ≤ -neg_sums j := by
+        simp only [min_gap]; split
+        · exact Finset.inf'_le _ (Finset.mem_univ j)
+        · exfalso
+          have hk0 : k = 0 := by omega
+          have : neg_sums j = 0 := by
+            show ∑ m : Fin k, _ = 0
+            have : (Finset.univ : Finset (Fin k)) = ∅ := by
+              ext ⟨m, hm⟩; simp; omega
+            simp [this]
+          linarith [hns_neg j]
+      nlinarith [mul_le_mul_of_nonneg_left hcvs_le (le_of_lt hε_pos)]
 
 -- ── Step 4b'. Cancellation strengthens → to ↔ ───
 
