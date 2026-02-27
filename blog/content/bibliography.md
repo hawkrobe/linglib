@@ -105,8 +105,8 @@ cited in: [QingFranke2015](https://github.com/hawkrobe/linglib/blob/main/Linglib
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/RSA/Implementations/QingEtAl2016.lean)
 
 **Scontras, G. & Pearl, L. S.** (2021). When Pragmatics Matters More for Truth-Value Judgments: An Investigation of Quantifier Scope Ambiguity. *Glossa, 6(1), 110*.\
-[formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/RSA/Implementations/ScontrasPearl2021.lean)\
-cited in: [ScontrasPearl2021RSA](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Quantification/Studies/ScontrasPearl2021RSA.lean)
+[formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Quantification/Studies/ScontrasPearl2021.lean, Phenomena/Quantification/Studies/ScontrasPearl2021RSA.lean, Phenomena/Quantification/Studies/ScontrasPearl2021TwoNot.lean)\
+cited in: [NumeralSemanticsBridge](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Quantification/Bridge/NumeralSemanticsBridge.lean), [ScontrasPearl2021](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Quantification/Studies/ScontrasPearl2021.lean), [ScontrasPearl2021RSA](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Quantification/Studies/ScontrasPearl2021RSA.lean), [ScontrasPearl2021TwoNot](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Quantification/Studies/ScontrasPearl2021TwoNot.lean)
 
 **Scontras, G. & Tonhauser, J.** (2025). Projection without Lexically-Specified Presupposition: A Model for “Know”. *Proceedings of Sinn und Bedeutung, 29, 1431–1448*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/RSA/Implementations/ScontrasTonhauser2025.lean)\
@@ -189,6 +189,10 @@ cited in: [BaleEtAl2025](https://github.com/hawkrobe/linglib/blob/main/Linglib/P
 
 **Barwise, J. & Cooper, R.** (1981). Generalized Quantifiers and Natural Language. *Linguistics and Philosophy, 4(2), 159–219*.\
 [foundational] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Lexical/Determiner/Quantifier.lean)
+
+**Chatzikyriakidis, S., Cooper, R., Gregoromichelaki, E. & Sutton, P.** (2025). Types and the Structure of Meaning: Issues in Compositional and Lexical Semantics. *Cambridge University Press*.\
+[formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/TypeTheoretic/Copredication.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/TypeTheoretic/FrameBridge.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Polysemy/CopredBridge.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Complementation/Attitudes/IntentionalIdentity/Data.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Complementation/Attitudes/IntentionalIdentity/Bridge.lean)\
+cited in: [Bridge](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Complementation/Attitudes/IntentionalIdentity/Bridge.lean), [Data](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Complementation/Attitudes/IntentionalIdentity/Data.lean), [CopredBridge](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Polysemy/CopredBridge.lean), [Copredication](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/TypeTheoretic/Copredication.lean), [FrameBridge](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/TypeTheoretic/FrameBridge.lean)
 
 **Keenan, E. & Stavi, J.** (1986). A Semantic Characterization of Natural Language Determiners. *Linguistics and Philosophy, 9(3), 253–326*.\
 [cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Lexical/Determiner/Quantifier.lean)
@@ -418,7 +422,8 @@ cited in: [Bridge](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenome
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Questions/Inquisitive.lean)
 
 **Fox, D.** (2018). Partition by Exhaustification: Comments on Dayal 1996. *Proceedings of Sinn und Bedeutung 22, 1, 403–434*.\
-[cited]
+[cited]\
+cited in: [Bridge](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Questions/Studies/Xiang2022/Bridge.lean), [Exhaustivity](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Questions/Exhaustivity.lean)
 
 **Groenendijk, J. & Stokhof, M.** (1984). Studies on the Semantics of Questions and the Pragmatics of Answers. *PhD dissertation, University of Amsterdam*.\
 [foundational] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Questions/Partition.lean)
@@ -446,6 +451,10 @@ cited in: [KD45Projection](https://github.com/hawkrobe/linglib/blob/main/Linglib
 **Schlenker, P.** (2009). Local Contexts. *Semantics and Pragmatics, 2, 1–78*.\
 [cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Comparisons/ProjectionMechanisms.lean)\
 cited in: [ProjectionMechanisms](https://github.com/hawkrobe/linglib/blob/main/Linglib/Comparisons/ProjectionMechanisms.lean)
+
+**Sharvit, Y.** (2025). Rooth-Partee Conditionals. *Linguistics and Philosophy*.\
+[formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Conditionals/Presuppositional.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Presupposition/Studies/Sharvit2025.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Presupposition/Bridge/SharvitCLOS.lean)\
+cited in: [SharvitCLOS](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Presupposition/Bridge/SharvitCLOS.lean), [Sharvit2025](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Presupposition/Studies/Sharvit2025.lean), [Presuppositional](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Conditionals/Presuppositional.lean)
 
 **von Fintel, K.** (1999). NPI Licensing, Strawson Entailment, and Context Dependency. *Journal of Semantics, 16(2), 97–148*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Entailment/StrawsonEntailment.lean)
@@ -498,9 +507,13 @@ cited in: [ClausePrefixes](https://github.com/hawkrobe/linglib/blob/main/Linglib
 **Chomsky, N.** (1995). The Minimalist Program. *MIT Press*.\
 [foundational] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/Minimalism/Core/Basic.lean)
 
+**de Hoop, H. & Malchukov, A.** (2008). Case-Marking Strategies. *Linguistic Inquiry, 39(4), 565–587*.\
+[formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Case/Studies/DeHoopMalchukov2008.lean)\
+cited in: [DeHoopMalchukov2008](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Case/Studies/DeHoopMalchukov2008.lean)
+
 **den Dikken, M.** (1995). Particles: On the Syntax of Verb-Particle, Triadic, and Causative Constructions. *Oxford University Press*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/ArgumentStructure/Bridge/MinimalismSmallClause.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Constructions/ParticleVerbs/Data.lean)\
-cited in: [MinimalismSmallClause](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/ArgumentStructure/Bridge/MinimalismSmallClause.lean)
+cited in: [MinimalismSmallClause](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/ArgumentStructure/Bridge/MinimalismSmallClause.lean), [MinimalismParticleSC](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Constructions/ParticleVerbs/Bridge/MinimalismParticleSC.lean), [MinimalismResultativeSC](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Constructions/Resultatives/Bridge/MinimalismResultativeSC.lean), [SmallClause](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/Minimalism/Core/SmallClause.lean)
 
 **Erlewine, M. Y.** (2016). Anti-locality and Optimality in Kaqchikel Agent Focus. *Natural Language \& Linguistic Theory, 34, 923–972*.\
 [cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/Minimalism/Core/Position.lean)\
@@ -519,6 +532,10 @@ cited in: [MinimalismSmallClause](https://github.com/hawkrobe/linglib/blob/main/
 
 **Hahn, M., Degen, J. & Futrell, R.** (2021). Modeling Word and Morpheme Order in Natural Language as an Efficient Trade-Off of Memory and Surprisal. *Psychological Review, 128(4), 726–756*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/DependencyGrammar/Formal/MemorySurprisal/Basic.lean)
+
+**Haspelmath, M.** (2021). Explaining Argument-Coding Splits with Role-Reference Associations. *Linguistics, 59(5), 1231–1270*.\
+[formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/Prominence.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/FormFrequency.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Case/Studies/Haspelmath2021.lean)\
+cited in: [FormFrequency](https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/FormFrequency.lean), [Prominence](https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/Prominence.lean), [Haspelmath2021](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Case/Studies/Haspelmath2021.lean)
 
 **Henry, A.** (1995). Belfast English and Standard English: Dialect Variation and Parameter Setting. *Oxford University Press*.\
 [cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/WordOrder/SubjectAuxInversion.lean)\

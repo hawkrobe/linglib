@@ -56,25 +56,29 @@ open Core.Prominence
 
 /-- Person prominence for differential indexing (Just 2024, §2.1).
 
-    The person scale for indexing is a binary split between speech act
+    The person scale for indexing is a **binary** split between speech act
     participants (SAP: 1st/2nd person) and non-participants (3rd person).
-    This mirrors Preminger's (2014) [±participant] feature decomposition. -/
-inductive PersonLevel where
+    This mirrors Preminger's (2014) [±participant] feature decomposition.
+
+    This is coarser than `Core.Prominence.PersonLevel` (1st > 2nd > 3rd),
+    which is needed for scenario splits. The binary split suffices for
+    indexing because indexing does not distinguish 1st from 2nd. -/
+inductive IndexingPersonLevel where
   /-- Speech act participants: 1st and 2nd person -/
   | sap
   /-- Non-participants: 3rd person -/
   | third
   deriving DecidableEq, BEq, Repr, Inhabited
 
-/-- Rank on the person scale: SAP (1) > 3rd (0). -/
-def PersonLevel.rank : PersonLevel → Nat
+/-- Rank on the indexing person scale: SAP (1) > 3rd (0). -/
+def IndexingPersonLevel.rank : IndexingPersonLevel → Nat
   | .sap   => 1
   | .third => 0
 
-/-- All person levels. -/
-def PersonLevel.all : List PersonLevel := [.sap, .third]
+/-- All indexing person levels. -/
+def IndexingPersonLevel.all : List IndexingPersonLevel := [.sap, .third]
 
-theorem person_sap_gt_third : PersonLevel.sap.rank > PersonLevel.third.rank := by decide
+theorem person_sap_gt_third : IndexingPersonLevel.sap.rank > IndexingPersonLevel.third.rank := by decide
 
 -- ============================================================================
 -- § 2: Indexing Fragment
@@ -104,7 +108,7 @@ structure IndexingFragment where
   /-- Which argument role is differentially indexed -/
   role : ArgumentRole
   /-- Which person levels trigger indexing -/
-  personIndexed : PersonLevel → Bool
+  personIndexed : IndexingPersonLevel → Bool
   /-- Which animacy levels trigger indexing -/
   animacyIndexed : AnimacyLevel → Bool
   /-- Which definiteness levels trigger indexing -/
@@ -117,7 +121,7 @@ structure IndexingFragment where
 /-- A dimension is **conditioning** if the marking predicate is non-uniform:
     some levels are indexed and some are not. -/
 def IndexingFragment.personConditioned (f : IndexingFragment) : Bool :=
-  PersonLevel.all.any f.personIndexed && !(PersonLevel.all.all f.personIndexed)
+  IndexingPersonLevel.all.any f.personIndexed && !(IndexingPersonLevel.all.all f.personIndexed)
 
 def IndexingFragment.animacyConditioned (f : IndexingFragment) : Bool :=
   AnimacyLevel.all.any f.animacyIndexed && !(AnimacyLevel.all.all f.animacyIndexed)
@@ -154,11 +158,15 @@ def IndexingFragment.aPolarityCorrect (f : IndexingFragment) : Bool :=
   (if f.definitenessConditioned then
     f.definitenessIndexed .nonSpecific && !f.definitenessIndexed .personalPronoun else true)
 
-/-- Role-appropriate polarity check. -/
+/-- Role-appropriate polarity check. T behaves like P (targets prominent),
+    R behaves like A (targets non-prominent). S is vacuously correct. -/
 def IndexingFragment.polarityCorrect (f : IndexingFragment) : Bool :=
   match f.role with
   | .P => f.pPolarityCorrect
+  | .T => f.pPolarityCorrect  -- T indexes like P (Haspelmath 2021)
   | .A => f.aPolarityCorrect
+  | .R => f.aPolarityCorrect  -- R indexes like A (Haspelmath 2021)
+  | .S => true                -- S is the reference point
 
 -- ============================================================================
 -- § 5: Differential P Indexing Fragments (Just 2024, Table 1)

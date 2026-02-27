@@ -815,4 +815,126 @@ theorem active_np_implies_active_pron :
       else true) = true := by
   native_decide
 
+-- ============================================================================
+-- Ditransitive Alignment (Haspelmath 2021, §3)
+-- ============================================================================
+
+/-! Ditransitive alignment classifies how a language codes R (recipient)
+    and T (theme) relative to the monotransitive roles A and P.
+
+    The terminology follows Haspelmath (2005, 2021):
+    - **Indirective**: T = P, R distinctly marked (like accusative for
+      monotransitives: the "subject-like" argument is unmarked)
+    - **Secundative**: R = P, T distinctly marked (like ergative for
+      monotransitives: the "object-like" argument is unmarked)
+    - **Neutral**: R = T = P (no distinction among objects)
+    - **Tripartite**: R ≠ T ≠ P (all three distinctly marked)
+
+    Haspelmath's key observation: indirective is to ditransitives what
+    accusative is to monotransitives; secundative is to ditransitives
+    what ergative is to monotransitives. -/
+
+/-- Ditransitive alignment type. Classifies how R (recipient) and T (theme)
+    are coded relative to the monotransitive P. -/
+inductive DitransitiveAlignment where
+  /-- Neutral (R = T = P): no distinction among non-agent arguments -/
+  | neutral
+  /-- Indirective (T = P ≠ R): R is distinctly marked, T patterns with P.
+      Analogous to accusative alignment. E.g., English "give the book TO Mary". -/
+  | indirective
+  /-- Secundative (R = P ≠ T): T is distinctly marked, R patterns with P.
+      Analogous to ergative alignment. E.g., many Bantu applicatives. -/
+  | secundative
+  /-- Tripartite (R ≠ T ≠ P): all three roles distinctly marked -/
+  | tripartite
+  deriving DecidableEq, BEq, Repr
+
+/-- Whether this ditransitive alignment marks R distinctly from P. -/
+def DitransitiveAlignment.marksR : DitransitiveAlignment → Bool
+  | .indirective => true
+  | .tripartite  => true
+  | _            => false
+
+/-- Whether this ditransitive alignment marks T distinctly from P. -/
+def DitransitiveAlignment.marksT : DitransitiveAlignment → Bool
+  | .secundative => true
+  | .tripartite  => true
+  | _            => false
+
+/-- A language's ditransitive alignment profile. -/
+structure DitransitiveProfile where
+  name : String
+  iso639 : String
+  alignment : DitransitiveAlignment
+  notes : String := ""
+  deriving Repr, DecidableEq, BEq
+
+section DitransitiveData
+
+/-- English: indirective (T = P, R marked with "to").
+    "give the book to Mary" vs. "give Mary the book" (double-object
+    alternation, but prepositional dative is the indirective base). -/
+def ditrans_english : DitransitiveProfile :=
+  { name := "English", iso639 := "eng"
+    alignment := .indirective
+    notes := "T = P (acc); R marked with 'to'" }
+
+/-- German: indirective (T = ACC, R = DAT). -/
+def ditrans_german : DitransitiveProfile :=
+  { name := "German", iso639 := "deu"
+    alignment := .indirective
+    notes := "T = accusative; R = dative" }
+
+/-- Latin: indirective (T = ACC, R = DAT). -/
+def ditrans_latin : DitransitiveProfile :=
+  { name := "Latin", iso639 := "lat"
+    alignment := .indirective
+    notes := "T = accusative; R = dative" }
+
+/-- Japanese: indirective (T = o, R = ni). -/
+def ditrans_japanese : DitransitiveProfile :=
+  { name := "Japanese", iso639 := "jpn"
+    alignment := .indirective
+    notes := "T = o (accusative); R = ni (dative)" }
+
+/-- Swahili: secundative (R = P, T distinctly marked via applicative). -/
+def ditrans_swahili : DitransitiveProfile :=
+  { name := "Swahili", iso639 := "swh"
+    alignment := .secundative
+    notes := "R = P in applicative; T marked differently" }
+
+/-- Mandarin: neutral (R and T both unmarked, distinguished by order). -/
+def ditrans_mandarin : DitransitiveProfile :=
+  { name := "Mandarin", iso639 := "cmn"
+    alignment := .neutral
+    notes := "R and T both unmarked; order distinguishes" }
+
+end DitransitiveData
+
+def allDitransProfiles : List DitransitiveProfile :=
+  [ ditrans_english, ditrans_german, ditrans_latin
+  , ditrans_japanese, ditrans_swahili, ditrans_mandarin ]
+
+/-- Indirective alignment is attested. -/
+theorem ditrans_indirective_attested :
+    allDitransProfiles.any (λ p => p.alignment == .indirective) = true := by
+  native_decide
+
+/-- Secundative alignment is attested. -/
+theorem ditrans_secundative_attested :
+    allDitransProfiles.any (λ p => p.alignment == .secundative) = true := by
+  native_decide
+
+/-- Neutral ditransitive alignment is attested. -/
+theorem ditrans_neutral_attested :
+    allDitransProfiles.any (λ p => p.alignment == .neutral) = true := by
+  native_decide
+
+/-- Indirective is more common than secundative (parallel to accusative
+    being more common than ergative for monotransitives). -/
+theorem ditrans_indirective_more_common :
+    (allDitransProfiles.filter (λ p => p.alignment == .indirective)).length >
+    (allDitransProfiles.filter (λ p => p.alignment == .secundative)).length := by
+  native_decide
+
 end Phenomena.Alignment.Typology

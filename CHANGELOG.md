@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.227.4] - 2026-02-27
+
+### Added
+- **Fusco & Sgrizzi (2025) formalization**: Italian *di*/*a* infinitival alternation and rational attitude semantics.
+  - `Theories/Semantics/Attitudes/RationalAttitude.lean`: `Reading` type, `readingFromSize`, `CausativeAttitude.denote` (single-denotation architecture), CLOSURE operator, `readings_from_single_denote` theorem, four diagnostics.
+  - `Theories/Semantics/Modality/Inertia.lean`: `InertialParams` (Dowty 1979), `inertialNecessity`/`inertialPossibility` via Kratzer, `empty_inertia_is_simple` and `inertial_isNormal` theorems.
+  - `Fragments/Italian/Predicates.lean`: `InfComplementizer` (*di*/*a*), `ItalianVerbEntry`, *convincere*/*persuadere*/*credere* entries, bridge theorems (`convincere_dual_reading`, `convincere_alternation_is_structural`).
+- **Bibliography**: added Fusco & Sgrizzi (2025), Beltrama, Solt & Burnett (2023), Chatzikyriakidis et al. (2025) to `references.bib`.
+
+### Fixed
+- **Beltrama et al. cite key**: `@cite{beltrama-solt-burnett-2022}` → `@cite{beltrama-solt-burnett-2023}` (correct publication year).
+
 ## [0.227.3] - 2026-02-27
 
 ### Changed

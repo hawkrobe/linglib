@@ -212,67 +212,126 @@ theorem representable_implies_cancellation {n : ℕ}
 -- ═══════════════════════════════════════════════════════════════
 
 /-- The feasibility polytope for measure representation: probability vectors
-    p : Fin n → ℚ that are nonneg, normalized, and consistent with all ordering
-    constraints on disjoint pairs. This is a (possibly empty) compact convex
-    polytope in the probability simplex, defined by finitely many half-spaces. -/
+    p : Fin n → ℚ that are nonneg, normalized, and **faithfully encode** the
+    ordering on disjoint pairs — exactly `sys.ge ↑A ↑B ↔ A.sum p ≥ B.sum p`.
+    The ↔ (rather than →) is essential: the forward direction ensures the
+    measure respects the ordering, while the backward direction ensures
+    strictness is preserved (no spurious ties). -/
 def feasibleWeights (n : ℕ) (sys : EpistemicSystemFA (Fin n)) : Set (Fin n → ℚ) :=
   { p | (∀ i, 0 ≤ p i) ∧
         Finset.univ.sum p = 1 ∧
-        ∀ (A B : Finset (Fin n)), Disjoint A B → sys.ge ↑A ↑B →
-          A.sum p ≥ B.sum p }
+        ∀ (A B : Finset (Fin n)), Disjoint A B →
+          (sys.ge ↑A ↑B ↔ A.sum p ≥ B.sum p) }
+
+/-- Point-mass measure from a weight vector: μ(A) = Σᵢ (if i ∈ A then pᵢ else 0).
+    Uses explicit if-then-else rather than Finset.filter to avoid DecidablePred
+    instance matching issues in rewrite tactics. -/
+private noncomputable def atomMu {n : ℕ} (p : Fin n → ℚ) (A : Set (Fin n)) : ℚ :=
+  Finset.univ.sum (fun i => if i ∈ A then p i else 0)
+
+/-- atomMu agrees with Finset.sum on finset coercions. -/
+private theorem atomMu_eq_finset_sum {n : ℕ} (p : Fin n → ℚ) (S : Finset (Fin n)) :
+    atomMu p ↑S = S.sum p := by
+  simp only [atomMu, Finset.mem_coe]
+  rw [← finset_sum_as_univ S p]
 
 /-- A feasible weight vector yields a representing measure.
-    Construction: μ(A) = Σᵢ∈A p(i). Finite additivity is definitional.
-    Representation (ge ↔ μ(A) ≥ μ(B)) uses:
-    - Forward: feasibility gives μ(A) ≥ μ(B) for disjoint A ≿ B; extend to
-      general pairs via the FA additivity axiom (A ≿ B ↔ A\B ≿ B\A).
-    - Backward: totality of ge forces consistency — if μ(A) > μ(B) then
-      ¬ge B A (else μ(B) ≥ μ(A)), so ge A B by totality. -/
+    Construction: μ(A) = Σᵢ (if i ∈ A then pᵢ else 0). Finite additivity follows
+    from a pointwise membership case split. Representation (ge ↔ μ(A) ≥ μ(B))
+    reduces to disjoint pairs via `reduce_to_disjoint` (using FA's Axiom A),
+    then applies the ↔ condition from `feasibleWeights`. -/
 private theorem feasible_to_measure {n : ℕ} (sys : EpistemicSystemFA (Fin n))
     {p : Fin n → ℚ} (hp : p ∈ feasibleWeights n sys) :
     ∃ m : FinAddMeasure (Fin n), ∀ A B, sys.ge A B ↔ m.inducedGe A B := by
+  obtain ⟨hnn, hsum, hcompat⟩ := hp
+  -- Nonneg: each summand is nonneg
+  have h_nonneg : ∀ A, 0 ≤ atomMu p A := by
+    intro A; simp only [atomMu]
+    induction (Finset.univ : Finset (Fin n)) using Finset.induction_on with
+    | empty => simp
+    | @insert a s has ih =>
+      rw [Finset.sum_insert has]
+      exact add_nonneg (by split <;> [exact hnn a; exact le_refl 0]) ih
+  -- Finite additivity via pointwise case split on membership
+  have h_additive : ∀ A B : Set (Fin n), (∀ x, x ∈ A → x ∉ B) →
+      atomMu p (A ∪ B) = atomMu p A + atomMu p B := by
+    intro A B hdisj
+    simp only [atomMu, ← Finset.sum_add_distrib]
+    apply Finset.sum_congr rfl
+    intro i _
+    by_cases hA : i ∈ A <;> by_cases hB : i ∈ B
+    · exact absurd hB (hdisj i hA)
+    · simp [Set.mem_union, hA, hB]
+    · simp [Set.mem_union, hA, hB]
+    · simp [Set.mem_union, hA, hB]
+  -- Normalization: all atoms in univ
+  have h_total : atomMu p Set.univ = 1 := by
+    simp only [atomMu, Set.mem_univ, ite_true, hsum]
+  let m : FinAddMeasure (Fin n) := ⟨atomMu p, h_nonneg, h_additive, h_total⟩
+  -- Representation via reduce_to_disjoint
+  refine ⟨m, reduce_to_disjoint sys m (fun C D hdisj => ?_)⟩
+  -- Convert Sets C, D to Finsets via filter
+  have hCeq : (↑(Finset.univ.filter (· ∈ C)) : Set (Fin n)) = C := by ext x; simp
+  have hDeq : (↑(Finset.univ.filter (· ∈ D)) : Set (Fin n)) = D := by ext x; simp
+  have hfinDisj : Disjoint (Finset.univ.filter (· ∈ C)) (Finset.univ.filter (· ∈ D)) := by
+    rw [Finset.disjoint_left]; intro x hx1 hx2
+    simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hx1 hx2
+    exact hdisj x hx1 hx2
+  -- hcompat on filter-finsets, transported to Sets via coercion identity
+  have key := hcompat _ _ hfinDisj
+  rw [hCeq, hDeq] at key
+  -- Bridge atomMu on Sets to Finset.sum (conv_lhs avoids rewriting RHS)
+  have hmuC : atomMu p C = (Finset.univ.filter (· ∈ C)).sum p := by
+    conv_lhs => rw [show C = ↑(Finset.univ.filter (· ∈ C)) from hCeq.symm]
+    exact atomMu_eq_finset_sum p _
+  have hmuD : atomMu p D = (Finset.univ.filter (· ∈ D)).sum p := by
+    conv_lhs => rw [show D = ↑(Finset.univ.filter (· ∈ D)) from hDeq.symm]
+    exact atomMu_eq_finset_sum p _
+  -- Unfold inducedGe (a def, not auto-reduced) and rewrite atomMu to finset sums
+  change sys.ge C D ↔ atomMu p C ≥ atomMu p D
+  rw [hmuC, hmuD]
+  exact key
+
+/-- **Theorem of alternatives for comparative probability** (Farkas / Scott):
+    for any FA system on Fin n, at least one of the following holds:
+    (I)  the ordering is representable — ∃ p ∈ feasibleWeights, or
+    (II) there exists a valid neutral portfolio with a strict member.
+
+    This is LP duality applied to the feasibility polytope
+      {p ≥ 0 : 1ᵀp = 1, sys.ge ↑A ↑B ↔ A.sum p ≥ B.sum p}.
+
+    The LP has standard form {x = (p, s) ≥ 0 : Ax = b} with
+      A = [1ᵀ | 0; V | -I],  b = (1, 0, …, 0),
+    where vⱼ = χ_Aⱼ − χ_Bⱼ are comparison vectors.
+
+    Farkas' lemma: exactly one holds:
+      (i)  ∃ x ≥ 0 : Ax = b
+      (ii) ∃ y : Aᵀy ≥ 0, bᵀy < 0
+    Expanding (ii) with y = (α, β₁, …, βₖ): the slack columns force
+    β ≤ 0, the p columns give α + Σβⱼ(vⱼ)ᵢ ≥ 0, and bᵀy < 0 gives α < 0.
+    Setting wⱼ = −βⱼ/(−α) ≥ 0, Σwⱼ(vⱼ)ᵢ ≥ 1 > 0 for all atoms i.
+
+    This certificate yields a neutral portfolio with a strict member:
+    compensate the positive excess at each atom by adding ({i}, ∅, dᵢ)
+    with dᵢ = −Σwⱼ(vⱼ)ᵢ, valid by monotonicity and strict by nonTrivial.
+
+    **Route 1 (Mathlib)**: specialize `ConvexCone.hyperplane_separation_of_
+    nonempty_of_isClosed_of_notMem` by proving finitely generated cones
+    are closed (Carathéodory / induction on generators). -/
+private theorem scott_alternatives {n : ℕ} (sys : EpistemicSystemFA (Fin n)) :
+    (∃ p, p ∈ feasibleWeights n sys) ∨
+    (∃ P : Portfolio n, P.isValid sys.ge ∧ P.isNeutral ∧ P.hasStrict sys.ge) :=
   sorry
 
 /-- The core LP step: cancellation implies the feasibility polytope is nonempty.
-
-    **Proof strategy** (Farkas' lemma / theorem of alternatives):
-
-    The representability question is the LP feasibility problem:
-      find p ≥ 0 with 1ᵀp = 1 and vⱼᵀp ≥ 0 for each ordering constraint j
-    where vⱼ = χ_Aⱼ - χ_Bⱼ for each pair (Aⱼ, Bⱼ) with Aⱼ ≿ Bⱼ.
-
-    Standard form with slack variables: {x = (p, s) ≥ 0 : Ax = b} where
-      A = [1ᵀ | 0; V | -I],  b = (1, 0, …, 0).
-
-    Farkas' lemma: exactly one holds:
-      (i)  ∃ x ≥ 0 : Ax = b                  — feasible
-      (ii) ∃ y : Aᵀy ≥ 0, bᵀy < 0            — dual certificate
-
-    Expanding (ii) with y = (α, β₁, …, βₖ):
-      • From slack columns: -βⱼ ≥ 0, i.e., β ≤ 0
-      • From p columns:     α + Σⱼ βⱼ(vⱼ)ᵢ ≥ 0 for each atom i
-      • From bᵀy < 0:       α < 0
-
-    Setting wⱼ = -βⱼ/(-α) ≥ 0 and dividing by -α > 0:
-      Σⱼ wⱼ(vⱼ)ᵢ ≥ 1 for all atoms i.
-
-    This certificate yields a neutral portfolio with a strict member,
-    contradicting cancellation. The argument uses totality of the ordering:
-    each Farkas weight wⱼ > 0 on a strict comparison (Aⱼ ≻ Bⱼ) contributes
-    a strict member, while tie comparisons (Aⱼ ~ Bⱼ) can be balanced by
-    their reverses. The surplus at each atom (≥ 1 rather than = 0) is
-    absorbed by the normalization constraint and nonnegativity slacks.
-
-    The technical prerequisite is Farkas' lemma itself, whose proof requires
-    showing that a finitely generated polyhedral cone is closed (to apply
-    geometric Hahn-Banach separation). In finite dimensions this follows
-    from the Minkowski-Weyl theorem; in Mathlib, the relevant entry point
-    is `geometric_hahn_banach_point_closed` composed with closedness of
-    finite-dimensional subspaces and images of proper cones. -/
+    Immediate from `scott_alternatives`: cancellation rules out branch (II),
+    so branch (I) must hold. -/
 private theorem cancellation_nonempty {n : ℕ} (sys : EpistemicSystemFA (Fin n))
     (hcancel : Cancellation n sys.ge) :
     ∃ p, p ∈ feasibleWeights n sys := by
-  sorry
+  rcases scott_alternatives sys with h | ⟨P, hV, hN, hS⟩
+  · exact h
+  · exact absurd hS (hcancel P hV hN)
 
 /-- **Scott's theorem** (hard direction): if no valid neutral portfolio has a
     strict member, then a finitely additive measure exists representing the
