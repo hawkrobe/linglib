@@ -959,6 +959,7 @@ import Linglib.Theories.Semantics.Modality.PhillipsBrown
 import Linglib.Theories.Semantics.Modality.ProbabilityOrdering
 import Linglib.Theories.Semantics.Modality.SatisfactionOrdering
 import Linglib.Theories.Semantics.Modality.Ability
+import Linglib.Theories.Semantics.Modality.ActualityEntailments
 import Linglib.Theories.Semantics.Modality.Simple
 import Linglib.Theories.Semantics.Modality.Temporal
 import Linglib.Theories.Semantics.Modality.Typology

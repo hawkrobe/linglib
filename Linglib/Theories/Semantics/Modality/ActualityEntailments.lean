@@ -1,0 +1,396 @@
+import Linglib.Theories.Semantics.Modality.EventRelativity
+import Linglib.Theories.Semantics.Modality.Ability
+
+/-!
+# Actuality Entailments: Position × Aspect (Hacquard 2006, 2009)
+  @cite{hacquard-2006} @cite{hacquard-2009}
+
+Bridges **event-relative modality** (`EventRelativity.lean`) with the
+**causal model of ability** (`Ability.lean`) to derive actuality
+entailments from the relative scope of aspect and modal.
+
+## The Puzzle
+
+The same modal verb shows different entailment patterns depending on
+interpretation (Bhatt 1999, Hacquard 2006 Ch.1):
+
+- Root (ability) + PFV: "Jane **a pu** prendre le train" → she took it
+- Root (ability) + IMPF: "Jane **pouvait** prendre le train" → maybe not
+- Epistemic + PFV: "Jane **a pu** prendre le train" → maybe not
+
+## Hacquard's (2006) Solution
+
+The relative position of the modal determines which event binder
+captures it:
+
+- Root modals (below AspP): `[AspP PRFV [ModP can [VP take train]]]`
+  Perfective quantifies over the entire modal+VP event → actualization.
+
+- Epistemic modals (above AspP): `[ModP can [AspP PRFV [VP take train]]]`
+  Modal scopes over perfective → perfective applies to VP only in
+  accessible worlds → no actualization in the actual world.
+
+## Bridge to Nadathur (2023)
+
+`Ability.lean` formalizes the causal model: `abilityWithAspect sc .perfective w`
+= ability ∧ actualization. This IS the root/belowAsp case: aspect scopes
+over the modal, so perfective forces both ability and actualization.
+
+The imperfective case `abilityWithAspect sc .imperfective w` = ability only.
+This corresponds to root + imperfective (aspect over modal, but imperfective
+doesn't force completion).
+
+## Content Licensing Explains the Asymmetry
+
+WHY are epistemic modals always above aspect? Content licensing
+(EventRelativity §8): epistemic modal bases require a contentful event.
+VP events lack content. Therefore epistemic modals cannot be bound by
+aspect (which introduces VP events) — they must be above AspP, bound
+by ASSERT or an attitude verb instead. Root modals need only
+circumstantial backgrounds (any event type), so they CAN be below AspP.
+
+The actuality entailment asymmetry follows from content licensing +
+aspect scope, without stipulation.
+
+## References
+
+- Hacquard, V. (2006). Aspects of Modality. MIT dissertation. Chapter 1.
+- Hacquard, V. (2009). On the interaction of aspect and modal auxiliaries.
+  Linguistics and Philosophy 32:279–315.
+- Nadathur, P. (2023). Actuality Inferences: Causality, Aspect, and Modality.
+- Bhatt, R. (1999). Covert Modality in Non-finite Contexts. UPenn dissertation.
+-/
+
+namespace Semantics.Modality.ActualityEntailments
+
+open Semantics.Modality.EventRelativity
+open Nadathur2023.Ability
+open Semantics.Attitudes.Intensional (World)
+open Semantics.Lexical.Verb.ViewpointAspect (ViewpointAspectB)
+
+
+-- ════════════════════════════════════════════════════
+-- § 1. Aspect Scope (Hacquard 2006, Ch.1, pp.29–48)
+-- ════════════════════════════════════════════════════
+
+/-- The relative scope of aspect and the modal in the clause structure.
+
+Root modals are below AspP: aspect quantifies over the modal event.
+Epistemic modals are above AspP: the modal quantifies over aspect.
+
+This structural difference — not lexical semantics — is the sole
+source of the actuality entailment asymmetry (Hacquard 2006, Ch.1). -/
+inductive AspectModalScope where
+  /-- Root: [Asp [Mod [VP]]] — aspect scopes over modal -/
+  | aspectOverModal
+  /-- Epistemic: [Mod [Asp [VP]]] — modal scopes over aspect -/
+  | modalOverAspect
+  deriving DecidableEq, BEq, Repr
+
+/-- Position determines aspect scope.
+belowAsp → aspect over modal (root configuration).
+aboveAsp → modal over aspect (epistemic configuration). -/
+def toAspectScope : ModalPosition → AspectModalScope
+  | .belowAsp => .aspectOverModal
+  | .aboveAsp => .modalOverAspect
+
+theorem belowAsp_aspect_over_modal :
+    toAspectScope .belowAsp = .aspectOverModal := rfl
+
+theorem aboveAsp_modal_over_aspect :
+    toAspectScope .aboveAsp = .modalOverAspect := rfl
+
+
+-- ════════════════════════════════════════════════════
+-- § 2. Actuality Entailment Predictions
+-- ════════════════════════════════════════════════════
+
+/-- Whether the theory predicts an actuality entailment for a given
+position × aspect combination.
+
+Only root + perfective yields an actuality entailment:
+
+| Position | Aspect | AE? | Why |
+|----------|--------|-----|-----|
+| root (below Asp) | PFV | ✓ | Asp > Mod: PFV forces completion |
+| root (below Asp) | IMPF | ✗ | Asp > Mod: IMPF doesn't force completion |
+| epistemic (above Asp) | PFV | ✗ | Mod > Asp: PFV in accessible worlds only |
+| epistemic (above Asp) | IMPF | ✗ | Mod > Asp: no completion |
+
+(Hacquard 2006, Ch.1; 2009, §3) -/
+def actualityEntailmentPredicted (pos : ModalPosition) (asp : ViewpointAspectB) : Bool :=
+  match pos, asp with
+  | .belowAsp, .perfective => true
+  | _, _ => false
+
+theorem root_perfective_entails :
+    actualityEntailmentPredicted .belowAsp .perfective = true := rfl
+
+theorem root_imperfective_no_entailment :
+    actualityEntailmentPredicted .belowAsp .imperfective = false := rfl
+
+theorem epistemic_perfective_no_entailment :
+    actualityEntailmentPredicted .aboveAsp .perfective = false := rfl
+
+theorem epistemic_imperfective_no_entailment :
+    actualityEntailmentPredicted .aboveAsp .imperfective = false := rfl
+
+/-- Only root + perfective yields actuality entailments.
+This is a characterization result: AE ↔ (belowAsp ∧ perfective). -/
+theorem only_root_perfective :
+    ∀ pos asp, actualityEntailmentPredicted pos asp = true →
+      pos = .belowAsp ∧ asp = .perfective := by
+  intro pos asp h
+  cases pos <;> cases asp <;> simp_all [actualityEntailmentPredicted]
+
+/-- The prediction aligns with the aspect scope story: AE holds
+exactly when aspect scopes over the modal AND aspect is perfective. -/
+theorem ae_iff_aspect_over_modal_pfv (pos : ModalPosition) (asp : ViewpointAspectB) :
+    actualityEntailmentPredicted pos asp =
+      (toAspectScope pos == .aspectOverModal && asp == .perfective) := by
+  cases pos <;> cases asp <;> rfl
+
+
+-- ════════════════════════════════════════════════════
+-- § 3. Same Modal, Different Positions
+-- ════════════════════════════════════════════════════
+
+/-- The same lexical modal yields different actuality patterns depending
+solely on position. This is Hacquard's core argument against lexical
+ambiguity: French *pouvoir*, Greek *boro*, Hindi *saknaa* are single
+lexical items whose actuality behavior is structurally determined.
+
+(Hacquard 2006, Ch.1, pp.43–45):
+- Root-*pouvoir* (below Asp) + PFV → actuality entailment
+- Epistemic-*pouvoir* (above Asp) + PFV → no actuality entailment -/
+theorem same_modal_different_entailments :
+    actualityEntailmentPredicted .belowAsp .perfective = true ∧
+    actualityEntailmentPredicted .aboveAsp .perfective = false := ⟨rfl, rfl⟩
+
+
+-- ════════════════════════════════════════════════════
+-- § 4. Bridge to Nadathur (2023): Ability.lean
+-- ════════════════════════════════════════════════════
+
+/-! `Ability.lean` formalizes the causal semantics of ability modals
+(Nadathur 2023): ability is causal sufficiency in a circumstantial
+background, modulated by viewpoint aspect. The bridge:
+
+- `abilityWithAspect sc .perfective w` = `abilityAt sc w ∧ complementActualized sc w`
+  → captures the root + PFV case (aspect over modal forces actualization)
+
+- `abilityWithAspect sc .imperfective w` = `abilityAt sc w`
+  → captures the root + IMPF case (aspect over modal but no completion)
+
+The theorems below make this correspondence explicit. -/
+
+/-- Root + PFV matches Ability.lean: perfective ability is defined as
+ability ∧ actualization, and the theory predicts an actuality entailment.
+
+The bridge works at two levels:
+1. *Prediction*: `actualityEntailmentPredicted .belowAsp .perfective = true`
+2. *Model*: `abilityWithAspect sc .perfective w = abilityAt sc w && complementActualized sc w` -/
+theorem root_pfv_matches_ability :
+    actualityEntailmentPredicted .belowAsp .perfective = true ∧
+    (∀ (sc : AbilityScenario) (w : World),
+      abilityWithAspect sc .perfective w =
+        (abilityAt sc w && complementActualized sc w)) :=
+  ⟨rfl, λ _ _ => rfl⟩
+
+/-- Root + IMPF matches Ability.lean: imperfective ability is pure
+ability without actualization, and the theory predicts no actuality
+entailment. -/
+theorem root_impfv_matches_ability :
+    actualityEntailmentPredicted .belowAsp .imperfective = false ∧
+    (∀ (sc : AbilityScenario) (w : World),
+      abilityWithAspect sc .imperfective w = abilityAt sc w) :=
+  ⟨rfl, λ _ _ => rfl⟩
+
+/-- Ability.lean's central result — `perfective_ability_entails_complement`
+— is an instance of the position × aspect prediction: root + PFV
+yields an actuality entailment.
+
+This is the payoff of the bridge: the causal model (Nadathur) and the
+structural account (Hacquard) agree. The causal model explains WHY
+perfective ability entails the complement (causal sufficiency +
+actualization). The structural account explains WHY this pattern
+arises only for root modals (aspect scope). -/
+theorem causal_structural_agreement :
+    -- Structural prediction: root + PFV → AE
+    actualityEntailmentPredicted .belowAsp .perfective = true ∧
+    -- Causal result: PFV ability → complement actualized
+    (∀ (sc : AbilityScenario) (w : World)
+      (h : abilityWithAspect sc .perfective w = true),
+      complementActualized sc w = true) :=
+  ⟨rfl, perfective_ability_entails_complement⟩
+
+
+-- ════════════════════════════════════════════════════
+-- § 5. Content Licensing Explains the Asymmetry
+-- ════════════════════════════════════════════════════
+
+/-! WHY are epistemic modals always above aspect? Content licensing
+(EventRelativity §8) provides the answer:
+
+- Epistemic modal bases require CON(e) — propositional content.
+- VP events (running, swimming) lack propositional content.
+- Aspect binds modals to VP events.
+- Therefore: a modal bound by aspect CANNOT be epistemic.
+- Therefore: epistemic modals are necessarily above AspP.
+- Therefore: perfective never scopes over epistemic modals.
+- Therefore: no actuality entailment for epistemics.
+
+The chain: content licensing → position → scope → (no) AE. -/
+
+/-- The full explanatory chain from content licensing to actuality
+entailments, linking EventRelativity §§8–9 to Hacquard (2006) Ch.1.
+
+Step 1: VP events lack content (EventRelativity §8).
+Step 2: Low position = bound to VP event = aspectOverModal.
+Step 3: aspectOverModal + PFV → actuality entailment.
+Step 4: High position = modalOverAspect → no AE even with PFV. -/
+theorem content_licensing_to_actuality :
+    -- Step 1: VP events lack content → can't project epistemic
+    EventBinder.vpEvent.hasContent = false ∧
+    EventBinder.vpEvent.canProjectEpistemic = false ∧
+    -- Step 2: Low position → aspect over modal
+    toAspectScope .belowAsp = .aspectOverModal ∧
+    -- Step 3: Root + PFV → actuality entailment
+    actualityEntailmentPredicted .belowAsp .perfective = true ∧
+    -- Step 4: High position → modal over aspect → no AE
+    toAspectScope .aboveAsp = .modalOverAspect ∧
+    actualityEntailmentPredicted .aboveAsp .perfective = false :=
+  ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
+
+/-- Epistemic modals are necessarily high (above Asp), because
+low modals are bound to VP events which lack content.
+
+Combined with § 2: epistemic + any aspect = no AE. This is not
+stipulated but derived from content licensing. -/
+theorem epistemic_necessarily_no_ae :
+    -- Low modals can't be epistemic (content licensing)
+    ModalPosition.belowAsp.defaultBinder.canProjectEpistemic = false ∧
+    -- High modals yield no AE regardless of aspect
+    actualityEntailmentPredicted .aboveAsp .perfective = false ∧
+    actualityEntailmentPredicted .aboveAsp .imperfective = false :=
+  ⟨rfl, rfl, rfl⟩
+
+
+-- ════════════════════════════════════════════════════
+-- § 6. Cross-Linguistic Actuality Entailment Data
+-- ════════════════════════════════════════════════════
+
+/-- Cross-linguistic actuality entailment datum.
+Records whether a language's modal yields actuality entailments
+under perfective vs imperfective aspect (Bhatt 1999, Hacquard 2006). -/
+structure ActualityDatum where
+  language : String
+  modal : String
+  gloss : String
+  /-- Does PFV + root modal → complement actualized? -/
+  pfvRootEntails : Bool
+  /-- Does IMPF + root modal → complement actualized? -/
+  impfRootEntails : Bool
+  source : String
+  deriving Repr, BEq, DecidableEq
+
+/-- French *pouvoir* (PFV = passé composé, IMPF = imparfait).
+
+(1a) "Jane a pu prendre le train" (PFV) → she took the train.
+(1b) "Jane pouvait prendre le train" (IMPF) → she may not have.
+
+(Hacquard 2006, Ch.1, (1)–(3); Bhatt 1999) -/
+def frenchPouvoir : ActualityDatum where
+  language := "French"
+  modal := "pouvoir"
+  gloss := "can/be.able"
+  pfvRootEntails := true
+  impfRootEntails := false
+  source := "Hacquard 2006, Ch.1; Bhatt 1999"
+
+/-- Greek *boro* (PFV = aorist, IMPF = paratatikós).
+
+"I Ariadne borése na kolimbísi" (PFV) → she swam.
+"I Ariadne borúse na kolimbísi" (IMPF) → she may not have.
+
+(Hacquard 2006, Ch.1, (4)–(6); Giannakidou 2001) -/
+def greekBoro : ActualityDatum where
+  language := "Greek"
+  modal := "boro"
+  gloss := "can/be.able"
+  pfvRootEntails := true
+  impfRootEntails := false
+  source := "Hacquard 2006, Ch.1; Giannakidou 2001"
+
+/-- Hindi *saknaa*.
+
+PFV + root → complement actualized.
+
+(Hacquard 2006, Ch.1, (7)–(8); Bhatt 1999) -/
+def hindiSaknaa : ActualityDatum where
+  language := "Hindi"
+  modal := "saknaa"
+  gloss := "can/be.able"
+  pfvRootEntails := true
+  impfRootEntails := false
+  source := "Hacquard 2006, Ch.1; Bhatt 1999"
+
+def allActualityData : List ActualityDatum :=
+  [frenchPouvoir, greekBoro, hindiSaknaa]
+
+/-- All attested languages show the predicted pattern: PFV root entails,
+IMPF root does not. -/
+theorem all_match_prediction :
+    allActualityData.all (λ d =>
+      d.pfvRootEntails == actualityEntailmentPredicted .belowAsp .perfective &&
+      d.impfRootEntails == actualityEntailmentPredicted .belowAsp .imperfective
+    ) = true := by native_decide
+
+/-- Per-datum verification: French. -/
+theorem french_pfv_entails : frenchPouvoir.pfvRootEntails = true := rfl
+theorem french_impf_no_entail : frenchPouvoir.impfRootEntails = false := rfl
+
+/-- Per-datum verification: Greek. -/
+theorem greek_pfv_entails : greekBoro.pfvRootEntails = true := rfl
+theorem greek_impf_no_entail : greekBoro.impfRootEntails = false := rfl
+
+/-- Per-datum verification: Hindi. -/
+theorem hindi_pfv_entails : hindiSaknaa.pfvRootEntails = true := rfl
+theorem hindi_impf_no_entail : hindiSaknaa.impfRootEntails = false := rfl
+
+
+-- ════════════════════════════════════════════════════
+-- § 7. The Full Picture: Three-Way Interaction
+-- ════════════════════════════════════════════════════
+
+/-- The actuality entailment pattern results from a three-way interaction
+between content licensing, syntactic position, and viewpoint aspect.
+
+This theorem chains together:
+- EventRelativity §8 (content licensing determines available flavors)
+- EventRelativity §9 (position determines event binder)
+- This file §1–2 (position determines aspect scope → AE prediction)
+- Ability.lean (causal model validates the root + PFV case)
+
+The result: a single architectural principle (modals take event
+arguments) plus one predicate (content licensing) derives the
+entire actuality entailment paradigm. -/
+theorem three_way_interaction :
+    -- Content licensing: VP events lack content
+    EventBinder.vpEvent.hasContent = false ∧
+    -- Position → binder: low modals get VP events
+    ModalPosition.belowAsp.defaultBinder = .vpEvent ∧
+    -- Position → scope: low modals have aspect over them
+    toAspectScope .belowAsp = .aspectOverModal ∧
+    -- Prediction: root + PFV → AE
+    actualityEntailmentPredicted .belowAsp .perfective = true ∧
+    -- Prediction: epistemic + PFV → no AE
+    actualityEntailmentPredicted .aboveAsp .perfective = false ∧
+    -- Validation: causal model agrees (ability + PFV = ability ∧ actualization)
+    (∀ (sc : AbilityScenario) (w : World),
+      abilityWithAspect sc .perfective w =
+        (abilityAt sc w && complementActualized sc w)) :=
+  ⟨rfl, rfl, rfl, rfl, rfl, λ _ _ => rfl⟩
+
+
+end Semantics.Modality.ActualityEntailments

@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.227.28] - 2026-02-27
+
+### Added
+- **Actuality entailment bridge (Hacquard 2006, Ch.1)**: New `ActualityEntailments.lean` connecting EventRelativity position theory to Ability.lean causal model. `AspectModalScope` (aspectOverModal | modalOverAspect), `toAspectScope`, `actualityEntailmentPredicted`. Key bridge: `causal_structural_agreement` (Hacquard's structural prediction + Nadathur's `perfective_ability_entails_complement` in one theorem). `content_licensing_to_actuality` chains VP-event content gap → position → scope → AE. `ae_iff_aspect_over_modal_pfv` characterization. Cross-linguistic data: French *pouvoir*, Greek *boro*, Hindi *saknaa* with `all_match_prediction`. `three_way_interaction` summary theorem.
+
 ## [0.227.27] - 2026-02-27
 
 ### Added
