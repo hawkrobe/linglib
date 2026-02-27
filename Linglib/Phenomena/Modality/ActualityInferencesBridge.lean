@@ -1,5 +1,6 @@
 import Mathlib.Data.List.Defs
 import Linglib.Theories.Semantics.Lexical.Verb.ViewpointAspect
+import Linglib.Theories.Semantics.Modality.ActualityEntailments
 
 /-!
 # Actuality Inference Data (Cross-Linguistic)
@@ -179,5 +180,50 @@ theorem four_languages :
 theorem balanced_design :
     perfData.length = 4 ∧ impfData.length = 4 := by
   constructor <;> native_decide
+
+
+-- ════════════════════════════════════════════════════
+-- Bridge: Data → Position × Aspect Theory
+-- (Hacquard 2006, via ActualityEntailments.lean)
+-- ════════════════════════════════════════════════════
+
+open Semantics.Modality.ActualityEntailments (actualityEntailmentPredicted)
+open Semantics.Modality.EventRelativity (ModalPosition)
+
+/-- Every datum's `complementEntailed` field matches the position × aspect
+prediction for root modals. All data involves root/ability modals
+(below AspP), so the prediction is `actualityEntailmentPredicted .belowAsp d.aspect`.
+
+This connects the theory-neutral empirical data (§§ above) to
+Hacquard's (2006) structural explanation: root modals are below Asp,
+so perfective forces actualization. -/
+theorem data_matches_position_theory :
+    allData.all (λ d =>
+      d.complementEntailed == actualityEntailmentPredicted .belowAsp d.aspect
+    ) = true := by native_decide
+
+/-- Per-language bridge: Greek data matches position theory. -/
+theorem greek_matches_theory :
+    greek_pfv.complementEntailed = actualityEntailmentPredicted .belowAsp .perfective ∧
+    greek_impf.complementEntailed = actualityEntailmentPredicted .belowAsp .imperfective :=
+  ⟨rfl, rfl⟩
+
+/-- Per-language bridge: Hindi data matches position theory. -/
+theorem hindi_matches_theory :
+    hindi_pfv.complementEntailed = actualityEntailmentPredicted .belowAsp .perfective ∧
+    hindi_impf.complementEntailed = actualityEntailmentPredicted .belowAsp .imperfective :=
+  ⟨rfl, rfl⟩
+
+/-- Per-language bridge: French data matches position theory. -/
+theorem french_matches_theory :
+    french_pfv.complementEntailed = actualityEntailmentPredicted .belowAsp .perfective ∧
+    french_impf.complementEntailed = actualityEntailmentPredicted .belowAsp .imperfective :=
+  ⟨rfl, rfl⟩
+
+/-- Per-language bridge: English data matches position theory. -/
+theorem english_matches_theory :
+    english_pfv.complementEntailed = actualityEntailmentPredicted .belowAsp .perfective ∧
+    english_impf.complementEntailed = actualityEntailmentPredicted .belowAsp .imperfective :=
+  ⟨rfl, rfl⟩
 
 end Phenomena.Modality.ActualityInferencesBridge
