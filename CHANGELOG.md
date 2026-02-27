@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.227.30] - 2026-02-27
+
+### Added
+- **ASSERT operator (Hacquard 2006, §4.2.1.2)**: New `Assert.lean`. `SpeechActType` (declarative | imperative | interrogative | exclamative), `SpeechActEvent` with `content : W → List (BProp W)`, `ASSERT`/`DIRECT` constructors. `speechActAnchoring` lifts speech act content into `AnchoringFn`. `sap_justifies_binder_content` derives `EventBinder.speechAct.hasContent = true` from SAP analysis. `speech_act_determines_flavor` (declarative → epistemic, imperative → deontic). Worked example: "You can leave" — `speech_act_modulates_domain` (◇stay = true under declarative, false under imperative). `speechActProjection` connecting to EventProjection §11: declarative → (speaker, now), imperative → (addressee, now).
+
 ## [0.227.29] - 2026-02-27
 
 ### Added
