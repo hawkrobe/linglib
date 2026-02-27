@@ -1,5 +1,6 @@
 import Linglib.Theories.Syntax.Minimalism.Core.Voice
 import Linglib.Theories.Morphology.RootTypology
+import Linglib.Core.Interfaces.VoiceSystem
 
 /-!
 # Chuj Verb Building Fragment (Coon 2019) @cite{coon-2019}
@@ -360,5 +361,38 @@ theorem root_classes_pairwise_distinct :
     -- √POS ≠ √NOM (different denotationType)
     (rootPOS.denotationType ≠ rootNOM.denotationType) := by
   exact ⟨by decide, by decide, by decide, by decide⟩
+
+-- ============================================================================
+-- § 10: Voice System Profile
+-- ============================================================================
+
+/-- Chuj voice system: four-way asymmetrical (Ø, -w, -ch, -j).
+
+    Unlike pivot systems (Toba Batak, Tagalog), Chuj voices don't
+    promote arguments to a privileged position. Instead, Voice controls
+    whether an external argument is overt, implicit, or absent.
+    Each voice form is built independently from root + v/Voice⁰
+    (Alexiadou et al. 2006): passive is not derived from active. -/
+def chujVoiceSystem : Interfaces.VoiceSystemProfile :=
+  { language := "Chuj"
+    voices := [ ⟨"Active (Ø)", .agent⟩
+              , ⟨"Agentive intransitive (-w)", .agent⟩
+              , ⟨"Passive (-ch)", .patient⟩
+              , ⟨"Agentless passive (-j)", .patient⟩ ]
+    symmetry := .asymmetrical
+    notes := "Non-pivot system; Voice controls EA status (Coon 2019)" }
+
+theorem chuj_voice_system_asymmetrical :
+    chujVoiceSystem.symmetry = .asymmetrical := rfl
+
+theorem chuj_voice_count :
+    chujVoiceSystem.voiceCount = 4 := rfl
+
+/-- Chuj is NOT a simple active/passive: it has 4 voices, not 2. -/
+theorem chuj_not_simple_active_passive :
+    chujVoiceSystem.isActivePassive = false := rfl
+
+theorem chuj_no_oblique_pivots :
+    chujVoiceSystem.distinguishesObliques = false := rfl
 
 end Fragments.Chuj

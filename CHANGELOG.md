@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.227.7] - 2026-02-27
+
+### Added
+- **Voice system profiles** for 5 additional fragments, connecting to VoiceSystemProfile interface:
+  - Mam (SJO): asymmetrical agentive/passive (Elkins et al. 2026)
+  - Kaqchikel: asymmetrical transitive/AF — both promote agent, AF is locality repair (Erlewine 2016)
+  - Chuj: 4-voice asymmetrical (Ø/-w/-ch/-j), non-pivot system (Coon 2019)
+  - Finnish: asymmetrical active/impersonal, not a true passive (Karlsson 2018)
+  - English: canonical asymmetrical active/passive
+
 ## [0.227.6] - 2026-02-27
 
 ### Added

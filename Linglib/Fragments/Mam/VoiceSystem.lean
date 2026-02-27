@@ -1,6 +1,7 @@
 import Linglib.Theories.Syntax.Minimalism.Core.Voice
 import Linglib.Theories.Syntax.Minimalism.Core.ClauseSpine
 import Linglib.Theories.Syntax.Minimalism.Core.Spellout
+import Linglib.Core.Interfaces.VoiceSystem
 
 /-!
 # Mam Voice System Fragment
@@ -176,5 +177,34 @@ theorem passive_voice_same_features :
     mamPassiveVoice.features = mamVoice.features ∧
     mamPassiveVoice.flavor ≠ mamVoice.flavor := by
   exact ⟨rfl, by decide⟩
+
+-- ============================================================================
+-- § 8: Voice System Profile
+-- ============================================================================
+
+/-- Mam voice system: two-way asymmetrical (agentive/passive).
+
+    Unlike Toba Batak's symmetrical pivot system, Mam's agentive voice
+    is the basic form (phase head, overt agent) and passive is derived
+    (non-phase, implicit agent). Voice does not determine pivot for
+    extraction — instead, Voice carries [uOblique] which conditions
+    extraction morphology (=(y)a'). -/
+def mamVoiceSystem : Interfaces.VoiceSystemProfile :=
+  { language := "Mam (SJO)"
+    voices := [ ⟨"Agentive Voice", .agent⟩, ⟨"Passive Voice", .patient⟩ ]
+    symmetry := .asymmetrical
+    notes := "Agentive is basic (phase head); passive is derived (Elkins et al. 2026)" }
+
+theorem mam_voice_system_asymmetrical :
+    mamVoiceSystem.symmetry = .asymmetrical := rfl
+
+theorem mam_voice_count :
+    mamVoiceSystem.voiceCount = 2 := rfl
+
+theorem mam_is_active_passive :
+    mamVoiceSystem.isActivePassive = true := rfl
+
+theorem mam_no_oblique_pivots :
+    mamVoiceSystem.distinguishesObliques = false := rfl
 
 end Fragments.Mam

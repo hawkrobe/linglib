@@ -1,4 +1,5 @@
 import Linglib.Theories.Syntax.Minimalism.Core.Voice
+import Linglib.Core.Interfaces.VoiceSystem
 
 /-!
 # Finnish Verb Entries @cite{karlsson-2018}
@@ -140,5 +141,30 @@ theorem verb_types_distinct :
     lukea.verbType ≠ tulla.verbType ∧
     tulla.verbType ≠ haluta.verbType := by
   exact ⟨by decide, by decide, by decide⟩
+
+-- ============================================================================
+-- § 5: Voice System Profile
+-- ============================================================================
+
+/-- Finnish voice system: two-way asymmetrical (active/impersonal).
+
+    Finnish lacks a true passive — what is traditionally called the
+    passive is an impersonal construction where the agent is demoted
+    to an implicit generic human referent, not promoted to a by-phrase
+    (Shore 1986, Karlsson 2018 Ch. 11). Active is the basic form. -/
+def finnishVoiceSystem : Interfaces.VoiceSystemProfile :=
+  { language := "Finnish"
+    voices := [ ⟨"Active", .agent⟩, ⟨"Impersonal", .patient⟩ ]
+    symmetry := .asymmetrical
+    notes := "Not a true passive; impersonal with implicit generic agent (Karlsson 2018)" }
+
+theorem finnish_voice_system_asymmetrical :
+    finnishVoiceSystem.symmetry = .asymmetrical := rfl
+
+theorem finnish_voice_count :
+    finnishVoiceSystem.voiceCount = 2 := rfl
+
+theorem finnish_is_active_passive :
+    finnishVoiceSystem.isActivePassive = true := rfl
 
 end Fragments.Finnish.Predicates
