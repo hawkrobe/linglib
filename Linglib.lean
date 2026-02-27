@@ -58,6 +58,7 @@ import Linglib.Core.Discourse.InformationStructure
 import Linglib.Core.Prosody
 import Linglib.Core.Definiteness
 import Linglib.Core.Prominence
+import Linglib.Core.FormFrequency
 import Linglib.Core.Case.Basic
 import Linglib.Core.Case.Hierarchy
 import Linglib.Core.Case.Syncretism
@@ -221,6 +222,7 @@ import Linglib.Phenomena.Case.Studies.Ozaki2025.Bridge
 import Linglib.Phenomena.Case.Bridge.DependentCaseInventories
 import Linglib.Phenomena.Case.Studies.Aissen2003
 import Linglib.Phenomena.Case.Studies.DeHoopMalchukov2008
+import Linglib.Phenomena.Case.Studies.Haspelmath2021
 import Linglib.Phenomena.Case.Bridge.DependentCaseDOM
 import Linglib.Phenomena.Case.Bridge.FinnishPartitive
 import Linglib.Phenomena.Case.Bridge.FinnishSuffixOrder

@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.226.98] - 2026-02-26
+
+### Added
+- **Haspelmath Universals 10–14 + form-frequency grounding** (`Haspelmath2021.lean`): Ditransitive person-role constraint (U10), relative scenario splits (U11), inverse (U12), passive (U13), dative alternation (U14). `usualDiscourseStatus` bridges ArgumentRole to DiscourseStatus for voice/frame predictions. `scenario_frequency_consistent` proves all downstream×upstream pairs respect frequency ordering (statement 68).
+- **Scenario frequency class** (`Core/Prominence.lean`): `Scenario.frequencyClass` (downstream=2, balanced=1, upstream=0), `Scenario.upstreamDegree`, monotonicity theorem.
+- **Voice direction and ditransitive frames** (`Core/FormFrequency.lean`): `VoiceDirection` (direct/inverse), `DitransitiveFrame` (doubleObject/prepositionalDative) with `codingLength`, `scenarioRespectsFormFrequency` predicate.
+
 ## [0.226.97] - 2026-02-26
 
 ### Added
