@@ -478,16 +478,6 @@ theorem Scenario.all_length : Scenario.all.length = 9 := by native_decide
 -- § 12: Role-Reference Association (Haspelmath 2021, §2)
 -- ============================================================================
 
-/-- Whether a role-reference combination is the "usual" (frequent) association.
-
-    The usual association pairs high-rank roles with high prominence and
-    low-rank roles with low prominence. Deviations from this pattern —
-    prominent Ps, non-prominent As, etc. — tend to receive longer coding.
-    This is Haspelmath's (2021) Role-Reference Association Universal. -/
-def isUsualAssociation (role : ArgumentRole) (a : AnimacyLevel)
-    (d : DefinitenessLevel) : Bool :=
-  isDefaultZone role a d
-
 /-- The direction of differential marking: for a given role, does
     differential coding target the prominent end (upper set) or the
     non-prominent end (lower set)?

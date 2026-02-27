@@ -7,6 +7,7 @@
 - **Syncretism wiring**: Finnish, Tamil, Latin, German Fragments now import `Core.nomAccSyncretism` / `Core.comInstSyncretism` instead of redefining identical instances locally.
 - **LocalExtension wiring**: Latin Fragment exercises `Core.localExtension` ABL→INST and ABL→CAUS paths (ablativus instrumenti / ablativus causae).
 - **Silverstein + dyirbalSplit relocated**: moved from Core to `Phenomena/Alignment/Typology.lean` with bridge theorems connecting `dyirbalSplit` to the existing Dyirbal alignment profile and `silverstein_predicts_dixon` connecting the threshold mechanism to Dixon's generalization.
+- **Core/Prominence audit**: deleted `isUsualAssociation` (trivial alias for `isDefaultZone`); exercised `isAnimacyOnly`/`isDefinitenessOnly` in DifferentialIndexing (Swahili, Kagulu animacy-only; Hungarian, Eastern Mansi definiteness-only).
 
 ## [0.227.7] - 2026-02-27
 

@@ -585,6 +585,18 @@ theorem swahili_monotone : swahiliDMP.isMonotone = true := by native_decide
 theorem kagulu_monotone : kaguluDMP.isMonotone = true := by native_decide
 theorem easternMansi_monotone : easternMansiDMP.isMonotone = true := by native_decide
 
+/-- Swahili P indexing depends only on animacy (definiteness is irrelevant). -/
+theorem swahili_animacy_only : swahiliDMP.isAnimacyOnly = true := by native_decide
+
+/-- Kagulu P indexing depends only on animacy. -/
+theorem kagulu_animacy_only : kaguluDMP.isAnimacyOnly = true := by native_decide
+
+/-- Hungarian P indexing depends only on definiteness (animacy is irrelevant). -/
+theorem hungarian_definiteness_only : hungarianDMP.isDefinitenessOnly = true := by native_decide
+
+/-- Eastern Mansi A indexing depends only on definiteness. -/
+theorem easternMansi_definiteness_only : easternMansiDMP.isDefinitenessOnly = true := by native_decide
+
 -- ============================================================================
 -- § 14: Family Clustering (Just 2024, §2.2, §3.1)
 -- ============================================================================
