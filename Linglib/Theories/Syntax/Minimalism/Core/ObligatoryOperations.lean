@@ -1,3 +1,5 @@
+import Linglib.Theories.Syntax.Minimalism.Core.Agree
+
 /-!
 # Obligatory Operations @cite{preminger-2014}
 
@@ -213,5 +215,51 @@ def ProbePresence.realization : ProbePresence → Option PFRealization
 theorem present_unvalued_vs_absent :
     ProbePresence.realization (.present .unvalued) ≠
     ProbePresence.realization .absent := by decide
+
+-- ============================================================================
+-- § 7: Connecting Agree to Probe Outcomes
+-- ============================================================================
+
+/-- Run an Agree attempt and return the outcome.
+
+    This bridges the Agree mechanism (`applyAgree`) with the failure model
+    (`ProbeOutcome`): if valuation succeeds, the probe was valued; otherwise
+    it attempted but failed. This is the missing link between the Agree
+    operation (which returns `Option FeatureBundle`) and Preminger's
+    obligatory-but-failable model (which distinguishes valued from unvalued).
+
+    The key insight (Preminger 2014, Ch. 5): the Agree mechanism itself
+    doesn't decide what happens on failure — that's the job of the
+    `AgreementModel`. This function extracts the binary outcome so the
+    model can decide convergence. -/
+def attemptAgree (probeFeats goalFeats : FeatureBundle) (ftype : FeatureVal) : ProbeOutcome :=
+  match applyAgree probeFeats goalFeats ftype with
+  | some _ => .valued
+  | none => .unvalued
+
+/-- Run Agree under a given model and return convergence + PF realization. -/
+def agreeWithModel (model : AgreementModel) (probeFeats goalFeats : FeatureBundle)
+    (ftype : FeatureVal) : Bool × PFRealization :=
+  let outcome := attemptAgree probeFeats goalFeats ftype
+  (derivationConverges model outcome, outcome.pfRealization)
+
+/-- Successful Agree yields a valued probe outcome. -/
+theorem attemptAgree_valued {pf gf : FeatureBundle} {ft : FeatureVal} {result : FeatureBundle}
+    (h : applyAgree pf gf ft = some result) :
+    attemptAgree pf gf ft = .valued := by
+  simp only [attemptAgree, h]
+
+/-- Failed Agree yields an unvalued probe outcome. -/
+theorem attemptAgree_unvalued {pf gf : FeatureBundle} {ft : FeatureVal}
+    (h : applyAgree pf gf ft = none) :
+    attemptAgree pf gf ft = .unvalued := by
+  simp only [attemptAgree, h]
+
+/-- Under the obligatory-no-crash model, Agree always converges
+    regardless of whether the probe found a goal. -/
+theorem agreeWithModel_obligatory_converges (pf gf : FeatureBundle) (ft : FeatureVal) :
+    (agreeWithModel .obligatoryNocrash pf gf ft).1 = true := by
+  simp only [agreeWithModel]
+  exact obligatory_always_converges _
 
 end Minimalism

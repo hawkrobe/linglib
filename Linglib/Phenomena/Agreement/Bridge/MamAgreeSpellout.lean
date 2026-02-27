@@ -1,4 +1,5 @@
 import Linglib.Fragments.Mam.Agreement
+import Linglib.Theories.Syntax.Minimalism.Core.ObligatoryOperations
 
 /-!
 # Minimalism Bridge: Agree-Conditioned Pronoun Spellout in Mam
@@ -69,13 +70,13 @@ open Minimalism Fragments.Mam
     Placeholder values (0, false) are irrelevant — `sameType` matching
     ensures any Person/Number goal is found regardless. -/
 def voiceProbe : FeatureBundle :=
-  [.unvalued (.phi (.person 0)), .unvalued (.phi (.number false))]
+  [.unvalued (.phi (.person .third)), .unvalued (.phi (.number false))]
 
 /-- Infl's probe features: [uPerson, uNumber].
     In intransitives, these are valued by S. In transitives, the probe
     is blocked by Voice_TR before reaching any DP. -/
 def inflProbe : FeatureBundle :=
-  [.unvalued (.phi (.person 0)), .unvalued (.phi (.number false))]
+  [.unvalued (.phi (.person .third)), .unvalued (.phi (.number false))]
 
 -- ============================================================================
 -- § 2: Goal Feature Bundles (3SG test case)
@@ -83,7 +84,7 @@ def inflProbe : FeatureBundle :=
 
 /-- A 3SG DP's features: [Person:3, Number:sg]. -/
 def dp3sg : FeatureBundle :=
-  [.valued (.phi (.person 3)), .valued (.phi (.number false))]
+  [.valued (.phi (.person .third)), .valued (.phi (.number false))]
 
 -- ============================================================================
 -- § 3: Agree Valuation — Voice agrees with agent
@@ -91,25 +92,25 @@ def dp3sg : FeatureBundle :=
 
 /-- Voice's [uPerson] is valued as [Person:3] from a 3SG agent. -/
 theorem voice_agrees_person :
-    applyAgree voiceProbe dp3sg (.phi (.person 0)) =
-    some [.valued (.phi (.person 3)), .unvalued (.phi (.number false))] := by
+    applyAgree voiceProbe dp3sg (.phi (.person .third)) =
+    some [.valued (.phi (.person .third)), .unvalued (.phi (.number false))] := by
   native_decide
 
 /-- After person agreement, Voice's [uNumber] is valued as [Number:sg].
     This is the second step of φ-Agree: person first, then number. -/
 theorem voice_agrees_number :
-    let afterPerson := [.valued (.phi (.person 3)), .unvalued (.phi (.number false))]
+    let afterPerson := [.valued (.phi (.person .third)), .unvalued (.phi (.number false))]
     applyAgree afterPerson dp3sg (.phi (.number false)) =
-    some [.valued (.phi (.person 3)), .valued (.phi (.number false))] := by
+    some [.valued (.phi (.person .third)), .valued (.phi (.number false))] := by
   native_decide
 
 /-- Full φ-valuation of Voice by a 3SG agent: both person and number valued. -/
 def voiceFullyAgreed : FeatureBundle :=
-  [.valued (.phi (.person 3)), .valued (.phi (.number false))]
+  [.valued (.phi (.person .third)), .valued (.phi (.number false))]
 
 /-- The two-step Agree pipeline produces a fully valued bundle. -/
 theorem voice_agree_pipeline :
-    (applyAgree voiceProbe dp3sg (.phi (.person 0))).bind
+    (applyAgree voiceProbe dp3sg (.phi (.person .third))).bind
       (λ fb => applyAgree fb dp3sg (.phi (.number false))) =
     some voiceFullyAgreed := by
   native_decide
@@ -126,7 +127,7 @@ theorem setA_spellout_3sg :
 /-- Set A spellout for 1SG: Voice with [Person:1, Number:sg] yields A1SG marker. -/
 theorem setA_spellout_1sg :
     let v1sg : FeatureBundle :=
-      [.valued (.phi (.person 1)), .valued (.phi (.number false))]
+      [.valued (.phi (.person .first)), .valued (.phi (.number false))]
     spellout setAVocab v1sg (some .v) = some "n-/w-" := by
   native_decide
 
@@ -140,7 +141,7 @@ theorem setA_spellout_1sg :
     entry is selected: "∅". -/
 theorem setB_intransitive_3sg :
     let inflAgreed : FeatureBundle :=
-      [.valued (.phi (.person 3)), .valued (.phi (.number false))]
+      [.valued (.phi (.person .third)), .valued (.phi (.number false))]
     spellout setBVocab inflAgreed (some .T) = some "∅" := by
   native_decide
 
@@ -161,7 +162,7 @@ theorem setB_transitive_default :
     vs. probe failure). -/
 theorem setB_same_surface :
     let inflAgreed3sg : FeatureBundle :=
-      [.valued (.phi (.person 3)), .valued (.phi (.number false))]
+      [.valued (.phi (.person .third)), .valued (.phi (.number false))]
     let inflBlocked : FeatureBundle := []
     spellout setBVocab inflAgreed3sg (some .T) =
     spellout setBVocab inflBlocked (some .T) := by
@@ -172,7 +173,7 @@ theorem setB_same_surface :
     agreement, producing a distinct exponent. -/
 theorem setB_intransitive_1sg :
     let t1sg : FeatureBundle :=
-      [.valued (.phi (.person 1)), .valued (.phi (.number false))]
+      [.valued (.phi (.person .first)), .valued (.phi (.number false))]
     spellout setBVocab t1sg (some .T) = some "chin" := by
   native_decide
 
@@ -185,7 +186,7 @@ theorem setB_transitive_ignores_object :
     spellout setBVocab inflBlocked (some .T) = some "∅" ∧
     -- Compare: a 1SG intransitive S would trigger "chin"
     let inflAgreed1sg : FeatureBundle :=
-      [.valued (.phi (.person 1)), .valued (.phi (.number false))]
+      [.valued (.phi (.person .first)), .valued (.phi (.number false))]
     spellout setBVocab inflAgreed1sg (some .T) = some "chin" := by
   exact ⟨by native_decide, by native_decide⟩
 
@@ -210,7 +211,7 @@ theorem probe_restriction_yields_default :
     spellout setBVocab ([] : FeatureBundle) (some .T) = some "∅" ∧
     -- Intransitive 1SG: probe succeeds → "chin" (not default)
     spellout setBVocab
-      [.valued (.phi (.person 1)), .valued (.phi (.number false))]
+      [.valued (.phi (.person .first)), .valued (.phi (.number false))]
       (some .T) = some "chin" := by
   exact ⟨by native_decide, by native_decide⟩
 
@@ -224,15 +225,15 @@ theorem probe_restriction_yields_default :
 theorem intransitive_pipeline_1sg :
     -- Infl Agrees with 1SG S
     (applyAgree inflProbe
-      [.valued (.phi (.person 1)), .valued (.phi (.number false))]
-      (.phi (.person 0))).bind
+      [.valued (.phi (.person .first)), .valued (.phi (.number false))]
+      (.phi (.person .third))).bind
       (λ fb => applyAgree fb
-        [.valued (.phi (.person 1)), .valued (.phi (.number false))]
+        [.valued (.phi (.person .first)), .valued (.phi (.number false))]
         (.phi (.number false))) =
-    some [.valued (.phi (.person 1)), .valued (.phi (.number false))] ∧
+    some [.valued (.phi (.person .first)), .valued (.phi (.number false))] ∧
     -- Spells out as "chin" (not default "∅")
     spellout setBVocab
-      [.valued (.phi (.person 1)), .valued (.phi (.number false))]
+      [.valued (.phi (.person .first)), .valued (.phi (.number false))]
       (some .T) = some "chin" := by
   exact ⟨by native_decide, by native_decide⟩
 
@@ -249,7 +250,7 @@ theorem intransitive_pipeline_1sg :
     5. Patient is not φ-Agreed-with → overt pronoun required -/
 theorem full_pipeline_3sg_transitive :
     -- Step 1-2: Voice Agrees and spells out as Set A
-    (applyAgree voiceProbe dp3sg (.phi (.person 0))).bind
+    (applyAgree voiceProbe dp3sg (.phi (.person .third))).bind
       (λ fb => applyAgree fb dp3sg (.phi (.number false))) = some voiceFullyAgreed ∧
     spellout setAVocab voiceFullyAgreed (some .v) = some "t-" ∧
     -- Step 3-4: Infl probe blocked → default Set B
@@ -318,5 +319,34 @@ theorem different_probe_heads :
     MamArgPosition.agent.agreeProbe = some .v ∧
     MamArgPosition.intranS.agreeProbe = some .T ∧
     MamArgPosition.patient.agreeProbe = none := ⟨rfl, rfl, rfl⟩
+
+-- ============================================================================
+-- § 11: Connecting to Obligatory Operations (Preminger 2014, Ch. 5)
+-- ============================================================================
+
+/-- The transitive Set B default is an instance of Preminger's probe failure:
+    Infl's probe searches an empty domain (blocked by Voice_TR) and finds no
+    DP with matching φ-features. `attemptAgree` maps the `none` result from
+    `applyAgree` to `ProbeOutcome.unvalued`. -/
+theorem transitive_is_probe_failure :
+    attemptAgree inflProbe [] (.phi (.person .third)) = .unvalued := by
+  native_decide
+
+/-- The intransitive case is real agreement: Infl's probe finds S and copies
+    its φ-features. `attemptAgree` maps the `some _` result to `.valued`. -/
+theorem intransitive_is_real_agreement :
+    attemptAgree inflProbe
+      [.valued (.phi (.person .first)), .valued (.phi (.number false))]
+      (.phi (.person .third)) = .valued := by
+  native_decide
+
+/-- Under Preminger's obligatory-no-crash model, probe failure converges
+    and produces Elsewhere morphology — exactly the Set B "∅" we observe
+    in Mam transitives. This connects the abstract failure model to the
+    concrete spellout: `ProbeOutcome.unvalued` → `PFRealization.elsewhere`
+    → the Elsewhere Vocabulary entry → "∅". -/
+theorem probe_failure_converges_with_elsewhere :
+    derivationConverges .obligatoryNocrash .unvalued = true ∧
+    ProbeOutcome.unvalued.pfRealization = .elsewhere := ⟨rfl, rfl⟩
 
 end Phenomena.Agreement.Bridge.MamAgreeSpellout

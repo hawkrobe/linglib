@@ -466,6 +466,7 @@ import Linglib.Phenomena.Presupposition.Studies.ScontrasTonhauser2025
 import Linglib.Phenomena.Presupposition.Studies.Wang2025
 import Linglib.Phenomena.Presupposition.Studies.Warstadt2022
 import Linglib.Phenomena.Presupposition.Studies.Yagi2025
+import Linglib.Phenomena.Presupposition.Studies.Sharvit2025
 import Linglib.Phenomena.Presupposition.Bridge.BeliefEmbedding
 import Linglib.Phenomena.Presupposition.Bridge.NeoGricean
 import Linglib.Phenomena.Presupposition.Bridge.OntologicalPreconditions
@@ -476,6 +477,7 @@ import Linglib.Phenomena.Presupposition.Bridge.RSAComparison
 import Linglib.Phenomena.Presupposition.Bridge.ScontrasTonhauser2025BToM
 import Linglib.Phenomena.Presupposition.Bridge.TowerBridge
 import Linglib.Phenomena.Presupposition.Bridge.KD45Projection
+import Linglib.Phenomena.Presupposition.Bridge.SharvitCLOS
 import Linglib.Phenomena.Modality.OutlookMarkers
 import Linglib.Phenomena.Agreement.NounCategorization
 import Linglib.Phenomena.Agreement.Bridge.NounCategorization
@@ -488,6 +490,8 @@ import Linglib.Phenomena.Quantification.Bridge
 import Linglib.Phenomena.Quantification.Studies.FrankeBergen2020
 import Linglib.Phenomena.Quantification.Studies.ScontrasPearl2021
 import Linglib.Phenomena.Quantification.Studies.ScontrasPearl2021RSA
+import Linglib.Phenomena.Quantification.Studies.ScontrasPearl2021TwoNot
+import Linglib.Phenomena.Quantification.Bridge.NumeralSemanticsBridge
 import Linglib.Phenomena.Quantification.Compare
 import Linglib.Phenomena.Questions.Basic
 import Linglib.Phenomena.Questions.Typology
@@ -733,7 +737,9 @@ import Linglib.Theories.Syntax.HPSG.Inversion
 import Linglib.Theories.Semantics.Focus.KratzerSelkirk2020
 
 -- Theories: Minimalism
+import Linglib.Theories.Syntax.Minimalism.Core.Features
 import Linglib.Theories.Syntax.Minimalism.Core.Agree
+import Linglib.Theories.Syntax.Minimalism.Core.CaseFilter
 import Linglib.Theories.Syntax.Minimalism.Core.PersonGeometry
 import Linglib.Theories.Syntax.Minimalism.Core.ObligatoryOperations
 import Linglib.Theories.Syntax.Minimalism.Core.CaseDiscrimination
@@ -920,6 +926,7 @@ import Linglib.Theories.Semantics.Conditionals.Exhaustivity
 import Linglib.Theories.Semantics.Conditionals.Iatridou
 import Linglib.Theories.Semantics.Conditionals.LeftNested
 import Linglib.Theories.Semantics.Conditionals.Restrictor
+import Linglib.Theories.Semantics.Conditionals.Presuppositional
 import Linglib.Theories.Semantics.Modality.Basic
 import Linglib.Theories.Semantics.Modality.Compare
 import Linglib.Theories.Semantics.Modality.Directive

@@ -1,5 +1,30 @@
 # Changelog
 
+## [0.227.0] - 2026-02-26
+
+### Added
+- **Features.lean** (`Theories/Syntax/Minimalism/Core/`): extracted feature infrastructure (PhiFeature, CaseVal, HonLevel, FeatureVal, GramFeature, FeatureBundle) from Agree.lean. `PhiFeature.person` now takes `PersonLevel` instead of `Nat`.
+- **CaseFilter.lean** (`Theories/Syntax/Minimalism/Core/`): extracted Case Filter predicate and enforcement theorems from Agree.lean.
+- **Satisfaction conditions** (Agree.lean §14): Deal (2021) `SatisfactionCond` with feature-match, head-encounter, and disjunctive variants. Mam's Infl probe as concrete example with four verification theorems.
+- **`attemptAgree`** (ObligatoryOperations.lean §7): connects Preminger's abstract `ProbeOutcome` to the concrete `applyAgree` function. Three theorems: `attemptAgree_valued`, `attemptAgree_unvalued`, `agreeWithModel_obligatory_converges`.
+- **Mam–Preminger bridge** (MamAgreeSpellout.lean §11): `transitive_is_probe_failure`, `intransitive_is_real_agreement`, `probe_failure_converges_with_elsewhere`.
+- **Voice-based case comparison** (Comparisons/CaseTheories.lean §§3–5): extended from 2-way to 3-way comparison (Agree vs Dependent vs Voice/Woolford/Scott). Tripartite alignment, Voice's role across theories, Case Filter connection.
+
+### Changed
+- **PersonLevel replaces Nat** for person features across: PersonGeometry, Kaqchikel/Agreement, Mam/Agreement, MamAgreeSpellout, AllocutivityBridge, DifferentialIndexing bridge.
+- **Agree.lean** slimmed: feature types → Features.lean, Case Filter → CaseFilter.lean. Now imports Features.lean.
+
+## [0.226.100] - 2026-02-26
+
+### Changed
+- **Scontras & Pearl (2021) data file** (`ScontrasPearl2021.lean`): removed fabricated experimental results (S&P is a modeling paper with no new experiments), fixed docstring to `/-!` with `@cite`. Added Section 4 types: `JumpOutcome4`, `NumeralReading`, `twoNotTruth` (eq 6 truth conditions for "two horses didn't jump" with n=4).
+- **Scontras & Pearl (2021) RSA file** (`ScontrasPearl2021RSA.lean`): clarified that "Paper value" column is model predictions (not experimental data), noted `supportiveCfg` models Gualmini et al. (2008), added developmental continuity section.
+- **Bibliography** (`references.bib`): fixed stale `sources` path for `scontras-pearl-2021`.
+
+### Added
+- **Section 4 two-not RSA model** (`ScontrasPearl2021TwoNot.lean`): RSA model for "two horses didn't jump" with n=4. 5 worlds × 10 latent states (2 scopes × 5 QUDs). Exact vs at-least configs with Binomial(4, 0.5) priors. Informativity contrast theorems: exact surface has 1 true world, at-least has 3.
+- **Numeral semantics bridge** (`Bridge/NumeralSemanticsBridge.lean`): grounds `twoNotTruth` in `maxMeaning` from `Numeral.Semantics`. Four grounding theorems connecting exact/at-least × surface/inverse to `maxMeaning .eq`/`.ge`. Documents convergent evidence for exact semantics and Kennedy's type-shift resolution of the exact vs lower-bound tension.
+
 ## [0.226.98] - 2026-02-26
 
 ### Added

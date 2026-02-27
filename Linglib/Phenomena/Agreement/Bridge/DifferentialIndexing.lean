@@ -53,33 +53,33 @@ open Fragments.Kaqchikel
     directly proves that all DOM profiles are monotone as DMPs. -/
 
 -- ============================================================================
--- § 2: PersonGeometry ↔ PersonLevel Connection
+-- § 2: PersonGeometry ↔ IndexingPersonLevel Connection
 -- ============================================================================
 
 /-! Just's binary person split (SAP vs 3rd) is exactly Preminger's
     [±participant] feature decomposition. -/
 
-/-- Map a numeric person value (1, 2, 3) to Just's PersonLevel.
+/-- Map a PersonLevel to Just's IndexingPersonLevel.
     1st/2nd → SAP, 3rd → third. -/
-def personToLevel : Nat → PersonLevel
-  | 1 => .sap
-  | 2 => .sap
-  | _ => .third
+def personToLevel : PersonLevel → IndexingPersonLevel
+  | .first  => .sap
+  | .second => .sap
+  | .third  => .third
 
 /-- personToLevel agrees with decomposePerson on the participant split:
     SAP ↔ [+participant], third ↔ [−participant]. -/
 theorem personLevel_matches_participant :
-    (personToLevel 1 == .sap) = (decomposePerson 1).hasParticipant ∧
-    (personToLevel 2 == .sap) = (decomposePerson 2).hasParticipant ∧
-    (personToLevel 3 == .sap) = (decomposePerson 3).hasParticipant := by
+    (personToLevel .first == .sap) = (decomposePerson .first).hasParticipant ∧
+    (personToLevel .second == .sap) = (decomposePerson .second).hasParticipant ∧
+    (personToLevel .third == .sap) = (decomposePerson .third).hasParticipant := by
   exact ⟨rfl, rfl, rfl⟩
 
 /-- SAP has higher prominence rank than 3rd, just as [+participant]
     gives higher probe resolution rank. -/
 theorem personLevel_rank_matches_probe_rank :
-    (PersonLevel.sap.rank > PersonLevel.third.rank) ∧
-    (probeResolutionRank 1 false > probeResolutionRank 3 false) ∧
-    (probeResolutionRank 2 false > probeResolutionRank 3 false) := by decide
+    (IndexingPersonLevel.sap.rank > IndexingPersonLevel.third.rank) ∧
+    (probeResolutionRank .first false > probeResolutionRank .third false) ∧
+    (probeResolutionRank .second false > probeResolutionRank .third false) := by decide
 
 -- ============================================================================
 -- § 3: Kaqchikel as Non-Differential Baseline
@@ -155,8 +155,8 @@ theorem person_dominates_both :
     definiteness frequency hierarchy: person features are both
     structurally and typologically dominant. -/
 theorem preminger_participant_outranks :
-    probeResolutionRank 1 false > probeResolutionRank 3 true ∧
-    probeResolutionRank 3 true > probeResolutionRank 3 false := by decide
+    probeResolutionRank .first false > probeResolutionRank .third true ∧
+    probeResolutionRank .third true > probeResolutionRank .third false := by decide
 
 -- ============================================================================
 -- § 6: Basque Fragment ↔ Just's IndexingFragment

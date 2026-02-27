@@ -11,174 +11,46 @@ Agree is the mechanism by which features are checked/valued:
 3. The probe's feature is valued by copying from the goal
 4. Both features are then checked (and may delete at PF/LF)
 
-## Key Concepts
+## Architecture
 
-- **Interpretable features**: Contribute to meaning (e.g., [person] on D)
-- **Uninterpretable features**: Must be checked/deleted (e.g., [uPerson] on T)
-- **Probe**: Head with unvalued uninterpretable feature
-- **Goal**: Element with valued feature matching the probe
-- **Locality**: Agree targets the closest c-commanded goal
+This file contains the Agree *operation* and its structural conditions
+(locality, activity, phase-boundedness, defective intervention). For
+the feature *types* (PhiFeature, FeatureVal, etc.), see `Features.lean`.
+For the *failure model* (what happens when Agree fails), see
+`ObligatoryOperations.lean`. For the Case Filter, see `CaseFilter.lean`.
 
-## Examples
+## Satisfaction Conditions (Deal 2021)
 
-- T has [uφ] (unvalued phi-features), probes and finds subject DP with [φ]
-- C has [uQ], probes and finds [+Q] on a question particle or wh-phrase
-- v has [uCase:acc], assigns accusative to the closest DP in its domain
+Standard Agree assumes a probe is satisfied by finding a matching valued
+feature. Deal (2021) and Keine (2019) argue for richer conditions:
+- **Feature match**: the standard case
+- **Head encounter**: probe is satisfied by encountering a head of a
+  particular category (e.g., Infl's probe stopped by transitive Voice)
+- **Disjunctive**: probe is satisfied by ANY of several conditions
+
+This captures e.g. Mam's Infl probe, which has satisfaction condition
+[SAT: φ or Voice_TR] — it stops when it finds either matching
+φ-features OR transitive Voice, whichever comes first.
 
 ## References
 
 - Chomsky, N. (2000). "Minimalist Inquiries"
 - Chomsky, N. (2001). "Derivation by Phase"
 - Adger, D. (2003). "Core Syntax", Chapter 4
+- Deal, A. R. (2021). "Interaction, Satisfaction, and the PCC"
+- Keine, S. (2019). "Selective Opacity"
 -/
 
+import Linglib.Theories.Syntax.Minimalism.Core.Features
 import Linglib.Theories.Syntax.Minimalism.Core.Phase
-import Linglib.Core.Case.Basic
 
 namespace Minimalism
 
--- Part 1: Feature Types
+open Core.Prominence
 
-/-- Phi-features (agreement features) -/
-inductive PhiFeature where
-  | person : Nat → PhiFeature        -- 1, 2, 3
-  | number : Bool → PhiFeature       -- true = plural, false = singular
-  | gender : Nat → PhiFeature        -- language-specific encoding
-  deriving Repr, DecidableEq
-
-/-- Case values used in the Agree system.
-
-    This is the Minimalism-internal case type, covering the 8 values needed
-    for Agree-based case assignment. For the full cross-linguistic inventory,
-    see `Core.Case` (Blake 1994). -/
-inductive CaseVal where
-  | nom    -- nominative (subject)
-  | acc    -- accusative (object)
-  | dat    -- dative
-  | gen    -- genitive
-  | obl    -- oblique (default)
-  | abl    -- ablative (source: Japanese *kara*, Latin *ab*)
-  | erg    -- ergative (transitive subject: Basque, Hindi)
-  | abs    -- absolutive (intransitive subject / transitive object)
-  deriving Repr, DecidableEq
-
-/-- Convert a Minimalist `CaseVal` to the theory-neutral `Core.Case`.
-
-    `obl` (oblique) is a Minimalism-internal category, not a specific case in
-    Blake's (1994) typology. We map it to `dat` as the highest-ranked
-    peripheral case — this is an approximation, since "oblique" in Minimalism
-    is a cover term for non-core cases, most commonly dative-like. -/
-def CaseVal.toCase : CaseVal → Core.Case
-  | .nom => .nom
-  | .acc => .acc
-  | .dat => .dat
-  | .gen => .gen
-  | .obl => .dat  -- oblique: Minimalism-internal, approx. as highest peripheral
-  | .abl => .abl
-  | .erg => .erg
-  | .abs => .abs
-
-/-- Honorific level: social ordering between speaker and referent.
-    Relational, not absolute (Alok 2020, Portner et al. 2019).
-    ⟦iHON⟧ = λx. S_i ≺ x, where ≺ encodes social hierarchy. -/
-inductive HonLevel where
-  | nh    -- nonhonorific: S ≥ referent
-  | h     -- honorific: S < referent
-  | hh    -- high honorific: S << referent
-  deriving Repr, DecidableEq
-
-/-- Feature values that can be checked via Agree -/
-inductive FeatureVal where
-  | phi : PhiFeature → FeatureVal
-  | case : CaseVal → FeatureVal
-  | wh : Bool → FeatureVal           -- [±wh]
-  | q : Bool → FeatureVal            -- [±Q] (question)
-  | epp : Bool → FeatureVal          -- EPP (needs specifier)
-  | tense : Bool → FeatureVal        -- [±tense]
-  | hon : HonLevel → FeatureVal      -- [iHON] (Alok & Bhalla 2026)
-  | finite : Bool → FeatureVal       -- [±finite] (Fin head, Rizzi 1997)
-  | factive : Bool → FeatureVal      -- [±factive] (clause-typing)
-  | neg : Bool → FeatureVal          -- [±neg] (NegP, Pollock 1989)
-  | rel : Bool → FeatureVal          -- [±rel] (relative clause typing, Rizzi 2001)
-  | oblique : Bool → FeatureVal     -- [±oblique] (extraction tracking, Elkins et al. 2026)
-  deriving Repr, DecidableEq
-
-/-- Do two feature values have the same type, ignoring specific values?
-
-    This is the correct matching predicate for Agree: a probe with
-    [uPerson] should match any goal with [Person:x], regardless of
-    the specific person value x. In contrast, `DecidableEq` (`==`)
-    compares both type and value, which is wrong for Agree matching
-    where the probe carries a placeholder value. -/
-def FeatureVal.sameType : FeatureVal → FeatureVal → Bool
-  | .phi p1, .phi p2 => match p1, p2 with
-    | .person _, .person _ => true
-    | .number _, .number _ => true
-    | .gender _, .gender _ => true
-    | _, _ => false
-  | .case _, .case _ => true
-  | .wh _, .wh _ => true
-  | .q _, .q _ => true
-  | .epp _, .epp _ => true
-  | .tense _, .tense _ => true
-  | .hon _, .hon _ => true
-  | .finite _, .finite _ => true
-  | .factive _, .factive _ => true
-  | .neg _, .neg _ => true
-  | .rel _, .rel _ => true
-  | .oblique _, .oblique _ => true
-  | _, _ => false
-
-/-- A grammatical feature: either valued or unvalued
-
-    - Valued (interpretable): contributes to meaning, can be a goal
-    - Unvalued (uninterpretable): must be checked, acts as probe -/
-inductive GramFeature where
-  | valued : FeatureVal → GramFeature
-  | unvalued : FeatureVal → GramFeature  -- The FeatureVal indicates feature TYPE
-  deriving Repr, DecidableEq
-
-/-- Is this feature valued? -/
-def GramFeature.isValued : GramFeature → Bool
-  | .valued _ => true
-  | .unvalued _ => false
-
-/-- Is this feature unvalued (a potential probe)? -/
-def GramFeature.isUnvalued : GramFeature → Bool
-  | .valued _ => false
-  | .unvalued _ => true
-
-/-- Get the feature type (ignoring valued/unvalued distinction) -/
-def GramFeature.featureType : GramFeature → FeatureVal
-  | .valued v => v
-  | .unvalued v => v
-
-/-- Do two features match in type? (for Agree)
-    Delegates to `FeatureVal.sameType`, ignoring specific values. -/
-def featuresMatch (f1 f2 : GramFeature) : Bool :=
-  f1.featureType.sameType f2.featureType
-
--- Part 2: Feature Bundles on Syntactic Objects
-
-/-- A feature bundle: list of grammatical features -/
-abbrev FeatureBundle := List GramFeature
-
-/-- Does the bundle have an unvalued feature of a given type?
-    Uses `sameType` so that e.g. [uPerson:0] matches ftype [Person:3]. -/
-def hasUnvaluedFeature (fb : FeatureBundle) (ftype : FeatureVal) : Bool :=
-  fb.any λ f => f.isUnvalued && f.featureType.sameType ftype
-
-/-- Does the bundle have a valued feature of a given type?
-    Uses `sameType` so that e.g. [Person:3] matches ftype [Person:0]. -/
-def hasValuedFeature (fb : FeatureBundle) (ftype : FeatureVal) : Bool :=
-  fb.any λ f => f.isValued && f.featureType.sameType ftype
-
-/-- Get the valued feature of a given type (if present).
-    Uses `sameType` for type-level matching. -/
-def getValuedFeature (fb : FeatureBundle) (ftype : FeatureVal) : Option GramFeature :=
-  fb.find? λ f => f.isValued && f.featureType.sameType ftype
-
--- Part 3: Extended Lexical Items with Features
+-- ============================================================================
+-- § 1: Extended Lexical Items with Features
+-- ============================================================================
 
 /-- Extended LI with grammatical features
 
@@ -201,7 +73,9 @@ def ExtendedLI.isProbe (li : ExtendedLI) : Bool :=
 def ExtendedLI.isGoalFor (li : ExtendedLI) (ftype : FeatureVal) : Bool :=
   hasValuedFeature li.features ftype
 
--- Part 4: Agree Relation
+-- ============================================================================
+-- § 2: Agree Relation
+-- ============================================================================
 
 /-- A probe-goal pair for Agree -/
 structure AgreeRelation where
@@ -229,7 +103,9 @@ def validAgree (a : AgreeRelation) (root : SyntacticObject) : Prop :=
   a.probeNeedsFeature = true ∧
   a.goalHasFeature = true
 
--- Part 5: Locality (Closest Goal)
+-- ============================================================================
+-- § 3: Locality (Closest Goal)
+-- ============================================================================
 
 /-- X intervenes between probe and goal (within tree `root`) iff:
     - probe c-commands X
@@ -249,7 +125,9 @@ def closestGoal (a : AgreeRelation) (root : SyntacticObject) : Prop :=
     x ≠ a.goal ∧
     intervenes root a.probe x a.goal xFeats a.feature
 
--- Part 6: Feature Valuation
+-- ============================================================================
+-- § 4: Feature Valuation
+-- ============================================================================
 
 /-- Value an unvalued feature by copying from a valued one -/
 def valueFeature (unvalued valued : GramFeature) : Option GramFeature :=
@@ -258,8 +136,8 @@ def valueFeature (unvalued valued : GramFeature) : Option GramFeature :=
   | _, _ => none
 
 /-- Apply Agree: value the probe's feature from the goal.
-    Uses `sameType` for matching, so a probe with [uPerson:0] will
-    be valued by a goal with [Person:3] — the placeholder value is
+    Uses `sameType` for matching, so a probe with [uPerson:_] will
+    be valued by a goal with [Person:3rd] — the placeholder value is
     irrelevant, only the feature type matters. -/
 def applyAgree (probeFeats goalFeats : FeatureBundle) (ftype : FeatureVal) :
     Option FeatureBundle :=
@@ -273,21 +151,26 @@ def applyAgree (probeFeats goalFeats : FeatureBundle) (ftype : FeatureVal) :
         | none => f
       else f)
 
--- Part 7: Common Agree Configurations
+-- ============================================================================
+-- § 5: Common Agree Configurations
+-- ============================================================================
 
 /-- T-Agree: T probes for φ-features on subject DP
 
-    T has [uφ], subject DP has [φ] → T gets valued φ -/
+    T has [uφ], subject DP has [φ] → T gets valued φ.
+    The `.third` value on person probes is a conventional placeholder —
+    `sameType` ignores the specific `PersonLevel` value, matching any
+    `.person _` against any `.person _`. -/
 structure TAgree where
   tHead : SyntacticObject
   subject : SyntacticObject
   tFeatures : FeatureBundle
   subjFeatures : FeatureBundle
   -- T has unvalued phi
-  t_has_uphi : hasUnvaluedFeature tFeatures (.phi (.person 0)) = true ∨
+  t_has_uphi : hasUnvaluedFeature tFeatures (.phi (.person .third)) = true ∨
                hasUnvaluedFeature tFeatures (.phi (.number false)) = true
   -- Subject has valued phi
-  subj_has_phi : hasValuedFeature subjFeatures (.phi (.person 0)) = true ∨
+  subj_has_phi : hasValuedFeature subjFeatures (.phi (.person .third)) = true ∨
                  hasValuedFeature subjFeatures (.phi (.number false)) = true
 
 /-- C-Agree: C probes for [Q] feature
@@ -303,7 +186,9 @@ structure CAgree where
   -- Q-element has valued [+Q]
   q_has_q : hasValuedFeature qFeatures (.q true) = true
 
--- Part 8: Movement Triggered by Agree
+-- ============================================================================
+-- § 6: Movement Triggered by Agree
+-- ============================================================================
 
 /-- EPP triggers movement to specifier
 
@@ -328,26 +213,9 @@ def agreeTriggersMoveement (probeFeats : FeatureBundle) : Bool :=
 def tToCTriggered (cFeats : FeatureBundle) : Bool :=
   hasUnvaluedFeature cFeats (.q false) && hasEPP cFeats
 
--- Part 9: Worked Example - Subject-Auxiliary Inversion
-
-/-
-## Deriving Subject-Auxiliary Inversion
-
-In matrix questions:
-1. C has [uQ, EPP] - unvalued Q feature, needs specifier
-2. T (auxiliary) has [+Q] feature (or is attracted by EPP)
-3. T moves to C to check [uQ] (head-to-head movement)
-4. Subject remains in Spec-TP (below C+T)
-
-Result: Aux-Subject-V order ("Can John eat?")
-
-In embedded questions:
-1. C has [uQ] but wh-movement satisfies it
-2. No T-to-C movement needed
-3. Subject stays before T
-
-Result: Subject-Aux-V order ("what John can eat")
--/
+-- ============================================================================
+-- § 7: Worked Example - Subject-Auxiliary Inversion
+-- ============================================================================
 
 /-- Matrix C features: [uQ, EPP] -/
 def matrixCFeatures : FeatureBundle :=
@@ -363,40 +231,9 @@ theorem matrix_triggers_t_to_c : tToCTriggered matrixCFeatures = true := rfl
 /-- Embedded C does not trigger T-to-C -/
 theorem embedded_no_t_to_c : tToCTriggered embeddedCFeatures = false := rfl
 
--- Part 10: Case Assignment via Agree
-
-/-- Nominative Case is assigned by T
-
-    T has [uCase:nom], assigns to closest DP in Spec-TP -/
-def tAssignsNominative : FeatureBundle :=
-  [.unvalued (.case .nom)]
-
-/-- Accusative Case is assigned by v (transitive light verb)
-
-    v has [uCase:acc], assigns to closest DP (object) -/
-def vAssignsAccusative : FeatureBundle :=
-  [.unvalued (.case .acc)]
-
-/-- DP needs Case (Case Filter)
-
-    All DPs have [uCase], must be valued by Agree -/
-def dpNeedsCase : FeatureBundle :=
-  [.unvalued (.case .obl)]  -- unvalued, will be valued by T or v
-
--- Part 11: Activity Condition
-
-/-
-## The Activity Condition (Chomsky 2000, 2001)
-
-A goal is only "visible" to a probe if it is ACTIVE, i.e., if it has at least
-one unvalued feature. Once all of a goal's features are valued, it becomes
-inactive and is no longer accessible for further Agree operations.
-
-This explains:
-1. Why subjects don't undergo further agreement after Case is valued
-2. Why moved elements "freeze in place" once their features are satisfied
-3. Defective intervention effects
--/
+-- ============================================================================
+-- § 8: Activity Condition (Chomsky 2000, 2001)
+-- ============================================================================
 
 /-- Is a feature bundle active? (has at least one unvalued feature)
 
@@ -425,10 +262,8 @@ def hasCase (fb : FeatureBundle) : Bool :=
 theorem activity_via_case (fb : FeatureBundle)
     (h : fb.all λ f => match f.featureType with | .case _ => true | _ => false) :
     isActive fb ↔ needsCase fb := by
-  -- When all features are Case features, isActive ↔ needsCase
   constructor
-  · -- isActive → needsCase
-    intro hActive
+  · intro hActive
     simp only [isActive, List.any_eq_true] at hActive
     simp only [needsCase, List.any_eq_true]
     obtain ⟨f, hfMem, hfUnval⟩ := hActive
@@ -438,15 +273,16 @@ theorem activity_via_case (fb : FeatureBundle)
     · exact hfUnval
     · simp only [List.all_eq_true] at h
       exact h f hfMem
-  · -- needsCase → isActive
-    intro hNeeds
+  · intro hNeeds
     simp only [needsCase, List.any_eq_true] at hNeeds
     simp only [isActive, List.any_eq_true]
     obtain ⟨f, hfMem, hfCond⟩ := hNeeds
     simp only [Bool.and_eq_true] at hfCond
     exact ⟨f, hfMem, hfCond.1⟩
 
--- Part 12: Active Goal (for Agree with Activity)
+-- ============================================================================
+-- § 9: Active Goal (for Agree with Activity)
+-- ============================================================================
 
 /-- A goal that satisfies the Activity Condition -/
 structure ActiveGoal where
@@ -471,22 +307,9 @@ def validAgreeWithActivity (a : AgreeRelation) (root : SyntacticObject) : Prop :
   validAgree a root ∧
   isActive a.goalFeatures = true
 
--- Part 13: Multiple Agree
-
-/-
-## Multiple Agree (Hiraiwa 2001, 2005)
-
-In some languages/constructions, a single probe can agree with multiple goals
-simultaneously. This is called "Multiple Agree."
-
-Examples:
-- Japanese honorification (verb agrees with subject AND object)
-- Multiple wh-fronting in Slavic languages
-- Long-distance agreement in Icelandic
-
-The key constraint: all goals must be in the probe's c-command domain,
-and there's no intervener with the relevant feature.
--/
+-- ============================================================================
+-- § 10: Multiple Agree (Hiraiwa 2001, 2005)
+-- ============================================================================
 
 /-- Multiple Agree: a probe agreeing with a list of goals -/
 structure MultipleAgree where
@@ -506,7 +329,6 @@ def MultipleAgree.isValid (ma : MultipleAgree) (root : SyntacticObject) : Prop :
 
 /-- Apply Multiple Agree: value probe's feature, mark all goals -/
 def applyMultipleAgree (ma : MultipleAgree) : Option FeatureBundle :=
-  -- Get the valued feature from the first goal
   match ma.goals.head? with
   | none => none
   | some (_, gf) =>
@@ -520,110 +342,9 @@ def applyMultipleAgree (ma : MultipleAgree) : Option FeatureBundle :=
           | none => f
         else f)
 
--- Part 14: Case Filter
-
-/-
-## The Case Filter
-
-Every DP must receive Case. In Minimalist terms:
-- Every DP has [uCase] (unvalued Case feature)
-- [uCase] must be valued by Agree with a Case-assigning head
-- Failure to value [uCase] causes the derivation to crash
-
-Case assigners:
-- T assigns nominative to its specifier (subject)
-- v assigns accusative to its complement (object)
-- P assigns oblique to its complement
--/
-
-/-- A DP's features (with unvalued Case) -/
-structure DPFeatures where
-  phi : List PhiFeature      -- Person, number, gender
-  caseFeature : GramFeature  -- The Case feature (valued or unvalued)
-  deriving Repr
-
-/-- Create DP features with unvalued Case -/
-def DPFeatures.withUnvaluedCase (phi : List PhiFeature) : DPFeatures :=
-  ⟨phi, .unvalued (.case .obl)⟩
-
-/-- Create DP features with valued Case -/
-def DPFeatures.withCase (phi : List PhiFeature) (c : CaseVal) : DPFeatures :=
-  ⟨phi, .valued (.case c)⟩
-
-/-- Does a DP satisfy the Case Filter? (has valued Case) -/
-def satisfiesCaseFilter (dp : DPFeatures) : Bool :=
-  dp.caseFeature.isValued
-
-/-- Convert DPFeatures to a FeatureBundle -/
-def DPFeatures.toBundle (dp : DPFeatures) : FeatureBundle :=
-  dp.phi.map (λ p => .valued (.phi p)) ++ [dp.caseFeature]
-
-/-- The Case Filter: a derivation converges only if all DPs have valued Case
-
-    This is stated as: for all DPs in the structure, their Case feature
-    must be valued. -/
-def caseFilterHolds (dps : List DPFeatures) : Bool :=
-  dps.all satisfiesCaseFilter
-
-/-- If Case Filter fails, there exists a DP without Case -/
-theorem case_filter_necessary (dps : List DPFeatures) :
-    caseFilterHolds dps = false → ∃ dp ∈ dps, satisfiesCaseFilter dp = false := by
-  intro h
-  induction dps with
-  | nil => simp [caseFilterHolds] at h
-  | cons hd tl ih =>
-    simp only [caseFilterHolds, List.all_cons, Bool.and_eq_false_iff] at h
-    cases h with
-    | inl hHd =>
-      use hd
-      simp only [List.mem_cons, true_or, true_and]
-      exact hHd
-    | inr hTl =>
-      obtain ⟨dp, hdp, hsat⟩ := ih hTl
-      use dp
-      simp only [List.mem_cons]
-      exact ⟨Or.inr hdp, hsat⟩
-
-/-- A well-formed derivation satisfies the Case Filter -/
-theorem case_filter_at_interfaces (dps : List DPFeatures)
-    (hWF : caseFilterHolds dps = true) :
-    ∀ dp ∈ dps, satisfiesCaseFilter dp = true := by
-  intro dp hdp
-  induction dps with
-  | nil => simp at hdp
-  | cons hd tl ih =>
-    simp only [caseFilterHolds, List.all_cons, Bool.and_eq_true] at hWF
-    rcases List.mem_cons.mp hdp with heq | hmem
-    · rw [heq]; exact hWF.1
-    · exact ih hWF.2 hmem
-
--- Part 15: Defective Intervention
-
-/-
-## Defective Intervention (Chomsky 2000)
-
-An element X is a DEFECTIVE INTERVENER if:
-1. It has some features that match the probe
-2. But it's INACTIVE (all features valued)
-
-Defective interveners block Agree even though they can't participate in it.
-
-Example: In raising constructions, PRO is a defective intervener:
-  "John seems [PRO to be happy]"
-  - T probes for φ-features
-  - PRO has φ but is inactive (no Case)
-  - But PRO is DEFECTIVE, so it doesn't block Agree with "John"
-
-Wait, this is backwards. Let me reconsider:
-Actually, defective intervention is when an INACTIVE element still blocks:
-  "*There seems a man to be here"
-  - "a man" intervenes between T and "there" for EPP
-  - But "a man" has unvalued Case, so it SHOULD be active
-
-The real defective intervention is:
-  - An element that MATCHES but can't be the goal
-  - e.g., expletive "there" matches for φ but doesn't have full φ-features
--/
+-- ============================================================================
+-- § 11: Defective Intervention (Chomsky 2000)
+-- ============================================================================
 
 /-- A defective element: has some matching features but incomplete set -/
 structure DefectiveElement where
@@ -649,10 +370,11 @@ def defectivelyIntervenes (root : SyntacticObject) (probe x goal : SyntacticObje
   cCommandsIn root x goal ∧
   xDef.so = x ∧
   xDef.isDeficient = true ∧
-  -- X has a matching feature
   (xDef.features.any λ f => featuresMatch f (.unvalued ftype)) = true
 
--- Part 16: Phase-Bounded Agree
+-- ============================================================================
+-- § 12: Phase-Bounded Agree
+-- ============================================================================
 
 /-- Valid Agree with Phase Impenetrability Condition.
 
@@ -672,27 +394,23 @@ def fullAgree (strength : PICStrength) (phases : List Phase)
   validAgreeWithActivity rel root ∧
     ¬∃ ph ∈ phases, phaseImpenetrable strength ph.head rel.goal
 
--- Part 17: Clause-Typing Agree Configurations
+-- ============================================================================
+-- § 13: Clause-Typing Agree Configurations
+-- ============================================================================
 
-/-- Fin-Agree: Fin probes for [±finite] on its complement (TP).
-    The Fin head in Rizzi's (1997) split-CP checks whether its complement
-    is finite (indicative/realis) or non-finite (subjunctive/irrealis). -/
+/-- Fin-Agree: Fin probes for [±finite] on its complement (TP). -/
 def finAgreeFeatures (isFinite : Bool) : FeatureBundle :=
   [.unvalued (.finite isFinite)]
 
-/-- Force-Fin-Agree: Force/C probes for clause-type features on Fin.
-    In the split-CP, Force selects Fin via Agree, checking features like
-    [±factive] that determine the clause's discourse function. -/
+/-- Force-Fin-Agree: Force/C probes for clause-type features on Fin. -/
 def forceFinAgreeFeatures (isFactive : Bool) : FeatureBundle :=
   [.unvalued (.factive isFactive)]
 
-/-- Neg-Agree: Neg probes for [±neg], licensing sentential negation.
-    In Pollock's (1989) split-IP, NegP hosts the negation feature. -/
+/-- Neg-Agree: Neg probes for [±neg], licensing sentential negation. -/
 def negAgreeFeatures : FeatureBundle :=
   [.unvalued (.neg true)]
 
-/-- Rel-Agree: Rel probes for [±rel], licensing relative clause formation.
-    In Rizzi's (2001) extension, the Rel head types the clause as relative. -/
+/-- Rel-Agree: Rel probes for [±rel], licensing relative clause formation. -/
 def relAgreeFeatures : FeatureBundle :=
   [.unvalued (.rel true)]
 
@@ -708,5 +426,102 @@ theorem neg_features_match :
 
 theorem rel_features_match :
     featuresMatch (.unvalued (.rel true)) (.valued (.rel false)) = true := rfl
+
+-- ============================================================================
+-- § 14: Satisfaction Conditions (Deal 2021; Keine 2019)
+-- ============================================================================
+
+/-- How a probe's search can be terminated.
+
+    Standard Agree assumes a probe is satisfied only by finding a matching
+    valued feature (simple feature match). Deal (2021) argues for richer
+    conditions to capture e.g. Mam's Infl probe, which is satisfied by
+    EITHER matching φ-features OR encountering transitive Voice:
+
+    **Mam example** (Scott 2023, via Deal 2021):
+    - Infl carries [uφ] with satisfaction [SAT: φ or Voice_TR]
+    - Intransitive: probe passes through (no Voice_TR) → finds S → real φ-agreement
+    - Transitive: probe encounters Voice_TR → satisfied without copying φ → default "∅"
+
+    This turns the Mam bridge's prose account into a computable derivation:
+    ```
+    def mamInflSatisfaction : SatisfactionCond :=
+      .disjunctive [.featureMatch (.phi (.person .third)), .headEncounter .v]
+    ```
+-/
+inductive SatisfactionCond where
+  /-- Standard: probe is satisfied by finding a matching valued feature. -/
+  | featureMatch : FeatureVal → SatisfactionCond
+  /-- Disjunctive: probe is satisfied by ANY of these conditions.
+      Models Deal's (2021) interaction-based probes. -/
+  | disjunctive : List SatisfactionCond → SatisfactionCond
+  /-- Head encounter: probe is satisfied by encountering a head of this
+      category, even without feature matching. The probe stops but copies
+      no features — yielding the Elsewhere (default) exponent at PF. -/
+  | headEncounter : Cat → SatisfactionCond
+  deriving Repr
+
+/-- Is an atomic (non-disjunctive) condition met? -/
+private def atomicSatisfied (cond : SatisfactionCond) (fb : FeatureBundle)
+    (ctx : Option Cat) : Bool :=
+  match cond with
+  | .featureMatch ft => hasValuedFeature fb ft
+  | .headEncounter cat => ctx == some cat
+  | .disjunctive _ => false  -- nested disjunctions handled at top level
+
+/-- Check whether a satisfaction condition is met.
+
+    `fb` is the feature bundle of the element the probe encounters.
+    `ctx` is the syntactic category of that element (if it's a head).
+    Returns `true` if the probe should stop searching. -/
+def SatisfactionCond.isSatisfied (cond : SatisfactionCond) (fb : FeatureBundle)
+    (ctx : Option Cat) : Bool :=
+  match cond with
+  | .featureMatch ft => hasValuedFeature fb ft
+  | .disjunctive conds => conds.any (atomicSatisfied · fb ctx)
+  | .headEncounter cat => ctx == some cat
+
+/-- Did the probe copy features, or just stop?
+
+    When satisfied by feature match, the probe copies features (→ real agreement).
+    When satisfied by head encounter, no features are copied (→ default/Elsewhere).
+    For disjunctive conditions, feature copying occurs iff the first satisfied
+    condition is a feature match. -/
+def SatisfactionCond.copiedFeatures (cond : SatisfactionCond) (fb : FeatureBundle)
+    (ctx : Option Cat) : Bool :=
+  match cond with
+  | .featureMatch ft => hasValuedFeature fb ft
+  | .disjunctive conds =>
+    match conds.find? (atomicSatisfied · fb ctx) with
+    | some (.featureMatch ft) => hasValuedFeature fb ft
+    | _ => false  -- head encounter or nested → no features copied
+  | .headEncounter _ => false
+
+/-- Mam's Infl probe satisfaction condition (Deal 2021; Scott 2023):
+    satisfied by EITHER matching φ-features OR encountering transitive Voice. -/
+def mamInflSatisfaction : SatisfactionCond :=
+  .disjunctive [.featureMatch (.phi (.person .third)), .headEncounter .v]
+
+/-- Intransitive environment: the probe encounters a DP with φ-features
+    (no Voice_TR in the way). Feature match is satisfied → real agreement. -/
+theorem mam_intransitive_satisfied :
+    mamInflSatisfaction.isSatisfied
+      [.valued (.phi (.person .first)), .valued (.phi (.number false))]
+      none = true := by native_decide
+
+/-- Transitive environment: the probe encounters Voice_TR (category .v).
+    Head encounter is satisfied → probe stops without copying features. -/
+theorem mam_transitive_satisfied :
+    mamInflSatisfaction.isSatisfied [] (some .v) = true := by native_decide
+
+/-- In the transitive case, no features are copied — yielding default. -/
+theorem mam_transitive_no_copy :
+    mamInflSatisfaction.copiedFeatures [] (some .v) = false := by native_decide
+
+/-- In the intransitive case, features ARE copied — yielding real agreement. -/
+theorem mam_intransitive_copies :
+    mamInflSatisfaction.copiedFeatures
+      [.valued (.phi (.person .first)), .valued (.phi (.number false))]
+      none = true := by native_decide
 
 end Minimalism

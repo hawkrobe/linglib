@@ -95,11 +95,11 @@ def personNumbers : List PersonNumber :=
 -- § 2: Feature Decomposition (grounded in PersonGeometry.lean)
 -- ============================================================================
 
-/-- Person value (1, 2, or 3). -/
-def PersonNumber.person : PersonNumber → Nat
-  | .p1sg | .p1pl => 1
-  | .p2sg | .p2pl => 2
-  | .p3sg | .p3pl => 3
+/-- Person value as `PersonLevel` (the canonical person type). -/
+def PersonNumber.person : PersonNumber → Core.Prominence.PersonLevel
+  | .p1sg | .p1pl => .first
+  | .p2sg | .p2pl => .second
+  | .p3sg | .p3pl => .third
 
 /-- Is this person-number [+plural]? -/
 def PersonNumber.isPlural : PersonNumber → Bool
@@ -119,12 +119,12 @@ def PersonNumber.isAuthor (pn : PersonNumber) : Bool :=
 
 /-- Convert to PhiFeature list for the Agree infrastructure. -/
 def PersonNumber.toPhiFeatures : PersonNumber → List PhiFeature
-  | .p1sg => [.person 1, .number false]
-  | .p2sg => [.person 2, .number false]
-  | .p3sg => [.person 3, .number false]
-  | .p1pl => [.person 1, .number true]
-  | .p2pl => [.person 2, .number true]
-  | .p3pl => [.person 3, .number true]
+  | .p1sg => [.person .first, .number false]
+  | .p2sg => [.person .second, .number false]
+  | .p3sg => [.person .third, .number false]
+  | .p1pl => [.person .first, .number true]
+  | .p2pl => [.person .second, .number true]
+  | .p3pl => [.person .third, .number true]
 
 -- ============================================================================
 -- § 3: Set A (ERG) Vocabulary

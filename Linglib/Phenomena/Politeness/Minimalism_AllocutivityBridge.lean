@@ -76,7 +76,7 @@ def allocProbeFeatures (level : HonLevel) : FeatureBundle :=
 /-- Addressee DP features: valued [iHON] and [person:2].
     The addressee is always 2nd person. -/
 def addresseeDPFeatures (level : HonLevel) : FeatureBundle :=
-  [.valued (.hon level), .valued (.phi (.person 2))]
+  [.valued (.hon level), .valued (.phi (.person .second))]
 
 -- ============================================================================
 -- Section B: Embeddability from Probe Location

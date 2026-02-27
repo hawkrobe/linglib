@@ -1,3 +1,5 @@
+import Linglib.Core.Prominence
+
 /-!
 # Person Feature Geometry @cite{preminger-2014}
 
@@ -22,6 +24,14 @@ in Kaqchikel Agent Focus (Preminger 2014, §3.3):
 probing. If π⁰ succeeds, its target determines the marker; if it
 fails, #⁰ provides the result; if both fail, the default surfaces.
 
+## Person Type
+
+`decomposePerson` takes `Core.Prominence.PersonLevel` (`.first |
+.second | .third`) — the canonical person type shared across the
+library — rather than a raw `Nat`. This eliminates meaningless
+person values and grounds the decomposition in the same type used
+by `DifferentialIndexing`, `Prominence.PersonLevel.isSAP`, etc.
+
 ## References
 
 - Preminger, O. (2014). Agreement and Its Failures. MIT Press.
@@ -31,6 +41,8 @@ fails, #⁰ provides the result; if both fail, the default surfaces.
 -/
 
 namespace Minimalism
+
+open Core.Prominence
 
 -- ============================================================================
 -- § 1: Decomposed Person Features
@@ -66,17 +78,15 @@ def DecomposedPerson.wellFormed (dp : DecomposedPerson) : Bool :=
 -- § 2: Person Decomposition
 -- ============================================================================
 
-/-- Decompose a person value (1, 2, 3) into sub-features.
+/-- Decompose a person value into sub-features.
 
     - 1st person: [+participant, +author]
     - 2nd person: [+participant, −author]
-    - 3rd person: [−participant, −author]
-
-    Values other than 1/2 go to the 3rd-person default. -/
-def decomposePerson : Nat → DecomposedPerson
-  | 1 => ⟨true, true⟩
-  | 2 => ⟨true, false⟩
-  | _ => ⟨false, false⟩
+    - 3rd person: [−participant, −author] -/
+def decomposePerson : PersonLevel → DecomposedPerson
+  | .first  => ⟨true, true⟩
+  | .second => ⟨true, false⟩
+  | .third  => ⟨false, false⟩
 
 -- ============================================================================
 -- § 3: Probe Targets
@@ -101,7 +111,7 @@ inductive ProbeTarget where
 
     A DP with person value `person` and number `isPlural` is visible
     to the probe iff it bears the probe's target feature. -/
-def probeVisible (target : ProbeTarget) (person : Nat) (isPlural : Bool) : Bool :=
+def probeVisible (target : ProbeTarget) (person : PersonLevel) (isPlural : Bool) : Bool :=
   match target with
   | .participant => (decomposePerson person).hasParticipant
   | .plural => isPlural
@@ -122,7 +132,7 @@ def probeVisible (target : ProbeTarget) (person : Nat) (isPlural : Bool) : Bool 
     This rank is derived from the probing mechanism, not stipulated:
     π⁰ outranks #⁰, and each probe targets any DP bearing the sought
     feature. The rank captures the combined effect. -/
-def probeResolutionRank (person : Nat) (isPlural : Bool) : Nat :=
+def probeResolutionRank (person : PersonLevel) (isPlural : Bool) : Nat :=
   if (decomposePerson person).hasParticipant then 2
   else if isPlural then 1
   else 0
@@ -133,51 +143,41 @@ def probeResolutionRank (person : Nat) (isPlural : Bool) : Nat :=
 
 /-- 1st person is [+participant, +author]. -/
 theorem first_person_decomposition :
-    (decomposePerson 1).hasParticipant = true ∧
-    (decomposePerson 1).hasAuthor = true := ⟨rfl, rfl⟩
+    (decomposePerson .first).hasParticipant = true ∧
+    (decomposePerson .first).hasAuthor = true := ⟨rfl, rfl⟩
 
 /-- 2nd person is [+participant, −author]. -/
 theorem second_person_decomposition :
-    (decomposePerson 2).hasParticipant = true ∧
-    (decomposePerson 2).hasAuthor = false := ⟨rfl, rfl⟩
+    (decomposePerson .second).hasParticipant = true ∧
+    (decomposePerson .second).hasAuthor = false := ⟨rfl, rfl⟩
 
 /-- 3rd person is [−participant, −author]. -/
 theorem third_person_decomposition :
-    (decomposePerson 3).hasParticipant = false ∧
-    (decomposePerson 3).hasAuthor = false := ⟨rfl, rfl⟩
+    (decomposePerson .third).hasParticipant = false ∧
+    (decomposePerson .third).hasAuthor = false := ⟨rfl, rfl⟩
 
-/-- All standard person values yield well-formed decompositions. -/
-theorem standard_persons_wellFormed :
-    (decomposePerson 1).wellFormed = true ∧
-    (decomposePerson 2).wellFormed = true ∧
-    (decomposePerson 3).wellFormed = true := ⟨rfl, rfl, rfl⟩
-
-/-- All possible decompositions are well-formed: [author] entails
-    [participant] for every input. -/
-theorem all_decompositions_wellFormed : ∀ n : Nat,
-    (decomposePerson n).wellFormed = true
-  | 0 => rfl
-  | 1 => rfl
-  | 2 => rfl
-  | _ + 3 => rfl
+/-- All person values yield well-formed decompositions. -/
+theorem all_decompositions_wellFormed (p : PersonLevel) :
+    (decomposePerson p).wellFormed = true := by
+  cases p <;> rfl
 
 -- ============================================================================
 -- § 6: Verification — Probe Visibility
 -- ============================================================================
 
 /-- 1st person is visible to the person probe (π⁰). -/
-theorem first_visible_to_pi : probeVisible .participant 1 false = true := rfl
+theorem first_visible_to_pi : probeVisible .participant .first false = true := rfl
 
 /-- 3rd person is invisible to the person probe. -/
-theorem third_invisible_to_pi : probeVisible .participant 3 false = false := rfl
+theorem third_invisible_to_pi : probeVisible .participant .third false = false := rfl
 
 /-- 3rd plural is visible to the number probe (#⁰). -/
-theorem third_plural_visible_to_hash : probeVisible .plural 3 true = true := rfl
+theorem third_plural_visible_to_hash : probeVisible .plural .third true = true := rfl
 
 /-- 3rd singular is invisible to both probes. -/
 theorem third_sg_invisible_to_both :
-    probeVisible .participant 3 false = false ∧
-    probeVisible .plural 3 false = false := ⟨rfl, rfl⟩
+    probeVisible .participant .third false = false ∧
+    probeVisible .plural .third false = false := ⟨rfl, rfl⟩
 
 -- ============================================================================
 -- § 7: Verification — Resolution Rank
@@ -185,22 +185,22 @@ theorem third_sg_invisible_to_both :
 
 /-- 1st/2nd person get rank 2 (visible to π⁰). -/
 theorem participant_rank :
-    probeResolutionRank 1 false = 2 ∧
-    probeResolutionRank 2 false = 2 ∧
-    probeResolutionRank 1 true = 2 ∧
-    probeResolutionRank 2 true = 2 := ⟨rfl, rfl, rfl, rfl⟩
+    probeResolutionRank .first false = 2 ∧
+    probeResolutionRank .second false = 2 ∧
+    probeResolutionRank .first true = 2 ∧
+    probeResolutionRank .second true = 2 := ⟨rfl, rfl, rfl, rfl⟩
 
 /-- 3rd plural gets rank 1 (visible to #⁰ only). -/
-theorem plural_rank : probeResolutionRank 3 true = 1 := rfl
+theorem plural_rank : probeResolutionRank .third true = 1 := rfl
 
 /-- 3rd singular gets rank 0 (invisible to both probes = default). -/
-theorem default_rank : probeResolutionRank 3 false = 0 := rfl
+theorem default_rank : probeResolutionRank .third false = 0 := rfl
 
 /-- Rank is monotone in the probe hierarchy: any DP visible to π⁰
     (rank 2) outranks any DP visible only to #⁰ (rank 1), which
     outranks any DP invisible to both (rank 0). -/
 theorem rank_hierarchy :
-    probeResolutionRank 1 false > probeResolutionRank 3 true ∧
-    probeResolutionRank 3 true > probeResolutionRank 3 false := by decide
+    probeResolutionRank .first false > probeResolutionRank .third true ∧
+    probeResolutionRank .third true > probeResolutionRank .third false := by decide
 
 end Minimalism
