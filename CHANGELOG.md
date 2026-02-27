@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.227.32] - 2026-02-27
+
+### Added
+- **Solstad & Bott (2024) deep integration: occasion verbs, IC bias, coherence relations**. New `Core/Discourse/CoherenceRelation.lean`: `CoherenceRelation` enum (explanation, result, occasion, elaboration, parallel, contrast), `CoherenceClass` (Kehler 2002), `CausalDirection`, `Connective` → relation mapping, `because_selects_cause`. New `Phenomena/ImplicitCausality/Studies/SolstadBott2024/`: `Data.lean` with 28 stimulus verbs across 4 classes (OccV/AgExp/StimExp/AgPat), `VerbClass.predictedBias`, IC proportion data from Exps 1–4. `Bridge/PresuppositionBridge.lean`: `occasionEventPhase` reusing EventPhase, projection through negation via aboutness, per-verb `presupType = softTrigger` verification. `Bridge/ProtoRoleBridge.lean`: entailment profiles per verb class, `occV_matches_agExp_profile` (OccV ≈ AgExp = S+IE), `predictICBias` from profiles, `predictions_match_data` (all 4 classes). `manage_senses_diverge_on_theta` documents the agent-evocator tension: `manage` (`.agent`, traditional) vs `manage_occasion` (`.experiencer`, S&B 2024) — same verb, different effective argument structure via `SenseTag.occasion` (cf. Kim 2024 on Class II psych verbs). 26 new verb fragment entries: dare, bother, hesitate (OccV); enjoy, like, love, hate, admire, envy, respect, value (AgExp); frighten, amuse, fascinate, irritate, annoy, bore, charm, impress (StimExp); chase, hit, push, pull, carry, drag, call (AgPat).
+
+## [0.227.31] - 2026-02-27
+
+### Added
+- **DDRP–BToM–Common Ground integration (Ritchie & Schiller 2024)**: New `Bridge/RitchieSchiller2024BToM.lean`. `SpatialScene`, `perceivable`, `sceneToDDRP` (perception-generated DDRPs with monotonicity from ≤-transitivity). `sceneToDDRP_eq_sceneDDRP` (hand-written DDRP = perception-generated). `ddprGroundedInCG` + `shared_scene_shared_ddrp` (common-ground constraint: shared scene → shared DDRP). `rsa_btom_bridge` (L1 = BToM world marginal via `L1_eq_btom_worldMarginal`). `perception_generates_rsa_ddrp` (perception module generates the RSA model's DDRP). Latent classification: scale = mental, scene = shared. `partitionScene` + `different_scenes_different_ddrps` + `perception_mismatch_changes_truth` (imperfect perception yields disagreement on truth values, motivating perceptual co-presence).
+
 ## [0.227.30] - 2026-02-27
 
 ### Added

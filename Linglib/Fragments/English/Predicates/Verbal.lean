@@ -433,7 +433,9 @@ def keep : VerbEntry where
 -- § Verb Entries — Implicative / Control
 -- ════════════════════════════════════════════════════
 
-/-- "manage" — positive implicative: "managed to VP" entails "VP" -/
+/-- "manage" — positive implicative: "managed to VP" entails "VP".
+    Traditional analysis: agentive subject controls the complement.
+    See also `manage_occasion` for the Solstad & Bott (2024) analysis. -/
 def manage : VerbEntry := .mkRegular {
   form := "manage"
   complementType := .infinitival
@@ -1152,6 +1154,278 @@ def forget_rog : VerbEntry where
   senseTag := .rogative
 
 -- ════════════════════════════════════════════════════
+-- § Verb Entries — Occasion Verbs (Solstad & Bott 2024)
+-- ════════════════════════════════════════════════════
+
+/-! Occasion verbs presuppose a prior occasioning eventuality and have
+    experiencer (agent-evocator) subjects. They pattern with AgExp verbs
+    for implicit causality bias (Solstad & Bott 2024).
+
+    "manage" has two entries: `manage` (`.default`, agentive subject — traditional
+    implicative analysis) and `manage_occasion` (`.occasion`, experiencer subject —
+    Solstad & Bott's agent-evocator analysis). This mirrors Kim's (2024) observation
+    that the same verb can project different effective argument structures
+    depending on the interpretive context. -/
+
+/-- "manage" occasion sense — agent-evocator subject (Solstad & Bott 2024).
+    Same implicative semantics as `manage`, but subject is experiencer
+    (sentience + independent existence, no entailed volition/causation).
+    The do-test passes pragmatically because the complement denotes a
+    volitional action, not because the matrix verb entails agentivity. -/
+def manage_occasion : VerbEntry := .mkRegular {
+  form := "manage"
+  complementType := .infinitival
+  subjectTheta := some .experiencer
+  controlType := .subjectControl
+  passivizable := false
+  implicativeBuilder := some .positive
+  presupType := some .softTrigger
+  senseTag := .occasion }
+
+/-- "dare" — occasion verb: presupposes intimidating circumstance -/
+def dare : VerbEntry := .mkRegular {
+  form := "dare"
+  complementType := .infinitival
+  subjectTheta := some .experiencer
+  controlType := .subjectControl
+  passivizable := false
+  presupType := some .softTrigger }
+
+/-- "bother" — occasion verb: presupposes effort/inconvenience -/
+def bother : VerbEntry := .mkRegular {
+  form := "bother"
+  complementType := .infinitival
+  subjectTheta := some .experiencer
+  controlType := .subjectControl
+  passivizable := false
+  presupType := some .softTrigger }
+
+/-- "hesitate" — occasion verb: presupposes reluctance/risk -/
+def hesitate : VerbEntry := .mkRegular {
+  form := "hesitate"
+  complementType := .infinitival
+  subjectTheta := some .experiencer
+  controlType := .subjectControl
+  passivizable := false
+  presupType := some .softTrigger }
+
+-- ════════════════════════════════════════════════════
+-- § Verb Entries — Agent-Experiencer (Solstad & Bott 2024)
+-- ════════════════════════════════════════════════════
+
+/-! Levin (1993) class 31.2 (admire). Subject = experiencer, object = stimulus.
+    NP1 (subject) IC bias. -/
+
+/-- "enjoy" — AgExp verb (experiencer-subject) -/
+def enjoy : VerbEntry := .mkRegular {
+  form := "enjoy"
+  complementType := .np
+  subjectTheta := some .experiencer
+  objectTheta := some .stimulus
+  levinClass := some .admire }
+
+/-- "like" — AgExp verb (experiencer-subject) -/
+def like : VerbEntry := .mkRegular {
+  form := "like"
+  complementType := .np
+  subjectTheta := some .experiencer
+  objectTheta := some .stimulus
+  levinClass := some .admire }
+
+/-- "love" — AgExp verb (experiencer-subject) -/
+def love : VerbEntry := .mkRegular {
+  form := "love"
+  complementType := .np
+  subjectTheta := some .experiencer
+  objectTheta := some .stimulus
+  levinClass := some .admire }
+
+/-- "hate" — AgExp verb (experiencer-subject) -/
+def hate : VerbEntry := .mkRegular {
+  form := "hate"
+  complementType := .np
+  subjectTheta := some .experiencer
+  objectTheta := some .stimulus
+  levinClass := some .admire }
+
+/-- "admire" — AgExp verb (experiencer-subject) -/
+def admire : VerbEntry := .mkRegular {
+  form := "admire"
+  complementType := .np
+  subjectTheta := some .experiencer
+  objectTheta := some .stimulus
+  levinClass := some .admire }
+
+/-- "envy" — AgExp verb (experiencer-subject) -/
+def envy : VerbEntry := .mkRegular {
+  form := "envy"
+  complementType := .np
+  subjectTheta := some .experiencer
+  objectTheta := some .stimulus
+  levinClass := some .admire }
+
+/-- "respect" — AgExp verb (experiencer-subject) -/
+def respect : VerbEntry := .mkRegular {
+  form := "respect"
+  complementType := .np
+  subjectTheta := some .experiencer
+  objectTheta := some .stimulus
+  levinClass := some .admire }
+
+/-- "value" — AgExp verb (experiencer-subject) -/
+def value : VerbEntry := .mkRegular {
+  form := "value"
+  complementType := .np
+  subjectTheta := some .experiencer
+  objectTheta := some .stimulus
+  levinClass := some .admire }
+
+-- ════════════════════════════════════════════════════
+-- § Verb Entries — Stimulus-Experiencer (Solstad & Bott 2024)
+-- ════════════════════════════════════════════════════
+
+/-! Levin (1993) class 31.1 (amuse). Subject = stimulus, object = experiencer.
+    NP2 (object) IC bias. -/
+
+/-- "frighten" — StimExp verb (stimulus-subject) -/
+def frighten : VerbEntry := .mkRegular {
+  form := "frighten"
+  complementType := .np
+  subjectTheta := some .stimulus
+  objectTheta := some .experiencer
+  levinClass := some .amuse }
+
+/-- "amuse" — StimExp verb (stimulus-subject) -/
+def amuse : VerbEntry := .mkRegular {
+  form := "amuse"
+  complementType := .np
+  subjectTheta := some .stimulus
+  objectTheta := some .experiencer
+  levinClass := some .amuse }
+
+/-- "fascinate" — StimExp verb (stimulus-subject) -/
+def fascinate : VerbEntry := .mkRegular {
+  form := "fascinate"
+  complementType := .np
+  subjectTheta := some .stimulus
+  objectTheta := some .experiencer
+  levinClass := some .amuse }
+
+/-- "irritate" — StimExp verb (stimulus-subject) -/
+def irritate : VerbEntry := .mkRegular {
+  form := "irritate"
+  complementType := .np
+  subjectTheta := some .stimulus
+  objectTheta := some .experiencer
+  levinClass := some .amuse }
+
+/-- "annoy" — StimExp verb (stimulus-subject) -/
+def annoy : VerbEntry := .mkRegular {
+  form := "annoy"
+  complementType := .np
+  subjectTheta := some .stimulus
+  objectTheta := some .experiencer
+  levinClass := some .amuse }
+
+/-- "bore" — StimExp verb (stimulus-subject) -/
+def bore : VerbEntry := .mkRegular {
+  form := "bore"
+  complementType := .np
+  subjectTheta := some .stimulus
+  objectTheta := some .experiencer
+  levinClass := some .amuse }
+
+/-- "charm" — StimExp verb (stimulus-subject) -/
+def charm : VerbEntry := .mkRegular {
+  form := "charm"
+  complementType := .np
+  subjectTheta := some .stimulus
+  objectTheta := some .experiencer
+  levinClass := some .amuse }
+
+/-- "impress" — StimExp verb (stimulus-subject) -/
+def impress : VerbEntry := .mkRegular {
+  form := "impress"
+  complementType := .np
+  subjectTheta := some .stimulus
+  objectTheta := some .experiencer
+  levinClass := some .amuse }
+
+-- ════════════════════════════════════════════════════
+-- § Verb Entries — Agent-Patient (Solstad & Bott 2024)
+-- ════════════════════════════════════════════════════
+
+/-! Agent-patient verbs with full agentive subjects. NP1 IC bias (default).
+    "kick" already defined above. -/
+
+/-- "chase" — AgPat verb (Levin 51.6) -/
+def chase : VerbEntry := .mkRegular {
+  form := "chase"
+  complementType := .np
+  subjectTheta := some .agent
+  objectTheta := some .patient
+  levinClass := some .chase }
+
+/-- "hit" — AgPat verb (Levin 18.1) -/
+def hit : VerbEntry where
+  form := "hit"
+  form3sg := "hits"
+  formPast := "hit"
+  formPastPart := "hit"
+  formPresPart := "hitting"
+  complementType := .np
+  subjectTheta := some .agent
+  objectTheta := some .patient
+  levinClass := some .hit
+
+/-- "push" — AgPat verb (Levin 12) -/
+def push : VerbEntry := .mkRegular {
+  form := "push"
+  complementType := .np
+  subjectTheta := some .agent
+  objectTheta := some .patient
+  levinClass := some .pushPull }
+
+/-- "pull" — AgPat verb (Levin 12) -/
+def pull : VerbEntry := .mkRegular {
+  form := "pull"
+  complementType := .np
+  subjectTheta := some .agent
+  objectTheta := some .patient
+  levinClass := some .pushPull }
+
+/-- "carry" — AgPat verb (Levin 11.4) -/
+def carry : VerbEntry where
+  form := "carry"
+  form3sg := "carries"
+  formPast := "carried"
+  formPastPart := "carried"
+  formPresPart := "carrying"
+  complementType := .np
+  subjectTheta := some .agent
+  objectTheta := some .patient
+  levinClass := some .carry
+
+/-- "drag" — AgPat verb (Levin 11.4/12) -/
+def drag : VerbEntry where
+  form := "drag"
+  form3sg := "drags"
+  formPast := "dragged"
+  formPastPart := "dragged"
+  formPresPart := "dragging"
+  complementType := .np
+  subjectTheta := some .agent
+  objectTheta := some .patient
+  levinClass := some .carry
+
+/-- "call" — AgPat verb (communication + agent-patient frame) -/
+def call : VerbEntry := .mkRegular {
+  form := "call"
+  complementType := .np
+  subjectTheta := some .agent
+  objectTheta := some .patient }
+
+-- ════════════════════════════════════════════════════
 -- § Verb List and Lookup
 -- ════════════════════════════════════════════════════
 
@@ -1187,7 +1461,15 @@ def allVerbs : List VerbEntry := [
   -- Question-embedding (Dayal 2025)
   wonder, ask, investigate, depend_on,
   -- Factive question-embedding senses
-  remember_rog, forget_rog
+  remember_rog, forget_rog,
+  -- Occasion Verbs (Solstad & Bott 2024)
+  manage_occasion, dare, bother, hesitate,
+  -- Agent-Experiencer (Solstad & Bott 2024)
+  enjoy, like, love, hate, admire, envy, respect, value,
+  -- Stimulus-Experiencer (Solstad & Bott 2024)
+  frighten, amuse, fascinate, irritate, annoy, bore, charm, impress,
+  -- Agent-Patient (Solstad & Bott 2024)
+  chase, hit, push, pull, carry, drag, call
 ]
 
 /-- Look up a verb entry by citation form. -/

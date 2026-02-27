@@ -82,6 +82,7 @@ import Linglib.Theories.Morphology.Core.Exponence
 import Linglib.Theories.Morphology.Core.ScaleFromParadigm
 import Linglib.Theories.Morphology.Core.WordStructure
 import Linglib.Theories.Interfaces.MorphologySemantics.StemToLex
+import Linglib.Core.Discourse.CoherenceRelation
 import Linglib.Core.Discourse.DiscourseRole
 import Linglib.Core.Interval.QInterval
 import Linglib.Core.Interval.PadeExp
@@ -381,6 +382,10 @@ import Linglib.Phenomena.Nonliteral.Humor.Studies.KaoEtAl2016
 import Linglib.Phenomena.Nonliteral.Hyperbole.KaoEtAl2014
 import Linglib.Phenomena.Imperatives.Studies.SumersEtAl2023
 import Linglib.Phenomena.Imperatives.Typology
+-- Phenomena: Implicit Causality (Solstad & Bott 2024)
+import Linglib.Phenomena.ImplicitCausality.Studies.SolstadBott2024.Data
+import Linglib.Phenomena.ImplicitCausality.Studies.SolstadBott2024.Bridge.PresuppositionBridge
+import Linglib.Phenomena.ImplicitCausality.Studies.SolstadBott2024.Bridge.ProtoRoleBridge
 -- Phenomena: Imprecision (extracted from Gradability/)
 import Linglib.Phenomena.Imprecision.Basic
 import Linglib.Phenomena.Imprecision.FormMeaning

@@ -154,12 +154,14 @@ vs. "remember" as factive question-embedding), the `SenseTag` records
 - `.rogative`: question-embedding sense (Dayal 2025)
 - `.causative`: causative use of otherwise non-causative verb
 - `.instrumental`: instrument-specific sense (Rappaport Hovav & Levin 2024)
+- `.occasion`: occasion verb sense with experiencer subject (Solstad & Bott 2024)
 -/
 inductive SenseTag where
   | default       -- Primary/unmarked sense
   | rogative      -- Question-embedding sense
   | causative     -- Causative use of otherwise non-causative verb
   | instrumental  -- Instrument-specific sense
+  | occasion      -- Occasion verb sense (Solstad & Bott 2024): agent-evocator subject
   deriving DecidableEq, BEq, Repr
 
 /--
