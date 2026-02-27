@@ -1,4 +1,5 @@
 import Linglib.Theories.Syntax.Minimalism.Core.Basic
+import Linglib.Theories.Syntax.Minimalism.Core.Features
 
 /-!
 # Derivational Positions
@@ -245,7 +246,14 @@ theorem pivot_blocked_by_anti_locality
     In Toba Batak, each intermediate C checks [+Pred] against the
     passing wh-copy, yielding extraction morphology. In Mam, each
     intermediate Voice⁰ Agrees [+oblique], yielding =(y)a'. Both
-    are modeled as entries in a CyclicChain. -/
+    are modeled as entries in a CyclicChain.
+
+    The `agreeResult` field records whether Agree occurred at this
+    position. When the mover passes through a phase head that probes
+    for features (e.g., Voice with [uOblique]), Agree values the
+    probe's features. The valued features can then be spelled out
+    morphologically — this is how multiple =(y)a' arise in Mam
+    long-distance extraction (one per Voice along the chain). -/
 structure CyclicPosition where
   /-- The moving element -/
   mover : SyntacticObject
@@ -255,6 +263,11 @@ structure CyclicPosition where
   events : List MergeEvent
   /-- Evidence that the mover passed through this spec -/
   passedThrough : movedToSpecOf events mover projection
+  /-- Features on the probe head at this position after Agree, if
+      Agree occurred. `none` = no probe at this position (e.g., a
+      non-phase edge). `some fb` = the probe's valued features,
+      ready for Spellout (e.g., [+oblique] on Voice → =(y)a'). -/
+  agreeResult : Option FeatureBundle := none
 
 /-- A successive-cyclic chain: the ordered sequence of intermediate
     landing sites an element occupies during long-distance movement. -/
@@ -265,5 +278,17 @@ structure CyclicChain where
   positions : List CyclicPosition
   /-- All positions involve the same mover -/
   sameMover : ∀ p ∈ positions, p.mover = mover
+
+/-- Count cyclic positions where Agree occurred (features were valued).
+    In Mam, this equals the number of =(y)a' morphemes expected in
+    long-distance extraction: one per Voice/Dir along the chain. -/
+def CyclicChain.agreeCount (chain : CyclicChain) : Nat :=
+  chain.positions.filter (·.agreeResult.isSome) |>.length
+
+/-- Extract the agreed feature bundles from a chain, in order.
+    Each `some fb` corresponds to a position where Agree occurred,
+    yielding features that will be spelled out at PF. -/
+def CyclicChain.agreedFeatures (chain : CyclicChain) : List FeatureBundle :=
+  chain.positions.filterMap (·.agreeResult)
 
 end Minimalism

@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.227.2] - 2026-02-27
+
+### Added
+- **K'iche' extraction fragment** (`Fragments/Kiche/ExtractionMorphology.lean`): *wi* extraction morphology data (spatial, instrumental, temporal, reason, subject, object), `KicheExtractionDatum`, `frontingParticleGeneralization`, `wi_subset_of_obliques` theorem.
+- **Mayan extraction comparison** (`Phenomena/FillerGap/Bridge/MayanExtractionComparison.lean`): cross-linguistic bridge comparing Mam =(y)a' (Agree reflex) vs K'iche' *wi* (copy spellout). Shared properties, parametric differences, `ExtractionMorphologyMechanism` enum, `different_mechanisms` theorem.
+- **Derivation tree** (MinimalismOblExtraction.lean §10): explicit `SyntacticObject` derivation of monoclausal transitive oblique extraction (Tree 27 from Elkins et al.), connecting `merge`, `applyAgree`, and `spellout` in a single pipeline theorem.
+- **Dir⁰ spellout** (MinimalismOblExtraction.lean §9): `dir_probe_matches_voice`, `dir_spellout_eqya` — Dir carries [uOblique] parallel to Voice.
+- **Temporal oblique bridge** (MinimalismOblExtraction.lean): `bridge_temporal_obl` theorem; `predictEqYa` now takes `isTemporal` parameter.
+- **Unified Agree** (MamAgreeSpellout.lean §12): `phi_and_oblique_agree_parallel` showing φ-probe and oblique probe are parallel instances of the same `applyAgree` operation.
+- **CyclicPosition.agreeResult** (Position.lean): optional `FeatureBundle` on cyclic positions tracking Agree results at intermediate landing sites. `CyclicChain.agreeCount` and `agreedFeatures` helpers.
+
+### Changed
+- **Temporal oblique encoding** (ExtractionMorphology.lean): `temporalOblExtraction` now uses `obliqueExtracted := true, isTemporal := true` (previously `obliqueExtracted := false`). Temporal obliques are obliques that are exempt, not non-obliques.
+- **Island sensitivity derived** (ExtractionMorphology.lean): `eqyaIslandSensitive` now derived from `MovementReflex.islandSensitive` (= `requiresMovement ∧ movementPhaseBounded`) instead of stipulated as `true`.
+- **Dir heads carry [uOblique]** (VoiceSystem.lean): `MamDirHead` gains `hasUOblique` field and `features` function; `dirCis`/`dirTrans` updated. `dir_features_match_voice` theorem.
+
 ## [0.227.0] - 2026-02-26
 
 ### Added

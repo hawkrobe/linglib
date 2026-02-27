@@ -79,16 +79,42 @@ structure MamDirHead where
   /-- Whether the directional is cislocative (toward speaker) or
       translocative (away from speaker) -/
   cislocative : Bool
+  /-- Whether this Dir head carries [uOblique], enabling Agree with
+      passing obliques. Like Voice⁰, Dir⁰ can independently trigger
+      =(y)a' spellout when oblique extraction passes through its
+      domain (Elkins et al. 2026, §3.1, §4.5). -/
+  hasUOblique : Bool := false
   deriving DecidableEq, BEq, Repr
 
-/-- Cislocative directional: movement toward deictic center -/
-def dirCis : MamDirHead := { cislocative := true }
+/-- Dir⁰'s probe features when it carries [uOblique]. -/
+def MamDirHead.features (d : MamDirHead) : Minimalism.FeatureBundle :=
+  if d.hasUOblique then [.unvalued (.oblique false)] else []
 
-/-- Translocative directional: movement away from deictic center -/
-def dirTrans : MamDirHead := { cislocative := false }
+/-- Cislocative directional with [uOblique]: movement toward deictic center.
+    Carries the same oblique probe as Voice⁰ (Elkins et al. §3.1, ex. 8). -/
+def dirCis : MamDirHead := { cislocative := true, hasUOblique := true }
+
+/-- Translocative directional with [uOblique]: movement away from deictic center. -/
+def dirTrans : MamDirHead := { cislocative := false, hasUOblique := true }
 
 -- ============================================================================
--- § 4: Projection Theorems
+-- § 4: Dir Probe Theorems
+-- ============================================================================
+
+/-- Cislocative Dir carries [uOblique]. -/
+theorem dirCis_has_uOblique : dirCis.hasUOblique = true := rfl
+
+/-- Translocative Dir carries [uOblique]. -/
+theorem dirTrans_has_uOblique : dirTrans.hasUOblique = true := rfl
+
+/-- Dir's probe features match Voice's: both carry [uOblique].
+    This ensures both heads can independently Agree with a passing
+    oblique, yielding multiple =(y)a' along the movement path. -/
+theorem dir_features_match_voice :
+    dirCis.features = mamVoice.features := by native_decide
+
+-- ============================================================================
+-- § 5: Projection Theorems
 -- ============================================================================
 
 /-- Mam transitive spine projects Voice. -/

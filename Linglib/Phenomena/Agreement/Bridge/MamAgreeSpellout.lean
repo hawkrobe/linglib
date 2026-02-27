@@ -1,4 +1,5 @@
 import Linglib.Fragments.Mam.Agreement
+import Linglib.Fragments.Mam.VoiceSystem
 import Linglib.Theories.Syntax.Minimalism.Core.ObligatoryOperations
 
 /-!
@@ -348,5 +349,65 @@ theorem intransitive_is_real_agreement :
 theorem probe_failure_converges_with_elsewhere :
     derivationConverges .obligatoryNocrash .unvalued = true ∧
     ProbeOutcome.unvalued.pfRealization = .elsewhere := ⟨rfl, rfl⟩
+
+-- ============================================================================
+-- § 12: Unified Agree — Ā-agreement and φ-agreement as One Operation
+-- ============================================================================
+
+/-! Voice⁰ in Mam carries two independent probes (Elkins et al. 2026):
+
+1. **φ-probe** [uPerson, uNumber]: Agrees with agent in Spec,VoiceP,
+   yielding Set A morphology (e.g., "t-" for 3SG).
+2. **Oblique probe** [uOblique]: Agrees with a passing Ā-moved oblique,
+   yielding =(y)a' on Voice⁰ (Elkins et al. 2026, §5).
+
+Both are instances of the same abstract Agree operation: probe searches
+c-command domain, finds closest matching goal, copies features, and the
+valued features are spelled out by Vocabulary Insertion. They differ only
+in which features they probe for and what vocabulary entries match.
+
+This section makes the unity explicit by running both pipelines in
+parallel and showing they produce different exponents from the same
+mechanism.
+
+See also: `Phenomena.FillerGap.Bridge.MinimalismOblExtraction` for the
+full =(y)a' analysis. -/
+
+/-- Voice's oblique probe features (from VoiceSystem). -/
+private def voiceOblProbe : FeatureBundle := mamVoice.features
+
+/-- Both probes on Voice are unvalued features — both act as probes
+    in the sense of Agree (Chomsky 2000, 2001). -/
+theorem both_probes_unvalued :
+    voiceProbe.all GramFeature.isUnvalued = true ∧
+    voiceOblProbe.all GramFeature.isUnvalued = true := by
+  exact ⟨by native_decide, by native_decide⟩
+
+/-- Voice's oblique vocabulary (local copy — canonical definition in
+    `Phenomena.FillerGap.Bridge.MinimalismOblExtraction`). -/
+private def eqYaVocab : VocabEntry :=
+  { features := [.valued (.oblique true)]
+  , exponent := "=(y)a'"
+  , context := some .Voice }
+
+/-- φ-Agree and oblique-Agree are parallel instances of the same
+    operation: probe, value, spellout. They differ only in which
+    features are probed and which vocabulary entries match.
+
+    - φ-Agree: Voice + 3SG agent → [Person:3, Number:sg] → Set A "t-"
+    - Oblique-Agree: Voice + oblique → [+oblique] → =(y)a'
+
+    Both pipelines use `applyAgree` for valuation and `spellout` for
+    morphological realization. -/
+theorem phi_and_oblique_agree_parallel :
+    -- φ-Agree pipeline: value person, then number, then spellout
+    (applyAgree voiceProbe dp3sg (.phi (.person .third))).bind
+      (λ fb => applyAgree fb dp3sg (.phi (.number false))) = some voiceFullyAgreed ∧
+    spellout setAVocab voiceFullyAgreed (some .v) = some "t-" ∧
+    -- Oblique-Agree pipeline: value oblique, then spellout
+    applyAgree voiceOblProbe [.valued (.oblique true)] (.oblique false) =
+      some [.valued (.oblique true)] ∧
+    spellout [eqYaVocab] [.valued (.oblique true)] (some .Voice) = some "=(y)a'" := by
+  exact ⟨by native_decide, by native_decide, by native_decide, by native_decide⟩
 
 end Phenomena.Agreement.Bridge.MamAgreeSpellout

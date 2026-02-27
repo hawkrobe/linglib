@@ -193,6 +193,7 @@ import Linglib.Fragments.Polish.QuestionParticles
 import Linglib.Fragments.Ukrainian.Case
 import Linglib.Fragments.Ukrainian.QuestionParticles
 import Linglib.Fragments.Tagalog.TemporalConnectives
+import Linglib.Fragments.Italian.Predicates
 import Linglib.Fragments.Spanish.Clitics
 import Linglib.Fragments.Spanish.Predicates
 import Linglib.Fragments.Spanish.PersonFeatures
@@ -201,6 +202,7 @@ import Linglib.Fragments.Mam.Agreement
 import Linglib.Fragments.Mam.ExtractionMorphology
 import Linglib.Fragments.Kaqchikel.AgentFocus
 import Linglib.Fragments.Kaqchikel.Agreement
+import Linglib.Fragments.Kiche.ExtractionMorphology
 import Linglib.Fragments.Chuj.VerbBuilding
 
 -- Phenomena
@@ -386,7 +388,10 @@ import Linglib.Phenomena.Imprecision.RSA_EgreEtAl2023Bridge
 import Linglib.Phenomena.FillerGap.Islands.Data
 import Linglib.Phenomena.FillerGap.Islands.MannerOfSpeaking
 import Linglib.Phenomena.FillerGap.Compare
+import Linglib.Phenomena.FillerGap.OblExtraction
 import Linglib.Phenomena.FillerGap.Bridge.MinimalismAgentFocus
+import Linglib.Phenomena.FillerGap.Bridge.MinimalismOblExtraction
+import Linglib.Phenomena.FillerGap.Bridge.MayanExtractionComparison
 import Linglib.Phenomena.Nonliteral.Irony.KaoEtAl2015
 import Linglib.Phenomena.Nonliteral.Irony.Studies.SpinosoDiPiano2025
 import Linglib.Phenomena.Nonliteral.Metaphor.KaoEtAl2014
@@ -581,6 +586,7 @@ import Linglib.Theories.Syntax.CCG.Bridge.Interface
 import Linglib.Theories.Syntax.CCG.Bridge.Homomorphism
 import Linglib.Theories.Syntax.CCG.Bridge.Derivation
 import Linglib.Phenomena.Agreement.Bridge.CCGAgreement
+import Linglib.Phenomena.Agreement.Bridge.MamAgreeSpellout
 import Linglib.Phenomena.Agreement.DifferentialIndexing
 import Linglib.Phenomena.Agreement.Bridge.DifferentialIndexing
 import Linglib.Phenomena.Coordination.CCGBridge
@@ -906,6 +912,7 @@ import Linglib.Theories.Semantics.Attitudes.NegRaising
 import Linglib.Theories.Semantics.Attitudes.Monotonicity
 import Linglib.Theories.Semantics.Attitudes.Factivity
 import Linglib.Theories.Semantics.Attitudes.EpistemicThreshold
+import Linglib.Theories.Semantics.Attitudes.RationalAttitude
 import Linglib.Theories.Semantics.Truthmaker.Basic
 import Linglib.Theories.Semantics.Causation.Basic
 import Linglib.Theories.Semantics.Causation.Builder
@@ -940,6 +947,7 @@ import Linglib.Theories.Semantics.Modality.Ability
 import Linglib.Theories.Semantics.Modality.Simple
 import Linglib.Theories.Semantics.Modality.Temporal
 import Linglib.Theories.Semantics.Modality.Typology
+import Linglib.Theories.Semantics.Modality.Inertia
 import Linglib.Theories.Semantics.Mood.Basic
 import Linglib.Theories.Semantics.Reference.Basic
 import Linglib.Theories.Semantics.Reference.Kaplan

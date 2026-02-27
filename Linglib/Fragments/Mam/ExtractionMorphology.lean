@@ -103,6 +103,14 @@ structure MamExtractionDatum where
   clauseType : MamClauseType
   /-- Is an oblique being extracted? -/
   obliqueExtracted : Bool
+  /-- Is the extracted oblique temporal ('when')?
+      Temporal obliques do not trigger =(y)a' even when they are
+      genuinely oblique and genuinely extracted (§8.1, ex. 56).
+      This is currently **unexplained** — the paper notes it as an
+      open question: "we leave an account of this for future work"
+      (§8.1). We encode the exemption honestly rather than hiding it
+      by setting `obliqueExtracted := false` for temporals. -/
+  isTemporal : Bool := false
   /-- Judgment on =(y)a' -/
   judgment : MamExtractionJudgment
   deriving Repr
@@ -149,12 +157,19 @@ def passiveOblExtraction : MamExtractionDatum :=
 
 /-- Temporal oblique extraction: =(y)a' BLOCKED.
     "When" (*b'iix taq*) does not trigger =(y)a', unlike spatial and
-    other obliques. Elkins et al. §8.1, ex. (56). -/
+    other obliques. Elkins et al. §8.1, ex. (56).
+
+    Note: temporal obliques ARE obliques and ARE extracted — we encode
+    this honestly with `obliqueExtracted := true, isTemporal := true`
+    rather than pretending they're not obliques. The exemption is
+    unexplained; the paper notes: "we leave an account of this for
+    future work" (§8.1). -/
 def temporalOblExtraction : MamExtractionDatum :=
   { label := "Temporal oblique wh-extraction (no MVMT)"
   , reference := "§8.1, ex. (56)"
   , clauseType := .fullCP
-  , obliqueExtracted := false  -- false: temporal obliques don't count as [oblique]
+  , obliqueExtracted := true
+  , isTemporal := true
   , judgment := .blocked }
 
 /-- All monoclausal extraction data points. -/
@@ -241,10 +256,14 @@ theorem temporal_obl_blocked : temporalOblExtraction.judgment = .blocked := rfl
 -- ============================================================================
 
 /-- Core generalization (monoclausal): =(y)a' is licensed iff the clause
-    projects Voice AND a (non-temporal) oblique is extracted. -/
+    projects Voice AND a non-temporal oblique is extracted.
+
+    The `!d.isTemporal` conjunct is a stipulation — the paper does not
+    explain why temporal obliques are exempt (§8.1). It is separated out
+    as a distinct condition rather than hidden in `obliqueExtracted`. -/
 theorem eqya_iff_voice_and_oblique :
     monoData.all (λ d =>
-      (d.clauseType.projectsVoice && d.obliqueExtracted) ==
+      (d.clauseType.projectsVoice && d.obliqueExtracted && !d.isTemporal) ==
       (d.judgment == .licensed)) = true := by
   native_decide
 
@@ -265,23 +284,71 @@ theorem eqya_tracks_oblique_not_extraction :
     transObjExtraction.judgment = .blocked ∧
     transOblExtraction.judgment = .licensed := ⟨rfl, rfl, rfl, rfl, rfl⟩
 
+/-- Temporal obliques are genuine obliques that undergo genuine extraction,
+    but are exempt from =(y)a' marking. This is an open question. -/
+theorem temporal_is_oblique_but_exempt :
+    temporalOblExtraction.obliqueExtracted = true ∧
+    temporalOblExtraction.isTemporal = true ∧
+    temporalOblExtraction.judgment = .blocked := ⟨rfl, rfl, rfl⟩
+
 -- ============================================================================
--- § 7: Island Sensitivity (§7.1)
+-- § 7: Island Sensitivity — Derived from Movement Analysis
 -- ============================================================================
 
-/-- =(y)a' is island-sensitive: it cannot appear when the oblique is
-    extracted from within a syntactic island. This argues against a
-    resumptive-pronoun analysis, since resumptives typically rescue
-    island violations. Elkins et al. §7.1, ex. (50)–(52). -/
-def eqyaIslandSensitive : Bool := true
+/-- A morphological reflex of syntactic Ā-movement inherits movement's
+    locality properties. Since Ā-movement is phase-bounded (Phase
+    Impenetrability Condition; Phase.lean), any morpheme that requires
+    movement through a probe's specifier is island-sensitive.
+
+    This replaces a stipulated `Bool` with a derivation from two
+    independent properties:
+    1. The morpheme requires Ā-movement (established by the Agree analysis)
+    2. Movement is phase-bounded (from PIC)
+
+    References:
+    - Chomsky (2000, 2001) on PIC
+    - Elkins et al. (2026) §7.1 on =(y)a' island sensitivity -/
+structure MovementReflex where
+  /-- The morpheme is a spellout of features valued via Agree with
+      a constituent that has undergone Ā-movement through the probe's
+      specifier. Established by the Agree analysis in §5. -/
+  requiresMovement : Bool
+  /-- Movement is bounded by phases (PIC; Phase.lean).
+      Islands are configurations where the phase edge is unavailable,
+      blocking successive-cyclic movement. -/
+  movementPhaseBounded : Bool
+  deriving DecidableEq, BEq, Repr
+
+/-- Island sensitivity is derived: a movement reflex is island-sensitive
+    iff the morpheme requires movement AND movement is phase-bounded.
+    No movement → no Agree → no spellout. -/
+def MovementReflex.islandSensitive (mr : MovementReflex) : Bool :=
+  mr.requiresMovement && mr.movementPhaseBounded
+
+/-- =(y)a' is a movement reflex: it requires Ā-movement of the oblique
+    through Spec,VoiceP (so Voice can Agree [uOblique]), and movement
+    is phase-bounded (PIC). -/
+def eqyaMovementReflex : MovementReflex :=
+  { requiresMovement := true
+  , movementPhaseBounded := true }
+
+/-- Island sensitivity of =(y)a' follows from its being a movement reflex.
+    Derived from `requiresMovement ∧ movementPhaseBounded`, not stipulated. -/
+def eqyaIslandSensitive : Bool := eqyaMovementReflex.islandSensitive
+
+/-- Proof that the derivation yields island sensitivity. -/
+theorem eqya_island_sensitive_derived :
+    eqyaMovementReflex.islandSensitive = true := rfl
 
 -- ============================================================================
 -- § 8: Against Agent Focus (§7.2)
 -- ============================================================================
 
-/-- =(y)a' co-occurs with passive voice morphology (*-njtz*), while
-    Agent Focus (*-a*) is in complementary distribution with voice
-    morphemes. This shows =(y)a' is not an instance of AF.
+/-- =(y)a' co-occurs with passive voice morphology (*-njtz*) because
+    =(y)a' is a feature ([+oblique]) on Voice⁰, not a Voice morpheme
+    slot competitor. Agent Focus (*-a*) IS a Voice morpheme and therefore
+    cannot co-occur with other voice morphology (passive *-njtz*,
+    antipassive *-n*).
     Elkins et al. §7.2, ex. (53)–(54). -/
 def eqyaCooccursWithPassive : Bool := true
 
