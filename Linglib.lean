@@ -508,6 +508,7 @@ import Linglib.Phenomena.Quantification.Studies.FrankeBergen2020
 import Linglib.Phenomena.Quantification.Studies.ScontrasPearl2021
 import Linglib.Phenomena.Quantification.Studies.ScontrasPearl2021RSA
 import Linglib.Phenomena.Quantification.Studies.ScontrasPearl2021TwoNot
+import Linglib.Phenomena.Quantification.Studies.RitchieSchiller2024
 import Linglib.Phenomena.Quantification.Bridge.NumeralSemanticsBridge
 import Linglib.Phenomena.Quantification.Compare
 import Linglib.Phenomena.Questions.Basic
@@ -836,6 +837,7 @@ import Linglib.Theories.Semantics.Lexical.Numeral.Polysemy
 import Linglib.Theories.Semantics.Lexical.Numeral.Precision
 import Linglib.Theories.Semantics.Lexical.Numeral.Semantics
 import Linglib.Theories.Semantics.Lexical.Determiner.Definite
+import Linglib.Theories.Semantics.Lexical.Determiner.DomainRestriction
 import Linglib.Theories.Semantics.Lexical.Determiner.Quantifier
 
 import Linglib.Theories.Semantics.Lexical.Expressives.Basic

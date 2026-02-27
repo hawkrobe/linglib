@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.227.24] - 2026-02-27
+
+### Fixed
+- **Ritchie & Schiller (2024) audit**: Fixed hallucinated journal citation (*Philosophical Studies* → *Semantics & Pragmatics* 17, Article 13: 1–49). Corrected docstrings: paper's proposal is cognitive heuristics (perceptual availability, salience, manipulability), not "affordance-based spatial cognition"; paper argues against rational pragmatic/discourse-structural/intentionalist accounts, not "purely semantic vs. purely pragmatic"; Previc (1998) identifies four spatial zones, not three. Marked the bottle scenario as illustrative (not from the paper — paper uses books). Removed hallucinated "bottles in France" example. Fixed wrong section references (§5 → §3.2, §1.1). Renamed `affordance_constraint` → `finite_candidates` with honest docstring.
+
 ## [0.227.23] - 2026-02-27
 
 ### Added
