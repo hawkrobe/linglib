@@ -137,5 +137,37 @@ def scopeYieldsTrue {m : Model}
     (d : ScopeDerivation m .t) (s : ScopeConfig) : Bool :=
   d.meaningAt s
 
+-- ============================================================================
+-- Scope Entailment (Musolino & Lidz 2003)
+-- ============================================================================
+
+/-- Entailment structure between scope readings (Musolino & Lidz 2003).
+    Determines whether a quantifier-negation pair is diagnostic for
+    scope preferences: independent readings allow contexts where exactly
+    one reading is true; nested readings (one entails the other) do not. -/
+inductive ScopeEntailment where
+  | surfaceEntailsInverse  -- surface ⊂ inverse (e.g., ∀>¬ entails ¬>∀)
+  | inverseEntailsSurface  -- inverse ⊂ surface
+  | independent            -- neither entails the other (e.g., exact numerals)
+  | equivalent             -- readings are extensionally identical
+  deriving DecidableEq, BEq, Repr, Inhabited
+
+/-- Diagnostic scope pairs allow contexts where exactly one reading is true.
+    Only independent pairs are diagnostic; nested or equivalent pairs are not. -/
+def ScopeEntailment.isDiagnostic : ScopeEntailment → Bool
+  | .independent => true
+  | _ => false
+
+/-- Classify scope entailment from truth-value functions over a world list. -/
+def classifyScopeEntailment {W : Type}
+    (worlds : List W) (surface inverse : W → Bool) : ScopeEntailment :=
+  let sEntI := worlds.all (fun w => !surface w || inverse w)
+  let iEntS := worlds.all (fun w => !inverse w || surface w)
+  match sEntI, iEntS with
+  | true, true   => .equivalent
+  | true, false  => .surfaceEntailsInverse
+  | false, true  => .inverseEntailsSurface
+  | false, false => .independent
+
 end Semantics.Scope
 

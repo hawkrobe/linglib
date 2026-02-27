@@ -263,6 +263,17 @@ theorem rsa_meaning_from_scope_derivation :
     (everyHorseDidntJump w).meaningAt (readingToScopeConfig lat.scope) := by
   intro lat w; cases lat <;> cases w <;> rfl
 
+/-- The every-not scope pair has surface-entails-inverse structure
+    (Musolino & Lidz 2003): surface scope (none jumped) is a strict
+    subset of inverse scope (not all jumped). This makes universals
+    non-diagnostic for scope preferences — no TVJ context can
+    distinguish isomorphic from non-isomorphic behavior. -/
+theorem every_not_scope_entailment :
+    Semantics.Scope.classifyScopeEntailment
+      [JumpOutcome.zero, .one, .two]
+      (scopeTruth .surface) (scopeTruth .inverse)
+    = .surfaceEntailsInverse := by native_decide
+
 -- ============================================================================
 -- §4. QUD Projection
 -- ============================================================================

@@ -90,6 +90,10 @@ cited in: [KaoEtAl2014](https://github.com/hawkrobe/linglib/blob/main/Linglib/Ph
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Gradability/Imprecision/Studies/LassiterGoodman2017.lean)\
 cited in: [LassiterGoodman2017](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Imprecision/Studies/LassiterGoodman2017.lean)
 
+**Musolino, J. & Lidz, J.** (2003). The Scope of Isomorphism: Turning Adults Into Children. *Language Acquisition, 11(4), 277–291*.\
+[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Quantification/Studies/ScontrasPearl2021.lean)\
+cited in: [ScontrasPearl2021](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Quantification/Studies/ScontrasPearl2021.lean)
+
 **Nouwen, R.** (2024). The Semantics and Probabilistic Pragmatics of Deadjectival Intensifiers. *Semantics and Pragmatics*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Gradability/RSA_Nouwen2024Bridge.lean)
 
@@ -581,6 +585,10 @@ cited in: [SubjectAuxInversion](https://github.com/hawkrobe/linglib/blob/main/Li
 **Sag, I. A., Wasow, T. & Bender, E. M.** (2003). Syntactic Theory: A Formal Introduction. *CSLI Publications*.\
 [foundational] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/WordOrder/SubjectAuxInversion.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/HPSG/Inversion.lean)\
 cited in: [SubjectAuxInversion](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/WordOrder/SubjectAuxInversion.lean)
+
+**Sarvasy, H. S. & Aikhenvald, A. Y.** (2025). Clause Chaining in the Languages of the World. *Oxford University Press*.\
+[formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/ClauseChaining/Typology.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/ClauseChaining/Data.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/ClauseChaining/Bridge/FragmentBridge.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/ClauseChaining/Bridge/TowerBridge.lean)\
+cited in: [FragmentBridge](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/ClauseChaining/Bridge/FragmentBridge.lean), [TowerBridge](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/ClauseChaining/Bridge/TowerBridge.lean), [Data](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/ClauseChaining/Data.lean), [Typology](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/ClauseChaining/Typology.lean)
 
 **Steedman, M.** (2000). The Syntactic Process. *MIT Press*.\
 [foundational] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/CCG/Core/Basic.lean)

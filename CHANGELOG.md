@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.227.5] - 2026-02-27
+
+### Added
+- **Musolino & Lidz (2003) integration**: scope entailment asymmetry, experimental data, bibliography.
+  - `ScontrasPearl2021.lean` §3: `universal_surface_entails_inverse`, `universal_inverse_not_entails_surface`, `numeral_surface_not_entails_inverse`, `numeral_inverse_not_entails_surface` — the paper's deepest claim: universals mask the isomorphism effect (surface ⊂ inverse) while numerals reveal it (readings independent).
+  - `ScontrasPearl2021.lean` §4: M&L 2003 experimental data (`AcceptanceRate`, 27.5%/100%/92.5%).
+  - `Scope.lean`: `ScopeEntailment` enum, `isDiagnostic`, `classifyScopeEntailment` — general infrastructure for scope reading entailment structure.
+  - `ScontrasPearl2021RSA.lean`: `every_not_scope_entailment` bridge theorem connecting truth conditions to `classifyScopeEntailment`.
+- **Bibliography**: added Musolino & Lidz (2003), Sarvasy & Aikhenvald (2025).
+
+### Fixed
+- **Hallucinated citation**: M&L 2003 was cited as *Journal of Child Language* 30: 915–950; corrected to *Language Acquisition* 11(4): 277–291.
+- **Misleading theorem**: `exact_atleast_agree_1of2` renamed to `every_not_covers_1of2` with accurate docstring.
+
 ## [0.227.4] - 2026-02-27
 
 ### Added

@@ -1,5 +1,5 @@
 /-!
-# Scontras & Pearl (2021): Quantifier Scope Ambiguity @cite{scontras-pearl-2021}
+# Scontras & Pearl (2021): Quantifier Scope Ambiguity @cite{scontras-pearl-2021} @cite{musolino-lidz-2003}
 
 "When pragmatics matters more for truth-value judgments:
 An investigation of quantifier scope ambiguity"
@@ -25,8 +25,8 @@ rather than reporting new experiments.
 
 - Scontras, G. & Pearl, L. (2021). When pragmatics matters more for
   truth-value judgments. *Glossa* 6(1): 110.
-- Musolino, J. & Lidz, J. (2003). The scope of isomorphism.
-  *Journal of Child Language* 30: 915–950.
+- Musolino, J. & Lidz, J. (2003). The scope of isomorphism:
+  Turning adults into children. *Language Acquisition* 11(4): 277–291.
 -/
 
 namespace Phenomena.Quantification.Studies.ScontrasPearl2021
@@ -119,12 +119,15 @@ def twoNotTruth : NumeralReading → ScopeReading → JumpOutcome4 → Bool
   | .atLeast, .inverse, .w1 => true
   | .atLeast, .inverse, _   => false
 
-/-- In the 1-of-2 context (n=2), both numeral readings give truth conditions
-    identical to `scopeTruth`. With only 2 horses, "exactly 2" and "at least 2"
-    have the same extension over {0, 1, 2}, so the choice of numeral semantics
-    is immaterial. The every-not model's `scopeTruth` thus covers the 1-of-2
-    two-not case (paper §4.2, p. 25). -/
-theorem exact_atleast_agree_1of2 :
+/-- In the 1-of-2 context (n=2, numeral=2), "two horses didn't jump" reduces
+    to "every horse didn't jump" because the numeral saturates the domain.
+    The every-not model's `scopeTruth` thus covers the 1-of-2 two-not case
+    (paper §4.2): exact and at-least have the same extension when n = numeral.
+
+    This theorem documents the `scopeTruth` values that serve as the shared
+    baseline. The interesting divergence only appears in the 2-of-4 context
+    where n > numeral (see `exact_atleast_diverge_2of4`). -/
+theorem every_not_covers_1of2 :
     scopeTruth .surface .zero = true ∧
     scopeTruth .surface .one = false ∧
     scopeTruth .surface .two = false ∧
@@ -146,5 +149,71 @@ theorem exact_atleast_diverge_2of4 :
     twoNotTruth .atLeast .inverse .w3 = false ∧
     twoNotTruth .exact .inverse .w4 = true ∧
     twoNotTruth .atLeast .inverse .w4 = false := ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
+
+-- ============================================================================
+-- §3. Scope Entailment Asymmetry (Musolino & Lidz 2003, pp. 288–289)
+-- ============================================================================
+
+/-- For universals, surface scope (∀>¬: none jumped) ENTAILS inverse scope
+    (¬>∀: not all jumped). If no horse jumped, then trivially not every horse
+    jumped. This means no truth-value judgment context can diagnose the
+    isomorphism effect for universals: whenever surface is true, inverse
+    is automatically true too (Musolino & Lidz 2003, p. 289). -/
+theorem universal_surface_entails_inverse :
+    ∀ w, scopeTruth .surface w = true → scopeTruth .inverse w = true := by
+  intro w; cases w <;> simp [scopeTruth]
+
+/-- The entailment is strict: inverse does NOT entail surface.
+    At w=1 (one horse jumped), inverse scope is true (not all jumped)
+    but surface scope is false (not none jumped). -/
+theorem universal_inverse_not_entails_surface :
+    ∃ w, scopeTruth .inverse w = true ∧ scopeTruth .surface w = false :=
+  ⟨.one, rfl, rfl⟩
+
+/-- For exact numerals, surface scope does NOT entail inverse scope.
+    At w=2 (exactly 2 jumped out of 4), surface is true (exactly 2 didn't)
+    but inverse is false (it IS the case that exactly 2 jumped).
+    This independence is what makes numerals diagnostic for the isomorphism
+    effect (Musolino & Lidz 2003, p. 289). -/
+theorem numeral_surface_not_entails_inverse :
+    ∃ w, twoNotTruth .exact .surface w = true ∧
+         twoNotTruth .exact .inverse w = false :=
+  ⟨.w2, rfl, rfl⟩
+
+/-- Inverse scope also does not entail surface for exact numerals.
+    At w=0 (none jumped), inverse is true (¬(exactly 2 jumped)) but
+    surface is false (not exactly 2 didn't jump, since all 4 didn't). -/
+theorem numeral_inverse_not_entails_surface :
+    ∃ w, twoNotTruth .exact .inverse w = true ∧
+         twoNotTruth .exact .surface w = false :=
+  ⟨.w0, rfl, rfl⟩
+
+-- ============================================================================
+-- §4. Musolino & Lidz (2003) Experimental Data
+-- ============================================================================
+
+/-- Acceptance rate from a truth-value judgment experiment. -/
+structure AcceptanceRate where
+  accepted : Nat
+  total : Nat
+  deriving Repr
+
+/-- Experiment 2, Condition 1: wide scope true, narrow scope false.
+    "Two frogs didn't jump over the rock" — 3 of 5 frogs jumped.
+    Adults access inverse scope (¬>two: not exactly two jumped) → 100%. -/
+def ml2003_exp2_wideTrue : AcceptanceRate := ⟨40, 40⟩
+
+/-- Experiment 2, Condition 2: narrow scope true, wide scope false.
+    "Two frogs didn't jump over the rock" — 2 of 5 frogs jumped.
+    Adults show isomorphism effect (surface scope preference) → 27.5%.
+    This is the key datum that S&P 2021's RSA model explains. -/
+def ml2003_exp2_narrowTrue : AcceptanceRate := ⟨11, 40⟩
+
+/-- Experiment 3, Condition 2: same as Exp 2 Cond 2 but preceded by
+    an affirmative statement ("Two frogs jumped over the rock...
+    but two frogs didn't jump over the rock").
+    Affirmative context rescues inverse scope access → 92.5%.
+    Modeled by S&P 2021's `supportiveCfg`. -/
+def ml2003_exp3_affirmative : AcceptanceRate := ⟨37, 40⟩
 
 end Phenomena.Quantification.Studies.ScontrasPearl2021
