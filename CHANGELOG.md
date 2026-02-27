@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.227.25] - 2026-02-27
+
+### Added
+- **Hacquard (2010) content licensing** (EventRelativity.lean §8): `EventBinder` (speechAct | attitude | vpEvent) refining the binary `AnchorType`, `hasContent` predicate (speech acts and attitudes are contentful; VP events are not), `canProjectEpistemic` / `canProjectCircumstantial` / `availableFlavors` derived from content. Key theorems: `content_determines_flavors` (Table 1), `attitudes_pattern_with_speech`, `vpEvent_differs_from_contentful`, `toFlavor_from_content` (AnchorType.toFlavor as corollary of content licensing).
+- **Hacquard (2010) position–binding** (EventRelativity.lean §9): `ModalPosition` (aboveAsp | belowAsp), `defaultBinder` / `withAttitude` deriving event binder from syntactic position. `position_determines_epistemic` (high = epistemic available, low = not), `embedded_high_still_epistemic`, `embedded_low_still_root`, `full_position_flavor_table`.
+- **Kratzer bridge** (EventRelativity.lean §10): `anchor_reduces` and `accessible_is_background_filter` showing event-relative modality reduces to Kratzer conversational backgrounds by construction.
+
 ## [0.227.24] - 2026-02-27
 
 ### Fixed
