@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.227.16] - 2026-02-27
+
+### Changed
+- **Route VendlerClass through AspectualProfile**: `Template.toAspectualProfile`, `RootType.stativeAspectualProfile`, `cosTypeToAspectualProfile` — all three VendlerClass producers now derive via `AspectualProfile.toVendlerClass` instead of stipulating the class directly.
+
+## [0.227.15] - 2026-02-27
+
+### Added
+- **10 additional MoS verbs**: mumble, mutter, shriek, yell, groan, grumble, hiss, sigh, whimper, snap — all from Storment (2026, p. 4 table). Full per-verb annotation, QI-agrees, derivedQI bridge theorems; `qi_data_consistent` now covers all 17 verbs.
+- **Setswana QI data** (Collins 1997, Storment 2026 §2): `qi_setswana_botsa` (ex. 4), `qi_setswana_bua` with depictive (ex. 11), `qi_setswana_transitivity` blocked with two DPs (ex. 5).
+- **QI structural evidence** (Storment 2026, §3): new `QIStructuralTest` / `QIStructuralDatum` types with 12 data points — agreement (English default 3sg, Setswana SM17), parasitic gap blocking (A-movement ≠ Ā, exs. 62a-b), subject raising (ex. 67a), conjoint/disjoint (ex. 87), quote category (split quote ex. 90, non-grammatical ex. 96a), constituent ordering (depictive/manner/purpose follow Agent, complements precede Agent).
+- **QI derivation formalization** (§4): `QIPosition` (specTP, specVoiceP, specvP, discourseP), `QIDerivation` structure, `qiSmuggling` derivation. Bridge theorems connect each structural position to observable §3 data: `theme_specTP_agreement`, `theme_specTP_no_parasitic_gap`, `theme_specTP_raising`, `agent_specvP_conjoint`, `quote_discourseP_split`, `vp_smuggling_ordering`.
+
 ## [0.227.14] - 2026-02-27
 
 ### Added

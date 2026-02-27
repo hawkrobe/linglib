@@ -13,7 +13,7 @@ and distinct syntactic frames.
 
 ## Bridges
 
-- `Template.vendlerClass` → `VendlerClass` (aspect)
+- `Template.toAspectualProfile` → `AspectualProfile` (aspect)
 - `motionContact_variable_agentivity` → `sweepBasicSubjectProfile` (proto-roles)
 - `contact_determines_implies_effector_subject` → `isEffector` (proto-roles)
 - `lexicalize_increases_agentivity` → `pAgentScore` ordering (proto-roles)
@@ -90,13 +90,17 @@ def Template.predicateCount : Template → Nat
   | .accomplishment => 2  -- ACT + BECOME
   | .motionContact => 2   -- MOVE + CONTACT
 
-/-- Predicted Vendler class for each template. -/
-def Template.vendlerClass : Template → VendlerClass
-  | .state => .state
-  | .activity => .activity
-  | .achievement => .achievement
-  | .accomplishment => .accomplishment
-  | .motionContact => .activity  -- Atelic by default (sweep is an activity)
+/-- Predicted aspectual profile for each template. -/
+def Template.toAspectualProfile : Template → AspectualProfile
+  | .state => stateProfile
+  | .activity => activityProfile
+  | .achievement => achievementProfile
+  | .accomplishment => accomplishmentProfile
+  | .motionContact => activityProfile  -- Atelic by default (sweep is an activity)
+
+/-- Predicted Vendler class for each template (derived from profile). -/
+def Template.vendlerClass (t : Template) : VendlerClass :=
+  t.toAspectualProfile.toVendlerClass
 
 -- ════════════════════════════════════════════════════
 -- § 4. Argument Realization from Templates

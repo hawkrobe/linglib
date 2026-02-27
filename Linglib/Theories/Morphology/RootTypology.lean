@@ -384,13 +384,17 @@ theorem become_is_inception :
 -- § 10. Connecting Root Types to VendlerClass (Aspect.lean)
 -- ════════════════════════════════════════════════════
 
+/-- Aspectual profile for root types in their stative use. -/
+def RootType.stativeAspectualProfile : RootType → AspectualProfile
+  | .propertyConcept => stateProfile        -- "The rug is flat" (stative)
+  | .result => achievementProfile           -- No pure stative; even "broken" entails change
+
 /-- Result root verbs are typically achievements or accomplishments
     (they have BECOME in their template). PC root verbs in their
     inchoative (change-of-state) use are also achievements/accomplishments,
-    but their stative use is a state. -/
-def RootType.stativeVendlerClass : RootType → VendlerClass
-  | .propertyConcept => .state       -- "The rug is flat" (stative)
-  | .result => .achievement          -- No pure stative; even "broken" entails change
+    but their stative use is a state (derived from profile). -/
+def RootType.stativeVendlerClass (rt : RootType) : VendlerClass :=
+  rt.stativeAspectualProfile.toVendlerClass
 
 /-- PC roots in stative use are states; result roots pattern as achievements
     even in adjectival use (the state entails prior change). -/

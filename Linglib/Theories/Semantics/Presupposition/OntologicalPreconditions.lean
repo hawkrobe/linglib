@@ -425,17 +425,22 @@ theorem start_is_telic (P : W → Bool) (w : W) (hNotP : P w = false) :
 
 
 /--
-CoS verbs have specific Vendler classifications based on their telicity
-and the nature of the state change.
+Aspectual profile for CoS verb types.
 
-- "stop": Achievement (telic, punctual change to ¬P)
-- "start": Achievement (telic, punctual change to P)
-- "continue": Activity (atelic, durative persistence)
+- "stop": Achievement profile (telic, punctual change to ¬P)
+- "start": Achievement profile (telic, punctual change to P)
+- "continue": Activity profile (atelic, durative persistence)
 -/
-def cosTypeToVendlerClass : CoSType → VendlerClass
-  | .cessation => .achievement    -- "stop": punctual, telic
-  | .inception => .achievement    -- "start": punctual, telic
-  | .continuation => .activity    -- "continue": durative, atelic
+def cosTypeToAspectualProfile : CoSType → AspectualProfile
+  | .cessation => achievementProfile    -- "stop": punctual, telic
+  | .inception => achievementProfile    -- "start": punctual, telic
+  | .continuation => activityProfile    -- "continue": durative, atelic
+
+/--
+CoS verbs have specific Vendler classifications (derived from profile).
+-/
+def cosTypeToVendlerClass (t : CoSType) : VendlerClass :=
+  (cosTypeToAspectualProfile t).toVendlerClass
 
 /--
 Cessation is classified as achievement (telic, punctual).
