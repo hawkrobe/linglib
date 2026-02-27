@@ -97,7 +97,7 @@ set_option autoImplicit false
 namespace Phenomena.Reference.Studies.QingFranke2015
 
 open Phenomena RSA BigOperators Core
-open Real (exp log exp_pos)
+open Real (exp log exp_pos exp_lt_exp)
 
 -- ============================================================================
 -- §1. Empirical Data
@@ -694,6 +694,193 @@ theorem all_findings_verified : ∀ f : Finding, formalize f := by
   · exact salience_reversal_circle
   · exact salience_reversal_green
 
+-- ============================================================================
+-- §15. λ-Independence of Speaker Rankings
+-- ============================================================================
+
+/-! The speaker ranking under both belief-oriented and action-oriented scoring
+is **completely independent of λ** (the rationality parameter). Since `exp`
+is strictly monotone and multiplication by λ > 0 preserves strict order:
+
+    exp(λ · a) > exp(λ · b) ⟺ a > b    (for λ > 0)
+
+**Consequence**: The qualitative predictions (findings 1–4) hold for ALL λ > 0.
+The paper's strong rejection of λ = 1 (p. 8) affects only the *magnitude* of
+preferences (softmax temperature), not their *direction*. The existing
+`rsa_predict` proofs at α = 1 establish log(L0) − cost orderings that hold
+at every positive α.
+
+Cost thresholds (the exact c ranges where each finding holds):
+- **Finding 1** (sq > gr for green_sq): all c ≥ 0 (log 1 − 0 > log ½ − c)
+- **Finding 2** (bl > ci for blue_circ): c < ln 2 ≈ 0.693 (see §16)
+- **Finding 3** (ci > gr for green_circ): all c > 0 (log ½ − 0 > log ½ − c)
+- **Finding 4** (ci = gr, no cost): equality, independent of everything -/
+
+/-- Belief-oriented score ranking reduces to log L0 minus cost, independent of λ.
+
+    For two truthful utterances (l0 ≠ 0 for both), the beliefGoalScore comparison
+    is equivalent to comparing `log L0 − cost`, which has no λ dependence.
+    Combined with `RationalAction.policy_gt_of_score_gt`, this means all
+    qualitative belief-oriented S1 predictions are λ-independent. -/
+theorem beliefGoal_gt_iff
+    (cost : Utterance → ℝ) (l0 : Utterance → Object → ℝ)
+    (u₁ u₂ : Utterance) (w : Object)
+    {α : ℝ} (hα : 0 < α)
+    (h1 : l0 u₁ w ≠ 0) (h2 : l0 u₂ w ≠ 0) :
+    beliefGoalScore cost l0 α () w u₁ > beliefGoalScore cost l0 α () w u₂ ↔
+    log (l0 u₁ w) - cost u₁ > log (l0 u₂ w) - cost u₂ := by
+  simp only [beliefGoalScore, if_neg h1, if_neg h2]
+  exact ⟨fun h => lt_of_mul_lt_mul_left (exp_lt_exp.mp h) (le_of_lt hα),
+         fun h => exp_lt_exp.mpr (mul_lt_mul_of_pos_left h hα)⟩
+
+/-- Action-oriented score ranking reduces to L0 minus cost, independent of λ.
+
+    Same λ-independence as belief-oriented, but comparing raw L0 rather than
+    log L0. The difference between σ_a and σ_b is not λ-sensitivity (both are
+    λ-independent) but how they *transform* L0: log compresses the informativity
+    scale, amplifying small differences in L0 posterior. -/
+theorem actionGoal_gt_iff
+    (cost : Utterance → ℝ) (l0 : Utterance → Object → ℝ)
+    (u₁ u₂ : Utterance) (w : Object)
+    {α : ℝ} (hα : 0 < α) :
+    actionGoalScore cost l0 α () w u₁ > actionGoalScore cost l0 α () w u₂ ↔
+    l0 u₁ w - cost u₁ > l0 u₂ w - cost u₂ := by
+  simp only [actionGoalScore]
+  exact ⟨fun h => lt_of_mul_lt_mul_left (exp_lt_exp.mp h) (le_of_lt hα),
+         fun h => exp_lt_exp.mpr (mul_lt_mul_of_pos_left h hα)⟩
+
+-- ============================================================================
+-- §16. Cost Thresholds
+-- ============================================================================
+
+/-! The σ_aU tie at c = 1/2 (§13a) is the **exact boundary**: σ_aU predicts
+"blue" > "circle" for blue_circle iff c < 1/2. Action-oriented scoring uses
+raw L0:  1 − c > 1/2 − 0  ⟺  c < 1/2.
+
+Belief-oriented scoring (σ_bU) uses log L0, giving a wider threshold of
+c < ln 2 ≈ 0.693:  log 1 − c > log(1/2) − 0  ⟺  c < ln 2.
+
+The paper's best-fit c for σ_bU is 1.77, which exceeds ln 2 — meaning
+the MAP estimate actually reverses the blue_circle prediction. But the
+marginal likelihood (integrating over all c) still favors σ_bU overall. -/
+
+/-- σ_aU cost threshold for blue_circle: "blue" > "circle" ⟺ c < 1/2.
+
+    Given L0(blue_circ|"blue") = 1 and L0(blue_circ|"circle") = 1/2,
+    the action-oriented comparison reduces to 1 − c > 1/2. The existing tie
+    `σ_aU_blue_circ_tie` is the corollary at c = 1/2. -/
+theorem σ_aU_blue_circ_threshold
+    {l0 : Utterance → Object → ℝ} {c : ℝ} {α : ℝ} (hα : 0 < α)
+    (hbl : l0 .blue .blue_circle = 1) (hci : l0 .circle .blue_circle = 1/2) :
+    actionGoalScore (adjCost c) l0 α () .blue_circle .blue >
+    actionGoalScore (adjCost c) l0 α () .blue_circle .circle ↔ c < 1/2 := by
+  rw [actionGoal_gt_iff _ _ _ _ _ hα]
+  simp only [hbl, hci, adjCost]
+  constructor <;> intro h <;> linarith
+
+/-- σ_bU cost threshold for blue_circle: "blue" > "circle" ⟺ c < ln 2.
+
+    Belief-oriented scoring uses log, so the threshold is wider than σ_aU's
+    (ln 2 ≈ 0.693 > 0.5). This explains why σ_bU accommodates cost better
+    than σ_aU: the log transform amplifies informativity differences,
+    leaving more room for cost before the ranking flips. -/
+theorem σ_bU_blue_circ_threshold
+    {l0 : Utterance → Object → ℝ} {c : ℝ} {α : ℝ} (hα : 0 < α)
+    (hbl : l0 .blue .blue_circle = 1) (hci : l0 .circle .blue_circle = 1/2)
+    (hbl_ne : l0 .blue .blue_circle ≠ 0) (hci_ne : l0 .circle .blue_circle ≠ 0) :
+    beliefGoalScore (adjCost c) l0 α () .blue_circle .blue >
+    beliefGoalScore (adjCost c) l0 α () .blue_circle .circle ↔ c < log 2 := by
+  rw [beliefGoal_gt_iff _ _ _ _ _ hα hbl_ne hci_ne]
+  simp only [hbl, hci, adjCost, Real.log_one]
+  have hlog : log ((1:ℝ) / 2) = -log 2 := by rw [one_div, Real.log_inv]
+  rw [hlog]
+  constructor <;> intro h <;> linarith
+
+-- ============================================================================
+-- §17. Raw Experimental Data (Tables 3–4)
+-- ============================================================================
+
+/-! Production and comprehension counts from the experiment (N = 42 speakers,
+21 listeners). These connect model predictions to empirical observations. -/
+
+/-- Speaker production data from Table 3 (N = 42 per target object).
+
+    - green_square: 40 "square", 2 "green" (95.2% unique shape)
+    - blue_circle:  36 "blue", 6 "circle" (85.7% unique color)
+    - green_circle: 30 "circle", 12 "green" (71.4% preferred noun) -/
+def speakerData : Object → Utterance → Nat
+  | .green_square, .square => 40
+  | .green_square, .green  => 2
+  | .blue_circle,  .blue   => 36
+  | .blue_circle,  .circle => 6
+  | .green_circle, .circle => 30
+  | .green_circle, .green  => 12
+  | _, _                    => 0
+
+/-- Listener comprehension data from Table 4 (N = 21 per ambiguous utterance).
+
+    - "circle": 14 blue_circle, 7 green_circle (66.7% salience direction)
+    - "green":  12 green_square, 9 green_circle (57.1% salience direction) -/
+def listenerData : Utterance → Object → Nat
+  | .circle, .blue_circle  => 14
+  | .circle, .green_circle => 7
+  | .green,  .green_square => 12
+  | .green,  .green_circle => 9
+  | _, _                    => 0
+
+/-- Speaker data sums to N = 42 per target. -/
+theorem speakerData_consistent :
+    speakerData .green_square .square + speakerData .green_square .green = 42 ∧
+    speakerData .blue_circle .blue + speakerData .blue_circle .circle = 42 ∧
+    speakerData .green_circle .circle + speakerData .green_circle .green = 42 :=
+  ⟨rfl, rfl, rfl⟩
+
+/-- Listener data sums to N = 21 per ambiguous utterance. -/
+theorem listenerData_consistent :
+    listenerData .circle .blue_circle + listenerData .circle .green_circle = 21 ∧
+    listenerData .green .green_square + listenerData .green .green_circle = 21 :=
+  ⟨rfl, rfl⟩
+
+/-- Speaker majority choice agrees with σ_bU S1 ranking (findings 1–3). -/
+theorem speakerData_matches_model :
+    speakerData .green_square .square > speakerData .green_square .green ∧
+    speakerData .blue_circle .blue > speakerData .blue_circle .circle ∧
+    speakerData .green_circle .circle > speakerData .green_circle .green :=
+  ⟨by decide, by decide, by decide⟩
+
+/-- Listener majority agrees with salience L1 direction (findings 5–6). -/
+theorem listenerData_matches_salience :
+    listenerData .circle .blue_circle > listenerData .circle .green_circle ∧
+    listenerData .green .green_square > listenerData .green .green_circle :=
+  ⟨by decide, by decide⟩
+
+-- ============================================================================
+-- §18. FG2012 Bridge
+-- ============================================================================
+
+/-! σ_bU with zero cost IS Frank & Goodman (2012)'s model. FG2012 defines:
+
+    s1Score l0 α _ w u := if l0 u w = 0 then 0 else exp(α * log(l0 u w))
+
+which equals `beliefGoalScore (fun _ => 0)` since `x − 0 = x` (`sub_zero`).
+
+The two papers use different reference game contexts (FG2012: {blue_square,
+blue_circle, green_square}; QF2015: {green_square, blue_circle, green_circle}),
+so their RSAConfigs operate on different types. But the scoring rule, the
+compositional pattern, and the RSAConfig structure are identical — QF2015's
+contribution is decomposing along the cost, goal, and salience dimensions. -/
+
+/-- Zero-cost belief-oriented scoring equals FG2012's scoring rule.
+
+    `beliefGoalScore (fun _ => 0)` reduces to `if l0 = 0 then 0 else exp(α * log l0)`
+    by `sub_zero`. This is the formal statement that σ_bU generalizes FG2012
+    by adding utterance cost — setting cost to zero recovers the original model. -/
+theorem zeroCost_beliefGoal_eq
+    (l0 : Utterance → Object → ℝ) (α : ℝ) (w : Object) (u : Utterance) :
+    beliefGoalScore (fun _ => (0 : ℝ)) l0 α () w u =
+    if l0 u w = 0 then 0 else exp (α * log (l0 u w)) := by
+  simp [beliefGoalScore, sub_zero]
+
 /-!
 ## Summary: What this file tests about the RSAConfig API
 
@@ -723,6 +910,23 @@ theorem all_findings_verified : ∀ f : Finding, formalize f := by
    API with different `s1Score` and `meaning` choices. `rsa_predict` handles
    all comparisons including score-equality ties (σ_aU, zeroCost). The
    capstone theorem shows σ_bU uniquely predicts the blue_circle observation.
+
+7. **λ-independence** (§15): `beliefGoal_gt_iff` and `actionGoal_gt_iff` prove
+   that speaker rankings depend only on `log L0 − cost` (or `L0 − cost`),
+   not on the rationality parameter λ. The paper's rejection of λ = 1 affects
+   only quantitative fit, not qualitative predictions.
+
+8. **Cost thresholds** (§16): `σ_aU_blue_circ_threshold` (c < 1/2) and
+   `σ_bU_blue_circ_threshold` (c < ln 2) give the exact cost boundaries
+   for each model's blue_circle prediction. The log transform in σ_bU
+   widens the viable cost range.
+
+9. **Raw data** (§17): `speakerData` and `listenerData` formalize Tables 3–4.
+   `speakerData_matches_model` and `listenerData_matches_salience` verify
+   that majority choices match model predictions.
+
+10. **FG2012 bridge** (§18): `zeroCost_beliefGoal_eq` proves that belief-oriented
+    scoring at zero cost recovers Frank & Goodman (2012)'s scoring rule.
 -/
 
 end Phenomena.Reference.Studies.QingFranke2015
