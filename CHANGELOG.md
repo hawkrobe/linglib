@@ -1,9 +1,19 @@
 # Changelog
 
+## [0.227.26] - 2026-02-27
+
+### Fixed
+- **Hacquard (2010) audit**: Fixed hallucinated "Table 1" reference → (49a–f). Fixed "(48a–c)" → "(38), (48)". Fixed "§5.1" → "§5.3" for event binding section. Fixed incorrect claim that `AnchorType` "collapses e₁ and e₂ into `describedEvent`" → correctly states it omits e₁ (irrelevant in A-O&R's matrix-clause data).
+
+### Added
+- **`AnchorType.toEventBinder`**: Formal bridge from the binary `AnchorType` to the ternary `EventBinder`, replacing the stipulative `toFlavor_from_content` with `toFlavor_derived` (primary flavor = head of event binder's available flavor list).
+- **`unattested_49e_explained`**: Six-reading attestation theorem enumerating all binder × flavor combinations from Hacquard (2010) (49a–f), distinguishing content-licensing explanations (49e) from pragmatic blocking (49b, 49d).
+- **Ordering source note**: Docstring on `accessible` acknowledging the omission of Kratzer's ordering source (cf. Hacquard 2010, (29)).
+
 ## [0.227.25] - 2026-02-27
 
 ### Added
-- **Hacquard (2010) content licensing** (EventRelativity.lean §8): `EventBinder` (speechAct | attitude | vpEvent) refining the binary `AnchorType`, `hasContent` predicate (speech acts and attitudes are contentful; VP events are not), `canProjectEpistemic` / `canProjectCircumstantial` / `availableFlavors` derived from content. Key theorems: `content_determines_flavors` (Table 1), `attitudes_pattern_with_speech`, `vpEvent_differs_from_contentful`, `toFlavor_from_content` (AnchorType.toFlavor as corollary of content licensing).
+- **Hacquard (2010) content licensing** (EventRelativity.lean §8): `EventBinder` (speechAct | attitude | vpEvent) refining the binary `AnchorType`, `hasContent` predicate (speech acts and attitudes are contentful; VP events are not), `canProjectEpistemic` / `canProjectCircumstantial` / `availableFlavors` derived from content. Key theorems: `content_determines_flavors` ((49a–f)), `attitudes_pattern_with_speech`, `vpEvent_differs_from_contentful`.
 - **Hacquard (2010) position–binding** (EventRelativity.lean §9): `ModalPosition` (aboveAsp | belowAsp), `defaultBinder` / `withAttitude` deriving event binder from syntactic position. `position_determines_epistemic` (high = epistemic available, low = not), `embedded_high_still_epistemic`, `embedded_low_still_root`, `full_position_flavor_table`.
 - **Kratzer bridge** (EventRelativity.lean §10): `anchor_reduces` and `accessible_is_background_filter` showing event-relative modality reduces to Kratzer conversational backgrounds by construction.
 

@@ -112,7 +112,11 @@ theorem described_is_circumstantial :
 -- ════════════════════════════════════════════════════
 
 /-- Accessibility: world w' is accessible from w given anchoring
-function f applied to event e. -/
+function f applied to event e.
+
+NB: This omits Kratzer's ordering source g (cf. Hacquard 2010, (29):
+`max_g(e)(∩f(e))`). The ordering source is orthogonal to the
+content-licensing analysis and not needed for the MI application. -/
 def accessible {Ev W : Type*} (f : AnchoringFn Ev W) (e : Ev)
     (allW : List W) (w : W) : List W :=
   allW.filter λ w' => (f e w).all λ p => p w'
@@ -419,16 +423,18 @@ which event the modal is relative to:
 - e₁: an attitude event (bound by attitude verbs: *believe*, *want*, ...)
 - e₂: the VP event (bound by aspect: IMPF/PRFV)
 
-The binary `AnchorType` (§1) collapses e₁ and e₂ into `describedEvent`.
-`EventBinder` refines this, which matters because attitude events are
-**contentful** (like speech events), not contentless (like VP events).
+The binary `AnchorType` (§1) omits e₁ (irrelevant in A-O&R's
+matrix-clause data), keeping only the speech event (e₀) / VP event (e₂)
+distinction. `EventBinder` adds e₁, which matters because attitude
+events are **contentful** (like speech events), not contentless (like
+VP events).
 
 The key insight (Hacquard 2010, §6): epistemic modal bases require a
 contentful event — one with propositional content CON(e). Speech acts
 and attitudes have content; VP events (running, screaming) do not.
 This single predicate derives the position → flavor correlation. -/
 
-/-- The three event binders (Hacquard 2010, (48a–c)). -/
+/-- The three event binders (Hacquard 2010, (38), (48)). -/
 inductive EventBinder where
   /-- e₀: the utterance event (bound by ASSERT) -/
   | speechAct
@@ -488,7 +494,7 @@ theorem low_modal_not_epistemic :
     EventBinder.vpEvent.canProjectEpistemic = false := rfl
 
 /-- Contentful events yield both flavors; contentless events yield
-only circumstantial. Derives Hacquard's (2010) Table 1. -/
+only circumstantial. Derives the pattern in Hacquard's (2010) (49a–f). -/
 theorem content_determines_flavors :
     EventBinder.speechAct.availableFlavors = [.epistemic, .circumstantial] ∧
     EventBinder.attitude.availableFlavors = [.epistemic, .circumstantial] ∧
@@ -512,23 +518,47 @@ theorem vpEvent_differs_from_contentful :
       EventBinder.attitude.availableFlavors := by
   constructor <;> decide
 
-/-- `AnchorType.toFlavor` is a COROLLARY of content licensing.
+/-- Map the binary anchor type to the corresponding event binder.
+`speechEvent` → `speechAct` (matrix clause default).
+`describedEvent` → `vpEvent` (VP event bound by aspect). -/
+def AnchorType.toEventBinder : AnchorType → EventBinder
+  | .speechEvent => .speechAct
+  | .describedEvent => .vpEvent
 
-In the A-O&R modal indefinite context, `speechEvent` corresponds to
-`EventBinder.speechAct` (contentful → epistemic available), and
-`describedEvent` corresponds to `EventBinder.vpEvent` (contentless
-→ circumstantial only). The binary stipulation is derived from
-the deeper predicate `hasContent`. -/
-theorem toFlavor_from_content :
-    AnchorType.speechEvent.toFlavor = .epistemic ∧
-    EventBinder.speechAct.hasContent = true ∧
-    AnchorType.describedEvent.toFlavor = .circumstantial ∧
-    EventBinder.vpEvent.hasContent = false := ⟨rfl, rfl, rfl, rfl⟩
+/-- `AnchorType.toFlavor` is derivable from content licensing: the
+primary flavor for each anchor type is the head of the corresponding
+event binder's available flavor list. This replaces a stipulation
+with a derivation through `hasContent`. -/
+theorem toFlavor_derived :
+    ∀ a : AnchorType,
+      a.toEventBinder.availableFlavors.head? = some a.toFlavor := by
+  intro a; cases a <;> rfl
+
+/-- The six binder × flavor combinations (Hacquard 2010, (49a–f)).
+Content licensing explains (49e): VP events lack content → no epistemic.
+The remaining unattested combinations (49b: speech act + circumstantial,
+49d: attitude + circumstantial) are semantically possible but
+pragmatically blocked — circumstantial readings of high modals are
+pre-empted by the more informative epistemic reading (Hacquard 2010,
+pp.110–111). -/
+theorem unattested_49e_explained :
+    -- (49e) VP event + epistemic: ruled out by content licensing
+    EventBinder.vpEvent.canProjectEpistemic = false ∧
+    -- (49a) speech act + epistemic: attested ✓
+    EventBinder.speechAct.canProjectEpistemic = true ∧
+    -- (49c) attitude + epistemic: attested ✓
+    EventBinder.attitude.canProjectEpistemic = true ∧
+    -- (49f) VP event + circumstantial: attested ✓
+    EventBinder.vpEvent.canProjectCircumstantial = true ∧
+    -- (49b, 49d) high + circumstantial: semantically possible,
+    -- pragmatically blocked (not ruled out by content licensing)
+    EventBinder.speechAct.canProjectCircumstantial = true ∧
+    EventBinder.attitude.canProjectCircumstantial = true := ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
 
 
 -- ════════════════════════════════════════════════════
 -- § 9. Syntactic Position and Event Binding
---      (Hacquard 2010, §5.1)
+--      (Hacquard 2010, §5.3)
 -- ════════════════════════════════════════════════════
 
 /-! Syntactic position determines which event binder is closest to the
@@ -543,7 +573,7 @@ in `Theories/Semantics/Lexical/Verb/ViewpointAspect.lean` to the
 event-relative framework. -/
 
 /-- Position of a modal relative to Aspect in the clause.
-Hacquard (2010, §5.1): this is the structural correlate of the
+Hacquard (2010, §5.3): this is the structural correlate of the
 Cinque (1999) high/low modal distinction. -/
 inductive ModalPosition where
   /-- Above AspP: bound by ASSERT (matrix) or attitude verb (embedded) -/
