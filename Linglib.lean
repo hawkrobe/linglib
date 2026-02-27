@@ -31,6 +31,8 @@ import Linglib.Core.Semantics.Presupposition
 import Linglib.Core.Agent.ProductOfExperts
 import Linglib.Core.Partition
 import Linglib.Core.PolarityPartition
+import Linglib.Core.Polyhedral
+import Linglib.Core.ModalIndefinite
 import Linglib.Core.Discourse.QUD
 import Linglib.Core.Interface
 import Linglib.Core.StructuralEquationModel
@@ -209,6 +211,7 @@ import Linglib.Fragments.Kaqchikel.AgentFocus
 import Linglib.Fragments.Kaqchikel.Agreement
 import Linglib.Fragments.Kiche.ExtractionMorphology
 import Linglib.Fragments.Chuj.VerbBuilding
+import Linglib.Fragments.Chuj.ModalIndefinites
 
 -- Phenomena
 import Linglib.Phenomena.Causatives.Studies.SpalekMcNally.Data
@@ -267,6 +270,7 @@ import Linglib.Phenomena.ArgumentStructure.Bridge.MinimalismSubcategorization
 import Linglib.Phenomena.ArgumentStructure.Bridge.DGValency
 import Linglib.Phenomena.ArgumentStructure.Bridge.TheoryComparison
 import Linglib.Phenomena.ArgumentStructure.Studies.HaddicanEtAl2026
+import Linglib.Phenomena.ArgumentStructure.Bridge.MinimalismPassive
 import Linglib.Phenomena.ArgumentStructure.Bridge.MinimalismSmallClause
 import Linglib.Phenomena.ScalarImplicatures.ArgumentativeFraming
 import Linglib.Phenomena.Modality.ActualityInferencesBridge
@@ -431,6 +435,8 @@ import Linglib.Theories.Semantics.Dynamic.Systems.BSML.Basic
 import Linglib.Theories.Semantics.Dynamic.Systems.BSML.FreeChoice
 import Linglib.Phenomena.Modality.Studies.Aloni2022Bridge
 import Linglib.Comparisons.FreeChoice
+import Linglib.Phenomena.ModalIndefinites.Data
+import Linglib.Phenomena.ModalIndefinites.Bridge.KratzerAnchoring
 import Linglib.Phenomena.Negation.Basic
 import Linglib.Phenomena.Negation.ExpletiveNegationBridge
 import Linglib.Phenomena.WordOrder.NonProjectivity
@@ -955,6 +961,7 @@ import Linglib.Theories.Semantics.Modality.Simple
 import Linglib.Theories.Semantics.Modality.Temporal
 import Linglib.Theories.Semantics.Modality.Typology
 import Linglib.Theories.Semantics.Modality.Inertia
+import Linglib.Theories.Semantics.Modality.EventRelativity
 import Linglib.Theories.Semantics.Mood.Basic
 import Linglib.Theories.Semantics.Reference.Basic
 import Linglib.Theories.Semantics.Reference.Kaplan

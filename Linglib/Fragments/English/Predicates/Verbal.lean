@@ -928,7 +928,8 @@ def claim : VerbEntry := .mkRegular {
 
 /-! Manner-of-speaking (MoS) verbs specify *how* something is said.
     Storment (2026, NLLT) shows these divide into two classes:
-    - **QI-permitting** (unaccusative): whisper, murmur, shout, cry, scream
+    - **QI-permitting** (unaccusative): whisper, murmur, mumble, mutter, shout,
+      cry, scream, shriek, yell, groan, grumble, hiss, sigh, whimper, snap
     - **Non-QI** (unergative): speak, talk -/
 
 /-- "whisper" — MoS verb, permits quotative inversion (unaccusative) -/
@@ -970,6 +971,96 @@ def cry : VerbEntry := .mkRegular {
 /-- "scream" — MoS verb, permits quotative inversion (unaccusative) -/
 def scream : VerbEntry := .mkRegular {
   form := "scream"
+  speechActVerb := true
+  complementType := .finiteClause
+  subjectTheta := some .theme
+  unaccusative := true
+  levinClass := some .mannerOfSpeaking }
+
+/-- "mumble" — MoS verb, permits quotative inversion (unaccusative) -/
+def mumble : VerbEntry := .mkRegular {
+  form := "mumble"
+  speechActVerb := true
+  complementType := .finiteClause
+  subjectTheta := some .theme
+  unaccusative := true
+  levinClass := some .mannerOfSpeaking }
+
+/-- "mutter" — MoS verb, permits quotative inversion (unaccusative) -/
+def mutter : VerbEntry := .mkRegular {
+  form := "mutter"
+  speechActVerb := true
+  complementType := .finiteClause
+  subjectTheta := some .theme
+  unaccusative := true
+  levinClass := some .mannerOfSpeaking }
+
+/-- "shriek" — MoS verb, permits quotative inversion (unaccusative) -/
+def shriek : VerbEntry := .mkRegular {
+  form := "shriek"
+  speechActVerb := true
+  complementType := .finiteClause
+  subjectTheta := some .theme
+  unaccusative := true
+  levinClass := some .mannerOfSpeaking }
+
+/-- "yell" — MoS verb, permits quotative inversion (unaccusative) -/
+def yell : VerbEntry := .mkRegular {
+  form := "yell"
+  speechActVerb := true
+  complementType := .finiteClause
+  subjectTheta := some .theme
+  unaccusative := true
+  levinClass := some .mannerOfSpeaking }
+
+/-- "groan" — MoS verb, permits quotative inversion (unaccusative) -/
+def groan : VerbEntry := .mkRegular {
+  form := "groan"
+  speechActVerb := true
+  complementType := .finiteClause
+  subjectTheta := some .theme
+  unaccusative := true
+  levinClass := some .mannerOfSpeaking }
+
+/-- "grumble" — MoS verb, permits quotative inversion (unaccusative) -/
+def grumble : VerbEntry := .mkRegular {
+  form := "grumble"
+  speechActVerb := true
+  complementType := .finiteClause
+  subjectTheta := some .theme
+  unaccusative := true
+  levinClass := some .mannerOfSpeaking }
+
+/-- "hiss" — MoS verb, permits quotative inversion (unaccusative) -/
+def hiss : VerbEntry := .mkRegular {
+  form := "hiss"
+  speechActVerb := true
+  complementType := .finiteClause
+  subjectTheta := some .theme
+  unaccusative := true
+  levinClass := some .mannerOfSpeaking }
+
+/-- "sigh" — MoS verb, permits quotative inversion (unaccusative) -/
+def sigh : VerbEntry := .mkRegular {
+  form := "sigh"
+  speechActVerb := true
+  complementType := .finiteClause
+  subjectTheta := some .theme
+  unaccusative := true
+  levinClass := some .mannerOfSpeaking }
+
+/-- "whimper" — MoS verb, permits quotative inversion (unaccusative) -/
+def whimper : VerbEntry := .mkRegular {
+  form := "whimper"
+  speechActVerb := true
+  complementType := .finiteClause
+  subjectTheta := some .theme
+  unaccusative := true
+  levinClass := some .mannerOfSpeaking }
+
+/-- "snap" — MoS verb, permits quotative inversion (unaccusative) -/
+def snap : VerbEntry := .mkRegular {
+  form := "snap"
   speechActVerb := true
   complementType := .finiteClause
   subjectTheta := some .theme

@@ -1,5 +1,28 @@
 # Changelog
 
+## [0.227.21] - 2026-02-27
+
+### Fixed
+- **Modal indefinite denotation** (EventRelativity.lean): corrected `modalComponent` from ◇(∃y[y≠x ∧ P(y) ∧ Q(y)]) to ∀y[P(y)(w) → ◇_{f(e₁)}(Q(y))], matching A-O&R (2024) (59). The paper's modal component is a UNIVERSAL (every restrictor member is a possible scope-satisfier), not an existential (some other individual works).
+- **Non-volitional verb flavors** (Data.lean): `.internalArgNonVolitional` corrected from `[.epistemic, .circumstantial]` to `[.epistemic]`. The paper (§4.1, ex.34) explicitly shows RC is unavailable with non-volitional verbs like "like."
+- **Hallucinated example sentences** (Data.lean §11): all three Chuj strings and example numbers were fabricated. Replaced with real examples from the paper: (22) external arg epistemic, (31) internal volitional RC, (34) internal non-volitional epistemic, (41) adjunct volitional RC, (39) adjunct non-volitional epistemic.
+- **Hallucinated/wrong citations**: `unoCualquiera.source` "2020" → "2018", `unQualsiasi.source` "Chierchia 2006" → "Chierchia 2013" (per §5.3.2 reference), `komon.source` "Royer 2022" → "Alonso-Ovalle & Royer 2021".
+- **Dependency violation**: Fragment `Chuj/ModalIndefinites.lean` imported `Phenomena.ModalIndefinites.Data` (Fragments must not import Phenomena). Fixed by extracting `ModalComponentStatus` and `ModalIndefiniteEntry` to new `Core/ModalIndefinite.lean`; both Fragment and Phenomena now import from Core.
+- **Adjunct volitionality**: `ChujDPPosition` now has `.adjunctVolitional` / `.adjunctNonVolitional` (was just `.adjunct`), matching Table 5's full position × volitionality matrix. Bridge `availableAnchors` and `predictions_match_data` updated for all 5 positions.
+
+### Added
+- **`Core/ModalIndefinite.lean`**: reusable types `ModalComponentStatus` and `ModalIndefiniteEntry` in framework-agnostic Core.
+- **Volitionality bridge theorems** (KratzerAnchoring.lean): `int_arg_nonvol_speech_only`, `adjunct_vol_prediction`, `adjunct_nonvol_prediction`.
+- **`volitionality_matters` theorem** (Data.lean): proves volitional ≠ non-volitional internal arg flavor sets.
+
+## [0.227.20] - 2026-02-27
+
+### Added
+- **Event-relative modality** (Hacquard 2006/2009/2010): `Theories/Semantics/Modality/EventRelativity.lean` — `AnchoringFn Ev W := Ev → W → List (BProp W)` bridging events and Kratzer conversational backgrounds. `AnchorType` (speechEvent / describedEvent) with `toFlavor` mapping. Event-relative `possibility`/`necessity` with duality theorem. `modalIndefiniteSat` and `upperBoundedSat` for modal/anti-singleton indefinites. Worked example with `BookWorld` verifying `native_decide`.
+- **Modal indefinites typology** (Alonso-Ovalle & Royer 2024): `Phenomena/ModalIndefinites/Data.lean` — Seven cross-linguistic entries: *yalnhej* (Chuj), *komon* (Chuj), *algún* (Spanish), *irgendein* (German), *uno cualquiera* (Spanish), *n'importe quel* (French), *un qualsiasi* (Italian). Per-datum verification, typological generalizations, position-sensitive flavor distribution for Chuj with `ChujDPPosition` and `yalnhejFlavorsAt`.
+- **Kratzer anchoring bridge** (`Phenomena/ModalIndefinites/Bridge/KratzerAnchoring.lean`): `availableAnchors` mapping syntactic positions to anchor types. `predictedFlavors` deriving observed flavors from anchoring theory. `predictions_match_data` proving predicted = observed for all Chuj positions. Voice → position bridge connecting `vØ.hasD` / `v_ch.hasD` from Chuj verb building to external/internal argument status. Cross-linguistic bridge theorems for status and upper-boundedness dimensions with independence proof (all four cells of status × UB matrix attested).
+- **Chuj modal indefinite fragment** (`Fragments/Chuj/ModalIndefinites.lean`): `yalnhejEntry` and `komonEntry` lexical entries reusing `ModalIndefiniteEntry`, with per-entry verification theorems.
+
 ## [0.227.19] - 2026-02-27
 
 ### Added

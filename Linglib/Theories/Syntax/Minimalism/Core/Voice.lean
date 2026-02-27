@@ -44,6 +44,12 @@ Voice_nonThematic + [vGO, vBE] = inchoative [vGO, vBE].
 - Coon, J. (2019). Building verbs in Chuj. *Journal of Linguistics* 55(1): 35–81.
 - Muñoz Pérez, C. (2026). Stylistic applicatives: A lens into the
   nature of anticausative SE. *Glossa* 11(1).
+- Collins, C. (2005). A Smuggling Approach to the Passive in English.
+  *Syntax* 8(2): 81–120. @cite{collins-2005}
+- Chomsky, N. (2001). Derivation by Phase. In M. Kenstowicz (ed.),
+  *Ken Hale: A Life in Language*, 1–52. MIT Press.
+- Legate, J. A. (2003). Some Interface Properties of the Phase.
+  *Linguistic Inquiry* 34(3): 506–516.
 -/
 
 namespace Minimalism
@@ -56,13 +62,15 @@ namespace Minimalism
 
     Agentive Voice introduces an agent; causer Voice introduces a causer;
     non-thematic Voice has no semantics (anticausative SE);
-    expletive Voice has neither specifier nor semantics (middles). -/
+    expletive Voice has neither specifier nor semantics (middles);
+    passive Voice checks Case without assigning θ (Collins 2005: *by*). -/
 inductive VoiceFlavor where
   | agentive     -- Introduces external argument with agent θ-role (Kratzer 1996)
   | causer       -- Introduces causer (Schäfer 2008: Voice_CAUSE)
   | nonThematic  -- Semantically vacuous, no θ-role (anticausative SE, Chuj -j)
   | expletive    -- No specifier, no semantics (middle voice)
   | impersonal   -- Demotes agent to implicit generic human (Finnish "passive")
+  | passive      -- Checks Case but does not assign θ (Collins 2005: *by* heads VoiceP)
   deriving DecidableEq, BEq, Repr
 
 -- ============================================================================
@@ -77,6 +85,10 @@ structure VoiceHead where
   hasD : Bool
   /-- Is this Voice head a phase head? (v* = agentive Voice) -/
   phaseHead : Bool
+  /-- Does this Voice head check Case? In active, v checks accusative;
+      in passive, Voice/*by* checks it (Collins 2005, p. 96: feature
+      dissociation). Default false — only passive Voice checks Case. -/
+  checksCase : Bool := false
   /-- Agree-relevant features on Voice (e.g., [uOblique] for Mam =(y)a').
       Default empty — most Voice heads carry no probe features. -/
   features : FeatureBundle := []
@@ -86,12 +98,12 @@ structure VoiceHead where
 def VoiceHead.assignsTheta (v : VoiceHead) : Bool :=
   match v.flavor with
   | .agentive | .causer => true
-  | .nonThematic | .expletive | .impersonal => false
+  | .nonThematic | .expletive | .impersonal | .passive => false
 
 /-- Does this Voice head have semantic content? -/
 def VoiceHead.hasSemantics (v : VoiceHead) : Bool :=
   match v.flavor with
-  | .agentive | .causer | .impersonal => true
+  | .agentive | .causer | .impersonal | .passive => true
   | .nonThematic | .expletive => false
 
 -- ============================================================================
@@ -119,6 +131,22 @@ def voiceMiddle : VoiceHead :=
     but does not assign a θ-role to a syntactic specifier. -/
 def voiceImpersonal : VoiceHead :=
   { flavor := .impersonal, hasD := false, phaseHead := false }
+
+/-- Passive Voice (Collins 2005): headed by *by*, checks Case but does
+    not assign a θ-role — v assigns the θ-role to the external argument
+    in Spec,vP. Passive v is NOT a phase head: the Case-checking feature
+    that makes v* a strong phase head has been dissociated onto Voice/*by*
+    (Collins 2005, p. 96, p. 98).
+
+    This is why PartP (complement of v) remains accessible for smuggling:
+    passive v is a defective v, not v*. Cf. Chomsky (2001): "only v*
+    (transitive) is a strong phase."
+
+    **Contested**: Legate (2003) argues passive v IS a phase head based
+    on reconstruction and parasitic gap data. The current formalization
+    follows Collins (2005) and Chomsky (2001, 2008). -/
+def voicePassive : VoiceHead :=
+  { flavor := .passive, hasD := true, phaseHead := false, checksCase := true }
 
 -- ============================================================================
 -- § 4: Verification Theorems
@@ -148,6 +176,18 @@ theorem impersonal_no_theta : voiceImpersonal.assignsTheta = false := rfl
     over the agent variable, unlike non-thematic Voice which is vacuous. -/
 theorem impersonal_has_semantics : voiceImpersonal.hasSemantics = true := rfl
 
+/-- Passive Voice does NOT assign a θ-role (v does). -/
+theorem passive_no_theta : voicePassive.assignsTheta = false := rfl
+
+/-- Passive Voice IS NOT a phase head (Collins 2005, p. 98). -/
+theorem passive_not_phase : voicePassive.phaseHead = false := rfl
+
+/-- Passive Voice HAS semantic content (*by* mediates Case-checking). -/
+theorem passive_has_semantics : voicePassive.hasSemantics = true := rfl
+
+/-- Passive Voice checks Case (Collins 2005, p. 96: feature dissociation). -/
+theorem passive_checks_case : voicePassive.checksCase = true := rfl
+
 /-- Only agentive and causer Voice assign θ-roles. -/
 theorem theta_implies_agentive_or_causer (v : VoiceHead) :
     v.assignsTheta = true → v.flavor = .agentive ∨ v.flavor = .causer := by
@@ -173,6 +213,7 @@ def VoiceFlavor.eventContribution : VoiceFlavor → Option VerbHead
   | .nonThematic => none
   | .expletive   => none
   | .impersonal  => none
+  | .passive     => none
 
 /-- Build the full verbal decomposition by combining Voice's contribution
     with the root-determined lower event structure.
@@ -246,5 +287,36 @@ theorem voice_determines_causativity_go_be (v : VoiceHead) :
   cases v with | mk flavor _ _ _ =>
   cases flavor <;> simp [buildDecomposition, VoiceFlavor.eventContribution,
     isCausative, VoiceHead.assignsTheta] <;> decide
+
+-- ============================================================================
+-- § 7: Feature Dissociation (Collins 2005, §4)
+-- ============================================================================
+
+/-- In active, v (= agentive Voice) assigns θ AND controls Case-checking
+    (Case is checked by v, not by Voice). In passive, these functions
+    dissociate: v assigns θ (external argument in Spec,vP), while Voice/*by*
+    checks Case (Collins 2005, p. 96). -/
+theorem active_theta_and_case_unified :
+    voiceAgent.assignsTheta = true ∧ voiceAgent.checksCase = false := ⟨rfl, rfl⟩
+
+/-- Passive: θ-assignment and Case-checking are dissociated.
+    Voice does NOT assign θ (v does), but Voice DOES check Case. -/
+theorem passive_theta_case_dissociated :
+    voicePassive.assignsTheta = false ∧ voicePassive.checksCase = true := ⟨rfl, rfl⟩
+
+/-- UTAH compliance (Collins 2005, p. 95): the external argument is
+    structurally present (hasD = true) in BOTH active and passive.
+    The external argument occupies the same position (Spec,vP)
+    regardless of voice — satisfying the Uniformity of Theta Assignment
+    Hypothesis. -/
+theorem utah_active_passive :
+    voiceAgent.hasD = true ∧ voicePassive.hasD = true := ⟨rfl, rfl⟩
+
+/-- Passive Voice does not contribute vDO. In Collins' analysis, the
+    activity subevent exists (the agent acts in both active and passive)
+    but it is introduced by v, not by Voice. The current architecture
+    tracks only Voice's contribution; v's contribution is implicit. -/
+theorem passive_no_event_contribution :
+    VoiceFlavor.passive.eventContribution = none := rfl
 
 end Minimalism
