@@ -14,6 +14,16 @@
 - **PersonLevel replaces Nat** for person features across: PersonGeometry, Kaqchikel/Agreement, Mam/Agreement, MamAgreeSpellout, AllocutivityBridge, DifferentialIndexing bridge.
 - **Agree.lean** slimmed: feature types → Features.lean, Case Filter → CaseFilter.lean. Now imports Features.lean.
 
+## [0.226.101] - 2026-02-26
+
+### Fixed
+- **TwoNot configs match paper's Figure 7** (`ScontrasPearl2021TwoNot.lean`): primary configs now use b_suc=0.1 with P(inv)=0.1 (Binomial(4, 0.1) ∝ (6561, 2916, 486, 36, 1)), matching the paper's baseline parameters. Previously used b_suc=0.5 with uniform scope priors, which doesn't match any specific figure. Fixed "Figure 5" → "Figure 7" throughout.
+- **Renamed configs**: `exactCfg`/`atleastCfg` → `exactBaselineCfg`/`atleastBaselineCfg` (baseline params) + `exactSymCfg`/`atleastSymCfg` (symmetric b_suc=0.5).
+- **Renamed sorry theorems**: `exact_2of4_endorsement_high` → `exact_baseline_endorsement_high`, `atleast_2of4_endorsement_lower` → `exact_vs_atleast_endorsement` — now reference baseline configs.
+
+### Added
+- **Inverse scope cardinality theorems** (`ScontrasPearl2021TwoNot.lean` §7): `exact_inverse_quad` (4 true worlds — very uninformative), `atLeast_inverse_double` (2 true worlds). Completes the informativity contrast picture: exact surface 1 / at-least surface 3 / exact inverse 4 / at-least inverse 2.
+
 ## [0.226.100] - 2026-02-26
 
 ### Changed
@@ -22,7 +32,7 @@
 - **Bibliography** (`references.bib`): fixed stale `sources` path for `scontras-pearl-2021`.
 
 ### Added
-- **Section 4 two-not RSA model** (`ScontrasPearl2021TwoNot.lean`): RSA model for "two horses didn't jump" with n=4. 5 worlds × 10 latent states (2 scopes × 5 QUDs). Exact vs at-least configs with Binomial(4, 0.5) priors. Informativity contrast theorems: exact surface has 1 true world, at-least has 3.
+- **Section 4 two-not RSA model** (`ScontrasPearl2021TwoNot.lean`): RSA model for "two horses didn't jump" with n=4. 5 worlds × 10 latent states (2 scopes × 5 QUDs). Exact vs at-least configs with Binomial(4, 0.1) priors. Informativity contrast theorems: exact surface has 1 true world, at-least has 3.
 - **Numeral semantics bridge** (`Bridge/NumeralSemanticsBridge.lean`): grounds `twoNotTruth` in `maxMeaning` from `Numeral.Semantics`. Four grounding theorems connecting exact/at-least × surface/inverse to `maxMeaning .eq`/`.ge`. Documents convergent evidence for exact semantics and Kennedy's type-shift resolution of the exact vs lower-bound tension.
 
 ## [0.226.98] - 2026-02-26

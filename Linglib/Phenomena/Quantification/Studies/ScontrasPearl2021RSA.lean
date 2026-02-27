@@ -61,7 +61,9 @@ See `surface_from_every_sem`, `inverse_from_every_sem`, and
 
 ## Key Findings (Figure 2)
 
-S2 endorsement for "every horse didn't jump" in the partial world (w=1):
+S2 endorsement for "every horse didn't jump" in the partial world (w=1).
+The "Paper value" column is S&P's computed model predictions (not experimental
+data — S&P is a modeling paper explaining Musolino & Lidz 2003 findings):
 
 | Config | S2(everyNot|w=1) | Paper value |
 |--------|-----------------|-------------|
@@ -71,6 +73,13 @@ S2 endorsement for "every horse didn't jump" in the partial world (w=1):
 
 The S2 ordering w0 > w1 > w2 is **robust** across all prior configurations,
 even when L1 orderings vary (e.g., highBaseCfg reverses L1 ordering).
+
+## Developmental Continuity (§3.3)
+
+The same model architecture explains both child and adult behavior.
+Children's isomorphic (surface-scope) preference follows from low `b_suc`
+priors. Adult-like inverse scope access emerges from supportive contexts
+(high `b_suc`, all?-biased QUD) — the same model, different priors.
 
 ## References
 
@@ -347,7 +356,8 @@ noncomputable abbrev highBaseCfg :=
     (fun _ => 1) (fun _ => le_of_lt one_pos)
 
 /-- Supportive context: b_suc = 0.9 + all?-biased QUD (1:18:1 ≈ 0.05:0.9:0.05).
-    Models contexts that pragmatically support inverse scope (§3.3, Figure 3). -/
+    Models the Gualmini et al. (2008) early-success manipulation, where context
+    pragmatically supports inverse scope (§3.3, Figure 3). -/
 noncomputable abbrev supportiveCfg :=
   cfg (fun w => match w with | .zero => 1 | .one => 18 | .two => 81)
     (fun w => by cases w <;> positivity)
