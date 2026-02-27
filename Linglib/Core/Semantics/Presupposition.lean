@@ -188,6 +188,10 @@ def strawsonEntails (p q : PrProp W) : Prop :=
   forall w, p.presup w = true -> p.assertion w = true ->
     q.presup w = true /\ (q.presup w = true -> q.assertion w = true)
 
+/-- Strawson equivalence: mutual Strawson entailment. -/
+def strawsonEquiv (p q : PrProp W) : Prop :=
+  strawsonEntails p q ∧ strawsonEntails q p
+
 /-- Flexible accommodation disjunction (Geurts 2005, Aloni 2022, Yagi 2025).
 
 Each disjunct is evaluated only against worlds where its own presupposition
