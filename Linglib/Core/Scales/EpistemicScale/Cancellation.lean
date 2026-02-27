@@ -1,4 +1,5 @@
 import Linglib.Core.Scales.EpistemicScale.Fin3
+import Mathlib.Algebra.BigOperators.Group.Finset.Piecewise
 
 /-!
 # Cancellation conditions for comparative probability
@@ -292,46 +293,170 @@ private theorem feasible_to_measure {n : ℕ} (sys : EpistemicSystemFA (Fin n))
   rw [hmuC, hmuD]
   exact key
 
-/-- **Theorem of alternatives for comparative probability** (Farkas / Scott):
-    for any FA system on Fin n, at least one of the following holds:
-    (I)  the ordering is representable — ∃ p ∈ feasibleWeights, or
-    (II) there exists a valid neutral portfolio with a strict member.
+-- ── Step 4a. Not all singletons null ─────────────
 
-    This is LP duality applied to the feasibility polytope
-      {p ≥ 0 : 1ᵀp = 1, sys.ge ↑A ↑B ↔ A.sum p ≥ B.sum p}.
+/-- If all singletons are null, then ∅ ≿ S for any finset S (by FA induction). -/
+private lemma ge_empty_of_all_null {n : ℕ} (sys : EpistemicSystemFA (Fin n))
+    (hall : ∀ i, sys.ge ∅ {i}) (S : Finset (Fin n)) : sys.ge ∅ ↑S := by
+  induction S using Finset.induction_on with
+  | empty => simp only [Finset.coe_empty]; exact sys.refl ∅
+  | @insert a S' haS' ih =>
+    have h1 : (↑S' : Set (Fin n)) \ ({a} ∪ ↑S') = ∅ := by
+      ext x; simp only [Set.mem_diff, Set.mem_union, Finset.mem_coe,
+        Set.mem_empty_iff_false, iff_false, not_and, Decidable.not_not]
+      intro hx; exact Or.inr hx
+    have h2 : ({a} ∪ ↑S' : Set (Fin n)) \ ↑S' = {a} := by
+      ext x; simp only [Set.mem_diff, Set.mem_union, Set.mem_singleton_iff, Finset.mem_coe]
+      constructor
+      · rintro ⟨hx | hx, hnx⟩ <;> [exact hx; exact absurd hx hnx]
+      · intro hx; subst hx; exact ⟨Or.inl rfl, fun h => haS' (Finset.mem_coe.mp h)⟩
+    rw [Finset.coe_insert, Set.insert_eq]
+    exact sys.trans ∅ ↑S' ({a} ∪ ↑S') ih
+      (by rw [sys.additive ↑S' ({a} ∪ ↑S'), h1, h2]; exact hall a)
 
-    The LP has standard form {x = (p, s) ≥ 0 : Ax = b} with
-      A = [1ᵀ | 0; V | -I],  b = (1, 0, …, 0),
-    where vⱼ = χ_Aⱼ − χ_Bⱼ are comparison vectors.
+/-- Not all singletons can be null: ∃ i, ¬sys.ge ∅ {i}. If all were null,
+    FA induction gives sys.ge ∅ Set.univ, contradicting nonTrivial. -/
+private theorem not_all_null {n : ℕ} (sys : EpistemicSystemFA (Fin n)) :
+    ∃ i : Fin n, ¬sys.ge ∅ {i} := by
+  by_contra hall; push_neg at hall
+  exact sys.nonTrivial (by rw [← Finset.coe_univ]; exact ge_empty_of_all_null sys hall _)
 
-    Farkas' lemma: exactly one holds:
-      (i)  ∃ x ≥ 0 : Ax = b
-      (ii) ∃ y : Aᵀy ≥ 0, bᵀy < 0
-    Expanding (ii) with y = (α, β₁, …, βₖ): the slack columns force
-    β ≤ 0, the p columns give α + Σβⱼ(vⱼ)ᵢ ≥ 0, and bᵀy < 0 gives α < 0.
-    Setting wⱼ = −βⱼ/(−α) ≥ 0, Σwⱼ(vⱼ)ᵢ ≥ 1 > 0 for all atoms i.
+-- ── Step 4b. Farkas alternative for the ordering LP ──
 
-    This certificate yields a neutral portfolio with a strict member:
-    compensate the positive excess at each atom by adding ({i}, ∅, dᵢ)
-    with dᵢ = −Σwⱼ(vⱼ)ᵢ, valid by monotonicity and strict by nonTrivial.
+/-- **Farkas alternative for the ordering LP**: either a one-directional
+    probability representation exists, or there is a valid portfolio
+    whose weighted comparison sums are strictly negative at every atom.
 
-    **Route 1 (Mathlib)**: specialize `ConvexCone.hyperplane_separation_of_
-    nonempty_of_isClosed_of_notMem` by proving finitely generated cones
-    are closed (Carathéodory / induction on generators). -/
-private theorem scott_alternatives {n : ℕ} (sys : EpistemicSystemFA (Fin n)) :
-    (∃ p, p ∈ feasibleWeights n sys) ∨
-    (∃ P : Portfolio n, P.isValid sys.ge ∧ P.isNeutral ∧ P.hasStrict sys.ge) :=
+    This is LP duality: the feasibility polytope
+      {p ≥ 0 : 1ᵀp = 1, vⱼᵀp ≥ 0 for each ge-constraint j}
+    is nonempty iff no dual certificate of infeasibility exists.
+    A certificate (y, α) with Aᵀy ≥ 0 and bᵀy < 0 translates to
+    nonneg weights wⱼ with Σwⱼ(vⱼ)ᵢ < 0 at every atom.
+
+    **Route 1**: specialize Mathlib's `ProperCone.hyperplane_separation_point`
+    by proving finitely generated cones are closed (Carathéodory). -/
+private theorem farkas_ordering_lp {n : ℕ} (sys : EpistemicSystemFA (Fin n)) :
+    (∃ p : Fin n → ℚ, (∀ i, 0 ≤ p i) ∧ Finset.univ.sum p = 1 ∧
+      ∀ (A B : Finset (Fin n)), Disjoint A B →
+        sys.ge ↑A ↑B → A.sum p ≥ B.sum p) ∨
+    (∃ P : Portfolio n, P.isValid sys.ge ∧
+      ∀ i : Fin n, P.weightedSum i < 0) :=
   sorry
 
+-- ── Step 4c. Certificate → cancellation violation ───
+
+private lemma toList_map_sum {α : Type*} [AddCommMonoid α] {ι : Type*}
+    (s : Finset ι) (f : ι → α) :
+    (s.val.toList.map f).sum = s.sum f := by
+  rw [← Multiset.sum_coe, ← Multiset.map_coe, Multiset.coe_toList]; rfl
+
+private lemma compVec_single_empty {n : ℕ} (a j : Fin n) :
+    comparisonVec n {a} ∅ j = if j = a then 1 else 0 := by
+  unfold comparisonVec; simp only [Finset.mem_singleton]; split <;> simp
+
+private lemma weightedSum_append {n : ℕ} (P Q : List (WComparison n)) (i : Fin n) :
+    Portfolio.weightedSum (List.append P Q) i =
+    Portfolio.weightedSum P i + Portfolio.weightedSum Q i := by
+  unfold Portfolio.weightedSum
+  show (List.map _ (P ++ Q)).sum = (List.map _ P).sum + (List.map _ Q).sum
+  rw [List.map_append, List.sum_append]
+
+/-- Singleton portfolio: one ({i}, ∅, dᵢ) entry per atom. -/
+private noncomputable def singletonPortfolio {n : ℕ} (d : Fin n → ℚ) (hd : ∀ i, 0 < d i) :
+    List (WComparison n) :=
+  (Finset.univ : Finset (Fin n)).val.toList.map fun i =>
+    (⟨{i}, ∅, d i, Finset.disjoint_empty_right _, hd i⟩ : WComparison n)
+
+private theorem weightedSum_singletonPortfolio {n : ℕ} (d : Fin n → ℚ) (hd : ∀ i, 0 < d i)
+    (j : Fin n) :
+    Portfolio.weightedSum (singletonPortfolio d hd) j = d j := by
+  unfold singletonPortfolio Portfolio.weightedSum
+  rw [List.map_map]
+  conv => lhs; arg 1; arg 1; ext i; simp only [Function.comp]; rw [compVec_single_empty]
+  simp only [Int.cast_ite, Int.cast_one, Int.cast_zero, mul_ite, mul_one, mul_zero]
+  rw [toList_map_sum, Finset.sum_ite_eq, if_pos (Finset.mem_univ j)]
+
+/-- An infeasibility certificate (valid portfolio with strictly negative
+    weighted sums at every atom) yields a neutral portfolio with a strict
+    member, violating cancellation.
+
+    Construction: append ({i}, ∅, dᵢ) for each atom i with dᵢ = −wsum(i) > 0.
+    Neutrality: wsum(j) + dⱼ = 0 by construction.
+    Strictness: ∃ i₀ with ¬sys.ge ∅ {i₀} (from `not_all_null`). -/
+private theorem certificate_to_violation {n : ℕ} (sys : EpistemicSystemFA (Fin n))
+    (P : Portfolio n) (hV : P.isValid sys.ge)
+    (hNeg : ∀ i : Fin n, P.weightedSum i < 0) :
+    ∃ Q : Portfolio n, Q.isValid sys.ge ∧ Q.isNeutral ∧ Q.hasStrict sys.ge := by
+  let d : Fin n → ℚ := fun i => -P.weightedSum i
+  have hd : ∀ i, 0 < d i := fun i => by simp only [d]; linarith [hNeg i]
+  let singles := singletonPortfolio d hd
+  refine ⟨List.append P singles, ?valid, ?neutral, ?strict⟩
+  case valid =>
+    intro wc hwc
+    rcases List.mem_append.mp hwc with h | h
+    · exact hV wc h
+    · obtain ⟨i, _, rfl⟩ := List.mem_map.mp h
+      simp only [Finset.coe_singleton, Finset.coe_empty]
+      exact sys.mono ∅ {i} (Set.empty_subset _)
+  case neutral =>
+    intro j
+    rw [weightedSum_append P singles j, weightedSum_singletonPortfolio d hd j]
+    simp only [d]; linarith
+  case strict =>
+    obtain ⟨i₀, hi₀⟩ := not_all_null sys
+    refine ⟨⟨{i₀}, ∅, d i₀, Finset.disjoint_empty_right _, hd i₀⟩, ?mem, ?str⟩
+    case mem =>
+      exact List.mem_append.mpr (Or.inr
+        (List.mem_map.mpr ⟨i₀, Multiset.mem_toList.mpr (Finset.mem_univ i₀), rfl⟩))
+    case str =>
+      simp only [Finset.coe_empty, Finset.coe_singleton]; exact hi₀
+
+-- ── Step 4d. One-directional feasibility from cancellation ──
+
+/-- Cancellation implies one-directional LP feasibility:
+    ∃ p ≥ 0, Σp = 1, sys.ge → p(A) ≥ p(B).
+    Composition of `farkas_ordering_lp` (Farkas alternative) and
+    `certificate_to_violation` (certificate → cancellation violation). -/
+private theorem onedir_from_cancel {n : ℕ} (sys : EpistemicSystemFA (Fin n))
+    (hcancel : Cancellation n sys.ge) :
+    ∃ p : Fin n → ℚ, (∀ i, 0 ≤ p i) ∧ Finset.univ.sum p = 1 ∧
+      ∀ (A B : Finset (Fin n)), Disjoint A B →
+        sys.ge ↑A ↑B → A.sum p ≥ B.sum p := by
+  rcases farkas_ordering_lp sys with h | ⟨P, hV, hNeg⟩
+  · exact h
+  · obtain ⟨Q, hQV, hQN, hQS⟩ := certificate_to_violation sys P hV hNeg
+    exact absurd hQS (hcancel Q hQV hQN)
+
+-- ── Step 4e. Strengthen → to ↔ ───────────────────
+
+/-- Strengthen one-directional to bidirectional feasibility: if
+    p ≥ 0, Σp = 1, and sys.ge ↑A ↑B → A.sum p ≥ B.sum p for disjoint
+    pairs, then also A.sum p ≥ B.sum p → sys.ge ↑A ↑B (no spurious ties).
+
+    Uses cancellation: a spurious tie (A.sum p = B.sum p with B ≻ A)
+    would yield a portfolio violating cancellation. -/
+private theorem strengthen_to_bidir {n : ℕ} (sys : EpistemicSystemFA (Fin n))
+    (hcancel : Cancellation n sys.ge)
+    {p : Fin n → ℚ} (hnn : ∀ i, 0 ≤ p i)
+    (hsum : Finset.univ.sum p = 1)
+    (hone : ∀ (A B : Finset (Fin n)), Disjoint A B →
+      sys.ge ↑A ↑B → A.sum p ≥ B.sum p) :
+    p ∈ feasibleWeights n sys :=
+  sorry
+
+-- ── Step 4f. Compose: cancellation → feasible weights ──
+
 /-- The core LP step: cancellation implies the feasibility polytope is nonempty.
-    Immediate from `scott_alternatives`: cancellation rules out branch (II),
-    so branch (I) must hold. -/
+    Decomposes into:
+    1. `farkas_ordering_lp` — Farkas alternative gives → feasible or certificate
+    2. `certificate_to_violation` — certificate contradicts cancellation
+    3. `onedir_from_cancel` — so → feasibility holds
+    4. `strengthen_to_bidir` — strengthen → to ↔ using cancellation -/
 private theorem cancellation_nonempty {n : ℕ} (sys : EpistemicSystemFA (Fin n))
     (hcancel : Cancellation n sys.ge) :
     ∃ p, p ∈ feasibleWeights n sys := by
-  rcases scott_alternatives sys with h | ⟨P, hV, hN, hS⟩
-  · exact h
-  · exact absurd hS (hcancel P hV hN)
+  obtain ⟨p, hnn, hsum, hone⟩ := onedir_from_cancel sys hcancel
+  exact ⟨p, strengthen_to_bidir sys hcancel hnn hsum hone⟩
 
 /-- **Scott's theorem** (hard direction): if no valid neutral portfolio has a
     strict member, then a finitely additive measure exists representing the

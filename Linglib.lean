@@ -194,6 +194,11 @@ import Linglib.Fragments.Ukrainian.Case
 import Linglib.Fragments.Ukrainian.QuestionParticles
 import Linglib.Fragments.Tagalog.TemporalConnectives
 import Linglib.Fragments.Italian.Predicates
+import Linglib.Fragments.Italian.Nouns
+import Linglib.Fragments.Italian.Determiners
+import Linglib.Fragments.Italian.Pronouns
+import Linglib.Fragments.Italian.Negation
+import Linglib.Fragments.Italian.Tense
 import Linglib.Fragments.Spanish.Clitics
 import Linglib.Fragments.Spanish.Predicates
 import Linglib.Fragments.Spanish.PersonFeatures
