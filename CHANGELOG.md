@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.227.29] - 2026-02-27
+
+### Added
+- **Individual-time pairs from events (Hacquard 2006, §4.1)**: EventRelativity §§11–13. `IndTimePair`, `EventProjection` (holder + temporal trace τ), `toPair`. `factoredAnchoring` shows event-relative anchoring subsumes (individual, time)-parameterized R. Worked example: (201) "Jane a dû prendre le train" — epistemic → (speaker, now), root → (Jane, then). `same_modal_different_params`, `root_restricts_more`. §13 `events_richer_than_pairs`: content licensing operates on events (hasContent), not pairs.
+
 ## [0.227.28] - 2026-02-27
 
 ### Added

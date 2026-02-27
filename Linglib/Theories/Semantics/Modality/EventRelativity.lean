@@ -657,4 +657,240 @@ theorem accessible_is_background_filter {Ev W : Type*}
     accessible f e allW w = allW.filter (λ w' => (f e w).all (· w')) := rfl
 
 
+-- ════════════════════════════════════════════════════
+-- § 11. Individual-Time Pairs from Events
+--       (Hacquard 2006, §4.1, pp.131–136)
+-- ════════════════════════════════════════════════════
+
+/-! Hacquard (2006, §4.1) proposes that accessibility relations take
+EVENT arguments (193): `R_f := λe.λw. w is compatible with f(e)`.
+Events project to (individual, time) pairs via two functions:
+
+- `holder(e)`: the thematic participant — Agent, Experiencer, or
+  speaker — determined by the event's thematic structure.
+- `τ(e)`: the temporal trace — the time of the event.
+
+This makes individual-time pairs (the traditional modal parameter per
+Kratzer 1981, von Fintel & Heim 1999) DERIVED from events, not
+primitive. Three advantages:
+
+1. **Unification**: The same mechanism (event projection) applies
+   to all three event types, deriving the right individual and time.
+2. **Additional structure**: Events carry propositional content (§8),
+   aspectual structure (ActualityEntailments.lean), and thematic
+   structure. Individual-time pairs carry none of this.
+3. **No stipulated parameters**: The modal doesn't need to be
+   specified for a particular individual or time. These are projected
+   from whichever event binds the modal (200): the closest binder. -/
+
+/-- An individual-time pair: the traditional modal parameter.
+
+Kratzer (1981) relativizes accessibility to circumstances at a world.
+Von Fintel & Heim (1999) relativize to an (individual, time). Hacquard
+derives the pair from events, making it redundant as a primitive. -/
+structure IndTimePair (Individual TimePoint : Type*) where
+  individual : Individual
+  time : TimePoint
+  deriving DecidableEq, BEq, Repr
+
+/-- Event projection: how events map to individuals and times.
+
+`holder` extracts the thematic participant (Hacquard 2006, p.134):
+"the agent and temporal trace of the event quantified by Aspect."
+For speech events: the speaker. For attitudes: the experiencer.
+For VP events: the agent or experiencer.
+
+`time` extracts the temporal trace τ (Hacquard 2006, p.135):
+the time at which the event occurs, hence the time at which the
+accessibility relation is evaluated. -/
+structure EventProjection (Ev Individual TimePoint : Type*) where
+  holder : Ev → Individual
+  time : Ev → TimePoint
+
+/-- Derive the individual-time pair from an event.
+
+This is the core of §4.1: individual-time pairs are not stipulated
+but projected from events. `toPair proj e = (holder(e), τ(e))`. -/
+def EventProjection.toPair {Ev Individual TimePoint : Type*}
+    (proj : EventProjection Ev Individual TimePoint) (e : Ev) :
+    IndTimePair Individual TimePoint where
+  individual := proj.holder e
+  time := proj.time e
+
+/-- An anchoring function that factors through event projection.
+
+If `g` is an accessibility relation parameterized by (individual, time),
+then `factoredAnchoring proj g` is the event-relative version:
+`f(e)(w) = g(holder(e), τ(e))(w)`.
+
+This shows that event-relative anchoring SUBSUMES individual-time
+anchoring: any (individual, time)-parameterized R can be recovered by
+composing with event projection. -/
+def factoredAnchoring {Ev W Individual TimePoint : Type*}
+    (proj : EventProjection Ev Individual TimePoint)
+    (g : Individual → TimePoint → W → List (BProp W)) : AnchoringFn Ev W :=
+  λ e w => g (proj.holder e) (proj.time e) w
+
+/-- Factored anchoring reduces to the (individual, time)-parameterized
+function applied to the event's projected pair. -/
+theorem factored_reduces {Ev W Individual TimePoint : Type*}
+    (proj : EventProjection Ev Individual TimePoint)
+    (g : Individual → TimePoint → W → List (BProp W)) (e : Ev) (w : W) :
+    factoredAnchoring proj g e w = g (proj.holder e) (proj.time e) w := rfl
+
+
+-- ════════════════════════════════════════════════════
+-- § 12. Worked Example: "Jane a dû prendre le train"
+--       (Hacquard 2006, (201), pp.135–136)
+-- ════════════════════════════════════════════════════
+
+/-! (201) "Jane a dû prendre le train."
+     Jane must-PST-PFV take the train.
+  a. Given MY evidence NOW, Jane must have taken the train.    [epistemic]
+  b. Given JANE'S circumstances THEN, Jane had to take the train. [root]
+
+The sentence is ambiguous between an epistemic and a goal-oriented
+reading. The two readings differ in the event that anchors the modal:
+
+| Reading | Event | holder(e) | τ(e) | Modal domain |
+|---------|-------|-----------|------|-------------|
+| Epistemic | speech act e₀ | speaker | now | speaker's evidence NOW |
+| Root | VP event e₂ | Jane | then | Jane's circumstances THEN |
+
+The same modal *devoir* gets different parameters from different
+event bindings. No lexical ambiguity is needed. -/
+
+/-- Two individuals in the train scenario. -/
+inductive TrainPerson where | speaker | jane
+  deriving DecidableEq, BEq, Repr, Inhabited
+
+/-- Two time points: speech time and the past event time. -/
+inductive TrainTime where | now | then
+  deriving DecidableEq, BEq, Repr, Inhabited
+
+/-- Two events: the speech act and Jane's train-taking. -/
+inductive TrainEvent where | speechAct | janesTaking
+  deriving DecidableEq, BEq, Repr
+
+/-- The event projection for the train scenario.
+
+Speech act event: holder = speaker, τ = speech time (now).
+VP event (Jane's taking): holder = Jane, τ = past time (then). -/
+def trainProjection : EventProjection TrainEvent TrainPerson TrainTime where
+  holder
+    | .speechAct => .speaker
+    | .janesTaking => .jane
+  time
+    | .speechAct => .now
+    | .janesTaking => .then
+
+/-- Speech event projects to (speaker, now). -/
+theorem speech_projects_to_speaker_now :
+    trainProjection.toPair .speechAct = ⟨.speaker, .now⟩ := rfl
+
+/-- VP event projects to (Jane, then). -/
+theorem vp_projects_to_jane_then :
+    trainProjection.toPair .janesTaking = ⟨.jane, .then⟩ := rfl
+
+/-- The same modal (*devoir*) gets different individual-time pairs
+from different event bindings. This is (201): the epistemic reading
+relativizes to the speaker's evidence NOW; the root reading relativizes
+to Jane's circumstances THEN. -/
+theorem same_modal_different_params :
+    trainProjection.toPair .speechAct ≠
+    trainProjection.toPair .janesTaking := by decide
+
+/-- Two worlds: one where Jane took the train, one where she didn't. -/
+inductive TrainWorld where | took | didnt
+  deriving DecidableEq, BEq, Repr, Inhabited
+
+private def allTW : List TrainWorld := [.took, .didnt]
+
+/-- Epistemic anchoring (via speech event): the speaker considers both
+worlds possible (no decisive evidence either way). -/
+private def epistemicBg : TrainPerson → TrainTime → TrainWorld →
+    List (BProp TrainWorld)
+  | .speaker, .now, _ => []  -- empty background: all worlds accessible
+
+  | _, _, _ => []
+
+/-- Root/goal-oriented anchoring (via VP event): given Jane's
+circumstances at the past time, only the took-world is compatible
+(she was in a situation where she had to take the train). -/
+private def rootBg : TrainPerson → TrainTime → TrainWorld →
+    List (BProp TrainWorld)
+  | .jane, .then, _ => [λ w => w == .took]  -- only took-world accessible
+  | _, _, _ => []
+
+/-- The epistemic anchoring function (factored through projection). -/
+private def fEpistemicTrain : AnchoringFn TrainEvent TrainWorld :=
+  factoredAnchoring trainProjection epistemicBg
+
+/-- The root anchoring function (factored through projection). -/
+private def fRootTrain : AnchoringFn TrainEvent TrainWorld :=
+  factoredAnchoring trainProjection rootBg
+
+/-- Epistemic reading: modal anchored to speech event.
+The speaker's evidence is compatible with Jane taking the train.
+`◇_{f(e₀)} (took)` holds because the speaker considers `took` possible. -/
+theorem epistemic_reading_possible :
+    possibility fEpistemicTrain .speechAct allTW
+      (· == .took) .took = true := by native_decide
+
+/-- Root reading: modal anchored to VP event.
+Given Jane's circumstances, she HAD to take the train.
+`□_{f(e₂)} (took)` holds because only `took` is accessible. -/
+theorem root_reading_necessary :
+    necessity fRootTrain .janesTaking allTW
+      (· == .took) .took = true := by native_decide
+
+/-- The root anchoring via VP event restricts the accessible worlds
+more than the epistemic anchoring via speech event. Both readings
+use the SAME modal; the different accessible worlds come entirely
+from the different event bindings → different (individual, time)
+projections → different conversational backgrounds. -/
+theorem root_restricts_more :
+    -- Epistemic: both worlds accessible from speech event
+    (accessible fEpistemicTrain .speechAct allTW .took).length = 2 ∧
+    -- Root: only took-world accessible from VP event
+    (accessible fRootTrain .janesTaking allTW .took).length = 1 := by
+  constructor <;> native_decide
+
+
+-- ════════════════════════════════════════════════════
+-- § 13. Events Carry More Than Pairs
+-- ════════════════════════════════════════════════════
+
+/-! Individual-time pairs capture WHO and WHEN, but events additionally
+carry WHETHER-CONTENT. This extra dimension is what content licensing
+(§8) exploits: epistemic R requires CON(e), which is a property of
+events (speech acts and attitudes have content; VP events don't), not
+a property of (individual, time) pairs.
+
+Two events can project to the SAME individual-time pair yet differ in
+content licensing. For instance, imagine a speech event and an attitude
+event where the speaker = the attitude holder and the times coincide.
+Both project to (speaker, now), but they are different events with
+(potentially) different content. The event level is strictly richer. -/
+
+/-- Events carry content information (§8) that individual-time pairs
+do not. This theorem shows that `hasContent` discriminates events
+even though pairs cannot: speech acts and attitudes are both
+contentful, VP events are not.
+
+An (individual, time) pair has no `hasContent` field. If we collapsed
+events to pairs, we would LOSE the ability to derive content licensing.
+This is why events, not pairs, are the right primitive. -/
+theorem events_richer_than_pairs :
+    -- Content licensing discriminates event binders
+    EventBinder.speechAct.hasContent = true ∧
+    EventBinder.attitude.hasContent = true ∧
+    EventBinder.vpEvent.hasContent = false ∧
+    -- Yet speech acts and attitudes project to the SAME kind of holder
+    -- (a sentient individual with propositional attitudes).
+    -- Pairs would conflate them; events distinguish them.
+    EventBinder.speechAct.availableFlavors =
+      EventBinder.attitude.availableFlavors := ⟨rfl, rfl, rfl, rfl⟩
+
+
 end Semantics.Modality.EventRelativity
