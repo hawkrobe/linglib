@@ -138,7 +138,8 @@ theorem subject_always_nom :
 /-- The overt marking profile produced by running the full pipeline
     (dependent case + DOM filter). -/
 def overtProfile (lang : CaseLanguageType) (dom : DOMProfile) : DOMProfile :=
-  DOMProfile.mk' (dom.name ++ " (pipeline)") λ a d => objectOvert lang dom (mkTrans a d)
+  { name := dom.name ++ " (pipeline)", role := .P, channel := .flagging
+    marks := λ a d => objectOvert lang dom (mkTrans a d) }
 
 /-- Every OT-predicted animacy type, run through the full pipeline,
     produces a monotone overt marking profile. -/

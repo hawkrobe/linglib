@@ -46,11 +46,12 @@ open Fragments.Kaqchikel
 -- § 1: DOM ↔ DifferentialMarkingProfile Structural Isomorphism
 -- ============================================================================
 
-/-! Since `DOMProfile` is now an abbreviation for `DifferentialMarkingProfile`
-    (specialized to role P + channel flagging), the isomorphism between DOM
-    and DMP is definitional — no conversion or bridge theorems needed.
-    The monotonicity universal `dom_monotonicity_universal` in Typology.lean
-    directly proves that all DOM profiles are monotone as DMPs. -/
+/-! `DOMProfile` is an abbreviation for `DifferentialMarkingProfile`
+    (specialized to role P + channel flagging), and `IndexingFragment`
+    extends `DifferentialMarkingProfile` (with channel = `.indexing`).
+    Both DOM profiles and indexing fragments inherit all DMP infrastructure
+    (monotonicity, dimensionality, cutoff constructors, mirror image)
+    directly — no conversion or bridge theorems needed. -/
 
 -- ============================================================================
 -- § 2: PersonGeometry ↔ IndexingPersonLevel Connection

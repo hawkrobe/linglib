@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.227.12] - 2026-02-27
+
+### Changed
+- **IndexingFragment extends DifferentialMarkingProfile**: `IndexingFragment` now inherits from `DifferentialMarkingProfile` via `extends`, giving automatic coercion and dot notation for all DMP infrastructure (monotonicity, dimensionality, cutoffs). Smart constructor `mk'` computes the 2D `marks` predicate from per-dimension predicates. Deleted `toDMP`, standalone `*DMP` definitions, and `DOMProfile.mk'`/`animacyCutoff`/`definitenessCutoff` wrapper constructors. All 24 indexing fragments and 8 DOM profiles rewritten to use Core constructors directly.
+
 ## [0.227.11] - 2026-02-27
 
 ### Added

@@ -851,27 +851,6 @@ marking framework. Monotonicity (`isMonotone`), `isAnimacyOnly`, and
 `isDefinitenessOnly` are all inherited from `DifferentialMarkingProfile`. -/
 abbrev DOMProfile := DifferentialMarkingProfile
 
-/-- Convenience constructor for DOMProfiles (P + flagging). -/
-def DOMProfile.mk' (name : String) (marks : AnimacyLevel → DefinitenessLevel → Bool)
-    : DOMProfile :=
-  { name, role := .P, channel := .flagging, marks }
-
--- ============================================================================
--- Cutoff Constructors for One-Dimensional DOM
--- ============================================================================
-
-/-- Construct a one-dimensional animacy-based DOM profile: objects at or
-above the cutoff animacy level are marked, regardless of definiteness.
-Example: Spanish marks human objects (cutoff = .human). -/
-def DOMProfile.animacyCutoff (name : String) (cutoff : AnimacyLevel) : DOMProfile :=
-  DifferentialMarkingProfile.animacyCutoffP name .flagging cutoff
-
-/-- Construct a one-dimensional definiteness-based DOM profile: objects at
-or above the cutoff definiteness level are marked, regardless of animacy.
-Example: Turkish marks definite+ objects (cutoff = .definite). -/
-def DOMProfile.definitenessCutoff (name : String) (cutoff : DefinitenessLevel) : DOMProfile :=
-  DifferentialMarkingProfile.definitenessCutoffP name .flagging cutoff
-
 -- ============================================================================
 -- Language DOM Profiles
 -- ============================================================================
@@ -882,38 +861,38 @@ section DOMLanguages
 One-dimensional (animacy-based), cutoff between human and animate
 (Aissen 2003, §4). -/
 def spanishDOM : DOMProfile :=
-  DOMProfile.animacyCutoff "Spanish" .human
+  .animacyCutoffP "Spanish" .flagging .human
 
 /-- Russian: animate accusative (genitive form used as accusative for
 animate nouns). One-dimensional (animacy-based), cutoff between animate
 and inanimate (Aissen 2003, §4). -/
 def russianDOM : DOMProfile :=
-  DOMProfile.animacyCutoff "Russian" .animate
+  .animacyCutoffP "Russian" .flagging .animate
 
 /-- Turkish: `-(y)I` marking for definite direct objects regardless of
 animacy. One-dimensional (definiteness-based), cutoff between definite
 and indefinite specific (Aissen 2003, §4). -/
 def turkishDOM : DOMProfile :=
-  DOMProfile.definitenessCutoff "Turkish" .definite
+  .definitenessCutoffP "Turkish" .flagging .definite
 
 /-- Hebrew: `ʔet` marking for definite direct objects regardless of
 animacy. Same one-dimensional definiteness cutoff as Turkish
 (Aissen 2003, §4). -/
 def hebrewDOM : DOMProfile :=
-  DOMProfile.definitenessCutoff "Hebrew" .definite
+  .definitenessCutoffP "Hebrew" .flagging .definite
 
 /-- Persian: `-rā` marking for definite direct objects. One-dimensional
 (definiteness-based) for obligatory marking; optional extension to
 specific indefinite animates (Aissen 2003, §5). Modeled here with the
 definiteness-based obligatory core. -/
 def persianDOM : DOMProfile :=
-  DOMProfile.definitenessCutoff "Persian" .definite
+  .definitenessCutoffP "Persian" .flagging .definite
 
 /-- Catalan: `a`-marking restricted to personal pronouns. The most
 restrictive DOM pattern attested: only the highest cell on the
 definiteness scale receives marking (Aissen 2003, §4). -/
 def catalanDOM : DOMProfile :=
-  DOMProfile.definitenessCutoff "Catalan" .personalPronoun
+  .definitenessCutoffP "Catalan" .flagging .personalPronoun
 
 /-- Hindi-Urdu: `-ko` marking conditioned by BOTH animacy and definiteness.
 Two-dimensional DOM with a staircase cutoff (Aissen 2003, §5, Table 12):
@@ -924,16 +903,17 @@ Two-dimensional DOM with a staircase cutoff (Aissen 2003, §5, Table 12):
 This captures the obligatory marking core. Optional/variable marking
 extends further down the staircase at the boundary cells. -/
 def hindiDOM : DOMProfile :=
-  DOMProfile.mk' "Hindi-Urdu" λ a d =>
-    match a with
-    | .human     => d.rank ≥ DefinitenessLevel.indefiniteSpecific.rank
-    | .animate   => d.rank ≥ DefinitenessLevel.definite.rank
-    | .inanimate => false
+  { name := "Hindi-Urdu", role := .P, channel := .flagging
+    marks := λ a d =>
+      match a with
+      | .human     => d.rank ≥ DefinitenessLevel.indefiniteSpecific.rank
+      | .animate   => d.rank ≥ DefinitenessLevel.definite.rank
+      | .inanimate => false }
 
 /-- No DOM: no differential marking (either no case at all, or uniform
 case on all objects). Trivially monotone. -/
 def noDOMProfile : DOMProfile :=
-  DOMProfile.mk' "No DOM" λ _ _ => false
+  { name := "No DOM", role := .P, channel := .flagging, marks := λ _ _ => false }
 
 end DOMLanguages
 

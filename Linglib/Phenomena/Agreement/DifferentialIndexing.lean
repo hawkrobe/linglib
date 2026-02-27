@@ -86,10 +86,10 @@ theorem person_sap_gt_third : IndexingPersonLevel.sap.rank > IndexingPersonLevel
 
 /-- A differential indexing fragment for a single language (Just 2024).
 
-    Each language encodes its indexing pattern as **marking predicates** —
-    functions from prominence levels to Bool — specifying which values on
-    each scale trigger indexing. The conditioning factors are then DERIVED
-    from these predicates, not stipulated.
+    Extends `DifferentialMarkingProfile` with language metadata and
+    per-dimension marking predicates. The 2D `marks` predicate is computed
+    from `animacyIndexed` and `definitenessIndexed` by the `mk'` constructor,
+    and the channel is always `.indexing`.
 
     For P indexing: `true` at a level means "P arguments at this level
     ARE indexed." The expectation (Just §4.2) is that P indexing targets
@@ -98,21 +98,28 @@ theorem person_sap_gt_third : IndexingPersonLevel.sap.rank > IndexingPersonLevel
     For A indexing: `true` at a level means "A arguments at this level
     ARE indexed." The expectation is that A indexing targets the
     non-prominent end. -/
-structure IndexingFragment where
-  /-- Language name -/
-  name : String
+structure IndexingFragment extends DifferentialMarkingProfile where
   /-- ISO 639-3 code -/
   iso639 : String
   /-- Language family -/
   family : String
-  /-- Which argument role is differentially indexed -/
-  role : ArgumentRole
   /-- Which person levels trigger indexing -/
   personIndexed : IndexingPersonLevel → Bool
   /-- Which animacy levels trigger indexing -/
   animacyIndexed : AnimacyLevel → Bool
   /-- Which definiteness levels trigger indexing -/
   definitenessIndexed : DefinitenessLevel → Bool
+
+/-- Smart constructor for `IndexingFragment`.
+    Computes the 2D `marks` predicate as the product of
+    `animacyIndexed` and `definitenessIndexed`, and sets `channel := .indexing`. -/
+def IndexingFragment.mk' (name iso639 family : String) (role : ArgumentRole)
+    (personIndexed : IndexingPersonLevel → Bool)
+    (animacyIndexed : AnimacyLevel → Bool)
+    (definitenessIndexed : DefinitenessLevel → Bool) : IndexingFragment :=
+  { name, iso639, family, role, channel := .indexing
+    marks := λ a d => animacyIndexed a && definitenessIndexed d
+    personIndexed, animacyIndexed, definitenessIndexed }
 
 -- ============================================================================
 -- § 3: Derived Conditioning Factors
@@ -185,159 +192,127 @@ def IndexingFragment.polarityCorrect (f : IndexingFragment) : Bool :=
 section PIndexing
 
 /-- Abkhaz (NW Caucasian): P indexed only for SAP (Hewitt 1979). -/
-def abkhaz : IndexingFragment :=
-  { name := "Abkhaz", iso639 := "abk", family := "Northwest Caucasian"
-    role := .P
-    personIndexed := λ | .sap => true | .third => false
-    animacyIndexed := λ _ => true
-    definitenessIndexed := λ _ => true }
+def abkhaz : IndexingFragment := .mk'
+  "Abkhaz" "abk" "Northwest Caucasian" .P
+  (λ | .sap => true | .third => false)
+  (λ _ => true) (λ _ => true)
 
 /-- Amharic (Semitic): P indexed for SAP and definite objects (Amha 2007). -/
-def amharic : IndexingFragment :=
-  { name := "Amharic", iso639 := "amh", family := "Semitic"
-    role := .P
-    personIndexed := λ | .sap => true | .third => false
-    animacyIndexed := λ _ => true
-    definitenessIndexed := λ
-      | .personalPronoun | .properName | .definite => true
-      | .indefiniteSpecific | .nonSpecific => false }
+def amharic : IndexingFragment := .mk'
+  "Amharic" "amh" "Semitic" .P
+  (λ | .sap => true | .third => false)
+  (λ _ => true)
+  (λ | .personalPronoun | .properName | .definite => true
+     | .indefiniteSpecific | .nonSpecific => false)
 
 /-- Basque (Isolate): object agreement only for SAP objects
     (Laka 1996, Preminger 2014). -/
-def basque : IndexingFragment :=
-  { name := "Basque", iso639 := "eus", family := "Isolate"
-    role := .P
-    personIndexed := λ | .sap => true | .third => false
-    animacyIndexed := λ _ => true
-    definitenessIndexed := λ _ => true }
+def basque : IndexingFragment := .mk'
+  "Basque" "eus" "Isolate" .P
+  (λ | .sap => true | .third => false)
+  (λ _ => true) (λ _ => true)
 
 /-- Georgian (Kartvelian): P agreement conditioned by person — indirect
     objects (dative) are indexed for SAP only (Harris 1981). -/
-def georgian : IndexingFragment :=
-  { name := "Georgian", iso639 := "kat", family := "Kartvelian"
-    role := .P
-    personIndexed := λ | .sap => true | .third => false
-    animacyIndexed := λ _ => true
-    definitenessIndexed := λ _ => true }
+def georgian : IndexingFragment := .mk'
+  "Georgian" "kat" "Kartvelian" .P
+  (λ | .sap => true | .third => false)
+  (λ _ => true) (λ _ => true)
 
 /-- Hungarian (Uralic): definite conjugation triggered by definite objects;
     indefinite conjugation for indefinite objects (Coppock & Wechsler 2012).
     See also `Fragments.Hungarian.Predicates` for the conjugation split. -/
-def hungarian : IndexingFragment :=
-  { name := "Hungarian", iso639 := "hun", family := "Uralic"
-    role := .P
-    personIndexed := λ _ => true
-    animacyIndexed := λ _ => true
-    definitenessIndexed := λ
-      | .personalPronoun | .properName | .definite => true
-      | .indefiniteSpecific | .nonSpecific => false }
+def hungarian : IndexingFragment := .mk'
+  "Hungarian" "hun" "Uralic" .P
+  (λ _ => true) (λ _ => true)
+  (λ | .personalPronoun | .properName | .definite => true
+     | .indefiniteSpecific | .nonSpecific => false)
 
 /-- Kagulu (Bantu): object marker for animate+ objects (Petzell 2008). -/
-def kagulu : IndexingFragment :=
-  { name := "Kagulu", iso639 := "kki", family := "Bantu"
-    role := .P
-    personIndexed := λ _ => true
-    animacyIndexed := λ | .human | .animate => true | .inanimate => false
-    definitenessIndexed := λ _ => true }
+def kagulu : IndexingFragment := .mk'
+  "Kagulu" "kki" "Bantu" .P
+  (λ _ => true)
+  (λ | .human | .animate => true | .inanimate => false)
+  (λ _ => true)
 
 /-- KiNzadi (Bantu): P indexed for SAP only (Crane et al. 2011). -/
-def kinzadi : IndexingFragment :=
-  { name := "KiNzadi", iso639 := "nzd", family := "Bantu"
-    role := .P
-    personIndexed := λ | .sap => true | .third => false
-    animacyIndexed := λ _ => true
-    definitenessIndexed := λ _ => true }
+def kinzadi : IndexingFragment := .mk'
+  "KiNzadi" "nzd" "Bantu" .P
+  (λ | .sap => true | .third => false)
+  (λ _ => true) (λ _ => true)
 
 /-- Koorete (Omotic): P indexed for SAP only (Mendisu 2010). -/
-def koorete : IndexingFragment :=
-  { name := "Koorete", iso639 := "kqy", family := "Omotic"
-    role := .P
-    personIndexed := λ | .sap => true | .third => false
-    animacyIndexed := λ _ => true
-    definitenessIndexed := λ _ => true }
+def koorete : IndexingFragment := .mk'
+  "Koorete" "kqy" "Omotic" .P
+  (λ | .sap => true | .third => false)
+  (λ _ => true) (λ _ => true)
 
 /-- Maltese (Semitic): definite object agreement — verb agrees with definite
     objects via suffixed object markers (Just & Čéplö 2022). -/
-def maltese : IndexingFragment :=
-  { name := "Maltese", iso639 := "mlt", family := "Semitic"
-    role := .P
-    personIndexed := λ _ => true
-    animacyIndexed := λ _ => true
-    definitenessIndexed := λ
-      | .personalPronoun | .properName | .definite => true
-      | .indefiniteSpecific | .nonSpecific => false }
+def maltese : IndexingFragment := .mk'
+  "Maltese" "mlt" "Semitic" .P
+  (λ _ => true) (λ _ => true)
+  (λ | .personalPronoun | .properName | .definite => true
+     | .indefiniteSpecific | .nonSpecific => false)
 
 /-- Nkore-Kiga (Bantu): object marker for SAP objects (Taylor 1985). -/
-def nkoreKiga : IndexingFragment :=
-  { name := "Nkore-Kiga", iso639 := "nyn", family := "Bantu"
-    role := .P
-    personIndexed := λ | .sap => true | .third => false
-    animacyIndexed := λ _ => true
-    definitenessIndexed := λ _ => true }
+def nkoreKiga : IndexingFragment := .mk'
+  "Nkore-Kiga" "nyn" "Bantu" .P
+  (λ | .sap => true | .third => false)
+  (λ _ => true) (λ _ => true)
 
 /-- Romanian (Romance): clitic doubling conditioned by person, animacy, and
     definiteness (Cojocaru 2004). SAP + human + definite = doubled. -/
-def romanian : IndexingFragment :=
-  { name := "Romanian", iso639 := "ron", family := "Romance"
-    role := .P
-    personIndexed := λ | .sap => true | .third => false
-    animacyIndexed := λ | .human => true | .animate | .inanimate => false
-    definitenessIndexed := λ
-      | .personalPronoun | .properName | .definite => true
-      | .indefiniteSpecific | .nonSpecific => false }
+def romanian : IndexingFragment := .mk'
+  "Romanian" "ron" "Romance" .P
+  (λ | .sap => true | .third => false)
+  (λ | .human => true | .animate | .inanimate => false)
+  (λ | .personalPronoun | .properName | .definite => true
+     | .indefiniteSpecific | .nonSpecific => false)
 
 /-- Somali (Cushitic): P indexed for SAP — full paradigm for SAP objects,
     reduced for 3rd person (Saeed 1984). Focus/topicality also plays a role
     but is not captured in the prominence grid. -/
-def somali : IndexingFragment :=
-  { name := "Somali", iso639 := "som", family := "Cushitic"
-    role := .P
-    personIndexed := λ | .sap => true | .third => false
-    animacyIndexed := λ _ => true
-    definitenessIndexed := λ _ => true }
+def somali : IndexingFragment := .mk'
+  "Somali" "som" "Cushitic" .P
+  (λ | .sap => true | .third => false)
+  (λ _ => true) (λ _ => true)
 
 /-- Swahili (Bantu): object marker obligatory for human objects, optional/
     absent for non-human (Morimoto 2000, Riedel 2009). -/
-def swahili : IndexingFragment :=
-  { name := "Swahili", iso639 := "swh", family := "Bantu"
-    role := .P
-    personIndexed := λ _ => true
-    animacyIndexed := λ | .human => true | .animate | .inanimate => false
-    definitenessIndexed := λ _ => true }
+def swahili : IndexingFragment := .mk'
+  "Swahili" "swh" "Bantu" .P
+  (λ _ => true)
+  (λ | .human => true | .animate | .inanimate => false)
+  (λ _ => true)
 
 /-- Teiwa (Trans-New Guinea): P indexed for animate objects (Klamer 2010). -/
-def teiwa : IndexingFragment :=
-  { name := "Teiwa", iso639 := "twe", family := "Trans-New Guinea"
-    role := .P
-    personIndexed := λ _ => true
-    animacyIndexed := λ | .human | .animate => true | .inanimate => false
-    definitenessIndexed := λ _ => true }
+def teiwa : IndexingFragment := .mk'
+  "Teiwa" "twe" "Trans-New Guinea" .P
+  (λ _ => true)
+  (λ | .human | .animate => true | .inanimate => false)
+  (λ _ => true)
 
 /-- Welsh (Celtic): synthetic agreement only with pronominal (SAP) objects;
     analytic (no agreement) with 3rd person full NPs (Borsley et al. 2007). -/
-def welsh : IndexingFragment :=
-  { name := "Welsh", iso639 := "cym", family := "Celtic"
-    role := .P
-    personIndexed := λ | .sap => true | .third => false
-    animacyIndexed := λ _ => true
-    definitenessIndexed := λ _ => true }
+def welsh : IndexingFragment := .mk'
+  "Welsh" "cym" "Celtic" .P
+  (λ | .sap => true | .third => false)
+  (λ _ => true) (λ _ => true)
 
 /-- Zulu (Bantu): object marker for animate objects (Buell 2005). -/
-def zulu : IndexingFragment :=
-  { name := "Zulu", iso639 := "zul", family := "Bantu"
-    role := .P
-    personIndexed := λ _ => true
-    animacyIndexed := λ | .human | .animate => true | .inanimate => false
-    definitenessIndexed := λ _ => true }
+def zulu : IndexingFragment := .mk'
+  "Zulu" "zul" "Bantu" .P
+  (λ _ => true)
+  (λ | .human | .animate => true | .inanimate => false)
+  (λ _ => true)
 
 /-- Spoken Arabic varieties (Semitic): P indexed for SAP only —
     object suffixes restricted to pronominal objects (Just 2024). -/
-def spokenArabic : IndexingFragment :=
-  { name := "Spoken Arabic", iso639 := "arb", family := "Semitic"
-    role := .P
-    personIndexed := λ | .sap => true | .third => false
-    animacyIndexed := λ _ => true
-    definitenessIndexed := λ _ => true }
+def spokenArabic : IndexingFragment := .mk'
+  "Spoken Arabic" "arb" "Semitic" .P
+  (λ | .sap => true | .third => false)
+  (λ _ => true) (λ _ => true)
 
 end PIndexing
 
@@ -355,65 +330,51 @@ section AIndexing
 
 /-- Jamsay (Dogon): A indexed only for 3rd person agents — SAP agents are
     not cross-referenced on the verb (Heath 2008). -/
-def jamsay : IndexingFragment :=
-  { name := "Jamsay", iso639 := "djm", family := "Dogon"
-    role := .A
-    personIndexed := λ | .sap => false | .third => true
-    animacyIndexed := λ _ => true
-    definitenessIndexed := λ _ => true }
+def jamsay : IndexingFragment := .mk'
+  "Jamsay" "djm" "Dogon" .A
+  (λ | .sap => false | .third => true)
+  (λ _ => true) (λ _ => true)
 
 /-- Kharia (Munda): A indexed for 3rd person agents (Peterson 2011). -/
-def kharia : IndexingFragment :=
-  { name := "Kharia", iso639 := "khr", family := "Austroasiatic (Munda)"
-    role := .A
-    personIndexed := λ | .sap => false | .third => true
-    animacyIndexed := λ _ => true
-    definitenessIndexed := λ _ => true }
+def kharia : IndexingFragment := .mk'
+  "Kharia" "khr" "Austroasiatic (Munda)" .A
+  (λ | .sap => false | .third => true)
+  (λ _ => true) (λ _ => true)
 
 /-- Mundari (Munda): A indexed for 3rd person agents (Osada 2008). -/
-def mundari : IndexingFragment :=
-  { name := "Mundari", iso639 := "unr", family := "Austroasiatic (Munda)"
-    role := .A
-    personIndexed := λ | .sap => false | .third => true
-    animacyIndexed := λ _ => true
-    definitenessIndexed := λ _ => true }
+def mundari : IndexingFragment := .mk'
+  "Mundari" "unr" "Austroasiatic (Munda)" .A
+  (λ | .sap => false | .third => true)
+  (λ _ => true) (λ _ => true)
 
 /-- Juang (Munda): A indexed for 3rd person agents (Patnaik 2008). -/
-def juang : IndexingFragment :=
-  { name := "Juang", iso639 := "jun", family := "Austroasiatic (Munda)"
-    role := .A
-    personIndexed := λ | .sap => false | .third => true
-    animacyIndexed := λ _ => true
-    definitenessIndexed := λ _ => true }
+def juang : IndexingFragment := .mk'
+  "Juang" "jun" "Austroasiatic (Munda)" .A
+  (λ | .sap => false | .third => true)
+  (λ _ => true) (λ _ => true)
 
 /-- Anywa (Nilotic): A indexed for 3rd person agents only — SAP agents
     are not cross-referenced (Reh 1996). -/
-def anywa : IndexingFragment :=
-  { name := "Anywa", iso639 := "anu", family := "Nilotic"
-    role := .A
-    personIndexed := λ | .sap => false | .third => true
-    animacyIndexed := λ _ => true
-    definitenessIndexed := λ _ => true }
+def anywa : IndexingFragment := .mk'
+  "Anywa" "anu" "Nilotic" .A
+  (λ | .sap => false | .third => true)
+  (λ _ => true) (λ _ => true)
 
 /-- Reyesano (Tacanan): A indexed for 3rd person and non-human agents
     (Guillaume 2009). -/
-def reyesano : IndexingFragment :=
-  { name := "Reyesano", iso639 := "rey", family := "Tacanan"
-    role := .A
-    personIndexed := λ | .sap => false | .third => true
-    animacyIndexed := λ | .human => false | .animate | .inanimate => true
-    definitenessIndexed := λ _ => true }
+def reyesano : IndexingFragment := .mk'
+  "Reyesano" "rey" "Tacanan" .A
+  (λ | .sap => false | .third => true)
+  (λ | .human => false | .animate | .inanimate => true)
+  (λ _ => true)
 
 /-- Eastern Mansi (Uralic): A indexed for indefinite/non-topical agents
     (Virtanen 2014, 2015). -/
-def easternMansi : IndexingFragment :=
-  { name := "Eastern Mansi", iso639 := "mns", family := "Uralic"
-    role := .A
-    personIndexed := λ _ => true
-    animacyIndexed := λ _ => true
-    definitenessIndexed := λ
-      | .personalPronoun | .properName | .definite => false
-      | .indefiniteSpecific | .nonSpecific => true }
+def easternMansi : IndexingFragment := .mk'
+  "Eastern Mansi" "mns" "Uralic" .A
+  (λ _ => true) (λ _ => true)
+  (λ | .personalPronoun | .properName | .definite => false
+     | .indefiniteSpecific | .nonSpecific => true)
 
 end AIndexing
 
@@ -551,51 +512,31 @@ theorem mirror_image_universal :
     allIndexingLanguages.all (·.polarityCorrect) = true := by native_decide
 
 -- ============================================================================
--- § 13: DifferentialMarkingProfile Instances (Animacy × Definiteness Grid)
+-- § 13: Monotonicity on the Animacy × Definiteness Grid
 -- ============================================================================
 
 /-! For languages where animacy and/or definiteness condition indexing,
-    we construct `DifferentialMarkingProfile` instances on the 2D grid
-    and verify monotonicity. These are derived from the fragment's marking
-    predicates — no separate stipulation. -/
-
-/-- Construct a DifferentialMarkingProfile from a fragment's animacy and
-    definiteness predicates. -/
-def IndexingFragment.toDMP (f : IndexingFragment) : DifferentialMarkingProfile :=
-  { name := f.name
-    role := f.role
-    channel := .indexing
-    marks := λ a d => f.animacyIndexed a && f.definitenessIndexed d }
-
-/-- Hungarian P indexing profile (derived from fragment). -/
-def hungarianDMP : DifferentialMarkingProfile := hungarian.toDMP
-
-/-- Swahili P indexing profile (derived from fragment). -/
-def swahiliDMP : DifferentialMarkingProfile := swahili.toDMP
-
-/-- Kagulu P indexing profile (derived from fragment). -/
-def kaguluDMP : DifferentialMarkingProfile := kagulu.toDMP
-
-/-- Eastern Mansi A indexing profile (derived from fragment). -/
-def easternMansiDMP : DifferentialMarkingProfile := easternMansi.toDMP
+    we verify monotonicity of the inherited `DifferentialMarkingProfile`
+    on the 2D grid. The `marks` predicate is derived from the fragment's
+    `animacyIndexed` and `definitenessIndexed` — no separate stipulation. -/
 
 /-- All animacy/definiteness-conditioned profiles are monotone. -/
-theorem hungarian_monotone : hungarianDMP.isMonotone = true := by native_decide
-theorem swahili_monotone : swahiliDMP.isMonotone = true := by native_decide
-theorem kagulu_monotone : kaguluDMP.isMonotone = true := by native_decide
-theorem easternMansi_monotone : easternMansiDMP.isMonotone = true := by native_decide
+theorem hungarian_monotone : hungarian.isMonotone = true := by native_decide
+theorem swahili_monotone : swahili.isMonotone = true := by native_decide
+theorem kagulu_monotone : kagulu.isMonotone = true := by native_decide
+theorem easternMansi_monotone : easternMansi.isMonotone = true := by native_decide
 
 /-- Swahili P indexing depends only on animacy (definiteness is irrelevant). -/
-theorem swahili_animacy_only : swahiliDMP.isAnimacyOnly = true := by native_decide
+theorem swahili_animacy_only : swahili.isAnimacyOnly = true := by native_decide
 
 /-- Kagulu P indexing depends only on animacy. -/
-theorem kagulu_animacy_only : kaguluDMP.isAnimacyOnly = true := by native_decide
+theorem kagulu_animacy_only : kagulu.isAnimacyOnly = true := by native_decide
 
 /-- Hungarian P indexing depends only on definiteness (animacy is irrelevant). -/
-theorem hungarian_definiteness_only : hungarianDMP.isDefinitenessOnly = true := by native_decide
+theorem hungarian_definiteness_only : hungarian.isDefinitenessOnly = true := by native_decide
 
 /-- Eastern Mansi A indexing depends only on definiteness. -/
-theorem easternMansi_definiteness_only : easternMansiDMP.isDefinitenessOnly = true := by native_decide
+theorem easternMansi_definiteness_only : easternMansi.isDefinitenessOnly = true := by native_decide
 
 -- ============================================================================
 -- § 14: Family Clustering (Just 2024, §2.2, §3.1)

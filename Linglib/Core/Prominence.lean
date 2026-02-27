@@ -279,8 +279,8 @@ def isDefaultZone (role : ArgumentRole) (a : AnimacyLevel) (d : DefinitenessLeve
     grid receive overt differential marking for a given argument role and
     channel.
 
-    This generalizes Aissen's (2003) `DOMProfile` (= P + flagging) to all
-    four combinations: P flagging, A flagging, P indexing, A indexing. -/
+    Covers all four combinations of role × channel: P flagging, A flagging,
+    P indexing, A indexing. -/
 structure DifferentialMarkingProfile where
   /-- Language name -/
   name : String
