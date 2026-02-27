@@ -58,6 +58,8 @@ def yalnhej : ModalIndefiniteEntry where
   flavors := [.epistemic, .circumstantial]  -- RC ⊂ circumstantial
   upperBounded := false
   positionSensitive := true
+  hasUnremarkableReading := false
+  canBePredicate := false
   source := "Alonso-Ovalle & Royer 2024"
 
 /-- Chuj *komon*: at-issue random-choice modifier for mass/plural
@@ -69,6 +71,8 @@ def komon : ModalIndefiniteEntry where
   status := .atIssue
   flavors := [.circumstantial]
   upperBounded := false
+  hasUnremarkableReading := true
+  canBePredicate := true
   source := "Alonso-Ovalle & Royer 2021"
 
 
@@ -85,6 +89,8 @@ def algún : ModalIndefiniteEntry where
   status := .notAtIssue
   flavors := [.epistemic]
   upperBounded := true
+  hasUnremarkableReading := false
+  canBePredicate := false
   source := "Alonso-Ovalle & Menéndez-Benito 2010"
 
 
@@ -102,6 +108,8 @@ def irgendein : ModalIndefiniteEntry where
   status := .notAtIssue
   flavors := [.epistemic, .circumstantial]
   upperBounded := false
+  hasUnremarkableReading := true
+  canBePredicate := true
   source := "Kratzer & Shimoyama 2002"
 
 
@@ -118,6 +126,8 @@ def unoCualquiera : ModalIndefiniteEntry where
   status := .atIssue
   flavors := [.circumstantial]
   upperBounded := true
+  hasUnremarkableReading := true
+  canBePredicate := true
   source := "Alonso-Ovalle & Menéndez-Benito 2018"
 
 
@@ -137,6 +147,8 @@ def nimporteQuel : ModalIndefiniteEntry where
   status := .atIssue
   flavors := [.circumstantial]
   upperBounded := false
+  hasUnremarkableReading := false
+  canBePredicate := false
   source := "Jayez & Tovena 2006"
 
 
@@ -156,6 +168,8 @@ def unQualsiasi : ModalIndefiniteEntry where
   status := .atIssue
   flavors := [.circumstantial]
   upperBounded := false
+  hasUnremarkableReading := false
+  canBePredicate := false
   source := "Chierchia 2013"
 
 
@@ -392,6 +406,251 @@ theorem ex34_nonvol_epistemic_only :
 theorem examples_match_position_prediction :
     allExamples.all (λ ex => ex.availableFlavors == yalnhejFlavorsAt ex.position)
     = true := by native_decide
+
+
+-- ════════════════════════════════════════════════════
+-- § 12. Non-Maximality Data (A-O&R 2024, §3.2.4)
+-- ════════════════════════════════════════════════════
+
+/-! Yalnhej is compatible with partial-domain scenarios, unlike
+maximal free relatives (English *whatever*). A *whatever*-FR
+requires every domain member to satisfy the scope; yalnhej
+does not. This is distinct from upper-boundedness: UB blocks
+∀P→Q (anti-singleton), whereas non-maximality merely allows
+¬∀P→Q without requiring it. -/
+
+/-- A maximality datum: a context + Chuj sentence + felicity judgment. -/
+structure MaximalityDatum where
+  /-- Context description -/
+  context : String
+  /-- Chuj sentence -/
+  chuj : String
+  /-- English gloss -/
+  gloss : String
+  /-- Whether yalnhej is felicitous in this context -/
+  yalnhejFelicitous : Bool
+  /-- Example number in A-O&R (2024) -/
+  exampleNumber : String
+  deriving Repr
+
+/-- (43)/(44): Partial-domain, RC context.
+    Context: 10 tools on a table; speaker grabbed 3 at random.
+    *Yalnhej* is felicitous — no maximality requirement. -/
+def ex43_partialRC : MaximalityDatum where
+  context := "10 tools on a table; speaker grabbed 3 at random"
+  chuj := "Ix-w-il-a' [yalnhej tas herramienta]."
+  gloss := "I grabbed YALNHEJ what tools"
+  yalnhejFelicitous := true
+  exampleNumber := "(43)/(44)"
+
+/-- (46)/(47): Partial-domain, epistemic context.
+    Context: 10 meals available; speaker ate 5 but doesn't remember which.
+    *Yalnhej* is felicitous — compatible with not knowing, without
+    requiring all meals to have been eaten. -/
+def ex46_partialEpi : MaximalityDatum where
+  context := "10 meals available; speaker ate 5 unknown ones"
+  chuj := "Ix-w-uch'a' [yalnhej tas tek-al]."
+  gloss := "I ate YALNHEJ what dishes"
+  yalnhejFelicitous := true
+  exampleNumber := "(46)/(47)"
+
+def allMaximalityData : List MaximalityDatum :=
+  [ex43_partialRC, ex46_partialEpi]
+
+/-- Per-datum: both partial-domain examples are felicitous with yalnhej. -/
+theorem ex43_felicitous : ex43_partialRC.yalnhejFelicitous = true := rfl
+theorem ex46_felicitous : ex46_partialEpi.yalnhejFelicitous = true := rfl
+
+/-- All maximality data show yalnhej is felicitous in partial-domain
+    contexts — confirming non-maximality. -/
+theorem all_partial_domain_felicitous :
+    allMaximalityData.all (·.yalnhejFelicitous) = true := by native_decide
+
+
+-- ════════════════════════════════════════════════════
+-- § 13. Unremarkable Readings (A-O&R 2024, §5)
+-- ════════════════════════════════════════════════════
+
+/-! Some modal indefinites have "unremarkable" (plain existential)
+readings in addition to their modal readings. *Komon* and *uno
+cualquiera* can mean just "some" without modal flavor; *yalnhej*
+cannot. A-O&R (2024, §5) correlate this with predicativity:
+items that can appear in predicative position tend to have
+unremarkable readings; *yalnhej* cannot be predicative and
+correspondingly lacks unremarkable readings. -/
+
+/-- An unremarkable-reading datum: item + whether it has unremarkable readings. -/
+structure UnremarkableReadingDatum where
+  /-- Language -/
+  language : String
+  /-- Surface form -/
+  form : String
+  /-- Does the item have unremarkable (non-modal) readings? -/
+  hasUnremarkable : Bool
+  /-- Can the item appear in predicative position? -/
+  predicative : Bool
+  /-- Example number(s) in A-O&R (2024) -/
+  exampleNumber : String
+  deriving Repr
+
+/-- (99)–(102): *uno cualquiera* has unremarkable readings;
+    can be predicative. -/
+def unoCualquiera_unremarkable : UnremarkableReadingDatum where
+  language := "Spanish"
+  form := "uno cualquiera"
+  hasUnremarkable := true
+  predicative := true
+  exampleNumber := "(99)–(102)"
+
+/-- (94)/(95): *irgendein* has unremarkable readings;
+    can be predicative. -/
+def irgendein_unremarkable : UnremarkableReadingDatum where
+  language := "German"
+  form := "irgendein"
+  hasUnremarkable := true
+  predicative := true
+  exampleNumber := "(94)/(95)"
+
+/-- *komon* has unremarkable readings; can be predicative
+    (A-O&R 2024, §5). -/
+def komon_unremarkable : UnremarkableReadingDatum where
+  language := "Chuj (Mayan)"
+  form := "komon"
+  hasUnremarkable := true
+  predicative := true
+  exampleNumber := "§5"
+
+/-- (104)/(105): *yalnhej* LACKS unremarkable readings;
+    CANNOT be predicative. -/
+def yalnhej_unremarkable : UnremarkableReadingDatum where
+  language := "Chuj (Mayan)"
+  form := "yalnhej"
+  hasUnremarkable := false
+  predicative := false
+  exampleNumber := "(104)/(105)"
+
+def allUnremarkableData : List UnremarkableReadingDatum :=
+  [unoCualquiera_unremarkable, irgendein_unremarkable,
+   komon_unremarkable, yalnhej_unremarkable]
+
+-- Per-datum verification
+
+theorem yalnhej_no_unremarkable :
+    yalnhej_unremarkable.hasUnremarkable = false := rfl
+
+theorem komon_has_unremarkable :
+    komon_unremarkable.hasUnremarkable = true := rfl
+
+theorem unoCualquiera_has_unremarkable :
+    unoCualquiera_unremarkable.hasUnremarkable = true := rfl
+
+theorem irgendein_has_unremarkable_datum :
+    irgendein_unremarkable.hasUnremarkable = true := rfl
+
+/-- Predicativity correlates with unremarkable readings:
+    every datum where canBePredicate = true also has unremarkable
+    readings, and vice versa. -/
+theorem predicativity_unremarkable_correlation :
+    allUnremarkableData.all (λ d =>
+      d.predicative == d.hasUnremarkable) = true := by native_decide
+
+/-- Cross-check: the entry-level fields agree with the datum-level fields
+    for yalnhej, komon, and uno cualquiera. -/
+theorem yalnhej_entry_unremarkable_agrees :
+    yalnhej.hasUnremarkableReading = yalnhej_unremarkable.hasUnremarkable := rfl
+
+theorem komon_entry_unremarkable_agrees :
+    komon.hasUnremarkableReading = komon_unremarkable.hasUnremarkable := rfl
+
+theorem unoCualquiera_entry_unremarkable_agrees :
+    unoCualquiera.hasUnremarkableReading = unoCualquiera_unremarkable.hasUnremarkable := rfl
+
+
+-- ════════════════════════════════════════════════════
+-- § 14. Harmonic Interpretations (A-O&R 2024, §4.3)
+-- ════════════════════════════════════════════════════
+
+/-! Under an external modal (imperative, deontic, attitude verb),
+the MI's anchor can be co-indexed with the modal's event, giving
+"any X is fine" readings. The non-harmonic reading anchors the MI
+to the described event independently; the harmonic reading aligns
+the MI's domain with the external modal's domain. -/
+
+/-- The type of embedding modal for harmonic interpretation data. -/
+inductive EmbeddingModal where
+  /-- Imperative: "Grab yalnhej card!" -/
+  | imperative
+  /-- Deontic: "You should grab yalnhej card." -/
+  | deontic
+  /-- Attitude verb: "Xun thinks yalnhej person came." -/
+  | attitudeVerb
+  deriving DecidableEq, BEq, Repr
+
+/-- A harmonic interpretation datum. -/
+structure HarmonicDatum where
+  /-- Chuj sentence -/
+  chuj : String
+  /-- English gloss -/
+  gloss : String
+  /-- Which embedding modal -/
+  embedding : EmbeddingModal
+  /-- Does the harmonic reading arise? -/
+  isHarmonic : Bool
+  /-- Description of reading -/
+  reading : String
+  /-- Example number in A-O&R (2024) -/
+  exampleNumber : String
+  deriving Repr
+
+/-- (82): Imperative, non-harmonic reading.
+    "Grab a random card!" — MI anchors to the described (grabbing) event. -/
+def ex82_imperativeNonharmonic : HarmonicDatum where
+  chuj := "Il-a' [yalnhej tas baraja]!"
+  gloss := "Grab YALNHEJ what card!"
+  embedding := .imperative
+  isHarmonic := false
+  reading := "Grab a random card (described event anchor)"
+  exampleNumber := "(82)"
+
+/-- (85): Imperative, harmonic reading.
+    "Grab yalnhej card!" — MI anchor co-indexed with imperative event,
+    giving "any card is fine" / "it doesn't matter which." -/
+def ex85_imperativeHarmonic : HarmonicDatum where
+  chuj := "Il-a' [yalnhej tas baraja]!"
+  gloss := "Grab YALNHEJ what card!"
+  embedding := .imperative
+  isHarmonic := true
+  reading := "Any card is fine (imperative event anchor)"
+  exampleNumber := "(85)"
+
+/-- (90)/(91): Attitude verb, harmonic reading.
+    "Xun thinks yalnhej person came" — MI anchor co-indexed with
+    doxastic modal of 'think', giving "whoever it was" reading. -/
+def ex90_attitudeHarmonic : HarmonicDatum where
+  chuj := "S-b'oj-on waj Xun [yalnhej mach] ix-hul-i."
+  gloss := "Xun thinks YALNHEJ who came"
+  embedding := .attitudeVerb
+  isHarmonic := true
+  reading := "Xun thinks someone came, doesn't know/care who (doxastic anchor)"
+  exampleNumber := "(90)/(91)"
+
+def allHarmonicData : List HarmonicDatum :=
+  [ex82_imperativeNonharmonic, ex85_imperativeHarmonic, ex90_attitudeHarmonic]
+
+-- Per-datum verification
+
+theorem ex82_nonharmonic : ex82_imperativeNonharmonic.isHarmonic = false := rfl
+theorem ex85_harmonic : ex85_imperativeHarmonic.isHarmonic = true := rfl
+theorem ex90_harmonic : ex90_attitudeHarmonic.isHarmonic = true := rfl
+
+/-- Same surface string, two readings: (82) non-harmonic and (85) harmonic
+    share the same Chuj form but differ in anchor co-indexing. -/
+theorem imperative_ambiguity :
+    ex82_imperativeNonharmonic.chuj = ex85_imperativeHarmonic.chuj ∧
+    ex82_imperativeNonharmonic.isHarmonic ≠ ex85_imperativeHarmonic.isHarmonic := by
+  constructor
+  · rfl
+  · decide
 
 
 end Phenomena.ModalIndefinites.Data

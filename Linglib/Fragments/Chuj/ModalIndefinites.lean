@@ -50,6 +50,8 @@ def yalnhejEntry : ModalIndefiniteEntry where
   flavors := [.epistemic, .circumstantial]
   upperBounded := false
   positionSensitive := true
+  hasUnremarkableReading := false
+  canBePredicate := false
   source := "Alonso-Ovalle & Royer 2024"
 
 /-- *komon*: mass/plural modal modifier.
@@ -61,6 +63,8 @@ def komonEntry : ModalIndefiniteEntry where
   status := .atIssue
   flavors := [.circumstantial]
   upperBounded := false
+  hasUnremarkableReading := true
+  canBePredicate := true
   source := "Alonso-Ovalle & Royer 2021"
 
 

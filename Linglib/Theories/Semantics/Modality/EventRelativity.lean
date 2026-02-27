@@ -268,4 +268,134 @@ theorem yalnhej_not_upper_bounded_abc :
   · native_decide
 
 
+-- ════════════════════════════════════════════════════
+-- § 6. Non-Maximality (A-O&R 2024, §3.2.4)
+-- ════════════════════════════════════════════════════
+
+/-! Yalnhej is compatible with partial-domain scenarios: the speaker
+can felicitously use *yalnhej* even when not all P are Q. This
+distinguishes it from maximal free relatives (*whatever*), which
+require every domain member to satisfy the scope. Unlike
+upper-boundedness (which blocks ∀P→Q), non-maximality is about
+COMPATIBILITY with ¬∀P→Q — a weaker property.
+
+We demonstrate non-maximality using the existing 3-book model:
+in world `ab` (books a,b available but NOT c), the MI denotation
+still holds because every book is available in SOME accessible world,
+even though not every book is available in the actual world. -/
+
+/-- MI holds in world ab where book c is NOT available.
+    The existential component (∃x P∧Q) holds (book a is available).
+    The modal component (∀y P→◇Q) holds (each book is available
+    in some accessible world). Crucially, ¬∀y P→Q(y)(ab): book c
+    is not available in ab. This shows yalnhej is compatible with
+    not-all-P-being-Q — non-maximality. -/
+theorem yalnhej_nonmaximal_ab :
+    modalIndefiniteSat fEPI .speech allBW allBooks isBook isAvailable .ab = true := by
+  native_decide
+
+/-- Three-way contrast: maximality vs yalnhej vs *algún*.
+    In world abc (all books available): MI holds + UB fails.
+    In world ab (not all available): MI holds + UB holds.
+    A maximal item (*whatever*) would require all books available
+    (fail in ab). *Algún* (UB) would require not-all (fail in abc).
+    *Yalnhej* (non-UB) succeeds in BOTH. -/
+theorem yalnhej_three_way_contrast :
+    -- yalnhej OK in abc (all available)
+    modalIndefiniteSat fEPI .speech allBW allBooks isBook isAvailable .abc = true ∧
+    -- yalnhej OK in ab (not all available) — non-maximal
+    modalIndefiniteSat fEPI .speech allBW allBooks isBook isAvailable .ab = true ∧
+    -- UB fails in abc (all satisfy scope → anti-singleton violated)
+    upperBoundedSat fEPI .speech allBW allBooks isBook isAvailable .abc = false := by
+  refine ⟨?_, ?_, ?_⟩ <;> native_decide
+
+
+-- ════════════════════════════════════════════════════
+-- § 7. Harmonic Interpretations (A-O&R 2024, §4.3)
+-- ════════════════════════════════════════════════════
+
+/-! When a modal indefinite occurs under an external modal (imperative,
+deontic, attitude verb), the MI's anchoring event can be CO-INDEXED
+with the external modal's event. This "harmonic" configuration
+gives "any X is fine" readings — the MI's modal domain aligns with
+the embedding modal's domain.
+
+Non-harmonic: the MI's anchor is independent of the external modal.
+  "Grab yalnhej card" = grab a random card (MI anchors to described event).
+Harmonic: the MI's anchor is co-indexed with the imperative/deontic event.
+  "Grab yalnhej card" = any card is fine (MI anchors to imperative event).
+
+We model this with a card-grabbing scenario: three cards, worlds varying
+in which cards are grabbable, and two event types (local vs imperative). -/
+
+/-- Three cards for testing harmonic readings. -/
+inductive Card where | c1 | c2 | c3
+  deriving DecidableEq, BEq, Repr, Inhabited
+
+/-- Three worlds varying in which cards are grabbable. -/
+inductive CardWorld where
+  | all    -- all three grabbable
+  | only1  -- only c1 grabbable
+  | only2  -- only c2 grabbable
+  deriving DecidableEq, BEq, Repr, Inhabited
+
+private def allCards : List Card := [.c1, .c2, .c3]
+private def allCW : List CardWorld := [.all, .only1, .only2]
+
+/-- "is a card": always true in our domain. -/
+private def isCard : Card → CardWorld → Bool := λ _ _ => true
+
+/-- "can grab": which cards are grabbable in which worlds. -/
+private def canGrab : Card → CardWorld → Bool
+  | .c1, .all   => true
+  | .c1, .only1 => true
+  | .c1, .only2 => false
+  | .c2, .all   => true
+  | .c2, .only1 => false
+  | .c2, .only2 => true
+  | .c3, .all   => true
+  | .c3, .only1 => false
+  | .c3, .only2 => false
+
+/-- Three event types: speech, local (described), imperative. -/
+inductive GrabEvent where | speech | local | imperative
+  deriving DecidableEq, BEq, Repr
+
+/-- Anchoring function for the card scenario.
+    - Speech event: empty background (all worlds accessible).
+    - Local event: restricts to worlds where local circumstances hold
+      (only world `only1` — current situation has only c1 available).
+    - Imperative event: all worlds accessible (any card COULD be
+      grabbed if permitted). -/
+private def fGrab : AnchoringFn GrabEvent CardWorld
+  | .speech, _ => []  -- all worlds accessible
+  | .local, _ => [λ w => w == .only1]  -- only `only1` accessible
+  | .imperative, _ => []  -- all worlds accessible (permission domain)
+
+/-- Non-harmonic MI fails: when the MI anchors to the local event,
+    only world `only1` is accessible. In `only1`, only c1 is grabbable.
+    The modal component ∀y[card(y) → ◇_{local}(grab(y))] fails because
+    c2 and c3 are not grabbable in any locally accessible world. -/
+theorem nonharmonic_fails :
+    modalIndefiniteSat fGrab .local allCW allCards isCard canGrab .only1 = false := by
+  native_decide
+
+/-- Harmonic MI succeeds: when the MI's anchor is co-indexed with the
+    imperative event, all worlds are accessible. Every card is grabbable
+    in some world (c1 in `only1`, c2 in `only2`, c3 in `all`). The
+    modal component ∀y[card(y) → ◇_{imperative}(grab(y))] holds.
+    This gives the "any card is fine" reading. -/
+theorem harmonic_succeeds :
+    modalIndefiniteSat fGrab .imperative allCW allCards isCard canGrab .only1 = true := by
+  native_decide
+
+/-- Harmonic ≠ non-harmonic: the two readings are formally distinct.
+    Same world of evaluation (.only1), same domain, same predicates —
+    only the anchoring event differs. -/
+theorem harmonic_neq_nonharmonic :
+    modalIndefiniteSat fGrab .local allCW allCards isCard canGrab .only1 = false ∧
+    modalIndefiniteSat fGrab .imperative allCW allCards isCard canGrab .only1 = true := by
+  constructor <;> native_decide
+
+
 end Semantics.Modality.EventRelativity

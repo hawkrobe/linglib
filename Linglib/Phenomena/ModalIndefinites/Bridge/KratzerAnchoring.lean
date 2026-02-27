@@ -228,4 +228,48 @@ theorem not_at_issue_and_not_ub_exists :
   native_decide  -- irgendein
 
 
+-- ════════════════════════════════════════════════════
+-- § 9. Unremarkable Reading Bridge (A-O&R 2024, §5)
+-- ════════════════════════════════════════════════════
+
+/-- *Yalnhej* lacks unremarkable readings (fragment entry agrees). -/
+theorem yalnhej_lacks_unremarkable :
+    yalnhejEntry.hasUnremarkableReading = false := rfl
+
+/-- *Komon* has unremarkable readings (fragment entry agrees). -/
+theorem komon_has_unremarkable :
+    komonEntry.hasUnremarkableReading = true := rfl
+
+/-- Predicativity correlates with unremarkable readings across all entries:
+    every entry where canBePredicate = true also has unremarkable readings,
+    and vice versa. This captures A-O&R's (2024, §5) generalization that
+    predicativity enables plain existential readings. -/
+theorem predicativity_correlates_unremarkable :
+    allEntries.all (λ e =>
+      e.canBePredicate == e.hasUnremarkableReading) = true := by native_decide
+
+
+-- ════════════════════════════════════════════════════
+-- § 10. Non-Maximality Bridge (A-O&R 2024, §3.2.4)
+-- ════════════════════════════════════════════════════
+
+/-- *Yalnhej* is not upper-bounded: it does not require ¬∀P→Q.
+    Non-upper-boundedness entails non-maximality (compatible with
+    partial-domain scenarios) but not vice versa — non-maximality
+    is a weaker property. The EventRelativity worked example
+    (§6) demonstrates this concretely with `yalnhej_nonmaximal_ab`. -/
+theorem yalnhej_nonmaximal :
+    yalnhejEntry.upperBounded = false := rfl
+
+/-- *Yalnhej* cannot be predicative, consistent with lacking
+    unremarkable readings. -/
+theorem yalnhej_not_predicative :
+    yalnhejEntry.canBePredicate = false := rfl
+
+/-- *Komon* can be predicative, consistent with having unremarkable
+    readings. -/
+theorem komon_predicative :
+    komonEntry.canBePredicate = true := rfl
+
+
 end Phenomena.ModalIndefinites.Bridge.KratzerAnchoring

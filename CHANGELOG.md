@@ -1,5 +1,23 @@
 # Changelog
 
+## [0.227.23] - 2026-02-27
+
+### Added
+- **A-O&R (2024) non-maximality** (EventRelativity.lean §6): `yalnhej_nonmaximal_ab` (MI holds in partial-domain world), `yalnhej_three_way_contrast` (MI holds in both all-available and partial-available worlds + UB fails — maximal/*algún*/yalnhej trichotomy).
+- **A-O&R (2024) harmonic interpretations** (EventRelativity.lean §7): `Card`/`CardWorld`/`GrabEvent` types, `canGrab`/`fGrab` anchoring function, `nonharmonic_fails` (local anchor restricts to one card), `harmonic_succeeds` (imperative anchor permits all cards), `harmonic_neq_nonharmonic` (readings are formally distinct).
+- **Unremarkable readings data** (Data.lean §13): `UnremarkableReadingDatum` structure, 4 items (*uno cualquiera* ✓, *irgendein* ✓, *komon* ✓, *yalnhej* ✗), `predicativity_unremarkable_correlation` (predicative ↔ unremarkable for all data), cross-check theorems against entry-level fields.
+- **Non-maximality data** (Data.lean §12): `MaximalityDatum` structure, partial-domain RC (ex.43/44) and epistemic (ex.46/47) examples, `all_partial_domain_felicitous`.
+- **Harmonic interpretation data** (Data.lean §14): `HarmonicDatum` structure, `EmbeddingModal` type (imperative/deontic/attitude verb), imperative non-harmonic (82) vs harmonic (85), attitude verb harmonic (90/91), `imperative_ambiguity` (same surface form, two readings).
+- **`ModalIndefiniteEntry` new fields**: `hasUnremarkableReading` and `canBePredicate` (both `Bool := false`) in `Core/ModalIndefinite.lean`. All 7 cross-linguistic entries updated.
+- **Unremarkable reading bridge** (KratzerAnchoring.lean §9): `yalnhej_lacks_unremarkable`, `komon_has_unremarkable`, `predicativity_correlates_unremarkable` (canBePredicate ↔ hasUnremarkableReading for all entries).
+- **Non-maximality bridge** (KratzerAnchoring.lean §10): `yalnhej_nonmaximal` (upperBounded = false), `yalnhej_not_predicative`, `komon_predicative`.
+
+## [0.227.22] - 2026-02-27
+
+### Added
+- **Ritchie & Schiller (2024) domain restriction**: `Theories/Semantics/Lexical/Determiner/DomainRestriction.lean` — domain-restricted quantifiers (`every_restricted`, `some_restricted`, `no_restricted`), `SpatialScale` (peripersonal/action/vista/unrestricted), `DDRP` structure with nesting axioms, `every_unrestricted` recovery theorem, `every_restricted_anti_mono` (restrictor ↓MON), `some_restricted_mono` (restrictor ↑MON), DDRP nesting chain (`action_implies_peri`, `vista_implies_action`, `unr_implies_vista`).
+- **Ritchie & Schiller (2024) bottle scenario**: `Phenomena/Quantification/Studies/RitchieSchiller2024.lean` — 4-bottle scene with spatial regions, 3 world states, 9-entry truth table for "every bottle is empty" under each DDRP candidate (`native_decide`), `proximal_default` (only peripersonal licenses utterance in proximal world), `affordance_constraint` (4 candidates, not arbitrary predicates), nesting bridges to `DDRP.action_implies_peri` / `DDRP.vista_implies_action`.
+
 ## [0.227.21] - 2026-02-27
 
 ### Fixed
