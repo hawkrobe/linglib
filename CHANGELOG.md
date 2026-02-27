@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.227.6] - 2026-02-27
+
+### Added
+- **Voice system interface**: `Core/Interfaces/VoiceSystem.lean` — theory-neutral typology of voice systems (PivotTarget, VoiceEntry, VoiceSystemSymmetry, VoiceSystemProfile) with helpers for promotable roles, oblique distinctions, and active/passive classification.
+- **Toba Batak voice profile**: `tbVoiceSystem` in `Fragments/TobaBatak/Basic.lean` — two-way symmetrical system with verification theorems.
+- **Interface hub**: added `ExtractionMorphology` and `VoiceSystem` imports to `Core/Interface.lean`.
+
 ## [0.227.5] - 2026-02-27
 
 ### Added

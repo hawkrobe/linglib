@@ -198,21 +198,20 @@ structure AcceptanceRate where
   total : Nat
   deriving Repr
 
-/-- Experiment 2, Condition 1: wide scope true, narrow scope false.
-    "Two frogs didn't jump over the rock" — 3 of 5 frogs jumped.
-    Adults access inverse scope (¬>two: not exactly two jumped) → 100%. -/
-def ml2003_exp2_wideTrue : AcceptanceRate := ⟨40, 40⟩
+/-- Experiment 2, matched condition: isomorphic reading (two > not) true.
+    "Two N didn't V" — context makes surface scope true, inverse false.
+    Adults accept readily when the isomorphic reading works → 100%. -/
+def ml2003_exp2_matched : AcceptanceRate := ⟨40, 40⟩
 
-/-- Experiment 2, Condition 2: narrow scope true, wide scope false.
-    "Two frogs didn't jump over the rock" — 2 of 5 frogs jumped.
+/-- Experiment 2, unmatched condition: non-isomorphic reading (not > two) true.
+    "Two N didn't V" — context makes only inverse scope true.
     Adults show isomorphism effect (surface scope preference) → 27.5%.
     This is the key datum that S&P 2021's RSA model explains. -/
-def ml2003_exp2_narrowTrue : AcceptanceRate := ⟨11, 40⟩
+def ml2003_exp2_unmatched : AcceptanceRate := ⟨11, 40⟩
 
-/-- Experiment 3, Condition 2: same as Exp 2 Cond 2 but preceded by
-    an affirmative statement ("Two frogs jumped over the rock...
-    but two frogs didn't jump over the rock").
-    Affirmative context rescues inverse scope access → 92.5%.
+/-- Experiment 3: same as Exp 2 unmatched but preceded by an affirmative
+    statement (e.g., "Two frogs jumped... but two frogs didn't jump").
+    Affirmative context rescues non-isomorphic (inverse scope) access → 92.5%.
     Modeled by S&P 2021's `supportiveCfg`. -/
 def ml2003_exp3_affirmative : AcceptanceRate := ⟨37, 40⟩
 

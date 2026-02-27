@@ -5,6 +5,8 @@ import Linglib.Core.Interfaces.ScopeTheory
 import Linglib.Core.Interfaces.ImplicatureTheory
 import Linglib.Core.Interfaces.Felicity
 import Linglib.Core.Interfaces.CoreferenceTheory
+import Linglib.Core.Interfaces.ExtractionMorphology
+import Linglib.Core.Interfaces.VoiceSystem
 
 /-!
 # Theory Comparison Interfaces
@@ -19,4 +21,6 @@ or import individual files from `Core/Interfaces/` for finer-grained control.
 - `ImplicatureTheory`: Scalar implicature predictions (ImplicatureTheory)
 - `FelicityCondition`: Felicity/oddness predictions (FelicityCondition)
 - `CoreferenceTheory`: Coreference predictions (CoreferenceTheory)
+- `ExtractionMorphology`: Cross-linguistic extraction marking (ExtractionProfile)
+- `VoiceSystem`: Voice system typology (VoiceSystemProfile)
 -/

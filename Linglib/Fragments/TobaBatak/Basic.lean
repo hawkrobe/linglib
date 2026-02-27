@@ -1,4 +1,5 @@
 import Linglib.Core.Interfaces.ExtractionMorphology
+import Linglib.Core.Interfaces.VoiceSystem
 
 /-!
 # Toba Batak Fragment @cite{erlewine-2018}
@@ -148,5 +149,33 @@ def tbExtractionProfile : Interfaces.ExtractionProfile :=
              "restriction derived from predicate fronting + " ++
              "nominal licensing: non-pivot DPs in Spec,CP lack " ++
              "a Case licensor (Erlewine 2018, §4)" }
+
+-- ============================================================================
+-- § 6: Voice System Profile
+-- ============================================================================
+
+/-- Toba Batak voice system: two-way symmetrical (AV/OV).
+
+    Unlike Philippine-type languages (Tagalog: 4+ voices including
+    locative, instrumental), Toba Batak has only actor and object
+    voice. The system is symmetrical — neither voice is morphologically
+    basic (Erlewine 2018). -/
+def tbVoiceSystem : Interfaces.VoiceSystemProfile :=
+  { language := "Toba Batak"
+    voices := [ ⟨"Actor Voice", .agent⟩, ⟨"Object Voice", .patient⟩ ]
+    symmetry := .symmetrical
+    notes := "Two-way symmetrical system (Erlewine 2018)" }
+
+theorem tb_voice_system_symmetrical :
+    tbVoiceSystem.symmetry = .symmetrical := rfl
+
+theorem tb_voice_count :
+    tbVoiceSystem.voiceCount = 2 := rfl
+
+theorem tb_is_active_passive :
+    tbVoiceSystem.isActivePassive = true := rfl
+
+theorem tb_promotes_agent :
+    tbVoiceSystem.promotesRole .agent = true := rfl
 
 end Fragments.TobaBatak
