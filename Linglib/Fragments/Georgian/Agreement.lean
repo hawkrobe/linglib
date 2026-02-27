@@ -151,8 +151,7 @@ inductive TenseSeries where
     This instantiates `Core.SplitErgativity` from Blake's (1994, Ch. 4)
     typology of tense/aspect-conditioned splits. -/
 def georgianSplit : Core.SplitErgativity TenseSeries :=
-  { domain := .tenseAspect
-    ergCondition := fun ts => ts == .aorist }
+  { ergCondition := fun ts => ts == .aorist }
 
 /-- Aorist triggers ergative alignment. -/
 theorem aorist_ergative :

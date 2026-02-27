@@ -8,7 +8,7 @@ Hungarian has **18 morphological cases** (one of the largest in Europe),
 with agglutinative suffixes. Beyond the common grammatical cases, Hungarian
 has a rich local case system and several abstract cases.
 
-Our 16-value `Core.Case` can represent 11 of the 18:
+Our 19-value `Core.Case` can represent 11 of the 18:
 - **Grammatical**: NOM (∅), ACC (-t), DAT (-nak / -nek), GEN (= DAT form)
 - **Local**: INE (-ban / -ben), ELA (-ból / -ből), ILL (-ba / -be),
   ADE (-nál / -nél), ABL (-tól / -től), ALL (-hoz / -hez / -höz),

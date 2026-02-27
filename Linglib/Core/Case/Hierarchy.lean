@@ -67,7 +67,7 @@ def Case.hierarchyRank : Case → Nat
 -- ============================================================================
 
 /-- Whether the inventory has at least one case at the given rank. -/
-def hasRank (inv : List Case) (r : Nat) : Bool :=
+private def hasRank (inv : List Case) (r : Nat) : Bool :=
   inv.any fun c => c.hierarchyRank == r
 
 /-- A case inventory is contiguous (no rank gaps) on the hierarchy.

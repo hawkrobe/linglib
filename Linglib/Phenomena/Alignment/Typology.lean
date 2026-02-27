@@ -1,4 +1,6 @@
 import Linglib.Core.Lexical.Word
+import Linglib.Core.Case.SplitConditions
+import Linglib.Core.Prominence
 
 /-!
 # Morphosyntactic Alignment Typology (WALS Chapters 98--100)
@@ -814,6 +816,86 @@ theorem active_np_implies_active_pron :
       then p.pronAlignment == .active
       else true) = true := by
   native_decide
+
+-- ============================================================================
+-- Split-Ergative Conditioning (Silverstein 1976)
+-- ============================================================================
+
+/-! ### Silverstein's Hierarchy
+
+Silverstein (1976) predicts that ergative marking targets the **less prominent**
+end of the animacy/definiteness scale. More prominent NPs (pronouns, 1st/2nd
+person) get accusative treatment; less prominent NPs (full NPs, 3rd person,
+inanimate) get ergative treatment.
+
+The `silverstein` function encodes this as a threshold-based predicate over
+prominence values, and its monotonicity property captures the implicational
+nature of the hierarchy: if a less-prominent NP gets accusative treatment,
+all more-prominent NPs do too.
+
+The `dyirbalSplit` instantiates `Core.SplitErgativity` for Dyirbal's
+animacy-conditioned split, connecting the split mechanism to the `dyirbal`
+alignment profile above.
+
+- Silverstein, M. (1976). Hierarchy of features and ergativity. In Dixon, R.
+  M. W. (ed.), *Grammatical Categories in Australian Languages*. AIAS. -/
+
+section SilversteinSplit
+
+open Core.Prominence (AnimacyLevel)
+
+/-- Map the binary Core alignment family to the full alignment type. -/
+private def toAlignmentType : Core.AlignmentFamily → AlignmentType
+  | .accusative => .accusative
+  | .ergative => .ergative
+
+/-- Silverstein's hierarchy: NPs at or above the prominence threshold get
+    accusative alignment; those below get ergative (Silverstein 1976). -/
+def silverstein (threshold : Nat) (npProminence : Nat) : Core.AlignmentFamily :=
+  if npProminence ≥ threshold then .accusative else .ergative
+
+/-- Silverstein is monotone: if prominence p₁ ≥ p₂ and p₂ gets accusative,
+    then p₁ gets accusative. (Higher prominence → more likely accusative.) -/
+theorem silverstein_monotone (threshold p₁ p₂ : Nat)
+    (h_ge : p₁ ≥ p₂) (h_acc : silverstein threshold p₂ = .accusative) :
+    silverstein threshold p₁ = .accusative := by
+  simp only [silverstein] at *
+  split at h_acc
+  · split
+    · rfl
+    · omega
+  · contradiction
+
+/-- Silverstein predicts Dixon's generalization: with threshold 1,
+    full NPs (prominence 0) get ergative, pronouns (prominence 1) get
+    accusative — exactly the NP-ergative / pronoun-accusative split. -/
+theorem silverstein_predicts_dixon :
+    silverstein 1 0 = .ergative ∧ silverstein 1 1 = .accusative := ⟨rfl, rfl⟩
+
+/-- Dyirbal-style split by animacy: human/animate → accusative,
+    inanimate → ergative (Dixon 1972, Blake 1994 Ch. 4). -/
+def dyirbalSplit : Core.SplitErgativity AnimacyLevel :=
+  { ergCondition := fun a => a == .inanimate }
+
+theorem dyirbal_human_acc :
+    dyirbalSplit.alignment .human = .accusative := rfl
+
+theorem dyirbal_inanimate_erg :
+    dyirbalSplit.alignment .inanimate = .ergative := rfl
+
+/-- The Dyirbal split matches the Dyirbal alignment profile: inanimate NPs
+    get ergative alignment (matching `dyirbal.npAlignment`). -/
+theorem dyirbal_split_matches_np :
+    toAlignmentType (dyirbalSplit.alignment .inanimate)
+    = dyirbal.npAlignment := rfl
+
+/-- Human/animate arguments get accusative alignment (matching
+    `dyirbal.pronAlignment`). -/
+theorem dyirbal_split_matches_pron :
+    toAlignmentType (dyirbalSplit.alignment .human)
+    = dyirbal.pronAlignment := rfl
+
+end SilversteinSplit
 
 -- ============================================================================
 -- Ditransitive Alignment (Haspelmath 2021, §3)

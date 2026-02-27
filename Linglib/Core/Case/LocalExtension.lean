@@ -47,7 +47,7 @@ def localExtension : Case → List Case
   | _     => []
 
 /-- Does case `c` have any grammatical extensions? -/
-def hasExtension (c : Case) : Bool :=
+private def hasExtension (c : Case) : Bool :=
   !(localExtension c).isEmpty
 
 -- ============================================================================
@@ -73,23 +73,9 @@ theorem acc_no_extension : localExtension .acc = [] := rfl
 theorem erg_no_extension : localExtension .erg = [] := rfl
 theorem abs_no_extension : localExtension .abs = [] := rfl
 
-/-- Only peripheral cases have extensions. -/
-theorem core_cases_no_extension (c : Case) (a : AlignmentFamily)
-    (hCore : c.isCore a = true) : localExtension c = [] := by
-  cases a <;> cases c <;> simp_all [Case.isCore, localExtension]
-
 -- ============================================================================
 -- § 3: Directionality
 -- ============================================================================
-
-/-- Extension sources are always peripheral (spatial) cases, never core. -/
-def extensionSourcesPeripheralBool : Bool :=
-  Case.allCases.all fun c =>
-    if hasExtension c then !c.isCore .accusative && !c.isCore .ergative
-    else true
-
-theorem extension_sources_peripheral :
-    extensionSourcesPeripheralBool = true := by native_decide
 
 /-- The ABL → INST → CAUS chain is properly ordered:
     each step goes from more concrete to more abstract. -/

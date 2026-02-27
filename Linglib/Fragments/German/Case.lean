@@ -30,8 +30,8 @@ def caseInventory : List Core.Case :=
 theorem inventory_valid :
     Core.validInventory caseInventory = true := by native_decide
 
-/-- NOM/ACC syncretism in neuter and feminine. -/
-def neuterSyncretism : Core.Syncretism :=
-  ⟨.nom, .acc, by decide⟩
+/-- NOM/ACC syncretism in neuter and feminine.
+    Instantiates the cross-linguistic NOM/ACC pattern from `Core.Case.Syncretism`. -/
+def neuterSyncretism : Core.Syncretism := Core.nomAccSyncretism
 
 end Fragments.German.Case

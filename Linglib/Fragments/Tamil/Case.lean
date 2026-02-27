@@ -28,9 +28,9 @@ def caseInventory : List Core.Case :=
 theorem inventory_valid :
     Core.validInventory caseInventory = true := by native_decide
 
-/-- Tamil COM/INST syncretism (-ōṭu). -/
-def comInstSyncretism : Core.Syncretism :=
-  ⟨.com, .inst, by decide⟩
+/-- Tamil COM/INST syncretism (-ōṭu covers both functions).
+    Uses the cross-linguistic pattern from `Core.Case.Syncretism`. -/
+def comInstSyncretism : Core.Syncretism := Core.comInstSyncretism
 
 /-- COM/INST are strictly adjacent (ranks 1, 2). -/
 theorem com_inst_adjacent :

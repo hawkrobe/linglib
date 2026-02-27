@@ -1,6 +1,7 @@
 import Linglib.Core.Case.Basic
 import Linglib.Core.Case.Hierarchy
 import Linglib.Core.Case.Syncretism
+import Linglib.Core.Case.LocalExtension
 
 /-!
 # Latin Case Inventory @cite{blake-1994}
@@ -59,9 +60,9 @@ theorem inventory_with_loc_valid :
 -- § 2: Syncretism Patterns (Blake 1994, pp. 19–24)
 -- ============================================================================
 
-/-- NOM/ACC syncretism in neuter nouns. -/
-def neuterSyncretism : Core.Syncretism :=
-  ⟨.nom, .acc, by decide⟩
+/-- NOM/ACC syncretism in neuter nouns (2nd, 3rd, 4th declension).
+    Instantiates the cross-linguistic NOM/ACC pattern from `Core.Case.Syncretism`. -/
+def neuterSyncretism : Core.Syncretism := Core.nomAccSyncretism
 
 /-- NOM/ACC is same-tier (both rank 6) — trivially adjacent. -/
 theorem neuter_syncretism_adjacent :
@@ -79,5 +80,20 @@ theorem dat_abl_not_strictly_adjacent :
 
 theorem dat_abl_inventory_adjacent :
     Core.inventoryAdjacent coreInventory .dat .abl = true := by native_decide
+
+-- ============================================================================
+-- § 3: Local Case Extension (Blake 1994, Ch. 6)
+-- ============================================================================
+
+/-- Latin ABL is the textbook case of local case extension: a single
+    morphological form covers source (ablativus separativus), instrumental
+    (ablativus instrumenti), and causal (ablativus causae) functions.
+    This is exactly the ABL → INST → CAUS grammaticalization path
+    formalized in `Core.Case.LocalExtension`. -/
+theorem abl_extends_to_inst :
+    Core.Case.inst ∈ Core.localExtension .abl := by simp [Core.localExtension]
+
+theorem abl_extends_to_caus :
+    Core.Case.caus ∈ Core.localExtension .abl := by simp [Core.localExtension]
 
 end Fragments.Latin.Case

@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.227.8] - 2026-02-27
+
+### Changed
+- **Core/Case audit cleanup**: deleted dead code (`isCore`, `isPeripheral`, `SplitDomain`, 20+ orphaned theorems), fixed stale "16 values" → "19 values" docstrings, marked `hasRank`/`hasExtension` private, simplified `SplitErgativity` (removed unused `domain` field), rewrote `SplitConditions.lean` (153 → 61 lines).
+- **Syncretism wiring**: Finnish, Tamil, Latin, German Fragments now import `Core.nomAccSyncretism` / `Core.comInstSyncretism` instead of redefining identical instances locally.
+- **LocalExtension wiring**: Latin Fragment exercises `Core.localExtension` ABL→INST and ABL→CAUS paths (ablativus instrumenti / ablativus causae).
+- **Silverstein + dyirbalSplit relocated**: moved from Core to `Phenomena/Alignment/Typology.lean` with bridge theorems connecting `dyirbalSplit` to the existing Dyirbal alignment profile and `silverstein_predicts_dixon` connecting the threshold mechanism to Dixon's generalization.
+
 ## [0.227.7] - 2026-02-27
 
 ### Added

@@ -74,9 +74,9 @@ theorem allative_extends_to_dative :
 -- ============================================================================
 
 /-- Finnish NOM/ACC syncretism: the accusative of non-pronominal singular
-    nouns is identical to the nominative (Karlsson 2018, Ch. 13). -/
-def nomAccSyncretism : Core.Syncretism :=
-  ⟨.nom, .acc, by decide⟩
+    nouns is identical to the nominative (Karlsson 2018, Ch. 13).
+    Uses the cross-linguistic pattern from `Core.Case.Syncretism`. -/
+def nomAccSyncretism : Core.Syncretism := Core.nomAccSyncretism
 
 /-- Finnish ABL/INST are not syncretic — ablative (-ltA) and instructive
     (-n) are distinct forms. Unlike many IE languages where ABL and INST

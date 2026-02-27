@@ -19,9 +19,7 @@ exception, which he explains via historical derivation of ERG from INST
 ## Examples
 
 - NOM/ACC syncretism in neuter nouns (Latin, Greek, Russian): same tier (rank 6)
-- ERG/INST syncretism in Australian languages: not strictly adjacent (ranks 6, 2)
-- DAT/ALL syncretism: adjacent (ranks 4, 1)
-- COM/INST syncretism: adjacent (ranks 1, 2)
+- COM/INST syncretism (WALS Ch. 52): adjacent (ranks 1, 2)
 
 ## Formalization
 
@@ -83,15 +81,6 @@ def inventoryAdjacent (inv : List Case) (c1 c2 : Case) : Bool :=
     Same rank — trivially adjacent. -/
 def nomAccSyncretism : Syncretism :=
   ⟨.nom, .acc, by decide⟩
-
-/-- ERG/INST syncretism (many Australian languages).
-    Blake (1994, pp. 174–175) argues ERG historically derives from INST. -/
-def ergInstSyncretism : Syncretism :=
-  ⟨.erg, .inst, by decide⟩
-
-/-- DAT/ALL syncretism (Latin ad, many languages merge goal/recipient). -/
-def datAllSyncretism : Syncretism :=
-  ⟨.dat, .all, by decide⟩
 
 /-- COM/INST syncretism (WALS Ch. 52: many languages use one marker). -/
 def comInstSyncretism : Syncretism :=

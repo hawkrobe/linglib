@@ -2,7 +2,7 @@
 # Case: Theory-Neutral Inventory @cite{blake-1994}
 
 A framework-agnostic case inventory drawn from Blake's (1994) cross-linguistic
-survey. These 16 values cover the cases attested across Blake's typological
+survey. These 19 values cover the cases attested across Blake's typological
 sample (Chs. 2, 5). Every syntactic framework (Minimalism, HPSG, DG, CCG)
 can import this type without committing to a particular theory of case assignment.
 
@@ -15,8 +15,7 @@ hierarchy itself lives in `Core.Case.Hierarchy`.
 Blake's most basic distinction (p. 32): **core** cases (NOM/ACC in accusative
 systems, ERG/ABS in ergative systems) mark grammatical relations determined by
 argument structure. **Peripheral** cases mark semantic roles (source, goal,
-instrument, etc.). The `isCore` predicate encodes this partition, parameterized
-by alignment type.
+instrument, etc.).
 
 ## References
 
@@ -30,11 +29,12 @@ namespace Core
 -- § 1: Alignment Family
 -- ============================================================================
 
-/-- Alignment family for determining which cases are core.
+/-- The two major morphosyntactic alignment families (Blake 1994, Ch. 2).
 
-    Duplicated from `Phenomena.Alignment.Typology.AlignmentType` at the level
-    of the two major families relevant to core-case identification. Core
-    infrastructure cannot import Phenomena. -/
+    Used by `SplitErgativity` to parameterize which alignment a split-ergative
+    system selects. The full five-way typology (neutral, accusative, ergative,
+    tripartite, active) lives in `Phenomena.Alignment.Typology.AlignmentType`;
+    this Core type restricts to the two families relevant to case splits. -/
 inductive AlignmentFamily where
   /-- Accusative alignment: S = A (NOM) vs P (ACC) -/
   | accusative
@@ -48,7 +48,7 @@ inductive AlignmentFamily where
 
 /-- Cross-linguistic case inventory (Blake 1994, Chs. 2, 5).
 
-    The 16 values cover the morphological cases attested across Blake's
+    The 19 values cover the morphological cases attested across Blake's
     typological sample. Ordered roughly by the Blake hierarchy (formalized
     in `Hierarchy.lean`), from core grammatical cases to peripheral
     semantic cases. -/
@@ -98,57 +98,10 @@ inductive Case where
   deriving DecidableEq, BEq, Repr, Inhabited
 
 -- ============================================================================
--- § 3: Core vs. Peripheral
+-- § 3: Exhaustive Enumeration
 -- ============================================================================
 
-/-- Is this case a core grammatical case under the given alignment?
-
-    Core cases mark the primary grammatical relations (subject, object) and
-    are determined by argument structure rather than semantic role. In
-    accusative systems, NOM and ACC are core. In ergative systems, ERG and
-    ABS are core. All other cases are peripheral (Blake 1994, p. 32). -/
-def Case.isCore (alignment : AlignmentFamily) : Case → Bool
-  | .nom => alignment == .accusative
-  | .acc => alignment == .accusative
-  | .erg => alignment == .ergative
-  | .abs => alignment == .ergative
-  | _    => false
-
-/-- Is this case peripheral (not core)? -/
-def Case.isPeripheral (alignment : AlignmentFamily) (c : Case) : Bool :=
-  !c.isCore alignment
-
--- ============================================================================
--- § 4: Core/Peripheral Theorems
--- ============================================================================
-
-/-- In accusative systems, exactly NOM and ACC are core. -/
-theorem acc_core_nom : Case.isCore .accusative .nom = true := rfl
-theorem acc_core_acc : Case.isCore .accusative .acc = true := rfl
-theorem acc_periph_erg : Case.isCore .accusative .erg = false := rfl
-theorem acc_periph_dat : Case.isCore .accusative .dat = false := rfl
-
-/-- In ergative systems, exactly ERG and ABS are core. -/
-theorem erg_core_erg : Case.isCore .ergative .erg = true := rfl
-theorem erg_core_abs : Case.isCore .ergative .abs = true := rfl
-theorem erg_periph_nom : Case.isCore .ergative .nom = false := rfl
-theorem erg_periph_acc : Case.isCore .ergative .acc = false := rfl
-
-/-- DAT is always peripheral regardless of alignment. -/
-theorem dat_always_peripheral (a : AlignmentFamily) :
-    Case.isPeripheral a .dat = true := by
-  cases a <;> rfl
-
-/-- LOC is always peripheral regardless of alignment. -/
-theorem loc_always_peripheral (a : AlignmentFamily) :
-    Case.isPeripheral a .loc = true := by
-  cases a <;> rfl
-
--- ============================================================================
--- § 5: Exhaustive Enumeration
--- ============================================================================
-
-/-- All 16 case values (for finite verification). -/
+/-- All 19 case values (for finite verification). -/
 def Case.allCases : List Case :=
   [.nom, .acc, .erg, .abs, .gen, .dat, .loc, .abl,
    .all, .inst, .com, .voc, .part, .perl, .ben, .caus,
