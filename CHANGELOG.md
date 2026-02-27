@@ -1,5 +1,23 @@
 # Changelog
 
+## [0.227.18] - 2026-02-27
+
+### Added
+- **Beaver & Condoravdi (2003) deep integration**: Four additions connecting B&C's uniform analysis of *before*/*after* more deeply into linglib's infrastructure:
+  - **BranchingTime bridge** (BeaverCondoravdi.lean §1b): `histAltOfWorldHistory`/`worldHistoryOfHistAlt` conversions with round-trip identities, `altReflexive_iff_reflexive` and `altMonotone_iff_backwardsClosed` bridge theorems connecting B&C's `HistAlt` to BranchingTime's `WorldHistory`.
+  - **Heinämäki (1974) analysis + B&C Theorem 1** (Anscombe.lean): `Heinamaki.before`/`Heinamaki.after` (reference interval semantics), `isMinTime` (attained left bound), `anscombe_heinamaki_equiv_before`/`anscombe_heinamaki_equiv_after` equivalence theorems.
+  - **Logical properties §6** (Anscombe.lean): `before_antisymmetric`, `before_transitive` (strict order from ∃∀ quantifier pattern); `after_not_antisymmetric`, `after_not_transitive` (counterexamples from ∃∃ pattern).
+  - **NPI licensing from complement monotonicity** (Anscombe.lean): `before_complement_DE` (antitone/DE in complement, licenses NPIs), `after_complement_UE` (monotone/UE, blocks NPIs), `npi_licensing_from_monotonicity` (unified contrast).
+
+## [0.227.17] - 2026-02-27
+
+### Added
+- **Collins (2005) passive-as-smuggling integration**: `VoiceFlavor.passive` — new Voice flavor for Collins' passive Voice (*by* heads VoiceP, checks Case without assigning θ). `VoiceHead.checksCase` field (default false) captures feature dissociation: in active, v checks Case; in passive, Voice/*by* does. `voicePassive` canonical head with phaseHead = false (passive v is defective, not v*; Chomsky 2001, Collins 2005 p. 98).
+- **Passive smuggling** (Smuggling.lean §5): `licensesPassiveSmuggling` paralleling `licensesQI` — PartP smuggles object past external argument in Spec-vP. Verification theorems: `passive_voice_licenses_smuggling`, `active_blocks_smuggling`, `smuggling_shared_precondition`, `passive_dissociation_enables_smuggling`.
+- **Feature dissociation theorems** (Voice.lean §7): `active_theta_and_case_unified`, `passive_theta_case_dissociated`, `utah_active_passive` (UTAH compliance — hasD = true in both), `passive_no_event_contribution`.
+- **Passive data expansion** (Passive.lean): c-command asymmetries (binding, NPI licensing; Collins ex. 10a-d), particle placement (ex. 15-16), auxiliary selection (ex. 23a-d), idiom preservation (UTAH evidence).
+- **MinimalismPassive bridge**: `Phenomena/ArgumentStructure/Bridge/MinimalismPassive.lean` — connects passive data to Voice/Smuggling theory. `passive_anticausative_both_smuggle`, `active_passive_complementary`, `case_on_v_implies_phase`, `smuggling_predicts_ccommand`, `unified_smuggling` (passive + QI + anticausative share non-phase precondition).
+
 ## [0.227.16] - 2026-02-27
 
 ### Changed

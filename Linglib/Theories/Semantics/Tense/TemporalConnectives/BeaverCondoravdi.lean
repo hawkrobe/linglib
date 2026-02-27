@@ -1,4 +1,5 @@
 import Linglib.Theories.Semantics.Tense.TemporalConnectives.Basic
+import Linglib.Theories.Semantics.Tense.BranchingTime
 import Linglib.Core.Scales.Scale
 
 /-!
@@ -84,6 +85,52 @@ def altReflexive (alt : HistAlt W T) : Prop :=
     history up to any earlier t ≤ t'. -/
 def altMonotone (alt : HistAlt W T) : Prop :=
   ∀ w t t', t ≤ t' → alt w t' ⊆ alt w t
+
+-- ============================================================================
+-- § 1b: Bridge to BranchingTime.WorldHistory
+-- ============================================================================
+
+/-- Convert a `WorldHistory` (situation-indexed) to curried `HistAlt` form. -/
+def histAltOfWorldHistory (h : Semantics.Tense.BranchingTime.WorldHistory W T) :
+    HistAlt W T :=
+  fun w t => h ⟨w, t⟩
+
+/-- Convert curried `HistAlt` to `WorldHistory` (situation-indexed) form. -/
+def worldHistoryOfHistAlt (a : HistAlt W T) :
+    Semantics.Tense.BranchingTime.WorldHistory W T :=
+  fun s => a s.world s.time
+
+omit [LinearOrder T] in
+/-- Round-trip: `WorldHistory → HistAlt → WorldHistory` is identity. -/
+theorem histAlt_worldHistory_roundtrip
+    (h : Semantics.Tense.BranchingTime.WorldHistory W T) :
+    worldHistoryOfHistAlt (histAltOfWorldHistory h) = h := rfl
+
+omit [LinearOrder T] in
+/-- Round-trip: `HistAlt → WorldHistory → HistAlt` is identity. -/
+theorem worldHistory_histAlt_roundtrip (a : HistAlt W T) :
+    histAltOfWorldHistory (worldHistoryOfHistAlt a) = a := rfl
+
+omit [LinearOrder T] in
+/-- `altReflexive` is equivalent to `WorldHistory.reflexive`. -/
+theorem altReflexive_iff_reflexive (a : HistAlt W T) :
+    altReflexive a ↔ (worldHistoryOfHistAlt a).reflexive := by
+  unfold altReflexive Semantics.Tense.BranchingTime.WorldHistory.reflexive
+         worldHistoryOfHistAlt
+  constructor
+  · intro h s; exact h s.world s.time
+  · intro h w t; exact h ⟨w, t⟩
+
+/-- `altMonotone` is equivalent to `WorldHistory.backwardsClosed`. -/
+theorem altMonotone_iff_backwardsClosed (a : HistAlt W T) :
+    altMonotone a ↔ (worldHistoryOfHistAlt a).backwardsClosed := by
+  unfold altMonotone Semantics.Tense.BranchingTime.WorldHistory.backwardsClosed
+         worldHistoryOfHistAlt
+  constructor
+  · intro h w w' t t' hle hw'
+    exact h w t' t hle hw'
+  · intro h w t t' hle w' hw'
+    exact h w w' t' t hle hw'
 
 -- ============================================================================
 -- § 2: Earliest Across Alternatives
