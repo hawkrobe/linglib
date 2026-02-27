@@ -24,7 +24,7 @@ conditions because MAX picks the same informative bound from both B and ¬B.
 | comparative   | ✓               | ✓ (6+ langs) | Jin & Koenig 2021    |
 | *fear/worry*  | ✓               | ✓ (39 langs) | Jin & Koenig 2021    |
 
-## High vs Low EN (Greco 2018, 2019)
+## High vs Low EN (Greco 2018, 2019, 2020) @cite{greco-2020}
 
 Two types of EN with different syntactic positions and licensing:
 - **High EN**: targets non-truth-conditional content (exclamatives, surprise);
@@ -143,9 +143,34 @@ def italianExclamative : ENDatum :=
   , enType := .high, isOptional := false
   , licensesWeakNPIs := false }
 
+/-- Italian surprise negation (Greco 2020, §2–4): *non* merges in the CP
+    layer (above FinP) rather than in the TP-internal NegP. High EN —
+    obligatory, non-truth-conditional, does not license weak NPIs. -/
+def italianSneg : ENDatum :=
+  { language := "Italian", construction := "surprise negation (Sneg)"
+  , negMarker := Fragments.Italian.Negation.negMarker
+  , enType := .high, isOptional := false
+  , licensesWeakNPIs := false }
+
+/-- Brazilian Portuguese surprise negation (Greco 2020, §5.1): *é que não*
+    construction. High EN — obligatory, non-truth-conditional. -/
+def brazilianPortugueseSneg : ENDatum :=
+  { language := "Brazilian Portuguese", construction := "é que não (Sneg)"
+  , negMarker := "não"
+  , enType := .high, isOptional := false
+  , licensesWeakNPIs := false }
+
 def allENData : List ENDatum :=
   [ frenchBefore, italianBefore, spanishComparative, italianComparative
-  , frenchFear, italianUntil, italianExclamative ]
+  , frenchFear, italianUntil, italianExclamative
+  , italianSneg, brazilianPortugueseSneg ]
+
+/-- High EN blocks weak NPIs (Greco 2020, Table 1): in our sample,
+    every high-EN construction has `licensesWeakNPIs = false`. Low EN
+    may or may not license NPIs (Italian *prima che* and *finché* do). -/
+theorem high_en_blocks_npis :
+    allENData.all (λ d =>
+      if d.enType == .high then !d.licensesWeakNPIs else true) = true := by native_decide
 
 -- ════════════════════════════════════════════════════
 -- § 3. Rett's Generalization: EN ↔ Ambidirectionality

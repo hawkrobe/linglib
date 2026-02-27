@@ -285,6 +285,10 @@ structure NegationProfile where
   negIndefinite : Option NegIndefiniteStrategy := none
   /-- Illustrative negative marker form(s). -/
   negMarkers : List String := []
+  /-- Is the negation marker a syntactic head (X°) rather than a phrase (XP)?
+      Relevant for Greco (2020): only head-status markers can merge in CP
+      to produce surprise negation. -/
+  negIsHead : Option Bool := none
   /-- Notes on the negation system. -/
   notes : String := ""
   deriving Repr
@@ -341,6 +345,7 @@ def french : NegationProfile :=
   , asymmetrySubtype := .nonAssignable
   , negIndefinite := some .cooccur
   , negMarkers := ["ne", "pas"]
+  , negIsHead := some true  -- ne is a weak clitic (X°)
   , notes := "WALS codes as particle (ne optional in colloquial); " ++
              "historically bipartite ne...pas (Jespersen cycle)" }
 
@@ -449,6 +454,7 @@ def spanish : NegationProfile :=
   , asymmetrySubtype := .nonAssignable
   , negIndefinite := some .mixed
   , negMarkers := ["no"]
+  , negIsHead := some false  -- no can be focused/coordinated (XP; Greco 2020, §5.2)
   , notes := "Position-dependent: preverbal nadie precludes no, " ++
              "postverbal nada requires no" }
 
@@ -466,6 +472,7 @@ def italian : NegationProfile :=
   , asymmetrySubtype := .nonAssignable
   , negIndefinite := some .mixed
   , negMarkers := ["non"]
+  , negIsHead := some true  -- non is a preverbal clitic (X°), cannot be focused/coordinated
   , notes := "Preverbal non; n-words: postverbal require non " ++
              "(Non ho visto nessuno), preverbal alone " ++
              "(Nessuno è venuto); parallels Spanish pattern" }
@@ -712,6 +719,14 @@ theorem spanish_is_mixed : spanish.negIndefinite == some .mixed := by native_dec
 theorem italian_is_particle : italian.morphemeType == .particle := by native_decide
 theorem italian_is_symmetric : italian.symmetry == .symmetric := by native_decide
 theorem italian_is_mixed : italian.negIndefinite == some .mixed := by native_decide
+/-- Italian *non* is a syntactic head (X°): preverbal clitic,
+    cannot be focused or coordinated (Greco 2020, §4). -/
+theorem italian_neg_is_head : italian.negIsHead == some true := by native_decide
+/-- Spanish *no* is a phrase (XP): can be focused and coordinated
+    (Greco 2020, §5.2). -/
+theorem spanish_neg_is_phrase : spanish.negIsHead == some false := by native_decide
+/-- French *ne* is a syntactic head (X°): weak clitic. -/
+theorem french_neg_is_head : french.negIsHead == some true := by native_decide
 /-- Italian and Spanish share the same mixed n-word strategy. -/
 theorem italian_spanish_parallel :
     italian.negIndefinite = spanish.negIndefinite := rfl

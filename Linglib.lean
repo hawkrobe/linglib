@@ -446,6 +446,7 @@ import Linglib.Phenomena.Morphology.Studies.AckermanMalouf2013.Bridge
 import Linglib.Phenomena.Allomorphy.SlavicVerbalizer.Data
 import Linglib.Phenomena.Allomorphy.SlavicVerbalizer.Bridge.OTAnalysis
 import Linglib.Phenomena.Negation.Studies.StankovaSimik2024.Data
+import Linglib.Phenomena.Negation.Bridge.PhaseEN
 import Linglib.Phenomena.Plurals.Basic
 import Linglib.Phenomena.Plurals.Homogeneity
 import Linglib.Phenomena.Plurals.NonMaximality
@@ -764,6 +765,7 @@ import Linglib.Theories.Syntax.Minimalism.Formal.HeadMovement.Basic
 import Linglib.Theories.Syntax.Minimalism.Formal.HeadMovement.VerbMovement
 import Linglib.Theories.Syntax.Minimalism.HeadMovement.BulgarianLHM
 import Linglib.Theories.Syntax.Minimalism.HeadMovement.GermanicV2
+import Linglib.Theories.Syntax.Minimalism.Movement.Smuggling
 import Linglib.Phenomena.Politeness.Minimalism_AllocutivityBridge
 import Linglib.Theories.Syntax.Minimalism.Inversion
 import Linglib.Theories.Syntax.Minimalism.SpeechActs

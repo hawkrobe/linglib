@@ -257,6 +257,13 @@ def french_avant_EN : ExpletiveNegDatum where
 -- § 5: EN Distribution Generalizations
 -- ============================================================================
 
+/-! Note: The ambidirectionality↔EN correspondence formalized here is
+    also verified (more comprehensively) in
+    `Phenomena.Negation.ExpletiveNegation.rett_generalization`
+    over the `ENConstruction` enum, which covers all six construction
+    types. The `ENDistribution` entries below provide the same
+    generalization over a subset (temporal connectives only). -/
+
 /-- EN is attested with *before* and *until* but NOT with *after* or *when*.
     This follows from ambidirectionality (Rett 2026): *before* is ambidirectional
     (negating the complement doesn't change truth conditions), so EN is vacuous.
