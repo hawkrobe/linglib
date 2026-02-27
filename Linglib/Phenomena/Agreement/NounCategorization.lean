@@ -4,6 +4,7 @@ import Linglib.Fragments.Mandarin.Classifiers
 import Linglib.Fragments.Mandarin.Nouns
 import Linglib.Fragments.Japanese.Classifiers
 import Linglib.Fragments.Japanese.Nouns
+import Linglib.Fragments.Italian.Nouns
 
 /-!
 # Noun Categorization and Agreement Typology
@@ -84,6 +85,28 @@ def french : NounCategorizationSystem :=
   , hasUnmarkedDefault := true  -- Masculine is unmarked
   , preferredSemantics := [.sex, .animacy]
   , source := "Aikhenvald (2000), §2" }
+
+-- ============================================================================
+-- §1b: Italian (Indo-European) — Noun class / gender
+-- ============================================================================
+
+/-- Italian noun categorization: 2-class gender system (masc/fem).
+    Like French, [-arg, +pred] (Chierchia 1998). Agreement on determiners
+    (il/la, un/una), adjectives (‑o/‑a), and past participles (‑o/‑a).
+    Richer article allomorphy than French (il/lo/la, i/gli/le). -/
+def italian : NounCategorizationSystem :=
+  { language := "Italian"
+  , family := "Indo-European"
+  , classifierType := .nounClass
+  , scopes := [.headModifierNP, .predicateArgument]
+  , assignment := .mixed  -- Semantic (sex) + morphological (-o/-a endings)
+  , realizations := [.freeForm, .suffix]  -- il/la + -o/-a, etc.
+  , hasAgreement := true
+  , inventorySize := 2  -- Masculine, feminine
+  , isObligatory := true
+  , hasUnmarkedDefault := true  -- Masculine is unmarked
+  , preferredSemantics := [.sex, .animacy]
+  , source := "Aikhenvald (2000), §2; Chierchia (1998)" }
 
 -- ============================================================================
 -- §2: Mandarin (Sino-Tibetan) — Numeral classifier
@@ -167,7 +190,7 @@ theorem classifier_systems_have_default :
 -- ============================================================================
 
 def allSystems : List NounCategorizationSystem :=
-  [french, mandarin, japanese]
+  [french, italian, mandarin, japanese]
 
 /-- All three systems are obligatory (not optional). -/
 theorem all_obligatory :

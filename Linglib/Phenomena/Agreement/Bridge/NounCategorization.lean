@@ -13,7 +13,8 @@ Parameter from `Theories.Semantics.Lexical.Noun.Kind.Chierchia1998`.
 - `argOnly_implies_numeral_classifier`: [+arg, -pred] → numeral classifiers
 - `predOnly_implies_noun_class`: [-arg, +pred] → noun class
 - `mandarin_chierchia_consistent`, `japanese_chierchia_consistent`,
-  `french_chierchia_consistent`: Actual classifier types match predictions
+  `french_chierchia_consistent`, `italian_chierchia_consistent`:
+  Actual classifier types match predictions
 
 ## Known gaps
 
@@ -44,6 +45,11 @@ theorem mandarin_mapping : Fragments.Mandarin.Nouns.mandarinMapping = .argOnly :
 /-- Japanese mapping is [+arg, -pred] (Chierchia 1998). -/
 theorem japanese_mapping : Fragments.Japanese.Nouns.japaneseMapping = .argOnly := rfl
 
+/-- Italian mapping is [-arg, +pred] (Chierchia 1998). Italian is the
+    star witness for `predOnly`: bare arguments are restricted and D
+    must be projected for argumenthood. -/
+theorem italian_mapping : Fragments.Italian.Nouns.italianMapping = .predOnly := rfl
+
 /-- The Chierchia-Aikhenvald bridge: [+arg, -pred] languages are numeral
     classifier languages. -/
 theorem argOnly_implies_numeral_classifier :
@@ -72,5 +78,15 @@ theorem japanese_chierchia_consistent :
 theorem french_chierchia_consistent :
     some french.classifierType =
       nominalMappingToClassifierType Fragments.French.Nouns.frenchMapping := rfl
+
+/-- Italian's actual classifier type matches the Chierchia prediction. -/
+theorem italian_chierchia_consistent :
+    some italian.classifierType =
+      nominalMappingToClassifierType Fragments.Italian.Nouns.italianMapping := rfl
+
+/-- French and Italian agree on Chierchia mapping: both are predOnly. -/
+theorem french_italian_same_mapping :
+    Fragments.French.Nouns.frenchMapping =
+      Fragments.Italian.Nouns.italianMapping := rfl
 
 end Phenomena.Agreement.Bridge.NounCategorization

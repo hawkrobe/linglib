@@ -453,6 +453,24 @@ def spanish : NegationProfile :=
              "postverbal nada requires no" }
 
 /--
+Italian: negative particle `non`; symmetric negation. Mixed behavior for
+negative indefinites (paralleling Spanish): preverbal n-words stand alone
+(`Nessuno è venuto` 'Nobody came'), but postverbal n-words require `non`
+(`Non ho visto nessuno` 'NEG have seen nobody').
+-/
+def italian : NegationProfile :=
+  { language := "Italian"
+  , iso := "ita"
+  , morphemeType := .particle
+  , symmetry := .symmetric
+  , asymmetrySubtype := .nonAssignable
+  , negIndefinite := some .mixed
+  , negMarkers := ["non"]
+  , notes := "Preverbal non; n-words: postverbal require non " ++
+             "(Non ho visto nessuno), preverbal alone " ++
+             "(Nessuno è venuto); parallels Spanish pattern" }
+
+/--
 Burmese: bipartite negation with prefix `ma-` and suffix `-bu`; the negative
 suffix `-bu` replaces the TAM markers used in the affirmative. Always
 asymmetric: the negative neutralizes TAM distinctions.
@@ -553,8 +571,8 @@ def nelemwa : NegationProfile :=
 /-- All language profiles in the sample. -/
 def allLanguages : List NegationProfile :=
   [ english, german, french, russian, finnish, japanese, mandarin, turkish
-  , czech, spanish, burmese, maori, izi, kolYukaghir, rama, hixkaryana
-  , nelemwa ]
+  , czech, spanish, italian, burmese, maori, izi, kolYukaghir, rama
+  , hixkaryana, nelemwa ]
 
 -- ============================================================================
 -- Helper Predicates
@@ -691,6 +709,12 @@ theorem finnish_afin : finnish.asymmetrySubtype == .finiteness := by native_deci
 theorem japanese_is_affix : japanese.morphemeType == .affix := by native_decide
 theorem burmese_is_double : burmese.morphemeType == .doubleNeg := by native_decide
 theorem spanish_is_mixed : spanish.negIndefinite == some .mixed := by native_decide
+theorem italian_is_particle : italian.morphemeType == .particle := by native_decide
+theorem italian_is_symmetric : italian.symmetry == .symmetric := by native_decide
+theorem italian_is_mixed : italian.negIndefinite == some .mixed := by native_decide
+/-- Italian and Spanish share the same mixed n-word strategy. -/
+theorem italian_spanish_parallel :
+    italian.negIndefinite = spanish.negIndefinite := rfl
 theorem russian_neg_concord : russian.hasNegConcord = true := by native_decide
 
 -- ============================================================================
@@ -744,11 +768,11 @@ theorem finnish_neg_aux_representative :
 -- ============================================================================
 
 /-- Number of languages in our sample. -/
-theorem sample_size : allLanguages.length = 17 := by native_decide
+theorem sample_size : allLanguages.length = 18 := by native_decide
 
 /-- Morpheme type distribution in our sample. -/
 theorem sample_affix_count : countByMorphemeType allLanguages .affix = 5 := by native_decide
-theorem sample_particle_count : countByMorphemeType allLanguages .particle = 7 := by native_decide
+theorem sample_particle_count : countByMorphemeType allLanguages .particle = 8 := by native_decide
 theorem sample_auxverb_count : countByMorphemeType allLanguages .auxVerb = 1 := by native_decide
 theorem sample_double_count : countByMorphemeType allLanguages .doubleNeg = 2 := by native_decide
 theorem sample_unclear_count : countByMorphemeType allLanguages .wordUnclear = 1 := by native_decide
@@ -757,7 +781,7 @@ theorem sample_variation_count : countByMorphemeType allLanguages .variation = 1
 /-- Symmetry distribution in our sample mirrors the WALS pattern:
     symmetric-only languages are the most common single type. -/
 theorem sample_symmetry_counts :
-    countBySymmetry allLanguages .symmetric = 11 ∧
+    countBySymmetry allLanguages .symmetric = 12 ∧
     countBySymmetry allLanguages .asymmetric = 5 ∧
     countBySymmetry allLanguages .both = 1 := by
   native_decide

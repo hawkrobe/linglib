@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.227.11] - 2026-02-27
+
+### Added
+- **Italian fragment**: 5 new files — Nouns (Chierchia `predOnly`, 15 entries, NP constructors), Determiners (12 quantifiers with gender/number agreement), Pronouns (strong T/V + full clitic paradigm with syncretism), Negation (n-words, negative concord examples), Tense (5 TAMEEntry + TensePerspectiveEntry, Kratzer decomposition for passato prossimo).
+- **Italian wired to Phenomena**: NounCategorization (Italian entry + Chierchia bridge `italian_chierchia_consistent`, `french_italian_same_mapping`), Negation/Typology (Italian profile, `italian_spanish_parallel`, sample 17→18), ExpletiveNegationBridge (4 Italian entries derive `negMarker` from fragment).
+
+## [0.227.9] - 2026-02-27
+
+### Added
+- **Smuggling (Collins 2005)**: `Theories/Syntax/Minimalism/Movement/Smuggling.lean` — formalizes complement extraction past the subject via non-phase Voice (Collins 2005, Syntax 8(2)), derives `permitsSmuggling` from existing `VoiceHead.phaseHead`, and defines `licensesQI` combining smuggling availability with complement presence.
+- **Quotative inversion bridge** (Storment 2026): `derivedQI` in `Unaccusativity/Bridge.lean` derives QI licensing from Voice + complement type, with per-verb verification matching diagnostic data (`qi_data_consistent`).
+- **QI ≠ LI distinctness** (Storment 2026, §2): new data points (`li_kick`, `li_arrive_pronoun`, `qi_whisper_transitive`, `qi_whisper_pronoun`) and theorems (`qi_li_diverge_on_whisper`, `li_blocks_transitive`, `li_vs_qi_pronouns`) proving quotative and locative inversion are structurally distinct.
+- **MoS island ↔ QI cross-reference**: `mos_extraction_asymmetry` theorem connecting Lu, Pan & Degen (2025) discourse-sourced island classification with Storment's syntactic smuggling — same verbs, same complements, different operations, different sources.
+- **Cross-linguistic QI data**: French (chuchoter/dire/parler) and German (flüstern/sprechen) quotative inversion judgments paralleling the English MoS split.
+
 ## [0.227.8] - 2026-02-27
 
 ### Changed

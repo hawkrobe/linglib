@@ -2,6 +2,7 @@ import Linglib.Theories.Semantics.Degree.Comparative
 import Linglib.Theories.Semantics.Tense.TemporalConnectives
 import Linglib.Phenomena.Polarity.NPIs
 import Linglib.Fragments.English.Modifiers.Adjectives
+import Linglib.Fragments.Italian.Negation
 
 /-!
 # Expletive Negation: Typology and Licensing
@@ -107,7 +108,8 @@ def frenchBefore : ENDatum :=
 
 def italianBefore : ENDatum :=
   { language := "Italian", construction := "prima che"
-  , negMarker := "non", enType := .low, isOptional := true
+  , negMarker := Fragments.Italian.Negation.negMarker
+  , enType := .low, isOptional := true
   , licensesWeakNPIs := true }
 
 def spanishComparative : ENDatum :=
@@ -117,7 +119,8 @@ def spanishComparative : ENDatum :=
 
 def italianComparative : ENDatum :=
   { language := "Italian", construction := "più ... di quanto"
-  , negMarker := "non", enType := .low, isOptional := true
+  , negMarker := Fragments.Italian.Negation.negMarker
+  , enType := .low, isOptional := true
   , licensesWeakNPIs := false
   , mannerEffect := some { evaluative := true, atypical := false } }
 
@@ -129,13 +132,15 @@ def frenchFear : ENDatum :=
 /-- Greco (2018): Italian *until*-clauses license both EN and weak NPIs. -/
 def italianUntil : ENDatum :=
   { language := "Italian", construction := "finché"
-  , negMarker := "non", enType := .low, isOptional := true
+  , negMarker := Fragments.Italian.Negation.negMarker
+  , enType := .low, isOptional := true
   , licensesWeakNPIs := true }
 
 /-- Italian wh-exclamatives: high EN (Greco 2018). -/
 def italianExclamative : ENDatum :=
   { language := "Italian", construction := "wh-exclamative"
-  , negMarker := "non", enType := .high, isOptional := false
+  , negMarker := Fragments.Italian.Negation.negMarker
+  , enType := .high, isOptional := false
   , licensesWeakNPIs := false }
 
 def allENData : List ENDatum :=
