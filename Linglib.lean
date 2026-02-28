@@ -232,6 +232,7 @@ import Linglib.Phenomena.Agreement.DetNoun
 import Linglib.Phenomena.Assertion.Basic
 import Linglib.Phenomena.Assertion.Bridge.KrifkaLayers
 import Linglib.Phenomena.Assertion.Bridge.GunlogsonRising
+import Linglib.Phenomena.Assertion.Bridge.KrifkaCSD
 import Linglib.Phenomena.Case.Data
 import Linglib.Phenomena.Case.Typology
 import Linglib.Phenomena.Case.Studies.Ozaki2025.Data
