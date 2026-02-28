@@ -202,15 +202,32 @@ theorem eatObjectIsObject :
 -- § 5. Bridge to Cruse (1973): Features Derived from Entailments
 -- ════════════════════════════════════════════════════
 
+/-- Source of do-test acceptability (Solstad & Bott 2024; Cruse 1973).
+
+    The do-test ("What X did was VP") can be passed via two routes:
+    - `.semantic`: the verb's entailment profile includes volition/causation/movement
+    - `.pragmatic`: the complement denotes a volitional action, so do-test passes
+      even though the matrix verb doesn't entail agentivity.
+
+    Example: "What John did was manage to escape" passes pragmatically because
+    "escape" entails agentivity, even though "manage" doesn't. -/
+inductive DoTestSource where
+  | semantic    -- Profile-based: verb entails volition/causation/movement
+  | pragmatic   -- Complement-based: complement evokes agentivity
+  deriving DecidableEq, Repr, BEq
+
 /-- Cruse's do-test, reformulated over Dowty entailments.
 
-    The do-test passes iff at least one of {volition, causation, movement}
-    holds — these are the P-Agent entailments that correspond to Cruse's
-    four features:
+    The do-test passes (semantically) iff at least one of
+    {volition, causation, movement} holds — these are the P-Agent
+    entailments that correspond to Cruse's four features:
     - Cruse's volitive  ≈ Dowty's volition
     - Cruse's effective ≈ Dowty's causation
     - Cruse's agentive_ ≈ Dowty's movement + volition
-    - Cruse's initiative ≈ Dowty's causation + volition -/
+    - Cruse's initiative ≈ Dowty's causation + volition
+
+    Note: this tests SEMANTIC passing only (from the verb's own entailment
+    profile). For pragmatic passing (from the complement), see `DoTestSource`. -/
 def passesDoTestFromProfile (p : EntailmentProfile) : Bool :=
   p.volition || p.causation || p.movement
 

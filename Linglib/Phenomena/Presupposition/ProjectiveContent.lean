@@ -190,6 +190,11 @@ inductive ProjectiveTrigger where
   | almost_polar
   /-- Definite descriptions: existence and uniqueness -/
   | definite_description
+  /-- Occasion verbs: prior occasioning eventuality
+      (Solstad & Bott 2024, S&P 17:11). "Punish" presupposes a prior
+      offense; "manage" presupposes a prior difficulty. SCF=no (can be
+      informative), OLE=yes (attributed to attitude holder). -/
+  | occasion_verb
 
   -- Class D triggers (SCF=yes, OLE=no)
   /-- "too": salience of alternative -/
@@ -218,6 +223,7 @@ def ProjectiveTrigger.toClass : ProjectiveTrigger → ProjectiveClass
   | .only_prejacent => .classC
   | .almost_polar => .classC
   | .definite_description => .classC
+  | .occasion_verb => .classC
   -- Class D
   | .too_salience => .classD
   | .demonstrative_indication => .classD
@@ -385,6 +391,17 @@ The salience requirement of "too" has:
 -/
 example : ProjectiveTrigger.too_salience.toClass = .classD := rfl
 
+/--
+"The judge punished Peter" — occasion verb.
+
+The occasion verb "punish" has:
+- Projective content: Peter did something wrong (the occasioning eventuality)
+- Class C: SCF=no (can be informative), OLE=yes (attributed to attitude holder)
+
+Established in Solstad & Bott (2024, S&P 17:11), Experiments 1–2.
+-/
+example : ProjectiveTrigger.occasion_verb.toClass = .classC := rfl
+
 
 /--
 Traditional classification of projective phenomena.
@@ -418,6 +435,7 @@ def ProjectiveTrigger.traditionalCategory : ProjectiveTrigger → TraditionalCat
   | .almost_polar => .presupposition
   | .too_existence => .presupposition
   | .too_salience => .presupposition
+  | .occasion_verb => .presupposition
   -- Conventional implicatures
   | .expressive => .conventionalImplicature
   -- Supplementary content

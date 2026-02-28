@@ -160,18 +160,159 @@ def sorgen : GermanVerbEntry where
   attitudeBuilder := some (.preferential .uncertaintyBased)
 
 -- ============================================================================
--- § 3: Verb List
+-- § 3: Occasion Verbs (Solstad & Bott 2024, S&P 17:11)
+-- ============================================================================
+
+/-! German interpersonal occasion verbs presuppose a prior occasioning
+    eventuality (Solstad & Bott 2024, Table 1). The subject performs an
+    interpersonal action triggered by the object's prior behavior.
+
+    These verbs were tested for projectivity in Experiments 1–3 of the
+    S&P paper and for IC bias (as "agent-evocator" verbs) in Solstad &
+    Bott (2022, 2023). -/
+
+/-- *bestrafen* — "punish": presupposes the object did something wrong -/
+def bestrafen : GermanVerbEntry where
+  form := "bestrafen"
+  form3sg := "bestraft"
+  formPast := "bestrafte"
+  formPastPart := "bestraft"
+  complementType := .np
+  subjectTheta := some .agent
+  objectTheta := some .patient
+  presupType := some .softTrigger
+  senseTag := .occasion
+
+/-- *belohnen* — "reward": presupposes the object did something praiseworthy -/
+def belohnen : GermanVerbEntry where
+  form := "belohnen"
+  form3sg := "belohnt"
+  formPast := "belohnte"
+  formPastPart := "belohnt"
+  complementType := .np
+  subjectTheta := some .agent
+  objectTheta := some .patient
+  presupType := some .softTrigger
+  senseTag := .occasion
+
+/-- *loben* — "praise": presupposes praiseworthy behavior by the object -/
+def loben : GermanVerbEntry where
+  form := "loben"
+  form3sg := "lobt"
+  formPast := "lobte"
+  formPastPart := "gelobt"
+  complementType := .np
+  subjectTheta := some .agent
+  objectTheta := some .patient
+  presupType := some .softTrigger
+  senseTag := .occasion
+
+/-- *kritisieren* — "criticise": presupposes the object did something wrong -/
+def kritisieren : GermanVerbEntry where
+  form := "kritisieren"
+  form3sg := "kritisiert"
+  formPast := "kritisierte"
+  formPastPart := "kritisiert"
+  complementType := .np
+  subjectTheta := some .agent
+  objectTheta := some .patient
+  presupType := some .softTrigger
+  senseTag := .occasion
+
+/-- *danken* — "thank": presupposes the object did something helpful -/
+def danken : GermanVerbEntry where
+  form := "danken"
+  form3sg := "dankt"
+  formPast := "dankte"
+  formPastPart := "gedankt"
+  complementType := .np
+  subjectTheta := some .agent
+  objectTheta := some .experiencer
+  presupType := some .softTrigger
+  senseTag := .occasion
+
+/-- *verklagen* — "sue": presupposes the object caused harm -/
+def verklagen : GermanVerbEntry where
+  form := "verklagen"
+  form3sg := "verklagt"
+  formPast := "verklagte"
+  formPastPart := "verklagt"
+  complementType := .np
+  subjectTheta := some .agent
+  objectTheta := some .patient
+  presupType := some .softTrigger
+  senseTag := .occasion
+
+/-- *gratulieren* — "congratulate": presupposes the object achieved something -/
+def gratulieren : GermanVerbEntry where
+  form := "gratulieren"
+  form3sg := "gratuliert"
+  formPast := "gratulierte"
+  formPastPart := "gratuliert"
+  complementType := .np
+  subjectTheta := some .agent
+  objectTheta := some .patient
+  presupType := some .softTrigger
+  senseTag := .occasion
+
+/-- *zurechtweisen* — "rebuke": presupposes the object misbehaved -/
+def zurechtweisen : GermanVerbEntry where
+  form := "zurechtweisen"
+  form3sg := "weist zurecht"
+  formPast := "wies zurecht"
+  formPastPart := "zurechtgewiesen"
+  complementType := .np
+  subjectTheta := some .agent
+  objectTheta := some .patient
+  presupType := some .softTrigger
+  senseTag := .occasion
+
+-- ============================================================================
+-- § 4: Verb List
 -- ============================================================================
 
 def allVerbs : List GermanVerbEntry :=
   [lassen, machen, toeten, zerbrechen,
-   hoffen, fuerchten, befuerchten, wuenschen, sorgen]
+   hoffen, fuerchten, befuerchten, wuenschen, sorgen,
+   bestrafen, belohnen, loben, kritisieren, danken,
+   verklagen, gratulieren, zurechtweisen]
 
 def lookup (form : String) : Option GermanVerbEntry :=
   allVerbs.find? (·.form == form)
 
 -- ============================================================================
--- § 4: Causative Grounding Theorems
+-- § 5: Occasion Verb Grounding Theorems
+-- ============================================================================
+
+/-- All 8 German occasion verbs are soft presupposition triggers. -/
+theorem occasion_verbs_soft_trigger :
+    bestrafen.presupType = some .softTrigger ∧
+    belohnen.presupType = some .softTrigger ∧
+    loben.presupType = some .softTrigger ∧
+    kritisieren.presupType = some .softTrigger ∧
+    danken.presupType = some .softTrigger ∧
+    verklagen.presupType = some .softTrigger ∧
+    gratulieren.presupType = some .softTrigger ∧
+    zurechtweisen.presupType = some .softTrigger :=
+  ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
+
+/-- All German occasion verbs use the `.occasion` sense tag. -/
+theorem occasion_verbs_sense_tag :
+    bestrafen.senseTag = .occasion ∧
+    belohnen.senseTag = .occasion ∧
+    loben.senseTag = .occasion ∧
+    kritisieren.senseTag = .occasion := ⟨rfl, rfl, rfl, rfl⟩
+
+/-- German occasion verbs have agent subjects (unlike English semi-modal
+    occasion verbs which have experiencer subjects). These are interpersonal
+    action verbs, not implicative/semi-modal verbs. -/
+theorem occasion_verbs_agent_subject :
+    bestrafen.subjectTheta = some .agent ∧
+    belohnen.subjectTheta = some .agent ∧
+    kritisieren.subjectTheta = some .agent := ⟨rfl, rfl, rfl⟩
+
+-- ============================================================================
+-- § 6: Causative Grounding Theorems
 -- ============================================================================
 
 /-- *lassen* uses `.enable` builder (permissive). -/
@@ -192,7 +333,7 @@ theorem lexical_causatives_use_make :
     zerbrechen.causativeBuilder = some .make := ⟨rfl, rfl⟩
 
 -- ============================================================================
--- § 5: Attitude Grounding Theorems
+-- § 7: Attitude Grounding Theorems
 -- ============================================================================
 
 /-- *hoffen* and *wünschen* are positive preferential (Class 3). -/
@@ -212,7 +353,7 @@ theorem sorgen_is_uncertainty :
     sorgen.attitudeBuilder = some (.preferential .uncertaintyBased) := rfl
 
 -- ============================================================================
--- § 6: Cross-Linguistic Bridge Theorems
+-- § 8: Cross-Linguistic Bridge Theorems
 -- ============================================================================
 
 /-- German *fürchten* matches Japanese 恐れ *osore* and Turkish *kork-*:

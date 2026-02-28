@@ -16,13 +16,16 @@ listeners seek as a cause/explanation in sentence continuations:
 - **Occasion** ("and then"): temporal contiguity — no causal search
 
 This interacts with verb semantics to produce implicit causality (IC) bias
-(Solstad & Bott 2024). @cite{solstad-bott-2024}
+(Solstad & Bott 2022). @cite{solstad-bott-2022} @cite{solstad-bott-2024}
 
 ## References
 
 - Hobbs, J. R. (1979). Coherence and Coreference. *Cognitive Science* 3, 67–90.
 - Kehler, A. (2002). *Coherence, Reference, and the Theory of Grammar*. CSLI.
-- Solstad, T. & Bott, O. (2024). Occasion Verbs. *Natural Language Semantics*.
+- Solstad, T. & Bott, O. (2022). On the nature of implicit causality and
+  consequentiality. *Language, Cognition and Neuroscience* 37(10), 1311–1340.
+- Solstad, T. & Bott, O. (2024). Cataphoric resolution of projective content.
+  *Semantics & Pragmatics* 17:11.
 -/
 
 namespace Core.Discourse.CoherenceRelation
@@ -96,9 +99,10 @@ def CoherenceRelation.selectsEffect (r : CoherenceRelation) : Bool :=
 -- ════════════════════════════════════════════════════
 
 /-- German/English connective forms used as experimental stimuli
-    (Solstad & Bott 2024, Exps 4–5). -/
+    (Solstad & Bott 2022, Exps 1–4). -/
 inductive Connective where
-  | because     -- "weil" / "because"
+  | because     -- "weil" / "because" → I-Caus
+  | andSo       -- "sodass" / "and so" → I-Cons
   | although    -- "obwohl" / "although"
   | andThen     -- "und dann" / "and then"
   deriving DecidableEq, Repr, BEq
@@ -106,6 +110,7 @@ inductive Connective where
 /-- Map connectives to the coherence relation they signal. -/
 def Connective.toRelation : Connective → CoherenceRelation
   | .because   => .explanation
+  | .andSo     => .result
   | .although  => .contrast
   | .andThen   => .occasion
 
@@ -117,6 +122,10 @@ def Connective.toRelation : Connective → CoherenceRelation
 theorem because_selects_cause :
     (Connective.toRelation .because).selectsCause = true := rfl
 
+/-- "and so" selects for effects (forward causal / I-Cons). -/
+theorem andSo_selects_effect :
+    (Connective.toRelation .andSo).selectsEffect = true := rfl
+
 /-- "although" does not select for causes. -/
 theorem although_not_causal :
     (Connective.toRelation .although).selectsCause = false := rfl
@@ -124,6 +133,12 @@ theorem although_not_causal :
 /-- "and then" does not select for causes. -/
 theorem andThen_not_causal :
     (Connective.toRelation .andThen).selectsCause = false := rfl
+
+/-- "because" and "and so" are both causal but in opposite directions
+    (Solstad & Bott 2022, §1.4): I-Caus is backward, I-Cons is forward. -/
+theorem because_andSo_opposite_directions :
+    (Connective.toRelation .because).causalDirection = .backward ∧
+    (Connective.toRelation .andSo).causalDirection = .forward := ⟨rfl, rfl⟩
 
 /-- Both causal relations (explanation, result) belong to causeEffect class. -/
 theorem causal_relations_same_class :

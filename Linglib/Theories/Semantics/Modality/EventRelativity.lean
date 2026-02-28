@@ -2,7 +2,8 @@ import Linglib.Core.Semantics.Proposition
 import Linglib.Core.Logic.ModalLogic
 
 /-!
-# Event-Relative Modality (Hacquard 2006, 2009, 2010) @cite{hacquard-2010}
+# Event-Relative Modality (Hacquard 2006, 2009, 2010)
+  @cite{hacquard-2006} @cite{hacquard-2009} @cite{hacquard-2010}
 
 Modal domains are projected from event arguments, not stipulated at the
 clause level. An **anchoring function** maps events to conversational
@@ -77,17 +78,22 @@ Kratzer-style conversational background. -/
 def anchor {Ev W : Type*} (f : AnchoringFn Ev W) (e : Ev) : W → List (BProp W) :=
   f e
 
-/-- The type of modal anchor: determines which event provides the
-modal base and hence which modal flavor results.
+/-- The type of modal anchor: a binary coarsening of `EventBinder` (§8)
+that collapses the contentful cases (speech act, attitude) into
+`speechEvent` and the contentless case (VP event) into `describedEvent`.
+
+This captures the matrix-clause application (Alonso-Ovalle & Royer 2024)
+where only two anchor types matter. For the full three-way distinction
+needed for embedded contexts, use `EventBinder` directly.
 
 Hacquard (2006): the speech event projects epistemic modality;
 the described event projects circumstantial/root modality.
 Alonso-Ovalle & Royer (2024) refine circumstantial to include
 random choice as a subtype. -/
 inductive AnchorType where
-  /-- Anchored to the speech event → epistemic modal base -/
+  /-- Anchored to a contentful event (speech act or attitude) → epistemic available -/
   | speechEvent
-  /-- Anchored to the described event → circumstantial modal base -/
+  /-- Anchored to the VP event → circumstantial modal base -/
   | describedEvent
   deriving DecidableEq, BEq, Repr, Inhabited
 
@@ -151,263 +157,13 @@ theorem duality {Ev W : Type*} (f : AnchoringFn Ev W) (e : Ev)
 
 
 -- ════════════════════════════════════════════════════
--- § 3. Modal Indefinite Denotation (A-O&R 2024, (59))
+-- §§ 3–7. Modal Indefinites (extracted to ModalIndefinites.lean)
 -- ════════════════════════════════════════════════════
 
-/-- The modal component of a modal indefinite (A-O&R 2024, (59)):
-
-    ∀y[P(y)(w) → ◇_{f(e₁)}(Q(y)(w'))]
-
-For every individual y satisfying restrictor P in the actual world,
-there exists an accessible world w' (via anchoring function f applied
-to event e₁) where y satisfies scope predicate Q. This is the
-"modal variation" inference: every domain member is a possible
-witness. -/
-def modalComponent {Ev W Entity : Type*}
-    (f : AnchoringFn Ev W) (e : Ev) (allW : List W)
-    (domain : List Entity) (P Q : Entity → W → Bool)
-    (w : W) : Bool :=
-  domain.all λ y => !(P y w) ||
-    possibility f e allW (λ w' => Q y w') w
-
-/-- Full modal indefinite denotation (A-O&R 2024, (59)):
-
-    ⟦MI⟧^{f,e₁} = λP.λQ.λw.
-      ∃x[P(x)(w) ∧ Q(x)(w)] ∧
-      ∀y[P(y)(w) → ◇_{f(e₁)}(Q(y)(w'))]
-
-The existential component asserts that some individual satisfies
-both restrictor and scope. The universal modal component asserts
-that EVERY restrictor individual is a possible scope-satisfier
-in some accessible world — the free choice / modal variation
-effect. -/
-def modalIndefiniteSat {Ev W Entity : Type*}
-    (f : AnchoringFn Ev W) (e : Ev) (allW : List W)
-    (domain : List Entity) (P Q : Entity → W → Bool) (w : W) : Bool :=
-  (domain.any λ x => P x w && Q x w) &&
-    modalComponent f e allW domain P Q w
-
-
--- ════════════════════════════════════════════════════
--- § 4. Upper-Boundedness (A-O&R 2024, §5)
--- ════════════════════════════════════════════════════
-
-/-- An upper-bounded modal indefinite additionally requires that NOT
-every P is Q in the actual world — the speaker does not know/intend
-for all domain members to satisfy Q.
-
-    ⟦MI_UB⟧ = ⟦MI⟧ ∧ ¬∀x[P(x)(w) → Q(x)(w)]
-
-This is the anti-singleton inference of *algún*
-(Alonso-Ovalle & Menéndez-Benito 2010). Items like *yalnhej* lack
-this condition and are compatible with all P being Q. -/
-def upperBoundedSat {Ev W Entity : Type*}
-    (f : AnchoringFn Ev W) (e : Ev) (allW : List W)
-    (domain : List Entity) (P Q : Entity → W → Bool) (w : W) : Bool :=
-  modalIndefiniteSat f e allW domain P Q w &&
-    !(domain.all λ x => !(P x w) || Q x w)
-
-/-- Upper-boundedness strengthens the modal indefinite:
-if the UB version holds, the plain MI version holds. -/
-theorem upperBounded_entails_plain {Ev W Entity : Type*}
-    (f : AnchoringFn Ev W) (e : Ev) (allW : List W)
-    (domain : List Entity) (P Q : Entity → W → Bool) (w : W)
-    (h : upperBoundedSat f e allW domain P Q w = true) :
-    modalIndefiniteSat f e allW domain P Q w = true := by
-  unfold upperBoundedSat at h
-  simp only [Bool.and_eq_true] at h
-  exact h.1
-
-
--- ════════════════════════════════════════════════════
--- § 5. Worked Example: 3 Books
--- ════════════════════════════════════════════════════
-
-/-- Three books for testing the modal indefinite semantics. -/
-inductive Book where | a | b | c
-  deriving DecidableEq, BEq, Repr, Inhabited
-
-/-- Three possible worlds varying in which books are available. -/
-inductive BookWorld where
-  | abc   -- all three available
-  | ab    -- only a, b available
-  | ac    -- only a, c available
-  deriving DecidableEq, BEq, Repr, Inhabited
-
-instance : Core.Proposition.FiniteWorlds BookWorld where
-  worlds := [.abc, .ab, .ac]
-  complete := λ w => by cases w <;> simp
-
-private def allBooks : List Book := [.a, .b, .c]
-private def allBW : List BookWorld := [.abc, .ab, .ac]
-
-/-- "is a book": always true for our domain. -/
-private def isBook : Book → BookWorld → Bool := λ _ _ => true
-
-/-- "is available": varies by world. -/
-private def isAvailable : Book → BookWorld → Bool
-  | .a, _ => true           -- book a always available
-  | .b, .abc => true
-  | .b, .ab => true
-  | .b, .ac => false
-  | .c, .abc => true
-  | .c, .ab => false
-  | .c, .ac => true
-
-/-- A speech event and a described event. -/
-inductive SpeechOrDescribed where | speech | described
-  deriving DecidableEq, BEq, Repr
-
-/-- Epistemic anchoring: the speaker considers all three worlds possible. -/
-private def fEPI : AnchoringFn SpeechOrDescribed BookWorld :=
-  λ _ _ => []  -- empty background → all worlds accessible
-
-/-- "Yalnhej bought a book" in world abc:
-    ∃x[book(x) ∧ avail(x)] ∧ ∀y[book(y) → ◇_{EPI}(avail(y))]
-    Every book is available in some accessible world. -/
-theorem yalnhej_book_abc :
-    modalIndefiniteSat fEPI .speech allBW allBooks isBook isAvailable .abc = true := by
-  native_decide
-
-/-- Not upper-bounded: in world abc, all three books ARE available,
-    yet the MI denotation holds. The anti-singleton condition fails
-    (all books satisfy the scope), showing yalnhej is non-UB. -/
-theorem yalnhej_not_upper_bounded_abc :
-    modalIndefiniteSat fEPI .speech allBW allBooks isBook isAvailable .abc = true ∧
-    ¬(upperBoundedSat fEPI .speech allBW allBooks isBook isAvailable .abc = true) := by
-  constructor
-  · native_decide
-  · native_decide
-
-
--- ════════════════════════════════════════════════════
--- § 6. Non-Maximality (A-O&R 2024, §3.2.4)
--- ════════════════════════════════════════════════════
-
-/-! Yalnhej is compatible with partial-domain scenarios: the speaker
-can felicitously use *yalnhej* even when not all P are Q. This
-distinguishes it from maximal free relatives (*whatever*), which
-require every domain member to satisfy the scope. Unlike
-upper-boundedness (which blocks ∀P→Q), non-maximality is about
-COMPATIBILITY with ¬∀P→Q — a weaker property.
-
-We demonstrate non-maximality using the existing 3-book model:
-in world `ab` (books a,b available but NOT c), the MI denotation
-still holds because every book is available in SOME accessible world,
-even though not every book is available in the actual world. -/
-
-/-- MI holds in world ab where book c is NOT available.
-    The existential component (∃x P∧Q) holds (book a is available).
-    The modal component (∀y P→◇Q) holds (each book is available
-    in some accessible world). Crucially, ¬∀y P→Q(y)(ab): book c
-    is not available in ab. This shows yalnhej is compatible with
-    not-all-P-being-Q — non-maximality. -/
-theorem yalnhej_nonmaximal_ab :
-    modalIndefiniteSat fEPI .speech allBW allBooks isBook isAvailable .ab = true := by
-  native_decide
-
-/-- Three-way contrast: maximality vs yalnhej vs *algún*.
-    In world abc (all books available): MI holds + UB fails.
-    In world ab (not all available): MI holds + UB holds.
-    A maximal item (*whatever*) would require all books available
-    (fail in ab). *Algún* (UB) would require not-all (fail in abc).
-    *Yalnhej* (non-UB) succeeds in BOTH. -/
-theorem yalnhej_three_way_contrast :
-    -- yalnhej OK in abc (all available)
-    modalIndefiniteSat fEPI .speech allBW allBooks isBook isAvailable .abc = true ∧
-    -- yalnhej OK in ab (not all available) — non-maximal
-    modalIndefiniteSat fEPI .speech allBW allBooks isBook isAvailable .ab = true ∧
-    -- UB fails in abc (all satisfy scope → anti-singleton violated)
-    upperBoundedSat fEPI .speech allBW allBooks isBook isAvailable .abc = false := by
-  refine ⟨?_, ?_, ?_⟩ <;> native_decide
-
-
--- ════════════════════════════════════════════════════
--- § 7. Harmonic Interpretations (A-O&R 2024, §4.3)
--- ════════════════════════════════════════════════════
-
-/-! When a modal indefinite occurs under an external modal (imperative,
-deontic, attitude verb), the MI's anchoring event can be CO-INDEXED
-with the external modal's event. This "harmonic" configuration
-gives "any X is fine" readings — the MI's modal domain aligns with
-the embedding modal's domain.
-
-Non-harmonic: the MI's anchor is independent of the external modal.
-  "Grab yalnhej card" = grab a random card (MI anchors to described event).
-Harmonic: the MI's anchor is co-indexed with the imperative/deontic event.
-  "Grab yalnhej card" = any card is fine (MI anchors to imperative event).
-
-We model this with a card-grabbing scenario: three cards, worlds varying
-in which cards are grabbable, and two event types (local vs imperative). -/
-
-/-- Three cards for testing harmonic readings. -/
-inductive Card where | c1 | c2 | c3
-  deriving DecidableEq, BEq, Repr, Inhabited
-
-/-- Three worlds varying in which cards are grabbable. -/
-inductive CardWorld where
-  | all    -- all three grabbable
-  | only1  -- only c1 grabbable
-  | only2  -- only c2 grabbable
-  deriving DecidableEq, BEq, Repr, Inhabited
-
-private def allCards : List Card := [.c1, .c2, .c3]
-private def allCW : List CardWorld := [.all, .only1, .only2]
-
-/-- "is a card": always true in our domain. -/
-private def isCard : Card → CardWorld → Bool := λ _ _ => true
-
-/-- "can grab": which cards are grabbable in which worlds. -/
-private def canGrab : Card → CardWorld → Bool
-  | .c1, .all   => true
-  | .c1, .only1 => true
-  | .c1, .only2 => false
-  | .c2, .all   => true
-  | .c2, .only1 => false
-  | .c2, .only2 => true
-  | .c3, .all   => true
-  | .c3, .only1 => false
-  | .c3, .only2 => false
-
-/-- Three event types: speech, local (described), imperative. -/
-inductive GrabEvent where | speech | local | imperative
-  deriving DecidableEq, BEq, Repr
-
-/-- Anchoring function for the card scenario.
-    - Speech event: empty background (all worlds accessible).
-    - Local event: restricts to worlds where local circumstances hold
-      (only world `only1` — current situation has only c1 available).
-    - Imperative event: all worlds accessible (any card COULD be
-      grabbed if permitted). -/
-private def fGrab : AnchoringFn GrabEvent CardWorld
-  | .speech, _ => []  -- all worlds accessible
-  | .local, _ => [λ w => w == .only1]  -- only `only1` accessible
-  | .imperative, _ => []  -- all worlds accessible (permission domain)
-
-/-- Non-harmonic MI fails: when the MI anchors to the local event,
-    only world `only1` is accessible. In `only1`, only c1 is grabbable.
-    The modal component ∀y[card(y) → ◇_{local}(grab(y))] fails because
-    c2 and c3 are not grabbable in any locally accessible world. -/
-theorem nonharmonic_fails :
-    modalIndefiniteSat fGrab .local allCW allCards isCard canGrab .only1 = false := by
-  native_decide
-
-/-- Harmonic MI succeeds: when the MI's anchor is co-indexed with the
-    imperative event, all worlds are accessible. Every card is grabbable
-    in some world (c1 in `only1`, c2 in `only2`, c3 in `all`). The
-    modal component ∀y[card(y) → ◇_{imperative}(grab(y))] holds.
-    This gives the "any card is fine" reading. -/
-theorem harmonic_succeeds :
-    modalIndefiniteSat fGrab .imperative allCW allCards isCard canGrab .only1 = true := by
-  native_decide
-
-/-- Harmonic ≠ non-harmonic: the two readings are formally distinct.
-    Same world of evaluation (.only1), same domain, same predicates —
-    only the anchoring event differs. -/
-theorem harmonic_neq_nonharmonic :
-    modalIndefiniteSat fGrab .local allCW allCards isCard canGrab .only1 = false ∧
-    modalIndefiniteSat fGrab .imperative allCW allCards isCard canGrab .only1 = true := by
-  constructor <;> native_decide
+/-! The modal indefinite denotation (A-O&R 2024), upper-boundedness,
+non-maximality, and harmonic interpretation types have been extracted to
+`Theories/Semantics/Modality/ModalIndefinites.lean`. That file imports
+this one for `AnchoringFn` and `possibility`. -/
 
 
 -- ════════════════════════════════════════════════════
@@ -590,6 +346,32 @@ def AnchorType.toEventBinder : AnchorType → EventBinder
   | .speechEvent => .speechAct
   | .describedEvent => .vpEvent
 
+/-- Project an event binder to the binary anchor type.
+
+This collapses the three-way `EventBinder` to the two-way `AnchorType`
+by grouping contentful events (speech act, attitude) together as
+`speechEvent` and contentless events (VP) as `describedEvent`.
+
+The grouping is principled: it follows `hasContent`. Contentful binders
+project to `speechEvent`; contentless to `describedEvent`. -/
+def EventBinder.toAnchorType : EventBinder → AnchorType
+  | .speechAct => .speechEvent
+  | .attitude  => .speechEvent   -- attitude is contentful → groups with speech act
+  | .vpEvent   => .describedEvent
+
+/-- The projection groups by contentfulness: all contentful binders map
+to `speechEvent`, the contentless binder maps to `describedEvent`. -/
+theorem toAnchorType_groups_by_content :
+    ∀ b : EventBinder,
+      (b.toAnchorType == .speechEvent) = b.hasContent := by
+  intro b; cases b <;> rfl
+
+/-- `toEventBinder` is a section of `toAnchorType`: round-tripping
+through EventBinder and back recovers the original AnchorType. -/
+theorem toEventBinder_section :
+    ∀ a : AnchorType, a.toEventBinder.toAnchorType = a := by
+  intro a; cases a <;> rfl
+
 /-- `AnchorType.toFlavor` is derivable from content licensing: the
 primary flavor for each anchor type is the head of the corresponding
 event binder's available flavor list. This replaces a stipulation
@@ -598,6 +380,14 @@ theorem toFlavor_derived :
     ∀ a : AnchorType,
       a.toEventBinder.availableFlavors.head? = some a.toFlavor := by
   intro a; cases a <;> rfl
+
+/-- `AnchorType.toFlavor` is also derivable via `toAnchorType`: the
+primary flavor of any binder's anchor type equals the head of that
+binder's available flavors (for binders that have a primary flavor). -/
+theorem toFlavor_via_projection :
+    ∀ b : EventBinder, b.hasContent = true →
+      b.toAnchorType.toFlavor = .epistemic := by
+  intro b hb; cases b <;> simp_all [EventBinder.hasContent, EventBinder.toAnchorType]
 
 /-- The six binder × flavor combinations (Hacquard 2010, (49a–f)).
 Content licensing explains (49e): VP events lack content → no epistemic.
@@ -730,6 +520,72 @@ from event e. The implementation parallels `Kratzer.accessibleWorlds`
 theorem accessible_is_background_filter {Ev W : Type*}
     (f : AnchoringFn Ev W) (e : Ev) (allW : List W) (w : W) :
     accessible f e allW w = allW.filter (λ w' => (f e w).all (· w')) := rfl
+
+
+-- ════════════════════════════════════════════════════
+-- § 10b. Event-Relative Ordering Source
+--        (Hacquard 2010, (29): max_g(e)(∩f(e)))
+-- ════════════════════════════════════════════════════
+
+/-! The modal evaluation in §2 omits Kratzer's ordering source g. The
+full Hacquard (2010) semantics (29) is:
+
+    ⟦modal⟧(p)(e)(w) = ∀/∃ w' ∈ max_{g(e)(w)}(∩f(e)(w)). p(w')
+
+where `max_{g(e)(w)}` selects the BEST worlds among the accessible
+worlds, ranked by the ordering source projected from event e.
+
+An **event-relative ordering source** maps events to ordering functions,
+parallel to how the anchoring function maps events to modal bases.
+Different events can yield different orderings — e.g., a speech event
+might project the speaker's normative standards, while a VP event
+might project stereotypical ordering (inertia). -/
+
+/-- An event-relative ordering source: maps events to world-orderings.
+The ordering source determines how accessible worlds are ranked
+(Kratzer 1981, 2012). Applied to event e and world w, it yields the
+set of propositions characterizing the ideal (norms, stereotypes, goals). -/
+abbrev OrderingFn (Ev W : Type*) := Ev → W → List (BProp W)
+
+/-- The best worlds among the accessible set, ranked by the event-relative
+ordering source. Combines the anchoring function (modal base) with the
+ordering function to select the maximally ideal accessible worlds.
+
+This implements Hacquard's (29): `max_{g(e)}(∩f(e))`. -/
+def bestAccessible {Ev W : Type*} [DecidableEq W]
+    (f : AnchoringFn Ev W) (g : OrderingFn Ev W) (e : Ev)
+    (allW : List W) (w : W) : List W :=
+  let acc := accessible f e allW w
+  let ordering := g e w
+  acc.filter λ w' =>
+    acc.all λ w'' =>
+      -- w' is at least as good as w'' iff w' satisfies all ordering
+      -- propositions that w'' satisfies (Kratzer's ≤_A relation)
+      (ordering.filter (· w'')).all (· w')
+
+/-- Event-relative necessity with ordering source:
+    □_{f(e),g(e)} p at world w = ∀w' ∈ Best(f(e),g(e),w). p(w'). -/
+def orderedNecessity {Ev W : Type*} [DecidableEq W]
+    (f : AnchoringFn Ev W) (g : OrderingFn Ev W) (e : Ev)
+    (allW : List W) (p : BProp W) (w : W) : Bool :=
+  (bestAccessible f g e allW w).all p
+
+/-- Event-relative possibility with ordering source:
+    ◇_{f(e),g(e)} p at world w = ∃w' ∈ Best(f(e),g(e),w). p(w'). -/
+def orderedPossibility {Ev W : Type*} [DecidableEq W]
+    (f : AnchoringFn Ev W) (g : OrderingFn Ev W) (e : Ev)
+    (allW : List W) (p : BProp W) (w : W) : Bool :=
+  (bestAccessible f g e allW w).any p
+
+/-- Empty ordering source: all accessible worlds are best (no ranking).
+Reduces to the unordered evaluation in §2. -/
+theorem empty_ordering_reduces {Ev W : Type*} [DecidableEq W]
+    (f : AnchoringFn Ev W) (e : Ev) (allW : List W)
+    (p : BProp W) (w : W) :
+    orderedNecessity f (λ _ _ => []) e allW p w =
+      necessity f e allW p w := by
+  unfold orderedNecessity bestAccessible necessity accessible
+  simp [List.filter_eq_self, List.all_eq_true]
 
 
 -- ════════════════════════════════════════════════════

@@ -202,6 +202,7 @@ import Linglib.Fragments.Italian.Determiners
 import Linglib.Fragments.Italian.Pronouns
 import Linglib.Fragments.Italian.Negation
 import Linglib.Fragments.Italian.Tense
+import Linglib.Fragments.Italian.Modals
 import Linglib.Fragments.Spanish.Clitics
 import Linglib.Fragments.Spanish.Predicates
 import Linglib.Fragments.Spanish.PersonFeatures
@@ -275,6 +276,10 @@ import Linglib.Phenomena.ArgumentStructure.Bridge.MinimalismPassive
 import Linglib.Phenomena.ArgumentStructure.Bridge.MinimalismSmallClause
 import Linglib.Phenomena.ScalarImplicatures.ArgumentativeFraming
 import Linglib.Phenomena.Modality.ActualityInferencesBridge
+import Linglib.Phenomena.Modality.Bridge.EventRelativityRestructuring
+import Linglib.Phenomena.Modality.Bridge.TemporalOrientationBridge
+import Linglib.Phenomena.Modality.Bridge.ModalPositionFragmentBridge
+import Linglib.Phenomena.Modality.Bridge.PragmaticBlockingBridge
 import Linglib.Phenomena.TenseAspect.CrossDomainBridge
 import Linglib.Phenomena.TenseAspect.DiagnosticsBridge
 import Linglib.Phenomena.AuxiliaryVerbs.Diagnostics
@@ -382,10 +387,11 @@ import Linglib.Phenomena.Nonliteral.Humor.Studies.KaoEtAl2016
 import Linglib.Phenomena.Nonliteral.Hyperbole.KaoEtAl2014
 import Linglib.Phenomena.Imperatives.Studies.SumersEtAl2023
 import Linglib.Phenomena.Imperatives.Typology
--- Phenomena: Implicit Causality (Solstad & Bott 2024)
+-- Phenomena: Implicit Causality (Solstad & Bott 2022, 2024)
 import Linglib.Phenomena.ImplicitCausality.Studies.SolstadBott2024.Data
 import Linglib.Phenomena.ImplicitCausality.Studies.SolstadBott2024.Bridge.PresuppositionBridge
 import Linglib.Phenomena.ImplicitCausality.Studies.SolstadBott2024.Bridge.ProtoRoleBridge
+import Linglib.Phenomena.ImplicitCausality.Studies.SolstadBott2024.Bridge.ProjectivityBridge
 -- Phenomena: Imprecision (extracted from Gradability/)
 import Linglib.Phenomena.Imprecision.Basic
 import Linglib.Phenomena.Imprecision.FormMeaning
@@ -478,6 +484,9 @@ import Linglib.Phenomena.Politeness.Studies.YoonEtAl2020
 import Linglib.Phenomena.Polysemy.Data
 import Linglib.Phenomena.Polysemy.CopredBridge
 import Linglib.Phenomena.Possession.Typology
+import Linglib.Phenomena.PsychVerbs.Data
+import Linglib.Phenomena.PsychVerbs.Bridge.CausationBridge
+import Linglib.Phenomena.PsychVerbs.Bridge.ContentLicensingBridge
 import Linglib.Phenomena.Presupposition.Basic
 import Linglib.Phenomena.Presupposition.Diagnostics
 import Linglib.Phenomena.Presupposition.ProjectiveContent
@@ -635,6 +644,7 @@ import Linglib.Comparisons.TenseTheories
 import Linglib.Comparisons.VaguenessTheories
 import Linglib.Comparisons.ProjectionMechanisms
 import Linglib.Comparisons.KratzerEpistemicRSA
+import Linglib.Comparisons.ModalPosition
 import Linglib.Comparisons.CaseTheories
 
 -- Theories: Dependency Grammar
@@ -946,6 +956,7 @@ import Linglib.Theories.Semantics.Causation.Sufficiency
 import Linglib.Theories.Semantics.Causation.Implicative
 import Linglib.Theories.Semantics.Causation.ProductionDependence
 import Linglib.Theories.Semantics.Causation.Resultatives
+import Linglib.Theories.Semantics.Causation.PsychCausation
 import Linglib.Theories.Semantics.Conditionals.Assertability
 import Linglib.Theories.Semantics.Conditionals.Basic
 import Linglib.Theories.Semantics.Conditionals.ConditionalType
@@ -972,6 +983,7 @@ import Linglib.Theories.Semantics.Modality.Temporal
 import Linglib.Theories.Semantics.Modality.Typology
 import Linglib.Theories.Semantics.Modality.Inertia
 import Linglib.Theories.Semantics.Modality.EventRelativity
+import Linglib.Theories.Semantics.Modality.ModalIndefinites
 import Linglib.Theories.Semantics.Mood.Basic
 import Linglib.Theories.Semantics.Reference.Basic
 import Linglib.Theories.Semantics.Reference.Kaplan

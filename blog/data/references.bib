@@ -109,6 +109,20 @@
   sources   = {Phenomena/Reference/Studies/QingFranke2015.lean}
 }
 
+@article{belletti-rizzi-1988,
+  author    = {Belletti, Adriana and Rizzi, Luigi},
+  year      = {1988},
+  title     = {Psych-Verbs and $\theta$-Theory},
+  journal   = {Natural Language and Linguistic Theory},
+  volume    = {6},
+  number    = {3},
+  pages     = {291--352},
+  doi       = {10.1007/BF00133902},
+  subfield  = {syntax/argument-structure},
+  role      = {formalized},
+  sources   = {Phenomena/PsychVerbs/Data.lean;Phenomena/PsychVerbs/Bridge/CausationBridge.lean}
+}
+
 @article{bergen-goodman-2015,
   author    = {Bergen, Leon and Goodman, Noah D.},
   year      = {2015},
@@ -1407,24 +1421,51 @@
 @article{solstad-bott-2024,
   author    = {Solstad, Torgrim and Bott, Oliver},
   year      = {2024},
-  title     = {Occasion Verbs},
-  journal   = {Natural Language Semantics},
-  volume    = {32},
-  pages     = {475--521},
-  doi       = {10.1007/s11050-024-09216-7},
-  subfield  = {semantics/lexical},
+  title     = {Cataphoric Resolution of Projective Content: The Case of Occasion Verbs},
+  journal   = {Semantics \& Pragmatics},
+  volume    = {17},
+  number    = {11},
+  doi       = {10.3765/sp.17.11},
+  subfield  = {semantics/presupposition},
   role      = {formalized},
-  sources   = {Phenomena/ImplicitCausality/Studies/SolstadBott2024/Data.lean;Phenomena/ImplicitCausality/Studies/SolstadBott2024/Bridge/PresuppositionBridge.lean;Phenomena/ImplicitCausality/Studies/SolstadBott2024/Bridge/ProtoRoleBridge.lean}
+  sources   = {Phenomena/ImplicitCausality/Studies/SolstadBott2024/Data.lean;Phenomena/ImplicitCausality/Studies/SolstadBott2024/Bridge/PresuppositionBridge.lean;Phenomena/ImplicitCausality/Studies/SolstadBott2024/Bridge/ProtoRoleBridge.lean;Phenomena/ImplicitCausality/Studies/SolstadBott2024/Bridge/ProjectivityBridge.lean}
+}
+
+@article{solstad-bott-2022,
+  author    = {Solstad, Torgrim and Bott, Oliver},
+  year      = {2022},
+  title     = {On the Nature of Implicit Causality and Consequentiality: The Case of Psychological Verbs},
+  journal   = {Language, Cognition and Neuroscience},
+  volume    = {37},
+  number    = {10},
+  pages     = {1311--1340},
+  doi       = {10.1080/23273798.2022.2069278},
+  subfield  = {semantics/lexical},
+  role      = {cited},
+  sources   = {Phenomena/ImplicitCausality/Studies/SolstadBott2024/Data.lean}
+}
+
+@article{solstad-bott-2023,
+  author    = {Solstad, Torgrim and Bott, Oliver},
+  year      = {2023},
+  title     = {Implicit Causality and Consequentiality of Action Verbs},
+  journal   = {Frontiers in Language Sciences},
+  volume    = {2},
+  number    = {1143214},
+  doi       = {10.3389/flang.2023.1143214},
+  subfield  = {semantics/lexical},
+  role      = {cited},
+  sources   = {Phenomena/ImplicitCausality/Studies/SolstadBott2024/Data.lean}
 }
 
 @phdthesis{kim-2024,
-  author    = {Kim, Yenan Jeanne},
+  author    = {Kim, Youngjin},
   year      = {2024},
-  title     = {The Argument Structure of Object Experiencer Verbs},
+  title     = {On the Argument Structure of Object Experiencer Verbs},
   school    = {University College London},
   subfield  = {semantics/lexical},
-  role      = {cited},
-  sources   = {Phenomena/ImplicitCausality/Studies/SolstadBott2024/Bridge/ProtoRoleBridge.lean}
+  role      = {formalized},
+  sources   = {Theories/Semantics/Causation/PsychCausation.lean;Phenomena/PsychVerbs/Data.lean;Phenomena/PsychVerbs/Bridge/CausationBridge.lean}
 }
 
 @article{kennedy-2007,

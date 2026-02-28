@@ -1,6 +1,7 @@
 import Linglib.Core.Scales.EpistemicScale.Fin3
 import Linglib.Core.Polyhedral
 import Mathlib.Algebra.BigOperators.Group.Finset.Piecewise
+import Mathlib.Algebra.BigOperators.Field
 
 /-!
 # Cancellation conditions for comparative probability
@@ -646,28 +647,393 @@ private theorem farkas_ordering_lp {n : ℕ} (sys : EpistemicSystemFA (Fin n)) :
 
 -- ── Step 4b'. Cancellation strengthens → to ↔ ───
 
-/-- If the one-directional feasibility polytope is nonempty AND
-    cancellation holds, then the bidirectional (↔) polytope
-    `feasibleWeights` is also nonempty.
+/-- Split a sum over `Fin ((n + k) + K)` into nonneg + ordering + strict parts. -/
+private lemma sum_three_parts {n k K : ℕ} (f : Fin ((n + k) + K) → ℚ) :
+    ∑ i, f i = (∑ i : Fin n, f ⟨i.val, by omega⟩) +
+    (∑ m : Fin k, f ⟨n + m.val, by omega⟩) +
+    (∑ s : Fin K, f ⟨(n + k) + s.val, by omega⟩) := by
+  rw [Fin.sum_univ_add, Fin.sum_univ_add (fun i : Fin (n + k) => f (Fin.castAdd K i))]
+  congr 1
 
-    Key idea: the → polytope is a convex polytope P. The ↔ polytope
-    is P minus certain faces (one for each strict ordering B ≻ A where
-    we need p(B) > p(A) rather than ≥). Cancellation ensures no strict
-    ordering is "forced tight" on all of P: if compVec(B,A)·p = 0 for
-    all p ∈ P, then (by LP duality) compVec(B,A) is a nonneg combination
-    of constraint normals, yielding a neutral valid portfolio with the
-    strict member (B,A) — contradicting cancellation.
+/-- Weighted sum of a filterMap portfolio equals the Finset sum
+    (zero-weight terms contribute 0 and are skipped by filterMap). -/
+private lemma filterMap_weightedSum {n k' : ℕ}
+    (pairs : Fin k' → Finset (Fin n) × Finset (Fin n))
+    (w : Fin k' → ℚ) (hw : ∀ i, 0 ≤ w i)
+    (hdisj : ∀ i, Disjoint (pairs i).1 (pairs i).2)
+    (j : Fin n) :
+    Portfolio.weightedSum
+      ((List.finRange k').filterMap (fun i =>
+        if h : 0 < w i then
+          some ⟨(pairs i).1, (pairs i).2, w i, hdisj i, h⟩
+        else none)) j =
+    ∑ i : Fin k', w i *
+      ((comparisonVec n (pairs i).1 (pairs i).2 j : ℤ) : ℚ) := by
+  simp only [Portfolio.weightedSum]
+  conv_rhs => rw [← finRange_map_sum]
+  suffices ∀ l : List (Fin k'),
+      ((l.filterMap (fun i =>
+        if h : 0 < w i then
+          some ⟨(pairs i).1, (pairs i).2, w i, hdisj i, h⟩
+        else none)).map (fun wc : WComparison n =>
+        wc.weight * ((comparisonVec n wc.left wc.right j : ℤ) : ℚ))).sum =
+      (l.map (fun i =>
+        w i * ((comparisonVec n (pairs i).1 (pairs i).2 j : ℤ) : ℚ))).sum
+      from this _
+  intro l; induction l with
+  | nil => simp
+  | cons hd tl ih =>
+    simp only [List.map_cons, List.sum_cons]
+    by_cases hpos : 0 < w hd
+    · -- Include entry: filterMap keeps it
+      simp only [List.filterMap_cons, dif_pos hpos, List.map_cons, List.sum_cons, ih]
+    · -- Skip entry: filterMap drops it, contribution is 0
+      simp only [List.filterMap_cons, dif_neg hpos]
+      rw [ih]
+      have : w hd = 0 := le_antisymm (not_lt.mp hpos) (hw hd)
+      simp [this]
 
-    Therefore, the relative interior of P (which avoids all non-binding
-    faces) satisfies the strict constraints, giving a point in the ↔
-    polytope. -/
+/-- Strict pairs: disjoint (A, B) where sys.ge ↑A ↑B strictly (¬sys.ge ↑B ↑A). -/
+private noncomputable def strictPairsOf {n : ℕ} (sys : EpistemicSystemFA (Fin n)) :
+    List (Finset (Fin n) × Finset (Fin n)) :=
+  ((Finset.univ ×ˢ Finset.univ : Finset _).filter
+    (fun ab => Disjoint ab.1 ab.2 ∧ sys.ge ↑ab.1 ↑ab.2 ∧ ¬sys.ge ↑ab.2 ↑ab.1)).toList
+
+private theorem strictPairs_mem {n : ℕ} (sys : EpistemicSystemFA (Fin n))
+    (A B : Finset (Fin n)) (hd : Disjoint A B) (hge : sys.ge ↑A ↑B) (hng : ¬sys.ge ↑B ↑A) :
+    (A, B) ∈ strictPairsOf sys := by
+  simp only [strictPairsOf, Finset.mem_toList, Finset.mem_filter, Finset.mem_product,
+    Finset.mem_univ, true_and]
+  exact ⟨hd, hge, hng⟩
+
+private theorem strictPairs_disj {n : ℕ} (sys : EpistemicSystemFA (Fin n))
+    (m : Fin (strictPairsOf sys).length) :
+    Disjoint ((strictPairsOf sys).get m).1 ((strictPairsOf sys).get m).2 := by
+  have := List.get_mem (strictPairsOf sys) m
+  simp only [strictPairsOf, Finset.mem_toList, Finset.mem_filter] at this
+  exact this.2.1
+
+private theorem strictPairs_ge {n : ℕ} (sys : EpistemicSystemFA (Fin n))
+    (m : Fin (strictPairsOf sys).length) :
+    sys.ge ↑((strictPairsOf sys).get m).1 ↑((strictPairsOf sys).get m).2 := by
+  have := List.get_mem (strictPairsOf sys) m
+  simp only [strictPairsOf, Finset.mem_toList, Finset.mem_filter] at this
+  exact this.2.2.1
+
+private theorem strictPairs_strict {n : ℕ} (sys : EpistemicSystemFA (Fin n))
+    (m : Fin (strictPairsOf sys).length) :
+    ¬sys.ge ↑((strictPairsOf sys).get m).2 ↑((strictPairsOf sys).get m).1 := by
+  have := List.get_mem (strictPairsOf sys) m
+  simp only [strictPairsOf, Finset.mem_toList, Finset.mem_filter] at this
+  exact this.2.2.2
+
+set_option maxHeartbeats 1600000 in
 private theorem cancel_strengthens_to_bidir {n : ℕ} (sys : EpistemicSystemFA (Fin n))
     (hcancel : Cancellation n sys.ge)
     (hexists : ∃ p : Fin n → ℚ, (∀ i, 0 ≤ p i) ∧ Finset.univ.sum p = 1 ∧
       ∀ (A B : Finset (Fin n)), Disjoint A B →
         sys.ge ↑A ↑B → A.sum p ≥ B.sum p) :
-    ∃ p, p ∈ feasibleWeights n sys :=
-  sorry
+    ∃ p, p ∈ feasibleWeights n sys := by
+  obtain ⟨p₀, hnn₀, hsum₀, hge₀⟩ := hexists
+  -- Enumerate all ge pairs
+  let gePairs : List (Finset (Fin n) × Finset (Fin n)) :=
+    ((Finset.univ ×ˢ Finset.univ : Finset _).filter
+      (fun ab => Disjoint ab.1 ab.2 ∧ sys.ge ↑ab.1 ↑ab.2)).toList
+  let k := gePairs.length
+  let sp := strictPairsOf sys
+  let K := sp.length
+  have hgePairsMem : ∀ (A B : Finset (Fin n)), Disjoint A B → sys.ge ↑A ↑B →
+      (A, B) ∈ gePairs := by
+    intro A B hd hge
+    simp only [gePairs, Finset.mem_toList, Finset.mem_filter, Finset.mem_product,
+      Finset.mem_univ, true_and]
+    exact ⟨hd, hge⟩
+  have hgePairsDisj : ∀ m : Fin k, Disjoint (gePairs.get m).1 (gePairs.get m).2 := by
+    intro ⟨m, hm⟩
+    have := List.get_mem gePairs ⟨m, hm⟩
+    simp only [gePairs, Finset.mem_toList, Finset.mem_filter] at this
+    exact this.2.1
+  have hgePairsGe : ∀ m : Fin k, sys.ge ↑(gePairs.get m).1 ↑(gePairs.get m).2 := by
+    intro ⟨m, hm⟩
+    have := List.get_mem gePairs ⟨m, hm⟩
+    simp only [gePairs, Finset.mem_toList, Finset.mem_filter] at this
+    exact this.2.2
+  -- Case split: are there strict pairs?
+  by_cases hK : K = 0
+  · -- No strict pairs: p₀ is already ↔ feasible
+    refine ⟨p₀, hnn₀, hsum₀, fun A B hdisj => ⟨hge₀ A B hdisj, fun hge => ?_⟩⟩
+    -- Need: sys.ge ↑A ↑B. Suppose not → strict pair exists, contradicting K = 0
+    by_contra hng
+    have hBA : sys.ge ↑B ↑A := (sys.total ↑A ↑B).resolve_left hng
+    have hmem := strictPairs_mem sys B A hdisj.symm hBA hng
+    have hempty : (strictPairsOf sys).length = 0 := hK
+    have : (strictPairsOf sys) = [] := by
+      rcases strictPairsOf sys with _ | ⟨_, _⟩ <;> simp_all
+    simp [this] at hmem
+  · -- Strict pairs exist: build augmented LP and apply Farkas
+    have hK_pos : 0 < K := Nat.pos_of_ne_zero hK
+    -- Build constraint function: n nonneg + k ordering + K strict
+    let ineqFn : Fin ((n + k) + K) → Polyhedral.Ineq n := fun i =>
+      if h : i.val < n then
+        ⟨fun j => if j = ⟨i.val, h⟩ then -1 else 0, 0⟩
+      else if _ : i.val < n + k then
+        ⟨fun j => -(((comparisonVec n (gePairs.get ⟨i.val - n, by omega⟩).1
+            (gePairs.get ⟨i.val - n, by omega⟩).2 j : ℤ) : ℚ)), 0⟩
+      else
+        ⟨fun j => -(((comparisonVec n (sp.get ⟨i.val - (n + k), by omega⟩).1
+            (sp.get ⟨i.val - (n + k), by omega⟩).2 j : ℤ) : ℚ)), -1⟩
+    let S : Polyhedral.System n := List.ofFn ineqFn
+    have hget : ∀ i : Fin ((n + k) + K), ineqFn i ∈ S :=
+      fun i => List.mem_ofFn.mpr ⟨i, rfl⟩
+    -- Apply Farkas
+    rcases Polyhedral.farkas S with ⟨x, hx⟩ | hcert
+    · -- ═══ Feasible case: extract and normalize ═══
+      have hsat : ∀ i : Fin ((n + k) + K), (ineqFn i).sat x := fun i => hx _ (hget i)
+      -- Extract nonnegativity
+      have hx_nn : ∀ i : Fin n, 0 ≤ x i := by
+        intro i
+        have h := hsat ⟨i.val, by omega⟩
+        simp only [ineqFn, dif_pos i.isLt, Polyhedral.Ineq.sat, Polyhedral.dot] at h
+        simp only [ite_mul, neg_one_mul, zero_mul, Finset.sum_ite_eq', Finset.mem_univ,
+          ite_true] at h
+        linarith
+      -- Extract ordering constraints
+      have hx_ord : ∀ (A B : Finset (Fin n)), Disjoint A B →
+          sys.ge ↑A ↑B → A.sum x ≥ B.sum x := by
+        intro A B hdisj hge
+        obtain ⟨⟨m, hm⟩, hget_m⟩ := List.mem_iff_get.mp (hgePairsMem A B hdisj hge)
+        have h := hsat ⟨n + m, by omega⟩
+        simp only [ineqFn, show ¬(n + m < n) from by omega, dite_false,
+          show (n + m < n + k) from by omega, dite_true,
+          Polyhedral.Ineq.sat, Polyhedral.dot] at h
+        simp only [show n + m - n = m from by omega] at h
+        simp only [neg_mul, Finset.sum_neg_distrib] at h
+        have hcv := compVec_as_sum_diff A B x hdisj
+        rw [hget_m] at h; linarith
+      -- Extract strict constraints
+      have hx_strict : ∀ s : Fin K, (sp.get s).1.sum x ≥ (sp.get s).2.sum x + 1 := by
+        intro ⟨s, hs⟩
+        have h := hsat ⟨n + k + s, by omega⟩
+        simp only [ineqFn, show ¬(n + k + s < n) from by omega, dite_false,
+          show ¬(n + k + s < n + k) from by omega,
+          Polyhedral.Ineq.sat, Polyhedral.dot] at h
+        simp only [show n + k + s - (n + k) = s from by omega] at h
+        simp only [neg_mul, Finset.sum_neg_distrib] at h
+        linarith [compVec_as_sum_diff (sp.get ⟨s, hs⟩).1 (sp.get ⟨s, hs⟩).2 x
+          (strictPairs_disj sys ⟨s, hs⟩)]
+      -- Normalize: Σx > 0 (from strict constraint on pair 0)
+      have hsum_pos : 0 < Finset.univ.sum x := by
+        have hs0 := hx_strict ⟨0, hK_pos⟩
+        have hA := Finset.sum_nonneg (fun i (_ : i ∈ (sp.get ⟨0, hK_pos⟩).1) => hx_nn i)
+        have hB := Finset.sum_nonneg (fun i (_ : i ∈ (sp.get ⟨0, hK_pos⟩).2) => hx_nn i)
+        calc Finset.univ.sum x
+            ≥ (sp.get ⟨0, hK_pos⟩).1.sum x := Finset.sum_le_univ_sum_of_nonneg hx_nn
+          _ ≥ (sp.get ⟨0, hK_pos⟩).2.sum x + 1 := hs0
+          _ ≥ 0 + 1 := by linarith
+          _ > 0 := by linarith
+      -- Define normalized vector
+      let σ := Finset.univ.sum x
+      have hσ_pos : 0 < σ := hsum_pos
+      have hσ_ne : σ ≠ 0 := ne_of_gt hσ_pos
+      refine ⟨fun i => x i / σ, fun i => div_nonneg (hx_nn i) (le_of_lt hσ_pos), ?_, ?_⟩
+      · -- Σ(x/σ) = 1
+        show Finset.univ.sum (fun i => x i / σ) = 1
+        rw [← Finset.sum_div]; exact div_self hσ_ne
+      · -- ↔ for disjoint pairs
+        intro A B hdisj
+        constructor
+        · -- → direction
+          intro hge
+          show A.sum (fun i => x i / σ) ≥ B.sum (fun i => x i / σ)
+          have h := hx_ord A B hdisj hge
+          rw [show A.sum (fun i => x i / σ) = A.sum x / σ from by rw [Finset.sum_div],
+              show B.sum (fun i => x i / σ) = B.sum x / σ from by rw [Finset.sum_div]]
+          exact div_le_div_of_nonneg_right h (le_of_lt hσ_pos)
+        · -- ← direction (contrapositive)
+          intro hge
+          by_contra hng
+          have hBA : sys.ge ↑B ↑A := (sys.total ↑A ↑B).resolve_left hng
+          have hmem := strictPairs_mem sys B A hdisj.symm hBA hng
+          obtain ⟨⟨s, hs⟩, hgets⟩ := List.mem_iff_get.mp hmem
+          have hgap := hx_strict ⟨s, hs⟩
+          rw [hgets] at hgap
+          -- B.sum x > A.sum x, so A.sum (x/σ) < B.sum (x/σ)
+          have hlt : A.sum (fun i => x i / σ) < B.sum (fun i => x i / σ) := by
+            rw [show A.sum (fun i => x i / σ) = A.sum x / σ from by rw [Finset.sum_div],
+                show B.sum (fun i => x i / σ) = B.sum x / σ from by rw [Finset.sum_div]]
+            exact div_lt_div_of_pos_right (by linarith) hσ_pos
+          linarith
+    · -- ═══ Infeasible case: certificate → cancellation violation ═══
+      exfalso
+      obtain ⟨cert⟩ := hcert
+      have hlen : S.length = (n + k) + K := List.length_ofFn
+      -- Cast cert weights to natural indices
+      let ws : Fin ((n + k) + K) → ℚ := fun i => cert.ws (i.cast hlen.symm)
+      have ws_nn : ∀ i, 0 ≤ ws i := fun i => cert.nonneg _
+      -- Transport: reindex sums
+      have hreindex : ∀ f : Fin S.length → ℚ,
+          ∑ i : Fin S.length, f i =
+          ∑ i : Fin ((n + k) + K), f (i.cast hlen.symm) :=
+        fun f => Fintype.sum_equiv (finCongr hlen) _ _ (fun i => by simp [finCongr])
+      have hS_get : ∀ i : Fin S.length,
+          S.get i = ineqFn (i.cast hlen) := fun i => List.get_ofFn ineqFn i
+      -- Coefficients zero
+      have hcoeffsZero : ∀ j : Fin n,
+          ∑ i : Fin ((n + k) + K), ws i * (ineqFn i).lhs j = 0 := by
+        intro j
+        have h := cert.coeffsZero j
+        rw [hreindex] at h; simp_rw [hS_get] at h; exact h
+      -- Bound negative
+      have hboundNeg :
+          ∑ i : Fin ((n + k) + K), ws i * (ineqFn i).rhs < 0 := by
+        have h := cert.boundNeg
+        rw [hreindex] at h; simp_rw [hS_get] at h; exact h
+      -- ── Decompose boundNeg: strict weights sum > 0 ──
+      have hstrictWtSum : 0 < ∑ s : Fin K, ws ⟨(n + k) + s.val, by omega⟩ := by
+        rw [sum_three_parts] at hboundNeg
+        have h1 : ∑ i : Fin n, ws ⟨i.val, by omega⟩ * (ineqFn ⟨i.val, by omega⟩).rhs = 0 :=
+          Finset.sum_eq_zero fun i _ => by
+            have : (ineqFn ⟨i.val, by omega⟩).rhs = 0 := by
+              simp only [ineqFn, dif_pos i.isLt]
+            simp [this]
+        have h2 : ∑ m : Fin k, ws ⟨n + m.val, by omega⟩ *
+            (ineqFn ⟨n + m.val, by omega⟩).rhs = 0 :=
+          Finset.sum_eq_zero fun m _ => by
+            have : (ineqFn ⟨n + m.val, by omega⟩).rhs = 0 := by
+              simp only [ineqFn, show ¬(n + m.val < n) from by omega,
+                show n + m.val < n + k from by omega, dite_false, dite_true]
+            simp [this]
+        have h3 : ∑ s : Fin K, ws ⟨(n + k) + s.val, by omega⟩ *
+            (ineqFn ⟨(n + k) + s.val, by omega⟩).rhs =
+            -(∑ s : Fin K, ws ⟨(n + k) + s.val, by omega⟩) := by
+          have hrhs : ∀ s : Fin K, (ineqFn ⟨(n + k) + s.val, by omega⟩).rhs = (-1 : ℚ) := by
+            intro s; simp only [ineqFn, show ¬((n + k) + s.val < n) from by omega,
+              show ¬((n + k) + s.val < n + k) from by omega, dite_false]
+          simp_rw [hrhs, mul_neg_one, Finset.sum_neg_distrib]
+        linarith
+      -- ── Find s₀ with positive strict weight ──
+      obtain ⟨s₀, _, hs₀⟩ : ∃ s ∈ (Finset.univ : Finset (Fin K)),
+          0 < ws ⟨(n + k) + s.val, by omega⟩ := by
+        by_contra hall; push_neg at hall
+        have : ∑ s : Fin K, ws ⟨(n + k) + s.val, by omega⟩ = 0 :=
+          Finset.sum_eq_zero fun s hs => le_antisymm (hall s hs)
+            (ws_nn ⟨(n + k) + s.val, by omega⟩)
+        linarith
+      -- ── Coefficient decomposition via sum_three_parts ──
+      have hDecomp : ∀ j : Fin n,
+          ws ⟨j.val, by omega⟩ +
+          (∑ m : Fin k, ws ⟨n + m.val, by omega⟩ *
+            ((comparisonVec n (gePairs.get m).1 (gePairs.get m).2 j : ℤ) : ℚ)) +
+          (∑ s : Fin K, ws ⟨(n + k) + s.val, by omega⟩ *
+            ((comparisonVec n (sp.get s).1 (sp.get s).2 j : ℤ) : ℚ)) = 0 := by
+        intro j; have h := hcoeffsZero j
+        rw [sum_three_parts] at h
+        -- Nonneg: only the j-th row contributes -ws(j)
+        have h_nn : ∑ i : Fin n, ws ⟨i.val, by omega⟩ * (ineqFn ⟨i.val, by omega⟩).lhs j =
+            -ws ⟨j.val, by omega⟩ := by
+          rw [Finset.sum_eq_single j]
+          · simp only [ineqFn, dif_pos j.isLt]; simp
+          · intro i _ hij
+            simp only [ineqFn, dif_pos i.isLt]
+            simp [show j ≠ i from Ne.symm hij]
+          · intro h; exact absurd (Finset.mem_univ j) h
+        -- Ordering: simplify lhs
+        have h_ord : ∀ m : Fin k, ws ⟨n + m.val, by omega⟩ *
+            (ineqFn ⟨n + m.val, by omega⟩).lhs j =
+            -(ws ⟨n + m.val, by omega⟩ *
+              ((comparisonVec n (gePairs.get m).1 (gePairs.get m).2 j : ℤ) : ℚ)) := by
+          intro m
+          have : (ineqFn ⟨n + m.val, by omega⟩).lhs j =
+              -(((comparisonVec n (gePairs.get ⟨m.val, m.isLt⟩).1
+                (gePairs.get ⟨m.val, m.isLt⟩).2 j : ℤ) : ℚ)) := by
+            simp only [ineqFn, show ¬(n + m.val < n) from by omega,
+              show n + m.val < n + k from by omega, dite_false, dite_true]
+            have : (⟨n + m.val - n, by omega⟩ : Fin k) = m := by
+              ext; show n + m.val - n = m.val; omega
+            rw [this]
+          rw [this]; ring
+        -- Strict: simplify lhs
+        have h_str : ∀ s : Fin K, ws ⟨(n + k) + s.val, by omega⟩ *
+            (ineqFn ⟨(n + k) + s.val, by omega⟩).lhs j =
+            -(ws ⟨(n + k) + s.val, by omega⟩ *
+              ((comparisonVec n (sp.get s).1 (sp.get s).2 j : ℤ) : ℚ)) := by
+          intro s
+          have : (ineqFn ⟨(n + k) + s.val, by omega⟩).lhs j =
+              -(((comparisonVec n (sp.get ⟨s.val, s.isLt⟩).1
+                (sp.get ⟨s.val, s.isLt⟩).2 j : ℤ) : ℚ)) := by
+            simp only [ineqFn, show ¬((n + k) + s.val < n) from by omega,
+              show ¬((n + k) + s.val < n + k) from by omega, dite_false]
+            have : (⟨(n + k) + s.val - (n + k), by omega⟩ : Fin K) = s := by
+              ext; show (n + k) + s.val - (n + k) = s.val; omega
+            rw [this]
+          rw [this]; ring
+        simp_rw [h_nn, h_ord, Finset.sum_neg_distrib, h_str, Finset.sum_neg_distrib] at h
+        linarith
+      -- ── Build portfolio violating cancellation ──
+      let Q_ord : List (WComparison n) :=
+        (List.finRange k).filterMap fun m =>
+          if h : 0 < ws ⟨n + m.val, by omega⟩ then
+            some ⟨(gePairs.get m).1, (gePairs.get m).2,
+              ws ⟨n + m.val, by omega⟩, hgePairsDisj m, h⟩
+          else none
+      let Q_strict : List (WComparison n) :=
+        (List.finRange K).filterMap fun s =>
+          if h : 0 < ws ⟨(n + k) + s.val, by omega⟩ then
+            some ⟨(sp.get s).1, (sp.get s).2,
+              ws ⟨(n + k) + s.val, by omega⟩, strictPairs_disj sys s, h⟩
+          else none
+      let Q_sing : List (WComparison n) :=
+        (List.finRange n).filterMap fun j =>
+          if h : 0 < ws ⟨j.val, by omega⟩ then
+            some ⟨{j}, ∅, ws ⟨j.val, by omega⟩, Finset.disjoint_empty_right _, h⟩
+          else none
+      let Q : Portfolio n := Q_ord ++ Q_strict ++ Q_sing
+      have hQ_strict : Q.hasStrict sys.ge :=
+        ⟨⟨(sp.get s₀).1, (sp.get s₀).2, ws ⟨(n + k) + s₀.val, by omega⟩,
+          strictPairs_disj sys s₀, hs₀⟩,
+          List.mem_append_left _ (List.mem_append_right _
+            (List.mem_filterMap.mpr ⟨s₀, List.mem_finRange s₀, dif_pos hs₀⟩)),
+          strictPairs_strict sys s₀⟩
+      have hQ_valid : Q.isValid sys.ge := by
+        intro wc hwc
+        rcases List.mem_append.mp hwc with h | h
+        · rcases List.mem_append.mp h with h | h
+          · obtain ⟨m, _, hm⟩ := List.mem_filterMap.mp h
+            split_ifs at hm with hpos
+            cases hm; exact hgePairsGe m
+          · obtain ⟨s, _, hs⟩ := List.mem_filterMap.mp h
+            split_ifs at hs with hpos
+            cases hs; exact strictPairs_ge sys s
+        · obtain ⟨j, _, hj⟩ := List.mem_filterMap.mp h
+          split_ifs at hj with hpos
+          cases hj; exact sys.mono ∅ {j} (by simp)
+      have hQ_neutral : Q.isNeutral := by
+        intro j
+        show Portfolio.weightedSum (Q_ord ++ Q_strict ++ Q_sing) j = 0
+        simp only [Portfolio.weightedSum, List.map_append, List.sum_append]
+        rw [show (Q_ord.map _).sum = _ from filterMap_weightedSum
+              (fun m => ((gePairs.get m).1, (gePairs.get m).2))
+              (fun m => ws ⟨n + m.val, by omega⟩)
+              (fun m => ws_nn ⟨n + m.val, by omega⟩) hgePairsDisj j,
+            show (Q_strict.map _).sum = _ from filterMap_weightedSum
+              (fun s => ((sp.get s).1, (sp.get s).2))
+              (fun s => ws ⟨(n + k) + s.val, by omega⟩)
+              (fun s => ws_nn ⟨(n + k) + s.val, by omega⟩)
+              (strictPairs_disj sys) j,
+            show (Q_sing.map _).sum = _ from filterMap_weightedSum
+              (fun i => ({i}, (∅ : Finset (Fin n))))
+              (fun i => ws ⟨i.val, by omega⟩)
+              (fun i => ws_nn ⟨i.val, by omega⟩)
+              (fun _ => Finset.disjoint_empty_right _) j]
+        have hsing : ∑ i : Fin n, ws ⟨i.val, by omega⟩ *
+            ((comparisonVec n {i} ∅ j : ℤ) : ℚ) = ws ⟨j.val, by omega⟩ := by
+          rw [Finset.sum_eq_single j]
+          · simp [comparisonVec, Finset.mem_singleton]
+          · intro i _ hij
+            simp [comparisonVec, Finset.mem_singleton, Ne.symm hij]
+          · intro h; exact absurd (Finset.mem_univ j) h
+        rw [hsing]; linarith [hDecomp j]
+      exact absurd hQ_strict (hcancel Q hQ_valid hQ_neutral)
 
 -- ── Step 4c. Certificate → cancellation violation ───
 

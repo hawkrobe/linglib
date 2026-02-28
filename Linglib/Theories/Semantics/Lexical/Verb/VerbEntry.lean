@@ -9,6 +9,7 @@ import Linglib.Theories.Semantics.Attitudes.Doxastic
 import Linglib.Theories.Semantics.Attitudes.Preferential
 import Linglib.Theories.Semantics.Causation.Basic
 import Linglib.Theories.Semantics.Causation.Implicative
+import Linglib.Theories.Semantics.Causation.PsychCausation
 
 /-! # Cross-Linguistic Verb Infrastructure
 
@@ -45,6 +46,7 @@ open Semantics.Probabilistic.Measurement (Dimension)
 open Semantics.Attitudes.Doxastic (Veridicality)
 open Semantics.Attitudes.Preferential (AttitudeValence NVPClass PreferentialPredicate)
 open Core.NaturalLogic (EntailmentSig)
+open Semantics.Causation.PsychCausation (CausalSource)
 
 /--
 Which Montague predicate builder this verb uses.
@@ -251,6 +253,9 @@ structure VerbCore where
   implicativeBuilder : Option ImplicativeBuilder := none
   /-- For causative verbs: which semantic builder (links to compositional semantics). -/
   causativeBuilder : Option CausativeBuilder := none
+  /-- Source of causation for psych causatives (Kim 2024 UPH).
+      `.external` = mind-external percept, `.internal` = mind-internal representation. -/
+  causalSource : Option CausalSource := none
 
   -- === Intensionality ===
   /-- Does the verb create an opaque context for its complement? -/

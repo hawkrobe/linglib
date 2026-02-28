@@ -80,6 +80,7 @@ import Linglib.Theories.Semantics.Causation.Implicative
 import Linglib.Theories.Semantics.Causation.CausalVerb
 import Linglib.Theories.Semantics.Causation.CausalClosure
 import Linglib.Theories.Semantics.Causation.DegreeCausation
+import Linglib.Theories.Semantics.Causation.PsychCausation
 
 namespace NadathurLauer2020
 

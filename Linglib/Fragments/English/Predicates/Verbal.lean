@@ -1287,68 +1287,96 @@ def value : VerbEntry := .mkRegular {
 /-! Levin (1993) class 31.1 (amuse). Subject = stimulus, object = experiencer.
     NP2 (object) IC bias. -/
 
-/-- "frighten" — StimExp verb (stimulus-subject) -/
+/-- "frighten" — StimExp verb (stimulus-subject, eventive: Kim 2024 UPH) -/
 def frighten : VerbEntry := .mkRegular {
   form := "frighten"
   complementType := .np
   subjectTheta := some .stimulus
   objectTheta := some .experiencer
+  causalSource := some .external
   levinClass := some .amuse }
 
-/-- "amuse" — StimExp verb (stimulus-subject) -/
+/-- "amuse" — StimExp verb (stimulus-subject, eventive: Kim 2024 UPH) -/
 def amuse : VerbEntry := .mkRegular {
   form := "amuse"
   complementType := .np
   subjectTheta := some .stimulus
   objectTheta := some .experiencer
+  causalSource := some .external
   levinClass := some .amuse }
 
-/-- "fascinate" — StimExp verb (stimulus-subject) -/
+/-- "fascinate" — StimExp verb (stimulus-subject, eventive: Kim 2024 UPH) -/
 def fascinate : VerbEntry := .mkRegular {
   form := "fascinate"
   complementType := .np
   subjectTheta := some .stimulus
   objectTheta := some .experiencer
+  causalSource := some .external
   levinClass := some .amuse }
 
-/-- "irritate" — StimExp verb (stimulus-subject) -/
+/-- "irritate" — StimExp verb (stimulus-subject, eventive: Kim 2024 UPH) -/
 def irritate : VerbEntry := .mkRegular {
   form := "irritate"
   complementType := .np
   subjectTheta := some .stimulus
   objectTheta := some .experiencer
+  causalSource := some .external
   levinClass := some .amuse }
 
-/-- "annoy" — StimExp verb (stimulus-subject) -/
+/-- "annoy" — StimExp verb (stimulus-subject, eventive: Kim 2024 UPH) -/
 def annoy : VerbEntry := .mkRegular {
   form := "annoy"
   complementType := .np
   subjectTheta := some .stimulus
   objectTheta := some .experiencer
+  causalSource := some .external
   levinClass := some .amuse }
 
-/-- "bore" — StimExp verb (stimulus-subject) -/
+/-- "bore" — StimExp verb (stimulus-subject, eventive: Kim 2024 UPH) -/
 def bore : VerbEntry := .mkRegular {
   form := "bore"
   complementType := .np
   subjectTheta := some .stimulus
   objectTheta := some .experiencer
+  causalSource := some .external
   levinClass := some .amuse }
 
-/-- "charm" — StimExp verb (stimulus-subject) -/
+/-- "charm" — StimExp verb (stimulus-subject, eventive: Kim 2024 UPH) -/
 def charm : VerbEntry := .mkRegular {
   form := "charm"
   complementType := .np
   subjectTheta := some .stimulus
   objectTheta := some .experiencer
+  causalSource := some .external
   levinClass := some .amuse }
 
-/-- "impress" — StimExp verb (stimulus-subject) -/
+/-- "impress" — StimExp verb (stimulus-subject, eventive: Kim 2024 UPH) -/
 def impress : VerbEntry := .mkRegular {
   form := "impress"
   complementType := .np
   subjectTheta := some .stimulus
   objectTheta := some .experiencer
+  causalSource := some .external
+  levinClass := some .amuse }
+
+/-- "concern" — stative Class II psych verb (Kim 2024 UPH, internal cause) -/
+def concern : VerbEntry := .mkRegular {
+  form := "concern"
+  complementType := .np
+  subjectTheta := some .stimulus
+  objectTheta := some .experiencer
+  causalSource := some .internal
+  opaqueContext := true
+  levinClass := some .amuse }
+
+/-- "interest" — stative Class II psych verb (Kim 2024 UPH, internal cause) -/
+def interest : VerbEntry := .mkRegular {
+  form := "interest"
+  complementType := .np
+  subjectTheta := some .stimulus
+  objectTheta := some .experiencer
+  causalSource := some .internal
+  opaqueContext := true
   levinClass := some .amuse }
 
 -- ════════════════════════════════════════════════════
@@ -1468,6 +1496,8 @@ def allVerbs : List VerbEntry := [
   enjoy, like, love, hate, admire, envy, respect, value,
   -- Stimulus-Experiencer (Solstad & Bott 2024)
   frighten, amuse, fascinate, irritate, annoy, bore, charm, impress,
+  -- Stative Class II (Kim 2024 UPH)
+  concern, interest,
   -- Agent-Patient (Solstad & Bott 2024)
   chase, hit, push, pull, carry, drag, call
 ]
