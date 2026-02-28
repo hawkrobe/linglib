@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.227.38] - 2026-02-27
+
+### Added
+- **PsychCausalLink: formal integration of Kim (2024) maintenance relation**. New `Theories/Semantics/Causation/PsychCausalLink.lean` grounds `CausalSource` in temporal intervals (`Interval.precedes`/`.overlaps`), event sorts (`EventSort`), and counterfactual semantics (`universalCounterfactualB`). Eventive causation = temporal precedence + BECOME; maintenance = temporal overlap + no transition. Proved temporal symmetry of maintenance, irreflexivity of eventive, mutual exclusivity of precedence and overlap. CausationBridge §7: per-verb grounding (frighten → precedence, concern → overlap) and `uph_causal_link_level` bundling Kim's central claim.
+
 ## [0.227.37] - 2026-02-27
 
 ### Fixed

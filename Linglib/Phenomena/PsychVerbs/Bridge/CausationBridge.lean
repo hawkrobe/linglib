@@ -1,4 +1,5 @@
 import Linglib.Theories.Semantics.Causation.PsychCausation
+import Linglib.Theories.Semantics.Causation.PsychCausalLink
 import Linglib.Theories.Semantics.Events.ProtoRoles
 import Linglib.Phenomena.PsychVerbs.Data
 import Linglib.Fragments.English.Predicates.Verbal
@@ -21,11 +22,15 @@ and Kim's (2024) Uniform Projection Hypothesis for Class II psych verbs.
 4. **T/SM restriction**: derived from the Onset Condition on causal chains
 5. **Class I/II theta reversal**: experiencer and stimulus swap positions
 6. **Bridge to proto-role infrastructure**: theta roles map to canonical Dowty profiles
+7. **Causal link grounding**: causalSource tags ground out in temporal and
+   event-structural properties via PsychCausalLink
 -/
 
 namespace Phenomena.PsychVerbs.Bridge
 
 open Semantics.Causation.PsychCausation
+open Semantics.Causation.PsychCausalLink
+open Core.Time (Interval)
 open Fragments.English.Predicates.Verbal
 open Phenomena.PsychVerbs.Data
 open Phenomena.ImplicitCausality.Studies.SolstadBott2024.Bridge
@@ -226,5 +231,75 @@ theorem classI_no_causal_source :
     like.causalSource = none ∧
     love.causalSource = none ∧
     hate.causalSource = none := ⟨rfl, rfl, rfl, rfl⟩
+
+-- ════════════════════════════════════════════════════
+-- § 7. Causal Link Grounding
+-- ════════════════════════════════════════════════════
+
+/-! The `causalSource` field on each fragment entry isn't just a label —
+    it determines genuine temporal and event-structural properties via
+    `CausalSource.toLink`. These theorems show that changing a verb's
+    `causalSource` tag would change its predicted temporal behavior. -/
+
+variable {Time : Type*} [LinearOrder Time]
+
+/-- Eventive Class II verbs (frighten, amuse, ...) use temporal precedence:
+    the causing percept finishes before the mental state change begins. -/
+theorem eventive_classII_temporal :
+    (CausalSource.toLink Time .external).temporalConstraint =
+    Interval.precedes := rfl
+
+/-- Stative Class II verbs (concern, interest) use temporal overlap:
+    the mental representation and the psychological state coexist. -/
+theorem stative_classII_temporal :
+    (CausalSource.toLink Time .internal).temporalConstraint =
+    Interval.overlaps := rfl
+
+/-- Eventive Class II involves a state transition (BECOME):
+    "The noise frightened John" — John transitions INTO a frightened state. -/
+theorem eventive_classII_has_become :
+    (CausalSource.toLink Time .external).involvesTransition = true := rfl
+
+/-- Stative Class II involves no transition:
+    "The problem concerns John" — no change of state, just persistence. -/
+theorem stative_classII_no_become :
+    (CausalSource.toLink Time .internal).involvesTransition = false := rfl
+
+/-- Per-verb grounding: frighten's causalSource tag (fragment datum)
+    determines temporal precedence (theoretical prediction).
+    Changing frighten to `.internal` would predict overlap instead. -/
+theorem frighten_causal_link :
+    frighten.causalSource = some .external ∧
+    (CausalSource.toLink Time .external).temporalConstraint =
+      Interval.precedes ∧
+    (CausalSource.toLink Time .external).involvesTransition = true :=
+  ⟨rfl, rfl, rfl⟩
+
+/-- Per-verb grounding: concern's causalSource tag (fragment datum)
+    determines temporal overlap and no transition (theoretical prediction).
+    Changing concern to `.external` would predict precedence instead. -/
+theorem concern_causal_link :
+    concern.causalSource = some .internal ∧
+    (CausalSource.toLink Time .internal).temporalConstraint =
+      Interval.overlaps ∧
+    (CausalSource.toLink Time .internal).involvesTransition = false :=
+  ⟨rfl, rfl, rfl⟩
+
+/-- The UPH at the causal link level: eventive and stative Class II verbs
+    differ ONLY in their causal link (temporal + event sort), NOT in their
+    theta grid. This is Kim's central claim — the aspectual split is
+    orthogonal to argument structure. -/
+theorem uph_causal_link_level :
+    -- Same theta grid (from § 2)
+    frighten.subjectTheta = concern.subjectTheta ∧
+    frighten.objectTheta = concern.objectTheta ∧
+    -- Different causal links
+    (CausalSource.toLink Time .external).involvesTransition = true ∧
+    (CausalSource.toLink Time .internal).involvesTransition = false ∧
+    (CausalSource.toLink Time .external).temporalConstraint =
+      Interval.precedes ∧
+    (CausalSource.toLink Time .internal).temporalConstraint =
+      Interval.overlaps :=
+  ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
 
 end Phenomena.PsychVerbs.Bridge
