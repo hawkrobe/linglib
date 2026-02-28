@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.227.42] - 2026-02-27
+
+### Added
+- **PsychVerbSem: compositional denotation via cognitive situation models** (`Theories/Semantics/Causation/PsychVerbSem.lean`). `ExperiencerState` decomposes experiencer cognition into BToM layers (perceives/represents/inMentalState). `CausalPathway` (.perceptual/.representational) selects which layer the stimulus connects through. `psychVerbSem` gives a single denotation from which opacity, temporal behavior, and UPH fall out. Cicero/Tully opacity derived by `rfl`: perceptual pathway extensional (both frighten), representational pathway intensional (Cicero concerns but Tully doesn't). `CausalPathway ↔ CausalSource` isomorphism with roundtrip theorems. Temporal bridge via `CausalPathway.toLink` agreeing with `CausalSource.toLink`. Zero `sorry`.
+
 ## [0.227.40] - 2026-02-27
 
 ### Added
