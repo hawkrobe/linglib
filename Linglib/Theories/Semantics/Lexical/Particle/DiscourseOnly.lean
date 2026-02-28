@@ -114,20 +114,29 @@ def atIssueContent (d : Sentence W) : W → Bool :=
 
 /-- Presupposition / definedness condition for discourse *only*.
 
-IKW (2025) Def. 16: ⟦S [only S']⟧ is defined only if:
-1. S and S' are both relevant to the QUD, and
-2. There exists an answer α ∈ QUD that S supports (fullSupport).
+IKW (2025) Def. 16: ⟦S [only S']⟧ is defined only if S and S' are
+"relevant" to the QUD and ∃α ∈ QUD s.t. S supports α.
 
-Condition (2) ensures an evidential direction exists to be undermined.
-We use `fullSupport` (doxastic + probabilistic) rather than just
-probabilistic support — this is what makes the interrogative restriction
-fall out. -/
+We decompose this into two conditions:
+
+1. **S' is probabilistically relevant** to the QUD: S' changes the
+   probability of some answer (P(α|S') ≠ P(α)). This is weaker than the
+   paper's formal RELEVANCE (Def. 12), which is defined via SUPPORT and
+   includes the doxastic condition. We use the weaker check because the
+   paper's formal Def. 12, taken literally, would block info-seeking S'
+   (DOX_sp ⊄ q for all q ∈ ⟦S'⟧), contradicting its own prediction that
+   interrogative S' is fine (exx. 30a, 31a). The doxastic condition should
+   only gate *support* (condition 2), not mere topical relevance.
+
+2. **S supports some answer α** via `fullSupport` (doxastic + probabilistic).
+   This subsumes S's relevance — if S supports α, S is automatically relevant.
+   This is where the interrogative left-argument restriction falls out: the
+   doxastic condition blocks info-seeking questions from supporting any answer. -/
 def isDefined (d : Sentence W) (ctx : Context W) : Bool :=
-  -- S is relevant to QUD
-  relevant d.sDen.highlighted ctx.qud ctx.prior &&
-  -- S' is relevant to QUD
+  -- S' is probabilistically relevant to QUD (weaker than SUPPORT-based relevance)
   relevant d.s'Den.highlighted ctx.qud ctx.prior &&
   -- S supports some answer (fullSupport: doxastic + probabilistic)
+  -- This subsumes S's relevance: if S supports α, S is relevant.
   ctx.qud.alternatives.any λ α =>
     fullSupport ctx.dox d.sDen ctx.prior α ctx.worlds
 
@@ -145,7 +154,11 @@ The "S supports α" condition is implicit in `isDefined` — if the CI is being
 evaluated, S already established the direction. -/
 def ciContent (d : Sentence W) (ctx : Context W) : Bool :=
   ctx.qud.alternatives.any λ α =>
-    -- (i) All true partial answers support α
+    -- (i) All true partial answers support α.
+    -- We use `probSupports` (probabilistic only) rather than `fullSupport` here
+    -- because partial answers are propositions already established in discourse —
+    -- the speaker has committed to believing them, so the doxastic condition
+    -- (DOX_sp ⊆ q) is trivially satisfied for any established partial answer.
     ctx.partialAnswers.all (λ p => probSupports ctx.prior p α) &&
     -- S itself supports α (part of establishing the direction)
     fullSupport ctx.dox d.sDen ctx.prior α ctx.worlds &&
@@ -230,5 +243,41 @@ theorem interrogative_prejacent_satisfies_ci_condition {W : Type*} [Fintype W]
     !fullSupport dox s'Den prior α worlds = true := by
   rw [fullSupport_fails_unbelieved dox s'Den prior α worlds hNoBelief]
   rfl
+
+/-- Weak non-agreement: when S' can't support any answer, S and S' neither
+agree nor disagree — they "merely don't agree" (IKW 2025 p. 227).
+
+This captures a key prediction about interrogative prejacents. When S' is
+an info-seeking question, fullSupport fails for S' on every α (doxastic
+failure). So `agree` = false (S' can't jointly support any α with S) AND
+`disagree` = false (disagree requires S' to support *some* answer, which
+it can't). The result is non-agreement without disagreement — a weaker
+relation than the active clash seen with declarative S'.
+
+Example (IKW ex. 18): "The house is beautiful, only can we afford it?"
+→ S supports "buy the house", S' doesn't support anything
+→ Not agreement, not disagreement: just weak non-agreement -/
+theorem weak_non_agreement {W : Type*} [Fintype W]
+    (d : Sentence W) (ctx : Context W)
+    (hS'noSupport : ∀ α, α ∈ ctx.qud.alternatives →
+      fullSupport ctx.dox d.s'Den ctx.prior α ctx.worlds = false) :
+    d.agree ctx = false ∧ d.disagree ctx = false := by
+  constructor
+  · -- agree = false: S' can't support any α, so no joint support
+    unfold Sentence.agree
+    rw [List.any_eq_false]
+    intro α hMem
+    rw [hS'noSupport α hMem]
+    simp
+  · -- disagree = false: S' can't support any α, so second conjunct fails
+    unfold Sentence.disagree
+    have hNoS' : (ctx.qud.alternatives.any λ α =>
+        fullSupport ctx.dox d.s'Den ctx.prior α ctx.worlds) = false := by
+      rw [List.any_eq_false]
+      intro α hMem
+      rw [hS'noSupport α hMem]
+      simp
+    rw [hNoS']
+    simp
 
 end Semantics.Lexical.Particle.DiscourseOnly
