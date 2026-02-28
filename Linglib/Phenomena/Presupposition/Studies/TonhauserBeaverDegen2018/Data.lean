@@ -10,25 +10,51 @@ projectivity and at-issueness." Journal of Semantics 35(3): 495–542.
 ## Key Findings
 
 1. **Projectivity is gradient**, not binary. Even "strong" projective triggers
-   like NRRCs show mean projectivity ratings below ceiling (84/100, not 100).
-2. **At-issueness is gradient** and **anti-correlated** with projectivity
-   (r ≈ −0.77 across expression types, r ≈ −0.85 across predicates).
+   like NRRCs show mean projectivity ≈ .96, not 1.0.
+2. **Not-at-issueness is gradient** and **positively correlated** with
+   projectivity: r = .85 across 9 expression types (Exp 1a), r = .99
+   across 12 predicates (Exp 1b).
 3. **Appositives are not maximally projective**, contra Potts (2005).
 4. **Within-type variation**: different lexical items of the same type
-   yield different ratings (e.g., different NRRC contents differ).
+   yield different ratings.
+
+## Gradient Projection Principle (GPP)
+
+The paper's central theoretical contribution (p. 497, ex. 7):
+
+  "If content C is expressed by a constituent embedded under an
+   entailment-canceling operator, then C projects to the extent that
+   it is not at-issue."
+
+This generalizes Simons et al.'s (2010) Pragmatic Account by replacing
+the binary at-issue/not-at-issue distinction with a gradient one.
 
 ## Experiments
 
-- **Exp 1a**: Projectivity ratings for 9 expression types (family-of-sentences)
-- **Exp 1b**: At-issueness ratings for same 9 types (HWAM diagnostic)
-- **Exp 2a**: Projectivity ratings for 20 clause-embedding predicates
-- **Exp 2b**: At-issueness ratings for same 20 predicates
+- **Exp 1a**: 9 expression types — projectivity + not-at-issueness
+  (asking whether diagnostic). 190 participants.
+- **Exp 1b**: 12 clause-embedding predicates — same diagnostics.
+  235 participants (after exclusions).
+- **Exp 2a/2b**: Replications with direct dissent diagnostic (not formalized here).
+
+## Data
+
+Values are approximate means read from Figures 3 and 6. The paper reports
+ranges in text (e.g., projectivity .76–.96 for Exp 1a) but does not
+provide a table of exact per-expression means. Textually confirmed values
+are annotated.
+
+The scale is 0–1 (proportion of "yes" responses). The paper measures
+**not-at-issueness** via the "asking whether" diagnostic: higher values
+mean the content is MORE not-at-issue (more backgrounded).
 
 ## References
 
 - Tonhauser, J., Beaver, D. I. & Degen, J. (2018). How projective is projective
   content? Gradience in projectivity and at-issueness. Journal of Semantics
   35(3): 495–542.
+- Simons, M., Tonhauser, J., Beaver, D. & Roberts, C. (2010). What projects
+  and why. SALT 20.
 - Potts, C. (2005). The Logic of Conventional Implicatures.
 - Tonhauser, J., Beaver, D. I., Roberts, C. & Simons, M. (2013). Toward a
   taxonomy of projective content. Language 89(1): 66–109.
@@ -37,16 +63,18 @@ projectivity and at-issueness." Journal of Semantics 35(3): 495–542.
 namespace Phenomena.Presupposition.Studies.TonhauserBeaverDegen2018
 
 -- ════════════════════════════════════════════════════
--- § Experiment 1: Nine Expression Types
+-- § Experiment 1a: Nine Expression Types
 -- ════════════════════════════════════════════════════
 
-/-- The 9 expression types tested in Experiments 1a and 1b.
+/-- The 9 expression types tested in Experiment 1a.
 
-    These span the Tonhauser et al. (2013) taxonomy:
-    - Class B (SCF=no, OLE=no): NRRC, appositive, possessive NP
+    All are **non-SCF** (Strong Contextual Felicity = no), chosen to
+    isolate projectivity and at-issueness variation (p. 504).
+
+    - Class B (SCF=no, OLE=no): NRRC, nominal appositive, possessive NP
     - Class C (SCF=no, OLE=yes): discover, know, be annoyed, stop
     - Focus-sensitive: only
-    - Adjectival: stupid -/
+    - Evaluative adjective: be stupid to -/
 inductive ExpressionType where
   | nrrc              -- non-restrictive relative clause
   | nominalAppositive -- nominal appositive
@@ -56,197 +84,249 @@ inductive ExpressionType where
   | annoyed           -- emotive factive "be annoyed"
   | stop              -- change-of-state "stop"
   | only              -- focus-sensitive "only"
-  | stupid            -- evaluative adjective "stupid"
+  | stupid            -- evaluative adjective "be stupid to"
   deriving DecidableEq, Repr, BEq
 
-/-- Mean projectivity rating from Experiment 1a (0–100 scale).
-    Ratings reflect the degree to which content projects past
-    the family-of-sentences diagnostic (negation, question, modal, conditional).
+/-- Mean projectivity rating from Experiment 1a (0–1 scale).
 
-    Values are approximate means from Figure 3 of the paper. -/
+    Values approximate means from Figure 3. Text (p. 507) confirms:
+    - only = .76 (minimum)
+    - NRRC = .96 and be annoyed = .96 (maximum, "close to ceiling") -/
 def projectivityRating : ExpressionType → ℚ
-  | .nrrc              => 84
-  | .nominalAppositive => 82
-  | .possessiveNP      => 78
-  | .discover          => 75
-  | .know              => 72
-  | .annoyed           => 70
-  | .stop              => 68
-  | .only              => 55
-  | .stupid            => 42
+  | .nrrc              => 96/100  -- text: .96
+  | .nominalAppositive => 94/100
+  | .possessiveNP      => 93/100
+  | .discover          => 88/100
+  | .know              => 91/100
+  | .annoyed           => 96/100  -- text: .96
+  | .stop              => 88/100
+  | .only              => 76/100  -- text: .76
+  | .stupid            => 86/100
 
-/-- Mean at-issueness rating from Experiment 1b (0–100 scale).
-    Higher = more at-issue (addresses the QUD).
-    Measured via the "Hey wait a minute!" diagnostic and direct ratings.
+/-- Mean not-at-issueness rating from Experiment 1a (0–1 scale).
+    Measured via the "asking whether" diagnostic.
 
-    Values are approximate means from Figure 3. -/
-def atIssuenessRating : ExpressionType → ℚ
-  | .nrrc              => 28
-  | .nominalAppositive => 32
-  | .possessiveNP      => 38
-  | .discover          => 45
-  | .know              => 48
-  | .annoyed           => 50
-  | .stop              => 55
-  | .only              => 62
-  | .stupid            => 72
+    Higher = more not-at-issue (more backgrounded).
+
+    Values approximate means from Figure 3. Text (p. 508) confirms:
+    - only = .73 (minimum)
+    - NRRC = .96 (maximum) -/
+def notAtIssuenessRating : ExpressionType → ℚ
+  | .nrrc              => 96/100  -- text: .96
+  | .nominalAppositive => 91/100
+  | .possessiveNP      => 93/100
+  | .discover          => 84/100
+  | .know              => 88/100
+  | .annoyed           => 94/100
+  | .stop              => 78/100
+  | .only              => 73/100  -- text: .73
+  | .stupid            => 82/100
+
+/-- At-issueness = 1 − not-at-issueness. Higher = more at-issue.
+    Derived from the paper's direct measurements. -/
+def atIssuenessRating (e : ExpressionType) : ℚ := 1 - notAtIssuenessRating e
 
 -- ════════════════════════════════════════════════════
--- § Experiment 2: Twenty Clause-Embedding Predicates
+-- § Experiment 1b: Twelve Clause-Embedding Predicates
 -- ════════════════════════════════════════════════════
 
-/-- The 20 clause-embedding predicates from Experiments 2a and 2b.
-    These overlap partially with Degen & Tonhauser (2021). -/
+/-- The 12 clause-embedding predicates from Experiment 1b (p. 511).
+
+    Semantic classes (per paper):
+    - Emotive: be amused, be annoyed
+    - Cognitive: be aware, discover, find out, learn, notice, realize, establish
+    - Sensory: see
+    - Communication: confess, reveal -/
 inductive Predicate where
-  | establish
+  | beAmused
+  | beAnnoyed
+  | beAware
   | confess
-  | reveal
   | discover
-  | see
-  | know
-  | learn
+  | establish
   | findOut
+  | learn
   | notice
   | realize
-  | isAware
-  | isAmused
-  | annoyed
-  | beRight
-  | acknowledge
-  | confirm
-  | demonstrate
-  | prove
-  | pretend
-  | inform
+  | reveal
+  | see
   deriving DecidableEq, Repr, BEq
 
-/-- Mean projectivity ratings for the 20 predicates from Exp 2a (0–100). -/
+/-- Mean projectivity ratings for the 12 predicates from Exp 1b (0–1 scale).
+    Values approximate means from Figure 6. -/
 def verbProjectivity : Predicate → ℚ
-  | .establish   => 60
-  | .confess     => 62
-  | .reveal      => 70
-  | .discover    => 76
-  | .see         => 72
-  | .know        => 74
-  | .learn       => 68
-  | .findOut     => 66
-  | .notice      => 73
-  | .realize     => 75
-  | .isAware     => 71
-  | .isAmused    => 69
-  | .annoyed     => 70
-  | .beRight     => 78
-  | .acknowledge => 64
-  | .confirm     => 63
-  | .demonstrate => 65
-  | .prove       => 67
-  | .pretend     => 45
-  | .inform      => 58
+  | .establish  => 43/100
+  | .confess    => 65/100
+  | .reveal     => 77/100
+  | .learn      => 82/100
+  | .discover   => 86/100
+  | .findOut    => 90/100
+  | .see        => 90/100
+  | .beAmused   => 92/100
+  | .realize    => 92/100
+  | .beAware    => 93/100
+  | .notice     => 94/100
+  | .beAnnoyed  => 94/100
 
-/-- Mean at-issueness ratings for the 20 predicates from Exp 2b (0–100). -/
-def verbAtIssueness : Predicate → ℚ
-  | .establish   => 55
-  | .confess     => 52
-  | .reveal      => 42
-  | .discover    => 38
-  | .see         => 40
-  | .know        => 39
-  | .learn       => 44
-  | .findOut     => 46
-  | .notice      => 40
-  | .realize     => 37
-  | .isAware     => 42
-  | .isAmused    => 44
-  | .annoyed     => 43
-  | .beRight     => 35
-  | .acknowledge => 50
-  | .confirm     => 51
-  | .demonstrate => 48
-  | .prove       => 45
-  | .pretend     => 65
-  | .inform      => 56
+/-- Mean not-at-issueness ratings for the 12 predicates from Exp 1b (0–1 scale).
+    Values approximate means from Figure 6. -/
+def verbNotAtIssueness : Predicate → ℚ
+  | .establish  => 47/100
+  | .confess    => 56/100
+  | .reveal     => 68/100
+  | .learn      => 73/100
+  | .discover   => 78/100
+  | .findOut    => 82/100
+  | .see        => 83/100
+  | .beAmused   => 85/100
+  | .realize    => 86/100
+  | .beAware    => 87/100
+  | .notice     => 88/100
+  | .beAnnoyed  => 89/100
+
+/-- At-issueness = 1 − not-at-issueness for predicates. -/
+def verbAtIssueness (p : Predicate) : ℚ := 1 - verbNotAtIssueness p
 
 -- ════════════════════════════════════════════════════
--- § Verification Theorems
+-- § Regression Coefficients
 -- ════════════════════════════════════════════════════
 
-/-- NRRCs are the most projective among the 9 expression types. -/
-theorem nrrc_most_projective : ∀ e : ExpressionType,
+/-- Regression coefficient: not-at-issueness predicts projectivity.
+    Exp 1a (p. 508–509): β = 0.37, SE = 0.10, t = 3.70, p < .003.
+    Exp 1b (p. 514):     β = 0.34, SE = 0.04, t = 9.31, p < .0001.
+
+    The effect is significant in both experiments. -/
+structure RegressionEffect where
+  beta : ℚ
+  se : ℚ
+  deriving Repr
+
+def exp1aRegression : RegressionEffect := ⟨37/100, 10/100⟩
+def exp1bRegression : RegressionEffect := ⟨34/100, 4/100⟩
+
+-- ════════════════════════════════════════════════════
+-- § Correlation Coefficients
+-- ════════════════════════════════════════════════════
+
+/-- Pearson r for not-at-issueness × projectivity (positive correlation).
+    "Collapsing" = computed over expression-type/predicate means.
+    "Not collapsing" = computed over individual items.
+
+    Exp 1a (p. 508): r = .85 (collapsing), r = .45 (not collapsing)
+    Exp 1b (p. 514): r = .99 (collapsing), r = .44 (not collapsing) -/
+structure CorrelationData where
+  collapsing : ℚ
+  notCollapsing : ℚ
+  deriving Repr
+
+def exp1aCorrelation : CorrelationData := ⟨85/100, 45/100⟩
+def exp1bCorrelation : CorrelationData := ⟨99/100, 44/100⟩
+
+-- ════════════════════════════════════════════════════
+-- § Verification Theorems: Exp 1a
+-- ════════════════════════════════════════════════════
+
+/-- NRRC and be annoyed are tied for most projective (text: .96). -/
+theorem nrrc_annoyed_most_projective : ∀ e : ExpressionType,
     projectivityRating e ≤ projectivityRating .nrrc := by
   intro e; cases e <;> native_decide
 
-/-- Evaluative adjectives (stupid) are the least projective. -/
-theorem stupid_least_projective : ∀ e : ExpressionType,
-    projectivityRating .stupid ≤ projectivityRating e := by
+/-- only is the least projective at .76 (text confirms). -/
+theorem only_least_projective : ∀ e : ExpressionType,
+    projectivityRating .only ≤ projectivityRating e := by
   intro e; cases e <;> native_decide
 
-/-- NRRCs are the least at-issue among the 9 expression types. -/
-theorem nrrc_least_atissue : ∀ e : ExpressionType,
-    atIssuenessRating .nrrc ≤ atIssuenessRating e := by
+/-- NRRC has the highest not-at-issueness at .96 (text confirms). -/
+theorem nrrc_most_notAtIssue : ∀ e : ExpressionType,
+    notAtIssuenessRating e ≤ notAtIssuenessRating .nrrc := by
   intro e; cases e <;> native_decide
 
-/-- Evaluative adjectives (stupid) are the most at-issue. -/
-theorem stupid_most_atissue : ∀ e : ExpressionType,
-    atIssuenessRating e ≤ atIssuenessRating .stupid := by
+/-- only has the lowest not-at-issueness at .73 (text confirms). -/
+theorem only_least_notAtIssue : ∀ e : ExpressionType,
+    notAtIssuenessRating .only ≤ notAtIssuenessRating e := by
   intro e; cases e <;> native_decide
-
-/-- Anti-correlation: for the 9 expression types, the projectivity ordering
-    is the reverse of the at-issueness ordering. More projective types
-    are less at-issue. -/
-theorem anticorrelation_expression_types :
-    (projectivityRating .nrrc > projectivityRating .stupid) ∧
-    (atIssuenessRating .nrrc < atIssuenessRating .stupid) ∧
-    (projectivityRating .nominalAppositive > projectivityRating .only) ∧
-    (atIssuenessRating .nominalAppositive < atIssuenessRating .only) := by
-  native_decide
 
 /-- Appositives are not maximally projective, contra Potts (2005).
-    Potts predicted appositives should have projectivity = 100 (obligatory
-    projection). The data shows 82/100 — high but not maximal. -/
+    Potts predicted CI content (including appositives) should project
+    obligatorily. The data shows 94/100 — high but not 1.0. -/
 theorem appositives_not_maximally_projective :
-    projectivityRating .nominalAppositive < 100 := by native_decide
+    projectivityRating .nominalAppositive < 1 := by native_decide
 
-/-- Within-type variation: different clause-embedding predicates that are
-    all traditionally classified as "factive" show different projectivity
-    ratings. This supports gradient over binary classification. -/
+/-- Within-type variation: factive predicates differ in projectivity.
+    discover (.88) vs know (.91) — both traditionally "factive" but
+    different ratings. -/
 theorem within_type_variation :
-    verbProjectivity .discover ≠ verbProjectivity .know ∧
-    verbProjectivity .know ≠ verbProjectivity .realize := by
+    projectivityRating .discover ≠ projectivityRating .know := by
   native_decide
 
-/-- `beRight` has the highest projectivity among the 20 predicates. -/
-theorem beRight_highest_verb_projectivity :
-    ∀ p : Predicate, verbProjectivity p ≤ verbProjectivity .beRight := by
-  intro p; cases p <;> native_decide
-
-/-- `pretend` has the lowest projectivity — it is not a projective trigger. -/
-theorem pretend_lowest_verb_projectivity :
-    ∀ p : Predicate, verbProjectivity .pretend ≤ verbProjectivity p := by
-  intro p; cases p <;> native_decide
-
-/-- Anti-correlation holds for verb data: `beRight` has highest projectivity
-    and lowest at-issueness; `pretend` has lowest projectivity and highest
-    at-issueness. -/
-theorem anticorrelation_verbs :
-    (verbProjectivity .beRight > verbProjectivity .pretend) ∧
-    (verbAtIssueness .beRight < verbAtIssueness .pretend) := by
+/-- GPP supported for Exp 1a extremes: only has highest at-issueness
+    and lowest projectivity; NRRC has lowest at-issueness and highest
+    projectivity. -/
+theorem gpp_extreme_pair_exp1a :
+    atIssuenessRating .only > atIssuenessRating .nrrc ∧
+    projectivityRating .only < projectivityRating .nrrc := by
   native_decide
 
 -- ════════════════════════════════════════════════════
--- § Connection to ProjectiveTrigger
+-- § Verification Theorems: Exp 1b
 -- ════════════════════════════════════════════════════
 
-/-- Map expression types to the existing `ProjectiveTrigger` enum from
-    `ProjectiveContent.lean`, where a direct mapping exists. -/
-def ExpressionType.toProjectiveTriggerName : ExpressionType → String
-  | .nrrc              => "nrrc"
-  | .nominalAppositive => "appositive"
-  | .possessiveNP      => "possessive_np"
-  | .discover          => "know_complement"
-  | .know              => "know_complement"
-  | .annoyed           => "know_complement"
-  | .stop              => "stop_prestate"
-  | .only              => "only_prejacent"
-  | .stupid            => "expressive"  -- closest match in existing taxonomy
+/-- be annoyed has the highest projectivity among the 12 predicates.
+    (Tied with notice at .94.) -/
+theorem beAnnoyed_highest_verb_projectivity :
+    ∀ p : Predicate, verbProjectivity p ≤ verbProjectivity .beAnnoyed := by
+  intro p; cases p <;> native_decide
+
+/-- establish has the lowest projectivity (.43) — notably below .50,
+    suggesting it may not even be a projective trigger. -/
+theorem establish_lowest_verb_projectivity :
+    ∀ p : Predicate, verbProjectivity .establish ≤ verbProjectivity p := by
+  intro p; cases p <;> native_decide
+
+/-- establish is below .50 — the only predicate below chance level. -/
+theorem establish_below_chance :
+    verbProjectivity .establish < 1/2 := by native_decide
+
+/-- GPP supported for Exp 1b extremes: establish has highest
+    at-issueness and lowest projectivity. -/
+theorem gpp_extreme_pair_exp1b :
+    verbAtIssueness .establish > verbAtIssueness .beAnnoyed ∧
+    verbProjectivity .establish < verbProjectivity .beAnnoyed := by
+  native_decide
+
+/-- All predicates except establish have projectivity ≥ .65. -/
+theorem non_establish_above_65 : ∀ p : Predicate,
+    p ≠ .establish → 65/100 ≤ verbProjectivity p := by
+  intro p hp; cases p <;> first | native_decide | exact absurd rfl hp
+
+-- ════════════════════════════════════════════════════
+-- § Tukey Groupings
+-- ════════════════════════════════════════════════════
+
+/-- The top group of Exp 1a (Table 1): {NRRC, annoyed, NomApp, possNP, know}
+    show no significant pairwise differences in projectivity.
+    These form the "high projectivity" cluster (.91–.96). -/
+theorem exp1a_top_group_tight_range :
+    projectivityRating .nrrc - projectivityRating .know ≤ 6/100 := by
+  native_decide
+
+/-- only is significantly different from all other expression types
+    (Table 1: all pairwise comparisons significant at p < .001). -/
+theorem only_separated_from_top :
+    projectivityRating .nrrc - projectivityRating .only ≥ 15/100 := by
+  native_decide
+
+/-- The top group of Exp 1b (Table 3): {annoyed, notice, aware, realize,
+    amused, see, findOut} show no significant pairwise differences.
+    These form the "high projectivity" cluster (.90–.94). -/
+theorem exp1b_top_group_tight_range :
+    verbProjectivity .beAnnoyed - verbProjectivity .findOut ≤ 5/100 := by
+  native_decide
+
+/-- establish is clearly separated from the top group
+    (Table 3: all pairwise comparisons significant at p < .001). -/
+theorem establish_separated_from_top :
+    verbProjectivity .beAnnoyed - verbProjectivity .establish ≥ 40/100 := by
+  native_decide
 
 end Phenomena.Presupposition.Studies.TonhauserBeaverDegen2018

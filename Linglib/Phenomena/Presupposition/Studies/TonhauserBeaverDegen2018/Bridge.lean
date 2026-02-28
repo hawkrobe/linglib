@@ -11,7 +11,8 @@ Connects the empirical data from Tonhauser, Beaver & Degen (2018) to:
 1. **Core.Discourse.AtIssueness** — lifts raw ℚ ratings to bounded degree types
 2. **ProjectiveContent.lean** — recovers the Tonhauser et al. (2013) 4-class
    taxonomy from gradient data and shows binary AtIssueness is a thresholding
-3. **DegenTonhauser2021** — cross-references overlapping predicates
+3. **AntiCorrelation** — instantiates the deterministic anti-monotonicity
+   property for Exp 1b verb data
 
 ## Taxonomy Recovery
 
@@ -19,6 +20,14 @@ The 4-class taxonomy from Tonhauser et al. (2013) is recoverable from the
 gradient data: Class B triggers (NRRC, appositive, possNP) have the highest
 mean projectivity, Class C triggers (stop, know, discover, annoyed) are in
 the middle, and focus-sensitive/adjectival triggers are lower.
+
+## Gradient Projection Principle
+
+The GPP predicts that not-at-issueness positively correlates with projectivity.
+The Exp 1b data satisfies the deterministic (monotone) version: every pair
+of predicates where one has strictly lower at-issueness also has weakly
+higher projectivity. Exp 1a shows a strong but non-monotone relationship
+(r = .85; possNP and NomApp are non-monotone).
 -/
 
 namespace Phenomena.Presupposition.Studies.TonhauserBeaverDegen2018.Bridge
@@ -31,27 +40,27 @@ open Phenomena.Presupposition.Studies.TonhauserBeaverDegen2018
 -- § Degree Lifting
 -- ════════════════════════════════════════════════════
 
-/-- Lift an expression type's raw projectivity rating to a bounded degree. -/
+/-- Lift an expression type's projectivity rating to a bounded degree. -/
 def ExpressionType.toProjectivityDegree (e : ExpressionType) : ProjectivityDegree :=
-  ⟨projectivityRating e / 100,
+  ⟨projectivityRating e,
    by cases e <;> native_decide,
    by cases e <;> native_decide⟩
 
-/-- Lift an expression type's raw at-issueness rating to a bounded degree. -/
+/-- Lift an expression type's at-issueness to a bounded degree. -/
 def ExpressionType.toAtIssuenessDegree (e : ExpressionType) : AtIssuenessDegree :=
-  ⟨atIssuenessRating e / 100,
+  ⟨atIssuenessRating e,
    by cases e <;> native_decide,
    by cases e <;> native_decide⟩
 
 /-- Lift a predicate's projectivity rating to a bounded degree. -/
 def Predicate.toProjectivityDegree (p : Predicate) : ProjectivityDegree :=
-  ⟨verbProjectivity p / 100,
+  ⟨verbProjectivity p,
    by cases p <;> native_decide,
    by cases p <;> native_decide⟩
 
-/-- Lift a predicate's at-issueness rating to a bounded degree. -/
+/-- Lift a predicate's at-issueness to a bounded degree. -/
 def Predicate.toAtIssuenessDegree (p : Predicate) : AtIssuenessDegree :=
-  ⟨verbAtIssueness p / 100,
+  ⟨verbAtIssueness p,
    by cases p <;> native_decide,
    by cases p <;> native_decide⟩
 
@@ -76,117 +85,109 @@ def classCMeanProjectivity : ℚ :=
 
 /-- Class B triggers have higher mean projectivity than Class C triggers.
     This is consistent with the Tonhauser et al. (2013) taxonomy where
-    Class B triggers (expressives, appositives) are "more projective"
+    Class B triggers (appositives, NRRCs) are "more projective"
     than Class C triggers (factives). -/
 theorem classB_higher_projectivity_than_classC :
     classCMeanProjectivity < classBMeanProjectivity := by native_decide
 
-/-- Mean at-issueness for Class B triggers. -/
-def classBMeanAtIssueness : ℚ :=
-  (atIssuenessRating ExpressionType.nrrc +
-   atIssuenessRating ExpressionType.nominalAppositive +
-   atIssuenessRating ExpressionType.possessiveNP) / 3
+/-- Mean not-at-issueness for Class B triggers. -/
+def classBMeanNotAtIssueness : ℚ :=
+  (notAtIssuenessRating ExpressionType.nrrc +
+   notAtIssuenessRating ExpressionType.nominalAppositive +
+   notAtIssuenessRating ExpressionType.possessiveNP) / 3
 
-/-- Mean at-issueness for Class C triggers. -/
-def classCMeanAtIssueness : ℚ :=
-  (atIssuenessRating ExpressionType.discover +
-   atIssuenessRating ExpressionType.know +
-   atIssuenessRating ExpressionType.annoyed +
-   atIssuenessRating ExpressionType.stop) / 4
+/-- Mean not-at-issueness for Class C triggers. -/
+def classCMeanNotAtIssueness : ℚ :=
+  (notAtIssuenessRating ExpressionType.discover +
+   notAtIssuenessRating ExpressionType.know +
+   notAtIssuenessRating ExpressionType.annoyed +
+   notAtIssuenessRating ExpressionType.stop) / 4
 
-/-- Class B triggers are less at-issue than Class C triggers.
-    Anti-correlated with projectivity: higher projection ↔ lower at-issueness. -/
-theorem classB_lower_atissueness_than_classC :
-    classBMeanAtIssueness < classCMeanAtIssueness := by native_decide
+/-- Class B triggers are more not-at-issue than Class C triggers.
+    Consistent with GPP: higher not-at-issueness ↔ higher projectivity. -/
+theorem classB_higher_notAtIssueness_than_classC :
+    classCMeanNotAtIssueness < classBMeanNotAtIssueness := by native_decide
 
 -- ════════════════════════════════════════════════════
 -- § Threshold Interpretation
 -- ════════════════════════════════════════════════════
 
-/-- With the default threshold of 0.5, NRRCs are classified as not-at-issue.
-    atIssuenessRating .nrrc = 28, so 28/100 = 0.28 < 0.5 = θ. -/
-theorem nrrc_not_at_issue_default :
-    toClassical (ExpressionType.toAtIssuenessDegree .nrrc) defaultThreshold
+/-- With the default threshold of 0.5, all 9 expression types are
+    classified as not-at-issue (at-issueness ≤ 0.27 for all types).
+    This is expected: the paper specifically tested projective
+    contents, which are by definition not-at-issue. -/
+theorem all_expression_types_not_at_issue :
+    ∀ e : ExpressionType,
+      toClassical (ExpressionType.toAtIssuenessDegree e) defaultThreshold
+        = .notAtIssue := by
+  intro e; cases e <;> native_decide
+
+/-- For Exp 1b predicates, only establish is classified as at-issue
+    with the default threshold (at-issueness = 53/100 > 0.5).
+    All other predicates have at-issueness < 0.5. -/
+theorem establish_at_issue_default :
+    toClassical (Predicate.toAtIssuenessDegree .establish) defaultThreshold
+      = .atIssue := by
+  native_decide
+
+/-- All predicates except establish are classified as not-at-issue
+    with the default threshold. -/
+theorem non_establish_not_at_issue (p : Predicate) (h : p ≠ .establish) :
+    toClassical (Predicate.toAtIssuenessDegree p) defaultThreshold
       = .notAtIssue := by
-  native_decide
-
-/-- With the default threshold of 0.5, evaluative adjectives (stupid) are
-    classified as at-issue. 72/100 = 0.72 > 0.5 = θ. -/
-theorem stupid_at_issue_default :
-    toClassical (ExpressionType.toAtIssuenessDegree .stupid) defaultThreshold
-      = .atIssue := by
-  native_decide
-
-/-- With the default threshold of 0.5, "only" is classified as at-issue.
-    62/100 = 0.62 > 0.5 = θ. -/
-theorem only_at_issue_default :
-    toClassical (ExpressionType.toAtIssuenessDegree .only) defaultThreshold
-      = .atIssue := by
-  native_decide
-
-/-- With the default threshold, "stop" is classified as at-issue.
-    55/100 = 0.55 > 0.5 = θ. -/
-theorem stop_at_issue_default :
-    toClassical (ExpressionType.toAtIssuenessDegree .stop) defaultThreshold
-      = .atIssue := by
-  native_decide
-
-/-- With the default threshold, "know" is not-at-issue.
-    48/100 = 0.48 < 0.5 = θ. -/
-theorem know_not_at_issue_default :
-    toClassical (ExpressionType.toAtIssuenessDegree .know) defaultThreshold
-      = .notAtIssue := by
-  native_decide
+  cases p <;> first | native_decide | exact absurd rfl h
 
 -- ════════════════════════════════════════════════════
--- § Anti-Correlation Bridge
+-- § Gradient Projection Principle: Anti-Monotonicity
 -- ════════════════════════════════════════════════════
 
-/-- The anti-correlation holds for expression types: for every pair where
-    one has strictly higher projectivity, that one has weakly lower
-    at-issueness. Verified for the extreme pair (nrrc vs stupid). -/
-theorem expression_type_anticorrelation :
-    projectivityRating ExpressionType.nrrc >
-      projectivityRating ExpressionType.stupid ∧
-    atIssuenessRating ExpressionType.nrrc <
-      atIssuenessRating ExpressionType.stupid := by
-  native_decide
+/-- The GPP anti-monotonicity property holds for Exp 1b verb data:
+    for any two predicates, if one has strictly higher at-issueness,
+    it has weakly lower projectivity.
 
-/-- The anti-correlation holds for verb data: beRight (highest projectivity)
-    has lower at-issueness than pretend (lowest projectivity). -/
-theorem verb_anticorrelation :
-    verbProjectivity Predicate.beRight > verbProjectivity Predicate.pretend ∧
-    verbAtIssueness Predicate.beRight < verbAtIssueness Predicate.pretend := by
+    This is the deterministic version of the GPP. The statistical
+    version (r = .99) is a weaker claim.
+
+    Proof: exhaustive check over all 12 × 12 = 144 predicate pairs. -/
+theorem exp1b_gpp_antimonotone :
+    ∀ (p q : Predicate),
+      verbAtIssueness p < verbAtIssueness q →
+      verbProjectivity q ≤ verbProjectivity p := by
+  intro p q; cases p <;> cases q <;> native_decide
+
+/-- Exp 1a is NOT fully anti-monotone: possNP has higher
+    not-at-issueness than NomApp (93 vs 91) but lower projectivity
+    (93 vs 94). This shows the GPP is a statistical generalization
+    (r = .85), not a deterministic law, for heterogeneous types. -/
+theorem exp1a_non_monotone_witness :
+    notAtIssuenessRating ExpressionType.possessiveNP >
+      notAtIssuenessRating ExpressionType.nominalAppositive ∧
+    projectivityRating ExpressionType.possessiveNP <
+      projectivityRating ExpressionType.nominalAppositive := by
   native_decide
 
 -- ════════════════════════════════════════════════════
 -- § Cross-Reference with Degen & Tonhauser (2021)
 -- ════════════════════════════════════════════════════
 
-/-- Predicates shared between TBD2018 and D&T2021: know, discover, see,
-    annoyed, reveal. Both studies find gradient projectivity for these
-    predicates — consistent findings across experiments.
+/-- Predicates shared between TBD2018 Exp 1b and D&T2021: discover
+    and be annoyed. Both studies find gradient projectivity —
+    consistent findings across experiments.
 
-    In TBD2018, these predicates have projectivity ratings in [70, 76].
-    In D&T2021, the same predicates show gradient (not categorical)
-    projection behavior. -/
+    TBD2018: discover projectivity = .86, be annoyed = .94
+    D&T2021: both show gradient (not categorical) projection. -/
 theorem shared_predicates_gradient :
-    verbProjectivity Predicate.discover > 50 ∧
-    verbProjectivity Predicate.know > 50 ∧
-    verbProjectivity Predicate.see > 50 ∧
-    verbProjectivity Predicate.annoyed > 50 ∧
-    verbProjectivity Predicate.reveal > 50 := by
+    verbProjectivity Predicate.discover > 1/2 ∧
+    verbProjectivity Predicate.beAnnoyed > 1/2 := by
   native_decide
 
-/-- All shared predicates show intermediate at-issueness — neither fully
-    at-issue nor fully backgrounded. -/
+/-- Both shared predicates show intermediate at-issueness — neither
+    fully at-issue nor fully backgrounded. -/
 theorem shared_predicates_intermediate_atissueness :
-    verbAtIssueness Predicate.discover > 20 ∧
-    verbAtIssueness Predicate.discover < 80 ∧
-    verbAtIssueness Predicate.know > 20 ∧
-    verbAtIssueness Predicate.know < 80 ∧
-    verbAtIssueness Predicate.see > 20 ∧
-    verbAtIssueness Predicate.see < 80 := by
+    verbAtIssueness Predicate.discover > 0 ∧
+    verbAtIssueness Predicate.discover < 1/2 ∧
+    verbAtIssueness Predicate.beAnnoyed > 0 ∧
+    verbAtIssueness Predicate.beAnnoyed < 1/2 := by
   native_decide
 
 end Phenomena.Presupposition.Studies.TonhauserBeaverDegen2018.Bridge

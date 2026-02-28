@@ -6,8 +6,11 @@ import Mathlib.Tactic.Linarith
 /-!
 # Gradient At-Issueness and Projectivity
 
-At-issueness and projectivity are **gradient**, not binary, and **anti-correlated**
-(r ≈ −0.77). This module lifts at-issueness from a binary enum (Roberts 2012)
+At-issueness and projectivity are **gradient**, not binary, and **anti-correlated**.
+Tonhauser, Beaver & Degen (2018) report r = .85 (9 expression types) and
+r = .99 (12 predicates) for the positive correlation between not-at-issueness
+and projectivity, equivalently a negative correlation between at-issueness
+and projectivity. This module lifts at-issueness from a binary enum (Roberts 2012)
 to a bounded rational degree with threshold semantics, mirroring the pattern
 used for gradable adjectives (degree > θ → positive meaning).
 
@@ -121,8 +124,14 @@ structure GradientPair where
 /-- Anti-correlation property: across a list of expression ratings,
     higher at-issueness systematically co-occurs with lower projectivity.
 
-    Tonhauser, Beaver & Degen (2018) report r ≈ −0.77 across 9 expression
-    types and r ≈ −0.85 across 20 clause-embedding predicates. -/
+    Tonhauser, Beaver & Degen (2018) report r = .85 across 9 expression
+    types (Exp 1a) and r = .99 across 12 clause-embedding predicates
+    (Exp 1b), for the positive correlation between not-at-issueness and
+    projectivity. This is equivalent to an anti-correlation between
+    at-issueness and projectivity.
+
+    This structure captures the deterministic (monotone) version of the
+    Gradient Projection Principle. The statistical version uses Pearson r. -/
 structure AntiCorrelation where
   /-- The paired ratings -/
   pairs : List GradientPair
