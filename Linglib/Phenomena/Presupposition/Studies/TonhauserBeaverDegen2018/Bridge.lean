@@ -170,19 +170,22 @@ theorem exp1a_non_monotone_witness :
 -- § Cross-Reference with Degen & Tonhauser (2021)
 -- ════════════════════════════════════════════════════
 
-/-- Predicates shared between TBD2018 Exp 1b and D&T2021: discover
-    and be annoyed. Both studies find gradient projectivity —
-    consistent findings across experiments.
+/-- Predicates shared between TBD2018 Exp 1b and D&T2021:
+    be annoyed, confess, discover, establish, reveal, see (6 of 12).
+    Both studies find gradient projectivity — consistent findings
+    across experiments.
 
-    TBD2018: discover projectivity = .86, be annoyed = .94
-    D&T2021: both show gradient (not categorical) projection. -/
+    TBD2018 projectivity: beAnnoyed .94, confess .65, discover .86,
+    establish .43, reveal .77, see .90. -/
 theorem shared_predicates_gradient :
+    verbProjectivity Predicate.beAnnoyed > 1/2 ∧
     verbProjectivity Predicate.discover > 1/2 ∧
-    verbProjectivity Predicate.beAnnoyed > 1/2 := by
+    verbProjectivity Predicate.reveal > 1/2 ∧
+    verbProjectivity Predicate.see > 1/2 := by
   native_decide
 
-/-- Both shared predicates show intermediate at-issueness — neither
-    fully at-issue nor fully backgrounded. -/
+/-- Among shared predicates, discover shows intermediate
+    at-issueness — neither fully at-issue nor fully backgrounded. -/
 theorem shared_predicates_intermediate_atissueness :
     verbAtIssueness Predicate.discover > 0 ∧
     verbAtIssueness Predicate.discover < 1/2 ∧

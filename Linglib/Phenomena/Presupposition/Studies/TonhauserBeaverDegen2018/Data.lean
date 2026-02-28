@@ -283,8 +283,9 @@ theorem establish_lowest_verb_projectivity :
     ∀ p : Predicate, verbProjectivity .establish ≤ verbProjectivity p := by
   intro p; cases p <;> native_decide
 
-/-- establish is below .50 — the only predicate below chance level. -/
-theorem establish_below_chance :
+/-- establish is the only predicate with projectivity below the
+    midpoint .50, suggesting it may not be a projective trigger. -/
+theorem establish_below_midpoint :
     verbProjectivity .establish < 1/2 := by native_decide
 
 /-- GPP supported for Exp 1b extremes: establish has highest
