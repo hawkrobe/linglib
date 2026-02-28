@@ -1280,6 +1280,25 @@ def value : VerbEntry := .mkRegular {
   objectTheta := some .stimulus
   levinClass := some .admire }
 
+/-- "fear" (NP complement) — Class I psych verb (B&R *temere*).
+    "John fears snakes." Experiencer subject, stimulus object.
+    Note: `fear` (attitude verb, clausal complement) is defined separately. -/
+def fear_np : VerbEntry := .mkRegular {
+  form := "fear"
+  complementType := .np
+  subjectTheta := some .experiencer
+  objectTheta := some .stimulus
+  levinClass := some .admire }
+
+/-- "dread" (NP complement) — Class I psych verb.
+    "John dreads exams." Note: `dread` (attitude, clausal) defined separately. -/
+def dread_np : VerbEntry := .mkRegular {
+  form := "dread"
+  complementType := .np
+  subjectTheta := some .experiencer
+  objectTheta := some .stimulus
+  levinClass := some .admire }
+
 -- ════════════════════════════════════════════════════
 -- § Verb Entries — Stimulus-Experiencer (Solstad & Bott 2024)
 -- ════════════════════════════════════════════════════
@@ -1372,6 +1391,141 @@ def concern : VerbEntry := .mkRegular {
 /-- "interest" — stative Class II psych verb (Kim 2024 UPH, internal cause) -/
 def interest : VerbEntry := .mkRegular {
   form := "interest"
+  complementType := .np
+  subjectTheta := some .stimulus
+  objectTheta := some .experiencer
+  causalSource := some .internal
+  opaqueContext := true
+  levinClass := some .amuse }
+
+/-- "surprise" — eventive Class II (Levin 31.1). "The news surprised John." -/
+def surprise : VerbEntry := .mkRegular {
+  form := "surprise"
+  complementType := .np
+  subjectTheta := some .stimulus
+  objectTheta := some .experiencer
+  causalSource := some .external
+  levinClass := some .amuse }
+
+/-- "scare" — eventive Class II (Levin 31.1). "The noise scared John." -/
+def scare : VerbEntry := .mkRegular {
+  form := "scare"
+  complementType := .np
+  subjectTheta := some .stimulus
+  objectTheta := some .experiencer
+  causalSource := some .external
+  levinClass := some .amuse }
+
+/-- "delight" — eventive Class II (Levin 31.1). "The gift delighted Mary." -/
+def delight : VerbEntry := .mkRegular {
+  form := "delight"
+  complementType := .np
+  subjectTheta := some .stimulus
+  objectTheta := some .experiencer
+  causalSource := some .external
+  levinClass := some .amuse }
+
+/-- "embarrass" — eventive Class II (Levin 31.1). "The remark embarrassed John." -/
+def embarrass : VerbEntry := .mkRegular {
+  form := "embarrass"
+  complementType := .np
+  subjectTheta := some .stimulus
+  objectTheta := some .experiencer
+  causalSource := some .external
+  levinClass := some .amuse }
+
+/-- "upset" — eventive Class II (Levin 31.1). "The news upset Mary." -/
+def upset_psych : VerbEntry := .mkRegular {
+  form := "upset"
+  complementType := .np
+  subjectTheta := some .stimulus
+  objectTheta := some .experiencer
+  causalSource := some .external
+  levinClass := some .amuse }
+
+/-- "disgust" — eventive Class II (Levin 31.1). "The smell disgusted John." -/
+def disgust : VerbEntry := .mkRegular {
+  form := "disgust"
+  complementType := .np
+  subjectTheta := some .stimulus
+  objectTheta := some .experiencer
+  causalSource := some .external
+  levinClass := some .amuse }
+
+/-- "shock" — eventive Class II (Levin 31.1). "The revelation shocked everyone." -/
+def shock : VerbEntry := .mkRegular {
+  form := "shock"
+  complementType := .np
+  subjectTheta := some .stimulus
+  objectTheta := some .experiencer
+  causalSource := some .external
+  levinClass := some .amuse }
+
+/-- "confuse" — eventive Class II (Levin 31.1). "The instructions confused John." -/
+def confuse : VerbEntry := .mkRegular {
+  form := "confuse"
+  complementType := .np
+  subjectTheta := some .stimulus
+  objectTheta := some .experiencer
+  causalSource := some .external
+  levinClass := some .amuse }
+
+/-- "disappoint" — eventive Class II (Levin 31.1). "The result disappointed Mary." -/
+def disappoint : VerbEntry := .mkRegular {
+  form := "disappoint"
+  complementType := .np
+  subjectTheta := some .stimulus
+  objectTheta := some .experiencer
+  causalSource := some .external
+  levinClass := some .amuse }
+
+/-- "worry" (eventive) — Class II, external cause. "The noise worried John."
+    Note: `worry` (attitude, clausal) defined separately. -/
+def worry_eventive : VerbEntry := .mkRegular {
+  form := "worry"
+  complementType := .np
+  subjectTheta := some .stimulus
+  objectTheta := some .experiencer
+  causalSource := some .external
+  levinClass := some .amuse }
+
+/-- "worry" (stative) — Class II, internal cause. "The situation worries John."
+    Kim (2024) UPH: same theta grid as worry_eventive, different causal source. -/
+def worry_stative : VerbEntry := .mkRegular {
+  form := "worry"
+  complementType := .np
+  subjectTheta := some .stimulus
+  objectTheta := some .experiencer
+  causalSource := some .internal
+  opaqueContext := true
+  levinClass := some .amuse }
+
+/-- "please" — stative Class II (Kim 2024 UPH, internal cause).
+    "The idea pleases John." Related to B&R Class III It. *piacere*. -/
+def please_psych : VerbEntry := .mkRegular {
+  form := "please"
+  complementType := .np
+  subjectTheta := some .stimulus
+  objectTheta := some .experiencer
+  causalSource := some .internal
+  opaqueContext := true
+  levinClass := some .amuse }
+
+/-- "trouble" — stative Class II (Kim 2024 UPH, internal cause).
+    "The thought troubles John." -/
+def trouble : VerbEntry := .mkRegular {
+  form := "trouble"
+  complementType := .np
+  subjectTheta := some .stimulus
+  objectTheta := some .experiencer
+  causalSource := some .internal
+  opaqueContext := true
+  levinClass := some .amuse }
+
+/-- "puzzle" — stative Class II (Kim 2024 UPH, internal cause).
+    "The problem puzzles John." -/
+def puzzle : VerbEntry := .mkRegular {
+  form := "puzzle"
   complementType := .np
   subjectTheta := some .stimulus
   objectTheta := some .experiencer

@@ -13,17 +13,32 @@ import Linglib.Phenomena.ImplicitCausality.Studies.SolstadBott2024.Bridge.ProtoR
 Bridge theorems connecting fragment entries to the B&R (1988) classification
 and Kim's (2024) Uniform Projection Hypothesis for Class II psych verbs.
 
+## Architecture
+
+The fragment entries in `Verbal.lean` set four fields independently:
+- `causalSource` (external vs internal)
+- `subjectTheta` (stimulus vs experiencer)
+- `objectTheta` (experiencer vs stimulus)
+- `opaqueContext` (true vs false)
+
+Kim's (2024) theory predicts these fields must covary:
+- All Class II verbs share the same theta grid (UPH)
+- `opaqueContext` is determined by `subjectIntensional` applied to `causalSource`
+- `causalSource` determines temporal and event-structural behavior
+
+These predictions are captured by the `classII_consistent` predicate (§ 1),
+verified per-verb (§ 2), and then used to DERIVE consequences (§ 3–7).
+
 ## Key results
 
-1. **Per-verb causalSource verification**: each StimExp entry is tagged correctly
-2. **UPH uniformity**: all Class II verbs share the same theta grid
-   (stimulus + experiencer), regardless of eventive/stative split
-3. **Intensionality derivation**: internal causal source → intensional subject
-4. **T/SM restriction**: derived from the Onset Condition on causal chains
-5. **Class I/II theta reversal**: experiencer and stimulus swap positions
-6. **Bridge to proto-role infrastructure**: theta roles map to canonical Dowty profiles
-7. **Causal link grounding**: causalSource tags ground out in temporal and
-   event-structural properties via PsychCausalLink
+1. **Consistency**: each Class II entry satisfies `classII_consistent`,
+   connecting 4 independently-set fields through Kim's theory
+2. **UPH derivation**: theta-grid uniformity FOLLOWS from consistency
+3. **Opacity derivation**: `opaqueContext` FOLLOWS from `causalSource`
+4. **Temporal prediction**: temporal behavior FOLLOWS from `causalSource`
+5. **T/SM restriction**: derived from the Onset Condition on causal chains
+6. **Class I/II theta reversal**: derived from the consistency predicates
+7. **Proto-role bridge**: theta roles map to canonical Dowty profiles
 -/
 
 namespace Phenomena.PsychVerbs.Bridge
@@ -38,121 +53,261 @@ open Phenomena.ImplicitCausality.Studies.SolstadBott2024.Bridge
 open Semantics.Events.ProtoRoles
 
 -- ════════════════════════════════════════════════════
--- § 1. Per-Verb CausalSource Verification
+-- § 1. Consistency Predicates
 -- ════════════════════════════════════════════════════
 
-/-- frighten is tagged as external (eventive Class II). -/
-theorem frighten_is_external :
-    frighten.causalSource = some .external := rfl
+/-- A Class II (object-experiencer) psych verb entry is internally consistent
+    when its four independently-set fields agree with Kim's (2024) predictions:
 
-/-- amuse is tagged as external (eventive Class II). -/
-theorem amuse_is_external :
-    amuse.causalSource = some .external := rfl
+    (a) It has a causal source (external or internal)
+    (b) UPH theta grid: stimulus subject, experiencer object
+    (c) Opacity agrees with `subjectIntensional` applied to the causal source
 
-/-- fascinate is tagged as external (eventive Class II). -/
-theorem fascinate_is_external :
-    fascinate.causalSource = some .external := rfl
+    The existential over `CausalSource` ties the causal source to the opacity
+    prediction: changing the causal source field MUST change the opacity field
+    to maintain consistency. -/
+def classII_consistent (v : VerbEntry) : Prop :=
+  ∃ cs : CausalSource,
+    v.causalSource = some cs ∧
+    v.subjectTheta = some .stimulus ∧
+    v.objectTheta = some .experiencer ∧
+    v.opaqueContext = subjectIntensional cs
 
-/-- irritate is tagged as external (eventive Class II). -/
-theorem irritate_is_external :
-    irritate.causalSource = some .external := rfl
-
-/-- annoy is tagged as external (eventive Class II). -/
-theorem annoy_is_external :
-    annoy.causalSource = some .external := rfl
-
-/-- bore is tagged as external (eventive Class II). -/
-theorem bore_is_external :
-    bore.causalSource = some .external := rfl
-
-/-- charm is tagged as external (eventive Class II). -/
-theorem charm_is_external :
-    charm.causalSource = some .external := rfl
-
-/-- impress is tagged as external (eventive Class II). -/
-theorem impress_is_external :
-    impress.causalSource = some .external := rfl
-
-/-- concern is tagged as internal (stative Class II). -/
-theorem concern_is_internal :
-    concern.causalSource = some .internal := rfl
-
-/-- interest is tagged as internal (stative Class II). -/
-theorem interest_is_internal :
-    interest.causalSource = some .internal := rfl
+/-- A Class I (experiencer-subject) psych verb entry is consistent with
+    B&R's (1988) *temere* pattern: experiencer subject, stimulus object,
+    no causal source (the internal/external distinction is Class-II-specific). -/
+def classI_consistent (v : VerbEntry) : Prop :=
+  v.causalSource = none ∧
+  v.subjectTheta = some .experiencer ∧
+  v.objectTheta = some .stimulus
 
 -- ════════════════════════════════════════════════════
--- § 2. Uniform Projection Hypothesis
+-- § 2. Per-Verb Consistency Verification
 -- ════════════════════════════════════════════════════
 
-/-- UPH: eventive and stative Class II verbs share the same theta grid.
-    Both have stimulus subject and experiencer object — the difference
-    is only in causalSource, not in argument structure. -/
-theorem classII_uniform_projection :
+/-! Each theorem below connects 4 independently-set fragment fields through
+    Kim's theory. If ANY field on the fragment entry changes (causalSource,
+    subjectTheta, objectTheta, or opaqueContext), the corresponding theorem
+    breaks — ensuring the fields stay in theoretical agreement. -/
+
+-- Eventive Class II (external causal source, transparent subjects)
+
+theorem frighten_consistent : classII_consistent frighten :=
+  ⟨.external, rfl, rfl, rfl, rfl⟩
+
+theorem amuse_consistent : classII_consistent amuse :=
+  ⟨.external, rfl, rfl, rfl, rfl⟩
+
+theorem fascinate_consistent : classII_consistent fascinate :=
+  ⟨.external, rfl, rfl, rfl, rfl⟩
+
+theorem irritate_consistent : classII_consistent irritate :=
+  ⟨.external, rfl, rfl, rfl, rfl⟩
+
+theorem annoy_consistent : classII_consistent annoy :=
+  ⟨.external, rfl, rfl, rfl, rfl⟩
+
+theorem bore_consistent : classII_consistent bore :=
+  ⟨.external, rfl, rfl, rfl, rfl⟩
+
+theorem charm_consistent : classII_consistent charm :=
+  ⟨.external, rfl, rfl, rfl, rfl⟩
+
+theorem impress_consistent : classII_consistent impress :=
+  ⟨.external, rfl, rfl, rfl, rfl⟩
+
+theorem surprise_consistent : classII_consistent surprise :=
+  ⟨.external, rfl, rfl, rfl, rfl⟩
+
+theorem scare_consistent : classII_consistent scare :=
+  ⟨.external, rfl, rfl, rfl, rfl⟩
+
+theorem delight_consistent : classII_consistent delight :=
+  ⟨.external, rfl, rfl, rfl, rfl⟩
+
+theorem embarrass_consistent : classII_consistent embarrass :=
+  ⟨.external, rfl, rfl, rfl, rfl⟩
+
+theorem upset_psych_consistent : classII_consistent upset_psych :=
+  ⟨.external, rfl, rfl, rfl, rfl⟩
+
+theorem disgust_consistent : classII_consistent disgust :=
+  ⟨.external, rfl, rfl, rfl, rfl⟩
+
+theorem shock_consistent : classII_consistent shock :=
+  ⟨.external, rfl, rfl, rfl, rfl⟩
+
+theorem confuse_consistent : classII_consistent confuse :=
+  ⟨.external, rfl, rfl, rfl, rfl⟩
+
+theorem disappoint_consistent : classII_consistent disappoint :=
+  ⟨.external, rfl, rfl, rfl, rfl⟩
+
+theorem worry_eventive_consistent : classII_consistent worry_eventive :=
+  ⟨.external, rfl, rfl, rfl, rfl⟩
+
+-- Stative Class II (internal causal source, opaque subjects)
+
+theorem concern_consistent : classII_consistent concern :=
+  ⟨.internal, rfl, rfl, rfl, rfl⟩
+
+theorem interest_consistent : classII_consistent interest :=
+  ⟨.internal, rfl, rfl, rfl, rfl⟩
+
+theorem worry_stative_consistent : classII_consistent worry_stative :=
+  ⟨.internal, rfl, rfl, rfl, rfl⟩
+
+theorem please_psych_consistent : classII_consistent please_psych :=
+  ⟨.internal, rfl, rfl, rfl, rfl⟩
+
+theorem trouble_consistent : classII_consistent trouble :=
+  ⟨.internal, rfl, rfl, rfl, rfl⟩
+
+theorem puzzle_consistent : classII_consistent puzzle :=
+  ⟨.internal, rfl, rfl, rfl, rfl⟩
+
+-- Class I (experiencer-subject, no causal source)
+
+theorem enjoy_consistent : classI_consistent enjoy :=
+  ⟨rfl, rfl, rfl⟩
+
+theorem like_consistent : classI_consistent like :=
+  ⟨rfl, rfl, rfl⟩
+
+theorem love_consistent : classI_consistent love :=
+  ⟨rfl, rfl, rfl⟩
+
+theorem hate_consistent : classI_consistent hate :=
+  ⟨rfl, rfl, rfl⟩
+
+theorem fear_np_consistent : classI_consistent fear_np :=
+  ⟨rfl, rfl, rfl⟩
+
+theorem dread_np_consistent : classI_consistent dread_np :=
+  ⟨rfl, rfl, rfl⟩
+
+-- ════════════════════════════════════════════════════
+-- § 3. Derivations from Consistency
+-- ════════════════════════════════════════════════════
+
+/-- **UPH (derived)**: any two consistent Class II verbs share the same
+    theta grid, regardless of their causal source. This is Kim's central
+    claim — the eventive/stative split is orthogonal to argument structure.
+
+    The proof extracts the theta-grid equalities from consistency and
+    chains them. No enumeration of verbs needed. -/
+theorem uph_from_consistency (v₁ v₂ : VerbEntry)
+    (h₁ : classII_consistent v₁) (h₂ : classII_consistent v₂) :
+    v₁.subjectTheta = v₂.subjectTheta ∧
+    v₁.objectTheta = v₂.objectTheta := by
+  obtain ⟨_, _, hs₁, ho₁, _⟩ := h₁
+  obtain ⟨_, _, hs₂, ho₂, _⟩ := h₂
+  exact ⟨hs₁.trans hs₂.symm, ho₁.trans ho₂.symm⟩
+
+/-- **Opacity derivation**: any consistent Class II verb with internal
+    causal source has an opaque subject position.
+
+    This connects two independently-set fields (causalSource, opaqueContext)
+    through Kim's theory: the opacity ISN'T stipulated — it FOLLOWS from
+    the causal source being internal (maintenance relation). -/
+theorem internal_implies_opaque (v : VerbEntry)
+    (h : classII_consistent v) (hs : v.causalSource = some .internal) :
+    v.opaqueContext = true := by
+  obtain ⟨cs, hcs, _, _, ho⟩ := h
+  cases hcs ▸ hs; exact ho
+
+/-- **Transparency derivation**: any consistent Class II verb with external
+    causal source has a transparent subject position. -/
+theorem external_implies_transparent (v : VerbEntry)
+    (h : classII_consistent v) (hs : v.causalSource = some .external) :
+    v.opaqueContext = false := by
+  obtain ⟨cs, hcs, _, _, ho⟩ := h
+  cases hcs ▸ hs; exact ho
+
+/-- **Theta reversal (derived)**: consistent Class I and Class II verbs
+    swap subject and object theta roles. -/
+theorem theta_reversal_from_consistency (vI vII : VerbEntry)
+    (hI : classI_consistent vI) (hII : classII_consistent vII) :
+    vI.subjectTheta = vII.objectTheta ∧
+    vI.objectTheta = vII.subjectTheta := by
+  obtain ⟨_, hsI, hoI⟩ := hI
+  obtain ⟨_, _, hsII, hoII, _⟩ := hII
+  exact ⟨hsI.trans hoII.symm, hoI.trans hsII.symm⟩
+
+/-- **UPH within a single verb**: worry's eventive and stative readings
+    share the same theta grid but differ in causal source.
+    This is Kim's strongest test case — same lexical item, two readings. -/
+theorem worry_uniform_projection :
+    worry_eventive.subjectTheta = worry_stative.subjectTheta ∧
+    worry_eventive.objectTheta = worry_stative.objectTheta ∧
+    worry_eventive.causalSource ≠ worry_stative.causalSource :=
+  ⟨rfl, rfl, by decide⟩
+
+-- ════════════════════════════════════════════════════
+-- § 4. Temporal Prediction from CausalSource
+-- ════════════════════════════════════════════════════
+
+variable {Time : Type*} [LinearOrder Time]
+
+/-- **Temporal derivation (external)**: any verb with external causal source
+    predicts temporal precedence and a state transition (BECOME).
+    The temporal behavior FOLLOWS from the causal source, not from
+    per-verb stipulation. -/
+theorem external_predicts_precedence :
+    (CausalSource.toLink Time .external).temporalConstraint =
+      Interval.precedes ∧
+    (CausalSource.toLink Time .external).involvesTransition = true :=
+  ⟨rfl, rfl⟩
+
+/-- **Temporal derivation (internal)**: any verb with internal causal source
+    predicts temporal overlap and no state transition.
+    Cause and effect coexist (maintenance relation). -/
+theorem internal_predicts_overlap :
+    (CausalSource.toLink Time .internal).temporalConstraint =
+      Interval.overlaps ∧
+    (CausalSource.toLink Time .internal).involvesTransition = false :=
+  ⟨rfl, rfl⟩
+
+/-- **Per-verb temporal grounding**: frighten's fragment datum (external source)
+    determines specific temporal predictions. Changing the datum to `.internal`
+    would change the predictions. -/
+theorem frighten_temporal :
+    frighten.causalSource = some .external ∧
+    (CausalSource.toLink Time .external).temporalConstraint =
+      Interval.precedes ∧
+    (CausalSource.toLink Time .external).involvesTransition = true :=
+  ⟨rfl, rfl, rfl⟩
+
+/-- **Per-verb temporal grounding**: concern's internal source determines
+    temporal overlap and no transition. -/
+theorem concern_temporal :
+    concern.causalSource = some .internal ∧
+    (CausalSource.toLink Time .internal).temporalConstraint =
+      Interval.overlaps ∧
+    (CausalSource.toLink Time .internal).involvesTransition = false :=
+  ⟨rfl, rfl, rfl⟩
+
+/-- **UPH at the causal link level**: eventive and stative Class II verbs
+    share the same theta grid (from § 3) but differ in temporal and
+    event-structural predictions. This is Kim's full claim: the aspectual
+    split is orthogonal to argument structure. -/
+theorem uph_causal_link_level :
+    -- Same theta grid
     frighten.subjectTheta = concern.subjectTheta ∧
-    frighten.objectTheta = concern.objectTheta := ⟨rfl, rfl⟩
-
-/-- All 10 Class II entries have stimulus subjects. -/
-theorem classII_all_stimulus_subject :
-    frighten.subjectTheta = some .stimulus ∧
-    amuse.subjectTheta = some .stimulus ∧
-    fascinate.subjectTheta = some .stimulus ∧
-    irritate.subjectTheta = some .stimulus ∧
-    annoy.subjectTheta = some .stimulus ∧
-    bore.subjectTheta = some .stimulus ∧
-    charm.subjectTheta = some .stimulus ∧
-    impress.subjectTheta = some .stimulus ∧
-    concern.subjectTheta = some .stimulus ∧
-    interest.subjectTheta = some .stimulus :=
-  ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
-
-/-- All 10 Class II entries have experiencer objects. -/
-theorem classII_all_experiencer_object :
-    frighten.objectTheta = some .experiencer ∧
-    amuse.objectTheta = some .experiencer ∧
-    fascinate.objectTheta = some .experiencer ∧
-    irritate.objectTheta = some .experiencer ∧
-    annoy.objectTheta = some .experiencer ∧
-    bore.objectTheta = some .experiencer ∧
-    charm.objectTheta = some .experiencer ∧
-    impress.objectTheta = some .experiencer ∧
-    concern.objectTheta = some .experiencer ∧
-    interest.objectTheta = some .experiencer :=
-  ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
+    frighten.objectTheta = concern.objectTheta ∧
+    -- Different temporal behavior
+    (CausalSource.toLink Time .external).temporalConstraint =
+      Interval.precedes ∧
+    (CausalSource.toLink Time .internal).temporalConstraint =
+      Interval.overlaps ∧
+    -- Different event structure
+    (CausalSource.toLink Time .external).involvesTransition = true ∧
+    (CausalSource.toLink Time .internal).involvesTransition = false :=
+  ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
 
 -- ════════════════════════════════════════════════════
--- § 3. Intensionality from CausalSource
+-- § 5. T/SM Restriction from Onset Condition
 -- ════════════════════════════════════════════════════
-
-/-- Internal causal source implies subject position is intensional. -/
-theorem internal_implies_intensional :
-    subjectIntensional CausalSource.internal = true := rfl
-
-/-- External causal source implies subject position is extensional. -/
-theorem external_implies_extensional :
-    subjectIntensional CausalSource.external = false := rfl
-
-/-- Stative Class II verbs (concern, interest) have opaque contexts. -/
-theorem stative_classII_opaque :
-    concern.opaqueContext = true ∧
-    interest.opaqueContext = true := ⟨rfl, rfl⟩
-
-/-- Eventive Class II verbs (frighten, amuse) have transparent contexts. -/
-theorem eventive_classII_transparent :
-    frighten.opaqueContext = false ∧
-    amuse.opaqueContext = false := ⟨rfl, rfl⟩
-
--- ════════════════════════════════════════════════════
--- § 4. T/SM Restriction from Onset Condition
--- ════════════════════════════════════════════════════
-
-/-- The Onset Condition: onset position is available for causal adjuncts. -/
-theorem onset_available :
-    onsetCondition .onset = true := rfl
-
-/-- The terminus position is NOT available for causal adjuncts. -/
-theorem terminus_unavailable :
-    onsetCondition .terminus = false := rfl
 
 /-- T/SM restriction derived: Cause occupies onset, SM also needs onset,
     but only one participant can occupy onset → they conflict.
@@ -164,7 +319,7 @@ theorem tsm_onset_conflict :
     onsetCondition .terminus = false := ⟨rfl, rfl⟩
 
 -- ════════════════════════════════════════════════════
--- § 5. Bridge to Proto-Role Infrastructure
+-- § 6. Bridge to Proto-Role Infrastructure
 -- ════════════════════════════════════════════════════
 
 /-- Class II theta roles map to the canonical Dowty proto-role profiles
@@ -174,44 +329,6 @@ theorem tsm_onset_conflict :
 theorem classII_theta_matches_proto_roles :
     ThetaRole.canonicalProfile .stimulus = stimExpSubjectProfile ∧
     ThetaRole.canonicalProfile .experiencer = stimExpObjectProfile := ⟨rfl, rfl⟩
-
--- ════════════════════════════════════════════════════
--- § 6. Class I / Class II Theta Reversal
--- ════════════════════════════════════════════════════
-
-/-- Class I verbs (enjoy, like, love, hate) have experiencer subjects.
-    This is the B&R *temere* pattern: subject = experiencer. -/
-theorem classI_experiencer_subject :
-    enjoy.subjectTheta = some .experiencer ∧
-    like.subjectTheta = some .experiencer ∧
-    love.subjectTheta = some .experiencer ∧
-    hate.subjectTheta = some .experiencer := ⟨rfl, rfl, rfl, rfl⟩
-
-/-- Class I verbs have stimulus objects (the thing experienced). -/
-theorem classI_stimulus_object :
-    enjoy.objectTheta = some .stimulus ∧
-    like.objectTheta = some .stimulus ∧
-    love.objectTheta = some .stimulus ∧
-    hate.objectTheta = some .stimulus := ⟨rfl, rfl, rfl, rfl⟩
-
-/-- Theta-role reversal: Class I and Class II swap subject/object roles.
-    Class I: subject = experiencer, object = stimulus
-    Class II: subject = stimulus, object = experiencer -/
-theorem theta_role_reversal :
-    -- Class I: subject = experiencer
-    enjoy.subjectTheta = some .experiencer ∧
-    -- Class II: subject = stimulus
-    frighten.subjectTheta = some .stimulus ∧
-    -- Class I: object = stimulus
-    enjoy.objectTheta = some .stimulus ∧
-    -- Class II: object = experiencer
-    frighten.objectTheta = some .experiencer := ⟨rfl, rfl, rfl, rfl⟩
-
-/-- Both classes involve the same two theta roles (experiencer + stimulus),
-    just in reversed structural positions. -/
-theorem same_roles_reversed :
-    enjoy.subjectTheta = frighten.objectTheta ∧
-    enjoy.objectTheta = frighten.subjectTheta := ⟨rfl, rfl⟩
 
 /-- Class I subject profile matches Class II object profile:
     both are experiencers (sentience + independent existence). -/
@@ -225,81 +342,16 @@ theorem classI_maps_to_experiencer :
 theorem classII_maps_to_stimulus :
     PsychVerbClass.expectedSubjectRole .classII = some .stimulus := rfl
 
-/-- Class I verbs have no causalSource (the distinction is Class-II-specific). -/
-theorem classI_no_causal_source :
-    enjoy.causalSource = none ∧
-    like.causalSource = none ∧
-    love.causalSource = none ∧
-    hate.causalSource = none := ⟨rfl, rfl, rfl, rfl⟩
-
 -- ════════════════════════════════════════════════════
--- § 7. Causal Link Grounding
+-- § 7. Intensionality Type-Level Properties
 -- ════════════════════════════════════════════════════
 
-/-! The `causalSource` field on each fragment entry isn't just a label —
-    it determines genuine temporal and event-structural properties via
-    `CausalSource.toLink`. These theorems show that changing a verb's
-    `causalSource` tag would change its predicted temporal behavior. -/
+/-- Internal causal source implies subject position is intensional (type level). -/
+theorem internal_implies_intensional :
+    subjectIntensional CausalSource.internal = true := rfl
 
-variable {Time : Type*} [LinearOrder Time]
-
-/-- Eventive Class II verbs (frighten, amuse, ...) use temporal precedence:
-    the causing percept finishes before the mental state change begins. -/
-theorem eventive_classII_temporal :
-    (CausalSource.toLink Time .external).temporalConstraint =
-    Interval.precedes := rfl
-
-/-- Stative Class II verbs (concern, interest) use temporal overlap:
-    the mental representation and the psychological state coexist. -/
-theorem stative_classII_temporal :
-    (CausalSource.toLink Time .internal).temporalConstraint =
-    Interval.overlaps := rfl
-
-/-- Eventive Class II involves a state transition (BECOME):
-    "The noise frightened John" — John transitions INTO a frightened state. -/
-theorem eventive_classII_has_become :
-    (CausalSource.toLink Time .external).involvesTransition = true := rfl
-
-/-- Stative Class II involves no transition:
-    "The problem concerns John" — no change of state, just persistence. -/
-theorem stative_classII_no_become :
-    (CausalSource.toLink Time .internal).involvesTransition = false := rfl
-
-/-- Per-verb grounding: frighten's causalSource tag (fragment datum)
-    determines temporal precedence (theoretical prediction).
-    Changing frighten to `.internal` would predict overlap instead. -/
-theorem frighten_causal_link :
-    frighten.causalSource = some .external ∧
-    (CausalSource.toLink Time .external).temporalConstraint =
-      Interval.precedes ∧
-    (CausalSource.toLink Time .external).involvesTransition = true :=
-  ⟨rfl, rfl, rfl⟩
-
-/-- Per-verb grounding: concern's causalSource tag (fragment datum)
-    determines temporal overlap and no transition (theoretical prediction).
-    Changing concern to `.external` would predict precedence instead. -/
-theorem concern_causal_link :
-    concern.causalSource = some .internal ∧
-    (CausalSource.toLink Time .internal).temporalConstraint =
-      Interval.overlaps ∧
-    (CausalSource.toLink Time .internal).involvesTransition = false :=
-  ⟨rfl, rfl, rfl⟩
-
-/-- The UPH at the causal link level: eventive and stative Class II verbs
-    differ ONLY in their causal link (temporal + event sort), NOT in their
-    theta grid. This is Kim's central claim — the aspectual split is
-    orthogonal to argument structure. -/
-theorem uph_causal_link_level :
-    -- Same theta grid (from § 2)
-    frighten.subjectTheta = concern.subjectTheta ∧
-    frighten.objectTheta = concern.objectTheta ∧
-    -- Different causal links
-    (CausalSource.toLink Time .external).involvesTransition = true ∧
-    (CausalSource.toLink Time .internal).involvesTransition = false ∧
-    (CausalSource.toLink Time .external).temporalConstraint =
-      Interval.precedes ∧
-    (CausalSource.toLink Time .internal).temporalConstraint =
-      Interval.overlaps :=
-  ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
+/-- External causal source implies subject position is extensional (type level). -/
+theorem external_implies_extensional :
+    subjectIntensional CausalSource.external = false := rfl
 
 end Phenomena.PsychVerbs.Bridge

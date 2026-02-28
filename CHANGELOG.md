@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.227.39] - 2026-02-27
+
+### Changed
+- **CausationBridge: derivation-based architecture, 24 Class II + 6 Class I entries**. Restructured `CausationBridge.lean` around `classII_consistent`/`classI_consistent` predicates that bundle 4 independently-set fragment fields (causalSource, subjectTheta, objectTheta, opaqueContext) through Kim's theory. Per-verb consistency verification (24 Class II, 6 Class I). Derived consequences: `uph_from_consistency` (UPH follows from predicate — any two consistent Class II verbs share theta grid without enumeration), `internal_implies_opaque`/`external_implies_transparent` (opacity follows from causalSource + consistency), `theta_reversal_from_consistency` (Class I/II reversal follows from both predicates), `worry_uniform_projection` (UPH within single verb). 17 new fragment entries in `Verbal.lean`: 2 Class I (`fear_np`, `dread_np`), 10 eventive Class II (`surprise`, `scare`, `delight`, `embarrass`, `upset_psych`, `disgust`, `shock`, `confuse`, `disappoint`, `worry_eventive`), 5 stative Class II (`worry_stative`, `please_psych`, `trouble`, `puzzle`).
+
 ## [0.227.38] - 2026-02-27
 
 ### Added
