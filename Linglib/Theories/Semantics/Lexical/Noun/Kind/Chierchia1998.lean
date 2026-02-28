@@ -41,7 +41,7 @@ come from Mathlib for free, giving us Link's semilattice directly.
 import Mathlib.Data.Set.Basic
 import Mathlib.Data.Fintype.Basic
 import Mathlib.Order.UpperLower.Basic
-import Linglib.Core.Scales.Mereology
+import Linglib.Core.Mereology
 
 namespace Semantics.Lexical.Noun.Kind.Chierchia1998
 

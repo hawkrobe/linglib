@@ -1,4 +1,4 @@
-import Linglib.Core.Scales.Mereology
+import Linglib.Core.Mereology
 
 /-! # Truthmaker Semantics (Fine 2017) @cite{fine-2017}
 

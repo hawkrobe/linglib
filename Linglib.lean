@@ -69,7 +69,7 @@ import Linglib.Core.Case.SplitConditions
 import Linglib.Core.Case.LocalExtension
 import Linglib.Core.Lexical.NounCategorization
 import Linglib.Core.Scales.Roundness
-import Linglib.Core.Scales.Mereology
+import Linglib.Core.Mereology
 import Linglib.Core.Scales.MereoDim
 import Linglib.Core.ContentIndividual
 import Linglib.Core.Agent.BToM
@@ -476,6 +476,7 @@ import Linglib.Phenomena.Plurals.NonMaximality
 import Linglib.Phenomena.Plurals.Studies.HaslingerEtAl2025Bridge
 import Linglib.Phenomena.Plurals.Studies.QingEtAl2025
 import Linglib.Phenomena.Plurals.Compare
+import Linglib.Phenomena.Plurals.Bridge.StratifiedReference
 import Linglib.Phenomena.Polarity.Basic
 import Linglib.Phenomena.Polarity.DisjunctionIgnorance
 import Linglib.Phenomena.Polarity.Exceptives
@@ -577,6 +578,11 @@ import Linglib.Phenomena.TenseAspect.Data
 import Linglib.Phenomena.TenseAspect.Bridge
 import Linglib.Phenomena.TenseAspect.ThenPresentBridge
 import Linglib.Phenomena.TenseAspect.Bridge.TowerBridge
+import Linglib.Phenomena.TenseAspect.Bridge.Krifka1998
+import Linglib.Phenomena.TenseAspect.Bridge.SpatialTrace
+import Linglib.Phenomena.TenseAspect.Bridge.Krifka1989
+import Linglib.Phenomena.TenseAspect.Bridge.GradualChange
+import Linglib.Phenomena.TenseAspect.Bridge.DimensionCoherence
 import Linglib.Phenomena.TemporalConnectives.Compare
 import Linglib.Phenomena.TemporalConnectives.NegationData
 import Linglib.Phenomena.TemporalConnectives.VeridicalityBridge
@@ -970,7 +976,8 @@ import Linglib.Theories.Semantics.Causation.ProductionDependence
 import Linglib.Theories.Semantics.Causation.Resultatives
 import Linglib.Theories.Semantics.Causation.PsychCausation
 import Linglib.Theories.Semantics.Causation.PsychCausalLink
-import Linglib.Theories.Semantics.Causation.PsychVerbSem
+import Linglib.Phenomena.PsychVerbs.Studies.HartshorneEtAl2016.Data
+import Linglib.Phenomena.PsychVerbs.Studies.HartshorneEtAl2016.Bridge
 import Linglib.Theories.Semantics.Conditionals.Assertability
 import Linglib.Theories.Semantics.Conditionals.Basic
 import Linglib.Theories.Semantics.Conditionals.ConditionalType

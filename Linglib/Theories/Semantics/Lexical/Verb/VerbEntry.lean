@@ -10,6 +10,8 @@ import Linglib.Theories.Semantics.Attitudes.Preferential
 import Linglib.Theories.Semantics.Causation.Basic
 import Linglib.Theories.Semantics.Causation.Implicative
 import Linglib.Theories.Semantics.Causation.PsychCausation
+import Linglib.Theories.Semantics.Lexical.Verb.Aspect
+import Linglib.Theories.Semantics.Events.Krifka1998
 
 /-! # Cross-Linguistic Verb Infrastructure
 
@@ -47,6 +49,8 @@ open Semantics.Attitudes.Doxastic (Veridicality)
 open Semantics.Attitudes.Preferential (AttitudeValence NVPClass PreferentialPredicate)
 open Core.NaturalLogic (EntailmentSig)
 open Semantics.Causation.PsychCausation (CausalSource)
+open Semantics.Lexical.Verb.Aspect (VendlerClass)
+open Semantics.Events.Krifka1998 (VerbIncClass)
 
 /--
 Which Montague predicate builder this verb uses.
@@ -237,6 +241,17 @@ structure VerbCore where
       True for speech-act verbs (say, tell, claim, ask). This is a genuine
       semantic primitive that cannot be derived from other fields. -/
   speechActVerb : Bool := false
+  /-- Vendler (1957) aspectual class of the verb's base VP.
+      For verbs whose class depends on the object NP (eat apples = activity,
+      eat two apples = accomplishment), record the class with a quantized
+      (bounded) object. `none` for verbs where Vendler class is inapplicable
+      (e.g., clause-embedding verbs). -/
+  vendlerClass : Option VendlerClass := none
+  /-- Krifka (1998) incrementality class of the object/theme role.
+      `.sinc` = strictly incremental (eat, build); `.inc` = incremental
+      with backups (read); `.cumOnly` = cumulative only (push, carry).
+      `none` for intransitives and clause-embedding verbs. -/
+  verbIncClass : Option VerbIncClass := none
   /-- Is the verb a presupposition trigger? -/
   presupType : Option PresupTriggerType := none
   /-- For measure predicates: which dimension this verb selects for.

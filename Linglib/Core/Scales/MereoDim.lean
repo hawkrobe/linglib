@@ -1,4 +1,4 @@
-import Linglib.Core.Scales.Mereology
+import Linglib.Core.Mereology
 import Linglib.Core.Scales.Scale
 import Mathlib.Algebra.Order.Archimedean.Basic
 import Mathlib.Algebra.Order.Field.Rat

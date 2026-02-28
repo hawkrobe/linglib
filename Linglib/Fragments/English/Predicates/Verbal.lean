@@ -23,6 +23,8 @@ export Core.Verbs (PreferentialBuilder AttitudeBuilder PresupTriggerType
 open Core.Verbs
 open NadathurLauer2020.Builder (CausativeBuilder)
 open Nadathur2023.Implicative (ImplicativeBuilder)
+open Semantics.Lexical.Verb.Aspect (VendlerClass)
+open Semantics.Events.Krifka1998 (VerbIncClass)
 
 -- ════════════════════════════════════════════════════
 -- § English Morphophonological Rules
@@ -114,6 +116,7 @@ def sleep : VerbEntry where
   complementType := .none
   subjectTheta := some .agent
   passivizable := false
+  vendlerClass := some .state
 
 /-- "run" — intransitive, no presupposition -/
 def run : VerbEntry where
@@ -125,6 +128,7 @@ def run : VerbEntry where
   complementType := .none
   subjectTheta := some .agent
   passivizable := false
+  vendlerClass := some .activity
   levinClass := some .mannerOfMotion
   rootProfile := some {
     forceMag := some [.moderate]
@@ -139,6 +143,7 @@ def arrive : VerbEntry := .mkRegular {
   subjectTheta := some .theme  -- Underlying object
   unaccusative := true
   passivizable := false
+  vendlerClass := some .achievement
   levinClass := some .inherentlyDirectedMotion }
 
 /-- "eat" — transitive, no presupposition -/
@@ -151,6 +156,8 @@ def eat : VerbEntry where
   complementType := .np
   subjectTheta := some .agent
   objectTheta := some .patient
+  vendlerClass := some .accomplishment
+  verbIncClass := some .sinc
   levinClass := some .eat
   rootProfile := some {
     forceMag := some [.low, .moderate]
@@ -164,6 +171,7 @@ def kick : VerbEntry := .mkRegular {
   complementType := .np
   subjectTheta := some .agent
   objectTheta := some .patient
+  vendlerClass := some .activity
   levinClass := some .hit
   rootProfile := some {
     forceMag := some [.moderate, .high]
@@ -183,6 +191,7 @@ def give : VerbEntry where
   subjectTheta := some .agent
   objectTheta := some .theme
   object2Theta := some .goal
+  vendlerClass := some .accomplishment
   levinClass := some .give
 
 /-- "put" — locative -/
@@ -195,6 +204,7 @@ def put : VerbEntry where
   complementType := .np_pp
   subjectTheta := some .agent
   objectTheta := some .theme
+  vendlerClass := some .achievement
   levinClass := some .put
 
 /-- "weigh" — measure predicate selecting for mass/weight (Bale & Schwarz 2026). -/
@@ -203,6 +213,7 @@ def weigh : VerbEntry := .mkRegular {
   complementType := .np
   subjectTheta := some .theme
   objectTheta := some .theme
+  vendlerClass := some .state
   selectsDimension := some .mass
   levinClass := some .measure }
 
@@ -212,6 +223,7 @@ def cover : VerbEntry := .mkRegular {
   complementType := .np
   subjectTheta := some .agent
   objectTheta := some .theme
+  vendlerClass := some .accomplishment
   selectsDimension := some .distance }
 
 /-- "measure" — general measurement predicate. -/
@@ -220,6 +232,7 @@ def measure : VerbEntry := .mkRegular {
   complementType := .np
   subjectTheta := some .theme
   objectTheta := some .theme
+  vendlerClass := some .state
   levinClass := some .measure }
 
 /-- "buy" — irregular transitive -/
@@ -232,6 +245,7 @@ def buy : VerbEntry where
   complementType := .np
   subjectTheta := some .agent
   objectTheta := some .patient
+  vendlerClass := some .accomplishment
 
 /-- "meet" — irregular transitive -/
 def meet : VerbEntry where
@@ -243,6 +257,7 @@ def meet : VerbEntry where
   complementType := .np
   subjectTheta := some .agent
   objectTheta := some .patient
+  vendlerClass := some .achievement
 
 /-- "sell" — irregular transitive -/
 def sell : VerbEntry where
@@ -254,6 +269,7 @@ def sell : VerbEntry where
   complementType := .np
   subjectTheta := some .agent
   objectTheta := some .patient
+  vendlerClass := some .accomplishment
 
 /-- "leave" — transitive (also used intransitively with argument drop) -/
 def leave : VerbEntry where
@@ -265,6 +281,8 @@ def leave : VerbEntry where
   complementType := .np
   subjectTheta := some .agent
   objectTheta := some .theme
+  vendlerClass := some .achievement
+  levinClass := some .leave
 
 /-- "see" — transitive, can also embed clauses -/
 def see : VerbEntry where
@@ -276,6 +294,7 @@ def see : VerbEntry where
   complementType := .np
   subjectTheta := some .experiencer
   objectTheta := some .stimulus
+  vendlerClass := some .state
   factivePresup := true
   levinClass := some .see
 
@@ -722,6 +741,7 @@ def kill : VerbEntry := .mkRegular {
   complementType := .np
   subjectTheta := some .agent
   objectTheta := some .patient
+  vendlerClass := some .accomplishment
   causativeBuilder := some .make
   levinClass := some .murder
   rootProfile := some {
@@ -743,6 +763,7 @@ def break_ : VerbEntry where
   subjectTheta := some .agent
   objectTheta := some .patient
   unaccusative := false
+  vendlerClass := some .accomplishment
   causativeBuilder := some .make
   levinClass := some .break_
   rootProfile := some {
@@ -768,6 +789,7 @@ def tear_ : VerbEntry where
   subjectTheta := some .agent
   objectTheta := some .patient
   unaccusative := false
+  vendlerClass := some .accomplishment
   causativeBuilder := some .make
   levinClass := some .break_
   rootProfile := some {
@@ -784,6 +806,7 @@ def burn : VerbEntry := .mkRegular {
   complementType := .np
   subjectTheta := some .agent
   objectTheta := some .patient
+  vendlerClass := some .accomplishment
   causativeBuilder := some .make
   levinClass := some .otherCoS
   rootProfile := some {
@@ -800,6 +823,7 @@ def destroy : VerbEntry := .mkRegular {
   complementType := .np
   subjectTheta := some .agent
   objectTheta := some .patient
+  vendlerClass := some .accomplishment
   causativeBuilder := some .make
   levinClass := some .destroy
   rootProfile := some {
@@ -814,6 +838,7 @@ def melt : VerbEntry := .mkRegular {
   complementType := .np
   subjectTheta := some .agent
   objectTheta := some .patient
+  vendlerClass := some .accomplishment
   causativeBuilder := some .make
   levinClass := some .otherCoS
   rootProfile := some {
@@ -834,6 +859,8 @@ def devour : VerbEntry := .mkRegular {
   complementType := .np
   subjectTheta := some .agent
   objectTheta := some .patient
+  vendlerClass := some .accomplishment
+  verbIncClass := some .sinc
   levinClass := some .devour
   rootProfile := some {
     forceMag := some [.moderate, .high]
@@ -851,6 +878,35 @@ def read : VerbEntry where
   complementType := .np
   subjectTheta := some .agent
   objectTheta := some .patient
+  vendlerClass := some .accomplishment
+  verbIncClass := some .inc
+
+/-- "build" — creation verb, strictly incremental theme -/
+def build : VerbEntry where
+  form := "build"
+  form3sg := "builds"
+  formPast := "built"
+  formPastPart := "built"
+  formPresPart := "building"
+  complementType := .np
+  subjectTheta := some .agent
+  objectTheta := some .patient
+  vendlerClass := some .accomplishment
+  verbIncClass := some .sinc
+  levinClass := some .build
+
+/-- "write" — creation verb, strictly incremental theme -/
+def write : VerbEntry where
+  form := "write"
+  form3sg := "writes"
+  formPast := "wrote"
+  formPastPart := "written"
+  formPresPart := "writing"
+  complementType := .np
+  subjectTheta := some .agent
+  objectTheta := some .patient
+  vendlerClass := some .accomplishment
+  verbIncClass := some .sinc
 
 /-- "sweep" — motion + sustained contact, variable agentivity (default sense). -/
 def sweep : VerbEntry where
@@ -1222,6 +1278,7 @@ def enjoy : VerbEntry := .mkRegular {
   complementType := .np
   subjectTheta := some .experiencer
   objectTheta := some .stimulus
+  vendlerClass := some .state
   levinClass := some .admire }
 
 /-- "like" — AgExp verb (experiencer-subject) -/
@@ -1230,6 +1287,7 @@ def like : VerbEntry := .mkRegular {
   complementType := .np
   subjectTheta := some .experiencer
   objectTheta := some .stimulus
+  vendlerClass := some .state
   levinClass := some .admire }
 
 /-- "love" — AgExp verb (experiencer-subject) -/
@@ -1238,6 +1296,7 @@ def love : VerbEntry := .mkRegular {
   complementType := .np
   subjectTheta := some .experiencer
   objectTheta := some .stimulus
+  vendlerClass := some .state
   levinClass := some .admire }
 
 /-- "hate" — AgExp verb (experiencer-subject) -/
@@ -1246,6 +1305,7 @@ def hate : VerbEntry := .mkRegular {
   complementType := .np
   subjectTheta := some .experiencer
   objectTheta := some .stimulus
+  vendlerClass := some .state
   levinClass := some .admire }
 
 /-- "admire" — AgExp verb (experiencer-subject) -/
@@ -1254,6 +1314,7 @@ def admire : VerbEntry := .mkRegular {
   complementType := .np
   subjectTheta := some .experiencer
   objectTheta := some .stimulus
+  vendlerClass := some .state
   levinClass := some .admire }
 
 /-- "envy" — AgExp verb (experiencer-subject) -/
@@ -1262,6 +1323,7 @@ def envy : VerbEntry := .mkRegular {
   complementType := .np
   subjectTheta := some .experiencer
   objectTheta := some .stimulus
+  vendlerClass := some .state
   levinClass := some .admire }
 
 /-- "respect" — AgExp verb (experiencer-subject) -/
@@ -1270,6 +1332,7 @@ def respect : VerbEntry := .mkRegular {
   complementType := .np
   subjectTheta := some .experiencer
   objectTheta := some .stimulus
+  vendlerClass := some .state
   levinClass := some .admire }
 
 /-- "value" — AgExp verb (experiencer-subject) -/
@@ -1278,6 +1341,7 @@ def value : VerbEntry := .mkRegular {
   complementType := .np
   subjectTheta := some .experiencer
   objectTheta := some .stimulus
+  vendlerClass := some .state
   levinClass := some .admire }
 
 /-- "fear" (NP complement) — Class I psych verb (B&R *temere*).
@@ -1546,6 +1610,7 @@ def chase : VerbEntry := .mkRegular {
   complementType := .np
   subjectTheta := some .agent
   objectTheta := some .patient
+  vendlerClass := some .activity
   levinClass := some .chase }
 
 /-- "hit" — AgPat verb (Levin 18.1) -/
@@ -1558,6 +1623,7 @@ def hit : VerbEntry where
   complementType := .np
   subjectTheta := some .agent
   objectTheta := some .patient
+  vendlerClass := some .activity
   levinClass := some .hit
 
 /-- "push" — AgPat verb (Levin 12) -/
@@ -1566,6 +1632,8 @@ def push : VerbEntry := .mkRegular {
   complementType := .np
   subjectTheta := some .agent
   objectTheta := some .patient
+  vendlerClass := some .activity
+  verbIncClass := some .cumOnly
   levinClass := some .pushPull }
 
 /-- "pull" — AgPat verb (Levin 12) -/
@@ -1574,6 +1642,8 @@ def pull : VerbEntry := .mkRegular {
   complementType := .np
   subjectTheta := some .agent
   objectTheta := some .patient
+  vendlerClass := some .activity
+  verbIncClass := some .cumOnly
   levinClass := some .pushPull }
 
 /-- "carry" — AgPat verb (Levin 11.4) -/
@@ -1586,6 +1656,8 @@ def carry : VerbEntry where
   complementType := .np
   subjectTheta := some .agent
   objectTheta := some .patient
+  vendlerClass := some .activity
+  verbIncClass := some .cumOnly
   levinClass := some .carry
 
 /-- "drag" — AgPat verb (Levin 11.4/12) -/
@@ -1598,6 +1670,8 @@ def drag : VerbEntry where
   complementType := .np
   subjectTheta := some .agent
   objectTheta := some .patient
+  vendlerClass := some .activity
+  verbIncClass := some .cumOnly
   levinClass := some .carry
 
 /-- "call" — AgPat verb (communication + agent-patient frame) -/
@@ -1615,7 +1689,7 @@ def call : VerbEntry := .mkRegular {
 def allVerbs : List VerbEntry := [
   -- Simple
   sleep, run, arrive, eat, kick, give, put, buy, meet, sell, leave, see, devour, read,
-  sweep, sweep_instr,
+  build, write, sweep, sweep_instr,
   -- Factive
   know, regret, realize, discover, notice,
   -- Change of State

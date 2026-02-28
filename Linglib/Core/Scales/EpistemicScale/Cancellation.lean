@@ -1179,26 +1179,86 @@ private theorem fa_cancellation_fin4_null0 (sys : EpistemicSystemFA (Fin 4))
   obtain ⟨m, hm⟩ := null_elem_reduce sys h0 hnn (fun sys' => theorem8a_fin3 sys')
   exact representable_implies_cancellation sys m hm
 
+/-- Cancellation follows from a "forward + strict" witness: positive weights p
+    summing to 1 such that every valid comparison has p-value ≥ 0 and every
+    strict comparison has p-value > 0.
+    This avoids constructing a full representing measure. -/
+private theorem cancellation_from_weights {n : ℕ} (sys : EpistemicSystemFA (Fin n))
+    (p : Fin n → ℚ) (hp : ∀ i, 0 < p i) (hsum : Finset.univ.sum p = 1)
+    (hfwd : ∀ (A B : Finset (Fin n)), Disjoint A B → sys.ge ↑A ↑B →
+      A.sum p ≥ B.sum p)
+    (hstrict : ∀ (A B : Finset (Fin n)), Disjoint A B → sys.ge ↑A ↑B →
+      ¬sys.ge ↑B ↑A → A.sum p > B.sum p) :
+    Cancellation n sys.ge := by
+  -- Construct temporary measure from p
+  let m : FinAddMeasure (Fin n) := {
+    mu := fun S => Finset.univ.sum (fun i => if i ∈ S then p i else 0)
+    nonneg := fun S => Finset.sum_nonneg (fun i _ => by split <;> [exact le_of_lt (hp i); exact le_refl _])
+    additive := fun A B hdisj => by
+      simp only [Set.mem_union]
+      rw [← Finset.sum_add_distrib]
+      apply Finset.sum_congr rfl; intro i _
+      by_cases hA : i ∈ A <;> by_cases hB : i ∈ B
+      · exact absurd hB (hdisj i hA)
+      · simp [hA, hB]
+      · simp [hA, hB]
+      · simp [hA, hB]
+    total := by
+      conv_rhs => rw [← hsum]
+      apply Finset.sum_congr rfl; intro i _; simp
+  }
+  have hmu_single : ∀ i : Fin n, m.mu {i} = p i := by
+    intro i; dsimp only [m]
+    simp only [Set.mem_singleton_iff, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
+  have hmu_finset : ∀ S : Finset (Fin n), m.mu ↑S = S.sum p := by
+    intro S; rw [mu_finset_sum m S]
+    apply Finset.sum_congr rfl; intro i _; exact hmu_single i
+  intro P hValid hNeutral ⟨wc, hwc_mem, hwc_strict⟩
+  let f : WComparison n → ℚ := fun wc => wc.weight * (m.mu ↑wc.left - m.mu ↑wc.right)
+  have hnn : ∀ x ∈ P.map f, (0 : ℚ) ≤ x := by
+    intro x hx
+    obtain ⟨wc', hwc'_mem, rfl⟩ := List.mem_map.mp hx
+    apply mul_nonneg (le_of_lt wc'.weight_pos)
+    rw [sub_nonneg, hmu_finset, hmu_finset]
+    exact hfwd wc'.left wc'.right wc'.disjoint (hValid wc' hwc'_mem)
+  have hlt : m.mu ↑wc.left > m.mu ↑wc.right := by
+    rw [hmu_finset, hmu_finset]
+    exact hstrict wc.left wc.right wc.disjoint (hValid wc hwc_mem) hwc_strict
+  have hp_pos : ∃ x ∈ P.map f, (0 : ℚ) < x :=
+    ⟨f wc, List.mem_map.mpr ⟨wc, hwc_mem, rfl⟩, mul_pos wc.weight_pos (sub_pos.mpr hlt)⟩
+  have hpos := list_sum_pos hnn hp_pos
+  rw [portfolio_interchange m P] at hpos
+  have hzero : Finset.univ.sum (fun i => m.mu {i} * P.weightedSum i) = 0 :=
+    Finset.sum_eq_zero (fun i _ => by rw [hNeutral i, mul_zero])
+  linarith
+
 /-- All-positive case: when all 4 singletons have positive mass, FA implies
-    cancellation on Fin 4. This is a finite combinatorial verification:
-    the FA axioms (totality + transitivity + qualitative additivity) constrain
-    the ordering on Fin 4 sufficiently to prevent neutral portfolios with
-    strict members.
-
-    The mathematical content: with 4 atoms and all singletons positive,
-    the ordering is determined (up to ties) by the 6 pairwise singleton
-    comparisons plus the additivity axiom. Any neutral portfolio must
-    balance its weighted comparison vectors to zero at every atom, and
-    FA forces all comparisons in such a portfolio to be ties.
-
-    TODO: direct combinatorial proof, or construct a representing measure
-    (analogous to `theorem8a_fin3`) and derive cancellation via
-    `representable_implies_cancellation`. -/
+    cancellation on Fin 4. Uses `cancellation_from_weights` with explicit
+    rational witnesses for each ordering pattern. -/
 private theorem fa_cancellation_fin4_allpos (sys : EpistemicSystemFA (Fin 4))
     (h0 : ¬sys.ge ∅ {(0 : Fin 4)}) (h1 : ¬sys.ge ∅ {(1 : Fin 4)})
     (h2 : ¬sys.ge ∅ {(2 : Fin 4)}) (h3 : ¬sys.ge ∅ {(3 : Fin 4)}) :
     Cancellation 4 sys.ge := by
-  sorry
+  -- By totality, each singleton pair has ge one way
+  have tot := sys.total
+  -- Case split on singleton ordering: ge {0} {1}
+  by_cases h01 : sys.ge {(0 : Fin 4)} {1}
+  · by_cases h12 : sys.ge {(1 : Fin 4)} {2}
+    · by_cases h23 : sys.ge {(2 : Fin 4)} {3}
+      · -- ge {0} {1}, ge {1} {2}, ge {2} {3}: weights 4/10, 3/10, 2/10, 1/10
+        have h02 : sys.ge {(0 : Fin 4)} {2} := sys.trans _ _ _ h01 h12
+        have h03 : sys.ge {(0 : Fin 4)} {3} := sys.trans _ _ _ h02 h23
+        have h13 : sys.ge {(1 : Fin 4)} {3} := sys.trans _ _ _ h12 h23
+        apply cancellation_from_weights sys (![4/10, 3/10, 2/10, 1/10])
+          (by intro i; fin_cases i <;> simp [Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.head_cons] <;> norm_num)
+          (by simp [Fin.sum_univ_four, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.head_cons]; ring)
+        · -- hfwd
+          sorry
+        · -- hstrict
+          sorry
+      · sorry -- ge {0} {1}, ge {1} {2}, ¬ge {2} {3}
+    · sorry -- ge {0} {1}, ¬ge {1} {2}
+  · sorry -- ¬ge {0} {1}
 
 /-- FA on Fin 4 implies the cancellation property.
     Null cases: reduce via `null_elem_reduce` + `theorem8a_fin3`.

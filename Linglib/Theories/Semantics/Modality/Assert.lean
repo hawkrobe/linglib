@@ -345,7 +345,14 @@ inductive SpeechTime where | now
 /-- The event projection for speech act events.
 
 Declarative: holder = speaker (it's the speaker's beliefs).
-Imperative: holder = addressee (it's the addressee's obligations). -/
+Imperative: holder = addressee (it's the addressee's obligations).
+
+NB: `.interrogative => .speaker` because the holder is who PERFORMS the
+speech act (always the speaker in Hacquard's framework). This is distinct
+from the SEAT OF KNOWLEDGE (Speas & Tenny 2003), which is the hearer for
+interrogatives — that notion captures who has epistemic authority over
+the content, not who initiates the speech event. The bridge between these
+is in `SpeechActs.lean`: `seat_of_knowledge_agrees_with_epistemic_authority`. -/
 def speechActProjection : EventProjection SpeechActType Interlocutor SpeechTime where
   holder
     | .declarative => .speaker

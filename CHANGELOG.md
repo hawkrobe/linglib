@@ -1,9 +1,57 @@
 # Changelog
 
+## [0.227.46] - 2026-02-27
+
+### Added
+- **PIP formalization** (`Theories/Semantics/Dynamic/Systems/PIP/`): Keshet & Abney (2024) "Intensional Anaphora" — Plural Intensional Presuppositional predicate calculus encoded as dynamic updates over IntensionalCDRT. Core types (`FLabel`, `Description`, `LabelStore`, `Discourse`, `PUpdate`), connectives (atom, negation, conjunction, disjunction with label floating, labeled/unlabeled existentials, universal quantification), modal operators (must, might, would) with `modalExpand` for world-shifting (Veltman 1996, Frank 1997), presupposition (`retrieveDef` for DEF_α resolution), summation (`summationFiltered`), external/local variable binding classification.
+- **PIP worked examples** (`PIP/Phenomena.lean`): Stone's modal subordination ("A wolf might come in. It would eat you first."), Partee's bathroom sentences ("Either there's no bathroom, or it's upstairs."), Karttunen's paycheck pronouns. End-to-end consistency proofs for both Stone's puzzle and the bathroom sentence. Anaphora strategy comparison (value-based vs file-change vs description-based).
+- **PIP anaphora bridge** (`Phenomena/Anaphora/Bridge/PIPAnaphora.lean`): connects PIP to theory-neutral anaphora data — modal subordination (wolf examples), bathroom sentences (label survival through negation + disjunction), donkey anaphora (label survival through ¬∃¬). Full bathroom label regression test. Unified account theorem (label monotonicity explains all three phenomena).
+- **Key theorems**: `labels_survive_negation`, `labels_survive_must`, `labels_survive_might`, `labels_survive_disj` (label monotonicity); `modalExpand_superset`, `modalExpand_adds_accessible` (modal world-shifting); `stone_discourse_consistent`, `bathroom_sentence_consistent` (end-to-end info-state non-emptiness); `register_preserves` (label store monotonicity). Zero `sorry`.
+
+## [0.227.45] - 2026-02-27
+
+### Added
+- **5 new bridge files** closing all downstream gaps in the Krifka/Champollion mereological tower:
+  - `Phenomena/TenseAspect/Bridge/SpatialTrace.lean`: path telicity — `pathShapeToTelicity`, `LevinClass.pathSpec`, `LicensingPipeline PathShape`, motion VP data (arrive/leave/run + PPs)
+  - `Phenomena/TenseAspect/Bridge/Krifka1989.lean`: measure phrase quantization — `MassNoun`/`CountNoun`/`BarePlural`, `QMOD`/`qmod_qua`, `composedRef` (VerbIncClass × NomRef → VP ref), 8 verb-NP composition data
+  - `Phenomena/TenseAspect/Bridge/GradualChange.lean`: gradual change — `GRAD`/`GRADSquare`/`MeasureProportional`, `predictsGRAD` from VerbIncClass, parametric documentation of proof path
+  - `Phenomena/Plurals/Bridge/StratifiedReference.lean`: distributivity — `SDR`/`VerbDistributivity`, per-verb distributivity profiles (see/kill/meet/eat), SSR ↔ atelicity bridge
+  - `Phenomena/TenseAspect/Bridge/DimensionCoherence.lean`: dimension coherence — `dimension_coherence`, `any_chain_qua_transfer`, licensing pipeline convergence across all 6 classification systems
+
+### Changed
+- **`Fragments/English/Predicates/Verbal.lean`**: add `levinClass := some .leave` to `leave` verb entry (enables SpatialTrace bridge)
+
+## [0.227.44] - 2026-02-27
+
+### Changed
+- **Mereology refactor**: moved `Core/Scales/Mereology.lean` → `Core/Mereology.lean` — mereology is more primitive than degree semantics, not subordinate to Scales. Updated 7 importers + `Linglib.lean`. `MereoDim.lean` stays in `Core/Scales/` as the mereology-scale bridge.
+
+### Added
+- **VerbCore aspectual fields**: `vendlerClass : Option VendlerClass` and `verbIncClass : Option VerbIncClass` on `VerbCore`, linking verb entries to Vendler (1957) aspect classification and Krifka (1998) incrementality theory.
+- **Fragment verb annotations**: 30+ verb entries annotated with Vendler class and incrementality. New entries: `build` (sinc accomplishment), `write` (sinc accomplishment). `eat`/`devour` = sinc, `read` = inc, `push`/`pull`/`carry`/`drag` = cumOnly. States, activities, achievements, accomplishments all annotated.
+- **Krifka (1998) bridge file** (`Phenomena/TenseAspect/Bridge/Krifka1998.lean`): per-verb incrementality verification, Vendler class verification, VendlerClass → MereoTag bridge, compositional telicity instantiations, diagnostic bridge (for/in adverbial compatibility from CUM/QUA), cross-verification (incrementality × Vendler consistency). Zero `sorry`.
+
+## [0.227.43] - 2026-02-27
+
+### Fixed
+- **SpeechActs.lean**: Rename `SAPMood.promissive` → `SAPMood.subjunctive` to match Speas & Tenny (2003) terminology (paper uses "subjunctive" for [-finite, hearer does NOT c-command content]). Bridge `SAPMood.toIllocutionaryMood` maps `.subjunctive → .promissive`.
+- **Krifka.lean**: Fix citation — clause layers (TP/JP/ComP/ActP) are from Krifka (2020), not Krifka (2015). Add `@cite{krifka-2020}`.
+- **SpeechActs.lean**: Fix misleading theorem names: `sap_hosts_proles` → `deriveMood_finite` (body matches name), `sa_above_c_in_ep` now actually proves `fValue .SA > fValue .C` via ExtendedProjection import.
+- **SpeechActs.lean**: Fix bridge docstring — mapping is injective (not 1:1), since `IllocutionaryMood` has `.exclamative` with no `SAPMood` counterpart.
+
+### Added
+- **SpeechActs.lean §G**: Sentience Domain (Speas & Tenny 2003, §2) — `SentienceProjection` (EvalP/EvidP), rank ordering, `evalPSpecifier` (= `seatOfKnowledge`), `EvidPSpecifier` (= `EvidentialSource`), bridge theorem to `Core/Discourse/Epistemicity.lean`'s `EpistemicProfile`.
+- **SpeechActs.lean**: `PRole.toDiscourseRole` mapping and `seat_of_knowledge_agrees_with_epistemic_authority` bridge theorem connecting configurational `seatOfKnowledge` to framework-agnostic `epistemicAuthority` via `toIllocutionaryMood`.
+- **Krifka.lean §8**: Informative vs performative updates (Krifka 2020, §2) — `UpdateType`, `informativeUpdate`, `TypedAssertion`, `commitment_closure` theorem.
+- **Krifka.lean §9**: Actor vs Committer distinction (Krifka 2015, §6) — `ActorCommitter`, `assertionRoles` (speaker=both), `questionRoles` (speaker acts, addressee commits), `actor_committer_diverge` theorem.
+- **Krifka.lean §10**: Speech act composition (Krifka 2015, §3–5) — `SpeechAct`, `monopolarQuestion` (biased questions), `speechActConj`/`speechActDisj`, `matchingTag` with per-datum verification (`matching_tag_shared_content`, `matching_tag_same_actor`, `matching_tag_committers_diverge`).
+- **references.bib**: Add `krifka-2015` and `krifka-2020` entries.
+
 ## [0.227.42] - 2026-02-27
 
 ### Added
-- **PsychVerbSem: compositional denotation via cognitive situation models** (`Theories/Semantics/Causation/PsychVerbSem.lean`). `ExperiencerState` decomposes experiencer cognition into BToM layers (perceives/represents/inMentalState). `CausalPathway` (.perceptual/.representational) selects which layer the stimulus connects through. `psychVerbSem` gives a single denotation from which opacity, temporal behavior, and UPH fall out. Cicero/Tully opacity derived by `rfl`: perceptual pathway extensional (both frighten), representational pathway intensional (Cicero concerns but Tully doesn't). `CausalPathway ↔ CausalSource` isomorphism with roundtrip theorems. Temporal bridge via `CausalPathway.toLink` agreeing with `CausalSource.toLink`. Zero `sorry`.
+- **HartshorneEtAl2016 Data + Bridge** (`Phenomena/PsychVerbs/Studies/HartshorneEtAl2016/`). Data: `SemanticType` (.habitualAttitude/.causedEpisode), `SemanticTypeProfile`, verb data (16 verbs), cross-linguistic data (4 languages), `class_type_alignment` theorem. Bridge: `SemanticType ↔ CausalSource` isomorphism with roundtrip theorems, empirical profile derivation from CausalSource, consistency with PsychCausalLink temporal predictions (`transition_prediction_consistent`). Zero `sorry`.
+- **PsychVerbSem blog library** (`blog/lean/PsychVerbs/`): novel cognitive situation model for psych verb denotations. `ExperiencerState` decomposes experiencer cognition into BToM layers. `CausalPathway` (.perceptual/.representational) selects which layer the stimulus connects through. `psychVerbSem` gives a single denotation from which opacity, temporal behavior, and UPH fall out. Cicero/Tully opacity by `rfl`. Extensions: BToM bridge (`fromBToM`, perceptual extensionality), CausalFrame integration (causal sufficiency/necessity, intervention), situation semantics bridge (cognitive persistence, SitVarStatus mapping).
 
 ## [0.227.40] - 2026-02-27
 

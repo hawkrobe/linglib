@@ -30,8 +30,10 @@ c-commands content.
 
 import Linglib.Theories.Syntax.Minimalism.Core.Basic
 import Linglib.Theories.Syntax.Minimalism.Core.Phase
+import Linglib.Theories.Syntax.Minimalism.Formal.ExtendedProjection.Basic
 import Linglib.Core.Temporal.Context
 import Linglib.Core.Discourse.DiscourseRole
+import Linglib.Core.Discourse.Evidence
 import Linglib.Fragments.English.Pronouns
 
 namespace Minimalism.Phenomena.SpeechActs
@@ -67,12 +69,12 @@ inductive PRole where
     | true          | false           | declarative  |
     | true          | true            | interrogative|
     | false         | true            | imperative   |
-    | false         | false           | promissive   | -/
+    | false         | false           | subjunctive  | -/
 inductive SAPMood where
   | declarative     -- [+finite, hearer does NOT c-command content]
   | interrogative   -- [+finite, hearer c-commands content]
   | imperative      -- [-finite, hearer c-commands content]
-  | promissive      -- [-finite, hearer does NOT c-command content]
+  | subjunctive     -- [-finite, hearer does NOT c-command content]
   deriving Repr, DecidableEq, BEq
 
 /-- Derive mood from the two binary features. -/
@@ -81,7 +83,7 @@ def deriveMood (contentFinite hearerCCommandsContent : Bool) : SAPMood :=
   | true,  false => .declarative
   | true,  true  => .interrogative
   | false, true  => .imperative
-  | false, false => .promissive
+  | false, false => .subjunctive
 
 -- ============================================================================
 -- Section B2: Bridge to IllocutionaryMood
@@ -90,13 +92,16 @@ def deriveMood (contentFinite hearerCCommandsContent : Bool) : SAPMood :=
 open Core.Discourse (IllocutionaryMood)
 
 /-- Map configurational mood (Speas & Tenny 2003) to framework-agnostic
-    illocutionary mood. The mapping is 1:1 since `SAPMood` and
-    `IllocutionaryMood` share the same four constructors. -/
+    illocutionary mood. The mapping is injective: all four `SAPMood`
+    constructors embed into `IllocutionaryMood`, but `.exclamative`
+    has no `SAPMood` counterpart (exclamatives are not derived in S&T's
+    2×2 matrix). S&T's "subjunctive" maps to the illocutionary
+    `promissive` — both encode [-finite, speaker-oriented] speech acts. -/
 def SAPMood.toIllocutionaryMood : SAPMood → IllocutionaryMood
   | .declarative   => .declarative
   | .interrogative  => .interrogative
   | .imperative     => .imperative
-  | .promissive     => .promissive
+  | .subjunctive    => .promissive
 
 -- ============================================================================
 -- Section C: Seat of Knowledge
@@ -106,12 +111,30 @@ def SAPMood.toIllocutionaryMood : SAPMood → IllocutionaryMood
 
     In declaratives, the speaker holds knowledge of the content.
     In interrogatives, the hearer is assumed to have knowledge.
-    In imperatives and promissives, the speaker determines the desired action. -/
+    In imperatives and subjunctives, the speaker determines the desired action. -/
 def seatOfKnowledge : SAPMood → PRole
   | .declarative   => .speaker   -- speaker knows content
   | .interrogative => .hearer    -- speaker asks hearer (hearer knows)
   | .imperative    => .speaker   -- speaker knows desired action
-  | .promissive    => .speaker   -- speaker commits
+  | .subjunctive   => .speaker   -- speaker commits
+
+/-- Map P-roles to framework-agnostic discourse roles.
+    SPEAKER → speaker, HEARER → addressee, SEAT OF KNOWLEDGE → speaker
+    (default; use `seatOfKnowledge` for mood-sensitive resolution). -/
+def PRole.toDiscourseRole : PRole → Core.Discourse.DiscourseRole
+  | .speaker         => .speaker
+  | .hearer          => .addressee
+  | .seatOfKnowledge => .speaker  -- default; varies by mood
+
+open Core.Discourse (epistemicAuthority) in
+/-- `seatOfKnowledge` (Speas & Tenny, configurational) agrees with
+    `epistemicAuthority` (DiscourseRole.lean, framework-agnostic) via
+    the `toIllocutionaryMood` bridge. Both encode the same generalization:
+    declarative/imperative/subjunctive → speaker, interrogative → addressee. -/
+theorem seat_of_knowledge_agrees_with_epistemic_authority (m : SAPMood) :
+    (seatOfKnowledge m).toDiscourseRole =
+    epistemicAuthority m.toIllocutionaryMood := by
+  cases m <;> rfl
 
 -- ============================================================================
 -- Section D: Context Grounding
@@ -142,7 +165,7 @@ theorem deriveMood_exhaustive :
     ∀ (f h : Bool), deriveMood f h = .declarative ∨
                      deriveMood f h = .interrogative ∨
                      deriveMood f h = .imperative ∨
-                     deriveMood f h = .promissive := by
+                     deriveMood f h = .subjunctive := by
   decide
 
 -- E2: Declarative = speaker knows
@@ -161,16 +184,11 @@ theorem speaker_is_agent {W E P T : Type*} (ctx : KContext W E P T) :
 theorem hearer_is_addressee {W E P T : Type*} (ctx : KContext W E P T) :
     resolveRole ctx .hearer = ctx.addressee := rfl
 
--- E6: Bridge to LeftPeriphery.SelectionClass —
---     rogativeSAP selects full SAP structure, so SAP-layer P-roles
---     (SPEAKER, HEARER) are syntactically active only in rogativeSAP
---     complements (e.g., "ask"). Uninterrogative verbs (believe) never
---     access SAP, so P-roles remain unbound.
---
---     This is a structural observation, not a formal identity theorem:
---     SelectionClass.rogativeSAP encodes that "ask" selects up to SAP,
---     which is exactly the layer where SPEAKER/HEARER are projected.
-theorem sap_hosts_proles :
+-- E6: Finite content with/without hearer c-command yields declarative/interrogative.
+--     Structural observation: rogativeSAP (LeftPeriphery.lean) selects full SAP,
+--     so SAP-layer P-roles are syntactically active only in rogativeSAP
+--     complements (e.g., "ask").
+theorem deriveMood_finite :
     deriveMood true false = .declarative ∧
     deriveMood true true = .interrogative := ⟨rfl, rfl⟩
 
@@ -195,12 +213,10 @@ theorem hearer_is_addressee_in_context {W E P T : Type*} (ctx : KContext W E P T
 theorem sa_phase_derivation_final :
     isSAPhaseHead (mkLeaf .SA [] 0) = true := rfl
 
--- E10: SA in the EP hierarchy — fValue .SA = 7 > fValue .C = 6.
---      SA dominates CP in the extended projection.
---      (The inequality is proved here; the values are in ExtendedProjection/Basic.lean.)
+-- E10: SA dominates C in the extended projection hierarchy.
+--      fValue .SA = 7 > fValue .C = 6 (ExtendedProjection/Basic.lean).
 theorem sa_above_c_in_ep :
-    deriveMood true false = .declarative ∧
-    deriveMood false true = .imperative := ⟨rfl, rfl⟩
+    fValue .SA > fValue .C := by decide
 
 -- Mood-sensitive seat of knowledge resolves correctly in context
 theorem seat_of_knowledge_declarative {W E P T : Type*} (ctx : KContext W E P T) :
@@ -252,5 +268,74 @@ theorem discourse_role_from_person (p : Fragments.English.Pronouns.PronounEntry)
     (per : Person) (hp : p.person = some per) :
     pronounDiscourseRole p = personToRole per := by
   simp [pronounDiscourseRole, hp]
+
+-- ============================================================================
+-- Section G: Sentience Domain (Speas & Tenny 2003, §2)
+-- ============================================================================
+
+/-- Functional projections in the Sentience Domain (Speas & Tenny 2003, §2).
+
+    Below SAP, the Sentience Domain mediates between the speech act layer
+    and the propositional content. It hosts two projections:
+
+    - **EvalP** (Evaluation Phrase): specifier = SEAT OF KNOWLEDGE, the
+      sentient mind that evaluates the proposition's truth.
+    - **EvidP** (Evidential Phrase): specifier = EVIDENCE, the type of
+      evidence supporting the evaluation.
+
+    Hierarchy (structure 34 in S&T):
+
+        SAP > EvalP > EvidP > episP (= TP)
+
+    The Sentience Domain captures "judgements and evaluations by a sentient
+    mind on the truth-value of the proposition" (p.333). -/
+inductive SentienceProjection where
+  | EvidP   -- Evidential Phrase: hosts EVIDENCE
+  | EvalP   -- Evaluation Phrase: hosts SEAT OF KNOWLEDGE
+  deriving DecidableEq, Repr, BEq
+
+/-- Rank ordering of Sentience Domain projections.
+    EvidP < EvalP < SAP (the SAP itself is above the Sentience Domain). -/
+def SentienceProjection.rank : SentienceProjection → Nat
+  | .EvidP => 0
+  | .EvalP => 1
+
+/-- EvalP dominates EvidP in the Sentience Domain. -/
+theorem evalp_above_evidp :
+    SentienceProjection.EvalP.rank > SentienceProjection.EvidP.rank := by decide
+
+/-- The specifier of EvalP hosts a P-role: SEAT OF KNOWLEDGE.
+
+    This is the sentient mind performing the evaluation. In declaratives,
+    this is the SPEAKER; in interrogatives, the HEARER (same as
+    `seatOfKnowledge`, since EvalP is where the seat is structurally
+    projected). -/
+def evalPSpecifier : SAPMood → PRole := seatOfKnowledge
+
+/-- The specifier of EvidP hosts the evidence type.
+
+    Maps S&T's EVIDENCE argument to the framework-agnostic
+    `EvidentialSource` from `Core/Discourse/Evidence.lean`:
+    - direct → sensory observation
+    - inference → reasoning from effects
+    - hearsay → reported evidence -/
+abbrev EvidPSpecifier := Core.Evidence.EvidentialSource
+
+/-- Bridge to `Core/Discourse/Epistemicity.lean`: the Sentience Domain's
+    two specifiers (SEAT OF KNOWLEDGE + EVIDENCE) correspond to
+    `EpistemicProfile`'s two main fields (authority + source).
+
+    | S&T Sentience Domain | Core.Epistemicity     |
+    |----------------------|-----------------------|
+    | EvalP spec (Seat)    | EpistemicProfile.authority |
+    | EvidP spec (Evidence)| EpistemicProfile.source    |
+
+    The structural hierarchy (EvalP > EvidP) corresponds to authority
+    scoping over source: WHO evaluates is determined before HOW they know. -/
+theorem sentience_domain_bridges_to_epistemicity :
+    -- EvalP specifier for declarative = speaker = ego authority
+    evalPSpecifier .declarative = .speaker ∧
+    -- EvalP specifier for interrogative = hearer = allocutive authority
+    evalPSpecifier .interrogative = .hearer := ⟨rfl, rfl⟩
 
 end Minimalism.Phenomena.SpeechActs

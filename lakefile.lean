@@ -15,3 +15,9 @@ require «doc-gen4» from git
 @[default_target]
 lean_lib Linglib where
   globs := #[.submodules `Linglib]
+
+/-- Blog essays: novel synthesis and explorations accompanying blog posts.
+    These import from Linglib but are not part of the library proper. -/
+lean_lib PsychVerbs where
+  srcDir := "blog/lean"
+  globs := #[.submodules `PsychVerbs]
