@@ -47,7 +47,9 @@ without abandoning bilateral truth conditions.
 
 set_option autoImplicit false
 
-namespace Phenomena.ScalarImplicatures.GoodmanStuhlmuller2013
+namespace KennedyRSA
+
+open Phenomena.ScalarImplicatures.GoodmanStuhlmuller2013
 
 -- ============================================================================
 -- §14. Kennedy Exact Semantics with Type-Shifting Ambiguity
@@ -198,4 +200,4 @@ theorem kennedy_numeral_findings_verified : ∀ f : Finding, formalizeKennedy f 
   · exact kennedy_one_partial_1v3
   · exact kennedy_one_partial_1v2_canceled
 
-end Phenomena.ScalarImplicatures.GoodmanStuhlmuller2013
+end KennedyRSA

@@ -25,6 +25,8 @@ But linguistics faces a challenge that mathematics does not: we are an empirical
 
 Linglib is organized around a strict dependency hierarchy with three layers. The layers mirror the logic of empirical science: you have theories that make predictions, those predictions are mediated by concrete lexical and grammatical configurations, and the predictions are ultimately tested against observed phenomena.
 
+![Three-layer architecture diagram showing Theories → Fragments → Phenomena with dependency arrows flowing upstream](/images/architecture/three-layers.svg)
+
 **Theories** are the library code — types, operators, predicates, and proof infrastructure. `Theories/TruthConditional/` defines compositional denotations for determiners, adjectives, and verbs. `Theories/RSA/` defines the literal listener, pragmatic speaker, and pragmatic listener. `Theories/NeoGricean/` defines the EXH operator and alternative generation. Theories do not know about any particular language or any particular experiment. They are pure formal machinery.
 
 **Fragments** are configurations — concrete lexical entries parameterized by Theory types. `Fragments/English/Determiners.lean` assigns each English determiner a monotonicity class, a strength classification, and a generalized quantifier denotation. `Fragments/Quantities.lean` sets up the scalar quantity domain (some/all) that RSA implementations use. Fragments import Theories but never import Phenomena. They are pure lexical data: they know about the formal categories but not about what any experiment found.

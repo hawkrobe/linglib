@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.227.48] - 2026-02-27
+
+### Added
+- **Blog SVG diagrams**: 7 static SVGs for blog posts — three-layer architecture (Post 1), conservativity set diagram + duality square + dependency chain (Post 2), quality filter side-by-side (Post 3), TensePronoun anatomy + Reichenbach timelines (Post 4)
+- **Interactive RSA explorer** (Post 2): three-theory widget (Horn ⟨some, all⟩ / Kennedy exact / Type-shifted) with adjustable domain size and rationality, showing L₀→S₁→L₁ probability flow
+
+### Changed
+- **KennedyExact moved to blog/lean/KennedyRSA/**: novel Kennedy–G&S bridge (quality filter as interpretation selector) moved from Linglib proper to blog-side Lean, following the PsychVerbs pattern for unpublished synthesis
+
+## [0.227.47] - 2026-02-27
+
+### Added
+- **Normality orderings** (`Core/Order/Normality.lean`): shared infrastructure unifying the normality/plausibility ordering pattern that appeared independently in Kratzer (ordering sources), BeliefRevision (plausibility orderings), Rudin (epistemic state updates), and now Veltman (expectation patterns). `NormalityOrder` type with `optimal`, `refine`, `fromProps`, `respects`, and persistence theorems. `refine_total_optimal` proves refinement makes promoted worlds optimal.
+- **Veltman (1996) defaults** (`Theories/Semantics/Dynamic/Effects/Default/Basic.lean`): `ExpState` (info state + normality ordering), update operations (`assertUpdate`, `normallyUpdate`, `presumablyTest`, `mightTest`). Key theorem: `normally_presumably_succeeds` — after "normally p", "presumably p" passes. Persistence: `persistence_assert`, `persistence_normally` — later defaults and assertions never undo earlier ones (Veltman Prop. 2). `conflicting_defaults_iff_agree` — Nixon Diamond produces agnosticism. `compatible_defaults_optimal` — reinforcing defaults converge. Zero `sorry`.
+
 ## [0.227.46] - 2026-02-27
 
 ### Added

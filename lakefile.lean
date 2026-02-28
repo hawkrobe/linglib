@@ -21,3 +21,7 @@ lean_lib Linglib where
 lean_lib PsychVerbs where
   srcDir := "blog/lean"
   globs := #[.submodules `PsychVerbs]
+
+lean_lib KennedyRSA where
+  srcDir := "blog/lean"
+  globs := #[.submodules `KennedyRSA]

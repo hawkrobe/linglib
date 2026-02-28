@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 400" font-family="'IBM Plex Sans', 'Helvetica Neue', sans-serif">
+  <defs>
+    <marker id="sq-arr" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#64748b"/>
+    </marker>
+    <marker id="sq-arr-b" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#2563eb"/>
+    </marker>
+    <marker id="sq-arr-r" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#dc2626"/>
+    </marker>
+    <marker id="sq-arr-p" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#7c3aed"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="480" height="400" fill="#fafaf9" rx="8"/>
+
+  <!-- Title -->
+  <text x="240" y="30" text-anchor="middle" font-size="15" font-weight="600" fill="#1c1917">Square of Opposition</text>
+
+  <!-- Nodes -->
+  <!-- every (top-left) -->
+  <rect x="50" y="70" width="130" height="60" rx="8" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+  <text x="115" y="98" text-anchor="middle" font-size="16" font-weight="700" fill="#1e40af">every</text>
+  <text x="115" y="118" text-anchor="middle" font-size="10" fill="#3b82f6">∀x∈A: x∈B</text>
+
+  <!-- some (top-right) -->
+  <rect x="300" y="70" width="130" height="60" rx="8" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+  <text x="365" y="98" text-anchor="middle" font-size="16" font-weight="700" fill="#166534">some</text>
+  <text x="365" y="118" text-anchor="middle" font-size="10" fill="#22c55e">∃x∈A: x∈B</text>
+
+  <!-- no (bottom-left) -->
+  <rect x="50" y="260" width="130" height="60" rx="8" fill="#fee2e2" stroke="#dc2626" stroke-width="2"/>
+  <text x="115" y="288" text-anchor="middle" font-size="16" font-weight="700" fill="#991b1b">no</text>
+  <text x="115" y="308" text-anchor="middle" font-size="10" fill="#dc2626">¬∃x∈A: x∈B</text>
+
+  <!-- not-all (bottom-right) -->
+  <rect x="300" y="260" width="130" height="60" rx="8" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
+  <text x="365" y="288" text-anchor="middle" font-size="16" font-weight="700" fill="#92400e">not all</text>
+  <text x="365" y="308" text-anchor="middle" font-size="10" fill="#d97706">¬∀x∈A: x∈B</text>
+
+  <!-- Arrows -->
+  <!-- Top: every → some (entailment) -->
+  <line x1="185" y1="95" x2="295" y2="95" stroke="#64748b" stroke-width="1.5" marker-end="url(#sq-arr)"/>
+  <text x="240" y="88" text-anchor="middle" font-size="9" fill="#64748b" font-weight="500">⊨ entails</text>
+
+  <!-- Bottom: no → not-all (entailment) -->
+  <line x1="185" y1="285" x2="295" y2="285" stroke="#64748b" stroke-width="1.5" marker-end="url(#sq-arr)"/>
+  <text x="240" y="278" text-anchor="middle" font-size="9" fill="#64748b" font-weight="500">⊨ entails</text>
+
+  <!-- Left: every ↔ no (inner negation) -->
+  <line x1="110" y1="135" x2="110" y2="255" stroke="#dc2626" stroke-width="1.5" marker-end="url(#sq-arr-r)"/>
+  <text x="58" y="200" text-anchor="middle" font-size="9" fill="#dc2626" font-weight="500" transform="rotate(-90, 58, 200)">inner negation</text>
+
+  <!-- Right: some ↔ not-all (outer negation) -->
+  <line x1="370" y1="135" x2="370" y2="255" stroke="#2563eb" stroke-width="1.5" marker-end="url(#sq-arr-b)"/>
+  <text x="424" y="200" text-anchor="middle" font-size="9" fill="#2563eb" font-weight="500" transform="rotate(-90, 424, 200)">outer negation</text>
+
+  <!-- Diagonals: duals -->
+  <line x1="175" y1="125" x2="305" y2="265" stroke="#7c3aed" stroke-width="1.5" stroke-dasharray="6,3" marker-end="url(#sq-arr-p)"/>
+  <line x1="305" y1="125" x2="175" y2="265" stroke="#7c3aed" stroke-width="1.5" stroke-dasharray="6,3" marker-end="url(#sq-arr-p)"/>
+  <rect x="206" y="186" width="68" height="20" rx="4" fill="#fafaf9" stroke="#7c3aed" stroke-width="1"/>
+  <text x="240" y="200" text-anchor="middle" font-size="9" font-weight="600" fill="#7c3aed">duals</text>
+
+  <!-- Legend -->
+  <text x="240" y="354" text-anchor="middle" font-size="10" fill="#475569">innerNeg(every) = no · dualQ(every) = some</text>
+  <text x="240" y="372" text-anchor="middle" font-size="10" fill="#475569">outerNeg(some) = not all · dualQ(no) = not all</text>
+  <text x="240" y="392" text-anchor="middle" font-size="10" fill="#94a3b8" font-style="italic">All operations preserve conservativity.</text>
+</svg>

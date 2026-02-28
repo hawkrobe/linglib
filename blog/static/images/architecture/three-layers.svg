@@ -1,0 +1,88 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 520" font-family="'IBM Plex Sans', 'Helvetica Neue', sans-serif">
+  <defs>
+    <marker id="arrow-up" markerWidth="10" markerHeight="7" refX="0" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#94a3b8"/>
+    </marker>
+    <marker id="arrow-up-blue" markerWidth="10" markerHeight="7" refX="0" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#2563eb"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="720" height="520" fill="#fafaf9" rx="8"/>
+
+  <!-- Title -->
+  <text x="360" y="32" text-anchor="middle" font-size="15" font-weight="600" fill="#1c1917">Three-Layer Architecture</text>
+
+  <!-- Layer 1: Theories (top) -->
+  <rect x="60" y="60" width="600" height="120" rx="10" fill="#eff6ff" stroke="#2563eb" stroke-width="1.5"/>
+  <text x="90" y="88" font-size="15" font-weight="700" fill="#1e40af">Theories</text>
+  <text x="90" y="106" font-size="11" fill="#3b82f6">Pure formal machinery — types, operators, predicates</text>
+
+  <!-- Theory examples -->
+  <rect x="90" y="118" width="150" height="44" rx="5" fill="#dbeafe" stroke="#93c5fd" stroke-width="1"/>
+  <text x="165" y="136" text-anchor="middle" font-size="10" font-weight="500" fill="#1e40af">Semantics/Montague/</text>
+  <text x="165" y="152" text-anchor="middle" font-size="9" fill="#60a5fa">some_sem, every_sem</text>
+
+  <rect x="260" y="118" width="150" height="44" rx="5" fill="#dbeafe" stroke="#93c5fd" stroke-width="1"/>
+  <text x="335" y="136" text-anchor="middle" font-size="10" font-weight="500" fill="#1e40af">Pragmatics/RSA/</text>
+  <text x="335" y="152" text-anchor="middle" font-size="9" fill="#60a5fa">L0, S1, L1, RSAConfig</text>
+
+  <rect x="430" y="118" width="200" height="44" rx="5" fill="#dbeafe" stroke="#93c5fd" stroke-width="1"/>
+  <text x="530" y="136" text-anchor="middle" font-size="10" font-weight="500" fill="#1e40af">Semantics/Modality/Kratzer/</text>
+  <text x="530" y="152" text-anchor="middle" font-size="9" fill="#60a5fa">conversational backgrounds</text>
+
+  <!-- Arrow: Fragments → Theories -->
+  <line x1="360" y1="206" x2="360" y2="185" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrow-up)"/>
+  <text x="375" y="200" font-size="10" fill="#94a3b8" font-style="italic">imports</text>
+
+  <!-- Layer 2: Fragments (middle) -->
+  <rect x="60" y="210" width="600" height="120" rx="10" fill="#fefce8" stroke="#ca8a04" stroke-width="1.5"/>
+  <text x="90" y="238" font-size="15" font-weight="700" fill="#854d0e">Fragments</text>
+  <text x="90" y="256" font-size="11" fill="#ca8a04">Lexical entries parameterized by Theory types</text>
+
+  <!-- Fragment examples -->
+  <rect x="90" y="268" width="170" height="44" rx="5" fill="#fef9c3" stroke="#fde047" stroke-width="1"/>
+  <text x="175" y="286" text-anchor="middle" font-size="10" font-weight="500" fill="#854d0e">English/Determiners</text>
+  <text x="175" y="302" text-anchor="middle" font-size="9" fill="#a16207">monotonicity, strength, GQ</text>
+
+  <rect x="280" y="268" width="160" height="44" rx="5" fill="#fef9c3" stroke="#fde047" stroke-width="1"/>
+  <text x="360" y="286" text-anchor="middle" font-size="10" font-weight="500" fill="#854d0e">Quantities</text>
+  <text x="360" y="302" text-anchor="middle" font-size="9" fill="#a16207">none &lt; few &lt; some &lt; all</text>
+
+  <rect x="460" y="268" width="170" height="44" rx="5" fill="#fef9c3" stroke="#fde047" stroke-width="1"/>
+  <text x="545" y="286" text-anchor="middle" font-size="10" font-weight="500" fill="#854d0e">Japanese/Particles</text>
+  <text x="545" y="302" text-anchor="middle" font-size="9" fill="#a16207">wa, ga, mo, ...</text>
+
+  <!-- Arrow: Phenomena → Fragments -->
+  <line x1="360" y1="356" x2="360" y2="335" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrow-up)"/>
+  <text x="375" y="350" font-size="10" fill="#94a3b8" font-style="italic">imports</text>
+
+  <!-- Layer 3: Phenomena (bottom) -->
+  <rect x="60" y="360" width="600" height="130" rx="10" fill="#f0fdf4" stroke="#16a34a" stroke-width="1.5"/>
+  <text x="90" y="388" font-size="15" font-weight="700" fill="#166534">Phenomena</text>
+  <text x="90" y="406" font-size="11" fill="#16a34a">Empirical data + bridge theorems verifying predictions</text>
+
+  <!-- Phenomena examples -->
+  <rect x="90" y="418" width="170" height="54" rx="5" fill="#dcfce7" stroke="#86efac" stroke-width="1"/>
+  <text x="175" y="436" text-anchor="middle" font-size="10" font-weight="500" fill="#166534">ScalarImplicatures/</text>
+  <text x="175" y="451" text-anchor="middle" font-size="9" fill="#22c55e">Data: "some" → "not all"</text>
+  <text x="175" y="464" text-anchor="middle" font-size="9" fill="#22c55e">Bridge: RSA prediction = data</text>
+
+  <rect x="280" y="418" width="160" height="54" rx="5" fill="#dcfce7" stroke="#86efac" stroke-width="1"/>
+  <text x="360" y="436" text-anchor="middle" font-size="10" font-weight="500" fill="#166534">Quantification/</text>
+  <text x="360" y="451" text-anchor="middle" font-size="9" fill="#22c55e">Data: all dets conservative</text>
+  <text x="360" y="464" text-anchor="middle" font-size="9" fill="#22c55e">Bridge: GQ proofs match</text>
+
+  <rect x="460" y="418" width="170" height="54" rx="5" fill="#dcfce7" stroke="#86efac" stroke-width="1"/>
+  <text x="545" y="436" text-anchor="middle" font-size="10" font-weight="500" fill="#166534">Tense/</text>
+  <text x="545" y="451" text-anchor="middle" font-size="9" fill="#22c55e">Data: 22 Reichenbach frames</text>
+  <text x="545" y="464" text-anchor="middle" font-size="9" fill="#22c55e">Bridge: 9 theories verified</text>
+
+  <!-- Diagonal grounding arrow -->
+  <line x1="565" y1="415" x2="480" y2="180" stroke="#2563eb" stroke-width="1.5" stroke-dasharray="6,3" marker-end="url(#arrow-up-blue)"/>
+  <text x="538" y="300" text-anchor="middle" font-size="9" fill="#2563eb" font-weight="500" transform="rotate(-55, 538, 300)">also imports Theories</text>
+
+  <!-- "Never" arrows -->
+  <text x="360" y="510" text-anchor="middle" font-size="11" fill="#94a3b8">Dependency always flows upstream. Theories never import Fragments or Phenomena.</text>
+</svg>

@@ -21,6 +21,7 @@ import Linglib.Core.Scales.HornScale
 import Linglib.Core.Semantics.Intension
 import Linglib.Core.Logic.ModalLogic
 import Linglib.Core.Logic.BeliefRevision
+import Linglib.Core.Order.Normality
 import Linglib.Core.Logic.RankingFunction
 import Linglib.Core.Register
 import Linglib.Core.SocialMeaning
@@ -73,6 +74,7 @@ import Linglib.Core.Mereology
 import Linglib.Core.Scales.MereoDim
 import Linglib.Core.ContentIndividual
 import Linglib.Core.Agent.BToM
+import Linglib.Core.Agent.Emotion
 import Linglib.Core.Temporal.Path
 import Linglib.Core.Continuation
 import Linglib.Core.Lexical.PersonCategory
@@ -617,7 +619,6 @@ import Linglib.Phenomena.ScalarImplicatures.Bridge.TheoryAgreement
 import Linglib.Phenomena.ScalarImplicatures.Bridge.TheoryComparison
 import Linglib.Phenomena.ScalarImplicatures.GoodmanStuhlmuller2013.Data
 import Linglib.Phenomena.ScalarImplicatures.GoodmanStuhlmuller2013.Bridge
-import Linglib.Phenomena.ScalarImplicatures.GoodmanStuhlmuller2013.KennedyExact
 import Linglib.Phenomena.PhonologicalAlternation.Data
 import Linglib.Phenomena.PhonologicalAlternation.Bridge.SPEDerivations
 import Linglib.Phenomena.PhonologicalAlternation.Bridge.AutosegmentalDerivations
@@ -724,6 +725,7 @@ import Linglib.Theories.Semantics.Dynamic.Effects.Bilateral.Basic
 import Linglib.Theories.Semantics.Dynamic.Effects.Bilateral.FreeChoice
 import Linglib.Theories.Semantics.Dynamic.Effects.Probability.Basic
 import Linglib.Theories.Semantics.Dynamic.Effects.Epistemic.Basic
+import Linglib.Theories.Semantics.Dynamic.Effects.Default.Basic
 -- Theories: Dynamic Semantics — Systems
 import Linglib.Theories.Semantics.Dynamic.Systems.BUS.Basic
 import Linglib.Theories.Semantics.Dynamic.Systems.BUS.DynamicTy2

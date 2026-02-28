@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 340 680" font-family="'IBM Plex Sans', 'Helvetica Neue', sans-serif">
+  <defs>
+    <marker id="dc-arr" markerWidth="10" markerHeight="7" refX="5" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#64748b"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="340" height="680" fill="#fafaf9" rx="8"/>
+
+  <!-- Title -->
+  <text x="170" y="28" text-anchor="middle" font-size="14" font-weight="600" fill="#1c1917">Scalar Implicature: Full Dependency Chain</text>
+
+  <!-- Step 1: Core -->
+  <rect x="30" y="50" width="280" height="80" rx="8" fill="#f1f5f9" stroke="#94a3b8" stroke-width="1.5"/>
+  <text x="45" y="71" font-size="10" font-weight="700" fill="#94a3b8">1 · CORE</text>
+  <text x="45" y="88" font-size="11" font-weight="600" fill="#334155">Conservative, ScopeUpwardMono</text>
+  <text x="45" y="104" font-size="10" fill="#64748b">Abstract GQ properties + Horn scale ⟨some, all⟩</text>
+  <text x="45" y="118" font-size="9" fill="#94a3b8" font-style="italic">Core/Quantification.lean, Core/HornScale.lean</text>
+
+  <!-- Arrow -->
+  <line x1="170" y1="130" x2="170" y2="150" stroke="#64748b" stroke-width="1.5" marker-end="url(#dc-arr)"/>
+
+  <!-- Step 2: TruthConditional -->
+  <rect x="30" y="155" width="280" height="90" rx="8" fill="#eff6ff" stroke="#2563eb" stroke-width="1.5"/>
+  <text x="45" y="176" font-size="10" font-weight="700" fill="#2563eb">2 · TRUTH-CONDITIONAL</text>
+  <text x="45" y="193" font-size="11" font-weight="600" fill="#1e40af">some_sem, every_sem</text>
+  <text x="45" y="209" font-size="10" fill="#3b82f6">some_sem A B = ∃x, A x ∧ B x</text>
+  <text x="45" y="223" font-size="10" fill="#3b82f6">Proved: conservative, upward-monotone</text>
+  <text x="45" y="237" font-size="9" fill="#93c5fd" font-style="italic">Determiner/Quantifier.lean</text>
+
+  <!-- Arrow -->
+  <line x1="170" y1="245" x2="170" y2="265" stroke="#64748b" stroke-width="1.5" marker-end="url(#dc-arr)"/>
+
+  <!-- Step 3: Fragments -->
+  <rect x="30" y="270" width="280" height="90" rx="8" fill="#fefce8" stroke="#ca8a04" stroke-width="1.5"/>
+  <text x="45" y="291" font-size="10" font-weight="700" fill="#ca8a04">3 · FRAGMENTS</text>
+  <text x="45" y="308" font-size="11" font-weight="600" fill="#854d0e">QuantityWord.some_, .all</text>
+  <text x="45" y="324" font-size="10" fill="#a16207">meaning n .some_ w = (w.val ≥ 1)</text>
+  <text x="45" y="338" font-size="10" fill="#a16207">Maps to some_sem (lower-bounded)</text>
+  <text x="45" y="352" font-size="9" fill="#d97706" font-style="italic">Fragments/Quantities.lean</text>
+
+  <!-- Arrow -->
+  <line x1="170" y1="360" x2="170" y2="380" stroke="#64748b" stroke-width="1.5" marker-end="url(#dc-arr)"/>
+
+  <!-- Step 4: RSA -->
+  <rect x="30" y="385" width="280" height="100" rx="8" fill="#fdf4ff" stroke="#a855f7" stroke-width="1.5"/>
+  <text x="45" y="406" font-size="10" font-weight="700" fill="#a855f7">4 · RSA</text>
+  <text x="45" y="423" font-size="11" font-weight="600" fill="#7e22ce">L0 → S1 → L1</text>
+  <text x="45" y="439" font-size="10" fill="#a855f7">L0 hears "some" → uniform over {w | w ≥ 1}</text>
+  <text x="45" y="453" font-size="10" fill="#a855f7">S1 prefers "all" when all qualify</text>
+  <text x="45" y="467" font-size="10" fill="#a855f7">L1 infers: "some" → speaker chose not "all"</text>
+  <text x="45" y="481" font-size="9" fill="#c084fc" font-style="italic">Pragmatics/RSA/ + Fragments/Quantities.lean</text>
+
+  <!-- Arrow -->
+  <line x1="170" y1="485" x2="170" y2="505" stroke="#64748b" stroke-width="1.5" marker-end="url(#dc-arr)"/>
+
+  <!-- Step 5: Phenomena -->
+  <rect x="30" y="510" width="280" height="90" rx="8" fill="#f0fdf4" stroke="#16a34a" stroke-width="1.5"/>
+  <text x="45" y="531" font-size="10" font-weight="700" fill="#16a34a">5 · PHENOMENA</text>
+  <text x="45" y="548" font-size="11" font-weight="600" fill="#166534">Scalar implicature verified</text>
+  <text x="45" y="564" font-size="10" fill="#22c55e">Data: adults strengthen "some" to "not all"</text>
+  <text x="45" y="578" font-size="10" fill="#22c55e">Bridge: RSA prediction matches behavioral data</text>
+  <text x="45" y="592" font-size="9" fill="#4ade80" font-style="italic">Phenomena/ScalarImplicatures/</text>
+
+  <!-- Grounding note -->
+  <rect x="30" y="620" width="280" height="46" rx="6" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
+  <text x="170" y="640" text-anchor="middle" font-size="10" fill="#475569" font-weight="500">At no step does the RSA model stipulate a meaning.</text>
+  <text x="170" y="655" text-anchor="middle" font-size="10" fill="#475569">Change some_sem → change propagates through all layers.</text>
+</svg>

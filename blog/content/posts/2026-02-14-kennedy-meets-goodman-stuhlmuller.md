@@ -49,6 +49,8 @@ where S1(u | w, access, i) runs the full knowledge-state speaker model (with qua
 
 ## 4. How the Quality Filter Selects Interpretations
 
+![Side-by-side comparison of full vs partial access showing how the quality filter blocks the exact interpretation under uncertainty](/images/kennedy/quality-filter.svg)
+
 The central mechanism is straightforward: the quality filter interacts with the speaker's epistemic state to select the appropriate interpretation.
 
 **Full access.** When the speaker knows the true world state, the exact interpretation is viable for bare *two* at s2 (it is true there). The exact interpretation is also more *informative* than the lower-bound interpretation, since it rules out s3. A rational speaker therefore prefers the exact interpretation. The listener, reasoning about this preference, assigns high posterior probability to s2 upon hearing *two*. The result is an exact reading.

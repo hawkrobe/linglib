@@ -13,7 +13,11 @@ This cross-module dependency structure is precisely what Linglib's three-layer a
 
 ## Abstract properties (Core layer)
 
-Barwise and Cooper's insight was that natural language determiners — *every*, *some*, *no*, *most*, *few* — share a common semantic type: each takes two properties (a restrictor and a scope) and returns a truth value. In Lean:
+Barwise and Cooper's insight was that natural language determiners — *every*, *some*, *no*, *most*, *few* — share a common semantic type: each takes two properties (a restrictor and a scope) and returns a truth value.
+
+![Conservativity: only the A∩B region matters for natural language determiners](/images/quantifiers/conservativity.svg)
+
+In Lean:
 
 ```lean
 abbrev GQ (α : Type*) := (α → Bool) → (α → Bool) → Bool
@@ -31,6 +35,8 @@ One theorem at this layer is especially consequential for downstream work: `cons
 
 At this layer, the semantic universals become theorems (for the implemented denotations): `every_sem` is conservative, quantity-invariant, and monotone; `some_sem` is conservative, symmetric, and upward-monotone. The concrete layer also establishes duality relationships: `innerNeg(every) = no`, `dualQ(every) = some`. These are consequences of the denotations, not definitions, verified by the type checker.
 
+![Square of opposition showing duality, inner negation, and outer negation relationships among quantifiers](/images/quantifiers/duality-square.svg)
+
 The file includes a non-conservative counterexample — a GQ defined as $|A| > |B|$, which demonstrably violates conservativity — establishing that the property is non-trivial. Natural languages could in principle have determiners of this form.
 
 ## Lexical entries and RSA domains (Fragment layer)
@@ -40,6 +46,8 @@ The file includes a non-conservative counterexample — a GQ defined as $|A| > |
 This is where the dependency chain reaches the pragmatics. `RSA/Domains/Quantities.lean` defines parameterized quantity domains — worlds indexed by how many entities have a property (0 through $n$), utterances drawn from the `QuantityWord` scale, and meaning functions derived from the Fragment entries. The literal listener L₀ updates a uniform prior on the utterance's literal meaning; the pragmatic speaker S₁ chooses utterances to be informative; the pragmatic listener L₁ reasons about the speaker's choice.
 
 ## The full dependency chain
+
+![Five-layer dependency chain from Core properties through RSA to Phenomena](/images/quantifiers/dependency-chain.svg)
 
 The scalar implicature of *some* can be traced through all three layers:
 
@@ -52,6 +60,208 @@ The scalar implicature of *some* can be traced through all three layers:
 4. **RSA**: L₀ hears "some" and assigns equal probability to all worlds where at least one entity qualifies (including the world where all qualify). S₁, choosing between "some" and "all," prefers "all" when all qualify (it is more informative). L₁ reasons: if the speaker chose "some" over "all," the all-world is less likely. Result: *some* is strengthened to *some but not all*.
 
 5. **Phenomena**: `Phenomena/ScalarImplicatures/` records that adult English speakers reliably draw this inference, and verification theorems confirm that the RSA model's predictions match the behavioral data.
+
+The reasoning chain from literal semantics to scalar implicature can be explored interactively. Switch between semantic theories to see how the alternative structure and truth conditions change the pragmatic predictions:
+
+<div id="rsa-explorer" style="margin:1.5em 0;padding:1.2em 1.4em;background:var(--entry,#fafaf9);border:1px solid var(--border,#e2e8f0);border-radius:12px;font-family:system-ui,-apple-system,sans-serif;">
+<div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:10px;">
+  <div style="font-size:14px;font-weight:700;color:var(--primary,#1c1917);">RSA Explorer</div>
+  <div style="flex:1;"></div>
+  <div id="rsa-mode" style="display:flex;gap:3px;"></div>
+</div>
+<div style="display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:12px;">
+  <div id="rsa-pills" style="display:flex;gap:4px;"></div>
+  <div style="flex:1;"></div>
+  <div style="display:flex;gap:14px;flex-wrap:wrap;">
+    <label style="font-size:11px;color:var(--secondary,#64748b);display:flex;align-items:center;gap:5px;">
+      Objects <input type="range" id="rsa-n" min="3" max="6" value="3" style="width:56px;"> <span id="rsa-nv" style="font-weight:600;min-width:12px;">3</span>
+    </label>
+    <label style="font-size:11px;color:var(--secondary,#64748b);display:flex;align-items:center;gap:5px;">
+      &alpha; <input type="range" id="rsa-a" min="1" max="20" value="4" style="width:56px;"> <span id="rsa-av" style="font-weight:600;min-width:16px;">4</span>
+    </label>
+  </div>
+</div>
+<div id="rsa-out"></div>
+</div>
+
+<script>
+(function(){
+  // === THEORY MODES ===
+  var MODES=[
+    { id:'horn', label:'Horn \u27E8some, all\u27E9',
+      utts:['none','some','all'],
+      lb:{none:'"none"',some:'"some"',all:'"all"'},
+      co:{none:'#dc2626',some:'#2563eb',all:'#16a34a'},
+      bg:{none:'#fef2f2',some:'#eff6ff',all:'#f0fdf4'},
+      df:'some',
+      sem:function(u,w,n){return u==='none'?w===0:u==='some'?w>=1:w===n;},
+      l0sub:function(fo,lb){return 'Hears '+lb[fo]+': uniform over compatible worlds';},
+      l1sub:function(fo,lb){return 'Hears '+lb[fo]+': reasons about speaker\u2019s choice';}
+    },
+    { id:'exact', label:'Kennedy exact',
+      utts:['bare','gt','geq'],
+      lb:{bare:'\u27E6two\u27E7',gt:'\u27E6more than two\u27E7',geq:'\u27E6at least two\u27E7'},
+      co:{bare:'#2563eb',gt:'#d97706',geq:'#16a34a'},
+      bg:{bare:'#eff6ff',gt:'#fffbeb',geq:'#f0fdf4'},
+      df:'bare',
+      sem:function(u,w){return u==='bare'?w===2:u==='gt'?w>2:w>=2;},
+      l0sub:function(fo,lb){return fo==='bare'?'\u27E6two\u27E7 = exactly 2 (bilateral, de-Fregean)':'Hears '+lb[fo];},
+      l1sub:function(){return 'Exact meaning is already maximally informative';}
+    },
+    { id:'shifted', label:'Type-shifted',
+      utts:['bare','gt','geq'],
+      lb:{bare:'\u27E6two\u27E7\u2193',gt:'\u27E6more than two\u27E7',geq:'\u27E6at least two\u27E7'},
+      co:{bare:'#2563eb',gt:'#d97706',geq:'#16a34a'},
+      bg:{bare:'#eff6ff',gt:'#fffbeb',geq:'#f0fdf4'},
+      df:'bare',
+      sem:function(u,w){return u==='bare'?w>=2:u==='gt'?w>2:w>=2;},
+      l0sub:function(fo,lb){return fo==='bare'?'\u27E6two\u27E7 = \u2265 2 (lowered via Partee BE + \u2203-closure)':'Hears '+lb[fo];},
+      l1sub:function(){return 'Type-shifted \u27E6two\u27E7 = \u27E6at least two\u27E7 \u2014 S\u2081 is indifferent';}
+    }
+  ];
+
+  var mi=0, n=3, al=4, fo='some';
+  function M(){return MODES[mi];}
+
+  // === RSA ===
+  function lit(u,w){return M().sem(u,w,n);}
+
+  function calc(){
+    var utts=M().utts, l0={}, s1=[], l1={};
+    utts.forEach(function(u){
+      var c=0; for(var w=0;w<=n;w++) if(lit(u,w)) c++;
+      l0[u]=[]; for(var w=0;w<=n;w++) l0[u].push(c>0&&lit(u,w)?1/c:0);
+    });
+    for(var w=0;w<=n;w++){
+      var sc=utts.map(function(u){var p=l0[u][w];return p>0?Math.exp(al*Math.log(p)):0;});
+      var Z=sc.reduce(function(a,b){return a+b;},0);
+      s1.push(Z>0?sc.map(function(s){return s/Z;}):sc.map(function(){return 0;}));
+    }
+    for(var ui=0;ui<utts.length;ui++){
+      var u=utts[ui],sc=[];
+      for(var w=0;w<=n;w++) sc.push(s1[w][ui]);
+      var Z=sc.reduce(function(a,b){return a+b;},0);
+      l1[u]=Z>0?sc.map(function(s){return s/Z;}):sc.map(function(){return 0;});
+    }
+    return{l0:l0,s1:s1,l1:l1};
+  }
+
+  // === RENDERING ===
+  function pct(v){return(v*100).toFixed(1);}
+  function wl(w){return w+' of '+n;}
+
+  function bar(label,val,color,ann){
+    var a=ann?'<span style="font-size:9px;color:#64748b;margin-left:4px;">'+ann+'</span>':'';
+    return '<div style="display:flex;align-items:center;height:24px;margin:2px 0;">'
+      +'<span style="width:46px;font-size:11px;color:var(--secondary,#64748b);text-align:right;padding-right:7px;">'+label+'</span>'
+      +'<div style="flex:1;height:18px;background:var(--border,#e2e8f0);border-radius:3px;overflow:hidden;">'
+      +'<div style="height:100%;width:'+(val*100)+'%;background:'+color+';border-radius:3px;min-width:'+(val>0?1:0)+'px;"></div>'
+      +'</div>'
+      +'<span style="width:40px;font-size:10px;color:var(--secondary,#64748b);text-align:right;padding-left:5px;">'+pct(val)+'%</span>'+a
+      +'</div>';
+  }
+
+  function sbar(label,vals,bold){
+    var m=M(), utts=m.utts;
+    var segs=utts.map(function(u,i){
+      var w=vals[i]*100; if(w<0.3) return '';
+      return '<div style="height:100%;width:'+w+'%;background:'+m.co[u]+';opacity:'+(u===fo?1:0.3)+';" title="'+m.lb[u]+': '+pct(vals[i])+'%"></div>';
+    }).join('');
+    var fi=utts.indexOf(fo);
+    var ls=bold?'font-weight:600;color:var(--primary,#1c1917);':'';
+    return '<div style="display:flex;align-items:center;height:24px;margin:2px 0;">'
+      +'<span style="width:46px;font-size:11px;color:var(--secondary,#64748b);text-align:right;padding-right:7px;'+ls+'">'+label+'</span>'
+      +'<div style="flex:1;height:18px;background:var(--border,#e2e8f0);border-radius:3px;overflow:hidden;display:flex;">'+segs+'</div>'
+      +'<span style="width:40px;font-size:10px;color:var(--secondary,#64748b);text-align:right;padding-left:5px;">'+pct(vals[fi])+'%</span>'
+      +'</div>';
+  }
+
+  function pnl(badge,title,sub,bg,body){
+    return '<div style="padding:10px 12px;background:'+bg+';border-radius:8px;margin-bottom:4px;">'
+      +'<div style="display:flex;align-items:baseline;gap:7px;margin-bottom:1px;">'
+      +'<span style="font-size:14px;font-weight:700;color:var(--primary,#1c1917);">'+badge+'</span>'
+      +'<span style="font-size:12px;font-weight:500;color:var(--primary,#1c1917);">'+title+'</span></div>'
+      +'<div style="font-size:10px;color:var(--secondary,#64748b);margin-bottom:7px;">'+sub+'</div>'
+      +body+'</div>';
+  }
+
+  function legend(){
+    var m=M();
+    return '<div style="display:flex;gap:10px;margin-top:5px;">'
+      +m.utts.map(function(u){return '<span style="display:flex;align-items:center;gap:3px;">'
+        +'<span style="width:9px;height:9px;background:'+m.co[u]+';border-radius:2px;opacity:'+(u===fo?1:0.3)+';"></span>'
+        +'<span style="font-size:9px;color:var(--secondary,#64748b);">'+m.lb[u]+'</span></span>';}).join('')+'</div>';
+  }
+
+  function render(){
+    var m=M(), d=calc(), fc=m.co[fo], h='', b, w;
+    var dn='\u2193', arr='\u2190';
+
+    // L0
+    b='';
+    for(w=0;w<=n;w++) b+=bar(wl(w),d.l0[fo][w],fc+'88');
+    h+=pnl('L\u2080','Literal Listener',m.l0sub(fo,m.lb),m.bg[fo],b);
+    h+='<div style="text-align:center;color:var(--secondary,#94a3b8);font-size:15px;line-height:1.2;">'+dn+'</div>';
+
+    // S1
+    b='';
+    for(w=0;w<=n;w++){
+      var hl=(m.id==='horn'&&fo==='some'&&w===n)||(m.id!=='horn'&&fo==='bare'&&w===2);
+      b+=sbar(wl(w),d.s1[w],hl);
+    }
+    b+=legend();
+    h+=pnl('S\u2081','Pragmatic Speaker','At each world, chooses by informativity (\u03b1\u2009=\u2009'+al+')','#faf5ff',b);
+    h+='<div style="text-align:center;color:var(--secondary,#94a3b8);font-size:15px;line-height:1.2;">'+dn+'</div>';
+
+    // L1
+    b='';
+    for(w=0;w<=n;w++){
+      var ann='';
+      if(m.id==='horn'&&fo==='some'&&w===n&&d.l1[fo][w]<d.l0[fo][w]-0.001) ann=arr+' weakened';
+      if(m.id==='shifted'&&fo==='bare'&&w>2&&d.l1[fo][w]<d.l0[fo][w]-0.001) ann=arr+' weakened';
+      if(m.id==='exact'&&fo==='bare'&&w===2) ann=arr+' already exact';
+      b+=bar(wl(w),d.l1[fo][w],fc,ann);
+    }
+    h+=pnl('L\u2081','Pragmatic Listener',m.l1sub(fo,m.lb),'#f0fdf4',b);
+
+    document.getElementById('rsa-out').innerHTML=h;
+  }
+
+  // === CONTROLS ===
+  function modePills(){
+    var el=document.getElementById('rsa-mode');
+    el.innerHTML=MODES.map(function(m,i){
+      var a=i===mi;
+      return '<button data-i="'+i+'" style="padding:2px 8px;font-size:10px;font-weight:'+(a?600:400)
+        +';border:1.5px solid '+(a?'var(--primary,#334155)':'var(--border,#cbd5e1)')
+        +';border-radius:5px;cursor:pointer;background:'+(a?'var(--primary,#334155)':'var(--entry,#fff)')
+        +';color:'+(a?'#fff':'var(--secondary,#64748b)')
+        +';font-family:system-ui,sans-serif;line-height:1.5;">'+m.label+'</button>';
+    }).join('');
+    el.querySelectorAll('button').forEach(function(b){
+      b.onclick=function(){mi=+b.dataset.i;fo=M().df;modePills();uttPills();render();};
+    });
+  }
+
+  function uttPills(){
+    var m=M(), el=document.getElementById('rsa-pills');
+    el.innerHTML=m.utts.map(function(u){
+      var a=u===fo;
+      return '<button data-u="'+u+'" style="padding:2px 9px;font-size:11px;font-weight:'+(a?600:400)
+        +';border:1.5px solid '+m.co[u]+';border-radius:5px;cursor:pointer;background:'+(a?m.co[u]:'var(--entry,#fff)')
+        +';color:'+(a?'#fff':m.co[u])
+        +';font-family:system-ui,sans-serif;line-height:1.5;">'+m.lb[u]+'</button>';
+    }).join('');
+    el.querySelectorAll('button').forEach(function(b){
+      b.onclick=function(){fo=b.dataset.u;uttPills();render();};
+    });
+  }
+
+  document.getElementById('rsa-n').oninput=function(){n=+this.value;document.getElementById('rsa-nv').textContent=n;render();};
+  document.getElementById('rsa-a').oninput=function(){al=+this.value;document.getElementById('rsa-av').textContent=al;render();};
+  modePills();uttPills();render();
+})();
+</script>
 
 At no step does the RSA model stipulate a meaning function. The literal semantics of "some" derives from the compositional semantics via the Fragment layer. If `some_sem` were changed to a bilateral meaning (some but not all), the RSA model would automatically inherit the change, the scalar implicature would disappear (L₁ would have nothing to strengthen), and the bridge theorem against the Phenomena data would fail. The grounding theorem `some_meaning_from_montague` makes this dependency explicit.
 
