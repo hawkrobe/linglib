@@ -1006,7 +1006,9 @@ private theorem cancel_strengthens_to_bidir {n : ℕ} (sys : EpistemicSystemFA (
             cases hs; exact strictPairs_ge sys s
         · obtain ⟨j, _, hj⟩ := List.mem_filterMap.mp h
           split_ifs at hj with hpos
-          cases hj; exact sys.mono ∅ {j} (by simp)
+          cases hj
+          simp only [Finset.coe_singleton, Finset.coe_empty]
+          exact sys.mono ∅ {j} (Set.empty_subset _)
       have hQ_neutral : Q.isNeutral := by
         intro j
         show Portfolio.weightedSum (Q_ord ++ Q_strict ++ Q_sing) j = 0

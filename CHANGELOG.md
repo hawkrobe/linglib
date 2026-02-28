@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.227.37] - 2026-02-27
+
+### Fixed
+- **Close `cancel_strengthens_to_bidir` sorry**: fix `sys.mono` coercion via `Finset.coe_singleton`/`coe_empty` pattern. Sorry count in `Cancellation.lean` drops from 2 to 1.
+
 ## [0.227.36] - 2026-02-27
 
 ### Added
