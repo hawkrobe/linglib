@@ -149,4 +149,28 @@ def toContextSet (s : TaggedSlate W) : ContextSet W :=
 
 end TaggedSlate
 
+-- ════════════════════════════════════════════════════
+-- § 3. Contextual Evidence (Büring & Gunlogson 2000)
+-- ════════════════════════════════════════════════════
+
+/-- Contextual evidence bias (Büring & Gunlogson 2000).
+
+    Expectation about p induced by evidence available in the current
+    discourse situation. Used as:
+    - A felicity condition on rising declaratives (Gunlogson 2001)
+    - A bias dimension for polar questions (Romero 2024)
+
+    This type is shared between assertion theory and question bias
+    theory because the same notion of contextual evidence governs
+    both: evidence for p licenses rising declaratives about p and
+    positive polar questions about p. -/
+inductive ContextualEvidence where
+  /-- Current context provides evidence for p. -/
+  | forP
+  /-- No contextual evidence either way. -/
+  | neutral
+  /-- Current context provides evidence against p. -/
+  | againstP
+  deriving DecidableEq, BEq, Repr
+
 end Core.Discourse.Commitment

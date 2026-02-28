@@ -387,7 +387,7 @@ binder's available flavors (for binders that have a primary flavor). -/
 theorem toFlavor_via_projection :
     ∀ b : EventBinder, b.hasContent = true →
       b.toAnchorType.toFlavor = .epistemic := by
-  intro b hb; cases b <;> simp_all [EventBinder.hasContent, EventBinder.toAnchorType]
+  intro b hb; cases b <;> simp_all [EventBinder.hasContent, EventBinder.toAnchorType, AnchorType.toFlavor]
 
 /-- The six binder × flavor combinations (Hacquard 2010, (49a–f)).
 Content licensing explains (49e): VP events lack content → no epistemic.
@@ -585,7 +585,11 @@ theorem empty_ordering_reduces {Ev W : Type*} [DecidableEq W]
     orderedNecessity f (λ _ _ => []) e allW p w =
       necessity f e allW p w := by
   unfold orderedNecessity bestAccessible necessity accessible
-  simp [List.filter_eq_self, List.all_eq_true]
+  have : ∀ (l : List W), l.all (fun (_ : W) => true) = true := by
+    intro l; induction l with
+    | nil => rfl
+    | cons _ _ ih => exact ih
+  simp [this]
 
 
 -- ════════════════════════════════════════════════════

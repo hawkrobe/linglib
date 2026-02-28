@@ -581,9 +581,9 @@ theorem all_theories_pairwise_equivalent :
 
 /-- Total minimal pairs tested -/
 def totalPairsTested : Nat :=
-  reflexiveCoreferenceData.pairs.length +
-  pronominalDisjointReferenceData.pairs.length +
-  complementaryDistributionData.pairs.length
+  Nat.add (Nat.add reflexiveCoreferenceData.pairs.length
+    pronominalDisjointReferenceData.pairs.length)
+    complementaryDistributionData.pairs.length
 
 #eval totalPairsTested  -- 9 pairs
 

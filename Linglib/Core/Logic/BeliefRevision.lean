@@ -1,5 +1,6 @@
 import Linglib.Core.Semantics.Proposition
 import Linglib.Core.Scales.EpistemicScale.Conditional
+import Linglib.Core.Order.Normality
 
 /-!
 # Belief Revision and Preferential Reasoning
@@ -149,23 +150,21 @@ def rationalMonotonicity {W : Type*} (pc : PreferentialConsequence W) : Prop :=
     as plausible as w₂. The minimal elements of a proposition A are
     the most plausible A-worlds.
 
-    Includes the **smoothness condition** (also called "limit assumption"):
-    every satisfiable proposition has minimal elements. This is automatic
-    for finite W; for infinite W it rules out infinite descending chains.
-    KLM (1990) call this "stopperedness". -/
-structure PlausibilityOrder (W : Type*) where
-  /-- The plausibility comparison -/
-  le : W → W → Prop
-  /-- Reflexivity -/
-  le_refl : ∀ w, le w w
-  /-- Transitivity -/
-  le_trans : ∀ u v w, le u v → le v w → le u w
+    Extends `NormalityOrder` with the **smoothness condition** (also
+    called "limit assumption"): every satisfiable proposition has
+    minimal elements. This is automatic for finite W; for infinite W
+    it rules out infinite descending chains. KLM (1990) call this
+    "stopperedness". -/
+structure PlausibilityOrder (W : Type*) extends Core.Order.NormalityOrder W where
   /-- Smoothness: every satisfiable φ has a minimal element -/
   smooth : ∀ (φ : Prop' W) (w : W), φ w →
     ∃ v, φ v ∧ le v w ∧ ∀ u, φ u → le u v → le v u
 
 /-- The most plausible worlds satisfying φ: those with no strictly
-    more plausible φ-world. -/
+    more plausible φ-world.
+
+    This is the same as `NormalityOrder.optimal` applied to the set
+    `{w | φ w}`, but stated with `Prop'` for the System P interface. -/
 def PlausibilityOrder.minimal {W : Type*} (po : PlausibilityOrder W)
     (φ : Prop' W) : Prop' W :=
   fun w => φ w ∧ ∀ v, φ v → po.le v w → po.le w v
@@ -242,9 +241,7 @@ private lemma sublist_length_lt_of_mem {α : Type*} {l₁ l₂ : List α}
 
 def kratzerPlausibility {W : Type*} [Fintype W] [DecidableEq W]
     (orderingSource : List (BProp W)) : PlausibilityOrder W where
-  le := fun w v => ∀ p ∈ orderingSource, p v = true → p w = true
-  le_refl := fun w _ _ h => h
-  le_trans := fun u v w huv hvw p hp hpw => huv p hp (hvw p hp hpw)
+  toNormalityOrder := Core.Order.NormalityOrder.fromProps orderingSource
   smooth := fun φ w hφw => by
     classical
     let sat := fun (v : W) => (orderingSource.filter (fun p => p v)).length

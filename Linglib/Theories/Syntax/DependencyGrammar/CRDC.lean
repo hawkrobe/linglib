@@ -166,10 +166,7 @@ structure CRDCConfig where
 
 /-- Get element at index from list -/
 def getAt? {α : Type} (xs : List α) (i : Nat) : Option α :=
-  match xs, i with
-  | [], _ => none
-  | x :: _, 0 => some x
-  | _ :: rest, n + 1 => getAt? rest n
+  xs[i]?
 
 /-- Check if CRDC is satisfied
 

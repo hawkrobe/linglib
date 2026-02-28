@@ -1,6 +1,7 @@
 import Linglib.Theories.Semantics.Modality.Kratzer
 import Linglib.Core.Semantics.CommonGround
 import Linglib.Core.Discourse.InformationStructure
+import Linglib.Core.Discourse.Commitment
 
 /-!
 # Biased Polar Questions
@@ -91,19 +92,9 @@ inductive OriginalBias where
   | againstP
   deriving DecidableEq, BEq, Repr
 
-/-- Contextual evidence bias (Büring & Gunlogson 2000).
-
-Expectation that p is true induced by evidence that has just become mutually
-available to the participants in the current discourse situation. May
-contradict the speaker's original belief. -/
-inductive ContextualEvidence where
-  /-- Current context provides evidence for p. -/
-  | forP
-  /-- No contextual evidence either way. -/
-  | neutral
-  /-- Current context provides evidence against p. -/
-  | againstP
-  deriving DecidableEq, BEq, Repr
+-- Re-export `ContextualEvidence` from Core so that downstream files
+-- opening `Semantics.Modality.BiasedPQ` still find it here.
+export Core.Discourse.Commitment (ContextualEvidence)
 
 -- ============================================================================
 -- §3: Romero's Table 1 — Original Speaker Bias (Ladd 1981, R&H 2004)

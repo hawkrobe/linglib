@@ -258,7 +258,7 @@ Theorem: Total alternatives for 3-way = 7
 Core (3) + Derived (4) = 7 alternatives
 -/
 theorem three_way_total :
-    threeWayExample.coreAlternatives.length +
+    Nat.add threeWayExample.coreAlternatives.length
     threeWayExample.derivedAlternatives.length = 7 := by
   native_decide
 
