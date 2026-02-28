@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.227.49] - 2026-02-27
+
+### Added
+- **Emotion appraisal architecture** (`Core/Agent/Emotion.lean`): Houlihan, Kleiman-Weiner, Hewitt, Tenenbaum & Saxe (2023) — emotions as post-inference appraisals over BToM posteriors. Four appraisal types (AU, PE, CFa, CFo) × two perspectives (base, reputational). All 20 emotion concepts with qualitative profiles from Fig. 4. Key theorems: `appraisal_patterns_distinguishable` (all 20 unique by weight pattern), `all_retrospective` (scope boundary), `embarrassment_purely_reputational`. Appraisal computation functions (`achievedUtility`, `predictionError`, `counterfactualAppraisal`) structurally grounded in BToM marginals.
+- **Psych verb emotion grounding** (`blog/lean/PsychVerbs/PsychVerbSem.lean` §12): novel synthesis connecting Houlihan et al.'s appraisal architecture to psych verb CausalPathway and AttitudeValence. `verbToEmotion` maps 12 psych verbs to emotion concepts; `emotionToValence` derives attitude valence from AU sign; `appraisalToPathway` maps appraisal types to causal pathways. Class I verbs (fear, hope, dread) correctly return `none` — they denote prospective/dispositional states, not retrospective episode emotions.
+
 ## [0.227.48] - 2026-02-27
 
 ### Added

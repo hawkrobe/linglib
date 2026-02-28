@@ -1,9 +1,11 @@
 import Linglib.Theories.Semantics.Causation.PsychCausation
 import Linglib.Theories.Semantics.Causation.PsychCausalLink
 import Linglib.Core.Agent.BToM
+import Linglib.Core.Agent.Emotion
 import Linglib.Core.StructuralEquationModel
 import Linglib.Theories.Semantics.Intensional.Situations.Elbourne
 import Linglib.Phenomena.PsychVerbs.Studies.HartshorneEtAl2016.Bridge
+import Linglib.Theories.Semantics.Attitudes.Preferential
 
 /-!
 # Psych Verb Denotation via Cognitive Situation Models
@@ -42,6 +44,7 @@ From this single denotation, properties are **derived**, not stipulated:
 | §9 CausalFrame | Nadathur & Lauer 2020 | `Core.StructuralEquationModel` |
 | §10 Situations | Elbourne 2005/2013 | `Situations.Elbourne.SitVarStatus` |
 | §11 Hartshorne | Hartshorne et al. 2016 | `HartshorneEtAl2016.Bridge` |
+| §12 Emotion appraisals | Houlihan et al. 2023 | `Core.Agent.Emotion` |
 -/
 
 namespace PsychVerbs
@@ -447,5 +450,162 @@ theorem three_way_agreement (t : SemanticType) :
       semanticTypeToPathway t := by cases t <;> rfl
 
 end Hartshorne
+
+-- ════════════════════════════════════════════════════════════════
+-- § 12. Emotion Appraisal Grounding (Houlihan et al. 2023)
+-- ════════════════════════════════════════════════════════════════
+
+/-! Novel synthesis: connecting Houlihan et al.'s emotion appraisal
+architecture to psych verb CausalPathway and AttitudeValence.
+
+The key bridge: the **dominant appraisal type** of an emotion predicts
+which CausalPathway the corresponding psych verb uses.
+
+- **PE-dominant** emotions (surprise, confusion) → perceptual pathway
+  (external stimulus violates expectations)
+- **AU-dominant** emotions (joy, pride, disgust, respect) → representational
+  pathway (internal evaluation of outcomes against desires)
+- **CFa-dominant** emotions (regret, relief) → perceptual pathway
+  (external event enables counterfactual comparison)
+
+Class I verbs (fear, worry, dread, hope, love, hate) return `none` from
+`verbToEmotion` because they denote **stable attitudes**, not episode-level
+emotions. All 20 Houlihan emotions are retrospective (post-outcome);
+Class I verbs are prospective or dispositional. This is Hartshorne et al.'s
+attitude/episode distinction, now grounded in computational architecture. -/
+
+section EmotionGrounding
+open Core.Agent.Emotion
+
+/-- Count non-irrelevant entries per appraisal type (both perspectives). -/
+private def appraisalCount (w : AppraisalWeights) (t : AppraisalType) : Nat :=
+  let pw := match t with
+    | .achievedUtility => w.au
+    | .predictionError => w.pe
+    | .counterfactualAgent => w.cfa
+    | .counterfactualOpponent => w.cfo
+  (if pw.base != .irrelevant then 1 else 0) +
+  (if pw.reputational != .irrelevant then 1 else 0)
+
+/-- The dominant appraisal type of an emotion profile: whichever type
+    has the most non-irrelevant slots. Ties broken AU > PE > CF > CFo
+    (utility as the evaluative core). Returns `none` when all zero. -/
+def dominantAppraisal (e : EmotionProfile) : Option AppraisalType :=
+  let au := appraisalCount e.weights .achievedUtility
+  let pe := appraisalCount e.weights .predictionError
+  let cfa := appraisalCount e.weights .counterfactualAgent
+  let cfo := appraisalCount e.weights .counterfactualOpponent
+  if au ≥ pe && au ≥ cfa && au ≥ cfo && au > 0 then some .achievedUtility
+  else if pe ≥ cfa && pe ≥ cfo && pe > 0 then some .predictionError
+  else if cfa ≥ cfo && cfa > 0 then some .counterfactualAgent
+  else if cfo > 0 then some .counterfactualOpponent
+  else none
+
+/-- Map dominant appraisal type to CausalPathway.
+
+- PE → perceptual (external stimulus violates expectations)
+- AU → representational (internal evaluation against desires)
+- CFa/CFo → perceptual (external event enables counterfactual) -/
+def appraisalToPathway : AppraisalType → CausalPathway
+  | .predictionError        => .perceptual
+  | .achievedUtility        => .representational
+  | .counterfactualAgent    => .perceptual
+  | .counterfactualOpponent => .perceptual
+
+/-- Map an emotion to a CausalPathway via its dominant appraisal. -/
+def emotionToPathway (e : EmotionProfile) : Option CausalPathway :=
+  (dominantAppraisal e).map appraisalToPathway
+
+/-- Four-way agreement: Houlihan appraisals → CausalPathway agrees with
+    Kim CausalSource → CausalPathway. -/
+theorem appraisal_causalSource_agreement :
+    appraisalToPathway .predictionError = causalSourceToPathway .external ∧
+    appraisalToPathway .achievedUtility = causalSourceToPathway .internal :=
+  ⟨rfl, rfl⟩
+
+-- Per-verb emotion mapping
+
+/-- Map psych verbs to their Houlihan et al. emotion concept.
+    Returns `none` for Class I verbs (stable attitudes) — these denote
+    prospective/dispositional states, not retrospective episode emotions. -/
+def verbToEmotion : String → Option EmotionProfile
+  | "surprise"    => some surprise
+  | "amuse"       => some amusement
+  | "annoy"       => some annoyance
+  | "disappoint"  => some disappointment
+  | "embarrass"   => some embarrassment
+  | "disgust"     => some disgust
+  | "devastate"   => some devastation
+  | "relieve"     => some relief
+  | "shock"       => some surprise
+  | "delight"     => some joy
+  | "admire"      => some respect
+  | "enjoy"       => some joy
+  -- Class I verbs: stable attitudes, not episode emotions
+  | "fear"        => none
+  | "worry"       => none
+  | "dread"       => none
+  | "hope"        => none
+  | "love"        => none
+  | "hate"        => none
+  | _             => none
+
+-- Pathway consistency: verb → emotion → pathway
+
+/-- For PE-pure emotions (no AU/CF activation), the dominant appraisal
+    correctly predicts the perceptual pathway. -/
+theorem surprise_verb_perceptual :
+    verbToEmotion "surprise" = some surprise ∧
+    emotionToPathway surprise = some .perceptual := ⟨rfl, rfl⟩
+
+/-- For AU-pure emotions (only reputational utility), the dominant
+    appraisal correctly predicts the representational pathway. -/
+theorem admire_verb_representational :
+    verbToEmotion "admire" = some respect ∧
+    emotionToPathway respect = some .representational := ⟨rfl, rfl⟩
+
+/-- Mixed-profile emotions (AU + PE + CF all active) default to AU via
+    tiebreaking, yielding representational. This is a known limitation:
+    "disappoint" is a Class II verb (perceptual pathway by verb
+    classification), but its emotion profile has no single dominant
+    appraisal type. The verb classification and emotion architecture
+    capture orthogonal aspects of the verb's meaning. -/
+theorem disappoint_emotion_mixed :
+    verbToEmotion "disappoint" = some disappointment ∧
+    emotionToPathway disappointment = some .representational := ⟨rfl, rfl⟩
+
+theorem embarrass_emotion_reputational :
+    verbToEmotion "embarrass" = some embarrassment ∧
+    emotionToPathway embarrassment = some .representational := ⟨rfl, rfl⟩
+
+/-- Class I verbs are not grounded by the appraisal architecture. -/
+theorem class_I_not_episode :
+    verbToEmotion "fear" = none ∧
+    verbToEmotion "worry" = none ∧
+    verbToEmotion "dread" = none ∧
+    verbToEmotion "hope" = none := ⟨rfl, rfl, rfl, rfl⟩
+
+-- Connection to AttitudeValence
+
+open Semantics.Attitudes.Preferential (AttitudeValence)
+
+/-- Map an emotion's AU sign to AttitudeValence.
+    Positive AU → positive valence (joy, pride, relief, ...)
+    Negative AU → negative valence (fury, disgust, devastation, ...)
+    Irrelevant AU → none (surprise, confusion — valence-neutral) -/
+def emotionToValence (e : EmotionProfile) : Option AttitudeValence :=
+  if e.weights.au.base == AppraisalSign.positive ||
+     e.weights.au.reputational == AppraisalSign.positive then
+    some AttitudeValence.positive
+  else if e.weights.au.base == AppraisalSign.negative ||
+          e.weights.au.reputational == AppraisalSign.negative then
+    some AttitudeValence.negative
+  else none
+
+theorem joy_positive_valence : emotionToValence joy = some .positive := rfl
+theorem fury_negative_valence : emotionToValence fury = some .negative := rfl
+theorem surprise_no_valence : emotionToValence surprise = none := rfl
+
+end EmotionGrounding
 
 end PsychVerbs
