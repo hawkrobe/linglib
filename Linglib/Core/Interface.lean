@@ -7,6 +7,7 @@ import Linglib.Core.Interfaces.Felicity
 import Linglib.Core.Interfaces.CoreferenceTheory
 import Linglib.Core.Interfaces.ExtractionMorphology
 import Linglib.Core.Interfaces.VoiceSystem
+import Linglib.Core.Interfaces.AssertionTheory
 
 /-!
 # Theory Comparison Interfaces
