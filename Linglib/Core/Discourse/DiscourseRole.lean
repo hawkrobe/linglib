@@ -43,6 +43,7 @@ inductive IllocutionaryMood where
   | interrogative
   | imperative
   | promissive
+  | exclamative
   deriving DecidableEq, Repr, BEq, Inhabited
 
 /-- Which participant holds epistemic authority for a given illocutionary mood.
@@ -54,6 +55,7 @@ def epistemicAuthority : IllocutionaryMood → DiscourseRole
   | .interrogative  => .addressee
   | .imperative     => .speaker
   | .promissive     => .speaker
+  | .exclamative    => .speaker
 
 /-- Resolve a discourse role to a concrete entity via a ContextTower,
     reading from the origin (speech-act context).

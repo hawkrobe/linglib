@@ -1,4 +1,5 @@
 import Linglib.Theories.Semantics.Modality.EventRelativity
+import Linglib.Core.Discourse.DiscourseRole
 
 /-!
 # The ASSERT Operator and Speech Act Phrase
@@ -46,6 +47,7 @@ namespace Semantics.Modality.Assert
 open Semantics.Modality.EventRelativity
 open Core.Proposition (BProp)
 open Core.ModalLogic (ModalFlavor)
+open Core.Discourse (IllocutionaryMood)
 
 
 -- ════════════════════════════════════════════════════
@@ -57,19 +59,10 @@ open Core.ModalLogic (ModalFlavor)
 Hacquard (2006, §4.2.1.2, p.144): "The content of the speech event
 is different depending on the type of speech act."
 
-Each type determines what kind of propositional content the speech
-event carries, which in turn determines which modal flavors can
-project from it. -/
-inductive SpeechActType where
-  /-- Assertion: CON(e*) = speaker's beliefs (doxastic) -/
-  | declarative
-  /-- Command/request: CON(e*) = addressee's to-do list (priority) -/
-  | imperative
-  /-- Question: CON(e*) = the question content -/
-  | interrogative
-  /-- Exclamation: CON(e*) = the exclaimed content -/
-  | exclamative
-  deriving DecidableEq, BEq, Repr, Inhabited
+Now unified with `IllocutionaryMood` from `Core.Discourse`. The five
+constructors — declarative, interrogative, imperative, promissive,
+exclamative — classify the pragmatic act performed. -/
+abbrev SpeechActType := IllocutionaryMood
 
 /-- All speech acts are contentful events. This is definitional:
 a speech act IS the performance of propositional content.
@@ -77,7 +70,7 @@ a speech act IS the performance of propositional content.
 This derives `EventBinder.speechAct.hasContent = true`: the speech
 event introduced by SAP always carries content, hence it can always
 project epistemic R (content licensing, EventRelativity §8). -/
-def SpeechActType.hasContent : SpeechActType → Bool
+def hasContent : SpeechActType → Bool
   | _ => true
 
 /-- The primary modal flavor licensed by each speech act type.
@@ -85,10 +78,13 @@ def SpeechActType.hasContent : SpeechActType → Bool
 - Declarative → epistemic: the content is the speaker's beliefs, so
   R accesses what the speaker considers possible (Hacquard 2006, p.144).
 - Imperative → deontic: the content is the addressee's obligations, so
-  R accesses what is permitted/required (Portner 2001). -/
-def SpeechActType.primaryFlavor : SpeechActType → ModalFlavor
+  R accesses what is permitted/required (Portner 2001).
+- Promissive → deontic: the content is the speaker's commitments,
+  paralleling imperative (Portner 2001). -/
+def primaryFlavor : SpeechActType → ModalFlavor
   | .declarative => .epistemic
   | .imperative => .deontic
+  | .promissive => .deontic
   | .interrogative => .epistemic
   | .exclamative => .epistemic
 
@@ -189,16 +185,16 @@ The bridge theorems below make this derivation explicit. -/
 /-- All speech act types are contentful — by definition, performing
 a speech act involves producing propositional content. -/
 theorem all_speech_acts_contentful :
-    ∀ t : SpeechActType, t.hasContent = true := by
+    ∀ t : SpeechActType, hasContent t = true := by
   intro t; cases t <;> rfl
 
 /-- ASSERT produces a contentful event. -/
 theorem assert_contentful {W : Type*} (beliefs : W → List (BProp W)) :
-    (ASSERT beliefs).actType.hasContent = true := rfl
+    hasContent (ASSERT beliefs).actType = true := rfl
 
 /-- DIRECT produces a contentful event. -/
 theorem direct_contentful {W : Type*} (obligations : W → List (BProp W)) :
-    (DIRECT obligations).actType.hasContent = true := rfl
+    hasContent (DIRECT obligations).actType = true := rfl
 
 /-- Speech act contentfulness agrees with `EventBinder.speechAct.hasContent`.
 
@@ -207,7 +203,7 @@ This is the key bridge: the stipulated fact in EventRelativity §8
 analysis — ASSERT always introduces a contentful event. -/
 theorem sap_justifies_binder_content :
     -- Every speech act type is contentful (this file)
-    (∀ t : SpeechActType, t.hasContent = true) ∧
+    (∀ t : SpeechActType, hasContent t = true) ∧
     -- EventBinder.speechAct is contentful (EventRelativity §8)
     EventBinder.speechAct.hasContent = true :=
   ⟨all_speech_acts_contentful, rfl⟩
@@ -219,11 +215,11 @@ theorem sap_justifies_binder_content :
 
 /-- Declarative speech acts license epistemic modals. -/
 theorem declarative_epistemic :
-    SpeechActType.declarative.primaryFlavor = .epistemic := rfl
+    primaryFlavor .declarative = .epistemic := rfl
 
 /-- Imperative speech acts license deontic modals. -/
 theorem imperative_deontic :
-    SpeechActType.imperative.primaryFlavor = .deontic := rfl
+    primaryFlavor .imperative = .deontic := rfl
 
 /-- Different speech act types yield different primary flavors for
 the same modal. This derives the "must" ambiguity:
@@ -236,8 +232,8 @@ the same modal. This derives the "must" ambiguity:
 Same modal, different speech acts, different readings.
 No lexical ambiguity needed. -/
 theorem speech_act_determines_flavor :
-    SpeechActType.declarative.primaryFlavor ≠
-    SpeechActType.imperative.primaryFlavor := by decide
+    primaryFlavor .declarative ≠
+    primaryFlavor .imperative := by decide
 
 
 -- ════════════════════════════════════════════════════
@@ -354,6 +350,7 @@ def speechActProjection : EventProjection SpeechActType Interlocutor SpeechTime 
   holder
     | .declarative => .speaker
     | .imperative => .addressee
+    | .promissive => .speaker
     | .interrogative => .speaker
     | .exclamative => .speaker
   time _ := .now

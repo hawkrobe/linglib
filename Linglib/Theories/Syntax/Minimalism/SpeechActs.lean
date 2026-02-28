@@ -31,6 +31,7 @@ c-commands content.
 import Linglib.Theories.Syntax.Minimalism.Core.Basic
 import Linglib.Theories.Syntax.Minimalism.Core.Phase
 import Linglib.Core.Temporal.Context
+import Linglib.Core.Discourse.DiscourseRole
 import Linglib.Fragments.English.Pronouns
 
 namespace Minimalism.Phenomena.SpeechActs
@@ -81,6 +82,21 @@ def deriveMood (contentFinite hearerCCommandsContent : Bool) : SAPMood :=
   | true,  true  => .interrogative
   | false, true  => .imperative
   | false, false => .promissive
+
+-- ============================================================================
+-- Section B2: Bridge to IllocutionaryMood
+-- ============================================================================
+
+open Core.Discourse (IllocutionaryMood)
+
+/-- Map configurational mood (Speas & Tenny 2003) to framework-agnostic
+    illocutionary mood. The mapping is 1:1 since `SAPMood` and
+    `IllocutionaryMood` share the same four constructors. -/
+def SAPMood.toIllocutionaryMood : SAPMood → IllocutionaryMood
+  | .declarative   => .declarative
+  | .interrogative  => .interrogative
+  | .imperative     => .imperative
+  | .promissive     => .promissive
 
 -- ============================================================================
 -- Section C: Seat of Knowledge
