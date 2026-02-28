@@ -193,6 +193,15 @@ inductive ComplementType where
   | question        -- Embedded question "wonder who"
   deriving DecidableEq, Repr, BEq
 
+/-- Is this complement type finite (i.e., does it contain a tense head)?
+
+    Finite complements (.finiteClause, .question) have independent tense
+    morphology; non-finite complements (.infinitival, .gerund, .smallClause)
+    do not. -/
+def ComplementType.isFinite : ComplementType → Bool
+  | .finiteClause | .question => true
+  | _ => false
+
 /--
 Control type for verbs with infinitival complements.
 -/

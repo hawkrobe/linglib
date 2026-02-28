@@ -524,6 +524,8 @@ import Linglib.Phenomena.Presupposition.Bridge.ScontrasTonhauser2025BToM
 import Linglib.Phenomena.Presupposition.Bridge.TowerBridge
 import Linglib.Phenomena.Presupposition.Bridge.KD45Projection
 import Linglib.Phenomena.Presupposition.Bridge.SharvitCLOS
+import Linglib.Phenomena.Presupposition.ForgetPresuppositions
+import Linglib.Phenomena.Presupposition.Bridge.ForgetBridge
 import Linglib.Phenomena.Modality.OutlookMarkers
 import Linglib.Phenomena.Agreement.NounCategorization
 import Linglib.Phenomena.Agreement.Bridge.NounCategorization
@@ -970,6 +972,7 @@ import Linglib.Theories.Semantics.Attitudes.SituationDependent
 import Linglib.Theories.Semantics.Attitudes.NegRaising
 import Linglib.Theories.Semantics.Attitudes.Monotonicity
 import Linglib.Theories.Semantics.Attitudes.Factivity
+import Linglib.Theories.Semantics.Attitudes.PreExistence
 import Linglib.Theories.Semantics.Attitudes.EpistemicThreshold
 import Linglib.Theories.Semantics.Attitudes.RationalAttitude
 import Linglib.Theories.Semantics.Truthmaker.Basic
