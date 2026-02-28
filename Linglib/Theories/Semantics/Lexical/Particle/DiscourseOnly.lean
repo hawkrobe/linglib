@@ -1,0 +1,234 @@
+import Linglib.Theories.Semantics.Questions.Support
+import Linglib.Theories.Semantics.Lexical.Expressives.Basic
+import Linglib.Theories.Semantics.Questions.Inquisitive
+
+/-!
+# Discourse *only* (Ippolito, Kiss & Williams 2025) @cite{ippolito-kiss-williams-2025}
+
+Semantics of discourse *only*: a connective that takes two clausal arguments
+S and S' and contributes a conventional implicature (CI) that S' fails to
+support the evidential direction established by prior partial answers to the QUD.
+
+## The Puzzle
+
+Cross-linguistically, some languages have a discourse particle glossed as
+"only" that conjoins two clauses while signaling that the second undermines
+the evidential trajectory of the first:
+
+- Italian: *solo che* ("La casa è bella, solo che è costosissima")
+- Russian: *tol'ko* ("Квартира большая, только кухня маленькая")
+- Hungarian: *csak* ("A ház szép, csak drága")
+- Mandarin: *zhǐshì* ("房子很好, 只是太贵了")
+
+## Definition 16 (IKW 2025)
+
+⟦S [only S']⟧^c is defined only if S and S' are relevant to QUD in c and
+∃α ∈ QUD s.t. S supports α. If defined:
+- At-issue: ⟨⟦S⟧^c, ⟦S'⟧^c⟩ (pair of denotations; for declaratives, modeled
+  as conjunction of highlighted content)
+- CI: ∃α ∈ QUD s.t. (i) every true partial answer p ∉ QUD supports α,
+  and (ii) S' does not support α
+
+## Key Predictions
+
+- **Interrogative left-arg restriction** (§5.2): Canonical info-seeking questions
+  cannot be the left argument because the speaker doesn't believe any answer,
+  so DOX_sp ⊆ q fails for all q, and SUPPORT fails. This falls out from
+  `fullSupport_fails_unbelieved` in Support.lean — no stipulation needed.
+- **Biased/rhetorical questions CAN be left args** (§5.2, exx. 20–21): These
+  questions have a believed answer (DOX_sp ⊆ q for some q), so the doxastic
+  condition is satisfied.
+- **Comparison with *but*** (§6): Both express contrast, but *only*'s right
+  argument only needs to fail to support (¬SUPPORT), not actively counter-support
+  (negRelevant). This makes *only* strictly weaker than *but*.
+
+## References
+
+- Ippolito, M., Kiss, A. & Williams, W. (2025). Discourse *only*. WCCFL 41.
+- Potts, C. (2005). The Logic of Conventional Implicatures. OUP.
+- Thomas, W. (2026). A probabilistic, question-based approach to additivity.
+-/
+
+namespace Semantics.Lexical.Particle.DiscourseOnly
+
+open Semantics.Questions.Inquisitive hiding supports
+open Semantics.Questions.ProbabilisticAnswerhood
+open Semantics.Questions.Support
+open Semantics.Lexical.Expressives
+
+-- Context
+
+/-- Discourse context for evaluating discourse *only*.
+
+Includes the QUD, a prior distribution, the speaker's doxastic state, and
+a record of true partial answers to the QUD established in prior discourse.
+
+The doxastic state is what makes the interrogative restriction fall out
+naturally: canonical info-seeking questions fail the doxastic condition
+of SUPPORT (the speaker doesn't believe any answer). -/
+structure Context (W : Type*) [Fintype W] where
+  /-- The QUD as an inquisitive issue -/
+  qud : Issue W
+  /-- Prior probability distribution -/
+  prior : Prior W
+  /-- Speaker's doxastic state DOX_sp -/
+  dox : InfoState W
+  /-- Worlds for evaluating doxastic subset checks -/
+  worlds : List W
+  /-- True partial answers to the QUD established in prior discourse.
+
+  IKW (2025) Def. 16 CI condition (i) quantifies universally over ALL true
+  partial answers p ∉ QUD: each must support the same α. We track these
+  explicitly so the CI can check the universal condition. -/
+  partialAnswers : List (W → Bool)
+
+-- Sentence
+
+/-- A discourse *only* sentence with two clausal arguments.
+
+`sDen` is the inquisitive denotation of the left argument S,
+`s'Den` is the inquisitive denotation of the right argument S'.
+
+For declaratives, each `Issue` has a single alternative (the propositional
+content). For questions, each `Issue` has multiple alternatives. The
+denotation type is uniform — what varies is whether the doxastic condition
+of SUPPORT can be satisfied. -/
+structure Sentence (W : Type*) where
+  /-- Inquisitive denotation of the left argument S -/
+  sDen : Issue W
+  /-- Inquisitive denotation of the right argument S' -/
+  s'Den : Issue W
+
+namespace Sentence
+
+variable {W : Type*} [Fintype W]
+
+/-- At-issue content of "S only S'".
+
+IKW (2025) Def. 16: the at-issue content is the pair ⟨⟦S⟧, ⟦S'⟧⟩.
+For declarative arguments, we model this as conjunction of the highlighted
+(informational) content of each denotation: every world where both S and S'
+are informatively true. -/
+def atIssueContent (d : Sentence W) : W → Bool :=
+  λ w => d.sDen.highlighted w && d.s'Den.highlighted w
+
+/-- Presupposition / definedness condition for discourse *only*.
+
+IKW (2025) Def. 16: ⟦S [only S']⟧ is defined only if:
+1. S and S' are both relevant to the QUD, and
+2. There exists an answer α ∈ QUD that S supports (fullSupport).
+
+Condition (2) ensures an evidential direction exists to be undermined.
+We use `fullSupport` (doxastic + probabilistic) rather than just
+probabilistic support — this is what makes the interrogative restriction
+fall out. -/
+def isDefined (d : Sentence W) (ctx : Context W) : Bool :=
+  -- S is relevant to QUD
+  relevant d.sDen.highlighted ctx.qud ctx.prior &&
+  -- S' is relevant to QUD
+  relevant d.s'Den.highlighted ctx.qud ctx.prior &&
+  -- S supports some answer (fullSupport: doxastic + probabilistic)
+  ctx.qud.alternatives.any λ α =>
+    fullSupport ctx.dox d.sDen ctx.prior α ctx.worlds
+
+/-- CI content of discourse *only*.
+
+IKW (2025) Def. 16 CI: ∃α ∈ QUD s.t.
+(i) ∀p ∈ partialAnswers, p supports α (all prior discourse points toward α)
+(ii) S' does not SUPPORT α (the right argument fails to support that direction)
+
+Condition (i) captures the universal quantification over true partial answers.
+When partialAnswers is empty, condition (i) is vacuously true, which is correct:
+the CI only requires that no prior evidence contradicts the direction.
+
+The "S supports α" condition is implicit in `isDefined` — if the CI is being
+evaluated, S already established the direction. -/
+def ciContent (d : Sentence W) (ctx : Context W) : Bool :=
+  ctx.qud.alternatives.any λ α =>
+    -- (i) All true partial answers support α
+    ctx.partialAnswers.all (λ p => probSupports ctx.prior p α) &&
+    -- S itself supports α (part of establishing the direction)
+    fullSupport ctx.dox d.sDen ctx.prior α ctx.worlds &&
+    -- (ii) S' does NOT support α
+    !fullSupport ctx.dox d.s'Den ctx.prior α ctx.worlds
+
+/-- Full two-dimensional meaning of "S only S'".
+
+Combines at-issue content (conjunction of highlighted content) with CI content
+(S' fails to support an answer that S and prior discourse support). Uses
+Potts' (2005) `TwoDimProp` to keep the dimensions independent. -/
+def meaning (d : Sentence W) (ctx : Context W) : TwoDimProp W :=
+  { atIssue := d.atIssueContent
+  , ci := λ _ => d.ciContent ctx }
+
+/-- Agreement: S and S' agree w.r.t. the QUD iff there is a proposition
+α ∈ QUD s.t. both S and S' fully support α.
+
+IKW (2025) Def. 14a. -/
+def agree (d : Sentence W) (ctx : Context W) : Bool :=
+  ctx.qud.alternatives.any λ α =>
+    fullSupport ctx.dox d.sDen ctx.prior α ctx.worlds &&
+    fullSupport ctx.dox d.s'Den ctx.prior α ctx.worlds
+
+/-- Disagreement: S and S' disagree w.r.t. the QUD iff they each support
+some answer but do not agree on any single answer.
+
+IKW (2025) Def. 14b. -/
+def disagree (d : Sentence W) (ctx : Context W) : Bool :=
+  (ctx.qud.alternatives.any λ α =>
+    fullSupport ctx.dox d.sDen ctx.prior α ctx.worlds) &&
+  (ctx.qud.alternatives.any λ α =>
+    fullSupport ctx.dox d.s'Den ctx.prior α ctx.worlds) &&
+  !d.agree ctx
+
+end Sentence
+
+-- Theorems
+
+/-- At-issue content is conjunction of highlighted content. -/
+theorem atIssue_is_conjunction {W : Type*} (d : Sentence W) :
+    d.atIssueContent = λ w => d.sDen.highlighted w && d.s'Den.highlighted w := rfl
+
+/-- CI projects through negation (inherited from TwoDimProp).
+
+Negating "S only S'" negates the at-issue conjunction but the CI
+(S' fails to support the direction) still holds. -/
+theorem ci_projects_neg {W : Type*} [Fintype W]
+    (d : Sentence W) (ctx : Context W) :
+    (TwoDimProp.neg (d.meaning ctx)).ci = (d.meaning ctx).ci := rfl
+
+/-- Interrogative left argument is blocked by the doxastic condition.
+
+When the speaker doesn't believe any alternative of S (DOX_sp ⊄ q for all
+q ∈ ⟦S⟧), SUPPORT fails for every answer r. This blocks `isDefined`,
+because no α ∈ QUD can be supported.
+
+This derives the restriction from the architecture of SUPPORT rather than
+stipulating it as a clause-type filter. Biased/rhetorical questions, where
+the speaker DOES believe an answer, correctly pass this check. -/
+theorem interrogative_blocks_support {W : Type*} [Fintype W]
+    (dox : InfoState W) (sentDen : Issue W) (prior : Prior W)
+    (answer : W → Bool) (worlds : List W)
+    (hNoBelief : ∀ q, q ∈ sentDen.alternatives →
+      Semantics.Questions.Inquisitive.supports dox q worlds = false) :
+    fullSupport dox sentDen prior answer worlds = false :=
+  fullSupport_fails_unbelieved dox sentDen prior answer worlds hNoBelief
+
+/-- Interrogative prejacents trivially satisfy the CI's condition (ii).
+
+When S' is an info-seeking question whose speaker doesn't believe any answer,
+fullSupport fails for S', so ¬fullSupport ctx.dox d.s'Den ... = true. The
+prejacent "automatically" fails to support any direction, which is why
+interrogative prejacents are typically fine cross-linguistically.
+
+This captures IKW §5.2's observation that S' can be interrogative. -/
+theorem interrogative_prejacent_satisfies_ci_condition {W : Type*} [Fintype W]
+    (dox : InfoState W) (s'Den : Issue W) (prior : Prior W)
+    (α : W → Bool) (worlds : List W)
+    (hNoBelief : ∀ q, q ∈ s'Den.alternatives →
+      Semantics.Questions.Inquisitive.supports dox q worlds = false) :
+    !fullSupport dox s'Den prior α worlds = true := by
+  rw [fullSupport_fails_unbelieved dox s'Den prior α worlds hNoBelief]
+  rfl
+
+end Semantics.Lexical.Particle.DiscourseOnly

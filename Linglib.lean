@@ -207,6 +207,7 @@ import Linglib.Fragments.Italian.Pronouns
 import Linglib.Fragments.Italian.Negation
 import Linglib.Fragments.Italian.Tense
 import Linglib.Fragments.Italian.Modals
+import Linglib.Fragments.Spanish.Binominals
 import Linglib.Fragments.Spanish.Clitics
 import Linglib.Fragments.Spanish.Predicates
 import Linglib.Fragments.Spanish.PersonFeatures
@@ -353,6 +354,8 @@ import Linglib.Phenomena.Ellipsis.FragmentAnswers
 import Linglib.Phenomena.Ellipsis.Gapping
 import Linglib.Phenomena.Ellipsis.Sluicing
 import Linglib.Phenomena.Ellipsis.VPEllipsis
+import Linglib.Phenomena.Ellipsis.NPEllipsis
+import Linglib.Phenomena.Ellipsis.Bridge.MinimalismNPEllipsis
 import Linglib.Phenomena.Ellipsis.Studies.AnandHardtMcCloskey2021.Data
 import Linglib.Phenomena.Ellipsis.Studies.AnandHardtMcCloskey2021.Bridge
 import Linglib.Phenomena.Entailment.Basic
@@ -365,6 +368,8 @@ import Linglib.Phenomena.Focus.Basic
 import Linglib.Phenomena.Focus.Rooth1992Bridge
 import Linglib.Phenomena.Focus.PolarityStress
 import Linglib.Phenomena.Focus.ProsodicExhaustivity
+import Linglib.Phenomena.Focus.DiscourseOnly
+import Linglib.Phenomena.Focus.Bridge.DTSDiscourseOnly
 import Linglib.Phenomena.Generics.BareNames
 import Linglib.Phenomena.Generics.BarePlurals
 import Linglib.Phenomena.Generics.Data
@@ -472,6 +477,8 @@ import Linglib.Phenomena.Morphology.DegreeCompositionBridge
 import Linglib.Phenomena.Morphology.ZwickyPullum1983Bridge
 import Linglib.Phenomena.Morphology.Typology
 import Linglib.Phenomena.Morphology.Studies.AckermanMalouf2013.Bridge
+import Linglib.Phenomena.Morphology.CategoryChanging
+import Linglib.Phenomena.Morphology.Bridge.CategorialFeatures
 import Linglib.Phenomena.Allomorphy.SlavicVerbalizer.Data
 import Linglib.Phenomena.Allomorphy.SlavicVerbalizer.Bridge.OTAnalysis
 import Linglib.Phenomena.Negation.Studies.StankovaSimik2024.Data
@@ -670,6 +677,7 @@ import Linglib.Comparisons.KratzerEpistemicRSA
 import Linglib.Comparisons.ModalPosition
 import Linglib.Comparisons.AssertionTheories
 import Linglib.Comparisons.CaseTheories
+import Linglib.Comparisons.CategorialFeatures
 
 -- Theories: Dependency Grammar
 import Linglib.Theories.Syntax.DependencyGrammar.Core.Basic
@@ -903,6 +911,7 @@ import Linglib.Theories.Semantics.Lexical.Noun.Kind.Krifka2004
 import Linglib.Theories.Semantics.Lexical.Noun.Relational.Barker2011
 import Linglib.Theories.Semantics.Lexical.Noun.TypeShifting
 import Linglib.Theories.Semantics.Lexical.Particle.Additive
+import Linglib.Theories.Semantics.Lexical.Particle.DiscourseOnly
 import Linglib.Theories.Semantics.Lexical.Plural.Distributivity
 import Linglib.Theories.Semantics.Montague.PTQ
 import Linglib.Theories.Semantics.Entailment.AntiAdditivity
@@ -1061,6 +1070,7 @@ import Linglib.Theories.Semantics.Questions.Polarity
 import Linglib.Theories.Semantics.Questions.QParticleLayer
 import Linglib.Theories.Semantics.Questions.PragmaticAnswerhood
 import Linglib.Theories.Semantics.Questions.ProbabilisticAnswerhood
+import Linglib.Theories.Semantics.Questions.Support
 import Linglib.Theories.Semantics.Questions.ScopeReadings
 import Linglib.Theories.Semantics.Questions.SignalingGames
 import Linglib.Theories.Semantics.Questions.DegreeQuestion

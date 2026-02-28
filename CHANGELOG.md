@@ -1,5 +1,22 @@
 # Changelog
 
+## [0.227.55] - 2026-02-28
+
+### Added
+- **SUPPORT primitive** (`Theories/Semantics/Questions/Support.lean`): Two-layer SUPPORT per IKW (2025) Def. 13 — `probSupports`/`probAntiSupports` (probabilistic: P(α|E) > P(α)), `fullSupport` (doxastic + probabilistic: DOX_sp ⊆ q ∧ P(r|q) > P(r)). `fullSupport_declarative`, `fullSupport_fails_unbelieved` (interrogative restriction derived, not stipulated), `probAntiSupports_implies_not_probSupports` (*but*/*only* asymmetry). Shared by additive particles (Thomas 2026) and discourse *only* (IKW 2025).
+- **Discourse *only*** (`Theories/Semantics/Lexical/Particle/DiscourseOnly.lean`): IKW (2025) Def. 16. `Context` (QUD + prior + doxastic state + partial answers), `Sentence` (inquisitive denotations sDen/s'Den), `ciContent` with universal quantification over partial answers. Interrogative restriction derived from `fullSupport_fails_unbelieved` — no `ClauseType` stipulation. `interrogative_prejacent_satisfies_ci_condition` (S' as question trivially fails to support).
+- **Cross-linguistic data** (`Phenomena/Focus/DiscourseOnly.lean`): 12 discourse *only* data points from IKW (2025) — Italian *solo che* (3), Russian *tol'ko* (3), Hungarian *csak* (3), Mandarin *zhǐshì* (2), English *only* (1). Per-datum verification theorems.
+- **DTS bridge** (`Phenomena/Focus/Bridge/DTSDiscourseOnly.lean`): `DTSDiscourseOnlyWitness` requires only `sPosRelevant` (not `s'NegRelevant`). `negRelevant_implies_not_probSupports` (DTS negative relevance → non-support), `but_sufficient_for_only` (*but* condition subsumes *only* condition, IKW §6). `discOnly_implies_unexpectedness_under_but` delegates to Theorem 8 under stronger *but* premises. 2 sorry.
+
+## [0.227.54] - 2026-02-28
+
+### Added
+- **Nominal extended projection** (`Theories/Syntax/Minimalism/`): Added `n` (categorizer/gender, Marantz 2001), `Num` (number, Ritter 1991), `Q` (quantity/classifier, Borer 2005) to `Cat`. Full nominal spine N(F0) → n(F1) → Num(F2) → Q(F3) → D(F4) parallels the verbal spine at each F-level. Updated `fValue`, `catFeatures`, `catFamily`, `epSemanticType`, `argumentDomainCat`. Nominal argument domain is nP (F0–F1), symmetric with verbal vP. Key theorem: `verbal_nominal_parallel`.
+- **NP-ellipsis phenomena** (`Phenomena/Ellipsis/NPEllipsis.lean`): Saab (2026) three-way Spanish binominal classification (pseudo-partitive, quantificational, qualitative) with NP-ellipsis and agreement data. Core result: `npe_iff_numE` (NP-ellipsis ↔ Num[E]). Per-datum verification for 6 examples.
+- **NP-ellipsis bridge** (`Phenomena/Ellipsis/Bridge/MinimalismNPEllipsis.lean`): Connects Minimalist nominal spine to ellipsis data. Proves argument domain symmetry (`argdomain_boundary_parallel`), licensing predictions (`licensing_matches_data`), EP-internal relations across the nominal spine.
+- **[E] feature** (`Features.lean`): Added `ellipsis : Bool → FeatureVal` for NP-ellipsis licensing. Extended `EllipsisLicense` with `NominalEllipsisLicense` (Num[E], Lobeck 1995 / Saab 2026), making the three-way ellipsis licensing typology explicit (e-GIVENness / SIC / Num[E]).
+- **Spanish binominal fragment** (`Fragments/Spanish/Binominals.lean`): 9 binominal noun entries (grupo, conjunto, serie, montón, pila, cantidad, mierda, maravilla, desastre) with type classification and per-noun NPE verification.
+
 ## [0.227.53] - 2026-02-27
 
 ### Added
