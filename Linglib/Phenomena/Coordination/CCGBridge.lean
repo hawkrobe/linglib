@@ -34,7 +34,7 @@ Both conjuncts have category S/NP, so they can coordinate normally.
 -/
 
 import Linglib.Theories.Syntax.CCG.Core.Basic
-import Linglib.Theories.Syntax.CCG.Bridge.Interface
+import Linglib.Theories.Interfaces.SyntaxSemantics.CCG.Interface
 import Linglib.Phenomena.Coordination.Data
 
 namespace Phenomena.Coordination

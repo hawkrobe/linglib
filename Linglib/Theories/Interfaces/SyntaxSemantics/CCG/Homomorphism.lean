@@ -18,7 +18,7 @@ corresponds to a semantic operation.
 -/
 
 import Linglib.Theories.Syntax.CCG.Core.Basic
-import Linglib.Theories.Syntax.CCG.Bridge.Interface
+import Linglib.Theories.Interfaces.SyntaxSemantics.CCG.Interface
 import Linglib.Theories.Syntax.CCG.Core.Combinators
 import Linglib.Theories.Semantics.Montague.Basic
 

@@ -34,7 +34,7 @@ with a concrete linguistic example: "the book that John read _"
 - Heim & Kratzer (1998) "Semantics in Generative Grammar", Ch. 7, 8
 -/
 
-import Linglib.Theories.Syntax.Minimalism.Bridge.Interface
+import Linglib.Theories.Interfaces.SyntaxSemantics.Minimalism.Interface
 import Linglib.Theories.Syntax.Minimalism.Core.Basic
 
 namespace Minimalism.Bridge.RelativeClauses

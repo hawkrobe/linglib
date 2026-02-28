@@ -633,9 +633,9 @@ import Linglib.Phenomena.PhonologicalAlternation.Bridge.AutosegmentalDerivations
 import Linglib.Theories.Syntax.CCG.Core.Basic
 import Linglib.Theories.Syntax.CCG.Core.Combinators
 import Linglib.Theories.Syntax.CCG.Core.FromFragments
-import Linglib.Theories.Syntax.CCG.Bridge.Interface
-import Linglib.Theories.Syntax.CCG.Bridge.Homomorphism
-import Linglib.Theories.Syntax.CCG.Bridge.Derivation
+import Linglib.Theories.Interfaces.SyntaxSemantics.CCG.Interface
+import Linglib.Theories.Interfaces.SyntaxSemantics.CCG.Homomorphism
+import Linglib.Theories.Interfaces.SyntaxSemantics.CCG.Derivation
 import Linglib.Phenomena.Agreement.Bridge.CCGAgreement
 import Linglib.Phenomena.Agreement.Bridge.MamAgreeSpellout
 import Linglib.Phenomena.Agreement.DifferentialIndexing
@@ -825,7 +825,7 @@ import Linglib.Theories.Syntax.Minimalism.Core.Labeling
 import Linglib.Theories.Syntax.Minimalism.Core.Phase
 import Linglib.Theories.Syntax.Minimalism.Formal.MergeUnification
 import Linglib.Theories.Syntax.Minimalism.Scope
-import Linglib.Theories.Syntax.Minimalism.Bridge.Interface
+import Linglib.Theories.Interfaces.SyntaxSemantics.Minimalism.Interface
 import Linglib.Theories.Syntax.Minimalism.Bridge.CombinationSchemata
 import Linglib.Theories.Syntax.Minimalism.Bridge.RelativeClauses
 import Linglib.Theories.Syntax.Minimalism.Core.Structure
@@ -833,7 +833,7 @@ import Linglib.Theories.Syntax.Minimalism.Core.Basic
 import Linglib.Theories.Syntax.Minimalism.Core.Voice
 import Linglib.Theories.Syntax.Minimalism.Core.Applicative
 import Linglib.Theories.Syntax.Minimalism.Core.SmallClause
-import Linglib.Theories.Syntax.Minimalism.Bridge.EventStructureBridge
+import Linglib.Theories.Interfaces.SyntaxSemantics.Minimalism.EventStructureBridge
 import Linglib.Theories.Morphology.DM.Fission
 import Linglib.Theories.Morphology.DM.Categorizer
 import Linglib.Theories.Morphology.Core.CliticVsAffix
@@ -892,6 +892,7 @@ import Linglib.Theories.Semantics.Probabilistic.Graded.BayesianSemantics
 import Linglib.Theories.Semantics.Probabilistic.Graded.GradedProposition
 import Linglib.Theories.Pragmatics.RSA.Core.SemanticBackend
 import Linglib.Theories.Interfaces.SyntaxSemantics.SyntaxInterface
+import Linglib.Theories.Interfaces.SyntaxSemantics.Borer2005
 import Linglib.Theories.Semantics.Montague.Modification
 import Linglib.Theories.Semantics.Lexical.Noun.GradableNouns
 import Linglib.Theories.Semantics.Lexical.Noun.Kind.Carlson1977
