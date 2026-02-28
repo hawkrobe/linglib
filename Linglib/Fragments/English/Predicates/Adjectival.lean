@@ -136,6 +136,78 @@ def dry : AdjectivalPredicateEntry where
   antonymRelation := some .contradictory
 
 
+/-- "clean" — closed scale (maximally clean), contradictory to "dirty" -/
+def clean : AdjectivalPredicateEntry where
+  form := "clean"
+  scaleType := .closed
+  dimension := "cleanliness"
+  antonymForm := some "dirty"
+  antonymRelation := some .contradictory
+
+/-- "dirty" — closed scale (maximally dirty), contradictory to "clean" -/
+def dirty : AdjectivalPredicateEntry where
+  form := "dirty"
+  scaleType := .closed
+  dimension := "cleanliness"
+  antonymForm := some "clean"
+  antonymRelation := some .contradictory
+
+/-- "straight" — closed scale (maximally straight), contradictory to "bent" -/
+def straight : AdjectivalPredicateEntry where
+  form := "straight"
+  scaleType := .closed
+  dimension := "straightness"
+  antonymForm := some "bent"
+  antonymRelation := some .contradictory
+
+/-- "flat" — closed scale (maximally flat), contradictory to "bumpy" -/
+def flat : AdjectivalPredicateEntry where
+  form := "flat"
+  scaleType := .closed
+  dimension := "flatness"
+  antonymForm := some "bumpy"
+  antonymRelation := some .contradictory
+
+/-- "open" — closed scale (maximally open), contradictory to "closed" -/
+def open_ : AdjectivalPredicateEntry where
+  form := "open"
+  scaleType := .closed
+  dimension := "openness"
+  antonymForm := some "closed"
+  antonymRelation := some .contradictory
+
+/-- "long" — open scale, contrary to "short" (length dimension) -/
+def long : AdjectivalPredicateEntry where
+  form := "long"
+  scaleType := .open_
+  dimension := "length"
+  antonymForm := some "short"
+  antonymRelation := some .contrary
+
+/-- "wide" — open scale, contrary to "narrow" -/
+def wide : AdjectivalPredicateEntry where
+  form := "wide"
+  scaleType := .open_
+  dimension := "width"
+  antonymForm := some "narrow"
+  antonymRelation := some .contrary
+
+/-- "cool" — open scale, contrary to "warm" -/
+def cool : AdjectivalPredicateEntry where
+  form := "cool"
+  scaleType := .open_
+  dimension := "temperature"
+  antonymForm := some "warm"
+  antonymRelation := some .contrary
+
+/-- "warm" — open scale, contrary to "cool" -/
+def warm : AdjectivalPredicateEntry where
+  form := "warm"
+  scaleType := .open_
+  dimension := "temperature"
+  antonymForm := some "cool"
+  antonymRelation := some .contrary
+
 /-- All adjectival predicate entries -/
 def allEntries : List (AdjectivalPredicateEntry) := [
   tall, short,
@@ -143,7 +215,9 @@ def allEntries : List (AdjectivalPredicateEntry) := [
   full, empty,
   hot, cold,
   expensive, cheap,
-  wet, dry
+  wet, dry,
+  clean, dirty, straight, flat, open_,
+  long, wide, cool, warm
 ]
 
 /-- Look up an entry by form -/

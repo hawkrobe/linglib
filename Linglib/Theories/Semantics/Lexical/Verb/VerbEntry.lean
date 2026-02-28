@@ -11,6 +11,7 @@ import Linglib.Theories.Semantics.Causation.Basic
 import Linglib.Theories.Semantics.Causation.Implicative
 import Linglib.Theories.Semantics.Causation.PsychCausation
 import Linglib.Theories.Semantics.Lexical.Verb.Aspect
+import Linglib.Theories.Semantics.Lexical.Verb.DegreeAchievement
 import Linglib.Theories.Semantics.Events.Krifka1998
 
 /-! # Cross-Linguistic Verb Infrastructure
@@ -50,6 +51,7 @@ open Semantics.Attitudes.Preferential (AttitudeValence NVPClass PreferentialPred
 open Core.NaturalLogic (EntailmentSig)
 open Semantics.Causation.PsychCausation (CausalSource)
 open Semantics.Lexical.Verb.Aspect (VendlerClass)
+open Semantics.Lexical.Verb.DegreeAchievement (DegreeAchievementScale)
 open Semantics.Events.Krifka1998 (VerbIncClass)
 
 /--
@@ -247,6 +249,10 @@ structure VerbCore where
       (bounded) object. `none` for verbs where Vendler class is inapplicable
       (e.g., clause-embedding verbs). -/
   vendlerClass : Option VendlerClass := none
+  /-- For degree achievements (Kennedy & Levin 2007): the scale structure from
+      which default vendlerClass is derived. When present, vendlerClass should
+      agree with degreeAchievementScale.defaultVendlerClass. -/
+  degreeAchievementScale : Option DegreeAchievementScale := none
   /-- Krifka (1998) incrementality class of the object/theme role.
       `.sinc` = strictly incremental (eat, build); `.inc` = incremental
       with backups (read); `.cumOnly` = cumulative only (push, carry).
@@ -300,6 +306,11 @@ structure VerbCore where
   /-- Root-specific quality dimensions (within-class variation). -/
   rootProfile : Option RootProfile := none
   deriving Repr, BEq
+
+/-- Derive vendlerClass from degreeAchievementScale if present.
+    Falls back to the stipulated vendlerClass field. -/
+def VerbCore.derivedVendlerClass (v : VerbCore) : Option VendlerClass :=
+  v.vendlerClass <|> v.degreeAchievementScale.map (·.defaultVendlerClass)
 
 /-- Veridicality is DERIVED from the attitude builder -/
 def VerbCore.veridicality (v : VerbCore) : Option Veridicality :=

@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.227.52] - 2026-02-27
+
+### Added
+- **Degree achievements** (`Theories/Semantics/Lexical/Verb/DegreeAchievement.lean`): Kennedy & Levin (2007) — derive `VendlerClass` from adjectival scale boundedness. `DegreeAchievementScale` structure with `defaultTelicity`, `defaultVendlerClass`, `LicensingPipeline` instance. Key theorems: `closed_scale_telic`, `open_scale_atelic`, `telicity_vendler_agree`.
+- **Degree achievement fragment entries**: 12 DA verbs annotated with `degreeAchievementScale` — 6 closed-scale (bend, boil, clean, straighten, flatten, open) and 6 open-scale (rust, increase, lengthen, widen, cool, warm). 9 new adjective entries (clean, dirty, straight, flat, open, long, wide, cool, warm) in `Adjectival.lean`.
+- **Degree achievement bridge** (`Phenomena/TenseAspect/Bridge/DegreeAchievement.lean`): per-verb derived vendlerClass verification (§1), adjective-verb scale agreement (§2), telicity diagnostic predictions (§3), pipeline convergence (§4). All theorems close by `rfl`.
+- **DA auto-test** in `CrossBridgeConsistency.lean`: `all_verbs_da_vendler_consistent` — every verb with `degreeAchievementScale` has matching `vendlerClass` (by `native_decide`).
+
+## [0.227.51] - 2026-02-27
+
+### Changed
+- **Normality orderings audit** (`Core/Order/Normality.lean`): extensionality lemma (`NormalityOrder.ext`), `connected` predicate, `total_connected`, `refine_total_connected`, idempotency (`refine_idempotent`, Prop 3.6(ii)), commutativity (`refine_comm`), `refine_univ`/`refine_empty` identity laws, `refine_of_respects` (respecting = no-op), `optimal_of_respects_connected` (general presumably theorem with connectedness condition). Fixed Prop 2 → Prop 3.6(iv) citation.
+- **Veltman defaults strengthened** (`Dynamic/Effects/Default/Basic.lean`): added `presumably_passes` (general version with connectedness), `normallyUpdate_idempotent`, `normallyUpdate_normally_idempotent`, `normallyUpdate_comm`. Fixed ExpState notation (`σ = ⟨ε, s⟩`), `_hφψ` → `hφψ`, Nixon Diamond docstring (honest about degenerate vs conditional case). Added §4 scope note in module docstring.
+- **PlausibilityOrder unified** (`Core/Logic/BeliefRevision.lean`): `PlausibilityOrder` now `extends NormalityOrder` instead of duplicating fields. `kratzerPlausibility` constructs via `NormalityOrder.fromProps`. Zero downstream breakage.
+
 ## [0.227.49] - 2026-02-27
 
 ### Added

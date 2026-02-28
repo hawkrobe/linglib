@@ -587,6 +587,7 @@ import Linglib.Phenomena.TenseAspect.Bridge.Krifka1989
 import Linglib.Phenomena.TenseAspect.Bridge.GradualChange
 import Linglib.Phenomena.TenseAspect.Bridge.DimensionCoherence
 import Linglib.Phenomena.TenseAspect.Bridge.CrossBridgeConsistency
+import Linglib.Phenomena.TenseAspect.Bridge.DegreeAchievement
 import Linglib.Phenomena.TemporalConnectives.Compare
 import Linglib.Phenomena.TemporalConnectives.NegationData
 import Linglib.Phenomena.TemporalConnectives.VeridicalityBridge
@@ -927,6 +928,7 @@ import Linglib.Theories.Semantics.Tense.Declerck
 import Linglib.Theories.Semantics.Tense.Anderson
 import Linglib.Theories.Semantics.Montague.Variables
 import Linglib.Theories.Semantics.Lexical.Verb.Aspect
+import Linglib.Theories.Semantics.Lexical.Verb.DegreeAchievement
 import Linglib.Theories.Semantics.Lexical.Verb.ChangeOfState.Theory
 import Linglib.Theories.Semantics.Lexical.Verb.Habituals
 import Linglib.Theories.Semantics.Lexical.Verb.SelectionalPreferences

@@ -24,6 +24,8 @@ open Core.Verbs
 open NadathurLauer2020.Builder (CausativeBuilder)
 open Nadathur2023.Implicative (ImplicativeBuilder)
 open Semantics.Lexical.Verb.Aspect (VendlerClass)
+open Semantics.Lexical.Verb.DegreeAchievement (DegreeAchievementScale)
+open Core.Scale (Boundedness)
 open Semantics.Events.Krifka1998 (VerbIncClass)
 
 -- ════════════════════════════════════════════════════
@@ -224,6 +226,7 @@ def cover : VerbEntry := .mkRegular {
   subjectTheta := some .agent
   objectTheta := some .theme
   vendlerClass := some .accomplishment
+  verbIncClass := some .sinc
   selectsDimension := some .distance }
 
 /-- "measure" — general measurement predicate. -/
@@ -310,6 +313,7 @@ def know : VerbEntry where
   formPastPart := "known"
   formPresPart := "knowing"
   complementType := .finiteClause
+  vendlerClass := some .state
   subjectTheta := some .experiencer
   passivizable := false
   presupType := some .softTrigger
@@ -326,6 +330,7 @@ def regret : VerbEntry where
   formPastPart := "regretted"
   formPresPart := "regretting"
   complementType := .finiteClause
+  vendlerClass := some .state
   subjectTheta := some .experiencer
   passivizable := false
   presupType := some .softTrigger
@@ -335,6 +340,7 @@ def regret : VerbEntry where
 def realize : VerbEntry := .mkRegular {
   form := "realize"
   complementType := .finiteClause
+  vendlerClass := some .achievement
   subjectTheta := some .experiencer
   passivizable := false
   presupType := some .softTrigger
@@ -345,6 +351,7 @@ def realize : VerbEntry := .mkRegular {
 def discover : VerbEntry := .mkRegular {
   form := "discover"
   complementType := .finiteClause
+  vendlerClass := some .achievement
   subjectTheta := some .experiencer
   passivizable := false
   presupType := some .softTrigger
@@ -356,6 +363,7 @@ def discover : VerbEntry := .mkRegular {
 def notice : VerbEntry := .mkRegular {
   form := "notice"
   complementType := .finiteClause
+  vendlerClass := some .achievement
   subjectTheta := some .experiencer
   passivizable := false
   presupType := some .softTrigger
@@ -374,6 +382,7 @@ def stop : VerbEntry where
   formPastPart := "stopped"
   formPresPart := "stopping"
   complementType := .gerund
+  vendlerClass := some .achievement
   subjectTheta := some .agent
   controlType := .subjectControl
   passivizable := false
@@ -389,6 +398,7 @@ def quit : VerbEntry where
   formPastPart := "quit"
   formPresPart := "quitting"
   complementType := .gerund
+  vendlerClass := some .achievement
   subjectTheta := some .agent
   controlType := .subjectControl
   passivizable := false
@@ -400,6 +410,7 @@ def quit : VerbEntry where
 def start : VerbEntry := .mkRegular {
   form := "start"
   complementType := .gerund
+  vendlerClass := some .achievement
   subjectTheta := some .agent
   controlType := .subjectControl
   passivizable := false
@@ -415,6 +426,7 @@ def begin_ : VerbEntry where
   formPastPart := "begun"
   formPresPart := "beginning"
   complementType := .gerund
+  vendlerClass := some .achievement
   subjectTheta := some .agent
   controlType := .subjectControl
   passivizable := false
@@ -426,6 +438,7 @@ def begin_ : VerbEntry where
 def continue_ : VerbEntry := .mkRegular {
   form := "continue"
   complementType := .gerund
+  vendlerClass := some .activity
   subjectTheta := some .agent
   controlType := .subjectControl
   passivizable := false
@@ -441,6 +454,7 @@ def keep : VerbEntry where
   formPastPart := "kept"
   formPresPart := "keeping"
   complementType := .gerund
+  vendlerClass := some .activity
   subjectTheta := some .agent
   controlType := .subjectControl
   passivizable := false
@@ -458,6 +472,7 @@ def keep : VerbEntry where
 def manage : VerbEntry := .mkRegular {
   form := "manage"
   complementType := .infinitival
+  vendlerClass := some .achievement
   subjectTheta := some .agent
   controlType := .subjectControl
   passivizable := false
@@ -467,6 +482,7 @@ def manage : VerbEntry := .mkRegular {
 def fail : VerbEntry := .mkRegular {
   form := "fail"
   complementType := .infinitival
+  vendlerClass := some .achievement
   subjectTheta := some .agent
   controlType := .subjectControl
   passivizable := false
@@ -480,6 +496,7 @@ def try_ : VerbEntry where
   formPastPart := "tried"
   formPresPart := "trying"
   complementType := .infinitival
+  vendlerClass := some .activity
   subjectTheta := some .agent
   controlType := .subjectControl
   passivizable := false
@@ -488,6 +505,7 @@ def try_ : VerbEntry where
 def persuade : VerbEntry := .mkRegular {
   form := "persuade"
   complementType := .infinitival
+  vendlerClass := some .accomplishment
   subjectTheta := some .agent
   objectTheta := some .experiencer
   controlType := .objectControl }
@@ -496,6 +514,7 @@ def persuade : VerbEntry := .mkRegular {
 def promise : VerbEntry := .mkRegular {
   form := "promise"
   complementType := .infinitival
+  vendlerClass := some .achievement
   subjectTheta := some .agent
   objectTheta := some .goal
   controlType := .subjectControl }
@@ -504,6 +523,7 @@ def promise : VerbEntry := .mkRegular {
 def remember : VerbEntry := .mkRegular {
   form := "remember"
   complementType := .infinitival
+  vendlerClass := some .achievement
   subjectTheta := some .experiencer
   controlType := .subjectControl
   passivizable := false
@@ -517,6 +537,7 @@ def forget : VerbEntry where
   formPastPart := "forgotten"
   formPresPart := "forgetting"
   complementType := .infinitival
+  vendlerClass := some .achievement
   subjectTheta := some .experiencer
   controlType := .subjectControl
   passivizable := false
@@ -530,6 +551,7 @@ def forget : VerbEntry where
 def believe : VerbEntry := .mkRegular {
   form := "believe"
   complementType := .finiteClause
+  vendlerClass := some .state
   subjectTheta := some .experiencer
   passivizable := false
   opaqueContext := true
@@ -544,6 +566,7 @@ def think : VerbEntry where
   formPastPart := "thought"
   formPresPart := "thinking"
   complementType := .finiteClause
+  vendlerClass := some .state
   subjectTheta := some .experiencer
   passivizable := false
   opaqueContext := true
@@ -558,6 +581,7 @@ def think : VerbEntry where
 def want : VerbEntry := .mkRegular {
   form := "want"
   complementType := .infinitival
+  vendlerClass := some .state
   subjectTheta := some .experiencer
   controlType := .subjectControl
   passivizable := false
@@ -572,6 +596,7 @@ def want : VerbEntry := .mkRegular {
 def hope : VerbEntry := .mkRegular {
   form := "hope"
   complementType := .finiteClause
+  vendlerClass := some .state
   altComplementType := some .infinitival
   altControlType := .subjectControl
   subjectTheta := some .experiencer
@@ -584,6 +609,7 @@ def hope : VerbEntry := .mkRegular {
 def expect : VerbEntry := .mkRegular {
   form := "expect"
   complementType := .finiteClause
+  vendlerClass := some .state
   subjectTheta := some .experiencer
   passivizable := false
   opaqueContext := true
@@ -598,6 +624,7 @@ def wish : VerbEntry where
   formPastPart := "wished"
   formPresPart := "wishing"
   complementType := .finiteClause
+  vendlerClass := some .state
   subjectTheta := some .experiencer
   passivizable := false
   opaqueContext := true
@@ -609,6 +636,7 @@ def wish : VerbEntry where
 def fear : VerbEntry := .mkRegular {
   form := "fear"
   complementType := .finiteClause
+  vendlerClass := some .state
   subjectTheta := some .experiencer
   passivizable := false
   opaqueContext := true
@@ -620,6 +648,7 @@ def fear : VerbEntry := .mkRegular {
 def dread : VerbEntry := .mkRegular {
   form := "dread"
   complementType := .finiteClause
+  vendlerClass := some .state
   subjectTheta := some .experiencer
   passivizable := false
   opaqueContext := true
@@ -635,6 +664,7 @@ def worry : VerbEntry where
   formPastPart := "worried"
   formPresPart := "worrying"
   complementType := .finiteClause
+  vendlerClass := some .state
   subjectTheta := some .experiencer
   passivizable := false
   opaqueContext := true
@@ -649,6 +679,7 @@ def worry : VerbEntry where
 def seem : VerbEntry := .mkRegular {
   form := "seem"
   complementType := .infinitival
+  vendlerClass := some .state
   subjectTheta := none
   controlType := .raising
   passivizable := false
@@ -662,6 +693,7 @@ def seem : VerbEntry := .mkRegular {
 def cause : VerbEntry := .mkRegular {
   form := "cause"
   complementType := .infinitival
+  vendlerClass := some .accomplishment
   subjectTheta := some .agent
   objectTheta := some .patient
   controlType := .objectControl
@@ -676,6 +708,7 @@ def make : VerbEntry where
   formPastPart := "made"
   formPresPart := "making"
   complementType := .smallClause
+  vendlerClass := some .accomplishment
   subjectTheta := some .agent
   objectTheta := some .patient
   controlType := .objectControl
@@ -689,6 +722,7 @@ def let_ : VerbEntry where
   formPastPart := "let"
   formPresPart := "letting"
   complementType := .smallClause
+  vendlerClass := some .achievement
   subjectTheta := some .agent
   objectTheta := some .patient
   controlType := .objectControl
@@ -702,6 +736,7 @@ def have_caus : VerbEntry where
   formPastPart := "had"
   formPresPart := "having"
   complementType := .smallClause
+  vendlerClass := some .achievement
   subjectTheta := some .agent
   objectTheta := some .patient
   controlType := .objectControl
@@ -716,6 +751,7 @@ def get_caus : VerbEntry where
   formPastPart := "gotten"
   formPresPart := "getting"
   complementType := .infinitival
+  vendlerClass := some .accomplishment
   subjectTheta := some .agent
   objectTheta := some .patient
   controlType := .objectControl
@@ -726,6 +762,7 @@ def get_caus : VerbEntry where
 def force : VerbEntry := .mkRegular {
   form := "force"
   complementType := .infinitival
+  vendlerClass := some .accomplishment
   subjectTheta := some .agent
   objectTheta := some .patient
   controlType := .objectControl
@@ -790,6 +827,7 @@ def tear_ : VerbEntry where
   objectTheta := some .patient
   unaccusative := false
   vendlerClass := some .accomplishment
+  verbIncClass := some .sinc
   causativeBuilder := some .make
   levinClass := some .break_
   rootProfile := some {
@@ -807,6 +845,7 @@ def burn : VerbEntry := .mkRegular {
   subjectTheta := some .agent
   objectTheta := some .patient
   vendlerClass := some .accomplishment
+  verbIncClass := some .sinc
   causativeBuilder := some .make
   levinClass := some .otherCoS
   rootProfile := some {
@@ -839,6 +878,7 @@ def melt : VerbEntry := .mkRegular {
   subjectTheta := some .agent
   objectTheta := some .patient
   vendlerClass := some .accomplishment
+  verbIncClass := some .sinc
   causativeBuilder := some .make
   levinClass := some .otherCoS
   rootProfile := some {
@@ -916,6 +956,7 @@ def sweep : VerbEntry where
   formPastPart := "swept"
   formPresPart := "sweeping"
   complementType := .np
+  vendlerClass := some .activity
   subjectTheta := none
   objectTheta := some .theme
   passivizable := true
@@ -935,6 +976,7 @@ def sweep_instr : VerbEntry where
   formPastPart := "swept"
   formPresPart := "sweeping"
   complementType := .np
+  vendlerClass := some .activity
   subjectTheta := some .agent
   objectTheta := some .theme
   passivizable := true
@@ -960,6 +1002,7 @@ def say : VerbEntry where
   formPresPart := "saying"
   speechActVerb := true
   complementType := .finiteClause
+  vendlerClass := some .achievement
   levinClass := some .say
 
 /-- "tell" — communication verb with recipient -/
@@ -971,6 +1014,7 @@ def tell : VerbEntry where
   formPresPart := "telling"
   speechActVerb := true
   complementType := .finiteClause
+  vendlerClass := some .achievement
   levinClass := some .tell
 
 /-- "claim" — communication verb, speaker doesn't endorse -/
@@ -978,6 +1022,7 @@ def claim : VerbEntry := .mkRegular {
   form := "claim"
   speechActVerb := true
   complementType := .finiteClause
+  vendlerClass := some .achievement
   levinClass := some .say }
 
 -- ════════════════════════════════════════════════════
@@ -995,6 +1040,7 @@ def whisper : VerbEntry := .mkRegular {
   form := "whisper"
   speechActVerb := true
   complementType := .finiteClause
+  vendlerClass := some .activity
   subjectTheta := some .theme
   unaccusative := true
   levinClass := some .mannerOfSpeaking }
@@ -1004,6 +1050,7 @@ def murmur : VerbEntry := .mkRegular {
   form := "murmur"
   speechActVerb := true
   complementType := .finiteClause
+  vendlerClass := some .activity
   subjectTheta := some .theme
   unaccusative := true
   levinClass := some .mannerOfSpeaking }
@@ -1013,6 +1060,7 @@ def shout : VerbEntry := .mkRegular {
   form := "shout"
   speechActVerb := true
   complementType := .finiteClause
+  vendlerClass := some .activity
   subjectTheta := some .theme
   unaccusative := true
   levinClass := some .mannerOfSpeaking }
@@ -1022,6 +1070,7 @@ def cry : VerbEntry := .mkRegular {
   form := "cry"
   speechActVerb := true
   complementType := .finiteClause
+  vendlerClass := some .activity
   subjectTheta := some .theme
   unaccusative := true
   levinClass := some .mannerOfSpeaking }
@@ -1031,6 +1080,7 @@ def scream : VerbEntry := .mkRegular {
   form := "scream"
   speechActVerb := true
   complementType := .finiteClause
+  vendlerClass := some .activity
   subjectTheta := some .theme
   unaccusative := true
   levinClass := some .mannerOfSpeaking }
@@ -1040,6 +1090,7 @@ def mumble : VerbEntry := .mkRegular {
   form := "mumble"
   speechActVerb := true
   complementType := .finiteClause
+  vendlerClass := some .activity
   subjectTheta := some .theme
   unaccusative := true
   levinClass := some .mannerOfSpeaking }
@@ -1049,6 +1100,7 @@ def mutter : VerbEntry := .mkRegular {
   form := "mutter"
   speechActVerb := true
   complementType := .finiteClause
+  vendlerClass := some .activity
   subjectTheta := some .theme
   unaccusative := true
   levinClass := some .mannerOfSpeaking }
@@ -1058,6 +1110,7 @@ def shriek : VerbEntry := .mkRegular {
   form := "shriek"
   speechActVerb := true
   complementType := .finiteClause
+  vendlerClass := some .activity
   subjectTheta := some .theme
   unaccusative := true
   levinClass := some .mannerOfSpeaking }
@@ -1067,6 +1120,7 @@ def yell : VerbEntry := .mkRegular {
   form := "yell"
   speechActVerb := true
   complementType := .finiteClause
+  vendlerClass := some .activity
   subjectTheta := some .theme
   unaccusative := true
   levinClass := some .mannerOfSpeaking }
@@ -1076,6 +1130,7 @@ def groan : VerbEntry := .mkRegular {
   form := "groan"
   speechActVerb := true
   complementType := .finiteClause
+  vendlerClass := some .activity
   subjectTheta := some .theme
   unaccusative := true
   levinClass := some .mannerOfSpeaking }
@@ -1085,6 +1140,7 @@ def grumble : VerbEntry := .mkRegular {
   form := "grumble"
   speechActVerb := true
   complementType := .finiteClause
+  vendlerClass := some .activity
   subjectTheta := some .theme
   unaccusative := true
   levinClass := some .mannerOfSpeaking }
@@ -1094,6 +1150,7 @@ def hiss : VerbEntry := .mkRegular {
   form := "hiss"
   speechActVerb := true
   complementType := .finiteClause
+  vendlerClass := some .activity
   subjectTheta := some .theme
   unaccusative := true
   levinClass := some .mannerOfSpeaking }
@@ -1103,6 +1160,7 @@ def sigh : VerbEntry := .mkRegular {
   form := "sigh"
   speechActVerb := true
   complementType := .finiteClause
+  vendlerClass := some .activity
   subjectTheta := some .theme
   unaccusative := true
   levinClass := some .mannerOfSpeaking }
@@ -1112,6 +1170,7 @@ def whimper : VerbEntry := .mkRegular {
   form := "whimper"
   speechActVerb := true
   complementType := .finiteClause
+  vendlerClass := some .activity
   subjectTheta := some .theme
   unaccusative := true
   levinClass := some .mannerOfSpeaking }
@@ -1121,6 +1180,7 @@ def snap : VerbEntry := .mkRegular {
   form := "snap"
   speechActVerb := true
   complementType := .finiteClause
+  vendlerClass := some .activity
   subjectTheta := some .theme
   unaccusative := true
   levinClass := some .mannerOfSpeaking }
@@ -1134,6 +1194,7 @@ def speak : VerbEntry where
   formPresPart := "speaking"
   speechActVerb := true
   complementType := .none
+  vendlerClass := some .activity
   subjectTheta := some .agent
   passivizable := false
   levinClass := some .mannerOfSpeaking
@@ -1143,6 +1204,7 @@ def talk : VerbEntry := .mkRegular {
   form := "talk"
   speechActVerb := true
   complementType := .none
+  vendlerClass := some .activity
   subjectTheta := some .agent
   passivizable := false
   levinClass := some .mannerOfSpeaking }
@@ -1155,6 +1217,7 @@ def talk : VerbEntry := .mkRegular {
 def wonder : VerbEntry := .mkRegular {
   form := "wonder"
   complementType := .question
+  vendlerClass := some .state
   takesQuestionBase := true
   opaqueContext := true }
 
@@ -1163,12 +1226,14 @@ def ask : VerbEntry := .mkRegular {
   form := "ask"
   speechActVerb := true
   complementType := .question
+  vendlerClass := some .achievement
   takesQuestionBase := true }
 
 /-- "investigate" — rogative, embeds interrogatives only -/
 def investigate : VerbEntry := .mkRegular {
   form := "investigate"
   complementType := .question
+  vendlerClass := some .activity
   subjectTheta := some .agent
   takesQuestionBase := true
   levinClass := some .search }
@@ -1181,12 +1246,14 @@ def depend_on : VerbEntry where
   formPastPart := "depended on"
   formPresPart := "depending on"
   complementType := .question
+  vendlerClass := some .state
   takesQuestionBase := true
 
 /-- "remember" in factive/question-embedding sense. -/
 def remember_rog : VerbEntry := .mkRegular {
   form := "remember"
   complementType := .finiteClause
+  vendlerClass := some .state
   subjectTheta := some .experiencer
   passivizable := false
   presupType := some .softTrigger
@@ -1202,6 +1269,7 @@ def forget_rog : VerbEntry where
   formPastPart := "forgotten"
   formPresPart := "forgetting"
   complementType := .finiteClause
+  vendlerClass := some .state
   subjectTheta := some .experiencer
   passivizable := false
   presupType := some .softTrigger
@@ -1231,6 +1299,7 @@ def forget_rog : VerbEntry where
 def manage_occasion : VerbEntry := .mkRegular {
   form := "manage"
   complementType := .infinitival
+  vendlerClass := some .achievement
   subjectTheta := some .experiencer
   controlType := .subjectControl
   passivizable := false
@@ -1242,6 +1311,7 @@ def manage_occasion : VerbEntry := .mkRegular {
 def dare : VerbEntry := .mkRegular {
   form := "dare"
   complementType := .infinitival
+  vendlerClass := some .achievement
   subjectTheta := some .experiencer
   controlType := .subjectControl
   passivizable := false
@@ -1251,6 +1321,7 @@ def dare : VerbEntry := .mkRegular {
 def bother : VerbEntry := .mkRegular {
   form := "bother"
   complementType := .infinitival
+  vendlerClass := some .achievement
   subjectTheta := some .experiencer
   controlType := .subjectControl
   passivizable := false
@@ -1260,6 +1331,7 @@ def bother : VerbEntry := .mkRegular {
 def hesitate : VerbEntry := .mkRegular {
   form := "hesitate"
   complementType := .infinitival
+  vendlerClass := some .activity
   subjectTheta := some .experiencer
   controlType := .subjectControl
   passivizable := false
@@ -1350,6 +1422,7 @@ def value : VerbEntry := .mkRegular {
 def fear_np : VerbEntry := .mkRegular {
   form := "fear"
   complementType := .np
+  vendlerClass := some .state
   subjectTheta := some .experiencer
   objectTheta := some .stimulus
   levinClass := some .admire }
@@ -1359,6 +1432,7 @@ def fear_np : VerbEntry := .mkRegular {
 def dread_np : VerbEntry := .mkRegular {
   form := "dread"
   complementType := .np
+  vendlerClass := some .state
   subjectTheta := some .experiencer
   objectTheta := some .stimulus
   levinClass := some .admire }
@@ -1374,6 +1448,7 @@ def dread_np : VerbEntry := .mkRegular {
 def frighten : VerbEntry := .mkRegular {
   form := "frighten"
   complementType := .np
+  vendlerClass := some .accomplishment
   subjectTheta := some .stimulus
   objectTheta := some .experiencer
   causalSource := some .external
@@ -1383,6 +1458,7 @@ def frighten : VerbEntry := .mkRegular {
 def amuse : VerbEntry := .mkRegular {
   form := "amuse"
   complementType := .np
+  vendlerClass := some .accomplishment
   subjectTheta := some .stimulus
   objectTheta := some .experiencer
   causalSource := some .external
@@ -1392,6 +1468,7 @@ def amuse : VerbEntry := .mkRegular {
 def fascinate : VerbEntry := .mkRegular {
   form := "fascinate"
   complementType := .np
+  vendlerClass := some .accomplishment
   subjectTheta := some .stimulus
   objectTheta := some .experiencer
   causalSource := some .external
@@ -1401,6 +1478,7 @@ def fascinate : VerbEntry := .mkRegular {
 def irritate : VerbEntry := .mkRegular {
   form := "irritate"
   complementType := .np
+  vendlerClass := some .accomplishment
   subjectTheta := some .stimulus
   objectTheta := some .experiencer
   causalSource := some .external
@@ -1410,6 +1488,7 @@ def irritate : VerbEntry := .mkRegular {
 def annoy : VerbEntry := .mkRegular {
   form := "annoy"
   complementType := .np
+  vendlerClass := some .accomplishment
   subjectTheta := some .stimulus
   objectTheta := some .experiencer
   causalSource := some .external
@@ -1419,6 +1498,7 @@ def annoy : VerbEntry := .mkRegular {
 def bore : VerbEntry := .mkRegular {
   form := "bore"
   complementType := .np
+  vendlerClass := some .accomplishment
   subjectTheta := some .stimulus
   objectTheta := some .experiencer
   causalSource := some .external
@@ -1428,6 +1508,7 @@ def bore : VerbEntry := .mkRegular {
 def charm : VerbEntry := .mkRegular {
   form := "charm"
   complementType := .np
+  vendlerClass := some .accomplishment
   subjectTheta := some .stimulus
   objectTheta := some .experiencer
   causalSource := some .external
@@ -1437,6 +1518,7 @@ def charm : VerbEntry := .mkRegular {
 def impress : VerbEntry := .mkRegular {
   form := "impress"
   complementType := .np
+  vendlerClass := some .accomplishment
   subjectTheta := some .stimulus
   objectTheta := some .experiencer
   causalSource := some .external
@@ -1446,6 +1528,7 @@ def impress : VerbEntry := .mkRegular {
 def concern : VerbEntry := .mkRegular {
   form := "concern"
   complementType := .np
+  vendlerClass := some .state
   subjectTheta := some .stimulus
   objectTheta := some .experiencer
   causalSource := some .internal
@@ -1456,6 +1539,7 @@ def concern : VerbEntry := .mkRegular {
 def interest : VerbEntry := .mkRegular {
   form := "interest"
   complementType := .np
+  vendlerClass := some .state
   subjectTheta := some .stimulus
   objectTheta := some .experiencer
   causalSource := some .internal
@@ -1466,6 +1550,7 @@ def interest : VerbEntry := .mkRegular {
 def surprise : VerbEntry := .mkRegular {
   form := "surprise"
   complementType := .np
+  vendlerClass := some .accomplishment
   subjectTheta := some .stimulus
   objectTheta := some .experiencer
   causalSource := some .external
@@ -1475,6 +1560,7 @@ def surprise : VerbEntry := .mkRegular {
 def scare : VerbEntry := .mkRegular {
   form := "scare"
   complementType := .np
+  vendlerClass := some .accomplishment
   subjectTheta := some .stimulus
   objectTheta := some .experiencer
   causalSource := some .external
@@ -1484,6 +1570,7 @@ def scare : VerbEntry := .mkRegular {
 def delight : VerbEntry := .mkRegular {
   form := "delight"
   complementType := .np
+  vendlerClass := some .accomplishment
   subjectTheta := some .stimulus
   objectTheta := some .experiencer
   causalSource := some .external
@@ -1493,6 +1580,7 @@ def delight : VerbEntry := .mkRegular {
 def embarrass : VerbEntry := .mkRegular {
   form := "embarrass"
   complementType := .np
+  vendlerClass := some .accomplishment
   subjectTheta := some .stimulus
   objectTheta := some .experiencer
   causalSource := some .external
@@ -1502,6 +1590,7 @@ def embarrass : VerbEntry := .mkRegular {
 def upset_psych : VerbEntry := .mkRegular {
   form := "upset"
   complementType := .np
+  vendlerClass := some .accomplishment
   subjectTheta := some .stimulus
   objectTheta := some .experiencer
   causalSource := some .external
@@ -1511,6 +1600,7 @@ def upset_psych : VerbEntry := .mkRegular {
 def disgust : VerbEntry := .mkRegular {
   form := "disgust"
   complementType := .np
+  vendlerClass := some .accomplishment
   subjectTheta := some .stimulus
   objectTheta := some .experiencer
   causalSource := some .external
@@ -1520,6 +1610,7 @@ def disgust : VerbEntry := .mkRegular {
 def shock : VerbEntry := .mkRegular {
   form := "shock"
   complementType := .np
+  vendlerClass := some .accomplishment
   subjectTheta := some .stimulus
   objectTheta := some .experiencer
   causalSource := some .external
@@ -1529,6 +1620,7 @@ def shock : VerbEntry := .mkRegular {
 def confuse : VerbEntry := .mkRegular {
   form := "confuse"
   complementType := .np
+  vendlerClass := some .accomplishment
   subjectTheta := some .stimulus
   objectTheta := some .experiencer
   causalSource := some .external
@@ -1538,6 +1630,7 @@ def confuse : VerbEntry := .mkRegular {
 def disappoint : VerbEntry := .mkRegular {
   form := "disappoint"
   complementType := .np
+  vendlerClass := some .accomplishment
   subjectTheta := some .stimulus
   objectTheta := some .experiencer
   causalSource := some .external
@@ -1548,6 +1641,7 @@ def disappoint : VerbEntry := .mkRegular {
 def worry_eventive : VerbEntry := .mkRegular {
   form := "worry"
   complementType := .np
+  vendlerClass := some .accomplishment
   subjectTheta := some .stimulus
   objectTheta := some .experiencer
   causalSource := some .external
@@ -1558,6 +1652,7 @@ def worry_eventive : VerbEntry := .mkRegular {
 def worry_stative : VerbEntry := .mkRegular {
   form := "worry"
   complementType := .np
+  vendlerClass := some .state
   subjectTheta := some .stimulus
   objectTheta := some .experiencer
   causalSource := some .internal
@@ -1569,6 +1664,7 @@ def worry_stative : VerbEntry := .mkRegular {
 def please_psych : VerbEntry := .mkRegular {
   form := "please"
   complementType := .np
+  vendlerClass := some .state
   subjectTheta := some .stimulus
   objectTheta := some .experiencer
   causalSource := some .internal
@@ -1580,6 +1676,7 @@ def please_psych : VerbEntry := .mkRegular {
 def trouble : VerbEntry := .mkRegular {
   form := "trouble"
   complementType := .np
+  vendlerClass := some .state
   subjectTheta := some .stimulus
   objectTheta := some .experiencer
   causalSource := some .internal
@@ -1591,6 +1688,7 @@ def trouble : VerbEntry := .mkRegular {
 def puzzle : VerbEntry := .mkRegular {
   form := "puzzle"
   complementType := .np
+  vendlerClass := some .state
   subjectTheta := some .stimulus
   objectTheta := some .experiencer
   causalSource := some .internal
@@ -1611,6 +1709,7 @@ def chase : VerbEntry := .mkRegular {
   subjectTheta := some .agent
   objectTheta := some .patient
   vendlerClass := some .activity
+  verbIncClass := some .cumOnly
   levinClass := some .chase }
 
 /-- "hit" — AgPat verb (Levin 18.1) -/
@@ -1678,8 +1777,824 @@ def drag : VerbEntry where
 def call : VerbEntry := .mkRegular {
   form := "call"
   complementType := .np
+  vendlerClass := some .activity
   subjectTheta := some .agent
   objectTheta := some .patient }
+
+-- ════════════════════════════════════════════════════
+-- § Levin Class Expansion — Putting (§ 9)
+-- ════════════════════════════════════════════════════
+
+/-- "place" — Levin 9.1 Put verbs. Instantaneous placement. -/
+def place : VerbEntry := .mkRegular {
+  form := "place"
+  complementType := .np_pp
+  subjectTheta := some .agent
+  objectTheta := some .theme
+  vendlerClass := some .achievement
+  levinClass := some .put }
+
+/-- "pour" — Levin 9.5 Pour verbs. Manner of caused motion. -/
+def pour : VerbEntry := .mkRegular {
+  form := "pour"
+  complementType := .np
+  subjectTheta := some .agent
+  objectTheta := some .theme
+  vendlerClass := some .activity
+  verbIncClass := some .cumOnly
+  levinClass := some .pour }
+
+/-- "spray" — Levin 9.7 Spray/Load verbs. Locative alternation. -/
+def spray : VerbEntry := .mkRegular {
+  form := "spray"
+  complementType := .np
+  subjectTheta := some .agent
+  objectTheta := some .theme
+  vendlerClass := some .accomplishment
+  verbIncClass := some .sinc
+  levinClass := some .sprayLoad }
+
+/-- "load" — Levin 9.7 Spray/Load verbs. Locative alternation. -/
+def load : VerbEntry := .mkRegular {
+  form := "load"
+  complementType := .np
+  subjectTheta := some .agent
+  objectTheta := some .theme
+  vendlerClass := some .accomplishment
+  verbIncClass := some .sinc
+  levinClass := some .sprayLoad }
+
+-- ════════════════════════════════════════════════════
+-- § Levin Class Expansion — Removing (§ 10)
+-- ════════════════════════════════════════════════════
+
+/-- "remove" — Levin 10.1 Remove verbs. -/
+def remove : VerbEntry := .mkRegular {
+  form := "remove"
+  complementType := .np
+  subjectTheta := some .agent
+  objectTheta := some .patient
+  vendlerClass := some .accomplishment
+  levinClass := some .remove }
+
+/-- "clean" — Levin 10.3 Clear verbs. Incremental by surface area.
+    Also a degree achievement: closed scale (maximally clean). -/
+def clean : VerbEntry := .mkRegular {
+  form := "clean"
+  complementType := .np
+  subjectTheta := some .agent
+  objectTheta := some .patient
+  vendlerClass := some .accomplishment
+  degreeAchievementScale := some {
+    scaleBoundedness := .closed, dimension := "cleanliness",
+    baseAdjective := some "clean" }
+  verbIncClass := some .sinc
+  levinClass := some .clear }
+
+/-- "steal" — Levin 10.5 Steal verbs. -/
+def steal : VerbEntry where
+  form := "steal"
+  form3sg := "steals"
+  formPast := "stole"
+  formPastPart := "stolen"
+  formPresPart := "stealing"
+  complementType := .np
+  subjectTheta := some .agent
+  objectTheta := some .patient
+  vendlerClass := some .accomplishment
+  levinClass := some .steal
+
+-- ════════════════════════════════════════════════════
+-- § Levin Class Expansion — Sending and Carrying (§ 11)
+-- ════════════════════════════════════════════════════
+
+/-- "send" — Levin 11.1 Send verbs. -/
+def send : VerbEntry where
+  form := "send"
+  form3sg := "sends"
+  formPast := "sent"
+  formPastPart := "sent"
+  formPresPart := "sending"
+  complementType := .np
+  subjectTheta := some .agent
+  objectTheta := some .theme
+  vendlerClass := some .accomplishment
+  levinClass := some .send
+
+/-- "drive" — Levin 11.5 Drive verbs (vehicle-mediated motion). -/
+def drive : VerbEntry where
+  form := "drive"
+  form3sg := "drives"
+  formPast := "drove"
+  formPastPart := "driven"
+  formPresPart := "driving"
+  complementType := .np
+  subjectTheta := some .agent
+  objectTheta := some .theme
+  vendlerClass := some .activity
+  verbIncClass := some .cumOnly
+  levinClass := some .drive
+
+-- ════════════════════════════════════════════════════
+-- § Levin Class Expansion — Change of Possession (§ 13)
+-- ════════════════════════════════════════════════════
+
+/-- "donate" — Levin 13.2 Contribute verbs. -/
+def donate : VerbEntry := .mkRegular {
+  form := "donate"
+  complementType := .np
+  subjectTheta := some .agent
+  objectTheta := some .theme
+  vendlerClass := some .accomplishment
+  levinClass := some .contribute }
+
+/-- "obtain" — Levin 13.5 Get verbs. -/
+def obtain : VerbEntry := .mkRegular {
+  form := "obtain"
+  complementType := .np
+  subjectTheta := some .agent
+  objectTheta := some .theme
+  vendlerClass := some .accomplishment
+  levinClass := some .getObtain }
+
+/-- "trade" — Levin 13.6 Exchange verbs. -/
+def trade : VerbEntry := .mkRegular {
+  form := "trade"
+  complementType := .np
+  subjectTheta := some .agent
+  objectTheta := some .theme
+  vendlerClass := some .achievement
+  levinClass := some .exchange }
+
+-- ════════════════════════════════════════════════════
+-- § Levin Class Expansion — Learn, Hold, Conceal (§ 14–16)
+-- ════════════════════════════════════════════════════
+
+/-- "learn" — Levin 14 Learn verbs. -/
+def learn : VerbEntry := .mkRegular {
+  form := "learn"
+  complementType := .np
+  subjectTheta := some .experiencer
+  objectTheta := some .theme
+  vendlerClass := some .accomplishment
+  levinClass := some .learn }
+
+/-- "hold" — Levin 15.1 Hold verbs. Stative. -/
+def hold : VerbEntry where
+  form := "hold"
+  form3sg := "holds"
+  formPast := "held"
+  formPastPart := "held"
+  formPresPart := "holding"
+  complementType := .np
+  subjectTheta := some .agent
+  objectTheta := some .patient
+  vendlerClass := some .state
+  levinClass := some .hold
+
+/-- "hide" — Levin 16 Conceal verbs. -/
+def hide : VerbEntry where
+  form := "hide"
+  form3sg := "hides"
+  formPast := "hid"
+  formPastPart := "hidden"
+  formPresPart := "hiding"
+  complementType := .np
+  subjectTheta := some .agent
+  objectTheta := some .theme
+  vendlerClass := some .accomplishment
+  levinClass := some .conceal
+
+-- ════════════════════════════════════════════════════
+-- § Levin Class Expansion — Throwing (§ 17)
+-- ════════════════════════════════════════════════════
+
+/-- "throw" — Levin 17.1 Throw verbs. Ballistic motion. -/
+def throw : VerbEntry where
+  form := "throw"
+  form3sg := "throws"
+  formPast := "threw"
+  formPastPart := "thrown"
+  formPresPart := "throwing"
+  complementType := .np
+  subjectTheta := some .agent
+  objectTheta := some .theme
+  vendlerClass := some .achievement
+  levinClass := some .throw
+
+-- ════════════════════════════════════════════════════
+-- § Levin Class Expansion — Contact (§ 19–20)
+-- ════════════════════════════════════════════════════
+
+/-- "poke" — Levin 19 Poke verbs. Punctual contact. -/
+def poke : VerbEntry := .mkRegular {
+  form := "poke"
+  complementType := .np
+  subjectTheta := some .agent
+  objectTheta := some .patient
+  vendlerClass := some .achievement
+  levinClass := some .poke }
+
+/-- "touch" — Levin 20 Touch verbs. Surface contact. -/
+def touch : VerbEntry := .mkRegular {
+  form := "touch"
+  complementType := .np
+  subjectTheta := some .agent
+  objectTheta := some .patient
+  vendlerClass := some .achievement
+  levinClass := some .touch }
+
+-- ════════════════════════════════════════════════════
+-- § Levin Class Expansion — Cutting (§ 21)
+-- ════════════════════════════════════════════════════
+
+/-- "cut" — Levin 21.1 Cut verbs. Incremental by length of cut. -/
+def cut : VerbEntry where
+  form := "cut"
+  form3sg := "cuts"
+  formPast := "cut"
+  formPastPart := "cut"
+  formPresPart := "cutting"
+  complementType := .np
+  subjectTheta := some .agent
+  objectTheta := some .patient
+  vendlerClass := some .accomplishment
+  verbIncClass := some .sinc
+  levinClass := some .cut
+
+/-- "chop" — Levin 21.2 Carve verbs. -/
+def chop : VerbEntry where
+  form := "chop"
+  form3sg := "chops"
+  formPast := "chopped"
+  formPastPart := "chopped"
+  formPresPart := "chopping"
+  complementType := .np
+  subjectTheta := some .agent
+  objectTheta := some .patient
+  vendlerClass := some .accomplishment
+  verbIncClass := some .sinc
+  levinClass := some .carve
+
+-- ════════════════════════════════════════════════════
+-- § Levin Class Expansion — Combining and Separating (§ 22–23)
+-- ════════════════════════════════════════════════════
+
+/-- "mix" — Levin 22.1 Mix verbs. Incremental by proportion combined. -/
+def mix : VerbEntry := .mkRegular {
+  form := "mix"
+  complementType := .np
+  subjectTheta := some .agent
+  objectTheta := some .patient
+  vendlerClass := some .accomplishment
+  verbIncClass := some .sinc
+  levinClass := some .mix }
+
+/-- "separate" — Levin 23.1 Separate verbs. -/
+def separate : VerbEntry := .mkRegular {
+  form := "separate"
+  complementType := .np
+  subjectTheta := some .agent
+  objectTheta := some .patient
+  vendlerClass := some .accomplishment
+  levinClass := some .separate }
+
+-- ════════════════════════════════════════════════════
+-- § Levin Class Expansion — Coloring and Image Creation (§ 24–25)
+-- ════════════════════════════════════════════════════
+
+/-- "paint" — Levin 24 Color verbs. Incremental by surface area. -/
+def paint : VerbEntry := .mkRegular {
+  form := "paint"
+  complementType := .np
+  subjectTheta := some .agent
+  objectTheta := some .theme
+  vendlerClass := some .accomplishment
+  verbIncClass := some .sinc
+  levinClass := some .color }
+
+/-- "draw" — Levin 25 Image Creation verbs. Incremental by extent. -/
+def draw : VerbEntry where
+  form := "draw"
+  form3sg := "draws"
+  formPast := "drew"
+  formPastPart := "drawn"
+  formPresPart := "drawing"
+  complementType := .np
+  subjectTheta := some .agent
+  objectTheta := some .theme
+  vendlerClass := some .accomplishment
+  verbIncClass := some .sinc
+  levinClass := some .imageCreation
+
+-- ════════════════════════════════════════════════════
+-- § Levin Class Expansion — Creation and Transformation (§ 26)
+-- ════════════════════════════════════════════════════
+
+/-- "create" — Levin 26.4 Create verbs. -/
+def create : VerbEntry := .mkRegular {
+  form := "create"
+  complementType := .np
+  subjectTheta := some .agent
+  objectTheta := some .theme
+  vendlerClass := some .accomplishment
+  levinClass := some .create }
+
+/-- "grow" — Levin 26.2 Grow verbs. Incremental by size. -/
+def grow : VerbEntry where
+  form := "grow"
+  form3sg := "grows"
+  formPast := "grew"
+  formPastPart := "grown"
+  formPresPart := "growing"
+  complementType := .np
+  subjectTheta := some .agent
+  objectTheta := some .theme
+  vendlerClass := some .accomplishment
+  verbIncClass := some .sinc
+  levinClass := some .grow
+
+/-- "perform" — Levin 26.7 Performance verbs. -/
+def perform : VerbEntry := .mkRegular {
+  form := "perform"
+  complementType := .np
+  subjectTheta := some .agent
+  objectTheta := some .theme
+  vendlerClass := some .accomplishment
+  levinClass := some .performance }
+
+-- ════════════════════════════════════════════════════
+-- § Levin Class Expansion — Predicative Complements (§ 29)
+-- ════════════════════════════════════════════════════
+
+/-- "appoint" — Levin 29.1 Appoint verbs. -/
+def appoint : VerbEntry := .mkRegular {
+  form := "appoint"
+  complementType := .np
+  subjectTheta := some .agent
+  objectTheta := some .patient
+  vendlerClass := some .achievement
+  levinClass := some .appoint }
+
+-- ════════════════════════════════════════════════════
+-- § Levin Class Expansion — Perception (§ 30)
+-- ════════════════════════════════════════════════════
+
+/-- "hear" — Levin 30.1 See verbs. Stative perception. -/
+def hear : VerbEntry where
+  form := "hear"
+  form3sg := "hears"
+  formPast := "heard"
+  formPastPart := "heard"
+  formPresPart := "hearing"
+  complementType := .np
+  subjectTheta := some .experiencer
+  objectTheta := some .stimulus
+  vendlerClass := some .state
+  levinClass := some .see
+
+-- ════════════════════════════════════════════════════
+-- § Levin Class Expansion — Judgment and Assessment (§ 33–34)
+-- ════════════════════════════════════════════════════
+
+/-- "blame" — Levin 33 Judgment verbs. -/
+def blame : VerbEntry := .mkRegular {
+  form := "blame"
+  complementType := .np
+  subjectTheta := some .agent
+  objectTheta := some .patient
+  vendlerClass := some .activity
+  verbIncClass := some .cumOnly
+  levinClass := some .judgment }
+
+/-- "evaluate" — Levin 34 Assessment verbs. -/
+def evaluate : VerbEntry := .mkRegular {
+  form := "evaluate"
+  complementType := .np
+  subjectTheta := some .agent
+  objectTheta := some .theme
+  vendlerClass := some .activity
+  verbIncClass := some .cumOnly
+  levinClass := some .assessment }
+
+-- ════════════════════════════════════════════════════
+-- § Levin Class Expansion — Social Interaction (§ 36)
+-- ════════════════════════════════════════════════════
+
+/-- "marry" — Levin 36 Social Interaction verbs. -/
+def marry : VerbEntry where
+  form := "marry"
+  form3sg := "marries"
+  formPast := "married"
+  formPastPart := "married"
+  formPresPart := "marrying"
+  complementType := .np
+  subjectTheta := some .agent
+  objectTheta := some .patient
+  vendlerClass := some .achievement
+  levinClass := some .socialInteraction
+
+-- ════════════════════════════════════════════════════
+-- § Levin Class Expansion — Animal Sounds (§ 38)
+-- ════════════════════════════════════════════════════
+
+/-- "bark" — Levin 38 Animal Sound verbs. -/
+def bark : VerbEntry := .mkRegular {
+  form := "bark"
+  complementType := .none
+  subjectTheta := some .agent
+  passivizable := false
+  vendlerClass := some .activity
+  levinClass := some .animalSound }
+
+-- ════════════════════════════════════════════════════
+-- § Levin Class Expansion — Body (§ 40–41)
+-- ════════════════════════════════════════════════════
+
+/-- "breathe" — Levin 40.1 Body Process verbs. -/
+def breathe : VerbEntry := .mkRegular {
+  form := "breathe"
+  complementType := .none
+  subjectTheta := some .agent
+  passivizable := false
+  vendlerClass := some .activity
+  levinClass := some .bodyProcess }
+
+/-- "cough" — Levin 40.1 Body Process verbs. -/
+def cough : VerbEntry := .mkRegular {
+  form := "cough"
+  complementType := .none
+  subjectTheta := some .agent
+  passivizable := false
+  vendlerClass := some .activity
+  levinClass := some .bodyProcess }
+
+/-- "flinch" — Levin 40.5 Flinch verbs. Involuntary reaction. -/
+def flinch : VerbEntry := .mkRegular {
+  form := "flinch"
+  complementType := .none
+  subjectTheta := some .experiencer
+  passivizable := false
+  vendlerClass := some .achievement
+  levinClass := some .flinch }
+
+/-- "dress" — Levin 41.1 Dress verbs. -/
+def dress : VerbEntry := .mkRegular {
+  form := "dress"
+  complementType := .np
+  subjectTheta := some .agent
+  objectTheta := some .patient
+  vendlerClass := some .accomplishment
+  levinClass := some .dress }
+
+-- ════════════════════════════════════════════════════
+-- § Levin Class Expansion — Killing (§ 42)
+-- ════════════════════════════════════════════════════
+
+/-- "drown" — Levin 42.2 Poison verbs. Manner-of-killing. -/
+def drown : VerbEntry := .mkRegular {
+  form := "drown"
+  complementType := .np
+  subjectTheta := some .agent
+  objectTheta := some .patient
+  vendlerClass := some .accomplishment
+  causativeBuilder := some .make
+  levinClass := some .poison }
+
+-- ════════════════════════════════════════════════════
+-- § Levin Class Expansion — Emission (§ 43)
+-- ════════════════════════════════════════════════════
+
+/-- "glow" — Levin 43.1 Light Emission verbs. -/
+def glow : VerbEntry := .mkRegular {
+  form := "glow"
+  complementType := .none
+  subjectTheta := some .theme
+  passivizable := false
+  vendlerClass := some .state
+  unaccusative := true
+  levinClass := some .lightEmission }
+
+/-- "buzz" — Levin 43.2 Sound Emission verbs. -/
+def buzz : VerbEntry := .mkRegular {
+  form := "buzz"
+  complementType := .none
+  subjectTheta := some .theme
+  passivizable := false
+  vendlerClass := some .activity
+  unaccusative := true
+  levinClass := some .soundEmission }
+
+/-- "bleed" — Levin 43.4 Substance Emission verbs. -/
+def bleed : VerbEntry where
+  form := "bleed"
+  form3sg := "bleeds"
+  formPast := "bled"
+  formPastPart := "bled"
+  formPresPart := "bleeding"
+  complementType := .none
+  subjectTheta := some .theme
+  passivizable := false
+  vendlerClass := some .activity
+  unaccusative := true
+  levinClass := some .substanceEmission
+
+-- ════════════════════════════════════════════════════
+-- § Levin Class Expansion — Change of State (§ 45)
+-- ════════════════════════════════════════════════════
+
+/-- "bend" — Levin 45.2 Bend verbs. Causative/inchoative alternation.
+    Degree achievement: closed scale (straight → bent, has maximal endpoint). -/
+def bend : VerbEntry where
+  form := "bend"
+  form3sg := "bends"
+  formPast := "bent"
+  formPastPart := "bent"
+  formPresPart := "bending"
+  complementType := .np
+  subjectTheta := some .agent
+  objectTheta := some .patient
+  vendlerClass := some .accomplishment
+  degreeAchievementScale := some {
+    scaleBoundedness := .closed, dimension := "curvature" }
+  causativeBuilder := some .make
+  levinClass := some .bend
+
+/-- "boil" — Levin 45.3 Cooking verbs. Causative/inchoative alternation.
+    Degree achievement: closed scale (reaches boiling point). -/
+def boil : VerbEntry := .mkRegular {
+  form := "boil"
+  complementType := .np
+  subjectTheta := some .agent
+  objectTheta := some .patient
+  vendlerClass := some .accomplishment
+  degreeAchievementScale := some {
+    scaleBoundedness := .closed, dimension := "temperature",
+    baseAdjective := some "hot" }
+  causativeBuilder := some .make
+  levinClass := some .cooking }
+
+/-- "rust" — Levin 45.5 Entity-Specific CoS verbs. Inchoative only.
+    Degree achievement: open scale (no maximum rustedness). -/
+def rust : VerbEntry := .mkRegular {
+  form := "rust"
+  complementType := .none
+  subjectTheta := some .theme
+  passivizable := false
+  unaccusative := true
+  vendlerClass := some .activity
+  degreeAchievementScale := some {
+    scaleBoundedness := .open_, dimension := "corrosion" }
+  levinClass := some .entitySpecificCoS }
+
+/-- "increase" — Levin 45.6 Calibratable CoS verbs (degree achievements).
+    Degree achievement: open scale (no maximum quantity). -/
+def increase : VerbEntry := .mkRegular {
+  form := "increase"
+  complementType := .np
+  subjectTheta := some .agent
+  objectTheta := some .patient
+  vendlerClass := some .activity
+  degreeAchievementScale := some {
+    scaleBoundedness := .open_, dimension := "quantity" }
+  levinClass := some .calibratableCoS }
+
+-- ════════════════════════════════════════════════════
+-- § Degree Achievement Verb Pairs (Kennedy & Levin 2007)
+-- ════════════════════════════════════════════════════
+
+/-- "straighten" — Closed-scale degree achievement (base adj: straight).
+    Accomplishment: "straightened the wire in 10 seconds." -/
+def straighten : VerbEntry := .mkRegular {
+  form := "straighten"
+  complementType := .np
+  subjectTheta := some .agent
+  objectTheta := some .patient
+  vendlerClass := some .accomplishment
+  degreeAchievementScale := some {
+    scaleBoundedness := .closed, dimension := "straightness",
+    baseAdjective := some "straight" }
+  levinClass := some .otherCoS }
+
+/-- "flatten" — Closed-scale degree achievement (base adj: flat).
+    Accomplishment: "flattened the dough in 2 minutes." -/
+def flatten : VerbEntry := .mkRegular {
+  form := "flatten"
+  complementType := .np
+  subjectTheta := some .agent
+  objectTheta := some .patient
+  vendlerClass := some .accomplishment
+  degreeAchievementScale := some {
+    scaleBoundedness := .closed, dimension := "flatness",
+    baseAdjective := some "flat" }
+  levinClass := some .otherCoS }
+
+/-- "open" — Closed-scale degree achievement (base adj: open, closed scale).
+    Accomplishment: "opened the door in 3 seconds." -/
+def open_ : VerbEntry := .mkRegular {
+  form := "open"
+  complementType := .np
+  subjectTheta := some .agent
+  objectTheta := some .patient
+  vendlerClass := some .accomplishment
+  degreeAchievementScale := some {
+    scaleBoundedness := .closed, dimension := "openness",
+    baseAdjective := some "open" }
+  levinClass := some .otherCoS }
+
+/-- "lengthen" — Open-scale degree achievement (base adj: long, open scale).
+    Activity: "lengthened the rope for hours." -/
+def lengthen : VerbEntry := .mkRegular {
+  form := "lengthen"
+  complementType := .np
+  subjectTheta := some .agent
+  objectTheta := some .patient
+  vendlerClass := some .activity
+  degreeAchievementScale := some {
+    scaleBoundedness := .open_, dimension := "length",
+    baseAdjective := some "long" }
+  levinClass := some .calibratableCoS }
+
+/-- "widen" — Open-scale degree achievement (base adj: wide, open scale).
+    Activity: "widened the road for months." -/
+def widen : VerbEntry := .mkRegular {
+  form := "widen"
+  complementType := .np
+  subjectTheta := some .agent
+  objectTheta := some .patient
+  vendlerClass := some .activity
+  degreeAchievementScale := some {
+    scaleBoundedness := .open_, dimension := "width",
+    baseAdjective := some "wide" }
+  levinClass := some .calibratableCoS }
+
+/-- "cool" — Open-scale degree achievement (base adj: cool, open scale).
+    Activity: "cooled for an hour." -/
+def cool : VerbEntry := .mkRegular {
+  form := "cool"
+  complementType := .np
+  subjectTheta := some .agent
+  objectTheta := some .patient
+  vendlerClass := some .activity
+  degreeAchievementScale := some {
+    scaleBoundedness := .open_, dimension := "temperature",
+    baseAdjective := some "cool" }
+  levinClass := some .otherCoS }
+
+/-- "warm" — Open-scale degree achievement (base adj: warm, open scale).
+    Activity: "warmed for an hour." -/
+def warm : VerbEntry := .mkRegular {
+  form := "warm"
+  complementType := .np
+  subjectTheta := some .agent
+  objectTheta := some .patient
+  vendlerClass := some .activity
+  degreeAchievementScale := some {
+    scaleBoundedness := .open_, dimension := "temperature",
+    baseAdjective := some "warm" }
+  levinClass := some .otherCoS }
+
+-- ════════════════════════════════════════════════════
+-- § Levin Class Expansion — Existence, Appearance, Position (§ 47–50)
+-- ════════════════════════════════════════════════════
+
+/-- "exist" — Levin 47.1 Exist verbs. Pure state. -/
+def exist : VerbEntry := .mkRegular {
+  form := "exist"
+  complementType := .none
+  subjectTheta := some .theme
+  passivizable := false
+  vendlerClass := some .state
+  unaccusative := true
+  levinClass := some .exist }
+
+/-- "appear" — Levin 48.1 Appear verbs. Punctual emergence. -/
+def appear : VerbEntry := .mkRegular {
+  form := "appear"
+  complementType := .none
+  subjectTheta := some .theme
+  passivizable := false
+  vendlerClass := some .achievement
+  unaccusative := true
+  levinClass := some .appear }
+
+/-- "fidget" — Levin 49 Body-Internal Motion verbs. -/
+def fidget : VerbEntry := .mkRegular {
+  form := "fidget"
+  complementType := .none
+  subjectTheta := some .agent
+  passivizable := false
+  vendlerClass := some .activity
+  levinClass := some .bodyInternalMotion }
+
+/-- "sit" — Levin 50 Assume Position verbs. Stative. -/
+def sit : VerbEntry where
+  form := "sit"
+  form3sg := "sits"
+  formPast := "sat"
+  formPastPart := "sat"
+  formPresPart := "sitting"
+  complementType := .none
+  subjectTheta := some .agent
+  passivizable := false
+  vendlerClass := some .state
+  levinClass := some .assumePosition
+
+/-- "stand" — Levin 50 Assume Position verbs. Stative. -/
+def stand : VerbEntry where
+  form := "stand"
+  form3sg := "stands"
+  formPast := "stood"
+  formPastPart := "stood"
+  formPresPart := "standing"
+  complementType := .none
+  subjectTheta := some .agent
+  passivizable := false
+  vendlerClass := some .state
+  levinClass := some .assumePosition
+
+-- ════════════════════════════════════════════════════
+-- § Levin Class Expansion — Motion (§ 51)
+-- ════════════════════════════════════════════════════
+
+/-- "walk" — Levin 51.3 Manner of Motion verbs. -/
+def walk : VerbEntry := .mkRegular {
+  form := "walk"
+  complementType := .none
+  subjectTheta := some .agent
+  passivizable := false
+  vendlerClass := some .activity
+  levinClass := some .mannerOfMotion }
+
+/-- "swim" — Levin 51.3 Manner of Motion verbs. -/
+def swim : VerbEntry where
+  form := "swim"
+  form3sg := "swims"
+  formPast := "swam"
+  formPastPart := "swum"
+  formPresPart := "swimming"
+  complementType := .none
+  subjectTheta := some .agent
+  passivizable := false
+  vendlerClass := some .activity
+  levinClass := some .mannerOfMotion
+
+/-- "fly" — Levin 51.4 Vehicle Motion verbs. -/
+def fly : VerbEntry where
+  form := "fly"
+  form3sg := "flies"
+  formPast := "flew"
+  formPastPart := "flown"
+  formPresPart := "flying"
+  complementType := .none
+  subjectTheta := some .agent
+  passivizable := false
+  vendlerClass := some .activity
+  levinClass := some .vehicleMotion
+
+-- ════════════════════════════════════════════════════
+-- § Levin Class Expansion — Avoid, Linger, Rush (§ 52–53)
+-- ════════════════════════════════════════════════════
+
+/-- "avoid" — Levin 52 Avoid verbs. Stative. -/
+def avoid : VerbEntry := .mkRegular {
+  form := "avoid"
+  complementType := .np
+  subjectTheta := some .agent
+  objectTheta := some .theme
+  vendlerClass := some .state
+  levinClass := some .avoid }
+
+/-- "linger" — Levin 53.1 Linger verbs. -/
+def linger : VerbEntry := .mkRegular {
+  form := "linger"
+  complementType := .none
+  subjectTheta := some .agent
+  passivizable := false
+  vendlerClass := some .activity
+  levinClass := some .linger }
+
+/-- "rush" — Levin 53.2 Rush verbs. -/
+def rush : VerbEntry := .mkRegular {
+  form := "rush"
+  complementType := .none
+  subjectTheta := some .agent
+  passivizable := false
+  vendlerClass := some .activity
+  levinClass := some .rush }
+
+-- ════════════════════════════════════════════════════
+-- § Levin Class Expansion — Weather (§ 57)
+-- ════════════════════════════════════════════════════
+
+/-- "rain" — Levin 57 Weather verbs. Expletive subject. -/
+def rain : VerbEntry := .mkRegular {
+  form := "rain"
+  complementType := .none
+  subjectTheta := none
+  passivizable := false
+  vendlerClass := some .activity
+  levinClass := some .weather }
 
 -- ════════════════════════════════════════════════════
 -- § Verb List and Lookup
@@ -1727,7 +2642,57 @@ def allVerbs : List VerbEntry := [
   -- Stative Class II (Kim 2024 UPH)
   concern, interest,
   -- Agent-Patient (Solstad & Bott 2024)
-  chase, hit, push, pull, carry, drag, call
+  chase, hit, push, pull, carry, drag, call,
+  -- Levin § 9 Putting
+  place, pour, spray, load,
+  -- Levin § 10 Removing
+  remove, clean, steal,
+  -- Levin § 11 Sending and Carrying
+  send, drive,
+  -- Levin § 13 Change of Possession
+  donate, obtain, trade,
+  -- Levin § 14–16 Learn, Hold, Conceal
+  learn, hold, hide,
+  -- Levin § 17 Throwing
+  throw,
+  -- Levin § 19–20 Contact
+  poke, touch,
+  -- Levin § 21 Cutting
+  cut, chop,
+  -- Levin § 22–23 Combining, Separating
+  mix, separate,
+  -- Levin § 24–25 Coloring, Image Creation
+  paint, draw,
+  -- Levin § 26 Creation and Transformation
+  create, grow, perform,
+  -- Levin § 29 Predicative Complements
+  appoint,
+  -- Levin § 30 Perception
+  hear,
+  -- Levin § 33–34 Judgment, Assessment
+  blame, evaluate,
+  -- Levin § 36 Social Interaction
+  marry,
+  -- Levin § 38 Animal Sounds
+  bark,
+  -- Levin § 40–41 Body, Grooming
+  breathe, cough, flinch, dress,
+  -- Levin § 42 Killing
+  drown,
+  -- Levin § 43 Emission
+  glow, buzz, bleed,
+  -- Levin § 45 Change of State
+  bend, boil, rust, increase,
+  -- Degree Achievement Pairs (Kennedy & Levin 2007)
+  straighten, flatten, open_, lengthen, widen, cool, warm,
+  -- Levin § 47–50 Existence, Appearance, Position
+  exist, appear, fidget, sit, stand,
+  -- Levin § 51 Motion
+  walk, swim, fly,
+  -- Levin § 52–53 Avoid, Linger, Rush
+  avoid, linger, rush,
+  -- Levin § 57 Weather
+  rain
 ]
 
 /-- Look up a verb entry by citation form. -/
