@@ -34,6 +34,7 @@ import Linglib.Core.PolarityPartition
 import Linglib.Core.Polyhedral
 import Linglib.Core.ModalIndefinite
 import Linglib.Core.Discourse.QUD
+import Linglib.Core.Discourse.AtIssueness
 import Linglib.Core.Interface
 import Linglib.Core.StructuralEquationModel
 import Linglib.Core.CausalBayesNet
@@ -83,6 +84,7 @@ import Linglib.Theories.Morphology.Core.ScaleFromParadigm
 import Linglib.Theories.Morphology.Core.WordStructure
 import Linglib.Theories.Interfaces.MorphologySemantics.StemToLex
 import Linglib.Core.Discourse.CoherenceRelation
+import Linglib.Core.Discourse.Commitment
 import Linglib.Core.Discourse.DiscourseRole
 import Linglib.Core.Interval.QInterval
 import Linglib.Core.Interval.PadeExp
@@ -227,6 +229,9 @@ import Linglib.Phenomena.Focus.AdditiveParticles.Data
 import Linglib.Phenomena.Focus.AdditiveParticles.Studies.Thomas2026
 import Linglib.Phenomena.Agreement.Basic
 import Linglib.Phenomena.Agreement.DetNoun
+import Linglib.Phenomena.Assertion.Basic
+import Linglib.Phenomena.Assertion.Bridge.KrifkaLayers
+import Linglib.Phenomena.Assertion.Bridge.GunlogsonRising
 import Linglib.Phenomena.Case.Data
 import Linglib.Phenomena.Case.Typology
 import Linglib.Phenomena.Case.Studies.Ozaki2025.Data
@@ -254,6 +259,7 @@ import Linglib.Phenomena.Anaphora.Bridge.DGNominal
 import Linglib.Phenomena.Anaphora.Bridge.HPSGCoreference
 import Linglib.Phenomena.Anaphora.Bridge.MinimalismCoreference
 import Linglib.Phenomena.Anaphora.Bridge.TypeTheoreticAnaphora
+import Linglib.Phenomena.Anaphora.Bridge.PIPAnaphora
 import Linglib.Phenomena.Anaphora.Coreference
 import Linglib.Phenomena.Anaphora.CrossSentential
 import Linglib.Phenomena.Anaphora.DonkeyAnaphora
@@ -498,6 +504,8 @@ import Linglib.Phenomena.Presupposition.Studies.Wang2025
 import Linglib.Phenomena.Presupposition.Studies.Warstadt2022
 import Linglib.Phenomena.Presupposition.Studies.Yagi2025
 import Linglib.Phenomena.Presupposition.Studies.Sharvit2025
+import Linglib.Phenomena.Presupposition.Studies.TonhauserBeaverDegen2018.Data
+import Linglib.Phenomena.Presupposition.Studies.TonhauserBeaverDegen2018.Bridge
 import Linglib.Phenomena.Presupposition.Bridge.BeliefEmbedding
 import Linglib.Phenomena.Presupposition.Bridge.NeoGricean
 import Linglib.Phenomena.Presupposition.Bridge.OntologicalPreconditions
@@ -645,6 +653,7 @@ import Linglib.Comparisons.VaguenessTheories
 import Linglib.Comparisons.ProjectionMechanisms
 import Linglib.Comparisons.KratzerEpistemicRSA
 import Linglib.Comparisons.ModalPosition
+import Linglib.Comparisons.AssertionTheories
 import Linglib.Comparisons.CaseTheories
 
 -- Theories: Dependency Grammar
@@ -724,6 +733,9 @@ import Linglib.Theories.Semantics.Dynamic.Systems.IntensionalCDRT.ModalDonkeyAna
 import Linglib.Theories.Semantics.Dynamic.Systems.IntensionalCDRT.PresuppositionWeakening
 import Linglib.Theories.Semantics.Dynamic.Systems.IntensionalCDRT.Situations
 import Linglib.Theories.Semantics.Dynamic.Systems.IntensionalCDRT.Update
+import Linglib.Theories.Semantics.Dynamic.Systems.PIP.Basic
+import Linglib.Theories.Semantics.Dynamic.Systems.PIP.Connectives
+import Linglib.Theories.Semantics.Dynamic.Systems.PIP.Phenomena
 import Linglib.Theories.Semantics.Dynamic.Systems.PLA.Basic
 import Linglib.Theories.Semantics.Dynamic.Systems.PLA.Belief
 import Linglib.Theories.Semantics.Dynamic.Systems.PLA.DeepTheorems
@@ -1113,6 +1125,12 @@ import Linglib.Theories.Pragmatics.RSA.ScalarImplicatures.Embedded.Basic
 import Linglib.Theories.Pragmatics.RSA.ScalarImplicatures.Embedded.Conditionals
 import Linglib.Theories.Pragmatics.RSA.ScalarImplicatures.Embedded.Questions
 import Linglib.Theories.Pragmatics.RSA.ScalarImplicatures.Hurford
+import Linglib.Theories.Pragmatics.Assertion.Stalnaker
+import Linglib.Theories.Pragmatics.Assertion.FarkasAdapter
+import Linglib.Theories.Pragmatics.Assertion.Krifka
+import Linglib.Theories.Pragmatics.Assertion.Brandom
+import Linglib.Theories.Pragmatics.Assertion.Gunlogson
+import Linglib.Theories.Pragmatics.Assertion.Lauer
 
 -- Theories: Phonology
 import Linglib.Theories.Phonology.Features

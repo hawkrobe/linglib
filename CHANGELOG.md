@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.227.40] - 2026-02-27
+
+### Added
+- **Gradient at-issueness and projectivity** (`Core/Discourse/AtIssueness.lean`). New module defines `AtIssuenessDegree` and `ProjectivityDegree` as bounded ℚ ∈ [0,1] with threshold semantics mirroring the adjective `positiveMeaning` pattern. `isAtIssue d θ` mirrors `positiveMeaning d θ`. Includes `AntiCorrelation` structure, `atIssuenessFromQUD` qualitative connection, `Preorder` instances, and `toClassical` recovery of binary classification. At-issueness moves from Phenomena → Core (correct layer per dependency discipline).
+- **Tonhauser, Beaver & Degen (2018) formalization**. `TonhauserBeaverDegen2018/Data.lean`: 9 expression types + 20 clause-embedding predicates with gradient projectivity and at-issueness ratings. Per-datum verification: `nrrc_most_projective`, `stupid_least_projective`, `anticorrelation_expression_types`, `appositives_not_maximally_projective` (contra Potts 2005), `within_type_variation`. `TonhauserBeaverDegen2018/Bridge.lean`: degree lifting, taxonomy recovery (Class B > Class C projectivity), threshold interpretation (default θ=0.5 recovers binary classification), anti-correlation bridge, cross-reference with D&T2021 shared predicates.
+
+### Changed
+- **ProjectiveContent.lean**: import `AtIssueness`, add `AtIssueness.ofDegree` bridge from gradient → binary, add optional `projectivityDegree`/`atIssuenessDegree` fields to `ProjectiveItem`.
+- **InformationStructure.lean**: import `AtIssueness`, add `DiscourseStatus.ofAtIssueness` connecting at-issue/not-at-issue to Focus/Background.
+
 ## [0.227.39] - 2026-02-27
 
 ### Changed

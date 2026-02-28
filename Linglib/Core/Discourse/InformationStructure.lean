@@ -1,4 +1,5 @@
 import Linglib.Core.Lexical.UD
+import Linglib.Core.Discourse.AtIssueness
 
 /-!
 # Core.InformationStructure
@@ -186,6 +187,21 @@ inductive DiscourseStatus where
   /-- Unmarked: merely new information -/
   | new
   deriving DecidableEq, Repr, BEq
+
+/-- Map gradient at-issueness to discourse status.
+
+    High at-issueness content is foregrounded (new or focused);
+    low at-issueness content is backgrounded (given). This connects
+    the at-issue/not-at-issue distinction (Roberts 2012, Tonhauser
+    et al. 2018) to the Focus/Background partition.
+
+    - At-issue → `.new` (unmarked foreground; `.focused` requires
+      additional evidence of contrast)
+    - Not-at-issue → `.given` (backgrounded) -/
+def DiscourseStatus.ofAtIssueness (d : Core.Discourse.AtIssueness.AtIssuenessDegree)
+    (θ : Core.Discourse.AtIssueness.AtIssuenessThreshold :=
+      Core.Discourse.AtIssueness.defaultThreshold) : DiscourseStatus :=
+  if Core.Discourse.AtIssueness.isAtIssue d θ then .new else .given
 
 /-! ## Polarity-Switch Contexts
 

@@ -49,11 +49,13 @@ Belief-Predicate Test (for OLE):
 
 import Linglib.Core.Semantics.Presupposition
 import Linglib.Core.Semantics.Proposition
+import Linglib.Core.Discourse.AtIssueness
 
 namespace Phenomena.Presupposition.ProjectiveContent
 
 open Core.Presupposition
 open Core.Proposition
+open Core.Discourse.AtIssueness
 
 
 /--
@@ -243,6 +245,10 @@ structure ProjectiveItem (W : Type*) where
   content : W → Bool
   /-- The at-issue content (if any) -/
   atIssue : W → Bool := λ _ => true
+  /-- Gradient projectivity degree (TBD2018), if empirically measured -/
+  projectivityDegree : Option ℚ := none
+  /-- Gradient at-issueness degree (TBD2018), if empirically measured -/
+  atIssuenessDegree : Option ℚ := none
 
 /--
 Convert a ProjectiveItem to a PrProp.
@@ -293,10 +299,15 @@ def defaultProjection : ProjectionBehavior :=
 
 
 /--
-At-issueness status of content.
+At-issueness status of content (binary classification).
 
 Following Roberts (2012), at-issue content addresses the Question Under
 Discussion (QUD), while not-at-issue content is backgrounded.
+
+**Note:** Tonhauser, Beaver & Degen (2018) show that at-issueness is
+*gradient*, not binary. For the gradient version, see
+`Core.Discourse.AtIssueness.AtIssuenessDegree`. This binary enum is
+recoverable from a degree + threshold via `AtIssueness.ofDegree`.
 -/
 inductive AtIssueness where
   /-- Content that addresses the QUD -/
@@ -304,6 +315,15 @@ inductive AtIssueness where
   /-- Backgrounded content -/
   | notAtIssue
   deriving DecidableEq, Repr
+
+/-- Recover binary at-issueness from a gradient degree and threshold.
+    With the default threshold of 0.5, content with degree > 0.5 maps
+    to `.atIssue`, ≤ 0.5 to `.notAtIssue`. -/
+def AtIssueness.ofDegree (d : AtIssuenessDegree)
+    (θ : AtIssuenessThreshold := defaultThreshold) : AtIssueness :=
+  match toClassical d θ with
+  | .atIssue => .atIssue
+  | .notAtIssue => .notAtIssue
 
 /--
 Challengeability with "Hey wait a minute!"
