@@ -583,6 +583,7 @@ import Linglib.Phenomena.TenseAspect.Bridge.SpatialTrace
 import Linglib.Phenomena.TenseAspect.Bridge.Krifka1989
 import Linglib.Phenomena.TenseAspect.Bridge.GradualChange
 import Linglib.Phenomena.TenseAspect.Bridge.DimensionCoherence
+import Linglib.Phenomena.TenseAspect.Bridge.CrossBridgeConsistency
 import Linglib.Phenomena.TemporalConnectives.Compare
 import Linglib.Phenomena.TemporalConnectives.NegationData
 import Linglib.Phenomena.TemporalConnectives.VeridicalityBridge

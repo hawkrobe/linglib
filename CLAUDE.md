@@ -412,6 +412,11 @@ The point of linglib is to hook everything together as densely as possible so we
 - Grounding theorems connecting abstract Boolean layers to compositional semantics
 - Cross-layer agreement theorems proving different representations are consistent (e.g., three independent derivations of SelectionClass all agree)
 
+**Test both layers of multi-component state.** When a formalization has state with multiple independent components (e.g., PIP's `Discourse = info × labels`), test each component independently. A bug in one component can hide behind passing tests on the other — label-only tests can pass while the info state is vacuously empty. Include:
+- **Positive consistency tests**: show the output is non-empty from reasonable input (e.g., `stone_discourse_consistent`, `bathroom_sentence_consistent`). Construct a specific witness assignment and prove it survives the full pipeline.
+- **Negative rejection tests**: show specific values are correctly rejected (e.g., `stone_discourse_rejects_unbound`, `bathroom_rejects_nonupstairs`). These confirm the operators genuinely filter rather than vacuously accepting everything.
+- **Structural property tests**: verify key properties of intermediate operators (e.g., `modalExpand_adds_accessible`, `register_preserves`). These catch architectural bugs before they manifest in end-to-end tests.
+
 ## References
 
 ### RSA Papers (Implemented)

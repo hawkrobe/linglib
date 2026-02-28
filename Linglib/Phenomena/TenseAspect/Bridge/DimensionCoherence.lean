@@ -1,5 +1,6 @@
 import Linglib.Theories.Semantics.Events.DimensionCoherence
 import Linglib.Theories.Semantics.Events.DimensionBridge
+import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Phenomena.TenseAspect.DiagnosticsBridge
 
 /-!
@@ -34,6 +35,7 @@ open Core.Scale (LicensingPipeline Boundedness MereoTag)
 open Core.Path (PathShape)
 open _root_.Mereology (quaBoundedness cumBoundedness)
 open Phenomena.TenseAspect.Diagnostics (forXPrediction inXPrediction)
+open Fragments.English.Predicates.Verbal
 
 -- ════════════════════════════════════════════════════
 -- § 1. Dimension Irrelevance
@@ -91,6 +93,27 @@ def sleepVP : VPLicensingDatum :=
 
 def vpData : List VPLicensingDatum :=
   [eatTwoApples, eatApples, arriveVP, sleepVP]
+
+/-! Verify that the hardcoded VendlerClass values in VP data match the
+    fragment verb entries. Without these, changing a fragment annotation
+    would leave the convergence theorems below silently green. -/
+
+/-- "eat two apples" vendlerClass matches fragment. -/
+theorem eatTwoApples_grounded :
+    eat.toVerbCore.vendlerClass = some eatTwoApples.vendlerClass := rfl
+
+/-- "eat apples" VP-level activity comes from sinc + CUM NP composition. -/
+theorem eatApples_grounded :
+    eat.toVerbCore.verbIncClass = some .sinc ∧
+    VendlerClass.activity.telicity = eatApples.telicity := ⟨rfl, rfl⟩
+
+/-- "arrive" vendlerClass matches fragment. -/
+theorem arriveVP_grounded :
+    arrive.toVerbCore.vendlerClass = some arriveVP.vendlerClass := rfl
+
+/-- "sleep" vendlerClass matches fragment. -/
+theorem sleepVP_grounded :
+    sleep.toVerbCore.vendlerClass = some sleepVP.vendlerClass := rfl
 
 -- ════════════════════════════════════════════════════
 -- § 3. Per-VP Convergence Verification

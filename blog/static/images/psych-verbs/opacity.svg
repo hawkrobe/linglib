@@ -1,0 +1,83 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 380" font-family="'IBM Plex Sans', 'Helvetica Neue', sans-serif">
+  <defs>
+    <marker id="arr" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#555"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="720" height="380" fill="#fafaf9" rx="8"/>
+
+  <!-- Title -->
+  <text x="360" y="30" text-anchor="middle" font-size="15" font-weight="600" fill="#1c1917">Opacity by Computation: Cicero / Tully</text>
+
+  <!-- Left column: Perceptual -->
+  <text x="180" y="62" text-anchor="middle" font-size="13" font-weight="600" fill="#1e40af">Perceptual (frighten)</text>
+
+  <!-- Cicero → perceives → true -->
+  <rect x="30" y="80" width="90" height="36" rx="5" fill="#e0e7ff" stroke="#6366f1" stroke-width="1"/>
+  <text x="75" y="103" text-anchor="middle" font-size="12" fill="#4338ca">Cicero</text>
+  <line x1="120" y1="98" x2="168" y2="98" stroke="#555" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="145" y="91" text-anchor="middle" font-size="9" fill="#78716c">perceives</text>
+  <rect x="172" y="80" width="46" height="36" rx="5" fill="#dcfce7" stroke="#16a34a" stroke-width="1"/>
+  <text x="195" y="103" text-anchor="middle" font-size="12" font-weight="600" fill="#166534">true</text>
+  <line x1="218" y1="98" x2="258" y2="98" stroke="#555" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="238" y="91" text-anchor="middle" font-size="9" fill="#78716c">causes</text>
+  <rect x="262" y="80" width="46" height="36" rx="5" fill="#dcfce7" stroke="#16a34a" stroke-width="1"/>
+  <text x="285" y="103" text-anchor="middle" font-size="12" font-weight="600" fill="#166534">true</text>
+
+  <!-- Tully → perceives → true -->
+  <rect x="30" y="130" width="90" height="36" rx="5" fill="#e0e7ff" stroke="#6366f1" stroke-width="1"/>
+  <text x="75" y="153" text-anchor="middle" font-size="12" fill="#4338ca">Tully</text>
+  <line x1="120" y1="148" x2="168" y2="148" stroke="#555" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="145" y="141" text-anchor="middle" font-size="9" fill="#78716c">perceives</text>
+  <rect x="172" y="130" width="46" height="36" rx="5" fill="#dcfce7" stroke="#16a34a" stroke-width="1"/>
+  <text x="195" y="153" text-anchor="middle" font-size="12" font-weight="600" fill="#166534">true</text>
+  <line x1="218" y1="148" x2="258" y2="148" stroke="#555" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="238" y="141" text-anchor="middle" font-size="9" fill="#78716c">causes</text>
+  <rect x="262" y="130" width="46" height="36" rx="5" fill="#dcfce7" stroke="#16a34a" stroke-width="1"/>
+  <text x="285" y="153" text-anchor="middle" font-size="12" font-weight="600" fill="#166534">true</text>
+
+  <!-- Result: same -->
+  <rect x="80" y="180" width="200" height="30" rx="5" fill="#f0fdf4" stroke="#16a34a" stroke-width="1.5"/>
+  <text x="180" y="200" text-anchor="middle" font-size="11" font-weight="500" fill="#166534">Cicero frightens = Tully frightens = true</text>
+
+  <!-- Right column: Representational -->
+  <text x="540" y="62" text-anchor="middle" font-size="13" font-weight="600" fill="#92400e">Representational (concern)</text>
+
+  <!-- Cicero → represents → true -->
+  <rect x="390" y="80" width="90" height="36" rx="5" fill="#fef3c7" stroke="#d97706" stroke-width="1"/>
+  <text x="435" y="103" text-anchor="middle" font-size="12" fill="#92400e">Cicero</text>
+  <line x1="480" y1="98" x2="528" y2="98" stroke="#555" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="504" y="91" text-anchor="middle" font-size="9" fill="#78716c">represents</text>
+  <rect x="532" y="80" width="46" height="36" rx="5" fill="#dcfce7" stroke="#16a34a" stroke-width="1"/>
+  <text x="555" y="103" text-anchor="middle" font-size="12" font-weight="600" fill="#166534">true</text>
+  <line x1="578" y1="98" x2="618" y2="98" stroke="#555" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="598" y="91" text-anchor="middle" font-size="9" fill="#78716c">maintains</text>
+  <rect x="622" y="80" width="46" height="36" rx="5" fill="#dcfce7" stroke="#16a34a" stroke-width="1"/>
+  <text x="645" y="103" text-anchor="middle" font-size="12" font-weight="600" fill="#166534">true</text>
+
+  <!-- Tully → represents → false -->
+  <rect x="390" y="130" width="90" height="36" rx="5" fill="#fef3c7" stroke="#d97706" stroke-width="1"/>
+  <text x="435" y="153" text-anchor="middle" font-size="12" fill="#92400e">Tully</text>
+  <line x1="480" y1="148" x2="528" y2="148" stroke="#555" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="504" y="141" text-anchor="middle" font-size="9" fill="#78716c">represents</text>
+  <rect x="532" y="130" width="46" height="36" rx="5" fill="#fee2e2" stroke="#dc2626" stroke-width="1"/>
+  <text x="555" y="153" text-anchor="middle" font-size="12" font-weight="600" fill="#991b1b">false</text>
+  <line x1="578" y1="148" x2="618" y2="148" stroke="#aaa" stroke-width="1.5" stroke-dasharray="4,3"/>
+  <text x="598" y="141" text-anchor="middle" font-size="9" fill="#aaa">blocked</text>
+  <rect x="622" y="130" width="46" height="36" rx="5" fill="#f5f5f4" stroke="#d4d4d4" stroke-width="1"/>
+  <text x="645" y="153" text-anchor="middle" font-size="12" fill="#a3a3a3">---</text>
+
+  <!-- Result: different -->
+  <rect x="430" y="180" width="230" height="30" rx="5" fill="#fef2f2" stroke="#dc2626" stroke-width="1.5"/>
+  <text x="545" y="200" text-anchor="middle" font-size="11" font-weight="500" fill="#991b1b">Cicero concerns = true ≠ Tully concerns = false</text>
+
+  <!-- Bottom: the key insight -->
+  <rect x="60" y="240" width="600" height="120" rx="8" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+  <text x="360" y="268" text-anchor="middle" font-size="13" font-weight="600" fill="#1c1917">Why it works</text>
+  <text x="360" y="292" text-anchor="middle" font-size="11.5" fill="#475569">Perception is world-driven: Cicero and Tully are the same person in the world,</text>
+  <text x="360" y="308" text-anchor="middle" font-size="11.5" fill="#475569">so they are perceived identically. Belief is representation-driven: the agent</text>
+  <text x="360" y="324" text-anchor="middle" font-size="11.5" fill="#475569">can have a Cicero-concept without having a Tully-concept. The pathway</text>
+  <text x="360" y="340" text-anchor="middle" font-size="11.5" fill="#475569">determines which layer is consulted, and opacity falls out by computation.</text>
+</svg>

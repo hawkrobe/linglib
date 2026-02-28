@@ -219,6 +219,30 @@ theorem stone_discourse_consistent :
     · right; exact ⟨SWorld.actual, g_wolf_in_retrieve, hacc⟩
     · rfl
 
+/--
+Negative test: an assignment with **unbound** wolf variable does NOT survive
+Stone's discourse. The existsLabeled in sentence 1 extends assignments
+with `vWolf ↦ .some .wolf`, and the atom predicate `isWolf` requires
+`g.indiv vWolf == .some .wolf`. An unbound assignment (vWolf = ⋆)
+fails this predicate check, so it cannot appear in the body result
+of might, and is correctly rejected.
+
+This confirms the discourse genuinely filters — it's not vacuously
+accepting all assignments.
+-/
+theorem stone_discourse_rejects_unbound :
+    (g₀_stone, SWorld.actual) ∉ (stoneSentence1 stone_d₀).info := by
+  unfold stoneSentence1 might modalExpand
+  dsimp only
+  intro ⟨_, w₁, _, _, hmem⟩
+  unfold existsLabeled atom Discourse.mapInfo at hmem
+  -- hmem has form: ⟨extended_membership, predicate⟩
+  -- The predicate requires isWolf g₀_stone w₁ = true,
+  -- but isWolf g₀_stone _ = (.star == .some .wolf) = false
+  obtain ⟨_, hpred⟩ := hmem
+  dsimp only at hpred
+  simp [isWolf, g₀_stone, vWolf] at hpred
+
 end Stone
 
 
@@ -336,6 +360,47 @@ theorem bathroom_sentence_consistent :
   -- but isBathroom g₀ w = (g₀.indiv vBath == .some .bathroom) = (.star == .some .bathroom) = false
   intro ⟨_, hpred⟩
   simp [isBathroom, g₀, vBath] at hpred
+
+/-- Assignment with bathroom entity bound. -/
+private def g_bath : ICDRTAssignment BWorld BEntity :=
+  { indiv := λ v => if v == vBath then .some .bathroom else .star
+    prop := λ _ => ∅ }
+
+/--
+Negative test: a bathroom-bound assignment at the no-bathroom world
+is rejected by the full bathroom sentence.
+
+At `.noBath`, both disjuncts fail:
+- First (negation): g_bath IS in the existential's output (it matches
+  the `isBathroom` predicate), so negation removes it
+- Second (upstairs): `isUpstairs` requires `w == .bath`, but w = `.noBath`
+
+This tests the genuine semantic content: the sentence says either there's
+no bathroom OR the bathroom is upstairs. A bathroom that isn't upstairs
+violates both conditions.
+-/
+theorem bathroom_rejects_nonupstairs :
+    (g_bath, BWorld.noBath) ∉ (bathroomSentence bath_d₀).info := by
+  intro hmem
+  unfold bathroomSentence disj at hmem
+  dsimp only at hmem
+  rcases hmem with h | h
+  · -- First disjunct: negation removes g_bath (existential succeeds)
+    unfold negation at h
+    dsimp only at h
+    obtain ⟨_, hneg⟩ := h
+    apply hneg
+    unfold existsLabeled atom Discourse.mapInfo
+    exact ⟨⟨g₀, .bathroom, Set.mem_univ _, rfl, rfl⟩, rfl⟩
+  · -- Second disjunct: isUpstairs fails (.noBath ≠ .bath)
+    unfold conj at h
+    simp only [retrieveDef, negation, existsLabeled, atom, Discourse.mapInfo,
+               LabelStore.register, LabelStore.lookup, αBath, vBath,
+               isBathroom] at h
+    obtain ⟨_, hpred⟩ := h
+    -- isUpstairs g_bath .noBath = (.some .bathroom == .some .bathroom && .noBath == .bath)
+    -- = (true && false) = false, contradicting hpred
+    exact absurd hpred (by unfold isUpstairs g_bath vBath; decide)
 
 end Bathroom
 

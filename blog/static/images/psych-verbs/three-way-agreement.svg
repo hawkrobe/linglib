@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 400" font-family="'IBM Plex Sans', 'Helvetica Neue', sans-serif">
+  <defs>
+    <marker id="a1" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#6366f1"/>
+    </marker>
+    <marker id="a2" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#059669"/>
+    </marker>
+    <marker id="a3" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#dc2626"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="720" height="400" fill="#fafaf9" rx="8"/>
+
+  <!-- Title -->
+  <text x="360" y="30" text-anchor="middle" font-size="15" font-weight="600" fill="#1c1917">Three-Way Theoretical Agreement</text>
+  <text x="360" y="50" text-anchor="middle" font-size="11" fill="#78716c">Three independent theoretical traditions converge on the same binary distinction</text>
+
+  <!-- Triangle vertices -->
+  <!-- Top: SemanticType (Hartshorne et al. 2016) -->
+  <rect x="255" y="70" width="210" height="70" rx="8" fill="#ede9fe" stroke="#6366f1" stroke-width="2"/>
+  <text x="360" y="95" text-anchor="middle" font-size="13" font-weight="600" fill="#4338ca">SemanticType</text>
+  <text x="360" y="112" text-anchor="middle" font-size="10" fill="#6366f1">Hartshorne, O'Donnell &amp; Tenenbaum 2016</text>
+  <text x="360" y="128" text-anchor="middle" font-size="10" fill="#7c3aed" font-style="italic">habitualAttitude | causedEpisode</text>
+
+  <!-- Bottom left: CausalSource (Kim 2024) -->
+  <rect x="40" y="260" width="210" height="70" rx="8" fill="#d1fae5" stroke="#059669" stroke-width="2"/>
+  <text x="145" y="285" text-anchor="middle" font-size="13" font-weight="600" fill="#065f46">CausalSource</text>
+  <text x="145" y="302" text-anchor="middle" font-size="10" fill="#059669">Kim 2024</text>
+  <text x="145" y="318" text-anchor="middle" font-size="10" fill="#047857" font-style="italic">internal | external</text>
+
+  <!-- Bottom right: CausalPathway (novel) -->
+  <rect x="470" y="260" width="210" height="70" rx="8" fill="#fee2e2" stroke="#dc2626" stroke-width="2"/>
+  <text x="575" y="285" text-anchor="middle" font-size="13" font-weight="600" fill="#991b1b">CausalPathway</text>
+  <text x="575" y="302" text-anchor="middle" font-size="10" fill="#dc2626">novel (this post)</text>
+  <text x="575" y="318" text-anchor="middle" font-size="10" fill="#b91c1c" font-style="italic">representational | perceptual</text>
+
+  <!-- Arrows with roundtrip labels -->
+  <!-- SemanticType ↔ CausalSource -->
+  <line x1="280" y1="140" x2="170" y2="256" stroke="#6366f1" stroke-width="1.8" marker-end="url(#a2)"/>
+  <line x1="185" y1="260" x2="295" y2="140" stroke="#059669" stroke-width="1.8" marker-end="url(#a1)"/>
+  <text x="182" y="196" text-anchor="middle" font-size="10" fill="#6366f1" transform="rotate(-35, 182, 196)">semanticTypeToCausalSource</text>
+  <text x="278" y="212" text-anchor="middle" font-size="10" fill="#059669" transform="rotate(-35, 278, 212)">causalSourceToSemanticType</text>
+
+  <!-- SemanticType ↔ CausalPathway -->
+  <line x1="440" y1="140" x2="548" y2="256" stroke="#6366f1" stroke-width="1.8" marker-end="url(#a3)"/>
+  <line x1="536" y1="260" x2="425" y2="140" stroke="#dc2626" stroke-width="1.8" marker-end="url(#a1)"/>
+  <text x="534" y="196" text-anchor="middle" font-size="10" fill="#6366f1" transform="rotate(35, 534, 196)">semanticTypeToPathway</text>
+  <text x="440" y="212" text-anchor="middle" font-size="10" fill="#dc2626" transform="rotate(35, 440, 212)">pathwayToSemanticType</text>
+
+  <!-- CausalSource ↔ CausalPathway -->
+  <line x1="250" y1="290" x2="466" y2="290" stroke="#059669" stroke-width="1.8" marker-end="url(#a3)"/>
+  <line x1="470" y1="300" x2="254" y2="300" stroke="#dc2626" stroke-width="1.8" marker-end="url(#a2)"/>
+  <text x="360" y="284" text-anchor="middle" font-size="10" fill="#059669">causalSourceToPathway</text>
+  <text x="360" y="316" text-anchor="middle" font-size="10" fill="#dc2626">toCausalSource</text>
+
+  <!-- Commutativity theorem -->
+  <rect x="180" y="350" width="360" height="36" rx="6" fill="#f0f9ff" stroke="#0284c7" stroke-width="1.5"/>
+  <text x="360" y="373" text-anchor="middle" font-size="11" font-weight="500" fill="#0369a1">three_way_agreement: all paths commute (proof by rfl)</text>
+</svg>

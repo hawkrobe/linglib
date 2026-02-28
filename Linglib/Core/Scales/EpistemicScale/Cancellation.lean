@@ -1232,6 +1232,18 @@ private theorem cancellation_from_weights {n : ℕ} (sys : EpistemicSystemFA (Fi
     Finset.sum_eq_zero (fun i _ => by rw [hNeutral i, mul_zero])
   linarith
 
+/-- Classify all Finset (Fin 4) into one of 16 explicit values. -/
+private lemma finset_fin4_eq (S : Finset (Fin 4)) :
+    S = ∅ ∨ S = {0} ∨ S = {1} ∨ S = {2} ∨ S = {3} ∨
+    S = {0,1} ∨ S = {0,2} ∨ S = {0,3} ∨ S = {1,2} ∨ S = {1,3} ∨ S = {2,3} ∨
+    S = {0,1,2} ∨ S = {0,1,3} ∨ S = {0,2,3} ∨ S = {1,2,3} ∨
+    S = Finset.univ := by
+  suffices h : ∀ S : Finset (Fin 4), S ∈ ({∅, {0}, {1}, {2}, {3},
+    {0,1}, {0,2}, {0,3}, {1,2}, {1,3}, {2,3},
+    {0,1,2}, {0,1,3}, {0,2,3}, {1,2,3}, Finset.univ} : Finset (Finset (Fin 4))) by
+    have := h S; simp [Finset.mem_insert] at this; exact this
+  decide
+
 /-- All-positive case: when all 4 singletons have positive mass, FA implies
     cancellation on Fin 4. Uses `cancellation_from_weights` with explicit
     rational witnesses for each ordering pattern. -/
@@ -1239,26 +1251,53 @@ private theorem fa_cancellation_fin4_allpos (sys : EpistemicSystemFA (Fin 4))
     (h0 : ¬sys.ge ∅ {(0 : Fin 4)}) (h1 : ¬sys.ge ∅ {(1 : Fin 4)})
     (h2 : ¬sys.ge ∅ {(2 : Fin 4)}) (h3 : ¬sys.ge ∅ {(3 : Fin 4)}) :
     Cancellation 4 sys.ge := by
-  -- By totality, each singleton pair has ge one way
-  have tot := sys.total
-  -- Case split on singleton ordering: ge {0} {1}
-  by_cases h01 : sys.ge {(0 : Fin 4)} {1}
-  · by_cases h12 : sys.ge {(1 : Fin 4)} {2}
-    · by_cases h23 : sys.ge {(2 : Fin 4)} {3}
-      · -- ge {0} {1}, ge {1} {2}, ge {2} {3}: weights 4/10, 3/10, 2/10, 1/10
-        have h02 : sys.ge {(0 : Fin 4)} {2} := sys.trans _ _ _ h01 h12
-        have h03 : sys.ge {(0 : Fin 4)} {3} := sys.trans _ _ _ h02 h23
-        have h13 : sys.ge {(1 : Fin 4)} {3} := sys.trans _ _ _ h12 h23
-        apply cancellation_from_weights sys (![4/10, 3/10, 2/10, 1/10])
-          (by intro i; fin_cases i <;> simp [Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.head_cons] <;> norm_num)
-          (by simp [Fin.sum_univ_four, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.head_cons]; ring)
-        · -- hfwd
-          sorry
-        · -- hstrict
-          sorry
-      · sorry -- ge {0} {1}, ge {1} {2}, ¬ge {2} {3}
-    · sorry -- ge {0} {1}, ¬ge {1} {2}
-  · sorry -- ¬ge {0} {1}
+  -- Derive ¬ge ∅ for pairs/triples (from singletons + mono + trans)
+  have hng01 : ¬sys.ge ∅ ({0, 1} : Set (Fin 4)) := fun h =>
+    h0 (sys.trans _ _ _ h (sys.mono _ _ (Set.singleton_subset_iff.mpr (Set.mem_insert _ _))))
+  have hng02 : ¬sys.ge ∅ ({0, 2} : Set (Fin 4)) := fun h =>
+    h0 (sys.trans _ _ _ h (sys.mono _ _ (Set.singleton_subset_iff.mpr (Set.mem_insert _ _))))
+  have hng03 : ¬sys.ge ∅ ({0, 3} : Set (Fin 4)) := fun h =>
+    h0 (sys.trans _ _ _ h (sys.mono _ _ (Set.singleton_subset_iff.mpr (Set.mem_insert _ _))))
+  have hng12 : ¬sys.ge ∅ ({1, 2} : Set (Fin 4)) := fun h =>
+    h1 (sys.trans _ _ _ h (sys.mono _ _ (Set.singleton_subset_iff.mpr (Set.mem_insert _ _))))
+  have hng13 : ¬sys.ge ∅ ({1, 3} : Set (Fin 4)) := fun h =>
+    h1 (sys.trans _ _ _ h (sys.mono _ _ (Set.singleton_subset_iff.mpr (Set.mem_insert _ _))))
+  have hng23 : ¬sys.ge ∅ ({2, 3} : Set (Fin 4)) := fun h =>
+    h2 (sys.trans _ _ _ h (sys.mono _ _ (Set.singleton_subset_iff.mpr (Set.mem_insert _ _))))
+  have hng012 : ¬sys.ge ∅ ({0, 1, 2} : Set (Fin 4)) := fun h =>
+    hng01 (sys.trans _ _ _ h (sys.mono _ _ (by intro x hx; rcases hx with rfl | rfl; exact Or.inl rfl; exact Or.inr (Or.inl rfl))))
+  have hng013 : ¬sys.ge ∅ ({0, 1, 3} : Set (Fin 4)) := fun h =>
+    hng01 (sys.trans _ _ _ h (sys.mono _ _ (by intro x hx; rcases hx with rfl | rfl; exact Or.inl rfl; exact Or.inr (Or.inl rfl))))
+  have hng023 : ¬sys.ge ∅ ({0, 2, 3} : Set (Fin 4)) := fun h =>
+    hng02 (sys.trans _ _ _ h (sys.mono _ _ (by intro x hx; rcases hx with rfl | rfl; exact Or.inl rfl; exact Or.inr (Or.inl rfl))))
+  have hng123 : ¬sys.ge ∅ ({1, 2, 3} : Set (Fin 4)) := fun h =>
+    hng12 (sys.trans _ _ _ h (sys.mono _ _ (by intro x hx; rcases hx with rfl | rfl; exact Or.inl rfl; exact Or.inr (Or.inl rfl))))
+  have hngu : ¬sys.ge ∅ (Set.univ : Set (Fin 4)) := fun h =>
+    h0 (sys.trans _ _ _ h (sys.mono _ _ (Set.subset_univ _)))
+  -- Helper: derive ¬ge {i} S from ge chain to ¬ge ∅ {j}
+  -- Pattern: ge {i} S → additivity/trans → ge ∅ {j} → contradiction
+  -- We use sys.additive to peel off common elements:
+  --   ge A B where A ⊂ B → ge (A\B) (B\A) → ge ∅ (B\A) → ge ∅ {j}
+
+  -- Case split on all 6 pairwise singleton orderings
+  by_cases h01 : sys.ge {(0 : Fin 4)} {1} <;>
+  by_cases h02 : sys.ge {(0 : Fin 4)} {2} <;>
+  by_cases h03 : sys.ge {(0 : Fin 4)} {3} <;>
+  by_cases h12 : sys.ge {(1 : Fin 4)} {2} <;>
+  by_cases h13 : sys.ge {(1 : Fin 4)} {3} <;>
+  by_cases h23 : sys.ge {(2 : Fin 4)} {3}
+  -- 64 branches; many eliminated by totality + transitivity
+  -- For each surviving branch, get reverse orderings from totality
+  all_goals try (have h10 := (sys.total {1} {0}).resolve_right ‹_›)
+  all_goals try (have h20 := (sys.total {2} {0}).resolve_right ‹_›)
+  all_goals try (have h30 := (sys.total {3} {0}).resolve_right ‹_›)
+  all_goals try (have h21 := (sys.total {2} {1}).resolve_right ‹_›)
+  all_goals try (have h31 := (sys.total {3} {1}).resolve_right ‹_›)
+  all_goals try (have h32 := (sys.total {3} {2}).resolve_right ‹_›)
+  -- Eliminate transitivity violations
+  all_goals try (exfalso; exact ‹¬sys.ge _ _› (sys.trans _ _ _ ‹sys.ge _ _› ‹sys.ge _ _›))
+  -- Remaining: apply cancellation_from_weights with appropriate weights
+  all_goals sorry
 
 /-- FA on Fin 4 implies the cancellation property.
     Null cases: reduce via `null_elem_reduce` + `theorem8a_fin3`.

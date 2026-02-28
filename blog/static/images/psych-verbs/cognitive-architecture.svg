@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 420" font-family="'IBM Plex Sans', 'Helvetica Neue', sans-serif">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#555"/>
+    </marker>
+    <marker id="arrow-blue" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#2563eb"/>
+    </marker>
+    <marker id="arrow-amber" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#d97706"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="720" height="420" fill="#fafaf9" rx="8"/>
+
+  <!-- Title -->
+  <text x="360" y="32" text-anchor="middle" font-size="15" font-weight="600" fill="#1c1917">ExperiencerState — Cognitive Situation Model</text>
+
+  <!-- World box -->
+  <rect x="30" y="60" width="120" height="60" rx="6" fill="#f5f5f4" stroke="#a8a29e" stroke-width="1.5"/>
+  <text x="90" y="88" text-anchor="middle" font-size="13" font-weight="500" fill="#44403c">World</text>
+  <text x="90" y="106" text-anchor="middle" font-size="11" fill="#78716c">stimulus exists</text>
+
+  <!-- Perception box -->
+  <rect x="220" y="60" width="160" height="60" rx="6" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+  <text x="300" y="82" text-anchor="middle" font-size="13" font-weight="600" fill="#1e40af">perceives</text>
+  <text x="300" y="100" text-anchor="middle" font-size="11" fill="#3b82f6">Stimulus → Bool</text>
+  <text x="300" y="114" text-anchor="middle" font-size="10" fill="#60a5fa" font-style="italic">extensional</text>
+
+  <!-- Belief box -->
+  <rect x="220" y="170" width="160" height="60" rx="6" fill="#fef3c7" stroke="#d97706" stroke-width="1.5"/>
+  <text x="300" y="192" text-anchor="middle" font-size="13" font-weight="600" fill="#92400e">represents</text>
+  <text x="300" y="210" text-anchor="middle" font-size="11" fill="#d97706">Stimulus → Bool</text>
+  <text x="300" y="224" text-anchor="middle" font-size="10" fill="#f59e0b" font-style="italic">intensional</text>
+
+  <!-- Mental State box -->
+  <rect x="480" y="115" width="180" height="60" rx="6" fill="#f0fdf4" stroke="#16a34a" stroke-width="1.5"/>
+  <text x="570" y="137" text-anchor="middle" font-size="13" font-weight="600" fill="#166534">inMentalState</text>
+  <text x="570" y="155" text-anchor="middle" font-size="11" fill="#16a34a">MState → Bool</text>
+  <text x="570" y="169" text-anchor="middle" font-size="10" fill="#4ade80" font-style="italic">e.g. concerned</text>
+
+  <!-- Arrows: World → Perception -->
+  <line x1="150" y1="90" x2="215" y2="90" stroke="#2563eb" stroke-width="2" marker-end="url(#arrow-blue)"/>
+
+  <!-- Arrow: Perception → Mental State (perceptCauses) -->
+  <line x1="380" y1="90" x2="476" y2="130" stroke="#2563eb" stroke-width="2" marker-end="url(#arrow-blue)" stroke-dasharray="6,3"/>
+  <text x="432" y="100" text-anchor="middle" font-size="10" fill="#2563eb" font-weight="500">perceptCauses</text>
+
+  <!-- Arrow: Belief → Mental State (beliefMaintains) -->
+  <line x1="380" y1="200" x2="476" y2="155" stroke="#d97706" stroke-width="2" marker-end="url(#arrow-amber)" stroke-dasharray="6,3"/>
+  <text x="440" y="192" text-anchor="middle" font-size="10" fill="#d97706" font-weight="500">beliefMaintains</text>
+
+  <!-- Pathway labels -->
+  <!-- Perceptual pathway -->
+  <rect x="30" y="280" width="320" height="110" rx="8" fill="#eff6ff" stroke="#2563eb" stroke-width="1.5" stroke-dasharray="6,3"/>
+  <text x="190" y="305" text-anchor="middle" font-size="13" font-weight="600" fill="#1e40af">Perceptual Pathway</text>
+  <text x="190" y="325" text-anchor="middle" font-size="11" fill="#3b82f6">World → Percept → MentalState</text>
+  <text x="190" y="348" text-anchor="middle" font-size="11" fill="#64748b">frighten, scare, amuse, shock</text>
+  <text x="190" y="370" text-anchor="middle" font-size="11" fill="#64748b">External causation · Extensional</text>
+  <text x="190" y="385" text-anchor="middle" font-size="10" fill="#94a3b8" font-style="italic">Cicero frightens ↔ Tully frightens</text>
+
+  <!-- Representational pathway -->
+  <rect x="370" y="280" width="320" height="110" rx="8" fill="#fffbeb" stroke="#d97706" stroke-width="1.5" stroke-dasharray="6,3"/>
+  <text x="530" y="305" text-anchor="middle" font-size="13" font-weight="600" fill="#92400e">Representational Pathway</text>
+  <text x="530" y="325" text-anchor="middle" font-size="11" fill="#d97706">Belief → MentalState</text>
+  <text x="530" y="348" text-anchor="middle" font-size="11" fill="#64748b">concern, worry, bother, trouble</text>
+  <text x="530" y="370" text-anchor="middle" font-size="11" fill="#64748b">Maintenance causation · Intensional</text>
+  <text x="530" y="385" text-anchor="middle" font-size="10" fill="#94a3b8" font-style="italic">Cicero concerns ✗ Tully concerns</text>
+</svg>

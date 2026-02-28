@@ -7,6 +7,10 @@
 - **PIP worked examples** (`PIP/Phenomena.lean`): Stone's modal subordination ("A wolf might come in. It would eat you first."), Partee's bathroom sentences ("Either there's no bathroom, or it's upstairs."), Karttunen's paycheck pronouns. End-to-end consistency proofs for both Stone's puzzle and the bathroom sentence. Anaphora strategy comparison (value-based vs file-change vs description-based).
 - **PIP anaphora bridge** (`Phenomena/Anaphora/Bridge/PIPAnaphora.lean`): connects PIP to theory-neutral anaphora data — modal subordination (wolf examples), bathroom sentences (label survival through negation + disjunction), donkey anaphora (label survival through ¬∃¬). Full bathroom label regression test. Unified account theorem (label monotonicity explains all three phenomena).
 - **Key theorems**: `labels_survive_negation`, `labels_survive_must`, `labels_survive_might`, `labels_survive_disj` (label monotonicity); `modalExpand_superset`, `modalExpand_adds_accessible` (modal world-shifting); `stone_discourse_consistent`, `bathroom_sentence_consistent` (end-to-end info-state non-emptiness); `register_preserves` (label store monotonicity). Zero `sorry`.
+- **Negative rejection tests**: `stone_discourse_rejects_unbound` (unbound wolf assignment fails sentence 1), `bathroom_rejects_nonupstairs` (bathroom entity at non-upstairs world fails both disjuncts). Confirms operators genuinely filter rather than vacuously accepting.
+
+### Changed
+- **CLAUDE.md**: add "Test both layers of multi-component state" principle — require positive consistency tests, negative rejection tests, and structural property tests when formalizations have independent state components (e.g., PIP's `Discourse = info × labels`).
 
 ## [0.227.45] - 2026-02-27
 
@@ -44,14 +48,19 @@
 - **SpeechActs.lean**: `PRole.toDiscourseRole` mapping and `seat_of_knowledge_agrees_with_epistemic_authority` bridge theorem connecting configurational `seatOfKnowledge` to framework-agnostic `epistemicAuthority` via `toIllocutionaryMood`.
 - **Krifka.lean §8**: Informative vs performative updates (Krifka 2020, §2) — `UpdateType`, `informativeUpdate`, `TypedAssertion`, `commitment_closure` theorem.
 - **Krifka.lean §9**: Actor vs Committer distinction (Krifka 2015, §6) — `ActorCommitter`, `assertionRoles` (speaker=both), `questionRoles` (speaker acts, addressee commits), `actor_committer_diverge` theorem.
-- **Krifka.lean §10**: Speech act composition (Krifka 2015, §3–5) — `SpeechAct`, `monopolarQuestion` (biased questions), `speechActConj`/`speechActDisj`, `matchingTag` with per-datum verification (`matching_tag_shared_content`, `matching_tag_same_actor`, `matching_tag_committers_diverge`).
+- **Krifka.lean §10**: Speech act composition (Krifka 2015, §3–5) — `SpeechAct`, `monopolarQuestion` (biased questions), `ComplexSpeechAct` (`.atom`/`.conj`/`.disj`), `matchingTag`, `reverseTag`, `tag_type_distinction`, per-datum verification (`matching_tag_shared_content`, `matching_tag_same_actor`, `matching_tag_committers_diverge`).
+- **Krifka.lean §4**: Tree-based commitment spaces (Krifka 2015, §2) — `CommitmentSpace` structure with `root` (√C = CG) + `continuations` (proposed states). Operations: `assert` (narrows root + all continuations), `question` (preserves root, adds continuation, narrows existing), `acceptFirst`/`rejectFirst`, `isSettled`, `toContextSet`. `KrifkaState` refactored: `cg : CG W` → `space : CommitmentSpace W`. New operations: `question`, `acceptContinuation`, `rejectContinuation`. Theorems: `commitment_closure` (now definitional), `question_preserves_cg`, `question_accept_eq_assert_root`, `assert_preserves_settled`, `question_unsettles`, `accept_resettles_simple`.
+- **Krifka.lean**: `KAgent.toDiscourseRole` bridge to framework-agnostic `DiscourseRole`.
 - **references.bib**: Add `krifka-2015` and `krifka-2020` entries.
 
 ## [0.227.42] - 2026-02-27
 
 ### Added
-- **HartshorneEtAl2016 Data + Bridge** (`Phenomena/PsychVerbs/Studies/HartshorneEtAl2016/`). Data: `SemanticType` (.habitualAttitude/.causedEpisode), `SemanticTypeProfile`, verb data (16 verbs), cross-linguistic data (4 languages), `class_type_alignment` theorem. Bridge: `SemanticType ↔ CausalSource` isomorphism with roundtrip theorems, empirical profile derivation from CausalSource, consistency with PsychCausalLink temporal predictions (`transition_prediction_consistent`). Zero `sorry`.
-- **PsychVerbSem blog library** (`blog/lean/PsychVerbs/`): novel cognitive situation model for psych verb denotations. `ExperiencerState` decomposes experiencer cognition into BToM layers. `CausalPathway` (.perceptual/.representational) selects which layer the stimulus connects through. `psychVerbSem` gives a single denotation from which opacity, temporal behavior, and UPH fall out. Cicero/Tully opacity by `rfl`. Extensions: BToM bridge (`fromBToM`, perceptual extensionality), CausalFrame integration (causal sufficiency/necessity, intervention), situation semantics bridge (cognitive persistence, SitVarStatus mapping).
+- **HartshorneEtAl2016 Data + Bridge** (`Phenomena/PsychVerbs/Studies/HartshorneEtAl2016/`). Data: `SemanticType` (.habitualAttitude/.causedEpisode), `SemanticTypeProfile`, prominence-based linking (`prominentRole`, `prominence_determines_linking`), generalization data (English/Japanese/Russian adults + English children), verb data (16 verbs), cross-linguistic data (4 languages). Bridge: `SemanticType ↔ CausalSource` isomorphism, profile derivation from CausalSource, temporal prediction consistency. Zero `sorry`.
+- **PsychVerbSem blog library** (`blog/lean/PsychVerbs/PsychVerbSem.lean`): single-file novel synthesis. `ExperiencerState` cognitive situation model, `CausalPathway`, `psychVerbSem` denotation, Cicero/Tully opacity by `rfl`, BToM bridge, CausalFrame integration, situation semantics bridge, Hartshorne et al. connection.
+
+### Fixed
+- **ClassIIReading.toSemanticType**: changed from `SemanticType` to `Option SemanticType` — stative Class II verbs (concern, bore) are NOT habitual attitudes; they're intermediate and don't map cleanly to either Hartshorne category.
 
 ## [0.227.40] - 2026-02-27
 
