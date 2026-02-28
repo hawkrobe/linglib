@@ -292,6 +292,19 @@ theorem ExpFrame.refineAt_creates_respect (π : ExpFrame W) (d : Set W)
 
 -- ═══ Coherence Preservation ═══
 
+/-- Refinement can only remove normal worlds, never add them.
+    Because `refineAt` either preserves or strengthens the ordering
+    at each subdomain, the normal condition is harder to satisfy. -/
+theorem ExpFrame.refineAt_normal_mono (π : ExpFrame W) (d : Set W)
+    (e : W → Prop) (d₀ : Set W) :
+    (π.refineAt d e).normal d₀ ⊆ π.normal d₀ := by
+  intro w ⟨hwd₀, hdom⟩
+  refine ⟨hwd₀, fun d' hd' hwd' v hv => ?_⟩
+  have h := hdom d' hd' hwd' v hv
+  by_cases hd'_eq : d' = d
+  · subst hd'_eq; rw [refineAt_target] at h; exact h.1
+  · rw [refineAt_unchanged _ _ _ _ hd'_eq] at h; exact h
+
 /-- **Coherence characterization** (Proposition 4.7): given coherent π
     with d ∩ e ≠ ∅, the refined frame π_{d∘e} is coherent iff there is
     no d' ⊇ d such that nπd' ⊆ d \ e.
@@ -308,7 +321,43 @@ theorem ExpFrame.refineAt_coherent_iff (π : ExpFrame W) (d : Set W)
     (hne : ∃ w ∈ d, e w) :
     (π.refineAt d e).coherent ↔
     ¬∃ d', d ⊆ d' ∧ π.normal d' ⊆ { w ∈ d | ¬e w } := by
-  sorry
+  obtain ⟨v₀, hv₀d, hev₀⟩ := hne
+  constructor
+  · -- →: refined coherent → no bad superdomain
+    intro hcoh_ref ⟨d₀, hd_sub, hnorm_sub⟩
+    have hd₀_ne : d₀.Nonempty := ⟨v₀, hd_sub hv₀d⟩
+    obtain ⟨w, hw_ref⟩ := hcoh_ref d₀ hd₀_ne
+    -- w is also normal in π (monotonicity), so w ∈ d ∧ ¬e w
+    obtain ⟨hwd, hne_w⟩ := hnorm_sub (refineAt_normal_mono π d e d₀ hw_ref)
+    -- But the refined pattern at d forces e w (using the e-witness v₀)
+    have h := hw_ref.2 d hd_sub hwd v₀ hv₀d
+    rw [refineAt_target] at h
+    exact hne_w (h.2 hev₀)
+  · -- ←: no bad superdomain → refined coherent
+    intro hno_bad d₀ hd₀_ne
+    by_cases hd_sub : d ⊆ d₀
+    · -- d ⊆ d₀: find a surviving normal world
+      -- nπd₀ ⊄ d \ e, so ∃ w ∈ nπd₀ with w ∉ d \ e
+      have ⟨w, hw_norm, hw_ok⟩ :
+          ∃ w ∈ π.normal d₀, w ∉ ({ w ∈ d | ¬e w } : Set W) := by
+        by_contra h
+        exact hno_bad ⟨d₀, hd_sub, fun x hx => by_contra fun hx' => h ⟨x, hx, hx'⟩⟩
+      -- hw_ok : ¬(w ∈ d ∧ ¬e w), i.e., w ∉ d ∨ e w
+      refine ⟨w, hw_norm.1, fun d' hd' hwd' v hv => ?_⟩
+      by_cases hd'_eq : d' = d
+      · -- d' = d: refined pattern demands (πd).le ∧ (e v → e w)
+        rw [hd'_eq, refineAt_target]
+        constructor
+        · have := hw_norm.2 d' hd' hwd' v hv; rwa [hd'_eq] at this
+        · intro _; by_contra hne_w; rw [hd'_eq] at hwd'; exact hw_ok ⟨hwd', hne_w⟩
+      · rw [refineAt_unchanged _ _ _ _ hd'_eq]
+        exact hw_norm.2 d' hd' hwd' v hv
+    · -- d ⊄ d₀: all subdomains ≠ d, patterns unchanged
+      obtain ⟨w, hw⟩ := hcoh d₀ hd₀_ne
+      refine ⟨w, hw.1, fun d' hd' hwd' v hv => ?_⟩
+      have hd'_ne : d' ≠ d := fun heq => hd_sub (heq ▸ hd')
+      rw [refineAt_unchanged _ _ _ _ hd'_ne]
+      exact hw.2 d' hd' hwd' v hv
 
 
 -- ═══ Connection to §3 ═══

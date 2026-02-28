@@ -6,6 +6,7 @@
 - **Veltman §4 expectation frames** (`Theories/Semantics/Dynamic/Effects/Default/Frames.lean`): `ExpFrame` (per-domain normality orderings), `ExpFrame.normal` (Definition 4.3 — subdomain check for specificity), `ExpFrame.coherent`, `ExpFrame.refineAt` (Definition 4.5 — refine at one domain only), `FrameState`, `condDefault` (Definition 4.6 — conditional defaults), `presumablyFrame`, `assertFrame`. Key theorems: `refineAt_comm_same`, `refineAt_comm_diff`, `refineAt_idempotent`, `refineAt_of_respects`, `const_normal_of_connected` (§4→§3 connection). 1 sorry (`refineAt_coherent_iff`, Proposition 4.7).
 - **Tweety/Nixon phenomena** (`Phenomena/DefaultReasoning/TweetyNixon.lean`): theory-neutral data for Tweety Triangle (4-world `TweetyWorld`, `isBird`, `isPenguin`, `flies`, `penguin_is_bird`) and Nixon Diamond (4-world `NixonWorld`, `isQuaker`, `isRepublican`, `isPacifist`).
 - **Veltman frames bridge** (`Phenomena/DefaultReasoning/Bridge/VeltmanFrames.lean`): regression tests grounding `ExpFrame.normal` in Tweety Triangle. `birdFlies_normal_in_birds` (positive), `penguinFlies_not_normal_in_birds` (key specificity test — fails without subdomain check), `penguinNoFly_normal_in_penguins` (positive). 0 sorry.
+- **Proposition 4.7 closed** (`Frames.lean`): `refineAt_coherent_iff` — coherence characterization for refined frames, with helper `refineAt_normal_mono` (refinement can only remove normal worlds). Full proof, 0 sorry across all Veltman files.
 
 ## [0.227.52] - 2026-02-27
 
