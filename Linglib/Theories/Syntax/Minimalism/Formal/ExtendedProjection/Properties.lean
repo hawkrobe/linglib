@@ -45,9 +45,13 @@ inductive EPSemanticType where
 def epSemanticType : Cat → EPSemanticType
   | .V | .N | .A | .P => .property       -- F0: property-denoting
   | .v                 => .intermediate   -- F1: event quantification domain
+  | .n                 => .intermediate   -- F1: categorizer (gender/class, Marantz 2001)
+  | .a                 => .intermediate   -- F1: adjectival categorizer (Panagiotidis 2015)
   | .Voice             => .intermediate   -- F1: introduces external argument (Kratzer 1996)
   | .Appl              => .intermediate   -- F1: introduces applied argument (Pylkkänen 2008)
-  | .D                 => .entity         -- F1: entity-denoting (in nominal EP)
+  | .Num               => .intermediate   -- F2: number inflection (Ritter 1991)
+  | .Q                 => .intermediate   -- F3: quantity/classifier (Borer 2005)
+  | .D                 => .entity         -- F4: entity-denoting (in nominal EP)
   | .T                 => .intermediate   -- F2: tense/aspect binding
   | .Neg               => .intermediate   -- F2: negation (Pollock 1989)
   | .Mod               => .intermediate   -- F2: modality (Cinque 1999)
@@ -108,13 +112,22 @@ def isEPExternal (daughter parent : Cat) : Bool :=
     This is the standard clausal spine for finite clauses. -/
 def fullVerbalEP : List Cat := [.V, .v, .T, .C]
 
-/-- Full nominal EP: N → D.
-    This is the standard nominal spine. -/
-def fullNominalEP : List Cat := [.N, .D]
+/-- Full nominal EP: N → n → Q → Num → D.
+    Q (classifier / individuation) is below Num (number / counting)
+    per Borer (2005): individuation must precede counting.
+    (Ritter 1991, Grimshaw 2005, Borer 2005). -/
+def fullNominalEP : List Cat := [.N, .n, .Q, .Num, .D]
 
 /-- Small clause EP: just the lexical head, no functional layers.
     E.g., "consider [SC him intelligent]" — the SC has no T or C. -/
 def smallClauseVerbalEP : List Cat := [.V]
+
+/-- Adjectival EP: A → a (Panagiotidis 2015).
+    The minimal adjectival extended projection, parallel to the
+    verbal (V → v) and nominal (N → n) categorizer layers.
+    Further adjectival functional structure (DegP, etc.) is
+    language-dependent and not included here. -/
+def adjectivalEP : List Cat := [.A, .a]
 
 /-- Adjectival small clause EP: just A.
     E.g., "consider [SC him happy]" -/
@@ -142,12 +155,15 @@ def isTruncated (spine : List Cat) : Bool :=
     - vP still denotes ⟨e,t⟩ (property of events)
     - TP (F2) starts binding tense → no longer ⟨e,t⟩
 
-    For nominal EPs: the argument domain is NP (F0)
-    - DP (F1) denotes e (entity), not ⟨e,t⟩ -/
+    For nominal EPs: the argument domain extends to nP (F1)
+    - nP still denotes ⟨e,t⟩ (property of entities)
+    - NumP (F2) starts binding number → no longer ⟨e,t⟩
+    This parallels the verbal domain: v ↔ n at the same F-level. -/
 def argumentDomainCat (topCat : Cat) : Cat :=
   match topCat with
   | .C | .Force | .Fin | .Foc | .Top | .Rel | .SA
   | .T | .Neg | .Mod | .Pol | .Asp | .Evid => .v  -- clausal functional heads → vP is argument domain
+  | .D | .Q | .Num                          => .n  -- nominal functional heads → nP is argument domain
   | _       => topCat  -- small clause / lexical head → the SC itself is argument domain
 
 /-- Is a category within the argument domain of a given top category?
@@ -171,6 +187,18 @@ theorem c_is_proposition :
 theorem d_is_entity :
     epSemanticType .D = .entity := by decide
 
+/-- Nominal categorizer n is intermediate (still ⟨e,t⟩-ish). -/
+theorem n_is_intermediate :
+    epSemanticType .n = .intermediate := by decide
+
+/-- Q is intermediate (classifier/individuation: CUM → QUA). -/
+theorem q_is_intermediate :
+    epSemanticType .Q = .intermediate := by decide
+
+/-- Num is intermediate (number/counting: QUA → measured). -/
+theorem num_is_intermediate :
+    epSemanticType .Num = .intermediate := by decide
+
 /-- All lexical heads denote properties. -/
 theorem lexical_heads_are_properties :
     epSemanticType .V = .property ∧ epSemanticType .N = .property ∧
@@ -180,7 +208,23 @@ theorem lexical_heads_are_properties :
 theorem vp_internal_to_vp :
     isEPInternal .V .v = true := by decide
 
-/-- NP is EP-internal to DP (complement position). -/
+/-- NP is EP-internal to nP (complement of categorizer). -/
+theorem np_internal_to_np :
+    isEPInternal .N .n = true := by decide
+
+/-- nP is EP-internal to QP (complement of classifier/individuation). -/
+theorem np_internal_to_qp :
+    isEPInternal .n .Q = true := by decide
+
+/-- QP is EP-internal to NumP (complement of number/counting). -/
+theorem qp_internal_to_nump :
+    isEPInternal .Q .Num = true := by decide
+
+/-- NumP is EP-internal to DP (complement of determiner). -/
+theorem nump_internal_to_dp :
+    isEPInternal .Num .D = true := by decide
+
+/-- NP is EP-internal to DP (transitively). -/
 theorem np_internal_to_dp :
     isEPInternal .N .D = true := by decide
 
@@ -196,6 +240,18 @@ theorem full_clause_argdomain :
 /-- The argument domain of a TP is also vP. -/
 theorem tp_argdomain :
     argumentDomainCat .T = .v := by decide
+
+/-- The argument domain of a full DP is nP (parallel to vP for clauses). -/
+theorem full_dp_argdomain :
+    argumentDomainCat .D = .n := by decide
+
+/-- The argument domain of QP is nP. -/
+theorem qp_argdomain :
+    argumentDomainCat .Q = .n := by decide
+
+/-- The argument domain of NumP is nP. -/
+theorem nump_argdomain :
+    argumentDomainCat .Num = .n := by decide
 
 /-- V is within the argument domain of a full clause. -/
 theorem v_in_argdomain :
@@ -223,6 +279,11 @@ theorem full_nominal_ep_wellformed :
     allCategoryConsistent fullNominalEP = true ∧
     allFMonotone fullNominalEP = true := by decide
 
+/-- Adjectival EP is well-formed: consistent and monotone (Panagiotidis 2015). -/
+theorem adjectival_ep_wellformed :
+    allCategoryConsistent adjectivalEP = true ∧
+    allFMonotone adjectivalEP = true := by decide
+
 /-- Infinitival EP is well-formed. -/
 theorem infinitival_ep_wellformed :
     allCategoryConsistent infinitivalEP = true ∧
@@ -236,9 +297,15 @@ theorem small_clause_is_truncated :
 theorem full_verbal_not_truncated :
     isTruncated fullVerbalEP = false := by decide
 
-/-- Functional heads cannot assign theta roles. -/
+/-- F1+ heads cannot assign theta roles (Grimshaw 2005 Definition 10).
+    Note: Panagiotidis (2015 §4.5) argues categorizers (v, n, a) are lexical,
+    not functional — but in Grimshaw's F-value system they are F1 (non-lexical).
+    The theta restriction here follows Grimshaw, not Panagiotidis. -/
 theorem functional_heads_no_theta :
-    canAssignTheta .v = false ∧ canAssignTheta .D = false ∧
+    canAssignTheta .v = false ∧ canAssignTheta .n = false ∧
+    canAssignTheta .a = false ∧
+    canAssignTheta .Num = false ∧ canAssignTheta .Q = false ∧
+    canAssignTheta .D = false ∧
     canAssignTheta .T = false ∧ canAssignTheta .C = false := by decide
 
 /-- Lexical heads can assign theta roles. -/

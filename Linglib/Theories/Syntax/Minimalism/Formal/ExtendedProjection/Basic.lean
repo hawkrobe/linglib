@@ -24,6 +24,7 @@ Standard EPs:
 
 - Grimshaw, J. (2005). Words and Structure. CSLI Lecture Notes.
 - Grimshaw, J. (1991/2005). Extended Projection. Chapter 1.
+- Panagiotidis, P. (2015). Categorial Features. @cite{panagiotidis-2015}
 -/
 
 import Linglib.Theories.Syntax.Minimalism.Core.Labeling
@@ -34,20 +35,23 @@ namespace Minimalism
 -- Part 1: Categorial Features [±V, ±N]
 -- ═══════════════════════════════════════════════════════════════
 
-/-- Grimshaw's [±V, ±N] categorial features.
-    Cross-classifies the four lexical categories:
+/-- Chomsky's (1970) [±V, ±N] categorial features, adopted by Grimshaw (2005)
+    for Extended Projections. Cross-classifies the four lexical categories:
     - V = [+V, -N], N = [-V, +N], A = [+V, +N], P = [-V, -N]
 
-    Functional categories inherit these from their lexical anchor. -/
+    Functional categories inherit these from their lexical anchor.
+
+    For an alternative where [N] and [V] carry semantic content (referentiality
+    and temporal predication), see `CategorialFeatures` (Panagiotidis 2015). -/
 structure CatFeatures where
   plusV : Bool   -- [+V] = verbal/adjectival
   plusN : Bool   -- [+N] = nominal/adjectival
   deriving Repr, DecidableEq, BEq
 
-/-- Compute [±V, ±N] features from existing `Cat`.
+/-- Compute Chomsky's (1970) [±V, ±N] features from `Cat`.
     Functional categories inherit features from their lexical anchor:
     - v, T, C inherit [+V, -N] from V
-    - D inherits [-V, +N] from N -/
+    - n, Num, Q, D inherit [-V, +N] from N -/
 def catFeatures : Cat → CatFeatures
   | .V     => ⟨true,  false⟩   -- [+V, -N]
   | .v     => ⟨true,  false⟩   -- [+V, -N] (light verb)
@@ -67,8 +71,12 @@ def catFeatures : Cat → CatFeatures
   | .Asp   => ⟨true,  false⟩   -- [+V, -N] (Cinque 1999)
   | .Evid  => ⟨true,  false⟩   -- [+V, -N] (Cinque 1999)
   | .N     => ⟨false, true⟩    -- [-V, +N]
+  | .n     => ⟨false, true⟩    -- [-V, +N] (categorizer/gender, Marantz 2001)
+  | .Num   => ⟨false, true⟩    -- [-V, +N] (number, Ritter 1991)
+  | .Q     => ⟨false, true⟩    -- [-V, +N] (quantity/classifier, Borer 2005)
   | .D     => ⟨false, true⟩    -- [-V, +N]
   | .A     => ⟨true,  true⟩    -- [+V, +N]
+  | .a     => ⟨true,  true⟩    -- [+V, +N] (adjectival categorizer, Panagiotidis 2015)
   | .P     => ⟨false, false⟩   -- [-V, -N]
 
 -- ═══════════════════════════════════════════════════════════════
@@ -76,26 +84,43 @@ def catFeatures : Cat → CatFeatures
 -- ═══════════════════════════════════════════════════════════════
 
 /-- Grimshaw's F-value: the functional level within an extended projection.
-    - F0 = lexical (V, N, A, P) — content heads
-    - F1 = first functional layer (v, D) — close functional shell
-    - F2 = second functional layer (T) — tense/agreement
-    - F3 = finiteness (Fin) — Rizzi 1997 split-CP, boundary of IP/CP
-    - F4 = focus (Foc) — Rizzi 1997 split-CP
-    - F5 = topic (Top) — Rizzi 1997 split-CP
-    - F6 = complementizer/force (C) — clause type
-    - F7 = speech act (SA) — Speas & Tenny 2003
 
-    Within Grimshaw's original F3, Rizzi (1997) provides strict internal
-    ordering: Fin < Foc < Top < C (= Force). The fValues here encode
-    this refinement: Grimshaw's macro-levels are preserved (F0–F2 unchanged)
-    while the C-domain is spread to capture the cartographic hierarchy. -/
+    F-values are globally aligned across category families to capture
+    the verbal–nominal parallelism (Ritter 1991, Grimshaw 2005).
+
+    The nominal spine follows Borer's (2005) ordering: Q (classifier /
+    individuation, CL#) is at F2, below Num (number / counting, #)
+    at F3. This reflects the semantic composition order: individuation
+    must precede counting (you can't count what hasn't been individuated).
+    See `Borer2005.lean` for the formal argument.
+
+    | F-level | Role              | Verbal           | Nominal             |
+    |---------|-------------------|------------------|---------------------|
+    | F0      | Lexical (content) | V                | N                   |
+    | F1      | Categorizer       | v, Voice, Appl   | n (gender/class)    |
+    | F2      | Specification     | T, Neg, Asp, Mod | Q (classifier/CL#)  |
+    | F3      | Inner edge        | Fin              | Num (number/#)      |
+    | F4      | Discourse/ref     | Foc              | D (definiteness)    |
+    | F5      | Topic             | Top, Rel         |                     |
+    | F6      | Clause/force      | C, Force         |                     |
+    | F7      | Speech act        | SA               |                     |
+
+    **Verbal–nominal parallelism**: The parallelism is robust at F0
+    (lexical anchors) and F1 (categorizers: v ↔ n). At F2–F3, the
+    verbal and nominal spines are *analogous* but not isomorphic:
+    T/Asp specify temporal properties while Q specifies individuation;
+    Fin types the clause while Num types the nominal. The semantic
+    functions differ, but both occupy the same structural zone.
+
+    The verbal C-domain is internally ordered per Rizzi (1997):
+    Fin(F3) < Foc(F4) < Top(F5) < C(F6). -/
 def fValue : Cat → Nat
   | .V | .N | .A | .P          => 0   -- lexical (F0)
-  | .v | .D | .Voice | .Appl   => 1   -- first functional (F1)
-  | .T | .Neg | .Mod | .Pol
-  | .Asp | .Evid               => 2   -- inflectional domain (F2)
-  | .Fin                        => 3   -- finiteness (F3, Rizzi 1997 split-CP)
-  | .Foc                        => 4   -- focus (F4, Rizzi 1997 split-CP)
+  | .v | .n | .a | .Voice | .Appl => 1  -- first functional / categorizer (F1)
+  | .T | .Q | .Neg | .Mod
+  | .Pol | .Asp | .Evid         => 2   -- specification domain (F2)
+  | .Fin | .Num                 => 3   -- inner edge (F3)
+  | .Foc | .D                   => 4   -- discourse / referential (F4)
   | .Top | .Rel                 => 5   -- topic field (F5, Rizzi 1997/2001)
   | .C | .Force                 => 6   -- complementizer/force (F6)
   | .SA                         => 7   -- speech act (F7, Speas & Tenny 2003)
@@ -140,10 +165,10 @@ def isFHead (c : Cat) : Bool := fValue c > 0
 /-- The four lexical category families, each defining an EP domain.
     All categories in an EP must belong to the same family. -/
 inductive CatFamily where
-  | verbal        -- V, v, T, C  [+V, -N]
-  | nominal       -- N, D        [-V, +N]
-  | adjectival    -- A           [+V, +N]
-  | adpositional  -- P           [-V, -N]
+  | verbal        -- V, v, T, C          [+V, -N]
+  | nominal       -- N, n, Num, Q, D     [-V, +N]
+  | adjectival    -- A                   [+V, +N]
+  | adpositional  -- P                   [-V, -N]
   deriving Repr, DecidableEq, BEq
 
 /-- Map a category to its family.
@@ -151,9 +176,66 @@ inductive CatFamily where
 def catFamily : Cat → CatFamily
   | .V | .v | .Voice | .Appl | .T | .Foc | .Top | .Fin | .C | .SA
   | .Force | .Neg | .Mod | .Rel | .Pol | .Asp | .Evid => .verbal
-  | .N | .D                            => .nominal
-  | .A                                 => .adjectival
-  | .P                                 => .adpositional
+  | .N | .n | .Num | .Q | .D           => .nominal
+  | .A | .a                              => .adjectival
+  | .P                                  => .adpositional
+
+-- ═══════════════════════════════════════════════════════════════
+-- Part 5b: Categorial Features — Panagiotidis (2015)
+-- ═══════════════════════════════════════════════════════════════
+
+/-- Panagiotidis (2015) categorial features: [N] and [V] as substantive,
+    LF-interpretable features with semantic content.
+
+    - **[N]** = sortal perspective / referentiality (capacity to introduce a
+      discourse referent, following Longobardi 1994/2005; §4.3 p84)
+    - **[V]** = temporal perspective / eventivity (capacity to anchor to
+      time/events; §4.3 p85)
+
+    This contrasts with Chomsky's (1970) [±V, ±N] diacritics (see `CatFeatures`):
+    Chomsky's features are arbitrary binary cross-classifiers, while Panagiotidis's
+    are grounded in semantic substance. The key empirical difference is the status
+    of P: Chomsky treats P as actively bearing [-V, -N]; Panagiotidis treats P as
+    the **default** categorizer lacking both [N] and [V] (§4.3).
+
+    **Interpretability distinction** (§5.8): On categorizers (v, n, a), these
+    features are *interpretable* — they provide the LF-legible interpretive
+    perspective (sortal or temporal). On higher functional heads (T, C, D, etc.),
+    these features are *uninterpretable* copies that serve only for Agree/selection.
+    This formalization does not encode the interpretable/uninterpretable distinction
+    but records which features are present, which suffices for EP consistency.
+
+    Despite the conceptual difference, the two systems produce the same four
+    equivalence classes over categories (see `chomsky_panagiotidis_agree`). -/
+structure CategorialFeatures where
+  hasN : Bool   -- [N] = referentiality
+  hasV : Bool   -- [V] = temporal predication
+  deriving Repr, DecidableEq, BEq
+
+/-- Map a category to Panagiotidis's (2015) categorial features.
+
+    Categorizers (n, v, a) bear the substantive features; functional heads
+    in the same EP inherit them (just as in Grimshaw's consistency requirement).
+    P and its extended projection bear neither feature — P is the default case. -/
+def categorialFeatures : Cat → CategorialFeatures
+  | .V | .v | .Voice | .Appl | .T | .Foc | .Top | .Fin | .C | .SA
+  | .Force | .Neg | .Mod | .Rel | .Pol | .Asp | .Evid => ⟨false, true⟩   -- [V]
+  | .N | .n | .Num | .Q | .D           => ⟨true, false⟩   -- [N]
+  | .A | .a                              => ⟨true, true⟩    -- [N, V]
+  | .P                                  => ⟨false, false⟩  -- default (no features)
+
+/-- Consistency under Panagiotidis's system: two categories share [N]/[V] features. -/
+def categorialConsistent (c1 c2 : Cat) : Bool :=
+  categorialFeatures c1 == categorialFeatures c2
+
+/-- Chomsky's [±V, ±N] and Panagiotidis's [N]/[V] produce the same equivalence
+    classes over all categories. They agree on which pairs are EP-consistent.
+
+    The conceptual difference — P as [-V, -N] vs. P as default — is invisible
+    to the consistency check: both systems group P only with itself. -/
+theorem chomsky_panagiotidis_agree (c1 c2 : Cat) :
+    categoryConsistent c1 c2 = categorialConsistent c1 c2 := by
+  cases c1 <;> cases c2 <;> decide
 
 -- ═══════════════════════════════════════════════════════════════
 -- Part 6: Extended Projection Structure
@@ -239,10 +321,12 @@ theorem verbal_chain_consistent :
     categoryConsistent .V .v ∧ categoryConsistent .v .T ∧
     categoryConsistent .T .C := by decide
 
-/-- The nominal chain N → D is category-consistent:
-    both have [-V, +N] features. -/
+/-- The nominal chain N → n → Q → Num → D is category-consistent:
+    all have [-V, +N] features. Q (CL#, individuation) is below
+    Num (#, counting) per Borer (2005). -/
 theorem nominal_chain_consistent :
-    categoryConsistent .N .D := by decide
+    categoryConsistent .N .n ∧ categoryConsistent .n .Q ∧
+    categoryConsistent .Q .Num ∧ categoryConsistent .Num .D := by decide
 
 -- F-values are monotone along standard chains
 
@@ -252,9 +336,11 @@ theorem verbal_fvalues_monotone :
     fValue .V ≤ fValue .v ∧ fValue .v ≤ fValue .T ∧
     fValue .T ≤ fValue .C := by decide
 
-/-- F-values increase along the nominal chain: N(0) ≤ D(1). -/
+/-- F-values increase along the nominal chain: N(0) ≤ n(1) ≤ Q(2) ≤ Num(3) ≤ D(4).
+    Q (individuation) is below Num (counting) per Borer (2005). -/
 theorem nominal_fvalues_monotone :
-    fValue .N ≤ fValue .D := by decide
+    fValue .N ≤ fValue .n ∧ fValue .n ≤ fValue .Q ∧
+    fValue .Q ≤ fValue .Num ∧ fValue .Num ≤ fValue .D := by decide
 
 -- Cross-family inconsistency
 
@@ -275,7 +361,7 @@ theorem f0_iff_lexical (c : Cat) :
 
 /-- F1+ is exactly the functional heads. -/
 theorem fpos_iff_functional (c : Cat) :
-    isFHead c = true ↔ (c = .v ∨ c = .Voice ∨ c = .Appl ∨ c = .D ∨ c = .T ∨ c = .Foc ∨ c = .Top ∨ c = .Fin ∨ c = .C ∨ c = .SA ∨ c = .Force ∨ c = .Neg ∨ c = .Mod ∨ c = .Rel ∨ c = .Pol ∨ c = .Asp ∨ c = .Evid) := by
+    isFHead c = true ↔ (c = .v ∨ c = .n ∨ c = .a ∨ c = .Num ∨ c = .Q ∨ c = .Voice ∨ c = .Appl ∨ c = .D ∨ c = .T ∨ c = .Foc ∨ c = .Top ∨ c = .Fin ∨ c = .C ∨ c = .SA ∨ c = .Force ∨ c = .Neg ∨ c = .Mod ∨ c = .Rel ∨ c = .Pol ∨ c = .Asp ∨ c = .Evid) := by
   cases c <;> simp [isFHead, fValue]
 
 -- Family consistency
@@ -295,13 +381,13 @@ theorem full_verbal_ep_consistent :
 theorem full_verbal_ep_monotone :
     allFMonotone [Cat.V, Cat.v, Cat.T, Cat.C] = true := by decide
 
-/-- The full nominal EP spine [N, D] is category-consistent. -/
+/-- The full nominal EP spine [N, n, Q, Num, D] is category-consistent. -/
 theorem full_nominal_ep_consistent :
-    allCategoryConsistent [Cat.N, Cat.D] = true := by decide
+    allCategoryConsistent [Cat.N, Cat.n, Cat.Q, Cat.Num, Cat.D] = true := by decide
 
-/-- The full nominal EP spine [N, D] is F-monotone. -/
+/-- The full nominal EP spine [N, n, Q, Num, D] is F-monotone. -/
 theorem full_nominal_ep_monotone :
-    allFMonotone [Cat.N, Cat.D] = true := by decide
+    allFMonotone [Cat.N, Cat.n, Cat.Q, Cat.Num, Cat.D] = true := by decide
 
 -- Bridge to BarLevel (from XBar.lean)
 
@@ -313,7 +399,48 @@ theorem f0_corresponds_to_head :
 
 /-- Functional heads (F1+) extend the projection beyond the lexical head. -/
 theorem fhead_extends_projection :
-    isFHead .v ∧ isFHead .D ∧ isFHead .T ∧ isFHead .C := by decide
+    isFHead .v ∧ isFHead .n ∧ isFHead .a ∧ isFHead .Num ∧ isFHead .Q ∧
+    isFHead .D ∧ isFHead .T ∧ isFHead .C := by decide
+
+/-- The verbal and nominal spines are parallel at F0–F1
+    (Grimshaw 2005): V ↔ N (lexical), v ↔ n (categorizer).
+
+    At F2–F3 the spines diverge: T (temporal specification, F2)
+    pairs with Q (individuation, F2), while Fin (clause-typing, F3)
+    pairs with Num (number, F3). These are structural analogs
+    occupying the same EP zone, but their semantic functions differ.
+    See `borer_ordering_unique` in `Borer2005.lean` for the formal
+    argument that Q must be below Num. -/
+theorem verbal_nominal_parallel :
+    fValue .V = fValue .N ∧ fValue .v = fValue .n ∧
+    fValue .T = fValue .Q ∧ fValue .Fin = fValue .Num := by decide
+
+/-- Is this category a categorizer (Panagiotidis 2015)?
+    Categorizers bear substantive, interpretable [N]/[V] features
+    and combine with acategorial roots to yield categorized items.
+
+    **Important**: Panagiotidis (§4.5) argues categorizers are NOT functional
+    heads — they are the only true *lexical* heads (roots being acategorial).
+    Our F-value system (from Grimshaw 2005) places them at F1, which makes
+    `isFHead` return true for categorizers. This reflects Grimshaw's architectural
+    classification, not Panagiotidis's ontological claim about their nature. -/
+def isCategorizer (c : Cat) : Bool :=
+  match c with
+  | .v | .n | .a => true
+  | _            => false
+
+/-- All three categorizers are at F1 in Grimshaw's (2005) F-value system.
+    Panagiotidis (2015) predicts this parallelism; the F1 encoding is Grimshaw's. -/
+theorem categorizers_at_f1 :
+    fValue .v = 1 ∧ fValue .n = 1 ∧ fValue .a = 1 := by decide
+
+/-- The three categorizers are parallel: all at the same F-level. -/
+theorem categorizer_parallel :
+    fValue .v = fValue .n ∧ fValue .n = fValue .a := by decide
+
+/-- The adjectival categorizer is in the adjectival family (parallel to v→verbal, n→nominal). -/
+theorem a_in_adjectival_family :
+    catFamily .a = .adjectival := by decide
 
 -- ═══════════════════════════════════════════════════════════════
 -- Part 8: Split-CP Extended Projection (Rizzi 1997)
@@ -368,14 +495,19 @@ theorem fullRizziLP_monotone :
 /-- Force and C have the same fValue (they're the same position when unsplit). -/
 theorem force_equals_c_fvalue : fValue .Force = fValue .C := by decide
 
-/-- Neg is in the inflectional domain (same F-level as T). -/
-theorem neg_in_inflectional_domain : fValue .Neg = fValue .T := by decide
+/-- Neg is in the specification domain (same F-level as T and Q). -/
+theorem neg_in_specification_domain : fValue .Neg = fValue .T := by decide
 
 /-- New functional heads are all in the verbal family. -/
 theorem new_heads_verbal :
     catFamily .Force = .verbal ∧ catFamily .Neg = .verbal ∧
     catFamily .Mod = .verbal ∧ catFamily .Rel = .verbal ∧
     catFamily .Pol = .verbal := by decide
+
+/-- Nominal functional heads are in the nominal family. -/
+theorem nominal_functional_heads :
+    catFamily .n = .nominal ∧ catFamily .Num = .nominal ∧
+    catFamily .Q = .nominal := by decide
 
 -- ═══════════════════════════════════════════════════════════════
 -- Part 9: Complement Size (Egressy 2026, Wurmbrand 2014)

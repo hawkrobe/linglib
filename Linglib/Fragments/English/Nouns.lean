@@ -12,7 +12,20 @@ namespace Fragments.English.Nouns
 open Semantics.Lexical.Noun.Kind.Chierchia1998 (BlockingPrinciple)
 
 
-/-- A lexical entry for an English noun. -/
+/-- A lexical entry for an English noun.
+
+    The `countable` field records a morphosyntactic fact about the
+    noun's conventional behavior in English (does it pluralize? does
+    it take "a"?). This is theory-neutral data:
+
+    - **Chierchia (1998)** treats `countable` as a lexical feature
+      on nouns, directly encoding the mass/count distinction.
+    - **Borer (2005)** claims `countable` is *derivable from*
+      functional structure (presence of Q in the EP spine) and
+      should not be a primitive. See `same_root_mass_and_count`.
+
+    Both theories are compatible with this fragment: Chierchia uses
+    the field directly; Borer proves it redundant via a bridge. -/
 structure NounEntry where
   /-- Singular form -/
   formSg : String
