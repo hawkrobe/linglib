@@ -562,6 +562,7 @@ import Linglib.Phenomena.Quantification.Studies.ScontrasPearl2021RSA
 import Linglib.Phenomena.Quantification.Studies.ScontrasPearl2021TwoNot
 import Linglib.Phenomena.Quantification.Studies.RitchieSchiller2024
 import Linglib.Phenomena.Quantification.Bridge.NumeralSemanticsBridge
+import Linglib.Phenomena.Quantification.Bridge.PolarizedSplitScope
 import Linglib.Phenomena.Quantification.Bridge.RitchieSchiller2024BToM
 import Linglib.Phenomena.Quantification.Compare
 import Linglib.Phenomena.Questions.Basic

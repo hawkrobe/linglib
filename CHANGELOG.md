@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.227.60] - 2026-02-28
+
+### Added
+- **Split scope bridge** (`Phenomena/Quantification/Bridge/PolarizedSplitScope.lean`): Bridge connecting polarized individual theory to split scope phenomenon. Complementary polarities cancel scope (`split_scope_restrictor_only`, `split_scope_eq_restrictor`), `no` as complement of positive PolInd join, `every` from negation of negative PolInds. 0 sorry.
+
 ## [0.227.59] - 2026-02-28
 
 ### Added
