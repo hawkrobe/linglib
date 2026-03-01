@@ -427,6 +427,151 @@ theorem RootDen.meaning_postulate_derived
   h
 
 -- ════════════════════════════════════════════════════
+-- § 7c. Ditransitive Root Classes (B&KG 2020 Ch. 3, Table 3.2)
+-- ════════════════════════════════════════════════════
+
+/-- What a ditransitive root entails about possession (B&KG 2020 §3.3).
+    Templates always introduce PROSPECTIVE possession (via ◇ modality).
+    Whether the ROOT adds actual or prospective possession on top
+    determines cancellability:
+    "gave X the ball, #but X never had it" vs.
+    "sent X the ball, but it never arrived" (OK). -/
+inductive PossessionEntailment where
+  | none        -- root says nothing about possession (template provides ◇have')
+  | prospective -- root entails future/intended possession (√PROMISE, √OWE)
+  | actual      -- root entails actual possession transfer (√GIVE, √HAND)
+  deriving DecidableEq, Repr, BEq
+
+/-- Six classes of ditransitive verb roots (B&KG 2020 §3.6, Table 3.2).
+    The ditransitive parallel to the PC/result distinction for CoS roots:
+    templates contribute only PROSPECTIVE states; roots can contribute
+    ACTUAL states. -/
+inductive DitransitiveRootClass where
+  | causedPossession   -- √GIVE, √HAND, √PASS: actual possession transfer
+  | futureHaving       -- √PROMISE, √OWE, √BEQUEATH: prospective possession
+  | ballisticMotion    -- √THROW, √TOSS, √FLING: manner + caused motion
+  | sending            -- √SEND, √MAIL, √SHIP: caused motion, no manner
+  | accompaniedMotion  -- √BRING, √TAKE: agent accompanies theme
+  | carrying           -- √CARRY, √HAUL, √LUG: manner + accompaniment
+  deriving DecidableEq, Repr, BEq
+
+/-- What a ditransitive root entails about the transfer event.
+    Each field is a distinct semantic entailment from the ROOT,
+    independent of what the template provides. -/
+structure DitransitiveEntailments where
+  possession    : PossessionEntailment
+  causedMotion  : Bool  -- root entails caused motion of theme
+  manner        : Bool  -- root specifies manner of transfer/motion
+  accompaniment : Bool  -- root entails agent accompanies theme
+  deriving DecidableEq, BEq, Repr
+
+/-- Entailment profile for each ditransitive root class (B&KG 2020 §3.6). -/
+def DitransitiveRootClass.entailments : DitransitiveRootClass → DitransitiveEntailments
+  | .causedPossession  => ⟨.actual,      false, false, false⟩
+  | .futureHaving      => ⟨.prospective, false, false, false⟩
+  | .ballisticMotion   => ⟨.none,        true,  true,  false⟩
+  | .sending           => ⟨.none,        true,  false, false⟩
+  | .accompaniedMotion => ⟨.none,        true,  false, true⟩
+  | .carrying          => ⟨.none,        true,  true,  true⟩
+
+/-- √GIVE entails actual possession — "Kim gave Sandy the ball,
+    #but Sandy never had it" is contradictory (§3.3, ex. 17). -/
+theorem give_entails_actual_possession :
+    (DitransitiveRootClass.entailments .causedPossession).possession = .actual := rfl
+
+/-- √SEND does NOT entail possession — "Kim sent Sandy the ball,
+    but it never arrived" is felicitous (§3.3, ex. 18). -/
+theorem send_no_possession :
+    (DitransitiveRootClass.entailments .sending).possession = .none := rfl
+
+/-- √PROMISE entails only prospective possession. -/
+theorem promise_prospective :
+    (DitransitiveRootClass.entailments .futureHaving).possession = .prospective := rfl
+
+/-- √THROW entails manner + caused motion but not possession. -/
+theorem throw_manner_motion :
+    let e := DitransitiveRootClass.entailments .ballisticMotion
+    e.possession = .none ∧ e.causedMotion = true ∧ e.manner = true := ⟨rfl, rfl, rfl⟩
+
+/-- √BRING entails accompaniment — agent travels with theme. -/
+theorem bring_accompaniment :
+    (DitransitiveRootClass.entailments .accompaniedMotion).accompaniment = true := rfl
+
+/-- √CARRY entails manner + accompaniment but not possession. -/
+theorem carry_manner_accompaniment :
+    let e := DitransitiveRootClass.entailments .carrying
+    e.manner = true ∧ e.accompaniment = true ∧ e.possession = .none := ⟨rfl, rfl, rfl⟩
+
+/-- Bridge to LevinClass: ditransitive Levin classes → root classes. -/
+def LevinClass.ditransitiveRootClass : LevinClass → Option DitransitiveRootClass
+  | .give => some .causedPossession
+  | .contribute => some .causedPossession
+  | .exchange => some .causedPossession
+  | .throw => some .ballisticMotion
+  | .send => some .sending
+  | .carry => some .carrying
+  | _ => none
+
+theorem give_class_causedPossession :
+    LevinClass.ditransitiveRootClass .give = some .causedPossession := rfl
+theorem throw_class_ballisticMotion :
+    LevinClass.ditransitiveRootClass .throw = some .ballisticMotion := rfl
+theorem send_class_sending :
+    LevinClass.ditransitiveRootClass .send = some .sending := rfl
+theorem carry_class_carrying :
+    LevinClass.ditransitiveRootClass .carry = some .carrying := rfl
+
+-- ════════════════════════════════════════════════════
+-- § 7d. Ditransitive Root Denotations (B&KG 2020 §3.5–3.6)
+-- ════════════════════════════════════════════════════
+
+/-- A ditransitive root's denotation (B&KG 2020 §3.5, eqs. 46–55).
+    Parallel to `RootDen` for CoS roots (§7b).
+
+    The formal contrast:
+    - √SEND = λyλzλe[send'(y,z,e)] — event predicate only
+    - √GIVE = λyλzλe[give'(y,z,e) ∧ have'(z,y)] — possession IN the root
+
+    Templates always add prospective possession (via ◇). Whether the root
+    ALSO adds actual possession determines cancellation behavior, telicity,
+    and *again* readings — the same architecture as CoS roots with BECOME. -/
+inductive DitransitiveDen (Entity Event : Type) where
+  /-- Root WITHOUT possession entailment. Like PC roots for CoS:
+      the template provides the (prospective) possession. -/
+  | simple (eventPred : Entity → Entity → Event → Prop)
+  /-- Root WITH actual possession entailment. Like result roots for CoS:
+      possession is IN the root's truth conditions.
+      The `entailsPoss` proof is constitutive — not a meaning postulate. -/
+  | withPossession
+    (eventPred : Entity → Entity → Event → Prop)
+    (possess : Entity → Entity → Prop)
+    (entailsPoss : ∀ y z e, eventPred y z e → possess z y)
+
+/-- Whether possession is cancelable for a verb with this root.
+    Root-entailed actual possession is NOT cancelable; template-only
+    prospective possession IS cancelable.
+
+    Structural parallel to `RootDen.carriesBECOME`: root-constitutive
+    content cannot be canceled in either domain. -/
+def DitransitiveDen.possessionCancelable {Entity Event : Type} :
+    DitransitiveDen Entity Event → Bool
+  | .simple _ => true
+  | .withPossession _ _ _ => false
+
+/-- A send-type denotation (simple) has cancelable possession. -/
+theorem simple_possession_cancelable {Entity Event : Type}
+    (ep : Entity → Entity → Event → Prop) :
+    (DitransitiveDen.simple ep :
+      DitransitiveDen Entity Event).possessionCancelable = true := rfl
+
+/-- A give-type denotation (withPossession) has uncancelable possession. -/
+theorem withPossession_not_cancelable {Entity Event : Type}
+    (ep : Entity → Entity → Event → Prop) (poss : Entity → Entity → Prop)
+    (h : ∀ y z e, ep y z e → poss z y) :
+    (DitransitiveDen.withPossession ep poss h :
+      DitransitiveDen Entity Event).possessionCancelable = false := rfl
+
+-- ════════════════════════════════════════════════════
 -- § 8. Bridge to EntailmentProfile.changeOfState (ProtoRoles §8)
 -- ════════════════════════════════════════════════════
 
@@ -659,6 +804,76 @@ theorem bkg_again_matches_boolean {Entity State Event : Type}
     (rd : RootDen Entity State Event) :
     rd.predictedAgainReadings = rd.rootType.againReadings := by
   cases rd <;> rfl
+
+-- ════════════════════════════════════════════════════
+-- § 12c. Ditransitive Telicity and *Again* (B&KG 2020 §§3.7, 3.9)
+-- ════════════════════════════════════════════════════
+
+/-- Whether a ditransitive verb is obligatorily telic in the IO frame
+    (B&KG 2020 §3.7).
+
+    Telicity correlates with whether the root spells out a state in the
+    template. If the root entails actual possession, the template's
+    prospective possession is discharged → definite endpoint → telic.
+
+    "Kim gave Sandy balls for an hour" — # (bounded by possession transfer)
+    "Kim sent Sandy balls for an hour" — OK (endpoint only prospective) -/
+def DitransitiveRootClass.obligatorilyTelic : DitransitiveRootClass → Bool
+  | .causedPossession  => true
+  | _ => false
+
+/-- Telicity aligns exactly with actual possession entailment. -/
+theorem telic_iff_actual_possession (c : DitransitiveRootClass) :
+    c.obligatorilyTelic = true ↔
+    c.entailments.possession = .actual := by
+  cases c <;> simp [DitransitiveRootClass.obligatorilyTelic,
+    DitransitiveRootClass.entailments]
+
+/-- What *again* presupposes over the root of a ditransitive denotation.
+    Parallel to `RootDen.againOverRoot` (§12b): root-constitutive content
+    makes root-scope and vP-scope *again* collapse.
+
+    - .withPossession: root carries possession → *again* over root
+      presupposes prior possession (= prior change) → collapse
+    - .simple: root has no possession → *again* over root presupposes
+      prior event only (= prior state) → distinct readings -/
+def DitransitiveDen.againOverRoot {Entity Event : Type} :
+    DitransitiveDen Entity Event → AgainPresupposition
+  | .simple _ => .priorState
+  | .withPossession _ _ _ => .priorChange
+
+/-- *again* over the ditransitive vP always presupposes prior caused
+    possession (from template CAUSE + ◇have'). -/
+def againOverDitransitiveVP : AgainPresupposition := .priorChange
+
+/-- Give-type: root-scope and vP-scope *again* yield the SAME
+    presupposition. Parallel to `result_again_collapsed`. -/
+theorem give_den_again_collapsed {Entity Event : Type}
+    (ep : Entity → Entity → Event → Prop) (poss : Entity → Entity → Prop)
+    (h : ∀ y z e, ep y z e → poss z y) :
+    (DitransitiveDen.withPossession ep poss h :
+      DitransitiveDen Entity Event).againOverRoot =
+    againOverDitransitiveVP := rfl
+
+/-- Send-type: root-scope and vP-scope *again* yield DISTINCT
+    presuppositions. Parallel to `pc_again_distinct`. -/
+theorem send_den_again_distinct {Entity Event : Type}
+    (ep : Entity → Entity → Event → Prop) :
+    (DitransitiveDen.simple ep :
+      DitransitiveDen Entity Event).againOverRoot ≠
+    againOverDitransitiveVP := by
+  simp [DitransitiveDen.againOverRoot, againOverDitransitiveVP]
+
+/-- Predicted *again* readings for each ditransitive root class. -/
+def DitransitiveRootClass.againReadings :
+    DitransitiveRootClass → List AgainReading
+  | .causedPossession => [.repetitive]
+  | _ => [.restitutive, .repetitive]
+
+/-- Give has one reading (collapse); send has two (distinct). -/
+theorem give_one_send_two_again :
+    (DitransitiveRootClass.againReadings .causedPossession).length = 1 ∧
+    (DitransitiveRootClass.againReadings .sending).length = 2 := ⟨rfl, rfl⟩
 
 -- ════════════════════════════════════════════════════
 -- § 13. Consequence for Event-Structural Theory (§9)
