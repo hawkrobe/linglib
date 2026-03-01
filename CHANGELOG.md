@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.227.69] - 2026-03-01
+
+### Added
+- **B&KG 2020 Ch. 5 — full root typology** (`RootTypology.lean`): `RootPosition` (.complement/.adjoined), `FullRootSpec` (entailments × position with `positionLicensed`, `semanticallyCoherent`, `wellFormed`). 8 Table 12 witnesses (√FLAT/√BLOSSOM/√CRACK/√JOG/√DROWN/√TOSS/√HAND/√EXIST). `TemplateHead` enum (vAct/vCause/vBecome/pLoc/pHave) with bridge to `Primitive`. `RootEntailments.entailedHeads` (Table 13 monotone mapping), `DitransitiveRootClass.additionalHeads`. Gap predictions: 3 principled gap types (adjoined without manner, +M+S−R−C incoherence, well-formedness violations). `isAttestedCell` with per-type verification.
+
 ## [0.227.68] - 2026-03-01
 
 ### Added

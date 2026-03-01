@@ -1292,3 +1292,303 @@ theorem same_change_same_morphosyntax (r₁ r₂ : Root)
     r₁.entailsChange = r₂.entailsChange := by
   simp [Root.verbalMarkedness, Root.stativeMarkedness, Root.entailsChange, h]
 
+-- ════════════════════════════════════════════════════
+-- § 18. Root Position in Event Structure (B&KG 2020 §5.4.1, Table 12)
+-- ════════════════════════════════════════════════════
+
+/-- Where a root sits in event structure (B&KG 2020 §5.4.1).
+
+    - **complement**: under v_become, filling the result/state slot.
+      The root provides the state that BECOME operates on.
+      Examples: √FLAT, √CRACK, √DROWN.
+    - **adjoined**: to v_cause/v_act, modifying the causing event.
+      The root specifies the manner of the activity.
+      Examples: √JOG, √TOSS, √HAND.
+
+    Position is NOT determined solely by the 4 entailment features.
+    √DROWN and √TOSS have identical features (+S,+M,+R,+C) but differ
+    in position — √DROWN is complement (manner restricts how the state
+    is caused), √TOSS is adjoined (manner is the primary event,
+    which happens to cause a state change). -/
+inductive RootPosition where
+  | complement  -- under v_become: root fills the result/state slot
+  | adjoined    -- to v_cause: root modifies the causing event
+  deriving DecidableEq, Repr, BEq
+
+/-- Full root specification: entailment features + structural position.
+    This is B&KG's (2020) Table 12 in full — the 4 binary entailment
+    features × 2 positions give 32 theoretical cells, of which 7 are
+    attested and the rest are principled gaps. -/
+structure FullRootSpec where
+  entailments : RootEntailments
+  position : RootPosition
+  deriving DecidableEq, BEq, Repr
+
+/-- Adjoined position requires +manner: a root in adjunct position
+    must specify a manner of action. Without manner, there is nothing
+    to adjoin — the adjunct slot expects an action modifier. -/
+def FullRootSpec.positionLicensed (s : FullRootSpec) : Bool :=
+  match s.position with
+  | .adjoined => s.entailments.manner
+  | .complement => true
+
+/-- +manner +state −result −cause is semantically incoherent (B&KG §5.4.1):
+    the root would specify both a manner of action and a state, but with
+    no result or cause linking them. What would such a verb mean?
+    "Perform manner M while in state S" — with no causal connection. -/
+def FullRootSpec.semanticallyCoherent (s : FullRootSpec) : Bool :=
+  !(s.entailments.manner && s.entailments.state &&
+    !s.entailments.result && !s.entailments.cause)
+
+/-- Full well-formedness: entailment constraints + position licensing +
+    semantic coherence. -/
+def FullRootSpec.wellFormed (s : FullRootSpec) : Bool :=
+  s.entailments.wellFormed && s.positionLicensed && s.semanticallyCoherent
+
+/-! ### Attested cells of Table 12 -/
+
+/-- √FLAT: +S −M −R −C, complement. Property concept root. -/
+def FullRootSpec.flat : FullRootSpec := ⟨.propertyConcept, .complement⟩
+
+/-- √BLOSSOM: +S −M +R −C, complement. Pure result root. -/
+def FullRootSpec.blossom : FullRootSpec := ⟨.pureResult, .complement⟩
+
+/-- √CRACK: +S −M +R +C, complement. Causative result root. -/
+def FullRootSpec.crack : FullRootSpec := ⟨.causativeResult, .complement⟩
+
+/-- √JOG: −S +M −R −C, adjoined. Pure manner root. -/
+def FullRootSpec.jog : FullRootSpec := ⟨.pureManner, .adjoined⟩
+
+/-- √DROWN: +S +M +R +C, complement. Manner+result in complement position —
+    the manner restricts HOW the state is caused. -/
+def FullRootSpec.drown : FullRootSpec := ⟨.fullSpec, .complement⟩
+
+/-- √TOSS: +S +M +R +C, adjoined. Manner+result in adjunct position —
+    the manner is the primary event that happens to cause a state change. -/
+def FullRootSpec.toss : FullRootSpec := ⟨.fullSpec, .adjoined⟩
+
+/-- √HAND: +S +M +R +C, adjoined (ditransitive). Same position as √TOSS
+    but additionally entails possession transfer (see DitransitiveRootClass). -/
+def FullRootSpec.hand : FullRootSpec := ⟨.fullSpec, .adjoined⟩
+
+/-- √EXIST: −S −M −R −C, complement. Minimal stative root. -/
+def FullRootSpec.exist : FullRootSpec := ⟨.minimal, .complement⟩
+
+-- All attested types are well-formed
+theorem flat_wf : FullRootSpec.flat.wellFormed = true := rfl
+theorem blossom_wf : FullRootSpec.blossom.wellFormed = true := rfl
+theorem crack_wf : FullRootSpec.crack.wellFormed = true := rfl
+theorem jog_wf : FullRootSpec.jog.wellFormed = true := rfl
+theorem drown_wf : FullRootSpec.drown.wellFormed = true := rfl
+theorem toss_wf : FullRootSpec.toss.wellFormed = true := rfl
+theorem hand_wf : FullRootSpec.hand.wellFormed = true := rfl
+theorem exist_wf : FullRootSpec.exist.wellFormed = true := rfl
+
+/-- √DROWN and √TOSS have identical entailments but different positions. -/
+theorem drown_toss_same_entailments :
+    FullRootSpec.drown.entailments = FullRootSpec.toss.entailments := rfl
+
+theorem drown_toss_diff_position :
+    FullRootSpec.drown.position ≠ FullRootSpec.toss.position := by
+  simp [FullRootSpec.drown, FullRootSpec.toss]
+
+-- ════════════════════════════════════════════════════
+-- § 19. Root → Templatic Head Prediction (B&KG 2020 Table 13)
+-- ════════════════════════════════════════════════════
+
+/-- Templatic functional heads in event structure (B&KG 2020 Table 13).
+
+    Each root type PREDICTS which templatic heads its verb will entail.
+    If the root's own meaning already includes what a template head
+    provides, that head is "entailed by the root" — its semantic
+    contribution is redundant (though structurally still present).
+
+    v_act, v_cause, v_become are verbal heads. P_loc and P_have
+    are prepositional heads specific to ditransitive structures. -/
+inductive TemplateHead where
+  | vAct     -- v_act: agentive activity head
+  | vCause   -- v_cause: causal relation head
+  | vBecome  -- v_become: change-of-state head
+  | pLoc     -- P_loc: locative preposition (ditransitive motion)
+  | pHave    -- P_have: possession preposition (ditransitive transfer)
+  deriving DecidableEq, Repr, BEq
+
+/-- Bridge to event structure primitives. The three verbal heads
+    correspond to R&L (1998) primitives; the prepositional heads
+    are not event-structural primitives. -/
+def TemplateHead.toPrimitive : TemplateHead → Option Primitive
+  | .vAct => some .ACT
+  | .vCause => some .CAUSE
+  | .vBecome => some .BECOME
+  | .pLoc => none
+  | .pHave => none
+
+/-- Which template heads a root's entailments make redundant (Table 13).
+
+    The mapping is monotone: more root entailments → more heads entailed.
+
+    - +result → v_become (root entails the change v_become would provide)
+    - +cause → v_cause (root entails the causation v_cause would provide)
+    - +manner ∧ +cause → v_act (manner that causes = activity)
+    - +manner alone → no v_act (manner without causation doesn't entail
+      activity — √JOG specifies jogging manner but v_act still provides
+      the activity frame) -/
+def RootEntailments.entailedHeads (r : RootEntailments) : List TemplateHead :=
+  (if r.result then [.vBecome] else []) ++
+  (if r.cause then [.vCause] else []) ++
+  (if r.manner && r.cause then [.vAct] else [])
+
+/-- For ditransitive roots, additional prepositional heads beyond
+    the verbal heads predicted by `entailedHeads`. -/
+def DitransitiveRootClass.additionalHeads : DitransitiveRootClass → List TemplateHead
+  | .causedPossession  => [.pLoc, .pHave]  -- √HAND: location + possession
+  | .ballisticMotion   => [.pLoc]           -- √TOSS: location of arrival
+  | .sending           => [.pLoc]           -- √SEND: location of arrival
+  | .accompaniedMotion => [.pLoc]           -- √BRING: destination
+  | .carrying          => [.pLoc]           -- √CARRY: destination
+  | .futureHaving      => []                -- √PROMISE: no spatial path
+
+/-! ### Table 13 verification -/
+
+/-- √JOG (pureManner): no template heads entailed.
+    The root specifies jogging manner, but v_act still provides
+    the activity frame — the root doesn't make it redundant. -/
+theorem jog_no_heads :
+    RootEntailments.pureManner.entailedHeads = [] := rfl
+
+/-- √FLAT (propertyConcept): no template heads entailed.
+    The root names a state, but doesn't entail change or cause. -/
+theorem flat_no_heads :
+    RootEntailments.propertyConcept.entailedHeads = [] := rfl
+
+/-- √BLOSSOM (pureResult): v_become entailed.
+    The root entails change — v_become's contribution is redundant. -/
+theorem blossom_heads :
+    RootEntailments.pureResult.entailedHeads = [.vBecome] := rfl
+
+/-- √CRACK (causativeResult): v_become + v_cause entailed.
+    The root entails change AND causation. -/
+theorem crack_heads :
+    RootEntailments.causativeResult.entailedHeads = [.vBecome, .vCause] := rfl
+
+/-- √DROWN (fullSpec): v_become + v_cause + v_act entailed.
+    The root entails change, causation, AND activity (manner that causes). -/
+theorem drown_heads :
+    RootEntailments.fullSpec.entailedHeads = [.vBecome, .vCause, .vAct] := rfl
+
+/-- √TOSS (fullSpec + ballistic): v_become + v_cause + v_act + P_loc.
+    Verbal heads from entailments + P_loc from ditransitive class. -/
+theorem toss_heads :
+    RootEntailments.fullSpec.entailedHeads ++
+    DitransitiveRootClass.additionalHeads .ballisticMotion =
+    [.vBecome, .vCause, .vAct, .pLoc] := rfl
+
+/-- √HAND (fullSpec + causedPossession): all 5 heads.
+    Verbal heads from entailments + P_loc + P_have from ditransitive class. -/
+theorem hand_heads :
+    RootEntailments.fullSpec.entailedHeads ++
+    DitransitiveRootClass.additionalHeads .causedPossession =
+    [.vBecome, .vCause, .vAct, .pLoc, .pHave] := rfl
+
+/-- Monotonicity: more root entailments → weakly more heads entailed.
+    Pure result ⊂ causative result ⊂ full spec (by inclusion). -/
+theorem heads_monotone :
+    RootEntailments.pureResult.entailedHeads.length ≤
+    RootEntailments.causativeResult.entailedHeads.length ∧
+    RootEntailments.causativeResult.entailedHeads.length ≤
+    RootEntailments.fullSpec.entailedHeads.length := ⟨by native_decide, by native_decide⟩
+
+/-- All entailed heads for verbal template heads correspond to
+    event structure primitives. -/
+theorem verbal_heads_have_primitives :
+    (TemplateHead.vAct.toPrimitive).isSome = true ∧
+    (TemplateHead.vCause.toPrimitive).isSome = true ∧
+    (TemplateHead.vBecome.toPrimitive).isSome = true := ⟨rfl, rfl, rfl⟩
+
+-- ════════════════════════════════════════════════════
+-- § 20. Gap Predictions (B&KG 2020 §5.4.1, Table 12)
+-- ════════════════════════════════════════════════════
+
+/-- Whether a FullRootSpec cell is attested in B&KG's Table 12. -/
+def FullRootSpec.isAttestedCell (s : FullRootSpec) : Bool :=
+  s.wellFormed &&
+  match s.entailments, s.position with
+  -- Attested complement types
+  | ⟨true, false, false, false⟩, .complement => true   -- √FLAT
+  | ⟨true, false, true, false⟩,  .complement => true   -- √BLOSSOM
+  | ⟨true, false, true, true⟩,   .complement => true   -- √CRACK
+  | ⟨true, true, true, true⟩,    .complement => true   -- √DROWN
+  | ⟨false, false, false, false⟩, .complement => true   -- √EXIST
+  -- Attested adjoined types
+  | ⟨false, true, false, false⟩, .adjoined => true      -- √JOG
+  | ⟨true, true, true, true⟩,    .adjoined => true      -- √TOSS/√HAND
+  -- Everything else is a gap
+  | _, _ => false
+
+/-! ### Gap explanations
+
+B&KG (§5.4.1) identify three principled gap types:
+
+1. **Adjoined without manner**: the adjunct position in event structure
+   hosts manner modifiers. Without +manner, there's nothing to adjoin.
+   This rules out all −manner roots in adjoined position.
+
+2. **+manner +state −result −cause**: the root would need to encode
+   both a manner of action and a state, with no causal/change connection
+   between them. No known verb has this pattern.
+
+3. **Well-formedness violations**: +result −state and +cause −result
+   are ruled out by the entailment constraints (result→state, cause→result). -/
+
+/-- Gap type 1: adjoined position requires manner. -/
+theorem gap_adjoined_no_manner :
+    (FullRootSpec.mk .propertyConcept .adjoined).positionLicensed = false := rfl
+
+theorem gap_adjoined_result :
+    (FullRootSpec.mk .pureResult .adjoined).positionLicensed = false := rfl
+
+theorem gap_adjoined_causativeResult :
+    (FullRootSpec.mk .causativeResult .adjoined).positionLicensed = false := rfl
+
+theorem gap_adjoined_minimal :
+    (FullRootSpec.mk .minimal .adjoined).positionLicensed = false := rfl
+
+/-- Gap type 2: +manner +state −result −cause is incoherent. -/
+theorem gap_manner_state_no_result :
+    (FullRootSpec.mk ⟨true, true, false, false⟩ .complement).semanticallyCoherent = false := rfl
+
+theorem gap_manner_state_no_result_adj :
+    (FullRootSpec.mk ⟨true, true, false, false⟩ .adjoined).semanticallyCoherent = false := rfl
+
+/-- Gap type 3: well-formedness violations. -/
+theorem gap_result_no_state :
+    (RootEntailments.mk false false true false).wellFormed = false := rfl
+
+theorem gap_cause_no_result :
+    (RootEntailments.mk true false false true).wellFormed = false := rfl
+
+/-! ### Attested cells are well-formed and recognized -/
+
+theorem flat_attested : FullRootSpec.flat.isAttestedCell = true := rfl
+theorem blossom_attested : FullRootSpec.blossom.isAttestedCell = true := rfl
+theorem crack_attested : FullRootSpec.crack.isAttestedCell = true := rfl
+theorem jog_attested : FullRootSpec.jog.isAttestedCell = true := rfl
+theorem drown_attested : FullRootSpec.drown.isAttestedCell = true := rfl
+theorem toss_attested : FullRootSpec.toss.isAttestedCell = true := rfl
+theorem exist_attested : FullRootSpec.exist.isAttestedCell = true := rfl
+
+/-- The open question: +S +M +R −C (mannerResult without cause) in
+    complement position. B&KG note this cell may be inhabited by
+    verbs like *slide* — manner of motion + change of location,
+    without external causation. Left as NOT attested per Table 12,
+    pending further research. -/
+theorem mannerResult_complement_unattested :
+    (FullRootSpec.mk .mannerResult .complement).isAttestedCell = false := rfl
+
+/-- The complement/adjoined split for fullSpec roots is the only
+    case where position differentiates otherwise identical entailments. -/
+theorem fullSpec_both_positions :
+    FullRootSpec.drown.isAttestedCell = true ∧
+    FullRootSpec.toss.isAttestedCell = true ∧
+    FullRootSpec.drown.entailments = FullRootSpec.toss.entailments := ⟨rfl, rfl, rfl⟩
+
