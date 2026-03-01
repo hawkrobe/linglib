@@ -2,14 +2,14 @@ import Linglib.Core.Logic.Quantification
 import Mathlib.Order.BooleanAlgebra.Defs
 
 /-!
-# Polarized Individuals and the Birkhoff Representation @cite{elliott-2026}
+# Polarized Individuals and the Birkhoff Representation @cite{elliott-2025}
 
 Entity–polarity pairs, trivalent functions, and the Birkhoff
 representation theorem for conservative GQs.
 
 ## Overview
 
-Elliott (2026) argues that determiners denote sets of **polarized
+Elliott (2025) argues that determiners denote sets of **polarized
 individuals** — entity–polarity pairs `(e, ±)` that encode whether an
 entity witnesses the restrictor ∩ scope (positive) or the restrictor ∖
 scope (negative). The conservative GQ lattice (`ConsGQ`, §12 of
@@ -26,7 +26,7 @@ The module is organized in five sections:
    domain D_e^± from Elliott §4.3.
 
 3. **Birkhoff representation** (`consGQOrderIso`): the order-isomorphism
-   `ConsGQ α ≃o ((α → Tri) → Bool)`, using `Mathlib.Order.Equiv.toOrderIso`.
+   `ConsGQ α ≃o ((α → Tri) → Bool)`, using mathlib's `Equiv.toOrderIso`.
    This is the concrete Birkhoff representation: conservative GQs are
    exactly predicates on trivalent functions. Conservativity is a
    structural consequence of the encoding — `predToGQ_conservative`
@@ -42,7 +42,7 @@ The module is organized in five sections:
 
 ## References
 
-- Elliott, P. (2026). Determiners as Polarized Individuals.
+- Elliott, P. (2025). Determiners as predicates. SALT 35.
 - Birkhoff, G. (1937). Rings of sets.
 - Van Benthem, J. (1984). Questions about Quantifiers.
 -/
@@ -57,7 +57,7 @@ namespace Core.Quantification
     - `pos`: entity is in restrictor ∩ scope
     - `neg`: entity is in restrictor ∖ scope
     - `blank`: entity is irrelevant (not constrained by the quantifier)
-    Elliott (2026), §4.3. -/
+    Elliott (2025), §4.3. -/
 inductive Tri where
   | pos   : Tri
   | neg   : Tri
@@ -65,17 +65,6 @@ inductive Tri where
   deriving DecidableEq, Repr, BEq
 
 namespace Tri
-
-/-- Convert a polarity `Bool` to the corresponding non-blank trivalent
-    value: `true ↦ pos`, `false ↦ neg`. -/
-def ofBool : Bool → Tri
-  | true  => .pos
-  | false => .neg
-
-@[simp] theorem ofBool_true : ofBool true = .pos := rfl
-@[simp] theorem ofBool_false : ofBool false = .neg := rfl
-
-theorem ofBool_ne_blank (b : Bool) : ofBool b ≠ .blank := by cases b <;> simp [ofBool]
 
 /-- Check whether a trivalent value is non-blank (= in the restrictor). -/
 def isNonBlank : Tri → Bool
@@ -147,17 +136,17 @@ def triPositive (f : α → Tri) : α → Bool :=
 -- ============================================================================
 
 /-- Map a predicate on trivalent functions to a GQ.
-    Elliott (2026), §4.3.2, equation (44). -/
+    Elliott (2025), §4.3.2, equation (44). -/
 def predToGQ (P : (α → Tri) → Bool) : GQ α :=
   λ R S => P (triFunction R S)
 
 /-- Map a conservative GQ to a predicate on trivalent functions.
-    Elliott (2026), §4.3.1, equation (40). -/
+    Elliott (2025), §4.3.1, equation (40). -/
 def gqToPred (Q : GQ α) : (α → Tri) → Bool :=
   λ f => Q (triSupport f) (triPositive f)
 
 /-- **Conservativity for free**: any predicate on trivalent functions
-    yields a conservative GQ. This is the central insight of Elliott (2026):
+    yields a conservative GQ. This is the central insight of Elliott (2025):
     conservativity is a structural consequence of the predicative theory,
     not an additional constraint. -/
 private theorem triFunction_and_absorb (R S : α → Bool) :
@@ -189,18 +178,16 @@ theorem predToConsGQ_gqToPred (Q : ConsGQ α) :
 @[simp] theorem predToConsGQ_val (P : (α → Tri) → Bool) (R S : α → Bool) :
     (predToConsGQ P).1 R S = P (triFunction R S) := rfl
 
-/-- **Birkhoff Representation for ConsGQ** (Elliott 2026, Theorem 1).
+/-- **Birkhoff Representation for ConsGQ** (Elliott 2025, §4.3).
 
     Conservative GQs are order-isomorphic to predicates on trivalent
     functions (= the powerset of the polarized domain D_e^±).
 
-    This is the concrete Birkhoff representation theorem
-    (`Mathlib.Order.Birkhoff.OrderIso.lowerSetSupIrred`): the abstract
-    version identifies any finite distributive lattice with the lattice
-    of lower sets of its sup-irreducible elements. Our isomorphism makes
-    this explicit for `ConsGQ`: the sup-irreducible (= atomic, since
-    `ConsGQ` is a `BooleanAlgebra`) elements correspond to individual
-    trivalent functions `f : α → Tri`.
+    This is the concrete Birkhoff representation: the abstract version
+    (`OrderIso.lowerSetSupIrred` in `Mathlib.Order.Birkhoff`) identifies
+    any finite distributive lattice with the lattice of lower sets of its
+    sup-irreducible elements. Our isomorphism makes this explicit for
+    `ConsGQ` using `Equiv.toOrderIso` from mathlib.
 
     The isomorphism is constructive and works for any `α`, not just
     finite types. -/
@@ -329,7 +316,7 @@ end PolInd
 --
 -- This extends the bounded distributive lattice from §12 of
 -- `Quantification.lean` (via Sublattice) to a full `BooleanAlgebra`.
--- Elliott (2026), Theorem 1.
+-- Elliott (2025), Theorem 1.
 
 section ConsGQ_BA
 

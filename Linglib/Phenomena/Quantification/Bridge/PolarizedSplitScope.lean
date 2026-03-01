@@ -1,7 +1,7 @@
 import Linglib.Theories.Semantics.Lexical.Determiner.PolarizedIndividuals
 
 /-!
-# Split Scope via Polarized Individuals @cite{elliott-2026}
+# Split Scope via Polarized Individuals @cite{elliott-2025}
 
 Bridge file connecting the polarized individual decomposition of
 determiners (`Theories/Semantics/Lexical/Determiner/PolarizedIndividuals`)
@@ -22,7 +22,7 @@ while the existential restrictor scopes below it.
 
 ## Lattice-Theoretic Analysis
 
-Elliott (2026) derives split scope from the polarized individual
+Elliott (2025) derives split scope from the polarized individual
 decomposition: `no` = `(⋁_e (e,+))ᶜ`. Since complement distributes
 over scope position changes, the negative and existential components
 can end up at different heights.
@@ -34,7 +34,7 @@ ignores scope entirely (it only checks the restrictor).
 
 ## References
 
-- Elliott, P. (2026). Determiners as Polarized Individuals.
+- Elliott, P. (2025). Determiners as predicates. SALT 35.
 - Rullmann, H. (1995). Maximality in the Semantics of Wh-Constructions.
 - Penka, D. (2011). Negative Indefinites.
 -/

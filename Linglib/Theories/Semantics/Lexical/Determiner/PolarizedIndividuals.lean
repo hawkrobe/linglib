@@ -1,7 +1,7 @@
 import Linglib.Core.Logic.PolarizedIndividuals
 
 /-!
-# Determiners via Polarized Individuals @cite{elliott-2026}
+# Determiners via Polarized Individuals @cite{elliott-2025}
 
 Connects standard quantifier denotations to the polarized individual
 decomposition from `Core.Logic.PolarizedIndividuals`.
@@ -14,13 +14,13 @@ pairs via the `ConsGQ` Boolean algebra:
 - `no    = (⋁_e (e, +))ᶜ`     — negative universal: no positive witness
 - `not_all = ⋁_e (e, -)`      — negative existential: at least one negative
 
-The key compositional fact for split scope (PR 4) is `pos_sup_neg`:
+The key compositional fact for split scope is `pos_sup_neg`:
 `(e,+) ⊔ (e,-) = λR S. R(e)`, already proved in
 `Core.Logic.PolarizedIndividuals`.
 
 ## References
 
-- Elliott, P. (2026). Determiners as Polarized Individuals.
+- Elliott, P. (2025). Determiners as predicates. SALT 35.
 - Barwise, J. & Cooper, R. (1981). Generalized Quantifiers and Natural Language.
 -/
 
