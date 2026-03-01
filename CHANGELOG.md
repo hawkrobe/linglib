@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.227.59] - 2026-02-28
+
+### Added
+- **Determiners via polarized individuals** (`Theories/Semantics/Lexical/Determiner/PolarizedIndividuals.lean`): Square of opposition as PolInd joins/meets — `some`, `every`, `no` decomposed into entity-polarity pairs. Inner negation swaps polarity, duality square (dual some = every, outer neg some = no), split scope re-exported from Core. 0 sorry.
+
+## [0.227.58] - 2026-02-28
+
+### Added
+- **End-to-end derivation chains** (`Bridge/DiscourseOnlyDerivations.lean`): 8-world house model instantiating Def. 16 with concrete propositions, QUD, prior, and doxastic states. `native_decide` proofs (0 sorry) for `isDefined` and `ciContent` on both declarative-declarative and polar-Q-as-S' scenarios. Per-datum connection theorems for all 5 core examples + 3 polar Q examples. Abstract `interrogative_s'_ci_satisfied` generalizing across all interrogative S' cases.
+
+### Fixed
+- **`isDefined` relevance check** (`Particle/DiscourseOnly.lean`): Fixed bug where interrogative S' always failed the relevance check. Old code used `relevant s'Den.highlighted`, but for questions `highlighted` = tautology (disjunction of alternatives), which is trivially irrelevant. Now checks `s'Den.alternatives.any (fun q => relevant q ...)` — per-alternative relevance. For declaratives (one alternative) this is equivalent; for questions it correctly asks whether the question is relevant to the QUD.
+
 ## [0.227.57] - 2026-02-28
 
 ### Fixed

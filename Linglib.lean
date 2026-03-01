@@ -912,6 +912,7 @@ import Linglib.Theories.Semantics.Lexical.Numeral.Precision
 import Linglib.Theories.Semantics.Lexical.Numeral.Semantics
 import Linglib.Theories.Semantics.Lexical.Determiner.Definite
 import Linglib.Theories.Semantics.Lexical.Determiner.DomainRestriction
+import Linglib.Theories.Semantics.Lexical.Determiner.PolarizedIndividuals
 import Linglib.Theories.Semantics.Lexical.Determiner.Quantifier
 
 import Linglib.Theories.Semantics.Lexical.Expressives.Basic
