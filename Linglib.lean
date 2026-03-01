@@ -444,6 +444,7 @@ import Linglib.Phenomena.FillerGap.Bridge.MinimalismOblExtraction
 import Linglib.Phenomena.FillerGap.Bridge.MayanExtractionComparison
 import Linglib.Phenomena.Nonliteral.Irony.KaoEtAl2015
 import Linglib.Phenomena.Nonliteral.Irony.Studies.SpinosoDiPiano2025
+import Linglib.Phenomena.Nonliteral.Bridge.RelevanceTheory
 import Linglib.Phenomena.Nonliteral.Metaphor.KaoEtAl2014
 import Linglib.Phenomena.Numerals.Studies.ClausWalch2024
 import Linglib.Phenomena.Numerals.Snyder2026Bridge
@@ -636,6 +637,7 @@ import Linglib.Phenomena.ScalarImplicatures.WeakEvidenceEffect
 import Linglib.Phenomena.ScalarImplicatures.Bridge.BaleEtAl2025
 import Linglib.Phenomena.ScalarImplicatures.Bridge.HornScale
 import Linglib.Phenomena.ScalarImplicatures.Bridge.NeoGricean
+import Linglib.Phenomena.ScalarImplicatures.Bridge.RelevanceTheory
 import Linglib.Phenomena.ScalarImplicatures.Bridge.RSACremersWilcoxSpector2023
 import Linglib.Phenomena.ScalarImplicatures.Bridge.RSAEmbedded
 import Linglib.Phenomena.ScalarImplicatures.Bridge.RSAHurford
