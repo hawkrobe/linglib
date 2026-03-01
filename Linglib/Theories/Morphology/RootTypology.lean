@@ -389,24 +389,43 @@ inductive RootDen (Entity State Event : Type) where
     (statePred : Entity → State → Prop)
     (become : Event → State → Prop)
     (entailsChange : ∀ x s, statePred x s → ∃ e, become e s)
+  /-- Manner+result root: state predicate entailing change AND manner
+      restriction on the causing event (B&KG 2020 §4.5.3, eq. 74).
+      √GUILLOTINE = λxλs[dead'(x,s) ∧ ∃e'∃v[cause'(v,e') ∧ become'(s,e')
+                          ∧ ∀v'[cause'(v',e') → guillotining'(v')]]]
+      The root packages both the result state AND a restriction on how
+      that result is brought about. This violates Manner/Result
+      Complementarity — manner and result coexist in one root. -/
+  | mannerResult
+    (statePred : Entity → State → Prop)
+    (become : Event → State → Prop)
+    (manner : Event → Prop)
+    (entailsChange : ∀ x s, statePred x s → ∃ e, become e s)
+    (entailsManner : ∀ x s, statePred x s → ∃ v, manner v)
 
-/-- Extract the RootType from a BKG denotation. -/
+/-- Extract the RootType from a BKG denotation.
+    Manner+result roots map to `.result` at the Boolean level — they
+    entail change, which is all the Chapter 2 typology cares about.
+    The manner dimension is only visible at the denotation level. -/
 def RootDen.rootType {Entity State Event : Type} :
     RootDen Entity State Event → RootType
   | .pc _ => .propertyConcept
   | .result _ _ _ => .result
+  | .mannerResult _ _ _ _ _ => .result
 
-/-- Extract the underlying state predicate from either root type. -/
+/-- Extract the underlying state predicate from any root type. -/
 def RootDen.statePred {Entity State Event : Type} :
     RootDen Entity State Event → (Entity → State → Prop)
   | .pc pred => pred
   | .result pred _ _ => pred
+  | .mannerResult pred _ _ _ _ => pred
 
 /-- Whether the root carries its own BECOME relation (built into the denotation). -/
 def RootDen.carriesBECOME {Entity State Event : Type} :
     RootDen Entity State Event → Bool
   | .pc _ => false
   | .result _ _ _ => true
+  | .mannerResult _ _ _ _ _ => true
 
 /-- Carrying BECOME built-in is the same as entailing change.
     This connects the denotation architecture to the Boolean flag. -/
@@ -425,6 +444,59 @@ theorem RootDen.meaning_postulate_derived
     (h : ∀ x s, pred x s → ∃ e, become e s) :
     MeaningPostulateEntailsChange pred become :=
   h
+
+/-- Whether the root carries a manner restriction on causation (B&KG 2020 §4.5.3).
+    Only manner+result roots have this — PC and pure result roots do not
+    restrict how causation proceeds. -/
+def RootDen.carriesMANNER {Entity State Event : Type} :
+    RootDen Entity State Event → Bool
+  | .pc _ => false
+  | .result _ _ _ => false
+  | .mannerResult _ _ _ _ _ => true
+
+/-- A root denotation violates MRC iff it carries both BECOME and a manner
+    restriction — i.e., it encodes both result and manner in one root.
+    Only `.mannerResult` satisfies this (by construction). -/
+def RootDen.denotationViolatesMRC {Entity State Event : Type} :
+    RootDen Entity State Event → Bool
+  | .pc _ => false
+  | .result _ _ _ => false
+  | .mannerResult _ _ _ _ _ => true
+
+/-- MRC violation at the denotation level = having both BECOME and MANNER. -/
+theorem RootDen.violatesMRC_iff {Entity State Event : Type}
+    (rd : RootDen Entity State Event) :
+    rd.denotationViolatesMRC = (rd.carriesBECOME && rd.carriesMANNER) := by
+  cases rd <;> rfl
+
+/-- Manner+result denotations violate MRC. -/
+theorem RootDen.mannerResult_violates {Entity State Event : Type}
+    (sp : Entity → State → Prop) (become : Event → State → Prop)
+    (manner : Event → Prop)
+    (hc : ∀ x s, sp x s → ∃ e, become e s) (hm : ∀ x s, sp x s → ∃ v, manner v) :
+    (RootDen.mannerResult sp become manner hc hm :
+      RootDen Entity State Event).denotationViolatesMRC = true := rfl
+
+/-- Result-only denotations respect MRC. -/
+theorem RootDen.result_respects {Entity State Event : Type}
+    (sp : Entity → State → Prop) (become : Event → State → Prop)
+    (hc : ∀ x s, sp x s → ∃ e, become e s) :
+    (RootDen.result sp become hc :
+      RootDen Entity State Event).denotationViolatesMRC = false := rfl
+
+/-- PC denotations respect MRC. -/
+theorem RootDen.pc_respects {Entity State Event : Type}
+    (sp : Entity → State → Prop) :
+    (RootDen.pc sp : RootDen Entity State Event).denotationViolatesMRC = false := rfl
+
+/-- **Bridge: denotation-level MRC → Boolean RootEntailments MRC.**
+    Manner+result denotations correspond to RootEntailments where
+    `violatesMRC = true` (i.e., +manner +result configurations like
+    `mannerResult` or `fullSpec` in RootDimensions.lean). -/
+theorem RootDen.denotation_matches_boolean_MRC {Entity State Event : Type}
+    (rd : RootDen Entity State Event) :
+    rd.denotationViolatesMRC = rd.carriesMANNER := by
+  cases rd <;> rfl
 
 -- ════════════════════════════════════════════════════
 -- § 7c. Ditransitive Root Classes (B&KG 2020 Ch. 3, Table 3.2)
@@ -570,6 +642,112 @@ theorem withPossession_not_cancelable {Entity Event : Type}
     (h : ∀ y z e, ep y z e → poss z y) :
     (DitransitiveDen.withPossession ep poss h :
       DitransitiveDen Entity Event).possessionCancelable = false := rfl
+
+-- ════════════════════════════════════════════════════
+-- § 7e. MRC Diagnostics (B&KG 2020 §§4.2–4.3)
+-- ════════════════════════════════════════════════════
+
+/-- The six MRC diagnostics developed in B&KG (2020 §§4.2–4.3).
+    Three test for result entailment in the root; three test for manner.
+    An MRC violation is a verb that passes diagnostics from BOTH sets.
+
+    Result diagnostics (§4.2):
+    - `denialOfResult`: "X cut Y, #but Y wasn't separated" — contradictory
+    - `objectDeletion`: result verbs resist unspecified object deletion
+    - `restrictedResultatives`: result verbs block adding new result XPs
+
+    Manner diagnostics (§4.3):
+    - `selectionalRestriction`: subject restricted to agents capable of the manner
+    - `denialOfAction`: "X cut Y, #but X didn't do anything" — contradictory
+    - `agentOrientedAdverbs`: combines with 'deliberately', 'carefully' -/
+inductive MRCDiagnostic where
+  | denialOfResult
+  | objectDeletion
+  | restrictedResultatives
+  | selectionalRestriction
+  | denialOfAction
+  | agentOrientedAdverbs
+  deriving DecidableEq, Repr, BEq
+
+/-- Whether a diagnostic tests for result entailment. -/
+def MRCDiagnostic.testsResult : MRCDiagnostic → Bool
+  | .denialOfResult => true
+  | .objectDeletion => true
+  | .restrictedResultatives => true
+  | _ => false
+
+/-- Whether a diagnostic tests for manner entailment. -/
+def MRCDiagnostic.testsManner : MRCDiagnostic → Bool
+  | .selectionalRestriction => true
+  | .denialOfAction => true
+  | .agentOrientedAdverbs => true
+  | _ => false
+
+/-- Each diagnostic tests for exactly one of manner or result. -/
+theorem diagnostic_exclusive (d : MRCDiagnostic) :
+    d.testsResult = !d.testsManner := by
+  cases d <;> rfl
+
+/-- A verb's diagnostic profile: which of the six diagnostics it passes.
+    B&KG (2020 Table 4.1) survey these for each verb class. -/
+structure MRCDiagnosticProfile where
+  denialOfResult         : Bool
+  objectDeletion         : Bool
+  restrictedResultatives : Bool
+  selectionalRestriction : Bool
+  denialOfAction         : Bool
+  agentOrientedAdverbs   : Bool
+  deriving DecidableEq, BEq, Repr
+
+/-- Whether the profile shows result entailment (passes ≥1 result diagnostic). -/
+def MRCDiagnosticProfile.showsResult (p : MRCDiagnosticProfile) : Bool :=
+  p.denialOfResult || p.objectDeletion || p.restrictedResultatives
+
+/-- Whether the profile shows manner entailment (passes ≥1 manner diagnostic). -/
+def MRCDiagnosticProfile.showsManner (p : MRCDiagnosticProfile) : Bool :=
+  p.selectionalRestriction || p.denialOfAction || p.agentOrientedAdverbs
+
+/-- An MRC violation is a verb whose diagnostics show BOTH manner and result. -/
+def MRCDiagnosticProfile.showsMRCViolation (p : MRCDiagnosticProfile) : Bool :=
+  p.showsManner && p.showsResult
+
+/-- Cut passes all 6 diagnostics (B&KG §4.4): manner of cutting + separation.
+    "Kim cut the bread, #but the bread wasn't separated" (result)
+    "Kim cut the bread, #but Kim didn't do anything" (manner) -/
+def cutDiagnostics : MRCDiagnosticProfile :=
+  ⟨true, true, true, true, true, true⟩
+
+/-- Break passes result diagnostics only: pure result (√CRACK), no manner. -/
+def breakDiagnostics : MRCDiagnosticProfile :=
+  ⟨true, true, true, false, false, false⟩
+
+/-- Hit passes manner diagnostics only: pure manner (impact), no result. -/
+def hitDiagnostics : MRCDiagnosticProfile :=
+  ⟨false, false, false, true, true, true⟩
+
+/-- Drown passes all 6 (B&KG §4.5): manner of drowning + death result. -/
+def drownDiagnostics : MRCDiagnosticProfile :=
+  ⟨true, true, true, true, true, true⟩
+
+theorem cut_MRC_violation : cutDiagnostics.showsMRCViolation = true := rfl
+theorem break_no_MRC_violation : breakDiagnostics.showsMRCViolation = false := rfl
+theorem hit_no_MRC_violation : hitDiagnostics.showsMRCViolation = false := rfl
+theorem drown_MRC_violation : drownDiagnostics.showsMRCViolation = true := rfl
+
+/-- Cut is MRC-violating by BOTH diagnostics AND RootEntailments. -/
+theorem cut_diagnostics_match_entailments :
+    cutDiagnostics.showsMRCViolation =
+    (LevinClass.rootEntailments .cut).violatesMRC := rfl
+
+/-- Break is MRC-respecting by BOTH diagnostics AND RootEntailments. -/
+theorem break_diagnostics_match_entailments :
+    breakDiagnostics.showsMRCViolation =
+    (LevinClass.rootEntailments .break_).violatesMRC := rfl
+
+/-- Hit is MRC-respecting by BOTH diagnostics AND RootEntailments. -/
+theorem hit_diagnostics_match_entailments :
+    hitDiagnostics.showsMRCViolation =
+    (LevinClass.rootEntailments .hit).violatesMRC := rfl
 
 -- ════════════════════════════════════════════════════
 -- § 8. Bridge to EntailmentProfile.changeOfState (ProtoRoles §8)
@@ -755,11 +933,16 @@ inductive AgainPresupposition where
 
     For result roots (√CRACK): *again*[√CRACK](x) presupposes x was previously
     cracked. But √CRACK's denotation INCLUDES ∃e'[become'(s,e')], so this
-    presupposition ENTAILS a prior change event. -/
+    presupposition ENTAILS a prior change event.
+
+    For manner+result roots (√GUILLOTINE): *again* over the root presupposes
+    prior change+manner. The root packages BECOME + manner restriction,
+    so root-scope *again* entails a prior mannered change event (§4.5.2). -/
 def RootDen.againOverRoot {Entity State Event : Type} :
     RootDen Entity State Event → AgainPresupposition
   | .pc _ => .priorState
   | .result _ _ _ => .priorChange
+  | .mannerResult _ _ _ _ _ => .priorChange
 
 /-- What *again* presupposes when scoping over vP (v_become + root).
     Always presupposes prior change, regardless of root type, because
@@ -787,11 +970,14 @@ theorem result_again_collapsed {Entity State Event : Type}
 
 /-- Predicted *again* readings from the BKG denotation architecture.
     Distinct presuppositions → both readings available.
-    Collapsed presuppositions → only repetitive. -/
+    Collapsed presuppositions → only repetitive.
+    Manner+result roots collapse like result roots — the manner
+    restriction adds no new scope point because it's within the root. -/
 def RootDen.predictedAgainReadings {Entity State Event : Type} :
     RootDen Entity State Event → List AgainReading
   | .pc _ => [.restitutive, .repetitive]
   | .result _ _ _ => [.repetitive]
+  | .mannerResult _ _ _ _ _ => [.repetitive]
 
 /-- **The key bridge**: the BKG denotation architecture predicts the SAME
     again-reading distribution as the Boolean `RootType.againReadings`.
@@ -874,6 +1060,70 @@ def DitransitiveRootClass.againReadings :
 theorem give_one_send_two_again :
     (DitransitiveRootClass.againReadings .causedPossession).length = 1 ∧
     (DitransitiveRootClass.againReadings .sending).length = 2 := ⟨rfl, rfl⟩
+
+-- ════════════════════════════════════════════════════
+-- § 12d. Manner+Result Roots and *Again* (B&KG 2020 §4.5.2)
+-- ════════════════════════════════════════════════════
+
+/-- Manner+result roots: root-scope and vP-scope *again* yield THE SAME
+    presupposition, just like pure result roots. But the reason is RICHER:
+    the root packages BECOME + manner, so root-scope *again* presupposes
+    a prior mannered change event — which is strictly MORE than what
+    vP-scope presupposes (just prior change).
+
+    Observable prediction: only repetitive reading available.
+    Same as result roots, but for a different reason — manner is also
+    caught in the collapse because it's inside the root. -/
+theorem mannerResult_again_collapsed {Entity State Event : Type}
+    (sp : Entity → State → Prop) (become : Event → State → Prop)
+    (manner : Event → Prop)
+    (hc : ∀ x s, sp x s → ∃ e, become e s) (hm : ∀ x s, sp x s → ∃ v, manner v) :
+    (RootDen.mannerResult sp become manner hc hm :
+      RootDen Entity State Event).againOverRoot =
+    (againOverVP : AgainPresupposition) := rfl
+
+/-- Manner+result roots lack the restitutive reading. -/
+theorem mannerResult_no_restitutive {Entity State Event : Type}
+    (sp : Entity → State → Prop) (become : Event → State → Prop)
+    (manner : Event → Prop)
+    (hc : ∀ x s, sp x s → ∃ e, become e s) (hm : ∀ x s, sp x s → ∃ v, manner v) :
+    (RootDen.mannerResult sp become manner hc hm :
+      RootDen Entity State Event).predictedAgainReadings = [.repetitive] := rfl
+
+/-- The three-way root denotation typology (B&KG 2020 §4.5.5):
+    PC, result, and manner+result roots ALL correctly predict *again*
+    readings via the unified `bkg_again_matches_boolean` bridge.
+
+    PC roots: two readings (restitutive + repetitive)
+    Result roots: one reading (repetitive) — change in root
+    Manner+result roots: one reading (repetitive) — change + manner in root -/
+theorem three_way_again_summary :
+    (RootType.againReadings .propertyConcept).length = 2 ∧
+    (RootType.againReadings .result).length = 1 := ⟨rfl, rfl⟩
+
+/-- **Bridge: MRC-violating roots → collapsed *again* readings.**
+    If a root denotation violates MRC (manner+result), it has only
+    repetitive *again*. The diagnostic MRC violation predicts the
+    *again* collapse. -/
+theorem mrc_violation_implies_again_collapse {Entity State Event : Type}
+    (rd : RootDen Entity State Event)
+    (h : rd.denotationViolatesMRC = true) :
+    rd.predictedAgainReadings = [.repetitive] := by
+  cases rd with
+  | pc _ => simp [RootDen.denotationViolatesMRC] at h
+  | result _ _ _ => rfl
+  | mannerResult _ _ _ _ _ => rfl
+
+/-- **Bridge: MRC-respecting result roots → collapsed *again* too.**
+    Collapsed *again* is necessary but NOT sufficient for MRC violation.
+    Pure result roots also collapse, but they don't violate MRC. -/
+theorem again_collapse_not_sufficient_for_mrc {Entity State Event : Type}
+    (sp : Entity → State → Prop) (become : Event → State → Prop)
+    (hc : ∀ x s, sp x s → ∃ e, become e s) :
+    (RootDen.result sp become hc :
+      RootDen Entity State Event).predictedAgainReadings = [.repetitive] ∧
+    (RootDen.result sp become hc :
+      RootDen Entity State Event).denotationViolatesMRC = false := ⟨rfl, rfl⟩
 
 -- ════════════════════════════════════════════════════
 -- § 13. Consequence for Event-Structural Theory (§9)

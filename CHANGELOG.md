@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.227.68] - 2026-03-01
+
+### Added
+- **B&KG 2020 Ch. 4 — MRC violations** (`RootTypology.lean`): `RootDen.mannerResult` constructor (§4.5.3, eq. 74: √GUILLOTINE = state + BECOME + manner restriction on cause), `carriesMANNER`, `denotationViolatesMRC` with bridge to Boolean `violatesMRC`. `MRCDiagnostic` enum (6 diagnostics: denial of result/action, object deletion, restricted resultatives, selectional restriction, agent-oriented adverbs), `MRCDiagnosticProfile` with `showsMRCViolation`. Per-verb profiles (cut/break/hit/drown) with cross-layer agreement theorems. *Again* predictions for manner+result roots: `mannerResult_again_collapsed`, `mrc_violation_implies_again_collapse`, `again_collapse_not_sufficient_for_mrc`.
+
+## [0.227.67] - 2026-03-01
+
+### Added
+- **B&KG 2020 Ch. 3 — ditransitive root typology** (`RootTypology.lean`): `DitransitiveRootClass` (6-way: causedPossession/futureHaving/ballisticMotion/sending/accompaniedMotion/carrying), `DitransitiveEntailments` (possession/causedMotion/manner/accompaniment), `PossessionEntailment` (.none/.prospective/.actual). `DitransitiveDen` (actual/prospective possession architecture parallel to `RootDen`). `LevinClass.ditransitiveRootClass` bridge. Telicity (`obligatorilyTelic`, `telic_iff_actual_possession`), *again* predictions (`DitransitiveRootClass.againReadings`, `give_den_again_collapsed`, `send_den_again_distinct`).
+
+## [0.227.66] - 2026-03-01
+
+### Added
+- **B&KG 2020 Ch. 2 — change-in-denotation architecture** (`RootTypology.lean`): `ChangeRestriction` (break vs cook/kill: selectional restriction on caused change), `RootDen` inductive (`.pc`/`.result`: change constitutive of root meaning, not external meaning postulate). Compositional *again* derivation: `AgainPresupposition`, `RootDen.againOverRoot`, `againOverVP`, reading collapse from denotation structure (`result_again_collapsed`, `pc_again_distinct`), `bkg_again_matches_boolean` bridge.
+
 ## [0.227.65] - 2026-02-28
 
 ### Fixed
