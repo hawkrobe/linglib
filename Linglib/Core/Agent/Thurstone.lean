@@ -1,5 +1,5 @@
 import Linglib.Core.Agent.RationalAction
-import Mathlib.MeasureTheory.Integral.Bochner.Set
+import Linglib.Core.Agent.NormalCDF
 import Mathlib.MeasureTheory.Measure.Haar.OfBasis
 
 /-!
@@ -25,13 +25,13 @@ all stimuli — the "simplest nontrivial case" in Thurstone's taxonomy.
 ## The Logistic Approximation (pp. 58-59)
 
 Luce observes that the logistic function `1/(1 + exp(-x))` closely approximates
-the normal CDF `Φ(x · √(π/3))`. The maximum absolute deviation between the two
+the normal CDF `Φ(x · π/√3)`. The maximum absolute deviation between the two
 is approximately 0.01. This means Thurstone's Case V is approximately a special
 case of the Luce model:
 
   `P(a,b) ≈ 1/(1 + exp(-k(u(a) - u(b))))`
 
-for `k = √(π/3) / (σ√2)`. The logistic approximation is what makes the
+for `k = π / (σ√6)`. The logistic approximation is what makes the
 connection to Luce's ratio-scale framework (§2.A) and hence to softmax (§2).
 
 ## Strong Stochastic Transitivity
@@ -44,45 +44,6 @@ transitivity that Luce's axioms alone guarantee.
 namespace Core
 
 open Real MeasureTheory BigOperators Set
-
--- ============================================================================
--- §1. Normal CDF
--- ============================================================================
-
-/-- The standard normal probability density function: `φ(t) = (1/√(2π)) · exp(-t²/2)`. -/
-noncomputable def normalPDF (t : ℝ) : ℝ :=
-  (1 / Real.sqrt (2 * Real.pi)) * Real.exp (-(t ^ 2) / 2)
-
-/-- The standard normal cumulative distribution function:
-    `Φ(x) = ∫_{-∞}^{x} (1/√(2π)) exp(-t²/2) dt`.
-
-    Defined as the Lebesgue integral of the standard normal PDF over `(-∞, x]`. -/
-noncomputable def normalCDF (x : ℝ) : ℝ :=
-  ∫ t in Iic x, normalPDF t
-
-/-- The normal CDF is monotone increasing. -/
-theorem normalCDF_mono : Monotone normalCDF := by
-  sorry -- TODO: follows from normalPDF being non-negative
-
-/-- `Φ(0) = 1/2` by symmetry of the standard normal distribution. -/
-theorem normalCDF_zero : normalCDF 0 = 1 / 2 := by
-  sorry -- TODO: symmetry of the Gaussian integral
-
-/-- For `x > 0`, `Φ(x) > 1/2`. -/
-theorem normalCDF_pos_gt_half {x : ℝ} (hx : 0 < x) : 1 / 2 < normalCDF x := by
-  sorry -- TODO: follows from normalCDF_mono and normalCDF_zero
-
-/-- For `x < 0`, `Φ(x) < 1/2`. -/
-theorem normalCDF_neg_lt_half {x : ℝ} (hx : x < 0) : normalCDF x < 1 / 2 := by
-  sorry -- TODO: follows from normalCDF_mono and normalCDF_zero
-
-/-- Symmetry: `Φ(-x) = 1 - Φ(x)`. -/
-theorem normalCDF_neg (x : ℝ) : normalCDF (-x) = 1 - normalCDF x := by
-  sorry -- TODO: change of variables t ↦ -t in the integral
-
-/-- The normal CDF is strictly monotone increasing. -/
-theorem normalCDF_strictMono : StrictMono normalCDF := by
-  sorry -- TODO: follows from normalPDF being strictly positive
 
 -- ============================================================================
 -- §2. Thurstone Case V
@@ -180,25 +141,25 @@ theorem ThurstoneCaseV.transitivity_right (m : ThurstoneCaseV Stimulus)
 /-!
 ## The Logistic Approximation (Luce 1959, pp. 58-59)
 
-The logistic function `1/(1 + exp(-x))` approximates `Φ(x · √(π/3))` with
+The logistic function `1/(1 + exp(-x))` approximates `Φ(x · π/√3)` with
 maximum absolute deviation ≈ 0.01. This is the key technical fact connecting
 Thurstone's Gaussian model to Luce's exponential (softmax) model.
 
-The scaling factor `√(π/3)` arises from matching variances: the standard
+The scaling factor `π/√3` arises from matching variances: the standard
 logistic distribution has variance `π²/3`, while the standard normal has
-variance 1. Rescaling the logistic argument by `√(π/3)` matches the
+variance 1. Rescaling the normal CDF argument by `π/√3` matches the
 second moments of the two distributions.
 -/
 
 /-- The logistic function closely approximates the normal CDF after rescaling.
 
-    Specifically, `|Φ(x · √(π/3)) - logistic(x)| ≤ 0.01` for all `x`.
+    Specifically, `|Φ(x · π/√3) - logistic(x)| ≤ 0.01` for all `x`.
     The maximum deviation of ≈ 0.01 occurs near `|x| ≈ 1.3`.
 
     This is a numerical bound; the proof would require bounding the
     integral defining `Φ` against the closed-form logistic. -/
 theorem logistic_approx_normal (x : ℝ) :
-    |normalCDF (x * Real.sqrt (Real.pi / 3)) - logistic x| ≤ 0.01 := by
+    |normalCDF (x * (Real.pi / Real.sqrt 3)) - logistic x| ≤ 0.01 := by
   sorry -- TODO: numerical bound, verified computationally
 
 -- ============================================================================
@@ -208,13 +169,13 @@ theorem logistic_approx_normal (x : ℝ) :
 /-!
 ## Thurstone Case V ≈ Luce Model
 
-Set `d = u(a) - u(b)` and `k = 1 / (σ · √2 · √(π/3))`. Then:
+Set `d = u(a) - u(b)` and `k = π / (σ · √6)`. Then:
 
-  `d / (σ√2) = k · d · √(π/3)`
+  `d / (σ√2) = k · d · (π/√3)`
 
 so the Thurstone formula becomes:
 
-  `P_T(a,b) = Φ(d / (σ√2)) = Φ(kd · √(π/3)) ≈ logistic(kd)`
+  `P_T(a,b) = Φ(d / (σ√2)) = Φ(kd · (π/√3)) ≈ logistic(kd)`
 
 where the last step applies `logistic_approx_normal`. This gives:
 
@@ -224,13 +185,13 @@ which is exactly the Luce model with rationality parameter `k`.
 -/
 
 /-- The scaling constant connecting Thurstone and Luce:
-    `k = 1 / (σ · √2 · √(π/3))` so that `(u(a)-u(b))/(σ√2) = k·(u(a)-u(b))·√(π/3)`. -/
+    `k = π / (σ · √6)` so that `(u(a)-u(b))/(σ√2) = k·(u(a)-u(b))·(π/√3)`. -/
 noncomputable def thurstoneLuceK (sigma : ℝ) : ℝ :=
-  1 / (sigma * Real.sqrt 2 * Real.sqrt (Real.pi / 3))
+  Real.pi / (sigma * Real.sqrt 6)
 
 /-- **Thurstone–Luce approximation** (Luce 1959, §2.D, pp. 58-59).
 
-    With `k = 1/(σ√2 · √(π/3))`, the Thurstone Case V probability
+    With `k = π/(σ · √6)`, the Thurstone Case V probability
     `P_T(a,b) = Φ((u(a)-u(b))/(σ√2))` and the Luce model probability
     `P_L(a,b) = 1/(1 + exp(-k(u(a)-u(b))))` satisfy `|P_T - P_L| ≤ 0.01`.
 
@@ -240,8 +201,8 @@ theorem thurstone_luce_approximation (m : ThurstoneCaseV Stimulus)
     (a b : Stimulus) :
     |m.choiceProb a b -
      logistic (thurstoneLuceK m.sigma * (m.scale a - m.scale b))| ≤ 0.01 := by
-  -- The key identity: (u(a)-u(b))/(σ√2) = k·(u(a)-u(b)) · √(π/3)
-  -- where k = 1/(σ√2 · √(π/3)), so this reduces to logistic_approx_normal.
+  -- The key identity: (u(a)-u(b))/(σ√2) = k·(u(a)-u(b)) · (π/√3)
+  -- where k = π/(σ · √6), so this reduces to logistic_approx_normal.
   sorry -- TODO: unfold thurstoneLuceK, simplify, apply logistic_approx_normal
 
 /-- The Thurstone model gives the same choice probabilities as a `RationalAction`

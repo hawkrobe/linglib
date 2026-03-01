@@ -1,221 +1,310 @@
 import Linglib.Core.Agent.RationalAction
 
 /-!
-# Algebraic Approximations to Axiom 1 (Luce 1959, §1.G) @cite{luce-1959}
+# Algebraic Approximations (Luce 1959, §1.G, pp. 34–37) @cite{luce-1959}
 
-When Axiom 1 (IIA) is only *approximately* satisfied in empirical data, how far
-can derived quantities deviate from their exact-IIA values? Luce (1959, pp. 27–31)
-develops algebraic bounds on the propagation of error through the product rule and
-the transitivity cycle.
+Luce (1959, §1.G) develops the connection between choice probabilities and
+ordinal preference structures via **just noticeable differences** (jnds).
 
-## Key concepts
+When stimuli are "close" in value, subjects cannot reliably discriminate
+between them — the choice probability `P(x, {x,y})` is near `1/2`. A jnd
+threshold `π ∈ (1/2, 1)` defines two relations on the alternative set:
 
-1. **ε-approximate IIA** (`ApproxLuce`): the choice probability `P(a, S)` is within
-   `ε` of the ratio rule `v(a) / Σ v(b)` for some non-negative scale `v`.
+- **L(π)**: `x` is discriminably preferred to `y` (Definition 3)
+- **I(π)**: `x` and `y` are indistinguishable (Definition 3)
 
-2. **Product-rule error propagation** (`approxProductRule`): if pairwise comparisons
-   satisfy Axiom 1 within `ε`, then the product rule `P(a, T) = P(a, S) · P(S, T)`
-   holds within a bound depending on `ε` and the set sizes.
+## Key results
 
-3. **Transitivity deviation** (`transitivityDeviation`): the absolute difference
-   `|P(a,b)·P(b,c)·P(c,a) − P(b,a)·P(c,b)·P(a,c)|`, which is zero under exact IIA.
+1. **Semiorder** (Theorem 5): Under Axiom 1 with imperfect discrimination,
+   `(L(π), I(π))` satisfies the semiorder axioms — trichotomy, I-reflexivity,
+   L-transitivity, and the interval condition `xLy ∧ yIz ∧ zLw → xLw`.
 
-4. **Transitivity bound** (`transitivity_bound`): under ε-approximate IIA, the
-   transitivity deviation is bounded by `6ε` (first-order).
+2. **Trace** (Definition 4): `x ≥_T y` iff `P(x, z) ≥ P(y, z)` for all `z`.
+   The trace extracts the "underlying" preference by requiring dominance in
+   all pairwise comparisons against any third alternative.
+
+3. **Weak order** (Theorem 6): Under Axiom 1, the trace is a weak order
+   (total preorder), and `x ≥_T y` iff `v(x) ≥ v(y)` iff `P(x, y) ≥ 1/2`.
+
+## Connection to the choice axiom
+
+The semiorder captures the *observable* preference structure (what a subject
+can discriminate), while the trace recovers the *latent* ratio scale ordering.
+Theorem 6 shows that Axiom 1 forces these to align: the trace is exactly the
+ordering induced by the scale values `v`.
 -/
 
 namespace Core
 
 open Real BigOperators Finset
 
--- ============================================================================
--- §1.G. ε-Approximate IIA
--- ============================================================================
-
-/-- A choice function that is ε-close to some Luce model.
-
-Luce (1959, §1.G) considers the case where empirical choice probabilities do not
-exactly satisfy Axiom 1 but are within `ε` of a ratio rule. The structure bundles
-a choice function `P`, a scale `v`, and a uniform approximation bound. -/
-structure ApproxLuce (A : Type*) [Fintype A] [DecidableEq A] where
-  /-- Observed choice probability: `P(a, T)` is the probability of choosing `a`
-      from choice set `T`. -/
-  P : Finset A → A → ℝ
-  /-- Luce scale values (the `v` function). -/
-  v : A → ℝ
-  /-- Scale values are positive. -/
-  v_pos : ∀ (a : A), 0 < v a
-  /-- Approximation tolerance. -/
-  ε : ℝ
-  /-- Tolerance is non-negative. -/
-  ε_nonneg : 0 ≤ ε
-  /-- P is a probability: values lie in [0, 1]. -/
-  P_nonneg : ∀ (T : Finset A) (a : A), 0 ≤ P T a
-  P_le_one : ∀ (T : Finset A) (a : A), P T a ≤ 1
-  /-- P sums to 1 on T. -/
-  P_sum : ∀ (T : Finset A), T.Nonempty → ∑ a ∈ T, P T a = 1
-  /-- P(a, T) = 0 when a ∉ T. -/
-  P_zero_outside : ∀ (T : Finset A) (a : A), a ∉ T → P T a = 0
-  /-- The ε-approximation condition: |P(a, T) − v(a) / Σ_{b∈T} v(b)| ≤ ε
-      for all `a ∈ T`. This is the quantitative weakening of Axiom 1. -/
-  approx : ∀ (T : Finset A) (a : A), a ∈ T →
-    |P T a - v a / ∑ b ∈ T, v b| ≤ ε
-
-variable {A : Type*} [Fintype A] [DecidableEq A]
-
-/-- The exact Luce probability for `a` in choice set `T`. -/
-noncomputable def luceProb (v : A → ℝ) (T : Finset A) (a : A) : ℝ :=
-  v a / ∑ b ∈ T, v b
-
-omit [Fintype A] [DecidableEq A] in
-/-- Luce probabilities sum to 1 when the total scale is nonzero. -/
-theorem luceProb_sum_eq_one (v : A → ℝ) (T : Finset A)
-    (hT : ∑ b ∈ T, v b ≠ 0) :
-    ∑ a ∈ T, luceProb v T a = 1 := by
-  simp only [luceProb, ← sum_div]
-  exact div_self hT
+variable {A : Type*} [DecidableEq A]
 
 -- ============================================================================
--- §1.G.1. Product Rule under Approximate IIA
+-- §1. Pairwise Choice Probabilities
 -- ============================================================================
 
-/-- Under ε-approximate IIA, the product rule `P(a, T) ≈ P(a, S) · P(S, T)` holds
-within a computable error bound. The product rule states that the probability of
-choosing `a` from `T` equals the probability of choosing `a` from `S` times the
-probability of choosing *some element of* `S` from `T`, where `S ⊆ T`.
+/-- The pairwise choice probability `P(x, {x,y})` under a ratio scale `v`:
+    `P(x, y) = v(x) / (v(x) + v(y))`.
 
-Under exact IIA this is an equality (Luce 1959, Theorem 1). When IIA holds only
-within `ε`, the product deviates by at most `2ε + ε²` (first-order: `O(ε)`).
+    This is the Luce model prediction for binary forced choice.
+    The function is symmetric in the sense that `P(x,y) + P(y,x) = 1`. -/
+noncomputable def pairwiseProb (v : A → ℝ) (x y : A) : ℝ :=
+  v x / (v x + v y)
 
-The bound arises because both `P(a, S)` and `P(S, T) = Σ_{b∈S} P(b, T)` each
-carry at most `ε` error from their respective Luce values, and the product of
-two quantities each within `ε` of their targets deviates by at most
-`ε · L₂ + ε · L₁ + ε²` where L₁, L₂ ≤ 1 are the exact Luce values. -/
-theorem approxProductRule (al : ApproxLuce A) (S' T : Finset A) (hST : S' ⊆ T)
-    (a : A) (ha : a ∈ S') (hS_ne : S'.Nonempty) (hT_ne : T.Nonempty) :
-    |al.P T a - al.P S' a * ∑ b ∈ S', al.P T b| ≤ 2 * al.ε + al.ε ^ 2 := by
-  sorry -- TODO: decompose P(a,T) and P(a,S)·P(S,T) via triangle inequality on
-         -- their Luce approximations, then bound the cross-term using ε² ≤ ε
-         -- when ε ≤ 1. The key step is:
-         --   |P(a,T) - L(a,T)| ≤ ε  and  |P(a,S)·P(S,T) - L(a,S)·L(S,T)| ≤ 2ε + ε²
-         -- using the identity xy - x'y' = x(y-y') + y'(x-x') and |x|,|y'| ≤ 1.
+/-- Pairwise probabilities are non-negative for positive scales. -/
+theorem pairwiseProb_nonneg (v : A → ℝ) (hv : ∀ a : A, 0 < v a) (x y : A) :
+    0 ≤ pairwiseProb v x y :=
+  div_nonneg (le_of_lt (hv x)) (le_of_lt (add_pos (hv x) (hv y)))
 
--- ============================================================================
--- §1.G.2. Transitivity Deviation
--- ============================================================================
+/-- Pairwise probabilities are at most 1 for positive scales. -/
+theorem pairwiseProb_le_one (v : A → ℝ) (hv : ∀ a : A, 0 < v a) (x y : A) :
+    pairwiseProb v x y ≤ 1 := by
+  simp only [pairwiseProb]
+  rw [div_le_one (add_pos (hv x) (hv y))]
+  linarith [hv y]
 
-/-- The transitivity deviation measures the failure of the Luce transitivity
-condition for a triple `(a, b, c)`:
+/-- Complementarity: `P(x, y) + P(y, x) = 1` for positive scales. -/
+theorem pairwiseProb_complement (v : A → ℝ) (hv : ∀ a : A, 0 < v a) (x y : A) :
+    pairwiseProb v x y + pairwiseProb v y x = 1 := by
+  simp only [pairwiseProb]
+  have hne : v x + v y ≠ 0 := ne_of_gt (add_pos (hv x) (hv y))
+  rw [show v y + v x = v x + v y from by ring, ← add_div, div_self hne]
 
-  `P(a,{a,b}) · P(b,{b,c}) · P(c,{c,a}) = P(b,{a,b}) · P(c,{b,c}) · P(a,{c,a})`
-
-Under exact IIA both sides equal `v(a)·v(b)·v(c) / (v(a)+v(b))(v(b)+v(c))(v(c)+v(a))`,
-so the difference is zero. The deviation quantifies the empirical departure. -/
-noncomputable def transitivityDeviation (P : Finset A → A → ℝ) (a b c : A) : ℝ :=
-  let ab : Finset A := {a, b}
-  let bc : Finset A := {b, c}
-  let ca : Finset A := {c, a}
-  |P ab a * P bc b * P ca c - P ab b * P bc c * P ca a|
-
-omit [Fintype A] in
-/-- Under exact IIA (ε = 0), the transitivity deviation is zero.
-
-If the choice function exactly equals the Luce rule, then for any triple (a, b, c)
-the forward product `P(a,{a,b})·P(b,{b,c})·P(c,{c,a})` equals the reverse product
-`P(b,{a,b})·P(c,{b,c})·P(a,{c,a})`, since both reduce to
-`v(a)·v(b)·v(c) / ((v(a)+v(b))·(v(b)+v(c))·(v(c)+v(a)))`. -/
-theorem transitivityDeviation_zero_of_exact (v : A → ℝ) (hv : ∀ (a : A), 0 < v a)
-    (a b c : A) (_hab : a ≠ b) (_hbc : b ≠ c) (_hca : c ≠ a) :
-    transitivityDeviation (luceProb v) a b c = 0 := by
-  simp only [transitivityDeviation, luceProb]
-  -- Both products have numerator v(a)·v(b)·v(c) and the same denominator,
-  -- so the difference is zero.
-  set Dab := ∑ x ∈ ({a, b} : Finset A), v x with hDab_def
-  set Dbc := ∑ x ∈ ({b, c} : Finset A), v x with hDbc_def
-  set Dca := ∑ x ∈ ({c, a} : Finset A), v x with hDca_def
-  have hDab : Dab ≠ 0 :=
-    ne_of_gt (sum_pos (λ x _ => hv x) ⟨a, mem_insert_self a {b}⟩)
-  have hDbc : Dbc ≠ 0 :=
-    ne_of_gt (sum_pos (λ x _ => hv x) ⟨b, mem_insert_self b {c}⟩)
-  have hDca : Dca ≠ 0 :=
-    ne_of_gt (sum_pos (λ x _ => hv x) ⟨c, mem_insert_self c {a}⟩)
-  -- Show the two triple products are equal, so |x - x| = 0
-  suffices h : v a / Dab * (v b / Dbc) * (v c / Dca) =
-               v b / Dab * (v c / Dbc) * (v a / Dca) by
-    rw [h, sub_self, abs_zero]
+/-- `P(x, x) = 1/2` for positive scales (indifference with self). -/
+theorem pairwiseProb_self (v : A → ℝ) (hv : ∀ a : A, 0 < v a) (x : A) :
+    pairwiseProb v x x = 1 / 2 := by
+  simp only [pairwiseProb]
+  have hne : v x ≠ 0 := ne_of_gt (hv x)
   field_simp
+  ring
 
-/-- Under ε-approximate IIA, the transitivity deviation is bounded by `6ε`
-(to first order in `ε`).
+/-- `P(x, y) > 1/2` iff `v(x) > v(y)`: the higher-scale alternative is
+    chosen more than half the time. -/
+theorem pairwiseProb_gt_half_iff (v : A → ℝ) (hv : ∀ a : A, 0 < v a) (x y : A) :
+    1 / 2 < pairwiseProb v x y ↔ v y < v x := by
+  simp only [pairwiseProb]
+  rw [lt_div_iff₀ (add_pos (hv x) (hv y))]
+  constructor <;> intro h <;> nlinarith
 
-Each of the six pairwise probabilities `P(x, {x,y})` deviates from its Luce value
-by at most `ε`. Since the transitivity deviation is a difference of two triple
-products, each of which is a product of three terms each within `ε` of values in
-`[0,1]`, the total deviation is bounded by `6ε` (plus higher-order terms in ε
-which we absorb). More precisely, the bound is `6ε + O(ε²)`, but we state the
-simpler `6 * ε + 12 * ε ^ 2 + 8 * ε ^ 3` which is tight. -/
-theorem transitivity_bound (al : ApproxLuce A) (a b c : A)
-    (hab : a ≠ b) (hbc : b ≠ c) (hca : c ≠ a) :
-    transitivityDeviation al.P a b c ≤ 6 * al.ε + 12 * al.ε ^ 2 + 8 * al.ε ^ 3 := by
-  sorry -- TODO: Let Lᵢ denote the exact Luce values and Pᵢ = Lᵢ + δᵢ with |δᵢ| ≤ ε.
-         -- Then P₁P₂P₃ - P₄P₅P₆ = (L₁+δ₁)(L₂+δ₂)(L₃+δ₃) - (L₄+δ₄)(L₅+δ₅)(L₆+δ₆).
-         -- Expanding and using |Lᵢ| ≤ 1, |δᵢ| ≤ ε, and the exact identity
-         -- L₁L₂L₃ = L₄L₅L₆ (from transitivityDeviation_zero_of_exact),
-         -- the bound follows from triangle inequality on the expanded terms:
-         --   3·ε·1·1 + 3·ε²·1 + ε³  (for each product)  ×  2  =  6ε + 6ε² + 2ε³
-         -- The stated bound 6ε + 12ε² + 8ε³ is a safe over-approximation.
+/-- `P(x, y) ≥ 1/2` iff `v(x) ≥ v(y)`. -/
+theorem pairwiseProb_ge_half_iff (v : A → ℝ) (hv : ∀ a : A, 0 < v a) (x y : A) :
+    1 / 2 ≤ pairwiseProb v x y ↔ v y ≤ v x := by
+  simp only [pairwiseProb]
+  rw [le_div_iff₀ (add_pos (hv x) (hv y))]
+  constructor <;> intro h <;> nlinarith
+
+/-- Monotonicity: `P(x, z) ≥ P(y, z)` iff `v(x) ≥ v(y)`.
+
+    The function `t ↦ t/(t+c)` is monotone increasing for `c > 0`,
+    so the ordering of pairwise probabilities against any fixed `z`
+    mirrors the ordering of scale values. -/
+theorem pairwiseProb_mono_iff (v : A → ℝ) (hv : ∀ a : A, 0 < v a) (x y z : A) :
+    pairwiseProb v y z ≤ pairwiseProb v x z ↔ v y ≤ v x := by
+  simp only [pairwiseProb]
+  rw [div_le_div_iff₀ (add_pos (hv y) (hv z)) (add_pos (hv x) (hv z))]
+  constructor <;> intro h <;> nlinarith [hv z]
 
 -- ============================================================================
--- §1.G.3. Pairwise Consistency
+-- §2. Just Noticeable Differences (Definition 3, p. 34)
 -- ============================================================================
 
-/-- The pairwise consistency ratio for a triple (a, b, c):
-    `P(a,{a,b}) · P(b,{b,c}) · P(c,{c,a}) / (P(b,{a,b}) · P(c,{b,c}) · P(a,{c,a}))`.
-    Under exact IIA this equals 1. -/
-noncomputable def consistencyRatio (P : Finset A → A → ℝ) (a b c : A) : ℝ :=
-  let ab : Finset A := {a, b}
-  let bc : Finset A := {b, c}
-  let ca : Finset A := {c, a}
-  (P ab a * P bc b * P ca c) / (P ab b * P bc c * P ca a)
+/-- The `L(π)` relation (Definition 3, Luce 1959, p. 34):
+    `x L(π) y` iff `P(x, {x,y}) > π`.
 
-omit [Fintype A] in
-/-- Under exact Luce, the consistency ratio is 1. -/
-theorem consistencyRatio_eq_one_of_exact (v : A → ℝ) (hv : ∀ (a : A), 0 < v a)
-    (a b c : A) (_hab : a ≠ b) (_hbc : b ≠ c) (_hca : c ≠ a) :
-    consistencyRatio (luceProb v) a b c = 1 := by
-  simp only [consistencyRatio, luceProb]
-  -- Numerator and denominator are both v(a)·v(b)·v(c) / D for the same D,
-  -- so the ratio is 1.
-  set Dab := ∑ x ∈ ({a, b} : Finset A), v x with hDab_def
-  set Dbc := ∑ x ∈ ({b, c} : Finset A), v x with hDbc_def
-  set Dca := ∑ x ∈ ({c, a} : Finset A), v x with hDca_def
-  have hDab : Dab ≠ 0 :=
-    ne_of_gt (sum_pos (λ x _ => hv x) ⟨a, mem_insert_self a {b}⟩)
-  have hDbc : Dbc ≠ 0 :=
-    ne_of_gt (sum_pos (λ x _ => hv x) ⟨b, mem_insert_self b {c}⟩)
-  have hDca : Dca ≠ 0 :=
-    ne_of_gt (sum_pos (λ x _ => hv x) ⟨c, mem_insert_self c {a}⟩)
-  have hva : v a ≠ 0 := ne_of_gt (hv a)
-  have hvb : v b ≠ 0 := ne_of_gt (hv b)
-  have hvc : v c ≠ 0 := ne_of_gt (hv c)
-  field_simp [hDab, hDbc, hDca, hva, hvb, hvc]
+    This means `x` is **discriminably preferred** to `y` at threshold `π`:
+    the observer can reliably tell that `x` is "better" than `y`. The
+    threshold `π` must satisfy `1/2 < π < 1`; it represents the minimum
+    probability that constitutes a "noticeable difference." -/
+def jndL (v : A → ℝ) (thr : ℝ) (x y : A) : Prop :=
+  thr < pairwiseProb v x y
 
-/-- Under ε-approximate IIA, the consistency ratio is close to 1.
-    Specifically, `|consistencyRatio P a b c − 1| ≤ bound(ε)` where the bound
-    depends on ε and a lower bound on the pairwise probabilities.
+/-- The `I(π)` relation (Definition 3, Luce 1959, p. 34):
+    `x I(π) y` iff `1 - π ≤ P(x, {x,y}) ≤ π`.
 
-    When all pairwise probabilities are bounded below by `δ > 0`, the consistency
-    ratio lies in `[1 − 6ε/δ³, 1 + 6ε/δ³]` (to first order). -/
-theorem consistencyRatio_near_one (al : ApproxLuce A) (a b c : A)
-    (hab : a ≠ b) (hbc : b ≠ c) (hca : c ≠ a)
-    (δ : ℝ) (hδ : 0 < δ)
-    (hP_lower : ∀ (T : Finset A) (x : A), x ∈ T → T.card = 2 → δ ≤ al.P T x) :
-    |consistencyRatio al.P a b c - 1| ≤
-      (6 * al.ε + 12 * al.ε ^ 2 + 8 * al.ε ^ 3) / δ ^ 3 := by
-  sorry -- TODO: Write consistencyRatio = 1 + (forward - reverse) / reverse.
-         -- The numerator |forward - reverse| is bounded by transitivity_bound.
-         -- The denominator reverse = P(b,{a,b})·P(c,{b,c})·P(a,{c,a}) ≥ δ³
-         -- by the lower bound assumption.
-         -- Then |ratio - 1| = |forward - reverse| / reverse ≤ bound / δ³.
+    This means `x` and `y` are **indistinguishable** at threshold `π`:
+    neither is reliably discriminated from the other. By complementarity,
+    `x I(π) y` iff `1 - π ≤ P(x,y) ≤ π` iff `1 - π ≤ P(y,x) ≤ π`,
+    so `I` is symmetric. -/
+def jndI (v : A → ℝ) (thr : ℝ) (x y : A) : Prop :=
+  1 - thr ≤ pairwiseProb v x y ∧ pairwiseProb v x y ≤ thr
+
+-- ============================================================================
+-- §3. Semiorder Properties (Theorem 5, p. 35)
+-- ============================================================================
+
+/-!
+## Semiorder axioms
+
+Luce (1959, p. 35) defines a **semiordering** of a set `U` as a pair
+`(L, I)` of relations satisfying, for all `x, y, z, w ∈ U`:
+
+(i)   **Trichotomy**: exactly one of `xLy`, `yLx`, or `xIy` holds
+(ii)  **I-reflexivity**: `xIx`
+(iii) **Interval condition**: `xLy ∧ yIz ∧ zLw → xLw`
+(iv)  **No sandwiching**: `xLy ∧ yLz → ¬(xIw ∧ wIz)`
+
+Theorem 5 proves these hold for `(L(π), I(π))` under Axiom 1.
+-/
+
+/-- I(π) is symmetric: if `x` and `y` are indistinguishable, so are `y` and `x`.
+
+    Since `P(y,x) = 1 - P(x,y)`, the condition `1-π ≤ P(x,y) ≤ π`
+    is equivalent to `1-π ≤ P(y,x) ≤ π`. -/
+theorem jndI_symm (v : A → ℝ) (hv : ∀ a : A, 0 < v a) (thr : ℝ) (x y : A)
+    (h : jndI v thr x y) : jndI v thr y x := by
+  simp only [jndI] at *
+  have hc := pairwiseProb_complement v hv x y
+  constructor <;> linarith [h.1, h.2]
+
+/-- **I-reflexivity**: `x I(π) x`, since `P(x, x) = 1/2` and `1-π < 1/2 < π`
+    whenever `1/2 < π < 1`. -/
+theorem jndI_refl (v : A → ℝ) (hv : ∀ a : A, 0 < v a) (thr : ℝ)
+    (hthr_lower : 1 / 2 < thr) (_hthr_upper : thr < 1) (x : A) :
+    jndI v thr x x := by
+  simp only [jndI, pairwiseProb_self v hv]
+  constructor <;> linarith
+
+omit [DecidableEq A] in
+/-- **Trichotomy**: for any `x, y`, exactly one of `xLy`, `yLx`, or `xIy` holds.
+
+    Since `P(x,y) + P(y,x) = 1`, the three conditions `P(x,y) > π`,
+    `P(y,x) > π` (i.e., `P(x,y) < 1-π`), and `1-π ≤ P(x,y) ≤ π`
+    partition the interval `[0, 1]`. -/
+theorem jnd_trichotomy (v : A → ℝ) (hv : ∀ a : A, 0 < v a) (thr : ℝ)
+    (_hthr_lower : 1 / 2 < thr) (_hthr_upper : thr < 1) (x y : A) :
+    (jndL v thr x y ∧ ¬jndL v thr y x ∧ ¬jndI v thr x y) ∨
+    (jndL v thr y x ∧ ¬jndL v thr x y ∧ ¬jndI v thr x y) ∨
+    (jndI v thr x y ∧ ¬jndL v thr x y ∧ ¬jndL v thr y x) := by
+  sorry -- TODO: case split on P(x,y) vs thr: P > thr gives xLy; P(y,x) > thr gives yLx;
+         -- otherwise 1-thr ≤ P ≤ thr gives xIy. Follows from P(x,y) + P(y,x) = 1.
+
+omit [DecidableEq A] in
+/-- **L-transitivity**: `xLy ∧ yLz → xLz`.
+
+    Under Axiom 1, `P(x,y) > π` means `v(x)/(v(x)+v(y)) > π`, i.e.,
+    `v(x)/v(y) > π/(1-π)`. If also `v(y)/v(z) > π/(1-π)`, then
+    `v(x)/v(z) > (π/(1-π))² > π/(1-π)` (since `π/(1-π) > 1`),
+    so `P(x,z) > π`. -/
+theorem jndL_trans (v : A → ℝ) (hv : ∀ a : A, 0 < v a) (thr : ℝ)
+    (hthr_lower : 1 / 2 < thr) (_hthr_upper : thr < 1) (x y z : A)
+    (hxy : jndL v thr x y) (hyz : jndL v thr y z) :
+    jndL v thr x z := by
+  simp only [jndL, pairwiseProb] at *
+  have hvx := hv x; have hvy := hv y; have hvz := hv z
+  rw [lt_div_iff₀ (add_pos hvx hvy)] at hxy
+  rw [lt_div_iff₀ (add_pos hvy hvz)] at hyz
+  rw [lt_div_iff₀ (add_pos hvx hvz)]
+  have h1 : thr * v y < (1 - thr) * v x := by nlinarith
+  have h2 : thr * v z < (1 - thr) * v y := by nlinarith
+  nlinarith [mul_pos (by linarith : (0:ℝ) < 1 - thr) hvy]
+
+/-- **Interval condition**: `xLy ∧ yIz ∧ zLw → xLw`.
+
+    Under Axiom 1: `xLy` gives `v(x)/v(y) > π/(1-π)`, `yIz` gives
+    `v(y)/v(z) ≥ (1-π)/π` (from `P(y,z) ≥ 1-π`), and `zLw` gives
+    `v(z)/v(w) > π/(1-π)`. Multiplying the first and third ratios and
+    using the bound on `v(y)/v(z)`:
+    `v(x)/v(w) = (v(x)/v(y)) · (v(y)/v(z)) · (v(z)/v(w)) > π/(1-π)`
+    since the middle factor is ≥ (1-π)/π and the outer factors are > π/(1-π),
+    giving a product > (π/(1-π))·((1-π)/π)·(π/(1-π)) = π/(1-π). -/
+theorem jndL_interval (v : A → ℝ) (hv : ∀ a : A, 0 < v a) (thr : ℝ)
+    (hthr_lower : 1 / 2 < thr) (hthr_upper : thr < 1) (x y z w : A)
+    (hxy : jndL v thr x y) (hyz : jndI v thr y z) (hzw : jndL v thr z w) :
+    jndL v thr x w := by
+  sorry -- TODO: Follows from the ratio bounds described above.
+         -- The key step is showing v(x)/v(w) > π/(1-π) by multiplying
+         -- the ratios v(x)/v(y), v(y)/v(z), v(z)/v(w) and bounding
+         -- each factor. Requires careful nonlinear arithmetic with
+         -- the positivity constraints.
+
+/-- **No sandwiching**: `xLy ∧ yLz → ¬(xIw ∧ wIz)`.
+
+    If `v(x) ≫ v(y) ≫ v(z)` (both with ratio > π/(1-π)), then no
+    `w` can be indistinguishable from both `x` and `z`: such a `w`
+    would need `v(w) ≈ v(x)` and `v(w) ≈ v(z)` simultaneously, but
+    `v(x)/v(z) > (π/(1-π))² ≫ 1` prevents this. -/
+theorem jndL_no_sandwich (v : A → ℝ) (hv : ∀ a : A, 0 < v a) (thr : ℝ)
+    (hthr_lower : 1 / 2 < thr) (hthr_upper : thr < 1) (x y z w : A)
+    (hxy : jndL v thr x y) (hyz : jndL v thr y z) :
+    ¬(jndI v thr x w ∧ jndI v thr w z) := by
+  sorry -- TODO: From xLy ∧ yLz, get v(x)/v(z) > (π/(1-π))². If xIw,
+         -- then v(x)/v(w) ≤ π/(1-π). If wIz, then v(w)/v(z) ≤ π/(1-π).
+         -- But v(x)/v(z) = (v(x)/v(w))·(v(w)/v(z)) ≤ (π/(1-π))²,
+         -- contradicting the strict bound from transitivity through y.
+
+-- ============================================================================
+-- §4. The Trace (Definition 4 and Theorem 6, p. 37)
+-- ============================================================================
+
+/-- The trace relation (Definition 4, Luce 1959, p. 37):
+    `x ≥_T y` iff `P(x, z) ≥ P(y, z)` for all `z`.
+
+    The trace extracts the "underlying" preference ordering by requiring
+    that `x` is at least as preferred as `y` in **every** pairwise
+    comparison against a common reference `z`. This is a stronger condition
+    than just `P(x, y) ≥ 1/2`. -/
+def traceGe (v : A → ℝ) (x y : A) : Prop :=
+  ∀ z : A, pairwiseProb v y z ≤ pairwiseProb v x z
+
+/-- **Theorem 6** (Luce 1959, p. 37): Under Axiom 1, the trace relation
+    is equivalent to `v(x) ≥ v(y)`.
+
+    **Proof sketch**: Under Axiom 1, `P(x,z) = v(x)/(v(x)+v(z))`. Since
+    `t ↦ t/(t+c)` is monotone increasing for `c > 0`, we have
+    `P(x,z) ≥ P(y,z)` for all `z` iff `v(x) ≥ v(y)`.
+
+    (→) Take `z = y`: `P(x,y) ≥ P(y,y) = 1/2`, hence `v(x) ≥ v(y)`.
+    (←) If `v(x) ≥ v(y)`, monotonicity of `t/(t+c)` gives `P(x,z) ≥ P(y,z)`. -/
+theorem trace_iff_scale_ge (v : A → ℝ) (hv : ∀ a : A, 0 < v a) (x y : A) :
+    traceGe v x y ↔ v y ≤ v x := by
+  simp only [traceGe]
+  constructor
+  · intro h
+    -- Take z = y: P(y,y) ≤ P(x,y), i.e. 1/2 ≤ P(x,y)
+    have := h y
+    rwa [pairwiseProb_mono_iff v hv x y y] at this
+  · intro hle z
+    rwa [pairwiseProb_mono_iff v hv x y z]
+
+/-- Corollary: `x ≥_T y` iff `P(x, y) ≥ 1/2` (Luce 1959, p. 37). -/
+theorem trace_iff_pairwiseProb_ge_half (v : A → ℝ) (hv : ∀ a : A, 0 < v a)
+    (x y : A) :
+    traceGe v x y ↔ 1 / 2 ≤ pairwiseProb v x y := by
+  rw [trace_iff_scale_ge v hv, pairwiseProb_ge_half_iff v hv]
+
+omit [DecidableEq A] in
+/-- The trace is reflexive: `x ≥_T x`. -/
+theorem traceGe_refl (v : A → ℝ) (x : A) : traceGe v x x :=
+  λ _ => le_refl _
+
+/-- The trace is transitive: `x ≥_T y ∧ y ≥_T z → x ≥_T z`. -/
+theorem traceGe_trans (v : A → ℝ) (hv : ∀ a : A, 0 < v a) (x y z : A)
+    (hxy : traceGe v x y) (hyz : traceGe v y z) :
+    traceGe v x z := by
+  rw [trace_iff_scale_ge v hv] at *
+  linarith
+
+/-- The trace is total: for any `x, y`, either `x ≥_T y` or `y ≥_T x`.
+
+    This completes the proof that the trace is a **weak order** (total
+    preorder). Under Axiom 1, the trace is determined by the ratio scale
+    values, which are totally ordered reals. -/
+theorem traceGe_total (v : A → ℝ) (hv : ∀ a : A, 0 < v a) (x y : A) :
+    traceGe v x y ∨ traceGe v y x := by
+  rw [trace_iff_scale_ge v hv, trace_iff_scale_ge v hv]
+  exact le_total (v y) (v x)
+
+/-- The trace agrees with L: if `xLy` for any `π`, then `x ≥_T y`.
+
+    `P(x,y) > π > 1/2` implies `v(x) > v(y)` implies `x ≥_T y`. -/
+theorem traceGe_of_jndL (v : A → ℝ) (hv : ∀ a : A, 0 < v a) (thr : ℝ)
+    (hthr : 1 / 2 < thr) (x y : A) (h : jndL v thr x y) :
+    traceGe v x y := by
+  rw [trace_iff_scale_ge v hv]
+  rw [jndL, pairwiseProb] at h
+  have hD := add_pos (hv x) (hv y)
+  have := (lt_div_iff₀ hD).mp h
+  nlinarith
 
 end Core

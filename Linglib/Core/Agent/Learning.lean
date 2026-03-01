@@ -21,15 +21,15 @@ produces a new `RationalAction`, and `RationalAction` *is* the Luce choice rule.
 
 We also formalize:
 
-1. **Linear learning model** (§4.A): `v_{n+1}(a) = α·v_n(a) + (1-α)·r(a)`
-2. **Axiom 1 preservation** (§4.B): `update` yields a `RationalAction` — IIA by construction
-3. **β-model** (§4.C): probability-space learning `P_{n+1}(a) = (1-β)·P_n(a) + β·δ(a, chosen)`
-4. **Iteration** (§4.D): n-fold application of the linear update
-5. **Convergence** (§4.E): under constant reinforcement, `v_n(a) → r(a)` as `n → ∞`
+1. **Response strength operators** (§4.B): positive linear operators on ratio-scale values
+2. **Alpha model** (§4.C): `v_{n+1}(a) = α·v_n(a) + (1-α)·r(a)` — the linear learning rule
+3. **Axiom 1 preservation** (§4.B, Theorem 16): `update` yields a `RationalAction` — IIA by construction
+4. **Beta model** (§4.D): probability-space learning `P_{n+1}(a) = (1-β)·P_n(a) + β·δ(a, chosen)`
+5. **Convergence** (§4.G): under constant reinforcement, `v_n(a) → r(a)` as `n → ∞`
 
 ## References
 
-- Luce, R. D. (1959). Individual Choice Behavior (Vol. 4). Wiley. Chapter 4, pp. 113–128.
+- Luce, R. D. (1959). Individual Choice Behavior. Wiley. Chapter 4, pp. 91–128.
 - Bush, R. R. & Mosteller, F. (1955). Stochastic Models for Learning. Wiley.
 -/
 
@@ -38,10 +38,10 @@ namespace Core
 open BigOperators Finset Filter
 
 -- ============================================================================
--- §1. Linear Learning Model (§4.A)
+-- §1. Response Strength Operators (§4.B) and the Alpha Model (§4.C)
 -- ============================================================================
 
-/-- A linear learner for the Luce ratio-scale model (Luce 1959, §4.A).
+/-- A linear learner for the Luce ratio-scale model (Luce 1959, §4.B–C).
 
 The learning rule is a positive linear operator on ratio-scale values:
 `v_{n+1}(a) = α · v_n(a) + (1-α) · r(a)` where `α ∈ (0,1)` is the retention
@@ -80,10 +80,10 @@ theorem LinearLearner.complementRate_lt_one (ll : LinearLearner A) :
   linarith [ll.learnRate_pos]
 
 -- ============================================================================
--- §2. Linear Update & Axiom 1 Preservation (§4.A–B)
+-- §2. Linear Update & Axiom 1 Preservation (§4.B–C)
 -- ============================================================================
 
-/-- One step of linear learning (Luce 1959, §4.A):
+/-- One step of linear learning (Luce 1959, §4.C, Alpha Model):
 `v_{n+1}(s, a) = α · v_n(s, a) + (1 - α) · r(a)`.
 
 The result is a new `RationalAction`, so the Luce choice rule (IIA) holds at
@@ -103,7 +103,7 @@ theorem linear_update_nonneg (ll : LinearLearner A) (ra : RationalAction S A)
     (s : S) (a : A) : 0 ≤ (ll.update ra).score s a :=
   (ll.update ra).score_nonneg s a
 
-/-- **Axiom 1 preservation** (Luce 1959, §4.B, Theorem 17):
+/-- **Axiom 1 preservation** (Luce 1959, §4.B, Theorem 16):
 
 If the Luce choice rule P(a) = v(a)/Σv(b) holds at trial n, then after a
 positive linear update v' = α·v + (1-α)·r, the updated rule
@@ -120,10 +120,10 @@ theorem linear_learning_preserves_axiom1 (ll : LinearLearner A) (ra : RationalAc
   rfl
 
 -- ============================================================================
--- §3. β-Model (§4.C)
+-- §3. Beta Model (§4.D)
 -- ============================================================================
 
-/-- The β-model (Luce 1959, §4.C; Bush & Mosteller 1955):
+/-- The β-model (Luce 1959, §4.D; Bush & Mosteller 1955):
 
 An alternative learning model operating directly on probabilities rather than
 ratio-scale values:
@@ -140,7 +140,7 @@ structure BetaModel (A : Type*) where
   /-- β is strictly less than 1. -/
   beta_lt_one : beta < 1
 
-/-- One step of β-model update (Luce 1959, §4.C):
+/-- One step of β-model update (Luce 1959, §4.D):
 `P'(a) = (1-β) · P(a) + β · δ(a, chosen)`.
 
 Takes a probability function and the chosen action, returns updated probabilities. -/
@@ -172,10 +172,10 @@ theorem BetaModel.update_sum_one [DecidableEq A] (bm : BetaModel A) (P : A → �
   ring
 
 -- ============================================================================
--- §4. Iteration of Linear Learning (§4.D)
+-- §4. Iteration of Linear Learning (§4.C continued)
 -- ============================================================================
 
-/-- n-step iteration of linear learning (Luce 1959, §4.D):
+/-- n-step iteration of linear learning (Luce 1959, §4.C):
 
 Apply the linear update rule n times starting from an initial `RationalAction`.
 At each step, Axiom 1 is preserved because `update` produces a `RationalAction`. -/
@@ -191,7 +191,7 @@ theorem iterate_linear_nonneg (ll : LinearLearner A) (ra : RationalAction S A)
     0 ≤ (iterate_linear ll ra n).score s a :=
   (iterate_linear ll ra n).score_nonneg s a
 
-/-- Closed-form for iterated linear learning (Luce 1959, §4.D):
+/-- Closed-form for iterated linear learning (Luce 1959, §4.C):
 
 After n iterations with retention rate α and reinforcement r:
 `v_n(s, a) = α^n · v_0(s, a) + (1 - α^n) · r(a)`
@@ -210,10 +210,10 @@ theorem iterate_linear_closed_form (ll : LinearLearner A) (ra : RationalAction S
     ring
 
 -- ============================================================================
--- §5. Asymptotic Convergence (§4.E)
+-- §5. Asymptotic Convergence (§4.G)
 -- ============================================================================
 
-/-- **Convergence of linear learning** (Luce 1959, §4.E):
+/-- **Convergence of linear learning** (Luce 1959, §4.G):
 
 Under constant reinforcement, the ratio-scale values converge to the
 reinforcement values: `v_n(s, a) → r(a)` as `n → ∞`.
@@ -232,12 +232,12 @@ theorem linear_convergence (ll : LinearLearner A) (ra : RationalAction S A)
   sorry
 
 -- ============================================================================
--- §6. Expected Choice Sequences (§4.D–E)
+-- §6. Expected Choice Sequences (§4.C–G)
 -- ============================================================================
 
 /-- A record of a learning trial: what was available, what was chosen, what
 was the reinforcement. Used for analyzing sequences of choices over trials
-(Luce 1959, §4.D–E). -/
+(Luce 1959, §4.C–G). -/
 structure TrialRecord (A : Type*) where
   /-- The action chosen on this trial. -/
   chosen : A
@@ -246,7 +246,7 @@ structure TrialRecord (A : Type*) where
 
 /-- An expected choice sequence: the initial agent, a learner, and a history
 of trials. This structure supports analyzing how choice probabilities evolve
-over a sequence of reinforced trials (Luce 1959, §4.D–E). -/
+over a sequence of reinforced trials (Luce 1959, §4.C–G). -/
 structure ExpectedChoiceSequence (S A : Type*) [Fintype A] where
   /-- The learning model governing updates. -/
   learner : LinearLearner A

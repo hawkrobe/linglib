@@ -50,6 +50,7 @@ import Linglib.Core.Agent.RationalAction
 import Linglib.Core.Agent.UtilityTheory
 import Linglib.Core.Agent.ChoiceApproximations
 import Linglib.Core.Agent.Psychophysics
+import Linglib.Core.Agent.NormalCDF
 import Linglib.Core.Agent.Thurstone
 import Linglib.Core.Agent.SignalDetection
 import Linglib.Core.Agent.RankOrderings
@@ -88,7 +89,6 @@ import Linglib.Core.Scales.MereoDim
 import Linglib.Core.ContentIndividual
 import Linglib.Core.Agent.BToM
 import Linglib.Core.Agent.Emotion
-import Linglib.Core.Agent.SignalDetection
 import Linglib.Core.Path
 import Linglib.Core.Continuation
 import Linglib.Core.Lexical.PersonCategory
@@ -305,6 +305,7 @@ import Linglib.Phenomena.ArgumentStructure.Bridge.TheoryComparison
 import Linglib.Phenomena.ArgumentStructure.Studies.HaddicanEtAl2026
 import Linglib.Phenomena.ArgumentStructure.Bridge.MinimalismPassive
 import Linglib.Phenomena.ArgumentStructure.Bridge.MinimalismSmallClause
+import Linglib.Phenomena.ArgumentStructure.Bridge.ThetaPrediction
 import Linglib.Phenomena.ScalarImplicatures.ArgumentativeFraming
 import Linglib.Phenomena.Modality.ActualityInferencesBridge
 import Linglib.Phenomena.Modality.Bridge.EventRelativityRestructuring
@@ -874,6 +875,7 @@ import Linglib.Theories.Syntax.Minimalism.Core.Applicative
 import Linglib.Theories.Syntax.Minimalism.Core.SmallClause
 import Linglib.Theories.Interfaces.SyntaxSemantics.Minimalism.EventStructureBridge
 import Linglib.Theories.Interfaces.SyntaxSemantics.Minimalism.CausalSourceBridge
+import Linglib.Theories.Interfaces.SyntaxSemantics.Minimalism.VoiceTheta
 import Linglib.Theories.Morphology.DM.Fission
 import Linglib.Theories.Morphology.DM.Categorizer
 import Linglib.Theories.Morphology.Core.CliticVsAffix

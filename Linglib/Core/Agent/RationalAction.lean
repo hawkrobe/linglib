@@ -1204,26 +1204,29 @@ theorem bayesian_maximizes (w : ι → ℝ) (hw_nonneg : ∀ i, 0 ≤ w i)
 end BayesianOptimality
 
 -- ============================================================================
--- §6. Independence of Unit (Luce 1959, §1.F, Theorem 6)
+-- §6. Uniqueness Characterization (converse of Theorem 4)
 -- ============================================================================
 
 /-!
-## Independence of Unit
+## Uniqueness of the Ratio Scale
 
-Luce (1959, §1.F, Theorem 6) proves that the ratio scale representation of
-choice probabilities is independent of the "unit" of measurement. If two
-agents have identical policies on the same alternatives, their score functions
-must be proportional: `score₂ = k · score₁` for some `k > 0`.
+Theorem 4 (proved earlier as `policy_eq_of_proportional`) shows that
+proportional scores yield the same policy. The converse — that identical
+policies force proportional scores — completes the uniqueness characterization:
+**same policy ↔ proportional scores**, with proportionality constant
+`k = totalScore₂/totalScore₁`.
 
-This is the converse of Theorem 4 (forward: `policy_eq_of_proportional`).
-Together they give: **same policy ↔ proportional scores**.
+Note: This is distinct from the "Independence-of-Unit Condition" in §1.F
+(pp. 28–33), which concerns state-dependent transformations f satisfying
+f(kv) = kf(v). That condition addresses how scale values transform across
+experimental conditions, not the uniqueness of the scale within a condition.
 -/
 
-section IndependenceOfUnit
+section UniquenessCharacterization
 
 variable {S A : Type*} [Fintype A]
 
-/-- Converse of uniqueness (Luce 1959, Theorem 6, Independence of Unit):
+/-- Converse of Theorem 4 (uniqueness of ratio scale):
     If two agents with positive total scores have the same policy,
     then their scores are proportional with constant `k = total₂/total₁`. -/
 theorem RationalAction.proportional_of_policy_eq
@@ -1242,7 +1245,7 @@ theorem RationalAction.proportional_of_policy_eq
   field_simp [h₁_ne]
   linarith
 
-/-- Full uniqueness characterization (Luce 1959, Theorems 4 + 6):
+/-- Full uniqueness characterization (Luce 1959, Theorem 4 and its converse):
     Two agents with positive total scores have the same policy if and only if
     their scores are proportional. -/
 theorem RationalAction.policy_eq_iff_proportional
@@ -1259,7 +1262,7 @@ theorem RationalAction.policy_eq_iff_proportional
   · intro ⟨k, hk, hprop⟩ a
     exact (policy_eq_of_proportional ra₁ ra₂ s k hk hprop a).symm
 
-end IndependenceOfUnit
+end UniquenessCharacterization
 
 -- ============================================================================
 -- §7. Appendix 1: Alternative Forms of Axiom 1 (Luce 1959, pp. 129–132)

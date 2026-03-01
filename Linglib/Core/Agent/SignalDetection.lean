@@ -1,6 +1,5 @@
 import Linglib.Core.Agent.RationalAction
-import Mathlib.MeasureTheory.Integral.Bochner.Set
-import Mathlib.MeasureTheory.Measure.Lebesgue.Basic
+import Linglib.Core.Agent.NormalCDF
 
 /-!
 # Signal Detectability Theory (Luce 1959, §2.E) @cite{luce-1959}
@@ -54,37 +53,6 @@ set_option autoImplicit false
 namespace Core
 
 open Real MeasureTheory BigOperators
-
--- ============================================================================
--- §1. Normal CDF
--- ============================================================================
-
-/-- Normal CDF: Phi(x) = P(Z <= x) for standard normal Z.
-
-    Defined as the integral of the standard normal density over (-inf, x].
-    This is noncomputable because it involves Lebesgue integration of the
-    Gaussian density — no closed-form elementary expression exists. -/
-noncomputable def normalCDF (x : ℝ) : ℝ :=
-  ∫ t in Set.Iic x, (1 / Real.sqrt (2 * Real.pi)) * Real.exp (-(t ^ 2) / 2)
-
-/-- The normal CDF is bounded between 0 and 1. -/
-theorem normalCDF_nonneg (x : ℝ) : 0 ≤ normalCDF x := by
-  sorry -- TODO: non-negativity of integral of non-negative density
-
-theorem normalCDF_le_one (x : ℝ) : normalCDF x ≤ 1 := by
-  sorry -- TODO: CDF is at most 1 (total integral is 1)
-
-/-- Phi is monotone: x <= y implies Phi(x) <= Phi(y). -/
-theorem normalCDF_mono : Monotone normalCDF := by
-  sorry -- TODO: monotonicity from non-negative integrand over expanding domain
-
-/-- Symmetry: Phi(-x) = 1 - Phi(x). -/
-theorem normalCDF_neg (x : ℝ) : normalCDF (-x) = 1 - normalCDF x := by
-  sorry -- TODO: follows from symmetry of the Gaussian density
-
-/-- Phi(0) = 1/2 by symmetry of the standard normal. -/
-theorem normalCDF_zero : normalCDF 0 = 1 / 2 := by
-  sorry -- TODO: follows from normalCDF_neg at x = 0 and total integral = 1
 
 -- ============================================================================
 -- §2. SDT Model
