@@ -707,6 +707,7 @@ import Linglib.Comparisons.KratzerEpistemicRSA
 import Linglib.Comparisons.ModalPosition
 import Linglib.Comparisons.AssertionTheories
 import Linglib.Comparisons.CaseTheories
+import Linglib.Comparisons.FrameComposition
 import Linglib.Comparisons.CategorialFeatures
 
 -- Theories: Dependency Grammar
@@ -819,6 +820,7 @@ import Linglib.Theories.Pragmatics.RelevanceTheory.Comprehension
 import Linglib.Theories.Semantics.TypeTheoretic.Core
 import Linglib.Theories.Semantics.TypeTheoretic.Copredication
 import Linglib.Theories.Semantics.TypeTheoretic.Discourse
+import Linglib.Theories.Semantics.TypeTheoretic.DFrame
 import Linglib.Theories.Semantics.TypeTheoretic.FrameBridge
 import Linglib.Theories.Semantics.TypeTheoretic.Modality
 import Linglib.Theories.Semantics.TypeTheoretic.Quantification
