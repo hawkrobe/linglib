@@ -16,6 +16,7 @@ import Linglib.Core.Semantics.Proposition
 import Linglib.Core.Lexical.UD
 import Linglib.Core.Logic.Duality
 import Linglib.Core.Logic.Quantification
+import Linglib.Core.Logic.PolarizedIndividuals
 import Linglib.Core.Logic.SquareOfOpposition
 import Linglib.Core.Scales.HornScale
 import Linglib.Core.Semantics.Intension
