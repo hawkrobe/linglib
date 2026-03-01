@@ -831,6 +831,8 @@ import Linglib.Theories.Syntax.ConstructionGrammar.Basic
 import Linglib.Theories.Syntax.ConstructionGrammar.Studies.FillmoreKayOConnor1988
 import Linglib.Theories.Syntax.ConstructionGrammar.Studies.GoldbergShirtz2025
 import Linglib.Theories.Syntax.ConstructionGrammar.ArgumentStructure
+import Linglib.Theories.Syntax.ConstructionGrammar.Slot
+import Linglib.Phenomena.Constructions.Bridge.SlotVerification
 import Linglib.Phenomena.Constructions.CxG_KayFillmore1999Bridge
 import Linglib.Phenomena.Constructions.DG_OsborneGross2012Bridge
 import Linglib.Theories.Syntax.ConstructionGrammar.Studies.GoldbergJackendoff2004
