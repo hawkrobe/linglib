@@ -56,6 +56,7 @@ import Linglib.Core.Agent.Thurstone
 import Linglib.Core.Agent.SignalDetection
 import Linglib.Core.Agent.RankOrderings
 import Linglib.Core.Agent.SemiorderRanking
+import Linglib.Core.Agent.GaussianChoice
 import Linglib.Core.Agent.Learning
 import Linglib.Core.Discourse.Evidence
 import Linglib.Core.Discourse.Epistemicity
