@@ -55,21 +55,7 @@ set_option autoImplicit false
 namespace Theories.Pragmatics.RelevanceTheory
 
 -- ============================================================================
--- §1. Interpretations
--- ============================================================================
-
-/-- An interpretation: what the hearer derives from an utterance.
-    Packages an explicature with implicated premises and conclusions. -/
-structure Interpretation (W : Type*) where
-  /-- The explicature: pragmatically enriched logical form -/
-  explicature : W → Bool
-  /-- Implicated premises: contextual assumptions supplied by the hearer -/
-  implicatedPremises : List (W → Bool)
-  /-- Implicated conclusions: derived from explicature + premises -/
-  implicatedConclusions : List (W → Bool)
-
--- ============================================================================
--- §2. RT Scenarios
+-- §1. RT Scenarios
 -- ============================================================================
 
 /-- An RT scenario: everything the comprehension procedure needs.
@@ -108,7 +94,7 @@ def RTScenario.adjustedThreshold (s : RTScenario I) (i : I) : ℕ :=
   s.threshold + s.effortWeight * s.effort i
 
 -- ============================================================================
--- §3. The Comprehension Procedure
+-- §2. The Comprehension Procedure
 -- ============================================================================
 
 /-- The comprehension procedure selects interpretation `i`.
@@ -133,7 +119,7 @@ def RTScenario.communicationFails (s : RTScenario I) : Prop :=
   ∀ i ∈ s.candidates, s.effects i < s.adjustedThreshold i
 
 -- ============================================================================
--- §4. Structural Properties
+-- §3. Structural Properties
 -- ============================================================================
 
 /-- If the procedure selects i, communication does not fail. -/
@@ -151,7 +137,11 @@ theorem RTScenario.selected_blocks (s : RTScenario I) (i j : I)
   hi.2.2 j hj hacc
 
 /-- Two interpretations at different accessibility levels cannot both be
-    selected: the more accessible one would block the less accessible one. -/
+    selected: the more accessible one would block the less accessible one.
+
+    This is a direct consequence of satisficing: once the procedure stops
+    at the first good-enough interpretation, less accessible candidates
+    are never reached. -/
 theorem RTScenario.selects_at_most_one (s : RTScenario I) (i j : I)
     (hi : s.comprehensionSelects i) (hj : s.comprehensionSelects j)
     (hacc : s.accessibility i < s.accessibility j) : False := by
@@ -159,18 +149,34 @@ theorem RTScenario.selects_at_most_one (s : RTScenario I) (i j : I)
   have h2 := hi.2.1
   omega
 
+/-- The selected interpretation passes its threshold. -/
+theorem RTScenario.selected_passes_threshold (s : RTScenario I) (i : I)
+    (h : s.comprehensionSelects i) :
+    s.adjustedThreshold i ≤ s.effects i :=
+  h.2.1
+
+/-- If the most accessible candidate passes threshold, it is selected. -/
+theorem RTScenario.most_accessible_selected (s : RTScenario I) (i : I)
+    (hmem : i ∈ s.candidates)
+    (hpass : s.adjustedThreshold i ≤ s.effects i)
+    (hmost : ∀ j ∈ s.candidates, ¬(s.accessibility j < s.accessibility i)) :
+    s.comprehensionSelects i :=
+  ⟨hmem, hpass, fun j hj hacc => absurd hacc (hmost j hj)⟩
+
 -- ============================================================================
--- §5. Processing Effort Arguments
+-- §4. Processing Effort Arguments
 -- ============================================================================
 
 /-- A processing effort argument: interpretation `i` is DISpreferred
     because its effort raises the threshold above its effects, even though
     it would be acceptable at zero effort.
 
-    This formalizes arguments like: "The literal interpretation of 'He is
-    a whale' is accessible but produces no positive effects (it contradicts
-    mutual knowledge that the referent is human), so the hearer moves to
-    the next candidate." -/
+    Example: in a rapid conversational exchange, enriching "some" to
+    "some but not all" may cost more effort than the effects justify,
+    even though in a slower context the enriched reading would be selected.
+
+    This mechanism is distinctive to RT — NeoGricean theories have no
+    counterpart. -/
 def RTScenario.blockedByEffort (s : RTScenario I) (i : I) : Prop :=
   s.threshold ≤ s.effects i ∧ s.effects i < s.adjustedThreshold i
 
@@ -186,8 +192,16 @@ theorem RTScenario.effortFree_threshold (s : RTScenario I) (i : I)
   have : s.effortWeight = 0 := h
   rw [this, Nat.zero_mul, Nat.add_zero]
 
+/-- Effort blocking requires nonzero effort weight — in an effort-free
+    scenario, no interpretation can be blocked by effort. -/
+theorem RTScenario.effortFree_not_blocked (s : RTScenario I) (i : I)
+    (h : s.effortFree) : ¬s.blockedByEffort i := by
+  intro ⟨hle, hlt⟩
+  rw [RTScenario.effortFree_threshold s i h] at hlt
+  omega
+
 -- ============================================================================
--- §6. Clause (b): Speaker's Alternatives
+-- §5. Clause (b): Speaker's Alternatives
 -- ============================================================================
 
 /-- Clause (b) of optimal relevance: the communicator's choice was the

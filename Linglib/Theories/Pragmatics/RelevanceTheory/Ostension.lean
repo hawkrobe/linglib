@@ -11,12 +11,22 @@ Ostensive communication involves two layers of intention:
    and audience the communicator's informative intention
 
 The communicative intention is what distinguishes ostensive communication
-from mere information transmission. It triggers the comprehension procedure
-by creating an expectation of optimal relevance.
+from mere information transmission. It creates a PRESUMPTION OF OPTIMAL
+RELEVANCE (Postface p. 270), which triggers the comprehension procedure.
+
+The presumption of optimal relevance does not have independent formal
+content — it is REALIZED BY the comprehension procedure (see
+`Comprehension.lean`). As S&W put it (Postface p. 271): "What makes it
+possible to recognise the communicator's informative intention is [the
+comprehension] procedure." The formal machinery that implements this
+presumption is `RTScenario.comprehensionSelects`: the satisficing search
+over interpretations ordered by accessibility IS what it means for the
+hearer to treat the stimulus as optimally relevant.
 
 ## References
 
-Sperber, D. & Wilson, D. (1986/95). Relevance. Ch. 1 §9, Ch. 4 §1.
+Sperber, D. & Wilson, D. (1986/95). Relevance. Ch. 1 §9, Ch. 4 §1;
+Postface pp. 270-271.
 -/
 
 set_option autoImplicit false
@@ -41,23 +51,16 @@ structure InformativeIntention (A : Type*) where
 
     S&W (p. 63): "Communicative intention: to make it mutually manifest
     to audience and communicator that the communicator has this
-    informative intention." -/
+    informative intention."
+
+    The ostensive stimulus triggers the comprehension procedure by
+    creating a presumption of optimal relevance. This presumption is not
+    formalized as a separate Prop — it is operationalized by the
+    `RTScenario.comprehensionSelects` predicate in `Comprehension.lean`. -/
 structure OstensiveStimulus (W : Type*) (A : Type*) where
   /-- The communicator's informative intention -/
   informativeIntention : InformativeIntention A
   /-- The communicator's cognitive environment -/
   communicatorEnv : CogEnv W A
-
-/-- An ostensive stimulus creates a presumption of optimal relevance.
-    This is the Second (Communicative) Principle of Relevance.
-
-    The hearer assumes:
-    (a) The stimulus is relevant enough to be worth processing
-    (b) It is the most relevant one compatible with the communicator's
-        abilities and preferences
-
-    This presumption triggers and guides the comprehension procedure. -/
-def OstensiveStimulus.presumesRelevance {W : Type*} {A : Type*}
-    (_ : OstensiveStimulus W A) : Prop := True
 
 end Theories.Pragmatics.RelevanceTheory

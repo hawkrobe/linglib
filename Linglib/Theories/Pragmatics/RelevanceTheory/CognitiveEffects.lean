@@ -17,6 +17,11 @@ The 2nd edition (Postface, p. 265) renames "contextual effects" to
 "cognitive effects" to emphasize these are changes in the individual's
 cognitive state.
 
+All three types are POSITIVE cognitive effects (S&W Ch. 3 §1-3).
+Contradiction is positive because eliminating a false assumption improves
+the individual's representation of the world. These three exhaust the ways
+an input can be relevant — an input that produces none of these is irrelevant.
+
 ## References
 
 Sperber, D. & Wilson, D. (1986/95). Relevance. Ch. 3 §1-3; Postface.
@@ -28,7 +33,11 @@ namespace Theories.Pragmatics.RelevanceTheory
 
 /-- The three types of cognitive effect (S&W, Ch. 3).
     These exhaust the ways new information can be relevant in a context.
-    An input producing none of these is irrelevant. -/
+    An input producing none of these is irrelevant.
+
+    All three are positive: strengthening and contextual implication
+    obviously so; contradiction is positive because eliminating a false
+    assumption is epistemically beneficial. -/
 inductive EffectType where
   /-- Existing assumption strengthened by new evidence -/
   | strengthening
@@ -37,18 +46,6 @@ inductive EffectType where
   /-- New conclusion derived from input + context jointly -/
   | contextualImplication
   deriving DecidableEq, BEq, Repr
-
-/-- All three types are positive cognitive effects. Contradiction is
-    positive because eliminating a false assumption improves the
-    individual's representation of the world. -/
-def EffectType.isPositive : EffectType → Bool
-  | .strengthening => true
-  | .contradiction => true
-  | .contextualImplication => true
-
-/-- Every effect type is positive. -/
-theorem EffectType.all_positive (e : EffectType) : e.isPositive = true := by
-  cases e <;> rfl
 
 /-- An effect profile: the cognitive effects of processing an input in
     context, with an overall magnitude assessment.
@@ -62,10 +59,6 @@ structure EffectProfile where
   /-- Overall magnitude (higher = more relevant, all else equal) -/
   magnitude : ℕ
   deriving Repr
-
-/-- Does the profile contain any positive effects? -/
-def EffectProfile.hasPositiveEffects (p : EffectProfile) : Bool :=
-  !p.effects.isEmpty
 
 /-- An input with no effects is irrelevant (S&W, Ch. 3). -/
 def EffectProfile.irrelevant (p : EffectProfile) : Prop :=

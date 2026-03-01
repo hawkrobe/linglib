@@ -11,7 +11,7 @@ highly manifest; distant inferences are weakly manifest.
 |------------|---------------|
 | `CogEnv` | Ch. 1, §7: "A cognitive environment of an individual" |
 | `isManifest` | Ch. 1, §7: "manifest to an individual" |
-| `MutualCogEnv` | Ch. 1, §8: "mutual cognitive environments" |
+| `SharedCogEnv` | Ch. 1, §9: "shared cognitive environment" (p. 42) |
 
 ## References
 
@@ -57,13 +57,21 @@ theorem CogEnv.moreManifest_trans (env : CogEnv W A) {a b c : A}
     env.moreManifest a c := by
   simp only [moreManifest] at *; omega
 
-/-- A mutual cognitive environment: assumptions mutually manifest to all
-    parties in a communicative exchange.
+/-- A shared cognitive environment: assumptions manifest to all parties,
+    where the fact that they share the environment is itself manifest.
 
-    S&W's shortcut: rather than requiring infinite mutual knowledge
-    iteration, a shared physical environment suffices. If individuals share
-    a perceptual environment and have similar cognitive abilities,
-    perceptible facts are mutually manifest. -/
-structure MutualCogEnv (W : Type*) (A : Type*) extends CogEnv W A
+    S&W (p. 42) argue that mutual knowledge (an infinite regress of
+    "A knows that B knows that A knows...") is unattainable. Their
+    replacement is the SHARED cognitive environment: a cognitive environment
+    that two people share, where it is manifest to both that they share it.
+
+    This is NOT a weaker version of mutual knowledge — it's a fundamentally
+    different notion. The sharing is grounded in perceptual co-presence
+    and similar cognitive abilities, not in iterated belief attribution. -/
+structure SharedCogEnv (W : Type*) (A : Type*) extends CogEnv W A where
+  /-- Number of parties sharing this environment -/
+  parties : ℕ
+  /-- The sharing itself is manifest (reflexivity condition) -/
+  sharingManifest : Prop
 
 end Theories.Pragmatics.RelevanceTheory
