@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.227.57] - 2026-02-28
+
+### Fixed
+- **Original language text** (`Phenomena/Focus/DiscourseOnly.lean`): `sClause`/`sPrimeClause` now hold original language text (Russian romanization, Hungarian, Mandarin pinyin, Italian) instead of English. Added `sGloss`/`sPrimeGloss` fields for English translations. All 28 data entries verified against paper PDF.
+- **Removed 3 hallucinated entries**: `italian_film`, `italian_wouldHaveCome`, `hungarian_garden` — not in IKW 2025 WCCFL proceedings. Renamed `russian_apartment` → `russian_house` to match paper's ex. 29b.
+- **Fixed all source references**: Core examples now correctly cite §7 ex. 29a–d (were falsely attributed to §3 ex. 8–14).
+
 ## [0.227.56] - 2026-02-28
 
 ### Fixed
