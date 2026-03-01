@@ -7,14 +7,20 @@ Empirically attested feature dimensions for characterizing the idiosyncratic
 in ways that affect selectional restrictions, figurative extensions, and
 cross-linguistic translation equivalence (Spalek & McNally, forthcoming).
 
-## Two-level architecture
+## Three-level architecture
 
 **Level 1 — Levin meaning components** (§ 1). Binary features that define verb
 classes, diagnosed by diathesis alternation behavior. From Levin (1993:5–10):
 the four verbs *break*, *cut*, *hit*, and *touch* are distinguished by the
 presence or absence of change of state, contact, motion, and causation.
 
-**Level 2 — Root-specific features** (§ 3). Range-valued dimensions capturing
+**Level 2 — Root structural entailments** (§ 3b). Binary features capturing
+what the verb root itself entails about event structure: state, manner, result,
+and cause. From Beavers & Koontz-Garboden (2020, Table 12). These sit between
+template-level event structure and surface meaning components, explaining
+*why* surface verbs have the components they do.
+
+**Level 3 — Root-specific features** (§ 3). Range-valued dimensions capturing
 within-class variation in root content. A root's "position" along each
 dimension is not a point but a **range** of acceptable values (§ 2), reflecting
 the fact that verbs are compatible with a range of event types.
@@ -64,6 +70,11 @@ all entries that constrain that dimension. This is by design.
 -- ════════════════════════════════════════════════════
 
 /-- Binary meaning components that define Levin (1993) verb classes.
+
+    These describe **surface** verb behavior, not root-level entailments.
+    Beavers & Koontz-Garboden (2020) argue that surface CoS and causation
+    can come from either the template or the root; see `RootEntailments`
+    (§ 3b) for the root-level decomposition.
 
     Diagnosed by participation in diathesis alternations (pp. 5–10):
     - `changeOfState`: middle alternation, causative/inchoative alternation
@@ -252,17 +263,21 @@ inductive AgentControl where
 
 /-- Within-class root content profile.
 
-    Captures the idiosyncratic conceptual content that distinguishes
-    verbs within a single Levin class. Each dimension is a `Range`
-    of acceptable values; `none` means the root says nothing about
-    that dimension (unconstrained).
+    Captures **quality** dimensions of root content — force, robustness,
+    agent properties — as opposed to `RootEntailments` (§ 3b), which
+    captures **structural** entailments (state, manner, result, cause).
 
-    Together with `MeaningComponents` (which defines the class) and
-    `LevinClass` (which identifies the class), this gives a three-level
+    Each dimension is a `Range` of acceptable values; `none` means the
+    root says nothing about that dimension (unconstrained).
+
+    Together with `MeaningComponents` (which defines the class),
+    `LevinClass` (which identifies the class), and `RootEntailments`
+    (which captures structural entailments), this gives a four-level
     characterization of a verb's semantic content:
     1. Class-defining meaning components (binary, from alternations)
     2. Class membership (Levin taxonomy)
-    3. Root-specific features (ranges, from detailed lexical analysis) -/
+    3. Root structural entailments (B&KG 2020)
+    4. Root-specific quality features (ranges, from detailed lexical analysis) -/
 structure RootProfile where
   /-- Force magnitude: Talmy (1988). -/
   forceMag : Range ForceLevel := none
@@ -277,6 +292,117 @@ structure RootProfile where
   /-- Agent control: Dowty (1991) P2, Spalek & McNally. -/
   agentControl : Range AgentControl := none
   deriving BEq, Repr, Inhabited
+
+-- ════════════════════════════════════════════════════
+-- § 3b. Root Structural Entailments (B&KG 2020)
+-- ════════════════════════════════════════════════════
+
+/-- Root-level structural entailments from Beavers & Koontz-Garboden (2020).
+
+    B&KG argue against Bifurcation (roots only contribute idiosyncratic
+    content) and Manner/Result Complementarity (no root encodes both).
+    Roots CAN entail states, change, and causation — notions traditionally
+    reserved for templates (CAUSE, BECOME).
+
+    The four features define a root typology (Table 12, p. 228):
+    - `state`: root describes a state (√FLAT, √CRACK, √DRY)
+    - `manner`: root describes an action/manner (√JOG, √RUN, √HIT)
+    - `result`: root entails change — passes restitutive *again* test
+    - `cause`: root entails causation
+
+    Constraints: `result → state` and `cause → result` (see `wellFormed`).
+
+    @cite{beavers-koontz-garboden-2020} -/
+structure RootEntailments where
+  state  : Bool
+  manner : Bool
+  result : Bool
+  cause  : Bool
+  deriving DecidableEq, BEq, Repr
+
+namespace RootEntailments
+
+/-- If a root entails change (result), it entails a state that changes.
+    B&KG (2020, p. 47): result entailments presuppose state entailments. -/
+def resultImpliesState (r : RootEntailments) : Bool :=
+  !r.result || r.state
+
+/-- If a root entails causation, it entails what is caused (a result).
+    B&KG (2020, p. 243): cause entailments presuppose result entailments. -/
+def causeImpliesResult (r : RootEntailments) : Bool :=
+  !r.cause || r.result
+
+/-- Well-formedness: both collocational constraints hold. -/
+def wellFormed (r : RootEntailments) : Bool :=
+  r.resultImpliesState && r.causeImpliesResult
+
+/-! ### Canonical root types (B&KG Table 12) -/
+
+/-- +S −M −R −C: property concept roots (√FLAT, √DRY).
+    Deadjectival COS verbs — the root names the result state.
+    Table 12, row 1, complement position. -/
+def propertyConcept : RootEntailments := ⟨true, false, false, false⟩
+
+/-- +S −M +R −C: internally caused result roots (√BLOSSOM, √RUST).
+    Root entails both a state and a change to that state, but not
+    external causation. Table 12, row 2, complement position. -/
+def pureResult : RootEntailments := ⟨true, false, true, false⟩
+
+/-- +S −M +R +C: externally caused result roots (√CRACK, √BREAK).
+    Root entails a state, change, AND causation — the root inherently
+    implies an external cause. Table 12, row 3, complement position.
+    B&KG (p. 228): these "lexicalize crosslinguistically as basic
+    causatives" unlike √BLOSSOM-type roots. -/
+def causativeResult : RootEntailments := ⟨true, false, true, true⟩
+
+/-- −S +M −R −C: pure manner roots (√JOG, √RUN, √SWIM).
+    Root specifies action manner without entailing any state.
+    Table 12, row 4, adjoined position. -/
+def pureManner : RootEntailments := ⟨false, true, false, false⟩
+
+/-- +S +M +R −C: manner + result without cause.
+    Well-formed per the constraints but UNATTESTED in B&KG's Table 12
+    (row 6 is empty in both positions). B&KG (p. 229): such roots
+    "would essentially derive syntactically unergative verbs with pure
+    change-of-state meanings." Defined for completeness. -/
+def mannerResult : RootEntailments := ⟨true, true, true, false⟩
+
+/-- +S +M +R +C: fully specified roots (√HAND, √DROWN, √CUT).
+    B&KG Ch. 3–4: manner + caused change. These are the attested MRC
+    violators. Table 12, row 7.
+    √HAND sits in adjoined position, √DROWN in complement position;
+    this structural difference is not captured here. -/
+def fullSpec : RootEntailments := ⟨true, true, true, true⟩
+
+/-- −S −M −R −C: minimal roots — no structural entailments.
+    Conservative default for classes not yet studied under B&KG's
+    framework. Not a row in Table 12 (which only lists roots with
+    at least one positive feature). -/
+def minimal : RootEntailments := ⟨false, false, false, false⟩
+
+/-! ### Canonical type well-formedness -/
+
+theorem propertyConcept_wf : propertyConcept.wellFormed = true := rfl
+theorem pureResult_wf : pureResult.wellFormed = true := rfl
+theorem causativeResult_wf : causativeResult.wellFormed = true := rfl
+theorem pureManner_wf : pureManner.wellFormed = true := rfl
+theorem mannerResult_wf : mannerResult.wellFormed = true := rfl
+theorem fullSpec_wf : fullSpec.wellFormed = true := rfl
+theorem minimal_wf : minimal.wellFormed = true := rfl
+
+/-! ### MRC violation detection -/
+
+/-- Does this root violate Manner/Result Complementarity?
+    B&KG Ch. 4: some roots encode both manner and result. -/
+def violatesMRC (r : RootEntailments) : Bool := r.manner && r.result
+
+theorem fullSpec_violates_MRC : fullSpec.violatesMRC = true := rfl
+theorem mannerResult_violates_MRC : mannerResult.violatesMRC = true := rfl
+theorem pureResult_respects_MRC : pureResult.violatesMRC = false := rfl
+theorem pureManner_respects_MRC : pureManner.violatesMRC = false := rfl
+theorem causativeResult_respects_MRC : causativeResult.violatesMRC = false := rfl
+
+end RootEntailments
 
 -- ════════════════════════════════════════════════════
 -- § 4. Levin (1993) Verb Class Taxonomy
@@ -874,3 +1000,281 @@ def RootProfile.overlaps (rp₁ rp₂ : RootProfile) : Bool :=
   rp₁.resultType.overlaps rp₂.resultType &&
   rp₁.agentVolition.overlaps rp₂.agentVolition &&
   rp₁.agentControl.overlaps rp₂.agentControl
+
+-- ════════════════════════════════════════════════════
+-- § 8. Root Entailment Mapping (B&KG 2020)
+-- ════════════════════════════════════════════════════
+
+/-- Root structural entailments for each Levin class.
+
+    Assignments marked (B&KG) are directly from Beavers & Koontz-Garboden
+    (2020) Table 12 and Chapters 2–5. Others are inferred from class
+    semantics following B&KG's framework:
+    - Externally caused CoS → `causativeResult` (√CRACK pattern)
+    - Internally caused CoS → `pureResult` (√BLOSSOM pattern)
+    - Action/manner verbs → `pureManner` (√JOG pattern)
+    - MRC violators → `fullSpec` (√HAND/√DROWN pattern)
+    - Stative/psychological → `propertyConcept` (√FLAT pattern)
+
+    Classes marked (default) use `minimal` as a conservative placeholder
+    pending detailed study under B&KG's framework. -/
+def LevinClass.rootEntailments : LevinClass → RootEntailments
+  -- §9 Putting: template provides CAUSE+BECOME; root content varies
+  | .put => .minimal                -- (default)
+  | .funnel => .pureManner          -- manner of channeling
+  | .pour => .pureManner            -- manner of pouring
+  | .coil => .pureManner            -- manner of arranging
+  | .sprayLoad => .minimal          -- (default)
+  -- §10 Removing
+  | .remove => .minimal             -- (default)
+  | .clear => .causativeResult      -- externally caused cleared state
+  | .wipe => .pureManner            -- manner of surface action
+  | .steal => .minimal              -- (default)
+  -- §11 Sending and Carrying
+  | .send => .minimal               -- (default)
+  | .carry => .pureManner           -- manner of transport
+  | .drive => .pureManner           -- manner via vehicle
+  -- §12 Exerting Force
+  | .pushPull => .pureManner        -- manner of force application
+  -- §13 Change of Possession
+  | .give => .fullSpec              -- (B&KG Ch.3) √HAND: manner + caused possession change
+  | .contribute => .minimal         -- (default) less specified than give
+  | .getObtain => .minimal          -- (default)
+  | .exchange => .minimal           -- (default)
+  -- §14–16
+  | .learn => .minimal              -- (default)
+  | .hold => .propertyConcept       -- state of holding
+  | .conceal => .causativeResult    -- externally caused hidden state
+  -- §17 Throwing
+  | .throw => .fullSpec             -- manner of propulsion + caused arrival
+  -- §18 Contact by Impact
+  | .hit => .pureManner             -- (B&KG Ch.4) impact manner, no state entailed
+  | .swat => .pureManner            -- like hit
+  -- §19 Poking
+  | .poke => .pureManner            -- manner of contact
+  -- §20 Contact: Touch
+  | .touch => .minimal              -- (B&KG) no structural entailments
+  -- §21 Cutting
+  | .cut => .fullSpec               -- (B&KG Ch.4) cutting manner + caused separation
+  | .carve => .fullSpec             -- like cut
+  -- §22 Combining and Attaching
+  | .mix => .causativeResult        -- externally caused combined state
+  | .amalgamate => .causativeResult
+  -- §23 Separating
+  | .separate => .causativeResult   -- externally caused separated state
+  | .split => .fullSpec             -- instrument manner + caused separation
+  -- §24 Coloring
+  | .color => .causativeResult      -- externally caused colored state
+  -- §25 Image Creation
+  | .imageCreation => .fullSpec     -- etching manner + caused image
+  -- §26 Creation and Transformation
+  | .build => .causativeResult      -- externally caused creation
+  | .grow => .pureResult            -- internally caused growth
+  | .create => .causativeResult     -- externally caused creation
+  | .knead => .fullSpec             -- kneading manner + caused shape change
+  | .turn => .causativeResult       -- externally caused transformation
+  | .performance => .pureManner     -- performance manner
+  -- §27–28
+  | .engender => .causativeResult   -- root entails causation
+  | .calve => .pureResult           -- internally caused biological process
+  -- §29 Predicative Complements
+  | .appoint => .causativeResult    -- externally caused status change
+  | .characterize => .minimal       -- (default)
+  | .declare => .causativeResult    -- externally caused status change
+  -- §30 Perception
+  | .see => .minimal                -- (default)
+  | .sight => .minimal              -- (default)
+  -- §31 Psych-Verbs
+  | .amuse => .causativeResult      -- stimulus causes psychological CoS
+  | .admire => .propertyConcept     -- psychological state
+  | .marvel => .propertyConcept     -- psychological state
+  -- §32–34
+  | .want => .propertyConcept       -- desiderative state
+  | .judgment => .minimal           -- (default)
+  | .assessment => .minimal         -- (default)
+  -- §35 Searching
+  | .search => .pureManner          -- searching manner
+  -- §36 Social Interaction
+  | .socialInteraction => .minimal  -- (default)
+  -- §37 Communication
+  | .say => .minimal                -- (default)
+  | .tell => .minimal               -- (default)
+  | .mannerOfSpeaking => .pureManner -- manner of speaking
+  -- §38 Animal Sounds
+  | .animalSound => .pureManner     -- specific sound manner
+  -- §39 Ingesting
+  | .eat => .causativeResult        -- caused consumption, no specific manner
+  | .devour => .fullSpec            -- vigorous manner + caused consumption
+  | .dine => .pureManner            -- social activity manner
+  -- §40 Body
+  | .bodyProcess => .minimal        -- (default)
+  | .flinch => .minimal             -- (default)
+  -- §41 Grooming
+  | .dress => .causativeResult      -- externally caused dressed state
+  -- §42 Killing
+  | .murder => .causativeResult     -- (B&KG) root entails caused death
+  | .poison => .fullSpec            -- (B&KG) poisoning manner + caused death (√DROWN-type)
+  -- §43 Emission
+  | .lightEmission => .propertyConcept  -- emitting state
+  | .soundEmission => .propertyConcept
+  | .substanceEmission => .propertyConcept
+  -- §44 Destroy
+  | .destroy => .causativeResult    -- (B&KG) root entails caused total destruction
+  -- §45 Change of State
+  | .break_ => .causativeResult     -- (B&KG Ch.2,5) √CRACK: externally caused CoS
+  | .bend => .causativeResult       -- externally caused shape change
+  | .cooking => .fullSpec           -- (B&KG) cooking manner + caused CoS
+  | .otherCoS => .causativeResult   -- √MELT/√FREEZE: externally caused CoS
+  | .entitySpecificCoS => .pureResult -- √BLOSSOM/√RUST: internally caused
+  | .calibratableCoS => .pureResult -- internally driven scalar change
+  -- §46 Lodge
+  | .lodge => .minimal              -- (default)
+  -- §47 Existence
+  | .exist => .minimal              -- (B&KG) pure stative, no root content
+  -- §48 Appearance
+  | .appear => .pureResult          -- internally caused appearance
+  -- §49 Body-Internal Motion
+  | .bodyInternalMotion => .pureManner -- fidgeting manner
+  -- §50 Assuming a Position
+  | .assumePosition => .pureResult  -- internally caused position change
+  -- §51 Motion
+  | .inherentlyDirectedMotion => .pureResult -- internally caused directed motion
+  | .leave => .pureResult           -- internally caused departure
+  | .mannerOfMotion => .pureManner  -- (B&KG) √JOG: motion manner
+  | .vehicleMotion => .pureManner   -- vehicle manner
+  | .chase => .pureManner           -- chasing manner
+  -- §52 Avoid
+  | .avoid => .minimal              -- (default)
+  -- §53 Lingering and Rushing
+  | .linger => .pureManner          -- temporal manner
+  | .rush => .pureManner            -- temporal manner
+  -- §54 Measure
+  | .measure => .propertyConcept    -- measurement state
+  -- §55 Aspectual
+  | .aspectual => .minimal          -- (default) template-level
+  -- §57 Weather
+  | .weather => .minimal            -- (default)
+
+/-! ### Well-formedness verification
+
+All canonical types satisfy the constraints, so every branch of
+`rootEntailments` is well-formed (each branch returns a canonical type). -/
+
+/-- Break roots (√CRACK) are well-formed. -/
+theorem break_root_wf : (LevinClass.rootEntailments .break_).wellFormed = true := rfl
+
+/-- Cut roots (MRC violator, fullSpec) are well-formed. -/
+theorem cut_root_wf : (LevinClass.rootEntailments .cut).wellFormed = true := rfl
+
+/-- Hit roots (pureManner) are well-formed. -/
+theorem hit_root_wf : (LevinClass.rootEntailments .hit).wellFormed = true := rfl
+
+/-- Touch roots (minimal) are well-formed. -/
+theorem touch_root_wf : (LevinClass.rootEntailments .touch).wellFormed = true := rfl
+
+/-- Give roots (√HAND, fullSpec) are well-formed. -/
+theorem give_root_wf : (LevinClass.rootEntailments .give).wellFormed = true := rfl
+
+/-- Destroy roots (causativeResult) are well-formed. -/
+theorem destroy_root_wf : (LevinClass.rootEntailments .destroy).wellFormed = true := rfl
+
+/-- Murder roots (causativeResult) are well-formed. -/
+theorem murder_root_wf : (LevinClass.rootEntailments .murder).wellFormed = true := rfl
+
+/-- Poison roots (√DROWN-type fullSpec) are well-formed. -/
+theorem poison_root_wf : (LevinClass.rootEntailments .poison).wellFormed = true := rfl
+
+/-! ### MRC violation verification -/
+
+/-- Cut is an MRC violator (B&KG Ch. 4): manner of cutting + caused separation. -/
+theorem cut_violates_MRC :
+    (LevinClass.rootEntailments .cut).violatesMRC = true := rfl
+
+/-- Cooking is an MRC violator: cooking manner + caused CoS. -/
+theorem cooking_violates_MRC :
+    (LevinClass.rootEntailments .cooking).violatesMRC = true := rfl
+
+/-- Poison (√DROWN-type) is an MRC violator: poisoning manner + caused death. -/
+theorem poison_violates_MRC :
+    (LevinClass.rootEntailments .poison).violatesMRC = true := rfl
+
+/-- Break respects MRC — pure result (√CRACK), no manner. -/
+theorem break_respects_MRC :
+    (LevinClass.rootEntailments .break_).violatesMRC = false := rfl
+
+/-- Hit respects MRC — pure manner (√JOG-type), no result. -/
+theorem hit_respects_MRC :
+    (LevinClass.rootEntailments .hit).violatesMRC = false := rfl
+
+/-! ### Cross-layer consistency
+
+Template + root entailments predict the event-structural subset of surface
+meaning components (changeOfState, causation, mannerSpec). Uses
+`mc.changeOfState && mc.causation` as a proxy for `Template.hasCause`
+(the accomplishment template is selected when both hold; the actual
+`Template` type lives in `Theories/Semantics/Events/EventStructure.lean`
+and cannot be imported here without creating a circular dependency).
+
+B&KG's "manner" is broader than Levin's `mannerSpec`: B&KG code hit/cut
+as +manner (impact/cutting action), but Levin codes this as contact+motion
+(±instrument), not `mannerSpec`. The prediction holds for classes where
+root manner aligns with Levin's `mannerSpec` (cooking, motion) but
+diverges for contact-manner classes (hit, cut). -/
+
+/-- Predict event-structural meaning components from template causation
+    and root entailments. -/
+def predictEventStructural (templateHasCause : Bool) (r : RootEntailments) :
+    Bool × Bool × Bool :=
+  (templateHasCause || r.result,   -- changeOfState
+   templateHasCause || r.cause,    -- causation
+   r.manner)                       -- mannerSpec (B&KG sense)
+
+/-- Event-structural subset of surface meaning components. -/
+def MeaningComponents.eventStructural (mc : MeaningComponents) : Bool × Bool × Bool :=
+  (mc.changeOfState, mc.causation, mc.mannerSpec)
+
+/-- Predicted event structure for a Levin class.
+    Uses `mc.changeOfState && mc.causation` as a proxy for `Template.hasCause`. -/
+def LevinClass.predictedEventStructural (c : LevinClass) : Bool × Bool × Bool :=
+  let mc := c.meaningComponents
+  predictEventStructural (mc.changeOfState && mc.causation) c.rootEntailments
+
+/-- Break: prediction matches observation (accomplishment + √CRACK). -/
+theorem break_eventStructural_consistent :
+    LevinClass.predictedEventStructural .break_ =
+    (LevinClass.meaningComponents .break_).eventStructural := rfl
+
+/-- Cooking: prediction matches (accomplishment + fullSpec root). -/
+theorem cooking_eventStructural_consistent :
+    LevinClass.predictedEventStructural .cooking =
+    (LevinClass.meaningComponents .cooking).eventStructural := rfl
+
+/-- Manner of motion: prediction matches (activity + √JOG). -/
+theorem mannerOfMotion_eventStructural_consistent :
+    LevinClass.predictedEventStructural .mannerOfMotion =
+    (LevinClass.meaningComponents .mannerOfMotion).eventStructural := rfl
+
+/-- Existence: prediction matches (stative + minimal root). -/
+theorem exist_eventStructural_consistent :
+    LevinClass.predictedEventStructural .exist =
+    (LevinClass.meaningComponents .exist).eventStructural := rfl
+
+/-- Destroy: prediction matches (accomplishment + causativeResult). -/
+theorem destroy_eventStructural_consistent :
+    LevinClass.predictedEventStructural .destroy =
+    (LevinClass.meaningComponents .destroy).eventStructural := rfl
+
+/-- Touch: prediction matches (activity + minimal root). -/
+theorem touch_eventStructural_consistent :
+    LevinClass.predictedEventStructural .touch =
+    (LevinClass.meaningComponents .touch).eventStructural := rfl
+
+/-- Murder: prediction matches (accomplishment + causativeResult). -/
+theorem murder_eventStructural_consistent :
+    LevinClass.predictedEventStructural .murder =
+    (LevinClass.meaningComponents .murder).eventStructural := rfl
+
+/-- Manner of speaking: prediction matches (activity + pureManner root). -/
+theorem mannerOfSpeaking_eventStructural_consistent :
+    LevinClass.predictedEventStructural .mannerOfSpeaking =
+    (LevinClass.meaningComponents .mannerOfSpeaking).eventStructural := rfl
