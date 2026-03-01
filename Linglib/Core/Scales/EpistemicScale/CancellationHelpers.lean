@@ -10,12 +10,6 @@ namespace Core.Scale
 
 attribute [local instance] Classical.propDecidable
 
-lemma ge_empty_contra (sys : EpistemicSystemFA (Fin 4))
-    (hpos : ∀ (i : Fin 4), ¬sys.ge ∅ {i})
-    {B : Set (Fin 4)} (hne : B.Nonempty) (h : sys.ge ∅ B) : False := by
-  obtain ⟨x, hx⟩ := hne
-  exact hpos x (sys.trans _ _ _ h (sys.mono _ _ (Set.singleton_subset_iff.mpr hx)))
-
 -- Precomputed set-difference equalities for Fin 4
 lemma sd_0_0 : ({(0 : Fin 4)} : Set (Fin 4)) \ {(0 : Fin 4)} = (∅ : Set (Fin 4)) := by ext x; fin_cases x <;> simp [Set.mem_diff, Set.mem_insert_iff]
 lemma sd_0_01 : ({(0 : Fin 4)} : Set (Fin 4)) \ {(0 : Fin 4), (1 : Fin 4)} = (∅ : Set (Fin 4)) := by ext x; fin_cases x <;> simp [Set.mem_diff, Set.mem_insert_iff]

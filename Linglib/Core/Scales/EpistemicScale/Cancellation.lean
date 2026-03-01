@@ -1256,6 +1256,55 @@ theorem cancellation_from_weights_fin4 (sys : EpistemicSystemFA (Fin 4))
     · exact absurd (heq A B hDisj h hGe) hStrict
     · exact absurd hGe (hnge A B hDisj h)
 
+/-- ge(∅, B) is impossible when B is nonempty and ¬ge(∅, {i}) for all singletons. -/
+lemma ge_empty_contra (sys : EpistemicSystemFA (Fin 4))
+    (hpos : ∀ (i : Fin 4), ¬sys.ge ∅ {i})
+    {B : Set (Fin 4)} (hne : B.Nonempty) (h : sys.ge ∅ B) : False := by
+  obtain ⟨x, hx⟩ := hne
+  exact hpos x (sys.trans _ _ _ h (sys.mono _ _ (Set.singleton_subset_iff.mpr hx)))
+
+/-- Pre-computed pair variant of `cancellation_from_weights_fin4`.
+    Instead of 256-case dispatch via `finset_fin4_eq`, the caller provides
+    explicit lists of critical (A,B) pairs and proves coverage via `native_decide`.
+    Empty-set cases are handled internally via `ge_empty_contra`. -/
+theorem cancellation_from_pairs (sys : EpistemicSystemFA (Fin 4))
+    (p : Fin 4 → ℚ) (hp : ∀ i, 0 < p i) (hsum : Finset.univ.sum p = 1)
+    (hpos : ∀ i : Fin 4, ¬sys.ge (∅ : Set (Fin 4)) {i})
+    (lt_pairs : List (Finset (Fin 4) × Finset (Fin 4)))
+    (hlt_cover : ∀ A B : Finset (Fin 4), A.Nonempty → B.Nonempty →
+      Disjoint A B → A.sum p < B.sum p → (A, B) ∈ lt_pairs)
+    (hlt : ∀ pair ∈ lt_pairs, ¬sys.ge (↑pair.1 : Set (Fin 4)) ↑pair.2)
+    (eq_pairs : List (Finset (Fin 4) × Finset (Fin 4)))
+    (heq_cover : ∀ A B : Finset (Fin 4), A.Nonempty → B.Nonempty →
+      Disjoint A B → A.sum p = B.sum p → (A, B) ∈ eq_pairs)
+    (heq : ∀ pair ∈ eq_pairs,
+      sys.ge (↑pair.1 : Set (Fin 4)) ↑pair.2 → sys.ge ↑pair.2 ↑pair.1)
+    : Cancellation 4 sys.ge := by
+  apply cancellation_from_weights_fin4 sys p hp hsum
+  · -- hnge: ∀ A B, Disjoint A B → A.sum p < B.sum p → ¬sys.ge ↑A ↑B
+    intro A B hDisj hLt
+    rcases A.eq_empty_or_nonempty with rfl | hA
+    · rcases B.eq_empty_or_nonempty with rfl | hB
+      · simp [Finset.sum_empty] at hLt
+      · intro hGe
+        exact ge_empty_contra sys hpos (Finset.coe_nonempty.mpr hB)
+          (by rwa [Finset.coe_empty] at hGe)
+    · rcases B.eq_empty_or_nonempty with rfl | hB
+      · simp [Finset.sum_empty] at hLt
+        exact absurd hLt (not_lt.mpr (le_of_lt (Finset.sum_pos (fun i _ => hp i) hA)))
+      · exact hlt (A, B) (hlt_cover A B hA hB hDisj hLt)
+  · -- heq: ∀ A B, Disjoint A B → A.sum p = B.sum p → sys.ge ↑A ↑B → sys.ge ↑B ↑A
+    intro A B hDisj hEqSum hGe
+    rcases A.eq_empty_or_nonempty with rfl | hA
+    · rcases B.eq_empty_or_nonempty with rfl | hB
+      · exact hGe
+      · exact absurd (Finset.sum_pos (fun i _ => hp i) hB)
+          (by simp [Finset.sum_empty] at hEqSum; linarith)
+    · rcases B.eq_empty_or_nonempty with rfl | hB
+      · exact absurd (Finset.sum_pos (fun i _ => hp i) hA)
+          (by simp [Finset.sum_empty] at hEqSum; linarith)
+      · exact heq (A, B) (heq_cover A B hA hB hDisj hEqSum) hGe
+
 /-- When weights are **generic** (no two nonempty disjoint subsets have equal sum),
     cancellation reduces to a single forward obligation: sys.ge ↑A ↑B → A.sum p ≥ B.sum p.
     The strict direction and equal-sum bidirectionality are both free:

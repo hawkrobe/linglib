@@ -6,7 +6,6 @@ namespace Core.Scale
 
 attribute [local instance] Classical.propDecidable
 
-set_option maxHeartbeats 800000 in
 theorem chamber_66 (sys : EpistemicSystemFA (Fin 4))
     (hpos : ∀ i : Fin 4, ¬sys.ge (∅ : Set (Fin 4)) {i})
     (h01 : sys.ge {(0 : Fin 4)} {1}) (h12 : sys.ge {(1 : Fin 4)} {2})
@@ -74,29 +73,45 @@ theorem chamber_66 (sys : EpistemicSystemFA (Fin 4))
         have h2 := (sys.additive {(0 : Fin 4), (2 : Fin 4)} {(0 : Fin 4), (1 : Fin 4)}).mp h1
         rw [sd_02_01, sd_01_02] at h2
         exact h21 h2
-  exact cancellation_from_weights_fin4 sys (![(8 : ℚ)/23, (6 : ℚ)/23, (5 : ℚ)/23, (4 : ℚ)/23])
+  exact cancellation_from_pairs sys (![(8 : ℚ)/23, (6 : ℚ)/23, (5 : ℚ)/23, (4 : ℚ)/23])
     (by intro i; fin_cases i <;> norm_num)
     (by simp [Fin.sum_univ_four]; norm_num)
-    (by intro A B hDisj hLt
-        rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
-        rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
-        simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] <;>
-        (try exact absurd hDisj (by decide)) <;>
-        (try assumption) <;>
-        (try (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h)) <;>
-        (exfalso; exact absurd hLt (by native_decide)))
-    (by intro A B hDisj hEq hGe
-        rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
-        rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
-        simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at hGe ⊢ <;>
-        (try exact absurd hDisj (by decide)) <;>
-        (try assumption) <;>
-        (try (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe)) <;>
-        (exfalso; exact absurd hEq (by native_decide)))
+    hpos
+    [({0}, {1, 2}),
+     ({0}, {1, 3}),
+     ({0}, {2, 3}),
+     ({0}, {1, 2, 3}),
+     ({1}, {0}),
+     ({1}, {0, 2}),
+     ({1}, {0, 3}),
+     ({1}, {2, 3}),
+     ({1}, {0, 2, 3}),
+     ({2}, {0}),
+     ({2}, {1}),
+     ({2}, {0, 1}),
+     ({2}, {0, 3}),
+     ({2}, {1, 3}),
+     ({2}, {0, 1, 3}),
+     ({3}, {0}),
+     ({3}, {1}),
+     ({3}, {2}),
+     ({3}, {0, 1}),
+     ({3}, {0, 2}),
+     ({3}, {1, 2}),
+     ({3}, {0, 1, 2}),
+     ({1, 2}, {0, 3}),
+     ({1, 3}, {0, 2}),
+     ({2, 3}, {0, 1})]
+    (by native_decide)
+    (by intro ⟨A, B⟩ hmem
+        simp only [List.mem_cons, List.mem_nil_iff, or_false, Prod.mk.injEq] at hmem
+        rcases hmem with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
+        <;> (try simp only [Finset.coe_insert, Finset.coe_singleton])
+        <;> assumption)
+    []
+    (by native_decide)
+    (by intro _ hmem; cases hmem)
 
-set_option maxHeartbeats 800000 in
 theorem chamber_67 (sys : EpistemicSystemFA (Fin 4))
     (hpos : ∀ i : Fin 4, ¬sys.ge (∅ : Set (Fin 4)) {i})
     (h01 : sys.ge {(0 : Fin 4)} {1}) (h12 : sys.ge {(1 : Fin 4)} {2})
@@ -163,29 +178,50 @@ theorem chamber_67 (sys : EpistemicSystemFA (Fin 4))
         have h2 := (sys.additive {(0 : Fin 4), (3 : Fin 4)} {(0 : Fin 4), (1 : Fin 4)}).mp h1
         rw [sd_03_01, sd_01_03] at h2
         exact hng_3_1 h2
-  exact cancellation_from_weights_fin4 sys (![(6 : ℚ)/17, (4 : ℚ)/17, (4 : ℚ)/17, (3 : ℚ)/17])
+  exact cancellation_from_pairs sys (![(6 : ℚ)/17, (4 : ℚ)/17, (4 : ℚ)/17, (3 : ℚ)/17])
     (by intro i; fin_cases i <;> norm_num)
     (by simp [Fin.sum_univ_four]; norm_num)
-    (by intro A B hDisj hLt
-        rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
-        rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
-        simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] <;>
-        (try exact absurd hDisj (by decide)) <;>
-        (try assumption) <;>
-        (try (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h)) <;>
-        (exfalso; exact absurd hLt (by native_decide)))
-    (by intro A B hDisj hEq hGe
-        rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
-        rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
-        simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at hGe ⊢ <;>
-        (try exact absurd hDisj (by decide)) <;>
-        (try assumption) <;>
-        (try (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe)) <;>
-        (exfalso; exact absurd hEq (by native_decide)))
+    hpos
+    [({0}, {1, 2}),
+     ({0}, {1, 3}),
+     ({0}, {2, 3}),
+     ({0}, {1, 2, 3}),
+     ({1}, {0}),
+     ({1}, {0, 2}),
+     ({1}, {0, 3}),
+     ({1}, {2, 3}),
+     ({1}, {0, 2, 3}),
+     ({2}, {0}),
+     ({2}, {0, 1}),
+     ({2}, {0, 3}),
+     ({2}, {1, 3}),
+     ({2}, {0, 1, 3}),
+     ({3}, {0}),
+     ({3}, {1}),
+     ({3}, {2}),
+     ({3}, {0, 1}),
+     ({3}, {0, 2}),
+     ({3}, {1, 2}),
+     ({3}, {0, 1, 2}),
+     ({1, 2}, {0, 3}),
+     ({1, 3}, {0, 2}),
+     ({2, 3}, {0, 1})]
+    (by native_decide)
+    (by intro ⟨A, B⟩ hmem
+        simp only [List.mem_cons, List.mem_nil_iff, or_false, Prod.mk.injEq] at hmem
+        rcases hmem with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
+        <;> (try simp only [Finset.coe_insert, Finset.coe_singleton])
+        <;> assumption)
+    [({1}, {2}),
+     ({2}, {1})]
+    (by native_decide)
+    (by intro ⟨A, B⟩ hmem
+        simp only [List.mem_cons, List.mem_nil_iff, or_false, Prod.mk.injEq] at hmem
+        rcases hmem with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
+        <;> (try simp only [Finset.coe_insert, Finset.coe_singleton])
+        <;> (try intro _)
+        <;> assumption)
 
-set_option maxHeartbeats 800000 in
 theorem chamber_68 (sys : EpistemicSystemFA (Fin 4))
     (hpos : ∀ i : Fin 4, ¬sys.ge (∅ : Set (Fin 4)) {i})
     (h01 : sys.ge {(0 : Fin 4)} {1}) (h12 : sys.ge {(1 : Fin 4)} {2})
@@ -256,29 +292,50 @@ theorem chamber_68 (sys : EpistemicSystemFA (Fin 4))
         have h2 := (sys.additive {(0 : Fin 4), (2 : Fin 4)} {(0 : Fin 4), (1 : Fin 4)}).mp h1
         rw [sd_02_01, sd_01_02] at h2
         exact h21 h2
-  exact cancellation_from_weights_fin4 sys (![(5 : ℚ)/15, (4 : ℚ)/15, (3 : ℚ)/15, (3 : ℚ)/15])
+  exact cancellation_from_pairs sys (![(5 : ℚ)/15, (4 : ℚ)/15, (3 : ℚ)/15, (3 : ℚ)/15])
     (by intro i; fin_cases i <;> norm_num)
     (by simp [Fin.sum_univ_four]; norm_num)
-    (by intro A B hDisj hLt
-        rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
-        rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
-        simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] <;>
-        (try exact absurd hDisj (by decide)) <;>
-        (try assumption) <;>
-        (try (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h)) <;>
-        (exfalso; exact absurd hLt (by native_decide)))
-    (by intro A B hDisj hEq hGe
-        rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
-        rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
-        simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at hGe ⊢ <;>
-        (try exact absurd hDisj (by decide)) <;>
-        (try assumption) <;>
-        (try (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe)) <;>
-        (exfalso; exact absurd hEq (by native_decide)))
+    hpos
+    [({0}, {1, 2}),
+     ({0}, {1, 3}),
+     ({0}, {2, 3}),
+     ({0}, {1, 2, 3}),
+     ({1}, {0}),
+     ({1}, {0, 2}),
+     ({1}, {0, 3}),
+     ({1}, {2, 3}),
+     ({1}, {0, 2, 3}),
+     ({2}, {0}),
+     ({2}, {1}),
+     ({2}, {0, 1}),
+     ({2}, {0, 3}),
+     ({2}, {1, 3}),
+     ({2}, {0, 1, 3}),
+     ({3}, {0}),
+     ({3}, {1}),
+     ({3}, {0, 1}),
+     ({3}, {0, 2}),
+     ({3}, {1, 2}),
+     ({3}, {0, 1, 2}),
+     ({1, 2}, {0, 3}),
+     ({1, 3}, {0, 2}),
+     ({2, 3}, {0, 1})]
+    (by native_decide)
+    (by intro ⟨A, B⟩ hmem
+        simp only [List.mem_cons, List.mem_nil_iff, or_false, Prod.mk.injEq] at hmem
+        rcases hmem with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
+        <;> (try simp only [Finset.coe_insert, Finset.coe_singleton])
+        <;> assumption)
+    [({2}, {3}),
+     ({3}, {2})]
+    (by native_decide)
+    (by intro ⟨A, B⟩ hmem
+        simp only [List.mem_cons, List.mem_nil_iff, or_false, Prod.mk.injEq] at hmem
+        rcases hmem with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
+        <;> (try simp only [Finset.coe_insert, Finset.coe_singleton])
+        <;> (try intro _)
+        <;> assumption)
 
-set_option maxHeartbeats 800000 in
 theorem chamber_69 (sys : EpistemicSystemFA (Fin 4))
     (hpos : ∀ i : Fin 4, ¬sys.ge (∅ : Set (Fin 4)) {i})
     (h01 : sys.ge {(0 : Fin 4)} {1}) (h12 : sys.ge {(1 : Fin 4)} {2})
@@ -348,29 +405,52 @@ theorem chamber_69 (sys : EpistemicSystemFA (Fin 4))
         have h2 := (sys.additive {(1 : Fin 4), (2 : Fin 4)} {(0 : Fin 4), (1 : Fin 4)}).mp h1
         rw [sd_12_01, sd_01_12] at h2
         exact hng_2_0 h2
-  exact cancellation_from_weights_fin4 sys (![(3 : ℚ)/9, (2 : ℚ)/9, (2 : ℚ)/9, (2 : ℚ)/9])
+  exact cancellation_from_pairs sys (![(3 : ℚ)/9, (2 : ℚ)/9, (2 : ℚ)/9, (2 : ℚ)/9])
     (by intro i; fin_cases i <;> norm_num)
     (by simp [Fin.sum_univ_four]; norm_num)
-    (by intro A B hDisj hLt
-        rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
-        rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
-        simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] <;>
-        (try exact absurd hDisj (by decide)) <;>
-        (try assumption) <;>
-        (try (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h)) <;>
-        (exfalso; exact absurd hLt (by native_decide)))
-    (by intro A B hDisj hEq hGe
-        rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
-        rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
-        simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at hGe ⊢ <;>
-        (try exact absurd hDisj (by decide)) <;>
-        (try assumption) <;>
-        (try (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe)) <;>
-        (exfalso; exact absurd hEq (by native_decide)))
+    hpos
+    [({0}, {1, 2}),
+     ({0}, {1, 3}),
+     ({0}, {2, 3}),
+     ({0}, {1, 2, 3}),
+     ({1}, {0}),
+     ({1}, {0, 2}),
+     ({1}, {0, 3}),
+     ({1}, {2, 3}),
+     ({1}, {0, 2, 3}),
+     ({2}, {0}),
+     ({2}, {0, 1}),
+     ({2}, {0, 3}),
+     ({2}, {1, 3}),
+     ({2}, {0, 1, 3}),
+     ({3}, {0}),
+     ({3}, {0, 1}),
+     ({3}, {0, 2}),
+     ({3}, {1, 2}),
+     ({3}, {0, 1, 2}),
+     ({1, 2}, {0, 3}),
+     ({1, 3}, {0, 2}),
+     ({2, 3}, {0, 1})]
+    (by native_decide)
+    (by intro ⟨A, B⟩ hmem
+        simp only [List.mem_cons, List.mem_nil_iff, or_false, Prod.mk.injEq] at hmem
+        rcases hmem with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
+        <;> (try simp only [Finset.coe_insert, Finset.coe_singleton])
+        <;> assumption)
+    [({1}, {2}),
+     ({1}, {3}),
+     ({2}, {1}),
+     ({2}, {3}),
+     ({3}, {1}),
+     ({3}, {2})]
+    (by native_decide)
+    (by intro ⟨A, B⟩ hmem
+        simp only [List.mem_cons, List.mem_nil_iff, or_false, Prod.mk.injEq] at hmem
+        rcases hmem with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
+        <;> (try simp only [Finset.coe_insert, Finset.coe_singleton])
+        <;> (try intro _)
+        <;> assumption)
 
-set_option maxHeartbeats 800000 in
 theorem chamber_70 (sys : EpistemicSystemFA (Fin 4))
     (hpos : ∀ i : Fin 4, ¬sys.ge (∅ : Set (Fin 4)) {i})
     (h01 : sys.ge {(0 : Fin 4)} {1}) (h12 : sys.ge {(1 : Fin 4)} {2})
@@ -438,29 +518,50 @@ theorem chamber_70 (sys : EpistemicSystemFA (Fin 4))
         have h2 := (sys.additive {(0 : Fin 4)} {(0 : Fin 4), (1 : Fin 4)}).mp h1
         rw [sd_0_01, sd_01_0] at h2
         exact (hpos ⟨1, by omega⟩) h2
-  exact cancellation_from_weights_fin4 sys (![(7 : ℚ)/19, (5 : ℚ)/19, (4 : ℚ)/19, (3 : ℚ)/19])
+  exact cancellation_from_pairs sys (![(7 : ℚ)/19, (5 : ℚ)/19, (4 : ℚ)/19, (3 : ℚ)/19])
     (by intro i; fin_cases i <;> norm_num)
     (by simp [Fin.sum_univ_four]; norm_num)
-    (by intro A B hDisj hLt
-        rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
-        rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
-        simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] <;>
-        (try exact absurd hDisj (by decide)) <;>
-        (try assumption) <;>
-        (try (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h)) <;>
-        (exfalso; exact absurd hLt (by native_decide)))
-    (by intro A B hDisj hEq hGe
-        rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
-        rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
-        simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at hGe ⊢ <;>
-        (try exact absurd hDisj (by decide)) <;>
-        (try assumption) <;>
-        (try (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe)) <;>
-        (exfalso; exact absurd hEq (by native_decide)))
+    hpos
+    [({0}, {1, 2}),
+     ({0}, {1, 3}),
+     ({0}, {1, 2, 3}),
+     ({1}, {0}),
+     ({1}, {0, 2}),
+     ({1}, {0, 3}),
+     ({1}, {2, 3}),
+     ({1}, {0, 2, 3}),
+     ({2}, {0}),
+     ({2}, {1}),
+     ({2}, {0, 1}),
+     ({2}, {0, 3}),
+     ({2}, {1, 3}),
+     ({2}, {0, 1, 3}),
+     ({3}, {0}),
+     ({3}, {1}),
+     ({3}, {2}),
+     ({3}, {0, 1}),
+     ({3}, {0, 2}),
+     ({3}, {1, 2}),
+     ({3}, {0, 1, 2}),
+     ({1, 2}, {0, 3}),
+     ({1, 3}, {0, 2}),
+     ({2, 3}, {0, 1})]
+    (by native_decide)
+    (by intro ⟨A, B⟩ hmem
+        simp only [List.mem_cons, List.mem_nil_iff, or_false, Prod.mk.injEq] at hmem
+        rcases hmem with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
+        <;> (try simp only [Finset.coe_insert, Finset.coe_singleton])
+        <;> assumption)
+    [({0}, {2, 3}),
+     ({2, 3}, {0})]
+    (by native_decide)
+    (by intro ⟨A, B⟩ hmem
+        simp only [List.mem_cons, List.mem_nil_iff, or_false, Prod.mk.injEq] at hmem
+        rcases hmem with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
+        <;> (try simp only [Finset.coe_insert, Finset.coe_singleton])
+        <;> (try intro _)
+        <;> assumption)
 
-set_option maxHeartbeats 800000 in
 theorem chamber_71 (sys : EpistemicSystemFA (Fin 4))
     (hpos : ∀ i : Fin 4, ¬sys.ge (∅ : Set (Fin 4)) {i})
     (h01 : sys.ge {(0 : Fin 4)} {1}) (h12 : sys.ge {(1 : Fin 4)} {2})
@@ -531,29 +632,51 @@ theorem chamber_71 (sys : EpistemicSystemFA (Fin 4))
         have h2 := (sys.additive {(0 : Fin 4)} {(0 : Fin 4), (1 : Fin 4)}).mp h1
         rw [sd_0_01, sd_01_0] at h2
         exact (hpos ⟨1, by omega⟩) h2
-  exact cancellation_from_weights_fin4 sys (![(4 : ℚ)/11, (3 : ℚ)/11, (2 : ℚ)/11, (2 : ℚ)/11])
+  exact cancellation_from_pairs sys (![(4 : ℚ)/11, (3 : ℚ)/11, (2 : ℚ)/11, (2 : ℚ)/11])
     (by intro i; fin_cases i <;> norm_num)
     (by simp [Fin.sum_univ_four]; norm_num)
-    (by intro A B hDisj hLt
-        rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
-        rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
-        simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] <;>
-        (try exact absurd hDisj (by decide)) <;>
-        (try assumption) <;>
-        (try (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h)) <;>
-        (exfalso; exact absurd hLt (by native_decide)))
-    (by intro A B hDisj hEq hGe
-        rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
-        rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
-        simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at hGe ⊢ <;>
-        (try exact absurd hDisj (by decide)) <;>
-        (try assumption) <;>
-        (try (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe)) <;>
-        (exfalso; exact absurd hEq (by native_decide)))
+    hpos
+    [({0}, {1, 2}),
+     ({0}, {1, 3}),
+     ({0}, {1, 2, 3}),
+     ({1}, {0}),
+     ({1}, {0, 2}),
+     ({1}, {0, 3}),
+     ({1}, {2, 3}),
+     ({1}, {0, 2, 3}),
+     ({2}, {0}),
+     ({2}, {1}),
+     ({2}, {0, 1}),
+     ({2}, {0, 3}),
+     ({2}, {1, 3}),
+     ({2}, {0, 1, 3}),
+     ({3}, {0}),
+     ({3}, {1}),
+     ({3}, {0, 1}),
+     ({3}, {0, 2}),
+     ({3}, {1, 2}),
+     ({3}, {0, 1, 2}),
+     ({1, 2}, {0, 3}),
+     ({1, 3}, {0, 2}),
+     ({2, 3}, {0, 1})]
+    (by native_decide)
+    (by intro ⟨A, B⟩ hmem
+        simp only [List.mem_cons, List.mem_nil_iff, or_false, Prod.mk.injEq] at hmem
+        rcases hmem with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
+        <;> (try simp only [Finset.coe_insert, Finset.coe_singleton])
+        <;> assumption)
+    [({0}, {2, 3}),
+     ({2}, {3}),
+     ({3}, {2}),
+     ({2, 3}, {0})]
+    (by native_decide)
+    (by intro ⟨A, B⟩ hmem
+        simp only [List.mem_cons, List.mem_nil_iff, or_false, Prod.mk.injEq] at hmem
+        rcases hmem with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
+        <;> (try simp only [Finset.coe_insert, Finset.coe_singleton])
+        <;> (try intro _)
+        <;> assumption)
 
-set_option maxHeartbeats 800000 in
 theorem chamber_72 (sys : EpistemicSystemFA (Fin 4))
     (hpos : ∀ i : Fin 4, ¬sys.ge (∅ : Set (Fin 4)) {i})
     (h01 : sys.ge {(0 : Fin 4)} {1}) (h12 : sys.ge {(1 : Fin 4)} {2})
@@ -621,29 +744,52 @@ theorem chamber_72 (sys : EpistemicSystemFA (Fin 4))
         have h2 := (sys.additive {(0 : Fin 4)} {(0 : Fin 4), (1 : Fin 4)}).mp h1
         rw [sd_0_01, sd_01_0] at h2
         exact (hpos ⟨1, by omega⟩) h2
-  exact cancellation_from_weights_fin4 sys (![(5 : ℚ)/13, (3 : ℚ)/13, (3 : ℚ)/13, (2 : ℚ)/13])
+  exact cancellation_from_pairs sys (![(5 : ℚ)/13, (3 : ℚ)/13, (3 : ℚ)/13, (2 : ℚ)/13])
     (by intro i; fin_cases i <;> norm_num)
     (by simp [Fin.sum_univ_four]; norm_num)
-    (by intro A B hDisj hLt
-        rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
-        rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
-        simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] <;>
-        (try exact absurd hDisj (by decide)) <;>
-        (try assumption) <;>
-        (try (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h)) <;>
-        (exfalso; exact absurd hLt (by native_decide)))
-    (by intro A B hDisj hEq hGe
-        rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
-        rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
-        simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at hGe ⊢ <;>
-        (try exact absurd hDisj (by decide)) <;>
-        (try assumption) <;>
-        (try (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe)) <;>
-        (exfalso; exact absurd hEq (by native_decide)))
+    hpos
+    [({0}, {1, 2}),
+     ({0}, {1, 2, 3}),
+     ({1}, {0}),
+     ({1}, {0, 2}),
+     ({1}, {0, 3}),
+     ({1}, {2, 3}),
+     ({1}, {0, 2, 3}),
+     ({2}, {0}),
+     ({2}, {0, 1}),
+     ({2}, {0, 3}),
+     ({2}, {1, 3}),
+     ({2}, {0, 1, 3}),
+     ({3}, {0}),
+     ({3}, {1}),
+     ({3}, {2}),
+     ({3}, {0, 1}),
+     ({3}, {0, 2}),
+     ({3}, {1, 2}),
+     ({3}, {0, 1, 2}),
+     ({1, 2}, {0, 3}),
+     ({1, 3}, {0, 2}),
+     ({2, 3}, {0, 1})]
+    (by native_decide)
+    (by intro ⟨A, B⟩ hmem
+        simp only [List.mem_cons, List.mem_nil_iff, or_false, Prod.mk.injEq] at hmem
+        rcases hmem with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
+        <;> (try simp only [Finset.coe_insert, Finset.coe_singleton])
+        <;> assumption)
+    [({0}, {1, 3}),
+     ({0}, {2, 3}),
+     ({1}, {2}),
+     ({2}, {1}),
+     ({1, 3}, {0}),
+     ({2, 3}, {0})]
+    (by native_decide)
+    (by intro ⟨A, B⟩ hmem
+        simp only [List.mem_cons, List.mem_nil_iff, or_false, Prod.mk.injEq] at hmem
+        rcases hmem with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
+        <;> (try simp only [Finset.coe_insert, Finset.coe_singleton])
+        <;> (try intro _)
+        <;> assumption)
 
-set_option maxHeartbeats 800000 in
 theorem chamber_73 (sys : EpistemicSystemFA (Fin 4))
     (hpos : ∀ i : Fin 4, ¬sys.ge (∅ : Set (Fin 4)) {i})
     (h01 : sys.ge {(0 : Fin 4)} {1}) (h12 : sys.ge {(1 : Fin 4)} {2})
@@ -715,29 +861,55 @@ theorem chamber_73 (sys : EpistemicSystemFA (Fin 4))
         have h2 := (sys.additive {(0 : Fin 4)} {(0 : Fin 4), (1 : Fin 4)}).mp h1
         rw [sd_0_01, sd_01_0] at h2
         exact (hpos ⟨1, by omega⟩) h2
-  exact cancellation_from_weights_fin4 sys (![(2 : ℚ)/5, (1 : ℚ)/5, (1 : ℚ)/5, (1 : ℚ)/5])
+  exact cancellation_from_pairs sys (![(2 : ℚ)/5, (1 : ℚ)/5, (1 : ℚ)/5, (1 : ℚ)/5])
     (by intro i; fin_cases i <;> norm_num)
     (by simp [Fin.sum_univ_four]; norm_num)
-    (by intro A B hDisj hLt
-        rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
-        rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
-        simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] <;>
-        (try exact absurd hDisj (by decide)) <;>
-        (try assumption) <;>
-        (try (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h)) <;>
-        (exfalso; exact absurd hLt (by native_decide)))
-    (by intro A B hDisj hEq hGe
-        rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
-        rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
-        simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at hGe ⊢ <;>
-        (try exact absurd hDisj (by decide)) <;>
-        (try assumption) <;>
-        (try (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe)) <;>
-        (exfalso; exact absurd hEq (by native_decide)))
+    hpos
+    [({0}, {1, 2, 3}),
+     ({1}, {0}),
+     ({1}, {0, 2}),
+     ({1}, {0, 3}),
+     ({1}, {2, 3}),
+     ({1}, {0, 2, 3}),
+     ({2}, {0}),
+     ({2}, {0, 1}),
+     ({2}, {0, 3}),
+     ({2}, {1, 3}),
+     ({2}, {0, 1, 3}),
+     ({3}, {0}),
+     ({3}, {0, 1}),
+     ({3}, {0, 2}),
+     ({3}, {1, 2}),
+     ({3}, {0, 1, 2}),
+     ({1, 2}, {0, 3}),
+     ({1, 3}, {0, 2}),
+     ({2, 3}, {0, 1})]
+    (by native_decide)
+    (by intro ⟨A, B⟩ hmem
+        simp only [List.mem_cons, List.mem_nil_iff, or_false, Prod.mk.injEq] at hmem
+        rcases hmem with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
+        <;> (try simp only [Finset.coe_insert, Finset.coe_singleton])
+        <;> assumption)
+    [({0}, {1, 2}),
+     ({0}, {1, 3}),
+     ({0}, {2, 3}),
+     ({1}, {2}),
+     ({1}, {3}),
+     ({2}, {1}),
+     ({2}, {3}),
+     ({3}, {1}),
+     ({3}, {2}),
+     ({1, 2}, {0}),
+     ({1, 3}, {0}),
+     ({2, 3}, {0})]
+    (by native_decide)
+    (by intro ⟨A, B⟩ hmem
+        simp only [List.mem_cons, List.mem_nil_iff, or_false, Prod.mk.injEq] at hmem
+        rcases hmem with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
+        <;> (try simp only [Finset.coe_insert, Finset.coe_singleton])
+        <;> (try intro _)
+        <;> assumption)
 
-set_option maxHeartbeats 800000 in
 theorem chamber_74 (sys : EpistemicSystemFA (Fin 4))
     (hpos : ∀ i : Fin 4, ¬sys.ge (∅ : Set (Fin 4)) {i})
     (h01 : sys.ge {(0 : Fin 4)} {1}) (h12 : sys.ge {(1 : Fin 4)} {2})
@@ -804,29 +976,45 @@ theorem chamber_74 (sys : EpistemicSystemFA (Fin 4))
         have h2 := (sys.additive {(0 : Fin 4), (2 : Fin 4)} {(0 : Fin 4), (1 : Fin 4)}).mp h1
         rw [sd_02_01, sd_01_02] at h2
         exact h21 h2
-  exact cancellation_from_weights_fin4 sys (![(7 : ℚ)/21, (6 : ℚ)/21, (5 : ℚ)/21, (3 : ℚ)/21])
+  exact cancellation_from_pairs sys (![(7 : ℚ)/21, (6 : ℚ)/21, (5 : ℚ)/21, (3 : ℚ)/21])
     (by intro i; fin_cases i <;> norm_num)
     (by simp [Fin.sum_univ_four]; norm_num)
-    (by intro A B hDisj hLt
-        rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
-        rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
-        simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] <;>
-        (try exact absurd hDisj (by decide)) <;>
-        (try assumption) <;>
-        (try (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h)) <;>
-        (exfalso; exact absurd hLt (by native_decide)))
-    (by intro A B hDisj hEq hGe
-        rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
-        rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
-        simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at hGe ⊢ <;>
-        (try exact absurd hDisj (by decide)) <;>
-        (try assumption) <;>
-        (try (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe)) <;>
-        (exfalso; exact absurd hEq (by native_decide)))
+    hpos
+    [({0}, {1, 2}),
+     ({0}, {1, 3}),
+     ({0}, {2, 3}),
+     ({0}, {1, 2, 3}),
+     ({1}, {0}),
+     ({1}, {0, 2}),
+     ({1}, {0, 3}),
+     ({1}, {2, 3}),
+     ({1}, {0, 2, 3}),
+     ({2}, {0}),
+     ({2}, {1}),
+     ({2}, {0, 1}),
+     ({2}, {0, 3}),
+     ({2}, {1, 3}),
+     ({2}, {0, 1, 3}),
+     ({3}, {0}),
+     ({3}, {1}),
+     ({3}, {2}),
+     ({3}, {0, 1}),
+     ({3}, {0, 2}),
+     ({3}, {1, 2}),
+     ({3}, {0, 1, 2}),
+     ({0, 3}, {1, 2}),
+     ({1, 3}, {0, 2}),
+     ({2, 3}, {0, 1})]
+    (by native_decide)
+    (by intro ⟨A, B⟩ hmem
+        simp only [List.mem_cons, List.mem_nil_iff, or_false, Prod.mk.injEq] at hmem
+        rcases hmem with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
+        <;> (try simp only [Finset.coe_insert, Finset.coe_singleton])
+        <;> assumption)
+    []
+    (by native_decide)
+    (by intro _ hmem; cases hmem)
 
-set_option maxHeartbeats 800000 in
 theorem chamber_75 (sys : EpistemicSystemFA (Fin 4))
     (hpos : ∀ i : Fin 4, ¬sys.ge (∅ : Set (Fin 4)) {i})
     (h01 : sys.ge {(0 : Fin 4)} {1}) (h12 : sys.ge {(1 : Fin 4)} {2})
@@ -892,29 +1080,50 @@ theorem chamber_75 (sys : EpistemicSystemFA (Fin 4))
         have h2 := (sys.additive {(0 : Fin 4), (2 : Fin 4)} {(0 : Fin 4), (1 : Fin 4)}).mp h1
         rw [sd_02_01, sd_01_02] at h2
         exact h21 h2
-  exact cancellation_from_weights_fin4 sys (![(4 : ℚ)/13, (4 : ℚ)/13, (3 : ℚ)/13, (2 : ℚ)/13])
+  exact cancellation_from_pairs sys (![(4 : ℚ)/13, (4 : ℚ)/13, (3 : ℚ)/13, (2 : ℚ)/13])
     (by intro i; fin_cases i <;> norm_num)
     (by simp [Fin.sum_univ_four]; norm_num)
-    (by intro A B hDisj hLt
-        rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
-        rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
-        simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] <;>
-        (try exact absurd hDisj (by decide)) <;>
-        (try assumption) <;>
-        (try (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h)) <;>
-        (exfalso; exact absurd hLt (by native_decide)))
-    (by intro A B hDisj hEq hGe
-        rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
-        rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
-        simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at hGe ⊢ <;>
-        (try exact absurd hDisj (by decide)) <;>
-        (try assumption) <;>
-        (try (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe)) <;>
-        (exfalso; exact absurd hEq (by native_decide)))
+    hpos
+    [({0}, {1, 2}),
+     ({0}, {1, 3}),
+     ({0}, {2, 3}),
+     ({0}, {1, 2, 3}),
+     ({1}, {0, 2}),
+     ({1}, {0, 3}),
+     ({1}, {2, 3}),
+     ({1}, {0, 2, 3}),
+     ({2}, {0}),
+     ({2}, {1}),
+     ({2}, {0, 1}),
+     ({2}, {0, 3}),
+     ({2}, {1, 3}),
+     ({2}, {0, 1, 3}),
+     ({3}, {0}),
+     ({3}, {1}),
+     ({3}, {2}),
+     ({3}, {0, 1}),
+     ({3}, {0, 2}),
+     ({3}, {1, 2}),
+     ({3}, {0, 1, 2}),
+     ({0, 3}, {1, 2}),
+     ({1, 3}, {0, 2}),
+     ({2, 3}, {0, 1})]
+    (by native_decide)
+    (by intro ⟨A, B⟩ hmem
+        simp only [List.mem_cons, List.mem_nil_iff, or_false, Prod.mk.injEq] at hmem
+        rcases hmem with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
+        <;> (try simp only [Finset.coe_insert, Finset.coe_singleton])
+        <;> assumption)
+    [({0}, {1}),
+     ({1}, {0})]
+    (by native_decide)
+    (by intro ⟨A, B⟩ hmem
+        simp only [List.mem_cons, List.mem_nil_iff, or_false, Prod.mk.injEq] at hmem
+        rcases hmem with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
+        <;> (try simp only [Finset.coe_insert, Finset.coe_singleton])
+        <;> (try intro _)
+        <;> assumption)
 
-set_option maxHeartbeats 800000 in
 theorem chamber_76 (sys : EpistemicSystemFA (Fin 4))
     (hpos : ∀ i : Fin 4, ¬sys.ge (∅ : Set (Fin 4)) {i})
     (h01 : sys.ge {(0 : Fin 4)} {1}) (h12 : sys.ge {(1 : Fin 4)} {2})
@@ -980,29 +1189,50 @@ theorem chamber_76 (sys : EpistemicSystemFA (Fin 4))
         have h2 := (sys.additive {(0 : Fin 4), (3 : Fin 4)} {(0 : Fin 4), (1 : Fin 4)}).mp h1
         rw [sd_03_01, sd_01_03] at h2
         exact hng_3_1 h2
-  exact cancellation_from_weights_fin4 sys (![(5 : ℚ)/15, (4 : ℚ)/15, (4 : ℚ)/15, (2 : ℚ)/15])
+  exact cancellation_from_pairs sys (![(5 : ℚ)/15, (4 : ℚ)/15, (4 : ℚ)/15, (2 : ℚ)/15])
     (by intro i; fin_cases i <;> norm_num)
     (by simp [Fin.sum_univ_four]; norm_num)
-    (by intro A B hDisj hLt
-        rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
-        rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
-        simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] <;>
-        (try exact absurd hDisj (by decide)) <;>
-        (try assumption) <;>
-        (try (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h)) <;>
-        (exfalso; exact absurd hLt (by native_decide)))
-    (by intro A B hDisj hEq hGe
-        rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
-        rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
-        simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at hGe ⊢ <;>
-        (try exact absurd hDisj (by decide)) <;>
-        (try assumption) <;>
-        (try (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe)) <;>
-        (exfalso; exact absurd hEq (by native_decide)))
+    hpos
+    [({0}, {1, 2}),
+     ({0}, {1, 3}),
+     ({0}, {2, 3}),
+     ({0}, {1, 2, 3}),
+     ({1}, {0}),
+     ({1}, {0, 2}),
+     ({1}, {0, 3}),
+     ({1}, {2, 3}),
+     ({1}, {0, 2, 3}),
+     ({2}, {0}),
+     ({2}, {0, 1}),
+     ({2}, {0, 3}),
+     ({2}, {1, 3}),
+     ({2}, {0, 1, 3}),
+     ({3}, {0}),
+     ({3}, {1}),
+     ({3}, {2}),
+     ({3}, {0, 1}),
+     ({3}, {0, 2}),
+     ({3}, {1, 2}),
+     ({3}, {0, 1, 2}),
+     ({0, 3}, {1, 2}),
+     ({1, 3}, {0, 2}),
+     ({2, 3}, {0, 1})]
+    (by native_decide)
+    (by intro ⟨A, B⟩ hmem
+        simp only [List.mem_cons, List.mem_nil_iff, or_false, Prod.mk.injEq] at hmem
+        rcases hmem with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
+        <;> (try simp only [Finset.coe_insert, Finset.coe_singleton])
+        <;> assumption)
+    [({1}, {2}),
+     ({2}, {1})]
+    (by native_decide)
+    (by intro ⟨A, B⟩ hmem
+        simp only [List.mem_cons, List.mem_nil_iff, or_false, Prod.mk.injEq] at hmem
+        rcases hmem with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
+        <;> (try simp only [Finset.coe_insert, Finset.coe_singleton])
+        <;> (try intro _)
+        <;> assumption)
 
-set_option maxHeartbeats 800000 in
 theorem chamber_77 (sys : EpistemicSystemFA (Fin 4))
     (hpos : ∀ i : Fin 4, ¬sys.ge (∅ : Set (Fin 4)) {i})
     (h01 : sys.ge {(0 : Fin 4)} {1}) (h12 : sys.ge {(1 : Fin 4)} {2})
@@ -1071,29 +1301,52 @@ theorem chamber_77 (sys : EpistemicSystemFA (Fin 4))
         have h2 := (sys.additive {(0 : Fin 4), (3 : Fin 4)} {(0 : Fin 4), (1 : Fin 4)}).mp h1
         rw [sd_03_01, sd_01_03] at h2
         exact hng_3_1 h2
-  exact cancellation_from_weights_fin4 sys (![(2 : ℚ)/7, (2 : ℚ)/7, (2 : ℚ)/7, (1 : ℚ)/7])
+  exact cancellation_from_pairs sys (![(2 : ℚ)/7, (2 : ℚ)/7, (2 : ℚ)/7, (1 : ℚ)/7])
     (by intro i; fin_cases i <;> norm_num)
     (by simp [Fin.sum_univ_four]; norm_num)
-    (by intro A B hDisj hLt
-        rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
-        rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
-        simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] <;>
-        (try exact absurd hDisj (by decide)) <;>
-        (try assumption) <;>
-        (try (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h)) <;>
-        (exfalso; exact absurd hLt (by native_decide)))
-    (by intro A B hDisj hEq hGe
-        rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
-        rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
-        simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at hGe ⊢ <;>
-        (try exact absurd hDisj (by decide)) <;>
-        (try assumption) <;>
-        (try (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe)) <;>
-        (exfalso; exact absurd hEq (by native_decide)))
+    hpos
+    [({0}, {1, 2}),
+     ({0}, {1, 3}),
+     ({0}, {2, 3}),
+     ({0}, {1, 2, 3}),
+     ({1}, {0, 2}),
+     ({1}, {0, 3}),
+     ({1}, {2, 3}),
+     ({1}, {0, 2, 3}),
+     ({2}, {0, 1}),
+     ({2}, {0, 3}),
+     ({2}, {1, 3}),
+     ({2}, {0, 1, 3}),
+     ({3}, {0}),
+     ({3}, {1}),
+     ({3}, {2}),
+     ({3}, {0, 1}),
+     ({3}, {0, 2}),
+     ({3}, {1, 2}),
+     ({3}, {0, 1, 2}),
+     ({0, 3}, {1, 2}),
+     ({1, 3}, {0, 2}),
+     ({2, 3}, {0, 1})]
+    (by native_decide)
+    (by intro ⟨A, B⟩ hmem
+        simp only [List.mem_cons, List.mem_nil_iff, or_false, Prod.mk.injEq] at hmem
+        rcases hmem with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
+        <;> (try simp only [Finset.coe_insert, Finset.coe_singleton])
+        <;> assumption)
+    [({0}, {1}),
+     ({0}, {2}),
+     ({1}, {0}),
+     ({1}, {2}),
+     ({2}, {0}),
+     ({2}, {1})]
+    (by native_decide)
+    (by intro ⟨A, B⟩ hmem
+        simp only [List.mem_cons, List.mem_nil_iff, or_false, Prod.mk.injEq] at hmem
+        rcases hmem with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
+        <;> (try simp only [Finset.coe_insert, Finset.coe_singleton])
+        <;> (try intro _)
+        <;> assumption)
 
-set_option maxHeartbeats 800000 in
 theorem chamber_78 (sys : EpistemicSystemFA (Fin 4))
     (hpos : ∀ i : Fin 4, ¬sys.ge (∅ : Set (Fin 4)) {i})
     (h01 : sys.ge {(0 : Fin 4)} {1}) (h12 : sys.ge {(1 : Fin 4)} {2})
@@ -1160,29 +1413,50 @@ theorem chamber_78 (sys : EpistemicSystemFA (Fin 4))
         have h2 := (sys.additive {(0 : Fin 4), (2 : Fin 4)} {(0 : Fin 4), (1 : Fin 4)}).mp h1
         rw [sd_02_01, sd_01_02] at h2
         exact h21 h2
-  exact cancellation_from_weights_fin4 sys (![(6 : ℚ)/18, (5 : ℚ)/18, (4 : ℚ)/18, (3 : ℚ)/18])
+  exact cancellation_from_pairs sys (![(6 : ℚ)/18, (5 : ℚ)/18, (4 : ℚ)/18, (3 : ℚ)/18])
     (by intro i; fin_cases i <;> norm_num)
     (by simp [Fin.sum_univ_four]; norm_num)
-    (by intro A B hDisj hLt
-        rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
-        rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
-        simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] <;>
-        (try exact absurd hDisj (by decide)) <;>
-        (try assumption) <;>
-        (try (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h)) <;>
-        (exfalso; exact absurd hLt (by native_decide)))
-    (by intro A B hDisj hEq hGe
-        rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
-        rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
-        simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at hGe ⊢ <;>
-        (try exact absurd hDisj (by decide)) <;>
-        (try assumption) <;>
-        (try (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe)) <;>
-        (exfalso; exact absurd hEq (by native_decide)))
+    hpos
+    [({0}, {1, 2}),
+     ({0}, {1, 3}),
+     ({0}, {2, 3}),
+     ({0}, {1, 2, 3}),
+     ({1}, {0}),
+     ({1}, {0, 2}),
+     ({1}, {0, 3}),
+     ({1}, {2, 3}),
+     ({1}, {0, 2, 3}),
+     ({2}, {0}),
+     ({2}, {1}),
+     ({2}, {0, 1}),
+     ({2}, {0, 3}),
+     ({2}, {1, 3}),
+     ({2}, {0, 1, 3}),
+     ({3}, {0}),
+     ({3}, {1}),
+     ({3}, {2}),
+     ({3}, {0, 1}),
+     ({3}, {0, 2}),
+     ({3}, {1, 2}),
+     ({3}, {0, 1, 2}),
+     ({1, 3}, {0, 2}),
+     ({2, 3}, {0, 1})]
+    (by native_decide)
+    (by intro ⟨A, B⟩ hmem
+        simp only [List.mem_cons, List.mem_nil_iff, or_false, Prod.mk.injEq] at hmem
+        rcases hmem with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
+        <;> (try simp only [Finset.coe_insert, Finset.coe_singleton])
+        <;> assumption)
+    [({0, 3}, {1, 2}),
+     ({1, 2}, {0, 3})]
+    (by native_decide)
+    (by intro ⟨A, B⟩ hmem
+        simp only [List.mem_cons, List.mem_nil_iff, or_false, Prod.mk.injEq] at hmem
+        rcases hmem with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
+        <;> (try simp only [Finset.coe_insert, Finset.coe_singleton])
+        <;> (try intro _)
+        <;> assumption)
 
-set_option maxHeartbeats 800000 in
 theorem chamber_79 (sys : EpistemicSystemFA (Fin 4))
     (hpos : ∀ i : Fin 4, ¬sys.ge (∅ : Set (Fin 4)) {i})
     (h01 : sys.ge {(0 : Fin 4)} {1}) (h12 : sys.ge {(1 : Fin 4)} {2})
@@ -1248,29 +1522,51 @@ theorem chamber_79 (sys : EpistemicSystemFA (Fin 4))
         have h2 := (sys.additive {(0 : Fin 4), (3 : Fin 4)} {(0 : Fin 4), (1 : Fin 4)}).mp h1
         rw [sd_03_01, sd_01_03] at h2
         exact hng_3_1 h2
-  exact cancellation_from_weights_fin4 sys (![(4 : ℚ)/12, (3 : ℚ)/12, (3 : ℚ)/12, (2 : ℚ)/12])
+  exact cancellation_from_pairs sys (![(4 : ℚ)/12, (3 : ℚ)/12, (3 : ℚ)/12, (2 : ℚ)/12])
     (by intro i; fin_cases i <;> norm_num)
     (by simp [Fin.sum_univ_four]; norm_num)
-    (by intro A B hDisj hLt
-        rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
-        rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
-        simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] <;>
-        (try exact absurd hDisj (by decide)) <;>
-        (try assumption) <;>
-        (try (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h)) <;>
-        (exfalso; exact absurd hLt (by native_decide)))
-    (by intro A B hDisj hEq hGe
-        rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
-        rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
-        simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at hGe ⊢ <;>
-        (try exact absurd hDisj (by decide)) <;>
-        (try assumption) <;>
-        (try (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe)) <;>
-        (exfalso; exact absurd hEq (by native_decide)))
+    hpos
+    [({0}, {1, 2}),
+     ({0}, {1, 3}),
+     ({0}, {2, 3}),
+     ({0}, {1, 2, 3}),
+     ({1}, {0}),
+     ({1}, {0, 2}),
+     ({1}, {0, 3}),
+     ({1}, {2, 3}),
+     ({1}, {0, 2, 3}),
+     ({2}, {0}),
+     ({2}, {0, 1}),
+     ({2}, {0, 3}),
+     ({2}, {1, 3}),
+     ({2}, {0, 1, 3}),
+     ({3}, {0}),
+     ({3}, {1}),
+     ({3}, {2}),
+     ({3}, {0, 1}),
+     ({3}, {0, 2}),
+     ({3}, {1, 2}),
+     ({3}, {0, 1, 2}),
+     ({1, 3}, {0, 2}),
+     ({2, 3}, {0, 1})]
+    (by native_decide)
+    (by intro ⟨A, B⟩ hmem
+        simp only [List.mem_cons, List.mem_nil_iff, or_false, Prod.mk.injEq] at hmem
+        rcases hmem with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
+        <;> (try simp only [Finset.coe_insert, Finset.coe_singleton])
+        <;> assumption)
+    [({1}, {2}),
+     ({2}, {1}),
+     ({0, 3}, {1, 2}),
+     ({1, 2}, {0, 3})]
+    (by native_decide)
+    (by intro ⟨A, B⟩ hmem
+        simp only [List.mem_cons, List.mem_nil_iff, or_false, Prod.mk.injEq] at hmem
+        rcases hmem with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
+        <;> (try simp only [Finset.coe_insert, Finset.coe_singleton])
+        <;> (try intro _)
+        <;> assumption)
 
-set_option maxHeartbeats 800000 in
 theorem chamber_80 (sys : EpistemicSystemFA (Fin 4))
     (hpos : ∀ i : Fin 4, ¬sys.ge (∅ : Set (Fin 4)) {i})
     (h01 : sys.ge {(0 : Fin 4)} {1}) (h12 : sys.ge {(1 : Fin 4)} {2})
@@ -1334,29 +1630,53 @@ theorem chamber_80 (sys : EpistemicSystemFA (Fin 4))
         have h2 := (sys.additive {(0 : Fin 4), (2 : Fin 4)} {(0 : Fin 4), (1 : Fin 4)}).mp h1
         rw [sd_02_01, sd_01_02] at h2
         exact h21 h2
-  exact cancellation_from_weights_fin4 sys (![(3 : ℚ)/10, (3 : ℚ)/10, (2 : ℚ)/10, (2 : ℚ)/10])
+  exact cancellation_from_pairs sys (![(3 : ℚ)/10, (3 : ℚ)/10, (2 : ℚ)/10, (2 : ℚ)/10])
     (by intro i; fin_cases i <;> norm_num)
     (by simp [Fin.sum_univ_four]; norm_num)
-    (by intro A B hDisj hLt
-        rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
-        rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
-        simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] <;>
-        (try exact absurd hDisj (by decide)) <;>
-        (try assumption) <;>
-        (try (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h)) <;>
-        (exfalso; exact absurd hLt (by native_decide)))
-    (by intro A B hDisj hEq hGe
-        rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
-        rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
-        simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at hGe ⊢ <;>
-        (try exact absurd hDisj (by decide)) <;>
-        (try assumption) <;>
-        (try (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe)) <;>
-        (exfalso; exact absurd hEq (by native_decide)))
+    hpos
+    [({0}, {1, 2}),
+     ({0}, {1, 3}),
+     ({0}, {2, 3}),
+     ({0}, {1, 2, 3}),
+     ({1}, {0, 2}),
+     ({1}, {0, 3}),
+     ({1}, {2, 3}),
+     ({1}, {0, 2, 3}),
+     ({2}, {0}),
+     ({2}, {1}),
+     ({2}, {0, 1}),
+     ({2}, {0, 3}),
+     ({2}, {1, 3}),
+     ({2}, {0, 1, 3}),
+     ({3}, {0}),
+     ({3}, {1}),
+     ({3}, {0, 1}),
+     ({3}, {0, 2}),
+     ({3}, {1, 2}),
+     ({3}, {0, 1, 2}),
+     ({2, 3}, {0, 1})]
+    (by native_decide)
+    (by intro ⟨A, B⟩ hmem
+        simp only [List.mem_cons, List.mem_nil_iff, or_false, Prod.mk.injEq] at hmem
+        rcases hmem with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
+        <;> (try simp only [Finset.coe_insert, Finset.coe_singleton])
+        <;> assumption)
+    [({0}, {1}),
+     ({1}, {0}),
+     ({2}, {3}),
+     ({3}, {2}),
+     ({0, 2}, {1, 3}),
+     ({0, 3}, {1, 2}),
+     ({1, 2}, {0, 3}),
+     ({1, 3}, {0, 2})]
+    (by native_decide)
+    (by intro ⟨A, B⟩ hmem
+        simp only [List.mem_cons, List.mem_nil_iff, or_false, Prod.mk.injEq] at hmem
+        rcases hmem with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
+        <;> (try simp only [Finset.coe_insert, Finset.coe_singleton])
+        <;> (try intro _)
+        <;> assumption)
 
-set_option maxHeartbeats 800000 in
 theorem chamber_81 (sys : EpistemicSystemFA (Fin 4))
     (hpos : ∀ i : Fin 4, ¬sys.ge (∅ : Set (Fin 4)) {i})
     (h01 : sys.ge {(0 : Fin 4)} {1}) (h12 : sys.ge {(1 : Fin 4)} {2})
@@ -1421,29 +1741,58 @@ theorem chamber_81 (sys : EpistemicSystemFA (Fin 4))
     fun h => hf4 (sys.trans _ _ _ h03 h)
   have hng_3_012 : ¬sys.ge {(3 : Fin 4)} {(0 : Fin 4), (1 : Fin 4), (2 : Fin 4)} :=
     fun h => hng_3_01 (sys.trans _ _ _ h (sys.mono {(0 : Fin 4), (1 : Fin 4)} {(0 : Fin 4), (1 : Fin 4), (2 : Fin 4)} (by intro x hx; fin_cases x <;> simp_all)))
-  exact cancellation_from_weights_fin4 sys (![(1 : ℚ)/4, (1 : ℚ)/4, (1 : ℚ)/4, (1 : ℚ)/4])
+  exact cancellation_from_pairs sys (![(1 : ℚ)/4, (1 : ℚ)/4, (1 : ℚ)/4, (1 : ℚ)/4])
     (by intro i; fin_cases i <;> norm_num)
     (by simp [Fin.sum_univ_four]; norm_num)
-    (by intro A B hDisj hLt
-        rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
-        rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
-        simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] <;>
-        (try exact absurd hDisj (by decide)) <;>
-        (try assumption) <;>
-        (try (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h)) <;>
-        (exfalso; exact absurd hLt (by native_decide)))
-    (by intro A B hDisj hEq hGe
-        rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
-        rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
-        simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at hGe ⊢ <;>
-        (try exact absurd hDisj (by decide)) <;>
-        (try assumption) <;>
-        (try (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe)) <;>
-        (exfalso; exact absurd hEq (by native_decide)))
+    hpos
+    [({0}, {1, 2}),
+     ({0}, {1, 3}),
+     ({0}, {2, 3}),
+     ({0}, {1, 2, 3}),
+     ({1}, {0, 2}),
+     ({1}, {0, 3}),
+     ({1}, {2, 3}),
+     ({1}, {0, 2, 3}),
+     ({2}, {0, 1}),
+     ({2}, {0, 3}),
+     ({2}, {1, 3}),
+     ({2}, {0, 1, 3}),
+     ({3}, {0, 1}),
+     ({3}, {0, 2}),
+     ({3}, {1, 2}),
+     ({3}, {0, 1, 2})]
+    (by native_decide)
+    (by intro ⟨A, B⟩ hmem
+        simp only [List.mem_cons, List.mem_nil_iff, or_false, Prod.mk.injEq] at hmem
+        rcases hmem with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
+        <;> (try simp only [Finset.coe_insert, Finset.coe_singleton])
+        <;> assumption)
+    [({0}, {1}),
+     ({0}, {2}),
+     ({0}, {3}),
+     ({1}, {0}),
+     ({1}, {2}),
+     ({1}, {3}),
+     ({2}, {0}),
+     ({2}, {1}),
+     ({2}, {3}),
+     ({3}, {0}),
+     ({3}, {1}),
+     ({3}, {2}),
+     ({0, 1}, {2, 3}),
+     ({0, 2}, {1, 3}),
+     ({0, 3}, {1, 2}),
+     ({1, 2}, {0, 3}),
+     ({1, 3}, {0, 2}),
+     ({2, 3}, {0, 1})]
+    (by native_decide)
+    (by intro ⟨A, B⟩ hmem
+        simp only [List.mem_cons, List.mem_nil_iff, or_false, Prod.mk.injEq] at hmem
+        rcases hmem with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
+        <;> (try simp only [Finset.coe_insert, Finset.coe_singleton])
+        <;> (try intro _)
+        <;> assumption)
 
-set_option maxHeartbeats 800000 in
 theorem chamber_82 (sys : EpistemicSystemFA (Fin 4))
     (hpos : ∀ i : Fin 4, ¬sys.ge (∅ : Set (Fin 4)) {i})
     (h01 : sys.ge {(0 : Fin 4)} {1}) (h12 : sys.ge {(1 : Fin 4)} {2})
@@ -1510,29 +1859,50 @@ theorem chamber_82 (sys : EpistemicSystemFA (Fin 4))
         have h2 := (sys.additive {(0 : Fin 4)} {(0 : Fin 4), (1 : Fin 4)}).mp h1
         rw [sd_0_01, sd_01_0] at h2
         exact (hpos ⟨1, by omega⟩) h2
-  exact cancellation_from_weights_fin4 sys (![(6 : ℚ)/17, (5 : ℚ)/17, (4 : ℚ)/17, (2 : ℚ)/17])
+  exact cancellation_from_pairs sys (![(6 : ℚ)/17, (5 : ℚ)/17, (4 : ℚ)/17, (2 : ℚ)/17])
     (by intro i; fin_cases i <;> norm_num)
     (by simp [Fin.sum_univ_four]; norm_num)
-    (by intro A B hDisj hLt
-        rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
-        rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
-        simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] <;>
-        (try exact absurd hDisj (by decide)) <;>
-        (try assumption) <;>
-        (try (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h)) <;>
-        (exfalso; exact absurd hLt (by native_decide)))
-    (by intro A B hDisj hEq hGe
-        rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
-        rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
-        simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at hGe ⊢ <;>
-        (try exact absurd hDisj (by decide)) <;>
-        (try assumption) <;>
-        (try (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe)) <;>
-        (exfalso; exact absurd hEq (by native_decide)))
+    hpos
+    [({0}, {1, 2}),
+     ({0}, {1, 3}),
+     ({0}, {1, 2, 3}),
+     ({1}, {0}),
+     ({1}, {0, 2}),
+     ({1}, {0, 3}),
+     ({1}, {2, 3}),
+     ({1}, {0, 2, 3}),
+     ({2}, {0}),
+     ({2}, {1}),
+     ({2}, {0, 1}),
+     ({2}, {0, 3}),
+     ({2}, {1, 3}),
+     ({2}, {0, 1, 3}),
+     ({3}, {0}),
+     ({3}, {1}),
+     ({3}, {2}),
+     ({3}, {0, 1}),
+     ({3}, {0, 2}),
+     ({3}, {1, 2}),
+     ({3}, {0, 1, 2}),
+     ({0, 3}, {1, 2}),
+     ({1, 3}, {0, 2}),
+     ({2, 3}, {0, 1})]
+    (by native_decide)
+    (by intro ⟨A, B⟩ hmem
+        simp only [List.mem_cons, List.mem_nil_iff, or_false, Prod.mk.injEq] at hmem
+        rcases hmem with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
+        <;> (try simp only [Finset.coe_insert, Finset.coe_singleton])
+        <;> assumption)
+    [({0}, {2, 3}),
+     ({2, 3}, {0})]
+    (by native_decide)
+    (by intro ⟨A, B⟩ hmem
+        simp only [List.mem_cons, List.mem_nil_iff, or_false, Prod.mk.injEq] at hmem
+        rcases hmem with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
+        <;> (try simp only [Finset.coe_insert, Finset.coe_singleton])
+        <;> (try intro _)
+        <;> assumption)
 
-set_option maxHeartbeats 800000 in
 theorem chamber_83 (sys : EpistemicSystemFA (Fin 4))
     (hpos : ∀ i : Fin 4, ¬sys.ge (∅ : Set (Fin 4)) {i})
     (h01 : sys.ge {(0 : Fin 4)} {1}) (h12 : sys.ge {(1 : Fin 4)} {2})
@@ -1599,29 +1969,51 @@ theorem chamber_83 (sys : EpistemicSystemFA (Fin 4))
         have h2 := (sys.additive {(0 : Fin 4)} {(0 : Fin 4), (1 : Fin 4)}).mp h1
         rw [sd_0_01, sd_01_0] at h2
         exact (hpos ⟨1, by omega⟩) h2
-  exact cancellation_from_weights_fin4 sys (![(5 : ℚ)/14, (4 : ℚ)/14, (3 : ℚ)/14, (2 : ℚ)/14])
+  exact cancellation_from_pairs sys (![(5 : ℚ)/14, (4 : ℚ)/14, (3 : ℚ)/14, (2 : ℚ)/14])
     (by intro i; fin_cases i <;> norm_num)
     (by simp [Fin.sum_univ_four]; norm_num)
-    (by intro A B hDisj hLt
-        rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
-        rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
-        simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] <;>
-        (try exact absurd hDisj (by decide)) <;>
-        (try assumption) <;>
-        (try (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h)) <;>
-        (exfalso; exact absurd hLt (by native_decide)))
-    (by intro A B hDisj hEq hGe
-        rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
-        rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
-        simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at hGe ⊢ <;>
-        (try exact absurd hDisj (by decide)) <;>
-        (try assumption) <;>
-        (try (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe)) <;>
-        (exfalso; exact absurd hEq (by native_decide)))
+    hpos
+    [({0}, {1, 2}),
+     ({0}, {1, 3}),
+     ({0}, {1, 2, 3}),
+     ({1}, {0}),
+     ({1}, {0, 2}),
+     ({1}, {0, 3}),
+     ({1}, {2, 3}),
+     ({1}, {0, 2, 3}),
+     ({2}, {0}),
+     ({2}, {1}),
+     ({2}, {0, 1}),
+     ({2}, {0, 3}),
+     ({2}, {1, 3}),
+     ({2}, {0, 1, 3}),
+     ({3}, {0}),
+     ({3}, {1}),
+     ({3}, {2}),
+     ({3}, {0, 1}),
+     ({3}, {0, 2}),
+     ({3}, {1, 2}),
+     ({3}, {0, 1, 2}),
+     ({1, 3}, {0, 2}),
+     ({2, 3}, {0, 1})]
+    (by native_decide)
+    (by intro ⟨A, B⟩ hmem
+        simp only [List.mem_cons, List.mem_nil_iff, or_false, Prod.mk.injEq] at hmem
+        rcases hmem with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
+        <;> (try simp only [Finset.coe_insert, Finset.coe_singleton])
+        <;> assumption)
+    [({0}, {2, 3}),
+     ({0, 3}, {1, 2}),
+     ({1, 2}, {0, 3}),
+     ({2, 3}, {0})]
+    (by native_decide)
+    (by intro ⟨A, B⟩ hmem
+        simp only [List.mem_cons, List.mem_nil_iff, or_false, Prod.mk.injEq] at hmem
+        rcases hmem with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
+        <;> (try simp only [Finset.coe_insert, Finset.coe_singleton])
+        <;> (try intro _)
+        <;> assumption)
 
-set_option maxHeartbeats 800000 in
 theorem chamber_84 (sys : EpistemicSystemFA (Fin 4))
     (hpos : ∀ i : Fin 4, ¬sys.ge (∅ : Set (Fin 4)) {i})
     (h01 : sys.ge {(0 : Fin 4)} {1}) (h12 : sys.ge {(1 : Fin 4)} {2})
@@ -1688,29 +2080,52 @@ theorem chamber_84 (sys : EpistemicSystemFA (Fin 4))
         have h2 := (sys.additive {(0 : Fin 4)} {(0 : Fin 4), (1 : Fin 4)}).mp h1
         rw [sd_0_01, sd_01_0] at h2
         exact (hpos ⟨1, by omega⟩) h2
-  exact cancellation_from_weights_fin4 sys (![(4 : ℚ)/11, (3 : ℚ)/11, (3 : ℚ)/11, (1 : ℚ)/11])
+  exact cancellation_from_pairs sys (![(4 : ℚ)/11, (3 : ℚ)/11, (3 : ℚ)/11, (1 : ℚ)/11])
     (by intro i; fin_cases i <;> norm_num)
     (by simp [Fin.sum_univ_four]; norm_num)
-    (by intro A B hDisj hLt
-        rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
-        rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
-        simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] <;>
-        (try exact absurd hDisj (by decide)) <;>
-        (try assumption) <;>
-        (try (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h)) <;>
-        (exfalso; exact absurd hLt (by native_decide)))
-    (by intro A B hDisj hEq hGe
-        rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
-        rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
-        simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at hGe ⊢ <;>
-        (try exact absurd hDisj (by decide)) <;>
-        (try assumption) <;>
-        (try (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe)) <;>
-        (exfalso; exact absurd hEq (by native_decide)))
+    hpos
+    [({0}, {1, 2}),
+     ({0}, {1, 2, 3}),
+     ({1}, {0}),
+     ({1}, {0, 2}),
+     ({1}, {0, 3}),
+     ({1}, {2, 3}),
+     ({1}, {0, 2, 3}),
+     ({2}, {0}),
+     ({2}, {0, 1}),
+     ({2}, {0, 3}),
+     ({2}, {1, 3}),
+     ({2}, {0, 1, 3}),
+     ({3}, {0}),
+     ({3}, {1}),
+     ({3}, {2}),
+     ({3}, {0, 1}),
+     ({3}, {0, 2}),
+     ({3}, {1, 2}),
+     ({3}, {0, 1, 2}),
+     ({0, 3}, {1, 2}),
+     ({1, 3}, {0, 2}),
+     ({2, 3}, {0, 1})]
+    (by native_decide)
+    (by intro ⟨A, B⟩ hmem
+        simp only [List.mem_cons, List.mem_nil_iff, or_false, Prod.mk.injEq] at hmem
+        rcases hmem with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
+        <;> (try simp only [Finset.coe_insert, Finset.coe_singleton])
+        <;> assumption)
+    [({0}, {1, 3}),
+     ({0}, {2, 3}),
+     ({1}, {2}),
+     ({2}, {1}),
+     ({1, 3}, {0}),
+     ({2, 3}, {0})]
+    (by native_decide)
+    (by intro ⟨A, B⟩ hmem
+        simp only [List.mem_cons, List.mem_nil_iff, or_false, Prod.mk.injEq] at hmem
+        rcases hmem with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
+        <;> (try simp only [Finset.coe_insert, Finset.coe_singleton])
+        <;> (try intro _)
+        <;> assumption)
 
-set_option maxHeartbeats 800000 in
 theorem chamber_85 (sys : EpistemicSystemFA (Fin 4))
     (hpos : ∀ i : Fin 4, ¬sys.ge (∅ : Set (Fin 4)) {i})
     (h01 : sys.ge {(0 : Fin 4)} {1}) (h12 : sys.ge {(1 : Fin 4)} {2})
@@ -1777,29 +2192,53 @@ theorem chamber_85 (sys : EpistemicSystemFA (Fin 4))
         have h2 := (sys.additive {(0 : Fin 4)} {(0 : Fin 4), (1 : Fin 4)}).mp h1
         rw [sd_0_01, sd_01_0] at h2
         exact (hpos ⟨1, by omega⟩) h2
-  exact cancellation_from_weights_fin4 sys (![(3 : ℚ)/8, (2 : ℚ)/8, (2 : ℚ)/8, (1 : ℚ)/8])
+  exact cancellation_from_pairs sys (![(3 : ℚ)/8, (2 : ℚ)/8, (2 : ℚ)/8, (1 : ℚ)/8])
     (by intro i; fin_cases i <;> norm_num)
     (by simp [Fin.sum_univ_four]; norm_num)
-    (by intro A B hDisj hLt
-        rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
-        rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
-        simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] <;>
-        (try exact absurd hDisj (by decide)) <;>
-        (try assumption) <;>
-        (try (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h)) <;>
-        (exfalso; exact absurd hLt (by native_decide)))
-    (by intro A B hDisj hEq hGe
-        rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
-        rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
-        simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at hGe ⊢ <;>
-        (try exact absurd hDisj (by decide)) <;>
-        (try assumption) <;>
-        (try (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe)) <;>
-        (exfalso; exact absurd hEq (by native_decide)))
+    hpos
+    [({0}, {1, 2}),
+     ({0}, {1, 2, 3}),
+     ({1}, {0}),
+     ({1}, {0, 2}),
+     ({1}, {0, 3}),
+     ({1}, {2, 3}),
+     ({1}, {0, 2, 3}),
+     ({2}, {0}),
+     ({2}, {0, 1}),
+     ({2}, {0, 3}),
+     ({2}, {1, 3}),
+     ({2}, {0, 1, 3}),
+     ({3}, {0}),
+     ({3}, {1}),
+     ({3}, {2}),
+     ({3}, {0, 1}),
+     ({3}, {0, 2}),
+     ({3}, {1, 2}),
+     ({3}, {0, 1, 2}),
+     ({1, 3}, {0, 2}),
+     ({2, 3}, {0, 1})]
+    (by native_decide)
+    (by intro ⟨A, B⟩ hmem
+        simp only [List.mem_cons, List.mem_nil_iff, or_false, Prod.mk.injEq] at hmem
+        rcases hmem with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
+        <;> (try simp only [Finset.coe_insert, Finset.coe_singleton])
+        <;> assumption)
+    [({0}, {1, 3}),
+     ({0}, {2, 3}),
+     ({1}, {2}),
+     ({2}, {1}),
+     ({0, 3}, {1, 2}),
+     ({1, 2}, {0, 3}),
+     ({1, 3}, {0}),
+     ({2, 3}, {0})]
+    (by native_decide)
+    (by intro ⟨A, B⟩ hmem
+        simp only [List.mem_cons, List.mem_nil_iff, or_false, Prod.mk.injEq] at hmem
+        rcases hmem with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
+        <;> (try simp only [Finset.coe_insert, Finset.coe_singleton])
+        <;> (try intro _)
+        <;> assumption)
 
-set_option maxHeartbeats 800000 in
 theorem chamber_86 (sys : EpistemicSystemFA (Fin 4))
     (hpos : ∀ i : Fin 4, ¬sys.ge (∅ : Set (Fin 4)) {i})
     (h01 : sys.ge {(0 : Fin 4)} {1}) (h12 : sys.ge {(1 : Fin 4)} {2})
@@ -1874,29 +2313,52 @@ theorem chamber_86 (sys : EpistemicSystemFA (Fin 4))
         have h2 := (sys.additive {(0 : Fin 4)} {(0 : Fin 4), (1 : Fin 4)}).mp h1
         rw [sd_0_01, sd_01_0] at h2
         exact (hpos ⟨1, by omega⟩) h2
-  exact cancellation_from_weights_fin4 sys (![(3 : ℚ)/9, (3 : ℚ)/9, (2 : ℚ)/9, (1 : ℚ)/9])
+  exact cancellation_from_pairs sys (![(3 : ℚ)/9, (3 : ℚ)/9, (2 : ℚ)/9, (1 : ℚ)/9])
     (by intro i; fin_cases i <;> norm_num)
     (by simp [Fin.sum_univ_four]; norm_num)
-    (by intro A B hDisj hLt
-        rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
-        rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
-        simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] <;>
-        (try exact absurd hDisj (by decide)) <;>
-        (try assumption) <;>
-        (try (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h)) <;>
-        (exfalso; exact absurd hLt (by native_decide)))
-    (by intro A B hDisj hEq hGe
-        rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
-        rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
-        simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at hGe ⊢ <;>
-        (try exact absurd hDisj (by decide)) <;>
-        (try assumption) <;>
-        (try (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe)) <;>
-        (exfalso; exact absurd hEq (by native_decide)))
+    hpos
+    [({0}, {1, 2}),
+     ({0}, {1, 3}),
+     ({0}, {1, 2, 3}),
+     ({1}, {0, 2}),
+     ({1}, {0, 3}),
+     ({1}, {0, 2, 3}),
+     ({2}, {0}),
+     ({2}, {1}),
+     ({2}, {0, 1}),
+     ({2}, {0, 3}),
+     ({2}, {1, 3}),
+     ({2}, {0, 1, 3}),
+     ({3}, {0}),
+     ({3}, {1}),
+     ({3}, {2}),
+     ({3}, {0, 1}),
+     ({3}, {0, 2}),
+     ({3}, {1, 2}),
+     ({3}, {0, 1, 2}),
+     ({0, 3}, {1, 2}),
+     ({1, 3}, {0, 2}),
+     ({2, 3}, {0, 1})]
+    (by native_decide)
+    (by intro ⟨A, B⟩ hmem
+        simp only [List.mem_cons, List.mem_nil_iff, or_false, Prod.mk.injEq] at hmem
+        rcases hmem with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
+        <;> (try simp only [Finset.coe_insert, Finset.coe_singleton])
+        <;> assumption)
+    [({0}, {1}),
+     ({0}, {2, 3}),
+     ({1}, {0}),
+     ({1}, {2, 3}),
+     ({2, 3}, {0}),
+     ({2, 3}, {1})]
+    (by native_decide)
+    (by intro ⟨A, B⟩ hmem
+        simp only [List.mem_cons, List.mem_nil_iff, or_false, Prod.mk.injEq] at hmem
+        rcases hmem with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
+        <;> (try simp only [Finset.coe_insert, Finset.coe_singleton])
+        <;> (try intro _)
+        <;> assumption)
 
-set_option maxHeartbeats 800000 in
 theorem chamber_87 (sys : EpistemicSystemFA (Fin 4))
     (hpos : ∀ i : Fin 4, ¬sys.ge (∅ : Set (Fin 4)) {i})
     (h01 : sys.ge {(0 : Fin 4)} {1}) (h12 : sys.ge {(1 : Fin 4)} {2})
@@ -1965,26 +2427,53 @@ theorem chamber_87 (sys : EpistemicSystemFA (Fin 4))
         have h2 := (sys.additive {(0 : Fin 4)} {(0 : Fin 4), (1 : Fin 4)}).mp h1
         rw [sd_0_01, sd_01_0] at h2
         exact (hpos ⟨1, by omega⟩) h2
-  exact cancellation_from_weights_fin4 sys (![(2 : ℚ)/6, (2 : ℚ)/6, (1 : ℚ)/6, (1 : ℚ)/6])
+  exact cancellation_from_pairs sys (![(2 : ℚ)/6, (2 : ℚ)/6, (1 : ℚ)/6, (1 : ℚ)/6])
     (by intro i; fin_cases i <;> norm_num)
     (by simp [Fin.sum_univ_four]; norm_num)
-    (by intro A B hDisj hLt
-        rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
-        rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
-        simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] <;>
-        (try exact absurd hDisj (by decide)) <;>
-        (try assumption) <;>
-        (try (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h)) <;>
-        (exfalso; exact absurd hLt (by native_decide)))
-    (by intro A B hDisj hEq hGe
-        rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
-        rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
-        simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at hGe ⊢ <;>
-        (try exact absurd hDisj (by decide)) <;>
-        (try assumption) <;>
-        (try (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe)) <;>
-        (exfalso; exact absurd hEq (by native_decide)))
+    hpos
+    [({0}, {1, 2}),
+     ({0}, {1, 3}),
+     ({0}, {1, 2, 3}),
+     ({1}, {0, 2}),
+     ({1}, {0, 3}),
+     ({1}, {0, 2, 3}),
+     ({2}, {0}),
+     ({2}, {1}),
+     ({2}, {0, 1}),
+     ({2}, {0, 3}),
+     ({2}, {1, 3}),
+     ({2}, {0, 1, 3}),
+     ({3}, {0}),
+     ({3}, {1}),
+     ({3}, {0, 1}),
+     ({3}, {0, 2}),
+     ({3}, {1, 2}),
+     ({3}, {0, 1, 2}),
+     ({2, 3}, {0, 1})]
+    (by native_decide)
+    (by intro ⟨A, B⟩ hmem
+        simp only [List.mem_cons, List.mem_nil_iff, or_false, Prod.mk.injEq] at hmem
+        rcases hmem with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
+        <;> (try simp only [Finset.coe_insert, Finset.coe_singleton])
+        <;> assumption)
+    [({0}, {1}),
+     ({0}, {2, 3}),
+     ({1}, {0}),
+     ({1}, {2, 3}),
+     ({2}, {3}),
+     ({3}, {2}),
+     ({0, 2}, {1, 3}),
+     ({0, 3}, {1, 2}),
+     ({1, 2}, {0, 3}),
+     ({1, 3}, {0, 2}),
+     ({2, 3}, {0}),
+     ({2, 3}, {1})]
+    (by native_decide)
+    (by intro ⟨A, B⟩ hmem
+        simp only [List.mem_cons, List.mem_nil_iff, or_false, Prod.mk.injEq] at hmem
+        rcases hmem with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
+        <;> (try simp only [Finset.coe_insert, Finset.coe_singleton])
+        <;> (try intro _)
+        <;> assumption)
 
 end Core.Scale
