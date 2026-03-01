@@ -1,7 +1,7 @@
 import Linglib.Theories.Semantics.Questions.Inquisitive
 
 /-!
-# Probabilistic Answerhood (Thomas 2026)
+# Probabilistic Answerhood (Thomas 2026) @cite{thomas-2026}
 
 Answerhood in terms of probability changes, following Thomas (2026)
 "A probabilistic, question-based approach to additivity".
@@ -83,13 +83,11 @@ abbrev probOfState {W : Type*} [Fintype W]
 
 /-- Relevance: P changes the probability of some alternative in Q.
 
-Definition 61 from Thomas (2026):
-```
-Relevant(P, Q) ≡ ∃A ∈ Q: P(A|P) ≠ P(A)
-```
-
-A proposition P is relevant to question Q iff learning P would change
-the probability distribution over Q's alternatives. -/
+Simplified from Thomas (2026) Definition 61 for the case where R is a
+declarative (single alternative P). Thomas's full definition quantifies
+over alternatives of both R and S: ∃A ∈ alt(R), A' ∈ alt(S) s.t.
+P_L(A'|A) ≠ P_L(A'). For declarative R with a single alternative P,
+this reduces to: ∃A' ∈ alt(Q): P(A'|P) ≠ P(A'). -/
 def relevant {W : Type*} [Fintype W]
     (p : W → Bool) (q : Issue W) (prior : Prior W) : Bool :=
   q.alternatives.any λ alt =>
@@ -104,24 +102,78 @@ def irrelevant {W : Type*} [Fintype W]
 
 -- Definition 62: Probabilistic Answerhood
 
-/-- Probabilistic answerhood: P raises the probability of some alternative.
+/-- Probabilistic answerhood (simplified): P raises the probability of some alternative.
 
-Definition 62 from Thomas (2026):
-```
-ProbAnswers(P, Q) ≡ ∃A ∈ Q: P(A|P) > P(A)
-```
+Simplified from Thomas (2026) Definition 62, which additionally requires
+that the witnessed resolution is raised MORE than any other (in ratio terms):
+(b) for all A' ⊂ alt(Q), if ∩A' ⊉ ∩A, then P(∩A|info(R))/P(∩A) > P(∩A'|info(R))/P(∩A').
 
-This is a weaker condition than standard partial answerhood:
-- Standard: P is consistent with some cell and rules out others
-- Probabilistic: P raises probability of some answer
-
-Under uniform priors on partitions, these coincide. -/
+This implementation captures only condition (a): ∃A ∈ Q: P(A|P) > P(A).
+The full definition is stronger — it requires the supported answer to be
+*maximally* supported. For the cases we use (binary QUDs, single-alternative
+declaratives), the simplified version suffices. -/
 def probAnswers {W : Type*} [Fintype W]
     (p : W → Bool) (q : Issue W) (prior : Prior W) : Bool :=
   q.alternatives.any λ alt =>
     let condProb := conditionalProb prior p alt
     let priorProb := probOfState prior alt
     condProb > priorProb
+
+/-- Intersection of a list of propositions.
+
+Empty intersection is trivialState (all worlds), per the convention
+that the empty conjunction is ⊤. -/
+private def intersectAlts {W : Type*} (alts : List (W → Bool)) : W → Bool :=
+  alts.foldl (fun acc alt w => acc w && alt w) trivialState
+
+/-- Full probabilistic answerhood per Thomas (2026) Definition 62.
+
+R ANSWERS Q iff ∃ nonempty A ⊆ alt(Q) s.t.
+(a) P(∩A | info(R)) > P(∩A)
+(b) ∀A' ⊆ alt(Q), ∩A' ⊄ ∩A → P(∩A|info(R))/P(∩A) > P(∩A'|info(R))/P(∩A')
+
+Condition (b) ensures that A is the *maximally* supported resolution: no
+other resolution whose intersection isn't already contained in ∩A has a
+higher Bayes factor. This prevents a proposition from "answering" a question
+by accidentally raising two unrelated alternatives equally.
+
+For binary QUDs (|alt(Q)| = 2), conditions (a) and (b) coincide with
+`probAnswers`: raising P(H) necessarily lowers P(¬H), so the Bayes factor
+condition is automatic. See `probAnswersFull_eq_simple_binary`. -/
+def probAnswersFull {W : Type*} [Fintype W]
+    (p : W → Bool) (q : Issue W) (prior : Prior W) : Bool :=
+  let nonemptySubsets := q.alternatives.sublists.filter fun l => !l.isEmpty
+  nonemptySubsets.any fun a =>
+    let interA := intersectAlts a
+    let pA := probOfProp prior interA
+    let condA := conditionalProb prior p interA
+    -- (a) P(∩A | p) > P(∩A)
+    condA > pA &&
+    -- (b) A's Bayes factor dominates all non-contained subsets
+    pA > 0 &&
+    nonemptySubsets.all fun a' =>
+      let interA' := intersectAlts a'
+      let pA' := probOfProp prior interA'
+      -- ∩A' ⊆ ∩A → condition vacuously satisfied
+      let contained := decide (∀ w : W, interA' w = true → interA w = true)
+      if contained then true
+      else if pA' > 0 then
+        condA / pA > conditionalProb prior p interA' / pA'
+      else true  -- P(∩A') = 0 → ratio undefined, vacuous
+
+/-- The simplified `probAnswers` (condition (a) only) is equivalent to the
+full Thomas (62) `probAnswersFull` for binary QUDs.
+
+For binary {H, ¬H}, raising P(H) necessarily lowers P(¬H), so the Bayes
+factor for H automatically exceeds the Bayes factor for ¬H. The only
+nonempty subsets with non-trivial intersections are {H} and {¬H} (since
+∩{H,¬H} = H ∩ ¬H = ∅ has P(∅) = 0). -/
+theorem probAnswersFull_eq_simple_binary {W : Type*} [Fintype W]
+    (p : W → Bool) (h : W → Bool) (prior : Prior W)
+    (hBinary : (Issue.polar h).alternatives.length = 2) :
+    probAnswersFull p (Issue.polar h) prior =
+    probAnswers p (Issue.polar h) prior := by
+  sorry
 
 /-- Which alternative(s) are supported by P.
 

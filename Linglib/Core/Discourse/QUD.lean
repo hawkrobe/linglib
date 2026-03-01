@@ -1,14 +1,18 @@
 import Mathlib.Data.Set.Basic
 
 /-!
-# QUD (Question Under Discussion)
+# QUD (Question Under Discussion) @cite{roberts-2012}
 
 A QUD partitions the meaning space into equivalence classes. Two meanings are
 equivalent under a QUD if they "answer the question the same way."
 
+The file also contains inquisitive semantics core types (`InfoState`, `Issue`)
+and Roberts' (2012) formalization of question entailment, subquestions, and
+discourse move relevance.
+
 ## References
 
-- Roberts (2012). Information structure in discourse.
+- Roberts (2012). Information structure in discourse. *Semantics & Pragmatics* 5(6).
 - Kao et al. (2014). Nonliteral understanding of number words. PNAS.
 -/
 
@@ -322,12 +326,23 @@ def empty : Issue W := { alternatives := [trivialState] }
 /-- The absurd issue: resolved only by the absurd state. -/
 def absurd : Issue W := { alternatives := [absurdState] }
 
-/-- A mention-some issue has multiple alternatives (non-singleton). -/
-def isMentionSome (q : Issue W) : Bool := q.isInquisitive
+/-- A proposition is a mention-some answer to Q: it resolves Q by settling
+at least one alternative without settling all of them.
 
-/-- A mention-all issue has a single alternative (singleton). -/
-def isMentionAll (q : Issue W) : Bool :=
-  q.alternatives.length == 1
+In the decision-theoretic setting, mention-some answerhood is defined
+relative to a decision problem (see `Core.Agent.DecisionTheory.isMentionSome`).
+This definition is the purely logical version from inquisitive semantics:
+an answer settles Q partially. -/
+def isMentionSomeAnswer (q : Issue W) (answer : InfoState W) (worlds : List W) : Bool :=
+  -- Settles at least one alternative (answer ⊆ some alt)
+  q.alternatives.any (fun alt => answer.subset alt worlds) &&
+  -- Doesn't settle all alternatives
+  q.alternatives.any (fun alt => !(answer.subset alt worlds))
+
+/-- A proposition is a mention-all answer to Q: it settles all alternatives
+(resolves Q completely by being contained in every alternative). -/
+def isMentionAllAnswer (q : Issue W) (answer : InfoState W) (worlds : List W) : Bool :=
+  q.alternatives.all (fun alt => answer.subset alt worlds)
 
 /-- Number of alternatives (possible complete answers). -/
 def numAlternatives (q : Issue W) : Nat :=
@@ -372,11 +387,13 @@ is true. -/
 def Issue.infoContent {W : Type*} (q : Issue W) : W → Bool :=
   λ w => q.alternatives.any λ alt => alt w
 
-/-- The highlighted proposition: the disjunction of all alternatives.
+/-- The highlighted/informational content of an issue. Alias for `infoContent`.
 
-Same as infoContent, but emphasizes the "highlighted" reading in
-inquisitive semantics. -/
-def Issue.highlighted {W : Type*} (q : Issue W) : W → Bool :=
+In the standard inquisitive semantics framework, the informational content
+(union of all alternatives) IS the highlighted content for declarative
+sentences. We keep this alias because IKW (2025) Def. 16 uses "highlighted
+content" terminology in defining the at-issue content of discourse *only*. -/
+abbrev Issue.highlighted {W : Type*} (q : Issue W) : W → Bool :=
   q.infoContent
 
 -- Theorems
@@ -450,5 +467,37 @@ def moveRelevant {W : Type*} (den : Issue W) (qud : Issue W)
     partiallyAnswers alt qud worlds ||
     subquestions.any fun sq =>
       partiallyAnswers alt sq worlds
+
+/-- `propEntails` is reflexive. -/
+theorem propEntails_refl {W : Type*} (p : W → Bool) (worlds : List W) :
+    propEntails p p worlds = true := by
+  unfold propEntails
+  simp [List.all_eq_true]
+
+/-- `questionEntails` is reflexive: every question entails itself. -/
+theorem questionEntails_refl {W : Type*} (q : Issue W) (worlds : List W) :
+    questionEntails q q worlds = true := by
+  unfold questionEntails
+  simp only [List.all_eq_true, List.any_eq_true]
+  intro alt hMem
+  exact ⟨alt, hMem, propEntails_refl alt worlds⟩
+
+/-- Subquestion is reflexive: every question is a subquestion of itself. -/
+theorem isSubquestion_refl {W : Type*} (q : Issue W) (worlds : List W) :
+    isSubquestion q q worlds = true :=
+  questionEntails_refl q worlds
+
+/-- Partial answerhood of an alternative implies move relevance.
+
+If some alternative of a move partially answers the QUD directly,
+the move is relevant (even without subquestions). -/
+theorem partiallyAnswers_implies_relevant {W : Type*}
+    (den : Issue W) (qud : Issue W) (worlds : List W)
+    (alt : W → Bool) (hAlt : alt ∈ den.alternatives)
+    (hPA : partiallyAnswers alt qud worlds = true) :
+    moveRelevant den qud [] worlds = true := by
+  unfold moveRelevant
+  rw [List.any_eq_true]
+  exact ⟨alt, hAlt, by simp [hPA]⟩
 
 end Discourse

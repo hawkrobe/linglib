@@ -1,6 +1,5 @@
 import Linglib.Theories.Semantics.Questions.Support
 import Linglib.Theories.Semantics.Lexical.Expressives.Basic
-import Linglib.Theories.Semantics.Questions.Inquisitive
 
 /-!
 # Discourse *only* (Ippolito, Kiss & Williams 2025) @cite{ippolito-kiss-williams-2025}
@@ -292,5 +291,45 @@ theorem weak_non_agreement {W : Type*} [Fintype W]
       simp
     rw [hNoS']
     simp
+
+/-- Disagreement implies CI content when partial answers are empty.
+
+If S and S' disagree (each supports some answer but don't agree on any
+single answer) and there are no prior partial answers, then the CI is
+automatically satisfied.
+
+Proof: `disagree = true` gives us (1) ∃α: fullSupport S α = true,
+(2) ∃β: fullSupport S' β = true, (3) ¬agree = for all γ,
+¬(fullSupport S γ ∧ fullSupport S' γ). Taking α from (1), fullSupport S α
+is true. By (3), fullSupport S' α must be false. With empty partial answers,
+condition (i) is vacuous. So α witnesses the CI.
+
+This captures the paper's core insight: when S and S' evidentially clash
+(disagree), the CI is inherently satisfied. -/
+theorem disagree_implies_ciContent_empty_partial {W : Type*} [Fintype W]
+    (d : Sentence W) (ctx : Context W)
+    (hDisagree : d.disagree ctx = true)
+    (hPartial : ctx.partialAnswers = []) :
+    d.ciContent ctx = true := by
+  unfold Sentence.disagree at hDisagree
+  simp only [Bool.and_eq_true, Bool.not_eq_true'] at hDisagree
+  obtain ⟨⟨hSsupports, _⟩, hNotAgree⟩ := hDisagree
+  unfold Sentence.ciContent
+  rw [List.any_eq_true] at hSsupports ⊢
+  obtain ⟨α, hMem, hSupp⟩ := hSsupports
+  refine ⟨α, hMem, ?_⟩
+  simp only [Bool.and_eq_true, Bool.not_eq_true', hPartial, List.all_nil, true_and]
+  refine ⟨hSupp, ?_⟩
+  -- From ¬agree: for all α, ¬(fullSupport S α ∧ fullSupport S' α)
+  unfold Sentence.agree at hNotAgree
+  rw [List.any_eq_false] at hNotAgree
+  have h := hNotAgree α hMem
+  simp only [Bool.and_eq_true] at h
+  -- h : ¬(fullSupport S α = true ∧ fullSupport S' α = true)
+  -- hSupp : fullSupport S α = true
+  -- Goal : fullSupport S' α = false
+  cases hS' : fullSupport ctx.dox d.s'Den ctx.prior α ctx.worlds
+  · rfl
+  · exfalso; exact h ⟨hSupp, hS'⟩
 
 end Semantics.Lexical.Particle.DiscourseOnly
