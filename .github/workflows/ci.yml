@@ -36,7 +36,7 @@ jobs:
         run: lake exe cache get
 
       - name: Build
-        run: lake build
+        run: lake build -j1
 
       - name: Check for sorries (informational)
         run: |
