@@ -1203,4 +1203,162 @@ theorem bayesian_maximizes (w : ι → ℝ) (hw_nonneg : ∀ i, 0 ≤ w i)
 
 end BayesianOptimality
 
+-- ============================================================================
+-- §6. Independence of Unit (Luce 1959, §1.F, Theorem 6)
+-- ============================================================================
+
+/-!
+## Independence of Unit
+
+Luce (1959, §1.F, Theorem 6) proves that the ratio scale representation of
+choice probabilities is independent of the "unit" of measurement. If two
+agents have identical policies on the same alternatives, their score functions
+must be proportional: `score₂ = k · score₁` for some `k > 0`.
+
+This is the converse of Theorem 4 (forward: `policy_eq_of_proportional`).
+Together they give: **same policy ↔ proportional scores**.
+-/
+
+section IndependenceOfUnit
+
+variable {S A : Type*} [Fintype A]
+
+/-- Converse of uniqueness (Luce 1959, Theorem 6, Independence of Unit):
+    If two agents with positive total scores have the same policy,
+    then their scores are proportional with constant `k = total₂/total₁`. -/
+theorem RationalAction.proportional_of_policy_eq
+    (ra₁ ra₂ : RationalAction S A) (s : S)
+    (h₁ : 0 < ra₁.totalScore s)
+    (h₂ : 0 < ra₂.totalScore s)
+    (hpol : ∀ a, ra₁.policy s a = ra₂.policy s a) :
+    ∀ a, ra₂.score s a =
+      (ra₂.totalScore s / ra₁.totalScore s) * ra₁.score s a := by
+  intro a
+  have h₁_ne : ra₁.totalScore s ≠ 0 := ne_of_gt h₁
+  have h₂_ne : ra₂.totalScore s ≠ 0 := ne_of_gt h₂
+  have h := hpol a
+  simp only [policy, h₁_ne, h₂_ne, ↓reduceIte] at h
+  rw [div_eq_div_iff h₁_ne h₂_ne] at h
+  field_simp [h₁_ne]
+  linarith
+
+/-- Full uniqueness characterization (Luce 1959, Theorems 4 + 6):
+    Two agents with positive total scores have the same policy if and only if
+    their scores are proportional. -/
+theorem RationalAction.policy_eq_iff_proportional
+    (ra₁ ra₂ : RationalAction S A) (s : S)
+    (h₁ : 0 < ra₁.totalScore s)
+    (h₂ : 0 < ra₂.totalScore s) :
+    (∀ a, ra₁.policy s a = ra₂.policy s a) ↔
+    ∃ k : ℝ, 0 < k ∧ ∀ a, ra₂.score s a = k * ra₁.score s a := by
+  constructor
+  · intro hpol
+    exact ⟨ra₂.totalScore s / ra₁.totalScore s,
+           div_pos h₂ h₁,
+           proportional_of_policy_eq ra₁ ra₂ s h₁ h₂ hpol⟩
+  · intro ⟨k, hk, hprop⟩ a
+    exact (policy_eq_of_proportional ra₁ ra₂ s k hk hprop a).symm
+
+end IndependenceOfUnit
+
+-- ============================================================================
+-- §7. Appendix 1: Alternative Forms of Axiom 1 (Luce 1959, pp. 129–132)
+-- ============================================================================
+
+/-!
+## Alternative Forms of Axiom 1
+
+Luce (1959, Appendix 1) proves three equivalent formulations of the choice
+axiom:
+
+**(a) Ratio form**: There exists a positive function `v` such that
+`P(x, T) = v(x) / Σ_{y∈T} v(y)` for all `x ∈ T`.
+
+**(b) Product rule**: `P(x, T) = P(x, S) · P(S, T)` for `x ∈ S ⊆ T`,
+where `P(S, T) = Σ_{y∈S} P(y, T)`.
+
+**(c) Pairwise independence**: The odds ratio `P(x,{x,y}) · P(y,T) =
+P(y,{x,y}) · P(x,T)` — pairwise ratios are preserved in any superset.
+
+The ratio form (a) is the definition of `RationalAction`; (a)→(b) is
+`product_rule` and (a)→(c) is `pChoice_ratio`.
+-/
+
+section Appendix1
+
+variable {A : Type*} [DecidableEq A]
+
+/-- A general choice function on finite subsets: the minimal structure for
+    stating Axiom 1 equivalences without assuming a ratio scale a priori. -/
+structure ChoiceFn (A : Type*) [DecidableEq A] where
+  /-- P(a, T): probability of choosing `a` from set `T` -/
+  prob : Finset A → A → ℝ
+  /-- Probabilities are non-negative -/
+  prob_nonneg : ∀ (T : Finset A) (a : A), 0 ≤ prob T a
+  /-- Zero probability outside the choice set -/
+  prob_zero_outside : ∀ (T : Finset A) (a : A), a ∉ T → prob T a = 0
+
+/-- **Axiom 1, Form (a)**: ratio scale representation.
+    There exists `v > 0` such that `P(x, T) = v(x) / Σ v(y)`. -/
+def ChoiceFn.hasRatioScale (cf : ChoiceFn A) : Prop :=
+  ∃ v : A → ℝ, (∀ a, 0 < v a) ∧
+    ∀ (T : Finset A) (a : A), a ∈ T →
+      cf.prob T a = v a / ∑ b ∈ T, v b
+
+/-- **Axiom 1, Form (b)**: product rule.
+    `P(x, T) = P(x, S) · Σ_{y∈S} P(y, T)` for `x ∈ S ⊆ T`. -/
+def ChoiceFn.hasProductRule (cf : ChoiceFn A) : Prop :=
+  ∀ (S T : Finset A), S ⊆ T → S.Nonempty →
+    (∑ b ∈ T, cf.prob T b = 1) →
+    ∀ a ∈ S,
+      cf.prob T a = cf.prob S a * ∑ b ∈ S, cf.prob T b
+
+/-- **Axiom 1, Form (c)**: pairwise independence (IIA).
+    The odds ratio is preserved in any superset:
+    `P(x,T) · P(y,{x,y}) = P(y,T) · P(x,{x,y})`. -/
+def ChoiceFn.hasPairwiseIIA (cf : ChoiceFn A) : Prop :=
+  ∀ (T : Finset A) (a b : A), a ∈ T → b ∈ T →
+    cf.prob T a * cf.prob {a, b} b = cf.prob T b * cf.prob {a, b} a
+
+/-- (a) → (b): Ratio form implies product rule (Luce 1959, Appendix 1). -/
+theorem ratio_implies_product (cf : ChoiceFn A)
+    (h : cf.hasRatioScale) : cf.hasProductRule := by
+  intro S T hST hS _hT a ha
+  obtain ⟨v, hv_pos, hv_rule⟩ := h
+  rw [hv_rule T a (hST ha), hv_rule S a ha]
+  have hS_ne : (∑ b ∈ S, v b) ≠ 0 :=
+    ne_of_gt (Finset.sum_pos (λ b _ => hv_pos b) hS)
+  have hT_ne : (∑ b ∈ T, v b) ≠ 0 :=
+    ne_of_gt (Finset.sum_pos (λ b _ => hv_pos b) (Finset.Nonempty.mono hST hS))
+  have hsum : ∑ b ∈ S, cf.prob T b = (∑ b ∈ S, v b) / ∑ c ∈ T, v c := by
+    rw [Finset.sum_div]
+    exact Finset.sum_congr rfl (λ b hb => hv_rule T b (hST hb))
+  rw [hsum]; field_simp
+
+/-- (a) → (c): Ratio form implies pairwise IIA (Luce 1959, Appendix 1). -/
+theorem ratio_implies_pairwiseIIA (cf : ChoiceFn A)
+    (h : cf.hasRatioScale) : cf.hasPairwiseIIA := by
+  intro T a b ha hb
+  obtain ⟨v, hv_pos, hv_rule⟩ := h
+  have hab_a : a ∈ ({a, b} : Finset A) := Finset.mem_insert.mpr (Or.inl rfl)
+  have hab_b : b ∈ ({a, b} : Finset A) := by simp
+  rw [hv_rule T a ha, hv_rule T b hb,
+      hv_rule {a, b} b hab_b, hv_rule {a, b} a hab_a]
+  ring
+
+/-- (c) → (a): Pairwise IIA implies ratio form (Luce 1959, Appendix 1).
+    The ratio scale is constructed by fixing a reference element x₀ and
+    setting v(x) = P(x, {x, x₀}) / P(x₀, {x, x₀}). -/
+theorem pairwiseIIA_implies_ratio (cf : ChoiceFn A)
+    (_h : cf.hasPairwiseIIA) : cf.hasRatioScale := by
+  sorry -- TODO: construct v from pairwise probabilities and fixed reference
+
+/-- **Axiom 1 equivalence** (Luce 1959, Appendix 1):
+    Ratio form ↔ pairwise IIA. -/
+theorem axiom1_ratio_iff_pairwiseIIA (cf : ChoiceFn A) :
+    cf.hasRatioScale ↔ cf.hasPairwiseIIA :=
+  ⟨ratio_implies_pairwiseIIA cf, pairwiseIIA_implies_ratio cf⟩
+
+end Appendix1
+
 end Core

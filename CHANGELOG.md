@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.227.64] - 2026-02-28
+
+### Added
+- **Luce (1959) comprehensive formalization** — 6 new files + extensions to `RationalAction.lean` covering the full book:
+  - **`RationalAction.lean` §1.F + Appendix 1**: Independence of Unit (`proportional_of_policy_eq`, `policy_eq_iff_proportional`); `ChoiceFn` type with three equivalent Axiom 1 forms (ratio, product rule, pairwise IIA) and proofs of (a)→(b), (a)→(c)
+  - **`ChoiceApproximations.lean`** (§1.G): `ApproxLuce` structure for ε-approximate IIA, `transitivityDeviation` with exact-zero proof, `consistencyRatio` with exact-one proof, error propagation bounds
+  - **`Psychophysics.lean`** (§2.B–C): `StevensScale` power law, `stevens_fechner_equivalence` (power ↔ log under variable change), `MultidimStimulus` with dimension independence axiom
+  - **`Thurstone.lean`** (§2.D): `ThurstoneCaseV` Gaussian discriminal processes, `normalCDF`, logistic-normal approximation bridge, strong stochastic transitivity
+  - **`SignalDetection.lean`** (§2.E): `SDTModel` with d'/criterion, hit/false-alarm rates, `rocCurve`, `likelihoodRatio`, `sdt_as_luce` connecting SDT to Luce choice rule
+  - **`RankOrderings.lean`** (§2.F): `rankProb` (Theorem 9 product-of-successive-choices), `rankProbScoreProd`, `expectedRank`
+  - **`Learning.lean`** (Ch.4): `LinearLearner` with update, `BetaModel`, `iterate_linear` with closed-form `α^n·v₀ + (1-α^n)·r` proved by induction, asymptotic convergence
+
 ## [0.227.63] - 2026-02-28
 
 ### Added

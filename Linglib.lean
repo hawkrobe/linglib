@@ -48,6 +48,12 @@ import Linglib.Core.Logic.OT
 import Linglib.Core.Agent.DecisionTheory
 import Linglib.Core.Agent.RationalAction
 import Linglib.Core.Agent.UtilityTheory
+import Linglib.Core.Agent.ChoiceApproximations
+import Linglib.Core.Agent.Psychophysics
+import Linglib.Core.Agent.Thurstone
+import Linglib.Core.Agent.SignalDetection
+import Linglib.Core.Agent.RankOrderings
+import Linglib.Core.Agent.Learning
 import Linglib.Core.Discourse.Evidence
 import Linglib.Core.Discourse.Epistemicity
 import Linglib.Core.ProcessingModel
@@ -82,6 +88,7 @@ import Linglib.Core.Scales.MereoDim
 import Linglib.Core.ContentIndividual
 import Linglib.Core.Agent.BToM
 import Linglib.Core.Agent.Emotion
+import Linglib.Core.Agent.SignalDetection
 import Linglib.Core.Path
 import Linglib.Core.Continuation
 import Linglib.Core.Lexical.PersonCategory
@@ -866,6 +873,7 @@ import Linglib.Theories.Syntax.Minimalism.Core.Voice
 import Linglib.Theories.Syntax.Minimalism.Core.Applicative
 import Linglib.Theories.Syntax.Minimalism.Core.SmallClause
 import Linglib.Theories.Interfaces.SyntaxSemantics.Minimalism.EventStructureBridge
+import Linglib.Theories.Interfaces.SyntaxSemantics.Minimalism.CausalSourceBridge
 import Linglib.Theories.Morphology.DM.Fission
 import Linglib.Theories.Morphology.DM.Categorizer
 import Linglib.Theories.Morphology.Core.CliticVsAffix
