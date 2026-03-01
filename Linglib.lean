@@ -381,6 +381,7 @@ import Linglib.Phenomena.Focus.PolarityStress
 import Linglib.Phenomena.Focus.ProsodicExhaustivity
 import Linglib.Phenomena.Focus.DiscourseOnly
 import Linglib.Phenomena.Focus.Bridge.DTSDiscourseOnly
+import Linglib.Phenomena.Focus.Bridge.DiscourseOnlyDerivations
 import Linglib.Phenomena.Generics.BareNames
 import Linglib.Phenomena.Generics.BarePlurals
 import Linglib.Phenomena.Generics.Data
@@ -790,6 +791,12 @@ import Linglib.Theories.Pragmatics.DecisionTheoretic.ScalarImplicature
 import Linglib.Theories.Pragmatics.DecisionTheoretic.But
 import Linglib.Theories.Pragmatics.DecisionTheoretic.Even
 import Linglib.Theories.Pragmatics.DecisionTheoretic.Also
+-- Theories: Relevance Theory (Sperber & Wilson)
+import Linglib.Theories.Pragmatics.RelevanceTheory.CognitiveEnvironment
+import Linglib.Theories.Pragmatics.RelevanceTheory.CognitiveEffects
+import Linglib.Theories.Pragmatics.RelevanceTheory.Relevance
+import Linglib.Theories.Pragmatics.RelevanceTheory.Ostension
+import Linglib.Theories.Pragmatics.RelevanceTheory.Comprehension
 -- Theories: TTR (Type Theory with Records)
 import Linglib.Theories.Semantics.TypeTheoretic.Core
 import Linglib.Theories.Semantics.TypeTheoretic.Copredication
