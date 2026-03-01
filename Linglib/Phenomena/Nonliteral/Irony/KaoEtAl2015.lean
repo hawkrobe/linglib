@@ -2,7 +2,7 @@ import Linglib.Theories.Pragmatics.RSA.Core.Config
 import Linglib.Tactics.RSAPredict
 
 /-!
-# Kao, Levy & Goodman (2015) — A Computational Model of Irony @cite{kao-levy-goodman-2015}
+# Kao & Goodman (2015) — Let's Talk (Ironically) About the Weather @cite{kao-goodman-2015}
 
 Proceedings of the 37th Annual Meeting of the Cognitive Science Society.
 

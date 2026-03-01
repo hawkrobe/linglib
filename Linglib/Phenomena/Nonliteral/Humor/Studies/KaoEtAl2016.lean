@@ -1,5 +1,5 @@
-/-
-# Kao, Levy & Goodman (2016) - Computational Model of Linguistic Humor in Puns
+/-!
+# Kao, Levy & Goodman (2016) — A Computational Model of Linguistic Humor in Puns @cite{kao-levy-goodman-2016}
 
 This module contains empirical data from:
 
