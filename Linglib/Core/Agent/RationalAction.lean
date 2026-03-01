@@ -1051,11 +1051,10 @@ theorem logSumExp_convex (s : ι → ℝ) :
         log_rpow hZ_x, log_rpow hZ_y] at hlog_le
     linarith
 
-/-- Derivative of log-partition gives expected value.
+/-- Derivative of log-partition gives expected value:
+    `d/dα log(Σ exp(α sᵢ)) = Σ softmax(s,α)ᵢ · sᵢ`.
 
-TODO: Proof sketch — `d/dα log(Σ exp(α sᵢ)) = Σ sᵢ exp(α sᵢ) / Σ exp(α sⱼ)`.
-Requires `HasDerivAt` for `log ∘ Σ exp(α · sᵢ)` via chain rule and `hasDerivAt_exp`,
-then `hasDerivAt_finset_sum`. Doable but involved; lower priority. -/
+    Proof via chain rule on `log ∘ Σ exp(α · sᵢ)`, then `hasDerivAt_finset_sum`. -/
 theorem deriv_logSumExp (s : ι → ℝ) (α : ℝ) :
     deriv (λ α => logSumExp s α) α = ∑ i : ι, softmax s α i * s i := by
   simp only [logSumExp, softmax]
