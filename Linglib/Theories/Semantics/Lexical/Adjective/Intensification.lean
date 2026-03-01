@@ -34,7 +34,10 @@ import Mathlib.Data.Rat.Defs
 namespace Semantics.Lexical.Adjective.Intensification
 
 open Core.Scale (Degree Threshold Degree.toNat Threshold.toNat deg thr)
-open Semantics.Lexical.Adjective (positiveMeaning)
+
+/-- Single-threshold positive meaning: degree > θ. -/
+def positiveMeaning {max : Nat} (d : Degree max) (θ : Threshold max) : Bool :=
+  (θ : Degree max) < d
 
 -- Evaluative Valence (shared with Phenomena.Gradability.Intensifiers)
 

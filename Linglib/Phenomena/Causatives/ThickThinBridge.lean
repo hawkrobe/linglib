@@ -244,4 +244,11 @@ theorem kill_class_vs_empirical :
     LevinClass.murder.participatesIn .causativeInchoative = true
     ∧ kill.alternating = false := ⟨rfl, rfl⟩
 
+/-- All ThickThin verb entries (for aggregate bridge theorems). -/
+def allEntries : List ThickThinEntry :=
+  [ activate, affect, change, damage, destroy, eliminate, hurt, kill,
+    restore, start, stop, trigger,
+    break_, burn, bury, cut, drop, lift, lock, melt, mix, shut,
+    spread, stretch, switch ]
+
 end Phenomena.Causatives.ThickThin

@@ -97,6 +97,16 @@ def evalS1Score {U W L : Type*} [Fintype W] [DecidableEq W] [DecidableEq L]
   | .actionBased cost =>
     let p := evalL0Exact meaning l u w
     expPoint (↑α * (p - cost u))
+  | .weightedBeliefAction infWeight bonus =>
+    let p := evalL0Exact meaning l u w
+    if hp : 0 < p then
+      -- exp(α · (infWeight · log(L0) + bonus(u)))
+      let logBase := logPoint p hp
+      let scaled := (QInterval.exact infWeight).mul logBase
+      let bonusTerm := QInterval.exact (bonus u)
+      let arg := (QInterval.exact (↑α)).mul (scaled.add bonusTerm)
+      expInterval arg
+    else QInterval.exact 0
   | .beliefWeighted belief quality =>
     if quality l u then
       -- exp(α · Σ_s belief(l,s) · log(L0(u,s)))

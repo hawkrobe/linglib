@@ -146,7 +146,6 @@ theorem S1_trace_iff_score_ge (cfg : RSAConfig U W) (l : cfg.Latent) (w : W)
 When `S1agent.score w u₁ = S1agent.score w u₂` for all latent values and
 worlds, the two utterances are indistinguishable at L1: the pragmatic
 listener assigns them the same posterior over worlds. -/
-omit [DecidableEq U] in
 theorem L1_eq_of_S1_score_eq (cfg : RSAConfig U W) (u₁ u₂ : U)
     (h_eq : ∀ (l : cfg.Latent) (w : W),
       (cfg.S1agent l).score w u₁ = (cfg.S1agent l).score w u₂)
