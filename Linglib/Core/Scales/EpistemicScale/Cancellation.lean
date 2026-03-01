@@ -24,9 +24,8 @@ a neutral portfolio with a strict member.
 * `cancellation_implies_representable` — hard direction: cancellation → measure existence
   (via `feasibleWeights`, `cancellation_nonempty`, `feasible_to_measure`)
 * `fa_cancellation_fin3` — FA axioms imply cancellation on Fin 3
-* `fa_cancellation_fin4` — FA axioms imply cancellation on Fin 4
+* `fa_cancellation_fin4` — FA axioms imply cancellation on Fin 4 (in `Cancellation88.lean`)
 * `theorem8a_fin3'` — KPS Theorem 8a for n = 3 (via cancellation)
-* `theorem8a_fin4'` — KPS Theorem 8a for n = 4 (via cancellation)
 -/
 
 namespace Core.Scale
@@ -1148,7 +1147,7 @@ theorem fa_cancellation_fin3 (sys : EpistemicSystemFA (Fin 3)) :
   exact representable_implies_cancellation sys m hm
 
 /-- Not all 4 singletons can be null (non-triviality). -/
-private theorem not_all_null_fin4 (sys : EpistemicSystemFA (Fin 4))
+theorem not_all_null_fin4 (sys : EpistemicSystemFA (Fin 4))
     (h0 : sys.ge ∅ {(0 : Fin 4)}) (h1 : sys.ge ∅ {(1 : Fin 4)})
     (h2 : sys.ge ∅ {(2 : Fin 4)}) (h3 : sys.ge ∅ {(3 : Fin 4)}) : False := by
   have h01 : sys.ge ∅ ({0, 1} : Set (Fin 4)) := by
@@ -1172,7 +1171,7 @@ private theorem not_all_null_fin4 (sys : EpistemicSystemFA (Fin 4))
           exact h012)))
 
 /-- Helper: if element 0 is null on Fin 4, derive cancellation via null reduction to Fin 3. -/
-private theorem fa_cancellation_fin4_null0 (sys : EpistemicSystemFA (Fin 4))
+theorem fa_cancellation_fin4_null0 (sys : EpistemicSystemFA (Fin 4))
     (h0 : sys.ge ∅ {(0 : Fin 4)})
     (hnn : ∃ i : Fin 3, ¬sys.ge ∅ {Fin.succ i}) :
     Cancellation 4 sys.ge := by
@@ -1183,7 +1182,7 @@ private theorem fa_cancellation_fin4_null0 (sys : EpistemicSystemFA (Fin 4))
     summing to 1 such that every valid comparison has p-value ≥ 0 and every
     strict comparison has p-value > 0.
     This avoids constructing a full representing measure. -/
-private theorem cancellation_from_weights {n : ℕ} (sys : EpistemicSystemFA (Fin n))
+theorem cancellation_from_weights {n : ℕ} (sys : EpistemicSystemFA (Fin n))
     (p : Fin n → ℚ) (hp : ∀ i, 0 < p i) (hsum : Finset.univ.sum p = 1)
     (hfwd : ∀ (A B : Finset (Fin n)), Disjoint A B → sys.ge ↑A ↑B →
       A.sum p ≥ B.sum p)
@@ -1232,8 +1231,33 @@ private theorem cancellation_from_weights {n : ℕ} (sys : EpistemicSystemFA (Fi
     Finset.sum_eq_zero (fun i _ => by rw [hNeutral i, mul_zero])
   linarith
 
+/-- Wrapper around `cancellation_from_weights` that replaces the two universally-quantified
+    obligations (hfwd, hstrict) with a single contrapositive condition:
+    for every disjoint pair (A, B) where A.sum p < B.sum p, we have ¬sys.ge ↑A ↑B.
+    Equal-sum pairs need bidirectionality (heq).
+    The proof of cancellation_from_weights does the hfwd/hstrict dispatch once;
+    each chamber only provides the ~5-10 ¬ge facts for "wrong-direction" pairs. -/
+theorem cancellation_from_weights_fin4 (sys : EpistemicSystemFA (Fin 4))
+    (p : Fin 4 → ℚ) (hp : ∀ i, 0 < p i) (hsum : Finset.univ.sum p = 1)
+    (hnge : ∀ (A B : Finset (Fin 4)), Disjoint A B →
+      A.sum p < B.sum p → ¬sys.ge ↑A ↑B)
+    (heq : ∀ (A B : Finset (Fin 4)), Disjoint A B →
+      A.sum p = B.sum p → sys.ge ↑A ↑B → sys.ge ↑B ↑A) :
+    Cancellation 4 sys.ge := by
+  apply cancellation_from_weights sys p hp hsum
+  · -- hfwd: sys.ge ↑A ↑B → A.sum p ≥ B.sum p
+    intro A B hDisj hGe
+    by_contra hlt; push_neg at hlt
+    exact absurd hGe (hnge A B hDisj hlt)
+  · -- hstrict: sys.ge ↑A ↑B → ¬sys.ge ↑B ↑A → A.sum p > B.sum p
+    intro A B hDisj hGe hStrict
+    by_contra h; push_neg at h
+    rcases eq_or_lt_of_le h with h | h
+    · exact absurd (heq A B hDisj h hGe) hStrict
+    · exact absurd hGe (hnge A B hDisj h)
+
 /-- Classify all Finset (Fin 4) into one of 16 explicit values. -/
-private lemma finset_fin4_eq (S : Finset (Fin 4)) :
+lemma finset_fin4_eq (S : Finset (Fin 4)) :
     S = ∅ ∨ S = {0} ∨ S = {1} ∨ S = {2} ∨ S = {3} ∨
     S = {0,1} ∨ S = {0,2} ∨ S = {0,3} ∨ S = {1,2} ∨ S = {1,3} ∨ S = {2,3} ∨
     S = {0,1,2} ∨ S = {0,1,3} ∨ S = {0,2,3} ∨ S = {1,2,3} ∨
@@ -1244,196 +1268,104 @@ private lemma finset_fin4_eq (S : Finset (Fin 4)) :
     have := h S; simp [Finset.mem_insert] at this; exact this
   decide
 
+/-- ¬ge({1,3}, {0,2}) from singleton hypotheses via additive decomposition.
+    Route A (¬ge({1},{0})): ge({1,3},{0,2}) → additive ge({0,2},{0,3}) via ge({2},{3})
+      → trans → ge({1,3},{0,3}) → additive → ge({1},{0}) → contradiction.
+    Route B (¬ge({3},{2})): ge({1,3},{0,2}) → additive ge({0,2},{1,2}) via ge({0},{1})
+      → trans → ge({1,3},{1,2}) → additive → ge({3},{2}) → contradiction. -/
+theorem nge_13_02 (sys : EpistemicSystemFA (Fin 4))
+    (h01 : sys.ge {(0 : Fin 4)} {1}) (h23 : sys.ge {(2 : Fin 4)} {3})
+    (h : ¬sys.ge {(1 : Fin 4)} {0} ∨ ¬sys.ge {(3 : Fin 4)} {2}) :
+    ¬sys.ge ({1, 3} : Set (Fin 4)) {0, 2} := by
+  intro hge
+  rcases h with h10 | h32
+  · -- Route A: through {0,3}. ge({0,2},{0,3}) ↔ ge({2},{3}).
+    have h1 : sys.ge ({0, 2} : Set (Fin 4)) {0, 3} := by
+      rw [sys.additive ({0, 2} : Set (Fin 4)) {0, 3}]
+      rw [show ({0, 2} : Set (Fin 4)) \ {0, 3} = {(2 : Fin 4)} from
+            by ext x; fin_cases x <;> simp [Set.mem_diff, Set.mem_insert_iff],
+          show ({0, 3} : Set (Fin 4)) \ {0, 2} = {(3 : Fin 4)} from
+            by ext x; fin_cases x <;> simp [Set.mem_diff, Set.mem_insert_iff]]
+      exact h23
+    -- ge({1,3},{0,3}) ↔ ge({1},{0})
+    have h2 := sys.trans _ _ _ hge h1
+    rw [sys.additive ({1, 3} : Set (Fin 4)) {0, 3}] at h2
+    rw [show ({1, 3} : Set (Fin 4)) \ {0, 3} = {(1 : Fin 4)} from
+          by ext x; fin_cases x <;> simp [Set.mem_diff, Set.mem_insert_iff],
+        show ({0, 3} : Set (Fin 4)) \ {1, 3} = {(0 : Fin 4)} from
+          by ext x; fin_cases x <;> simp [Set.mem_diff, Set.mem_insert_iff]] at h2
+    exact h10 h2
+  · -- Route B: through {1,2}. ge({0,2},{1,2}) ↔ ge({0},{1}).
+    have h1 : sys.ge ({0, 2} : Set (Fin 4)) {1, 2} := by
+      rw [sys.additive ({0, 2} : Set (Fin 4)) {1, 2}]
+      rw [show ({0, 2} : Set (Fin 4)) \ {1, 2} = {(0 : Fin 4)} from
+            by ext x; fin_cases x <;> simp [Set.mem_diff, Set.mem_insert_iff],
+          show ({1, 2} : Set (Fin 4)) \ {0, 2} = {(1 : Fin 4)} from
+            by ext x; fin_cases x <;> simp [Set.mem_diff, Set.mem_insert_iff]]
+      exact h01
+    -- ge({1,3},{1,2}) ↔ ge({3},{2})
+    have h2 := sys.trans _ _ _ hge h1
+    rw [sys.additive ({1, 3} : Set (Fin 4)) {1, 2}] at h2
+    rw [show ({1, 3} : Set (Fin 4)) \ {1, 2} = {(3 : Fin 4)} from
+          by ext x; fin_cases x <;> simp [Set.mem_diff, Set.mem_insert_iff],
+        show ({1, 2} : Set (Fin 4)) \ {1, 3} = {(2 : Fin 4)} from
+          by ext x; fin_cases x <;> simp [Set.mem_diff, Set.mem_insert_iff]] at h2
+    exact h32 h2
+
+/-- ¬ge({2,3}, {0,1}) from singleton hypotheses via additive decomposition.
+    Route A (¬ge({2},{0})): ge({2,3},{0,1}) → additive ge({0,1},{0,3}) via ge({1},{3})
+      → trans → ge({2,3},{0,3}) → additive → ge({2},{0}) → contradiction.
+    Route B (¬ge({3},{1})): ge({2,3},{0,1}) → additive ge({0,1},{1,2}) via ge({0},{2})
+      → trans → ge({2,3},{1,2}) → additive → ge({3},{1}) → contradiction. -/
+theorem nge_23_01 (sys : EpistemicSystemFA (Fin 4))
+    (h12 : sys.ge {(1 : Fin 4)} {2}) (h23 : sys.ge {(2 : Fin 4)} {3})
+    (h01 : sys.ge {(0 : Fin 4)} {1})
+    (h : ¬sys.ge {(2 : Fin 4)} {0} ∨ ¬sys.ge {(3 : Fin 4)} {1}) :
+    ¬sys.ge ({2, 3} : Set (Fin 4)) {0, 1} := by
+  intro hge
+  rcases h with h20 | h31
+  · -- Route A: through {0,3}. ge({0,1},{0,3}) ↔ ge({1},{3}).
+    have h13 := sys.trans _ _ _ h12 h23
+    have h1 : sys.ge ({0, 1} : Set (Fin 4)) {0, 3} := by
+      rw [sys.additive ({0, 1} : Set (Fin 4)) {0, 3}]
+      rw [show ({0, 1} : Set (Fin 4)) \ {0, 3} = {(1 : Fin 4)} from
+            by ext x; fin_cases x <;> simp [Set.mem_diff, Set.mem_insert_iff],
+          show ({0, 3} : Set (Fin 4)) \ {0, 1} = {(3 : Fin 4)} from
+            by ext x; fin_cases x <;> simp [Set.mem_diff, Set.mem_insert_iff]]
+      exact h13
+    -- ge({2,3},{0,3}) ↔ ge({2},{0})
+    have h2 := sys.trans _ _ _ hge h1
+    rw [sys.additive ({2, 3} : Set (Fin 4)) {0, 3}] at h2
+    rw [show ({2, 3} : Set (Fin 4)) \ {0, 3} = {(2 : Fin 4)} from
+          by ext x; fin_cases x <;> simp [Set.mem_diff, Set.mem_insert_iff],
+        show ({0, 3} : Set (Fin 4)) \ {2, 3} = {(0 : Fin 4)} from
+          by ext x; fin_cases x <;> simp [Set.mem_diff, Set.mem_insert_iff]] at h2
+    exact h20 h2
+  · -- Route B: through {1,2}. ge({0,1},{1,2}) ↔ ge({0},{2}).
+    have h02 := sys.trans _ _ _ h01 h12
+    have h1 : sys.ge ({0, 1} : Set (Fin 4)) {1, 2} := by
+      rw [sys.additive ({0, 1} : Set (Fin 4)) {1, 2}]
+      rw [show ({0, 1} : Set (Fin 4)) \ {1, 2} = {(0 : Fin 4)} from
+            by ext x; fin_cases x <;> simp [Set.mem_diff, Set.mem_insert_iff],
+          show ({1, 2} : Set (Fin 4)) \ {0, 1} = {(2 : Fin 4)} from
+            by ext x; fin_cases x <;> simp [Set.mem_diff, Set.mem_insert_iff]]
+      exact h02
+    -- ge({2,3},{1,2}) ↔ ge({3},{1})
+    have h2 := sys.trans _ _ _ hge h1
+    rw [sys.additive ({2, 3} : Set (Fin 4)) {1, 2}] at h2
+    rw [show ({2, 3} : Set (Fin 4)) \ {1, 2} = {(3 : Fin 4)} from
+          by ext x; fin_cases x <;> simp [Set.mem_diff, Set.mem_insert_iff],
+        show ({1, 2} : Set (Fin 4)) \ {2, 3} = {(1 : Fin 4)} from
+          by ext x; fin_cases x <;> simp [Set.mem_diff, Set.mem_insert_iff]] at h2
+    exact h31 h2
+
 /-- Cancellation transfers through permutations (via representability). -/
-private theorem perm_cancellation {n : ℕ} (σ : Fin n ≃ Fin n)
+theorem perm_cancellation {n : ℕ} (σ : Fin n ≃ Fin n)
     (sys : EpistemicSystemFA (Fin n))
     (hc : Cancellation n (transportFA σ sys).ge) :
     Cancellation n sys.ge := by
   obtain ⟨m, hm⟩ := perm_repr σ sys (cancellation_implies_representable _ hc)
   exact representable_implies_cancellation sys m hm
-
-set_option maxHeartbeats 3200000 in
-/-- Canonical case: 0 ≥ 1 ≥ 2 ≥ 3 with all singletons positive. -/
-private theorem fa_cancellation_fin4_sorted (sys : EpistemicSystemFA (Fin 4))
-    (hpos : ∀ i : Fin 4, ¬sys.ge ∅ {i})
-    (h01 : sys.ge {(0 : Fin 4)} {1}) (h12 : sys.ge {(1 : Fin 4)} {2})
-    (h23 : sys.ge {(2 : Fin 4)} {3}) :
-    Cancellation 4 sys.ge := by
-  -- Derive transitive consequences
-  have h02 : sys.ge {(0 : Fin 4)} {2} := sys.trans _ _ _ h01 h12
-  have h03 : sys.ge {(0 : Fin 4)} {3} := sys.trans _ _ _ h02 h23
-  have h13 : sys.ge {(1 : Fin 4)} {3} := sys.trans _ _ _ h12 h23
-  -- Case-split on the free pair {0,3} vs {1,2}
-  by_cases hfree : sys.ge {(0 : Fin 4), 3} {1, 2}
-  · -- Case: ge {0,3} {1,2}. Use weights (10,6,3,1)/20.
-    apply cancellation_from_weights sys (![10/20, 6/20, 3/20, 1/20])
-    · intro i; fin_cases i <;> norm_num
-    · simp [Fin.sum_univ_four]; norm_num
-    · sorry -- hfwd
-    · sorry -- hstrict
-  · -- Case: ¬ge {0,3} {1,2} → ge {1,2} {0,3} by totality
-    have hfree' : sys.ge {(1 : Fin 4), 2} {0, 3} := (sys.total _ _).resolve_right hfree
-    apply cancellation_from_weights sys (![10/26, 8/26, 7/26, 1/26])
-    · intro i; fin_cases i <;> norm_num
-    · simp [Fin.sum_univ_four]; norm_num
-    · sorry -- hfwd
-    · sorry -- hstrict
-
-set_option maxHeartbeats 12800000 in
-set_option linter.unusedTactic false in
-set_option linter.unusedVariables false in
-/-- All-positive case: when all 4 singletons have positive mass, FA implies
-    cancellation on Fin 4. Case-splits on singleton orderings, then permutes
-    each to canonical form 0≥1≥2≥3 for `fa_cancellation_fin4_sorted`. -/
-private theorem fa_cancellation_fin4_allpos (sys : EpistemicSystemFA (Fin 4))
-    (h0 : ¬sys.ge ∅ {(0 : Fin 4)}) (h1 : ¬sys.ge ∅ {(1 : Fin 4)})
-    (h2 : ¬sys.ge ∅ {(2 : Fin 4)}) (h3 : ¬sys.ge ∅ {(3 : Fin 4)}) :
-    Cancellation 4 sys.ge := by
-  -- Case-split on all 6 pairwise singleton orderings (64 branches)
-  by_cases h01 : sys.ge {(0 : Fin 4)} {1} <;>
-  by_cases h02 : sys.ge {(0 : Fin 4)} {2} <;>
-  by_cases h03 : sys.ge {(0 : Fin 4)} {3} <;>
-  by_cases h12 : sys.ge {(1 : Fin 4)} {2} <;>
-  by_cases h13 : sys.ge {(1 : Fin 4)} {3} <;>
-  by_cases h23 : sys.ge {(2 : Fin 4)} {3}
-  -- Resolve reverse orderings via totality
-  all_goals try (have h10 := (sys.total {1} {0}).resolve_right ‹_›)
-  all_goals try (have h20 := (sys.total {2} {0}).resolve_right ‹_›)
-  all_goals try (have h30 := (sys.total {3} {0}).resolve_right ‹_›)
-  all_goals try (have h21 := (sys.total {2} {1}).resolve_right ‹_›)
-  all_goals try (have h31 := (sys.total {3} {1}).resolve_right ‹_›)
-  all_goals try (have h32 := (sys.total {3} {2}).resolve_right ‹_›)
-  -- Eliminate transitivity violations (24 branches eliminated)
-  all_goals try (exfalso; exact ‹¬sys.ge _ _› (sys.trans _ _ _ ‹sys.ge _ _› ‹sys.ge _ _›))
-  -- Derive all transitive consequences for remaining 40 branches
-  all_goals try (have := sys.trans _ _ _ ‹sys.ge {0} {1}› ‹sys.ge {1} {2}›)
-  all_goals try (have := sys.trans _ _ _ ‹sys.ge {0} {2}› ‹sys.ge {2} {3}›)
-  all_goals try (have := sys.trans _ _ _ ‹sys.ge {1} {2}› ‹sys.ge {2} {3}›)
-  all_goals try (have := sys.trans _ _ _ ‹sys.ge {1} {0}› ‹sys.ge {0} {2}›)
-  all_goals try (have := sys.trans _ _ _ ‹sys.ge {1} {0}› ‹sys.ge {0} {3}›)
-  all_goals try (have := sys.trans _ _ _ ‹sys.ge {2} {0}› ‹sys.ge {0} {1}›)
-  all_goals try (have := sys.trans _ _ _ ‹sys.ge {2} {0}› ‹sys.ge {0} {3}›)
-  all_goals try (have := sys.trans _ _ _ ‹sys.ge {2} {1}› ‹sys.ge {1} {0}›)
-  all_goals try (have := sys.trans _ _ _ ‹sys.ge {2} {1}› ‹sys.ge {1} {3}›)
-  all_goals try (have := sys.trans _ _ _ ‹sys.ge {3} {0}› ‹sys.ge {0} {1}›)
-  all_goals try (have := sys.trans _ _ _ ‹sys.ge {3} {0}› ‹sys.ge {0} {2}›)
-  all_goals try (have := sys.trans _ _ _ ‹sys.ge {3} {1}› ‹sys.ge {1} {0}›)
-  all_goals try (have := sys.trans _ _ _ ‹sys.ge {3} {1}› ‹sys.ge {1} {2}›)
-  all_goals try (have := sys.trans _ _ _ ‹sys.ge {3} {2}› ‹sys.ge {2} {0}›)
-  all_goals try (have := sys.trans _ _ _ ‹sys.ge {3} {2}› ‹sys.ge {2} {1}›)
-  -- Permute each surviving branch to canonical form and apply sorted theorem.
-  -- Each block: apply perm_cancellation with a specific S₄ element, then dispatch
-  -- the sorted hypotheses. inv = ![a,b,c,d] encodes ordering a≥b≥c≥d.
-  all_goals first
-    | (apply perm_cancellation (show Fin 4 ≃ Fin 4 from ⟨![0,1,2,3], ![0,1,2,3], by decide, by decide⟩)
-       refine fa_cancellation_fin4_sorted _ (fun i => by rw [perm_null_iff]; fin_cases i <;> (dsimp; assumption)) ?_ ?_ ?_
-       all_goals (rw [perm_singleton_iff]; dsimp; assumption))
-    | (apply perm_cancellation (show Fin 4 ≃ Fin 4 from ⟨![0,1,3,2], ![0,1,3,2], by decide, by decide⟩)
-       refine fa_cancellation_fin4_sorted _ (fun i => by rw [perm_null_iff]; fin_cases i <;> (dsimp; assumption)) ?_ ?_ ?_
-       all_goals (rw [perm_singleton_iff]; dsimp; assumption))
-    | (apply perm_cancellation (show Fin 4 ≃ Fin 4 from ⟨![0,2,1,3], ![0,2,1,3], by decide, by decide⟩)
-       refine fa_cancellation_fin4_sorted _ (fun i => by rw [perm_null_iff]; fin_cases i <;> (dsimp; assumption)) ?_ ?_ ?_
-       all_goals (rw [perm_singleton_iff]; dsimp; assumption))
-    | (apply perm_cancellation (show Fin 4 ≃ Fin 4 from ⟨![0,3,1,2], ![0,2,3,1], by decide, by decide⟩)
-       refine fa_cancellation_fin4_sorted _ (fun i => by rw [perm_null_iff]; fin_cases i <;> (dsimp; assumption)) ?_ ?_ ?_
-       all_goals (rw [perm_singleton_iff]; dsimp; assumption))
-    | (apply perm_cancellation (show Fin 4 ≃ Fin 4 from ⟨![0,2,3,1], ![0,3,1,2], by decide, by decide⟩)
-       refine fa_cancellation_fin4_sorted _ (fun i => by rw [perm_null_iff]; fin_cases i <;> (dsimp; assumption)) ?_ ?_ ?_
-       all_goals (rw [perm_singleton_iff]; dsimp; assumption))
-    | (apply perm_cancellation (show Fin 4 ≃ Fin 4 from ⟨![0,3,2,1], ![0,3,2,1], by decide, by decide⟩)
-       refine fa_cancellation_fin4_sorted _ (fun i => by rw [perm_null_iff]; fin_cases i <;> (dsimp; assumption)) ?_ ?_ ?_
-       all_goals (rw [perm_singleton_iff]; dsimp; assumption))
-    | (apply perm_cancellation (show Fin 4 ≃ Fin 4 from ⟨![1,0,2,3], ![1,0,2,3], by decide, by decide⟩)
-       refine fa_cancellation_fin4_sorted _ (fun i => by rw [perm_null_iff]; fin_cases i <;> (dsimp; assumption)) ?_ ?_ ?_
-       all_goals (rw [perm_singleton_iff]; dsimp; assumption))
-    | (apply perm_cancellation (show Fin 4 ≃ Fin 4 from ⟨![1,0,3,2], ![1,0,3,2], by decide, by decide⟩)
-       refine fa_cancellation_fin4_sorted _ (fun i => by rw [perm_null_iff]; fin_cases i <;> (dsimp; assumption)) ?_ ?_ ?_
-       all_goals (rw [perm_singleton_iff]; dsimp; assumption))
-    | (apply perm_cancellation (show Fin 4 ≃ Fin 4 from ⟨![2,0,1,3], ![1,2,0,3], by decide, by decide⟩)
-       refine fa_cancellation_fin4_sorted _ (fun i => by rw [perm_null_iff]; fin_cases i <;> (dsimp; assumption)) ?_ ?_ ?_
-       all_goals (rw [perm_singleton_iff]; dsimp; assumption))
-    | (apply perm_cancellation (show Fin 4 ≃ Fin 4 from ⟨![3,0,1,2], ![1,2,3,0], by decide, by decide⟩)
-       refine fa_cancellation_fin4_sorted _ (fun i => by rw [perm_null_iff]; fin_cases i <;> (dsimp; assumption)) ?_ ?_ ?_
-       all_goals (rw [perm_singleton_iff]; dsimp; assumption))
-    | (apply perm_cancellation (show Fin 4 ≃ Fin 4 from ⟨![2,0,3,1], ![1,3,0,2], by decide, by decide⟩)
-       refine fa_cancellation_fin4_sorted _ (fun i => by rw [perm_null_iff]; fin_cases i <;> (dsimp; assumption)) ?_ ?_ ?_
-       all_goals (rw [perm_singleton_iff]; dsimp; assumption))
-    | (apply perm_cancellation (show Fin 4 ≃ Fin 4 from ⟨![3,0,2,1], ![1,3,2,0], by decide, by decide⟩)
-       refine fa_cancellation_fin4_sorted _ (fun i => by rw [perm_null_iff]; fin_cases i <;> (dsimp; assumption)) ?_ ?_ ?_
-       all_goals (rw [perm_singleton_iff]; dsimp; assumption))
-    | (apply perm_cancellation (show Fin 4 ≃ Fin 4 from ⟨![1,2,0,3], ![2,0,1,3], by decide, by decide⟩)
-       refine fa_cancellation_fin4_sorted _ (fun i => by rw [perm_null_iff]; fin_cases i <;> (dsimp; assumption)) ?_ ?_ ?_
-       all_goals (rw [perm_singleton_iff]; dsimp; assumption))
-    | (apply perm_cancellation (show Fin 4 ≃ Fin 4 from ⟨![1,3,0,2], ![2,0,3,1], by decide, by decide⟩)
-       refine fa_cancellation_fin4_sorted _ (fun i => by rw [perm_null_iff]; fin_cases i <;> (dsimp; assumption)) ?_ ?_ ?_
-       all_goals (rw [perm_singleton_iff]; dsimp; assumption))
-    | (apply perm_cancellation (show Fin 4 ≃ Fin 4 from ⟨![2,1,0,3], ![2,1,0,3], by decide, by decide⟩)
-       refine fa_cancellation_fin4_sorted _ (fun i => by rw [perm_null_iff]; fin_cases i <;> (dsimp; assumption)) ?_ ?_ ?_
-       all_goals (rw [perm_singleton_iff]; dsimp; assumption))
-    | (apply perm_cancellation (show Fin 4 ≃ Fin 4 from ⟨![3,1,0,2], ![2,1,3,0], by decide, by decide⟩)
-       refine fa_cancellation_fin4_sorted _ (fun i => by rw [perm_null_iff]; fin_cases i <;> (dsimp; assumption)) ?_ ?_ ?_
-       all_goals (rw [perm_singleton_iff]; dsimp; assumption))
-    | (apply perm_cancellation (show Fin 4 ≃ Fin 4 from ⟨![2,3,0,1], ![2,3,0,1], by decide, by decide⟩)
-       refine fa_cancellation_fin4_sorted _ (fun i => by rw [perm_null_iff]; fin_cases i <;> (dsimp; assumption)) ?_ ?_ ?_
-       all_goals (rw [perm_singleton_iff]; dsimp; assumption))
-    | (apply perm_cancellation (show Fin 4 ≃ Fin 4 from ⟨![3,2,0,1], ![2,3,1,0], by decide, by decide⟩)
-       refine fa_cancellation_fin4_sorted _ (fun i => by rw [perm_null_iff]; fin_cases i <;> (dsimp; assumption)) ?_ ?_ ?_
-       all_goals (rw [perm_singleton_iff]; dsimp; assumption))
-    | (apply perm_cancellation (show Fin 4 ≃ Fin 4 from ⟨![1,2,3,0], ![3,0,1,2], by decide, by decide⟩)
-       refine fa_cancellation_fin4_sorted _ (fun i => by rw [perm_null_iff]; fin_cases i <;> (dsimp; assumption)) ?_ ?_ ?_
-       all_goals (rw [perm_singleton_iff]; dsimp; assumption))
-    | (apply perm_cancellation (show Fin 4 ≃ Fin 4 from ⟨![1,3,2,0], ![3,0,2,1], by decide, by decide⟩)
-       refine fa_cancellation_fin4_sorted _ (fun i => by rw [perm_null_iff]; fin_cases i <;> (dsimp; assumption)) ?_ ?_ ?_
-       all_goals (rw [perm_singleton_iff]; dsimp; assumption))
-    | (apply perm_cancellation (show Fin 4 ≃ Fin 4 from ⟨![2,1,3,0], ![3,1,0,2], by decide, by decide⟩)
-       refine fa_cancellation_fin4_sorted _ (fun i => by rw [perm_null_iff]; fin_cases i <;> (dsimp; assumption)) ?_ ?_ ?_
-       all_goals (rw [perm_singleton_iff]; dsimp; assumption))
-    | (apply perm_cancellation (show Fin 4 ≃ Fin 4 from ⟨![3,1,2,0], ![3,1,2,0], by decide, by decide⟩)
-       refine fa_cancellation_fin4_sorted _ (fun i => by rw [perm_null_iff]; fin_cases i <;> (dsimp; assumption)) ?_ ?_ ?_
-       all_goals (rw [perm_singleton_iff]; dsimp; assumption))
-    | (apply perm_cancellation (show Fin 4 ≃ Fin 4 from ⟨![2,3,1,0], ![3,2,0,1], by decide, by decide⟩)
-       refine fa_cancellation_fin4_sorted _ (fun i => by rw [perm_null_iff]; fin_cases i <;> (dsimp; assumption)) ?_ ?_ ?_
-       all_goals (rw [perm_singleton_iff]; dsimp; assumption))
-    | (apply perm_cancellation (show Fin 4 ≃ Fin 4 from ⟨![3,2,1,0], ![3,2,1,0], by decide, by decide⟩)
-       refine fa_cancellation_fin4_sorted _ (fun i => by rw [perm_null_iff]; fin_cases i <;> (dsimp; assumption)) ?_ ?_ ?_
-       all_goals (rw [perm_singleton_iff]; dsimp; assumption))
-
-/-- FA on Fin 4 implies the cancellation property.
-    Null cases: reduce via `null_elem_reduce` + `theorem8a_fin3`.
-    All-positive case: direct combinatorial argument (`fa_cancellation_fin4_allpos`). -/
-theorem fa_cancellation_fin4 (sys : EpistemicSystemFA (Fin 4)) :
-    Cancellation 4 sys.ge := by
-  by_cases h0 : sys.ge ∅ {(0 : Fin 4)}
-  · -- element 0 null: reduce to Fin 3
-    exact fa_cancellation_fin4_null0 sys h0 (by
-      by_contra hall; push_neg at hall
-      exact not_all_null_fin4 sys h0 (hall 0) (hall 1) (hall 2))
-  · by_cases h1 : sys.ge ∅ {(1 : Fin 4)}
-    · -- element 1 null: permute via swap(0,1) to put null at 0
-      obtain ⟨m, hm⟩ := perm_repr (Equiv.swap 0 1) sys
-        (null_elem_reduce (transportFA (Equiv.swap 0 1) sys)
-          ((perm_null_convert _ _ 0 1 (by decide)).mpr h1)
-          ⟨0, fun h => h0 ((perm_null_convert _ _ 1 0 (by decide)).mp h)⟩
-          (fun sys' => theorem8a_fin3 sys'))
-      exact representable_implies_cancellation sys m hm
-    · by_cases h2 : sys.ge ∅ {(2 : Fin 4)}
-      · -- element 2 null: permute via swap(0,2)
-        obtain ⟨m, hm⟩ := perm_repr (Equiv.swap 0 2) sys
-          (null_elem_reduce (transportFA (Equiv.swap 0 2) sys)
-            ((perm_null_convert _ _ 0 2 (by decide)).mpr h2)
-            ⟨0, fun h => h1 ((perm_null_convert _ _ 1 1 (by decide)).mp h)⟩
-            (fun sys' => theorem8a_fin3 sys'))
-        exact representable_implies_cancellation sys m hm
-      · by_cases h3 : sys.ge ∅ {(3 : Fin 4)}
-        · -- element 3 null: permute via swap(0,3)
-          obtain ⟨m, hm⟩ := perm_repr (Equiv.swap 0 3) sys
-            (null_elem_reduce (transportFA (Equiv.swap 0 3) sys)
-              ((perm_null_convert _ _ 0 3 (by decide)).mpr h3)
-              ⟨0, fun h => h1 ((perm_null_convert _ _ 1 1 (by decide)).mp h)⟩
-              (fun sys' => theorem8a_fin3 sys'))
-          exact representable_implies_cancellation sys m hm
-        · -- all singletons positive
-          exact fa_cancellation_fin4_allpos sys h0 h1 h2 h3
 
 -- ═══════════════════════════════════════════════════════════════
 -- § 6. KPS Theorem 8a via cancellation
@@ -1444,11 +1376,5 @@ theorem fa_cancellation_fin4 (sys : EpistemicSystemFA (Fin 4)) :
 theorem theorem8a_fin3' (sys : EpistemicSystemFA (Fin 3)) :
     ∃ (m : FinAddMeasure (Fin 3)), ∀ A B, sys.ge A B ↔ m.inducedGe A B :=
   cancellation_implies_representable sys (fa_cancellation_fin3 sys)
-
-/-- **Theorem 8a for Fin 4** (via cancellation): every FA system on Fin 4 is
-    representable by a finitely additive probability measure. -/
-theorem theorem8a_fin4' (sys : EpistemicSystemFA (Fin 4)) :
-    ∃ (m : FinAddMeasure (Fin 4)), ∀ A B, sys.ge A B ↔ m.inducedGe A B :=
-  cancellation_implies_representable sys (fa_cancellation_fin4 sys)
 
 end Core.Scale

@@ -1,4 +1,4 @@
-import Linglib.Core.Scales.EpistemicScale.Cancellation
+import Linglib.Core.Scales.EpistemicScale.Cancellation88
 
 /-!
 # Theorem 8a for Fin 4
