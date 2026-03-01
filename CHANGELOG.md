@@ -1,13 +1,29 @@
 # Changelog
 
+## [0.227.65] - 2026-02-28
+
+### Fixed
+- **Luce (1959) audit** — cross-referenced all formalizations against the PDF:
+  - **`ChoiceApproximations.lean`** (§1.G): entirely rewritten — old content (ε-approximate IIA, transitivity bounds) was hallucinated; replaced with actual §1.G: JNDs (Definition 3), semiorder axioms (Theorem 5), trace relation (Definition 4), trace is weak order (Theorem 6)
+  - **`RationalAction.lean`** §6: relabeled from "Independence of Unit (§1.F, Theorem 6)" to "Uniqueness Characterization (converse of Theorem 4)" — actual §1.F is about state-dependent transformations
+  - **`Learning.lean`**: corrected all section references (§4.A→§4.B/C, §4.C→§4.D, §4.D→§4.C, §4.E→§4.G, Theorem 17→Theorem 16)
+  - **`Thurstone.lean`**: fixed logistic approximation constant from `√(π/3) ≈ 1.023` to `π/√3 ≈ 1.814` (variance-matching derivation)
+
+### Added
+- **`NormalCDF.lean`**: shared Gaussian CDF module (`normalPDF`, `normalCDF`, 8 properties) extracted from duplicate definitions in `Thurstone.lean` and `SignalDetection.lean`
+
+### Removed
+- Duplicate `normalCDF`/`normalPDF` sections from `Thurstone.lean` and `SignalDetection.lean` (now imported from `NormalCDF.lean`)
+- Duplicate `import Linglib.Core.Agent.SignalDetection` in `Linglib.lean`
+
 ## [0.227.64] - 2026-02-28
 
 ### Added
 - **Luce (1959) comprehensive formalization** — 6 new files + extensions to `RationalAction.lean` covering the full book:
   - **`RationalAction.lean` §1.F + Appendix 1**: Independence of Unit (`proportional_of_policy_eq`, `policy_eq_iff_proportional`); `ChoiceFn` type with three equivalent Axiom 1 forms (ratio, product rule, pairwise IIA) and proofs of (a)→(b), (a)→(c)
-  - **`ChoiceApproximations.lean`** (§1.G): `ApproxLuce` structure for ε-approximate IIA, `transitivityDeviation` with exact-zero proof, `consistencyRatio` with exact-one proof, error propagation bounds
+  - **`ChoiceApproximations.lean`** (§1.G): `pairwiseProb`, JNDs (`jndL`, `jndI`), semiorder properties, `traceGe` weak order
   - **`Psychophysics.lean`** (§2.B–C): `StevensScale` power law, `stevens_fechner_equivalence` (power ↔ log under variable change), `MultidimStimulus` with dimension independence axiom
-  - **`Thurstone.lean`** (§2.D): `ThurstoneCaseV` Gaussian discriminal processes, `normalCDF`, logistic-normal approximation bridge, strong stochastic transitivity
+  - **`Thurstone.lean`** (§2.D): `ThurstoneCaseV` Gaussian discriminal processes, logistic-normal approximation bridge, strong stochastic transitivity
   - **`SignalDetection.lean`** (§2.E): `SDTModel` with d'/criterion, hit/false-alarm rates, `rocCurve`, `likelihoodRatio`, `sdt_as_luce` connecting SDT to Luce choice rule
   - **`RankOrderings.lean`** (§2.F): `rankProb` (Theorem 9 product-of-successive-choices), `rankProbScoreProd`, `expectedRank`
   - **`Learning.lean`** (Ch.4): `LinearLearner` with update, `BetaModel`, `iterate_linear` with closed-form `α^n·v₀ + (1-α^n)·r` proved by induction, asymptotic convergence
