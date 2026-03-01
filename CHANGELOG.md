@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.227.71] - 2026-03-01
+
+### Changed
+- **Cancellation88 split for CI parallelism**: split monolithic 11000-line `Cancellation88.lean` into 6 files (CancellationHelpers + 4 CancellationChambers groups + Cancellation88 dispatch). Chambers compile in parallel (4:40 wall vs 8:55 single-file). Also optimize `fa_cancellation_fin4_allpos` from 12.8M to 800K heartbeats by replacing 24-way `first` dispatch + 15 transitivity lines with 39 explicit per-goal permutation bullets. Fix `KaoEtAl2016.lean` import-before-docstring error.
+
 ## [0.227.70] - 2026-03-01
 
 ### Changed

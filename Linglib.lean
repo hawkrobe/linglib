@@ -87,6 +87,11 @@ import Linglib.Core.Scales.EpistemicScale.Entailments
 import Linglib.Core.Scales.EpistemicScale.Conditional
 import Linglib.Core.Scales.EpistemicScale.Cancellation
 import Linglib.Core.Scales.EpistemicScale.Cancellation88
+import Linglib.Core.Scales.EpistemicScale.CancellationChambers1
+import Linglib.Core.Scales.EpistemicScale.CancellationChambers2
+import Linglib.Core.Scales.EpistemicScale.CancellationChambers3
+import Linglib.Core.Scales.EpistemicScale.CancellationChambers4
+import Linglib.Core.Scales.EpistemicScale.CancellationHelpers
 import Linglib.Core.Scales.EpistemicScale.Fin3
 import Linglib.Core.Scales.EpistemicScale.Fin4
 import Linglib.Core.Mereology

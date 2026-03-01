@@ -1,3 +1,5 @@
+import Mathlib.Data.Rat.Defs
+
 /-!
 # Kao, Levy & Goodman (2016) — A Computational Model of Linguistic Humor in Puns @cite{kao-levy-goodman-2016}
 
@@ -30,8 +32,6 @@ The study used 435 sentences:
 
 Funniness rated on 1-7 scale, z-scored across participants.
 -/
-
-import Mathlib.Data.Rat.Defs
 
 namespace Phenomena.Nonliteral.Humor.Studies.KaoEtAl2016
 
