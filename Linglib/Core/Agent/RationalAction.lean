@@ -7,7 +7,7 @@ import Mathlib.Algebra.BigOperators.Field
 import Mathlib.Analysis.Convex.Mul
 
 /-!
-# Rational Action
+# Rational Action @cite{luce-1959}
 
 The mathematical foundation for all soft-rational agents: RSA speakers/listeners,
 BToM agents, and decision-theoretic actors.
@@ -37,7 +37,7 @@ The key mathematical results characterizing this choice rule are:
 
 ## References
 
-- Luce, R. D. (1959). Individual Choice Behavior.
+- Luce, R. D. (1959). Individual Choice Behavior (Vol. 4). Wiley.
 - Franke, M. & Degen, J. (submitted). The softmax function.
 - Cover, T. M. & Thomas, J. A. (2006). Elements of Information Theory.
 - Zaslavsky, N., Hu, J., & Levy, R. (2020). A Rate-Distortion view of RSA.
@@ -536,12 +536,81 @@ theorem softmax_exponential_family (s : ι → ℝ) (α : ℝ) (i : ι) [Nonempt
 end SoftmaxBasic
 
 -- ============================================================================
--- §2a. RationalAction ↔ Softmax Bridge
+-- §2a. Fechnerian Characterization & Softmax Bridge
 -- ============================================================================
+
+/-!
+## Why Softmax? The Fechnerian Characterization
+
+The exponential parameterization `score = exp(α · utility)` is not a design
+choice — it is the **unique** transformation connecting Luce's ratio scale to
+a utility (interval) scale (Luce 1959, §2.A; Adams & Messick 1957).
+
+**Ratio vs interval scales.** Luce's Axiom 1 (IIA) yields a **ratio scale**
+`v`: only ratios `v(a)/v(b)` are meaningful (Theorem 4). Fechner's
+psychophysics requires an **interval scale** `u`: only differences
+`u(a) - u(b)` are meaningful. The question: how are `v` and `u` related?
+
+**Derivation.** From `P(a,b) = v(a)/(v(a)+v(b))`, the odds ratio is
+`v(a)/v(b) = g(u(a) - u(b))` for some function `g`. Transitivity of ratios
+(`v(a)/v(c) = [v(a)/v(b)] · [v(b)/v(c)]`) forces Cauchy's multiplicative
+functional equation: `g(s + t) = g(s) · g(t)`. The unique monotone increasing
+solution is `g(s) = exp(k · s)` (`cauchy_mul_exp`), giving:
+
+- `v(a) = C · exp(k · u(a))` — the ratio scale IS the exponential of utility
+- `P(a,b) = 1/(1 + exp(-k · (u(a) - u(b))))` — the logistic function
+- For n alternatives: `P(a|S) = exp(k · u(a)) / Σ exp(k · u(b))` — softmax
+
+The parameter `k > 0` is the rationality parameter `α` in RSA.
+
+### References
+
+- Luce, R. D. (1959). Individual Choice Behavior, §2.A.
+- Adams, E. W. & Messick, S. (1957). An axiomatic formalization and
+  generalization of successive intervals scaling.
+-/
+
+/-- **Cauchy's multiplicative functional equation** (classical):
+    If `g : ℝ → ℝ` satisfies `g(s + t) = g(s) · g(t)` and is strictly
+    monotone increasing, then `g(s) = exp(k · s)` for some `k > 0`.
+
+    Proof sketch: `g(0) = 1` (else `g ≡ 0`, contradicting monotonicity).
+    Set `h = log ∘ g`; then `h(s+t) = h(s) + h(t)` (additive Cauchy).
+    Monotonicity implies measurability, so `h(s) = k·s` for `k = h(1)`.
+    Strict monotonicity forces `k > 0`. -/
+theorem cauchy_mul_exp (g : ℝ → ℝ)
+    (hg_mul : ∀ s t, g (s + t) = g s * g t)
+    (hg_mono : StrictMono g) :
+    ∃ k : ℝ, 0 < k ∧ g 0 = 1 ∧ ∀ s, g s = Real.exp (k * s) := by
+  sorry -- TODO: classical via additive Cauchy + monotonicity → linearity
+
+/-- **Fechnerian uniqueness** (Luce 1959, §2.A; Adams & Messick 1957):
+    If a ratio scale `v` and interval scale `u` represent the same
+    ordering via `v(x)/v(y) = g(u(x) - u(y))` for a strictly monotone
+    multiplicative `g`, then `v` is the exponential of `u`.
+
+    This is WHY `fromSoftmax` uses `exp(α · utility)`: the exponential
+    is **forced** by the requirement that log-odds be linear in utility
+    differences. It is the unique bridge between Luce's ratio scale
+    (Chapter 1) and Fechner's interval scale (Chapter 2). -/
+theorem luce_fechnerian_exp {X : Type*} (v u : X → ℝ) (g : ℝ → ℝ)
+    (hv_pos : ∀ x, 0 < v x)
+    (h_ratio : ∀ x y, v x / v y = g (u x - u y))
+    (hg_mul : ∀ s t, g (s + t) = g s * g t)
+    (hg_mono : StrictMono g) :
+    ∃ k : ℝ, 0 < k ∧ ∀ x₀ x, v x = v x₀ * Real.exp (k * (u x - u x₀)) := by
+  obtain ⟨k, hk, _, hg_exp⟩ := cauchy_mul_exp g hg_mul hg_mono
+  exact ⟨k, hk, fun x₀ x => by
+    have h := h_ratio x x₀
+    rw [hg_exp (u x - u x₀)] at h
+    rwa [div_eq_iff (ne_of_gt (hv_pos x₀)), mul_comm] at h⟩
 
 /-- Construct a RationalAction from a utility function via softmax.
 
-The score is `exp(α · utility(s, a))`, so `policy = softmax(utility, α)`. -/
+The score is `exp(α · utility(s, a))`, so `policy = softmax(utility, α)`.
+The exponential parameterization is forced by the Fechnerian characterization
+(`luce_fechnerian_exp`): it is the unique bridge from Luce's ratio scale
+to an additive utility scale. -/
 noncomputable def RationalAction.fromSoftmax
     (utility : S → A → ℝ) (α : ℝ) : RationalAction S A where
   score s a := exp (α * utility s a)
