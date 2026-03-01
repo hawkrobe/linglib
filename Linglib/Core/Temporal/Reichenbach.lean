@@ -80,13 +80,12 @@ theorem isPast_simpleCase (f : ReichenbachFrame Time) (h : f.isSimpleCase) :
     f.isPast ↔ f.referenceTime < f.speechTime := by
   simp only [isPast, isSimpleCase] at *; rw [h]
 
-/-- Perfective: E ⊆ R (event contained in reference) -/
+/-- Perfective: E ⊆ R (event contained in reference).
+    Simplified to E = R for point-based times.
+    TODO: proper interval-based perfective/imperfective distinction
+    lives in `Theories/Semantics/Lexical/Verb/ViewpointAspect.lean`. -/
 def isPerfective (f : ReichenbachFrame Time) : Prop :=
-  f.eventTime = f.referenceTime  -- Simplified: E = R
-
-/-- Imperfective: R ⊆ E (reference contained in event) -/
-def isImperfective (f : ReichenbachFrame Time) : Prop :=
-  f.eventTime = f.referenceTime  -- Simplified: needs intervals for proper treatment
+  f.eventTime = f.referenceTime
 
 /-- Perfect: E < R (event precedes reference) -/
 def isPerfect (f : ReichenbachFrame Time) : Prop :=

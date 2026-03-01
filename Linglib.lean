@@ -6,7 +6,6 @@ and their interfaces. See README.md for documentation links.
 -/
 
 -- Core
-import Linglib.Core.Temporal.Situation
 import Linglib.Core.Lexical.Word
 import Linglib.Core.Grammar
 import Linglib.Core.Lexical.Pronouns
@@ -55,7 +54,7 @@ import Linglib.Core.ProcessingModel
 import Linglib.Core.Temporal.Time
 import Linglib.Core.Temporal.Reichenbach
 import Linglib.Core.Temporal.Tense
-import Linglib.Core.Temporal.Context
+import Linglib.Core.Context.Basic
 import Linglib.Core.Context.Tower
 import Linglib.Core.Context.Shifts
 import Linglib.Core.Context.Rich
@@ -83,7 +82,7 @@ import Linglib.Core.Scales.MereoDim
 import Linglib.Core.ContentIndividual
 import Linglib.Core.Agent.BToM
 import Linglib.Core.Agent.Emotion
-import Linglib.Core.Temporal.Path
+import Linglib.Core.Path
 import Linglib.Core.Continuation
 import Linglib.Core.Lexical.PersonCategory
 import Linglib.Core.Lexical.MorphRule
@@ -383,6 +382,7 @@ import Linglib.Phenomena.Focus.ProsodicExhaustivity
 import Linglib.Phenomena.Focus.DiscourseOnly
 import Linglib.Phenomena.Focus.Bridge.DTSDiscourseOnly
 import Linglib.Phenomena.Focus.Bridge.DiscourseOnlyDerivations
+import Linglib.Phenomena.Focus.Bridge.GranularityJust
 import Linglib.Phenomena.Generics.BareNames
 import Linglib.Phenomena.Generics.BarePlurals
 import Linglib.Phenomena.Generics.Data
@@ -891,6 +891,7 @@ import Linglib.Theories.Semantics.Degree.Frameworks.Heim
 import Linglib.Theories.Semantics.Degree.Frameworks.Klein
 import Linglib.Theories.Semantics.Degree.Frameworks.Schwarzschild
 import Linglib.Theories.Semantics.Degree.Frameworks.Rett
+import Linglib.Theories.Semantics.Degree.Granularity
 
 -- Theories: Semantics.Montague (Montague architecture)
 import Linglib.Theories.Semantics.Lexical.Adjective.Intensification

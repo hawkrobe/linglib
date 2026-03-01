@@ -101,16 +101,4 @@ theorem source_path_licensed :
 theorem unbounded_path_blocked :
     PathShape.unbounded.toBoundedness.isLicensed = false := rfl
 
--- ════════════════════════════════════════════════════
--- § 4. Named Licensing Theorems (Zwarts)
--- ════════════════════════════════════════════════════
-
-/-- Zwarts: bounded path → closed → licensed. -/
-theorem zwarts_bounded_licensed :
-    (PathShape.bounded.toBoundedness).isLicensed = true := rfl
-
-/-- Zwarts: unbounded path → open → blocked. -/
-theorem zwarts_unbounded_blocked :
-    (PathShape.unbounded.toBoundedness).isLicensed = false := rfl
-
 end Core.Path

@@ -1,10 +1,7 @@
 import Mathlib.Order.Basic
 import Mathlib.Data.Set.Basic
 import Linglib.Core.Scales.Scale
-import Linglib.Core.Temporal.Situation
 import Linglib.Tactics.OntSort
-
-export Core (Situation)
 
 /-!
 # Theory-Neutral Temporal Infrastructure
@@ -37,6 +34,39 @@ dynamic semantics, and intensional semantics. The theory-specific layer
 - Champollion, L. (2015). The interaction of compositional semantics and
   event semantics. *Linguistics and Philosophy* 38(1):31–66.
 -/
+
+-- ════════════════════════════════════════════════════
+-- § Situation (World × Time)
+-- ════════════════════════════════════════════════════
+
+namespace Core
+
+/--
+A situation is a part of a world at a time.
+
+Following Kratzer's situation semantics:
+- Situations are "slices" of possible worlds
+- They have both spatial and temporal extent
+- They can be minimal witnesses for propositions
+
+We model situations as world–time pairs, abstracting from spatial extent.
+This is the most basic composition of ontological primitives.
+
+## References
+
+- Kratzer, A. (1989). An investigation of the lumps of thought.
+- Kratzer, A. (2021). Situations in natural language semantics. SEP.
+-/
+@[ont_sort] structure Situation (W Time : Type*) where
+  /-- The world this situation is part of -/
+  world : W
+  /-- The temporal coordinate of the situation -/
+  time : Time
+  deriving Repr
+
+end Core
+
+export Core (Situation)
 
 namespace Core.Time
 
@@ -114,7 +144,7 @@ theorem properSub_implies_sub (i₁ i₂ : Interval Time)
     (h : i₁.properSubinterval i₂) : i₁.subinterval i₂ :=
   h.1
 
-theorem subinterval_refl (i : Interval Time) : i.subinterval i :=
+@[simp] theorem subinterval_refl (i : Interval Time) : i.subinterval i :=
   ⟨le_refl _, le_refl _⟩
 
 /-- No interval is properly contained in itself. -/
@@ -241,19 +271,19 @@ def toInterval (gi : GInterval Time) : Interval Time where
   valid := gi.valid
 
 /-- The closed counterpart of an open interval is always closed. -/
-theorem toClosed_isClosed (gi : GInterval Time) : gi.toClosed.isClosed :=
+@[simp] theorem toClosed_isClosed (gi : GInterval Time) : gi.toClosed.isClosed :=
   ⟨rfl, rfl⟩
 
 /-- The open counterpart is always open. -/
-theorem toOpen_isOpen (gi : GInterval Time) : gi.toOpen.isOpen :=
+@[simp] theorem toOpen_isOpen (gi : GInterval Time) : gi.toOpen.isOpen :=
   ⟨rfl, rfl⟩
 
 /-- toClosed is idempotent. -/
-theorem toClosed_idempotent (gi : GInterval Time) :
+@[simp] theorem toClosed_idempotent (gi : GInterval Time) :
     gi.toClosed.toClosed = gi.toClosed := rfl
 
 /-- toOpen is idempotent. -/
-theorem toOpen_idempotent (gi : GInterval Time) :
+@[simp] theorem toOpen_idempotent (gi : GInterval Time) :
     gi.toOpen.toOpen = gi.toOpen := rfl
 
 end GInterval
@@ -264,20 +294,8 @@ end Interval
 -- § Dense Time (Fox & Hackl 2006, Rouillard 2026)
 -- ════════════════════════════════════════════════════
 
-/-- Dense time is captured by Mathlib's `DenselyOrdered` typeclass:
-    ∀ m₁ m₂, m₁ < m₂ → ∃ m₃, m₁ < m₃ ∧ m₃ < m₂.
-
-    This is Rouillard (2026) eq. (8) and an instance of Fox & Hackl (2006)
-    Universal Density of Measurement (UDM). Instead of a custom class, we
-    use Mathlib's `DenselyOrdered` directly — ℚ and ℝ already have instances.
-
-    Crucial for G-TIA polarity sensitivity: ensures that no open interval
-    can be the smallest interval including a closed time. -/
-abbrev DenseTime (Time : Type*) [LinearOrder Time] := DenselyOrdered Time
-
-
--- Situation is now defined in Core/Ontology.lean (Core.Situation).
--- Re-exported via `export Core (Situation)` above.
+-- Situation (Core.Situation) is defined at the top of this file and
+-- re-exported via `export Core (Situation)` above.
 
 
 -- ════════════════════════════════════════════════════

@@ -1,4 +1,7 @@
-/-
+import Linglib.Core.Temporal.Time
+import Linglib.Core.Temporal.Reichenbach
+
+/-!
 # Kaplanian Context of Utterance
 
 The full context tuple ⟨agent, world, time, position⟩ from Kaplan (1989)
@@ -13,9 +16,6 @@ projection; `KContext` is the full Kaplanian structure.
 - Kaplan, D. (1989). Demonstratives. In Almog, Perry & Wettstein (eds.),
   Themes from Kaplan. Oxford University Press, §XVIII.
 -/
-
-import Linglib.Core.Temporal.Time
-import Linglib.Core.Temporal.Reichenbach
 
 namespace Core.Context
 

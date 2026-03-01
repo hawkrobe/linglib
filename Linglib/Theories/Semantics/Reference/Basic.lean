@@ -26,7 +26,7 @@ These mechanisms are independent: a term can exhibit any subset.
 
 import Linglib.Core.Semantics.Intension
 import Linglib.Core.Semantics.Proposition
-import Linglib.Core.Temporal.Context
+import Linglib.Core.Context.Basic
 
 namespace Semantics.Reference.Basic
 

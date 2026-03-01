@@ -1,5 +1,5 @@
 import Linglib.Theories.Semantics.Events.Mereology
-import Linglib.Core.Temporal.Path
+import Linglib.Core.Path
 import Linglib.Core.RootDimensions
 
 /-!

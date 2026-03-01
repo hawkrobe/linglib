@@ -31,7 +31,7 @@ c-commands content.
 import Linglib.Theories.Syntax.Minimalism.Core.Basic
 import Linglib.Theories.Syntax.Minimalism.Core.Phase
 import Linglib.Theories.Syntax.Minimalism.Formal.ExtendedProjection.Basic
-import Linglib.Core.Temporal.Context
+import Linglib.Core.Context.Basic
 import Linglib.Core.Discourse.DiscourseRole
 import Linglib.Core.Discourse.Evidence
 import Linglib.Fragments.English.Pronouns
