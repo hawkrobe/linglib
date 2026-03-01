@@ -5,7 +5,7 @@ import Linglib.Theories.Syntax.ConstructionGrammar.Studies.GoldbergShirtz2025
 /-!
 # Slot/Filler Verification
 
-@cite{dunn-2025} @cite{kay-fillmore-1999}
+@cite{dunn-2026} @cite{kay-fillmore-1999}
 
 Per-datum verification that `derivedSpecificity` (computed from the typed
 slot structure) matches the `Specificity` values stipulated in existing
