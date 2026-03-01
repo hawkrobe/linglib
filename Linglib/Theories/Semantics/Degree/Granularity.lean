@@ -1,4 +1,5 @@
 import Mathlib.Order.Basic
+import Mathlib.Algebra.Order.Group.Defs
 import Linglib.Core.Scales.Scale
 
 /-!
@@ -25,7 +26,8 @@ This reversal explains why approximative *just* yields different readings:
 
 ## Structure
 
-- § 1: Granularity intervals (eq. 43) and degree morphology (eqs. 45, 49).
+- § 1: Granularity intervals (eq. 43), construction from ε (eqs. 40–42),
+  and degree morphology (eqs. 45, 49).
 - § 2: Entailment reversal — from interval endpoint monotonicity.
 - § 3: Approximative *just* (eq. 44) — vacuous vs substantive negative
   component derived from the reversal.
@@ -48,6 +50,47 @@ structure GranInterval (D : Type*) where
   lo : D
   /-- Supremum of the grain cell — used by comparatives (eq. 49). -/
   hi : D
+
+-- ════════════════════════════════════════════════════
+-- § 1a. Granularity Construction (eqs. 40–42)
+-- ════════════════════════════════════════════════════
+
+/-! ### Sauerland & Stateva (2011) granularity framework
+
+Eqs. (40a-c) define the properties of a granularity function γ:
+- (40a) s ∈ γ(s) — every degree is in its own cell
+- (40b) γ(s) is an interval — (already guaranteed by `GranInterval`)
+- (40c) |γ(s)| = |γ(s')| for all s, s' — all cells have equal width
+  (guaranteed by parametric construction from ε)
+
+Eq. (41): γ is finer than γ' iff cells of γ are strictly narrower.
+Eq. (42): The concrete construction γ(d) = (d − ε, d + ε). -/
+
+section GranularityFunction
+
+variable {D : Type*} [AddCommGroup D] [LinearOrder D] [IsOrderedAddMonoid D]
+
+/-- Eq. (42): Construct a granularity interval from grain size ε.
+    g(d) = (d − ε, d + ε) — the open interval of width 2ε around d.
+    (Eq. 43 refines this for scale endpoints; see `GranInterval` docstring.) -/
+def mkGranInterval (ε d : D) : GranInterval D := ⟨d - ε, d + ε⟩
+
+/-- Eq. (40a): d ∈ g(d) for positive grain — every degree is in the
+    interior of its own cell. For open interval (lo, hi): lo < d < hi. -/
+theorem containsSelf (ε d : D) (hε : 0 < ε) :
+    (mkGranInterval ε d).lo < d ∧ d < (mkGranInterval ε d).hi :=
+  ⟨sub_lt_self d hε, lt_add_of_pos_right d hε⟩
+
+/-- Eq. (41): Finer granularity → narrower intervals → containment.
+    If ε₁ ≤ ε₂, then g_{ε₁}(d) ⊆ g_{ε₂}(d):
+    - lo: d − ε₂ ≤ d − ε₁  (finer has larger infimum)
+    - hi: d + ε₁ ≤ d + ε₂  (finer has smaller supremum) -/
+theorem finer_contained (ε₁ ε₂ d : D) (h : ε₁ ≤ ε₂) :
+    (mkGranInterval ε₂ d).lo ≤ (mkGranInterval ε₁ d).lo ∧
+    (mkGranInterval ε₁ d).hi ≤ (mkGranInterval ε₂ d).hi :=
+  ⟨sub_le_sub_left h d, add_le_add_right h d⟩
+
+end GranularityFunction
 
 variable {D : Type*} [LinearOrder D]
 
