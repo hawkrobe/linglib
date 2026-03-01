@@ -10,10 +10,10 @@ Connects the formal semantics of approximative *just* from
 `Phenomena.Focus.Exclusives`.
 
 The `.precisifyingEquality` flavor ("just as tall as" ≈ "exactly")
-follows from `just_eq_reduces`: the negative component of *just* is
+follows from `just_vacuous_iff`: the negative component of *just* is
 vacuous for equatives. The `.precisifyingProximity` flavor ("just taller
-than" ≈ "barely") follows from `just_comp_rules_out_coarser`: the
-negative component forces failure at coarser grains.
+than" ≈ "barely") follows from `just_rules_out`: the negative component
+forces failure at coarser grains.
 
 ## References
 
@@ -63,18 +63,24 @@ theorem equative_yields_equality :
 -- § 3. Formal Grounding
 -- ════════════════════════════════════════════════════
 
-/-- The equality reading for equatives is grounded: *just*'s negative
-    component is vacuous, so "just as tall as" = finest equative
-    = standard equative (μ_x ≥ d_c). -/
-theorem equality_grounded (μ_x d_c : Nat) :
-    approxJust eqAtGran μ_x d_c ↔ eqAtGran .finest μ_x d_c :=
-  just_eq_reduces μ_x d_c
+/-- The equality reading for equatives is grounded: when the finest
+    grain is the strongest (largest lo → fine entails coarse), *just*'s
+    negative component is vacuous, so "just as tall as" reduces to the
+    equative at finest grain. Instantiates `just_vacuous_iff`. -/
+theorem equality_grounded {D G : Type*} [LinearOrder D]
+    (p : G → D → Prop) (finest : G)
+    (h : ∀ g, atLeastAsStrong p finest g) (μ_x : D) :
+    approxJust p finest μ_x ↔ p finest μ_x :=
+  just_vacuous_iff p finest h μ_x
 
-/-- The proximity reading for comparatives is grounded: *just*'s
-    negative component rules out coarser-grain truth. -/
-theorem proximity_grounded (g : GranLevel) (hcoarser : 0 < g.ε)
-    (μ_x d_c : Nat) (hjust : approxJust compAtGran μ_x d_c) :
-    ¬ compAtGran g μ_x d_c :=
-  just_comp_rules_out_coarser g hcoarser μ_x d_c hjust
+/-- The proximity reading for comparatives is grounded: when the finest
+    grain is NOT the strongest at some coarser grain g, *just* rules out
+    truth at g. Instantiates `just_rules_out`. -/
+theorem proximity_grounded {D G : Type*} [LinearOrder D]
+    (p : G → D → Prop) (finest g : G)
+    (h : ¬ atLeastAsStrong p finest g)
+    (μ_x : D) (hjust : approxJust p finest μ_x) :
+    ¬ p g μ_x :=
+  just_rules_out p finest g h μ_x hjust
 
 end Phenomena.Focus.Bridge.GranularityJust

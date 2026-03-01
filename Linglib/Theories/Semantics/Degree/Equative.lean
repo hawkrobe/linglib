@@ -21,7 +21,7 @@ three" and is strengthened to "exactly three" by implicature.
 `Degree.Granularity` (Thomas & Deo 2020) offers a different explanation:
 the "exactly" reading arises because *just* signals finest granularity,
 and the finest equative is already the strongest (so *just*'s negative
-component is vacuous). See `just_eq_reduces` in `Degree.Granularity`.
+component is vacuous). See `just_vacuous_iff` in `Degree.Granularity`.
 
 ## References
 
