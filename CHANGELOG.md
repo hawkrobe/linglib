@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.227.70] - 2026-03-01
+
+### Changed
+- **Cancellation88.lean build speedup (16 min → 6 min)**: optimize auto-generated chamber proofs by restricting `simp only` targets (goal-only for hnge, `at hGe ⊢` for heq instead of `at *`) and using progressive `(try t) <;>` filtering instead of `first | ...` tactic search. Updated `scratch/gen_lean.py` generator accordingly.
+
 ## [0.227.69] - 2026-03-01
 
 ### Added

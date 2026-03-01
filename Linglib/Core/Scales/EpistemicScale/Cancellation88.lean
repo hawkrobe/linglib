@@ -267,14 +267,20 @@ private theorem chamber_0 (sys : EpistemicSystemFA (Fin 4))
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hLt (by native_decide)) | (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h) | assumption)
+          Finset.coe_empty, Finset.coe_univ] <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h)) <;>
+        (exfalso; exact absurd hLt (by native_decide)))
     (by intro A B hDisj hEq hGe
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hEq (by native_decide)) | (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe) | assumption)
+          Finset.coe_empty, Finset.coe_univ] at hGe ⊢ <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe)) <;>
+        (exfalso; exact absurd hEq (by native_decide)))
 
 set_option maxHeartbeats 800000 in
 private theorem chamber_1 (sys : EpistemicSystemFA (Fin 4))
@@ -347,14 +353,20 @@ private theorem chamber_1 (sys : EpistemicSystemFA (Fin 4))
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hLt (by native_decide)) | (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h) | assumption)
+          Finset.coe_empty, Finset.coe_univ] <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h)) <;>
+        (exfalso; exact absurd hLt (by native_decide)))
     (by intro A B hDisj hEq hGe
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hEq (by native_decide)) | (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe) | assumption)
+          Finset.coe_empty, Finset.coe_univ] at hGe ⊢ <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe)) <;>
+        (exfalso; exact absurd hEq (by native_decide)))
 
 set_option maxHeartbeats 800000 in
 private theorem chamber_2 (sys : EpistemicSystemFA (Fin 4))
@@ -427,14 +439,20 @@ private theorem chamber_2 (sys : EpistemicSystemFA (Fin 4))
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hLt (by native_decide)) | (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h) | assumption)
+          Finset.coe_empty, Finset.coe_univ] <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h)) <;>
+        (exfalso; exact absurd hLt (by native_decide)))
     (by intro A B hDisj hEq hGe
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hEq (by native_decide)) | (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe) | assumption)
+          Finset.coe_empty, Finset.coe_univ] at hGe ⊢ <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe)) <;>
+        (exfalso; exact absurd hEq (by native_decide)))
 
 set_option maxHeartbeats 800000 in
 private theorem chamber_3 (sys : EpistemicSystemFA (Fin 4))
@@ -510,14 +528,20 @@ private theorem chamber_3 (sys : EpistemicSystemFA (Fin 4))
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hLt (by native_decide)) | (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h) | assumption)
+          Finset.coe_empty, Finset.coe_univ] <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h)) <;>
+        (exfalso; exact absurd hLt (by native_decide)))
     (by intro A B hDisj hEq hGe
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hEq (by native_decide)) | (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe) | assumption)
+          Finset.coe_empty, Finset.coe_univ] at hGe ⊢ <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe)) <;>
+        (exfalso; exact absurd hEq (by native_decide)))
 
 set_option maxHeartbeats 800000 in
 private theorem chamber_4 (sys : EpistemicSystemFA (Fin 4))
@@ -589,14 +613,20 @@ private theorem chamber_4 (sys : EpistemicSystemFA (Fin 4))
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hLt (by native_decide)) | (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h) | assumption)
+          Finset.coe_empty, Finset.coe_univ] <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h)) <;>
+        (exfalso; exact absurd hLt (by native_decide)))
     (by intro A B hDisj hEq hGe
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hEq (by native_decide)) | (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe) | assumption)
+          Finset.coe_empty, Finset.coe_univ] at hGe ⊢ <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe)) <;>
+        (exfalso; exact absurd hEq (by native_decide)))
 
 set_option maxHeartbeats 800000 in
 private theorem chamber_5 (sys : EpistemicSystemFA (Fin 4))
@@ -675,14 +705,20 @@ private theorem chamber_5 (sys : EpistemicSystemFA (Fin 4))
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hLt (by native_decide)) | (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h) | assumption)
+          Finset.coe_empty, Finset.coe_univ] <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h)) <;>
+        (exfalso; exact absurd hLt (by native_decide)))
     (by intro A B hDisj hEq hGe
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hEq (by native_decide)) | (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe) | assumption)
+          Finset.coe_empty, Finset.coe_univ] at hGe ⊢ <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe)) <;>
+        (exfalso; exact absurd hEq (by native_decide)))
 
 set_option maxHeartbeats 800000 in
 private theorem chamber_6 (sys : EpistemicSystemFA (Fin 4))
@@ -755,14 +791,20 @@ private theorem chamber_6 (sys : EpistemicSystemFA (Fin 4))
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hLt (by native_decide)) | (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h) | assumption)
+          Finset.coe_empty, Finset.coe_univ] <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h)) <;>
+        (exfalso; exact absurd hLt (by native_decide)))
     (by intro A B hDisj hEq hGe
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hEq (by native_decide)) | (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe) | assumption)
+          Finset.coe_empty, Finset.coe_univ] at hGe ⊢ <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe)) <;>
+        (exfalso; exact absurd hEq (by native_decide)))
 
 set_option maxHeartbeats 800000 in
 private theorem chamber_7 (sys : EpistemicSystemFA (Fin 4))
@@ -834,14 +876,20 @@ private theorem chamber_7 (sys : EpistemicSystemFA (Fin 4))
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hLt (by native_decide)) | (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h) | assumption)
+          Finset.coe_empty, Finset.coe_univ] <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h)) <;>
+        (exfalso; exact absurd hLt (by native_decide)))
     (by intro A B hDisj hEq hGe
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hEq (by native_decide)) | (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe) | assumption)
+          Finset.coe_empty, Finset.coe_univ] at hGe ⊢ <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe)) <;>
+        (exfalso; exact absurd hEq (by native_decide)))
 
 set_option maxHeartbeats 800000 in
 private theorem chamber_8 (sys : EpistemicSystemFA (Fin 4))
@@ -914,14 +962,20 @@ private theorem chamber_8 (sys : EpistemicSystemFA (Fin 4))
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hLt (by native_decide)) | (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h) | assumption)
+          Finset.coe_empty, Finset.coe_univ] <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h)) <;>
+        (exfalso; exact absurd hLt (by native_decide)))
     (by intro A B hDisj hEq hGe
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hEq (by native_decide)) | (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe) | assumption)
+          Finset.coe_empty, Finset.coe_univ] at hGe ⊢ <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe)) <;>
+        (exfalso; exact absurd hEq (by native_decide)))
 
 set_option maxHeartbeats 800000 in
 private theorem chamber_9 (sys : EpistemicSystemFA (Fin 4))
@@ -993,14 +1047,20 @@ private theorem chamber_9 (sys : EpistemicSystemFA (Fin 4))
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hLt (by native_decide)) | (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h) | assumption)
+          Finset.coe_empty, Finset.coe_univ] <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h)) <;>
+        (exfalso; exact absurd hLt (by native_decide)))
     (by intro A B hDisj hEq hGe
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hEq (by native_decide)) | (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe) | assumption)
+          Finset.coe_empty, Finset.coe_univ] at hGe ⊢ <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe)) <;>
+        (exfalso; exact absurd hEq (by native_decide)))
 
 set_option maxHeartbeats 800000 in
 private theorem chamber_10 (sys : EpistemicSystemFA (Fin 4))
@@ -1077,14 +1137,20 @@ private theorem chamber_10 (sys : EpistemicSystemFA (Fin 4))
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hLt (by native_decide)) | (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h) | assumption)
+          Finset.coe_empty, Finset.coe_univ] <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h)) <;>
+        (exfalso; exact absurd hLt (by native_decide)))
     (by intro A B hDisj hEq hGe
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hEq (by native_decide)) | (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe) | assumption)
+          Finset.coe_empty, Finset.coe_univ] at hGe ⊢ <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe)) <;>
+        (exfalso; exact absurd hEq (by native_decide)))
 
 set_option maxHeartbeats 800000 in
 private theorem chamber_11 (sys : EpistemicSystemFA (Fin 4))
@@ -1160,14 +1226,20 @@ private theorem chamber_11 (sys : EpistemicSystemFA (Fin 4))
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hLt (by native_decide)) | (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h) | assumption)
+          Finset.coe_empty, Finset.coe_univ] <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h)) <;>
+        (exfalso; exact absurd hLt (by native_decide)))
     (by intro A B hDisj hEq hGe
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hEq (by native_decide)) | (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe) | assumption)
+          Finset.coe_empty, Finset.coe_univ] at hGe ⊢ <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe)) <;>
+        (exfalso; exact absurd hEq (by native_decide)))
 
 set_option maxHeartbeats 800000 in
 private theorem chamber_12 (sys : EpistemicSystemFA (Fin 4))
@@ -1239,14 +1311,20 @@ private theorem chamber_12 (sys : EpistemicSystemFA (Fin 4))
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hLt (by native_decide)) | (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h) | assumption)
+          Finset.coe_empty, Finset.coe_univ] <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h)) <;>
+        (exfalso; exact absurd hLt (by native_decide)))
     (by intro A B hDisj hEq hGe
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hEq (by native_decide)) | (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe) | assumption)
+          Finset.coe_empty, Finset.coe_univ] at hGe ⊢ <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe)) <;>
+        (exfalso; exact absurd hEq (by native_decide)))
 
 set_option maxHeartbeats 800000 in
 private theorem chamber_13 (sys : EpistemicSystemFA (Fin 4))
@@ -1326,14 +1404,20 @@ private theorem chamber_13 (sys : EpistemicSystemFA (Fin 4))
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hLt (by native_decide)) | (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h) | assumption)
+          Finset.coe_empty, Finset.coe_univ] <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h)) <;>
+        (exfalso; exact absurd hLt (by native_decide)))
     (by intro A B hDisj hEq hGe
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hEq (by native_decide)) | (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe) | assumption)
+          Finset.coe_empty, Finset.coe_univ] at hGe ⊢ <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe)) <;>
+        (exfalso; exact absurd hEq (by native_decide)))
 
 set_option maxHeartbeats 800000 in
 private theorem chamber_14 (sys : EpistemicSystemFA (Fin 4))
@@ -1404,14 +1488,20 @@ private theorem chamber_14 (sys : EpistemicSystemFA (Fin 4))
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hLt (by native_decide)) | (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h) | assumption)
+          Finset.coe_empty, Finset.coe_univ] <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h)) <;>
+        (exfalso; exact absurd hLt (by native_decide)))
     (by intro A B hDisj hEq hGe
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hEq (by native_decide)) | (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe) | assumption)
+          Finset.coe_empty, Finset.coe_univ] at hGe ⊢ <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe)) <;>
+        (exfalso; exact absurd hEq (by native_decide)))
 
 set_option maxHeartbeats 800000 in
 private theorem chamber_15 (sys : EpistemicSystemFA (Fin 4))
@@ -1482,14 +1572,20 @@ private theorem chamber_15 (sys : EpistemicSystemFA (Fin 4))
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hLt (by native_decide)) | (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h) | assumption)
+          Finset.coe_empty, Finset.coe_univ] <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h)) <;>
+        (exfalso; exact absurd hLt (by native_decide)))
     (by intro A B hDisj hEq hGe
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hEq (by native_decide)) | (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe) | assumption)
+          Finset.coe_empty, Finset.coe_univ] at hGe ⊢ <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe)) <;>
+        (exfalso; exact absurd hEq (by native_decide)))
 
 set_option maxHeartbeats 800000 in
 private theorem chamber_16 (sys : EpistemicSystemFA (Fin 4))
@@ -1564,14 +1660,20 @@ private theorem chamber_16 (sys : EpistemicSystemFA (Fin 4))
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hLt (by native_decide)) | (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h) | assumption)
+          Finset.coe_empty, Finset.coe_univ] <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h)) <;>
+        (exfalso; exact absurd hLt (by native_decide)))
     (by intro A B hDisj hEq hGe
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hEq (by native_decide)) | (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe) | assumption)
+          Finset.coe_empty, Finset.coe_univ] at hGe ⊢ <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe)) <;>
+        (exfalso; exact absurd hEq (by native_decide)))
 
 set_option maxHeartbeats 800000 in
 private theorem chamber_17 (sys : EpistemicSystemFA (Fin 4))
@@ -1649,14 +1751,20 @@ private theorem chamber_17 (sys : EpistemicSystemFA (Fin 4))
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hLt (by native_decide)) | (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h) | assumption)
+          Finset.coe_empty, Finset.coe_univ] <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h)) <;>
+        (exfalso; exact absurd hLt (by native_decide)))
     (by intro A B hDisj hEq hGe
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hEq (by native_decide)) | (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe) | assumption)
+          Finset.coe_empty, Finset.coe_univ] at hGe ⊢ <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe)) <;>
+        (exfalso; exact absurd hEq (by native_decide)))
 
 set_option maxHeartbeats 800000 in
 private theorem chamber_18 (sys : EpistemicSystemFA (Fin 4))
@@ -1731,14 +1839,20 @@ private theorem chamber_18 (sys : EpistemicSystemFA (Fin 4))
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hLt (by native_decide)) | (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h) | assumption)
+          Finset.coe_empty, Finset.coe_univ] <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h)) <;>
+        (exfalso; exact absurd hLt (by native_decide)))
     (by intro A B hDisj hEq hGe
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hEq (by native_decide)) | (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe) | assumption)
+          Finset.coe_empty, Finset.coe_univ] at hGe ⊢ <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe)) <;>
+        (exfalso; exact absurd hEq (by native_decide)))
 
 set_option maxHeartbeats 800000 in
 private theorem chamber_19 (sys : EpistemicSystemFA (Fin 4))
@@ -1817,14 +1931,20 @@ private theorem chamber_19 (sys : EpistemicSystemFA (Fin 4))
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hLt (by native_decide)) | (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h) | assumption)
+          Finset.coe_empty, Finset.coe_univ] <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h)) <;>
+        (exfalso; exact absurd hLt (by native_decide)))
     (by intro A B hDisj hEq hGe
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hEq (by native_decide)) | (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe) | assumption)
+          Finset.coe_empty, Finset.coe_univ] at hGe ⊢ <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe)) <;>
+        (exfalso; exact absurd hEq (by native_decide)))
 
 set_option maxHeartbeats 800000 in
 private theorem chamber_20 (sys : EpistemicSystemFA (Fin 4))
@@ -1898,14 +2018,20 @@ private theorem chamber_20 (sys : EpistemicSystemFA (Fin 4))
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hLt (by native_decide)) | (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h) | assumption)
+          Finset.coe_empty, Finset.coe_univ] <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h)) <;>
+        (exfalso; exact absurd hLt (by native_decide)))
     (by intro A B hDisj hEq hGe
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hEq (by native_decide)) | (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe) | assumption)
+          Finset.coe_empty, Finset.coe_univ] at hGe ⊢ <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe)) <;>
+        (exfalso; exact absurd hEq (by native_decide)))
 
 set_option maxHeartbeats 800000 in
 private theorem chamber_21 (sys : EpistemicSystemFA (Fin 4))
@@ -1986,14 +2112,20 @@ private theorem chamber_21 (sys : EpistemicSystemFA (Fin 4))
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hLt (by native_decide)) | (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h) | assumption)
+          Finset.coe_empty, Finset.coe_univ] <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h)) <;>
+        (exfalso; exact absurd hLt (by native_decide)))
     (by intro A B hDisj hEq hGe
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hEq (by native_decide)) | (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe) | assumption)
+          Finset.coe_empty, Finset.coe_univ] at hGe ⊢ <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe)) <;>
+        (exfalso; exact absurd hEq (by native_decide)))
 
 set_option maxHeartbeats 800000 in
 private theorem chamber_22 (sys : EpistemicSystemFA (Fin 4))
@@ -2067,14 +2199,20 @@ private theorem chamber_22 (sys : EpistemicSystemFA (Fin 4))
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hLt (by native_decide)) | (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h) | assumption)
+          Finset.coe_empty, Finset.coe_univ] <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h)) <;>
+        (exfalso; exact absurd hLt (by native_decide)))
     (by intro A B hDisj hEq hGe
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hEq (by native_decide)) | (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe) | assumption)
+          Finset.coe_empty, Finset.coe_univ] at hGe ⊢ <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe)) <;>
+        (exfalso; exact absurd hEq (by native_decide)))
 
 set_option maxHeartbeats 800000 in
 private theorem chamber_23 (sys : EpistemicSystemFA (Fin 4))
@@ -2149,14 +2287,20 @@ private theorem chamber_23 (sys : EpistemicSystemFA (Fin 4))
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hLt (by native_decide)) | (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h) | assumption)
+          Finset.coe_empty, Finset.coe_univ] <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h)) <;>
+        (exfalso; exact absurd hLt (by native_decide)))
     (by intro A B hDisj hEq hGe
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hEq (by native_decide)) | (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe) | assumption)
+          Finset.coe_empty, Finset.coe_univ] at hGe ⊢ <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe)) <;>
+        (exfalso; exact absurd hEq (by native_decide)))
 
 set_option maxHeartbeats 800000 in
 private theorem chamber_24 (sys : EpistemicSystemFA (Fin 4))
@@ -2230,14 +2374,20 @@ private theorem chamber_24 (sys : EpistemicSystemFA (Fin 4))
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hLt (by native_decide)) | (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h) | assumption)
+          Finset.coe_empty, Finset.coe_univ] <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h)) <;>
+        (exfalso; exact absurd hLt (by native_decide)))
     (by intro A B hDisj hEq hGe
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hEq (by native_decide)) | (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe) | assumption)
+          Finset.coe_empty, Finset.coe_univ] at hGe ⊢ <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe)) <;>
+        (exfalso; exact absurd hEq (by native_decide)))
 
 set_option maxHeartbeats 800000 in
 private theorem chamber_25 (sys : EpistemicSystemFA (Fin 4))
@@ -2311,14 +2461,20 @@ private theorem chamber_25 (sys : EpistemicSystemFA (Fin 4))
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hLt (by native_decide)) | (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h) | assumption)
+          Finset.coe_empty, Finset.coe_univ] <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h)) <;>
+        (exfalso; exact absurd hLt (by native_decide)))
     (by intro A B hDisj hEq hGe
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hEq (by native_decide)) | (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe) | assumption)
+          Finset.coe_empty, Finset.coe_univ] at hGe ⊢ <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe)) <;>
+        (exfalso; exact absurd hEq (by native_decide)))
 
 set_option maxHeartbeats 800000 in
 private theorem chamber_26 (sys : EpistemicSystemFA (Fin 4))
@@ -2390,14 +2546,20 @@ private theorem chamber_26 (sys : EpistemicSystemFA (Fin 4))
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hLt (by native_decide)) | (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h) | assumption)
+          Finset.coe_empty, Finset.coe_univ] <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h)) <;>
+        (exfalso; exact absurd hLt (by native_decide)))
     (by intro A B hDisj hEq hGe
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hEq (by native_decide)) | (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe) | assumption)
+          Finset.coe_empty, Finset.coe_univ] at hGe ⊢ <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe)) <;>
+        (exfalso; exact absurd hEq (by native_decide)))
 
 set_option maxHeartbeats 800000 in
 private theorem chamber_27 (sys : EpistemicSystemFA (Fin 4))
@@ -2472,14 +2634,20 @@ private theorem chamber_27 (sys : EpistemicSystemFA (Fin 4))
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hLt (by native_decide)) | (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h) | assumption)
+          Finset.coe_empty, Finset.coe_univ] <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h)) <;>
+        (exfalso; exact absurd hLt (by native_decide)))
     (by intro A B hDisj hEq hGe
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hEq (by native_decide)) | (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe) | assumption)
+          Finset.coe_empty, Finset.coe_univ] at hGe ⊢ <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe)) <;>
+        (exfalso; exact absurd hEq (by native_decide)))
 
 set_option maxHeartbeats 800000 in
 private theorem chamber_28 (sys : EpistemicSystemFA (Fin 4))
@@ -2550,14 +2718,20 @@ private theorem chamber_28 (sys : EpistemicSystemFA (Fin 4))
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hLt (by native_decide)) | (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h) | assumption)
+          Finset.coe_empty, Finset.coe_univ] <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h)) <;>
+        (exfalso; exact absurd hLt (by native_decide)))
     (by intro A B hDisj hEq hGe
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hEq (by native_decide)) | (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe) | assumption)
+          Finset.coe_empty, Finset.coe_univ] at hGe ⊢ <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe)) <;>
+        (exfalso; exact absurd hEq (by native_decide)))
 
 set_option maxHeartbeats 800000 in
 private theorem chamber_29 (sys : EpistemicSystemFA (Fin 4))
@@ -2635,14 +2809,20 @@ private theorem chamber_29 (sys : EpistemicSystemFA (Fin 4))
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hLt (by native_decide)) | (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h) | assumption)
+          Finset.coe_empty, Finset.coe_univ] <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h)) <;>
+        (exfalso; exact absurd hLt (by native_decide)))
     (by intro A B hDisj hEq hGe
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hEq (by native_decide)) | (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe) | assumption)
+          Finset.coe_empty, Finset.coe_univ] at hGe ⊢ <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe)) <;>
+        (exfalso; exact absurd hEq (by native_decide)))
 
 set_option maxHeartbeats 800000 in
 private theorem chamber_30 (sys : EpistemicSystemFA (Fin 4))
@@ -2714,14 +2894,20 @@ private theorem chamber_30 (sys : EpistemicSystemFA (Fin 4))
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hLt (by native_decide)) | (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h) | assumption)
+          Finset.coe_empty, Finset.coe_univ] <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h)) <;>
+        (exfalso; exact absurd hLt (by native_decide)))
     (by intro A B hDisj hEq hGe
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hEq (by native_decide)) | (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe) | assumption)
+          Finset.coe_empty, Finset.coe_univ] at hGe ⊢ <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe)) <;>
+        (exfalso; exact absurd hEq (by native_decide)))
 
 set_option maxHeartbeats 800000 in
 private theorem chamber_31 (sys : EpistemicSystemFA (Fin 4))
@@ -2792,14 +2978,20 @@ private theorem chamber_31 (sys : EpistemicSystemFA (Fin 4))
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hLt (by native_decide)) | (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h) | assumption)
+          Finset.coe_empty, Finset.coe_univ] <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h)) <;>
+        (exfalso; exact absurd hLt (by native_decide)))
     (by intro A B hDisj hEq hGe
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hEq (by native_decide)) | (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe) | assumption)
+          Finset.coe_empty, Finset.coe_univ] at hGe ⊢ <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe)) <;>
+        (exfalso; exact absurd hEq (by native_decide)))
 
 set_option maxHeartbeats 800000 in
 private theorem chamber_32 (sys : EpistemicSystemFA (Fin 4))
@@ -2875,14 +3067,20 @@ private theorem chamber_32 (sys : EpistemicSystemFA (Fin 4))
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hLt (by native_decide)) | (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h) | assumption)
+          Finset.coe_empty, Finset.coe_univ] <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h)) <;>
+        (exfalso; exact absurd hLt (by native_decide)))
     (by intro A B hDisj hEq hGe
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hEq (by native_decide)) | (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe) | assumption)
+          Finset.coe_empty, Finset.coe_univ] at hGe ⊢ <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe)) <;>
+        (exfalso; exact absurd hEq (by native_decide)))
 
 set_option maxHeartbeats 800000 in
 private theorem chamber_33 (sys : EpistemicSystemFA (Fin 4))
@@ -2961,14 +3159,20 @@ private theorem chamber_33 (sys : EpistemicSystemFA (Fin 4))
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hLt (by native_decide)) | (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h) | assumption)
+          Finset.coe_empty, Finset.coe_univ] <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h)) <;>
+        (exfalso; exact absurd hLt (by native_decide)))
     (by intro A B hDisj hEq hGe
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hEq (by native_decide)) | (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe) | assumption)
+          Finset.coe_empty, Finset.coe_univ] at hGe ⊢ <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe)) <;>
+        (exfalso; exact absurd hEq (by native_decide)))
 
 set_option maxHeartbeats 800000 in
 private theorem chamber_34 (sys : EpistemicSystemFA (Fin 4))
@@ -3043,14 +3247,20 @@ private theorem chamber_34 (sys : EpistemicSystemFA (Fin 4))
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hLt (by native_decide)) | (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h) | assumption)
+          Finset.coe_empty, Finset.coe_univ] <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h)) <;>
+        (exfalso; exact absurd hLt (by native_decide)))
     (by intro A B hDisj hEq hGe
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hEq (by native_decide)) | (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe) | assumption)
+          Finset.coe_empty, Finset.coe_univ] at hGe ⊢ <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe)) <;>
+        (exfalso; exact absurd hEq (by native_decide)))
 
 set_option maxHeartbeats 800000 in
 private theorem chamber_35 (sys : EpistemicSystemFA (Fin 4))
@@ -3132,14 +3342,20 @@ private theorem chamber_35 (sys : EpistemicSystemFA (Fin 4))
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hLt (by native_decide)) | (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h) | assumption)
+          Finset.coe_empty, Finset.coe_univ] <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h)) <;>
+        (exfalso; exact absurd hLt (by native_decide)))
     (by intro A B hDisj hEq hGe
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hEq (by native_decide)) | (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe) | assumption)
+          Finset.coe_empty, Finset.coe_univ] at hGe ⊢ <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe)) <;>
+        (exfalso; exact absurd hEq (by native_decide)))
 
 set_option maxHeartbeats 800000 in
 private theorem chamber_36 (sys : EpistemicSystemFA (Fin 4))
@@ -3215,14 +3431,20 @@ private theorem chamber_36 (sys : EpistemicSystemFA (Fin 4))
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hLt (by native_decide)) | (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h) | assumption)
+          Finset.coe_empty, Finset.coe_univ] <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h)) <;>
+        (exfalso; exact absurd hLt (by native_decide)))
     (by intro A B hDisj hEq hGe
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hEq (by native_decide)) | (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe) | assumption)
+          Finset.coe_empty, Finset.coe_univ] at hGe ⊢ <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe)) <;>
+        (exfalso; exact absurd hEq (by native_decide)))
 
 set_option maxHeartbeats 800000 in
 private theorem chamber_37 (sys : EpistemicSystemFA (Fin 4))
@@ -3297,14 +3519,20 @@ private theorem chamber_37 (sys : EpistemicSystemFA (Fin 4))
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hLt (by native_decide)) | (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h) | assumption)
+          Finset.coe_empty, Finset.coe_univ] <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h)) <;>
+        (exfalso; exact absurd hLt (by native_decide)))
     (by intro A B hDisj hEq hGe
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hEq (by native_decide)) | (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe) | assumption)
+          Finset.coe_empty, Finset.coe_univ] at hGe ⊢ <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe)) <;>
+        (exfalso; exact absurd hEq (by native_decide)))
 
 set_option maxHeartbeats 800000 in
 private theorem chamber_38 (sys : EpistemicSystemFA (Fin 4))
@@ -3375,14 +3603,20 @@ private theorem chamber_38 (sys : EpistemicSystemFA (Fin 4))
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hLt (by native_decide)) | (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h) | assumption)
+          Finset.coe_empty, Finset.coe_univ] <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h)) <;>
+        (exfalso; exact absurd hLt (by native_decide)))
     (by intro A B hDisj hEq hGe
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hEq (by native_decide)) | (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe) | assumption)
+          Finset.coe_empty, Finset.coe_univ] at hGe ⊢ <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe)) <;>
+        (exfalso; exact absurd hEq (by native_decide)))
 
 set_option maxHeartbeats 800000 in
 private theorem chamber_39 (sys : EpistemicSystemFA (Fin 4))
@@ -3456,14 +3690,20 @@ private theorem chamber_39 (sys : EpistemicSystemFA (Fin 4))
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hLt (by native_decide)) | (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h) | assumption)
+          Finset.coe_empty, Finset.coe_univ] <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h)) <;>
+        (exfalso; exact absurd hLt (by native_decide)))
     (by intro A B hDisj hEq hGe
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hEq (by native_decide)) | (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe) | assumption)
+          Finset.coe_empty, Finset.coe_univ] at hGe ⊢ <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe)) <;>
+        (exfalso; exact absurd hEq (by native_decide)))
 
 set_option maxHeartbeats 800000 in
 private theorem chamber_40 (sys : EpistemicSystemFA (Fin 4))
@@ -3542,14 +3782,20 @@ private theorem chamber_40 (sys : EpistemicSystemFA (Fin 4))
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hLt (by native_decide)) | (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h) | assumption)
+          Finset.coe_empty, Finset.coe_univ] <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h)) <;>
+        (exfalso; exact absurd hLt (by native_decide)))
     (by intro A B hDisj hEq hGe
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hEq (by native_decide)) | (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe) | assumption)
+          Finset.coe_empty, Finset.coe_univ] at hGe ⊢ <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe)) <;>
+        (exfalso; exact absurd hEq (by native_decide)))
 
 set_option maxHeartbeats 800000 in
 private theorem chamber_41 (sys : EpistemicSystemFA (Fin 4))
@@ -3631,14 +3877,20 @@ private theorem chamber_41 (sys : EpistemicSystemFA (Fin 4))
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hLt (by native_decide)) | (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h) | assumption)
+          Finset.coe_empty, Finset.coe_univ] <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h)) <;>
+        (exfalso; exact absurd hLt (by native_decide)))
     (by intro A B hDisj hEq hGe
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hEq (by native_decide)) | (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe) | assumption)
+          Finset.coe_empty, Finset.coe_univ] at hGe ⊢ <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe)) <;>
+        (exfalso; exact absurd hEq (by native_decide)))
 
 set_option maxHeartbeats 800000 in
 private theorem chamber_42 (sys : EpistemicSystemFA (Fin 4))
@@ -3709,14 +3961,20 @@ private theorem chamber_42 (sys : EpistemicSystemFA (Fin 4))
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hLt (by native_decide)) | (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h) | assumption)
+          Finset.coe_empty, Finset.coe_univ] <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h)) <;>
+        (exfalso; exact absurd hLt (by native_decide)))
     (by intro A B hDisj hEq hGe
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hEq (by native_decide)) | (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe) | assumption)
+          Finset.coe_empty, Finset.coe_univ] at hGe ⊢ <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe)) <;>
+        (exfalso; exact absurd hEq (by native_decide)))
 
 set_option maxHeartbeats 800000 in
 private theorem chamber_43 (sys : EpistemicSystemFA (Fin 4))
@@ -3795,14 +4053,20 @@ private theorem chamber_43 (sys : EpistemicSystemFA (Fin 4))
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hLt (by native_decide)) | (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h) | assumption)
+          Finset.coe_empty, Finset.coe_univ] <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h)) <;>
+        (exfalso; exact absurd hLt (by native_decide)))
     (by intro A B hDisj hEq hGe
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hEq (by native_decide)) | (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe) | assumption)
+          Finset.coe_empty, Finset.coe_univ] at hGe ⊢ <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe)) <;>
+        (exfalso; exact absurd hEq (by native_decide)))
 
 set_option maxHeartbeats 800000 in
 private theorem chamber_44 (sys : EpistemicSystemFA (Fin 4))
@@ -3872,14 +4136,20 @@ private theorem chamber_44 (sys : EpistemicSystemFA (Fin 4))
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hLt (by native_decide)) | (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h) | assumption)
+          Finset.coe_empty, Finset.coe_univ] <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h)) <;>
+        (exfalso; exact absurd hLt (by native_decide)))
     (by intro A B hDisj hEq hGe
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hEq (by native_decide)) | (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe) | assumption)
+          Finset.coe_empty, Finset.coe_univ] at hGe ⊢ <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe)) <;>
+        (exfalso; exact absurd hEq (by native_decide)))
 
 set_option maxHeartbeats 800000 in
 private theorem chamber_45 (sys : EpistemicSystemFA (Fin 4))
@@ -3952,14 +4222,20 @@ private theorem chamber_45 (sys : EpistemicSystemFA (Fin 4))
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hLt (by native_decide)) | (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h) | assumption)
+          Finset.coe_empty, Finset.coe_univ] <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h)) <;>
+        (exfalso; exact absurd hLt (by native_decide)))
     (by intro A B hDisj hEq hGe
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hEq (by native_decide)) | (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe) | assumption)
+          Finset.coe_empty, Finset.coe_univ] at hGe ⊢ <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe)) <;>
+        (exfalso; exact absurd hEq (by native_decide)))
 
 set_option maxHeartbeats 800000 in
 private theorem chamber_46 (sys : EpistemicSystemFA (Fin 4))
@@ -4029,14 +4305,20 @@ private theorem chamber_46 (sys : EpistemicSystemFA (Fin 4))
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hLt (by native_decide)) | (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h) | assumption)
+          Finset.coe_empty, Finset.coe_univ] <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h)) <;>
+        (exfalso; exact absurd hLt (by native_decide)))
     (by intro A B hDisj hEq hGe
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hEq (by native_decide)) | (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe) | assumption)
+          Finset.coe_empty, Finset.coe_univ] at hGe ⊢ <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe)) <;>
+        (exfalso; exact absurd hEq (by native_decide)))
 
 set_option maxHeartbeats 800000 in
 private theorem chamber_47 (sys : EpistemicSystemFA (Fin 4))
@@ -4109,14 +4391,20 @@ private theorem chamber_47 (sys : EpistemicSystemFA (Fin 4))
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hLt (by native_decide)) | (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h) | assumption)
+          Finset.coe_empty, Finset.coe_univ] <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h)) <;>
+        (exfalso; exact absurd hLt (by native_decide)))
     (by intro A B hDisj hEq hGe
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hEq (by native_decide)) | (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe) | assumption)
+          Finset.coe_empty, Finset.coe_univ] at hGe ⊢ <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe)) <;>
+        (exfalso; exact absurd hEq (by native_decide)))
 
 set_option maxHeartbeats 800000 in
 private theorem chamber_48 (sys : EpistemicSystemFA (Fin 4))
@@ -4186,14 +4474,20 @@ private theorem chamber_48 (sys : EpistemicSystemFA (Fin 4))
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hLt (by native_decide)) | (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h) | assumption)
+          Finset.coe_empty, Finset.coe_univ] <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h)) <;>
+        (exfalso; exact absurd hLt (by native_decide)))
     (by intro A B hDisj hEq hGe
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hEq (by native_decide)) | (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe) | assumption)
+          Finset.coe_empty, Finset.coe_univ] at hGe ⊢ <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe)) <;>
+        (exfalso; exact absurd hEq (by native_decide)))
 
 set_option maxHeartbeats 800000 in
 private theorem chamber_49 (sys : EpistemicSystemFA (Fin 4))
@@ -4263,14 +4557,20 @@ private theorem chamber_49 (sys : EpistemicSystemFA (Fin 4))
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hLt (by native_decide)) | (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h) | assumption)
+          Finset.coe_empty, Finset.coe_univ] <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h)) <;>
+        (exfalso; exact absurd hLt (by native_decide)))
     (by intro A B hDisj hEq hGe
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hEq (by native_decide)) | (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe) | assumption)
+          Finset.coe_empty, Finset.coe_univ] at hGe ⊢ <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe)) <;>
+        (exfalso; exact absurd hEq (by native_decide)))
 
 set_option maxHeartbeats 800000 in
 private theorem chamber_50 (sys : EpistemicSystemFA (Fin 4))
@@ -4344,14 +4644,20 @@ private theorem chamber_50 (sys : EpistemicSystemFA (Fin 4))
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hLt (by native_decide)) | (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h) | assumption)
+          Finset.coe_empty, Finset.coe_univ] <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h)) <;>
+        (exfalso; exact absurd hLt (by native_decide)))
     (by intro A B hDisj hEq hGe
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hEq (by native_decide)) | (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe) | assumption)
+          Finset.coe_empty, Finset.coe_univ] at hGe ⊢ <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe)) <;>
+        (exfalso; exact absurd hEq (by native_decide)))
 
 set_option maxHeartbeats 800000 in
 private theorem chamber_51 (sys : EpistemicSystemFA (Fin 4))
@@ -4428,14 +4734,20 @@ private theorem chamber_51 (sys : EpistemicSystemFA (Fin 4))
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hLt (by native_decide)) | (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h) | assumption)
+          Finset.coe_empty, Finset.coe_univ] <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h)) <;>
+        (exfalso; exact absurd hLt (by native_decide)))
     (by intro A B hDisj hEq hGe
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hEq (by native_decide)) | (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe) | assumption)
+          Finset.coe_empty, Finset.coe_univ] at hGe ⊢ <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe)) <;>
+        (exfalso; exact absurd hEq (by native_decide)))
 
 set_option maxHeartbeats 800000 in
 private theorem chamber_52 (sys : EpistemicSystemFA (Fin 4))
@@ -4513,14 +4825,20 @@ private theorem chamber_52 (sys : EpistemicSystemFA (Fin 4))
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hLt (by native_decide)) | (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h) | assumption)
+          Finset.coe_empty, Finset.coe_univ] <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h)) <;>
+        (exfalso; exact absurd hLt (by native_decide)))
     (by intro A B hDisj hEq hGe
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hEq (by native_decide)) | (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe) | assumption)
+          Finset.coe_empty, Finset.coe_univ] at hGe ⊢ <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe)) <;>
+        (exfalso; exact absurd hEq (by native_decide)))
 
 set_option maxHeartbeats 800000 in
 private theorem chamber_53 (sys : EpistemicSystemFA (Fin 4))
@@ -4602,14 +4920,20 @@ private theorem chamber_53 (sys : EpistemicSystemFA (Fin 4))
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hLt (by native_decide)) | (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h) | assumption)
+          Finset.coe_empty, Finset.coe_univ] <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h)) <;>
+        (exfalso; exact absurd hLt (by native_decide)))
     (by intro A B hDisj hEq hGe
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hEq (by native_decide)) | (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe) | assumption)
+          Finset.coe_empty, Finset.coe_univ] at hGe ⊢ <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe)) <;>
+        (exfalso; exact absurd hEq (by native_decide)))
 
 set_option maxHeartbeats 800000 in
 private theorem chamber_54 (sys : EpistemicSystemFA (Fin 4))
@@ -4683,14 +5007,20 @@ private theorem chamber_54 (sys : EpistemicSystemFA (Fin 4))
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hLt (by native_decide)) | (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h) | assumption)
+          Finset.coe_empty, Finset.coe_univ] <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h)) <;>
+        (exfalso; exact absurd hLt (by native_decide)))
     (by intro A B hDisj hEq hGe
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hEq (by native_decide)) | (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe) | assumption)
+          Finset.coe_empty, Finset.coe_univ] at hGe ⊢ <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe)) <;>
+        (exfalso; exact absurd hEq (by native_decide)))
 
 set_option maxHeartbeats 800000 in
 private theorem chamber_55 (sys : EpistemicSystemFA (Fin 4))
@@ -4767,14 +5097,20 @@ private theorem chamber_55 (sys : EpistemicSystemFA (Fin 4))
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hLt (by native_decide)) | (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h) | assumption)
+          Finset.coe_empty, Finset.coe_univ] <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h)) <;>
+        (exfalso; exact absurd hLt (by native_decide)))
     (by intro A B hDisj hEq hGe
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hEq (by native_decide)) | (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe) | assumption)
+          Finset.coe_empty, Finset.coe_univ] at hGe ⊢ <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe)) <;>
+        (exfalso; exact absurd hEq (by native_decide)))
 
 set_option maxHeartbeats 800000 in
 private theorem chamber_56 (sys : EpistemicSystemFA (Fin 4))
@@ -4848,14 +5184,20 @@ private theorem chamber_56 (sys : EpistemicSystemFA (Fin 4))
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hLt (by native_decide)) | (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h) | assumption)
+          Finset.coe_empty, Finset.coe_univ] <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h)) <;>
+        (exfalso; exact absurd hLt (by native_decide)))
     (by intro A B hDisj hEq hGe
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hEq (by native_decide)) | (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe) | assumption)
+          Finset.coe_empty, Finset.coe_univ] at hGe ⊢ <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe)) <;>
+        (exfalso; exact absurd hEq (by native_decide)))
 
 set_option maxHeartbeats 800000 in
 private theorem chamber_57 (sys : EpistemicSystemFA (Fin 4))
@@ -4933,14 +5275,20 @@ private theorem chamber_57 (sys : EpistemicSystemFA (Fin 4))
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hLt (by native_decide)) | (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h) | assumption)
+          Finset.coe_empty, Finset.coe_univ] <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h)) <;>
+        (exfalso; exact absurd hLt (by native_decide)))
     (by intro A B hDisj hEq hGe
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hEq (by native_decide)) | (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe) | assumption)
+          Finset.coe_empty, Finset.coe_univ] at hGe ⊢ <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe)) <;>
+        (exfalso; exact absurd hEq (by native_decide)))
 
 set_option maxHeartbeats 800000 in
 private theorem chamber_58 (sys : EpistemicSystemFA (Fin 4))
@@ -5013,14 +5361,20 @@ private theorem chamber_58 (sys : EpistemicSystemFA (Fin 4))
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hLt (by native_decide)) | (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h) | assumption)
+          Finset.coe_empty, Finset.coe_univ] <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h)) <;>
+        (exfalso; exact absurd hLt (by native_decide)))
     (by intro A B hDisj hEq hGe
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hEq (by native_decide)) | (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe) | assumption)
+          Finset.coe_empty, Finset.coe_univ] at hGe ⊢ <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe)) <;>
+        (exfalso; exact absurd hEq (by native_decide)))
 
 set_option maxHeartbeats 800000 in
 private theorem chamber_59 (sys : EpistemicSystemFA (Fin 4))
@@ -5093,14 +5447,20 @@ private theorem chamber_59 (sys : EpistemicSystemFA (Fin 4))
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hLt (by native_decide)) | (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h) | assumption)
+          Finset.coe_empty, Finset.coe_univ] <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h)) <;>
+        (exfalso; exact absurd hLt (by native_decide)))
     (by intro A B hDisj hEq hGe
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hEq (by native_decide)) | (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe) | assumption)
+          Finset.coe_empty, Finset.coe_univ] at hGe ⊢ <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe)) <;>
+        (exfalso; exact absurd hEq (by native_decide)))
 
 set_option maxHeartbeats 800000 in
 private theorem chamber_60 (sys : EpistemicSystemFA (Fin 4))
@@ -5177,14 +5537,20 @@ private theorem chamber_60 (sys : EpistemicSystemFA (Fin 4))
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hLt (by native_decide)) | (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h) | assumption)
+          Finset.coe_empty, Finset.coe_univ] <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h)) <;>
+        (exfalso; exact absurd hLt (by native_decide)))
     (by intro A B hDisj hEq hGe
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hEq (by native_decide)) | (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe) | assumption)
+          Finset.coe_empty, Finset.coe_univ] at hGe ⊢ <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe)) <;>
+        (exfalso; exact absurd hEq (by native_decide)))
 
 set_option maxHeartbeats 800000 in
 private theorem chamber_61 (sys : EpistemicSystemFA (Fin 4))
@@ -5261,14 +5627,20 @@ private theorem chamber_61 (sys : EpistemicSystemFA (Fin 4))
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hLt (by native_decide)) | (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h) | assumption)
+          Finset.coe_empty, Finset.coe_univ] <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h)) <;>
+        (exfalso; exact absurd hLt (by native_decide)))
     (by intro A B hDisj hEq hGe
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hEq (by native_decide)) | (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe) | assumption)
+          Finset.coe_empty, Finset.coe_univ] at hGe ⊢ <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe)) <;>
+        (exfalso; exact absurd hEq (by native_decide)))
 
 set_option maxHeartbeats 800000 in
 private theorem chamber_62 (sys : EpistemicSystemFA (Fin 4))
@@ -5341,14 +5713,20 @@ private theorem chamber_62 (sys : EpistemicSystemFA (Fin 4))
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hLt (by native_decide)) | (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h) | assumption)
+          Finset.coe_empty, Finset.coe_univ] <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h)) <;>
+        (exfalso; exact absurd hLt (by native_decide)))
     (by intro A B hDisj hEq hGe
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hEq (by native_decide)) | (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe) | assumption)
+          Finset.coe_empty, Finset.coe_univ] at hGe ⊢ <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe)) <;>
+        (exfalso; exact absurd hEq (by native_decide)))
 
 set_option maxHeartbeats 800000 in
 private theorem chamber_63 (sys : EpistemicSystemFA (Fin 4))
@@ -5421,14 +5799,20 @@ private theorem chamber_63 (sys : EpistemicSystemFA (Fin 4))
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hLt (by native_decide)) | (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h) | assumption)
+          Finset.coe_empty, Finset.coe_univ] <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h)) <;>
+        (exfalso; exact absurd hLt (by native_decide)))
     (by intro A B hDisj hEq hGe
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hEq (by native_decide)) | (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe) | assumption)
+          Finset.coe_empty, Finset.coe_univ] at hGe ⊢ <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe)) <;>
+        (exfalso; exact absurd hEq (by native_decide)))
 
 set_option maxHeartbeats 800000 in
 private theorem chamber_64 (sys : EpistemicSystemFA (Fin 4))
@@ -5501,14 +5885,20 @@ private theorem chamber_64 (sys : EpistemicSystemFA (Fin 4))
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hLt (by native_decide)) | (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h) | assumption)
+          Finset.coe_empty, Finset.coe_univ] <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h)) <;>
+        (exfalso; exact absurd hLt (by native_decide)))
     (by intro A B hDisj hEq hGe
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hEq (by native_decide)) | (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe) | assumption)
+          Finset.coe_empty, Finset.coe_univ] at hGe ⊢ <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe)) <;>
+        (exfalso; exact absurd hEq (by native_decide)))
 
 set_option maxHeartbeats 800000 in
 private theorem chamber_65 (sys : EpistemicSystemFA (Fin 4))
@@ -5581,14 +5971,20 @@ private theorem chamber_65 (sys : EpistemicSystemFA (Fin 4))
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hLt (by native_decide)) | (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h) | assumption)
+          Finset.coe_empty, Finset.coe_univ] <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h)) <;>
+        (exfalso; exact absurd hLt (by native_decide)))
     (by intro A B hDisj hEq hGe
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hEq (by native_decide)) | (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe) | assumption)
+          Finset.coe_empty, Finset.coe_univ] at hGe ⊢ <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe)) <;>
+        (exfalso; exact absurd hEq (by native_decide)))
 
 set_option maxHeartbeats 800000 in
 private theorem chamber_66 (sys : EpistemicSystemFA (Fin 4))
@@ -5665,14 +6061,20 @@ private theorem chamber_66 (sys : EpistemicSystemFA (Fin 4))
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hLt (by native_decide)) | (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h) | assumption)
+          Finset.coe_empty, Finset.coe_univ] <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h)) <;>
+        (exfalso; exact absurd hLt (by native_decide)))
     (by intro A B hDisj hEq hGe
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hEq (by native_decide)) | (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe) | assumption)
+          Finset.coe_empty, Finset.coe_univ] at hGe ⊢ <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe)) <;>
+        (exfalso; exact absurd hEq (by native_decide)))
 
 set_option maxHeartbeats 800000 in
 private theorem chamber_67 (sys : EpistemicSystemFA (Fin 4))
@@ -5748,14 +6150,20 @@ private theorem chamber_67 (sys : EpistemicSystemFA (Fin 4))
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hLt (by native_decide)) | (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h) | assumption)
+          Finset.coe_empty, Finset.coe_univ] <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h)) <;>
+        (exfalso; exact absurd hLt (by native_decide)))
     (by intro A B hDisj hEq hGe
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hEq (by native_decide)) | (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe) | assumption)
+          Finset.coe_empty, Finset.coe_univ] at hGe ⊢ <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe)) <;>
+        (exfalso; exact absurd hEq (by native_decide)))
 
 set_option maxHeartbeats 800000 in
 private theorem chamber_68 (sys : EpistemicSystemFA (Fin 4))
@@ -5835,14 +6243,20 @@ private theorem chamber_68 (sys : EpistemicSystemFA (Fin 4))
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hLt (by native_decide)) | (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h) | assumption)
+          Finset.coe_empty, Finset.coe_univ] <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h)) <;>
+        (exfalso; exact absurd hLt (by native_decide)))
     (by intro A B hDisj hEq hGe
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hEq (by native_decide)) | (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe) | assumption)
+          Finset.coe_empty, Finset.coe_univ] at hGe ⊢ <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe)) <;>
+        (exfalso; exact absurd hEq (by native_decide)))
 
 set_option maxHeartbeats 800000 in
 private theorem chamber_69 (sys : EpistemicSystemFA (Fin 4))
@@ -5921,14 +6335,20 @@ private theorem chamber_69 (sys : EpistemicSystemFA (Fin 4))
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hLt (by native_decide)) | (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h) | assumption)
+          Finset.coe_empty, Finset.coe_univ] <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h)) <;>
+        (exfalso; exact absurd hLt (by native_decide)))
     (by intro A B hDisj hEq hGe
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hEq (by native_decide)) | (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe) | assumption)
+          Finset.coe_empty, Finset.coe_univ] at hGe ⊢ <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe)) <;>
+        (exfalso; exact absurd hEq (by native_decide)))
 
 set_option maxHeartbeats 800000 in
 private theorem chamber_70 (sys : EpistemicSystemFA (Fin 4))
@@ -6005,14 +6425,20 @@ private theorem chamber_70 (sys : EpistemicSystemFA (Fin 4))
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hLt (by native_decide)) | (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h) | assumption)
+          Finset.coe_empty, Finset.coe_univ] <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h)) <;>
+        (exfalso; exact absurd hLt (by native_decide)))
     (by intro A B hDisj hEq hGe
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hEq (by native_decide)) | (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe) | assumption)
+          Finset.coe_empty, Finset.coe_univ] at hGe ⊢ <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe)) <;>
+        (exfalso; exact absurd hEq (by native_decide)))
 
 set_option maxHeartbeats 800000 in
 private theorem chamber_71 (sys : EpistemicSystemFA (Fin 4))
@@ -6092,14 +6518,20 @@ private theorem chamber_71 (sys : EpistemicSystemFA (Fin 4))
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hLt (by native_decide)) | (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h) | assumption)
+          Finset.coe_empty, Finset.coe_univ] <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h)) <;>
+        (exfalso; exact absurd hLt (by native_decide)))
     (by intro A B hDisj hEq hGe
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hEq (by native_decide)) | (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe) | assumption)
+          Finset.coe_empty, Finset.coe_univ] at hGe ⊢ <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe)) <;>
+        (exfalso; exact absurd hEq (by native_decide)))
 
 set_option maxHeartbeats 800000 in
 private theorem chamber_72 (sys : EpistemicSystemFA (Fin 4))
@@ -6176,14 +6608,20 @@ private theorem chamber_72 (sys : EpistemicSystemFA (Fin 4))
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hLt (by native_decide)) | (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h) | assumption)
+          Finset.coe_empty, Finset.coe_univ] <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h)) <;>
+        (exfalso; exact absurd hLt (by native_decide)))
     (by intro A B hDisj hEq hGe
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hEq (by native_decide)) | (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe) | assumption)
+          Finset.coe_empty, Finset.coe_univ] at hGe ⊢ <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe)) <;>
+        (exfalso; exact absurd hEq (by native_decide)))
 
 set_option maxHeartbeats 800000 in
 private theorem chamber_73 (sys : EpistemicSystemFA (Fin 4))
@@ -6264,14 +6702,20 @@ private theorem chamber_73 (sys : EpistemicSystemFA (Fin 4))
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hLt (by native_decide)) | (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h) | assumption)
+          Finset.coe_empty, Finset.coe_univ] <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h)) <;>
+        (exfalso; exact absurd hLt (by native_decide)))
     (by intro A B hDisj hEq hGe
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hEq (by native_decide)) | (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe) | assumption)
+          Finset.coe_empty, Finset.coe_univ] at hGe ⊢ <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe)) <;>
+        (exfalso; exact absurd hEq (by native_decide)))
 
 set_option maxHeartbeats 800000 in
 private theorem chamber_74 (sys : EpistemicSystemFA (Fin 4))
@@ -6347,14 +6791,20 @@ private theorem chamber_74 (sys : EpistemicSystemFA (Fin 4))
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hLt (by native_decide)) | (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h) | assumption)
+          Finset.coe_empty, Finset.coe_univ] <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h)) <;>
+        (exfalso; exact absurd hLt (by native_decide)))
     (by intro A B hDisj hEq hGe
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hEq (by native_decide)) | (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe) | assumption)
+          Finset.coe_empty, Finset.coe_univ] at hGe ⊢ <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe)) <;>
+        (exfalso; exact absurd hEq (by native_decide)))
 
 set_option maxHeartbeats 800000 in
 private theorem chamber_75 (sys : EpistemicSystemFA (Fin 4))
@@ -6429,14 +6879,20 @@ private theorem chamber_75 (sys : EpistemicSystemFA (Fin 4))
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hLt (by native_decide)) | (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h) | assumption)
+          Finset.coe_empty, Finset.coe_univ] <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h)) <;>
+        (exfalso; exact absurd hLt (by native_decide)))
     (by intro A B hDisj hEq hGe
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hEq (by native_decide)) | (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe) | assumption)
+          Finset.coe_empty, Finset.coe_univ] at hGe ⊢ <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe)) <;>
+        (exfalso; exact absurd hEq (by native_decide)))
 
 set_option maxHeartbeats 800000 in
 private theorem chamber_76 (sys : EpistemicSystemFA (Fin 4))
@@ -6511,14 +6967,20 @@ private theorem chamber_76 (sys : EpistemicSystemFA (Fin 4))
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hLt (by native_decide)) | (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h) | assumption)
+          Finset.coe_empty, Finset.coe_univ] <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h)) <;>
+        (exfalso; exact absurd hLt (by native_decide)))
     (by intro A B hDisj hEq hGe
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hEq (by native_decide)) | (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe) | assumption)
+          Finset.coe_empty, Finset.coe_univ] at hGe ⊢ <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe)) <;>
+        (exfalso; exact absurd hEq (by native_decide)))
 
 set_option maxHeartbeats 800000 in
 private theorem chamber_77 (sys : EpistemicSystemFA (Fin 4))
@@ -6596,14 +7058,20 @@ private theorem chamber_77 (sys : EpistemicSystemFA (Fin 4))
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hLt (by native_decide)) | (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h) | assumption)
+          Finset.coe_empty, Finset.coe_univ] <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h)) <;>
+        (exfalso; exact absurd hLt (by native_decide)))
     (by intro A B hDisj hEq hGe
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hEq (by native_decide)) | (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe) | assumption)
+          Finset.coe_empty, Finset.coe_univ] at hGe ⊢ <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe)) <;>
+        (exfalso; exact absurd hEq (by native_decide)))
 
 set_option maxHeartbeats 800000 in
 private theorem chamber_78 (sys : EpistemicSystemFA (Fin 4))
@@ -6679,14 +7147,20 @@ private theorem chamber_78 (sys : EpistemicSystemFA (Fin 4))
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hLt (by native_decide)) | (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h) | assumption)
+          Finset.coe_empty, Finset.coe_univ] <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h)) <;>
+        (exfalso; exact absurd hLt (by native_decide)))
     (by intro A B hDisj hEq hGe
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hEq (by native_decide)) | (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe) | assumption)
+          Finset.coe_empty, Finset.coe_univ] at hGe ⊢ <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe)) <;>
+        (exfalso; exact absurd hEq (by native_decide)))
 
 set_option maxHeartbeats 800000 in
 private theorem chamber_79 (sys : EpistemicSystemFA (Fin 4))
@@ -6761,14 +7235,20 @@ private theorem chamber_79 (sys : EpistemicSystemFA (Fin 4))
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hLt (by native_decide)) | (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h) | assumption)
+          Finset.coe_empty, Finset.coe_univ] <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h)) <;>
+        (exfalso; exact absurd hLt (by native_decide)))
     (by intro A B hDisj hEq hGe
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hEq (by native_decide)) | (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe) | assumption)
+          Finset.coe_empty, Finset.coe_univ] at hGe ⊢ <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe)) <;>
+        (exfalso; exact absurd hEq (by native_decide)))
 
 set_option maxHeartbeats 800000 in
 private theorem chamber_80 (sys : EpistemicSystemFA (Fin 4))
@@ -6841,14 +7321,20 @@ private theorem chamber_80 (sys : EpistemicSystemFA (Fin 4))
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hLt (by native_decide)) | (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h) | assumption)
+          Finset.coe_empty, Finset.coe_univ] <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h)) <;>
+        (exfalso; exact absurd hLt (by native_decide)))
     (by intro A B hDisj hEq hGe
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hEq (by native_decide)) | (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe) | assumption)
+          Finset.coe_empty, Finset.coe_univ] at hGe ⊢ <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe)) <;>
+        (exfalso; exact absurd hEq (by native_decide)))
 
 set_option maxHeartbeats 800000 in
 private theorem chamber_81 (sys : EpistemicSystemFA (Fin 4))
@@ -6922,14 +7408,20 @@ private theorem chamber_81 (sys : EpistemicSystemFA (Fin 4))
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hLt (by native_decide)) | (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h) | assumption)
+          Finset.coe_empty, Finset.coe_univ] <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h)) <;>
+        (exfalso; exact absurd hLt (by native_decide)))
     (by intro A B hDisj hEq hGe
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hEq (by native_decide)) | (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe) | assumption)
+          Finset.coe_empty, Finset.coe_univ] at hGe ⊢ <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe)) <;>
+        (exfalso; exact absurd hEq (by native_decide)))
 
 set_option maxHeartbeats 800000 in
 private theorem chamber_82 (sys : EpistemicSystemFA (Fin 4))
@@ -7005,14 +7497,20 @@ private theorem chamber_82 (sys : EpistemicSystemFA (Fin 4))
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hLt (by native_decide)) | (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h) | assumption)
+          Finset.coe_empty, Finset.coe_univ] <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h)) <;>
+        (exfalso; exact absurd hLt (by native_decide)))
     (by intro A B hDisj hEq hGe
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hEq (by native_decide)) | (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe) | assumption)
+          Finset.coe_empty, Finset.coe_univ] at hGe ⊢ <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe)) <;>
+        (exfalso; exact absurd hEq (by native_decide)))
 
 set_option maxHeartbeats 800000 in
 private theorem chamber_83 (sys : EpistemicSystemFA (Fin 4))
@@ -7088,14 +7586,20 @@ private theorem chamber_83 (sys : EpistemicSystemFA (Fin 4))
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hLt (by native_decide)) | (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h) | assumption)
+          Finset.coe_empty, Finset.coe_univ] <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h)) <;>
+        (exfalso; exact absurd hLt (by native_decide)))
     (by intro A B hDisj hEq hGe
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hEq (by native_decide)) | (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe) | assumption)
+          Finset.coe_empty, Finset.coe_univ] at hGe ⊢ <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe)) <;>
+        (exfalso; exact absurd hEq (by native_decide)))
 
 set_option maxHeartbeats 800000 in
 private theorem chamber_84 (sys : EpistemicSystemFA (Fin 4))
@@ -7171,14 +7675,20 @@ private theorem chamber_84 (sys : EpistemicSystemFA (Fin 4))
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hLt (by native_decide)) | (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h) | assumption)
+          Finset.coe_empty, Finset.coe_univ] <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h)) <;>
+        (exfalso; exact absurd hLt (by native_decide)))
     (by intro A B hDisj hEq hGe
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hEq (by native_decide)) | (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe) | assumption)
+          Finset.coe_empty, Finset.coe_univ] at hGe ⊢ <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe)) <;>
+        (exfalso; exact absurd hEq (by native_decide)))
 
 set_option maxHeartbeats 800000 in
 private theorem chamber_85 (sys : EpistemicSystemFA (Fin 4))
@@ -7254,14 +7764,20 @@ private theorem chamber_85 (sys : EpistemicSystemFA (Fin 4))
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hLt (by native_decide)) | (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h) | assumption)
+          Finset.coe_empty, Finset.coe_univ] <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h)) <;>
+        (exfalso; exact absurd hLt (by native_decide)))
     (by intro A B hDisj hEq hGe
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hEq (by native_decide)) | (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe) | assumption)
+          Finset.coe_empty, Finset.coe_univ] at hGe ⊢ <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe)) <;>
+        (exfalso; exact absurd hEq (by native_decide)))
 
 set_option maxHeartbeats 800000 in
 private theorem chamber_86 (sys : EpistemicSystemFA (Fin 4))
@@ -7345,14 +7861,20 @@ private theorem chamber_86 (sys : EpistemicSystemFA (Fin 4))
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hLt (by native_decide)) | (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h) | assumption)
+          Finset.coe_empty, Finset.coe_univ] <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h)) <;>
+        (exfalso; exact absurd hLt (by native_decide)))
     (by intro A B hDisj hEq hGe
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hEq (by native_decide)) | (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe) | assumption)
+          Finset.coe_empty, Finset.coe_univ] at hGe ⊢ <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe)) <;>
+        (exfalso; exact absurd hEq (by native_decide)))
 
 set_option maxHeartbeats 800000 in
 private theorem chamber_87 (sys : EpistemicSystemFA (Fin 4))
@@ -7430,14 +7952,20 @@ private theorem chamber_87 (sys : EpistemicSystemFA (Fin 4))
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hLt (by native_decide)) | (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h) | assumption)
+          Finset.coe_empty, Finset.coe_univ] <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exact fun h => ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) h)) <;>
+        (exfalso; exact absurd hLt (by native_decide)))
     (by intro A B hDisj hEq hGe
         rcases finset_fin4_eq A with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         rcases finset_fin4_eq B with rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl|rfl <;>
         simp only [Finset.coe_insert, Finset.coe_singleton,
-          Finset.coe_empty, Finset.coe_univ] at * <;>
-        first | exact absurd hDisj (by decide) | (exfalso; exact absurd hEq (by native_decide)) | (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe) | assumption)
+          Finset.coe_empty, Finset.coe_univ] at hGe ⊢ <;>
+        (try exact absurd hDisj (by decide)) <;>
+        (try assumption) <;>
+        (try (exfalso; exact ge_empty_contra sys hpos (by first | exact Set.insert_nonempty _ _ | exact Set.singleton_nonempty _ | exact Set.univ_nonempty) hGe)) <;>
+        (exfalso; exact absurd hEq (by native_decide)))
 
 set_option maxHeartbeats 3200000 in
 private theorem dispatch_TTT (sys : EpistemicSystemFA (Fin 4))
