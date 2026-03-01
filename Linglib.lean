@@ -57,6 +57,7 @@ import Linglib.Core.Agent.SignalDetection
 import Linglib.Core.Agent.RankOrderings
 import Linglib.Core.Agent.SemiorderRanking
 import Linglib.Core.Agent.GaussianChoice
+import Linglib.Core.Agent.PsychophysicalChoice
 import Linglib.Core.Agent.Learning
 import Linglib.Core.Discourse.Evidence
 import Linglib.Core.Discourse.Epistemicity
@@ -940,6 +941,7 @@ import Linglib.Theories.Semantics.Probabilistic.Graded.GradedProposition
 import Linglib.Theories.Pragmatics.RSA.Core.SemanticBackend
 import Linglib.Theories.Interfaces.SyntaxSemantics.SyntaxInterface
 import Linglib.Theories.Interfaces.SyntaxSemantics.Borer2005
+import Linglib.Theories.Interfaces.SyntaxSemantics.Linking
 import Linglib.Theories.Semantics.Montague.Modification
 import Linglib.Theories.Semantics.Lexical.Noun.GradableNouns
 import Linglib.Theories.Semantics.Lexical.Noun.Kind.Carlson1977
