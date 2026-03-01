@@ -1,0 +1,27 @@
+/-!
+# Hungarian Discourse Particles
+
+Lexical entry for Hungarian *csak* — the discourse *only* connective
+(IKW 2025). Allows all clause types as S'.
+
+## References
+
+- Ippolito, Kiss & Williams (2025). Discourse *only*. WCCFL 41.
+-/
+
+namespace Fragments.Hungarian.DiscourseParticles
+
+/-- A discourse *only* particle entry. -/
+structure DiscourseOnlyParticle where
+  form : String
+  nativeForm : String
+  gloss : String
+  deriving Repr, DecidableEq, BEq
+
+/-- Hungarian *csak* — allows all clause types as S'. -/
+def csak : DiscourseOnlyParticle where
+  form := "csak"
+  nativeForm := "csak"
+  gloss := "only"
+
+end Fragments.Hungarian.DiscourseParticles

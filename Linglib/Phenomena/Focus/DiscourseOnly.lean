@@ -1,3 +1,8 @@
+import Linglib.Fragments.Italian.DiscourseParticles
+import Linglib.Fragments.Russian.DiscourseParticles
+import Linglib.Fragments.Hungarian.DiscourseParticles
+import Linglib.Fragments.Mandarin.DiscourseParticles
+
 /-!
 # Discourse *only*: Cross-Linguistic Data @cite{ippolito-kiss-williams-2025}
 
@@ -17,18 +22,21 @@ the evidential direction of the first.
 
 ## Key Distributional Generalizations
 
-1. The left argument S must be a declarative or exclamative (not an
-   info-seeking interrogative) — §5.2
-2. The prejacent S' is typically declarative but can vary cross-linguistically
+1. The left argument S cannot be a canonical info-seeking interrogative
+   (§5.2); declaratives, imperatives, exclamatives, and biased/rhetorical
+   questions are all attested as S
+2. The prejacent S' varies cross-linguistically: Russian and Hungarian
+   allow all types; Mandarin blocks exclamatives; Italian restricts S' to
+   declaratives only (§7)
 3. S and S' must be relevant to the same QUD
 4. S must support some answer α that S' fails to support
 
 ## §7 Clause-Type Matrix (Table equivalent)
 
 The paper's main typological result: clause-type restrictions on S' vary
-cross-linguistically. Italian *solo che* restricts S' to declaratives.
-Russian *tol'ko* and Hungarian *csak* allow all types except canonical
-wh-questions. Mandarin *zhǐshì* additionally blocks exclamative S'.
+cross-linguistically. Italian *solo che* restricts S' to declaratives only.
+Russian *tol'ko* and Hungarian *csak* allow all clause types as S'.
+Mandarin *zhǐshì* allows all types except exclamatives.
 
 ## References
 
@@ -36,6 +44,11 @@ wh-questions. Mandarin *zhǐshì* additionally blocks exclamative S'.
 -/
 
 namespace Phenomena.Focus.DiscourseOnly
+
+open Fragments.Italian.DiscourseParticles (soloChe)
+open Fragments.Russian.DiscourseParticles (tolko)
+open Fragments.Hungarian.DiscourseParticles (csak)
+open Fragments.Mandarin.DiscourseParticles (zhishi)
 
 -- Clause Type Classification
 
@@ -94,7 +107,7 @@ structure DiscourseOnlyDatum where
 /-- Italian (8): "La casa è bella, solo che è costosissima" -/
 def italian_house : DiscourseOnlyDatum :=
   { language := "Italian"
-  , form := "solo che"
+  , form := soloChe.form
   , sClause := "The house is beautiful"
   , sPrimeClause := "it is very expensive"
   , qud := "Should we buy the house?"
@@ -108,7 +121,7 @@ def italian_house : DiscourseOnlyDatum :=
 /-- Italian (9): "Il film non era male, solo che era un po' lungo" -/
 def italian_film : DiscourseOnlyDatum :=
   { language := "Italian"
-  , form := "solo che"
+  , form := soloChe.form
   , sClause := "The movie was not bad"
   , sPrimeClause := "it was a bit long"
   , qud := "Was the movie good?"
@@ -121,7 +134,7 @@ def italian_film : DiscourseOnlyDatum :=
 /-- Italian (10): "Sarei venuto, solo che non mi hanno invitato" -/
 def italian_wouldHaveCome : DiscourseOnlyDatum :=
   { language := "Italian"
-  , form := "solo che"
+  , form := soloChe.form
   , sClause := "I would have come"
   , sPrimeClause := "they didn't invite me"
   , qud := "Why didn't you come?"
@@ -135,7 +148,7 @@ def italian_wouldHaveCome : DiscourseOnlyDatum :=
 /-- Russian (11): "Kvartira bol'šaja, tol'ko kuxnja malen'kaja" -/
 def russian_apartment : DiscourseOnlyDatum :=
   { language := "Russian"
-  , form := "tol'ko"
+  , form := tolko.form
   , sClause := "The apartment is big"
   , sPrimeClause := "the kitchen is small"
   , qud := "Is the apartment good?"
@@ -148,7 +161,7 @@ def russian_apartment : DiscourseOnlyDatum :=
 /-- Hungarian (12): "A ház szép, csak drága" -/
 def hungarian_house : DiscourseOnlyDatum :=
   { language := "Hungarian"
-  , form := "csak"
+  , form := csak.form
   , sClause := "The house is beautiful"
   , sPrimeClause := "it is expensive"
   , qud := "Should we buy the house?"
@@ -161,7 +174,7 @@ def hungarian_house : DiscourseOnlyDatum :=
 /-- Hungarian (13): "Szép a ház, csak a kert kicsi" -/
 def hungarian_garden : DiscourseOnlyDatum :=
   { language := "Hungarian"
-  , form := "csak"
+  , form := csak.form
   , sClause := "The house is beautiful"
   , sPrimeClause := "the garden is small"
   , qud := "Should we buy the house?"
@@ -174,7 +187,7 @@ def hungarian_garden : DiscourseOnlyDatum :=
 /-- Mandarin (14): "Fángzi hěn hǎo, zhǐshì tài guìle" -/
 def mandarin_house : DiscourseOnlyDatum :=
   { language := "Mandarin"
-  , form := "zhǐshì"
+  , form := zhishi.form
   , sClause := "The house is very good"
   , sPrimeClause := "it is too expensive"
   , qud := "Should we buy the house?"
@@ -192,19 +205,20 @@ def english_house : DiscourseOnlyDatum :=
   , sPrimeClause := "it is too expensive"
   , qud := "Should we buy the house?"
   , felicitous := true
-  , source := "IKW 2025, §1 ex. 1"
+  , source := "IKW 2025, §1 ex. 2"
   , clauseType := some .declarative
   , position := some .right
   }
 
 -- ============================================================================
 -- §7: Russian *tol'ko* — S' clause-type variation (ex. 30a–f)
+-- All felicitous: Russian allows all clause types as S'.
 -- ============================================================================
 
 /-- Russian (30a): canonical polar Q as S' — felicitous -/
 def russian_s'_polarQ : DiscourseOnlyDatum :=
   { language := "Russian"
-  , form := "tol'ko"
+  , form := tolko.form
   , sClause := "The house is beautiful"
   , sPrimeClause := "has it been renovated? [polar Q]"
   , qud := "Should we buy the house?"
@@ -217,9 +231,9 @@ def russian_s'_polarQ : DiscourseOnlyDatum :=
 /-- Russian (30b): high-negation polar Q as S' — felicitous -/
 def russian_s'_highNegQ : DiscourseOnlyDatum :=
   { language := "Russian"
-  , form := "tol'ko"
+  , form := tolko.form
   , sClause := "The house is beautiful"
-  , sPrimeClause := "hasn't it been renovated? [high-neg polar Q]"
+  , sPrimeClause := "didn't it have problems with the roof? [high-neg polar Q]"
   , qud := "Should we buy the house?"
   , felicitous := true
   , source := "IKW 2025, §7 ex. 30b"
@@ -227,14 +241,16 @@ def russian_s'_highNegQ : DiscourseOnlyDatum :=
   , position := some .right
   }
 
-/-- Russian (30c): canonical wh-Q as S' — infelicitous -/
+/-- Russian (30c): canonical wh-Q as S' — felicitous.
+The restriction on canonical questions (§5.2) is about the LEFT argument S,
+not the prejacent S'. -/
 def russian_s'_whQ : DiscourseOnlyDatum :=
   { language := "Russian"
-  , form := "tol'ko"
+  , form := tolko.form
   , sClause := "The house is beautiful"
   , sPrimeClause := "when was it renovated? [wh-Q]"
   , qud := "Should we buy the house?"
-  , felicitous := false
+  , felicitous := true
   , source := "IKW 2025, §7 ex. 30c"
   , clauseType := some .canonicalWhQ
   , position := some .right
@@ -243,9 +259,9 @@ def russian_s'_whQ : DiscourseOnlyDatum :=
 /-- Russian (30d): negative rhetorical wh-Q as S' — felicitous -/
 def russian_s'_negRhetWhQ : DiscourseOnlyDatum :=
   { language := "Russian"
-  , form := "tol'ko"
+  , form := tolko.form
   , sClause := "The house is beautiful"
-  , sPrimeClause := "who would renovate it? [neg-rhet wh-Q]"
+  , sPrimeClause := "who will pay two millions for it? [neg-rhet wh-Q]"
   , qud := "Should we buy the house?"
   , felicitous := true
   , source := "IKW 2025, §7 ex. 30d"
@@ -254,25 +270,27 @@ def russian_s'_negRhetWhQ : DiscourseOnlyDatum :=
   , notes := "Rhetorical Q: speaker believes answer (nobody), DOX_sp ⊆ q"
   }
 
-/-- Russian (30e): imperative as S' — felicitous -/
+/-- Russian (30e): imperative as S' — felicitous.
+Different scenario from 30a–d: S is imperative, QUD is about the metro pass. -/
 def russian_s'_imperative : DiscourseOnlyDatum :=
   { language := "Russian"
-  , form := "tol'ko"
-  , sClause := "The house is beautiful"
-  , sPrimeClause := "don't buy it just now [imperative]"
-  , qud := "Should we buy the house?"
+  , form := tolko.form
+  , sClause := "Take my metro pass"
+  , sPrimeClause := "don't lose it [imperative]"
+  , qud := "Is it OK to use the metro pass?"
   , felicitous := true
   , source := "IKW 2025, §7 ex. 30e"
   , clauseType := some .imperative
   , position := some .right
   }
 
-/-- Russian (30f): exclamative as S' — felicitous -/
+/-- Russian (30f): exclamative as S' — felicitous.
+Both S and S' are exclamatives in this example. -/
 def russian_s'_exclamative : DiscourseOnlyDatum :=
   { language := "Russian"
-  , form := "tol'ko"
-  , sClause := "The house is beautiful"
-  , sPrimeClause := "what neighbours! [exclamative]"
+  , form := tolko.form
+  , sClause := "What a beautiful house!"
+  , sPrimeClause := "what a terrible neighborhood! [exclamative]"
   , qud := "Should we buy the house?"
   , felicitous := true
   , source := "IKW 2025, §7 ex. 30f"
@@ -282,12 +300,13 @@ def russian_s'_exclamative : DiscourseOnlyDatum :=
 
 -- ============================================================================
 -- §7: Hungarian *csak* — S' clause-type variation (ex. 31a–f)
+-- All felicitous: Hungarian allows all clause types as S'.
 -- ============================================================================
 
 /-- Hungarian (31a): canonical polar Q as S' — felicitous -/
 def hungarian_s'_polarQ : DiscourseOnlyDatum :=
   { language := "Hungarian"
-  , form := "csak"
+  , form := csak.form
   , sClause := "The house is beautiful"
   , sPrimeClause := "has it been renovated? [polar Q]"
   , qud := "Should we buy the house?"
@@ -300,9 +319,9 @@ def hungarian_s'_polarQ : DiscourseOnlyDatum :=
 /-- Hungarian (31b): high-negation polar Q as S' — felicitous -/
 def hungarian_s'_highNegQ : DiscourseOnlyDatum :=
   { language := "Hungarian"
-  , form := "csak"
+  , form := csak.form
   , sClause := "The house is beautiful"
-  , sPrimeClause := "hasn't it been renovated? [high-neg polar Q]"
+  , sPrimeClause := "wasn't it sold just now? [high-neg polar Q]"
   , qud := "Should we buy the house?"
   , felicitous := true
   , source := "IKW 2025, §7 ex. 31b"
@@ -310,14 +329,16 @@ def hungarian_s'_highNegQ : DiscourseOnlyDatum :=
   , position := some .right
   }
 
-/-- Hungarian (31c): canonical wh-Q as S' — infelicitous -/
+/-- Hungarian (31c): canonical wh-Q as S' — felicitous.
+The restriction on canonical questions (§5.2) is about the LEFT argument S,
+not the prejacent S'. -/
 def hungarian_s'_whQ : DiscourseOnlyDatum :=
   { language := "Hungarian"
-  , form := "csak"
+  , form := csak.form
   , sClause := "The house is beautiful"
-  , sPrimeClause := "when was it renovated? [wh-Q]"
+  , sPrimeClause := "when has it been renovated? [wh-Q]"
   , qud := "Should we buy the house?"
-  , felicitous := false
+  , felicitous := true
   , source := "IKW 2025, §7 ex. 31c"
   , clauseType := some .canonicalWhQ
   , position := some .right
@@ -326,9 +347,9 @@ def hungarian_s'_whQ : DiscourseOnlyDatum :=
 /-- Hungarian (31d): negative rhetorical wh-Q as S' — felicitous -/
 def hungarian_s'_negRhetWhQ : DiscourseOnlyDatum :=
   { language := "Hungarian"
-  , form := "csak"
+  , form := csak.form
   , sClause := "The house is beautiful"
-  , sPrimeClause := "who would renovate it? [neg-rhet wh-Q]"
+  , sPrimeClause := "who would pay 2 million for it? [neg-rhet wh-Q]"
   , qud := "Should we buy the house?"
   , felicitous := true
   , source := "IKW 2025, §7 ex. 31d"
@@ -337,25 +358,27 @@ def hungarian_s'_negRhetWhQ : DiscourseOnlyDatum :=
   , notes := "Rhetorical Q: speaker believes answer (nobody), DOX_sp ⊆ q"
   }
 
-/-- Hungarian (31e): imperative as S' — felicitous -/
+/-- Hungarian (31e): imperative as S' — felicitous.
+Different scenario from 31a–d: S is imperative, QUD is about the metro pass. -/
 def hungarian_s'_imperative : DiscourseOnlyDatum :=
   { language := "Hungarian"
-  , form := "csak"
-  , sClause := "The house is beautiful"
-  , sPrimeClause := "don't buy it just now [imperative]"
-  , qud := "Should we buy the house?"
+  , form := csak.form
+  , sClause := "Take my metro pass"
+  , sPrimeClause := "don't lose it [imperative]"
+  , qud := "Is it OK to use the metro pass?"
   , felicitous := true
   , source := "IKW 2025, §7 ex. 31e"
   , clauseType := some .imperative
   , position := some .right
   }
 
-/-- Hungarian (31f): exclamative as S' — felicitous -/
+/-- Hungarian (31f): exclamative as S' — felicitous.
+Both S and S' are exclamatives in this example. -/
 def hungarian_s'_exclamative : DiscourseOnlyDatum :=
   { language := "Hungarian"
-  , form := "csak"
-  , sClause := "The house is beautiful"
-  , sPrimeClause := "what neighbours! [exclamative]"
+  , form := csak.form
+  , sClause := "What a beautiful house!"
+  , sPrimeClause := "what a terrible neighborhood! [exclamative]"
   , qud := "Should we buy the house?"
   , felicitous := true
   , source := "IKW 2025, §7 ex. 31f"
@@ -365,13 +388,15 @@ def hungarian_s'_exclamative : DiscourseOnlyDatum :=
 
 -- ============================================================================
 -- §7: Mandarin *zhǐshì* — S' clause-type variation (ex. 32a–f)
+-- All felicitous except 32f (exclamative): Mandarin uniquely blocks
+-- exclamative S'.
 -- ============================================================================
 
 /-- Mandarin (32a): canonical polar Q as S' — felicitous -/
 def mandarin_s'_polarQ : DiscourseOnlyDatum :=
   { language := "Mandarin"
-  , form := "zhǐshì"
-  , sClause := "The house is very good"
+  , form := zhishi.form
+  , sClause := "The house is beautiful"
   , sPrimeClause := "has it been renovated? [polar Q]"
   , qud := "Should we buy the house?"
   , felicitous := true
@@ -383,9 +408,9 @@ def mandarin_s'_polarQ : DiscourseOnlyDatum :=
 /-- Mandarin (32b): high-negation polar Q as S' — felicitous -/
 def mandarin_s'_highNegQ : DiscourseOnlyDatum :=
   { language := "Mandarin"
-  , form := "zhǐshì"
-  , sClause := "The house is very good"
-  , sPrimeClause := "hasn't it been renovated? [high-neg polar Q]"
+  , form := zhishi.form
+  , sClause := "The house is beautiful"
+  , sPrimeClause := "didn't it have a problem with the electric system? [high-neg polar Q]"
   , qud := "Should we buy the house?"
   , felicitous := true
   , source := "IKW 2025, §7 ex. 32b"
@@ -393,14 +418,16 @@ def mandarin_s'_highNegQ : DiscourseOnlyDatum :=
   , position := some .right
   }
 
-/-- Mandarin (32c): canonical wh-Q as S' — infelicitous -/
+/-- Mandarin (32c): canonical wh-Q as S' — felicitous.
+The restriction on canonical questions (§5.2) is about the LEFT argument S,
+not the prejacent S'. -/
 def mandarin_s'_whQ : DiscourseOnlyDatum :=
   { language := "Mandarin"
-  , form := "zhǐshì"
-  , sClause := "The house is very good"
-  , sPrimeClause := "when was it renovated? [wh-Q]"
+  , form := zhishi.form
+  , sClause := "The house is beautiful"
+  , sPrimeClause := "when has it been renovated? [wh-Q]"
   , qud := "Should we buy the house?"
-  , felicitous := false
+  , felicitous := true
   , source := "IKW 2025, §7 ex. 32c"
   , clauseType := some .canonicalWhQ
   , position := some .right
@@ -409,9 +436,9 @@ def mandarin_s'_whQ : DiscourseOnlyDatum :=
 /-- Mandarin (32d): negative rhetorical wh-Q as S' — felicitous -/
 def mandarin_s'_negRhetWhQ : DiscourseOnlyDatum :=
   { language := "Mandarin"
-  , form := "zhǐshì"
-  , sClause := "The house is very good"
-  , sPrimeClause := "who would renovate it? [neg-rhet wh-Q]"
+  , form := zhishi.form
+  , sClause := "The house is beautiful"
+  , sPrimeClause := "who would pay 2 millions for it? [neg-rhet wh-Q]"
   , qud := "Should we buy the house?"
   , felicitous := true
   , source := "IKW 2025, §7 ex. 32d"
@@ -420,25 +447,27 @@ def mandarin_s'_negRhetWhQ : DiscourseOnlyDatum :=
   , notes := "Rhetorical Q: speaker believes answer (nobody), DOX_sp ⊆ q"
   }
 
-/-- Mandarin (32e): imperative as S' — felicitous -/
+/-- Mandarin (32e): imperative as S' — felicitous.
+Different scenario from 32a–d: S is imperative, QUD is about the metro pass. -/
 def mandarin_s'_imperative : DiscourseOnlyDatum :=
   { language := "Mandarin"
-  , form := "zhǐshì"
-  , sClause := "The house is very good"
-  , sPrimeClause := "don't buy it just now [imperative]"
-  , qud := "Should we buy the house?"
+  , form := zhishi.form
+  , sClause := "Use my metro pass"
+  , sPrimeClause := "don't lose it [imperative]"
+  , qud := "Is it OK to use the metro pass?"
   , felicitous := true
   , source := "IKW 2025, §7 ex. 32e"
   , clauseType := some .imperative
   , position := some .right
   }
 
-/-- Mandarin (32f): exclamative as S' — INFELICITOUS (Mandarin-specific) -/
+/-- Mandarin (32f): exclamative as S' — INFELICITOUS (Mandarin-specific).
+Mandarin zhǐshì uniquely blocks exclamative S'. -/
 def mandarin_s'_exclamative : DiscourseOnlyDatum :=
   { language := "Mandarin"
-  , form := "zhǐshì"
-  , sClause := "The house is very good"
-  , sPrimeClause := "what neighbours! [exclamative]"
+  , form := zhishi.form
+  , sClause := "What a beautiful house!"
+  , sPrimeClause := "what a terrible neighborhood! [exclamative]"
   , qud := "Should we buy the house?"
   , felicitous := false
   , source := "IKW 2025, §7 ex. 32f"
@@ -455,7 +484,7 @@ def mandarin_s'_exclamative : DiscourseOnlyDatum :=
 /-- Italian (33a): declarative as S' — felicitous -/
 def italian_s'_declarative : DiscourseOnlyDatum :=
   { language := "Italian"
-  , form := "solo che"
+  , form := soloChe.form
   , sClause := "The house is beautiful"
   , sPrimeClause := "it is very expensive [declarative]"
   , qud := "Should we buy the house?"
@@ -468,7 +497,7 @@ def italian_s'_declarative : DiscourseOnlyDatum :=
 /-- Italian (33b): polar Q as S' — infelicitous -/
 def italian_s'_polarQ : DiscourseOnlyDatum :=
   { language := "Italian"
-  , form := "solo che"
+  , form := soloChe.form
   , sClause := "The house is beautiful"
   , sPrimeClause := "has it been renovated? [polar Q]"
   , qud := "Should we buy the house?"
@@ -482,7 +511,7 @@ def italian_s'_polarQ : DiscourseOnlyDatum :=
 /-- Italian (33c): wh-Q as S' — infelicitous -/
 def italian_s'_whQ : DiscourseOnlyDatum :=
   { language := "Italian"
-  , form := "solo che"
+  , form := soloChe.form
   , sClause := "The house is beautiful"
   , sPrimeClause := "when was it renovated? [wh-Q]"
   , qud := "Should we buy the house?"
@@ -496,7 +525,7 @@ def italian_s'_whQ : DiscourseOnlyDatum :=
 /-- Italian (33d): imperative as S' — infelicitous -/
 def italian_s'_imperative : DiscourseOnlyDatum :=
   { language := "Italian"
-  , form := "solo che"
+  , form := soloChe.form
   , sClause := "The house is beautiful"
   , sPrimeClause := "don't buy it just now [imperative]"
   , qud := "Should we buy the house?"
@@ -510,7 +539,7 @@ def italian_s'_imperative : DiscourseOnlyDatum :=
 /-- Italian (33e): exclamative as S' — infelicitous -/
 def italian_s'_exclamative : DiscourseOnlyDatum :=
   { language := "Italian"
-  , form := "solo che"
+  , form := soloChe.form
   , sClause := "The house is beautiful"
   , sPrimeClause := "what neighbours! [exclamative]"
   , qud := "Should we buy the house?"
@@ -572,26 +601,26 @@ theorem english_house_felicitous : english_house.felicitous = true := rfl
 
 -- Per-datum verification: §7 clause-type variation
 
--- Russian: ✓ polar Q, ✓ high-neg Q, ✗ wh-Q, ✓ neg-rhet wh-Q, ✓ imperative, ✓ exclamative
+-- Russian: ✓ polar Q, ✓ high-neg Q, ✓ wh-Q, ✓ neg-rhet wh-Q, ✓ imperative, ✓ exclamative
 theorem russian_s'_polarQ_ok : russian_s'_polarQ.felicitous = true := rfl
 theorem russian_s'_highNegQ_ok : russian_s'_highNegQ.felicitous = true := rfl
-theorem russian_s'_whQ_bad : russian_s'_whQ.felicitous = false := rfl
+theorem russian_s'_whQ_ok : russian_s'_whQ.felicitous = true := rfl
 theorem russian_s'_negRhetWhQ_ok : russian_s'_negRhetWhQ.felicitous = true := rfl
 theorem russian_s'_imperative_ok : russian_s'_imperative.felicitous = true := rfl
 theorem russian_s'_exclamative_ok : russian_s'_exclamative.felicitous = true := rfl
 
--- Hungarian: ✓ polar Q, ✓ high-neg Q, ✗ wh-Q, ✓ neg-rhet wh-Q, ✓ imperative, ✓ exclamative
+-- Hungarian: ✓ polar Q, ✓ high-neg Q, ✓ wh-Q, ✓ neg-rhet wh-Q, ✓ imperative, ✓ exclamative
 theorem hungarian_s'_polarQ_ok : hungarian_s'_polarQ.felicitous = true := rfl
 theorem hungarian_s'_highNegQ_ok : hungarian_s'_highNegQ.felicitous = true := rfl
-theorem hungarian_s'_whQ_bad : hungarian_s'_whQ.felicitous = false := rfl
+theorem hungarian_s'_whQ_ok : hungarian_s'_whQ.felicitous = true := rfl
 theorem hungarian_s'_negRhetWhQ_ok : hungarian_s'_negRhetWhQ.felicitous = true := rfl
 theorem hungarian_s'_imperative_ok : hungarian_s'_imperative.felicitous = true := rfl
 theorem hungarian_s'_exclamative_ok : hungarian_s'_exclamative.felicitous = true := rfl
 
--- Mandarin: ✓ polar Q, ✓ high-neg Q, ✗ wh-Q, ✓ neg-rhet wh-Q, ✓ imperative, ✗ exclamative
+-- Mandarin: ✓ polar Q, ✓ high-neg Q, ✓ wh-Q, ✓ neg-rhet wh-Q, ✓ imperative, ✗ exclamative
 theorem mandarin_s'_polarQ_ok : mandarin_s'_polarQ.felicitous = true := rfl
 theorem mandarin_s'_highNegQ_ok : mandarin_s'_highNegQ.felicitous = true := rfl
-theorem mandarin_s'_whQ_bad : mandarin_s'_whQ.felicitous = false := rfl
+theorem mandarin_s'_whQ_ok : mandarin_s'_whQ.felicitous = true := rfl
 theorem mandarin_s'_negRhetWhQ_ok : mandarin_s'_negRhetWhQ.felicitous = true := rfl
 theorem mandarin_s'_imperative_ok : mandarin_s'_imperative.felicitous = true := rfl
 theorem mandarin_s'_exclamative_bad : mandarin_s'_exclamative.felicitous = false := rfl
@@ -605,11 +634,14 @@ theorem italian_s'_exclamative_bad : italian_s'_exclamative.felicitous = false :
 
 -- Cross-linguistic generalizations
 
-/-- Canonical wh-Q as S' is blocked in all four languages. -/
-theorem whQ_s'_universally_blocked :
-    russian_s'_whQ.felicitous = false ∧
-    hungarian_s'_whQ.felicitous = false ∧
-    mandarin_s'_whQ.felicitous = false ∧
+/-- Canonical wh-Q as S' is allowed in Russian, Hungarian, and Mandarin.
+The restriction on canonical info-seeking questions (§5.2) applies to the
+LEFT argument S, not the prejacent S'. Only Italian blocks wh-Q as S', but
+Italian blocks ALL non-declarative S'. -/
+theorem whQ_s'_allowed_except_italian :
+    russian_s'_whQ.felicitous = true ∧
+    hungarian_s'_whQ.felicitous = true ∧
+    mandarin_s'_whQ.felicitous = true ∧
     italian_s'_whQ.felicitous = false := ⟨rfl, rfl, rfl, rfl⟩
 
 /-- Negative rhetorical wh-Q as S' is allowed in all languages that allow

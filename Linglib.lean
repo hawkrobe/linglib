@@ -70,6 +70,13 @@ import Linglib.Core.Case.SplitConditions
 import Linglib.Core.Case.LocalExtension
 import Linglib.Core.Lexical.NounCategorization
 import Linglib.Core.Scales.Roundness
+import Linglib.Core.Scales.EpistemicScale.Defs
+import Linglib.Core.Scales.EpistemicScale.Entailments
+import Linglib.Core.Scales.EpistemicScale.Conditional
+import Linglib.Core.Scales.EpistemicScale.Cancellation
+import Linglib.Core.Scales.EpistemicScale.Cancellation88
+import Linglib.Core.Scales.EpistemicScale.Fin3
+import Linglib.Core.Scales.EpistemicScale.Fin4
 import Linglib.Core.Mereology
 import Linglib.Core.Scales.MereoDim
 import Linglib.Core.ContentIndividual
@@ -138,6 +145,7 @@ import Linglib.Fragments.Hebrew.TemporalDeictic
 import Linglib.Fragments.HindiUrdu.Particles
 import Linglib.Fragments.Hungarian.Case
 import Linglib.Fragments.Hungarian.Coordination
+import Linglib.Fragments.Hungarian.DiscourseParticles
 import Linglib.Fragments.Finnish.Case
 import Linglib.Fragments.Finnish.ConsonantGradation
 import Linglib.Fragments.Finnish.Infinitives
@@ -164,6 +172,7 @@ import Linglib.Fragments.Japanese.TemporalDeictic
 import Linglib.Fragments.Japanese.Particles
 import Linglib.Fragments.Japanese.Predicates
 import Linglib.Fragments.Japanese.Conditionals
+import Linglib.Fragments.Mandarin.DiscourseParticles
 import Linglib.Fragments.Mandarin.Determiners
 import Linglib.Fragments.Mandarin.Classifiers
 import Linglib.Fragments.Mandarin.Nouns
@@ -190,6 +199,7 @@ import Linglib.Fragments.Hindi.Pronouns
 import Linglib.Fragments.Maithili.Pronouns
 import Linglib.Fragments.Punjabi.Pronouns
 import Linglib.Fragments.Russian.Case
+import Linglib.Fragments.Russian.DiscourseParticles
 import Linglib.Fragments.Russian.TemporalDeictic
 import Linglib.Fragments.Serbian.Case
 import Linglib.Fragments.Serbian.TemporalConnectives
@@ -200,6 +210,7 @@ import Linglib.Fragments.Polish.QuestionParticles
 import Linglib.Fragments.Ukrainian.Case
 import Linglib.Fragments.Ukrainian.QuestionParticles
 import Linglib.Fragments.Tagalog.TemporalConnectives
+import Linglib.Fragments.Italian.DiscourseParticles
 import Linglib.Fragments.Italian.Predicates
 import Linglib.Fragments.Italian.Nouns
 import Linglib.Fragments.Italian.Determiners

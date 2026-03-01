@@ -101,7 +101,7 @@ P(S|H)/P(S|¬H) > 1, i.e., P(S|H) > P(S|¬H). By Bayes' theorem,
 P(H|S) > P(H) ↔ P(S|H) > P(S) ↔ P(S|H) > P(S|H)P(H) + P(S|¬H)P(¬H)
 ↔ P(S|H)(1−P(H)) > P(S|¬H)P(¬H) ↔ P(S|H)P(¬H) > P(S|¬H)P(¬H)
 ↔ P(S|H) > P(S|¬H) (when P(¬H) > 0) ↔ BF > 1. -/
-theorem probSupports_iff_posRelevant_binary {W : Type*} [Fintype W]
+theorem probSupports_implies_posRelevant_binary {W : Type*} [Fintype W]
     (prior : Prior W) (topic : BProp W) (evidence : W → Bool)
     (hH_pos : probOfProp prior topic > 0)
     (hNH_pos : probOfProp prior (λ w => !topic w) > 0)

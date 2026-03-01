@@ -1,11 +1,22 @@
 # Changelog
 
+## [0.227.56] - 2026-02-28
+
+### Fixed
+- **§7 data corrections** (`Phenomena/Focus/DiscourseOnly.lean`): Fixed 3 wrong felicitous values — canonical wh-Q as S' is ALLOWED in Russian/Hungarian/Mandarin (paper has no # marks on 30c, 31c, 32c). The restriction on canonical questions (§5.2) applies to S (left arg), not S'. Fixed 15 hallucinated glosses to match paper translations (30b-f, 31b-f, 32b-f). Fixed QUDs and S clauses for imperative/exclamative examples. Fixed `english_house` source (ex. 2, not ex. 1).
+- **Replaced `whQ_s'_universally_blocked`** (false claim) with `whQ_s'_allowed_except_italian` (correct: only Italian blocks wh-Q as S').
+- **Renamed `probSupports_iff_posRelevant_binary`** → `probSupports_implies_posRelevant_binary` (statement is one direction, not iff).
+
+### Added
+- **Fragment entries** for discourse *only* particles in each language's Fragment directory: Italian `soloChe`, Russian `tolko`, Hungarian `csak`, Mandarin `zhishi`. Data file derives `form` fields from Fragment entries (derive, don't duplicate).
+- **`weak_non_agreement`** theorem: when S' can't support any answer, agree=false ∧ disagree=false (IKW p. 227).
+
 ## [0.227.55] - 2026-02-28
 
 ### Added
 - **SUPPORT primitive** (`Theories/Semantics/Questions/Support.lean`): Two-layer SUPPORT per IKW (2025) Def. 13 — `probSupports`/`probAntiSupports` (probabilistic: P(α|E) > P(α)), `fullSupport` (doxastic + probabilistic: DOX_sp ⊆ q ∧ P(r|q) > P(r)). `fullSupport_declarative`, `fullSupport_fails_unbelieved` (interrogative restriction derived, not stipulated), `probAntiSupports_implies_not_probSupports` (*but*/*only* asymmetry). Shared by additive particles (Thomas 2026) and discourse *only* (IKW 2025).
 - **Discourse *only*** (`Theories/Semantics/Lexical/Particle/DiscourseOnly.lean`): IKW (2025) Def. 16. `Context` (QUD + prior + doxastic state + partial answers), `Sentence` (inquisitive denotations sDen/s'Den), `ciContent` with universal quantification over partial answers. Interrogative restriction derived from `fullSupport_fails_unbelieved` — no `ClauseType` stipulation. `interrogative_prejacent_satisfies_ci_condition` (S' as question trivially fails to support).
-- **Cross-linguistic data** (`Phenomena/Focus/DiscourseOnly.lean`): 12 discourse *only* data points from IKW (2025) — Italian *solo che* (3), Russian *tol'ko* (3), Hungarian *csak* (3), Mandarin *zhǐshì* (2), English *only* (1). Per-datum verification theorems.
+- **Cross-linguistic data** (`Phenomena/Focus/DiscourseOnly.lean`): 31 discourse *only* data points from IKW (2025) — §3 core examples (8) + §7 clause-type matrix (23). Per-datum verification theorems. Cross-linguistic generalizations: `whQ_s'_allowed_except_italian`, `italian_s'_only_declarative`, `mandarin_blocks_exclamative_s'`.
 - **DTS bridge** (`Phenomena/Focus/Bridge/DTSDiscourseOnly.lean`): `DTSDiscourseOnlyWitness` requires only `sPosRelevant` (not `s'NegRelevant`). `negRelevant_implies_not_probSupports` (DTS negative relevance → non-support), `but_sufficient_for_only` (*but* condition subsumes *only* condition, IKW §6). `discOnly_implies_unexpectedness_under_but` delegates to Theorem 8 under stronger *but* premises. 2 sorry.
 
 ## [0.227.54] - 2026-02-28

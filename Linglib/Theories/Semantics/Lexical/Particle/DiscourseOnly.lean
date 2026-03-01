@@ -117,23 +117,27 @@ def atIssueContent (d : Sentence W) : W → Bool :=
 IKW (2025) Def. 16: ⟦S [only S']⟧ is defined only if S and S' are
 "relevant" to the QUD and ∃α ∈ QUD s.t. S supports α.
 
+The paper's notion of relevance (assumption iii, p. 225) is structural:
+S is relevant if it is a subquestion of the QUD or an answer to one. This
+is a topical notion — independent of the speaker's doxastic state. We
+approximate it with probabilistic relevance (P(α|S) ≠ P(α) for some α),
+which captures the same intuition computationally.
+
 We decompose this into two conditions:
 
 1. **S' is probabilistically relevant** to the QUD: S' changes the
-   probability of some answer (P(α|S') ≠ P(α)). This is weaker than the
-   paper's formal RELEVANCE (Def. 12), which is defined via SUPPORT and
-   includes the doxastic condition. We use the weaker check because the
-   paper's formal Def. 12, taken literally, would block info-seeking S'
-   (DOX_sp ⊄ q for all q ∈ ⟦S'⟧), contradicting its own prediction that
-   interrogative S' is fine (exx. 30a, 31a). The doxastic condition should
-   only gate *support* (condition 2), not mere topical relevance.
+   probability of some answer. This approximates the paper's structural
+   relevance. Info-seeking questions pass this check (they shift answer
+   probabilities even though the speaker doesn't believe any answer),
+   which is correct — the paper predicts interrogative S' is fine (exx. 30a, 31a).
 
 2. **S supports some answer α** via `fullSupport` (doxastic + probabilistic).
    This subsumes S's relevance — if S supports α, S is automatically relevant.
    This is where the interrogative left-argument restriction falls out: the
-   doxastic condition blocks info-seeking questions from supporting any answer. -/
+   doxastic condition (Def. 13) blocks info-seeking questions from supporting
+   any answer. -/
 def isDefined (d : Sentence W) (ctx : Context W) : Bool :=
-  -- S' is probabilistically relevant to QUD (weaker than SUPPORT-based relevance)
+  -- S' is probabilistically relevant to QUD (approximates structural relevance)
   relevant d.s'Den.highlighted ctx.qud ctx.prior &&
   -- S supports some answer (fullSupport: doxastic + probabilistic)
   -- This subsumes S's relevance: if S supports α, S is relevant.
