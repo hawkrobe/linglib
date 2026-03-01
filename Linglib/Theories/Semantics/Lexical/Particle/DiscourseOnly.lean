@@ -46,12 +46,13 @@ the evidential trajectory of the first:
 
 - Ippolito, M., Kiss, A. & Williams, W. (2025). Discourse *only*. WCCFL 41.
 - Potts, C. (2005). The Logic of Conventional Implicatures. OUP.
+- Roberts, C. (2012). Information structure in discourse. *Semantics & Pragmatics* 5(6).
 - Thomas, W. (2026). A probabilistic, question-based approach to additivity.
 -/
 
 namespace Semantics.Lexical.Particle.DiscourseOnly
 
-open Semantics.Questions.Inquisitive hiding supports
+open Discourse
 open Semantics.Questions.ProbabilisticAnswerhood
 open Semantics.Questions.Support
 open Semantics.Lexical.Expressives
@@ -81,6 +82,17 @@ structure Context (W : Type*) [Fintype W] where
   partial answers p ∉ QUD: each must support the same α. We track these
   explicitly so the CI can check the universal condition. -/
   partialAnswers : List (W → Bool)
+  /-- Subquestions of the QUD established by the discourse context.
+
+  Roberts (2012) Def. 8–9: q is a subquestion of Q iff answering Q
+  (contextually) entails a complete answer to q. IKW (2025) §5.1:
+  "Answering this question requires answering its plausible subquestions,
+  such as *Is the house beautiful? Is the house expensive?*"
+
+  These are provided by the discourse context, not computed: the contextual
+  entailment relation depends on common ground assumptions (e.g., beauty
+  is a criterion for buying). -/
+  subquestions : List (Issue W)
 
 -- Sentence
 
@@ -117,30 +129,27 @@ def atIssueContent (d : Sentence W) : W → Bool :=
 IKW (2025) Def. 16: ⟦S [only S']⟧ is defined only if S and S' are
 "relevant" to the QUD and ∃α ∈ QUD s.t. S supports α.
 
-The paper's notion of relevance (assumption iii, p. 225) is structural:
-S is relevant if it is a subquestion of the QUD or an answer to one. This
-is a topical notion — independent of the speaker's doxastic state. We
-approximate it with probabilistic relevance (P(α|S) ≠ P(α) for some α),
-which captures the same intuition computationally.
+Relevance is structural, following Roberts (2012) Def. 15 and IKW
+assumption iii (p. 225): "S is relevant to QUD if S is either a
+subquestion of QUD or an answer to a subquestion q of QUD."
 
-We decompose this into two conditions:
+We decompose the presupposition into three conditions:
 
-1. **S' is probabilistically relevant** to the QUD: S' changes the
-   probability of some answer. This approximates the paper's structural
-   relevance. Info-seeking questions pass this check (they shift answer
-   probabilities even though the speaker doesn't believe any answer),
-   which is correct — the paper predicts interrogative S' is fine (exx. 30a, 31a).
+1. **S is structurally relevant**: some alternative of S partially answers
+   the QUD or a subquestion of the QUD (via `Discourse.moveRelevant`).
 
-2. **S supports some answer α** via `fullSupport` (doxastic + probabilistic).
-   This subsumes S's relevance — if S supports α, S is automatically relevant.
+2. **S' is structurally relevant**: same check for the right argument.
+
+3. **S supports some answer α** via `fullSupport` (doxastic + probabilistic).
    This is where the interrogative left-argument restriction falls out: the
    doxastic condition (Def. 13) blocks info-seeking questions from supporting
    any answer. -/
 def isDefined (d : Sentence W) (ctx : Context W) : Bool :=
-  -- S' is probabilistically relevant to QUD (approximates structural relevance)
-  relevant d.s'Den.highlighted ctx.qud ctx.prior &&
-  -- S supports some answer (fullSupport: doxastic + probabilistic)
-  -- This subsumes S's relevance: if S supports α, S is relevant.
+  -- S is relevant to the QUD (Roberts 2012 Def. 15 / IKW assumption iii)
+  moveRelevant d.sDen ctx.qud ctx.subquestions ctx.worlds &&
+  -- S' is relevant to the QUD
+  moveRelevant d.s'Den ctx.qud ctx.subquestions ctx.worlds &&
+  -- ∃α ∈ QUD s.t. S supports α (IKW Def. 16)
   ctx.qud.alternatives.any λ α =>
     fullSupport ctx.dox d.sDen ctx.prior α ctx.worlds
 
@@ -227,7 +236,7 @@ theorem interrogative_blocks_support {W : Type*} [Fintype W]
     (dox : InfoState W) (sentDen : Issue W) (prior : Prior W)
     (answer : W → Bool) (worlds : List W)
     (hNoBelief : ∀ q, q ∈ sentDen.alternatives →
-      Semantics.Questions.Inquisitive.supports dox q worlds = false) :
+      Discourse.supports dox q worlds = false) :
     fullSupport dox sentDen prior answer worlds = false :=
   fullSupport_fails_unbelieved dox sentDen prior answer worlds hNoBelief
 
@@ -243,7 +252,7 @@ theorem interrogative_prejacent_satisfies_ci_condition {W : Type*} [Fintype W]
     (dox : InfoState W) (s'Den : Issue W) (prior : Prior W)
     (α : W → Bool) (worlds : List W)
     (hNoBelief : ∀ q, q ∈ s'Den.alternatives →
-      Semantics.Questions.Inquisitive.supports dox q worlds = false) :
+      Discourse.supports dox q worlds = false) :
     !fullSupport dox s'Den prior α worlds = true := by
   rw [fullSupport_fails_unbelieved dox s'Den prior α worlds hNoBelief]
   rfl

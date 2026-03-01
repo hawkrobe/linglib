@@ -37,7 +37,7 @@ doxastic condition because the speaker does believe an answer.
 
 namespace Semantics.Questions.Support
 
-open Semantics.Questions.Inquisitive
+open Discourse
 open Semantics.Questions.ProbabilisticAnswerhood
 
 -- Probabilistic Support

@@ -43,7 +43,7 @@ Probabilistic answerhood generalizes the mention-some/mention-all distinction:
 namespace Semantics.Questions.ProbabilisticAnswerhood
 
 open Semantics.Questions
-open Semantics.Questions.Inquisitive
+open Discourse
 
 -- Conditional Probability Infrastructure
 

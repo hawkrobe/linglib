@@ -199,3 +199,256 @@ def applyToQUD {M N : Type} [BEq N] [LawfulBEq N]
   QUD.ofProject (prec.round ∘ proj) prec.name
 
 end PrecisionProjection
+
+-- ============================================================================
+-- Inquisitive Semantics Core Types
+-- ============================================================================
+--
+-- The `QUD M` type above partitions a meaning space M by an equivalence
+-- relation. The types below represent the *intensional* side: propositions
+-- as sets of worlds, questions as sets of propositions (alternatives).
+--
+-- The connection: a `QUD M` induces an `Issue W` when we fix a world type W
+-- and a denotation function M → (W → Bool). Each equivalence class of the
+-- QUD maps to an alternative of the Issue. `QUD.refines` (Core/Partition.lean)
+-- corresponds to `questionEntails` below: if Q refines q at the partition
+-- level, then Q entails q at the issue level.
+--
+-- References:
+-- - Ciardelli, Groenendijk & Roelofsen (2018). Inquisitive Semantics. OUP.
+-- - Roberts (2012). Information structure in discourse. S&P 5(6).
+
+namespace Discourse
+
+-- Information States
+
+/-- An information state: worlds compatible with current information.
+
+In standard Inquisitive Semantics, an info state is a SET of worlds.
+Here we represent it as a characteristic function σ : W → Bool.
+
+Semantically: σ w = true means "world w is compatible with the information".
+The empty info state (σ = λ_ => false) represents inconsistent information. -/
+abbrev InfoState (W : Type*) := W → Bool
+
+/-- The absurd/inconsistent info state: no worlds are compatible. -/
+def absurdState {W : Type*} : InfoState W := λ _ => false
+
+/-- The trivial info state: all worlds are compatible (total ignorance). -/
+def trivialState {W : Type*} : InfoState W := λ _ => true
+
+/-- Check if an info state is empty (inconsistent). -/
+def InfoState.isEmpty {W : Type*} (σ : InfoState W) (worlds : List W) : Bool :=
+  !worlds.any σ
+
+/-- Check if an info state is non-empty. -/
+def InfoState.isNonEmpty {W : Type*} (σ : InfoState W) (worlds : List W) : Bool :=
+  worlds.any σ
+
+/-- Info state σ is a subset of σ' (σ ⊆ σ'). -/
+def InfoState.subset {W : Type*} (σ σ' : InfoState W) (worlds : List W) : Bool :=
+  worlds.all λ w => σ w → σ' w
+
+/-- Intersection of two info states. -/
+def InfoState.inter {W : Type*} (σ σ' : InfoState W) : InfoState W :=
+  λ w => σ w && σ' w
+
+/-- Union of two info states. -/
+def InfoState.union {W : Type*} (σ σ' : InfoState W) : InfoState W :=
+  λ w => σ w || σ' w
+
+-- Support and Entailment
+
+/-- Info state σ supports proposition p iff σ ⊆ ⟦p⟧.
+
+This is the fundamental relation in Inquisitive Semantics:
+σ ⊨ p (σ supports p) iff every world in σ makes p true.
+
+If σ is empty, it supports every proposition (ex falso quodlibet). -/
+def supports {W : Type*} (σ : InfoState W) (p : W → Bool) (worlds : List W) : Bool :=
+  worlds.all λ w => σ w → p w
+
+/-- Propositional entailment: p entails q iff every p-world is a q-world.
+
+Equivalently: the info state ⟦p⟧ supports ⟦q⟧ over all worlds. -/
+def propEntails {W : Type*} (p q : W → Bool) (worlds : List W) : Bool :=
+  worlds.all λ w => !p w || q w
+
+-- Issues (Questions in Inquisitive Semantics)
+
+/-- An issue: set of information states that resolve the question.
+
+In full Inquisitive Semantics, issues must be:
+1. **Downward-closed**: if σ resolves and σ' ⊆ σ, then σ' resolves
+2. **Non-empty**: the absurd state ∅ resolves every issue
+
+Here we represent an issue by its maximal (largest) resolving states,
+called **alternatives**. Downward closure is then implicit.
+
+This representation aligns with Hamblin semantics: the alternatives are
+the possible complete answers. -/
+structure Issue (W : Type*) where
+  /-- The maximal resolving states (alternatives) -/
+  alternatives : List (InfoState W)
+
+namespace Issue
+
+variable {W : Type*}
+
+/-- Check if an info state resolves the issue.
+
+σ resolves Q iff σ is contained in some alternative.
+(Downward closure: any sub-state of an alternative also resolves.) -/
+def resolves (q : Issue W) (σ : InfoState W) (worlds : List W) : Bool :=
+  q.alternatives.any λ alt => σ.subset alt worlds
+
+/-- An issue is inquisitive if it has multiple alternatives.
+
+Non-inquisitive issues have exactly one alternative (assertions).
+Inquisitive issues genuinely ask for information. -/
+def isInquisitive (q : Issue W) : Bool :=
+  q.alternatives.length > 1
+
+/-- An issue is informative if not all states resolve it.
+
+Non-informative issues are resolved by the trivial state (tautologies).
+Informative issues rule out some possibilities. -/
+def isInformative (q : Issue W) (worlds : List W) : Bool :=
+  !q.resolves trivialState worlds
+
+/-- The empty issue: resolved by any info state. -/
+def empty : Issue W := { alternatives := [trivialState] }
+
+/-- The absurd issue: resolved only by the absurd state. -/
+def absurd : Issue W := { alternatives := [absurdState] }
+
+/-- A mention-some issue has multiple alternatives (non-singleton). -/
+def isMentionSome (q : Issue W) : Bool := q.isInquisitive
+
+/-- A mention-all issue has a single alternative (singleton). -/
+def isMentionAll (q : Issue W) : Bool :=
+  q.alternatives.length == 1
+
+/-- Number of alternatives (possible complete answers). -/
+def numAlternatives (q : Issue W) : Nat :=
+  q.alternatives.length
+
+-- Issue Operations
+
+/-- Intersection of two issues (conjunction): Q ∩ Q'. -/
+def inter (q q' : Issue W) (worlds : List W) : Issue W :=
+  let pairs := q.alternatives.flatMap λ a =>
+    q'.alternatives.filterMap λ a' =>
+      let intersection := a.inter a'
+      if intersection.isNonEmpty worlds then some intersection else none
+  { alternatives := pairs }
+
+/-- Union of two issues (disjunction): Q ∪ Q'. -/
+def union (q q' : Issue W) : Issue W :=
+  { alternatives := q.alternatives ++ q'.alternatives }
+
+/-- Create an Issue from a polar question.
+
+"Is p true?" has two alternatives: ⟦p⟧ and ⟦¬p⟧. -/
+def polar (p : W → Bool) : Issue W :=
+  { alternatives := [p, λ w => !p w] }
+
+/-- Create an Issue from a list of alternatives (direct construction). -/
+def ofAlternatives (alts : List (InfoState W)) : Issue W :=
+  { alternatives := alts }
+
+/-- Create a wh-question Issue: "which x satisfies P?" -/
+def which {E : Type*} (domain : List E) (pred : E → W → Bool) : Issue W :=
+  { alternatives := domain.map λ e => λ w => pred e w }
+
+end Issue
+
+-- Propositional Content of Issues
+
+/-- The informational content of an issue: the union of all alternatives.
+
+This is what the issue "presupposes" — the proposition that SOME alternative
+is true. -/
+def Issue.infoContent {W : Type*} (q : Issue W) : W → Bool :=
+  λ w => q.alternatives.any λ alt => alt w
+
+/-- The highlighted proposition: the disjunction of all alternatives.
+
+Same as infoContent, but emphasizes the "highlighted" reading in
+inquisitive semantics. -/
+def Issue.highlighted {W : Type*} (q : Issue W) : W → Bool :=
+  q.infoContent
+
+-- Theorems
+
+/-- Polar questions are always inquisitive (two alternatives). -/
+theorem polar_is_inquisitive {W : Type*} (p : W → Bool) :
+    (Issue.polar p).isInquisitive = true := rfl
+
+/-- The empty issue is not inquisitive. -/
+theorem empty_not_inquisitive {W : Type*} :
+    (Issue.empty : Issue W).isInquisitive = false := rfl
+
+-- ============================================================================
+-- Roberts (2012): QUD Structure, Subquestions, and Relevance
+-- ============================================================================
+--
+-- Roberts' QUD theory introduces hierarchical question structure: a QUD
+-- decomposes into subquestions, and discourse moves are relevant iff they
+-- address the QUD or its subquestions.
+--
+-- The connection to QUD.refines (Core/Partition.lean):
+-- - QUD.refines q q'   ≡  q's partition refines q' (knows q → knows q')
+-- - questionEntails Q q ≡  every alternative of Q entails some alt of q
+-- These are the same relation at different levels of abstraction.
+
+/-- A proposition p partially answers an issue q if p entails at least one
+of q's alternatives.
+
+Roberts (2012): a partial answer to Q is a proposition that, when added to
+the common ground, resolves at least one alternative. We use the strong
+version: p entails (is a subset of) some alternative of q. -/
+def partiallyAnswers {W : Type*} (p : W → Bool) (q : Issue W) (worlds : List W) : Bool :=
+  q.alternatives.any fun alt => propEntails p alt worlds
+
+/-- Question q₁ entails question q₂ iff every alternative of q₁ entails
+some alternative of q₂.
+
+Roberts (2012) Def. 8 (following Groenendijk & Stokhof 1984:16):
+"One interrogative q₁ entails another q₂ iff every proposition that
+answers q₁ answers q₂ as well."
+
+At the partition level, this corresponds to `QUD.refines` (Core/Partition.lean):
+if Q refines q, then knowing Q's answer determines q's answer. -/
+def questionEntails {W : Type*} (q₁ q₂ : Issue W) (worlds : List W) : Bool :=
+  q₁.alternatives.all fun alt₁ =>
+    q₂.alternatives.any fun alt₂ => propEntails alt₁ alt₂ worlds
+
+/-- q is a subquestion of Q iff Q entails q: answering Q yields a
+complete answer to q.
+
+Roberts (2012) Def. 8–9. At the partition level, this is `QUD.refines`:
+the parent question's partition is a refinement of the subquestion's. -/
+def isSubquestion {W : Type*} (q parent : Issue W) (worlds : List W) : Bool :=
+  questionEntails parent q worlds
+
+/-- A discourse move (assertion or question) is relevant to the QUD if
+it partially answers the QUD or a subquestion.
+
+Roberts (2012) Def. 15 / IKW (2025) assumption iii, p. 225:
+"S is relevant to QUD if S is either a subquestion of QUD or an answer
+to a subquestion q of QUD."
+
+For assertions (single-alternative issues): checks whether the propositional
+content partially answers the QUD or a subquestion.
+For questions (multi-alternative issues): checks whether any alternative
+partially answers the QUD or a subquestion — resolving the question would
+inform a subquestion. -/
+def moveRelevant {W : Type*} (den : Issue W) (qud : Issue W)
+    (subquestions : List (Issue W)) (worlds : List W) : Bool :=
+  den.alternatives.any fun alt =>
+    partiallyAnswers alt qud worlds ||
+    subquestions.any fun sq =>
+      partiallyAnswers alt sq worlds
+
+end Discourse

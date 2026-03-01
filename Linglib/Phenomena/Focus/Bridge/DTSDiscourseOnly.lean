@@ -46,7 +46,7 @@ DecisionTheoretic/But  → cip_contrariness_implies_unexpectedness
 namespace Phenomena.Focus.Bridge.DTSDiscourseOnly
 
 open Core.Proposition
-open Semantics.Questions.Inquisitive hiding supports
+open Discourse
 open Semantics.Questions.ProbabilisticAnswerhood
 open Semantics.Questions.Support
 open Semantics.Lexical.Particle.DiscourseOnly
@@ -59,8 +59,8 @@ open Theories.DTS.But
 
 A DTS `Issue W` is a single topic H (with ¬H implicit). The corresponding
 inquisitive issue has two alternatives: H and ¬H. -/
-def dtsToInquisitive {W : Type*} (topic : BProp W) : Semantics.Questions.Inquisitive.Issue W :=
-  Semantics.Questions.Inquisitive.Issue.polar topic
+def dtsToInquisitive {W : Type*} (topic : BProp W) : Discourse.Issue W :=
+  Discourse.Issue.polar topic
 
 /-- The DTS issue and inquisitive issue have matching alternatives. -/
 theorem dtsToInquisitive_alternatives {W : Type*} (topic : BProp W) :

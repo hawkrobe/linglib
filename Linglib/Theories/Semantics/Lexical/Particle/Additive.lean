@@ -51,7 +51,7 @@ Given resolved question RQ and antecedent ANT:
 namespace Semantics.Lexical.Particle.Additive
 
 open Semantics.Questions
-open Semantics.Questions.Inquisitive
+open Discourse
 open Semantics.Questions.ProbabilisticAnswerhood
 
 -- Additive Particle Types
