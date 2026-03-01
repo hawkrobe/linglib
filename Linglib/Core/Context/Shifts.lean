@@ -47,7 +47,7 @@ def temporalShift (newTime : T) : ContextShift (KContext W E P T) where
 def perspectiveShift (newAgent : E) (newTime : T) (newWorld : W) :
     ContextShift (KContext W E P T) where
   apply := λ c => { c with agent := newAgent, time := newTime, world := newWorld }
-  label := .attitude
+  label := .perspective
 
 /-- Identity shift: no change to the context. Kaplan's thesis for English
     says attitude verbs push identity shifts — embedding happens without
@@ -92,6 +92,9 @@ def identityShift : ContextShift (KContext W E P T) where
 
 @[simp] theorem temporalShift_preserves_addressee (newTime : T) (c : KContext W E P T) :
     ((temporalShift newTime).apply c).addressee = c.addressee := rfl
+
+@[simp] theorem temporalShift_preserves_position (newTime : T) (c : KContext W E P T) :
+    ((temporalShift newTime).apply c).position = c.position := rfl
 
 @[simp] theorem temporalShift_changes_time (newTime : T) (c : KContext W E P T) :
     ((temporalShift newTime).apply c).time = newTime := rfl

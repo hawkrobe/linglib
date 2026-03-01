@@ -146,12 +146,12 @@ theorem hpShift_expanding (newTime : T) (expandedDomain : Set W)
   exact h rc
 
 /-- HP shift preserves the agent. -/
-theorem hpShift_preserves_agent (newTime : T) (expandedDomain : Set W)
+@[simp] theorem hpShift_preserves_agent (newTime : T) (expandedDomain : Set W)
     (rc : RichContext W E P T) :
     ((hpShift (E := E) (P := P) newTime expandedDomain).apply rc).agent = rc.agent := rfl
 
 /-- HP shift changes the time. -/
-theorem hpShift_changes_time (newTime : T) (expandedDomain : Set W)
+@[simp] theorem hpShift_changes_time (newTime : T) (expandedDomain : Set W)
     (rc : RichContext W E P T) :
     ((hpShift (E := E) (P := P) newTime expandedDomain).apply rc).time = newTime := rfl
 

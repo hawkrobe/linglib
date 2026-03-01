@@ -46,6 +46,7 @@ inductive ShiftLabel where
   | temporal    -- temporal shift (sequence of tense, historical present)
   | evidential  -- evidential perspective shift (Cumming 2026)
   | mood        -- mood operator (SUBJ situation introduction)
+  | perspective -- full perspective shift (FID: agent + time + world)
   | quotation   -- direct quotation
   | clauseChain -- clause chain scope (final verb TAM scopes over medial clauses)
   | generic     -- unclassified shift
@@ -120,6 +121,14 @@ def push (t : ContextTower C) (σ : ContextShift C) : ContextTower C :=
 @[simp] theorem contextAt_depth (t : ContextTower C) :
     t.contextAt t.depth = t.innermost := by
   simp only [contextAt, innermost, depth, List.take_length]
+
+/-- Past the tower depth, `contextAt` saturates at the innermost context.
+    This is because `List.take k` on a list shorter than `k` returns the
+    whole list. -/
+theorem contextAt_saturates (t : ContextTower C) (k : ℕ) (hk : t.depth ≤ k) :
+    t.contextAt k = t.innermost := by
+  simp only [contextAt, innermost, depth] at *
+  rw [List.take_of_length_le hk]
 
 @[simp] theorem push_origin (t : ContextTower C) (σ : ContextShift C) :
     (t.push σ).origin = t.origin := rfl
