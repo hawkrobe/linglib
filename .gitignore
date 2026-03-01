@@ -32,3 +32,4 @@ CLAUDE.md
 # Hugo build artifacts
 blog/.hugo_build.lock
 blog/public/
+blog/scripts/__pycache__/
