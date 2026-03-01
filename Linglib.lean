@@ -47,6 +47,7 @@ import Linglib.Core.Logic.ConstraintEvaluation
 import Linglib.Core.Logic.OT
 import Linglib.Core.Agent.DecisionTheory
 import Linglib.Core.Agent.RationalAction
+import Linglib.Core.Agent.SoftmaxOptimality
 import Linglib.Core.Agent.UtilityTheory
 import Linglib.Core.Agent.ChoiceApproximations
 import Linglib.Core.Agent.Psychophysics
