@@ -311,6 +311,15 @@ The generator script scans all `.lean` files for `@cite{...}` patterns and:
 
 Place `@cite{key}` in the module docstring header, next to the author/year line. For files that cite multiple papers, use multiple `@cite{key}` tags. The key must exactly match the BibTeX entry key in `references.bib`.
 
+### Hallucination prevention for bibliography entries
+
+New bib entries are high-risk for hallucinated metadata. Every field — title, journal, year, volume, pages, DOI — must be verified against the actual publication, not recalled from memory. Specific rules:
+
+1. **Always include a DOI when one exists.** Look it up on the publisher's site, Google Scholar, or Semantic Scholar. If you cannot verify a DOI exists, omit it — a missing DOI is better than a fabricated one.
+2. **Validate title and journal name exactly.** Do not paraphrase titles. Copy them character-for-character from the publication. Journal names must match the official name (e.g., "Psychological Review" not "Cognitive Psychology"; "Language Acquisition" not "Journal of Child Language").
+3. **Verify volume/issue/pages against the actual publication.** These are frequently hallucinated — especially for recent papers (2023+) that may not be in training data.
+4. **When in doubt, leave fields blank rather than guessing.** A bib entry with just `author`, `year`, `title`, and `doi` is more trustworthy than one with fabricated page numbers.
+
 ## Git Conventions
 
 - Use one-line commit messages (no multi-line body)
@@ -411,6 +420,15 @@ The point of linglib is to hook everything together as densely as possible so we
 - Bridge theorems connecting Fragment entries to Theory predictions (like `BuilderProperties.lean`, `LeftPeriphery.lean` section I)
 - Grounding theorems connecting abstract Boolean layers to compositional semantics
 - Cross-layer agreement theorems proving different representations are consistent (e.g., three independent derivations of SelectionClass all agree)
+
+**Do not cite equation, table, or section numbers from memory.** References to specific locations within a paper — "eq. (39)", "Table 1", "§5.1", "Theorem 6" — are the single most hallucinated category in this project's history. Rules:
+
+- **Never cite equation/table/section/theorem numbers unless you are looking at the paper.** If you cannot verify the number, describe the content instead (e.g., "the granularity function" rather than "eq. (45)").
+- **Never cite specific parameter values (α = 3, r² = 0.99, P(whale) = 1/100) without verification.** State that the model uses a rationality parameter rather than asserting its exact value.
+- **Never cite specific page ranges from memory.** Page numbers are arbitrary and impossible to recall accurately. Omit them or verify against the PDF.
+- **Prefer content descriptions over location references.** "Kratzer's ordering source semantics" is verifiable; "Kratzer (1991) p. 644" requires checking. The former survives paper re-pagination; the latter doesn't.
+
+If a docstring needs to reference a specific result in a paper, use `-- UNVERIFIED: eq. 39` to flag it for human review. This makes unverified location claims grep-able and auditable.
 
 **Test both layers of multi-component state.** When a formalization has state with multiple independent components (e.g., PIP's `Discourse = info × labels`), test each component independently. A bug in one component can hide behind passing tests on the other — label-only tests can pass while the info state is vacuously empty. Include:
 - **Positive consistency tests**: show the output is non-empty from reasonable input (e.g., `stone_discourse_consistent`, `bathroom_sentence_consistent`). Construct a specific witness assignment and prove it survives the full pipeline.
