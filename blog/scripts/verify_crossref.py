@@ -123,10 +123,21 @@ def search_by_title(title: str) -> list[dict]:
 # Comparison logic
 # ---------------------------------------------------------------------------
 
+def strip_html(s: str) -> str:
+    """Strip HTML tags and entities from CrossRef metadata."""
+    s = re.sub(r"<[^>]+>", "", s)
+    s = s.replace("&lt;", "<").replace("&gt;", ">")
+    s = s.replace("&amp;", "&").replace("&quot;", '"')
+    # Remove any remaining HTML-style tags after entity decoding
+    s = re.sub(r"<[^>]+>", "", s)
+    return s
+
+
 def cr_title(item: dict) -> str:
     """Extract title from CrossRef item."""
     titles = item.get("title", [])
-    return titles[0] if titles else ""
+    t = titles[0] if titles else ""
+    return strip_html(t)
 
 
 def cr_container(item: dict) -> str:
@@ -190,7 +201,16 @@ def normalize_journal(j: str) -> str:
     j = clean_latex(j)
     # Common abbreviation expansions
     j = j.replace("&", "and")
-    return re.sub(r"\s+", " ", j).strip().lower()
+    j = re.sub(r"\s+", " ", j).strip().lower()
+    # Known CrossRef journal abbreviations
+    JOURNAL_ABBREVS = {
+        "cogl": "cognitive linguistics",
+        "ling": "linguistics",
+        "lang": "language",
+    }
+    if j in JOURNAL_ABBREVS:
+        j = JOURNAL_ABBREVS[j]
+    return j
 
 
 def compare_entry(entry: dict, cr: dict) -> list[tuple[str, str, str]]:
@@ -205,6 +225,7 @@ def compare_entry(entry: dict, cr: dict) -> list[tuple[str, str, str]]:
     xr_title = cr_title(cr)
     sim = title_similarity(bib_title, xr_title)
     if sim < 0.7 and bib_title and xr_title:
+        # Still flag it, but severity() will downgrade subtitle truncation to LOW
         issues.append(("title", clean_latex(bib_title), xr_title))
 
     # Year
@@ -228,8 +249,13 @@ def compare_entry(entry: dict, cr: dict) -> list[tuple[str, str, str]]:
                 xw = set(xn.split())
                 overlap = len(bw & xw) / max(len(bw), len(xw), 1)
                 if overlap < 0.5:
+                    # For incollection: CrossRef often returns series name
+                    # instead of book title. Downgrade to LOW for these.
+                    field_name = "journal"
+                    if etype == "incollection":
+                        field_name = "journal-series"  # will get LOW severity
                     issues.append((
-                        "journal",
+                        field_name,
                         clean_latex(bib_journal),
                         xr_journal,
                     ))
@@ -259,10 +285,21 @@ def compare_entry(entry: dict, cr: dict) -> list[tuple[str, str, str]]:
         for a in bib_author_str.split(" and ")
         if a.strip()
     ]
-    xr_lastnames = [n.lower() for n in cr_authors(cr)]
+    xr_lastnames = [n.lower().strip() for n in cr_authors(cr) if n.strip()]
     if bib_lastnames and xr_lastnames:
-        bib_set = set(bib_lastnames)
-        xr_set = set(xr_lastnames)
+        # Normalize author names for comparison
+        def normalize_author(name: str) -> str:
+            # Strip nobiliary particles
+            for p in ("von ", "van ", "de ", "den ", "der "):
+                if name.startswith(p):
+                    name = name[len(p):]
+            # Strip diacritics for comparison
+            import unicodedata
+            name = unicodedata.normalize("NFD", name)
+            name = "".join(c for c in name if unicodedata.category(c) != "Mn")
+            return name.strip()
+        bib_set = set(normalize_author(n) for n in bib_lastnames)
+        xr_set = set(normalize_author(n) for n in xr_lastnames)
         if bib_set and xr_set:
             overlap = len(bib_set & xr_set) / max(len(bib_set), len(xr_set))
             if overlap < 0.5:
@@ -279,9 +316,22 @@ def compare_entry(entry: dict, cr: dict) -> list[tuple[str, str, str]]:
 # Output formatting
 # ---------------------------------------------------------------------------
 
-def severity(field: str) -> str:
+def is_subtitle_truncation(bib_title: str, xr_title: str) -> bool:
+    """Check if the mismatch is just subtitle truncation (one is prefix of other)."""
+    nb = normalize(bib_title)
+    nx = normalize(xr_title)
+    # One title starts with the other (after normalization)
+    return nb.startswith(nx) or nx.startswith(nb)
+
+
+def severity(field: str, bib_val: str = "", xr_val: str = "") -> str:
     """Assign severity level to a field mismatch."""
-    if field in ("title", "journal", "authors"):
+    if field == "title":
+        # Downgrade subtitle truncation to LOW
+        if is_subtitle_truncation(bib_val, xr_val):
+            return "LOW"
+        return "HIGH"
+    if field in ("journal", "authors"):
         return "HIGH"
     if field in ("year", "volume"):
         return "MEDIUM"
@@ -291,7 +341,7 @@ def severity(field: str) -> str:
 def format_issues(issues: list[tuple[str, str, str]]) -> list[str]:
     lines = []
     for field, bib_val, xr_val in issues:
-        sev = severity(field)
+        sev = severity(field, bib_val, xr_val)
         lines.append(f"  [{sev:6s}] {field}:")
         lines.append(f"           bib:      {bib_val}")
         lines.append(f"           crossref: {xr_val}")
@@ -353,9 +403,9 @@ def main():
 
         issues = compare_entry(entry, cr)
         if issues:
-            high = sum(1 for f, _, _ in issues if severity(f) == "HIGH")
-            med = sum(1 for f, _, _ in issues if severity(f) == "MEDIUM")
-            low = sum(1 for f, _, _ in issues if severity(f) == "LOW")
+            high = sum(1 for f, b, x in issues if severity(f, b, x) == "HIGH")
+            med = sum(1 for f, b, x in issues if severity(f, b, x) == "MEDIUM")
+            low = sum(1 for f, b, x in issues if severity(f, b, x) == "LOW")
             parts = []
             if high:
                 parts.append(f"{high} HIGH")
@@ -447,7 +497,7 @@ def main():
     if mismatches:
         # Sort by severity: HIGH first
         mismatches.sort(
-            key=lambda x: -sum(1 for f, _, _ in x[1] if severity(f) == "HIGH")
+            key=lambda x: -sum(1 for f, b, xr in x[1] if severity(f, b, xr) == "HIGH")
         )
         print(f"\n{'─' * 72}")
         print("MISMATCHES (sorted by severity)")
@@ -478,7 +528,7 @@ def main():
     # Exit code: nonzero if any HIGH-severity mismatches
     high_count = sum(
         1 for _, issues in mismatches
-        for f, _, _ in issues if severity(f) == "HIGH"
+        for f, b, xr in issues if severity(f, b, xr) == "HIGH"
     )
     if high_count:
         print(f"\n{high_count} HIGH-severity mismatch(es) found.")
