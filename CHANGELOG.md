@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.227.63] - 2026-02-28
+
+### Added
+- **`approxJust_comp_exact`** (`Degree/Granularity.lean`): On ℕ, *just* + comparative forces exactly 1 unit above the standard (μ_x = d_c + 1). The paper's strongest discrete prediction.
+- **Monotonicity theorems** (`eqAtGran_upwardMono`, `compAtGran_downwardMono`): Entailment reversal stated via `Core.Scale.IsUpwardMonotone`/`IsDownwardMonotone`, connecting granularity to existing scale infrastructure.
+- **`LinearOrder` + `OrderBot` instances** for `GranLevel` via `LinearOrder.lift'` from mathlib, replacing manual `LE`/`LT`.
+
+### Fixed
+- **Hallucinated equation numbers**: `eqAtGran` referenced "eq. 39" → corrected to paper eq. (45); `compAtGran` referenced "eq. 42" → corrected to paper eq. (49).
+- **Hallucinated page range**: "pp. 360–377" → corrected to "pp. 354–372" (from copyright notice).
+- **Bridge file mislabel**: "The tank is just full" was labeled as equative construction; corrected docstring to note it achieves equality via closed-scale endpoint, not equative morphology.
+- **Discretization documented**: Added docstring section explaining ℕ vs dense-scale design choice and why universal quantification in `approxJust` (vs paper's finite 𝒢) is satisfiable on ℕ but not on dense scales.
+
 ## [0.227.62] - 2026-02-28
 
 ### Added

@@ -50,7 +50,11 @@ theorem comparative_yields_proximity :
     justFlavorFromConstruction .comparative =
     precisifying_prox_older.flavor := rfl
 
-/-- "The tank is just full" — equative + just = equality. -/
+/-- Equative + just = equality ("just as tall as" ≈ "exactly as tall as").
+    Note: `precisifying_eq_full` ("just full") achieves equality via a
+    closed-scale endpoint standard, not via equative morphology. The
+    shared flavor (`.precisifyingEquality`) reflects parallel pragmatic
+    effects through different compositional routes. -/
 theorem equative_yields_equality :
     justFlavorFromConstruction .equative =
     precisifying_eq_full.flavor := rfl
