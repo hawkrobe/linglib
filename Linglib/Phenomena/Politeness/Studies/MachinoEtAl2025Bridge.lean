@@ -1,12 +1,12 @@
 import Linglib.Phenomena.Politeness.Studies.MachinoEtAl2025
-import Linglib.Theories.Semantics.Lexical.Adjective.Theory
+import Linglib.Theories.Semantics.Degree.Core
 
 /-!
 # Bridge: Machino et al. (2025) × Adjective Theory
 
 Connects the cross-cultural intensifier data in
 `Phenomena.Politeness.Studies.MachinoEtAl2025` to the modifier
-direction classification from `Theories.Semantics.Lexical.Adjective.Theory`.
+direction classification from `Theories.Semantics.Degree.Core`.
 
 ## Predictions verified
 
@@ -21,7 +21,7 @@ direction classification from `Theories.Semantics.Lexical.Adjective.Theory`.
 
 namespace Phenomena.Politeness.Studies.MachinoEtAl2025.Bridge
 
-open Semantics.Lexical.Adjective (ModifierDirection)
+open Semantics.Degree (ModifierDirection)
 open Phenomena.Politeness.Studies.MachinoEtAl2025
 
 /-- Culture-specific modifier direction.

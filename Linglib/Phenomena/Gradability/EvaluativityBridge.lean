@@ -11,7 +11,7 @@ are evaluative, comparatives are not, equatives show asymmetry.
 
 `EvaluativityStatus`, `EvaluativityDatum`, `EvaluativityPrediction`
 
-`AdjectivalConstruction` is defined in `Theories.Semantics.Lexical.Adjective.Theory`.
+`AdjectivalConstruction` is defined in `Theories.Semantics.Degree.Core`.
 
 ## References
 
@@ -20,7 +20,7 @@ are evaluative, comparatives are not, equatives show asymmetry.
 
 namespace Phenomena.Gradability.EvaluativityBridge
 
-open Semantics.Lexical.Adjective (AdjectivalConstruction)
+open Semantics.Degree (AdjectivalConstruction)
 
 -- Evaluativity Judgments
 

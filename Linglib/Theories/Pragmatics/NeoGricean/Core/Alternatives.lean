@@ -52,7 +52,7 @@ namespace NeoGricean.Alternatives
 -- Use shared ContextPolarity from Semantics.Entailment.Polarity
 open Semantics.Entailment.Polarity (ContextPolarity)
 open NeoGricean.Markedness
-open Semantics.Lexical.Adjective (AdjectivalConstruction)
+open Semantics.Degree (AdjectivalConstruction)
 
 
 /--

@@ -22,6 +22,14 @@ This module adds adjective-specific infrastructure:
 - Negation semantics functions
 - Degree modifiers (Kennedy & McNally 2005, Israel 2011)
 
+## Relationship to Degree.Core
+
+This module uses concrete `Degree max` (= `Fin (max+1)`) for computation
+in RSA models and Fragment entries. `Degree.Core` uses abstract types
+(`Entity D : Type*` with `LinearOrder D`) for framework-level theorems.
+See also `Degree.Granularity` for granularity-sensitive degree morphology
+(Thomas & Deo 2020).
+
 ## Comparison with ModalTheory
 
 | Aspect        | ModalTheory                        | AdjectiveTheory                    |
@@ -43,6 +51,7 @@ This module adds adjective-specific infrastructure:
 import Linglib.Theories.Semantics.Montague.Basic
 import Linglib.Core.Scales.Scale
 import Linglib.Theories.Semantics.Lexical.Adjective.MLScale
+import Linglib.Theories.Semantics.Degree.Core
 
 namespace Semantics.Lexical.Adjective
 
@@ -138,97 +147,6 @@ def contraryNegMeaning {max : Nat} (d : Degree max) (tp : ThresholdPair max) : B
 /-- Negation of contrary negative: "not unhappy" = degree >= theta_neg. -/
 def notContraryNegMeaning {max : Nat} (d : Degree max) (tp : ThresholdPair max) : Bool :=
   (tp.neg : Degree max) ≤ d
-
--- ════════════════════════════════════════════════════
--- Single-Threshold Meaning Functions
--- ════════════════════════════════════════════════════
-
-/-- Positive form: degree > threshold -/
-def positiveMeaning {max : Nat} (d : Degree max) (t : Threshold max) : Bool :=
-  (t : Degree max) < d
-
-/-- Negative form: degree < threshold -/
-def negativeMeaning {max : Nat} (d : Degree max) (t : Threshold max) : Bool :=
-  d < (t : Degree max)
-
-/-- Antonym reverses the comparison -/
-def antonymMeaning {max : Nat} (d : Degree max) (t : Threshold max) : Bool :=
-  d ≤ (t : Degree max)
-
--- ════════════════════════════════════════════════════
--- Degree Modifiers (Kennedy & McNally 2005; Israel 2011)
--- ════════════════════════════════════════════════════
-
-/-- Degree modifier direction — same axis as NPI scalar direction. -/
-inductive ModifierDirection where
-  | amplifier   -- very, extremely: θ + δ → strengthens
-  | downtoner   -- slightly, kind of: θ - δ → attenuates
-  deriving DecidableEq, BEq, Repr
-
-/-- A degree modifier that shifts the threshold of a gradable predicate. -/
-structure DegreeModifier (max : Nat) where
-  form : String
-  direction : ModifierDirection
-  shift : Fin (max + 1)
-  rank : Nat
-  deriving Repr
-
-/-- Apply a modifier to a threshold. -/
-def DegreeModifier.applyToThreshold {max : Nat} (m : DegreeModifier max)
-    (θ : Threshold max) : Threshold max :=
-  have hθ := θ.value.isLt
-  have hm := m.shift.isLt
-  match m.direction with
-  | .amplifier =>
-    ⟨⟨min (θ.value.val + m.shift.val) (max - 1), by omega⟩⟩
-  | .downtoner =>
-    ⟨⟨θ.value.val - m.shift.val, by omega⟩⟩
-
-/-- A modified gradable predicate: degree(x) > M(θ). -/
-def modifiedMeaning {max : Nat} (m : DegreeModifier max)
-    (d : Degree max) (θ : Threshold max) : Bool :=
-  positiveMeaning d (m.applyToThreshold θ)
-
--- Modifier Instances
-
-section ModifierInstances
-
-variable (max : Nat)
-
-/-- "slightly" — minimal downtoner -/
-def slightly (h : 1 ≤ max := by omega) : DegreeModifier max :=
-  { form := "slightly", direction := .downtoner
-  , shift := ⟨1, by omega⟩, rank := 1 }
-
-/-- "kind of" — moderate downtoner -/
-def kindOf (h : 2 ≤ max := by omega) : DegreeModifier max :=
-  { form := "kind of", direction := .downtoner
-  , shift := ⟨2, by omega⟩, rank := 2 }
-
-/-- "quite" — amplifier (AmE reading). -/
-def quite (h : 1 ≤ max := by omega) : DegreeModifier max :=
-  { form := "quite", direction := .amplifier
-  , shift := ⟨1, by omega⟩, rank := 1 }
-
-/-- "very" — strong amplifier -/
-def very (h : 2 ≤ max := by omega) : DegreeModifier max :=
-  { form := "very", direction := .amplifier
-  , shift := ⟨2, by omega⟩, rank := 2 }
-
-/-- "extremely" — maximal amplifier -/
-def extremely (h : 3 ≤ max := by omega) : DegreeModifier max :=
-  { form := "extremely", direction := .amplifier
-  , shift := ⟨3, by omega⟩, rank := 3 }
-
-end ModifierInstances
-
--- Strength Hierarchy Verification
-
-#guard Nat.blt (quite 10).rank (very 10).rank
-#guard Nat.blt (very 10).rank (extremely 10).rank
-#guard Nat.blt (slightly 10).rank (kindOf 10).rank
-#guard Nat.blt 3 ((very 10).applyToThreshold (⟨⟨3, by omega⟩⟩ : Threshold 10) |>.toNat)
-#guard Nat.blt ((slightly 10).applyToThreshold (⟨⟨5, by omega⟩⟩ : Threshold 10) |>.toNat) 5
 
 -- ════════════════════════════════════════════════════
 -- Antonym Relations
@@ -391,27 +309,5 @@ theorem degree_admits_optimum {max : Nat} (h : 1 ≤ max) :
 theorem degree_measure_is_id {max : Nat} {W : Type*} (μ : W → Degree max) :
     (DirectedMeasure.kennedyNumeral μ).μ = μ :=
   rfl
-
--- ════════════════════════════════════════════════════
--- Adjectival Construction Types
--- ════════════════════════════════════════════════════
-
-/-- Adjectival construction type (positive, comparative, equative, etc.).
-Used by evaluativity analyses to track which constructions trigger evaluative readings. -/
-inductive AdjectivalConstruction where
-  | positive
-  | comparative
-  | equative
-  | measurePhrase
-  | degreeQuestion
-  deriving Repr, DecidableEq, BEq
-
-instance : ToString AdjectivalConstruction where
-  toString
-    | .positive => "positive"
-    | .comparative => "comparative"
-    | .equative => "equative"
-    | .measurePhrase => "measurePhrase"
-    | .degreeQuestion => "degreeQuestion"
 
 end Semantics.Lexical.Adjective

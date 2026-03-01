@@ -98,7 +98,7 @@ inductive Utterance where
 -- Semantics (Section 3.2, Eqs. 21–22)
 -- ============================================================================
 
-open Semantics.Lexical.Adjective (positiveMeaning negativeMeaning)
+open Semantics.Degree (positiveMeaning negativeMeaning)
 
 /-- ⟦tall⟧(θ)(x) = 1 iff height(x) > θ (Kennedy 2007, positive form). -/
 def tallMeaning (θ : Threshold) (h : Height) : Bool :=

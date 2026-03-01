@@ -50,7 +50,7 @@ namespace NeoGricean.Evaluativity
 open NeoGricean
 open NeoGricean.Markedness
 open NeoGricean.Alternatives
-open Semantics.Lexical.Adjective (AdjectivalConstruction)
+open Semantics.Degree (AdjectivalConstruction)
 open Semantics.Lexical.Adjective
 
 

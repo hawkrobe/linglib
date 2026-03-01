@@ -16,6 +16,13 @@ implicating that "taller than" is false, yielding equality.
 This parallels numeral strengthening: "three" literally means "at least
 three" and is strengthened to "exactly three" by implicature.
 
+## Alternative: Granularity-Based Account
+
+`Degree.Granularity` (Thomas & Deo 2020) offers a different explanation:
+the "exactly" reading arises because *just* signals finest granularity,
+and the finest equative is already the strongest (so *just*'s negative
+component is vacuous). See `just_eq_reduces` in `Degree.Granularity`.
+
 ## References
 
 - Rett, J. (2020). Separate but equal: A typology of equative constructions.

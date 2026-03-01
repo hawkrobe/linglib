@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.227.62] - 2026-02-28
+
+### Added
+- **Granularity-sensitive degree semantics** (`Theories/Semantics/Degree/Granularity.lean`): Thomas & Deo (2020) formalization — `GranLevel`, `eqAtGran`/`compAtGran` (granularity-sensitive morphology), entailment reversal theorems (`eq_fine_entails_coarse`, `comp_coarse_entails_fine`), approximative *just* (`approxJust`), `just_eq_reduces` (negative component vacuous for equatives), `just_comp_rules_out_coarser` (substantive for comparatives), `roundnessToGrain` bridge to `Core.Roundness`. 0 sorry.
+- **Granularity bridge** (`Phenomena/Focus/Bridge/GranularityJust.lean`): Connects Thomas & Deo granularity theory to *just* flavor data in `Exclusives.lean` — `justFlavorFromConstruction`, `equality_grounded`, `proximity_grounded`. 0 sorry.
+
+### Changed
+- **Degree/Core ← Adjective/Theory refactoring**: Moved general-purpose degree operations (`positiveMeaning`, `negativeMeaning`, `antonymMeaning`, `ModifierDirection`, `DegreeModifier`, modifier instances, `AdjectivalConstruction`) from `Lexical.Adjective.Theory` to `Degree.Core`. Adjective-specific types (`NegationType`, `ThresholdPair`, `GradableAdjEntry`, `AdjectiveTheory`) remain in `Adjective/Theory.lean`. Updated 6 downstream files' open statements.
+- **Cross-reference docstrings** added to `Degree/Core.lean`, `Adjective/Theory.lean`, `Equative.lean` clarifying the split between abstract degree types and concrete adjective types.
+
+### Removed
+- 11 dead shim files in `Phenomena/Gradability/Imprecision/` (superseded by `Phenomena/Imprecision/`)
+- Deprecated re-export shims: `Lexical/Adjective/Comparative.lean`, `Lexical/Degree.lean`
+
 ## [0.227.61] - 2026-02-28
 
 ### Added
