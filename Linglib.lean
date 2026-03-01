@@ -289,6 +289,8 @@ import Linglib.Phenomena.ArgumentStructure.Subcategorization
 import Linglib.Phenomena.ArgumentStructure.Typology
 import Linglib.Phenomena.ArgumentStructure.Unaccusativity.Data
 import Linglib.Phenomena.ArgumentStructure.Unaccusativity.Bridge
+import Linglib.Phenomena.ArgumentStructure.DiathesisAlternations.Data
+import Linglib.Phenomena.ArgumentStructure.DiathesisAlternations.Bridge
 import Linglib.Phenomena.ArgumentStructure.Bridge.CCGSubcategorization
 import Linglib.Phenomena.ArgumentStructure.Bridge.MinimalismSubcategorization
 import Linglib.Phenomena.ArgumentStructure.Bridge.DGValency

@@ -223,10 +223,11 @@ theorem break_destroy_same_components :
 theorem break_class_predicts_alternation :
     LevinClass.break_.participatesIn .causativeInchoative = true := rfl
 
-/-- Cut (thick) is in a class that predicts both conative and
-    causative alternations — more alternation-rich than break. -/
+/-- Cut (thick) is in a class that predicts conative and BPPA alternations.
+    Unlike break, cut does NOT participate in causative/inchoative because
+    instrument specification blocks the inchoative (Levin 1993, p. 9–10). -/
 theorem cut_class_rich_alternation :
-    LevinClass.cut.participatesIn .causativeInchoative = true
+    LevinClass.cut.participatesIn .causativeInchoative = false
     ∧ LevinClass.cut.participatesIn .conative = true
     ∧ LevinClass.cut.participatesIn .bodyPartPossessorAscension = true := ⟨rfl, rfl, rfl⟩
 

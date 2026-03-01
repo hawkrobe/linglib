@@ -660,7 +660,7 @@ inductive DiathesisAlternation where
 
     | Alternation | Required components |
     |---|---|
-    | Causative/inchoative | changeOfState ∧ causation |
+    | Causative/inchoative | changeOfState ∧ causation ∧ ¬instrumentSpec |
     | Middle | changeOfState |
     | Conative | contact ∧ motion |
     | Body-part possessor ascension | contact |
@@ -669,7 +669,7 @@ inductive DiathesisAlternation where
     Dative and locative alternations are class-specific rather than
     component-derived, so they must be checked per class. -/
 def MeaningComponents.predictedAlternation : MeaningComponents → DiathesisAlternation → Bool
-  | mc, .causativeInchoative => mc.changeOfState && mc.causation
+  | mc, .causativeInchoative => mc.changeOfState && mc.causation && !mc.instrumentSpec
   | mc, .middle => mc.changeOfState
   | mc, .conative => mc.contact && mc.motion
   | mc, .bodyPartPossessorAscension => mc.contact
@@ -680,14 +680,11 @@ def MeaningComponents.predictedAlternation : MeaningComponents → DiathesisAlte
 /-- Full alternation profile for a Levin class, combining component-derived
     predictions with class-specific overrides for dative and locative. -/
 def LevinClass.participatesIn (c : LevinClass) (alt : DiathesisAlternation) : Bool :=
-  match alt with
-  | .dative => match c with
-    | .give | .send | .tell => true
-    | _ => false
-  | .locative => match c with
-    | .sprayLoad => true
-    | _ => false
-  | other => c.meaningComponents.predictedAlternation other
+  c.meaningComponents.predictedAlternation alt ||
+  match c, alt with
+  | .give, .dative | .send, .dative | .tell, .dative => true
+  | .sprayLoad, .locative => true
+  | _, _ => false
 
 /-! ### Canonical diagnostic theorems
 
@@ -701,9 +698,11 @@ theorem break_alternations :
     ∧ LevinClass.break_.participatesIn .conative = false
     ∧ LevinClass.break_.participatesIn .bodyPartPossessorAscension = false := ⟨rfl, rfl, rfl, rfl⟩
 
-/-- Cut participates in all four canonical alternations (CoS + contact + motion + causation). -/
+/-- Cut participates in middle, conative, and BPPA but NOT causative/inchoative.
+    Instrument specification blocks the inchoative: "*The string cut." (Levin p. 9, ex. 23b).
+    Because *cut* inherently specifies an instrument, it requires an agent (p. 10). -/
 theorem cut_alternations :
-    LevinClass.cut.participatesIn .causativeInchoative = true
+    LevinClass.cut.participatesIn .causativeInchoative = false
     ∧ LevinClass.cut.participatesIn .middle = true
     ∧ LevinClass.cut.participatesIn .conative = true
     ∧ LevinClass.cut.participatesIn .bodyPartPossessorAscension = true := ⟨rfl, rfl, rfl, rfl⟩
@@ -721,6 +720,23 @@ theorem touch_alternations :
     ∧ LevinClass.touch.participatesIn .middle = false
     ∧ LevinClass.touch.participatesIn .conative = false
     ∧ LevinClass.touch.participatesIn .bodyPartPossessorAscension = true := ⟨rfl, rfl, rfl, rfl⟩
+
+/-- Instrument specification blocks the causative/inchoative alternation
+    for any verb, regardless of other meaning components (Levin 1993, p. 10).
+    Because the instrument must be wielded by an agent, the agentless
+    inchoative variant is unavailable. -/
+theorem MeaningComponents.instrumentSpec_blocks_ci (mc : MeaningComponents)
+    (h : mc.instrumentSpec = true) :
+    mc.predictedAlternation .causativeInchoative = false := by
+  simp only [predictedAlternation, h, Bool.not_true, Bool.and_false]
+
+/-- Corollary: instrument specification also blocks the resultative
+    (same reasoning — manner verbs that specify an instrument cannot
+    appear in the resultative construction). -/
+theorem MeaningComponents.instrumentSpec_blocks_resultative (mc : MeaningComponents)
+    (h : mc.instrumentSpec = true) :
+    mc.predictedAlternation .resultative = false := by
+  simp only [predictedAlternation, h, Bool.not_true, Bool.and_false]
 
 /-! ### Cross-class predictions -/
 
