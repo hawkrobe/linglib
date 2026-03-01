@@ -125,6 +125,21 @@ def computeS1ScoreBounds {U W L : Type*} [Fintype W] [DecidableEq W] [DecidableE
     let p := computeL0Rat meaning l u w
     if p = 0 then Bounds.zero
     else (Bounds.exact (p ^ α)).mul (expBounds (-(↑α * cost u)))
+  | .weightedBeliefAction infWeight bonus =>
+    let p := computeL0Rat meaning l u w
+    if p = 0 then Bounds.zero
+    else
+      -- exp(α · (γ · log(p) + bonus(u)))
+      -- = exp(α·γ·log(p)) · exp(α·bonus(u))
+      -- = p^(α·γ) · exp(α·bonus(u))
+      -- Use interval for both factors since α·γ may not be ℕ
+      let logBounds : Bounds :=
+        if hp : 0 < p then
+          let li := logPoint p hp
+          ⟨infWeight * li.lo, infWeight * li.hi⟩
+        else Bounds.zero
+      let argBounds : Bounds := ⟨↑α * (logBounds.lo + bonus u), ↑α * (logBounds.hi + bonus u)⟩
+      expIntervalBounds argBounds
   | .actionBased cost =>
     let p := computeL0Rat meaning l u w
     expBounds (↑α * (p - cost u))
@@ -276,6 +291,19 @@ def trySymbolicS1ScoreGt {U W L : Type*} [Fintype W] [DecidableEq W] [DecidableE
     else if proj₂ = 0 then proj₁ > 0
     else if proj₁ = 0 then false
     else proj₁ - cost u₁ > proj₂ - cost u₂
+  | .weightedBeliefAction infWeight bonus =>
+    -- exp(α·(γ·log(L0₁) + b₁)) > exp(α·(γ·log(L0₂) + b₂))
+    -- iff γ·log(L0₁) + b₁ > γ·log(L0₂) + b₂
+    let p₁ := computeL0Rat meaning l u₁ w
+    let p₂ := computeL0Rat meaning l u₂ w
+    let b₁ := bonus u₁; let b₂ := bonus u₂
+    if p₁ = 0 then false
+    else if p₂ = 0 then true
+    else if p₁ = p₂ then b₁ > b₂  -- log terms cancel
+    else if b₁ = b₂ then p₁ > p₂  -- bonus cancels, log monotone
+    else if p₁ ≥ p₂ && b₁ ≥ b₂ then p₁ > p₂ || b₁ > b₂  -- dominance
+    else if p₁ ≤ p₂ && b₁ ≤ b₂ then false  -- reverse dominance
+    else false  -- general case: fall back to intervals
   | _ => false  -- beliefBased/qudBelief are already exact; beliefWeighted no shortcut
 
 /-- Symbolic S1 score comparison: ¬(score(u₁) > score(u₂)). -/
@@ -313,6 +341,17 @@ def trySymbolicS1ScoreNotGt {U W L : Type*} [Fintype W] [DecidableEq W] [Decidab
     if proj₁ = 0 then true
     else if proj₂ = 0 then false
     else proj₁ - cost u₁ ≤ proj₂ - cost u₂
+  | .weightedBeliefAction _infWeight bonus =>
+    let p₁ := computeL0Rat meaning l u₁ w
+    let p₂ := computeL0Rat meaning l u₂ w
+    let b₁ := bonus u₁; let b₂ := bonus u₂
+    if p₁ = 0 then true
+    else if p₂ = 0 then false
+    else if p₁ = p₂ then b₁ ≤ b₂
+    else if b₁ = b₂ then p₁ ≤ p₂
+    else if p₁ ≤ p₂ && b₁ ≤ b₂ then true
+    else if p₁ ≥ p₂ && b₁ ≥ b₂ then p₁ = p₂ && b₁ = b₂
+    else false
   | _ => false
 
 -- ============================================================================

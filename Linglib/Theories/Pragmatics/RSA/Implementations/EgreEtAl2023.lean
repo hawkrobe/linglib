@@ -348,7 +348,12 @@ def U1 {W M I : Type} [BEq W]
     then acc + pw * RSA.InformationTheory.log2Approx lw
     else acc) 0
 
-/-- Local softmax: exp(α·u_k) / Σ_j exp(α·u_j). -/
+/-- Local softmax: exp(α·u_k) / Σ_j exp(α·u_j).
+
+This is a Float approximation of the exponential `Core.softmax` from
+`RationalAction.lean` (which operates over `Fintype → ℝ`). The ℚ→Float
+conversion introduces rounding; for exact proofs, use `Core.softmax`
+and its properties (`softmax_add_const`, `softmax_nonneg`, etc.). -/
 private def softmaxLocal (α : ℚ) (utilities : List ℚ) : List ℚ :=
   let αF := ratToFloat α
   let exps := utilities.map λ u => Float.exp (αF * ratToFloat u)

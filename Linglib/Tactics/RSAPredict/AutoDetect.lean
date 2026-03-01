@@ -41,6 +41,7 @@ inductive DetectedPattern where
   | qudBelief
   | qudAction
   | beliefAction
+  | weightedBeliefAction
   | actionBased
   | beliefWeighted
 
@@ -537,7 +538,9 @@ def buildConfigData (U W L : Expr)
     (αNat : ℕ) (pattern : DetectedPattern)
     (costVals : Option (Array ℚ) := none)
     (beliefVals : Option (Array ℚ) := none)
-    (qualityVals : Option (Array Bool) := none) : MetaM (Option Expr) := do
+    (qualityVals : Option (Array Bool) := none)
+    (infWeightVal : Option ℚ := none)
+    (bonusVals : Option (Array ℚ) := none) : MetaM (Option Expr) := do
 
   -- Build meaning function: L → U → W → ℚ
   let meaningFn ← buildTernaryQFn L U W allLElems allUElems allWElems meaningVals
@@ -554,6 +557,12 @@ def buildConfigData (U W L : Expr)
       let some costs := costVals | return none
       let costFn ← buildUnaryQFn U allUElems costs
       mkAppOptM ``RSA.S1ScoreSpec.beliefAction #[U, W, L, costFn]
+    | .weightedBeliefAction => do
+      let some iw := infWeightVal | return none
+      let some bv := bonusVals | return none
+      let iwExpr ← mkRatExpr iw
+      let bonusFn ← buildUnaryQFn U allUElems bv
+      mkAppOptM ``RSA.S1ScoreSpec.weightedBeliefAction #[U, W, L, iwExpr, bonusFn]
     | .beliefWeighted => do
       let some bv := beliefVals | return none
       let some qv := qualityVals | return none
@@ -775,6 +784,7 @@ def tryAutoDetectL1Compare (goal : MVarId) (cfg u w₁ w₂ : Expr) : TacticM Bo
     | .qudBelief => "qudBelief"
     | .qudAction => "qudAction"
     | .beliefAction => "beliefAction"
+    | .weightedBeliefAction => "weightedBeliefAction"
     | .actionBased => "actionBased"
     | .beliefWeighted => "beliefWeighted"
   logInfo m!"rsa_predict: [auto-detect] detected {patternName}"
@@ -899,6 +909,7 @@ def tryAutoDetectL1NotGt (goal : MVarId) (cfg u w₁ w₂ : Expr) : TacticM Bool
   let patternName := match pattern with
     | .beliefBased => "beliefBased" | .qudBelief => "qudBelief"
     | .qudAction => "qudAction" | .beliefAction => "beliefAction"
+    | .weightedBeliefAction => "weightedBeliefAction"
     | .actionBased => "actionBased" | .beliefWeighted => "beliefWeighted"
   logInfo m!"rsa_predict: [auto-detect/¬L1] detected {patternName}"
 

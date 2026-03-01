@@ -46,6 +46,7 @@ import Linglib.Core.Logic.NaturalLogic
 import Linglib.Core.Logic.ConstraintEvaluation
 import Linglib.Core.Logic.OT
 import Linglib.Core.Agent.DecisionTheory
+import Linglib.Core.Agent.ExperimentDesign
 import Linglib.Core.Agent.RationalAction
 import Linglib.Core.Agent.SoftmaxOptimality
 import Linglib.Core.Agent.UtilityTheory
@@ -832,6 +833,7 @@ import Linglib.Theories.Syntax.ConstructionGrammar.Studies.FillmoreKayOConnor198
 import Linglib.Theories.Syntax.ConstructionGrammar.Studies.GoldbergShirtz2025
 import Linglib.Theories.Syntax.ConstructionGrammar.ArgumentStructure
 import Linglib.Theories.Syntax.ConstructionGrammar.Slot
+import Linglib.Theories.Syntax.ConstructionGrammar.GrammarDist
 import Linglib.Phenomena.Constructions.Bridge.SlotVerification
 import Linglib.Phenomena.Constructions.CxG_KayFillmore1999Bridge
 import Linglib.Phenomena.Constructions.DG_OsborneGross2012Bridge
@@ -1158,6 +1160,7 @@ import Linglib.Theories.Pragmatics.RSA.Core.Model
 import Linglib.Theories.Pragmatics.RSA.Core.Noise
 import Linglib.Theories.Pragmatics.RSA.Core.Priors
 import Linglib.Theories.Pragmatics.RSA.Core.Softmax.Limits
+import Linglib.Theories.Pragmatics.RSA.Core.SpeakerDiscrimination
 import Linglib.Theories.Pragmatics.RSA.Implementations.DegenEtAl2020
 import Linglib.Theories.Pragmatics.RSA.Quantities
 import Linglib.Theories.Pragmatics.RSA.Extensions.ArgumentativeStrength

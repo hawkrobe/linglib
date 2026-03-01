@@ -354,4 +354,80 @@ theorem internal_implies_intensional :
 theorem external_implies_extensional :
     subjectIntensional CausalSource.external = false := rfl
 
+-- ════════════════════════════════════════════════════
+-- § 8. Derived Stimulus Type (Pesetsky 1995)
+-- ════════════════════════════════════════════════════
+
+/-! For Class II verbs, stimulus subtype is DERIVED from causal source
+    via `CausalSource.toStimulusType`. No new lexical field needed —
+    the existing `causalSource` field determines T vs SM.
+
+    These theorems verify that each verb's derived stimulus type
+    predicts the correct PP frame and Cause-cooccurrence behavior. -/
+
+open Semantics.Causation.PsychCausation (StimulusType CausalSource.toStimulusType)
+
+/-- Derive a verb's stimulus type from its causal source. -/
+def derivedStimulusType (v : VerbEntry) : Option StimulusType :=
+  v.causalSource.map CausalSource.toStimulusType
+
+-- Eventive Class II → Target (T) stimulus
+
+theorem frighten_is_target : derivedStimulusType frighten = some .target := rfl
+theorem amuse_is_target : derivedStimulusType amuse = some .target := rfl
+theorem fascinate_is_target : derivedStimulusType fascinate = some .target := rfl
+theorem irritate_is_target : derivedStimulusType irritate = some .target := rfl
+theorem annoy_is_target : derivedStimulusType annoy = some .target := rfl
+theorem bore_is_target : derivedStimulusType bore = some .target := rfl
+theorem charm_is_target : derivedStimulusType charm = some .target := rfl
+theorem impress_is_target : derivedStimulusType impress = some .target := rfl
+theorem surprise_is_target : derivedStimulusType surprise = some .target := rfl
+theorem scare_is_target : derivedStimulusType scare = some .target := rfl
+theorem delight_is_target : derivedStimulusType delight = some .target := rfl
+theorem embarrass_is_target : derivedStimulusType embarrass = some .target := rfl
+theorem upset_psych_is_target : derivedStimulusType upset_psych = some .target := rfl
+theorem disgust_is_target : derivedStimulusType disgust = some .target := rfl
+theorem shock_is_target : derivedStimulusType shock = some .target := rfl
+theorem confuse_is_target : derivedStimulusType confuse = some .target := rfl
+theorem disappoint_is_target : derivedStimulusType disappoint = some .target := rfl
+theorem worry_eventive_is_target : derivedStimulusType worry_eventive = some .target := rfl
+
+-- Stative Class II → Subject Matter (SM) stimulus
+
+theorem concern_is_sm : derivedStimulusType concern = some .subjectMatter := rfl
+theorem interest_is_sm : derivedStimulusType interest = some .subjectMatter := rfl
+theorem worry_stative_is_sm : derivedStimulusType worry_stative = some .subjectMatter := rfl
+theorem please_psych_is_sm : derivedStimulusType please_psych = some .subjectMatter := rfl
+theorem trouble_is_sm : derivedStimulusType trouble = some .subjectMatter := rfl
+theorem puzzle_is_sm : derivedStimulusType puzzle = some .subjectMatter := rfl
+
+-- Class I → no derived stimulus type (T/SM is per-use, not lexical)
+
+theorem enjoy_no_stimulus_type : derivedStimulusType enjoy = none := rfl
+theorem like_no_stimulus_type : derivedStimulusType like = none := rfl
+theorem love_no_stimulus_type : derivedStimulusType love = none := rfl
+theorem hate_no_stimulus_type : derivedStimulusType hate = none := rfl
+theorem fear_np_no_stimulus_type : derivedStimulusType fear_np = none := rfl
+theorem dread_np_no_stimulus_type : derivedStimulusType dread_np = none := rfl
+
+-- Derived properties of stimulus type
+
+/-- Any verb with external causal source derives a Target stimulus
+    that doesn't conflict with overt Cause. -/
+theorem external_derives_target (v : VerbEntry)
+    (hs : v.causalSource = some .external) :
+    ∃ st : StimulusType, derivedStimulusType v = some st ∧
+      st = .target ∧ st.conflictsWithCause = false := by
+  simp only [derivedStimulusType, hs]
+  exact ⟨.target, rfl, rfl, rfl⟩
+
+/-- Any verb with internal causal source derives an SM stimulus
+    that conflicts with overt Cause (Onset Condition). -/
+theorem internal_derives_sm (v : VerbEntry)
+    (hs : v.causalSource = some .internal) :
+    ∃ st : StimulusType, derivedStimulusType v = some st ∧
+      st = .subjectMatter ∧ st.conflictsWithCause = true := by
+  simp only [derivedStimulusType, hs]
+  exact ⟨.subjectMatter, rfl, rfl, rfl⟩
+
 end Phenomena.PsychVerbs.Bridge

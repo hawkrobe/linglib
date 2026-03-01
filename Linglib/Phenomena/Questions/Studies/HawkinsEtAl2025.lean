@@ -116,12 +116,13 @@ structure CS2ResponseRates where
   otherCategory : ℚ
   deriving Repr
 
+/-- Human response rates averaged across 30 vignettes (from MCMC fitting data). -/
 def cs2_human_rates : CS2ResponseRates :=
-  { competitor := 58/100
-  , taciturn := 18/100
-  , sameCategory := 15/100
-  , exhaustive := 8/100
-  , otherCategory := 1/100
+  { competitor := 512/1000
+  , taciturn := 206/1000
+  , sameCategory := 168/1000
+  , exhaustive := 101/1000
+  , otherCategory := 14/1000
   }
 
 def cs2_model_rates : CS2ResponseRates :=
@@ -193,15 +194,66 @@ theorem prior_pq_beats_zero_shot :
   native_decide
 
 
-/-- Best-fitting model parameters from paper -/
+/-- Best-fitting model parameters from Table S2 of electronic supplementary material.
+
+    Fit by MCMC (100 burn-in, 5000 samples) to minimize error between
+    model and human answer distributions. Parameters vary by case study. -/
 structure ModelParams where
-  α_Q : ℚ := 5    -- Questioner rationality
-  α_R : ℚ := 5    -- Respondent rationality
-  β : ℚ := 1/2    -- Action-relevance weight (vs informativity)
-  w_c : ℚ := 3/10 -- Response cost weight
+  α_respondent : ℚ  -- R₁ softmax temperature
+  α_questioner : ℚ  -- Q softmax temperature
+  α_policy : ℚ      -- Action policy softmax temperature
+  β : ℚ             -- Action-relevance weight (0 = pure epistemic, 1 = pure action)
+  w_c : ℚ           -- Response cost weight
+  U_fail : Option ℚ -- Utility of failure (receiving nothing); none for CS1
   deriving Repr
 
-def defaultParams : ModelParams := {}
+/-- CS2 fitted parameters (Table S2). β ≈ 1 means almost pure action-relevance. -/
+def cs2Params : ModelParams :=
+  { α_respondent := 887/100
+  , α_questioner := 373/100
+  , α_policy := 4
+  , β := 96/100
+  , w_c := 96/100
+  , U_fail := some (34/10)
+  }
+
+/-- CS1 fitted parameters (Table S2). -/
+def cs1Params : ModelParams :=
+  { α_respondent := 5
+  , α_questioner := 3/2
+  , α_policy := 5/2
+  , β := 9/10
+  , w_c := 3/10
+  , U_fail := none
+  }
+
+/-- CS3 fitted parameters (Table S2). β ≈ 0.29 means mostly epistemic. -/
+def cs3Params : ModelParams :=
+  { α_respondent := 294/100
+  , α_questioner := 589/100
+  , α_policy := 854/100
+  , β := 29/100
+  , w_c := 234/100
+  , U_fail := some (-594/100)
+  }
+
+/-- Empirically elicited utility values (Table S1, 0-100 slider scale).
+    Each row is a decision problem (what the questioner wants);
+    each column is an item type. Mean values across N=162 participants. -/
+structure CS2Utilities where
+  target_for_target : ℚ       -- wanting target → getting target
+  competitor_for_target : ℚ   -- wanting target → getting competitor
+  sameCat_for_target : ℚ      -- wanting target → getting same-category
+  otherCat_for_target : ℚ     -- wanting target → getting other-category
+  deriving Repr
+
+/-- Mean utility values from Table S1 (on 0-100 scale). -/
+def cs2_utilities : CS2Utilities :=
+  { target_for_target := 9618/100     -- 96.18
+  , competitor_for_target := 5693/100  -- 56.93
+  , sameCat_for_target := 3611/100     -- 36.11
+  , otherCat_for_target := 2369/100    -- 23.69
+  }
 
 
 /-- Key qualitative predictions from PRIOR-PQ -/

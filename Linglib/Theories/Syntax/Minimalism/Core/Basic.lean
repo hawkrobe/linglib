@@ -36,6 +36,10 @@ inductive Cat where
   | T     -- tense
   | C     -- complementizer
   | v     -- light verb
+  | n     -- nominal categorizer / gender (little-n, Marantz 2001; Distributed Morphology)
+  | a     -- adjectival categorizer (little-a, Panagiotidis 2015; DegP complement)
+  | Num   -- number (Ritter 1991; NumP between nP and QP/DP)
+  | Q     -- quantity / classifier (Borer 2005; QP between NumP and DP)
   | Voice -- Voice head (Kratzer 1996; Schäfer 2008)
   | Appl  -- Applicative head (Pylkkänen 2008; Cuervo 2003)
   | Foc   -- focus (Rizzi 1997 split-CP; hosts [FoC] feature, triggers A-bar movement)

@@ -824,7 +824,10 @@ section Entropy
 
 variable {ι : Type*} [Fintype ι] [Nonempty ι]
 
-/-- Shannon entropy: H(p) = -Σᵢ pᵢ log pᵢ. -/
+/-- Shannon entropy: H(p) = -Σᵢ pᵢ log pᵢ.
+
+For a ℚ-valued counterpart suitable for decidable computation, see
+`Core.InformationTheory.entropy` in `Linglib/Core/InformationTheory.lean`. -/
 noncomputable def shannonEntropy (p : ι → ℝ) : ℝ :=
   -∑ i : ι, if p i = 0 then 0 else p i * log (p i)
 

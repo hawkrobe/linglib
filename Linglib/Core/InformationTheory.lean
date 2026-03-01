@@ -7,8 +7,9 @@ Domain-agnostic information-theoretic functions over rational numbers, suitable
 for decidable computation. These are used by both pragmatic models (RSA) and
 morphological complexity metrics (Ackerman & Malouf 2013).
 
-For ℝ-valued proofs (non-negativity, max-entropy bounds, Gibbs VP), see
-`Core/RationalAction.lean`.
+For the ℝ-valued counterpart, see `Core.shannonEntropy` in
+`Linglib/Core/Agent/RationalAction.lean` (§4), which uses `Real.log` and
+supports proofs of non-negativity, max-entropy bounds, and Gibbs VP.
 
 ## Main definitions
 
@@ -16,19 +17,25 @@ For ℝ-valued proofs (non-negativity, max-entropy bounds, Gibbs VP), see
 - `entropy`: Shannon entropy H(X)
 - `conditionalEntropy`: H(Y|X) = H(X,Y) - H(X)
 - `mutualInformation`: I(X;Y) = H(X) + H(Y) - H(X,Y)
+- `deltaP`: ΔP directional association measure
+- `deltaPCounts`: ΔP from a 2×2 contingency table
 
 ## References
 
 - Cover, T. M. & Thomas, J. A. (2006). Elements of Information Theory.
 - Ackerman, F. & Malouf, R. (2013). Morphological Organization: The Low
   Conditional Entropy Conjecture. Language 89(3), 429–464.
+- Ellis, N. C. (2006). Selective Attention and Transfer Phenomena in L2
+  Acquisition. Applied Linguistics 27(2), 164–194.
+- Dunn, J. (2025). Syntactic Variation from Individuals to Populations.
+  Cambridge University Press.
 -/
 
 namespace Core.InformationTheory
 
 /-- Natural logarithm approximated as a rational (for decidable proofs).
 
-We use a simple linear approximation log₂(x) ≈ (x - 1) / (x + 1) * 2.885.
+We use a simple linear approximation log₂(x) ≈ 3 * (x - 1) / (x + 1).
 This is only used for concrete computations; proofs use abstract properties.
 For exact proofs about limiting behavior, we would need Mathlib.Analysis. -/
 def log2Approx (x : ℚ) : ℚ :=
@@ -44,7 +51,13 @@ def log2Approx (x : ℚ) : ℚ :=
 
 H(X) = -Σ_x P(x) log P(x)
 
-Note: 0 log 0 is defined as 0 (standard convention). -/
+Note: 0 log 0 is defined as 0 (standard convention).
+
+This is the ℚ counterpart of `Core.shannonEntropy` in `RationalAction.lean`,
+using `log2Approx` (rational linear approximation) instead of `Real.log`.
+Suitable for decidable computation; for mathematical proofs, use
+`shannonEntropy` and its theorems (`shannonEntropy_nonneg`,
+`shannonEntropy_le_log_card`, etc.). -/
 def entropy {α : Type} [BEq α] (dist : List (α × ℚ)) : ℚ :=
   let terms := dist.map λ (_, p) =>
     if p ≤ 0 then 0
@@ -68,5 +81,74 @@ def conditionalEntropy {α β : Type} [BEq α] [BEq β]
     (joint : List ((α × β) × ℚ))
     (marginalX : List (α × ℚ)) : ℚ :=
   entropy joint - entropy marginalX
+
+/-- Jensen-Shannon divergence over an explicit inventory.
+
+JSD(p, q) = H(m) - (H(p) + H(q)) / 2 where m(x) = (p(x) + q(x)) / 2.
+Symmetric, bounded (0 ≤ JSD ≤ 1 bit), and a metric (after sqrt).
+
+Used for grammar distance (Dunn 2025), register comparison, and anywhere
+KL divergence's asymmetry is undesirable. -/
+def jsdOf {α : Type} [BEq α] (xs : List α) (p q : α → ℚ) : ℚ :=
+  let distP := xs.map fun x => (x, p x)
+  let distQ := xs.map fun x => (x, q x)
+  let distM := xs.map fun x => (x, (p x + q x) / 2)
+  entropy distM - (entropy distP + entropy distQ) / 2
+
+/-- ΔP: directional association measure (Ellis 2006, Dunn 2025).
+
+ΔP(x → y) = P(y | x) - P(y | ¬x)
+
+Measures how much knowing x changes the probability of y. Used by
+Dunn (2025) to identify constructions from corpus data: a slot-filler
+pair (x, y) is constructional when ΔP is high in both directions.
+
+Properties:
+- Bounded: ΔP ∈ [-1, 1] for valid probability inputs
+- ΔP = 0 when x and y are independent (see `deltaP_eq_zero_of_independent`)
+- Directional: ΔP(x→y) ≠ ΔP(y→x) in general
+
+Takes joint probability P(x,y), marginal P(x), and marginal P(y).
+Returns the directional association from x to y. -/
+def deltaP (pXY pX pY : ℚ) : ℚ :=
+  let pYgivenX := if pX ≤ 0 then 0 else pXY / pX
+  let pYgivenNotX := if pX ≥ 1 then 0 else (pY - pXY) / (1 - pX)
+  pYgivenX - pYgivenNotX
+
+/-- ΔP from a 2×2 contingency table.
+
+Given observed counts:
+
+|     |  y  | ¬y  |
+|-----|-----|-----|
+|  x  |  a  |  b  |
+| ¬x  |  c  |  d  |
+
+ΔP(x → y) = a/(a+b) - c/(c+d)
+
+This is the form used in corpus-based CxG (Dunn 2025): count how often
+a filler appears in a slot (a) vs not (b), and how often it appears
+elsewhere (c) vs not (d). -/
+def deltaPCounts (a b c d : ℕ) : ℚ :=
+  let ab : ℚ := ↑a + ↑b
+  let cd : ℚ := ↑c + ↑d
+  (if ab = 0 then 0 else ↑a / ab) - (if cd = 0 then 0 else ↑c / cd)
+
+/-- ΔP vanishes under independence: if P(x,y) = P(x)·P(y), then ΔP = 0.
+
+This is the key property: ΔP measures departure from independence.
+When slot and filler are statistically independent (knowing the slot
+tells you nothing about the filler), ΔP is zero. -/
+theorem deltaP_eq_zero_of_independent (pX pY : ℚ)
+    (hpX_pos : 0 < pX) (hpX_lt : pX < 1) :
+    deltaP (pX * pY) pX pY = 0 := by
+  have hne : pX ≠ 0 := (ne_of_lt hpX_pos).symm
+  have hne1 : (1 : ℚ) - pX ≠ 0 := sub_ne_zero.mpr (ne_of_lt hpX_lt).symm
+  dsimp only [deltaP]
+  rw [if_neg (not_le.mpr hpX_pos), if_neg (not_le.mpr hpX_lt)]
+  rw [mul_div_cancel_left₀ pY hne]
+  rw [show pY - pX * pY = pY * (1 - pX) from by
+    rw [mul_sub, mul_one, mul_comm pY pX]]
+  rw [mul_div_cancel_right₀ pY hne1, sub_self]
 
 end Core.InformationTheory

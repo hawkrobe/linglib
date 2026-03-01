@@ -84,4 +84,99 @@ def CausalSource.isEventive : CausalSource → Bool
   | .external => true
   | .internal => false
 
+-- ════════════════════════════════════════════════════
+-- § Stimulus Subtype (Pesetsky 1995)
+-- ════════════════════════════════════════════════════
+
+/-- Pesetsky's (1995) subdivision of the stimulus role.
+
+    Class II psych verbs take a stimulus/cause argument, but
+    Pesetsky shows this role has two semantically distinct subtypes:
+
+    - **Target (T)**: what the emotion is *directed at*
+      "John fears the dog" — the dog is the target of fear
+    - **SubjectMatter (SM)**: what the emotion is *about*
+      "John worries about the exam" — the exam is the subject matter
+
+    The T/SM distinction controls PP frame selection (*of* for T,
+    *about* for SM), cooccurrence with Cause (SM and Cause conflict
+    via the Onset Condition), and the naturalness of the experiencer
+    predicate (T-predicates are "natural", SM-predicates are
+    "arbitrary" in Pesetsky's terms).
+
+    Crucially, T/SM has zero syntax: the syntactic structure is
+    identical regardless of which subtype the stimulus has. The
+    distinction is purely semantic/lexical. -/
+inductive StimulusType where
+  | target        -- T: directed-at ("fears the dog")
+  | subjectMatter -- SM: about ("worries about the exam")
+  deriving DecidableEq, BEq, Repr
+
+/-- Target stimuli select *of*-PP complements. -/
+def StimulusType.ppFrame : StimulusType → String
+  | .target        => "of"
+  | .subjectMatter => "about"
+
+/-- Subject Matter conflicts with overt Cause (Onset Condition).
+    Target does not — it occupies a different position in the
+    causal chain. -/
+def StimulusType.conflictsWithCause : StimulusType → Bool
+  | .target        => false
+  | .subjectMatter => true
+
+-- ════════════════════════════════════════════════════
+-- § CausalSource → StimulusType Derivation
+-- ════════════════════════════════════════════════════
+
+/-- Derive stimulus subtype from causal source (Pesetsky 1995).
+
+    For Class II psych verbs, the T/SM distinction is *determined by*
+    the causal source:
+
+    - External percept → Target: the percept IS the direct object of
+      the emotion ("the noise frightened John" → frightened *of* the noise)
+    - Internal representation → Subject Matter: the representation is
+      what the emotion is *about* ("the problem concerns John" →
+      concerned *about* the problem)
+
+    For Class I verbs (fear, enjoy), T/SM is a per-use property selected
+    by PP frame (*of* vs *about*), not a lexical property. A single Class I
+    verb like "afraid" can take either T ("afraid of dogs") or SM
+    ("afraid about the outcome"). So this derivation applies only to
+    Class II, where the stimulus is the subject and the causal source
+    is a lexical property. -/
+def CausalSource.toStimulusType : CausalSource → StimulusType
+  | .external => .target
+  | .internal => .subjectMatter
+
+/-- External causal source derives Target stimulus. -/
+theorem external_is_target :
+    CausalSource.toStimulusType .external = .target := rfl
+
+/-- Internal causal source derives Subject Matter stimulus. -/
+theorem internal_is_subjectMatter :
+    CausalSource.toStimulusType .internal = .subjectMatter := rfl
+
+/-- Derived SM conflicts with Cause; derived T does not.
+    This connects the Onset Condition to the causal source:
+    internal-source verbs can't cooccur with overt Cause because
+    their derived SM stimulus competes for the onset position. -/
+theorem sm_cause_conflict_from_source :
+    (CausalSource.toStimulusType .internal).conflictsWithCause = true ∧
+    (CausalSource.toStimulusType .external).conflictsWithCause = false :=
+  ⟨rfl, rfl⟩
+
+/-- The causal source determines three properties simultaneously:
+    stimulus subtype, PP frame, and Cause cooccurrence. -/
+theorem source_determines_stimulus_properties :
+    -- External → T, "of", no conflict
+    CausalSource.toStimulusType .external = .target ∧
+    (CausalSource.toStimulusType .external).ppFrame = "of" ∧
+    (CausalSource.toStimulusType .external).conflictsWithCause = false ∧
+    -- Internal → SM, "about", conflict
+    CausalSource.toStimulusType .internal = .subjectMatter ∧
+    (CausalSource.toStimulusType .internal).ppFrame = "about" ∧
+    (CausalSource.toStimulusType .internal).conflictsWithCause = true :=
+  ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
+
 end Semantics.Causation.PsychCausation

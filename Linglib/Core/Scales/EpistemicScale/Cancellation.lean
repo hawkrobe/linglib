@@ -1256,6 +1256,26 @@ theorem cancellation_from_weights_fin4 (sys : EpistemicSystemFA (Fin 4))
     · exact absurd (heq A B hDisj h hGe) hStrict
     · exact absurd hGe (hnge A B hDisj h)
 
+/-- When weights are **generic** (no two nonempty disjoint subsets have equal sum),
+    cancellation reduces to a single forward obligation: sys.ge ↑A ↑B → A.sum p ≥ B.sum p.
+    The strict direction and equal-sum bidirectionality are both free:
+    - strict: contrapositive of hfwd (if A.sum p < B.sum p then ¬sys.ge ↑A ↑B)
+    - heq: vacuously true (genericity rules out equal-sum disjoint pairs) -/
+theorem cancellation_from_generic_weights {n : ℕ} (sys : EpistemicSystemFA (Fin n))
+    (p : Fin n → ℚ) (hp : ∀ i, 0 < p i) (hsum : Finset.univ.sum p = 1)
+    (hfwd : ∀ (A B : Finset (Fin n)), Disjoint A B → sys.ge ↑A ↑B →
+      A.sum p ≥ B.sum p)
+    (hgeneric : ∀ (A B : Finset (Fin n)), Disjoint A B →
+      A.sum p = B.sum p → A = ∅ ∧ B = ∅) :
+    Cancellation n sys.ge := by
+  apply cancellation_from_weights sys p hp hsum hfwd
+  intro A B hDisj hGe hStrict
+  by_contra h; push_neg at h
+  rcases eq_or_lt_of_le h with heq | hlt
+  · obtain ⟨rfl, rfl⟩ := hgeneric A B hDisj heq
+    exact hStrict (sys.refl _)
+  · exact absurd hGe (fun hge => absurd (hfwd A B hDisj hge) (not_le.mpr hlt))
+
 /-- Classify all Finset (Fin 4) into one of 16 explicit values. -/
 lemma finset_fin4_eq (S : Finset (Fin 4)) :
     S = ∅ ∨ S = {0} ∨ S = {1} ∨ S = {2} ∨ S = {3} ∨

@@ -33,7 +33,8 @@ namespace RSA.InformationTheory
 
 -- Re-export core information-theoretic definitions so that all existing
 -- downstream code using `RSA.InformationTheory.entropy` etc. continues to work.
-export Core.InformationTheory (log2Approx entropy conditionalEntropy mutualInformation)
+export Core.InformationTheory (log2Approx entropy conditionalEntropy mutualInformation
+  jsdOf deltaP deltaPCounts)
 
 /--
 RSA iteration level.

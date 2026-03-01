@@ -1,4 +1,5 @@
 import Linglib.Core.Agent.RationalAction
+import Linglib.Core.Agent.BToM
 
 /-!
 # RSAConfig — Unified RSA Configuration
@@ -46,11 +47,18 @@ S1 score examples:
 - Baker, Saxe & Tenenbaum (2009). Action Understanding as Inverse Planning.
 - Qing & Franke (2013). Variations on a Bayesian Theme.
 - Kao et al. (2014). Nonliteral Understanding of Number Words.
+
+## BToM Grounding (§5)
+
+Every RSAConfig gives rise to a BToM generative model via `toBToM`. The
+pragmatic listener (L1) IS a BToM observer: `L1_eq_btom_worldMarginal`
+proves that L1's score equals the BToM world marginal. See
+`BToMGrounding.lean` for latent classification (Gricean vs channel-theoretic).
 -/
 
 namespace RSA
 
-open BigOperators Core
+open BigOperators Core Core.BToM
 
 -- ============================================================================
 -- RSAConfig Structure
@@ -264,6 +272,72 @@ noncomputable def S2 (cfg : RSAConfig U W) (w : W) (u : U) : ℝ :=
 theorem S2_nonneg (cfg : RSAConfig U W) (w : W) (u : U) :
     0 ≤ cfg.S2 w u :=
   cfg.S2agent.policy_nonneg w u
+
+end RSAConfig
+
+-- ============================================================================
+-- §5. BToM Grounding: RSAConfig → BToMModel
+-- ============================================================================
+
+namespace RSAConfig
+
+variable {U W : Type*} [Fintype U] [Fintype W]
+
+/-- Map an RSAConfig to a BToM generative model.
+
+The mapping from RSA to BToM ontology:
+- **Action** = U (utterance)
+- **Percept** = W (speaker perceives the world directly — perfect perception)
+- **Belief** = W (speaker's belief matches the world — perfect knowledge)
+- **Desire** = cfg.Latent (speaker's latent state: goals, interpretations, etc.)
+- **Shared** = Unit (single-utterance models have fixed common ground)
+- **Medium** = Unit (channel properties not separately modeled)
+- **World** = W
+
+The perception/belief chain uses Kronecker deltas `[p = w]` and `[b = p]`,
+reflecting the standard RSA assumption that the speaker knows the true world
+state. RSA's world-conditioned latent prior `latentPrior(w, l)` maps directly
+to BToM's world-conditioned desire prior `desirePrior(w, d)`, making the
+correspondence transparent.
+
+See `L1_eq_btom_worldMarginal` for the proof that this BToM model's
+world marginal equals `cfg.L1agent.score`. -/
+noncomputable def toBToM (cfg : RSAConfig U W) [DecidableEq W] :
+    BToMModel ℝ U W W cfg.Latent Unit Unit W where
+  perceptModel w p := if p = w then 1 else 0
+  beliefModel p b := if b = p then 1 else 0
+  planModel b d _ _ a := cfg.S1 d b a
+  worldPrior := cfg.worldPrior
+  desirePrior := cfg.latentPrior
+  sharedPrior _ := 1
+  mediumPrior _ := 1
+
+set_option maxHeartbeats 1600000 in
+/-- RSA's pragmatic listener IS BToM world-marginal inference.
+
+L1's score function — `worldPrior(w) · Σ_l latentPrior(w,l) · S1(u|w,l)` —
+equals the world marginal of the BToM model constructed by `toBToM`. This
+makes RSA's listener a genuine instance of BToM observer inference, not
+merely an analogy.
+
+Proof sketch: The delta functions in `perceptModel` and `beliefModel` collapse
+the sums over `Percept = W` and `Belief = W` to the single term where
+`p = w` and `b = w`. The sums over `Shared = Unit` and `Medium = Unit`
+contribute factor 1. The remaining sum over `Desire = Latent` matches
+`cfg.L1agent.score` by definition of `planModel` and `desirePrior`. -/
+theorem L1_eq_btom_worldMarginal [DecidableEq W]
+    (cfg : RSAConfig U W) (u : U) (w : W) :
+    cfg.L1agent.score u w = (cfg.toBToM).worldMarginal u w := by
+  unfold L1agent toBToM BToMModel.worldMarginal BToMModel.jointScore
+  simp only [Fintype.sum_unique, mul_one]
+  have key : ∀ (c : Prop) [Decidable c] (a : ℝ),
+      a * (if c then (1 : ℝ) else 0) = if c then a else 0 := by
+    intros c _ a; split <;> simp
+  simp_rw [key]
+  simp_rw [ite_mul, zero_mul]
+  simp [Finset.sum_ite_eq']
+  rw [Finset.mul_sum]
+  exact Finset.sum_congr rfl fun x _ => by ring
 
 end RSAConfig
 

@@ -29,6 +29,7 @@ Each `S1ScoreSpec` variant has:
 | `qudAction` | `if proj=0 then 0 else exp(α·(log proj - cost u))` | Kao et al. 2014 Hyperbole |
 | `beliefAction` | `if L0=0 then 0 else exp(α·(log L0 - cost u))` | Qing & Franke 2015 σ_b |
 | `actionBased` | `exp(α·(L0(w\|u) - cost u))` | Qing & Franke 2015 σ_a |
+| `weightedBeliefAction` | `if L0=0 then 0 else exp(α·(γ·log L0 + bonus u))` | Hawkins et al. 2025 |
 | `beliefWeighted` | `if qualOk then exp(α·Σ_s b(l,s)·log L0(u,s)) else 0` | Goodman & Stuhlmüller 2013 |
 -/
 
@@ -67,6 +68,12 @@ inductive S1ScoreSpec (U W L : Type*) where
       Action-oriented: raw L0 probability, no log.
       Used by Qing & Franke 2015 σ_a. -/
   | actionBased (cost : U → ℚ)
+  /-- score = if L0(w|u) = 0 then 0 else exp(α · (infWeight · log L0(w|u) + bonus u)).
+      Weighted belief-action: informativity weight γ on log L0, plus a per-utterance
+      bonus that can encode action relevance, cost, or any u-dependent term.
+      Subsumes `beliefAction`: `beliefAction(cost) = weightedBeliefAction 1 (fun u => -cost u)`.
+      Used by Hawkins et al. 2025 (PRIOR-PQ). -/
+  | weightedBeliefAction (infWeight : ℚ) (bonus : U → ℚ)
   /-- score = if quality(l, u) then exp(α · Σ_w belief(l, w) · log L0(u, w)) else 0.
       Belief-weighted expected log-informativity, gated by quality.
       Used by Goodman & Stuhlmüller 2013. -/
@@ -141,6 +148,9 @@ noncomputable def S1ScoreSpec.toS1Score [DecidableEq L]
     else exp (α * (log (l0 u w) - ↑(cost u)))
   | .actionBased cost => fun l0 α _l w u =>
     exp (α * (l0 u w - ↑(cost u)))
+  | .weightedBeliefAction infWeight bonus => fun l0 α _l w u =>
+    if l0 u w = 0 then 0
+    else exp (α * (↑infWeight * log (l0 u w) + ↑(bonus u)))
   | .beliefWeighted belief quality => fun l0 α l _w u =>
     if quality l u then
       exp (α * ∑ s : W, ↑(belief l s) * log (l0 u s))
@@ -164,6 +174,11 @@ theorem S1ScoreSpec.toS1Score_nonneg [DecidableEq L]
     · exact le_refl 0
     · exact le_of_lt (exp_pos _)
   | .beliefAction _ =>
+    simp only [toS1Score]
+    split
+    · exact le_refl 0
+    · exact le_of_lt (exp_pos _)
+  | .weightedBeliefAction _ _ =>
     simp only [toS1Score]
     split
     · exact le_refl 0

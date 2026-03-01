@@ -117,6 +117,9 @@ inductive FeatureVal where
   | neg : Bool → FeatureVal          -- [±neg] (NegP, Pollock 1989)
   | rel : Bool → FeatureVal          -- [±rel] (relative clause typing, Rizzi 2001)
   | oblique : Bool → FeatureVal     -- [±oblique] (extraction tracking, Elkins et al. 2026)
+  | ellipsis : Bool → FeatureVal   -- [E] feature licensing NP-ellipsis (Lobeck 1995, Saab 2026)
+  | catN : Bool → FeatureVal       -- [N] referentiality (Panagiotidis 2015)
+  | catV : Bool → FeatureVal       -- [V] temporal predication (Panagiotidis 2015)
   deriving Repr, DecidableEq
 
 /-- Do two feature values have the same type, ignoring specific values?
@@ -143,6 +146,9 @@ def FeatureVal.sameType : FeatureVal → FeatureVal → Bool
   | .neg _, .neg _ => true
   | .rel _, .rel _ => true
   | .oblique _, .oblique _ => true
+  | .ellipsis _, .ellipsis _ => true
+  | .catN _, .catN _ => true
+  | .catV _, .catV _ => true
   | _, _ => false
 
 -- ============================================================================
