@@ -28,7 +28,7 @@ all definitions here apply directly.
 - **§4–§8 Theorems**: duality, symmetry/strength, Boolean closure,
   type ⟨1⟩, van Benthem characterization
 - **§12 Conservative GQ lattice**: `ConsGQ α` bounded distributive lattice
-  (Elliott 2026)
+  (Elliott 2025)
 
 ## References
 
@@ -36,7 +36,7 @@ all definitions here apply directly.
 - van Benthem, J. (1984). Questions About Quantifiers. J. Symbolic Logic 49(2).
 - Keenan, E. & Stavi, J. (1986). A Semantic Characterization of Natural Language Determiners.
 - Peters, S. & Westerståhl, D. (2006). Quantifiers in Language and Logic.
-- Elliott, P. (2026). Determiners as Polarized Individuals.
+- Elliott, P. (2025). Determiners as predicates. SALT 35.
 -/
 
 namespace Core.Quantification
@@ -903,7 +903,7 @@ def conservativeQuantifierCount (n : Nat) : Nat :=
 #eval conservativeQuantifierCount 4  -- 32768
 
 -- ============================================================================
--- §12 — Conservative GQ Lattice (Elliott 2026)
+-- §12 — Conservative GQ Lattice (Elliott 2025)
 -- ============================================================================
 
 /-- Conservative GQs form a sublattice of `GQ α`. The `DistribLattice`
@@ -912,7 +912,7 @@ def conservativeQuantifierCount (n : Nat) : Nat :=
     pointwise). Closure under `⊔`/`⊓` follows from
     `conservative_gqJoin`/`conservative_gqMeet` (§8).
 
-    Reference: Elliott, P. (2026). Determiners as Polarized Individuals. -/
+    Reference: Elliott, P. (2025). Determiners as predicates. SALT 35. -/
 def conservativeSublattice : Sublattice (GQ α) where
   carrier := { q | Conservative q }
   supClosed' q₁ hq₁ q₂ hq₂ := conservative_gqJoin q₁ q₂ hq₁ hq₂
@@ -920,7 +920,7 @@ def conservativeSublattice : Sublattice (GQ α) where
 
 /-- Conservative GQs: the subtype of `GQ α` satisfying conservativity.
     Forms a bounded distributive lattice under pointwise Boolean operations
-    (Elliott 2026, Theorem 1). Meet is `∧`, join is `∨`, the order is
+    (Elliott 2025, §4.3). Meet is `∧`, join is `∨`, the order is
     pointwise implication. The Birkhoff representation theorem applied to
     this lattice yields polarized individuals as join-irreducible elements.
 

@@ -325,7 +325,7 @@ end PolInd
 --
 -- This extends the bounded distributive lattice from §12 of
 -- `Quantification.lean` (via Sublattice) to a full `BooleanAlgebra`.
--- Elliott (2025), Theorem 1.
+-- Elliott (2025), §4.3.
 
 section ConsGQ_BA
 
