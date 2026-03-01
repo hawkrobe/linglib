@@ -100,10 +100,10 @@ inductive ResultClass where
   deriving DecidableEq, Repr, BEq
 
 -- ════════════════════════════════════════════════════
--- § 1b. Change Restriction (B&KG 2020 §2.4, Table 30)
+-- § 1b. Change Restriction (B&KG 2020 §2.4)
 -- ════════════════════════════════════════════════════
 
-/-- How a result root's change entailment is restricted (B&KG 2020 §2.4, Table 30).
+/-- How a result root's change entailment is restricted (B&KG 2020 §2.4).
 
     Break-type result roots (√CRACK, √SHATTER) entail change of ANY kind —
     spatial or temporal. A crack can "run from the tree to the house" without
@@ -256,6 +256,33 @@ theorem result_roots_witness_against_bifurcation :
 theorem pc_roots_consistent_with_bifurcation :
     RootType.entailsChange .propertyConcept = false := rfl
 
+/-- **B&KG (2020) strengthened bifurcation failure via RootEntailments.**
+
+    Beavers et al. (2021) show roots can entail CHANGE (one templatic notion).
+    B&KG (2020) show roots can entail CHANGE, CAUSATION, and MANNER —
+    ALL notions traditionally reserved for templates. This is a strictly
+    stronger refutation: even if one accepted that change is "special",
+    roots encoding manner+cause (√GUILLOTINE, √HAND) violate bifurcation
+    on three separate dimensions simultaneously.
+
+    Witness: `RootEntailments.fullSpec` has all four features true. -/
+theorem bkg_bifurcation_fails_all_dimensions :
+    -- Roots can entail change (result = true)
+    RootEntailments.fullSpec.result = true ∧
+    -- Roots can entail causation (cause = true)
+    RootEntailments.fullSpec.cause = true ∧
+    -- Roots can entail manner (manner = true)
+    RootEntailments.fullSpec.manner = true ∧
+    -- All at once — not just one dimension
+    RootEntailments.fullSpec.state = true := ⟨rfl, rfl, rfl, rfl⟩
+
+/-- Multiple Levin classes witness the stronger bifurcation failure. -/
+theorem bkg_bifurcation_multiple_witnesses :
+    (LevinClass.rootEntailments .cut).result = true ∧
+    (LevinClass.rootEntailments .cut).manner = true ∧
+    (LevinClass.rootEntailments .give).cause = true ∧
+    (LevinClass.rootEntailments .give).manner = true := ⟨rfl, rfl, rfl, rfl⟩
+
 -- ════════════════════════════════════════════════════
 -- § 6. The Markedness Generalization (§8, eq. 44)
 -- ════════════════════════════════════════════════════
@@ -338,39 +365,21 @@ def MeaningPostulateEntailsChange
     (become : Event → State → Prop) : Prop :=
   ∀ x s, rootPred x s → ∃ e, become e s
 
-/-- For result roots, the meaning postulate always holds (by axiom).
-    For PC roots, it does not (the state can hold without any prior change).
-
-    This bridges the Boolean `entailsChange` flag to the full
-    compositional semantics. -/
-structure RootSemantics (Entity State Event : Type) where
-  /-- The root's state predicate -/
-  pred : RootDenotation Entity State
-  /-- The become relation on events and states -/
-  become : Event → State → Prop
-  /-- The root's type -/
-  rootType : RootType
-  /-- For result roots: change is entailed (meaning postulate).
-      For PC roots: no such entailment. -/
-  changeEntailment :
-    rootType = .result →
-    MeaningPostulateEntailsChange pred become
-
 -- ════════════════════════════════════════════════════
 -- § 7b. Root Denotation: Change-in-Denotation Architecture (B&KG 2020 §2.5)
 -- ════════════════════════════════════════════════════
 
-/-- B&KG's (2020 §2.5, eqs. 37a–b) root denotation architecture, where
+/-- Root denotation architecture (B&KG 2020 §2.5, eqs. 37a–b), where
     change is CONSTITUTIVE of the result root's meaning rather than an
-    external meaning postulate.
+    external meaning postulate (cf. Beavers et al. 2021 eq. 21).
 
     The formal contrast:
     - √FLAT = λxλs[flat'(x,s)] — pure state, no change in truth conditions
     - √CRACK = λxλs[cracked'(x,s) ∧ ∃e'[become'(s,e')]] — change IN the root
 
-    This differs from `RootSemantics` above (Beavers et al. 2021 eq. 21),
-    where the state predicate and the change requirement are separate.
-    B&KG argue the change IS what the root means, not an external constraint.
+    The earlier Beavers et al. (2021) analysis used a separate structure
+    with an external meaning postulate constraining result roots. B&KG
+    argue the change IS what the root means, not an external constraint.
 
     The empirical payoff: the *again* diagnostic's reading collapse for result
     roots (§12b below) follows logically from this architecture. If change is
@@ -456,18 +465,10 @@ def RootDen.carriesMANNER {Entity State Event : Type} :
 
 /-- A root denotation violates MRC iff it carries both BECOME and a manner
     restriction — i.e., it encodes both result and manner in one root.
-    Only `.mannerResult` satisfies this (by construction). -/
-def RootDen.denotationViolatesMRC {Entity State Event : Type} :
-    RootDen Entity State Event → Bool
-  | .pc _ => false
-  | .result _ _ _ => false
-  | .mannerResult _ _ _ _ _ => true
-
-/-- MRC violation at the denotation level = having both BECOME and MANNER. -/
-theorem RootDen.violatesMRC_iff {Entity State Event : Type}
-    (rd : RootDen Entity State Event) :
-    rd.denotationViolatesMRC = (rd.carriesBECOME && rd.carriesMANNER) := by
-  cases rd <;> rfl
+    Derived from the two independent predicates, not pattern-matched separately. -/
+def RootDen.denotationViolatesMRC {Entity State Event : Type}
+    (rd : RootDen Entity State Event) : Bool :=
+  rd.carriesBECOME && rd.carriesMANNER
 
 /-- Manner+result denotations violate MRC. -/
 theorem RootDen.mannerResult_violates {Entity State Event : Type}
@@ -490,16 +491,17 @@ theorem RootDen.pc_respects {Entity State Event : Type}
     (RootDen.pc sp : RootDen Entity State Event).denotationViolatesMRC = false := rfl
 
 /-- **Bridge: denotation-level MRC → Boolean RootEntailments MRC.**
-    Manner+result denotations correspond to RootEntailments where
-    `violatesMRC = true` (i.e., +manner +result configurations like
-    `mannerResult` or `fullSpec` in RootDimensions.lean). -/
-theorem RootDen.denotation_matches_boolean_MRC {Entity State Event : Type}
-    (rd : RootDen Entity State Event) :
-    rd.denotationViolatesMRC = rd.carriesMANNER := by
-  cases rd <;> rfl
+    MRC violation requires BOTH conditions — having manner alone
+    (if such a constructor existed) would not be a violation. -/
+theorem RootDen.mrc_requires_both {Entity State Event : Type}
+    (rd : RootDen Entity State Event)
+    (h : rd.denotationViolatesMRC = true) :
+    rd.carriesBECOME = true ∧ rd.carriesMANNER = true := by
+  simp [RootDen.denotationViolatesMRC] at h
+  exact h
 
 -- ════════════════════════════════════════════════════
--- § 7c. Ditransitive Root Classes (B&KG 2020 Ch. 3, Table 3.2)
+-- § 7c. Ditransitive Root Classes (B&KG 2020 Ch. 3)
 -- ════════════════════════════════════════════════════
 
 /-- What a ditransitive root entails about possession (B&KG 2020 §3.3).
@@ -514,7 +516,7 @@ inductive PossessionEntailment where
   | actual      -- root entails actual possession transfer (√GIVE, √HAND)
   deriving DecidableEq, Repr, BEq
 
-/-- Six classes of ditransitive verb roots (B&KG 2020 §3.6, Table 3.2).
+/-- Six classes of ditransitive verb roots (B&KG 2020 §3.6).
     The ditransitive parallel to the PC/result distinction for CoS roots:
     templates contribute only PROSPECTIVE states; roots can contribute
     ACTUAL states. -/
@@ -659,14 +661,14 @@ theorem withPossession_not_cancelable {Entity Event : Type}
     Manner diagnostics (§4.3):
     - `selectionalRestriction`: subject restricted to agents capable of the manner
     - `denialOfAction`: "X cut Y, #but X didn't do anything" — contradictory
-    - `agentOrientedAdverbs`: combines with 'deliberately', 'carefully' -/
+    - `actorParaphrase`: paraphrasable as "X did manner to Y" (§4.3) -/
 inductive MRCDiagnostic where
   | denialOfResult
   | objectDeletion
   | restrictedResultatives
   | selectionalRestriction
   | denialOfAction
-  | agentOrientedAdverbs
+  | actorParaphrase
   deriving DecidableEq, Repr, BEq
 
 /-- Whether a diagnostic tests for result entailment. -/
@@ -680,7 +682,7 @@ def MRCDiagnostic.testsResult : MRCDiagnostic → Bool
 def MRCDiagnostic.testsManner : MRCDiagnostic → Bool
   | .selectionalRestriction => true
   | .denialOfAction => true
-  | .agentOrientedAdverbs => true
+  | .actorParaphrase => true
   | _ => false
 
 /-- Each diagnostic tests for exactly one of manner or result. -/
@@ -689,14 +691,14 @@ theorem diagnostic_exclusive (d : MRCDiagnostic) :
   cases d <;> rfl
 
 /-- A verb's diagnostic profile: which of the six diagnostics it passes.
-    B&KG (2020 Table 4.1) survey these for each verb class. -/
+    B&KG (2020 §§4.2–4.3) survey these for each verb class. -/
 structure MRCDiagnosticProfile where
   denialOfResult         : Bool
   objectDeletion         : Bool
   restrictedResultatives : Bool
   selectionalRestriction : Bool
   denialOfAction         : Bool
-  agentOrientedAdverbs   : Bool
+  actorParaphrase   : Bool
   deriving DecidableEq, BEq, Repr
 
 /-- Whether the profile shows result entailment (passes ≥1 result diagnostic). -/
@@ -705,7 +707,7 @@ def MRCDiagnosticProfile.showsResult (p : MRCDiagnosticProfile) : Bool :=
 
 /-- Whether the profile shows manner entailment (passes ≥1 manner diagnostic). -/
 def MRCDiagnosticProfile.showsManner (p : MRCDiagnosticProfile) : Bool :=
-  p.selectionalRestriction || p.denialOfAction || p.agentOrientedAdverbs
+  p.selectionalRestriction || p.denialOfAction || p.actorParaphrase
 
 /-- An MRC violation is a verb whose diagnostics show BOTH manner and result. -/
 def MRCDiagnosticProfile.showsMRCViolation (p : MRCDiagnosticProfile) : Bool :=
@@ -807,14 +809,12 @@ theorem result_templates_have_become :
 theorem state_template_no_become :
     Template.hasBECOME .state = false := rfl
 
-/-- Bridge: BECOME = CoSType.inception (¬P → P transition).
-    This connects the template operator to the existing CoS semantics. -/
-theorem become_is_inception :
-    -- Achievement template's Vendler class is achievement (has BECOME)
+/-- Bridge: templates with BECOME map to achievement/accomplishment Vendler
+    classes, both of which are telic (bounded by the result state).
+    This connects the template operator to the existing aspectual profile. -/
+theorem become_templates_telic :
     Template.vendlerClass .achievement = .achievement ∧
-    -- BECOME in the template corresponds to inception CoS
-    -- (presupposes ¬P, asserts P — Resultatives.lean §6)
-    true := ⟨rfl, rfl⟩
+    Template.vendlerClass .accomplishment = .accomplishment := ⟨rfl, rfl⟩
 
 -- ════════════════════════════════════════════════════
 -- § 10. Connecting Root Types to VendlerClass (Aspect.lean)
@@ -1098,8 +1098,20 @@ theorem mannerResult_no_restitutive {Entity State Event : Type}
     Result roots: one reading (repetitive) — change in root
     Manner+result roots: one reading (repetitive) — change + manner in root -/
 theorem three_way_again_summary :
+    -- PC roots: two readings (restitutive + repetitive)
     (RootType.againReadings .propertyConcept).length = 2 ∧
-    (RootType.againReadings .result).length = 1 := ⟨rfl, rfl⟩
+    -- Result roots: one reading (repetitive only)
+    (RootType.againReadings .result).length = 1 ∧
+    -- Manner+result roots: also one reading (from denotation-level collapse)
+    ∀ {Entity State Event : Type} (mr : RootDen Entity State Event),
+      mr.denotationViolatesMRC = true →
+      mr.predictedAgainReadings.length = 1 := by
+  refine ⟨rfl, rfl, ?_⟩
+  intro Entity State Event mr hmr
+  cases mr with
+  | pc _ => simp [RootDen.denotationViolatesMRC, RootDen.carriesBECOME, RootDen.carriesMANNER] at hmr
+  | result _ _ _ => simp [RootDen.denotationViolatesMRC, RootDen.carriesBECOME, RootDen.carriesMANNER] at hmr
+  | mannerResult _ _ _ _ _ => rfl
 
 /-- **Bridge: MRC-violating roots → collapsed *again* readings.**
     If a root denotation violates MRC (manner+result), it has only
@@ -1110,8 +1122,8 @@ theorem mrc_violation_implies_again_collapse {Entity State Event : Type}
     (h : rd.denotationViolatesMRC = true) :
     rd.predictedAgainReadings = [.repetitive] := by
   cases rd with
-  | pc _ => simp [RootDen.denotationViolatesMRC] at h
-  | result _ _ _ => rfl
+  | pc _ => simp [RootDen.denotationViolatesMRC, RootDen.carriesBECOME, RootDen.carriesMANNER] at h
+  | result _ _ _ => simp [RootDen.denotationViolatesMRC, RootDen.carriesBECOME, RootDen.carriesMANNER] at h
   | mannerResult _ _ _ _ _ => rfl
 
 /-- **Bridge: MRC-respecting result roots → collapsed *again* too.**
@@ -1198,7 +1210,7 @@ def Root.stativeMarkedness (r : Root) : Markedness :=
   _root_.stativeMarkedness r.changeType
 
 -- ════════════════════════════════════════════════════
--- § 17. Cross-Classification: Arity × Change Entailment
+-- § 16. Cross-Classification: Arity × Change Entailment
 -- ════════════════════════════════════════════════════
 
 -- Witnesses for all four cells of the 2×2 cross-classification.
@@ -1293,7 +1305,7 @@ theorem same_change_same_morphosyntax (r₁ r₂ : Root)
   simp [Root.verbalMarkedness, Root.stativeMarkedness, Root.entailsChange, h]
 
 -- ════════════════════════════════════════════════════
--- § 18. Root Position in Event Structure (B&KG 2020 §5.4.1, Table 12)
+-- § 17. Root Position in Event Structure (B&KG 2020 §5.4.1, Table 12)
 -- ════════════════════════════════════════════════════
 
 /-- Where a root sits in event structure (B&KG 2020 §5.4.1).
@@ -1367,9 +1379,10 @@ def FullRootSpec.drown : FullRootSpec := ⟨.fullSpec, .complement⟩
     the manner is the primary event that happens to cause a state change. -/
 def FullRootSpec.toss : FullRootSpec := ⟨.fullSpec, .adjoined⟩
 
-/-- √HAND: +S +M +R +C, adjoined (ditransitive). Same position as √TOSS
-    but additionally entails possession transfer (see DitransitiveRootClass). -/
-def FullRootSpec.hand : FullRootSpec := ⟨.fullSpec, .adjoined⟩
+/-- √HAND: same entailments + position as √TOSS. The difference is in
+    the ditransitive layer (DitransitiveRootClass.causedPossession vs
+    .ballisticMotion), not in FullRootSpec's 4+1 features. -/
+abbrev FullRootSpec.hand : FullRootSpec := FullRootSpec.toss
 
 /-- √EXIST: −S −M −R −C, complement. Minimal stative root. -/
 def FullRootSpec.exist : FullRootSpec := ⟨.minimal, .complement⟩
@@ -1393,7 +1406,7 @@ theorem drown_toss_diff_position :
   simp [FullRootSpec.drown, FullRootSpec.toss]
 
 -- ════════════════════════════════════════════════════
--- § 19. Root → Templatic Head Prediction (B&KG 2020 Table 13)
+-- § 18. Root → Templatic Head Prediction (B&KG 2020 Table 13)
 -- ════════════════════════════════════════════════════
 
 /-- Templatic functional heads in event structure (B&KG 2020 Table 13).
@@ -1506,7 +1519,7 @@ theorem verbal_heads_have_primitives :
     (TemplateHead.vBecome.toPrimitive).isSome = true := ⟨rfl, rfl, rfl⟩
 
 -- ════════════════════════════════════════════════════
--- § 20. Gap Predictions (B&KG 2020 §5.4.1, Table 12)
+-- § 19. Gap Predictions (B&KG 2020 §5.4.1, Table 12)
 -- ════════════════════════════════════════════════════
 
 /-- Whether a FullRootSpec cell is attested in B&KG's Table 12. -/
