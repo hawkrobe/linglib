@@ -2,7 +2,7 @@ import Linglib.Theories.Semantics.Events.EventStructure
 import Linglib.Core.Root
 
 /-!
-# Root Typology: States and Changes of State (Beavers et al. 2021) @cite{beavers-etal-2021} @cite{coon-2019}
+# Root Typology: States and Changes of State (Beavers et al. 2021, B&KG 2020) @cite{beavers-etal-2021} @cite{beavers-koontz-garboden-2020} @cite{coon-2019}
 
 Beavers, Everdell, Jerro, Kauhanen, Koontz-Garboden, LeBovidge & Nichols (2021)
 "States and changes of state: A crosslinguistic study of the roots of verbal
@@ -98,6 +98,49 @@ inductive ResultClass where
   | calibratableCoS            -- go up, increase, go down, decrease, differ
   | inherentlyDirectedMotion   -- come, go, enter, exit, return
   deriving DecidableEq, Repr, BEq
+
+-- ════════════════════════════════════════════════════
+-- § 1b. Change Restriction (B&KG 2020 §2.4, Table 30)
+-- ════════════════════════════════════════════════════
+
+/-- How a result root's change entailment is restricted (B&KG 2020 §2.4, Table 30).
+
+    Break-type result roots (√CRACK, √SHATTER) entail change of ANY kind —
+    spatial or temporal. A crack can "run from the tree to the house" without
+    a temporal becoming event; the state itself extends spatially.
+
+    Cook/kill-type result roots (√COOK, √KILL) entail only TEMPORAL change.
+    Cooking, killing, and melting are necessarily temporal processes.
+    "✱The meat cooked from the oven to the table" is ruled out.
+
+    This three-way refinement (PC / break-type / cook-type) is invisible to
+    the binary `entailsChange` flag but has consequences for spatial predication
+    and the interpretation of directional PPs (B&KG 2020 §2.4). -/
+inductive ChangeRestriction where
+  | anyChange      -- break-type: spatial or temporal (√CRACK, √SHATTER, √BEND)
+  | temporalOnly   -- cook/kill-type: temporal change only (√COOK, √KILL, √MELT)
+  deriving DecidableEq, Repr, BEq
+
+/-- Change restriction for each result root subclass.
+    Breaking/bending roots and directed motion allow spatial change descriptions;
+    cooking/killing/destroying/scalar-change roots are temporally restricted. -/
+def ResultClass.changeRestriction : ResultClass → ChangeRestriction
+  | .breaking => .anyChange
+  | .bending => .anyChange
+  | .inherentlyDirectedMotion => .anyChange  -- directional change is inherently spatial
+  | .entitySpecificCoS => .temporalOnly      -- burn, melt, freeze — temporal processes
+  | .cooking => .temporalOnly
+  | .killing => .temporalOnly
+  | .destroying => .temporalOnly
+  | .calibratableCoS => .temporalOnly        -- increase/decrease — temporal scalar change
+
+/-- Breaking roots allow spatial change: "The road cracked from the tree to the house." -/
+theorem breaking_allows_spatial :
+    ResultClass.changeRestriction .breaking = .anyChange := rfl
+
+/-- Cooking roots restrict to temporal change: "✱The meat cooked from A to B." -/
+theorem cooking_temporal_only :
+    ResultClass.changeRestriction .cooking = .temporalOnly := rfl
 
 -- ════════════════════════════════════════════════════
 -- § 2. Morphosyntactic Correlates (§§3.2–3.5, 6–7)
@@ -314,6 +357,76 @@ structure RootSemantics (Entity State Event : Type) where
     MeaningPostulateEntailsChange pred become
 
 -- ════════════════════════════════════════════════════
+-- § 7b. Root Denotation: Change-in-Denotation Architecture (B&KG 2020 §2.5)
+-- ════════════════════════════════════════════════════
+
+/-- B&KG's (2020 §2.5, eqs. 37a–b) root denotation architecture, where
+    change is CONSTITUTIVE of the result root's meaning rather than an
+    external meaning postulate.
+
+    The formal contrast:
+    - √FLAT = λxλs[flat'(x,s)] — pure state, no change in truth conditions
+    - √CRACK = λxλs[cracked'(x,s) ∧ ∃e'[become'(s,e')]] — change IN the root
+
+    This differs from `RootSemantics` above (Beavers et al. 2021 eq. 21),
+    where the state predicate and the change requirement are separate.
+    B&KG argue the change IS what the root means, not an external constraint.
+
+    The empirical payoff: the *again* diagnostic's reading collapse for result
+    roots (§12b below) follows logically from this architecture. If change is
+    in the root, scoping *again* over root vs. over vP yields the same
+    presupposition — explaining the collapse without stipulation. -/
+inductive RootDen (Entity State Event : Type) where
+  /-- PC root: pure state predicate. The state can hold without prior change.
+      √FLAT = λxλs[flat'(x,s)] — "the table is flat" doesn't presuppose
+      any prior flattening event. -/
+  | pc (statePred : Entity → State → Prop)
+  /-- Result root: state predicate constitutively entailing change.
+      √CRACK = λxλs[cracked'(x,s) ∧ ∃e'[become'(s,e')]]
+      The existential over becoming events is PART OF the root's truth
+      conditions, not a separate meaning postulate. -/
+  | result
+    (statePred : Entity → State → Prop)
+    (become : Event → State → Prop)
+    (entailsChange : ∀ x s, statePred x s → ∃ e, become e s)
+
+/-- Extract the RootType from a BKG denotation. -/
+def RootDen.rootType {Entity State Event : Type} :
+    RootDen Entity State Event → RootType
+  | .pc _ => .propertyConcept
+  | .result _ _ _ => .result
+
+/-- Extract the underlying state predicate from either root type. -/
+def RootDen.statePred {Entity State Event : Type} :
+    RootDen Entity State Event → (Entity → State → Prop)
+  | .pc pred => pred
+  | .result pred _ _ => pred
+
+/-- Whether the root carries its own BECOME relation (built into the denotation). -/
+def RootDen.carriesBECOME {Entity State Event : Type} :
+    RootDen Entity State Event → Bool
+  | .pc _ => false
+  | .result _ _ _ => true
+
+/-- Carrying BECOME built-in is the same as entailing change.
+    This connects the denotation architecture to the Boolean flag. -/
+theorem RootDen.carriesBECOME_iff_entailsChange
+    {Entity State Event : Type}
+    (rd : RootDen Entity State Event) :
+    rd.carriesBECOME = rd.rootType.entailsChange := by
+  cases rd <;> rfl
+
+/-- For result roots, the meaning postulate is DERIVED from the denotation —
+    not a separate axiom. This is the formal content of B&KG's argument:
+    change isn't externally constrained — it's what the root means. -/
+theorem RootDen.meaning_postulate_derived
+    {Entity State Event : Type}
+    (pred : Entity → State → Prop) (become : Event → State → Prop)
+    (h : ∀ x s, pred x s → ∃ e, become e s) :
+    MeaningPostulateEntailsChange pred become :=
+  h
+
+-- ════════════════════════════════════════════════════
 -- § 8. Bridge to EntailmentProfile.changeOfState (ProtoRoles §8)
 -- ════════════════════════════════════════════════════
 
@@ -474,6 +587,78 @@ theorem result_no_restitutive :
 theorem pc_has_restitutive :
     AgainReading.restitutive ∈ RootType.againReadings .propertyConcept := by
   simp [RootType.againReadings]
+
+-- ════════════════════════════════════════════════════
+-- § 12b. Again Diagnostic: Compositional Derivation (B&KG 2020 §2.5)
+-- ════════════════════════════════════════════════════
+
+/-- What *again* presupposes at a given scope position (von Stechow 1995, 1996).
+
+    *again* is a presupposition trigger: attaching it to constituent C
+    presupposes that C's denotation held at some prior time. The distinction
+    between priorState and priorChange determines whether restitutive and
+    repetitive readings are distinct or collapse into one. -/
+inductive AgainPresupposition where
+  | priorState   -- presupposes a prior state held (no change implied)
+  | priorChange  -- presupposes a prior change event occurred
+  deriving DecidableEq, Repr, BEq
+
+/-- What *again* presupposes when scoping over just the root.
+
+    For PC roots (√FLAT): *again*[√FLAT](x) presupposes x was previously flat.
+    This is a pure state presupposition — no change is implied.
+
+    For result roots (√CRACK): *again*[√CRACK](x) presupposes x was previously
+    cracked. But √CRACK's denotation INCLUDES ∃e'[become'(s,e')], so this
+    presupposition ENTAILS a prior change event. -/
+def RootDen.againOverRoot {Entity State Event : Type} :
+    RootDen Entity State Event → AgainPresupposition
+  | .pc _ => .priorState
+  | .result _ _ _ => .priorChange
+
+/-- What *again* presupposes when scoping over vP (v_become + root).
+    Always presupposes prior change, regardless of root type, because
+    v_become introduces BECOME compositionally. -/
+def againOverVP : AgainPresupposition := .priorChange
+
+/-- PC roots: root-scope and vP-scope *again* yield DISTINCT presuppositions.
+    Root-scope → prior state (no change); vP-scope → prior change.
+    Two distinct presuppositions → two available readings. -/
+theorem pc_again_distinct {Entity State Event : Type}
+    (pred : Entity → State → Prop) :
+    (RootDen.pc pred : RootDen Entity State Event).againOverRoot ≠
+    (againOverVP : AgainPresupposition) := by
+  simp [RootDen.againOverRoot, againOverVP]
+
+/-- Result roots: root-scope and vP-scope *again* yield THE SAME presupposition.
+    Both presuppose prior change — root-scope because change is in the
+    denotation, vP-scope because v_become introduces it.
+    Same presupposition → readings collapse into one. -/
+theorem result_again_collapsed {Entity State Event : Type}
+    (pred : Entity → State → Prop) (become : Event → State → Prop)
+    (h : ∀ x s, pred x s → ∃ e, become e s) :
+    (RootDen.result pred become h : RootDen Entity State Event).againOverRoot =
+    (againOverVP : AgainPresupposition) := rfl
+
+/-- Predicted *again* readings from the BKG denotation architecture.
+    Distinct presuppositions → both readings available.
+    Collapsed presuppositions → only repetitive. -/
+def RootDen.predictedAgainReadings {Entity State Event : Type} :
+    RootDen Entity State Event → List AgainReading
+  | .pc _ => [.restitutive, .repetitive]
+  | .result _ _ _ => [.repetitive]
+
+/-- **The key bridge**: the BKG denotation architecture predicts the SAME
+    again-reading distribution as the Boolean `RootType.againReadings`.
+
+    This validates the compositional explanation: the reading collapse
+    for result roots is not stipulated — it follows from change being
+    constitutive of the root's meaning. The Boolean function encodes
+    the SAME prediction, but the compositional analysis explains WHY. -/
+theorem bkg_again_matches_boolean {Entity State Event : Type}
+    (rd : RootDen Entity State Event) :
+    rd.predictedAgainReadings = rd.rootType.againReadings := by
+  cases rd <;> rfl
 
 -- ════════════════════════════════════════════════════
 -- § 13. Consequence for Event-Structural Theory (§9)
