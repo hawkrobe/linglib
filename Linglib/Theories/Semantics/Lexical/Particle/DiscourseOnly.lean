@@ -3,6 +3,7 @@ import Linglib.Theories.Semantics.Lexical.Expressives.Basic
 
 /-!
 # Discourse *only* (Ippolito, Kiss & Williams 2025) @cite{ippolito-kiss-williams-2025}
+@cite{potts-2005} @cite{roberts-2012} @cite{thomas-2026}
 
 Semantics of discourse *only*: a connective that takes two clausal arguments
 S and S' and contributes a conventional implicature (CI) that S' fails to
@@ -41,12 +42,6 @@ the evidential trajectory of the first:
   argument only needs to fail to support (¬SUPPORT), not actively counter-support
   (negRelevant). This makes *only* strictly weaker than *but*.
 
-## References
-
-- Ippolito, M., Kiss, A. & Williams, W. (2025). Discourse *only*. WCCFL 41.
-- Potts, C. (2005). The Logic of Conventional Implicatures. OUP.
-- Roberts, C. (2012). Information structure in discourse. *Semantics & Pragmatics* 5(6).
-- Thomas, W. (2026). A probabilistic, question-based approach to additivity.
 -/
 
 namespace Semantics.Lexical.Particle.DiscourseOnly

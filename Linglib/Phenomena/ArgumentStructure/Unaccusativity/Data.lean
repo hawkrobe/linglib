@@ -6,6 +6,7 @@ data fully theory-neutral.
 
 /-!
 # Unaccusativity Diagnostic Data
+@cite{burzio-1986} @cite{levin-hovav-1995} @cite{perlmutter-1978} @cite{storment-2026}
 
 Theory-neutral empirical data on unaccusativity diagnostics.
 
@@ -17,12 +18,6 @@ Theory-neutral empirical data on unaccusativity diagnostics.
 - **Resultative predication**: "the river froze solid" vs *"John ran tired"
 - **Auxiliary selection**: Italian *è arrivato* (be) vs *ha dormito* (have)
 
-## References
-
-- Perlmutter, D. (1978). Impersonal passives and the Unaccusative Hypothesis.
-- Burzio, L. (1986). Italian Syntax.
-- Levin, B. & Rappaport Hovav, M. (1995). Unaccusativity.
-- Storment, J. (2026). Quotative inversion as an unaccusativity diagnostic. NLLT.
 -/
 
 namespace Phenomena.ArgumentStructure.Unaccusativity.Data

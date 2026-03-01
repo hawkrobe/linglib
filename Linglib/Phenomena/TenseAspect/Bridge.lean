@@ -31,9 +31,6 @@ theory's mechanism produces the expected Reichenbach frame. The comparison
 matrix in `Comparisons/TenseTheories.lean` is assembled from these
 per-datum verification theorems.
 
-## References
-
-- See individual theory files for citations.
 -/
 
 namespace Phenomena.TenseAspect.Bridge
@@ -464,7 +461,6 @@ theorem deal_derives_counterfactualFrame :
   · simp [refinedULC]
 
 
-
 -- ════════════════════════════════════════════════════════════════
 -- § Per-Theory Derivations: Zeijlstra
 -- ════════════════════════════════════════════════════════════════
@@ -537,7 +533,6 @@ theorem deal_derives_fakePastSubjunctive :
   constructor
   · rfl
   · simp [refinedULC]
-
 
 
 -- ════════════════════════════════════════════════════════════════

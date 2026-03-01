@@ -9,9 +9,6 @@ No distinct vocative in standard Russian (unlike Ukrainian, Czech, Polish).
 
 The inventory is perfectly contiguous on Blake's hierarchy.
 
-## References
-
-- Blake, B. J. (1994). *Case*. Cambridge University Press.
 -/
 
 namespace Fragments.Russian.Case

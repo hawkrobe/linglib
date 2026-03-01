@@ -17,10 +17,6 @@ English resultative constructions, drawn from Goldberg & Jackendoff (2004)
 6. **Aspectual contrasts**: telic vs atelic frame tests
 7. **Unacceptable resultatives**: semantic coherence violations
 
-## Reference
-
-Goldberg, A. E. & Jackendoff, R. (2004). The English Resultative as a
-Family of Constructions. Language, 80(3), 532–568.
 -/
 
 namespace Phenomena.Constructions.Resultatives

@@ -1,5 +1,6 @@
 /-!
 # Evidential Source Classification
+@cite{aikhenvald-2004} @cite{cumming-2026} @cite{von-fintel-gillies-2010}
 
 Canonical three-way classification of evidential source (Aikhenvald 2004,
 Cumming 2026) and its causal-temporal correlates.
@@ -13,11 +14,6 @@ This module provides the shared vocabulary that bridges:
 - Cumming's (2026) tense evidentiality (T ≤ A = downstream evidence)
 - von Fintel & Gillies's (2010) epistemic evidentiality (direct vs indirect)
 
-## References
-
-- Aikhenvald, A. Y. (2004). Evidentiality. OUP.
-- Cumming, S. (2026). Tense and evidence. *L&P* 49:153–175.
-- von Fintel, K. & Gillies, A. (2010). Must...stay...strong! *NLS* 18:351–383.
 -/
 
 namespace Core.Evidence

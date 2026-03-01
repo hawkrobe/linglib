@@ -3,6 +3,7 @@ import Linglib.Theories.Pragmatics.RSA.Core.Config
 
 /-!
 # RSA-BToM Grounding: Latent Classification
+@cite{baker-jara-ettinger-saxe-tenenbaum-2017} @cite{clark-1996} @cite{goodman-frank-2016}
 
 The structural mapping `toBToM` and the bridge theorem `L1_eq_btom_worldMarginal`
 now live in `Config.lean` (§5), where they are methods on `RSAConfig`. This file
@@ -33,13 +34,6 @@ predictions. This follows because marginalization doesn't care about labels:
 The classifications diverge only on cognitive-level claims about what kind
 of inference the listener is performing.
 
-## References
-
-- Baker, Jara-Ettinger, Saxe & Tenenbaum (2017). Rational quantitative
-  attribution of beliefs, desires and percepts in human mentalizing.
-- Goodman & Frank (2016). Pragmatic Language Interpretation as
-  Probabilistic Inference.
-- Clark, H. (1996). Using Language. Cambridge University Press.
 -/
 
 open Core.BToM BigOperators

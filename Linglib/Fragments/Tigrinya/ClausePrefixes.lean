@@ -26,10 +26,6 @@ spell-outs of distinct heads in a cartographic left periphery (Rizzi 1997).
 5. **Selection**: Matrix verb class determines which prefix appears
    (knowledge → kəmzi-, desiderative → kɨ-, etc.)
 
-## References
-
-- Cacchioli, S. (2025). The Syntax of Clausal Prefixes in Tigrinya.
-  PhD dissertation.
 -/
 
 namespace Fragments.Tigrinya.ClausePrefixes

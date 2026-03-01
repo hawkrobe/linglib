@@ -5,6 +5,7 @@ import Mathlib.Data.Rat.Defs
 
 /-!
 # OT Constraints for Numerical Expressions (Cummins 2015)
+@cite{cummins-2015} @cite{cummins-franke-2021}
 
 Optimality-Theoretic constraint system for numeral production.
 Speakers choose among candidate numeral expressions by optimizing
@@ -33,11 +34,6 @@ The OT constraints map onto RSA parameters:
 100 (score 6) gets a wider enriched range than 110 (score 2), explaining why
 "more than 100" has weaker argumentative strength per C&F's pragmatic reversal.
 
-## References
-
-- Cummins (2015). Constraints on numerical expressions. OUP.
-- Cummins & Franke (2021). Rational Speech Acts for numeral enrichment.
-- Jansen & Pollmann (2001). On round numbers.
 -/
 
 namespace NeoGricean.Constraints.NumericalExpressions

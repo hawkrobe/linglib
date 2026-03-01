@@ -57,14 +57,6 @@ open NadathurLauer2020.Examples
 | `makeSem` | Semantics of "make" (sufficiency) |
 | `causeSem` | Semantics of "cause" (necessity + occurrence) |
 
-## References
-
-- Nadathur, P. & Lauer, S. (2020). Causal necessity, causal sufficiency,
-  and the implications of causative verbs. Glossa 5(1), 49.
-- Lewis, D. (1973). Counterfactuals. Blackwell.
-- Pearl, J. (2000). Causality. Cambridge University Press.
-- Grusdt, F., Lassiter, D. & Franke, M. (2022). Probabilistic modeling
-  of rational communication with conditionals. Cognition.
 -/
 
 -- Re-export all submodules

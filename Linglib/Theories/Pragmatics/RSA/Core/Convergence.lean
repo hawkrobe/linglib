@@ -2,6 +2,7 @@ import Linglib.Theories.Pragmatics.RSA.Core.Config
 
 /-!
 # RSA Convergence Theory (Stub)
+@cite{csiszr-tusndy-1984} @cite{zaslavsky-hu-levy-2020}
 
 Proves that RSA dynamics converge by showing G_α is monotonically increasing.
 
@@ -14,10 +15,4 @@ Proves that RSA dynamics converge by showing G_α is monotonically increasing.
 
 Old RSAScenarioR-based proofs removed; restate using RSAConfig.
 
-## References
-
-- Zaslavsky, N., Hu, J., & Levy, R. (2020). A Rate-Distortion view of human
-  pragmatic reasoning. Proposition 1.
-- Csiszár, I. & Tusnády, G. (1984). Information geometry and alternating
-  minimization procedures.
 -/

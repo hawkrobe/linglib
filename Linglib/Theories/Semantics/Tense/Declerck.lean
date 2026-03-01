@@ -4,6 +4,7 @@ import Linglib.Core.Context.Tower
 
 /-!
 # Declerck's Tense Theory (1991/2006)
+@cite{declerck-1991} @cite{declerck-2006}
 
 Declerck's descriptive theory of English tense differs from Reichenbach (1947)
 in three structural ways:
@@ -62,10 +63,6 @@ frame has E = R. This means `isPerfect` (E < R) can never hold for a
 Declercian projection — the "perfect" lives in the chain structure
 (TO_sit before TO₂), not in the Reichenbach E/R relation.
 
-## References
-
-- Declerck, R. (1991). *Tense in English: Its Structure and Use in Discourse*. Routledge.
-- Declerck, R. (2006). *The Grammar of the English Tense System*. Mouton.
 -/
 
 namespace Semantics.Tense.Declerck

@@ -10,11 +10,9 @@ import Linglib.Fragments.Hebrew.TemporalDeictic
 import Linglib.Fragments.Hungarian.TemporalDeictic
 
 /-!
-# Then-Present Puzzle (Zhao 2026, Tsilia, Zhao & Sharvit 2026)
-@cite{zhao-2026} @cite{tsilia-zhao-sharvit-2026}
-
-Temporal "then" is cross-linguistically incompatible with present tense.
-Zhao (2026) explains this via a perspective parameter π (= Kiparsky's P):
+# Then-Present Puzzle (Zhao 2025, Tsilia, Zhao & Sharvit 2026)
+@cite{zhao-2025} @cite{tsilia-zhao-sharvit-2026} @cite{kiparsky-2002}Temporal "then" is cross-linguistically incompatible with present tense.
+Zhao (2025) explains this via a perspective parameter π (= Kiparsky's P):
 present tense requires P = R, but "then" shifts P away from S, making
 P ≠ S. In root clauses, isSimpleCase requires P = S, so present + then
 forces R = P ≠ S — but present tense in root clauses needs R = S,
@@ -47,12 +45,6 @@ The presuppositional generalization (`then_perspective_clash` in
 `TsiliaEtAl2026.lean`) subsumes this: OP_π forces P = localEval while
 ⌈then⌉ requires P ≠ localEval.
 
-## References
-
-- Zhao, Z. (2026). Cross-Linguistic and Cross-Domain Parallels in the
-  Semantics of Degree and Time. MIT dissertation, Part I.
-- Tsilia, D., Zhao, Z. & Sharvit, Y. (2026). Tense and perspective.
-- Kiparsky, P. (2002). Event structure and the perfect.
 -/
 
 namespace Phenomena.TenseAspect.ThenPresentBridge
@@ -91,7 +83,7 @@ theorem all_then_shift_perspective :
 -- § 3. The Then-Present Incompatibility
 -- ════════════════════════════════════════════════════
 
-/-- The then-present incompatibility (Zhao 2026, Part I):
+/-- The then-present incompatibility (Zhao 2025, Part I):
     In a simple root clause (P = S) with present tense (R = P),
     "then" requires P ≠ S — contradiction.
 

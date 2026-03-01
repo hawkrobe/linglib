@@ -29,11 +29,6 @@ The difference between:
 
 is not just notational — it's the structural basis for bridging.
 
-## References
-
-- Ahn, D. & Zhu, Y. (2025). A bridge to definiteness. NLS 33:433-484.
-- Schwarz, F. (2009). Two types of definites in natural language.
-- Barker, C. (2011). Possessives and relational nouns.
 -/
 
 namespace Semantics.Lexical.Determiner.Demonstrative.AhnZhu2025

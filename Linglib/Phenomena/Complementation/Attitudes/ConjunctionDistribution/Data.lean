@@ -11,10 +11,6 @@ conjunction in their complement, and some do not.
   "John believes p and q" ↔ "John believes p and John believes q"   ✓
   "John is surprised that p and q" ↛ "John is surprised that p ..."  ✗
 
-## References
-
-- Bondarenko, T. & Elliott, P.D. (2026). Monotonicity via mereology.
-  @cite{bondarenko-elliott-2026}
 -/
 
 namespace Phenomena.Complementation.Attitudes.ConjunctionDistribution

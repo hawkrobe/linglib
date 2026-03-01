@@ -34,10 +34,6 @@ RSA's L0 can now evaluate compositional semantics directly:
 L0(u, w) = ⟦u⟧(w)  -- where ⟦u⟧ : World → Bool
 ```
 
-## References
-
-- Montague (1973) "The Proper Treatment of Quantification in Ordinary English"
-- Gallin (1975) "Intensional and Higher-Order Modal Logic"
 -/
 
 import Linglib.Theories.Semantics.Montague.Basic

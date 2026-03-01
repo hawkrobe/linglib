@@ -10,10 +10,6 @@ The core BSML theory (formulas, support, enrichment, FC theorems) lives in
 `Theories/Semantics/Dynamic/Systems/BSML/`. This file provides the concrete
 deontic model and verifies the FC predictions computationally.
 
-## References
-
-- Aloni, M. (2022). Logic and conversation: The case of free choice. S&P 15.
-  @cite{aloni-2022}
 -/
 
 namespace Phenomena.Modality.Studies.Aloni2022Bridge

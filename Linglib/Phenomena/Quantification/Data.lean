@@ -8,20 +8,6 @@ Theory-neutral empirical data on quantifier scope and numeral semantics.
 - `Numerals`: Imprecision patterns in bare numerals
 - `ScopeWordOrder`: Word order effects on scope in verb-final constructions
 
-## References
-- May (1985). Logical Form.
-- Larson (1988). On the double object construction.
-- Bruening (2001). QR obeys Superiority.
-- Antonyuk (2015). Quantifier scope and scope freezing in Russian.
-- Scontras et al. (2014, 2017). Experimental studies on scope ambiguity.
-- Krifka (2007). Approximate interpretation.
-- Solt (2014, 2018). Imprecise numerals.
-- Solt & Waldon (2019). Numerals under negation.
-- Solt (2023). Imprecision without homogeneity.
-- Bayer (1990, 1996). German scope restrictions.
-- Haegeman & van Riemsdijk (1986). West Flemish.
-- Steedman (2000). The Syntactic Process, Chapter 6.
-- Kayne (1983, 1998). Scope and word order.
 -/
 
 namespace Phenomena.Quantification.Data

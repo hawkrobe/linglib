@@ -5,6 +5,7 @@ import Linglib.Core.Case.LocalExtension
 
 /-!
 # Finnish Case Inventory @cite{blake-1994}
+@cite{karlsson-2017}
 
 Finnish has **15 morphological cases** (Karlsson 2018), one of the richest
 case systems in Europe:
@@ -30,10 +31,6 @@ function (Blake 1994, Ch. 6: ALL → DAT extension). This creates a gap at
 rank 4 (DAT) on Blake's hierarchy, making Finnish a known exception to
 strict contiguity.
 
-## References
-
-- Blake, B. J. (1994). *Case*. Cambridge University Press.
-- Karlsson, F. (2018). *Finnish: A Comprehensive Grammar* (3rd ed.). Routledge.
 -/
 
 namespace Fragments.Finnish.Case

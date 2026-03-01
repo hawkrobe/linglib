@@ -5,6 +5,7 @@ import Linglib.Core.Interfaces.VoiceSystem
 
 /-!
 # Mam Voice System Fragment
+@cite{elkins-imanishi-coon-2026}
 
 Minimalist infrastructure for the SJO Mam verbal domain, connecting the
 language-specific clause sizes to the ClauseSpine and VoiceHead abstractions.
@@ -21,10 +22,6 @@ language-specific clause sizes to the ClauseSpine and VoiceHead abstractions.
    (V1 in the verbal template Voice > V1(Dir) > Appl > V2(root)) but is
    NOT added to `Cat` as it is not universal.
 
-## References
-
-- Elkins, N., Y. Imanishi & J. Coon (2026). Wh-movement and oblique
-  extraction in SJO Mam.
 -/
 
 namespace Fragments.Mam

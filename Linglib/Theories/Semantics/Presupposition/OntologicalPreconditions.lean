@@ -33,10 +33,6 @@ This theory predicts that pattern: preconditions can be elaborated because
 they're independent facts about the world; consequences follow from the event
 and thus can't be "allowed for" independently.
 
-## References
-
-- Roberts, C. & Simons, M. (2024). Preconditions and projection.
-- Tonhauser et al. (2013). Toward a taxonomy of projective content.
 -/
 
 import Linglib.Core.Semantics.Presupposition

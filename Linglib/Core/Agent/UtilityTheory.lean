@@ -2,6 +2,7 @@ import Linglib.Core.Agent.RationalAction
 
 /-!
 # Luce's Utility Decomposition Theory (Chapter 3) @cite{luce-1959}
+@cite{franke-jger-2016}
 
 Luce (1959, Chapter 3) extends the choice axiom from simple alternatives to
 **gambles** — uncertain prospects of the form "get outcome `a` if event `ρ` occurs,
@@ -26,10 +27,6 @@ This module formalizes:
 7. **RSA bridge**: RSA's additive utility structure `utility = informativity - cost`
    follows from Luce's decomposition in log-space.
 
-## References
-
-- Luce, R. D. (1959). Individual Choice Behavior (Vol. 4). Wiley. Chapter 3.
-- Franke, M. & Jäger, G. (2016). Probabilistic pragmatics.
 -/
 
 namespace Core

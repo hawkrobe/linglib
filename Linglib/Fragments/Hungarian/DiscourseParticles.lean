@@ -1,12 +1,10 @@
 /-!
 # Hungarian Discourse Particles
+@cite{ippolito-kiss-williams-2025}
 
 Lexical entry for Hungarian *csak* — the discourse *only* connective
 (IKW 2025). Allows all clause types as S'.
 
-## References
-
-- Ippolito, Kiss & Williams (2025). Discourse *only*. WCCFL 41.
 -/
 
 namespace Fragments.Hungarian.DiscourseParticles

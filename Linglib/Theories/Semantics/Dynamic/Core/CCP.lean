@@ -15,11 +15,6 @@ Abstract foundations shared by PLA, DRT, DPL, CDRT, and other dynamic semantics 
 - `CCP` forms a `Monoid` (composition + identity)
 - Support and Content form a Galois connection
 
-## References
-
-- Heim, I. (1982). The Semantics of Definite and Indefinite Noun Phrases.
-- Groenendijk, J. & Stokhof, M. (1991). Dynamic Predicate Logic.
-- Veltman, F. (1996). Defaults in Update Semantics.
 -/
 
 import Mathlib.Data.Set.Basic

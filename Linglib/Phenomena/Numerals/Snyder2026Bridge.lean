@@ -2,6 +2,7 @@ import Linglib.Theories.Semantics.Lexical.Numeral.Polysemy
 
 /-!
 # Snyder (2026): Number Word Polysemy Data
+@cite{snyder-2026}
 
 Key example sentences from Snyder (2026, *L&P* 49:57–100) illustrating the
 nine semantic functions of number words. These examples motivate Polymorphic
@@ -14,9 +15,6 @@ Number words appear in at least nine syntactic/semantic configurations.
 The challenge is that no single semantic type (e, ⟨e,t⟩, or ⟨⟨e,t⟩,t⟩)
 directly generates all nine. Any theory must explain how the others arise.
 
-## References
-
-- Snyder, E. (2026). Numbers as kinds. *L&P* 49, 57–100.
 -/
 
 namespace Phenomena.Numerals.Snyder2026

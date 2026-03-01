@@ -19,9 +19,6 @@ M, g, ê ⊨ φ means formula φ is satisfied in model M relative to:
 M ⊨ φ means φ is true in M: for all assignments g, there exists a witness
 sequence ê such that M, g, ê ⊨ φ.
 
-## References
-
-- Dekker, P. (2012). Dynamic Semantics. Springer. Definition 3.
 -/
 
 import Linglib.Theories.Semantics.Dynamic.Systems.PLA.Basic

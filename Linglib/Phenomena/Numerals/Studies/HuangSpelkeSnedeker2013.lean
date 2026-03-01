@@ -4,6 +4,7 @@ open Core.Empirical
 
 /-!
 # Huang, Spelke & Snedeker (2013) — Covered-Box Paradigm
+@cite{huang-snedeker-2013} @cite{musolino-2004} @cite{wynn-1992}
 
 "What Exactly do Numbers Mean?"
 Language Learning and Development 9(2): 105-129
@@ -33,13 +34,6 @@ Across 4 experiments with adults and two-knower children (ages 2;6–3;7):
 4. **Two-knower specificity**: children who know "one" and "two" but NOT "three"
    still give exact readings for "two"
 
-## References
-
-- Huang, Y.T., Spelke, E., & Snedeker, J. (2013). What exactly do numbers mean?
-  *Language Learning and Development* 9(2), 105-129.
-- Wynn, K. (1992). Children's acquisition of the number words and the counting
-  system. *Cognitive Psychology* 24, 220-251.
-- Musolino, J. (2004). The semantics and acquisition of number words. *Cognition* 93.
 -/
 
 namespace Phenomena.Numerals.Studies.HuangSpelkeSnedeker2013

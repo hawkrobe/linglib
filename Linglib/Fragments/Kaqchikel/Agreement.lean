@@ -67,10 +67,6 @@ the probe finds no suitable goal, no agreement obtains and a default
 (3SG = ∅) surfaces. This contrasts with the standard Minimalist view
 (Chomsky 2001) where unvalued features cause the derivation to crash.
 
-## References
-
-- Preminger, O. (2014). Agreement and Its Failures. MIT Press.
-  (Linguistic Inquiry Monographs 68.)
 -/
 
 namespace Fragments.Kaqchikel

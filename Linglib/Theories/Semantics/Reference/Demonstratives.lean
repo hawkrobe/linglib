@@ -18,9 +18,6 @@ demonstrative has no content.
 - `DemoFregePuzzle`: "that [Hes] = that [Phos]" informative because
   demonstrations differ
 
-## References
-
-- Kaplan, D. (1989). Demonstratives, §IX, XV, XVI.
 -/
 
 import Linglib.Core.Context.Basic

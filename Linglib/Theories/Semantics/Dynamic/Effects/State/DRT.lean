@@ -24,10 +24,6 @@ Referent x is accessible from position p iff:
 - x is introduced in a box dominating p, and
 - x is not in the scope of negation/universal
 
-## References
-
-- Kamp, H. (1981). A Theory of Truth and Semantic Representation.
-- Kamp, H. & Reyle, U. (1993). From Discourse to Logic.
 -/
 
 import Linglib.Theories.Semantics.Dynamic.Core.Basic

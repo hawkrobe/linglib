@@ -19,12 +19,6 @@ but exhibit "generic recalcitrance" — harder than ordinary definite singulars.
 3. Locative adjuncts, adjectival modifiers, and naming-convention contexts help
 4. Generic BSNs are not upward-entailing (diagnostic for true genericity)
 
-## References
-
-- Gasparri, L. (2025). Bare singular names and genericity. Journal of Semantics 42: 127-135.
-- Carlson, G. (1977). Reference to Kinds in English.
-- Krifka, M. et al. (1995). Genericity: An Introduction.
-- Dayal, V. (2004). Number Marking and (in)Definiteness in Kind Terms.
 -/
 
 namespace Phenomena.Generics.BareNames

@@ -2,6 +2,7 @@ import Linglib.Theories.Semantics.Tense.Basic
 
 /-!
 # Hungarian Temporal Deictic Adverbs
+@cite{egressy-2026} @cite{zhao-2025}
 
 Lexical entries for Hungarian temporal adverbs used as clause-size
 diagnostics in Egressy (2026, §4).
@@ -22,12 +23,6 @@ But it is also compatible with the bare TP complement on its shifted
 reading, while *aznap* 'that day' is compatible with the simultaneous
 reading in bare TP complements.
 
-## References
-
-- Egressy, A. (2026). Size-sensitive sequence of tense in Hungarian.
-  *The Linguistic Review*, §4.
-- Zhao, Z. (2026). Cross-Linguistic and Cross-Domain Parallels in the
-  Semantics of Degree and Time. MIT dissertation, Part I.
 -/
 
 namespace Fragments.Hungarian.TemporalDeictic
@@ -36,7 +31,7 @@ open Semantics.Tense
 
 /-- Hungarian *akkor* 'then' — perspective-shifting temporal deictic.
     Part of the cross-linguistic "then"-present incompatibility
-    inventory (Zhao 2026, Tsilia, Zhao & Sharvit 2026). -/
+    inventory (Zhao 2025, Tsilia, Zhao & Sharvit 2026). -/
 def akkor : ThenAdverb where
   language := "Hungarian"
   form := "akkor"

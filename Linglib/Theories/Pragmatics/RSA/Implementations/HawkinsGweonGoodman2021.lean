@@ -323,10 +323,6 @@ Composing via predicate modification:
 
 This is exactly Semantics.Montague.Modification.intersectiveMod applied iteratively.
 
-## Reference
-
-- Heim & Kratzer (1998). Semantics in Generative Grammar, Ch. 4 (Predicate Modification)
-- Montague (1973). The Proper Treatment of Quantification
 -/
 
 namespace MontaguGrounding

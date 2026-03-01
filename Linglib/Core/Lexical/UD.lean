@@ -8,13 +8,6 @@ These provide theory-neutral lexical categories, morphological annotations,
 and grammatical relations that can be used in Phenomena/ and mapped to/from
 theory-specific categories (CCG.Cat, Minimalism features, DG trees, etc.).
 
-## References
-
-- de Marneffe, M.-C., C. Manning, J. Nivre, & D. Zeman (2021).
-  "Universal Dependencies." Computational Linguistics 47(2):255-308.
-- https://universaldependencies.org/u/pos/
-- https://universaldependencies.org/u/feat/
-- https://universaldependencies.org/u/dep/
 -/
 
 namespace UD

@@ -2,6 +2,7 @@ import Linglib.Theories.Pragmatics.NeoGricean.Presuppositions
 
 /-!
 # Mandarin Presuppositional Particles
+@cite{wang-2025}
 
 Lexical entries for Mandarin presupposition triggers, linking Fragment-level
 lexical data to the NeoGricean trigger typology (Wang 2025 Table 4.1) and
@@ -28,9 +29,6 @@ experimental data (Wang 2025 Experiments 1-3).
 - `NeoGricean.Presuppositions.PresupTrigger`: trigger type
 - `Phenomena.Presupposition.Studies.Wang2025`: experimental data
 
-## References
-
-- Wang, S. (2025). Presupposition, Competition, and Coherence. MIT dissertation.
 -/
 
 namespace Fragments.Mandarin.Particles

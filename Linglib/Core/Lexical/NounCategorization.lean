@@ -1,5 +1,6 @@
 /-!
 # Noun Categorization Typology
+@cite{aikhenvald-2000} @cite{chierchia-1998} @cite{dixon-1982}
 
 Cross-linguistic typology of noun categorization devices, following
 Aikhenvald (2000) "Classifiers: A Typology of Noun Categorization Devices."
@@ -16,11 +17,6 @@ common `ClassifierEntry` type for individual classifier lexical entries.
 - **§4 ClassifierEntry**: Per-classifier lexical entry with semantic typing
 - **§5 NounCategorizationSystem**: Per-language system description
 
-## References
-
-- Aikhenvald, A. Y. (2000). Classifiers: A Typology of Noun Categorization Devices.
-- Dixon, R. M. W. (1982). Where Have All the Adjectives Gone?
-- Chierchia, G. (1998). Reference to Kinds Across Languages.
 -/
 
 namespace Core.NounCategorization

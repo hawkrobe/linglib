@@ -3,6 +3,7 @@ import Linglib.Core.Temporal.Time
 
 /-!
 # Spatiotemporal Distance @cite{koev-2017}
+@cite{cumming-2026}
 
 Koev (2017, *Journal of Semantics* 34(1):1–38) argues that the Bulgarian
 evidential introduces a **learning event** — the event through which the
@@ -26,11 +27,6 @@ The temporal component (`temporallyDisjoint`) is self-contained and
 connects to Cumming's (2026) downstream evidence constraint (T ≤ A)
 via `disjoint_earlier_implies_isBefore`.
 
-## References
-
-- Koev, T. (2017). Evidentiality, learning events, and spatiotemporal
-  distance. *Journal of Semantics* 34(1):1–38.
-- Cumming, S. (2026). Tense and evidence. *L&P* 49:153–175.
 -/
 
 namespace Semantics.Events.SpatiotemporalDistance

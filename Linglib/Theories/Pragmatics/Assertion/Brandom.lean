@@ -4,9 +4,7 @@ import Linglib.Core.Interfaces.AssertionTheory
 /-!
 # Brandom (1994): Scorekeeping Model of Assertion
 
-@cite{brandom-1994}
-
-Models assertion as a move in a normative scorekeeping game. Each
+@cite{brandom-1994} @cite{brandom-1983}Models assertion as a move in a normative scorekeeping game. Each
 participant tracks a "scorecard" for every other participant, recording
 two kinds of normative status:
 
@@ -32,10 +30,6 @@ to q (even if they haven't explicitly asserted q). This is Brandom's
 "material inference" — the content of a claim is determined by its
 inferential role.
 
-## References
-
-- Brandom, R. (1994). *Making It Explicit*. Harvard UP. Ch. 3.
-- Brandom, R. (1983). Asserting. *Noûs* 17(4): 637–650.
 -/
 
 namespace Theories.Pragmatics.Assertion.Brandom

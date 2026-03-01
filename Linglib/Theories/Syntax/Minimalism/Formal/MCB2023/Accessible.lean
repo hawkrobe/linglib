@@ -18,10 +18,6 @@ Internal Merge (Proposition 2.17 and Corollary 2.22).
 - Proposition 2.17: counting behavior of EM vs IM
 - Corollary 2.22: sideward/countercyclic Merge violates counting constraints
 
-## References
-
-- Marcolli, M., Chomsky, N. & Berwick, R.C. (2023). "Mathematical Structure of
-  Syntactic Merge", §2
 -/
 
 import Linglib.Theories.Syntax.Minimalism.Formal.MCB2023.FreeMagmaEquiv

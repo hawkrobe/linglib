@@ -31,11 +31,6 @@ Scenarios can be modeled in RSA as:
 2. QUDs that partition by scenario-relevant distinctions
 3. A latent "Goal" variable (as in RSAScenario.Goal)
 
-## References
-
-- Fillmore, C.J. (1982). Frame Semantics. In Linguistics in the Morning Calm.
-- Schank, R.C. & Abelson, R.P. (1977). Scripts, Plans, Goals and Understanding.
-- Erk, K. & Herbelot, A. (2024). How to Marry a Star. Journal of Semantics.
 -/
 
 import Mathlib.Data.Rat.Defs

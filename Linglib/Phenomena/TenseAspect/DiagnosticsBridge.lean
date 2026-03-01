@@ -37,12 +37,6 @@ The classic tests from Vendler (1957) and Dowty (1979):
   - Slow-motion: "The bomb is exploding" (stretched out)
   - Preliminary stages: "John is dying" (process leading to death)
 
-## References
-
-- Vendler, Z. (1957). Verbs and times.
-- Dowty, D. (1979). Word Meaning and Montague Grammar.
-- Smith, C. (1991). The Parameter of Aspect.
-- Rothstein, S. (2004). Structuring Events.
 -/
 
 import Linglib.Theories.Semantics.Lexical.Verb.Aspect

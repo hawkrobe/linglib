@@ -7,6 +7,7 @@ import Linglib.Fragments.English.Determiners
 
 /-!
 # The Semantics of Definiteness
+@cite{donnellan-1966} @cite{heim-1982} @cite{kamp-1981} @cite{partee-1987} @cite{russell-1905} @cite{strawson-1950}
 
 Denotations for definite descriptions using the type vocabulary from
 `Core/Definiteness.lean`. Two theories, formalized as determiner denotations
@@ -25,14 +26,6 @@ with presuppositions:
 - `the_uniq_presup_iff_iota`: uniqueness presup ↔ Partee's ι succeeds
 - `the_is_every_on_singletons`: ⟦the⟧ = ⟦every⟧ on singleton restrictors
 
-## References
-
-- Russell, B. (1905). On Denoting. Mind.
-- Strawson, P. (1950). On Referring. Mind.
-- Heim, I. (1982). The Semantics of Definite and Indefinite NPs. UMass diss.
-- Kamp, H. (1981). A Theory of Truth and Semantic Representation.
-- Partee, B. (1987). NP Interpretation and Type-shifting Principles.
-- Donnellan, K. (1966). Reference and Definite Descriptions. Phil. Review.
 -/
 
 namespace Semantics.Lexical.Determiner.Definite

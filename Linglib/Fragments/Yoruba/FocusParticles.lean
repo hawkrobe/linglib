@@ -2,6 +2,7 @@ import Linglib.Core.Lexical.Word
 
 /-!
 # Yorùbá Focus Particles @cite{aremu-2026}
+@cite{aboh-2004} @cite{biberauer-roberts-2014}
 
 Focus-marking morphemes across Yorùbá dialects. Standard Yorùbá uses
 clause-initial *ni* for ex-situ focus; south-eastern dialects (Ìkálẹ̀,
@@ -21,12 +22,6 @@ creating an apparent FOFC violation (Biberauer, Holmberg & Roberts 2014).
 All dialects also permit in-situ focus, marked by high tone (H%) on the
 focused constituent without movement or a focus particle.
 
-## References
-
-- Aremu, A. (2026). Focus marking in Ìkálẹ̀ (Yorùbá). Glossa 11(1).
-- Aboh, E. (2004). The Morphosyntax of Complement-Head Sequences.
-- Biberauer, T., Holmberg, A. & Roberts, I. (2014). A syntactic universal
-  and its consequences. Linguistic Inquiry 45(2): 169–225.
 -/
 
 namespace Fragments.Yoruba.FocusParticles

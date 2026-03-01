@@ -3,6 +3,7 @@ import Linglib.Core.Case.Hierarchy
 
 /-!
 # Korean Case Inventory
+@cite{blake-1994}
 
 Korean marks case with postpositional particles:
 - -i / -ga (NOM), -eul / -reul (ACC), -ui (GEN), -ege / -hante (DAT)
@@ -11,9 +12,6 @@ Korean marks case with postpositional particles:
 Like Japanese, Korean has a particle-based case system. The inventory
 maps cleanly onto Blake's hierarchy with no gaps.
 
-## References
-
-- Blake, B. J. (1994). *Case*. Cambridge University Press.
 -/
 
 namespace Fragments.Korean.Case

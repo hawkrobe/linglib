@@ -23,10 +23,6 @@ presumption is `RTScenario.comprehensionSelects`: the satisficing search
 over interpretations ordered by accessibility IS what it means for the
 hearer to treat the stimulus as optimally relevant.
 
-## References
-
-Sperber, D. & Wilson, D. (1986/95). Relevance. Ch. 1 §9, Ch. 4 §1;
-Postface pp. 270-271.
 -/
 
 set_option autoImplicit false

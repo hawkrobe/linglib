@@ -5,9 +5,7 @@ import Linglib.Core.Scales.EpistemicScale.Defs
 /-!
 # Common Ground and Common Knowledge
 
-@cite{halpern-2003}
-
-Conversational common ground following Stalnaker (1974, 2002), with
+@cite{halpern-2003} @cite{fagin-vardi-1995} @cite{stalnaker-1974} @cite{stalnaker-2002}Conversational common ground following Stalnaker (1974, 2002), with
 multi-agent epistemic operators from Halpern (2003, Ch. 7).
 
 Common ground IS common knowledge (Stalnaker 2002): a proposition is
@@ -24,13 +22,6 @@ formal fixed-point characterization from epistemic logic.
 | Common knowledge | C_G(φ) | φ ∧ E(φ) ∧ E(E(φ)) ∧ ... |
 | Distributed knowledge | D_G(φ) | φ at all (∩ᵢ Rᵢ)-accessible worlds |
 
-## References
-
-- Stalnaker, R. (1974). Pragmatic Presuppositions.
-- Stalnaker, R. (2002). Common Ground. L&P 25: 701–721.
-- Halpern, J. (2003). Reasoning about Uncertainty. Ch. 7.
-- Fagin, R., Halpern, J., Moses, Y. & Vardi, M. (1995). Reasoning
-  about Knowledge. MIT Press.
 -/
 
 namespace Core.CommonGround

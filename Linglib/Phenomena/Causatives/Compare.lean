@@ -6,6 +6,7 @@ import Linglib.Phenomena.Causatives.ThickThinBridge
 
 /-!
 # Causative Alternation: Cross-Theory Bridge
+@cite{cuervo-2003} @cite{kratzer-1996} @cite{martin-rose-nichols-2025} @cite{schfer-2008}
 
 Connects four independent formalizations of the causative alternation:
 
@@ -25,13 +26,6 @@ Connects four independent formalizations of the causative alternation:
 - Thick verbs (production causation) pattern with agentive Voice
 - Alternating verbs have both agentive and non-thematic Voice variants
 
-## References
-
-- Kratzer, A. (1996). Severing the external argument from its verb.
-- Rappaport Hovav, M. & Levin, B. (1998). Building verb meanings.
-- Cuervo, M. C. (2003). Datives at Large.
-- Schäfer, F. (2008). The Syntax of (Anti-)Causatives.
-- Martin, Rose & Nichols (2025). Burning facts: thick and thin causatives.
 -/
 
 namespace Phenomena.Causatives.Compare

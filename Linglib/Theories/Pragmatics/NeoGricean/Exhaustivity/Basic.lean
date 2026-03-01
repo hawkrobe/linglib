@@ -1,5 +1,6 @@
 /-
 # Exhaustivity Operators: exh_mw and exh_ie
+@cite{groenendijk-stokhof-1984} @cite{spector-2016} @cite{wang-2025}
 
 Formalization of Spector (2016) "Comparing exhaustivity operators"
 Semantics & Pragmatics Volume 9, Article 11: 1–33.
@@ -27,11 +28,6 @@ Section 5: Proofs
 
 Theorem 9: When ALT is closed under conjunction, exh_mw = exh_ie
 
-## References
-
-- Spector (2016). Comparing exhaustivity operators. S&P 9(11):1-33.
-- Fox (2007). Free choice and the theory of scalar implicatures.
-- Groenendijk & Stokhof (1984). Studies on the semantics of questions.
 -/
 
 import Mathlib.Data.Set.Basic
@@ -1864,9 +1860,6 @@ per MC-set—capturing ambiguity in presuppositional alternatives.
 - `exh_ie` = ⋀(⋂ all MC-sets) (Definition 4 above)
 - `exh_mx` = one reading per MC-set: for each E, ⋀E
 
-### References
-- Wang, S. (2025). Presupposition, Competition, and Coherence. Ch. 4.
-- Spector, B. (2016). Comparing exhaustivity operators. S&P 9(11):1-33.
 -/
 
 section ExhMX
@@ -1998,9 +1991,6 @@ FLAT(S) = {⋀{f(Aᵢ) | i} | f is a choice function picking one from each Aᵢ}
 This is proved equivalent to Groenendijk & Stokhof's (1984) pointwise
 answerhood (Ans_PW).
 
-### References
-- Wang (2025). Presupposition, Competition, and Coherence. Ch. 4.
-- Groenendijk, J. & Stokhof, M. (1984). Studies on the Semantics of Questions.
 -/
 
 section FlatOperator

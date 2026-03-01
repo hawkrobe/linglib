@@ -20,11 +20,6 @@ Local context theory unifies presupposition projection and implicature:
 - Local context is defined by polarity composition
 - This module makes that connection explicit via GroundedPolarity
 
-## References
-
-- Schlenker (2009). Local contexts. Semantics & Pragmatics 2:3.
-- Heim (1983). On the projection problem for presuppositions.
-- Chierchia & McConnell-Ginet (2000). Meaning and Grammar, Ch. 6.
 -/
 
 import Linglib.Core.Semantics.Presupposition

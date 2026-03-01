@@ -3,6 +3,7 @@ import Linglib.Core.Case.Hierarchy
 
 /-!
 # Slovenian Case Inventory
+@cite{blake-1994}
 
 Slovenian has **6 cases**: NOM, ACC, GEN, DAT, LOC, INST. Unlike
 most other South Slavic languages (which have lost case), Slovenian
@@ -10,9 +11,6 @@ preserves the full 6-case system. No distinct vocative.
 
 Perfectly contiguous on Blake's hierarchy.
 
-## References
-
-- Blake, B. J. (1994). *Case*. Cambridge University Press.
 -/
 
 namespace Fragments.Slovenian.Case

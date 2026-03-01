@@ -5,6 +5,7 @@ import Linglib.Phenomena.Questions.PolarAnswers
 
 /-!
 # Turk, Hirsch & İnce (2026) — Category Match Bridge
+@cite{fox-katzir-2011} @cite{kratzer-selkirk-2020} @cite{rooth-1992} @cite{turk-ince-2026}
 
 Connects the empirical judgments in `PolarAnswers.lean` (modal answers
 are infelicitous to Turkish polar questions) to the formal explanation:
@@ -27,13 +28,6 @@ Category match yields {p, ¬p} — the correct polar question.
 
 Four worlds: Ali sleeps/doesn't × deontic must/free.
 
-## References
-
-- Turk, E., Hirsch, A. & İnce, A. (2026). Constraining Alternatives
-  in Turkish Polar Questions.
-- Fox, D. & Katzir, R. (2011). On the characterization of alternatives.
-- Rooth, M. (1992). A Theory of Focus Interpretation. NLS 1: 75-116.
-- Kratzer, A. & Selkirk, E. (2020). Deconstructing Information Structure.
 -/
 
 namespace Phenomena.Questions.Studies.TurkHirschInce2026Bridge

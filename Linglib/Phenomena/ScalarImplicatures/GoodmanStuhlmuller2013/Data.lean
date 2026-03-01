@@ -38,10 +38,6 @@ inferences weaken or disappear.
 | 10 | Partial | "one" | 2 | state 1 > state 3 | t(25)=-3.9, p<.001 |
 | 11 | Partial | "one" | 2 | state 1 not > state 2 | t(25)=1.5, p=.92 |
 
-## References
-
-- Goodman, N.D. & Stuhlmuller, A. (2013). Knowledge and implicature.
-  *TopiCS* 5(1): 173-184.
 -/
 
 set_option autoImplicit false

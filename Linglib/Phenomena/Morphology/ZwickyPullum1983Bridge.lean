@@ -4,6 +4,7 @@ import Linglib.Theories.Semantics.Modality.Basic
 
 /-!
 # Zwicky & Pullum 1983: Cliticization vs. Inflection
+@cite{zwicky-pullum-1983}
 
 Empirical data and classification theorems for the argument that
 English contracted negator *-n't* is an inflectional affix, not a
@@ -24,10 +25,6 @@ The scope irregularity of negation with modals provides a bridge to
 means MUST(NOT(P)). This non-compositional scope behavior is characteristic
 of inflectional affixes, not clitics.
 
-## References
-
-- Zwicky, A. M. & Pullum, G. K. (1983). Cliticization vs. Inflection:
-  English N'T. *Language* 59(3), 502–513.
 -/
 
 namespace Phenomena.Morphology.ZwickyPullum1983

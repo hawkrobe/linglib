@@ -41,13 +41,6 @@ The discourse state is a `CommitmentSpace` tree (§4):
 - **Accept**: promotes first continuation to root
 - **Reject**: prunes first continuation
 
-## References
-
-- Krifka, M. (2015). Bias in Commitment Space Semantics: Declarative
-  questions, negated questions, and question tags. *L&P* 38: 115–143.
-- Krifka, M. (2020). Layers of Assertive Clauses: Propositions,
-  Judgements, Commitments, Acts. In Hartmann & Wöllstein (eds.),
-  *Propositionale Argumente im Sprachvergleich*. Tübingen: Narr.
 -/
 
 namespace Theories.Pragmatics.Assertion.Krifka

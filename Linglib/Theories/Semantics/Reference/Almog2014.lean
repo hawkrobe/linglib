@@ -17,9 +17,6 @@ theorems connecting the reference theory to the rest of Linglib.
 | "The φ" (ref.)  | ✗           | ✗             | ✓               |
 | "The φ" (attr.) | ✗           | ✗             | ✗               |
 
-## References
-
-- Almog, J. (2014). Referential Mechanics. Oxford University Press.
 -/
 
 import Linglib.Theories.Semantics.Reference.Basic

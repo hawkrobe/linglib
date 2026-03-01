@@ -2,6 +2,7 @@ import Linglib.Phenomena.AuxiliaryVerbs.Typology
 
 /-!
 # Negative Auxiliaries (Anderson 2006 §1.7.2)
+@cite{anderson-2006} @cite{miestamo-2005}
 
 Some languages express sentential negation through a **negative auxiliary verb**
 that hosts inflection (tense, agreement) while the lexical verb appears in a
@@ -19,11 +20,6 @@ The neg-verb strategy is particularly interesting because the negative element
 is itself an auxiliary verb, creating an AVC with the negative verb as
 inflectional head.
 
-## References
-
-- Anderson, G. D. S. (2006). Auxiliary Verb Constructions. OUP. §1.7.2.
-- Miestamo, M. (2005). Standard Negation: The Negation of Declarative Verbal
-  Main Clauses in a Typological Perspective. Mouton de Gruyter.
 -/
 
 namespace Phenomena.AuxiliaryVerbs.NegativeAuxiliaries

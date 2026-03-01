@@ -2,6 +2,7 @@ import Linglib.Core.Lexical.UD
 
 /-!
 # Person Categories (Cysouw 2009)
+@cite{cysouw-2009}
 
 The 8 referential person categories from Cysouw's paradigmatic framework,
 extracted to Core/ for use by both Phenomena/ (typological data) and
@@ -11,9 +12,6 @@ This module contains just the type and its basic predicates. The full
 paradigmatic structure machinery (morpheme classes, homophony types,
 language data) remains in `Phenomena/Agreement/PersonMarkingTypology.lean`.
 
-## References
-
-- Cysouw, M. (2009). *The Paradigmatic Structure of Person Marking*. OUP.
 -/
 
 namespace Core.PersonCategory

@@ -2,6 +2,7 @@ import Linglib.Theories.Syntax.Minimalism.Core.Basic
 
 /-!
 # Verbal Decomposition (Cuervo 2003)
+@cite{cuervo-2003}
 
 Sub-eventive verb heads that decompose verbal structure into
 fine-grained event components. This decomposition connects directly
@@ -11,9 +12,6 @@ causatives add [vDO] for the external cause.
 Independent of applicative heads — used by Fission, EventStructureBridge,
 and the Spanish fragment.
 
-## References
-
-- Cuervo, M. C. (2003). *Datives at Large*. PhD dissertation, MIT.
 -/
 
 namespace Minimalism

@@ -5,9 +5,7 @@ import Linglib.Phenomena.Constructions.ParticleVerbs.Data
 /-!
 # PVC — Small Clause Bridge (den Dikken 1995)
 
-@cite{dendikken-1995}
-
-Connects particle verb construction data to the SC predication analysis.
+@cite{dendikken-1995} @cite{baker-1988}Connects particle verb construction data to the SC predication analysis.
 Den Dikken (1995, Ch. 2) analyzes particles as P heads of small
 clauses: `V [SC DP Prt]`. The particle predicates a result
 state/location of the DP subject.
@@ -31,10 +29,6 @@ movement, preferring continuous order (P incorporates instead).
 - `Theories.Syntax.Minimalism.Formal.HeadMovement.Basic`: head-to-head
   movement type and `formComplexLI` for incorporation
 
-## References
-
-- den Dikken, M. (1995). *Particles.* OUP.
-- Baker, M. C. (1988). *Incorporation.* U Chicago Press.
 -/
 
 namespace Phenomena.Constructions.ParticleVerbs.Bridge.MinimalismParticleSC

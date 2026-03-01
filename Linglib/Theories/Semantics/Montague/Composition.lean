@@ -10,10 +10,6 @@ Composition principles:
 Interpretation is syntax-agnostic: it works with any structure providing
 terminals and branching via the `SemanticStructure` interface.
 
-## References
-
-- Heim & Kratzer (1998). Semantics in Generative Grammar, Ch. 3-4.
-- Klein & Sag (1985). Type-Driven Translation.
 -/
 
 import Linglib.Theories.Semantics.Montague.Basic

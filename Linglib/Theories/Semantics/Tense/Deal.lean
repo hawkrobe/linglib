@@ -2,6 +2,7 @@ import Linglib.Theories.Semantics.Tense.Basic
 
 /-!
 # Deal (2020): Counterfactual Tense and the Upper Limit Constraint
+@cite{deal-2020} @cite{iatridou-2000}
 
 Deal's theory: past morphology in counterfactuals encodes **modal distance**,
 not temporal precedence. This explains why counterfactual "were" does not
@@ -21,12 +22,6 @@ Abusch's ULC says embedded R ≤ matrix E. But counterfactuals violate this:
 time before the attitude event. Deal resolves this by distinguishing
 temporal tense (subject to ULC) from counterfactual tense (exempt from ULC).
 
-## References
-
-- Deal, A. R. (2020). Counterfactuals and the Upper Limit Constraint.
-  Handout, LSA Summer Institute.
-- Iatridou, S. (2000). The grammatical ingredients of counterfactuality.
-  *Linguistic Inquiry* 31(2): 231-270.
 -/
 
 namespace Semantics.Tense.Deal

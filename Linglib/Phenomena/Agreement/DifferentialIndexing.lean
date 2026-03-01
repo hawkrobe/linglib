@@ -2,6 +2,7 @@ import Linglib.Core.Prominence
 
 /-!
 # Differential Indexing Typology @cite{just-2024}
+@cite{aissen-2003} @cite{haspelmath-2019} @cite{siewierska-2004}
 
 Formalizes the typological survey from:
 
@@ -35,15 +36,6 @@ This follows from the unified functional principle (§6, p. 315):
 A arguments are prominent by default; P arguments are not. Differential
 marking targets departures from these defaults.
 
-## References
-
-- Just, E. (2024). A structural and functional comparison of differential A
-  and P indexing. Linguistics 62(2): 295–321.
-- Haspelmath, M. (2019). Indexing and flagging, and the definition of
-  "head". Open Linguistics 5: 539–557.
-- Aissen, J. (2003). Differential Object Marking: Iconicity vs. Economy.
-  NLLT 21(3): 435–483.
-- Siewierska, A. (2004). Person. Cambridge University Press.
 -/
 
 namespace Phenomena.Agreement.DifferentialIndexing

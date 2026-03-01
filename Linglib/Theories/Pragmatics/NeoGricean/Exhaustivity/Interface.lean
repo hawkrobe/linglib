@@ -32,12 +32,6 @@ NeoGricean/Exhaustivity/Interface.lean (this file)
 └── Exhaustifiable typeclass (unified interface)
 ```
 
-## References
-
-- Spector (2016). Comparing exhaustivity operators. S&P 9(11):1-33.
-- Fox (2007). Free choice and the theory of scalar implicatures.
-- Spector (2007). Scalar implicatures: exhaustivity and Gricean reasoning.
-- Franke & Bergen (2020). Theory-driven statistical modeling.
 -/
 
 import Linglib.Core.Parse

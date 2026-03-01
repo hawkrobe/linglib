@@ -6,6 +6,7 @@ import Linglib.Fragments.English.TemporalAdverbials
 
 /-!
 # Rouillard (2026): Temporal *in*-Adverbials — Empirical Data
+@cite{kennedy-2007} @cite{rouillard-2026} @cite{vendler-1957}
 
 Empirical distributional data and verification theorems for temporal
 *in*-adverbials (TIAs), following Rouillard (2026) "Maximal informativity
@@ -33,13 +34,6 @@ This file is a **Phenomena** file: it imports Theories and verifies that
 theoretical predictions match empirical observations. It does NOT define
 new theoretical machinery.
 
-## References
-
-- Rouillard, V. (2026). Maximal informativity accounts for the distribution
-  of temporal *in*-adverbials. *L&P* 49:1–56.
-- Vendler, Z. (1957). Verbs and times.
-- Krifka, M. (1989, 1998). Nominal reference / The origins of telicity.
-- Kennedy, C. (2007). Vagueness and grammar.
 -/
 
 namespace Phenomena.TenseAspect.TemporalAdverbials.Rouillard2026

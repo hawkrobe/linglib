@@ -17,10 +17,6 @@ Generalizations: The *What's X doing Y?* Construction" (Language 75(1):1–33).
 7. **Embedding / CI projection**: WXDY meaning under embedding predicates
 8. **FKO1988 comparison**: relation to Incredulity Response construction
 
-## Reference
-
-Kay, P. & Fillmore, C. J. (1999). Grammatical Constructions and Linguistic
-Generalizations: The *What's X doing Y?* Construction. Language, 75(1), 1–33.
 -/
 
 namespace Phenomena.Constructions.Studies.KayFillmore1999

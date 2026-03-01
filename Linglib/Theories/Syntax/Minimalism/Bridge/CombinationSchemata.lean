@@ -22,10 +22,6 @@ are the same operation. This file further classifies Merge by *combination kind*
 - §2.2: External Merge without selection ≈ Head-Specifier
 - §2.3: Internal Merge ≈ Head-Filler
 
-## References
-
-- Chomsky, N. (1995, 2004, 2013). The Minimalist Program.
-- Müller, S. (2013). Unifying Everything. Language 89(4):920–950.
 -/
 
 namespace Minimalism

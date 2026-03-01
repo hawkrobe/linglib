@@ -16,11 +16,6 @@ Idiomaticity in Grammatical Constructions: The Case of *Let Alone*"
 5. **NPI trigger contrasts**: *barely* licenses, *almost*/*only* do not (§2.2.4)
 6. **Wh-extraction asymmetry**: easier from *let alone* than from *and* (§2.2.1)
 
-## Reference
-
-Fillmore, C. J., Kay, P., & O'Connor, M. C. (1988). Regularity and
-Idiomaticity in Grammatical Constructions: The Case of *Let Alone*.
-Language, 64(3), 501–538.
 -/
 
 namespace Phenomena.Constructions.Studies.FillmoreKayOConnor1988

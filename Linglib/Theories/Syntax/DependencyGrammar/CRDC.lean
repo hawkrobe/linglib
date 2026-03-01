@@ -35,11 +35,6 @@ For simple transitives, predictions are identical. Differences emerge with:
 - `↑` = Raised (appears elsewhere in structure)
 - Underline = subject/object of embedded predicate
 
-## References
-
-- Osborne, T. & Li, J. (2023). Conjunct Referential Dependency Constraint.
-- Osborne, T. (2019). A Dependency Grammar of English, Ch. 6.
-- Tesnière, L. (1959). Éléments de syntaxe structurale.
 -/
 
 import Linglib.Theories.Syntax.DependencyGrammar.Core.Nominal

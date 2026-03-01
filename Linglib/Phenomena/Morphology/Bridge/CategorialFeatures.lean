@@ -5,9 +5,7 @@ import Linglib.Theories.Syntax.Minimalism.Formal.ExtendedProjection.Properties
 /-!
 # Bridge: Categorial Features ↔ Category-Changing Morphology
 
-@cite{panagiotidis-2015}
-
-Connects the theory-side predictions of Panagiotidis (2015) — substantive
+@cite{panagiotidis-2015} @cite{marantz-1997}Connects the theory-side predictions of Panagiotidis (2015) — substantive
 categorial features [N] and [V] hosted on categorizer heads — to the empirical
 data on category-changing morphology in English.
 
@@ -38,10 +36,6 @@ THIS BRIDGE FILE
 Phenomena/Morphology/CategoryChanging.lean (RootFamily, LexCat)
 ```
 
-## References
-
-- Panagiotidis, P. (2015). Categorial Features. Cambridge.
-- Marantz, A. (1997). No escape from syntax. UPenn WPL 4(2).
 -/
 
 namespace Phenomena.Morphology.Bridge.CategorialFeatures

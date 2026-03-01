@@ -4,9 +4,7 @@ import Linglib.Core.Logic.ModalLogic
 /-!
 # Bridge: English Modal Fragment Entries ↔ Position-Based Flavor Availability
 
-@cite{hacquard-2010}
-
-Connects the force–flavor cartesian products in `Fragments/English/FunctionWords.lean`
+@cite{hacquard-2010} @cite{kratzer-1981}Connects the force–flavor cartesian products in `Fragments/English/FunctionWords.lean`
 (the set of POSSIBLE readings for each modal auxiliary) to EventRelativity's
 position-based flavor availability (WHEN each reading is available).
 
@@ -27,11 +25,6 @@ EventRelativity:
 
 Union = {epistemic, circumstantial, deontic} ✓ matches fragment entry.
 
-## References
-
-- Hacquard, V. (2010). On the event relativity of modal auxiliaries.
-  Natural Language Semantics 18:79–114.
-- Kratzer, A. (1981). The Notional Category of Modality.
 -/
 
 namespace Phenomena.Modality.Bridge.ModalPositionFragmentBridge

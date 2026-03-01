@@ -3,6 +3,7 @@ import Linglib.Theories.Semantics.Polarity.CzechNegation
 
 /-!
 # Czech Determiners
+@cite{giannakidou-1998} @cite{stakov-2026} @cite{zeijlstra-2004}
 
 Polarity-sensitive determiners central to Staňková's (2026) three-way negation
 diagnostic. Czech lacks articles (`ArticleType.none_`), so the NCI/PPI contrast
@@ -22,11 +23,6 @@ on determiners is the primary scope diagnostic for negation position.
 - Bridges to `Phenomena.Negation.CzechThreeWayNeg.Diagnostic` for per-position
   compatibility.
 
-## References
-
-- Staňková, V. (2026). A three-way distinction of negation interpretation in Czech.
-- Zeijlstra, H. (2004). Sentential Negation and Negative Concord. LOT.
-- Giannakidou, A. (1998). Polarity Sensitivity as (Non)Veridical Dependency.
 -/
 
 namespace Fragments.Czech.Determiners

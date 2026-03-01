@@ -7,9 +7,6 @@ Interface between syntax and pragmatics via `SemDeriv` bundles.
 
 `ScalarOccurrence`, `SemDeriv`, `alternativeMeanings`, `alternativeForms`, `SemanticsProducer`
 
-## References
-
-Montague (1973)
 -/
 
 import Linglib.Theories.Semantics.Entailment.Polarity

@@ -29,14 +29,6 @@ In any partial order (P, ≤), x **covers** y (written x ⋖ y) iff:
 4. **Exhaustivity**: Every head displacement is either syntactic movement
    (can violate covering) or amalgamation (restricted to covering).
 
-## References
-
-- Harizanov, B. & V. Gribanova (2019). "Whither head movement?"
-  Natural Language and Linguistic Theory 37:461-522.
-- Embick, D. & R. Noyer (2001). "Movement operations after syntax."
-  Linguistic Inquiry 32:555-595.
-- Barker, C. & G. Pullum (1990). "A Theory of Command Relations."
-  Linguistics and Philosophy 13:1-34.
 -/
 
 import Linglib.Theories.Syntax.Minimalism.Formal.Constraints.HMC

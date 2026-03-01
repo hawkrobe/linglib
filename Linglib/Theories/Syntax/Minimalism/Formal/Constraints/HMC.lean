@@ -16,10 +16,6 @@ Both types of syntactic head movement (head-to-spec and head-to-head)
 violate the HMC. This distinguishes them from Amalgamation, which is
 a post-syntactic (PF) operation that respects the HMC.
 
-## References
-
-- Travis (1984). "Parameters and Effects of Word Order Variation"
-- Harizanov, B. "Syntactic Head Movement", Section 5
 -/
 
 import Linglib.Theories.Syntax.Minimalism.Formal.HeadMovement.Basic

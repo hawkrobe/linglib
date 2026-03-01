@@ -2,6 +2,7 @@ import Linglib.Theories.Syntax.HPSG.Core.Basic
 
 /-!
 # Head-Filler Schema and SLASH Feature
+@cite{ginzburg-sag-2000} @cite{pollard-sag-1994}
 
 HPSG's third combination schema: the Head-Filler Schema handles long-distance
 dependencies (extraction, wh-movement). A filler XP combines with a sentence
@@ -23,11 +24,6 @@ Müller §2.3: "the formalization of internal Merge and that of the head-filler
 schema are very similar" — both handle displacement by pairing a moved element
 with its extraction site.
 
-## References
-
-- Pollard, C. & Sag, I. (1994). Head-Driven Phrase Structure Grammar. Ch. 9.
-- Ginzburg, J. & Sag, I. (2000). Interrogative Investigations. §2.3.
-- Müller, S. (2013). Unifying Everything. Language 89(4):920–950.
 -/
 
 namespace HPSG

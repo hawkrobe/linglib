@@ -5,6 +5,7 @@ import Linglib.Phenomena.Reference.DirectReference
 
 /-!
 # Pronoun Typology: PER/DEM Classification + Gradient Measures
+@cite{cardinaletti-starke-1999} @cite{dchaine-wiltschko-2002} @cite{elbourne-2005} @cite{patel-grosz-grosz-2017} @cite{postal-1966} @cite{schwarz-2009} @cite{schwarz-2013}
 
 Patel-Grosz & Grosz (2017) "Revisiting Pronominal Typology" (LI 48(2)) argue
 that 3rd-person pronouns split into two structural types:
@@ -26,15 +27,6 @@ Following Levshina et al. (2023) / `WordOrder/Gradience.lean`, we encode
 continuous measures of pronoun system complexity: inventory sizes, licensing
 context counts, and strength-level counts.
 
-## References
-
-- Patel-Grosz, P. & B. Grosz (2017). Revisiting Pronominal Typology. LI 48(2).
-- Schwarz, F. (2009). Two Types of Definites in Natural Language. UMass diss.
-- Schwarz, F. (2013). Two Kinds of Definites Cross-linguistically. L&L Compass 7(10).
-- Postal, P. (1966). On So-Called 'Pronouns' in English. Georgetown Monograph 19.
-- Elbourne, P. (2005). Situations and Individuals. MIT Press.
-- Cardinaletti, A. & M. Starke (1999). The Typology of Structural Deficiency.
-- Déchaine, R.-M. & M. Wiltschko (2002). Decomposing Pronouns. LI 33(3).
 -/
 
 namespace Phenomena.Anaphora.Typology

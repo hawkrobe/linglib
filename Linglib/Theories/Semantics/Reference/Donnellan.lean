@@ -17,12 +17,6 @@ content that varies across worlds.
 - `definitePrProp`: Attributive semantics with presupposition (bridges
   to `Core.Presupposition.PrProp`)
 
-## References
-
-- Donnellan, K. (1966). Reference and Definite Descriptions. Philosophical Review.
-- Almog, J. (2014). Referential Mechanics, Ch 3.
-- Russell, B. (1905). On Denoting. Mind.
-- Partee, B. (1987). Noun Phrase Interpretation and Type-shifting Principles.
 -/
 
 import Linglib.Theories.Semantics.Reference.Basic

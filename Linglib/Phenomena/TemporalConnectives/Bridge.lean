@@ -3,6 +3,7 @@ import Linglib.Fragments.English.TemporalExpressions
 
 /-!
 # Temporal Connective Truth-Condition Examples
+@cite{heinamaki-1974} @cite{heinamki-1974} @cite{rett-2020}
 
 Concrete scenarios verifying that the Anscombe, Rett, and Karttunen
 formalizations produce correct truth-value judgments.
@@ -26,10 +27,6 @@ Scenarios 7–10 verify Heinämäki (1974) Chs. 6, 8, 9 for *since*, *by*, *till
 | 9'| point(3)     | point(3)             | before     | False  |
 |10 | stative[5,10]| point(5)             | till       | True   |
 
-## References
-
-- Rett, J. (2020). Eliminating EARLIEST. *Sinn und Bedeutung* 24, Table 1.
-- Heinämäki, O. (1974). *Semantics of English temporal connectives*. PhD.
 -/
 
 namespace Phenomena.TemporalConnectives.Examples

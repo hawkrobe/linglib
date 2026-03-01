@@ -29,11 +29,6 @@ include future times.
 3. Modal donkey anaphora
 4. Cross-linguistic parallels (Spanish, Italian)
 
-## References
-
-- Mendes, A. (2025). Indefiniteness in future reference. S&P 18(10).
-- Comrie, B. (1985). Tense. Cambridge University Press.
-- Iatridou, S. (2000). The grammatical ingredients of counterfactuality.
 -/
 
 namespace Phenomena.SubordinateFuture

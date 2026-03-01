@@ -10,10 +10,6 @@ Building blocks for RSA quantity/scalar domains.
 - `meaning`: Literal semantics for scalar utterances
 - `extMeaning`: Extended semantics with "most"
 
-## References
-
-- Goodman, N. D. & Stuhlmüller, A. (2013). Knowledge and implicature.
-  Topics in Cognitive Science 5(1): 173-184.
 -/
 
 import Linglib.Fragments.English.Determiners

@@ -27,11 +27,6 @@ This is C-distributive because the question semantics IS the existential.
 ```
 This is NOT C-distributive because worry-about-Q involves global uncertainty.
 
-## References
-
-- Spector & Egré (2015). A uniform semantics for embedded interrogatives.
-- Theiler et al. (2018). A uniform semantics for declarative and interrogative complements.
-- Elliott et al. (2017). Predicates of relevance and theories of question embedding.
 -/
 
 import Mathlib.Data.Rat.Defs

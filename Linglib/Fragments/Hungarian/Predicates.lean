@@ -2,6 +2,7 @@ import Linglib.Theories.Semantics.Lexical.Verb.VerbEntry
 
 /-!
 # Hungarian Predicate Lexicon Fragment
+@cite{egressy-2026}
 
 Hungarian attitude verb entries, extending `VerbCore` with the
 Hungarian inflectional paradigm. Hungarian has a distinctive
@@ -27,10 +28,6 @@ demonstrate size-sensitive SOT:
 - *mond* 'say' — speech-act verb
 - *hisz* 'believe' — doxastic non-veridical
 
-## References
-
-- Egressy, A. (2026). Size-sensitive sequence of tense in Hungarian.
-  *The Linguistic Review*.
 -/
 
 namespace Fragments.Hungarian.Predicates

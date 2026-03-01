@@ -3,9 +3,7 @@ import Linglib.Theories.Semantics.Tense.TenseAspectComposition
 
 /-!
 # Kratzer (1998): More Structural Analogies Between Pronouns and Tenses
-@cite{kratzer-1998}
-
-Kratzer extends Partee's (1973) tense–pronoun analogy in three directions
+@cite{kratzer-1998} @cite{heim-kratzer-1998} @cite{klein-1994} @cite{partee-1973}Kratzer extends Partee's (1973) tense–pronoun analogy in three directions
 beyond the shared indexical/anaphoric/bound classification:
 
 ## Core Contributions
@@ -38,12 +36,6 @@ and simultaneous readings) but differ on what "past" means:
 - Kratzer: past is NEVER ambiguous; simultaneous = deletion of past
 - Ogihara: past IS ambiguous; simultaneous = zero-tense reading of past
 
-## References
-
-- Kratzer, A. (1998). More structural analogies between pronouns and tenses.
-  *SALT VIII*, 92-110.
-- Partee, B. (1973). Some structural analogies between tenses and pronouns.
-- Klein, W. (1994). Time in Language.
 -/
 
 namespace Semantics.Tense.Kratzer

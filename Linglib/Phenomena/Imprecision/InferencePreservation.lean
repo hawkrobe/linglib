@@ -20,11 +20,6 @@ This explains:
 - Why conjunctions resist non-maximality (conjuncts are alternatives)
 - Why "the four doors" is precise (sub-numerals are alternatives)
 
-## References
-
-- Dissertation Chapters 6-7
-- Sauerland & Stateva (2007): Numeral alternatives
-- Križ (2015): Conjunctions and homogeneity
 -/
 
 namespace Phenomena.Imprecision.InferencePreservation

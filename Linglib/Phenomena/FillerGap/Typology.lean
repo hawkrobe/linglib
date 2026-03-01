@@ -2,6 +2,7 @@ import Linglib.Core.Lexical.Word
 
 /-!
 # Cross-Linguistic Typology of Relativization (WALS Chapters 122--123)
+@cite{comrie-1989} @cite{de-vries-2002} @cite{keenan-comrie-1977} @cite{keenan-hawkins-1987}
 
 Cross-linguistic data on relative clause formation strategies from two WALS
 chapters by Comrie & Kuteva (2013), supplemented with the Keenan-Comrie
@@ -56,21 +57,6 @@ are more common than pre-nominal ones ([left who] man), and internally-headed
 relative clauses are rare. This correlates with basic word order: VO languages
 strongly prefer post-nominal, while OV languages may use pre-nominal.
 
-## References
-
-- Comrie, B. & T. Kuteva (2013a). Relativization on subjects. In Dryer, M. S.
-  & Haspelmath, M. (eds.), WALS Online (v2020.3). https://wals.info/chapter/122
-- Comrie, B. & T. Kuteva (2013b). Relativization on obliques. In Dryer, M. S.
-  & Haspelmath, M. (eds.), WALS Online (v2020.3). https://wals.info/chapter/123
-- Keenan, E. L. & B. Comrie (1977). Noun phrase accessibility and universal
-  grammar. Linguistic Inquiry 8(1): 63--99.
-- de Vries, M. (2002). The Syntax of Relativization. LOT Dissertation Series.
-  University of Amsterdam.
-- Keenan, E. L. & J. A. Hawkins (1987). The psychological validity of the
-  Accessibility Hierarchy. In Keenan (ed.), Universal Grammar: 15 Essays.
-  Croom Helm.
-- Comrie, B. (1989). Language Universals and Linguistic Typology. 2nd ed.
-  University of Chicago Press.
 -/
 
 namespace Phenomena.FillerGap.Typology

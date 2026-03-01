@@ -18,13 +18,6 @@ Homogeneity is characterized by non-complementary truth conditions:
 - Negative: requires existential denial (none satisfy)
 - Gap: some but not all satisfy → neither clearly true nor false
 
-## References
-
-- Löbner (2000): Polarity in natural language
-- Križ (2015, 2016): Homogeneity, trivalence, non-maximality
-- Križ & Chemla (2015): Experimental investigation
-- Križ & Spector (2021): Supervaluationist approach
-- Bar-Lev (2021a): Exhaustification approach
 -/
 
 namespace Phenomena.Plurals.Homogeneity

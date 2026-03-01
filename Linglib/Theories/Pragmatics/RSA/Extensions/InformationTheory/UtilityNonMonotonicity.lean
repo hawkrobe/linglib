@@ -2,6 +2,7 @@ import Linglib.Theories.Pragmatics.RSA.Extensions.InformationTheory.Basic
 
 /-!
 # Utility Non-Monotonicity with α < 1 (Stub)
+@cite{zaslavsky-hu-levy-2020}
 
 Formalizes Proposition 2 from Zaslavsky et al. (2020):
 
@@ -22,8 +23,4 @@ Three conditions are necessary for utility non-monotonicity:
 
 Old RSAScenarioQ-based counterexample removed; restate using RSAConfig.
 
-## References
-
-- Zaslavsky, N., Hu, J., & Levy, R. (2020). A Rate-Distortion view of human
-  pragmatic reasoning. arXiv:2005.06641, Proposition 2 and Figure 3.
 -/

@@ -26,12 +26,6 @@ computed in tandem at every compositional step.
   implicatures that can block NPI strengthening; weak terms (some, or) don't
 - **Bridge**: At root level in UE contexts, Chierchia's ‖S‖^S ⊆ exhIE(ALT, S)
 
-## References
-
-- Chierchia, G. (2004). Scalar implicatures, polarity phenomena, and the
-  syntax/pragmatics interface. In Belletti (ed.), Structures and Beyond.
-- Krifka, M. (1995). The semantics and pragmatics of polarity items.
-- Fox, D. (2007). Free choice and the theory of scalar implicatures.
 -/
 
 import Linglib.Theories.Pragmatics.NeoGricean.Exhaustivity.Basic

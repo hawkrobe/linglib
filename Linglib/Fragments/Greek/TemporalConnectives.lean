@@ -2,9 +2,7 @@ import Linglib.Fragments.English.TemporalExpressions
 
 /-!
 # Greek Temporal Connectives Fragment
-@cite{giannakidou-2002}
-
-Greek lexicalizes the two-*until* distinction and the veridicality asymmetry
+@cite{giannakidou-2002} @cite{giannakidou-1998}Greek lexicalizes the two-*until* distinction and the veridicality asymmetry
 through mood selection:
 
 - **πριν / prin** ('before'): requires subjunctive (in modern Greek),
@@ -26,12 +24,6 @@ veridicality (the complement event is presented as factual). This parallels
 Japanese tense marking (*mae* non-past / *ato* past) diagnosed in the
 O&ST (2024) data.
 
-## References
-
-- Giannakidou, A. (2002). UNTIL, aspect and negation: a novel argument
-  for two untils. *SALT* 12, 84–103.
-- Giannakidou, A. (1998). *Polarity Sensitivity as (Non)Veridical
-  Dependency*. Benjamins.
 -/
 
 namespace Fragments.Greek.TemporalConnectives

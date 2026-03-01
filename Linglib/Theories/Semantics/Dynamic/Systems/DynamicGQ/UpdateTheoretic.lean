@@ -3,6 +3,7 @@ import Linglib.Core.Mereology
 
 /-!
 # Update-Theoretic Dynamic Generalized Quantifiers
+@cite{charlow-2021}
 
 Same operators as `DynamicGQ.Basic`, but defined directly over
 `StateCCP W E := State W E → State W E` — Charlow's (2021) main contribution.
@@ -17,10 +18,6 @@ produces cumulative readings automatically.
 - `CardTest_u_distributive`: cardinality tests ARE distributive
 - `exactlyN_u_cumulative`: the composed meaning has cumulative truth conditions
 
-## References
-
-- Charlow, S. (2021). Post-suppositions and semantic theory. *L&P* 44, 701–765.
-  §6, equations 74–82.
 -/
 
 namespace Semantics.Dynamic.DynamicGQ.UpdateTheoretic

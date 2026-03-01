@@ -7,9 +7,6 @@ Theory-neutral data on when bare plurals receive generic vs existential readings
 
 `PredicateLevel`, `LocativeStatus`, `Presuppositionality`, `BarePluralDatum`, `SLevelDatum`, `PresuppositionalDatum`, `InformationStatus`, `TopicFocusDatum`, `IncorporationDatum`
 
-## References
-
-- Cohen & Erteschik-Shir (2002), Carlson (1977), Kratzer (1995), Diesing (1992)
 -/
 
 namespace Phenomena.BarePlurals

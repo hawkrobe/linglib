@@ -2,6 +2,7 @@ import Linglib.Core.Lexical.Word
 
 /-!
 # Extraction Morphology Interface
+@cite{elkins-imanishi-coon-2026} @cite{erlewine-2018} @cite{mccloskey-2002}
 
 Theory-neutral interface for cross-linguistic extraction morphology —
 how languages morphologically mark that a constituent has undergone
@@ -19,15 +20,6 @@ Languages vary dramatically in whether and how they track extraction:
 This interface parametrizes these strategies without committing to a
 particular syntactic theory of how extraction works.
 
-## References
-
-- Elkins, N., Y. Imanishi & J. Coon (2026). Wh-movement and oblique
-  extraction in SJO Mam.
-- Erlewine, M. Y. (2018). Extraction and licensing in Toba Batak.
-  Language 94(3): 662–697.
-- McCloskey, J. (2002). Resumption, successive cyclicity, and the
-  locality of operations. In S. D. Epstein & T. D. Seely (eds.),
-  Derivation and Explanation in the Minimalist Program.
 -/
 
 namespace Interfaces

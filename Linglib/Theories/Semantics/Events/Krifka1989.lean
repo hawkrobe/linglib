@@ -5,6 +5,7 @@ import Linglib.Theories.Semantics.Probabilistic.Measurement.Basic
 
 /-!
 # Krifka (1989) "Nominal Reference, Temporal Constitution and Quantification"
+@cite{champollion-2017} @cite{krifka-1989} @cite{krifka-1998} @cite{scontras-2014}
 
 The foundational paper connecting nominal reference properties (mass/count/plural)
 to aspectual properties (telic/atelic) via thematic role homomorphisms. This module
@@ -20,14 +21,6 @@ thematic role properties in `Krifka1998.lean` to provide:
 5. **Bridge to Scontras's measurement framework** (§5)
 6. **GRAD Square Instantiation**: canonical `GRADSquare` for the Krifka event structure (§6)
 
-## References
-
-- Krifka, M. (1989). Nominal reference, temporal constitution and quantification
-  in event semantics. In R. Bartsch et al. (eds.), *Semantics and Contextual
-  Expression*, 75–115. Foris.
-- Krifka, M. (1998). The origins of telicity.
-- Champollion, L. (2017). *Parts of a Whole*. OUP.
-- Scontras, G. (2014). *The Semantics of Measurement*. Harvard dissertation.
 -/
 
 namespace Semantics.Events.Krifka1989

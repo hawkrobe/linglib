@@ -1,5 +1,6 @@
 /-
 # NeoGricean Presupposition Integration
+@cite{wang-2025}
 
 Extends NeoGricean infrastructure with presupposition handling, connecting
 to the core presupposition projection from Core.Presupposition.
@@ -27,12 +28,6 @@ This module provides NeoGricean-specific infrastructure:
   - Derivation tracking for SI computation
   - SI-presupposition interaction
 
-## References
-
-- Kracht (2003). Mathematics of Language, Section 4.7
-- Heim (1983). On the projection problem for presuppositions
-- Karttunen (1974). Presupposition and linguistic context
-- Beaver (2001). Presupposition and Assertion in Dynamic Semantics
 -/
 
 import Linglib.Core.Semantics.Presupposition
@@ -168,8 +163,6 @@ This classification predicts obligatoriness:
 - No alternative → trigger is mandatorily omitted when presupposition only
   partially holds
 
-### References
-- Wang, S. (2025). Presupposition, Competition, and Coherence. Ch. 4, Table 4.1.
 -/
 
 /--

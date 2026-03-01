@@ -5,6 +5,7 @@ import Mathlib.Topology.Algebra.Order.LiminfLimsup
 
 /-!
 # Luce (1959) Chapter 4: Learning @cite{luce-1959}
+@cite{bush-mosteller-1955}
 
 Luce extends the choice axiom to dynamic settings where choice probabilities
 change over trials via learning and reinforcement. The central question: if
@@ -27,10 +28,6 @@ We also formalize:
 4. **Beta model** (§4.D): probability-space learning `P_{n+1}(a) = (1-β)·P_n(a) + β·δ(a, chosen)`
 5. **Convergence** (§4.G): under constant reinforcement, `v_n(a) → r(a)` as `n → ∞`
 
-## References
-
-- Luce, R. D. (1959). Individual Choice Behavior. Wiley. Chapter 4, pp. 91–128.
-- Bush, R. R. & Mosteller, F. (1955). Stochastic Models for Learning. Wiley.
 -/
 
 namespace Core

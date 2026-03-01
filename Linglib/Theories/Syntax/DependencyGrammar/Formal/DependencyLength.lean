@@ -3,6 +3,7 @@ import Linglib.Core.ProcessingModel
 
 /-!
 # Dependency Length Minimization
+@cite{ferrer-i-cancho-2006} @cite{futrell-gibson-2020} @cite{gibson-2000}
 
 Formalizes the core claim of Futrell, Levy & Gibson (2020): natural languages
 minimize total dependency length beyond what independent constraints predict.
@@ -35,14 +36,6 @@ DLM rather than stipulating it.
 - → `Core/ProcessingModel.lean`: dep length maps to locality dimension
 - → `Formal/HeadCriteria.lean`: consistent head direction reduces dep length
 
-## References
-
-- Futrell, R., Levy, R. & Gibson, E. (2020). Dependency locality as an
-  explanatory principle for word order. Language 96(2):371–412.
-- Behaghel, O. (1909, 1932). Beziehungen zwischen Umfang und Reihenfolge
-  von Satzgliedern. Deutsche Syntax IV.
-- Ferrer-i-Cancho, R. (2006). Why do syntactic links not cross?
-- Gibson, E. (2000). The dependency locality theory.
 -/
 
 namespace DepGrammar.DependencyLength

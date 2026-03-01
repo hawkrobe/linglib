@@ -33,11 +33,6 @@ From Horn (1984), Rett (2015):
    M-alternatives only exist in polar-invariant constructions where
    antonyms have the same truth conditions.
 
-## References
-
-- Geurts, B. (2010). Quantity Implicatures. Cambridge University Press.
-- Horn, L. (1984). Toward a new taxonomy for pragmatic inference.
-- Rett, J. (2015). The Semantics of Evaluativity. Oxford University Press.
 -/
 
 import Linglib.Theories.Pragmatics.NeoGricean.Core.Basic

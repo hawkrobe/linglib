@@ -3,6 +3,7 @@ import Linglib.Core.Scales.HornScale
 
 /-!
 # Horn Scale Bridge
+@cite{horn-1972}
 
 Connects the string-based `HornScaleDatumPair` records in
 `Phenomena/ScalarImplicatures/Basic.lean` to the typed Horn scale algebra
@@ -23,9 +24,6 @@ possibleNecessaryDatum), we prove:
 3. **Scale membership**: the datum's `strongerTerm` is indeed stronger
    in the typed scale.
 
-## References
-
-- Horn, L. (1972). On the Semantic Properties of Logical Operators in English.
 -/
 
 namespace Phenomena.ScalarImplicatures.Bridge.HornScale

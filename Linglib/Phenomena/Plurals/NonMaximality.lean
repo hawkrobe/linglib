@@ -16,13 +16,6 @@ Non-maximal readings arise when the distinction between "all" and "some but not 
 is irrelevant for the conversational goals. The perceived truth conditions are
 "weakened" to match the salient issue.
 
-## References
-
-- Krifka (1996): "Pragmatic strengthening in plural predications"
-- Lasersohn (1999): "Pragmatic halos"
-- Malamud (2012): Decision problems and non-maximality
-- Križ (2015, 2016): Issue-based semantics
-- Križ & Spector (2021): Supervaluationist approach
 -/
 
 namespace Phenomena.Plurals.NonMaximality

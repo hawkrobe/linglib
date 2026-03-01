@@ -23,13 +23,6 @@ when do-support is used and ungrammatical without it.
 
 **§4 Anticorrelation**: Do-support and verb raising are complementary.
 
-## References
-
-- Pollock, J.-Y. (1989). Verb Movement, Universal Grammar, and the Structure
-  of IP. Linguistic Inquiry 20(3):365-424. @cite{pollock-1989}
-- Arregi, K. & Pietraszko, A. (2021). The Ups and Downs of Head
-  Displacement. Linguistic Inquiry 52(2):241-290.
-  @cite{arregi-pietraszko-2021}
 -/
 
 namespace Phenomena.WordOrder.Bridge.MinimalismVerbMovement

@@ -27,10 +27,6 @@ Phenomena/Reference/Studies/Percus2000.lean  (this file)
   reading computations → truth values → match empirical judgments
 ```
 
-## References
-
-- Percus, O. (2000). Constraints on some other variables in syntax.
-  *Natural Language Semantics* 8(3): 173–229.
 -/
 
 namespace Phenomena.Reference.Studies.Percus2000

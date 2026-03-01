@@ -3,6 +3,7 @@ import Linglib.Core.Partition
 
 /-!
 # Questions/Partition.lean
+@cite{groenendijk-stokhof-1984}
 
 Groenendijk & Stokhof (1984) Partition Semantics for Questions.
 
@@ -24,10 +25,6 @@ to any equivalence-relation partition, not just question denotations.
 
 This module provides question-specific constructors and interpretation.
 
-## References
-
-- Groenendijk & Stokhof (1984). Studies on the Semantics of Questions.
-- Groenendijk & Stokhof (1997). Questions. Handbook of Logic and Language.
 -/
 
 namespace Semantics.Questions

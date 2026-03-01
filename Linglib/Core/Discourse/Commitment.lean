@@ -3,6 +3,7 @@ import Linglib.Core.Semantics.CommonGround
 
 /-!
 # Discourse Commitments
+@cite{brandom-1994} @cite{gunlogson-2001} @cite{krifka-2015}
 
 Shared types for modeling public commitments in discourse, used by
 multiple theories of assertion (Krifka, Brandom, Gunlogson).
@@ -16,11 +17,6 @@ their private beliefs). This separation is crucial for:
 - **Gunlogson (2001)**: source-marking distinguishes self-generated from
   other-generated commitments
 
-## References
-
-- Krifka, M. (2015). Bias in Commitment Space Semantics. *L&P* 38.
-- Brandom, R. (1994). *Making It Explicit*. Harvard UP.
-- Gunlogson, C. (2001). *True to Form*. PhD dissertation, UC Santa Cruz.
 -/
 
 namespace Core.Discourse.Commitment

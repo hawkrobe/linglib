@@ -4,6 +4,7 @@ import Linglib.Core.Context.Tower
 
 /-!
 # Percus (2000): Constraints on Situation Variables in Syntax @cite{percus-2000}
+@cite{heim-kratzer-1998} @cite{kratzer-1998} @cite{partee-1973}
 
 Formalizes Percus's theory of situation pronouns in LF. Every predicate
 takes a situation argument, every clause introduces a lambda-s binder, and
@@ -43,12 +44,6 @@ situation variables). The algebraic structure is identical:
 | `updateTemporal g n t`  | `updateSitVar g n s`             |
 | `temporalLambdaAbs`     | `sitLambdaAbs`                   |
 
-## References
-
-- Percus, O. (2000). Constraints on some other variables in syntax.
-  *Natural Language Semantics* 8(3): 173-229.
-- Partee, B. (1973). Some structural analogies between tenses and pronouns.
-- Kratzer, A. (1998). More structural analogies between pronouns and tenses.
 -/
 
 namespace Semantics.Intensional.Situations.Percus

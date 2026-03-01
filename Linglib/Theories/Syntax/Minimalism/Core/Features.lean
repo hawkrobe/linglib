@@ -3,6 +3,7 @@ import Linglib.Core.Prominence
 
 /-!
 # Feature Infrastructure for Minimalist Agree
+@cite{adger-2003} @cite{chomsky-2000} @cite{chomsky-2001}
 
 Phi-features, case values, and feature bundles — the shared infrastructure
 underlying all Agree-based operations. Extracted from `Agree.lean` to
@@ -28,11 +29,6 @@ For unvalued (probe) features, the `PersonLevel` value is irrelevant —
 ignoring the specific value. Use `.person .third` as the conventional
 placeholder for probes.
 
-## References
-
-- Chomsky, N. (2000). "Minimalist Inquiries"
-- Chomsky, N. (2001). "Derivation by Phase"
-- Adger, D. (2003). "Core Syntax", Chapter 4
 -/
 
 namespace Minimalism

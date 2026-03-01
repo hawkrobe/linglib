@@ -24,15 +24,6 @@ Several implicational universals are stated as theorems:
 3. **Medial-final dominance**: all six sampled languages are medial-final
 4. **SS unmarked**: in every SR language in the sample, SS is the unmarked member
 
-## References
-
-- Sarvasy, H. S. (2017). A Grammar of Nungon. Brill.
-- Sarvasy, H. S. (2015). Breaking the clause chains. Studies in Language 39(3).
-- Aikhenvald, A. Y. (2008). The Manambu Language of East Sepik, Papua New Guinea.
-  Oxford University Press.
-- Merlan, F. & A. Rumsey (1991). Ku Waru. Cambridge University Press.
-- de Vries, L. (2025). Clause chaining in Greater Awyu. In Sarvasy &
-  Aikhenvald (eds.), Clause Chaining in the Languages of the World.
 -/
 
 namespace Phenomena.ClauseChaining.Data

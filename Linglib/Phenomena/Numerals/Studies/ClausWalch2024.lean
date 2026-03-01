@@ -2,6 +2,7 @@ import Mathlib.Data.Rat.Defs
 
 /-!
 # Claus & Walch (2024): Evaluative Valence Distinguishes "at most" from "up to"
+@cite{blok-2015} @cite{claus-walch-2024} @cite{kennedy-2015}
 
 Empirical data from two experiments showing that "at most" and "up to" have identical
 truth conditions but divergent framing effects due to evaluative valence.
@@ -25,13 +26,6 @@ This reversal is predicted by Blok's (2015) evaluative valence distinction:
 - "at most" carries negative evaluative valence → endorsed in negative contexts
 - "up to" carries positive evaluative valence → endorsed in positive contexts
 
-## References
-
-- Claus, B. & Walch, V. (2024). Evaluative valence distinguishes at most from up to.
-  *Proceedings of Sinn und Bedeutung* 28.
-- Blok, D. (2015). The semantics and pragmatics of directional numeral modifiers.
-  *SALT* 25, 471–490.
-- Kennedy, C. (2015). A "de-Fregean" semantics for modified and unmodified numerals.
 -/
 
 namespace Phenomena.Numerals.Studies.ClausWalch2024

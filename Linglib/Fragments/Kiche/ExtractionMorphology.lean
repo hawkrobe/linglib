@@ -2,6 +2,7 @@ import Linglib.Core.Interfaces.ExtractionMorphology
 
 /-!
 # K'iche' Extraction Morphology Fragment
+@cite{elkins-imanishi-coon-2026} @cite{henderson-2008} @cite{imanishi-2020} @cite{mondloch-2017} @cite{mondloch-romero-2022} @cite{romero-2012}
 
 Theory-neutral data on the extraction particle *wi* in K'iche' (and more
 broadly K'ichean Mayan), contrasted with SJO Mam's =(y)a' (Elkins,
@@ -25,17 +26,6 @@ key respects:
    This generalization does not hold for =(y)a', which is conditioned
    by clause size and oblique status, not movement type.
 
-## References
-
-- Romero, S. (2012). "They don't get lost anymore."
-- Mondloch, J. (2017). K'iche' Maya reference grammar.
-- Mondloch, J. & S. Romero (2022). Clause structure and movement in
-  K'ichean. Ms.
-- Henderson, R. (2008). Extraction and word order in K'iche'.
-- Imanishi, Y. (2020). Parameterizing split ergativity in Mayan.
-- López Ixcoy, C. D. (2022). Extraction morphology in K'iche'.
-- Elkins, N., Y. Imanishi & J. Coon (2026). Wh-movement and oblique
-  extraction in SJO Mam.
 -/
 
 namespace Fragments.Kiche

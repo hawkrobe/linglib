@@ -4,6 +4,7 @@ import Linglib.Core.Context.Shifts
 
 /-!
 # Tense Phenomena: ContextTower Bridge
+@cite{abusch-1997} @cite{schlenker-2003} @cite{von-stechow-2009}
 
 End-to-end derivation chain connecting the ContextTower infrastructure
 to concrete tense phenomena. The core insight: embedded tense is modeled
@@ -32,11 +33,6 @@ Phenomena.TenseAspect.Data (matrixSaid, embeddedSickSimultaneous, etc.)
 4. **Tower depth = embedding depth**: one attitude verb = depth 1; nested
    attitudes = depth 2+
 
-## References
-
-- Abusch, D. (1997). Sequence of tense and temporal de re. L&P 20.
-- Von Stechow, A. (2009). Tenses in compositional semantics.
-- Schlenker, P. (2003). A Plea for Monsters. L&P.
 -/
 
 namespace Phenomena.TenseAspect.Bridge.TowerBridge

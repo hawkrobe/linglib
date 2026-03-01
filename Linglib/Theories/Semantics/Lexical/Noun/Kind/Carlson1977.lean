@@ -48,13 +48,6 @@ Carlson connects this to bare plural interpretation:
    - "A dog was everywhere" (bizarre: same dog everywhere)
    - "Dogs were everywhere" (natural: different dogs in different places)
 
-## References
-
-- Carlson, G. (1977). A Unified Analysis of the English Bare Plural.
-  Linguistics and Philosophy 1(3): 413-457.
-- Milsark, G. (1974). Existential Sentences in English. PhD thesis, MIT.
-- Siegel, M. E. A. (1976). Capturing the Adjective. PhD thesis, UMass Amherst.
-- Dowty, D. (1972). Studies in the Logic of Verb Aspect. PhD thesis, UT Austin.
 -/
 
 import Mathlib.Data.Set.Basic

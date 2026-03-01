@@ -20,11 +20,6 @@ Different answer types have different exhaustive requirements:
 - Definite plurals: exhaustive
 - Indefinites: non-exhaustive
 
-## References
-
-- Groenendijk & Stokhof (1984). Studies on the Semantics of Questions. Ch. IV.
-- Van Rooy (2003). Questioning to Resolve Decision Problems.
-- Dayal (2016). Questions. Ch. 2.
 -/
 
 import Linglib.Phenomena.Questions.Basic

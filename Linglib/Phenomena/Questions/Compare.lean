@@ -37,12 +37,6 @@ All three frameworks share the insight that question choice is informative:
 - **R&H**: Using VERUM question signals checking commitment → speaker has prior belief
 - **PRIOR-PQ**: Question choice reveals decision problem → respondent infers goals
 
-## References
-
-- Van Rooy, R. (2003). Questioning to Resolve Decision Problems. L&P 26.
-- Van Rooy, R. & Šafářová, M. (2003). On Polar Questions. SALT 13.
-- Romero, M. & Han, C.-H. (2004). On Negative Yes/No Questions.
-- Hawkins, R.D., et al. (2025). Relevant answers to polar questions.
 -/
 
 import Linglib.Core.Agent.DecisionTheory

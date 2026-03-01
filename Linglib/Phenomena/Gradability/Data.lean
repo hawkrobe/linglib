@@ -23,13 +23,6 @@ For evaluativity patterns, see `Gradability/Evaluativity.lean`.
 Scales (⟨warm, hot⟩, ⟨some, all⟩) are grounded in degree semantics:
 "hot" is stronger than "warm" because it requires a higher degree threshold.
 
-## References
-
-- Kennedy, C. (2007). Vagueness and grammar.
-- Kennedy, C. & McNally, L. (2005). Scale structure and degree modification.
-- Morzycki, M. (2009). Degree modification of gradable nouns.
-- Lassiter, D. & Goodman, N. (2017). Adjectival vagueness in a Bayesian model.
-- Burnett, H. (2017). Gradability in Natural Language.
 -/
 
 namespace Phenomena.Gradability

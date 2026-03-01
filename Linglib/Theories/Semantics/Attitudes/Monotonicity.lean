@@ -29,11 +29,6 @@ what follows about conjunction distribution and neg-raising?
    (`mono_att_distrib_and_iff` in `Truthmaker.Basic`) proves that the
    distribution follows from the `SemilatticeSup` structure of states.
 
-## References
-
-- Bondarenko, T. & Elliott, P.D. (2026). Monotonicity via mereology.
-  @cite{bondarenko-elliott-2026}
-- Icard, T. (2012). Inclusion and Exclusion in Natural Language.
 -/
 
 namespace Semantics.Attitudes.Monotonicity

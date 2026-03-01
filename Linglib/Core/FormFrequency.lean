@@ -2,6 +2,7 @@ import Linglib.Core.Prominence
 
 /-!
 # Form-Frequency Correspondence @cite{haspelmath-2021}
+@cite{zipf-1935}
 
 Haspelmath's (2021, §10.2) deeper explanation of argument-coding splits:
 the Role-Reference Association Universal (Universal 1) itself reduces to a
@@ -25,11 +26,6 @@ The key chain of explanation:
 This explains WHY the monotonicity patterns in DOM/DSM/differential
 indexing exist: they track frequency gradients on the prominence scales.
 
-## References
-
-- Haspelmath, M. (2021). Explaining argument-coding splits with
-  role-reference associations. Linguistics 59(5): 1231–1270.
-- Zipf, G. K. (1935). The Psycho-Biology of Language. Houghton Mifflin.
 -/
 
 namespace Core.FormFrequency

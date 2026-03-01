@@ -2,6 +2,7 @@ import Linglib.Theories.Pragmatics.Assertion.Krifka
 
 /-!
 # Krifka Bridge: Commitment Space Development (CSD) Tests
+@cite{krifka-2015}
 
 Worked examples exercising the tree-based commitment space operations
 from Krifka (2015, §2–5). Each test uses a concrete 2-world model
@@ -18,9 +19,6 @@ questions, acceptance, and rejection interact.
 6. Bipolar questions create two continuations
 7. Matching tags combine assertion + question bias
 
-## References
-
-- Krifka, M. (2015). Bias in Commitment Space Semantics. *L&P* 38: 115–143.
 -/
 
 namespace Phenomena.Assertion.Bridge.KrifkaCSD

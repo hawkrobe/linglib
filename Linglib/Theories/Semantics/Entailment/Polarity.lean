@@ -30,11 +30,6 @@ Mathlib provides composition lemmas for free:
 The polarity composition rules are a homomorphic image of the
 `EntailmentSig` monoid — see `EntailmentSig.toContextPolarity_compose`.
 
-## References
-
-- van Benthem (1986). Essays in Logical Semantics.
-- Ladusaw (1980). Polarity Sensitivity as Inherent Scope Relations.
-- Barwise & Cooper (1981). Generalized Quantifiers and Natural Language.
 -/
 
 import Mathlib.Order.Monotone.Defs

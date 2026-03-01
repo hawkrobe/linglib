@@ -7,8 +7,6 @@ Model comparison for doubly-quantified sentences. Global Intentions (GI) achieve
 - `NestedAristotelian`, `RSAModel`, `ModelResult`
 - `GrammaticalParse`, `ExhPosition`
 
-## References
-- Franke & Bergen (2020). Theory-driven statistical modeling for semantics and pragmatics. Annual Review of Linguistics, 6:533–562.
 -/
 
 namespace Phenomena.Quantification.Studies.FrankeBergen2020

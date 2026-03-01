@@ -27,16 +27,6 @@ Different theories use different "command" relations:
 obliqueness), these four approaches are equivalent. This explains why
 the theories make identical predictions on simple transitive clauses.
 
-## References
-
-- Barker, C. & G. Pullum (1990). A Theory of Command Relations.
-  Linguistics and Philosophy 13: 1-34.
-- Reinhart (1976). The Syntactic Domain of Anaphora. (introduced c-command)
-- Pollard & Sag (1994). HPSG, Ch. 6. (o-command based on obliqueness)
-- Hudson (1990). English Word Grammar. (DG with grammatical functions as primitive)
-- Osborne & Li (2023). Conjunct Referential Dependency Constraint. (recent DG binding)
-- Chomsky (1981). Lectures on Government and Binding.
-- Hale (1983). Warlpiri and the grammar of non-configurational languages.
 -/
 
 import Linglib.Fragments.English.Nouns

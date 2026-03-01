@@ -24,13 +24,6 @@ they introduce or retrieve temporal reference points.
    - Tense operators take a situation argument and constrain its time
    - τ(s) is the temporal trace of situation s
 
-## References
-
-- Reichenbach, H. (1947). Elements of Symbolic Logic.
-- Partee, B. (1973). Some structural analogies between tenses and pronouns.
-- Kratzer, A. (1998). More structural analogies between pronouns and tenses.
-- Klein, W. (1994). Time in Language.
-- Mendes, A. (2025). Indefiniteness in future reference. S&P 18(10).
 -/
 
 import Linglib.Core.Temporal.Tense

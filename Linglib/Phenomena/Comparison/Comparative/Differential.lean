@@ -1,5 +1,6 @@
 /-!
 # Differential Comparatives
+@cite{schwarzschild-2005} @cite{solt-2015} @cite{winter-2005}
 
 Empirical data on differential comparatives: constructions that specify
 the extent of the comparison ("3 inches taller", "twice as expensive",
@@ -14,11 +15,6 @@ the extent of the comparison ("3 inches taller", "twice as expensive",
 3. **Degree modifiers** ("much", "slightly", "a lot") are less restrictive
    than measure phrases — they work with open scales.
 
-## References
-
-- Schwarzschild, R. (2005). Measure phrases as modifiers of adjectives.
-- Solt, S. (2015). Q-adjectives and the semantics of quantity.
-- Winter, Y. (2005). Cross-categorial restrictions on measure phrase modification.
 -/
 
 namespace Phenomena.Comparison.Comparative.Differential

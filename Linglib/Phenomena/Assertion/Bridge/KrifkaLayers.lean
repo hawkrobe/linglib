@@ -3,6 +3,7 @@ import Linglib.Theories.Pragmatics.Assertion.Krifka
 
 /-!
 # Krifka Bridge: Layered Clause Structure
+@cite{krifka-2015}
 
 Connects Krifka's clause-layer analysis to the theory-neutral assertion data.
 
@@ -15,9 +16,6 @@ Connects Krifka's clause-layer analysis to the theory-neutral assertion data.
 3. **JP and ComP are independent**: hedges and oaths can co-occur
    ("I think I swear p" vs "I swear I think p").
 
-## References
-
-- Krifka, M. (2015). Bias in Commitment Space Semantics. *L&P* 38.
 -/
 
 namespace Phenomena.Assertion.Bridge.KrifkaLayers

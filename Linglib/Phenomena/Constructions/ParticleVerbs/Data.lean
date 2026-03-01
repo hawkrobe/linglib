@@ -1,5 +1,6 @@
 /-!
 # Particle Verb Constructions — Empirical Data
+@cite{dendikken-1995} @cite{johnson-1991}
 
 Theory-neutral data on English verb-particle constructions (VPCs / PVCs),
 including particle shift alternation and its constraints.
@@ -10,11 +11,6 @@ including particle shift alternation and its constraints.
 2. **Pronoun constraint**: pronouns force split order (*"lifted up her" vs "lifted her up")
 3. **Heavy NP constraint**: heavy NPs force continuous order ("lifted up the box that was on the table")
 
-## References
-
-- Johnson, K. (1991). Object positions. NLLT 9(4):577–636.
-- den Dikken, M. (1995). Particles: On the Syntax of Verb-Particle, Triadic, and
-  Causative Constructions. OUP.
 -/
 
 namespace Phenomena.Constructions.ParticleVerbs

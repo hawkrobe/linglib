@@ -4,6 +4,7 @@ import Mathlib.Tactic.Linarith
 
 /-!
 # Differential Comparative Semantics
+@cite{schwarzschild-2005} @cite{solt-2015} @cite{winter-2005}
 
 Compositional semantics for measure phrase differentials in comparatives:
 "3 inches taller", "twice as tall as".
@@ -19,12 +20,6 @@ This requires a **ratio scale** (with a meaningful zero point and unit),
 not just an ordinal or interval scale. Hence "3 inches taller" ✓ but
 "*3 units more beautiful" ✗.
 
-## References
-
-- Schwarzschild, R. (2005). Measure phrases as modifiers of adjectives.
-- Solt, S. (2015). Q-adjectives and the semantics of quantity.
-- Winter, Y. (2005). Cross-categorial restrictions on measure phrase
-  modification.
 -/
 
 namespace Semantics.Degree.Differential

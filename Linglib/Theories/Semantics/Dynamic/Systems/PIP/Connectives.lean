@@ -3,9 +3,7 @@ import Linglib.Theories.Semantics.Dynamic.Systems.PIP.Basic
 /-!
 # PIP Connectives and Modal Operators
 
-@cite{keshet-abney-2024}
-
-Dynamic encoding of PIP connectives (Keshet & Abney 2024):
+@cite{keshet-abney-2024} @cite{frank-1997} @cite{kratzer-1991} @cite{veltman-1996}Dynamic encoding of PIP connectives (Keshet & Abney 2024):
 - Conjunction, negation, disjunction (with label floating)
 - Labeled existential quantification
 - Modal operators (must, might, would) as world quantifiers
@@ -27,12 +25,6 @@ PIP's modals are generalized quantifiers over worlds (paper Section 2.5):
 Our encoding parameterizes by an accessibility relation (equivalent to
 a Kratzer modal base β) and quantifies over accessible worlds.
 
-## References
-
-- Keshet, E. & Abney, S. (2024). Intensional Anaphora. S&P 17.
-- Kratzer, A. (1991). Modality. In Semantics: An International Handbook.
-- Veltman, F. (1996). Defaults in Update Semantics. JPhilLogic 25(3).
-- Frank, A. (1997). Context Dependence in Modal Constructions. PhD diss., Stuttgart.
 -/
 
 namespace Semantics.Dynamic.PIP

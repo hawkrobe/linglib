@@ -12,12 +12,6 @@ the interaction of domain widening with different alternative sources and Gricea
 maxim failures. *Only* shares the exhaustification semantics but requires Roothian
 alternatives, explaining why it substitutes in only 2 of the 7 flavors.
 
-## References
-
-- Deo, A. & Thomas, W. (2025). Addressing the widest answerable question:
-  English "just" as a domain widening strategy.
-- Groenendijk & Stokhof (1984). Studies on the Semantics of Questions.
-- Rooth, M. (1992). A theory of focus interpretation.
 -/
 
 import Linglib.Core.Discourse.QUD

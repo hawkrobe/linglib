@@ -35,13 +35,6 @@ Not all decision problems can be expressed as QUD partitions.
 U_Combined(u|w,A) = λ·U_Relevance + (1-λ)·U_Truthfulness + C(u)
 ```
 
-## References
-
-- Sumers, T.R., et al. (2023). Reconciling Truthfulness and Relevance in
-  Communication. (Under review / working paper)
-- Van Rooy, R. (2003). Questioning to Resolve Decision Problems. L&P 26.
-- Groenendijk, J. & Stokhof, M. (1984). Studies on the Semantics of Questions.
-- Blackwell, D. (1953). Equivalent Comparisons of Experiments.
 -/
 
 import Linglib.Core.Agent.DecisionTheory

@@ -3,6 +3,7 @@ import Linglib.Core.ProcessingModel
 
 /-!
 # Memory-Surprisal Trade-off Framework
+@cite{futrell-2019} @cite{hahn-degen-futrell-2021} @cite{zaslavsky-hu-levy-2020}
 
 Core formalization of Hahn, Degen & Futrell (2021) "Modeling Word and Morpheme
 Order as an Efficient Trade-Off of Memory and Surprisal", *Psychological Review*
@@ -36,15 +37,6 @@ at which predictive information concentrates.
 - §3: Trade-off curve (TradeoffPoint, TradeoffCurve, AUC)
 - §4: Bridges (rate-distortion, processing model, dependency locality)
 
-## References
-
-- Hahn, M., Degen, J. & Futrell, R. (2021). Modeling word and morpheme order
-  as an efficient trade-off of memory and surprisal. *Psychological Review*
-  128(4):726–756.
-- Futrell, R. (2019). Information-theoretic locality properties of natural
-  language. *EMNLP*.
-- Zaslavsky, N., Hu, J. & Levy, R. (2020). A rate-distortion view of human
-  pragmatic reasoning.
 -/
 
 namespace DepGrammar.MemorySurprisal

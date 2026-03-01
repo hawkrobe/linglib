@@ -3,6 +3,7 @@ import Linglib.Fragments.Mandarin.QuestionParticles
 
 /-!
 # Nandao-Q Empirical Data (Zheng 2026)
+@cite{alleton-1988} @cite{zheng-2026}
 
 Theory-neutral data on Mandarin *nandao*-question felicity. The core finding
 is that positive evidential bias is **necessary** for nandao-Q felicity, while
@@ -15,11 +16,6 @@ negative epistemic bias is **neither necessary nor sufficient**.
 3. Evidence must be **unexpected** relative to prior information state
 4. Nandao-Qs can function as pure inquiry (no prior belief required)
 
-## References
-
-- Zheng, A.A. (2026). nandao-Qs: When Surprise Sparks Inquiry. WCCFL 43.
-- Alleton, V. (1988). The so-called 'rhetorical interrogation' in Mandarin Chinese.
-- Xu, L. (2012/2017). Nandao questions.
 -/
 
 namespace Phenomena.Questions.NandaoQs

@@ -39,10 +39,6 @@ These can come apart in overdetermination cases:
 - Lightning sufficient for fire
 - Lightning NOT necessary (arsonist would have caused it anyway)
 
-## References
-
-- Nadathur & Lauer (2020), Section 5.2
-- Lewis (1973). Counterfactuals.
 -/
 
 import Linglib.Core.StructuralEquationModel

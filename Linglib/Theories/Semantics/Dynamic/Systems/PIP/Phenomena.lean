@@ -3,9 +3,7 @@ import Linglib.Theories.Semantics.Dynamic.Systems.PIP.Connectives
 /-!
 # PIP: Worked Phenomena
 
-@cite{keshet-abney-2024}
-
-Concrete examples demonstrating how PIP handles the core anaphora puzzles
+@cite{keshet-abney-2024} @cite{karttunen-1969} @cite{partee-1972} @cite{roberts-1989} @cite{stone-1997}Concrete examples demonstrating how PIP handles the core anaphora puzzles
 via description-based retrieval over finite models:
 
 1. **Stone's puzzle**: "A wolf might come in. It would eat you first."
@@ -15,13 +13,6 @@ via description-based retrieval over finite models:
 Each example uses a small finite world/entity model with `native_decide`
 to verify PIP's predictions.
 
-## References
-
-- Keshet, E. & Abney, S. (2024). Intensional Anaphora. S&P 17.
-- Stone, M. (1997). The Anaphoric Parallel between Modality and Tense.
-- Roberts, C. (1989). Modal Subordination and Pronominal Anaphora.
-- Partee, B. (1972). Opacity, Coreference, and Pronouns.
-- Karttunen, L. (1969). Pronouns and Variables. CLS 5.
 -/
 
 namespace Semantics.Dynamic.PIP.Phenomena

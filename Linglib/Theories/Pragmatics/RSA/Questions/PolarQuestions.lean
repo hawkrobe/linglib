@@ -3,6 +3,7 @@ import Linglib.Core.Agent.DecisionTheory
 
 /-!
 # Decision Problems for Polar Questions (Stub)
+@cite{hawkins-etal-2025} @cite{van-rooy-2003}
 
 Building on Van Rooy (2003), this module defines decision problems for polar questions.
 
@@ -14,10 +15,6 @@ PQDecisionProblem, decision problem constructors) are preserved.
 The `dpExpectedValue` computation that depended on `RSA.Eval.sumScores` has been
 re-implemented with a local helper.
 
-## References
-
-- Van Rooy, R. (2003). Questioning to Resolve Decision Problems. L&P 26.
-- Hawkins, R.D., et al. (2025). Relevant answers to polar questions.
 -/
 
 namespace RSA.Questions

@@ -25,10 +25,6 @@ The squiggle operator (~) introduces a focus constraint via an anaphoric variabl
 3. Scalar implicature - focus alternatives feed into SI computation
 4. Q-A congruence - answer focus must match question
 
-## References
-
-- Rooth, M. (1992). A Theory of Focus Interpretation. Natural Language Semantics 1: 75-116.
-- Hamblin, C. (1973). Questions in Montague English. Foundations of Language.
 -/
 
 import Linglib.Core.Discourse.InformationStructure

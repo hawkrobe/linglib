@@ -5,6 +5,7 @@ import Linglib.Core.Temporal.Tense
 
 /-!
 # Zeijlstra (2012): SOT as Upward Agree
+@cite{chomsky-2000} @cite{zeijlstra-2012}
 
 Zeijlstra's theory: Sequence of Tense is syntactic concord, structurally
 parallel to Negative Concord. Subordinate past morphemes carry
@@ -37,11 +38,6 @@ Agree spell-out, not semantic past.
 - Counterfactual tense: not directly handled
 - Relative clause tense: would require extending Agree domain
 
-## References
-
-- Zeijlstra, H. (2012). There is only one way to agree. *The Linguistic
-  Review* 29(3): 491--539.
-- Chomsky, N. (2000). Minimalist Inquiries.
 -/
 
 namespace Minimalism.Tense.Zeijlstra

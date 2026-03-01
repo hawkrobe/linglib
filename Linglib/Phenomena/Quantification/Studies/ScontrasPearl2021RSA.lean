@@ -8,9 +8,7 @@ import Mathlib.Analysis.SpecialFunctions.Pow.Real
 /-!
 # Scontras & Pearl (2021) — Scope Ambiguity RSA Model
 
-@cite{scontras-pearl-2021}
-
-"When pragmatics matters more for truth-value judgments:
+@cite{scontras-pearl-2021} @cite{goodman-frank-2016}"When pragmatics matters more for truth-value judgments:
 An investigation of quantifier scope ambiguity"
 *Glossa* 6(1): 110.
 
@@ -81,12 +79,6 @@ Children's isomorphic (surface-scope) preference follows from low `b_suc`
 priors. Adult-like inverse scope access emerges from supportive contexts
 (high `b_suc`, all?-biased QUD) — the same model, different priors.
 
-## References
-
-- Scontras, G. & Pearl, L. (2021). When pragmatics matters more for
-  truth-value judgments. *Glossa* 6(1): 110.
-- Goodman, N.D. & Frank, M.C. (2016). Pragmatic language interpretation
-  as probabilistic inference. *TiCS* 20(11): 818-829.
 -/
 
 set_option autoImplicit false

@@ -25,12 +25,6 @@ Adverbials are modeled as `PTSConstraint`s on the PTS interval. The
 `toLBDomain` function converts an adverbial constraint into a domain
 restriction on LB values, which feeds directly into `PERF_XN`.
 
-## References
-
-- Iatridou, S., Anagnostopoulou, E. & Izvorski, R. (2001).
-  Observations about the form and meaning of the Perfect.
-- Knick, A. & Sharf, M. (2026). On focus and the perfect aspect.
-- Klein, W. (1994). Time in Language.
 -/
 
 import Linglib.Theories.Semantics.Tense.TenseAspectComposition

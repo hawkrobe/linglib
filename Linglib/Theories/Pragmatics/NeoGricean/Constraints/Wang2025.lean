@@ -7,6 +7,7 @@ import Linglib.Theories.Semantics.Lexical.Expressives.Basic
 
 /-!
 # Alternative Competition for Presupposition Triggers (Wang 2025)
+@cite{heim-1991} @cite{katzir-2007} @cite{sauerland-2008} @cite{wang-2025}
 
 Constraint-based evaluation of presuppositional vs. non-presuppositional alternatives,
 following Wang (2025) "Presupposition, Competition, and Coherence" Ch. 4.
@@ -44,12 +45,6 @@ The epistemic operator K (speaker's beliefs) interacts with exhaustification:
 - K >> exh_mx: preferred for atomic sentences (speaker-oriented reading)
 - exh_mx >> K: possible for complex sentences
 
-## References
-
-- Wang, S. (2025). Presupposition, Competition, and Coherence. MIT dissertation. Ch. 4.
-- Heim, I. (1991). Artikel und Definitheit. In von Stechow & Wunderlich.
-- Sauerland, U. (2008). Implicated presuppositions.
-- Katzir, R. (2007). Structurally-defined alternatives. L&P 30.
 -/
 
 namespace NeoGricean.Constraints.Wang2025

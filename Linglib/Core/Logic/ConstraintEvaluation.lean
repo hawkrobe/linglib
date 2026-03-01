@@ -1,5 +1,6 @@
 /-!
 # Constraint Evaluation
+@cite{erlewine-2016} @cite{kratzer-1991}
 
 Unified framework for constraint-based candidate evaluation, supporting
 two comparison modes:
@@ -26,14 +27,6 @@ subset inclusion (`satLE`). A `SatisfactionOrdering` with criteria
 else 1, ..., if satisfies a cₙ then 0 else 1]`, and `atLeastAsGood`
 coincides with `satLE` on this profile.
 
-## References
-
-- Prince, A. & P. Smolensky (1993/2004). Optimality Theory: Constraint
-  Interaction in Generative Grammar.
-- Kratzer, A. (1991). Modality. In von Stechow & Wunderlich (eds.),
-  Semantics: An International Handbook.
-- Erlewine, M. Y. (2016). Anti-locality and optimality in Kaqchikel
-  Agent Focus. NALS 24: 923–972.
 -/
 
 namespace Core.ConstraintEvaluation

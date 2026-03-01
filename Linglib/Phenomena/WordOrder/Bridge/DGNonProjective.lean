@@ -3,6 +3,7 @@ import Linglib.Phenomena.WordOrder.NonProjectivity
 
 /-!
 # Bridge: DG Non-Projective Theory → Treebank Non-Projectivity Data
+@cite{kuhlmann-2013} @cite{kuhlmann-nivre-2006}
 
 Connects the structural theory of non-projectivity (Kuhlmann & Nivre 2006,
 Kuhlmann 2013) to empirical treebank data on the prevalence of
@@ -15,10 +16,6 @@ well-nestedness, gap degree, and fan-out constraints.
 - Planarity is insufficient (covers far less than well-nestedness)
 - Fan-out ≤ 2 (block-degree ≤ 2) loses very few trees across all languages
 
-## References
-
-- Kuhlmann, M. & J. Nivre (2006). Mildly Non-Projective Dependency Structures.
-- Kuhlmann, M. (2013). Mildly Non-Projective Dependency Grammar.
 -/
 
 namespace Phenomena.WordOrder.Bridge.DGNonProjective

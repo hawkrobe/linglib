@@ -2,6 +2,7 @@ import Mathlib.Order.Basic
 
 /-!
 # Reichenbach's Temporal Framework
+@cite{kiparsky-2002} @cite{klein-1994} @cite{reichenbach-1947}
 
 Reichenbach (1947) / Klein (1994) tense–aspect parameters, extended with
 Kiparsky's (2002) perspective time P.
@@ -14,11 +15,6 @@ Three (four) distinguished times:
 
 Tense relates R to P; Aspect relates E to R.
 
-## References
-
-- Reichenbach, H. (1947). Elements of Symbolic Logic.
-- Klein, W. (1994). Time in Language.
-- Kiparsky, P. (2002). Event structure and the perfect.
 -/
 
 namespace Core.Reichenbach

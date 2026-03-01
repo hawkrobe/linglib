@@ -21,10 +21,6 @@ Four worlds in a taxonomic hierarchy (Olympic sprinter ⊂ runner ⊂ athlete),
 seven utterances, non-uniform priors. Species-level negation ("not Olympic
 sprinter") triggers stronger accommodation than genus-level ("not runner").
 
-## Reference
-
-Warstadt, A. (2022). Presupposition triggering reflects pragmatic reasoning
-about utterance utility. Proceedings of the 23rd Amsterdam Colloquium, 444–451.
 -/
 
 namespace Phenomena.Presupposition.Studies.Warstadt2022

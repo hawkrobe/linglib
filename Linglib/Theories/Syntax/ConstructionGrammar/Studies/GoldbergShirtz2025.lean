@@ -21,10 +21,6 @@ lunch", "a must-see movie"). Their key theoretical properties:
 4. **Inheritance network**: PALs inherit from both NN compounds (stress,
    no plural on modifier) and Adj+N constructions (prenominal position).
 
-## Reference
-
-Goldberg, A. E., & Shirtz, S. (2025). PAL constructions: How phrases can act
-like words. To appear in Language.
 -/
 
 namespace ConstructionGrammar.Studies.GoldbergShirtz2025

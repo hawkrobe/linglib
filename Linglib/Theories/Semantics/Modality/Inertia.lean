@@ -2,6 +2,7 @@ import Linglib.Theories.Semantics.Modality.Kratzer
 
 /-!
 # Inertial Modality (Dowty 1979) @cite{dowty-1979}
+@cite{fusco-sgrizzi-2025} @cite{kratzer-2012} @cite{portner-1998}
 
 The inertial ordering source ranks accessible worlds by how well they match
 the "normal continuation" of the current state of affairs.
@@ -20,12 +21,6 @@ Inertial modality underpins:
   the experiencer's rational attitude, the leaving comes about
   (Fusco & Sgrizzi 2025)
 
-## References
-
-- Dowty, D. (1979). Word Meaning and Montague Grammar. Reidel.
-- Portner, P. (1998). The progressive and modal semantics. *Language* 74(4).
-- Kratzer, A. (2012). Modals and Conditionals. OUP.
-- Fusco, A. & Sgrizzi, T. (2025). Belief or Action?
 -/
 
 namespace Semantics.Modality.Inertia

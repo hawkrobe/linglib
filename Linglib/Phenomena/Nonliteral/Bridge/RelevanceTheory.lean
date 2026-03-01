@@ -38,12 +38,6 @@ S&W argue these are not distinct categories but a continuum:
 All involve the hearer broadening or loosening the literal content until
 the interpretation achieves relevance.
 
-## References
-
-Sperber, D. & Wilson, D. (1986/95). Relevance. Ch. 4 §3 (pp. 231-237).
-Wilson, D. & Sperber, D. (2002). Truthfulness and relevance. Mind 111.
-Carston, R. (2002). Thoughts and Utterances. Ch. 5 (Metaphor and
-  approximation).
 -/
 
 set_option autoImplicit false

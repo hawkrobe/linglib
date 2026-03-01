@@ -24,10 +24,6 @@ This asymmetry supports lower-bound semantics:
 With exact semantics, the asymmetry is unexplained:
 - If "three" literally means =3, why is "not three" = <3 (not ≠3)?
 
-## References
-
-- Horn, L. (1972). On the Semantic Properties of Logical Operators in English.
-- Jespersen, O. (1917). Negation in English and Other Languages.
 -/
 
 import Linglib.Theories.Semantics.Lexical.Numeral.Semantics

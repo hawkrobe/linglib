@@ -7,9 +7,6 @@ Proofs that Montague semantics correctly predicts truth conditions.
 
 None (theorem-only module)
 
-## References
-
-Montague (1973)
 -/
 
 import Linglib.Theories.Semantics.Montague.Basic

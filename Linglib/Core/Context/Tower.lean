@@ -2,6 +2,7 @@ import Linglib.Core.Context.Basic
 
 /-!
 # Context Tower
+@cite{abusch-1997} @cite{anand-nevins-2004} @cite{cumming-2026} @cite{schlenker-2003}
 
 A depth-indexed stack of context shifts unifying the codebase's context-manipulation
 mechanisms: Kaplanian indexicals (origin access), shifted indexicals (local access),
@@ -26,12 +27,6 @@ FA takes two meanings (function and argument). Both are parameterized by the sam
 tower. FA applies the function to the argument at that tower. The tower is threaded
 as a reader parameter — `ContextTower C → ...` is the enriched meaning type.
 
-## References
-
-- Schlenker, P. (2003). A Plea for Monsters. *Linguistics & Philosophy*.
-- Anand, P. & Nevins, A. (2004). Shifty Operators in Changing Contexts. SALT XIV.
-- Abusch, D. (1997). Sequence of tense and temporal de re. *L&P* 20.
-- Cumming, S. (2026). Tense and evidence. *L&P* 49:153–175.
 -/
 
 namespace Core.Context

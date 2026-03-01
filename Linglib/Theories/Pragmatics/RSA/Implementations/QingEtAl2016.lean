@@ -2,12 +2,9 @@ import Linglib.Theories.Semantics.Lexical.Verb.ChangeOfState.Theory
 import Mathlib.Data.Rat.Defs
 
 /-!
-# Qing, Goodman & Lassiter (2016): RSA Projective Content Model @cite{qing-etal-2016}
+# Qing, Goodman & Lassiter (2016) @cite{qing-goodman-lassiter-2016}
 
-"A rational speech-act model of projective content"
-Proceedings of the Annual Meeting of the Cognitive Science Society, 38.
-
-The original formulation of the joint-inference-over-(world, context) model
+RSA Projective Content Model. The original formulation of the joint-inference-over-(world, context) model
 for presupposition projection. Scontras & Tonhauser (2025) and Warstadt (2022)
 are mathematically equivalent instances applied to different domains.
 
@@ -43,12 +40,6 @@ Context sets:
 2. QUD sensitivity: projection is stronger when QUD = now?
    (non-at-issue content projects more)
 
-## References
-
-- Qing, C., Goodman, N. D., & Lassiter, D. (2016). A rational speech-act
-  model of projective content. CogSci 2016.
-- Scontras & Tonhauser (2025). Projection without lexically-specified presupposition.
-- Warstadt (2022). Presupposition accommodation through pragmatic inference.
 -/
 
 namespace RSA.QingEtAl2016

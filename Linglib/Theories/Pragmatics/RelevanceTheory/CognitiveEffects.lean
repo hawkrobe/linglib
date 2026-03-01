@@ -22,9 +22,6 @@ Contradiction is positive because eliminating a false assumption improves
 the individual's representation of the world. These three exhaust the ways
 an input can be relevant — an input that produces none of these is irrelevant.
 
-## References
-
-Sperber, D. & Wilson, D. (1986/95). Relevance. Ch. 3 §1-3; Postface.
 -/
 
 set_option autoImplicit false

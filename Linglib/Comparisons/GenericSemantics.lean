@@ -13,11 +13,6 @@ such that threshold semantics gives the same truth value.
 GEN is eliminable: threshold semantics can express any GEN configuration,
 making the observable "prevalence" sufficient.
 
-## References
-
-- Krifka, M. et al. (1995). Genericity: An Introduction.
-- Tessler, M. H. & Goodman, N. D. (2019). The Language of Generalization.
-- Lassiter, D. & Goodman, N. D. (2017). Adjectival vagueness in a Bayesian model.
 -/
 
 import Linglib.Theories.Semantics.Lexical.Noun.Kind.Generics

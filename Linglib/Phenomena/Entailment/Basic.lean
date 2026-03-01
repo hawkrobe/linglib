@@ -14,11 +14,6 @@ Core patterns in semantic entailment: truth conditions and entailment judgments.
 - Scalar implicatures (see `ScalarImplicatures/`)
 - Negation (see `Negation/`)
 
-## References
-
-- Barwise & Cooper (1981). Generalized Quantifiers and Natural Language.
-- Keenan & Stavi (1986). A semantic characterization of natural language determiners.
-- van Benthem (1986). Essays in Logical Semantics.
 -/
 
 import Linglib.Core.Empirical

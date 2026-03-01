@@ -21,10 +21,6 @@ a 4,700-example annotated data set of naturally occurring English sluices.
 
 4. **Embedding is the norm**: 72.4% of sluices are embedded.
 
-## References
-
-- Anand, P., Hardt, D. & McCloskey, J. (2021). The Santa Cruz sluicing
-  data set. *Language* 97(1): e68–e88.
 -/
 
 namespace Phenomena.Ellipsis.Studies.AnandHardtMcCloskey2021.Data

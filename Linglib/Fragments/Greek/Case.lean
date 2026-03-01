@@ -15,9 +15,6 @@ the dative.
 The Modern Greek system (excluding VOC) is the minimal "inner
 peripheral" inventory: core cases + genitive.
 
-## References
-
-- Blake, B. J. (1994). *Case*. Cambridge University Press.
 -/
 
 namespace Fragments.Greek.Case

@@ -20,13 +20,6 @@ However, following Grusdt et al. (2022), we can maintain classical semantics
 while deriving apparent exceptions through RSA pragmatics. The key is that
 conditionals assert high conditional probability, not material implication.
 
-## References
-
-- Stalnaker (1968). A Theory of Conditionals.
-- Lewis (1973). Counterfactuals.
-- Kratzer (1991). Modality / Conditionals.
-- Grusdt, Lassiter & Franke (2022). Probabilistic modeling of rational
-  communication with conditionals.
 -/
 
 import Linglib.Core.Semantics.Proposition

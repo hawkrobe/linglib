@@ -6,6 +6,7 @@ import Linglib.Fragments.Serbian.TemporalConnectives
 
 /-!
 # Alstott & Aravind (2026): Bridge File
+@cite{alstott-aravind-2026} @cite{rett-2020}
 
 Connects the experimental data in `Data.lean` to Rett's (2020) INCHOAT/COMPLET
 operators and the English/Tagalog/Serbian temporal connective fragments.
@@ -27,10 +28,6 @@ operators and the English/Tagalog/Serbian temporal connective fragments.
    mark the same distinction that English encodes covertly and Alstott &
    Aravind measure as processing cost.
 
-## References
-
-- Alstott, A. & Aravind, A. (2026). Aspectual coercion in *before*/*after*-clauses.
-- Rett, J. (2020). Eliminating EARLIEST. *Sinn und Bedeutung* 24.
 -/
 
 namespace Phenomena.TenseAspect.Studies.AlstottAravind2026

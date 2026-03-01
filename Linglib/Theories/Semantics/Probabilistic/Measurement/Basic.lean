@@ -4,6 +4,7 @@ import Mathlib.Algebra.Order.Field.Rat
 
 /-!
 # Measurement Semantics
+@cite{bale-schwarz-2026} @cite{kennedy-2015} @cite{krifka-1989} @cite{scontras-2014}
 
 Formal semantics of measurement: measure functions, measure terms, and their
 connection to numeral semantics and degree semantics.
@@ -60,12 +61,6 @@ on these measure functions: addition and multiplication are available, but
 division is not. Quotient dimensions (density = mass/volume) exist in the
 quantity calculus but are not compositionally derivable.
 
-## References
-
-- Scontras, G. (2014). *The Semantics of Measurement*. Ph.D. dissertation, Harvard.
-- Kennedy, C. (2015). A "de-Fregean" semantics for modified and unmodified numerals.
-- Krifka, M. (1989). Nominal reference, temporal constitution, and quantification.
-- Bale, A. & Schwarz, B. (2026). Natural language and external conventions.
 -/
 
 namespace Semantics.Probabilistic.Measurement

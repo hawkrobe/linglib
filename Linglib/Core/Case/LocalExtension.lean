@@ -2,6 +2,7 @@ import Linglib.Core.Case.Hierarchy
 
 /-!
 # Local Case Extension Paths @cite{blake-1994}
+@cite{heine-2009}
 
 Blake (1994, Ch. 6) documents how semantic cases — especially local cases —
 extend to cover grammatical functions through grammaticalization (pp. 172–175).
@@ -21,11 +22,6 @@ occurred in a number of Indo-European languages"), LOC→DAT extension (p. 188,
 note 15), and ALL→DAT overlap (p. 174: "A dative will often express destination
 as well"). We encode these as directed chains for computational use.
 
-## References
-
-- Blake, B. J. (1994). *Case*. Cambridge University Press. Ch. 6.
-- Heine, B. (2009). Grammaticalization of cases. In Malchukov, A. & Spencer, A.
-  (eds.), *The Oxford Handbook of Case*. OUP.
 -/
 
 namespace Core

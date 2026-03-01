@@ -2,6 +2,7 @@ import Linglib.Theories.Syntax.Minimalism.Core.Basic
 
 /-!
 # Linear Correspondence Axiom (Kayne 1994)
+@cite{chomsky-1995} @cite{kayne-1994}
 
 Formalizes the core of Kayne's (1994) *The Antisymmetry of Syntax*: the
 Linear Correspondence Axiom (LCA), which derives linear (temporal)
@@ -27,10 +28,6 @@ hierarchical structure.
 - **Adjunction is left-adjunction** (`adjunction_left_only`)
 - **Sister terminals are unordered** (`sister_terminals_unordered`)
 
-## References
-
-- Kayne, R. S. (1994). *The Antisymmetry of Syntax*. MIT Press.
-- Chomsky, N. (1995). *The Minimalist Program*. MIT Press.
 -/
 
 namespace Minimalism

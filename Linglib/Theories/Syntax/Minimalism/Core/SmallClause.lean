@@ -3,9 +3,7 @@ import Linglib.Theories.Syntax.Minimalism.Core.Applicative
 /-!
 # Small Clause Predication (den Dikken 1995)
 
-@cite{dendikken-1995}
-
-Den Dikken's (1995) central thesis: all subject-predicate relationships
+@cite{dendikken-1995} @cite{baker-1988}Den Dikken's (1995) central thesis: all subject-predicate relationships
 are incarnated as small clauses `[SC Subject Predicate]`. The predicate
 head's category determines the construction type:
 
@@ -28,12 +26,6 @@ incorporation (den Dikken 1995, Ch. 5). Low applicatives introduce the
 same structural configuration as particles — SC predication between
 a goal and a theme, mediated by a P head.
 
-## References
-
-- den Dikken, M. (1995). *Particles: On the Syntax of Verb-Particle,
-  Triadic, and Causative Constructions.* OUP.
-- Baker, M. C. (1988). *Incorporation: A Theory of Grammatical
-  Function Changing.* University of Chicago Press.
 -/
 
 namespace Minimalism

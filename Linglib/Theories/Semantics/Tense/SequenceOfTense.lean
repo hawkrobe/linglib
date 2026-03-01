@@ -4,6 +4,7 @@ import Linglib.Theories.Semantics.Tense.Basic
 
 /-!
 # Sequence of Tense: TC ↔ IS Bridge
+@cite{heim-kratzer-1998} @cite{kratzer-1998} @cite{reichenbach-1947} @cite{von-stechow-2009}
 
 Bridge theorems connecting the truth-conditional tense operators
 (`applyTense` from `TC/Tense/Basic.lean`) to the intensional semantic
@@ -25,13 +26,6 @@ For the full six-theory comparison (Abusch, Von Stechow, Kratzer, Ogihara,
 Klecha, Deal), see `Theories/Semantics.Intensional/Tense/` and
 `Comparisons/TenseTheories.lean`.
 
-## References
-
-- Reichenbach, H. (1947). Elements of Symbolic Logic.
-- Ogihara, T. (1989/1996). Tense, Attitudes, and Scope. Kluwer.
-- Abusch, D. (1994/1997). Sequence of Tense Revisited.
-- Kratzer, A. (1998). More Structural Analogies Between Pronouns and Tenses.
-- Von Stechow, A. (2009). Tenses in compositional semantics.
 -/
 
 namespace Semantics.Tense.SequenceOfTense

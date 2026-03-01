@@ -2,6 +2,7 @@ import Linglib.Core.Interfaces.ExtractionMorphology
 
 /-!
 # Voice System Interface
+@cite{erlewine-2018} @cite{foley-2008}
 
 Theory-neutral interface for cross-linguistic voice system typology —
 how languages map argument roles to a privileged syntactic position
@@ -21,13 +22,6 @@ It complements `ExtractionMorphology` (which captures *how* extraction
 is marked) and `Minimalism.VoiceFlavor` (which captures the *semantic
 contribution* of the voice head).
 
-## References
-
-- Erlewine, M. Y. (2018). Extraction and licensing in Toba Batak.
-  Language 94(3): 662–697.
-- Foley, W. A. (2008). The place of Philippine languages in a
-  typology of voice systems. In P. K. Austin & S. Musgrave (eds.),
-  Voice and Grammatical Relations in Austronesian Languages.
 -/
 
 namespace Interfaces

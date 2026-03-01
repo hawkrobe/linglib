@@ -14,11 +14,6 @@ Foundation module for the Minimalist Program formalization.
 - **Containment (Dominance)**: Transitive closure of immediate containment
 - **C-command**: Standard asymmetric relation for binding and locality
 
-## References
-
-- Chomsky, N. (1995). "The Minimalist Program"
-- Chomsky, N. (2013). "Problems of Projection"
-- Adger, D. (2003). "Core Syntax", Chapters 2-3
 -/
 
 import Mathlib.Data.Set.Basic

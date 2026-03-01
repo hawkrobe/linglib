@@ -1,5 +1,6 @@
 /-!
 # Factive vs Non-Factive Attitude Verb Semantics
+@cite{karttunen-1971} @cite{kiparsky-kiparsky-1970} @cite{scontras-tonhauser-2025}
 
 Generic infrastructure for the factive/non-factive distinction in Boolean
 world models: world-dimension typeclasses, lexical semantics for know-type
@@ -29,12 +30,6 @@ A world type may carry orthogonal Boolean dimensions:
 | "X thinks C"     | BEL                | non-factive |
 | "X doesn't think"| ¬BEL               | non-factive |
 
-## References
-
-- Kiparsky, P. & Kiparsky, C. (1970). Fact.
-- Karttunen, L. (1971). Implicative verbs. Language 47(2).
-- Scontras, G. & Tonhauser, J. (2025). Projection without
-  lexically-specified presupposition. SuB 29.
 -/
 
 namespace Semantics.Attitudes.Factivity

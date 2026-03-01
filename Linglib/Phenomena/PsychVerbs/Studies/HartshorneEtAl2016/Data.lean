@@ -3,7 +3,7 @@ import Linglib.Phenomena.PsychVerbs.Data
 /-!
 # Hartshorne, O'Donnell & Tenenbaum (2016) — Empirical Data
 
-@cite{hartshorne-odonnell-tenenbaum-2016}
+@cite{hartshorne-etal-2016}
 
 Psych verbs, the linking problem, and the acquisition of language.
 Cognition 157: 268–288.

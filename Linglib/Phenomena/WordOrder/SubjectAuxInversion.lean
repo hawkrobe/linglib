@@ -26,26 +26,6 @@ Several phenomena push beyond the textbook treatment:
 - Do-support and verb movement (Pollock 1989, Arregi & Pietraszko 2021)
 - Verb-specific acquisition of inversion (Westergaard 2009)
 
-## References
-
-- Klima, E. (1964). Negation in English. In Fodor & Katz (eds.),
-  The Structure of Language, 246-323. @cite{klima-1964}
-- Pollock, J.-Y. (1989). Verb Movement, Universal Grammar, and the Structure
-  of IP. Linguistic Inquiry 20(3):365-424. @cite{pollock-1989}
-- Henry, A. (1995). Belfast English and Standard English: Dialect Variation
-  and Parameter Setting. Oxford University Press. @cite{henry-1995}
-- Adger, D. (2003). Core Syntax. OUP. @cite{adger-2003}
-- Sag, I., Wasow, T. & Bender, E. (2003). Syntactic Theory. 2nd ed.
-  CSLI. @cite{sag-wasow-bender-2003}
-- McCloskey, J. (2006). Questions and Questioning in a Local English.
-  Crosslinguistic Research in Syntax and Semantics, 87-126.
-  @cite{mccloskey-2006}
-- Radford, A. (2009). Analysing English Sentences. CUP. @cite{radford-2009}
-- Westergaard, M. (2009). The Acquisition of Word Order. John Benjamins.
-  @cite{westergaard-2009}
-- Arregi, K. & Pietraszko, A. (2021). The Ups and Downs of Head
-  Displacement. Linguistic Inquiry 52(2):241-290.
-  @cite{arregi-pietraszko-2021}
 -/
 
 namespace Phenomena.WordOrder.SubjectAuxInversion

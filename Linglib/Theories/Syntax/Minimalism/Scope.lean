@@ -16,12 +16,6 @@ Inverse scope is unavailable when:
 - **Double Object**: Indirect object c-commands direct object; QR would violate locality
 - **Passive**: By-phrase is an adjunct; QR from adjuncts is blocked
 
-## References
-
-- May (1985). Logical Form.
-- Fox (2000). Economy and Scope.
-- Bruening (2001). QR obeys Superiority.
-- Szabolcsi (2010). Quantification.
 -/
 
 import Linglib.Core.Interface

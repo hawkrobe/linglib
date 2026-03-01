@@ -2,6 +2,7 @@ import Linglib.Core.Lexical.Word
 
 /-!
 # Cross-Linguistic Typology of Possession (WALS Chapters 58--59)
+@cite{aikhenvald-2013} @cite{heine-1997} @cite{nichols-1986} @cite{nichols-bickel-2013} @cite{stassen-2009}
 
 Typological data on possessive constructions across languages, drawn from
 two WALS chapters by Nichols & Bickel (2013) and supplemented with data on
@@ -70,22 +71,6 @@ house"). Three major strategies:
 These strategies correlate with broader head-vs-dependent marking typology
 (Nichols 1986).
 
-## References
-
-- Nichols, J. & B. Bickel (2013). Obligatory possessive inflection.
-  In Dryer & Haspelmath (eds.), WALS Online (v2020.3).
-  https://wals.info/chapter/58
-- Nichols, J. & B. Bickel (2013). Possessive classification.
-  In Dryer & Haspelmath (eds.), WALS Online (v2020.3).
-  https://wals.info/chapter/59
-- Stassen, L. (2009). Predicative Possession. Oxford University Press.
-- Heine, B. (1997). Possession: Cognitive Sources, Forces, and
-  Grammaticalization. Cambridge University Press.
-- Nichols, J. (1986). Head-marking and dependent-marking grammar.
-  Language 62(1): 56--119.
-- Aikhenvald, A. Y. (2013). Possession and ownership: A cross-linguistic
-  perspective. In Aikhenvald & Dixon (eds.), Possession and Ownership.
-  Oxford University Press.
 -/
 
 namespace Phenomena.Possession.Typology

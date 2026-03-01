@@ -25,12 +25,6 @@ NPI licensing requires BOTH DE + uncertain (HC).
 PPI licensing requires established status (PC).
 This explains why PCs block NPIs despite being semantically DE!
 
-## References
-
-- Lassiter (2025). Sorting out left-nested conditionals.
-- Iatridou (1991). Topics in Conditionals.
-- Haegeman (2003). Conditional clauses: External and internal syntax.
-- Bhatt & Pancheva (2006). Conditionals.
 -/
 
 import Linglib.Theories.Semantics.Dynamic.State

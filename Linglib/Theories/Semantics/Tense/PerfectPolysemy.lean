@@ -6,6 +6,7 @@ import Linglib.Theories.Semantics.Tense.Compositional
 
 /-!
 # Perfect Polysemy (Kiparsky 2002)
+@cite{iatridou-anagnostopoulou-izvorski-2001} @cite{kiparsky-2002} @cite{pancheva-2003}
 
 Kiparsky's "Event Structure and the Perfect" argues that the English perfect's
 multiple readings (existential, universal, resultative, present-state) arise
@@ -32,13 +33,6 @@ This module integrates:
 5. **Kiparsky's three puzzles**: SOT asymmetry, present perfect puzzle, wh-puzzle
 6. **Compositional derivation**: existential = PERF(PRFV), universal = PERF(UNBOUNDED)
 
-## References
-
-- Kiparsky, P. (2002). Event structure and the perfect. In D. I. Beaver et al.
-  (eds.), *The Construction of Meaning*, CSLI.
-- Pancheva, R. (2003). The aspectual makeup of perfect participles.
-- Iatridou, S., Anagnostopoulou, E. & Izvorski, R. (2001). Observations about
-  the form and meaning of the Perfect.
 -/
 
 namespace Semantics.Tense.PerfectPolysemy

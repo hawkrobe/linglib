@@ -5,7 +5,7 @@ import Linglib.Theories.Semantics.Causation.PsychCausalLink
 /-!
 # Bridge: Hartshorne et al. (2016) ↔ Kim (2024) Causal Source
 
-@cite{hartshorne-odonnell-tenenbaum-2016}
+@cite{hartshorne-etal-2016}
 @cite{kim-2024}
 
 Connects Hartshorne et al.'s (2016) empirical semantic type distinction

@@ -4,9 +4,7 @@ import Linglib.Core.Interfaces.AssertionTheory
 /-!
 # Stalnaker's Common Ground Model of Assertion
 
-@cite{stalnaker-1978}
-
-Assertion as context set update: to assert p is to propose eliminating
+@cite{stalnaker-1978} @cite{stalnaker-2002}Assertion as context set update: to assert p is to propose eliminating
 ¬p-worlds from the common ground. This is the simplest assertion theory
 and the baseline against which richer theories are compared.
 
@@ -28,10 +26,6 @@ Stalnaker (1978) identifies three norms on assertion:
 This module models the EFFECT of assertion (CG update), not the norms.
 The norms are relevant to Krifka's separation of commitment from belief.
 
-## References
-
-- Stalnaker, R. (1978). Assertion. *Syntax and Semantics* 9: 315–332.
-- Stalnaker, R. (2002). Common Ground. *L&P* 25: 701–721.
 -/
 
 namespace Theories.Pragmatics.Assertion.Stalnaker

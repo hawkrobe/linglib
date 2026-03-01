@@ -23,10 +23,6 @@ goals, as in Yoon et al. 2020 for politeness).
 Binary T/V systems (Basque, Tamil, Galician, Punjabi) use `.informal`/`.formal`.
 Ternary honorific systems (Hindi, Magahi, Maithili, Korean) use all three levels.
 
-## References
-
-* Dieuleveut, Hsu & Bhatt (2025). A Register Approach to Modal Non-Concord.
-* Biber & Conrad (2009). Register, Genre, and Style.
 -/
 
 namespace Core.Register

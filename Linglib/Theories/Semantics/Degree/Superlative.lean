@@ -3,6 +3,7 @@ import Linglib.Theories.Semantics.Degree.Core
 
 /-!
 # Superlative Semantics
+@cite{heim-1999} @cite{sharvit-stateva-2002} @cite{szabolcsi-1986}
 
 Compositional semantics for the superlative morpheme `-est`/`most`.
 
@@ -21,11 +22,6 @@ Heim (1999) identifies two readings of superlatives:
 The two readings arise from the scope of `-est` relative to other
 operators: wide scope yields relative, narrow scope yields absolute.
 
-## References
-
-- Heim, I. (1999). Notes on superlatives. Ms., MIT.
-- Szabolcsi, A. (1986). Comparative superlatives.
-- Sharvit, Y. & Stateva, P. (2002). Superlative expressions, context, and focus.
 -/
 
 namespace Semantics.Degree.Superlative

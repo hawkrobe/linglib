@@ -31,12 +31,6 @@ formalism:
 - negative association → negative pole property
 - zero association → no property indexed on that dimension
 
-## References
-
-* Burnett, H. (2019). Signalling Games, Sociolinguistic Variation,
-  and the Construction of Style. *Linguistics & Philosophy* 42: 419–450.
-* Eckert, P. (2008). Variation and the indexical field.
-  *Journal of Sociolinguistics* 12(4): 453–476.
 -/
 
 namespace Sociolinguistics.EckertMontague

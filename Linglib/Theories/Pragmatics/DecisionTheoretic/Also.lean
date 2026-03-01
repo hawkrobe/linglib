@@ -5,6 +5,7 @@ import Mathlib.Algebra.Order.BigOperators.Group.Finset
 
 /-!
 # Decision-Theoretic Semantics: "Also" (Merin 1999 §5.2–5.4)
+@cite{merin-1999}
 
 Merin's DTS account of additive particles. Presupposition is modeled as
 *i-irrelevance*: a presupposed proposition is one that doesn't change any
@@ -24,10 +25,6 @@ antecedent D must have been relevant before becoming presupposed.
 - **Fact 17** (`presuppositional_independence_additivity`): presupposition
   implies multiplicativity of Bayes factor without CIP
 
-## References
-
-- Merin, A. (1999). Information, relevance, and social decisionmaking.
-  §5.2–5.4: Also, presupposition, and accommodation.
 -/
 
 namespace Theories.DTS.Also

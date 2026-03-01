@@ -2,6 +2,7 @@ import Linglib.Theories.Syntax.Minimalism.Formal.HeadMovement.Basic
 
 /-!
 # Verb Movement Parameter (Pollock 1989)
+@cite{chomsky-1995}
 
 Pollock (1989) established that languages differ parametrically in whether
 lexical verbs raise to T (Inflection). French lexical verbs obligatorily raise
@@ -23,11 +24,6 @@ Pollock identifies four positions that diagnose V-raising:
 
 All four converge: a language either raises V past all four, or past none.
 
-## References
-
-- Pollock, J.-Y. (1989). Verb Movement, Universal Grammar, and the Structure
-  of IP. Linguistic Inquiry 20(3):365-424. @cite{pollock-1989}
-- Chomsky, N. (1995). The Minimalist Program. MIT Press.
 -/
 
 namespace Minimalism

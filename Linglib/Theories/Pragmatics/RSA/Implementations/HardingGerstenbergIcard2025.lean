@@ -3,6 +3,7 @@ import Linglib.Core.StructuralEquationModel
 
 /-!
 # A Communication-First Account of Explanation
+@cite{halpern-pearl-2005} @cite{harding-gerstenberg-icard-2025}
 
 Formalization of Harding, Gerstenberg & Icard (2025).
 
@@ -26,11 +27,6 @@ dynamics rather than needing to be stipulated (contra Halpern & Pearl 2005).
 | Late Meeting | M_T vs M_∧ | Citing known cause T=1 is informative (signals M_T) |
 | Roof Replacement | M_R/M_D/M_∧/M_∨ | Citing R=1 more useful than D=1 for roof decision |
 
-## References
-
-- Harding, J., Gerstenberg, T. & Icard, T. (2025). A Communication-First
-  Account of Explanation. arXiv:2505.03732.
-- Halpern, J. & Pearl, J. (2005). Causes and Explanations.
 -/
 
 namespace HardingGerstenbergIcard2025

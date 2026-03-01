@@ -4,6 +4,7 @@ import Linglib.Phenomena.Focus.Exclusives
 
 /-!
 # Granularity Bridge: *Just* + Degree Morphology @cite{thomas-deo-2020}
+@cite{deo-thomas-2025}
 
 Connects the formal semantics of approximative *just* from
 `Theories.Semantics.Degree.Granularity` to the *just* flavor data in
@@ -15,11 +16,6 @@ vacuous for equatives. The `.precisifyingProximity` flavor ("just taller
 than" ≈ "barely") follows from `just_rules_out`: the negative component
 forces failure at coarser grains.
 
-## References
-
-- Thomas, W. & Deo, A. (2020). The interaction of *just* with modified
-  scalar predicates. *Sinn und Bedeutung* 24.
-- Deo, A. & Thomas, W. (2025). Addressing the widest answerable question.
 -/
 
 namespace Phenomena.Focus.Bridge.GranularityJust

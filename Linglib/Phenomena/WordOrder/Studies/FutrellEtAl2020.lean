@@ -1,5 +1,6 @@
 /-!
 # Futrell, Levy & Gibson (2020): Crosslinguistic Dependency Length Data
+@cite{futrell-gibson-2020}
 
 Empirical data from Table 2 of Futrell, Levy & Gibson (2020) "Dependency
 locality as an explanatory principle for word order", Language 96(2):371–412.
@@ -18,10 +19,6 @@ higher mean dependency lengths than head-initial languages (Arabic, Indonesian,
 Romanian), controlling for sentence length. This is predicted by DLM theory:
 head-final order with right-branching structures creates longer dependencies.
 
-## References
-
-- Futrell, R., Levy, R. & Gibson, E. (2020). Dependency locality as an
-  explanatory principle for word order. Language 96(2):371–412. Table 2.
 -/
 
 namespace Phenomena.WordOrder.DependencyLength.FutrellEtAl2020

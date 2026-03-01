@@ -2,15 +2,13 @@ import Mathlib.Order.WithBot
 
 /-!
 # Strong Kleene Three-Valued Logic
+@cite{kleene-1952}
 
 Three-valued truth values and propositional logic following Strong Kleene semantics.
 
 `TVal = WithBot Bool` gives us `tt`, `ff`, and `unk` (undefined/gap).
 `Prop3 W = W → TVal` lifts this to propositions over possible worlds.
 
-## References
-
-- Kleene, S.C. (1952). Introduction to Metamathematics.
 -/
 
 namespace Core.Kleene

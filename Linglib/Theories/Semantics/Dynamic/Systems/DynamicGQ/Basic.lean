@@ -3,6 +3,7 @@ import Linglib.Core.Mereology
 
 /-!
 # Pointwise Dynamic Generalized Quantifiers
+@cite{brasoveanu-2007} @cite{charlow-2021}
 
 Muskens/Brasoveanu-style dynamic GQ operators defined over the pointwise
 `DRS S := S → S → Prop` type. These correspond to Charlow (2021) §2.
@@ -17,11 +18,6 @@ Charlow shows that in the pointwise setting, sequencing `Mvar` inside vs outside
 `CardTest` yields pseudo-cumulative vs cumulative readings — and the pointwise
 system can only derive pseudo-cumulative.
 
-## References
-
-- Charlow, S. (2021). Post-suppositions and semantic theory. *L&P* 44, 701–765.
-  §2, equations 17–19.
-- Brasoveanu, A. (2007). *Structured Nominal and Modal Reference*.
 -/
 
 namespace Semantics.Dynamic.DynamicGQ.Basic

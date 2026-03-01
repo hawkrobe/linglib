@@ -7,9 +7,6 @@ Theory-neutral data about generic and habitual sentences, including prevalence a
 
 `PrevalenceAsymmetry`, `RarePropertyGeneric`, `StrikingPropertyEffect`, `ConnectionType`, `HabitualDatum`, `CausalGenericDatum`, `QuantifierContrast`, `AcquisitionDatum`
 
-## References
-
-- Carlson (1977), Leslie (2008), Prasada & Dillingham (2006), Cimpian et al. (2010), Tessler & Goodman (2019)
 -/
 
 import Mathlib.Data.Rat.Defs

@@ -1,5 +1,6 @@
 /-!
 # Equative Constructions: Empirical Data
+@cite{haspelmath-buchholz-1998} @cite{kennedy-2007} @cite{rett-2020}
 
 Empirical data on equative constructions ("as tall as"), including the
 at-least vs. exactly ambiguity and cross-linguistic variation.
@@ -15,11 +16,6 @@ at-least vs. exactly ambiguity and cross-linguistic variation.
 3. **Negative equatives**: "not as tall as" is typically interpreted as
    strict inequality, not "not exactly as tall".
 
-## References
-
-- Rett, J. (2020). Separate but equal: A typology of equative constructions.
-- Haspelmath, M. & Buchholz, O. (1998). Equative and similative constructions.
-- Kennedy, C. (2007). Vagueness and grammar.
 -/
 
 namespace Phenomena.Comparison.Equative

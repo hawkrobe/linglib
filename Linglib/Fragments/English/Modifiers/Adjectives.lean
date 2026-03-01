@@ -16,10 +16,6 @@ Lexical entries for adjectives used as modifiers (attributive position).
 
 Both share scale type and antonym information, but serve different grammatical functions.
 
-## References
-
-- Kennedy & McNally (2005). Scale structure, degree modification.
-- Kennedy (2007). Vagueness and grammar.
 -/
 
 import Linglib.Core.Lexical.Word

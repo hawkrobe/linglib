@@ -4,6 +4,7 @@ import Linglib.Theories.Semantics.Lexical.Verb.Aspect
 
 /-!
 # Maximal Informativity and Temporal *in*-Adverbials
+@cite{beck-rullmann-1999} @cite{fox-hackl-2006} @cite{kennedy-2007} @cite{krifka-1989} @cite{krifka-1998} @cite{rouillard-2026}
 
 Rouillard (2026) "Maximal informativity accounts for the distribution of
 temporal *in*-adverbials" (*Linguistics and Philosophy* 49:1–56).
@@ -47,16 +48,6 @@ E-TIA licensing ◁───── MIP ─────▷ G-TIA polarity sensiti
 6. Information collapse theorems
 7. Bridge: Kennedy open/closed scales ↔ TIA licensing
 
-## References
-
-- Rouillard, V. (2026). Maximal informativity accounts for the distribution
-  of temporal *in*-adverbials. *L&P* 49:1–56.
-- Krifka, M. (1989). Nominal reference, temporal constitution and
-  quantification in event semantics.
-- Krifka, M. (1998). The origins of telicity.
-- Fox, D. & Hackl, M. (2006). The universal density of measurement.
-- Beck, S. & Rullmann, H. (1999). A flexible approach to exhaustivity in questions.
-- Kennedy, C. (2007). Vagueness and grammar.
 -/
 
 namespace Semantics.Montague.Sentence.MaximalInformativity

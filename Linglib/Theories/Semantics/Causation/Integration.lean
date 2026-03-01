@@ -30,12 +30,6 @@ This module proves that:
 2. Structural necessity → Low counterfactual probability
 3. Both together → CausalRelation.ACausesC inference
 
-## References
-
-- Nadathur & Lauer (2020). Causal necessity, causal sufficiency...
-- Grusdt, Lassiter & Franke (2022). Probabilistic modeling of rational
-  communication with conditionals.
-- Pearl (2000). Causality.
 -/
 
 import Linglib.Core.StructuralEquationModel

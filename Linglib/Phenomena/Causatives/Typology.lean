@@ -1,5 +1,6 @@
 /-!
 # Cross-Linguistic Causative Typology (Song 1996)
+@cite{song-1996}
 
 Song's typology of causative constructions, orthogonal to the
 force-dynamic builder classification. This module classifies how
@@ -26,10 +27,6 @@ All causative events involve: GOAL → EVENT → RESULT
 - PURP type highlights: GOAL + EVENT (purposive, non-implicative)
 - COMPACT type: entire sequence collapsed into single predicate
 
-## References
-
-- Song, J. J. (1996). Causatives and Causation: A Universal-Typological
-  Perspective. Longman.
 -/
 
 namespace Phenomena.Causatives.Typology

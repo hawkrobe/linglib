@@ -45,11 +45,6 @@ appraisal space. Our qualitative profiles collapse these base domains
 into a single "base" perspective (4 types × 2 perspectives = 8 dimensions),
 which suffices to uniquely characterize all 20 emotion concepts.
 
-## References
-
-- Houlihan, S. D., Kleiman-Weiner, M., Hewitt, L. B., Tenenbaum, J. B., &
-  Saxe, R. (2023). Emotion prediction as computation over a generative model
-  of the world. Phil. Trans. R. Soc. A 381: 20220047.
 -/
 
 namespace Core.Agent.Emotion

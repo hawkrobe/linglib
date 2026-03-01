@@ -3,6 +3,7 @@ import Linglib.Phenomena.FillerGap.Islands.Data
 
 /-!
 # Bridge: Backgrounded Islands → Island Classification
+@cite{lu-degen-2025}
 
 Connects the formal backgroundedness model (Theories/Semantics/Focus) to the
 shared island infrastructure in `Phenomena/FillerGap/Islands/Data.lean`.
@@ -10,10 +11,6 @@ shared island infrastructure in `Phenomena/FillerGap/Islands/Data.lean`.
 The MoS island is classified as weak (ameliorable) and discourse-sourced, and
 we derive both properties from the formal model.
 
-## References
-
-- Lu, J., Pan, D., & Degen, J. (2025). Evidence for a discourse account of
-  manner-of-speaking islands. Language 101(4): 627–659.
 -/
 
 

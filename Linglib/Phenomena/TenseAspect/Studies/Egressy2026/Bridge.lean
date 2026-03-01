@@ -6,9 +6,7 @@ import Linglib.Fragments.Hungarian.TemporalDeictic
 
 /-!
 # Egressy (2026) Bridge: Size-Sensitive SOT → Zeijlstra + PIC
-@cite{egressy-2026}
-
-Bridge theorems connecting the empirical Hungarian SOT data from
+@cite{egressy-2026} @cite{zeijlstra-2012}Bridge theorems connecting the empirical Hungarian SOT data from
 `Data.lean` to the theoretical infrastructure:
 
 1. **Fragment grounding**: Verb forms in SOTJudgment entries match
@@ -25,12 +23,6 @@ Bridge theorems connecting the empirical Hungarian SOT data from
 7. **CTP class derivation**: Fragment verb entries yield the expected
    CTP classes
 
-## References
-
-- Egressy, A. (2026). Size-sensitive sequence of tense in Hungarian.
-  *The Linguistic Review*.
-- Zeijlstra, H. (2012). There is only one way to agree.
-  *The Linguistic Review* 29(3): 491--539.
 -/
 
 namespace Phenomena.TenseAspect.Studies.Egressy2026.Bridge

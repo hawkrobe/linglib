@@ -6,6 +6,7 @@ import Linglib.Core.Context.Shifts
 
 /-!
 # Tense and Evidence (Cumming 2026)
+@cite{cumming-2026} @cite{ninan-2022} @cite{reichenbach-1947}
 
 Cumming (2026, *Linguistics and Philosophy* 49:153–175) argues that English
 nonfuture tenses encode an evidential constraint: the speaker's evidence must
@@ -45,11 +46,6 @@ between these two phenomena is formalized in `Comparisons/TenseModalEvidentialit
 `EPCondition.toEvidentialPerspective` maps the five EP constraint shapes to
 the canonical `EvidentialPerspective` classification in `Core.Evidence`.
 
-## References
-
-- Cumming, S. (2026). Tense and evidence. *Linguistics and Philosophy* 49:153–175.
-- Ninan, D. (2022). Tense and temporal evidence. *L&P* 45:941–969.
-- Reichenbach, H. (1947). *Elements of Symbolic Logic*.
 -/
 
 namespace Semantics.Tense.Evidential

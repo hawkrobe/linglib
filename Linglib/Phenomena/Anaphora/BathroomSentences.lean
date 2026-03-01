@@ -21,12 +21,6 @@ negated in the first disjunct. This is surprising because:
 3. These typically involve modal possibility (free choice).
 4. Double negation pattern: ¬¬∃x accessible iff ∃x accessible.
 
-## References
-
-- Partee, B. (1972). Opacity, Coreference, and Pronouns.
-- Elliott, P. (2023). Donkey disjunctions and overlapping updates. SALT 33.
-- Elliott, P. & Sudo, Y. (2025). Free choice with anaphora. S&P 18.
-- Hofmann, L. (2025). Anaphoric accessibility with flat update. S&P.
 -/
 
 namespace Phenomena.Anaphora.BathroomSentences

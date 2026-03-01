@@ -1,5 +1,6 @@
 /-!
 # Manambu Medial Clause Markers @cite{aikhenvald-2008}
+@cite{aikhenvald-2025}
 
 Medial clause markers (clause chain linkers) in Manambu (Ndu family, East Sepik,
 Papua New Guinea). Data from Aikhenvald (2008: 538-561) and Aikhenvald (2025:
@@ -26,12 +27,6 @@ Manambu has a rich system of medial clause markers that encode:
 | -ga:y | SS | unlikely condition 'if' | no |
 | -n | neutral | sequential or simultaneous, manner | no |
 
-## References
-
-- Aikhenvald, A. Y. (2008). The Manambu Language of East Sepik, Papua New Guinea.
-  Oxford University Press.
-- Aikhenvald, A. Y. (2025). Clause chaining in Ndu languages. In Sarvasy &
-  Aikhenvald (eds.), Clause Chaining in the Languages of the World. Ch. 6.
 -/
 
 namespace Fragments.Manambu.MedialVerbs

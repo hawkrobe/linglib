@@ -23,10 +23,6 @@ This distinction prevents variable clash and enables clean compositional semanti
 
 Uses `Finset.biUnion` instead of `List.foldl` for cleaner proofs.
 
-## References
-
-- Dekker, P. (2012). Dynamic Semantics. Springer.
-- Dekker, P. (2008). A Guide to Dynamic Semantics.
 -/
 
 import Mathlib.Data.Set.Basic

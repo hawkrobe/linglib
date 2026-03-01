@@ -3,9 +3,7 @@ import Linglib.Core.Semantics.Presupposition
 /-!
 # Rooth-Partee Conditionals: Empirical Data
 
-@cite{sharvit-2025}
-
-Theory-neutral data for Sharvit (2025) "Rooth-Partee Conditionals."
+@cite{sharvit-2025} @cite{rooth-partee-1982}Theory-neutral data for Sharvit (2025) "Rooth-Partee Conditionals."
 
 ## The puzzle
 
@@ -25,11 +23,6 @@ are Strawson-equivalent — speakers cannot distinguish them. Under K/P
 `or^{K/P}(penniless, proud)` is undefined at penniless-worlds, causing those
 worlds to drop from the ∃-reading's quantification domain.
 
-## References
-
-- Sharvit, Y. (2025). Rooth-Partee Conditionals. L&P.
-- Rooth, M. & Partee, B. (1982). Conjunction, type ambiguity, and wide
-  scope or. WCCFL 1.
 -/
 
 namespace Phenomena.Presupposition.Studies.Sharvit2025

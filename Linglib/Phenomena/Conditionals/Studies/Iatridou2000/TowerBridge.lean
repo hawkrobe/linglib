@@ -33,10 +33,6 @@ Phenomena.Conditionals.Studies.Iatridou2000.Data (english_pastCF, etc.)
 4. **temporalShift produces temporal ExclF**: topic time ≠ speech time
 5. **Origin stability**: the actual context is preserved at arbitrary depth
 
-## References
-
-- Iatridou, S. (2000). The grammatical ingredients of counterfactuality.
-  *Linguistic Inquiry* 31(2): 231–270.
 -/
 
 namespace Phenomena.Conditionals.Studies.Iatridou2000.TowerBridge

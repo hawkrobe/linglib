@@ -17,9 +17,6 @@ Lexical entries for Ukrainian interrogative particles.
 - `SlavicPQStrategies.ukrainian`: PQ strategy profile (clause-initial čy obligatory)
 - Cross-Slavic RAZVE family: xiba is the Ukrainian cognate of Russian razve
 
-## References
-
-- Šimík, R. (2024). Polar question semantics and bias: Lessons from Slavic/Czech.
 -/
 
 namespace Fragments.Ukrainian.QuestionParticles

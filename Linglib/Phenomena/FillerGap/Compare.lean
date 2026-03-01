@@ -21,18 +21,6 @@ explain the gradient nature of island effects.
   adverbs to bridge verbs creates new islands. Which account predicts this?
   (Lu et al. 2025 → Discourse)
 
-## References
-
-- Ross, J.R. (1967). Constraints on Variables in Syntax.
-- Chomsky, N. (1973). Conditions on Transformations.
-- Chomsky, N. (1986). Barriers.
-- Chomsky, N. (1995). The Minimalist Program.
-- Kluender, R. (1991, 1998). Cognitive constraints on variables in syntax.
-- Deane, P. (1991). Limits to attention: A cognitive theory of island phenomena.
-- Hofmeister, P. & Sag, I.A. (2010). Cognitive constraints and island effects.
-  Language 86(2):366–415.
-- Lu, J., Pan, D. & Degen, J. (2025). Evidence for a discourse account of
-  manner-of-speaking islands. Language 101(4):627–659.
 -/
 
 import Linglib.Phenomena.FillerGap.Islands.Data

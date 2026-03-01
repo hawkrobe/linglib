@@ -2,6 +2,7 @@ import Linglib.Theories.Syntax.Minimalism.Core.Features
 
 /-!
 # The Case Filter
+@cite{baker-2015} @cite{chomsky-2001} @cite{marantz-1991}
 
 Every DP must receive Case. In Minimalist terms:
 - Every DP has [uCase] (unvalued Case feature)
@@ -17,11 +18,6 @@ For the competing dependent-case approach (Marantz 1991; Baker 2015),
 see `DependentCase.lean`. For inherent/Voice-based case (Woolford 2006),
 see `Voice.lean` and `Fragments.Mam.Agreement`.
 
-## References
-
-- Chomsky, N. (2001). Derivation by Phase.
-- Marantz, A. (1991). Case and licensing.
-- Baker, M. (2015). Case: Its Principles and Its Parameters.
 -/
 
 namespace Minimalism

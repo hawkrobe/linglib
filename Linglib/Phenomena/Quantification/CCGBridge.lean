@@ -3,6 +3,7 @@ import Linglib.Phenomena.Quantification.Data
 
 /-!
 # CCG Scope Bridge
+@cite{steedman-2000}
 
 Connects CCG scope theory (from `Theories.Syntax.CCG.Scope`) to
 empirical scope-word-order data (from `Phenomena.Quantification.Data`).
@@ -10,11 +11,6 @@ empirical scope-word-order data (from `Phenomena.Quantification.Data`).
 Proves that CCG derivation types correctly predict scope availability
 based on verb order (verb raising vs. verb projection raising).
 
-## References
-
-- Steedman (2000) "The Syntactic Process" Chapter 6
-- Bayer (1990, 1996) German scope restrictions
-- Haegeman & van Riemsdijk (1986) West Flemish
 -/
 
 namespace Phenomena.Quantification.CCGBridge

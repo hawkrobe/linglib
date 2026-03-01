@@ -2,6 +2,7 @@ import Linglib.Theories.Semantics.Lexical.Expressives.OutlookMarker
 
 /-!
 # Japanese Particles
+@cite{dayal-2025} @cite{kubota-2026} @cite{miyagawa-2012} @cite{sauerland-yatsushiro-2017}
 
 ## Part 1: Interrogative Particles
 
@@ -19,14 +20,6 @@ directly onto the three layers of the left periphery:
 Adverbs and focus particles that express subjective evaluation and manage
 discourse stances, following Kubota (2026) and Kubota & Ido (2026a,b).
 
-## References
-
-- Dayal, V. (2025). The Interrogative Left Periphery. Linguistic Inquiry 56(4).
-- Sauerland, U. & K. Yatsushiro (2017). Remind-me presuppositions and speech-act
-  decomposition. Linguistic Inquiry 48.
-- Miyagawa, S. (2012). Agreements that occur mainly in the main clause.
-- Kubota, Y. (2026). Outlook Management. In *Handbook of Japanese Semantics and Pragmatics*.
-- Kubota, Y. & M. Ido (2026a,b). Outlook markers / contrastive *wa*.
 -/
 
 namespace Fragments.Japanese.Particles

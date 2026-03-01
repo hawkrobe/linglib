@@ -4,6 +4,7 @@ import Mathlib.Tactic.DeriveFintype
 
 /-!
 # RSA Attitude Verb Embedding
+@cite{chierchia-fox-spector-2012} @cite{geurts-2010} @cite{sauerland-2004}
 
 Models scalar implicatures embedded under attitude verbs like "believe".
 
@@ -34,11 +35,6 @@ With attitude verbs:
 - This doesn't weaken the overall sentence
 - Both interpretations are felicitous
 
-## References
-
-- Geurts (2010). Quantity Implicatures. Ch. 4.
-- Sauerland (2004). Scalar implicatures in complex sentences.
-- Chierchia, Fox & Spector (2012). Scalar implicature as a grammatical phenomenon.
 -/
 
 namespace RSA.AttitudeEmbedding

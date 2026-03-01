@@ -3,6 +3,7 @@ import Linglib.Fragments.Finnish.Predicates
 
 /-!
 # Cross-Linguistic Typology of Valence and Voice (WALS Chapters 106--111)
+@cite{maslova-nedjalkov-2013} @cite{polinsky-2013} @cite{siewierska-2013} @cite{song-2013}
 
 Typological data on valence-changing and voice constructions, drawn from
 WALS (World Atlas of Language Structures) chapters 106--111:
@@ -26,19 +27,6 @@ applicatives). Causative typology (Ch 110--111) is covered in
 `Phenomena.Causatives.Typology`; only aggregate WALS counts are recorded
 here for cross-reference.
 
-## References
-
-- Maslova, E. & Nedjalkov, V. P. (2013). Reciprocal constructions.
-  In Dryer & Haspelmath (eds.), WALS Online. Ch. 106.
-- Siewierska, A. (2013). Passive constructions.
-  In Dryer & Haspelmath (eds.), WALS Online. Ch. 107.
-- Polinsky, M. (2013). Antipassive constructions.
-  In Dryer & Haspelmath (eds.), WALS Online. Ch. 108.
-- Polinsky, M. (2013). Applicative constructions.
-  In Dryer & Haspelmath (eds.), WALS Online. Ch. 109.
-- Song, J. J. (2013). Periphrastic causative constructions /
-  Nonperiphrastic causative constructions.
-  In Dryer & Haspelmath (eds.), WALS Online. Ch. 110--111.
 -/
 
 namespace Phenomena.ArgumentStructure.Typology

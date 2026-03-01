@@ -2,6 +2,7 @@ import Linglib.Theories.Semantics.Questions.Partition
 
 /-!
 # Questions/LiftedTypes.lean
+@cite{barker-shan-2014} @cite{groenendijk-stokhof-1984} @cite{partee-1986} @cite{partee-rooth-1983}
 
 Lifted Question Types (G&S 1984, Chapter VI, Section 6; Partee & Rooth 1983).
 
@@ -79,12 +80,6 @@ Barker & Shan argue continuations unify:
 The key insight: expressions denote functions on their own semantic context,
 enabling non-local effects while maintaining compositional, left-to-right evaluation.
 
-## References
-
-- Groenendijk & Stokhof (1984). Studies on the Semantics of Questions. Ch. VI, Section 6.
-- Partee & Rooth (1983). Generalized Conjunction and Type Ambiguity.
-- Partee (1986). Noun Phrase Interpretation and Type-Shifting Principles.
-- Barker & Shan (2014). Continuations and Natural Language. OUP.
 -/
 
 namespace Semantics.Questions.LiftedTypes

@@ -4,9 +4,8 @@ import Mathlib.Analysis.SpecialFunctions.Pow.Real
 /-!
 # Spinoso-Di Piano et al. (2025) — (RSA)² @cite{spinoso-di-piano-etal-2025}
 
-"(RSA)²: Irony as a Latent Rhetorical Strategy in a Rational Speech Act Model."
-Proceedings of the 63rd Annual Meeting of the Association for Computational
-Linguistics (ACL 2025), pp. 20898–20938.
+(RSA)²: A Rhetorical-Strategy-Aware Rational Speech Act Framework for
+Figurative Language Understanding (ACL 2025).
 
 ## The Model
 

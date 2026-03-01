@@ -2,6 +2,7 @@ import Linglib.Theories.Semantics.Modality.Kratzer
 
 /-!
 # Directive Modality: Strong and Weak Necessity
+@cite{kolodny-macfarlane-2010} @cite{kratzer-2012} @cite{von-fintel-iatridou-2008}
 
 von Fintel & Iatridou (2008) argue that natural languages systematically
 distinguish **strong necessity** ("must", "have to") from **weak necessity**
@@ -37,12 +38,6 @@ Weak necessity adds a secondary ordering source via `combineOrdering`.
 The `DeonticStrength` structure pairs primary and secondary norms,
 bridging to `DeonticFlavor`.
 
-## References
-
-- von Fintel, K. & Iatridou, S. (2008). How to say ought in every language.
-  Ms., MIT.
-- Kratzer, A. (2012). Modals and Conditionals. OUP. Ch. 2.
-- Kolodny, N. & MacFarlane, J. (2010). Ifs and oughts. JOPL 39(2):115–143.
 -/
 
 namespace Semantics.Modality.Directive

@@ -28,12 +28,6 @@ The "allows for" vs "results in" tests distinguish:
 
 These tests identify what's presupposed vs. what's asserted.
 
-## References
-
-- Karttunen (1973). Presuppositions of compound sentences.
-- von Fintel (2004). Would you believe it? The king of France is back!
-- Roberts & Simons (2024). Preconditions and projection.
-- Tonhauser et al. (2013). Toward a taxonomy of projective content.
 -/
 
 import Linglib.Core.Semantics.Presupposition

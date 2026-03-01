@@ -2,6 +2,7 @@ import Linglib.Core.Lexical.Word
 
 /-!
 # NP-Ellipsis in Spanish Binominals @cite{saab-2026}
+@cite{lobeck-1995} @cite{pesetsky-2013}
 
 Theory-neutral data on NP-ellipsis patterns across three types of
 Spanish binominal constructions that are superficially syncretic
@@ -27,14 +28,6 @@ NP-ellipsis distinguishes pseudo-partitive/quantificational (which share
 a primeval genitive structure with Num[E]) from qualitative (which have
 an equative structure lacking Num[E]).
 
-## References
-
-- Saab, A. (2026). NP-Ellipsis Patterns in Spanish Binominals.
-  *SinSpeC* 12: 1–36.
-- Pesetsky, D. (2013). *Russian Case Morphology and the Syntactic
-  Categories*. MIT Press.
-- Lobeck, A. (1995). *Ellipsis: Functional Heads, Licensing, and
-  Identification*. OUP.
 -/
 
 namespace Phenomena.Ellipsis.NPEllipsis

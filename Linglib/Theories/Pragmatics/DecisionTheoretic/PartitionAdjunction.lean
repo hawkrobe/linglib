@@ -3,6 +3,7 @@ import Linglib.Core.Agent.DecisionTheory
 
 /-!
 # Partition-Decision Adjunction
+@cite{blackwell-1953} @cite{merin-1999} @cite{van-rooy-2003}
 
 Galois connection between QUD partitions and decision problems, formalizing
 the Blackwell/Van Rooy correspondence.
@@ -37,11 +38,6 @@ The refinement morphism `QUDHom Q (sufficientPartition dp actions)` in
 (`QUDHom.toTrivial`) recover the fact that the trivial partition resolves
 only trivially dominable DPs.
 
-## References
-
-- Blackwell (1953). Equivalent Comparisons of Experiments.
-- Van Rooy (2003). Questioning to Resolve Decision Problems. L&P 26.
-- Merin (1999). Information, relevance, and social decisionmaking.
 -/
 
 open Core.DecisionTheory

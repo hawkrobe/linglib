@@ -4,6 +4,7 @@ import Linglib.Theories.Syntax.Minimalism.Core.VerbalDecomposition
 
 /-!
 # Voice Head Flavors (Kratzer 1996; Schäfer 2008)
+@cite{chomsky-2001} @cite{coon-2019} @cite{cuervo-2003} @cite{harley-2014} @cite{kratzer-1996} @cite{legate-2003} @cite{schfer-2008}
 
 Voice heads introduce (or fail to introduce) external arguments.
 The key typology from Schäfer (2008):
@@ -32,24 +33,6 @@ root-determined lower structure (vGO, vBE), this yields the causative
 alternation: Voice_AG + [vGO, vBE] = causative [vDO, vGO, vBE];
 Voice_nonThematic + [vGO, vBE] = inchoative [vGO, vBE].
 
-## References
-
-- Kratzer, A. (1996). Severing the external argument from its verb.
-  In *Phrase Structure and the Lexicon*, 109–137.
-- Cuervo, M. C. (2003). *Datives at Large*. PhD dissertation, MIT.
-- Schäfer, F. (2008). *The Syntax of (Anti-)Causatives*.
-  John Benjamins.
-- Harley, H. (2014). On the identity of roots. *Theoretical Linguistics*
-  40(3/4): 225–276.
-- Coon, J. (2019). Building verbs in Chuj. *Journal of Linguistics* 55(1): 35–81.
-- Muñoz Pérez, C. (2026). Stylistic applicatives: A lens into the
-  nature of anticausative SE. *Glossa* 11(1).
-- Collins, C. (2005). A Smuggling Approach to the Passive in English.
-  *Syntax* 8(2): 81–120. @cite{collins-2005}
-- Chomsky, N. (2001). Derivation by Phase. In M. Kenstowicz (ed.),
-  *Ken Hale: A Life in Language*, 1–52. MIT Press.
-- Legate, J. A. (2003). Some Interface Properties of the Phase.
-  *Linguistic Inquiry* 34(3): 506–516.
 -/
 
 namespace Minimalism

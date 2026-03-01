@@ -31,12 +31,6 @@ This file records the phenomena; theories belong in Theories/.
 - `Focus/PolarityStress.lean` - Prosodic stress on auxiliaries/negation
 - `Polarity/` - NPI/PPI licensing in these contexts
 
-## References
-
-- Ladd, D.R. (1981). A First Look at the Semantics and Pragmatics of
-  Negative Questions and Tag Questions.
-- Romero, M. & Han, C.-H. (2004). On Negative Yes/No Questions.
-- van Rooy, R. & Šafářová, M. (2003). On Polar Questions.
 -/
 
 import Linglib.Core.Lexical.Word

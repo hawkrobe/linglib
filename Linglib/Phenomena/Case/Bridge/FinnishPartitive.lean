@@ -2,7 +2,8 @@ import Linglib.Core.Case.Basic
 import Linglib.Theories.Semantics.Lexical.Verb.Aspect
 
 /-!
-# Finnish Partitive–Aspect Bridge @cite{karlsson-2018}
+# Finnish Partitive–Aspect Bridge @cite{karlsson-2017}
+@cite{kiparsky-1998} @cite{krifka-1989} @cite{krifka-1992}
 
 The Finnish partitive case is the primary formal link between case marking
 and aspectual interpretation in the language (Karlsson 2018, Chs. 9, 12–13).
@@ -29,16 +30,6 @@ Finnish partitive is evidence for the **Incremental Theme** hypothesis
 unbounded) compose with the verb's event structure to determine VP-level
 telicity. The case morphology makes this composition visible.
 
-## References
-
-- Karlsson, F. (2018). *Finnish: A Comprehensive Grammar*. Routledge.
-- Krifka, M. (1989). Nominal reference, temporal constitution and
-  quantification in event semantics. In *Semantics and Contextual Expression*.
-- Krifka, M. (1992). Thematic relations as links between nominal reference
-  and temporal constitution. In Sag, I. & Szabolcsi, A. (eds.),
-  *Lexical Matters*. CSLI.
-- Kiparsky, P. (1998). Partitive case and aspect. In Butt, M. & Geuder, W.
-  (eds.), *The Projection of Arguments*. CSLI.
 -/
 
 namespace Phenomena.Case.Bridge.FinnishPartitive

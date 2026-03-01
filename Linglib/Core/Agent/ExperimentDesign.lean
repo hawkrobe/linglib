@@ -3,6 +3,7 @@ import Linglib.Core.Agent.DecisionTheory
 
 /-!
 # Optimal Experiment Design @cite{lindley-1956} @cite{chaloner-verdinelli-1995}
+@cite{hawkins-etal-2025} @cite{myung-pitt-2009} @cite{van-rooy-2003}
 
 Domain-general framework for optimal experiment design: selecting experiments
 (questions, stimuli, tests) to maximize expected information gain (EIG).
@@ -40,16 +41,6 @@ EIG with deterministic observations recovers EUV.
 | `eig`                        | `questionUtility` (EUV)                |
 | `optimalExperiment`          | (no softmax wrapper in DecisionTheory) |
 
-## References
-
-- Lindley, D. V. (1956). On a Measure of the Information Provided by an
-  Experiment. *Annals of Mathematical Statistics* 27(4): 986–1005.
-- Chaloner, K. & Verdinelli, I. (1995). Bayesian Experimental Design:
-  A Review. *Statistical Science* 10(3): 273–304.
-- Myung, J. I. & Pitt, M. A. (2009). Optimal Experimental Design for Model
-  Discrimination. *Psychological Review* 116(3): 499–518.
-- Van Rooy (2003). Questioning to Resolve Decision Problems. L&P 26.
-- Hawkins, R. D. et al. (2025). Relevant answers to polar questions.
 -/
 
 namespace Core.ExperimentDesign

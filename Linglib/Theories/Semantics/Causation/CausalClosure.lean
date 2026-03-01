@@ -4,6 +4,7 @@ import Linglib.Theories.Semantics.Causation.Sufficiency
 
 /-!
 # Causal Closure Operator
+@cite{davey-priestley-2002} @cite{nadathur-lauer-2020}
 
 The algebraic root of causal reasoning: for positive dynamics,
 `normalDevelopment` is a **closure operator** on `(Situation, trueLE)`.
@@ -30,12 +31,6 @@ closures with different triggers.
 - **Level 3 (future)**: Scott Information System unifying all situation-like
   objects in linglib (causal, dynamic, modal, presuppositional)
 
-## References
-
-- Davey, B.A. & Priestley, H.A. (2002). *Introduction to Lattices and Order*.
-  Chapter 7: Closure operators and Galois connections.
-- Nadathur, P. & Lauer, S. (2020). Causal necessity, causal sufficiency,
-  and the implications of causative verbs. *Glossa*.
 -/
 
 namespace Core.CausalClosure

@@ -8,9 +8,6 @@ Empirical data from Thomas (2026) on argument-building uses of additive particle
 - `sueCooksFreetime`: Flagship example of argument-building "too"
 - `argumentBuildingExamples`: Collected argument-building data
 
-## References
-
-- Thomas (2026). A probabilistic, question-based approach to additivity.
 -/
 
 import Linglib.Phenomena.Focus.AdditiveParticles.Data

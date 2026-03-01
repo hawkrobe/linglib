@@ -3,6 +3,7 @@ import Linglib.Theories.Semantics.Degree.Core
 
 /-!
 # Framework-Independent Comparative Semantics
+@cite{hoeksema-1983} @cite{rett-2026} @cite{schwarzschild-2008} @cite{von-stechow-1984}
 
 Comparative semantics shared across all degree frameworks: the basic
 `comparativeSem` and `equativeSem` functions, antonymy as scale reversal,
@@ -20,12 +21,6 @@ ambidirectionality, manner implicature) is in `Degree/Frameworks/Rett.lean`.
 3. **DE-ness of than-clauses**: universal quantification over the standard
    domain is anti-monotone (Hoeksema 1983, von Stechow 1984).
 
-## References
-
-- Schwarzschild, R. (2008). The semantics of comparatives.
-- Rett, J. (2026). Semantic ambivalence and expletive negation. Ms.
-- Hoeksema, J. (1983). Negative polarity and the comparative.
-- von Stechow, A. (1984). Comparing semantic theories of comparison.
 -/
 
 namespace Semantics.Degree.Comparative

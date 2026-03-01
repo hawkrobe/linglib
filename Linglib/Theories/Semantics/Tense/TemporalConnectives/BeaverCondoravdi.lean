@@ -4,9 +4,7 @@ import Linglib.Core.Scales.Scale
 
 /-!
 # Beaver & Condoravdi (2003): Uniform Analysis with `earliest`
-@cite{beaver-condoravdi-2003}
-
-A **uniform** semantics for *before* and *after*: both connectives use the
+@cite{beaver-condoravdi-2003} @cite{thomason-1984}A **uniform** semantics for *before* and *after*: both connectives use the
 same `earliest` operator, with the veridicality asymmetry derived from
 **branching time** and historical alternatives rather than quantificational
 asymmetry.
@@ -41,12 +39,6 @@ The veridicality asymmetry falls out from the initial branch point condition:
 `earliest` operator is MAX on the < scale (same as Rett's MAX₍<₎), applied
 across historical alternatives.
 
-## References
-
-- Beaver, D. & Condoravdi, C. (2003). A uniform analysis of *before* and *after*.
-  *Proceedings of SALT* 13, 37–54.
-- Thomason, R. (1984). Combinations of tense and modality. *Handbook of
-  Philosophical Logic* 2, 135–165.
 -/
 
 namespace Semantics.Tense.TemporalConnectives.BeaverCondoravdi

@@ -27,11 +27,6 @@ Combined with assertion ∃x. P(x), this yields ⊥.
 1. Modal insertion: Insert covert ◇ (irgendein)
 2. Partial exhaustification: Prune one alt type (yek-i)
 
-## References
-
-- Alonso-Ovalle & Moghiseh (2025). Existential free choice items. S&P 18.
-- Chierchia (2013). Logic in Grammar.
-- Fox (2007). Free choice and the theory of scalar implicatures.
 -/
 
 import Linglib.Theories.Pragmatics.NeoGricean.Exhaustivity.Basic

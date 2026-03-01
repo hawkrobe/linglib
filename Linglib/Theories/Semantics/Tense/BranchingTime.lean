@@ -2,6 +2,7 @@ import Linglib.Core.Temporal.Time
 
 /-!
 # Branching Time and Temporal Propositions
+@cite{condoravdi-2002} @cite{thomason-1984}
 
 Theory-specific temporal infrastructure that commits to truth-conditional
 evaluation at situation indices.
@@ -14,10 +15,6 @@ Reichenbach frames) lives in `Core.Time` and `Core.Reichenbach`.
 1. **Historical modal base** (Thomason 1984) for future branching
 2. **Temporal propositions** evaluated at situations
 
-## References
-
-- Thomason, R. (1984). Combinations of tense and modality.
-- Condoravdi, M. (2002). Temporal interpretation of modals.
 -/
 
 namespace Semantics.Tense.BranchingTime

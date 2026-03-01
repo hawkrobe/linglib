@@ -5,6 +5,7 @@ import Mathlib.Tactic.Linarith
 
 /-!
 # Gradient At-Issueness and Projectivity
+@cite{roberts-2012}
 
 At-issueness and projectivity are **gradient**, not binary, and **anti-correlated**.
 Tonhauser, Beaver & Degen (2018) report r = .85 (9 expression types) and
@@ -28,12 +29,6 @@ We use `ℚ` with bound proofs rather than `Degree max` (= `Fin (max + 1)`)
 because at-issueness is a continuous expression-level property — `ℚ` is more
 natural and avoids an arbitrary `max` parameter.
 
-## References
-
-- Roberts (2012). Information structure in discourse.
-- Tonhauser, Beaver & Degen (2018). How projective is projective content?
-  @cite{tonhauser-beaver-degen-2018}
-- Simons et al. (2010). What projects and why.
 -/
 
 namespace Core.Discourse.AtIssueness

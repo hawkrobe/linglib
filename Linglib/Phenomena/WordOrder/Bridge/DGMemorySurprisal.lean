@@ -5,6 +5,7 @@ import Linglib.Theories.Syntax.DependencyGrammar.Formal.HarmonicOrder
 
 /-!
 # Study 2: Crosslinguistic Word-Order Efficiency (54 Languages)
+@cite{futrell-gibson-2020} @cite{hahn-degen-futrell-2021}
 
 Hahn et al. (2021) Study 2: for 54 languages from Universal Dependencies,
 real word orders achieve more efficient memory-surprisal trade-offs than
@@ -22,10 +23,6 @@ AUC values computed from <https://github.com/m-hahn/memory-surprisal>
 - → `Phenomena/DependencyLength/FutrellEtAl2020`: shared languages across datasets
 - → `Formal/HarmonicOrder`: DLM harmonic order prediction consistent with efficiency
 
-## References
-
-- Hahn, M., Degen, J. & Futrell, R. (2021). Study 2 (§5).
-- Futrell, R., Levy, R. & Gibson, E. (2020). Dependency locality. Language 96(2).
 -/
 
 namespace Phenomena.WordOrder.Bridge.DGMemorySurprisal

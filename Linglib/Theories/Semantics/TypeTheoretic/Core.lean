@@ -7,6 +7,7 @@ import Linglib.Core.Logic.ModalLogic
 
 /-!
 # Type Theory with Records — Core Foundations
+@cite{barwise-perry-1983} @cite{cooper-2023} @cite{martin-lf-1984} @cite{montague-1973}
 
 Type-theoretic foundations for TTR (Cooper 2023), organized by conceptual role:
 
@@ -43,12 +44,6 @@ remain distinct (`groundhog` ≠ `woodchuck` even if co-extensional).
 | Fixed-point types | `(x : E) × P x` (`Sigma`) |
 | IsTrue/IsFalse | `Nonempty T`/`IsEmpty T` |
 
-## References
-
-- Cooper (2023). From Perception to Communication. OUP. Ch 1, 3.
-- Martin-Löf (1984). Intuitionistic Type Theory.
-- Barwise & Perry (1983). Situations and Attitudes.
-- Montague (1973). The Proper Treatment of Quantification.
 -/
 
 namespace Semantics.TypeTheoretic

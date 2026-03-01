@@ -4,9 +4,7 @@ import Linglib.Theories.Semantics.Tense.Basic
 
 /-!
 # Tsilia, Zhao & Sharvit (2026): Tense and Perspective
-@cite{tsilia-zhao-sharvit-2026}
-
-The cross-linguistic incompatibility of temporal ⌈then⌉ with shifted present
+@cite{tsilia-zhao-sharvit-2026} @cite{sharvit-2003} @cite{zhao-2025}The cross-linguistic incompatibility of temporal ⌈then⌉ with shifted present
 tense is derived from **tense presuppositions** anchored to a perspectival
 parameter π. This creates the architecturally significant import edge from
 tense theory to `Core.Presupposition`.
@@ -30,11 +28,6 @@ presupposition is trivially satisfied at the shifted perspective: the
 simultaneous reading has R = P' where P' = E_matrix, which satisfies
 the PRES presupposition at the shifted π.
 
-## References
-
-- Tsilia, D., Zhao, Z. & Sharvit, Y. (2026). Tense and perspective.
-- Sharvit, Y. (2003). Embedded tense and universal grammar. LI 34(4).
-- Zhao, Z. (2026). Cross-Linguistic and Cross-Domain Parallels. MIT diss.
 -/
 
 namespace Semantics.Tense.TsiliaEtAl2026

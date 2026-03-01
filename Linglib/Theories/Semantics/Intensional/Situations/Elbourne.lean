@@ -7,6 +7,7 @@ import Linglib.Core.Discourse.QUD
 
 /-!
 # Elbourne (2013): Situation-Semantic Definite Descriptions @cite{elbourne-2013}
+@cite{barwise-perry-1983} @cite{elbourne-2005} @cite{heim-1982} @cite{postal-1966} @cite{schwarz-2009}
 
 Formalizes the core theoretical machinery from:
 
@@ -35,15 +36,6 @@ unifies:
 - `pronoun_is_definite_article`: ⟦it⟧ = ⟦the⟧ (Postal 1966, Elbourne 2005)
 - `the_sit_assertion_implies_presup`: assertion entails presupposition
 
-## References
-
-- Elbourne, P. (2013). Definite Descriptions. OUP.
-- Elbourne, P. (2005). Situations and Individuals. MIT Press.
-- Postal, P. (1966). On so-called 'pronouns' in English.
-- Barwise, J. & Perry, J. (1983). Situations and Attitudes.
-- Kratzer, A. (1989, 2002). Facts and situations.
-- Heim, I. (1982). Definite and Indefinite NPs. UMass diss.
-- Schwarz, F. (2009). Two Types of Definites in Natural Language.
 -/
 
 namespace Semantics.Intensional.Situations.Elbourne

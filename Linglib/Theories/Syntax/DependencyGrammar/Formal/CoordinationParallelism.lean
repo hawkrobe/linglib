@@ -4,6 +4,7 @@ import Linglib.Theories.Syntax.DependencyGrammar.Coordination
 
 /-!
 # Coordination Parallelism and Sharing
+@cite{osborne-2019}
 
 Formalizes Osborne's (2019, Ch 10–11) analysis of coordination: conjuncts
 must have parallel structure, shared dependents form catenae, and the CSC
@@ -29,10 +30,6 @@ coordination is just catena-ellipsis. The CSC follows from requiring symmetric
 - → `Ellipsis.lean`: gapping = catena-ellipsis in coordination
 - → `Phenomena/Ellipsis/Gapping.lean`: gapping direction ↔ sharing direction
 
-## References
-
-- Osborne, T. (2019). *A Dependency Grammar of English*, Ch 10–11.
-  Amsterdam: John Benjamins.
 -/
 
 namespace DepGrammar.CoordinationParallelism

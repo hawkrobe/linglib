@@ -2,6 +2,7 @@ import Linglib.Theories.Semantics.Questions.Inquisitive
 
 /-!
 # Probabilistic Answerhood (Thomas 2026) @cite{thomas-2026}
+@cite{groenendijk-stokhof-1984}
 
 Answerhood in terms of probability changes, following Thomas (2026)
 "A probabilistic, question-based approach to additivity".
@@ -34,10 +35,6 @@ Probabilistic answerhood generalizes the mention-some/mention-all distinction:
 - Under uniform priors, probabilistic answerhood reduces to standard partial answerhood
 - Non-uniform priors allow context-sensitive answerhood
 
-## References
-
-- Thomas (2026). A probabilistic, question-based approach to additivity.
-- Groenendijk & Stokhof (1984). Studies on the Semantics of Questions.
 -/
 
 namespace Semantics.Questions.ProbabilisticAnswerhood

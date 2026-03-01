@@ -1,5 +1,6 @@
 /-!
 # Hindi-Urdu Interrogative Particles
+@cite{bhatt-dayal-2014} @cite{bhatt-dayal-2020} @cite{dayal-2025}
 
 Particles related to question formation in Hindi-Urdu, following
 Bhatt & Dayal (2014, 2020) and Dayal (2025: §§1.3, 4.4).
@@ -17,11 +18,6 @@ The absence of a clause-typing particle means:
   (clause-typing cannot be forced at CP).
 - *kya:* in embedded position is the hallmark of quasi-subordination.
 
-## References
-
-- Bhatt, R. & V. Dayal (2014). Polar kyaa: Y/N or speech act operator.
-- Bhatt, R. & V. Dayal (2020). Polar question particles: Hindi-Urdu kya:.
-- Dayal, V. (2025). The Interrogative Left Periphery. Linguistic Inquiry 56(4).
 -/
 
 namespace Fragments.HindiUrdu.Particles

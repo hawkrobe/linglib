@@ -3,6 +3,7 @@ import Linglib.Theories.Semantics.Events.Basic
 
 /-!
 # Event–Interval Bridge
+@cite{krifka-1989} @cite{parsons-1990}
 
 The projection from event predicates (Level 3) to interval sets (Level 2):
 
@@ -26,11 +27,6 @@ and point-level theories (Anscombe).
 - The projection is **sort-erasing**: event sort (action/state) is lost. This
   is correct for temporal connectives, which don't care about event sort.
 
-## References
-
-- Krifka, M. (1989). Nominal reference, temporal constitution and
-  quantification in event semantics.
-- Parsons, T. (1990). Events in the Semantics of English.
 -/
 
 namespace Semantics.Tense.TemporalConnectives

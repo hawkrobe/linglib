@@ -1,12 +1,10 @@
 /-!
 # Mandarin Discourse Particles
+@cite{ippolito-kiss-williams-2025}
 
 Lexical entry for Mandarin *zhǐshì* (只是) — the discourse *only*
 connective (IKW 2025). Allows all clause types as S' except exclamatives.
 
-## References
-
-- Ippolito, Kiss & Williams (2025). Discourse *only*. WCCFL 41.
 -/
 
 namespace Fragments.Mandarin.DiscourseParticles

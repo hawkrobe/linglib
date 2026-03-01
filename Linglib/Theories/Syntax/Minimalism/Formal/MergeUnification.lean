@@ -25,11 +25,6 @@ The key insight is that this is a distinction in *preconditions*, not in the
 3. **Exhaustivity**: Every valid merge is either External or Internal
 4. **Movement Uniformity**: Properties of movement don't depend on mover's nature
 
-## References
-
-- Chomsky, N. (2004). "Beyond Explanatory Adequacy"
-- Chomsky, N. (2013). "Problems of Projection"
-- Harizanov, B. (2019). "Head movement and morphological realization"
 -/
 
 import Linglib.Theories.Syntax.Minimalism.Core.Labeling

@@ -5,6 +5,7 @@ import Linglib.Core.Context.Shifts
 
 /-!
 # Reference Phenomena: ContextTower Bridge
+@cite{anand-nevins-2004} @cite{banfield-1982} @cite{kaplan-1989} @cite{schlenker-2003}
 
 End-to-end derivation chain connecting the ContextTower infrastructure
 to the direct reference and indexical shift data in
@@ -36,12 +37,6 @@ Phenomena.Reference.DirectReference (MonsterThesis, shift languages)
 4. **Direct speech = full local access**: All coordinates from the embedded
    context (full perspective shift)
 
-## References
-
-- Kaplan, D. (1989). Demonstratives.
-- Schlenker, P. (2003). A Plea for Monsters. L&P.
-- Anand, P. & Nevins, A. (2004). Shifty Operators in Changing Contexts.
-- Banfield, A. (1982). Unspeakable Sentences.
 -/
 
 namespace Phenomena.Reference.Bridge.TowerBridge

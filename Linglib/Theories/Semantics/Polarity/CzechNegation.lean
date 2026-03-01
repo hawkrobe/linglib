@@ -1,14 +1,11 @@
 /-!
 # Czech Three-Way Negation: Core Types
+@cite{stakov-2026} @cite{zeijlstra-2004}
 
 Pure type definitions for the three-way negation distinction in Czech polar
 questions (Staňková 2026). Extracted from `Phenomena.Negation.CzechThreeWayNeg`
 so that Fragment files can reference these types without importing empirical data.
 
-## References
-
-- Staňková, V. (2026). A three-way distinction of negation interpretation in Czech.
-- Zeijlstra, H. (2004). Sentential Negation and Negative Concord. LOT.
 -/
 
 namespace Semantics.Polarity.CzechNegation

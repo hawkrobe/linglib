@@ -26,14 +26,6 @@ Equations (Knick & Sharf 2026):
 - (22b) ⟦PERF⟧ = λp.λt.∃tPTS[RB(tPTS, t) ∧ p(tPTS)]
 - (23b) ⟦PERF_XN⟧ = λp.λt.∃tPTS.∃tLB ∈ tᵣ[LB(tLB,tPTS) ∧ RB(tPTS,t) ∧ p(tPTS)]
 
-## References
-
-- Klein, W. (1994). Time in Language. Chapter 6.
-- Knick, A. & Sharf, M. (2026). On focus and the perfect aspect.
-- Smith, C. (1991). The Parameter of Aspect.
-- Iatridou, S., Anagnostopoulou, E. & Izvorski, R. (2001).
-  Observations about the form and meaning of the Perfect.
-- Pancheva, R. (2003). The aspectual makeup of perfect participles.
 -/
 
 import Linglib.Core.Temporal.Time

@@ -4,6 +4,7 @@ import Linglib.Theories.Semantics.Entailment.Polarity
 
 /-!
 # Questions/Polarity.lean
+@cite{bring-gunlogson-2000} @cite{ladd-1981} @cite{van-rooy-2003}
 
 Van Rooy & Šafářová (2003) Decision-Theoretic Account of Polar Question Choice.
 
@@ -41,11 +42,6 @@ Two sources of utility:
 - **Grounding questions**: Check surprising new information
 - **Medical diagnosis**: Truth of ¬q helps reach diagnostic goal
 
-## References
-
-- Van Rooy & Šafářová (2003). On Polar Questions. SALT 13.
-- Ladd (1981). Semantics and pragmatics of negative questions.
-- Büring & Gunlogson (2000). Aren't positive and negative polar questions the same?
 -/
 
 namespace Semantics.Questions.Polarity

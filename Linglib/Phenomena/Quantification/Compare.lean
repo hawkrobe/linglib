@@ -15,12 +15,6 @@ Comparing how different theories explain scope freezing phenomena.
 2. Where do they diverge?
 3. Is freezing categorical (grammar) or gradient (processing/pragmatics)?
 
-## References
-
-- Fox (2000). Economy and Scope.
-- Steedman (2000). The Syntactic Process.
-- Bruening (2001). QR obeys Superiority.
-- Scontras et al. (2017). Scope ambiguity processing.
 -/
 
 import Linglib.Core.Interface

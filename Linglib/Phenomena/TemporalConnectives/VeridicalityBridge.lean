@@ -5,6 +5,7 @@ import Linglib.Phenomena.TenseAspect.Studies.OgiharaST2024.Data
 
 /-!
 # Veridicality ↔ Presupposition Bridge
+@cite{beaver-condoravdi-2003} @cite{heim-1983} @cite{ogihara-steinert-threlkeld-2024}
 
 Connects three layers of the temporal connective formalization:
 
@@ -47,12 +48,6 @@ Non-veridical connectives carry no such presupposition. This connects the
 temporal connective veridicality to the general presupposition projection
 framework (Heim 1983, Schlenker 2009).
 
-## References
-
-- Ogihara, T. & Steinert-Threlkeld, S. (2024). An interval-based semantics
-  for *before* and *after*.
-- Beaver, D. & Condoravdi, C. (2003). A uniform analysis of *before* and *after*.
-- Heim, I. (1983). On the Projection Problem for Presuppositions.
 -/
 
 namespace Phenomena.TemporalConnectives.VeridicalityBridge

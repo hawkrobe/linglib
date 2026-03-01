@@ -53,10 +53,6 @@ left for future work.
   operation are defined there as shared infrastructure. This module
   builds `ExpState` (expectation states) on top of that.
 
-## References
-
-- Veltman, F. (1996). Defaults in update semantics. *Journal of
-  Philosophical Logic* 25(3), 221-261.
 -/
 
 namespace Semantics.Dynamic.Default

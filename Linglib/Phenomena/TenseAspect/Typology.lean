@@ -2,6 +2,7 @@ import Linglib.Core.Lexical.Word
 
 /-!
 # Cross-Linguistic Typology of Tense and Aspect (WALS Chapters 65--69)
+@cite{bybee-pagliuca-1994} @cite{comrie-1985} @cite{dryer-haspelmath-2013}
 
 Cross-linguistic data on tense-aspect systems from the World Atlas of Language
 Structures (WALS), covering five parameters:
@@ -32,21 +33,6 @@ aspectual marking tend also to have tense marking. Suffixing is overwhelmingly
 the dominant strategy for tense-aspect morphology (Dryer 2013). South-East
 Asian languages consistently lack morphological tense-aspect marking.
 
-## References
-
-- Dahl, O. & Velupillai, V. (2013a). Perfective/Imperfective Aspect. In
-  Dryer & Haspelmath (eds.), WALS Online. https://wals.info/chapter/65
-- Dahl, O. & Velupillai, V. (2013b). The Past Tense. In Dryer & Haspelmath
-  (eds.), WALS Online. https://wals.info/chapter/66
-- Dahl, O. & Velupillai, V. (2013c). The Future Tense. In Dryer & Haspelmath
-  (eds.), WALS Online. https://wals.info/chapter/67
-- Dahl, O. & Velupillai, V. (2013d). The Perfect. In Dryer & Haspelmath
-  (eds.), WALS Online. https://wals.info/chapter/68
-- Dryer, M. (2013). Position of Tense-Aspect Affixes. In Dryer & Haspelmath
-  (eds.), WALS Online. https://wals.info/chapter/69
-- Comrie, B. (1985). Tense. Cambridge University Press.
-- Bybee, J., Perkins, R. & Pagliuca, W. (1994). The Evolution of Grammar.
-  University of Chicago Press.
 -/
 
 namespace Phenomena.TenseAspect.Typology

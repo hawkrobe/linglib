@@ -31,12 +31,6 @@ Why do equatives show asymmetry (marked antonyms evaluative) but comparatives do
 - Equatives: polar-INVARIANT ("as tall as" = "as short as" semantically)
   → Unmarked alternative exists → Manner implicature → Asymmetry
 
-## References
-
-- Rett, J. (2015). The Semantics of Evaluativity. Oxford University Press.
-- Kennedy, C. (2007). Vagueness and grammar.
-- Bierwisch, M. (1989). The semantics of gradation.
-- Horn, L. (1984). Toward a new taxonomy for pragmatic inference.
 -/
 
 import Linglib.Theories.Pragmatics.NeoGricean.Core.Basic

@@ -18,15 +18,6 @@ and distinct syntactic frames.
 - `contact_determines_implies_effector_subject` → `isEffector` (proto-roles)
 - `lexicalize_increases_agentivity` → `pAgentScore` ordering (proto-roles)
 
-## References
-
-- Rappaport Hovav, M. & Levin, B. (1998). Building verb meanings.
-  In M. Butt & W. Geuder (eds.), *The Projection of Arguments*, 97–134.
-- Rappaport Hovav, M. & Levin, B. (2010). Reflections on manner/result
-  complementarity. In M. Rappaport Hovav et al. (eds.),
-  *Lexical Semantics, Syntax, and Event Structure*, 21–38.
-- Rappaport Hovav, M. & Levin, B. (2024). Variable agentivity: Polysemy
-  or underspecification? In *The Landscape of Verb Classes*.
 -/
 
 import Linglib.Theories.Semantics.Events.ProtoRoles

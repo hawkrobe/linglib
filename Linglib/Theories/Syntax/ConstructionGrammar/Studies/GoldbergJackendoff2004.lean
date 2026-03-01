@@ -22,10 +22,6 @@ Formalization of the core claims from Goldberg & Jackendoff (2004, Language 80(3
 7. **Temporal constraint**: the constructional subevent cannot temporally precede
    the verbal subevent
 
-## Reference
-
-Goldberg, A. E. & Jackendoff, R. (2004). The English Resultative as a
-Family of Constructions. Language, 80(3), 532–568.
 -/
 
 namespace ConstructionGrammar.Studies.GoldbergJackendoff2004

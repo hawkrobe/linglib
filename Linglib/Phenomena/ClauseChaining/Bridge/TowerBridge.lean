@@ -4,6 +4,7 @@ import Linglib.Core.Context.Shifts
 
 /-!
 # Clause Chaining: ContextTower Bridge @cite{sarvasy-aikhenvald-2025}
+@cite{foley-r-d-van-valin-1984}
 
 End-to-end derivation chain connecting the ContextTower infrastructure to
 clause chaining phenomena. The core insight: in a medial-final chain, the
@@ -33,12 +34,6 @@ Phenomena.ClauseChaining.Data (nungon, korean, turkish, etc.)
 4. **SR as agent comparison**: SS = `.agent` same across adjacent tower levels;
    DS = `.agent` differs
 
-## References
-
-- Sarvasy, H. S. & A. Y. Aikhenvald (eds.) (2025). Clause Chaining in the
-  Languages of the World. IRL Press at Oxford University Press.
-- Foley, W. A. & R. D. Van Valin, Jr. (1984). Functional Syntax and Universal
-  Grammar. Cambridge University Press.
 -/
 
 namespace Phenomena.ClauseChaining.Bridge.TowerBridge

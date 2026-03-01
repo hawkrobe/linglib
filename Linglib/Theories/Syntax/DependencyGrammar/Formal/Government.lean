@@ -4,6 +4,7 @@ import Linglib.Theories.Syntax.DependencyGrammar.Formal.HeadCriteria
 
 /-!
 # Government in Dependency Grammar
+@cite{osborne-2019}
 
 Formalizes government (Osborne 2019, Ch 4 §4.8, Ch 5): the mechanism by which
 a head determines the morphosyntactic form of its dependent.
@@ -28,10 +29,6 @@ count, different morphological requirements on the complement.
 - → `Core/Basic.lean`: `ArgSlot` has `cat` and `depType`; government adds
   morphological form constraints
 
-## References
-
-- Osborne, T. (2019). *A Dependency Grammar of English*, Ch 4 §4.8, Ch 5.
-  Amsterdam: John Benjamins.
 -/
 
 namespace DepGrammar.Government

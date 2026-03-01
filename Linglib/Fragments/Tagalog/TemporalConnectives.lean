@@ -3,6 +3,7 @@ import Linglib.Fragments.English.TemporalExpressions
 
 /-!
 # Tagalog Temporal Connectives Fragment
+@cite{dell-1983} @cite{rett-2020}
 
 Cross-linguistic data on Tagalog *bago* ('before') and *pagkatapos* ('after')
 showing overt morphological marking of the aspectual coercion that English
@@ -17,10 +18,6 @@ This morphological evidence supports Rett's (2020) ambiguity analysis:
 the covert INCHOAT/COMPLET operators posited for English correspond to
 overt aspect markers in Tagalog.
 
-## References
-
-- Dell, F. (1983). An aspectual distinction in Tagalog. *Oceanic Linguistics* 22/23.
-- Rett, J. (2020). Eliminating EARLIEST. *Sinn und Bedeutung* 24, §2.4.
 -/
 
 namespace Fragments.Tagalog.TemporalConnectives

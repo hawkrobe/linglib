@@ -47,12 +47,6 @@ This implementation connects to the broader RSA ecosystem:
 - **Word order**: Captures cross-linguistic variation in adjective ordering
   (prenominal English vs postnominal Spanish).
 
-## References
-
-- Waldon & Degen (2021). Modeling cross-linguistic production of referring
-  expressions. SCiL 2021, pp. 206-215.
-- Cohn-Gordon et al. (2018). An incremental iterated response model.
-- Degen et al. (2020). When redundancy is useful. Psychological Review.
 -/
 
 import Linglib.Theories.Pragmatics.RSA.Core.Noise

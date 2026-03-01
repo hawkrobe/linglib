@@ -10,6 +10,7 @@ import Mathlib.Algebra.Order.Field.Basic
 
 /-!
 # Decision-Theoretic Semantics: Core (Merin 1999)
+@cite{merin-1999}
 
 Core definitions for Merin's Decision-Theoretic Semantics (DTS). Meaning is
 explicated through *signed relevance* — the Bayes factor P(E|H)/P(E|¬H) —
@@ -34,10 +35,6 @@ relative to a dichotomic issue {H, ¬H}.
 - **Theorem 6b** (`xor_not_necessarily_positive`): Counterexample showing
   XOR of two positively relevant propositions can be negatively relevant
 
-## References
-
-- Merin, A. (1999). Information, relevance, and social decisionmaking.
-  In *Logic, Language, and Computation*, Vol. 2, CSLI.
 -/
 
 namespace Theories.DTS

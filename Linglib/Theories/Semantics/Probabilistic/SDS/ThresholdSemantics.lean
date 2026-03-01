@@ -33,12 +33,6 @@ Morzycki (2009) shows why "big idiot" works but "small idiot" doesn't:
 
 This parallels the positive/negative adjective asymmetry in degree semantics.
 
-## References
-
-- Lassiter, D. & Goodman, N.D. (2017). Adjectival vagueness in a Bayesian model.
-- Tessler, M.H. & Goodman, N.D. (2019). The Language of Generalization.
-- Morzycki, M. (2009). Degree modification of gradable nouns.
-- Kennedy, C. (2007). Vagueness and grammar.
 -/
 
 import Mathlib.Data.Rat.Defs

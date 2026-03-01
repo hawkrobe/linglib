@@ -3,6 +3,7 @@ import Linglib.Theories.Semantics.Dynamic.Core.CCP
 
 /-!
 # Pointwise ↔ Update-Theoretic Bridge
+@cite{charlow-2021} @cite{muskens-1996}
 
 Connects the pointwise `DRS S := S → S → Prop` type (Dynamic Ty2, Muskens 1996)
 to the update-theoretic `StateCCP W E := State W E → State W E` type (Charlow 2019).
@@ -15,11 +16,6 @@ The central result: `liftPW D` is always distributive (Charlow 2021, §6),
 meaning pointwise meanings can never produce irreducibly context-level effects.
 Cumulative readings require non-distributive M_v, which lives only in `StateCCP`.
 
-## References
-
-- Charlow, S. (2021). Post-suppositions and semantic theory. *L&P* 44, 701–765.
-  Equations 76–77.
-- Muskens, R. (1996). Combining Montague Semantics and Discourse Representation.
 -/
 
 namespace Semantics.Dynamic.Core.PointwiseUpdate

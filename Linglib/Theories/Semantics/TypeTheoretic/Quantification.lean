@@ -4,6 +4,7 @@ import Mathlib.Data.Finset.Card
 
 /-!
 # Type Theory with Records — Chapter 7: Witness-based Quantification
+@cite{barwise-cooper-1981} @cite{cooper-2023} @cite{van-benthem-1984}
 
 Cooper (2023) Chapter 7 replaces classical set-theoretic GQ denotations
 (cf. `Core.Quantification.GQ`) with *witness sets* — finite sets of
@@ -18,12 +19,6 @@ Key innovations:
 - **Complement witness sets**: COMPSET anaphora for 'few' (§7.4)
 - **Contexts with gaps**: long distance dependencies (§7.5)
 
-## References
-
-- Cooper (2023). From Perception to Communication. Ch 7.
-- Barwise & Cooper (1981). Generalized Quantifiers and Natural Language.
-- van Benthem (1984). Questions about Quantifiers.
-- Lücking & Ginzburg (2019, 2022). Dynamic Generalized Quantifiers.
 -/
 
 namespace Semantics.TypeTheoretic

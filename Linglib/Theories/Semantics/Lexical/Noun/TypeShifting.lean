@@ -18,10 +18,6 @@ The type-shifting triangle between three NP semantic types:
          e
 ```
 
-## References
-
-- Partee, B. H. (1987). Noun Phrase Interpretation and Type-shifting Principles.
-  In Groenendijk et al. (eds.), Studies in Discourse Representation Theory.
 -/
 
 import Linglib.Theories.Semantics.Montague.Basic

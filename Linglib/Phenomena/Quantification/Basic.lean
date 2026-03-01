@@ -7,10 +7,6 @@ Quantifier scope and numeral semantics.
 - `ScopeFreezing.Availability`, `ScopeFreezing.FreezingContext`
 - `Numerals.NumeralImprecisionDatum`, `Numerals.RoundnessLevel`
 
-## References
-- May (1985). Logical Form.
-- Krifka (2007). Approximate interpretation.
-- Solt (2014, 2018). Imprecise numerals.
 -/
 
 import Linglib.Phenomena.Quantification.Data

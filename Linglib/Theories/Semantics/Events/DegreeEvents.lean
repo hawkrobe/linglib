@@ -2,7 +2,7 @@ import Linglib.Theories.Semantics.Events.Basic
 import Linglib.Tactics.OntSort
 
 /-!
-# Degree Events (Zhao 2026, Ch. 4) @cite{zhao-2026}
+# Degree Events (Zhao 2025, Ch. 4) @cite{zhao-2025}
 
 Gradable predicates introduce events with degree traces τ_d parallel to
 temporal traces τ_i. Comparison involves thematic roles [STD], [TAR], [DIFF]
@@ -17,10 +17,6 @@ dimension, following Zhao's cross-domain parallel:
 | AGENT, THEME roles       | STD, TAR, DIFF roles        |
 | States: ATOM-DIST_t      | Bare comp: ATOM-DIST_d      |
 
-## References
-
-- Zhao, Z. (2026). Cross-Linguistic and Cross-Domain Parallels in the
-  Semantics of Degree and Time. MIT dissertation, Ch. 4.
 -/
 
 namespace Semantics.Events.DegreeEvents
@@ -49,7 +45,7 @@ def DegreeEv.τ_d {Time Deg : Type*} [LE Time] [LE Deg]
     (e : DegreeEv Time Deg) : Interval Deg :=
   e.degTrace
 
-/-- Comparison thematic roles (Zhao 2026, Ch. 4).
+/-- Comparison thematic roles (Zhao 2025, Ch. 4).
     In comparative constructions, events have participants playing
     degree-related roles analogous to standard thematic roles. -/
 inductive ComparisonRole where

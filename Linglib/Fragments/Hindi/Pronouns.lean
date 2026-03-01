@@ -7,10 +7,6 @@ Hindi has a three-level honorific system for 2nd person (non-hon *tuu* / hon
 uses distal demonstrative forms (*vah* sg / *ve* pl). AA is Fin-based and
 freely embeddable.
 
-## References
-
-- Alok, D. & A. Bhalla (2026). Allocutive agreement and the syntax of
-  honorifics.
 -/
 
 import Linglib.Core.Lexical.Pronouns

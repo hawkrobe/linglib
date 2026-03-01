@@ -30,12 +30,6 @@ Number morphology (sg/pl) constrains the instantiation set, not the
 denotation type. Singular morphology requires that instances are
 "conceptualized as a single entity."
 
-## References
-
-- Dayal, V. (2004). Number Marking and (In)definiteness in Kind Terms.
-  Linguistics and Philosophy 27: 393-450.
-- Chierchia, G. (1998). Reference to Kinds Across Languages.
-- Carlson, G. (1977). Reference to Kinds in English.
 -/
 
 import Linglib.Theories.Semantics.Lexical.Noun.Kind.Chierchia1998

@@ -24,11 +24,6 @@ Cross-serial dependencies in Dutch require this extra power:
 CCG handles this via generalized composition while maintaining
 the "mildly context-sensitive" property (polynomial parsing).
 
-## References
-
-- Steedman (2000). The Syntactic Process, Ch. 2
-- Joshi, A.K. (1985). Tree Adjoining Grammars
-- Vijay-Shanker & Weir (1994). The equivalence of CCG, TAG, and LIG
 -/
 
 import Linglib.Theories.Syntax.CCG.Formal.FormalLanguageTheory

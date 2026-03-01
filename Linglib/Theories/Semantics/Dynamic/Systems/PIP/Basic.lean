@@ -4,9 +4,7 @@ import Linglib.Theories.Semantics.Dynamic.Systems.IntensionalCDRT.Update
 /-!
 # Plural Intensional Presuppositional Predicate Calculus (PIP)
 
-@cite{keshet-abney-2024}
-
-Core types for Keshet & Abney (2024)'s PIP system, which extends
+@cite{keshet-abney-2024} @cite{brasoveanu-2010} @cite{stone-1997}Core types for Keshet & Abney (2024)'s PIP system, which extends
 first-order predicate calculus with set abstraction, plural assignments,
 formula labels, and world-subscripted predicates to handle intensional
 anaphora uniformly.
@@ -45,11 +43,6 @@ external/local variable distinction) are faithfully preserved.
 | `Discourse W E` | Information state + label registry |
 | `PUpdate W E` | Discourse-level update (dynamic encoding of PIP formulas) |
 
-## References
-
-- Keshet, E. & Abney, S. (2024). Intensional Anaphora. S&P 17.
-- Brasoveanu, A. (2010). Decomposing Modal Quantification. JoS 27(4).
-- Stone, M. (1997). The Anaphoric Parallel between Modality and Tense.
 -/
 
 namespace Semantics.Dynamic.PIP

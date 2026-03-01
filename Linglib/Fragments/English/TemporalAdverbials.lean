@@ -16,14 +16,6 @@ The Phenomena layer (`Phenomena/TemporalAdverbials/Rouillard2026.lean`)
 imports these entries and proves that Theory predictions match empirical
 acceptability judgments.
 
-## References
-
-- Rouillard, V. (2026). Maximal informativity accounts for the distribution
-  of temporal *in*-adverbials. *L&P* 49:1--56.
-- Dowty, D. (1979). Word Meaning and Montague Grammar.
-- Krifka, M. (1989). Nominal reference, temporal constitution and
-  quantification in event semantics.
-- von Fintel, K. & Iatridou, S. (2019). Since since.
 -/
 
 import Linglib.Theories.Semantics.Lexical.Verb.Aspect

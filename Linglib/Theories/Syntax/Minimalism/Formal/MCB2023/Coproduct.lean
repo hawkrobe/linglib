@@ -15,12 +15,6 @@ key structure connecting Merge to Hopf algebra formalism from QFT renormalizatio
 - `leadingCoproduct`: Δ₍₂₎(T) = Σᵥ Tᵥ ⊗ T/Tᵥ (eq 2.16)
 - `forestExternalMerge` / `forestInternalMerge`: Merge lifted to workspaces
 
-## References
-
-- Marcolli, M., Chomsky, N. & Berwick, R.C. (2023). "Mathematical Structure of
-  Syntactic Merge", §2.2–2.3
-- Connes, A. & Kreimer, D. (1998). "Hopf Algebras, Renormalization and
-  Noncommutative Geometry"
 -/
 
 import Linglib.Theories.Syntax.Minimalism.Formal.MCB2023.Accessible

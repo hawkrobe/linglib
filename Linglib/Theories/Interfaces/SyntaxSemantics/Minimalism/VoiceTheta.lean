@@ -6,9 +6,7 @@ import Linglib.Theories.Interfaces.SyntaxSemantics.Linking
 /-!
 # Severing Account of θ-Role Assignment (Kratzer 1996; Schäfer 2008)
 
-@cite{kratzer-1996} @cite{schaefer-2008}
-
-The **severing** account (Kratzer 1996) holds that the Voice head —
+@cite{kratzer-1996} @cite{schaefer-2008} @cite{alexiadou-schfer-2015} @cite{levin-2004} @cite{schfer-2008}The **severing** account (Kratzer 1996) holds that the Voice head —
 not the verb root — determines which theta role the external argument
 gets. The verb root is category-neutral; argument structure comes from
 the functional sequence.
@@ -48,13 +46,6 @@ single compatible Voice.
 VoiceFlavor`, allowing uniform comparison with other accounts via the
 shared linking interface.
 
-## References
-
-- Kratzer, A. (1996). Severing the external argument from its verb.
-- Schäfer, F. (2008). *The Syntax of (Anti-)Causatives*. Benjamins.
-- Levin, B. (2004). Verbs and constructions: Where next?
-- Alexiadou, A., E. Anagnostopoulou & F. Schäfer (2015). *External
-  Arguments in Transitivity Alternations*. Oxford.
 -/
 
 namespace Theories.Interfaces.SyntaxSemantics.VoiceTheta

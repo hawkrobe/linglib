@@ -3,6 +3,7 @@ import Linglib.Theories.Semantics.Degree.Core
 
 /-!
 # Compositional "How" — Degree Questions
+@cite{beck-rullmann-1999} @cite{fox-2007} @cite{rullmann-1995}
 
 Compositional semantics of degree questions ("how tall is Kim?"),
 connecting the syntactic structure of degree questions to the
@@ -34,11 +35,6 @@ The maximally informative answer is the one with d = height(Kim)
 This module provides the compositional structure that feeds into
 that analysis.
 
-## References
-
-- Rullmann, H. (1995). Maximality in the semantics of wh-constructions.
-- Fox, D. & Hackl, M. (2007). The universal density of measurement.
-- Beck, S. & Rullmann, H. (1999). A flexible approach to exhaustivity.
 -/
 
 namespace Semantics.Degree.DegreeQuestion

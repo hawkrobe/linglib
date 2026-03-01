@@ -21,12 +21,6 @@ rather than reporting new experiments.
 - `NumeralReading`: exact (=2) vs at-least (≥2)
 - `twoNotTruth`: truth conditions for "two horses didn't jump" (eq 6)
 
-## References
-
-- Scontras, G. & Pearl, L. (2021). When pragmatics matters more for
-  truth-value judgments. *Glossa* 6(1): 110.
-- Musolino, J. & Lidz, J. (2003). The scope of isomorphism:
-  Turning adults into children. *Language Acquisition* 11(4): 277–291.
 -/
 
 namespace Phenomena.Quantification.Studies.ScontrasPearl2021

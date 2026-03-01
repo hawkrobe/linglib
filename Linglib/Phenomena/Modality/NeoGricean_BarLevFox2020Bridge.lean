@@ -3,6 +3,7 @@ import Linglib.Phenomena.Modality.FreeChoice
 
 /-!
 # Bridge: NeoGricean Free Choice (Bar-Lev & Fox 2020) to Phenomena
+@cite{bar-lev-fox-2020}
 
 Connects the NeoGricean Innocent Inclusion formalization to empirical free choice
 data from `Phenomena.Modality.FreeChoice`.
@@ -10,10 +11,6 @@ data from `Phenomena.Modality.FreeChoice`.
 The theory predicts that free choice is a pragmatic inference (derived by
 Exh^{IE+II}) rather than a semantic entailment, matching the empirical data.
 
-## References
-
-- Bar-Lev & Fox (2020). Free choice, simplification, and Innocent Inclusion.
-  Natural Language Semantics 28:175-223.
 -/
 
 

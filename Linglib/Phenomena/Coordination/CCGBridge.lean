@@ -26,11 +26,6 @@ CCG shows that "John likes" IS a constituent with category S/NP:
 
 Both conjuncts have category S/NP, so they can coordinate normally.
 
-## References
-
-- Steedman (2000). The Syntactic Process. MIT Press.
-- Pickering & Barry (1991). Sentence processing without empty categories.
-  Language and Cognitive Processes, 6(3), 229-259.
 -/
 
 import Linglib.Theories.Syntax.CCG.Core.Basic

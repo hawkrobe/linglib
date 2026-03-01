@@ -4,6 +4,7 @@ import Linglib.Theories.Pragmatics.Assertion.Stalnaker
 
 /-!
 # Bridge: Gunlogson Felicity ↔ Contextual Evidence Bias
+@cite{bring-gunlogson-2000} @cite{gunlogson-2001} @cite{romero-2024}
 
 Connects Gunlogson's (2001) felicity condition on rising declaratives
 to the contextual evidence framework of Büring & Gunlogson (2000).
@@ -22,12 +23,6 @@ the addressee to already be committed to p — is not stipulated. It
 
 This derivation is formalized in `Gunlogson.cbc_from_uninformativeness`.
 
-## References
-
-- Gunlogson, C. (2001). *True to Form*. PhD dissertation, UC Santa Cruz.
-- Büring, D. & Gunlogson, C. (2000). Aren't positive and negative polar
-  questions the same? UCSC/UCLA.
-- Romero, M. (2024). Biased Polar Questions. *Ann. Rev. Ling.* 10.
 -/
 
 namespace Phenomena.Assertion.Bridge.GunlogsonBias

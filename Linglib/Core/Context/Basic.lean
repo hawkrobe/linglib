@@ -3,6 +3,7 @@ import Linglib.Core.Temporal.Reichenbach
 
 /-!
 # Kaplanian Context of Utterance
+@cite{kaplan-1989}
 
 The full context tuple ⟨agent, world, time, position⟩ from Kaplan (1989)
 "Demonstratives" §XVIII. Framework-agnostic infrastructure used by reference
@@ -11,10 +12,6 @@ theory, tense semantics, mood, and RSA.
 The simple `Context W E` (agent + world) in `Reference/Basic.lean` is a
 projection; `KContext` is the full Kaplanian structure.
 
-## References
-
-- Kaplan, D. (1989). Demonstratives. In Almog, Perry & Wettstein (eds.),
-  Themes from Kaplan. Oxford University Press, §XVIII.
 -/
 
 namespace Core.Context

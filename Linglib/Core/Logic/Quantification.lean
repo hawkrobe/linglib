@@ -6,6 +6,7 @@ import Linglib.Tactics.OntSort
 
 /-!
 # Generalized Quantifier Properties
+@cite{barwise-cooper-1981} @cite{elliott-2025} @cite{keenan-stavi-1986} @cite{peters-westerstahl-2006} @cite{van-benthem-1984}
 
 Model-agnostic properties of generalized quantifier denotations.
 
@@ -30,13 +31,6 @@ all definitions here apply directly.
 - **§12 Conservative GQ lattice**: `ConsGQ α` bounded distributive lattice
   (Elliott 2025)
 
-## References
-
-- Barwise, J. & Cooper, R. (1981). Generalized Quantifiers and Natural Language.
-- van Benthem, J. (1984). Questions About Quantifiers. J. Symbolic Logic 49(2).
-- Keenan, E. & Stavi, J. (1986). A Semantic Characterization of Natural Language Determiners.
-- Peters, S. & Westerståhl, D. (2006). Quantifiers in Language and Logic.
-- Elliott, P. (2025). Determiners as predicates. SALT 35.
 -/
 
 namespace Core.Quantification

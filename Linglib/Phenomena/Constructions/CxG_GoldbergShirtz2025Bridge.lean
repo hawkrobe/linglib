@@ -12,10 +12,6 @@ Claims 3 and 4 reference empirical study results (effect sizes from
 Studies 2/3, cross-linguistic attestation data) and so belong here
 rather than in the pure theory file.
 
-## Reference
-
-Goldberg, A. E., & Shirtz, S. (2025). PAL constructions: How phrases can act
-like words. To appear in Language.
 -/
 
 namespace ConstructionGrammar.Studies.GoldbergShirtz2025.Bridge

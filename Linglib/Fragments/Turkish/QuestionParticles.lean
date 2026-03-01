@@ -3,6 +3,7 @@ import Linglib.Theories.Semantics.Questions.QParticleLayer
 
 /-!
 # Turkish Question Particle Fragment
+@cite{fox-katzir-2011} @cite{turk-ince-2026}
 
 Turkish polar question particle *mI* (with vowel-harmony allomorphs
 mı/mi/mu/mü). Following Turk, Hirsch & İnce (2026), *mI* heads PolP
@@ -10,11 +11,6 @@ and bears focus (Σ_F). Its UPOS category is `PART`, which is
 crucial for category-match alternative computation (Fox & Katzir 2011):
 modals are `AUX`, so category match excludes them from mI's alternatives.
 
-## References
-
-- Turk, E., Hirsch, A. & İnce, A. (2026). Constraining Alternatives
-  in Turkish Polar Questions.
-- Fox, D. & Katzir, R. (2011). On the characterization of alternatives.
 -/
 
 namespace Fragments.Turkish.QuestionParticles

@@ -20,12 +20,6 @@ Following Horn (1984) and Rett (2015):
 The key point: these are objective, measurable properties. Different theories
 (NeoGricean vs. RSA) can use different mechanisms to derive the same effects.
 
-## References
-
-- Horn, L. (1984). Toward a new taxonomy for pragmatic inference.
-- Rett, J. (2015). The Semantics of Evaluativity, Chapters 5-6.
-- Bierwisch, M. (1989). The semantics of gradation.
-- Cruse, D. A. (1986). Lexical Semantics.
 -/
 
 import Linglib.Theories.Semantics.Lexical.Adjective.Theory

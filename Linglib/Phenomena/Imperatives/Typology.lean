@@ -2,6 +2,7 @@ import Linglib.Core.Lexical.Word
 
 /-!
 # Cross-Linguistic Typology of Imperatives (WALS Chapters 70--73)
+@cite{aikhenvald-2010} @cite{van-der-auwera-2006} @cite{van-der-auwera-lejeune-2013}
 
 Cross-linguistic data on imperative and related mood systems from four WALS
 chapters, all authored by Johan van der Auwera and Ludo Lejeune (2013).
@@ -51,23 +52,6 @@ Whether the language has a morphologically dedicated optative construction
 Sample: 319 languages. Optatives are a minority feature: only 77/319
 (24.1%) of sampled languages have a dedicated optative.
 
-## References
-
-- van der Auwera, J. & Lejeune, L. (2013). The morphological imperative.
-  In Dryer & Haspelmath (eds.), WALS Online (v2020.3).
-  https://wals.info/chapter/70
-- van der Auwera, J. & Lejeune, L. (2013). The prohibitive.
-  In Dryer & Haspelmath (eds.), WALS Online (v2020.3).
-  https://wals.info/chapter/71
-- van der Auwera, J. & Lejeune, L. (2013). Imperative-hortative systems.
-  In Dryer & Haspelmath (eds.), WALS Online (v2020.3).
-  https://wals.info/chapter/72
-- van der Auwera, J. & Lejeune, L. (2013). The optative.
-  In Dryer & Haspelmath (eds.), WALS Online (v2020.3).
-  https://wals.info/chapter/73
-- van der Auwera, J. (2006). Why languages prefer prohibitives.
-  Journal of Foreign Languages 161: 2--25.
-- Aikhenvald, A. Y. (2010). Imperatives and Commands. Oxford University Press.
 -/
 
 namespace Phenomena.Imperatives.Typology

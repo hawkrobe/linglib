@@ -2,6 +2,7 @@ import Linglib.Theories.Semantics.TypeTheoretic.Discourse
 
 /-!
 # Type Theory with Records — Chapter 6: Modality and Intensionality without Possible Worlds
+@cite{austin-1961} @cite{barwise-1989} @cite{cooper-2023} @cite{kratzer-1991}
 
 Cooper (2023) Chapter 6 extends the modal type system framework from Ch1
 with Prop-valued modal systems, topoi (replacing accessibility relations),
@@ -19,12 +20,6 @@ transitive verbs.
   - know = believe + veridicality (abstract doxastic bridge)
   - Topos → induced necessity/possibility (abstract Kratzer bridge)
 
-## References
-
-- Cooper (2023). From Perception to Communication. OUP. Ch 6.
-- Kratzer (1991). Modality / Conditionals.
-- Austin (1961). Truth.
-- Barwise (1989). The Situation in Logic.
 -/
 
 namespace Semantics.TypeTheoretic

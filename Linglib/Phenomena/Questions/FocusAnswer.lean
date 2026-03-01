@@ -11,11 +11,6 @@ which in turn depends on which question is being addressed.
 
 The focus structure of the answer must match the question's wh-phrase.
 
-## References
-
-- Groenendijk & Stokhof (1984). Studies on the Semantics of Questions. pp. 275-276.
-- Rooth (1992). A theory of focus interpretation. Natural Language Semantics.
-- Krifka (2011). Questions. Section on focus-answer congruence.
 -/
 
 import Linglib.Phenomena.Questions.Basic

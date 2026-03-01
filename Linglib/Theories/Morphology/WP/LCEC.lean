@@ -3,6 +3,7 @@ import Linglib.Core.Lexical.MorphRule
 
 /-!
 # The Low Conditional Entropy Conjecture @cite{ackerman-malouf-2013}
+@cite{blevins-2006} @cite{stump-finkel-2013}
 
 Ackerman, F. & Malouf, R. (2013). Morphological Organization: The Low
 Conditional Entropy Conjecture. *Language* 89(3), 429–464.
@@ -44,14 +45,6 @@ I-complexity low even when E-complexity is high.
 - `eComplexity`: number of distinct inflection classes
 - `LCECHolds`: predicate asserting I-complexity is below a threshold
 
-## References
-
-- Ackerman, F. & Malouf, R. (2013). Morphological Organization: The Low
-  Conditional Entropy Conjecture. *Language* 89(3), 429–464.
-- Stump, G. & Finkel, R. A. (2013). Morphological Typology: From Word to
-  Paradigm. CUP.
-- Blevins, J. P. (2006). Word-based morphology. *Journal of Linguistics*
-  42(3), 531–573.
 -/
 
 namespace Morphology.WP

@@ -1,5 +1,6 @@
 /-!
 # Comparative Constructions: Empirical Data
+@cite{bhatt-takahashi-2011} @cite{bresnan-1973} @cite{kennedy-1999} @cite{lechner-2004}
 
 Basic empirical data on comparative constructions — phrasal vs. clausal
 standards, morphological variation, and acceptability patterns.
@@ -13,12 +14,6 @@ standards, morphological variation, and acceptability patterns.
 3. **Subcomparatives** ("longer than the desk is wide") require clausal
    standards and are restricted in many languages.
 
-## References
-
-- Kennedy, C. (1999). Projecting the adjective.
-- Bresnan, J. (1973). Syntax of the comparative clause construction.
-- Bhatt, R. & Takahashi, S. (2011). Reduced and unreduced phrasal comparatives.
-- Lechner, W. (2004). Ellipsis in comparatives.
 -/
 
 namespace Phenomena.Comparison.Comparative

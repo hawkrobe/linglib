@@ -20,12 +20,6 @@ theory's predictions.
 | `referentialLoad` | Referential processing from intervening material |
 | `ease` | Retrieval facilitation (filler complexity, predictability) |
 
-## References
-
-- Gibson, E. (2000). The dependency locality theory.
-- Lewis, R.L. & Vasishth, S. (2005). An activation-based model.
-- Hofmeister, P. & Sag, I.A. (2010). Cognitive constraints and island effects.
-- Scontras, G. et al. (2017). Scope ambiguity processing.
 -/
 
 namespace ProcessingModel

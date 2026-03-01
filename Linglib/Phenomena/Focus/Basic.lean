@@ -9,11 +9,6 @@ Empirical data on focus interpretation effects (association with focus, contrast
 - `FIPApplication`: Types of focus interpretation effects
 - Classic examples from Rooth (1992)
 
-## References
-
-- Rooth, M. (1992). A Theory of Focus Interpretation.
-- Rooth, M. (1985). Association with Focus. PhD Dissertation.
-- Jackendoff, R. (1972). Semantic Interpretation in Generative Grammar.
 -/
 
 import Linglib.Core.Lexical.Word

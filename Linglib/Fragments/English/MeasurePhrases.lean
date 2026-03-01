@@ -2,6 +2,7 @@ import Linglib.Theories.Semantics.Probabilistic.Measurement.Basic
 
 /-!
 # English Measure Phrase Fragment
+@cite{bale-schwarz-2022} @cite{bale-schwarz-2026} @cite{coppock-2022} @cite{scontras-2014}
 
 Lexical entries for English measure terms and the preposition *per*.
 
@@ -17,12 +18,6 @@ Theory types (`Dimension`, `MeasureFn`, `MeasureTermSem`) live in
 entries — pure data typed by those theory types, following the
 Theories → Fragments dependency discipline.
 
-## References
-
-- Scontras, G. (2014). *The Semantics of Measurement*. Ph.D. dissertation, Harvard.
-- Bale, A. & Schwarz, B. (2026). Natural language and external conventions.
-- Bale, A. & Schwarz, B. (2022). Measurements from "per" without complex dimensions.
-- Coppock, E. (2022). Division vs. distributivity.
 -/
 
 namespace Fragments.English.MeasurePhrases

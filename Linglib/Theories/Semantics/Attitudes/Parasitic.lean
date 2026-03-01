@@ -31,11 +31,6 @@ The parasitic relationship means:
 - Hope's local context = belief's local context (when belief is available)
 - Belief's local context = its own accessibility relation (independent)
 
-## References
-
-- Maier (2015). Parasitic Attitudes. Linguistics and Philosophy.
-- Karttunen (1973). Presuppositions of Compound Sentences.
-- Heim (1992). Presupposition Projection and the Semantics of Attitude Verbs.
 -/
 
 import Linglib.Theories.Semantics.Attitudes.Doxastic

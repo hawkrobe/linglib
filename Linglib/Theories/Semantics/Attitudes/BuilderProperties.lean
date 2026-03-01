@@ -29,11 +29,6 @@ To derive properties FROM Fragment features, we need:
 
 This file breaks the cycle by importing both and defining the derivations.
 
-## References
-
-- Qing et al. (2025). When can NVPs take questions?
-- Elliott et al. (2017). Predicates of relevance and theories of question embedding.
-- Villalta (2008). Mood and gradability.
 -/
 
 import Linglib.Fragments.English.Predicates.Verbal

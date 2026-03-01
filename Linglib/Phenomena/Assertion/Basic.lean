@@ -2,6 +2,7 @@ import Linglib.Core.Empirical
 
 /-!
 # Assertion Phenomena: Theory-Neutral Data
+@cite{gunlogson-2001} @cite{lauer-2013} @cite{searle-1969}
 
 Empirical observations about assertion that any theory should account for.
 These data points are theory-neutral: they describe observable patterns
@@ -15,11 +16,6 @@ without importing from `Theories/`.
 4. **Retraction** withdraws a prior commitment
 5. **Lying** involves commitment without belief
 
-## References
-
-- Searle, J. (1969). *Speech Acts*. Cambridge UP.
-- Gunlogson, C. (2001). *True to Form*. PhD dissertation.
-- Lauer, S. (2013). *Towards a Dynamic Pragmatics*. PhD dissertation.
 -/
 
 namespace Phenomena.Assertion

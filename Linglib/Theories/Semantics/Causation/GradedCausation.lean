@@ -31,15 +31,6 @@ distinguishes it from both *cause* and *force*.
 2. `CoerciveImplication.ActionType` = categorical limit of ALT
 3. `CausativeBuilder` = binary coarsening of the graded model
 
-## References
-
-- Cao, A., White, A. S. & Lassiter, D. (2025). Cause, make, and force
-  as graded causatives. Proceedings of ELM 3, 88-103.
-- Pearl, J. (2019). Sufficient causes: On oxygen, matches, and fires.
-  Journal of Causal Inference 7(2).
-- Halpern, J. Y. & Kleiman-Weiner, M. (2018). Towards formal definitions
-  of blameworthiness, intention, and moral responsibility.
-- Frankfurt, H. G. (1969). Alternate possibilities and moral responsibility.
 -/
 
 import Mathlib.Data.Rat.Defs

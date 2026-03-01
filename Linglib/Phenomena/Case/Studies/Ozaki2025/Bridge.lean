@@ -5,6 +5,7 @@ import Linglib.Fragments.Japanese.Predicates
 
 /-!
 # Ozaki (2025) — Bridge: Dependent Case × Minimalist Syntax
+@cite{baker-2015} @cite{marantz-1991} @cite{ozaki-2025}
 
 Connects the empirical data from Ozaki (2025) to:
 1. **Dependent case theory** (Marantz 1991; Baker 2015) — explains the
@@ -30,12 +31,6 @@ no v* to assign it. Yet these verbs grammatically do. Dependent case
 dissolves this paradox: ACC is configural, arising whenever two caseless
 NPs share a Spell-Out domain, regardless of Voice/v flavor.
 
-## References
-
-- Ozaki, S. (2025). Dependent case in Japanese accusative/ablative
-  alternation verbs. *CLS 61*.
-- Baker, M. (2015). *Case: Its Principles and Its Parameters*. CUP.
-- Marantz, A. (1991). Case and licensing. *ESCOL* 1991, 234–253.
 -/
 
 namespace Phenomena.Case.Ozaki2025.Bridge

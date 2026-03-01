@@ -3,6 +3,7 @@ import Linglib.Core.Logic.NaturalLogic
 
 /-!
 # Polarity–Partition Bridge
+@cite{icard-2012} @cite{merin-1999}
 
 Connects the natural logic algebra (`Core.NaturalLogic`) to partition
 structure (`Core.Partition`), formalizing Merin's (1999) central insight:
@@ -27,10 +28,6 @@ structure (`Core.Partition`), formalizing Merin's (1999) central insight:
 `Core.Partition` provides the partition lattice on `QUD`. This module
 connects them: the NL algebra *governs* partition structure.
 
-## References
-
-- Merin (1999). Negative Attributes, Partitions, and Rational Decisions.
-- Icard (2012). Inclusion and Exclusion in Natural Language.
 -/
 
 namespace Core.PolarityPartition

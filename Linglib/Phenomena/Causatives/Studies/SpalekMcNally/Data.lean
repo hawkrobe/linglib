@@ -30,10 +30,6 @@ patient restrictions, separation geometry, and agent control.
    *tear* translates to many Spanish verbs; *rasgar* predominantly translates
    to *tear* only in specific contexts (Tables 1–2).
 
-## References
-
-- Spalek, A.A. & McNally, L. (forthcoming). The anatomy of a verb: *Tear*,
-  *rasgar*, and lexical equivalence. *Linguistics in Contrast*.
 -/
 
 namespace Phenomena.Causatives.ChangeOfState.Studies.SpalekMcNally

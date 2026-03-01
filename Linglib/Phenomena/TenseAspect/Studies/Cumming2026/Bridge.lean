@@ -4,6 +4,7 @@ import Linglib.Fragments.Bulgarian.Evidentials
 
 /-!
 # Cumming (2026) Verification Theorems
+@cite{cumming-2026}
 
 Verification theorems for the cross-linguistic nonfuture downstream
 generalization from Cumming (2026, *L&P* 49:153–175). Paradigm data
@@ -19,9 +20,6 @@ predictions.
 4. `future_no_downstream`: future entries do not require downstream evidence
 5. `korean_te_ney_ep_diverge`: EP and UP factorize independently in Korean
 
-## References
-
-- Cumming, S. (2026). Tense and evidence. *L&P* 49:153–175.
 -/
 
 namespace Phenomena.TenseAspect.Studies.Cumming2026.Bridge

@@ -4,6 +4,7 @@ import Linglib.Theories.Syntax.Minimalism.Core.Basic
 
 /-!
 # Voice and Applicative Derivations
+@cite{kratzer-1996} @cite{pylkknen-2008} @cite{schfer-2008}
 
 Classic examples testing the Voice/Appl heads in Minimalist derivations.
 
@@ -27,11 +28,6 @@ Classic examples testing the Voice/Appl heads in Minimalist derivations.
 5. **High applicative (benefactive)**: "John baked Mary a cake"
    VoiceP [Voice_AG [ApplP [Appl_high DP_benef [vP [VP V DP_theme]]]]]
 
-## References
-
-- Kratzer, A. (1996). Severing the external argument from its verb.
-- Pylkkänen, L. (2008). Introducing Arguments.
-- Schäfer, F. (2008). The Syntax of (Anti-)Causatives.
 -/
 
 namespace Minimalism.Phenomena.VoiceAppl

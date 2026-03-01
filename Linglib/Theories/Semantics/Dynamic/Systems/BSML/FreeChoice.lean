@@ -20,10 +20,6 @@ Free choice is DERIVED from three independent principles:
 2. **NE enrichment**: [·]⁺ adds non-emptiness constraints recursively
 3. **NE non-flatness**: empty teams fail NE, so both parts must be non-empty
 
-## References
-
-- Aloni, M. (2022). Logic and conversation: The case of free choice. S&P 15.
-  @cite{aloni-2022}
 -/
 
 namespace Semantics.Dynamic.BSML

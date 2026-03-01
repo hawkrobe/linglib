@@ -1,5 +1,6 @@
 /-!
 # D-Frames: Functional Attribute Structures @cite{loebner-2021}
+@cite{osswald-kallmeyer-2018} @cite{petersen-2007}
 
 Löbner (2021) "Frames at the Interface of Language and Cognition"
 (Annual Review of Linguistics 7: 261–284) defines **D-frames**
@@ -30,14 +31,6 @@ Three core mechanisms:
   attributes CAT, HEAD, VAL
 - See `Comparisons/FrameComposition.lean` for formal comparisons
 
-## References
-
-- Löbner, S. (2021). Frames at the Interface of Language and Cognition.
-  Annual Review of Linguistics 7: 261–284.
-- Löbner, S. (2014). Evidence for Frames from Human Language.
-- Petersen, W. (2007). Representation of Concepts as Frames.
-- Osswald, R. & Kallmeyer, L. (2018). Towards a Formalization of
-  Role-Semantic Resources Using Frame Logic.
 -/
 
 namespace Semantics.TypeTheoretic

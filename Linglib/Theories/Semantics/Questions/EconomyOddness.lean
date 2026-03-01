@@ -4,6 +4,7 @@ import Linglib.Theories.Semantics.Questions.Partition
 
 /-!
 # Economy of Structure and Information
+@cite{heim-1991} @cite{hurford-1974} @cite{katzir-2007} @cite{katzir-singh-2015} @cite{magri-2009} @cite{magri-2011} @cite{spector-2014}
 
 Katzir & Singh (2015). Proceedings of Sinn und Bedeutung 19, pp. 322–339.
 
@@ -26,15 +27,6 @@ These two conditions unify:
 Open problem: oddness under embedding (K&S §4) — the conditions are
 stated globally but oddness persists in embedded constituents.
 
-## References
-
-- Katzir, R. & Singh, R. (2015). Economy of structure and information.
-- Spector, B. (2014). Scalar implicatures, blindness and common knowledge.
-- Magri, G. (2009). Individual-level predicates and mandatory scalar implicatures.
-- Magri, G. (2011). Another argument for embedded scalar implicatures.
-- Katzir, R. (2007). Structurally-defined alternatives.
-- Hurford, J. R. (1974). Exclusive or inclusive disjunction.
-- Heim, I. (1991). Artikel und Definitheit.
 -/
 
 namespace Semantics.Questions.EconomyOddness

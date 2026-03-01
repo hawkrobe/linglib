@@ -3,6 +3,7 @@ import Linglib.Core.Prominence
 
 /-!
 # Case Typology (WALS Chapters 49--52)
+@cite{dryer-haspelmath-2013} @cite{iggesen-2013} @cite{stolz-veselinova-2013}
 
 Formalizes four chapters from the World Atlas of Language Structures (WALS)
 covering the typology of case systems:
@@ -23,17 +24,6 @@ giving the attested cross-linguistic counts. Language profiles combine all
 four dimensions, and typological generalizations are verified over the
 sample by `native_decide`.
 
-## References
-
-- Iggesen, O. A. (2013). Number of Cases. In Dryer, M. S. & Haspelmath, M.
-  (eds.), WALS Online (v2020). Ch. 49.
-- Iggesen, O. A. (2013). Asymmetrical Case-Marking. WALS Online. Ch. 50.
-- Iggesen, O. A. (2013). Position of Case Affixes. WALS Online. Ch. 51.
-- Stolz, T., Stroh, C. & Urdze, A. (2013). Comitatives and Instrumentals.
-  WALS Online. Ch. 52.
-- Dryer, M. S. & Haspelmath, M. (eds.) (2013). WALS Online (v2020).
-  Leipzig: Max Planck Institute for Evolutionary Anthropology.
-  https://wals.info
 -/
 
 namespace Phenomena.Case.Typology

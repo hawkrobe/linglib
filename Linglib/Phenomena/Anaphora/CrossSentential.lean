@@ -8,12 +8,6 @@ Empirical data on pronouns whose antecedents are in earlier sentences.
 - `CrossSententialDatum`: Data structure for cross-sentential anaphora
 - `indefinitePersists`, `universalBlocks`: Key examples of persistence and blocking
 
-## References
-
-- Karttunen, L. (1969). Discourse Referents.
-- Heim, I. (1982). The Semantics of Definite and Indefinite Noun Phrases.
-- Kamp, H. (1981). A Theory of Truth and Semantic Representation.
-- Groenendijk, J. & Stokhof, M. (1991). Dynamic Predicate Logic.
 -/
 
 namespace Phenomena.Anaphora.CrossSententialAnaphora

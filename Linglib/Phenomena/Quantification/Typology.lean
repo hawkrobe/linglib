@@ -4,6 +4,7 @@ import Linglib.Fragments.Japanese.Determiners
 
 /-!
 # Cross-Linguistic Quantifier Typology
+@cite{barwise-cooper-1981} @cite{peters-westerstahl-2006}
 
 Empirical quantifier inventories from three languages (three families) mapped to
 a common `QuantifierInventory` structure, following the pattern established in
@@ -21,10 +22,6 @@ a common `QuantifierInventory` structure, following the pattern established in
 - Mandarin: Li (1998), Cheng & Sybesma (1999)
 - Japanese: Shimoyama (2006), Nakanishi (2007)
 
-## References
-
-- Barwise, J. & Cooper, R. (1981). Generalized Quantifiers and Natural Language.
-- Peters, S. & Westerståhl, D. (2006). Quantifiers in Language and Logic.
 -/
 
 namespace Phenomena.Quantification.Typology

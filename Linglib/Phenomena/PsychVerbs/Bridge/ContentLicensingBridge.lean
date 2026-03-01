@@ -4,9 +4,7 @@ import Linglib.Theories.Semantics.Modality.EventRelativity
 /-!
 # Bridge: Psych Verb Contentfulness ↔ Modal Content Licensing
 
-@cite{kim-2024} @cite{hacquard-2010}
-
-Connects Kim (2024)'s causal source distinction for psych verbs to
+@cite{kim-2024} @cite{hacquard-2010} @cite{hacquard-2006}Connects Kim (2024)'s causal source distinction for psych verbs to
 Hacquard (2006, 2010)'s content licensing principle for modal flavor
 availability.
 
@@ -41,13 +39,6 @@ verb's event provides CON(e), just like an attitude verb's event does.
 - Epistemic R available → "it might be unsolvable" = given John's mental
   representation of the problem, it might be unsolvable
 
-## References
-
-- Kim, Y. (2024). The Uniform Projection Hypothesis for Object Experiencer
-  Psych Verbs. PhD thesis, UCL.
-- Hacquard, V. (2006). Aspects of Modality. MIT dissertation.
-- Hacquard, V. (2010). On the event relativity of modal auxiliaries.
-  NL Semantics 18:79–114.
 -/
 
 namespace Phenomena.PsychVerbs.Bridge.ContentLicensingBridge

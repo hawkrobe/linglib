@@ -2,18 +2,13 @@ import Mathlib.Data.Rat.Defs
 
 /-!
 # English Scales
-
-Horn scales for quantifiers, modals, and degrees.
+@cite{horn-1972} @cite{kennedy-2007} @cite{chierchia-2013} @cite{fox-2007} @cite{spector-2016}Horn scales for quantifiers, modals, and degrees.
 
 ## Main definitions
 
 - `Scale`: ordered list from weak to strong
 - `someAll`, `mightMust`: standard scales
 
-## References
-
-- Horn (1972). On the semantic properties of logical operators in English.
-- Kennedy (2007). Vagueness and grammar.
 -/
 
 namespace Fragments.English.Scales
@@ -227,11 +222,6 @@ contradiction (the EFCI puzzle), which is then resolved by rescue mechanisms.
 | Scalar ⟨some, all⟩ | ✓ | Clean SI: "some but not all" |
 | Domain {P(d)} | ✗ | Contradiction (needs rescue) |
 
-### References
-
-- Spector (2016). Comparing exhaustivity operators. S&P 9(11). Theorem 9.
-- Chierchia (2013). Logic in Grammar. Ch.1, EFCI discussion.
-- Fox (2007). Free choice and the theory of scalar implicatures.
 -/
 
 /--

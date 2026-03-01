@@ -2,9 +2,7 @@ import Linglib.Theories.Semantics.Tense.TemporalConnectives.Anscombe
 
 /-!
 # Karttunen (1974): *Until*, *When*, and the Two-*Until* Hypothesis
-@cite{karttunen-1974} @cite{heinamaki-1974}
-
-Karttunen argues that English has **two** *until*s:
+@cite{karttunen-1974} @cite{heinamaki-1974} @cite{dowty-1979} @cite{heinamki-1974}Karttunen argues that English has **two** *until*s:
 
 - **Durative *until***: "John slept until 3pm." The main clause is durative
   (stative/activity), and *until* marks the minimum extent of the main event.
@@ -40,11 +38,6 @@ Finnish lexicalizes the two-*until* distinction: **kunnes** / **siihen saakka**
 (durative) vs **ennenkuin** (punctual, literally 'before-than'). The Finnish
 punctual form is morphologically *before*, confirming Karttunen's analysis.
 
-## References
-
-- Karttunen, L. (1974). Until. *CLS* 10, 284–297.
-- Heinamäki, O. (1974). *Semantics of English temporal connectives*. PhD.
-- Dowty, D. (1979). *Word Meaning and Montague Grammar*. Ch. 7.
 -/
 
 namespace Semantics.Tense.TemporalConnectives

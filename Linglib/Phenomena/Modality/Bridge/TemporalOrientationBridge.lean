@@ -4,9 +4,7 @@ import Linglib.Theories.Semantics.Modality.Temporal
 /-!
 # Bridge: Event Projection → Temporal Orientation
 
-@cite{hacquard-2006} @cite{hacquard-2010}
-
-Derives the temporal orientation of modals from event projection
+@cite{hacquard-2006} @cite{hacquard-2010} @cite{condoravdi-2002} @cite{kratzer-2012}Derives the temporal orientation of modals from event projection
 (Hacquard 2006, §4.1). High modals get the speech time (present
 perspective); low modals get the event time (past perspective).
 
@@ -30,11 +28,6 @@ low modals bind to the VP event, their temporal parameters differ:
 This connects `EventProjection` (EventRelativity §11) to the temporal
 modal evaluation framework in `Temporal.lean`.
 
-## References
-
-- Hacquard, V. (2006). Aspects of Modality. MIT dissertation. §4.1.
-- Kratzer, A. (2012). Modals and Conditionals. OUP. Ch.4.
-- Condoravdi, C. (2002). Temporal interpretation of modals.
 -/
 
 namespace Phenomena.Modality.Bridge.TemporalOrientationBridge

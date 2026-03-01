@@ -3,6 +3,7 @@ import Linglib.Core.Discourse.AtIssueness
 
 /-!
 # Core.InformationStructure
+@cite{fox-katzir-2011} @cite{rooth-1992} @cite{steedman-2000}
 
 Theory-neutral types for Information Structure, alternative semantics,
 and discourse status.
@@ -17,12 +18,6 @@ This module provides descriptive types and basic data structures.
 Theory-specific operations (K&S's [FoC]/[G] features, their semantic effects)
 live in `Theories/Semantics/Focus/KratzerSelkirk2020.lean`.
 
-## References
-
-- Steedman (2000). The Syntactic Process, Chapter 5.
-- Rooth (1992). A theory of focus interpretation.
-- Fox, D. & Katzir, R. (2011). On the characterization of alternatives.
-- Roberts (1996/2012). Information structure in discourse.
 -/
 
 namespace Core.InformationStructure

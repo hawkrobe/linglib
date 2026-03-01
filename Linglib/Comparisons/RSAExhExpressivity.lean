@@ -44,12 +44,6 @@ These are different propositions. Standard RSA gives one answer.
 4. Compositional RSA closes the gap: by lifting scope to a latent variable,
    RSA can recover EXH's scope sensitivity (as in ScontrasPearl2021)
 
-## References
-
-- Chierchia, Fox & Spector (2012). Scalar implicature as a grammatical phenomenon.
-- Sauerland (2004). Scalar implicatures in complex sentences.
-- Bergen et al. (2016). Pragmatic reasoning through semantic inference. (LU-RSA)
-- Champollion, Alsop & Grosu (2019). Free choice as scope-dependent interpretation.
 -/
 
 import Linglib.Theories.Pragmatics.NeoGricean.Exhaustivity.Basic

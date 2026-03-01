@@ -16,9 +16,6 @@ Key typological properties:
 - měi requires classifiers; suǒyǒu does not
 - yǒu-de is proportional-weak, not pure existential
 
-## References
-- Li, Y.-H. A. (1998). Argument determiner phrases and number phrases.
-- Cheng, L. L.-S. & Sybesma, R. (1999). Bare and not-so-bare nouns.
 -/
 
 namespace Fragments.Mandarin.Determiners

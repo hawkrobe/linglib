@@ -2,6 +2,7 @@ import Linglib.Phenomena.FillerGap.Islands.Data
 
 /-!
 # Manner-of-Speaking Island Effects: Experimental Data
+@cite{lu-degen-2025}
 
 Empirical data from Lu, Pan & Degen (2025), "Evidence for a discourse account
 of manner-of-speaking islands," *Language* 101(4): 627–659.
@@ -21,11 +22,6 @@ discourse backgroundedness and the manner-of-speaking (MoS) island effect.
 All acceptability ratings coded as Nat (mean × 100, 0 = completely unacceptable,
 100 = completely acceptable). Backgroundedness proportions coded as Nat (× 100).
 
-## References
-
-- Lu, J., Pan, D., & Degen, J. (2025). Evidence for a discourse account of
-  manner-of-speaking islands. *Language* 101(4): 627–659.
-  DOI: https://doi.org/10.1353/lan.2025.a978271
 -/
 
 namespace Phenomena.FillerGap.Islands.MannerOfSpeaking

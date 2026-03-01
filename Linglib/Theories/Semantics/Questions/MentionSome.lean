@@ -3,6 +3,7 @@ import Linglib.Theories.Semantics.Questions.PragmaticAnswerhood
 
 /-!
 # Questions/MentionSome.lean
+@cite{belnap-1982} @cite{groenendijk-stokhof-1984} @cite{partee-rooth-1983}
 
 Mention-Some Interpretation from Groenendijk & Stokhof (1984), Chapter VI, Section 5.
 
@@ -54,11 +55,6 @@ Mention-some is licensed by:
 2. Wide-scope existentials
 3. Some verbs block mention-some: "depends", "matter", "determine"
 
-## References
-
-- Groenendijk & Stokhof (1984). Studies on the Semantics of Questions. Ch. VI, Section 5.
-- Partee & Rooth (1983). Generalized Conjunction and Type Ambiguity.
-- Belnap (1982). Questions and Answers in Montague Grammar.
 -/
 
 namespace Semantics.Questions.MentionSome

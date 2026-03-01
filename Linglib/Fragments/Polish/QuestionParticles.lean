@@ -17,9 +17,6 @@ Lexical entries for Polish interrogative particles.
 - `SlavicPQStrategies.polish`: PQ strategy profile (clause-initial czy obligatory)
 - Cross-Slavic RAZVE family: czyżby is the Polish member
 
-## References
-
-- Šimík, R. (2024). Polar question semantics and bias: Lessons from Slavic/Czech.
 -/
 
 namespace Fragments.Polish.QuestionParticles

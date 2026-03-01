@@ -1,5 +1,6 @@
 /-!
 # Discourse Coherence Relations
+@cite{hobbs-1979} @cite{kehler-2002}
 
 Coherence relations (Hobbs 1979, Kehler 2002) classify how adjacent discourse
 segments connect. Each relation belongs to one of three classes (resemblance,
@@ -18,14 +19,6 @@ listeners seek as a cause/explanation in sentence continuations:
 This interacts with verb semantics to produce implicit causality (IC) bias
 (Solstad & Bott 2022). @cite{solstad-bott-2022} @cite{solstad-bott-2024}
 
-## References
-
-- Hobbs, J. R. (1979). Coherence and Coreference. *Cognitive Science* 3, 67–90.
-- Kehler, A. (2002). *Coherence, Reference, and the Theory of Grammar*. CSLI.
-- Solstad, T. & Bott, O. (2022). On the nature of implicit causality and
-  consequentiality. *Language, Cognition and Neuroscience* 37(10), 1311–1340.
-- Solstad, T. & Bott, O. (2024). Cataphoric resolution of projective content.
-  *Semantics & Pragmatics* 17:11.
 -/
 
 namespace Core.Discourse.CoherenceRelation

@@ -34,11 +34,6 @@ confirms the register approach.
 
 ## Section D: Connection to modal typology
 
-## References
-
-* Dieuleveut, Hsu & Bhatt (2025). A Register Approach to Modal Non-Concord.
-* Zeijlstra (2007). Modal concord is syntactic agreement.
-* Geurts & Huitink (2006). Modal concord.
 -/
 
 namespace Phenomena.Modality.ModalConcord.Bridge

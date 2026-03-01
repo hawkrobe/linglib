@@ -3,6 +3,7 @@ import Mathlib.Tactic.DeriveFintype
 
 /-!
 # RSA Conditional Antecedent Embedding
+@cite{chierchia-2004} @cite{geurts-2010} @cite{von-fintel-1999}
 
 Models scalar implicatures embedded in conditional antecedents.
 
@@ -31,11 +32,6 @@ Local SI would strengthen "some" to "some-but-not-all", making:
 This is WEAKER than "If some passed, happy" (true in fewer cases).
 RSA should prefer the more informative global interpretation.
 
-## References
-
-- Geurts (2010). Quantity Implicatures. Ch. 3.
-- Chierchia (2004). Scalar implicatures, polarity phenomena.
-- von Fintel (1999). NPI licensing, Strawson-entailment, and context dependency.
 -/
 
 namespace RSA.ConditionalEmbedding

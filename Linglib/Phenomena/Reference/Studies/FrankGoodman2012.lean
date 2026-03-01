@@ -8,6 +8,7 @@ open Core.Empirical
 
 /-!
 # Frank & Goodman (2012) @cite{frank-goodman-2012}
+@cite{degen-2023} @cite{tenenbaum-griffiths-2001}
 
 "Predicting Pragmatic Reasoning in Language Games"
 Science 336(6084): 998
@@ -56,14 +57,6 @@ use `rsa_predict`.
   predicate modification (Heim & Kratzer 1998)
 - **Structural properties** (§5): Feature uniqueness/ambiguity proved by `rfl`
 
-## References
-
-- Frank, M.C. & Goodman, N.D. (2012). Predicting Pragmatic Reasoning in
-  Language Games. Science 336(6084): 998.
-- Degen, J. (2023). The Rational Speech Act Framework. §2.
-- Tenenbaum, J.B. & Griffiths, T.L. (2001). Generalization, similarity, and
-  Bayesian inference. Behavioral and Brain Sciences 24(4): 629–640.
-- Heim, I. & Kratzer, A. (1998). Semantics in Generative Grammar, Ch. 4.
 -/
 
 set_option autoImplicit false

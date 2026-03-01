@@ -2,6 +2,7 @@ import Linglib.Core.Agent.DecisionTheory
 
 /-!
 # Questions/SignalingGames.lean
+@cite{farrell-1993} @cite{lewis-1969} @cite{van-rooy-2003}
 
 Signaling Games and Credible Communication.
 
@@ -37,12 +38,6 @@ utility = communicative success (listener gets the right meaning).
 
 The QUD determines which partition equilibrium is played.
 
-## References
-
-- Lewis (1969). Convention.
-- Crawford & Sobel (1982). Strategic Information Transmission.
-- Farrell (1993). Meaning and Credibility in Cheap-Talk Games.
-- Van Rooy (2003). Quality and Quantity of Information Exchange.
 -/
 
 namespace Semantics.Questions

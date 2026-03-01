@@ -7,6 +7,7 @@ import Linglib.Fragments.Chuj.ModalIndefinites
 
 /-!
 # Bridge: Kratzer Anchoring ↔ Modal Indefinite Data
+@cite{alonso-ovalle-royer-2024} @cite{coon-2019} @cite{hacquard-2006}
 
 Connects the event-relative modality theory (Hacquard 2006, formalized in
 `Theories/Semantics/Modality/EventRelativity`) to the empirical data on
@@ -32,12 +33,6 @@ modal indefinites (A-O&R 2024, in `Phenomena/ModalIndefinites/Data`).
 5. **Cross-linguistic predictions**: The three-dimensional typology
    is instantiated with per-item bridge theorems.
 
-## References
-
-- Alonso-Ovalle, L. & Royer, J. (2024). Modal indefinites: Lessons from
-  Chuj. Linguistics and Philosophy.
-- Hacquard, V. (2006). Aspects of Modality. MIT dissertation.
-- Coon, J. (2019). Building verbs in Chuj. Journal of Linguistics 55(1).
 -/
 
 namespace Phenomena.ModalIndefinites.Bridge.KratzerAnchoring

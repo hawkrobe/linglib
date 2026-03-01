@@ -50,10 +50,6 @@ Combined utility (Eq. 9):
 3. **Empirical**: lambda approx 0.55 for unbiased participants (Exp 1)
 4. **Empirical**: Graded tradeoff, not strict priority (Exp 2)
 
-## References
-
-- Sumers, T.R., Ho, M.K., Griffiths, T.L., & Hawkins, R.D. (2023).
-  Reconciling truthfulness and relevance as epistemic and decision-theoretic utility.
 -/
 
 import Linglib.Theories.Pragmatics.RSA.Core.CombinedUtility

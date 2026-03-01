@@ -2,6 +2,7 @@ import Linglib.Theories.Syntax.Minimalism.Core.Agree
 
 /-!
 # Obligatory Operations @cite{preminger-2014}
+@cite{chomsky-2001}
 
 Preminger (2014, Ch. 5) argues that φ-agreement is an **obligatory
 operation** that can **fail without crashing** the derivation. This
@@ -54,12 +55,6 @@ the interface) cannot model obligatory-but-failable agreement because:
 All three are instances of the same mechanism: obligatory probing +
 failure without crash → default morphology.
 
-## References
-
-- Preminger, O. (2014). Agreement and Its Failures. MIT Press.
-  (Linguistic Inquiry Monographs 68.)
-- Chomsky, N. (2001). Derivation by Phase. In M. Kenstowicz (ed.),
-  Ken Hale: A Life in Language. MIT Press.
 -/
 
 namespace Minimalism

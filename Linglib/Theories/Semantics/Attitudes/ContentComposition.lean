@@ -2,6 +2,7 @@ import Linglib.Core.ContentIndividual
 
 /-!
 # Content Composition (Kratzer 2006; Moulton 2015) @cite{moulton-2015}
+@cite{grimshaw-1990} @cite{kratzer-2006}
 
 CPs as predicates of content individuals, not propositions.
 
@@ -34,11 +35,6 @@ closure:
 - Korean *ko*-clauses: saturators (type e), function-apply directly
 - German *dass*-clauses: position from V2/cluster, not from CP-as-argument
 
-## References
-
-- Kratzer, A. (2006). Decomposing attitude reports.
-- Moulton, K. (2015). CPs: Copies and compositionality. LI 46(2), 305–342.
-- Grimshaw, J. (1990). Argument Structure. MIT Press.
 -/
 
 namespace Semantics.Attitudes.ContentComposition

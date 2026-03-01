@@ -35,10 +35,6 @@ L1(w_ab | A) > P(w_ab) iff prior(w_ab) / prior(w_a) > c_A¬B / c_AB
 | 6 | EXH-LU | Exhaustification + LU |
 | 7-8 | RSA-LI | Lexical Intentions variants |
 
-## Reference
-
-Cremers, A., Wilcox, E., & Spector, B. (2023). "Exhaustivity and Anti-Exhaustivity
-in the RSA Framework". Semantics & Pragmatics.
 -/
 
 import Mathlib.Data.Rat.Defs

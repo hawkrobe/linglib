@@ -2,6 +2,7 @@ import Linglib.Core.Empirical
 
 /-!
 # Left-Nested Conditionals: Empirical Data
+@cite{gibbard-1981} @cite{haegeman-2003} @cite{iatridou-1991} @cite{lassiter-2025} @cite{mcgee-1985}
 
 Theory-neutral empirical observations about left-nested conditionals (LNCs)
 from Lassiter (2025) "Sorting out left-nested conditionals."
@@ -19,13 +20,6 @@ This file documents:
 5. *Only* + inversion patterns
 6. Modal/generic exceptions
 
-## References
-
-- Lassiter (2025). Sorting out left-nested conditionals.
-- Gibbard (1981). Two recent theories of conditionals.
-- McGee (1985). A counterexample to modus ponens.
-- Iatridou (1991). Topics in Conditionals.
-- Haegeman (2003). Conditional clauses: External and internal syntax.
 -/
 
 namespace Phenomena.Conditionals.LeftNested

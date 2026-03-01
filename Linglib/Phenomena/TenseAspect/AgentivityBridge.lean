@@ -3,6 +3,7 @@ import Linglib.Phenomena.TenseAspect.DiagnosticsBridge
 
 /-!
 # Bridge: Agentivity → Aspect Diagnostics
+@cite{cruse-1973}
 
 Connects Cruse (1973) agentivity decomposition to VendlerClass diagnostic
 predictions from `Phenomena.TenseAspect.DiagnosticsBridge`.
@@ -11,10 +12,6 @@ The do-test prediction for each Vendler class is derived from the agentivity
 theory: the do-test accepts durative dynamic classes (activity, accomplishment)
 and is marginal for others.
 
-## References
-
-- Cruse, D. A. (1973). Some Thoughts on Agentivity. Journal of
-  Linguistics 9(1), 11–23.
 -/
 
 

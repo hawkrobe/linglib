@@ -2,6 +2,7 @@ import Linglib.Core.Lexical.NounCategorization
 
 /-!
 # Japanese Classifier Lexicon
+@cite{aikhenvald-2000} @cite{downing-1996} @cite{lakoff-1987}
 
 Typed classifier entries for Japanese (josūshi 助数詞).
 
@@ -9,11 +10,6 @@ Japanese numeral classifiers are suffixed to the numeral (e.g. san-biki
 三匹 "three-CL:small.animal"). Like Mandarin, selection is semantically
 motivated, encoding animacy, shape, and function.
 
-## References
-
-- Aikhenvald, A. Y. (2000). Classifiers, Ch 4, Table 1.1.
-- Downing, P. (1996). Numeral Classifier Systems: The Case of Japanese.
-- Lakoff, G. (1987). Women, Fire, and Dangerous Things (on Japanese classifiers).
 -/
 
 namespace Fragments.Japanese.Classifiers

@@ -20,10 +20,6 @@ For de re/de dicto distinctions:
 - A peg is an extensional reference to an entity
 - A concept is an intensional way of identifying entities
 
-## References
-
-- Dekker, P. (2012). Dynamic Semantics. Springer. Chapter 4.
-- Veltman, F. (1996). Defaults in Update Semantics.
 -/
 
 import Linglib.Theories.Semantics.Dynamic.Systems.PLA.Update

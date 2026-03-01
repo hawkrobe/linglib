@@ -1,5 +1,6 @@
 /-
 # Relationship: Situation Description Systems and RSA
+@cite{bergen-levy-goodman-2016} @cite{erk-herbelot-2024} @cite{kao-etal-2014-hyperbole} @cite{kao-etal-2014-metaphor}
 
 This module establishes the correspondence between:
 - **SDS**: Situation Description Systems (Erk & Herbelot 2024)
@@ -60,12 +61,6 @@ The pragmatic listener:
 2. Reasons about speaker's choice given that lexicon
 3. Marginalizes over lexica
 
-## References
-
-- Erk, K. & Herbelot, A. (2024). How to Marry a Star: Probabilistic
-  Constraints for Meaning in Context. Journal of Semantics.
-- Bergen, L., Levy, R. & Goodman, N.D. (2016). Pragmatic reasoning
-  through semantic inference. Semantics & Pragmatics.
 -/
 
 import Mathlib.Data.Rat.Defs
@@ -505,11 +500,6 @@ SDS insights can enhance LU-RSA:
 - Add scenario as a latent variable (like Goal in RSAScenario)
 - Detect conflicts for ambiguity/pun prediction
 
-### References
-
-- Erk & Herbelot (2024). How to Marry a Star. Journal of Semantics.
-- Bergen, Levy & Goodman (2016). Pragmatic reasoning through semantic inference.
-- Kao, Wu, Bergen & Goodman (2014). Nonliteral understanding of number words.
 -/
 
 end Comparisons.SDSandRSA

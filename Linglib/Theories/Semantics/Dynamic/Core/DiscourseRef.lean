@@ -29,10 +29,6 @@ ICDRT extends DRT with propositional discourse referents:
 This separation enables anaphora to indefinites under negation:
 "Either there's no bathroom, or it's upstairs."
 
-## References
-
-- Hofmann, L. (2025). Anaphoric accessibility with flat update. S&P.
-- Groenendijk, J. & Stokhof, M. (1991). Dynamic Predicate Logic.
 -/
 
 import Linglib.Theories.Semantics.Dynamic.Core.Basic

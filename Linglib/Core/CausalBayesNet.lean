@@ -6,6 +6,7 @@ import Mathlib.Algebra.Order.Field.Rat
 
 /-!
 # Causal Bayes Net
+@cite{cheng-1997} @cite{grusdt-lassiter-franke-2022}
 
 Two-node causal Bayesian network infrastructure: directed causal structure
 over two binary variables, noisy-OR parameterization, and probability
@@ -15,12 +16,6 @@ distributions with conditional probability, independence, and correlation.
 - **NoisyOR**: Noisy-OR parameterization for probabilistic causal links (Cheng 1997)
 - **WorldState**: Joint distribution over two binary variables A and C
 
-## References
-
-- Grusdt, Lassiter & Franke (2022). Probabilistic modeling of rational
-  communication with conditionals.
-- Cheng, P. (1997). From covariation to causation.
-- Pearl, J. (2000/2009). *Causality: Models, Reasoning, and Inference*.
 -/
 
 namespace Core.CausalBayesNet

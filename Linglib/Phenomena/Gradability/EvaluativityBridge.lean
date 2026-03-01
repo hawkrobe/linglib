@@ -3,6 +3,7 @@ import Linglib.Theories.Semantics.Lexical.Adjective.Theory
 
 /-!
 # Evaluativity: Empirical Patterns
+@cite{rett-2015}
 
 Evaluativity distribution across adjectival constructions. Positive constructions
 are evaluative, comparatives are not, equatives show asymmetry.
@@ -13,9 +14,6 @@ are evaluative, comparatives are not, equatives show asymmetry.
 
 `AdjectivalConstruction` is defined in `Theories.Semantics.Degree.Core`.
 
-## References
-
-- Rett (2015), Kennedy (2007), Bierwisch (1989)
 -/
 
 namespace Phenomena.Gradability.EvaluativityBridge
@@ -42,7 +40,6 @@ structure EvaluativityDatum where
   presupposition : Option String := none
   notes : String := ""
   deriving Repr
-
 
 
 def positive_tall : EvaluativityDatum :=

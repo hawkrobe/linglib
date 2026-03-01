@@ -7,10 +7,6 @@ high-hon) realized as verbal agreement morphemes on finite verbs. 3rd person
 also distinguishes honorific levels (*ũ* non-hon / *o* hon). AA is Fin-based
 and freely embeddable.
 
-## References
-
-- Alok, D. & A. Bhalla (2026). Allocutive agreement and the syntax of
-  honorifics.
 -/
 
 import Linglib.Core.Lexical.Pronouns

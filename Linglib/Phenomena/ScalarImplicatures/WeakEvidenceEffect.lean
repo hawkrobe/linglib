@@ -2,6 +2,7 @@ import Mathlib.Data.Rat.Defs
 
 /-!
 # Weak Evidence Effect: Empirical Data
+@cite{barnett-griffiths-hawkins-2022}
 
 Experimental data from Barnett, Griffiths & Hawkins (2022) on how weak positive
 evidence can backfire when listeners expect speakers to have persuasive goals.
@@ -19,10 +20,6 @@ Participants play both the speaker role (expectation phase) and judge role
 2. For this group, weak evidence backfired (m = 34.7 on 0–100 scale, vs 50 midpoint)
 3. The speaker-dependent RSA model outperforms anchor-and-adjust alternatives
 
-## References
-
-- Barnett, S. A., Griffiths, T. L., & Hawkins, R. D. (2022). A Pragmatic Account
-  of the Weak Evidence Effect. *Open Mind*, 6, 169–182.
 -/
 
 namespace Phenomena.ScalarImplicatures.WeakEvidenceEffect

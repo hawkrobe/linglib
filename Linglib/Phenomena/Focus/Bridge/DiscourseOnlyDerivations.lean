@@ -3,6 +3,7 @@ import Linglib.Phenomena.Focus.DiscourseOnly
 
 /-!
 # End-to-End Derivation Chains for Discourse *only*
+@cite{ippolito-kiss-williams-2025}
 
 Concrete instantiations of the discourse *only* theory (IKW 2025 Def. 16)
 that derive the acceptability of specific cross-linguistic examples.
@@ -35,9 +36,6 @@ For interrogative S' examples (30a, 31a, etc.), the derivation shows that
 the speaker's uncertainty about the answer blocks `fullSupport` for S' on
 all QUD answers, trivially satisfying the CI's condition (ii).
 
-## References
-
-- Ippolito, Kiss & Williams (2025). Discourse *only*. WCCFL 41.
 -/
 
 namespace Phenomena.Focus.Bridge.DiscourseOnlyDerivations

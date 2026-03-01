@@ -8,10 +8,6 @@ exclusive (*naangaL*). 3rd person distinguishes masculine (*avan*), feminine
 (*avaL*), and honorific (*avar*). AA is Fin-based with limited embeddability
 (under speech/thought predicates).
 
-## References
-
-- Alok, D. & A. Bhalla (2026). Allocutive agreement and the syntax of
-  honorifics.
 -/
 
 import Linglib.Core.Lexical.Pronouns

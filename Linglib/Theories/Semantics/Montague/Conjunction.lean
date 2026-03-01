@@ -5,10 +5,6 @@ Conjunction and disjunction defined recursively over the type structure:
 - Base case: Boolean operations at type `t`
 - Recursive case: pointwise application at function types
 
-## References
-
-- Partee, B. & Rooth, M. (1983). Generalized Conjunction and Type Ambiguity.
-  In von Stechow et al. (eds.), Meaning, Use, and Interpretation. de Gruyter.
 -/
 
 import Linglib.Theories.Semantics.Montague.Basic

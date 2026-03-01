@@ -4,6 +4,7 @@ import Linglib.Core.Prominence
 
 /-!
 # Morphosyntactic Alignment Typology (WALS Chapters 98--100)
+@cite{bickel-nichols-2009} @cite{comrie-1978} @cite{comrie-2013} @cite{dixon-1994} @cite{dryer-haspelmath-2013}
 
 Formalizes three chapters from the World Atlas of Language Structures (WALS)
 covering morphosyntactic alignment -- the way languages mark the core
@@ -38,20 +39,6 @@ than for pronouns: many "ergative" languages are ergative for NPs but
 accusative for pronouns (e.g., Dyirbal, many Australian languages).
 Tripartite and active systems are typologically rare.
 
-## References
-
-- Comrie, B. (1978). Ergativity. In Lehmann, W. P. (ed.), Syntactic
-  Typology. University of Texas Press.
-- Comrie, B. (2013). Alignment of Case Marking of Full Noun Phrases.
-  In Dryer, M. S. & Haspelmath, M. (eds.), WALS Online (v2020). Ch. 98.
-- Comrie, B. (2013). Alignment of Case Marking of Pronouns. WALS Online. Ch. 99.
-- Comrie, B. (2013). Alignment of Verbal Person Marking. WALS Online. Ch. 100.
-- Dixon, R. M. W. (1994). Ergativity. Cambridge University Press.
-- Bickel, B. & Nichols, J. (2009). Case Marking and Alignment. In
-  Malchukov, A. & Spencer, A. (eds.), The Oxford Handbook of Case.
-- Dryer, M. S. & Haspelmath, M. (eds.) (2013). WALS Online (v2020).
-  Leipzig: Max Planck Institute for Evolutionary Anthropology.
-  https://wals.info
 -/
 
 namespace Phenomena.Alignment.Typology

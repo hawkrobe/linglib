@@ -27,13 +27,6 @@ vs P-Patient entailments.
 - CausativeBuilder = P-Agent entailment (c) causation (§9)
 - VerbEntry.unaccusative prediction from entailment counting (§10)
 
-## References
-
-- Dowty, D. (1991). Thematic Proto-Roles and Argument Selection.
-  Language 67(3), 547–619.
-- Levin, B. (2022). Proto-roles at 30. In *Thematic Roles*, 337–367.
-- Rappaport Hovav, M. & Levin, B. (2024). The landscape of verb classes.
-- Beavers, J. (2010). The structure of lexical meaning. Language 86(4).
 -/
 
 import Linglib.Theories.Semantics.Events.Agentivity

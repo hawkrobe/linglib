@@ -26,10 +26,6 @@ connecting `KnowledgeBeliefFrame` (from `CommonGround.lean`) through
 `doxOfAccessRel` (from `BeliefEmbedding.lean`) to `presupFiltered`
 (from `LocalContext.lean`).
 
-## References
-
-- Heim, I. (1992). Presupposition Projection and the Semantics of
-  Attitude Verbs. Journal of Semantics 9(3): 183–221.
 -/
 
 namespace Phenomena.Presupposition.Bridge.KD45Projection

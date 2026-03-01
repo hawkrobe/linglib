@@ -24,10 +24,6 @@ combination schemata (Head-Complement, Head-Specifier, Head-Filler).
 - §6. Directional MG ≈ CCG (placeholder)
 - §7. Both directions right: need Merge AND phrasal constructions
 
-## Reference
-
-Müller, S. (2013). Unifying Everything: Some Remarks on Simpler Syntax,
-Construction Grammar, Minimalism, and HPSG. Language, 89(4), 920–950.
 -/
 
 namespace Comparisons.Mueller2013

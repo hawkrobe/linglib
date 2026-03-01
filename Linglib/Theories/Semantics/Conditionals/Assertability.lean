@@ -13,12 +13,6 @@ This probabilistic semantics:
 2. Allows RSA to derive conditional perfection as an implicature
 3. Connects conditionals to causal/correlational reasoning
 
-## References
-
-- Adams (1975). The Logic of Conditionals.
-- Edgington (1995). On Conditionals.
-- Grusdt, Lassiter & Franke (2022). Probabilistic modeling of rational
-  communication with conditionals.
 -/
 
 import Linglib.Core.CausalBayesNet

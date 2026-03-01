@@ -34,10 +34,6 @@ head along the successive-cyclic movement path (Table 4, §6.2).
 All data from Elkins, Imanishi & Coon (2026), "Wh-movement and oblique
 extraction in SJO Mam". Examples cited by section/example number.
 
-## References
-
-- Elkins, N., Y. Imanishi & J. Coon (2026). Wh-movement and oblique
-  extraction in SJO Mam.
 -/
 
 namespace Fragments.Mam

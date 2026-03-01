@@ -38,9 +38,6 @@ cross-linguistically. Italian *solo che* restricts S' to declaratives only.
 Russian *tol'ko* and Hungarian *csak* allow all clause types as S'.
 Mandarin *zhǐshì* allows all types except exclamatives.
 
-## References
-
-- Ippolito, M., Kiss, A. & Williams, W. (2025). Discourse *only*. WCCFL 41.
 -/
 
 namespace Phenomena.Focus.DiscourseOnly

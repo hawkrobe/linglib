@@ -2,6 +2,7 @@ import Linglib.Theories.Pragmatics.DecisionTheoretic.Core
 
 /-!
 # Decision-Theoretic Semantics: Scalar Implicature (Merin 1999 §3)
+@cite{merin-1999}
 
 Merin's DTS account of scalar implicature via *protentive speaker meaning*
 and relevance-ordered alternatives. The key insight: scalar implicature
@@ -21,10 +22,6 @@ so a speaker who says "A or B" implicates ¬(A ∧ B).
 - **Prediction 2**: Under CIP, conjunction dominates both conjuncts and
   disjunction
 
-## References
-
-- Merin, A. (1999). Information, relevance, and social decisionmaking.
-  §3: Scalar implicature.
 -/
 
 namespace Theories.DTS.ScalarImplicature

@@ -5,6 +5,7 @@ import Linglib.Theories.Pragmatics.RSA.Core.Config
 
 /-!
 # RSA Questions: Shared Infrastructure (Stub)
+@cite{groenendijk-stokhof-1984} @cite{hawkins-etal-2025} @cite{van-rooy-2003}
 
 Shared infrastructure for RSA models of question-answer pragmatics.
 
@@ -16,11 +17,6 @@ type definitions and structural properties that do not depend on the old API.
 RSA question-answer computations need to be re-implemented using the new
 RSAConfig framework.
 
-## References
-
-- Hawkins, R.D., et al. (2025). Relevant answers to polar questions.
-- Van Rooy, R. (2003). Questioning to Resolve Decision Problems. L&P 26.
-- Groenendijk, J. & Stokhof, M. (1984). Studies on the Semantics of Questions.
 -/
 
 namespace RSA.Questions

@@ -2,7 +2,8 @@ import Linglib.Core.Lexical.MorphRule
 import Linglib.Core.Lexical.Word
 
 /-!
-# Finnish Negation: The Negative Auxiliary *ei* @cite{karlsson-2018}
+# Finnish Negation: The Negative Auxiliary *ei* @cite{karlsson-2017}
+@cite{bybee-1985} @cite{miestamo-2005}
 
 Finnish expresses sentential negation through a **conjugated negative
 auxiliary verb** *ei* (Karlsson 2018, Ch. 11). The negative verb inflects
@@ -27,11 +28,6 @@ to strict stem-outward ordering within a single word — the ordering
 principle holds across the analytical construction (neg aux + main verb)
 rather than within a synthetic word.
 
-## References
-
-- Karlsson, F. (2018). *Finnish: A Comprehensive Grammar*. Routledge. Ch. 11.
-- Miestamo, M. (2005). *Standard Negation*. Mouton de Gruyter.
-- Bybee, J. L. (1985). *Morphology*. Benjamins.
 -/
 
 namespace Fragments.Finnish.Negation

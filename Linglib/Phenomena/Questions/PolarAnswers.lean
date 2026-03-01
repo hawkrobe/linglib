@@ -10,10 +10,6 @@ Sentential (yes/no) interrogatives and their answer patterns.
 3. Disjunctive answers → exclusive interpretation
 4. Negative interrogatives mark doxastic attitude, not semantic content
 
-## References
-
-- Groenendijk & Stokhof (1984). Studies on the Semantics of Questions. Section 3.3.
-- Krifka (2011). Questions. In Semantics: An International Handbook.
 -/
 
 import Linglib.Phenomena.Questions.Basic

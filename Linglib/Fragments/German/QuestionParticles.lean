@@ -2,6 +2,7 @@ import Linglib.Theories.Semantics.Questions.QParticleLayer
 
 /-!
 # German Question Particles
+@cite{theiler-2021} @cite{zheng-2026}
 
 Lexical entries for German interrogative/flavoring particles.
 
@@ -25,11 +26,6 @@ it merely signals informational need.
 - `Fragments.Mandarin.QuestionParticles.nandao`: cross-linguistic parallel
 - `Kernel.nandaoFelicitous`: shared felicity mechanism (evidence + unexpectedness)
 
-## References
-
-- Theiler, N. (2021). Denn as a highlighting-sensitive particle.
-  Linguistics and Philosophy 44, 323–362.
-- Zheng, A.A. (2026). nandao-Qs: When Surprise Sparks Inquiry. WCCFL 43.
 -/
 
 namespace Fragments.German.QuestionParticles

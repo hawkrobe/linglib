@@ -3,6 +3,7 @@ import Linglib.Theories.Semantics.Causation.Necessity
 
 /-!
 # Causative Builder
+@cite{nadathur-lauer-2020} @cite{talmy-1988} @cite{wolff-2003}
 
 Links causative verb lexical entries to their compositional semantics,
 following the same pattern as `PreferentialBuilder` for attitude verbs.
@@ -21,14 +22,6 @@ not a causal-model property. Properties like "asserts sufficiency" or
 | enable | Barrier removal (permissive) | let, enable | sufficiency |
 | prevent | Barrier addition (blocking) | prevent | preventSem |
 
-## References
-
-- Nadathur, P. & Lauer, S. (2020). Causal necessity, causal sufficiency,
-  and the implications of causative verbs. Glossa 5(1), 49.
-- Wolff, P. (2003). Direct causation in the linguistic coding and
-  individuation of causal events. Cognition 88, 1-48.
-- Talmy, L. (1988). Force dynamics in language and cognition.
-  Cognitive Science 12, 49-100.
 -/
 
 namespace NadathurLauer2020.Builder

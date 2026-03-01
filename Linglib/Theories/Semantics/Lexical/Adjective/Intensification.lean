@@ -20,12 +20,6 @@ The intensified positive form is the conjunction (intersection) of:
 1. The base adjective's positive meaning: d > θ_adj
 2. The evaluative measure exceeding its own threshold: μ_eval(d) > θ_eval
 
-## References
-
-- Nouwen, R. (2024). The semantics and probabilistic pragmatics of
-  deadjectival intensifiers. Linguistics and Philosophy.
-- Kennedy, C. (2007). Vagueness and grammar.
-- Lassiter, D. & Goodman, N. (2017). Adjectival vagueness.
 -/
 
 import Linglib.Theories.Semantics.Lexical.Adjective.Theory

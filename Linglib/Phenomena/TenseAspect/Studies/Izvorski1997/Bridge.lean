@@ -7,6 +7,7 @@ import Linglib.Core.Discourse.Evidence
 
 /-!
 # Izvorski (1997) Bridge Theorems @cite{izvorski-1997}
+@cite{koev-2017} @cite{kratzer-1981}
 
 Bridge connecting Izvorski's (1997, SALT 7) epistemic modal analysis of the
 Bulgarian evidential to Kratzer's modal semantics and Koev's (2017) non-modal
@@ -34,13 +35,6 @@ exists.
   diverge when some best accessible world falsifies p. They collapse when
   the modal base is totally realistic.
 
-## References
-
-- Izvorski, R. (1997). The present perfect as an epistemic modal.
-  *SALT* 7:222–239.
-- Koev, T. (2017). Evidentiality, learning events, and spatiotemporal
-  distance. *Journal of Semantics* 34(1):1–38.
-- Kratzer, A. (1981). The Notional Category of Modality. de Gruyter.
 -/
 
 namespace Phenomena.TenseAspect.Studies.Izvorski1997.Bridge

@@ -20,10 +20,6 @@ PALs are phrases that fill word-level syntactic slots:
 5. **Conventional subtypes** (must-VERB, a simple ⟨PAL⟩, etc.) behave similarly (Study 5)
 6. PALs are attested in **unrelated language families** (German, Dutch, Turkish, Hebrew, ...)
 
-## Reference
-
-Goldberg, A. E., & Shirtz, S. (2025). PAL constructions: How phrases can act
-like words. To appear in Language.
 -/
 
 namespace Phenomena.Constructions.Studies.GoldbergShirtz2025

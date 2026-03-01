@@ -2,6 +2,7 @@ import Linglib.Theories.Semantics.Questions.QParticleLayer
 
 /-!
 # Macedonian Question Particles
+@cite{mitkovska-saraevi-2024}
 
 Lexical entries for Macedonian interrogative particles.
 
@@ -19,11 +20,6 @@ Saračević (2024) contrast *dali* with biased particles *zar* and *neli*.
 
 - `SlavicPQStrategies.macedonian`: PQ strategy profile (negationTriggersBias = false)
 
-## References
-
-- Šimík, R. (2024). Polar question semantics and bias: Lessons from Slavic/Czech.
-- Mitkovska, Bužarovska & Saračević (2024). The role of biased polar question
-  particles in discourse. Poznan Studies in Contemporary Linguistics.
 -/
 
 namespace Fragments.Macedonian.QuestionParticles

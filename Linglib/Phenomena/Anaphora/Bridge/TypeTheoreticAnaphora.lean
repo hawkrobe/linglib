@@ -4,6 +4,7 @@ import Linglib.Phenomena.Anaphora.Coreference
 
 /-!
 # Bridge: TTR Underspecification -> Anaphora Data
+@cite{chomsky-1981} @cite{cooper-2023} @cite{kanazawa-1994}
 
 Connects TTR's localization (donkey anaphora) and binding theory
 (reflexivization, anaphoric resolution) from
@@ -14,11 +15,6 @@ data in `Phenomena.Anaphora.DonkeyAnaphora` and
 Per-datum verification: each theorem verifies one data point from the
 Phenomena files against TTR predictions.
 
-## References
-
-- Cooper (2023). From Perception to Communication. OUP. Ch 8.
-- Chomsky (1981). Lectures on Government and Binding.
-- Kanazawa (1994). Weak vs. Strong Readings of Donkey Sentences.
 -/
 
 namespace Phenomena.Anaphora.Bridge.TypeTheoreticAnaphora

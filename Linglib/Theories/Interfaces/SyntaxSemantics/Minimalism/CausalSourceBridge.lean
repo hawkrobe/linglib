@@ -5,9 +5,7 @@ import Linglib.Theories.Semantics.Causation.PsychCausalLink
 /-!
 # Psych Verb Syntax-Semantics Interface (Pesetsky 1995; Kim 2024)
 
-@cite{pesetsky-1995} @cite{kim-2024}
-
-## Directions of determination
+@cite{pesetsky-1995} @cite{kim-2024} @cite{kratzer-1996} @cite{schfer-2008}## Directions of determination
 
 The psych verb interface involves three layers with distinct directions
 of determination:
@@ -46,14 +44,6 @@ structure is *invariant* across the two DP types. No head, feature, or
 morpheme distinguishes percept from representation DPs. The syntax is
 blind to the T/SM distinction. All variation is semantic.
 
-## References
-
-- Pesetsky, D. (1995). *Zero Syntax: Experiencers and Cascades*.
-  MIT Press.
-- Kim, Y. (2024). On the argument structure of object experiencer
-  verbs. PhD thesis, University College London.
-- Kratzer, A. (1996). Severing the external argument from its verb.
-- Schäfer, F. (2008). *The Syntax of (Anti-)Causatives*. Benjamins.
 -/
 
 namespace Theories.Interfaces.SyntaxSemantics.CausalSourceBridge

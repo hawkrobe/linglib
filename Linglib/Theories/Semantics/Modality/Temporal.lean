@@ -2,6 +2,7 @@ import Linglib.Theories.Semantics.Modality.Kratzer
 
 /-!
 # Temporal Modal Evaluation
+@cite{abusch-1997} @cite{condoravdi-2002} @cite{kratzer-2012} @cite{werner-2006}
 
 Modal bases and ordering sources are functions of both world and time
 (Kratzer 2012 Ch. 4, Condoravdi 2002). This module extends `Kratzer.lean`
@@ -27,13 +28,6 @@ This distinction matters for:
 `temporal_eq_static`: temporal modal evaluation reduces to standard Kratzer
 evaluation when the conversational backgrounds are time-independent.
 
-## References
-
-- Kratzer, A. (2012). Modals and Conditionals. OUP. Ch. 4.
-- Condoravdi, C. (2002). Temporal interpretation of modals: Modals for the
-  present and for the past. In Beaver et al., The Construction of Meaning.
-- Werner, T. (2006). Future and non-future modal sentences. NLLT 24:187–243.
-- Abusch, D. (1997). Sequence of tense and temporal de re. L&P 20(1):1–50.
 -/
 
 namespace Semantics.Modality.Temporal

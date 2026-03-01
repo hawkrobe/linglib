@@ -4,9 +4,7 @@ import Linglib.Fragments.Kiche.ExtractionMorphology
 /-!
 # Mayan Extraction Morphology: Parametric Comparison
 
-@cite{elkins-imanishi-coon-2026}
-
-Cross-linguistic comparison of extraction morphology in two Mayan
+@cite{elkins-imanishi-coon-2026} @cite{henderson-2008} @cite{imanishi-2020} @cite{mondloch-romero-2022}Cross-linguistic comparison of extraction morphology in two Mayan
 language groups: SJO Mam (=(y)a') and K'ichean (*wi*). Both mark
 oblique extraction with a dedicated morpheme, but the underlying
 mechanisms and distributional properties differ.
@@ -29,14 +27,6 @@ mechanisms and distributional properties differ.
 | Conditioned by clause size    | Yes (Voice project.)| No                    |
 | Multiple spellout in LD       | Yes (per Voice/Dir) | Unclear               |
 
-## References
-
-- Elkins, N., Y. Imanishi & J. Coon (2026). Wh-movement and oblique
-  extraction in SJO Mam.
-- Mondloch, J. & S. Romero (2022). Clause structure and movement in
-  K'ichean.
-- Henderson, R. (2008). Extraction and word order in K'iche'.
-- Imanishi, Y. (2020). Parameterizing split ergativity in Mayan.
 -/
 
 namespace Phenomena.FillerGap.Bridge.MayanExtractionComparison

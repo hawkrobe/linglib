@@ -35,10 +35,6 @@ predicate fronting + nominal licensing (DPs in Spec,CP lack a Case
 licensor). Mam (Mayan) shows a third pattern: unrestricted extraction
 with morphological reflexes of Agree.
 
-## References
-
-- Erlewine, M. Y. (2018). Extraction and licensing in Toba Batak.
-  Language 94(3): 662–697.
 -/
 
 namespace Phenomena.FillerGap.TobaBatak

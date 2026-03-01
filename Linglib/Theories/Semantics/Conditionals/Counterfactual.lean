@@ -31,14 +31,6 @@ Given a domain where SOME closest A-worlds satisfy B and SOME don't:
 
 Ramotowska et al. find experimental support for the SELECTIONAL theory.
 
-## References
-
-- Ramotowska, S., Marty, P., Romoli, J. & Santorio, P. (2025).
-  Counterfactuals and quantificational force. Semantics & Pragmatics.
-- Stalnaker, R. (1968). A Theory of Conditionals.
-- Lewis, D. (1973). Counterfactuals.
-- von Fintel, K. (2001). Counterfactuals in a Dynamic Context.
-- Križ, M. (2015). Aspects of Homogeneity in the Semantics of NPs.
 -/
 
 import Linglib.Theories.Semantics.Conditionals.Basic

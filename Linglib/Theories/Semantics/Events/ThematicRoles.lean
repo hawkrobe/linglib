@@ -12,12 +12,6 @@ to events (Parsons 1990). This module provides:
 - Davidson's key payoff: adverbial modification as predicate conjunction
 - VerbEntry grounding theorems
 
-## References
-
-- Parsons, T. (1990). Events in the Semantics of English.
-- Davidson, D. (1967). The logical form of action sentences.
-- Dowty, D. (1991). Thematic proto-roles and argument selection.
-- Kratzer, A. (1996). Severing the external argument from its verb.
 -/
 
 import Linglib.Theories.Semantics.Events.Basic

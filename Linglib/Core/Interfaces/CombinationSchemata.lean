@@ -14,10 +14,6 @@ fundamental modes of combination:
 | Head-Specifier | Ext Merge (later) | Head-Subj | T+bapp | subj dep |
 | Head-Filler | Int Merge | Head-Filler | fcomp/bcomp | non-proj dep |
 
-## Reference
-
-Müller, S. (2013). Unifying Everything: Some Remarks on Simpler Syntax,
-Construction Grammar, Minimalism, and HPSG. Language, 89(4), 920–950.
 -/
 
 namespace Core.Interfaces

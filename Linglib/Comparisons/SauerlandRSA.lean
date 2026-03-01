@@ -45,11 +45,6 @@ blocking), domain types (DisjWorld, DisjUtterance, disjMeaning), and structural
 theorems are preserved. RSA L1 computation (disjL1, p_both) and graded
 exclusivity theorems remain with `sorry` for future reimplementation.
 
-## References
-
-- Sauerland, U. (2004). Scalar implicatures in complex sentences. L&P 27:367-391.
-- Frank, M. C. & Goodman, N. D. (2012). Predicting pragmatic reasoning in language games.
-- Goodman, N. D. & Frank, M. C. (2016). Pragmatic language interpretation as probabilistic inference.
 -/
 
 import Linglib.Core.Semantics.Proposition

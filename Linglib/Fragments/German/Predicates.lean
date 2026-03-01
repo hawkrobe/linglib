@@ -2,6 +2,7 @@ import Linglib.Theories.Semantics.Lexical.Verb.VerbEntry
 
 /-!
 # German Predicate Lexicon Fragment
+@cite{qing-uegaki-2025} @cite{song-1996}
 
 German causative and attitude verb entries, extending `VerbCore` with the
 German inflectional paradigm (3sg present, Präteritum, Partizip II).
@@ -20,10 +21,6 @@ German preferential attitudes pattern with other Indo-European languages:
 - *fürchten* / *befürchten* — Class 2 (negative, C-distributive, takes questions)
 - *sich sorgen* — Class 1 (uncertainty-based, non-C-distributive)
 
-## References
-
-- Song, J. J. (1996). Causatives and Causation. Longman.
-- Qing, C., Lassiter, D., & Degen, J. (2025). Preferential attitude verbs.
 -/
 
 namespace Fragments.German.Predicates

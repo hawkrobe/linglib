@@ -24,11 +24,6 @@ L1: Pragmatic listener (jointly infers state s and goal phi)
 S2: Second-order speaker (omega-weighted info + social + presentational)
 ```
 
-## Reference
-
-Yoon, E. J., Tessler, M. H., Goodman, N. D., & Frank, M. C. (2020).
-Polite Speech Emerges From Competing Social Goals.
-Open Mind: Discoveries in Cognitive Science, 4, 71-87.
 -/
 
 import Linglib.Theories.Pragmatics.RSA.Core.CombinedUtility

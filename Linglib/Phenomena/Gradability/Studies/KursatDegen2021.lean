@@ -7,9 +7,6 @@ Perceptual difficulty predicts redundant modifier use. Material adjectives are h
 
 `PropertyType`, `PerceptualDifficultyDatum`, `ProductionDatum`, `Exp1Stats`, `Exp2Stats`, `Exp3Stats`, `PerceptualDifficultyHypothesis`
 
-## References
-
-- Kursat & Degen (2021)
 -/
 
 import Linglib.Core.Lexical.Word

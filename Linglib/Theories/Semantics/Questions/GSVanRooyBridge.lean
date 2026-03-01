@@ -5,6 +5,7 @@ import Linglib.Theories.Semantics.Questions.Polarity
 
 /-!
 # Questions/GSVanRooyBridge.lean
+@cite{blackwell-1953} @cite{groenendijk-stokhof-1984} @cite{van-rooy-2003}
 
 Bridging Theorems between Groenendijk & Stokhof (1984) and Van Rooy (2003).
 
@@ -24,13 +25,6 @@ This file establishes the formal connections between these approaches.
 4. **Exhaustivity Characterization**: When complete information is required
 5. **Polar Question Optimality**: PPQ/NPQ/Alt choice maximizes utility
 
-## References
-
-- Groenendijk & Stokhof (1984). Studies on the Semantics of Questions.
-- Van Rooy (2003). Questioning to Resolve Decision Problems. L&P 26.
-- Van Rooy (2003). Quality and Quantity of Information Exchange. JoLLI.
-- Van Rooy & Šafářová (2003). On Polar Questions. SALT 13.
-- Blackwell (1953). Equivalent Comparisons of Experiments.
 -/
 
 namespace Semantics.Questions.Bridge

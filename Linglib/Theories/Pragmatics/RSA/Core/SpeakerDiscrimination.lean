@@ -3,6 +3,7 @@ import Linglib.Core.Agent.ChoiceApproximations
 
 /-!
 # Speaker Discrimination: JND/Trace on S1
+@cite{degen-2023} @cite{luce-1959}
 
 Applies the just-noticeable-difference (JND) and trace infrastructure from
 Luce (1959, §1.G) — formalized in `ChoiceApproximations.lean` — to S1's
@@ -45,10 +46,6 @@ If S1 scores match everywhere for two utterances, L1 posteriors are
 identical. This is stated but sorry'd — the proof requires showing that
 equal S1 policies yield equal L1agent scores.
 
-## References
-
-- Luce, R. D. (1959). Individual Choice Behavior: A Theoretical Analysis. §1.G.
-- Degen, J. (2023). The Rational Speech Act Framework. §2.
 -/
 
 namespace RSA

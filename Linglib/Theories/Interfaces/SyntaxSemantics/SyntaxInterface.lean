@@ -7,9 +7,6 @@ Documents compositional homomorphism requirement and syntax-agnostic nature of M
 
 `TypeAssignment`, `CompositionalSemantics`, `MontagueSyntax`, `MontagueBenefits`
 
-## References
-
-Montague (1973)
 -/
 
 import Linglib.Theories.Semantics.Montague.Basic

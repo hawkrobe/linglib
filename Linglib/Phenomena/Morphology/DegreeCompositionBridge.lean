@@ -4,6 +4,7 @@ import Linglib.Fragments.English.Modifiers.Adjectives
 
 /-!
 # Degree Morphology Composition: Phenomena
+@cite{bybee-1985} @cite{horn-1972} @cite{kennedy-2007}
 
 Empirical tests for the degree morphology pipeline, verifying that
 adjective stems produce correct comparative and superlative forms
@@ -20,11 +21,6 @@ and that Horn scale generation works correctly.
 7. **Bybee bridge**: `.degree` has correct relevance rank
 8. **Vacuity**: all degree rules are semantically vacuous
 
-## References
-
-- Kennedy, C. (2007). Vagueness and grammar.
-- Horn, L. R. (1972). On the Semantic Properties of Logical Operators in English.
-- Bybee, J. L. (1985). Morphology.
 -/
 
 namespace Phenomena.Morphology.DegreeCompositionBridge

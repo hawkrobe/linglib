@@ -34,11 +34,6 @@ Gapping direction depends on the availability of verb categories:
 
 Languages with both verb orders (Dutch, Zapotec) allow both gapping patterns.
 
-## References
-
-- Ross (1970) "Gapping and the order of constituents"
-- Steedman (2000) "The Syntactic Process" Chapter 7
-- Maling (1972) "On 'Gapping and the order of constituents'"
 -/
 
 namespace Phenomena.Ellipsis.Gapping

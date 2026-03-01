@@ -6,6 +6,7 @@ import Linglib.Phenomena.Plurals.Studies.Charlow2021.Data
 
 /-!
 # Three-Way Comparison: Cumulative Readings
+@cite{charlow-2021}
 
 Compares three approaches to deriving cumulative readings of modified numerals
 (Charlow 2021):
@@ -20,9 +21,6 @@ All three derive cumulative readings for Scenario A, but update semantics
 does so with the least additional stipulation — non-distributivity of M_v
 is a *consequence* of the update-theoretic architecture, not an add-on.
 
-## References
-
-- Charlow, S. (2021). Post-suppositions and semantic theory. *L&P* 44, 701–765.
 -/
 
 namespace Phenomena.Plurals.Compare

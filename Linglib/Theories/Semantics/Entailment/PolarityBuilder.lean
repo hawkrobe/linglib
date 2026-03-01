@@ -4,6 +4,7 @@ import Linglib.Fragments.English.PolarityItems
 
 /-!
 # Polarity Builder — Derived NPI Licensing from Entailment Signatures
+@cite{deni-chemla-2021} @cite{von-fintel-1999}
 
 Bridge between the theory-neutral Fragment (`DEStrength`) and the formal
 monotonicity hierarchy (`IsDE`, `IsAntiAdditive`, `IsAntiMorphic`, `IsStrawsonDE`).
@@ -22,12 +23,6 @@ not captured by the standard entailment signature lattice.
 `licensesWeakNPI = true` (Strawson-DE suffices). This is von Fintel's (1999)
 central insight, derived not stipulated.
 
-## References
-
-- von Fintel, K. (1999). NPI Licensing, Strawson Entailment, and Context
-  Dependency. Journal of Semantics 16(2), 97–148.
-- Denić, M., Homer, V., Rothschild, D. & Chemla, E. (2021). The influence
-  of polarity items on inferential judgments. Cognitive Science 45(6).
 -/
 
 namespace Semantics.Entailment.PolarityBuilder

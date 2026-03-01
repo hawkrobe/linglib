@@ -2,6 +2,7 @@ import Linglib.Theories.Semantics.Tense.Basic
 
 /-!
 # Von Stechow (2009): Tenses in Compositional Semantics
+@cite{von-stechow-2009}
 
 Von Stechow's theory: tense features are checked against a local
 evaluation time that shifts under attitude embedding. The key mechanism
@@ -22,10 +23,6 @@ that must be checked against the local temporal anchor.
   coordinate, not the matrix event time
 - Cleaner compositional architecture: no res movement needed
 
-## References
-
-- Von Stechow, A. (2009). Tenses in compositional semantics.
-  In Klein & Li (eds.), *The Expression of Time*, 129-166.
 -/
 
 namespace Semantics.Tense.VonStechow

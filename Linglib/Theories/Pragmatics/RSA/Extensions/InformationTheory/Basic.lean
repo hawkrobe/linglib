@@ -3,6 +3,7 @@ import Linglib.Core.InformationTheory
 
 /-!
 # Information-Theoretic Foundations of RSA
+@cite{cover-thomas-2006} @cite{frank-goodman-2012} @cite{zaslavsky-hu-levy-2020}
 
 Re-exports domain-agnostic information-theoretic primitives from
 `Core.InformationTheory` into the `RSA.InformationTheory` namespace,
@@ -21,12 +22,6 @@ and dynamics have been removed.
 3. Critical α = 1: Phase transition at α = 1
 4. Utility non-monotonicity: E[V_L] can decrease even as G_α increases
 
-## References
-
-- Zaslavsky, N., Hu, J., & Levy, R. (2020). A Rate-Distortion view of human pragmatic
-  reasoning. arXiv:2005.06641.
-- Frank, M. C. & Goodman, N. D. (2012). Predicting pragmatic reasoning in language games.
-- Cover, T. M. & Thomas, J. A. (2006). Elements of Information Theory.
 -/
 
 namespace RSA.InformationTheory

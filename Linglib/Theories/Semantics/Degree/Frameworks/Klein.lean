@@ -2,6 +2,7 @@ import Linglib.Theories.Semantics.Degree.Core
 
 /-!
 # Klein's Delineation Approach
+@cite{burnett-2014} @cite{klein-1980} @cite{van-rooij-2011}
 
 Klein (1980) "A Semantics for Positive and Comparative Adjectives":
 a degree-free analysis where gradable adjectives are simple predicates
@@ -36,13 +37,6 @@ Klein's approach has difficulty with measure phrases ("3 inches taller")
 and degree modifiers ("very tall"), which are natural in degree-based
 frameworks.
 
-## References
-
-- Klein, E. (1980). A semantics for positive and comparative adjectives.
-  *Linguistics and Philosophy* 4(1): 1-45.
-- van Rooij, R. (2011). Vagueness and linguistics.
-- Burnett, H. (2014). A delineation solution to the puzzles of absolute
-  adjectives. *Linguistics and Philosophy* 37(1): 1-39.
 -/
 
 namespace Semantics.Degree.Frameworks.Klein

@@ -2,6 +2,7 @@ import Linglib.Theories.Semantics.Questions.QParticleLayer
 
 /-!
 # Serbian Question Particles
+@cite{todorovi-2023}
 
 Lexical entries for Serbian interrogative particles. Serbian has the richest
 PQ repertoire among Slavic languages (Todorović 2023).
@@ -19,10 +20,6 @@ PQ repertoire among Slavic languages (Todorović 2023).
 - `SlavicPQStrategies.zar`: bias particle data (outerNeg/innerNeg)
 - Bridge theorems in `SlavicPQStrategies` (Phenomena imports Fragments)
 
-## References
-
-- Šimík, R. (2024). Polar question semantics and bias: Lessons from Slavic/Czech.
-- Todorović, N. (2023). Serbian polar questions. Glossa.
 -/
 
 namespace Fragments.Serbian.QuestionParticles

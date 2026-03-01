@@ -19,10 +19,6 @@ of the veridicality contrast.
 
 **Level 1 (point sets)**: operates on `timeTrace` projections of `SentDenotation`.
 
-## References
-
-- Anscombe, E. (1964). Before and after. *The Philosophical Review* 73, 3–24.
-- Krifka, M. (2010b). *Before* and *after* without coercion. *NLLT* 28, 911–929.
 -/
 
 namespace Semantics.Tense.TemporalConnectives

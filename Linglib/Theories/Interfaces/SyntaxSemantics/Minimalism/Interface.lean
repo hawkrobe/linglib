@@ -35,10 +35,6 @@ Traces are encoded as `SyntacticObject.leaf` with id ≥ 10000.
 The trace index is `id - 10000`. Created via `mkTrace n`,
 detected via `isTrace so`.
 
-## References
-
-- Heim & Kratzer (1998) "Semantics in Generative Grammar", Ch. 5, 7
-- Chomsky (1995) "The Minimalist Program"
 -/
 
 import Linglib.Theories.Syntax.Minimalism.Core.Basic

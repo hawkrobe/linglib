@@ -2,6 +2,7 @@ import Linglib.Core.Lexical.Word
 
 /-!
 # Gender and Noun Class Typology (WALS Chapters 30--32)
+@cite{corbett-1991} @cite{dryer-haspelmath-2013}
 
 Formalizes three chapters from the World Atlas of Language Structures (WALS)
 covering the typology of gender and noun class systems, all authored by
@@ -41,20 +42,6 @@ Corbett's Agreement Hierarchy governs where gender agreement surfaces:
 If a language shows gender agreement on a lower target, it shows agreement
 on all higher targets.
 
-## References
-
-- Corbett, G. G. (1991). *Gender*. Cambridge University Press.
-- Corbett, G. G. (2013a). Number of Genders. In Dryer, M. S. & Haspelmath, M.
-  (eds.), WALS Online (v2020). Ch. 30. https://wals.info/chapter/30
-- Corbett, G. G. (2013b). Sex-based and Non-sex-based Gender Systems. In Dryer,
-  M. S. & Haspelmath, M. (eds.), WALS Online (v2020). Ch. 31.
-  https://wals.info/chapter/31
-- Corbett, G. G. (2013c). Systems of Gender Assignment. In Dryer, M. S. &
-  Haspelmath, M. (eds.), WALS Online (v2020). Ch. 32.
-  https://wals.info/chapter/32
-- Dryer, M. S. & Haspelmath, M. (eds.) (2013). WALS Online (v2020).
-  Leipzig: Max Planck Institute for Evolutionary Anthropology.
-  https://wals.info
 -/
 
 namespace Phenomena.Gender.Typology

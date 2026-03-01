@@ -1,5 +1,6 @@
 /-!
 # Definiteness: Types and Classifications
+@cite{donnellan-1966} @cite{hawkins-1978} @cite{heim-1982} @cite{patel-grosz-grosz-2017} @cite{schwarz-2009} @cite{schwarz-2013}
 
 Framework-agnostic vocabulary for definiteness phenomena. These types classify
 definite descriptions, article systems, and presupposition types without
@@ -14,14 +15,6 @@ Used by:
 - `Phenomena/Anaphora/PronounTypology.lean` (cross-linguistic article data)
 - `Phenomena/Anaphora/Bridging.lean` (bridging presupposition types)
 
-## References
-
-- Schwarz, F. (2009). Two Types of Definites in Natural Language. UMass diss.
-- Schwarz, F. (2013). Two Kinds of Definites Cross-linguistically. L&L Compass 7(10).
-- Hawkins, J. (1978). Definiteness and Indefiniteness. Croom Helm.
-- Heim, I. (1982). The Semantics of Definite and Indefinite NPs. UMass diss.
-- Patel-Grosz, P. & B. Grosz (2017). Revisiting Pronominal Typology. LI 48(2).
-- Donnellan, K. (1966). Reference and Definite Descriptions. Phil. Review.
 -/
 
 namespace Core.Definiteness

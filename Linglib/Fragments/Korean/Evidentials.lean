@@ -2,6 +2,7 @@ import Linglib.Theories.Semantics.Tense.Evidential
 
 /-!
 # Korean Evidential Fragment (Cumming 2026)
+@cite{cumming-2026}
 
 Paradigm entries for Korean tense-evidential morphology from Cumming (2026),
 Tables 18 (-te) and 19 (-ney). Korean is notable for morphologically encoding
@@ -16,9 +17,6 @@ their UP constraints differ:
 
 This EP/UP factorization is verified in `Phenomena/Cumming2026/Bridge.lean`.
 
-## References
-
-- Cumming, S. (2026). Tense and evidence. *L&P* 49:153–175. Tables 18, 19.
 -/
 
 namespace Fragments.Korean.Evidentials

@@ -3,6 +3,7 @@ import Linglib.Theories.Semantics.Attitudes.Doxastic
 
 /-!
 # Situation-Dependent Attitude Semantics
+@cite{heim-kratzer-1998} @cite{kratzer-1998} @cite{lewis-1979} @cite{von-stechow-2009}
 
 Attitude operators with temporal parameters: `believe`'s complement type shifts
 from `st` (propositions = W → Bool) to `s(it)` (situation-dependent propositions =
@@ -27,13 +28,6 @@ lifting theorems proving generalization. Zero breaking changes.
 Phase 2 (future): Migrate `Doxastic.lean` and `Preferential.lean` to use
 situation-dependent types natively, with backward-compat wrappers.
 
-## References
-
-- Lewis, D. (1979). Attitudes De Dicto and De Se. *The Philosophical Review* 88.
-- Kratzer, A. (1998). More Structural Analogies Between Pronouns and Tenses. *SALT VIII*.
-- Ogihara, T. (1989/1996). *Tense, Attitudes, and Scope*. Kluwer.
-- Von Stechow, A. (2009). Tenses in compositional semantics. In Klein & Li (eds.),
-  *The Expression of Time*, 129–166.
 -/
 
 namespace Semantics.Attitudes.SituationDependent

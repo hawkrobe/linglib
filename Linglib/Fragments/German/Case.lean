@@ -15,9 +15,6 @@ German has extensive syncretism, especially in the definite article:
 - NOM/ACC syncretism: neuter and feminine (der/das/die paradigm)
 - DAT/GEN syncretism: rare but occurs in some dialects
 
-## References
-
-- Blake, B. J. (1994). *Case*. Cambridge University Press.
 -/
 
 namespace Fragments.German.Case

@@ -3,6 +3,7 @@ import Linglib.Theories.Semantics.Causation.Necessity
 
 /-!
 # Structural Causation Tests
+@cite{hall-2004} @cite{nadathur-lauer-2020} @cite{pearl-2000}
 
 Verification that `Core.StructuralEquationModel` correctly models classic causal
 structures from the philosophy and linguistics literature.  Each section
@@ -19,12 +20,6 @@ and proves the predictions match via `native_decide`.
 | Double prevention | A prevents B, B prevents C | A enables C indirectly |
 | Symmetric overdetermination | A→C, B→C, both present | Neither necessary |
 
-## References
-
-- Nadathur & Lauer (2020). Causal necessity, causal sufficiency, and the
-  implications of causative verbs.
-- Pearl (2000). *Causality*.
-- Hall (2004). Two concepts of causation.
 -/
 
 namespace Phenomena.Causatives.StructuralCausation

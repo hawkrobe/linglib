@@ -2,6 +2,7 @@ import Linglib.Core.Lexical.Word
 
 /-!
 # Cross-Linguistic Typology of Nominal Plurality (WALS Chapters 33--36)
+@cite{corbett-2000} @cite{daniel-2013} @cite{dryer-haspelmath-2013} @cite{haspelmath-2013}
 
 Typological data on how languages encode plurality, drawn from four WALS
 chapters by Dryer, Haspelmath, Daniel, and Moravcsik. The data covers four
@@ -29,17 +30,6 @@ dimensions of plural morphology and syntax:
    associative plural. In nearly half (104), the associative marker is the same
    morpheme used for additive (ordinary) plurals.
 
-## References
-
-- Dryer, M. S. (2013). Coding of Nominal Plurality. In Dryer & Haspelmath (eds.),
-  WALS Online (v2020.3). https://wals.info/chapter/33
-- Haspelmath, M. (2013). Occurrence of Nominal Plurality. In Dryer & Haspelmath
-  (eds.), WALS Online (v2020.3). https://wals.info/chapter/34
-- Daniel, M. (2013). Plurality in Independent Personal Pronouns. In Dryer &
-  Haspelmath (eds.), WALS Online (v2020.3). https://wals.info/chapter/35
-- Daniel, M. & Moravcsik, E. (2013). The Associative Plural. In Dryer &
-  Haspelmath (eds.), WALS Online (v2020.3). https://wals.info/chapter/36
-- Corbett, G. G. (2000). Number. Cambridge University Press.
 -/
 
 namespace Phenomena.Plurals.Typology

@@ -3,6 +3,7 @@ import Linglib.Phenomena.Gradability.EvaluativityBridge
 
 /-!
 # Bridge: NeoGricean Alternatives → M-Alternative Verification
+@cite{horn-1984} @cite{rett-2015}
 
 Verifies M-alternative generation for concrete adjective pairs.
 
@@ -11,10 +12,6 @@ Tests that the M-alternative framework correctly identifies:
 - Which constructions lack M-alternatives (comparatives, positives)
 - Which form is marked in M-alternative pairs
 
-## References
-
-- Horn, L. (1984). Toward a new taxonomy for pragmatic inference.
-- Rett, J. (2015). The Semantics of Evaluativity. Oxford University Press.
 -/
 
 namespace Phenomena.Gradability.NeoGricean_AlternativesBridge

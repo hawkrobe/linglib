@@ -2,6 +2,7 @@ import Linglib.Core.Lexical.MorphRule
 
 /-!
 # Morphological Exponence Rules
+@cite{bybee-1985} @cite{comrie-1976} @cite{kennedy-2007} @cite{lakoff-1970} @cite{link-1983}
 
 Concrete instantiations of `MorphRule` for functional categories.
 
@@ -9,13 +10,6 @@ All rules that are purely formal (no semantic contribution) have
 `isVacuous := true`. Number marking on nouns is the exception:
 singular restricts to atoms, plural applies algebraic closure (Link 1983).
 
-## References
-
-- Bybee, J. L. (1985). Morphology. Benjamins.
-- Comrie, B. (1976). Aspect. Cambridge University Press.
-- Kennedy, C. (2007). Vagueness and grammar.
-- Lakoff, R. (1970). Tense and its relation to participants. *Language* 46(4).
-- Link, G. (1983). The logical analysis of plurals and mass terms.
 -/
 
 -- ════════════════════════════════════════════════════

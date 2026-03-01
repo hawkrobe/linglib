@@ -31,11 +31,6 @@ We implement approach #2 as a stepping stone. It shows that graded values
 can emerge from Boolean semantics + uncertainty, connecting to Lassiter &
 Goodman's result: "threshold semantics + uncertainty = graded semantics".
 
-## References
-
-- Bernardy et al. (2018). A Compositional Bayesian Semantics for Natural Language.
-- Grove & White. Probabilistic Dynamic Semantics.
-- Lassiter & Goodman (2017). Adjectival vagueness in a Bayesian model.
 -/
 
 import Linglib.Core.Semantics.Proposition

@@ -11,6 +11,7 @@ import Linglib.Tactics.OntSort
 
 /-!
 # Scales
+@cite{fox-hackl-2006} @cite{holliday-icard-2013} @cite{kennedy-2007} @cite{krantz-1971} @cite{krifka-1989} @cite{rouillard-2026}
 
 Root algebraic infrastructure for all scale-based reasoning in linglib.
 
@@ -73,15 +74,6 @@ Both domains use `Boundedness` to classify scales, and `Boundedness.isLicensed`
 derives the licensing prediction. Actual scale types encode boundedness via
 Mathlib typeclasses (`OrderTop`, `OrderBot`, `NoMaxOrder`, `NoMinOrder`).
 
-## References
-
-- Kennedy, C. (2007). Vagueness and grammar.
-- Krifka, M. (1989). Nominal reference, temporal constitution.
-- Rouillard, V. (2026). Maximal informativity and temporal in-adverbials.
-- Fox, D. & Hackl, M. (2006). The universal density of measurement.
-- Holliday, W. & Icard, T. (2013). Measure semantics and qualitative semantics
-  for epistemic modals.
-- Krantz, D. et al. (1971). Foundations of measurement, Vol. 1.
 -/
 
 namespace Core.Scale

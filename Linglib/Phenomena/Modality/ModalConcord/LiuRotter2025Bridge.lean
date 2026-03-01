@@ -27,12 +27,6 @@ Both studies find that MC preserves modal force (single reading, not double).
 Modal concord is an instance of the general concord pattern. Possibility MC
 patterns with negative concord (solidarity), necessity MC contrasts (competence).
 
-## References
-
-* Liu & Rotter (2025). Non-redundant modal concord.
-* Dieuleveut, Hsu & Bhatt (2025). A Register Approach to Modal Non-Concord.
-* Zeijlstra (2004). Sentential Negation and Negative Concord.
-* Fiske, Cuddy, Glick & Xu (2002). A model of (often mixed) stereotype content.
 -/
 
 namespace Phenomena.Modality.ModalConcord.LiuRotter2025.Bridge

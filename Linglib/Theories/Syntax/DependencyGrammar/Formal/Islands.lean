@@ -4,6 +4,7 @@ import Linglib.Theories.Syntax.DependencyGrammar.LongDistance
 
 /-!
 # Islands as Constraints on Rising Catenae
+@cite{huang-1982} @cite{osborne-2019} @cite{ross-1967}
 
 Formalizes Osborne's (2019, Ch 9) analysis of islands in dependency grammar.
 Islands are syntactic configurations that constrain which rising catenae can
@@ -35,12 +36,6 @@ different ways:
 - → `Discontinuity.lean`: islands block the formation of risen catenae
 - → `Catena.lean`: island material forms catenae (proven), uses `isCatena`
 - → `LongDistance.lean`: maps to `IslandType` (4 shared types + 5 new)
-## References
-
-- Osborne, T. (2019). *A Dependency Grammar of English*, Ch 9.
-  Amsterdam: John Benjamins.
-- Ross, J.R. (1967). Constraints on Variables in Syntax.
-- Huang, C.-T. J. (1982). Logical Relations in Chinese.
 -/
 
 namespace DepGrammar.Islands

@@ -17,10 +17,6 @@ entire algebraic hierarchy.
 - `toFreeMagmaMulHom`: magma homomorphism SO →ₙ* FreeMagma LIToken
 - `SyntacticObject.liftMagma`: universal property via FreeMagma.lift
 
-## References
-
-- Marcolli, M., Chomsky, N. & Berwick, R.C. (2023). "Mathematical Structure of
-  Syntactic Merge"
 -/
 
 import Linglib.Theories.Syntax.Minimalism.Core.Basic

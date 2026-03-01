@@ -5,6 +5,7 @@ import Linglib.Core.Discourse.Commitment
 
 /-!
 # Biased Polar Questions
+@cite{anderbois-2019} @cite{bring-gunlogson-2000} @cite{domaneschi-2017} @cite{frana-rawlins-2019} @cite{goodhue-2022} @cite{ladd-1981} @cite{repp-2013} @cite{romero-2015} @cite{romero-2024} @cite{romero-han-2004} @cite{stakov-2026}
 
 Cross-linguistic framework for polar question bias, following Romero (2024).
 Polar questions come in three forms — PosQ, LoNQ, HiNQ — which differ in
@@ -29,24 +30,6 @@ We formalize VERUM and FALSUM (line b) using existing Kratzer modal and
 CommonGround infrastructure, as this is the line adopted by Staňková (2026)
 for Czech.
 
-## References
-
-- Romero, M. (2024). Biased Polar Questions. Annual Review of Linguistics 10:279–302.
-- Ladd, R. (1981). A first look at the semantics and pragmatics of negative
-  questions and tag questions. CLS 17.
-- Büring, D. & Gunlogson, C. (2000). Aren't positive and negative polar questions
-  the same? UCSC/UCLA.
-- Romero, M. & Han, C. (2004). On negative yes/no questions. L&P 27.
-- Repp, S. (2013). Common ground management. In Beyond Expressives.
-- Romero, M. (2015). High negation in subjunctive conditionals and polar questions.
-- Frana, I. & Rawlins, K. (2019). Attitudes in compositional alternative semantics.
-- Goodhue, D. (2022). It's not just what you say, it's how you say it. L&P.
-- AnderBois, S. (2019). Negation, alternatives, and negative polar questions. In SALT 29.
-- Domaneschi, F. et al. (2017). N-words and sentential negation: Evidence from
-  polarity, scope and discourse. LI 48(3).
-- Staňková, V. (2026). A three-way distinction of negation interpretation in Czech.
-- Šimík, R. (2024). Polar question semantics and bias: Lessons from Slavic/Czech.
-  In B. Gehrke & R. Šimík (eds.), Topics in the semantics of Slavic languages. Language Science Press.
 -/
 
 namespace Semantics.Modality.BiasedPQ

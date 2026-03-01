@@ -3,6 +3,7 @@ import Linglib.Theories.Semantics.Dynamic.Core.Basic
 
 /-!
 # Type Theory with Records — Discourse State & Pragmatics
+@cite{cooper-2023} @cite{ginzburg-2012} @cite{kripke-1979} @cite{partee-1973}
 
 Discourse-level infrastructure for TTR (Cooper 2023, Chapters 2, 4, 5):
 
@@ -24,13 +25,6 @@ Discourse-level infrastructure for TTR (Cooper 2023, Chapters 2, 4, 5):
   FixedPtType, FrameType, restrictPpty, TravelFrame/PassengerFrame,
   semBeID, semBeScalar (§5.2–5.8).
 
-## References
-
-- Cooper (2023). From Perception to Communication. OUP. Ch 2, 4, 5.
-- Ginzburg (2012). The Interactive Stance.
-- Kripke (1979). A Puzzle about Belief.
-- Löbner (1979, 1981, 2015). Functional concepts.
-- Partee (1973). Some structural analogies between tenses and pronouns.
 -/
 
 namespace Semantics.TypeTheoretic

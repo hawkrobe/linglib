@@ -5,9 +5,7 @@ import Linglib.Theories.Semantics.Lexical.Verb.ChangeOfState.Theory
 
 /-!
 # Rett (2020): Antonymy + Aspectual Coercion
-@cite{rett-2020} @cite{rett-2026}
-
-*before* and *after* are antonyms on converse scales, with strong defaults
+@cite{rett-2020} @cite{rett-2026} @cite{jin-koenig-2021} @cite{krifka-2010b}*before* and *after* are antonyms on converse scales, with strong defaults
 (before-start, after-finish). Non-default readings require aspectual coercion:
 **INCHOAT** (GLB, atelic → onset) or **COMPLET** (LUB, telic → telos), which
 incur processing cost.
@@ -38,14 +36,6 @@ reference point is selected (all of B vs MAX of B).
 (ambidirectional), which is why it licenses expletive negation cross-
 linguistically. *after* and *while* are not ambidirectional.
 
-## References
-
-- Rett, J. (2020). Eliminating EARLIEST: a general semantics for *before* and
-  *after*. *Proceedings of Sinn und Bedeutung* 24, 201–218.
-- Rett, J. (2026). Semantic ambivalence and expletive negation. Ms.
-- Krifka, M. (2010). *Before* and *after* without coercion. *NLLT* 28, 911–929.
-- Jin, Y. & Koenig, J.-P. (2021). A cross-linguistic study of expletive
-  negation. *Linguistic Typology* 25(1), 39–78.
 -/
 
 namespace Semantics.Tense.TemporalConnectives

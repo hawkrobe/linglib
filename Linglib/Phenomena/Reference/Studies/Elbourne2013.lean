@@ -5,6 +5,7 @@ import Linglib.Fragments.English.Nouns
 
 /-!
 # Elbourne (2013): Situation-Semantic Definite Descriptions — Empirical Tests @cite{elbourne-2013}
+@cite{donnellan-1966} @cite{kripke-1977}
 
 End-to-end derivation chain from Fragment lexical entries through
 Elbourne's situation-semantic theory to concrete truth-value predictions.
@@ -36,11 +37,6 @@ Phenomena/Reference/Studies/Elbourne2013.lean  (this file)
 4. **De Re / De Dicto with Definites** (Ch 7): "Mary believes the president is a spy."
 5. **Existence Entailments** (Ch 8): "Hans wants the ghost to be quiet."
 
-## References
-
-- Elbourne, P. (2013). *Definite Descriptions*. OUP.
-- Donnellan, K. (1966). Reference and Definite Descriptions.
-- Kripke, S. (1977). Speaker's Reference and Semantic Reference.
 -/
 
 namespace Phenomena.Reference.Studies.Elbourne2013

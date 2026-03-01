@@ -24,11 +24,6 @@ The SF introduces modal displacement:
 - SF: ∀s₁∈hist(s₀): ∀x[book(x,s₁) ∧ reads(m,x,s₁)] → interesting(x,s₁)
   - Quantification over situations weakens to conditional existence
 
-## References
-
-- Mendes, A. (2025). Indefiniteness in future reference. S&P 18(10).
-- Heim, I. (1983). On the projection problem for presuppositions.
-- Beaver, D. (2001). Presupposition and Assertion in Dynamic Semantics.
 -/
 
 import Linglib.Theories.Semantics.Dynamic.Systems.IntensionalCDRT.Situations

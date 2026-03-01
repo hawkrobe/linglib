@@ -29,11 +29,6 @@ German has nested dependencies (can be handled by CFG):
       └────────────┘
           └────┘
 
-## References
-
-- Bresnan et al. (1982) "Cross-serial dependencies in Dutch"
-- Steedman (2000) "The Syntactic Process" Chapter 6
-- Shieber (1985) "Evidence against the context-freeness of natural language"
 -/
 
 namespace Phenomena.FillerGap.CrossSerial

@@ -7,10 +7,6 @@ Bilateral connectives enabling cross-disjunct anaphora (bathroom sentences).
 
 `BilateralICDRT.neg`, `disjBathroom`, `impl`, `donkeyConditional`, `bathroomSentence`
 
-## References
-
-- Hofmann (2025) §3: Disjunction and the bathroom problem
-- Elliott & Sudo (2025). Free choice with anaphora. S&P 18.
 -/
 
 import Linglib.Theories.Semantics.Dynamic.Systems.IntensionalCDRT.Update

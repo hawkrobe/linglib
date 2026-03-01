@@ -40,10 +40,6 @@ The model reproduces all 11 findings. All proofs use `rsa_predict`.
   `Theories.Pragmatics.RSA.Quantities`,
   `Theories.Semantics.Lexical.Numeral.Semantics`
 
-## References
-
-- Goodman, N.D. & Stuhlmuller, A. (2013). Knowledge and implicature.
-  *TopiCS* 5(1): 173-184.
 -/
 
 set_option autoImplicit false

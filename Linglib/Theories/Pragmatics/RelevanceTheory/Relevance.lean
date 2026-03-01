@@ -24,9 +24,6 @@ communicates a presumption of its own optimal relevance.
 Clause (b) does the work of Grice's maxim of Quantity without a cooperative
 principle — it derives implicatures about the speaker's knowledge and goals.
 
-## References
-
-Sperber, D. & Wilson, D. (1986/95). Relevance. Ch. 3 §4; Postface pp. 260-272.
 -/
 
 set_option autoImplicit false

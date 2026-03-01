@@ -28,10 +28,6 @@ CG requirements are DERIVED in this Bridge layer from `attitudeBuilder`.
 
 Exceptional cases (yǐwéi's postsupposition) are handled HERE, not in Fragments.
 
-## References
-
-- Glass (2025). Attested versus unattested contrafactive belief verbs.
-- Roberts & Özyıldız (2025). A causal explanation for the contrafactive gap.
 -/
 
 import Linglib.Theories.Semantics.Attitudes.Doxastic

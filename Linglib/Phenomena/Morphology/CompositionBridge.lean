@@ -5,6 +5,7 @@ import Linglib.Phenomena.Morphology.ZwickyPullum1983Bridge
 
 /-!
 # Morphological Composition: Phenomena
+@cite{link-1983}
 
 Empirical tests for the `Core.Morphology` pipeline, verifying that
 stem-based generation produces correct surface forms and features
@@ -19,9 +20,6 @@ from real English lexical entries in `Fragments/English/`.
 5. **Verb agreement**: sleep → sleeps (vacuous), eat → ate (vacuous)
 6. **Vacuity**: all verb inflection is semantically vacuous
 
-## References
-
-- Link, G. (1983). The logical analysis of plurals and mass terms.
 -/
 
 namespace Phenomena.Morphology.CompositionBridge

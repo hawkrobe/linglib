@@ -2,6 +2,7 @@ import Linglib.Theories.Semantics.Lexical.Verb.VerbEntry
 
 /-!
 # French Predicate Lexicon Fragment
+@cite{kayne-1975} @cite{song-1996}
 
 French causative predicates, centered on the *faire* causative.
 Song (1996) classifies *faire* as a COMPACT causative with free morpheme
@@ -11,10 +12,6 @@ despite being separate words.
 "Je ferai lire le livre à Nicole" = "I will make Nicole read the book"
 (faire + infinitive = single predicate for case marking purposes)
 
-## References
-
-- Song, J. J. (1996). Causatives and Causation. Longman. §5.1
-- Kayne, R. (1975). French Syntax. MIT Press. (faire-infinitive)
 -/
 
 namespace Fragments.French.Predicates

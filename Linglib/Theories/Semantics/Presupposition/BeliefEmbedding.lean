@@ -42,12 +42,6 @@ OLE = no (Class B, Class D): Presupposition attributed to speaker
   - Does not shift to John's perspective
   - Result: Speaker is annoyed (attributed to speaker)
 
-## References
-
-- Schlenker (2009). Local Contexts. Semantics & Pragmatics 2:3.
-- Heim (1992). Presupposition Projection and the Semantics of Attitude Verbs.
-- Tonhauser, Beaver, Roberts & Simons (2013). Toward a Taxonomy of
-  Projective Content. Language 89(1).
 -/
 
 import Linglib.Core.Semantics.CommonGround

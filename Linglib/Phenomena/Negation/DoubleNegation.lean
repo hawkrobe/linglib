@@ -20,11 +20,6 @@ The puzzle: semantically these should be equivalent, but anaphora differs.
 2. In standard DS, ¬¬φ and φ differ in dref accessibility (DNE for anaphora).
 3. Bilateral/flat update validates DNE for anaphora too (BUS/ICDRT solution).
 
-## References
-
-- Groenendijk, J. & Stokhof, M. (1991). Dynamic Predicate Logic.
-- Elliott, P. & Sudo, Y. (2025). Free choice with anaphora. S&P 18.
-- Hofmann, L. (2025). Anaphoric accessibility with flat update. S&P.
 -/
 
 namespace Phenomena.Negation.DoubleNegation

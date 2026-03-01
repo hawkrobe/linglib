@@ -2,6 +2,7 @@ import Linglib.Theories.Semantics.Questions.QParticleLayer
 
 /-!
 # Q-Particle Typology Bridge (Dayal 2025)
+@cite{bhatt-dayal-2020} @cite{dayal-2025} @cite{sauerland-yatsushiro-2017}
 
 Cross-linguistic Q-particle data classified by left-peripheral layer
 (Dayal 2025: §1.3). This file imports `QParticleLayer` from Theories/
@@ -11,11 +12,6 @@ structure [SAP [PerspP [CP ...]]].
 The theory-neutral data (clause typing, declarative questions, shiftiness,
 conjunct/disjunct marking) lives in `Phenomena.Questions.Typology`.
 
-## References
-
-- Dayal, V. (2025). The Interrogative Left Periphery. Linguistic Inquiry 56(4).
-- Bhatt, R. & V. Dayal (2020). Polar question particles: Hindi-Urdu kya:.
-- Sauerland, U. & K. Yatsushiro (2017). Two noises in the head.
 -/
 
 namespace Phenomena.Questions.TypologyBridge

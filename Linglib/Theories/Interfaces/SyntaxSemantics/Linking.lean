@@ -2,6 +2,7 @@ import Linglib.Theories.Semantics.Events.ThematicRoles
 
 /-!
 # Linking Theory Interface
+@cite{beavers-koontz-garboden-2020} @cite{dowty-1991} @cite{goldberg-1995} @cite{kratzer-1996} @cite{levin-2004} @cite{levin-hovav-1995} @cite{pesetsky-1995} @cite{pylkknen-2008} @cite{ramchand-2008}
 
 General interface for theories of argument realization — how verbs'
 arguments get their thematic roles.
@@ -44,18 +45,6 @@ Accounts expressible via this interface (non-exhaustive):
 | Proto-roles (Dowty 1991) | Unit | always [()] | yes (via ASP) |
 | Applicatives (Pylkkänen 2008) | (custom) | verb-constrained | no |
 
-## References
-
-- Kratzer, A. (1996). Severing the external argument from its verb.
-- Levin, B. & M. Rappaport Hovav (1995). *Unaccusativity*.
-- Rappaport Hovav, M. & B. Levin (1998). Building verb meanings.
-- Pesetsky, D. (1995). *Zero Syntax*.
-- Dowty, D. (1991). Thematic proto-roles and argument selection.
-- Ramchand, G. (2008). *Verb Meaning and the Lexicon*.
-- Goldberg, A. (1995). *Constructions*.
-- Pylkkänen, L. (2008). *Introducing Arguments*.
-- Levin, B. (2004). Verbs and constructions: Where next?
-- Beavers, J. & A. Koontz-Garboden (2020). *The Roots of Verbal Meaning*.
 -/
 
 namespace Interfaces.SyntaxSemantics

@@ -36,10 +36,6 @@ The predicted DOM profiles are matched against the `DOMProfile` language data
 in `Phenomena.Case.Typology`, verifying that every attested pattern corresponds
 to a possible OT grammar.
 
-## References
-
-- Aissen, J. (2003). Differential Object Marking: Iconicity vs. Economy.
-  NLLT 21(3): 435–483.
 -/
 
 namespace Phenomena.Case.Studies.Aissen2003

@@ -1,5 +1,6 @@
 /-!
 # Case: Theory-Neutral Inventory @cite{blake-1994}
+@cite{comrie-1978}
 
 A framework-agnostic case inventory drawn from Blake's (1994) cross-linguistic
 survey. These 19 values cover the cases attested across Blake's typological
@@ -17,10 +18,6 @@ systems, ERG/ABS in ergative systems) mark grammatical relations determined by
 argument structure. **Peripheral** cases mark semantic roles (source, goal,
 instrument, etc.).
 
-## References
-
-- Blake, B. J. (1994). *Case*. Cambridge University Press.
-- Comrie, B. (1978). Ergativity. In Lehmann, W. P. (ed.), *Syntactic Typology*.
 -/
 
 namespace Core

@@ -1,5 +1,6 @@
 /-!
 # Prominence Scales and Differential Argument Marking @cite{just-2024} @cite{haspelmath-2021}
+@cite{aissen-2003} @cite{haspelmath-2019}
 
 Framework-agnostic prominence hierarchies for referential properties. These
 scales underlie both **differential flagging** (case marking: DOM, DSM) and
@@ -42,16 +43,6 @@ These serve different functions — flagging disambiguates roles, indexing
 tracks referents through discourse — but both are governed by the same
 prominence scales.
 
-## References
-
-- Haspelmath, M. (2021). Explaining argument-coding splits with
-  role-reference associations. Linguistics 59(5): 1231–1270.
-- Just, E. (2024). A structural and functional comparison of differential A
-  and P indexing. Linguistics 62(2): 295–321.
-- Aissen, J. (2003). Differential Object Marking: Iconicity vs. Economy.
-  Natural Language & Linguistic Theory 21(3): 435–483.
-- Haspelmath, M. (2019). Indexing and flagging, and the definition of
-  "head". Open Linguistics 5: 539–557.
 -/
 
 namespace Core.Prominence

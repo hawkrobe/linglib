@@ -24,10 +24,6 @@ In DPL:
 2. Anaphora: variables persist across conjunction
 3. DNE failure: ¬¬φ ≠ φ for anaphora (negation is a test)
 
-## References
-
-- Groenendijk, J. & Stokhof, M. (1991). Dynamic Predicate Logic. L&P 14:39-100.
-- Groenendijk, J. & Stokhof, M. (1990). Dynamic Montague Grammar.
 -/
 
 import Linglib.Theories.Semantics.Dynamic.Core.Update

@@ -1,12 +1,10 @@
 /-!
 # Russian Discourse Particles
+@cite{ippolito-kiss-williams-2025}
 
 Lexical entry for Russian *tol'ko* (только) — the discourse *only*
 connective (IKW 2025). Allows all clause types as S'.
 
-## References
-
-- Ippolito, Kiss & Williams (2025). Discourse *only*. WCCFL 41.
 -/
 
 namespace Fragments.Russian.DiscourseParticles

@@ -27,11 +27,6 @@ state's accessibility relation, not their own.
 The dependency is asymmetric: belief can filter hope's presuppositions,
 but hope cannot filter belief's presuppositions.
 
-## References
-
-- Karttunen (1973). Presuppositions of compound sentences.
-- Maier (2015). Parasitic Attitudes.
-- Heim (1992). Presupposition Projection and the Semantics of Attitude Verbs.
 -/
 
 import Linglib.Core.Semantics.Presupposition

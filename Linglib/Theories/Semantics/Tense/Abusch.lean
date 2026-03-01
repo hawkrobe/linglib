@@ -2,6 +2,7 @@ import Linglib.Theories.Semantics.Tense.Basic
 
 /-!
 # Abusch (1997): Sequence of Tense and Temporal De Re
+@cite{abusch-1997} @cite{sharvit-2003}
 
 Abusch's theory: tense morphemes are temporal pronouns (variables with
 presupposed constraints and binding modes). The key innovation is
@@ -31,11 +32,6 @@ via res movement, just as DPs can scope out of attitude complements.
 - Modal-tense interaction: not addressed in original framework
 - Counterfactual tense: not addressed
 
-## References
-
-- Abusch, D. (1997). Sequence of tense and temporal de re.
-  *Linguistics and Philosophy* 20(1): 1–50.
-- Sharvit, Y. (2003). Trying to be progressive. *NELS 33*.
 -/
 
 namespace Semantics.Tense.Abusch

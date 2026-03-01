@@ -30,9 +30,6 @@ The ℚ-based RSA evaluation infrastructure (RSA.Eval, boolToRat, RSAScenario) h
 removed. Type definitions and structural properties are preserved. RSA computations
 (L0, S1, L1) need to be re-implemented using the new RSAConfig framework.
 
-## Reference
-
-Bergen, Levy & Goodman (2016) "Pragmatic reasoning through semantic inference"
 -/
 
 -- Lexicon: A mapping from utterances to truth functions

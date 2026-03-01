@@ -2,6 +2,7 @@ import Linglib.Theories.Pragmatics.RSA.Questions.PolarQuestions
 
 /-!
 # Response Selection Models for Polar Questions (PRIOR-PQ) (Stub)
+@cite{hawkins-etal-2025} @cite{van-rooy-2003}
 
 R0 (literal respondent) selects uniformly among true, safe responses.
 R1 (pragmatic respondent) uses ToM to infer the questioner's decision problem,
@@ -15,10 +16,6 @@ and structural properties (Response, R1UtilityComponents) are preserved.
 RSA computations (R0, R1, softmax, inferredDP) need to be re-implemented
 using the new RSAConfig framework.
 
-## References
-
-- Hawkins, R.D., et al. (2025). Relevant answers to polar questions.
-- Van Rooy, R. (2003). Questioning to Resolve Decision Problems.
 -/
 
 namespace RSA.Questions

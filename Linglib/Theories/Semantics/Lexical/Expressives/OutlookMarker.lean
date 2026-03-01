@@ -4,6 +4,7 @@ import Linglib.Theories.Semantics.Lexical.Expressives.Basic
 
 /-!
 # Outlook Markers: Dual-Layered Secondary Meaning
+@cite{coppock-2018} @cite{farkas-bruce-2010} @cite{kubota-2026} @cite{potts-2007}
 
 Formalization of Kubota (2026) "Outlook Management: 'Subjective' Meanings of
 Discourse-Sensitive Adverbs and Particles."
@@ -30,13 +31,6 @@ but share properties of both — specifically:
 | Lexical preconditions | *yameru* 'stop', *seikō-suru* 'succeed' | Soft triggers, overridable defaults |
 | Discourse-sensitive modifiers | *nanka*, *mushiro*, *dōse*, *semete* | Outlook markers (this file) |
 
-## References
-
-- Kubota, Y. (2026). Outlook Management. In N. Kizu et al. (eds.), *Handbook of Japanese Semantics and Pragmatics*.
-- Kubota, Y. & M. Ido (2026a,b). Outlook markers / contrastive *wa*.
-- Coppock, E. (2018). Outlook-based semantics. *L&P* 41.
-- Potts, C. (2007). The expressive dimension. *TL* 33(2).
-- Farkas, D. & K. Bruce (2010). On reacting to assertions and polar questions. *JoS* 27.
 -/
 
 namespace Semantics.Lexical.Expressives.OutlookMarker

@@ -3,11 +3,9 @@ import Linglib.Core.Interfaces.AssertionTheory
 import Linglib.Core.Discourse.DiscourseRole
 
 /-!
-# Gunlogson (2001): Source-Marked Commitments
+# Gunlogson (2004): Source-Marked Commitments
 
-@cite{gunlogson-2001}
-
-Models the distinction between falling and rising declaratives via
+@cite{gunlogson-2004} @cite{gunlogson-2001} @cite{gunlogson-2003}Models the distinction between falling and rising declaratives via
 source-marked discourse commitments. The key innovation: commitments
 carry a tag indicating whether they are self-generated (from the
 speaker's own evidence) or other-generated (attributed to the addressee).
@@ -32,11 +30,6 @@ Source determines who can challenge:
 - Other-generated commitments can be challenged by the speaker
   ("Is that really what you think?")
 
-## References
-
-- Gunlogson, C. (2001). *True to Form: Rising and Falling Declaratives
-  as Questions in English*. PhD dissertation, UC Santa Cruz.
-- Gunlogson, C. (2003). *True to Form*. Routledge.
 -/
 
 namespace Theories.Pragmatics.Assertion.Gunlogson

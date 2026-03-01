@@ -20,10 +20,6 @@ carries social meaning (perceived as less educated, non-standard dialect).
 * **Experiment 2** (n=89): Social meaning ratings (educated, standard dialect,
   friendly, attractive) for speakers of each condition.
 
-## Reference
-
-Dieuleveut, A., Hsu, B., & Bhatt, R. (2025). A Register Approach to Modal
-Non-Concord in English: An Experimental Study of Linguistic and Social Meaning.
 -/
 
 namespace Phenomena.Modality.ModalConcord

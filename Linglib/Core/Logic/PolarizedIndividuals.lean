@@ -3,6 +3,7 @@ import Mathlib.Order.BooleanAlgebra.Defs
 
 /-!
 # Polarized Individuals and the Birkhoff Representation @cite{elliott-2025}
+@cite{birkhoff-1937} @cite{van-benthem-1984}
 
 Entity–polarity pairs, trivalent functions, and the Birkhoff
 representation theorem for conservative GQs.
@@ -40,11 +41,6 @@ The module is organized in five sections:
 
 5. **Boolean algebra structure**: `ConsGQ α` is a Boolean algebra.
 
-## References
-
-- Elliott, P. (2025). Determiners as predicates. SALT 35.
-- Birkhoff, G. (1937). Rings of sets.
-- Van Benthem, J. (1984). Questions about Quantifiers.
 -/
 
 namespace Core.Quantification

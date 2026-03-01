@@ -4,6 +4,7 @@ import Mathlib.Data.List.Perm.Basic
 
 /-!
 # Generalized Quantifiers
+@cite{barwise-cooper-1981} @cite{keenan-stavi-1986} @cite{van-de-pol-2023} @cite{van-de-pol-etal-2023}
 
 Determiners have type `(e→t) → ((e→t) → t)`:
 - `⟦every⟧ = λR.λS. ∀x. R(x) → S(x)`
@@ -32,12 +33,6 @@ the universals.
 `Monotone`/`Antitone` (see `Core.Quantification.scopeUpMono_iff_monotone`),
 connecting to `Semantics.Entailment.Polarity.IsUpwardEntailing = Monotone`.
 
-## References
-
-- Barwise, J. & Cooper, R. (1981). Generalized Quantifiers and Natural Language.
-- Keenan, E. & Stavi, J. (1986). A Semantic Characterization of Natural Language Determiners.
-- van de Pol, I. et al. (2023). Quantifiers satisfying semantic universals have
-  shorter minimal description length. Cognition 232, 105150.
 -/
 
 namespace Semantics.Lexical.Determiner.Quantifier

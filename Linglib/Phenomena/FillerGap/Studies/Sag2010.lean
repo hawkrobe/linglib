@@ -13,11 +13,6 @@ a common filler–gap structure but differ systematically along 7 parameters.
 4. Wh-relative: "the person who they nominated"
 5. The-clause: "The more people I met, the happier I became."
 
-## References
-
-- Sag, I.A. (2010). English filler-gap constructions. Language 86(3):486–545.
-- Ginzburg, J. & Sag, I.A. (2000). Interrogative Investigations.
-- Hofmeister, P. & Sag, I.A. (2010). Cognitive constraints and island effects.
 -/
 
 import Linglib.Phenomena.FillerGap.Islands.Data

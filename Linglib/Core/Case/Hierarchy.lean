@@ -2,6 +2,7 @@ import Linglib.Core.Case.Basic
 
 /-!
 # Blake's Case Hierarchy @cite{blake-1994}
+@cite{iggesen-2013} @cite{moravcsik-1974}
 
 The **case hierarchy** (Blake 1994, §5.8, example 68) is an implicational
 tendency over case inventories:
@@ -27,11 +28,6 @@ Nanai has NOM ACC DAT LOC ABL INST ALL but no GEN — Blake's example 76,
 p. 160). The predicate is useful for checking well-formedness of idealized
 inventories.
 
-## References
-
-- Blake, B. J. (1994). *Case*. Cambridge University Press. §5.8.
-- Moravcsik, E. A. (1974). Object-verb agreement. *WPLU* 15: 25–140.
-- Iggesen, O. A. (2013). Number of Cases. In Dryer & Haspelmath (eds.), WALS.
 -/
 
 namespace Core

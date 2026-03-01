@@ -2,6 +2,7 @@ import Mathlib.Tactic.Basic
 
 /-!
 # Continuation Monad
+@cite{barker-shan-2014} @cite{charlow-2021}
 
 General-purpose continuation monad, following Barker & Shan (2014).
 The type `Cont R A := (A → R) → R` underlies lifted question types
@@ -15,10 +16,6 @@ scope-taking expressions generally.
 - `Cont.lower`: Barker & Shan's LOWER (evaluate with identity continuation)
 - `Tower C B A`: Barker & Shan's tower abbreviation `(A → B) → C`
 
-## References
-
-- Barker, C. & Shan, C. (2014). *Continuations and Natural Language*. OUP.
-- Charlow, S. (2021). Post-suppositions and semantic theory. *L&P* 44, 701–765.
 -/
 
 namespace Core.Continuation

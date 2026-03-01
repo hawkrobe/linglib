@@ -6,9 +6,7 @@ import Linglib.Theories.Semantics.Conditionals.Counterfactual
 /-!
 # Psych Verb Causal Links (Kim 2024, §3.3)
 
-@cite{kim-2024}
-
-Formal integration of Kim's (2024) maintenance relation with existing
+@cite{kim-2024} @cite{allen-1983} @cite{bach-1986} @cite{kratzer-2000}Formal integration of Kim's (2024) maintenance relation with existing
 infrastructure: temporal intervals (Allen 1983), event sorts (Bach 1986),
 and counterfactual semantics (Lewis 1973, Stalnaker 1968).
 
@@ -34,12 +32,6 @@ The fourth uses `universalCounterfactualB` from `Counterfactual.lean`.
   can't hold simultaneously for the same pair of eventualities)
 - `CausalSource.toLink` grounds the two-constructor enum in event structure
 
-## References
-
-- Kim, Y. (2024). On the argument structure of object experiencer verbs.
-- Kratzer, A. (2000). Decomposing make.
-- Allen, J. (1983). Maintaining knowledge about temporal intervals.
-- Bach, E. (1986). The algebra of events.
 -/
 
 namespace Semantics.Causation.PsychCausalLink

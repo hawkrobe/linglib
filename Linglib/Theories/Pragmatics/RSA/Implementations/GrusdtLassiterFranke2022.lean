@@ -41,10 +41,6 @@ The meaning of conditionals is grounded in the assertability condition from
 L0_conditional_meaning = conditionalSemantics
 ```
 
-## References
-
-- Grusdt, Lassiter & Franke (2022). Probabilistic modeling of rational
-  communication with conditionals. PLoS ONE.
 -/
 
 import Mathlib.Data.Rat.Defs
@@ -808,11 +804,6 @@ theorem model_demonstrates :
 3. **Grounding in Assertability**: The conditional semantics is exactly
    the assertability condition from Semantics.Conditionals.
 
-## References
-
-- Grusdt, Lassiter & Franke (2022). Probabilistic modeling of rational
-  communication with conditionals. PLoS ONE.
-- Frank & Goodman (2012). Predicting Pragmatic Reasoning in Language Games.
 -/
 
 end RSA.GrusdtLassiterFranke2022

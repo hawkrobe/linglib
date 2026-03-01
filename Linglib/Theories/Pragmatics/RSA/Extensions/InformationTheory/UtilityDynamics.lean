@@ -9,7 +9,4 @@ Proposition 2).
 
 Old RSAScenarioQ-based counterexample removed; restate using RSAConfig.
 
-## References
-
-- Zaslavsky et al. (2020), Proposition 2 and Figure 2
 -/

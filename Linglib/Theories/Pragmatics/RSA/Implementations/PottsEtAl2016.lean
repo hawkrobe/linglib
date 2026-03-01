@@ -24,10 +24,6 @@ Two refinement dimensions:
 2. UE context ("Someone scored"): local reading preferred -- the model
    derives embedded implicature in upward-entailing contexts
 
-## References
-
-Potts, Lassiter, Levy & Frank (2016). Embedded implicatures as pragmatic inferences under
-compositional lexical uncertainty. Journal of Semantics.
 -/
 
 namespace RSA.PottsLU

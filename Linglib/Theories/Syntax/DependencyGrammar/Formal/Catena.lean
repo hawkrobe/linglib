@@ -4,6 +4,7 @@ import Linglib.Theories.Syntax.DependencyGrammar.Core.Projection
 
 /-!
 # Catenae: A Novel Unit of Syntactic Analysis
+@cite{osborne-gross-2012}
 
 Formalizes the catena (Osborne, Putnam & Groß 2012, *Syntax* 15:4, 354–396).
 
@@ -33,10 +34,6 @@ functions (`isCatena`, `isConstituent`) enable `native_decide` proofs.
 - → mathlib `SimpleGraph`: `depsToSimpleGraph` converts dependency edges
 - → `DependencyLength.lean`: `catenaTotalDepLength` measures catena spread
 
-## References
-
-- Osborne, T., Putnam, M. & Groß, T. (2012). Catenae: Introducing a novel
-  unit of syntactic analysis. *Syntax* 15(4):354–396.
 -/
 
 namespace DepGrammar.Catena

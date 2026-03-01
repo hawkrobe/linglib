@@ -6,6 +6,7 @@ import Linglib.Theories.Semantics.Lexical.Verb.ViewpointAspect
 
 /-!
 # Causal Verb Frame (Nadathur 2023)
+@cite{nadathur-2023} @cite{nadathur-lauer-2020}
 
 Deep foundation for complement-entailing constructions: implicative verbs
 (*manage*, *fail*), ability modals (*be able*), and degree constructions
@@ -47,12 +48,6 @@ This is the deep structural reason that all three phenomena work the same way.
 | *enough to VP* | degree ≥ θ | Yes (PFV/IMPF) |
 | *too Adj to VP* | degree ≥ θ | Yes (PFV/IMPF) |
 
-## References
-
-- Nadathur, P. (2023). *Actuality Inferences: Causality, Aspect, and Modality*.
-  Oxford Studies in Semantics and Pragmatics 15.
-- Nadathur, P. & Lauer, S. (2020). Causal necessity, causal sufficiency,
-  and the implications of causative verbs. *Glossa*.
 -/
 
 namespace CausalVerb

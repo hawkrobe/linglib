@@ -10,15 +10,6 @@ encode addressee features — and the morphosyntactic expression of honorifics.
 - **Embeddability**: Where allocutive marking can appear (root-only vs embedded)
 - **HonDomain**: Where honorification surfaces (verbal, nominal, or both)
 
-## References
-
-- Alok, D. & A. Bhalla (2026). Allocutive agreement and the syntax of honorifics.
-- Alok, D. (2020). The syntax and semantics of allocutive agreement in Magahi.
-- Oyharçabal, B. (1993). Verb agreement with non-arguments: On allocutive
-  agreement. In J. I. Hualde & J. Ortiz de Urbina (eds.), Generative Studies
-  in Basque Linguistics.
-- Portner, P., M. Pak & R. Zanuttini (2019). The speaker-addressee relation at
-  the syntax-semantics interface.
 -/
 
 import Linglib.Core.Lexical.Word

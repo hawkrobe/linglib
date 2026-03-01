@@ -1,5 +1,6 @@
 /-!
 # Turkish Converbal Suffixes
+@cite{gksel-kerslake-2005} @cite{goksel-kerslake-2005} @cite{kornfilt-1997}
 
 Medial clause markers in Turkish: converbal (zarf-fiil) suffixes on the verb
 stem that link clauses in a chain. Like Korean, Turkish has no switch-reference
@@ -23,10 +24,6 @@ verb), but some converbs allow tense or aspect marking.
 | -meden | negative 'without doing' | (inherently negative) |
 | -casina | manner 'as if' | -mezcesine |
 
-## References
-
-- Goksel, A. & C. Kerslake (2005). Turkish: A Comprehensive Grammar. Routledge.
-- Kornfilt, J. (1997). Turkish. Routledge.
 -/
 
 namespace Fragments.Turkish.MedialVerbs

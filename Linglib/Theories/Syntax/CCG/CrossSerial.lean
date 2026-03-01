@@ -31,10 +31,6 @@ For "Jan Piet zag zwemmen" (Jan saw Piet swim):
   └────────────────────>─────────────┘
   S
 
-## References
-
-- Steedman (2000) "The Syntactic Process" Chapter 6
-- Steedman & Baldridge (2011) "Combinatory Categorial Grammar"
 -/
 
 import Linglib.Theories.Syntax.CCG.Core.Basic

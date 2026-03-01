@@ -20,11 +20,6 @@ This module provides a unified framework for such combined utility models.
 - λ = 1: Pure U_B (e.g., pure relevance)
 - λ ∈ (0,1): Weighted combination
 
-## References
-
-- Sumers et al. (2023). Reconciling truthfulness and relevance.
-- Hawkins et al. (2025). Relevant answers to polar questions.
-- Yoon et al. (2020). Polite speech emerges from competing social goals.
 -/
 
 import Mathlib.Data.Rat.Defs

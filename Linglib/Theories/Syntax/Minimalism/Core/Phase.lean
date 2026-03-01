@@ -19,13 +19,6 @@ Abels (2012), and Citko (2014).
 not stipulated. This grounds Phase Theory in the same projection machinery
 used by Containment → Labeling → Agree → Workspace.
 
-## References
-
-- Chomsky, N. (2000). "Minimalist Inquiries"
-- Chomsky, N. (2001). "Derivation by Phase"
-- Chomsky, N. (2008). "On Phases"
-- Abels, K. (2012). "Phases: An Essay on Cyclicity in Syntax"
-- Citko, B. (2014). "Phase Theory: An Introduction"
 -/
 
 import Linglib.Theories.Syntax.Minimalism.Core.Labeling

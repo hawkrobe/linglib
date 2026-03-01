@@ -6,9 +6,7 @@ import Linglib.Phenomena.Anaphora.DonkeyAnaphora
 /-!
 # PIP Bridge: Anaphora Phenomena
 
-@cite{keshet-abney-2024}
-
-Connects PIP (Keshet & Abney 2024) to the theory-neutral anaphora data
+@cite{keshet-abney-2024} @cite{geach-1962} @cite{partee-1972} @cite{roberts-1989}Connects PIP (Keshet & Abney 2024) to the theory-neutral anaphora data
 in `Phenomena/Anaphora/`. Verifies that PIP's description-based anaphora
 correctly predicts felicity judgments for:
 
@@ -32,12 +30,6 @@ single property that explains all three phenomena uniformly:
 - Bathroom sentences: labels survive `¬`
 - Donkey anaphora: labels survive quantifier scope
 
-## References
-
-- Keshet, E. & Abney, S. (2024). Intensional Anaphora. S&P 17.
-- Roberts, C. (1989). Modal Subordination and Pronominal Anaphora.
-- Partee, B. (1972). Opacity, Coreference, and Pronouns.
-- Geach, P. (1962). Reference and Generality.
 -/
 
 namespace Phenomena.Anaphora.Bridge.PIPAnaphora

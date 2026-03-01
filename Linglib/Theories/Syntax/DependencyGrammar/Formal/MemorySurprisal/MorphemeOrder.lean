@@ -4,6 +4,7 @@ import Linglib.Core.Lexical.MorphRule
 
 /-!
 # Study 3: Morpheme Order Optimization (Japanese & Sesotho)
+@cite{bybee-1985} @cite{demuth-1992} @cite{doke-mofokeng-1967} @cite{hahn-degen-futrell-2021} @cite{kaiser-yamamoto-2013}
 
 Hahn et al. (2021) Study 3: morpheme orders in Japanese verb suffixes
 and Sesotho verb affixes are near-optimally efficient in terms of
@@ -43,15 +44,6 @@ morphemes closer to the stem are more semantically relevant to the verb.
 <https://github.com/m-hahn/memory-surprisal>. Morpheme order data from
 SI §4.1-4.2, AUC values from SI Figures 6 and 8.
 
-## References
-
-- Hahn, M., Degen, J. & Futrell, R. (2021). Study 3 (§6).
-- Bybee, J. L. (1985). Morphology. Benjamins.
-- Kaiser, S., Ichikawa, Y., Kobayashi, N. & Yamamoto, H. (2013).
-  Japanese: A Comprehensive Grammar. Routledge.
-- Demuth, K. (1992). Acquisition of Sesotho. In D. Slobin (ed.),
-  The Crosslinguistic Study of Language Acquisition, vol. 3, 557–638.
-- Doke, C. M. & Mofokeng, S. M. (1967). Textbook of Southern Sotho Grammar.
 -/
 
 namespace DepGrammar.MemorySurprisal.MorphemeOrder

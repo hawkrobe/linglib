@@ -4,6 +4,7 @@ import Linglib.Theories.Syntax.DependencyGrammar.LongDistance
 
 /-!
 # Enhanced Dependencies (de Marneffe & Nivre 2019, §4.2)
+@cite{de-marneffe-nivre-2019} @cite{schuster-manning-2016}
 
 Basic dependency trees enforce a **unique-heads constraint**: every word (except root)
 has exactly one head. This means certain predicate-argument relations that hold
@@ -34,11 +35,6 @@ For each phenomenon (coordination, control, relative clauses), we prove:
 - → `DependencyLength.lean`: enhanced graphs have ≥ total dep length (more edges)
 - → `NonProjective.lean`: enhanced graphs can be non-projective
 
-## References
-
-- de Marneffe, M.-C. & Nivre, J. (2019). Dependency Grammar. Annual Review of
-  Linguistics 5:197–218. §4.2, Figure 9.
-- Schuster, S. & Manning, C. (2016). Enhanced English Universal Dependencies. LREC.
 -/
 
 namespace DepGrammar.EnhancedDependencies

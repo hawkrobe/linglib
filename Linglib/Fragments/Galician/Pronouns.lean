@@ -8,10 +8,6 @@ familiar dative clitic *che* that attaches to the verb for allocutive marking.
 3rd person distinguishes masculine and feminine in both singular and plural.
 AA is Fin-based and freely embeddable.
 
-## References
-
-- Alok, D. & A. Bhalla (2026). Allocutive agreement and the syntax of
-  honorifics.
 -/
 
 import Linglib.Core.Lexical.Pronouns

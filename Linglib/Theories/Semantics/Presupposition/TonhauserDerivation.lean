@@ -78,13 +78,6 @@ This module formalizes the taxonomy and the OLE derivation. The SCF derivation
 requires additional pragmatic machinery that connects to QUD theory and
 information structure (see Core.QUD, Core.InformationStructure).
 
-## References
-
-- Tonhauser, Beaver, Roberts & Simons (2013). Toward a Taxonomy of
-  Projective Content. Language 89(1), 66-109.
-- Schlenker (2009). Local Contexts. Semantics & Pragmatics 2:3.
-- Lewis (1979). Scorekeeping in a Language Game.
-- van der Sandt (1993). Presupposition Projection as Anaphora Resolution.
 -/
 
 import Linglib.Core.Semantics.CommonGround

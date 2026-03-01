@@ -2,6 +2,7 @@ import Linglib.Core.Case.Hierarchy
 
 /-!
 # Case Syncretism @cite{blake-1994}
+@cite{baerman-2005} @cite{caha-2009}
 
 Syncretism is the systematic neutralization of case distinctions: two or more
 cases share a single morphological exponent in some paradigm cells. Blake
@@ -28,11 +29,6 @@ We define syncretism as a relation between two cases within a given inventory.
 `inventoryAdjacent` checks relaxed adjacency (no intervening case in the
 actual inventory).
 
-## References
-
-- Blake, B. J. (1994). *Case*. Cambridge University Press. Ch. 2.
-- Baerman, M. et al. (2005). *The Syntax-Morphology Interface*. CUP.
-- Caha, P. (2009). *The Nanosyntax of Case*. Ph.D. thesis, Tromsø.
 -/
 
 namespace Core

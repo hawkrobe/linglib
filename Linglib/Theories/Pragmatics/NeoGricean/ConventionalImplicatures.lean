@@ -37,13 +37,6 @@ c. ¬⟦φ'⟧ᵘ doesn't contradict C given φ  (innocently excludable)
 4. Reinforceable
 5. Pattern with CI expressions on embeddability
 
-## References
-
-- Lo Guercio, N. (2025). Maximize Conventional Implicatures! S&P 18(9).
-- Potts, C. (2005). The Logic of Conventional Implicatures. OUP.
-- Fox, D. & Katzir, R. (2011). On the characterization of alternatives. NLS 19.
-- Gutzmann, D. (2015). Use-Conditional Meaning. OUP.
-- McCready, E. (2019). The Semantics and Pragmatics of Honorification. OUP.
 -/
 
 import Linglib.Theories.Semantics.Lexical.Expressives.Basic

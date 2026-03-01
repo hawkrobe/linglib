@@ -11,10 +11,6 @@ Experimental data from a tic-tac-toe-based judgment study of
 - Binary forced-choice: "Accurate" / "Inaccurate" for sentences like
   "Player X {caused/made/forced} Player O to place at location N"
 
-## References
-
-- Cao, A., White, A. S. & Lassiter, D. (2025). Cause, make, and force
-  as graded causatives. Proceedings of ELM 3, 88-103.
 -/
 
 namespace Phenomena.Causatives

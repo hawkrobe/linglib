@@ -5,6 +5,7 @@ import Linglib.Core.Case.SplitConditions
 
 /-!
 # Georgian Agreement Fragment @cite{just-2024}
+@cite{harris-1981}
 
 Georgian (Kartvelian) has a polypersonal agreement system where the finite
 verb indexes both subject and object. Object agreement is
@@ -38,12 +39,6 @@ Georgian has a tense/aspect-conditioned split ergative system (Harris 1981):
 The agreement split is orthogonal to the case split — object agreement
 is person-conditioned regardless of the case frame.
 
-## References
-
-- Harris, A. C. (1981). Georgian Syntax: A Study in Relational Grammar.
-  Cambridge University Press.
-- Just, E. (2024). A structural and functional comparison of differential A
-  and P indexing. Linguistics 62(2): 295–321.
 -/
 
 namespace Fragments.Georgian.Agreement

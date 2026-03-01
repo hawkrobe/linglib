@@ -21,10 +21,6 @@ Two readings:
 1. **Alternative**: Which one came? (exclusive)
 2. **Polar over disjunction**: Did at least one come? (yes/no)
 
-## References
-
-- Groenendijk & Stokhof (1984). Studies on the Semantics of Questions. Ch. VI.
-- Szabolcsi (1997). Ways of Scope Taking.
 -/
 
 import Linglib.Phenomena.Questions.Basic

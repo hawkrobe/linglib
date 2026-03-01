@@ -54,9 +54,6 @@ Fragments/English/Nouns  ──▷  Montague Lexicon  ──▷  SynTree
 - `SemDeriv` — derivation bundles (§13)
 - `Fragments.English.Nouns`, `.Predicates.Verbal` — fragment entries (§14)
 
-## References
-
-- Rooth, M. (1992). A Theory of Focus Interpretation. NLS 1: 75-116.
 -/
 
 namespace Phenomena.Focus.Rooth1992Bridge

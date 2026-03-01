@@ -23,15 +23,6 @@ theoretical framework.
 * `scm_persona_count`: exactly 8 personae (2^3 from 3 binary dimensions)
 * `scm_incomp_symm`, `scm_incomp_irrefl`: structural well-formedness
 
-## References
-
-* Fiske, S. T., Cuddy, A. J. C., Glick, P. & Xu, J. (2002). A model
-  of (often mixed) stereotype content. *JPSP* 82(6): 878–902.
-* Fiske, S. T., Cuddy, A. J. C. & Glick, P. (2007). Universal
-  dimensions of social cognition: Warmth and competence.
-  *Trends in Cognitive Sciences* 11(2): 77–83.
-* Burnett, H. (2019). Signalling Games, Sociolinguistic Variation,
-  and the Construction of Style. *Linguistics & Philosophy* 42: 419–450.
 -/
 
 namespace Sociolinguistics.SCM

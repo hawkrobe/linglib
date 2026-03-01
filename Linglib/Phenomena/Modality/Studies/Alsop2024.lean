@@ -4,6 +4,7 @@ import Mathlib.Analysis.SpecialFunctions.Pow.Real
 
 /-!
 # Alsop (2024) — Free Choice *Any* as GI-RSA
+@cite{alsop-2024} @cite{champollion-alsop-grosu-2019} @cite{dayal-1998} @cite{franke-bergen-2020} @cite{szabolcsi-2004} @cite{tessler-franke-2020}
 
 "Disjunction, Free Choice, and Exhaustification" (Chapter 4)
 
@@ -33,14 +34,6 @@ Parameters: α = 2, uniform interpretation prior, configurable world prior.
 | 7 | Ambiguity essential for FC | `exclusiveness_requires_ambiguity` |
 | 8 | No FC under negation | `no_fc_under_negation` |
 
-## References
-
-- Alsop, S. (2024). Disjunction, Free Choice, and Exhaustification.
-- Champollion, L., Alsop, S. & Grosu, A. (2019). Free choice disjunction
-  as a rational speech act. SALT 29: 238-257.
-- Franke, M. & Bergen, L. (2020). Theory-driven statistical modeling.
-- Dayal, V. (1998). Any as Inherently Modal. L&P.
-- Szabolcsi, A. (2004). Positive polarity — negative polarity. NLLT.
 -/
 
 set_option autoImplicit false

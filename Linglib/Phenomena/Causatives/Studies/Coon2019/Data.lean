@@ -1,5 +1,6 @@
 /-!
 # Chuj Verb Building: Empirical Data (Coon 2019)
+@cite{coon-2019}
 
 Theory-neutral empirical data from Coon (2019) "Building verbs in Chuj:
 Consequences for the nature of roots." *Journal of Linguistics* 55(1): 35–81.
@@ -23,10 +24,6 @@ to the theoretical analysis.
    by-phrases distinguish -ch from -j.
 6. **Example verbs** with glosses, organized by root class.
 
-## References
-
-- Coon, J. (2019). Building verbs in Chuj. *Journal of Linguistics*
-  55(1): 35–81.
 -/
 
 namespace Phenomena.Causatives.Studies.Coon2019

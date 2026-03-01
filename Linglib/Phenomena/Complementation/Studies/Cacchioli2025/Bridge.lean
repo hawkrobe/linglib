@@ -20,9 +20,6 @@ via SelectionBridge.lean).
    prefix appears with which verb class
 4. **Circumfix**: The negative prefix is correctly typed as discontinuous
 
-## References
-
-- Cacchioli, S. (2025). The Syntax of Clausal Prefixes in Tigrinya.
 -/
 
 namespace Phenomena.Complementation.Cacchioli2025.Bridge

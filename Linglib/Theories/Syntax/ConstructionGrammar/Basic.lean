@@ -4,17 +4,12 @@ import Linglib.Core.Semantics.CommonGround
 
 /-!
 # Construction Grammar: Core Types
+@cite{diessel-2023} @cite{goldberg-1995} @cite{goldberg-2003} @cite{goldberg-2006}
 
 Minimal infrastructure for Construction Grammar (CxG), the framework in which
 constructions — learned pairings of form and function — are the basic units
 of grammatical knowledge (Goldberg 1995, 2006; Diessel 2023).
 
-## References
-
-- Goldberg, A. E. (1995). Constructions: A Construction Grammar Approach to Argument Structure.
-- Goldberg, A. E. (2003). Constructions: A New Theoretical Approach to Language. TiCS 7(5):219–224.
-- Goldberg, A. E. (2006). Constructions at Work. OUP.
-- Diessel, H. (2023). The Grammar Network. CUP.
 -/
 
 namespace ConstructionGrammar

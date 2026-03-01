@@ -4,6 +4,7 @@ import Linglib.Theories.Semantics.Questions.Basic
 
 /-!
 # Additive Particles: too, also, either
+@cite{heim-1992} @cite{kripke-2009} @cite{thomas-2026}
 
 Felicity conditions for additive particles following Thomas (2026)
 "A probabilistic, question-based approach to additivity".
@@ -40,12 +41,6 @@ Given resolved question RQ and antecedent ANT:
 - RQ = "Who should host?" (implicit)
 - Together they evidence "Sue should host"
 
-## References
-
-- Thomas (2026). A probabilistic, question-based approach to additivity.
-- Kripke (2009). Presupposition and Anaphora: Remarks on the Formulation of
-  the Projection Problem.
-- Heim (1992). Presupposition Projection and the Semantics of Attitude Verbs.
 -/
 
 namespace Semantics.Lexical.Particle.Additive

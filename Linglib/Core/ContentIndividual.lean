@@ -3,6 +3,7 @@ import Linglib.Tactics.OntSort
 
 /-!
 # Content Individuals (Kratzer 2006; Liefke 2024 §4.3) @cite{kratzer-2006}
+@cite{baker-jara-ettinger-saxe-tenenbaum-2017} @cite{chandra-2025} @cite{hintikka-1969b} @cite{liefke-2024} @cite{moulton-2015}
 
 A content individual is a first-class mental state carrying propositional
 content — the denotation of content DPs like *John's belief that p*,
@@ -30,14 +31,6 @@ Two ways to relate a content individual x_c to a proposition p:
 
 Identity is strictly stronger (§3 below).
 
-## References
-
-- Kratzer, A. (2006). Decomposing attitude reports.
-- Moulton, K. (2015). CPs: Copies and compositionality. LI 46(2).
-- Liefke, K. (2024). Natural Language Ontology, §4.3.
-- Hintikka, J. (1969). Knowledge and Belief.
-- Baker, Jara-Ettinger, Saxe & Tenenbaum (2017). BToM.
-- Chandra, Goodman, Meylan, Hawkins et al. (2025). memo.
 -/
 
 namespace Core

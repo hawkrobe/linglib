@@ -3,6 +3,7 @@ import Linglib.Phenomena.FillerGap.CrossSerial
 
 /-!
 # CCG Cross-Serial Bridge
+@cite{al-1982} @cite{steedman-2000}
 
 Connects CCG derivations (from `Theories.Syntax.CCG.CrossSerial`) to
 empirical cross-serial dependency data (from `Phenomena.FillerGap.CrossSerial`).
@@ -11,10 +12,6 @@ Proves that CCG derivations produce the correct cross-serial bindings
 for Dutch verb clusters, and that the cross-serial pattern requires
 mild context-sensitivity.
 
-## References
-
-- Steedman (2000) "The Syntactic Process" Chapter 6
-- Bresnan et al. (1982) "Cross-serial dependencies in Dutch"
 -/
 
 namespace Phenomena.FillerGap.CCG_CrossSerialBridge

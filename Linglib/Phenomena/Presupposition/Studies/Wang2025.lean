@@ -4,6 +4,7 @@ import Mathlib.Data.Rat.Defs
 
 /-!
 # Wang (2025) Experimental Data
+@cite{wang-2025}
 
 Theory-neutral experimental data from Wang (2025) "Presupposition, Competition,
 and Coherence" — three experiments on Mandarin presupposition triggers.
@@ -25,9 +26,6 @@ Tests whether alternative structure affects felicity.
 Presuppositional triggers under attitude verbs: tests whether presuppositions
 can be resolved de re (against CG) vs. de dicto (against attitude holder's beliefs).
 
-## References
-
-- Wang, S. (2025). Presupposition, Competition, and Coherence. MIT dissertation.
 -/
 
 namespace Phenomena.Presupposition.Studies.Wang2025

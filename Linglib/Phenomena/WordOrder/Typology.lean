@@ -2,6 +2,7 @@ import Linglib.Core.Lexical.Word
 
 /-!
 # Word-Order Typology (Dryer 2013 / WALS)
+@cite{dryer-1992} @cite{dryer-haspelmath-2013} @cite{gibson-2025} @cite{greenberg-1963}
 
 WALS data from Gibson (2025, Ch. 5.3, Tables 1–3): cross-linguistic counts
 of harmonic vs disharmonic word-order pairings. Dryer (1992, 2013) documents
@@ -25,14 +26,6 @@ adjective-noun, demonstrative-noun, intensifier-adjective, negator-verb.
 Gibson (2025) argues these are cases where the dependent is a single word
 (no recursive subtree), so head direction is irrelevant to DLM.
 
-## References
-
-- Dryer, M. (1992). The Greenbergian word order correlations. Language 68.
-- Dryer, M. (2013). Order of object and verb / Order of adposition and NP.
-  In Dryer & Haspelmath (eds.), WALS Online. https://wals.info
-- Gibson, E. (2025). Syntax: A cognitive approach. Ch. 5.3. MIT Press.
-- Greenberg, J. (1963). Some universals of grammar. In Greenberg (ed.),
-  Universals of Language.
 -/
 
 namespace Phenomena.WordOrder.Typology

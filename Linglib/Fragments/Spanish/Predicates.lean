@@ -3,6 +3,7 @@ import Linglib.Theories.Syntax.Minimalism.Core.Applicative
 
 /-!
 # Spanish Verb Entries for the Causative Alternation
+@cite{cuervo-2003}
 
 Verbs from Muñoz Pérez (2026) classified by anticausative marking (SE)
 and event-structural decomposition (Cuervo 2003). The key empirical
@@ -15,10 +16,6 @@ structure (vGO ∧ vBE) that require SE-marking.
 - **Unmarked**: No SE in anticausative (*mejorar* → *mejorar*)
 - **Optional**: SE is marginal (*hervir* → *?hervirse*)
 
-## References
-
-- Muñoz Pérez, C. (2026). Stylistic applicatives. *Glossa* 11(1).
-- Cuervo, M. C. (2003). Datives at Large. MIT.
 -/
 
 namespace Fragments.Spanish.Predicates

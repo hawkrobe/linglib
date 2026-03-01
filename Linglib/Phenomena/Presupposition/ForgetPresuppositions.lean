@@ -2,6 +2,8 @@ import Linglib.Theories.Semantics.Lexical.Verb.VerbEntry
 
 /-!
 # Presuppositions of *forget* Across Complement Frames
+@cite{kiparsky-kiparsky-1970} @cite{williams-2025}
+@misc{white-2014}
 
 Theory-neutral empirical data from Williams (2025), who shows that
 *forget* is uniformly factive across all complement types, but the
@@ -32,12 +34,6 @@ and the psych-action reading ("forgot to VP"). There is no lexical
 ambiguity. What varies is the content of the presupposition, not its
 presence.
 
-## References
-
-- Williams, W. (2025). The presuppositions of 'forget'. SALT 35.
-- White, A. S. (2014). Factive-implicatives and modalized complements.
-- Kiparsky, P. & Kiparsky, C. (1970). Fact.
-@cite{williams-2025}
 -/
 
 namespace Phenomena.Presupposition.ForgetPresuppositions

@@ -6,6 +6,7 @@ import Linglib.Phenomena.Complementation.Typology
 
 /-!
 # DG Control/Raising Bridge: Osborne (2019, Ch 6 §6.8–6.9)
+@cite{de-marneffe-nivre-2019} @cite{noonan-2007} @cite{osborne-2019}
 
 Derivation chain from DG enhanced dependency analysis to complementation
 phenomena, grounded in the English Fragment lexicon.
@@ -42,11 +43,6 @@ classifyEnhancement = .controlSubject ← enhanced edge classified
 CTPDatum.hasEquiDeletion             ← matches Noonan's (2007) observations
 ```
 
-## References
-
-- Osborne, T. (2019). *A Dependency Grammar of English*, Ch 6 §6.8–6.9.
-- de Marneffe, M.-C. & Nivre, J. (2019). Dependency Grammar. §4.2.
-- Noonan, M. (2007). Complementation. In Shopen (ed.), *Language Typology*.
 -/
 
 namespace DepGrammar.ControlBridge

@@ -10,6 +10,7 @@ import Mathlib.Data.Rat.Cast.Order
 
 /-!
 # Bridge Theorems: Numeral Salience across Frameworks
+@cite{blok-2015} @cite{claus-walch-2024} @cite{cummins-2015} @cite{cummins-franke-2021} @cite{lasersohn-1999} @cite{woodin-winter-bhatt-2024}
 
 Connects the graded roundness model (k-ness) to five existing modules:
 
@@ -44,15 +45,6 @@ WoodinEtAl2024    NumericalExprs    (extended)
                Phenomena.Numerals.Compare (this file)
 ```
 
-## References
-
-- Cummins (2015). Constraints on numerical expressions.
-- Woodin, Winter & Bhatt (2024). Numeral frequency and roundness.
-- Kao et al. (2014). Nonliteral understanding of number words.
-- Cummins & Franke (2021). Approximate number word use.
-- Lasersohn (1999). Pragmatic halos.
-- Claus & Walch (2024). Evaluative valence distinguishes at most from up to.
-- Blok (2015). The semantics and pragmatics of directional numeral modifiers.
 -/
 
 namespace Phenomena.Numerals.Compare

@@ -7,6 +7,7 @@ import Linglib.Theories.Semantics.Degree.Comparative
 
 /-!
 # Framework Comparison: Where Kennedy and Heim Diverge
+@cite{heim-2001} @cite{kennedy-2007} @cite{klein-1980} @cite{rett-2026} @cite{schwarzschild-2008}
 
 Formal comparison of the five degree semantic frameworks on shared
 empirical ground. This is the key intellectual payoff of the `Degree/`
@@ -29,13 +30,6 @@ All five frameworks agree on the truth conditions of simple comparatives:
 | Subcomparatives             | Special | Special| Special| Natural    | Special|
 | EN licensing explanation    | —       | —    | —     | —             | ✓   |
 
-## References
-
-- Kennedy, C. (2007). Vagueness and grammar.
-- Heim, I. (2001). Degree operators and scope.
-- Klein, E. (1980). A semantics for positive and comparative adjectives.
-- Schwarzschild, R. (2008). The semantics of comparatives.
-- Rett, J. (2026). Semantic ambivalence and expletive negation.
 -/
 
 namespace Phenomena.Comparison.Comparative.Compare

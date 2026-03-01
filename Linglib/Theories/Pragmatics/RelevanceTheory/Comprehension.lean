@@ -45,9 +45,6 @@ The `adjustedThreshold` captures this: an interpretation that requires more
 effort must produce proportionally more effects to satisfy clause (a).
 Set `effortWeight = 0` to ignore effort in the threshold (pure effects-based).
 
-## References
-
-Sperber, D. & Wilson, D. (1986/95). Relevance. Ch. 4; Postface pp. 270-278.
 -/
 
 set_option autoImplicit false

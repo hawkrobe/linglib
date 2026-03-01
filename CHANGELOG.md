@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.227.72] - 2026-03-01
+
+### Changed
+- **Bibliography audit**: extract 2,577 inline references from 990+ Lean files, replace `## References` / `### References` sections with `@cite{key}` tags (2,233 new tags). Add 667 auto-generated bib entries + 87 high-frequency entries (1,003 total). Validate 249 DOI-bearing entries against CrossRef; fix sutton-2024 (title/pages), saab-2026 (pages), aikhenvald-2004 (add DOI), karlsson-2018→2017 (year/key), dowty-1991 (mangled journal), hofmeister-sag-2010 (mangled journal), hartshorne-etal-2016 (rename key, fix authors), spinoso-di-piano-etal-2025 (title/authors), alonso-ovalle-royer-2024 (title), klecha-2016 (restore DOI), krifka-2011 (chapter DOI). Fix 120 mangled journal fields and 184 `&`→`and` in author fields. Remove 1 duplicate (mueller-2013). Mark 220 entries validated=true.
+
 ## [0.227.71] - 2026-03-01
 
 ### Changed

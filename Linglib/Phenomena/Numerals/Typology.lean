@@ -2,6 +2,7 @@ import Linglib.Core.Lexical.Word
 
 /-!
 # Cross-Linguistic Typology of Numeral Systems (WALS Chapters 53--56)
+@cite{aikhenvald-2000} @cite{greenberg-1978} @cite{sanches-slobin-1973} @cite{stolz-veselinova-2013}
 
 Typological data on four dimensions of numeral morphology and syntax, drawn from
 WALS chapters by Stolz & Veselinova (Ch 53) and Gil (Ch 54--56). The data
@@ -33,22 +34,6 @@ and the relationship between conjunctions and universal quantification.
    a deep semantic connection between conjunction and universal quantification
    (both involve exhaustive predication over a set).
 
-## References
-
-- Stolz, T. & Veselinova, L. (2013). Ordinal Numerals. In Dryer & Haspelmath
-  (eds.), WALS Online (v2020.3). https://wals.info/chapter/53
-- Gil, D. (2013a). Distributive Numerals. In Dryer & Haspelmath (eds.), WALS
-  Online (v2020.3). https://wals.info/chapter/54
-- Gil, D. (2013b). Numeral Classifiers. In Dryer & Haspelmath (eds.), WALS
-  Online (v2020.3). https://wals.info/chapter/55
-- Gil, D. (2013c). Conjunctions and Universal Quantifiers. In Dryer & Haspelmath
-  (eds.), WALS Online (v2020.3). https://wals.info/chapter/56
-- Aikhenvald, A. Y. (2000). Classifiers: A Typology of Noun Categorization
-  Devices. Oxford University Press.
-- Greenberg, J. H. (1978). Generalizations about Numeral Systems. In Greenberg
-  (ed.), Universals of Human Language, vol. 3, 249--295. Stanford University Press.
-- Sanches, M. & Slobin, D. I. (1973). Numeral classifiers and plural marking:
-  an implicational universal. Working Papers in Language Universals 11, 1--22.
 -/
 
 namespace Phenomena.Numerals.Typology

@@ -7,6 +7,7 @@ import Mathlib.Tactic.NormNum
 
 /-!
 # English Determiners
+@cite{horn-1972}
 
 Quantifier lexicon with syntactic and semantic properties.
 
@@ -15,9 +16,6 @@ Quantifier lexicon with syntactic and semantic properties.
 - `QForce`: quantificational force
 - `QuantEntry`: unified lexical entry
 
-## References
-
-- Horn (1972). On the semantic properties of logical operators in English.
 -/
 
 namespace Fragments.English.Determiners

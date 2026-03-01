@@ -20,10 +20,6 @@ The key empirical contrasts establishing (8):
    is a *presupposition* (not an implicature) — it resists cancellation (14),
    projects past negation (15), and denial targets the assertion (16).
 
-## References
-
-- Izvorski, R. (1997). The present perfect as an epistemic modal.
-  *SALT* 7:222–239.
 -/
 
 namespace Phenomena.TenseAspect.Studies.Izvorski1997.Data

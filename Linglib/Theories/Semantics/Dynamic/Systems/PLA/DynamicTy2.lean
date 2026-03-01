@@ -11,10 +11,6 @@ Dynamic Ty2 has a single dref type S → E.
 Solution: Use `(VarIdx ⊕ PronIdx) → E` as the S parameter.
 This provides type-safe separation without magic numbers.
 
-## References
-
-- Dekker (2012). Dynamic Semantics.
-- Muskens (1996). Combining Montague Semantics and Discourse Representation.
 -/
 
 import Linglib.Theories.Semantics.Dynamic.Core.DynamicTy2

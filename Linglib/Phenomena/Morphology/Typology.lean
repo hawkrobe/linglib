@@ -2,6 +2,7 @@ import Mathlib.Data.Rat.Defs
 
 /-!
 # Morphological Typology: Paradigm Complexity
+@cite{ackerman-malouf-2013}
 
 Cross-linguistic typological data on morphological paradigm complexity.
 
@@ -20,10 +21,6 @@ inflection classes. The central empirical finding: despite wildly varying
 E-complexity, I-complexity (average conditional entropy) is uniformly low
 across all ten languages.
 
-## References
-
-- Ackerman, F. & Malouf, R. (2013). Morphological Organization: The Low
-  Conditional Entropy Conjecture. *Language* 89(3), 429–464.
 -/
 
 namespace Phenomena.Morphology.Typology

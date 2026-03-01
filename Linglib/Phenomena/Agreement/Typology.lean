@@ -3,6 +3,7 @@ import Linglib.Fragments.Finnish.Negation
 
 /-!
 # Paradigmatic Structure of Person Marking (Cysouw 2009)
+@cite{cysouw-2009} @cite{greenberg-1963} @cite{ingram-1978}
 
 Formalizes the typological framework from:
 
@@ -33,11 +34,6 @@ sharing a class are homophonous (marked by the same form).
 - **Implicational universals**: exclusive → inclusive (3.23), split inclusive → exclusive (3.24)
 - **Homophony Implication** (10.4): singular homophony → inflectional paradigm
 
-## References
-
-- Cysouw, M. (2009). The Paradigmatic Structure of Person Marking. OUP.
-- Ingram, D. (1978). Typology and universals of personal pronouns.
-- Greenberg, J. (1963). Some universals of grammar.
 -/
 
 namespace Phenomena.Agreement.Typology

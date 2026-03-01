@@ -4,6 +4,7 @@ import Linglib.Theories.Semantics.Modality.BiasedPQ
 
 /-!
 # Czech Three-Way Negation: Cross-Linguistic Typology
+@cite{repp-2013} @cite{romero-2024} @cite{stakov-2026} @cite{stakov-imk-2024}
 
 Bridges between the core three-way negation distinction (CzechThreeWayNeg.lean)
 and cross-linguistic frameworks: Romero (2024) PQ typology, Šimík (2024) Czech
@@ -11,14 +12,6 @@ PQ forms, Staňková & Šimík (2024) verb position / context sensitivity.
 
 Also contains example data (CzechNegDatum), bias profiles, and corpus data.
 
-## References
-
-- Staňková, V. (2026). A three-way distinction of negation interpretation in Czech.
-- Romero, M. (2024). Biased Polar Questions. Annual Review of Linguistics 10:279–302.
-- Šimík, R. (2024). Polar question semantics and bias: Lessons from Slavic/Czech.
-- Staňková, A. & Šimík, R. (2024). Negation in Czech polar questions.
-  Journal of Slavic Linguistics 33. Proceedings of FASL 32.
-- Repp, S. (2013). Common ground management. In Beyond Expressives.
 -/
 
 -- ============================================================================

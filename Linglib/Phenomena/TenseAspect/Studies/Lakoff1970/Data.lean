@@ -2,6 +2,7 @@ import Linglib.Theories.Morphology.Core.Exponence
 
 /-!
 # Lakoff (1970) Grammaticality Judgments
+@cite{lakoff-1970}
 
 Pure empirical data from Lakoff (1970) "Tense and Its Relation to Participants."
 No theoretical commitments — just the paper's acceptability judgments organized
@@ -19,9 +20,6 @@ by phenomenon.
   ("The meeting starts at 3"), but unscheduled events do not
   (*"It rains Thursday").
 
-## References
-
-- Lakoff, R. (1970). Tense and its relation to participants. *Language* 46(4).
 -/
 
 namespace Phenomena.TenseAspect.Studies.Lakoff1970.Data

@@ -31,17 +31,6 @@ are the result of default prosody.
 4. [G] containing [FoC] requires an alternatives-consuming operator inside
 5. Spellout ranking: [G]=No-φ >> [FoC]=φ-Level-Head (English)
 
-## References
-
-- Kratzer, A. & Selkirk, E. (2020). Deconstructing information structure.
-  Glossa 5(1): 113. DOI: https://doi.org/10.5334/gjgl.968
-- Rooth, M. (1992). A Theory of Focus Interpretation. NLS 1: 75-116.
-- Schwarzschild, R. (1999). GIVENness, AvoidF, and other constraints on
-  the placement of focus. NLS 7: 141-177.
-- Potts, C. (2005). The Logic of Conventional Implicatures. OUP.
-- Selkirk, E. (2008). Contrastive focus, givenness, and the unmarked
-  status of "discourse-new". Acta Linguistica Hungarica 55: 1-16.
-- Beaver, D. et al. (2007). When semantics meets phonetics. Language 83: 245-276.
 -/
 
 import Linglib.Core.Discourse.InformationStructure

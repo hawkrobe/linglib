@@ -3,6 +3,7 @@ import Linglib.Core.Context.Shifts
 
 /-!
 # Free Indirect Discourse (FID) as Mixed Perspective
+@cite{banfield-1982} @cite{eckardt-2015} @cite{schlenker-2004}
 
 Free Indirect Discourse is a narrative mode where the narrator's voice and
 the character's perspective blend. The hallmark of FID is that different
@@ -25,13 +26,6 @@ coordinates read from origin vs local.
 - `indirectSpeech`: All coordinates from origin (no perspective shift)
 - `fid_is_mixed`: FID is neither pure origin nor pure local access
 
-## References
-
-- Banfield, A. (1982). Unspeakable Sentences. Routledge.
-- Schlenker, P. (2004). Context of Thought and Context of Utterance.
-  *Linguistics & Philosophy*.
-- Eckardt, R. (2015). The Semantics of Free Indirect Discourse.
-  Brill.
 -/
 
 namespace Semantics.Reference.FreeIndirectDiscourse

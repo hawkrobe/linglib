@@ -19,12 +19,6 @@ A tolerance relation induces a partition on pluralities:
 
 This parallels how QUDs partition propositions in `Core/QUD.lean`.
 
-## References
-
-- Križ & Spector (2021). Interpreting plural predication. L&P.
-- Haslinger, Rosina, Schmitt & Wurm (2025). On the relation between
-  distributivity and maximality. S&P 18.
-- Link (1983). The logical analysis of plurals and mass terms.
 -/
 
 import Mathlib.Data.Finset.Basic

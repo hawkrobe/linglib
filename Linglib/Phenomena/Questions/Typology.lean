@@ -1,5 +1,6 @@
 /-!
 # Cross-Linguistic Question Typology (Dayal 2025)
+@cite{bhatt-dayal-2020} @cite{dayal-2025} @cite{mccloskey-2006} @cite{zu-2018}
 
 Theory-neutral cross-linguistic data on question formation and embedding,
 following Dayal (2025). Covers:
@@ -17,12 +18,6 @@ Theories/) lives in `Questions.TypologyBridge`.
 
 - English, Hindi-Urdu, Japanese, Italian, Newari
 
-## References
-
-- Dayal, V. (2025). The Interrogative Left Periphery. Linguistic Inquiry 56(4).
-- Bhatt, R. & V. Dayal (2020). Polar question particles: Hindi-Urdu kya:.
-- McCloskey, J. (2006). Questions and questioning in a local English.
-- Zu, X. (2018). Discourse participants and the structural representation of context.
 -/
 
 namespace Phenomena.Questions.Typology

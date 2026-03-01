@@ -1,5 +1,6 @@
 /-!
 # Comparison Constructions: Overview
+@cite{heim-2001} @cite{kennedy-2007} @cite{klein-1980} @cite{schwarzschild-2008} @cite{stassen-2013} @cite{wellwood-2015}
 
 Empirical data on comparison constructions across languages. This directory
 collects phenomena specifically about **constructions that compare** — the
@@ -32,14 +33,6 @@ Comparison/
 └── TypologyBridge.lean    — typology–fragment bridge (from Gradability/)
 ```
 
-## References
-
-- Stassen, L. (2013). WALS Ch. 121: Comparative Constructions.
-- Wellwood, A. (2015). On the semantics of comparison across categories.
-- Kennedy, C. (2007). Vagueness and grammar.
-- Schwarzschild, R. (2008). The semantics of comparatives.
-- Heim, I. (2001). Degree operators and scope.
-- Klein, E. (1980). A semantics for positive and comparative adjectives.
 -/
 
 namespace Phenomena.Comparison

@@ -2,6 +2,7 @@ import Mathlib.Algebra.Order.Ring.Rat
 
 /-!
 # Information-Theoretic Primitives (ℚ-valued)
+@cite{ackerman-malouf-2013} @cite{cover-thomas-2006} @cite{dunn-2025} @cite{ellis-2006}
 
 Domain-agnostic information-theoretic functions over rational numbers, suitable
 for decidable computation. These are used by both pragmatic models (RSA) and
@@ -20,15 +21,6 @@ supports proofs of non-negativity, max-entropy bounds, and Gibbs VP.
 - `deltaP`: ΔP directional association measure
 - `deltaPCounts`: ΔP from a 2×2 contingency table
 
-## References
-
-- Cover, T. M. & Thomas, J. A. (2006). Elements of Information Theory.
-- Ackerman, F. & Malouf, R. (2013). Morphological Organization: The Low
-  Conditional Entropy Conjecture. Language 89(3), 429–464.
-- Ellis, N. C. (2006). Selective Attention and Transfer Phenomena in L2
-  Acquisition. Applied Linguistics 27(2), 164–194.
-- Dunn, J. (2025). Syntactic Variation from Individuals to Populations.
-  Cambridge University Press.
 -/
 
 namespace Core.InformationTheory

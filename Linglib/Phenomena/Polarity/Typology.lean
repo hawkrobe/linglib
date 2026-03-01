@@ -2,6 +2,7 @@ import Linglib.Core.Lexical.Word
 
 /-!
 # Indefinite Pronoun Typology (Haspelmath 1997 / WALS Ch 46)
+@cite{haspelmath-1997} @cite{haspelmath-2013}
 
 Formalizes the core results of Haspelmath's (1997) cross-linguistic study of
 indefinite pronouns, one of the most celebrated results in semantic typology.
@@ -40,11 +41,6 @@ series. The chapter is based on Haspelmath's (1997) cross-linguistic sample:
 | 6 or more indefinite series|  121  |
 | Total                      |  321  |
 
-## References
-
-- Haspelmath, M. (1997). Indefinite Pronouns. Oxford: Clarendon Press.
-- Haspelmath, M. (2013). Indefinite pronouns. In Dryer & Haspelmath (eds.),
-  WALS Online (v2020.3). https://wals.info/chapter/46
 -/
 
 namespace Phenomena.Polarity.Typology

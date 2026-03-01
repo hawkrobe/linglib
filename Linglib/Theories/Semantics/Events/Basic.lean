@@ -16,13 +16,6 @@ Syntax-neutral: no commitment to Voice heads or specific composition
 principles. Kratzer (1996) Event Identification deferred to optional
 later module.
 
-## References
-
-- Davidson, D. (1967). The logical form of action sentences.
-- Parsons, T. (1990). Events in the Semantics of English.
-- Bach, E. (1986). The algebra of events.
-- Krifka, M. (1989). Nominal reference, temporal constitution and
-  quantification in event semantics.
 -/
 
 import Mathlib.Order.Basic

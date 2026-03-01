@@ -2,13 +2,10 @@ import Linglib.Theories.Semantics.Tense.Basic
 
 /-!
 # Mandarin Temporal Deictic Adverbs
+@cite{zhao-2025}
 
 Lexical entry for Mandarin 那时 "nà-shí" (that time), typed by `ThenAdverb`.
 
-## References
-
-- Zhao, Z. (2026). Cross-Linguistic and Cross-Domain Parallels in the
-  Semantics of Degree and Time. MIT dissertation, Part I.
 -/
 
 namespace Fragments.Mandarin.TemporalDeictic

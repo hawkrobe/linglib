@@ -17,11 +17,6 @@ Following Muskens (1996) CDRT:
 3. Discourse referents introduced at top level (flat update)
 4. Temporal anchoring via situation drefs
 
-## References
-
-- Mendes, A. (2025). Indefiniteness in future reference. S&P 18(10).
-- Muskens, R. (1996). Combining Montague semantics and discourse representation.
-- Hofmann, L. (2025). Anaphoric accessibility with flat update.
 -/
 
 import Linglib.Theories.Semantics.Dynamic.Systems.IntensionalCDRT.Situations

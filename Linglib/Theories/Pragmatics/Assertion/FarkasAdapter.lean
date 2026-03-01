@@ -25,10 +25,6 @@ This file is an ADAPTER: it wraps the existing `DiscourseState` type
 from `Theories/Semantics/Dynamic/State.lean` rather than redefining it.
 The adapter provides the `AssertionTheory` interface for comparison.
 
-## References
-
-- Farkas, D. & Bruce, K. (2010). On Reacting to Assertions and Polar
-  Questions. *JoS* 27(1): 81–118.
 -/
 
 namespace Theories.Pragmatics.Assertion.FarkasAdapter

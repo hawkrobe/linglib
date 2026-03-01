@@ -2,6 +2,7 @@ import Linglib.Theories.Syntax.Minimalism.Formal.ExtendedProjection.Basic
 
 /-!
 # Hungarian Function Words Fragment
+@cite{egressy-2026}
 
 Closed-class functional items relevant to Hungarian clause structure.
 
@@ -17,10 +18,6 @@ complement clauses — its presence or absence correlates with genuine
 structural differences in complement size, not merely with register or
 style.
 
-## References
-
-- Egressy, A. (2026). Size-sensitive sequence of tense in Hungarian.
-  *The Linguistic Review*.
 -/
 
 namespace Fragments.Hungarian.FunctionWords

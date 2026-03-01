@@ -6,6 +6,7 @@ import Linglib.Theories.Pragmatics.RSA.Core.Config
 
 /-!
 # Kratzer–Epistemic–RSA Bridge
+@cite{holliday-icard-2013} @cite{kraft-pratt-seidenberg-1959} @cite{kratzer-1981} @cite{kratzer-2012}
 
 This file traces the dependency chain from Kratzer's ordering source
 semantics down to RSA's `worldPrior`, via Holliday & Icard's (2013)
@@ -29,14 +30,6 @@ RSAConfig.worldPrior
 that state what additional conditions are needed to traverse the full
 pipeline.
 
-## References
-
-- Kratzer, A. (1981). The Notional Category of Modality.
-- Kratzer, A. (2012). Modals and Conditionals. OUP. Ch. 2 §2.4.
-- Holliday, W. & Icard, T. (2013). Measure Semantics and Qualitative
-  Semantics for Epistemic Modals. SALT 23.
-- Kraft, C., Pratt, J. & Seidenberg, A. (1959). Intuitive Probability
-  on Finite Sets. Annals of Mathematical Statistics 30.
 -/
 
 namespace Comparisons.KratzerEpistemicRSA

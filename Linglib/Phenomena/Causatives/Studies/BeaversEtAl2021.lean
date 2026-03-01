@@ -1,5 +1,6 @@
 /-!
 # Cross-Linguistic Typology of Change-of-State Verbs
+@cite{dixon-1982} @cite{levin-1993}
 
 Empirical data from Beavers, Everdell, Jerro, Kauhanen, Koontz-Garboden,
 LeBovidge & Nichols (2021) "States and changes of state: A crosslinguistic
@@ -24,11 +25,6 @@ stative) and coded morphological relationships.
    property, speed) cluster near 100% simple statives. Result subclasses
    (breaking, cooking, killing, destroying, directed motion) cluster near 0%.
 
-## References
-
-- Beavers et al. (2021). Language 97(3), 439–484.
-- Dixon, R.M.W. (1982). Where Have All the Adjectives Gone?
-- Levin, B. (1993). English Verb Classes and Alternations.
 -/
 
 namespace Phenomena.Causatives.Studies.BeaversEtAl2021

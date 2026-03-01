@@ -3,6 +3,7 @@ import Linglib.Theories.Semantics.Lexical.Verb.ViewpointAspect
 
 /-!
 # Temporal Decomposition of Events
+@cite{kiparsky-2002} @cite{pustejovsky-1991}
 
 Bridges the gap between `EventStructure.Template` (predicate-role decomposition,
 no temporal information) and `ViewpointAspect` (temporal operators on opaque
@@ -40,12 +41,6 @@ consumable by IMPF/PRFV/PERF. Key results:
 - `impf_activity_prfv_full_incompatible`: progressive and perfective are
   mutually exclusive at the same reference time
 
-## References
-
-- Moens, M. & Steedman, M. (1988). Temporal ontology and temporal reference.
-- Kiparsky, P. (2002). Event structure and the perfect.
-- Rappaport Hovav, M. & Levin, B. (1998). Building verb meanings.
-- Pustejovsky, J. (1991). The syntax of event structure.
 -/
 
 namespace Semantics.Events

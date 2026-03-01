@@ -3,6 +3,7 @@ import Linglib.Core.Semantics.Proposition
 
 /-!
 # Presupposition
+@cite{heim-1983} @cite{schlenker-2009} @cite{von-fintel-1999}
 
 Presuppositional propositions and projection mechanisms.
 
@@ -10,11 +11,6 @@ Presuppositional propositions and projection mechanisms.
 Filtering connectives (Heim 1983, Schlenker 2009) model how presuppositions
 project through logical operators.
 
-## References
-
-- Heim, I. (1983). On the Projection Problem for Presuppositions.
-- Schlenker, P. (2009). Local Contexts.
-- von Fintel, K. (1999). NPI Licensing, Strawson Entailment, and Context Dependency.
 -/
 
 namespace Core.Presupposition

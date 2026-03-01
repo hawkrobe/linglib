@@ -4,10 +4,6 @@
 Assignment-based binding (Heim & Kratzer 1998 Ch. 5) and its equivalence
 with the continuation approach (Barker & Shan 2014).
 
-## References
-
-- Heim & Kratzer (1998). Semantics in Generative Grammar. Ch. 5.
-- Barker & Shan (2014). Continuations and Natural Language. Ch. 15.
 -/
 
 import Linglib.Theories.Semantics.Montague.Basic

@@ -31,11 +31,6 @@ For a sentence S with embedded clause φ at position i:
 - No filtering material before "stopped"
 - Presupposition "John used to smoke" projects globally
 
-## References
-
-- Schlenker (2009). Local Contexts. Semantics & Pragmatics 2:3.
-- Heim (1983). On the Projection Problem for Presuppositions.
-- Karttunen (1974). Presupposition and Linguistic Context.
 -/
 
 import Linglib.Core.Semantics.CommonGround

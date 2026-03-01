@@ -30,12 +30,6 @@ Mandarin vs English contrast in bridging:
 - Mandarin *na*+CL accepts both bridging types (relationalizing operator).
 - English demonstratives are degraded in bridging contexts.
 
-## References
-
-- Clark, H. (1975). Bridging. Theoretical Issues in Natural Language Processing.
-- Asher, N. & Lascarides, A. (1998). Bridging. Journal of Semantics.
-- Ahn, D. & Zhu, Y. (2025). A bridge to definiteness. Forthcoming.
-- Prince, E. (1981). Toward a taxonomy of given-new information.
 -/
 
 import Linglib.Core.Definiteness

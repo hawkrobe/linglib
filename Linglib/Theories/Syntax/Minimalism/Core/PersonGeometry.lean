@@ -2,6 +2,7 @@ import Linglib.Core.Prominence
 
 /-!
 # Person Feature Geometry @cite{preminger-2014}
+@cite{bjar-rezac-2009}
 
 Preminger (2014, §4.3, (55)) decomposes phi-features into a
 hierarchical geometry where person sub-features are organized in a
@@ -32,12 +33,6 @@ library — rather than a raw `Nat`. This eliminates meaningless
 person values and grounds the decomposition in the same type used
 by `DifferentialIndexing`, `Prominence.PersonLevel.isSAP`, etc.
 
-## References
-
-- Preminger, O. (2014). Agreement and Its Failures. MIT Press.
-  (Linguistic Inquiry Monographs 68.)
-- Béjar, S. & M. Rezac (2009). Cyclic Agree. Linguistic Inquiry
-  40(1): 35–73.
 -/
 
 namespace Minimalism

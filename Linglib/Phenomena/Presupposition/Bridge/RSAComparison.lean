@@ -60,13 +60,6 @@ Qing/Warstadt argue "common ground" is appropriate because:
 
 **Crucially**: These interpretive differences don't affect the math.
 
-## References
-
-- Qing, Goodman & Lassiter (2016). A rational speech-act model of projective content.
-- Scontras & Tonhauser (2025). Projection without lexically-specified presupposition.
-- Warstadt (2022). Presupposition accommodation through pragmatic inference.
-- Stalnaker (1974). Pragmatic Presuppositions.
-- Lewis (1979). Scorekeeping in a Language Game.
 -/
 
 import Linglib.Theories.Pragmatics.RSA.Implementations.QingEtAl2016

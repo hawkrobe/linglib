@@ -3,6 +3,7 @@ import Linglib.Core.Temporal.Tense
 
 /-!
 # Wurmbrand (2014): Tense and Aspect in English Infinitives
+@cite{wurmbrand-2014}
 
 Wurmbrand's three-way classification of infinitival complements by tense
 properties. The key insight: infinitival complements are not uniformly
@@ -30,10 +31,6 @@ properties. The key insight: infinitival complements are not uniformly
 - Temporal de re: not directly addressed
 - ULC: not directly addressed
 
-## References
-
-- Wurmbrand, S. (2014). Tense and aspect in English infinitives.
-  *Linguistic Inquiry* 45(3): 403--447.
 -/
 
 namespace Minimalism.Tense.Wurmbrand

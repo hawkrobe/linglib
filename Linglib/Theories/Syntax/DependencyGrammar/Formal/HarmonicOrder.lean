@@ -2,6 +2,7 @@ import Linglib.Theories.Syntax.DependencyGrammar.Formal.DependencyLength
 
 /-!
 # Harmonic Word Order via Dependency Length Minimization
+@cite{dryer-1992} @cite{futrell-gibson-2020} @cite{gibson-2025} @cite{greenberg-1963}
 
 Gibson (2025, Ch. 5.3) argues that **dependency length minimization** (DLM)
 explains the **head-direction generalization** (Greenberg 1963, Dryer 1992):
@@ -23,12 +24,6 @@ types. The argument:
 - §4: **Direction change cost** — concrete DepTree examples (Gibson's pattern)
 - §5: **DLM prediction** — harmonic order is cheaper
 
-## References
-
-- Gibson, E. (2025). Syntax: A cognitive approach. Ch. 5.3. MIT Press.
-- Greenberg, J. (1963). Some universals of grammar.
-- Dryer, M. (1992). The Greenbergian word order correlations. Language 68.
-- Futrell, R., Levy, R. & Gibson, E. (2020). Dependency locality. Language 96(2).
 -/
 
 namespace DepGrammar.HarmonicOrder

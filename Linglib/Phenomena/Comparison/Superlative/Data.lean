@@ -1,5 +1,6 @@
 /-!
 # Superlative Constructions: Empirical Data
+@cite{hackl-2009} @cite{heim-1999} @cite{sharvit-stateva-2002} @cite{szabolcsi-1986}
 
 Empirical data on superlative constructions, including the absolute
 vs. relative reading ambiguity and the interaction with focus.
@@ -17,12 +18,6 @@ vs. relative reading ambiguity and the interaction with focus.
    some languages use the comparative + definite article (Romance),
    and others use entirely different strategies.
 
-## References
-
-- Heim, I. (1999). Notes on superlatives. Ms., MIT.
-- Szabolcsi, A. (1986). Comparative superlatives.
-- Sharvit, Y. & Stateva, P. (2002). Superlative expressions, context, and focus.
-- Hackl, M. (2009). On the grammar and processing of proportional quantifiers.
 -/
 
 namespace Phenomena.Comparison.Superlative

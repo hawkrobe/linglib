@@ -20,11 +20,6 @@ Standard EPs:
 - `ExtendedProjection`: Structure capturing an EP spine with consistency/monotonicity
 - `CatFamily`: The four category families (verbal, nominal, adjectival, adpositional)
 
-## References
-
-- Grimshaw, J. (2005). Words and Structure. CSLI Lecture Notes.
-- Grimshaw, J. (1991/2005). Extended Projection. Chapter 1.
-- Panagiotidis, P. (2015). Categorial Features. @cite{panagiotidis-2015}
 -/
 
 import Linglib.Theories.Syntax.Minimalism.Core.Labeling

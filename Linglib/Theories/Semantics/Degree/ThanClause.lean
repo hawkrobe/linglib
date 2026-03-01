@@ -3,6 +3,7 @@ import Linglib.Theories.Semantics.Degree.Core
 
 /-!
 # Than-Clause Semantics
+@cite{bhatt-pancheva-2004} @cite{heim-2006} @cite{von-stechow-1984}
 
 Compositional semantics for the than-clause in comparative constructions.
 The than-clause introduces the standard of comparison and determines
@@ -20,11 +21,6 @@ the degree set against which the matrix predicate is evaluated.
 3. **Scope**: the than-clause interacts with scope-taking elements
    (quantifiers, modals, negation).
 
-## References
-
-- Heim, I. (2006). Little. In *Proceedings of SALT 16*.
-- von Stechow, A. (1984). Comparing semantic theories of comparison.
-- Bhatt, R. & Pancheva, R. (2004). Late merger of degree clauses.
 -/
 
 namespace Semantics.Degree.ThanClause

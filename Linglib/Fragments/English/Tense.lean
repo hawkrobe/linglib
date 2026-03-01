@@ -4,6 +4,7 @@ import Linglib.Theories.Semantics.Tense.Kratzer
 
 /-!
 # English Tense Fragment (Cumming 2026 + Lakoff 1970)
+@cite{cumming-2026} @cite{lakoff-1970}
 
 Paradigm entries for English tense forms from Cumming (2026), Tables 20 and 22.
 Each entry specifies evidential perspective (EP) and utterance perspective (UP)
@@ -26,10 +27,6 @@ constraints via `EPCondition` and `UPCondition` enums.
 type (synthetic vs periphrastic) and grammatical tense, connecting Cumming's
 evidential constraints to Lakoff's false-tense diagnostic.
 
-## References
-
-- Cumming, S. (2026). Tense and evidence. *L&P* 49:153–175. Tables 20, 22.
-- Lakoff, R. (1970). Tense and its relation to participants. *Language* 46(4).
 -/
 
 namespace Fragments.English.Tense

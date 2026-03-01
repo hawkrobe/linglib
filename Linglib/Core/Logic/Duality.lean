@@ -4,6 +4,7 @@ import Mathlib.Order.BoundedOrder.Basic
 
 /-!
 # Duality
+@cite{barwise-cooper-1981}
 
 Universal vs existential operators formalized as a Galois connection.
 
@@ -16,9 +17,6 @@ Universal vs existential operators formalized as a Galois connection.
 For GQ-level duality operations (outer negation, inner negation, dual) see
 `Core.Quantification.outerNeg` / `innerNeg` / `dualQ`.
 
-## References
-
-- Barwise & Cooper (1981). Generalized Quantifiers and Natural Language.
 -/
 
 namespace Core.Duality

@@ -3,6 +3,7 @@ import Linglib.Theories.Semantics.Causation.Sufficiency
 
 /-!
 # Implicative Verb Semantics (Nadathur 2023, Chapter 1)
+@cite{karttunen-1971} @cite{nadathur-2023}
 
 Implicative verbs (*manage*, *fail*) have complement entailments that arise
 from two-event causal structure, NOT from aspectual composition.
@@ -30,11 +31,6 @@ The `VerbEntry.implicativeBuilder := some .positive` for *manage*
 in `Fragments/English/Predicates/Verbal.lean` is **grounded** by
 `manage_entails_complement`: if `manageSem` holds, the complement is true.
 
-## References
-
-- Nadathur, P. (2023). Actuality Inferences: Causality, Aspect, and Modality.
-  Chapter 1: Actuality Inferences and Implicative Verbs.
-- Karttunen, L. (1971). Implicative Verbs. Language 47(2), 340-358.
 -/
 
 namespace Nadathur2023.Implicative

@@ -2,6 +2,7 @@ import Mathlib.Data.Rat.Defs
 
 /-!
 # Argumentative Framing: Empirical Data
+@cite{cummins-franke-2021}
 
 Empirical observations from two papers on how speakers use quantity expressions
 to serve argumentative goals:
@@ -18,10 +19,6 @@ to serve argumentative goals:
 - MS et al. 2024 Experiment 1: Quantifier + adjective choice for exam results
 - MS et al. 2024 Experiment 2: Free-form descriptions of exam results
 
-## References
-
-- Cummins, C. & Franke, M. (2021). Argumentative strength of numerical quantity.
-- Macuch Silva, V. et al. (2024). Strategic quantifier use in production.
 -/
 
 namespace Phenomena.ScalarImplicatures.ArgumentativeFraming

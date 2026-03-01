@@ -3,6 +3,7 @@ import Linglib.Theories.Morphology.Core.Circumfix
 
 /-!
 # Morphological Word Structure
+@cite{hayes-2009b}
 
 Hierarchical representation of word-internal structure via the `MorphWord`
 inductive type: a tree of morphemes where affixation, compounding,
@@ -31,9 +32,6 @@ positions are implicit between adjacent morphemes in the flattened list.
 | `reduplicated` | total or partial reduplication| Warlpiri *kijikiji*           |
 | `converted`    | zero affixation / conversion  | noun *telephone* → verb       |
 
-## References
-
-- Hayes, B. (2009). *Introductory Phonology*. Blackwell. Ch 5: Morphology.
 -/
 
 namespace Theories.Morphology.WordStructure

@@ -29,12 +29,6 @@ Geurts & Pouscoulous (2009) verification task: 34% SI rate
 - NeoGricean (35%): 1% difference ✓
 - RSA (50%): 16% difference (but model may be incomplete here too)
 
-## References
-
-- Geurts & Pouscoulous (2009). Embedded implicatures?!
-- Geurts (2010). Quantity Implicatures.
-- Goodman & Frank (2016). Pragmatic Language Interpretation.
-- Bergen, Levy & Goodman (2016). Pragmatic reasoning through semantic inference.
 -/
 
 import Linglib.Core.Interface

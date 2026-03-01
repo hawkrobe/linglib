@@ -5,6 +5,7 @@ import Linglib.Core.Scales.Scale
 
 /-!
 # Kennedy (2007) Adjective Licensing Bridge
+@cite{kennedy-2007} @cite{kennedy-mcnally-2005}
 
 Connects the abstract `adjMeasure` and `LicensingPipeline` algebra
 (Core/Scale) to concrete Fragment entries (`tall`, `full`, `wet`, `dry`)
@@ -23,10 +24,6 @@ and Phenomena data (`closurePuzzle`, `completelyModifier`).
    universal `LicensingPipeline.isLicensed` interface, connecting
    adjective licensing to telicity, path shape, and mereological licensing.
 
-## References
-
-- Kennedy, C. (2007). Vagueness and grammar.
-- Kennedy, C. & McNally, L. (2005). Scale structure, degree modification.
 -/
 
 namespace Phenomena.Gradability.KennedyLicensingBridge

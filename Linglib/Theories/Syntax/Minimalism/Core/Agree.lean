@@ -32,13 +32,6 @@ This captures e.g. Mam's Infl probe, which has satisfaction condition
 [SAT: φ or Voice_TR] — it stops when it finds either matching
 φ-features OR transitive Voice, whichever comes first.
 
-## References
-
-- Chomsky, N. (2000). "Minimalist Inquiries"
-- Chomsky, N. (2001). "Derivation by Phase"
-- Adger, D. (2003). "Core Syntax", Chapter 4
-- Deal, A. R. (2021). "Interaction, Satisfaction, and the PCC"
-- Keine, S. (2019). "Selective Opacity"
 -/
 
 import Linglib.Theories.Syntax.Minimalism.Core.Features

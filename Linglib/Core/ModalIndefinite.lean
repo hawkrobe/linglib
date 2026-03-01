@@ -2,6 +2,7 @@ import Linglib.Core.Logic.ModalLogic
 
 /-!
 # Modal Indefinite Types
+@cite{alonso-ovalle-menendez-benito-2010} @cite{alonso-ovalle-royer-2024}
 
 Framework-agnostic types for recording cross-linguistic properties of modal
 indefinites — indefinite determiners/DPs that conventionally encode a modal
@@ -15,12 +16,6 @@ Following Alonso-Ovalle & Royer (2024):
 2. **Content**: Which modal flavors does the component support?
 3. **Upper-boundedness**: Does it impose an anti-singleton inference?
 
-## References
-
-- Alonso-Ovalle, L. & Royer, J. (2024). Modal indefinites: Lessons from
-  Chuj. Linguistics and Philosophy.
-- Alonso-Ovalle, L. & Menéndez-Benito, P. (2010). Modal indefinites.
-  Natural Language Semantics 18:1–31.
 -/
 
 namespace Core.ModalIndefinite

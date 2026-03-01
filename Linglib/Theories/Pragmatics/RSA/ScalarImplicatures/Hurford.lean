@@ -2,6 +2,7 @@ import Linglib.Theories.Pragmatics.RSA.Extensions.LexicalUncertainty.Basic
 
 /-!
 # RSA Analysis of Hurford's Constraint
+@cite{hurford-1974} @cite{singh-2008}
 
 Models Hurford's constraint as a consequence of speaker rationality in RSA.
 
@@ -27,12 +28,6 @@ RSA computations (L1, S1) need to be re-implemented using the new RSAConfig fram
 - Utterances: "some", "all", "some or all", null
 - Lexica: L_base (some = ≥1), L_refined (some = some-but-not-all)
 
-## References
-
-- Hurford (1974). Exclusive or inclusive disjunction. Foundations of Language.
-- Potts & Levy (2015). Negotiating lexical uncertainty and speaker expertise
-  with disjunction. BLS 41.
-- Singh (2008). On the interpretation of disjunction.
 -/
 
 namespace RSA.Hurford

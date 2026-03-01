@@ -5,9 +5,7 @@ import Linglib.Theories.Syntax.Minimalism.Movement.Smuggling
 /-!
 # Minimalism Bridge: Passive as Smuggling (Collins 2005)
 
-@cite{collins-2005}
-
-Connects the empirical passive data in `Phenomena.ArgumentStructure.Passive`
+@cite{collins-2005} @cite{chomsky-2001} @cite{legate-2003}Connects the empirical passive data in `Phenomena.ArgumentStructure.Passive`
 to the smuggling theory in `Theories.Syntax.Minimalism.Movement.Smuggling`
 and the Voice/phase infrastructure in `Theories.Syntax.Minimalism.Core.Voice`.
 
@@ -40,13 +38,6 @@ Passive: [TP DP_obj [T' T [VoiceP [PartP Part V t_obj] [Voice' by [vP DP_ext [v'
   — Voice/by checks Case on DP_ext (feature dissociation)
 ```
 
-## References
-
-- Collins, C. (2005). A Smuggling Approach to the Passive in English.
-  *Syntax* 8(2): 81–120.
-- Chomsky, N. (2001). Derivation by Phase.
-- Legate, J. A. (2003). Some Interface Properties of the Phase.
-  *Linguistic Inquiry* 34(3): 506–516.
 -/
 
 namespace Phenomena.ArgumentStructure.Bridge.MinimalismPassive

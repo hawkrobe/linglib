@@ -7,9 +7,6 @@ Lexical entries with semantic denotations and scalar alternatives.
 
 `ScaleMembership`, `SemLexEntry`, `SemLexicon`, `toyLexicon`
 
-## References
-
-Montague (1973)
 -/
 
 import Linglib.Core.Lexical.Word

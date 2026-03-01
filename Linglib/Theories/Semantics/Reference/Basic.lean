@@ -16,12 +16,6 @@ These mechanisms are independent: a term can exhibit any subset.
 - `isDirectlyReferential`: Content is rigid at every context
 - `properName`: Constant character, rigid content
 
-## References
-
-- Almog, J. (2014). Referential Mechanics. Oxford University Press.
-- Kaplan, D. (1989). Demonstratives. In Almog, Perry & Wettstein (eds.), Themes from Kaplan.
-- Kripke, S. (1980). Naming and Necessity. Harvard University Press.
-- Donnellan, K. (1966). Reference and Definite Descriptions. Philosophical Review.
 -/
 
 import Linglib.Core.Semantics.Intension

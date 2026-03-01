@@ -3,6 +3,7 @@ import Linglib.Theories.Semantics.TypeTheoretic.Copredication
 
 /-!
 # Copredication Bridge @cite{chatzikyriakidis-etal-2025}
+@cite{gotham-2017}
 
 Bridge theorems connecting copredication data to the TTR dot-type
 infrastructure. We model the "book" examples from §3 of
@@ -12,10 +13,6 @@ Chatzikyriakidis et al. (2025) and prove that:
 2. Different individuation criteria yield different counts
 3. The counting puzzle from Gotham (2017) is reproduced
 
-## References
-
-- Chatzikyriakidis et al. (2025). Types and the Structure of Meaning. §3.
-- Gotham, M. (2017). Composing Criteria of Individuation in Copredication.
 -/
 
 namespace Phenomena.Polysemy.Bridge

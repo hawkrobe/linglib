@@ -5,6 +5,7 @@ import Linglib.Phenomena.TemporalConnectives.AspectInteractionData
 
 /-!
 # Aspect × Temporal Connective Interaction Bridge
+@cite{alstott-aravind-2026} @cite{moens-steedman-1988} @cite{rett-2020}
 
 Connects three layers:
 
@@ -47,11 +48,6 @@ INCHOAT / COMPLET              Fragment.triggeredCoercion
   COMPLET(telic) = telos ─────► "COMPLET" for at_punct, before_ (coerced)
 ```
 
-## References
-
-- Moens, M. & Steedman, M. (1988). Temporal ontology and temporal reference.
-- Rett, J. (2020). Eliminating EARLIEST.
-- Alstott, A. & Aravind, A. (2026). Aspectual coercion in *before*/*after*-clauses.
 -/
 
 namespace Phenomena.TemporalConnectives.AspectInteractionBridge

@@ -3,6 +3,7 @@ import Linglib.Phenomena.Modality.FreeChoice
 
 /-!
 # Meyer & Feiman (2021) — Composing Alternatives
+@cite{bar-lev-fox-2017} @cite{chierchia-2004} @cite{fox-2007}
 
 Structural priming evidence that scalar and free choice implicatures
 decompose into independently parameterizable sub-computations.
@@ -46,15 +47,6 @@ The pattern falsifies any uniform account: shared ALT-NEG between *some*
 and numerals, but FC uses an entirely different mechanism (assertion-based
 per Bar-Lev & Fox 2017, not negation-based).
 
-## References
-
-- Bar-Lev, M. E. & Fox, D. (2017). Universal free choice and Innocent
-  Inclusion. *SALT 27*.
-- Fox, D. (2007). Free choice and the theory of scalar implicatures.
-  In Sauerland & Stateva (eds.), *Presupposition and Implicature in
-  Compositional Semantics*.
-- Chierchia, G. (2004). Scalar implicatures, polarity phenomena, and
-  the syntax/pragmatics interface. In Belletti (ed.), *Structures and Beyond*.
 -/
 
 namespace Phenomena.ScalarImplicatures.Studies.MeyerFeiman2021

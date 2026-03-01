@@ -4,6 +4,7 @@ import Linglib.Fragments.Finnish.Negation
 
 /-!
 # Auxiliary Verb Construction Typology (Anderson 2006)
+@cite{anderson-2006} @cite{huddleston-1976}
 
 Cross-linguistic classification of auxiliary verb constructions (AVCs) based on
 how inflection distributes between auxiliary and lexical verb. Anderson's core
@@ -20,11 +21,6 @@ insight: the **semantic head is always the lexical verb**, but the
 | Split | AUX or LEX | Jakaltek *x-Ø-ach w-ilwi* | person on one, TAM on other |
 | Split/doubled | AUX+LEX (split) | Pipil *ni-k-miktia-ya* | mixed |
 
-## References
-
-- Anderson, G. D. S. (2006). Auxiliary Verb Constructions. OUP.
-- Huddleston, R. (1976). Some theoretical issues in the description of the
-  English verb. *Lingua* 40:331-383.
 -/
 
 namespace Phenomena.AuxiliaryVerbs.Typology

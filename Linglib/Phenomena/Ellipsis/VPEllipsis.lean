@@ -2,6 +2,7 @@ import Linglib.Core.Lexical.Word
 
 /-!
 # VP Ellipsis: Empirical Data
+@cite{anand-mccloskey-2025} @cite{merchant-2013}
 
 Theory-neutral data on VP ellipsis, focusing on voice mismatch tolerance.
 
@@ -10,10 +11,6 @@ VP ellipsis differs from sluicing in tolerating voice mismatches
 requires only semantic identity (e-GIVENness), while sluicing requires
 both semantic and syntactic identity (SIC).
 
-## References
-
-- Merchant, J. (2013). Voice and ellipsis. *Linguistic Inquiry* 44(1): 77–108.
-- Anand, P., Hardt, D. & McCloskey, J. (2025). Sluicing and Syntactic Identity.
 -/
 
 namespace Phenomena.Ellipsis.VPEllipsis

@@ -29,12 +29,6 @@ This module provides explicit types for these components, making the
 theoretical distinctions clear while maintaining computational compatibility
 with existing RSA infrastructure.
 
-## References
-
-- Farkas, D. F. & Bruce, K. B. (2010). On Reacting to Assertions and Polar
-  Questions. Journal of Semantics 27(1), 81-118.
-- Stalnaker (1974). Pragmatic Presuppositions.
-- Lewis (1979). Scorekeeping in a Language Game.
 -/
 
 import Linglib.Core.Semantics.Proposition
@@ -46,7 +40,6 @@ namespace Semantics.Dynamic.State
 
 open Core.Proposition
 open Core.CommonGround
-
 
 
 /--

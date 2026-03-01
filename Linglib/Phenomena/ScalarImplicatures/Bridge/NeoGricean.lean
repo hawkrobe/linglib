@@ -4,6 +4,7 @@ import Linglib.Phenomena.ScalarImplicatures.Basic
 
 /-!
 # Bridge: NeoGricean Scalar Implicatures → Empirical Data
+@cite{geurts-2010} @cite{geurts-pouscoulous-2009}
 
 Connects NeoGricean scalar implicature theory to empirical data from
 Geurts & Pouscoulous (2009) and the basic scalar implicature phenomena.
@@ -16,10 +17,6 @@ Geurts & Pouscoulous (2009) and the basic scalar implicature phenomena.
 - Hurford rescue/violation predictions match felicity judgments
 - Singh asymmetry predictions match felicity judgments
 
-## References
-
-- Geurts, B. & Pouscoulous, N. (2009). Embedded implicatures?!
-- Geurts, B. (2010). Quantity Implicatures. Cambridge University Press.
 -/
 
 namespace Phenomena.ScalarImplicatures.Bridge.NeoGricean

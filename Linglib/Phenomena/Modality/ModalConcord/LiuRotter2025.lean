@@ -32,10 +32,6 @@ friendliness, warmth). The social meaning mirrors the commitment direction.
 * Possibility SM: *may/might/could VP*
 * Possibility MC: *may possibly/might perhaps/could potentially VP*
 
-## Reference
-
-Liu, M. & Rotter, C. (2025). Non-redundant modal concord: Evidence from
-speaker commitment and social meaning.
 -/
 
 namespace Phenomena.Modality.ModalConcord.LiuRotter2025

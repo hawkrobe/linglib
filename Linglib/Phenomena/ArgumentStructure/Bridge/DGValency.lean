@@ -9,6 +9,7 @@ import Linglib.Phenomena.ArgumentStructure.Passive
 
 /-!
 # DG Valency Bridge: Osborne (2019, Ch 6) @cite{osborne-2019}
+@cite{tesnire-1959}
 
 Full derivation chain from DG valency theory to argument structure
 phenomena, grounded in the English Fragment lexicon.
@@ -46,11 +47,6 @@ isCatena / isConstituent               ← structural analysis (Ch 4)
 Phenomena data match                   ← grammaticality predictions
 ```
 
-## References
-
-- Osborne, T. (2019). *A Dependency Grammar of English*, Ch 6: Valency.
-  Amsterdam: John Benjamins.
-- Tesnière, L. (1959). *Éléments de syntaxe structurale*. Paris: Klincksieck.
 -/
 
 namespace Phenomena.ArgumentStructure.Bridge.DGValency

@@ -4,6 +4,7 @@ import Linglib.Theories.Syntax.Minimalism.Formal.ExtendedProjection.Basic
 
 /-!
 # Nominal Syntax-Semantics Mapping (Borer 2005)
+@cite{borer-2005} @cite{champollion-2017} @cite{chierchia-1998} @cite{grimshaw-2005} @cite{krifka-1998}
 
 Compositional interpretation of the nominal extended projection
 via mereological predicates. Bridges the syntactic spine
@@ -49,13 +50,6 @@ consistent with compositional semantics:
 6. Ordering Argument: Why Q Below Num
 7. Bridges
 
-## References
-
-- Borer, H. (2005). *Structuring Sense, Vol I: In Name Only*. OUP.
-- Grimshaw, J. (2005). *Words and Structure*. CSLI.
-- Champollion, L. (2017). *Parts of a Whole*. OUP.
-- Chierchia, G. (1998). Reference to Kinds Across Languages.
-- Krifka, M. (1998). The origins of telicity.
 -/
 
 namespace Interfaces.SyntaxSemantics.Borer2005

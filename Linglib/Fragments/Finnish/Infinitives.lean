@@ -1,7 +1,7 @@
 import Linglib.Fragments.Finnish.Case
 
 /-!
-# Finnish Infinitive System @cite{karlsson-2018}
+# Finnish Infinitive System @cite{karlsson-2017}
 
 Finnish has **four productive infinitive forms** (Karlsson 2018, Ch. 10),
 each built from the verb stem plus a characteristic marker and case suffix:
@@ -30,9 +30,6 @@ This structural parallel — the same case paradigm applying to both nouns
 and nonfinite verbs — is evidence that Finnish local cases are genuine
 morphosyntactic features, not frozen adverbial suffixes.
 
-## References
-
-- Karlsson, F. (2018). *Finnish: A Comprehensive Grammar* (3rd ed.). Ch. 10.
 -/
 
 namespace Fragments.Finnish.Infinitives

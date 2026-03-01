@@ -22,10 +22,6 @@ Empirical modal inventories from 27 languages (17 families) mapped to the
 Guo, Imel, & Steinert-Threlkeld (2022). A database for modal semantic typology.
 https://clmbr.shane.st/modal-typology/
 
-## References
-
-* Imel, N., Guo, Q., & Steinert-Threlkeld, S. (2026). An Efficient Communication
-  Analysis of Modal Typology. Open Mind 10, 1–28.
 -/
 
 namespace Phenomena.Modality.Typology

@@ -34,11 +34,6 @@ observed across diverse theoretical frameworks.
   (5a)  Who did you see pictures of?          ✓  wh from object
   (5b) *Who did pictures of please you?       ✗  wh from subject
 
-## References
-
-- Ross, J.R. (1967). Constraints on Variables in Syntax.
-- Huang, C.-T. J. (1982). Logical Relations in Chinese and the Theory of Grammar.
-- Szabolcsi, A. (2006). "Strong vs. Weak Islands" in The Blackwell Companion to Syntax.
 -/
 
 import Linglib.Core.Grammar

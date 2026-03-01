@@ -4,6 +4,7 @@ import Mathlib.Tactic.Ring
 
 /-!
 # Bayesian Theory of Mind (BToM) @cite{baker-jara-ettinger-saxe-tenenbaum-2017}
+@cite{clark-1996} @cite{houlihan-kleiman-weiner-hewitt-tenenbaum-saxe-2023}
 
 Domain-general cognitive architecture for action explanation: how observers
 explain agents' behavior by jointly inferring mental states, shared states,
@@ -78,15 +79,6 @@ The model is designed for domain-specific extension without modification:
   inferred marginals without extending the generative model itself
   (Houlihan et al. 2023).
 
-## References
-
-- Baker, Jara-Ettinger, Saxe & Tenenbaum (2017). Rational quantitative
-  attribution of beliefs, desires and percepts in human mentalizing.
-  Nature Human Behaviour 1, 0064.
-- Clark, H. (1996). Using Language. Cambridge University Press.
-- Houlihan, Kleiman-Weiner, Hewitt, Tenenbaum & Saxe (2023). Emotion
-  prediction as computation over a generative model of the world.
-  Phil. Trans. R. Soc. A 381: 20220047.
 -/
 
 namespace Core.BToM

@@ -2,6 +2,7 @@ import Mathlib.Data.Set.Basic
 
 /-!
 # Team Semantics Infrastructure
+@cite{aloni-2022} @cite{ciardelli-groenendijk-roelofsen-2019} @cite{hodges-1997}
 
 Team semantics evaluates formulas relative to sets of evaluation points
 (teams) rather than single points. This module provides the core infrastructure.
@@ -26,12 +27,6 @@ This module provides general infrastructure. Specific applications:
 - `Systems/BSML/`: Bilateral State-based Modal Logic (Aloni 2022)
 - `Questions/Inquisitive.lean`: Inquisitive semantics for questions
 
-## References
-
-- Hodges, W. (1997). Compositional semantics for a language of imperfect information.
-- Väänänen, J. (2007). Dependence Logic. Cambridge University Press.
-- Ciardelli, Groenendijk & Roelofsen (2018). Inquisitive Semantics. Oxford UP.
-- Aloni, M. (2022). Logic and conversation: The case of free choice. S&P 15.
 -/
 
 namespace Semantics.Dynamic.TeamSemantics

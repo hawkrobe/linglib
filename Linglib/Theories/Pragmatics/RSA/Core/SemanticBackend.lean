@@ -7,9 +7,6 @@ Connects Montague semantics to the RSA pragmatics interface via φ agreement fun
 
 `MontagueSentence`, `ToyWorld`, `evaluate`, `montaguePhi`
 
-## References
-
-Montague (1973), Goodman & Stuhlmüller (2013)
 -/
 
 import Linglib.Theories.Semantics.Montague.Basic

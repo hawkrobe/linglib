@@ -6,6 +6,7 @@ import Mathlib.Data.Rat.Defs
 
 /-!
 # Cummins & Franke (2021): Argumentative Strength of Numerical Quantity
+@cite{cummins-franke-2021}
 
 Formalizes the conference registration scenario (C&F pp. 7–8) demonstrating that
 semantic and pragmatic argumentative strength can *reverse* the ordering of
@@ -20,11 +21,6 @@ exam scenario on strategic quantifier choice.
    flips — "more than 100" becomes pragmatically stronger
 3. **Exam scenario**: difficulty metric predicts quantifier weakening (all→most→some)
 
-## References
-
-- Cummins, C. & Franke, M. (2021). Argumentative strength of numerical quantity.
-  In E. Coppock & L. Champollion (Eds.), *Invitation to Formal Semantics*.
-- Macuch Silva, V. et al. (2024). Strategic quantifier use in production.
 -/
 
 namespace RSA.Implementations.CumminsFranke2021

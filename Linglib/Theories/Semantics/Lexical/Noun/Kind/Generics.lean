@@ -36,12 +36,6 @@ Tessler & Goodman (2019) eliminate GEN via threshold semantics:
 See `Theories/RSA/Implementations/TesslerGoodman2019.lean` for the RSA account
 and `Theories/Comparisons/GenericSemantics.lean` for the formal comparison.
 
-## References
-
-- Carlson, G. (1977). Reference to Kinds in English.
-- Krifka, M. et al. (1995). Genericity: An Introduction.
-- Chierchia, G. (1995). Individual-Level Predicates as Inherent Generics.
-- Tessler & Goodman (2019). The Language of Generalization.
 -/
 
 import Mathlib.Data.Rat.Defs

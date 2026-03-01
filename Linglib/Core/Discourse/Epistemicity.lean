@@ -3,6 +3,7 @@ import Linglib.Core.Context.Tower
 
 /-!
 # Epistemic Profile Layer
+@cite{floyd-2018} @cite{gawne-spronck-2024} @cite{tournadre-2008}
 
 Connective layer bundling evidential source, epistemic authority (egophoricity),
 and mirativity into a unified `EpistemicProfile`. Bridges these feature-geometric
@@ -31,15 +32,6 @@ Engagement, logophoricity, and epistemic vigilance would require substantial new
 infrastructure (discourse model, binding theory extension, RSA listener model
 extension respectively) and are left for future work.
 
-## References
-
-- Gawne, L. & Spronck, S. (2024). Evidentiality, egophoricity, and engagement:
-  the epistemicity glossary. *Linguistic Typology*.
-- Tournadre, N. (2008). Arguments against the concept of "conjunct"/"disjunct".
-  *Linguistics of the Tibeto-Burman Area* 31(2):121-146.
-- Floyd, S. (2018). Egophoricity and argument structure in Cha'palaa.
-  In Simeon Floyd, Elisabeth Norcliffe & Lila San Roque (eds.),
-  *Egophoricity*, 269-304. John Benjamins.
 -/
 
 namespace Core.Epistemicity

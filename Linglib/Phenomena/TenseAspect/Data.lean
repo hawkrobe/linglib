@@ -4,6 +4,7 @@ import Linglib.Core.Temporal.Tense
 
 /-!
 # Tense Phenomena: Empirical Data
+@cite{abusch-1997} @cite{anand-nevins-2004} @cite{banfield-1982} @cite{comrie-1985} @cite{deal-2020} @cite{declerck-1991} @cite{declerck-2006} @cite{heim-kratzer-1998} @cite{iatridou-2000} @cite{klecha-2016} @cite{kratzer-1998} @cite{ogihara-sharvit-2012} @cite{schlenker-2004} @cite{sharvit-2003} @cite{von-stechow-2009} @cite{wurmbrand-2014}
 
 Unified entry point for tense phenomena. Absorbs the former
 `Phenomena/SequenceOfTense/Data.lean` and extends coverage to
@@ -54,27 +55,6 @@ are in `Bridge.lean`.
 27. Bounded/unbounded default interpretation (PUTI)
 28. Present perfect vs preterit: time-sphere distinction
 
-## References
-
-- Ogihara, T. (1989/1996). Tense, Attitudes, and Scope.
-- Ogihara, T. & Sharvit, Y. (2012). Embedded tenses.
-- Abusch, D. (1997). Sequence of tense and temporal de re.
-- Von Stechow, A. (2009). Tenses in compositional semantics.
-- Kratzer, A. (1998). More structural analogies between pronouns and tenses.
-- Klecha, P. (2016). Modality and embedded temporal operators.
-- Deal, A. R. (2020). Counterfactuals and the Upper Limit Constraint.
-- Sharvit, Y. (2003). Trying to be progressive.
-- Iatridou, S. (2000). The grammatical ingredients of counterfactuality.
-- Banfield, A. (1982). Unspeakable Sentences.
-- Schlenker, P. (2004). Context of thought and context of utterance.
-- Anand, P. & Nevins, A. (2004). Shifty operators in changing contexts.
-- Wurmbrand, S. (2014). Tense and aspect in English infinitives.
-- Comrie, B. (1985). Tense.
-- Sharvit, Y. (2003). Embedded tense and universal grammar.
-- Musan, R. (1995/1997). On the temporal interpretation of noun phrases.
-- Iatridou, S. (2000). The grammatical ingredients of counterfactuality.
-- Declerck, R. (1991). Tense in English: Its Structure and Use in Discourse.
-- Declerck, R. (2006). The Grammar of the English Tense System.
 -/
 
 namespace Phenomena.TenseAspect
@@ -908,7 +888,6 @@ theorem indexicalShift_at_attitude_time :
   constructor
   · rfl
   · native_decide
-
 
 
 -- ── Extended phenomena facts ──

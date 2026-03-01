@@ -13,11 +13,6 @@ indexicals and the theory of singular propositions (Almog 2014, Ch 2).
 - `structured_distinguishes_unstructured`: The Frege puzzle — same
   unstructured content, different structured content
 
-## References
-
-- Kaplan, D. (1989). Demonstratives. In Almog, Perry & Wettstein (eds.),
-  Themes from Kaplan. Oxford University Press.
-- Almog, J. (2014). Referential Mechanics, Ch 2.
 -/
 
 import Linglib.Theories.Semantics.Reference.Basic

@@ -23,14 +23,6 @@ This module proves failure theorems against three existing linglib modules:
 
 It then shows `PrProp.orFlex` (flexible accommodation) handles both observations.
 
-## References
-
-- Yagi, Y. (2025). Conflicting presuppositions in disjunction. S&P 18:7.
-- Hausser, R. (1976). Presuppositions in Montague grammar.
-- Landman, F. (1986). Conflicting presuppositions and modal subordination.
-- Beaver, D. (2001). Presupposition and assertion in dynamic semantics.
-- Geurts, B. (2005). Entertaining alternatives.
-- Aloni, M. (2022). Logic and conversation.
 -/
 
 import Linglib.Core.Semantics.Presupposition

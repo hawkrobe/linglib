@@ -16,10 +16,6 @@ Core uses:
 1. PLA to Core: set W = Unit, merge assignment and witnesses
 2. Core to PLA: split assignment, use trivial world
 
-## References
-
-- Muskens, R. (1996). Combining Montague Semantics and Discourse Representation.
-- Dekker, P. (2012). Dynamic Semantics.
 -/
 
 import Linglib.Theories.Semantics.Dynamic.Core.Update

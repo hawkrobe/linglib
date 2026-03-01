@@ -8,13 +8,6 @@ restricted to root clauses. 1st person has register-sensitive variants
 3rd person pronouns (*kare*, *kanojo*) are literary/modern innovations;
 traditional Japanese relies heavily on null reference.
 
-## References
-
-- Miyagawa, S. (2012). Agreements that occur mainly in the main clause.
-- Portner, P., M. Pak & R. Zanuttini (2019). The speaker-addressee relation at
-  the syntax-semantics interface.
-- Alok, D. & A. Bhalla (2026). Allocutive agreement and the syntax of
-  honorifics.
 -/
 
 import Linglib.Core.Lexical.Pronouns

@@ -3,6 +3,7 @@ import Linglib.Fragments.English.MeasurePhrases
 
 /-!
 # Scontras (2014) — The Semantics of Measurement
+@cite{chierchia-1998} @cite{krifka-1989} @cite{scontras-2014}
 
 Empirical observations and bridge theorems for Scontras's quantizing noun
 typology (Ch. 3).
@@ -45,14 +46,6 @@ QU predictions.
 Dependency chain:
   Theory (`predictsQU`) → Fragment (`QuantizingNounEntry.nounClass`) → Phenomena (this file)
 
-## References
-
-- Scontras, G. (2014). *The Semantics of Measurement*. Ph.D. dissertation,
-  Harvard University. Chapter 3: Quantizing Nouns.
-- Krifka, M. (1989). Nominal reference, temporal constitution, and
-  quantification in event semantics.
-- Chierchia, G. (1998). Plurality of mass nouns and the notion of
-  "semantic parameter."
 -/
 
 namespace Phenomena.Quantification.Scontras2014

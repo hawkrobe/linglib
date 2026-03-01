@@ -39,12 +39,6 @@ Then `IsCDistributive propSemantics questionSemantics` is a theorem.
 | 2 | ✓ | negative | ✗ | ✓ | fear, osore, kork- |
 | 3 | ✓ | positive | ✓ | ✗ | hope, wish, expect |
 
-## References
-
-- Villalta (2008). Mood and gradability.
-- Romero (2015). Surprise-predicates and the focus association.
-- Uegaki & Sudo (2019). The *hope-wh puzzle.
-- Qing, Özyıldız, Roelofsen, Romero, Uegaki (2025). When can NVPs take questions?
 -/
 
 import Mathlib.Data.Rat.Defs
@@ -301,11 +295,6 @@ Only TSP (positive significance) creates triviality with questions:
 
 Negative predicates lack TSP, so no triviality, so they CAN take questions.
 
-## References
-
-- Kennedy (2007). Vagueness and grammar. Linguistics & Philosophy.
-- Villalta (2008). Mood and gradability. Linguistics & Philosophy.
-- Uegaki & Sudo (2019). The *hope-wh puzzle. Natural Language Semantics.
 -/
 
 /--

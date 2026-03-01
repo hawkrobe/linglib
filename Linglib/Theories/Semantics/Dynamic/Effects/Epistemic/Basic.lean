@@ -4,6 +4,7 @@ import Linglib.Theories.Semantics.Modality.Kratzer
 
 /-!
 # Neo-Stalnakerian Formalization of Assertion (Rudin 2025)
+@cite{rudin-2025} @cite{stalnaker-1978} @cite{veltman-1996}
 
 Rudin proposes that when a speaker asserts a sentence s, she predicates her
 epistemic state: she presents herself as though she knows s, and proposes
@@ -20,12 +21,6 @@ The key insight: epistemic modals get nonstandard updates not because they
 have special update semantics, but because they are speaker-orientedly
 epistemic *in the same way* that assertion is.
 
-## References
-
-- Rudin, D. (2025). Asserting epistemic modals. *L&P* 48, 43–88.
-- Stalnaker, R. (1978). Assertion. *Syntax and Semantics* 9, 315–332.
-- Veltman, F. (1996). Defaults in update semantics. *JPL* 25(3), 221–261.
-- Kratzer, A. (1981/1991). The notional category of modality / Modality.
 -/
 
 namespace Semantics.Dynamic.NeoStalnakerian

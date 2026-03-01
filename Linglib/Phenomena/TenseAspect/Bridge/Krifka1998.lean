@@ -6,6 +6,7 @@ import Linglib.Phenomena.TenseAspect.DiagnosticsBridge
 
 /-!
 # Krifka (1998) Bridge: Telicity Propagation → Fragment Verbs
+@cite{krifka-1998} @cite{vendler-1957}
 
 Connects Krifka's mereological telicity theory (`Events/Krifka1998.lean`) to
 concrete verb entries in `Fragments/English/Predicates/Verbal.lean` and
@@ -22,11 +23,6 @@ diagnostic predictions in `DiagnosticsBridge.lean`.
 4. **Diagnostic bridge** — for/in compatibility follows from CUM/QUA
    via Vendler class.
 
-## References
-
-- Krifka, M. (1998). The origins of telicity. In S. Rothstein (ed.),
-  *Events and Grammar*, 197–235. Kluwer.
-- Vendler, Z. (1957). Verbs and times.
 -/
 
 namespace Phenomena.TenseAspect.Bridge.Krifka1998

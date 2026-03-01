@@ -12,6 +12,7 @@ import Mathlib.Algebra.Order.Ring.Rat
 
 /-!
 # Partition Lattice
+@cite{blackwell-1953} @cite{carnap-1971} @cite{groenendijk-stokhof-1984} @cite{merin-1999}
 
 Refinement, coarsening, and cell enumeration for partitions (`QUD`).
 
@@ -37,12 +38,6 @@ coarsening preserves compositionality of expected value, while arbitrary
 restructuring does not. Negative attributes are products of proper coarsening —
 an epistemic, syntax-independent characterization of negativity.
 
-## References
-
-- Groenendijk & Stokhof (1984). Studies on the Semantics of Questions.
-- Merin (1999). Negative Attributes, Partitions, and Rational Decisions.
-- Blackwell (1953). Equivalent Comparisons of Experiments.
-- Carnap (1971). A Basic System of Inductive Logic. Part I.
 -/
 
 namespace QUD

@@ -4,9 +4,6 @@
 CDRT IS Dynamic Ty2 - Muskens created both.
 The embedding is essentially definitional.
 
-## References
-
-- Muskens (1996). Combining Montague Semantics and Discourse Representation.
 -/
 
 import Linglib.Theories.Semantics.Dynamic.Core.DynamicTy2

@@ -2,6 +2,7 @@ import Linglib.Fragments.English.TemporalExpressions
 
 /-!
 # Japanese Temporal Connectives Fragment
+@cite{ogihara-1996} @cite{ogihara-steinert-threlkeld-2024}
 
 Lexical entries for Japanese temporal subordinating connectives *前 mae*
 ('before') and *後 ato* ('after'), typed by `TemporalExprEntry`.
@@ -12,11 +13,6 @@ non-past tense in its complement even in past-tense contexts, while
 supports the veridicality contrast — *mae* presents the complement
 as unrealized, *ato* as realized.
 
-## References
-
-- Ogihara, T. & Steinert-Threlkeld, S. (2024). An interval-based
-  semantics for *before* and *after*. §3.
-- Ogihara, T. (1996). Tense, attitudes, and scope.
 -/
 
 namespace Fragments.Japanese.TemporalConnectives

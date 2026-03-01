@@ -2,6 +2,7 @@ import Linglib.Theories.Semantics.Dynamic.TeamSemantics
 
 /-!
 # Bilateral State-based Modal Logic (BSML) — Core
+@cite{aloni-yang-2024}
 
 Core definitions for BSML (Aloni 2022): formulas, models, bilateral support/anti-support,
 and double negation elimination.
@@ -15,11 +16,6 @@ Key innovations over classical modal logic:
 - **Split disjunction**: t ⊨ φ ∨ ψ iff ∃t₁,t₂: t₁ ∪ t₂ = t ∧ t₁ ⊨ φ ∧ t₂ ⊨ ψ
 - **Non-emptiness atom (NE)**: t ⊨ NE iff t ≠ ∅
 
-## References
-
-- Aloni, M. (2022). Logic and conversation: The case of free choice. S&P 15.
-  @cite{aloni-2022}
-- Aloni, M., Anttila, A. & Yang, F. (2024). State-based Modal Logics for Free Choice.
 -/
 
 namespace Semantics.Dynamic.BSML

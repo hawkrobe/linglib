@@ -27,9 +27,6 @@ Connects the K/P and K/P* conditionals to the Rooth-Partee empirical data.
    a richer model with worlds where Mia is neither penniless nor proud.
    The paper's general proof uses K/P** (type-flexible connectives, (142)).
 
-## References
-
-- Sharvit, Y. (2025). Rooth-Partee Conditionals. L&P.
 -/
 
 namespace Phenomena.Presupposition.Bridge.SharvitCLOS

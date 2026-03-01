@@ -5,6 +5,7 @@ import Mathlib.Algebra.Order.Field.Rat
 
 /-!
 # Mereology ↔ Scale Bridge
+@cite{champollion-2017} @cite{kennedy-2007} @cite{krifka-1989} @cite{krifka-1998} @cite{rouillard-2026}
 
 Cross-pillar connection between `Core/Mereology.lean` (CUM/QUA/ExtMeasure)
 and `Core/Scale.lean` (ComparativeScale/Boundedness/MIP/degree properties).
@@ -35,14 +36,6 @@ of gradual change). This is captured by `MeasureProportional` (§9) and
 `LaxMeasureSquare` (§10) below. The SINC-specific extension `GRADSquare`
 lives in `Events/Krifka1998.lean`.
 
-## References
-
-- Krifka, M. (1989). Nominal reference, temporal constitution and
-  quantification in event semantics.
-- Krifka, M. (1998). The origins of telicity.
-- Kennedy, C. (2007). Vagueness and grammar.
-- Rouillard, V. (2026). Maximal informativity and temporal in-adverbials.
-- Champollion, L. (2017). *Parts of a Whole*. OUP.
 -/
 
 namespace Mereology

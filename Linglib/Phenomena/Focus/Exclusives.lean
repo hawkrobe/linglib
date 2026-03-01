@@ -25,16 +25,6 @@ construal is determined:
 - (37b) Wider construals exist but fail Quality → unexplanatory, minimal sufficiency
 - (37c) Wider construals exist but fail Relevance → unelaboratory
 
-## References
-
-- Deo, A. & Thomas, W. (2025). Addressing the widest answerable question:
-  English "just" as a domain widening strategy.
-- Coppock, E. & Beaver, D. (2014). Principles of the exclusive muddle.
-- Beaver, D. & Clark, B. (2008). Sense and Sensitivity.
-- Wiegand, M. (2018). Exclusive morphemes.
-- Beltrama, A. (2021). Just perfect, These people are amazing.
-- Warstadt, A. (2020). On the role of discourse particles.
-- Thomas, W. & Deo, A. (2020). Approximative uses of just.
 -/
 
 namespace Phenomena.Focus.Exclusives

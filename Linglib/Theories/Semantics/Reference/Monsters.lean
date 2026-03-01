@@ -3,6 +3,7 @@ import Linglib.Theories.Semantics.Reference.Kaplan
 
 /-!
 # Kaplan's Anti-Monster Thesis (Tower Formulation)
+@cite{anand-nevins-2004} @cite{kaplan-1989} @cite{schlenker-2003}
 
 Kaplan (1989) "Demonstratives" VIII: the claim that natural language
 operators are *content operators* (shifting circumstances of evaluation)
@@ -24,12 +25,6 @@ are languages where attitude verbs push non-identity shifts (e.g.,
 - `sayM`: Schlenker's monster operator, rewritten via tower push + fold
 - Bridge: old `IsMonster` concept <-> `IsTowerMonster`
 
-## References
-
-- Kaplan, D. (1989). Demonstratives, VIII.
-- Schlenker, P. (2003). A Plea for Monsters. Linguistics & Philosophy.
-- Anand, P. & Nevins, A. (2004). Shifty Operators in Changing Contexts.
-  SALT XIV.
 -/
 
 namespace Semantics.Reference.Monsters

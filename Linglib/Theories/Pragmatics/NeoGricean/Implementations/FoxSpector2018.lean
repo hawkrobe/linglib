@@ -43,13 +43,6 @@ Section 6: Relationship to Focus
 - Economy condition derives Singh's Asymmetry
 - Economy condition interacts with Focus (AF, MF)
 
-## References
-
-- Fox & Spector (2018). Economy and embedded exhaustification. NLS 26:1-50.
-- Fox (2007). Free choice and the theory of scalar implicatures.
-- Hurford (1974). Exclusive or inclusive disjunction.
-- Singh (2008). On the interpretation of disjunction.
-- Spector (2016). Comparing exhaustivity operators. S&P 9(11):1-33.
 -/
 
 import Linglib.Theories.Pragmatics.NeoGricean.Exhaustivity.Basic

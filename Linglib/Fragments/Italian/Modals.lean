@@ -4,9 +4,7 @@ import Linglib.Theories.Semantics.Modality.EventRelativity
 /-!
 # Italian Modal Auxiliaries
 
-@cite{hacquard-2010}
-
-Italian modal auxiliaries *dovere* ('must') and *potere* ('can'), with
+@cite{hacquard-2010} @cite{cinque-2004} @cite{hacquard-2006} @cite{rizzi-1978}Italian modal auxiliaries *dovere* ('must') and *potere* ('can'), with
 their behavior under restructuring. These are the primary empirical
 evidence for Hacquard's (2006, 2010) event-relative analysis: when
 Italian modals appear in restructuring configurations (syntactically
@@ -28,15 +26,6 @@ the modal. Diagnostics:
 When restructured (low): only root readings (circumstantial, deontic).
 When non-restructured (high): epistemic readings available.
 
-## References
-
-- Hacquard, V. (2006). Aspects of Modality. MIT dissertation. Ch.2–3.
-- Hacquard, V. (2010). On the event relativity of modal auxiliaries.
-  Natural Language Semantics 18:79–114. §3.
-- Rizzi, L. (1978). A restructuring rule in Italian syntax. In Keyser (ed.),
-  Recent Transformational Studies in European Languages. MIT Press.
-- Cinque, G. (2004). Restructuring and functional structure. In Belletti (ed.),
-  Structures and Beyond. OUP.
 -/
 
 namespace Fragments.Italian.Modals

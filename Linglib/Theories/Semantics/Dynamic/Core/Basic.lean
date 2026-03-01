@@ -7,10 +7,6 @@ Common types for dynamic semantic theories.
 
 `Possibility`, `InfoState`, `Context`, `subsistsIn`, `supports`
 
-## References
-
-- Heim, I. (1982). The Semantics of Definite and Indefinite Noun Phrases.
-- Groenendijk, J. & Stokhof, M. (1991). Dynamic Predicate Logic. L&P 14:39-100.
 -/
 
 import Mathlib.Data.Set.Basic

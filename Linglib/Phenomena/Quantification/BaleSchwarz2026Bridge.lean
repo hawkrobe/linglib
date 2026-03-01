@@ -4,6 +4,7 @@ import Linglib.Fragments.English.MeasurePhrases
 
 /-!
 # Bale & Schwarz (2026) — Natural Language and External Conventions: Re-examining *per*
+@cite{bale-schwarz-2022} @cite{bale-schwarz-2026} @cite{coppock-2022} @cite{davidson-1979}
 
 Linguistics and Philosophy 49: 133--151
 
@@ -40,15 +41,6 @@ Two tests distinguish compositional from non-compositional *per*-phrases:
   blocked for quotient uses ("#Per milliliter, the density of that sample
   is thirteen grams"), because math speak lacks internal syntactic structure.
 
-## References
-
-- Bale, A. & Schwarz, B. (2026). Natural language and external conventions:
-  re-examining *per*. *Linguistics and Philosophy* 49, 133--151.
-- Bale, A. & Schwarz, B. (2022). Measurements from "per" without complex
-  dimensions. *SALT 32*, 543--560.
-- Coppock, E. (2022). Division vs. distributivity: Is *per* just like *each*?
-  *SALT 32*, 384--403.
-- Davidson, D. (1979). Quotation. *Theory and Decision* 11(1), 27--40.
 -/
 
 namespace Phenomena.Quantification.BaleSchwarz2026

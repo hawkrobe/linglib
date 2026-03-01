@@ -11,11 +11,6 @@ These types are used across multiple theories:
 - Information Structure (Kratzer & Selkirk 2020): spellout constraints
 - Focus theory: prosodic realization of focus/givenness
 
-## References
-
-- Pierrehumbert, J. (1980). The Phonology and Phonetics of English Intonation.
-- Beckman, M. & Pierrehumbert, J. (1986). Intonational Structure in Japanese and English.
-- Selkirk, E. (2009, 2011). The prosodic hierarchy.
 -/
 
 namespace Core.Prosody

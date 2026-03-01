@@ -8,9 +8,7 @@ import Linglib.Theories.Semantics.Lexical.Verb.Aspect
 
 /-!
 # Iatridou (2000): The Grammatical Ingredients of Counterfactuality
-@cite{iatridou-2000}
-
-Formalizes the core contribution of Iatridou (2000): the **Exclusion Feature**
+@cite{iatridou-2000} @cite{condoravdi-2002} @cite{deal-2020}Formalizes the core contribution of Iatridou (2000): the **Exclusion Feature**
 (ExclF), a single semantic predicate that unifies temporal past and
 counterfactual past. Past morphology signals exclusion of the topic situation's
 coordinate from the speaker's coordinate — on the temporal dimension for genuine
@@ -41,12 +39,6 @@ ExclF stress-tests the tower because:
 - `temporalShift` produces temporal ExclF when `newTime ≠ origin.time`
 - PastCF requires tower depth ≥ 2 (two mood-labeled shifts)
 
-## References
-
-- Iatridou, S. (2000). The grammatical ingredients of counterfactuality.
-  *Linguistic Inquiry* 31(2): 231–270.
-- Deal, A. R. (2020). Counterfactuals and the Upper Limit Constraint.
-- Condoravdi, M. (2002). Temporal interpretation of modals.
 -/
 
 namespace Semantics.Conditionals.Iatridou

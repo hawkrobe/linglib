@@ -19,12 +19,6 @@ Different embedding operators show different patterns for:
 
 The `no` vs `not every` asymmetry is particularly important.
 
-## References
-
-- Križ & Chemla (2015): Experimental investigation
-- Bar-Lev (2021a): Exhaustification approach predictions
-- Augurzky et al. (2023): every/no/not every asymmetry
-- Križ (2015): Trivalent projection
 -/
 
 namespace Phenomena.Imprecision.Projection

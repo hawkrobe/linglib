@@ -6,6 +6,7 @@ import Linglib.Theories.Semantics.Lexical.Verb.ViewpointAspect
 
 /-!
 # Ability Modals and Actuality Inferences (Nadathur 2023, Chapter 1)
+@cite{hacquard-2006} @cite{kratzer-1981} @cite{nadathur-2023}
 
 Bridges **causality**, **modality**, and **aspect** to derive actuality
 inferences for ability modals cross-linguistically.
@@ -33,11 +34,6 @@ does not, and similarly for Hindi *saknaa*, French *pouvoir*, etc.
 | `Modal.Kratzer` | this file | `toCircumstantialBase` |
 | `ViewpointAspect` | this file | `toKleinViewpoint` |
 
-## References
-
-- Nadathur, P. (2023). Actuality Inferences: Causality, Aspect, and Modality.
-- Kratzer, A. (1981). The Notional Category of Modality.
-- Hacquard, V. (2006). Aspects of Modality. MIT dissertation.
 -/
 
 namespace Nadathur2023.Ability

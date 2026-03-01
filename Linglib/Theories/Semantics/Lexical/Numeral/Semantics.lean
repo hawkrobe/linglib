@@ -4,6 +4,7 @@ import Linglib.Theories.Semantics.Lexical.Determiner.Quantifier
 
 /-!
 # Unified Numeral Semantics
+@cite{blok-2015} @cite{goodman-stuhlmuller-2013} @cite{horn-1972} @cite{kennedy-2015}
 
 Consolidates numeral theory infrastructure into a single module. All numeral meanings
 (bare + modified) flow through `maxMeaning`. The only theory disagreement is the
@@ -32,13 +33,6 @@ Modified numerals are theory-independent — everyone agrees "more than 3" means
 12. Aliases
 13. Verification
 
-## References
-
-- Horn, L. (1972). On the Semantic Properties of Logical Operators in English.
-- Kennedy, C. (2015). A "de-Fregean" semantics for modified and unmodified numerals.
-  *Semantics & Pragmatics* 8(10), 1–44.
-- Goodman & Stuhlmüller (2013). Knowledge and Implicature.
-- Blok, D. (2015). The semantics and pragmatics of directional numeral modifiers.
 -/
 
 namespace Semantics.Lexical.Numeral

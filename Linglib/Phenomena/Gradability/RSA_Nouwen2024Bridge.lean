@@ -6,6 +6,7 @@ import Mathlib.Tactic.Ring
 
 /-!
 # Bridge: Nouwen (2024) RSA Model → Gradability Phenomena
+@cite{lassiter-goodman-2017} @cite{nouwen-2024}
 
 "The semantics and probabilistic pragmatics of deadjectival intensifiers"
 Linguistics and Philosophy.
@@ -33,11 +34,6 @@ has been removed. Domain types, meaning functions, evaluative measures,
 sequential Bayesian update structure, and algebraic theorems are preserved.
 RSA computation stubs remain with `sorry` for future reimplementation.
 
-## References
-
-- Nouwen, R. (2024). The semantics and probabilistic pragmatics of
-  deadjectival intensifiers. Linguistics and Philosophy.
-- Lassiter, D. & Goodman, N. (2017). Adjectival vagueness.
 -/
 
 namespace RSA.Nouwen2024

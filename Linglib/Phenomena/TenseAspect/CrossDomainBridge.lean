@@ -2,8 +2,8 @@ import Linglib.Theories.Semantics.Lexical.Verb.Aspect
 import Linglib.Fragments.Mandarin.AspectComparison
 
 /-!
-# Cross-Domain Bridge: VendlerClass ↔ Mandarin Particles (Zhao 2026)
-@cite{zhao-2026}
+# Cross-Domain Bridge: VendlerClass ↔ Mandarin Particles (Zhao 2025)
+@cite{zhao-2025}
 
 Bridges VendlerClass ATOM-DIST predictions (from Theories/) to the
 Mandarin cross-domain particle entries (from Fragments/).
@@ -13,10 +13,6 @@ etc.) lives in `Theories/Semantics/Lexical/Verb/Aspect.lean` alongside
 the other VendlerClass feature functions. This file connects those
 predictions to the Fragment-level particle licensing.
 
-## References
-
-- Zhao, Z. (2026). Cross-Linguistic and Cross-Domain Parallels in the
-  Semantics of Degree and Time. MIT dissertation, Ch. 5–6.
 -/
 
 namespace Phenomena.TenseAspect.CrossDomainBridge

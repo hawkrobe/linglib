@@ -3,6 +3,7 @@ import Linglib.Fragments.Chuj.VerbBuilding
 
 /-!
 # Coon 2019 — Bridge Theorems
+@cite{coon-2019}
 
 Connects the Chuj fragment (`Fragments/Chuj/VerbBuilding.lean`) to the
 empirical data (`Phenomena/Causatives/Studies/Coon2019/Data.lean`).
@@ -39,9 +40,6 @@ Theories/Morphology/RootTypology.lean
 Fragments/Chuj/VerbBuilding.lean  ←→  THIS BRIDGE  ←→  Data.lean
 ```
 
-## References
-
-- Coon, J. (2019). *Journal of Linguistics* 55(1): 35–81.
 -/
 
 namespace Phenomena.Causatives.Studies.Coon2019.Bridge

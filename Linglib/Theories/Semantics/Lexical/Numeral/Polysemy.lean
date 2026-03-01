@@ -4,6 +4,7 @@ import Linglib.Theories.Semantics.Lexical.Noun.Kind.Chierchia1998
 
 /-!
 # Number Word Polysemy (Snyder 2026)
+@cite{mendia-2020} @cite{snyder-2026}
 
 Three polymorphic analyses of number words and their type-shifting maps.
 
@@ -26,11 +27,6 @@ Partee type-shifting.
                            (specificational)      (quantificational)
 ```
 
-## References
-
-- Snyder, E. (2026). Numbers as kinds. *L&P* 49, 57–100.
-- Partee, B. (1986/1987). Noun Phrase Interpretation and Type-shifting.
-- Mendia, J. A. (2020). One more comparative: a novel argument for degree abstraction.
 -/
 
 namespace Semantics.Lexical.Numeral.Polysemy

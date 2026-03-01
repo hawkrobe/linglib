@@ -21,9 +21,6 @@ Intonation selects among these:
 - Boundary tones (L, LH%, LL%): Mark prosodic phrase edges
 - Information feature (theta/rho): Projects theme/rheme through derivation
 
-## Reference
-
-Steedman (2000). The Syntactic Process, Chapter 5: Structure and Intonation.
 -/
 
 import Linglib.Theories.Syntax.CCG.Core.Basic

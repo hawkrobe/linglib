@@ -7,6 +7,7 @@ import Linglib.Theories.Pragmatics.Assertion.Lauer
 
 /-!
 # Assertion Theories: Cross-Theory Comparison
+@cite{brandom-1994} @cite{farkas-bruce-2010} @cite{gunlogson-2001} @cite{krifka-2015} @cite{lauer-2013} @cite{stalnaker-1978}
 
 Compares six theories of assertion along structural dimensions:
 Stalnaker, Farkas & Bruce, Krifka, Brandom, Gunlogson, and Lauer.
@@ -34,14 +35,6 @@ Stalnaker, Farkas & Bruce, Krifka, Brandom, Gunlogson, and Lauer.
 5. **Lying**: Krifka and Brandom handle it (commitment without belief);
    Stalnaker struggles (assertion = belief update).
 
-## References
-
-- Stalnaker, R. (1978). Assertion. *Syntax and Semantics* 9.
-- Farkas, D. & Bruce, K. (2010). On Reacting to Assertions. *JoS* 27(1).
-- Krifka, M. (2015). Bias in Commitment Space Semantics. *L&P* 38.
-- Brandom, R. (1994). *Making It Explicit*. Harvard UP.
-- Gunlogson, C. (2001). *True to Form*. PhD dissertation.
-- Lauer, S. (2013). *Towards a Dynamic Pragmatics*. PhD dissertation.
 -/
 
 namespace Comparisons.AssertionTheories

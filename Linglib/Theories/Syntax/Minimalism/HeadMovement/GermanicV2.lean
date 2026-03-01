@@ -31,14 +31,6 @@ From Harizanov (Section 5.1.2, p.35-36):
 - In V2 clauses, V raises DIRECTLY to C
 - Therefore V skips T, violating the HMC
 
-## References
-
-- Harizanov, B. "Syntactic Head Movement"
-  - V2 data: Section 5.1.1, pp.31-35, example (35)
-  - HMC violation: Section 5.1.2, pp.35-36
-  - Complex LIs: Section 5.2, pp.37-41
-- Vikner (1995:32, (11d)): Original German data
-- den Besten (1977/1983)
 -/
 
 import Linglib.Theories.Syntax.Minimalism.Formal.Constraints.HMC

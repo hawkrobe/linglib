@@ -5,6 +5,7 @@ import Linglib.Phenomena.Case.Studies.Aissen2003
 
 /-!
 # Bridge: Dependent Case → DOM → OT Factorial Typology @cite{aissen-2003}
+@cite{baker-2015} @cite{marantz-1991}
 
 Connects the three layers of the case pipeline end-to-end:
 
@@ -32,11 +33,6 @@ And the OT analysis guarantees that overt marking is monotone in prominence
      (all objects)              (some objects overt)     patterns possible
 ```
 
-## References
-
-- Marantz, A. (1991). Case and licensing. ESCOL 1991: 234–253.
-- Baker, M. (2015). Case: Its Principles and Its Parameters. CUP.
-- Aissen, J. (2003). Differential Object Marking. NLLT 21(3): 435–483.
 -/
 
 namespace Phenomena.Case.Bridge.DependentCaseDOM

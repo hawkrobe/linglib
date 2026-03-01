@@ -23,9 +23,6 @@ Latin syncretism patterns divide into two groups (Blake 1994, p. 22):
 - NOM + ACC: neuter nouns (2nd, 3rd, 4th declension)
 - DAT + ABL: plural across all declensions
 
-## References
-
-- Blake, B. J. (1994). *Case*. Cambridge University Press.
 -/
 
 namespace Fragments.Latin.Case

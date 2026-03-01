@@ -3,6 +3,7 @@ import Linglib.Theories.Pragmatics.DecisionTheoretic.But
 
 /-!
 # Decision-Theoretic Semantics: "Even" (Merin 1999 §5)
+@cite{anscombre-1973} @cite{francescotti-1995} @cite{kay-1990} @cite{merin-1999}
 
 Merin's DTS account of the scalar particle "even". The felicity of
 "A CONJ even(B)" requires B to be *more* relevant than A, resolving the
@@ -28,13 +29,6 @@ Merin shows that relevance subsumes all three prior analyses:
 The DTS account derives all three as special cases of "B is more
 relevant than A to the current issue."
 
-## References
-
-- Merin, A. (1999). Information, relevance, and social decisionmaking.
-  §5: Even, also, and presupposition.
-- Anscombre, J.-C. (1973). Même le roi de France est sage.
-- Kay, P. (1990). Even. L&IC 8.
-- Francescotti, R. (1995). Even: The conventional implicature approach reconsidered.
 -/
 
 namespace Theories.DTS.Even

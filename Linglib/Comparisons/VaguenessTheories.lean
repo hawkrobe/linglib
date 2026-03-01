@@ -1,5 +1,6 @@
 /-!
 # Vagueness Theory Comparison
+@cite{keefe-2000} @cite{williamson-1994}
 
 Theory-comparative infrastructure for vagueness: characterizes what each major
 theoretical position (epistemicism, supervaluationism, degree theory, contextualism)
@@ -8,10 +9,6 @@ predicts about borderline cases, sorites, higher-order vagueness, and classical 
 This is cross-theory comparison, not empirical data — hence lives in `Comparisons/`
 rather than `Phenomena/`.
 
-## References
-
-- Keefe, R. (2000). Theories of Vagueness.
-- Williamson, T. (1994). Vagueness.
 -/
 
 namespace Comparisons.VaguenessTheories

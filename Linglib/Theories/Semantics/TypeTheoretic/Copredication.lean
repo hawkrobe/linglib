@@ -2,6 +2,7 @@ import Linglib.Theories.Semantics.TypeTheoretic.Core
 
 /-!
 # Copredication and Dot Types @cite{chatzikyriakidis-etal-2025}
+@cite{asher-2011} @cite{cooper-2023} @cite{gotham-2017} @cite{pustejovsky-1995}
 
 Polysemous nouns like "book" denote objects with multiple aspects
 (physical object AND informational content). Copredication applies
@@ -22,15 +23,6 @@ We use `Setoid` directly (passed as a value, not via instance
 resolution) since a single type may need multiple individuation
 criteria (physical vs. informational individuation of books).
 
-## References
-
-- Chatzikyriakidis, S., Cooper, R., Gregoromichelaki, E. & Sutton, P. (2025).
-  Types and the Structure of Meaning. Cambridge Elements in Semantics.
-- Pustejovsky, J. (1995). The Generative Lexicon. MIT Press.
-- Asher, N. (2011). Lexical Meaning in Context. CUP.
-- Gotham, M. (2017). Composing Criteria of Individuation in Copredication.
-  Journal of Semantics 34(2): 331–371.
-- Cooper, R. (2023). From Perception to Communication. OUP.
 -/
 
 namespace Semantics.TypeTheoretic

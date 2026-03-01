@@ -4,6 +4,7 @@ import Linglib.Core.Case.Syncretism
 
 /-!
 # Tamil Case Inventory
+@cite{blake-1994}
 
 Tamil (Dravidian) has **8 cases** with agglutinative suffixes:
 NOM (∅), ACC (-ai), DAT (-ukku), GEN (-in / -uṭaiya), LOC (-il),
@@ -13,9 +14,6 @@ The instrumental and comitative are sometimes syncretic (-ōṭu covers
 both functions), a pattern documented cross-linguistically (Blake 1994;
 WALS Ch. 52).
 
-## References
-
-- Blake, B. J. (1994). *Case*. Cambridge University Press.
 -/
 
 namespace Fragments.Tamil.Case

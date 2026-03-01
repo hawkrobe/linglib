@@ -1,17 +1,12 @@
 /-!
 # Felicity Condition
+@cite{fox-hackl-2006} @cite{katzir-singh-2015} @cite{magri-2009} @cite{spector-2014}
 
 Abstract interface for felicity/oddness predictions, following the
 `ImplicatureTheory` pattern. Provides a unified type for comparing
 K&S (2015), Magri (2009), Spector (2014), Fox & Hackl (2006), and
 future felicity theories.
 
-## References
-
-- Katzir, R. & Singh, R. (2015). Economy of structure and information.
-- Magri, G. (2009). Individual-level predicates and mandatory scalar implicatures.
-- Spector, B. (2014). Scalar implicatures, blindness and common knowledge.
-- Fox, D. & Hackl, M. (2006). The universal density of measurement.
 -/
 
 namespace Interfaces

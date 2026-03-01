@@ -58,11 +58,6 @@ The question: How do speakers and listeners allocate perspective-taking effort?
 - Correlation: ρ = -0.81, 95% CI = [-0.9, -0.7]
 - More informative utterances → fewer errors
 
-## Reference
-
-Hawkins, R. D., Gweon, H., & Goodman, N. D. (2021). The Division of Labor in
-Communication: Speakers Help Listeners Account for Asymmetries in Visual
-Perspective. Cognitive Science, 45, e12926.
 -/
 
 namespace Phenomena.Reference.Studies.HawkinsGweonGoodman2021

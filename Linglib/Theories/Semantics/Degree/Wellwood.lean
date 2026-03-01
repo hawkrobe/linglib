@@ -5,9 +5,7 @@ import Linglib.Theories.Semantics.Degree.Comparative
 /-!
 # Compositional Comparative Derivation (Wellwood 2015, §2–3)
 
-@cite{wellwood-2015}
-
-Wellwood (2015) argues that comparatives across nominal, verbal, and
+@cite{wellwood-2015} @cite{cariani-santorio-wellwood-2024} @cite{schwarzschild-2008}Wellwood (2015) argues that comparatives across nominal, verbal, and
 adjectival domains share a uniform DegP pipeline yielding truth conditions
 of the form:
 
@@ -32,12 +30,6 @@ dimension type tracks measured domain (§3.4):
 - State domains (linear orders) → dimensionally restricted → unique dimension
 - Entity/event domains (partial orders) → not restricted → multiple dimensions
 
-## References
-
-- Wellwood, A. (2015). On the semantics of comparison across categories.
-  Linguistics and Philosophy 38(1): 67-101.
-- Schwarzschild, R. (2008). The semantics of comparatives.
-- Cariani, F., Santorio, P. & Wellwood, A. (2024). Confidence reports.
 -/
 
 namespace Semantics.Degree.Wellwood

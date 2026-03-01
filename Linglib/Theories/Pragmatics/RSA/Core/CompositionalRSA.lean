@@ -36,13 +36,6 @@ not the structural level.
 4. `composed_local_equals_localExh`: Composed local EXH = local reading
 5. `lu_cannot_express_local`: LU is scope-blind like standard RSA
 
-## References
-
-- Bergen, Levy & Goodman (2016). Pragmatic reasoning through semantic inference.
-- Potts, Lassiter, Levy & Frank (2016). Embedded implicatures as pragmatic inferences.
-- Chierchia, Fox & Spector (2012). Scalar implicature as a grammatical phenomenon.
-- Fox (2007). Free choice and the theory of scalar implicatures.
-- Franke (2011). Quantity implicatures, exhaustive interpretation.
 -/
 
 import Linglib.Theories.Pragmatics.NeoGricean.Exhaustivity.Basic

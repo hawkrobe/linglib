@@ -2,9 +2,7 @@ import Linglib.Core.Discourse.AtIssueness
 
 /-!
 # Tonhauser, Beaver & Degen (2018): How Projective Is Projective Content?
-@cite{tonhauser-beaver-degen-2018}
-
-Empirical data from "How projective is projective content? Gradience in
+@cite{tonhauser-beaver-degen-2018} @cite{potts-2005} @cite{simons-roberts-2010} @cite{tonhauser-beaver-roberts-simons-2013}Empirical data from "How projective is projective content? Gradience in
 projectivity and at-issueness." Journal of Semantics 35(3): 495–542.
 
 ## Key Findings
@@ -48,16 +46,6 @@ The scale is 0–1 (proportion of "yes" responses). The paper measures
 **not-at-issueness** via the "asking whether" diagnostic: higher values
 mean the content is MORE not-at-issue (more backgrounded).
 
-## References
-
-- Tonhauser, J., Beaver, D. I. & Degen, J. (2018). How projective is projective
-  content? Gradience in projectivity and at-issueness. Journal of Semantics
-  35(3): 495–542.
-- Simons, M., Tonhauser, J., Beaver, D. & Roberts, C. (2010). What projects
-  and why. SALT 20.
-- Potts, C. (2005). The Logic of Conventional Implicatures.
-- Tonhauser, J., Beaver, D. I., Roberts, C. & Simons, M. (2013). Toward a
-  taxonomy of projective content. Language 89(1): 66–109.
 -/
 
 namespace Phenomena.Presupposition.Studies.TonhauserBeaverDegen2018

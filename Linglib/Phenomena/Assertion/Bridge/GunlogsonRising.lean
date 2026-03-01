@@ -4,6 +4,7 @@ import Linglib.Theories.Pragmatics.Assertion.Stalnaker
 
 /-!
 # Gunlogson Bridge: Rising Declaratives
+@cite{gunlogson-2001}
 
 Connects Gunlogson's source-marking analysis to the rising declarative data.
 
@@ -18,9 +19,6 @@ to the addressee and invite confirmation or denial.
 | Falling ↓ | `fallingDeclarative` | self-generated |
 | Rising ↑ | `risingDeclarative` | other-generated |
 
-## References
-
-- Gunlogson, C. (2001). *True to Form*. PhD dissertation, UC Santa Cruz.
 -/
 
 namespace Phenomena.Assertion.Bridge.GunlogsonRising

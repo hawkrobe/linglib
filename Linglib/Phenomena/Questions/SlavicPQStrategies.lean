@@ -8,6 +8,7 @@ import Linglib.Fragments.Macedonian.QuestionParticles
 
 /-!
 # Cross-Slavic Polar Question Strategies
+@cite{esipova-romero-2023} @cite{todorovi-2023}
 
 Typology of default (unbiased) polar question strategies across Slavic
 languages, based on Šimík (2024 §4.1). Slavic languages show rich variation
@@ -32,13 +33,6 @@ Fragment entries (Phenomena imports Fragments, not vice versa). This ensures
 single-source-of-truth: changing a particle form in the Fragment automatically
 propagates here.
 
-## References
-
-- Šimík, R. (2024). Polar question semantics and bias: Lessons from Slavic/Czech.
-  In B. Gehrke & R. Šimík (eds.), Topics in the semantics of Slavic languages.
-- Todorović, N. (2023). Serbian polar questions. Glossa.
-- Onoeva, M. & Staňková, A. (to appear). Corpus study of PQ strategies.
-- Esipova, M. & Romero, M. (2023). Russian IntonPQs.
 -/
 
 namespace Phenomena.Questions.SlavicPQStrategies

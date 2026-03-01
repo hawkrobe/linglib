@@ -3,6 +3,7 @@ import Linglib.Core.Logic.SquareOfOpposition
 
 /-!
 # Neg-Raising as O→E Pragmatic Strengthening
+@cite{bartsch-1973} @cite{gajewski-2007} @cite{horn-2001}
 
 Neg-raising is the phenomenon where the negation of an attitude verb is
 interpreted as the attitude applied to the negated complement:
@@ -38,11 +39,6 @@ a gap between ¬Bel(p) and Bel(¬p)) but NOT for `know` (veridical: ¬know(p)
 includes cases where p is false, so strengthening to know(¬p) would require
 ¬p to be true, which is a factual claim the speaker may not intend).
 
-## References
-
-- Horn, L. (2001). A Natural History of Negation. §5.2.
-- Bartsch, R. (1973). "Negative Transportation" gibt es nicht.
-- Gajewski, J. (2007). Neg-raising and polarity.
 -/
 
 namespace Semantics.Attitudes.NegRaising

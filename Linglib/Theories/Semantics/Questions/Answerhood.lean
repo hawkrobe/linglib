@@ -4,11 +4,6 @@ import Linglib.Theories.Semantics.Questions.Hamblin
 /-
 The ANS operator and the answerhood thesis (Groenendijk & Stokhof 1984, Ch. I).
 
-## References
-
-- Groenendijk & Stokhof (1984). Studies on the Semantics of Questions.
-- Karttunen (1977). Syntax and Semantics of Questions.
-- Bennett & Belnap (1990). Conditional Assertion and Restricted Quantification.
 -/
 
 namespace Semantics.Questions.Answerhood

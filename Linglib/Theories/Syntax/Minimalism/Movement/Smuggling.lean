@@ -34,12 +34,6 @@ This connects to the existing `VoiceHead.phaseHead` field:
 Collins (2005, p. 98) makes the same point: "neither the moved PartP nor
 an unaccusative vP are strong phases."
 
-## References
-
-- Collins, C. (2005). A Smuggling Approach to the Passive in English.
-  *Syntax* 8(2): 81–120. @cite{collins-2005}
-- Storment, J. (2026). Quotative inversion as an unaccusativity diagnostic.
-  *Natural Language & Linguistic Theory*. @cite{storment-2026}
 -/
 
 namespace Minimalism

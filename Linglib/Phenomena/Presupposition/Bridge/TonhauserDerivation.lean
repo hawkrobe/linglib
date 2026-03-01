@@ -3,17 +3,13 @@ import Linglib.Phenomena.Presupposition.ProjectiveContent
 
 /-!
 # Bridge: Tonhauser Derivation -> Projective Content Taxonomy
+@cite{schlenker-2009} @cite{tonhauser-beaver-roberts-simons-2013}
 
 Connects Schlenker's local context theory to the empirical taxonomy of
 Tonhauser et al. (2013). Contains trigger classification theorems, the
 four-class taxonomy structure, and the main theorem showing that
 Schlenker derives Tonhauser.
 
-## References
-
-- Tonhauser, Beaver, Roberts & Simons (2013). Toward a Taxonomy of
-  Projective Content. Language 89(1), 66-109.
-- Schlenker (2009). Local Contexts. Semantics & Pragmatics 2:3.
 -/
 
 namespace Phenomena.Presupposition.Bridge.TonhauserDerivation

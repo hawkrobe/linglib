@@ -6,6 +6,7 @@ import Linglib.Core.Context.Shifts
 
 /-!
 # Unified Tense Pronoun Architecture
+@cite{abusch-1997} @cite{heim-kratzer-1998} @cite{kratzer-1998} @cite{partee-1973} @cite{von-stechow-2009}
 
 Abusch's (1997) insight: a tense morpheme is a **temporal pronoun** — a variable
 (Partee 1973) with a presupposed temporal constraint (Prior, reinterpreted) and
@@ -30,13 +31,6 @@ and `Theories/Semantics.Intensional/Attitude/` need the shared infrastructure
 (`GramTense`, `SOTParameter`, `TemporalAssignment`, etc.) without a cross-tree
 import.
 
-## References
-
-- Partee, B. (1973). Some structural analogies between tenses and pronouns.
-- Kratzer, A. (1998). More structural analogies between pronouns and tenses.
-- Ogihara, T. (1989/1996). Tense, Attitudes, and Scope. Kluwer.
-- Abusch, D. (1997). Sequence of tense and temporal de re.
-- Von Stechow, A. (2009). Tenses in compositional semantics.
 -/
 
 namespace Core.Tense

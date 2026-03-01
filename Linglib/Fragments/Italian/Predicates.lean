@@ -21,10 +21,6 @@ Italian *convincere* ('convince') selects two distinct infinitival complements:
 The complement marker (*di* vs *a*) tracks the complement's structural size,
 which determines the rational attitude reading.
 
-## References
-
-- Fusco, A. & Sgrizzi, T. (2025). Belief or Action?
-  Semantic Ambiguity in the Italian Non-finite Domain.
 -/
 
 namespace Fragments.Italian.Predicates

@@ -12,10 +12,6 @@ BUS adds a layer on top of Dynamic Ty2:
 
 Negation swaps dimensions, giving DNE definitionally.
 
-## References
-
-- Elliott (2023). Donkey disjunctions and overlapping updates.
-- Elliott & Sudo (2025). Free choice with anaphora.
 -/
 
 import Linglib.Theories.Semantics.Dynamic.Core.DynamicTy2

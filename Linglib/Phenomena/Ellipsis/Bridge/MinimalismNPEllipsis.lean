@@ -4,6 +4,7 @@ import Linglib.Theories.Syntax.Minimalism.Formal.ExtendedProjection.Properties
 
 /-!
 # Bridge: Minimalist Nominal Spine → NP-Ellipsis @cite{saab-2026}
+@cite{lobeck-1995} @cite{ritter-1991}
 
 Connects the Minimalist nominal extended projection (N → n → Q → Num → D)
 to the NP-ellipsis data in Spanish binominals.
@@ -17,12 +18,6 @@ to the NP-ellipsis data in Spanish binominals.
 3. Pseudo-partitive and quantificational binominals have Num[E];
    qualitative binominals lack it due to their EquP structure.
 
-## References
-
-- Saab, A. (2026). NP-Ellipsis Patterns in Spanish Binominals.
-- Ritter, E. (1991). Two Functional Categories in Noun Phrases.
-- Lobeck, A. (1995). Ellipsis: Functional Heads, Licensing, and
-  Identification.
 -/
 
 namespace Phenomena.Ellipsis.Bridge.MinimalismNPEllipsis

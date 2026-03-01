@@ -27,12 +27,6 @@ The grounding theorem `naiveListener_eq_L0` verifies that this reuse
 is semantically correct: the SMG L₀ definition produces the same
 results as running Franke's L₀ on the converted game.
 
-## References
-
-* Burnett, H. (2019). Signalling Games, Sociolinguistic Variation,
-  and the Construction of Style. *Linguistics & Philosophy* 42: 419–450.
-* Franke, M. (2011). Quantity implicatures, exhaustive interpretation,
-  and rational conversation. *Semantics & Pragmatics* 4(1): 1–82.
 -/
 
 namespace Sociolinguistics.SMG

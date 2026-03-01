@@ -4,6 +4,7 @@ import Linglib.Theories.Syntax.Minimalism.Core.Voice
 
 /-!
 # Categorizing Heads (Distributed Morphology) @cite{harley-2014}
+@cite{acquaviva-2008} @cite{embick-2004} @cite{marantz-1997} @cite{pfau-2000}
 
 Harley (2014) "On the identity of roots" addresses three questions about
 roots in DM:
@@ -32,17 +33,6 @@ roots in DM:
 This module formalizes the categorization layer and its relationship to Voice.
 List 2/3 architecture is left for future work.
 
-## References
-
-- Harley, H. (2014). On the identity of roots. *Theoretical Linguistics* 40,
-  225–276.
-- Marantz, A. (1997). No escape from syntax. U. Penn WPL 4(2), 201–225.
-- Embick, D. (2004). On the structure of resultative participles in English.
-  *Linguistic Inquiry* 35, 355–392.
-- Pfau, R. (2000). *Features and categories in language production*. PhD,
-  Goethe-Universität Frankfurt.
-- Acquaviva, P. (2008). Roots and lexicality in Distributed Morphology.
-  LingBuzz/000654.
 -/
 
 namespace Morphology.DM

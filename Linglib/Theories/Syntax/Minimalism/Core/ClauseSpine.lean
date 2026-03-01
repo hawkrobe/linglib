@@ -2,6 +2,7 @@ import Linglib.Theories.Syntax.Minimalism.Formal.ExtendedProjection.Basic
 
 /-!
 # Clause Spine: Fine-Grained Clause Size
+@cite{elkins-imanishi-coon-2026} @cite{grimshaw-2005} @cite{wurmbrand-2014}
 
 `ComplementSize` (ExtendedProjection/Basic.lean) classifies clausal complements
 by their highest functional head, which works well for tense-Agree transparency
@@ -12,12 +13,6 @@ distinction: =(y)a' appears when Voice⁰ is projected but not when only Appl⁰
 `ClauseSpine` records the full list of projected heads, enabling per-head
 projection queries while remaining backward-compatible with `ComplementSize`.
 
-## References
-
-- Elkins, N., Y. Imanishi & J. Coon (2026). Wh-movement and oblique extraction
-  in SJO Mam.
-- Wurmbrand, S. (2014). Restructuring across the world.
-- Grimshaw, J. (2005). Words and Structure.
 -/
 
 namespace Minimalism

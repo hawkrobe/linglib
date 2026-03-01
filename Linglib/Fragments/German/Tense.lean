@@ -2,6 +2,7 @@ import Linglib.Theories.Semantics.Tense.Kratzer
 
 /-!
 # German Tense Fragment (Kratzer 1998)
+@cite{heim-kratzer-1998} @cite{kratzer-1998}
 
 German tense paradigm entries following Kratzer's (1998) decomposition.
 The key contrast with English: German Preterit is a genuine PAST pronoun
@@ -21,10 +22,6 @@ The present perfect (Perfekt) has replaced the Preterit in spoken German
 for out-of-the-blue past reference, matching the prediction: Perfekt
 has a PRESENT tense head (indexical-compatible).
 
-## References
-
-- Kratzer, A. (1998). More structural analogies between pronouns and tenses.
-  *SALT VIII*, 92-110.
 -/
 
 namespace Fragments.German.Tense

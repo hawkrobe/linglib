@@ -3,6 +3,7 @@ import Linglib.Phenomena.Entailment.Basic
 
 /-!
 # Bridge: Compositional Truth Conditions → Entailment Data
+@cite{montague-1973}
 
 Connects Montague compositional semantics derivations to the empirical
 truth-condition judgments in `Phenomena.Entailment.Basic`.
@@ -10,9 +11,6 @@ truth-condition judgments in `Phenomena.Entailment.Basic`.
 Each bridge theorem verifies that the compositional derivation matches
 the empirical judgment for a specific sentence.
 
-## References
-
-- Montague (1973). The Proper Treatment of Quantification.
 -/
 
 

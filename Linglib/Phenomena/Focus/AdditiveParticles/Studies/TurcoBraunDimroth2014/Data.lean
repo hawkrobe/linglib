@@ -4,6 +4,7 @@ import Linglib.Fragments.German.PolarityMarking
 
 /-!
 # Turco, Braun & Dimroth (2014) — Production Data
+@cite{turco-braun-dimroth-2014}
 
 Empirical data from Turco, Braun & Dimroth (2014), who compare how Dutch and
 German speakers produce polarity-switch utterances (negation → affirmation)
@@ -24,10 +25,6 @@ in contrast vs. correction contexts.
 - Figures 2 & 6 (production strategy distributions)
 - Table/statistics for German VF pitch range by context
 
-## References
-
-- Turco, G., Braun, B. & Dimroth, C. (2014). How Dutch and German speakers
-  produce and realize focus, contrast and correction. *JASA* 136(3), 1400–1414.
 -/
 
 namespace Phenomena.Focus.AdditiveParticles.Studies.TurcoBraunDimroth2014

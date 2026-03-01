@@ -4,6 +4,7 @@ import Linglib.Fragments.Chuj.VerbBuilding
 
 /-!
 # Bridge: Root Typology Theory ↔ BeaversEtAl2021 Empirical Data
+@cite{coon-2019}
 
 Connects the theory-side predictions of `Theories/Morphology/RootTypology.lean`
 (Beavers et al. 2021 formalization) to the empirical data in
@@ -42,10 +43,6 @@ Fragments/Chuj/VerbBuilding.lean     THIS BRIDGE FILE
     └──────────────────────────────→ Phenomena/Causatives/Studies/BeaversEtAl2021.lean
 ```
 
-## References
-
-- Beavers et al. (2021). Language 97(3), 439–484.
-- Coon, J. (2019). Journal of Linguistics 55(1), 35–81.
 -/
 
 namespace Phenomena.Causatives.Bridge.RootTypology

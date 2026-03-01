@@ -7,10 +7,6 @@ Theory-neutral empirical data on confidence reports from CSW (2024).
 These are judgments and entailment patterns that any theory of gradable
 attitude adjectives should account for.
 
-## References
-
-- Cariani, F., Santorio, P. & Wellwood, A. (2024). Confidence reports.
-  Semantics & Pragmatics 17(14): 1-40.
 -/
 
 namespace Phenomena.Gradability.CarianiSantorioWellwood2024

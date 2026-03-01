@@ -36,10 +36,6 @@ Level 2 via `eventDenotation` (EventBridge.lean).
 but the converse fails: Anscombe allows partial overlap of runtimes,
 while O&ST requires entire-runtime precedence (τ-precedence).
 
-## References
-
-- Ogihara, T. & Steinert-Threlkeld, S. (2024). An interval-based
-  semantics for *before* and *after*.
 -/
 
 namespace Semantics.Tense.TemporalConnectives

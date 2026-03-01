@@ -28,10 +28,6 @@ Polarity stress targets truth/polarity rather than content alternatives.
 - `Basic.lean` - General focus phenomena (only, even, contrast)
 - `Questions/NegativeQuestions.lean` - Negative question interpretation
 
-## References
-
-- Höhle, T. (1992). Über Verum-Fokus im Deutschen.
-- Romero, M. & Han, C.-H. (2004). On Negative Yes/No Questions.
 -/
 
 import Linglib.Core.Lexical.Word

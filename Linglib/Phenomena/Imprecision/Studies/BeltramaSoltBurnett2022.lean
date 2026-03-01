@@ -45,14 +45,6 @@ tolerance modifier:
   50 → .approximate
 - `Fragments.English.NumeralModifiers.about`: tolerance modifier
 
-## References
-
-* Beltrama, A., Solt, S. & Burnett, H. (2022). Context, precision, and
-  social perception. *Language in Society* 52(5): 805–835.
-* Campbell-Kibler, K. (2011). Sociolinguistic variables and perception.
-  *Language and Linguistics Compass* 5(8): 1–14.
-* Fiske, S. T., Cuddy, A. J. C. & Glick, P. (2007). Universal dimensions
-  of social cognition: Warmth and competence. *TICS* 11(2): 77–83.
 -/
 
 namespace Phenomena.Imprecision.Studies.BeltramaSoltBurnett2022

@@ -14,12 +14,6 @@ to existing linglib infrastructure:
 4. ComplementType ↔ NoonanCompType — map English-specific to typological categories
 5. VerbEntry → MoodSelector — derive mood selection from verb features
 
-## References
-
-- Noonan, M. (2007). Complementation. In T. Shopen (ed.), Language Typology
-  and Syntactic Description, vol. 2, 2nd ed. Cambridge University Press.
-- Dayal, V. (2025). The Interrogative Left Periphery.
-- Mendes, A. (2025). Indefiniteness in future reference.
 -/
 
 namespace Phenomena.Complementation.Bridge

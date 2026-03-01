@@ -5,9 +5,7 @@ import Linglib.Core.Order.Normality
 /-!
 # Belief Revision and Preferential Reasoning
 
-@cite{halpern-2003}
-
-Halpern (2003, Ch. 8) connects three frameworks — default reasoning
+@cite{halpern-2003} @cite{alchourrn-makinson-1985} @cite{kraus-magidor-1990}Halpern (2003, Ch. 8) connects three frameworks — default reasoning
 (System P), AGM belief revision, and conditional plausibility measures —
 showing they are algebraically equivalent. This file formalizes:
 
@@ -30,13 +28,6 @@ Conditional plausibility   (EpistemicScale/Conditional.lean)
 AGM revision operator      (this file: K*1–K*5)
 ```
 
-## References
-
-- Alchourrón, C., Gärdenfors, P. & Makinson, D. (1985). On the Logic
-  of Theory Change. J. Symbolic Logic 50(2): 510–530.
-- Kraus, S., Lehmann, D. & Magidor, M. (1990). Nonmonotonic Reasoning,
-  Preferential Models and Cumulative Logics. Artificial Intelligence 44: 167–207.
-- Halpern, J. (2003). Reasoning about Uncertainty. MIT Press. Ch. 8.
 -/
 
 namespace Core.Logic.BeliefRevision

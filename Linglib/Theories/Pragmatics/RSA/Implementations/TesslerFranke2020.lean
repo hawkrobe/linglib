@@ -25,10 +25,6 @@ We use 5 degrees with fixed thresholds:
 - theta_pos = 3 (threshold for "happy")
 - Gap region: degrees 2-3
 
-## References
-
-- Tessler & Franke (2020). Not unreasonable: Why two negatives don't make a positive.
-- Lassiter & Goodman (2017). Adjectival vagueness in a Bayesian model.
 -/
 
 import Linglib.Theories.Semantics.Lexical.Adjective.Theory

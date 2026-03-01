@@ -60,11 +60,6 @@ treatment would compute channel capacity:
 C = 1 - H(ε)  -- for binary symmetric channel with error rate ε
 ```
 
-## References
-
-- Bergen & Goodman (2015). The Strategic Use of Noise.
-- Degen et al. (2020). When redundancy is useful.
-- Kursat & Degen (2021). Perceptual difficulty differences.
 -/
 
 import Mathlib.Data.Rat.Defs

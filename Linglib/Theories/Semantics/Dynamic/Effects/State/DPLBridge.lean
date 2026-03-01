@@ -5,10 +5,6 @@ DPL embeds directly into Dynamic Ty2 with S = Nat → E.
 DPL assignments ARE Dynamic Ty2 assignments.
 DPL relations ARE DRS meanings.
 
-## References
-
-- Groenendijk & Stokhof (1991). Dynamic Predicate Logic.
-- Muskens (1996). Combining Montague Semantics and Discourse Representation.
 -/
 
 import Linglib.Theories.Semantics.Dynamic.Core.DynamicTy2

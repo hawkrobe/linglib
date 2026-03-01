@@ -2,6 +2,7 @@ import Linglib.Theories.Syntax.Minimalism.Core.Agree
 
 /-!
 # Dependent Case Theory (Marantz 1991; Baker 2015)
+@cite{baker-2015} @cite{deal-2010} @cite{marantz-1991} @cite{ozaki-2025}
 
 An alternative to Agree-based case assignment. Case is determined by
 the structural configuration of NPs within a Spell-Out domain:
@@ -39,14 +40,6 @@ unaccusatives with two internal arguments and no thematic Voice. Accusative
 ablative *kara* is lexical case from an optional P head that bleeds
 dependent accusative.
 
-## References
-
-- Marantz, A. (1991). Case and licensing. *ESCOL* 1991, 234–253.
-- Baker, M. (2015). *Case: Its Principles and Its Parameters*. CUP.
-- Deal, A. M. (2010). Ergative case and the transitive subject: A view
-  from Nez Perce. *NLLT* 28(1), 73–120.
-- Ozaki, S. (2025). Dependent case in Japanese accusative/ablative
-  alternation verbs. *CLS 61*.
 -/
 
 namespace Minimalism

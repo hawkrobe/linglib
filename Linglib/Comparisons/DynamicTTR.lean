@@ -3,6 +3,7 @@ import Linglib.Theories.Semantics.TypeTheoretic.Quantification
 
 /-!
 # Dynamic Semantics ↔ TTR: Truth-Conditional Equivalence
+@cite{cooper-2023} @cite{groenendijk-stokhof-1991} @cite{muskens-1996} @cite{sutton-2024}
 
 CDRT (Dynamic/) and TTR (TypeTheoretic/) handle overlapping phenomena
 — discourse referents, donkey anaphora, cross-sentential binding — with
@@ -29,15 +30,6 @@ potential**. In CDRT, `¬¬(∃x.P(x))` has the same truth conditions as
 after double negation (negation resets the register). In TTR, anaphoric
 potential is carried by type structure, not side effects.
 
-## References
-
-- Muskens, R. (1996). Combining Montague Semantics and Discourse
-  Representation. Linguistics and Philosophy 19: 143–186.
-- Cooper, R. (2023). From Perception to Communication. OUP. Ch 7–8.
-- Groenendijk, J. & Stokhof, M. (1991). Dynamic Predicate Logic.
-  Linguistics and Philosophy 14: 39–100.
-- Sutton, P. (2024). Types and Type Theories. Annual Review of
-  Linguistics 10: 347–370.
 -/
 
 namespace Comparisons.DynamicTTR

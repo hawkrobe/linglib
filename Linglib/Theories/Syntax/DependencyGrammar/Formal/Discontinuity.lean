@@ -4,6 +4,7 @@ import Linglib.Theories.Syntax.DependencyGrammar.LongDistance
 
 /-!
 # Discontinuities as Risen Catenae
+@cite{osborne-2019} @cite{osborne-gross-2012}
 
 Formalizes Osborne's (2019, Ch 7–8) analysis of discontinuities in dependency
 grammar. The central concept is the **risen catena**: a catena that takes on a
@@ -44,12 +45,6 @@ leftward (rising); extraposition displaces rightward (lowering).
   risen catenae generalize it
 - → `LongDistance.lean`: topicalization and wh-fronting map to `GapType.objGap`
 
-## References
-
-- Osborne, T. (2019). *A Dependency Grammar of English*, Ch 7–8.
-  Amsterdam: John Benjamins.
-- Osborne, T., Putnam, M. & Groß, T. (2012). Catenae: Introducing a novel
-  unit of syntactic analysis. *Syntax* 15(4):354–396.
 -/
 
 namespace DepGrammar.Discontinuity

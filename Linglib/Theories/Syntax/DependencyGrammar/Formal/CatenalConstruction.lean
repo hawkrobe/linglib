@@ -34,10 +34,6 @@ proof that those nodes form a catena.
 Concrete instances and verified claims are in
 `Phenomena/Constructions/DG_OsborneGross2012Bridge.lean`.
 
-## References
-
-- Osborne, T. & Groß, T. (2012). Constructions are catenae: Construction
-  Grammar meets Dependency Grammar. *Cognitive Linguistics* 23(1):165–216.
 -/
 
 namespace DepGrammar.CatenalConstruction

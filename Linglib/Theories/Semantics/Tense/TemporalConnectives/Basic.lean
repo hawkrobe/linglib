@@ -3,6 +3,7 @@ import Linglib.Core.Temporal.Time
 
 /-!
 # Temporal Connective Infrastructure
+@cite{allen-1983} @cite{krifka-1989}
 
 Shared types and basic lemmas for temporal connective semantics.
 
@@ -22,11 +23,6 @@ Level 2: SentDenotation Time      (interval sets — this file)
 Level 1: Set Time                 (point sets)
 ```
 
-## References
-
-- Allen, J. (1983). Maintaining knowledge about temporal intervals.
-- Krifka, M. (1989). Nominal reference, temporal constitution and
-  quantification in event semantics.
 -/
 
 namespace Semantics.Tense.TemporalConnectives

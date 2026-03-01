@@ -15,15 +15,6 @@ The bound-setting modifiers are classified following Kennedy (2015):
 Evaluative valence (Blok 2015, Claus & Walch 2024) distinguishes "at most" (negative)
 from "up to" (positive), predicting divergent framing effects.
 
-## References
-
-- Égré, P., Spector, B., Mortier, A., & Verheyen, S. (2023). On the optimality
-  of vagueness. Linguistics and Philosophy, 46, 1101–1130.
-- Kennedy, C. (2015). A "de-Fregean" semantics for modified and unmodified numerals.
-- Blok, D. (2015). The semantics and pragmatics of directional numeral modifiers.
-- Claus, B. & Walch, V. (2024). Evaluative valence distinguishes at most from up to.
-- Krifka, M. (2007). Approximate interpretation of number words.
-- Solt, S. (2014). An alternative theory of imprecision.
 -/
 
 import Linglib.Core.Lexical.Word

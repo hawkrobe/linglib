@@ -2,6 +2,7 @@ import Linglib.Core.Empirical
 
 /-!
 # Additive Particle Data
+@cite{ahn-2015} @cite{heim-1992} @cite{kripke-2009} @cite{rooth-1992}
 
 Empirical data on additive particles (too, also, either) and their felicity conditions.
 
@@ -11,12 +12,6 @@ Empirical data on additive particles (too, also, either) and their felicity cond
 - `FelicityJudgment`: Acceptability ratings (ok/marginal/odd)
 - `UseType`: Standard, argument-building, scalar, contrastive uses
 
-## References
-
-- Rooth (1992). A Theory of Focus Interpretation.
-- Ahn (2015). The Semantics of Additive Either.
-- Kripke (2009). Presupposition and Anaphora.
-- Heim (1992). Presupposition Projection and the Semantics of Attitude Verbs.
 -/
 
 namespace Phenomena.Focus.AdditiveParticles

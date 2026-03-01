@@ -2,6 +2,7 @@ import Linglib.Core.Discourse.InformationStructure
 
 /-!
 # German Polarity-Marking Strategies
+@cite{turco-braun-dimroth-2014}
 
 Lexical entries for how German marks polarity switches (negation → affirmation).
 
@@ -20,12 +21,6 @@ German's strategy is non-particulate.
   different phenomenon from the declarative Verum focus (Höhle 1992) encoded here
 - `Fragments.German.QuestionParticles`: German *denn* (question-flavoring)
 
-## References
-
-- Turco, G., Braun, B. & Dimroth, C. (2014). How Dutch and German speakers
-  produce and realize focus, contrast and correction. *JASA* 136(3), 1400–1414.
-- Höhle, T. (1992). Über Verum-Fokus im Deutschen. In J. Jacobs (ed.),
-  *Informationsstruktur und Grammatik*, 112–141. Westdeutscher Verlag.
 -/
 
 namespace Fragments.German.PolarityMarking

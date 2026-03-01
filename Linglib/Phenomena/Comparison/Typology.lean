@@ -2,6 +2,7 @@ import Linglib.Core.Lexical.Word
 
 /-!
 # Comparative Construction Typology (WALS Chapter 121)
+@cite{beck-2009} @cite{dixon-2012} @cite{haspelmath-2001} @cite{kennedy-2007} @cite{stassen-1985} @cite{stassen-2013}
 
 Cross-linguistic data on how languages express comparison of inequality
 ("X is taller than Y"), based on Stassen (2013) in WALS Online. Stassen
@@ -27,21 +28,6 @@ The typology intersects with two further dimensions:
 5. SOV languages strongly favor locational comparatives; SVO languages split
    between exceed and particle types (Stassen 1985, 2013).
 
-## References
-
-- Stassen, L. (2013). Comparative constructions. In Dryer, M. S. &
-  Haspelmath, M. (eds.), WALS Online (v2020.3). https://wals.info/chapter/121
-- Stassen, L. (1985). Comparison and Universal Grammar. Blackwell.
-- Beck, S., Krasikova, S., Fleischer, D., et al. (2009). Crosslinguistic
-  variation in comparison constructions. Linguistic Variation Yearbook
-  9(1): 1--66.
-- Haspelmath, M. (2001). The European linguistic area: Standard Average
-  European. In Haspelmath et al. (eds.), Language Typology and Language
-  Universals, vol. 2. Mouton de Gruyter.
-- Kennedy, C. (2007). Vagueness and grammar: The semantics of relative
-  and absolute gradable adjectives. Linguistics and Philosophy 30(1): 1--45.
-- Dixon, R. M. W. (2012). Basic Linguistic Theory, vol. 3: Further
-  Grammatical Topics. Oxford University Press. Chapter 12: Comparatives.
 -/
 
 namespace Phenomena.Comparison.Typology

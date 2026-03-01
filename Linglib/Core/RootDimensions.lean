@@ -1,5 +1,6 @@
 /-!
 # Quality Dimensions for Verb Root Content
+@cite{dowty-1991} @cite{fillmore-atkins-2000} @cite{hale-keyser-1987} @cite{levin-1993} @cite{talmy-1988} @cite{talmy-2000}
 
 Empirically attested feature dimensions for characterizing the idiosyncratic
 ("root") content of verb meanings. Verbs within a single class (e.g., Levin's
@@ -38,31 +39,6 @@ Adding a new dimension: define a value type, add a `Range` field to
 Adding a value to an existing dimension: breaking change — forces reviewing
 all entries that constrain that dimension. This is by design.
 
-## References
-
-- Levin, B. (1993). *English Verb Classes and Alternations*. Chicago.
-  — Meaning components: pp. 5–10 (break/cut/hit/touch analysis).
-  — Class taxonomy: Part II, §§ 9–57.
-- Hale, K. & Keyser, S.J. (1987). A view from the middle. Lexicon Project
-  Working Papers 10, MIT.
-  — "separation in material integrity" as the core of cut/break meaning.
-- Talmy, L. (1988). Force dynamics in language and cognition.
-  *Cognitive Science* 12, 49–100.
-  — Force magnitude and direction as primitives of event structure.
-- Talmy, L. (2000). *Toward a Cognitive Semantics*, Vol. I. MIT Press.
-  — Force vectors with directional parameters.
-- Dowty, D. (1991). Thematic proto-roles and argument selection.
-  *Language* 67(3), 547–619.
-  — Proto-Agent P1 (volitional involvement), P2 (sentience/perception).
-- Fillmore, C. & Atkins, B.T.S. (2000). Describing polysemy: The case of
-  'crawl'. In *Polysemy*, ed. Y. Ravin & C. Leacock, 91–110. OUP.
-  — Participant physical properties constrain verb applicability.
-- Spalek, A.A. & McNally, L. (forthcoming). The anatomy of a verb: *Tear*,
-  *rasgar*, and lexical equivalence. *Linguistics in Contrast*.
-  — Patient robustness, force direction, agent control as root dimensions.
-- Beavers, J. & Koontz-Garboden, A. (2020). *The Roots of Verbal Meaning*.
-  OUP.
-  — Change-of-state roots vs. property concept roots.
 -/
 
 -- ════════════════════════════════════════════════════

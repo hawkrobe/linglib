@@ -5,9 +5,7 @@ import Mathlib.Analysis.SpecialFunctions.Pow.Real
 /-!
 # Champollion, Alsop & Grosu (2019) — Free Choice Disjunction as RSA
 
-@cite{champollion-alsop-grosu-2019}
-
-"Free choice disjunction as a rational speech act"
+@cite{champollion-alsop-grosu-2019} @cite{bergen-levy-goodman-2016} @cite{fox-2007} @cite{franke-2011}"Free choice disjunction as a rational speech act"
 Proceedings of SALT 29: 238-257.
 
 ## The Model
@@ -51,14 +49,6 @@ The two interpretation functions represent optional exhaustification (Fox 2007):
 | 3 | EI holds under uniform prior | `ei_uniform` |
 | 4 | EI weakened under biased prior | `ei_prior_sensitive` |
 
-## References
-
-- Champollion, L., Alsop, S. & Grosu, A. (2019). Free choice disjunction
-  as a rational speech act. SALT 29: 238-257.
-- Bergen, L., Levy, R. & Goodman, N.D. (2016). Pragmatic reasoning through
-  semantic inference. S&P 9(20).
-- Fox, D. (2007). Free choice and the theory of scalar implicatures.
-- Franke, M. (2011). Quantity implicatures, exhaustive interpretation. S&P.
 -/
 
 set_option autoImplicit false

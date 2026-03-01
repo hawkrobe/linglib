@@ -2,6 +2,7 @@ import Linglib.Core.Semantics.CommonGround
 
 /-!
 # Assertion Theory Interface
+@cite{brandom-1994} @cite{farkas-bruce-2010} @cite{gunlogson-2001} @cite{krifka-2015} @cite{lauer-2013} @cite{stalnaker-1978}
 
 Abstract interface for comparing theories of assertion, following the
 same interface-and-instantiation pattern used for `ImplicatureTheory`.
@@ -22,14 +23,6 @@ Each theory implements `AssertionTheory` by providing:
 | Gunlogson | Yes | Yes | Yes |
 | Lauer | Yes (credence) | No | No |
 
-## References
-
-- Stalnaker, R. (1978). Assertion. *Syntax and Semantics* 9.
-- Farkas, D. & Bruce, K. (2010). On Reacting to Assertions. *JoS* 27(1).
-- Krifka, M. (2015). Bias in Commitment Space Semantics. *L&P* 38.
-- Brandom, R. (1994). *Making It Explicit*. Harvard UP.
-- Gunlogson, C. (2001). *True to Form*. PhD dissertation, UC Santa Cruz.
-- Lauer, S. (2013). *Towards a Dynamic Pragmatics*. PhD dissertation, Stanford.
 -/
 
 namespace Interfaces

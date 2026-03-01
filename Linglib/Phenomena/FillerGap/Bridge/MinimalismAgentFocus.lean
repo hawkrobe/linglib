@@ -3,6 +3,7 @@ import Linglib.Theories.Syntax.Minimalism.Core.Position
 
 /-!
 # Minimalism Bridge: Kaqchikel Agent Focus @cite{erlewine-2016}
+@cite{erlewine-2018}
 
 Connects the Kaqchikel Agent Focus fragment to the Minimalist analysis:
 anti-locality (Position.lean) drives OT competition (ConstraintEvaluation.lean),
@@ -83,12 +84,6 @@ Both use `specToSpecAntiLocality` from Position.lean, but Toba Batak's
 pivot restriction is about nominal licensing while Kaqchikel's AF is
 about OT candidate competition.
 
-## References
-
-- Erlewine, M. Y. (2016). Anti-locality and optimality in Kaqchikel
-  Agent Focus. NALS 24: 923–972.
-- Erlewine, M. Y. (2018). Extraction and licensing in Toba Batak.
-  Language 94(3): 662–697.
 -/
 
 namespace Phenomena.FillerGap.Bridge.MinimalismAgentFocus

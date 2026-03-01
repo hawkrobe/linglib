@@ -26,13 +26,6 @@ Extended Yoon et al. (2020) RSA with:
 - Social utility weight (ω_social) varies by culture
 - Information utility weight (ω_info) varies by culture
 
-## References
-
-- Machino, M., Chen, S., & Goodman, N. D. (2025). Minding the Politeness Gap:
-  A cross-cultural computational model of intensifier interpretation.
-- Yoon, E. J., Tessler, M. H., Goodman, N. D., & Frank, M. C. (2020).
-  Polite Speech Emerges From Competing Social Goals.
-- Kennedy, C. & McNally, L. (2005). Scale structure, degree modification.
 -/
 
 namespace Phenomena.Politeness.Studies.MachinoEtAl2025

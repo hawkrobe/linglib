@@ -3,6 +3,7 @@ import Linglib.Theories.Syntax.Minimalism.Core.Features
 
 /-!
 # Derivational Positions
+@cite{abels-2012} @cite{brillman-hirsch-2016} @cite{erlewine-2016} @cite{erlewine-2018}
 
 Derives positional information (specifier vs. complement) from merge
 history, following the Minimalist view that position is derivational,
@@ -32,15 +33,6 @@ Two variants are formalized:
    clause structure (Erlewine 2018, fn. 24) and drives Agent Focus in
    Kaqchikel (Erlewine 2016).
 
-## References
-
-- Abels, K. (2012). Phases: An Essay on Cyclicity in Syntax.
-- Erlewine, M. Y. (2016). Anti-locality and optimality in Kaqchikel
-  Agent Focus. NALS 24: 923–972.
-- Erlewine, M. Y. (2018). Extraction and licensing in Toba Batak.
-  Language 94(3): 662–697.
-- Brillman, R. & A. Hirsch (2016). A new argument for Spec-to-Spec
-  anti-locality.
 -/
 
 namespace Minimalism

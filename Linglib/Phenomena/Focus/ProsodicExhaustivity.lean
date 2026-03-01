@@ -30,12 +30,6 @@ This phenomenon relates to mention-all vs mention-some:
 - Stress can FORCE exhaustive (mention-all) interpretation
 - See `Questions/Exhaustivity.lean` for general exhaustivity data
 
-## References
-
-- Bergen, L. & Goodman, N.D. (2015). The Strategic Use of Noise in Pragmatic
-  Reasoning. Topics in Cognitive Science 7(2): 336-350.
-- Groenendijk, J. & Stokhof, M. (1984). Studies on the Semantics of Questions.
-- Rooth, M. (1992). A Theory of Focus Interpretation. NLS 1(1): 75-116.
 -/
 
 import Linglib.Core.Lexical.Word

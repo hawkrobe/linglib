@@ -7,11 +7,6 @@ Core update operations for dynamic semantics over `Possibility W E` states.
 
 `update`, `randomAssign`, `exists_`, `ofProp`, `ofPred1`, `ofPred2`
 
-## References
-
-- Heim, I. (1982). The Semantics of Definite and Indefinite Noun Phrases.
-- Heim, I. (1983). File Change Semantics. In Bäuerle et al.
-- Groenendijk, J. & Stokhof, M. (1991). Dynamic Predicate Logic.
 -/
 
 import Linglib.Theories.Semantics.Dynamic.Core.Basic

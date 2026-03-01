@@ -2,14 +2,10 @@ import Linglib.Core.Lexical.Word
 
 /-!
 # Questions: Basic Types and Shared Infrastructure
+@cite{dayal-2016} @cite{groenendijk-stokhof-1984} @cite{krifka-2011}
 
 Theory-neutral types for question-answer phenomena.
 
-## References
-
-- Groenendijk & Stokhof (1984). Studies on the Semantics of Questions.
-- Krifka (2011). Questions. In Semantics: An International Handbook.
-- Dayal (2016). Questions. Oxford University Press.
 -/
 
 namespace Phenomena.Questions

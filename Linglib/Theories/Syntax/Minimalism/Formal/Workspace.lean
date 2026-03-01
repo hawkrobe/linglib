@@ -18,12 +18,6 @@ and Adger (2003) Chapter 3.
 3. Apply Merge to combine items in W
 4. Continue until N is exhausted and W contains a single SO
 
-## References
-
-- Chomsky, N. (1995). The Minimalist Program.
-- Chomsky, N. (2000). Minimalist Inquiries.
-- Adger, D. (2003). Core Syntax, Chapter 3.
-- Collins, C. & E. Stabler (2016). A Formalization of Minimalist Syntax.
 -/
 
 import Linglib.Core.Grammar

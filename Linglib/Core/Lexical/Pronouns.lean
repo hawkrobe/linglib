@@ -3,6 +3,7 @@ import Linglib.Core.Register
 
 /-!
 # Shared Pronoun and Allocutive Entry Types
+@cite{alok-bhalla-2026}
 
 Cross-linguistic structures for pronoun inventories and allocutive markers,
 shared across all Fragment/*/Pronouns.lean files.
@@ -21,9 +22,6 @@ Shared structure for allocutive markers — verbal suffixes (Hindi, Magahi,
 Maithili, Punjabi, Tamil, Basque), particles (Korean, Japanese), or
 clitics (Galician) that realize speaker-addressee agreement.
 
-## References
-
-- Alok, D. & A. Bhalla (2026). Allocutive agreement and the syntax of honorifics.
 -/
 
 namespace Core.Pronouns

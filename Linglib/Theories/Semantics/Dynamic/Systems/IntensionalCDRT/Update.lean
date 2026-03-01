@@ -29,10 +29,6 @@ This allows indefinites to "scope out" while tracking their local context.
 2. Inner negation: introduces dref in negative update
 3. Double negation: dref accessible in positive update!
 
-## References
-
-- Hofmann (2025) §2.3-2.4
-- Groenendijk & Stokhof (1991). Dynamic Predicate Logic.
 -/
 
 import Linglib.Theories.Semantics.Dynamic.Systems.IntensionalCDRT.Basic

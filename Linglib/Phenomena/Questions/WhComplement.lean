@@ -26,10 +26,6 @@ Just as PPQ "Is it raining?" vs NPQ "Isn't it raining?" differ pragmatically
 despite semantic equivalence, "Who P?" vs "Who doesn't P?" differ in what
 counts as a direct answer.
 
-## References
-
-- Groenendijk & Stokhof (1984). Studies on the Semantics of Questions. Ch. IV.
-- Krifka (2011). Questions. In Semantics: An International Handbook.
 -/
 
 import Linglib.Phenomena.Questions.Basic

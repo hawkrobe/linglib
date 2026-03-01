@@ -18,10 +18,6 @@ and metatheorems.
 - `exist_i_valid`: ⊨ Exist I (from proper-context constraint)
 - `actually_stable`: A(φ) has Stable Content (world-independent)
 
-## References
-
-- Kaplan, D. (1989). Demonstratives. In Almog, Perry & Wettstein (eds.),
-  Themes from Kaplan. Oxford University Press, §VIII-XIX.
 -/
 
 import Linglib.Core.Context.Basic

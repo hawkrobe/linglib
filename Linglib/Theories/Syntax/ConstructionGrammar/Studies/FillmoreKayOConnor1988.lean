@@ -21,11 +21,6 @@ and specific pragmatic constraints. The key contributions:
 4. **Pragmatic function**: resolves conflict between Gricean Quantity
    (informativeness — the A clause) and Relevance (the B clause)
 
-## Reference
-
-Fillmore, C. J., Kay, P., & O'Connor, M. C. (1988). Regularity and
-Idiomaticity in Grammatical Constructions: The Case of *Let Alone*.
-Language, 64(3), 501–538.
 -/
 
 namespace ConstructionGrammar.Studies.FillmoreKayOConnor1988

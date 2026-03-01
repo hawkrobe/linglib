@@ -35,19 +35,6 @@ prejudiciality-based account of task asymmetry.
    approximate use have algebraically opposite associations with every
    social dimension.
 
-## References
-
-* Beltrama, A. & Schwarz, F. (2024). Social stereotypes affect
-  imprecision resolution across different tasks.
-  *Semantics & Pragmatics* 17(10): 1–34.
-* Beltrama, A., Solt, S. & Burnett, H. (2022). Context, precision,
-  and social perception: A sociopragmatic study.
-  *Language in Society* 52(5): 805–835.
-* Eckert, P. (2008). Variation and the indexical field.
-  *J. Sociolinguistics* 12(4): 453–476.
-* Fiske, S. T., Cuddy, A. J. C. & Glick, P. (2007). Universal
-  dimensions of social cognition: Warmth and competence.
-  *Trends in Cognitive Sciences* 11(2): 77–83.
 -/
 
 namespace Phenomena.Imprecision.Studies.BeltramaSchwarz2024

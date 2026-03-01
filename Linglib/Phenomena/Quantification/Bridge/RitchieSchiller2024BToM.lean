@@ -5,9 +5,7 @@ import Linglib.Core.Semantics.CommonGround
 /-!
 # DDRP–BToM–Common Ground Integration
 
-@cite{ritchie-schiller-2024}
-
-Connects Ritchie & Schiller's (2024) DDRPs to Baker et al.'s (2017) BToM
+@cite{ritchie-schiller-2024} @cite{baker-jara-ettinger-saxe-tenenbaum-2017} @cite{clark-1996} @cite{stalnaker-2002}Connects Ritchie & Schiller's (2024) DDRPs to Baker et al.'s (2017) BToM
 architecture and Stalnaker's (2002) common ground.
 
 ## The Argument
@@ -39,12 +37,6 @@ them a *consequence* of BToM's perception module, constrained by common ground:
    access, domain restriction can fail — motivating R&S's requirement of
    perceptual co-presence.
 
-## References
-
-- Baker, Jara-Ettinger, Saxe & Tenenbaum (2017). Rational quantitative
-  attribution of beliefs, desires and percepts in human mentalizing.
-- Clark, H. (1996). Using Language. Cambridge University Press.
-- Stalnaker, R. (2002). Common Ground. L&P 25: 701–721.
 -/
 
 set_option autoImplicit false

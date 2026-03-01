@@ -2,6 +2,7 @@ import Linglib.Theories.Pragmatics.NeoGricean.Exhaustivity.Basic
 
 /-!
 # Core Theorems from Chierchia (2013) *Logic in Grammar*
+@cite{chierchia-2013} @cite{fox-2007} @cite{spector-2016}
 
 Deep integration of Chierchia's central results connecting polarity,
 scalar implicatures, free choice, and intervention — all with real proofs.
@@ -27,14 +28,6 @@ scalar implicatures, free choice, and intervention — all with real proofs.
 6. **FC Duality** (Ch. 5–6):
    Free choice works uniformly for ◇ and □ via the same exhaustification.
 
-## References
-
-- Chierchia, G. (2013). *Logic in Grammar: Polarity, Free Choice, and
-  Intervention*. Oxford University Press.
-- Fox, D. (2007). Free choice and the theory of scalar implicatures.
-  In Sauerland & Stateva (eds.), *Presupposition and Implicature in
-  Compositional Semantics*. Palgrave Macmillan.
-- Spector, B. (2016). Comparing exhaustivity operators. *S&P* 9(11):1–33.
 -/
 
 namespace NeoGricean.Exhaustivity.Chierchia2013

@@ -7,10 +7,6 @@ Dynamic semantics with two update dimensions (positive and negative) that valida
 
 `BUSDen`, `hasGap`, `defined`, `strawsonEntails`, `strongEntails`
 
-## References
-
-- Elliott, P. (2023). Donkey disjunctions and overlapping updates. SALT 33: 666-685.
-- Elliott, P. & Sudo, Y. (2025). Free choice with anaphora. Semantics & Pragmatics 18.
 -/
 
 import Linglib.Theories.Semantics.Dynamic.Effects.Bilateral.Basic

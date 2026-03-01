@@ -3,6 +3,7 @@ import Linglib.Fragments.English.TemporalExpressions
 
 /-!
 # Serbian Temporal Connectives Fragment
+@cite{rett-2020} @cite{todorovi-2015}
 
 Cross-linguistic data on Serbian *pre* ('before') and *posle* ('after')
 showing overt viewpoint aspect morphology (PFV/IMPF) in embedded temporal
@@ -21,11 +22,6 @@ This parallels the Tagalog PFV.NEUT/AIA distinction (see
 `Fragments.Tagalog.TemporalConnectives`) but uses the standard
 PFV/IMPF opposition rather than Tagalog's finer-grained system.
 
-## References
-
-- Rett, J. (2020). Eliminating EARLIEST. *Sinn und Bedeutung* 24, §2.4.
-- Todorović, N. (2015). Tense and aspect (and mood) in Serbian.
-  In *Proceedings of FDSL 10*.
 -/
 
 namespace Fragments.Serbian.TemporalConnectives

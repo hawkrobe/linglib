@@ -23,10 +23,6 @@ A lens into the nature of anticausative SE" (*Glossa* 11(1)).
    (or optionally SE-marked) anticausatives. Unmarked anticausatives
    (*mejorar*) block it.
 
-## References
-
-- Muñoz Pérez, C. (2026). Stylistic applicatives: A lens into the
-  nature of anticausative SE. *Glossa* 11(1).
 -/
 
 namespace Phenomena.Causatives.Studies.MunozPerez2026.Data

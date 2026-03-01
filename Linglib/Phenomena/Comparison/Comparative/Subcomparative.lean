@@ -1,5 +1,6 @@
 /-!
 # Subcomparatives
+@cite{bhatt-pancheva-2004} @cite{kennedy-1999} @cite{lechner-2004} @cite{schwarzschild-2008}
 
 Empirical data on subcomparatives — comparative constructions where the
 matrix and embedded predicates differ ("longer than the desk is wide").
@@ -14,12 +15,6 @@ matrix and embedded predicates differ ("longer than the desk is wide").
 3. **Cross-linguistic variation**: subcomparatives are unavailable in
    many languages (German allows them freely; Japanese restricts them).
 
-## References
-
-- Kennedy, C. (1999). Projecting the adjective.
-- Schwarzschild, R. (2008). The semantics of comparatives.
-- Lechner, W. (2004). Ellipsis in comparatives.
-- Bhatt, R. & Pancheva, R. (2004). Late merger of degree clauses.
 -/
 
 namespace Phenomena.Comparison.Comparative.Subcomparative

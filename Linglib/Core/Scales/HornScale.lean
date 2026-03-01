@@ -9,9 +9,6 @@ stronger members entail weaker members. Scale ordering determines scalar implica
 `HornScale`, `scalePosition`, `isWeaker`, `strongerAlternatives`, `quantScale`,
 `worldMeaning`, `connScale`, `modalScale`
 
-## References
-
-Horn (1972). On the Semantic Properties of Logical Operators in English.
 -/
 
 import Mathlib.Data.Rat.Defs

@@ -6,6 +6,7 @@ open Core.Empirical
 
 /-!
 # Qing & Franke (2015) @cite{qing-franke-2015}
+@cite{frank-goodman-2012}
 
 "Variations on a Bayesian Theme: Comparing Bayesian Models of Referential Reasoning"
 
@@ -84,12 +85,6 @@ for ambiguous utterances. Human listener data matches the salience direction.
 | 5 | `salience_reversal_circle` | uniform vs salience L1 flip for "circle" | σ_bU |
 | 6 | `salience_reversal_green` | uniform vs salience L1 flip for "green" | σ_bU |
 
-## References
-
-- Qing, C. & Franke, M. (2015). Variations on a Bayesian Theme: Comparing Bayesian
-  Models of Referential Reasoning. In H. Zeevat & H.-C. Schmitz (Eds.), *Bayesian
-  Natural Language Semantics and Pragmatics*, pp. 201–220. Springer.
-- Frank, M.C. & Goodman, N.D. (2012). Predicting Pragmatic Reasoning in Language Games.
 -/
 
 set_option autoImplicit false

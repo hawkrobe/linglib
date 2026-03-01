@@ -4,9 +4,7 @@ import Linglib.Theories.Semantics.Modality.EventRelativity
 /-!
 # Bridge: Italian Restructuring ↔ Event-Relative Modality
 
-@cite{hacquard-2010}
-
-Connects the Italian restructuring data (Fragments/Italian/Modals) to
+@cite{hacquard-2010} @cite{cinque-2004} @cite{rizzi-1978}Connects the Italian restructuring data (Fragments/Italian/Modals) to
 Hacquard's (2010) content licensing theory (EventRelativity §8).
 
 ## The Argument (Hacquard 2010, §3)
@@ -23,11 +21,6 @@ This is the key empirical argument for event-relative modality: the same
 lexical modal (*potere*) shows different flavor availability depending
 purely on its syntactic position, explained by content licensing.
 
-## References
-
-- Hacquard, V. (2010). §3: Italian restructuring evidence.
-- Rizzi, L. (1978). A restructuring rule in Italian syntax.
-- Cinque, G. (2004). Restructuring and functional structure.
 -/
 
 namespace Phenomena.Modality.Bridge.EventRelativityRestructuring

@@ -34,10 +34,6 @@ This factorization enables:
 - Interpretable constraint sources
 - Independent modeling of each factor
 
-## References
-
-- Erk & Herbelot (2024). How to Marry a Star. Journal of Semantics.
-- Bergen, Levy & Goodman (2016). Pragmatic reasoning through semantic inference.
 -/
 
 import Linglib.Theories.Semantics.Probabilistic.SDS.Core

@@ -58,10 +58,6 @@ Universals 4 and 6 are already proven in `Aissen2003.lean` and
 Universals 10–14 (ditransitive scenarios, inverse, passive, dative
 alternation) are noted but require additional infrastructure.
 
-## References
-
-- Haspelmath, M. (2021). Explaining argument-coding splits with
-  role-reference associations. Linguistics 59(5): 1231–1270.
 -/
 
 namespace Phenomena.Case.Studies.Haspelmath2021

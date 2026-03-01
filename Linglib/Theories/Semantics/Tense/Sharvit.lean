@@ -3,6 +3,7 @@ import Linglib.Core.Temporal.Tense
 
 /-!
 # Sharvit (2003): Simultaneous Tense as a Genuine Tense
+@cite{ogihara-sharvit-2012} @cite{sharvit-2003}
 
 Sharvit's theory: the simultaneous reading under attitudes arises from a
 genuine tense with its own semantics -- it denotes "at the local evaluation
@@ -48,12 +49,6 @@ are available in embedded clauses, producing optional SOT:
   pending closer consultation of Sharvit's LI 2003 paper
 - Cross-linguistic predictions not fully worked out
 
-## References
-
-- Sharvit, Y. (2003). Embedded tense and universal grammar.
-  *Linguistic Inquiry* 34(4): 669--681.
-- Ogihara, T. & Sharvit, Y. (2012). Embedded tenses.
-  In R. Binnick (ed.), *The Oxford Handbook of Tense and Aspect*.
 -/
 
 namespace Semantics.Tense.Sharvit

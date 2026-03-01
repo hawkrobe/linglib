@@ -30,9 +30,6 @@ reject Smith's assertion (M = 5.03) but are also strongly inclined to
 *disagree* that what Smith said is false (M = 2.42). This dissociation
 is absent in **Control**, where rejection and falsity ratings are similar.
 
-## Reference
-
-Khoo, J. (2015). Modal Disagreements. *Inquiry*, 58(5), 511-534.
 -/
 
 namespace Phenomena.Modality.Studies.Khoo2015

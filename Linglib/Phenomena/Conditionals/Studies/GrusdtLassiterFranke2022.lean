@@ -23,10 +23,6 @@ The paper presents three experiments testing the RSA model of conditionals.
    - Participants judge assertability of conditionals with different P(C|A)
    - Key finding: Threshold θ ≈ 0.9 fits human judgments
 
-## References
-
-- Grusdt, Lassiter & Franke (2022). Probabilistic modeling of rational
-  communication with conditionals. PLoS ONE.
 -/
 
 import Linglib.Core.Empirical

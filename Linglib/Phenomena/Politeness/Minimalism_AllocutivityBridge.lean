@@ -23,15 +23,6 @@ head (Fin or SA) and a null addressee DP.
   of syntactic [iHON] — both encode social relations between discourse
   participants
 
-## References
-
-- Alok, D. & A. Bhalla (2026). Allocutive agreement and the syntax of
-  honorifics.
-- Alok, D. (2020). The syntax and semantics of allocutive agreement in Magahi.
-- Speas, M. & C. Tenny (2003). Configurational properties of point of view
-  roles. In A. M. Di Sciullo (ed.), Asymmetry in Grammar.
-- Portner, P., M. Pak & R. Zanuttini (2019). The speaker-addressee relation at
-  the syntax-semantics interface.
 -/
 
 import Linglib.Theories.Syntax.Minimalism.Core.Agree

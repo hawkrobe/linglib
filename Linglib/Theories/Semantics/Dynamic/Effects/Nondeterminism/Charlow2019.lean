@@ -6,10 +6,6 @@ is shared between static and dynamic systems. The static/dynamic divide
 reduces to a single operator ↑ determining whether modified assignments
 are retained.
 
-## References
-
-- Charlow, S. (2019). Where is the destructive update problem? S&P 12(10), 1-24.
-- Groenendijk, J. & Stokhof, M. (1991). Dynamic Predicate Logic.
 -/
 
 import Linglib.Theories.Semantics.Dynamic.Effects.State.DPL

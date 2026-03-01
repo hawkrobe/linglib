@@ -10,10 +10,6 @@ The file also contains inquisitive semantics core types (`InfoState`, `Issue`)
 and Roberts' (2012) formalization of question entailment, subquestions, and
 discourse move relevance.
 
-## References
-
-- Roberts (2012). Information structure in discourse. *Semantics & Pragmatics* 5(6).
-- Kao et al. (2014). Nonliteral understanding of number words. PNAS.
 -/
 
 /-- A QUD partitions the meaning space via an equivalence relation.

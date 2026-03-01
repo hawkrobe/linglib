@@ -12,7 +12,7 @@ import Linglib.Theories.Semantics.Attitudes.Preferential
 
 @cite{kim-2024} @cite{baker-saxe-tenenbaum-2017}
 @cite{nadathur-lauer-2020} @cite{elbourne-2005}
-@cite{hartshorne-odonnell-tenenbaum-2016}
+@cite{hartshorne-etal-2016}
 
 Nobody has given psych verbs a compositional denotation grounded in a cognitive
 situation model. The ingredients exist across Pesetsky (1995, causal heads),

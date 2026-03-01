@@ -3,6 +3,7 @@ import Linglib.Fragments.English.TemporalExpressions
 
 /-!
 # Before/After Semantics: Four-Theory Comparison
+@cite{alstott-aravind-2026} @cite{anscombe-1964} @cite{beaver-condoravdi-2003} @cite{ogihara-steinert-threlkeld-2024} @cite{rett-2020}
 
 Compares four theories of English temporal connectives at different
 levels of semantic representation:
@@ -35,15 +36,6 @@ scenario/connective combinations (Table 1 of Rett 2020). They diverge on:
    B&C from the `earliest` operator's universal force
 4. **Veridicality derivation**: O&ST and B&C derive it; Anscombe and Rett stipulate it
 
-## References
-
-- Anscombe, E. (1964). Before and after.
-- Rett, J. (2020). Eliminating EARLIEST. *Sinn und Bedeutung* 24.
-- Ogihara, T. & Steinert-Threlkeld, S. (2024). An interval-based semantics for
-  *before* and *after*.
-- Beaver, D. & Condoravdi, C. (2003). A uniform analysis of *before* and *after*.
-- Alstott, A. & Aravind, A. (2026). Aspectual coercion in *before*/*after*-clauses.
-- Krifka, M. (2010b). *Before* and *after* without coercion.
 -/
 
 namespace Phenomena.TemporalConnectives.Compare

@@ -27,12 +27,6 @@ This maps directly to `PrProp` from `Core.Presupposition`:
 "Mary started smoking" at same world:
   - presup(w) = ¬w.priorSmokes = false   ✗ (presupposition failure)
 
-## References
-
-- Abusch, D. (2002). Lexical Alternatives as a Source of Pragmatic Presuppositions.
-- Tonhauser, J., Beaver, D., Roberts, C., & Simons, M. (2013).
-  Toward a Taxonomy of Projective Content.
-- Simons, M. (2001). On the conversational basis of some presuppositions.
 -/
 
 import Linglib.Core.Semantics.Presupposition

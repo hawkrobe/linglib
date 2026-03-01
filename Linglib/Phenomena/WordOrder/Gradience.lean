@@ -4,6 +4,7 @@ import Linglib.Phenomena.WordOrder.Studies.FutrellEtAl2020
 
 /-!
 # Gradient Word-Order Measures (Levshina, Namboodiripad et al. 2023)
+@cite{levshina-stoynova-2023}
 
 Levshina, Namboodiripad, Allassonnière-Tang, Kramer, Talamo, Verkerk, Wilmoth,
 Garrido Rodriguez, Gupton, Kidd, Liu, Naccarato, Nordlinger, Panova & Stoynova
@@ -27,13 +28,6 @@ Garrido Rodriguez, Gupton, Kidd, Liu, Naccarato, Nordlinger, Panova & Stoynova
 - OSF Dataset6.txt: Russian register variation (conversation/fiction/news)
 - https://osf.io/w9u6v/
 
-## References
-
-- Levshina, N., Namboodiripad, S., Allassonnière-Tang, M., Kramer, M.,
-  Talamo, L., Verkerk, A., Wilmoth, S., Garrido Rodriguez, G., Gupton, T.M.,
-  Kidd, E., Liu, Z., Naccarato, C., Nordlinger, R., Panova, A. &
-  Stoynova, N. (2023). Why we need a gradient approach to word order.
-  *Linguistics* 61(4):825–883.
 -/
 
 namespace Phenomena.WordOrder.Gradience

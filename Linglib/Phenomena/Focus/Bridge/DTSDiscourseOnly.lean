@@ -5,6 +5,7 @@ import Linglib.Phenomena.Focus.DiscourseOnly
 
 /-!
 # Bridge: DTS ↔ Discourse *only*
+@cite{ippolito-kiss-williams-2025} @cite{merin-1999}
 
 Connects the CI of discourse *only* (Ippolito, Kiss & Williams 2025) to
 Merin's (1999) Decision-Theoretic Semantics, specifically the notion of
@@ -37,10 +38,6 @@ DecisionTheoretic/Core → posRelevant / negRelevant (Bayes factor)
 DecisionTheoretic/But  → cip_contrariness_implies_unexpectedness
 ```
 
-## References
-
-- Ippolito, Kiss & Williams (2025). Discourse *only*. WCCFL 41.
-- Merin (1999). Information, relevance, and social decisionmaking.
 -/
 
 namespace Phenomena.Focus.Bridge.DTSDiscourseOnly

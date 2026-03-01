@@ -1,5 +1,6 @@
 /-!
 # Ozaki (2025) — Japanese Accusative/Ablative Alternation: Data
+@cite{ozaki-2025}
 
 Empirical data from Ozaki (2025, CLS 61) on Japanese departure verbs
 that alternate between accusative *-o* and ablative *kara* marking
@@ -24,10 +25,6 @@ on the source argument.
 This file contains no theoretical commitments. See Bridge.lean for
 connection to dependent case theory and Minimalist syntax.
 
-## References
-
-- Ozaki, S. (2025). Dependent case in Japanese accusative/ablative
-  alternation verbs. *CLS 61*.
 -/
 
 namespace Phenomena.Case.Ozaki2025.Data

@@ -14,11 +14,6 @@ quotation.
 3. Responsive predicates allow quasi-subordination only when negated or questioned
    ("shiftiness", McCloskey 2006)
 
-## References
-
-- Dayal, V. (2025). The Interrogative Left Periphery. Linguistic Inquiry 56(4).
-- McCloskey, J. (2006). Questions and questioning in a local English.
-- Grimshaw, J. (1979). Complement selection and the lexicon.
 -/
 
 namespace Phenomena.Questions.Embedding

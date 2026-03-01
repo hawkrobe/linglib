@@ -2,6 +2,7 @@ import Mathlib.Logic.Function.Iterate
 
 /-!
 # Structural Equation Model
+@cite{nadathur-lauer-2020}
 
 Theory-neutral infrastructure for deterministic causal and counterfactual
 reasoning based on Pearl's structural causal model framework.
@@ -18,11 +19,6 @@ reasoning based on Pearl's structural causal model framework.
 For the probabilistic causal Bayes net layer (WorldState, CausalRelation,
 NoisyOR), see `Core.CausalBayesNet`.
 
-## References
-
-- Nadathur, P. & Lauer, S. (2020). Causal necessity, causal sufficiency,
-  and the implications of causative verbs. *Glossa*.
-- Pearl, J. (2000/2009). *Causality: Models, Reasoning, and Inference*.
 -/
 
 namespace Core.StructuralEquationModel

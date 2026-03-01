@@ -26,8 +26,4 @@ this data to specific theories are in `Phenomena/FillerGap/Bridge/`:
 5. **Not Agent Focus**: Co-occurs with passive *-njtz* (§7.2).
 6. **Temporal obliques exempt**: 'when' does not trigger =(y)a' (§8.1).
 
-## References
-
-- Elkins, N., Y. Imanishi & J. Coon (2026). Wh-movement and oblique
-  extraction in SJO Mam.
 -/

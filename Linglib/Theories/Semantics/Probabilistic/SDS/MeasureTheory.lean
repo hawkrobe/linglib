@@ -30,10 +30,6 @@ SDSConstraintSystem (discrete, ℚ)     SDSMeasureSystem (continuous, ℝ)
 - `Mathlib.Probability.ProbabilityMassFunction.Basic`
 - `Mathlib.MeasureTheory.Integral.Bochner`
 
-## References
-
-- Mathlib probability theory: https://leanprover-community.github.io/mathlib4_docs/Mathlib/Probability/
-- Lassiter & Goodman (2017) use continuous threshold distributions
 -/
 
 import Linglib.Theories.Semantics.Probabilistic.SDS.Core

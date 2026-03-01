@@ -4,6 +4,7 @@ import Linglib.Theories.Semantics.Tense.ParticipantPerspective
 
 /-!
 # Lakoff (1970) Bridge Theorems
+@cite{lakoff-1970}
 
 Connects the empirical judgments in `Data.lean` to theoretical predictions
 from `Perspective.lean` (Lakoff predicates) and `Fragments/English/Tense.lean`
@@ -18,9 +19,6 @@ from `Perspective.lean` (Lakoff predicates) and `Fragments/English/Tense.lean`
 3. **Temporal-perspective bridges**: false-past data satisfies `eventTime = speechTime`.
 4. **Novel-info and salience bridges**: connect §2 and §4 data to predicates.
 
-## References
-
-- Lakoff, R. (1970). Tense and its relation to participants. *Language* 46(4).
 -/
 
 namespace Phenomena.TenseAspect.Studies.Lakoff1970.Bridge

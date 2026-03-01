@@ -44,14 +44,6 @@ This paper extends and empirically tests the Tonhauser taxonomy:
 - OLE (Obligatory Local Effect) relates to attribution under embedding
 - But the binary factive/nonfactive distinction is not empirically supported
 
-## References
-
-- Degen, J. & Tonhauser, J. (2021). Are there factive predicates? An empirical
-  investigation. Language.
-- Kiparsky, P. & Kiparsky, C. (1970). Fact.
-- Schlenker, P. (2009). Local Contexts.
-- Tonhauser, J., Beaver, D., Roberts, C. & Simons, M. (2013). Toward a
-  taxonomy of projective content.
 -/
 
 import Linglib.Core.Semantics.Presupposition

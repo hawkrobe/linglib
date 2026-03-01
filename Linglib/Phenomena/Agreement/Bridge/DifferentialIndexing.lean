@@ -8,6 +8,7 @@ import Linglib.Fragments.Hungarian.Predicates
 
 /-!
 # Bridge: Differential Indexing ↔ DOM, PersonGeometry, Kaqchikel
+@cite{aissen-2003} @cite{just-2024} @cite{preminger-2014}
 
 Connects Just (2024) differential indexing to three existing formalizations:
 
@@ -26,12 +27,6 @@ Connects Just (2024) differential indexing to three existing formalizations:
    which serves as the baseline against which differential systems are
    defined.
 
-## References
-
-- Just, E. (2024). A structural and functional comparison of differential A
-  and P indexing. Linguistics 62(2): 295–321.
-- Aissen, J. (2003). Differential Object Marking. NLLT 21(3): 435–483.
-- Preminger, O. (2014). Agreement and Its Failures. MIT Press.
 -/
 
 namespace Phenomena.Agreement.Bridge.DifferentialIndexing

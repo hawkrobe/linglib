@@ -24,12 +24,6 @@ two distinct members are incompatible.
 space — a persona that takes a stance on every dimension (every
 bipolar pair has exactly one pole selected).
 
-## References
-
-* Burnett, H. (2019). Signalling Games, Sociolinguistic Variation,
-  and the Construction of Style. *Linguistics & Philosophy* 42: 419–450.
-* Eckert, P. (2008). Variation and the indexical field.
-  *Journal of Sociolinguistics* 12(4): 453–476.
 -/
 
 namespace Sociolinguistics

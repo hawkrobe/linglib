@@ -6,6 +6,7 @@ import Linglib.Core.Scales.Scale
 
 /-!
 # Kennedy Framework on Comparative Data
+@cite{kennedy-2007} @cite{kennedy-mcnally-2005}
 
 Bridge connecting Kennedy's (2007) measure function approach to the
 comparative construction data in `Phenomena/Comparison/Comparative/`.
@@ -24,10 +25,6 @@ comparative construction data in `Phenomena/Comparison/Comparative/`.
    for measure phrase differentials ("3 inches taller") because the
    degree argument IS a measure.
 
-## References
-
-- Kennedy, C. (2007). Vagueness and grammar.
-- Kennedy, C. & McNally, L. (2005). Scale structure, degree modification.
 -/
 
 namespace Phenomena.Comparison.Comparative.KennedyBridge

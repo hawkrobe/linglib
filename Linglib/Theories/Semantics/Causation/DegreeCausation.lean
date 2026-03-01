@@ -2,6 +2,7 @@ import Linglib.Theories.Semantics.Causation.CausalVerb
 
 /-!
 # Degree Constructions and Actuality Inferences (Nadathur 2023, Chapter 5)
+@cite{meier-2003} @cite{nadathur-2023}
 
 Formalizes the causal analysis of *enough* and *too* constructions:
 
@@ -29,12 +30,6 @@ variable (degree ≥ threshold). This means:
 - `tooWithAspect` uses `CausalFrame.complementBlockedAt` with polarity = negative
 - The actuality theorems are INSTANCES of the generic ones from `CausalVerb.lean`
 
-## References
-
-- Nadathur, P. (2023). *Actuality Inferences: Causality, Aspect, and Modality*.
-  Chapter 5: Enough and Too.
-- Meier, C. (2003). The meaning of *too*, *enough*, and *so...that*.
-  Natural Language Semantics.
 -/
 
 namespace Nadathur2023.DegreeCausation

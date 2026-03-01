@@ -1,5 +1,6 @@
 /-!
 # Latin Coordination Morphemes
+@cite{haspelmath-2007}
 
 Latin has a rich coordination system with both free and bound forms.
 The J/MU decomposition (Mitrović & Sauerland 2014, 2016) maps cleanly:
@@ -15,12 +16,6 @@ bisyndetic uses of J particles.
 Connection to Typology.lean: `Phenomena.Coordination.Typology.latin`
 encodes the structural patterns (a_co_b, a_b'co, co'a_b'co).
 
-## References
-
-- Mitrović & Sauerland (2016). Two conjunctions are better than one.
-  Acta Linguistica Hungarica 63(4), 471-494.
-- Haspelmath (2007). Coordination. In Shopen (ed.), Language Typology
-  and Syntactic Description. Cambridge University Press.
 -/
 
 namespace Fragments.Latin.Coordination

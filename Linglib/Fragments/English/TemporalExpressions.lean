@@ -3,6 +3,7 @@ import Linglib.Fragments.English.FunctionWords
 
 /-!
 # English Temporal Expressions Fragment
+@cite{alstott-aravind-2026} @cite{heinamaki-1974} @cite{heinamki-1974} @cite{rett-2020}
 
 Lexical entries for temporal expressions: subordinating connectives (*before*,
 *after*, *while*, *until*, *when*, *since*, *till*) and adverbial modifiers
@@ -15,11 +16,6 @@ both categories. This matters because *by* has the same temporal-ordering
 semantics as *before* (weakened to ≤) and should participate in the
 veridicality and NPI-licensing generalizations (Heinämäki 1974).
 
-## References
-
-- Rett, J. (2020). Eliminating EARLIEST. *Sinn und Bedeutung* 24.
-- Alstott, A. & Aravind, A. (2026). Aspectual coercion in *before*/*after*-clauses.
-- Heinämäki, O. (1974). *Semantics of English temporal connectives*.
 -/
 
 namespace Fragments.English.TemporalExpressions

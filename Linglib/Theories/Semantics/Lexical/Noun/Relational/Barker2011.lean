@@ -10,9 +10,6 @@ Barker's type-shifting analysis: π relationalizes sortals, Ex detransitivizes r
 
 `π`, `ExProp`, `ExDecidable`, `PossessiveSemantics`, `possessiveRelational`, `possessiveSortal`, `naSemantics`, `bareSemantics`
 
-## References
-
-Barker (2011), Partee (1997), Vikner & Jensen (2002), Ahn & Zhu (2025)
 -/
 
 namespace Semantics.Lexical.Noun.Relational.Barker2011

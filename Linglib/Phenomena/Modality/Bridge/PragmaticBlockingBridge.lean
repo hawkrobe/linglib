@@ -3,9 +3,7 @@ import Linglib.Theories.Semantics.Modality.EventRelativity
 /-!
 # Pragmatic Blocking of High Circumstantial Readings
 
-@cite{hacquard-2010}
-
-Formalizes the pragmatic blocking of circumstantial readings for
+@cite{hacquard-2010} @cite{grice-1975}Formalizes the pragmatic blocking of circumstantial readings for
 high modals (Hacquard 2010, pp. 110–111). Content licensing does NOT
 rule out circumstantial readings for high modals — `canProjectCircumstantial`
 returns `true` for all event binders. Instead, circumstantial readings of
@@ -44,11 +42,6 @@ utterance that maximizes informativity. When both readings are available,
 the epistemic one carries more information (it conveys the speaker's
 evidence state), so it is pragmatically preferred.
 
-## References
-
-- Hacquard, V. (2010). On the event relativity of modal auxiliaries.
-  Natural Language Semantics 18:79–114. pp. 110–111.
-- Grice, H.P. (1975). Logic and conversation.
 -/
 
 namespace Phenomena.Modality.Bridge.PragmaticBlockingBridge

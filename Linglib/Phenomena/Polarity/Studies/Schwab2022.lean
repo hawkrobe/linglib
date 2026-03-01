@@ -28,13 +28,6 @@ superficially satisfies this. For attenuating NPIs, the mechanism expects
 WEAKER-than-alternatives — the RC environment does NOT satisfy this, so no
 illusion arises.
 
-## References
-
-- Schwab, J. (2022). Lexical variation in NPI illusions. Journal of Memory
-  and Language, 124, 104317.
-- Schwab, J. & Liu, M. (2020). The role of scalar properties in NPI illusions.
-- Israel, M. (2011). The Grammar of Polarity. CUP.
-- Krifka, M. (1995). The semantics and pragmatics of polarity items.
 -/
 
 import Linglib.Fragments.English.PolarityItems

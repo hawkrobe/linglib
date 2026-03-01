@@ -41,15 +41,6 @@ limited evidence for embedded SIs. Ronai's methodology uses the Gotzner &
 Romoli (2018) paradigm and tests 42 scales, finding robust embedded SIs
 with predictable cross-scale variation.
 
-## References
-
-- Ronai, E. (2024). Embedded scalar diversity. SALT 34, 110-131.
-- van Tiel, B., Van Miltenburg, E., Zevakhina, N., & Geurts, B. (2016).
-  Scalar diversity. Journal of Semantics, 33(1), 137-175.
-- Gotzner, N. & Romoli, J. (2018). The scalar inferences of strong scalar
-  terms under negative quantifiers. Journal of Semantics, 35(1), 95-126.
-- Bergen, L., Levy, R., & Goodman, N. (2016). Pragmatic reasoning through
-  semantic inference. Semantics and Pragmatics, 9.
 -/
 
 import Mathlib.Data.Rat.Defs

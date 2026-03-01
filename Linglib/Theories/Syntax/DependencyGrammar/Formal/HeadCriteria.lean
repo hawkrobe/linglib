@@ -18,12 +18,6 @@ Given a construction C containing words H and D:
 5. **Morphological determination**: The form of D depends on H (agreement/government)
 6. **Positional determination**: The linear position of D is specified relative to H
 
-## References
-
-- Zwicky, A. (1985). Heads. Journal of Linguistics, 21(1), 1–29.
-- Hudson, R. (1990). English Word Grammar. Oxford: Blackwell.
-- de Marneffe, M.-C. & Nivre, J. (2019). Dependency Grammar.
-  Annual Review of Linguistics, 5, 197–218. §2.5.
 -/
 
 import Linglib.Theories.Syntax.DependencyGrammar.Core.Basic

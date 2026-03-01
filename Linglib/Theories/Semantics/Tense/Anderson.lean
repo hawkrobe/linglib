@@ -4,6 +4,7 @@ import Linglib.Theories.Semantics.Mood.Basic
 
 /-!
 # Anderson Conditionals and Domain Expansion
+@cite{condoravdi-2002} @cite{ippolito-2013}
 
 Formalizes the connection between backward temporal shifts and domain expansion
 in conditionals, following Mizuno's argument: the historical present (HP) in
@@ -24,10 +25,6 @@ tower push of an `hpShift`: a context shift that moves time backward and
 expands the domain. This connects the modal-temporal interaction in
 conditionals to the tower architecture.
 
-## References
-
-- Condoravdi, M. (2002). Temporal interpretation of modals.
-- Ippolito, M. (2013). Subjunctive Conditionals.
 -/
 
 namespace Semantics.Tense.Anderson

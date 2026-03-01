@@ -2,6 +2,7 @@ import Linglib.Theories.Semantics.Polarity.CzechNegation
 
 /-!
 # Czech Three-Way Negation in Polar Questions
+@cite{stakov-2026} @cite{zeijlstra-2004}
 
 Core empirical data for Staňková (2026), who proposes that negation in Czech
 occupies three distinct LF positions in polar questions:
@@ -25,10 +26,6 @@ The core types (`NegPosition`, `Diagnostic`, `licenses`) are in
 Romero (2024), Šimík (2024), verb position, and bias profiles are in
 `CzechThreeWayNeg.Typology`.
 
-## References
-
-- Staňková, V. (2026). A three-way distinction of negation interpretation in Czech.
-- Zeijlstra, H. (2004). Sentential Negation and Negative Concord. LOT.
 -/
 
 namespace Phenomena.Negation.CzechThreeWayNegBridge

@@ -3,6 +3,7 @@ import Linglib.Theories.Semantics.Dynamic.Systems.DynamicGQ.Basic
 
 /-!
 # Higher-Order Dynamic Generalized Quantifiers
+@cite{barker-shan-2014} @cite{charlow-2021}
 
 Charlow's (2021) first solution to cumulative readings: higher-order
 dynamic GQs using a "tower" continuation type. A modified numeral like
@@ -17,11 +18,6 @@ The simpler `HODGQ` type `(DRS S → DRS S) → DRS S` (= `Cont (DRS S) (DRS S)`
 cannot achieve this because its continuation receives an already-maximized
 flat DRS — the nuclear scope can only be placed outside maximization.
 
-## References
-
-- Charlow, S. (2021). Post-suppositions and semantic theory. *L&P* 44, 701–765.
-  §3–4, equations 24–27.
-- Barker, C. & Shan, C. (2014). *Continuations and Natural Language*. OUP.
 -/
 
 namespace Semantics.Dynamic.DynamicGQ.HigherOrder

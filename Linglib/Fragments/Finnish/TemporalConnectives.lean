@@ -2,6 +2,7 @@ import Linglib.Fragments.English.TemporalExpressions
 
 /-!
 # Finnish Temporal Connectives Fragment
+@cite{heinamaki-1974} @cite{heinamki-1974} @cite{karttunen-1974}
 
 Finnish lexicalizes the two-*until* distinction that Karttunen (1974) argues
 is covert in English:
@@ -20,11 +21,6 @@ Karttunen's identity: punctual *until* = ¬*before*.
 Finnish also has **kun** ('when') and the standard *before*/*after* pair:
 **ennen** / **jälkeen**.
 
-## References
-
-- Karttunen, L. (1974). Until. *CLS* 10, 284–297.
-- Heinamäki, O. (1974). *Semantics of English temporal connectives*. PhD,
-  Indiana University.
 -/
 
 namespace Fragments.Finnish.TemporalConnectives

@@ -45,10 +45,6 @@ The two readings are distinguished by the PerspectiveP layer (Dayal 2025):
 | 9 | `FKO1988` | WXDY is a formal idiom; sibling to Incredulity Response |
 | 10 | `Phenomena/KayFillmore1999` | Per-datum verification |
 
-## Reference
-
-Kay, P. & Fillmore, C. J. (1999). Grammatical Constructions and Linguistic
-Generalizations: The *What's X doing Y?* Construction. Language, 75(1), 1–33.
 -/
 
 namespace ConstructionGrammar.Studies.KayFillmore1999

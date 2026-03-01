@@ -3,6 +3,7 @@ import Linglib.Theories.Pragmatics.RSA.Extensions.LexicalUncertainty.Basic
 
 /-!
 # RSA Embedded Scalar Implicatures: Simplified Model (For Analysis)
+@cite{bergen-levy-goodman-2016} @cite{geurts-2010} @cite{potts-etal-2016}
 
 This file implements a **simplified** 2-lexicon model to analyze why minimal
 Lexical Uncertainty models fail to derive embedded implicature patterns.
@@ -18,12 +19,6 @@ RSA computations need to be re-implemented using the new RSAConfig framework.
 Demonstrates that a minimal 2-lexicon, 3-world model gives **inverted**
 predictions, motivating the richer structure in the full model.
 
-## References
-
-- Potts, Lassiter, Levy & Frank (2016). Embedded implicatures as pragmatic
-  inferences under compositional lexical uncertainty. Journal of Semantics.
-- Bergen, Levy & Goodman (2016). Pragmatic reasoning through semantic inference.
-- Geurts, B. (2010). Quantity Implicatures.
 -/
 
 namespace RSA.EmbeddedScalars

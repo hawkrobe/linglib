@@ -40,11 +40,6 @@ PLA's dynamic updates operate on `Set`-valued info states. The two
 representations are morally equivalent — `IsConservative` here corresponds
 to `Conservative` in Core — but typed for different downstream consumers.
 
-## References
-
-- Dekker, P. (2012). Dynamic Semantics. Springer. Chapter 4, §4.1.
-- Barwise, J. & Cooper, R. (1981). Generalized Quantifiers and Natural Language.
-- Groenendijk & Stokhof (1991). Dynamic Predicate Logic.
 -/
 
 import Linglib.Theories.Semantics.Dynamic.Systems.PLA.Update

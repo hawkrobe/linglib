@@ -37,13 +37,6 @@ Carlson 1977 (bare plurals = proper names of kinds)
 5. Theory comparison: Chierchia vs Krifka -- equivalent for English, differ for scrambling
 6. Scrambling (Le Bruyn & de Swart 2022): Dutch/German data distinguishes the theories
 
-## References
-
-- Carlson, G. (1977). A Unified Analysis of the English Bare Plural.
-- Chierchia, G. (1998). Reference to Kinds Across Languages.
-- Dayal, V. (2004). Number Marking and (In)definiteness in Kind Terms.
-- Krifka, M. (2004). Bare NPs: Kind-referring, Indefinites, Both, or Neither?
-- Le Bruyn, B. & de Swart, H. (2022). Exceptional wide scope of bare nominals.
 -/
 
 import Linglib.Theories.Semantics.Lexical.Noun.Kind.Carlson1977

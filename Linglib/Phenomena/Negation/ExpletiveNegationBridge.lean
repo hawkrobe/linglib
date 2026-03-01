@@ -6,6 +6,7 @@ import Linglib.Fragments.Italian.Negation
 
 /-!
 # Expletive Negation: Typology and Licensing
+@cite{greco-2018} @cite{greco-2019} @cite{halm-huszr-2021} @cite{jin-koenig-2021} @cite{kennedy-mcnally-2005} @cite{napoli-nespor-1976} @cite{rett-2026}
 
 Expletive negation (EN) is truth-conditionally vacuous negation that appears
 in specific grammatical environments cross-linguistically. Rett (2026) unifies
@@ -32,18 +33,6 @@ Two types of EN with different syntactic positions and licensing:
 - **Low EN**: targets truth-conditional content in ambidirectional environments;
   optional and triggers manner implicature (evaluativity).
 
-## References
-
-- Rett, J. (2026). Semantic ambivalence and expletive negation. Ms.
-- Jin, Y. & Koenig, J.-P. (2021). A cross-linguistic study of expletive
-  negation. *Linguistic Typology* 25(1), 39–78.
-- Greco, C. (2018). Negative Polarity Items and Expletive Negation.
-- Greco, C. (2019). The structure of expletive negation.
-- Halm, T. & Huszár, B. (2021). High and low expletive negation.
-- Cépeda, P. (2018). Expletive negation and evaluativity.
-- Krifka, M. (2010b). *Before* and *after* without coercion.
-- Kennedy, C. & McNally, L. (2005). Scale structure, degree modification.
-- Napoli, D. J. & Nespor, M. (1976). Negatives in comparatives.
 -/
 
 namespace Phenomena.Negation.ExpletiveNegation

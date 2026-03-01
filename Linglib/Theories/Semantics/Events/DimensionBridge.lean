@@ -5,6 +5,7 @@ import Linglib.Theories.Semantics.Tense.MaximalInformativity
 
 /-!
 # Cross-Dimension Bridge (Theory-Specific)
+@cite{kennedy-2007} @cite{krifka-1989} @cite{krifka-1998} @cite{rouillard-2026} @cite{zwarts-2005}
 
 Theory-specific commutativity squares, `LicensingPipeline` instances, concrete
 dimension chain instantiations, and end-to-end licensing theorems. Builds on
@@ -28,13 +29,6 @@ the theory-neutral infrastructure in `Core/MereoDim.lean`, `Core/Time.lean`,
    mereological tag (QUA/CUM), not on which dimension (temporal/spatial/object)
    the chain traverses. This is the "all the same theorem" claim.
 
-## References
-
-- Kennedy, C. (2007). Vagueness and grammar.
-- Rouillard, V. (2026). Maximal informativity and temporal in-adverbials.
-- Krifka, M. (1989). Nominal reference, temporal constitution.
-- Krifka, M. (1998). The origins of telicity.
-- Zwarts, J. (2005). Prepositional aspect and the algebra of paths.
 -/
 
 open Semantics.Lexical.Verb.Aspect

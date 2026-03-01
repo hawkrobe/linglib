@@ -38,13 +38,6 @@ Content that can be challenged with "Hey wait a minute!" is at-issue.
 Belief-Predicate Test (for OLE):
 "x believes that P" — does the projective content describe x's beliefs?
 
-## References
-
-- Tonhauser, Beaver, Roberts & Simons (2013). Toward a Taxonomy of
-  Projective Content. Language 89(1), 66-109.
-- Roberts (2012). Information structure in discourse.
-- Potts (2005). The Logic of Conventional Implicatures.
-- Simons et al. (2010). What projects and why.
 -/
 
 import Linglib.Core.Semantics.Presupposition

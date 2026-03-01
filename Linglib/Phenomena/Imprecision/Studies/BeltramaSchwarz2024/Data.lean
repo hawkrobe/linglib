@@ -27,11 +27,6 @@ judgment tasks (Exp 2): Chill speakers increase tolerance for
 imprecision in both tasks, but Nerdy speakers only increase
 exactness demands in the inference task.
 
-## References
-
-* Beltrama, A. & Schwarz, F. (2024). Social stereotypes affect
-  imprecision resolution across different tasks.
-  *Semantics & Pragmatics* 17(10): 1–34.
 -/
 
 namespace Phenomena.Imprecision.Studies.BeltramaSchwarz2024

@@ -20,9 +20,6 @@ Cases with no Core.Case equivalent: essive, translative, terminative,
 distributive, superessive, sublative, delative. We collapse the
 internal/external/surface local triads like Finnish.
 
-## References
-
-- Blake, B. J. (1994). *Case*. Cambridge University Press.
 -/
 
 namespace Fragments.Hungarian.Case

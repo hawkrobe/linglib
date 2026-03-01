@@ -5,6 +5,7 @@ import Linglib.Core.Context.Shifts
 
 /-!
 # Presupposition: ContextTower Bridge
+@cite{heim-1983} @cite{karttunen-1974} @cite{schlenker-2009}
 
 End-to-end derivation chain connecting the ContextTower infrastructure to
 presupposition projection phenomena via Schlenker's (2009) local context
@@ -34,11 +35,6 @@ Phenomena.Presupposition.Basic (king example, factive verbs, projection patterns
 4. **Belief embedding = attitudeShift**: attitude verbs push a shift, creating
    a tower of depth 1 where OLE triggers project to the attitude holder's beliefs
 
-## References
-
-- Schlenker, P. (2009). Local Contexts. Semantics & Pragmatics 2:3.
-- Karttunen, L. (1974). Presupposition and Linguistic Context.
-- Heim, I. (1983). On the Projection Problem for Presuppositions.
 -/
 
 namespace Phenomena.Presupposition.Bridge.TowerBridge

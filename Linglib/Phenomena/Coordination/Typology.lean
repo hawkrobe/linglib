@@ -28,16 +28,6 @@ Haspelmath's structural categories map onto M&S's semantic pieces:
 The MU particle in conjunction is typically the SAME morpheme as the
 language's additive/focus particle, confirming the diachronic link.
 
-## References
-
-- Haspelmath (2007). Coordination. In Shopen (ed.), Language Typology
-  and Syntactic Description. Cambridge University Press.
-- Stassen (2000). AND-languages and WITH-languages. Linguistic Typology 4.
-- Mitrović & Sauerland (2014). Decomposing coordination. NELS 44.
-- Mitrović & Sauerland (2016). Two conjunctions are better than one.
-  Acta Linguistica Hungarica 63(4), 471-494.
-- Mitrović (2021). Superparticles. Springer. (SNLT 98)
-- Bill et al. (2025). Is DP conjunction always complex? S&P 18(5).
 -/
 
 import Linglib.Phenomena.Coordination.Studies.BillEtAl2025

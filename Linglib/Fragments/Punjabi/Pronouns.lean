@@ -6,10 +6,6 @@ Punjabi has a two-level honorific system for 2nd person (non-hon *tũ* / hon
 *tusii*) realized as verbal agreement suffixes. 3rd person uses demonstrative
 forms (*uh* for both sg and pl). AA is Fin-based with limited embeddability.
 
-## References
-
-- Alok, D. & A. Bhalla (2026). Allocutive agreement and the syntax of
-  honorifics.
 -/
 
 import Linglib.Core.Lexical.Pronouns

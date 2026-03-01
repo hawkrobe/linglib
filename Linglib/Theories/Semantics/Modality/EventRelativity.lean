@@ -3,9 +3,7 @@ import Linglib.Core.Logic.ModalLogic
 
 /-!
 # Event-Relative Modality (Hacquard 2006, 2009, 2010)
-  @cite{hacquard-2006} @cite{hacquard-2009} @cite{hacquard-2010}
-
-Modal domains are projected from event arguments, not stipulated at the
+  @cite{hacquard-2006} @cite{hacquard-2009} @cite{hacquard-2010} @cite{alonso-ovalle-royer-2024} @cite{kratzer-1981}Modal domains are projected from event arguments, not stipulated at the
 clause level. An **anchoring function** maps events to conversational
 backgrounds (Kratzer 1981): the event type determines the modal flavor.
 
@@ -41,16 +39,6 @@ Modal indefinites (Alonso-Ovalle & Royer 2024) are existential quantifiers
 carrying a modal component whose domain is projected from an event
 argument via an anchoring function.
 
-## References
-
-- Hacquard, V. (2006). Aspects of Modality. MIT dissertation.
-- Hacquard, V. (2009). On the interaction of aspect and modal auxiliaries.
-  Linguistics and Philosophy 32:279–315.
-- Hacquard, V. (2010). On the event relativity of modal auxiliaries.
-  Natural Language Semantics 18:79–114.
-- Alonso-Ovalle, L. & Royer, J. (2024). Modal indefinites: Lessons from
-  Chuj. Linguistics and Philosophy.
-- Kratzer, A. (1981). The Notional Category of Modality.
 -/
 
 namespace Semantics.Modality.EventRelativity
@@ -827,7 +815,6 @@ theorem events_richer_than_pairs :
     -- Pairs would conflate them; events distinguish them.
     EventBinder.speechAct.availableFlavors =
       EventBinder.attitude.availableFlavors := ⟨rfl, rfl, rfl, rfl⟩
-
 
 
 -- ════════════════════════════════════════════════════

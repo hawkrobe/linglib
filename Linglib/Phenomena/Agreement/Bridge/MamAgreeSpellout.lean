@@ -51,12 +51,6 @@ Both yield "∅", but the intransitive case involves real agreement while
 the transitive case involves probe failure. This bridge demonstrates
 both paths.
 
-## References
-
-- Scott, T. (2023). Pronouns and agreement in San Juan Atitán Mam.
-  UC Berkeley dissertation.
-- Deal, A. M. (2015, 2021). Interaction and satisfaction in φ-agreement.
-- Keine, S. (2019, 2020). Selective opacity and horizons.
 -/
 
 namespace Phenomena.Agreement.Bridge.MamAgreeSpellout

@@ -13,9 +13,6 @@ allative functions — a cross-linguistically common pattern that Blake
 documents as ALL → DAT extension (Ch. 6). Similarly, -de covers both
 instrumental and locative functions.
 
-## References
-
-- Blake, B. J. (1994). *Case*. Cambridge University Press.
 -/
 
 namespace Fragments.Japanese.Case

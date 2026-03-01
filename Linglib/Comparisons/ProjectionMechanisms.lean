@@ -36,16 +36,6 @@ items).
 3. BToM strictly subsumes filtering for projection predictions in
    conditional environments
 
-## References
-
-- Heim (1983). On the Projection Problem for Presuppositions.
-  @cite{heim-1983}
-- Schlenker (2009). Local Contexts. @cite{schlenker-2009}
-- Scontras & Tonhauser (2025). Projection without lexically-specified
-  presupposition. @cite{scontras-tonhauser-2025}
-- Baker, Jara-Ettinger, Saxe & Tenenbaum (2017). Rational quantitative
-  attribution of beliefs, desires and percepts. Nature Human Behaviour.
-  @cite{baker-jara-ettinger-saxe-tenenbaum-2017}
 -/
 
 namespace Comparisons.ProjectionMechanisms

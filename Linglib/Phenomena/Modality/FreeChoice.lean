@@ -13,12 +13,6 @@ Pragmatically: ◇(C∨T) → ◇C ∧ ◇T (free choice!)
 
 This is not a semantic entailment; it is a pragmatic inference.
 
-## References
-
-- Ross, A. (1944). Imperatives and Logic. Theoria.
-- Kamp, H. (1973). Free Choice Permission. Proceedings of the Aristotelian Society.
-- Zimmermann, T.E. (2000). Free Choice Disjunction and Epistemic Possibility.
-- Geurts, B. (2010). Quantity Implicatures. Ch. 6.
 -/
 
 namespace Phenomena.Modality.FreeChoice
@@ -254,12 +248,6 @@ Key difference from disjunction:
 - Disjunction: ◇(a ∨ b) → ◇a ∧ ◇b
 - Universal FCI: ◇(∃x.class(x)) → ∀x.class(x) → ◇take(x)
 
-## References
-
-- Kadmon, N. & Landman, F. (1993). Any. Linguistics and Philosophy 16:353-422.
-- Dayal, V. (1998). Any as Inherently Modal. Linguistics and Philosophy 21:433-476.
-- Szabolcsi, A. (2004). Positive polarity - negative polarity. NLLT 22:409-452.
-- Alsop, S. (2024). The pragmatics of free choice any.
 -/
 
 /--
@@ -395,9 +383,6 @@ The pronoun "it" in the second disjunct is bound by the existential
 in the negated first disjunct. This is puzzling because negation should
 block binding, yet the inference requires x to be accessible.
 
-## References
-
-- Elliott, P. & Sudo, Y. (2025). Free choice with anaphora. S&P 18.
 -/
 
 /--

@@ -2,6 +2,7 @@ import Linglib.Core.Logic.Quantification
 
 /-!
 # Square of Opposition
+@cite{barwise-cooper-1981} @cite{horn-2001}
 
 The Aristotelian Square of Opposition reified as a first-class algebraic object.
 
@@ -32,12 +33,6 @@ The three duality operations (outer negation, inner negation, dual) generate
 the square from any single vertex. This module provides the abstract framework;
 concrete instantiations live in their respective theory modules.
 
-## References
-
-- Horn, L. (2001). A Natural History of Negation. Ch. 1: "Contradiction".
-- Barwise, J. & Cooper, R. (1981). Generalized Quantifiers and Natural Language.
-- Löbner, S. (1990). Wahr neben Falsch: Duale Operatoren als die Quantoren
-  natürlicher Sprache.
 -/
 
 namespace Core.SquareOfOpposition

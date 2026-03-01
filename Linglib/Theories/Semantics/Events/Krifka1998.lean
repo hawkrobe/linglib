@@ -30,13 +30,6 @@ MSO, UO) combining into **strict incrementality (SINC)**, plus the
 
 Note: Overlap, ExtMeasure, and extMeasure_qua are in Mereology.lean (§10).
 
-## References
-
-- Krifka, M. (1998). The origins of telicity. In S. Rothstein (ed.),
-  *Events and Grammar*, 197–235. Kluwer.
-- Krifka, M. (1989). Nominal reference, temporal constitution and
-  quantification in event semantics.
-- Champollion, L. (2017). *Parts of a Whole*. OUP.
 -/
 
 import Linglib.Theories.Semantics.Events.Mereology

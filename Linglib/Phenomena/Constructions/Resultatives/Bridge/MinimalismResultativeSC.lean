@@ -4,9 +4,7 @@ import Linglib.Phenomena.Constructions.Resultatives.Data
 /-!
 # Resultative — Small Clause Bridge (den Dikken 1995)
 
-@cite{dendikken-1995}
-
-Den Dikken (1995:25, ex. 41c): resultative constructions instantiate
+@cite{dendikken-1995} @cite{goldberg-jackendoff-2004}Den Dikken (1995:25, ex. 41c): resultative constructions instantiate
 SC predication with an adjectival or prepositional predicate:
 
     "They hammered the metal flat"         →  V [SC DP AP]
@@ -36,11 +34,6 @@ onto SC predicate categories:
 - `Phenomena.Constructions.ParticleVerbs.Bridge.MinimalismParticleSC`:
   path resultatives share SC predicate category P with PVCs.
 
-## References
-
-- den Dikken, M. (1995). *Particles.* OUP.
-- Goldberg, A. E. & Jackendoff, R. (2004). The English Resultative
-  as a Family of Constructions. Language, 80(3), 532-568.
 -/
 
 namespace Phenomena.Constructions.Resultatives.Bridge.MinimalismResultativeSC

@@ -7,9 +7,7 @@ import Linglib.Theories.Semantics.Lexical.Noun.Kind.Dayal2004
 /-!
 # Cross-Categorial Measurement Semantics
 
-@cite{wellwood-2015}
-
-Wellwood (2015) argues that all comparative sentences contain a covert `much`
+@cite{wellwood-2015} @cite{schwarzschild-2006}Wellwood (2015) argues that all comparative sentences contain a covert `much`
 morpheme whose semantics is a measure function μ assigned by a variable
 assignment A (eq. 28):
 
@@ -52,12 +50,6 @@ mereologies" (p. 81) — ordered domains with proper parts. We classify
 them as `.cumulative` because the structural consequence is the same:
 mereological structure enables monotonic measurement by `much`.
 
-## References
-
-- Wellwood, A. (2015). On the semantics of comparison across categories.
-  Linguistics and Philosophy 38(1): 67-101.
-- Schwarzschild, R. (2006). The role of dimensions in the syntax of
-  noun phrases. Syntax 9(1): 67-110.
 -/
 
 namespace Semantics.Lexical.Measurement

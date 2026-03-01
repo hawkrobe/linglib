@@ -24,11 +24,6 @@ In "Dexter ate bread, and Warren, potatoes":
 This leftward-looking function can only combine with a verb to its LEFT.
 Hence: forward gapping in SVO/VSO, backward gapping in SOV.
 
-## References
-
-- Steedman (2000) "The Syntactic Process" Chapter 7
-- Maling (1972) "On 'Gapping and the order of constituents'"
-- Dowty (1988) "Type-raising, functional composition, and non-constituent conjunction"
 -/
 
 import Linglib.Theories.Syntax.CCG.Core.Basic

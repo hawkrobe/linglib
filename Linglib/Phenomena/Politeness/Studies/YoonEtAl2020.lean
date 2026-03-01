@@ -23,11 +23,6 @@ Speakers with BOTH goals (informative + kind) produce more negation
 in bad states (0-1 hearts) compared to single-goal conditions.
 This is the signature of indirect speech driven by self-presentation.
 
-## Reference
-
-Yoon, E. J., Tessler, M. H., Goodman, N. D., & Frank, M. C. (2020).
-Polite Speech Emerges From Competing Social Goals.
-Open Mind: Discoveries in Cognitive Science, 4, 71-87.
 -/
 
 namespace Phenomena.Politeness.Studies.YoonEtAl2020

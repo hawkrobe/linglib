@@ -45,10 +45,6 @@ The grammar selects AF as optimal via OT competition (§5):
 SSAL >> XRef means avoiding the too-local movement outranks maintaining
 cross-referencing agreement.
 
-## References
-
-- Erlewine, M. Y. (2016). Anti-locality and optimality in Kaqchikel
-  Agent Focus. NALS 24: 923–972.
 -/
 
 namespace Fragments.Kaqchikel

@@ -3,9 +3,7 @@ import Linglib.Theories.Semantics.Reference.Kaplan
 
 /-!
 # Anderson Conditionals: Crosslinguistic Marking Strategies
-@cite{mizuno-2024}
-
-Formalizes the crosslinguistic typology of Anderson conditionals from
+@cite{mizuno-2024} @cite{anderson-1951}Formalizes the crosslinguistic typology of Anderson conditionals from
 Mizuno (2024) "Strategies for Anderson Conditionals", *Semantics and
 Pragmatics* 17(8): 1–14.
 
@@ -50,12 +48,6 @@ availability for Future Less Vivid conditionals (Iatridou 2000, §4.2):
 - Japanese: X-marking available for neither (Ogihara 2014)
 - Mandarin: X-marking available for neither
 
-## References
-
-- Mizuno, T. (2024). Strategies for Anderson conditionals.
-  *Semantics and Pragmatics* 17(8): 1–14.
-- Anderson, A. R. (1951). A note on subjunctive and counterfactual
-  conditionals. *Analysis* 12(2): 35–38.
 -/
 
 namespace Semantics.Conditionals.Anderson

@@ -5,6 +5,7 @@ open Core.Empirical
 
 /-!
 # Alstott & Aravind (2026): Aspectual Coercion in *before*/*after*-Clauses
+@cite{alstott-aravind-2026} @cite{brennan-pylkknen-2010} @cite{rett-2020}
 
 Self-paced reading data from 4 experiments testing Rett's (2020) prediction
 that aspectual coercion (INCHOAT, COMPLET) incurs measurable processing cost.
@@ -26,11 +27,6 @@ Key findings:
   Brennan & Pylkkänen (2010) (Exps 1a, 3)
 - Complement coercion (sanity check) replicates across all experiments
 
-## References
-
-- Alstott, A. & Aravind, A. (2026). Aspectual coercion in *before*/*after*-clauses.
-- Rett, J. (2020). Eliminating EARLIEST. *Sinn und Bedeutung* 24.
-- Brennan, J. & Pylkkänen, L. (2010). Processing events.
 -/
 
 namespace Phenomena.TenseAspect.Studies.AlstottAravind2026

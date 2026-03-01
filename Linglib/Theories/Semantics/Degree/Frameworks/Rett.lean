@@ -3,6 +3,7 @@ import Linglib.Theories.Semantics.Degree.Core
 
 /-!
 # Rett's Order-Sensitive MAX Framework
+@cite{rett-2026} @cite{rullmann-1995} @cite{schwarzschild-2008}
 
 Rett (2026) "Semantic Ambivalence and Expletive Negation": the
 comparative morpheme is an order-sensitive maximality operator MAX_R
@@ -36,11 +37,6 @@ expletive negation licensing.
 - The comparative morpheme `comparativeSem` is now in `Degree.Comparative`
 - EN predictions are in `Phenomena/Negation/ExpletiveNegationBridge.lean`
 
-## References
-
-- Rett, J. (2026). Semantic ambivalence and expletive negation. Ms.
-- Schwarzschild, R. (2008). The semantics of comparatives.
-- Rullmann, H. (1995). Maximality in the semantics of wh-constructions.
 -/
 
 namespace Semantics.Degree.Frameworks.Rett

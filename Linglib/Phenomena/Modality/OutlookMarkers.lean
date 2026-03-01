@@ -2,6 +2,7 @@ import Linglib.Fragments.Japanese.Particles
 
 /-!
 # Empirical Data: Kubota (2026) "Outlook Management"
+@cite{kubota-2026}
 
 Empirical observations on Japanese outlook markers from Kubota (2026).
 
@@ -14,9 +15,6 @@ Empirical observations on Japanese outlook markers from Kubota (2026).
 5. **Modal interaction** (45–46): stance interacts with modal flavor
 6. **Incompatibility patterns** (11–12): *mushiro*/*yahari* mutually exclude *igai-ni* 'unexpected'
 
-## References
-
-- Kubota, Y. (2026). Outlook Management. In *Handbook of Japanese Semantics and Pragmatics*.
 -/
 
 namespace Phenomena.Modality.OutlookMarkers.Kubota2026

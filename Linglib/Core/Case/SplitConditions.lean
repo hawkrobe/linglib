@@ -2,6 +2,7 @@ import Linglib.Core.Case.Basic
 
 /-!
 # Split-Ergative Conditioning @cite{blake-1994}
+@cite{dixon-1994}
 
 Blake (1994, Ch. 4) documents that **split-ergative** systems condition the
 choice between ergative and accusative alignment on factors such as
@@ -12,10 +13,6 @@ The `SplitErgativity` structure captures this: parameterized by a `Factor`
 type and a predicate `ergCondition` that determines which factor values
 trigger ergative alignment.
 
-## References
-
-- Blake, B. J. (1994). *Case*. Cambridge University Press. Ch. 4.
-- Dixon, R. M. W. (1994). *Ergativity*. Cambridge University Press.
 -/
 
 namespace Core

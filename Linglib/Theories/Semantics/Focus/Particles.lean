@@ -29,13 +29,6 @@ Local RSA derives EVEN effects from polarity-sensitive informativity:
 
 See `RSAExhMonad/LocalRSA/Unification.lean` for the Local RSA account.
 
-## References
-
-- Lahiri, U. (1998). Focus and negative polarity in Hindi.
-- Crnič, L. (2014). Non-monotonicity in NPI licensing.
-- Rooth, M. (1992). A theory of focus interpretation.
-- Karttunen, L. & Peters, S. (1979). Conventional implicature.
-- Chierchia, G. (2013). Logic in Grammar.
 -/
 
 import Mathlib.Data.Set.Basic

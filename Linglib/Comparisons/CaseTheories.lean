@@ -5,6 +5,7 @@ import Linglib.Fragments.Mam.Agreement
 
 /-!
 # Case Theories: Agree vs. Dependent Case vs. Voice-Based
+@cite{baker-2015} @cite{chomsky-2000} @cite{chomsky-2001} @cite{marantz-1991} @cite{ozaki-2025} @cite{scott-2023} @cite{woolford-1997} @cite{woolford-2006}
 
 Three competing theories of abstract case assignment in Minimalism:
 
@@ -42,20 +43,6 @@ Three competing theories of abstract case assignment in Minimalism:
 - Dependent case: Voice is irrelevant to the algorithm
 - Voice-based: Voice directly assigns ERG/ACC based on θ-role
 
-## References
-
-- Chomsky, N. (2000). Minimalist inquiries. In *Step by Step*, 89–155.
-- Chomsky, N. (2001). Derivation by phase. In *Ken Hale: A Life in
-  Language*, 1–52.
-- Marantz, A. (1991). Case and licensing. *ESCOL* 1991, 234–253.
-- Baker, M. (2015). *Case: Its Principles and Its Parameters*. CUP.
-- Woolford, E. (1997). Four-way case systems: Ergative, nominative,
-  objective and accusative. *NLLT* 15(1): 181–227.
-- Woolford, E. (2006). Lexical case, inherent case, and argument
-  structure. *LI* 37(1): 111–130.
-- Scott, T. (2023). Pronouns and agreement in San Juan Atitán Mam.
-  UC Berkeley dissertation.
-- Ozaki, S. (2025). CLS 61.
 -/
 
 namespace Comparisons.CaseTheories

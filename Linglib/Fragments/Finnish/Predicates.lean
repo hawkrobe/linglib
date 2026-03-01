@@ -2,7 +2,8 @@ import Linglib.Theories.Syntax.Minimalism.Core.Voice
 import Linglib.Core.Interfaces.VoiceSystem
 
 /-!
-# Finnish Verb Entries @cite{karlsson-2018}
+# Finnish Verb Entries @cite{karlsson-2017}
+@cite{shore-1986}
 
 Finnish verbs illustrate two phenomena that exercise linglib's infrastructure:
 
@@ -23,11 +24,6 @@ Finnish verbs illustrate two phenomena that exercise linglib's infrastructure:
    We record the type as data, not as separate MorphRules, since the
    classification is lexical.
 
-## References
-
-- Karlsson, F. (2018). *Finnish: A Comprehensive Grammar*. Routledge. Chs. 10–11.
-- Shore, S. (1986). Onko suomessa passiivia? [Does Finnish have a passive?]
-  *Suomalaisen Kirjallisuuden Seura*.
 -/
 
 namespace Fragments.Finnish.Predicates

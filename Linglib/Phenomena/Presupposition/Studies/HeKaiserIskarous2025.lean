@@ -28,10 +28,6 @@ Part-whole relations (e.g., house-bathroom, classroom-stove):
 | wonkyRSA | Complex prior for common ground update |
 | funkyRSA | Combination of fuzzy + wonky |
 
-## Reference
-
-He, M., Kaiser, E., & Iskarous, K. (2025). "Modeling sentence polarity asymmetries:
-Fuzzy interpretations in a possibly wonky world". SCiL 2025.
 -/
 
 import Mathlib.Data.Rat.Defs

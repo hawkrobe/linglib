@@ -13,10 +13,6 @@ Questions with multiple wh-phrases require n-place term answers.
 An n-constituent interrogative asks for an n-place relation.
 The answer specifies which n-tuples satisfy the relation exhaustively.
 
-## References
-
-- Groenendijk & Stokhof (1984). Studies on the Semantics of Questions. Section 3.2.
-- Dayal (2016). Questions. Chapter on pair-list readings.
 -/
 
 import Linglib.Phenomena.Questions.Basic

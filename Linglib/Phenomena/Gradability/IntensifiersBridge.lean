@@ -15,11 +15,6 @@ evaluative adjectives (e.g., "horribly warm", "pleasantly warm"):
 
 This file records pure empirical data — no theoretical commitments.
 
-## References
-
-- Nouwen, R. (2024). The semantics and probabilistic pragmatics of
-  deadjectival intensifiers. Linguistics and Philosophy.
-- Zwicky, A. M. (1970). Greek-letter variables and the Sanskrit ruki class.
 -/
 
 import Linglib.Theories.Semantics.Lexical.Adjective.Intensification

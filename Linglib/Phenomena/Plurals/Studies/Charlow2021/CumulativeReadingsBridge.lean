@@ -4,6 +4,7 @@ import Linglib.Theories.Semantics.Dynamic.Effects.Nondeterminism.PointwiseUpdate
 
 /-!
 # Charlow 2021: Cumulative Readings Bridge
+@cite{charlow-2021}
 
 Connects the empirical data (Scenario A/B) to the dynamic GQ theory.
 Verifies that:
@@ -11,9 +12,6 @@ Verifies that:
 2. The update-theoretic system is correct (predicts FALSE for Scenario B)
 3. The cumulative reading is strictly stronger than pseudo-cumulative
 
-## References
-
-- Charlow, S. (2021). Post-suppositions and semantic theory. *L&P* 44, 701–765.
 -/
 
 namespace Phenomena.Plurals.Studies.Charlow2021.CumulativeReadings

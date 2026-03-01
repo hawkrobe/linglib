@@ -34,12 +34,6 @@ RSA S1 (softmax)  ──α→∞──>  IBR S1 (argmax)  ────>  exhMW  
 1. **IBR = exhMW**: Full proof that IBR fixed point equals exhMW
 2. **Equivalence Conditions**: Precise characterization of when theories are equivalent
 
-## References
-
-- Franke (2011). Quantity implicatures, exhaustive interpretation, and rational conversation.
-- Goodman & Frank (2016). Pragmatic Language Interpretation as Probabilistic Inference.
-- Geurts (2010). Quantity Implicatures.
-- Frank & Goodman (2012). Predicting Pragmatic Reasoning in Language Games.
 -/
 
 import Linglib.Theories.Pragmatics.RSA.ScalarImplicatures.Basic

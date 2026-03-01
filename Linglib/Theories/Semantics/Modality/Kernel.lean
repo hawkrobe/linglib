@@ -2,6 +2,7 @@ import Linglib.Theories.Semantics.Modality.Kratzer
 import Linglib.Core.Semantics.Presupposition
 /-!
 # Kernel Semantics for Epistemic Modals
+@cite{von-fintel-gillies-2010} @cite{von-fintel-gillies-2021}
 
 Von Fintel & Gillies (2010, 2021) kernel semantics. Epistemic modals carry an
 evidential presupposition that the prejacent is not *directly settled* by the
@@ -14,10 +15,6 @@ evidential distribution (Observation 4) and its incompatibility with *it's
 possible* (Observation 5). Kernel semantics resolves this because *can't φ* =
 *must*(¬φ) is simultaneously strong and evidentially constrained.
 
-## References
-
-- von Fintel, K. & Gillies, A. (2010). Must...stay...strong! NLS 18:351–383.
-- von Fintel, K. & Gillies, A. (2021). Still going strong. NLS 29:91–113.
 -/
 
 namespace Semantics.Modality

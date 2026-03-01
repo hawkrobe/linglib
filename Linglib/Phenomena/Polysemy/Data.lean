@@ -2,6 +2,7 @@ import Linglib.Core.Lexical.Word
 
 /-!
 # Copredication Data
+@cite{asher-2011} @cite{gotham-2017} @cite{pustejovsky-1995}
 
 Empirical judgments for copredication — the phenomenon where predicates
 selecting different semantic aspects apply to the same polysemous noun phrase.
@@ -17,13 +18,6 @@ selecting different semantic aspects apply to the same polysemous noun phrase.
 3. **Lunch copredication**: "The lunch was delicious but took forever"
    — delicious selects food, took forever selects event.
 
-## References
-
-- Pustejovsky, J. (1995). The Generative Lexicon. MIT Press.
-- Asher, N. (2011). Lexical Meaning in Context. CUP.
-- Chatzikyriakidis et al. (2025). Types and the Structure of Meaning. §3.
-- Gotham, M. (2017). Composing Criteria of Individuation in Copredication.
-  Journal of Semantics 34(2): 331–371.
 -/
 
 namespace Phenomena.Polysemy

@@ -22,10 +22,6 @@ This shows that exhaustive interpretation is derivable from Gricean maxims:
 5. Exhaustification: Keep only minimal valuations
 6. Gricean reasoning: I(P) = states making P optimal; Max(P) = most informed such states
 
-## References
-
-- Spector (2007). Scalar implicatures: exhaustivity and Gricean reasoning.
-- Groenendijk & Stokhof (1984). Studies on the semantics of questions.
 -/
 
 import Mathlib.Data.Finset.Basic

@@ -29,10 +29,6 @@ Instead of DRS boxes, CDRT uses:
 | s → t | Dynamic propositions |
 | (s → t) → s → t | Sentence meanings |
 
-## References
-
-- Muskens, R. (1996). Combining Montague Semantics and Discourse Representation.
-- Linguistics and Philosophy 19:143-186.
 -/
 
 import Linglib.Theories.Semantics.Dynamic.Core.Basic

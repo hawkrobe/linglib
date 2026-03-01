@@ -17,12 +17,6 @@ Kind readings require topic position.
 | Singular exclusion | ∩ undefined for non-cumulative | Unfilled number argument |
 | Kind reading | Always available | Requires topic position |
 
-## References
-
-- Krifka, M. (2004). Bare NPs: Kind-referring, Indefinites, Both, or Neither?
-- Carlson, G. (1977). Reference to Kinds in English.
-- Chierchia, G. (1998). Reference to Kinds Across Languages.
-- Le Bruyn, B. & de Swart, H. (2022). Exceptional wide scope of bare nominals.
 -/
 
 import Mathlib.Data.Set.Basic

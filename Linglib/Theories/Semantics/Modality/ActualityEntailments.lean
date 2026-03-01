@@ -3,9 +3,7 @@ import Linglib.Theories.Semantics.Modality.Ability
 
 /-!
 # Actuality Entailments: Position × Aspect (Hacquard 2006, 2009)
-  @cite{hacquard-2006} @cite{hacquard-2009}
-
-Bridges **event-relative modality** (`EventRelativity.lean`) with the
+  @cite{hacquard-2006} @cite{hacquard-2009} @cite{bhatt-1999} @cite{nadathur-2023}Bridges **event-relative modality** (`EventRelativity.lean`) with the
 **causal model of ability** (`Ability.lean`) to derive actuality
 entailments from the relative scope of aspect and modal.
 
@@ -52,13 +50,6 @@ circumstantial backgrounds (any event type), so they CAN be below AspP.
 The actuality entailment asymmetry follows from content licensing +
 aspect scope, without stipulation.
 
-## References
-
-- Hacquard, V. (2006). Aspects of Modality. MIT dissertation. Chapter 1.
-- Hacquard, V. (2009). On the interaction of aspect and modal auxiliaries.
-  Linguistics and Philosophy 32:279–315.
-- Nadathur, P. (2023). Actuality Inferences: Causality, Aspect, and Modality.
-- Bhatt, R. (1999). Covert Modality in Non-finite Contexts. UPenn dissertation.
 -/
 
 namespace Semantics.Modality.ActualityEntailments

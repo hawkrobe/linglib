@@ -2,6 +2,7 @@ import Linglib.Theories.Semantics.Questions.QParticleLayer
 
 /-!
 # Russian Question Particles
+@cite{esipova-romero-2023}
 
 Lexical entries for Russian interrogative particles with distributional
 properties and bias profiles.
@@ -19,11 +20,6 @@ properties and bias profiles.
 - `SlavicPQStrategies.razve`: bias particle data (outerNeg/innerNeg)
 - Bridge theorems in `SlavicPQStrategies` (Phenomena imports Fragments)
 
-## References
-
-- Šimík, R. (2024). Polar question semantics and bias: Lessons from Slavic/Czech.
-- Esipova, M. & Romero, M. (2023). Russian IntonPQs.
-- Onoeva, M. & Staňková, A. (to appear). Corpus study of PQ strategies.
 -/
 
 namespace Fragments.Russian.QuestionParticles

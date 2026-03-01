@@ -3,6 +3,7 @@ import Linglib.Theories.Semantics.TypeTheoretic.Core
 
 /-!
 # Common Nouns as Predicates vs. Types @cite{sutton-2024}
+@cite{chatzikyriakidis-luo-2020} @cite{cooper-2023} @cite{luo-2012}
 
 Montague's STT treats common nouns as predicates: `man : Entity → Bool`.
 TTR treats them as types: `Man : Type`, where `a : Man` witnesses that
@@ -32,15 +33,6 @@ same truth conditions for basic predication.
    distinct (different `IType` names). TTR preserves the
    groundhog/woodchuck distinction; Montague collapses it.
 
-## References
-
-- Sutton, P. (2024). Types and Type Theories. Annual Review of
-  Linguistics 10: 347–370.
-- Luo, Z. (2012). Common Nouns as Types. In Béchet & Dikovsky (eds.),
-  LACL 2012, LNCS 7351: 173–185.
-- Cooper, R. (2023). From Perception to Communication. OUP.
-- Chatzikyriakidis, S. & Luo, Z. (2020). Formal Semantics in Modern
-  Type Theories. Wiley/ISTE.
 -/
 
 namespace Comparisons.CNsAsTypes

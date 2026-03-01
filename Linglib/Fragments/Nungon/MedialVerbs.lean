@@ -2,6 +2,7 @@ import Linglib.Core.Lexical.UD
 
 /-!
 # Nungon Medial Verb Morphology @cite{sarvasy-2017}
+@cite{sarvasy-2015} @cite{sarvasy-aikhenvald-2025}
 
 Medial verb morphology in Nungon (Trans-New Guinea, Finisterre-Huon family;
 Morobe Province, Papua New Guinea). Nungon has the most extensively described
@@ -36,13 +37,6 @@ participant whose identity *differs* from the following clause's subject.
 
 Note: 2du and 3du are syncretic (-uny-a); 2pl and 3pl are syncretic (-u-ya).
 
-## References
-
-- Sarvasy, H. S. (2017). A Grammar of Nungon. Brill.
-- Sarvasy, H. S. (2015). Breaking the clause chains: non-canonical medial
-  clauses in Nungon. Studies in Language 39(3):664-696.
-- Sarvasy, H. S. (2025). Clause chaining in Nungon. In Sarvasy &
-  Aikhenvald (eds.), Clause Chaining in the Languages of the World. Ch. 7.
 -/
 
 namespace Fragments.Nungon.MedialVerbs

@@ -3,6 +3,7 @@ import Linglib.Core.Agent.BToM
 
 /-!
 # RSAConfig — Unified RSA Configuration
+@cite{baker-tenenbaum-2009} @cite{degen-2023} @cite{frank-goodman-2012}
 
 A streamlined RSA configuration grounded in rational action theory. Each RSA
 model decomposes into two orthogonal dimensions:
@@ -39,14 +40,6 @@ S1 score examples:
 - Belief-based (F&G 2012): score = rpow(L0(w|u), α). rpow(0,α)=0.
 - Action-based (Q&F 2013): score = exp(α · (L0(w|u) - cost(u)))
 - QUD-based (Kao et al. 2014): score = exp(α · (ln L0(g(s,a)|u) - C(u)))
-
-## References
-
-- Degen (2023). The Rational Speech Act Framework. §2.
-- Frank & Goodman (2012). Predicting Pragmatic Reasoning in Language Games.
-- Baker, Saxe & Tenenbaum (2009). Action Understanding as Inverse Planning.
-- Qing & Franke (2013). Variations on a Bayesian Theme.
-- Kao et al. (2014). Nonliteral Understanding of Number Words.
 
 ## BToM Grounding (§5)
 

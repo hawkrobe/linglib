@@ -4,6 +4,7 @@ import Linglib.Theories.Semantics.Questions.Partition
 
 /-!
 # Inquisitive Semantics Bridge
+@cite{ciardelli-groenendijk-roelofsen-2019} @cite{thomas-2026}
 
 Bridges between Hamblin/partition question types and the inquisitive
 `Discourse.Issue` type (defined in Core/Discourse/QUD.lean).
@@ -13,11 +14,6 @@ Core types (`Discourse.InfoState`, `Discourse.Issue`, `Discourse.supports`,
 (`Discourse.moveRelevant`, `Discourse.partiallyAnswers`,
 `Discourse.questionEntails`) are defined in `Core/Discourse/QUD.lean`.
 
-## References
-
-- Ciardelli, Groenendijk & Roelofsen (2018). Inquisitive Semantics. OUP.
-- Thomas (2026). A probabilistic, question-based approach to additivity.
-- Groenendijk & Roelofsen (2009). Inquisitive Semantics and Pragmatics.
 -/
 
 namespace Semantics.Questions.Inquisitive

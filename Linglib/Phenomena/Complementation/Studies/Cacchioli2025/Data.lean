@@ -15,10 +15,6 @@ grammaticality judgments, and co-occurrence restrictions.
 4. **Fixed linear order**: Prefix always precedes the verbal complex
 5. **Agreement asymmetry**: kɨ- and ʔay-...-n take agreement; zɨ- and kəmzi- don't
 
-## References
-
-- Cacchioli, S. (2025). The Syntax of Clausal Prefixes in Tigrinya.
-  PhD dissertation.
 -/
 
 namespace Phenomena.Complementation.Cacchioli2025.Data

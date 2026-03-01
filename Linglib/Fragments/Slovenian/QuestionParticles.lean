@@ -18,9 +18,6 @@ Incompatible with DeclPQs (Šimík 2024 ex. 28).
 
 - `SlavicPQStrategies.slovenian`: PQ strategy profile
 
-## References
-
-- Šimík, R. (2024). Polar question semantics and bias: Lessons from Slavic/Czech.
 -/
 
 namespace Fragments.Slovenian.QuestionParticles

@@ -3,6 +3,7 @@ import Linglib.Phenomena.Polarity.Studies.VonFintel1999
 
 /-!
 # Bridge: PolarityBuilder → Polarity Phenomena
+@cite{von-fintel-1999}
 
 Cross-layer agreement between the Builder's monotonicity-derived licensing
 predictions and the Fragment's empirical `isLicensedIn` data, plus the
@@ -14,10 +15,6 @@ The Builder's `licensesItem` (derived from monotonicity proofs) agrees with
 the Fragment's `isLicensedIn` (empirical licensing lists) for all tested
 context–item pairs.
 
-## References
-
-- von Fintel, K. (1999). NPI Licensing, Strawson Entailment, and Context
-  Dependency. Journal of Semantics 16(2), 97–148.
 -/
 
 

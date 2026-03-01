@@ -18,11 +18,6 @@ Two distinct types of syntactic head movement:
 Both violate the Head Movement Constraint (HMC), distinguishing them from
 Amalgamation (a post-syntactic PF operation that respects HMC).
 
-## References
-
-- Harizanov, B. (2019). "Head Movement and Morphological Realization"
-- Travis, L. (1984). "Parameters and Effects of Word Order Variation"
-- Chomsky, N. (2001). "Derivation by Phase"
 -/
 
 import Linglib.Theories.Syntax.Minimalism.Core.Phase

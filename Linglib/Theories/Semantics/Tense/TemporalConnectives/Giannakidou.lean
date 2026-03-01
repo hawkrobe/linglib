@@ -3,9 +3,7 @@ import Linglib.Theories.Semantics.Lexical.Verb.ViewpointAspect
 
 /-!
 # Viewpoint Aspect × Temporal Connective Interaction
-@cite{giannakidou-2002} @cite{karttunen-1974}
-
-Giannakidou (2002) shows that viewpoint aspect determines negation scope
+@cite{giannakidou-2002} @cite{karttunen-1974} @cite{klein-1994} @cite{mittwoch-1977}Giannakidou (2002) shows that viewpoint aspect determines negation scope
 with *until*:
 
 - **Imperfective main clause** (states/progressives): the main clause is
@@ -37,13 +35,6 @@ world-independent (purely temporal structure).
 2. `prfvDenotation_not_subinterval_closed`: PRFV does not
 3. `scope_readings_distinct`: wide-scope and narrow-scope ¬*until* differ
 
-## References
-
-- Giannakidou, A. (2002). UNTIL, aspect and negation. *SALT* 12.
-- Karttunen, L. (1974). Until. *CLS* 10, 284–297.
-- Klein, W. (1994). *Time in Language*.
-- Mittwoch, A. (1977). How to refer to one's own words. *Linguistik und
-  Didaktik* 32, 316–321.
 -/
 
 namespace Semantics.Tense.TemporalConnectives

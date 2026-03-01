@@ -4,6 +4,7 @@ import Linglib.Core.Discourse.Epistemicity
 
 /-!
 # Tense–Modal Evidentiality Bridge
+@cite{cumming-2026} @cite{von-fintel-gillies-2010} @cite{zheng-2026}
 
 Connects Cumming's (2026) tense evidential constraint to von Fintel & Gillies's
 (2010) kernel semantics for epistemic `must`. Both phenomena reflect the same
@@ -29,11 +30,6 @@ The dripping-raincoat scenario (Zheng 2026, used in Kernel.lean) provides a
 concrete bridge: the raincoat evidence is causally downstream of rain (T ≤ A),
 and the kernel {wearingRaincoat} doesn't settle isRaining.
 
-## References
-
-- Cumming, S. (2026). Tense and evidence. *L&P* 49:153–175.
-- von Fintel, K. & Gillies, A. (2010). Must...stay...strong! *NLS* 18:351–383.
-- Zheng, L. (2026). The semantics of Mandarin polar *nandao*-questions. *NLS*.
 -/
 
 namespace Comparisons.TenseModalEvidentiality

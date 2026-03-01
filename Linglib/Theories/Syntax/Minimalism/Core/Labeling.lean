@@ -16,11 +16,6 @@ Maximality and minimality are RELATIONAL, not intrinsic properties.
 An element can be minimal in one structure but maximal in another.
 This enables movement to change an element's syntactic status.
 
-## References
-
-- Chomsky, N. (2013). "Problems of Projection"
-- Chomsky, N. (2015). "Problems of Projection: Extensions"
-- Collins, C. & E. Stabler (2016). "A Formalization of Minimalist Syntax"
 -/
 
 import Linglib.Theories.Syntax.Minimalism.Core.Basic

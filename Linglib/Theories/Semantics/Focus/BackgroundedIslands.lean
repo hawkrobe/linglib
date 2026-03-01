@@ -3,6 +3,7 @@ import Linglib.Core.Discourse.InformationStructure
 
 /-!
 # Backgrounded Constituents Are Islands
+@cite{erteschik-shir-2007} @cite{goldberg-2013} @cite{kratzer-selkirk-2020} @cite{lu-degen-2025} @cite{roberts-2012}
 
 Formalization of the discourse-backgroundedness account of manner-of-speaking
 (MoS) island effects, following Lu, Pan & Degen (2025).
@@ -34,14 +35,6 @@ foregrounding it and backgrounding the other. We derive:
 - Paper "backgrounded" = K&S `DiscourseStatus.given` (`Core/InformationStructure.lean`)
 - Rooth FIP / Q-A congruence (`Focus/Interpretation.lean`) = same as QUD cell membership
 
-## References
-
-- Lu, J., Pan, D., & Degen, J. (2025). Evidence for a discourse account of
-  manner-of-speaking islands. *Language* 101(4): 627–659.
-- Erteschik-Shir, N. (2007). *Information Structure*.
-- Goldberg, A.E. (2013). Backgrounded constituents cannot be 'extracted'.
-- Roberts, C. (2012). Information structure in discourse.
-- Kratzer, A. & Selkirk, E. (2020). Deconstructing Information Structure.
 -/
 
 open Core.InformationStructure

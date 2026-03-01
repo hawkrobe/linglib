@@ -6,13 +6,6 @@ Basque has a T/V distinction (*hi* familiar vs *zu* formal) and SA-based
 allocutive verbal suffixes that are restricted to root clauses. 2nd person
 plural *zuek* is distinct from formal singular *zu*.
 
-## References
-
-- Oyharçabal, B. (1993). Verb agreement with non-arguments: On allocutive
-  agreement. In J. I. Hualde & J. Ortiz de Urbina (eds.), Generative Studies
-  in Basque Linguistics.
-- Alok, D. & A. Bhalla (2026). Allocutive agreement and the syntax of
-  honorifics.
 -/
 
 import Linglib.Core.Lexical.Pronouns

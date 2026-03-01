@@ -7,6 +7,7 @@ import Mathlib.Tactic.Linarith
 
 /-!
 # Noncooperative Communication: Unified Argumentative RSA
+@cite{barnett-griffiths-hawkins-2022} @cite{cummins-2025} @cite{cummins-franke-2021} @cite{mazzarella-2018} @cite{merin-1999} @cite{sperber-2010}
 
 Unifies Cummins & Franke (2021)'s argumentative strength framework and
 Barnett et al. (2022)'s persuasive RSA into a single parameterized model,
@@ -46,16 +47,6 @@ Both C&F and Barnett involve misleading at the typicality/implicature
 level while maintaining truthful assertions — the argumentative speaker
 exploits pragmatic expectations without violating Quality.
 
-## References
-
-- Cummins, C. (2025). Noncooperative Communication. *Annu. Rev. Linguist.*, 11, 35–52.
-- Cummins, C. & Franke, M. (2021). Argumentative strength of numerical quantity.
-- Barnett, S. A., Griffiths, T. L., & Hawkins, R. D. (2022). A Pragmatic Account
-  of the Weak Evidence Effect. *Open Mind*, 6, 169–182.
-- Merin, A. (1999). Information, relevance, and social decision-making.
-- Sperber, D., et al. (2010). Epistemic vigilance. *Mind & Language*, 25, 359–393.
-- Macuch Silva, V. et al. (2024). Strategic quantifier use in production.
-- Mazzarella, D. et al. (2018). Saying, presupposing and implicating.
 -/
 
 namespace RSA.NoncooperativeCommunication

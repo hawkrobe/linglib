@@ -1,5 +1,6 @@
 /-!
 # Korean Conjunctive (Converbal) Suffixes
+@cite{sohn-1999} @cite{yeon-brown-2011}
 
 Medial clause markers in Korean: conjunctive suffixes on the verb stem that
 link clauses in a chain. Korean has no switch-reference morphology; instead,
@@ -24,10 +25,6 @@ the single final (independent) verb.
 | -nikka | causal 'since, because' (evidential) | possible | possible |
 | -(eu)ryeo | purpose/intention 'in order to' | no | possible |
 
-## References
-
-- Sohn, H.-M. (1999). The Korean Language. Cambridge University Press.
-- Yeon, J. & L. Brown (2011). Korean: A Comprehensive Grammar. Routledge.
 -/
 
 namespace Fragments.Korean.MedialVerbs

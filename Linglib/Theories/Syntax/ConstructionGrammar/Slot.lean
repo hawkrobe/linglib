@@ -4,9 +4,7 @@ import Mathlib.Algebra.Order.Ring.Rat
 /-!
 # Typed Slot-Filler Representation
 
-@cite{dunn-2026} @cite{kay-fillmore-1999}
-
-Constructions are sequences of slots, where each slot is either fixed
+@cite{dunn-2026} @cite{kay-fillmore-1999} @cite{dunn-2025} @cite{fillmore-oconnor-1988} @cite{goldberg-1995}Constructions are sequences of slots, where each slot is either fixed
 (a specific lexeme), open (any word of a given syntactic category),
 or headed (a phrase headed by a specific lexeme). Dunn's (2025)
 variationist CxG treats abstraction as continuous (the proportion of
@@ -40,15 +38,6 @@ into `Slot String` via `ConstructionSlot.toSlot` (§3).
 
 Verification theorems live in `Phenomena/Constructions/Bridge/SlotVerification.lean`.
 
-## References
-
-- Dunn, J. (2025). Syntactic Variation from Individuals to Populations.
-  Cambridge University Press.
-- Kay, P. & Fillmore, C. J. (1999). Grammatical Constructions and
-  Linguistic Generalizations: The WXDY Construction. Language 75(1):1–33.
-- Goldberg, A. E. (1995). Constructions. Ch. 3.
-- Fillmore, C. J., Kay, P. & O'Connor, M. C. (1988). Regularity and
-  Idiomaticity in Grammatical Constructions. Language 64(3):501–538.
 -/
 
 namespace ConstructionGrammar

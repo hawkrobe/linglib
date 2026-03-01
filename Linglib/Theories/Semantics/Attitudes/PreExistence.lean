@@ -2,6 +2,8 @@ import Linglib.Theories.Semantics.Lexical.Verb.VerbEntry
 
 /-!
 # Pre-Existence and Modal Insertion in Factive Complements
+@cite{bondarenko-2019} @cite{bondarenko-2020} @cite{williams-2025}
+@misc{white-2014}
 
 Williams (2025) argues that the distribution of the covert modal in
 non-finite complements of *forget* is governed by the **pre-existence
@@ -38,13 +40,6 @@ precede the forgetting.
 2025, p. 8, (15)): the covert modal Mod heads the complement of
 *forget* just in case the complement is a plain infinitive.
 
-## References
-
-- Williams, W. (2025). The presuppositions of 'forget'. SALT 35.
-- Bondarenko, T. (2019). From think to remember. SALT 29.
-- Bondarenko, T. (2020). Factivity from pre-existence. Glossa 5(1).
-- White, A. S. (2014). Factive-implicatives and modalized complements.
-@cite{williams-2025}
 -/
 
 namespace Semantics.Attitudes.PreExistence

@@ -10,9 +10,6 @@ to function application and composition.
 - `SemLexEntry`: Lexical entry with semantics
 - `DerivStep.interp`: Computes meaning from derivation compositionally
 
-## References
-
-- Steedman (2000). The Syntactic Process.
 -/
 
 import Linglib.Theories.Syntax.CCG.Core.Basic

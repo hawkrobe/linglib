@@ -3,6 +3,7 @@ import Linglib.Phenomena.WordOrder.Typology
 
 /-!
 # Bridge: DG Harmonic Order → WALS Word-Order Typology
+@cite{dryer-1992} @cite{gibson-2025}
 
 Connects the DLM (dependency length minimization) prediction that harmonic
 word order is cheaper (§4 of `HarmonicOrder.lean`) to the WALS typological
@@ -16,10 +17,6 @@ For each of the 3 construction pairs in WALS (Gibson 2025 Tables 1–3):
 Also verifies well-formedness, projectivity, and Behaghel's law for the
 example trees from `HarmonicOrder.lean`.
 
-## References
-
-- Gibson, E. (2025). Syntax: A cognitive approach. Ch. 5.3. MIT Press.
-- Dryer, M. (1992). The Greenbergian word order correlations. Language 68.
 -/
 
 namespace Phenomena.WordOrder.Bridge.DGHarmonicOrder

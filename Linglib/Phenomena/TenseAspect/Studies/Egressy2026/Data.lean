@@ -29,10 +29,6 @@ but blocked in full CP complements (with *hogy*).
 Theory-neutral empirical judgments only. Bridge theorems connecting
 these to Zeijlstra's Agree-based SOT are in `Bridge.lean`.
 
-## References
-
-- Egressy, A. (2026). Size-sensitive sequence of tense in Hungarian.
-  *The Linguistic Review*.
 -/
 
 namespace Phenomena.TenseAspect.Studies.Egressy2026

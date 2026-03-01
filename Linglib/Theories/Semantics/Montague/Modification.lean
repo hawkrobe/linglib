@@ -11,12 +11,6 @@ General adjective type: `⟨⟨e,t⟩, ⟨e,t⟩⟩`. Meaning postulates constra
 Predicate modification (H&K Ch. 4): `⟦α β⟧ = λx. ⟦α⟧(x) ∧ ⟦β⟧(x)`,
 valid for intersective adjectives only.
 
-## References
-
-- Kamp (1975). Two theories about adjectives.
-- Kamp & Partee (1995). Prototype theory and compositionality.
-- Partee (2001). Privative Adjectives: Subsective plus Coercion.
-- Heim & Kratzer (1998). Semantics in Generative Grammar, Ch. 4.
 -/
 
 import Linglib.Theories.Semantics.Montague.Basic

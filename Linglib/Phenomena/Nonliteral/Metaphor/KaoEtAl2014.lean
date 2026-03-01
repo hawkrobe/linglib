@@ -31,10 +31,6 @@ Parameters: α = 3, P(whale) = 1/100, P(person) = 99/100
 | 5 | Specific QUD → higher P(large=T) than vague QUD | `context_sensitivity` |
 | 6 | P(person \| "person") > P(whale \| "person") | `literal_correct` |
 
-## References
-
-Kao, J. T., Bergen, L., & Goodman, N. D. (2014). Formalizing the Pragmatics of
-Metaphor Understanding. CogSci 36, 719-724.
 -/
 
 set_option autoImplicit false

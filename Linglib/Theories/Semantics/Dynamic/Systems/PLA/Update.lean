@@ -17,10 +17,6 @@ Dekker shows three equivalent perspectives on dynamic meaning:
 - Theorem 3.2: updates-to-support equivalence
 - Dynamic conjunction: non-commutative, non-idempotent
 
-## References
-
-- Dekker, P. (2012). Dynamic Semantics. Springer. Chapter 3.
-- Groenendijk, J. & Stokhof, M. (1991). Dynamic Predicate Logic.
 -/
 
 import Linglib.Theories.Semantics.Dynamic.Systems.PLA.Semantics

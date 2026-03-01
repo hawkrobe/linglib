@@ -29,9 +29,6 @@ with a concrete linguistic example: "the book that John read _"
 5. **Predicate Modification with head noun**: λx. book(x) ∧ read(j, x)
 6. **Definite description**: ιx[book(x) ∧ read(j,x)]
 
-## References
-
-- Heim & Kratzer (1998) "Semantics in Generative Grammar", Ch. 7, 8
 -/
 
 import Linglib.Theories.Interfaces.SyntaxSemantics.Minimalism.Interface

@@ -6,6 +6,7 @@ import Linglib.Phenomena.Case.Studies.Aissen2003
 
 /-!
 # De Hoop & Malchukov (2008): Case-Marking Strategies @cite{de-hoop-malchukov-2008}
+@cite{aissen-2003} @cite{blutner-2000}
 
 Case-Marking Strategies. Linguistic Inquiry 39(4): 565–587.
 
@@ -64,14 +65,6 @@ be differentially marked. When PaIP dominates:
 
 This derives: DOM ↔ nom-acc, DSM ↔ ergative (p. 580).
 
-## References
-
-- de Hoop, H. & A. Malchukov (2008). Case-Marking Strategies.
-  Linguistic Inquiry 39(4): 565–587.
-- Blutner, R. (2000). Some Aspects of Optimality in Natural Language
-  Interpretation. JOLLI 9(1): 1–25.
-- Aissen, J. (2003). Differential Object Marking: Iconicity vs. Economy.
-  NLLT 21(3): 435–483.
 -/
 
 namespace Phenomena.Case.Studies.DeHoopMalchukov2008

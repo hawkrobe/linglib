@@ -17,13 +17,6 @@ There is a systematic correlation:
 
 The reverse pattern (adding complexity to add imprecision) is unattested.
 
-## References
-
-- Löbner (2000): Polarity and complexity
-- Krifka (2002, 2007): Complexity and imprecision
-- Horn (1984): Division of pragmatic labor
-- Katzir (2007): Structural complexity and alternatives
-- Dissertation Chapter 3: No Needless Manner Violations
 -/
 
 namespace Phenomena.Imprecision.FormMeaning

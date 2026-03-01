@@ -3,6 +3,7 @@ import Linglib.Core.Scales.HornScale
 
 /-!
 # Scale Generation from Morphological Paradigms
+@cite{horn-1972} @cite{kennedy-2007}
 
 Derives Horn scales automatically from adjective paradigms. Given a stem
 with comparative and superlative rules, we can construct the scale
@@ -19,10 +20,6 @@ computation.
 - `adjectiveScale`: extracts a degree scale from a stem's paradigm
 - `morphologicalAlternatives`: returns paradigm-mates as scalar alternatives
 
-## References
-
-- Horn, L. R. (1972). On the Semantic Properties of Logical Operators in English.
-- Kennedy, C. (2007). Vagueness and grammar.
 -/
 
 namespace Core.Morphology.ScaleFromParadigm

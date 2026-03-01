@@ -4,7 +4,8 @@ import Linglib.Theories.Phonology.RuleBased.Defs
 import Linglib.Theories.Phonology.Autosegmental.Defs
 
 /-!
-# Finnish Vowel Harmony @cite{karlsson-2018}
+# Finnish Vowel Harmony @cite{karlsson-2017}
+@cite{goldsmith-1976} @cite{ringen-heinmki-1999}
 
 Finnish has **palatal vowel harmony**: the [±back] feature of root vowels
 propagates rightward through all suffixes (Karlsson 2018, Ch. 2). This is
@@ -32,12 +33,6 @@ feature from the stem's last harmonic vowel rightward through the suffix.
 Neutral vowels are transparent: the spreading "skips" them (their own [back]
 value is independently set to [−back]).
 
-## References
-
-- Karlsson, F. (2018). *Finnish: A Comprehensive Grammar* (3rd ed.). Routledge.
-- Goldsmith, J. A. (1976). *Autosegmental Phonology*. PhD, MIT.
-- Ringen, C. O. & Heinämäki, O. (1999). Variation in Finnish vowel harmony.
-  *NLLT* 17: 303–337.
 -/
 
 namespace Fragments.Finnish.VowelHarmony

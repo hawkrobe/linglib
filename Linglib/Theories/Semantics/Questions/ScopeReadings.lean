@@ -4,6 +4,7 @@ import Linglib.Theories.Semantics.Questions.MentionSome
 
 /-!
 # Questions/ScopeReadings.lean
+@cite{dayal-2016} @cite{groenendijk-stokhof-1984} @cite{szabolcsi-1997}
 
 Pair-List, Choice, and Mention-Some Readings (G&S 1984, Chapter VI, Sections 2-5).
 
@@ -36,11 +37,6 @@ Different individuals can give different complete answers.
 - The question is parameterized by which y is relevant
 - Answer resolves the question for SOME y (the one that matters)
 
-## References
-
-- Groenendijk & Stokhof (1984). Studies on the Semantics of Questions. Ch. VI, Sections 2.1-2.2.
-- Szabolcsi (1997). Quantifiers in Pair-List Readings.
-- Dayal (2016). Questions. MIT Press.
 -/
 
 namespace Semantics.Questions.ScopeReadings

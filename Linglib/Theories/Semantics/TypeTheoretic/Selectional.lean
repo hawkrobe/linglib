@@ -2,6 +2,7 @@ import Linglib.Theories.Semantics.TypeTheoretic.Core
 
 /-!
 # Selectional Restrictions via Subtyping @cite{sutton-2024}
+@cite{chatzikyriakidis-luo-2020} @cite{cooper-2023} @cite{luo-2012} @cite{pustejovsky-1995}
 
 Makes `SubtypeOf` from `Core.lean` load-bearing by wiring it into
 typed composition. Verbs declare the ontological sort they require;
@@ -36,15 +37,6 @@ them: when subtyping succeeds, the soft preference is high; when it
 fails, the soft preference is at `selectionalEpsilon` (the coercion/
 metaphor residual).
 
-## References
-
-- Luo, Z. (2012). Common Nouns as Types. LACL 2012, LNCS 7351.
-- Chatzikyriakidis, S. & Luo, Z. (2020). Formal Semantics in
-  Modern Type Theories. Wiley/ISTE.
-- Pustejovsky, J. (1995). The Generative Lexicon. MIT Press.
-- Sutton, P. (2024). Types and Type Theories. Annual Review of
-  Linguistics 10: 347–370.
-- Cooper, R. (2023). From Perception to Communication. OUP.
 -/
 
 namespace Semantics.TypeTheoretic.Selectional

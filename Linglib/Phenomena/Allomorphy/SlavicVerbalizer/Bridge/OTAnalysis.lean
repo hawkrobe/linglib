@@ -4,6 +4,7 @@ import Linglib.Phenomena.Allomorphy.SlavicVerbalizer.Data
 
 /-!
 # Slavic Verbalizer — OT Analysis @cite{stojkovic-2026}
+@cite{stojkovi-2026}
 
 OT evaluation connecting constraint rankings to the empirical surface
 forms of the Slavic verbalizer (VBLZ). Stojković (2026) argues the VBLZ
@@ -50,10 +51,6 @@ The 4! = 24 permutations of the four variable constraints produce
 exactly 4 distinct optima: {[ov]}, {[ev]}, {[uv]}, {[iv]}. Three
 correspond to attested groups; {[iv]} is unattested.
 
-## References
-
-- Stojković, J. (2026). Same Form, Different Grammars: The Slavic
-  [ov]∼[u] Alternation. In *Advances in Formal Slavic Linguistics 2023*.
 -/
 
 namespace Phenomena.Allomorphy.SlavicVerbalizer.Bridge.OTAnalysis

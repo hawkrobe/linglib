@@ -22,13 +22,6 @@ This module formalizes the decomposition and connects it to:
 - `CausativeBuilder` (initiative ↔ causative constructions)
 - `VendlerClass` / `DiagnosticResult` (aspect diagnostics)
 
-## References
-
-- Cruse, D. A. (1973). Some Thoughts on Agentivity. Journal of
-  Linguistics 9(1), 11–23.
-- Parsons, T. (1990). Events in the Semantics of English.
-- Nadathur, P. & Lauer, S. (2020). Causal necessity, causal sufficiency,
-  and the implications of causative verbs. Glossa 5(1), 49.
 -/
 
 import Linglib.Theories.Semantics.Events.ThematicRoles

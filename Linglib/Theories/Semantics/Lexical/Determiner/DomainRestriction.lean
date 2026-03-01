@@ -3,9 +3,7 @@ import Linglib.Theories.Semantics.Lexical.Determiner.Quantifier
 /-!
 # Quantifier Domain Restriction
 
-@cite{ritchie-schiller-2024}
-
-Ritchie, H. & Schiller, K. (2024). Default Domain Restriction Possibilities.
+@cite{ritchie-schiller-2024} @cite{bach-1994} @cite{cutting-vishton-1995} @cite{previc-1998} @cite{stanley-szab-2000} @cite{von-fintel-1994}Ritchie, H. & Schiller, K. (2024). Default Domain Restriction Possibilities.
 *Semantics & Pragmatics* 17, Article 13: 1–49.
 
 ## Core Idea
@@ -39,13 +37,6 @@ determiners are conservative (Barwise & Cooper 1981): Q(R, S) = Q(R, R ∩ S).
 Combined with Extension (spectator irrelevance), restricting the domain to entities
 satisfying C is equivalent to restricting the restrictor to C ∩ R.
 
-## References
-
-- von Fintel, K. (1994). Restrictions on Quantifier Domains. UMass dissertation.
-- Stanley, J. & Szabó, Z.G. (2000). On quantifier domain restriction. M&L 15(3).
-- Bach, K. (1994). Conversational impliciture. M&L 9(2).
-- Previc, F.H. (1998). The neuropsychology of 3-D space. Psychological Bulletin 124(2).
-- Cutting, J.E. & Vishton, P.M. (1995). Perceiving layout and knowing distances.
 -/
 
 set_option autoImplicit false

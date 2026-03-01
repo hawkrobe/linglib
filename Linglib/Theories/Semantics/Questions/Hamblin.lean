@@ -2,6 +2,7 @@ import Linglib.Theories.Semantics.Questions.Basic
 
 /-!
 # Questions/Hamblin.lean
+@cite{hamblin-1973b} @cite{karttunen-1977} @cite{kratzer-shimoyama-2002b} @cite{partee-rooth-1983}
 
 Hamblin Semantics for Questions.
 
@@ -23,12 +24,6 @@ generalized conjunction:
 - Q₁ ∧ Q₂ = λp. Q₁(p) ∧ Q₂(p)
 - Q₁ ∨ Q₂ = λp. Q₁(p) ∨ Q₂(p)
 
-## References
-
-- Hamblin (1973). Questions in Montague English. Foundations of Language.
-- Karttunen (1977). Syntax and Semantics of Questions. L&P.
-- Kratzer & Shimoyama (2002). Indeterminate Pronouns. SALT 12.
-- Partee & Rooth (1983). Generalized Conjunction and Type Ambiguity.
 -/
 
 namespace Semantics.Questions.Hamblin

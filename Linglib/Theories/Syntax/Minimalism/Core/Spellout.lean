@@ -2,6 +2,7 @@ import Linglib.Theories.Syntax.Minimalism.Core.Agree
 
 /-!
 # Spellout: Feature-to-Morphology Mapping
+@cite{elkins-imanishi-coon-2026} @cite{halle-marantz-1993} @cite{kiparsky-1973}
 
 Bridges the gap between Agree (which values features in narrow syntax) and
 PF (which realizes valued feature bundles as phonological exponents). In
@@ -15,16 +16,6 @@ wins. This captures e.g. Mam =(y)a' appearing specifically when Voice⁰
 bears [+oblique], while a less specific entry would yield the default
 (zero) exponent.
 
-## References
-
-- Halle, M. & A. Marantz (1993). Distributed Morphology and the pieces
-  of inflection. In K. Hale & S. J. Keyser (eds.), The View from
-  Building 20. MIT Press.
-- Kiparsky, P. (1973). "Elsewhere" in phonology. In S. Anderson &
-  P. Kiparsky (eds.), A Festschrift for Morris Halle. Holt, Rinehart
-  and Winston.
-- Elkins, N., Y. Imanishi & J. Coon (2026). Wh-movement and oblique
-  extraction in SJO Mam.
 -/
 
 namespace Minimalism

@@ -3,6 +3,7 @@ import Linglib.Theories.Syntax.DependencyGrammar.Formal.DependencyLength
 
 /-!
 # Study 1: Artificial Language Learning (Fedzechkina et al. 2013/2017)
+@cite{fedzechkina-newport-2012} @cite{fedzechkina-newport-2017} @cite{hahn-degen-futrell-2021}
 
 Hahn et al. (2021) Study 1 reanalyzes Fedzechkina, Jaeger & Newport (2012,
 2017): learners of an artificial language with flexible word order converge
@@ -25,15 +26,6 @@ Learners exposed to a 50/50 mixture of both orders converge toward
 Language A's order (~67% use by end of training), showing a learning
 bias for dependency-length-minimizing (= memory-efficient) orders.
 
-## References
-
-- Fedzechkina, M., Jaeger, T. F. & Newport, E. L. (2012). Language
-  learners restructure their input to facilitate efficient communication.
-  *PNAS* 109:17897–17902.
-- Fedzechkina, M., Jaeger, T. F. & Newport, E. L. (2017). Balancing
-  effort and information transmission during language acquisition.
-  *Cognitive Science* 41:416–446.
-- Hahn, M., Degen, J. & Futrell, R. (2021). Study 1 (§4).
 -/
 
 namespace DepGrammar.MemorySurprisal.FedzechkinaEtAl2017

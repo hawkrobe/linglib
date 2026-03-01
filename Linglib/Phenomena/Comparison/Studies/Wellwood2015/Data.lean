@@ -16,10 +16,6 @@ nominal, verbal, and adjectival domains.
 - §3.4: Dimensional restriction patterns
 - §5: Number morphology and measurement (grammar shifts measurement)
 
-## References
-
-- Wellwood, A. (2015). On the semantics of comparison across categories.
-  Linguistics and Philosophy 38(1): 67-101.
 -/
 
 namespace Phenomena.Comparison.Wellwood2015

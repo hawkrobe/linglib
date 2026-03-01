@@ -8,6 +8,7 @@ import Linglib.Fragments.Italian.Nouns
 
 /-!
 # Noun Categorization and Agreement Typology
+@cite{aikhenvald-2000} @cite{chierchia-1998} @cite{dixon-1982} @cite{greenberg-1972}
 
 Cross-linguistic typology of noun categorization systems, following Aikhenvald
 (2000). The central diagnostic is **agreement**: noun class/gender systems
@@ -42,12 +43,6 @@ classifier–number complementarity.
 - **Noun entries**: `Fragments.{Mandarin,Japanese,French}.Nouns`
 - **Chierchia bridge**: `Semantics.Lexical.Noun.Kind.Chierchia1998`
 
-## References
-
-- Aikhenvald, A. Y. (2000). Classifiers: A Typology of Noun Categorization Devices.
-- Dixon, R. M. W. (1982). Where Have All the Adjectives Gone?
-- Chierchia, G. (1998). Reference to Kinds Across Languages.
-- Greenberg, J. H. (1972). Numeral classifiers and substantival number.
 -/
 
 namespace Phenomena.Agreement.NounCategorization

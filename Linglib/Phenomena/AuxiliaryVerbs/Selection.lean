@@ -2,6 +2,7 @@ import Linglib.Core.Lexical.Word
 
 /-!
 # Be/Have Auxiliary Selection in European Perfects
+@cite{burzio-1986} @cite{sorace-2000}
 
 Many European languages select between *be* and *have* as the perfect auxiliary
 based on the transitivity/unaccusativity of the lexical verb. The canonical
@@ -18,11 +19,6 @@ Vendler's achievement class (telic, punctual) correlates with unaccusativity:
 canonical achievements (*arrive*, *die*, *fall*) are unaccusative and select *be*
 in split-auxiliary languages.
 
-## References
-
-- Burzio, L. (1986). Italian Syntax. Reidel.
-- Sorace, A. (2000). Gradients in auxiliary selection with intransitive verbs.
-  *Language* 76:859-890.
 -/
 
 namespace Phenomena.AuxiliaryVerbs.Selection

@@ -6,9 +6,7 @@ import Linglib.Theories.Pragmatics.RSA.Extensions.LexicalUncertainty.Basic
 /-!
 # Grammar as Distribution
 
-@cite{dunn-2026} @cite{hawkins-franke-frank-goldberg-smith-griffiths-goodman-2023}
-
-A grammar is a frequency profile over constructions (Dunn 2025). This
+@cite{dunn-2026} @cite{hawkins-franke-frank-goldberg-smith-griffiths-goodman-2023} @cite{bergen-levy-goodman-2016} @cite{dunn-2025}A grammar is a frequency profile over constructions (Dunn 2025). This
 generalizes lexical uncertainty (Bergen et al. 2016): where LU varies meaning
 assignments, grammar uncertainty varies both meaning AND production frequency.
 
@@ -37,13 +35,6 @@ The same grammar object classifies differently in BToM depending on the
 phenomenon (§5): variability → medium, generalization → shared,
 online learning → mental.
 
-## References
-
-- Dunn, J. (2025). Syntactic Variation from Individuals to Populations.
-  Cambridge University Press.
-- Hawkins, Franke, Frank, Goldberg, Smith, Griffiths & Goodman (2023). From
-  Partners to Populations. Psychological Review 130(4), 977.
-- Bergen, Levy & Goodman (2016). Pragmatic Reasoning through Semantic Inference.
 -/
 
 namespace ConstructionGrammar

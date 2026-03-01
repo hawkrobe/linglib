@@ -3,6 +3,7 @@ import Linglib.Theories.Semantics.Conditionals.Basic
 
 /-!
 # Restrictor Theory of Conditionals
+@cite{kratzer-1986} @cite{kratzer-2012} @cite{von-fintel-2012}
 
 Kratzer's restrictor analysis: if-clauses restrict the modal domain rather than
 functioning as binary connectives. "If α, (must) β" is analyzed as modal
@@ -26,12 +27,6 @@ necessity (∀w' ∈ Best(f+α, ∅, w). β(w')) equals the strict conditional
 (∀w' ∈ ∩f(w). α(w') → β(w')) from `Conditionals/Basic.lean`. This is the
 core bridge connecting the two currently-independent modules.
 
-## References
-
-- Kratzer, A. (1986). Conditionals. CLS 22.
-- Kratzer, A. (2012). Modals and Conditionals. OUP. Ch. 4.
-- von Fintel, K. (2012). Subjunctive conditionals. In Russell & Fara,
-  Routledge Companion to Philosophy of Language.
 -/
 
 namespace Semantics.Conditionals.Restrictor

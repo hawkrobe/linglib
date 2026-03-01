@@ -7,6 +7,7 @@ import Linglib.Theories.Semantics.Causation.ProductionDependence
 
 /-!
 # Resultatives as Concealed Causatives
+@cite{baglini-bar-asher-siegal-2025} @cite{goldberg-jackendoff-2004} @cite{levin-2019} @cite{martin-rose-nichols-2025} @cite{nadathur-lauer-2020}
 
 Connects the resultative construction (Goldberg & Jackendoff 2004) to the
 causative semantics infrastructure:
@@ -25,18 +26,6 @@ causative semantics infrastructure:
 6. **Müller decomposability**: all subconstructions decompose into
    universal schemata
 
-## References
-
-- Goldberg, A. E. & Jackendoff, R. (2004). The English Resultative as a
-  Family of Constructions. Language, 80(3), 532–568.
-- Nadathur, P. & Lauer, S. (2020). Causal necessity, causal sufficiency,
-  and the implications of causative verbs. Glossa.
-- Baglini, R. & Bar-Asher Siegal, E. A. (2025). Modeling linguistic
-  causation. Linguistics & Philosophy, 48, 647–691.
-- Levin, B. (2019). Resultatives and constraints on concealed causatives.
-  In Proceedings of JerSem.
-- Martin, F., Rose, D. & Nichols, S. (2025). Burning facts: thick and thin
-  causatives. Version 1, November 23, 2025.
 -/
 
 namespace Causative.Resultatives

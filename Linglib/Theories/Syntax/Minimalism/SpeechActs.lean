@@ -22,10 +22,6 @@ c-commands content.
 - **ExtendedProjection/Basic.lean**: `fValue .SA = 7` > `fValue .C = 6`
 - **RSA/YoonEtAl2020**: HEARER (structural) ↔ addressee in social utility
 
-## References
-
-- Speas, M. & C. Tenny (2003). Configurational properties of point of view
-  roles. In A. M. Di Sciullo (ed.), Asymmetry in Grammar. John Benjamins.
 -/
 
 import Linglib.Theories.Syntax.Minimalism.Core.Basic

@@ -12,10 +12,6 @@ correspondence theorems, and the lattice of normal modal logics.
 
 Linguistic interpretations belong in `Theories/Montague/Modal/`.
 
-## References
-* Kripke (1963), Semantical Considerations on Modal Logic
-* Chellas (1980), Modal Logic: An Introduction
-* Blackburn, de Rijke, Venema (2001), Modal Logic
 -/
 
 namespace Core.ModalLogic

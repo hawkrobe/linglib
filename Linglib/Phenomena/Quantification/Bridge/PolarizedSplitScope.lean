@@ -2,6 +2,7 @@ import Linglib.Theories.Semantics.Lexical.Determiner.PolarizedIndividuals
 
 /-!
 # Split Scope via Polarized Individuals @cite{elliott-2025}
+@cite{penka-2011} @cite{rullmann-1995}
 
 Bridge file connecting the polarized individual decomposition of
 determiners (`Theories/Semantics/Lexical/Determiner/PolarizedIndividuals`)
@@ -32,11 +33,6 @@ The key algebraic fact is `pos_sup_neg`:
 — the join of complementary polarities yields a quantifier that
 ignores scope entirely (it only checks the restrictor).
 
-## References
-
-- Elliott, P. (2025). Determiners as predicates. SALT 35.
-- Rullmann, H. (1995). Maximality in the Semantics of Wh-Constructions.
-- Penka, D. (2011). Negative Indefinites.
 -/
 
 namespace Phenomena.Quantification.Bridge.PolarizedSplitScope

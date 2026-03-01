@@ -46,20 +46,6 @@ The formalization captures five parameter dimensions:
 | Interclausal semantics | 9 relation types marked on medial verbs | sequential, simultaneous, ... |
 | Bridging constructions | recapitulative, summary | tail-head linkage, generic verb |
 
-## References
-
-- Sarvasy, H. S. & A. Y. Aikhenvald (eds.) (2025). Clause Chaining in the
-  Languages of the World. IRL Press at Oxford University Press.
-- Foley, W. A. & R. D. Van Valin, Jr. (1984). Functional Syntax and Universal
-  Grammar. Cambridge University Press.
-- Longacre, R. E. (2007). Sentences as combinations of clauses. In Shopen (ed.),
-  Language Typology and Syntactic Description, vol. 2, 2nd ed. CUP.
-- Sarvasy, H. S. (2015). Breaking the clause chains: non-canonical medial
-  clauses in Nungon. Studies in Language 39(3):664-696.
-- de Vries, L. (2025). Clause chaining in Greater Awyu. In Sarvasy &
-  Aikhenvald (eds.), Clause Chaining in the Languages of the World.
-- Aikhenvald, A. Y. (2025). Clause chaining and language contact. In Sarvasy &
-  Aikhenvald (eds.), Clause Chaining in the Languages of the World.
 -/
 
 namespace Phenomena.ClauseChaining.Typology

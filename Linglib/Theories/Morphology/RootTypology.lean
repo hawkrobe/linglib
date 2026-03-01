@@ -3,6 +3,7 @@ import Linglib.Core.Root
 
 /-!
 # Root Typology: States and Changes of State (Beavers et al. 2021, B&KG 2020) @cite{beavers-etal-2021} @cite{beavers-koontz-garboden-2020} @cite{coon-2019}
+@cite{arad-2005} @cite{dixon-1982} @cite{embick-2004}
 
 Beavers, Everdell, Jerro, Kauhanen, Koontz-Garboden, LeBovidge & Nichols (2021)
 "States and changes of state: A crosslinguistic study of the roots of verbal
@@ -37,18 +38,6 @@ between functional head and root.
 - `CoSType.inception` = BECOME as ¬P→P transition (ChangeOfState/Theory)
 - `Template.achievement`/`.accomplishment` = templates containing BECOME (EventStructure)
 - Crosslinguistic data validates the correlations (Phenomena)
-
-## References
-
-- Beavers, J., Everdell, M., Jerro, K., Kauhanen, H., Koontz-Garboden, A.,
-  LeBovidge, E. & Nichols, S. (2021). States and changes of state.
-  Language 97(3), 439–484.
-- Beavers, J. & Koontz-Garboden, A. (2020). The Roots of Verbal Meaning.
-  Oxford: Oxford University Press.
-- Embick, D. (2004). On the structure of resultative participles in English.
-  Linguistic Inquiry 35, 355–392.
-- Arad, M. (2005). Roots and Patterns. Dordrecht: Springer.
-- Dixon, R.M.W. (1982). Where Have All the Adjectives Gone? The Hague: Mouton.
 
 ## Unified Root (§§15–17)
 

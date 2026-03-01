@@ -2,16 +2,13 @@ import Linglib.Theories.Syntax.Minimalism.Core.VerbalDecomposition
 
 /-!
 # Applicative Heads (Pylkkänen 2008)
+@cite{cuervo-2003} @cite{pylkknen-2008}
 
 Applicative heads introduce applied arguments (benefactives, goals,
 sources) into the verbal structure. The high/low distinction determines
 whether the applied argument relates to the event as a whole (high)
 or to the theme (low).
 
-## References
-
-- Pylkkänen, L. (2008). *Introducing Arguments*. MIT Press.
-- Cuervo, M. C. (2003). *Datives at Large*. PhD dissertation, MIT.
 -/
 
 namespace Minimalism

@@ -1,5 +1,6 @@
 /-!
 # Degree Questions: Empirical Data
+@cite{beck-rullmann-1999} @cite{fox-2007} @cite{rullmann-1995}
 
 Empirical data on degree questions ("how tall is Kim?"), including
 negative islands, modal obviation, and comparative subdeletion.
@@ -17,11 +18,6 @@ The theoretical analysis is in `Theories/Semantics/Questions/DegreeQuestion.lean
 3. **Existential modal fails**: "*How tall is Kim allowed to be?"
    remains unacceptable (existential modal doesn't help).
 
-## References
-
-- Fox, D. & Hackl, M. (2007). The universal density of measurement.
-- Rullmann, H. (1995). Maximality in the Semantics of Wh-Constructions.
-- Beck, S. & Rullmann, H. (1999). A flexible approach to exhaustivity in questions.
 -/
 
 namespace Phenomena.Comparison.DegreeQuestion

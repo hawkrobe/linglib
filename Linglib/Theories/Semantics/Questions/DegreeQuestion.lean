@@ -3,6 +3,7 @@ import Linglib.Core.Logic.ModalLogic
 
 /-!
 # Degree Questions and the Universal Density of Measurement
+@cite{beck-rullmann-1999} @cite{fox-2007} @cite{link-1983} @cite{rullmann-1995}
 
 Fox & Hackl (2007) "The universal density of measurement"
 (*Linguistics and Philosophy* 29:537–586).
@@ -44,12 +45,6 @@ Degree properties (`eqDeg`, `atLeastDeg`, `moreThanDeg`, `atMostDeg`,
 and discrete–dense divergence theorems are in `Core.Scale` (§ 6 of
 `Core/MeasurementScale.lean`).
 
-## References
-
-- Fox, D. & Hackl, M. (2007). The universal density of measurement. L&P 29:537–586.
-- Rullmann, H. (1995). Maximality in the Semantics of Wh-Constructions. UMass diss.
-- Beck, S. & Rullmann, H. (1999). A flexible approach to exhaustivity in questions.
-- Link, G. (1983). The logical analysis of plurals and mass terms.
 -/
 
 namespace Semantics.Questions.DegreeQuestion

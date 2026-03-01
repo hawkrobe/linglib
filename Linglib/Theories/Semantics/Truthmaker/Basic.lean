@@ -48,12 +48,6 @@ conjunction and disjunction at the verification/falsification level:
 6. **Subject-matter**: σ(A) = the fusion of all verifiers of A. Two sentences
    can be logically equivalent but differ in subject-matter.
 
-## References
-
-- Fine, K. (2017). Truthmaker semantics. In *A Companion to the Philosophy
-  of Language* (2nd ed.). Wiley.
-- Bondarenko, T. & Elliott, P.D. (2026). Monotonicity via mereology.
-  @cite{bondarenko-elliott-2026}
 -/
 
 namespace Semantics.Truthmaker

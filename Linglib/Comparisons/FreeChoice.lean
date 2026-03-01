@@ -8,6 +8,7 @@ import Linglib.Phenomena.Modality.FreeChoice
 
 /-!
 # Free Choice: Theory Comparison
+@cite{aloni-2022} @cite{alsop-2024} @cite{bar-lev-fox-2020} @cite{champollion-alsop-grosu-2019} @cite{elliott-2025} @cite{fox-2007}
 
 Comparing how different theories derive free choice inferences.
 
@@ -27,14 +28,6 @@ Pragmatically: ◇(A ∨ B) → ◇A ∧ ◇B (free choice!)
 4. **Aloni (2022)**: BSML - Bilateral State-based Modal Logic (team semantics)
 5. **Elliott & Sudo (2025)**: BUS - Bilateral Update Semantics (dynamic)
 
-## References
-
-- Bar-Lev & Fox (2020). Free choice, simplification, and Innocent Inclusion. NLS.
-- Champollion, Alsop & Grosu (2019). Free choice disjunction as RSA. SALT 29.
-- Alsop (2024). The pragmatics of free choice any.
-- Aloni (2022). Logic and conversation: The case of free choice. S&P 15.
-- Elliott & Sudo (2025). Free choice with anaphora. S&P 18.
-- Fox (2007). Free choice and the theory of scalar implicatures.
 -/
 
 namespace Comparisons.FreeChoice

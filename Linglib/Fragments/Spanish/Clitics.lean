@@ -18,9 +18,6 @@ This syncretism drives the availability of stylistic applicatives.
 | 1PL   | nos    | nos   | nos  | ← syncretic, but not singular
 | 2/3PL | los/las| les/se| se   | ← NOT syncretic
 
-## References
-
-- Muñoz Pérez, C. (2026). Stylistic applicatives. *Glossa* 11(1).
 -/
 
 namespace Fragments.Spanish.Clitics

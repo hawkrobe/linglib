@@ -23,10 +23,6 @@ The paper identifies three classes of NVPs based on:
 | 2 | ✓ | negative | ✗ | ✓ |
 | 3 | ✓ | positive | ✓ | ✗ |
 
-## References
-
-- Qing, C., Özyıldız, D., Roelofsen, F., Romero, M., & Uegaki, W. (2025).
-  When can non-veridical preferential attitude predicates take questions?
 -/
 
 import Linglib.Fragments.English.Predicates.Verbal

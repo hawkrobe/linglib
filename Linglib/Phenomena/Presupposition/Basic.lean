@@ -27,12 +27,6 @@ Following Karttunen (1974) and Heim (1983):
 - Conditional: filtering (antecedent → consequent)
 - Disjunction: symmetric filtering
 
-## References
-
-- Karttunen (1974). Presupposition and linguistic context.
-- Heim (1983). On the projection problem for presuppositions.
-- Beaver & Geurts (2014). Presupposition. SEP.
-- Kracht (2003). Mathematics of Language, Section 4.7.
 -/
 
 import Linglib.Core.Semantics.Presupposition

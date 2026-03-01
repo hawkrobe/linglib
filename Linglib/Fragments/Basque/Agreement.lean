@@ -4,6 +4,7 @@ import Linglib.Core.Case.Hierarchy
 
 /-!
 # Basque Agreement Fragment @cite{just-2024}
+@cite{laka-1996} @cite{preminger-2014}
 
 Basque (isolate) has a rich agreement system where the finite verb indexes
 up to three arguments: ergative (A), absolutive (S/P), and dative (R).
@@ -23,12 +24,6 @@ person objects are not.
 | S (intransitive subj) | ABS | Always |
 | P (transitive patient) | ABS | SAP only (differential) |
 
-## References
-
-- Laka, I. (1996). A Brief Grammar of Euskara, the Basque Language.
-- Preminger, O. (2014). Agreement and Its Failures. MIT Press.
-- Just, E. (2024). A structural and functional comparison of differential A
-  and P indexing. Linguistics 62(2): 295–321.
 -/
 
 namespace Fragments.Basque.Agreement

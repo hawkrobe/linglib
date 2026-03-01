@@ -23,9 +23,6 @@ Pure intension algebra (`varying_not_rigid`, `rigid_neq_nonrigid`,
 `rigid_allOrNothing`, `nonrigid_identity_contingent`) lives in
 `Core/Intension.lean` alongside `rigid_identity_necessary`.
 
-## References
-
-- Kripke, S. (1980). Naming and Necessity. Harvard University Press.
 -/
 
 import Linglib.Core.Semantics.Intension

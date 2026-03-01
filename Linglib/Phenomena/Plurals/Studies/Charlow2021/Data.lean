@@ -3,6 +3,7 @@ import Mathlib.Data.Fintype.Basic
 
 /-!
 # Charlow 2021: Empirical Data
+@cite{charlow-2021}
 
 Finite witnessing models for the cumulative reading puzzle.
 
@@ -21,10 +22,6 @@ but a 3-boy subgroup saw exactly 5.
 The key empirical observation: native speakers judge the sentence FALSE
 in Scenario B, matching the cumulative reading.
 
-## References
-
-- Charlow, S. (2021). Post-suppositions and semantic theory. *L&P* 44, 701–765.
-  Figure 1, §1.
 -/
 
 namespace Phenomena.Plurals.Studies.Charlow2021.Data

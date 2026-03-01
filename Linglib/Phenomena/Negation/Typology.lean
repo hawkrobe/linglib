@@ -2,6 +2,7 @@ import Linglib.Core.Lexical.Word
 
 /-!
 # Cross-Linguistic Typology of Negation (WALS Chapters 112--115)
+@cite{dryer-haspelmath-2013} @cite{haspelmath-2013} @cite{miestamo-2005} @cite{miestamo-2013}
 
 Cross-linguistic data on clausal negation from four WALS chapters:
 
@@ -45,19 +46,6 @@ Sample: 206 languages. Co-occurrence with predicate negation overwhelmingly
 dominant (170/206 = 82.5%). Preclusion concentrated in Western Europe and
 Mesoamerica.
 
-## References
-
-- Dryer, M. S. (2013). Negative morphemes. In Dryer & Haspelmath (eds.),
-  WALS Online (v2020.3). https://wals.info/chapter/112
-- Miestamo, M. (2013). Symmetric and asymmetric standard negation.
-  In Dryer & Haspelmath (eds.), WALS Online. https://wals.info/chapter/113
-- Miestamo, M. (2013). Subtypes of asymmetric standard negation.
-  In Dryer & Haspelmath (eds.), WALS Online. https://wals.info/chapter/114
-- Haspelmath, M. (2013). Negative indefinite pronouns and predicate
-  negation. In Dryer & Haspelmath (eds.), WALS Online.
-  https://wals.info/chapter/115
-- Miestamo, M. (2005). Standard Negation: The Negation of Declarative
-  Verbal Main Clauses in a Typological Perspective. Mouton de Gruyter.
 -/
 
 namespace Phenomena.Negation.Typology

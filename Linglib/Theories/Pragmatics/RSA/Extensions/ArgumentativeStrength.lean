@@ -4,6 +4,7 @@ import Mathlib.Data.Rat.Defs
 
 /-!
 # Argumentative Strength for Quantity Expressions
+@cite{cummins-franke-2021} @cite{merin-1999}
 
 Merin (1999)'s log-likelihood ratio measure of argumentative strength, as applied
 to numerical quantity expressions in Cummins & Franke (2021) and quantifier choice
@@ -28,11 +29,6 @@ A pragmatic variant replaces literal truth with assertability:
 - argStr is a pointwise KL divergence (bridge to InformationTheory)
 - At λ=1 in CombinedUtility, utility reduces to pure argumentative strength
 
-## References
-
-- Merin, A. (1999). Information, relevance, and social decisionmaking.
-- Cummins, C. & Franke, M. (2021). Argumentative strength of numerical quantity.
-- Macuch Silva, V. et al. (2024). Strategic quantifier use in production.
 -/
 
 namespace RSA.ArgumentativeStrength

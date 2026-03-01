@@ -31,9 +31,6 @@ because Fission is a Minimalist/DM operation — Fragments stay theory-neutral.
 5. **Three-way synonymy**: SE+CL, CL+LE, SE+CL+LE are semantically
    identical because Voice⁰ is semantically vacuous
 
-## References
-
-- Muñoz Pérez, C. (2026). Stylistic applicatives. *Glossa* 11(1).
 -/
 
 namespace Phenomena.Causatives.Studies.MunozPerez2026.Bridge

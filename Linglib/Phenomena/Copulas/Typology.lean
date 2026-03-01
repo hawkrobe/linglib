@@ -2,6 +2,7 @@ import Linglib.Core.Lexical.Word
 
 /-!
 # Copula and Predication Typology (WALS Chapters 117--120)
+@cite{hengeveld-1992} @cite{pustet-2003} @cite{stassen-1997}
 
 Cross-linguistic data on predication strategies and copulas from four WALS
 chapters, all authored by Leon Stassen (2013). These chapters address a
@@ -53,20 +54,6 @@ Whether the copula can be absent in nominal predication. Three values:
   typically present tense or 3rd person (107/386 = 27.7%).
 - **Widespread**: zero copula is the normal/default strategy (97/386 = 25.1%).
 
-## References
-
-- Stassen, L. (2013a). Predicative adjectives. In Dryer & Haspelmath (eds.),
-  WALS Online (v2020.3). https://wals.info/chapter/117
-- Stassen, L. (2013b). Predicative noun phrases. In Dryer & Haspelmath
-  (eds.), WALS Online. https://wals.info/chapter/118
-- Stassen, L. (2013c). Nominal and locational predication. In Dryer &
-  Haspelmath (eds.), WALS Online. https://wals.info/chapter/119
-- Stassen, L. (2013d). Zero copula for predicate nominals. In Dryer &
-  Haspelmath (eds.), WALS Online. https://wals.info/chapter/120
-- Stassen, L. (1997). Intransitive Predication. Oxford University Press.
-- Hengeveld, K. (1992). Non-verbal Predication. Mouton de Gruyter.
-- Pustet, R. (2003). Copulas: Universals in the Categorization of the
-  Lexicon. Oxford University Press.
 -/
 
 namespace Phenomena.Copulas.Typology

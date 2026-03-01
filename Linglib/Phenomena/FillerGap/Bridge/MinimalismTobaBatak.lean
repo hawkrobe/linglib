@@ -3,6 +3,7 @@ import Linglib.Theories.Syntax.Minimalism.Core.Position
 
 /-!
 # Minimalism Bridge: Toba Batak Extraction Restriction @cite{erlewine-2018}
+@cite{elkins-imanishi-coon-2026}
 
 Connects the empirical extraction data from Toba Batak to the
 Minimalist analysis in Erlewine (2018).
@@ -41,12 +42,6 @@ is `CyclicChain` from Position.lean:
 - **TB**: Each intermediate C⁰ shows extraction voice morphology,
   reflecting the passage of the wh-element through Spec,CP.
 
-## References
-
-- Erlewine, M. Y. (2018). Extraction and licensing in Toba Batak.
-  Language 94(3): 662–697.
-- Elkins, N., Y. Imanishi & J. Coon (2026). Wh-movement and oblique
-  extraction in SJO Mam.
 -/
 
 namespace Phenomena.FillerGap.Bridge.MinimalismTobaBatak

@@ -24,11 +24,6 @@ Sluicing is licensed when the **argument domain** of the ellipsis site is
 - **Case matching**: Case is assigned within the argument domain → must match
 - **Small clause antecedents**: Smaller argument domain → more permissive matching
 
-## References
-
-- Anand, P., Hardt, D., & McCloskey, J. (2025). Sluicing and Syntactic Identity.
-- Grimshaw, J. (2005). Words and Structure.
-- Merchant, J. (2001). The Syntax of Silence.
 -/
 
 import Linglib.Theories.Syntax.Minimalism.Formal.ExtendedProjection.Properties

@@ -2,6 +2,7 @@ import Linglib.Fragments.English.FunctionWords
 
 /-!
 # English Auxiliary Diagnostics: NICE Properties (Huddleston 1976)
+@cite{huddleston-1976} @cite{palmer-2001}
 
 NICE = Negation, Inversion, Code (VP ellipsis), Emphasis.
 These four properties distinguish true auxiliaries from main verbs in English.
@@ -16,11 +17,6 @@ Full auxiliaries exhibit all four; semi-auxiliaries exhibit a proper subset.
 | Code | VP ellipsis (stranding) | *He can and she can too* |
 | Emphasis | Emphatic stress for verum focus | *He CAN go* |
 
-## References
-
-- Huddleston, R. (1976). Some theoretical issues in the description of the
-  English verb. *Lingua* 40:331-383.
-- Palmer, F. R. (2001). Mood and Modality. 2nd ed. CUP.
 -/
 
 namespace Phenomena.AuxiliaryVerbs.Diagnostics

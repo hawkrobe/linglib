@@ -27,12 +27,6 @@ In short: "It is for sure that we should add p to the CG."
    - Asserting ¬FOR-SURE-CG(p) (PI) implicates belief in p
    - Asserting FOR-SURE-CG(¬p) (NI) implicates belief in ¬p
 
-## References
-
-- Romero, M. & Han, C.-H. (2004). On Negative Yes/No Questions.
-- Höhle, T. (1992). Über Verum-Fokus im Deutschen.
-- Ladd, D.R. (1981). A First Look at the Semantics and Pragmatics of
-  Negative Questions and Tag Questions.
 -/
 
 import Linglib.Theories.Semantics.Questions.Basic

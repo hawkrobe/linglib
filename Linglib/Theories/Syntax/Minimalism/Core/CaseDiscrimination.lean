@@ -1,5 +1,6 @@
 /-!
 # Case Discrimination in Agreement @cite{preminger-2014}
+@cite{bobaljik-2008} @cite{moravcsik-1974}
 
 Preminger (2014, Ch. 8) formalizes the **Moravcsik hierarchy**
 (Moravcsik 1974, Bobaljik 2008): agreement is case-discriminating —
@@ -46,13 +47,6 @@ When a dative DP intervenes between a probe and its intended target:
 This unifies dative intervention with Kichean AF: both are instances
 of **obligatory agreement failing without crashing** (Ch. 5).
 
-## References
-
-- Preminger, O. (2014). Agreement and Its Failures. MIT Press.
-- Bobaljik, J. D. (2008). Where's phi? Agreement as a post-syntactic
-  operation. In D. Harbour et al. (eds.), Phi-Theory. OUP.
-- Moravcsik, E. A. (1974). Object-verb agreement. Working Papers on
-  Language Universals 15: 25–140.
 -/
 
 namespace Minimalism

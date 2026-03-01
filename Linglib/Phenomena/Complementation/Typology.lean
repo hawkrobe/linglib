@@ -36,20 +36,6 @@ Key generalizations:
 - SOV languages overwhelmingly use postpositions (Ch 95)
 - Purpose clause strategy correlates with finiteness availability
 
-## References
-
-- Noonan, M. (2007). Complementation. In Shopen (ed.), Language Typology
-  and Syntactic Description, vol. 2, 2nd ed. Cambridge University Press.
-- Dryer, M. S. (2013a). Order of adverbial subordinator and clause. In
-  Dryer & Haspelmath (eds.), WALS Online. https://wals.info/chapter/94
-- Dryer, M. S. (2013b). Relationship between the order of object and verb
-  and the order of adposition and noun phrase. In Dryer & Haspelmath
-  (eds.), WALS Online. https://wals.info/chapter/95
-- Diessel, H. (2013). Adverbial subordination. In Dryer & Haspelmath
-  (eds.), WALS Online.
-- Dixon, R. M. W. (2006). Complement clauses and complementation
-  strategies in typological perspective. In Dixon & Aikhenvald (eds.),
-  Complementation. Oxford University Press.
 -/
 
 namespace Phenomena.Complementation.Typology

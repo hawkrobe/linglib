@@ -43,10 +43,6 @@ This predicts that adults endorse "two horses didn't jump" more readily
 in 2-of-4 contexts under exact numeral semantics — converging with
 Kennedy (2015) and acquisition data from Musolino (2004).
 
-## References
-
-- Scontras, G. & Pearl, L. (2021). When pragmatics matters more for
-  truth-value judgments. *Glossa* 6(1): 110.
 -/
 
 set_option autoImplicit false

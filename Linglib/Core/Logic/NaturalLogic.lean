@@ -3,6 +3,7 @@ import Mathlib.Algebra.BigOperators.Group.List.Defs
 
 /-!
 # Natural Logic Relations and Entailment Signatures (Icard 2012)
+@cite{icard-2012} @cite{maccartney-manning-2009}
 
 Framework-agnostic infrastructure for the natural logic relation algebra and
 entailment signatures, following Icard (2012) "Inclusion and Exclusion in
@@ -24,12 +25,6 @@ Natural Language."
 - `NLRelation` carries a `PartialOrder` + `BoundedOrder` (≡ = ⊥, # = ⊤)
 - `EntailmentSig` carries a `PartialOrder` + `OrderBot` (all = ⊥) + `Monoid` (compose)
 
-## References
-
-- Icard, T. (2012). Inclusion and Exclusion in Natural Language.
-  Studia Logica 100(4), 705–725.
-- MacCartney, B. & Manning, C. (2009). An extended model of natural logic.
-  IWCS-8.
 -/
 
 namespace Core.NaturalLogic

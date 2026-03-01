@@ -4,9 +4,7 @@ import Linglib.Theories.Semantics.Lexical.Adjective.Theory
 /-!
 # States-Based Gradable Adjective Semantics
 
-@cite{cariani-santorio-wellwood-2024} @cite{wellwood-2015}
-
-An alternative to Kennedy-style degree semantics (`Theory.lean`). Gradable
+@cite{cariani-santorio-wellwood-2024} @cite{wellwood-2015} @cite{cariani-wellwood-2023} @cite{kennedy-2007}An alternative to Kennedy-style degree semantics (`Theory.lean`). Gradable
 adjectives denote properties of states (type `⟨v,t⟩`), not measure functions.
 The positive form works via a **background ordering** on states and a
 **contrast point** that carves out the positive region — no covert `pos`
@@ -34,15 +32,6 @@ contrast point. The background ordering is the ambient `[Preorder S]`.
 This is a competing theory to `AdjectiveTheory` in `Theory.lean`; the
 bridge theorem `statesBased_iff_kennedy` shows when they agree.
 
-## References
-
-- Cariani, F., Santorio, P. & Wellwood, A. (2024). Confidence reports.
-  Semantics & Pragmatics 17(14): 1-40.
-- Wellwood, A. (2015). On the semantics of comparison across categories.
-  Linguistics and Philosophy 38(1): 67-101.
-- Cariani, F., Santorio, P. & Wellwood, A. (2023). Positive gradable
-  adjective ascriptions without positive morphemes. SuB 27: 97-113.
-- Kennedy, C. (2007). Vagueness and grammar.
 -/
 
 namespace Semantics.Lexical.Adjective.StatesBased

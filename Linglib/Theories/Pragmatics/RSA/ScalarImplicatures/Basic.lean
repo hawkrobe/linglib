@@ -5,6 +5,7 @@ import Linglib.Core.Interface
 
 /-!
 # RSA Scalar Implicatures from Semantic Derivations
+@cite{bergen-levy-goodman-2016} @cite{frank-goodman-2012} @cite{goodman-frank-2016}
 
 Connects RSA pragmatics to the syntax-semantics pipeline.
 Any syntax theory (CCG, HPSG, Minimalism) that produces a `SemDeriv.Derivation`
@@ -93,11 +94,6 @@ The RSA model currently uses stub values. The ℚ-based RSA evaluation
 infrastructure has been removed. The instance needs to be re-implemented
 using the new RSAConfig framework.
 
-## References
-
-- Goodman & Frank (2016). Pragmatic Language Interpretation as Probabilistic Inference.
-- Frank & Goodman (2012). Predicting Pragmatic Reasoning in Language Games.
-- Bergen, Levy & Goodman (2016). Pragmatic reasoning through semantic inference.
 -/
 
 namespace RSA

@@ -242,13 +242,13 @@ end Homogeneity
 
 section AtomicDistributivity
 
-/-- Whether a VendlerClass predicts ATOM-DIST_t (Zhao 2026, Def. 5.3).
+/-- Whether a VendlerClass predicts ATOM-DIST_t (Zhao 2025, Def. 5.3).
     States satisfy ATOM-DIST_t (distribute over temporal subintervals);
     dynamic classes do not. Stricter than `isHomogeneous`: activities are
     homogeneous but fail ATOM-DIST_t.
 
-    - Zhao, Z. (2026). Cross-Linguistic and Cross-Domain Parallels in the
-      Semantics of Degree and Time. MIT dissertation, Ch. 5. -/
+    - Zhao, Z. (2025). Cross-Linguistic and Cross-Domain Temporal Expressions.
+      NYU dissertation, Ch. 5. -/
 def VendlerClass.predictsAtomDist : VendlerClass → Bool
   | .state => true
   | .activity | .achievement | .accomplishment => false

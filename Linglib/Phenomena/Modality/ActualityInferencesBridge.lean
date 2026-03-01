@@ -4,6 +4,7 @@ import Linglib.Theories.Semantics.Modality.ActualityEntailments
 
 /-!
 # Actuality Inference Data (Cross-Linguistic)
+@cite{bhatt-1999} @cite{hacquard-2006} @cite{mari-martin-2007} @cite{nadathur-2023}
 
 Cross-linguistic empirical data on actuality inferences with ability modals,
 following the pattern of `Phenomena/Causatives/Data.lean`.
@@ -20,12 +21,6 @@ complement, while those with **imperfective** aspect do not.
 | French | *pouvoir* | Yes | No |
 | English | *be able* | Yes (episodic) | No (habitual) |
 
-## References
-
-- Nadathur, P. (2023). Actuality Inferences: Causality, Aspect, and Modality.
-- Hacquard, V. (2006). Aspects of Modality. MIT dissertation.
-- Bhatt, R. (1999). Covert Modality in Non-finite Contexts. UPenn dissertation.
-- Mari, A. & Martin, F. (2007). Tense, abilities and actuality entailments.
 -/
 
 namespace Phenomena.Modality.ActualityInferencesBridge

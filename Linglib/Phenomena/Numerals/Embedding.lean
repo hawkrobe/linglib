@@ -1,5 +1,6 @@
 /-!
 # Numeral Embedding Test Cases
+@cite{bylinina-nouwen-2020} @cite{coppock-beaver-2014} @cite{gajewski-2007} @cite{horn-1972} @cite{kaufmann-2012} @cite{kennedy-2015} @cite{kiparsky-kiparsky-1970} @cite{meier-2003} @cite{musolino-2004} @cite{nouwen-2006} @cite{solt-waldon-2019}
 
 Theory-neutral empirical test cases for bare numerals in embedding environments
 (negation, modals, attitudes, conditionals, DE contexts). These environments are
@@ -13,21 +14,6 @@ where lower-bound and bilateral numeral theories diverge most sharply.
 4. **Conditionals**: "If you have three children..." — ≥3 vs =3 as trigger condition
 5. **Existential scope**: embedded EXH blocked under existential quantifier
 
-## References
-
-- Horn, L. (1972). On the Semantic Properties of Logical Operators in English.
-- Kennedy, C. (2015). A "de-Fregean" semantics for modified and unmodified numerals.
-  *Semantics & Pragmatics* 8(10), 1–44.
-- Bylinina, L. & Nouwen, R. (2020). Numeral semantics. *Language and Linguistics
-  Compass* 14(8).
-- Nouwen, R. (2006). Remarks on the Polar Orientation of Almost.
-- Coppock, E. & Beaver, D. (2014). Principles of the Exclusive Muddle.
-- Solt, S. & Waldon, B. (2019). Numerals under negation. *Glossa* 4(1).
-- Musolino, J. (2004). The semantics and acquisition of number words.
-- Kaufmann, M. (2012). Interpreting Imperatives. Springer.
-- Gajewski, J. (2007). Neg-raising and polarity.
-- Meier, C. (2003). The meaning of too, enough, and so...that.
-- Kiparsky, P. & Kiparsky, C. (1970). Fact.
 -/
 
 namespace Phenomena.Numerals.Embedding

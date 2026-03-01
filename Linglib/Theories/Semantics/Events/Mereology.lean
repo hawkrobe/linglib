@@ -5,6 +5,7 @@ import Linglib.Theories.Semantics.Lexical.Verb.Aspect
 
 /-!
 # Event Mereology
+@cite{bach-1986} @cite{champollion-2017}
 
 Event-specific mereological infrastructure built on top of the generic
 `Core.Mereology` definitions. Specializes `CUM`, `QUA`, `IsSumHom`, etc.
@@ -22,11 +23,6 @@ Generic mereological definitions (`CUM`, `DIV`, `QUA`, `Atom`, `AlgClosure`,
 4. τ Homomorphism (runtime preserves ⊕)
 5. Bridges to existing types
 
-## References
-
-- Champollion, L. (2017). *Parts of a Whole: Distributivity as a Bridge
-  Between Aspect and Measurement*. OUP.
-- Bach, E. (1986). The algebra of events.
 -/
 
 namespace Semantics.Events.Mereology

@@ -3,6 +3,7 @@ import Linglib.Tactics.OntSort
 
 /-!
 # Spatial Path Infrastructure
+@cite{gawron-2009} @cite{talmy-2000} @cite{zwarts-2005} @cite{zwarts-winter-2000}
 
 Framework-agnostic types for spatial paths and their boundedness
 classification. Paths are the spatial analog of temporal intervals
@@ -20,15 +21,6 @@ from `Core/Mereology.lean`.
 2. Path Shape (Boundedness Classification)
 3. PathShape ↔ Scale Boundedness Bridge
 
-## References
-
-- Zwarts, J. & Winter, Y. (2000). Vector space semantics: a model-theoretic
-  analysis of locative prepositions. *Journal of Logic, Language and
-  Information* 9, 169–211.
-- Zwarts, J. (2005). Prepositional aspect and the algebra of paths.
-  *Linguistics and Philosophy* 28, 739–779.
-- Gawron, J.M. (2009). Paths and scalar change.
-- Talmy, L. (2000). *Toward a Cognitive Semantics*, Vol. II. MIT Press.
 -/
 
 namespace Core.Path

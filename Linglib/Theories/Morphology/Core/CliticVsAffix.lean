@@ -2,6 +2,7 @@ import Linglib.Core.Lexical.MorphRule
 
 /-!
 # Clitic vs. Affix Diagnostics (Zwicky & Pullum 1983)
+@cite{zwicky-pullum-1983}
 
 Six criteria for distinguishing clitics from inflectional affixes,
 formalized as a diagnostic profile.
@@ -22,10 +23,6 @@ affix. A morpheme that scores clitic-like on all six is a simple clitic.
 The surprising result of Zwicky & Pullum 1983 is that English *-n't*
 scores affix-like on all six, despite the traditional clitic analysis.
 
-## References
-
-- Zwicky, A. M. & Pullum, G. K. (1983). Cliticization vs. Inflection:
-  English N'T. *Language* 59(3), 502–513.
 -/
 
 namespace Morphology.Diagnostics

@@ -2,6 +2,7 @@ import Linglib.Theories.Semantics.TypeTheoretic.Core
 
 /-!
 # Typed Frames as TTR Record Types @cite{chatzikyriakidis-etal-2025}
+@cite{cooper-2023} @cite{osswald-kallmeyer-2018} @cite{petersen-2007}
 
 Chatzikyriakidis et al. (2025) §2–3 argue that typed attribute-value
 frames (Petersen 2007, Löbner 2014, Osswald & Kallmeyer 2018) and
@@ -21,14 +22,6 @@ linglib's existing `Probabilistic/Scenarios/` models a *different*
 tradition — probabilistic scenario semantics (Erk & Herbelot 2024).
 The typed-frame tradition here is structural, not distributional.
 
-## References
-
-- Chatzikyriakidis et al. (2025). Types and the Structure of Meaning. §2–3.
-- Petersen, W. (2007). Representation of Concepts as Frames.
-- Löbner, S. (2014). Evidence for Frames from Human Language.
-- Osswald, R. & Kallmeyer, L. (2018). Towards a Formalization of
-  Role-Semantic Resources Using Frame Logic. Nat. Lang. & Ling. Theory.
-- Cooper, R. (2023). From Perception to Communication. OUP.
 -/
 
 namespace Semantics.TypeTheoretic

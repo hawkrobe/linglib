@@ -3,17 +3,12 @@ import Mathlib.Data.Rat.Defs
 
 /-!
 # Pragmatic Halo and Precision Modes
+@cite{krifka-2007} @cite{lasersohn-1999} @cite{woodin-winter-bhatt-2024}
 
 Rounding semantics for numeral imprecision (Lasersohn 1999, Krifka 2007, Kao et al. 2014).
 Round numbers (100, 1000) are interpreted imprecisely; sharp numbers (103, 1001)
 are interpreted precisely. This is the "pragmatic halo" effect.
 
-## References
-
-- Lasersohn, P. (1999). Pragmatic halos. Language 75(3): 522-551.
-- Krifka, M. (2007). Approximate interpretation of number words.
-- Kao et al. (2014). Nonliteral understanding of number words. PNAS.
-- Woodin, Winter & Bhatt (2024). Numeral frequency and roundness.
 -/
 
 namespace Semantics.Lexical.Numeral.Precision

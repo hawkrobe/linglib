@@ -38,14 +38,6 @@ See also `Degree.Granularity` for granularity-sensitive degree morphology
 | Parameters    | Accessibility relation / backgrounds | Threshold(s), antonym type        |
 | Key question  | What's the modal base?             | Where's the threshold? Contrary?   |
 
-## References
-
-- Kennedy, C. (2007). Vagueness and grammar.
-- Kennedy, C. & McNally, L. (2005). Scale structure, degree modification.
-- Lassiter, D. & Goodman, N. (2017). Adjectival vagueness in a Bayesian model.
-- Tessler, M. H. & Franke, M. (2020). Not unreasonable.
-- Cruse, D. A. (1986). Lexical Semantics.
-- Israel, M. (2011). The Grammar of Polarity.
 -/
 
 import Linglib.Theories.Semantics.Montague.Basic

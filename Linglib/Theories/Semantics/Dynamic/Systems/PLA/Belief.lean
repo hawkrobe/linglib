@@ -27,12 +27,6 @@ A conceptual cover is a set of concepts that:
 
 Covers formalize "ways of thinking about" entities.
 
-## References
-
-- Dekker, P. (2012). Dynamic Semantics. Springer. Chapter 4, §4.2-4.3.
-- Aloni, M. (2001). Quantification under Conceptual Covers.
-- Quine, W.V.O. (1956). Quantifiers and Propositional Attitudes.
-- Kaplan, D. (1968). Quantifying In.
 -/
 
 import Linglib.Theories.Semantics.Dynamic.Systems.PLA.Epistemic

@@ -2,6 +2,7 @@ import Linglib.Theories.Semantics.Tense.Basic
 
 /-!
 # Ogihara (1996): Tense, Attitudes, and Scope
+@cite{ogihara-1989} @cite{ogihara-1996}
 
 Ogihara's theory: embedded past is **ambiguous** between a genuine past
 reading and a zero-tense reading. Zero tense is a bound variable that
@@ -23,10 +24,6 @@ receives the matrix event time, producing the simultaneous reading.
 Both make identical predictions for SOT phenomena, but they disagree
 about the source: ambiguity (Ogihara) vs deletion (Kratzer).
 
-## References
-
-- Ogihara, T. (1996). *Tense, Attitudes, and Scope*. Kluwer.
-- Ogihara, T. (1989). Temporal reference in English and Japanese. PhD thesis.
 -/
 
 namespace Semantics.Tense.Ogihara

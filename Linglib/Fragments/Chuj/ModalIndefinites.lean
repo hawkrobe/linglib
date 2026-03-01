@@ -2,6 +2,7 @@ import Linglib.Core.ModalIndefinite
 
 /-!
 # Chuj Modal Indefinite Fragment
+@cite{alonso-ovalle-royer-2021} @cite{alonso-ovalle-royer-2024}
 
 Lexical entries for Chuj modal indefinites *yalnhej* (singular) and
 *komon* (mass/plural), following Alonso-Ovalle & Royer (2024).
@@ -23,11 +24,6 @@ position, which in turn constrains the available modal flavor:
 
 This connection is proved in `Phenomena/ModalIndefinites/Bridge/KratzerAnchoring.lean`.
 
-## References
-
-- Alonso-Ovalle, L. & Royer, J. (2024). Modal indefinites: Lessons from
-  Chuj. Linguistics and Philosophy.
-- Alonso-Ovalle, L. & Royer, J. (2021). On Chuj modal indefinites.
 -/
 
 namespace Fragments.Chuj.ModalIndefinites

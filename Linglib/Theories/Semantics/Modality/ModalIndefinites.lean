@@ -3,9 +3,7 @@ import Linglib.Theories.Semantics.Modality.EventRelativity
 /-!
 # Modal Indefinite Semantics (Alonso-Ovalle & Royer 2024)
 
-@cite{alonso-ovalle-royer-2024}
-
-Formal denotation of modal indefinites: existential quantifiers carrying a
+@cite{alonso-ovalle-royer-2024} @cite{alonso-ovalle-menendez-benito-2010} @cite{hacquard-2006}Formal denotation of modal indefinites: existential quantifiers carrying a
 modal component whose domain is projected from an event argument via an
 anchoring function (Hacquard 2006). Extracted from EventRelativity §§3–7.
 
@@ -32,13 +30,6 @@ Under external modals (imperatives, deontic), the MI's anchor can be
 co-indexed with the external modal's event, yielding "any X is fine"
 readings. Non-harmonic anchoring gives "a random X" readings.
 
-## References
-
-- Alonso-Ovalle, L. & Royer, J. (2024). Modal indefinites: Lessons from
-  Chuj. Linguistics and Philosophy.
-- Alonso-Ovalle, L. & Menéndez-Benito, P. (2010). Modal indefinites.
-  Natural Language Semantics 18:1–31.
-- Hacquard, V. (2006). Aspects of Modality. MIT dissertation.
 -/
 
 namespace Semantics.Modality.ModalIndefinites

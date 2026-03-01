@@ -2,6 +2,7 @@ import Linglib.Core.Lexical.NounCategorization
 
 /-!
 # Mandarin Chinese Classifier Lexicon
+@cite{aikhenvald-2000} @cite{chao-1968} @cite{erbaugh-1986}
 
 Typed classifier entries for Mandarin Chinese, replacing unstructured
 string representations with semantically annotated `ClassifierEntry` values.
@@ -15,11 +16,6 @@ Classifier selection in Mandarin is semantically motivated (Aikhenvald 2000
 §11.2.3). Sortal classifiers encode inherent properties (animacy, shape,
 function); the general classifier 个 serves as a default/residue.
 
-## References
-
-- Aikhenvald, A. Y. (2000). Classifiers, Ch 4, §11.2.3.
-- Chao, Y. R. (1968). A Grammar of Spoken Chinese.
-- Erbaugh, M. S. (1986). Taking Stock: The Development of Chinese Noun Classifiers.
 -/
 
 namespace Fragments.Mandarin.Classifiers

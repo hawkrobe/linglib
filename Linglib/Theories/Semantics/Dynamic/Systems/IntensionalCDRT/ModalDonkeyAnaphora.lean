@@ -28,11 +28,6 @@ The anaphoric relationship:
 - SUBJ is existential (like indefinite "a")
 - IND is presuppositional (like definite "the")
 
-## References
-
-- Mendes, A. (2025). Indefiniteness in future reference. S&P 18(10).
-- Groenendijk & Stokhof (1991). Dynamic Predicate Logic.
-- Roberts (1989). Modal subordination and pronominal anaphora.
 -/
 
 import Linglib.Theories.Semantics.Dynamic.Systems.IntensionalCDRT.Situations

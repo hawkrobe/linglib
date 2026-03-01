@@ -2,6 +2,7 @@ import Linglib.Theories.Syntax.DependencyGrammar.Formal.Catena
 
 /-!
 # VP Divergence: DG vs PSG Constituency
+@cite{osborne-2019} @cite{osborne-gross-2012}
 
 Formalizes the central empirical disagreement between Dependency Grammar and
 Phrase Structure Grammar regarding the finite VP (Osborne 2019, Ch. 2–4;
@@ -27,11 +28,6 @@ finite VP as a constituent — supporting DG's prediction.
 - → `Core/Basic.lean`: uses `DepTree`, `Dependency`, `Word`
 - → `DependencyLength.lean`: VP catena dep length
 
-## References
-
-- Osborne, T. (2019). *A Dependency Grammar of English*. John Benjamins.
-- Osborne, T., Putnam, M. & Groß, T. (2012). Catenae: Introducing a novel
-  unit of syntactic analysis. *Syntax* 15(4):354–396.
 -/
 
 namespace DepGrammar.VPDivergence

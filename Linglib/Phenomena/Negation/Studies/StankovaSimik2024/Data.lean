@@ -2,6 +2,7 @@ import Linglib.Phenomena.Negation.CzechThreeWayNegTypologyBridge
 
 /-!
 # Staňková & Šimík (2024): Negation in Czech Polar Questions
+@cite{stakov-imk-2024}
 
 Experimental data from three naturalness judgment experiments on negation
 in Czech polar questions (Staňková & Šimík, FASL 32 / JSL 33).
@@ -25,10 +26,6 @@ in Czech polar questions (Staňková & Šimík, FASL 32 / JSL 33).
 5. The particle *copak* requires contextual evidence — biased contexts
    preferred (§6.2)
 
-## References
-
-- Staňková, A. & Šimík, R. (2024). Negation in Czech polar questions.
-  Journal of Slavic Linguistics 33. Proceedings of FASL 32.
 -/
 
 namespace Phenomena.Negation.Studies.StankovaSimik2024.Data

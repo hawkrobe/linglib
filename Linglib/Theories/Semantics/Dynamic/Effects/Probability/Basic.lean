@@ -18,11 +18,6 @@ The PDS framework shows that:
 - RSA's graded φ can emerge from Boolean φ_θ + marginalization
 - Different "latent variable" choices (dcS vs cg) are computational variants
 
-## References
-
-- Grove & White. Probabilistic Dynamic Semantics. Elements in Semantics.
-- Lassiter & Goodman (2017). Adjectival vagueness in a Bayesian model.
-- Bernardy et al. (2018). A Compositional Bayesian Semantics for Natural Language.
 -/
 
 import Mathlib.Data.Rat.Defs

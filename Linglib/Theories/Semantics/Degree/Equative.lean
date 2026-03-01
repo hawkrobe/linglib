@@ -3,6 +3,7 @@ import Linglib.Theories.Semantics.Degree.Core
 
 /-!
 # Equative Semantics
+@cite{kennedy-2007} @cite{rett-2020} @cite{schwarzschild-2008}
 
 Compositional semantics for equative constructions ("as tall as").
 
@@ -23,11 +24,6 @@ the "exactly" reading arises because *just* signals finest granularity,
 and the finest equative is already the strongest (so *just*'s negative
 component is vacuous). See `just_vacuous_iff` in `Degree.Granularity`.
 
-## References
-
-- Rett, J. (2020). Separate but equal: A typology of equative constructions.
-- Kennedy, C. (2007). Vagueness and grammar.
-- Schwarzschild, R. (2008). The semantics of comparatives.
 -/
 
 namespace Semantics.Degree.Equative

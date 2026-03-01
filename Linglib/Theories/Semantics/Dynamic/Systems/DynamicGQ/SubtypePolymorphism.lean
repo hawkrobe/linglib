@@ -2,6 +2,7 @@ import Linglib.Theories.Semantics.Dynamic.Systems.DynamicGQ.Basic
 
 /-!
 # Subtype Polymorphism for Dynamic GQs
+@cite{charlow-2021}
 
 Charlow's (2021) §4: a type system that distinguishes "complete" (T) from
 "incomplete" (t) dynamic meanings. Modified numerals contribute incomplete
@@ -14,10 +15,6 @@ completion (T) inside M_v's scope, but M_v requires its argument to be
 incomplete (t). The cumulative reading is well-typed because cardinality
 tests scope outside M_v.
 
-## References
-
-- Charlow, S. (2021). Post-suppositions and semantic theory. *L&P* 44, 701–765.
-  §4, equations 40–46.
 -/
 
 namespace Semantics.Dynamic.DynamicGQ.SubtypePolymorphism

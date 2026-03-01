@@ -3,6 +3,7 @@ import Linglib.Theories.Semantics.Degree.Core
 
 /-!
 # Schwarzschild's Interval Semantics
+@cite{schwarzschild-2005} @cite{schwarzschild-2008} @cite{schwarzschild-wilkinson-2002}
 
 Schwarzschild (2008) "The Semantics of Comparatives and Other Degree
 Constructions": degrees are reified as **intervals** on a scale, and
@@ -26,14 +27,6 @@ degree morphology manipulates these intervals.
 4. **Differential comparatives**: "3 inches taller" specifies the
    difference between intervals, natural in the interval framework.
 
-## References
-
-- Schwarzschild, R. (2008). The semantics of comparatives and other
-  degree constructions. *Language and Linguistics Compass* 2(2): 308-331.
-- Schwarzschild, R. (2005). Measure phrases as modifiers of adjectives.
-  *Recherches Linguistiques de Vincennes* 34: 207-228.
-- Schwarzschild, R. & Wilkinson, K. (2002). Quantifiers in comparatives.
-  *Natural Language Semantics* 10(1): 1-41.
 -/
 
 namespace Semantics.Degree.Frameworks.Schwarzschild

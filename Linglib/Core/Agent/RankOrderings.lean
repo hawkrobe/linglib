@@ -18,9 +18,6 @@ shrinking alternative sets — a direct consequence of IIA.
 - `rankProb_marginal_first`: marginalizing rankings over the first choice
   recovers `pChoice`.
 
-## References
-
-- Luce, R. D. (1959). Individual Choice Behavior, §2.F (pp. 66–72).
 -/
 
 namespace Core

@@ -3,6 +3,7 @@ import Linglib.Theories.Syntax.HPSG.Core.Basic
 
 /-!
 # Frame Composition: Unification vs. Function Application
+@cite{pollard-sag-1994}
 
 linglib has multiple frame-like structures — ThematicFrame (neo-Davidsonian
 role bundles), HPSG Sign (typed feature structures), Frame2 (TTR records) —
@@ -31,11 +32,6 @@ this directly: the modifier fills an attribute slot. Predicate Modification
 (PM) is a restricted form of unification — it conjoins two ⟨e,t⟩ predicates
 but cannot target a *specific* attribute the way unification does.
 
-## References
-
-- Löbner, S. (2021). Frames at the Interface of Language and Cognition.
-- Pollard, C. & Sag, I. (1994). Head-Driven Phrase Structure Grammar.
-- Heim, I. & Kratzer, A. (1998). Semantics in Generative Grammar.
 -/
 
 namespace Comparisons.FrameComposition

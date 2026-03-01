@@ -3,9 +3,7 @@ import Linglib.Core.Logic.BeliefRevision
 /-!
 # Ranking Functions and Iterated Belief Revision
 
-@cite{halpern-2003}
-
-Ranking functions (ordinal conditional functions, OCFs) provide a
+@cite{halpern-2003} @cite{darwiche-pearl-1997} @cite{spohn-1988}Ranking functions (ordinal conditional functions, OCFs) provide a
 qualitative, ordinal approach to belief revision that serves as the
 quantitative semantics for System P + Rational Monotonicity.
 
@@ -32,14 +30,6 @@ at least one belief state.
    the iterated revision postulates C1–C4 (§2), which AGM alone
    does not constrain.
 
-## References
-
-- Spohn, W. (1988). Ordinal Conditional Functions: A Dynamic Theory
-  of Epistemic States. In W.L. Harper & B. Skyrms (Eds.), Causation
-  in Decision, Belief Change, and Statistics II. Kluwer. 105–134.
-- Darwiche, A. & Pearl, J. (1997). On the Logic of Iterated Belief
-  Revision. Artificial Intelligence 89: 1–29.
-- Halpern, J. (2003). Reasoning about Uncertainty. MIT Press. Ch. 8.
 -/
 
 namespace Core.Logic.Ranking

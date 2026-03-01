@@ -2,9 +2,7 @@ import Linglib.Theories.Semantics.Lexical.Verb.Aspect
 
 /-!
 # Aspect × Temporal Connective Interaction Data
-@cite{moens-steedman-1988}
-
-Theory-neutral empirical data on how temporal connectives interact with the
+@cite{moens-steedman-1988} @cite{vendler-1957}Theory-neutral empirical data on how temporal connectives interact with the
 aspectual class (Vendler class) of their complement and main clauses.
 
 ## Key Empirical Generalizations (Moens & Steedman 1988)
@@ -24,11 +22,6 @@ aspectual class (Vendler class) of their complement and main clauses.
    - Telic embedded clause → endpoint reading is default
    - Atelic embedded clause → onset reading requires coercion (INCHOAT)
 
-## References
-
-- Moens, M. & Steedman, M. (1988). Temporal ontology and temporal reference.
-  *Computational Linguistics* 14(2), 15–28.
-- Vendler, Z. (1957). Verbs and times. *The Philosophical Review* 66, 143–160.
 -/
 
 namespace Phenomena.TemporalConnectives.AspectInteractionData

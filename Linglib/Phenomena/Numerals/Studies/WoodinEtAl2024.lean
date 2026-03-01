@@ -3,6 +3,7 @@ import Mathlib.Data.Rat.Defs
 
 /-!
 # Woodin, Winter & Bhatt (2024): Numeral Frequency and Roundness
+@cite{sigurd-1988} @cite{woodin-winter-bhatt-2024}
 
 Corpus study showing number frequency is predicted by:
 (a) log magnitude, and
@@ -17,13 +18,6 @@ Informational texts (Wikipedia) show stronger roundness effects than
 non-informational texts (fiction, conversation), suggesting roundness
 interacts with communicative goals.
 
-## References
-
-- Woodin, Winter & Bhatt (2024). Why are some numbers more frequent than
-  others? A corpus study of numeral roundness.
-- Sigurd (1988). Round numbers.
-- Jansen & Pollmann (2001). On round numbers: An analysis of numerical
-  turn-taking points.
 -/
 
 namespace Phenomena.Numerals.Studies.WoodinEtAl2024

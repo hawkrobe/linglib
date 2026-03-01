@@ -1,5 +1,6 @@
 /-!
 # Hahn, Degen & Futrell (2021): 54-Language Efficiency Data
+@cite{hahn-degen-futrell-2021}
 
 Empirical data from Study 2 of Hahn, Degen & Futrell (2021) "Modeling Word
 and Morpheme Order as an Efficient Trade-Off of Memory and Surprisal",
@@ -28,11 +29,6 @@ G values from SI Figure 2 (bootstrapped estimates).
 AUC values from <https://github.com/m-hahn/memory-surprisal>
 (`results/tradeoff/listener-curve-auc.tsv`).
 
-## References
-
-- Hahn, M., Degen, J. & Futrell, R. (2021). Modeling word and morpheme order
-  as an efficient trade-off of memory and surprisal. *Psychological Review*
-  128(4):726–756.
 -/
 
 namespace Phenomena.WordOrder.Studies.HahnDegenFutrell2021

@@ -1,5 +1,6 @@
 /-!
 # Hungarian Coordination Morphemes
+@cite{szabolcsi-2015}
 
 Hungarian is one of two languages in our sample (with Georgian) that attests
 all three M&S conjunction strategies: J-only, MU-only, and J-MU.
@@ -17,12 +18,6 @@ in Hungarian children (possibly ceiling effects).
 Connection to Typology.lean: `Phenomena.Coordination.Typology.hungarian`
 Connection to BillEtAl2025: Hungarian is one of two test languages.
 
-## References
-
-- Bill et al. (2025). Is DP conjunction always complex? S&P 18(5).
-- Mitrović & Sauerland (2016). Two conjunctions are better than one.
-  Acta Linguistica Hungarica 63(4), 471-494.
-- Szabolcsi (2015). What do quantifier particles do? L&P 38(2).
 -/
 
 namespace Fragments.Hungarian.Coordination

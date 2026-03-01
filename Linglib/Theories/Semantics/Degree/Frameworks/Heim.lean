@@ -4,6 +4,7 @@ import Linglib.Theories.Semantics.Degree.Frameworks.Kennedy
 
 /-!
 # Heim's Sentential Operator Approach
+@cite{heim-2001} @cite{heim-2006}
 
 Heim (2001) "Degree Operators and Scope": the comparative morpheme
 `-er` is a sentential operator that introduces degree variables via
@@ -34,11 +35,6 @@ other operators (negation, modals, quantifiers) that the degree
 quantifier approach does not, because -er takes scope at the clause
 level.
 
-## References
-
-- Heim, I. (2001). Degree operators and scope. In *Audiatur Vox
-  Sapientiae*, ed. C. Féry & W. Sternefeld, 214-239.
-- Heim, I. (2006). Little. In *Proceedings of SALT 16*.
 -/
 
 namespace Semantics.Degree.Frameworks.Heim

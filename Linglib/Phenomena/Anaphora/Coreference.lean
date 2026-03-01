@@ -10,11 +10,6 @@ Empirical data on coreference constraints for reflexives, pronouns, and full nom
 - `complementaryDistributionData`: Reflexives and pronouns in complementary distribution
 - `AnaphorType`, `CoreferencePattern`: Classification of anaphoric expressions
 
-## References
-
-- Chomsky, N. (1981). Lectures on Government and Binding.
-- Pollard, C. & I. Sag (1994). Head-Driven Phrase Structure Grammar, Ch. 6.
-- König, E. & P. Siemund (2000). Intensifiers and Reflexives.
 -/
 
 import Linglib.Core.Grammar

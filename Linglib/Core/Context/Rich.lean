@@ -4,6 +4,7 @@ import Linglib.Core.Discourse.Evidence
 
 /-!
 # Rich Context
+@cite{aikhenvald-2004} @cite{condoravdi-2002} @cite{cumming-2026}
 
 `RichContext` extends `KContext` with a domain of accessible worlds and an
 evidential source. This supports two phenomena that plain `KContext` cannot
@@ -24,11 +25,6 @@ express:
 - `DomainExpanding` — property of a shift: it expands the domain
 - `hpShift` — historical present temporal shift (backward time + domain expansion)
 
-## References
-
-- Condoravdi, M. (2002). Temporal interpretation of modals.
-- Cumming, S. (2026). Tense and evidence. *L&P* 49:153–175.
-- Aikhenvald, A. Y. (2004). Evidentiality. OUP.
 -/
 
 namespace Core.Context

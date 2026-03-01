@@ -6,12 +6,6 @@ Magahi has a three-level honorific system for 2nd person (non-hon / hon /
 high-hon) realized as verbal agreement morphemes. 3rd person uses demonstrative
 forms (*i* proximal / *ũ* distal). AA is Fin-based and freely embeddable.
 
-## References
-
-- Alok, D. (2020). The syntax and semantics of allocutive agreement in Magahi.
-  PhD dissertation, Rutgers University.
-- Alok, D. & A. Bhalla (2026). Allocutive agreement and the syntax of
-  honorifics.
 -/
 
 import Linglib.Core.Lexical.Pronouns

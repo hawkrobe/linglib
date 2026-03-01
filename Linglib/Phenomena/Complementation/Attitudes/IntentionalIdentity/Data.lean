@@ -2,6 +2,7 @@ import Linglib.Core.Lexical.Word
 
 /-!
 # Intentional Identity Data @cite{chatzikyriakidis-etal-2025}
+@cite{edelberg-1986} @cite{geach-1967}
 
 Empirical data for intentional identity — the phenomenon where
 two attitude reports appear to be "about the same thing" even
@@ -19,12 +20,6 @@ regular variable (no accessible referent), and it can't be an
 E-type pronoun (no unique salient witch across the two agents'
 belief states).
 
-## References
-
-- Geach, P.T. (1967). Intentional Identity. Journal of Philosophy 64(20): 627–632.
-- Edelberg, W. (1986). A New Puzzle about Intentional Identity.
-  Journal of Philosophical Logic 15: 1–25.
-- Chatzikyriakidis et al. (2025). Types and the Structure of Meaning. §2.
 -/
 
 namespace Phenomena.Complementation.Attitudes.IntentionalIdentity

@@ -2,6 +2,7 @@ import Linglib.Theories.Semantics.Tense.Basic
 
 /-!
 # Klecha (2016): Modality and Embedded Temporal Operators
+@cite{klecha-2016}
 
 Klecha's theory: **modals shift the evaluation time**, not just attitude
 verbs. This means tense under a modal is checked against the modal's
@@ -25,10 +26,6 @@ evaluation time, not against speech time.
 This is formalized via the `evalTimeIndex` field on `TensePronoun`: modals
 update this index just as attitude verbs do.
 
-## References
-
-- Klecha, P. (2016). Modality and embedded temporal operators.
-  *Semantics and Pragmatics* 9(9): 1-55.
 -/
 
 namespace Semantics.Tense.Klecha

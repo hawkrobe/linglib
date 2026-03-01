@@ -2,7 +2,8 @@ import Linglib.Theories.Phonology.Features
 import Linglib.Theories.Phonology.RuleBased.Defs
 
 /-!
-# Finnish Consonant Gradation @cite{karlsson-2018}
+# Finnish Consonant Gradation @cite{karlsson-2017}
+@cite{hayes-2009b}
 
 Consonant gradation is a morphophonological alternation affecting stops at
 morpheme-internal syllable boundaries in Finnish (Karlsson 2018, Chs. 4–5).
@@ -26,10 +27,6 @@ We model the quantitative and qualitative rules as SPE `PhonRule`s. The
 conditioning environment — closed vs. open syllable — is approximated by
 right context: a following consonant signals a closed syllable.
 
-## References
-
-- Karlsson, F. (2018). *Finnish: A Comprehensive Grammar*. Routledge. Chs. 4–5.
-- Hayes, B. (2009). *Introductory Phonology*. Blackwell. Ch 6 (SPE rules).
 -/
 
 namespace Fragments.Finnish.ConsonantGradation

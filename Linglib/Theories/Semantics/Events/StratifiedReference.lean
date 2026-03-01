@@ -16,10 +16,6 @@ instances of the same abstract property, differing only in the
 "dimension" (what map is applied) and "granularity" (what counts as
 a proper part along that dimension).
 
-## References
-
-- Champollion, L. (2017). *Parts of a Whole: Distributivity as a Bridge
-  Between Aspect and Measurement*. OUP. Chapters 4–7.
 -/
 
 import Linglib.Theories.Semantics.Events.Mereology

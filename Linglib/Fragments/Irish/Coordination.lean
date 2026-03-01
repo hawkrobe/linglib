@@ -1,5 +1,6 @@
 /-!
 # Irish Coordination Morphemes
+@cite{haspelmath-2007} @cite{stenson-1981}
 
 Irish coordination morphemes. Irish is a J-only language for conjunction:
 "agus" is the sole conjunctive coordinator. There is no MU (additive
@@ -8,12 +9,6 @@ particle) strategy for conjunction attested.
 Connection to Typology.lean: `Phenomena.Coordination.Typology.irish`
 encodes the structural pattern (a_co_b only, J-only strategy).
 
-## References
-
-- Stenson (1981). Studies in Irish Syntax. Tübingen: Narr.
-- Mac Congáil (2004). Irish Grammar. Cois Life.
-- Haspelmath (2007). Coordination. In Shopen (ed.), Language Typology
-  and Syntactic Description. Cambridge University Press.
 -/
 
 namespace Fragments.Irish.Coordination

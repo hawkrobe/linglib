@@ -24,12 +24,6 @@ For bare plural phenomena, see:
 
 - `Studies/HaslingerEtAl2025.lean` - Distributivity ≠ Maximality
 
-## References
-
-- Link, G. (1983). The logical analysis of plurals and mass terms.
-- Schwarzschild, R. (1996). Pluralities. Kluwer.
-- Križ, M. (2015). Aspects of Homogeneity in the Semantics of Natural Language.
-- Malamud, S. (2012). The meaning of plural definites.
 -/
 
 namespace Phenomena.Plurals

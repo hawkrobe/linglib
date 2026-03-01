@@ -14,12 +14,6 @@ in `Theories/Semantics.Intensional/Reference/`.
 5. **"I am here now"**: Logically true, contingent content
 6. **Necessity of identity**: If true, "a = b" is necessarily true
 
-## References
-
-- Kripke, S. (1980). Naming and Necessity. Harvard University Press.
-- Donnellan, K. (1966). Reference and Definite Descriptions. Philosophical Review.
-- Kaplan, D. (1989). Demonstratives.
-- Frege, G. (1892). Über Sinn und Bedeutung.
 -/
 
 import Linglib.Core.Empirical

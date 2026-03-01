@@ -25,12 +25,6 @@ The underlying math is the same: Product of Experts combination.
 | Concept disambiguation | concept c | P(c \| selectional role) | P(c \| scenario/frame) |
 | LU-RSA | lexicon L | P(L \| compositional constraints) | P(L \| prior) |
 
-## References
-
-- Erk, K. & Herbelot, A. (2024). How to Marry a Star. Journal of Semantics.
-- Bergen, L., Levy, R. & Goodman, N.D. (2016). Pragmatic reasoning through
-  semantic inference. Semantics & Pragmatics.
-- Lassiter, D. & Goodman, N.D. (2017). Adjectival vagueness in a Bayesian model.
 -/
 
 import Mathlib.Data.Rat.Defs

@@ -39,10 +39,6 @@ It does NOT validate:
 - Probabilistic conjunction: confident(p ∧ q) → confident(p)
 - Connectedness (CSW are agnostic, §4.6 discussion of (58))
 
-## References
-
-- Cariani, F., Santorio, P. & Wellwood, A. (2024). Confidence reports.
-  Semantics & Pragmatics 17(14): 1-40.
 -/
 
 namespace Semantics.Attitudes.Confidence

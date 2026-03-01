@@ -3,6 +3,7 @@ import Linglib.Fragments.English.Predicates.Verbal
 
 /-!
 # Thick vs Thin Causative Verb Data (Martin, Rose & Nichols 2025)
+@cite{martin-rose-nichols-2025}
 
 Corpus survey data from Table 3: 37 English causative verbs classified by
 four binary properties:
@@ -19,10 +20,6 @@ four binary properties:
 - The correlation is strong but not perfect: some thick verbs (burn, lift, lock)
   are occasionally found with omission subjects in corpora
 
-## References
-
-- Martin, F., Rose, D. & Nichols, S. (2025). Burning facts: thick and thin
-  causatives. Version 1, November 23, 2025.
 -/
 
 namespace Phenomena.Causatives.ThickThin

@@ -1,5 +1,6 @@
 /-
 # Doxastic Attitude Semantics
+@cite{pearl-2000}
 
 Modal/accessibility-based semantics for doxastic attitude verbs like
 `believe`, `know`, `think`.
@@ -20,11 +21,6 @@ Doxastic attitudes use Hintikka-style accessibility relations:
 Doxastic attitudes can embed questions via exhaustive interpretation:
 - ⟦x knows Q⟧ = ∀p ∈ Q. (p true → x knows p) ∧ (p false → x knows ¬p)
 
-## References
-
-- Hintikka (1969). Knowledge and Belief.
-- Heim (1992). Presupposition projection and the semantics of attitude verbs.
-- Karttunen (1977). Syntax and semantics of questions.
 -/
 
 import Linglib.Core.Semantics.Proposition
@@ -235,11 +231,6 @@ NO causal chain: ¬p (ROUND) does NOT generate indicators for p (FLAT)
 
 This asymmetry DERIVES the gap from independent causal-cognitive principles.
 
-### References
-
-- Pearl (2000). Causality: Models, Reasoning, and Inference.
-- Roberts & Simons (2024). Presupposition as ontological precondition.
-- Roberts & Özyıldız (2025). A causal explanation for the contrafactive gap.
 -/
 
 -- ============================================================================

@@ -2,6 +2,7 @@ import Linglib.Theories.Syntax.HPSG.Core.Basic
 
 /-!
 # Lexical Rules in HPSG
+@cite{pollard-sag-1987} @cite{pollard-sag-1994}
 
 Formalization of valence-changing lexical rules in HPSG.
 
@@ -21,11 +22,6 @@ head features. This is the HPSG tradition from Pollard & Sag (1987, 1994).
 - `passive_preserves_head`: passive doesn't change head features
 - `passive_changes_valence`: passive modifies the argument structure
 
-## References
-
-- Pollard, C. & Sag, I. (1987). Information-Based Syntax and Semantics. Vol. 1.
-- Pollard, C. & Sag, I. (1994). Head-Driven Phrase Structure Grammar.
-- Müller, S. (2013). Unifying Everything. Language 89(4):920–950.
 -/
 
 namespace HPSG

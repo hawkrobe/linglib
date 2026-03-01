@@ -1,5 +1,6 @@
 /-!
 # Cross-Categorial Comparison Constructions
+@cite{bresnan-1973} @cite{hackl-2000} @cite{wellwood-2015}
 
 Construction-level data on Wellwood's (2015) cross-categorial parallels:
 comparison constructions apply uniformly across nominal, verbal, and
@@ -10,11 +11,6 @@ domains use the same morphosyntactic template (`much`/`more` + comparative
 morphology). The measured-domain-level predictions (mereological status,
 dimensional restriction) are in `Studies/Wellwood2015/`.
 
-## References
-
-- Wellwood, A. (2015). On the semantics of comparison across categories.
-- Bresnan, J. (1973). Syntax of the comparative clause construction.
-- Hackl, M. (2000). Comparative quantifiers.
 -/
 
 namespace Phenomena.Comparison.CrossCategorial

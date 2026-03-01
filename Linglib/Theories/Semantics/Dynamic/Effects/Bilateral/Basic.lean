@@ -29,11 +29,6 @@ BilateralDen W E = {
 - DNE: ¬¬φ = φ (definitional - negation swaps, swap twice = identity)
 - de Morgan: ¬(φ ∨ ψ) ⟺ ¬φ ∧ ¬ψ (valid, unlike standard DS)
 
-## References
-
-- Elliott, P. (2023). Donkey disjunctions and overlapping updates. SALT 33.
-- Elliott, P. & Sudo, Y. (2025). Free choice with anaphora. S&P 18.
-- Krahmer, E. & Muskens, R. (1995). Negation and disjunction in DRT.
 -/
 
 import Linglib.Theories.Semantics.Dynamic.Core.Update

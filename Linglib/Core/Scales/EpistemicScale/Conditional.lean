@@ -3,9 +3,7 @@ import Linglib.Core.Scales.EpistemicScale.Defs
 /-!
 # Conditional Plausibility and Probabilistic Update
 
-@cite{halpern-2003}
-
-Halpern (2003, Ch. 3) axiomatizes conditional plausibility measures,
+@cite{halpern-2003} @cite{jeffrey-1965} @cite{popper-1955}Halpern (2003, Ch. 3) axiomatizes conditional plausibility measures,
 generalizing Bayesian conditioning, Popper spaces, Jeffrey's rule,
 and imaging under a single algebraic framework (Cond1–Cond4).
 
@@ -30,11 +28,6 @@ plausibility:
 The eliminative mode is the special case where P(A|B) ∈ {0, 1}:
 each world either survives or is eliminated.
 
-## References
-
-- Halpern, J. (2003). Reasoning about Uncertainty. MIT Press. Ch. 3.
-- Popper, K. (1955). Two autonomous axiom systems for probability.
-- Jeffrey, R. (1965). The Logic of Decision.
 -/
 
 namespace Core.Scale

@@ -29,10 +29,6 @@ that the CG model lacks. The threshold mechanism provides a
 quantitative handle on hedging and commitment strength that
 Krifka's ComP layer models categorically.
 
-## References
-
-- Lauer, S. (2013). *Towards a Dynamic Pragmatics*. PhD dissertation,
-  Stanford University.
 -/
 
 namespace Theories.Pragmatics.Assertion.Lauer

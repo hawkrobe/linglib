@@ -44,12 +44,6 @@ Case matching follows from the continuation analysis:
 - The wh-phrase's case comes from its syntactic position
 - This position is determined by the reconstructed continuation
 
-## References
-
-- Ross, J.R. (1969). Guess who? (introduced "sluicing")
-- Chung, S., Ladusaw, W., & McCloskey, J. (1995). Sluicing and Logical Form.
-- Merchant, J. (2001). The Syntax of Silence.
-- Barker, C. & Shan, C. (2014). Continuations and Natural Language. Ch. 16.
 -/
 
 import Linglib.Core.Lexical.Word

@@ -31,9 +31,6 @@ In other words: if we add C to the background, E necessarily follows.
    - The short circuit alone was enough to cause the fire
    - No other conditions needed (beyond background)
 
-## References
-
-- Nadathur & Lauer (2020), Section 5.1
 -/
 
 namespace NadathurLauer2020.Sufficiency

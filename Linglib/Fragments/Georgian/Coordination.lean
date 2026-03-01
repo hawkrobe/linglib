@@ -1,5 +1,6 @@
 /-!
 # Georgian Coordination Morphemes
+@cite{haspelmath-2007}
 
 Georgian is one of two languages in our sample (with Hungarian) that attests
 all three M&S conjunction strategies: J-only, MU-only, and J-MU.
@@ -17,13 +18,6 @@ Connection to Typology.lean: `Phenomena.Coordination.Typology.georgian`
 Connection to BillEtAl2025: Georgian children found J-MU hardest (contrary
 to the Transparency Principle prediction).
 
-## References
-
-- Bill et al. (2025). Is DP conjunction always complex? S&P 18(5).
-- Mitrović & Sauerland (2016). Two conjunctions are better than one.
-  Acta Linguistica Hungarica 63(4), 471-494.
-- Haspelmath (2007). Coordination. In Shopen (ed.), Language Typology
-  and Syntactic Description. Cambridge University Press.
 -/
 
 namespace Fragments.Georgian.Coordination

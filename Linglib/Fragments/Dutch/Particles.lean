@@ -2,6 +2,7 @@ import Linglib.Core.Discourse.InformationStructure
 
 /-!
 # Dutch Polarity Particles
+@cite{dimroth-2010} @cite{turco-braun-dimroth-2014}
 
 Lexical entries for Dutch sentence-internal polarity particles.
 
@@ -10,12 +11,6 @@ affirmative particle *wel*, which appears sentence-internally and carries
 a pitch accent. This contrasts with German, which uses Verum focus on the
 finite verb (Turco, Braun & Dimroth 2014).
 
-## References
-
-- Turco, G., Braun, B. & Dimroth, C. (2014). How Dutch and German speakers
-  produce and realize focus, contrast and correction. *JASA* 136(3), 1400–1414.
-- Dimroth, C. (2010). The acquisition of negation. In L. Horn (ed.),
-  *The Expression of Negation*, 39–72. de Gruyter.
 -/
 
 namespace Fragments.Dutch.Particles

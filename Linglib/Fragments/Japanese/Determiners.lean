@@ -14,9 +14,6 @@ Key typological properties:
 - Conservativity expected to hold (universal)
 - Negative concord via -mo...nai: dare-mo...nai = nobody
 
-## References
-- Shimoyama, J. (2006). Indeterminate phrase quantification in Japanese.
-- Nakanishi, K. (2007). Formal properties of measurement constructions.
 -/
 
 namespace Fragments.Japanese.Determiners

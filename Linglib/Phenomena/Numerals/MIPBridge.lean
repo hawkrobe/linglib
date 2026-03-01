@@ -3,6 +3,7 @@ import Linglib.Theories.Semantics.Lexical.Numeral.Semantics
 
 /-!
 # Numeral MIP Bridge
+@cite{fox-hackl-2006} @cite{kennedy-2015}
 
 Surfaces the abstract `Core.Scale` maximal informativity theorems at the
 Phenomena level, connecting numeral semantics (`maxMeaning`) to the
@@ -23,11 +24,6 @@ density predictions.
 4. **MIP derives exact meaning**: `isMaxInf_atLeast_iff_eq` proves
    max⊨ of "at least n" at world w iff μ(w) = n.
 
-## References
-
-- Fox, D. & Hackl, M. (2006). The universal density of measurement.
-- Kennedy, C. (2015). A "de-Fregean" semantics for modified and
-  unmodified numerals.
 -/
 
 namespace Phenomena.Numerals.MIPBridge

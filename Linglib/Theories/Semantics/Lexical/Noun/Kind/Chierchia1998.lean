@@ -30,12 +30,6 @@ We model `Individual Atom` as `Set Atom`. Atoms are singletons `{a}`,
 pluralities are larger sets. `PartialOrder` (⊆) and `SemilatticeSup` (∪)
 come from Mathlib for free, giving us Link's semilattice directly.
 
-## References
-
-- Chierchia, G. (1998). Reference to Kinds Across Languages.
-- Carlson, G. (1977). Reference to Kinds in English.
-- Link, G. (1983). The Logical Analysis of Plural and Mass Nouns.
-- Partee, B. (1987). Noun Phrase Interpretation and Type-Shifting Principles.
 -/
 
 import Mathlib.Data.Set.Basic

@@ -2,6 +2,7 @@ import Linglib.Theories.Semantics.Dynamic.Core.Update
 
 /-!
 # State Effect: Assignment Threading
+@cite{heim-1982} @cite{heim-1983} @cite{veltman-1996}
 
 The state effect underlies anaphora resolution in dynamic semantics. It threads
 variable assignments through interpretation, allowing one sentence to bind
@@ -27,12 +28,6 @@ Heim's File Metaphor:
 
 ⟦φ⟧ : File → File (sentences are context change potentials)
 
-## References
-
-- Heim, I. (1982). The Semantics of Definite and Indefinite Noun Phrases.
-  PhD dissertation, University of Massachusetts.
-- Heim, I. (1983). File Change Semantics and the Familiarity Theory of
-  Definiteness. In Bäuerle et al. (eds.), Meaning, Use, and Interpretation.
 -/
 
 namespace Semantics.Dynamic.FileChangeSemantics
@@ -180,9 +175,6 @@ In Update Semantics:
 
 ⟦φ⟧ : State → State where State = Set World
 
-## References
-
-- Veltman, F. (1996). Defaults in Update Semantics. Journal of Philosophical Logic 25:221-261.
 -/
 
 namespace Semantics.Dynamic.UpdateSemantics

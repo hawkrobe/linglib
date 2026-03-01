@@ -4,6 +4,7 @@ import Linglib.Core.Temporal.Reichenbach
 
 /-!
 # Tense Theory Infrastructure: Shared Types
+@cite{abusch-1997} @cite{deal-2020} @cite{heim-kratzer-1998} @cite{klecha-2016} @cite{kratzer-1998} @cite{ogihara-1996} @cite{sharvit-2003} @cite{von-stechow-2009} @cite{wurmbrand-2014} @cite{zeijlstra-2012}
 
 Shared types and infrastructure for the tense theories formalized in
 `Semantics.Intensional/Tense/` (Abusch 1997, Von Stechow 2009, Kratzer 1998,
@@ -25,17 +26,6 @@ of a derivation theorem in that theory's file.
 - `TenseTheory`: identity card for a theory (no verdict field)
 - `AttitudeTemporalSemantics`: how an attitude verb shifts eval time
 
-## References
-
-- Abusch, D. (1997). Sequence of tense and temporal de re.
-- Von Stechow, A. (2009). Tenses in compositional semantics.
-- Kratzer, A. (1998). More structural analogies between pronouns and tenses.
-- Ogihara, T. (1996). Tense, attitudes, and scope.
-- Klecha, P. (2016). Modality and embedded temporal operators.
-- Deal, A. R. (2020). Counterfactuals and the Upper Limit Constraint.
-- Sharvit, Y. (2003). Embedded tense and universal grammar.
-- Zeijlstra, H. (2012). There is only one way to agree.
-- Wurmbrand, S. (2014). Tense and aspect in English infinitives.
 -/
 
 namespace Semantics.Tense
@@ -532,7 +522,7 @@ theorem bound_tense_simultaneous {Time : Type*} [LinearOrder Time]
 
 /-- A "then"-type temporal adverb.
     Cross-linguistically, "then" shifts the perspective time P away
-    from the speech time S (Zhao 2026, Tsilia, Zhao & Sharvit 2026). -/
+    from the speech time S (Zhao 2025, Tsilia, Zhao & Sharvit 2026). -/
 structure ThenAdverb where
   /-- Language name -/
   language : String

@@ -8,12 +8,6 @@ plain/humble distinction (*na* / *jeo*). 3rd person pronouns (*geu*, *geunyeo*)
 are relatively recent Sino-Korean innovations; traditional Korean relies
 on null reference and demonstratives.
 
-## References
-
-- Portner, P., M. Pak & R. Zanuttini (2019). The speaker-addressee relation at
-  the syntax-semantics interface.
-- Alok, D. & A. Bhalla (2026). Allocutive agreement and the syntax of
-  honorifics.
 -/
 
 import Linglib.Core.Lexical.Pronouns

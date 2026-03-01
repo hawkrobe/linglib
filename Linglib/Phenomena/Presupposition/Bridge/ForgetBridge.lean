@@ -20,10 +20,6 @@ empirical data about *forget*'s presuppositions (from
 3. **Fragment consistency** — the two Fragment entries for *forget*
    (implicative and factive/rogative) align with the theory
 
-## References
-
-- Williams, W. (2025). The presuppositions of 'forget'. SALT 35.
-@cite{williams-2025}
 -/
 
 namespace Phenomena.Presupposition.Bridge.ForgetBridge

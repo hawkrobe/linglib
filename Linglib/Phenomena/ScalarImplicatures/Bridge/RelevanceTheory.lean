@@ -29,11 +29,6 @@ Both derive "some → not all", but by different mechanisms:
 - **RT**: Comprehension procedure + clause (b). No scales needed — the
   implicature follows from the general presumption of optimal relevance.
 
-## References
-
-Sperber, D. & Wilson, D. (1986/95). Relevance. Postface pp. 270-278.
-Carston, R. (1998). Informativeness, relevance and scalar implicature.
-Wilson, D. & Sperber, D. (2004). Relevance Theory. In Horn & Ward (eds).
 -/
 
 set_option autoImplicit false

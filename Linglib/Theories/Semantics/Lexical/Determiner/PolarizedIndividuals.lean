@@ -2,6 +2,7 @@ import Linglib.Core.Logic.PolarizedIndividuals
 
 /-!
 # Determiners via Polarized Individuals @cite{elliott-2025}
+@cite{barwise-cooper-1981}
 
 Connects standard quantifier denotations to the polarized individual
 decomposition from `Core.Logic.PolarizedIndividuals`.
@@ -18,10 +19,6 @@ The key compositional fact for split scope is `pos_sup_neg`:
 `(e,+) ⊔ (e,-) = λR S. R(e)`, already proved in
 `Core.Logic.PolarizedIndividuals`.
 
-## References
-
-- Elliott, P. (2025). Determiners as predicates. SALT 35.
-- Barwise, J. & Cooper, R. (1981). Generalized Quantifiers and Natural Language.
 -/
 
 namespace Semantics.Lexical.Determiner.Polarized

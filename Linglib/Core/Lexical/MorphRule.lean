@@ -2,6 +2,7 @@ import Linglib.Core.Lexical.Word
 
 /-!
 # Morphological Infrastructure
+@cite{bybee-1985} @cite{champollion-2017} @cite{link-1983} @cite{zwicky-1977} @cite{zwicky-pullum-1983}
 
 Framework-agnostic types for morphological analysis and compositional
 morphological rules.
@@ -29,15 +30,6 @@ A `MorphRule σ` transforms a stem's surface form, morphosyntactic features,
 and meaning of type `σ` simultaneously. Rules where the semantic effect is
 `id` (e.g., verb agreement) are marked `isVacuous := true`.
 
-## References
-
-- Bybee, J. L. (1985). Morphology: A Study of the Relation between
-  Meaning and Form. Benjamins.
-- Zwicky, A. M. (1977). On Clitics. Indiana University Linguistics Club.
-- Zwicky, A. M. & Pullum, G. K. (1983). Cliticization vs. Inflection:
-  English N'T. *Language* 59(3), 502–513.
-- Link, G. (1983). The logical analysis of plurals and mass terms.
-- Champollion, L. (2017). Parts of a Whole. OUP.
 -/
 
 namespace Core.Morphology

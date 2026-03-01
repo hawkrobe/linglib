@@ -29,15 +29,6 @@ Harizanov argues this is HEAD-TO-SPECIFIER movement:
 3. All head-to-specifier movement violates the HMC
 4. Therefore: Bulgarian LHM violates the HMC
 
-## References
-
-- Harizanov, B. "Syntactic Head Movement: Elements in Generative Syntax"
-  - Bulgarian data: Section 4.1.1, pp.19-21, examples (29), (48), (52)
-  - Maximality claim: Section 4.2, p.29
-  - HMC violation: Section 3.1, p.12; Section 4.2, p.29
-- Lambova (2004c:274, (15)): Original Bulgarian data
-- Collins, C. & E. Stabler (2016). "A Formalization of Minimalist Syntax"
-  - Position-indexed maximality: Section 3.4
 -/
 
 import Linglib.Theories.Syntax.Minimalism.Formal.Constraints.HMC

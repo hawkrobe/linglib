@@ -18,10 +18,6 @@ exhLUMeaning, wonkyGoalProject), and structural definitions are preserved.
 RSA computation stubs and prediction theorems remain with `sorry` for future
 reimplementation.
 
-## References
-
-Cremers, A., Wilcox, E., & Spector, B. (2023). Exhaustivity and Anti-Exhaustivity
-in the RSA Framework. Semantics & Pragmatics.
 -/
 
 namespace Phenomena.ScalarImplicatures.Bridge.RSACremersWilcoxSpector2023

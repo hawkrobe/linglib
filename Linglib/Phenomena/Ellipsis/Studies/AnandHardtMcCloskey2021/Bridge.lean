@@ -5,9 +5,7 @@ import Linglib.Theories.Syntax.Minimalism.Formal.Sluicing.FormalMatching
 /-!
 # Sluicing — Minimalist Bridge Theorems
 
-@cite{anand-hardt-mccloskey-2021}
-
-Connects empirical sluicing data — both the individual examples in
+@cite{anand-hardt-mccloskey-2021} @cite{anand-mccloskey-2025}Connects empirical sluicing data — both the individual examples in
 `Phenomena.Ellipsis.Sluicing` and the corpus findings from Anand, Hardt
 & McCloskey (2021) — to the Syntactic Isomorphism Condition (SIC)
 formalized in `Theories.Syntax.Minimalism.Formal.Sluicing.FormalMatching`.
@@ -32,12 +30,6 @@ the full chain:
 
 4. **Corpus distributions** (§4): Sprouting dominates, *why* dominates.
 
-## References
-
-- Anand, P., Hardt, D. & McCloskey, J. (2021). The Santa Cruz sluicing
-  data set. *Language* 97(1): e68–e88.
-- Anand, P., Hardt, D. & McCloskey, J. (2025). Sluicing and Syntactic
-  Identity.
 -/
 
 namespace Phenomena.Ellipsis.Studies.AnandHardtMcCloskey2021.Bridge

@@ -23,14 +23,6 @@ temporal connectives, focusing on:
 - Italian: *prima che non* (before + EN), *finché non* (until + EN).
   French: *avant que ne* (before + EN).
 
-## References
-
-- Giannakidou, A. (2002). UNTIL, aspect and negation. *SALT* 12.
-- Greco, M. (2020). On the syntax of surprise negation sentences: A case
-  study on expletive negation. *NLLT* 38(3), 775–825.
-- Jin, Y. & Koenig, J.-P. (2021). A cross-linguistic study of expletive
-  negation. *Linguistic Typology* 25(1), 39–78.
-- Rett, J. (2026). Semantic ambivalence and expletive negation. Ms.
 -/
 
 namespace Phenomena.TemporalConnectives.NegationData

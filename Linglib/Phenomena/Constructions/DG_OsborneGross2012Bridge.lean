@@ -4,6 +4,7 @@ import Linglib.Phenomena.Constructions.Studies.OsborneGross2012.Data
 
 /-!
 # Bridge: Osborne & Groß (2012) DG Catenae → CxG Constructions
+@cite{fillmore-oconnor-1988} @cite{osborne-gross-2012}
 
 Connects the dependency trees from `Studies/OsborneGross2012/Data.lean`
 to the catena theory from `Catena.lean` and the CxG types from
@@ -30,10 +31,6 @@ FKO1988 `IdiomType` classification is bridged to catena verification:
 substantive decoding idioms ("kick the bucket") and formal idioms
 (the comparative correlative) are both catenae.
 
-## References
-
-- Osborne, T. & Groß, T. (2012). Constructions are catenae. *CogLing* 23(1).
-- Fillmore, C. J., Kay, P. & O'Connor, M. C. (1988). Let Alone. *Language* 64(3).
 -/
 
 namespace Phenomena.Constructions.Studies.OsborneGross2012.Bridge

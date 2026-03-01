@@ -3,9 +3,7 @@ import Linglib.Theories.Semantics.Modality.EventRelativity
 /-!
 # Cinque (1999) vs Hacquard (2006): Modal Position
 
-@cite{hacquard-2010}
-
-Two approaches to the correlation between modal position (high vs low in
+@cite{hacquard-2010} @cite{cinque-1999} @cite{hacquard-2006}Two approaches to the correlation between modal position (high vs low in
 the clause) and modal flavor (epistemic vs root/circumstantial):
 
 ## Cinque (1999): Cartographic Stipulation
@@ -38,13 +36,6 @@ cannot be epistemic. No dedicated functional heads are needed.
 | Flexibility | None (fixed heads) | Varies with event structure |
 | Embedded contexts | Must re-stipulate | Falls out from attitude events |
 
-## References
-
-- Cinque, G. (1999). Adverbs and Functional Heads: A Cross-Linguistic
-  Perspective. OUP.
-- Hacquard, V. (2006). Aspects of Modality. MIT dissertation.
-- Hacquard, V. (2010). On the event relativity of modal auxiliaries.
-  Natural Language Semantics 18:79–114.
 -/
 
 namespace Comparisons.ModalPosition

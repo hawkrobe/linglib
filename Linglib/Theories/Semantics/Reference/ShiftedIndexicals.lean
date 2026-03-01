@@ -2,6 +2,7 @@ import Linglib.Theories.Semantics.Reference.Kaplan
 
 /-!
 # Shifted Indexicals
+@cite{anand-nevins-2004} @cite{deal-2020} @cite{schlenker-2003}
 
 Cross-linguistic variation in indexical interpretation via tower depth:
 English "I" reads from the origin (`.origin`), Amharic "I" reads from the
@@ -17,11 +18,6 @@ person shifts but time does not.
 - `schlenker_counterexample`: English "I" and Amharic "I" diverge in the
   same tower configuration
 
-## References
-
-- Schlenker, P. (2003). A Plea for Monsters. *Linguistics & Philosophy*.
-- Anand, P. & Nevins, A. (2004). Shifty Operators in Changing Contexts. SALT XIV.
-- Deal, A. R. (2020). A Theory of Indexical Shift. MIT Press.
 -/
 
 namespace Semantics.Reference.ShiftedIndexicals

@@ -4,6 +4,7 @@ import Linglib.Core.Interfaces.VoiceSystem
 
 /-!
 # Chuj Verb Building Fragment (Coon 2019) @cite{coon-2019}
+@cite{davis-1997}
 
 Formalization of the core claims from Coon (2019) "Building verbs in Chuj:
 Consequences for the nature of roots."
@@ -50,13 +51,6 @@ the syntactic complement projection, giving {√TV} vs {√ITV, √POS, √NOM}.
 This matches the -aj diagnostic: -aj marks implicit arguments, and only √TV
 stems show -aj (the theme can be implicit), not √ITV.
 
-## References
-
-- Coon, J. (2019). Building verbs in Chuj: Consequences for the nature
-  of roots. *Journal of Linguistics* 55(1): 35–81.
-- Davis, H. (1997). Deep unaccusativity and zero syntax in St'at'imcets.
-  In A. Mendikoetxea & M. Uribe-Etxebarria (eds.), *Theoretical Issues
-  at the Morphology-Syntax Interface*, 55–96.
 -/
 
 namespace Fragments.Chuj

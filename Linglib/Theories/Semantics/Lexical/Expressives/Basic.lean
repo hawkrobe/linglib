@@ -1,5 +1,6 @@
 /-
 # Two-Dimensional Semantics for Conventional Implicatures
+@cite{potts-2005} @cite{wang-2025}
 
 Formalization of Potts (2005) "The Logic of Conventional Implicatures" (LCI).
 
@@ -25,12 +26,6 @@ Key CI expressions:
 - Appositives: via comma feature
 - Supplementary adverbs: ⟦luckily⟧ : ⟨tᵃ, tᶜ⟩
 
-## References
-
-- Potts, C. (2005). The Logic of Conventional Implicatures. OUP.
-- Gutzmann, D. (2015). Use-Conditional Meaning. OUP.
-- Kaplan, D. (1999). The Meaning of Ouch and Oops.
-- McCready, E. (2010). Varieties of Conventional Implicature. S&P 3(8).
 -/
 
 import Mathlib.Data.Rat.Defs
@@ -339,10 +334,6 @@ This provides a new cross-module connection between:
 - `Core.Presupposition.PrProp` (presupposition + assertion)
 - `Semantics.Lexical.Expressives.TwoDimProp` (at-issue + CI)
 
-### References
-- Wang, S. & Buccola, B. (2025). De re presupposition via CI bifurcation.
-- Wang, S. (2025). Presupposition, Competition, and Coherence. Ch. 5.
-- Potts, C. (2005). The Logic of Conventional Implicatures. OUP.
 -/
 
 /--

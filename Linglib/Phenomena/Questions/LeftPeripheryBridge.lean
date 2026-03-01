@@ -5,6 +5,7 @@ import Linglib.Phenomena.Questions.TypologyBridge
 
 /-!
 # Bridge: Left Periphery Theory -> Embedding/Typology Data
+@cite{dayal-2025} @cite{mccloskey-2006}
 
 Connects the left-peripheral selection class theory from
 `Theories.Semantics.Questions.LeftPeriphery` to the empirical embedding
@@ -15,10 +16,6 @@ Sections F and G from the original LeftPeriphery module: per-datum
 verification against embedding judgments, shiftiness predictions, and
 cross-linguistic Q-particle predictions.
 
-## References
-
-- Dayal, V. (2025). The Interrogative Left Periphery.
-- McCloskey, J. (2006). Questions and questioning in a local English.
 -/
 
 namespace Phenomena.Questions.LeftPeripheryBridge

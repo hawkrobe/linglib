@@ -4,6 +4,7 @@ import Linglib.Core.Interface
 
 /-!
 # Type Theory with Records — Chapter 8: Type-Based Underspecification
+@cite{chomsky-1981} @cite{cooper-2023} @cite{kanazawa-1994} @cite{scontras-pearl-2021}
 
 Cooper (2023) Chapter 8 introduces *content types* that replace specific
 contents with types whose witnesses are fully specified readings. This module
@@ -44,12 +45,6 @@ formalizes the chapter's mechanisms at two levels:
 - `localizeConditional` derives the correct strong donkey reading
 - `crossSententialResolve` bridges discourse merge to pronoun resolution
 
-## References
-
-- Cooper (2023). From Perception to Communication. OUP. Ch 8.
-- Scontras & Pearl (2021). When pragmatics matters more for TVJ.
-- Chomsky (1981). Lectures on Government and Binding.
-- Kanazawa (1994). Weak vs. Strong Readings of Donkey Sentences.
 -/
 
 namespace Semantics.TypeTheoretic

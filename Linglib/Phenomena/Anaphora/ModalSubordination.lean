@@ -20,11 +20,6 @@ under "might" in the first sentence. This is surprising because:
 3. "A wolf might come in. It eats you." is odd (indicative blocks).
 4. The pattern is similar to counterfactual conditionals.
 
-## References
-
-- Roberts, C. (1989). Modal Subordination and Pronominal Anaphora in Discourse.
-- Stone, M. (1997). The Anaphoric Parallel between Modality and Tense.
-- Hofmann, L. (2025). Anaphoric accessibility with flat update. S&P.
 -/
 
 namespace Phenomena.Anaphora.ModalSubordination

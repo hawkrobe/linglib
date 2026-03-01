@@ -6,6 +6,7 @@ import Linglib.Fragments.Bulgarian.Evidentials
 
 /-!
 # Koev (2017) Bridge Theorems @cite{koev-2017}
+@cite{cumming-2026} @cite{izvorski-1997}
 
 Bridge theorems connecting Koev's (2017) spatiotemporal distance analysis
 to existing linglib infrastructure, organized around the paper's four
@@ -33,13 +34,6 @@ The learn predicate is subscripted with **cs(k)** (context set), not with
 status: the evidential restricts the context set directly (≈ presupposition),
 while the assertion commits the speaker to p via DECL (72).
 
-## References
-
-- Koev, T. (2017). Evidentiality, learning events, and spatiotemporal
-  distance. *Journal of Semantics* 34(1):1–38.
-- Cumming, S. (2026). Tense and evidence. *L&P* 49:153–175.
-- Izvorski, R. (1997). The present perfect as an epistemic modal.
-  *SALT* 7:222–239.
 -/
 
 namespace Phenomena.TenseAspect.Studies.Koev2017.Bridge

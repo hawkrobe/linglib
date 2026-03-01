@@ -5,6 +5,7 @@ import Linglib.Theories.Morphology.Core.Exponence
 
 /-!
 # Tense and Participant Perspective (Lakoff 1970)
+@cite{cumming-2026} @cite{lakoff-1970}
 
 **Participant perspective** (Lakoff 1970) — psychological salience and hearer
 novelty — is distinct from **temporal perspective** (Kiparsky's π / Tsilia,
@@ -31,10 +32,6 @@ downstream (the chipmunk is still there = T ≤ A holds), because the event has
 lost psychological salience. `TensePerspective` inherits the full (S, R, E, A)
 frame and adds the participant-psychological layer on top.
 
-## References
-
-- Lakoff, R. (1970). Tense and its relation to participants. *Language* 46(4).
-- Cumming, S. (2026). Tense and evidence. *L&P* 49:153–175.
 -/
 
 namespace Semantics.Tense.ParticipantPerspective

@@ -3,6 +3,7 @@ import Linglib.Phenomena.Presupposition.Basic
 
 /-!
 # Bridge: NeoGricean Presuppositions to Phenomena
+@cite{heim-1983} @cite{karttunen-1974} @cite{kracht-2003}
 
 Connects the NeoGricean presupposition infrastructure (trigger types, derivation
 tracking, SI interaction) to empirical presupposition data from
@@ -11,11 +12,6 @@ tracking, SI interaction) to empirical presupposition data from
 Provides example derivations wrapping the King, conditional, and factive verb
 examples from Phenomena for NeoGricean SI computation.
 
-## References
-
-- Kracht (2003). Mathematics of Language, Section 4.7
-- Heim (1983). On the projection problem for presuppositions
-- Karttunen (1974). Presupposition and linguistic context
 -/
 
 

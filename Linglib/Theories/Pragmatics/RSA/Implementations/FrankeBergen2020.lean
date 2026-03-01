@@ -16,10 +16,6 @@ GI treats EXH parse as speaker OUTPUT. The speaker jointly optimizes
 (utterance, parse) pairs. Uses the unified `Exhaustifiable` typeclass
 which invokes `applyExhAtParse` from the NeoGricean exhaustivity machinery.
 
-## References
-
-- Franke, M. & Bergen, L. (2020). "Theory-driven statistical modeling"
-- Phenomena data in: Linglib.Phenomena.FrankeBergen2020.Data
 -/
 
 import Linglib.Core.Parse

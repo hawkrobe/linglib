@@ -18,10 +18,6 @@ Lexical entries for Bulgarian interrogative particles.
 - Cross-Slavic RAZVE family: nima is the Bulgarian member
 - Dukova-Zheleva: nima expresses incredulity/surprise
 
-## References
-
-- Šimík, R. (2024). Polar question semantics and bias: Lessons from Slavic/Czech.
-- Dukova-Zheleva, G. Questions and Focus in Bulgarian. U. of Ottawa.
 -/
 
 namespace Fragments.Bulgarian.QuestionParticles

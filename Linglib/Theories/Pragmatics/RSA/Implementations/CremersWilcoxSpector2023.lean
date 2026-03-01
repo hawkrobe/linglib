@@ -9,10 +9,6 @@ under biased priors, which contradicts human behavior. EXH-LU blocks this via ex
 `baselineL1`, `exhL1`, `freeLU_L1`, `svRSA_L1`, `exhLU_L1`, `wRSA_L1`, `bwRSA_L1`,
 `rsaLI_uniform_L1`, `rsaLI_biased_L1`
 
-## References
-
-Cremers, A., Wilcox, E., & Spector, B. (2023). Exhaustivity and Anti-Exhaustivity
-in the RSA Framework. Semantics & Pragmatics.
 -/
 
 import Linglib.Theories.Pragmatics.RSA.Core.Config

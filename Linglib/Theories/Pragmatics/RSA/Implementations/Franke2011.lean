@@ -5,10 +5,6 @@ rational conversation. S&P 4(1):1-82.
 IBR (iterated best response) converges to exhaustive interpretation (exhMW).
 RSA is "soft" IBR: as α → ∞, softmax → argmax → exhMW → exhIE.
 
-## References
-
-- Franke (2011). S&P 4(1):1-82.
-- Benz, Jäger & van Rooij (2005). Game theory and pragmatics.
 -/
 
 import Mathlib.Data.Set.Basic

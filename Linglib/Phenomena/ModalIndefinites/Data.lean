@@ -2,6 +2,7 @@ import Linglib.Core.ModalIndefinite
 
 /-!
 # Modal Indefinites: Cross-Linguistic Data
+@cite{alonso-ovalle-menendez-benito-2010} @cite{alonso-ovalle-royer-2024} @cite{kratzer-shimoyama-2002b}
 
 Theory-neutral empirical data on modal indefinites, following
 Alonso-Ovalle & Royer (2024) "Modal indefinites: Lessons from Chuj."
@@ -24,14 +25,6 @@ choice).
 3. **Upper-boundedness**: Does the indefinite impose an anti-singleton
    inference (¬∀x[P(x) → Q(x)])?
 
-## References
-
-- Alonso-Ovalle, L. & Royer, J. (2024). Modal indefinites: Lessons from
-  Chuj. Linguistics and Philosophy.
-- Alonso-Ovalle, L. & Menéndez-Benito, P. (2010). Modal indefinites.
-  Natural Language Semantics 18:1–31.
-- Kratzer, A. & Shimoyama, J. (2002). Indeterminate pronouns: The view
-  from Japanese.
 -/
 
 namespace Phenomena.ModalIndefinites.Data

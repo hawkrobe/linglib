@@ -5,6 +5,7 @@ import Linglib.Theories.Semantics.Conditionals.Basic
 
 /-!
 # Conditional Perfection via Answer-Level Exhaustification
+@cite{cornulier-1983} @cite{evcen-bale-barner-2026} @cite{groenendijk-stokhof-1984}
 
 Formalizes the connection between conditional perfection and speech-act level
 exhaustification, following von Fintel (2001) "Conditional strengthening."
@@ -23,13 +24,6 @@ asks for sufficient conditions for C (antecedent-focus), the conditional answer
 triggers exhaustification over alternative antecedents. Evcen, Bale & Barner
 (2026) experimentally validate this prediction.
 
-## References
-
-- von Fintel (2001). Conditional strengthening: A case study in implicature.
-- Cornulier (1983). "If" and the presumption of exhaustivity.
-- Geis & Zwicky (1971). On invited inferences.
-- Groenendijk & Stokhof (1984). Studies on the semantics of questions.
-- Evcen, Bale & Barner (2026). [Experimental validation]
 -/
 
 namespace Semantics.Conditionals.Exhaustivity

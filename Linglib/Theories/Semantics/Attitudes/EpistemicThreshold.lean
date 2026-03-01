@@ -7,9 +7,7 @@ import Mathlib.Tactic.NormNum
 /-!
 # Epistemic Threshold Semantics (Ying, Zhi-Xuan, Wong, Mansinghka & Tenenbaum 2025)
 
-@cite{ying-zhi-xuan-wong-mansinghka-tenenbaum-2025}
-
-Epistemic vocabulary — attitude verbs (`believes`, `knows`), modal verbs
+@cite{ying-zhi-xuan-wong-mansinghka-tenenbaum-2025} @cite{baker-jara-ettinger-saxe-tenenbaum-2017} @cite{cariani-santorio-wellwood-2024} @cite{hintikka-1969b} @cite{kennedy-2007} @cite{lassiter-goodman-2017}Epistemic vocabulary — attitude verbs (`believes`, `knows`), modal verbs
 (`might`, `must`), and modal adjectives (`likely`, `certain`) — denotes
 **threshold functions over agent credence** Pr(A, φ).
 
@@ -83,16 +81,6 @@ where P(b | a) is the BToM belief marginal (`BToMModel.beliefMarginal`).
 Through the RSA-BToM bridge (`L1_eq_btom_worldMarginal`), this connects
 to the pragmatic listener's interpretation of epistemic language.
 
-## References
-
-- Ying, L., Zhi-Xuan, T., Wong, L., Mansinghka, V. & Tenenbaum, J. B.
-  (2025). Understanding Epistemic Language with a Language-Augmented
-  Bayesian Theory of Mind. TACL 13, 613–637.
-- Hintikka, J. (1969). Knowledge and Belief.
-- Cariani, F., Santorio, P. & Wellwood, A. (2024). Confidence reports.
-- Baker, Jara-Ettinger, Saxe & Tenenbaum (2017). BToM.
-- Kennedy, C. (2007). Vagueness and grammar.
-- Lassiter, D. (2017). Graded modality.
 -/
 
 namespace Semantics.Attitudes.EpistemicThreshold

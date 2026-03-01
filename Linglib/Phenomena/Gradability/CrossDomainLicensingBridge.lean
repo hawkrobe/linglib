@@ -7,6 +7,7 @@ import Linglib.Core.Temporal.Time
 
 /-!
 # Cross-Domain Licensing Agreement Bridge
+@cite{champollion-2017} @cite{kennedy-2007} @cite{krifka-1989} @cite{krifka-1998} @cite{rouillard-2026} @cite{zwarts-2005}
 
 The showcase theorem: six independent classification systems from different
 linguistic subfields all agree on licensing predictions, because they all
@@ -46,14 +47,6 @@ Each arrow encodes an independently motivated theoretical insight:
 All six have `LicensingPipeline` instances mapping their closed/open variants
 to `Boundedness.closed`/`.open_`, yielding identical licensing predictions.
 
-## References
-
-- Kennedy, C. (2007). Vagueness and grammar.
-- Rouillard, V. (2026). Maximal informativity and temporal in-adverbials.
-- Krifka, M. (1989). Nominal reference, temporal constitution.
-- Krifka, M. (1998). The origins of telicity.
-- Zwarts, J. (2005). Prepositional aspect and the algebra of paths.
-- Champollion, L. (2017). Parts of a Whole.
 -/
 
 namespace Phenomena.Gradability.CrossDomainLicensingBridge

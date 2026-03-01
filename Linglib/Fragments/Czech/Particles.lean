@@ -2,6 +2,7 @@ import Linglib.Theories.Semantics.Polarity.CzechNegation
 
 /-!
 # Czech Diagnostic Particles
+@cite{stakov-2026}
 
 Particles and adverbs used as diagnostics for the three-way negation distinction
 in Czech polar questions (Staňková 2026, Table 1).
@@ -24,11 +25,6 @@ that uniquely identifies each negation position.
 - *náhodou* 'by chance' modifies the ordering source of FALSUM's
   epistemic possibility component (Staňková §2.2.1)
 
-## References
-
-- Staňková, V. (2026). A three-way distinction of negation interpretation in Czech.
-- Šimík, R. (2024). Polar question semantics and bias: Lessons from Slavic/Czech.
-  In B. Gehrke & R. Šimík (eds.), Topics in the semantics of Slavic languages.
 -/
 
 namespace Fragments.Czech.Particles

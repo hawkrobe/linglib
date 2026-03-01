@@ -16,10 +16,6 @@ The theory in `Theories/Montague/Plural/Distributivity.lean` predicts:
 - *jeder* uses `distMaximal` (identity tolerance)
 - *jeweils* uses `distTolerant` (context-sensitive tolerance)
 
-## References
-
-- Haslinger, Rosina, Schmitt & Wurm (2025). On the relation between
-  distributivity and maximality. Semantics & Pragmatics 18.
 -/
 
 import Linglib.Theories.Semantics.Lexical.Plural.Distributivity

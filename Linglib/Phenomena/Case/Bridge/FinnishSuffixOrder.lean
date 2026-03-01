@@ -1,7 +1,8 @@
 import Linglib.Core.Lexical.MorphRule
 
 /-!
-# Finnish Suffix Order vs. Bybee's Relevance Hierarchy @cite{karlsson-2018}
+# Finnish Suffix Order vs. Bybee's Relevance Hierarchy @cite{karlsson-2017}
+@cite{bybee-1985}
 
 Finnish nominal morphology follows a strict suffix order (Karlsson 2018, Ch. 7):
 
@@ -36,11 +37,6 @@ This file verifies that the subset of Finnish nominal suffix slots that
 map to Bybee categories respects the relevance hierarchy, and documents
 the gap: case has no `MorphCategory` and therefore no Bybee rank.
 
-## References
-
-- Karlsson, F. (2018). *Finnish: A Comprehensive Grammar*. Routledge. Ch. 7.
-- Bybee, J. L. (1985). *Morphology: A Study of the Relation between
-  Meaning and Form*. Benjamins.
 -/
 
 namespace Phenomena.Case.Bridge.FinnishSuffixOrder

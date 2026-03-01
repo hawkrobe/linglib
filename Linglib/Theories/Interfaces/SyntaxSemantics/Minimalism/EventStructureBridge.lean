@@ -3,6 +3,7 @@ import Linglib.Theories.Semantics.Events.EventStructure
 
 /-!
 # Event Structure ↔ Syntactic Heads Bridge
+@cite{cuervo-2003}
 
 Connects Rappaport Hovav & Levin's (1998) event structure templates to
 Cuervo's (2003) syntactic verb head decomposition. This bridges the
@@ -19,10 +20,6 @@ semantic layer (Semantics.Events/EventStructure) to the syntactic layer
 | accomplishment  | [vDO, vGO, vBE]| Causative with external cause  |
 | motionContact   | [vDO]          | Manner activity (MOVE+CONTACT) |
 
-## References
-
-- Rappaport Hovav, M. & Levin, B. (1998). Building verb meanings.
-- Cuervo, M. C. (2003). Datives at Large. PhD dissertation, MIT.
 -/
 
 namespace Minimalism.Bridge

@@ -1,5 +1,6 @@
 /-
 # Beller & Gerstenberg (2025)
+@cite{levin-2019} @cite{nadathur-lauer-2020}
 
 RSA model for causal expression choice based on whether-causation (W),
 how-causation (H), and sufficient-causation (S).
@@ -10,10 +11,6 @@ how-causation (H), and sufficient-causation (S).
 - `CausalWorld`
 - `expressionMeaning`
 
-## References
-
-- Beller & Gerstenberg (2025). Causation, Meaning, and Communication.
-  Psychological Review.
 -/
 
 import Linglib.Theories.Pragmatics.RSA.Core.Config
@@ -281,12 +278,6 @@ expression choices: the structural properties of the causal model
 determine the W-H-S world, which determines literal semantics,
 which RSA pragmatics then sharpens.
 
-### References
-
-- Nadathur, P. & Lauer, S. (2020). Causal necessity, causal sufficiency,
-  and the implications of causative verbs. Glossa 5(1), 49.
-- Levin, B. (2019). Resultatives and constraints on concealed causatives.
-  In Proceedings of JerSem.
 -/
 
 section StructuralBridge

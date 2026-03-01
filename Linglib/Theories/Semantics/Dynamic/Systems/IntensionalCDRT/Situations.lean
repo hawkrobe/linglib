@@ -31,11 +31,6 @@ The mood operators from `Sentence/Mood/Basic.lean` have dynamic counterparts:
 - `SUBJ`: Introduces an SDref (existential over historical alternatives)
 - `IND`: Retrieves an SDref (presuppositional)
 
-## References
-
-- Mendes, A. (2025). Indefiniteness in future reference. S&P 18(10).
-- Hofmann, L. (2025). Anaphoric accessibility with flat update. S&P.
-- Muskens, R. (1996). Combining Montague semantics and discourse representation.
 -/
 
 import Linglib.Theories.Semantics.Dynamic.Systems.IntensionalCDRT.Basic

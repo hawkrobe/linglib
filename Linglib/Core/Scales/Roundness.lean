@@ -1,5 +1,6 @@
 /-!
 # Graded Numeral Roundness (k-ness Model)
+@cite{krifka-2007} @cite{sigurd-1988} @cite{woodin-winter-bhatt-2024}
 
 Framework-agnostic infrastructure for graded numeral roundness,
 following Sigurd (1988), Jansen & Pollmann (2001), and Woodin et al. (2024).
@@ -19,12 +20,6 @@ This module lives in Core because both Phenomena (empirical data) and
 Theories (Semantics.Montague, NeoGricean, RSA) depend on the roundness
 score, avoiding a cross-layer Theories→Phenomena import.
 
-## References
-
-- Sigurd (1988). Round numbers.
-- Jansen & Pollmann (2001). On round numbers.
-- Woodin, Winter & Bhatt (2024). Numeral frequency and roundness.
-- Krifka (2007). Approximate interpretation of number words.
 -/
 
 namespace Core.Roundness

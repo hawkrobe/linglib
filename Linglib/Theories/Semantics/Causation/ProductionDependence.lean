@@ -2,6 +2,7 @@ import Linglib.Theories.Semantics.Causation.Builder
 
 /-!
 # Burning Facts: Thick and Thin Causatives (Martin, Rose & Nichols 2025)
+@cite{embick-2009} @cite{martin-rose-nichols-2025} @cite{rose-nichols-2021} @cite{wolff-2003}
 
 Two concepts of CAUSE underlie lexical causative verb semantics:
 
@@ -28,16 +29,6 @@ d-causes without producing anything.
 | Thick → strong ASR | resultative compatibility | Bridge.lean |
 | Builder `.make` | sufficiency = P-CAUSE in deterministic limit | Builder.lean |
 
-## References
-
-- Martin, F., Rose, D. & Nichols, S. (2025). Burning facts: thick and thin
-  causatives. Version 1, November 23, 2025.
-- Rose, D., Schaffer, J., & Nichols, S. (2021). Cause and burn.
-  Cognition 215.
-- Wolff, P. (2003). Direct causation in the linguistic coding and
-  individuation of causal events. Cognition 88, 1-48.
-- Embick, D. (2009). Roots, states, and stative passives. Abstract for
-  Roots workshop, Universität Stuttgart.
 -/
 
 namespace MartinRoseNichols2025

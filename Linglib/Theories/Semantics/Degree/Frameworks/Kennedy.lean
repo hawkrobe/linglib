@@ -3,6 +3,7 @@ import Linglib.Theories.Semantics.Degree.Core
 
 /-!
 # Kennedy's Measure Function Approach
+@cite{kennedy-2007} @cite{kennedy-mcnally-2005}
 
 Kennedy (2007) "Vagueness and Grammar": gradable adjectives denote
 relations between individuals and degrees, mediated by a measure
@@ -35,12 +36,6 @@ meanings of the elements of a sentence to the computation of its truth
 conditions." When a scale has an endpoint, using it as the standard is
 more informative than using a contextual norm.
 
-## References
-
-- Kennedy, C. (2007). Vagueness and grammar: The semantics of relative
-  and absolute gradable adjectives. *Linguistics and Philosophy* 30(1): 1-45.
-- Kennedy, C. & McNally, L. (2005). Scale structure, degree modification,
-  and the semantics of gradable predicates. *Language* 81(2): 345-381.
 -/
 
 namespace Semantics.Degree.Frameworks.Kennedy

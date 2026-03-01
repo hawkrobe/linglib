@@ -2,6 +2,7 @@ import Linglib.Core.Lexical.Word
 
 /-!
 # Cross-Linguistic Typology of Evidentiality (WALS Chapters 77--78)
+@cite{aikhenvald-2004} @cite{de-haan-1999} @cite{willett-1988}
 
 Cross-linguistic data on grammatical evidentiality from the World Atlas of
 Language Structures, covering two parameters:
@@ -32,17 +33,6 @@ When present, evidentials are overwhelmingly verbal affixes; particles and
 clitics are comparatively rare. Systems with three or more evidential choices
 always include direct evidence as a grammaticalized category.
 
-## References
-
-- de Haan, F. (2013a). Semantic Distinctions of Evidentiality. In Dryer &
-  Haspelmath (eds.), WALS Online (v2020.3). https://wals.info/chapter/77
-- de Haan, F. (2013b). Coding of Evidentiality. In Dryer & Haspelmath
-  (eds.), WALS Online (v2020.3). https://wals.info/chapter/78
-- Aikhenvald, A. Y. (2004). Evidentiality. Oxford University Press.
-- de Haan, F. (1999). Evidentiality and epistemic modality: Setting
-  boundaries. Southwest Journal of Linguistics 18: 83--101.
-- Willett, T. (1988). A cross-linguistic survey of the grammaticalization
-  of evidentiality. Studies in Language 12: 51--97.
 -/
 
 namespace Phenomena.Modality.Typology

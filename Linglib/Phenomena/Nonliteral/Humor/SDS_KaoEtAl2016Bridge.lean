@@ -1,5 +1,6 @@
 /-
 # SDS and Humor: Formal Correspondence with Kao et al. (2016)
+@cite{erk-herbelot-2024} @cite{kao-levy-goodman-2016} @cite{raskin-1985}
 
 This module establishes the formal connection between:
 1. **Kao et al. (2016)** - Computational model of pun humor
@@ -25,10 +26,6 @@ These are equivalent when we identify:
 - Selectional constraints ≈ evidence from predicate words
 - Scenario constraints ≈ evidence from context words
 
-## References
-
-- Kao, Levy & Goodman (2016). A Computational Model of Linguistic Humor in Puns.
-- Erk & Herbelot (2024). How to Marry a Star.
 -/
 
 import Linglib.Theories.Semantics.Probabilistic.SDS.Core
@@ -581,11 +578,6 @@ Both frameworks formalize the same intuition:
 3. **Tied posteriors are necessary but not sufficient**
    - Need BOTH uncertainty (ambiguity) AND conflict (distinctiveness)
 
-### References
-
-- Kao, Levy & Goodman (2016). A Computational Model of Linguistic Humor in Puns.
-- Erk & Herbelot (2024). How to Marry a Star.
-- Raskin (1985). Semantic mechanisms of humor. (Script opposition theory)
 -/
 
 end Semantics.Probabilistic.SDS.Humor

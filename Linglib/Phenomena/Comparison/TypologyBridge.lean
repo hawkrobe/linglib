@@ -4,6 +4,7 @@ import Linglib.Core.Scales.Scale
 
 /-!
 # Gradability Typology Bridge
+@cite{kennedy-2007}
 
 Per-entry verification that the string-based typology data in `Data.lean`
 matches the Fragment entries in `Fragments/English/Predicates/Adjectival.lean`
@@ -19,9 +20,6 @@ entry, we verify:
 3. **Licensing agreement**: `LicensingPipeline.isLicensed tall.scaleType`
    matches the degree modifier compatibility from Data.lean
 
-## References
-
-- Kennedy, C. (2007). Vagueness and grammar.
 -/
 
 namespace Phenomena.Comparison.TypologyBridge

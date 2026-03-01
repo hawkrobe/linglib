@@ -3,6 +3,7 @@ import Mathlib.Tactic.DeriveFintype
 
 /-!
 # RSA Question Embedding
+@cite{geurts-2010} @cite{guerzoni-2004} @cite{hamblin-1973b}
 
 Models scalar implicatures embedded in questions.
 
@@ -41,12 +42,6 @@ local SI weakens), questions create an asymmetry:
 RSA should predict: Local SI is dispreferred in questions because it
 makes one answer pragmatically odd.
 
-## References
-
-- Geurts (2010). Quantity Implicatures. Ch. 3 on embedded implicatures.
-- Hamblin (1973). Questions in Montague English.
-- van Rooij & Schulz (2004). Exhaustive interpretation of complex sentences.
-- Guerzoni (2004). Even-NPIs in yes/no questions.
 -/
 
 namespace RSA.QuestionEmbedding

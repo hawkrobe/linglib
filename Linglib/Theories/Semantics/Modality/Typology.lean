@@ -18,11 +18,6 @@ Single Axis of Variability (SAV) universal from cross-linguistic modal typology.
 * `sav_implies_iff`: SAV is strictly stronger than IFF
 * `cartesianProduct_satisfies_iff`: Kratzer's independent parameterization → IFF
 
-## References
-
-* Nauze (2008). Modality in Typological Perspective.
-* Steinert-Threlkeld, Imel, & Guo (2023). A Semantic Universal for Modal Language.
-* Imel, Guo, & Steinert-Threlkeld (2026). An Efficient Communication Analysis of Modal Typology.
 -/
 
 namespace Semantics.Modality.Typology

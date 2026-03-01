@@ -37,9 +37,6 @@ Type definitions and structural properties (CompUtt, AtomicLexicon, CompLUScenar
 are preserved. RSA computations need to be re-implemented using the new RSAConfig
 framework.
 
-## Reference
-
-Bergen, Levy & Goodman (2016) "Pragmatic reasoning through semantic inference"
 -/
 
 -- Compositional Utterance Structure

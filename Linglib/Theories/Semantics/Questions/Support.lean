@@ -2,6 +2,7 @@ import Linglib.Theories.Semantics.Questions.ProbabilisticAnswerhood
 
 /-!
 # Evidential Support (IKW 2025, Thomas 2026)
+@cite{ippolito-kiss-williams-2025} @cite{thomas-2026}
 
 Named abstraction over probabilistic answerhood primitives, factored out for
 reuse across discourse particles that share the notion of "supporting an
@@ -29,10 +30,6 @@ doxastic condition because the speaker does believe an answer.
 - `supportedAnswers` — which alternatives are supported
 - `supportStrength` — magnitude of evidential boost
 
-## References
-
-- Thomas (2026). A probabilistic, question-based approach to additivity.
-- Ippolito, Kiss & Williams (2025). Discourse *only*. WCCFL 41.
 -/
 
 namespace Semantics.Questions.Support

@@ -8,8 +8,7 @@ import Mathlib.Analysis.Convex.Mul
 
 /-!
 # Rational Action @cite{luce-1959}
-
-The mathematical foundation for all soft-rational agents: RSA speakers/listeners,
+@cite{cover-thomas-2006} @cite{zaslavsky-hu-levy-2020} @cite{adams-messick-1957}The mathematical foundation for all soft-rational agents: RSA speakers/listeners,
 BToM agents, and decision-theoretic actors.
 
 ## Architecture
@@ -35,12 +34,6 @@ The key mathematical results characterizing this choice rule are:
 4. **Bayesian Optimality** (§5): The Bayesian posterior maximizes expected
    log-likelihood. This is the listener half of RSA convergence.
 
-## References
-
-- Luce, R. D. (1959). Individual Choice Behavior (Vol. 4). Wiley.
-- Franke, M. & Degen, J. (submitted). The softmax function.
-- Cover, T. M. & Thomas, J. A. (2006). Elements of Information Theory.
-- Zaslavsky, N., Hu, J., & Levy, R. (2020). A Rate-Distortion view of RSA.
 -/
 
 namespace Core
@@ -563,11 +556,6 @@ solution is `g(s) = exp(k · s)` (`cauchy_mul_exp`), giving:
 
 The parameter `k > 0` is the rationality parameter `α` in RSA.
 
-### References
-
-- Luce, R. D. (1959). Individual Choice Behavior, §2.A.
-- Adams, E. W. & Messick, S. (1957). An axiomatic formalization and
-  generalization of successive intervals scaling.
 -/
 
 /-- **Cauchy's multiplicative functional equation** (classical):
@@ -646,10 +634,6 @@ The Gibbs VP reduces to KL non-negativity via three identities:
 
 Combining: H(p) + α⟨p,s⟩ + KL = log Z = H(q) + α⟨q,s⟩, so KL ≥ 0 ⟹ LHS ≤ RHS.
 
-### References
-
-- Cover & Thomas (2006), Elements of Information Theory, Ch. 2
-- Zaslavsky et al. (2020), SM §B
 -/
 
 section KLDivergence

@@ -25,12 +25,6 @@ Fragment answers differ from sluicing:
 2. **Syntactic Ellipsis** (Merchant 2004): Fragments have full syntactic structure
 3. **Direct Interpretation** (Stainton 2006): Fragments interpreted without ellipsis
 
-## References
-
-- Bergen, L. & Goodman, N.D. (2015). The Strategic Use of Noise in Pragmatic
-  Reasoning. Topics in Cognitive Science 7(2): 336-350.
-- Merchant, J. (2004). Fragments and ellipsis. L&P 27(6): 661-738.
-- Stainton, R. (2006). Words and Thoughts. OUP.
 -/
 
 import Linglib.Core.Lexical.Word

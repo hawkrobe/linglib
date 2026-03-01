@@ -2,6 +2,7 @@ import Linglib.Core.Context.Tower
 
 /-!
 # Discourse Roles
+@cite{kaplan-1989} @cite{lakoff-1970} @cite{speas-tenny-2003}
 
 Framework-agnostic discourse participant roles (speaker, addressee) and their
 connection to illocutionary mood. Lakoff (1970) observes that tense selection
@@ -15,11 +16,6 @@ in Semantics.Dynamic/State) encode configurational or update-theoretic commitmen
 against a Kaplanian context via `ContextTower` (from the origin, since discourse
 roles reflect the actual speech-act participants).
 
-## References
-
-- Lakoff, R. (1970). Tense and its relation to participants. *Language* 46(4).
-- Kaplan, D. (1989). Demonstratives.
-- Speas, M. & Tenny, C. (2003). Configurational properties of point of view roles.
 -/
 
 namespace Core.Discourse

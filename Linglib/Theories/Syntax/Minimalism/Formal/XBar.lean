@@ -26,11 +26,6 @@ X-Bar theory provides a template for phrase structure:
 2. **Binary Branching**: All structures are binary
 3. **Specifier-Head-Complement**: Linear order in English
 
-## References
-
-- Jackendoff, R. (1977). X-Bar Syntax.
-- Chomsky, N. (1986). Barriers.
-- Adger, D. (2003). Core Syntax, Chapter 2.
 -/
 
 import Linglib.Theories.Syntax.Minimalism.Core.Labeling

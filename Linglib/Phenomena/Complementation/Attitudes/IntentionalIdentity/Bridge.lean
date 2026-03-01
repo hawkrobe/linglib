@@ -3,6 +3,7 @@ import Linglib.Theories.Semantics.TypeTheoretic.Modality
 
 /-!
 # Intentional Identity Bridge @cite{chatzikyriakidis-etal-2025}
+@cite{cooper-2023} @cite{geach-1967}
 
 TTR solution to Geach's intentional identity puzzle.
 
@@ -32,11 +33,6 @@ The key: TTR types are intensional objects that can be shared across
 attitude contexts without requiring witnesses. Two agents can think
 "about the same witch-type" without any witch existing.
 
-## References
-
-- Geach (1967). Intentional Identity. Journal of Philosophy.
-- Cooper (2023). From Perception to Communication. OUP. §6.5.
-- Chatzikyriakidis et al. (2025). Types and the Structure of Meaning. §2.
 -/
 
 namespace Phenomena.Complementation.Attitudes.IntentionalIdentity.Bridge

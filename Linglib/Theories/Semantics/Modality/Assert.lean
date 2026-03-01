@@ -3,9 +3,7 @@ import Linglib.Core.Discourse.DiscourseRole
 
 /-!
 # The ASSERT Operator and Speech Act Phrase
-  @cite{hacquard-2006}
-
-Formalizes the Speech Act Phrase (SAP) from Hacquard (2006, §4.2.1.2,
+  @cite{hacquard-2006} @cite{portner-2001} @cite{tenny-speas-2004}Formalizes the Speech Act Phrase (SAP) from Hacquard (2006, §4.2.1.2,
 pp.141–144), following Tenny & Speas (2004). Every matrix clause is
 headed by a SAP that introduces a speech event e* with propositional
 CONTENT. The type of speech act determines the content:
@@ -33,13 +31,6 @@ modal bound to e* accesses. In the `AnchoringFn` framework:
 Different speech act types give different CON(e*), hence different
 modal flavors — without lexical ambiguity in the modal.
 
-## References
-
-- Hacquard, V. (2006). Aspects of Modality. MIT dissertation. Ch.3, §4.2.
-- Tenny, C. & Speas, P. (2004). The interaction of clausal syntax,
-  discourse roles, and information structure. Ms., CMU & UMass.
-- Portner, P. (2001). The Semantics of Imperatives within a Theory
-  of Clause Types. SALT 11.
 -/
 
 namespace Semantics.Modality.Assert

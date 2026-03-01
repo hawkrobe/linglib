@@ -16,11 +16,6 @@ Empirical data: semantic and pragmatic properties of sentential negation.
    - "John didn't see anyone" (valid)
    - *"John saw anyone" (invalid without negation)
 
-## References
-
-- Ladusaw (1980) on polarity sensitivity
-- Chierchia (2004) on scalar implicatures and DE
-- Horn (1989) on negation
 -/
 
 import Linglib.Core.Empirical

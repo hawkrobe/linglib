@@ -37,13 +37,6 @@ ideologically linked traits (Figures 3–4 in Eckert 2008).
 * `RSA.NoncooperativeCommunication.SpeakerOrientation`: cooperative vs.
   argumentative as a coarse speaker-type dimension
 
-## References
-
-* Eckert, P. (2008). Variation and the indexical field.
-  *J. Sociolinguistics* 12(4): 453–476.
-* Silverstein, M. (2003). Indexical order and the dialectics of
-  sociolinguistic life.
-* Ochs, E. (1992). Indexing gender.
 -/
 
 namespace Core.SocialMeaning

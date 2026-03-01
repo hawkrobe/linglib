@@ -2,6 +2,7 @@ import Linglib.Core.Discourse.Evidence
 
 /-!
 # Epistemic Evidentiality — Empirical Data
+@cite{groenendijk-stokhof-1975} @cite{karttunen-1972} @cite{kratzer-1991} @cite{von-fintel-gillies-2010} @cite{von-fintel-gillies-2021}
 
 Theory-neutral empirical observations about the interaction between epistemic
 necessity modals (English *must*, *have to*) and evidential source.
@@ -24,13 +25,6 @@ The placement of the bare prejacent is Karttunen's Problem:
 - Standard modal logic: must φ ⊨ φ (must is ABOVE bare)
 - Naive intuition: φ conveys more confidence than must φ (bare is ABOVE must)
 
-## References
-
-- Karttunen, L. (1972). Possible and must. In Kimball (ed.), Syntax and Semantics 1.
-- Groenendijk, J. & Stokhof, M. (1975). Modality and conversational information.
-- Kratzer, A. (1991). Modality. In von Stechow & Wunderlich (eds.), Semantics.
-- von Fintel, K. & Gillies, A. (2010). Must...stay...strong! NLS 18:351–383.
-- von Fintel, K. & Gillies, A. (2021). Still going strong. NLS 29:91–113.
 -/
 
 namespace Phenomena.Modality.EpistemicEvidentiality

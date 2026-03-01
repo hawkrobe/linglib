@@ -29,11 +29,6 @@ LNCs with modals, quantificational adverbs, or generic/habitual readings
 CAN be interpreted as HCs, because these provide "object-level" content
 that can be genuinely supposed without prior discourse.
 
-## References
-
-- Lassiter (2025). Sorting out left-nested conditionals.
-- Gibbard (1981). Two recent theories of conditionals.
-- McGee (1985). A counterexample to modus ponens.
 -/
 
 import Linglib.Theories.Semantics.Conditionals.ConditionalType

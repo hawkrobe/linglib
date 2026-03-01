@@ -3,6 +3,7 @@ import Mathlib.Data.Fintype.Basic
 
 /-!
 # Post-Suppositional Dynamic GQs
+@cite{brasoveanu-2012} @cite{charlow-2021}
 
 Charlow's (2021) §5: bi-dimensional meanings using a Writer-like monad.
 A `PostSupp S A` carries both a value and accumulated post-suppositional
@@ -13,11 +14,6 @@ post-suppositional content, which is resolved after maximization. This
 automatically produces cumulative readings because post-suppositions
 from different quantifiers compose independently.
 
-## References
-
-- Charlow, S. (2021). Post-suppositions and semantic theory. *L&P* 44, 701–765.
-  §5, equations 53–58; Appendix B, equations 120–121.
-- Brasoveanu, A. (2012). Modified numerals as post-suppositions.
 -/
 
 namespace Semantics.Dynamic.DynamicGQ.PostSuppositional

@@ -27,10 +27,6 @@ licensor (Erlewine 2018, §4). This is NOT a voice-as-Case system in
 the Philippine sense; it is a structural consequence of how probing
 and Case assignment interact with predicate fronting.
 
-## References
-
-- Erlewine, M. Y. (2018). Extraction and licensing in Toba Batak.
-  Language 94(3): 662–697.
 -/
 
 namespace Fragments.TobaBatak

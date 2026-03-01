@@ -18,10 +18,6 @@ The compositional grounding section is retained: it derives sentence
 meanings, polarity, and cost from Montague semantics and structural
 complexity, independent of the RSA evaluation machinery.
 
-## Reference
-
-He, M., Kaiser, E., & Iskarous, K. (2025). "Modeling sentence polarity asymmetries:
-Fuzzy interpretations in a possibly wonky world". SCiL 2025.
 -/
 
 

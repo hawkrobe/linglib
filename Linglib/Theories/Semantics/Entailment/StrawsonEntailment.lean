@@ -16,11 +16,6 @@ These are not classically DE but do license NPIs. Strawson-DE explains why.
 
 AM < AA < DE < Strawson-DE (weakest level of negative strength)
 
-## References
-
-- von Fintel, K. (1999). NPI Licensing, Strawson Entailment, and Context
-  Dependency. Journal of Semantics 16(2), 97–148.
-- Strawson, P. (1952). Introduction to Logical Theory.
 -/
 
 import Mathlib.Order.Monotone.Defs

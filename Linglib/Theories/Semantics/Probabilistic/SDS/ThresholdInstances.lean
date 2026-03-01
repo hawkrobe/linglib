@@ -27,11 +27,6 @@ The difference is in how the threshold is determined:
 | Generics | θ ∈ [0,1] | 1_{prevalence ≥ θ} | P(θ) prior |
 | Gradable nouns | θ ∈ {fixed} | 1_{θ = threshold} | 1 (trivial) |
 
-## References
-
-- Lassiter & Goodman (2017). Adjectival vagueness in a Bayesian model.
-- Tessler & Goodman (2019). The Language of Generalization.
-- Morzycki (2009). Degree modification of gradable nouns.
 -/
 
 import Linglib.Theories.Semantics.Probabilistic.SDS.Core

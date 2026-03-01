@@ -3,6 +3,7 @@ import Linglib.Phenomena.Presupposition.ProjectiveContent
 
 /-!
 # Bridge: Belief Embedding -> Projective Content Taxonomy
+@cite{schlenker-2009} @cite{tonhauser-beaver-roberts-simons-2013}
 
 Connects the Schlenker local context machinery for belief embedding
 to the Tonhauser et al. (2013) projective content taxonomy.
@@ -10,11 +11,6 @@ to the Tonhauser et al. (2013) projective content taxonomy.
 Proves that OLE (Obligatory Local Effect) status matches shift behavior
 under belief predicates, and verifies trigger-specific predictions.
 
-## References
-
-- Schlenker (2009). Local Contexts. Semantics & Pragmatics 2:3.
-- Tonhauser, Beaver, Roberts & Simons (2013). Toward a Taxonomy of
-  Projective Content. Language 89(1).
 -/
 
 namespace Phenomena.Presupposition.Bridge.BeliefEmbedding

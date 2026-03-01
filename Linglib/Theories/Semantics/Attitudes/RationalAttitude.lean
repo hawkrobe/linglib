@@ -5,6 +5,7 @@ import Linglib.Theories.Syntax.Minimalism.Formal.ExtendedProjection.Basic
 
 /-!
 # Rational Attitude Semantics @cite{fusco-sgrizzi-2025}
+@cite{dowty-1979}
 
 Unified semantics for attitude verbs that support both belief and intention
 readings. The key insight: these are not two separate verb types but a single
@@ -30,11 +31,6 @@ The parameter P is determined by complement size:
 - *di*-infinitive (CP): P = CLOSURE(λe. VP(e)) — existentially closed
 - *a*-infinitive (aP): P = λe. VP(e) — event variable open
 
-## References
-
-- Dowty, D. (1979). Word Meaning and Montague Grammar. Reidel.
-- Fusco, A. & Sgrizzi, T. (2025). Belief or Action?
-  Semantic Ambiguity in the Italian Non-finite Domain.
 -/
 
 namespace Semantics.Attitudes.RationalAttitude

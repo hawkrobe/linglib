@@ -3,6 +3,7 @@ import Linglib.Phenomena.Ellipsis.Gapping
 
 /-!
 # CCG Gapping Bridge
+@cite{maling-1972} @cite{ross-1970} @cite{steedman-2000}
 
 Connects CCG category theory (from `Theories.Syntax.CCG.Gapping`) to
 empirical gapping data (from `Phenomena.Ellipsis.Gapping`).
@@ -12,11 +13,6 @@ Proves that:
 2. Ross's generalization emerges from CCG's Principles of Consistency and Inheritance
 3. Dutch allows both gapping directions due to mixed word order
 
-## References
-
-- Steedman (2000) "The Syntactic Process" Chapter 7
-- Ross (1970) "Gapping and the order of constituents"
-- Maling (1972) "On 'Gapping and the order of constituents'"
 -/
 
 namespace Phenomena.Ellipsis.CCG_GappingBridge

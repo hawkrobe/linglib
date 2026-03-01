@@ -28,9 +28,6 @@ Key results:
 - Short circuit is both **sufficient** AND **necessary**
 - This is the "cause" ∩ "make" case
 
-## References
-
-- Nadathur & Lauer (2020), Section 3
 -/
 
 import Linglib.Theories.Semantics.Causation.Sufficiency

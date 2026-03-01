@@ -3,6 +3,7 @@ import Linglib.Core.Agent.NormalCDF
 
 /-!
 # Signal Detectability Theory (Luce 1959, §2.E) @cite{luce-1959}
+@cite{green-swets-1966} @cite{macmillan-creelman-2005}
 
 Signal Detection Theory (SDT) models the observer's task of discriminating
 between two hypotheses — "signal present" (sN) and "noise only" (N) — when
@@ -41,11 +42,6 @@ distance between the two discriminal dispersions, and the logistic approximation
 to the Gaussian CDF connects SDT choice probabilities to the Luce-Thurstone
 logistic choice model.
 
-## References
-
-- Luce, R. D. (1959). Individual Choice Behavior, §2.E, pp. 60-66.
-- Green, D. M. & Swets, J. A. (1966). Signal Detection Theory and Psychophysics.
-- Macmillan, N. A. & Creelman, C. D. (2005). Detection Theory (2nd ed.).
 -/
 
 set_option autoImplicit false

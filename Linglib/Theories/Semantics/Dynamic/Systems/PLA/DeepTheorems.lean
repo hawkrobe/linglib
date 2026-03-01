@@ -9,11 +9,6 @@ Fundamental results distinguishing dynamic from static semantics.
 - `existential_introduces_witness`
 - `static_conjunction_commutes`
 
-## References
-
-- Dekker, P. (2012). Dynamic Semantics.
-- Groenendijk & Stokhof (1991). Dynamic Predicate Logic.
-- Heim (1982). The Semantics of Definite and Indefinite Noun Phrases.
 -/
 
 import Linglib.Theories.Semantics.Dynamic.Systems.PLA.Update
@@ -63,7 +58,6 @@ theorem cross_sentential_witness (M : Model E) (x : VarIdx) (φ ψ : Formula)
     ∃ e : E, φ.sat M (p.1[x ↦ e]) p.2 := by
   have h := (cross_sentential_binding M x φ ψ s p hp).1
   exact export_witness M x φ s p h
-
 
 
 /-- Domain passes through negation. -/
@@ -127,7 +121,6 @@ theorem dyn_eq_static_when_no_drefs (M : Model E) (φ ψ : Formula) (s : InfoSta
   rw [seq_update_eq]
   ext p
   simp only [Set.mem_setOf_eq, Formula.update, InfoState.restrict, Formula.sat]
-
 
 
 /-- Existential extends scope rightward in dynamic conjunction. -/

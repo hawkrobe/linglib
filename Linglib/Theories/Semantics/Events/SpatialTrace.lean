@@ -4,6 +4,7 @@ import Linglib.Core.RootDimensions
 
 /-!
 # Spatial Trace Function σ
+@cite{gawron-2009} @cite{krifka-1998} @cite{talmy-2000} @cite{zwarts-2005} @cite{zwarts-winter-2000}
 
 The spatial dimension of event structure: σ maps events to their spatial
 trajectories (paths). This parallels τ (temporal trace, `EventCEM.τ_hom`)
@@ -39,15 +40,6 @@ All three use the same QUA/CUM pullback mechanism via `MereoDim`.
 5. PathShape → Telicity Bridge
 6. Motion Verb Path Annotations
 
-## References
-
-- Zwarts, J. & Winter, Y. (2000). Vector space semantics: a model-theoretic
-  analysis of locative prepositions. *JoLLI* 9, 169–211.
-- Zwarts, J. (2005). Prepositional aspect and the algebra of paths.
-  *Linguistics and Philosophy* 28, 739–779.
-- Gawron, J.M. (2009). Paths and scalar change.
-- Talmy, L. (2000). *Toward a Cognitive Semantics*, Vol. II. MIT Press.
-- Krifka, M. (1998). The origins of telicity.
 -/
 
 open Semantics.Events

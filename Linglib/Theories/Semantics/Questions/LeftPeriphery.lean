@@ -14,13 +14,6 @@ The key prediction: responsive predicates reject quasi-subordination because
 their knowledge entailment contradicts PerspP's ignorance presupposition.
 This is DERIVED, not stipulated.
 
-## References
-
-- Dayal, V. (2025). The Interrogative Left Periphery: How a Clause Becomes a Question.
-  Linguistic Inquiry 56(4), 663–712.
-- McCloskey, J. (2006). Questions and questioning in a local English.
-- Hamblin, C. (1973). Questions in Montague English.
-- Karttunen, L. (1977). Syntax and semantics of questions.
 -/
 
 import Linglib.Theories.Semantics.Questions.Hamblin

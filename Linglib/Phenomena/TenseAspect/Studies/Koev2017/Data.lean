@@ -13,10 +13,6 @@ The paper also demonstrates that the evidential contribution is
 is **fully committed** to the proposition (non-modal analysis, contra
 Izvorski 1997).
 
-## References
-
-- Koev, T. (2017). Evidentiality, learning events, and spatiotemporal
-  distance. *Journal of Semantics* 34(1):1–38.
 -/
 
 namespace Phenomena.TenseAspect.Studies.Koev2017.Data

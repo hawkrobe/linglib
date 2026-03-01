@@ -9,6 +9,7 @@ import Mathlib.Order.Hom.Lattice
 
 /-!
 # Algebraic Mereology
+@cite{champollion-2017} @cite{krifka-1989} @cite{krifka-1998} @cite{link-1983} @cite{simons-1987}
 
 Framework-agnostic mereological infrastructure formalized over Mathlib's
 `SemilatticeSup` (binary join = mereological sum ⊕) and `PartialOrder`
@@ -31,16 +32,6 @@ with part-whole structure.
 11. Functional QUA propagation
 12. CUM/QUA Pullback Interaction
 
-## References
-
-- Champollion, L. (2017). *Parts of a Whole: Distributivity as a Bridge
-  Between Aspect and Measurement*. OUP.
-- Krifka, M. (1998). The origins of telicity. In S. Rothstein (ed.),
-  *Events and Grammar*, 197–235. Kluwer.
-- Krifka, M. (1989). Nominal reference, temporal constitution and
-  quantification in event semantics.
-- Link, G. (1983). The logical analysis of plurals and mass terms.
-- Simons, P. (1987). *Parts: A Study in Ontology*. OUP.
 -/
 
 namespace Mereology

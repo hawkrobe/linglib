@@ -13,10 +13,6 @@ highly manifest; distant inferences are weakly manifest.
 | `isManifest` | Ch. 1, §7: "manifest to an individual" |
 | `SharedCogEnv` | Ch. 1, §9: "shared cognitive environment" (p. 42) |
 
-## References
-
-Sperber, D. & Wilson, D. (1986/95). Relevance: Communication and Cognition.
-Blackwell. Ch. 1 §7-8.
 -/
 
 set_option autoImplicit false

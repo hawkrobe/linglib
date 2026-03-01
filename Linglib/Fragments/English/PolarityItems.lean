@@ -18,12 +18,6 @@ Theory-neutral lexical entries for polarity-sensitive items:
 - `Theories/NeoGricean/Exhaustivity/EFCI.lean`: Chierchia's exhaustification analysis
 - `Phenomena/NPIs/Data.lean`: Empirical distribution data
 
-## References
-
-- Ladusaw (1979). Polarity sensitivity as inherent scope relations.
-- Kadmon & Landman (1993). Any. L&P 16.
-- Chierchia (2013). Logic in Grammar.
-- Giannakidou (1998). Polarity Sensitivity as (Non)Veridical Dependency.
 -/
 
 import Linglib.Core.Lexical.Word

@@ -4,6 +4,7 @@ import Linglib.Theories.Semantics.Degree.Comparative
 
 /-!
 # Heim Framework on Comparative Data
+@cite{heim-2001}
 
 Bridge connecting Heim's (2001) sentential operator approach to the
 comparative construction data.
@@ -19,9 +20,6 @@ Heim's framework makes different predictions about scope:
 2. **Clausal vs. phrasal**: Heim's than-clause is always clausal
    (a degree predicate). Phrasal "than Bill" involves degree ellipsis.
 
-## References
-
-- Heim, I. (2001). Degree operators and scope.
 -/
 
 namespace Phenomena.Comparison.Comparative.HeimBridge

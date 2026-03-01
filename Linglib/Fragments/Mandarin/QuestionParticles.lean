@@ -3,6 +3,7 @@ import Linglib.Theories.Semantics.Questions.QParticleLayer
 
 /-!
 # Mandarin Question Particles
+@cite{chu-1998} @cite{li-thompson-1981} @cite{zheng-2026}
 
 Lexical entries for Mandarin interrogative particles with distributional
 properties and bias profiles.
@@ -22,11 +23,6 @@ properties and bias profiles.
 - `Typology.QParticleLayer`: ma is CP, ba and nandao are PerspP
 - `Kernel.nandaoFelicitous`: formal felicity conditions for nandao
 
-## References
-
-- Zheng, A.A. (2026). nandao-Qs: When Surprise Sparks Inquiry. WCCFL 43.
-- Li, C.N. & Thompson, S.A. (1981). Mandarin Chinese: A Functional Reference Grammar.
-- Chu, C.C. (1998). A Discourse Grammar of Mandarin Chinese.
 -/
 
 namespace Fragments.Mandarin.QuestionParticles

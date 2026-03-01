@@ -16,11 +16,6 @@ This module provides:
 2. `QNScope` - Specific quantifier-negation scope
 3. `ScopeDerivation` - Derivations with multiple scope readings
 
-## References
-
-- May (1985) "Logical Form: Its Structure and Derivation"
-- Montague (1973) "The Proper Treatment of Quantification"
-- Scontras & Pearl (2021) "When pragmatics matters more for truth-value judgments"
 -/
 
 import Linglib.Theories.Semantics.Montague.Basic

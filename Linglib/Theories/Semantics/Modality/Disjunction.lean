@@ -29,12 +29,6 @@ Three innovations over Zimmermann:
 - Free choice (◇(A∨B) → ◇A ∧ ◇B) follows from the structure
 - Exclusive 'or' follows from Disjointness, not scalar implicature
 
-## References
-
-- Geurts, B. (2005). Entertaining Alternatives: Disjunctions as Modals. NLS 13:383–410.
-- Zimmermann, T.E. (2000). Free Choice Disjunction and Epistemic Possibility. NLS 8:255–290.
-- Kratzer, A. (1991). Modality. In Semantics: An International Handbook.
-- Yagi, Y. (2025). Conflicting presuppositions in disjunction. S&P 18:7.
 -/
 
 import Linglib.Core.Semantics.Proposition

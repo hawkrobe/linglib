@@ -24,10 +24,6 @@ chain; its incompatibility with an overt Cause follows from the Onset Condition.
 - `onsetCondition`: causal adjuncts map to onset position
 - T/SM restriction: Cause occupies onset, SM wants onset → conflict
 
-## References
-
-- Kim, Y. (2024). On the argument structure of object experiencer verbs.
-  PhD thesis, University College London.
 -/
 
 namespace Semantics.Causation.PsychCausation

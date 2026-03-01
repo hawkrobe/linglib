@@ -23,11 +23,6 @@ since all derivations in an equivalence class have the same meaning.
 4. Processing implication: A parser only needs to find one derivation
    from each equivalence class; the others are redundant.
 
-## References
-
-- Steedman (2000) "The Syntactic Process" Chapter 9
-- Karttunen (1989), Pareschi & Steedman (1987) on chart parsing for CCG
-- Hepple & Morrill (1989), Eisner (1996) on normal form parsing
 -/
 
 import Linglib.Theories.Syntax.CCG.Core.Basic

@@ -28,11 +28,6 @@ dref's as functions taking info states as arguments."
 - DRT: isomorphic to CDRT (box notation)
 - BUS: Dynamic Ty2 + bilateral (pos/neg) structure
 
-## References
-
-- Muskens, R. (1996). Combining Montague Semantics and Discourse Representation.
-- Brasoveanu, A. (2007). Structured Nominal and Modal Reference. Ch. 3.
-- Gallin, D. (1975). Intensional and Higher-Order Modal Logic.
 -/
 
 import Mathlib.Data.Set.Basic

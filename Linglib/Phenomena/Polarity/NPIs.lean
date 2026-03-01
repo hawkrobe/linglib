@@ -1,5 +1,6 @@
 /-
 # Negative Polarity Items: Empirical Patterns
+@cite{chierchia-2013} @cite{ladusaw-1992} @cite{zanuttini-1991}
 
 Theory-neutral data about NPI licensing and distribution.
 
@@ -18,18 +19,6 @@ Theory-neutral data about NPI licensing and distribution.
 - **Giannakidou (1998)**: NPIs licensed in nonveridical contexts
 - **Chierchia (2013)**: NPIs involve covert EVEN + domain widening
 
-## References
-
-- Ladusaw, W. (1979). Polarity Sensitivity as Inherent Scope Relations.
-- Fauconnier, G. (1975). Polarity and the scale principle.
-- Giannakidou, A. (1998). Polarity Sensitivity as (Non)Veridical Dependency.
-- Chierchia, G. (2013). Logic in Grammar.
-- Lahiri, U. (1998). Focus and negative polarity in Hindi.
-- Kadmon, N. & Landman, F. (1993). Any. Linguistics & Philosophy.
-- Krifka, M. (1995). The semantics and pragmatics of polarity items.
-- van Rooy, R. (2003). Negative Polarity Items in Questions: Strength as Relevance.
-- Borkin, A. (1971). Polarity items in questions.
-- Israel, M. (2001). Minimizers, maximizers and the rhetoric of scalar reasoning.
 -/
 
 import Linglib.Fragments.English.PolarityItems
@@ -769,11 +758,6 @@ construed as MINIMAL on a relevant scale:
    (That problem wouldn't be solved by even two professors)
    [Context: two is the minimum expected number to solve it]
 
-### References
-
-- Chierchia (2013). Logic in Grammar. Cambridge. Ch.1, p.5-8.
-- Zanuttini (1991). Syntactic Properties of Sentential Negation.
-- Ladusaw (1992). Expressing Negation.
 -/
 
 /--

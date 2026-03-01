@@ -1,5 +1,6 @@
 /-
 # Flexible Negation: Empirical Data
+@cite{cruse-1986} @cite{horn-1989} @cite{kennedy-mcnally-2005}
 
 Tessler & Franke (2020) "Not unreasonable: Why two negatives don't make a positive"
 -/
@@ -24,12 +25,6 @@ This file captures the empirical patterns around flexible negation, where:
 - "happy" = x > θ_pos, "unhappy" = x < θ_neg where θ_neg < θ_pos
 - Gap region: θ_neg ≤ x ≤ θ_pos (neither happy nor unhappy)
 
-## References
-
-- Tessler & Franke (2020). Not unreasonable: Why two negatives don't make a positive
-- Horn (1989). A Natural History of Negation
-- Kennedy & McNally (2005). Scale structure, degree modification
-- Cruse (1986). Lexical Semantics (contraries vs. contradictories)
 -/
 
 namespace Phenomena.Negation.FlexibleNegation
@@ -407,12 +402,6 @@ def predictions : List FlexibleNegationPrediction :=
 3. Gap region has positive probability for "not unhappy"
 4. `P(contradictory | 'not happy') > P(contradictory | 'unhappy')`
 
-### References
-
-- Tessler & Franke (2020). Not unreasonable: Why two negatives don't make a positive
-- Horn (1989). A Natural History of Negation
-- Kennedy & McNally (2005). Scale structure, degree modification
-- Cruse (1986). Lexical Semantics
 -/
 
 end Phenomena.Negation.FlexibleNegation

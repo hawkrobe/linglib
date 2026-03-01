@@ -2,6 +2,7 @@ import Linglib.Core.Lexical.MorphRule
 
 /-!
 # Circumfixal Exponence
+@cite{spencer-zwicky-1998}
 
 Circumfixal exponence wraps a stem with morphological material on both sides
 (prefix + suffix). This is a theory-neutral description of the surface
@@ -18,9 +19,6 @@ Cross-linguistically attested circumfixes include:
 - **Core/MorphRule.lean**: `AttachmentSide.circumfix` — morphological classification
 - **DM/Fission.lean**: Distributed Morphology operations (theory-specific derivation)
 
-## References
-
-- Spencer, A. & A. Zwicky (1998). The Handbook of Morphology. Blackwell.
 -/
 
 namespace Morphology.Circumfix

@@ -20,11 +20,6 @@ different disjuncts can give different complete answers.
 "Whom does John or Mary love?"
 → "If John is asking: Bill. If Mary is asking: Sue."
 
-## References
-
-- Groenendijk & Stokhof (1984). Studies on the Semantics of Questions. Ch. VI.
-- Szabolcsi (1997). Quantifiers in Pair-List Readings.
-- Dayal (2016). Questions. MIT Press.
 -/
 
 import Linglib.Phenomena.Questions.Basic

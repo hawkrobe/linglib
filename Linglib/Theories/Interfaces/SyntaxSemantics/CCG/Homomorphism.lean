@@ -11,10 +11,6 @@ corresponds to a semantic operation.
 - `fcompSem`: Semantic rule for composition (B combinator)
 - `HomomorphismProperty`: Structure encoding rule-to-rule correspondence
 
-## References
-
-- Steedman (2000). The Syntactic Process.
-- Montague (1973). The Proper Treatment of Quantification.
 -/
 
 import Linglib.Theories.Syntax.CCG.Core.Basic

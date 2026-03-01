@@ -7,11 +7,6 @@ from indices (possible worlds) to extensions, rigid designators, and evaluation.
 These primitives are shared by `Semantics.Intensional/`, `Semantics.Montague/`,
 and `RSA/` — any module that needs world-parameterized meanings.
 
-## References
-
-- Gallin (1975). Intensional and Higher-Order Modal Logic.
-- von Fintel & Heim (2011). Intensional Semantics. Ch 1.
-- SEP, "Intensional Logic".
 -/
 
 import Linglib.Core.Semantics.Proposition

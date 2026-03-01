@@ -3,14 +3,12 @@ import Linglib.Core.Case.Hierarchy
 
 /-!
 # Ukrainian Case Inventory
+@cite{blake-1994}
 
 Ukrainian has **7 cases**: NOM, ACC, GEN, DAT, LOC, INST, VOC.
 The standard Slavic 7-case system. The 6-case core (excluding VOC)
 is perfectly contiguous on Blake's hierarchy.
 
-## References
-
-- Blake, B. J. (1994). *Case*. Cambridge University Press.
 -/
 
 namespace Fragments.Ukrainian.Case

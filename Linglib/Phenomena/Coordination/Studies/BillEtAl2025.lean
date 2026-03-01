@@ -37,14 +37,6 @@ The M&S decomposition maps directly onto Montague/Conjunction.lean:
 - MU = `inclFunc` (INCL schema / subset relation)
 - ☉ = `typeRaise` (individual → singleton set / generalized quantifier)
 
-## References
-
-- Mitrović & Sauerland (2014). Decomposing coordination. NELS 44.
-- Mitrović & Sauerland (2016). Two conjunctions are better than one.
-  Acta Linguistica Hungarica 63(4), 471-494.
-- van Hout (1998). On the role of direct objects. BUCLD 22.
-- Szabolcsi (2015). What do quantifier particles do? L&P 38(2).
-- Haslinger et al. (2019). A plural analysis of distributive conjunctions.
 -/
 
 import Linglib.Core.Empirical

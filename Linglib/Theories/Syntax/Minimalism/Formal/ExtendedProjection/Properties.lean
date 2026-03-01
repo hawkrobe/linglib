@@ -12,10 +12,6 @@ Properties derived from Grimshaw (2005) Extended Projection theory.
    lower F-value); specifiers are EP-external.
 4. **Truncation**: Small clauses are truncated EPs lacking functional layers.
 
-## References
-
-- Grimshaw, J. (2005). Words and Structure, Chapters 1, 2.
-- Anand, P., Hardt, D., & McCloskey, J. (2025). Sluicing and Syntactic Identity.
 -/
 
 import Linglib.Theories.Syntax.Minimalism.Formal.ExtendedProjection.Basic

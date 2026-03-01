@@ -5,6 +5,7 @@ import Mathlib.Data.Rat.Defs
 
 /-!
 # Barnett, Griffiths & Hawkins (2022): A Pragmatic Account of the Weak Evidence Effect
+@cite{barnett-griffiths-hawkins-2022}
 
 Extends RSA with a **persuasive speaker** who has a goal state w* that may differ
 from the true world state w. The speaker's utility combines epistemic and persuasive
@@ -26,10 +27,6 @@ strong evidence means it doesn't exist, shifting beliefs in the opposite directi
 We formalize a simplified Stick Contest (3 sticks from {1,...,5}, 10 worlds) and
 verify the weak evidence effect computationally at β=2.
 
-## References
-
-- Barnett, S. A., Griffiths, T. L., & Hawkins, R. D. (2022). A Pragmatic Account
-  of the Weak Evidence Effect. *Open Mind*, 6, 169–182.
 -/
 
 namespace RSA.Implementations.BarnettEtAl2022

@@ -21,10 +21,6 @@ The grammar shift bridges (§4) ground Wellwood's §5 in the existing
 `Lexical.Verb.Aspect`, showing that grammatical shifts that change
 telicity also change measurement status.
 
-## References
-
-- Wellwood, A. (2015). On the semantics of comparison across categories.
-  Linguistics and Philosophy 38(1): 67-101.
 -/
 
 namespace Phenomena.Comparison.Wellwood2015.Bridge

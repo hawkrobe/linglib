@@ -32,9 +32,6 @@ This asymmetry is diagnostic: it shows the upper bound is implicated, not assert
 Lower-bound theory: All three operations valid (there IS an implicature to operate on)
 Exact theory: Operations are anomalous (no implicature exists)
 
-## References
-
-- Horn, L. (1972). On the Semantic Properties of Logical Operators in English. §1.22, §1.73.
 -/
 
 import Linglib.Theories.Semantics.Lexical.Numeral.Semantics

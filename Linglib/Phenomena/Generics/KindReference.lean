@@ -7,9 +7,6 @@ Theory-neutral data on kind reference, bare nominals, cross-linguistic patterns,
 
 `BareNominalType`, `CrossLingDatum`, `BareSingularDatum`, `ScopeDatum`, `ScramblingPosition`, `ScramblingScopeDatum`, `PredLevel`, `PredicateDatum`, `SingularKindDatum`, `TaxonomicDatum`, `PredicateClass`, `BPInterpDatum`
 
-## References
-
-- Carlson (1977), Chierchia (1998), Dayal (2004), Cohen & Erteschik-Shir (2002), Krifka et al. (1995), Le Bruyn & de Swart (2022), de Hoop (1996), Ruys (2001)
 -/
 
 namespace Phenomena.Generics.KindReference

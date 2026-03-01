@@ -3,6 +3,7 @@ import Linglib.Phenomena.Gradability.EvaluativityBridge
 
 /-!
 # Bridge: NeoGricean Evaluativity → Empirical Data
+@cite{rett-2015}
 
 Connects NeoGricean evaluativity theory (Rett 2015) predictions to
 empirical evaluativity judgments from Phenomena.Gradability.Evaluativity.
@@ -13,9 +14,6 @@ empirical evaluativity judgments from Phenomena.Gradability.Evaluativity.
 - `predictionMatches`: Check if derivation matches empirical datum
 - Per-datum verification theorems for all construction/polarity combinations
 
-## References
-
-- Rett, J. (2015). The Semantics of Evaluativity. Oxford University Press.
 -/
 
 namespace Phenomena.Gradability.NeoGricean_EvaluativityBridge

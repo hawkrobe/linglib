@@ -8,9 +8,6 @@ Provides assignment functions, modified assignments, pronoun interpretation, and
 
 `Assignment`, `Assignment.update`, `DenotG`, `interpPronoun`, `applyG`, `lambdaAbsG`
 
-## References
-
-Heim & Kratzer (1998). Semantics in Generative Grammar, Ch. 5.
 -/
 
 import Linglib.Theories.Semantics.Montague.Basic

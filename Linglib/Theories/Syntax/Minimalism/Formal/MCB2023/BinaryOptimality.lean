@@ -17,10 +17,6 @@ connection for counting SO shapes.
 - `binary_unique_optimal`: binary is uniquely optimal
 - `so_shapes_catalan`: number of SO shapes with n internal nodes = catalan n
 
-## References
-
-- Marcolli, M., Chomsky, N. & Berwick, R.C. (2023). "Mathematical Structure of
-  Syntactic Merge", §4
 -/
 
 import Linglib.Theories.Syntax.Minimalism.Formal.MCB2023.FreeMagmaEquiv

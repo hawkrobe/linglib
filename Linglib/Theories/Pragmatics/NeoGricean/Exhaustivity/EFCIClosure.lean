@@ -14,11 +14,6 @@ conjunction. For EFCI alternatives, the pre-exhaustified domain
 alternatives are mutually inconsistent -- their conjunction is ⊥.
 This breaks closure and creates the need for rescue mechanisms.
 
-## References
-
-- Spector (2016). Comparing exhaustivity operators.
-- Alonso-Ovalle & Moghiseh (2025). Existential free choice items.
-- Chierchia (2013). Logic in Grammar.
 -/
 
 import Linglib.Theories.Pragmatics.NeoGricean.Exhaustivity.Basic

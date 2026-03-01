@@ -20,13 +20,6 @@ to depend on it for its reference.
 3. Sometimes "...beats some donkey they own" (weak readings).
 4. "Most farmers who own a donkey beat it" (proportion problem).
 
-## References
-
-- Geach, P. (1962). Reference and Generality. (introduced the puzzle)
-- Evans, G. (1977). Pronouns, Quantifiers, and Relative Clauses.
-- Heim, I. (1982). The Semantics of Definite and Indefinite Noun Phrases.
-- Groenendijk & Stokhof (1991). Dynamic Predicate Logic.
-- Kanazawa, M. (1994). Weak vs. Strong Readings of Donkey Sentences.
 -/
 
 import Linglib.Core.Lexical.Word

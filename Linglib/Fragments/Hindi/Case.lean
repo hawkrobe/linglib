@@ -22,9 +22,6 @@ This fragment connects to the `hindiSplit` already defined in
 `Core.Case.SplitConditions`, which formalizes the perfective to
 ergative conditioning (Blake 1994, Ch. 4).
 
-## References
-
-- Blake, B. J. (1994). *Case*. Cambridge University Press. Ch. 4.
 -/
 
 namespace Fragments.Hindi.Case

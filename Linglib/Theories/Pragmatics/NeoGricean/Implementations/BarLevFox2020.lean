@@ -1,5 +1,6 @@
 /-
 # Innocent Inclusion and Free Choice
+@cite{bar-lev-fox-2020} @cite{fox-2007} @cite{spector-2016}
 
 Formalization of Bar-Lev & Fox (2020) "Free choice, simplification, and Innocent Inclusion"
 Natural Language Semantics 28:175-223.
@@ -21,11 +22,6 @@ The key is closure under conjunction:
 When ALT is not closed under conjunction, II can assign TRUE to alternatives
 that IE cannot assign FALSE to.
 
-## References
-
-- Bar-Lev & Fox (2020). Free choice, simplification, and Innocent Inclusion. NLS 28:175-223.
-- Fox (2007). Free choice and the theory of scalar implicatures.
-- Spector (2016). Comparing exhaustivity operators.
 -/
 
 import Linglib.Theories.Pragmatics.NeoGricean.Exhaustivity.Basic
@@ -525,10 +521,6 @@ The structural difference between FC and simple disjunction is
 - Closed → exclusive-or (standard scalar implicature)
 - Not closed → free choice (via Innocent Inclusion)
 
-### References
-- Bar-Lev & Fox (2020). Free choice, simplification, and Innocent Inclusion.
-- Fox (2007). Free choice and the theory of scalar implicatures.
-- Spector (2016). Comparing exhaustivity operators.
 -/
 
 end NeoGricean.FreeChoice

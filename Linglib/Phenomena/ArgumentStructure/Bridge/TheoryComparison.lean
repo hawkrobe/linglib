@@ -23,10 +23,6 @@ reflexives ("She laughed herself silly") where CxG handles the extra
 argument via construction-licensed roles while Minimalism requires
 special mechanisms.
 
-## Reference
-
-Goldberg, A. E. & Jackendoff, R. (2004). The English Resultative as a
-Family of Constructions. Language, 80(3), 532–568.
 -/
 
 namespace Phenomena.ArgumentStructure.Bridge.TheoryComparison

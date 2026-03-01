@@ -33,12 +33,6 @@ In CDRT (Muskens 1996), these operators compose dynamically:
 - SUBJ introduces a situation variable and updates the context
 - IND retrieves a situation from the context
 
-## References
-
-- Mendes, A. (2025). Indefiniteness in future reference. S&P 18(10).
-- Iatridou, S. (2000). The grammatical ingredients of counterfactuality.
-- Portner, P. (2018). Mood. Oxford Handbook of Modality and Mood.
-- Giannakidou, A. (1998). Polarity Sensitivity as (Non)Veridical Dependency.
 -/
 
 import Linglib.Theories.Semantics.Tense.BranchingTime

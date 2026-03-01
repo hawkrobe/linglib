@@ -8,11 +8,6 @@ Coreference constraints via c-command and locality following Chomsky (1981, 1986
 - `NominalType`, `SimpleClause`
 - `reflexiveLicensed`, `pronounLocallyFree`, `grammaticalForCoreference`
 
-## References
-
-- Chomsky, N. (1981). Lectures on Government and Binding.
-- Chomsky, N. (1986). Knowledge of Language.
-- Adger, D. (2003). Core Syntax, Chapter 8.
 -/
 
 import Linglib.Fragments.English.Nouns

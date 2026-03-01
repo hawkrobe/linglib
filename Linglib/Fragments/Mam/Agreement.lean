@@ -42,10 +42,6 @@ through agreement patterns.
 | S (intransitive subj) | ABS (from Infl) | Set B | reduced/null |
 | P (transitive patient) | ACC (from Voice) | default Set B | **overt** |
 
-## References
-
-- Scott, T. (2023). Pronouns and agreement in San Juan Atitán Mam.
-  UC Berkeley dissertation.
 -/
 
 namespace Fragments.Mam

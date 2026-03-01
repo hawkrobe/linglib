@@ -30,12 +30,6 @@ BUS + Modal Disjunction:
 - FC with anaphora: bathroom inference pattern
 - Dual prohibition: ¬◇φ ∧ ¬◇ψ ⊨ ¬(φ ∨ ψ) (preserved)
 
-## References
-
-- Elliott, P. (2023). Donkey disjunctions and overlapping updates. SALT 33: 666-685.
-- Elliott, P. & Sudo, Y. (2025). Free choice with anaphora. S&P 18.
-- Zimmermann, T.E. (2000). Free Choice Disjunction and Epistemic Possibility.
-- Alonso-Ovalle, L. (2006). Disjunction in Alternative Semantics.
 -/
 
 import Linglib.Theories.Semantics.Dynamic.Systems.BUS.Basic

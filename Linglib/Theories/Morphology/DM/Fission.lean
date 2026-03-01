@@ -2,6 +2,7 @@ import Linglib.Theories.Syntax.Minimalism.Core.VerbalDecomposition
 
 /-!
 # Fission (Distributed Morphology)
+@cite{halle-marantz-1993} @cite{noyer-1997}
 
 Fission is a postsyntactic operation that splits a single terminal node
 into two morphological exponents. This module provides the generic
@@ -12,13 +13,6 @@ The key parameters of any Fission rule:
 2. **Person condition**: Which person categories trigger Fission?
 3. **Realization**: How is the split terminal spelled out?
 
-## References
-
-- Halle, M. & A. Marantz (1993). Distributed Morphology and the
-  pieces of inflection. In *The View from Building 20*, 111–176.
-- Noyer, R. (1997). *Features, Positions and Affixes in Autonomous
-  Morphological Structure*. Garland.
-- Muñoz Pérez, C. (2026). Stylistic applicatives. *Glossa* 11(1).
 -/
 
 namespace Minimalism.Morphology

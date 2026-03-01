@@ -14,11 +14,6 @@ or pragmatic theory.
 3. **Indicative/Subjunctive Split**: Different morphology, different interpretation
 4. **Conditional Questions**: "If A, will C?" vs "Will C if A?"
 
-## References
-
-- Geis & Zwicky (1971). On invited inferences.
-- van der Auwera (1997). Pragmatics in the last quarter century.
-- von Fintel (2011). Conditionals.
 -/
 
 import Linglib.Core.Empirical

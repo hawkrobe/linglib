@@ -8,6 +8,7 @@ import Linglib.Theories.Semantics.Tense.TemporalConnectives.BeaverCondoravdi
 
 /-!
 # Temporal Connective Semantics
+@cite{anscombe-1964} @cite{beaver-condoravdi-2003} @cite{karttunen-1974} @cite{krifka-2010b} @cite{ogihara-steinert-threlkeld-2024} @cite{rett-2020}
 
 Hub module re-exporting all temporal connective theories. Five semantic
 analyses operate at four distinct levels of abstraction:
@@ -48,14 +49,4 @@ counterparts of the Anscombe connectives (Heinämäki 1974).
 - `OST.lean`: Event-level quantificational asymmetry + veridicality
 - `BeaverCondoravdi.lean`: Intensional uniform analysis with `earliest`
 
-## References
-
-- Anscombe, E. (1964). Before and after. *The Philosophical Review* 73, 3–24.
-- Karttunen, L. (1974). Until. *CLS* 10, 284–297.
-- Rett, J. (2020). Eliminating EARLIEST. *Sinn und Bedeutung* 24, 201–218.
-- Ogihara, T. & Steinert-Threlkeld, S. (2024). Limitations of a modal
-  analysis of *before* and *after*. *S&P* 17(1).
-- Beaver, D. & Condoravdi, C. (2003). A uniform analysis of *before* and *after*.
-  *Proceedings of SALT* 13, 37–54.
-- Krifka, M. (2010). *Before* and *after* without coercion. *NLLT* 28, 911–929.
 -/

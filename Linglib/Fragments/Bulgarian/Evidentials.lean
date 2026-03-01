@@ -2,6 +2,7 @@ import Linglib.Theories.Semantics.Tense.Evidential
 
 /-!
 # Bulgarian Evidential Fragment (Cumming 2026)
+@cite{cumming-2026}
 
 Paradigm entries for Bulgarian tense-evidential morphology from Cumming (2026),
 Table 17. The -l participle interacts with tense to encode evidential perspective.
@@ -13,9 +14,6 @@ Table 17. The -l participle interacts with tense to encode evidential perspectiv
 | NFUT + -l  | T ≤ A         | T ≤ S         | yes        |
 | FUT + -l   | A < T         | (none)        | no         |
 
-## References
-
-- Cumming, S. (2026). Tense and evidence. *L&P* 49:153–175. Table 17.
 -/
 
 namespace Fragments.Bulgarian.Evidentials

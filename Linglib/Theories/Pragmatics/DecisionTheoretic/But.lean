@@ -2,6 +2,7 @@ import Linglib.Theories.Pragmatics.DecisionTheoretic.Core
 
 /-!
 # Decision-Theoretic Semantics: "But" (Merin 1999 §4)
+@cite{harris-1946} @cite{merin-1999}
 
 Merin's DTS account of adversative conjunction. The felicity of "A but B"
 requires that A and B have opposite relevance signs, and that the conjunction
@@ -21,11 +22,6 @@ sets H = B, yielding unexpected-B-given-A.
 - **Theorem 10**: Properties of default-but interpretation
 - **Corollary 11** (Harris universal): NNIR prevents "Qa but Qb"
 
-## References
-
-- Merin, A. (1999). Information, relevance, and social decisionmaking.
-  §4: The semantics of "but".
-- Harris, Z. (1946). From morpheme to utterance. Language 22.
 -/
 
 namespace Theories.DTS.But

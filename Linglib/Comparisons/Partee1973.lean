@@ -6,6 +6,7 @@ import Linglib.Core.Semantics.Intension
 
 /-!
 # Tenses and Pronouns: Partee's Structural Analogy
+@cite{abusch-1997} @cite{elbourne-2013} @cite{heim-kratzer-1998} @cite{kaplan-1989} @cite{kratzer-1998} @cite{partee-1973}
 
 Formalizes Partee (1973): tenses in English exhibit the same three-way
 interpretive ambiguity as pronouns — indexical, anaphoric, and bound-variable
@@ -53,15 +54,6 @@ instantiations of the generic `Core.VarAssignment` infrastructure:
 The algebraic structure is identical: Partee's insight is that the SAME
 referential mechanism operates over different domains.
 
-## References
-
-- Partee, B. (1973). Some structural analogies between tenses and pronouns
-  in English. *The Journal of Philosophy* 70(18): 601–609.
-- Kratzer, A. (1998). More structural analogies between pronouns and tenses.
-  *SALT VIII*.
-- Abusch, D. (1997). Sequence of tense and temporal de re.
-- Kaplan, D. (1989). Demonstratives.
-- Elbourne, P. (2013). Definite Descriptions. OUP.
 -/
 
 namespace Comparisons.Partee1973

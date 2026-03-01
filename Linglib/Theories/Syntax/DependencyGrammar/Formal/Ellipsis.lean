@@ -2,6 +2,7 @@ import Linglib.Theories.Syntax.DependencyGrammar.Formal.Catena
 
 /-!
 # Ellipsis as Catena-Targeting
+@cite{osborne-2019} @cite{osborne-gross-2012}
 
 Formalizes Osborne's (2019, Ch 12–13) thesis: ellipsis targets catenae, not
 constituents. This is the primary empirical motivation for the catena concept —
@@ -18,12 +19,6 @@ not a constituent — making catenae essential.
 
 - → `Catena.lean`: uses `isCatena`, `isConstituent` for proofs
 
-## References
-
-- Osborne, T. (2019). *A Dependency Grammar of English*, Ch 12–13.
-  Amsterdam: John Benjamins.
-- Osborne, T., Putnam, M. & Groß, T. (2012). Catenae: Introducing a novel
-  unit of syntactic analysis. *Syntax* 15(4):354–396.
 -/
 
 namespace DepGrammar.Ellipsis

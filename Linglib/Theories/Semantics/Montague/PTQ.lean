@@ -16,10 +16,6 @@ the homomorphism between natural language syntax and model-theoretic semantics.
 This module uses the canonical `Semantics.Montague.Ty` type system. Intensions are
 represented as `s ⇒ τ` rather than a separate `intens` constructor.
 
-## References
-
-- Montague, R. (1973). "The Proper Treatment of Quantification in Ordinary English."
-  In Hintikka, Moravcsik & Suppes (eds.), Approaches to Natural Language.
 -/
 
 import Linglib.Theories.Semantics.Montague.Basic

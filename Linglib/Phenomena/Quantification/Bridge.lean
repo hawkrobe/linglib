@@ -3,6 +3,7 @@ import Linglib.Fragments.English.Determiners
 
 /-!
 # Quantifier Universals Bridge
+@cite{barwise-cooper-1981} @cite{mostowski-1957} @cite{peters-westerstahl-2006} @cite{van-benthem-1984} @cite{van-de-pol-2023} @cite{van-de-pol-etal-2023}
 
 Bridges the English determiner fragment (`Fragments.English.Determiners.QuantityWord`)
 to the GQ property predicates in `Core.Quantification` and
@@ -37,14 +38,6 @@ to the GQ property predicates in `Core.Quantification` and
   `no_asymmetric`, `no_strict_partial_order`, `no_euclidean`
 - **Counting formula**: `Core.Quantification.conservativeQuantifierCount`
 
-## References
-
-- Barwise, J. & Cooper, R. (1981). Generalized Quantifiers and Natural Language.
-- Mostowski, A. (1957). On a generalization of quantifiers.
-- Peters, S. & Westerståhl, D. (2006). Quantifiers in Language and Logic.
-- van Benthem, J. (1984). Questions About Quantifiers. J. Symbolic Logic 49(2).
-- van de Pol, I. et al. (2023). Quantifiers satisfying semantic universals have
-  shorter minimal description length. Cognition 232, 105150.
 -/
 
 namespace Phenomena.Quantification.Bridge

@@ -5,6 +5,7 @@ import Linglib.Core.Interface
 
 /-!
 # Argument Structure Constructions
+@cite{goldberg-1995}
 
 CxG's argument structure constructions (Goldberg 1995) and their decomposition
 into Müller's three universal schemata.
@@ -22,10 +23,6 @@ phrasal patterns that only CxG can capture.
    they cannot be decomposed into the three schemata
 3. This is CxG's unique contribution: phrasal constructions beyond the schemata
 
-## References
-
-- Goldberg, A. E. (1995). Constructions. Ch. 3.
-- Müller, S. (2013). Unifying Everything. Language 89(4):920–950.
 -/
 
 namespace ConstructionGrammar

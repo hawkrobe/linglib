@@ -4,9 +4,7 @@ import Linglib.Core.Semantics.Presupposition
 /-!
 # Presuppositional Conditionals: K/P vs K/P*
 
-@cite{sharvit-2025}
-
-Formalizes the contrast between Karttunen/Peters (K/P) and Sharvit's K/P*
+@cite{sharvit-2025} @cite{heim-1992} @cite{rooth-partee-1982}Formalizes the contrast between Karttunen/Peters (K/P) and Sharvit's K/P*
 conditionals from "Rooth-Partee Conditionals" (Linguistics & Philosophy, 2025).
 
 ## The problem
@@ -37,14 +35,6 @@ in `Counterfactual.closestWorlds`.
 - `ifKP`: K/P conditional with local filtering (for comparison)
 - `trivialCloser`: Degenerate similarity (all worlds equally close)
 
-## References
-
-- Sharvit, Y. (2025). Rooth-Partee Conditionals. Linguistics & Philosophy.
-- Heim, I. (1992). Presupposition projection and the semantics of
-  attitude verbs. Journal of Semantics 9.
-- Pérez Carballo, A. (2009). Toward a dissolution of the proviso problem.
-- Rooth, M. & Partee, B. (1982). Conjunction, type ambiguity, and wide
-  scope or. WCCFL 1.
 -/
 
 namespace Semantics.Conditionals.Presuppositional

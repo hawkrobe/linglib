@@ -4,6 +4,7 @@ import Linglib.Theories.Syntax.Minimalism.Core.ClauseSpine
 
 /-!
 # Minimalism Bridge: Oblique Extraction in Mam
+@cite{elkins-imanishi-coon-2026}
 
 Connects three Minimalist abstractions — ClauseSpine, Agree/feature-valuation,
 and Spellout — to the empirical data on =(y)a' distribution in SJO Mam.
@@ -35,10 +36,6 @@ This bridge proves that the theory correctly predicts each data point:
 - **Not copy spellout**: =(y)a' appears on Voice/Dir (the probe), not in the
   extraction site (the copy)
 
-## References
-
-- Elkins, N., Y. Imanishi & J. Coon (2026). Wh-movement and oblique
-  extraction in SJO Mam.
 -/
 
 namespace Phenomena.FillerGap.Bridge.MinimalismOblExtraction

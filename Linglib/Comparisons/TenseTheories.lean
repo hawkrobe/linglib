@@ -38,9 +38,6 @@ structurally. For Partee's (1973) tense–pronoun structural analogy
 (indexical/anaphoric/bound-variable interpretations of tense morphemes),
 see `Comparisons/Partee1973.lean`.
 
-## References
-
-- See individual theory files for per-theory citations.
 -/
 
 namespace Comparisons.TenseTheories
@@ -322,7 +319,6 @@ theorem semantic_vs_syntactic_divide :
     (Zeijlstra.hasTemporalDeRe = false ∧ Zeijlstra.hasULC = false) ∧
     (Wurmbrand.hasTemporalDeRe = false ∧ Wurmbrand.hasULC = false) :=
   ⟨⟨rfl, rfl⟩, ⟨rfl, rfl⟩, ⟨rfl, rfl⟩⟩
-
 
 
 -- ════════════════════════════════════════════════════════════════

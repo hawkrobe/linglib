@@ -2,6 +2,7 @@ import Linglib.Core.Agent.RationalAction
 
 /-!
 # Psychophysics: Stevens' Power Law and Multidimensional Stimuli @cite{luce-1959}
+@cite{stevens-1957}
 
 Luce (1959) §2.B–C: the power-law specialization of the Fechnerian framework
 and its extension to multi-dimensional stimulus continua.
@@ -38,10 +39,6 @@ provided the dimensions contribute independently to discriminability. This
 `DimensionIndependence` axiom says that the relative discriminability along
 one dimension does not depend on the value along the other.
 
-## References
-
-- Luce, R. D. (1959). Individual Choice Behavior, §2.B–C.
-- Stevens, S. S. (1957). On the psychophysical law. Psychological Review, 64(3).
 -/
 
 namespace Core

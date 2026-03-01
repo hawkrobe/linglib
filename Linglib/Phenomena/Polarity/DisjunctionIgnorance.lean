@@ -2,6 +2,7 @@ import Linglib.Core.Logic.NaturalLogic
 
 /-
 # Disjunction Ignorance: Empirical Data
+@cite{chierchia-2013}
 
 Theory-neutral empirical patterns for ignorance inferences from disjunction.
 
@@ -15,11 +16,6 @@ This is different from scalar implicature:
 - Scalar: "some" → speaker knows not all
 - Ignorance: "A or B" → speaker doesn't know which
 
-## References
-
-- Gazdar, G. (1979). Pragmatics: Implicature, Presupposition, and Logical Form.
-- Sauerland, U. (2004). Scalar Implicatures in Complex Sentences.
-- Geurts, B. (2010). Quantity Implicatures. Ch. 3.3.
 -/
 
 namespace Phenomena.Polarity.DisjunctionIgnorance
@@ -312,10 +308,6 @@ The asymmetry follows from the Maximize Strength principle:
 
 When the exclusive SI is not computed, the inclusive reading emerges.
 
-### References
-
-- Chierchia (2013). Logic in Grammar. Cambridge. Ch.1.
-- See also: Theories/NeoGricean/Exhaustivity/Basic.lean (Maximize Strength)
 -/
 
 /--

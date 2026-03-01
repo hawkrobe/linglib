@@ -3,6 +3,7 @@ import Linglib.Theories.Semantics.Montague.Basic
 
 /-!
 # Degree Semantics: Core Infrastructure
+@cite{heim-2001} @cite{kennedy-2007} @cite{klein-1980} @cite{rett-2026} @cite{schwarzschild-2008}
 
 Shared types and interfaces for degree-based analyses of gradable
 expressions. This module defines the minimal `GradablePredicate`
@@ -43,13 +44,6 @@ entries. The two serve different clients: this module is imported by
 `Degree/Frameworks/` and `Degree/Comparative.lean`; `Adjective.Theory` is
 imported by `Fragments/English/` and `Phenomena/Gradability/` bridges.
 
-## References
-
-- Kennedy, C. (2007). Vagueness and grammar.
-- Heim, I. (2001). Degree operators and scope.
-- Klein, E. (1980). A semantics for positive and comparative adjectives.
-- Schwarzschild, R. (2008). The semantics of comparatives.
-- Rett, J. (2026). Semantic ambivalence and expletive negation. Ms.
 -/
 
 namespace Semantics.Degree

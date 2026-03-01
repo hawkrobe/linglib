@@ -17,14 +17,6 @@ Theory-neutral empirical patterns for imprecision in bare numerals.
 Round numerals (100, 50, 1000) permit imprecise readings, but non-round numerals
 (99, 47, 1003) require exact readings. This asymmetry is systematic across languages.
 
-## References
-
-- Krifka (2007): Approximate interpretation
-- Sauerland & Stateva (2007): Scalar alternatives for numerals
-- Solt (2014, 2018): Imprecise numerals
-- Solt & Waldon (2019): Numerals under negation
-- Križ (2015): Numerals and homogeneity
-- Solt (2023): Imprecision without homogeneity
 -/
 
 namespace Phenomena.Imprecision.Numerals

@@ -29,12 +29,6 @@ See:
 - `Core/Analyticity.lean`: L-analyticity explanation (Gajewski 2002)
 - The semantics should go in `Theories/Montague/Lexicon/` when added
 
-## References
-
-- von Fintel, K. (1993). Exceptive constructions. NLLT 11(1):123-148.
-- Hoeksema, J. (1995). The semantics of exception phrases.
-- Gajewski, J. (2002). On analyticity in natural language.
-- Moltmann, F. (1995). Exception sentences and polyadic quantification.
 -/
 
 namespace Phenomena.Polarity.Exceptives

@@ -20,9 +20,6 @@ When J = I (total ignorance), pragmatic answerhood reduces to semantic answerhoo
 - Pragmatically rigid: term denotes same across indices in J
 - Pragmatically definite: term picks out unique individual in J
 
-## References
-
-- Groenendijk & Stokhof (1984). Studies on the Semantics of Questions. Ch. IV.
 -/
 
 import Linglib.Phenomena.Questions.Basic

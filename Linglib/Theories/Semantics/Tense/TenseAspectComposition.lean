@@ -31,12 +31,6 @@ The eval* operators instantiate the situation (fixing world and time).
 - Earlier LB strengthens IMPF (Theorem 5), later LB strengthens PRFV (Theorem 6)
 - The converse of Theorem 5 is false: concrete counterexample (Theorem 7)
 
-## References
-
-- Knick, A. & Sharf, M. (2026). On focus and the perfect aspect.
-- Klein, W. (1994). Time in Language. Chapter 6.
-- Iatridou, S., Anagnostopoulou, E. & Izvorski, R. (2001).
-  Observations about the form and meaning of the Perfect.
 -/
 
 import Linglib.Theories.Semantics.Lexical.Verb.ViewpointAspect

@@ -2,6 +2,7 @@ import Linglib.Core.Lexical.Word
 
 /-!
 # Cross-Linguistic Typology of Articles and Demonstratives (WALS)
+@cite{bhat-2013} @cite{greenberg-1978} @cite{himmelmann-1997}
 
 Typological data on definiteness marking, indefinite articles, and demonstrative
 systems across languages, drawn from five chapters of the World Atlas of Language
@@ -36,21 +37,6 @@ Structures (Dryer & Haspelmath 2013):
    affix is a well-established diachronic pathway (Greenberg 1978, Himmelmann
    1997).
 
-## References
-
-- Dryer, M. (2013a). Definite articles. In Dryer & Haspelmath (eds.),
-  WALS Online. Ch. 37. https://wals.info/chapter/37
-- Dryer, M. (2013b). Indefinite articles. In Dryer & Haspelmath (eds.),
-  WALS Online. Ch. 38. https://wals.info/chapter/38
-- Diessel, H. (2013a). Distance contrasts in demonstratives. In Dryer &
-  Haspelmath (eds.), WALS Online. Ch. 41. https://wals.info/chapter/41
-- Diessel, H. (2013b). Pronominal and adnominal demonstratives. In Dryer &
-  Haspelmath (eds.), WALS Online. Ch. 42. https://wals.info/chapter/42
-- Bhat, D. N. S. (2013). Third-person pronouns and demonstratives. In Dryer &
-  Haspelmath (eds.), WALS Online. Ch. 43. https://wals.info/chapter/43
-- Greenberg, J. (1978). How does a language acquire gender markers? In
-  Greenberg (ed.), Universals of Human Language, Vol. 3.
-- Himmelmann, N. (1997). Deiktikon, Artikel, Nominalphrase. Niemeyer.
 -/
 
 namespace Phenomena.Reference.Typology

@@ -11,10 +11,6 @@ Theory-neutral empirical observations from "On the optimality of vagueness."
 4. The round/non-round asymmetry affects "around" acceptability
 5. Sorites-like tolerance chains for "around"
 
-## References
-
-- Égré, P., Spector, B., Mortier, A., & Verheyen, S. (2023). On the optimality
-  of vagueness. Linguistics and Philosophy, 46, 1101–1130.
 -/
 
 import Linglib.Phenomena.Imprecision.Numerals

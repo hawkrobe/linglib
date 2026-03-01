@@ -8,9 +8,6 @@ Basic phrase structure and linearization for the Minimalist Program.
 - `Position`, `dominates`, `structurallyPrecedes`
 - `HeadPosition`, `TPosition`, `tPronouncedAt`
 
-## References
-
-- Chomsky, N. (1995). "The Minimalist Program"
 -/
 
 import Linglib.Core.Lexical.Word

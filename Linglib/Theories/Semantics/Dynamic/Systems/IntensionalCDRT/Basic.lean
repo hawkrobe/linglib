@@ -8,11 +8,6 @@ anaphora to indefinites under negation.
 
 `IContext`, `DynProp`, `CommitmentSet`
 
-## References
-
-- Hofmann, L. (2025). Anaphoric accessibility with flat update. S&P.
-- Groenendijk, J. & Stokhof, M. (1991). Dynamic Predicate Logic. L&P 14.
-- Heim, I. (1982). The Semantics of Definite and Indefinite Noun Phrases.
 -/
 
 import Linglib.Theories.Semantics.Dynamic.Core.Basic

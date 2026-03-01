@@ -3,6 +3,7 @@ import Linglib.Theories.Morphology.WP.LCEC
 
 /-!
 # Ackerman & Malouf (2013): Bridge Theorems @cite{ackerman-malouf-2013}
+@cite{carstairs-mccarthy-2010}
 
 Verification theorems connecting the cross-linguistic typological data
 to the LCEC predictions. Each theorem proves that a language's reported
@@ -14,11 +15,6 @@ I-complexity falls below the LCEC threshold.
 - §2: E-complexity / I-complexity dissociation
 - §3: Mazatec case study (observed vs. random baseline)
 
-## References
-
-- Ackerman, F. & Malouf, R. (2013). Morphological Organization: The Low
-  Conditional Entropy Conjecture. *Language* 89(3), 429–464.
-- Carstairs-McCarthy, A. (2010). The Evolution of Morphology. OUP.
 -/
 
 namespace Phenomena.Morphology.AckermanMalouf2013

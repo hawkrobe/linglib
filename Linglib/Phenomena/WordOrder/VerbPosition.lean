@@ -3,11 +3,6 @@
 
 Theory-neutral empirical data on verb position alternations.
 
-## References
-
-- Harizanov, B. "Syntactic Head Movement: Elements in Generative Syntax"
-- Lambova (2004c:274, (15)): Bulgarian participle fronting
-- Vikner (1995:32, (11d)): German V2
 -/
 
 import Linglib.Core.Lexical.Word
