@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.227.61] - 2026-02-28
+
+### Added
+- **Birkhoff representation** (`Core/Logic/PolarizedIndividuals.lean`): Constructive order-isomorphism `consGQOrderIso : ConsGQ α ≃o ((α → Tri) → Bool)` using mathlib's `Equiv.toOrderIso`. Conservative GQs are exactly predicates on trivalent functions. `predToGQ_conservative` (conservativity for free), `triFunction`/`triSupport`/`triPositive` encoding/decoding with round-trip simp lemmas, `toGQ_eq_predToGQ` connecting PolInd to atomic predicates. 0 sorry.
+- **Non-conservative round-trip theorem** (`predToGQ_gqToPred_eq`): For any GQ, the Birkhoff round-trip replaces S with R∩S — non-conservative determiners cannot be expressed as predicates on trivalent functions. Elliott (2025) §4.3, eq. (43).
+- **Bib entry** `elliott-2025` added to `references.bib`.
+
+### Fixed
+- **Elliott citation accuracy**: Corrected paper title from hallucinated "Determiners as Polarized Individuals" to actual "Determiners as predicates" (SALT 35, 2025). Fixed year 2026→2025 across all 4 files. Fixed hallucinated "Theorem 1" references → §4.3. Removed "PR 4" internal jargon from docstrings.
+- **Dead code removal**: Removed orphaned `Tri.ofBool`, `Tri.toBool`, `PolDomain` (all unused after refactoring). Added `Tri.isNonBlank`/`Tri.isPos` match-based methods replacing BEq-based predicates.
+- **`triFunction` definitional reduction**: Changed from `if/then/else` (which requires `simp` to reduce `if true = true then ...`) to `match` (definitional reduction after `cases`).
+
 ## [0.227.60] - 2026-02-28
 
 ### Added
