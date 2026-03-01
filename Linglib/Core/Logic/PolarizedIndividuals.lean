@@ -200,6 +200,15 @@ def consGQOrderIso : ConsGQ α ≃o ((α → Tri) → Bool) :=
     (fun {_ _} h f => h (triSupport f) (triPositive f))
     (fun {_ _} h R S => h (triFunction R S))
 
+/-- For any GQ (not necessarily conservative), the Birkhoff round-trip
+    replaces S with R ∩ S. Conservative GQs are exactly those for which
+    this substitution is the identity. Non-conservative determiners
+    cannot be expressed as predicates on trivalent functions.
+    Elliott (2025), §4.3, eq. (43). -/
+theorem predToGQ_gqToPred_eq (Q : GQ α) (R S : α → Bool) :
+    predToGQ (gqToPred Q) R S = Q R (λ x => R x && S x) := by
+  simp only [predToGQ, gqToPred, triSupport_triFunction, triPositive_triFunction]
+
 -- ============================================================================
 -- §4 — Entity–Polarity Pairs
 -- ============================================================================
