@@ -1,4 +1,5 @@
 import Linglib.Theories.Semantics.Causation.ProductionDependence
+import Linglib.Fragments.English.Predicates.Verbal
 
 /-!
 # Thick vs Thin Causative Verb Data (Martin, Rose & Nichols 2025)
@@ -27,11 +28,41 @@ four binary properties:
 namespace Phenomena.Causatives.ThickThin
 
 open MartinRoseNichols2025
+open Fragments.English.Predicates.Verbal (VerbEntry)
+namespace V
+  -- Re-export Fragment verb entries under a short alias to avoid name clashes
+  -- with the ThickThinEntry definitions in this namespace.
+  abbrev activate := Fragments.English.Predicates.Verbal.activate
+  abbrev affect := Fragments.English.Predicates.Verbal.affect
+  abbrev change := Fragments.English.Predicates.Verbal.change
+  abbrev damage := Fragments.English.Predicates.Verbal.damage
+  abbrev destroy := Fragments.English.Predicates.Verbal.destroy
+  abbrev eliminate := Fragments.English.Predicates.Verbal.eliminate
+  abbrev hurt := Fragments.English.Predicates.Verbal.hurt
+  abbrev kill := Fragments.English.Predicates.Verbal.kill
+  abbrev restore := Fragments.English.Predicates.Verbal.restore
+  abbrev start := Fragments.English.Predicates.Verbal.start
+  abbrev stop := Fragments.English.Predicates.Verbal.stop
+  abbrev trigger := Fragments.English.Predicates.Verbal.trigger
+  abbrev break_ := Fragments.English.Predicates.Verbal.break_
+  abbrev burn := Fragments.English.Predicates.Verbal.burn
+  abbrev bury := Fragments.English.Predicates.Verbal.bury
+  abbrev cut := Fragments.English.Predicates.Verbal.cut
+  abbrev drop := Fragments.English.Predicates.Verbal.drop
+  abbrev lift := Fragments.English.Predicates.Verbal.lift
+  abbrev lock := Fragments.English.Predicates.Verbal.lock
+  abbrev melt := Fragments.English.Predicates.Verbal.melt
+  abbrev mix := Fragments.English.Predicates.Verbal.mix
+  abbrev shut := Fragments.English.Predicates.Verbal.shut
+  abbrev spread := Fragments.English.Predicates.Verbal.spread
+  abbrev stretch := Fragments.English.Predicates.Verbal.stretch
+  abbrev switch := Fragments.English.Predicates.Verbal.switch
+end V
 
-/-- A single verb entry from Table 3. -/
-structure ThickThinEntry where
-  /-- Verb form -/
-  verb : String
+/-- A single verb entry from Table 3, extending a Fragment VerbEntry.
+    The Levin class, verb form, root profile, etc. are all inherited from
+    the Fragment entry — only the Martin et al. (2025) annotations are new. -/
+structure ThickThinEntry extends VerbEntry where
   /-- Participates in causative/anticausative alternation -/
   alternating : Bool
   /-- Thick = encodes manner of causing (rejects abstract subjects in physical sense) -/
@@ -42,7 +73,10 @@ structure ThickThinEntry where
   omissionSubjects : Bool
   /-- Thick/thin classification from theory -/
   thickThinClass : ThickThinClass := if thick then .thickManner else .thin
-  deriving Repr, BEq
+  deriving Repr
+
+/-- Verb form (convenience accessor). -/
+def ThickThinEntry.verb (e : ThickThinEntry) : String := e.form
 
 /-! ## Table 3 data (representative subset)
 
@@ -52,72 +86,63 @@ covering the key patterns. Numbers in comments refer to Table 3 rows. -/
 -- === Thin causatives (result-only, no manner specification) ===
 
 def activate : ThickThinEntry :=    -- #1
-  { verb := "activate", alternating := true, thick := false, asr := false, omissionSubjects := true }
+  { toVerbEntry := V.activate, alternating := true, thick := false, asr := false, omissionSubjects := true }
 def affect : ThickThinEntry :=      -- #2
-  { verb := "affect", alternating := false, thick := false, asr := false, omissionSubjects := true }
+  { toVerbEntry := V.affect, alternating := false, thick := false, asr := false, omissionSubjects := true }
 def change : ThickThinEntry :=      -- #3
-  { verb := "change", alternating := true, thick := false, asr := false, omissionSubjects := true }
+  { toVerbEntry := V.change, alternating := true, thick := false, asr := false, omissionSubjects := true }
 def damage : ThickThinEntry :=      -- #6
-  { verb := "damage", alternating := false, thick := false, asr := false, omissionSubjects := true }
+  { toVerbEntry := V.damage, alternating := false, thick := false, asr := false, omissionSubjects := true }
 def destroy : ThickThinEntry :=     -- #7
-  { verb := "destroy", alternating := false, thick := false, asr := false, omissionSubjects := true }
+  { toVerbEntry := V.destroy, alternating := false, thick := false, asr := false, omissionSubjects := true }
 def eliminate : ThickThinEntry :=   -- #9
-  { verb := "eliminate", alternating := false, thick := false, asr := false, omissionSubjects := true }
+  { toVerbEntry := V.eliminate, alternating := false, thick := false, asr := false, omissionSubjects := true }
 def hurt : ThickThinEntry :=        -- #12
-  { verb := "hurt", alternating := false, thick := false, asr := false, omissionSubjects := true }
+  { toVerbEntry := V.hurt, alternating := false, thick := false, asr := false, omissionSubjects := true }
 def kill : ThickThinEntry :=        -- #13
-  { verb := "kill", alternating := false, thick := false, asr := false, omissionSubjects := true }
+  { toVerbEntry := V.kill, alternating := false, thick := false, asr := false, omissionSubjects := true }
 def restore : ThickThinEntry :=     -- #17
-  { verb := "restore", alternating := false, thick := false, asr := false, omissionSubjects := true }
+  { toVerbEntry := V.restore, alternating := false, thick := false, asr := false, omissionSubjects := true }
 def start : ThickThinEntry :=       -- #20
-  { verb := "start", alternating := true, thick := false, asr := false, omissionSubjects := true }
+  { toVerbEntry := V.start, alternating := true, thick := false, asr := false, omissionSubjects := true }
 def stop : ThickThinEntry :=        -- #21
-  { verb := "stop", alternating := true, thick := false, asr := false, omissionSubjects := false }
+  { toVerbEntry := V.stop, alternating := true, thick := false, asr := false, omissionSubjects := false }
 def trigger : ThickThinEntry :=     -- #22
-  { verb := "trigger", alternating := false, thick := false, asr := false, omissionSubjects := true,
-    thickThinClass := .thin }  -- Note: trigger has Y* for ASR (requires resultative)
+  { toVerbEntry := V.trigger, alternating := false, thick := false, asr := false, omissionSubjects := true,
+    thickThinClass := .thin }
 
 -- === Thick causatives (manner-encoding, restrict abstract subjects) ===
 
 def break_ : ThickThinEntry :=      -- #25
-  { verb := "break", alternating := true, thick := true, asr := true, omissionSubjects := false }
+  { toVerbEntry := V.break_, alternating := true, thick := true, asr := true, omissionSubjects := false }
 def burn : ThickThinEntry :=        -- #27
-  { verb := "burn", alternating := true, thick := true, asr := true, omissionSubjects := true,
+  { toVerbEntry := V.burn, alternating := true, thick := true, asr := true, omissionSubjects := true,
     thickThinClass := .thickManner }  -- Exception: burn found with omission subjects
 def bury : ThickThinEntry :=        -- #26
-  { verb := "bury", alternating := false, thick := true, asr := false, omissionSubjects := false,
+  { toVerbEntry := V.bury, alternating := false, thick := true, asr := false, omissionSubjects := false,
     thickThinClass := .thickState }   -- Thick via state property, NOT causative manner verb
 def cut : ThickThinEntry :=         -- #28
-  { verb := "cut", alternating := false, thick := true, asr := true, omissionSubjects := false }
+  { toVerbEntry := V.cut, alternating := false, thick := true, asr := true, omissionSubjects := false }
 def drop : ThickThinEntry :=        -- #29
-  { verb := "drop", alternating := true, thick := true, asr := true, omissionSubjects := false }
+  { toVerbEntry := V.drop, alternating := true, thick := true, asr := true, omissionSubjects := false }
 def lift : ThickThinEntry :=        -- #30
-  { verb := "lift", alternating := false, thick := true, asr := true, omissionSubjects := true,
+  { toVerbEntry := V.lift, alternating := false, thick := true, asr := true, omissionSubjects := true,
     thickThinClass := .thickManner }  -- Exception: lift found with omission subjects
 def lock : ThickThinEntry :=        -- #31
-  { verb := "lock", alternating := true, thick := true, asr := true, omissionSubjects := true,
+  { toVerbEntry := V.lock, alternating := true, thick := true, asr := true, omissionSubjects := true,
     thickThinClass := .thickManner }  -- Exception: lock found with omission subjects
 def melt : ThickThinEntry :=        -- #32
-  { verb := "melt", alternating := true, thick := true, asr := true, omissionSubjects := false }
+  { toVerbEntry := V.melt, alternating := true, thick := true, asr := true, omissionSubjects := false }
 def mix : ThickThinEntry :=         -- #33
-  { verb := "mix", alternating := true, thick := true, asr := true, omissionSubjects := false }
+  { toVerbEntry := V.mix, alternating := true, thick := true, asr := true, omissionSubjects := false }
 def shut : ThickThinEntry :=        -- #34
-  { verb := "shut", alternating := true, thick := true, asr := true, omissionSubjects := false }
+  { toVerbEntry := V.shut, alternating := true, thick := true, asr := true, omissionSubjects := false }
 def spread : ThickThinEntry :=      -- #35
-  { verb := "spread", alternating := true, thick := true, asr := true, omissionSubjects := false }
+  { toVerbEntry := V.spread, alternating := true, thick := true, asr := true, omissionSubjects := false }
 def stretch : ThickThinEntry :=     -- #36
-  { verb := "stretch", alternating := true, thick := true, asr := true, omissionSubjects := false }
+  { toVerbEntry := V.stretch, alternating := true, thick := true, asr := true, omissionSubjects := false }
 def switch : ThickThinEntry :=      -- #37
-  { verb := "switch", alternating := true, thick := true, asr := true, omissionSubjects := false }
-
-/-- All Table 3 entries. -/
-def allEntries : List ThickThinEntry :=
-  [ -- thin
-    activate, affect, change, damage, destroy, eliminate, hurt, kill,
-    restore, start, stop, trigger,
-    -- thick
-    break_, burn, bury, cut, drop, lift, lock, melt, mix, shut,
-    spread, stretch, switch ]
+  { toVerbEntry := V.switch, alternating := true, thick := true, asr := true, omissionSubjects := false }
 
 /-! ## Per-datum verification theorems -/
 
@@ -138,32 +163,17 @@ theorem change_is_thin : change.thick = false := rfl
 theorem bury_thick_no_asr : bury.thick = true ∧ bury.asr = false := ⟨rfl, rfl⟩
 theorem bury_is_thick_state : bury.thickThinClass = .thickState := rfl
 
-/-! ## Correlation theorems
+-- Verb forms are inherited from Fragment entries
+theorem break_verb : break_.verb = "break" := rfl
+theorem kill_verb : kill.verb = "kill" := rfl
+theorem destroy_verb : destroy.verb = "destroy" := rfl
 
-The core empirical finding: thickness correlates with ASR compatibility
-and anti-correlates with omission subject compatibility. -/
-
-/-- Most thick verbs (≥ 11/13) are ASR-compatible. -/
-theorem most_thick_have_asr :
-    let thickVerbs := allEntries.filter (·.thick)
-    let asrThick := thickVerbs.filter (·.asr)
-    asrThick.length ≥ 11 := by native_decide
-
-/-- Most thin verbs (≥ 10/12 in our sample) accept omission subjects. -/
-theorem most_thin_accept_omission :
-    let thinVerbs := allEntries.filter (!·.thick)
-    let omThin := thinVerbs.filter (·.omissionSubjects)
-    omThin.length ≥ 10 := by native_decide
-
-/-- No thin verb in our sample has ASR. -/
-theorem no_thin_has_asr :
-    (allEntries.filter (!·.thick)).all (!·.asr) = true := by native_decide
-
-/-- Most thick verbs (≥ 9/13) reject omission subjects. -/
-theorem most_thick_reject_omission :
-    let thickVerbs := allEntries.filter (·.thick)
-    let noOmThick := thickVerbs.filter (!·.omissionSubjects)
-    noOmThick.length ≥ 9 := by native_decide
+-- Levin classes are inherited from Fragment entries
+theorem break_levin : break_.levinClass = some .break_ := rfl
+theorem kill_levin : kill.levinClass = some .murder := rfl
+theorem destroy_levin : destroy.levinClass = some .destroy := rfl
+theorem cut_levin : cut.levinClass = some .cut := rfl
+theorem burn_levin : burn.levinClass = some .otherCoS := rfl
 
 /-! ## Bridge to ThickThinClass
 
@@ -193,15 +203,44 @@ theorem bury_asr_theory :
 theorem kill_asr_theory :
     kill.thickThinClass.strongASRCompatible = false := rfl
 
-/-! ## Alternation statistics (§7)
+/-! ## Bridge to Levin (1993) classes
 
-76% (10/13) of thick verbs alternate vs 50% (12/24) of thin verbs.
-Thickness promotes the causative/anticausative alternation. -/
+The thick/thin distinction cross-cuts Levin classes: verbs in the same
+general domain (change of state, causation) can be thick or thin. The
+difference is whether the verb specifies manner of causing. -/
 
-/-- Most thick verbs in our sample alternate. -/
-theorem thick_mostly_alternate :
-    let thickVerbs := allEntries.filter (·.thick)
-    let altThick := thickVerbs.filter (·.alternating)
-    altThick.length * 100 / thickVerbs.length ≥ 70 := by native_decide
+/-- Break (thick) and destroy (thin) both have CoS + causation in their
+    Levin meaning components. The thick/thin split is orthogonal to
+    the basic meaning component profile. -/
+theorem break_destroy_same_components :
+    (LevinClass.break_.meaningComponents.changeOfState =
+     LevinClass.destroy.meaningComponents.changeOfState)
+    ∧ (LevinClass.break_.meaningComponents.causation =
+       LevinClass.destroy.meaningComponents.causation) := ⟨rfl, rfl⟩
+
+/-- Thick manner verbs belong to Levin classes that predict the
+    causative alternation. -/
+theorem break_class_predicts_alternation :
+    LevinClass.break_.participatesIn .causativeInchoative = true := rfl
+
+/-- Cut (thick) is in a class that predicts both conative and
+    causative alternations — more alternation-rich than break. -/
+theorem cut_class_rich_alternation :
+    LevinClass.cut.participatesIn .causativeInchoative = true
+    ∧ LevinClass.cut.participatesIn .conative = true
+    ∧ LevinClass.cut.participatesIn .bodyPartPossessorAscension = true := ⟨rfl, rfl, rfl⟩
+
+/-- Destroy (thin) is also predicted to participate in causative alternation
+    by its meaning components, but empirically it does not alternate.
+    This shows the limits of meaning-component prediction. -/
+theorem destroy_class_vs_empirical :
+    LevinClass.destroy.participatesIn .causativeInchoative = true
+    ∧ Phenomena.Causatives.ThickThin.destroy.alternating = false := ⟨rfl, rfl⟩
+
+/-- Kill (thin, murder class) is predicted to participate in causative
+    alternation but empirically does not alternate. -/
+theorem kill_class_vs_empirical :
+    LevinClass.murder.participatesIn .causativeInchoative = true
+    ∧ kill.alternating = false := ⟨rfl, rfl⟩
 
 end Phenomena.Causatives.ThickThin

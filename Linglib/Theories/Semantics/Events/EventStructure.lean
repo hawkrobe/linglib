@@ -188,4 +188,111 @@ theorem lexicalize_increases_agentivity :
 theorem lexicalized_is_full_agent :
     (Template.lexicalizeInstrument .motionContact).pAgentScore = 5 := by native_decide
 
+-- ════════════════════════════════════════════════════
+-- § 7. Bridge to Levin (1993) Verb Classes
+-- ════════════════════════════════════════════════════
+
+/-! Levin classes map to event structure templates via meaning components.
+    The core correspondence (R&L 1998 §3; R&L 2010 §2):
+
+    | Meaning component pattern | Template | Example class |
+    |---|---|---|
+    | CoS + causation | accomplishment | break (45.1), destroy (44) |
+    | CoS, no causation | achievement | appear (48.1), calve (28) |
+    | No CoS, no motion | state | exist (47.1), admire (31.2) |
+    | Otherwise | activity | hit (18.1), run (51.3) |
+
+    The `motionContact` template is specific to the sweep/rub/scrape
+    class and requires a class-specific override. -/
+
+end Semantics.Events.EventStructure
+
+/-- Predicted event structure template from meaning components. -/
+def MeaningComponents.predictedTemplate : MeaningComponents → Semantics.Events.EventStructure.Template
+  | mc => if mc.changeOfState && mc.causation then .accomplishment
+    else if mc.changeOfState then .achievement
+    else if !mc.motion && !mc.contact then .state
+    else .activity
+
+/-- Predicted template for a Levin class, with class-specific overrides. -/
+def LevinClass.eventTemplate : LevinClass → Semantics.Events.EventStructure.Template
+  -- motionContact is class-specific (sweep/rub/scrape)
+  | .wipe => .motionContact
+  | c => c.meaningComponents.predictedTemplate
+
+namespace Semantics.Events.EventStructure
+
+/-! ### Verification: canonical quadruple -/
+
+/-- Break → accomplishment (CoS + causation → [ACT CAUSE BECOME]). -/
+theorem break_is_accomplishment :
+    LevinClass.break_.eventTemplate = .accomplishment := rfl
+
+/-- Hit → activity (contact + motion, no CoS → [ACT]). -/
+theorem hit_is_activity :
+    LevinClass.hit.eventTemplate = .activity := rfl
+
+/-- Touch → activity (contact only, no CoS). -/
+theorem touch_is_activity :
+    LevinClass.touch.eventTemplate = .activity := rfl
+
+/-- Cut → accomplishment (CoS + causation). -/
+theorem cut_is_accomplishment :
+    LevinClass.cut.eventTemplate = .accomplishment := rfl
+
+/-! ### Change-of-state classes → accomplishment -/
+
+/-- All §45 CoS classes map to accomplishment. -/
+theorem cos_classes_accomplishment :
+    LevinClass.break_.eventTemplate = .accomplishment
+    ∧ LevinClass.bend.eventTemplate = .accomplishment
+    ∧ LevinClass.cooking.eventTemplate = .accomplishment
+    ∧ LevinClass.otherCoS.eventTemplate = .accomplishment
+    ∧ LevinClass.destroy.eventTemplate = .accomplishment := ⟨rfl, rfl, rfl, rfl, rfl⟩
+
+/-! ### Motion classes → activity -/
+
+/-- Motion verbs are activities (no CoS, have motion). -/
+theorem motion_is_activity :
+    LevinClass.mannerOfMotion.eventTemplate = .activity
+    ∧ LevinClass.inherentlyDirectedMotion.eventTemplate = .activity := ⟨rfl, rfl⟩
+
+/-! ### Stative classes → state -/
+
+/-- Perception/psych statives map to state template. -/
+theorem stative_classes_state :
+    LevinClass.exist.eventTemplate = .state
+    ∧ LevinClass.admire.eventTemplate = .state
+    ∧ LevinClass.want.eventTemplate = .state := ⟨rfl, rfl, rfl⟩
+
+/-! ### Achievement classes -/
+
+/-- Appear (CoS without causation) → achievement. -/
+theorem appear_is_achievement :
+    LevinClass.appear.eventTemplate = .achievement := rfl
+
+/-- Calve (CoS without causation) → achievement. -/
+theorem calve_is_achievement :
+    LevinClass.calve.eventTemplate = .achievement := rfl
+
+/-! ### Special: motionContact -/
+
+/-- Wipe class → motionContact (class-specific override). -/
+theorem wipe_is_motionContact :
+    LevinClass.wipe.eventTemplate = .motionContact := rfl
+
+/-! ### Template → aspectual class consistency -/
+
+/-- Accomplishment classes (break, cut) are predicted telic. -/
+theorem break_telic :
+    LevinClass.break_.eventTemplate.vendlerClass = .accomplishment := rfl
+
+/-- Activity classes (hit, run) are predicted atelic. -/
+theorem hit_atelic :
+    LevinClass.hit.eventTemplate.vendlerClass = .activity := rfl
+
+/-- State classes (exist, admire) are predicted stative. -/
+theorem exist_stative :
+    LevinClass.exist.eventTemplate.vendlerClass = .state := rfl
+
 end Semantics.Events.EventStructure

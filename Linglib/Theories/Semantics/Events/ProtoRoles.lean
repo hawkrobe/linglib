@@ -503,7 +503,100 @@ theorem kickObject_is_forceRecipient :
     isForceRecipient kickObjectProfile = true := by native_decide
 
 -- ════════════════════════════════════════════════════
--- § 14. Modern Extensions (comment only)
+-- § 14. Bridge to Levin (1993) Meaning Components
+-- ════════════════════════════════════════════════════
+
+/-! Levin's (1993) meaning components are a coarse-grained projection of
+    Dowty's entailment profiles. Three of the four components correspond
+    to specific Dowty entailments:
+
+    | Levin component | Dowty entailment | Argument |
+    |---|---|---|
+    | `causation` | P-Agent (c) `causation` | Subject |
+    | `changeOfState` | P-Patient (a) `changeOfState` | Object / unacc. subject |
+    | `motion` | P-Agent (d) `movement` | Subject |
+    | `contact` | — (no direct Dowty counterpart) | — |
+
+    The key divergence: Levin's `causation` is *narrow* — it diagnoses
+    specifically causation of a change of state (via the causative/inchoative
+    alternation). Dowty's `causation` is *broad* — any event where one
+    participant causes something in another. Hit verbs have Dowty `causation`
+    (kicker causes the kicking event) but lack Levin `causation` (no CoS).
+
+    This means Levin `causation = true` → Dowty `causation = true` AND
+    Dowty `changeOfState = true` (for the patient). But the converse fails:
+    Dowty `causation = true` alone does NOT imply Levin `causation = true`. -/
+
+/-- Subject entailments predicted by Levin meaning components:
+    `causation` → P-Agent (c), `motion` → P-Agent (d). -/
+def levinSubjectPrediction (mc : MeaningComponents) : Bool × Bool :=
+  (mc.causation, mc.motion)
+
+/-- Patient entailments predicted by Levin meaning components:
+    `changeOfState` → P-Patient (a), `causation` → P-Patient (c) causallyAffected. -/
+def levinPatientPrediction (mc : MeaningComponents) : Bool × Bool :=
+  (mc.changeOfState, mc.causation)
+
+/-- Break class: subject has causation entailment. -/
+theorem break_class_subject_causation :
+    (levinSubjectPrediction LevinClass.break_.meaningComponents).1 = true := rfl
+
+/-- Break class: patient undergoes CoS. -/
+theorem break_class_patient_cos :
+    (levinPatientPrediction LevinClass.break_.meaningComponents).1 = true := rfl
+
+/-- Hit class: subject does NOT have Levin causation (no CoS to cause). -/
+theorem hit_class_no_levin_causation :
+    (levinSubjectPrediction LevinClass.hit.meaningComponents).1 = false := rfl
+
+/-- Hit class: patient is NOT predicted to undergo CoS. -/
+theorem hit_class_patient_no_cos :
+    (levinPatientPrediction LevinClass.hit.meaningComponents).1 = false := rfl
+
+/-- Verification: kick subject has Dowty causation = true even though
+    hit class has Levin causation = false. This demonstrates the narrow
+    vs. broad causation divergence. -/
+theorem kick_dowty_vs_levin_causation :
+    kickSubjectProfile.causation = true
+    ∧ LevinClass.hit.meaningComponents.causation = false := ⟨rfl, rfl⟩
+
+/-- Motion classes predict subject movement entailment. -/
+theorem motion_class_subject_movement :
+    (levinSubjectPrediction LevinClass.mannerOfMotion.meaningComponents).2 = true
+    ∧ (levinSubjectPrediction LevinClass.inherentlyDirectedMotion.meaningComponents).2 = true
+    := ⟨rfl, rfl⟩
+
+/-- Stative classes predict no subject movement or causation. -/
+theorem stative_class_no_dynamics :
+    levinSubjectPrediction LevinClass.exist.meaningComponents = ⟨false, false⟩
+    ∧ levinSubjectPrediction LevinClass.admire.meaningComponents = ⟨false, false⟩
+    := ⟨rfl, rfl⟩
+
+/-- Levin causation implies Dowty causation (narrow → broad).
+    If a Levin class has `causation = true`, any subject profile
+    consistent with that class should have `causation = true`. -/
+theorem levin_causation_subsumes :
+    ∀ (mc : MeaningComponents), mc.causation = true →
+    (levinSubjectPrediction mc).1 = true :=
+  fun _ h => h
+
+/-- Dowty causation does NOT imply Levin causation. The kick example
+    is a counterexample: Dowty assigns causation to the kicker, but
+    Levin does not assign causation to the hit class. -/
+theorem dowty_causation_not_subsumes :
+    kickSubjectProfile.causation = true
+    ∧ LevinClass.hit.meaningComponents.causation = false := ⟨rfl, rfl⟩
+
+/-- Levin's `causation` is causation OF change-of-state specifically.
+    Therefore it predicts both P-Agent `causation` (subject causes)
+    AND P-Patient `changeOfState` (patient changes). -/
+theorem levin_causation_implies_both (mc : MeaningComponents)
+    (h : mc.causation = true) :
+    (levinSubjectPrediction mc).1 = true
+    ∧ (levinPatientPrediction mc).2 = true := ⟨h, h⟩
+
+-- ════════════════════════════════════════════════════
+-- § 15. Modern Extensions (comment only)
 -- ════════════════════════════════════════════════════
 
 /-

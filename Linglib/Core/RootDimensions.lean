@@ -479,20 +479,371 @@ def LevinClass.section : LevinClass → String
   | .measure => "54" | .aspectual => "55" | .weather => "57"
 
 /-- Meaning components associated with each Levin class.
-    Populated for classes with well-known component profiles. -/
-def LevinClass.meaningComponents : LevinClass → Option MeaningComponents
-  | .break_ => some .break_
-  | .cut => some .cut
-  | .hit => some .hit
-  | .touch => some .touch
-  | .destroy => some .destroy
-  | .bend => some .bend
-  | .carve => some { changeOfState := true, contact := true, motion := true,
-                     causation := true, instrumentSpec := true }
-  | _ => none
+
+    Profiles are assigned using the diagnostic criteria from Levin (1993:5–10):
+    - `changeOfState`: middle alternation (*the glass broke* / *this bread cuts easily*)
+    - `contact`: body-part possessor ascension (*I hit him on the arm* / *I hit his arm*)
+    - `motion`: conative alternation requires motion + contact (*I cut at the bread*)
+    - `causation`: causative/inchoative alternation (*she broke the vase* / *the vase broke*)
+    - `instrumentSpec`: verb specifies instrument/means (cut vs. break; p. 157)
+    - `mannerSpec`: verb specifies manner of action (cooking, manner of motion; p. 244)
+
+    For classes not discussed in the canonical quadruple analysis, profiles are inferred
+    from Part II class descriptions and alternation participation patterns. -/
+def LevinClass.meaningComponents : LevinClass → MeaningComponents
+  -- §9 Putting: caused change of location (motion + causation)
+  | .put => ⟨false, false, true, true, false, false⟩
+  | .funnel => ⟨false, false, true, true, false, true⟩        -- manner of putting
+  | .pour => ⟨false, false, true, true, false, true⟩          -- manner of putting
+  | .coil => ⟨false, false, true, true, false, true⟩          -- resulting configuration
+  | .sprayLoad => ⟨false, false, true, true, false, false⟩
+  -- §10 Removing: caused change of location away from source
+  | .remove => ⟨false, false, true, true, false, false⟩
+  | .clear => ⟨true, false, true, true, false, false⟩         -- location undergoes CoS
+  | .wipe => ⟨true, true, true, true, false, true⟩            -- contact + manner of removing
+  | .steal => ⟨false, false, false, true, false, false⟩       -- change of possession, not physical motion
+  -- §11 Sending and Carrying: caused motion
+  | .send => ⟨false, false, true, true, false, false⟩
+  | .carry => ⟨false, true, true, true, false, true⟩          -- contact + manner (holding while moving)
+  | .drive => ⟨false, false, true, true, false, true⟩         -- manner via vehicle
+  -- §12 Exerting Force: directed force with contact
+  | .pushPull => ⟨false, true, true, false, false, false⟩     -- no causative alternation
+  -- §13 Change of Possession
+  | .give => ⟨false, false, false, true, false, false⟩        -- caused transfer
+  | .contribute => ⟨false, false, false, true, false, false⟩
+  | .getObtain => ⟨false, false, false, false, false, false⟩  -- no causation (receiver perspective)
+  | .exchange => ⟨false, false, false, false, false, false⟩
+  -- §14–16
+  | .learn => ⟨false, false, false, false, false, false⟩
+  | .hold => ⟨false, true, false, false, false, false⟩        -- inherent contact
+  | .conceal => ⟨true, false, false, true, false, false⟩      -- causes hidden state
+  -- §17 Throwing: ballistic caused motion with initial contact
+  | .throw => ⟨false, true, true, true, false, false⟩
+  -- §18 Contact by Impact
+  | .hit => .hit
+  | .swat => ⟨false, true, true, false, false, false⟩         -- like hit
+  -- §19 Poking: contact through motion with instrument
+  | .poke => ⟨false, true, true, false, true, false⟩
+  -- §20 Contact: Touch
+  | .touch => .touch
+  -- §21 Cutting
+  | .cut => .cut
+  | .carve => ⟨true, true, true, true, true, false⟩
+  -- §22 Combining and Attaching
+  | .mix => ⟨true, false, false, true, false, false⟩          -- CoS (combined state)
+  | .amalgamate => ⟨true, false, false, true, false, false⟩
+  -- §23 Separating and Disassembling
+  | .separate => ⟨true, false, false, true, false, false⟩
+  | .split => ⟨true, true, false, true, true, false⟩          -- contact + instrument
+  -- §24 Coloring: surface CoS via contact
+  | .color => ⟨true, true, false, true, false, false⟩
+  -- §25 Image Creation: surface CoS with instrument
+  | .imageCreation => ⟨true, true, false, true, true, false⟩
+  -- §26 Creation and Transformation
+  | .build => ⟨true, false, false, true, false, false⟩        -- CoS (creation)
+  | .grow => ⟨true, false, false, true, false, false⟩
+  | .create => ⟨true, false, false, true, false, false⟩
+  | .knead => ⟨true, true, false, true, false, true⟩          -- contact + manner
+  | .turn => ⟨true, false, false, true, false, false⟩         -- transformation
+  | .performance => ⟨false, false, false, false, false, true⟩  -- manner only
+  -- §27–28
+  | .engender => ⟨true, false, false, true, false, false⟩     -- bringing into being
+  | .calve => ⟨true, false, false, false, false, false⟩       -- inherent process, not caused
+  -- §29 Predicative Complements
+  | .appoint => ⟨true, false, false, true, false, false⟩      -- status change
+  | .characterize => ⟨false, false, false, false, false, false⟩
+  | .declare => ⟨true, false, false, true, false, false⟩
+  -- §30 Perception
+  | .see => ⟨false, false, false, false, false, false⟩
+  | .sight => ⟨false, false, false, false, false, false⟩
+  -- §31 Psych-Verbs
+  | .amuse => ⟨true, false, false, true, false, false⟩        -- stimulus causes psychological CoS
+  | .admire => ⟨false, false, false, false, false, false⟩     -- stative
+  | .marvel => ⟨false, false, false, false, false, false⟩     -- stative
+  -- §32–34
+  | .want => ⟨false, false, false, false, false, false⟩
+  | .judgment => ⟨false, false, false, false, false, false⟩
+  | .assessment => ⟨false, false, false, false, false, false⟩
+  -- §35 Searching
+  | .search => ⟨false, false, true, false, false, false⟩      -- directed motion through space
+  -- §36 Social Interaction
+  | .socialInteraction => ⟨false, false, false, false, false, false⟩
+  -- §37 Communication
+  | .say => ⟨false, false, false, false, false, false⟩
+  | .tell => ⟨false, false, false, false, false, false⟩
+  | .mannerOfSpeaking => ⟨false, false, false, false, false, true⟩  -- manner specified
+  -- §38 Animal Sounds
+  | .animalSound => ⟨false, false, false, false, false, true⟩
+  -- §39 Ingesting
+  | .eat => ⟨true, true, false, false, false, false⟩          -- CoS (consumption) + contact
+  | .devour => ⟨true, true, false, false, false, true⟩        -- + manner
+  | .dine => ⟨false, false, false, false, false, true⟩        -- manner only (social activity)
+  -- §40 Body
+  | .bodyProcess => ⟨false, false, false, false, false, false⟩
+  | .flinch => ⟨false, false, true, false, false, false⟩      -- involuntary motion
+  -- §41 Grooming
+  | .dress => ⟨true, true, false, true, false, false⟩         -- CoS (dressed state) + contact
+  -- §42 Killing
+  | .murder => ⟨true, false, false, true, false, false⟩
+  | .poison => ⟨true, false, false, true, true, false⟩        -- instrument specified
+  -- §43 Emission
+  | .lightEmission => ⟨false, false, false, false, false, false⟩
+  | .soundEmission => ⟨false, false, false, false, false, false⟩
+  | .substanceEmission => ⟨false, false, false, false, false, false⟩
+  -- §44 Destroy
+  | .destroy => .destroy
+  -- §45 Change of State
+  | .break_ => .break_
+  | .bend => .bend
+  | .cooking => ⟨true, false, false, true, false, true⟩       -- CoS + manner (bake/boil/fry)
+  | .otherCoS => ⟨true, false, false, true, false, false⟩     -- burn, melt, freeze
+  | .entitySpecificCoS => ⟨true, false, false, true, false, false⟩  -- bloom, rust
+  | .calibratableCoS => ⟨true, false, false, true, false, false⟩    -- increase, decrease
+  -- §46 Lodge
+  | .lodge => ⟨false, false, true, false, false, false⟩       -- locating
+  -- §47 Existence
+  | .exist => ⟨false, false, false, false, false, false⟩      -- pure stative
+  -- §48 Appearance
+  | .appear => ⟨true, false, false, false, false, false⟩      -- coming into view = CoS
+  -- §49 Body-Internal Motion
+  | .bodyInternalMotion => ⟨false, false, true, false, false, false⟩
+  -- §50 Assuming a Position
+  | .assumePosition => ⟨true, false, true, false, false, false⟩  -- CoS (new position) + motion
+  -- §51 Motion
+  | .inherentlyDirectedMotion => ⟨false, false, true, false, false, false⟩
+  | .leave => ⟨false, false, true, false, false, false⟩
+  | .mannerOfMotion => ⟨false, false, true, false, false, true⟩   -- manner specified
+  | .vehicleMotion => ⟨false, false, true, false, false, true⟩    -- vehicle = manner
+  | .chase => ⟨false, false, true, false, false, false⟩
+  -- §52 Avoid
+  | .avoid => ⟨false, false, false, false, false, false⟩      -- no inherent motion
+  -- §53 Lingering and Rushing
+  | .linger => ⟨false, false, false, false, false, true⟩      -- temporal manner
+  | .rush => ⟨false, false, true, false, false, true⟩         -- motion + manner
+  -- §54 Measure
+  | .measure => ⟨false, false, false, false, false, false⟩    -- stative
+  -- §55 Aspectual
+  | .aspectual => ⟨true, false, false, true, false, false⟩    -- causative alternation (start/stop)
+  -- §57 Weather
+  | .weather => ⟨false, false, false, false, false, false⟩
 
 -- ════════════════════════════════════════════════════
--- § 5. Derived Properties
+-- § 5. Diathesis Alternation Diagnostics
+-- ════════════════════════════════════════════════════
+
+/-- Diathesis alternations from Levin (1993) Part One that serve as diagnostics
+    for verb class membership. The first four are the canonical diagnostics
+    from the Introduction (pp. 5–10); others are class-specific. -/
+inductive DiathesisAlternation where
+  /-- §1.1.2: *she broke the vase* / *the vase broke*. Diagnoses causation + CoS. -/
+  | causativeInchoative
+  /-- §1.2: *the bread cuts easily*. Diagnoses change of state. -/
+  | middle
+  /-- §1.3: *I cut at the bread*. Diagnoses contact + motion. -/
+  | conative
+  /-- §1.4.1: *I hit him on the arm* / *I hit his arm*. Diagnoses contact. -/
+  | bodyPartPossessorAscension
+  /-- §2.1: *give NP NP* / *give NP to NP*. Give/send class. -/
+  | dative
+  /-- §2.3: *spray paint on wall* / *spray wall with paint*. Spray/load class. -/
+  | locative
+  /-- §8.1: *hammer the metal flat*. Available to manner verbs. -/
+  | resultative
+  deriving DecidableEq, BEq, Repr
+
+/-- Predicted alternation participation derived from meaning components.
+
+    The core claim of Levin (1993:5–10): meaning components — diagnosed by
+    alternation participation — form the bridge between verb semantics and
+    verb syntax. Each diagnostic alternation corresponds to a specific
+    configuration of meaning components:
+
+    | Alternation | Required components |
+    |---|---|
+    | Causative/inchoative | changeOfState ∧ causation |
+    | Middle | changeOfState |
+    | Conative | contact ∧ motion |
+    | Body-part possessor ascension | contact |
+    | Resultative | changeOfState ∧ ¬instrumentSpec (manner verbs) |
+
+    Dative and locative alternations are class-specific rather than
+    component-derived, so they must be checked per class. -/
+def MeaningComponents.predictedAlternation : MeaningComponents → DiathesisAlternation → Bool
+  | mc, .causativeInchoative => mc.changeOfState && mc.causation
+  | mc, .middle => mc.changeOfState
+  | mc, .conative => mc.contact && mc.motion
+  | mc, .bodyPartPossessorAscension => mc.contact
+  | _, .dative => false         -- class-specific, not component-derived
+  | _, .locative => false       -- class-specific, not component-derived
+  | mc, .resultative => mc.changeOfState && !mc.instrumentSpec
+
+/-- Full alternation profile for a Levin class, combining component-derived
+    predictions with class-specific overrides for dative and locative. -/
+def LevinClass.participatesIn (c : LevinClass) (alt : DiathesisAlternation) : Bool :=
+  match alt with
+  | .dative => match c with
+    | .give | .send | .tell => true
+    | _ => false
+  | .locative => match c with
+    | .sprayLoad => true
+    | _ => false
+  | other => c.meaningComponents.predictedAlternation other
+
+/-! ### Canonical diagnostic theorems
+
+The four verbs *break*, *cut*, *hit*, *touch* are distinguished by exactly
+their pattern of alternation participation (Levin 1993:5–10). -/
+
+/-- Break participates in causative/inchoative and middle (CoS + causation). -/
+theorem break_alternations :
+    LevinClass.break_.participatesIn .causativeInchoative = true
+    ∧ LevinClass.break_.participatesIn .middle = true
+    ∧ LevinClass.break_.participatesIn .conative = false
+    ∧ LevinClass.break_.participatesIn .bodyPartPossessorAscension = false := ⟨rfl, rfl, rfl, rfl⟩
+
+/-- Cut participates in all four canonical alternations (CoS + contact + motion + causation). -/
+theorem cut_alternations :
+    LevinClass.cut.participatesIn .causativeInchoative = true
+    ∧ LevinClass.cut.participatesIn .middle = true
+    ∧ LevinClass.cut.participatesIn .conative = true
+    ∧ LevinClass.cut.participatesIn .bodyPartPossessorAscension = true := ⟨rfl, rfl, rfl, rfl⟩
+
+/-- Hit participates in conative and body-part ascension (contact + motion, no CoS). -/
+theorem hit_alternations :
+    LevinClass.hit.participatesIn .causativeInchoative = false
+    ∧ LevinClass.hit.participatesIn .middle = false
+    ∧ LevinClass.hit.participatesIn .conative = true
+    ∧ LevinClass.hit.participatesIn .bodyPartPossessorAscension = true := ⟨rfl, rfl, rfl, rfl⟩
+
+/-- Touch participates only in body-part ascension (contact only). -/
+theorem touch_alternations :
+    LevinClass.touch.participatesIn .causativeInchoative = false
+    ∧ LevinClass.touch.participatesIn .middle = false
+    ∧ LevinClass.touch.participatesIn .conative = false
+    ∧ LevinClass.touch.participatesIn .bodyPartPossessorAscension = true := ⟨rfl, rfl, rfl, rfl⟩
+
+/-! ### Cross-class predictions -/
+
+/-- All CoS classes (§45) participate in the causative/inchoative alternation. -/
+theorem cos_classes_causative :
+    LevinClass.break_.participatesIn .causativeInchoative = true
+    ∧ LevinClass.bend.participatesIn .causativeInchoative = true
+    ∧ LevinClass.cooking.participatesIn .causativeInchoative = true
+    ∧ LevinClass.otherCoS.participatesIn .causativeInchoative = true := ⟨rfl, rfl, rfl, rfl⟩
+
+/-- Spray/load participates in the locative alternation. -/
+theorem sprayLoad_locative :
+    LevinClass.sprayLoad.participatesIn .locative = true := rfl
+
+/-- Give class participates in the dative alternation. -/
+theorem give_dative :
+    LevinClass.give.participatesIn .dative = true := rfl
+
+/-- Motion verbs (§51) don't participate in causative alternation (no causation component). -/
+theorem motion_no_causative :
+    LevinClass.mannerOfMotion.participatesIn .causativeInchoative = false
+    ∧ LevinClass.inherentlyDirectedMotion.participatesIn .causativeInchoative = false := ⟨rfl, rfl⟩
+
+/-- Contact verbs predict conative alternation participation. -/
+theorem contact_motion_conative :
+    LevinClass.hit.participatesIn .conative = true
+    ∧ LevinClass.swat.participatesIn .conative = true
+    ∧ LevinClass.poke.participatesIn .conative = true
+    ∧ LevinClass.cut.participatesIn .conative = true := ⟨rfl, rfl, rfl, rfl⟩
+
+/-- Touch verbs lack motion → no conative despite having contact. -/
+theorem touch_no_conative :
+    LevinClass.touch.participatesIn .conative = false := rfl
+
+/-- Cut participates in resultative; break does too (no instrumentSpec). -/
+theorem cut_no_resultative_break_resultative :
+    LevinClass.cut.participatesIn .resultative = false
+    ∧ LevinClass.break_.participatesIn .resultative = true := ⟨rfl, rfl⟩
+
+-- ════════════════════════════════════════════════════
+-- § 6. Predicted Unaccusativity
+-- ════════════════════════════════════════════════════
+
+/-- Predicted unaccusativity from Levin class membership.
+
+    Based on Levin & Rappaport Hovav (1995): unaccusativity correlates with
+    internally caused change of state or directed change, while unergativity
+    correlates with agentive activity.
+
+    For classes that participate in the causative/inchoative alternation
+    (CoS + causation), this predicts unaccusativity for the intransitive
+    (inchoative) alternant. For inherently intransitive classes (emission,
+    existence, appearance), this predicts unaccusativity outright.
+
+    **Key omission**: manner-of-speaking verbs (§37.3) are predicted
+    unergative here (agentive manner), but Storment (2026) shows they
+    are empirically unaccusative. This is a documented divergence. -/
+def LevinClass.predictsUnaccusative : LevinClass → Bool
+  -- §45 Change of State: inchoative alternant is unaccusative
+  | .break_ | .bend | .cooking | .otherCoS
+  | .entitySpecificCoS | .calibratableCoS => true
+  -- §44 Destroy: CoS (total destruction)
+  | .destroy => true
+  -- §22 Combining: CoS (combined state)
+  | .mix | .amalgamate => true
+  -- §23 Separating: CoS
+  | .separate | .split => true
+  -- §48 Appearance: coming into view
+  | .appear => true
+  -- §47 Existence: stative (there-insertion diagnostic)
+  | .exist => true
+  -- §28 Calve: internally caused CoS
+  | .calve => true
+  -- §51.1 Inherently directed motion: goal-oriented
+  | .inherentlyDirectedMotion => true
+  -- §51.2 Leave: source-oriented directed motion
+  | .leave => true
+  -- §43 Emission: source argument is internal
+  | .lightEmission | .soundEmission | .substanceEmission => true
+  -- §57 Weather: expletive subject
+  | .weather => true
+  -- Default: not predicted unaccusative (includes agentive activities,
+  -- manner of motion §51.3, manner of speaking §37.3, body process §40.1)
+  | _ => false
+
+/-! ### Unaccusativity prediction theorems -/
+
+/-- CoS classes (§45) predict unaccusative. -/
+theorem cos_predicts_unaccusative :
+    LevinClass.predictsUnaccusative .break_ = true
+    ∧ LevinClass.predictsUnaccusative .bend = true
+    ∧ LevinClass.predictsUnaccusative .cooking = true
+    ∧ LevinClass.predictsUnaccusative .otherCoS = true := ⟨rfl, rfl, rfl, rfl⟩
+
+/-- Manner-of-motion (§51.3) predicts unergative. -/
+theorem mom_predicts_unergative :
+    LevinClass.predictsUnaccusative .mannerOfMotion = false := rfl
+
+/-- Inherently directed motion (§51.1) predicts unaccusative. -/
+theorem idm_predicts_unaccusative :
+    LevinClass.predictsUnaccusative .inherentlyDirectedMotion = true := rfl
+
+/-- Emission classes (§43) predict unaccusative. -/
+theorem emission_predicts_unaccusative :
+    LevinClass.predictsUnaccusative .lightEmission = true
+    ∧ LevinClass.predictsUnaccusative .soundEmission = true
+    ∧ LevinClass.predictsUnaccusative .substanceEmission = true := ⟨rfl, rfl, rfl⟩
+
+/-- MoS (§37.3) does NOT predict unaccusative — this is the Storment divergence. -/
+theorem mos_predicts_unergative :
+    LevinClass.predictsUnaccusative .mannerOfSpeaking = false := rfl
+
+/-- The causative/inchoative alternation implies the existence of an
+    unaccusative variant: if a class participates in causative/inchoative,
+    it predicts unaccusativity for the inchoative alternant. -/
+theorem causativeInchoative_implies_unaccusative :
+    LevinClass.break_.participatesIn .causativeInchoative = true
+    ∧ LevinClass.predictsUnaccusative .break_ = true
+    ∧ LevinClass.otherCoS.participatesIn .causativeInchoative = true
+    ∧ LevinClass.predictsUnaccusative .otherCoS = true := ⟨rfl, rfl, rfl, rfl⟩
+
+-- ════════════════════════════════════════════════════
+-- § 7. Derived Properties
 -- ════════════════════════════════════════════════════
 
 /-- Does a root profile constrain patient properties? -/

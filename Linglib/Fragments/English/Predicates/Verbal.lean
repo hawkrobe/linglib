@@ -890,6 +890,170 @@ def melt : VerbEntry := .mkRegular {
   } }
 
 -- ════════════════════════════════════════════════════
+-- § Martin, Rose & Nichols (2025) — Thick/Thin Causatives
+-- ════════════════════════════════════════════════════
+
+-- Entries for causative verbs classified by Martin et al. (2025) that don't
+-- already have Fragment entries elsewhere (break_, burn, destroy, melt, kill,
+-- cut, mix, start, stop already defined above).
+
+/-- "activate" — thin causative, CoS without manner. -/
+def activate : VerbEntry := .mkRegular {
+  form := "activate"
+  complementType := .np
+  subjectTheta := some .agent
+  objectTheta := some .patient
+  vendlerClass := some .accomplishment
+  levinClass := some .otherCoS }
+
+/-- "affect" — thin causative, general effect. -/
+def affect : VerbEntry := .mkRegular {
+  form := "affect"
+  complementType := .np
+  subjectTheta := some .agent
+  objectTheta := some .patient
+  vendlerClass := some .activity
+  levinClass := some .destroy }
+
+/-- "change" — thin causative, transformation (§26.6). -/
+def change : VerbEntry := .mkRegular {
+  form := "change"
+  complementType := .np
+  subjectTheta := some .agent
+  objectTheta := some .patient
+  vendlerClass := some .accomplishment
+  levinClass := some .turn }
+
+/-- "damage" — thin causative, partial destruction. -/
+def damage : VerbEntry := .mkRegular {
+  form := "damage"
+  complementType := .np
+  subjectTheta := some .agent
+  objectTheta := some .patient
+  vendlerClass := some .accomplishment
+  levinClass := some .destroy }
+
+/-- "eliminate" — thin causative, removal/destruction. -/
+def eliminate : VerbEntry := .mkRegular {
+  form := "eliminate"
+  complementType := .np
+  subjectTheta := some .agent
+  objectTheta := some .patient
+  vendlerClass := some .accomplishment
+  levinClass := some .destroy }
+
+/-- "hurt" — thin causative, generic harm. -/
+def hurt : VerbEntry where
+  form := "hurt"
+  form3sg := "hurts"
+  formPast := "hurt"
+  formPastPart := "hurt"
+  formPresPart := "hurting"
+  complementType := .np
+  subjectTheta := some .agent
+  objectTheta := some .patient
+  vendlerClass := some .accomplishment
+  levinClass := some .destroy
+
+/-- "restore" — thin causative, reverse transformation (§26.6). -/
+def restore : VerbEntry := .mkRegular {
+  form := "restore"
+  complementType := .np
+  subjectTheta := some .agent
+  objectTheta := some .patient
+  vendlerClass := some .accomplishment
+  levinClass := some .turn }
+
+/-- "trigger" — thin causative, engender class (§27). -/
+def trigger : VerbEntry := .mkRegular {
+  form := "trigger"
+  complementType := .np
+  subjectTheta := some .agent
+  objectTheta := some .patient
+  vendlerClass := some .achievement
+  levinClass := some .engender }
+
+/-- "bury" — thick causative (state), concealment (§16). -/
+def bury : VerbEntry := .mkRegular {
+  form := "bury"
+  complementType := .np
+  subjectTheta := some .agent
+  objectTheta := some .patient
+  vendlerClass := some .accomplishment
+  levinClass := some .conceal }
+
+/-- "drop" — thick causative, caused falling (§45.4). -/
+def drop : VerbEntry := .mkRegular {
+  form := "drop"
+  complementType := .np
+  subjectTheta := some .agent
+  objectTheta := some .patient
+  vendlerClass := some .accomplishment
+  levinClass := some .otherCoS }
+
+/-- "lift" — thick causative, caused upward motion (§11.4 carry). -/
+def lift : VerbEntry := .mkRegular {
+  form := "lift"
+  complementType := .np
+  subjectTheta := some .agent
+  objectTheta := some .patient
+  vendlerClass := some .accomplishment
+  levinClass := some .carry }
+
+/-- "lock" — thick causative, caused secured state (§45.4). -/
+def lock : VerbEntry := .mkRegular {
+  form := "lock"
+  complementType := .np
+  subjectTheta := some .agent
+  objectTheta := some .patient
+  vendlerClass := some .accomplishment
+  levinClass := some .otherCoS }
+
+/-- "shut" — thick causative, caused closed state (§45.4). -/
+def shut : VerbEntry where
+  form := "shut"
+  form3sg := "shuts"
+  formPast := "shut"
+  formPastPart := "shut"
+  formPresPart := "shutting"
+  complementType := .np
+  subjectTheta := some .agent
+  objectTheta := some .patient
+  vendlerClass := some .accomplishment
+  levinClass := some .otherCoS
+
+/-- "spread" — thick causative, spray/load class (§9.7). -/
+def spread : VerbEntry where
+  form := "spread"
+  form3sg := "spreads"
+  formPast := "spread"
+  formPastPart := "spread"
+  formPresPart := "spreading"
+  complementType := .np
+  subjectTheta := some .agent
+  objectTheta := some .patient
+  vendlerClass := some .accomplishment
+  levinClass := some .sprayLoad
+
+/-- "stretch" — thick causative, bend class (§45.2). -/
+def stretch : VerbEntry := .mkRegular {
+  form := "stretch"
+  complementType := .np
+  subjectTheta := some .agent
+  objectTheta := some .patient
+  vendlerClass := some .accomplishment
+  levinClass := some .bend }
+
+/-- "switch" — thick causative, CoS (§45.4). -/
+def switch : VerbEntry := .mkRegular {
+  form := "switch"
+  complementType := .np
+  subjectTheta := some .agent
+  objectTheta := some .patient
+  vendlerClass := some .accomplishment
+  levinClass := some .otherCoS }
+
+-- ════════════════════════════════════════════════════
 -- § Verb Entries — Other
 -- ════════════════════════════════════════════════════
 
@@ -2625,6 +2789,8 @@ def allVerbs : List VerbEntry := [
   let_, have_caus, get_caus, force,
   -- Lexical causatives (Martin, Rose & Nichols 2025)
   kill, break_, tear_, burn, destroy, melt,
+  activate, affect, change, damage, eliminate, hurt, restore, trigger,
+  bury, drop, lift, lock, shut, spread, stretch, switch,
   -- Communication
   say, tell, claim,
   -- Manner of Speaking (Storment 2026)

@@ -583,4 +583,118 @@ theorem vp_smuggling_ordering :
     qi_ordering_manner.result = .passes ∧
     qi_ordering_purpose.result = .passes := ⟨rfl, rfl, rfl, rfl, rfl⟩
 
+-- ════════════════════════════════════════════════════
+-- § 13. Levin (1993) Class Bridge
+-- ════════════════════════════════════════════════════
+
+/-! Levin & Rappaport Hovav (1995) predict unaccusativity from verb class
+    membership: CoS classes (§45) predict unaccusative for their inchoative
+    alternant, manner-of-motion (§51.3) predicts unergative, inherently
+    directed motion (§51.1) predicts unaccusative, and emission classes
+    (§43) predict unaccusative.
+
+    The function `LevinClass.predictsUnaccusative` (in RootDimensions.lean)
+    encodes these predictions. Here we verify them against Fragment entries
+    that carry both `.levinClass` and `.unaccusative` annotations. -/
+
+-- Per-verb agreement: Levin prediction matches empirical annotation
+
+/-- arrive (§51.1 inherentlyDirectedMotion) → predicted + empirically unaccusative. -/
+theorem arrive_levin_agrees :
+    arrive.levinClass = some .inherentlyDirectedMotion
+    ∧ LevinClass.predictsUnaccusative .inherentlyDirectedMotion = true
+    ∧ arrive.unaccusative = true := ⟨rfl, rfl, rfl⟩
+
+/-- run (§51.3 mannerOfMotion) → predicted + empirically unergative. -/
+theorem run_levin_agrees :
+    run.levinClass = some .mannerOfMotion
+    ∧ LevinClass.predictsUnaccusative .mannerOfMotion = false
+    ∧ run.unaccusative = false := ⟨rfl, rfl, rfl⟩
+
+/-- exist (§47) → predicted + empirically unaccusative. -/
+theorem exist_levin_agrees :
+    exist.levinClass = some .exist
+    ∧ LevinClass.predictsUnaccusative .exist = true
+    ∧ exist.unaccusative = true := ⟨rfl, rfl, rfl⟩
+
+/-- appear (§48) → predicted + empirically unaccusative. -/
+theorem appear_levin_agrees :
+    appear.levinClass = some .appear
+    ∧ LevinClass.predictsUnaccusative .appear = true
+    ∧ appear.unaccusative = true := ⟨rfl, rfl, rfl⟩
+
+/-- glow (§43.1 lightEmission) → predicted + empirically unaccusative. -/
+theorem glow_levin_agrees :
+    glow.levinClass = some .lightEmission
+    ∧ LevinClass.predictsUnaccusative .lightEmission = true
+    ∧ glow.unaccusative = true := ⟨rfl, rfl, rfl⟩
+
+/-- buzz (§43.2 soundEmission) → predicted + empirically unaccusative. -/
+theorem buzz_levin_agrees :
+    buzz.levinClass = some .soundEmission
+    ∧ LevinClass.predictsUnaccusative .soundEmission = true
+    ∧ buzz.unaccusative = true := ⟨rfl, rfl, rfl⟩
+
+/-- bleed (§43.4 substanceEmission) → predicted + empirically unaccusative. -/
+theorem bleed_levin_agrees :
+    bleed.levinClass = some .substanceEmission
+    ∧ LevinClass.predictsUnaccusative .substanceEmission = true
+    ∧ bleed.unaccusative = true := ⟨rfl, rfl, rfl⟩
+
+/-- rust (§45.5 entitySpecificCoS) → predicted + empirically unaccusative. -/
+theorem rust_levin_agrees :
+    rust.levinClass = some .entitySpecificCoS
+    ∧ LevinClass.predictsUnaccusative .entitySpecificCoS = true
+    ∧ rust.unaccusative = true := ⟨rfl, rfl, rfl⟩
+
+/-- fidget (§49 bodyInternalMotion) → predicted + empirically unergative. -/
+theorem fidget_levin_agrees :
+    fidget.levinClass = some .bodyInternalMotion
+    ∧ LevinClass.predictsUnaccusative .bodyInternalMotion = false
+    ∧ fidget.unaccusative = false := ⟨rfl, rfl, rfl⟩
+
+/-- kick (§18.1 hit) → predicted + empirically not unaccusative. -/
+theorem kick_levin_agrees :
+    kick.levinClass = some .hit
+    ∧ LevinClass.predictsUnaccusative .hit = false
+    ∧ kick.unaccusative = false := ⟨rfl, rfl, rfl⟩
+
+-- The MoS divergence: Levin class predicts unergative, but empirically unaccusative
+
+/-- MoS verbs: Levin class does NOT predict unaccusativity (agentive manner
+    activity), but they ARE empirically unaccusative (Storment 2026 QI
+    diagnostic). This divergence motivates Storment's syntactic analysis
+    (smuggling) over a purely lexical-semantic account of unaccusativity. -/
+theorem mos_levin_diverges :
+    LevinClass.predictsUnaccusative .mannerOfSpeaking = false
+    ∧ whisper.levinClass = some .mannerOfSpeaking
+    ∧ whisper.unaccusative = true
+    ∧ speak.levinClass = some .mannerOfSpeaking
+    ∧ speak.unaccusative = false := ⟨rfl, rfl, rfl, rfl, rfl⟩
+
+/-- The MoS split: both whisper and speak are §37.3 mannerOfSpeaking,
+    but they diverge on unaccusativity. Levin class membership alone
+    cannot explain this — the split is between verbs that lexicalize
+    their subject as theme (whisper) vs agent (speak). -/
+theorem mos_within_class_split :
+    whisper.levinClass = speak.levinClass
+    ∧ whisper.unaccusative = true
+    ∧ speak.unaccusative = false
+    ∧ whisper.subjectTheta = some .theme
+    ∧ speak.subjectTheta = some .agent := ⟨rfl, rfl, rfl, rfl, rfl⟩
+
+-- CoS classes: causative/inchoative alternation → unaccusative inchoative
+
+/-- Break (§45.1): the Fragment entry is the transitive causative form
+    (unaccusative = false), but the class predicts an unaccusative
+    inchoative alternant ("the vase broke"). The causative/inchoative
+    alternation is the bridge between the transitive entry and the
+    predicted unaccusativity. -/
+theorem break_causativeInchoative_unaccusative :
+    break_.levinClass = some .break_
+    ∧ LevinClass.break_.participatesIn .causativeInchoative = true
+    ∧ LevinClass.predictsUnaccusative .break_ = true
+    ∧ break_.unaccusative = false  -- Fragment entry is the transitive form
+    := ⟨rfl, rfl, rfl, rfl⟩
+
 end Phenomena.ArgumentStructure.Unaccusativity.Bridge
