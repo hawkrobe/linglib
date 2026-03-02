@@ -441,10 +441,10 @@ theorem czechPQForm_consistent_with_pqForm :
   intro pos; cases pos <;> rfl
 
 -- ============================================================================
--- §15: Czech Bias Profiles (Šimík 2024, Table 2 / Staňková 2023)
+-- §15: Czech Bias Profiles (@cite{simik-2024}, Table 2 / @cite{stankova-2023})
 -- ============================================================================
 
-/-- Czech bias profile (Šimík 2024 Table 2, based on Staňková 2023).
+/-- Czech bias profile (@cite{simik-2024} Table 2, based on @cite{stankova-2023}).
 
 Each cell records which Czech PQ forms are felicitous under a given
 combination of contextual evidence × original speaker bias. Empty list = no
@@ -478,7 +478,7 @@ in quiz scenarios where no bias is intended (Šimík 2024 §4.1, ex. 25). -/
 theorem interPPQ_is_default :
     (czechBiasProfile .neutral .neutral).contains .interPPQ = true := rfl
 
-/-- DeclPQs require matching evidential bias (Staňková 2023, Šimík §3.2):
+/-- DeclPQs require matching evidential bias (@cite{stankova-2023}, @cite{simik-2024} §3.2):
 DeclPPQ needs positive evidence, DeclNPQ needs negative evidence. -/
 theorem declPPQ_requires_positive_evidence :
     (czechBiasProfile .forP .neutral).contains .declPPQ = true ∧

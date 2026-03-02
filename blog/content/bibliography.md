@@ -2377,7 +2377,7 @@ cited in: [Bridge](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenome
 
 **Gehrke, B. & \vSim\'ik, R.** (2024). Polar Question Semantics and Bias: Lessons from Slavic. *Topics in the Semantics of Slavic Languages*.\
 [cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Fragments/Czech/Determiners.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Negation/CzechThreeWayNegBridge.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Questions/NegativeQuestions.lean)\
-cited in: [Particles](https://github.com/hawkrobe/linglib/blob/main/Linglib/Fragments/Czech/Particles.lean)
+cited in: [Particles](https://github.com/hawkrobe/linglib/blob/main/Linglib/Fragments/Czech/Particles.lean), [CzechThreeWayNegTypologyBridge](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Negation/CzechThreeWayNegTypologyBridge.lean)
 
 **Grimshaw, J.** (1979). Complement Selection and the Lexicon. *Linguistic Inquiry, 10(2), 279–326*.\
 [cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Questions/Embedding.lean)
@@ -2459,6 +2459,10 @@ cited in: [EntropyNPIs](https://github.com/hawkrobe/linglib/blob/main/Linglib/Th
 **Spector, B.** (2014). Scalar implicatures, blindness and common knowledge.\
 [cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/Interfaces/Felicity.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Questions/EconomyOddness.lean)\
 cited in: [Felicity](https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/Interfaces/Felicity.lean), [EconomyOddness](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Questions/EconomyOddness.lean)
+
+**Sta\vnkov\'a, A.** (2023). The Expression of Speaker's Bias in Czech Polar Questions.\
+[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/manual)\
+cited in: [Particles](https://github.com/hawkrobe/linglib/blob/main/Linglib/Fragments/Czech/Particles.lean), [CzechThreeWayNegTypologyBridge](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Negation/CzechThreeWayNegTypologyBridge.lean)
 
 **Sta\vnkov\'a, A. & \vSim\'ik, R.** (2024). Negation in Czech Polar Questions. *Journal of Slavic Linguistics, 33*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Negation/CzechThreeWayNegBridge.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Questions/NegativeQuestions.lean)\

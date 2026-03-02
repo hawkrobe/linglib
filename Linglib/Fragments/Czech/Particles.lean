@@ -146,8 +146,8 @@ def vubec : ParticleEntry :=
 Rhetorical/adversative particle in PQs and statements. Related to the
 cross-Slavic family of PQ particles including Russian *razve*, Ukrainian
 *xiba*, Belarusian *ci*, Polish *czyż(by)*, Bulgarian *nima*, and
-Czech *copak/cožpak* (@cite{simik-2024} §4.2.4; Nekula 1996; Šebestová & Malá 2016;
-Staňková 2023). Conveys surprise or doubt. -/
+Czech *copak/cožpak* (@cite{simik-2024} §4.2.4; @cite{nekula-1996}; @cite{sebestova-mala-2016};
+@cite{stankova-2023}). Conveys surprise or doubt. -/
 def snad : ParticleEntry :=
   { form := "snad"
   , gloss := "perhaps/surely.not"
@@ -157,8 +157,8 @@ def snad : ParticleEntry :=
 /-- *copak* 'what then, RAZVE'
 
 Expresses a conflict between the speaker's prior belief and current
-contextual evidence (@cite{stankova-simik-2024} §6.2; Štícha 1995b, Nekula 1996,
-Malá 2008, Šebestová & Malá 2016). Licensed in both positive and negative PQs,
+contextual evidence (@cite{stankova-simik-2024} §6.2; @cite{sticha-1995b}, @cite{nekula-1996},
+@cite{sebestova-mala-2016}). Licensed in both positive and negative PQs,
 but requires a biased context (evidential bias).
 
 Key properties (@cite{stankova-simik-2024} §6.2):
