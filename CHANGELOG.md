@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.227.76] - 2026-03-01
+
+### Changed
+- **Bib audit round 6**: fix 24 entries by cross-referencing Lean source context against actual publications. Correct hallucinated titles (goodhue-2022 "It's not just what you say"→"Isn't there more than one way to bias a polar question?", domaneschi-2017 "N-words"→"Bias in polar questions", ninan-2022 "Tense and temporal evidence"→"Assertion, Evidence, and the Future", osswald-kallmeyer-2018 wrong journal→incollection). Fix entry types: horn-2001/kehler-2002/grimshaw-2005/tesnire-1959/pollard-sag-1987→@book, caha-2009/brasoveanu-2007→@phdthesis, kratzer-2021→SEP @incollection, von-fintel-heim-2011→lecture notes, postal-1966→@incollection with Georgetown handle. Add DOIs for snyder-2026, he-kaiser-iskarous-2025, thomas-deo-2020, cariani-wellwood-2023, moravcsik-1974. 768 validated, 233 unvalidated, 1001 total.
+
 ## [0.227.75] - 2026-03-01
 
 ### Changed

@@ -680,13 +680,15 @@
 }
 
 @inproceedings{he-kaiser-iskarous-2025,
-  author    = {He, Muyi and Kaiser, Elsi and Iskarous, Khalil},
+  author    = {He, Muxuan and Kaiser, Elsi and Iskarous, Khalil},
   year      = {2025},
   title     = {Modeling Sentence Polarity Asymmetries: Fuzzy Interpretations in a Possibly Wonky World},
   booktitle = {Proceedings of the Society for Computation in Linguistics},
+  pages     = {74--83},
+  doi       = {10.7275/scil.3180},
   url       = {https://aclanthology.org/2025.scil-1.7/},
   subfield  = {pragmatics/rsa},
-  validated = {false},
+  validated = {true},
   role      = {formalized},
   sources   = {Theories/Pragmatics/RSA/Implementations/HeKaiserIskarous2025.lean}
 }
@@ -725,7 +727,8 @@
   howpublished = {arXiv:2005.06641},
   url       = {https://arxiv.org/abs/2005.06641},
   subfield  = {pragmatics/rsa},
-  validated = {false},
+  doi       = {10.48550/arxiv.2005.06641},
+  validated = {true},
   role      = {formalized},
   sources   = {Theories/Pragmatics/RSA/Extensions/InformationTheory/Basic.lean}
 }
@@ -834,7 +837,8 @@
   title     = {Causes and Explanations},
   subfield  = {pragmatics/rsa},
   role      = {cited},
-  validated = {false},
+  doi       = {10.1093/bjps/axi147},
+  validated = {true},
   sources   = {Theories/Pragmatics/RSA/Implementations/HardingGerstenbergIcard2025.lean}
 }
 % REF: Baker, Saxe & Tenenbaum (2009). Action Understanding as Inverse Planning.
@@ -1995,9 +1999,10 @@
   journal   = {Working Papers on Language Universals},
   volume    = {15},
   pages     = {25--140},
+  doi       = {10.5281/zenodo.1423196},
   subfield  = {semantics/compositional},
   role      = {cited},
-  validated = {false},
+  validated = {true},
   sources   = {Core/Case/Hierarchy.lean;Theories/Syntax/Minimalism/Core/CaseDiscrimination.lean}
 }
 % REF: Fauconnier, G. (1975). Polarity and the scale principle.
@@ -2642,7 +2647,8 @@
   journal   = {Strong Readings of Donkey Sentences.},
   subfield  = {semantics/compositional},
   role      = {cited},
-  validated = {false},
+  doi       = {10.1007/bf00984775},
+  validated = {true},
   sources   = {Phenomena/Anaphora/Bridge/TypeTheoreticAnaphora.lean;Phenomena/Anaphora/DonkeyAnaphora.lean;Theories/Semantics/TypeTheoretic/Underspecification.lean}
 }
 % REF: Fagin, R., Halpern, J., Moses, Y. & Vardi, M. (1995). Reasoning about Knowledge. MIT Press.
@@ -2786,21 +2792,23 @@
   title     = {Possession: Cognitive Sources, Forces, and Grammaticalization},
   subfield  = {semantics/compositional},
   role      = {cited},
-  validated = {false},
+  doi       = {10.1017/cbo9780511581908},
+  validated = {true},
   sources   = {Phenomena/Possession/Typology.lean}
 }
 % REF: Marantz, A. (1997). No escape from syntax. U. Penn WPL 4(2), 201–225.
 @article{marantz-1997,
-  author    = {Marantz, A},
+  author    = {Marantz, Alec},
   year      = {1997},
-  title     = {No escape from syntax},
-  journal   = {U. Penn WPL},
+  title     = {No escape from syntax: Don't try morphological analysis in the privacy of your own lexicon},
+  journal   = {University of Pennsylvania Working Papers in Linguistics},
   volume    = {4},
   number    = {2},
   pages     = {201--225},
+  url       = {https://repository.upenn.edu/pwpl/vol4/iss2/14/},
   subfield  = {semantics/compositional},
   role      = {cited},
-  validated = {false},
+  validated = {true},
   sources   = {Phenomena/Morphology/Bridge/CategorialFeatures.lean;Theories/Morphology/DM/Categorizer.lean}
 }
 % REF: Stassen, L. (1997). Intransitive Predication. Oxford University Press.
@@ -2989,7 +2997,8 @@
   title     = {True to Form: Rising and Falling Declaratives as Questions in English},
   subfield  = {semantics/compositional},
   role      = {cited},
-  validated = {false},
+  doi       = {10.4324/9780203502013},
+  validated = {true},
   sources   = {Comparisons/AssertionTheories.lean;Core/Discourse/Commitment.lean;Core/Interfaces/AssertionTheory.lean;Phenomena/Assertion/Basic.lean;Phenomena/Assertion/Bridge/GunlogsonBias.lean;Phenomena/Assertion/Bridge/GunlogsonRising.lean;Theories/Pragmatics/Assertion/Gunlogson.lean}
 }
 % REF: Haspelmath, M. (2001). The European linguistic area: Standard Average European. In Haspelmath et al. (eds.), Language Ty
@@ -3007,14 +3016,16 @@
   sources   = {Phenomena/Comparison/Typology.lean}
 }
 % REF: Horn, L. (2001). A Natural History of Negation. Ch. 1: "Contradiction".
-@article{horn-2001,
-  author    = {Horn, L},
+@book{horn-2001,
+  author    = {Horn, Laurence R.},
   year      = {2001},
   title     = {A Natural History of Negation},
-  journal   = {Ch. 1: "Contradiction".},
+  publisher = {CSLI Publications},
+  edition   = {2},
+  isbn      = {9781575863368},
   subfield  = {semantics/compositional},
   role      = {cited},
-  validated = {false},
+  validated = {true},
   sources   = {Core/Logic/SquareOfOpposition.lean;Theories/Semantics/Attitudes/NegRaising.lean}
 }
 % REF: Israel, M. (2001). Minimizers, maximizers and the rhetoric of scalar reasoning.
@@ -3076,14 +3087,15 @@
   sources   = {Phenomena/Generics/BarePlurals.lean}
 }
 % REF: Kehler, A. (2002). *Coherence, Reference, and the Theory of Grammar*. CSLI.
-@article{kehler-2002,
-  author    = {Kehler, A},
+@book{kehler-2002,
+  author    = {Kehler, Andrew},
   year      = {2002},
   title     = {Coherence, Reference, and the Theory of Grammar},
-  journal   = {CSLI.},
+  publisher = {CSLI Publications},
+  isbn      = {9781575862163},
   subfield  = {semantics/compositional},
   role      = {cited},
-  validated = {false},
+  validated = {true},
   sources   = {Core/Discourse/CoherenceRelation.lean}
 }
 % REF: McCloskey, J. (2002). Resumption, successive cyclicity, and the locality of operations. In S. D. Epstein & T. D. Seely (
@@ -3146,7 +3158,8 @@
   title     = {Copulas: Universals in the Categorization of the Lexicon},
   subfield  = {semantics/compositional},
   role      = {cited},
-  validated = {false},
+  doi       = {10.1093/acprof:oso/9780199258505.001.0001},
+  validated = {true},
   sources   = {Phenomena/Copulas/Typology.lean}
 }
 % REF: Aikhenvald, A. Y. (2004). Evidentiality. Oxford University Press.
@@ -3242,14 +3255,15 @@
   sources   = {Core/Case/Syncretism.lean}
 }
 % REF: Grimshaw, J. (2005). Words and Structure. CSLI Lecture Notes.
-@article{grimshaw-2005,
-  author    = {Grimshaw, J},
+@book{grimshaw-2005,
+  author    = {Grimshaw, Jane},
   year      = {2005},
   title     = {Words and Structure},
-  journal   = {CSLI Lecture Notes.},
+  publisher = {CSLI Publications},
+  isbn      = {9781575864211},
   subfield  = {semantics/compositional},
   role      = {cited},
-  validated = {false},
+  validated = {true},
   sources   = {Theories/Interfaces/SyntaxSemantics/Borer2005.lean;Theories/Syntax/Minimalism/Core/ClauseSpine.lean;Theories/Syntax/Minimalism/Formal/ExtendedProjection/Basic.lean;Theories/Syntax/Minimalism/Formal/ExtendedProjection/Properties.lean;Theories/Syntax/Minimalism/Formal/Sluicing/FormalMatching.lean}
 }
 % REF: Lewis, R.L. & Vasishth, S. (2005). An activation-based model.
@@ -3348,7 +3362,8 @@
   title     = {Approximate interpretation of number words},
   subfield  = {semantics/compositional},
   role      = {cited},
-  validated = {false},
+  doi       = {10.18452/9508},
+  validated = {true},
   sources   = {Core/Scales/Roundness.lean;Fragments/English/NumeralModifiers.lean;Phenomena/Imprecision/Numerals.lean;Phenomena/Quantification/Basic.lean;Phenomena/Quantification/Data.lean;Theories/Semantics/Lexical/Numeral/Precision.lean}
 }
 % REF: Longacre, R. E. (2007). Sentences as combinations of clauses. In Shopen (ed.), Language Typology and Syntactic Descripti
@@ -3463,14 +3478,15 @@
   sources   = {Phenomena/Alignment/Typology.lean}
 }
 % REF: Caha, P. (2009). *The Nanosyntax of Case*. Ph.D. thesis, Tromsø.
-@article{caha-2009,
-  author    = {Caha, P},
+@phdthesis{caha-2009,
+  author    = {Caha, Pavel},
   year      = {2009},
   title     = {The Nanosyntax of Case},
-  journal   = {Ph.D. thesis, Tromsø.},
+  school    = {University of Troms{\o}},
+  url       = {https://munin.uit.no/handle/10037/2203},
   subfield  = {semantics/compositional},
   role      = {cited},
-  validated = {false},
+  validated = {true},
   sources   = {Core/Case/Syncretism.lean}
 }
 % REF: Gawron, J.M. (2009). Paths and scalar change.
@@ -4011,14 +4027,18 @@
   sources   = {Phenomena/Negation/ExpletiveNegationBridge.lean}
 }
 % REF: Osswald, R. & Kallmeyer, L. (2018). Towards a Formalization of Role-Semantic Resources Using Frame Logic. Nat. Lang. & L
-@article{osswald-kallmeyer-2018,
-  author    = {Osswald, R. and Kallmeyer, L},
+@incollection{osswald-kallmeyer-2018,
+  author    = {Osswald, Rainer and Kallmeyer, Laura},
   year      = {2018},
-  title     = {Towards a Formalization of Role-Semantic Resources Using Frame Logic},
-  journal   = {Nat. Lang. & Ling. Theory.},
+  title     = {Towards a formalization of {R}ole and {R}eference {G}rammar},
+  booktitle = {Applying and Expanding Role and Reference Grammar},
+  editor    = {Kailuweit, Rolf and K{\"u}nkel, Lisann and Staudinger, Eva},
+  pages     = {355--378},
+  publisher = {Albert-Ludwigs-Universit{\"a}t},
+  address   = {Freiburg},
   subfield  = {semantics/compositional},
   role      = {cited},
-  validated = {false},
+  validated = {true},
   sources   = {Theories/Semantics/TypeTheoretic/DFrame.lean;Theories/Semantics/TypeTheoretic/FrameBridge.lean}
 }
 % REF: Portner, P. (2018). Mood. Oxford Handbook of Modality and Mood.
@@ -4118,14 +4138,17 @@
   sources   = {Phenomena/Negation/ExpletiveNegationBridge.lean}
 }
 % REF: Kratzer, A. (2021). Situations in natural language semantics. SEP.
-@article{kratzer-2021,
-  author    = {Kratzer, A},
+@incollection{kratzer-2021,
+  author    = {Kratzer, Angelika},
   year      = {2021},
-  title     = {Situations in natural language semantics},
-  journal   = {SEP.},
+  title     = {Situations in Natural Language Semantics},
+  booktitle = {The Stanford Encyclopedia of Philosophy},
+  editor    = {Zalta, Edward N.},
+  publisher = {Metaphysics Research Lab, Stanford University},
+  url       = {https://plato.stanford.edu/entries/situations-semantics/},
   subfield  = {semantics/compositional},
   role      = {cited},
-  validated = {false},
+  validated = {true},
   sources   = {Core/Temporal/Time.lean}
 }
 % REF: Le Bruyn, B. & de Swart, H. (2022). Exceptional wide scope of bare nominals.
@@ -4299,15 +4322,16 @@
 }
 % REF: Snyder, E. (2026). Numbers as kinds. *L&P* 49, 57–100.
 @article{snyder-2026,
-  author    = {Snyder, E},
+  author    = {Snyder, Eric},
   year      = {2026},
-  title     = {Numbers as kinds},
+  title     = {Numbers as kinds: towards an improved explanation of number word polysemy},
   journal   = {Linguistics and Philosophy},
   volume    = {49},
   pages     = {57--100},
+  doi       = {10.1007/s10988-025-09445-9},
   subfield  = {semantics/compositional},
   role      = {cited},
-  validated = {false},
+  validated = {true},
   sources   = {Phenomena/Numerals/Snyder2026Bridge.lean;Theories/Semantics/Lexical/Numeral/Polysemy.lean}
 }
 % REF: Stojković, J. (2026). Same Form, Different Grammars: The Slavic [ov]∼[u] Alternation. In *Advances in Formal Slavic Ling
@@ -4941,14 +4965,15 @@
   sources   = {Theories/Semantics/Modality/Directive.lean}
 }
 % REF: von Fintel & Heim (2011). Intensional Semantics. Ch 1.
-@article{von-fintel-heim-2011,
-  author    = {von Fintel and Heim},
+@misc{von-fintel-heim-2011,
+  author    = {von Fintel, Kai and Heim, Irene},
   year      = {2011},
   title     = {Intensional Semantics},
-  journal   = {Ch 1.},
+  howpublished = {Lecture notes, MIT},
+  url       = {http://web.mit.edu/fintel/fintel-heim-intensional.pdf},
   subfield  = {semantics/modality},
   role      = {cited},
-  validated = {false},
+  validated = {true},
   sources   = {Core/Semantics/Intension.lean;Phenomena/Conditionals/Data.lean}
 }
 % REF: von Fintel, K. (2012). Subjunctive conditionals. In Russell & Fara, Routledge Companion to Philosophy of Language.
@@ -4973,20 +4998,22 @@
   booktitle = {Beyond Expressives},
   subfield  = {semantics/modality},
   role      = {cited},
-  validated = {false},
+  doi       = {10.1163/9789004183988_008},
+  validated = {true},
   sources   = {Phenomena/Negation/CzechThreeWayNegTypologyBridge.lean;Theories/Semantics/Modality/BiasedPQ.lean}
 }
 % REF: Domaneschi, F. et al. (2017). N-words and sentential negation: Evidence from polarity, scope and discourse. LI 48(3).
 @article{domaneschi-2017,
-  author    = {Domaneschi, F. et al},
+  author    = {Domaneschi, Filippo and Romero, Maribel and Braun, Bettina},
   year      = {2017},
-  title     = {N-words and sentential negation: Evidence from polarity, scope and discourse},
-  journal   = {Linguistic Inquiry},
-  volume    = {48},
-  number    = {3},
+  title     = {Bias in polar questions: Evidence from {E}nglish and {G}erman production experiments},
+  journal   = {Glossa: a journal of general linguistics},
+  volume    = {2},
+  number    = {1},
+  doi       = {10.5334/gjgl.27},
   subfield  = {semantics/modality},
   role      = {cited},
-  validated = {false},
+  validated = {true},
   sources   = {Theories/Semantics/Modality/BiasedPQ.lean}
 }
 % REF: AnderBois, S. (2019). Negation, alternatives, and negative polar questions. In SALT 29.
@@ -5027,13 +5054,16 @@
 }
 % REF: Goodhue, D. (2022). It's not just what you say, it's how you say it. L&P.
 @article{goodhue-2022,
-  author    = {Goodhue, D},
+  author    = {Goodhue, Daniel},
   year      = {2022},
-  title     = {It's not just what you say, it's how you say it},
-  journal   = {L&P.},
+  title     = {Isn't there more than one way to bias a polar question?},
+  journal   = {Natural Language Semantics},
+  volume    = {30},
+  pages     = {379--413},
+  doi       = {10.1007/s11050-022-09198-2},
   subfield  = {semantics/modality},
   role      = {cited},
-  validated = {false},
+  validated = {true},
   sources   = {Theories/Semantics/Modality/BiasedPQ.lean}
 }
 % REF: Romero, M. (2024). Biased Polar Questions. Annual Review of Linguistics 10:279–302.
@@ -5172,11 +5202,11 @@
 @book{hintikka-1969,
   author    = {Hintikka, Jaakko},
   year      = {1962},
-  title     = {Knowledge and Belief},
+  title     = {Knowledge and Belief: An Introduction to the Logic of the Two Notions},
   publisher = {Cornell University Press},
   isbn      = {9781904987086},
   subfield  = {semantics/reference},
-  validated = {false},
+  validated = {true},
   role      = {foundational},
   sources   = {Theories/Semantics/Attitudes/Doxastic.lean}
 }
@@ -5289,7 +5319,8 @@
   journal   = {Linguistics & Philosophy.},
   subfield  = {semantics/reference},
   role      = {cited},
-  validated = {false},
+  doi       = {10.1023/A:1022225203544},
+  validated = {true},
   sources   = {Core/Context/Tower.lean;Phenomena/Reference/Bridge/TowerBridge.lean;Phenomena/TenseAspect/Bridge/TowerBridge.lean;Theories/Semantics/Reference/Monsters.lean;Theories/Semantics/Reference/ShiftedIndexicals.lean}
 }
 % REF: Schlenker, P. (2004). Context of Thought and Context of Utterance. *Linguistics & Philosophy*.
@@ -5358,12 +5389,13 @@
   author    = {Thomas, Wes and Deo, Ashwini},
   year      = {2020},
   title     = {The Interaction of \emph{just} with Modified Scalar Predicates},
-  journal   = {Sinn und Bedeutung},
+  booktitle = {Proceedings of Sinn und Bedeutung},
   volume    = {24},
   number    = {2},
   pages     = {354--372},
+  doi       = {10.18148/sub/2020.v24i2.902},
   subfield  = {semantics/focus},
-  validated = {false},
+  validated = {true},
   role      = {formalized},
   sources   = {Theories/Semantics/Degree/Granularity.lean;Phenomena/Focus/Bridge/GranularityJust.lean}
 }
@@ -6681,15 +6713,17 @@
 }
 % REF: Ninan, D. (2022). Tense and temporal evidence. *L&P* 45:941–969.
 @article{ninan-2022,
-  author    = {Ninan, D},
+  author    = {Ninan, Dilip},
   year      = {2022},
-  title     = {Tense and temporal evidence},
-  journal   = {Linguistics and Philosophy},
-  volume    = {45},
-  pages     = {941--969},
+  title     = {Assertion, Evidence, and the Future},
+  journal   = {The Philosophical Review},
+  volume    = {131},
+  number    = {4},
+  pages     = {405--451},
+  doi       = {10.1215/00318108-10136817},
   subfield  = {semantics/tense},
   role      = {cited},
-  validated = {false},
+  validated = {true},
   sources   = {Theories/Semantics/Tense/Evidential.lean}
 }
 % REF: Rappaport Hovav, M. & Levin, B. (2024). Variable agentivity: Polysemy or underspecification? In *The Landscape of Verb C
@@ -7581,14 +7615,17 @@
   sources   = {Phenomena/Plurals/Homogeneity.lean;Phenomena/Plurals/NonMaximality.lean;Theories/Semantics/Lexical/Plural/Distributivity.lean}
 }
 % REF: Cariani, F., Santorio, P. & Wellwood, A. (2023). Positive gradable adjective ascriptions without positive morphemes. SuB
-@article{cariani-wellwood-2023,
-  author    = {Cariani, F., Santorio, P. and Wellwood, A},
+@inproceedings{cariani-wellwood-2023,
+  author    = {Cariani, Fabrizio and Santorio, Paolo and Wellwood, Alexis},
   year      = {2023},
   title     = {Positive gradable adjective ascriptions without positive morphemes},
-  journal   = {SuB 27: 97-113.},
+  booktitle = {Proceedings of Sinn und Bedeutung},
+  volume    = {27},
+  pages     = {97--113},
+  doi       = {10.18148/sub/2023.v27.1056},
   subfield  = {semantics/lexical},
   role      = {cited},
-  validated = {false},
+  validated = {true},
   sources   = {Theories/Semantics/Lexical/Adjective/StatesBased.lean}
 }
 
@@ -7813,13 +7850,16 @@
 }
 % REF: Hurford (1974). Exclusive or inclusive disjunction. Foundations of Language.
 @article{hurford-1974,
-  author    = {Hurford},
+  author    = {Hurford, James R.},
   year      = {1974},
   title     = {Exclusive or inclusive disjunction},
-  journal   = {Foundations of Language.},
+  journal   = {Foundations of Language},
+  volume    = {11},
+  number    = {3},
+  pages     = {409--411},
   subfield  = {semantics/questions},
   role      = {cited},
-  validated = {false},
+  validated = {true},
   sources   = {Theories/Pragmatics/NeoGricean/Implementations/FoxSpector2018.lean;Theories/Pragmatics/RSA/ScalarImplicatures/Hurford.lean;Theories/Semantics/Questions/EconomyOddness.lean}
 }
 % REF: Grimshaw, J. (1979). Complement selection and the lexicon.
@@ -8688,7 +8728,8 @@
   title     = {The Semantics of Definite and Indefinite Noun Phrases},
   school    = {University of Massachusetts Amherst},
   subfield  = {semantics/dynamic},
-  validated = {false},
+  doi       = {10.5281/zenodo.8100765},
+  validated = {true},
   role      = {foundational},
   sources   = {Core/Definiteness.lean;Phenomena/Anaphora/DonkeyAnaphora.lean;Theories/Semantics/Dynamic/State.lean}
 }
@@ -8713,8 +8754,9 @@
   year      = {2021},
   title     = {Post-Suppositions and Semantic Theory},
   journal   = {Journal of Semantics},
+  url       = {https://lingbuzz.net/lingbuzz/003243},
   subfield  = {semantics/dynamic},
-  validated = {false},
+  validated = {true},
   role      = {cited},
   sources   = {Phenomena/Plurals/Studies/Charlow2021/Data.lean;Theories/Semantics/Dynamic/Effects/Nondeterminism/PointwiseUpdate.lean}
 }
@@ -8803,14 +8845,17 @@
   sources   = {Phenomena/Anaphora/Bridge/PIPAnaphora.lean;Phenomena/Anaphora/DonkeyAnaphora.lean}
 }
 % REF: Postal, P. (1966). On So-Called 'Pronouns' in English. Georgetown Monograph 19.
-@article{postal-1966,
-  author    = {Postal, P},
+@incollection{postal-1966,
+  author    = {Postal, Paul M.},
   year      = {1966},
-  title     = {On So-Called 'Pronouns' in English},
-  journal   = {Georgetown Monograph 19.},
+  title     = {On So-Called `Pronouns' in {E}nglish},
+  booktitle = {Report of the Seventeenth Annual Round Table Meeting on Linguistics and Language Studies},
+  editor    = {Dinneen, Francis},
+  publisher = {Georgetown University Press},
+  url       = {https://hdl.handle.net/10822/555459},
   subfield  = {semantics/dynamic},
   role      = {cited},
-  validated = {false},
+  validated = {true},
   sources   = {Phenomena/Anaphora/Typology.lean;Theories/Semantics/Intensional/Situations/Elbourne.lean}
 }
 % REF: Kaplan, D. (1968). Quantifying In.
@@ -8951,7 +8996,8 @@
   title     = {The Typology of Structural Deficiency},
   subfield  = {semantics/dynamic},
   role      = {cited},
-  validated = {false},
+  doi       = {10.1515/9783110804010.145},
+  validated = {true},
   sources   = {Phenomena/Anaphora/Typology.lean}
 }
 % REF: König, E. & P. Siemund (2000). Intensifiers and Reflexives.
@@ -9026,14 +9072,15 @@
   sources   = {Theories/Semantics/Dynamic/Effects/Bilateral/FreeChoice.lean}
 }
 % REF: Brasoveanu, A. (2007). Structured Nominal and Modal Reference. Ch. 3.
-@article{brasoveanu-2007,
-  author    = {Brasoveanu, A},
+@phdthesis{brasoveanu-2007,
+  author    = {Brasoveanu, Adrian},
   year      = {2007},
   title     = {Structured Nominal and Modal Reference},
-  journal   = {Ch. 3.},
+  school    = {Rutgers University},
+  url       = {https://people.ucsc.edu/~abrsvn/diss_brasoveanu_2007.pdf},
   subfield  = {semantics/dynamic},
   role      = {cited},
-  validated = {false},
+  validated = {true},
   sources   = {Theories/Semantics/Dynamic/Core/DynamicTy2.lean;Theories/Semantics/Dynamic/Systems/DynamicGQ/Basic.lean}
 }
 % REF: Dekker, P. (2008). A Guide to Dynamic Semantics.
@@ -9964,7 +10011,7 @@
   pages     = {365--424},
   url       = {https://www.jstor.org/stable/4178634},
   subfield  = {syntax},
-  validated = {false},
+  validated = {true},
   role      = {formalized},
   sources   = {Phenomena/WordOrder/SubjectAuxInversion.lean}
 }
@@ -10137,14 +10184,15 @@
 }
 
 % REF: Tesnière, L. (1959). *Éléments de syntaxe structurale*. Paris: Klincksieck.
-@article{tesnire-1959,
-  author    = {Tesnière, L},
+@book{tesnire-1959,
+  author    = {Tesni{\`e}re, Lucien},
   year      = {1959},
-  title     = {Éléments de syntaxe structurale},
-  journal   = {Paris: Klincksieck.},
+  title     = {{\'E}l{\'e}ments de syntaxe structurale},
+  publisher = {Klincksieck},
+  address   = {Paris},
   subfield  = {syntax},
   role      = {cited},
-  validated = {false},
+  validated = {true},
   sources   = {Phenomena/ArgumentStructure/Bridge/DGValency.lean;Theories/Syntax/DependencyGrammar/CRDC.lean}
 }
 % REF: Greenberg, J. (1963). Some universals of grammar. In Greenberg (ed.), Universals of Language.
@@ -10387,14 +10435,16 @@
   sources   = {Phenomena/FillerGap/Typology.lean}
 }
 % REF: Pollard, C. & Sag, I. (1987). Information-Based Syntax and Semantics. Vol. 1.
-@article{pollard-sag-1987,
-  author    = {Pollard, C. and Sag, I},
+@book{pollard-sag-1987,
+  author    = {Pollard, Carl and Sag, Ivan A.},
   year      = {1987},
   title     = {Information-Based Syntax and Semantics},
-  journal   = {Vol. 1.},
+  volume    = {1},
+  publisher = {CSLI Publications},
+  isbn      = {9780937073247},
   subfield  = {syntax},
   role      = {cited},
-  validated = {false},
+  validated = {true},
   sources   = {Theories/Syntax/HPSG/Core/LexicalRules.lean}
 }
 % REF: Dowty (1988) "Type-raising, functional composition, and non-constituent conjunction"
@@ -10933,7 +10983,8 @@
   title     = {"Phase Theory: An Introduction"},
   subfield  = {syntax},
   role      = {cited},
-  validated = {false},
+  doi       = {10.1017/cbo9781139644037},
+  validated = {true},
   sources   = {Theories/Syntax/Minimalism/Core/Phase.lean}
 }
 % REF: Mitrović & Sauerland (2014). Decomposing coordination. NELS 44.
@@ -11722,7 +11773,8 @@
   title     = {The Handbook of Morphology},
   subfield  = {morphology},
   role      = {cited},
-  validated = {false},
+  doi       = {10.1111/b.9780631226949.2001.x},
+  validated = {true},
   sources   = {Theories/Morphology/Core/Circumfix.lean}
 }
 % REF: Cheng, L. L.-S. & Sybesma, R. (1999). Bare and not-so-bare nouns.
