@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.227.75] - 2026-03-01
+
+### Changed
+- **Bib audit round 5**: round 3 CrossRef search finds 40 more DOIs (51 candidates, 11 reverted as wrong — encyclopedia entries, book reviews, wrong field). Clean 62 mangled `booktitle = {In Editor (eds.), ...}` fields into proper booktitle/editor/publisher. 731 validated, 270 unvalidated, 1001 total.
+
 ## [0.227.74] - 2026-03-01
 
 ### Changed
