@@ -1040,7 +1040,7 @@
   title     = {On the Semantic Properties of Logical Operators in {E}nglish},
   school    = {University of California, Los Angeles},
   subfield  = {pragmatics/neogricean},
-  validated = {false},
+  validated = {true},
   role      = {foundational},
   sources   = {Core/Scales/HornScale.lean;Theories/Pragmatics/NeoGricean/Core/Alternatives.lean}
 }
@@ -1054,7 +1054,7 @@
   publisher = {Georgetown University Press},
   pages     = {11--42},
   subfield  = {pragmatics/neogricean},
-  validated = {false},
+  validated = {true},
   role      = {foundational},
   sources   = {Theories/Pragmatics/NeoGricean/Core/Alternatives.lean;Phenomena/Negation/FlexibleNegation.lean}
 }
@@ -1246,13 +1246,15 @@
 }
 
 % REF: Jespersen, O. (1917). Negation in English and Other Languages.
-@misc{jespersen-1917,
-  author    = {Jespersen, O},
+@book{jespersen-1917,
+  author    = {Jespersen, Otto},
   year      = {1917},
-  title     = {Negation in English and Other Languages},
+  title     = {Negation in {English} and Other Languages},
+  publisher = {A.F. H{\o}st},
+  address   = {Copenhagen},
   subfield  = {pragmatics/neogricean},
   role      = {cited},
-  validated = {false},
+  validated = {true},
   sources   = {Theories/Pragmatics/NeoGricean/NegationScope.lean}
 }
 % REF: Bierwisch, M. (1989). The semantics of gradation.
@@ -1394,7 +1396,7 @@
   pages     = {179--221},
   isbn      = {157586181X},
   subfield  = {pragmatics/dts},
-  validated = {false},
+  validated = {true},
   role      = {formalized},
   sources   = {Theories/Pragmatics/DecisionTheoretic/Core.lean}
 }
@@ -1438,7 +1440,7 @@
   title     = {Towards a Dynamic Pragmatics},
   school    = {Stanford University},
   subfield  = {pragmatics/assertion},
-  validated = {false},
+  validated = {true},
   role      = {formalized},
   sources   = {Theories/Pragmatics/Assertion/Lauer.lean}
 }
@@ -1502,9 +1504,9 @@
   year      = {2004},
   title     = {True to Form: Rising and Falling Declaratives as Questions in {E}nglish},
   publisher = {Routledge},
-  isbn      = {0-415-96781-3},
+  isbn      = {9780415967815},
   subfield  = {pragmatics/assertion},
-  validated = {false},
+  validated = {true},
   role      = {formalized},
   sources   = {Theories/Pragmatics/Assertion/Gunlogson.lean}
 }
@@ -1893,13 +1895,16 @@
   sources   = {Core/Agent/Psychophysics.lean}
 }
 % REF: Austin (1961). Truth.
-@misc{austin-1961,
-  author    = {Austin},
+@incollection{austin-1961,
+  author    = {Austin, J. L.},
   year      = {1961},
   title     = {Truth},
+  booktitle = {Philosophical Papers},
+  editor    = {Urmson, J. O. and Warnock, G. J.},
+  publisher = {Oxford University Press},
   subfield  = {semantics/compositional},
   role      = {cited},
-  validated = {false},
+  validated = {true},
   sources   = {Theories/Semantics/TypeTheoretic/Modality.lean}
 }
 % REF: Jeffrey, R. (1965). The Logic of Decision.
@@ -1937,13 +1942,15 @@
   sources   = {Phenomena/Assertion/Basic.lean}
 }
 % REF: Borkin, A. (1971). Polarity items in questions.
-@misc{borkin-1971,
-  author    = {Borkin, A},
+@inproceedings{borkin-1971,
+  author    = {Borkin, Ann},
   year      = {1971},
-  title     = {Polarity items in questions},
+  title     = {Polarity Items in Questions},
+  booktitle = {Papers from the Seventh Regional Meeting of the Chicago Linguistic Society (CLS 7)},
+  pages     = {53--62},
   subfield  = {semantics/compositional},
   role      = {cited},
-  validated = {false},
+  validated = {true},
   sources   = {Phenomena/Polarity/NPIs.lean}
 }
 % REF: Carnap (1971). A Basic System of Inductive Logic. Part I.
@@ -1959,23 +1966,30 @@
   sources   = {Core/Partition.lean}
 }
 % REF: Krantz, D. et al. (1971). Foundations of measurement, Vol. 1.
-@misc{krantz-1971,
-  author    = {Krantz, D. et al},
+@book{krantz-1971,
+  author    = {Krantz, David H. and Luce, R. Duncan and Suppes, Patrick and Tversky, Amos},
   year      = {1971},
-  title     = {Foundations of measurement, Vol. 1},
+  title     = {Foundations of Measurement, Volume {I}: Additive and Polynomial Representations},
+  publisher = {Academic Press},
+  address   = {New York},
+  isbn      = {9780124254015},
   subfield  = {semantics/compositional},
   role      = {cited},
-  validated = {false},
+  validated = {true},
   sources   = {Core/Scales/Scale.lean}
 }
 % REF: Bresnan, J. (1973). Syntax of the comparative clause construction.
-@misc{bresnan-1973,
-  author    = {Bresnan, J},
+@article{bresnan-1973,
+  author    = {Bresnan, Joan W.},
   year      = {1973},
-  title     = {Syntax of the comparative clause construction},
+  title     = {Syntax of the Comparative Clause Construction in {English}},
+  journal   = {Linguistic Inquiry},
+  volume    = {4},
+  number    = {3},
+  pages     = {275--343},
   subfield  = {semantics/compositional},
   role      = {cited},
-  validated = {false},
+  validated = {true},
   sources   = {Phenomena/Comparison/Comparative/Data.lean;Phenomena/Comparison/CrossCategorial.lean}
 }
 % REF: Sanches, M. & Slobin, D. I. (1973). Numeral classifiers and plural marking: an implicational universal. Working Papers i
@@ -2006,13 +2020,15 @@
   sources   = {Core/Case/Hierarchy.lean;Theories/Syntax/Minimalism/Core/CaseDiscrimination.lean}
 }
 % REF: Fauconnier, G. (1975). Polarity and the scale principle.
-@misc{fauconnier-1975,
-  author    = {Fauconnier, G},
+@inproceedings{fauconnier-1975,
+  author    = {Fauconnier, Gilles},
   year      = {1975},
-  title     = {Polarity and the scale principle},
+  title     = {Polarity and the Scale Principle},
+  booktitle = {Papers from the 11th Regional Meeting of the Chicago Linguistic Society (CLS 11)},
+  pages     = {188--199},
   subfield  = {semantics/compositional},
   role      = {cited},
-  validated = {false},
+  validated = {true},
   sources   = {Phenomena/Polarity/NPIs.lean}
 }
 % REF: Gallin, D. (1975). Intensional and Higher-Order Modal Logic.
@@ -2163,33 +2179,37 @@
   sources   = {Theories/Semantics/TypeTheoretic/Discourse.lean}
 }
 % REF: Ladusaw, W. (1979). Polarity Sensitivity as Inherent Scope Relations.
-@misc{ladusaw-1979,
-  author    = {Ladusaw, W},
+@phdthesis{ladusaw-1979,
+  author    = {Ladusaw, William A.},
   year      = {1979},
   title     = {Polarity Sensitivity as Inherent Scope Relations},
+  school    = {University of Texas at Austin},
   subfield  = {semantics/compositional},
   role      = {cited},
-  validated = {false},
+  validated = {true},
   sources   = {Fragments/English/PolarityItems.lean;Phenomena/Polarity/NPIs.lean}
 }
 % REF: Ladusaw (1980). Polarity Sensitivity as Inherent Scope Relations.
-@misc{ladusaw-1980,
-  author    = {Ladusaw},
+@book{ladusaw-1980,
+  author    = {Ladusaw, William A.},
   year      = {1980},
   title     = {Polarity Sensitivity as Inherent Scope Relations},
+  publisher = {Garland},
+  address   = {New York},
   subfield  = {semantics/compositional},
   role      = {cited},
-  validated = {false},
+  validated = {true},
   sources   = {Phenomena/Negation/Basic.lean;Theories/Semantics/Entailment/Polarity.lean}
 }
 % REF: Pierrehumbert, J. (1980). The Phonology and Phonetics of English Intonation.
-@misc{pierrehumbert-1980,
-  author    = {Pierrehumbert, J},
+@phdthesis{pierrehumbert-1980,
+  author    = {Pierrehumbert, Janet B.},
   year      = {1980},
-  title     = {The Phonology and Phonetics of English Intonation},
+  title     = {The Phonology and Phonetics of {English} Intonation},
+  school    = {Massachusetts Institute of Technology},
   subfield  = {semantics/compositional},
   role      = {cited},
-  validated = {false},
+  validated = {true},
   sources   = {Core/Prosody.lean}
 }
 % REF: Fillmore, C.J. (1982). Frame Semantics. In Linguistics in the Morning Calm.
@@ -2238,13 +2258,16 @@
   sources   = {Phenomena/ClauseChaining/Bridge/TowerBridge.lean;Phenomena/ClauseChaining/Typology.lean}
 }
 % REF: Martin-Löf (1984). Intuitionistic Type Theory.
-@misc{martin-lf-1984,
-  author    = {Martin-Löf},
+@book{martin-lf-1984,
+  author    = {Martin-L{\"o}f, Per},
   year      = {1984},
   title     = {Intuitionistic Type Theory},
+  publisher = {Bibliopolis},
+  address   = {Napoli},
+  note      = {Notes by Giovanni Sambin of a series of lectures given in Padua, June 1980},
   subfield  = {semantics/compositional},
   role      = {cited},
-  validated = {false},
+  validated = {true},
   sources   = {Theories/Semantics/TypeTheoretic/Core.lean}
 }
 % REF: van Benthem, J. (1984). Questions About Quantifiers. J. Symbolic Logic 49(2).
@@ -2367,13 +2390,14 @@
   sources   = {Phenomena/Entailment/Basic.lean;Theories/Semantics/Entailment/Polarity.lean}
 }
 % REF: Hale, K. & Keyser, S.J. (1987). A view from the middle. Lexicon Project Working Papers 10, MIT. — "separation in materia
-@book{hale-keyser-1987,
-  author    = {Hale, K. and Keyser, S.J},
+@misc{hale-keyser-1987,
+  author    = {Hale, Kenneth and Keyser, Samuel Jay},
   year      = {1987},
-  title     = {A view from the middle},
+  title     = {A View from the Middle},
+  note      = {Lexicon Project Working Papers 10, Center for Cognitive Science, MIT},
   subfield  = {semantics/compositional},
   role      = {cited},
-  validated = {false},
+  validated = {true},
   sources   = {Core/RootDimensions.lean}
 }
 % REF: Simons, P. (1987). *Parts: A Study in Ontology*. OUP.
@@ -2389,12 +2413,14 @@
 }
 % REF: Baker, M. C. (1988). *Incorporation: A Theory of Grammatical Function Changing.* University of Chicago Press.
 @book{baker-1988,
-  author    = {Baker, M. C},
+  author    = {Baker, Mark C.},
   year      = {1988},
   title     = {Incorporation: A Theory of Grammatical Function Changing},
+  publisher = {University of Chicago Press},
+  isbn      = {9780226035420},
   subfield  = {semantics/compositional},
   role      = {cited},
-  validated = {false},
+  validated = {true},
   sources   = {Phenomena/Constructions/ParticleVerbs/Bridge/MinimalismParticleSC.lean;Theories/Syntax/Minimalism/Core/SmallClause.lean}
 }
 % REF: Fillmore, C. J., Kay, P. & O'Connor, M. C. (1988). Regularity and Idiomaticity in Grammatical Constructions. Language 64
@@ -2413,13 +2439,17 @@
   sources   = {Phenomena/Constructions/DG_OsborneGross2012Bridge.lean;Theories/Syntax/ConstructionGrammar/Slot.lean}
 }
 % REF: Larson (1988). On the double object construction.
-@misc{larson-1988,
-  author    = {Larson},
+@article{larson-1988,
+  author    = {Larson, Richard K.},
   year      = {1988},
-  title     = {On the double object construction},
+  title     = {On the Double Object Construction},
+  journal   = {Linguistic Inquiry},
+  volume    = {19},
+  number    = {3},
+  pages     = {335--391},
   subfield  = {semantics/compositional},
   role      = {cited},
-  validated = {false},
+  validated = {true},
   sources   = {Phenomena/Quantification/Data.lean}
 }
 % REF: Sigurd (1988). Round numbers.
@@ -2449,23 +2479,29 @@
   sources   = {Core/Logic/RankingFunction.lean}
 }
 % REF: Barwise (1989). The Situation in Logic.
-@misc{barwise-1989,
-  author    = {Barwise},
+@book{barwise-1989,
+  author    = {Barwise, Jon},
   year      = {1989},
   title     = {The Situation in Logic},
+  publisher = {CSLI Publications},
+  series    = {CSLI Lecture Notes},
+  number    = {17},
+  isbn      = {9780937073322},
   subfield  = {semantics/compositional},
   role      = {cited},
-  validated = {false},
+  validated = {true},
   sources   = {Theories/Semantics/TypeTheoretic/Modality.lean}
 }
 % REF: Horn (1989). A Natural History of Negation
-@misc{horn-1989,
-  author    = {Horn},
+@book{horn-1989,
+  author    = {Horn, Laurence R.},
   year      = {1989},
   title     = {A Natural History of Negation},
+  publisher = {University of Chicago Press},
+  isbn      = {9780226353388},
   subfield  = {semantics/compositional},
   role      = {cited},
-  validated = {false},
+  validated = {true},
   sources   = {Phenomena/Negation/Basic.lean;Phenomena/Negation/FlexibleNegation.lean}
 }
 % REF: Kratzer, A. (1989). An investigation of the lumps of thought.
@@ -2495,12 +2531,15 @@
 }
 % REF: Corbett, G. G. (1991). *Gender*. Cambridge University Press.
 @book{corbett-1991,
-  author    = {Corbett, G. G},
+  author    = {Corbett, Greville G.},
   year      = {1991},
   title     = {Gender},
+  publisher = {Cambridge University Press},
+  doi       = {10.1017/CBO9781139166119},
+  isbn      = {9780521338455},
   subfield  = {semantics/compositional},
   role      = {cited},
-  validated = {false},
+  validated = {true},
   sources   = {Phenomena/Gender/Typology.lean}
 }
 % REF: Dowty, D. (1991). Thematic proto-roles and argument selection. *Language* 67(3), 547–619. — Proto-Agent P1 (volitional i
@@ -2558,13 +2597,14 @@
   sources   = {Phenomena/ClauseChaining/Data.lean}
 }
 % REF: Zanuttini (1991). Syntactic Properties of Sentential Negation.
-@misc{zanuttini-1991,
-  author    = {Zanuttini},
+@phdthesis{zanuttini-1991,
+  author    = {Zanuttini, Raffaella},
   year      = {1991},
-  title     = {Syntactic Properties of Sentential Negation},
+  title     = {Syntactic Properties of Sentential Negation: A Comparative Study of Romance Languages},
+  school    = {University of Pennsylvania},
   subfield  = {semantics/compositional},
   role      = {cited},
-  validated = {false},
+  validated = {true},
   sources   = {Phenomena/Polarity/NPIs.lean}
 }
 % REF: Hengeveld, K. (1992). Non-verbal Predication. Mouton de Gruyter.
@@ -2663,13 +2703,17 @@
   sources   = {Core/Semantics/CommonGround.lean}
 }
 % REF: Hoeksema, J. (1995). The semantics of exception phrases.
-@misc{hoeksema-1995,
-  author    = {Hoeksema, J},
+@incollection{hoeksema-1995,
+  author    = {Hoeksema, Jacob},
   year      = {1995},
-  title     = {The semantics of exception phrases},
+  title     = {The Semantics of Exception Phrases},
+  booktitle = {Quantifiers, Logic and Language},
+  editor    = {van der Does, Jaap and van Eijck, Jan},
+  publisher = {CSLI Publications},
+  pages     = {145--177},
   subfield  = {semantics/compositional},
   role      = {cited},
-  validated = {false},
+  validated = {true},
   sources   = {Phenomena/Polarity/Exceptives.lean}
 }
 % REF: Kamp & Partee (1995). Prototype theory and compositionality.
@@ -2684,13 +2728,17 @@
   sources   = {Theories/Semantics/Montague/Modification.lean}
 }
 % REF: Levin, B. & M. Rappaport Hovav (1995). *Unaccusativity*.
-@misc{levin-hovav-1995,
-  author    = {Levin, B. and M. Rappaport Hovav},
+@book{levin-hovav-1995,
+  author    = {Levin, Beth and Rappaport Hovav, Malka},
   year      = {1995},
-  title     = {Unaccusativity},
+  title     = {Unaccusativity: At the Syntax-Lexical Semantics Interface},
+  publisher = {MIT Press},
+  series    = {Linguistic Inquiry Monographs},
+  number    = {26},
+  isbn      = {9780262620949},
   subfield  = {semantics/compositional},
   role      = {cited},
-  validated = {false},
+  validated = {true},
   sources   = {Phenomena/ArgumentStructure/Unaccusativity/Data.lean;Theories/Interfaces/SyntaxSemantics/Linking.lean}
 }
 % REF: Moltmann, F. (1995). Exception sentences and polyadic quantification.
@@ -2706,12 +2754,13 @@
 }
 % REF: Rullmann, H. (1995). Maximality in the Semantics of Wh-Constructions. UMass diss.
 @phdthesis{rullmann-1995,
-  author    = {Rullmann, H},
+  author    = {Rullmann, Hotze},
   year      = {1995},
   title     = {Maximality in the Semantics of Wh-Constructions},
+  school    = {University of Massachusetts Amherst},
   subfield  = {semantics/compositional},
   role      = {cited},
-  validated = {false},
+  validated = {true},
   sources   = {Phenomena/Comparison/DegreeQuestion/Data.lean;Phenomena/Quantification/Bridge/PolarizedSplitScope.lean;Theories/Semantics/Degree/DegreeQuestion.lean;Theories/Semantics/Degree/Frameworks/Rett.lean;Theories/Semantics/Questions/DegreeQuestion.lean}
 }
 % REF: Krifka (1996): "Pragmatic strengthening in plural predications"
@@ -2834,13 +2883,15 @@
   sources   = {Phenomena/Comparison/Equative/Data.lean}
 }
 % REF: Heim & Kratzer (1998). Semantics in Generative Grammar, Ch. 4 (Predicate Modification)
-@misc{heim-kratzer-1998,
-  author    = {Heim and Kratzer},
+@book{heim-kratzer-1998,
+  author    = {Heim, Irene and Kratzer, Angelika},
   year      = {1998},
-  title     = {Semantics in Generative Grammar, Ch. 4 (Predicate Modification)},
+  title     = {Semantics in Generative Grammar},
+  publisher = {Blackwell},
+  isbn      = {9780631197133},
   subfield  = {semantics/compositional},
   role      = {cited},
-  validated = {false},
+  validated = {true},
   sources   = {Comparisons/FrameComposition.lean;Phenomena/Reference/Studies/FrankGoodman2012.lean;Theories/Interfaces/SyntaxSemantics/Minimalism/Interface.lean;Theories/Pragmatics/RSA/Implementations/HawkinsGweonGoodman2021.lean;Theories/Semantics/Montague/Composition.lean;Theories/Semantics/Montague/Modification.lean;Theories/Semantics/Reference/Binding.lean;Theories/Syntax/Minimalism/Bridge/RelativeClauses.lean}
 }
 % REF: Lahiri, U. (1998). Focus and negative polarity in Hindi.
@@ -2887,23 +2938,29 @@
   sources   = {Phenomena/Assertion/Bridge/GunlogsonBias.lean;Theories/Semantics/Modality/BiasedPQ.lean;Theories/Semantics/Questions/Polarity.lean}
 }
 % REF: Chierchia & McConnell-Ginet (2000). Meaning and Grammar, Ch. 6.
-@misc{chierchia-mcconnell-ginet-2000,
-  author    = {Chierchia and McConnell-Ginet},
+@book{chierchia-mcconnell-ginet-2000,
+  author    = {Chierchia, Gennaro and McConnell-Ginet, Sally},
   year      = {2000},
-  title     = {Meaning and Grammar, Ch. 6},
+  title     = {Meaning and Grammar: An Introduction to Semantics},
+  edition   = {2nd},
+  publisher = {MIT Press},
+  isbn      = {9780262531641},
   subfield  = {semantics/compositional},
   role      = {cited},
-  validated = {false},
+  validated = {true},
   sources   = {Theories/Semantics/Entailment/PresuppositionPolarity.lean}
 }
 % REF: Corbett, G. G. (2000). Number. Cambridge University Press.
 @book{corbett-2000,
-  author    = {Corbett, G. G},
+  author    = {Corbett, Greville G.},
   year      = {2000},
   title     = {Number},
+  publisher = {Cambridge University Press},
+  doi       = {10.1017/cbo9781139164344},
+  isbn      = {9780521649704},
   subfield  = {semantics/compositional},
   role      = {cited},
-  validated = {false},
+  validated = {true},
   sources   = {Phenomena/Plurals/Typology.lean}
 }
 % REF: Fillmore, C. & Atkins, B.T.S. (2000). Describing polysemy: The case of 'crawl'. In *Polysemy*, ed. Y. Ravin & C. Leacock
@@ -2942,13 +2999,14 @@
   sources   = {Core/ProcessingModel.lean;Theories/Syntax/DependencyGrammar/Formal/DependencyLength.lean}
 }
 % REF: Hackl, M. (2000). Comparative quantifiers.
-@misc{hackl-2000,
-  author    = {Hackl, M},
+@phdthesis{hackl-2000,
+  author    = {Hackl, Martin},
   year      = {2000},
-  title     = {Comparative quantifiers},
+  title     = {Comparative Quantifiers},
+  school    = {Massachusetts Institute of Technology},
   subfield  = {semantics/compositional},
   role      = {cited},
-  validated = {false},
+  validated = {true},
   sources   = {Phenomena/Comparison/CrossCategorial.lean}
 }
 % REF: Sorace, A. (2000). Gradients in auxiliary selection with intransitive verbs. *Language* 76:859-890.
@@ -3267,13 +3325,17 @@
   sources   = {Theories/Interfaces/SyntaxSemantics/Borer2005.lean;Theories/Syntax/Minimalism/Core/ClauseSpine.lean;Theories/Syntax/Minimalism/Formal/ExtendedProjection/Basic.lean;Theories/Syntax/Minimalism/Formal/ExtendedProjection/Properties.lean;Theories/Syntax/Minimalism/Formal/Sluicing/FormalMatching.lean}
 }
 % REF: Lewis, R.L. & Vasishth, S. (2005). An activation-based model.
-@misc{lewis-vasishth-2005,
-  author    = {Lewis, R.L. and Vasishth, S},
+@article{lewis-vasishth-2005,
+  author    = {Lewis, Richard L. and Vasishth, Shravan},
   year      = {2005},
-  title     = {An activation-based model},
+  title     = {An Activation-Based Model of Sentence Processing as Skilled Memory Retrieval},
+  journal   = {Cognitive Science},
+  volume    = {29},
+  pages     = {375--419},
+  doi       = {10.1207/s15516709cog0000_25},
   subfield  = {semantics/compositional},
   role      = {cited},
-  validated = {false},
+  validated = {true},
   sources   = {Core/ProcessingModel.lean}
 }
 % REF: Macmillan, N. A. & Creelman, C. D. (2005). Detection Theory (2nd ed.).
@@ -3346,13 +3408,15 @@
 }
 % REF: van der Auwera, J. (2006). Why languages prefer prohibitives. Journal of Foreign Languages 161: 2--25.
 @article{van-der-auwera-2006,
-  author    = {van der Auwera, J},
+  author    = {van der Auwera, Johan},
   year      = {2006},
   title     = {Why languages prefer prohibitives},
-  journal   = {Journal of Foreign Languages 161: 2--25.},
+  journal   = {Journal of Foreign Languages},
+  volume    = {161},
+  pages     = {2--25},
   subfield  = {semantics/compositional},
   role      = {cited},
-  validated = {false},
+  validated = {true},
   sources   = {Phenomena/Imperatives/Typology.lean}
 }
 % REF: Krifka, M. (2007). Approximate interpretation of number words.
@@ -3659,12 +3723,14 @@
 }
 % REF: Dixon, R. M. W. (2012). Basic Linguistic Theory, vol. 3: Further Grammatical Topics. Oxford University Press. Chapter 12
 @book{dixon-2012,
-  author    = {Dixon, R. M. W},
+  author    = {Dixon, R. M. W.},
   year      = {2012},
-  title     = {Basic Linguistic Theory, vol. 3: Further Grammatical Topics},
+  title     = {Basic Linguistic Theory, vol.\ 3: Further Grammatical Topics},
+  publisher = {Oxford University Press},
+  isbn      = {9780199571109},
   subfield  = {semantics/compositional},
   role      = {cited},
-  validated = {false},
+  validated = {true},
   sources   = {Phenomena/Comparison/Typology.lean}
 }
 % REF: Ginzburg (2012). The Interactive Stance.
@@ -3874,12 +3940,13 @@
 }
 % REF: Scontras, G. (2014). *The Semantics of Measurement*. Ph.D. dissertation, Harvard University. Chapter 3: Quantizing Nouns
 @phdthesis{scontras-2014,
-  author    = {Scontras, G},
+  author    = {Scontras, Gregory},
   year      = {2014},
   title     = {The Semantics of Measurement},
+  school    = {Harvard University},
   subfield  = {semantics/compositional},
   role      = {cited},
-  validated = {false},
+  validated = {true},
   sources   = {Fragments/English/MeasurePhrases.lean;Phenomena/Quantification/Scontras2014Bridge.lean;Theories/Semantics/Events/Krifka1989.lean;Theories/Semantics/Probabilistic/Measurement/Basic.lean}
 }
 % REF: Alexiadou, A., E. Anagnostopoulou & F. Schäfer (2015). *External Arguments in Transitivity Alternations*. Oxford.
@@ -4368,7 +4435,7 @@
   title     = {The Anaphoric Parallel between Modality and Tense},
   note      = {IRCS Technical Report 97-06, University of Pennsylvania},
   subfield  = {semantics/modality},
-  validated = {false},
+  validated = {true},
   role      = {cited},
   sources   = {Phenomena/Anaphora/ModalSubordination.lean;Theories/Semantics/Dynamic/Systems/PIP/Basic.lean}
 }
@@ -4382,7 +4449,7 @@
   publisher = {CSLI Publications},
   pages     = {59--88},
   subfield  = {semantics/modality},
-  validated = {false},
+  validated = {true},
   role      = {cited},
   sources   = {Theories/Semantics/Modality/TemporalOrientation.lean;Phenomena/Modality/Bridge/TemporalOrientationBridge.lean}
 }
@@ -4519,7 +4586,7 @@
   school    = {Massachusetts Institute of Technology},
   url       = {https://dspace.mit.edu/handle/1721.1/37421},
   subfield  = {semantics/modality},
-  validated = {false},
+  validated = {true},
   role      = {formalized},
   sources   = {Theories/Semantics/Modality/Assert.lean;Theories/Semantics/Modality/ActualityEntailments.lean;Theories/Semantics/Modality/EventRelativity.lean;Phenomena/Modality/Bridge/TemporalOrientationBridge.lean}
 }
@@ -4608,13 +4675,17 @@
   sources   = {Theories/Semantics/Conditionals/Basic.lean;Theories/Semantics/Conditionals/Counterfactual.lean}
 }
 % REF: Geis & Zwicky (1971). On invited inferences.
-@misc{geis-zwicky-1971,
-  author    = {Geis and Zwicky},
+@article{geis-zwicky-1971,
+  author    = {Geis, Marc and Zwicky, Arnold M.},
   year      = {1971},
-  title     = {On invited inferences},
+  title     = {On Invited Inferences},
+  journal   = {Linguistic Inquiry},
+  volume    = {2},
+  number    = {4},
+  pages     = {561--566},
   subfield  = {semantics/modality},
   role      = {cited},
-  validated = {false},
+  validated = {true},
   sources   = {Phenomena/Conditionals/Data.lean;Theories/Semantics/Conditionals/Exhaustivity.lean}
 }
 % REF: Karttunen, L. (1972). Possible and must. In Kimball (ed.), Syntax and Semantics 1.
@@ -4827,13 +4898,15 @@
 }
 % REF: de Haan, F. (1999). Evidentiality and epistemic modality: Setting boundaries. Southwest Journal of Linguistics 18: 83--1
 @article{de-haan-1999,
-  author    = {de Haan, F},
+  author    = {de Haan, Ferdinand},
   year      = {1999},
   title     = {Evidentiality and epistemic modality: Setting boundaries},
-  journal   = {Southwest Journal of Linguistics 18: 83--101.},
+  journal   = {Southwest Journal of Linguistics},
+  volume    = {18},
+  pages     = {83--101},
   subfield  = {semantics/modality},
   role      = {cited},
-  validated = {false},
+  validated = {true},
   sources   = {Phenomena/Modality/Typology.lean}
 }
 % REF: Portner, P. (2001). The Semantics of Imperatives within a Theory of Clause Types. SALT 11.
@@ -4884,14 +4957,14 @@
   sources   = {Phenomena/Modality/FreeChoice.lean;Phenomena/Modality/Studies/Alsop2024.lean}
 }
 % REF: Tenny, C. & Speas, P. (2004). The interaction of clausal syntax, discourse roles, and information structure. Ms., CMU & 
-@article{tenny-speas-2004,
-  author    = {Tenny, C. and Speas, P},
+@misc{tenny-speas-2004,
+  author    = {Tenny, Carol and Speas, Peggy},
   year      = {2004},
   title     = {The interaction of clausal syntax, discourse roles, and information structure},
-  journal   = {Ms., CMU & UMass.},
+  note      = {Ms., Carnegie Mellon University and University of Massachusetts Amherst},
   subfield  = {semantics/modality},
   role      = {cited},
-  validated = {false},
+  validated = {true},
   sources   = {Theories/Semantics/Modality/Assert.lean}
 }
 % REF: Bhatt & Pancheva (2006). Conditionals.
@@ -5834,14 +5907,15 @@
   sources   = {Theories/Semantics/Causation/Builder.lean;Theories/Semantics/Causation/ProductionDependence.lean}
 }
 % REF: Embick, D. (2009). Roots, states, and stative passives. Abstract for Roots workshop, Universität Stuttgart.
-@article{embick-2009,
-  author    = {Embick, D},
+@misc{embick-2009,
+  author    = {Embick, David},
   year      = {2009},
   title     = {Roots, states, and stative passives},
-  journal   = {Abstract for Roots workshop, Universität Stuttgart.},
+  note      = {Talk presented at the Roots Workshop, Universit{\"a}t Stuttgart},
+  url       = {https://www.ling.upenn.edu/~embick/stut.pdf},
   subfield  = {semantics/causation},
   role      = {cited},
-  validated = {false},
+  validated = {true},
   sources   = {Theories/Semantics/Causation/ProductionDependence.lean}
 }
 % REF: Halpern, J. Y. & Kleiman-Weiner, M. (2018). Towards formal definitions of blameworthiness, intention, and moral responsi
@@ -10561,14 +10635,16 @@
   sources   = {Theories/Syntax/Minimalism/Formal/MCB2023/Coproduct.lean}
 }
 % REF: van Hout (1998). On the role of direct objects. BUCLD 22.
-@article{van-hout-1998,
-  author    = {van Hout},
+@inproceedings{van-hout-1998,
+  author    = {van Hout, Angeliek},
   year      = {1998},
-  title     = {On the role of direct objects},
-  journal   = {BUCLD 22.},
+  title     = {On the Role of Direct Objects and Particles in Learning Telicity in {Dutch} and {English}},
+  booktitle = {Proceedings of the 22nd Annual Boston University Conference on Language Development (BUCLD 22)},
+  publisher = {Cascadilla Press},
+  pages     = {397--408},
   subfield  = {syntax},
   role      = {cited},
-  validated = {false},
+  validated = {true},
   sources   = {Phenomena/Coordination/Studies/BillEtAl2025.lean}
 }
 % REF: Aikhenvald, A. Y. (2000). Classifiers: A Typology of Noun Categorization Devices. Oxford University Press.
@@ -11049,14 +11125,16 @@
   sources   = {Fragments/Georgian/Coordination.lean;Fragments/Hungarian/Coordination.lean;Fragments/Latin/Coordination.lean;Phenomena/Coordination/Studies/BillEtAl2025.lean;Phenomena/Coordination/Typology.lean}
 }
 % REF: Schuster, S. & Manning, C. (2016). Enhanced English Universal Dependencies. LREC.
-@article{schuster-manning-2016,
-  author    = {Schuster, S. and Manning, C},
+@inproceedings{schuster-manning-2016,
+  author    = {Schuster, Sebastian and Manning, Christopher D.},
   year      = {2016},
-  title     = {Enhanced English Universal Dependencies},
-  journal   = {LREC.},
+  title     = {Enhanced {English} {Universal} {Dependencies}: An Improved Representation for Natural Language Understanding Tasks},
+  booktitle = {Proceedings of the Tenth International Conference on Language Resources and Evaluation (LREC'16)},
+  pages     = {2371--2378},
+  url       = {https://aclanthology.org/L16-1376/},
   subfield  = {syntax},
   role      = {cited},
-  validated = {false},
+  validated = {true},
   sources   = {Theories/Syntax/DependencyGrammar/Formal/EnhancedDependencies.lean}
 }
 % REF: Fedzechkina, M., Jaeger, T. F. & Newport, E. L. (2017). Balancing effort and information transmission during language ac
@@ -11566,14 +11644,16 @@
   sources   = {Fragments/Mandarin/QuestionParticles.lean}
 }
 % REF: Stenson (1981). Studies in Irish Syntax. Tübingen: Narr.
-@article{stenson-1981,
-  author    = {Stenson},
+@book{stenson-1981,
+  author    = {Stenson, Nancy},
   year      = {1981},
   title     = {Studies in Irish Syntax},
-  journal   = {Tübingen: Narr.},
+  publisher = {Gunter Narr Verlag},
+  address   = {T{\"u}bingen},
+  isbn      = {9783878083580},
   subfield  = {morphology},
   role      = {cited},
-  validated = {false},
+  validated = {true},
   sources   = {Fragments/Irish/Coordination.lean}
 }
 % REF: Dixon, R.M.W. (1982). Where Have All the Adjectives Gone? The Hague: Mouton.
@@ -11589,13 +11669,16 @@
 }
 % REF: Dell, F. (1983). An aspectual distinction in Tagalog. *Oceanic Linguistics* 22/23.
 @article{dell-1983,
-  author    = {Dell, F},
+  author    = {Dell, Fran{\c{c}}ois},
   year      = {1983},
-  title     = {An aspectual distinction in Tagalog},
-  journal   = {Oceanic Linguistics 22/23.},
+  title     = {An Aspectual Distinction in {Tagalog}},
+  journal   = {Oceanic Linguistics},
+  volume    = {22/23},
+  number    = {1/2},
+  pages     = {175--206},
   subfield  = {morphology},
   role      = {cited},
-  validated = {false},
+  validated = {true},
   sources   = {Fragments/Tagalog/TemporalConnectives.lean}
 }
 % REF: Bybee, J. L. (1985). *Morphology: A Study of the Relation between Meaning and Form*. Benjamins.
@@ -11723,14 +11806,16 @@
   sources   = {Fragments/Turkish/MedialVerbs.lean}
 }
 % REF: Noyer, R. (1997). *Features, Positions and Affixes in Autonomous Morphological Structure*. Garland.
-@article{noyer-1997,
-  author    = {Noyer, R},
+@book{noyer-1997,
+  author    = {Noyer, Rolf},
   year      = {1997},
   title     = {Features, Positions and Affixes in Autonomous Morphological Structure},
-  journal   = {Garland.},
+  publisher = {Garland Publishing},
+  address   = {New York},
+  isbn      = {9780815327592},
   subfield  = {morphology},
   role      = {cited},
-  validated = {false},
+  validated = {true},
   sources   = {Theories/Morphology/DM/Fission.lean}
 }
 % REF: Chu, C.C. (1998). A Discourse Grammar of Mandarin Chinese.
@@ -11864,14 +11949,15 @@
   sources   = {Fragments/Italian/Modals.lean;Phenomena/Modality/Bridge/EventRelativityRestructuring.lean}
 }
 % REF: Mac Congáil (2004). Irish Grammar. Cois Life.
-@article{congil-2004,
-  author    = {Mac Congáil},
+@book{congil-2004,
+  author    = {Mac Cong{\'a}il, Nollaig},
   year      = {2004},
-  title     = {Irish Grammar},
-  journal   = {Cois Life.},
+  title     = {Irish Grammar Book},
+  publisher = {Cl{\'o} Iar-Chonnacht},
+  isbn      = {9781902420493},
   subfield  = {morphology},
   role      = {cited},
-  validated = {false},
+  validated = {true},
   sources   = {Fragments/Irish/Coordination.lean}
 }
 % REF: Embick, D. (2004). On the structure of resultative participles in English. *Linguistic Inquiry* 35, 355–392.
@@ -11958,13 +12044,17 @@
 }
 % REF: Acquaviva, P. (2008). Roots and lexicality in Distributed Morphology. LingBuzz/000654.
 @article{acquaviva-2008,
-  author    = {Acquaviva, P},
+  author    = {Acquaviva, Paolo},
   year      = {2008},
   title     = {Roots and lexicality in Distributed Morphology},
-  journal   = {LingBuzz/000654.},
+  journal   = {York Papers in Linguistics},
+  volume    = {2},
+  number    = {10},
+  pages     = {1--21},
+  url       = {https://ling.auf.net/lingbuzz/000654},
   subfield  = {morphology},
   role      = {cited},
-  validated = {false},
+  validated = {true},
   sources   = {Theories/Morphology/DM/Categorizer.lean}
 }
 % REF: Henderson, R. (2008). Extraction and word order in K'iche'.
@@ -12022,16 +12112,6 @@
   role      = {cited},
   validated = {true},
   sources   = {Fragments/Japanese/Particles.lean;Fragments/Japanese/Pronouns.lean}
-}
-% REF: Romero, S. (2012). "They don't get lost anymore."
-@misc{romero-2012,
-  author    = {Romero, S},
-  year      = {2012},
-  title     = {"They don't get lost anymore."},
-  subfield  = {morphology},
-  role      = {cited},
-  validated = {false},
-  sources   = {Fragments/Kiche/ExtractionMorphology.lean}
 }
 % REF: Stolz, T. & Veselinova, L. (2013). Ordinal Numerals. In Dryer & Haspelmath (eds.), WALS Online (v2020.3). https://wals.i
 @incollection{stolz-veselinova-2013,
@@ -12128,13 +12208,16 @@
   sources   = {Fragments/Serbian/TemporalConnectives.lean}
 }
 % REF: Mondloch, J. (2017). K'iche' Maya reference grammar.
-@misc{mondloch-2017,
-  author    = {Mondloch, J},
+@book{mondloch-2017,
+  author    = {Mondloch, James L.},
   year      = {2017},
-  title     = {K'iche' Maya reference grammar},
+  title     = {Basic {K'ichee'} Grammar: 38 Lessons},
+  edition   = {Revised},
+  publisher = {University Press of Colorado},
+  isbn      = {9781607325307},
   subfield  = {morphology},
   role      = {cited},
-  validated = {false},
+  validated = {true},
   sources   = {Fragments/Kiche/ExtractionMorphology.lean}
 }
 % REF: Sauerland, U. & K. Yatsushiro (2017). Remind-me presuppositions and speech-act decomposition. Linguistic Inquiry 48.
@@ -12230,16 +12313,6 @@
   sources   = {Fragments/Kiche/ExtractionMorphology.lean}
 }
 % REF: Mondloch, J. & S. Romero (2022). Clause structure and movement in K'ichean. Ms.
-@article{mondloch-romero-2022,
-  author    = {Mondloch, J. and S. Romero},
-  year      = {2022},
-  title     = {Clause structure and movement in K'ichean},
-  journal   = {Ms.},
-  subfield  = {morphology},
-  role      = {cited},
-  validated = {false},
-  sources   = {Fragments/Kiche/ExtractionMorphology.lean;Phenomena/FillerGap/Bridge/MayanExtractionComparison.lean}
-}
 % REF: Égré, P., Spector, B., Mortier, A., & Verheyen, S. (2023). On the optimality of vagueness. Linguistics and Philosophy, 4
 @article{gr-verheyen-2023,
   author    = {Égré, P., Spector, B., Mortier, A., and Verheyen, S},

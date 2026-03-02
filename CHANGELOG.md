@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.227.77] - 2026-03-01
+
+### Changed
+- **Bib audit round 7**: fix 48 entries, remove 2 hallucinated entries. Fix 12 entries with malformed journal fields (van-der-auwera-2006, de-haan-1999 → proper vol/pages; tenny-speas-2004, embick-2009, mondloch-romero-2022 → @misc; van-hout-1998, schuster-manning-2016, fauconnier-1975, borkin-1971 → @inproceedings; stenson-1981, noyer-1997, congil-2004 → @book; dell-1983 → fix vol/pages; acquaviva-2008 → York Papers in Linguistics). Fix 20+ classic texts: horn-1989/baker-1988/corbett-1991/corbett-2000/barwise-1989/jespersen-1917/dixon-2012/krantz-1971/martin-lf-1984 → @book with ISBNs/DOIs; heim-kratzer-1998/chierchia-mcconnell-ginet-2000 → @book; ladusaw-1979/pierrehumbert-1980/zanuttini-1991/rullmann-1995/hackl-2000/hacquard-2006 → @phdthesis; larson-1988/bresnan-1973/geis-zwicky-1971/lewis-vasishth-2005 → @article. Remove hallucinated romero-2012, mondloch-romero-2022; fix mondloch-2017 title. 816 validated, 183 unvalidated, 999 total.
+
 ## [0.227.76] - 2026-03-01
 
 ### Changed
