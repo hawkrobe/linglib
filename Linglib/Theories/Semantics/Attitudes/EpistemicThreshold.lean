@@ -7,7 +7,7 @@ import Mathlib.Tactic.NormNum
 /-!
 # Epistemic Threshold Semantics (Ying, Zhi-Xuan, Wong, Mansinghka & Tenenbaum 2025)
 
-@cite{ying-zhi-xuan-wong-mansinghka-tenenbaum-2025} @cite{baker-jara-ettinger-saxe-tenenbaum-2017} @cite{cariani-santorio-wellwood-2024} @cite{hintikka-1969b} @cite{kennedy-2007} @cite{lassiter-goodman-2017}Epistemic vocabulary — attitude verbs (`believes`, `knows`), modal verbs
+@cite{ying-zhi-xuan-wong-mansinghka-tenenbaum-2025} @cite{baker-jara-ettinger-saxe-tenenbaum-2017} @cite{cariani-santorio-wellwood-2024}  @cite{kennedy-2007} @cite{lassiter-goodman-2017}Epistemic vocabulary — attitude verbs (`believes`, `knows`), modal verbs
 (`might`, `must`), and modal adjectives (`likely`, `certain`) — denotes
 **threshold functions over agent credence** Pr(A, φ).
 

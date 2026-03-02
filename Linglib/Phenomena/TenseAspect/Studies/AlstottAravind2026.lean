@@ -5,7 +5,7 @@ open Core.Empirical
 
 /-!
 # Alstott & Aravind (2026): Aspectual Coercion in *before*/*after*-Clauses
-@cite{alstott-aravind-2026} @cite{brennan-pylkknen-2010} @cite{rett-2020}
+@cite{alstott-aravind-2026}  @cite{rett-2020}
 
 Self-paced reading data from 4 experiments testing Rett's (2020) prediction
 that aspectual coercion (INCHOAT, COMPLET) incurs measurable processing cost.

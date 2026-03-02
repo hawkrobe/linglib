@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.227.79] - 2026-03-02
+
+### Changed
+- **Bib audit round 9**: verify 8 DOI entries against CrossRef, search 80 entries across 4 batches. Fix 6 entries with DOIs found: scontras-2017→scontras-polinsky-tsai-mai-2017 (@article Glossa), beltrama-2021 (@article L&P), brennan-pylkknen-2010→brennan-pylkkanen-2008 (@article Brain & Language, year corrected), frana-rawlins-2019 (@article S&P, title corrected), greco-2019 (@article NLLT, author corrected to Matteo), vijay-shanker-weir-1994 (@article Math Systems Theory). Add ISBNs to pre-DOI books: parsons-1990 (@book MIT Press), hintikka-1962 (@book Cornell, year corrected from 1969), beaver-2001 (@book CSLI), bybee-perkins-pagliuca-1994 (@book UChicago). Add stable URLs: von-fintel-2001 (MIT), ross-1967 (DSpace), cuervo-2003 (MIT AI), grimshaw-1979 (@article LI 10(2), user-verified), karttunen-1973 (@article LI 4(2), user-verified with JSTOR). Add DOIs: siewierska-2004 (CUP). 895 validated, 115 unvalidated, 1010 total.
+
 ## [0.227.78] - 2026-03-01
 
 ### Changed
