@@ -16,8 +16,7 @@ cover the major parameter combinations:
 | Korowai | Trans-New Guinea | multi-track | medial-final | reduced |
 
 ## Implicational universals
-@cite{givon-1983} @cite{sarvasy-2015}
-
+@cite{givon-1983} @cite{sarvasy-2015} @cite{aikhenvald-2008} @cite{de-vries-2025} @cite{goksel-kerslake-2005} @cite{merlan-rumsey-1991} @cite{sarvasy-2017} @cite{sohn-1999}
 
 Several implicational universals are stated as theorems:
 

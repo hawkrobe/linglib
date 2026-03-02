@@ -4,7 +4,6 @@ import Mathlib.Data.Rat.Defs
 # Social Meaning and the Indexical Field @cite{eckert-2008}
 @cite{beltrama-schwarz-2024}
 
-
 Framework-agnostic types for the social meaning of linguistic variation,
 following @cite{eckert-2008}'s theory of the indexical field.
 

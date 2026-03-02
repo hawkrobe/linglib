@@ -184,7 +184,7 @@ def notEveryQUDEffect : QUDManipulationDatum :=
 `no` resists non-maximality but `not every` permits it,
 which is surprising because both are downward-entailing.
 
-Source: @cite{augurzky-etal-2023}, Bar-Lev (2021a)
+Source: @cite{augurzky-etal-2023}, @cite{bar-lev-2021a}
 -/
 structure NoNotEveryAsymmetryDatum where
   /-- `no` sentence -/
@@ -257,7 +257,7 @@ def exactlyOneTruthConditions : EmbeddedTruthConditions :=
 /--
 Plurals in restrictor vs nuclear scope behave differently.
 
-Source: Mayr & Sudo (2022), Križ (2015)
+Source: @cite{mayr-sudo-2022}, Križ (2015)
 -/
 structure RestrictorScopeDatum where
   /-- Sentence -/

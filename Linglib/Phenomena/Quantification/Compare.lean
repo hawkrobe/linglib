@@ -37,7 +37,6 @@ open CCG.Scope
 ## CCG Explanation of Scope Freezing
 @cite{antonyuk-2015} @cite{scontras-polinsky-tsai-mai-2017}
 
-
 In CCG, scope ambiguity arises from derivational ambiguity:
 - **Type-raising** allows arguments to take scope
 - **Composition** allows non-canonical derivations

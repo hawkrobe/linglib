@@ -5,7 +5,7 @@ import Linglib.Theories.Semantics.Lexical.Verb.ChangeOfState.Theory
 
 /-!
 # @cite{rett-2020}: Antonymy + Aspectual Coercion
-@cite{rett-2020} @cite{rett-2026} @cite{jin-koenig-2021} @cite{krifka-2010b}*before* and *after* are antonyms on converse scales, with strong defaults
+@cite{rett-2020} @cite{rett-2026} @cite{jin-koenig-2021} @cite{krifka-2010b}*before* and *after* are antonyms on converse scales, with strong defaults @cite{de-swart-1998} @cite{dolling-2014}
 (before-start, after-finish). Non-default readings require aspectual coercion:
 **INCHOAT** (GLB, atelic → onset) or **COMPLET** (LUB, telic → telos), which
 incur processing cost.

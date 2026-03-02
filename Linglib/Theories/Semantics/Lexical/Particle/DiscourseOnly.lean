@@ -72,14 +72,14 @@ structure Context (W : Type*) [Fintype W] where
   worlds : List W
   /-- True partial answers to the QUD established in prior discourse.
 
-  IKW (2025) Def. 16 CI condition (i) quantifies universally over ALL true
+  @cite{ippolito-kiss-williams-2025} Def. 16 CI condition (i) quantifies universally over ALL true
   partial answers p ∉ QUD: each must support the same α. We track these
   explicitly so the CI can check the universal condition. -/
   partialAnswers : List (W → Bool)
   /-- Subquestions of the QUD established by the discourse context.
 
   @cite{roberts-2012} Def. 8–9: q is a subquestion of Q iff answering Q
-  (contextually) entails a complete answer to q. IKW (2025) §5.1:
+  (contextually) entails a complete answer to q. @cite{ippolito-kiss-williams-2025} §5.1:
   "Answering this question requires answering its plausible subquestions,
   such as *Is the house beautiful? Is the house expensive?*"
 
@@ -111,7 +111,7 @@ variable {W : Type*} [Fintype W]
 
 /-- At-issue content of "S only S'".
 
-IKW (2025) Def. 16: the at-issue content is the pair ⟨⟦S⟧, ⟦S'⟧⟩.
+@cite{ippolito-kiss-williams-2025} Def. 16: the at-issue content is the pair ⟨⟦S⟧, ⟦S'⟧⟩.
 For declarative arguments, we model this as conjunction of the highlighted
 (informational) content of each denotation: every world where both S and S'
 are informatively true. -/
@@ -120,7 +120,7 @@ def atIssueContent (d : Sentence W) : W → Bool :=
 
 /-- Presupposition / definedness condition for discourse *only*.
 
-IKW (2025) Def. 16: ⟦S [only S']⟧ is defined only if S and S' are
+@cite{ippolito-kiss-williams-2025} Def. 16: ⟦S [only S']⟧ is defined only if S and S' are
 "relevant" to the QUD and ∃α ∈ QUD s.t. S supports α.
 
 Relevance is structural, following @cite{roberts-2012} Def. 15 and IKW
@@ -149,7 +149,7 @@ def isDefined (d : Sentence W) (ctx : Context W) : Bool :=
 
 /-- CI content of discourse *only*.
 
-IKW (2025) Def. 16 CI: ∃α ∈ QUD s.t.
+@cite{ippolito-kiss-williams-2025} Def. 16 CI: ∃α ∈ QUD s.t.
 (i) ∀p ∈ partialAnswers, p supports α (all prior discourse points toward α)
 (ii) S' does not SUPPORT α (the right argument fails to support that direction)
 
@@ -176,7 +176,7 @@ def ciContent (d : Sentence W) (ctx : Context W) : Bool :=
 
 Combines at-issue content (conjunction of highlighted content) with CI content
 (S' fails to support an answer that S and prior discourse support). Uses
-Potts' (2005) `TwoDimProp` to keep the dimensions independent. -/
+@cite{potts-2005}'s `TwoDimProp` to keep the dimensions independent. -/
 def meaning (d : Sentence W) (ctx : Context W) : TwoDimProp W :=
   { atIssue := d.atIssueContent
   , ci := λ _ => d.ciContent ctx }
@@ -184,7 +184,7 @@ def meaning (d : Sentence W) (ctx : Context W) : TwoDimProp W :=
 /-- Agreement: S and S' agree w.r.t. the QUD iff there is a proposition
 α ∈ QUD s.t. both S and S' fully support α.
 
-IKW (2025) Def. 14a. -/
+@cite{ippolito-kiss-williams-2025} Def. 14a. -/
 def agree (d : Sentence W) (ctx : Context W) : Bool :=
   ctx.qud.alternatives.any λ α =>
     fullSupport ctx.dox d.sDen ctx.prior α ctx.worlds &&
@@ -193,7 +193,7 @@ def agree (d : Sentence W) (ctx : Context W) : Bool :=
 /-- Disagreement: S and S' disagree w.r.t. the QUD iff they each support
 some answer but do not agree on any single answer.
 
-IKW (2025) Def. 14b. -/
+@cite{ippolito-kiss-williams-2025} Def. 14b. -/
 def disagree (d : Sentence W) (ctx : Context W) : Bool :=
   (ctx.qud.alternatives.any λ α =>
     fullSupport ctx.dox d.sDen ctx.prior α ctx.worlds) &&

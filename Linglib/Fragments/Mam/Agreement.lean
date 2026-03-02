@@ -6,7 +6,6 @@ import Linglib.Core.Case.Hierarchy
 # Mam Agreement Fragment @cite{scott-2023}
 @cite{deal-2021} @cite{woolford-1997}
 
-
 Agreement morphology and pronoun realization data for San Juan Atitán (SJA)
 Mam, a Mayan language with morphologically tripartite agreement alignment: S, A, and O each trigger distinct marking patterns
 on the verb.

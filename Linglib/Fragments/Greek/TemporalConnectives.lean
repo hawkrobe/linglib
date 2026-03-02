@@ -22,7 +22,7 @@ diagnoses the veridicality distinction: subjunctive signals non-veridicality
 (the complement event is presented as unrealized), while indicative signals
 veridicality (the complement event is presented as factual). This parallels
 Japanese tense marking (*mae* non-past / *ato* past) diagnosed in the
-O&ST (2024) data.
+O&@cite{ogihara-steinert-threlkeld-2024} data.
 
 -/
 

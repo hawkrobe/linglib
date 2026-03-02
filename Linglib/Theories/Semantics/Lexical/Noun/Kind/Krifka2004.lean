@@ -212,7 +212,6 @@ def simpleTypeShiftVariation : Bool := true
 ## Position-Sensitive ∃-Shift
 @cite{carlson-1977} @cite{le-bruyn-de-swart-2022} @cite{partee-1987}
 
-
 ∃-shift applies at the surface position of the bare plural,
 predicting that scrambled BPs take wide scope over negation.
 -/

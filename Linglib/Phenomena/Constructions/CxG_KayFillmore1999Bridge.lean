@@ -175,7 +175,7 @@ open Semantics.Lexical.Expressives
 - At-issue: the embedded proposition (there's a fly in my soup)
 - CI: speaker finds this unexpected/inappropriate
 
-This mirrors Potts' (2005) analysis of expressives: the expressive
+This mirrors @cite{potts-2005}'s analysis of expressives: the expressive
 content is independent of at-issue truth. -/
 def wxdyTwoDim {W : Type*} (embeddedProp unexpectedness : W → Bool) : TwoDimProp W :=
   TwoDimProp.withCI embeddedProp unexpectedness

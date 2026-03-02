@@ -82,6 +82,20 @@ def expIntervalBounds (b : Bounds) : Bounds :=
   ⟨lo_qi.lo, hi_qi.hi⟩
 
 -- ============================================================================
+-- Pow: p^α as exact ℚ or interval
+-- ============================================================================
+
+/-- Bounds for p^α where p ≥ 0. Exact when α is a natural number (α.den = 1),
+    interval via exp(α·log(p)) otherwise. -/
+def powBounds (p : ℚ) (α : ℚ) : Bounds :=
+  if p = 0 then Bounds.zero
+  else if α.den = 1 then Bounds.exact (p ^ α.num.toNat)
+  else if hp : 0 < p then
+    let li := logPoint p hp
+    expIntervalBounds ⟨α * li.lo, α * li.hi⟩
+  else Bounds.zero
+
+-- ============================================================================
 -- L0: Exact ℚ Policy
 -- ============================================================================
 
@@ -105,48 +119,43 @@ def computeL0Rat {U W L : Type*} [Fintype W]
     For `beliefWeighted`: full interval pipeline. -/
 def computeS1ScoreBounds {U W L : Type*} [Fintype W] [DecidableEq W] [DecidableEq L]
     (spec : S1ScoreSpec U W L)
-    (meaning : L → U → W → ℚ) (α : ℕ)
+    (meaning : L → U → W → ℚ) (α : ℚ)
     (l : L) (w : W) (u : U) : Bounds :=
   match spec with
   | .beliefBased =>
-    Bounds.exact ((computeL0Rat meaning l u w) ^ α)
+    powBounds (computeL0Rat meaning l u w) α
   | .qudBelief project =>
     let l0 : W → ℚ := computeL0Rat meaning l u
     let projected := (Finset.univ.filter (fun w' => project w' l = project w l)).sum l0
-    Bounds.exact (projected ^ α)
+    powBounds projected α
   | .qudAction cost project =>
     let l0 : W → ℚ := computeL0Rat meaning l u
     let projected := (Finset.univ.filter (fun w' => project w' l = project w l)).sum l0
     if projected = 0 then Bounds.zero
     else
       -- exp(α·(log projected - cost u)) = projected^α · exp(-α · cost u)
-      (Bounds.exact (projected ^ α)).mul (expBounds (-(↑α * cost u)))
+      (powBounds projected α).mul (expBounds (-(α * cost u)))
   | .beliefAction cost =>
     let p := computeL0Rat meaning l u w
     if p = 0 then Bounds.zero
-    else (Bounds.exact (p ^ α)).mul (expBounds (-(↑α * cost u)))
+    else (powBounds p α).mul (expBounds (-(α * cost u)))
   | .weightedBeliefAction infWeight bonus =>
     let p := computeL0Rat meaning l u w
     if p = 0 then Bounds.zero
     else
       -- exp(α · (γ · log(p) + bonus(u)))
-      -- = exp(α·γ·log(p)) · exp(α·bonus(u))
-      -- = p^(α·γ) · exp(α·bonus(u))
-      -- Use interval for both factors since α·γ may not be ℕ
-      let logBounds : Bounds :=
+      let logBnds : Bounds :=
         if hp : 0 < p then
           let li := logPoint p hp
           ⟨infWeight * li.lo, infWeight * li.hi⟩
         else Bounds.zero
-      let argBounds : Bounds := ⟨↑α * (logBounds.lo + bonus u), ↑α * (logBounds.hi + bonus u)⟩
+      let argBounds : Bounds := ⟨α * (logBnds.lo + bonus u), α * (logBnds.hi + bonus u)⟩
       expIntervalBounds argBounds
   | .actionBased cost =>
     let p := computeL0Rat meaning l u w
-    expBounds (↑α * (p - cost u))
+    expBounds (α * (p - cost u))
   | .beliefWeighted belief quality =>
     if quality l u then
-      -- exp(α · Σ_w belief(l,w) · log(L0(u,w)))
-      -- Compute the argument bounds via Finset.sum on lo/hi
       let argLo := Finset.univ.sum fun s =>
         let p := computeL0Rat meaning l u s
         let bq := belief l s
@@ -157,13 +166,11 @@ def computeS1ScoreBounds {U W L : Type*} [Fintype W] [DecidableEq W] [DecidableE
         let bq := belief l s
         if hp : 0 < p then bq * (logPoint p hp).hi
         else bq * (-1000)
-      -- Scale by α and take exp
-      let scaled : Bounds := ⟨↑α * argLo, ↑α * argHi⟩
+      let scaled : Bounds := ⟨α * argLo, α * argHi⟩
       expIntervalBounds scaled
     else Bounds.zero
   | .combinedUtility terms =>
     let p := computeL0Rat meaning l u w
-    -- Gate only when a logInformativity term has nonzero weight for this latent
     let hasActiveLog := terms.any fun t => match t with
       | .logInformativity weight => weight l != 0
       | _ => false
@@ -179,7 +186,7 @@ def computeS1ScoreBounds {U W L : Type*} [Fintype W] [DecidableEq W] [DecidableE
           Bounds.exact (weight l * ev)
         | .constant fn => Bounds.exact (fn l u)
       let termSum := terms.foldl (fun acc t => acc.add (evalTerm t)) Bounds.zero
-      let scaled : Bounds := ⟨↑α * termSum.lo, ↑α * termSum.hi⟩
+      let scaled : Bounds := ⟨α * termSum.lo, α * termSum.hi⟩
       expIntervalBounds scaled
 
 -- ============================================================================
@@ -191,7 +198,7 @@ def computeS1ScoreBounds {U W L : Type*} [Fintype W] [DecidableEq W] [DecidableE
 def computeS1PolicyBounds {U W L : Type*} [Fintype U] [Fintype W]
     [DecidableEq U] [DecidableEq W] [DecidableEq L]
     (spec : S1ScoreSpec U W L)
-    (meaning : L → U → W → ℚ) (α : ℕ)
+    (meaning : L → U → W → ℚ) (α : ℚ)
     (l : L) (w : W) (u : U) : Bounds :=
   let myScore := computeS1ScoreBounds spec meaning α l w u
   -- Total bounds: lo of total = Σ lo_i, hi of total = Σ hi_i
@@ -217,10 +224,10 @@ def computeL1ScoreBounds {U W : Type*} [Fintype U] [Fintype W]
     (d : RSAConfigData U W) (u : U) (w : W) : Bounds :=
   let latentSumLo := Finset.univ.sum fun (l : d.Latent) =>
     d.latentPrior w l *
-      (computeS1PolicyBounds d.scoreSpec d.meaning d.α l w u).lo
+      (computeS1PolicyBounds d.s1Spec d.meaning d.α l w u).lo
   let latentSumHi := Finset.univ.sum fun (l : d.Latent) =>
     d.latentPrior w l *
-      (computeS1PolicyBounds d.scoreSpec d.meaning d.α l w u).hi
+      (computeS1PolicyBounds d.s1Spec d.meaning d.α l w u).hi
   ⟨d.worldPrior w * latentSumLo, d.worldPrior w * latentSumHi⟩
 
 -- ============================================================================
@@ -269,11 +276,10 @@ def checkL1ScoreNotGt {U W : Type*} [Fintype U] [Fintype W]
     - **beliefWeighted**: no simple shortcut, fall back to intervals. -/
 def trySymbolicS1ScoreGt {U W L : Type*} [Fintype W] [DecidableEq W] [DecidableEq L]
     (spec : S1ScoreSpec U W L)
-    (meaning : L → U → W → ℚ) (α : ℕ)
+    (meaning : L → U → W → ℚ) (α : ℚ)
     (l : L) (w : W) (u₁ u₂ : U) : Bool :=
   match spec with
   | .actionBased cost =>
-    -- exp(α·(L0₁ - c₁)) > exp(α·(L0₂ - c₂)) iff L0₁ - c₁ > L0₂ - c₂
     let p₁ := computeL0Rat meaning l u₁ w
     let p₂ := computeL0Rat meaning l u₂ w
     p₁ - cost u₁ > p₂ - cost u₂
@@ -281,28 +287,20 @@ def trySymbolicS1ScoreGt {U W L : Type*} [Fintype W] [DecidableEq W] [DecidableE
     let p₁ := computeL0Rat meaning l u₁ w
     let p₂ := computeL0Rat meaning l u₂ w
     let c₁ := cost u₁; let c₂ := cost u₂
-    if p₁ = 0 then false  -- score₁ = 0, can't be greater
-    else if p₂ = 0 then true  -- score₂ = 0, score₁ > 0
-    else if p₁ = p₂ then
-      -- L0^α cancels: exp(-α·c₁) > exp(-α·c₂) iff c₁ < c₂
-      c₁ < c₂
-    else if c₁ = c₂ then
-      -- exp terms cancel: L0₁^α > L0₂^α iff L0₁ > L0₂ (for positive L0, α > 0)
-      p₁ > p₂
-    else if p₁ ≥ p₂ && c₁ ≤ c₂ then
-      -- Dominance: both factors favor u₁ (one strictly)
-      p₁ > p₂ || c₁ < c₂
-    else if p₁ ≤ p₂ && c₁ ≥ c₂ then
-      -- Reverse dominance: both factors favor u₂
-      false
+    if p₁ = 0 then false
+    else if p₂ = 0 then true
+    else if p₁ = p₂ then c₁ < c₂
+    else if c₁ = c₂ then p₁ > p₂
+    else if p₁ ≥ p₂ && c₁ ≤ c₂ then p₁ > p₂ || c₁ < c₂
+    else if p₁ ≤ p₂ && c₁ ≥ c₂ then false
     else
-      -- General case: L0₁^α / L0₂^α > exp(α·(c₁-c₂))
-      -- L0₁^α / L0₂^α is exact ℚ; one Padé evaluation for exp
-      let l0Ratio := (p₁ ^ α) / (p₂ ^ α)
-      let expB := expBounds (↑α * (c₁ - c₂))
-      l0Ratio > expB.hi
+      -- General case: only exact when α is integer
+      if α.den = 1 then
+        let l0Ratio := (p₁ ^ α.num.toNat) / (p₂ ^ α.num.toNat)
+        let expB := expBounds (α * (c₁ - c₂))
+        l0Ratio > expB.hi
+      else false
   | .qudAction cost project =>
-    -- Same as actionBased but on projected L0
     let l0 : W → ℚ := computeL0Rat meaning l u₁
     let proj₁ := (Finset.univ.filter (fun w' => project w' l = project w l)).sum l0
     let l0₂ : W → ℚ := computeL0Rat meaning l u₂
@@ -312,24 +310,22 @@ def trySymbolicS1ScoreGt {U W L : Type*} [Fintype W] [DecidableEq W] [DecidableE
     else if proj₁ = 0 then false
     else proj₁ - cost u₁ > proj₂ - cost u₂
   | .weightedBeliefAction infWeight bonus =>
-    -- exp(α·(γ·log(L0₁) + b₁)) > exp(α·(γ·log(L0₂) + b₂))
-    -- iff γ·log(L0₁) + b₁ > γ·log(L0₂) + b₂
     let p₁ := computeL0Rat meaning l u₁ w
     let p₂ := computeL0Rat meaning l u₂ w
     let b₁ := bonus u₁; let b₂ := bonus u₂
     if p₁ = 0 then false
     else if p₂ = 0 then true
-    else if p₁ = p₂ then b₁ > b₂  -- log terms cancel
-    else if b₁ = b₂ then p₁ > p₂  -- bonus cancels, log monotone
-    else if p₁ ≥ p₂ && b₁ ≥ b₂ then p₁ > p₂ || b₁ > b₂  -- dominance
-    else if p₁ ≤ p₂ && b₁ ≤ b₂ then false  -- reverse dominance
-    else false  -- general case: fall back to intervals
-  | _ => false  -- beliefBased/qudBelief are already exact; beliefWeighted no shortcut
+    else if p₁ = p₂ then b₁ > b₂
+    else if b₁ = b₂ then p₁ > p₂
+    else if p₁ ≥ p₂ && b₁ ≥ b₂ then p₁ > p₂ || b₁ > b₂
+    else if p₁ ≤ p₂ && b₁ ≤ b₂ then false
+    else false
+  | _ => false
 
 /-- Symbolic S1 score comparison: ¬(score(u₁) > score(u₂)). -/
 def trySymbolicS1ScoreNotGt {U W L : Type*} [Fintype W] [DecidableEq W] [DecidableEq L]
     (spec : S1ScoreSpec U W L)
-    (meaning : L → U → W → ℚ) (α : ℕ)
+    (meaning : L → U → W → ℚ) (α : ℚ)
     (l : L) (w : W) (u₁ u₂ : U) : Bool :=
   match spec with
   | .actionBased cost =>
@@ -340,19 +336,18 @@ def trySymbolicS1ScoreNotGt {U W L : Type*} [Fintype W] [DecidableEq W] [Decidab
     let p₁ := computeL0Rat meaning l u₁ w
     let p₂ := computeL0Rat meaning l u₂ w
     let c₁ := cost u₁; let c₂ := cost u₂
-    if p₁ = 0 then true  -- score₁ = 0, not greater
-    else if p₂ = 0 then false  -- score₂ = 0, score₁ > 0, so IS greater
+    if p₁ = 0 then true
+    else if p₂ = 0 then false
     else if p₁ = p₂ then c₁ ≥ c₂
     else if c₁ = c₂ then p₁ ≤ p₂
-    else if p₁ ≤ p₂ && c₁ ≥ c₂ then true  -- both factors favor u₂
-    else if p₁ ≥ p₂ && c₁ ≤ c₂ then
-      -- Both favor u₁ — IS greater unless equal
-      p₁ = p₂ && c₁ = c₂
+    else if p₁ ≤ p₂ && c₁ ≥ c₂ then true
+    else if p₁ ≥ p₂ && c₁ ≤ c₂ then p₁ = p₂ && c₁ = c₂
     else
-      -- General case: check L0₁^α / L0₂^α ≤ exp(α·(c₁-c₂)).lo
-      let l0Ratio := (p₁ ^ α) / (p₂ ^ α)
-      let expB := expBounds (↑α * (c₁ - c₂))
-      l0Ratio ≤ expB.lo
+      if α.den = 1 then
+        let l0Ratio := (p₁ ^ α.num.toNat) / (p₂ ^ α.num.toNat)
+        let expB := expBounds (α * (c₁ - c₂))
+        l0Ratio ≤ expB.lo
+      else false
   | .qudAction cost project =>
     let l0 : W → ℚ := computeL0Rat meaning l u₁
     let proj₁ := (Finset.univ.filter (fun w' => project w' l = project w l)).sum l0
@@ -387,11 +382,11 @@ def checkS1PolicyGt {U W : Type*} [Fintype U] [Fintype W]
     [DecidableEq U] [DecidableEq W]
     (d : RSAConfigData U W) (l : d.Latent) (w : W) (u₁ u₂ : U) : Bool :=
   -- Try symbolic comparison first (exact ℚ, no interval approximation)
-  if trySymbolicS1ScoreGt d.scoreSpec d.meaning d.α l w u₁ u₂ then true
+  if trySymbolicS1ScoreGt d.s1Spec d.meaning d.α l w u₁ u₂ then true
   else
     -- Fall back to interval comparison
-    let b₁ := computeS1ScoreBounds d.scoreSpec d.meaning d.α l w u₁
-    let b₂ := computeS1ScoreBounds d.scoreSpec d.meaning d.α l w u₂
+    let b₁ := computeS1ScoreBounds d.s1Spec d.meaning d.α l w u₁
+    let b₂ := computeS1ScoreBounds d.s1Spec d.meaning d.α l w u₂
     b₂.hi < b₁.lo
 
 /-- Check that S1 score for (l,w,u₁) is NOT strictly greater than for (l,w,u₂).
@@ -400,10 +395,10 @@ def checkS1PolicyGt {U W : Type*} [Fintype U] [Fintype W]
 def checkS1PolicyNotGt {U W : Type*} [Fintype U] [Fintype W]
     [DecidableEq U] [DecidableEq W]
     (d : RSAConfigData U W) (l : d.Latent) (w : W) (u₁ u₂ : U) : Bool :=
-  if trySymbolicS1ScoreNotGt d.scoreSpec d.meaning d.α l w u₁ u₂ then true
+  if trySymbolicS1ScoreNotGt d.s1Spec d.meaning d.α l w u₁ u₂ then true
   else
-    let b₁ := computeS1ScoreBounds d.scoreSpec d.meaning d.α l w u₁
-    let b₂ := computeS1ScoreBounds d.scoreSpec d.meaning d.α l w u₂
+    let b₁ := computeS1ScoreBounds d.s1Spec d.meaning d.α l w u₁
+    let b₂ := computeS1ScoreBounds d.s1Spec d.meaning d.α l w u₂
     b₁.hi ≤ b₂.lo
 
 -- ============================================================================
@@ -507,5 +502,155 @@ theorem s1_not_gt_of_check_ext (cfg : RSA.RSAConfig U W) (d : RSAConfigData U W)
     (h : checkS1PolicyNotGt d (h_lat ▸ l) w u₁ u₂ = true) :
     ¬(cfg.S1 l w u₁ > cfg.S1 l w u₂) := by
   subst h_eq; exact s1_not_gt_of_check d (h_lat ▸ l) w u₁ u₂ h
+
+-- ============================================================================
+-- Rational Coarsening (denominator control for nested interval pipelines)
+-- ============================================================================
+
+/-- Round q down (toward -∞) to nearest multiple of 1/2^n.
+    Guarantees roundDownQ q n ≤ q. -/
+def roundDownQ (q : ℚ) (n : ℕ) : ℚ :=
+  let s : ℤ := 2 ^ n
+  (⌊q * s⌋ : ℤ) / s
+
+/-- Round q up (toward +∞) to nearest multiple of 1/2^n.
+    Guarantees q ≤ roundUpQ q n. -/
+def roundUpQ (q : ℚ) (n : ℕ) : ℚ :=
+  let s : ℤ := 2 ^ n
+  (⌈q * s⌉ : ℤ) / s
+
+/-- Coarsen bounds to denominators of at most 2^n.
+    Widens the interval slightly: lo rounds down, hi rounds up.
+    This prevents denominator explosion in nested interval pipelines
+    (e.g., logPoint on the output of divPos on S1 pipeline results). -/
+def Bounds.coarsen (b : Bounds) (n : ℕ) : Bounds :=
+  ⟨roundDownQ b.lo n, roundUpQ b.hi n⟩
+
+-- ============================================================================
+-- S2 Pipeline: L1 Marginals → S2 Score → S2 Check
+-- ============================================================================
+
+/-- Bounds for log(b) where b is a nonneg Bounds interval.
+    Uses logPoint on lo/hi (monotonicity of log). Returns [log(lo), log(hi)]
+    when lo > 0; [-1000, log(hi)] when lo ≤ 0 (as a safe fallback). -/
+def logBounds (b : Bounds) : Bounds :=
+  if hhi : 0 < b.hi then
+    if hlo : 0 < b.lo then
+      ⟨(logPoint b.lo hlo).lo, (logPoint b.hi hhi).hi⟩
+    else
+      ⟨-1000, (logPoint b.hi hhi).hi⟩
+  else ⟨-1000, -1000⟩
+
+/-- Compute L1 normalization constant bounds: Σ_{w,l} prior(w) · prior(w,l) · S1(l,w,u). -/
+def computeL1NormBounds {U W : Type*} [Fintype U] [Fintype W]
+    [DecidableEq U] [DecidableEq W]
+    (d : RSAConfigData U W) (u : U) : Bounds :=
+  let lo := Finset.univ.sum fun (w : W) =>
+    d.worldPrior w * (Finset.univ.sum fun (l : d.Latent) =>
+      d.latentPrior w l *
+        (computeS1PolicyBounds d.s1Spec d.meaning d.α l w u).lo)
+  let hi := Finset.univ.sum fun (w : W) =>
+    d.worldPrior w * (Finset.univ.sum fun (l : d.Latent) =>
+      d.latentPrior w l *
+        (computeS1PolicyBounds d.s1Spec d.meaning d.α l w u).hi)
+  ⟨lo, hi⟩
+
+/-- Compute L1 state marginal bounds: P_L1(w|u) = L1_score(u,w) / Σ_w' L1_score(u,w').
+    Returns bounds for the marginal probability of state w given utterance u. -/
+def computeL1StateMarginalBounds {U W : Type*} [Fintype U] [Fintype W]
+    [DecidableEq U] [DecidableEq W]
+    (d : RSAConfigData U W) (u : U) (w : W) : Bounds :=
+  let score := computeL1ScoreBounds d u w
+  let norm := computeL1NormBounds d u
+  Bounds.divPos score norm
+
+/-- Compute L1 latent marginal bounds: P_L1(l|u) = Σ_w prior(w)·prior(w,l)·S1(l,w,u) / norm. -/
+def computeL1LatentMarginalBounds {U W : Type*} [Fintype U] [Fintype W]
+    [DecidableEq U] [DecidableEq W]
+    (d : RSAConfigData U W) (u : U) (l : d.Latent) : Bounds :=
+  let lo := Finset.univ.sum fun (w : W) =>
+    d.worldPrior w * (d.latentPrior w l *
+      (computeS1PolicyBounds d.s1Spec d.meaning d.α l w u).lo)
+  let hi := Finset.univ.sum fun (w : W) =>
+    d.worldPrior w * (d.latentPrior w l *
+      (computeS1PolicyBounds d.s1Spec d.meaning d.α l w u).hi)
+  let norm := computeL1NormBounds d u
+  Bounds.divPos ⟨lo, hi⟩ norm
+
+/-- Compute S2 score bounds, dispatching on S2ScoreSpec.
+
+    For `utilityMaximizing`: computes L1 marginals inline, evaluating S1
+    policies once and reusing the results for all terms. The monolithic
+    structure avoids redundant S1 policy recomputation that would occur
+    with separate marginal functions. -/
+def computeS2ScoreBounds {U W : Type*} [Fintype U] [Fintype W]
+    [DecidableEq U] [DecidableEq W]
+    (d : RSAConfigData U W) (spec : RSA.S2ScoreSpec U W d.Latent)
+    (w : W) (u : U) : Bounds :=
+  match spec with
+  | .endorsement =>
+    computeL1ScoreBounds d u w
+  | .utilityMaximizing α₂ terms =>
+    -- Step 1: Compute L1 unnormalized scores for each world
+    --   l1Score(w') = worldPrior(w') · Σ_l latentPrior(w',l) · S1(l,w',u)
+    let l1ScoreLo : W → ℚ := fun w' =>
+      d.worldPrior w' * (Finset.univ.sum fun (l : d.Latent) =>
+        d.latentPrior w' l *
+          (computeS1PolicyBounds d.s1Spec d.meaning d.α l w' u).lo)
+    let l1ScoreHi : W → ℚ := fun w' =>
+      d.worldPrior w' * (Finset.univ.sum fun (l : d.Latent) =>
+        d.latentPrior w' l *
+          (computeS1PolicyBounds d.s1Spec d.meaning d.α l w' u).hi)
+    -- Step 2: Norm = Σ_w' l1Score(w')
+    let normLo := Finset.univ.sum l1ScoreLo
+    let normHi := Finset.univ.sum l1ScoreHi
+    let norm : Bounds := ⟨normLo, normHi⟩
+    -- Step 3: Evaluate each S2 utility term
+    -- Coarsen marginals to 20 binary digits before feeding to logBounds
+    -- to prevent denominator explosion in nested interval pipelines.
+    let evalTerm : RSA.S2UtilityTerm U W d.Latent → Bounds := fun t =>
+      match t with
+      | .logStateMarginal weight =>
+        let marg := (Bounds.divPos ⟨l1ScoreLo w, l1ScoreHi w⟩ norm).coarsen 20
+        (Bounds.exact weight).mul (logBounds marg)
+      | .expectedValue weight value =>
+        let evLo := Finset.univ.sum fun (w' : W) =>
+          value w' * (Bounds.divPos ⟨l1ScoreLo w', l1ScoreHi w'⟩ norm).lo
+        let evHi := Finset.univ.sum fun (w' : W) =>
+          value w' * (Bounds.divPos ⟨l1ScoreLo w', l1ScoreHi w'⟩ norm).hi
+        (Bounds.exact weight).mul ⟨evLo, evHi⟩
+      | .logLatentMarginal weight target =>
+        let latLo := Finset.univ.sum fun (w' : W) =>
+          d.worldPrior w' * (d.latentPrior w' target *
+            (computeS1PolicyBounds d.s1Spec d.meaning d.α target w' u).lo)
+        let latHi := Finset.univ.sum fun (w' : W) =>
+          d.worldPrior w' * (d.latentPrior w' target *
+            (computeS1PolicyBounds d.s1Spec d.meaning d.α target w' u).hi)
+        let marg := (Bounds.divPos ⟨latLo, latHi⟩ norm).coarsen 20
+        (Bounds.exact weight).mul (logBounds marg)
+      | .constant fn =>
+        Bounds.exact (fn u)
+    let termSum := terms.foldl (fun acc t => acc.add (evalTerm t)) Bounds.zero
+    let scaled : Bounds := ⟨α₂ * termSum.lo, α₂ * termSum.hi⟩
+    expIntervalBounds scaled
+
+/-- Check that S2 score for (w,u₁) is strictly greater than for (w,u₂). -/
+def checkS2ScoreGt {U W : Type*} [Fintype U] [Fintype W]
+    [DecidableEq U] [DecidableEq W]
+    (d : RSAConfigData U W) (w : W) (u₁ u₂ : U) : Bool :=
+  match d.s2Spec with
+  | none => false
+  | some spec =>
+    let b₁ := computeS2ScoreBounds d spec w u₁
+    let b₂ := computeS2ScoreBounds d spec w u₂
+    b₂.hi < b₁.lo
+
+/-- Soundness: if checkS2ScoreGt returns true, then S2(u₁|w) > S2(u₂|w). -/
+theorem s2_gt_of_check (d : RSAConfigData U W)
+    (w : W) (u₁ u₂ : U)
+    (h : checkS2ScoreGt d w u₁ u₂ = true) :
+    -- TODO: define ℝ S2 and state soundness
+    True := by
+  trivial
 
 end RSA.Verify

@@ -320,7 +320,7 @@ Non-maximality patterns are stable across development.
 
 Children show adult-like sensitivity to context for non-maximal readings.
 
-Source: Tieu et al. (2019), mentioned in dissertation
+Source: @cite{tieu-etal-2019}, mentioned in dissertation
 -/
 structure DevelopmentalDatum where
   /-- Age group -/

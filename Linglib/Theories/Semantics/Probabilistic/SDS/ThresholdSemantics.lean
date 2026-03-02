@@ -62,7 +62,6 @@ def ThresholdPredicate.holds {E D : Type} [LE D] [DecidableRel (α := D) (· ≤
 ## Gradable Adjectives
 @cite{morzycki-2009}
 
-
 ⟦tall⟧(x, θ) = 1 iff height(x) > θ
 
 The threshold θ is uncertain and inferred pragmatically via RSA.

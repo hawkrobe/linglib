@@ -122,7 +122,7 @@ theorem toSitVarStatus_not_injective :
 
 /-! The codebase contains both perspectives on tense:
 
-**Prior (1967)**: `PAST P s s' := s.time < s'.time ∧ P s`. Tense is an
+**@cite{prior-1967}**: `PAST P s s' := s.time < s'.time ∧ P s`. Tense is an
 operator that constrains temporal relations — existential quantification
 over past times.
 

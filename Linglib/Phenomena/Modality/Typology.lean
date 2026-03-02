@@ -372,7 +372,7 @@ Tuyuca (Tucanoan).
 Three-or-more-choice system with one of the richest evidential inventories
 known: five evidential categories --- visual, nonvisual sensory, apparent
 (inferential), secondhand (reported), and assumed. All five are
-obligatorily encoded as verbal suffixes. Barnes (1984) is the classic
+obligatorily encoded as verbal suffixes. @cite{barnes-1984} is the classic
 description. Coded as verbal affixes.
 -/
 def tuyuca : EvidentialityProfile :=
@@ -389,7 +389,7 @@ Kashaya (Pomoan).
 Three-or-more-choice system: performative/factual (direct), visual,
 auditory, inferential, and reportative. Coded as verbal suffixes. Kashaya
 is notable for distinguishing visual from auditory direct evidence.
-Oswalt (1986) is the primary source.
+@cite{oswalt-1986} is the primary source.
 -/
 def kashaya : EvidentialityProfile :=
   { language := "Kashaya", iso := "kju", family := "Pomoan"

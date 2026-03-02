@@ -143,7 +143,7 @@ def rationalMonotonicity {W : Type*} (pc : PreferentialConsequence W) : Prop :=
     Extends `NormalityOrder` with the **smoothness condition** (also
     called "limit assumption"): every satisfiable proposition has
     minimal elements. This is automatic for finite W; for infinite W
-    it rules out infinite descending chains. KLM (1990) call this
+    it rules out infinite descending chains. @cite{kraus-magidor-1990} call this
     "stopperedness". -/
 structure PlausibilityOrder (W : Type*) extends Core.Order.NormalityOrder W where
   /-- Smoothness: every satisfiable φ has a minimal element -/

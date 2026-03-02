@@ -71,7 +71,7 @@ inductive LicensingContext where
       than its scalar alternatives (Israel's "understating" polarity items).
     - **NonScalar** items (lift a finger) are idiomatic, not scalar.
 
-    Israel (1996). Polarity sensitivity as lexical semantics. L&P 19(6).
+    @cite{israel-1996}. Polarity sensitivity as lexical semantics. L&P 19(6).
     @cite{israel-2011}. The Grammar of Polarity. CUP.
     @cite{schwab-2022}. Lexical variation in NPI illusions. -/
 inductive ScalarDirection where

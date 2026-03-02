@@ -167,7 +167,7 @@ def rsa_phase_locality {U W : Type*}
 /-- Phase-bounded alternative computation: alternatives for an expression
     are computed from material within the same phase, not globally.
 
-    This connects to Chierchia (2006) / @cite{fox-katzir-2011}:
+    This connects to @cite{chierchia-2006} / @cite{fox-katzir-2011}:
     the set of alternatives depends on what's locally available. -/
 def phase_bounded_alternatives {U : Type*}
     (local_alts : U → List U)

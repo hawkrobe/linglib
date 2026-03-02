@@ -7,7 +7,7 @@ import Linglib.Phenomena.Polarity.Studies.VonFintel1999
 
 Cross-layer agreement between the Builder's monotonicity-derived licensing
 predictions and the Fragment's empirical `isLicensedIn` data, plus the
-VonFintel (1999) `onlyNotDE` empirical bridge.
+@cite{von-fintel-1999}'s `onlyNotDE` empirical bridge.
 
 ## Key result
 

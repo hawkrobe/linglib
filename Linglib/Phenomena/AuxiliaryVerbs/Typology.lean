@@ -124,7 +124,7 @@ def pipil : AVCDatum :=
 /-- Finnish negative auxiliary *ei* — split (person/number on aux, TAM on main verb).
     The split nature derives from `Fragments.Finnish.Negation.finnishNegDistribution`:
     the negative auxiliary hosts negation, tense, and agreement, while the lexical verb
-    retains only the stem and aspect (connegative form). Karlsson (2018, Ch. 11). -/
+    retains only the stem and aspect (connegative form). @cite{karlsson-2017}. -/
 def finnish : AVCDatum :=
   { language := "Finnish"
   , form := "e-n lue"

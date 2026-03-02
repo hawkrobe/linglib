@@ -18,7 +18,6 @@ This file captures the empirical patterns around flexible negation, where:
 ## Key Distinction
 @cite{franke-bergen-2020}
 
-
 **Contradictory negation**: P and ¬P partition the space
 - "not happy" (contradictory) = x ≤ θ (complement of x > θ)
 - Every point is either happy or not-happy

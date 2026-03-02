@@ -394,7 +394,7 @@ def indirectQShifted : ReichenbachFrame ℤ where
     (Abusch, Von Stechow, Kratzer, Ogihara) — there is no attitude verb
     to trigger the shift.
 
-    @cite{banfield-1982}, @cite{schlenker-2004}, Sharvit (2008). -/
+    @cite{banfield-1982}, @cite{schlenker-2004}, @cite{sharvit-2008}. -/
 
 /-- FID matrix: "She walked to the window" (past, narrated event at -3). -/
 def fidWalked : ReichenbachFrame ℤ where
@@ -427,7 +427,7 @@ def fidGardenBeautiful : ReichenbachFrame ℤ where
     This is problematic for theories where present tense = R = S:
     the constraint is violated, yet the sentence is felicitous.
 
-    Wolfson (1979), Schiffrin (1981). -/
+    @cite{wolfson-1979}, @cite{schiffrin-1981}. -/
 
 /-- Historical present: "Napoleon enters the room."
     Present morphology (R = P) but the event is in the past.
@@ -531,7 +531,7 @@ theorem wantedToLeave_future_oriented :
     more like an independent temporal reference anchored by the
     temporal connective (*before*, *after*).
 
-    Arregui & Kusumoto (1998), @cite{ogihara-sharvit-2012}. -/
+    @cite{arregui-kusumoto-1998}, @cite{ogihara-sharvit-2012}. -/
 
 /-- Adjunct clause: "Before John left, Mary was happy."
     John's leaving is before Mary's happiness.

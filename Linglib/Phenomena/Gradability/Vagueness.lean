@@ -109,7 +109,7 @@ Empirical observations:
 - People reject the conclusion (the absurd case)
 - People show gradient acceptance as cases approach the threshold
 
-Source: Edgington (1997), @cite{lassiter-goodman-2017} Section 5
+Source: @cite{edgington-1995}, @cite{lassiter-goodman-2017} Section 5
 -/
 structure SoritesDatum where
   adjective : String
@@ -184,7 +184,7 @@ Is there a sharp boundary between "borderline tall" and "clearly tall"?
 
 This threatens any theory that posits sharp boundaries anywhere.
 
-Source: @cite{fine-1975}, @cite{williamson-1994}, Raffman (2014)
+Source: @cite{fine-1975}, @cite{williamson-1994}, @cite{raffman-2014}
 -/
 structure HigherOrderVaguenessData where
   basePredicate : String
@@ -314,7 +314,7 @@ This seems true for vague predicates:
 
 But iterated application leads to absurdity (the sorites).
 
-Source: Wright (1976), @cite{fara-2000}
+Source: @cite{wright-1976}, @cite{fara-2000}
 -/
 structure TolerancePrincipleData where
   predicate : String
@@ -360,7 +360,7 @@ For N = 762 (mm from 7'4\" to 4'10\"):
 The paradox dissolves: the argument is valid but unsound.
 Each premise is probably true, but the conjunction is probably false.
 
-Source: Edgington (1997), @cite{lassiter-goodman-2017} Section 5
+Source: @cite{edgington-1995}, @cite{lassiter-goodman-2017} Section 5
 -/
 structure ProbabilisticSoritesData where
   predicate : String

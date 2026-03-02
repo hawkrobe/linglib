@@ -8,7 +8,6 @@ import Linglib.Fragments.English.Lexicon
 # HPSG Interpretation of Fragment Entries
 @cite{pollard-sag-1994}
 
-
 Maps Fragment lexical entries to HPSG Signs (words with appropriate Synsem).
 
 This is the **theory interpretation layer**: Fragment entries are theory-neutral,

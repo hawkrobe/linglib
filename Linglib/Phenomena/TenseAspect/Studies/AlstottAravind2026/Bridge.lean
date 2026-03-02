@@ -64,7 +64,7 @@ theorem exp1b_tests_at_modifier_coercion :
   ⟨rfl, rfl⟩
 
 /-- Exps 1a/3 test INCHOAT triggered by the *within* temporal modifier.
-    These fail to replicate Brennan & Pylkkänen (2010). -/
+    These fail to replicate @cite{brennan-pylkkanen-2008}. -/
 theorem exp1a_tests_within_modifier_coercion :
     exp1a_rt.coercionType = .inchoative ∧
     within_.triggeredCoercion = some "INCHOAT" :=

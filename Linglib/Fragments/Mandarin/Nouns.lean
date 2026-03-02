@@ -7,7 +7,6 @@ import Linglib.Theories.Semantics.Lexical.Noun.Kind.Chierchia1998
 # Mandarin Chinese Noun Lexicon Fragment
 @cite{chierchia-1998}
 
-
 Mandarin-specific noun entries. Mandarin is [+arg, -pred]:
 all nouns are kind-denoting by default, no number morphology, no articles,
 classifiers required for counting, bare nouns freely occur as arguments.

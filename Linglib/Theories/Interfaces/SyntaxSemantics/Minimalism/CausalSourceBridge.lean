@@ -60,7 +60,7 @@ open Core.Time (Interval)
 -- ════════════════════════════════════════════════════════════════════
 
 /-- Pesetsky's CAUS head (1995) is identified with Schäfer's
-    Voice_CAUSE (2008). Both introduce a causer external argument.
+    Voice_CAUSE (@cite{schaefer-2008}). Both introduce a causer external argument.
 
     This identification follows Occam: the two analyses posit the
     same structural position (Spec,vP/VoiceP) introducing the same

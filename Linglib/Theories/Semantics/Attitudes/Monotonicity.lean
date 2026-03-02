@@ -18,7 +18,6 @@ what follows about conjunction distribution and neg-raising?
 ## Key contributions
 @cite{bondarenko-elliott-2026}
 
-
 1. **Conjunction distribution derived from EntailmentSig**: An attitude verb
    distributes over conjunction iff its complement signature refines `.mono`.
 

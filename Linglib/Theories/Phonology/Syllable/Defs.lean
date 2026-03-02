@@ -32,7 +32,7 @@ open Theories.Phonology (Segment Feature)
     | Vowel     |  +  |   +    |  −   |  +   |  4   |
 
     Within obstruents, [±continuant] further splits stops (rank 0) from
-    fricatives (rank 1) per Clements (1990), yielding a 6-level scale. -/
+    fricatives (rank 1) per @cite{clements-1990}, yielding a 6-level scale. -/
 def sonorityOf (s : Segment) : Nat :=
   if s.hasValue .sonorant false then
     -- Obstruent: stop vs fricative (Clements 1990 refinement)

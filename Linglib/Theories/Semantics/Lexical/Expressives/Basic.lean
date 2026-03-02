@@ -319,7 +319,7 @@ def isFelicitous (exprType : CIExprType) (target : String) (ctx : CIContext) : B
 ## CI Lift: Presupposition → Two-Dimensional Meaning
 
 @cite{wang-2025} analyze de re presupposition by bifurcating a @cite{gutzmann-2015}
-presuppositional meaning into two dimensions using Potts' (2004) CI type system:
+presuppositional meaning into two dimensions using @cite{potts-2005}'s CI type system:
 
 - **At-issue**: the assertion component (identity function on the propositional content)
 - **CI**: the presupposition (projects to root, evaluated against CG)

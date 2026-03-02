@@ -358,7 +358,7 @@ noncomputable abbrev highBaseCfg :=
     (fun _ => 1) (fun _ => le_of_lt one_pos)
 
 /-- Supportive context: b_suc = 0.9 + all?-biased QUD (1:18:1 ≈ 0.05:0.9:0.05).
-    Models the Gualmini et al. (2008) early-success manipulation, where context
+    Models the @cite{gualmini-etal-2008} early-success manipulation, where context
     pragmatically supports inverse scope (§3.3, Figure 3). -/
 noncomputable abbrev supportiveCfg :=
   cfg (fun w => match w with | .zero => 1 | .one => 18 | .two => 81)

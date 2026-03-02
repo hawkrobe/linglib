@@ -86,7 +86,7 @@ open Core.Reichenbach (ReichenbachFrame)
     This is a conceptual partition, not a temporal relation: both "I visited
     Paris" and "I have visited Paris" can refer to the same objective event,
     but differ in time-sphere membership. The term is Declerck's own;
-    Weinrich (1964) captures a similar partition as *besprochene Welt* vs.
+    @cite{weinrich-1964} captures a similar partition as *besprochene Welt* vs.
     *erzählte Welt*. -/
 inductive TimeSphere where
   | past     -- wholly before t₀

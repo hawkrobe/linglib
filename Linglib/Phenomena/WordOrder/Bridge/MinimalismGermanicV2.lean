@@ -5,7 +5,6 @@ import Linglib.Phenomena.WordOrder.VerbPosition
 # Bridge: Germanic V2 Analysis to Verb Position Phenomena
 @cite{harizanov-gribanova-2019}
 
-
 Connects the Minimalist analysis of Germanic V2 to the
 empirical verb position data in `Phenomena.WordOrder.VerbPosition`.
 

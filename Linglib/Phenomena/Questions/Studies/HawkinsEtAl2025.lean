@@ -60,7 +60,7 @@ inductive ResponseType where
 /-!
 ## Case Study 1: Credit Cards
 
-Replication/extension of Clark (1979), N = 25 participants.
+Replication/extension of @cite{clark-1979}, N = 25 participants.
 
 ### Conditions
 - (3) "Do you accept American Express?" → "Yes, we accept AE and [exhaustive list]"

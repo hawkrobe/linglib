@@ -6,7 +6,6 @@ open Core.Empirical
 # @cite{bale-etal-2025} — Competence by Default @cite{bale-etal-2025}
 @cite{geurts-2010} @cite{levinson-2000} @cite{soames-1982}
 
-
 Bale, A. C., Noguchi, H., Rolland, M. & Barner, D. (2025). Competence by
 default: Do listeners assume that speakers are knowledgeable when computing
 conversational inferences? *Journal of Semantics* 42(1–2): 39–55.

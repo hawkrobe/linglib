@@ -5,7 +5,6 @@ import Linglib.Theories.Morphology.Core.Circumfix
 # Tigrinya Clausal Prefixes @cite{cacchioli-2025}
 @cite{pollock-1989} @cite{rizzi-1997}
 
-
 Lexical entries for Tigrinya's four clause-initial morphemes, analyzed as
 spell-outs of distinct heads in a cartographic left periphery.
 

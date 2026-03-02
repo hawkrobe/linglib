@@ -286,7 +286,6 @@ theorem belief_filtering_condition (blc : BeliefLocalCtx W Agent) (p : PrProp W)
 ### Bridging Bool-valued and Prop-valued Accessibility
 @cite{hintikka-1969}
 
-
 `CommonGround.MultiAgent` uses Bool-valued `AgentAccessRel W E = E → W → W → Bool`.
 `BeliefEmbedding` uses Prop-valued `DoxasticAccessibility W E = E → W → ContextSet W`
 where `ContextSet W = W → Prop`.

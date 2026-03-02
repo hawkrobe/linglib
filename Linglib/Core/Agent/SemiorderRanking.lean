@@ -54,7 +54,7 @@ noncomputable def RationalAction.fromScale (v : A → ℝ) (hv : ∀ a, 0 ≤ v 
     equals `pChoice` from RationalAction on the two-element set `{x, y}`.
 
     Proof: unfold both sides. `pairwiseProb v x y = v x / (v x + v y)`.
-    `pChoice  {x,y} x = v x / (∑ b ∈ {x,y}, v b) = v x / (v x + v y)`
+    `pChoice {x,y} x = v x / (∑ b ∈ {x,y}, v b) = v x / (v x + v y)`
     when `x ≠ y` (so `{x,y}` has two elements). -/
 theorem pairwiseProb_eq_pChoice (v : A → ℝ) (hv : ∀ a, 0 < v a)
     (x y : A) (hne : x ≠ y) :

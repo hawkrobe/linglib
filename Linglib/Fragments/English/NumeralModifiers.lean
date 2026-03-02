@@ -108,7 +108,7 @@ The most common English approximator. Used in BSB2022's stimuli:
 ⟦about n⟧ = λy.λx. |n-x| ≤ y
 Pragmatically signals peaked private distribution centered on n.
 
-Source: Beltrama, Solt & Burnett (2022)
+Source: @cite{beltrama-solt-burnett-2023}
 -/
 def about : NumeralModifierEntry :=
   { form := "about"
@@ -356,7 +356,7 @@ Unlike tolerance modifiers ("around"), "almost" EXCLUDES the target value
 Empirically, "almost three" means ~2 (below only), favoring LB.
 
 Source: @cite{nouwen-2006} "Remarks on the Polar Orientation of Almost";
-  Penka (2006); Sadock (1981).
+  @cite{penka-2006}; @cite{sadock-1981}.
 -/
 def almost : NumeralModifierEntry :=
   { form := "almost"

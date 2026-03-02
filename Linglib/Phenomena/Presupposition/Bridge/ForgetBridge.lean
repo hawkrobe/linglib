@@ -6,7 +6,6 @@ import Linglib.Fragments.English.Predicates.Verbal
 # Forget Bridge: Pre-Existence Theory vs. Empirical Data
 @cite{white-2014}
 
-
 Connects the pre-existence theory (from `PreExistence.lean`) to
 empirical data about *forget*'s presuppositions (from
 `ForgetPresuppositions.lean`) and to the English verb Fragment.

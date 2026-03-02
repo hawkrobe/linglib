@@ -278,7 +278,7 @@ Russell 1905). It is a matter of situation variable scope.
   where s* refers to actual world → the actual president
 
 This analysis is empirically superior to scope-based approaches because
-it handles Bäuerle's (1983) puzzle (Ch 7 §7.2) where the indefinite takes
+it handles @cite{bauerle-1983}'s puzzle (Ch 7 §7.2) where the indefinite takes
 narrow scope but the situation pronoun scopes out. -/
 inductive SitVarStatus where
   /-- Free: mapped to a contextually salient situation (→ de re) -/

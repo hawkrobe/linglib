@@ -6,7 +6,6 @@ import Linglib.Theories.Semantics.Conditionals.Basic
 # @cite{evcen-bale-barner-2026} — Bridge @cite{evcen-bale-barner-2026}
 @cite{von-fintel-2001}
 
-
 Connects the experimental findings of @cite{evcen-bale-barner-2026} to the
 answer-level exhaustification theory of conditional perfection
 as formalized in `Semantics.Conditionals.Exhaustivity`.

@@ -68,7 +68,6 @@ structure NPIDatum where
 ## The "Any" Paradigm
 @cite{israel-2011} @cite{kadmon-landman-1993} @cite{ladusaw-1979} @cite{lahiri-1998} @cite{van-rooy-2003}
 
-
 "Any" is the classic English weak NPI. Licensed in DE contexts.
 -/
 

@@ -5,7 +5,6 @@ import Mathlib.Data.Rat.Defs
 # @cite{evcen-bale-barner-2026} — Conditional Perfection Data @cite{evcen-bale-barner-2026}
 @cite{von-fintel-2001}
 
-
 Theory-neutral empirical data on conditional perfection from three experiments
 by @cite{evcen-bale-barner-2026}.
 

@@ -11,7 +11,7 @@ import Linglib.Fragments.Chuj.ModalIndefinites
 
 Connects the event-relative modality theory (Hacquard 2006, formalized in
 `Theories/Semantics/Modality/EventRelativity`) to the empirical data on
-modal indefinites (A-O&R 2024, in `Phenomena/ModalIndefinites/Data`).
+modal indefinites (@cite{alonso-ovalle-royer-2024}, in `Phenomena/ModalIndefinites/Data`).
 
 ## Key Bridge Theorems
 
@@ -55,7 +55,7 @@ event. Internal arguments and adjuncts of VOLITIONAL verbs can
 be anchored to either event. Internal arguments and adjuncts of
 NON-VOLITIONAL verbs only get speech event anchoring, because the
 described event has no decision subevent to project normative
-conditions from (A-O&R 2024, §4.1).
+conditions from (§4.1).
 
 This is A-O&R's core structural explanation for the
 position-sensitivity of *yalnhej*'s modal flavor. -/
@@ -75,7 +75,7 @@ theorem int_arg_vol_both_anchors :
     availableAnchors .internalArgVolitional = [.speechEvent, .describedEvent] := rfl
 
 /-- Non-volitional internal arguments have only speech event anchoring
-    (A-O&R 2024, §4.1, ex.66). -/
+    (§4.1, ex.66). -/
 theorem int_arg_nonvol_speech_only :
     availableAnchors .internalArgNonVolitional = [.speechEvent] := rfl
 
@@ -191,7 +191,7 @@ theorem not_at_issue_group :
 
 /-- Upper-bounded modal indefinites impose an anti-singleton inference:
 the speaker considers it possible that not all domain members satisfy
-the scope predicate (A-O&R 2024, §5). -/
+the scope predicate (§5). -/
 theorem upper_bounded_group :
     [algún, unoCualquiera].all (·.upperBounded) = true := by native_decide
 
@@ -225,7 +225,7 @@ theorem not_at_issue_and_not_ub_exists :
 
 
 -- ════════════════════════════════════════════════════
--- § 9. Unremarkable Reading Bridge (A-O&R 2024, §5)
+-- § 9. Unremarkable Reading Bridge (§5)
 -- ════════════════════════════════════════════════════
 
 /-- *Yalnhej* lacks unremarkable readings (fragment entry agrees). -/
@@ -238,7 +238,7 @@ theorem komon_has_unremarkable :
 
 /-- Predicativity correlates with unremarkable readings across all entries:
     every entry where canBePredicate = true also has unremarkable readings,
-    and vice versa. This captures A-O&R's (2024, §5) generalization that
+    and vice versa. This captures @cite{alonso-ovalle-royer-2024}'s (§5) generalization that
     predicativity enables plain existential readings. -/
 theorem predicativity_correlates_unremarkable :
     allEntries.all (λ e =>
@@ -246,7 +246,7 @@ theorem predicativity_correlates_unremarkable :
 
 
 -- ════════════════════════════════════════════════════
--- § 10. Non-Maximality Bridge (A-O&R 2024, §3.2.4)
+-- § 10. Non-Maximality Bridge (§3.2.4)
 -- ════════════════════════════════════════════════════
 
 /-- *Yalnhej* is not upper-bounded: it does not require ¬∀P→Q.

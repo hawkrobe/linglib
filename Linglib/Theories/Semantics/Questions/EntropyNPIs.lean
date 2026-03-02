@@ -365,7 +365,7 @@ theorem strong_npi_creates_rhetorical {W : Type*} [Fintype W]
 /-!
 ## K&L's Question Strengthening
 
-Kadmon & Landman (1990) propose that stressed "any" strengthens questions:
+@cite{kadmon-landman-1990} propose that stressed "any" strengthens questions:
 
 Q' strengthens Q iff Q is already answered but Q' is still unanswered.
 

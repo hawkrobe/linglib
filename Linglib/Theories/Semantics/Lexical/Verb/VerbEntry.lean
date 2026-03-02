@@ -25,8 +25,7 @@ English-specific morphology (3sg, past, participles) lives in
 `VerbCore` with their own inflectional paradigms.
 
 ## Design
-@cite{bale-schwarz-2026} @cite{dayal-2025} @cite{heim-1992} @cite{icard-2012} @cite{kennedy-2007} @cite{maier-2015} @cite{qing-uegaki-2025} @cite{rappaport-hovav-levin-2024} @cite{solstad-bott-2024}
-
+@cite{bale-schwarz-2026} @cite{dayal-2025} @cite{heim-1992} @cite{icard-2012} @cite{kennedy-2007} @cite{maier-2015} @cite{qing-uegaki-2025} @cite{rappaport-hovav-levin-2024} @cite{solstad-bott-2024} @cite{rappaport-hovav-levin-1998}
 
 `VerbCore` is the **semantic spine** of a verb entry. It carries:
 - Argument structure (theta roles, complement type, control)

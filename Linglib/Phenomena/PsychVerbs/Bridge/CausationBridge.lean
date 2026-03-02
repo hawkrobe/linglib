@@ -74,7 +74,7 @@ def classII_consistent (v : VerbEntry) : Prop :=
     v.opaqueContext = subjectIntensional cs
 
 /-- A Class I (experiencer-subject) psych verb entry is consistent with
-    B&R's (1988) *temere* pattern: experiencer subject, stimulus object,
+    @cite{belletti-rizzi-1988}'s *temere* pattern: experiencer subject, stimulus object,
     no causal source (the internal/external distinction is Class-II-specific). -/
 def classI_consistent (v : VerbEntry) : Prop :=
   v.causalSource = none ∧

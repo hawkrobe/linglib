@@ -10,7 +10,7 @@ answer to a QUD" — additive particles and discourse *only*.
 
 ## Two layers of SUPPORT
 
-IKW (2025) Definition 13 decomposes SUPPORT into two independent conditions:
+@cite{ippolito-kiss-williams-2025} Definition 13 decomposes SUPPORT into two independent conditions:
 
 1. **Doxastic**: the speaker believes some alternative q of the sentence's
    denotation (DOX_sp ⊆ q for some q ∈ ⟦S⟧)
@@ -40,7 +40,7 @@ open Semantics.Questions.ProbabilisticAnswerhood
 
 /-- Probabilistic support: evidence E raises the probability of answer α.
 
-This is the probabilistic component of IKW (2025) Definition 13:
+This is the probabilistic component of @cite{ippolito-kiss-williams-2025} Definition 13:
 P(α|E) > P(α). Wraps `isPositiveEvidence` from `ProbabilisticAnswerhood`. -/
 def probSupports {W : Type*} [Fintype W]
     (prior : Prior W) (evidence : W → Bool) (answer : W → Bool) : Bool :=
@@ -74,7 +74,7 @@ def conjunctionStrengthensSupport {W : Type*} [Fintype W]
 
 -- Doxastic Support (IKW 2025 Def. 13)
 
-/-- Full SUPPORT predicate from IKW (2025) Definition 13.
+/-- Full SUPPORT predicate from @cite{ippolito-kiss-williams-2025} Definition 13.
 
 SUPPORT(S, r) holds iff:
 1. (Doxastic) ∃q ∈ ⟦S⟧: DOX_sp ⊆ q — the speaker believes some alternative

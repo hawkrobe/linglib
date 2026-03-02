@@ -206,7 +206,7 @@ Sources:
 
 /-- WALS Ch 20: How inflectional formatives are attached to stems.
 
-    Bickel & Nichols (2013a) classify languages by the dominant fusion
+    @cite{bickel-nichols-2013a} classify languages by the dominant fusion
     strategy in their inflectional morphology. **Isolating** languages
     express grammatical categories with separate words. **Concatenative**
     (agglutinative) languages attach clearly segmentable affixes.
@@ -251,7 +251,7 @@ theorem ch20_total :
 
 /-- WALS Ch 21: How many grammatical categories a single formative expresses.
 
-    Bickel & Nichols (2013b) distinguish **monoexponential** systems, where
+    @cite{bickel-nichols-2013b} distinguish **monoexponential** systems, where
     each affix realizes exactly one grammatical category (e.g., Turkish -lar
     = plural only), from **polyexponential** (cumulative/fusional) systems,
     where a single formative bundles multiple categories (e.g., Latin -orum =
@@ -283,7 +283,7 @@ theorem ch21_total :
 
 /-- WALS Ch 22: How many inflectional categories are expressed on the verb.
 
-    Bickel & Nichols (2013c) count the number of inflectional categories
+    @cite{bickel-nichols-2013c} count the number of inflectional categories
     (person, number, tense, aspect, mood, etc.) that are expressed as bound
     morphology on the verb. Languages range from 0 (analytic/isolating) to
     13+ (highly polysynthetic). -/
@@ -319,7 +319,7 @@ theorem ch22_total :
 
 /-- WALS Ch 25: Where grammatical relations are marked in phrases.
 
-    Nichols & Bickel (2013a) classify languages by whether grammatical
+    @cite{bickel-nichols-2013a} classify languages by whether grammatical
     relations (subject-of, object-of, possessor-of) are marked on the
     **head** of the phrase (e.g., verb agreement for subjects), on the
     **dependent** (e.g., case marking on nouns), on **both** (double
@@ -401,7 +401,7 @@ theorem ch26_total :
 
 /-- WALS Ch 27: Whether the language has productive reduplication.
 
-    Rubino (2013) classifies languages by whether they exhibit productive
+    @cite{rubino-2013} classifies languages by whether they exhibit productive
     full or partial reduplication as a morphological process. Reduplication
     is used cross-linguistically for plurality, intensification, aspect,
     diminutive, and other functions. -/

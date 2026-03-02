@@ -11,7 +11,6 @@ a determiner to be argumental.
 ## Determiner System
 @cite{chierchia-1998}
 
-
 Italian has a richer article paradigm than French, with allomorphy
 conditioned by gender, number, and phonological context:
 

@@ -6,7 +6,6 @@ and subordination strategies.
 ## Part I: CTP Typology
 @cite{dixon-2006} @cite{dryer-haspelmath-2013} @cite{noonan-2007}
 
-
 Based on:
 - Noonan, M. (2007). Complementation. In T. Shopen (ed.), Language Typology
   and Syntactic Description, vol. 2, 2nd ed. Cambridge University Press.

@@ -7,7 +7,7 @@ A QUD partitions the meaning space into equivalence classes. Two meanings are
 equivalent under a QUD if they "answer the question the same way."
 
 The file also contains inquisitive semantics core types (`InfoState`, `Issue`)
-and Roberts' (2012) formalization of question entailment, subquestions, and
+and @cite{roberts-2012}'s formalization of question entailment, subquestions, and
 discourse move relevance.
 
 -/
@@ -387,7 +387,7 @@ def Issue.infoContent {W : Type*} (q : Issue W) : W → Bool :=
 
 In the standard inquisitive semantics framework, the informational content
 (union of all alternatives) IS the highlighted content for declarative
-sentences. We keep this alias because IKW (2025) Def. 16 uses "highlighted
+sentences. We keep this alias because @cite{ippolito-kiss-williams-2025} Def. 16 uses "highlighted
 content" terminology in defining the at-issue content of discourse *only*. -/
 abbrev Issue.highlighted {W : Type*} (q : Issue W) : W → Bool :=
   q.infoContent
@@ -448,7 +448,7 @@ def isSubquestion {W : Type*} (q parent : Issue W) (worlds : List W) : Bool :=
 /-- A discourse move (assertion or question) is relevant to the QUD if
 it partially answers the QUD or a subquestion.
 
-@cite{roberts-2012} Def. 15 / IKW (2025) assumption iii, p. 225:
+@cite{roberts-2012} Def. 15 / @cite{ippolito-kiss-williams-2025} assumption iii, p. 225:
 "S is relevant to QUD if S is either a subquestion of QUD or an answer
 to a subquestion q of QUD."
 

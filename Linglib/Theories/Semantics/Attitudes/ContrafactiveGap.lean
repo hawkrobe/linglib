@@ -176,7 +176,7 @@ theorem strong_contrafactive_violates_plc' :
 /--
 **Theorem**: Weak contrafactive requirements are not subject to the PLC.
 
-Glass (2022) argues that yǐwéi's falsity inference is a postsupposition
+@cite{glass-2025} argues that yǐwéi's falsity inference is a postsupposition
 about the output context, not a presupposition about the input context.
 The PLC constrains presupposition-assertion pairs, not postsuppositions.
 -/

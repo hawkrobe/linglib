@@ -204,7 +204,6 @@ end Modals
 ### Numerals and Horn Scales
 @cite{horn-1972} @cite{kennedy-2015}
 
-
 Numerals are NOT represented as a `HornScale` here because:
 
 1. Under **lower-bound** semantics, numerals do form a scale

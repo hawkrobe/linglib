@@ -104,6 +104,32 @@ inductive S1ScoreSpec (U W L : Type*) where
   | combinedUtility (terms : List (S1UtilityTerm U W L))
 
 -- ============================================================================
+-- S2ScoreSpec
+-- ============================================================================
+
+/-- Utility term component for `S2ScoreSpec.utilityMaximizing` scoring.
+    Each term contributes an additive component to the S2 utility,
+    computed w.r.t. L1 marginals (not L0). -/
+inductive S2UtilityTerm (U W L : Type*) where
+  /-- ω · ln P_L1(w|u) — log-informativity at the true world, w.r.t. L1. -/
+  | logStateMarginal (weight : ℚ)
+  /-- ω · Σ_w' P_L1(w'|u) · V(w') — expected value under L1 state marginals. -/
+  | expectedValue (weight : ℚ) (value : W → ℚ)
+  /-- ω · ln P_L1(l̂|u) — log probability of target latent under L1. -/
+  | logLatentMarginal (weight : ℚ) (target : L)
+  /-- f(u) — per-utterance constant (cost, etc.). -/
+  | constant (fn : U → ℚ)
+
+/-- S2 scoring specification. Determines how the S2 speaker scores utterances.
+    - `endorsement`: S2(u|w) ∝ L1(w|u) — same as L1 endorsement (no extra utility).
+    - `utilityMaximizing`: S2(u|w) ∝ exp(α · Σ terms) — full utility model. -/
+inductive S2ScoreSpec (U W L : Type*) where
+  /-- S2 score = L1(w|u). Simple endorsement (no presentational utility). -/
+  | endorsement
+  /-- S2 score = exp(α · Σ_i term_i). Utility-maximizing with L1-derived terms. -/
+  | utilityMaximizing (α : ℚ) (terms : List (S2UtilityTerm U W L))
+
+-- ============================================================================
 -- RSAConfigData
 -- ============================================================================
 
@@ -111,7 +137,7 @@ inductive S1ScoreSpec (U W L : Type*) where
 
     Mirrors `RSAConfig` but all fields are computable, enabling
     `native_decide` verification. The `toRSAConfig` lift casts ℚ → ℝ
-    and expands `scoreSpec` into the appropriate `s1Score` lambda. -/
+    and expands `s1Spec` into the appropriate `s1Score` lambda. -/
 structure RSAConfigData (U W : Type*) [Fintype U] [Fintype W]
     [DecidableEq U] [DecidableEq W] where
   /-- Latent variable type (default Unit). -/
@@ -125,11 +151,13 @@ structure RSAConfigData (U W : Type*) [Fintype U] [Fintype W]
   /-- Meaning values are non-negative. -/
   meaning_nonneg : ∀ l u w, 0 ≤ meaning l u w
   /-- S1 scoring pattern. -/
-  scoreSpec : S1ScoreSpec U W Latent
-  /-- Rationality parameter (natural number, ≥ 1). -/
-  α : ℕ
+  s1Spec : S1ScoreSpec U W Latent
+  /-- Rationality parameter (positive rational). -/
+  α : ℚ
   /-- Rationality is positive. -/
-  α_pos : 0 < α := by omega
+  α_pos : 0 < α := by norm_num
+  /-- Optional S2 scoring specification. When `some`, enables S2 speaker layer. -/
+  s2Spec : Option (S2ScoreSpec U W Latent) := none
   /-- Prior over worlds (unnormalized, ℚ-valued). -/
   worldPrior : W → ℚ := fun _ => 1
   /-- World prior is non-negative. -/
@@ -239,16 +267,16 @@ theorem S1ScoreSpec.toS1Score_nonneg [DecidableEq L]
 -- toRSAConfig
 -- ============================================================================
 
-/-- Lift RSAConfigData to RSAConfig by casting ℚ → ℝ and expanding scoreSpec. -/
+/-- Lift RSAConfigData to RSAConfig by casting ℚ → ℝ and expanding s1Spec. -/
 noncomputable def RSAConfigData.toRSAConfig [DecidableEq U] [DecidableEq W]
     (d : RSAConfigData U W) : RSAConfig U W where
   Latent := d.Latent
   meaning l u w := ↑(d.meaning l u w)
   meaning_nonneg l u w := by exact_mod_cast d.meaning_nonneg l u w
-  s1Score := d.scoreSpec.toS1Score
-  s1Score_nonneg l0 α l w u hl0 hα := d.scoreSpec.toS1Score_nonneg l0 α l w u hl0 hα
+  s1Score := d.s1Spec.toS1Score
+  s1Score_nonneg l0 α l w u hl0 hα := d.s1Spec.toS1Score_nonneg l0 α l w u hl0 hα
   α := ↑d.α
-  α_pos := by exact_mod_cast d.α_pos
+  α_pos := Rat.cast_pos.mpr d.α_pos
   worldPrior w := ↑(d.worldPrior w)
   worldPrior_nonneg w := by exact_mod_cast d.worldPrior_nonneg w
   latentPrior w l := ↑(d.latentPrior w l)

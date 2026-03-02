@@ -55,7 +55,7 @@ structure GranInterval (D : Type*) where
 -- § 1a. Granularity Construction (eqs. 40–42)
 -- ════════════════════════════════════════════════════
 
-/-! ### Sauerland & Stateva (2011) granularity framework
+/-! ### @cite{sauerland-stateva-2011} granularity framework
 
 Eqs. (40a-c) define the properties of a granularity function γ:
 - (40a) s ∈ γ(s) — every degree is in its own cell

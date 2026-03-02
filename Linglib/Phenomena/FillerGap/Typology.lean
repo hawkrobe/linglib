@@ -231,7 +231,7 @@ def WALSCount.totalOf (cs : List WALSCount) : Nat :=
   cs.foldl (λ acc c => acc + c.count) 0
 
 /-- Chapter 122 distribution: relativization strategies on subjects (N = 824).
-    Counts from Comrie & Kuteva (2013a), WALS Online. -/
+    Counts from @cite{comrie-kuteva-2013a}, WALS Online. -/
 def ch122Counts : List WALSCount :=
   [ ⟨"Gap", 326⟩
   , ⟨"Pronoun retention", 15⟩
@@ -240,7 +240,7 @@ def ch122Counts : List WALSCount :=
   , ⟨"Mixed", 205⟩ ]
 
 /-- Chapter 123 distribution: relativization strategies on obliques (N = 624).
-    Counts from Comrie & Kuteva (2013b), WALS Online.
+    Counts from @cite{comrie-kuteva-2013b}, WALS Online.
 
     Note: the sample for Ch 123 is smaller than Ch 122 because some
     languages in the Ch 122 sample could not be assessed for oblique

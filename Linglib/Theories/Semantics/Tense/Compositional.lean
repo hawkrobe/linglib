@@ -251,7 +251,6 @@ end Examples
 ### composeTense Properties
 @cite{kiparsky-2002}
 
-
 `composeTense` is a stipulative function defining how surface tenses compose
 under embedding. The following theorems establish its algebraic properties.
 

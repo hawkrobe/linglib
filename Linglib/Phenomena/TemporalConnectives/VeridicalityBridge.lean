@@ -20,7 +20,7 @@ For each temporal connective:
 - The Fragment's `complementVeridical` field is **grounded** in a theory-level
   proof: veridical entries have proofs that the connective entails complement
   instantiation; non-veridical entries have counterexamples.
-- The `complementVeridical` field matches the empirical data in the O&ST (2024)
+- The `complementVeridical` field matches the empirical data in the O&@cite{ogihara-steinert-threlkeld-2024}
   study (data layer agreement).
 
 ## The Explanatory Chain
@@ -134,13 +134,13 @@ theorem before_nonveridicality_grounded :
 -- ============================================================================
 
 /-- The Fragment's `complementVeridical` field matches the empirical data
-    from the O&ST (2024) study for *after*. -/
+    from the O&@cite{ogihara-steinert-threlkeld-2024} study for *after*. -/
 theorem after_fragment_matches_data :
     after_.complementVeridical = after_veridical.complementEntailed :=
   rfl
 
 /-- The Fragment's `complementVeridical` field matches the empirical data
-    from the O&ST (2024) study for *before*. -/
+    from the O&@cite{ogihara-steinert-threlkeld-2024} study for *before*. -/
 theorem before_fragment_matches_data :
     before_.complementVeridical = before_nonveridical.complementEntailed :=
   rfl
@@ -288,7 +288,7 @@ theorem all_before_readings_nonveridical :
     before_.complementVeridical = false :=
   rfl
 
-/-- The O&ST (2024) data covers all three B&C readings:
+/-- The O&@cite{ogihara-steinert-threlkeld-2024} data covers all three B&C readings:
     - `before_nonveridical`: basic non-veridical (compatible with any reading)
     - `before_counterfactual`: counterfactual reading (bomb example)
     - `before_noncommittal`: non-committal reading (Supreme Court example) -/

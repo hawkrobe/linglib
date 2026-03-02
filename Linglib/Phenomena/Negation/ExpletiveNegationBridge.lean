@@ -6,7 +6,7 @@ import Linglib.Fragments.Italian.Negation
 
 /-!
 # Expletive Negation: Typology and Licensing
-@cite{greco-2018} @cite{greco-2019} @cite{halm-huszr-2021} @cite{jin-koenig-2021} @cite{kennedy-mcnally-2005} @cite{napoli-nespor-1976} @cite{rett-2026}
+@cite{greco-2018} @cite{greco-2019} @cite{halm-huszr-2021} @cite{jin-koenig-2021} @cite{kennedy-mcnally-2005} @cite{napoli-nespor-1976} @cite{rett-2026} @cite{cepeda-2018}
 
 Expletive negation (EN) is truth-conditionally vacuous negation that appears
 in specific grammatical environments cross-linguistically. @cite{rett-2026} unifies

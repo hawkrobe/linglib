@@ -19,7 +19,7 @@ Empirical modal inventories from 27 languages (17 families) mapped to the
 
 ## Data source
 
-Guo, Imel, & Steinert-Threlkeld (2022). A database for modal semantic typology.
+@cite{steinert-threlkeld-imel-guo-2023}. A database for modal semantic typology.
 https://clmbr.shane.st/modal-typology/
 
 -/

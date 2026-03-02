@@ -6,7 +6,7 @@ import Linglib.Phenomena.Constructions.ParticleVerbs.Data
 /-!
 # PVC–DOC Structural Priming — Small Clause Bridge
 
-@cite{haddican-tamminga-dendikken-wade-2026} @cite{dendikken-1995} @cite{halle-marantz-1993} @cite{johnson-1991}
+@cite{haddican-tamminga-dendikken-wade-2026} @cite{dendikken-1995} @cite{halle-marantz-1993} @cite{johnson-1991} @cite{aarts-1989} @cite{svenonius-1996a} @cite{bruening-2010a}
 
 Haddican, @cite{haddican-tamminga-dendikken-wade-2026} report a production priming
 experiment (N=238) showing PVCs ("put down the vase") prime DOCs
@@ -53,7 +53,7 @@ furnish isomorphism at the process level (both involve V+Head complex
 predicate formation) rather than tree-shape identity — "We know of no
 priming literature testing specifically whether movement or other syntactic
 operations can feed priming" (p.11). @cite{brennan-pylkkanen-2008}'s low ApplP and
-Wood & Marantz's (2017) i* head are also noted as potential sources of
+@cite{wood-marantz-2017} i* head are also noted as potential sources of
 isomorphism (nn. 13, 15).
 
 ## Cross-references
@@ -373,7 +373,7 @@ exactly as PVC particle shift derives from `V [SC DP Prt]` — see
 `DativeAlternation` for the empirical data.
 
 The nested analysis has more internal structure than the flat
-`V [SC DP DP]` from Kayne (1984), but both share the outermost
+`V [SC DP DP]` from @cite{kayne-1984}, but both share the outermost
 SC template `V [SC Subj XP]`. -/
 
 /-- Nested SC DOC: `give [SC book [PP to Hsu]]`.

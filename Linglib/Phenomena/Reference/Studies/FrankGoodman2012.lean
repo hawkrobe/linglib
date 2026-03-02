@@ -257,8 +257,8 @@ theorem extension_sizes :
 
 /-! All RSA levels derive from `cfg`:
 
-- `cfg.L0  u w` — L0 posterior P(w|u)
-- `cfg.S1  w u` — S1 policy P(u|w)
+- `cfg.L0 u w` — L0 posterior P(w|u)
+- `cfg.S1 w u` — S1 policy P(u|w)
 - `cfg.L1 u w` — L1 posterior P(w|u)
 
 The pragmatic inferences arise because S1 prefers informative utterances:

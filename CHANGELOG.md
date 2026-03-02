@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.227.82] - 2026-03-02
+
+### Changed
+- **Citation cleanup round 2**: Replace 650+ in-text citations with `@cite{key}` tags across 147 Lean files. Add 68 new bib entries to `references.bib` (1106 total). Reduce unmatched citations from 101 to 12 (4 false positives, 4 Czech diacritics, 4 Dieuleveut misattribution). Fix wrong DOIs: mayr-sudo-2022 (resolved to Chierchia), barnes-1984 (465836→465835), wood-marantz-2017 (ch.0010→0011), bar-lev-2021a. Fix entry types: barnes-1984 (@book→@article), collins-1997 (@article→@book), wood-marantz-2017 (@article→@incollection). Add Henderson year fix (2017→2019 manuscript→published). 2696 valid @cite references across codebase.
+
 ## [0.227.81] - 2026-03-02
 
 ### Added

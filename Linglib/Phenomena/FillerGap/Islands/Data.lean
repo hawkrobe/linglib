@@ -233,7 +233,7 @@ theorem mos_is_weak :
 
 /-!
 ## Gradience in Island Effects
-@cite{hofmeister-sag-2010} @cite{chomsky-1973} @cite{chomsky-1986} @cite{chomsky-1995} @cite{ross-1967} @cite{szabolcsi-2006}
+@cite{hofmeister-sag-2010} @cite{chomsky-1973} @cite{chomsky-1986} @cite{chomsky-1995} @cite{ross-1967} @cite{szabolcsi-2006} @cite{goldberg-2006} @cite{lu-degen-2025}
 
 @cite{hofmeister-sag-2010} argue that the binary strong/weak classification is insufficient. Island effects are **gradient** along multiple
 dimensions, and acceptability varies systematically with nonstructural

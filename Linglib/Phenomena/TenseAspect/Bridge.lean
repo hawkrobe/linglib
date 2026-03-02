@@ -17,7 +17,6 @@ import Linglib.Fragments.German.Tense
 # Tense Phenomena: Bridge Theorems
 @cite{lakoff-1970}
 
-
 Per-theory × per-phenomenon derivation theorems connecting the empirical
 data in `Data.lean` to the nine tense theories in
 `Theories/Semantics.Intensional/Tense/` and `Theories/Minimalism/Tense/`.

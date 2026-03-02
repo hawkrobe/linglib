@@ -8,7 +8,6 @@ Personal pronouns (strong forms) and clitic paradigm for Italian.
 ## Strong Pronouns
 @cite{munoz-perez-2026}
 
-
 Italian has a T/V distinction in 2nd person:
 - Singular: *tu* (familiar T) vs *Lei* (formal V, 3sg agreement)
 - Plural: *voi* (familiar) vs *Loro* (formal, archaic; *voi* now used for both)

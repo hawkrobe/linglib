@@ -8,7 +8,6 @@ import Linglib.Core.Register
 # Modal Logic
 @cite{rotter-liu-2025}
 
-
 Kripke semantics for normal modal logics. Formalizes frames, frame conditions,
 correspondence theorems, and the lattice of normal modal logics.
 

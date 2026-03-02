@@ -65,7 +65,6 @@ def closestWorldsB {W : Type*} [DecidableEq W]
 ## Universal Theory
 @cite{ramotowska-santorio-2025}
 
-
 The standard possible-worlds analysis: counterfactuals universally quantify
 over the closest antecedent-worlds.
 

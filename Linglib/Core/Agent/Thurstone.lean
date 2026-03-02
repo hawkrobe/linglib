@@ -5,7 +5,7 @@ import Mathlib.MeasureTheory.Measure.Haar.OfBasis
 /-!
 # Thurstone's Theory of Discriminal Processes @cite{luce-1959}
 
-@cite{luce-1959} §2.D (pp. 53-60): Thurstone's (1927) Case V model of
+@cite{luce-1959} §2.D (pp. 53-60): @cite{thurstone-1927}'s Case V model of
 paired comparison, and the logistic approximation that connects it to the
 Luce choice rule.
 

@@ -4,7 +4,6 @@ import Linglib.Core.RootDimensions
 # Diathesis Alternation Data
 @cite{levin-1993}
 
-
 Theory-neutral empirical data on diathesis alternation participation.
 
 The four verbs *break*, *cut*, *hit*, *touch* form a canonical diagnostic

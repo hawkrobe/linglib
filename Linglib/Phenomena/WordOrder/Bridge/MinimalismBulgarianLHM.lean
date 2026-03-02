@@ -5,7 +5,6 @@ import Linglib.Phenomena.WordOrder.VerbPosition
 # Bridge: Bulgarian Long Head Movement to Verb Position Phenomena
 @cite{harizanov-gribanova-2019}
 
-
 Connects the Minimalist analysis of Bulgarian LHM to the
 empirical verb position data in `Phenomena.WordOrder.VerbPosition`.
 

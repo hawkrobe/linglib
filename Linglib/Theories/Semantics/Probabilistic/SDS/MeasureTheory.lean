@@ -42,7 +42,6 @@ namespace Semantics.Probabilistic.SDS.MeasureTheory
 ## SDSMeasureSystem Design
 @cite{lassiter-goodman-2017}
 
-
 A measure-theoretic SDS constraint system would be the continuous analogue
 of `SDSConstraintSystem`, where:
 - The parameter space Θ has a measurable structure

@@ -7,7 +7,6 @@ import Linglib.Core.Agent.ExperimentDesign
 # PRIOR-PQ as RSAConfig @cite{hawkins-etal-2025}
 @cite{frank-goodman-2012}
 
-
 Hawkins, R. D., Tsvilodub, P., Bergey, C., Goodman, N. D. & Franke, M. (2025).
 "Relevant answers to polar questions." Phil. Trans. R. Soc. B 380: 20230505.
 

@@ -269,7 +269,7 @@ The speech event's content provides the conversational background.
 
 NB: These are defined directly rather than via `speechActAnchoring`
 (§3) to avoid type inference issues with the generic `Ev` parameter.
-The result is equivalent: `fDecl  w = speechActAnchoring
+The result is equivalent: `fDecl w = speechActAnchoring
 declarativeEvidence (λ _ _ => []) (.inl) w`. -/
 private def fDecl : AnchoringFn Unit LeaveWorld :=
   λ () => declarativeEvidence.content

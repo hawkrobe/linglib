@@ -53,7 +53,7 @@ structure LNCDatum where
 -- Gibbard's Example
 
 /-!
-## Gibbard's Example (1981)
+## Gibbard's Example @cite{gibbard-1981}
 
 The classic example of a left-nested conditional, discussed extensively
 in the philosophical literature on conditionals.

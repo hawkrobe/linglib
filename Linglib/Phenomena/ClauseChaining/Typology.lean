@@ -15,8 +15,7 @@ are **dependent but not embedded** — what Role & Reference Grammar calls
 "cosubordination."
 
 ## Core structural asymmetry
-@cite{chomsky-1981} @cite{dryer-1992} @cite{givon-1983}
-
+@cite{chomsky-1981} @cite{dryer-1992} @cite{givon-1983} @cite{sarvasy-2015}
 
 The medial/final asymmetry is the defining property. Medial verbs carry a
 **reduced** morphological paradigm: some TAM categories are absent or restricted,
@@ -313,7 +312,7 @@ def InterclauseRelation.encodableViaSR : InterclauseRelation → Bool
     These are characteristic of oral narrative in clause-chaining languages
     and serve to structure discourse into episodes.
 
-    @cite{sarvasy-aikhenvald-2025} §1.6; de Vries (2005); @cite{sarvasy-aikhenvald-2025} §3.3. -/
+    @cite{sarvasy-aikhenvald-2025} §1.6; @cite{de-vries-2005}; @cite{sarvasy-aikhenvald-2025} §3.3. -/
 inductive BridgingType where
   /-- Recapitulative (tail-head) linkage: the first medial clause of a new chain
       repeats (wholly or in reduced form) the final clause of the preceding chain.

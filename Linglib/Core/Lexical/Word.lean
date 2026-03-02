@@ -4,7 +4,6 @@ import Linglib.Core.Lexical.UD
 # Word
 @cite{biberauer-roberts-2014} @cite{dryer-1992}
 
-
 The lexical unit and its building blocks: morphological feature types (aliased
 to Universal Dependencies), the `Features` bundle, and the `Word` structure.
 

@@ -2,6 +2,7 @@ import Mathlib.Data.Rat.Defs
 
 /-!
 # Register
+@cite{fiske-cuddy-glick-xu-2002}
 
 Sociolinguistic register as a lexical feature. Register encodes the
 formality level of a linguistic form — whether it belongs to formal

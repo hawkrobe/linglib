@@ -374,7 +374,7 @@ This explains:
 - "completely full" ✓ (fullness scale: empty to full)
 - "??completely tall" ✗ (height scale: 0 to... what?)
 
-Source: @cite{kennedy-mcnally-2005}, Rotstein & Winter (2004)
+Source: @cite{kennedy-mcnally-2005}, @cite{rotstein-winter-2004}
 -/
 structure ScaleClosurePuzzle where
   closedScaleAdj : String

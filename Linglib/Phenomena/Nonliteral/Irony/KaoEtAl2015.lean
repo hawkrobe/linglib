@@ -5,7 +5,6 @@ import Linglib.Tactics.RSAPredict
 # @cite{kao-goodman-2015} — Let's Talk (Ironically) About the Weather @cite{kao-goodman-2015}
 @cite{bergen-goodman-2015}
 
-
 Proceedings of the 37th Annual Meeting of the Cognitive Science Society.
 
 ## The Model

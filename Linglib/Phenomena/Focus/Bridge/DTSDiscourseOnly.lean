@@ -132,7 +132,7 @@ theorem negRelevant_implies_not_probSupports {W : Type*} [Fintype W]
 
 When S is posRelevant and S' is negRelevant (the *but* condition), S'
 also fails to probabilistically support H (the *only* condition). This
-formalizes IKW (2025) §6's claim that discourse *only* is strictly weaker
+formalizes @cite{ippolito-kiss-williams-2025} §6's claim that discourse *only* is strictly weaker
 than *but*. -/
 theorem but_sufficient_for_only {W : Type*} [Fintype W]
     (prior : Prior W) (topic : BProp W)

@@ -398,12 +398,12 @@ theorem universal_closure_fails :
   omega
 
 -- ============================================================================
--- Section 7c: EXH–Type-Shifting Duality (Spector 2013 §6.2 vs Kennedy 2015 §3.1)
+-- Section 7c: EXH–Type-Shifting Duality (@cite{spector-2013} §6.2 vs @cite{kennedy-2015} §3.1)
 -- ============================================================================
 
 /-! ## EXH and Type-Shifting Are Inverses
 
-Spector (2013, §6.2) proposes that the exact reading of bare numerals arises from
+@cite{spector-2013} (§6.2) proposes that the exact reading of bare numerals arises from
 a covert exhaustivity operator: `EXH(≥n) = ≥n ∧ ¬(≥n+1) = (=n)`. @cite{kennedy-2015} proposes the reverse: the lower-bound reading arises from type-shifting the
 exact meaning: `typeShift(=n) = ∃k≥n.(=k) = (≥n)`.
 
@@ -434,7 +434,7 @@ because:
 /-- Scalar exhaustification for numerals.
     `exhNumeral m n` = "the max count is at least m AND NOT at least m+1"
     = "the max count is exactly m".
-    This is Spector's (2013, §6.2) EXH applied to the numeral scalar alternative set
+    This is @cite{spector-2013}'s (§6.2) EXH applied to the numeral scalar alternative set
     {`≥k` : k is a numeral}. -/
 def exhNumeral (_maxN : Nat) (m : Nat) (n : Nat) : Bool :=
   maxMeaning .ge m n && !(maxMeaning .ge (m + 1) n)

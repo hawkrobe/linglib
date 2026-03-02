@@ -1,6 +1,6 @@
 /-!
 # D-Frames: Functional Attribute Structures @cite{loebner-2021}
-@cite{osswald-kallmeyer-2018} @cite{petersen-2007}
+@cite{osswald-kallmeyer-2018} @cite{petersen-2007} @cite{lobner-2014}
 
 @cite{loebner-2021} "Frames at the Interface of Language and Cognition"
 (Annual Review of Linguistics 7: 261–284) defines **D-frames**

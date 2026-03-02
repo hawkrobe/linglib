@@ -262,7 +262,6 @@ theorem substitutivity_deRe (R : DoxAccessibility E) (M : Model E)
 ## Quine's Ortcutt Puzzle
 @cite{quine-1956}
 
-
 The linguistic puzzle that motivates conceptual covers:
 
 > "Ralph believes that the man in the brown hat is a spy."

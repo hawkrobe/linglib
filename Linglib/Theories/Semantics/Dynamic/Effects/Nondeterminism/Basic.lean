@@ -4,7 +4,6 @@ import Linglib.Theories.Semantics.Dynamic.Core.Basic
 # Nondeterminism Effect: Plural/Choice Alternatives
 @cite{charlow-2019}
 
-
 The nondeterminism effect models indefinites as introducing sets of alternatives
 rather than single values. This underlies:
 - Indefinites as choice functions

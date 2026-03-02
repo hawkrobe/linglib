@@ -46,7 +46,7 @@ def liftProp (p : BProp W) : InfoSensDen W := λ _ => p
     ⟦might-p⟧ⁱ(w) = true iff ∃w' ∈ i, p(w') = true.
     Truth is insensitive to the evaluation world w.
 
-    @cite{rudin-2025} eq. (25); adapted from Yalcin (2007). -/
+    @cite{rudin-2025} eq. (25); adapted from @cite{yalcin-2007}. -/
 def mightSimple (p : BProp W) : InfoSensDen W :=
   λ i _ => i.any p
 

@@ -81,7 +81,6 @@ def localExhMW {World Alt : Type} (node : LocalAltNode World Alt) : Prop' World 
 ## LU-RSA: What It Can and Cannot Do
 @cite{potts-etal-2016}
 
-
 ### The LU Approach
 
 LU-RSA models uncertainty over the lexicon:

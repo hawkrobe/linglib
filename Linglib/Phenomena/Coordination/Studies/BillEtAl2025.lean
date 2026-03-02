@@ -414,7 +414,6 @@ theorem georgian_contradicts_transparency :
 ## Link to Phenomena/Gradability/Imprecision/FormMeaning.lean
 @cite{van-hout-1998}
 
-
 The Transparency Principle is the acquisition-side counterpart of
 the No Needless Manner Violations principle formalized in FormMeaning.lean.
 

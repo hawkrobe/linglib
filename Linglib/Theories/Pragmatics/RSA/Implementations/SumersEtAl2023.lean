@@ -63,7 +63,6 @@ open RSA.CombinedUtility
 ## Signaling Bandits
 @cite{frank-goodman-2012}
 
-
 Unlike Lewis signaling games where world state = correct action,
 signaling bandits separate abstract knowledge (feature values) from
 concrete decisions (which action to take).

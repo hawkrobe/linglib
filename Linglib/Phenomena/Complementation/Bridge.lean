@@ -231,7 +231,7 @@ theorem ctp_selection_consistent_ask :
 
 /-! ## C1. Map CTP classes to mood selection
 
-This connects Noonan's semantic CTP classes to Mendes' (2025) mood semantics.
+This connects Noonan's semantic CTP classes to @cite{mendes-2025}'s mood semantics.
 The realis/irrealis split predicts mood selection. -/
 
 /-- Map CTP class to mood selection.

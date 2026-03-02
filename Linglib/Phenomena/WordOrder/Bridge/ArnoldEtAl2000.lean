@@ -94,7 +94,7 @@ theorem heavy_last_consistent_with_dlm :
 /-!
 ## Pure-discourse: Correct on newness, blind to weight
 
-Givón (1988) claims ordering is determined by information status: given
+@cite{givon-1988} claims ordering is determined by information status: given
 referents precede new ones. Weight effects are epiphenomenal (new referents
 need more descriptive material, so they tend to be heavier).
 

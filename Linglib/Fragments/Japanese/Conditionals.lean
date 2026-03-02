@@ -4,7 +4,6 @@ import Linglib.Theories.Semantics.Conditionals.ConditionalType
 # Japanese Conditional Markers
 @cite{iatridou-1991} @cite{mizuno-2024}
 
-
 Conditional morphemes in Japanese and their HC/PC restrictions.
 
 ## Markers

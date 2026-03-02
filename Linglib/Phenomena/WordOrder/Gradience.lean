@@ -82,8 +82,7 @@ theorem categorical_consistent_with_gradient :
 -- §2: Gradient Language Profile (OSF Dataset1.txt + Dataset3.txt)
 -- ============================================================================
 
-/-- Per-language gradient word-order data from Levshina, Namboodiripad et al.
-    (2023) OSF datasets. SO proportion from Dataset1.txt, entropy and case MI
+/-- Per-language gradient word-order data from Levshina, @cite{namboodiripad-etal-2023} OSF datasets. SO proportion from Dataset1.txt, entropy and case MI
     from Dataset3.txt. All values × 1000, rounded to nearest integer. -/
 structure GradientWOProfile where
   name : String

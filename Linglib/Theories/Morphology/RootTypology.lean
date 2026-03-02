@@ -3,7 +3,7 @@ import Linglib.Core.Root
 
 /-!
 # Root Typology: States and Changes of State (Beavers et al. 2021, B&KG 2020) @cite{beavers-etal-2021} @cite{beavers-koontz-garboden-2020} @cite{coon-2019}
-@cite{arad-2005} @cite{dixon-1982} @cite{embick-2004} @cite{dowty-1991} @cite{embick-2009} @cite{rose-nichols-2021}
+@cite{arad-2005} @cite{dixon-1982} @cite{embick-2004} @cite{dowty-1991} @cite{embick-2009} @cite{rose-nichols-2021} @cite{levin-1993}
 
 Beavers, Everdell, Jerro, Kauhanen, @cite{beavers-etal-2021}
 "States and changes of state: A crosslinguistic study of the roots of verbal
@@ -245,10 +245,10 @@ theorem result_roots_witness_against_bifurcation :
 theorem pc_roots_consistent_with_bifurcation :
     RootType.entailsChange .propertyConcept = false := rfl
 
-/-- **B&KG (2020) strengthened bifurcation failure via RootEntailments.**
+/-- **B&@cite{beavers-koontz-garboden-2020} strengthened bifurcation failure via RootEntailments.**
 
     @cite{beavers-etal-2021} show roots can entail CHANGE (one templatic notion).
-    B&KG (2020) show roots can entail CHANGE, CAUSATION, and MANNER —
+    B&@cite{beavers-koontz-garboden-2020} show roots can entail CHANGE, CAUSATION, and MANNER —
     ALL notions traditionally reserved for templates. This is a strictly
     stronger refutation: even if one accepted that change is "special",
     roots encoding manner+cause (√GUILLOTINE, √HAND) violate bifurcation
@@ -1317,7 +1317,7 @@ inductive RootPosition where
   deriving DecidableEq, Repr, BEq
 
 /-- Full root specification: entailment features + structural position.
-    This is B&KG's (2020) Table 12 in full — the 4 binary entailment
+    This is B&@cite{beavers-koontz-garboden-2020}'s Table 12 in full — the 4 binary entailment
     features × 2 positions give 32 theoretical cells, of which 7 are
     attested and the rest are principled gaps. -/
 structure FullRootSpec where

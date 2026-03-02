@@ -464,7 +464,7 @@ theorem contrafactive_gap_is_structural :
 Weak contrafactives like Mandarin yǐwéi don't violate the PLC because
 their projective content is fundamentally different:
 
-1. **Not a presupposition**: Glass (2022) argues yǐwéi's falsity inference
+1. **Not a presupposition**: @cite{glass-2025} argues yǐwéi's falsity inference
    is a postsupposition (about output context) not presupposition (input)
 
 2. **Different requirement**: yǐwéi requires CG ◇ ¬p (CG compatible with ¬p),

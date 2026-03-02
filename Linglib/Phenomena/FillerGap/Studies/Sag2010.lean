@@ -59,7 +59,7 @@ inductive Finiteness where
   | infinitivalPossible  -- VP[inf] head daughter possible (interrogative, relative)
   deriving Repr, DecidableEq, BEq
 
-/-- Semantic type of the clause (§2.1, example 30; follows G&S 2000). -/
+/-- Semantic type of the clause (§2.1, example 30; follows @cite{ginzburg-sag-2000}). -/
 inductive FGSemanticType where
   | question   -- Set of propositions (wh-interrogative)
   | fact       -- Fact: related to but distinct from proposition (exclamative)

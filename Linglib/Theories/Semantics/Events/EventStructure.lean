@@ -184,7 +184,7 @@ theorem lexicalized_is_full_agent :
 -- ════════════════════════════════════════════════════
 
 /-! Levin classes map to event structure templates via meaning components.
-    The core correspondence (R&L 1998 §3; R&L 2010 §2):
+    The core correspondence (@cite{rappaport-hovav-levin-1998} §3; @cite{rappaport-hovav-levin-2010} §2):
 
     | Meaning component pattern | Template | Example class |
     |---|---|---|

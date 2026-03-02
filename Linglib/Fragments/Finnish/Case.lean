@@ -86,7 +86,7 @@ theorem abl_inst_distinct :
 -- ============================================================================
 
 /-- Direction of motion/relation in the Finnish local case system.
-    Karlsson (2018, Ch. 13): the three directional dimensions —
+    @cite{karlsson-2017}: the three directional dimensions —
     static location, source of motion, and goal of motion. -/
 inductive Direction where
   | static   -- at/in/on (no motion)
@@ -96,7 +96,7 @@ inductive Direction where
 
 /-- Location type: whether the spatial relation is conceptualized as
     internal (containment) or external (surface/proximity).
-    Karlsson (2018, Ch. 13): Finnish systematically distinguishes
+    @cite{karlsson-2017}: Finnish systematically distinguishes
     "inside" (inessive/elative/illative) from "at/on" (adessive/ablative/allative). -/
 inductive LocationType where
   | internal  -- containment: in, out of, into

@@ -2,8 +2,7 @@ import Linglib.Core.RootDimensions
 
 /-!
 # Root: Cross-Cutting Primitive Types
-@cite{beavers-etal-2021} @cite{dixon-1982} @cite{harley-2014} @cite{levin-1993}
-
+@cite{beavers-etal-2021} @cite{dixon-1982} @cite{harley-2014} @cite{levin-1993} @cite{henderson-2019}
 
 Framework-agnostic types for characterizing verb roots across theoretical
 modules. These types are used by Semantics (event structure, denotations),

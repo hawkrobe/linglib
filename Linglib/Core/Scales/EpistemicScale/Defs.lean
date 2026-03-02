@@ -8,7 +8,7 @@ import Mathlib.Tactic.IntervalCases
 /-!
 # Epistemic Comparative Likelihood
 
-@cite{holliday-icard-2013} @cite{halpern-2003}
+@cite{holliday-icard-2013} @cite{halpern-2003} @cite{van-der-hoek-1996}
 
 Epistemic likelihood scales: the `EpistemicScale` arm of the categorical
 diagram in `Core/Scale.lean`. Extracted here because this domain-specific

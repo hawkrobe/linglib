@@ -24,7 +24,7 @@ Key findings:
 - Completive coercion consistently shows processing cost (Exps 1b, 2)
 - Inchoative coercion in *after*-clauses shows delayed cost (Exp 4)
 - Inchoative coercion in *within*-modifier contexts fails to replicate
-  Brennan & Pylkkänen (2010) (Exps 1a, 3)
+  @cite{brennan-pylkkanen-2008} (Exps 1a, 3)
 - Complement coercion (sanity check) replicates across all experiments
 
 -/
@@ -94,7 +94,7 @@ structure NaturalnessResult where
 -- ============================================================================
 
 /-- Exp 1a: INCHOAT with *within*-modifier + activity verb.
-    Fails to replicate Brennan & Pylkkänen (2010).
+    Fails to replicate @cite{brennan-pylkkanen-2008}.
     No significant RT slowdown; no naturalness difference. -/
 def exp1a_rt : ExperimentResult :=
   { experiment := .exp1a
@@ -167,7 +167,7 @@ def exp2_naturalness : NaturalnessResult :=
 -- ============================================================================
 
 /-- Exp 3: INCHOAT with subject-experiencer verbs (stative reading).
-    Second failure to replicate Brennan & Pylkkänen (2010).
+    Second failure to replicate @cite{brennan-pylkkanen-2008}.
     No significant RT effect; no naturalness difference. -/
 def exp3_rt : ExperimentResult :=
   { experiment := .exp3

@@ -2,7 +2,7 @@ import Linglib.Core.ModalIndefinite
 
 /-!
 # Modal Indefinites: Cross-Linguistic Data
-@cite{alonso-ovalle-menendez-benito-2010} @cite{alonso-ovalle-royer-2024} @cite{kratzer-shimoyama-2002b}
+@cite{alonso-ovalle-menendez-benito-2010} @cite{alonso-ovalle-royer-2024} @cite{kratzer-shimoyama-2002b} @cite{alonso-ovalle-royer-2021} @cite{chierchia-2013} @cite{jayez-tovena-2006}
 
 Theory-neutral empirical data on modal indefinites, following
 @cite{alonso-ovalle-royer-2024} "Modal indefinites: Lessons from Chuj."
@@ -16,7 +16,7 @@ choice), or that the speaker doesn't know which individual satisfies the
 predicate (epistemic ignorance), or that any choice is permitted (random
 choice).
 
-## Three Dimensions of Variation (A-O&R 2024, §6)
+## Three Dimensions of Variation (§6)
 
 1. **Status**: Is the modal component at-issue (part of assertive content)
    or not-at-issue (presupposed / conventionally implicated)?
@@ -34,11 +34,11 @@ open Core.ModalIndefinite
 
 
 -- ════════════════════════════════════════════════════
--- § 1. Chuj *yalnhej* (A-O&R 2024)
+-- § 1. Chuj *yalnhej*
 -- ════════════════════════════════════════════════════
 
 /-- Chuj *yalnhej*: at-issue, epistemic + random choice, not upper-bounded,
-    position-sensitive (A-O&R 2024, §6).
+    position-sensitive (§6).
 
     External argument → epistemic only.
     Internal argument / adjunct (volitional) → epistemic or random choice.
@@ -56,7 +56,7 @@ def yalnhej : ModalIndefiniteEntry where
   source := "Alonso-Ovalle & Royer 2024"
 
 /-- Chuj *komon*: at-issue random-choice modifier for mass/plural
-    (Alonso-Ovalle & Royer 2021; cited in A-O&R 2024, §5). -/
+    (Alonso-Ovalle & Royer 2021; cited in @cite{alonso-ovalle-royer-2024}, §5). -/
 def komon : ModalIndefiniteEntry where
   language := "Chuj (Mayan)"
   form := "komon"
@@ -74,7 +74,7 @@ def komon : ModalIndefiniteEntry where
 -- ════════════════════════════════════════════════════
 
 /-- Spanish *algún*: not-at-issue, epistemic only, upper-bounded
-    (A-O&R 2024, §6; Alonso-Ovalle & Menéndez-Benito 2010). -/
+    (§6; Alonso-Ovalle & Menéndez-Benito 2010). -/
 def algún : ModalIndefiniteEntry where
   language := "Spanish"
   form := "algún"
@@ -92,7 +92,7 @@ def algún : ModalIndefiniteEntry where
 -- ════════════════════════════════════════════════════
 
 /-- German *irgendein*: not-at-issue, epistemic + random choice,
-    not upper-bounded (A-O&R 2024, §6).
+    not upper-bounded (§6).
     Epistemic in episodic assertions; random choice under deontic modals. -/
 def irgendein : ModalIndefiniteEntry where
   language := "German"
@@ -111,7 +111,7 @@ def irgendein : ModalIndefiniteEntry where
 -- ════════════════════════════════════════════════════
 
 /-- Spanish *uno cualquiera*: at-issue, random choice only,
-    upper-bounded (A-O&R 2024, §5–6; A-O & M-B 2018). -/
+    upper-bounded (§5–6; @cite{alonso-ovalle-menendez-benito-2010}). -/
 def unoCualquiera : ModalIndefiniteEntry where
   language := "Spanish"
   form := "uno cualquiera"
@@ -129,10 +129,10 @@ def unoCualquiera : ModalIndefiniteEntry where
 -- ════════════════════════════════════════════════════
 
 /-- French *n'importe quel*: at-issue, random choice only,
-    not upper-bounded (A-O&R 2024, §6; Jayez & Tovena 2006).
+    not upper-bounded (§6; Jayez & Tovena 2006).
 
     Note: at-issue status and non-upper-boundedness are inferred from
-    the cited source; A-O&R 2024 discusses content only. -/
+    the cited source; @cite{alonso-ovalle-royer-2024} discusses content only. -/
 def nimporteQuel : ModalIndefiniteEntry where
   language := "French"
   form := "n'importe quel"
@@ -150,10 +150,10 @@ def nimporteQuel : ModalIndefiniteEntry where
 -- ════════════════════════════════════════════════════
 
 /-- Italian *un qualsiasi*: at-issue, random choice,
-    not upper-bounded (A-O&R 2024, §6; Chierchia 2013, §5.3.2).
+    not upper-bounded (§6; Chierchia 2013, §5.3.2).
 
     Note: at-issue status and non-upper-boundedness are inferred from
-    the cited source; A-O&R 2024 discusses content only. -/
+    the cited source; @cite{alonso-ovalle-royer-2024} discusses content only. -/
 def unQualsiasi : ModalIndefiniteEntry where
   language := "Italian"
   form := "un qualsiasi"
@@ -216,7 +216,7 @@ theorem algún_not_position_sensitive : algún.positionSensitive = false := rfl
 
 
 -- ════════════════════════════════════════════════════
--- § 9. Typological Generalizations (A-O&R 2024, §6)
+-- § 9. Typological Generalizations (§6)
 -- ════════════════════════════════════════════════════
 
 /-- Chuj *yalnhej* and German *irgendein* share the same flavor
@@ -227,7 +227,7 @@ theorem yalnhej_irgendein_same_flavors :
 theorem yalnhej_irgendein_differ_in_status :
     yalnhej.status ≠ irgendein.status := by decide
 
-/-- The at-issue / not-at-issue split (A-O&R 2024, §6.1):
+/-- The at-issue / not-at-issue split (§6.1):
 *yalnhej*, *uno cualquiera* are at-issue; *algún*, *irgendein*
 are not-at-issue. (n'importe quel and un qualsiasi classified as
 at-issue per their respective cited sources.) -/
@@ -245,7 +245,7 @@ theorem upper_bounded_items :
 
 /-- *Yalnhej* is the only item that is both at-issue AND has both
 epistemic and random choice flavors. This is the core empirical
-contribution of A-O&R (2024). -/
+contribution of @cite{alonso-ovalle-royer-2024}. -/
 theorem yalnhej_unique_profile :
     (allEntries.filter (λ e =>
       e.status == .atIssue && e.hasEpistemic && e.hasCircumstantial)).length = 1 := by
@@ -253,11 +253,11 @@ theorem yalnhej_unique_profile :
 
 
 -- ════════════════════════════════════════════════════
--- § 10. Position-Sensitive Flavor Distribution (A-O&R 2024, Table 5)
+-- § 10. Position-Sensitive Flavor Distribution (Table 5)
 -- ════════════════════════════════════════════════════
 
 /-- Syntactic positions for a DP in Chuj, cross-classified with
-verb volitionality (A-O&R 2024, §3–4, Table 5).
+verb volitionality (§3–4, Table 5).
 
 The paper shows that RC availability depends on TWO factors:
 (1) structural position (external vs internal/adjunct), and
@@ -277,7 +277,7 @@ inductive ChujDPPosition where
   deriving DecidableEq, BEq, Repr
 
 /-- Which modal flavors are available to *yalnhej* in each position
-(A-O&R 2024, Table 5, §3.2–4.2).
+(Table 5, §3.2–4.2).
 
 External argument: epistemic only — too high to co-bind with the
   VP event, so the anchor must project from the assertion (speech event).
@@ -292,16 +292,16 @@ def yalnhejFlavorsAt : ChujDPPosition → List ModalFlavor
   | .adjunctVolitional => [.epistemic, .circumstantial]
   | .adjunctNonVolitional => [.epistemic]
 
-/-- External argument restricts to epistemic only (A-O&R 2024, §3.2.1). -/
+/-- External argument restricts to epistemic only (§3.2.1). -/
 theorem ext_arg_epistemic_only :
     yalnhejFlavorsAt .externalArg = [.epistemic] := rfl
 
-/-- Volitional internal argument allows both flavors (A-O&R 2024, §3.2.2). -/
+/-- Volitional internal argument allows both flavors (§3.2.2). -/
 theorem int_arg_vol_both_flavors :
     yalnhejFlavorsAt .internalArgVolitional = [.epistemic, .circumstantial] := rfl
 
 /-- Non-volitional internal argument restricts to epistemic only
-    (A-O&R 2024, §3.2.2, ex.28/34). -/
+    (§3.2.2, ex.28/34). -/
 theorem int_arg_nonvol_epistemic_only :
     yalnhejFlavorsAt .internalArgNonVolitional = [.epistemic] := rfl
 
@@ -311,14 +311,14 @@ theorem position_matters :
   decide
 
 /-- Volitionality sensitivity: volitional ≠ non-volitional internal
-    flavor sets (A-O&R 2024, §4.1). -/
+    flavor sets (§4.1). -/
 theorem volitionality_matters :
     yalnhejFlavorsAt .internalArgVolitional ≠ yalnhejFlavorsAt .internalArgNonVolitional := by
   decide
 
 
 -- ════════════════════════════════════════════════════
--- § 11. Example Sentences (A-O&R 2024)
+-- § 11. Example Sentences
 -- ════════════════════════════════════════════════════
 
 /-- A Chuj *yalnhej* example sentence with empirical judgments. -/
@@ -331,7 +331,7 @@ structure YalnhejExample where
   position : ChujDPPosition
   /-- Available modal reading(s) -/
   availableFlavors : List ModalFlavor
-  /-- Example number in A-O&R (2024) -/
+  /-- Example number in @cite{alonso-ovalle-royer-2024} -/
   exampleNumber : String
   deriving Repr
 
@@ -402,7 +402,7 @@ theorem examples_match_position_prediction :
 
 
 -- ════════════════════════════════════════════════════
--- § 12. Non-Maximality Data (A-O&R 2024, §3.2.4)
+-- § 12. Non-Maximality Data (§3.2.4)
 -- ════════════════════════════════════════════════════
 
 /-! Yalnhej is compatible with partial-domain scenarios, unlike
@@ -422,7 +422,7 @@ structure MaximalityDatum where
   gloss : String
   /-- Whether yalnhej is felicitous in this context -/
   yalnhejFelicitous : Bool
-  /-- Example number in A-O&R (2024) -/
+  /-- Example number in @cite{alonso-ovalle-royer-2024} -/
   exampleNumber : String
   deriving Repr
 
@@ -461,13 +461,13 @@ theorem all_partial_domain_felicitous :
 
 
 -- ════════════════════════════════════════════════════
--- § 13. Unremarkable Readings (A-O&R 2024, §5)
+-- § 13. Unremarkable Readings (§5)
 -- ════════════════════════════════════════════════════
 
 /-! Some modal indefinites have "unremarkable" (plain existential)
 readings in addition to their modal readings. *Komon* and *uno
 cualquiera* can mean just "some" without modal flavor; *yalnhej*
-cannot. A-O&R (2024, §5) correlate this with predicativity:
+cannot. @cite{alonso-ovalle-royer-2024} (§5) correlate this with predicativity:
 items that can appear in predicative position tend to have
 unremarkable readings; *yalnhej* cannot be predicative and
 correspondingly lacks unremarkable readings. -/
@@ -482,7 +482,7 @@ structure UnremarkableReadingDatum where
   hasUnremarkable : Bool
   /-- Can the item appear in predicative position? -/
   predicative : Bool
-  /-- Example number(s) in A-O&R (2024) -/
+  /-- Example number(s) in @cite{alonso-ovalle-royer-2024} -/
   exampleNumber : String
   deriving Repr
 
@@ -505,7 +505,7 @@ def irgendein_unremarkable : UnremarkableReadingDatum where
   exampleNumber := "(94)/(95)"
 
 /-- *komon* has unremarkable readings; can be predicative
-    (A-O&R 2024, §5). -/
+    (§5). -/
 def komon_unremarkable : UnremarkableReadingDatum where
   language := "Chuj (Mayan)"
   form := "komon"
@@ -560,7 +560,7 @@ theorem unoCualquiera_entry_unremarkable_agrees :
 
 
 -- ════════════════════════════════════════════════════
--- § 14. Harmonic Interpretations (A-O&R 2024, §4.3)
+-- § 14. Harmonic Interpretations (§4.3)
 -- ════════════════════════════════════════════════════
 
 /-! Under an external modal (imperative, deontic, attitude verb),
@@ -591,7 +591,7 @@ structure HarmonicDatum where
   isHarmonic : Bool
   /-- Description of reading -/
   reading : String
-  /-- Example number in A-O&R (2024) -/
+  /-- Example number in @cite{alonso-ovalle-royer-2024} -/
   exampleNumber : String
   deriving Repr
 

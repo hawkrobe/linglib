@@ -567,7 +567,7 @@ theorem all_cross_consistent :
 Among the world's languages, suffixal case marking is far more common
 than prefixal. In our sample, every language with case affixes uses
 suffixes (either exclusively or in combination with prefixes). This
-reflects the strong universal preference documented by Hawkins (1983)
+reflects the strong universal preference documented by @cite{hawkins-1983}
 and @cite{dryer-1992}. -/
 
 theorem case_rich_are_suffixal :

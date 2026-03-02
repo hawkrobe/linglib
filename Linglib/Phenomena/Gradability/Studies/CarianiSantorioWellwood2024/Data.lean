@@ -3,7 +3,7 @@
 
 @cite{cariani-santorio-wellwood-2024}
 
-Theory-neutral empirical data on confidence reports from CSW (2024).
+Theory-neutral empirical data on confidence reports from @cite{cariani-santorio-wellwood-2024}.
 These are judgments and entailment patterns that any theory of gradable
 attitude adjectives should account for.
 

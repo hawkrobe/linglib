@@ -6,7 +6,6 @@ import Linglib.Fragments.English.PolarityItems
 # Bridge: Denić et al. (2021) → Entailment Signatures & Polarity Items
 @cite{israel-2011}
 
-
 Connects the empirical findings to:
 
 1. `Core.NaturalLogic.EntailmentSig` — DN environments have a distinct

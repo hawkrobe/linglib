@@ -45,7 +45,7 @@ Equivalently: ⟦m⟧ = fo(m) × fl(m) (Cartesian closure).
 Alternative formulation: a modal m satisfies IFF just in case ⟦m⟧ = fo(m) × fl(m),
 where × is the Cartesian product.
 
-Steinert-Threlkeld, Imel, & Guo (2023). -/
+Steinert-Threlkeld, Imel, & @cite{steinert-threlkeld-imel-guo-2023}. -/
 def satisfiesIFF (m : List ForceFlavor) : Bool :=
   m.all fun ⟨fo₁, _⟩ =>
     m.all fun ⟨_, fl₂⟩ =>
@@ -59,7 +59,7 @@ share the same flavor.
 
 [Alternative formulation: |fo(m)| = 1 or |fl(m)| = 1.]
 
-Nauze (2008). -/
+@cite{nauze-2008}. -/
 def satisfiesSAV (m : List ForceFlavor) : Bool :=
   m.all (fun ff₁ => m.all (fun ff₂ => ff₁.force == ff₂.force)) ||
   m.all (fun ff₁ => m.all (fun ff₂ => ff₁.flavor == ff₂.flavor))

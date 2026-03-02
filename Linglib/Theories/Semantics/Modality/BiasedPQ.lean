@@ -21,7 +21,7 @@ contextual evidence bias.
 
 ## Three Theoretical Lines for High Negation
 
-Romero (2020) clusters analyses into three lines:
+@cite{romero-2020} clusters analyses into three lines:
 - **Line a**: Σ_neg at the expressed proposition level
 - **Line b**: VERUM/FALSUM
 - **Line c**: ¬ASSERT at the speech act level

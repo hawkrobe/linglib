@@ -76,7 +76,7 @@ theorem one_layer_one_presup_type :
 -- §3: Definite Use Types (Hawkins 1978 / Schwarz 2013)
 -- ============================================================================
 
-/-- Hawkins' (1978) four use types for definite descriptions.
+/-- @cite{hawkins-1978}'s four use types for definite descriptions.
 @cite{schwarz-2013} shows these map systematically onto weak vs strong articles. -/
 inductive DefiniteUseType where
   | anaphoric          -- Antecedent in prior discourse (strong article)

@@ -117,7 +117,7 @@ Conjunctions exhibit homogeneity but resist non-maximal readings.
 "Ann and Bert have red hair" behaves like a plural definite
 for homogeneity, but unlike plural definites, it resists non-maximal readings.
 
-Source: Schwarzschild (1994), Križ (2015), dissertation Chapter 7
+Source: @cite{schwarzschild-1996}, @cite{kriz-2015}, dissertation Chapter 7
 -/
 def conjunctionExample : HomogeneityDatum :=
   { positiveSentence := "Ann and Bert have red hair."
@@ -165,7 +165,7 @@ Summative predicates: apply to parts of a singular entity.
 
 "The flag is blue" requires all (salient) parts to be blue.
 
-Source: Löbner (2000), Križ (2015), Amiraz (2020), Paillé (2020, 2022)
+Source: @cite{lobner-2000}, @cite{kriz-2015}, @cite{amiraz-2020}, Paillé (2020, 2022)
 -/
 def summativeExample : HomogeneityDatum :=
   { positiveSentence := "The flag is blue."
@@ -185,7 +185,7 @@ def summativeExample : HomogeneityDatum :=
 /--
 Bare conditionals exhibit homogeneity over situations.
 
-Source: von Fintel (1997), @cite{gajewski-2005}, Križ (2015)
+Source: @cite{von-fintel-1997}, @cite{gajewski-2005}, @cite{kriz-2015}
 -/
 def conditionalExample : HomogeneityDatum :=
   { positiveSentence := "They play soccer if the sun shines."
@@ -230,7 +230,7 @@ def collectiveExample : HomogeneityDatum :=
 When a plurality is part of a larger group that satisfies a collective predicate,
 the smaller plurality is neither clearly a satisfier nor clearly not.
 
-Source: Križ (2015, 2019), Chatain (2021)
+Source: Križ (2015, 2019), @cite{chatain-2021}
 -/
 structure UpwardHomogeneityDatum where
   /-- The sentence -/

@@ -581,7 +581,7 @@ def clauseTypeData : List DiscourseOnlyDatum :=
   , italian_s'_imperative, italian_s'_exclamative
   ]
 
-/-- All discourse *only* data from IKW (2025). -/
+/-- All discourse *only* data from @cite{ippolito-kiss-williams-2025}. -/
 def allDiscourseOnlyData : List DiscourseOnlyDatum :=
   coreExamples ++ clauseTypeData
 

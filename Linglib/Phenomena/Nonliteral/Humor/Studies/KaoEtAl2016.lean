@@ -4,7 +4,6 @@ import Mathlib.Data.Rat.Defs
 # @cite{kao-levy-goodman-2016} — A Computational Model of Linguistic Humor in Puns @cite{kao-levy-goodman-2016}
 @cite{bergen-levy-goodman-2016} @cite{goodman-frank-2016}
 
-
 This module contains empirical data from:
 
 Kao, J.T., Levy, R., & Goodman, N.D. (2016). A Computational Model of Linguistic

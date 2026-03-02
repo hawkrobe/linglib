@@ -7,7 +7,7 @@ import Linglib.Core.Scales.EpistemicScale.Cancellation
 /-!
 # Epistemic Comparative Likelihood — Main Theorems
 
-@cite{holliday-icard-2013} @cite{halpern-2003} @cite{kraft-pratt-seidenberg-1959}
+@cite{holliday-icard-2013} @cite{halpern-2003} @cite{kraft-pratt-seidenberg-1959} @cite{van-der-hoek-1996}
 
 Re-exports `EpistemicScale.Defs` (core definitions, Fin 1/2/3/5) and
 `EpistemicScale.Fin4` (Fin 4 representation theorem), then states the

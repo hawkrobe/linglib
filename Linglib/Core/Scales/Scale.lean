@@ -252,7 +252,7 @@ class PositiveRegion (α : Type*) (θ : Type*) where
 -- ════════════════════════════════════════════════════
 
 /-- A representation of a qualitative ordering by a quantitative measure.
-    KLST (1971): the fundamental bridge from comparative to numerical.
+    @cite{krantz-1971}: the fundamental bridge from comparative to numerical.
     Instances: AdditiveScale.IsRepresentable, Kennedy's μ, CSW's g(μ).
 
     Krantz, D. et al. (1971). Foundations of measurement, Vol. 1. -/

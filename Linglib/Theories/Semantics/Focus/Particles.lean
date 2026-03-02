@@ -53,7 +53,6 @@ structure FocusStructure (α : Type) where
 ## Covert EVEN (Lahiri 1998, Crnič 2014)
 @cite{rooth-1992}
 
-
 EVEN has two semantic contributions:
 
 1. **Scalar presupposition**: The focused element is least likely among alternatives

@@ -4,7 +4,6 @@ import Linglib.Theories.Semantics.Dynamic.Systems.BSML.Basic
 # BSML Free Choice Theorems
 @cite{aloni-2022}
 
-
 Pragmatic enrichment and free choice derivations in BSML.
 
 ## Key Results

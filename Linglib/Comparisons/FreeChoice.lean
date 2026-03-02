@@ -186,7 +186,7 @@ using the Global Intentions model from @cite{franke-bergen-2020}.
 
 ### Key Parallel to Champollion et al.
 
-| Aspect | Disjunction (2019) | Universal *any* (2024) |
+| Aspect | Disjunction (@cite{champollion-alsop-grosu-2019}) | Universal *any* (2024) |
 |--------|-------------------|----------------------|
 | FC inference | ◇(a∨b) → ◇a ∧ ◇b | ◇∃x.P(x) → ∀x.◇P(x) |
 | Robust inference | FCI | Exclusiveness |

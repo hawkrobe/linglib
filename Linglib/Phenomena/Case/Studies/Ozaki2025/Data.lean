@@ -143,7 +143,7 @@ def alternationData : List AlternationDatum :=
 
 /-! ### VP ellipsis — source elides as argument (ex. 9–10)
 
-Funakoshi's (2016) generalization: adjuncts can only be elided if no
+@cite{funakoshi-2016}'s generalization: adjuncts can only be elided if no
 other VP-internal elements are present. The source of *deru* elides
 even with an overt adverb *suguni* 'quickly', confirming argumenthood.
 The continuation (10) is non-contradictory, showing the elided reading
@@ -167,7 +167,7 @@ def deru_ellipsis_abl : ArgumenthoodDatum where
 
 /-! ### Long-distance scrambling — source scrambles freely (ex. 13)
 
-Saito (1985): arguments can undergo long-distance scrambling, adjuncts
+@cite{saito-1985}: arguments can undergo long-distance scrambling, adjuncts
 cannot. The source of *hanareru* scrambles out of the embedded clause,
 confirming argumenthood regardless of case marking. -/
 
@@ -219,7 +219,7 @@ def hanareru_direct_passive : UnaccusativityDatum where
 
 /-! ### *nani-o* wh-adjunct — blocked with unaccusatives (ex. 26)
 
-Kurafuji (1997): *nani-o* 'what-ACC' can mean 'why' with unergatives
+@cite{kurafuji-1997}: *nani-o* 'what-ACC' can mean 'why' with unergatives
 and transitives, but not with unaccusatives. Alternation verbs block
 this reading, patterning with unaccusatives. -/
 

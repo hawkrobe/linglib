@@ -53,7 +53,6 @@ open Semantics.Montague.BayesianSemantics
 ## Threshold Semantics Equivalences
 @cite{morzycki-2009}
 
-
 We show that the soft meanings defined in ThresholdSemantics.lean
 are equal to the SDS marginals computed via SDSConstraintSystem.
 -/

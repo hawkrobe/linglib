@@ -262,7 +262,7 @@ structure RootProfile where
   patientRob : Range Robustness := none
   /-- Type of physical change: @cite{levin-1993}, @cite{beavers-koontz-garboden-2020}. -/
   resultType : Range ResultType := none
-  /-- Agent volitionality: @cite{dowty-1991} P1, Ausensi (2021). -/
+  /-- Agent volitionality: @cite{dowty-1991} P1, @cite{ausensi-yu-smith-2021}. -/
   agentVolition : Range Volitionality := none
   /-- Agent control: @cite{dowty-1991} P2, Spalek & McNally. -/
   agentControl : Range AgentControl := none
@@ -298,12 +298,12 @@ structure RootEntailments where
 namespace RootEntailments
 
 /-- If a root entails change (result), it entails a state that changes.
-    B&KG (2020, p. 47): result entailments presuppose state entailments. -/
+    B&@cite{beavers-koontz-garboden-2020}: result entailments presuppose state entailments. -/
 def resultImpliesState (r : RootEntailments) : Bool :=
   !r.result || r.state
 
 /-- If a root entails causation, it entails what is caused (a result).
-    B&KG (2020, p. 243): cause entailments presuppose result entailments. -/
+    B&@cite{beavers-koontz-garboden-2020}: cause entailments presuppose result entailments. -/
 def causeImpliesResult (r : RootEntailments) : Bool :=
   !r.cause || r.result
 

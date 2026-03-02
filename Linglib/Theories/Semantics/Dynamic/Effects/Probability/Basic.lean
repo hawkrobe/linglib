@@ -31,7 +31,6 @@ namespace Semantics.Dynamic.Probabilistic
 ## The Probability Monad
 @cite{lassiter-goodman-2017}
 
-
 We define `P α` abstractly as a structure with `pure` and `bind` operations
 satisfying the monad laws. This allows us to reason about probabilistic
 programs without committing to a specific representation (PMF, measure, etc.).

@@ -5,7 +5,6 @@ import Linglib.Phenomena.WordOrder.SubjectAuxInversion
 # Bridge: HPSG → Subject-Auxiliary Inversion Data
 @cite{sag-wasow-bender-2003}
 
-
 Connects the HPSG [INV ±] analysis of inversion
 (`Theories/Syntax/HPSG/Inversion.lean`) to the theory-neutral SAI data
 (`Phenomena/WordOrder/SubjectAuxInversion.lean`).

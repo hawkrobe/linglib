@@ -411,7 +411,7 @@ def beaverEtAl2007_sid : SOFDatum := {
   source := "Beaver et al. (2007: 256), K&S (42)"
 }
 
-/-- Katz & Selkirk (2011) FoC-New vs New-FoC vs New-New triples.
+/-- @cite{katz-selkirk-2011} FoC-New vs New-FoC vs New-New triples.
     K&S (36): Phonetic evidence distinguishing [FoC] from newness. -/
 structure ProsodicTripleDatum where
   /-- First post-verbal phrase status -/
