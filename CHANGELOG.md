@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.227.80] - 2026-03-02
+
+### Changed
+- **Bib audit round 10**: Verify all 113 remaining entries against citation context in Lean source files via 4 parallel verification agents + 4 CrossRef/web search agents. Fix 46 @misc entries to proper BibTeX types: @article (macuch-silva-2024, roberts-simons-2024, anand-mccloskey-2025, csiszr-tusndy-1984, zwicky-1970, bartsch-1973, shore-1986, alleton-1988, zu-2018, halm-huszr-2021, rizzi-1978), @book (kracht-2003), @incollection (sauerland-stateva-2007, szabolcsi-1986, haegeman-van-riemsdijk-1986, erbaugh-1986, simik-2024), @inproceedings (liu-rotter-2025, mitrovi-sauerland-2014, ladd-1981, landman-1986, white-2014, ahn-2015, brillman-hirsch-2016, schwab-liu-2020, mari-martin-2007, katzir-singh-2015, prez-carballo-2009), @phdthesis (antonyuk-2015, wiegand-2018, greco-2018, lpez-ixcoy-2022), @unpublished (kiparsky-2002, henderson-2008, bhatt-dayal-2014, bring-gunlogson-2000, gawron-2009, esipova-romero-2023, solt-2023). Add verified DOIs: macuch-silva-2024 (10.1080/0163853X.2024.2413311), roberts-simons-2024 (10.1007/s10988-024-09413-9), anand-mccloskey-2025 (10.1162/ling_a_00495), liu-rotter-2025 (10.3765/elm.3.5817), sauerland-stateva-2007 (10.3765/salt.v17i0.3091), white-2014 (10.3765/salt.v24i0.2427), mari-martin-2007 (10.3765/salt.v17i0.2949), kracht-2003 (10.1515/9783110895667), bennett-belnap-1990 (10.2307/2214285, year corrected 1990→1970). Fix erbaugh-1986 DOI (.26erb→.25erb). Fix title mismatches: macuch-silva-2024, roberts-simons-2024, anand-mccloskey-2025, liu-rotter-2025, sauerland-stateva-2007. Standardize 6 WALS entries with full metadata/URLs. Delete 3 duplicates: stankova-2026, rappaport-hovav-levin-1998b, macuch-silva-2024. Add simik-2024 co-author Gehrke. Flag dieuleveut-hsu-bhatt-2025 title mismatch (matches published Rotter & Liu). 1006 validated of 1007 total.
+
 ## [0.227.79] - 2026-03-02
 
 ### Changed
