@@ -77,7 +77,7 @@ def CrossTab.harmonicDominant (t : CrossTab) : Bool :=
   t.harmonicCount > t.disharmonicCount
 
 -- ============================================================================
--- Data: Gibson (2025) Tables 1–3
+-- Data: @cite{gibson-2025} Tables 1–3
 -- ============================================================================
 
 /-- Table 1: Verb-Object order × Adposition order (Dryer 2013, WALS).

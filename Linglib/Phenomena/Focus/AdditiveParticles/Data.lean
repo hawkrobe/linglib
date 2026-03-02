@@ -240,7 +240,7 @@ def crossLinguisticData : List CrossLinguisticDatum :=
   , frenchAussi
   ]
 
--- Rooth (1992) Examples: Focus and "Too"
+-- @cite{rooth-1992} Examples: Focus and "Too"
 
 /-!
 ## Rooth's Focus-Based Analysis
@@ -300,7 +300,7 @@ def roothExamples : List AdditiveParticleDatum :=
   , roothTooMary
   ]
 
--- Ahn (2015) Examples: "Either" Analysis
+-- @cite{ahn-2015} Examples: "Either" Analysis
 
 /-!
 ## Ahn's Analysis of "Either"

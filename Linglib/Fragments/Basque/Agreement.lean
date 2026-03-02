@@ -4,7 +4,7 @@ import Linglib.Core.Case.Hierarchy
 
 /-!
 # Basque Agreement Fragment @cite{just-2024}
-@cite{laka-1996} @cite{preminger-2014}
+@cite{laka-1996} @cite{preminger-2014} @cite{blake-1994}
 
 Basque (isolate) has a rich agreement system where the finite verb indexes
 up to three arguments: ergative (A), absolutive (S/P), and dative (R).

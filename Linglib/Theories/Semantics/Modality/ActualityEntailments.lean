@@ -156,7 +156,7 @@ theorem same_modal_different_entailments :
 
 
 -- ════════════════════════════════════════════════════
--- § 4. Bridge to Nadathur (2023): Ability.lean
+-- § 4. Bridge to @cite{nadathur-2023}: Ability.lean
 -- ════════════════════════════════════════════════════
 
 /-! `Ability.lean` formalizes the causal semantics of ability modals: ability is causal sufficiency in a circumstantial

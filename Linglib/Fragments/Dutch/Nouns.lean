@@ -93,7 +93,7 @@ def barePluralScope (np : NP) : String :=
     | some .unscrambled => "narrow"
     | none => "underspecified"
 
--- Nouns from Le Bruyn & de Swart (2022)
+-- Nouns from @cite{le-bruyn-de-swart-2022}
 def boek : NounEntry :=
   { formSg := "boek", formPl := some "boeken", formDim := some "boekje" }
 

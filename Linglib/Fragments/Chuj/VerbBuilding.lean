@@ -187,7 +187,7 @@ theorem v_j_no_event : v_j.flavor.eventContribution = none := rfl
 -- § 5: Verb Building (buildDecomposition)
 -- ============================================================================
 
--- Core combinations from Coon (2019) §4–5.
+-- Core combinations from @cite{coon-2019} §4–5.
 -- Each voice form is built independently from root + v/Voice⁰ (p. 77,
 -- citing Alexiadou et al. 2006): passive is not derived from active.
 

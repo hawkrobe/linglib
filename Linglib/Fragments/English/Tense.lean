@@ -4,7 +4,7 @@ import Linglib.Theories.Semantics.Tense.Kratzer
 
 /-!
 # English Tense Fragment (Cumming 2026 + Lakoff 1970)
-@cite{cumming-2026} @cite{lakoff-1970}
+@cite{cumming-2026} @cite{lakoff-1970} @cite{heim-kratzer-1998}
 
 Paradigm entries for English tense forms from @cite{cumming-2026}, Tables 20 and 22.
 Each entry specifies evidential perspective (EP) and utterance perspective (UP)

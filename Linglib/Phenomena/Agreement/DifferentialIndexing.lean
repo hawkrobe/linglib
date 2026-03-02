@@ -2,7 +2,7 @@ import Linglib.Core.Prominence
 
 /-!
 # Differential Indexing Typology @cite{just-2024}
-@cite{aissen-2003} @cite{haspelmath-2019} @cite{siewierska-2004} @cite{harris-1981} @cite{laka-1996}
+@cite{aissen-2003} @cite{haspelmath-2019} @cite{siewierska-2004} @cite{harris-1981} @cite{laka-1996} @cite{haspelmath-2021}
 
 Formalizes the typological survey from:
 
@@ -428,7 +428,7 @@ def aPersonConditioned : List IndexingFragment :=
   aIndexingLanguages.filter (·.personConditioned)
 
 -- ============================================================================
--- § 10: Just (2024, §4.1) — Person Is the Dominant Conditioning Factor
+-- § 10: @cite{just-2024} — Person Is the Dominant Conditioning Factor
 -- ============================================================================
 
 /-! "The very same referential properties condition both differential P
@@ -456,7 +456,7 @@ theorem person_dominates_A :
   native_decide
 
 -- ============================================================================
--- § 11: Just (2024, §4.1) — Same Scales Condition Both P and A
+-- § 11: @cite{just-2024} — Same Scales Condition Both P and A
 -- ============================================================================
 
 /-! "The very same referential properties condition both differential P
@@ -478,7 +478,7 @@ theorem definiteness_conditions_both :
     aIndexingLanguages.any (·.definitenessConditioned) = true := by native_decide
 
 -- ============================================================================
--- § 12: Just (2024, §4.2) — Mirror Image / Opposite Polarity
+-- § 12: @cite{just-2024} — Mirror Image / Opposite Polarity
 -- ============================================================================
 
 /-! "The directions in which these scales operate form a mirror image:
@@ -547,7 +547,7 @@ theorem family_diversity :
     (allIndexingLanguages.map (·.family)).eraseDups.length ≥ 10 := by native_decide
 
 -- ============================================================================
--- § 15: Just (2024, §6) — Unified Principle
+-- § 15: @cite{just-2024} — Unified Principle
 -- ============================================================================
 
 /-! "Prominent arguments, be it A or P (or probably any other role), tend

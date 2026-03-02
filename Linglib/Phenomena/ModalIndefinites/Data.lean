@@ -2,7 +2,7 @@ import Linglib.Core.ModalIndefinite
 
 /-!
 # Modal Indefinites: Cross-Linguistic Data
-@cite{alonso-ovalle-menendez-benito-2010} @cite{alonso-ovalle-royer-2024} @cite{kratzer-shimoyama-2002b} @cite{alonso-ovalle-royer-2021} @cite{chierchia-2013} @cite{jayez-tovena-2006}
+@cite{alonso-ovalle-menendez-benito-2010} @cite{alonso-ovalle-royer-2024} @cite{kratzer-shimoyama-2002b} @cite{alonso-ovalle-royer-2021} @cite{chierchia-2013} @cite{jayez-tovena-2006} @cite{kratzer-shimoyama-2002}
 
 Theory-neutral empirical data on modal indefinites, following
 @cite{alonso-ovalle-royer-2024} "Modal indefinites: Lessons from Chuj."

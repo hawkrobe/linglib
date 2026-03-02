@@ -67,7 +67,7 @@ theorem theorem8b :
 theorem theorem6_completeness {W : Type*} [Fintype W]
     (sys : EpistemicSystemFA W) :
     ∃ (m : QualAddMeasure W), ∀ A B, sys.ge A B ↔ m.inducedGe A B :=
-  sorry -- van der Hoek (1996); linear extension of qualitative probability
+  sorry -- @cite{van-der-hoek-1996}; linear extension of qualitative probability
 
 /-- Helper: if ge A {b} for every b ∈ B, then ge A B, given monotonicity (T)
     and right-union (J). Proved by Finset induction on B.toFinset. -/

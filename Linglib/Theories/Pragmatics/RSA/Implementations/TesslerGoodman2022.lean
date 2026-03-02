@@ -323,7 +323,7 @@ For "short basketball player" with SUPERORDINATE comparison:
 4. **Speaker wouldn't use this** -> Listener infers subordinate
 -/
 
--- Connection to Lassiter & Goodman (2017)
+-- Connection to @cite{lassiter-goodman-2017}
 
 /-!
 ## Relation to @cite{lassiter-goodman-2017}

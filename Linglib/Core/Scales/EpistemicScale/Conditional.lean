@@ -48,7 +48,7 @@ inductive ConditioningMode where
   | eliminative
   | bayesian
   | jeffrey
-  | ranking   -- Spohn (1988): κ_φ(w) = κ(w) - κ(φ) for φ-worlds
+  | ranking   -- @cite{spohn-1988}: κ_φ(w) = κ(w) - κ(φ) for φ-worlds
   deriving DecidableEq, BEq, Repr
 
 -- ══════════════════════════════════════════════════════════════════════

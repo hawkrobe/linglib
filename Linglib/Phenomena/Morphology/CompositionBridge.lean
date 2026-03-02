@@ -263,7 +263,7 @@ theorem irregular_plurals_match_fragment :
   ⟨rfl, rfl, rfl, rfl, rfl⟩
 
 -- ============================================================================
--- §11: Bridge to Bybee (1985) Relevance Hierarchy
+-- §11: Bridge to @cite{bybee-1985} Relevance Hierarchy
 -- ============================================================================
 
 /-! The @cite{bybee-1985} relevance hierarchy orders morpheme categories by

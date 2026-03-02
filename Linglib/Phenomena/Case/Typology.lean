@@ -807,7 +807,7 @@ theorem ch51_same_sample :
     WALSCount.totalOf ch50Distribution := by native_decide
 
 -- ============================================================================
--- Aissen (2003) Prominence Scales and Differential Object Marking
+-- @cite{aissen-2003} Prominence Scales and Differential Object Marking
 -- ============================================================================
 
 /-! ## @cite{aissen-2003} DOM Hierarchy

@@ -252,7 +252,7 @@ def violatesHurford (S : CompLUScenario) : CompUtt S.Atom → Bool
   | .disj u₁ u₂ => entails S u₁ u₂ || entails S u₂ u₁
   | _ => false
 
--- Connection to Potts et al. (2016)
+-- Connection to @cite{potts-etal-2016}
 
 /--
 Structure for tracking embedded implicature predictions.

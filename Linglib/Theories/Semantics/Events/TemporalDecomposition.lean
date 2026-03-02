@@ -312,7 +312,7 @@ theorem impf_activity_prfv_full_incompatible {Time : Type*} [LinearOrder Time]
   | inr h => exact absurd heq_f (ne_of_lt h)
 
 -- ════════════════════════════════════════════════════
--- § 8. Moens & Steedman (1988) Event Types
+-- § 8. @cite{moens-steedman-1988} Event Types
 -- ════════════════════════════════════════════════════
 
 /-- @cite{moens-steedman-1988} aspectual profile. Extends Vendler's
@@ -382,7 +382,7 @@ theorem isAtomic_iff_punctual (c : MoensSteedmanClass) (h : c ≠ .state) :
 end MoensSteedmanClass
 
 -- ════════════════════════════════════════════════════
--- § 9. Unified When-Clause Semantics (M&S 1988)
+-- § 9. Unified When-Clause Semantics (@cite{moens-steedman-1988})
 -- ════════════════════════════════════════════════════
 
 /-- What *when* accesses in each event type. M&S's key claim: *when* has

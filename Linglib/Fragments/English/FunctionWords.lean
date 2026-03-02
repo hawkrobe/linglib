@@ -105,7 +105,7 @@ structure AuxEntry where
   negIrregular : Bool := false
   deriving Repr, BEq
 
--- Modals (no agreement). Modal meanings follow Kratzer (1981), Palmer (2001).
+-- Modals (no agreement). Modal meanings follow @cite{kratzer-1981}, @cite{palmer-2001}.
 -- Each uses cartesianProduct with singleton force (fixed force, variable flavor).
 private abbrev cp := ForceFlavor.cartesianProduct
 

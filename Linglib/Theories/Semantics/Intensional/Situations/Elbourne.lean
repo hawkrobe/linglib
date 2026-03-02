@@ -7,7 +7,7 @@ import Linglib.Core.Discourse.QUD
 
 /-!
 # @cite{elbourne-2013}: Situation-Semantic Definite Descriptions @cite{elbourne-2013}
-@cite{barwise-perry-1983} @cite{elbourne-2005} @cite{heim-1982} @cite{postal-1966} @cite{schwarz-2009} @cite{kamp-1981} @cite{stanley-szab-2000}
+@cite{barwise-perry-1983} @cite{elbourne-2005} @cite{heim-1982} @cite{postal-1966} @cite{schwarz-2009} @cite{kamp-1981} @cite{stanley-szab-2000} @cite{tonhauser-beaver-roberts-simons-2013}
 
 Formalizes the core theoretical machinery from:
 

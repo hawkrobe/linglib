@@ -2,7 +2,7 @@ import Linglib.Theories.Semantics.Tense.TemporalConnectives.Basic
 
 /-!
 # @cite{anscombe-1964} / @cite{krifka-2010b}: Under-specification Semantics
-@cite{anscombe-1964} @cite{krifka-2010b} @cite{ladusaw-1980}
+@cite{anscombe-1964} @cite{krifka-2010b} @cite{ladusaw-1980} @cite{beaver-condoravdi-2003}
 
 Single lexical entry per connective. Both *before* and *after* are predicates
 on time points; multiple readings arise from which point of B is relevant,
@@ -46,7 +46,7 @@ def Anscombe.after (A B : SentDenotation Time) : Prop :=
   ∃ t ∈ timeTrace A, ∃ t' ∈ timeTrace B, t' < t
 
 -- ============================================================================
--- § Heinämäki (1974): Reference Interval Semantics
+-- § @cite{heinamaki-1974}: Reference Interval Semantics
 -- ============================================================================
 
 /-! ### Heinämäki's analysis and equivalence with Anscombe

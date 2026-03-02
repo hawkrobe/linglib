@@ -291,9 +291,11 @@ The blog bibliography is generated from `blog/data/references.bib` (BibTeX). Whe
 4. **Regenerate the markdown**: `python3 blog/scripts/gen_bibliography.py`
 5. **Commit both files** (`references.bib` and the generated `bibliography.md`).
 
-### `@cite{key}` — Cross-referencing papers in Lean docstrings
+### `@cite{key}` — Cross-referencing papers in Lean files
 
-Use `@cite{key}` in Lean module docstrings to reference a paper by its BibTeX key:
+**Every academic citation in a `.lean` file must use `@cite{key}` — no raw inline citations.** This applies everywhere: module docstrings (`/-! ... -/`), declaration docstrings (`/-- ... -/`), and regular comments (`-- ...`). Never write `Kratzer (1991)` or `Kratzer 1991` — always write `@cite{kratzer-1991}`. For possessives, write `@cite{kratzer-1991}'s`. For parenthetical year-only references after the key is established, write `(@cite{kratzer-1991})`.
+
+If a paper has no entry in `references.bib`, add one before using `@cite{key}`.
 
 ```lean
 /-!

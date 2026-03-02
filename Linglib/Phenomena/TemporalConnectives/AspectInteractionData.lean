@@ -2,7 +2,7 @@ import Linglib.Theories.Semantics.Lexical.Verb.Aspect
 
 /-!
 # Aspect × Temporal Connective Interaction Data
-@cite{moens-steedman-1988} @cite{vendler-1957}Theory-neutral empirical data on how temporal connectives interact with the
+@cite{moens-steedman-1988} @cite{vendler-1957}Theory-neutral empirical data on how temporal connectives interact with the @cite{heinamaki-1974} @cite{rett-2020}
 aspectual class (Vendler class) of their complement and main clauses.
 
 ## Key Empirical Generalizations
@@ -52,7 +52,7 @@ structure AspectInteraction where
   deriving Repr
 
 -- ============================================================================
--- § 2: *When* + Embedded Clause (M&S 1988, §3)
+-- § 2: *When* + Embedded Clause (@cite{moens-steedman-1988}, §3)
 -- ============================================================================
 
 /-- *when* + state → no coercion (state persists).
@@ -102,7 +102,7 @@ def when_achievement : AspectInteraction where
   example_ := "When John arrived, Mary left"
 
 -- ============================================================================
--- § 3: *Until* Main Clause Restrictions (M&S 1988, §4; Karttunen 1974)
+-- § 3: *Until* Main Clause Restrictions (@cite{moens-steedman-1988}, §4; @cite{karttunen-1974})
 -- ============================================================================
 
 /-- *until* + stative main clause → acceptable (canonical use).
@@ -258,7 +258,7 @@ theorem durative_restriction_iff_homogeneous (c : VendlerClass) :
   cases c <;> rfl
 
 -- ============================================================================
--- § 7: Coercion Network Transitions (M&S 1988, Fig. 2)
+-- § 7: Coercion Network Transitions (@cite{moens-steedman-1988}, Fig. 2)
 -- ============================================================================
 
 /-- A directed edge in Moens & Steedman's aspectual coercion network.

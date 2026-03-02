@@ -44,6 +44,9 @@ def Bounds.zero : Bounds := ⟨0, 0⟩
 
 def Bounds.add (a b : Bounds) : Bounds := ⟨a.lo + b.lo, a.hi + b.hi⟩
 
+/-- Interval subtraction: [a.lo - b.hi, a.hi - b.lo]. -/
+def Bounds.sub (a b : Bounds) : Bounds := ⟨a.lo - b.hi, a.hi - b.lo⟩
+
 /-- Multiply nonneg bounds by a nonneg scalar. -/
 def Bounds.scaleNonneg (q : ℚ) (b : Bounds) : Bounds := ⟨q * b.lo, q * b.hi⟩
 
@@ -527,6 +530,97 @@ def Bounds.coarsen (b : Bounds) (n : ℕ) : Bounds :=
   ⟨roundDownQ b.lo n, roundUpQ b.hi n⟩
 
 -- ============================================================================
+-- Fast Log via Atanh Series (for S2 pipeline)
+-- ============================================================================
+
+/-- Bounds for log(2). From log(2) = 0.693147180559945309...
+    These bounds are verified to 10 decimal digits. -/
+private def log2Lo : ℚ := 6931471805 / 10000000000
+private def log2Hi : ℚ := 6931471806 / 10000000000
+
+/-- Find k such that q · 2^k ∈ [1/2, 1]. Requires q > 0. -/
+private def logReductionSteps (q : ℚ) : ℕ × Bool :=
+  -- For q ∈ (0, 1]: find k ≥ 0 such that q·2^k ∈ [1/2, 1]
+  -- For q > 1: find k ≥ 0 such that q/2^k ∈ [1/2, 1]
+  if q ≤ 0 then (0, false)
+  else if q ≤ 1 then
+    -- Shift left until q·2^k ≥ 1/2
+    let rec findK (k : ℕ) (v : ℚ) (fuel : ℕ) : ℕ :=
+      match fuel with
+      | 0 => k
+      | fuel + 1 => if v ≥ 1/2 then k else findK (k + 1) (v * 2) fuel
+    (findK 0 q 100, false)
+  else
+    -- Shift right until q/2^k ≤ 1
+    let rec findKR (k : ℕ) (v : ℚ) (fuel : ℕ) : ℕ :=
+      match fuel with
+      | 0 => k
+      | fuel + 1 => if v ≤ 1 then k else findKR (k + 1) (v / 2) fuel
+    (findKR 0 q 100, true)
+
+/-- Compute arctanh(y) partial sum: y + y³/3 + y⁵/5 +... + y^(2n-1)/(2n-1).
+    All terms have the same sign as y, so the partial sum is monotone. -/
+private def atanhPartialSum (y : ℚ) (n : ℕ) : ℚ :=
+  let y2 := y * y
+  let rec loop (k : ℕ) (yk : ℚ) (acc : ℚ) : ℕ → ℚ
+    | 0 => acc
+    | fuel + 1 =>
+      if k ≥ n then acc
+      else
+        let term := yk / (2 * ↑k + 1 : ℚ)
+        loop (k + 1) (yk * y2) (acc + term) fuel
+  loop 0 y 0 (n + 1)
+
+/-- Compute log(q) for 0 < q using argument reduction + atanh series.
+
+    Algorithm:
+    1. Reduce: find k so q·2^k ∈ [1/2, 1] (or q/2^k for q > 1)
+    2. Compute log(q_reduced) = 2·arctanh((q_r-1)/(q_r+1))
+       For q_r ∈ [1/2, 1]: |y| = |(q_r-1)/(q_r+1)| ≤ 1/3, series converges fast
+    3. log(q) = log(q_r) ∓ k·log(2)
+
+    With 15 terms: precision ≈ 2·(1/3)^31/(31·(1-1/9)) ≈ 3.5·10⁻¹⁶.
+    Exact rational arithmetic throughout — no exp/log chains. -/
+private def logPointAtan (q : ℚ) : ℚ × ℚ :=
+  if q ≤ 0 then (-1000, -1000)
+  else if q = 1 then (0, 0)
+  else
+    let (k, isLarge) := logReductionSteps q
+    -- Reduced value in [1/2, 1]
+    let qr := if isLarge then q / (2 ^ k : ℚ) else q * (2 ^ k : ℚ)
+    let y := (qr - 1) / (qr + 1)
+    let nTerms : ℕ := 15
+    let partialSum := 2 * atanhPartialSum y nTerms
+    -- Error bound: 2 · |y|^(2n+1) / ((2n+1) · (1 - y²))
+    let yAbs := if y ≥ 0 then y else -y
+    let y2 := y * y
+    let errBound := 2 * (yAbs ^ (2 * nTerms + 1)) / ((2 * ↑nTerms + 1 : ℚ) * (1 - y2))
+    -- log(qr) bounds: for qr ≤ 1 (y ≤ 0), series overestimates (closer to 0)
+    let (logQrLo, logQrHi) :=
+      if qr ≤ 1 then (partialSum - errBound, partialSum)
+      else (partialSum, partialSum + errBound)
+    -- Undo reduction: log(q) = log(qr) - k·log(2) (if q ≤ 1, we multiplied by 2^k)
+    -- or log(q) = log(qr) + k·log(2) (if q > 1, we divided by 2^k)
+    if isLarge then
+      -- q > 1: log(q) = log(qr) + k·log(2)
+      (logQrLo + ↑k * log2Lo, logQrHi + ↑k * log2Hi)
+    else
+      -- q ≤ 1: log(q) = log(qr) - k·log(2)
+      (logQrLo - ↑k * log2Hi, logQrHi - ↑k * log2Lo)
+
+/-- Log bounds over an interval, using atanh series.
+    Monotonicity: log(lo) ≤ log(x) ≤ log(hi) for x ∈ [lo, hi]. -/
+private def logBoundsFast (b : Bounds) : Bounds :=
+  if b.hi ≤ 0 then ⟨-1000, -1000⟩
+  else if b.lo ≤ 0 then
+    let (_, hiLog) := logPointAtan b.hi
+    ⟨-1000, hiLog⟩
+  else
+    let (loLog, _) := logPointAtan b.lo
+    let (_, hiLog) := logPointAtan b.hi
+    ⟨loLog, hiLog⟩
+
+-- ============================================================================
 -- S2 Pipeline: L1 Marginals → S2 Score → S2 Check
 -- ============================================================================
 
@@ -577,12 +671,68 @@ def computeL1LatentMarginalBounds {U W : Type*} [Fintype U] [Fintype W]
   let norm := computeL1NormBounds d u
   Bounds.divPos ⟨lo, hi⟩ norm
 
+/-- Compute S2 utility bounds (before exp(α₂·U)).
+    Returns bounds on the sum of S2 utility terms. -/
+private def computeS2UtilityBounds {U W : Type*} [Fintype U] [Fintype W]
+    [DecidableEq U] [DecidableEq W]
+    (d : RSAConfigData U W) (terms : List (RSA.S2UtilityTerm U W d.Latent))
+    (w : W) (u : U) : Bounds :=
+  -- Step 1: Compute L1 unnormalized scores for each world
+  --   l1Score(w') = worldPrior(w') · Σ_l latentPrior(w',l) · S1(l,w',u)
+  let l1ScoreLo : W → ℚ := fun w' =>
+    d.worldPrior w' * (Finset.univ.sum fun (l : d.Latent) =>
+      d.latentPrior w' l *
+        (computeS1PolicyBounds d.s1Spec d.meaning d.α l w' u).lo)
+  let l1ScoreHi : W → ℚ := fun w' =>
+    d.worldPrior w' * (Finset.univ.sum fun (l : d.Latent) =>
+      d.latentPrior w' l *
+        (computeS1PolicyBounds d.s1Spec d.meaning d.α l w' u).hi)
+  -- Step 2: Norm = Σ_w' l1Score(w')
+  let normLo := Finset.univ.sum l1ScoreLo
+  let normHi := Finset.univ.sum l1ScoreHi
+  let norm : Bounds := ⟨normLo, normHi⟩
+  -- Step 3: Coarsen L1 scores and norm to 30 binary digits before log.
+  -- Without coarsening, S1 pipeline exp/log creates denominators > 10^1000.
+  let l1ScoreCoarse : W → Bounds := fun w' =>
+    (⟨l1ScoreLo w', l1ScoreHi w'⟩ : Bounds).coarsen 30
+  let normCoarse := norm.coarsen 30
+  -- Step 4: Evaluate each S2 utility term.
+  -- Uses logBoundsFast on marginals directly (not log decomposition).
+  -- The divPos→coarsen→logBoundsFast chain keeps denominators bounded:
+  --   L1 scores (30-bit) → divPos (60-bit) → coarsen (30-bit) → logBoundsFast
+  let evalTerm : RSA.S2UtilityTerm U W d.Latent → Bounds := fun t =>
+    match t with
+    | .logStateMarginal weight =>
+      let marg := (Bounds.divPos (l1ScoreCoarse w) normCoarse).coarsen 30
+      (Bounds.exact weight).mul (logBoundsFast marg)
+    | .expectedValue weight value =>
+      -- Sign-aware multiplication: when value(w') < 0, multiplying by
+      -- divPos.lo gives the UPPER bound (not lower). Handle both signs.
+      let evLo := Finset.univ.sum fun (w' : W) =>
+        let marg := Bounds.divPos (l1ScoreCoarse w') normCoarse
+        if value w' ≥ 0 then value w' * marg.lo else value w' * marg.hi
+      let evHi := Finset.univ.sum fun (w' : W) =>
+        let marg := Bounds.divPos (l1ScoreCoarse w') normCoarse
+        if value w' ≥ 0 then value w' * marg.hi else value w' * marg.lo
+      (Bounds.exact weight).mul ⟨evLo, evHi⟩
+    | .logLatentMarginal weight target =>
+      let latLo := Finset.univ.sum fun (w' : W) =>
+        d.worldPrior w' * (d.latentPrior w' target *
+          (computeS1PolicyBounds d.s1Spec d.meaning d.α target w' u).lo)
+      let latHi := Finset.univ.sum fun (w' : W) =>
+        d.worldPrior w' * (d.latentPrior w' target *
+          (computeS1PolicyBounds d.s1Spec d.meaning d.α target w' u).hi)
+      let latCoarse := (⟨latLo, latHi⟩ : Bounds).coarsen 30
+      let marg := (Bounds.divPos latCoarse normCoarse).coarsen 30
+      (Bounds.exact weight).mul (logBoundsFast marg)
+    | .constant fn =>
+      Bounds.exact (fn u)
+  terms.foldl (fun acc t => acc.add (evalTerm t)) Bounds.zero
+
 /-- Compute S2 score bounds, dispatching on S2ScoreSpec.
 
     For `utilityMaximizing`: computes L1 marginals inline, evaluating S1
-    policies once and reusing the results for all terms. The monolithic
-    structure avoids redundant S1 policy recomputation that would occur
-    with separate marginal functions. -/
+    policies once and reusing the results for all terms. -/
 def computeS2ScoreBounds {U W : Type*} [Fintype U] [Fintype W]
     [DecidableEq U] [DecidableEq W]
     (d : RSAConfigData U W) (spec : RSA.S2ScoreSpec U W d.Latent)
@@ -591,59 +741,28 @@ def computeS2ScoreBounds {U W : Type*} [Fintype U] [Fintype W]
   | .endorsement =>
     computeL1ScoreBounds d u w
   | .utilityMaximizing α₂ terms =>
-    -- Step 1: Compute L1 unnormalized scores for each world
-    --   l1Score(w') = worldPrior(w') · Σ_l latentPrior(w',l) · S1(l,w',u)
-    let l1ScoreLo : W → ℚ := fun w' =>
-      d.worldPrior w' * (Finset.univ.sum fun (l : d.Latent) =>
-        d.latentPrior w' l *
-          (computeS1PolicyBounds d.s1Spec d.meaning d.α l w' u).lo)
-    let l1ScoreHi : W → ℚ := fun w' =>
-      d.worldPrior w' * (Finset.univ.sum fun (l : d.Latent) =>
-        d.latentPrior w' l *
-          (computeS1PolicyBounds d.s1Spec d.meaning d.α l w' u).hi)
-    -- Step 2: Norm = Σ_w' l1Score(w')
-    let normLo := Finset.univ.sum l1ScoreLo
-    let normHi := Finset.univ.sum l1ScoreHi
-    let norm : Bounds := ⟨normLo, normHi⟩
-    -- Step 3: Evaluate each S2 utility term
-    -- Coarsen marginals to 20 binary digits before feeding to logBounds
-    -- to prevent denominator explosion in nested interval pipelines.
-    let evalTerm : RSA.S2UtilityTerm U W d.Latent → Bounds := fun t =>
-      match t with
-      | .logStateMarginal weight =>
-        let marg := (Bounds.divPos ⟨l1ScoreLo w, l1ScoreHi w⟩ norm).coarsen 20
-        (Bounds.exact weight).mul (logBounds marg)
-      | .expectedValue weight value =>
-        let evLo := Finset.univ.sum fun (w' : W) =>
-          value w' * (Bounds.divPos ⟨l1ScoreLo w', l1ScoreHi w'⟩ norm).lo
-        let evHi := Finset.univ.sum fun (w' : W) =>
-          value w' * (Bounds.divPos ⟨l1ScoreLo w', l1ScoreHi w'⟩ norm).hi
-        (Bounds.exact weight).mul ⟨evLo, evHi⟩
-      | .logLatentMarginal weight target =>
-        let latLo := Finset.univ.sum fun (w' : W) =>
-          d.worldPrior w' * (d.latentPrior w' target *
-            (computeS1PolicyBounds d.s1Spec d.meaning d.α target w' u).lo)
-        let latHi := Finset.univ.sum fun (w' : W) =>
-          d.worldPrior w' * (d.latentPrior w' target *
-            (computeS1PolicyBounds d.s1Spec d.meaning d.α target w' u).hi)
-        let marg := (Bounds.divPos ⟨latLo, latHi⟩ norm).coarsen 20
-        (Bounds.exact weight).mul (logBounds marg)
-      | .constant fn =>
-        Bounds.exact (fn u)
-    let termSum := terms.foldl (fun acc t => acc.add (evalTerm t)) Bounds.zero
-    let scaled : Bounds := ⟨α₂ * termSum.lo, α₂ * termSum.hi⟩
+    let utility := computeS2UtilityBounds d terms w u
+    let scaled : Bounds := ⟨α₂ * utility.lo, α₂ * utility.hi⟩
     expIntervalBounds scaled
 
-/-- Check that S2 score for (w,u₁) is strictly greater than for (w,u₂). -/
+/-- Check that S2 score for (w,u₁) is strictly greater than for (w,u₂).
+    For `utilityMaximizing`, compares utilities directly (exp is monotone). -/
 def checkS2ScoreGt {U W : Type*} [Fintype U] [Fintype W]
     [DecidableEq U] [DecidableEq W]
     (d : RSAConfigData U W) (w : W) (u₁ u₂ : U) : Bool :=
   match d.s2Spec with
   | none => false
-  | some spec =>
-    let b₁ := computeS2ScoreBounds d spec w u₁
-    let b₂ := computeS2ScoreBounds d spec w u₂
-    b₂.hi < b₁.lo
+  | some spec => match spec with
+    | .endorsement =>
+      let b₁ := computeS2ScoreBounds d spec w u₁
+      let b₂ := computeS2ScoreBounds d spec w u₂
+      b₂.hi < b₁.lo
+    | .utilityMaximizing _α₂ terms =>
+      -- Compare utilities directly: exp(α₂·U₁) > exp(α₂·U₂) iff U₁ > U₂
+      -- This avoids the final exp step, removing interval widening.
+      let u₁_util := computeS2UtilityBounds d terms w u₁
+      let u₂_util := computeS2UtilityBounds d terms w u₂
+      u₂_util.hi < u₁_util.lo
 
 /-- Soundness: if checkS2ScoreGt returns true, then S2(u₁|w) > S2(u₂|w). -/
 theorem s2_gt_of_check (d : RSAConfigData U W)

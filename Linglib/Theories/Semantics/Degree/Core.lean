@@ -3,7 +3,7 @@ import Linglib.Theories.Semantics.Montague.Basic
 
 /-!
 # Degree Semantics: Core Infrastructure
-@cite{heim-2001} @cite{kennedy-2007} @cite{klein-1980} @cite{rett-2026} @cite{schwarzschild-2008}
+@cite{heim-2001} @cite{kennedy-2007} @cite{klein-1980} @cite{rett-2026} @cite{schwarzschild-2008} @cite{israel-2011} @cite{kennedy-mcnally-2005}
 
 Shared types and interfaces for degree-based analyses of gradable
 expressions. This module defines the minimal `GradablePredicate`

@@ -176,7 +176,7 @@ def catFamily : Cat → CatFamily
   | .P                                  => .adpositional
 
 -- ═══════════════════════════════════════════════════════════════
--- Part 5b: Categorial Features — Panagiotidis (2015)
+-- Part 5b: Categorial Features — @cite{panagiotidis-2015}
 -- ═══════════════════════════════════════════════════════════════
 
 /-- @cite{panagiotidis-2015} categorial features: [N] and [V] as substantive,

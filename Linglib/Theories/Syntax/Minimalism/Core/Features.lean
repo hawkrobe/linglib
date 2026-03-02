@@ -3,7 +3,7 @@ import Linglib.Core.Prominence
 
 /-!
 # Feature Infrastructure for Minimalist Agree
-@cite{adger-2003} @cite{chomsky-2000} @cite{chomsky-2001} @cite{alok-2020}
+@cite{adger-2003} @cite{chomsky-2000} @cite{chomsky-2001} @cite{alok-2020} @cite{alok-bhalla-2026} @cite{lobeck-1995} @cite{panagiotidis-2015} @cite{pollock-1989}
 
 Phi-features, case values, and feature bundles — the shared infrastructure
 underlying all Agree-based operations. Extracted from `Agree.lean` to

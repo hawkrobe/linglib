@@ -890,10 +890,10 @@ def melt : VerbEntry := .mkRegular {
   } }
 
 -- ════════════════════════════════════════════════════
--- § Martin, Rose & Nichols (2025) — Thick/Thin Causatives
+-- § @cite{martin-rose-nichols-2025} — Thick/Thin Causatives
 -- ════════════════════════════════════════════════════
 
--- Entries for causative verbs classified by Martin et al. (2025) that don't
+-- Entries for causative verbs classified by @cite{martin-rose-nichols-2025} that don't
 -- already have Fragment entries elsewhere (break_, burn, destroy, melt, kill,
 -- cut, mix, start, stop already defined above).
 

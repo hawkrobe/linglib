@@ -8,7 +8,7 @@ import Linglib.Phenomena.ImplicitCausality.Studies.SolstadBott2024.Bridge.ProtoR
 /-!
 # Psych Verb Causation Bridge (B&R 1988, Kim 2024 UPH)
 
-@cite{belletti-rizzi-1988} @cite{kim-2024}
+@cite{belletti-rizzi-1988} @cite{kim-2024} @cite{pesetsky-1995}
 
 Bridge theorems connecting fragment entries to the B&R (1988) classification
 and @cite{kim-2024}'s Uniform Projection Hypothesis for Class II psych verbs.

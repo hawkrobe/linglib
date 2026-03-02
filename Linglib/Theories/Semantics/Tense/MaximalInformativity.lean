@@ -63,7 +63,7 @@ open Semantics.Lexical.Verb.Aspect
 variable {W Time : Type*} [LinearOrder Time]
 
 -- Re-export maximal informativity from Core.Scale (canonical definitions).
--- Fox & Hackl (2007) §4 / Rouillard (2026) eq. (75).
+-- @cite{fox-2007} §4 / @cite{rouillard-2026} eq. (75).
 open Core.Scale (IsMaxInf HasMaxInf InformationCollapse)
 
 -- ════════════════════════════════════════════════════

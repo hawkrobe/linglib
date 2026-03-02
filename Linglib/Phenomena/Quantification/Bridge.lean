@@ -49,7 +49,7 @@ open Semantics.Montague (Model)
 open Semantics.Lexical.Determiner.Quantifier (FiniteModel)
 
 -- ============================================================================
--- Barwise & Cooper (1981): Conservativity is (near-)universal
+-- @cite{barwise-cooper-1981}: Conservativity is (near-)universal
 -- ============================================================================
 
 /-- Conservativity holds for all simple (lexicalized) English determiners
@@ -68,7 +68,7 @@ theorem conservativity_universal :
   · exact Semantics.Lexical.Determiner.Quantifier.every_conservative
 
 -- ============================================================================
--- Mostowski (1957) / Keenan & Stavi (1986): Quantity
+-- @cite{mostowski-1957} / @cite{keenan-stavi-1986}: Quantity
 -- ============================================================================
 
 /-- All simple determiners satisfy quantity/isomorphism closure:
@@ -148,7 +148,7 @@ theorem quantity_universal :
    their restrictor. See `Core.Quantification.vanBenthem_cons_ext`. -/
 
 -- ============================================================================
--- Van de Pol et al. (2023): Simplicity and Universals
+-- @cite{van-de-pol-etal-2023}: Simplicity and Universals
 -- ============================================================================
 
 /-- Monotone quantifiers have strictly lower LZ complexity than
@@ -205,7 +205,7 @@ theorem some_all_scale_upward :
       (·.monotonicity == .increasing) = true := by native_decide
 
 -- ============================================================================
--- Barwise & Cooper (1981): Weak/Strong and Persistence
+-- @cite{barwise-cooper-1981}: Weak/Strong and Persistence
 -- ============================================================================
 
 /-- U7 (B&C): Positive strong determiners are scope-upward-monotone.
@@ -319,7 +319,7 @@ theorem positive_strong_determiners_upward_monotone :
     simp [hfilt]
 
 -- ============================================================================
--- Van Benthem (1984) §3.3: Aristotle Reversed — Square of Opposition
+-- @cite{van-benthem-1984} §3.3: Aristotle Reversed — Square of Opposition
 -- ============================================================================
 
 /- Van Benthem 1984 §3.3: Under VAR*, the Square of Opposition is completely

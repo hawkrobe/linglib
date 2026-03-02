@@ -224,7 +224,7 @@ theorem projective_implies_nonProj_wf (t : DepTree) :
     simp [Bool.and]
 
 -- ============================================================================
--- §7: Example Trees from Kuhlmann & Nivre (2006)
+-- §7: Example Trees from @cite{kuhlmann-nivre-2006}
 -- ============================================================================
 
 /-! ### Figure 3 examples: gap degree, edge degree, well-nestedness -/

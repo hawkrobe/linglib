@@ -60,7 +60,7 @@ def ThresholdPredicate.holds {E D : Type} [LE D] [DecidableRel (α := D) (· ≤
 
 /-!
 ## Gradable Adjectives
-@cite{morzycki-2009}
+@cite{morzycki-2009} @cite{lassiter-goodman-2017} @cite{tessler-goodman-2019}
 
 ⟦tall⟧(x, θ) = 1 iff height(x) > θ
 

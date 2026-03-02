@@ -119,7 +119,7 @@ theorem presPerfProgXN_unfold (V : EventPred W Time) (tᵣ : Set Time)
   rfl
 
 -- ════════════════════════════════════════════════════
--- § Knick & Sharf (2026) Core Results
+-- § @cite{knick-sharf-2026} Core Results
 -- ════════════════════════════════════════════════════
 
 /-- **Theorem 3** (K&S 2026): U-perf(tᵣ) entails simple present.

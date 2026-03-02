@@ -7,7 +7,7 @@ import Mathlib.Tactic.NormNum
 
 /-!
 # English Determiners
-@cite{horn-1972}
+@cite{horn-1972} @cite{barwise-cooper-1981}
 
 Quantifier lexicon with syntactic and semantic properties.
 
@@ -438,7 +438,7 @@ From a `QuantityWord` you can reach:
 -/
 
 -- ============================================================================
--- Van Benthem (1984) §3.3: Inferential Characterization
+-- @cite{van-benthem-1984} §3.3: Inferential Characterization
 -- ============================================================================
 
 /-- Van Benthem 1984 §3.3: Inferential characterization of the Square of
@@ -653,7 +653,7 @@ theorem none_laa_bridge :
   ⟨rfl, no_laa, no_scope_down⟩
 
 -- ============================================================================
--- Van Benthem (1984): Inferential + Double Mono Bridges
+-- @cite{van-benthem-1984}: Inferential + Double Mono Bridges
 -- ============================================================================
 
 open Core.Quantification in

@@ -584,7 +584,7 @@ theorem vp_smuggling_ordering :
     qi_ordering_purpose.result = .passes := ⟨rfl, rfl, rfl, rfl, rfl⟩
 
 -- ════════════════════════════════════════════════════
--- § 13. Levin (1993) Class Bridge
+-- § 13. @cite{levin-1993} Class Bridge
 -- ════════════════════════════════════════════════════
 
 /-! Levin & Rappaport @cite{levin-hovav-1995} predict unaccusativity from verb class

@@ -37,7 +37,7 @@ namespace Phenomena.Coordination.Typology
 open Phenomena.Coordination.Studies.BillEtAl2025
 
 -- ============================================================================
--- Haspelmath (2007): Structural Typology
+-- @cite{haspelmath-2007}: Structural Typology
 -- ============================================================================
 
 /-- Syndesis: presence and number of overt coordinators (Haspelmath §1). -/
@@ -265,7 +265,7 @@ def slovenian : ConjunctionSystem :=
   , iso := "slv" }
 
 -- ============================================================================
--- Language Data: Haspelmath (2007) Typological Examples
+-- Language Data: @cite{haspelmath-2007} Typological Examples
 -- ============================================================================
 
 /--

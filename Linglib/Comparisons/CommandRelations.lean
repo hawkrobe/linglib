@@ -65,7 +65,7 @@ namespace Comparisons.CommandRelations
 open Set
 open Phenomena.Anaphora.Coreference
 
--- PART A: BARKER & PULLUM (1990) ABSTRACT FRAMEWORK
+-- PART A: @cite{barker-pullum-1990} ABSTRACT FRAMEWORK
 
 -- A.1: Abstract Tree Structure
 
@@ -1251,7 +1251,7 @@ are unified through B&P's algebraic framework. When the structural assumptions a
 (configurational languages), the theories necessarily agree by the Intersection Theorem.
 -/
 
--- PART J: KRACHT (1993) - DISTRIBUTOID STRUCTURE
+-- PART J: @cite{kracht-1993} - DISTRIBUTOID STRUCTURE
 
 /-!
 ## @cite{kracht-1993} "Mathematical Aspects of Command Relations"

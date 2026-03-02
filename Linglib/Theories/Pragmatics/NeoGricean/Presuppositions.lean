@@ -142,7 +142,7 @@ theorem si_proceeds_when_felicitous {W : Type*} (p : PrProp W) (w : W)
 
 
 -- ============================================================================
--- Wang (2025) Alternative Structure Classification
+-- @cite{wang-2025} Alternative Structure Classification
 -- ============================================================================
 
 /-!

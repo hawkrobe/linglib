@@ -150,7 +150,7 @@ theorem symmetric_filters_when_consequent_entails {W : Type*}
   exact h w hw_in hcons
 
 -- ════════════════════════════════════════════════════
--- § 5. Solstad & Bott (2024) Experiment 3 Result
+-- § 5. @cite{solstad-bott-2024} Experiment 3 Result
 -- ════════════════════════════════════════════════════
 
 /-- The key empirical finding: cataphoric resolution succeeds for occasion

@@ -39,7 +39,7 @@ private abbrev pd := ForceFlavor.mk .possibility .deontic
 private abbrev pc := ForceFlavor.mk .possibility .circumstantial
 
 -- ============================================================================
--- §1: Tlingit (Athabaskan-Eyak-Tlingit) — Cable (2017)
+-- §1: Tlingit (Athabaskan-Eyak-Tlingit) — @cite{cable-2017}
 -- ============================================================================
 
 def tlingit : ModalInventory where
@@ -59,7 +59,7 @@ theorem tlingit_size : tlingit.size = 5 := by native_decide
 theorem tlingit_has_synonymy : tlingit.hasSynonymy = true := by native_decide
 
 -- ============================================================================
--- §2: Javanese-Paciran (Austronesian) — Vander Klok (2013a)
+-- §2: Javanese-Paciran (Austronesian) — Van@cite{vander-klok-2013a}
 -- ============================================================================
 
 def javanese : ModalInventory where
@@ -80,7 +80,7 @@ theorem javanese_all_iff : javanese.allIFF = true := by native_decide
 theorem javanese_size : javanese.size = 7 := by native_decide
 
 -- ============================================================================
--- §3: Gitksan (Tsimshian) — Matthewson (2013)
+-- §3: Gitksan (Tsimshian) — @cite{matthewson-2013}
 -- ============================================================================
 
 /-- Gitksan has variable-force modals: ima('a) and gat express both
@@ -114,7 +114,7 @@ theorem prepei_not_sav :
     Semantics.Modality.Typology.satisfiesSAV [ne, pe, nd, nc] = false := by native_decide
 
 -- ============================================================================
--- §4: Korean (Koreanic) — Uegaki et al. (2025)
+-- §4: Korean (Koreanic) — @cite{qing-uegaki-2025}
 -- ============================================================================
 
 def korean : ModalInventory where
@@ -138,7 +138,7 @@ theorem korean_all_iff : korean.allIFF = true := by native_decide
 theorem korean_size : korean.size = 10 := by native_decide
 
 -- ============================================================================
--- §5: Modern Greek (Indo-European) — Uegaki et al. (2025)
+-- §5: Modern Greek (Indo-European) — @cite{qing-uegaki-2025}
 -- ============================================================================
 
 /-- Greek has non-IFF modals: Prepei and Mporei express non-rectangular
@@ -164,7 +164,7 @@ theorem greek_prepei_not_iff :
     satisfiesIFF [ne, pe, nd, nc] = false := by native_decide
 
 -- ============================================================================
--- §6: Mandarin (Sino-Tibetan) — Uegaki et al. (2025)
+-- §6: Mandarin (Sino-Tibetan) — @cite{qing-uegaki-2025}
 -- ============================================================================
 
 /-- Mandarin has many modals, extensive synonymy, but all satisfy IFF.
@@ -193,7 +193,7 @@ theorem mandarin_size : mandarin.size = 12 := by native_decide
 theorem mandarin_has_synonymy : mandarin.hasSynonymy = true := by native_decide
 
 -- ============================================================================
--- §7: Dutch (Indo-European) — Uegaki et al. (2025)
+-- §7: Dutch (Indo-European) — @cite{qing-uegaki-2025}
 -- ============================================================================
 
 /-- Dutch has one non-IFF modal: zou/zouden...kunnen expresses
@@ -220,7 +220,7 @@ theorem dutch_size : dutch.size = 10 := by native_decide
 theorem dutch_iff_count : dutch.iffCount = 9 := by native_decide
 
 -- ============================================================================
--- §8: Hungarian (Uralic) — Uegaki et al. (2025)
+-- §8: Hungarian (Uralic) — @cite{qing-uegaki-2025}
 -- ============================================================================
 
 def hungarian : ModalInventory where

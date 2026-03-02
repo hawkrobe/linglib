@@ -536,6 +536,7 @@ import Linglib.Phenomena.Politeness.Studies.MachinoEtAl2025
 import Linglib.Phenomena.Politeness.Studies.MachinoEtAl2025Bridge
 import Linglib.Phenomena.Politeness.Studies.YoonEtAl2020
 import Linglib.Phenomena.Politeness.Studies.YoonEtAl2020RSA
+import Linglib.Phenomena.Politeness.Studies.YoonEtAl2020S2
 import Linglib.Phenomena.Polysemy.Data
 import Linglib.Phenomena.Polysemy.CopredBridge
 import Linglib.Phenomena.Possession.Typology

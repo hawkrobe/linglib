@@ -263,7 +263,7 @@ def whyNegationIsDoxastic : String :=
   "This opens the possibility to use negation to mark doxastic attitudes."
 
 -- ═══════════════════════════════════════════════════════════════════════
--- Turkish Polar Questions and Modal Answers (Turk, Hirsch & İnce 2026)
+-- Turkish Polar Questions and Modal Answers (@cite{turk-ince-2026})
 -- ═══════════════════════════════════════════════════════════════════════
 
 /-! Turk, Hirsch & İnce (2026) observe that deontic modal answers are

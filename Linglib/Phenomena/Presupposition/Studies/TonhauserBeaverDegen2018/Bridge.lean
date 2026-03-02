@@ -167,7 +167,7 @@ theorem exp1a_non_monotone_witness :
   native_decide
 
 -- ════════════════════════════════════════════════════
--- § Cross-Reference with Degen & Tonhauser (2021)
+-- § Cross-Reference with @cite{degen-tonhauser-2021}
 -- ════════════════════════════════════════════════════
 
 /-- Predicates shared between TBD2018 Exp 1b and D&T2021:

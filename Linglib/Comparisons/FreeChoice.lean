@@ -74,7 +74,7 @@ theorem fci_is_pragmatic : coffeeOrTea.isSemanticEntailment = false := rfl
 theorem fci_is_captured : coffeeOrTea.isPragmaticInference = true := rfl
 
 -- ============================================================================
--- SECTION 2: Bar-Lev & Fox (2020) - Innocent Inclusion
+-- SECTION 2: @cite{bar-lev-fox-2020} - Innocent Inclusion
 -- ============================================================================
 
 /-!
@@ -116,7 +116,7 @@ theorem barlevfox_derives_fc :
   NeoGricean.FreeChoice.free_choice
 
 -- ============================================================================
--- SECTION 3: Champollion et al. (2019) - RSA + Semantic Uncertainty
+-- SECTION 3: @cite{champollion-alsop-grosu-2019} - RSA + Semantic Uncertainty
 -- ============================================================================
 
 /-!
@@ -162,7 +162,7 @@ theorem champollion_fc_robust :
   RSA.FreeChoice.fci_robust_to_prior
 
 -- ============================================================================
--- SECTION 3b: Alsop (2024) - RSA + Global Intentions for *any*
+-- SECTION 3b: @cite{alsop-2024} - RSA + Global Intentions for *any*
 -- ============================================================================
 
 /-!
@@ -213,7 +213,7 @@ theorem alsop_not_every_sensitive :
   RSA.FCIAny.not_every_weakened
 
 -- ============================================================================
--- SECTION 3c: Aloni (2022) - BSML Team Semantics
+-- SECTION 3c: @cite{aloni-2022} - BSML Team Semantics
 -- ============================================================================
 
 /-!
@@ -250,7 +250,7 @@ theorem aloni_dne {W : Type*} [DecidableEq W] (M : BSMLModel W)
   dne_support M φ t
 
 -- ============================================================================
--- SECTION 3d: Elliott & Sudo (2025) - Bilateral Update Semantics
+-- SECTION 3d: @cite{elliott-sudo-2025} - Bilateral Update Semantics
 -- ============================================================================
 
 /-!

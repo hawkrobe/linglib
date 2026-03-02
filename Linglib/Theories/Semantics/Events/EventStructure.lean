@@ -180,7 +180,7 @@ theorem lexicalized_is_full_agent :
     (Template.lexicalizeInstrument .motionContact).pAgentScore = 5 := by native_decide
 
 -- ════════════════════════════════════════════════════
--- § 7. Bridge to Levin (1993) Verb Classes
+-- § 7. Bridge to @cite{levin-1993} Verb Classes
 -- ════════════════════════════════════════════════════
 
 /-! Levin classes map to event structure templates via meaning components.

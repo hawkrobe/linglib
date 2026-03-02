@@ -105,7 +105,7 @@ def FIPApplication.description : FIPApplication → String
 /-!
 ## Additive Particles and FIP
 
-@cite{rooth-1992} §2.2 analyzes "too" via FIP:
+@cite{rooth-1992} §2.2 analyzes "too" via FIP: @cite{rooth-1985}
 
 "Mary read Lear, and she read Macbeth too"
 - Focus: MACBETH

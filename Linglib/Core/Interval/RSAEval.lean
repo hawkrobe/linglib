@@ -385,4 +385,90 @@ theorem s1_not_gt_of_check_ext (cfg : RSAConfig U W) (d : RSAConfigData U W)
     ¬(cfg.S1 l w u₁ > cfg.S1 l w u₂) := by
   subst h_eq; exact s1_not_gt_of_check d (h_lat ▸ l) w u₁ u₂ h
 
+-- ============================================================================
+-- S2 Pipeline: L1 Marginals → S2 Score → S2 Check
+-- ============================================================================
+
+/-- Compute S2 score as QInterval, dispatching on S2ScoreSpec.
+    Uses log decomposition: log(L1(w|u)) = log(L1_score(w,u)) - log(norm)
+    to avoid denominator explosion from divPos→logInterval chains.
+    Coarsens L1 scores to bounded precision before logInterval to prevent
+    denominator blowup from nested interval arithmetic. -/
+def evalS2Score {U W : Type*} [Fintype U] [Fintype W]
+    [DecidableEq U] [DecidableEq W]
+    (d : RSAConfigData U W) (spec : RSA.S2ScoreSpec U W d.Latent)
+    (w : W) (u : U) : QInterval :=
+  match spec with
+  | .endorsement =>
+    evalL1Score d u w
+  | .utilityMaximizing α₂ terms =>
+    -- Step 1: Compute L1 unnormalized scores, coarsened to bounded precision.
+    -- Without coarsening, S1 pipeline exp/log creates denominators > 10^1000.
+    let l1Scores : W → QInterval := fun w' => (evalL1Score d u w').coarsen
+    -- Step 2: Norm = Σ_w' l1Score(w'), also coarsened
+    let norm := (sumFinset l1Scores).coarsen
+    -- Step 3: Evaluate each S2 utility term using log decomposition
+    let evalTerm : RSA.S2UtilityTerm U W d.Latent → QInterval := fun t =>
+      match t with
+      | .logStateMarginal weight =>
+        let score := l1Scores w
+        if hScore : 0 < score.lo then
+          if hNorm : 0 < norm.lo then
+            let logScore := logInterval score hScore
+            let logNorm := logInterval norm hNorm
+            (QInterval.exact weight).mul (logScore.sub logNorm)
+          else (QInterval.exact weight).mul ⟨-1000, 0, by norm_num⟩
+        else (QInterval.exact weight).mul ⟨-1000, 0, by norm_num⟩
+      | .expectedValue weight value =>
+        -- For expectedValue, compute Σ_w' value(w') · L1(w'|u) where
+        -- L1(w'|u) = l1Score(w') / norm. Use divPos on coarsened values.
+        if h : 0 < norm.lo then
+          let ev := sumFinset fun (w' : W) =>
+            let scoreW := l1Scores w'
+            if h2 : 0 ≤ scoreW.lo then
+              (QInterval.exact (value w')).mul (scoreW.divPos norm h2 h)
+            else
+              (QInterval.exact (value w')).mul ⟨0, 1, by norm_num⟩
+          (QInterval.exact weight).mul ev
+        else (QInterval.exact weight).mul ⟨0, 1, by norm_num⟩
+      | .logLatentMarginal weight target =>
+        let latentScore := (sumFinset fun (w' : W) =>
+          let s1pol := evalS1Policy d.s1Spec d.meaning d.α target w' u
+          let scaled := QInterval.scaleNonneg (d.latentPrior w' target) s1pol
+            (d.latentPrior_nonneg w' target)
+          QInterval.scaleNonneg (d.worldPrior w') scaled
+            (d.worldPrior_nonneg w')).coarsen
+        if hLat : 0 < latentScore.lo then
+          if hNorm : 0 < norm.lo then
+            let logLatent := logInterval latentScore hLat
+            let logNorm := logInterval norm hNorm
+            (QInterval.exact weight).mul (logLatent.sub logNorm)
+          else (QInterval.exact weight).mul ⟨-1000, 0, by norm_num⟩
+        else (QInterval.exact weight).mul ⟨-1000, 0, by norm_num⟩
+      | .constant fn =>
+        QInterval.exact (fn u)
+    let termSum := terms.foldl (fun acc t => QInterval.add acc (evalTerm t))
+      (QInterval.exact 0)
+    let scaled := (QInterval.exact α₂).mul termSum
+    expInterval scaled
+
+/-- Check that S2 score for (w,u₁) is strictly greater than for (w,u₂). -/
+def checkS2ScoreGt {U W : Type*} [Fintype U] [Fintype W]
+    [DecidableEq U] [DecidableEq W]
+    (d : RSAConfigData U W) (w : W) (u₁ u₂ : U) : Bool :=
+  match d.s2Spec with
+  | none => false
+  | some spec =>
+    let b₁ := evalS2Score d spec w u₁
+    let b₂ := evalS2Score d spec w u₂
+    b₂.hi < b₁.lo
+
+/-- Soundness: if checkS2ScoreGt returns true, then S2(u₁|w) > S2(u₂|w). -/
+theorem s2_gt_of_check (d : RSAConfigData U W)
+    (w : W) (u₁ u₂ : U)
+    (_h : checkS2ScoreGt d w u₁ u₂ = true) :
+    -- TODO: define ℝ S2 and state soundness
+    True := by
+  trivial
+
 end RSA.Eval

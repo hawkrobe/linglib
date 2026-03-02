@@ -281,8 +281,8 @@ theorem nonhomogeneous_implies_closed_scale (p : AspectualProfile)
 /-- NPI licensing mechanism: DE vs MIP.
     Rouillard argues MIP subsumes DE for G-TIAs. -/
 inductive LicensingMechanism where
-  | downwardEntailment   -- Ladusaw (1979), Hoeksema (2006), Gajewski (2005)
-  | maximalInformativity  -- Rouillard (2026): MIP
+  | downwardEntailment   -- @cite{ladusaw-1979}, @cite{hoeksema-2006}, @cite{gajewski-2005}
+  | maximalInformativity  -- @cite{rouillard-2026}: MIP
   deriving DecidableEq, Repr, BEq
 
 /-- NPI prediction: does a licensing mechanism correctly predict
@@ -320,7 +320,7 @@ theorem mip_subsumes_de :
 -- § 9. Since-When Questions (§5.2)
 -- ════════════════════════════════════════════════════
 
--- Rouillard (2026) Sect. 5.2: "since when" questions disambiguate E/U-perfect.
+-- @cite{rouillard-2026} Sect. 5.2: "since when" questions disambiguate E/U-perfect.
 --
 -- (131) "Since when has Mary been sick?"
 --

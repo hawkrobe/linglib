@@ -46,8 +46,8 @@ inductive BinominalType where
 
 /-- The structural source of the genitive *de* (Saab 2026 §4). -/
 inductive GenitiveSource where
-  | primeval    -- Pesetsky (2013): default case when D blocks structural case
-  | equative   -- den Dikken (2006): EquP predication, not true genitive
+  | primeval    -- @cite{pesetsky-2013}: default case when D blocks structural case
+  | equative   -- @cite{dendikken-2006}: EquP predication, not true genitive
   deriving DecidableEq, BEq, Repr
 
 /-- Map binominal type to its genitive source. -/

@@ -8,7 +8,7 @@ import Linglib.Core.Case.Hierarchy
 # Kaqchikel Agreement Fragment @cite{preminger-2014}
 
 Agreement morphology for Kaqchikel (K'ichean, Mayan), formalizing
-@cite{preminger-2014} *Agreement and Its Failures*, Chapters 3-4 and @cite{chomsky-2001} @cite{scott-2023}
+@cite{preminger-2014} *Agreement and Its Failures*, Chapters 3-4 and @cite{chomsky-2001} @cite{scott-2023} @cite{blake-1994}
 Appendix 9.A.
 
 ## The System

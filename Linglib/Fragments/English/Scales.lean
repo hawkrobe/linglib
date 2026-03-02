@@ -335,7 +335,7 @@ def predictExhEffect (isClosed : Bool) : ClosureEffect :=
 #guard !threeDomain.isClosed
 
 -- ============================================================================
--- Connection to Spector (2016)
+-- Connection to @cite{spector-2016}
 -- ============================================================================
 
 /-!

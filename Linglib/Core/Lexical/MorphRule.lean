@@ -149,7 +149,7 @@ def ParadigmCell.isIrregular {F : Type} (c : ParadigmCell F) : Bool :=
   !c.regular && c.form.isSome
 
 -- ============================================================================
--- §5: Bybee (1985) Relevance Hierarchy
+-- §5: @cite{bybee-1985} Relevance Hierarchy
 -- ============================================================================
 
 /-- Morpheme functional category.

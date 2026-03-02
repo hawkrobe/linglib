@@ -43,7 +43,7 @@ variable {α : Type*}
 -- §1 Property Definitions
 -- ============================================================================
 
--- §1.1 Barwise & Cooper (1981) --
+-- §1.1 @cite{barwise-cooper-1981} --
 
 /--
 Conservativity: `Q(A, B) = Q(A, A ∩ B)`.
@@ -109,7 +109,7 @@ def PositiveStrong (q : GQ α) : Prop :=
 def NegativeStrong (q : GQ α) : Prop :=
   ∀ (R : α → Bool), q R R = false
 
--- §1.2 Peters & Westerståhl (2006) --
+-- §1.2 @cite{peters-westerstahl-2006} --
 
 /-- Extension (EXT): Q(A,B) depends only on A and B, not on the ambient
     universe M. In model-theoretic GQ theory (where Q^M takes a universe),
@@ -140,7 +140,7 @@ def RightAntiAdditive (q : GQ α) : Prop :=
   ∀ (R S S' : α → Bool),
     q R (λ x => S x || S' x) = (q R S && q R S')
 
--- §1.3 Van Benthem (1984): Relational properties --
+-- §1.3 @cite{van-benthem-1984}: Relational properties --
 
 /-- Transitive: Q(A,B) ∧ Q(B,C) → Q(A,C). Van Benthem 1984 §3.1.
     "all" is the prime transitive quantifier (inclusion is transitive). -/
@@ -206,7 +206,7 @@ def Filtrating (q : GQ α) : Prop :=
   ∀ (A B C : α → Bool),
     q A B = true → q A C = true → q A (λ x => B x && C x) = true
 
--- §1.4 Mostowski (1957) --
+-- §1.4 @cite{mostowski-1957} --
 
 /-- QUANT (Isomorphism closure): Q is invariant under permutations of the
     domain. Model-agnostic version: Q(A,B) depends only on the pointwise
@@ -602,7 +602,7 @@ theorem individual_meet_closed (a : α) (P Q : α → Bool) :
   simp only [individual]; intro hP hQ; simp [hP, hQ]
 
 -- ============================================================================
--- §8 Van Benthem (1984) Characterization
+-- §8 @cite{van-benthem-1984} Characterization
 -- ============================================================================
 
 /-- @cite{van-benthem-1984} Theorem 3.1.1: Under conservativity, inclusion (⊆)

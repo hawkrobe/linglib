@@ -168,7 +168,7 @@ theorem dead_no_alternatives :
     morphologicalAlternatives deadStem "dead" = [] := rfl
 
 -- ============================================================================
--- §7: Bridge to Bybee (1985) Relevance Hierarchy
+-- §7: Bridge to @cite{bybee-1985} Relevance Hierarchy
 -- ============================================================================
 
 /-- `.degree` has relevance rank 5, same as `.tense`. -/

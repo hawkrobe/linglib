@@ -284,6 +284,8 @@ example : licensesWeakNPI atMost2_student := atMost_isDE_scope
 
 /-!
 ## `DEStrength` ↔ Proof Hierarchy
+@cite{icard-2012}
+
 
 | `DEStrength` | Proof Predicate | Example Licensor |
 |--------------|-----------------|------------------|

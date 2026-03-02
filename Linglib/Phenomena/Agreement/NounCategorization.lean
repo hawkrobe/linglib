@@ -388,7 +388,7 @@ theorem noun_class_more_interactions :
     ncInteractions.length > clInteractions.length := by native_decide
 
 -- ============================================================================
--- §13: Greenberg (1972) universal
+-- §13: @cite{greenberg-1972} universal
 -- ============================================================================
 
 /- Greenberg (1972): Numeral classifiers and obligatory number marking are

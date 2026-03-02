@@ -49,7 +49,7 @@ structure LanguageData where
   deriving Repr
 
 -- ============================================================================
--- §2. Ackerman & Malouf (2013): The Ten Languages
+-- §2. @cite{ackerman-malouf-2013}: The Ten Languages
 -- ============================================================================
 
 /-! ### Nilo-Saharan languages -/

@@ -180,8 +180,8 @@ end Prop3
 
 -- Weak Kleene Logic and Meta-Assertion
 -- References:
--- - Kleene (1952), weak tables (§64)
--- - Beaver & Krahmer (2001). A partial account of presupposition projection.
+-- - @cite{kleene-1952}, weak tables (§64)
+-- - @cite{beaver-krahmer-2001}. A partial account of presupposition projection.
 
 namespace TVal
 

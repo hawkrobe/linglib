@@ -192,7 +192,7 @@ theorem eatObjectIsObject :
     selectsObject eatObjectProfile = true := by native_decide
 
 -- ════════════════════════════════════════════════════
--- § 5. Bridge to Cruse (1973): Features Derived from Entailments
+-- § 5. Bridge to @cite{cruse-1973}: Features Derived from Entailments
 -- ════════════════════════════════════════════════════
 
 /-- Source of do-test acceptability.
@@ -294,7 +294,7 @@ theorem patient_selects_object :
     selectsObject (ThetaRole.canonicalProfile .patient) = true := by native_decide
 
 -- ════════════════════════════════════════════════════
--- § 7. Bridge to Krifka (1998) SINC
+-- § 7. Bridge to @cite{krifka-1998} SINC
 -- ════════════════════════════════════════════════════
 
 /-- Dowty's P-Patient entailment (b) "incremental theme" is precisely
@@ -496,7 +496,7 @@ theorem kickObject_is_forceRecipient :
     isForceRecipient kickObjectProfile = true := by native_decide
 
 -- ════════════════════════════════════════════════════
--- § 14. Bridge to Levin (1993) Meaning Components
+-- § 14. Bridge to @cite{levin-1993} Meaning Components
 -- ════════════════════════════════════════════════════
 
 /-! @cite{levin-1993}'s meaning components are a coarse-grained projection of

@@ -42,7 +42,7 @@ all entries that constrain that dimension. This is by design.
 -/
 
 -- ════════════════════════════════════════════════════
--- § 1. Levin (1993) Meaning Components
+-- § 1. @cite{levin-1993} Meaning Components
 -- ════════════════════════════════════════════════════
 
 /-- Binary meaning components that define @cite{levin-1993} verb classes.
@@ -380,7 +380,7 @@ theorem causativeResult_respects_MRC : causativeResult.violatesMRC = false := rf
 end RootEntailments
 
 -- ════════════════════════════════════════════════════
--- § 4. Levin (1993) Verb Class Taxonomy
+-- § 4. @cite{levin-1993} Verb Class Taxonomy
 -- ════════════════════════════════════════════════════
 
 /-- Verb class taxonomy from @cite{levin-1993} Part II.

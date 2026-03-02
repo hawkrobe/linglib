@@ -158,7 +158,7 @@ theorem gen_false_implies_threshold_false
   intro hContra
   linarith
 
--- Connection to Tessler & Goodman (2019)
+-- Connection to @cite{tessler-goodman-2019}
 
 /-!
 ## How RSA Explains Generic Judgments

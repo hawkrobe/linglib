@@ -109,7 +109,7 @@ theorem distTolerant_allows_exceptions (P : Atom → W → Bool)
   · simp only [Tolerance.full, Finset.singleton_subset_iff, decide_eq_true_iff]; exact ha
   · simp [hPa]
 
--- Križ & Spector (2021): Full Formalization
+-- Križ & @cite{kriz-spector-2021}: Full Formalization
 
 /-!
 ## The Križ & @cite{kriz-spector-2021} Account

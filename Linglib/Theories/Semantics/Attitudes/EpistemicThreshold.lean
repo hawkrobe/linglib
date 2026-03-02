@@ -580,7 +580,7 @@ theorem moreCredent_iff_degree (cr : AgentCredence E W)
   rfl
 
 -- ============================================================================
--- §10. Lassiter (2017) Degree-Semantic Bridges
+-- §10. @cite{lassiter-goodman-2017} Degree-Semantic Bridges
 -- ============================================================================
 
 /-!

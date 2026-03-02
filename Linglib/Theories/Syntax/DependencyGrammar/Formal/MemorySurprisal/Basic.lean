@@ -307,7 +307,7 @@ theorem information_locality_generalizes_dep_locality :
     -- → steep decay → efficient trade-off curve
     True := by
   trivial
-  -- TODO: Proof sketch from Futrell (2019):
+  -- TODO: Proof sketch from @cite{futrell-2019}:
   -- If dependency length is bounded by L, then I_t ≈ 0 for t > L.
   -- The weighted sum Σ t·I_t is then bounded by L · Σ I_t = L · I_total.
   -- Minimizing dependency length minimizes this bound.

@@ -653,7 +653,7 @@ theorem perfectPreterit_same_eventTime :
 
 
 -- ════════════════════════════════════════════════════════════════
--- § Kratzer (1998): Full Derivational Chain (§29)
+-- § @cite{heim-kratzer-1998}: Full Derivational Chain (§29)
 -- ════════════════════════════════════════════════════════════════
 
 /-! End-to-end derivational chain connecting Fragment entries → Theory

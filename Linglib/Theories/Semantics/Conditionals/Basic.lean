@@ -224,7 +224,7 @@ theorem variably_strict_implies_material {W : Type*} (sim : SimilarityOrdering W
 
 /-!
 ## Kratzer Conditionals
-@cite{nadathur-lauer-2020}
+@cite{nadathur-lauer-2020} @cite{stalnaker-1968}
 
 This section provides a **polymorphic, Set-based** version of Kratzer's
 conditional semantics for use in mathematical proofs.

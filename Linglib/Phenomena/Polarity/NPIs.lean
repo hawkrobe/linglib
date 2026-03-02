@@ -454,7 +454,7 @@ def germanJemals : CrossLingNPI :=
   , npiItem := "jemals"
   , gloss := "ever"
   , licensingContexts := ["negation", "questions", "conditionals", "without"]
-  , scalarDirection := .strengthening  -- Schwab (2022): shows NPI illusion
+  , scalarDirection := .strengthening  -- @cite{schwab-2022}: shows NPI illusion
   , notes := "Similar distribution to English \"ever\""
   }
 
@@ -464,7 +464,7 @@ def germanSoRecht : CrossLingNPI :=
   , npiItem := "so recht"
   , gloss := "all that / particularly"
   , licensingContexts := ["negation"]
-  , scalarDirection := .attenuating  -- Schwab (2022): no NPI illusion
+  , scalarDirection := .attenuating  -- @cite{schwab-2022}: no NPI illusion
   , notes := "Attenuating NPI; weakens assertion. 'nicht so recht' ≈ 'not all that'"
   }
 

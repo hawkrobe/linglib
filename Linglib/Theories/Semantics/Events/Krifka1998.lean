@@ -134,7 +134,7 @@ structure SINC (θ : α → β → Prop) : Prop where
 -- § 3. Derived Properties
 -- ════════════════════════════════════════════════════
 
--- Note on UP vs UO + GUE: Krifka (1998) lists UP (eq. 43) as a
+-- Note on UP vs UO + GUE: @cite{krifka-1998} lists UP (eq. 43) as a
 -- separate property from the SINC components. UO is relativized to
 -- an outer (x,e) pair, so two independent fillers x,y of the same
 -- event e aren't directly connected by UO's uniqueness clause.
@@ -171,7 +171,7 @@ theorem mo_of_sinc {θ : α → β → Prop} (h : SINC θ) : MO θ :=
 -- In CEM models, SINC implies CumTheta: the bijection between object
 -- parts and event parts extends to sums. However, CumTheta does not
 -- follow from SINC in arbitrary join semilattices (it requires CEM
--- complementation to decompose sums). Following Krifka (1998), who
+-- complementation to decompose sums). Following @cite{krifka-1998}, who
 -- lists CumTheta (eq. 44) as a separate property from SINC (eq. 51),
 -- we require CumTheta as a separate hypothesis where needed (see
 -- `sinc_cum_propagation`).

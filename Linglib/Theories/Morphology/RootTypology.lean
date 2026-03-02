@@ -829,7 +829,7 @@ theorem root_stative_vendler :
   ⟨rfl, rfl⟩
 
 -- ════════════════════════════════════════════════════
--- § 11. Embick (2004) Adjectival Structures (§3.2, eq. 8)
+-- § 11. @cite{embick-2004} Adjectival Structures (§3.2, eq. 8)
 -- ════════════════════════════════════════════════════
 
 /-- @cite{embick-2004} posits two adjectival structures:

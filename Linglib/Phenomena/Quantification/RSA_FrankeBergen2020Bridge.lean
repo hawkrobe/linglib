@@ -4,7 +4,7 @@ import Linglib.Phenomena.Quantification.Studies.FrankeBergen2020
 
 /-!
 # Bridge: @cite{franke-bergen-2020} RSA Model → Quantification Phenomena
-@cite{franke-bergen-2020}
+@cite{franke-bergen-2020} @cite{fox-2007}
 
 Global Intentions (GI) RSA model for exhaustification ambiguity.
 The model depends on `AristQuant`, `NestedAristotelian`, `allSentences`,

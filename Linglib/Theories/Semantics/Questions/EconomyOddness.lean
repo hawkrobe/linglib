@@ -128,7 +128,7 @@ def Scenario.mk' {W U : Type*} (m : SemanticModel W U) (d : DiscourseContext W) 
   worlds     := m.worlds
 
 -- ═══════════════════════════════════════════════════════════════════════
--- §2  Spector (2014) Triviality (for comparison / bridge)
+-- §2  @cite{spector-2014} Triviality (for comparison / bridge)
 -- ═══════════════════════════════════════════════════════════════════════
 
 section Triviality

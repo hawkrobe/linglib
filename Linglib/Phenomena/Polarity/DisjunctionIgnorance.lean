@@ -371,7 +371,7 @@ structure ExclusiveInclusiveExample where
   source : String
   deriving Repr
 
--- Chierchia (2013) examples (1a,b)
+-- @cite{chierchia-2013} examples (1a,b)
 def hiring_consequent : ExclusiveInclusiveExample :=
   { sentence := "If everything goes well, we'll hire Mary or Sue"
   , position := .conditional_cons

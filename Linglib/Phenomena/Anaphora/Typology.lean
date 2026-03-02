@@ -408,7 +408,7 @@ theorem dem_productivity_from_article_system :
       (·.articleType == .weakAndStrong) = true := by native_decide
 
 -- ============================================================================
--- §F: Schwarz (2013) Article Typology
+-- §F: @cite{schwarz-2013} Article Typology
 -- ============================================================================
 
 /-! ### Definite use types (Hawkins 1978, Schwarz 2013 §2.1)
@@ -495,7 +495,7 @@ def schwarz_hausa : SchwarzArticleDatum :=
     weakStrategy := .overtArticle
     strongForAnaphoric := true   -- §4.2.2: ex. (37) ɗîn for anaphoric
     weakForUniqueness := true    -- §4.2.2: ex. (36) -n for uniqueness
-    bridgingSplit := false }     -- insufficient data in Schwarz (2013)
+    bridgingSplit := false }     -- insufficient data in @cite{schwarz-2013}
 
 -- Exceptional: single form for both uses (Schwarz 2013 §4.3)
 

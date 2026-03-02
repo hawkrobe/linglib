@@ -83,7 +83,7 @@ def orientationOf (goalWeight : ℚ) : SpeakerOrientation :=
 
 
 -- ============================================================
--- Section 3: Bridge — Barnett et al. (2022)
+-- Section 3: Bridge — @cite{barnett-griffiths-hawkins-2022}
 -- ============================================================
 
 /-- Barnett et al.'s Eq. 6 is literally goalOrientedUtility (via the

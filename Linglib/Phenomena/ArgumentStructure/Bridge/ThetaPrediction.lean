@@ -3,7 +3,7 @@ import Linglib.Theories.Interfaces.SyntaxSemantics.Minimalism.VoiceTheta
 
 /-!
 # Bridge: Linking Theory Predictions → Hand-Annotated θ-Roles
-@cite{kratzer-1996}
+@cite{kratzer-1996} @cite{rappaport-hovav-levin-1998}
 
 Two accounts of argument realization make predictions about external
 argument theta roles. This bridge file tests each account's predictions

@@ -67,7 +67,7 @@ theorem fragment_builder_agree_negation_ppi :
     negationProfile.licensesItem some_ppi = false := ⟨rfl, rfl⟩
 
 -- ============================================================================
--- VonFintel (1999) empirical bridge
+-- @cite{von-fintel-1999} empirical bridge
 -- ============================================================================
 
 /--

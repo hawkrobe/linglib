@@ -176,7 +176,7 @@ theorem flex_always_defined : ∀ w, flexDisj.eval w ≠ TVal.unk := by
 
 -- ══════════════════════════════════════════════════════════
 -- § Meta-assertion operator (Yagi §3.1)
--- Beaver & Krahmer (2001): maps * to 0, making disjuncts
+-- @cite{beaver-krahmer-2001}: maps * to 0, making disjuncts
 -- bivalent. Can make the disjunction false but loses the
 -- presupposition entirely.
 -- ══════════════════════════════════════════════════════════

@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.227.83] - 2026-03-02
+
+### Changed
+- **Citation cleanup round 3**: Extend `clean_citations.py` to process `--` comment lines (not just docstrings). Replace inline citations in 86 more files with `@cite{key}` tags. Add 21 new bib entries (Beaver & Krahmer 2001, Rizzi 2001, den Dikken 2006, Cimpian et al. 2010, Matthewson 2013, Vander Klok 2013a, Cable 2017, Hoeksema 2006, Dik 1975, Alexeyenko 2015, Heim 2000, Hiraiwa 2001/2005, Zanuttini 1997, Marantz 2001, Behaghel 1909, Mel'čuk 1988, Czech entries). Fix Dieuleveut/Hsu/Bhatt misattribution → Rotter & Liu 2025. Enforce `@cite{key}` for all citations in CLAUDE.md. 2767 valid @cite references, 1127 bib entries, 0 unmatched.
+
 ## [0.227.82] - 2026-03-02
 
 ### Changed

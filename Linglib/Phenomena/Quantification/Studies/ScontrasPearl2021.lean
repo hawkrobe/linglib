@@ -1,5 +1,7 @@
 /-!
 # @cite{scontras-pearl-2021}: Quantifier Scope Ambiguity @cite{scontras-pearl-2021} @cite{musolino-lidz-2003}
+@cite{horn-1972} @cite{kennedy-2015}
+
 
 "When pragmatics matters more for truth-value judgments:
 An investigation of quantifier scope ambiguity"
@@ -183,7 +185,7 @@ theorem numeral_inverse_not_entails_surface :
   ⟨.w0, rfl, rfl⟩
 
 -- ============================================================================
--- §4. Musolino & Lidz (2003) Experimental Data
+-- §4. @cite{musolino-lidz-2003} Experimental Data
 -- ============================================================================
 
 /-- Acceptance rate from a truth-value judgment experiment. -/

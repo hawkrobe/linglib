@@ -474,7 +474,7 @@ theorem alignment_correlation :
   refine ⟨?_, ?_, ?_, ?_⟩ <;> native_decide
 
 -- ============================================================================
--- § 8: Bridge to Aissen (2003)
+-- § 8: Bridge to @cite{aissen-2003}
 -- ============================================================================
 
 /-! Economy (*!) is the same constraint across both analyses. The DOM

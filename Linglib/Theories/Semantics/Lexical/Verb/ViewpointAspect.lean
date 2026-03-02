@@ -309,7 +309,7 @@ theorem impf_prfv_opposite_containment (P : EventPred W Time) (w : W) (t : Inter
    λ ⟨e, hSub, hP⟩ => ⟨e, hP, hSub⟩⟩
 
 -- ════════════════════════════════════════════════════
--- § Pancheva (2003): Higher Aspect and Perfect Types
+-- § @cite{pancheva-2003}: Higher Aspect and Perfect Types
 -- ════════════════════════════════════════════════════
 
 /-! @cite{pancheva-2003} decomposes perfect participles into two aspect heads:

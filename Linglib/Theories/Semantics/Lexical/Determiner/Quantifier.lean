@@ -637,7 +637,7 @@ theorem some_existential_weak_bridge :
   ⟨some_existential, every_not_existential⟩
 
 -- ============================================================================
--- Van Benthem (1984): Relational Properties of Concrete Quantifiers
+-- @cite{van-benthem-1984}: Relational Properties of Concrete Quantifiers
 -- ============================================================================
 
 /-- `⟦every⟧` is transitive: A ⊆ B and B ⊆ C implies A ⊆ C. -/
@@ -679,7 +679,7 @@ theorem no_quasi_universal : QuasiUniversal (no_sem m) := by
   cases hA : A x <;> simp_all
 
 -- ============================================================================
--- Van Benthem (1984): Double Monotonicity Classification
+-- @cite{van-benthem-1984}: Double Monotonicity Classification
 -- ============================================================================
 
 /-- `⟦every⟧` is restrictor-↓ (anti-persistent).

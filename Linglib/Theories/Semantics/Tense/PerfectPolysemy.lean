@@ -134,7 +134,7 @@ theorem resultative_requires_complex {Time : Type*} [LinearOrder Time]
   simp [resultativeReading]
 
 -- ════════════════════════════════════════════════════
--- § 4. Pancheva (2003) Bridge
+-- § 4. @cite{pancheva-2003} Bridge
 -- ════════════════════════════════════════════════════
 
 /-- Map @cite{pancheva-2003}'s perfect types to Kiparsky's readings.
@@ -318,7 +318,7 @@ def msAvailableReadings : MoensSteedmanClass → List PerfectReading
   | .culmination => [.existential, .universal, .resultative, .presentState]
   | .point => [.existential, .universal]
 
-/-- The resultative reading requires a consequent state (M&S 1988).
+/-- The resultative reading requires a consequent state (@cite{moens-steedman-1988}).
     Points (telic but without consequent state) cannot anchor a result. -/
 theorem resultative_requires_consState (c : MoensSteedmanClass)
     (h : c.toProfile.hasConsequentState = false) :

@@ -284,7 +284,7 @@ example : lower (m := toyModel) toyDomain (lift john_sem) = some john_sem := rfl
 end ToyExamples
 
 -- ============================================================================
--- Snyder (2026) / Partee (1986) Type-Shifters
+-- @cite{snyder-2026} / @cite{partee-1986} Type-Shifters
 -- ============================================================================
 
 section SnyderShifts

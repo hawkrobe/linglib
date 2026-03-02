@@ -186,7 +186,7 @@ def mandarinRelationalNa : BridgingDatum :=
   , notes := "na+CL as relationalizing operator (Ahn & Zhu analysis)"
   , source := "Ahn & Zhu 2025" }
 
--- Ahn & Zhu (2025) Experimental Items
+-- @cite{ahn-zhu-2025} Experimental Items
 
 /-- Ahn & Zhu Experiment 1: Part-whole condition -/
 def ahnZhuExp1PartWhole : BridgingDatum :=
