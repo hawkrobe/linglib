@@ -5,7 +5,7 @@ import Linglib.Core.ProcessingModel
 # Memory-Surprisal Trade-off Framework
 @cite{futrell-2019} @cite{hahn-degen-futrell-2021} @cite{zaslavsky-hu-levy-2020}
 
-Core formalization of Hahn, Degen & Futrell (2021) "Modeling Word and Morpheme
+Core formalization of @cite{hahn-degen-futrell-2021} "Modeling Word and Morpheme
 Order as an Efficient Trade-Off of Memory and Surprisal", *Psychological Review*
 128(4):726–756.
 
@@ -111,7 +111,7 @@ Stored as I_t × 1000 for decidable computation. -/
 structure MutualInfoProfile where
   /-- Name for this profile (e.g., "English", "Japanese", "Baseline") -/
   name : String
-  /-- I_t × 1000 for distances t = 1, 2, 3, ... -/
+  /-- I_t × 1000 for distances t = 1, 2, 3,... -/
   values : List Nat
   deriving Repr, DecidableEq, BEq
 
@@ -139,8 +139,8 @@ The memory required to achieve surprisal S_M is bounded below by:
 where the threshold is determined by S_M.
 
 More precisely: for a processor with memory capacity T steps,
-  H_M ≤ Σ_{t≤T} t · I_t    (memory cost of storing T steps)
-  S_M ≥ S_∞ + Σ_{t>T} I_t   (surplus surprisal from forgetting)
+  H_M ≤ Σ_{t≤T} t · I_t (memory cost of storing T steps)
+  S_M ≥ S_∞ + Σ_{t>T} I_t (surplus surprisal from forgetting)
 
 Languages with steeper I_t decay (more information locality)
 achieve better trade-offs: less memory for the same surprisal.
@@ -239,7 +239,7 @@ def efficientTradeoffHypothesis (real baseline : TradeoffCurve) : Bool :=
 /-! ### Bridge: Memory-Surprisal ↔ Rate-Distortion
 
 The memory-surprisal trade-off is structurally analogous to rate-distortion
-theory (Zaslavsky et al. 2020):
+theory:
 
 | Memory-Surprisal | Rate-Distortion |
 |-------------------|-----------------|
@@ -254,7 +254,7 @@ region boundary.
 
 TODO: Formal proof requires showing that the memory-surprisal trade-off
 curve equals the rate-distortion function for the appropriate source
-and distortion measure. See Hahn et al. (2021) SI §1.3. -/
+and distortion measure. See @cite{hahn-degen-futrell-2021} SI §1.3. -/
 theorem memory_surprisal_rate_distortion_correspondence :
     -- The memory-surprisal framework is a special case of rate-distortion
     -- where the source is the past context and the distortion is surprisal
@@ -299,7 +299,7 @@ rapidly.
 
 TODO: Formal proof requires connecting the structural notion of
 dependency length to the information-theoretic notion of mutual
-information at distance t. See Futrell (2019) and Hahn et al. (2021)
+information at distance t. See @cite{futrell-2019} and @cite{hahn-degen-futrell-2021}
 §2.3 for the argument that DLM is a special case of information
 locality optimization. -/
 theorem information_locality_generalizes_dep_locality :

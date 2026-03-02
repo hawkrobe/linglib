@@ -3,7 +3,7 @@ import Linglib.Tactics.RSAPredict
 import Mathlib.Analysis.SpecialFunctions.Pow.Real
 
 /-!
-# Kao, Bergen & Goodman (2014) — Metaphor @cite{kao-etal-2014-metaphor}
+# @cite{kao-etal-2014-hyperbole} — Metaphor @cite{kao-etal-2014-metaphor}
 
 "Formalizing the Pragmatics of Metaphor Understanding"
 Proceedings of the Annual Meeting of the Cognitive Science Society, 36, 719-724
@@ -43,7 +43,7 @@ open Real (rpow rpow_nonneg)
 -- §1. Empirical Findings
 -- ============================================================================
 
-/-- The 6 qualitative findings from Kao, Bergen & Goodman (2014).
+/-- The 6 qualitative findings from @cite{kao-etal-2014-hyperbole}.
     Each model of metaphor should formalize and prove all 6 findings. -/
 inductive Finding where
   /-- Hearing "whale" about a person, the listener infers the referent
@@ -150,7 +150,7 @@ noncomputable def qudProject (q : Goal) (f : World → ℝ) (w : World) : ℝ :=
 -- §6. RSAConfig
 -- ============================================================================
 
-/-- Kao et al. (2014) metaphor model, parametric in goal prior.
+/-- @cite{kao-etal-2014-hyperbole} metaphor model, parametric in goal prior.
 
     S1 score is rpow(projected_L0, α) — the paper's Eq. 5 without
     utterance cost. This directly encodes the paper's equations and
@@ -258,7 +258,7 @@ noncomputable def formalize : Finding → Prop
       vagueCfg.L1_marginal .person (fun w => w.1 == .person) >
       vagueCfg.L1_marginal .person (fun w => w.1 == .whale)
 
-/-- The RSA model accounts for all 6 empirical findings from Kao et al. (2014). -/
+/-- The RSA model accounts for all 6 empirical findings from @cite{kao-etal-2014-hyperbole}. -/
 theorem all_findings_verified : ∀ f : Finding, formalize f := by
   intro f; cases f
   · exact nonliteral

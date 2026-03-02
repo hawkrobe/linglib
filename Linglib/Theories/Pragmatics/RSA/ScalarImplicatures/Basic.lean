@@ -86,7 +86,7 @@ end RSA.ScalarImplicatures
 # RSA ImplicatureTheory Instance
 
 Implements the ImplicatureTheory interface for the RSA (Rational Speech Acts)
-framework (Goodman & Frank 2016).
+framework.
 
 ## Status
 

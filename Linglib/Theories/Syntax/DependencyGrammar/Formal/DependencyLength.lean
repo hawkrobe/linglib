@@ -3,9 +3,9 @@ import Linglib.Core.ProcessingModel
 
 /-!
 # Dependency Length Minimization
-@cite{ferrer-i-cancho-2006} @cite{futrell-gibson-2020} @cite{gibson-2000}
+@cite{ferrer-i-cancho-2006} @cite{futrell-gibson-2020} @cite{gibson-2000} @cite{zaslavsky-hu-levy-2020}
 
-Formalizes the core claim of Futrell, Levy & Gibson (2020): natural languages
+Formalizes the core claim of @cite{futrell-gibson-2020}: natural languages
 minimize total dependency length beyond what independent constraints predict.
 Across 53+ languages, observed word orders have shorter total dependency lengths
 than random baselines controlling for projectivity and head direction.
@@ -48,7 +48,7 @@ open DepGrammar
 
 /-- Linear distance between head and dependent: |headIdx - depIdx|.
 
-This is the fundamental unit of Futrell et al. (2020)'s dependency length
+This is the fundamental unit of @cite{futrell-gibson-2020}'s dependency length
 minimization. Corresponds to the number of intervening words + 1. -/
 def depLength (d : Dependency) : Nat :=
   max d.headIdx d.depIdx - min d.headIdx d.depIdx
@@ -62,7 +62,7 @@ def totalDepLength (t : DepTree) : Nat :=
 /-- Mean dependency length × 100 (scaled to avoid Float, stay in Nat).
 
 For a tree with n words, this is (totalDepLength × 100) / n.
-Used for crosslinguistic comparison (Futrell et al. 2020, Table 2). -/
+Used for crosslinguistic comparison. -/
 def meanDepLengthScaled (t : DepTree) : Nat :=
   let n := t.words.length
   if n == 0 then 0 else totalDepLength t * 100 / n
@@ -175,11 +175,11 @@ theorem short_before_long_savings (s1 s2 : Nat) (h : s1 ≤ s2) :
 /-- "John threw out the old trash" — SVO with particle adjacent to verb.
 Words: John(0) threw(1) out(2) the(3) old(4) trash(5)
 Dependencies:
-- nsubj: threw(1) ← John(0)      length = 1
+- nsubj: threw(1) ← John(0) length = 1
 - compound:prt: threw(1) → out(2) length = 1
-- det: trash(5) ← the(3)          length = 2
-- amod: trash(5) ← old(4)         length = 1
-- obj: threw(1) → trash(5)        length = 4  -- but we use simplified dep set
+- det: trash(5) ← the(3) length = 2
+- amod: trash(5) ← old(4) length = 1
+- obj: threw(1) → trash(5) length = 4 -- but we use simplified dep set
 Actually from paper: total dep length = 6 -/
 def threwOutTrash : DepTree :=
   { words := [Word.mk' "John" .PROPN, Word.mk' "threw" .VERB, Word.mk' "out" .ADP,
@@ -198,10 +198,10 @@ example : totalDepLength threwOutTrash = 9 := by native_decide
 /-- "John threw the old trash out" — particle shifted to end.
 Words: John(0) threw(1) the(2) old(3) trash(4) out(5)
 Dependencies:
-- nsubj: threw(1) ← John(0)      length = 1
-- det: trash(4) ← the(2)          length = 2
-- amod: trash(4) ← old(3)         length = 1
-- obj: threw(1) → trash(4)        length = 3
+- nsubj: threw(1) ← John(0) length = 1
+- det: trash(4) ← the(2) length = 2
+- amod: trash(4) ← old(3) length = 1
+- obj: threw(1) → trash(4) length = 3
 - compound:prt: threw(1) → out(5) length = 4 -/
 def threwTrashOut : DepTree :=
   { words := [Word.mk' "John" .PROPN, Word.mk' "threw" .VERB, Word.mk' "the" .DET,
@@ -223,14 +223,14 @@ example : totalDepLength threwOutTrash < totalDepLength threwTrashOut := by nati
 /-- Heavy NP shift: "John threw out the trash sitting in the kitchen"
 Words: John(0) threw(1) out(2) the(3) trash(4) sitting(5) in(6) the2(7) kitchen(8)
 Dependencies:
-- nsubj: threw(1) ← John(0)       length = 1
-- compound:prt: threw(1) → out(2)  length = 1
-- det: trash(4) ← the(3)           length = 1
-- obj: threw(1) → trash(4)         length = 3
-- acl: trash(4) → sitting(5)       length = 1
-- case: kitchen(8) ← in(6)         length = 2
-- det: kitchen(8) ← the2(7)        length = 1
-- obl: sitting(5) → kitchen(8)     length = 3 -/
+- nsubj: threw(1) ← John(0) length = 1
+- compound:prt: threw(1) → out(2) length = 1
+- det: trash(4) ← the(3) length = 1
+- obj: threw(1) → trash(4) length = 3
+- acl: trash(4) → sitting(5) length = 1
+- case: kitchen(8) ← in(6) length = 2
+- det: kitchen(8) ← the2(7) length = 1
+- obl: sitting(5) → kitchen(8) length = 3 -/
 def heavyNPShiftOptimal : DepTree :=
   { words := [Word.mk' "John" .PROPN, Word.mk' "threw" .VERB, Word.mk' "out" .ADP,
               Word.mk' "the" .DET, Word.mk' "trash" .NOUN, Word.mk' "sitting" .VERB,
@@ -267,7 +267,7 @@ example : totalDepLength heavyNPShiftOptimal < totalDepLength heavyNPShiftSubopt
 
 /-- The non-projective example tree from NonProjective.lean.
 Non-projective orderings tend to have higher dependency lengths because
-crossing arcs span larger distances (Ferrer-i-Cancho 2006). -/
+crossing arcs span larger distances. -/
 def nonProjDepLength : Nat := totalDepLength nonProjectiveTree
 
 /-- A projective reordering of the same dependency structure.
@@ -293,7 +293,7 @@ example : totalDepLength projectiveReordering ≤ totalDepLength nonProjectiveTr
 
 /-- Map a dependency's length to the `locality` dimension of ProcessingProfile.
 
-This connects DLM directly to Gibson (2000) DLT: dependency length IS
+This connects DLM directly to @cite{gibson-2000} DLT: dependency length IS
 the locality cost. The other dimensions (boundaries, referentialLoad, ease)
 are set to 0 since DLM abstracts away from them. -/
 def depToProcessingLocality (d : Dependency) : ProcessingModel.ProcessingProfile :=

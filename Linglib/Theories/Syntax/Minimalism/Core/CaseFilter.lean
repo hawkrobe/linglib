@@ -2,7 +2,7 @@ import Linglib.Theories.Syntax.Minimalism.Core.Features
 
 /-!
 # The Case Filter
-@cite{baker-2015} @cite{chomsky-2001} @cite{marantz-1991}
+@cite{baker-2015} @cite{chomsky-2001} @cite{marantz-1991} @cite{woolford-2006}
 
 Every DP must receive Case. In Minimalist terms:
 - Every DP has [uCase] (unvalued Case feature)
@@ -14,8 +14,8 @@ Case assigners (Agree-based):
 - v assigns accusative to its complement (object)
 - P assigns oblique to its complement
 
-For the competing dependent-case approach (Marantz 1991; Baker 2015),
-see `DependentCase.lean`. For inherent/Voice-based case (Woolford 2006),
+For the competing dependent-case approach,
+see `DependentCase.lean`. For inherent/Voice-based case,
 see `Voice.lean` and `Fragments.Mam.Agreement`.
 
 -/

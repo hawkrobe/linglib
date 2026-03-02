@@ -2,7 +2,7 @@ import Linglib.Phenomena.DefaultReasoning.TweetyNixon
 import Linglib.Theories.Semantics.Dynamic.Effects.Default.Frames
 
 /-!
-# Bridge: Veltman (1996) Frames → Tweety/Nixon
+# Bridge: @cite{veltman-1996} Frames → Tweety/Nixon
 
 @cite{veltman-1996}
 

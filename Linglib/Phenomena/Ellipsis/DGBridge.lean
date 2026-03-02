@@ -3,8 +3,10 @@ import Linglib.Phenomena.Ellipsis.Gapping
 
 /-!
 # Bridge: DG Ellipsis → Phenomena Ellipsis
+@cite{osborne-2019}
 
-Maps the DG catena-based ellipsis taxonomy (Osborne 2019) to the
+
+Maps the DG catena-based ellipsis taxonomy to the
 Phenomena ellipsis types from `Phenomena.Ellipsis.Gapping`.
 
 Key result: gapping (from the Phenomena taxonomy) is a special case of

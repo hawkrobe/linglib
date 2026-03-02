@@ -213,7 +213,7 @@ vR&Š: NPQ used when UV(¬p) > UV(p)
 R&H: NPQ with preposed negation has VERUM, signals epistemic bias
 PRIOR-PQ: Different Q(q|D) profile → different P(D|q) inference
 
-[sorry: show optimalQuestionType selects .negative when compareUtility yields .lt]
+[sorry: show optimalQuestionType selects.negative when compareUtility yields.lt]
 -/
 theorem npq_different_responses {W A : Type*} [Fintype W] [DecidableEq W] [DecidableEq A]
     (dp : Core.DecisionTheory.DecisionProblem W A) (actions : List A)
@@ -227,7 +227,7 @@ vR&Š: Alt questions when UV(p) ≈ UV(¬p) (no preference)
 R&H: Alt questions lack VERUM, balanced partition
 PRIOR-PQ: Alt questions should yield flatter P(D|q) distribution
 
-[sorry: show optimalQuestionType selects .alternative when compareUtility yields .eq]
+[sorry: show optimalQuestionType selects.alternative when compareUtility yields.eq]
 -/
 theorem alt_question_neutral_tom {W A : Type*} [Fintype W] [DecidableEq W] [DecidableEq A]
     (dp : Core.DecisionTheory.DecisionProblem W A) (actions : List A)

@@ -9,11 +9,11 @@ This structure appears in four places across formal semantics:
 
 1. **Kratzer (1981, 1991)**: ordering sources induce normality orderings
    for modal semantics (`Theories/Semantics/Modality/Kratzer.lean`)
-2. **Kraus, Lehmann & Magidor (1990)**: plausibility orderings interpret
+2. **@cite{kraus-magidor-1990}**: plausibility orderings interpret
    default consequence, System P (`Core/Logic/BeliefRevision.lean`)
-3. **Veltman (1996)**: expectation patterns are normality orderings that
+3. **@cite{veltman-1996}**: expectation patterns are normality orderings that
    get dynamically refined (`Theories/Semantics/Dynamic/Effects/Default/`)
-4. **Rudin (2025)**: ordering-source updates for epistemic modals
+4. **@cite{rudin-2025}**: ordering-source updates for epistemic modals
    (`Theories/Semantics/Dynamic/Effects/Epistemic/`)
 
 This module extracts the common mathematical core. The `PlausibilityOrder`
@@ -25,9 +25,9 @@ and `NormalityOrder` captures the shared preorder structure without it.
 
 - `NormalityOrder W`: preorder on worlds (reflexive, transitive)
 - `optimal`: most normal worlds in a domain
-- `refine`: promote φ-worlds — Veltman's (1996) key operation
+- `refine`: promote φ-worlds — @cite{veltman-1996}'s key operation
 - `connected`: every two worlds are comparable (totality)
-- `fromProps`: construct from ordering source — Kratzer's (1981) pattern
+- `fromProps`: construct from ordering source — @cite{kratzer-1981}'s pattern
 - `respects` / persistence: defaults survive further updates
 -/
 
@@ -72,7 +72,7 @@ def slt (no : NormalityOrder W) (w v : W) : Prop :=
     more normal world in the domain.
 
     Equivalent to `PlausibilityOrder.minimal` in `BeliefRevision.lean`
-    and to Veltman's (1996) opt_ε(σ). -/
+    and to @cite{veltman-1996}'s opt_ε(σ). -/
 def optimal (no : NormalityOrder W) (d : Set W) : Set W :=
   { w ∈ d | ∀ v ∈ d, no.le v w → no.le w v }
 
@@ -99,7 +99,7 @@ theorem total_all_optimal (d : Set W) :
     After `refine no φ`, a non-φ-world can no longer be as normal as a
     φ-world: w ≤' v iff (w ≤ v) ∧ (φ v → φ w).
 
-    This is Veltman's (1996) key operation. "Normally φ" updates the
+    This is @cite{veltman-1996}'s key operation. "Normally φ" updates the
     expectation pattern by intersecting with {⟨w,v⟩ : φ v → φ w}. -/
 def refine (no : NormalityOrder W) (φ : W → Prop) : NormalityOrder W where
   le w v := no.le w v ∧ (φ v → φ w)
@@ -130,7 +130,7 @@ theorem refine_promotes (no : NormalityOrder W) (φ : W → Prop)
 /-- An ordering **respects** φ if it already promotes φ-worlds:
     whenever w ≤ v and v satisfies φ, then w satisfies φ too.
 
-    This captures Veltman's (1996) notion of "accepting" a default:
+    This captures @cite{veltman-1996}'s notion of "accepting" a default:
     σ accepts "normally φ" iff σ's pattern already respects φ. -/
 def respects (no : NormalityOrder W) (φ : W → Prop) : Prop :=
   ∀ w v, no.le w v → φ v → φ w
@@ -142,7 +142,7 @@ theorem refine_respects (no : NormalityOrder W) (φ : W → Prop) :
 /-- **Persistence**: if an ordering respects φ, further refinement by
     any ψ still respects φ. Defaults are not undone by later defaults.
 
-    Veltman (1996), Proposition 3.6(iv). -/
+    @cite{veltman-1996}, Proposition 3.6(iv). -/
 theorem refine_preserves_respects (no : NormalityOrder W) (φ ψ : W → Prop)
     (h : no.respects φ) : (no.refine ψ).respects φ :=
   fun w v ⟨hle, _⟩ => h w v hle
@@ -157,7 +157,7 @@ theorem respects_refine_iff (no : NormalityOrder W) (φ : W → Prop)
 
 /-- **Idempotency**: refining by φ twice is the same as refining once.
 
-    Veltman (1996), Proposition 3.6(ii): (ε ∘ e) ∘ e = ε ∘ e. -/
+    @cite{veltman-1996}, Proposition 3.6(ii): (ε ∘ e) ∘ e = ε ∘ e. -/
 theorem refine_idempotent (no : NormalityOrder W) (φ : W → Prop) :
     (no.refine φ).refine φ = no.refine φ :=
   ext fun _ _ => (respects_refine_iff (no.refine φ) φ (refine_respects no φ))
@@ -184,7 +184,7 @@ theorem refine_empty (no : NormalityOrder W) :
 /-- **Respecting ordering equality**: if an ordering respects φ, then
     refining by φ gives back the same ordering.
 
-    Veltman (1996): ε ∘ e = ε when e is already a default in ε. -/
+    @cite{veltman-1996}: ε ∘ e = ε when e is already a default in ε. -/
 theorem refine_of_respects (no : NormalityOrder W) (φ : W → Prop)
     (h : no.respects φ) : no.refine φ = no :=
   ext fun _ _ => respects_refine_iff no φ h
@@ -199,7 +199,7 @@ theorem refine_of_respects (no : NormalityOrder W) (φ : W → Prop)
     Connectedness is essential: without it, a non-φ-world can be optimal
     by being incomparable with all φ-worlds.
 
-    Note: Veltman (1996) Proposition 3.4(i) states this without the
+    Note: @cite{veltman-1996} Proposition 3.4(i) states this without the
     connectedness assumption, but his proof implicitly relies on states
     being reachable from the total ordering, which ensures connectedness
     after a single refinement. After multiple refinements by "crossing"
@@ -278,7 +278,7 @@ theorem respects_no_domination (no : NormalityOrder W) (φ : W → Prop)
 /-- Construct a normality ordering from a list of propositions.
     w ≤ v iff every proposition satisfied by v is also satisfied by w.
 
-    This is Kratzer's (1981) ordering source construction:
+    This is @cite{kratzer-1981}'s ordering source construction:
     {p ∈ A : v ∈ p} ⊆ {p ∈ A : w ∈ p}.
 
     Equivalent to `atLeastAsGoodAs` in `Modality/Kratzer.lean` (computable)

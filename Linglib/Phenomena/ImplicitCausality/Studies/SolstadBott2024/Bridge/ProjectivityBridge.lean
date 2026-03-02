@@ -5,11 +5,11 @@ import Linglib.Phenomena.ImplicitCausality.Studies.SolstadBott2024.Data
 import Linglib.Fragments.English.Predicates.Verbal
 
 /-!
-# Solstad & Bott (2024) — Projectivity Bridge
+# @cite{solstad-bott-2024} — Projectivity Bridge
 
-@cite{solstad-bott-2024} @cite{tonhauser-beaver-roberts-simons-2013} @cite{heim-1983}
+@cite{solstad-bott-2024} @cite{tonhauser-beaver-roberts-simons-2013} @cite{heim-1983} @cite{schlenker-2009}
 
-Connects occasion verb presupposition to the Tonhauser et al. (2013) taxonomy
+Connects occasion verb presupposition to the @cite{tonhauser-beaver-roberts-simons-2013} taxonomy
 and formalizes the cataphoric resolution result from Experiment 3.
 
 ## Key claims (S&P 17:11)
@@ -20,8 +20,7 @@ and formalizes the cataphoric resolution result from Experiment 3.
    "out of the blue" — their presupposition can be informative (accommodated).
 3. **Cataphoric resolution is possible** (Exp 3): occasion verb presuppositions
    can be resolved by subsequent material (consequent of a conditional),
-   supporting **symmetric** filtering (Schlenker 2008, 2009) over Heim's (1983)
-   asymmetric left-to-right algorithm.
+   supporting **symmetric** filtering over @cite{heim-1983}'s asymmetric left-to-right algorithm.
 
 ## Tonhauser classification
 
@@ -30,7 +29,7 @@ alongside factive verbs (*know*) and change-of-state verbs (*stop*).
 
 ## Symmetric vs asymmetric filtering
 
-Heim (1983): local context at position i is computed from material to the
+@cite{heim-1983}: local context at position i is computed from material to the
 LEFT of i only → presuppositions in the antecedent cannot be resolved by
 the consequent.
 
@@ -53,7 +52,7 @@ open Core.CommonGround
 -- § 1. Occasion Verbs are Class C Triggers
 -- ════════════════════════════════════════════════════
 
-/-- Occasion verbs are Class C in the Tonhauser et al. (2013) taxonomy:
+/-- Occasion verbs are Class C in the @cite{tonhauser-beaver-roberts-simons-2013} taxonomy:
     SCF=no (can be informative), OLE=yes (attributed to attitude holder). -/
 theorem occasion_verb_is_classC :
     ProjectiveTrigger.occasion_verb.toClass = .classC := rfl
@@ -81,8 +80,8 @@ theorem occasion_verb_patterns_with_stop_know :
 
     Example: "The judge punished Peter"
     - precondition = Peter did something wrong (the occasion)
-    - eventOccurs  = the judge's punishing action
-    - consequence  = Peter is punished
+    - eventOccurs = the judge's punishing action
+    - consequence = Peter is punished
 
     The precondition (occasion) is what projects. -/
 def occasionEventPhase {W : Type*}

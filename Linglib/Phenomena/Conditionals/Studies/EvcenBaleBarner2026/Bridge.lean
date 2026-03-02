@@ -3,10 +3,12 @@ import Linglib.Theories.Semantics.Conditionals.Exhaustivity
 import Linglib.Theories.Semantics.Conditionals.Basic
 
 /-!
-# Evcen, Bale & Barner (2026) — Bridge @cite{evcen-bale-barner-2026}
+# @cite{evcen-bale-barner-2026} — Bridge @cite{evcen-bale-barner-2026}
+@cite{von-fintel-2001}
 
-Connects the experimental findings of Evcen, Bale & Barner (2026) to the
-answer-level exhaustification theory of conditional perfection (von Fintel 2001)
+
+Connects the experimental findings of @cite{evcen-bale-barner-2026} to the
+answer-level exhaustification theory of conditional perfection
 as formalized in `Semantics.Conditionals.Exhaustivity`.
 
 ## Dependency Chain
@@ -14,17 +16,17 @@ as formalized in `Semantics.Conditionals.Exhaustivity`.
 The theory makes a directional prediction through the following chain:
 
 ```
-exhaustifiedAnswer_excludes         (exhIE → local exclusion for IE alternatives)
+exhaustifiedAnswer_excludes (exhIE → local exclusion for IE alternatives)
     ↓
-exhaustification_yields_perfection  (exhIE + all alts IE + coverage → perfection)
+exhaustification_yields_perfection (exhIE + all alts IE + coverage → perfection)
     ↓
-theory_chain_button_perfection      (chain instantiated for the experimental scenario)
+theory_chain_button_perfection (chain instantiated for the experimental scenario)
     ↓
-coverage_without_exclusion_insufficient  (without exclusion → perfection fails)
+coverage_without_exclusion_insufficient (without exclusion → perfection fails)
     ↓
 Prediction: perfection iff exclusion is available
     ↓
-antecedent_focus_highest            (data confirms: QUDs providing exclusion > those without)
+antecedent_focus_highest (data confirms: QUDs providing exclusion > those without)
 ```
 
 The theory predicts an asymmetry: perfection when exhaustification provides
@@ -106,7 +108,7 @@ The hypotheses map to experimental conditions:
 - `hnp`: button A is not pressed
 
 The IE condition is discharged by `singleton_alt_innocently_excludable`:
-in the 2-button scenario, ALT = {answerProp .B} is a singleton, and the
+in the 2-button scenario, ALT = {answerProp.B} is a singleton, and the
 witness `pressA_plays` establishes joint consistency of φ ∧ ∼a. -/
 theorem theory_chain_button_perfection
     (w : Button2World)

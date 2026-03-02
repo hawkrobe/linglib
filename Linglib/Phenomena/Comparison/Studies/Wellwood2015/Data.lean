@@ -1,9 +1,9 @@
 /-!
-# Wellwood (2015): Empirical Data
+# @cite{wellwood-2015}: Empirical Data
 
 @cite{wellwood-2015}
 
-Theory-neutral empirical data from Wellwood (2015) on the distribution
+Theory-neutral empirical data from @cite{wellwood-2015} on the distribution
 of `much`/`many` and dimensional restrictions in comparatives across
 nominal, verbal, and adjectival domains.
 
@@ -149,10 +149,10 @@ def crossCategorialData : CrossCategorialParallel :=
 -- § 5. `much`/`many` Distribution (§3.3)
 -- ════════════════════════════════════════════════════
 
-/-- Bresnan (1973): `more` = `much` + `-er` (§3.3, p. 82–84).
+/-- @cite{bresnan-1973}: `more` = `much` + `-er` (§3.3, p. 82–84).
 
-    (70) a. as much soup    b. too much soup    c. so much soup
-         d. that much soup  e. *more much soup
+    (70) a. as much soup b. too much soup c. so much soup
+         d. that much soup e. *more much soup
 
     `much` occurs with CUM-like predicates (mass nouns, atelic VPs).
     `many` is a suppletive variant of `much` for count/QUA domains

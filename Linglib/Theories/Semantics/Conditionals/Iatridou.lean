@@ -7,8 +7,8 @@ import Linglib.Theories.Semantics.Mood.Basic
 import Linglib.Theories.Semantics.Lexical.Verb.Aspect
 
 /-!
-# Iatridou (2000): The Grammatical Ingredients of Counterfactuality
-@cite{iatridou-2000} @cite{condoravdi-2002} @cite{deal-2020}Formalizes the core contribution of Iatridou (2000): the **Exclusion Feature**
+# @cite{iatridou-2000}: The Grammatical Ingredients of Counterfactuality
+@cite{iatridou-2000} @cite{condoravdi-2002} @cite{deal-2020}Formalizes the core contribution of @cite{iatridou-2000}: the **Exclusion Feature**
 (ExclF), a single semantic predicate that unifies temporal past and
 counterfactual past. Past morphology signals exclusion of the topic situation's
 coordinate from the speaker's coordinate — on the temporal dimension for genuine
@@ -158,8 +158,8 @@ theorem two_shifts_two_exclFs (c : KContext W E P T) (w' : W) (t' t'' : T)
 
 The distinction between FLV and PresCF (both with 1 modal ExclF) depends
 on the predicate type:
-- ILPs and statives yield PresCF ("If he knew French, ...")
-- Telic predicates yield FLV ("If he were to leave tomorrow, ...") -/
+- ILPs and statives yield PresCF ("If he knew French,...")
+- Telic predicates yield FLV ("If he were to leave tomorrow,...") -/
 inductive IatridouPredType where
   /-- Individual-Level Predicate: "be tall", "know French" -/
   | ilp
@@ -260,7 +260,7 @@ theorem root_no_modal_exclF (c : KContext W E P T) :
 
 /-- Iatridou's subjunctive generalization (42): "A CF can contain a
 subjunctive morpheme only if that subjunctive morpheme has a past tense
-form" (Iatridou 2000, p.247).
+form".
 
 Strictly, the paper states this as a one-directional conditional
 (requires → has). We encode the biconditional because all languages

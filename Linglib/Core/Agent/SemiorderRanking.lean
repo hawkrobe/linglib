@@ -4,7 +4,7 @@ import Linglib.Core.Agent.RankOrderings
 /-!
 # Semiorder–Ranking Bridge @cite{luce-1959}
 
-Connects the two halves of Luce (1959) that are formalized independently in
+Connects the two halves of @cite{luce-1959} that are formalized independently in
 `ChoiceApproximations.lean` (§1.G) and `RankOrderings.lean` (§2.F):
 
 - **§1.G** defines pairwise choice probabilities `P(x,y) = v(x)/(v(x)+v(y))`,
@@ -54,7 +54,7 @@ noncomputable def RationalAction.fromScale (v : A → ℝ) (hv : ∀ a, 0 ≤ v 
     equals `pChoice` from RationalAction on the two-element set `{x, y}`.
 
     Proof: unfold both sides. `pairwiseProb v x y = v x / (v x + v y)`.
-    `pChoice () {x,y} x = v x / (∑ b ∈ {x,y}, v b) = v x / (v x + v y)`
+    `pChoice  {x,y} x = v x / (∑ b ∈ {x,y}, v b) = v x / (v x + v y)`
     when `x ≠ y` (so `{x,y}` has two elements). -/
 theorem pairwiseProb_eq_pChoice (v : A → ℝ) (hv : ∀ a, 0 < v a)
     (x y : A) (hne : x ≠ y) :

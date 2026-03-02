@@ -2,7 +2,7 @@ import Linglib.Core.Discourse.Commitment
 import Linglib.Core.Interfaces.AssertionTheory
 
 /-!
-# Brandom (1994): Scorekeeping Model of Assertion
+# @cite{brandom-1994}: Scorekeeping Model of Assertion
 
 @cite{brandom-1994} @cite{brandom-1983}Models assertion as a move in a normative scorekeeping game. Each
 participant tracks a "scorecard" for every other participant, recording
@@ -128,7 +128,7 @@ def empty : BrandomState W := ⟨Scorecard.empty⟩
 /-- Assert: the speaker undertakes a commitment and authorizes
     the addressee to re-assert.
 
-    Brandom (1994, Ch.3): asserting p has two effects:
+    @cite{brandom-1994}: asserting p has two effects:
     1. The speaker undertakes commitment to p
     2. The speaker authorizes others to re-assert p (default entitlement) -/
 def assert (s : BrandomState W) (p : BProp W) : BrandomState W :=
@@ -170,7 +170,7 @@ end BrandomState
 
 /-- A challenge: the addressee demands reasons for a commitment.
 
-    Brandom (1994): challenges shift the burden of proof. If the speaker
+    @cite{brandom-1994}: challenges shift the burden of proof. If the speaker
     cannot provide entitlement for a commitment, the commitment is
     defeated (withdrawn from the scorecard). -/
 structure Challenge (W : Type*) where

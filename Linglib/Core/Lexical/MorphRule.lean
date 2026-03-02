@@ -14,7 +14,7 @@ morphological rules.
 - `MorphStatus`: free word / simple clitic / special clitic / affix
 - `ParadigmCell`: one cell in a morphological paradigm (form + features)
 
-## Bybee (1985) Relevance Hierarchy
+## @cite{bybee-1985} Relevance Hierarchy
 
 `MorphCategory` classifies morpheme functional categories ordered by
 semantic relevance to the stem:
@@ -52,7 +52,7 @@ inductive AttachmentSide where
 
 /-- How restrictive a morpheme is about what it can attach to.
 
-Zwicky & Pullum (1983) criterion A: clitics exhibit low selection
+@cite{zwicky-pullum-1983} criterion A: clitics exhibit low selection
 (attach to virtually any word), while affixes exhibit high selection
 (attach only to specific stems or categories). -/
 inductive SelectionDegree where
@@ -87,11 +87,11 @@ locate a given morpheme on this scale. -/
 inductive MorphStatus where
   /-- Syntactically independent word. -/
   | freeWord
-  /-- Simple clitic (Zwicky 1977): phonologically reduced variant of
+  /-- Simple clitic: phonologically reduced variant of
       a free word, occurring in the same syntactic positions.
       English contracted auxiliaries *'s*, *'ve*, *'d*. -/
   | simpleClitic
-  /-- Special clitic (Zwicky 1977): either no corresponding free word
+  /-- Special clitic: either no corresponding free word
       exists, or the distribution differs from the free word.
       Romance pronominal clitics, Latin *-que*. -/
   | specialClitic
@@ -152,7 +152,7 @@ def ParadigmCell.isIrregular {F : Type} (c : ParadigmCell F) : Bool :=
 -- §5: Bybee (1985) Relevance Hierarchy
 -- ============================================================================
 
-/-- Morpheme functional category (Bybee 1985).
+/-- Morpheme functional category.
 
 Categories are ordered by semantic relevance to the verb stem:
 more relevant categories appear closer to the stem in suffixal
@@ -172,7 +172,7 @@ inductive MorphCategory where
   | degree        -- comparative/superlative on adjectives
   deriving Repr, DecidableEq, BEq
 
-/-- Relevance rank: lower = closer to the stem (Bybee 1985).
+/-- Relevance rank: lower = closer to the stem.
 
 Stem = 0 (most relevant to verb meaning).
 Derivation = 1 (changes verb category).
@@ -180,7 +180,7 @@ Derivation = 1 (changes verb category).
 Agreement = 8 (least relevant to verb meaning).
 
 `number` on nouns is ranked 3 (same as voice): it changes the
-noun's denotation via Link (1983), unlike verb agreement which
+noun's denotation via @cite{link-1983}, unlike verb agreement which
 is semantically vacuous.
 
 `degree` on adjectives is ranked 5 (same as tense on verbs):

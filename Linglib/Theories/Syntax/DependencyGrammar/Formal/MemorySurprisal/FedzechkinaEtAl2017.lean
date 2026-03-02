@@ -5,7 +5,7 @@ import Linglib.Theories.Syntax.DependencyGrammar.Formal.DependencyLength
 # Study 1: Artificial Language Learning (Fedzechkina et al. 2013/2017)
 @cite{fedzechkina-newport-2012} @cite{fedzechkina-newport-2017} @cite{hahn-degen-futrell-2021}
 
-Hahn et al. (2021) Study 1 reanalyzes Fedzechkina, Jaeger & Newport (2012,
+@cite{hahn-degen-futrell-2021} Study 1 reanalyzes Fedzechkina, Jaeger & Newport (2012,
 2017): learners of an artificial language with flexible word order converge
 toward orders that minimize dependency length — and these orders also
 achieve more efficient memory-surprisal trade-offs.
@@ -63,11 +63,11 @@ Language B (SOV, complex last): the dog | the big cat | chased -/
 /-- Language A SOV: "the-big-cat the-dog chased"
 Words: the(0) big(1) cat(2) the(3) dog(4) chased(5)
 Dependencies:
-- det: cat(2) ← the(0)       length 2
-- amod: cat(2) ← big(1)      length 1
-- nsubj: chased(5) ← cat(2)  length 3
-- det: dog(4) ← the(3)       length 1
-- obj: chased(5) ← dog(4)    length 1
+- det: cat(2) ← the(0) length 2
+- amod: cat(2) ← big(1) length 1
+- nsubj: chased(5) ← cat(2) length 3
+- det: dog(4) ← the(3) length 1
+- obj: chased(5) ← dog(4) length 1
 Total = 8 -/
 def langA_SOV : DepTree :=
   { words := [ Word.mk' "the" .DET, Word.mk' "big" .ADJ, Word.mk' "cat" .NOUN
@@ -79,11 +79,11 @@ def langA_SOV : DepTree :=
 /-- Language B SOV: "the-dog the-big-cat chased"
 Words: the(0) dog(1) the(2) big(3) cat(4) chased(5)
 Dependencies:
-- det: dog(1) ← the(0)        length 1
-- nsubj: chased(5) ← dog(1)   length 4  (long!)
-- det: cat(4) ← the(2)        length 2
-- amod: cat(4) ← big(3)       length 1
-- obj: chased(5) ← cat(4)     length 1
+- det: dog(1) ← the(0) length 1
+- nsubj: chased(5) ← dog(1) length 4 (long!)
+- det: cat(4) ← the(2) length 2
+- amod: cat(4) ← big(3) length 1
+- obj: chased(5) ← cat(4) length 1
 Total = 9 -/
 def langB_SOV : DepTree :=
   { words := [ Word.mk' "the" .DET, Word.mk' "dog" .NOUN, Word.mk' "the" .DET

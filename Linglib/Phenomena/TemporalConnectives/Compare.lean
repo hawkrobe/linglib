@@ -3,24 +3,24 @@ import Linglib.Fragments.English.TemporalExpressions
 
 /-!
 # Before/After Semantics: Four-Theory Comparison
-@cite{alstott-aravind-2026} @cite{anscombe-1964} @cite{beaver-condoravdi-2003} @cite{ogihara-steinert-threlkeld-2024} @cite{rett-2020}
+@cite{alstott-aravind-2026} @cite{anscombe-1964} @cite{beaver-condoravdi-2003} @cite{ogihara-steinert-threlkeld-2024} @cite{rett-2020} @cite{heinamaki-1974}
 
 Compares four theories of English temporal connectives at different
 levels of semantic representation:
 
-1. **Level 1 — Under-specification (Anscombe 1964; Krifka 2010b)**: Point-level.
+1. **Level 1 — Under-specification**: Point-level.
    Single lexical entry per connective. Multiple readings from under-specification
    + pragmatic strengthening. No covert aspectual operators.
 
-2. **Level 2 — Ambiguity (Rett 2020)**: Interval-set-level. Strong defaults
+2. **Level 2 — Ambiguity**: Interval-set-level. Strong defaults
    (before-start, after-finish). Non-default readings require covert
    **INCHOAT** or **COMPLET** operators that incur measurable processing cost.
 
-3. **Level 3 — Quantificational Event (Ogihara & Steinert-Threlkeld 2024)**:
+3. **Level 3 — Quantificational Event**:
    Event-level. Derives the veridicality asymmetry from quantificational
    structure (∃∃ for *after*, ∃∀ for *before*).
 
-4. **Level 4 — Intensional Uniform (Beaver & Condoravdi 2003)**: World–time pairs
+4. **Level 4 — Intensional Uniform**: World–time pairs
    with historical alternatives. Uniform `earliest` operator for both connectives.
    Derives veridicality from branching time (initial branch point condition).
 
@@ -125,7 +125,7 @@ def bcProfile : TheoryProfile :=
 -- ============================================================================
 
 /-- Rett predicts processing cost for non-default readings; Anscombe does not.
-    This is the core empirical discriminator tested by Alstott & Aravind (2026).
+    This is the core empirical discriminator tested by @cite{alstott-aravind-2026}.
     Completive coercion (Exps 1b, 2), inchoative in after-clauses (Exp 4), and
     cross-linguistic morphology all support the coercion account. -/
 def rettPredictsCoercionCost : Bool :=
@@ -173,10 +173,10 @@ theorem all_theories_distinct :
 -- ============================================================================
 
 /-- Both theories make identical truth-conditional predictions for all 6
-    scenario types in Rett's (2020) Table 1. They diverge *only* on
+    scenario types in @cite{rett-2020}'s Table 1. They diverge *only* on
     processing predictions and cross-linguistic morphology.
 
-    The 6 scenarios (Rett 2020, Table 1):
+    The 6 scenarios:
     1. process EE + *before* → ≺ initial
     2. culmination EE + *before* → ≺ initial OR ≺ final
     3. process EE + *after* → ≻ initial OR ≻ final
@@ -199,8 +199,7 @@ theorem telic_after_default_is_finish :
 -- § 5: Fragment Consistency
 -- ============================================================================
 
-/-- The Fragment entries correctly reflect the universal NPI asymmetry
-    (Heinamäki 1974; Rett 2020, §2.2): *before* licenses NPIs, *after* does not. -/
+/-- The Fragment entries correctly reflect the universal NPI asymmetry: *before* licenses NPIs, *after* does not. -/
 theorem npi_asymmetry :
     before_.licensesNPI = true ∧ after_.licensesNPI = false :=
   ⟨rfl, rfl⟩

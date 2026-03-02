@@ -5,7 +5,7 @@ import Linglib.Core.ModalIndefinite
 @cite{alonso-ovalle-menendez-benito-2010} @cite{alonso-ovalle-royer-2024} @cite{kratzer-shimoyama-2002b}
 
 Theory-neutral empirical data on modal indefinites, following
-Alonso-Ovalle & Royer (2024) "Modal indefinites: Lessons from Chuj."
+@cite{alonso-ovalle-royer-2024} "Modal indefinites: Lessons from Chuj."
 
 ## Definition
 

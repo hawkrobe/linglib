@@ -3,7 +3,7 @@ import Linglib.Theories.Pragmatics.NeoGricean.Core.Basic
 import Linglib.Theories.Pragmatics.NeoGricean.Core.Competence
 
 /-!
-# Bale et al. (2025) — Bridge Theorems
+# @cite{bale-etal-2025} — Bridge Theorems
 @cite{bale-etal-2025}
 
 Connects Bale et al.'s experimental findings to the NeoGricean competence
@@ -52,14 +52,14 @@ theorem pk_not_competent : competent (toBeliefState .partialKnowledge) = false :
     What `processAlternative` yields for each speaker type, connecting
     to the existing outcome theorems in `Competence.lean`. -/
 
-/-- FK speaker: `processAlternative true .disbelief` yields a strong SI.
+/-- FK speaker: `processAlternative true.disbelief` yields a strong SI.
     This matches `outcome_ii_strong`. -/
 theorem fk_yields_strong :
     let p := processAlternative true (toBeliefState .fullKnowledge)
     p.weakHolds = true ∧ p.competenceAssumed = true ∧ p.strongDerived = true := by
   native_decide
 
-/-- PK speaker (correctly identified): `processAlternative true .noOpinion`
+/-- PK speaker (correctly identified): `processAlternative true.noOpinion`
     yields weak-only. Competence check fails because speaker genuinely
     lacks knowledge. This matches `outcome_iii_incompetent`. -/
 theorem pk_yields_weak_only :

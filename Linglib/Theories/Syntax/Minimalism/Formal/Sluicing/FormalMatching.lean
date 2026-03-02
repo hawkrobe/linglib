@@ -73,7 +73,7 @@ def argumentDomainSpine (topCat : Cat) : List Cat → List Cat :=
     Head pairs encode the local syntactic structure that must match
     between antecedent and ellipsis site.
 
-    Anand et al. (2025) Definition 5: Two heads are lexically identical
+    @cite{anand-mccloskey-2025} Definition 5: Two heads are lexically identical
     iff they have the same category AND complement category. Case is
     included because it is assigned within the argument domain: a V that
     assigns dative is structurally distinct from one that assigns
@@ -90,7 +90,7 @@ structure HeadPair where
   assignedCase : Option UD.Case := none
   /-- Voice flavor of the head (agentive, nonThematic, etc.), when relevant.
       Distinguishes active v[agentive] from passive v[nonThematic] within
-      the argument domain (AHM 2025). -/
+      the argument domain. -/
   voiceFlavor : Option VoiceFlavor := none
   deriving Repr, DecidableEq, BEq
 
@@ -236,7 +236,7 @@ def passiveVP : List HeadPair :=
   [⟨.v, .V, 0, none, some .nonThematic⟩, ⟨.V, .D, 0, none, none⟩]
 
 /-- Voice mismatch blocks sluicing: active v[agentive] ≠ passive v[nonThematic]
-    within the argument domain (AHM 2025). -/
+    within the argument domain. -/
 theorem voice_mismatch_blocks_sluicing :
     structurallyIdentical activeVP passiveVP = false := by
   native_decide
@@ -338,7 +338,7 @@ theorem no_case_identity :
 
 /-- Case mismatch blocks structural identity even when all other head
     pairs match. This is the formal basis of the German case-matching
-    data (Merchant 2001): "wem" (dat) matches "jemandem" (dat), but
+    data: "wem" (dat) matches "jemandem" (dat), but
     "wen" (acc) does not. -/
 theorem case_mismatch_blocks_sluicing :
     structurallyIdentical
@@ -357,7 +357,7 @@ theorem case_match_licenses_sluicing :
 -- Part 6: e-GIVENness (Merchant 2001)
 -- ═══════════════════════════════════════════════════════════════
 
-/-- e-GIVENness: the semantic identity condition for ellipsis (Merchant 2001).
+/-- e-GIVENness: the semantic identity condition for ellipsis.
     The antecedent entails the F-closure of the ellipsis site and vice versa.
     F-closure existentially binds all F-marked (focused) material. -/
 structure EGivenness (Prop' : Type) where
@@ -374,7 +374,7 @@ structure EGivenness (Prop' : Type) where
   /-- Backward: ellipsis site entails F-closure of antecedent -/
   backward : entails ellipsisSite (fClosure antecedent)
 
-/-- Nominal ellipsis license: Num[E] feature (Lobeck 1995, Saab 2026).
+/-- Nominal ellipsis license: Num[E] feature.
     NP-ellipsis is licensed when the Num head carries an [E] feature,
     which permits PF-deletion of the nominal argument domain (complement
     of Num — everything at or below nP). -/
@@ -391,9 +391,9 @@ def NominalEllipsisLicense.isLicensed (nel : NominalEllipsisLicense) : Bool :=
 
 /-- Full ellipsis license: semantic identity (e-GIVENness) + optional SIC
     + optional Num[E].
-    - VP ellipsis: e-GIVENness only (AHM 2025)
-    - Sluicing: e-GIVENness + SIC (AHM 2025)
-    - NP-ellipsis: e-GIVENness + Num[E] (Saab 2026) -/
+    - VP ellipsis: e-GIVENness only
+    - Sluicing: e-GIVENness + SIC
+    - NP-ellipsis: e-GIVENness + Num[E] -/
 structure EllipsisLicense (Prop' : Type) where
   /-- Semantic identity: e-GIVENness (required for all ellipsis) -/
   semantic : EGivenness Prop'

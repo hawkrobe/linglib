@@ -103,7 +103,7 @@ theorem must_preserves_info (M : Model E) (φ : Formula) (s : InfoState E)
   simp only [Formula.must, if_pos h]
 
 /--
-Veltman (1996): Tests never add possibilities.
+@cite{veltman-1996}: Tests never add possibilities.
 -/
 theorem might_subset (M : Model E) (φ : Formula) (s : InfoState E) :
     φ.might M s ⊆ s := by
@@ -121,13 +121,13 @@ theorem must_subset (M : Model E) (φ : Formula) (s : InfoState E) :
 
 
 /--
-Asserting then testing: φ ; might ψ passes iff φ-update leaves room for ψ.
+Asserting then testing: φ; might ψ passes iff φ-update leaves room for ψ.
 -/
 theorem update_then_might (M : Model E) (φ ψ : Formula) (s : InfoState E) :
     (φ.update M ;; ψ.might M) s = ψ.might M (φ.update M s) := rfl
 
 /--
-Asserting then requiring: φ ; must ψ passes iff φ-update supports ψ.
+Asserting then requiring: φ; must ψ passes iff φ-update supports ψ.
 -/
 theorem update_then_must (M : Model E) (φ ψ : Formula) (s : InfoState E) :
     (φ.update M ;; ψ.must M) s = ψ.must M (φ.update M s) := rfl
@@ -277,7 +277,7 @@ def Concept.fromPron (i : PronIdx) : Concept E := λ p => p.2 i
 
 
 /-!
-## Relationship to Kratzer (1981) Modal Semantics
+## Relationship to @cite{kratzer-1981} Modal Semantics
 @cite{kratzer-1981}
 
 PLA's epistemic operators share deep structure with Kratzer's modal semantics

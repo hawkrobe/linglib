@@ -5,7 +5,7 @@ import Linglib.Theories.Syntax.Minimalism.Formal.ExtendedProjection.Basic
 
 /-! # Complementation Bridge Theorems
 
-Interconnection theorems linking Noonan's (2007) complementation typology
+Interconnection theorems linking @cite{noonan-2007}'s complementation typology
 to existing linglib infrastructure:
 
 1. CTPClass ↔ VerbEntry (Verbal.lean) — derive CTP class from verb features
@@ -36,7 +36,7 @@ This follows the `deriveSelectionClass` pattern from LeftPeriphery.lean. -/
 
     The mapping uses `objectTheta`, `factivePresup`, `causativeBuilder`,
     `implicativeBuilder`, `cosType`, `speechActVerb`, and `attitudeBuilder`:
-    - objectTheta == .stimulus → perception (see)
+    - objectTheta ==.stimulus → perception (see)
     - factivePresup → knowledge (know, realize, regret)
     - causativeBuilder.isSome → manipulative (cause, make, force)
     - implicativeBuilder.isSome → achievement (manage, fail)
@@ -175,8 +175,8 @@ theorem kick_no_ctp :
 /-! ## B1. Map Noonan's CTP classes to Dayal's selection classes
 
 This connects two independent typological systems:
-- Noonan (2007): CTP semantics → complement type
-- Dayal (2025): Predicate semantics → left-peripheral selection -/
+- @cite{noonan-2007}: CTP semantics → complement type
+- @cite{dayal-2025}: Predicate semantics → left-peripheral selection -/
 
 /-- Default mapping from CTP class to selection class.
 
@@ -310,7 +310,7 @@ it needs both Verbal and Mood/Basic. Follows the `deriveSelectionClass` pattern.
     - Preferential negative/uncertainty attitude → indicative (fear, worry)
     - Doxastic attitude → indicative (believe, think)
     - Factive → indicative (know: presupposes truth)
-    - Perception (objectTheta == .stimulus) → indicative (see)
+    - Perception (objectTheta ==.stimulus) → indicative (see)
     - Speech-act verb → moodNeutral (say: varies cross-linguistically)
     - Change-of-state → moodNeutral (stop: varies)
     - Causative → subjunctive (make: irrealis)
@@ -437,7 +437,7 @@ theorem ask_triple_consistency :
 
 /-! ## G1. Complement size by CTP class
 
-Egressy (2026) shows that complement size determines SOT availability
+@cite{egressy-2026} shows that complement size determines SOT availability
 in Hungarian. This bridge maps Noonan's CTP classes to their typical
 complement sizes, connecting the complementation typology to the
 clause-size infrastructure.

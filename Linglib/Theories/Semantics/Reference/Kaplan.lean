@@ -159,7 +159,7 @@ variable {W' : Type*} {E' : Type*} {P' : Type*} {T' : Type*}
 
 /-- "I" — first person pronoun. Reads the agent from the speech-act context.
 
-    Kaplan (1989): the character of "I" is the function that maps every
+    @cite{kaplan-1989}: the character of "I" is the function that maps every
     context to the agent of that context. In tower terms, "I" reads from
     the origin (depth 0), projecting `KContext.agent`. -/
 def pronI_access : AccessPattern (KContext W' E' P' T') E' :=
@@ -167,14 +167,14 @@ def pronI_access : AccessPattern (KContext W' E' P' T') E' :=
 
 /-- "you" — second person pronoun. Reads the addressee from the speech-act context.
 
-    Following Speas & Tenny (2003), the addressee is a coordinate of the
+    Following @cite{speas-tenny-2003}, the addressee is a coordinate of the
     Kaplanian context. "You" reads from the origin, projecting `KContext.addressee`. -/
 def pronYou_access : AccessPattern (KContext W' E' P' T') E' :=
   ⟨.origin, KContext.addressee⟩
 
 /-- "now" — temporal indexical. Reads the time from the speech-act context.
 
-    Kaplan (1989) §VI: N (now) is a content operator that shifts the
+    @cite{kaplan-1989} §VI: N (now) is a content operator that shifts the
     evaluation time to the context time. As an access pattern, "now"
     reads `KContext.time` from the origin. -/
 def opNow_access : AccessPattern (KContext W' E' P' T') T' :=
@@ -186,7 +186,7 @@ def opHere_access : AccessPattern (KContext W' E' P' T') P' :=
 
 /-- "actually" — modal indexical. Reads the world from the speech-act context.
 
-    Kaplan (1989) §VI: A (actually) shifts the evaluation world to the
+    @cite{kaplan-1989} §VI: A (actually) shifts the evaluation world to the
     context world. As an access pattern, "actually" reads `KContext.world`
     from the origin. -/
 def opActually_access : AccessPattern (KContext W' E' P' T') W' :=
@@ -262,9 +262,9 @@ def IsKaplanCompliant {C R : Type*} (ap : AccessPattern C R) : Prop :=
 /-- All English pure indexicals are Kaplan-compliant: they all read from
     the origin (speech-act context).
 
-    This is the tower formulation of Kaplan (1989) §VIII: natural language
+    This is the tower formulation of @cite{kaplan-1989} §VIII: natural language
     (English) operators cannot shift the context of utterance. In tower
-    terms, English indexicals have `depth = .origin`, so embedding (pushing
+    terms, English indexicals have `depth =.origin`, so embedding (pushing
     shifts) has no effect on their resolution. -/
 theorem kaplansThesisTower :
     IsKaplanCompliant (pronI_access (W' := W') (E' := E') (P' := P') (T' := T')) ∧

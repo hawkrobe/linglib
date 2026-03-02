@@ -11,9 +11,9 @@ The square arranges four operators at its vertices:
 ```
        contraries
   A ──────────────── E
-  │                  │
-  │  subalterns  subalterns
-  │                  │
+  │ │
+  │ subalterns subalterns
+  │ │
   I ──────────────── O
      subcontraries
 ```
@@ -187,10 +187,10 @@ propositional level, not from the proposition itself.
 
 Given `box : (W → Bool) → W → Bool` (e.g., □ = "all accessible worlds satisfy"),
 and a proposition `p`, produce the four corners:
-- A = box p         (□p: necessarily p)
-- E = box (¬p)      (□¬p: necessarily not-p)
-- I = ¬(box (¬p))   (◇p: possibly p)
-- O = ¬(box p)      (¬□p: not necessarily p)
+- A = box p (□p: necessarily p)
+- E = box (¬p) (□¬p: necessarily not-p)
+- I = ¬(box (¬p)) (◇p: possibly p)
+- O = ¬(box p) (¬□p: not necessarily p)
 -/
 def Square.fromBox {W : Type*} (box : (W → Bool) → W → Bool) (p : W → Bool) :
     Square (W → Bool) where

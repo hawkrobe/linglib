@@ -94,11 +94,10 @@ structure AuxEntry where
   /-- Modal meaning in the force-flavor space (Imel, Guo, & Steinert-Threlkeld 2026).
       Empty for non-modal auxiliaries. -/
   modalMeaning : List ForceFlavor := []
-  /-- Register level (Dieuleveut, Hsu & Bhatt 2025). Formal items (*must*,
+  /-- Register level. Formal items (*must*,
       *shall*) vs informal items (*have to*) vs unmarked (*can*, *will*). -/
   register : Level := .neutral
-  /-- Contracted negative form with *-n't*, if it exists (Zwicky & Pullum 1983,
-      Table 1). `none` for paradigm gaps (*mayn't*, *amn't*). -/
+  /-- Contracted negative form with *-n't*, if it exists. `none` for paradigm gaps (*mayn't*, *amn't*). -/
   negForm : Option String := none
   /-- Phonological irregularity in the negative form (Z&P criterion C).
       `true` when the contracted form cannot be derived by regular *-n't*
@@ -153,7 +152,7 @@ def must : AuxEntry where
 -- Semi-modals and periphrastic modals
 
 /-- *Have to*: periphrastic deontic/circumstantial necessity.
-    Informal register variant of *must* (Dieuleveut, Hsu & Bhatt 2025).
+    Informal register variant of *must*.
     Inflects unlike true modals: *has to*, *had to*, *having to*. -/
 def haveTo : AuxEntry where
   form := "have to"; auxType := .modal
@@ -248,7 +247,7 @@ open Core.Register (Level)
     without auxiliary morphology.
 
     Modal adverbs participate in concord constructions where two modal
-    expressions yield a single-modality reading (Liu & Rotter 2025). -/
+    expressions yield a single-modality reading. -/
 structure ModalAdvEntry where
   form : String
   /-- Modal meaning in the force-flavor space. -/
@@ -361,7 +360,7 @@ inductive AdvQuantForce where
 /-- An adverbial quantifier entry: a closed-class adverb that quantifies
     over situations (times, events, occasions).
 
-    In Percus's (2000) framework, adverbial quantifiers take a situation
+    In @cite{percus-2000}'s framework, adverbial quantifiers take a situation
     pronoun that determines their domain and introduce a new λs binder
     over their nuclear scope. Generalization Y constrains the situation
     pronoun to be bound by the nearest c-commanding λ. -/

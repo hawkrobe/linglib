@@ -5,12 +5,12 @@
 Theory-neutral empirical data on the interaction between negation and
 temporal connectives, focusing on:
 
-1. **The two-*until* hypothesis** (Giannakidou 2002): Greek lexicalizes the
+1. **The two-*until* hypothesis**: Greek lexicalizes the
    distinction between NPI-*until* (= ¬*before*) and durative *until*.
 
-2. **Expletive negation** (Greco 2020): *before*-clauses license truth-
+2. **Expletive negation**: *before*-clauses license truth-
    conditionally vacuous negation cross-linguistically, explained by
-   ambidirectionality (Rett 2026).
+   ambidirectionality.
 
 ## Key Empirical Generalizations
 
@@ -19,7 +19,7 @@ temporal connectives, focusing on:
 - *Mexri* requires imperfective/stative main clause; *prin* has no aspect
   restriction. This mirrors Karttunen's durative selectional restriction.
 - Expletive negation (EN) in *before*-clauses is attested in 50/70
-  languages (Jin & Koenig 2021). EN is NOT attested in *after*-clauses.
+  languages. EN is NOT attested in *after*-clauses.
 - Italian: *prima che non* (before + EN), *finché non* (until + EN).
   French: *avant que ne* (before + EN).
 
@@ -31,8 +31,7 @@ namespace Phenomena.TemporalConnectives.NegationData
 -- § 1: The Two-*Until* Hypothesis (Giannakidou 2002)
 -- ============================================================================
 
-/-- A judgment about the two-*until* distinction, encoding Giannakidou's
-    (2002) cross-linguistic evidence.
+/-- A judgment about the two-*until* distinction, encoding @cite{giannakidou-2002}'s cross-linguistic evidence.
 
     `semanticType` classifies connectives into the **before-type** (non-veridical,
     NPI-licensing, no durative restriction) vs **endpoint-type** (veridical,
@@ -90,7 +89,7 @@ def greek_prin : TwoUntilDatum where
 /-- Greek *mexri* (μέχρι): endpoint-type.
     Requires indicative, veridical complement, requires imperfective/stative
     main clause, does NOT license NPIs. Actualization is a conversational
-    implicature, not an entailment (Giannakidou 2002, §2.1).
+    implicature, not an entailment.
     "I Maria perimine mexri irthi o Janis."
     'Maria waited until Janis came.' -/
 def greek_mexri : TwoUntilDatum where
@@ -257,7 +256,7 @@ def french_avant_EN : ExpletiveNegDatum where
     generalization over a subset (temporal connectives only). -/
 
 /-- EN is attested with *before* and *until* but NOT with *after* or *when*.
-    This follows from ambidirectionality (Rett 2026): *before* is ambidirectional
+    This follows from ambidirectionality: *before* is ambidirectional
     (negating the complement doesn't change truth conditions), so EN is vacuous.
     *After* is NOT ambidirectional, so EN would change truth conditions
     (genuine negation, not expletive). -/
@@ -266,7 +265,7 @@ structure ENDistribution where
   connective : String
   /-- Is EN attested cross-linguistically? -/
   enAttested : Bool
-  /-- Is the connective ambidirectional (Rett 2026)? -/
+  /-- Is the connective ambidirectional? -/
   ambidirectional : Bool
   deriving Repr
 
@@ -290,7 +289,7 @@ def when_EN : ENDistribution where
   enAttested := false
   ambidirectional := false
 
-/-- EN is attested iff the connective is ambidirectional (Rett 2026).
+/-- EN is attested iff the connective is ambidirectional.
     This is the core empirical generalization: EN is licensed exactly in
     those environments where negation is truth-conditionally vacuous. -/
 theorem en_iff_ambidirectional :
@@ -305,7 +304,7 @@ theorem en_iff_ambidirectional :
 -- ============================================================================
 
 /-- Cross-linguistic survey data on EN prevalence.
-    Jin & Koenig (2021) surveyed 70 languages; 50 have EN in
+    @cite{jin-koenig-2021} surveyed 70 languages; 50 have EN in
     *before*-clauses. This makes EN the norm, not the exception. -/
 structure ENSurvey where
   /-- Total languages surveyed -/

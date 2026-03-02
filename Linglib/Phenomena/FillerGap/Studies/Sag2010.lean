@@ -23,7 +23,7 @@ namespace Phenomena.FillerGap.Studies.Sag2010
 -- F-G Clause Types
 -- ============================================================================
 
-/-- The five types of English filler-gap clause (Sag 2010, §2.1). -/
+/-- The five types of English filler-gap clause. -/
 inductive FGClauseType where
   | whInterrogative  -- "Who did they visit?" / "I wonder who they visited."
   | whExclamative    -- "What a fool he is!" / "It's amazing how odd it is."
@@ -215,8 +215,7 @@ theorem topicalized_requires_independence :
 theorem relative_requires_embedding :
     (fgParams .whRelative).independence = .prohibited := rfl
 
-/-! ### All fillers are nonverbal
-Sag (2010) §2.1 / example 25: filler daughter is always nonverbal across
+/-! ### All fillers are nonverb@cite{hofmeister-sag-2010} §2.1 / example 25: filler daughter is always nonverbal across
 all five F-G clause types. This is a constraint on the superordinate
 filler-head construction (58), not construction-specific. -/
 
@@ -231,7 +230,7 @@ theorem all_fillers_nonverbal :
 
 /-! ### Connection to `ConstraintType` in Islands/Data
 
-Sag (2010, p.514) argues that island constraints are construction-specific
+@cite{hofmeister-sag-2010} argues that island constraints are construction-specific
 GAP restrictions, not universal Subjacency. The topicalization construction
 has `[GAP ⟨⟩]` on its mother, making it an absolute extraction island. This
 matches the `ConstraintType` classification from Islands/Data. -/
@@ -276,9 +275,9 @@ theorem topicalized_maps_to_declarative :
 -- Wh-Word Inventory (Table 1)
 -- ============================================================================
 
-/-- Functions of wh-words across construction types (Sag 2010, Table 1).
+/-- Functions of wh-words across construction types.
 
-Each wh-word is classified by which F-G clause types it participates in.
+Each wh-word is classified by which F-G clause types it participates.
 '+' = full participant, '%' = for some speakers, '-' = excluded. -/
 structure WhWordProfile where
   form : String

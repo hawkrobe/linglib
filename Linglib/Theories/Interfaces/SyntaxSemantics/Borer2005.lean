@@ -3,7 +3,7 @@ import Linglib.Core.Lexical.NounCategorization
 import Linglib.Theories.Syntax.Minimalism.Formal.ExtendedProjection.Basic
 
 /-!
-# Nominal Syntax-Semantics Mapping (Borer 2005)
+# Nominal Syntax-Semantics Mapping
 @cite{borer-2005} @cite{champollion-2017} @cite{chierchia-1998} @cite{grimshaw-2005} @cite{krifka-1998}
 
 Compositional interpretation of the nominal extended projection
@@ -170,7 +170,7 @@ theorem mass_spine_no_q :
     projects Q (individuation). The fragment records `countable` as
     an observable fact; this theorem shows it equals `spineHasQ`.
 
-    Under Chierchia (1998), `countable` is a lexical primitive and
+    Un@cite{chierchia-1998}, `countable` is a lexical primitive and
     this theorem is an accidental correlation rather than an
     explanation. The two theories agree on the data but disagree on
     direction of explanation.
@@ -193,7 +193,7 @@ theorem mass_spine_not_countable :
 -- § 4. The Great Divide
 -- ════════════════════════════════════════════════════
 
-/-- The Great Divide (Borer 2005, Ch. 7): cross-linguistic variation
+/-- The Great Divide: cross-linguistic variation
     in nominal systems reduces to how individuation is realized.
 
     This is NOT a lexical parameter on nouns or a typological
@@ -218,7 +218,7 @@ theorem great_divide_semantic_invariance
   fun _ => div_qua P
 
 /-- In classifier languages, a ClassifierEntry spells out the Q head.
-    This bridges Aikhenvald's (2000) typological ClassifierEntry to
+    This bridges @cite{aikhenvald-2000}'s typological ClassifierEntry to
     Borer's syntactic CL# at Q(F2) in the nominal EP. -/
 structure ClassifierAsQ where
   /-- The classifier morpheme (from Aikhenvald's typology) -/
@@ -243,7 +243,7 @@ abbrev ClassifierPred (α : Type*) := α → Prop
 
     Examples:
     - 只 (zhī, small animal): `cl = fun x => x.animacy ∧ x.isSmall`
-    - 本 (běn, bound volume): `cl = fun x => x.shape == .boundVolume`
+    - 本 (běn, bound volume): `cl = fun x => x.shape ==.boundVolume`
     - Covert Div (English): `cl = fun _ => True`
 
     This connects the semantic parameters from classifier fragment
@@ -483,7 +483,7 @@ theorem num_without_q_incoherent :
 -- § 7. Bridges
 -- ════════════════════════════════════════════════════
 
-/-! ### Bridge to Chierchia (1998)
+/-! ### Bridge to @cite{chierchia-1998}
 
 Borer and Chierchia offer competing accounts of the mass/count
 distinction and cross-linguistic variation:
@@ -500,7 +500,7 @@ WHERE the distinction is encoded — lexicon vs. functional spine.
 A full formal comparison belongs in `Theories/Comparisons/`.
 -/
 
-/-! ### Bridge to Krifka (1998) / Mereology
+/-! ### Bridge to @cite{krifka-1998} / Mereology
 
 Borer's individuation connects directly to Krifka's event mereology
 already formalized in `Core/Mereology`:

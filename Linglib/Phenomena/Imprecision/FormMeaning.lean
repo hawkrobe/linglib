@@ -238,7 +238,7 @@ Markedness relation between forms.
 
 The constraint predicts: marked form → more precise meaning.
 
-Source: Horn (1984), Krifka (2007)
+Source: @cite{horn-1984}, @cite{krifka-2007}
 -/
 structure MarkednessData where
   /-- Unmarked (less marked) form -/

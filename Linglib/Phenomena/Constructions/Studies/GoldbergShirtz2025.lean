@@ -1,7 +1,7 @@
 import Mathlib.Data.Rat.Defs
 
 /-!
-# Goldberg & Shirtz (2025): PAL Constructions — Empirical Data
+# @cite{goldberg-shirtz-2025}: PAL Constructions — Empirical Data
 @cite{goldberg-shirtz-2025}
 
 Experimental results from five studies on Phrasal Adjective-Like (PAL)
@@ -19,7 +19,7 @@ PALs are phrases that fill word-level syntactic slots:
 3. PALs are judged as **wittier** than paraphrases (Study 2)
 4. PALs are judged as **more sarcastic** than paraphrases (Study 3)
 5. **Conventional subtypes** (must-VERB, a simple ⟨PAL⟩, etc.) behave similarly (Study 5)
-6. PALs are attested in **unrelated language families** (German, Dutch, Turkish, Hebrew, ...)
+6. PALs are attested in **unrelated language families** (German, Dutch, Turkish, Hebrew,...)
 
 -/
 

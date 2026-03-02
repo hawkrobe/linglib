@@ -7,7 +7,7 @@ import Linglib.Theories.Semantics.Questions.Polarity
 # Questions/GSVanRooyBridge.lean
 @cite{blackwell-1953} @cite{groenendijk-stokhof-1984} @cite{van-rooy-2003}
 
-Bridging Theorems between Groenendijk & Stokhof (1984) and Van Rooy (2003).
+Bridging Theorems between @cite{groenendijk-stokhof-1984} and @cite{van-rooy-2003}.
 
 ## Overview
 
@@ -43,7 +43,7 @@ The fundamental bridge: G&S's semantic refinement ordering on questions
 is *exactly* the universal pragmatic dominance ordering.
 
 ```
-Q ⊑ Q'  ⟺  ∀DP: EUV_DP(Q) ≥ EUV_DP(Q')
+Q ⊑ Q' ⟺ ∀DP: EUV_DP(Q) ≥ EUV_DP(Q')
 ```
 
 This is remarkable: the partition structure isn't arbitrary—it's the unique
@@ -568,7 +568,7 @@ theorem trivial_resolves_only_trivial {W A : Type*} [DecidableEq A]
 The maximally fine partition always determines optimal action: in each
 singleton cell {wᵢ}, action wᵢ dominates all others (utility 1 vs 0).
 
-Now correct after fixing `resolves` to existential (Van Rooy 2003, p.736). -/
+Now correct after fixing `resolves` to existential. -/
 theorem exact_resolves_all {W : Type*} [DecidableEq W]
     (worlds : List W) (hNonempty : worlds.length > 0) :
     let dp := completeInformationDP (W := W)

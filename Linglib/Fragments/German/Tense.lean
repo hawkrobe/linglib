@@ -1,10 +1,10 @@
 import Linglib.Theories.Semantics.Tense.Kratzer
 
 /-!
-# German Tense Fragment (Kratzer 1998)
+# German Tense Fragment
 @cite{heim-kratzer-1998} @cite{kratzer-1998}
 
-German tense paradigm entries following Kratzer's (1998) decomposition.
+German tense paradigm entries following @cite{heim-kratzer-1998}'s decomposition.
 The key contrast with English: German Preterit is a genuine PAST pronoun
 (anaphoric — requires discourse antecedent), while English "simple past"
 has a covert PRESENT tense head.

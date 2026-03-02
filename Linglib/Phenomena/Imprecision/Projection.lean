@@ -76,14 +76,14 @@ structure ProjectionDatum where
 
 
 /--
-Križ & Chemla (2015) tested these conditions experimentally.
+Križ & @cite{kriz-chemla-2015} tested these conditions experimentally.
 
 Task: Trivalent truth-value judgment
 - "completely true"
 - "completely false"
 - "neither completely true nor completely false"
 
-Source: Križ & Chemla (2015), Experiments C1-C3
+Source: Križ & @cite{kriz-chemla-2015}, Experiments C1-C3
 -/
 
 def everyProjection : ProjectionDatum :=
@@ -118,14 +118,14 @@ def exactlyTwoProjection : ProjectionDatum :=
 
 
 /--
-Augurzky et al. (2023) manipulated QUD between participants.
+@cite{augurzky-etal-2023} manipulated QUD between participants.
 
 Strict context: QUD targets strongest reading.
 Lax context: QUD targets weakest reading.
 
 `no` is less sensitive to QUD manipulation than `every`.
 
-Source: Augurzky et al. (2023), Experiments 1-2
+Source: @cite{augurzky-etal-2023}, Experiments 1-2
 -/
 structure QUDManipulationDatum where
   /-- The embedding operator -/
@@ -184,7 +184,7 @@ def notEveryQUDEffect : QUDManipulationDatum :=
 `no` resists non-maximality but `not every` permits it,
 which is surprising because both are downward-entailing.
 
-Source: Augurzky et al. (2023), Bar-Lev (2021a)
+Source: @cite{augurzky-etal-2023}, Bar-Lev (2021a)
 -/
 structure NoNotEveryAsymmetryDatum where
   /-- `no` sentence -/
@@ -214,7 +214,7 @@ def noNotEveryAsymmetry : NoNotEveryAsymmetryDatum :=
 /--
 Predicted truth conditions for embedded plurals.
 
-Source: Križ & Chemla (2015), Križ (2015)
+Source: Križ & @cite{kriz-chemla-2015}, Križ (2015)
 -/
 structure EmbeddedTruthConditions where
   /-- Operator -/

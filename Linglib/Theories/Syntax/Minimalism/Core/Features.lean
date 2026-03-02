@@ -3,7 +3,7 @@ import Linglib.Core.Prominence
 
 /-!
 # Feature Infrastructure for Minimalist Agree
-@cite{adger-2003} @cite{chomsky-2000} @cite{chomsky-2001}
+@cite{adger-2003} @cite{chomsky-2000} @cite{chomsky-2001} @cite{alok-2020}
 
 Phi-features, case values, and feature bundles — the shared infrastructure
 underlying all Agree-based operations. Extracted from `Agree.lean` to
@@ -13,20 +13,20 @@ when checking fails; see `ObligatoryOperations.lean`).
 
 ## Design Decision: `PersonLevel` replaces `Nat`
 
-`PhiFeature.person` uses `Core.Prominence.PersonLevel` (`.first | .second
-| .third`) rather than a raw `Nat`. This eliminates the possibility of
+`PhiFeature.person` uses `Core.Prominence.PersonLevel` (`.first |.second
+|.third`) rather than a raw `Nat`. This eliminates the possibility of
 meaningless person values (e.g., `person 47`) and grounds the feature
 inventory in the same canonical type used across the library:
 
 - `Core.Prominence.PersonLevel` — framework-agnostic person hierarchy
-- `PersonGeometry.DecomposedPerson` — Preminger's (2014) [±participant,
+- `PersonGeometry.DecomposedPerson` — @cite{preminger-2014}'s [±participant,
   ±author] decomposition, now mapping from `PersonLevel`
-- `DifferentialIndexing.IndexingPersonLevel` — Just's (2024) SAP/3rd
+- `DifferentialIndexing.IndexingPersonLevel` — @cite{just-2024}'s SAP/3rd
   binary split, bridged to `PersonLevel`
 
 For unvalued (probe) features, the `PersonLevel` value is irrelevant —
 `FeatureVal.sameType` matches any `.person _` against any `.person _`,
-ignoring the specific value. Use `.person .third` as the conventional
+ignoring the specific value. Use `.person.third` as the conventional
 placeholder for probes.
 
 -/
@@ -54,7 +54,7 @@ inductive PhiFeature where
 
     This is the Minimalism-internal case type, covering the 8 values needed
     for Agree-based case assignment. For the full cross-linguistic inventory,
-    see `Core.Case` (Blake 1994). -/
+    see `Core.Case`. -/
 inductive CaseVal where
   | nom    -- nominative (subject)
   | acc    -- accusative (object)
@@ -69,7 +69,7 @@ inductive CaseVal where
 /-- Convert a Minimalist `CaseVal` to the theory-neutral `Core.Case`.
 
     `obl` (oblique) is a Minimalism-internal category, not a specific case in
-    Blake's (1994) typology. We map it to `dat` as the highest-ranked
+    @cite{blake-1994}'s typology. We map it to `dat` as the highest-ranked
     peripheral case — this is an approximation, since "oblique" in Minimalism
     is a cover term for non-core cases, most commonly dative-like. -/
 def CaseVal.toCase : CaseVal → Core.Case
@@ -87,7 +87,7 @@ def CaseVal.toCase : CaseVal → Core.Case
 -- ============================================================================
 
 /-- Honorific level: social ordering between speaker and referent.
-    Relational, not absolute (Alok 2020, Portner et al. 2019).
+    Relational, not absolute.
     ⟦iHON⟧ = λx. S_i ≺ x, where ≺ encodes social hierarchy. -/
 inductive HonLevel where
   | nh    -- nonhonorific: S ≥ referent

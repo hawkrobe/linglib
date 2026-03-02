@@ -255,7 +255,7 @@ theorem empty_bouletic_indifferent (w : World) (a a' : BProp World) :
 -- Summary
 
 /-!
-## Summary: Phillips-Brown (2025) Integration
+## Summary: @cite{phillips-brown-2025} Integration
 
 ### Core Functions
 - `satisfiedBy GS a`: desires that proposition a satisfies

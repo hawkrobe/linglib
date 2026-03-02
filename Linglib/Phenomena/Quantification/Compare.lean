@@ -35,6 +35,8 @@ open CCG.Scope
 
 /-!
 ## CCG Explanation of Scope Freezing
+@cite{antonyuk-2015} @cite{scontras-polinsky-tsai-mai-2017}
+
 
 In CCG, scope ambiguity arises from derivational ambiguity:
 - **Type-raising** allows arguments to take scope
@@ -79,7 +81,7 @@ def ccgPredictsFreezing (ctx : FreezingContext) : Bool :=
 /-!
 ## Processing Explanation
 
-Processing accounts (Anderson 2004, Scontras et al. 2017) argue:
+Processing accounts argue:
 - Inverse scope requires **reanalysis** or **memory operations**
 - Cost scales with **complexity** of intervening material
 - Freezing = processing profile of frozen condition Pareto-dominates baseline
@@ -336,7 +338,7 @@ theorem all_scope_ordering_predictions_verified :
 
 3. **Cross-linguistic variation?**
    - Some languages show different freezing patterns
-   - Scrambling languages may differ (Antonyuk 2015)
+   - Scrambling languages may differ
 
 ### Proposed Test Cases
 

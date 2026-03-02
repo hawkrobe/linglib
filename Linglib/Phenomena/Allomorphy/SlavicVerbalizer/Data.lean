@@ -7,8 +7,8 @@ surface alternation across Slavic:
 
 | Group        | INF stem VC | Languages                                  |
 |--------------|-------------|--------------------------------------------|
-| [ov] group   | [ov]        | Polish, Czech, Slovak, U/L Sorbian, ...    |
-| [ov]/[ev]    | [ov]∼[ev]   | BCMS, Slovenian, Russian, ...              |
+| [ov] group   | [ov]        | Polish, Czech, Slovak, U/L Sorbian,...    |
+| [ov]/[ev]    | [ov]∼[ev]   | BCMS, Slovenian, Russian,...              |
 | [uv] group   | [uv]        | Ukrainian, Lemko Rusyn, Bulgarian, Maced.  |
 
 All groups share the present-stem vowel [u] (before /-je-/). The

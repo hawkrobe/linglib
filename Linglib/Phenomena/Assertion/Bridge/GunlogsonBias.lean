@@ -6,8 +6,8 @@ import Linglib.Theories.Pragmatics.Assertion.Stalnaker
 # Bridge: Gunlogson Felicity ↔ Contextual Evidence Bias
 @cite{bring-gunlogson-2000} @cite{gunlogson-2001} @cite{romero-2024}
 
-Connects Gunlogson's (2001) felicity condition on rising declaratives
-to the contextual evidence framework of Büring & Gunlogson (2000).
+Connects @cite{gunlogson-2001}'s felicity condition on rising declaratives
+to the contextual evidence framework of @cite{bring-gunlogson-2000}.
 
 ## The Paper's Deepest Claim
 
@@ -37,7 +37,7 @@ open Core.Discourse.Commitment
 /-- Rising declaratives require exactly `forP` evidence (coarse version).
 
     This is the coarser formulation using the `ContextualEvidence` type
-    shared with polar question bias (Romero 2024). The precise version
+    shared with polar question bias. The precise version
     is `cbcMet`, which checks the addressee's actual commitment state. -/
 theorem rising_requires_forP {W : Type*}
     (s : GunlogsonState W) (p : Core.Proposition.BProp W) :

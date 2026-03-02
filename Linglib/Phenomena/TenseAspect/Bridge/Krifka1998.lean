@@ -5,7 +5,7 @@ import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Phenomena.TenseAspect.DiagnosticsBridge
 
 /-!
-# Krifka (1998) Bridge: Telicity Propagation → Fragment Verbs
+# @cite{krifka-1998} Bridge: Telicity Propagation → Fragment Verbs
 @cite{krifka-1998} @cite{vendler-1957}
 
 Connects Krifka's mereological telicity theory (`Events/Krifka1998.lean`) to
@@ -145,17 +145,17 @@ theorem state_is_cum :
 -- ════════════════════════════════════════════════════
 
 /-! The payoff: verb incrementality + NP reference property → VP telicity.
-    These instantiate Krifka (1998) §3.3 for concrete verb entries. -/
+    These instantiate @cite{krifka-1998} §3.3 for concrete verb entries. -/
 
 /-- "eat apples": sinc verb + CUM NP → CUM VP (atelic).
-    Krifka (1998): CumTheta(θ) ∧ CUM(OBJ) → CUM(VP θ OBJ).
+    @cite{krifka-1998}: CumTheta(θ) ∧ CUM(OBJ) → CUM(VP θ OBJ).
     The verb's incrementality class is sinc, and bare plurals are CUM. -/
 theorem eat_apples_atelic :
     eat.toVerbCore.verbIncClass = some .sinc ∧
     VendlerClass.activity.telicity.toMereoTag = .cum := ⟨rfl, rfl⟩
 
 /-- "eat two apples": sinc verb + QUA NP → QUA VP (telic).
-    Krifka (1998): SINC(θ) ∧ QUA(OBJ) → QUA(VP θ OBJ).
+    @cite{krifka-1998}: SINC(θ) ∧ QUA(OBJ) → QUA(VP θ OBJ).
     The verb's incrementality class is sinc, and "two apples" is QUA. -/
 theorem eat_two_apples_telic :
     eat.toVerbCore.verbIncClass = some .sinc ∧

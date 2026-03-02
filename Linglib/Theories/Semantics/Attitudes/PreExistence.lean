@@ -2,12 +2,12 @@ import Linglib.Theories.Semantics.Lexical.Verb.VerbEntry
 
 /-!
 # Pre-Existence and Modal Insertion in Factive Complements
-@cite{bondarenko-2019} @cite{bondarenko-2020} @cite{williams-2025}
+@cite{bondarenko-2019} @cite{bondarenko-2020} @cite{williams-2025} @cite{white-2014}
 @misc{white-2014}
 
-Williams (2025) argues that the distribution of the covert modal in
+@cite{ippolito-kiss-williams-2025} argues that the distribution of the covert modal in
 non-finite complements of *forget* is governed by the **pre-existence
-presupposition** (Bondarenko 2019, 2020).
+presupposition**.
 
 ## Pre-Existence
 
@@ -78,7 +78,7 @@ def satisfiesPreExistence : ComplementType → Bool
 /-- Whether a factive verb's complement requires covert modal insertion
     to satisfy the pre-existence presupposition.
 
-    Under Williams (2025): Mod is inserted iff the complement type does
+    Un@cite{ippolito-kiss-williams-2025}: Mod is inserted iff the complement type does
     not inherently satisfy pre-existence. This is the SMINC generalization
     (Selectivity of Modal Insertion in Non-finite Contexts). -/
 def needsModalInsertion (ct : ComplementType) : Bool :=
@@ -93,8 +93,8 @@ theorem finiteClause_satisfies_preExistence :
     satisfiesPreExistence .finiteClause = true := rfl
 
 /-- Not all non-finite types violate pre-existence: gerunds satisfy it.
-    This is the key prediction that distinguishes Williams (2025) from the
-    Modalized Complement Analysis (White 2014). -/
+    This is the key prediction that distinguishes @cite{ippolito-kiss-williams-2025} from the
+    Modalized Complement Analysis. -/
 theorem gerund_satisfies_preExistence :
     satisfiesPreExistence .gerund = true := rfl
 
@@ -116,8 +116,8 @@ theorem sminc_finite_no_modal :
 -- §4. Comparison with Modalized Complement Analysis (White 2014)
 -- ============================================================================
 
-/-- The MCA (White 2014) predicts modal insertion for ALL non-finite
-    complements. Williams (2025) shows this overgenerates: gerunds
+/-- The MCA predicts modal insertion for ALL non-finite
+    complements. @cite{ippolito-kiss-williams-2025} shows this overgenerates: gerunds
     don't get modalized. -/
 def mcaPrediction (ct : ComplementType) : Bool :=
   !ct.isFinite

@@ -7,13 +7,12 @@ import Linglib.Core.Interfaces.VoiceSystem
 
 Finnish verbs illustrate two phenomena that exercise linglib's infrastructure:
 
-1. **The impersonal "passive"** — Finnish lacks a true passive (Karlsson 2018,
-   Ch. 11). What is traditionally called the passive is an impersonal
+1. **The impersonal "passive"** — Finnish lacks a true passive. What is traditionally called the passive is an impersonal
    construction: the agent is demoted to an implicit generic human referent,
    not promoted to a by-phrase. The subject position remains empty.
 
-   Active:  *Mies    avasi    oven.*  'The man opened the door.'
-   "Passive": *Ovi    avattiin.*       'The door was opened (by someone).'
+   Active: *Mies avasi oven.* 'The man opened the door.'
+   "Passive": *Ovi avattiin.* 'The door was opened (by someone).'
 
    This is formalized using `VoiceFlavor.impersonal`, distinct from both
    `nonThematic` (anticausative, no agent at all) and `agentive` (syntactically

@@ -3,7 +3,7 @@ import Linglib.Theories.Semantics.Lexical.Adjective.Theory
 
 /-!
 # Evaluativity: Empirical Patterns
-@cite{rett-2015}
+@cite{rett-2015} @cite{lassiter-goodman-2017} @cite{tessler-franke-2020}
 
 Evaluativity distribution across adjectival constructions. Positive constructions
 are evaluative, comparatives are not, equatives show asymmetry.
@@ -115,7 +115,7 @@ Equatives show an ASYMMETRY based on adjective polarity:
 This asymmetry is evidence for a marked/unmarked distinction,
 but the effect emerges from pragmatic competition, not lexical stipulation.
 
-Source: Rett (2015), Bierwisch (1989)
+Source: @cite{rett-2015}, @cite{bierwisch-1989}
 -/
 
 def equative_tall : EvaluativityDatum :=
@@ -150,7 +150,7 @@ However, measure phrases are RESTRICTED to positive-polar adjectives:
 - "Adam is 6ft tall" ✓
 - *"Adam is 4ft short" ✗
 
-Source: Schwarzschild (2005), Kennedy & McNally (2005)
+Source: @cite{schwarzschild-2005}, @cite{kennedy-mcnally-2005}
 -/
 
 def mp_tall : EvaluativityDatum :=
@@ -185,7 +185,7 @@ Degree questions show a similar asymmetry to equatives:
 The unmarked form is used for neutral information-seeking.
 The marked form presupposes the property holds.
 
-Source: Rett (2015)
+Source: @cite{rett-2015}
 -/
 
 def question_tall : EvaluativityDatum :=
@@ -264,7 +264,7 @@ A theory of evaluativity should derive:
    - Using marked form implicates evaluativity
 
 4. **MP restriction to positive adjectives**
-   - Schwarzschild (2005): MPs measure "gaps" (bounded intervals)
+   - @cite{schwarzschild-2005}: MPs measure "gaps" (bounded intervals)
    - Negative adjectives have unbounded intervals
    - *"4ft short" would measure an infinite interval
 
@@ -325,7 +325,7 @@ def allPredictions : List EvaluativityPrediction :=
 /-!
 ## Connections
 
-**To FlexibleNegation (Tessler & Franke 2020)**:
+**To FlexibleNegation**:
 - "not unhappy" ≠ "happy" involves evaluativity
 - "unhappy" is evaluative (degree below θ_neg)
 - "not unhappy" covers gap + positive region
@@ -334,7 +334,7 @@ def allPredictions : List EvaluativityPrediction :=
 - Evaluativity in equatives may be a manner implicature
 - Using costly marked form signals something extra
 
-**To Threshold Semantics (Lassiter & Goodman 2017)**:
+**To Threshold Semantics**:
 - Positive construction evaluativity derives from threshold inference
 - RSA listener infers threshold jointly with degree
 -/

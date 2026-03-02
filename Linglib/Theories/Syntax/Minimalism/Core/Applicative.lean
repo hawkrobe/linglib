@@ -1,8 +1,8 @@
 import Linglib.Theories.Syntax.Minimalism.Core.VerbalDecomposition
 
 /-!
-# Applicative Heads (Pylkkänen 2008)
-@cite{cuervo-2003} @cite{pylkknen-2008}
+# Applicative Heads
+@cite{cuervo-2003} @cite{pylkknen-2008} @cite{brennan-pylkkanen-2008}
 
 Applicative heads introduce applied arguments (benefactives, goals,
 sources) into the verbal structure. The high/low distinction determines
@@ -13,7 +13,7 @@ or to the theme (low).
 
 namespace Minimalism
 
-/-- High vs low applicatives (Pylkkänen 2008).
+/-- High vs low applicatives.
 
     - **High**: Above VP, relates applied argument to the event
       (affected/benefactive: "I baked him a cake")

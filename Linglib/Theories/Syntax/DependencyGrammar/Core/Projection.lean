@@ -9,7 +9,7 @@ closure), and the bridge theorems connecting BFS membership to dominance.
 Also contains the `isProjective` / `isWellFormed` predicates and the
 `Grammar` instance, which depend on projection infrastructure.
 
-References: Kuhlmann & Nivre (2006), Kuhlmann (2013).
+References: @cite{kuhlmann-nivre-2006}, @cite{kuhlmann-2013}.
 -/
 
 namespace DepGrammar
@@ -23,8 +23,8 @@ section Projection
 /-- **Projection** π(i): the yield of node i — all nodes it transitively
     dominates, including itself — sorted in ascending order.
 
-    The projection is the central primitive of Kuhlmann & Nivre (2006) and
-    Kuhlmann (2013). Projectivity, gap degree, block-degree, edge degree,
+    The projection is the central primitive of @cite{kuhlmann-nivre-2006} and
+    @cite{kuhlmann-2013}. Projectivity, gap degree, block-degree, edge degree,
     and well-nestedness are all defined in terms of projections.
 
     A dependency graph is **projective** iff every projection is an interval
@@ -42,7 +42,7 @@ def projection (deps : List Dependency) (root : Nat) : List Nat :=
         go (rest ++ children) (node :: visited) fuel'
   (go [root] [] fuel).mergeSort (· ≤ ·)
 
-/-- Whether a sorted list of positions forms an interval [min..max] with no
+/-- Whether a sorted list of positions forms an interval [min.max] with no
     internal gaps. A projection is an interval iff its node has gap degree 0. -/
 def isInterval (sorted : List Nat) : Bool :=
   match sorted with
@@ -56,12 +56,11 @@ def gaps (sorted : List Nat) : List (Nat × Nat) :=
   sorted.zip (sorted.drop 1) |>.filter λ (a, b) => b - a > 1
 
 /-- The **blocks** of a sorted projection: maximal contiguous segments.
-    (Kuhlmann 2013, §4.1)
 
     Example: projection [1, 2, 5, 6, 7] → blocks [[1, 2], [5, 6, 7]]
 
     The number of blocks equals gap degree + 1 and corresponds to the
-    fan-out of the LCFRS rule extracted for that node (Kuhlmann 2013, §7.3). -/
+    fan-out of the LCFRS rule extracted for that node. -/
 def blocks : List Nat → List (List Nat)
   | [] => []
   | [a] => [[a]]
@@ -84,13 +83,11 @@ def DepTree.gapDegree (t : DepTree) : Nat :=
   List.range t.words.length |>.map (gapDegreeAt t.deps) |>.foldl max 0
 
 /-- **Block-degree** of a node: number of blocks in its projection.
-    (Kuhlmann 2013, §7.1)
     Block-degree = gap degree + 1 = fan-out of extracted LCFRS rule. -/
 def blockDegreeAt (deps : List Dependency) (root : Nat) : Nat :=
   (blocks (projection deps root)).length
 
 /-- **Block-degree** of a tree: max block-degree over all nodes.
-    (Kuhlmann 2013, §7.1)
     Block-degree 1 ⟺ projective.
     Bounded block-degree + well-nestedness ⟺ polynomial parsing
     (Kuhlmann 2013, Lemma 10). -/

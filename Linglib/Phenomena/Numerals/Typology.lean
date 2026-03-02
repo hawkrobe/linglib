@@ -25,7 +25,7 @@ and the relationship between conjunctions and universal quantification.
    classifiers --- dedicated morphemes required or available when a numeral
    combines with a noun. Classifier languages concentrate in East and Southeast
    Asia and Mesoamerica. The global majority of languages lack classifiers.
-   An important typological correlation (Sanches & Slobin 1973): classifier
+   An important typological correlation: classifier
    languages tend to lack obligatory plural marking on nouns.
 
 4. **Conjunctions and Universal Quantifiers** (Ch 56, Gil): Whether a language
@@ -70,7 +70,7 @@ def OrdinalDistribution.total (d : OrdinalDistribution) : Nat :=
   d.firstSuppletion + d.firstSecondSuppletion + d.allFromCardinals +
   d.various + d.noOrdinals
 
-/-- Actual WALS Ch 53 counts (Stolz & Veselinova 2013). -/
+/-- Actual WALS Ch 53 counts. -/
 def ch53Distribution : OrdinalDistribution :=
   { firstSuppletion := 99
   , firstSecondSuppletion := 45
@@ -109,7 +109,7 @@ structure DistributiveDistribution where
 def DistributiveDistribution.total (d : DistributiveDistribution) : Nat :=
   d.noDistributive + d.reduplication + d.suffixCount + d.prefixCount + d.otherMeans
 
-/-- Actual WALS Ch 54 counts (Gil 2013a). -/
+/-- Actual WALS Ch 54 counts. -/
 def ch54Distribution : DistributiveDistribution :=
   { noDistributive := 63
   , reduplication := 85
@@ -144,7 +144,7 @@ structure ClassifierDistribution where
 def ClassifierDistribution.total (d : ClassifierDistribution) : Nat :=
   d.absent + d.optional + d.obligatory
 
-/-- Actual WALS Ch 55 counts (Gil 2013b). -/
+/-- Actual WALS Ch 55 counts. -/
 def ch55Distribution : ClassifierDistribution :=
   { absent := 260
   , optional := 62
@@ -176,7 +176,7 @@ structure ConjQuantDistribution where
 def ConjQuantDistribution.total (d : ConjQuantDistribution) : Nat :=
   d.identity + d.differentiation
 
-/-- Actual WALS Ch 56 counts (Gil 2013c). -/
+/-- Actual WALS Ch 56 counts. -/
 def ch56Distribution : ConjQuantDistribution :=
   { identity := 43
   , differentiation := 177 }
@@ -683,7 +683,7 @@ def NumeralProfile.hasDistributive (p : NumeralProfile) : Bool :=
 def NumeralProfile.isEastSoutheastAsian (p : NumeralProfile) : Bool :=
   p.region == .eastAsia || p.region == .southeastAsia
 
-/-- **Sanches-Slobin generalization** (Sanches & Slobin 1973): Classifier
+/-- **Sanches-Slobin generalization**: Classifier
     languages tend to lack obligatory plural marking on nouns. In our sample,
     every language with obligatory classifiers lacks obligatory plural.
 
@@ -752,10 +752,10 @@ theorem most_obligatory_classifier_no_distributive :
 -- The Greenberg Hierarchy for Ordinal Suppletion
 -- ============================================================================
 
-/-- Greenberg's (1978) implicational universal for ordinal suppletion:
+/-- @cite{greenberg-1978}'s implicational universal for ordinal suppletion:
     if a language has a suppletive ordinal for numeral N, then it has
     suppletive ordinals for all numerals less than N. Equivalently:
-    suppletion cuts off at some point in the sequence 1st, 2nd, 3rd, ...
+    suppletion cuts off at some point in the sequence 1st, 2nd, 3rd,...
     and all ordinals above the cutoff are regular.
 
     The WALS data captures the coarsest version: suppletion is most likely

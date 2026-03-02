@@ -64,7 +64,7 @@ def DepTree.asSimpleGraph (t : DepTree) : SimpleGraph (Fin t.words.length) :=
 -- IsCatena (Prop-level, mathlib-integrated)
 -- ============================================================================
 
-/-- A **catena** (Osborne et al. 2012, p. 359) is a non-empty subset S of tree
+/-- A **catena** is a non-empty subset S of tree
     nodes where the induced subgraph on S is preconnected. Equivalently: a word
     or combination of words that is continuous with respect to dominance.
 
@@ -103,8 +103,7 @@ def isConnected (deps : List Dependency) (nodes : List Nat) : Bool :=
     let reached := bfsReachable deps nodes start
     nodes.all reached.contains
 
-/-- Computable catena check: non-empty and connected in the tree.
-    (Osborne et al. 2012, p. 359) -/
+/-- Computable catena check: non-empty and connected in the tree. -/
 def isCatena (deps : List Dependency) (nodes : List Nat) : Bool :=
   !nodes.isEmpty && isConnected deps nodes
 
@@ -505,7 +504,7 @@ def isConstituent (deps : List Dependency) (n : Nat) (nodes : List Nat) : Bool :
 -- Enumeration and Counting
 -- ============================================================================
 
-/-- All non-empty subsets of {0, ..., n-1}. -/
+/-- All non-empty subsets of {0,..., n-1}. -/
 def allNonEmptySubsets (n : Nat) : List (List Nat) :=
   let rec powerset (remaining : List Nat) : List (List Nat) :=
     match remaining with
@@ -537,8 +536,8 @@ def catenaRatio (n : Nat) (deps : List Dependency) : Nat × Nat :=
 
 /-- Tree (9), p. 359: 4 abstract nodes.
         a(0)
-       /    \
-    b(1)   c(2)
+       / \
+    b(1) c(2)
     |
     d(3)
 
@@ -550,8 +549,8 @@ def tree9 : List Dependency :=
 
 /-- Tree (22), p. 371: 3-node flat tree.
       a(0)
-     /    \
-   b(1)  c(2)
+     / \
+   b(1) c(2)
 
     6 catenae, 1 non-catena, 3 constituents out of 7 total. -/
 def tree22 : List Dependency :=
@@ -576,7 +575,7 @@ def chain3 : List Dependency :=
 -- ============================================================================
 
 /-- "pulled some strings" — the idiom {pulled, strings} forms a catena
-    but not a constituent (Osborne et al. 2012, p. 362).
+    but not a constituent.
 
     Words: pulled(0) some(1) strings(2)
     UD: pulled → strings (obj), strings → some (det). -/
@@ -670,7 +669,7 @@ theorem not_catena_bc : isCatena tree9 [1, 2] = false := by native_decide
 theorem idiom_is_catena :
     isCatena pulledSomeStrings.deps [0, 2] = true := by native_decide
 
-/-- ...but NOT a constituent (subtree of "pulled" includes "some"). -/
+/--...but NOT a constituent (subtree of "pulled" includes "some"). -/
 theorem idiom_not_constituent :
     isConstituent pulledSomeStrings.deps 3 [0, 2] = false := by native_decide
 

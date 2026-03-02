@@ -52,7 +52,7 @@ def mkVar (name : String) : Variable := ⟨name⟩
 /-- **Situation** (Definition 9 from Nadathur & Lauer 2020)
 
     A partial valuation: some variables have known values, others are
-    undetermined.  Situations are *partial* functions — crucial for
+    undetermined. Situations are *partial* functions — crucial for
     modeling what's "given" vs what's computed, and for counterfactual
     reasoning (removing a cause = setting it to false). -/
 @[ext]
@@ -203,11 +203,11 @@ def empty : CausalDynamics := ⟨[]⟩
 /-- Create dynamics from a list of laws. -/
 def ofList (laws : List CausalLaw) : CausalDynamics := ⟨laws⟩
 
-/-- Disjunctive causation: A ∨ B → C.  Either cause alone suffices. -/
+/-- Disjunctive causation: A ∨ B → C. Either cause alone suffices. -/
 def disjunctiveCausation (cause1 cause2 effect : Variable) : CausalDynamics :=
   ⟨[CausalLaw.simple cause1 effect, CausalLaw.simple cause2 effect]⟩
 
-/-- Conjunctive causation: A ∧ B → C.  Both causes required. -/
+/-- Conjunctive causation: A ∧ B → C. Both causes required. -/
 def conjunctiveCausation (cause1 cause2 effect : Variable) : CausalDynamics :=
   ⟨[CausalLaw.conjunctive cause1 cause2 effect]⟩
 
@@ -243,7 +243,7 @@ def isFixpoint (dyn : CausalDynamics) (s : Situation) : Bool :=
 
 /-- **Normal Causal Development** (Definition 15)
 
-    Iterate forward propagation until fixpoint.  Uses bounded iteration
+    Iterate forward propagation until fixpoint. Uses bounded iteration
     (fuel) to ensure termination. -/
 def normalDevelopment (dyn : CausalDynamics) (s : Situation)
     (fuel : Nat := 100) : Situation :=
@@ -677,7 +677,7 @@ def intervene (dyn : CausalDynamics) (s : Situation)
     Compares normal development under do(cause = true) vs do(cause = false).
     If the effect's value differs, then `cause` manipulates `effect`.
 
-    This is the interventionist criterion for causation (Woodward 2003):
+    This is the interventionist criterion for causation:
     X causes Y iff there exists an intervention on X that changes Y. -/
 def manipulates (dyn : CausalDynamics) (s : Situation)
     (cause effect : Variable) : Bool :=

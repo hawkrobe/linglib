@@ -7,7 +7,7 @@ import Linglib.Theories.Syntax.DependencyGrammar.Formal.HarmonicOrder
 # Study 2: Crosslinguistic Word-Order Efficiency (54 Languages)
 @cite{futrell-gibson-2020} @cite{hahn-degen-futrell-2021}
 
-Hahn et al. (2021) Study 2: for 54 languages from Universal Dependencies,
+@cite{hahn-degen-futrell-2021} Study 2: for 54 languages from Universal Dependencies,
 real word orders achieve more efficient memory-surprisal trade-offs than
 grammar-preserving random baselines (50/54 = 93%). The 4 exceptions
 (Latvian, North Sami, Polish, Slovak) all have high word-order freedom.
@@ -57,16 +57,16 @@ theorem exceptions_higher_entropy :
 
 /-! ### Shared Languages
 
-Languages appearing in both Futrell et al. (2020) DLM dataset and
-Hahn et al. (2021) efficiency dataset. These form the empirical
+Languages appearing in both @cite{futrell-gibson-2020} DLM dataset and
+@cite{hahn-degen-futrell-2021} efficiency dataset. These form the empirical
 bridge between structural dependency length and information-theoretic
 efficiency. -/
 
-/-- ISO codes appearing in Futrell et al. (2020)'s 32-language dataset. -/
+/-- ISO codes appearing in @cite{futrell-gibson-2020}'s 32-language dataset. -/
 def futrellIsoCodes : List String :=
   Phenomena.WordOrder.DependencyLength.FutrellEtAl2020.languages.map (·.isoCode)
 
-/-- ISO codes appearing in Hahn et al. (2021)'s 54-language dataset. -/
+/-- ISO codes appearing in @cite{hahn-degen-futrell-2021}'s 54-language dataset. -/
 def hahnIsoCodes : List String :=
   allLanguages.map (·.isoCode)
 
@@ -103,7 +103,7 @@ theorem polish_only_shared_exception :
 
 The DLM explanation for the head-direction generalization (Gibson 2025,
 formalized in HarmonicOrder.lean) predicts that languages with consistent
-head direction have shorter dependencies. Hahn et al. (2021) show that
+head direction have shorter dependencies. @cite{hahn-degen-futrell-2021} show that
 languages with shorter dependencies also have more efficient trade-offs.
 
 This forms a chain: harmonic consistency → short deps → efficient trade-off. -/

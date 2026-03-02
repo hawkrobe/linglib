@@ -3,7 +3,7 @@
 @cite{aikhenvald-2000} @cite{chierchia-1998} @cite{dixon-1982}
 
 Cross-linguistic typology of noun categorization devices, following
-Aikhenvald (2000) "Classifiers: A Typology of Noun Categorization Devices."
+@cite{aikhenvald-2000} "Classifiers: A Typology of Noun Categorization Devices."
 
 Defines the parameter space for classifying noun categorization systems:
 classifier types, semantic parameters, structural properties, and a
@@ -209,7 +209,7 @@ structure NounCategorizationSystem where
 -- §6 Key Distinctions
 -- ============================================================================
 
-/-- Dixon's (1982) noun-class vs. classifier divide (Table 1.2).
+/-- @cite{dixon-1982}'s noun-class vs. classifier divide (Table 1.2).
     Noun classes: small, closed, grammaticalized, agreement.
     Classifiers: large, open, lexical, no agreement. -/
 def isNounClassType (t : ClassifierType) : Bool :=

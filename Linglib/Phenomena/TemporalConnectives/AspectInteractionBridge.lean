@@ -11,7 +11,7 @@ Connects three layers:
 
 1. **Fragment field**: `TemporalExprEntry.embeddedTelicityEffect : Bool`
 2. **Theory**: `VendlerClass.telicity`, `INCHOAT`, `COMPLET` operators
-3. **Data**: `AspectInteraction` judgments from Moens & Steedman (1988)
+3. **Data**: `AspectInteraction` judgments from @cite{moens-steedman-1988}
 
 ## What This File Proves
 
@@ -35,15 +35,15 @@ Connects three layers:
 ## The Explanatory Chain
 
 ```
-VendlerClass.telicity          TemporalExprEntry.embeddedTelicityEffect
-  .telic / .atelic  ──────────► true (before, after: reading depends on telicity)
+VendlerClass.telicity TemporalExprEntry.embeddedTelicityEffect
+.telic /.atelic ──────────► true (before, after: reading depends on telicity)
                                 false (while, when, until, since: insensitive)
 
-VendlerClass.duration          *until*/*since* selectional restriction
-  .durative  ─────────────────► satisfiesDurativeRestriction = true  (OK)
-  .punctual  ─────────────────► satisfiesDurativeRestriction = false (BAD)
+VendlerClass.duration *until*/*since* selectional restriction
+.durative ─────────────────► satisfiesDurativeRestriction = true (OK)
+.punctual ─────────────────► satisfiesDurativeRestriction = false (BAD)
 
-INCHOAT / COMPLET              Fragment.triggeredCoercion
+INCHOAT / COMPLET Fragment.triggeredCoercion
   INCHOAT(stative) = onset ───► "INCHOAT" for within_, after_ (coerced)
   COMPLET(telic) = telos ─────► "COMPLET" for at_punct, before_ (coerced)
 ```

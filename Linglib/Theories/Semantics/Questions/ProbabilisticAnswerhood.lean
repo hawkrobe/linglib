@@ -1,10 +1,10 @@
 import Linglib.Theories.Semantics.Questions.Inquisitive
 
 /-!
-# Probabilistic Answerhood (Thomas 2026) @cite{thomas-2026}
+# Probabilistic Answerhood @cite{thomas-2026}
 @cite{groenendijk-stokhof-1984}
 
-Answerhood in terms of probability changes, following Thomas (2026)
+Answerhood in terms of probability changes, following @cite{thomas-2026}
 "A probabilistic, question-based approach to additivity".
 
 ## Core Definitions
@@ -80,7 +80,7 @@ abbrev probOfState {W : Type*} [Fintype W]
 
 /-- Relevance: P changes the probability of some alternative in Q.
 
-Simplified from Thomas (2026) Definition 61 for the case where R is a
+Simplified from @cite{thomas-2026} Definition 61 for the case where R is a
 declarative (single alternative P). Thomas's full definition quantifies
 over alternatives of both R and S: ∃A ∈ alt(R), A' ∈ alt(S) s.t.
 P_L(A'|A) ≠ P_L(A'). For declarative R with a single alternative P,
@@ -101,7 +101,7 @@ def irrelevant {W : Type*} [Fintype W]
 
 /-- Probabilistic answerhood (simplified): P raises the probability of some alternative.
 
-Simplified from Thomas (2026) Definition 62, which additionally requires
+Simplified from @cite{thomas-2026} Definition 62, which additionally requires
 that the witnessed resolution is raised MORE than any other (in ratio terms):
 (b) for all A' ⊂ alt(Q), if ∩A' ⊉ ∩A, then P(∩A|info(R))/P(∩A) > P(∩A'|info(R))/P(∩A').
 
@@ -123,7 +123,7 @@ that the empty conjunction is ⊤. -/
 private def intersectAlts {W : Type*} (alts : List (W → Bool)) : W → Bool :=
   alts.foldl (fun acc alt w => acc w && alt w) trivialState
 
-/-- Full probabilistic answerhood per Thomas (2026) Definition 62.
+/-- Full probabilistic answerhood per @cite{thomas-2026} Definition 62.
 
 R ANSWERS Q iff ∃ nonempty A ⊆ alt(Q) s.t.
 (a) P(∩A | info(R)) > P(∩A)
@@ -205,13 +205,13 @@ def maxSupportedAlternative {W : Type*} [Fintype W]
 For a single info state σ (representing a potential resolution),
 info(σ) is just σ itself - the proposition that the actual world is in σ.
 
-For multiple resolving states, info({σ₁, ..., σₙ}) is their union. -/
+For multiple resolving states, info({σ₁,..., σₙ}) is their union. -/
 def infoContent {W : Type*} (states : List (InfoState W)) : W → Bool :=
   λ w => states.any λ σ => σ w
 
 /-- Evidences more strongly: R evidences A more strongly than R' does.
 
-Definition 63 from Thomas (2026):
+Definition 63 from @cite{thomas-2026}:
 ```
 EvidencesMoreStrongly(R, R', A) ≡ P(A|info(R)) > P(A|info(R'))
 ```

@@ -1,7 +1,7 @@
 import Linglib.Core.Lexical.MorphRule
 
 /-!
-# Clitic vs. Affix Diagnostics (Zwicky & Pullum 1983)
+# Clitic vs. Affix Diagnostics
 @cite{zwicky-pullum-1983}
 
 Six criteria for distinguishing clitics from inflectional affixes,

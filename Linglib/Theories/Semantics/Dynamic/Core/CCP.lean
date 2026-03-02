@@ -82,7 +82,7 @@ open Classical in
 /--
 Test-based negation: passes (returns input) iff φ yields ∅.
 
-This is the standard dynamic negation of Heim (1982), Veltman (1996):
+This is the standard dynamic negation of @cite{heim-1982}, @cite{veltman-1996}:
 ¬φ(s) = s if φ(s) = ∅, else ∅. Does not validate DNE.
 -/
 noncomputable def neg (φ : CCP P) : CCP P :=
@@ -212,7 +212,7 @@ def contentOf (sat : P → φ → Prop) (ψ : φ) : InfoStateOf P :=
   { p | sat p ψ }
 
 /--
-Galois connection: s ⊆ content ψ  ↔  s supports ψ
+Galois connection: s ⊆ content ψ ↔ s supports ψ
 
 This is the fundamental duality of dynamic semantics.
 -/

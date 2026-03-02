@@ -4,14 +4,14 @@ import Mathlib.Data.List.Perm.Basic
 
 /-!
 # Generalized Quantifiers
-@cite{barwise-cooper-1981} @cite{keenan-stavi-1986} @cite{van-de-pol-2023} @cite{van-de-pol-etal-2023}
+@cite{barwise-cooper-1981} @cite{keenan-stavi-1986} @cite{van-de-pol-2023} @cite{van-de-pol-etal-2023} @cite{mostowski-1957}
 
 Determiners have type `(e→t) → ((e→t) → t)`:
 - `⟦every⟧ = λR.λS. ∀x. R(x) → S(x)`
-- `⟦some⟧  = λR.λS. ∃x. R(x) ∧ S(x)`
-- `⟦no⟧    = λR.λS. ¬∃x. R(x) ∧ S(x)`
+- `⟦some⟧ = λR.λS. ∃x. R(x) ∧ S(x)`
+- `⟦no⟧ = λR.λS. ¬∃x. R(x) ∧ S(x)`
 
-## Semantic Universals (Barwise & Cooper 1981)
+## Semantic Universals
 
 Three properties conjectured to hold of all simple (lexicalized) determiners:
 - **Conservativity**: `Q(A, B) ↔ Q(A, A ∩ B)` — only the restrictor matters
@@ -19,7 +19,7 @@ Three properties conjectured to hold of all simple (lexicalized) determiners:
   `|A ∩ B|`, `|A \ B|`, `|B \ A|`, `|M \ (A ∪ B)|`
 - **Monotonicity**: Q is either upward or downward monotone in scope
 
-Van de Pol et al. (2023) show quantifiers satisfying these universals have
+@cite{van-de-pol-etal-2023} show quantifiers satisfying these universals have
 shorter minimal description length, suggesting a simplicity bias explains
 the universals.
 
@@ -345,7 +345,7 @@ theorem few_scope_down : ScopeDownwardMono (few_sem m) := by
 -- === Quantity / Isomorphism Closure (Mostowski 1957) ===
 
 /--
-Quantity / Isomorphism closure (Mostowski 1957; van Benthem 1984):
+Quantity / Isomorphism closure:
 Q(A, B) depends only on the four cardinalities
 `|A ∩ B|`, `|A \ B|`, `|B \ A|`, `|M \ (A ∪ B)|`.
 
@@ -367,7 +367,7 @@ def Quantity (q : m.interpTy Ty.det) : Prop :=
 
 /--
 A quantifier satisfies all three Barwise & Cooper universals.
-Van de Pol et al. (2023) show these quantifiers have shorter MDL.
+@cite{van-de-pol-etal-2023} show these quantifiers have shorter MDL.
 -/
 def SatisfiesUniversals (q : m.interpTy Ty.det) : Prop :=
   Conservative q ∧ Quantity q ∧ (ScopeUpwardMono q ∨ ScopeDownwardMono q)

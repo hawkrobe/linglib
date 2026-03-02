@@ -4,7 +4,7 @@ import Linglib.Theories.Semantics.TypeTheoretic.Discourse
 # Type Theory with Records — Chapter 6: Modality and Intensionality without Possible Worlds
 @cite{austin-1961} @cite{barwise-1989} @cite{cooper-2023} @cite{kratzer-1991}
 
-Cooper (2023) Chapter 6 extends the modal type system framework from Ch1
+@cite{cooper-2023} Chapter 6 extends the modal type system framework from Ch1
 with Prop-valued modal systems, topoi (replacing accessibility relations),
 Box/Diamond type constructors, Austinian/Russellian propositions,
 believe/know via long-term memory, points of view, and intensional
@@ -38,17 +38,17 @@ has the type) variants.
 
 A modal system of complex types TYPE_MC is a family of type systems indexed
 by "possibilities" where basic types and predicates are shared but witness
-assignments vary.  Cooper (2023) §6.3, (1)–(4). -/
+assignments vary. @cite{cooper-2023} §6.3, (1)–(4). -/
 
 /-- A possibility in a modal type system: an assignment of witnesses to types.
 Each possibility maps types (represented as `Ty`) to their set of witnesses.
-Cooper (2023) §6.3: possibilities differ in which objects witness which types. -/
+@cite{cooper-2023} §6.3: possibilities differ in which objects witness which types. -/
 structure Possibility (Ty Obj : Type) where
   /-- Whether object `a` witnesses type `T` in this possibility -/
   witnesses : Ty → Obj → Prop
 
 /-- A modal system of complex types: a family of possibilities.
-Cooper (2023) §6.3, Def A9: TYPE_MC = ⟨Type_M, BType, ⟨PType_M⟩, ...⟩_{M ∈ M}.
+@cite{cooper-2023} §6.3, Def A9: TYPE_MC = ⟨Type_M, BType, ⟨PType_M⟩,...⟩_{M ∈ M}.
 The possibilities share the same types but differ in witness assignments. -/
 structure ModalSystem (Ty Obj : Type) where
   /-- The index type for possibilities -/
@@ -57,7 +57,7 @@ structure ModalSystem (Ty Obj : Type) where
   poss : Poss → Possibility Ty Obj
 
 /-- Extension of a type in a possibility: the set of witnesses.
-Cooper (2023) §6.3, (1a): {a | a :_{TYPE_{M_i}} T}. -/
+@cite{cooper-2023} §6.3, (1a): {a | a :_{TYPE_{M_i}} T}. -/
 def ModalSystem.ext {Ty Obj : Type} (ms : ModalSystem Ty Obj)
     (p : ms.Poss) (T : Ty) : Obj → Prop :=
   ms.poss p |>.witnesses T
@@ -71,22 +71,22 @@ variable {Ty Obj : Type} (ms : ModalSystem Ty Obj)
 These quantify over ALL possibilities. -/
 
 /-- Restrictive necessary equivalence: T₁ ≈_r T₂ iff they have the same
-extension in all possibilities. Cooper (2023) §6.3, (1a). -/
+extension in all possibilities. @cite{cooper-2023} §6.3, (1a). -/
 def nec_equiv_r (T₁ T₂ : Ty) : Prop :=
   ∀ p, ms.ext p T₁ = ms.ext p T₂
 
 /-- Restrictive subtype: T₁ ⊑_r T₂ iff T₁'s extension ⊆ T₂'s in all
-possibilities. Cooper (2023) §6.3, (1b). -/
+possibilities. @cite{cooper-2023} §6.3, (1b). -/
 def nec_subtype_r (T₁ T₂ : Ty) : Prop :=
   ∀ p a, ms.ext p T₁ a → ms.ext p T₂ a
 
 /-- Restrictive necessity: T is necessary iff it has witnesses in all
-possibilities. Cooper (2023) §6.3, (1c). -/
+possibilities. @cite{cooper-2023} §6.3, (1c). -/
 def nec_r (T : Ty) : Prop :=
   ∀ p, ∃ a, ms.ext p T a
 
 /-- Restrictive possibility: T is possible iff it has witnesses in some
-possibility. Cooper (2023) §6.3, (1d). -/
+possibility. @cite{cooper-2023} §6.3, (1d). -/
 def poss_r (T : Ty) : Prop :=
   ∃ p, ∃ a, ms.ext p T a
 
@@ -95,29 +95,29 @@ def poss_r (T : Ty) : Prop :=
 These quantify over types that occur in at least one possibility. -/
 
 /-- Inclusive necessary equivalence: T₁ ≈_i T₂ iff for all possibilities
-containing both, they have the same extension. Cooper (2023) §6.3, (2a). -/
+containing both, they have the same extension. @cite{cooper-2023} §6.3, (2a). -/
 def nec_equiv_i (T₁ T₂ : Ty) : Prop :=
   ∀ p, (∃ a, ms.ext p T₁ a) → (∃ a, ms.ext p T₂ a) →
     ms.ext p T₁ = ms.ext p T₂
 
 /-- Inclusive subtype: T₁ ⊑_i T₂ iff for all possibilities containing both,
-T₁'s extension ⊆ T₂'s. Cooper (2023) §6.3, (2b). -/
+T₁'s extension ⊆ T₂'s. @cite{cooper-2023} §6.3, (2b). -/
 def nec_subtype_i (T₁ T₂ : Ty) : Prop :=
   ∀ p, (∃ a, ms.ext p T₁ a) → (∃ a, ms.ext p T₂ a) →
     ∀ a, ms.ext p T₁ a → ms.ext p T₂ a
 
 /-- Inclusive necessity: T is necessary iff it has witnesses in all
-possibilities that contain T. Cooper (2023) §6.3, (2c). -/
+possibilities that contain T. @cite{cooper-2023} §6.3, (2c). -/
 def nec_i (T : Ty) : Prop :=
   ∀ p, (∃ a, ms.ext p T a) → ∃ a, ms.ext p T a
 
 /-- Inclusive possibility: T is possible iff some possibility has T.
-Cooper (2023) §6.3, (2d). -/
+@cite{cooper-2023} §6.3, (2d). -/
 def poss_i (T : Ty) : Prop :=
   ∃ p, ∃ a, ms.ext p T a
 
-/-- Restrictive ⊑_r entails inclusive ⊑_i. Cooper (2023) §6.3, paragraph
-after (2): "if any of the restrictive definitions holds ... then the
+/-- Restrictive ⊑_r entails inclusive ⊑_i. @cite{cooper-2023} §6.3, paragraph
+after (2): "if any of the restrictive definitions holds... then the
 corresponding inclusive definition will also hold." -/
 theorem restrictive_subtype_implies_inclusive (T₁ T₂ : Ty) :
     nec_subtype_r ms T₁ T₂ → nec_subtype_i ms T₁ T₂ :=
@@ -195,10 +195,10 @@ theorem ModalSystem.toAccessRel_refl {Ty Obj : Type} (ms : ModalSystem Ty Obj) (
 
 If T is a type, then □_r T, □_i T, ◇_r T, ◇_i T are types.
 □T is non-empty iff T is necessary; ◇T is non-empty iff T is possible.
-Cooper (2023) §6.4, (5)–(11). -/
+@cite{cooper-2023} §6.4, (5)–(11). -/
 
 /-- Box type (necessity): □T is inhabited iff T is necessary in the modal system.
-Cooper (2023) §6.4, (5)–(7). A witness of □T is a proof that T has
+@cite{cooper-2023} §6.4, (5)–(7). A witness of □T is a proof that T has
 witnesses in all (restrictive) or relevant (inclusive) possibilities. -/
 def BoxR {Ty Obj : Type} (ms : ModalSystem Ty Obj) (T : Ty) : Prop :=
   nec_r ms T
@@ -207,7 +207,7 @@ def BoxI {Ty Obj : Type} (ms : ModalSystem Ty Obj) (T : Ty) : Prop :=
   nec_i ms T
 
 /-- Diamond type (possibility): ◇T is inhabited iff T is possible.
-Cooper (2023) §6.4, (5), (9). -/
+@cite{cooper-2023} §6.4, (5), (9). -/
 def DiamondR {Ty Obj : Type} (ms : ModalSystem Ty Obj) (T : Ty) : Prop :=
   poss_r ms T
 
@@ -236,11 +236,11 @@ A topos maps situations (of a background type) to types (the foreground).
 Topoi replace accessibility relations between possible worlds: they encode
 rules (epistemic, deontic) that license inferences from situations to types.
 
-Cooper (2023) §6.4, (20): τ : Topos has bg : Type and fg : (bg → Type).
+@cite{cooper-2023} §6.4, (20): τ : Topos has bg : Type and fg : (bg → Type).
 τ(s) = τ.fg(s). -/
 
 /-- A topos: a dependent type mapping background situations to foreground types.
-Cooper (2023) §6.4, (20): if τ : Topos, then τ has bg : Type, fg : (bg → Type).
+@cite{cooper-2023} §6.4, (20): if τ : Topos, then τ has bg : Type, fg : (bg → Type).
 Topoi replace Kratzer's conversational backgrounds (modal base + ordering source)
 in the analysis of modality. -/
 structure Topos where
@@ -250,7 +250,7 @@ structure Topos where
   fg : bg → Type
 
 /-- Apply a topos to a background situation: τ(s) = τ.fg(s).
-Cooper (2023) §6.4: τ(s) to represent τ.fg(s). -/
+@cite{cooper-2023} §6.4: τ(s) to represent τ.fg(s). -/
 def Topos.apply (τ : Topos) (s : τ.bg) : Type := τ.fg s
 
 /-- `Topos` and `Parametric Type` have identical structure: both are
@@ -264,7 +264,7 @@ def Topos.ofParametric (p : Parametric Type) : Topos :=
   ⟨p.Bg, p.fg⟩
 
 /-- Topos ≃ Parametric Type: the two structures are equivalent.
-Cooper's (2023) §6.4 topoi are structurally the same as the §4.3
+@cite{cooper-2023}'s §6.4 topoi are structurally the same as the §4.3
 parametric content pattern when Content = Type. -/
 def toposEquivParametric : Topos ≃ Parametric Type where
   toFun := Topos.toParametric
@@ -280,7 +280,7 @@ Topoi are used with action rules:
 
 /-- Epistemic use of a topos: from a situation of the background type,
 infer the existence of something of the foreground type.
-Cooper (2023) §6.4, (21). -/
+@cite{cooper-2023} §6.4, (21). -/
 def Topos.epistemicInference (τ : Topos) (s : τ.bg) : Prop :=
   Nonempty (τ.fg s)
 
@@ -299,15 +299,15 @@ The final version of nec/poss uses topoi instead of an "ideal" type:
   iff s :_p B, B ⊑ τ.bg, and τ(s) is compatible with T -/
 
 /-- Subtyping in a modal type system: B ⊑_T T means all witnesses of B
-are also witnesses of T. Cooper (2023) §6.4: B ⊑_𝕋 τ.bg. -/
+are also witnesses of T. @cite{cooper-2023} §6.4: B ⊑_𝕋 τ.bg. -/
 abbrev modalSubtype (B T : Type) : Prop := ∀ (_ : B), Nonempty T
 
 /-- Compatibility: T₁ ⊤⊤ T₂ iff their meet is non-empty — there exists
-something of both types simultaneously. Cooper (2023) §6.4, (17). -/
+something of both types simultaneously. @cite{cooper-2023} §6.4, (17). -/
 def Compatible (T₁ T₂ : Type) : Prop := Nonempty (T₁ × T₂)
 
 /-- Witness condition for necessity with topoi (version 4).
-Cooper (2023) §6.4, (23):
+@cite{cooper-2023} §6.4, (23):
   s :_p nec(T, B, τ) iff s :_p B, B ⊑_𝕋 τ.bg, and τ(s) ⊑_𝕋 T.
 
 We model this as: given a background witness `s`, a proof that the
@@ -322,7 +322,7 @@ structure NecTopos (T : Type) (B : Type) (τ : Topos) where
   sub : τ.fg (coerce sit) → T
 
 /-- Witness condition for possibility with topoi (version 4).
-Cooper (2023) §6.4, (24):
+@cite{cooper-2023} §6.4, (24):
   s :_p poss(T, B, τ) iff s :_p B, B ⊑_𝕋 τ.bg, and τ(s) ⊤⊤ T.
 Possibility requires compatibility rather than subtyping. -/
 structure PossTopos (T : Type) (B : Type) (τ : Topos) where
@@ -349,7 +349,7 @@ Cooper's topoi parallel Kratzer's conversational backgrounds:
 
 Both serve as the contextual parameter determining modal flavor.
 Cooper explicitly notes (§6.4): "Topoi replace accessibility relations
-between possible worlds ... encoding rules that license inferences."
+between possible worlds... encoding rules that license inferences."
 
 The structural correspondence:
 - Topos bg ↔ conversational background's domain (situations ↔ worlds)
@@ -378,7 +378,7 @@ theorem Topos.nec_implies_poss (τ : Topos) (hne : Nonempty τ.bg)
 /-! ### Broccoli example (§6.4, (25)–(31))
 
 "Mary should eat her broccoli" — deontic (children must eat food on their
-plate) vs bouletic (children eat food they love). Cooper (2023) §6.4.
+plate) vs bouletic (children eat food they love). @cite{cooper-2023} §6.4.
 
 Two topoi τ₁ and τ₂ with the same foreground (eat) but different backgrounds:
 - τ₁ (deontic): child has food on plate → child eats that food
@@ -404,7 +404,7 @@ def love_ : BrocInd → BrocInd → Prop := λ y x => y = .mary ∧ x = .broccol
 def eat_ : BrocInd → BrocInd → Prop := λ y x => y = .mary ∧ x = .broccoli
 
 /-- The base situation type B for "Mary should eat her broccoli".
-Cooper (2023) §6.4, (26):
+@cite{cooper-2023} §6.4, (26):
   [x=b:Ind, c₁:broccoli(x), y=m:Ind, c₂:child(y), z=p:Ind,
    c₃:plate(z), e₁:have(y,z), e₂:on(x,z), e₃:love(y,x)] -/
 structure BroccoliBase where
@@ -419,7 +419,7 @@ structure BroccoliBase where
   e₃ : love_ y x
 
 /-- The background type for τ₁ (deontic): food on child's plate.
-Cooper (2023) §6.4, (28a) background. -/
+@cite{cooper-2023} §6.4, (28a) background. -/
 structure DeonticBg where
   x : BrocInd
   c₁ : isFood x
@@ -431,7 +431,7 @@ structure DeonticBg where
   e₂ : on_ x z
 
 /-- The background type for τ₂ (bouletic): food the child loves.
-Cooper (2023) §6.4, (28b) background. -/
+@cite{cooper-2023} §6.4, (28b) background. -/
 structure BouleticBg where
   x : BrocInd
   c₁ : isFood x
@@ -443,12 +443,12 @@ structure BouleticBg where
 def eatType (y x : BrocInd) : Type := PLift (eat_ y x)
 
 /-- Topos τ₁ (deontic): children eat food on their plate.
-Cooper (2023) §6.4, (28a). -/
+@cite{cooper-2023} §6.4, (28a). -/
 def τ_deontic : Topos :=
   ⟨DeonticBg, λ r => eatType r.y r.x⟩
 
 /-- Topos τ₂ (bouletic): children eat food they love.
-Cooper (2023) §6.4, (28b). -/
+@cite{cooper-2023} §6.4, (28b). -/
 def τ_bouletic : Topos :=
   ⟨BouleticBg, λ r => eatType r.y r.x⟩
 
@@ -476,14 +476,14 @@ def bouleticBg : BouleticBg where
   e₃ := ⟨rfl, rfl⟩
 
 /-- Deontic reading: nec([e:eat(m,b)], T_broc, τ₁).
-Cooper (2023) §6.4, (29a): the deontic topos makes eating necessary. -/
+@cite{cooper-2023} §6.4, (29a): the deontic topos makes eating necessary. -/
 def broccoliDeonticNec : NecTopos (PLift (eat_ .mary .broccoli)) BroccoliBase τ_deontic where
   sit := brocBase
   coerce := λ b => ⟨b.x, b.hx, b.y, b.hy, b.z, b.hz, b.e₁, b.e₂⟩
   sub := id
 
 /-- Bouletic reading: nec([e:eat(m,b)], T_broc, τ₂).
-Cooper (2023) §6.4, (29b): the bouletic topos also makes eating necessary. -/
+@cite{cooper-2023} §6.4, (29b): the bouletic topos also makes eating necessary. -/
 def broccolicBouleticNec : NecTopos (PLift (eat_ .mary .broccoli)) BroccoliBase τ_bouletic where
   sit := brocBase
   coerce := λ b => ⟨b.x, b.hx, b.y, b.hy, b.e₃⟩
@@ -506,15 +506,15 @@ Propositions as types (not as sets of possible worlds). Two notions:
 - **Austinian proposition**: a pair ⟨s, T⟩ where s is a situation and T is a type;
   true iff s : T
 
-Cooper (2023) §6.5, following Austin (1961) and Barwise (1989). -/
+@cite{cooper-2023} §6.5, following @cite{austin-1961} and @cite{barwise-1989}. -/
 
 /-- A Russellian proposition: identified with its type.
-True iff the type is inhabited. Cooper (2023) §6.5. -/
+True iff the type is inhabited. @cite{cooper-2023} §6.5. -/
 abbrev RussellianProp := Type
 
 /-- An Austinian proposition: a situation–type pair.
 True iff the situation is of the type.
-Cooper (2023) §6.5, following Barwise & Perry (1983). -/
+@cite{cooper-2023} §6.5, following @cite{barwise-perry-1983}. -/
 structure AustinianProp where
   /-- The type (situation type) -/
   SitType : Type
@@ -527,7 +527,7 @@ of the pair IS truth — the constructive reading. -/
 def AustinianProp.isTrue (p : AustinianProp) : Prop := Nonempty p.SitType
 
 /-- If a Russellian proposition is true, the corresponding Austinian is too.
-Cooper (2023) §6.5: "if a Russellian proposition containing the same type
+@cite{cooper-2023} §6.5: "if a Russellian proposition containing the same type
 is true, then there is an Austinian proposition which is true." -/
 theorem russellian_true_implies_austinian {T : Type} (h : IsTrue T) :
     ∃ p : AustinianProp, p.SitType = T :=
@@ -540,17 +540,17 @@ Two kinds of subtyping:
 - **Postulated**: added via meaning postulates (e.g., sell(a,b,c) ⊑ buy(c,b,a))
 
 Structural subtyping is hardwired; postulated subtyping is learned/acquired.
-Cooper (2023) §6.5, (50). -/
+@cite{cooper-2023} §6.5, (50). -/
 
 /-- Subtyping kind: structural (hardwired) vs postulated (learned).
-Cooper (2023) §6.5, (50). -/
+@cite{cooper-2023} §6.5, (50). -/
 inductive SubtypingKind where
   | structural  -- follows from type structure alone (e.g., more fields)
   | postulated  -- added via meaning postulate (e.g., buy/sell equivalence)
   deriving Repr, DecidableEq
 
 /-- A meaning postulate: a declared subtyping relationship between types.
-Cooper (2023) §6.5, (50b): sell(a,b,c) ⊑ buy(c,b,a) is a postulated
+@cite{cooper-2023} §6.5, (50b): sell(a,b,c) ⊑ buy(c,b,a) is a postulated
 subtyping that does not follow from the structure of the types. -/
 structure MeaningPostulate (T₁ T₂ : Type) where
   /-- The postulated coercion -/
@@ -576,11 +576,11 @@ structure BuyEvent (E : Type) where
   seller : E
 
 /-- Structural subtyping example: a record with more fields subtypes one with fewer.
-Cooper (2023) §6.5, (50a): [ℓ₁:T₁, ℓ₂:T₂] ⊑ [ℓ₁:T₁]. -/
+@cite{cooper-2023} §6.5, (50a): [ℓ₁:T₁, ℓ₂:T₂] ⊑ [ℓ₁:T₁]. -/
 def structuralSubtype_example {T₁ T₂ : Type} : (T₁ × T₂) → T₁ := Prod.fst
 
 /-- Postulated subtyping: sell(a,b,c) ⊑ buy(c,b,a).
-Cooper (2023) §6.5, (50b). -/
+@cite{cooper-2023} §6.5, (50b). -/
 def sellBuyPostulate (E : Type) : MeaningPostulate (SellEvent E) (BuyEvent E) where
   coerce := λ s => ⟨s.buyer, s.thing, s.seller⟩
 
@@ -599,30 +599,30 @@ Propositional attitudes are analyzed via matching against long-term memory.
 believe(a, T) is non-empty iff there exists T' in a's long-term memory such
 that T' ⊑_∼ T (subtype modulo relabelling).
 
-Cooper (2023) §6.5, (40):
+@cite{cooper-2023} §6.5, (40):
   e : believe(a, T) iff e : ltm(a, T') and T' ⊑_∼ T -/
 
 /-- An agent's long-term memory: maps agents to record types (their stored beliefs).
-Cooper (2023) §6.5, p.257: "r is a's total information state, then a's
+@cite{cooper-2023} §6.5, p.257: "r is a's total information state, then a's
 long-term memory will be r.ltm." -/
 structure LTM (Agent : Type) where
   /-- The type representing the agent's long-term memory -/
   memType : Agent → Type
 
 /-- Subtyping modulo relabelling: T₁ ⊑_∼ T₂ iff there is a relabelling η
-such that T₁ ⊑ [T₂]_η. Cooper (2023) §6.5, (39).
-We model this abstractly as the existence of a coercion.  -/
+such that T₁ ⊑ [T₂]_η. @cite{cooper-2023} §6.5, (39).
+We model this abstractly as the existence of a coercion. -/
 def subtypeModRelabel (T₁ T₂ : Type) : Prop :=
   Nonempty (T₁ → T₂)
 
 /-- Witness condition for believe(a, T): version (40).
-Cooper (2023) §6.5, (40):
+@cite{cooper-2023} §6.5, (40):
   e : believe(a, T) iff e : ltm(a, T') and T' ⊑_∼ T. -/
 def believe {Agent : Type} (ltm : LTM Agent) (a : Agent) (T : Type) : Prop :=
   subtypeModRelabel (ltm.memType a) T
 
 /-- Knowledge is veridical belief: know(a, T) requires believe(a, T) AND T true.
-This is a standard characterization; Cooper (2023) does not give a full
+This is a standard characterization; @cite{cooper-2023} does not give a full
 definition of 'know' but discusses the connection. -/
 def know {Agent : Type} (ltm : LTM Agent) (a : Agent) (T : Type) : Prop :=
   believe ltm a T ∧ IsTrue T
@@ -638,7 +638,7 @@ theorem know_implies_true {Agent : Type} {ltm : LTM Agent} {a : Agent} {T : Type
   And.right
 
 /-- Belief is closed under (modulo-relabelling) subtyping.
-Cooper (2023) §6.5, (41): "for any relabelling η of T,
+@cite{cooper-2023} §6.5, (41): "for any relabelling η of T,
 s : believe(a, [T]_η)". -/
 theorem believe_closed_under_subtype {Agent : Type} {ltm : LTM Agent}
     {a : Agent} {T₁ T₂ : Type} (hb : believe ltm a T₁)
@@ -676,14 +676,14 @@ A point of view on a type T is a type T' that shares some labels/fields
 with T but provides alternative field types. Used for the Hesperus/Phosphorus
 puzzle and for intensional transitive verbs.
 
-Cooper (2023) §6.5, (55): pov(T₁, T₂) — T₁ is a point of view on T₂.
+@cite{cooper-2023} §6.5, (55): pov(T₁, T₂) — T₁ is a point of view on T₂.
 The key property: a situation can be described from different points of view.
 
 We model this as: T₁ is a point of view on T₂ if there is a way to
 "merge" T₁ with T₂ (asymmetric merge). -/
 
 /-- A point of view: T₁ is an alternative perspective on T₂.
-Cooper (2023) §6.5, (55): pov(T₁, T₂) — T₁ shares labels with T₂
+@cite{cooper-2023} §6.5, (55): pov(T₁, T₂) — T₁ shares labels with T₂
 but provides alternative field types.
 The `merge` field represents asymmetric merge (⊕) of T₂ with T₁. -/
 structure PointOfView (T₁ T₂ : Type) where
@@ -693,7 +693,7 @@ structure PointOfView (T₁ T₂ : Type) where
   project : Merged → T₂
 
 /-- Extended membership: a :_E T iff a : T or some component of a is of type T.
-Cooper (2023) §6.5, (57): a :_E T iff either a : T or for some b ε a, b : T. -/
+@cite{cooper-2023} §6.5, (57): a :_E T iff either a : T or for some b ε a, b : T. -/
 def extMember {T : Type} (_a : T) : Prop := True
 
 def extMemberVia {Outer Inner : Type} (a : Outer) (extract : Outer → Inner)
@@ -701,7 +701,7 @@ def extMemberVia {Outer Inner : Type} (a : Outer) (extract : Outer → Inner)
 
 /-! ### Revised believe with points of view (§6.5, (58))
 
-Cooper (2023) §6.5, (58) revises the witness condition for believe to
+@cite{cooper-2023} §6.5, (58) revises the witness condition for believe to
 account for points of view:
   e : believe(a, T) if
     e : ltm(a, T') and T' ⊑_∼ T
@@ -709,7 +709,7 @@ account for points of view:
     e :_E believe(a, T₁) and e :_E pov(T₂, T₁) and T₁[⊕]T₂ ⊑_∼ T -/
 
 /-- Revised believe with point-of-view support.
-Cooper (2023) §6.5, (58). -/
+@cite{cooper-2023} §6.5, (58). -/
 def believeWithPov {Agent : Type} (ltm : LTM Agent) (a : Agent) (T : Type) : Prop :=
   -- Direct case: ltm matches T
   believe ltm a T ∨
@@ -739,7 +739,7 @@ inductive CelestialBody where
   deriving Repr, DecidableEq
 
 /-- Ancient's LTM type before learning Hesperus = Phosphorus.
-Cooper (2023) §6.5, (52): separate entries for Hesperus and Phosphorus. -/
+@cite{cooper-2023} §6.5, (52): separate entries for Hesperus and Phosphorus. -/
 structure AncientsLTM_Before where
   hesperus : CelestialBody
   hesperus_rises_evening : hesperus = .venus  -- rises in the evening
@@ -747,7 +747,7 @@ structure AncientsLTM_Before where
   phosphorus_rises_morning : phosphorus = .venus  -- rises in the morning
 
 /-- Ancient's LTM type after learning they are the same.
-Cooper (2023) §6.5, (53): entries unified with identity constraint. -/
+@cite{cooper-2023} §6.5, (53): entries unified with identity constraint. -/
 structure AncientsLTM_After extends AncientsLTM_Before where
   same : hesperus = phosphorus
 
@@ -783,9 +783,9 @@ Key concepts:
   (a successful search is a finding) -/
 
 /-- An intensional transitive verb: takes an individual and a quantifier.
-Cooper (2023) §6.5, (64):
+@cite{cooper-2023} §6.5, (64):
   SemTransVerb(T_bg, p) for arity ⟨Ind, Quant⟩ =
-  'λc:T_bg . λQ:Quant . λr:[x:Ind] . [e : p(r.x, Q)]'
+  'λc:T_bg. λQ:Quant. λr:[x:Ind]. [e : p(r.x, Q)]'
 
 The p† variant is the extensional "dagger" form relating to individuals.
 -/
@@ -797,12 +797,12 @@ structure IntensionalTV (E : Type) where
 
 /-- Meaning postulate (65) for extensional transitive verbs:
   p(a, Q) ≈ Q(λr:[x:Ind].[e:p†(a,r.x)])
-Cooper (2023) §6.5, (65). -/
+@cite{cooper-2023} §6.5, (65). -/
 def extensionalMP {E : Type} (itv : IntensionalTV E) (a : E) (Q : Quant E) : Prop :=
   Nonempty (itv.pred a Q ≃ Q (λ x => itv.dagger a x))
 
 /-- Success postulate (66): a successful search is a finding.
-Cooper (2023) §6.5, (66):
+@cite{cooper-2023} §6.5, (66):
   successful(seek(a, Q)) ⊑_𝕋 find(a, Q). -/
 structure SuccessPostulate (E : Type) where
   seek : IntensionalTV E
@@ -818,13 +818,13 @@ Worship requires:
 1. Religious belief (intentionality): the subject believes in the deity
 2. Specificity: the religious belief type is a subtype of the quantified type
 
-Cooper (2023) §6.5, (75):
+@cite{cooper-2023} §6.5, (75):
   e : worship(a, Q) iff for some T,
     (1) e : rbelieve(a, T) — a has T as a religious belief
     (2) T ⊑_∼ Q(λr:[x:Ind].worship†(a, r.x)) -/
 
 /-- Religious belief: a distinguished part of long-term memory.
-Cooper (2023) §6.5, (72)–(74). -/
+@cite{cooper-2023} §6.5, (72)–(74). -/
 def rbelieve {Agent : Type} (_ltm : LTM Agent)
     (rbelType : Agent → Type) (a : Agent) (T : Type) : Prop :=
   Nonempty (rbelType a → T)
@@ -847,11 +847,11 @@ The analysis of want uses desire states (parallel to LTM).
   want†(a, T) is non-empty iff a's desires include T
   (the desire type is a subtype of T, modulo relabelling).
 
-Cooper (2023) §6.5, (90)–(92): want_P and want_Q related to want†;
+@cite{cooper-2023} §6.5, (90)–(92): want_P and want_Q related to want†;
 witness condition uses des(a, T') and T' ⊑_∼ T. -/
 
 /-- An agent's full information state: long-term memory, religious beliefs, desires.
-Cooper (2023) §6.5, (91). Distinct from the Ch4 TotalInfoState which
+@cite{cooper-2023} §6.5, (91). Distinct from the Ch4 TotalInfoState which
 pairs memory with a dialogue gameboard. -/
 structure AgentInfoState (Agent : Type) where
   /-- Long-term memory type for each agent -/
@@ -862,12 +862,12 @@ structure AgentInfoState (Agent : Type) where
   des : Agent → Type
 
 /-- Desire predicate: des(a, T) iff a's desire state subtypes T.
-Cooper (2023) §6.5: "e : des(a, T) just in case T is a's desires in e." -/
+@cite{cooper-2023} §6.5: "e : des(a, T) just in case T is a's desires in e." -/
 def desire {Agent : Type} (ais : AgentInfoState Agent) (a : Agent) (T : Type) : Prop :=
   subtypeModRelabel (ais.des a) T
 
 /-- Witness condition for want†(a, T).
-Cooper (2023) §6.5, (92):
+@cite{cooper-2023} §6.5, (92):
   e : want†(a, T) if for some T',
     e : des(a, T') and T' ⊑_∼ T. -/
 def wantDagger {Agent : Type} (ais : AgentInfoState Agent)
@@ -886,7 +886,7 @@ def wantWithPov {Agent : Type} (ais : AgentInfoState Agent)
     Nonempty (PointOfView T₂ T₁) ∧ subtypeModRelabel T₂ T
 
 /-- Book as an intensional verb requiring existence.
-Cooper (2023) §6.5, (87):
+@cite{cooper-2023} §6.5, (87):
   book(a, Q) ⊑_𝕋 Q(λr:[x:Ind].[e:be(r.x)])
 This ensures that if a books Q, there is something that exists (be).
 Unlike seek, book implies existence but not specificity. -/

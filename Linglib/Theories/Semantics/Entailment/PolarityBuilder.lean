@@ -4,24 +4,23 @@ import Linglib.Fragments.English.PolarityItems
 
 /-!
 # Polarity Builder — Derived NPI Licensing from Entailment Signatures
-@cite{deni-chemla-2021} @cite{von-fintel-1999} @cite{icard-2012}
+@cite{deni-chemla-2021} @cite{von-fintel-1999} @cite{icard-2012} @cite{zwarts-1996}
 
 Bridge between the theory-neutral Fragment (`DEStrength`) and the formal
 monotonicity hierarchy (`IsDE`, `IsAntiAdditive`, `IsAntiMorphic`, `IsStrawsonDE`).
 
 ## Design principle
 
-A `MonotonicityProfile` bundles a context with its Icard (2012) projectivity
+A `MonotonicityProfile` bundles a context with its @cite{icard-2012} projectivity
 signature (`EntailmentSig`). All DE/AA/AM classification is **derived** from the
 signature via `EntailmentSig.toDEStrength` — no independent Bool flags. Only
-`isStrawsonDE` remains independent, since Strawson-DE (von Fintel 1999) is
+`isStrawsonDE` remains independent, since Strawson-DE is
 not captured by the standard entailment signature lattice.
 
 ## Key result
 
 "Only" has `strongestLevel = none` (not classically DE) yet
-`licensesWeakNPI = true` (Strawson-DE suffices). This is von Fintel's (1999)
-central insight, derived not stipulated.
+`licensesWeakNPI = true` (Strawson-DE suffices). This is @cite{von-fintel-1999}'s central insight, derived not stipulated.
 
 -/
 
@@ -39,19 +38,18 @@ open Fragments.English.PolarityItems
 -- ============================================================================
 
 /--
-A context function bundled with its Icard (2012) entailment signature.
+A context function bundled with its @cite{icard-2012} entailment signature.
 
 The `entSig` is the single source of truth for DE/AA/AM classification:
 Bool flags (`isDE`, `isAA`, `isAM`) are derived from the signature via
 `EntailmentSig.toDEStrength`, not stored independently.
 
-`isStrawsonDE` remains an independent flag because Strawson-DE (von Fintel
-1999) is not captured by the standard entailment signature lattice.
+`isStrawsonDE` remains an independent flag because Strawson-DE is not captured by the standard entailment signature lattice.
 -/
 structure MonotonicityProfile where
   /-- Name for documentation -/
   name : String
-  /-- Icard (2012) entailment signature -/
+  /-- @cite{icard-2012} entailment signature -/
   entSig : EntailmentSig
   /-- Is Strawson-DE? (independent of entSig) -/
   isStrawsonDE : Bool := false
@@ -91,7 +89,7 @@ def MonotonicityProfile.isAtLeastStrawsonDE (p : MonotonicityProfile) : Bool :=
 /--
 Derived: licenses weak NPIs.
 
-Requires at least DE, or Strawson-DE (von Fintel 1999).
+Requires at least DE, or Strawson-DE.
 This is the key insight: Strawson-DE suffices for weak NPI licensing.
 -/
 def MonotonicityProfile.licensesWeakNPI (p : MonotonicityProfile) : Bool :=
@@ -100,7 +98,7 @@ def MonotonicityProfile.licensesWeakNPI (p : MonotonicityProfile) : Bool :=
 /--
 Derived: licenses strong NPIs.
 
-Requires anti-additive (Zwarts 1996). Strawson-DE and plain DE
+Requires anti-additive. Strawson-DE and plain DE
 are insufficient for strong NPIs like "lift a finger".
 -/
 def MonotonicityProfile.licensesStrongNPI (p : MonotonicityProfile) : Bool :=
@@ -418,22 +416,22 @@ the expected values for each profile.
 #guard onlyProfile.isAA == false
 #guard onlyProfile.isDE == false
 
-/-- Negation: ◇⊟ → .downward, strongest = .antiMorphic -/
+/-- Negation: ◇⊟ →.downward, strongest =.antiMorphic -/
 theorem negation_entSig_agrees :
     negationProfile.contextPolarity = .downward ∧
     negationProfile.strongestLevel = some .antiMorphic := ⟨rfl, rfl⟩
 
-/-- "No student": ◇ → .downward, strongest = .antiAdditive -/
+/-- "No student": ◇ →.downward, strongest =.antiAdditive -/
 theorem noStudent_entSig_agrees :
     noStudentProfile.contextPolarity = .downward ∧
     noStudentProfile.strongestLevel = some .antiAdditive := ⟨rfl, rfl⟩
 
-/-- "At most 2": − → .downward, strongest = .weak DE -/
+/-- "At most 2": − →.downward, strongest =.weak DE -/
 theorem atMost2_entSig_agrees :
     atMost2Profile.contextPolarity = .downward ∧
     atMost2Profile.strongestLevel = some .weak := ⟨rfl, rfl⟩
 
-/-- "Only": mono → .upward (not classically DE; Strawson-DE only) -/
+/-- "Only": mono →.upward (not classically DE; Strawson-DE only) -/
 theorem only_entSig_agrees :
     onlyProfile.contextPolarity = .upward ∧
     onlyProfile.strongestLevel = none := ⟨rfl, rfl⟩

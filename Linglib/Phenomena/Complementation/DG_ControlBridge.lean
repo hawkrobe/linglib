@@ -11,13 +11,12 @@ import Linglib.Phenomena.Complementation.Typology
 Derivation chain from DG enhanced dependency analysis to complementation
 phenomena, grounded in the English Fragment lexicon.
 
-## Key Insight (Osborne 2019)
+## Key Insight
 
 In DG, control and raising verbs both take xcomp complements. The basic tree
 enforces unique heads, so the controlled/raised subject appears as a dependent
 of the matrix verb ONLY. The predicate-argument relation to the embedded verb
-is **lost** in the basic tree but **recovered** in the enhanced dependency graph
-(de Marneffe & Nivre 2019).
+is **lost** in the basic tree but **recovered** in the enhanced dependency graph.
 
 ## Three Control Types
 
@@ -30,17 +29,17 @@ is **lost** in the basic tree but **recovered** in the enhanced dependency graph
 ## Derivation Chain
 
 ```
-Fragment VerbEntry.controlType       ← lexical data (manage=.subjectControl, etc.)
+Fragment VerbEntry.controlType ← lexical data (manage=.subjectControl, etc.)
     ↓
-DG basic tree (xcomp relation)      ← subject attached to matrix verb only
+DG basic tree (xcomp relation) ← subject attached to matrix verb only
     ↓
-DG enhanced graph                   ← shared nsubj edge added
+DG enhanced graph ← shared nsubj edge added
     ↓
-hasUnrepresentedArg = true           ← basic tree loses embedded subject
+hasUnrepresentedArg = true ← basic tree loses embedded subject
     ↓
-classifyEnhancement = .controlSubject ← enhanced edge classified
+classifyEnhancement =.controlSubject ← enhanced edge classified
     ↓
-CTPDatum.hasEquiDeletion             ← matches Noonan's (2007) observations
+CTPDatum.hasEquiDeletion ← matches @cite{noonan-2007}'s observations
 ```
 
 -/
@@ -258,8 +257,8 @@ open Fragments.English.Predicates.Verbal (manage persuade want hope stop start c
     2. DG enhanced dependencies (structural analysis)
     3. CTPDatum hasEquiDeletion (typological observation)
 
-    Note: "hope" has complementType = .finiteClause (primary frame) but
-    altComplementType = .infinitival with altControlType = .subjectControl.
+    Note: "hope" has complementType =.finiteClause (primary frame) but
+    altComplementType =.infinitival with altControlType =.subjectControl.
     The equi-deletion corresponds to the infinitival frame. -/
 theorem control_predicts_equi_deletion :
     -- Fragment says these are control verbs
@@ -294,7 +293,7 @@ theorem seem_is_raising_not_ctp :
 /-- **Full control derivation chain**: from Fragment lexicon through DG
     enhanced dependency analysis to complementation typology.
 
-    1. Fragment manage.controlType = .subjectControl ✓
+    1. Fragment manage.controlType =.subjectControl ✓
     2. Basic tree attaches John to manages only ✓
     3. Basic tree LOSES John as argument of sleep ✓
     4. Enhanced graph RECOVERS John as nsubj of sleep ✓
@@ -321,7 +320,7 @@ theorem control_derivation_chain :
 
 /-- **Full object control derivation chain**: persuade variant.
 
-    1. Fragment persuade.controlType = .objectControl ✓
+    1. Fragment persuade.controlType =.objectControl ✓
     2. Basic tree attaches Mary to persuaded only ✓
     3. Basic tree LOSES Mary as argument of run ✓
     4. Enhanced graph RECOVERS Mary as nsubj of run ✓

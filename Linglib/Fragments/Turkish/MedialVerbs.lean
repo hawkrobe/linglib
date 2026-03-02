@@ -19,7 +19,7 @@ verb), but some converbs allow tense or aspect marking.
 | -(y)ip | sequential 'and then, having done' | -(y)ip...(-madan) |
 | -(y)erek | manner/simultaneous 'by doing, while doing' | -meyerek |
 | -(y)ince | temporal/conditional 'when, once' | -meyince |
-| -ken | simultaneous 'while (in the state of)' | -mazken |
+| -ken | simultaneous 'while (in the state)' | -mazken |
 | -dikce | proportional 'as, the more...the more' | -medikce |
 | -meden | negative 'without doing' | (inherently negative) |
 | -casina | manner 'as if' | -mezcesine |
@@ -64,7 +64,7 @@ def ince : ConverbEntry :=
   { form := "-(y)ince", gloss := "when/once (temporal/conditional)"
     inherentlyNegative := false, negativeForm := some "-meyince" }
 
-/-- -ken: simultaneous 'while (in the state of)'.
+/-- -ken: simultaneous 'while (in the state)'.
     Attaches to the aorist or progressive stem. Marks ongoing state
     during the following event. -/
 def ken : ConverbEntry :=

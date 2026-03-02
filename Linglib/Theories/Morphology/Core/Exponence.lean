@@ -8,7 +8,7 @@ Concrete instantiations of `MorphRule` for functional categories.
 
 All rules that are purely formal (no semantic contribution) have
 `isVacuous := true`. Number marking on nouns is the exception:
-singular restricts to atoms, plural applies algebraic closure (Link 1983).
+singular restricts to atoms, plural applies algebraic closure.
 
 -/
 
@@ -171,7 +171,7 @@ namespace Core.Morphology.Number
 /-- Singular rule for nouns: adds atomicity condition.
 
     Semantics: `pred ↦ (λ x => pred x ∧ Atom x)`
-    This implements Link (1983): singular nouns denote atomic individuals. -/
+    This implements @cite{link-1983}: singular nouns denote atomic individuals. -/
 def singularNounRule {α : Type} (atomPred : α → Bool) :
     MorphRule (α → Bool) :=
   { category := .number

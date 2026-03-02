@@ -3,7 +3,7 @@ import Linglib.Core.Temporal.Tense
 import Linglib.Core.Context.Tower
 
 /-!
-# Percus (2000): Constraints on Situation Variables in Syntax @cite{percus-2000}
+# @cite{percus-2000}: Constraints on Situation Variables in Syntax @cite{percus-2000}
 @cite{heim-kratzer-1998} @cite{kratzer-1998} @cite{partee-1973}
 
 Formalizes Percus's theory of situation pronouns in LF. Every predicate
@@ -37,7 +37,7 @@ Situation assignments specialize `Core.VarAssignment` from `D = Time`
 (Partee's temporal variables) to `D = Situation W Time` (Percus's
 situation variables). The algebraic structure is identical:
 
-| Partee (1973)           | Percus (2000)                    |
+| @cite{partee-1973}           | @cite{percus-2000}                    |
 |-------------------------|----------------------------------|
 | `TemporalAssignment`    | `SituationAssignment`            |
 | `interpTense n g`       | `interpSitVar n g`               |
@@ -105,7 +105,7 @@ structure PredicateBinding where
   /-- The index of the closest c-commanding lambda-s binder -/
   closestBinderIndex : ℕ
 
-/-- Generalization X (Percus 2000, p. 183):
+/-- Generalization X:
 
     > The situation pronoun that a verb/predicate is associated with
     > must be bound by the minimal c-commanding situation binder.
@@ -171,7 +171,7 @@ def genXTowerWellFormed {C : Type*}
   ∀ p, p ∈ predicatePatterns → GenXAsTowerDepth p.2
 
 /-- Bridge: a PredicateBinding where sitVarIndex == closestBinderIndex
-    corresponds to GenXAsTowerDepth (depth = .local). Both express the
+    corresponds to GenXAsTowerDepth (depth =.local). Both express the
     same constraint: the predicate reads from the nearest binder.
 
     In PredicateBinding, the nearest binder is identified by index equality.

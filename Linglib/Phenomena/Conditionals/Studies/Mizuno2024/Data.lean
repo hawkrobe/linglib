@@ -1,8 +1,8 @@
 /-!
-# Mizuno (2024) — Crosslinguistic Data @cite{mizuno-2024}
+# @cite{mizuno-2024} — Crosslinguistic Data @cite{mizuno-2024}
 
 Theory-neutral crosslinguistic data on Anderson conditional strategies from
-Mizuno (2024) "Strategies for Anderson Conditionals", *Semantics and
+@cite{mizuno-2024} "Strategies for Anderson Conditionals", *Semantics and @cite{iatridou-2000}
 Pragmatics* 17(8): 1–14.
 
 ## Key Empirical Generalizations
@@ -16,7 +16,7 @@ Pragmatics* 17(8): 1–14.
 
 ## Data Sources
 
-- Examples (1)–(7) of Mizuno (2024)
+- Examples (1)–(7) of @cite{mizuno-2024}
 - Example (13a) for Mandarin
 - §4.2 for FLV availability data
 -/
@@ -35,7 +35,7 @@ for the Anderson reading. -/
 structure AndersonDatum where
   /-- Language name -/
   language : String
-  /-- Example number in Mizuno (2024) -/
+  /-- Example number in @cite{mizuno-2024} -/
   exampleNumber : String
   /-- Morphological form of the antecedent -/
   antecedentForm : String
@@ -66,7 +66,7 @@ structure FLVAvailabilityDatum where
 -- ════════════════════════════════════════════════════════════════
 
 /-- English Anderson conditional with X-marking (Mizuno 2024, ex. 1).
-    Anderson (1951): "If Jones had taken arsenic, he would have shown
+    @cite{anderson-1951}: "If Jones had taken arsenic, he would have shown
     exactly the symptoms he is actually showing."
 
     X-marking in antecedent (past perfect) + "actually" in consequent
@@ -179,18 +179,17 @@ def mandarin_xMarking : AndersonDatum where
 -- § FLV Availability Data
 -- ════════════════════════════════════════════════════════════════
 
-/-- English: X-marking available for FLV (Iatridou 2000). -/
+/-- English: X-marking available for FLV. -/
 def english_flv : FLVAvailabilityDatum where
   language := "English"
   xMarkingAvailable := true
 
-/-- Japanese: X-marking NOT available for FLV (Ogihara 2014,
-    Mizuno & Kaufmann 2019). -/
+/-- Japanese: X-marking NOT available for FLV. -/
 def japanese_flv : FLVAvailabilityDatum where
   language := "Japanese"
   xMarkingAvailable := false
 
-/-- Mandarin: X-marking NOT available for FLV (Mizuno 2024, §4.2). -/
+/-- Mandarin: X-marking NOT available for FLV. -/
 def mandarin_flv : FLVAvailabilityDatum where
   language := "Mandarin"
   xMarkingAvailable := false

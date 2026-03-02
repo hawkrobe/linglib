@@ -3,7 +3,7 @@ import Linglib.Fragments.Finnish.Case
 /-!
 # Finnish Infinitive System @cite{karlsson-2017}
 
-Finnish has **four productive infinitive forms** (Karlsson 2018, Ch. 10),
+Finnish has **four productive infinitive forms**,
 each built from the verb stem plus a characteristic marker and case suffix:
 
 | Infinitive | Marker | Case forms                               |
@@ -24,7 +24,7 @@ its five case forms correspond exactly to cells in the 3×2 local case matrix
 - adessive -malla = static + external
 
 The fifth, abessive -matta ('without V-ing'), comes from outside the local
-case matrix — abessive is a "marginal" case (Karlsson 2018, Ch. 13).
+case matrix — abessive is a "marginal" case.
 
 This structural parallel — the same case paradigm applying to both nouns
 and nonfinite verbs — is evidence that Finnish local cases are genuine
@@ -84,7 +84,7 @@ def inf3 : List InfForm :=
   , ⟨.iii, "abessive",  "-ma-ttA",  "without V-ing"⟩ ]
 
 /-- IV infinitive (MINEN-infinitive): verbal noun, nominative only.
-    "lukeminen" = 'reading' (the act of). -/
+    "lukeminen" = 'reading' (the act). -/
 def inf4 : List InfForm :=
   [ ⟨.iv, "nominative", "-minen", "the act of V-ing"⟩ ]
 

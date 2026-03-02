@@ -18,7 +18,7 @@ Major theoretical positions on vagueness.
 
 This is a theory-neutral characterization of what each position claims.
 
-Source: Keefe (2000), Williamson (1994)
+Source: @cite{keefe-2000}, @cite{williamson-1994}
 -/
 inductive VaguenessTheoryType where
   | epistemicism       -- Sharp boundaries exist but are unknowable
@@ -33,7 +33,7 @@ Data characterizing what each theory says about key phenomena.
 
 This allows us to track which theories predict which patterns.
 
-Source: Keefe (2000)
+Source: @cite{keefe-2000}
 -/
 structure TheoryPredictionProfile where
   theory : VaguenessTheoryType

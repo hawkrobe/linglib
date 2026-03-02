@@ -1,7 +1,7 @@
 import Linglib.Theories.Semantics.Lexical.Numeral.Polysemy
 
 /-!
-# Snyder (2026): Number Word Polysemy Data
+# @cite{snyder-2026}: Number Word Polysemy Data
 @cite{snyder-2026}
 
 Key example sentences from Snyder (2026, *L&P* 49:57–100) illustrating the

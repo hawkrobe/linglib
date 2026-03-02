@@ -3,7 +3,7 @@ import Linglib.Theories.Semantics.Dynamic.Systems.PIP.Basic
 /-!
 # PIP Connectives and Modal Operators
 
-@cite{keshet-abney-2024} @cite{frank-1997} @cite{kratzer-1991} @cite{veltman-1996}Dynamic encoding of PIP connectives (Keshet & Abney 2024):
+@cite{keshet-abney-2024} @cite{frank-1997} @cite{kratzer-1991} @cite{veltman-1996}Dynamic encoding of PIP connectives:
 - Conjunction, negation, disjunction (with label floating)
 - Labeled existential quantification
 - Modal operators (must, might, would) as world quantifiers
@@ -107,7 +107,7 @@ The core mechanism for description-based anaphora:
 
 The label α persists in the discourse state, surviving subsequent
 negation and modal operators. This is what enables:
-- Modal subordination: "A wolf might come in. It would eat you."
+- Modal subordination: "A wolf might come. It would eat you."
 - Bathroom sentences: "Either there's no bathroom, or it's upstairs."
 - Paycheck pronouns: "John spent his paycheck. Bill saved it."
 -/
@@ -157,8 +157,7 @@ Modal context expansion: adds accessible-world pairs to the context.
 
 Before evaluating the body of a modal, the context must include
 assignment-world pairs at accessible worlds. This mirrors the standard
-dynamic semantics treatment where modals shift the evaluation world
-(Veltman 1996, Frank 1997, Brasoveanu 2010): predicates inside the
+dynamic semantics treatment where modals shift the evaluation world: predicates inside the
 modal body are evaluated at accessible worlds, not just the evaluation world.
 
 Without expansion, a context filtered to a single evaluation world
@@ -189,7 +188,7 @@ Modal necessity (must): universal quantification over accessible worlds.
 
 The body is evaluated on an **expanded** context (via `modalExpand`) that
 includes pairs at all accessible worlds, mirroring PIP's world-subscripted
-predicates P_{w₁} (Veltman 1996, Frank 1997).
+predicates P_{w₁}.
 
 The world variable is **external**: quantified by the modal from outside
 the scope of any indefinites in φ. The individual variables introduced
@@ -312,7 +311,7 @@ Under a modal, the world variable is external and individual
 variables introduced by existentials are local.
 
   might(∃^α x. wolf(x) ∧ come-in(x))
-       ↑ external world    ↑ local x
+       ↑ external world ↑ local x
 
 This classification falls out from the scoping structure:
 - The modal quantifies over worlds from outside
@@ -328,7 +327,7 @@ Under a quantifier, both the bound variable and restrictor
 variable are local.
 
   every(∃x. farmer(x))(∃y. donkey(y) ∧ owns(x,y) → beats(x,y))
-       ↑ local x        ↑ local y
+       ↑ local x ↑ local y
 -/
 def quantifierBindings (boundVar restrictorVar : IVar) :
     List BoundVar :=

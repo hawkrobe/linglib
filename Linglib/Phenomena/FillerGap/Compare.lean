@@ -196,7 +196,7 @@ def fillerComplexityAdjunct : IslandManipulation :=
     differenceObserved := true
     significance := "t1(27)=3.484, p<0.01" }
 
-/-! ### MoS island manipulations (Lu, Pan & Degen 2025) -/
+/-! ### MoS island manipulations -/
 
 /-- Prosodic focus on embedded object in MoS islands (Experiments 1, 2a, 3b).
 Focus changes information structure without changing syntax or processing load. -/
@@ -332,9 +332,9 @@ theorem cnpc_acceptability_range :
 -- Connection to Sag 2010: Construction-Specific Islands
 -- ============================================================================
 
-/-! ### Sag's (2010) construction-based island analysis
+/-! ### @cite{hofmeister-sag-2010}'s construction-based island analysis
 
-Sag (2010, p.514) argues that island constraints are construction-specific
+@cite{hofmeister-sag-2010} argues that island constraints are construction-specific
 GAP restrictions, not universal Subjacency. This means:
 - The grammar **overgerates** (licenses extractions freely)
 - Construction-specific constraints (GAP restrictions) block some extractions
@@ -399,10 +399,10 @@ theorem complementary_coverage :
 1. **Filler complexity paradox** (H&S 2010): more complex wh-phrases *improve*
    island acceptability. Predicted by processing, not by competence or discourse.
 
-2. **Prosodic amelioration** (Lu et al. 2025): focus on embedded object
+2. **Prosodic amelioration**: focus on embedded object
    ameliorates MoS islands. Predicted by discourse, not by competence or processing.
 
-3. **Say+adverb replication** (Lu et al. 2025): adding manner adverbs to bridge
+3. **Say+adverb replication**: adding manner adverbs to bridge
    verb *say* creates new islands. Predicted by discourse alone.
 
 4. **Perfect complementarity**: processing (4/7) and discourse (3/7) cover
@@ -420,7 +420,7 @@ where processing also outperforms grammar-only accounts on gradient data.
 Both domains use `ProcessingModel.ProcessingProfile` with Pareto dominance
 for weight-free ordinal comparison.
 
-### Connection to Sag (2010)
+### Connection to @cite{hofmeister-sag-2010}
 
 Sag's F-G typology (`Phenomena.FillerGap.Studies.Sag2010`) identifies grammar-based
 islands (topicalization, exclamatives with `[GAP ⟨⟩]`). H&S 2010 covers
@@ -432,22 +432,22 @@ discourse-based islands (MoS). Together they provide a three-mechanism account.
 -- Connection to MoS Islands: A Third Type of Account
 -- ============================================================================
 
-/-! ### Manner-of-Speaking Islands (Lu, Pan & Degen 2025)
+/-! ### Manner-of-Speaking Islands
 
-Lu, Pan & Degen (2025) introduce a **discourse-based** account of island effects
+@cite{lu-degen-2025} introduce a **discourse-based** account of island effects
 that complements both competence and processing accounts. MoS islands arise from
 information-structural backgroundedness, not syntactic configuration or processing
 cost. This is a third mechanism alongside grammar-based and processing-based islands.
 
 The three sources are now tracked by `constraintSource` in Islands.Data:
-- `.syntactic` → competence grammar (Ross 1967, Chomsky 1973)
-- `.processing` → performance/memory (Hofmeister & Sag 2010)
-- `.discourse` → information structure (Lu, Pan & Degen 2025)
+- `.syntactic` → competence grammar
+- `.processing` → performance/memory
+- `.discourse` → information structure
 
 Together, these three mechanisms partition the space of island phenomena:
-1. Grammar-based: topicalization, exclamatives (Sag 2010)
+1. Grammar-based: topicalization, exclamatives
 2. Processing-based: CNPC, wh-islands (H&S 2010) — gradient with filler complexity
-3. Discourse-based: MoS complements (Lu et al. 2025) — gradient with prosodic focus -/
+3. Discourse-based: MoS complements — gradient with prosodic focus -/
 
 /-- MoS islands are discourse-sourced, distinct from syntactic/processing islands. -/
 theorem mos_distinct_from_traditional_islands :

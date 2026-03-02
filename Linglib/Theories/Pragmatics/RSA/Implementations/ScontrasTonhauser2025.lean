@@ -3,12 +3,12 @@ import Linglib.Core.Agent.BToM
 import Linglib.Theories.Semantics.Attitudes.Factivity
 
 /-!
-# Scontras & Tonhauser (2025) @cite{scontras-tonhauser-2025}
+# @cite{scontras-tonhauser-2025} @cite{scontras-tonhauser-2025}
 
 Projection emerges from RSA over speaker's private assumptions, not lexical
 presupposition. L1 infers what speaker takes for granted (dcS in F&B terms).
 
-This is a BToM model (Baker et al. 2017): L1 inverts S1's generative model
+This is a BToM model: L1 inverts S1's generative model
 to jointly infer the speaker's belief state and the world state.
 
 ## Factive Semantics
@@ -139,7 +139,7 @@ def worldPrior (pC : ℚ) : WorldState → ℚ
   | ⟨_, true⟩ => pC / 2
   | ⟨_, false⟩ => (1 - pC) / 2
 
-/-- Belief state prior following Section 4 of Scontras & Tonhauser (2025):
+/-- Belief state prior following Section 4 of @cite{scontras-tonhauser-2025}:
     - Knowledge of C is 4x as likely as knowledge of BEL
     - Full knowledge (singletons) is 0.5x as likely as knowledge of BEL
     - No beliefs (all) is 0.5x as likely as singletons
@@ -172,8 +172,7 @@ theorem assumesC_matches_generic : ∀ bs : BeliefState,
 open Core.BToM in
 /-- Classification of BeliefState in BToM terms.
 
-    The speaker's private assumptions are a mental state — what Baker et al.
-    (2017) call the agent's epistemic state. The L1 listener inverts S1's
+    The speaker's private assumptions are a mental state — what @cite{baker-jara-ettinger-saxe-tenenbaum-2017} call the agent's epistemic state. The L1 listener inverts S1's
     generative model to jointly infer this belief state and the world, making
     presupposition projection an instance of BToM observer inference. -/
 def beliefStateCategory : LatentCategory := .mental
@@ -182,7 +181,7 @@ open Core.BToM in
 /-- Classification of QUD in BToM terms.
 
     The QUD is intersubjective — maintained between speaker and listener.
-    This is Clark's (1996) shared state: both interlocutors track what
+    This is @cite{clark-1996}'s shared state: both interlocutors track what
     question is under discussion, and the speaker optimizes informativity
     with respect to it. -/
 def qudCategory : LatentCategory := .shared

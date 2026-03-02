@@ -3,10 +3,10 @@ import Linglib.Theories.Syntax.Minimalism.Formal.HeadMovement.Basic
 import Linglib.Phenomena.Constructions.ParticleVerbs.Data
 
 /-!
-# PVC — Small Clause Bridge (den Dikken 1995)
+# PVC — Small Clause Bridge
 
 @cite{dendikken-1995} @cite{baker-1988}Connects particle verb construction data to the SC predication analysis.
-Den Dikken (1995, Ch. 2) analyzes particles as P heads of small
+@cite{dendikken-1995} analyzes particles as P heads of small
 clauses: `V [SC DP Prt]`. The particle predicates a result
 state/location of the DP subject.
 
@@ -54,7 +54,7 @@ theorem particle_cat_matches_pred : SCPredCategory.toCat .P = Cat.P := rfl
 
 /-! ## §2. Particle incorporation (P-to-V head movement)
 
-Den Dikken (1995, Ch. 2): particle shift derived by P-to-V
+@cite{dendikken-1995}: particle shift derived by P-to-V
 incorporation. The particle head moves to V, forming a complex
 head `[V lift+up]`. This uses `formComplexLI` from
 `HeadMovement.Basic`, connecting PVCs to the head movement typology. -/

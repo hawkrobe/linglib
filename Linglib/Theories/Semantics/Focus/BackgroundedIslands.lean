@@ -3,18 +3,16 @@ import Linglib.Core.Discourse.InformationStructure
 
 /-!
 # Backgrounded Constituents Are Islands
-@cite{erteschik-shir-2007} @cite{goldberg-2013} @cite{kratzer-selkirk-2020} @cite{lu-degen-2025} @cite{roberts-2012}
+@cite{erteschik-shir-2007} @cite{goldberg-2013} @cite{kratzer-selkirk-2020} @cite{lu-degen-2025} @cite{roberts-2012} @cite{goldberg-2006}
 
 Formalization of the discourse-backgroundedness account of manner-of-speaking
-(MoS) island effects, following Lu, Pan & Degen (2025).
+(MoS) island effects, following @cite{lu-degen-2025}.
 
 ## Core Argument
 
-MoS verbs (whisper, shout, etc.) decompose into SAY + MANNER (Erteschik-Shir
-2007). The manner component activates a salient alternative set that addresses
-the QUD, foregrounding the verb and — by the single-QUD-at-a-time constraint
-(Roberts 1996, 2012) — backgrounding the complement. Backgrounded constituents
-resist wh-extraction (Goldberg 2006, 2013; Erteschik-Shir 1973), producing the
+MoS verbs (whisper, shout, etc.) decompose into SAY + MANNER. The manner component activates a salient alternative set that addresses
+the QUD, foregrounding the verb and — by the single-QUD-at-a-time constraint — backgrounding the complement. Backgrounded constituents
+resist wh-extraction, producing the
 island effect.
 
 ## Formal Strategy
@@ -41,13 +39,13 @@ open Core.InformationStructure
 
 namespace Semantics.Focus.BackgroundedIslands
 
-/-! ## §1. Verb Decomposition (Erteschik-Shir 2007)
+/-! ## §1. Verb Decomposition
 
 MoS verbs are lexically composed of a light verb SAY and a manner component:
 
     whisper = SAY + [whispering manner]
-    shout   = SAY + [shouting manner]
-    say     = SAY                        (no manner — bridge verb)
+    shout = SAY + [shouting manner]
+    say = SAY (no manner — bridge verb)
 
 The manner component is what makes MoS verbs lexically "heavier" and activates
 manner alternatives that can address the QUD. Bridge verbs like *say* lack this
@@ -56,7 +54,7 @@ component and so do not activate manner alternatives by default.
 
 /-- A manner-of-speaking component. The specific manner (whispering, shouting,
 etc.) is what generates the alternative set: {say in manner m₁, say in manner
-m₂, ...}. -/
+m₂,...}. -/
 structure MannerComponent where
   name : String
   deriving DecidableEq, Repr, BEq
@@ -272,8 +270,7 @@ We derive the island effect from the chain:
 Each step is proved, and the full chain is stated as a single theorem.
 -/
 
-/-- **The Backgroundedness Constraint on Extraction** (Goldberg 2006, 2013;
-Erteschik-Shir 1973, 1979; Kuno 1976, 1987):
+/-- **The Backgroundedness Constraint on Extraction**:
 
 Backgrounded constituents resist syntactic extraction. The more backgrounded
 a constituent, the less acceptable extraction from it.
@@ -292,8 +289,8 @@ complements, degrading extraction.
 Derivation chain:
 1. MoS verb has manner weight (lexical decomposition)
 2. Manner weight → default dimension is manner
-3. Manner dimension → complement status is .given (backgrounded)
-4. Backgrounded → extraction degraded (.given < .new)
+3. Manner dimension → complement status is.given (backgrounded)
+4. Backgrounded → extraction degraded (.given <.new)
 -/
 theorem mos_island_effect (v : VerbDecomp) (h : v.hasMannerWeight = true) :
     complementStatus (defaultDimension v) = .given := by
@@ -396,7 +393,7 @@ it manner weight, shifting the default QUD to manner and replicating the
 MoS island effect.
 
     "say softly" = say + manner adverb → manner weight → manner QUD → island
-    "say"        = say (no modifier)   → no manner weight → content QUD → no island
+    "say" = say (no modifier) → no manner weight → content QUD → no island
 
 This uniquely distinguishes the backgroundedness account:
 - Subjacency: same CP structure ± adverb → no contrast predicted
@@ -454,14 +451,11 @@ backgroundedness account correctly predicts all five experiments' results.
 
 /-- Accounts of the MoS island effect. -/
 inductive MoSAccount where
-  /-- Structural: MoS verbs select complex-NP complements
-  (Stowell 1981, Snyder 1992). -/
+  /-- Structural: MoS verbs select complex-NP complements. -/
   | subjacency
-  /-- Processing: low verb-frame frequency → high surprisal
-  (Liu et al. 2019, 2022; Kothari 2008). -/
+  /-- Processing: low verb-frame frequency → high surprisal. -/
   | verbFrameFrequency
-  /-- Discourse: backgrounded complements resist extraction
-  (Goldberg 2006, 2013; Erteschik-Shir 1973, 2007). -/
+  /-- Discourse: backgrounded complements resist extraction. -/
   | backgroundedness
   deriving DecidableEq, Repr, BEq
 
@@ -499,7 +493,7 @@ def accountPredictions : MoSAccount → Prediction
       frequencyCorrelation := false    -- backgroundedness, not frequency, is causal
     }
 
-/-- Empirical results from Lu, Pan & Degen (2025). -/
+/-- Empirical results from @cite{lu-degen-2025}. -/
 def empiricalResults : Prediction := {
   focusSensitive := true             -- Experiments 1, 2a, 3b: all significant
   sayAdverbCreatesIsland := true     -- Experiment 3a: p < 0.001
@@ -569,11 +563,11 @@ theorem foregrounding_iff_qud_content
 /-- **QUD complementarity**: Under manner QUD, manner is foregrounded ([FoC])
 and content is backgrounded ([G]). Under content QUD, vice versa.
 
-This connects to Kratzer & Selkirk (2020)'s insight that [FoC] and [G] are
+This connects to @cite{kratzer-selkirk-2020}'s insight that [FoC] and [G] are
 mutually exclusive features — you can't foreground and background the same
 dimension simultaneously. Extended here to cross-dimensional complementarity:
 foregrounding one dimension of a communication event necessarily backgrounds
-the other, given the single-QUD-at-a-time constraint (Roberts 1996). -/
+the other, given the single-QUD-at-a-time constraint. -/
 theorem qud_complementarity :
     (verbStatus .manner = .focused ∧ complementStatus .manner = .given) ∧
     (verbStatus .content = .given ∧ complementStatus .content = .new) := by

@@ -18,8 +18,8 @@ namespace Phenomena.Questions.PolarAnswers
 
 
 /-- G&S 1984: Yes and No are T⁰ (sentence adverbs, category S/S). @cite{fox-katzir-2011}
-    - yes ~ λp.p(a)   (affirms the proposition)
-    - no  ~ λp.¬p(a)  (negates the proposition)
+    - yes ~ λp.p(a) (affirms the proposition)
+    - no ~ λp.¬p(a) (negates the proposition)
 
     This makes sentential interrogatives derivable by the same IA-rule
     as constituent interrogatives, with AB⁰ = S and T⁰ = S/S.
@@ -275,7 +275,7 @@ def whyNegationIsDoxastic : String :=
 
     This is unexpected under Rooth-style type-theoretic alternative
     computation, where □p has the same type as p and should be an
-    alternative. Fox & Katzir (2011) category match explains why:
+    alternative. @cite{fox-katzir-2011} category match explains why:
     *mI* is a particle (PART), modals are auxiliaries (AUX), so
     category match excludes □p from the alternative set. -/
 

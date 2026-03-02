@@ -2,11 +2,11 @@ import Linglib.Theories.Semantics.TypeTheoretic.Core
 
 /-!
 # Typed Frames as TTR Record Types @cite{chatzikyriakidis-etal-2025}
-@cite{cooper-2023} @cite{osswald-kallmeyer-2018} @cite{petersen-2007}
+@cite{cooper-2023} @cite{osswald-kallmeyer-2018} @cite{petersen-2007} @cite{erk-herbelot-2024}
 
-Chatzikyriakidis et al. (2025) §2–3 argue that typed attribute-value
-frames (Petersen 2007, Löbner 2014, Osswald & Kallmeyer 2018) and
-TTR record types (Cooper 2023) are "notational variants" for
+@cite{chatzikyriakidis-etal-2025} §2–3 argue that typed attribute-value
+frames and
+TTR record types are "notational variants" for
 representing structured propositions.
 
 The central observation: a Lean `structure` *is* a typed frame.
@@ -19,7 +19,7 @@ frame with named attributes and typed values, and proves it embeds
 into `SimpleRecordType2` (a TTR record type) with preserved truth.
 
 linglib's existing `Probabilistic/Scenarios/` models a *different*
-tradition — probabilistic scenario semantics (Erk & Herbelot 2024).
+tradition — probabilistic scenario semantics.
 The typed-frame tradition here is structural, not distributional.
 
 -/
@@ -103,7 +103,7 @@ theorem frame_truth_iff_attrs {A₁ A₂ : Type}
 
 /-! ## Frames as structured propositions
 
-The key argument from Chatzikyriakidis et al. (2025) §2: frames
+The key argument from @cite{chatzikyriakidis-etal-2025} §2: frames
 (= record types) provide *structured* propositions with finer
 identity than sets of worlds. Two frames with the same truth
 conditions but different attributes are distinct. -/

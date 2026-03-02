@@ -30,7 +30,7 @@ open DepGrammar
 -- Head Criteria as Properties of Dependencies
 -- ============================================================================
 
-/-- The six criteria for head-dependent relations (Zwicky 1985, Hudson 1990). -/
+/-- The six criteria for head-dependent relations. -/
 structure HeadCriterion where
   name : String
   /-- Does this criterion identify H as head in the given dependency? -/
@@ -112,7 +112,7 @@ def isPrototypicalHead (criteria : List HeadCriterion) (dep : Dependency)
     Function word relations (det, aux, case) are controversial: the function
     word often determines morphological form but the content word determines
     category. This is why UD treats content words as heads — they satisfy
-    more criteria overall (de Marneffe & Nivre 2019, §4.5). -/
+    more criteria overall. -/
 inductive RelationClass where
   | coreArgument    -- nsubj, obj, iobj: satisfy all criteria
   | modifier        -- amod, advmod, nmod: optional, positionally flexible
@@ -136,7 +136,7 @@ def expectedCriteriaCount : RelationClass → Nat
 -- Content-Head vs. Function-Head Analysis
 -- ============================================================================
 
-/-- Two competing analyses of function words (de Marneffe & Nivre 2019, §4.5).
+/-- Two competing analyses of function words.
 
     Function-head: auxiliaries, determiners, prepositions are heads.
       - Most traditional DG frameworks (Hudson 1990, MTT, FGD)

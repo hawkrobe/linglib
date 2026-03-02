@@ -30,7 +30,7 @@ structure DepTree where
   deriving Repr
 
 /-- An enhanced dependency graph: like DepTree but allows multiple heads per word.
-    Relaxes the unique-heads constraint (de Marneffe & Nivre 2019, §4.2). -/
+    Relaxes the unique-heads constraint. -/
 structure DepGraph where
   words : List Word
   deps : List Dependency

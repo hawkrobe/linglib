@@ -4,8 +4,7 @@ import Linglib.Theories.Semantics.Lexical.Verb.VerbEntry
 # Korean Predicate Lexicon Fragment
 @cite{song-1996}
 
-Korean causative predicates, including the PURP-type *-ke ha-* causative
-(Song 1996). The *-ke ha-* construction is non-implicative: the caused
+Korean causative predicates, including the PURP-type *-ke ha-* causative. The *-ke ha-* construction is non-implicative: the caused
 event is not entailed to have actually occurred.
 
 "Keeho-ka Jinee-ka wus-ke ha-əss-ta" = "Keeho caused Jinee to smile"

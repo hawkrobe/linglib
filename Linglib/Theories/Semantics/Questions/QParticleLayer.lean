@@ -1,7 +1,9 @@
 /-!
 # Q-Particle Layer Type
+@cite{dayal-2025}
 
-Where in the left periphery a Q-particle resides (Dayal 2025).
+
+Where in the left periphery a Q-particle resides.
 
 Extracted from `Phenomena.Questions.Typology` so that Fragment files
 can reference the type without importing empirical data.

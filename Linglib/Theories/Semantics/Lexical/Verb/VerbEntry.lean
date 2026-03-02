@@ -25,6 +25,8 @@ English-specific morphology (3sg, past, participles) lives in
 `VerbCore` with their own inflectional paradigms.
 
 ## Design
+@cite{bale-schwarz-2026} @cite{dayal-2025} @cite{heim-1992} @cite{icard-2012} @cite{kennedy-2007} @cite{maier-2015} @cite{qing-uegaki-2025} @cite{rappaport-hovav-levin-2024} @cite{solstad-bott-2024}
+
 
 `VerbCore` is the **semantic spine** of a verb entry. It carries:
 - Argument structure (theta roles, complement type, control)
@@ -66,10 +68,10 @@ are DERIVED from the builder via theorems, not stipulated.
 - `relevanceBased`: Uses `qidai` constructor → NOT C-distributive
 
 The connection to Montague is:
-- `degreeComparison .positive` → `Preferential.hope`, `Preferential.expect`, etc.
-- `degreeComparison .negative` → `Preferential.fear`, `Preferential.dread`
+- `degreeComparison.positive` → `Preferential.hope`, `Preferential.expect`, etc.
+- `degreeComparison.negative` → `Preferential.fear`, `Preferential.dread`
 - `uncertaintyBased` → `Preferential.worry`
-- `relevanceBased .positive` → `Preferential.qidai`
+- `relevanceBased.positive` → `Preferential.qidai`
 -/
 inductive PreferentialBuilder where
   /-- Degree comparison semantics: ⟦x V Q⟧ = ∃p ∈ Q. μ(x,p) > θ. C-distributive. -/
@@ -95,10 +97,10 @@ This is the **minimal basis** from which theoretical properties are derived:
 2. **Preferential attitudes**: Use degree/uncertainty semantics (Villalta)
 
 Derived properties (in Theory layer):
-- C-distributivity: from PreferentialBuilder structure (Qing et al. 2025)
+- C-distributivity: from PreferentialBuilder structure
 - NVP class: from C-distributivity + valence
-- Parasitic on belief: from being preferential (Maier 2015)
-- Presupposition projection: from veridicality + attitude type (Heim 1992)
+- Parasitic on belief: from being preferential
+- Presupposition projection: from veridicality + attitude type
 -/
 inductive AttitudeBuilder where
   /-- Doxastic attitude (believe, know, think) with accessibility semantics -/
@@ -159,10 +161,10 @@ When a verb has multiple lexical entries (e.g., "remember" as implicative
 vs. "remember" as factive question-embedding), the `SenseTag` records
 *why* multiple entries exist:
 - `.default`: primary/unmarked sense
-- `.rogative`: question-embedding sense (Dayal 2025)
+- `.rogative`: question-embedding sense
 - `.causative`: causative use of otherwise non-causative verb
-- `.instrumental`: instrument-specific sense (Rappaport Hovav & Levin 2024)
-- `.occasion`: occasion verb sense with experiencer subject (Solstad & Bott 2024)
+- `.instrumental`: instrument-specific sense
+- `.occasion`: occasion verb sense with experiencer subject
 -/
 inductive SenseTag where
   | default       -- Primary/unmarked sense
@@ -195,8 +197,8 @@ inductive ComplementType where
 
 /-- Is this complement type finite (i.e., does it contain a tense head)?
 
-    Finite complements (.finiteClause, .question) have independent tense
-    morphology; non-finite complements (.infinitival, .gerund, .smallClause)
+    Finite complements (.finiteClause,.question) have independent tense
+    morphology; non-finite complements (.infinitival,.gerund,.smallClause)
     do not. -/
 def ComplementType.isFinite : ComplementType → Bool
   | .finiteClause | .question => true
@@ -236,8 +238,8 @@ structure VerbCore where
   /-- Control type for infinitival complements -/
   controlType : ControlType := .none
   /-- Alternate complement frame, for verbs with two complement types.
-      E.g., "hope" primarily takes .finiteClause ("hope that...") but
-      also takes .infinitival ("hope to...") with subject control.
+      E.g., "hope" primarily takes.finiteClause ("hope that...") but
+      also takes.infinitival ("hope to...") with subject control.
       When set, `altControlType` specifies the control type for this frame. -/
   altComplementType : Option ComplementType := none
   /-- Control type for the alternate complement frame. -/
@@ -252,17 +254,17 @@ structure VerbCore where
       True for speech-act verbs (say, tell, claim, ask). This is a genuine
       semantic primitive that cannot be derived from other fields. -/
   speechActVerb : Bool := false
-  /-- Vendler (1957) aspectual class of the verb's base VP.
+  /-- @cite{vendler-1957} aspectual class of the verb's base VP.
       For verbs whose class depends on the object NP (eat apples = activity,
       eat two apples = accomplishment), record the class with a quantized
       (bounded) object. `none` for verbs where Vendler class is inapplicable
       (e.g., clause-embedding verbs). -/
   vendlerClass : Option VendlerClass := none
-  /-- For degree achievements (Kennedy & Levin 2007): the scale structure from
+  /-- For degree achievements: the scale structure from
       which default vendlerClass is derived. When present, vendlerClass should
       agree with degreeAchievementScale.defaultVendlerClass. -/
   degreeAchievementScale : Option DegreeAchievementScale := none
-  /-- Krifka (1998) incrementality class of the object/theme role.
+  /-- @cite{krifka-1998} incrementality class of the object/theme role.
       `.sinc` = strictly incremental (eat, build); `.inc` = incremental
       with backups (read); `.cumOnly` = cumulative only (push, carry).
       `none` for intransitives and clause-embedding verbs. -/
@@ -270,7 +272,7 @@ structure VerbCore where
   /-- Is the verb a presupposition trigger? -/
   presupType : Option PresupTriggerType := none
   /-- For measure predicates: which dimension this verb selects for.
-      Determines *per*-phrase interpretation (Bale & Schwarz 2026):
+      Determines *per*-phrase interpretation:
       simplex dimension → compositional, quotient → math speak. -/
   selectsDimension : Option Dimension := none
 
@@ -297,11 +299,11 @@ structure VerbCore where
   attitudeBuilder : Option AttitudeBuilder := none
   /-- For non-preferential question-embedding verbs (know, wonder, ask) -/
   takesQuestionBase : Bool := false
-  /-- Entailment signature of the complement position (Icard 2012).
+  /-- Entailment signature of the complement position.
       Classifies this verb's monotonicity w.r.t. its clausal complement.
       `.mono` = upward monotone (believe, know); `.mult` = multiplicative only
       (be surprised). Used to derive conjunction distribution and neg-raising.
-      See Bondarenko & Elliott (2026). -/
+      See @cite{bondarenko-elliott-2026}. -/
   complementSig : Option EntailmentSig := none
 
   -- === Polysemy ===
@@ -310,7 +312,7 @@ structure VerbCore where
   senseTag : SenseTag := .default
 
   -- === Root Content (Levin 1993; Spalek & McNally) ===
-  /-- Levin (1993) verb class (§§ 9–57). -/
+  /-- @cite{levin-1993} verb class (§§ 9–57). -/
   levinClass : Option LevinClass := none
   /-- Root-specific quality dimensions (within-class variation). -/
   rootProfile : Option RootProfile := none
@@ -334,9 +336,9 @@ def VerbCore.derivedVendlerClass (v : VerbCore) : Option VendlerClass :=
     - Semantic builders: `causalSource` (Kim 2024 → stimulus),
       `attitudeBuilder` (→ experiencer)
     - Presupposition: `factivePresup` without attitude builder (→ experiencer)
-    - Polysemy: `senseTag = .occasion` (Solstad & Bott 2024 → experiencer)
-    - Verb class: `levinClass` (.weather → none, .flinch/.learn → experiencer,
-      .measure → theme)
+    - Polysemy: `senseTag =.occasion` (Solstad & Bott 2024 → experiencer)
+    - Verb class: `levinClass` (.weather → none,.flinch/.learn → experiencer,
+.measure → theme)
 
     Matches hand-annotated `subjectTheta` for ~94% of English verb entries.
     Remaining mismatches (e.g., *remember*, *dare*) have genuinely irreducible
@@ -432,8 +434,8 @@ def VerbCore.isPreferentialAttitude (v : VerbCore) : Bool :=
   v.preferentialValence.isSome
 
 /-- Map complement type to syntactic valence.
-    Clause-embedding types (.finiteClause, .infinitival, .gerund, .question,
-    .smallClause) map to `.clausal` — they take xcomp/ccomp, not obj.
+    Clause-embedding types (.finiteClause,.infinitival,.gerund,.question,
+.smallClause) map to `.clausal` — they take xcomp/ccomp, not obj.
     `checkVerbSubcat` skips `.clausal` verbs (their frames require
     different validation than NP-argument counting). -/
 def complementToValence : ComplementType → Valence

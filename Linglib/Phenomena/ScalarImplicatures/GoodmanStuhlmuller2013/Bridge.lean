@@ -5,7 +5,7 @@ import Linglib.Theories.Pragmatics.RSA.Quantities
 import Linglib.Theories.Semantics.Lexical.Numeral.Semantics
 
 /-!
-# Goodman & Stuhlmuller (2013): RSA Bridge
+# @cite{goodman-stuhlmuller-2013}: RSA Bridge
 @cite{goodman-stuhlmuller-2013}
 
 The paper's RSA model applied to the experimental data. A single `gsCfg`
@@ -16,14 +16,14 @@ the utterance type and literal semantics.
 
 ## Architecture (Eq. 1–5)
 
-    F_w : s → {0, 1}          truth function for utterance w            (§1)
-    P_lex(s | w) ∝ δ_{F_w(s)}  literal interpretation                   (§1)
-    U(w; s) = ln P_lex(s | w)  informativity (negative surprisal)        (Eq. 3)
-    P(s | o, a)                speaker's belief state                    (hypergeometric)
-    S1(w | o, a) ∝ exp(α · E_{P(s|o,a)}[U(w; s)])                       (Eq. 2)
+    F_w : s → {0, 1} truth function for utterance w (§1)
+    P_lex(s | w) ∝ δ_{F_w(s)} literal interpretation (§1)
+    U(w; s) = ln P_lex(s | w) informativity (negative surprisal) (Eq. 3)
+    P(s | o, a) speaker's belief state (hypergeometric)
+    S1(w | o, a) ∝ exp(α · E_{P(s|o,a)}[U(w; s)]) (Eq. 2)
                  = exp(α · Σ_s P(s | o, a) · ln P_lex(s | w))
-    S1(w | s, a) = Σ_o S1(w | o, a) · P(o | a, s)                      (Eq. 4)
-    L1(s | w, a) ∝ S1(w | s, a) · P(s)                                  (Eq. 1)
+    S1(w | s, a) = Σ_o S1(w | o, a) · P(o | a, s) (Eq. 4)
+    L1(s | w, a) ∝ S1(w | s, a) · P(s) (Eq. 1)
 
 The speaker observes a subset of objects (hypergeometric sampling), forms
 a belief P(s | o, a), and soft-max optimizes expected informativity under
@@ -150,11 +150,11 @@ open RSA Real in
 /-- GS2013 model parametric in utterance type and meaning function.
 
     Eq. 1–4 from the paper:
-    P_lex(s | w)    ∝  ⟦w⟧(s)                                     (literal listener)
-    U(w; s)          =  ln P_lex(s | w)                             (Eq. 3)
-    S1(w | o, a)    ∝  exp(α · Σ_s P(s | o, a) · U(w; s))         (Eq. 2)
-    S1(w | s, a)     =  Σ_o S1(w | o, a) · P(o | a, s)            (Eq. 4)
-    L1(s | w, a)    ∝  S1(w | s, a) · P(s)                         (Eq. 1)
+    P_lex(s | w) ∝ ⟦w⟧(s) (literal listener)
+    U(w; s) = ln P_lex(s | w) (Eq. 3)
+    S1(w | o, a) ∝ exp(α · Σ_s P(s | o, a) · U(w; s)) (Eq. 2)
+    S1(w | s, a) = Σ_o S1(w | o, a) · P(o | a, s) (Eq. 4)
+    L1(s | w, a) ∝ S1(w | s, a) · P(s) (Eq. 1)
 
     The quality filter ensures the speaker only considers utterances true at
     all worlds compatible with their observation. L1 marginalizes over

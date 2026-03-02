@@ -308,7 +308,7 @@ def efciContrastData : List EFCIContrastDatum :=
 
 
 /--
-EFCI rescue mechanism typology from Alonso-Ovalle & Moghiseh (2025).
+EFCI rescue mechanism typology from @cite{alonso-ovalle-moghiseh-2025}.
 -/
 inductive EFCIType where
   /-- Neither rescue mechanism (e.g., Romanian vreun) -/

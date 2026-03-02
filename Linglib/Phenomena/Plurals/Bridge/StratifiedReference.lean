@@ -6,7 +6,7 @@ import Linglib.Phenomena.TenseAspect.DiagnosticsBridge
 /-!
 # Stratified Reference Bridge: Distributivity → Fragment Verbs
 
-Connects Champollion's (2017) Stratified Reference theory
+Connects @cite{champollion-2017}'s Stratified Reference theory
 (`Events/StratifiedReference.lean`) to concrete verb entries and
 empirical distributivity/atelicity data.
 
@@ -64,7 +64,7 @@ def meetProfile : DistProfile :=
   { verb := "meet", agentSDR := false, themeSDR := false }
 
 /-- "eat" distributes on agent (each ate something).
-    "The boys ate the pizza" → each boy ate (some of) the pizza. -/
+    "The boys ate the pizza" → each boy ate (some) the pizza. -/
 def eatProfile : DistProfile :=
   { verb := "eat", agentSDR := true, themeSDR := true }
 

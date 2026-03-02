@@ -7,7 +7,7 @@ import Linglib.Theories.Semantics.TypeTheoretic.Core
 
 Montague's STT treats common nouns as predicates: `man : Entity → Bool`.
 TTR treats them as types: `Man : Type`, where `a : Man` witnesses that
-a is a man. Sutton (2024) §§3–5 argues these are not notational variants
+a is a man. @cite{sutton-2024} §§3–5 argues these are not notational variants
 — the choice determines whether selectional restriction violations are
 **type errors** or merely **false**.
 
@@ -101,7 +101,7 @@ In TTR/MTT, verbs can require arguments of specific *types*. "Laugh"
 takes `Animate`, not `Entity`. A chair is not `Animate`, so the
 predication doesn't compose — it's not false, it's *ill-typed*.
 
-Sutton (2024) §4: "In MTT [...] common nouns are interpreted as types
+@cite{sutton-2024} §4: "In MTT [...] common nouns are interpreted as types
 [...] selectional restrictions are *type* requirements." -/
 
 section SelectionalRestrictions
@@ -168,7 +168,7 @@ the same extension are *definitionally equal* by `funext`. TTR types
 carry intensional identity — two types can have the same witnesses
 yet remain distinct.
 
-Sutton (2024) §3.1: "there is nothing which prevents two types from
+@cite{sutton-2024} §3.1: "there is nothing which prevents two types from
 being associated with exactly the same set of objects." -/
 
 section Hyperintensionality
@@ -219,7 +219,7 @@ The approaches diverge exactly when:
 2. Hyperintensional contexts arise (§3)
 3. Copredication requires dot types (see TypeTheoretic/Copredication.lean)
 
-These are precisely Sutton's (2024) arguments for rich type theories. -/
+These are precisely @cite{sutton-2024}'s arguments for rich type theories. -/
 
 /-- Summary: the predicate/type duality is an equivalence modulo three
 phenomena. We can state the exact boundary. -/

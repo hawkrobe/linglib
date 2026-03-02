@@ -3,7 +3,7 @@ import Linglib.Fragments.English.Tense
 import Linglib.Theories.Semantics.Tense.ParticipantPerspective
 
 /-!
-# Lakoff (1970) Bridge Theorems
+# @cite{lakoff-1970} Bridge Theorems
 @cite{lakoff-1970}
 
 Connects the empirical judgments in `Data.lean` to theoretical predictions
@@ -81,7 +81,7 @@ theorem false_past_is_temporally_present (f : TensePerspective ℤ)
     f.eventTime = f.speechTime :=
   h.1
 
-/-- Under `falsePast`, `classifyUse .past` returns `.falseTense`. -/
+/-- Under `falsePast`, `classifyUse.past` returns `.falseTense`. -/
 theorem false_past_classified_correctly (f : TensePerspective ℤ)
     (h : falsePast f) :
     classifyUse .past f = TenseUse.falseTense := by

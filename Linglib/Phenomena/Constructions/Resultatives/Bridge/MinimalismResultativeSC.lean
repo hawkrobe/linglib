@@ -2,20 +2,20 @@ import Linglib.Theories.Syntax.Minimalism.Core.SmallClause
 import Linglib.Phenomena.Constructions.Resultatives.Data
 
 /-!
-# Resultative — Small Clause Bridge (den Dikken 1995)
+# Resultative — Small Clause Bridge
 
 @cite{dendikken-1995} @cite{goldberg-jackendoff-2004}Den Dikken (1995:25, ex. 41c): resultative constructions instantiate
 SC predication with an adjectival or prepositional predicate:
 
-    "They hammered the metal flat"         →  V [SC DP AP]
-    "She kicked the ball into the field"   →  V [SC DP PP]
+    "They hammered the metal flat" → V [SC DP AP]
+    "She kicked the ball into the field" → V [SC DP PP]
 
 The result-state XP (AP or PP) is the SC predicate; the direct object
 DP is the SC subject to which the property/path is ascribed.
 
 ## Resultative types as SC predicate categories
 
-Goldberg & Jackendoff's (2004) five-way resultative typology maps
+@cite{goldberg-jackendoff-2004} five-way resultative typology maps
 onto SC predicate categories:
 
 | Resultative type | SC pred | Example |

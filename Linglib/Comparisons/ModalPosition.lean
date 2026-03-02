@@ -1,17 +1,17 @@
 import Linglib.Theories.Semantics.Modality.EventRelativity
 
 /-!
-# Cinque (1999) vs Hacquard (2006): Modal Position
+# @cite{cinque-1999} vs @cite{hacquard-2006}: Modal Position
 
 @cite{hacquard-2010} @cite{cinque-1999} @cite{hacquard-2006}Two approaches to the correlation between modal position (high vs low in
 the clause) and modal flavor (epistemic vs root/circumstantial):
 
-## Cinque (1999): Cartographic Stipulation
+## @cite{cinque-1999}: Cartographic Stipulation
 
 Cinque proposes a universal hierarchy of functional projections with
 dedicated heads for each modal flavor:
 
-    Mod_epistemic > Mod_irrealis > ... > Mod_root > Mod_ability
+    Mod_epistemic > Mod_irrealis >... > Mod_root > Mod_ability
 
 Each modal type occupies a fixed position in the clause. The
 position–flavor correlation is STIPULATED: epistemic modals are high
@@ -97,7 +97,7 @@ epistemic (content licensing blocks it).
 
 The derivation:
 1. VP events lack content (EventBinder.vpEvent.hasContent = false)
-2. Low modals are bound to VP events (ModalPosition.belowAsp.defaultBinder = .vpEvent)
+2. Low modals are bound to VP events (ModalPosition.belowAsp.defaultBinder =.vpEvent)
 3. Epistemic requires content (EventBinder.canProjectEpistemic = hasContent)
 4. Therefore: low modals cannot be epistemic -/
 theorem hacquard_derives_correlation :

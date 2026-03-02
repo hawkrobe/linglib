@@ -3,10 +3,10 @@ import Linglib.Theories.Morphology.RootTypology
 import Linglib.Core.Interfaces.VoiceSystem
 
 /-!
-# Chuj Verb Building Fragment (Coon 2019) @cite{coon-2019}
+# Chuj Verb Building Fragment @cite{coon-2019}
 @cite{davis-1997}
 
-Formalization of the core claims from Coon (2019) "Building verbs in Chuj:
+Formalization of the core claims from @cite{coon-2019} "Building verbs in Chuj:
 Consequences for the nature of roots."
 
 ## Key Claims
@@ -15,7 +15,7 @@ Consequences for the nature of roots."
    by complement projection. √TV projects a complement DP; the others
    do not. Semantically, Coon (2019, (3)) assigns:
    √TV ⟨e, ⟨s,t⟩⟩, √ITV ⟨e, ⟨s,t⟩⟩, √POS ⟨e, ⟨s,d⟩⟩, √NOM ⟨e,t⟩.
-   Note: √TV and √ITV share the same semantic type following Davis (1997),
+   Note: √TV and √ITV share the same semantic type following @cite{davis-1997},
    but differ in whether their entity argument surfaces as a complement (√TV)
    or becomes the subject (√ITV).
 2. **Four v/Voice⁰ heads** (Ø, -w, -ch, -j) distinguished by whether
@@ -44,7 +44,7 @@ Consequences for the nature of roots."
 
 **RootArity captures complement projection, not semantic type.**
 Coon's semantic types (3) group {√TV, √ITV} together as ⟨e, ⟨s,t⟩⟩ — both
-compose with an entity argument per Davis (1997). But syntactically, only
+compose with an entity argument per @cite{davis-1997}. But syntactically, only
 √TV projects a complement DP that persists across voice alternations; √ITV's
 entity argument becomes the subject. Our `RootArity.selectsTheme` captures
 the syntactic complement projection, giving {√TV} vs {√ITV, √POS, √NOM}.
@@ -124,7 +124,7 @@ def rootITV : Root :=
     denotationType := some .eventPred }
 
 /-- √POS root: positional/stative. Semantic type ⟨e, ⟨s,d⟩⟩ — a
-    measure function, not a truth-value predicate (Henderson 2017).
+    measure function, not a truth-value predicate.
     Examples: chot "sit", kot "on all fours", watz "lie face down". -/
 def rootPOS : Root :=
   { arity := .noTheme, changeType := .propertyConcept,
@@ -365,8 +365,7 @@ theorem root_classes_pairwise_distinct :
     Unlike pivot systems (Toba Batak, Tagalog), Chuj voices don't
     promote arguments to a privileged position. Instead, Voice controls
     whether an external argument is overt, implicit, or absent.
-    Each voice form is built independently from root + v/Voice⁰
-    (Alexiadou et al. 2006): passive is not derived from active. -/
+    Each voice form is built independently from root + v/Voice⁰: passive is not derived from active. -/
 def chujVoiceSystem : Interfaces.VoiceSystemProfile :=
   { language := "Chuj"
     voices := [ ⟨"Active (Ø)", .agent⟩

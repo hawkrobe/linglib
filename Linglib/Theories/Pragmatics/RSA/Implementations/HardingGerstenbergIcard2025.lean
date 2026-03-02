@@ -5,7 +5,7 @@ import Linglib.Core.StructuralEquationModel
 # A Communication-First Account of Explanation
 @cite{halpern-pearl-2005} @cite{harding-gerstenberg-icard-2025}
 
-Formalization of Harding, Gerstenberg & Icard (2025).
+Formalization of @cite{harding-gerstenberg-icard-2025}.
 
 Explanation is modeled as an RSA communication game where:
 - **Worlds** are causal situations `(M, u)`: dynamics + exogenous context
@@ -78,7 +78,7 @@ def manipulationReward (w : CausalWorld) (action effect : Variable) : ℚ :=
 
 /-! ### Late Meeting
 
-Bob is late to meet Charlie, who is cross.  Bob knows T = 1 (he was
+Bob is late to meet Charlie, who is cross. Bob knows T = 1 (he was
 late) and B = 1 (he forgot Charlie's birthday), but is unsure whether
 the causal structure is M_T (tardiness alone suffices) or M_∧ (both
 tardiness AND birthday forgetting are needed).
@@ -196,14 +196,14 @@ end LateMeeting
 
 /-! ### Roof Replacement
 
-A house catches fire (F = 1).  Two potential causes: thatched roof
-(R = 1) and recent drought (D = 1).  Bob considers four possible
+A house catches fire (F = 1). Two potential causes: thatched roof
+(R = 1) and recent drought (D = 1). Bob considers four possible
 causal structures:
 
-- M_R: R → F  (roof alone causes fire)
-- M_D: D → F  (drought alone)
-- M_∧: R ∧ D → F  (both needed)
-- M_∨: R ∨ D → F  (either suffices)
+- M_R: R → F (roof alone causes fire)
+- M_D: D → F (drought alone)
+- M_∧: R ∧ D → F (both needed)
+- M_∨: R ∨ D → F (either suffices)
 
 Bob's decision: should he replace his thatched roof?
 
@@ -300,7 +300,7 @@ theorem roof_disj_neither_manipulates :
 /-- **Causal selection interacts with structure** (§4.3.1).
 
     In conjunctive structures, both causes are individually necessary →
-    both manipulate F.  In disjunctive structures, each cause has a
+    both manipulate F. In disjunctive structures, each cause has a
     backup → neither individually manipulates (overdetermination).
 
     The paper predicts speakers cite *abnormal* causes in conjunctive
@@ -322,13 +322,13 @@ end RoofReplacement
 
 /-! ### Milk Theft
 
-Bob's milk is depleted (M = 1).  Possible culprits: Charlie (C = 1),
-Dana (D = 1), or both.  The causal structure is disjunctive:
+Bob's milk is depleted (M = 1). Possible culprits: Charlie (C = 1),
+Dana (D = 1), or both. The causal structure is disjunctive:
 M_∨ with C ∨ D → M.
 
 Key prediction (§4.4): when both roommates drank the milk, citing
 both "C = 1, D = 1" is more useful (Bob wants to confront the right
-people), but longer messages cost more.  The tension between utility
+people), but longer messages cost more. The tension between utility
 and cost generates a preference for minimality. -/
 
 section MilkTheft

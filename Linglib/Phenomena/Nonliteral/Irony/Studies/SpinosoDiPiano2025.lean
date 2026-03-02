@@ -2,10 +2,10 @@ import Linglib.Phenomena.Nonliteral.Irony.KaoEtAl2015
 import Mathlib.Analysis.SpecialFunctions.Pow.Real
 
 /-!
-# Spinoso-Di Piano et al. (2025) — (RSA)² @cite{spinoso-di-piano-etal-2025} @cite{kao-goodman-2015}
+# Spinoso-@cite{spinoso-di-piano-etal-2025} — (RSA)² @cite{spinoso-di-piano-etal-2025} @cite{kao-goodman-2015}
 
 (RSA)²: A Rhetorical-Strategy-Aware Rational Speech Act Framework for
-Figurative Language Understanding (ACL 2025).
+Figurative Language Understanding.
 
 ## The Model
 
@@ -13,12 +13,12 @@ Replaces RSA's literal meaning indicator with a **rhetorical function**
 `f_r(c, m, u)` parameterized by strategy `r ∈ {literal, ironic}`. The strategy
 is a latent variable marginalized at L1, yielding the paper's title: (RSA)².
 
-- **L0**: L0(m|c,u,r) ∝ f_r(c, m, u) · P(m|c)        (Eq 4)
+- **L0**: L0(m|c,u,r) ∝ f_r(c, m, u) · P(m|c) (Eq 4)
   - literal: f_literal(c, m, u) = ⟦m = meaning(u)⟧
-  - ironic:  f_ironic(c, m, u) = ⟦m = opposite(meaning(u))⟧
-- **S1**: S1(u|m,c,r) ∝ L0(m|c,u,r)^α · P(u|c)        (Eq 5)
-- **L1**: L1(m|c,u,r) ∝ S1(u|m,c,r) · P(m|c)           (Eq 6)
-- **Marginalization**: L1(m|c,u) = Σ_r L1(m|c,u,r) · P(r|c,u)  (Eq 7)
+  - ironic: f_ironic(c, m, u) = ⟦m = opposite(meaning(u))⟧
+- **S1**: S1(u|m,c,r) ∝ L0(m|c,u,r)^α · P(u|c) (Eq 5)
+- **L1**: L1(m|c,u,r) ∝ S1(u|m,c,r) · P(m|c) (Eq 6)
+- **Marginalization**: L1(m|c,u) = Σ_r L1(m|c,u,r) · P(r|c,u) (Eq 7)
 
 Parameters: α = 1 (paper's default), uniform P(u|c), uniform P(r).
 
@@ -35,7 +35,7 @@ produces equivalent predictions. Similarly, uniform P(u|c) drops out of S1.
 The joint marginalization in RSAConfig is algebraically equivalent to the
 paper's per-strategy normalization then mixing (Eq 7).
 
-## Comparison to Kao et al. (2015)
+## Comparison to @cite{kao-goodman-2015}
 
 Both models derive irony from context-dependent pragmatic inference over the
 same weather domain. The key difference:
@@ -67,7 +67,7 @@ without modeling affect dimensions, matching the same qualitative predictions.
 
 Theorems 1+2 and 5+6 demonstrate context-dependence (same utterance, opposite
 interpretation). Theorems 3+4 are unique to (RSA)² — the strategy posterior is
-directly observable, unlike the QUD posterior in Kao et al. (2015). Theorems
+directly observable, unlike the QUD posterior in @cite{kao-goodman-2015}. Theorems
 7+10 test a boundary case: since opposite(ok) = ok, the ironic and literal
 strategies produce identical L0 distributions for "ok" in BOTH contexts, making
 L1's strategy inference uninformative. Theorems 8+9 test interior scale
@@ -84,7 +84,7 @@ as "literal interpretation in the opposite world."
 entire behavior reduces to comparing the world prior at two points. Irony
 emerges iff worldPrior(opposite(u.toWeather)) > worldPrior(u.toWeather). This
 is a much stronger claim than individual prediction theorems — it explains WHY
-the cross-model agreement with Kao et al. (2015) holds: both models agree
+the cross-model agreement with @cite{kao-goodman-2015} holds: both models agree
 whenever the weather prior is sufficiently asymmetric, because (RSA)²'s
 prediction IS just a prior comparison.
 
@@ -248,7 +248,7 @@ theorem literal_reading :
 
 /-- In terrible weather, L1 infers the speaker is using the ironic strategy
     when saying "amazing". This is directly observable in (RSA)² — unlike
-    Kao et al. (2015) where the QUD posterior is the analogous quantity. -/
+    @cite{kao-goodman-2015} where the QUD posterior is the analogous quantity. -/
 theorem infer_ironic :
     terribleCfg.L1_latent .amazing .ironic >
     terribleCfg.L1_latent .amazing .literal := by
@@ -265,7 +265,7 @@ theorem infer_literal :
 -- --------------------------------------------------------------------------
 
 /-- In pleasant weather, L1 hearing "terrible" infers the weather is
-    actually amazing — the ironic flip. Analogous to Kao et al. (2015)'s
+    actually amazing — the ironic flip. Analogous to @cite{kao-goodman-2015}'s
     `ironic_valence_flip`, but over weather states rather than valence. -/
 theorem terrible_ironic :
     pleasantCfg.L1_marginal .terrible (fun w => w == .amazing) >

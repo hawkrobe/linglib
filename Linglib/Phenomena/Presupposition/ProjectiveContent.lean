@@ -64,7 +64,7 @@ Examples with SCF:
 
 Examples without SCF:
 - Expressives: "That damn cat" doesn't require prior annoyance
-- Appositives: "Lance, an Ohioan, ..." informative content allowed
+- Appositives: "Lance, an Ohioan,..." informative content allowed
 - Factives: "John knows it's raining" can be informative
 -/
 inductive StrongContextualFelicity where
@@ -97,7 +97,7 @@ inductive ObligatoryLocalEffect where
 
 
 /--
-The four classes of projective content from Tonhauser et al. (2013).
+The four classes of projective content from @cite{tonhauser-beaver-roberts-simons-2013}.
 
 Each class is defined by a combination of SCF and OLE values.
 -/
@@ -152,7 +152,7 @@ theorem class_properties_roundtrip (c : ProjectiveClass) :
 
 
 /--
-Types of projective content triggers, following Tonhauser et al. (2013).
+Types of projective content triggers, following @cite{tonhauser-beaver-roberts-simons-2013}.
 
 Each trigger type is associated with a projective class and a description
 of the content it triggers.
@@ -294,10 +294,10 @@ def defaultProjection : ProjectionBehavior :=
 /--
 At-issueness status of content (binary classification).
 
-Following Roberts (2012), at-issue content addresses the Question Under
+Following @cite{roberts-2012}, at-issue content addresses the Question Under
 Discussion (QUD), while not-at-issue content is backgrounded.
 
-**Note:** Tonhauser, Beaver & Degen (2018) show that at-issueness is
+**Note:** @cite{tonhauser-beaver-degen-2018} show that at-issueness is
 *gradient*, not binary. For the gradient version, see
 `Core.Discourse.AtIssueness.AtIssuenessDegree`. This binary enum is
 recoverable from a degree + threshold via `AtIssueness.ofDegree`.

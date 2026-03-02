@@ -2,9 +2,9 @@ import Linglib.Core.Lexical.Word
 
 /-!
 # Indefinite Pronoun Typology (Haspelmath 1997 / WALS Ch 46)
-@cite{haspelmath-1997} @cite{haspelmath-2013}
+@cite{haspelmath-1997} @cite{haspelmath-2013} @cite{kadmon-landman-1993} @cite{ladusaw-1979}
 
-Formalizes the core results of Haspelmath's (1997) cross-linguistic study of
+Formalizes the core results of @cite{haspelmath-1997}'s cross-linguistic study of
 indefinite pronouns, one of the most celebrated results in semantic typology.
 
 ## The Implicational Map
@@ -31,7 +31,7 @@ functions.
 ## WALS Chapter 46
 
 WALS classifies languages by the number of distinct indefinite pronoun
-series. The chapter is based on Haspelmath's (1997) cross-linguistic sample:
+series. The chapter is based on @cite{haspelmath-1997}'s cross-linguistic sample:
 
 | Value                      | Count |
 |----------------------------|-------|
@@ -49,7 +49,7 @@ namespace Phenomena.Polarity.Typology
 -- §1: The Nine Function Types
 -- ============================================================================
 
-/-- The nine function types on Haspelmath's (1997) implicational map for
+/-- The nine function types on @cite{haspelmath-1997}'s implicational map for
     indefinite pronouns. These represent the semantic/pragmatic contexts
     in which indefinite pronoun forms are used.
 
@@ -95,7 +95,7 @@ def IndefiniteFunction.all : List IndefiniteFunction :=
 -- §2: The Implicational Map (Adjacency Structure)
 -- ============================================================================
 
-/-- Adjacent functions on Haspelmath's (1997) implicational map.
+/-- Adjacent functions on @cite{haspelmath-1997}'s implicational map.
 
     The map forms a connected graph:
     ```
@@ -1080,12 +1080,11 @@ polarity sensitivity:
 
 1. **Functions 4–7** (question through directNeg) correspond to the
    classic **downward-entailing** / **nonveridical** environments that
-   license NPIs (Ladusaw 1979, Giannakidou 1998).
+   license NPIs.
 
 2. **Functions 8–9** (comparative, freeChoice) correspond to
    **free choice** items, which have been analyzed as universal
-   quantifiers (Giannakidou 2001) or domain-widened indefinites
-   (Kadmon & Landman 1993, Chierchia 2013).
+   quantifiers or domain-widened indefinites.
 
 3. **Functions 1–3** (specific known/unknown, irrealis) correspond to
    **positive polarity** and **epistemic specificity**, which are

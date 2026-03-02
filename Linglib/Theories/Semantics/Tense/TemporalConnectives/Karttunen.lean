@@ -1,7 +1,7 @@
 import Linglib.Theories.Semantics.Tense.TemporalConnectives.Anscombe
 
 /-!
-# Karttunen (1974): *Until*, *When*, and the Two-*Until* Hypothesis
+# @cite{karttunen-1974}: *Until*, *When*, and the Two-*Until* Hypothesis
 @cite{karttunen-1974} @cite{heinamaki-1974} @cite{dowty-1979}Karttunen argues that English has **two** *until*s:
 
 - **Durative *until***: "John slept until 3pm." The main clause is durative
@@ -24,13 +24,13 @@ at the same level as Anscombe. The eight English temporal connectives reduce
 to four Level 1 primitives:
 
 - *before* = ∃∀ + strict ordering (Anscombe)
-- *after*  = ∃∃ + strict ordering (Anscombe)
-- *when*   = ∃ overlap (this file)
-- *while*  = ∀ containment (this file)
-- *until*  = ¬*before* (punctual) or *when* (durative) — derived, not primitive
-- *till*   = *until* (dialectal variant, Heinämäki Ch. 9)
-- *since*  = ∃∈B ∀∈A + ≤ ordering (starting-point, Heinämäki Ch. 6)
-- *by*     = ∃∈A ∀∈B + ≤ ordering (deadline, Heinämäki Ch. 8)
+- *after* = ∃∃ + strict ordering (Anscombe)
+- *when* = ∃ overlap (this file)
+- *while* = ∀ containment (this file)
+- *until* = ¬*before* (punctual) or *when* (durative) — derived, not primitive
+- *till* = *until* (dialectal variant, Heinämäki Ch. 9)
+- *since* = ∃∈B ∀∈A + ≤ ordering (starting-point, Heinämäki Ch. 6)
+- *by* = ∃∈A ∀∈B + ≤ ordering (deadline, Heinämäki Ch. 8)
 
 ## Cross-Linguistic Evidence
 
@@ -60,7 +60,7 @@ def Karttunen.when_ (A B : SentDenotation Time) : Prop :=
     "A while B" holds when every time in A is also a time in B.
     Stronger than *when* (which requires only one shared point).
 
-    This matches the implicit definition in Rett (2026, §3.3)
+    This matches the implicit definition in @cite{rett-2026}
     used to prove *while* is not ambidirectional. -/
 def Karttunen.while_ (A B : SentDenotation Time) : Prop :=
   ∀ t ∈ timeTrace A, t ∈ timeTrace B
@@ -71,19 +71,18 @@ def Karttunen.while_ (A B : SentDenotation Time) : Prop :=
     The difference from *when* is a **selectional restriction**: *until*
     requires A to be durative (stative/activity). Combined with the
     subinterval property of statives, overlap entails continuous persistence
-    of A up to the time of B — the "minimum length" semantics
-    (Karttunen 1974, p. 272). -/
+    of A up to the time of B — the "minimum length" semantics. -/
 def Karttunen.until (A B : SentDenotation Time) : Prop :=
   ∃ t, t ∈ timeTrace A ∧ t ∈ timeTrace B
 
-/-- *Till*: dialectal variant of durative *until* (Heinämäki 1974, Ch. 9).
+/-- *Till*: dialectal variant of durative *until*.
     Truth-conditionally identical to durative *until* (= *when* = ∃-overlap).
     Dialectally restricted in English; some varieties use *till* where
     standard English uses *until*. -/
 def Karttunen.till (A B : SentDenotation Time) : Prop :=
   ∃ t, t ∈ timeTrace A ∧ t ∈ timeTrace B
 
-/-- *Since*: lower-bound / starting-point semantics (Heinämäki 1974, Ch. 6).
+/-- *Since*: lower-bound / starting-point semantics.
     "A since B" holds when some B-time precedes or coincides with all A-times.
     This mirrors *before* with swapped arguments and non-strict ordering:
     *before* = ∃t∈A, ∀t'∈B, t < t'; *since* = ∃t∈B, ∀t'∈A, t ≤ t'.
@@ -93,7 +92,7 @@ def Karttunen.till (A B : SentDenotation Time) : Prop :=
 def Karttunen.since (A B : SentDenotation Time) : Prop :=
   ∃ t ∈ timeTrace B, ∀ t' ∈ timeTrace A, t ≤ t'
 
-/-- *By*: deadline / upper-bound semantics (Heinämäki 1974, Ch. 8).
+/-- *By*: deadline / upper-bound semantics.
     "A by B" holds when some A-time precedes or coincides with all B-times.
     "He arrived by 3pm" = his arrival has a time point at or before 3pm.
 
@@ -270,9 +269,9 @@ theorem after_witness_excludes_before_witness
 
 /-- Veridicality summary for the five temporal connectives at Level 1:
     - *before*: complement NOT veridical (∀ vacuously true on empty B)
-    - *after*:  complement veridical (∃ witness required)
-    - *when*:   complement veridical (∃ overlap witness)
-    - *while*:  complement veridical only when A nonempty (∀ vacuously true)
+    - *after*: complement veridical (∃ witness required)
+    - *when*: complement veridical (∃ overlap witness)
+    - *while*: complement veridical only when A nonempty (∀ vacuously true)
     - *until* (durative): complement veridical (= when)
     - *until* (punctual): complement NOT veridical by assertion alone
 
@@ -376,7 +375,7 @@ theorem by_not_implies_before :
     "Whenever it rains, I carry an umbrella" = every rain-time is an
     umbrella-time. Implies habitual/generic interpretation.
 
-    Heinämäki (1974) treats *whenever* as a universal quantifier over
+    @cite{heinamaki-1974} treats *whenever* as a universal quantifier over
     temporal overlap events, distinguishing it from the existential
     *when* (∃-overlap). -/
 def Karttunen.whenever (A B : SentDenotation Time) : Prop :=

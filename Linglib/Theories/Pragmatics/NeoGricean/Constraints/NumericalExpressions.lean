@@ -4,7 +4,7 @@ import Linglib.Theories.Pragmatics.NeoGricean.Core.Markedness
 import Mathlib.Data.Rat.Defs
 
 /-!
-# OT Constraints for Numerical Expressions (Cummins 2015)
+# OT Constraints for Numerical Expressions
 @cite{cummins-2015} @cite{cummins-franke-2021}
 
 Optimality-Theoretic constraint system for numeral production.
@@ -165,7 +165,7 @@ structure OTConstraint where
   rank : Nat
   deriving Repr
 
-/-- The four constraints with default ranking (Cummins 2015). -/
+/-- The four constraints with default ranking. -/
 def INFO : OTConstraint := { name := "INFO", rank := 4 }
 def GRANULARITY : OTConstraint := { name := "Granularity", rank := 3 }
 def QSIMP : OTConstraint := { name := "QSIMP", rank := 2 }
@@ -316,7 +316,7 @@ def constraintSatisfied (v : ViolationProfile) : NumeralConstraint → Bool
 open Core.SatisfactionOrdering
 
 /-- A SatisfactionOrdering over violation profiles using the four
-    Cummins (2015) constraints.
+    @cite{cummins-2015} constraints.
 
     This coarse-grains the OT system: a candidate "satisfies" a
     constraint iff it incurs 0 violations on that constraint.

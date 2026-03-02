@@ -3,7 +3,7 @@ import Linglib.Tactics.OntSort
 
 /-!
 # Content Individuals (Kratzer 2006; Liefke 2024 §4.3) @cite{kratzer-2006}
-@cite{baker-jara-ettinger-saxe-tenenbaum-2017} @cite{chandra-2025}  @cite{liefke-2024} @cite{moulton-2015}
+@cite{baker-jara-ettinger-saxe-tenenbaum-2017} @cite{chandra-2025} @cite{liefke-2024} @cite{moulton-2015} @cite{hintikka-1969}
 
 A content individual is a first-class mental state carrying propositional
 content — the denotation of content DPs like *John's belief that p*,
@@ -16,8 +16,8 @@ percepts (Liefke 2024 §4.3). What distinguishes a belief from a desire or
 a percept is not the ontological sort — it is the attitude relation (the
 verb) that embeds it.
 
-In BToM (Baker et al. 2017), these correspond to the type parameters over
-which the observer's posterior is defined. In memo (Chandra et al. 2025),
+In BToM, these correspond to the type parameters over
+which the observer's posterior is defined. In memo,
 they are the *frames* created by `thinks[...]`.
 
 ## Identity vs. Entailment
@@ -44,11 +44,10 @@ open Core.Proposition
 /-- A content individual: a first-class mental state carrying propositional
     content.
 
-    This is Kratzer's (2006) *content individual* — the denotation of content
+    This is @cite{kratzer-2006}'s *content individual* — the denotation of content
     DPs like *John's belief that p*, *the claim*, *every rumor*, *her wish*.
     It is the shared ontological sort underlying beliefs, desires, and percepts
-    (Liefke 2024 §4.3), and the *frame* created by `thinks[...]` in memo
-    (Chandra et al. 2025).
+    (Liefke 2024 §4.3), and the *frame* created by `thinks[...]` in memo.
 
     The `cont` field is Kratzer's CONT function: the propositional content
     this mental state carries. Two distinct content individuals can share
@@ -64,7 +63,7 @@ open Core.Proposition
 /-- Construct a content individual from a Hintikka-style accessibility relation.
     Given agent `a` at world `w`, the content is the set of accessible worlds.
 
-    This shows that the classical doxastic semantics (Hintikka 1969) is a
+    This shows that the classical doxastic semantics is a
     special case: a single deterministic content individual whose CONT is
     λw'. R(a, w, w'). Works for doxastic (believe), bouletic (want), and
     perceptual (see) accessibility alike — the sort is the same. -/
@@ -90,8 +89,7 @@ def ContentIndividual.sameContent {W : Type*} (c₁ c₂ : ContentIndividual W) 
       ∀w. CONT(x_c)(w) = true → p(w) = true
 
     This is the Hintikka reading of attitude reports: "x believes that p"
-    means p follows from x's belief content. Kratzer (2006) and Moulton
-    (2015) use the stronger notion of content *identity* (CONT = p). -/
+    means p follows from x's belief content. @cite{kratzer-2006} and @cite{moulton-2015} use the stronger notion of content *identity* (CONT = p). -/
 def ContentIndividual.entails {W : Type*}
     (xc : ContentIndividual W) (p : BProp W) : Prop :=
   ∀ w, xc.cont w = true → p w = true

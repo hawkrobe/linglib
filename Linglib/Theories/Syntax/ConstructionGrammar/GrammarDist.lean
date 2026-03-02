@@ -6,14 +6,13 @@ import Linglib.Theories.Pragmatics.RSA.Extensions.LexicalUncertainty.Basic
 /-!
 # Grammar as Distribution
 
-@cite{dunn-2026} @cite{hawkins-franke-frank-goldberg-smith-griffiths-goodman-2023} @cite{bergen-levy-goodman-2016} @cite{dunn-2025}A grammar is a frequency profile over constructions (Dunn 2025). This
-generalizes lexical uncertainty (Bergen et al. 2016): where LU varies meaning
+@cite{dunn-2026} @cite{hawkins-franke-frank-goldberg-smith-griffiths-goodman-2023} @cite{bergen-levy-goodman-2016} @cite{dunn-2025}A grammar is a frequency profile over constructions. This
+generalizes lexical uncertainty: where LU varies meaning
 assignments, grammar uncertainty varies both meaning AND production frequency.
 
 ## Architecture
 
-Two types capture the individual–population hierarchy from CHAI (Hawkins et al.
-2023) and Dunn's (2025) variationist CxG:
+Two types capture the individual–population hierarchy from @cite{dunn-2025} variationist CxG:
 
 - `GrammarDist C` — frequency profile over constructions (individual grammar)
 - `Grammar C W` — frequency + interpretation (connects to RSA `Lexicon`)
@@ -45,14 +44,14 @@ open Core.InformationTheory Core.BToM RSA.BToMGrounding
 -- §1. Core Types
 -- ============================================================================
 
-/-- A non-negative frequency profile over constructions (Dunn 2025).
+/-- A non-negative frequency profile over constructions.
 
 An individual's grammar is a frequency-weighted profile over constructions —
 not a binary set (in/out) but a weighting reflecting how often each
 construction is used. Note: this does not enforce normalization (Σ freq = 1);
 the weights are relative frequencies, not probabilities.
 
-In CHAI (Hawkins et al. 2023), this is φ_k — the partner-specific
+In CHAI, this is φ_k — the partner-specific
 production model that determines both what to say and how to interpret. -/
 structure GrammarDist (C : Type) where
   freq : C → ℚ
@@ -78,7 +77,7 @@ variable {C : Type} [BEq C]
 
 /-- Constructional diversity: Shannon entropy of the frequency profile.
 
-Higher entropy = more diverse construction usage. Dunn (2025) uses
+Higher entropy = more diverse construction usage. @cite{dunn-2025} uses
 grammar entropy to compare registers, dialects, and individual variation
 within L1 populations. -/
 def GrammarDist.entropyOver (g : GrammarDist C) (inventory : List C) : ℚ :=
@@ -86,7 +85,7 @@ def GrammarDist.entropyOver (g : GrammarDist C) (inventory : List C) : ℚ :=
 
 /-- Jensen-Shannon divergence between two grammars over a shared inventory.
 
-Symmetric, bounded, and a metric (after sqrt). Used by Dunn (2025) to
+Symmetric, bounded, and a metric (after sqrt). Used by @cite{dunn-2025} to
 measure register distance, dialect boundaries, and L1-L2 differences. -/
 def GrammarDist.jsd (p q : GrammarDist C) (inventory : List C) : ℚ :=
   jsdOf inventory p.freq q.freq
@@ -102,7 +101,7 @@ variable {C W U : Type}
 
 /-- Project a grammar to a lexicon by forgetting frequency.
 
-A `Lexicon` (Bergen et al. 2016) is a meaning assignment `C → W → ℚ`.
+A `Lexicon` is a meaning assignment `C → W → ℚ`.
 A `Grammar` is a meaning assignment PLUS a frequency profile. The
 projection forgets frequency, retaining only interpretation. -/
 def Grammar.toLexicon (g : Grammar C W) : Lexicon C W where
@@ -110,7 +109,7 @@ def Grammar.toLexicon (g : Grammar C W) : Lexicon C W where
 
 /-- Embed a lexicon as a grammar with uniform frequency.
 
-This is the key structural claim: lexical uncertainty (Bergen et al. 2016)
+This is the key structural claim: lexical uncertainty
 is the special case of grammar uncertainty where only meaning varies and
 production frequency is uniform across constructions.
 
@@ -171,7 +170,7 @@ end RSACost
 
 The same `Grammar C W` object classifies differently in BToM depending on
 the theoretical question. These correspond to the three core capacities
-identified in CHAI (Hawkins et al. 2023, §2.2):
+identified in CHAI:
 
 | Role | BToM Category | Dynamics | CHAI capacity | Phenomenon |
 |------|---------------|----------|---------------|------------|
@@ -216,7 +215,7 @@ def grammarClassification (role : GrammarRole) :
 
 /-- CHAI's two-level hierarchy expressed via RSAConfig.
 
-In CHAI (Hawkins et al. 2023), convention formation is modeled as
+In CHAI, convention formation is modeled as
 hierarchical Bayesian inference over two levels of grammar:
 
 - φ_k : partner-specific grammars (updated online through interaction)
@@ -231,12 +230,12 @@ L1's marginalization then automatically computes CHAI's Eq 4:
 
 This derives three phenomena:
 - P1 (efficiency): S1 incorporates φ.cost, so frequent constructions win
-- P2 (partner → community): Θ pools across partners via P(θ | D₁, D₂, ...)
+- P2 (partner → community): Θ pools across partners via P(θ | D₁, D₂,...)
 - P3 (context-sensitivity): different L0 meanings for different Θ values
 
 The `partnerGrammars` list contains one φ_k per interaction partner.
 CHAI's key claim is that Θ is abstracted by pooling across partners:
-P(Θ | D₁, ..., D_K) ∝ P(Θ) · Π_k P(D_k | Θ). Each partner grammar
+P(Θ | D₁,..., D_K) ∝ P(Θ) · Π_k P(D_k | Θ). Each partner grammar
 φ_k is drawn from P(φ | Θ) and updated independently through interaction.
 
 TODO: Formalize the dynamic aspect (sequential Bayesian updating of φ_k and
@@ -247,7 +246,7 @@ structure CHAIHierarchy (C W : Type) where
   partnerGrammars : List (Grammar C W)
   /-- Community-level convention parameter (CHAI's Θ).
       Abstractly: a shape parameter for the distribution over partner grammars.
-      Concretely: a "default" grammar that partner grammars are drawn from. -/
+      Concretely: a "default" grammar that partner grammars are drawn. -/
   communityConvention : Grammar C W
 
 section CHAIConventionality

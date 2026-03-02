@@ -2,7 +2,7 @@ import Linglib.Phenomena.Morphology.Typology
 import Linglib.Theories.Morphology.WP.LCEC
 
 /-!
-# Ackerman & Malouf (2013): Bridge Theorems @cite{ackerman-malouf-2013}
+# @cite{ackerman-malouf-2013}: Bridge Theorems @cite{ackerman-malouf-2013}
 @cite{carstairs-mccarthy-2010}
 
 Verification theorems connecting the cross-linguistic typological data
@@ -106,8 +106,7 @@ theorem mazatec_well_below_random :
 theorem mazatec_ratio_to_random :
     mazatec.avgCondEntropy * 7 < mazatecRandomBaseline := by native_decide
 
-/-- Mazatec has nonzero I-complexity: it violates Carstairs-McCarthy's
-    (2010) synonymy avoidance but satisfies the LCEC. This witnesses
+/-- Mazatec has nonzero I-complexity: it violates @cite{carstairs-mccarthy-2010}'s synonymy avoidance but satisfies the LCEC. This witnesses
     that the LCEC is strictly weaker than synonymy avoidance. -/
 theorem mazatec_violates_synonymyAvoidance :
     mazatec.avgCondEntropy > 0 := by native_decide

@@ -17,7 +17,7 @@ If w ~₁ v and v ~₂ u, we don't get w ~₁ u or w ~₂ u.
 
 ## The Solution: Flexible Types
 
-Partee & Rooth (1983) propose:
+@cite{partee-rooth-1983} propose:
 1. Categories have a **basic type** plus **predictable lifted types**
 2. Lifting rules are general procedures (not ad hoc)
 3. Interpret at **minimal type** unless higher type is needed
@@ -41,13 +41,13 @@ A lifted question is the set of all properties that hold of the underlying quest
 
 Once lifted, coordination is straightforward:
 ```
-Q₁ ∨ Q₂ = λP. P ∈ Q₁ ∨ P ∈ Q₂     -- property holds of either
-Q₁ ∧ Q₂ = λP. P ∈ Q₁ ∧ P ∈ Q₂     -- property holds of both
+Q₁ ∨ Q₂ = λP. P ∈ Q₁ ∨ P ∈ Q₂ -- property holds of either
+Q₁ ∧ Q₂ = λP. P ∈ Q₁ ∧ P ∈ Q₂ -- property holds of both
 ```
 
 This avoids the transitivity problem entirely.
 
-## Connection to Continuations (Barker & Shan 2014)
+## Connection to Continuations
 
 Lifted questions form a **continuation monad**. In Barker & Shan's tower notation,
 an expression's type is written as a vertical tower:
@@ -147,9 +147,9 @@ The monad laws (left/right identity, associativity) hold by construction.
 
 In B&S tower notation, this is the LIFT type-shifter:
 ```
-  A      LIFT      B | B
-phrase    ⟹       phrase
-  x                 [ ]
+  A LIFT B | B
+phrase ⟹ phrase
+  x []
                     ───
                      x
 ```
@@ -162,7 +162,7 @@ Allows a lifted question to "feed into" a function that produces another
 lifted question, with proper handling of the continuation.
 
 ```
-m >>= f  =  λP. m(λq. f(q)(P))
+m >>= f = λP. m(λq. f(q)(P))
 ```
 
 In B&S terms, this corresponds to the combination schema where the left

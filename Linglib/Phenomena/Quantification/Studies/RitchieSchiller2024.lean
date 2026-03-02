@@ -2,9 +2,9 @@ import Linglib.Theories.Semantics.Lexical.Determiner.DomainRestriction
 import Linglib.Theories.Pragmatics.RSA.Core.Config
 
 /-!
-# Ritchie & Schiller (2024) — Default Domain Restriction Possibilities
+# @cite{ritchie-schiller-2024} — Default Domain Restriction Possibilities
 
-@cite{ritchie-schiller-2024}
+@cite{ritchie-schiller-2024} @cite{cutting-vishton-1995}
 
 Ritchie, H. & Schiller, K. (2024). Default Domain Restriction Possibilities.
 *Semantics & Pragmatics* 17, Article 13: 1–49.
@@ -21,8 +21,7 @@ fail to explain *why* certain restrictions are defaults:
 
 Their positive proposal (§3): cognitive heuristics — perceptual availability,
 salience, and manipulability — generate a structured set of default domain
-restriction possibilities (DDRPs). These are grounded in spatial cognition
-(Cutting & Vishton 1995; Previc 1998), where nested spatial regions provide
+restriction possibilities (DDRPs). These are grounded in spatial cognition, where nested spatial regions provide
 a natural ordering on candidate restrictions.
 
 ## Scenario

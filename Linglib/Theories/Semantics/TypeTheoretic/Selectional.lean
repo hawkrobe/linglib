@@ -14,8 +14,7 @@ derivation — that is the "load" the instance bears.
 
 `restrict P : Ppty A` takes a property `P : Ppty B` and a proof
 `[SubtypeOf A B]`, returning the property composed with coercion.
-This is **typed function application** (Luo 2012, Chatzikyriakidis
-& Luo 2020): the argument type must be a subtype of the parameter
+This is **typed function application**: the argument type must be a subtype of the parameter
 type for composition to proceed.
 
 ## Complement coercion
@@ -23,7 +22,7 @@ type for composition to proceed.
 When no `SubtypeOf` instance exists but composition should still
 succeed, a `ComplementCoercion` provides a *meaning-changing* type
 shift. "John enjoyed the book" coerces `PhysObj` to `Event` via
-the telic quale (Pustejovsky 1995). Unlike `SubtypeOf`, this
+the telic quale. Unlike `SubtypeOf`, this
 changes what entity is being talked about.
 
 ## Connection to SelectionalPreferences.lean
@@ -117,7 +116,7 @@ instance instAnimalEntity : SubtypeOf Animal Entity :=
 Given `P : Ppty B` and `[SubtypeOf A B]`, produce `Ppty A` by coercing
 the argument up before applying `P`.
 
-This is **typed function application** (Luo 2012): the semantic
+This is **typed function application**: the semantic
 analogue of checking that the argument type is a subtype of the
 parameter type. If no `SubtypeOf` instance exists, composition fails
 at the Lean type level — a category mistake, not a truth-value failure. -/
@@ -231,7 +230,7 @@ theorem coercion_coherence (P : Ppty Entity) (h : Human) :
 entity), complement coercion is *meaning-changing*: the coerced entity
 is a DIFFERENT thing. "John enjoyed the book" doesn't mean John enjoyed
 a physical object — it means he enjoyed *reading* it. The book is
-coerced to an event via the telic quale (Pustejovsky 1995).
+coerced to an event via the telic quale.
 
 This is a distinct mechanism from subtyping, and conflating them would
 lose the meaning change. -/

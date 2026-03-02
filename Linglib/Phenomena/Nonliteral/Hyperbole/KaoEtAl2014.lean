@@ -4,7 +4,7 @@ import Linglib.Theories.Semantics.Lexical.Numeral.Precision
 import Linglib.Tactics.RSAPredict
 
 /-!
-# Kao et al. (2014) @cite{kao-etal-2014-hyperbole}
+# @cite{kao-etal-2014-hyperbole} @cite{kao-etal-2014-hyperbole}
 
 "Nonliteral understanding of number words"
 PNAS 111(33): 12002-12007
@@ -22,14 +22,14 @@ utterances.
 Speakers may use literally false utterances to convey *affective* information
 when the listener is uncertain about the speaker's communicative goal.
 
-    S1(u|s,a,g) ∝ exp(α · [ln L0(g(s,a)|u) - C(u)])           [Eq. 5,7]
+    S1(u|s,a,g) ∝ exp(α · [ln L0(g(s,a)|u) - C(u)]) [Eq. 5,7]
 
 where g composes precision (exact vs approximate) with relevance (price,
 affect, or both), yielding 5 distinct goals.
 
 L1 marginalizes over goals:
 
-    L1(s,a|u) ∝ P_S(s) · P_A(a|s) · Σ_g P_G(g) · S1(u|s,a,g)  [Eq. 10]
+    L1(s,a|u) ∝ P_S(s) · P_A(a|s) · Σ_g P_G(g) · S1(u|s,a,g) [Eq. 10]
 
 ## Grounding
 
@@ -62,7 +62,7 @@ open Real (exp log exp_pos)
 -- §1. Empirical Findings
 -- ============================================================================
 
-/-- The 6 qualitative findings from Kao et al. (2014) Experiments 3a–3c.
+/-- The 6 qualitative findings from @cite{kao-etal-2014-hyperbole} Experiments 3a–3c.
     Each model of hyperbole should formalize and prove all 6 findings. -/
 inductive Finding where
   /-- Hearing "$10,000" for a kettle, the listener infers notable affect
@@ -241,7 +241,7 @@ noncomputable def qudProject (q : Goal) (f : World → ℝ) (w : World) : ℝ :=
 -- §6. RSAConfig
 -- ============================================================================
 
-/-- Kao et al. (2014) hyperbole model, parametric in item. -/
+/-- @cite{kao-etal-2014-hyperbole} hyperbole model, parametric in item. -/
 noncomputable def cfg (item : Item) : RSA.RSAConfig PriceState World where
   Latent := Goal
   meaning := meaning
@@ -341,7 +341,7 @@ def formalize : Finding → Prop
       kettleCfg.L1_marginal .s501 (fun w => w.1 == .s501) >
       kettleCfg.L1_marginal .s500 (fun w => w.1 == .s500)
 
-/-- The RSA model accounts for all 6 empirical findings from Kao et al. (2014). -/
+/-- The RSA model accounts for all 6 empirical findings from @cite{kao-etal-2014-hyperbole}. -/
 theorem all_findings_verified : ∀ f : Finding, formalize f := by
   intro f; cases f
   · exact hyperbole_affect_at_modal

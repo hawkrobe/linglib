@@ -24,7 +24,7 @@ Events (`Ev Time`) currently lack a location field. Rather than extending
 the core event type (which would affect ~20 files), this module defines △
 parameterized over an external location function `loc : Ev Time → L`.
 The temporal component (`temporallyDisjoint`) is self-contained and
-connects to Cumming's (2026) downstream evidence constraint (T ≤ A)
+connects to @cite{cumming-2026}'s downstream evidence constraint (T ≤ A)
 via `disjoint_earlier_implies_isBefore`.
 
 -/

@@ -5,8 +5,7 @@ import Linglib.Theories.Semantics.Tense.Basic
 @cite{tsilia-zhao-sharvit-2026}
 
 Lexical entry for Russian тогда "togda" (then), typed by `ThenAdverb`.
-Cross-linguistic evidence for the then-present incompatibility
-(Tsilia, Zhao & Sharvit 2026).
+Cross-linguistic evidence for the then-present incompatibility.
 
 -/
 

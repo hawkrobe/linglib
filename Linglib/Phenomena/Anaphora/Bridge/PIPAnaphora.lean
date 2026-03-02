@@ -6,13 +6,13 @@ import Linglib.Phenomena.Anaphora.DonkeyAnaphora
 /-!
 # PIP Bridge: Anaphora Phenomena
 
-@cite{keshet-abney-2024} @cite{geach-1962} @cite{partee-1972} @cite{roberts-1989}Connects PIP (Keshet & Abney 2024) to the theory-neutral anaphora data
+@cite{keshet-abney-2024} @cite{geach-1962} @cite{partee-1972} @cite{roberts-1989}Connects PIP to the theory-neutral anaphora data
 in `Phenomena/Anaphora/`. Verifies that PIP's description-based anaphora
 correctly predicts felicity judgments for:
 
-1. Modal subordination (Roberts 1989, Stone 1997)
-2. Bathroom sentences (Partee 1972, Elliott & Sudo 2025)
-3. Donkey anaphora (Geach 1962, Heim 1982)
+1. Modal subordination
+2. Bathroom sentences
+3. Donkey anaphora
 
 ## Architecture
 

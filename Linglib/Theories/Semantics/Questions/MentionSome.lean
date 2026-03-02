@@ -5,7 +5,7 @@ import Linglib.Theories.Semantics.Questions.PragmaticAnswerhood
 # Questions/MentionSome.lean
 @cite{belnap-1982} @cite{groenendijk-stokhof-1984} @cite{partee-rooth-1983}
 
-Mention-Some Interpretation from Groenendijk & Stokhof (1984), Chapter VI, Section 5.
+Mention-Some Interpretation from @cite{groenendijk-stokhof-1984}, Chapter VI, Section 5.
 
 ## The Phenomenon
 
@@ -432,7 +432,7 @@ def cumulativeAnswer {W E : Type*} [DecidableEq E]
 Per CLAUDE.md, RSA/derived semantics should be grounded in Montague semantics.
 The existential in I-MS corresponds to Montague's existential quantifier.
 
-The I-MS rule uses: ∃x[β'(x) ∧ ...]
+The I-MS rule uses: ∃x[β'(x) ∧...]
 This ∃ is the same existential quantifier from Semantics.Montague.Quantifiers.existsSome.
 -/
 

@@ -82,8 +82,7 @@ inductive PassivePresence where
 /-- WALS Ch 108: Antipassive construction type.
 
     An antipassive is a derived detransitivized construction: the patient-like
-    argument is either suppressed or demoted to an oblique. The term
-    (Silverstein 1972) indicates the mirror image of the passive: in the
+    argument is either suppressed or demoted to an oblique. The term indicates the mirror image of the passive: in the
     passive the agent is demoted, in the antipassive the patient.
 
     - `implicitPatient`: Patient-like argument left implicit (unexpressed).
@@ -539,7 +538,7 @@ def german : ValenceProfile :=
     impersonal "passive" (present — the Fragment's `finnishPassive` has
     semantic content but does not project a syntactic agent), no antipassive,
     accusative alignment, no applicative, morphological causative
-    *-tta-* / *-ttä-* (Karlsson 2018, §10.4). -/
+    *-tta-* / *-ttä-*. -/
 def finnish : ValenceProfile :=
   { language := "Finnish"
   , iso := "fin"
@@ -618,7 +617,7 @@ theorem majority_of_sample_has_passive :
 
 /-- In the WALS Ch 108 data, antipassives occur in both accusative and
     ergative languages, but the correlation with ergativity is strong.
-    Polinsky (2013) lists 30 ergative languages with antipassives vs
+    @cite{polinsky-2013} lists 30 ergative languages with antipassives vs
     17 accusative languages (Table 1). -/
 theorem antipassive_ergative_association :
     let ergativeWithAP := 30
@@ -682,7 +681,7 @@ theorem applicative_implies_morph_causative :
 -- ============================================================================
 
 /-- WALS Ch 111: Among languages with morphological causatives, suffixation
-    is by far the most common pattern. Song (2013) lists examples:
+    is by far the most common pattern. @cite{song-2013} lists examples:
     Japanese "-(s)ase", Turkish "-dUr", Swahili "-ish-" / "-esh-".
     Prefixes (Abkhaz "r-"), infixes (Lepcha "-y-"), and circumfixes
     (Georgian "a-...-ineb") exist but are rare. This parallels Greenberg's

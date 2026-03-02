@@ -21,11 +21,11 @@ fitted threshold from Table 1(b). The bridge proves:
 
 ## Dependency Direction
 
-    Fragments/English/FunctionWords.lean  (AuxEntry, modalMeaning)
+    Fragments/English/FunctionWords.lean (AuxEntry, modalMeaning)
                     ↓
-    Theories/Semantics/Attitudes/EpistemicThreshold.lean  (EpistemicEntry, θ)
+    Theories/Semantics/Attitudes/EpistemicThreshold.lean (EpistemicEntry, θ)
                     ↓
-    Phenomena/Modality/EpistemicThresholdBridge.lean  (this file)
+    Phenomena/Modality/EpistemicThresholdBridge.lean (this file)
 -/
 
 namespace Phenomena.Modality.EpistemicThresholdBridge
@@ -86,11 +86,11 @@ strictly higher thresholds than possibility-force epistemic modals.
 
     □ modals: must (0.95) > should (0.80)
     ◇ modals: may (0.30) > might/could (0.20)
-    □ > ◇:    should (0.80) > may (0.30)
+    □ > ◇: should (0.80) > may (0.30)
 
 This connects two independent characterizations of the same items:
-- Kratzer (1981): force is an algebraic property of the modal operator
-- Ying et al. (2025): threshold is a fitted parameter over credence -/
+- @cite{kratzer-1981}: force is an algebraic property of the modal operator
+- @cite{ying-zhi-xuan-wong-mansinghka-tenenbaum-2025}: threshold is a fitted parameter over credence -/
 
 /-- Every necessity-force epistemic modal has a higher threshold than
     every possibility-force epistemic modal. -/

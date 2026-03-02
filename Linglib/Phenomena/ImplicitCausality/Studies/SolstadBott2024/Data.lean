@@ -8,20 +8,20 @@ import Mathlib.Tactic.NormNum
 
 Theory-neutral experimental data on implicit causality (I-Caus) and implicit
 consequentiality (I-Cons) for psych verbs. The experimental data comes from
-Solstad & Bott (2022), which tests stimulus-experiencer (STIM-EXP) and
+@cite{solstad-bott-2022}, which tests stimulus-experiencer (STIM-EXP) and
 experiencer-stimulus (EXP-STIM) verb classes in German.
 
 The theoretical framework connecting occasion verbs, projectivity, and
 IC bias comes from Solstad & Bott (2024, S&P 17:11).
 
-## Verb classes (Solstad & Bott 2022, §1.1; Au 1986)
+## Verb classes
 
 - **StimExp** (Stimulus-Experiencer): frighten, annoy, amuse — NP1 bias
 - **ExpStim** (Experiencer-Stimulus): admire, like, fear — NP2 bias
 - **AgentEvocator** (Agent-Evocator): criticise, congratulate — NP2 bias
 - **AgentPatient** (Agent-Patient): kick, chase, hit — NP1 bias
 
-## Key empirical findings (Solstad & Bott 2022)
+## Key empirical findings
 
 1. **Exp 1** (sentence continuation): I-Caus and I-Cons biases mirror each
    other for psych verbs. STIM-EXP: 87.4% NP1 with *weil*; EXP-STIM: 96%
@@ -40,8 +40,7 @@ namespace Phenomena.ImplicitCausality.Studies.SolstadBott2024
 -- § 1. Verb Classes
 -- ════════════════════════════════════════════════════
 
-/-- Verb classes from the IC bias literature (Au 1986; Crinean & Garnham 2006;
-    Solstad & Bott 2022). -/
+/-- Verb classes from the IC bias literature. -/
 inductive VerbClass where
   | stimExp        -- StimExp: frighten, annoy, amuse — subject is stimulus
   | expStim        -- ExpStim: admire, like, fear — subject is experiencer
@@ -65,11 +64,10 @@ inductive ICBias where
 
 /-- Predicted IC bias direction for each verb class.
 
-    The IC bias tracks the STIMULUS argument, not the subject per se
-    (Au 1986; Solstad & Bott 2022, §1.1):
+    The IC bias tracks the STIMULUS argument, not the subject per se:
     - StimExp (stimulus = subject) → NP1 (explanation about subject)
     - ExpStim (stimulus = object) → NP2 (explanation about object)
-    - AgentEvocator (evocator = object) → NP2 (Au 1986; Fillmore 1969)
+    - AgentEvocator (evocator = object) → NP2
     - AgPat (agent = subject) → NP1 (default) -/
 def VerbClass.predictedBias : VerbClass → ICBias
   | .stimExp       => .np1   -- stimulus is subject → NP1
@@ -81,7 +79,7 @@ def VerbClass.predictedBias : VerbClass → ICBias
 -- § 4. Connectives (Solstad & Bott 2022, Exp 1)
 -- ════════════════════════════════════════════════════
 
-/-- Connective conditions in Solstad & Bott (2022).
+/-- Connective conditions in @cite{solstad-bott-2022}.
     German connectives *weil* (because) and *sodass* (and so). -/
 inductive ExpConnective where
   | weil      -- "because" → I-Caus (Explanation relation)
@@ -92,7 +90,7 @@ inductive ExpConnective where
 -- § 5. Exp 1 Data: Coreference Biases (Table 1)
 -- ════════════════════════════════════════════════════
 
-/-- Subject coreference proportion from Exp 1, Table 1 of Solstad & Bott (2022).
+/-- Subject coreference proportion from Exp 1, Table 1 of @cite{solstad-bott-2022}.
     These are real data from 52 German participants with 20 STIM-EXP and
     20 EXP-STIM verbs (gefallen excluded). -/
 structure CorefDatum where
@@ -136,7 +134,7 @@ theorem icons_mirrors_icaus :
   · show 50 < (779 : ℚ)/10; norm_num
 
 /-- The Asymmetry Hypothesis: I-Caus and I-Cons derive from different
-    mechanisms (Solstad & Bott 2022, §1.4.3):
+    mechanisms:
     - I-Caus: verb-semantic (Empty Slot Theory)
     - I-Cons: discourse-structural (Contiguity Principle) -/
 theorem asymmetry_hypothesis_supported :

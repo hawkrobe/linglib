@@ -35,7 +35,7 @@ namespace Semantics.Causation.PsychCausation
     what the Cause picks out:
     - `.external`: mind-external percept/event ("the noise frightened John")
     - `.internal`: mind-internal representation via "stative causation" /
-      maintenance relation (Kim 2024, §3.3) — an existing mental
+      maintenance relation — an existing mental
       representation maintains the experiencer's psychological state
       ("the problem concerns John") -/
 inductive CausalSource where
@@ -43,7 +43,7 @@ inductive CausalSource where
   | internal  -- mental representation (stative causation/maintenance) → stative reading
   deriving DecidableEq, Repr, BEq
 
-/-- Position in a two-link causal chain (Kim 2024, Ch. 5).
+/-- Position in a two-link causal chain.
 
     Class II psych verbs involve a causal chain from cause (onset)
     to experiencer's mental state change (terminus). -/
@@ -84,7 +84,7 @@ def CausalSource.isEventive : CausalSource → Bool
 -- § Stimulus Subtype (Pesetsky 1995)
 -- ════════════════════════════════════════════════════
 
-/-- Pesetsky's (1995) subdivision of the stimulus role.
+/-- @cite{pesetsky-1995}'s subdivision of the stimulus role.
 
     Class II psych verbs take a stimulus/cause argument, but
     Pesetsky shows this role has two semantically distinct subtypes:
@@ -124,7 +124,7 @@ def StimulusType.conflictsWithCause : StimulusType → Bool
 -- § CausalSource → StimulusType Derivation
 -- ════════════════════════════════════════════════════
 
-/-- Derive stimulus subtype from causal source (Pesetsky 1995).
+/-- Derive stimulus subtype from causal source.
 
     For Class II psych verbs, the T/SM distinction is *determined by*
     the causal source:

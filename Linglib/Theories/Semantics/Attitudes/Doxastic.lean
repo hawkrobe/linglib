@@ -77,7 +77,7 @@ inductive Veridicality where
 /--
 Common Ground requirement polarity: does the verb place requirements on p or ¬p?
 
-Glass (2025) distinguishes belief verbs by whether their projective content
+@cite{glass-2025} distinguishes belief verbs by whether their projective content
 concerns p (positive) or ¬p (negative).
 -/
 inductive CGPolarity where
@@ -99,7 +99,7 @@ inductive CGStrength where
 /--
 Common Ground requirement for belief verbs.
 
-Glass (2025) proposes a 2×2 typology based on polarity × strength:
+@cite{glass-2025} proposes a 2×2 typology based on polarity × strength:
 - Factive (know): positive × necessity → CG ⊨ p
 - Nonfactive (think): no requirement
 - Weak contrafactive (yǐwéi): negative × possibility → CG ◇ ¬p
@@ -141,7 +141,7 @@ end CGRequirement
 /-!
 ## Deriving CG Requirements from Semantic Structure
 
-Glass (2025) shows that for DOXASTIC verbs, the CG requirement is NOT a
+@cite{glass-2025} shows that for DOXASTIC verbs, the CG requirement is NOT a
 separate lexical property - it follows from VERIDICALITY:
 
 - **Veridical** (know): presupposes p → factive CG requirement
@@ -260,7 +260,7 @@ A causal model M = (U, V, E) where:
 - endog: Endogenous variables (determined by structural equations)
 - edges: Causal edges representing direct influence
 
-This is a simplified Pearl (2000) causal model for our purposes.
+This is a simplified @cite{pearl-2000} causal model for our purposes.
 -/
 structure CausalModel where
   exog : List CausalVar
@@ -348,9 +348,9 @@ This captures the Roberts & Özyıldız insight that:
 3. Acquisition of indicators leads to belief formation
 
 Key structural equations:
-- indic(p) := p ∨ q  (p is sufficient for its indicators; q = other sources)
-- acq(a)(iₚ) := indic(p) ∧ exp(a)(iₚ)  (acquaintance requires indicator + experience)
-- B(a)(p) := acq(a)(iₚ)  (belief results from acquaintance with evidence)
+- indic(p) := p ∨ q (p is sufficient for its indicators; q = other sources)
+- acq(a)(iₚ) := indic(p) ∧ exp(a)(iₚ) (acquaintance requires indicator + experience)
+- B(a)(p) := acq(a)(iₚ) (belief results from acquaintance with evidence)
 -/
 def beliefFormationModel : CausalModel :=
   { exog := [BeliefVars.p, BeliefVars.not_p]
@@ -538,7 +538,7 @@ def DoxasticPredicate.holdsAt {W E : Type*}
 /--
 Semantics for doxastic predicate taking a Hamblin question.
 
-Following Karttunen (1977), "know Q" means knowing the true answer:
+Following @cite{karttunen-1977}, "know Q" means knowing the true answer:
 ⟦x knows Q⟧(w) = ∃p ∈ Q. p(w) ∧ x knows p
 
 For non-veridical predicates, we drop the p(w) requirement:
@@ -703,7 +703,7 @@ can be computed locally (inside the attitude) or globally (about speaker):
 **Global**: Speaker implicates ¬(speaker believes all)
 **Local**: x believes (some ∧ ¬all) [apparent local reading]
 
-Goodman & Stuhlmüller (2013) show the "local" reading arises from
+@cite{goodman-stuhlmuller-2013} show the "local" reading arises from
 pragmatic inference about speaker knowledge, not true local computation.
 
 See `RSA/Implementations/GoodmanStuhlmuller2013.lean` for the RSA treatment.

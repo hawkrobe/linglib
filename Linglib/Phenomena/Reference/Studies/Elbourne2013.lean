@@ -4,8 +4,8 @@ import Linglib.Fragments.English.Pronouns
 import Linglib.Fragments.English.Nouns
 
 /-!
-# Elbourne (2013): Situation-Semantic Definite Descriptions — Empirical Tests @cite{elbourne-2013}
-@cite{donnellan-1966} @cite{kripke-1977}
+# @cite{elbourne-2013}: Situation-Semantic Definite Descriptions — Empirical Tests @cite{elbourne-2013}
+@cite{donnellan-1966} @cite{kripke-1977} @cite{karttunen-1974}
 
 End-to-end derivation chain from Fragment lexical entries through
 Elbourne's situation-semantic theory to concrete truth-value predictions.
@@ -14,16 +14,16 @@ Elbourne's situation-semantic theory to concrete truth-value predictions.
 
 ```
 Fragments/English/Determiners.lean
-  "the": qforce = .definite → the_sit / the_sit'
+  "the": qforce =.definite → the_sit / the_sit'
 Fragments/English/Pronouns.lean
-  "it"/"he"/"she": pronounType = .personal, person = .third → the_sit' + NP-deletion
+  "it"/"he"/"she": pronounType =.personal, person =.third → the_sit' + NP-deletion
     ↓
 Theories/Semantics/Intensional/Situations/Elbourne.lean
-  the_sit / the_sit': λf.λs : ∃!x f(x)(s) . ιx f(x)(s)
+  the_sit / the_sit': λf.λs : ∃!x f(x)(s). ιx f(x)(s)
   SitVarStatus: free (de re) vs bound (de dicto)
   SituationFrame: mereological part-of structure
-    ↓  (concrete model + predicate denotations)
-Phenomena/Reference/Studies/Elbourne2013.lean  (this file)
+    ↓ (concrete model + predicate denotations)
+Phenomena/Reference/Studies/Elbourne2013.lean (this file)
   referential/attributive → truth values → match empirical judgments
   incomplete definites → situation-relative uniqueness
   donkey anaphora → minimality → uniqueness
@@ -57,7 +57,7 @@ open Semantics.Reference.Donnellan (UseMode)
 
 /-! ### Bridge 1: "the" → the_sit
 
-The Fragment entry for "the" has `qforce = .definite`. Under Elbourne's
+The Fragment entry for "the" has `qforce =.definite`. Under Elbourne's
 analysis, this maps to `the_sit`: a situation-relative Fregean definite
 that presupposes existence+uniqueness *in the evaluation situation*. -/
 
@@ -75,7 +75,7 @@ theorem english_the_is_uniqueness :
     some DefPresupType.uniqueness := rfl
 
 /-- Demonstratives "this"/"that" are also QForce.definite in the fragment.
-Schwarz (2009): they are structurally distinguished by requiring a
+@cite{schwarz-2009}: they are structurally distinguished by requiring a
 FAMILIARITY situation (= strong article / D_deix layer). -/
 theorem english_demonstratives_are_definite :
     Fragments.English.Determiners.this.qforce = .definite ∧
@@ -86,7 +86,7 @@ theorem english_demonstratives_are_definite :
 
 Third-person personal pronouns (he/she/it) are `the_sit` with
 phonologically null NP complements (Postal 1966, Elbourne 2005, 2013 Ch 10).
-The Fragment classifies them as `PronounType.personal` with `person = .third`. -/
+The Fragment classifies them as `PronounType.personal` with `person =.third`. -/
 
 /-- "it" is personal, 3rd person, sg.
 Under Elbourne: ⟦it⟧ = ⟦the⟧ + NP-deletion. -/
@@ -160,7 +160,7 @@ def voldemortExample : PronounAsDefinite :=
 
 /-! ### Setup
 
-Donnellan's (1966) classic scenario, analyzed via Elbourne (2013, Ch 5):
+@cite{donnellan-1966}'s classic scenario, analyzed via Elbourne (2013, Ch 5):
 
 The speaker is at Smith's murder trial. Jones sits in the dock,
 behaving very strangely. The speaker says:
@@ -234,7 +234,7 @@ theorem ref_attr_diverge :
 def refSitVar : SitVar := .free           -- s* = s_courtroom
 def attrSitVar : SitVar := .bound 1       -- s₁ bound to w_actual
 
-/-- Kripke's (1977) argument: referential reading is pragmatic
+/-- @cite{kripke-1977}'s argument: referential reading is pragmatic
     (speaker's reference), not a semantic ambiguity. Elbourne formalizes
     this: both readings use the same entry; only the SITUATION differs. -/
 theorem same_entry_both_readings :
@@ -442,11 +442,11 @@ end Donkey
 
 /-! ### Setup
 
-Extends Percus's (2000) analysis from bare predicates to full DPs.
+Extends @cite{percus-2000}'s analysis from bare predicates to full DPs.
 
 "Mary believes the president is a spy."
 
-De re (free s*):   [the president s*] at actual → actual president (Jones)
+De re (free s*): [the president s*] at actual → actual president (Jones)
 De dicto (bound s₁): [the president s₁] at belief → believed president (Smith)
 
 The DP "the president" stays in place; only the situation index changes.
@@ -517,7 +517,7 @@ Under Russell: Hans wants [∃!x ghost(x) ∧ quiet(x)] — Hans wants
 there to be a ghost. WRONG.
 
 Under Elbourne: the_sit' introduces a presupposition that projects
-to Hans's beliefs (Karttunen 1974). Hans believes there is a ghost,
+to Hans's beliefs. Hans believes there is a ghost,
 but the speaker need not. -/
 
 section ExistenceEntailment

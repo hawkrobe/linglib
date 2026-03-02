@@ -63,6 +63,8 @@ def closestWorldsB {W : Type*} [DecidableEq W]
 
 /-!
 ## Universal Theory
+@cite{ramotowska-santorio-2025}
+
 
 The standard possible-worlds analysis: counterfactuals universally quantify
 over the closest antecedent-worlds.
@@ -471,11 +473,11 @@ def TruthValue.join : TruthValue → TruthValue → TruthValue
   | .indeterminate, .true => .true
   | .true, _ => .true
 
-/-- Conjunctive projection computes the meet: meet(.., false, ..) = false -/
+/-- Conjunctive projection computes the meet: meet(., false,.) = false -/
 example : TruthValue.meet .true .false = .false := rfl
 example : TruthValue.meet .true .indeterminate = .indeterminate := rfl
 
-/-- Disjunctive projection computes the join: join(.., true, ..) = true -/
+/-- Disjunctive projection computes the join: join(., true,.) = true -/
 example : TruthValue.join .false .true = .true := rfl
 example : TruthValue.join .false .indeterminate = .indeterminate := rfl
 
@@ -493,7 +495,7 @@ infrastructure. See `Core/Duality.lean` for:
 - `universal_fragile`: one false → result false (right adjoint property)
 - `Quantifier.duality`: classification of quantifiers by adjoint type
 
-The counterfactual case (Ramotowska et al. 2025) is one instance of this
+The counterfactual case is one instance of this
 general principle, which also explains:
 - Presupposition projection
 - Homogeneity in plurals
@@ -521,7 +523,7 @@ The three theories make different predictions when counterfactuals are
 embedded under quantifiers. This is the key empirical test.
 
 Given:
-- A domain of individuals D = {a, b, c, ...}
+- A domain of individuals D = {a, b, c,...}
 - For each d ∈ D, a counterfactual "If d were A, d would be B"
 - Mixed results: some individuals' closest A-worlds satisfy B, others don't
 
@@ -647,7 +649,7 @@ The selection function s(w, A) can be grounded via causal intervention:
 
 s(w, A) = the world that results from intervening to make A true at w
 
-This connects to Nadathur & Lauer (2020):
+This connects to @cite{nadathur-lauer-2020}:
 - `normalDevelopment(s ⊕ {A = true})` gives the counterfactual A-world
 - Counterfactual dependence (necessity) = selection-based conditionals
 

@@ -120,7 +120,7 @@ This is why "Harry thinks that Anna married" can be derived by:
   1. (Harry ∘ thinks) ∘ (that ∘ (Anna ∘ married))
   2. Harry ∘ (thinks ∘ that) ∘ (Anna ∘ married)
   3. Harry ∘ (thinks ∘ (that ∘ Anna)) ∘ married
-  ... etc.
+... etc.
 
 All yield the same predicate-argument structure.
 -/

@@ -205,7 +205,7 @@ def wrongOrder : BathroomDatum := {
 /--
 Connection to modal subordination.
 
-"A wolf might come in. It would eat you first."
+"A wolf might come. It would eat you first."
 
 Similar pattern: anaphora to hypothetical/modal entity.
 -/

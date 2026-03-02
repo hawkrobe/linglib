@@ -7,24 +7,24 @@ import Linglib.Core.Discourse.Commitment
 # Biased Polar Questions
 @cite{anderbois-2019} @cite{bring-gunlogson-2000} @cite{domaneschi-2017} @cite{frana-rawlins-2019} @cite{goodhue-2022} @cite{ladd-1981} @cite{repp-2013} @cite{romero-2015} @cite{romero-2024} @cite{romero-han-2004} @cite{stakov-2026}
 
-Cross-linguistic framework for polar question bias, following Romero (2024).
+Cross-linguistic framework for polar question bias, following @cite{romero-2024}.
 Polar questions come in three forms — PosQ, LoNQ, HiNQ — which differ in
 sensitivity to two independent bias dimensions: original speaker bias and
 contextual evidence bias.
 
 ## Two Bias Dimensions
 
-1. **Original speaker bias** (Ladd 1981): The speaker's prior epistemic state
+1. **Original speaker bias**: The speaker's prior epistemic state
    (belief/expectation) about p *before* the current exchange.
-2. **Contextual evidence bias** (Büring & Gunlogson 2000): Expectation about p
+2. **Contextual evidence bias**: Expectation about p
    induced by evidence that becomes available *during* the current exchange.
 
 ## Three Theoretical Lines for High Negation
 
 Romero (2020) clusters analyses into three lines:
-- **Line a** (AnderBois 2011, 2019): Σ_neg at the expressed proposition level
-- **Line b** (Repp 2013, Romero 2015, Frana & Rawlins 2019): VERUM/FALSUM
-- **Line c** (Goodhue 2018, 2022c): ¬ASSERT at the speech act level
+- **Line a**: Σ_neg at the expressed proposition level
+- **Line b**: VERUM/FALSUM
+- **Line c**: ¬ASSERT at the speech act level
 
 We formalize VERUM and FALSUM (line b) using existing Kratzer modal and
 CommonGround infrastructure, as this is the line adopted by Staňková (2026)
@@ -61,11 +61,10 @@ inductive PQForm where
 -- §2: Bias Typology (Romero 2024 §2)
 -- ============================================================================
 
-/-- Original speaker bias (Ladd 1981, Romero & Han 2004).
+/-- Original speaker bias.
 
 Belief or expectation of the speaker that p is true, based on her epistemic
-state *prior to* the current situational context and conversational exchange
-(Domaneschi et al. 2017). -/
+state *prior to* the current situational context and conversational exchange. -/
 inductive OriginalBias where
   /-- Speaker originally expected/believed p. -/
   | forP
@@ -202,9 +201,9 @@ theorem falsum_atIssue_is_negation (ep : ModalBase) (cv : OrderingSource)
 -- §5b: FALSUM^CZ (Šimík 2024 §5, eq. 44)
 -- ============================================================================
 
-/-- Czech FALSUM (Šimík 2024 eq. 44), weaker than standard FALSUM (Repp 2013).
+/-- Czech FALSUM (Šimík 2024 eq. 44), weaker than standard FALSUM.
 
-⟦FALSUM_1^CZ⟧^g(p) = λw : ∃w' ∈ EPI_{g(1)}(w)[p(w') = 1] . p ∉ CG_w
+⟦FALSUM_1^CZ⟧^g(p) = λw : ∃w' ∈ EPI_{g(1)}(w)[p(w') = 1]. p ∉ CG_w
 
 Key differences from Repp's FALSUM:
 1. **Weak commitment**: epistemic *possibility* rather than necessity/belief

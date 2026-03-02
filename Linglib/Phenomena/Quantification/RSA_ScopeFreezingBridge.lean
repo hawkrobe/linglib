@@ -94,7 +94,7 @@ which is being rebuilt in the new RSAConfig framework.
 
 /-! ## Connection to Grammar Theories
 
-Both Minimalism and CCG predict `possessor_frozen.observed = .surfaceOnly`:
+Both Minimalism and CCG predict `possessor_frozen.observed =.surfaceOnly`:
 - **Minimalism**: DP phase blocks QR (see `Minimalism.Phenomena.Scope.predictsFreezing`)
 - **CCG**: Single derivation for possessor DP (see `CCG.Scope.ccgPredictsFreezing`)
 

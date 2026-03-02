@@ -5,7 +5,7 @@ import Linglib.Theories.Semantics.Tense.Basic
 @cite{egressy-2026} @cite{zhao-2025}
 
 Lexical entries for Hungarian temporal adverbs used as clause-size
-diagnostics in Egressy (2026, §4).
+diagnostics in @cite{egressy-2026}.
 
 ## Temporal Adverb Diagnostics
 
@@ -71,7 +71,7 @@ def elozo_nap : TemporalFrameAdverb where
   forcesShifted := true
   compatSimultaneous := false
 
-/-- All temporal frame adverbs from Egressy (2026, §4). -/
+/-- All temporal frame adverbs from @cite{egressy-2026}. -/
 def allFrameAdverbs : List TemporalFrameAdverb := [aznap, elozo_nap]
 
 /-- *előző nap* forces the shifted reading. -/

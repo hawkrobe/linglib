@@ -1,8 +1,8 @@
 /-!
-# Hahn, Degen & Futrell (2021): 54-Language Efficiency Data
+# @cite{hahn-degen-futrell-2021}: 54-Language Efficiency Data
 @cite{hahn-degen-futrell-2021}
 
-Empirical data from Study 2 of Hahn, Degen & Futrell (2021) "Modeling Word
+Empirical data from Study 2 of @cite{hahn-degen-futrell-2021} "Modeling Word
 and Morpheme Order as an Efficient Trade-Off of Memory and Surprisal",
 *Psychological Review* 128(4):726–756.
 

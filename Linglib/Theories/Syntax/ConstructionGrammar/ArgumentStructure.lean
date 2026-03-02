@@ -5,12 +5,12 @@ import Linglib.Core.Interface
 
 /-!
 # Argument Structure Constructions
-@cite{goldberg-1995}
+@cite{goldberg-1995} @cite{goldberg-shirtz-2025}
 
-CxG's argument structure constructions (Goldberg 1995) and their decomposition
+CxG's argument structure constructions and their decomposition
 into Müller's three universal schemata.
 
-Müller (2013, §3) argues "both directions right": the three universal schemata
+@cite{mueller-2013} argues "both directions right": the three universal schemata
 capture *fully abstract* constructions (ditransitive, caused-motion, resultative),
 but *partially open* and *lexically specified* constructions are irreducible
 phrasal patterns that only CxG can capture.
@@ -58,7 +58,7 @@ structure ArgStructureConstruction where
   hasHead : slots.any (·.isHead) = true
   deriving Repr
 
-/-! ## Concrete argument structure constructions (Goldberg 1995, Ch. 3) -/
+/-! ## Concrete argument structure constructions -/
 
 /-- Ditransitive construction: [Subj V Obj1 Obj2].
 "X CAUSES Y to RECEIVE Z" (e.g., "She gave him a book"). -/
@@ -174,7 +174,7 @@ theorem fullyAbstract_is_decomposable (c : Construction)
   rw [h₁, h₂]
   native_decide
 
-/-- PAL construction (Goldberg & Shirtz 2025) is NOT decomposable.
+/-- PAL construction is NOT decomposable.
 
 PAL is a phrasal construction where a phrase fills a word-level slot.
 This form-function pairing cannot be captured by the three schemata alone —
@@ -183,7 +183,7 @@ theorem pal_irreducible :
     isDecomposable Studies.GoldbergShirtz2025.palConstruction = false := by
   native_decide
 
-/-- *Let alone* construction (FKO 1988) is NOT decomposable.
+/-- *Let alone* construction is NOT decomposable.
 
 *Let alone* is a formal idiom with paired focus, scalar entailment, and
 NPI licensing requirements. These semantic/pragmatic properties cannot

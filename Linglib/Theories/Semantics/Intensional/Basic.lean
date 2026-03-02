@@ -83,7 +83,7 @@ def Proposition (m : IntensionalModel) : Type := m.World → Bool
 theorem proposition_eq_bprop (m : IntensionalModel) :
     Proposition m = Core.Proposition.BProp m.World := rfl
 
-/-- Semantics.Intensional.Intension .t equals Core.Intension.Intension W Bool. -/
+/-- Semantics.Intensional.Intension.t equals Core.Intension.Intension W Bool. -/
 theorem intension_t_eq_core (m : IntensionalModel) :
     Intension m .t = Core.Intension.Intension m.World Bool := rfl
 
@@ -335,7 +335,7 @@ def phi {m : IntensionalModel} (d : IntensionalDerivation m)
 /--
 Theorem: φ is definitionally equal to evaluating the meaning at the world.
 
-Note: `d.evalAt w` has type `m.base.interpTy d.ty`, which equals `Bool` when `d.ty = .t`.
+Note: `d.evalAt w` has type `m.base.interpTy d.ty`, which equals `Bool` when `d.ty =.t`.
 The `phi` function handles this type coercion.
 -/
 theorem phi_def {m : IntensionalModel} (d : IntensionalDerivation m)

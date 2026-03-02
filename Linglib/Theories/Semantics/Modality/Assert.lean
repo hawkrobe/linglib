@@ -3,14 +3,13 @@ import Linglib.Core.Discourse.DiscourseRole
 
 /-!
 # The ASSERT Operator and Speech Act Phrase
-  @cite{hacquard-2006} @cite{portner-2001} @cite{tenny-speas-2004}Formalizes the Speech Act Phrase (SAP) from Hacquard (2006, §4.2.1.2,
-pp.141–144), following Tenny & Speas (2004). Every matrix clause is
+  @cite{hacquard-2006} @cite{portner-2001} @cite{tenny-speas-2004}Formalizes the Speech Act Phrase (SAP) from Hacquard (2006, §4.2.1.2, @cite{speas-tenny-2003}
+pp.141–144), following @cite{tenny-speas-2004}. Every matrix clause is
 headed by a SAP that introduces a speech event e* with propositional
 CONTENT. The type of speech act determines the content:
 
 - **Declarative**: CON(e*) = speaker's beliefs → epistemic R
 - **Imperative**: CON(e*) = addressee's to-do list → deontic R
-  (Portner 2001)
 - **Interrogative**: CON(e*) = question content
 
 ## Architectural Significance
@@ -67,11 +66,11 @@ def hasContent : SpeechActType → Bool
 /-- The primary modal flavor licensed by each speech act type.
 
 - Declarative → epistemic: the content is the speaker's beliefs, so
-  R accesses what the speaker considers possible (Hacquard 2006, p.144).
+  R accesses what the speaker considers possible.
 - Imperative → deontic: the content is the addressee's obligations, so
-  R accesses what is permitted/required (Portner 2001).
+  R accesses what is permitted/required.
 - Promissive → deontic: the content is the speaker's commitments,
-  paralleling imperative (Portner 2001). -/
+  paralleling imperative. -/
 def primaryFlavor : SpeechActType → ModalFlavor
   | .declarative => .epistemic
   | .imperative => .deontic
@@ -108,7 +107,7 @@ def ASSERT {W : Type*} (beliefs : W → List (BProp W)) : SpeechActEvent W where
 /-- DIRECT: introduce an imperative speech event.
 
 The content encodes the addressee's to-do list — worlds compatible
-with the addressee fulfilling their obligations (Portner 2001). -/
+with the addressee fulfilling their obligations. -/
 def DIRECT {W : Type*} (obligations : W → List (BProp W)) : SpeechActEvent W where
   actType := .imperative
   content := obligations
@@ -131,7 +130,7 @@ def SpeechActEvent.toBackground {W : Type*}
 /-- Lift a speech act event into an anchoring function.
 
 Given a speech act event sa, we construct an `AnchoringFn` where:
-- The speech event (`.inl ()`) maps to sa's content
+- The speech event (`.inl `) maps to sa's content
 - Any described event (`.inr ev`) maps to the described event's
   own background.
 
@@ -165,7 +164,7 @@ theorem described_slot_passthrough {Ev W : Type*}
 /-! EventRelativity §8 stipulates `EventBinder.speechAct.hasContent = true`.
 With the SAP formalization, this becomes derivable:
 
-1. Every matrix clause has a SAP (Tenny & Speas 2004).
+1. Every matrix clause has a SAP.
 2. SAP introduces a speech event e*.
 3. e* carries CON(e*) (the speech act's propositional content).
 4. Therefore e* is contentful.
@@ -270,8 +269,8 @@ The speech event's content provides the conversational background.
 
 NB: These are defined directly rather than via `speechActAnchoring`
 (§3) to avoid type inference issues with the generic `Ev` parameter.
-The result is equivalent: `fDecl () w = speechActAnchoring
-declarativeEvidence (λ _ _ => []) (.inl ()) w`. -/
+The result is equivalent: `fDecl  w = speechActAnchoring
+declarativeEvidence (λ _ _ => []) (.inl) w`. -/
 private def fDecl : AnchoringFn Unit LeaveWorld :=
   λ () => declarativeEvidence.content
 
@@ -338,9 +337,9 @@ inductive SpeechTime where | now
 Declarative: holder = speaker (it's the speaker's beliefs).
 Imperative: holder = addressee (it's the addressee's obligations).
 
-NB: `.interrogative => .speaker` because the holder is who PERFORMS the
+NB: `.interrogative =>.speaker` because the holder is who PERFORMS the
 speech act (always the speaker in Hacquard's framework). This is distinct
-from the SEAT OF KNOWLEDGE (Speas & Tenny 2003), which is the hearer for
+from the SEAT OF KNOWLEDGE, which is the hearer for
 interrogatives — that notion captures who has epistemic authority over
 the content, not who initiates the speech event. The bridge between these
 is in `SpeechActs.lean`: `seat_of_knowledge_agrees_with_epistemic_authority`. -/

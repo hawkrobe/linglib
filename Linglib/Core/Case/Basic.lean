@@ -2,7 +2,7 @@
 # Case: Theory-Neutral Inventory @cite{blake-1994}
 @cite{comrie-1978}
 
-A framework-agnostic case inventory drawn from Blake's (1994) cross-linguistic
+A framework-agnostic case inventory drawn from @cite{blake-1994}'s cross-linguistic
 survey. These 19 values cover the cases attested across Blake's typological
 sample (Chs. 2, 5). Every syntactic framework (Minimalism, HPSG, DG, CCG)
 can import this type without committing to a particular theory of case assignment.
@@ -26,7 +26,7 @@ namespace Core
 -- § 1: Alignment Family
 -- ============================================================================
 
-/-- The two major morphosyntactic alignment families (Blake 1994, Ch. 2).
+/-- The two major morphosyntactic alignment families.
 
     Used by `SplitErgativity` to parameterize which alignment a split-ergative
     system selects. The full five-way typology (neutral, accusative, ergative,

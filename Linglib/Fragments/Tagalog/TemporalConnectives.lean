@@ -14,7 +14,7 @@ Tagalog distinguishes two perfective aspects in embedded temporal clauses:
 - **AIA** (ability-and-involuntary-action, culminating perfective): yields
   finish-point reading
 
-This morphological evidence supports Rett's (2020) ambiguity analysis:
+This morphological evidence supports @cite{rett-2020}'s ambiguity analysis:
 the covert INCHOAT/COMPLET operators posited for English correspond to
 overt aspect markers in Tagalog.
 
@@ -50,7 +50,7 @@ structure AspectReadingEntry where
 -- ============================================================================
 
 /-- *bago* + PFV.NEUT → before-start (≺ initial).
-    Rett (2020) ex. (12a): "She left before he swept the floor" with neutral
+    @cite{rett-2020} ex. (12a): "She left before he swept the floor" with neutral
     perfective yields the default initial-point reading. -/
 def bago_neut : AspectReadingEntry :=
   { connective := "bago"
@@ -60,7 +60,7 @@ def bago_neut : AspectReadingEntry :=
   , reading := .beforeStart }
 
 /-- *bago* + AIA → before-finish (≺ final).
-    Rett (2020) ex. (12b): "She left before he swept the floor" with AIA
+    @cite{rett-2020} ex. (12b): "She left before he swept the floor" with AIA
     (ability-and-involuntary-action) yields the coerced final-point reading.
     AIA is the morphological realization of COMPLET. -/
 def bago_aia : AspectReadingEntry :=

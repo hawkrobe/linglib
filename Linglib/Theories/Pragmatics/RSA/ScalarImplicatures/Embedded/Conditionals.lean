@@ -20,7 +20,7 @@ This predicts DE-like blocking of local implicatures, similar to "no one".
 
 Conditional antecedents are DE because:
 - Let p ⊆ q (p entails q)
-- Then: "If q, r" entails "If p, r"  (contrapositive reasoning)
+- Then: "If q, r" entails "If p, r" (contrapositive reasoning)
 
 For scalar implicatures:
 - "some" ⊆ "all" (in terms of truth conditions)

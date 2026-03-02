@@ -8,11 +8,11 @@ two comparison modes:
 1. **Lexicographic** (Optimality Theory): constraints are strictly ranked;
    the first constraint where candidates differ determines the winner.
    Used in phonology (Prince & Smolensky 1993/2004) and syntactic
-   competition (Erlewine 2016).
+   competition.
 
 2. **Subset inclusion** (Satisfaction ordering): a candidate is at least
    as good as another iff it satisfies every criterion the other satisfies.
-   Used in Kratzer's (1991) modal semantics (see `SatisfactionOrdering.lean`).
+   Used in @cite{kratzer-1991}'s modal semantics (see `SatisfactionOrdering.lean`).
 
 Both select optimal candidates from a set. They differ in comparison:
 `lexLE` yields a total order (OT always picks a winner); `satLE` yields
@@ -23,8 +23,8 @@ a partial order (incomparable candidates possible, as in Kratzer's semantics).
 `Core.SatisfactionOrdering.SatisfactionOrdering` is the special case where
 violations are binary (0 = satisfied, ≥1 = violated) and comparison uses
 subset inclusion (`satLE`). A `SatisfactionOrdering` with criteria
-[c₁, ..., cₙ] induces the profile `fun a => [if satisfies a c₁ then 0
-else 1, ..., if satisfies a cₙ then 0 else 1]`, and `atLeastAsGood`
+[c₁,..., cₙ] induces the profile `fun a => [if satisfies a c₁ then 0
+else 1,..., if satisfies a cₙ then 0 else 1]`, and `atLeastAsGood`
 coincides with `satLE` on this profile.
 
 -/
@@ -65,7 +65,7 @@ def lexLT (a b : List Nat) : Bool := lexLE a b && !lexLE b a
 
     Unlike `lexLE`, this is a partial order — two candidates may be
     incomparable if each satisfies constraints the other violates.
-    This is Kratzer's (1991) ordering on worlds relative to a premise set. -/
+    This is @cite{kratzer-1991}'s ordering on worlds relative to a premise set. -/
 def satLE : List Nat → List Nat → Bool
   | [], [] => true
   | [], _ :: _ => true
@@ -170,8 +170,8 @@ theorem optimal_subset (t : OTTableau Candidate) (c : Candidate) :
     1. They share exactly one dimension (same form or same meaning, not both),
     2. The blocker is strictly more harmonic (lexicographic <).
 
-    This is the blocking relation for Blutner's (2000) superoptimality,
-    used by de Hoop & Malchukov (2008) for bidirectional case optimization. -/
+    This is the blocking relation for @cite{blutner-2000}'s superoptimality,
+    used by @cite{de-hoop-malchukov-2008} for bidirectional case optimization. -/
 private def blocked {F M : Type} [BEq F] [BEq M]
     (profile : F × M → List Nat)
     (s : List (F × M)) (p : F × M) : Bool :=
@@ -189,7 +189,7 @@ private def superoptLoop {F M : Type} [BEq F] [BEq M]
     let s' := s.filter λ p => !blocked profile s p
     if s'.length == s.length then s else superoptLoop profile s' fuel
 
-/-- Blutner's (2000) **superoptimal** pairs: the largest set S such that
+/-- @cite{blutner-2000}'s **superoptimal** pairs: the largest set S such that
     no element of S blocks another element of S.
 
     A pair ⟨f, m⟩ is superoptimal iff:

@@ -11,8 +11,7 @@ other IE languages. He observes that syncretisms cluster into groups
 (NOM+ACC vs. DAT+ABL) that are "significant on other grounds" (p. 22).
 
 The **adjacency constraint** — that syncretic cases must be adjacent on the
-case hierarchy — is a generalization from the Nanosyntax tradition
-(Caha 2009), not an explicit claim by Blake. Blake's data is consistent with
+case hierarchy — is a generalization from the Nanosyntax tradition, not an explicit claim by Blake. Blake's data is consistent with
 it, and his ERG/INST syncretism (Australian languages) is the canonical
 exception, which he explains via historical derivation of ERG from INST
 (pp. 174–175).
@@ -48,7 +47,7 @@ structure Syncretism where
 
 /-- Are two cases adjacent on the hierarchy (same rank or ranks differ by 1)?
 
-    This is the strict form of the adjacency constraint (Caha 2009). In
+    This is the strict form of the adjacency constraint. In
     practice, some syncretisms span larger distances (e.g., ERG/INST in
     Australian languages), but the generalization is that adjacency is the
     norm. -/

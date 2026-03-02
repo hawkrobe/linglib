@@ -2,11 +2,11 @@ import Mathlib.Order.BoundedOrder.Basic
 import Mathlib.Algebra.BigOperators.Group.List.Defs
 
 /-!
-# Natural Logic Relations and Entailment Signatures (Icard 2012)
-@cite{icard-2012} @cite{maccartney-manning-2009}
+# Natural Logic Relations and Entailment Signatures
+@cite{icard-2012} @cite{maccartney-manning-2009} @cite{zwarts-1996}
 
 Framework-agnostic infrastructure for the natural logic relation algebra and
-entailment signatures, following Icard (2012) "Inclusion and Exclusion in
+entailment signatures, following @cite{icard-2012} "Inclusion and Exclusion in
 Natural Language."
 
 ## Contents
@@ -60,7 +60,7 @@ inductive NLRelation where
 namespace NLRelation
 
 /--
-Informativity ordering on NL relations (Icard 2012, p.710).
+Informativity ordering on NL relations.
 
 R ≤ R' means R is at least as informative as R'. The lattice has ≡ at
 the bottom (most informative) and # at the top (least informative).
@@ -197,7 +197,7 @@ end NLRelation
 -- ============================================================================
 
 /--
-Entailment signature (Icard 2012, §2).
+Entailment signature.
 
 An entailment signature classifies a function by its algebraic properties
 with respect to ∨ and ∧. This unifies the separate monotonicity and
@@ -230,7 +230,7 @@ inductive EntailmentSig where
 namespace EntailmentSig
 
 /--
-Refinement ordering on entailment signatures (Icard 2012, p.715).
+Refinement ordering on entailment signatures.
 
 The lattice has `all` at the bottom (most specific) and `mono`/`anti`
 at the top of their respective halves.
@@ -472,7 +472,7 @@ end EntailmentSig
 -- ============================================================================
 
 /--
-Strength of downward entailingness (Zwarts 1996).
+Strength of downward entailingness.
 
 Names the three levels of the DE hierarchy:
 - `.weak` = DE only (licenses weak NPIs: ever, any)
@@ -676,7 +676,7 @@ the `top` signature of each node from the target up to the root.
 The composed signature is `List.prod`, using the `Monoid` instance.
 
 Example from Icard §3.2:
-  path = [⊞, ⊕, ◇]  (top(is) ∘ top(involves) ∘ top(every_restrictor))
+  path = [⊞, ⊕, ◇] (top(is) ∘ top(involves) ∘ top(every_restrictor))
   contextProjectivity path = ◇ (anti-additive)
 -/
 def contextProjectivity (path : List EntailmentSig) : EntailmentSig :=
@@ -744,7 +744,7 @@ theorem projection_composition (R : NLRelation) (φ ψ : EntailmentSig) :
 /--
 Any DE-side signature licenses weak NPIs.
 
-This connects Icard's signature lattice to Ladusaw (1980): a signature on
+This connects Icard's signature lattice to @cite{ladusaw-1980}: a signature on
 the DE side (anti, antiAdd, antiMult, antiAddMult) creates a DE context,
 which is sufficient for weak NPI licensing.
 -/
@@ -756,8 +756,7 @@ theorem de_signature_licenses_weak_npi (σ : EntailmentSig) :
 /--
 Anti-additive or stronger signature licenses strong NPIs.
 
-Strong NPIs (lift a finger, in weeks) require anti-additive contexts
-(Zwarts 1996). In Icard's system, this corresponds to signatures
+Strong NPIs (lift a finger, in weeks) require anti-additive contexts. In Icard's system, this corresponds to signatures
 antiAdd, antiAddMult — but NOT plain anti or antiMult.
 -/
 theorem strong_npi_requires_antiadditive (σ : EntailmentSig) :

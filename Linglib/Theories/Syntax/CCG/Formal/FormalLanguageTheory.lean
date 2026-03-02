@@ -78,7 +78,7 @@ private theorem filter_count (n : Nat) (s : FourSymbol) :
   simp only [makeString_anbncndn, List.filter_append, List.filter_replicate, List.length_append]
   cases s <;> simp (config := { decide := true })
 
-/-- .a cannot appear in the suffix of aᵖbᵖcᵖdᵖ past position p. -/
+/--.a cannot appear in the suffix of aᵖbᵖcᵖdᵖ past position p. -/
 private theorem a_not_in_vxy_of_u_ge_p (p : Nat) (u vxy z : FourString)
     (hw : makeString_anbncndn p = u ++ vxy ++ z) (hu : u.length ≥ p) :
     FourSymbol.a ∉ vxy := by
@@ -101,7 +101,7 @@ private theorem a_not_in_vxy_of_u_ge_p (p : Nat) (u vxy z : FourString)
     simp only [List.mem_append, List.mem_replicate] at this
     obtain (⟨_, h⟩ | ⟨_, h⟩) | ⟨_, h⟩ := this <;> exact absurd h (by decide)
 
-/-- .d cannot appear in the prefix of aᵖbᵖcᵖdᵖ up to position 3p. -/
+/--.d cannot appear in the prefix of aᵖbᵖcᵖdᵖ up to position 3p. -/
 private theorem d_not_in_vxy_of_end_le_3p (p : Nat) (u vxy z : FourString)
     (hw : makeString_anbncndn p = u ++ vxy ++ z) (hend : u.length + vxy.length ≤ 3 * p) :
     FourSymbol.d ∉ vxy := by
@@ -132,7 +132,7 @@ private theorem d_not_in_vxy_of_end_le_3p (p : Nat) (u vxy z : FourString)
   simp only [List.mem_append, List.mem_replicate] at hd_3p
   obtain (⟨_, h⟩ | ⟨_, h⟩) | ⟨_, h⟩ := hd_3p <;> exact absurd h (by decide)
 
-/-- A contiguous substring of aᵖbᵖcᵖdᵖ of length ≤ p cannot contain both .a and .d,
+/-- A contiguous substring of aᵖbᵖcᵖdᵖ of length ≤ p cannot contain both.a and.d,
     since they are separated by 2p positions. -/
 private theorem not_a_and_d_in_vxy (p : Nat) (u vxy z : FourString)
     (hw : makeString_anbncndn p = u ++ vxy ++ z) (hvxy : vxy.length ≤ p) :
@@ -188,7 +188,7 @@ set_option maxHeartbeats 800000 in
 /-- Pumping breaks membership in {aⁿbⁿcⁿdⁿ}: for any decomposition of aᵖbᵖcᵖdᵖ
     into uvxyz with |vxy| ≤ p and |vy| ≥ 1, pumping at i=0 breaks membership.
 
-    Key insight: |vxy| ≤ p means vxy can't contain both .a and .d (they're
+    Key insight: |vxy| ≤ p means vxy can't contain both.a and.d (they're
     separated by 2p positions). Pumping down (i=0) preserves one count at p
     while reducing the total, making counts unequal. -/
 theorem pump_breaks_anbncndn (p : Nat) (_hp : p > 0) :
@@ -416,7 +416,7 @@ private theorem makeString_anbnc_in_language (n : Nat) :
 
 set_option maxHeartbeats 800000 in
 /-- {aⁿbⁿcⁿ} does NOT have the CFL pumping property, hence is not context-free.
-    Same structure as the four-symbol case: contiguity forces either .a or .c
+    Same structure as the four-symbol case: contiguity forces either.a or.c
     absent from vxy, preserving one count at p while the total decreases. -/
 theorem anbnc_not_pumpable :
     ¬ HasPumpingProperty3 isInLanguage_anbnc := by

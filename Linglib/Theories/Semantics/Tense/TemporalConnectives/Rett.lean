@@ -4,7 +4,7 @@ import Linglib.Theories.Semantics.Lexical.Verb.Aspect
 import Linglib.Theories.Semantics.Lexical.Verb.ChangeOfState.Theory
 
 /-!
-# Rett (2020): Antonymy + Aspectual Coercion
+# @cite{rett-2020}: Antonymy + Aspectual Coercion
 @cite{rett-2020} @cite{rett-2026} @cite{jin-koenig-2021} @cite{krifka-2010b}*before* and *after* are antonyms on converse scales, with strong defaults
 (before-start, after-finish). Non-default readings require aspectual coercion:
 **INCHOAT** (GLB, atelic → onset) or **COMPLET** (LUB, telic → telos), which
@@ -12,10 +12,10 @@ incur processing cost.
 
 Rett's formal analysis (eqs. 22a-b):
 - ⟦A before B⟧ = ∃t ∈ A [t ≺ MAX(B_≺)]
-- ⟦A after B⟧  = ∃t ∈ A [t ≻ MAX(B_≻)]
+- ⟦A after B⟧ = ∃t ∈ A [t ≻ MAX(B_≻)]
 
 Both theories use ∃ over the main clause A: "some time in A bears the
-relation to (some characterization of) B." They differ in how B's
+relation to (some characterization) B." They differ in how B's
 reference point is selected (all of B vs MAX of B).
 
 ## Level
@@ -30,7 +30,7 @@ reference point is selected (all of B vs MAX of B).
 - `stativeDenotation` has the subinterval property (connects to Krifka CUM)
 - Both theories agree on unambiguous cases (stative before, telic after)
 
-## Ambidirectionality (Rett 2026)
+## Ambidirectionality
 
 *before* is truth-conditionally insensitive to negation of its argument
 (ambidirectional), which is why it licenses expletive negation cross-
@@ -127,7 +127,7 @@ theorem complet_bridges_cessation (i : Interval Time) :
 -- § 4: Theory Agreement (Anscombe ↔ Rett)
 -- ============================================================================
 
-/-- Both theories predict "before-start" for statives (Rett 2020, Table 1).
+/-- Both theories predict "before-start" for statives.
 
     When B is stative (subinterval-closed), both theories reduce to
     "some time in A precedes all times in B":
@@ -153,7 +153,7 @@ theorem anscombe_rett_agree_stative_before_start
       · exact heq ▸ htm
       · exact lt_trans htm (hm_min t' ht' heq)⟩
 
-/-- Rett's analysis implies Anscombe's for telic "after" (Rett 2020, Table 1).
+/-- Rett's analysis implies Anscombe's for telic "after".
 
     The converse does NOT hold: Anscombe.after only requires *some* point
     of B to precede some point of A (∃ t' ∈ B, t' < t), while Rett requires
@@ -199,12 +199,12 @@ theorem rett_after_implies_anscombe (A B : SentDenotation Time) :
 
 /-! ### Expletive negation and ambidirectionality
 
-Rett (2026, §5) shows that *before* is **ambidirectional**: negating B
+@cite{rett-2026} shows that *before* is **ambidirectional**: negating B
 in "A before B" doesn't change truth conditions. This is why
 *before*-clauses license expletive negation cross-linguistically
 (Jin & Koenig 2021: 50 languages).
 
-The mechanism (Rett 2026, §5.2): for B = [s, f], both B and its
+The mechanism: for B = [s, f], both B and its
 **pre-event complement** (−∞, s] share s as their "most informative
 closed bound" on the < scale. The *before* construction relates A only
 to this bound, so negating B is truth-conditionally vacuous.
@@ -242,7 +242,7 @@ theorem complet_stative (i : Interval Time) :
   · rintro rfl
     exact ⟨i.finish, fun j ⟨_, hjf⟩ => hjf, fun t ht => ht i ⟨le_refl _, le_refl _⟩, rfl⟩
 
-/-- The pre-event complement of an event interval [s, f] (Rett 2026, §5.1). -/
+/-- The pre-event complement of an event interval [s, f]. -/
 def preEventDenotation (bot : Time) (i : Interval Time) (hbot : bot ≤ i.start) :
     SentDenotation Time :=
   stativeDenotation ⟨bot, i.start, hbot⟩
@@ -274,7 +274,7 @@ theorem maxOnScale_lt_complet_preEvent (bot : Time) (i : Interval Time) (hbot : 
     {i.start} := by
   rw [timeTrace_complet_preEvent, maxOnScale_lt_closedInterval _ _ (le_refl _)]
 
-/-- *Before* is truth-conditionally insensitive to event polarity (Rett 2026, §5.2).
+/-- *Before* is truth-conditionally insensitive to event polarity.
 
     Both select the same boundary point s through different mechanisms:
     the original uses the default *before*-start reading (MAX₍<₎),
@@ -287,7 +287,7 @@ theorem before_preEvent_ambidirectional (A : SentDenotation Time) (i_B : Interva
   apply before_determined_by_max
   rw [maxOnScale_lt_stative, maxOnScale_lt_complet_preEvent]
 
-/-- *After* is NOT ambidirectional (Rett 2026, §3.3): negating B changes
+/-- *After* is NOT ambidirectional: negating B changes
     truth conditions because MAX₍>₎(B) ≠ MAX₍>₎(¬B). -/
 theorem after_not_ambidirectional (hab : ∃ (a b : Time), a < b) :
     ¬ ∀ (A : SentDenotation Time) (B : Set Time),

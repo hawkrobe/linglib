@@ -1,7 +1,7 @@
 import Linglib.Theories.Semantics.Tense.Basic
 
 /-!
-# Deal (2020): Counterfactual Tense and the Upper Limit Constraint
+# @cite{deal-2020}: Counterfactual Tense and the Upper Limit Constraint
 @cite{deal-2020} @cite{iatridou-2000}
 
 Deal's theory: past morphology in counterfactuals encodes **modal distance**,
@@ -35,7 +35,7 @@ open Semantics.Tense
 -- § Counterfactual Distance
 -- ════════════════════════════════════════════════════════════════
 
-/-- The two uses of past morphology, following Iatridou (2000).
+/-- The two uses of past morphology, following @cite{iatridou-2000}.
 
     Past morphology is ambiguous between:
     1. Temporal precedence (genuine past tense)
@@ -128,7 +128,7 @@ theorem temporal_ne_counterfactual :
 -- § Theory Identity Card
 -- ════════════════════════════════════════════════════════════════
 
-/-- Deal (2020) theory identity card. -/
+/-- @cite{deal-2020} theory identity card. -/
 def Deal : TenseTheory where
   name := "Deal 2020"
   citation := "Deal, A. R. (2020). Counterfactuals and the Upper Limit Constraint."

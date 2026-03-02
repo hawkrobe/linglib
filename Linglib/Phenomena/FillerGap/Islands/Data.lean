@@ -177,7 +177,7 @@ inductive ConstraintType where
   | mannerOfSpeaking  -- MoS verb complement backgrounds content (Lu, Pan & Degen 2025)
   deriving Repr, DecidableEq
 
-/-- Constraint strength classification (Szabolcsi 2006) -/
+/-- Constraint strength classification -/
 inductive ConstraintStrength where
   | strong  -- Consistently blocks the dependency
   | weak    -- Ameliorated in some contexts (e.g., D-linked wh-phrases)
@@ -197,9 +197,9 @@ def constraintStrength : ConstraintType → ConstraintStrength
 Distinguishes structural accounts (subjacency), processing accounts
 (memory load), and discourse accounts (information structure). -/
 inductive IslandSource where
-  /-- Syntactic: island follows from structural configuration (Ross 1967, Chomsky 1973) -/
+  /-- Syntactic: island follows from structural configuration -/
   | syntactic
-  /-- Processing: island is an artifact of memory/retrieval difficulty (Hofmeister & Sag 2010) -/
+  /-- Processing: island is an artifact of memory/retrieval difficulty -/
   | processing
   /-- Discourse: island arises from information-structural backgroundedness (Goldberg 2006, 2013;
   Lu, Pan & Degen 2025) -/
@@ -208,7 +208,7 @@ inductive IslandSource where
 
 /-- Classification of island constraints by source.
 Traditional islands are syntactic; MoS islands are discourse-based.
-Note: this classification is itself debated — Hofmeister & Sag (2010) argue that many
+Note: this classification is itself debated — @cite{hofmeister-sag-2010} argue that many
 "syntactic" islands are actually processing-based. See `Comparisons/Islands.lean`. -/
 def constraintSource : ConstraintType → IslandSource
   | .embeddedQuestion  => .syntactic  -- but see H&S 2010 for processing account
@@ -233,40 +233,38 @@ theorem mos_is_weak :
 
 /-!
 ## Gradience in Island Effects
-@cite{hofmeister-sag-2010}
+@cite{hofmeister-sag-2010} @cite{chomsky-1973} @cite{chomsky-1986} @cite{chomsky-1995} @cite{ross-1967} @cite{szabolcsi-2006}
 
-Hofmeister & Sag (2010) argue that the binary strong/weak classification
-(Szabolcsi 2006) is insufficient. Island effects are **gradient** along multiple
+@cite{hofmeister-sag-2010} argue that the binary strong/weak classification is insufficient. Island effects are **gradient** along multiple
 dimensions, and acceptability varies systematically with nonstructural
 manipulations that leave island configurations intact.
 
 This challenges every categorical island constraint proposed:
-- Subjacency (Chomsky 1973)
-- Complex NP Constraint (Ross 1967)
-- Barriers (Chomsky 1986)
-- Minimal Link Condition (Chomsky 1995)
+- Subjacency
+- Complex NP Constraint
+- Barriers
+- Minimal Link Condition
 
 See `Phenomena.FillerGap.Compare` for the competence vs. performance comparison.
 -/
 
 /-- Processing factors that independently contribute to the difficulty of
-filler-gap dependencies inside islands (Hofmeister & Sag 2010, §3). -/
+filler-gap dependencies inside islands. -/
 inductive ProcessingFactor where
   /-- Distance between filler and gap increases memory load (§3.1).
   Confirmed by: Gibson 1998, 2000; Hawkins 1999; Grodner & Gibson 2005. -/
   | locality
   /-- Referential processing of intervening constituents depletes resources (§3.2).
   Definites trigger referent search; proper names > definites > indefinites > pronouns
-  in processing cost (Warren & Gibson 2002, 2005; Ariel 1990). -/
+  in processing cost. -/
   | referentialLoad
   /-- Clause boundaries impose processing cost independent of extraction (§3.3).
   Even in yes-no questions, different complementizers elicit different neurological
-  responses and acceptability (Kluender & Kutas 1993b). -/
+  responses and acceptability. -/
   | clauseBoundary
   /-- Syntactic/semantic complexity of the filler phrase affects retrieval (§3.4).
   Counterintuitively, MORE complex fillers REDUCE processing difficulty
-  because richer representations resist interference and aid retrieval
-  (Hofmeister 2007). -/
+  because richer representations resist interference and aid retrieval. -/
   | fillerComplexity
   deriving Repr, DecidableEq, BEq
 

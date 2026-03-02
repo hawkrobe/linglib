@@ -30,20 +30,20 @@ namespace Minimalism
 -- Part 1: Categorial Features [±V, ±N]
 -- ═══════════════════════════════════════════════════════════════
 
-/-- Chomsky's (1970) [±V, ±N] categorial features, adopted by Grimshaw (2005)
+/-- @cite{chomsky-1970}'s [±V, ±N] categorial features, adopted by @cite{grimshaw-2005}
     for Extended Projections. Cross-classifies the four lexical categories:
     - V = [+V, -N], N = [-V, +N], A = [+V, +N], P = [-V, -N]
 
     Functional categories inherit these from their lexical anchor.
 
     For an alternative where [N] and [V] carry semantic content (referentiality
-    and temporal predication), see `CategorialFeatures` (Panagiotidis 2015). -/
+    and temporal predication), see `CategorialFeatures`. -/
 structure CatFeatures where
   plusV : Bool   -- [+V] = verbal/adjectival
   plusN : Bool   -- [+N] = nominal/adjectival
   deriving Repr, DecidableEq, BEq
 
-/-- Compute Chomsky's (1970) [±V, ±N] features from `Cat`.
+/-- Compute @cite{chomsky-1970}'s [±V, ±N] features from `Cat`.
     Functional categories inherit features from their lexical anchor:
     - v, T, C inherit [+V, -N] from V
     - n, Num, Q, D inherit [-V, +N] from N -/
@@ -81,9 +81,9 @@ def catFeatures : Cat → CatFeatures
 /-- Grimshaw's F-value: the functional level within an extended projection.
 
     F-values are globally aligned across category families to capture
-    the verbal–nominal parallelism (Ritter 1991, Grimshaw 2005).
+    the verbal–nominal parallelism.
 
-    The nominal spine follows Borer's (2005) ordering: Q (classifier /
+    The nominal spine follows @cite{borer-2005}'s ordering: Q (classifier /
     individuation, CL#) is at F2, below Num (number / counting, #)
     at F3. This reflects the semantic composition order: individuation
     must precede counting (you can't count what hasn't been individuated).
@@ -107,7 +107,7 @@ def catFeatures : Cat → CatFeatures
     Fin types the clause while Num types the nominal. The semantic
     functions differ, but both occupy the same structural zone.
 
-    The verbal C-domain is internally ordered per Rizzi (1997):
+    The verbal C-domain is internally ordered per @cite{rizzi-1997}:
     Fin(F3) < Foc(F4) < Top(F5) < C(F6). -/
 def fValue : Cat → Nat
   | .V | .N | .A | .P          => 0   -- lexical (F0)
@@ -167,7 +167,7 @@ inductive CatFamily where
   deriving Repr, DecidableEq, BEq
 
 /-- Map a category to its family.
-    This determines which EP it can participate in. -/
+    This determines which EP it can participate. -/
 def catFamily : Cat → CatFamily
   | .V | .v | .Voice | .Appl | .T | .Foc | .Top | .Fin | .C | .SA
   | .Force | .Neg | .Mod | .Rel | .Pol | .Asp | .Evid => .verbal
@@ -179,7 +179,7 @@ def catFamily : Cat → CatFamily
 -- Part 5b: Categorial Features — Panagiotidis (2015)
 -- ═══════════════════════════════════════════════════════════════
 
-/-- Panagiotidis (2015) categorial features: [N] and [V] as substantive,
+/-- @cite{panagiotidis-2015} categorial features: [N] and [V] as substantive,
     LF-interpretable features with semantic content.
 
     - **[N]** = sortal perspective / referentiality (capacity to introduce a
@@ -187,7 +187,7 @@ def catFamily : Cat → CatFamily
     - **[V]** = temporal perspective / eventivity (capacity to anchor to
       time/events; §4.3 p85)
 
-    This contrasts with Chomsky's (1970) [±V, ±N] diacritics (see `CatFeatures`):
+    This contrasts with @cite{chomsky-1970}'s [±V, ±N] diacritics (see `CatFeatures`):
     Chomsky's features are arbitrary binary cross-classifiers, while Panagiotidis's
     are grounded in semantic substance. The key empirical difference is the status
     of P: Chomsky treats P as actively bearing [-V, -N]; Panagiotidis treats P as
@@ -207,7 +207,7 @@ structure CategorialFeatures where
   hasV : Bool   -- [V] = temporal predication
   deriving Repr, DecidableEq, BEq
 
-/-- Map a category to Panagiotidis's (2015) categorial features.
+/-- Map a category to @cite{panagiotidis-2015}'s categorial features.
 
     Categorizers (n, v, a) bear the substantive features; functional heads
     in the same EP inherit them (just as in Grimshaw's consistency requirement).
@@ -318,7 +318,7 @@ theorem verbal_chain_consistent :
 
 /-- The nominal chain N → n → Q → Num → D is category-consistent:
     all have [-V, +N] features. Q (CL#, individuation) is below
-    Num (#, counting) per Borer (2005). -/
+    Num (#, counting) per @cite{borer-2005}. -/
 theorem nominal_chain_consistent :
     categoryConsistent .N .n ∧ categoryConsistent .n .Q ∧
     categoryConsistent .Q .Num ∧ categoryConsistent .Num .D := by decide
@@ -332,7 +332,7 @@ theorem verbal_fvalues_monotone :
     fValue .T ≤ fValue .C := by decide
 
 /-- F-values increase along the nominal chain: N(0) ≤ n(1) ≤ Q(2) ≤ Num(3) ≤ D(4).
-    Q (individuation) is below Num (counting) per Borer (2005). -/
+    Q (individuation) is below Num (counting) per @cite{borer-2005}. -/
 theorem nominal_fvalues_monotone :
     fValue .N ≤ fValue .n ∧ fValue .n ≤ fValue .Q ∧
     fValue .Q ≤ fValue .Num ∧ fValue .Num ≤ fValue .D := by decide
@@ -397,8 +397,7 @@ theorem fhead_extends_projection :
     isFHead .v ∧ isFHead .n ∧ isFHead .a ∧ isFHead .Num ∧ isFHead .Q ∧
     isFHead .D ∧ isFHead .T ∧ isFHead .C := by decide
 
-/-- The verbal and nominal spines are parallel at F0–F1
-    (Grimshaw 2005): V ↔ N (lexical), v ↔ n (categorizer).
+/-- The verbal and nominal spines are parallel at F0–F1: V ↔ N (lexical), v ↔ n (categorizer).
 
     At F2–F3 the spines diverge: T (temporal specification, F2)
     pairs with Q (individuation, F2), while Fin (clause-typing, F3)
@@ -410,7 +409,7 @@ theorem verbal_nominal_parallel :
     fValue .V = fValue .N ∧ fValue .v = fValue .n ∧
     fValue .T = fValue .Q ∧ fValue .Fin = fValue .Num := by decide
 
-/-- Is this category a categorizer (Panagiotidis 2015)?
+/-- Is this category a categorizer?
     Categorizers bear substantive, interpretable [N]/[V] features
     and combine with acategorial roots to yield categorized items.
 
@@ -424,8 +423,8 @@ def isCategorizer (c : Cat) : Bool :=
   | .v | .n | .a => true
   | _            => false
 
-/-- All three categorizers are at F1 in Grimshaw's (2005) F-value system.
-    Panagiotidis (2015) predicts this parallelism; the F1 encoding is Grimshaw's. -/
+/-- All three categorizers are at F1 in @cite{grimshaw-2005}'s F-value system.
+    @cite{panagiotidis-2015} predicts this parallelism; the F1 encoding is Grimshaw's. -/
 theorem categorizers_at_f1 :
     fValue .v = 1 ∧ fValue .n = 1 ∧ fValue .a = 1 := by decide
 
@@ -441,7 +440,7 @@ theorem a_in_adjectival_family :
 -- Part 8: Split-CP Extended Projection (Rizzi 1997)
 -- ═══════════════════════════════════════════════════════════════
 
-/-- The verbal EP spine with Rizzi's (1997) split-CP layer:
+/-- The verbal EP spine with @cite{rizzi-1997}'s split-CP layer:
     V → v → T → Fin → Foc → Top → C.
     Fin is the boundary between IP and CP; Foc and Top are
     discourse-related projections between Fin and C (= Force). -/
@@ -511,11 +510,11 @@ theorem nominal_functional_heads :
 /-- The structural size of a clausal complement, determined by the
     highest functional head projected.
 
-    Complement size matters for tense Agree locality (Egressy 2026):
+    Complement size matters for tense Agree locality:
     a CP complement constitutes a phase boundary that blocks upward
     Agree for [uPAST], while a TP complement is transparent.
 
-    Also relevant for Wurmbrand's (2014) three-way infinitival
+    Also relevant for @cite{wurmbrand-2014}'s three-way infinitival
     classification (restructuring ≈ vP, propositional ≈ TP,
     full finite ≈ CP). -/
 structure ComplementSize where
@@ -535,7 +534,7 @@ def ComplementSize.isPhaseSized (cs : ComplementSize) : Bool :=
 /-- A complement is transparent to tense Agree if it is smaller than
     a full CP — i.e., the highest head is below C in the fseq.
 
-    Egressy (2026): TP complements (fValue 2) are transparent;
+    @cite{egressy-2026}: TP complements (fValue 2) are transparent;
     CP complements (fValue 6) are opaque. -/
 def ComplementSize.transparentToTenseAgree (cs : ComplementSize) : Bool :=
   cs.fLevel < fValue .C

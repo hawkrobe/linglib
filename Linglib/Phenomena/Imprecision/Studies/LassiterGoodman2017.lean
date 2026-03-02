@@ -7,7 +7,7 @@ import Mathlib.Tactic.DeriveFintype
 import Mathlib.Data.Fintype.Prod
 
 /-!
-# Lassiter & Goodman (2017) @cite{lassiter-goodman-2017}
+# @cite{lassiter-goodman-2017} @cite{lassiter-goodman-2017}
 
 Adjectival vagueness in a Bayesian model of interpretation.
 Synthese 194:3801–3836.
@@ -18,7 +18,7 @@ Standard RSA models fix the literal meaning of each utterance. Threshold RSA
 introduces a free semantic variable — the threshold θ — that the pragmatic
 listener L1 jointly infers alongside the world state:
 
-  P_L1(s, θ | u) ∝ P_S1(u | s, θ) · P(s) · P(θ)        (Eq. 24)
+  P_L1(s, θ | u) ∝ P_S1(u | s, θ) · P(s) · P(θ) (Eq. 24)
 
 This yields three key predictions (Section 4.3):
 1. **Information transmission**: hearing "tall"/"short" shifts the height

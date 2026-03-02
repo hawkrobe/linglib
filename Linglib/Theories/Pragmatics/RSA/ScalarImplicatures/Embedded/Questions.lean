@@ -3,7 +3,7 @@ import Mathlib.Tactic.DeriveFintype
 
 /-!
 # RSA Question Embedding
-@cite{geurts-2010} @cite{guerzoni-2004} @cite{hamblin-1973b}
+@cite{geurts-2010} @cite{guerzoni-2004} @cite{hamblin-1973b} @cite{groenendijk-stokhof-1984}
 
 Models scalar implicatures embedded in questions.
 
@@ -18,8 +18,8 @@ Questions have a unique status regarding scalar implicatures:
 
 ## Theoretical Background
 
-Questions are often analyzed as sets of propositions (Hamblin 1973) or
-partitions of logical space (Groenendijk & Stokhof 1984). The key insight:
+Questions are often analyzed as sets of propositions or
+partitions of logical space. The key insight:
 
 A question "Did some students pass?" asks the hearer to choose between:
 - "Yes, some passed" (weak: >=1)

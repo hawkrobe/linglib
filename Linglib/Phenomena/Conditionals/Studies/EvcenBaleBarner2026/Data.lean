@@ -2,10 +2,12 @@ import Linglib.Core.Empirical
 import Mathlib.Data.Rat.Defs
 
 /-!
-# Evcen, Bale & Barner (2026) — Conditional Perfection Data @cite{evcen-bale-barner-2026}
+# @cite{evcen-bale-barner-2026} — Conditional Perfection Data @cite{evcen-bale-barner-2026}
+@cite{von-fintel-2001}
+
 
 Theory-neutral empirical data on conditional perfection from three experiments
-by Evcen, Bale & Barner (2026).
+by @cite{evcen-bale-barner-2026}.
 
 ## Key Findings
 
@@ -14,7 +16,7 @@ by Evcen, Bale & Barner (2026).
 3. **Speaker knowledge** increases perfection
 
 These findings support the answer-level exhaustification account of conditional
-perfection (von Fintel 2001): perfection arises when the QUD makes
+perfection: perfection arises when the QUD makes
 alternative antecedents salient and the speaker is assumed to be exhaustive.
 
 ## Note on Data Values

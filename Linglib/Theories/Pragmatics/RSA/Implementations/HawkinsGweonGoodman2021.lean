@@ -404,7 +404,7 @@ theorem semantics_grounded :
 
 The full perspective-taking case (w_S = 1) maps to RSAConfig with latent variables:
 
-- **Latent** = Speaker's visual access (which objects they see)
+- **Latent** = Speaker's visual access (which objects they)
 - **World** = Full context (visible objects + hidden object features)
 - **speakerCredence** = P(world | speaker's visual access)
 
@@ -593,7 +593,7 @@ Note: At β = 0, egocentric may have higher raw informativity (since it doesn't
 average over hidden distractors). But at β > 0, the cost term creates a trade-off
 where intermediate weights become optimal. The key insight is that speakers should
 choose MORE INFORMATIVE utterances (like fullDescription) rather than shapeOnly
-when doing perspective-taking - that's where the benefit comes from.
+when doing perspective-taking - that's where the benefit comes.
 -/
 
 -- At β = 1/2 (high cost), intermediate weight (1/2) can be better than endpoints

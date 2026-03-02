@@ -2,7 +2,7 @@
 # D-Frames: Functional Attribute Structures @cite{loebner-2021}
 @cite{osswald-kallmeyer-2018} @cite{petersen-2007}
 
-Löbner (2021) "Frames at the Interface of Language and Cognition"
+@cite{loebner-2021} "Frames at the Interface of Language and Cognition"
 (Annual Review of Linguistics 7: 261–284) defines **D-frames**
 (Düsseldorf frames): typed attributed structures where every attribute
 is a *function* — each possessor has exactly one value per attribute.
@@ -113,7 +113,7 @@ def DFrame.compatibleOn {Attr Val : Type} [BEq Val]
 -- § 4. Lexical Family: price / cheap / cost (§3)
 -- ════════════════════════════════════════════════════
 
-/-! Löbner (2021) §3.1.1, Figure 3: *price*, *cheap*, and *cost* share
+/-! @cite{loebner-2021} §3.1.1, Figure 3: *price*, *cheap*, and *cost* share
     a single underlying PRICE frame with one attribute PRICE mapping a
     commodity (x) to its monetary value (p). They differ in perspective:
 
@@ -162,7 +162,7 @@ theorem price_cheap_different_central :
 -- § 5. Compound Composition via Unification (§3.2.2)
 -- ════════════════════════════════════════════════════
 
-/-! Löbner (2021) §3.2.2: N-N compounds compose by frame unification.
+/-! @cite{loebner-2021} §3.2.2: N-N compounds compose by frame unification.
 
     *Value compounds* fill an attribute slot of the head noun:
     "plastic bag" = the 'plastic' main node fills MATERIAL in the 'bag' frame.
@@ -223,7 +223,7 @@ theorem bag_plastic_compatible :
 -- § 6. Nondeterministic Composition (§4.1.2)
 -- ════════════════════════════════════════════════════
 
-/-! Löbner (2021) §4.1.2: composition by unification is not always
+/-! @cite{loebner-2021} §4.1.2: composition by unification is not always
     deterministic. The color adjective *red* unifies with any node
     of type VISIBLE OBJECT in the pencil frame (Figure 2). Since
     three nodes satisfy this type constraint — the coating of the

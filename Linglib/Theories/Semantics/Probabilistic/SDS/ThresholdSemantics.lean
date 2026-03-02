@@ -60,6 +60,8 @@ def ThresholdPredicate.holds {E D : Type} [LE D] [DecidableRel (α := D) (· ≤
 
 /-!
 ## Gradable Adjectives
+@cite{morzycki-2009}
+
 
 ⟦tall⟧(x, θ) = 1 iff height(x) > θ
 
@@ -186,7 +188,7 @@ def gnToThreshold {E : Type} (gn : GradableNounWithSize E) : ThresholdPredicate 
 /-!
 ## Why Polarity Matters
 
-The BIGNESS GENERALIZATION (Morzycki 2009):
+The BIGNESS GENERALIZATION:
 - "big/huge/enormous N" ✓ has degree reading
 - "small/tiny/minuscule N" ✗ no degree reading
 

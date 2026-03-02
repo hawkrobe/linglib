@@ -228,7 +228,7 @@ def johnSmokesAndStopped : PrProp SmokingWorld :=
 /--
 Summary of projection patterns across connectives.
 
-These capture the empirical generalizations from Karttunen (1974).
+These capture the empirical generalizations from @cite{karttunen-1974}.
 -/
 structure ProjectionPattern where
   /-- Name of the pattern -/

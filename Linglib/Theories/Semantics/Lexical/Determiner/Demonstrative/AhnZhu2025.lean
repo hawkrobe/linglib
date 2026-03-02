@@ -368,18 +368,18 @@ theorem na_can_bridge : naCanBridge = true := rfl
 ```
 -- Types encode structure
 inductive Pred E S : Arity → Type where
-  | pred1 : (E → S → Bool) → Pred E S .one
-  | pred2 : (E → E → S → Bool) → Pred E S .two
+  | pred1 : (E → S → Bool) → Pred E S.one
+  | pred2 : (E → E → S → Bool) → Pred E S.two
 
 -- π changes the type (adds argument)
-def π(P, R) : Pred E S .two := ...
+def π(P, R) : Pred E S.two :=...
 
 -- Accommodation is structural
-def canAccommodate a := a == .two
+def canAccommodate a := a ==.two
 
 -- Theorems FOLLOW from type structure
 theorem pi_enables : (π(P, R)).canAccommodate = true := rfl
-theorem pred1_cannot : P.canAccommodate = false := rfl  -- P : Pred E S .one
+theorem pred1_cannot : P.canAccommodate = false := rfl -- P : Pred E S.one
 ```
 
 ### The Difference
@@ -397,7 +397,7 @@ visible and proves bridging licensing as a consequence.
 
 
 /-!
-## Cumulative Integration with Barker (2011)
+## Cumulative Integration with @cite{barker-2011}
 
 This section shows how Ahn & Zhu's analysis DERIVES from Barker's framework.
 Rather than re-proving everything, we show the correspondence.
@@ -431,9 +431,9 @@ theorem bridging_from_barker {E S : Type}
 /--
 **The Derivation Chain**:
 
-1. Barker (2011): π : Pred1 → Pred2 (type-shifter adds argument)
-2. Barker (2011): Pred2 has a relatum slot (the extra argument)
-3. Ahn & Zhu (2025): Mandarin *na* applies π
+1. @cite{barker-2011}: π : Pred1 → Pred2 (type-shifter adds argument)
+2. @cite{barker-2011}: Pred2 has a relatum slot (the extra argument)
+3. @cite{ahn-zhu-2025}: Mandarin *na* applies π
 4. THEREFORE: *na* creates a relatum slot
 5. THEREFORE: *na* enables relational bridging
 

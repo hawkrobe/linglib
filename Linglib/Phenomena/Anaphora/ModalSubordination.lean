@@ -176,7 +176,7 @@ def wolfProbablyWould : ModalSubDatum := {
 /--
 Modal subordination connects to counterfactual conditionals.
 
-"If a wolf came in, it would eat you." has similar structure.
+"If a wolf came, it would eat you." has similar structure.
 -/
 structure CounterfactualDatum where
   conditional : String
@@ -216,7 +216,7 @@ def counterfactualIndicative : CounterfactualDatum := {
 -- Part 5: Three-way Classification (Hofmann 2025)
 
 /--
-Hofmann (2025) distinguishes three accessibility classes:
+@cite{hofmann-2025} distinguishes three accessibility classes:
 1. Veridical: Entity asserted to exist
 2. Hypothetical: Entity exists in considered possibilities
 3. Counterfactual: Entity exists in non-actual possibilities

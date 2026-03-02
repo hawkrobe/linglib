@@ -12,13 +12,13 @@ import Linglib.Fragments.Hungarian.TemporalDeictic
 /-!
 # Then-Present Puzzle (Zhao 2025, Tsilia, Zhao & Sharvit 2026)
 @cite{zhao-2025} @cite{tsilia-zhao-sharvit-2026} @cite{kiparsky-2002}Temporal "then" is cross-linguistically incompatible with present tense.
-Zhao (2025) explains this via a perspective parameter π (= Kiparsky's P):
+@cite{zhao-2025} explains this via a perspective parameter π (= Kiparsky's P):
 present tense requires P = R, but "then" shifts P away from S, making
 P ≠ S. In root clauses, isSimpleCase requires P = S, so present + then
 forces R = P ≠ S — but present tense in root clauses needs R = S,
 creating a contradiction.
 
-Tsilia, Zhao & Sharvit (2026) provide the presuppositional analysis: tenses
+@cite{tsilia-zhao-sharvit-2026} provide the presuppositional analysis: tenses
 are presupposition triggers anchored to π, and the incompatibility is a
 presupposition clash between ⌈then⌉ (P ≠ local eval) and OP_π (P = local
 eval).

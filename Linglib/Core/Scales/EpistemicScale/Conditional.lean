@@ -3,7 +3,7 @@ import Linglib.Core.Scales.EpistemicScale.Defs
 /-!
 # Conditional Plausibility and Probabilistic Update
 
-@cite{halpern-2003} @cite{jeffrey-1965} @cite{popper-1955}Halpern (2003, Ch. 3) axiomatizes conditional plausibility measures,
+@cite{halpern-2003} @cite{jeffrey-1965} @cite{popper-1955}@cite{halpern-2003} axiomatizes conditional plausibility measures,
 generalizing Bayesian conditioning, Popper spaces, Jeffrey's rule,
 and imaging under a single algebraic framework (Cond1–Cond4).
 
@@ -107,7 +107,7 @@ end CondMeasure
 
 /-- Construct conditional probability via the ratio P(A|B) = μ(A ∩ B)/μ(B).
 
-    Halpern (2003), Theorem 3.3.1: every finitely additive measure extends
+    @cite{halpern-2003}, Theorem 3.3.1: every finitely additive measure extends
     to a conditional measure satisfying P1–P4 via this construction.
     When μ(B) = 0, P(A|B) = 0 (B is "abnormal" in Popper's sense).
 
@@ -170,13 +170,13 @@ structure EvidencePartition (W : Type*) where
 
 /-- Jeffrey's rule: update a conditional measure with uncertain evidence.
 
-    Given a partition {E₁, ..., Eₙ} with new probabilities q₁, ..., qₙ:
+    Given a partition {E₁,..., Eₙ} with new probabilities q₁,..., qₙ:
     P'(A) = Σᵢ P(A | Eᵢ) · qᵢ
 
     This generalizes Bayesian conditioning: standard conditioning on E
     is the special case where qₑ = 1 and all other qᵢ = 0.
 
-    Jeffrey (1965), The Logic of Decision; Halpern (2003) §3.4. -/
+    @cite{jeffrey-1965}, The Logic of Decision; @cite{halpern-2003} §3.4. -/
 def jeffreyUpdate {W : Type*} (m : CondMeasure W)
     (ev : EvidencePartition W) : Set W → ℚ :=
   fun A =>

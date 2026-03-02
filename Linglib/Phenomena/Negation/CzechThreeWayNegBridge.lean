@@ -23,7 +23,7 @@ syntactic/prosodic encoding (word order and focus).
 This file contains per-cell verification theorems and scope generalizations.
 The core types (`NegPosition`, `Diagnostic`, `licenses`) are in
 `Theories.Semantics.Polarity.CzechNegation`. Cross-linguistic bridges to
-Romero (2024), Šimík (2024), verb position, and bias profiles are in
+@cite{romero-2024}, Šimík (2024), verb position, and bias profiles are in
 `CzechThreeWayNeg.Typology`.
 
 -/
@@ -90,7 +90,7 @@ theorem positions_exhaustive : ∀ p : NegPosition,
 -- ============================================================================
 
 /-- Only inner negation licenses NCIs — because only inner negation is in the
-scope domain of the Agree relation (Zeijlstra 2004). NCIs must be c-commanded
+scope domain of the Agree relation. NCIs must be c-commanded
 by ¬ at LF. Medial and outer negation are too high. -/
 theorem only_inner_licenses_nci :
     (∀ p : NegPosition, licenses p .nciLicensed = true → p = .inner) := by

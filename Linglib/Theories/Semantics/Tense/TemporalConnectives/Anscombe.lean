@@ -1,15 +1,15 @@
 import Linglib.Theories.Semantics.Tense.TemporalConnectives.Basic
 
 /-!
-# Anscombe (1964) / Krifka (2010b): Under-specification Semantics
-@cite{anscombe-1964} @cite{krifka-2010b}
+# @cite{anscombe-1964} / @cite{krifka-2010b}: Under-specification Semantics
+@cite{anscombe-1964} @cite{krifka-2010b} @cite{ladusaw-1980}
 
 Single lexical entry per connective. Both *before* and *after* are predicates
 on time points; multiple readings arise from which point of B is relevant,
 determined pragmatically by telicity.
 
-- *before B* = λt. ∀t' ∈ B, t < t'   (all of B follows the reference time)
-- *after B*  = λt. ∃t' ∈ B, t' < t   (some of B precedes the reference time)
+- *before B* = λt. ∀t' ∈ B, t < t' (all of B follows the reference time)
+- *after B* = λt. ∃t' ∈ B, t' < t (some of B precedes the reference time)
 
 The quantificational asymmetry (∀ in *before*, ∃ in *after*) is already present
 here at Level 1 (point sets), though Anscombe did not highlight it as the source
@@ -51,7 +51,7 @@ def Anscombe.after (A B : SentDenotation Time) : Prop :=
 
 /-! ### Heinämäki's analysis and equivalence with Anscombe
 
-Heinämäki's (1974) analysis uses a reference interval I(B) — the temporal
+@cite{heinamaki-1974}'s analysis uses a reference interval I(B) — the temporal
 interval associated with B — and defines *before*/*after* by comparison
 with that interval's boundary. This is the most standard textbook analysis.
 
@@ -196,7 +196,7 @@ theorem Anscombe.after_not_transitive :
 
 The complement position of a temporal connective is the B argument in
 "A connective B." The quantifier structure of each connective determines
-its monotonicity, which in turn determines NPI licensing (Ladusaw 1980):
+its monotonicity, which in turn determines NPI licensing:
 - *before* (∃∀): the ∀ over B reverses subset inclusion → DE → licenses NPIs
 - *after* (∃∃): the ∃ over B preserves subset inclusion → UE → blocks NPIs
 

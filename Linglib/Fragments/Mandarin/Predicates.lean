@@ -2,9 +2,9 @@ import Linglib.Theories.Semantics.Lexical.Verb.VerbEntry
 
 /-!
 # Mandarin Predicate Lexicon Fragment
-@cite{qing-uegaki-2025}
+@cite{qing-uegaki-2025} @cite{glass-2025}
 
-Mandarin predicates relevant to Qing et al. (2025). Properties like
+Mandarin predicates relevant to @cite{qing-uegaki-2025}. Properties like
 C-distributivity and NVP class are DERIVED from the `attitudeBuilder` field.
 -/
 
@@ -61,7 +61,7 @@ def haipa : MandarinVerbEntry := .mk' {
 /-!
 ## yǐwéi: Exceptional Postsupposition
 
-yǐwéi "be under the impression" (Glass 2022, 2025) has a POSTSUPPOSITION
+yǐwéi "be under the impression" has a POSTSUPPOSITION
 (output-context constraint) that ¬p is compatible with the Common Ground
 after the utterance. This is NOT a presupposition and cannot be derived
 from veridicality alone.

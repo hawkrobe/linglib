@@ -166,7 +166,7 @@ theorem rsa_is_two_dimensional_psychophysics (d : RSAUtilityDecomposition) :
 
 /-- The RSA informativity factor is a Stevens power law.
 
-    `informativity^α = StevensScale.psi ⟨α, 1, ...⟩ informativity`
+    `informativity^α = StevensScale.psi ⟨α, 1,...⟩ informativity`
     (with coefficient `k = 1`). -/
 theorem rsa_informativity_is_stevens (d : RSAUtilityDecomposition)
     (hα_pos : 0 < d.α) :

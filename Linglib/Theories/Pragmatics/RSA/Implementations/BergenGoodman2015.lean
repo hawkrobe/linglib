@@ -109,7 +109,7 @@ end NoisyChannel
 
 Example from paper:
 - A: "Who went to the movies?"
-- B: "Bob"  (fragment, not full sentence)
+- B: "Bob" (fragment, not full sentence)
 
 The listener infers "Bob went to the movies" because:
 1. "Bob" is not grammatical on its own
@@ -120,7 +120,7 @@ The listener infers "Bob went to the movies" because:
 
 - Meanings M = {Alice went, Bob went, Nobody went}
 - Full utterances U = {"Alice went", "Bob went", "Nobody went"}
-- Fragments F = {"Alice", "Bob", "Nobody", ...}
+- Fragments F = {"Alice", "Bob", "Nobody",...}
 - Noise: word deletion with probability δ
 -/
 

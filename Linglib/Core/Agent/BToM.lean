@@ -4,15 +4,14 @@ import Mathlib.Tactic.Ring
 
 /-!
 # Bayesian Theory of Mind (BToM) @cite{baker-jara-ettinger-saxe-tenenbaum-2017}
-@cite{clark-1996} @cite{houlihan-kleiman-weiner-hewitt-tenenbaum-saxe-2023}
+@cite{clark-1996} @cite{houlihan-kleiman-weiner-hewitt-tenenbaum-saxe-2023} @cite{kratzer-2006} @cite{ying-zhi-xuan-wong-mansinghka-tenenbaum-2025}
 
 Domain-general cognitive architecture for action explanation: how observers
 explain agents' behavior by jointly inferring mental states, shared states,
 and environmental constraints.
 
 BToM is not specific to language — it applies equally to physical action
-understanding, game-theoretic reasoning, emotion attribution
-(Houlihan et al. 2023), and communication. Linguistic specialization (RSA)
+understanding, game-theoretic reasoning, emotion attribution, and communication. Linguistic specialization (RSA)
 is established via the RSA-BToM bridge.
 
 ## Latent Variable Ontology
@@ -20,9 +19,9 @@ is established via the RSA-BToM bridge.
 Latent variables in the generative model fall into three ontological categories:
 
 - **Mental**: Individual mental states private to the agent — Belief, Desire,
-  Percept (Baker et al. 2017). These are properties of a single mind.
+  Percept. These are properties of a single mind.
 - **Shared**: Intersubjective states maintained between agents — common ground,
-  mutual belief, established precedents (Clark 1996). Not reducible to either
+  mutual belief, established precedents. Not reducible to either
   agent's individual mental state.
 - **Medium**: Non-mental environmental constraints on action — the structure
   of the communication channel, conventions, physical affordances.
@@ -55,7 +54,7 @@ The perception chain `W → P → B` is one specific causal architecture —
 it decomposes world-to-belief inference into observation then updating.
 Other architectures are possible (direct world-to-belief, joint
 perception-belief formation, belief from memory + percept). The current
-structure follows Baker et al. (2017) and is sufficient for RSA grounding,
+structure follows @cite{baker-jara-ettinger-saxe-tenenbaum-2017} and is sufficient for RSA grounding,
 where the chain collapses to identity (perfect perception and knowledge).
 
 ## Limitations
@@ -76,8 +75,7 @@ The model is designed for domain-specific extension without modification:
   presupposition accommodation, Clarkian conceptual pacts).
 - **Emotion attribution**: Post-inference appraisals (goal congruence,
   prediction error, counterfactual reasoning) can be computed from the
-  inferred marginals without extending the generative model itself
-  (Houlihan et al. 2023).
+  inferred marginals without extending the generative model itself.
 
 -/
 
@@ -96,9 +94,9 @@ might be classified as `mental` (speaker's intended meaning) or `medium`
 scope ambiguity. -/
 inductive LatentCategory where
   /-- Individual mental states, private to a single agent's mind.
-      Decomposes into Belief, Desire, and Percept (Baker et al. 2017). -/
+      Decomposes into Belief, Desire, and Percept. -/
   | mental
-  /-- Intersubjective states maintained between agents (Clark 1996).
+  /-- Intersubjective states maintained between agents.
       Common ground, discourse referents, QUD stacks, precedents.
       Not reducible to individual mental states. -/
   | shared
@@ -302,8 +300,7 @@ def BToMModel.mediumMarginal (model : BToMModel F A P B D S M W)
 /-- Belief-weighted expectation: given a scoring function on belief states,
     compute the belief-marginal weighted sum.
 
-    This is the general form of LaBToM's Pr(Agent, φ) computation
-    (Ying et al. 2025): instantiate `f b = if φ(b) then 1 else 0` to get
+    This is the general form of LaBToM's Pr(Agent, φ) computation: instantiate `f b = if φ(b) then 1 else 0` to get
     the unnormalized Pr_obs(Agent, φ | a) from BToM belief marginals.
 
     More generally, any quantity that depends on the agent's belief state
@@ -318,8 +315,7 @@ end OtherMarginals
 /-!
 ## Connection to Content Individuals
 
-BToM's Belief and Desire types correspond to content individuals
-(Kratzer 2006) — see `Core.ContentIndividual` for the ontological sort.
+BToM's Belief and Desire types correspond to content individuals — see `Core.ContentIndividual` for the ontological sort.
 A `BToMModel` can be instantiated with `ContentIndividual W` as the Belief
 type, making the observer's posterior a distribution over content individuals.
 -/

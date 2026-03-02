@@ -64,7 +64,7 @@ structure VerumFrame (W : Type*) where
 
 -- Part 2: The VERUM Operator
 
-/-- FOR-SURE-CG: The VERUM operator (Romero & Han 2004).
+/-- FOR-SURE-CG: The VERUM operator.
 
 ∀w' ∈ Epi_x(w)[∀w'' ∈ Conv_x(w')[p ∈ CG_w'']]
 
@@ -271,7 +271,7 @@ theorem preposed_negation_forces_verum :
 ## Relationship to Polarity.lean
 @cite{romero-han-2004}
 
-Van Rooy & Šafářová (2003) and Romero & Han (2004) are complementary:
+Van Rooy & Šafářová (2003) and @cite{romero-han-2004} are complementary:
 
 1. vR&S (Polarity.lean): Explains which polar question to use
    - Decision-theoretic: choose question that maximizes expected utility

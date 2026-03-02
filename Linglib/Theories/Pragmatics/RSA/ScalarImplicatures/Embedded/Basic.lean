@@ -126,7 +126,7 @@ def lexRefinedUEMeaning : UEUtterance → EmbeddedWorld → Bool
 
 With α = 1 and uniform priors, the simplified 2-lexicon model gives INVERTED
 predictions compared to the empirical pattern. This motivates the need for
-richer model structure (Potts et al. 2016).
+richer model structure.
 
 **DE Context** ("No one solved some"):
 - The simple model predicts L_refined (local) wins -- WRONG

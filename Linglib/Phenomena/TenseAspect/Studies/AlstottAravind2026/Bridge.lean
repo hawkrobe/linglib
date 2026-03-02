@@ -5,20 +5,20 @@ import Linglib.Fragments.Tagalog.TemporalConnectives
 import Linglib.Fragments.Serbian.TemporalConnectives
 
 /-!
-# Alstott & Aravind (2026): Bridge File
+# @cite{alstott-aravind-2026}: Bridge File
 @cite{alstott-aravind-2026} @cite{rett-2020}
 
-Connects the experimental data in `Data.lean` to Rett's (2020) INCHOAT/COMPLET
+Connects the experimental data in `Data.lean` to @cite{rett-2020}'s INCHOAT/COMPLET
 operators and the English/Tagalog/Serbian temporal connective fragments.
 
 ## Key Connections
 
 1. **Exp 2** (before-clause + COMPLET): tests the coerced reading of English
-   *before* — `before_.coercedReading = some .beforeFinish` — which requires
+   *before* — `before_.coercedReading = some.beforeFinish` — which requires
    COMPLET to extract the telos of a telic embedded event.
 
 2. **Exp 4** (after-clause + INCHOAT): tests the coerced reading of English
-   *after* — `after_.coercedReading = some .afterStart` — which requires
+   *after* — `after_.coercedReading = some.afterStart` — which requires
    INCHOAT to extract the onset of an atelic embedded event.
 
 3. **Exp 1b** (at-modifier + COMPLET): tests COMPLET triggered by the

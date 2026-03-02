@@ -49,8 +49,8 @@ namespace Phenomena.ScalarImplicatures.Studies.Ronai2024
 
 
 /--
-A lexical scale with properties from van Tiel et al. (2016) and
-embedded SI data from Ronai (2024).
+A lexical scale with properties from @cite{van-tiel-geurts-2016} and
+embedded SI data from @cite{ronai-2024}.
 -/
 structure ScaleDatum where
   /-- The weaker scalar term (e.g., "some", "warm") -/
@@ -61,11 +61,11 @@ structure ScaleDatum where
   semanticDistance : Option Float
   /-- Is the scale bounded? (stronger term = endpoint) -/
   bounded : Bool
-  /-- Global SI rate from van Tiel et al. (2016) Exp 2 (percentage 0-100) -/
+  /-- Global SI rate from @cite{van-tiel-geurts-2016} Exp 2 (percentage 0-100) -/
   globalSIRate : Option Nat
-  /-- Strong inference rate from Ronai (2024) Exp 1 (sliding scale 0-100) -/
+  /-- Strong inference rate from @cite{ronai-2024} Exp 1 (sliding scale 0-100) -/
   embeddedSIRate_Exp1 : Option Nat
-  /-- Strong inference rate from Ronai (2024) Exp 2 (percentage Yes responses) -/
+  /-- Strong inference rate from @cite{ronai-2024} Exp 2 (percentage Yes responses) -/
   embeddedSIRate_Exp2 : Option Nat
   deriving Repr
 
@@ -76,9 +76,9 @@ def ScaleDatum.name (s : ScaleDatum) : String :=
 
 /-!
 ## Scale Data
-@cite{ronai-2024} @cite{van-tiel-geurts-2016}
+@cite{ronai-2024} @cite{van-tiel-geurts-2016} @cite{bergen-levy-goodman-2016} @cite{chierchia-2004} @cite{potts-levy-2015} @cite{sauerland-2004}
 
-Data extracted from Ronai (2024) Figures 2, 3, 5, 6 and van Tiel et al. (2016).
+Data extracted from @cite{ronai-2024} Figures 2, 3, 5, 6 and @cite{van-tiel-geurts-2016}.
 The 42 scales are from van Tiel et al.'s original study.
 
 Semantic distance: 1 = "equally strong" to 7 = "much stronger"
@@ -513,8 +513,8 @@ def exp2Design : Exp2Design :=
 
 
 /--
-Correlation between global SI rates (van Tiel et al. 2016) and
-embedded SI rates (Ronai 2024).
+Correlation between global SI rates and
+embedded SI rates.
 -/
 structure CorrelationResult where
   /-- Pearson correlation coefficient -/
@@ -623,13 +623,13 @@ theorem bounded_higher :
 Theoretical accounts evaluated in the paper.
 -/
 inductive TheoryType where
-  /-- Grammatical theory (Chierchia 2004; Chierchia et al. 2012) -/
+  /-- Grammatical theory -/
   | grammatical
-  /-- Modified neo-Gricean (Sauerland 2004) -/
+  /-- Modified neo-Gricean -/
   | neoGricean
-  /-- RSA-LU with neo-Gricean uncertainty (Potts et al. 2015) -/
+  /-- RSA-LU with neo-Gricean uncertainty -/
   | rsaLU_neoGricean
-  /-- RSA-LU with unconstrained uncertainty (Bergen et al. 2016) -/
+  /-- RSA-LU with unconstrained uncertainty -/
   | rsaLU_unconstrained
   deriving DecidableEq, Repr
 
@@ -687,7 +687,7 @@ def priorStudies : List PriorStudy := [
   , nScales := 43 }
 ]
 
-/-- Ronai (2024) combines the Gotzner & Romoli paradigm with
+/-- @cite{ronai-2024} combines the Gotzner & Romoli paradigm with
     van Tiel et al.'s 42 scales. -/
 theorem comprehensive_test :
     exp1Design.nScales = 42 ∧

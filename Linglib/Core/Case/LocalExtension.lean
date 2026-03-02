@@ -4,7 +4,7 @@ import Linglib.Core.Case.Hierarchy
 # Local Case Extension Paths @cite{blake-1994}
 @cite{heine-2009}
 
-Blake (1994, Ch. 6) documents how semantic cases — especially local cases —
+@cite{blake-1994} documents how semantic cases — especially local cases —
 extend to cover grammatical functions through grammaticalization (pp. 172–175).
 He shows that this direction is always from spatial/concrete to
 grammatical/abstract: a locative marker may extend to dative function, but
@@ -34,7 +34,7 @@ namespace Core
     ordered from most concrete to most abstract.
 
     Each path represents a cross-linguistically attested polysemy chain,
-    synthesized from Blake's (1994, Ch. 6) discussion of case extension. -/
+    synthesized from @cite{blake-1994}'s discussion of case extension. -/
 def localExtension : Case → List Case
   | .abl  => [.inst, .caus]          -- source → instrument → cause
   | .loc  => [.dat]                  -- location → temporal/experiencer

@@ -6,7 +6,7 @@ import Linglib.Fragments.German.Conditionals
 # Left-Nested Conditionals: Bridge
 @cite{lassiter-2025}
 
-Connects the LNC empirical data from Lassiter (2025) to the conditional
+Connects the LNC empirical data from @cite{cao-white-lassiter-2025} to the conditional
 marker typology in `Fragments/{Language}/Conditionals.lean`.
 
 ## Bridge Structure

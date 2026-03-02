@@ -1,7 +1,7 @@
 import Linglib.Phenomena.Constructions.Studies.FillmoreKayOConnor1988
 
 /-!
-# Kay & Fillmore (1999): *What's X Doing Y?* — Empirical Data
+# @cite{kay-fillmore-1999}: *What's X Doing Y?* — Empirical Data
 @cite{kay-fillmore-1999}
 
 Theory-neutral judgment data from "Grammatical Constructions and Linguistic

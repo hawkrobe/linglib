@@ -6,11 +6,11 @@ import Linglib.Theories.Pragmatics.NeoGricean.Presuppositions
 import Linglib.Theories.Semantics.Lexical.Expressives.Basic
 
 /-!
-# Alternative Competition for Presupposition Triggers (Wang 2025)
+# Alternative Competition for Presupposition Triggers
 @cite{heim-1991} @cite{katzir-2007} @cite{sauerland-2008} @cite{wang-2025}
 
 Constraint-based evaluation of presuppositional vs. non-presuppositional alternatives,
-following Wang (2025) "Presupposition, Competition, and Coherence" Ch. 4.
+following @cite{wang-2025} "Presupposition, Competition, and Coherence" Ch. 4.
 
 ## Framework
 
@@ -71,7 +71,7 @@ S_p is internally coherent iff there exists a world where both the presuppositio
 and the assertion hold. IC violation means the presupposition contradicts the
 assertion — the sentence is semantically defective.
 
-Wang (2025): IC is NON-VIOLABLE.
+@cite{wang-2025}: IC is NON-VIOLABLE.
 -/
 def satisfiesIC (p : PrProp W) : Prop :=
   ∃ w, p.presup w = true ∧ p.assertion w = true
@@ -89,7 +89,7 @@ def satisfiesFP (cg : ContextSet W) (p : PrProp W) : Prop :=
 Partial FP satisfaction: the presupposition is compatible with the CG
 but not fully entailed.
 
-Wang (2025) Ch. 2-3: some triggers tolerate partial satisfaction (ye, you, reng)
+@cite{wang-2025} Ch. 2-3: some triggers tolerate partial satisfaction (ye, you, reng)
 while others don't (jiu, zhidao).
 -/
 def partialFP (cg : ContextSet W) (p : PrProp W) : Prop :=
@@ -113,7 +113,7 @@ def mpPrefers (cg : ContextSet W) (sp : PrProp W) : Prop :=
 /--
 Predict obligatoriness from alternative structure and context.
 
-Wang (2025) Ch. 4: The three-way prediction follows from constraint interaction.
+@cite{wang-2025} Ch. 4: The three-way prediction follows from constraint interaction.
 -/
 def predictObligatoriness (altStr : AltStructure) (cgEntailsPresup : Bool)
     (cgPartialPresup : Bool) : Obligatoriness :=
@@ -134,7 +134,7 @@ def predictObligatoriness (altStr : AltStructure) (cgEntailsPresup : Bool)
 /--
 Triggers with deletion alternatives remain felicitous under partial CG.
 
-Wang (2025) Ch. 4: ye/also, you/again, reng/still have deletion alternatives,
+@cite{wang-2025} Ch. 4: ye/also, you/again, reng/still have deletion alternatives,
 so even when the CG only partially entails the presupposition, the
 presuppositional form is not blocked.
 -/
@@ -144,7 +144,7 @@ theorem deletion_alt_partial_resolution :
 /--
 Triggers with no structural alternative are blocked under partial CG.
 
-Wang (2025) Ch. 4: jiu/only has no non-presuppositional alternative, so
+@cite{wang-2025} Ch. 4: jiu/only has no non-presuppositional alternative, so
 when the CG doesn't fully support the presupposition, the presuppositional
 form cannot be used.
 -/
@@ -184,7 +184,7 @@ def icNecessary (p : PrProp W) (h : satisfiesIC p) :
 /--
 The epistemic K operator: speaker believes φ.
 
-Wang (2025) Ch. 4: K is a covert doxastic operator marking the speaker's
+@cite{wang-2025} Ch. 4: K is a covert doxastic operator marking the speaker's
 epistemic stance. It scopes relative to exh_mx:
 - K >> exh_mx: preferred for atomic sentences
 - exh_mx >> K: available for complex sentences
@@ -215,7 +215,7 @@ structure WangInput (W : Type*) where
   ic : Bool
 
 /--
-Wang (2025) felicity check: evaluates constraint satisfaction.
+@cite{wang-2025} felicity check: evaluates constraint satisfaction.
 
 IC violation → odd (non-violable). Otherwise, obligatoriness prediction
 from alternative structure and CG support determines the status.
@@ -230,7 +230,7 @@ def wangCheck (input : WangInput W) : FelicityResult :=
     | .blocked => { status := .odd, source := some .unspecified }
 
 /--
-Wang (2025) as a felicity theory: predicts felicity from constraint evaluation.
+@cite{wang-2025} as a felicity theory: predicts felicity from constraint evaluation.
 -/
 instance : FelicityCondition (WangInput W) where
   name := "Wang (2025) Alternative Competition"
@@ -239,7 +239,7 @@ instance : FelicityCondition (WangInput W) where
 /--
 IC violation always yields oddness, regardless of CG support and alternative structure.
 
-Wang (2025): IC is the only non-violable constraint. A sentence whose
+@cite{wang-2025}: IC is the only non-violable constraint. A sentence whose
 presupposition contradicts its assertion is always infelicitous, no matter
 what the CG says or what alternatives exist.
 -/
@@ -259,7 +259,7 @@ form yields a felicitous two-dimensional meaning where:
 - The CI content (presupposition) is satisfied at all CG worlds
 
 This connects the constraint-based analysis to the CI bifurcation approach
-for de re presupposition (Wang & Buccola 2025).
+for de re presupposition.
 -/
 theorem ciLift_felicitous_when_fp_holds (p : PrProp W)
     (cg : ContextSet W) (hfp : satisfiesFP cg p) :

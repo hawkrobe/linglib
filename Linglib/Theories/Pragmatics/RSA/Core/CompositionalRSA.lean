@@ -79,8 +79,10 @@ def localExhMW {World Alt : Type} (node : LocalAltNode World Alt) : Prop' World 
 
 /-!
 ## LU-RSA: What It Can and Cannot Do
+@cite{potts-etal-2016}
 
-### The LU Approach (Potts, Lassiter, Levy & Frank 2015; Bergen et al. 2016)
+
+### The LU Approach
 
 LU-RSA models uncertainty over the lexicon:
 - Lexicon 1: "some" means "at least one" (weak)
@@ -89,7 +91,7 @@ LU-RSA models uncertainty over the lexicon:
 The listener marginalizes over lexica:
   L(w | m) ∝ P(w) × Σ_L P(L) × S₁(m | w, L)
 
-### What LU Can Do (Potts et al. 2015, Table 3)
+### What LU Can Do
 
 For simple cases like "Exactly one player hit some of his shots":
 - With strong lexicon, "some" means "some but not all"
@@ -169,7 +171,7 @@ LU would give:
 - Lexicon 1 (weak "some"): every student read at-least-one → SS, SA, AS, AA
 - Lexicon 2 (strong "some"): every student read some-but-not-all → SS only
 
-This matches Potts et al. (2015), who show strong empirical fits.
+This matches @cite{potts-levy-2015}, who show strong empirical fits.
 
 ### Where LU Fails: The Principled Derivation Problem
 
@@ -217,7 +219,7 @@ theorem lu_strong_equals_local :
 
 For single-scalar cases, LU achieves the same result as local EXH:
 - `lu_strong_equals_local` proves this formally
-- This explains the excellent fits to human data in Potts et al. (2015)
+- This explains the excellent fits to human data in @cite{potts-levy-2015}
 
 ### The Compositional Question: Where Does Marginalization Happen?
 
@@ -277,7 +279,7 @@ structure CompositionalArchitecture where
 /-!
 ### The Structural Difference
 
-What LU gets right (Potts et al. 2015):
+What LU gets right:
 - Single-scalar embedded implicatures
 - Probabilistic weighting over interpretations
 - Integration with RSA framework
@@ -403,10 +405,10 @@ Compositional RSA:
 
 ```
 Standard RSA ⊂ LU-RSA ≈ Standard RSA ⊂ Compositional RSA ≈ EXH
-     ↓              ↓                        ↓
- scope-blind   scope-blind             scope-sensitive
-     ↓              ↓                        ↓
- global only   global only             global AND local
+     ↓ ↓ ↓
+ scope-blind scope-blind scope-sensitive
+     ↓ ↓ ↓
+ global only global only global AND local
 ```
 
 LU-RSA and standard RSA have the same structural expressivity.
@@ -464,7 +466,7 @@ RSA excludes a world w when hearing utterance u if:
   ∃ u' ∈ Alt(u). ⟦u'⟧(w) ∧ informativity(u') > informativity(u)
 
 To exclude SA when hearing "every...some", we'd need an alternative u' where:
-  ⟦u'⟧(SA) = true  AND  ⟦u'⟧(SS) = false  (or u' more informative)
+  ⟦u'⟧(SA) = true AND ⟦u'⟧(SS) = false (or u' more informative)
 
 No such sentence exists in the nested Aristotelians.
 
@@ -633,7 +635,7 @@ without stipulating EXH. EXH then emerges as the α → ∞ limit of local RSA.
 -- SECTION 6: Global Intentions and "RSA All The Way Down"
 
 /-!
-## Bergen & Franke (2020): Global Intentions Model
+## @cite{franke-bergen-2020}: Global Intentions Model
 
 Bergen & Franke's "Global Intentions" (GI) model provides machinery for
 reasoning over where EXH applies.
@@ -671,11 +673,11 @@ Bergen & Franke's "parse" variable can be reinterpreted as
 "where RSA reasoning applies":
 
 ```
-Bergen & Franke:           RSA All The Way Down:
-─────────────────          ─────────────────────────
-parse p ∈ {lit,M,O,I,...}  config c ∈ {RSA application sites}
-⟦m⟧^p = EXH at positions   ⟦m⟧^c = RSA(α) at positions
-Speaker chooses parse      Speaker chooses where to be pragmatic
+Bergen & Franke: RSA All The Way Down:
+───────────────── ─────────────────────────
+parse p ∈ {lit,M,O,I,...} config c ∈ {RSA application sites}
+⟦m⟧^p = EXH at positions ⟦m⟧^c = RSA(α) at positions
+Speaker chooses parse Speaker chooses where to be pragmatic
 ```
 
 ### The Equivalence
@@ -768,7 +770,7 @@ def RSAATWDChoice.toGI {Utt : Type} (choice : RSAATWDChoice Utt) :
 
 ```
 theorem rsaatwd_limit_is_gi :
-    ∀ (scenario : ...) (m : Utt) (t : World),
+    ∀ (scenario :...) (m : Utt) (t : World),
       lim_{α→∞} P_RSAATWD(m, c | t; α) = P_GI(m, c.toParse | t)
 ```
 
@@ -963,25 +965,25 @@ theorem informativity_one_mul_value (i : Informativity) :
         Sentence: "Every student read some book"
                          │
                     ┌────┴────┐
-                    │  Matrix │ ← RSA here? (config.matrixRSA)
-                    │   EXH?  │
+                    │ Matrix │ ← RSA here? (config.matrixRSA)
+                    │ EXH? │
                     └────┬────┘
                          │
               ┌──────────┴──────────┐
-              │                     │
-         ┌────┴────┐           ┌────┴────┐
-         │ "every" │           │ VP      │
-         │ student │           │         │
-         └─────────┘           └────┬────┘
+              │ │
+         ┌────┴────┐ ┌────┴────┐
+         │ "every" │ │ VP │
+         │ student │ │ │
+         └─────────┘ └────┬────┘
                                     │
                           ┌─────────┴─────────┐
-                          │                   │
-                     ┌────┴────┐         ┌────┴────┐
-                     │ "read"  │         │ "some"  │ ← RSA here?
-                     └─────────┘         │  book   │   (config.innerRSA)
+                          │ │
+                     ┌────┴────┐ ┌────┴────┐
+                     │ "read" │ │ "some" │ ← RSA here?
+                     └─────────┘ │ book │ (config.innerRSA)
                                          └─────────┘
 
-P_S(m, c | t; α) = P_RSA_matrix(EXH? | ...; α) × P_RSA_inner(EXH? | ...; α)
+P_S(m, c | t; α) = P_RSA_matrix(EXH? |...; α) × P_RSA_inner(EXH? |...; α)
 ```
 
 The distribution factors along the tree structure.
@@ -1002,7 +1004,7 @@ the full product over all compositional nodes.
 /-!
 ## Summary: The Two Perspectives
 
-### Bergen & Franke (2020)
+### @cite{franke-bergen-2020}
 - Primitives: Grammar (generates EXH parses) + Pragmatics (RSA selects)
 - Architecture: P_S(m, p | t) where p is a grammatically-given parse
 - EXH status: Primitive grammatical operator

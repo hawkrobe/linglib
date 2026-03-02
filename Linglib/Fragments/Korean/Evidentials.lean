@@ -1,10 +1,10 @@
 import Linglib.Theories.Semantics.Tense.Evidential
 
 /-!
-# Korean Evidential Fragment (Cumming 2026)
+# Korean Evidential Fragment
 @cite{cumming-2026}
 
-Paradigm entries for Korean tense-evidential morphology from Cumming (2026),
+Paradigm entries for Korean tense-evidential morphology from @cite{cumming-2026},
 Tables 18 (-te) and 19 (-ney). Korean is notable for morphologically encoding
 evidential perspective independently of utterance perspective.
 

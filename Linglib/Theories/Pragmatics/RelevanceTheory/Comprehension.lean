@@ -7,8 +7,8 @@ The comprehension procedure is the heart of RT's account of utterance
 understanding. S&W (2nd ed, Postface):
 
 > "Follow a path of least effort in computing cognitive effects.
->  Test interpretive hypotheses in order of accessibility.
->  Stop when your expectations of relevance are satisfied."
+> Test interpretive hypotheses in order of accessibility.
+> Stop when your expectations of relevance are satisfied."
 
 This is an **ordered search** with a **satisficing** criterion:
 1. Consider candidate interpretations in order of accessibility
@@ -23,7 +23,7 @@ by the comprehension procedure in a given scenario. In Lean:
 
 ```
 theorem my_analysis :
-    scenario.comprehensionSelects interpretationI := by ...
+    scenario.comprehensionSelects interpretationI :=...
 ```
 
 This requires showing three things:

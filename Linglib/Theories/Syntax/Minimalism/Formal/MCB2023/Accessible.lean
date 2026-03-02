@@ -38,7 +38,7 @@ def SyntacticObject.properSubtrees : SyntacticObject → List SyntacticObject
   | .leaf _ => []
   | .node a b => a.subtrees ++ b.subtrees
 
-/-- Internal nodes (subtrees that are .node) -/
+/-- Internal nodes (subtrees that are.node) -/
 def SyntacticObject.internalNodes : SyntacticObject → List SyntacticObject
   | .leaf _ => []
   | so@(.node a b) => so :: (a.internalNodes ++ b.internalNodes)
@@ -363,7 +363,7 @@ theorem im_b0_preserved (T β : SyntacticObject)
 
 /-- IM: accessible terms increase by 1 + β.nodeCount.
 
-    merge(β, T) = .node β T has nodeCount = 1 + β.nodeCount + T.nodeCount.
+    merge(β, T) =.node β T has nodeCount = 1 + β.nodeCount + T.nodeCount.
     Since T is replaced in the forest, the net change in numVertices (= numAcc)
     is 1 + β.nodeCount. Note: β's subtree is duplicated (it remains inside T
     and also appears as a new child of the root). In MCB2023's sharing model

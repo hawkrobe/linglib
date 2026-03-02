@@ -119,7 +119,9 @@ def pnot_fullHierarchy (defined : BProp World → Prop) : FullHierarchy pnot def
 -- ============================================================================
 
 /-!
-### "Only" (von Fintel 1999, §2)
+### "Only"
+@cite{von-fintel-1999}
+
 
 Horn's analysis: "Only x VP" decomposes into:
 - **Presupposition** (positive): x VP (the focused individual satisfies VP)

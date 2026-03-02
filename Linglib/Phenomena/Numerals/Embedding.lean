@@ -309,9 +309,9 @@ def doubt_passed : NumeralEmbeddingDatum where
 -- ============================================================================
 
 /-- "She doesn't have 40 sheep" — QUD-convexity diagnostic.
-Infelicitous in neutral "how many?" context (Solt & Waldon 2019).
-Under LB: ¬(≥40) = {0..39}, a convex set → predicts felicitous (wrong).
-Under BL: ¬(=40) = {0..39, 41, 42, ...}, non-convex → predicts infelicitous (correct). -/
+Infelicitous in neutral "how many?" context.
+Under LB: ¬(≥40) = {0.39}, a convex set → predicts felicitous (wrong).
+Under BL: ¬(=40) = {0.39, 41, 42,...}, non-convex → predicts infelicitous (correct). -/
 def convexity_sheep : NumeralEmbeddingDatum where
   sentence := "She doesn't have 40 sheep"
   embedding := .convexity_test

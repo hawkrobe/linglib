@@ -148,7 +148,7 @@ theorem si_proceeds_when_felicitous {W : Type*} (p : PrProp W) (w : W)
 /-!
 ## Alternative Structure for Presupposition Triggers
 
-Wang (2025) Table 4.1 classifies presuppositional triggers by what
+@cite{wang-2025} Table 4.1 classifies presuppositional triggers by what
 non-presuppositional alternative they have. This determines their behavior
 under the IC >> FP >> MP constraint ranking.
 
@@ -166,7 +166,7 @@ This classification predicts obligatoriness:
 -/
 
 /--
-Wang (2025) Table 4.1: How a presupposition trigger relates to its
+@cite{wang-2025} Table 4.1: How a presupposition trigger relates to its
 non-presuppositional alternative.
 -/
 inductive AltStructure where
@@ -179,7 +179,7 @@ inductive AltStructure where
   deriving DecidableEq, Repr, BEq
 
 /--
-Wang (2025) pragmatic constraint ranking: IC >> FP >> MP.
+@cite{wang-2025} pragmatic constraint ranking: IC >> FP >> MP.
 
 - IC (Internal Coherence): S_p's presupposition is consistent with its assertion.
   Non-violable.
@@ -210,7 +210,7 @@ def constraintRanking : List PragConstraint := [.IC, .FP, .MP]
 /--
 Obligatoriness pattern predicted by the alternative competition framework.
 
-Wang (2025) derives three patterns from the interaction of trigger type,
+@cite{wang-2025} derives three patterns from the interaction of trigger type,
 alternative structure, and constraint ranking:
 1. Obligatory: trigger must be used when CG supports presupposition
 2. Optional: trigger may or may not be used
@@ -226,7 +226,7 @@ inductive Obligatoriness where
   deriving DecidableEq, Repr, BEq
 
 /--
-A presupposition trigger entry with Wang (2025) alternative structure.
+A presupposition trigger entry with @cite{wang-2025} alternative structure.
 
 Extends the basic trigger type with information about what non-presuppositional
 alternative exists, enabling the constraint-based competition analysis.

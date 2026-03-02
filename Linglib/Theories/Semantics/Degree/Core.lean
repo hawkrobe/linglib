@@ -19,11 +19,11 @@ comparison is introduced:
 
 | Framework       | Degree binding           | Standard introduction  |
 |-----------------|--------------------------|------------------------|
-| Kennedy (2007)  | Degree quantifier -er    | Degree clause          |
-| Heim (2001)     | Sentential -er operator  | λ-abstraction          |
-| Klein (1980)    | No degrees               | Comparison class       |
+| @cite{kennedy-2007}  | Degree quantifier -er    | Degree clause          |
+| @cite{heim-2001}     | Sentential -er operator  | λ-abstraction          |
+| @cite{klein-1980}    | No degrees               | Comparison class       |
 | Schwarzschild   | Intervals on scale       | Interval semantics     |
-| Rett (2026)     | Order-sensitive MAX      | Scale-directional MAX  |
+| @cite{rett-2026}     | Order-sensitive MAX      | Scale-directional MAX  |
 
 All frameworks except Klein posit degrees; this module provides the
 interface they share.
@@ -82,7 +82,7 @@ structure GradablePredicate (Entity D : Type*) [LinearOrder D]
     degree comparison happens. The internal structure varies:
 
     Kennedy: [DegP [Deg -er/as/est] [DegComplement than-clause]]
-    Heim:    [DegP [-er d₁ d₂] ...]  (sentential operator)
+    Heim: [DegP [-er d₁ d₂]...] (sentential operator)
 
     This type captures the framework-independent parts:
     what kind of comparison, and what standard type. -/
@@ -119,7 +119,7 @@ def positiveSem {Entity D : Type*} [LinearOrder D]
   μ x ≥ θ
 
 /-- The positive form with standard derived from scale structure.
-    Kennedy (2007): for closed-scale adjectives, the standard IS
+    @cite{kennedy-2007}: for closed-scale adjectives, the standard IS
     the scale endpoint (minimum or maximum); for open-scale adjectives,
     it's contextually determined. -/
 def positiveFromScale {Entity D : Type*} [LinearOrder D] [BoundedOrder D]

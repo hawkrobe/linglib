@@ -1,5 +1,5 @@
 /-!
-# Denić, Homer, Rothschild & Chemla (2021) @cite{denic-homer-rothschild-chemla-2021}
+# Denić, @cite{denic-homer-rothschild-chemla-2021} @cite{denic-homer-rothschild-chemla-2021}
 
 The influence of polarity items on inferential judgments.
 *Cognition* 215, 104791.

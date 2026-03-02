@@ -1,13 +1,12 @@
 import Linglib.Theories.Semantics.Questions.ProbabilisticAnswerhood
 
 /-!
-# Evidential Support (IKW 2025, Thomas 2026)
+# Evidential Support
 @cite{ippolito-kiss-williams-2025} @cite{thomas-2026}
 
 Named abstraction over probabilistic answerhood primitives, factored out for
 reuse across discourse particles that share the notion of "supporting an
-answer to a QUD" — additive particles (Thomas 2026) and discourse *only*
-(Ippolito, Kiss & Williams 2025).
+answer to a QUD" — additive particles and discourse *only*.
 
 ## Two layers of SUPPORT
 

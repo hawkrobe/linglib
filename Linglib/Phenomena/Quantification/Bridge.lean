@@ -13,7 +13,7 @@ to the GQ property predicates in `Core.Quantification` and
 
 1. **Conservativity** (Barwise & Cooper 1981, Conjecture 1): all six English
    quantity words (no, few, some, half, most, every) satisfy CONSERV.
-2. **Quantity/isomorphism closure** (Mostowski 1957): all six satisfy QUANT.
+2. **Quantity/isomorphism closure**: all six satisfy QUANT.
 3. **Monotonicity–strength correlation** (B&C U7): strong determiners are
    monotone; weak determiners partition into monotone and non-monotone ("half").
 4. **Weak ↔ there-insertion** (B&C Theorem C4, P&W Ch.6): weak determiners
@@ -25,7 +25,7 @@ to the GQ property predicates in `Core.Quantification` and
 ## Data structures
 
 - `MonotonicitySimplicity`, `ConservativitySimplicity`, `QuantitySimplicity`:
-  van de Pol et al. (2023) LZ complexity effect sizes.
+  @cite{van-de-pol-etal-2023} LZ complexity effect sizes.
 
 ## Thread map
 
@@ -73,7 +73,6 @@ theorem conservativity_universal :
 
 /-- All simple determiners satisfy quantity/isomorphism closure:
     their truth value depends only on cardinalities |A∩B|, |A\B|, etc.
-    (Mostowski 1957; Barwise & Cooper 1981).
     All/any-based quantifiers (every, some, no) use `all_bij_inv`/`any_bij_inv`;
     cardinality-based quantifiers (most, few, half) use `filter_length_bij_inv`. -/
 theorem quantity_universal :
@@ -164,14 +163,14 @@ structure MonotonicitySimplicity where
   monotone_simpler : monotone_mean_lz < non_monotone_mean_lz
 
 /-- Conservative quantifiers have lower LZ complexity than
-    non-conservative ones (van de Pol et al. 2023). -/
+    non-conservative ones. -/
 structure ConservativitySimplicity where
   conservative_mean_lz : ℚ
   non_conservative_mean_lz : ℚ
   conservative_simpler : conservative_mean_lz < non_conservative_mean_lz
 
 /-- Quantity-satisfying quantifiers have lower LZ complexity, but the
-    effect is weaker than monotonicity (van de Pol et al. 2023). -/
+    effect is weaker than monotonicity. -/
 structure QuantitySimplicity where
   quantity_mean_lz : ℚ
   non_quantity_mean_lz : ℚ
@@ -179,7 +178,7 @@ structure QuantitySimplicity where
 
 /-- The three universals combined: quantifiers satisfying all three have
     the lowest complexity. Monotonicity is the strongest single predictor,
-    quantity the weakest (van de Pol et al. 2023, §4.2). -/
+    quantity the weakest. -/
 structure UniversalsSimplicityRanking where
   monotonicity_effect : MonotonicitySimplicity
   conservativity_effect : ConservativitySimplicity

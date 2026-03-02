@@ -16,8 +16,8 @@ Standard attitude semantics evaluates embedded clauses relative to worlds only:
   ⟦x believes p⟧(w) = ∀w' ∈ Dox_x(w). p(w')
 
 This blocks sequence-of-tense (SOT) analysis, where embedded tense receives
-a shifted interpretation relative to the matrix event time. Von Stechow (2009)
-synthesizes Lewis (1979), Kratzer (1998), and Ogihara (1989): `believe`'s
+a shifted interpretation relative to the matrix event time. @cite{von-stechow-2009}
+synthesizes @cite{lewis-1979}, @cite{heim-kratzer-1998}, and @cite{ogihara-1989}: `believe`'s
 complement type shifts to s(it), and doxastic alternatives become situation pairs.
 
 ## Design
@@ -56,7 +56,7 @@ open Semantics.Attitudes.Doxastic
     pattern in `Core/Proposition.lean`. -/
 abbrev SitProp (W Time : Type*) := Situation W Time → Bool
 
-/-- Situation-dependent accessibility relation: Dox_y(w,t) = {(w',t') | ...}.
+/-- Situation-dependent accessibility relation: Dox_y(w,t) = {(w',t') |...}.
 
     Generalizes `AgentAccessRel W E = E → W → W → Bool` to include
     temporal coordinates in both the evaluation and accessible situations. -/
@@ -161,9 +161,9 @@ theorem sitVeridicalityHolds_lift {W Time : Type*} (v : Veridicality)
 /-- A situation-dependent doxastic attitude predicate.
 
     Generalizes `DoxasticPredicate` to use situation-dependent accessibility:
-    `Dox_y(w,t) = {(w',t') | ...}` instead of `Dox_y(w) = {w' | ...}`.
+    `Dox_y(w,t) = {(w',t') |...}` instead of `Dox_y(w) = {w' |...}`.
 
-    This is von Stechow's (2009) enriched attitude semantics:
+    This is @cite{von-stechow-2009}'s enriched attitude semantics:
     ⟦x believes p⟧(w,t) = ∀(w',t') ∈ Dox_x(w,t). p(w')(t') -/
 structure SitDoxasticPredicate (W Time E : Type*) where
   /-- Name of the predicate -/
@@ -203,7 +203,7 @@ def liftDoxastic {W E : Type*} (V : DoxasticPredicate W E)
 /-- The lifted predicate matches the original semantics.
 
     `(liftDoxastic V Time).holdsAt agent (liftProp p) s sits`
-    equals `V.holdsAt agent p s.world (sits.map .world)`.
+    equals `V.holdsAt agent p s.world (sits.map.world)`.
 
     This is the key backward-compatibility theorem: any existing
     analysis using `DoxasticPredicate` can be replayed exactly

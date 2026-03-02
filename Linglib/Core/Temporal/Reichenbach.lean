@@ -4,12 +4,12 @@ import Mathlib.Order.Basic
 # Reichenbach's Temporal Framework
 @cite{kiparsky-2002} @cite{klein-1994} @cite{reichenbach-1947}
 
-Reichenbach (1947) / Klein (1994) tense–aspect parameters, extended with
-Kiparsky's (2002) perspective time P.
+@cite{reichenbach-1947} / @cite{klein-1994} tense–aspect parameters, extended with
+@cite{kiparsky-2002}'s perspective time P.
 
 Three (four) distinguished times:
 - **S** (Speech time): When the utterance occurs
-- **P** (Perspective time): Origin of temporal deixis (Kiparsky 2002)
+- **P** (Perspective time): Origin of temporal deixis
 - **R** (Reference/Topic time): The time being talked about
 - **E** (Event time): When the event occurs
 
@@ -21,7 +21,7 @@ namespace Core.Reichenbach
 
 /--
 Reichenbach's temporal parameters for tense/aspect analysis,
-extended with Kiparsky's (2002) perspective time P.
+extended with @cite{kiparsky-2002}'s perspective time P.
 
 - `speechTime`: When the utterance is made (S)
 - `perspectiveTime`: Origin of temporal deixis (P, Kiparsky 2002)
@@ -34,7 +34,7 @@ and embedded tenses. Tense locates R relative to P (not S).
 structure ReichenbachFrame (Time : Type*) where
   /-- Speech time (S): when the utterance occurs -/
   speechTime : Time
-  /-- Perspective time (P): origin of temporal deixis (Kiparsky 2002).
+  /-- Perspective time (P): origin of temporal deixis.
       Equals S in root clauses; shifts in flashback, FID, embedded tenses. -/
   perspectiveTime : Time
   /-- Reference time (R): the time under discussion -/
@@ -47,7 +47,7 @@ namespace ReichenbachFrame
 variable {Time : Type*} [LinearOrder Time]
 
 /-- PAST: R < P (reference time precedes perspective time).
-    Kiparsky (2002): tense locates R relative to P, not S. -/
+    @cite{kiparsky-2002}: tense locates R relative to P, not S. -/
 def isPast (f : ReichenbachFrame Time) : Prop :=
   f.referenceTime < f.perspectiveTime
 

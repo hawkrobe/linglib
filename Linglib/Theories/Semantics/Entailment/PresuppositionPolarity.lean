@@ -134,7 +134,7 @@ def negationPresupContext : PresupContext W :=
 /--
 Presupposition projection behavior varies by quantifier.
 
-Following Heim (1983):
+Following @cite{heim-1983}:
 - Universal: "Every F is G" presupposes every F satisfies G's presup
 - Existential: "Some F is G" presupposes some F satisfies G's presup (or: at least one F exists)
 

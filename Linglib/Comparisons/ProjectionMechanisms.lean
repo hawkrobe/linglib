@@ -3,23 +3,23 @@ import Linglib.Theories.Semantics.Presupposition.LocalContext
 
 /-!
 # Projection Mechanisms: Compositional Filtering vs. RSA BToM
-@cite{scontras-tonhauser-2025}
+@cite{scontras-tonhauser-2025} @cite{heim-1983}
 
 Compares two theories of presupposition projection:
 
-1. **Compositional filtering** (Heim 1983, Schlenker 2009): Presuppositions
+1. **Compositional filtering**: Presuppositions
    project through connectives via local context computation. The filtering
    presupposition of "if A then B_p" is "A → p" (the antecedent filters
    the consequent's presupposition).
 
-2. **RSA BToM** (Scontras & Tonhauser 2025): Projection is a pragmatic
+2. **RSA BToM**: Projection is a pragmatic
    inference. The listener (L1) inverts the speaker's generative model to
    infer which propositions the speaker takes for granted. No lexical
    presupposition encoding is required.
 
 ## The Key Empirical Argument
 
-Scontras & Tonhauser (2025) argue that projection arises from pragmatic
+@cite{scontras-tonhauser-2025} argue that projection arises from pragmatic
 reasoning about the speaker's private assumptions, not from lexical
 encoding of presuppositions. Their BToM model predicts that even
 non-factive "think" — which has NO presupposition to filter — should
@@ -163,7 +163,7 @@ theorem btom_subsumes_filtering :
 filtering predicts trivial presupposition (no projection), while BToM
 predicts non-trivial projection modulated by relatedness.
 
-This is the Scontras & Tonhauser (2025) argument: if projection were
+This is the @cite{scontras-tonhauser-2025} argument: if projection were
 due to compositional filtering alone, non-presuppositional items like
 "think" should show no effect. But BToM predicts projection effects
 even for "think", because L1 infers the speaker's private assumptions

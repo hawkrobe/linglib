@@ -133,7 +133,7 @@ structure BarePluralEntry where
 -- Stage-Level vs Individual-Level Predicates
 
 /--
-Predicate classification (Milsark 1974, Siegel 1976):
+Predicate classification:
 
 - Stage-level (states): Predicated of stages (realizations).
   Examples: available, hungry, sick (physical), in the room, running

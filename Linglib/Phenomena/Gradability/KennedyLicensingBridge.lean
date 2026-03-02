@@ -4,7 +4,7 @@ import Linglib.Fragments.English.Predicates.Adjectival
 import Linglib.Core.Scales.Scale
 
 /-!
-# Kennedy (2007) Adjective Licensing Bridge
+# @cite{kennedy-2007} Adjective Licensing Bridge
 @cite{kennedy-2007} @cite{kennedy-mcnally-2005}
 
 Connects the abstract `adjMeasure` and `LicensingPipeline` algebra

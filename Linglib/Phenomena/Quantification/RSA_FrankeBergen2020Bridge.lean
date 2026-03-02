@@ -3,7 +3,7 @@ import Linglib.Theories.Pragmatics.NeoGricean.Exhaustivity.Interface
 import Linglib.Phenomena.Quantification.Studies.FrankeBergen2020
 
 /-!
-# Bridge: Franke & Bergen (2020) RSA Model → Quantification Phenomena
+# Bridge: @cite{franke-bergen-2020} RSA Model → Quantification Phenomena
 @cite{franke-bergen-2020}
 
 Global Intentions (GI) RSA model for exhaustification ambiguity.

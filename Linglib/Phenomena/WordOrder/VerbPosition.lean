@@ -15,18 +15,18 @@ namespace Phenomena.WordOrder.VerbPosition
 ## Bulgarian: Participle Fronting
 @cite{harizanov-gribanova-2019}
 
-From Lambova (2004c:274, (15)), cited in Harizanov (2019) examples (29), (48), (52).
+From Lambova (2004c:274, (15)), cited in @cite{harizanov-gribanova-2019} examples (29), (48), (52).
 
 Both word orders are grammatical with the same meaning:
 
 **Order A (participle before auxiliary):**
-    Pročeli   bjaha      studentite     statijata.
-    read      be.3p.pst  the.students   the.article
+    Pročeli bjaha studentite statijata.
+    read be.3p.pst the.students the.article
     'The students had read the article.'
 
 **Order B (auxiliary before participle):**
-    Studentite     bjaha      pročeli   statijata.
-    the.students   be.3p.pst  read      the.article
+    Studentite bjaha pročeli statijata.
+    the.students be.3p.pst read the.article
     'The students had read the article.'
 -/
 
@@ -52,18 +52,18 @@ def bulgarianExample : BulgarianParticipleData := {}
 /-!
 ## German: V2 Word Order
 
-From Vikner (1995:32, (11d)), cited in Harizanov (2019) example (35).
+From Vikner (1995:32, (11d)), cited in @cite{harizanov-gribanova-2019} example (35).
 
 The finite verb appears in different positions depending on clause type:
 
 **Root clause (verb second):**
     Diesen Film haben die Kinder gesehen.
-    this   film have  the children seen
+    this film have the children seen
     'The children have seen this film.'
 
 **Embedded clause (verb final):**
-    ... dass die Kinder diesen Film gesehen haben.
-    ... that the children this film seen have
+... dass die Kinder diesen Film gesehen haben.
+... that the children this film seen have
     '... that the children have seen this film.'
 -/
 

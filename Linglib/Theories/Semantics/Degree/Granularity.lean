@@ -83,8 +83,8 @@ theorem containsSelf (ε d : D) (hε : 0 < ε) :
 
 /-- Eq. (41): Finer granularity → narrower intervals → containment.
     If ε₁ ≤ ε₂, then g_{ε₁}(d) ⊆ g_{ε₂}(d):
-    - lo: d − ε₂ ≤ d − ε₁  (finer has larger infimum)
-    - hi: d + ε₁ ≤ d + ε₂  (finer has smaller supremum) -/
+    - lo: d − ε₂ ≤ d − ε₁ (finer has larger infimum)
+    - hi: d + ε₁ ≤ d + ε₂ (finer has smaller supremum) -/
 theorem finer_contained (ε₁ ε₂ d : D) (h : ε₁ ≤ ε₂) :
     (mkGranInterval ε₂ d).lo ≤ (mkGranInterval ε₁ d).lo ∧
     (mkGranInterval ε₁ d).hi ≤ (mkGranInterval ε₂ d).hi :=

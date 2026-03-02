@@ -199,8 +199,8 @@ theorem abstraction_binds_correct_variable {m : Model} (n : ℕ)
 /--
 Relative clause interpretation combines predicate abstraction with PM.
 
-For "the N that ... t ..."":
-1. Interpret the relative clause as λx. ⟦... t_n ...⟧^{g[n↦x]}
+For "the N that... t..."":
+1. Interpret the relative clause as λx. ⟦... t_n...⟧^{g[n↦x]}
 2. Combine with the head noun via Predicate Modification
 
 Result: λx. N(x) ∧ ⟦relative clause⟧(x)

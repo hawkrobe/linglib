@@ -1,12 +1,12 @@
 /-!
-# Scontras & Pearl (2021): Quantifier Scope Ambiguity @cite{scontras-pearl-2021} @cite{musolino-lidz-2003}
+# @cite{scontras-pearl-2021}: Quantifier Scope Ambiguity @cite{scontras-pearl-2021} @cite{musolino-lidz-2003}
 
 "When pragmatics matters more for truth-value judgments:
 An investigation of quantifier scope ambiguity"
 *Glossa* 6(1): 110.
 
 Scope truth conditions for scopally ambiguous sentences. S&P is a modeling paper —
-it explains endorsement patterns from Musolino & Lidz (2003) and others via RSA,
+it explains endorsement patterns from @cite{musolino-lidz-2003} and others via RSA,
 rather than reporting new experiments.
 
 ## Sections
@@ -152,7 +152,7 @@ theorem exact_atleast_diverge_2of4 :
     (¬>∀: not all jumped). If no horse jumped, then trivially not every horse
     jumped. This means no truth-value judgment context can diagnose the
     isomorphism effect for universals: whenever surface is true, inverse
-    is automatically true too (Musolino & Lidz 2003, p. 289). -/
+    is automatically true too. -/
 theorem universal_surface_entails_inverse :
     ∀ w, scopeTruth .surface w = true → scopeTruth .inverse w = true := by
   intro w; cases w <;> simp [scopeTruth]
@@ -168,7 +168,7 @@ theorem universal_inverse_not_entails_surface :
     At w=2 (exactly 2 jumped out of 4), surface is true (exactly 2 didn't)
     but inverse is false (it IS the case that exactly 2 jumped).
     This independence is what makes numerals diagnostic for the isomorphism
-    effect (Musolino & Lidz 2003, p. 289). -/
+    effect. -/
 theorem numeral_surface_not_entails_inverse :
     ∃ w, twoNotTruth .exact .surface w = true ∧
          twoNotTruth .exact .inverse w = false :=

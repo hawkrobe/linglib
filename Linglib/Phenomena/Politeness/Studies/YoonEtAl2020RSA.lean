@@ -4,7 +4,7 @@ import Linglib.Core.Interval.RSAEval
 import Linglib.Core.Interval.RSAVerify
 
 /-!
-# Yoon et al. (2020) — S1 Submodel
+# @cite{yoon-etal-2020} — S1 Submodel
 @cite{yoon-etal-2020}
 
 "Polite Speech Emerges From Competing Social Goals"
@@ -123,7 +123,7 @@ def Phi.val : Phi → ℚ
 -- §3. RSAConfigData
 -- ============================================================================
 
-/-- Yoon et al. (2020) S1 submodel.
+/-- @cite{yoon-etal-2020} S1 submodel.
 
     S1 utility = φ · log L0(u,s) + (1−φ) · E_L0[V|u] − l(u)
 
@@ -141,7 +141,7 @@ def cfg : RSA.RSAConfigData Utterance HeartState where
     intro _l u w
     cases u <;> cases w <;>
     simp only [utteranceSemantics, adjMeaning, Core.GradedProposition.neg, softSemantics] <;> norm_num
-  scoreSpec := .combinedUtility [
+  s1Spec := .combinedUtility [
     .logInformativity (fun φ => φ.val),
     .expectedValue (fun φ => 1 - φ.val) subjectiveValue,
     .constant (fun _ u => -(↑(utteranceCost u) : ℚ))

@@ -29,7 +29,7 @@ open Phenomena.Assertion
 
 /-- A hedge modifies the JP layer (epistemic status) to `weak`.
 
-    "I think p" = assertion with `epistemicStatus := .weak`.
+    "I think p" = assertion with `epistemicStatus :=.weak`.
     The TP content (p) is unchanged; only the JP layer is modified. -/
 def hedgeAsJP {W : Type*} (la : LayeredAssertion W) : LayeredAssertion W :=
   { la with epistemicStatus := .weak }
@@ -52,7 +52,7 @@ theorem hedge_preserves_commitment {W : Type*} (la : LayeredAssertion W) :
 
 /-- An oath modifies the ComP layer (commitment strength) to `strong`.
 
-    "I swear p" = assertion with `commitmentStrength := .strong`.
+    "I swear p" = assertion with `commitmentStrength :=.strong`.
     The TP content (p) is unchanged; only the ComP layer is modified. -/
 def oathAsComP {W : Type*} (la : LayeredAssertion W) : LayeredAssertion W :=
   { la with commitmentStrength := .strong }

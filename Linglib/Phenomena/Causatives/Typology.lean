@@ -1,5 +1,5 @@
 /-!
-# Cross-Linguistic Causative Typology (Song 1996)
+# Cross-Linguistic Causative Typology
 @cite{song-1996}
 
 Song's typology of causative constructions, orthogonal to the

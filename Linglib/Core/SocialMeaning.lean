@@ -2,9 +2,11 @@ import Mathlib.Data.Rat.Defs
 
 /-!
 # Social Meaning and the Indexical Field @cite{eckert-2008}
+@cite{beltrama-schwarz-2024}
+
 
 Framework-agnostic types for the social meaning of linguistic variation,
-following Eckert's (2008) theory of the indexical field.
+following @cite{eckert-2008}'s theory of the indexical field.
 
 A linguistic variable's social meaning is not a fixed correspondence to a
 social category but a constellation of ideologically linked persona
@@ -13,12 +15,12 @@ context.
 
 ## Core concepts
 
-**Indexical order** (Silverstein 2003): variables accumulate layers of
+**Indexical order**: variables accumulate layers of
 social meaning. First-order (demographic correlation, below awareness) →
 second-order (stylistic marker, available for manipulation) → third-order
 (stereotype, subject to metapragmatic commentary).
 
-**Stances vs. qualities** (Ochs 1992, Eckert 2008): variables directly
+**Stances vs. qualities**: variables directly
 index interactional *stances* (momentary positions like "being precise
 right now"). Habitual stances accrete into attributed *qualities* (stable
 traits like "is meticulous"). Social meaning mediates between form and
@@ -45,7 +47,7 @@ namespace Core.SocialMeaning
 -- Indexical order (Silverstein 2003)
 -- ============================================================================
 
-/-- Silverstein's (2003) indexical order: how a variable's social meaning
+/-- @cite{silverstein-2003}'s indexical order: how a variable's social meaning
     accumulates layers through use and metapragmatic awareness.
 
     Each order presupposes the previous: a variable must correlate with a
@@ -88,7 +90,7 @@ theorem second_lt_third : IndexicalOrder.second < IndexicalOrder.third := by dec
 
     Variables directly index stances. Qualities are attributed on the basis
     of habitual stance-taking: a person who habitually takes precise stances
-    gets attributed the quality "meticulous" (Beltrama & Schwarz 2024). -/
+    gets attributed the quality "meticulous". -/
 inductive StanceLevel where
   /-- Momentary interactional position (e.g., "being precise right now"). -/
   | stance
@@ -101,12 +103,12 @@ inductive StanceLevel where
 -- Indexical field (Eckert 2008)
 -- ============================================================================
 
-/-- An indexical field (Eckert 2008): the constellation of ideologically
+/-- An indexical field: the constellation of ideologically
     related meanings associated with a linguistic variable.
 
     Parameterized by:
     * `Variant`: variant forms of the variable (e.g., round vs. precise numeral)
-    * `Trait`: persona traits in the field (e.g., meticulous, casual, ...)
+    * `Trait`: persona traits in the field (e.g., meticulous, casual,...)
 
     The `association` function maps each (variant, trait) pair to a rational
     value. Positive values mean the variant indexes *toward* the trait;
@@ -115,7 +117,7 @@ inductive StanceLevel where
     (Eckert 2008: "the field is a space of potential meanings"). -/
 structure IndexicalField (Variant : Type) (Trait : Type) where
   /-- How strongly using this variant indexes this trait.
-      Positive = toward, negative = away from. -/
+      Positive = toward, negative = away. -/
   association : Variant → Trait → ℚ
   /-- Indexical order of this variable. -/
   order : IndexicalOrder

@@ -364,7 +364,7 @@ When the wh-answer is FUNCTIONALLY DEPENDENT on a wide-scope quantifier,
 we get readings where the answer is a function.
 
 "Which of his teachers does every student admire?"
-→ Answer: "John admires Smith, Mary admires Jones, ..."
+→ Answer: "John admires Smith, Mary admires Jones,..."
 → A function from students to teachers
 
 The function IS the complete answer under the pair-list reading.
@@ -451,7 +451,7 @@ theorem wideScope_existential_licenses_mentionSome {W E : Type*} [DecidableEq E]
 3. The answer can be presented as a list
 
 "Which student did each professor recommend?" ✓
-"Each professor recommended which student?"  (marked)
+"Each professor recommended which student?" (marked)
 
 **Choice Licensing**:
 1. Disjunction/existential c-commands wh-phrase

@@ -5,7 +5,7 @@ import Linglib.Core.Empirical
 @cite{gibbard-1981} @cite{haegeman-2003} @cite{iatridou-1991} @cite{lassiter-2025} @cite{mcgee-1985}
 
 Theory-neutral empirical observations about left-nested conditionals (LNCs)
-from Lassiter (2025) "Sorting out left-nested conditionals."
+from @cite{cao-white-lassiter-2025} "Sorting out left-nested conditionals."
 
 ## Overview
 
@@ -299,7 +299,7 @@ def ex32_npiAnyone : LNCDatum :=
 /-!
 ## Coordination Constraints
 
-Haegeman (2003): Premise conditionals resist coordination with other
+@cite{haegeman-2003}: Premise conditionals resist coordination with other
 conditional clauses. This extends to LNCs.
 -/
 
@@ -344,7 +344,7 @@ def ex35_coordinationDiagnostic : LNCDatum :=
 /-!
 ## *Only* + Inversion
 
-Another diagnostic from Haegeman (2003): PCs block *only* + subject-aux
+Another diagnostic from @cite{haegeman-2003}: PCs block *only* + subject-aux
 inversion, while HCs allow it.
 -/
 
@@ -501,11 +501,11 @@ Consistent with PC (not HC) reading.
 
 ### 4. Coordination Constraints
 LNCs resist coordination with other conditional clauses,
-like other PCs (Haegeman 2003).
+like other PCs.
 
 ### 5. *Only* + Inversion
 LNCs block *only* + subject-aux inversion,
-like other PCs (Haegeman 2003).
+like other PCs.
 
 ### 6. Modal/Generic Exception
 LNCs with modals, quantificational adverbs, or generic interpretation

@@ -3,14 +3,13 @@ import Linglib.Core.Empirical
 open Core.Empirical
 
 /-!
-# Khoo (2015): Modal Disagreements
+# @cite{khoo-2015}: Modal Disagreements
 @cite{khoo-2015}
 
 Empirical data from Khoo's experiment on epistemic modal disagreements.
 The key finding: speakers reject might-claims (high rejection rating)
 without judging them false (low falsity rating). This dissociation
-between rejection and falsity judgments is predicted by Rudin's (2025)
-Neo-Stalnakerian Framework, which derives it from the fact that truth
+between rejection and falsity judgments is predicted by @cite{rudin-2025}'s Neo-Stalnakerian Framework, which derives it from the fact that truth
 depends on the *assertor's* information while rejection depends on the
 *rejector's* information.
 
@@ -22,7 +21,7 @@ depends on the *assertor's* information while rejection depends on the
 - Control vignette: non-modal assertion ("Jim is at home right now")
 - Modal vignette: epistemic might ("Fat Tony might be dead")
 - False condition: "Do you agree that what [speaker] said is false?"
-- Rejection condition: "Would you respond by saying 'No, ...'?"
+- Rejection condition: "Would you respond by saying 'No,...'?"
 
 ## Key Finding: The Difference Observation
 

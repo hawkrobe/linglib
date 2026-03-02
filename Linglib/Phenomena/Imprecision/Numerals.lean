@@ -27,7 +27,7 @@ Roundness level of a numeral.
 
 More round = more potential for imprecision.
 
-Source: Krifka (2007), Sauerland & Stateva (2007)
+Source: @cite{krifka-2007}, @cite{sauerland-stateva-2007}
 -/
 inductive RoundnessLevel where
   | exact       -- 99, 47, 1003
@@ -136,7 +136,7 @@ def fiftyVsFortyNine : RoundnessAsymmetryDatum :=
 /--
 Numerals under negation require polar questions.
 
-Source: Solt & Waldon (2019)
+Source: @cite{solt-waldon-2019}
 -/
 structure NegationConstraintDatum where
   /-- Positive sentence -/
@@ -282,7 +282,7 @@ def approximatelyWithNonRound : ApproximatelyDatum :=
 /--
 Time expressions show similar round/non-round patterns.
 
-Source: dissertation (163), Solt (2023)
+Source: dissertation (163), @cite{solt-2023}
 -/
 structure TimeExpressionDatum where
   /-- The sentence -/
@@ -323,7 +323,7 @@ Granularity affects which numerals count as "round."
 
 E.g., on a scale of dozens, 48 might be "round" (4 dozen).
 
-Source: Krifka (2007)
+Source: @cite{krifka-2007}
 -/
 structure GranularityDatum where
   /-- The numeral -/
@@ -390,7 +390,7 @@ def gameShowExamples : List GameShowDatum :=
 -- ============================================================================
 
 /-- Coarse round → positive k-ness score.
-    If classifyRoundness n ≠ .exact, then n % 10 = 0, giving at least
+    If classifyRoundness n ≠.exact, then n % 10 = 0, giving at least
     multipleOf5 and multipleOf10, so roundnessScore ≥ 2. -/
 theorem coarse_implies_kness (n : Nat) (h : n > 0) (hc : classifyRoundness n ≠ .exact) :
     Core.Roundness.roundnessScore n > 0 := by

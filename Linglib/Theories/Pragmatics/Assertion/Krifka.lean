@@ -9,14 +9,14 @@ import Linglib.Core.Discourse.DiscourseRole
 
 Combines two strands of Krifka's work:
 
-1. **Commitment spaces** (Krifka 2015): the discourse state is a tree —
+1. **Commitment spaces**: the discourse state is a tree —
    the root (√C) is the current CG, and continuations are proposed
    future states from questions. Assertion narrows every state (`C + S⊢φ`);
    questions preserve the root and add branches (`C + ?φ`).
    Per-agent commitment slates track individual public commitments,
    enabling the commitment/belief separation (lying, hedging).
 
-2. **Layered assertive clauses** (Krifka 2020): four syntactic layers
+2. **Layered assertive clauses**: four syntactic layers
    each contributing a distinct semantic dimension:
 
 | Layer | Contribution | Example Modifier |
@@ -54,7 +54,7 @@ open Core.Discourse (IllocutionaryMood)
 -- § 1. Clause Layers
 -- ════════════════════════════════════════════════════
 
-/-- The four syntactic layers of an assertive clause (Krifka 2020).
+/-- The four syntactic layers of an assertive clause.
 
     Ordered from innermost (TP, propositional content) to outermost
     (ActP, speech act force). Each layer contributes a distinct semantic
@@ -209,7 +209,7 @@ def question (cs : CommitmentSpace W) (φ : BProp W) : CommitmentSpace W :=
   { root := cs.root
     continuations := (φ :: cs.root) :: cs.continuations.map (φ :: ·) }
 
-/-- The space is settled: no open continuations (Krifka 2015, p.330).
+/-- The space is settled: no open continuations.
     A settled space has no unresolved proposals. -/
 def isSettled : CommitmentSpace W → Bool
   | ⟨_, []⟩ => true
@@ -393,7 +393,7 @@ theorem supports_retraction :
 -- § 8. Informative vs Performative Updates (Krifka 2020, §2)
 -- ════════════════════════════════════════════════════
 
-/-- Update type for assertions (Krifka 2020, §2).
+/-- Update type for assertions.
 
     Krifka distinguishes two fundamentally different ways an assertion
     can change the common ground:
@@ -461,7 +461,7 @@ theorem question_accept_eq_assert_root {W : Type*}
 -- § 9. Actor vs Committer (Krifka 2015, §6)
 -- ════════════════════════════════════════════════════
 
-/-- The two discourse roles in a speech act (Krifka 2015, §6, p.343).
+/-- The two discourse roles in a speech act.
 
     Every speech act has an **actor** (who performs the act) and a
     **committer** (who undertakes the commitment). These can diverge:
@@ -511,7 +511,7 @@ structure SpeechAct (W : Type*) where
   /-- Actor/committer assignment -/
   roles : ActorCommitter := assertionRoles
 
-/-- Monopolar question (Krifka 2015, §3): proposes a single
+/-- Monopolar question: proposes a single
     continuation where the addressee commits to φ.
 
     `C +_{S₁} [? [⊢ φ]]` = {√C} ∪ (C + S₂⊢φ)
@@ -522,7 +522,7 @@ structure SpeechAct (W : Type*) where
     an assertion — the commitment is proposed, not imposed.
 
     Monopolar questions are inherently biased toward the proposed
-    continuation (Krifka 2015, §3, p.332). -/
+    continuation. -/
 def monopolarQuestion {W : Type*} (φ : BProp W) : SpeechAct W :=
   { content := φ, actType := .interrogative, roles := questionRoles }
 
@@ -554,7 +554,7 @@ def ComplexSpeechAct.components {W : Type*} : ComplexSpeechAct W → List (Speec
 
     "It's raining, isn't it?" = speaker asserts rain AND asks addressee
     to confirm. The speaker has already committed, so the question is
-    biased toward the asserted content (Krifka 2015, §5). -/
+    biased toward the asserted content. -/
 def matchingTag {W : Type*} (φ : BProp W) : ComplexSpeechAct W :=
   .conj
     { content := φ, actType := .declarative, roles := assertionRoles }
@@ -564,7 +564,7 @@ def matchingTag {W : Type*} (φ : BProp W) : ComplexSpeechAct W :=
     with opposite content.
 
     "It's raining, or isn't it?" = speaker offers two continuations.
-    The addressee picks one (Krifka 2015, §5). -/
+    The addressee picks one. -/
 def reverseTag {W : Type*} (φ negφ : BProp W) : ComplexSpeechAct W :=
   .disj
     { content := φ, actType := .declarative, roles := assertionRoles }

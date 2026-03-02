@@ -8,7 +8,7 @@ import Linglib.Core.Context.Shifts
 @cite{heim-1983} @cite{karttunen-1974} @cite{schlenker-2009}
 
 End-to-end derivation chain connecting the ContextTower infrastructure to
-presupposition projection phenomena via Schlenker's (2009) local context
+presupposition projection phenomena via @cite{schlenker-2009}'s local context
 computation.
 
 ## Derivation Chain
@@ -124,7 +124,7 @@ theorem negation_preserves_presup_phenomenon :
 -- § Belief Embedding = Attitude Shift (Depth 1)
 -- ============================================================================
 
-/-- "John believes that ..." pushes an attitude shift. The tower has depth 1,
+/-- "John believes that..." pushes an attitude shift. The tower has depth 1,
     matching the local context depth under one belief embedding. -/
 def beliefTowerConcrete : ContextTower PresupCtx :=
   rootTower.push (attitudeShift () .noKing)

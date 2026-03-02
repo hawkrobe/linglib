@@ -137,7 +137,7 @@ def many : QuantifierEntry :=
 -- ============================================================================
 
 /-- Numerical determiner entry. Parameterized by threshold n.
-    These are the class of determiners van de Pol et al. (2023) show
+    These are the class of determiners @cite{van-de-pol-etal-2023} show
     satisfy all three semantic universals (and have low MDL). -/
 structure NumericalDetEntry where
   form : String
@@ -242,7 +242,7 @@ def lookup (form : String) : Option QuantifierEntry :=
 -- ============================================================================
 
 /--
-The 6-word quantity scale used in van Tiel et al. (2021).
+The 6-word quantity scale used in @cite{van-tiel-franke-sauerland-2021}.
 
 This is a projection of the full lexicon for quantity-focused analyses.
 -/
@@ -434,7 +434,7 @@ From a `QuantityWord` you can reach:
 - **Prototype semantics**: `QuantityWord.ptMeaning` (gradient PT representation)
 - **RSA domains**: `RSA.Quantity` (pragmatic reasoning over quantity scales)
 - **Monotonicity**: `Semantics.Entailment.Monotonicity` (polarity)
-- **Complexity**: `Core.Conjectures.simplicity_explains_universals` (van de Pol et al. 2023)
+- **Complexity**: `Core.Conjectures.simplicity_explains_universals`
 -/
 
 -- ============================================================================

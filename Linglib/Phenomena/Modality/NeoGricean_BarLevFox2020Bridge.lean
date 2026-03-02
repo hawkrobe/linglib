@@ -2,7 +2,7 @@ import Linglib.Theories.Pragmatics.NeoGricean.Implementations.BarLevFox2020
 import Linglib.Phenomena.Modality.FreeChoice
 
 /-!
-# Bridge: NeoGricean Free Choice (Bar-Lev & Fox 2020) to Phenomena
+# Bridge: NeoGricean Free Choice to Phenomena
 @cite{bar-lev-fox-2020}
 
 Connects the NeoGricean Innocent Inclusion formalization to empirical free choice

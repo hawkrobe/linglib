@@ -5,12 +5,12 @@ import Linglib.Core.Scales.HornScale
 import Mathlib.Data.Rat.Defs
 
 /-!
-# Cummins & Franke (2021): Argumentative Strength of Numerical Quantity
+# @cite{cummins-franke-2021}: Argumentative Strength of Numerical Quantity
 @cite{cummins-franke-2021} @cite{macuch-silva-etal-2024}
 
 Formalizes the conference registration scenario (C&F pp. 7–8) demonstrating that
 semantic and pragmatic argumentative strength can *reverse* the ordering of
-"more than M" expressions. Also connects to Macuch Silva et al. (2024)'s
+"more than M" expressions. Also connects to Macuch @cite{macuch-silva-etal-2024}'s
 exam scenario on strategic quantifier choice.
 
 ## Key Results
@@ -73,29 +73,29 @@ def conferenceSuccess (w : Fin numWorlds) : Bool := w.val > 120
 def conferenceGoal : ArgumentativeGoal (Fin numWorlds) :=
   ⟨conferenceSuccess⟩
 
-/-- Number of goal worlds: 121..200 = 80 worlds -/
+/-- Number of goal worlds: 121.200 = 80 worlds -/
 def numGoalWorlds : Nat := 80
 
-/-- Number of non-goal worlds: 0..120 = 121 worlds -/
+/-- Number of non-goal worlds: 0.120 = 121 worlds -/
 def numNonGoalWorlds : Nat := 121
 
 -- Utterance: "more than 100"
 
-/-- Worlds where "more than 100" is true: 101..200 = 100 worlds -/
+/-- Worlds where "more than 100" is true: 101.200 = 100 worlds -/
 def moreThan100_trueWorlds : Nat := 100
 
-/-- P("more than 100" | G): among goal worlds (121..200), all 80 satisfy >100 -/
+/-- P("more than 100" | G): among goal worlds (121.200), all 80 satisfy >100 -/
 def p_mt100_givenG : ℚ := 80 / 80  -- = 1
 
-/-- P("more than 100" | ¬G): among non-goal worlds (0..120), those >100 are 101..120 = 20 -/
+/-- P("more than 100" | ¬G): among non-goal worlds (0.120), those >100 are 101.120 = 20 -/
 def p_mt100_givenNotG : ℚ := 20 / 121
 
 -- Utterance: "more than 110"
 
-/-- P("more than 110" | G): among goal worlds (121..200), all 80 satisfy >110 -/
+/-- P("more than 110" | G): among goal worlds (121.200), all 80 satisfy >110 -/
 def p_mt110_givenG : ℚ := 80 / 80  -- = 1
 
-/-- P("more than 110" | ¬G): among non-goal worlds (0..120), those >110 are 111..120 = 10 -/
+/-- P("more than 110" | ¬G): among non-goal worlds (0.120), those >110 are 111.120 = 10 -/
 def p_mt110_givenNotG : ℚ := 10 / 121
 
 -- Semantic argumentative strength (C&F Eq. 17)
@@ -136,19 +136,19 @@ theorem moreThan110_higher_bayesFactor :
 -- worlds than "more than 110", which reverses the ordering.
 
 /-- Assertability of "more than 100" given G: 60 out of 80 goal worlds
-(101..160 enriched range intersected with 121..200) -/
+(101.160 enriched range intersected with 121.200) -/
 def p_mt100_assertable_givenG : ℚ := 60 / 80
 
 /-- Assertability of "more than 100" given ¬G: 20 out of 121 non-goal worlds
-(enriched range 91..110 intersected with 0..120) -/
+(enriched range 91.110 intersected with 0.120) -/
 def p_mt100_assertable_givenNotG : ℚ := 20 / 121
 
 /-- Assertability of "more than 110" given G: 60 out of 80 goal worlds
-(111..170 enriched range intersected with 121..200) -/
+(111.170 enriched range intersected with 121.200) -/
 def p_mt110_assertable_givenG : ℚ := 60 / 80
 
 /-- Assertability of "more than 110" given ¬G: 10 out of 121 non-goal worlds
-(enriched range 101..120 intersected with 0..120) -/
+(enriched range 101.120 intersected with 0.120) -/
 def p_mt110_assertable_givenNotG : ℚ := 10 / 121
 
 /-- pragArgStr("more than 100", success) -/

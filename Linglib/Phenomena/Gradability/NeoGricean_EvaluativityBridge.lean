@@ -5,7 +5,7 @@ import Linglib.Phenomena.Gradability.EvaluativityBridge
 # Bridge: NeoGricean Evaluativity → Empirical Data
 @cite{rett-2015}
 
-Connects NeoGricean evaluativity theory (Rett 2015) predictions to
+Connects NeoGricean evaluativity theory predictions to
 empirical evaluativity judgments from Phenomena.Gradability.Evaluativity.
 
 ## Bridge Content

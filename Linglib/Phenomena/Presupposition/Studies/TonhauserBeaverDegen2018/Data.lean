@@ -1,7 +1,7 @@
 import Linglib.Core.Discourse.AtIssueness
 
 /-!
-# Tonhauser, Beaver & Degen (2018): How Projective Is Projective Content?
+# @cite{tonhauser-beaver-degen-2018}: How Projective Is Projective Content?
 @cite{tonhauser-beaver-degen-2018} @cite{potts-2005} @cite{simons-roberts-2010} @cite{tonhauser-beaver-roberts-simons-2013}Empirical data from "How projective is projective content? Gradience in
 projectivity and at-issueness." Journal of Semantics 35(3): 495–542.
 
@@ -12,7 +12,7 @@ projectivity and at-issueness." Journal of Semantics 35(3): 495–542.
 2. **Not-at-issueness is gradient** and **positively correlated** with
    projectivity: r = .85 across 9 expression types (Exp 1a), r = .99
    across 12 predicates (Exp 1b).
-3. **Appositives are not maximally projective**, contra Potts (2005).
+3. **Appositives are not maximally projective**, contra @cite{potts-2005}.
 4. **Within-type variation**: different lexical items of the same type
    yield different ratings.
 
@@ -181,7 +181,7 @@ def verbAtIssueness (p : Predicate) : ℚ := 1 - verbNotAtIssueness p
 
 /-- Regression coefficient: not-at-issueness predicts projectivity.
     Exp 1a (p. 508–509): β = 0.37, SE = 0.10, t = 3.70, p < .003.
-    Exp 1b (p. 514):     β = 0.34, SE = 0.04, t = 9.31, p < .0001.
+    Exp 1b (p. 514): β = 0.34, SE = 0.04, t = 9.31, p < .0001.
 
     The effect is significant in both experiments. -/
 structure RegressionEffect where
@@ -234,7 +234,7 @@ theorem only_least_notAtIssue : ∀ e : ExpressionType,
     notAtIssuenessRating .only ≤ notAtIssuenessRating e := by
   intro e; cases e <;> native_decide
 
-/-- Appositives are not maximally projective, contra Potts (2005).
+/-- Appositives are not maximally projective, contra @cite{potts-2005}.
     Potts predicted CI content (including appositives) should project
     obligatorily. The data shows 94/100 — high but not 1.0. -/
 theorem appositives_not_maximally_projective :
@@ -306,7 +306,7 @@ theorem only_separated_from_top :
   native_decide
 
 /-- The top group of Exp 1b (Table 3): {annoyed, notice, aware, realize,
-    amused, see, findOut} show no significant pairwise differences.
+    amused, findOut} show no significant pairwise differences.
     These form the "high projectivity" cluster (.90–.94). -/
 theorem exp1b_top_group_tight_range :
     verbProjectivity .beAnnoyed - verbProjectivity .findOut ≤ 5/100 := by

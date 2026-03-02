@@ -5,10 +5,9 @@ import Linglib.Theories.Syntax.Minimalism.Core.ObligatoryOperations
 /-!
 # Minimalism Bridge: Agree-Conditioned Pronoun Spellout in Mam
 
-@cite{scott-2023}
+@cite{scott-2023} @cite{chomsky-2000} @cite{deal-2021} @cite{elkins-imanishi-coon-2026}
 
-Connects the Agree operation (feature valuation) and probe restriction
-(Deal 2021, Keine 2019) to the empirical distribution of overt vs.
+Connects the Agree operation (feature valuation) and probe restriction to the empirical distribution of overt vs.
 reduced pronouns in SJA Mam.
 
 ## The Derivation
@@ -21,7 +20,7 @@ In a Mam transitive clause with a 3SG agent and 3SG patient:
    out as Set A "t-" on Voice.
 
 2. **Infl probes for φ**: Infl has a φ-probe with a disjunctive
-   satisfaction condition [SAT: φ or Voice_TR] (Deal 2021, Keine 2019).
+   satisfaction condition [SAT: φ or Voice_TR].
    In a transitive clause, the probe encounters transitive Voice and
    **stops** — no φ-features are copied to Infl. The Set B slot is
    filled by the Elsewhere form "∅" (default 2/3SG).
@@ -197,7 +196,7 @@ theorem setB_transitive_ignores_object :
     In intransitives, Voice is not transitive → the probe continues →
     finds S → copies φ.
 
-    This mechanism (Deal 2021, Keine 2019) replaces the older
+    This mechanism replaces the older
     "closest-goal intervention" account: it is NOT that the agent
     intervenes between Infl and the object, but that the probe is
     STOPPED by the VoiceP phase boundary. -/
@@ -348,12 +347,12 @@ theorem probe_failure_converges_with_elsewhere :
 -- § 12: Unified Agree — Ā-agreement and φ-agreement as One Operation
 -- ============================================================================
 
-/-! Voice⁰ in Mam carries two independent probes (Elkins et al. 2026):
+/-! Voice⁰ in Mam carries two independent probes:
 
 1. **φ-probe** [uPerson, uNumber]: Agrees with agent in Spec,VoiceP,
    yielding Set A morphology (e.g., "t-" for 3SG).
 2. **Oblique probe** [uOblique]: Agrees with a passing Ā-moved oblique,
-   yielding =(y)a' on Voice⁰ (Elkins et al. 2026, §5).
+   yielding =(y)a' on Voice⁰.
 
 Both are instances of the same abstract Agree operation: probe searches
 c-command domain, finds closest matching goal, copies features, and the
@@ -371,7 +370,7 @@ full =(y)a' analysis. -/
 private def voiceOblProbe : FeatureBundle := mamVoice.features
 
 /-- Both probes on Voice are unvalued features — both act as probes
-    in the sense of Agree (Chomsky 2000, 2001). -/
+    in the sense of Agree. -/
 theorem both_probes_unvalued :
     voiceProbe.all GramFeature.isUnvalued = true ∧
     voiceOblProbe.all GramFeature.isUnvalued = true := by

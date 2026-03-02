@@ -7,15 +7,15 @@ import Linglib.Fragments.English.Determiners
 
 /-!
 # The Semantics of Definiteness
-@cite{donnellan-1966} @cite{heim-1982} @cite{kamp-1981} @cite{partee-1987} @cite{russell-1905} @cite{strawson-1950}
+@cite{donnellan-1966} @cite{heim-1982} @cite{kamp-1981} @cite{partee-1987} @cite{russell-1905} @cite{strawson-1950} @cite{barwise-cooper-1981}
 
 Denotations for definite descriptions using the type vocabulary from
 `Core/Definiteness.lean`. Two theories, formalized as determiner denotations
 with presuppositions:
 
-- **Uniqueness** (Russell 1905, Frege 1892, Strawson 1950): "the φ" presupposes
+- **Uniqueness**: "the φ" presupposes
   existence and uniqueness of a φ-entity; asserts predication of that entity.
-- **Familiarity** (Heim 1982, Kamp 1981): "the φ" presupposes that a φ-entity
+- **Familiarity**: "the φ" presupposes that a φ-entity
   is already familiar/salient in the discourse; asserts predication of it.
 
 ## Key Results
@@ -65,7 +65,7 @@ def the_uniq {E : Type} (domain : List E) [DecidableEq E]
 /-- ⟦the⟧ under uniqueness, world-indexed version.
 
 For intensional contexts where the restrictor extension varies by world.
-This is the standard Heim & Kratzer (1998) entry. -/
+This is the standard @cite{heim-kratzer-1998} entry. -/
 def the_uniq_w {W E : Type} (domain : List E)
     (restrictor : E → W → Bool) (scope : E → W → Bool) : PrProp W :=
   { presup := λ w =>
@@ -83,13 +83,13 @@ def the_uniq_w {W E : Type} (domain : List E)
 
 /-- A discourse context tracking salient/familiar entities.
 
-Heim (1982): the context is a set of "file cards" — entities that have
+@cite{heim-1982}: the context is a set of "file cards" — entities that have
 been introduced into the discourse and are available for anaphoric reference. -/
 structure DiscourseContext (E : Type) where
   /-- Entities currently salient/familiar in discourse -/
   salient : List E
 
-/-- ⟦the⟧ under familiarity (Heim 1982, Kamp 1981):
+/-- ⟦the⟧ under familiarity:
 
 Presupposition: there exists a salient entity in the discourse context
 matching the restrictor.
@@ -162,7 +162,7 @@ theorem the_uniq_presup_iff_iota {m : Model} (domain : List m.Entity)
 When exactly one entity satisfies the restrictor, "the φ is ψ" and
 "every φ is ψ" have the same truth value. This is the classical
 observation that the definite article is a universal quantifier
-restricted to singletons (Barwise & Cooper 1981).
+restricted to singletons.
 
 TODO: prove by unfolding `every_sem` and showing that `∀x. R(x) → S(x)`
 reduces to `S(e)` when `R` is the singleton `{e}`. Requires showing that

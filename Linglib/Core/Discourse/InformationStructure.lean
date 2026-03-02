@@ -3,7 +3,7 @@ import Linglib.Core.Discourse.AtIssueness
 
 /-!
 # Core.InformationStructure
-@cite{fox-katzir-2011} @cite{rooth-1992} @cite{steedman-2000}
+@cite{fox-katzir-2011} @cite{rooth-1992} @cite{steedman-2000} @cite{roberts-2012}
 
 Theory-neutral types for Information Structure, alternative semantics,
 and discourse status.
@@ -29,7 +29,7 @@ namespace Core.InformationStructure
 /-- Two-dimensional meaning in Alternatives Semantics.
     Every expression has an O-value and an A-value.
 
-    Kratzer & Selkirk (2020) §3, §8. -/
+    @cite{kratzer-selkirk-2020} §3, §8. -/
 structure AltMeaning (α : Type) where
   /-- O(rdinary)-value: the actual denotation -/
   oValue : α
@@ -46,7 +46,7 @@ def AltMeaning.unfeatured {α : Type} (x : α) : AltMeaning α :=
 
 /-- A denotation tagged with its UPOS category.
     Pairs a semantic value with a UD part-of-speech tag, enabling
-    category-gated alternative computation (Fox & Katzir 2011).
+    category-gated alternative computation.
 
     Fox & Katzir argue that Rooth's (1985/1992) type-theoretic
     alternative computation (D_τ) over-generates: any expression of the
@@ -60,7 +60,7 @@ structure CatItem (α : Type) where
   deriving Repr
 
 /-- Category-match alternatives: only denotations with the same UPOS tag
-    count as alternatives (Fox & Katzir 2011).
+    count as alternatives.
 
     This is strictly more restrictive than Rooth's D_τ computation. -/
 def categoryMatchAlts {α : Type} (target : UD.UPOS) (lexicon : List (CatItem α)) : List α :=
@@ -187,8 +187,7 @@ inductive DiscourseStatus where
 
     High at-issueness content is foregrounded (new or focused);
     low at-issueness content is backgrounded (given). This connects
-    the at-issue/not-at-issue distinction (Roberts 2012, Tonhauser
-    et al. 2018) to the Focus/Background partition.
+    the at-issue/not-at-issue distinction to the Focus/Background partition.
 
     - At-issue → `.new` (unmarked foreground; `.focused` requires
       additional evidence of contrast)
@@ -200,21 +199,21 @@ def DiscourseStatus.ofAtIssueness (d : Core.Discourse.AtIssueness.AtIssuenessDeg
 
 /-! ## Polarity-Switch Contexts
 
-Turco, Braun & Dimroth (2014) distinguish two discourse contexts for polarity
+@cite{turco-braun-dimroth-2014} distinguish two discourse contexts for polarity
 switches (negation → affirmation). The distinction is theory-neutral: it
 characterizes the discourse relation between the antecedent and the target
 utterance, independent of how languages mark the switch.
 
-- Klein (2008): contrast = different topic situations, compatible claims
-- Umbach (2004): correction = same topic situation, mutually exclusive claims -/
+- @cite{klein-2008}: contrast = different topic situations, compatible claims
+- @cite{umbach-2004}: correction = same topic situation, mutually exclusive claims -/
 
 /-- The discourse context in which a polarity switch (neg → affirm) occurs.
     Crosslinguistically relevant: Dutch and German mark both contexts but with
-    different strategies (Turco, Braun & Dimroth 2014). -/
+    different strategies. -/
 inductive PolaritySwitchContext where
-  /-- Different topic situations, compatible claims (Klein 2008) -/
+  /-- Different topic situations, compatible claims -/
   | contrast
-  /-- Same topic situation, mutually exclusive claims (Umbach 2004) -/
+  /-- Same topic situation, mutually exclusive claims -/
   | correction
   deriving DecidableEq, Repr, BEq
 
@@ -245,9 +244,9 @@ structure PolarityMarkingEntry where
   prosodicTarget : Option String := none
   /-- Whether the marker appears sentence-internally (vs. pre-utterance) -/
   sentenceInternal : Bool
-  /-- Available in contrast contexts (Klein 2008) -/
+  /-- Available in contrast contexts -/
   contrastOk : Bool
-  /-- Available in correction contexts (Umbach 2004) -/
+  /-- Available in correction contexts -/
   correctionOk : Bool
   /-- The polarity-marking strategy category -/
   strategy : PolarityMarkingStrategy
@@ -261,7 +260,7 @@ Defined here (rather than in `Theories/Semantics/Focus/` or
 used by both layers. -/
 
 /-- Application type for the Focus Interpretation Principle.
-    Rooth (1992) §2 identifies four domains where focus semantic
+    @cite{rooth-1992} §2 identifies four domains where focus semantic
     values constrain interpretation. -/
 inductive FIPApplication where
   /-- Focusing adverbs: only, even, also -/

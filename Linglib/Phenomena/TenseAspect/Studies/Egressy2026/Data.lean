@@ -2,10 +2,10 @@ import Linglib.Core.Temporal.Tense
 import Linglib.Core.Temporal.Reichenbach
 
 /-!
-# Egressy (2026): Size-Sensitive Sequence of Tense in Hungarian
+# @cite{egressy-2026}: Size-Sensitive Sequence of Tense in Hungarian
 @cite{egressy-2026}
 
-Empirical data from Egressy (2026), who shows that Hungarian is a
+Empirical data from @cite{egressy-2026}, who shows that Hungarian is a
 partial SOT language: the simultaneous reading of past-under-past is
 available in structurally small complements (TP, without *hogy* 'that')
 but blocked in full CP complements (with *hogy*).
@@ -97,7 +97,7 @@ structure SOTJudgment where
 
 /-! ### CP complements (with *hogy*): shifted only -/
 
-/-- Egressy (2026), ex. (9): *Ági tud-t-a, hogy Mari beteg vol-t.*
+/-- @cite{egressy-2026}, ex. (9): *Ági tud-t-a, hogy Mari beteg vol-t.*
     'Ági know-PST-3SG that Mari sick be-PST'
     → Shifted only: Mari was sick before Ági's knowing -/
 def pastUnderPast_hogyCP_tudta : SOTJudgment where
@@ -109,7 +109,7 @@ def pastUnderPast_hogyCP_tudta : SOTJudgment where
   simultaneousGloss := none
   simultaneousAvailable := false
 
-/-- Egressy (2026), ex. (11a): *Ági mond-t-a, hogy Mari beteg vol-t.*
+/-- @cite{egressy-2026}, ex. (11a): *Ági mond-t-a, hogy Mari beteg vol-t.*
     'Ági say-PST-3SG that Mari sick be-PST'
     → Shifted only in full CP -/
 def pastUnderPast_hogyCP_mondta : SOTJudgment where
@@ -121,7 +121,7 @@ def pastUnderPast_hogyCP_mondta : SOTJudgment where
   simultaneousGloss := none
   simultaneousAvailable := false
 
-/-- Egressy (2026), ex. (11b): *Ági hit-t-e, hogy Mari beteg vol-t.*
+/-- @cite{egressy-2026}, ex. (11b): *Ági hit-t-e, hogy Mari beteg vol-t.*
     'Ági believe-PST-3SG that Mari sick be-PST'
     → Shifted only in full CP -/
 def pastUnderPast_hogyCP_hitte : SOTJudgment where
@@ -135,7 +135,7 @@ def pastUnderPast_hogyCP_hitte : SOTJudgment where
 
 /-! ### Bare TP complements (without *hogy*): both readings -/
 
-/-- Egressy (2026), ex. (10): *Ági tud-t-a Mari-t beteg-nek.*
+/-- @cite{egressy-2026}, ex. (10): *Ági tud-t-a Mari-t beteg-nek.*
     'Ági know-PST-3SG Mari-ACC sick-DAT'
     → Both readings: shifted and simultaneous -/
 def pastUnderPast_bareTP_tudta : SOTJudgment where

@@ -2,13 +2,13 @@ import Linglib.Core.Discourse.InformationStructure
 
 /-!
 # German Polarity-Marking Strategies
-@cite{turco-braun-dimroth-2014}
+@cite{turco-braun-dimroth-2014} @cite{hohle-1992} @cite{romero-han-2004}
 
 Lexical entries for how German marks polarity switches (negation → affirmation).
 
-The key finding of Turco, Braun & Dimroth (2014) is that German does NOT use
+The key finding of @cite{turco-braun-dimroth-2014} is that German does NOT use
 sentence-internal particles for polarity switches. Instead, German relies on
-Verum focus: a pitch accent on the finite verb (Höhle 1992). The particle
+Verum focus: a pitch accent on the finite verb. The particle
 *doch* can appear pre-utterance in corrections but is not sentence-internal
 in the relevant sense.
 
@@ -17,8 +17,8 @@ German's strategy is non-particulate.
 
 ## Cross-Module Connections
 
-- `Semantics.Questions.VerumFocus`: VERUM in questions (Romero & Han 2004) — a
-  different phenomenon from the declarative Verum focus (Höhle 1992) encoded here
+- `Semantics.Questions.VerumFocus`: VERUM in questions — a
+  different phenomenon from the declarative Verum focus encoded here
 - `Fragments.German.QuestionParticles`: German *denn* (question-flavoring)
 
 -/
@@ -27,7 +27,7 @@ namespace Fragments.German.PolarityMarking
 
 open Core.InformationStructure (PolarityMarkingEntry PolarityMarkingStrategy)
 
-/-- Verum focus — pitch accent on the finite verb (Höhle 1992).
+/-- Verum focus — pitch accent on the finite verb.
     Dominant strategy in German for neg→affirm switches in both contexts. -/
 def verumFocus : PolarityMarkingEntry where
   label := "Verum focus"
@@ -39,7 +39,7 @@ def verumFocus : PolarityMarkingEntry where
 
 /-- *doch* — pre-utterance correction particle.
     Available only in corrections, NOT sentence-internal in the sense of
-    Turco et al. (2014): it precedes the utterance rather than appearing
+    @cite{turco-braun-dimroth-2014}: it precedes the utterance rather than appearing
     within the VP/middle field. -/
 def dochPreUtterance : PolarityMarkingEntry where
   label := "doch (pre-utterance)"

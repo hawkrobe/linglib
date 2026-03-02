@@ -6,7 +6,7 @@ import Linglib.Core.Lexical.MorphRule
 # Study 3: Morpheme Order Optimization (Japanese & Sesotho)
 @cite{bybee-1985} @cite{demuth-1992} @cite{doke-mofokeng-1967} @cite{hahn-degen-futrell-2021} @cite{kaiser-yamamoto-2013}
 
-Hahn et al. (2021) Study 3: morpheme orders in Japanese verb suffixes
+@cite{hahn-degen-futrell-2021} Study 3: morpheme orders in Japanese verb suffixes
 and Sesotho verb affixes are near-optimally efficient in terms of
 memory-surprisal trade-offs. The real morpheme orders achieve lower AUC
 than random baselines.
@@ -32,7 +32,7 @@ Suffixes: reversive, causative, neuter, applicative, completive,
 
 Real order AUC ≈ 38.7 (morpheme level), baselines ≈ 38.8 (SI Figure 8).
 
-## Bybee (1985) Relevance Hierarchy
+## @cite{bybee-1985} Relevance Hierarchy
 
 stem < valence < voice < aspect < tense < mood < agreement
 
@@ -58,7 +58,7 @@ open Core.Morphology (MorphCategory respectsRelevanceHierarchy)
 /-! ### Japanese verb suffixes
 
 From SI §4.1, ordered from stem outward. The numbering follows
-Kaiser et al. (2013) and the UD segmentation used in the paper.
+@cite{kaiser-yamamoto-2013} and the UD segmentation used in the paper.
 
 | Slot | Category | Morpheme | Example |
 |------|----------|----------|---------|
@@ -97,7 +97,7 @@ theorem japanese_partial_bybee :
 
 /-! ### Sesotho verb affixes
 
-From SI §4.2 and Demuth (1992), Doke & Mofokeng (1967).
+From SI §4.2 and @cite{demuth-1992}, @cite{doke-mofokeng-1967}.
 
 **Prefixes** (from word edge inward toward stem):
 1. Subject agreement (sm)
@@ -224,14 +224,14 @@ theorem valence_is_innermost_functional :
 /-! ### Bridge: Japanese -(s)ase = Song's COMPACT morphological causative
 
 Japanese -(s)ase is classified as a morphological COMPACT causative in
-Song (1996). The `ik_ase` entry in `Fragments/Japanese/Predicates` confirms
-this: `causativeBuilder = some .make`. -/
+@cite{song-1996}. The `ik_ase` entry in `Fragments/Japanese/Predicates` confirms
+this: `causativeBuilder = some.make`. -/
 
 /-- The Japanese -(s)ase causative entry is causative (derived from causativeBuilder). -/
 theorem ik_ase_is_causative :
     Fragments.Japanese.Predicates.ik_ase.causativeBuilder.isSome = true := rfl
 
-/-- Japanese -(s)ase uses the .make causative builder (direct causation). -/
+/-- Japanese -(s)ase uses the.make causative builder (direct causation). -/
 theorem ik_ase_is_make :
     Fragments.Japanese.Predicates.ik_ase.causativeBuilder = some .make := rfl
 

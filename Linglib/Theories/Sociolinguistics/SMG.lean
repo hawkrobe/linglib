@@ -7,7 +7,7 @@ import Linglib.Theories.Pragmatics.RSA.Implementations.Franke2011
 
 Burnett's Social Meaning Game (SMG): a signalling game in which a
 speaker's variant choice conveys social information about their persona.
-The SMG reuses Franke's (2011) IBR machinery — the naive listener,
+The SMG reuses @cite{franke-2011}'s IBR machinery — the naive listener,
 strategic speaker, and uncovering listener are all instances of IBR
 reasoning applied to a social-meaning interpretation game.
 
@@ -70,7 +70,7 @@ structure SocialMeaningGame (P V : Type)
 /-- Convert a Social Meaning Game to Franke's interpretation game.
 
     This is the key architectural bridge: SMG analysis reuses the
-    existing IBR machinery from Franke (2011) rather than reimplementing
+    existing IBR machinery from @cite{franke-2011} rather than reimplementing
     iterated best response.
 
     The mapping:

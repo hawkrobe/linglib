@@ -40,7 +40,7 @@ open Semantics.Probabilistic.SDS.Core
 -- Threshold Support: Discretized [0,1]
 
 /--
-Discretized threshold range: [0, 1/10, 2/10, ..., 1]
+Discretized threshold range: [0, 1/10, 2/10,..., 1]
 
 This provides finite support for marginalization over threshold values.
 -/
@@ -174,7 +174,7 @@ def gnHoldsSDS {E : Type} (gn : GradableNounWithSize E) (x : E) : Bool :=
 /-!
 ## The Bigness Generalization
 
-Morzycki (2009) shows why "big idiot" works but "small idiot" doesn't.
+@cite{morzycki-2009} shows why "big idiot" works but "small idiot" doesn't.
 This follows from scale structure:
 
 - **Positive adjectives** (big): min{d : big(d)} = θ_big > 0 (substantive)

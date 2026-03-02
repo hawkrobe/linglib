@@ -3,7 +3,7 @@ import Linglib.Theories.Semantics.Lexical.Measurement
 import Linglib.Theories.Semantics.Events.ThematicRoles
 
 /-!
-# Wellwood (2015): Theory–Data Bridge
+# @cite{wellwood-2015}: Theory–Data Bridge
 
 @cite{wellwood-2015}
 
@@ -139,7 +139,7 @@ theorem rock_shift_status :
 
 /-- All cumulative categories map to open scales; all quantized categories
     map to closed scales. This connects the per-datum felicity predictions
-    to Kennedy's (2007) scale structure. -/
+    to @cite{kennedy-2007}'s scale structure. -/
 theorem massNoun_open_scale :
     (lexCatToStatus .massNoun).toBoundedness = .open_ := rfl
 

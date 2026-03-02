@@ -3,7 +3,7 @@ import Linglib.Core.Empirical
 open Core.Empirical
 
 /-!
-# Goodman & Stuhlmuller (2013): Empirical Data
+# @cite{goodman-stuhlmuller-2013}: Empirical Data
 @cite{goodman-stuhlmuller-2013}
 
 "Knowledge and Implicature: Modeling Language Understanding as Social Cognition"
@@ -59,7 +59,7 @@ def measure : MeasureSpec :=
 def nPerExperiment : Nat := 50
 def nObjects : Nat := 3
 
-/-- The 11 qualitative findings from Goodman & Stuhlmuller (2013) Experiments 1-2.
+/-- The 11 qualitative findings from @cite{goodman-stuhlmuller-2013} Experiments 1-2.
     Each finding is a pairwise bet comparison between world states under a specific
     (word, access) condition. -/
 inductive Finding where

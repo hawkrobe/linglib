@@ -9,20 +9,20 @@ import Linglib.Theories.Pragmatics.RSA.Core.Config
 @cite{holliday-icard-2013} @cite{kraft-pratt-seidenberg-1959} @cite{kratzer-1981} @cite{kratzer-2012}
 
 This file traces the dependency chain from Kratzer's ordering source
-semantics down to RSA's `worldPrior`, via Holliday & Icard's (2013)
+semantics down to RSA's `worldPrior`, via @cite{holliday-icard-2013}
 epistemic likelihood logics:
 
 ```
-Kratzer ordering source  A : List (BProp World)
-    ↓  atLeastAsGoodAs (subset inclusion on satisfied propositions)
-World preorder  ge_w : World → World → Prop
-    ↓  halpernLift (Lewis's l-lifting)
+Kratzer ordering source A : List (BProp World)
+    ↓ atLeastAsGoodAs (subset inclusion on satisfied propositions)
+World preorder ge_w : World → World → Prop
+    ↓ halpernLift (Lewis's l-lifting)
 EpistemicSystemW
-    ↓  + totality, transitivity, additivity
+    ↓ + totality, transitivity, additivity
 EpistemicSystemFA
-    ↓  theorem8a (|World4| = 4 < 5, so FA = FP∞)
+    ↓ theorem8a (|World4| = 4 < 5, so FA = FP∞)
 FinAddMeasure
-    ↓  mu {w} → worldPrior
+    ↓ mu {w} → worldPrior
 RSAConfig.worldPrior
 ```
 

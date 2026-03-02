@@ -51,7 +51,7 @@ open Semantics.Lexical.Adjective
 /--
 Polarity of an adjective: positive (unmarked) vs negative (marked).
 
-From Bierwisch (1989), Kennedy (2007):
+From @cite{bierwisch-1989}, @cite{kennedy-2007}:
 - **Positive-polar** (tall, happy, expensive): unmarked, default
 - **Negative-polar** (short, unhappy, cheap): marked, requires more justification
 
@@ -78,7 +78,7 @@ def Polarity.isMarked : Polarity → Bool
 Production cost associated with polarity.
 
 Marked forms cost more to produce, licensing manner implicatures.
-This follows Horn's (1984) Division of Pragmatic Labor.
+This follows @cite{horn-1984}'s Division of Pragmatic Labor.
 -/
 def Polarity.cost : Polarity → ℚ
   | .positive => 1  -- baseline
@@ -104,7 +104,7 @@ inductive PolarVariance where
 /--
 Polar variance by construction type.
 
-From Rett (2015) Table 3.1/5.1:
+From @cite{rett-2015} Table 3.1/5.1:
 - Positive: variant ("tall" ≠ "short" - different thresholds)
 - Comparative: variant ("taller than" ≠ "shorter than")
 - Equative: INVARIANT ("as tall as" = "as short as")
@@ -133,7 +133,7 @@ def mannerImplicatureApplies : AdjectivalConstruction → Bool
 /--
 Types of implicature that can derive evaluativity.
 
-Following Rett (2015) Chapter 4-5:
+Following @cite{rett-2015} Chapter 4-5:
 - **Quantity (Q)**: Avoid uninformative utterances → strengthen to evaluative
 - **Manner (R)**: Use of costly form signals marked meaning → evaluativity
 
@@ -149,7 +149,7 @@ inductive EvaluativityImplicature where
 /--
 Which implicature type derives evaluativity for this construction + polarity?
 
-From Rett (2015) Chapter 5:
+From @cite{rett-2015} Chapter 5:
 
 | Construction   | Positive-polar | Negative-polar |
 |----------------|----------------|----------------|
@@ -417,7 +417,7 @@ Both derive evaluativity pragmatically, but via different mechanisms:
 - Q-implicature: scalar reasoning about informativity
 - R-implicature: cost-based manner reasoning
 
-**RSA (e.g., Lassiter & Goodman 2017)**:
+**RSA**:
 - Joint inference over degree and threshold
 - Listener models speaker's utility-maximizing behavior
 - Cost can be built into speaker utility
@@ -450,7 +450,7 @@ Both correctly predict:
 /--
 The Marked Meaning Principle (MMP) derivation record.
 
-From Rett (2015) Chapter 5, following Horn (1984):
+From @cite{rett-2015} Chapter 5, following @cite{horn-1984}:
 
 The MMP states that using a marked form when an unmarked equivalent
 exists signals that the speaker intends the marked meaning.
@@ -593,7 +593,7 @@ def deriveEvaluativityWithLexicon
 /--
 Degree tautology analysis for positive constructions.
 
-Following Rett (2015) Chapter 3:
+Following @cite{rett-2015} Chapter 3:
 
 Without evaluativity, "John is tall" is a degree tautology:
 - It asserts that John has SOME degree of height
@@ -723,8 +723,8 @@ theorem grounded_matches_simple_short_equative :
 
 
 /-!
-## Rett (2015) Core Predictions
-@cite{rett-2015}
+## @cite{rett-2015} Core Predictions
+@cite{rett-2015} @cite{lassiter-goodman-2017}
 
 These theorems formalize the key empirical predictions from Rett's account:
 

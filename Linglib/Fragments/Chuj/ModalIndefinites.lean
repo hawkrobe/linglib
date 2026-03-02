@@ -5,7 +5,7 @@ import Linglib.Core.ModalIndefinite
 @cite{alonso-ovalle-royer-2021} @cite{alonso-ovalle-royer-2024}
 
 Lexical entries for Chuj modal indefinites *yalnhej* (singular) and
-*komon* (mass/plural), following Alonso-Ovalle & Royer (2024).
+*komon* (mass/plural), following @cite{alonso-ovalle-royer-2024}.
 
 These entries reuse the `ModalIndefiniteEntry` type from
 `Core/ModalIndefinite.lean`, instantiating the three-dimensional

@@ -16,7 +16,7 @@ namespace Phenomena.Focus.AdditiveParticles.Studies.Thomas2026
 
 open Phenomena.Focus.AdditiveParticles
 
-/-- Flagship argument-building example from Thomas (2026). -/
+/-- Flagship argument-building example from @cite{thomas-2026}. -/
 def sueCooksFreetime : AdditiveParticleDatum :=
   { sentence := "Sue cooks, and she has a lot of free time, too."
   , antecedent := "Sue cooks"
@@ -81,7 +81,7 @@ def quietAffordable : AdditiveParticleDatum :=
   , source := "Thomas (2026)"
   }
 
-/-- Argument-building examples from Thomas (2026). -/
+/-- Argument-building examples from @cite{thomas-2026}. -/
 def argumentBuildingExamples : List AdditiveParticleDatum :=
   [ sueCooksFreetime
   , brilliantHardworking
@@ -112,7 +112,7 @@ def infelicitousExamples : List AdditiveParticleDatum :=
 
 -- Collected Data
 
-/-- All Thomas (2026) examples. -/
+/-- All @cite{thomas-2026} examples. -/
 def allExamples : List AdditiveParticleDatum :=
   argumentBuildingExamples ++ infelicitousExamples
 

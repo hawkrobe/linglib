@@ -36,7 +36,7 @@ inductive PitchAccent where
 /--
 Boundary tones mark prosodic phrase edges.
 
-Following Pierrehumbert (1980) and Beckman & Pierrehumbert (1986):
+Following @cite{pierrehumbert-1980} and @cite{beckman-pierrehumbert-1986}:
 - L: Low intermediate phrase boundary
 - LH%: Rising intonational phrase boundary (continuation)
 - LL%: Falling intonational phrase boundary (finality)
@@ -49,11 +49,11 @@ inductive BoundaryTone where
 
 -- Prosodic Hierarchy
 
-/-- Prosodic hierarchy levels (Selkirk 2009, 2011).
+/-- Prosodic hierarchy levels.
 
     σ < f < ω < φ < ι
 
-    Used by Kratzer & Selkirk (2020) spellout constraints. -/
+    Used by @cite{kratzer-selkirk-2020} spellout constraints. -/
 inductive ProsodicLevel where
   | σ  -- syllable
   | f  -- foot

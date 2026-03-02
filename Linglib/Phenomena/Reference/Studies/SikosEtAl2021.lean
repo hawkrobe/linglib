@@ -3,7 +3,7 @@ import Linglib.Core.Empirical
 open Core.Empirical
 
 /-!
-# Sikos et al. (2021) @cite{sikos-etal-2021} @cite{frank-goodman-2012}
+# @cite{sikos-etal-2021} @cite{sikos-etal-2021} @cite{frank-goodman-2012}
 
 Sikos, L., Venhuizen, N. J., Drenhaus, H. & Crocker, M. W. (2021).
 Reevaluating pragmatic reasoning in language games.
@@ -11,7 +11,7 @@ Reevaluating pragmatic reasoning in language games.
 
 ## Core Contribution
 
-Replicates Frank & Goodman (2012) reference games and tests whether RSA's
+Replicates @cite{frank-goodman-2012} reference games and tests whether RSA's
 recursive reasoning (S1→L1) adds predictive value beyond a simpler baseline
 model that uses only the prior and literal semantics (= L0).
 

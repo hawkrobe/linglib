@@ -531,9 +531,9 @@ theorem cant_eq_must_neg (k : Kernel) (φ : BProp World) (w : World) :
     (kernelCant k φ).assertion w = (kernelMust k (λ w' => !φ w')).assertion w :=
   ⟨rfl, rfl⟩
 
-/-! ## Prior information state and nandao-Q felicity (Zheng 2026)
+/-! ## Prior information state and nandao-Q felicity
 
-Zheng (2026) shows Mandarin *nandao*-Qs are evidence-driven, not bias-driven.
+@cite{zheng-2026} shows Mandarin *nandao*-Qs are evidence-driven, not bias-driven.
 The felicity condition has three parts: (i) evidence in K supports the prejacent,
 (ii) K conflicts with prior expectations U, (iii) the prejacent is not directly
 settled in K. Condition (iii) is the same presupposition as `kernelMust`. -/

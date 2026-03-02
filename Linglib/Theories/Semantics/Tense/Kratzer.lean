@@ -2,8 +2,8 @@ import Linglib.Theories.Semantics.Tense.Basic
 import Linglib.Theories.Semantics.Tense.TenseAspectComposition
 
 /-!
-# Kratzer (1998): More Structural Analogies Between Pronouns and Tenses
-@cite{kratzer-1998} @cite{heim-kratzer-1998} @cite{klein-1994} @cite{partee-1973}Kratzer extends Partee's (1973) tense–pronoun analogy in three directions
+# @cite{heim-kratzer-1998}: More Structural Analogies Between Pronouns and Tenses
+@cite{kratzer-1998} @cite{heim-kratzer-1998} @cite{klein-1994} @cite{partee-1973}Kratzer extends @cite{partee-1973}'s tense–pronoun analogy in three directions
 beyond the shared indexical/anaphoric/bound classification:
 
 ## Core Contributions
@@ -112,7 +112,7 @@ theorem kratzer_deletion_yields_simultaneous {Time : Type*}
 -- § Theory Identity Card
 -- ════════════════════════════════════════════════════════════════
 
-/-- Kratzer (1998) theory identity card. -/
+/-- @cite{heim-kratzer-1998} theory identity card. -/
 def KratzerTense : TenseTheory where
   name := "Kratzer 1998"
   citation := "Kratzer, A. (1998). More structural analogies between pronouns and tenses. SALT VIII, 92-110."
@@ -180,8 +180,8 @@ intervening PERF. The PAST pronoun is anaphoric — it requires a
 discourse-salient temporal antecedent. This explains the striking contrast:
 
   English: "I didn't turn off the stove." ✓ (out of the blue — deictic)
-  German:  #"Ich schaltete den Herd nicht aus." ✗ (needs narrative context)
-  German:  "Ich habe den Herd nicht ausgeschaltet." ✓ (present perfect ok) -/
+  German: #"Ich schaltete den Herd nicht aus." ✗ (needs narrative context)
+  German: "Ich habe den Herd nicht ausgeschaltet." ✓ (present perfect ok) -/
 
 open Semantics.TenseAspectComposition
 open Semantics.Lexical.Verb.ViewpointAspect
@@ -257,7 +257,7 @@ uniformly to pronouns and tenses:
 
 The distribution of overt vs. zero follows from `Core.Tense.Overtness`. -/
 
-/-- Zero tense: a bound present tense in a local agreement domain (Kratzer 1998).
+/-- Zero tense: a bound present tense in a local agreement domain.
 
     Under SOT in English, the embedded "past" morphology is analyzed as
     a locally bound PRESENT tense that surfaces as zero because of

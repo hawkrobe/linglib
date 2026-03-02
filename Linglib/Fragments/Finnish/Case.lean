@@ -7,7 +7,7 @@ import Linglib.Core.Case.LocalExtension
 # Finnish Case Inventory @cite{blake-1994}
 @cite{karlsson-2017}
 
-Finnish has **15 morphological cases** (Karlsson 2018), one of the richest
+Finnish has **15 morphological cases**, one of the richest
 case systems in Europe:
 
 - **Grammatical** (3): nominative, genitive, partitive (+ accusative for
@@ -43,11 +43,11 @@ namespace Fragments.Finnish.Case
 
     All 15 Finnish cases now have Core.Case equivalents (essive, translative,
     abessive added to Core.Case; internal/external local pairs collapsed):
-    - NOM → .nom, ACC → .acc (pronoun/total-object accusative)
-    - GEN → .gen, PART → .part
-    - INE/ADE → .loc, ELA/ABL → .abl, ILL/ALL → .all
-    - ESS → .ess, TRANSL → .transl, ABESS → .abess
-    - INSTR → .inst, COM → .com -/
+    - NOM →.nom, ACC →.acc (pronoun/total-object accusative)
+    - GEN →.gen, PART →.part
+    - INE/ADE →.loc, ELA/ABL →.abl, ILL/ALL →.all
+    - ESS →.ess, TRANSL →.transl, ABESS →.abess
+    - INSTR →.inst, COM →.com -/
 def caseInventory : List Core.Case :=
   [.nom, .acc, .gen, .part, .loc, .abl, .all, .ess, .transl, .abess, .inst, .com]
 
@@ -71,7 +71,7 @@ theorem allative_extends_to_dative :
 -- ============================================================================
 
 /-- Finnish NOM/ACC syncretism: the accusative of non-pronominal singular
-    nouns is identical to the nominative (Karlsson 2018, Ch. 13).
+    nouns is identical to the nominative.
     Uses the cross-linguistic pattern from `Core.Case.Syncretism`. -/
 def nomAccSyncretism : Core.Syncretism := Core.nomAccSyncretism
 
@@ -113,7 +113,7 @@ structure LocalCase where
   coreCase : Core.Case
   deriving DecidableEq, BEq, Repr, Inhabited
 
-/-- The 3×2 local case matrix (Karlsson 2018, Ch. 13).
+/-- The 3×2 local case matrix.
 
     |           | Internal     | External     |
     |-----------|-------------|-------------|
@@ -121,8 +121,8 @@ structure LocalCase where
     | Source    | elative -stA  | ablative -ltA |
     | Goal      | illative -Vn  | allative -lle |
 
-    Core.Case collapses each row into a single value (static → .loc,
-    source → .abl, goal → .all). The matrix reveals the full structure. -/
+    Core.Case collapses each row into a single value (static →.loc,
+    source →.abl, goal →.all). The matrix reveals the full structure. -/
 def localCaseMatrix : Direction → LocationType → LocalCase
   | .static, .internal => ⟨"inessive",  "-ssA", .static, .internal, .loc⟩
   | .static, .external => ⟨"adessive",  "-llA", .static, .external, .loc⟩
@@ -144,17 +144,17 @@ def allLocalCases : List LocalCase :=
 theorem localCases_count : allLocalCases.length = 6 := by native_decide
 
 /-- Core.Case collapses each direction row: both internal and external
-    static cases map to .loc. -/
+    static cases map to.loc. -/
 theorem static_collapses_to_loc :
     (localCaseMatrix .static .internal).coreCase =
     (localCaseMatrix .static .external).coreCase := rfl
 
-/-- Both source cases map to .abl. -/
+/-- Both source cases map to.abl. -/
 theorem source_collapses_to_abl :
     (localCaseMatrix .source .internal).coreCase =
     (localCaseMatrix .source .external).coreCase := rfl
 
-/-- Both goal cases map to .all. -/
+/-- Both goal cases map to.all. -/
 theorem goal_collapses_to_all :
     (localCaseMatrix .goal .internal).coreCase =
     (localCaseMatrix .goal .external).coreCase := rfl

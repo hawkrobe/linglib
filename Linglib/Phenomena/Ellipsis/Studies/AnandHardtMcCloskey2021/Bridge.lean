@@ -6,8 +6,7 @@ import Linglib.Theories.Syntax.Minimalism.Formal.Sluicing.FormalMatching
 # Sluicing — Minimalist Bridge Theorems
 
 @cite{anand-hardt-mccloskey-2021} @cite{anand-mccloskey-2025}Connects empirical sluicing data — both the individual examples in
-`Phenomena.Ellipsis.Sluicing` and the corpus findings from Anand, Hardt
-& McCloskey (2021) — to the Syntactic Isomorphism Condition (SIC)
+`Phenomena.Ellipsis.Sluicing` and the corpus findings from @cite{anand-hardt-mccloskey-2021} — to the Syntactic Isomorphism Condition (SIC)
 formalized in `Theories.Syntax.Minimalism.Formal.Sluicing.FormalMatching`.
 
 ## Derivation Chain

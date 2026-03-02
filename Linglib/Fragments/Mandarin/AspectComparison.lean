@@ -1,7 +1,7 @@
 import Linglib.Core.Temporal.Time
 
 /-!
-# Mandarin Cross-Domain Particles (Zhao 2025, Ch. 6) @cite{zhao-2025}
+# Mandarin Cross-Domain Particles @cite{zhao-2025}
 
 Lexical entries for Mandarin le, guo, and mei-you with cross-domain behavior.
 These particles operate across temporal and degree domains:
@@ -37,7 +37,7 @@ inductive SemanticDomain where
   | degree     -- degree domain (comparison)
   deriving DecidableEq, Repr, BEq
 
-/-- A cross-domain particle entry (Zhao 2025, Ch. 6).
+/-- A cross-domain particle entry.
     Encodes the particle's surface form, its temporal and degree glosses,
     and whether it requires NOT-ATOM-DIST_α licensing. -/
 structure CrossDomainParticle where
@@ -54,7 +54,7 @@ structure CrossDomainParticle where
   deriving Repr
 
 /-- 了 le — perfective / exceed-threshold.
-    Presupposes NOT-ATOM-DIST_α in both domains (Zhao 2025, Ch. 6). -/
+    Presupposes NOT-ATOM-DIST_α in both domains. -/
 def le : CrossDomainParticle :=
   { hanzi := "了", pinyin := "le"
   , temporalGloss := "perfective"
@@ -62,7 +62,7 @@ def le : CrossDomainParticle :=
   , requiresAntiAtomDist := true }
 
 /-- 没有 mei-you — negative perfective / not-exceed.
-    Presupposes NOT-ATOM-DIST_α (Zhao 2025, Ch. 6). -/
+    Presupposes NOT-ATOM-DIST_α. -/
 def meiyou : CrossDomainParticle :=
   { hanzi := "没有", pinyin := "méi-yǒu"
   , temporalGloss := "negative perfective"
@@ -70,7 +70,7 @@ def meiyou : CrossDomainParticle :=
   , requiresAntiAtomDist := true }
 
 /-- 过 guo — experiential aspect.
-    No NOT-ATOM-DIST_α presupposition (Zhao 2025, Ch. 6). -/
+    No NOT-ATOM-DIST_α presupposition. -/
 def guo : CrossDomainParticle :=
   { hanzi := "过", pinyin := "guò"
   , temporalGloss := "experiential"

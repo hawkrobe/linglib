@@ -20,7 +20,7 @@ Connects the graded roundness model (k-ness) to five existing modules:
 4. **k-ness ↔ NumeralModifiers**: tolerance modifiers pair with high roundness
 5. **k-ness ↔ C&F enrichment**: wider enrichment for rounder numerals
 6. **OT ↔ RSA parameter map**: constraint-to-parameter correspondence
-7. **Evaluative valence ↔ framing**: Claus & Walch (2024) framing predictions
+7. **Evaluative valence ↔ framing**: @cite{claus-walch-2024} framing predictions
 8. **maxMeaning ↔ HasDegree**: degree bridge theorems
 
 ## Status
@@ -34,12 +34,12 @@ have been removed pending reimplementation with the new RSAConfig framework.
 
 ```
 Phenomena.Gradability.Imprecision.Numerals (k-ness core)
-    ↑              ↑                ↑
+    ↑ ↑ ↑
     |              |                |
-Phenomena.        NeoGricean.       Semantics.Montague.
-NumberUse.        Constraints.      Domain.Degree
-WoodinEtAl2024    NumericalExprs    (extended)
-    ↑              ↑                ↑
+Phenomena. NeoGricean. Semantics.Montague.
+NumberUse. Constraints. Domain.Degree
+WoodinEtAl2024 NumericalExprs (extended)
+    ↑ ↑ ↑
     +--------------+-------+--------+
                            |
                Phenomena.Numerals.Compare (this file)
@@ -66,7 +66,7 @@ In RSA, `cost : U → ℚ` penalizes certain utterances. The OT constraint NSAL
 provides a principled grounding: cost(u) = nsalViolations(u) / 6.
 
 Round numerals (100, 1000) have cost ≈ 0; non-round (7, 99) have cost ≈ 1.
-This connects Cummins (2015)'s constraint-based account to the Bayesian RSA
+This connects @cite{cummins-2015}'s constraint-based account to the Bayesian RSA
 framework via the `cost` field of `RSAScenario`.
 -/
 
@@ -103,9 +103,7 @@ theorem roundness_prior_monotone :
 -- ============================================================================
 
 /-!
-### Roundness Grounds Precision Mode
-
-Kao et al. (2014) use a binary `PrecisionMode` (.exact/.approximate) with
+### Roundness Grounds Precision Mo@cite{kao-etal-2014-hyperbole} use a binary `PrecisionMode` (.exact/.approximate) with
 `Goal.approxPrice` using fixed `base := 10`. The k-ness model provides a
 principled threshold: score ≥ 2 → `.approximate`, else `.exact`.
 
@@ -124,7 +122,7 @@ theorem roundness_grounds_precision_7 :
     inferPrecisionMode 7 = .exact := by native_decide
 
 /-- Fixed base-10 rounding and adaptive precision mode agree on round numbers:
-    if n is round (divisible by 10), inferPrecisionMode gives .approximate. -/
+    if n is round (divisible by 10), inferPrecisionMode gives.approximate. -/
 theorem base10_round_implies_approximate (n : Nat) (h : n > 0)
     (hr : n % 10 = 0) :
     inferPrecisionMode n = .approximate := by
@@ -166,7 +164,7 @@ theorem round_wider_halo :
 /-!
 ### Roundness Predicts Enrichment Width
 
-Cummins & Franke (2021) show that "more than M" undergoes pragmatic enrichment
+@cite{cummins-franke-2021} show that "more than M" undergoes pragmatic enrichment
 to "between M and M+δ" for some δ. The enrichment width δ depends on the
 roundness of M:
 
@@ -220,7 +218,7 @@ theorem ot_rsa_agree_round_preference :
 /-!
 ### Evaluative Valence Predicts Framing Direction
 
-Claus & Walch (2024) show that "at most" and "up to" have the same truth
+@cite{claus-walch-2024} show that "at most" and "up to" have the same truth
 conditions but opposite framing effects. The `evaluativeValence` field in
 `NumeralModifierEntry` predicts this:
 

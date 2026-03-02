@@ -3,7 +3,7 @@ import Linglib.Theories.Semantics.Tense.BranchingTime
 import Linglib.Core.Scales.Scale
 
 /-!
-# Beaver & Condoravdi (2003): Uniform Analysis with `earliest`
+# @cite{beaver-condoravdi-2003}: Uniform Analysis with `earliest`
 @cite{beaver-condoravdi-2003} @cite{thomason-1984}A **uniform** semantics for *before* and *after*: both connectives use the
 same `earliest` operator, with the veridicality asymmetry derived from
 **branching time** and historical alternatives rather than quantificational
@@ -55,7 +55,7 @@ variable {W T : Type*} [LinearOrder T]
     sharing w's history up to t but potentially diverging afterwards.
 
     `alt(w,t)` satisfies the initial branch point condition: all worlds in
-    `alt(w,t)` agree with w on all events at times ≤ t (Thomason 1984). -/
+    `alt(w,t)` agree with w on all events at times ≤ t. -/
 abbrev HistAlt (W T : Type*) := W → T → Set W
 
 /-- Initial branch point condition: worlds in `alt(w,t)` agree with w
@@ -71,7 +71,7 @@ def altReflexive (alt : HistAlt W T) : Prop :=
 
 /-- Monotonicity of alternatives: later times have fewer alternatives,
     since more shared history constrains the set of compatible worlds.
-    `alt(w,t') ⊆ alt(w,t)` when `t ≤ t'` (Thomason 1984).
+    `alt(w,t') ⊆ alt(w,t)` when `t ≤ t'`.
 
     Intuitively: if w' shares w's history up to t', it also shares w's
     history up to any earlier t ≤ t'. -/
@@ -138,7 +138,7 @@ def instTimes (worlds : Set W) (B : Set (W × T)) : Set T :=
 
     Uses `maxOnScale (· < ·)` which selects elements dominated by all others
     on the < ordering — i.e., the minimum / GLB. This is the same operator
-    Rett (2020) uses for her MAX₍<₎. -/
+    @cite{rett-2020} uses for her MAX₍<₎. -/
 def earliestAlt (alt : HistAlt W T) (B : Set (W × T)) (w : W) (t : T) : Set T :=
   maxOnScale (· < ·) (instTimes (alt w t) B)
 

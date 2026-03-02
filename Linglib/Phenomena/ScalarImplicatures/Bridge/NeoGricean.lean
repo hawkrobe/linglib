@@ -7,7 +7,7 @@ import Linglib.Phenomena.ScalarImplicatures.Basic
 @cite{geurts-2010} @cite{geurts-pouscoulous-2009}
 
 Connects NeoGricean scalar implicature theory to empirical data from
-Geurts & Pouscoulous (2009) and the basic scalar implicature phenomena.
+@cite{geurts-pouscoulous-2009} and the basic scalar implicature phenomena.
 
 ## Bridge Theorems
 
@@ -226,7 +226,7 @@ theorem task_effect_observed :
 /--
 Main theorem: Data adjudicates between Neo-Gricean variants
 
-The Geurts & Pouscoulous (2009) data support Contextualism over Defaultism:
+The @cite{geurts-pouscoulous-2009} data support Contextualism over Defaultism:
 1. Neutral rate (34%) matches contextualism (~35%), not defaultism (~90%)
 2. Task effect observed (contextualism predicts it, defaultism doesn't)
 -/

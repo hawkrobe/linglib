@@ -36,7 +36,7 @@ inductive EmbedType where
 /-- Embedding judgment for a predicate. -/
 structure EmbeddingDatum where
   verb : String
-  /-- "V whether/who ..." -/
+  /-- "V whether/who..." -/
   subordination : Bool
   /-- "V [did S leave↑]" (embedded inversion + matrix intonation) -/
   quasiSubordination : Bool

@@ -4,7 +4,7 @@ import Linglib.Theories.Semantics.Lexical.Noun.Kind.Chierchia1998
 
 /-! # English Noun Lexicon Fragment
 
-English NP structure. Bare plurals/mass nouns OK, bare singulars blocked (Chierchia 1998).
+English NP structure. Bare plurals/mass nouns OK, bare singulars blocked.
 -/
 
 namespace Fragments.English.Nouns
@@ -18,9 +18,9 @@ open Semantics.Lexical.Noun.Kind.Chierchia1998 (BlockingPrinciple)
     noun's conventional behavior in English (does it pluralize? does
     it take "a"?). This is theory-neutral data:
 
-    - **Chierchia (1998)** treats `countable` as a lexical feature
+    - **@cite{chierchia-1998}** treats `countable` as a lexical feature
       on nouns, directly encoding the mass/count distinction.
-    - **Borer (2005)** claims `countable` is *derivable from*
+    - **@cite{borer-2005}** claims `countable` is *derivable from*
       functional structure (presence of Q in the EP spine) and
       should not be a primitive. See `same_root_mass_and_count`.
 
@@ -156,8 +156,8 @@ def allNouns : List NounEntry := [
 ]
 
 /-- Convert a noun entry to a `Word` in singular form.
-    Proper names get `cat := .PROPN, person := .third`.
-    Common nouns get `cat := .NOUN, countable`. -/
+    Proper names get `cat :=.PROPN, person :=.third`.
+    Common nouns get `cat :=.NOUN, countable`. -/
 def NounEntry.toWordSg (n : NounEntry) : Word :=
   { form := n.formSg
   , cat := if n.proper then .PROPN else .NOUN

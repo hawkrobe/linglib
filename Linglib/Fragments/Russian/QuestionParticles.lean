@@ -56,8 +56,7 @@ def li : QParticleEntry where
 
 /-- разве razve — mirative/dubitative question particle (Šimík 2024 §4.2.4).
 Indicates conflict between speaker's prior epistemic state and current
-contextual evidence. Compatible with both outer and inner negation
-(Repp & Geist 2022). -/
+contextual evidence. Compatible with both outer and inner negation. -/
 def razve_ : QParticleEntry where
   form := "разве"
   romanization := "razve"

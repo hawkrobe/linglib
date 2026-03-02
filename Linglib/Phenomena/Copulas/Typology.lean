@@ -2,10 +2,10 @@ import Linglib.Core.Lexical.Word
 
 /-!
 # Copula and Predication Typology (WALS Chapters 117--120)
-@cite{hengeveld-1992} @cite{pustet-2003} @cite{stassen-1997} @cite{stassen-2013}
+@cite{hengeveld-1992} @cite{pustet-2003} @cite{stassen-1997} @cite{stassen-2013} @cite{haspelmath-2001}
 
 Cross-linguistic data on predication strategies and copulas from four WALS
-chapters, all authored by Leon Stassen (2013). These chapters address a
+chapters, all authored by Leon @cite{stassen-2013}. These chapters address a
 cluster of related questions: how languages express predication when the
 predicate is an adjective, a noun phrase, or a locative, and whether a
 copular element is needed in each case.
@@ -18,7 +18,7 @@ on the mat"). The copula, where it exists, is best understood not as a
 single phenomenon but as a family of strategies that languages deploy
 differently across predicate types.
 
-## Ch 117: Predicative Adjectives (Stassen 2013a)
+## Ch 117: Predicative Adjectives
 
 How languages express adjectival predication. Three values:
 - **Verbal**: adjectives behave like verbs (take verbal morphology, no copula).
@@ -28,14 +28,14 @@ How languages express adjectival predication. Three values:
 - **Mixed**: some adjectives are verbal, others require a copula
   (82/386 = 21.2%).
 
-## Ch 118: Predicative Noun Phrases (Stassen 2013b)
+## Ch 118: Predicative Noun Phrases
 
 How languages express nominal predication ("She is a doctor"). Two values:
 - **Verbal encoding**: a copula verb is used (171/386 = 44.3%).
 - **Non-verbal encoding**: juxtaposition, with no copula or a non-verbal
   particle/pronoun (215/386 = 55.7%).
 
-## Ch 119: Nominal and Locational Predication (Stassen 2013c)
+## Ch 119: Nominal and Locational Predication
 
 Whether a language uses the *same* or *different* strategy for nominal
 predication ("is a doctor") and locational predication ("is in the room").
@@ -46,7 +46,7 @@ Two values:
 The majority pattern is to differentiate: even English, which uses "be" for
 both, is cross-linguistically unusual in using a single copula.
 
-## Ch 120: Zero Copula for Predicate Nominals (Stassen 2013d)
+## Ch 120: Zero Copula for Predicate Nominals
 
 Whether the copula can be absent in nominal predication. Three values:
 - **Impossible**: copula is always required (182/386 = 47.2%).
@@ -170,8 +170,8 @@ inductive ZeroCopulaStatus where
 /-- Morphosyntactic type of copula, when present.
 
     This supplements the WALS classification with a finer-grained
-    typology of copular elements, following Pustet (2003) and
-    Hengeveld (1992). -/
+    typology of copular elements, following @cite{pustet-2003} and
+    @cite{hengeveld-1992}. -/
 inductive CopulaType where
   /-- Fully inflecting verbal copula: takes tense, agreement, negation
       like other verbs. Example: English `be` (am/is/are/was/were). -/
@@ -954,8 +954,7 @@ theorem copula_required_tends_identical :
 
 /-- Western European languages (English, French, German) share a common
     copula profile: non-verbal adjectives, verbal nominal copula, and
-    no zero copula. This is the "Standard Average European" pattern
-    (Haspelmath 2001). -/
+    no zero copula. This is the "Standard Average European" pattern. -/
 def westernEuropean : List CopulaProfile := [english, french, german]
 
 theorem western_european_nonverbal_adj :

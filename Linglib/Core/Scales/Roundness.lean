@@ -1,9 +1,9 @@
 /-!
 # Graded Numeral Roundness (k-ness Model)
-@cite{krifka-2007} @cite{sigurd-1988} @cite{woodin-winter-bhatt-2024} @cite{jansen-pollmann-2001}
+@cite{krifka-2007} @cite{sigurd-1988} @cite{woodin-winter-bhatt-2024} @cite{jansen-pollmann-2001} @cite{cummins-2015}
 
 Framework-agnostic infrastructure for graded numeral roundness,
-following Sigurd (1988), Jansen & Pollmann (2001), and Woodin et al. (2024).
+following @cite{sigurd-1988}, @cite{jansen-pollmann-2001}, and @cite{woodin-winter-bhatt-2024}.
 
 A number n has **k-ness** (for k ∈ {2, 2.5, 5, 10}) if n = m × k × 10^b
 for some b ≥ 1 and 1 ≤ m ≤ 9.
@@ -55,8 +55,8 @@ def has2_5ness (n : Nat) : Bool :=
 The 6 graded roundness properties from Sigurd/Jansen & Pollmann.
 
 Each field is an independent Boolean property. The number of true
-properties predicts numeral frequency (Woodin et al. 2024) and
-pragmatic behavior (Cummins 2015).
+properties predicts numeral frequency and
+pragmatic behavior.
 -/
 structure RoundnessProperties where
   multipleOf5 : Bool
@@ -125,7 +125,7 @@ For base b, checks divisibility by b, 2b, 5b, and 10b — mirroring
 the standard k-ness properties but on a different scale.
 
 Examples:
-- contextualRoundnessScore 48 12 = 2  (48 ÷ 12 = 4, 48 ÷ 24 = 2)
+- contextualRoundnessScore 48 12 = 2 (48 ÷ 12 = 4, 48 ÷ 24 = 2)
 - contextualRoundnessScore 120 12 = 4 (divides by 12, 24, 60, 120)
 -/
 def contextualRoundnessScore (n : Nat) (base : Nat) : Nat :=

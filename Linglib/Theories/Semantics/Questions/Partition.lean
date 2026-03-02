@@ -5,7 +5,7 @@ import Linglib.Core.Partition
 # Questions/Partition.lean
 @cite{groenendijk-stokhof-1984}
 
-Groenendijk & Stokhof (1984) Partition Semantics for Questions.
+@cite{groenendijk-stokhof-1984} Partition Semantics for Questions.
 
 ## Core Ideas
 
@@ -116,7 +116,7 @@ def alternativeQuestion {W : Type*}
 -- Exhaustivity
 
 /-- A question demands exhaustive answers if its semantics requires
-knowing exactly which cell the actual world is in.
+knowing exactly which cell the actual world is.
 
 This is the default for G&S semantics — all questions are exhaustive. -/
 def isExhaustive {W : Type*} (_q : GSQuestion W) : Bool := true

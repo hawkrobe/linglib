@@ -66,9 +66,9 @@ Types of negation for gradable adjectives.
 - Gap region where neither holds
 
 References:
-- Cruse (1986). Lexical Semantics.
-- Horn (1989). A Natural History of Negation.
-- Tessler & Franke (2020). Not unreasonable.
+- @cite{cruse-1986}. Lexical Semantics.
+- @cite{horn-1989}. A Natural History of Negation.
+- @cite{tessler-franke-2020}. Not unreasonable.
 -/
 inductive NegationType where
   | contradictory
@@ -155,8 +155,7 @@ abbrev AntonymRelation := NegationType
 A gradable adjective lexical entry.
 
 Bundles surface form, scale structure, and antonym information.
-The actual threshold is NOT part of the lexical entry — it's contextual
-(Kennedy 2007).
+The actual threshold is NOT part of the lexical entry — it's contextual.
 -/
 structure GradableAdjEntry where
   form : String

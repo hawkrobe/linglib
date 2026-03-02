@@ -71,10 +71,10 @@ theorem root_depth_zero : rootTower.depth = 0 := rfl
 -- § SOT Embedding = Temporal Shift
 -- ============================================================================
 
-/-- "John said ..." pushes a temporal shift: the matrix event time (-2)
+/-- "John said..." pushes a temporal shift: the matrix event time (-2)
     becomes the embedded clause's perspective time.
 
-    This models Von Stechow (2009): the attitude verb transmits its event
+    This models @cite{von-stechow-2009}: the attitude verb transmits its event
     time to the embedded clause. -/
 def sotTower : ContextTower TenseCtx :=
   rootTower.push (temporalShift (-2))

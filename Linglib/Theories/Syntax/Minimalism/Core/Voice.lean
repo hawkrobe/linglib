@@ -3,11 +3,11 @@ import Linglib.Theories.Syntax.Minimalism.Core.Agree
 import Linglib.Theories.Syntax.Minimalism.Core.VerbalDecomposition
 
 /-!
-# Voice Head Flavors (Kratzer 1996; Schäfer 2008)
+# Voice Head Flavors
 @cite{chomsky-2001} @cite{coon-2019} @cite{cuervo-2003} @cite{harley-2014} @cite{kratzer-1996} @cite{legate-2003} @cite{schfer-2008}
 
 Voice heads introduce (or fail to introduce) external arguments.
-The key typology from Schäfer (2008):
+The key typology from @cite{schfer-2008}:
 
 - **Agentive**: Introduces an agent external argument (Kratzer 1996 Voice_AG)
 - **Causer**: Introduces a causer (Schäfer 2008 Voice_CAUSE)
@@ -15,7 +15,7 @@ The key typology from Schäfer (2008):
   requiring PF realization (anticausative SE in Romance; Muñoz Pérez 2026)
 - **Expletive**: No specifier, no semantics (middle voice, dispositionals)
 
-## Key Claim (Muñoz Pérez 2026)
+## Key Claim
 
 Non-thematic Voice contributes no semantics. SE is a PF marker of absent
 external argument, not a semantic operator. Evidence: SE is optional in
@@ -23,10 +23,10 @@ Chilean Spanish when Fission produces a syncretic clitic.
 
 ## Voice–VerbHead Bridge (§§ 5–6)
 
-Voice and VerbHead (Cuervo 2003) are both "little-v" but encode different
+Voice and VerbHead are both "little-v" but encode different
 dimensions: Voice determines *whether* an external argument is introduced;
 VerbHead decomposes the *event structure* into subevents. The bridge
-formalizes Kratzer's (1996) insight in Cuervo's terms: agentive/causer Voice
+formalizes @cite{kratzer-1996}'s insight in Cuervo's terms: agentive/causer Voice
 contributes vDO (the agent's activity subevent) to the decomposition, while
 non-thematic/expletive Voice contributes nothing. Combined with
 root-determined lower structure (vGO, vBE), this yields the causative
@@ -115,19 +115,18 @@ def voiceMiddle : VoiceHead :=
 def voiceImpersonal : VoiceHead :=
   { flavor := .impersonal, hasD := false, phaseHead := false }
 
-/-- Passive Voice (Collins 2005): headed by *by*, checks Case but does
+/-- Passive Voice: headed by *by*, checks Case but does
     not assign a θ-role — v assigns the θ-role to the external argument
     in Spec,vP. Passive v is NOT a phase head: the Case-checking feature
-    that makes v* a strong phase head has been dissociated onto Voice/*by*
-    (Collins 2005, p. 96, p. 98).
+    that makes v* a strong phase head has been dissociated onto Voice/*by*.
 
     This is why PartP (complement of v) remains accessible for smuggling:
-    passive v is a defective v, not v*. Cf. Chomsky (2001): "only v*
+    passive v is a defective v, not v*. Cf. @cite{chomsky-2001}: "only v*
     (transitive) is a strong phase."
 
-    **Contested**: Legate (2003) argues passive v IS a phase head based
+    **Contested**: @cite{legate-2003} argues passive v IS a phase head based
     on reconstruction and parasitic gap data. The current formalization
-    follows Collins (2005) and Chomsky (2001, 2008). -/
+    follows @cite{collins-2005} and Chomsky (2001, 2008). -/
 def voicePassive : VoiceHead :=
   { flavor := .passive, hasD := true, phaseHead := false, checksCase := true }
 
@@ -142,7 +141,7 @@ theorem agentive_assigns_theta : voiceAgent.assignsTheta = true := rfl
 theorem nonThematic_no_theta : voiceAnticausative.assignsTheta = false := rfl
 
 /-- Non-thematic Voice has no semantic contribution.
-    This is the core claim of Muñoz Pérez (2026): SE is a PF phenomenon. -/
+    This is the core claim of Muñoz @cite{munoz-perez-2026}: SE is a PF phenomenon. -/
 theorem nonThematic_no_semantics : voiceAnticausative.hasSemantics = false := rfl
 
 /-- Agentive Voice is a phase head (v* = Voice_AG). -/
@@ -162,7 +161,7 @@ theorem impersonal_has_semantics : voiceImpersonal.hasSemantics = true := rfl
 /-- Passive Voice does NOT assign a θ-role (v does). -/
 theorem passive_no_theta : voicePassive.assignsTheta = false := rfl
 
-/-- Passive Voice IS NOT a phase head (Collins 2005, p. 98). -/
+/-- Passive Voice IS NOT a phase head. -/
 theorem passive_not_phase : voicePassive.phaseHead = false := rfl
 
 /-- Passive Voice HAS semantic content (*by* mediates Case-checking). -/
@@ -187,8 +186,7 @@ theorem theta_implies_agentive_or_causer (v : VoiceHead) :
     where an external argument acts or causes. Non-thematic and expletive
     Voice contribute nothing: there is no agent subevent.
 
-    This formalizes Kratzer's (1996) "severing" in Cuervo's (2003)
-    event-decomposition vocabulary: the external argument's subevent
+    This formalizes @cite{kratzer-1996}'s "severing" in @cite{cuervo-2003}'s event-decomposition vocabulary: the external argument's subevent
     comes from Voice, not from the root. -/
 def VoiceFlavor.eventContribution : VoiceFlavor → Option VerbHead
   | .agentive    => some .vDO
@@ -204,10 +202,10 @@ def VoiceFlavor.eventContribution : VoiceFlavor → Option VerbHead
     The root supplies lower subevents (e.g., [vGO, vBE] for change-of-state
     roots). Voice optionally prepends vDO. The result is Cuervo's
     full decomposition:
-    - Voice_AG + [vGO, vBE] → [vDO, vGO, vBE]  (causative)
-    - Voice_nonTh + [vGO, vBE] → [vGO, vBE]     (inchoative)
-    - Voice_AG + [] → [vDO]                      (unergative activity)
-    - Voice_nonTh + [vBE] → [vBE]                (stative) -/
+    - Voice_AG + [vGO, vBE] → [vDO, vGO, vBE] (causative)
+    - Voice_nonTh + [vGO, vBE] → [vGO, vBE] (inchoative)
+    - Voice_AG + [] → [vDO] (unergative activity)
+    - Voice_nonTh + [vBE] → [vBE] (stative) -/
 def buildDecomposition (voice : VoiceHead) (rootStructure : List VerbHead) :
     List VerbHead :=
   match voice.flavor.eventContribution with
@@ -255,7 +253,7 @@ theorem nonthematic_plus_state_is_state :
 
 /-- The causative alternation: same root structure [vGO, vBE] is causative
     under agentive Voice but inchoative under non-thematic Voice. This is
-    Coon's (2019) division of labor and Kratzer's (1996) severing in one
+    @cite{coon-2019}'s division of labor and @cite{kratzer-1996}'s severing in one
     theorem: alternation is determined by Voice, not by the root. -/
 theorem causative_alternation :
     isCausative (buildDecomposition voiceAgent [.vGO, .vBE]) = true ∧
@@ -278,7 +276,7 @@ theorem voice_determines_causativity_go_be (v : VoiceHead) :
 /-- In active, v (= agentive Voice) assigns θ AND controls Case-checking
     (Case is checked by v, not by Voice). In passive, these functions
     dissociate: v assigns θ (external argument in Spec,vP), while Voice/*by*
-    checks Case (Collins 2005, p. 96). -/
+    checks Case. -/
 theorem active_theta_and_case_unified :
     voiceAgent.assignsTheta = true ∧ voiceAgent.checksCase = false := ⟨rfl, rfl⟩
 
@@ -287,7 +285,7 @@ theorem active_theta_and_case_unified :
 theorem passive_theta_case_dissociated :
     voicePassive.assignsTheta = false ∧ voicePassive.checksCase = true := ⟨rfl, rfl⟩
 
-/-- UTAH compliance (Collins 2005, p. 95): the external argument is
+/-- UTAH compliance: the external argument is
     structurally present (hasD = true) in BOTH active and passive.
     The external argument occupies the same position (Spec,vP)
     regardless of voice — satisfying the Uniformity of Theta Assignment

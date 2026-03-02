@@ -89,7 +89,7 @@ def Level.toRat : Level → ℚ
 
 /-- Two forms are **register variants** if they differ in register
     level. This is the structural precondition for register mixing
-    and split-register constructions (Dieuleveut et al. 2025). -/
+    and split-register constructions. -/
 def areVariants (a b : Level) : Bool := a != b
 
 /-! ## Social indexation -/

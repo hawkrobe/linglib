@@ -51,7 +51,7 @@ inductive Syndesis where
 Coordinator position relative to its coordinand (Haspelmath §1.2).
 
 Haspelmath notes that **co-A B (prepositive on first coordinand only)
-is unattested** across 260 languages (Stassen 2000). This is the one
+is unattested** across 260 languages. This is the one
 logically possible monosyndetic pattern that never occurs.
 -/
 inductive CoordinatorPosition where
@@ -63,17 +63,17 @@ inductive CoordinatorPosition where
 Structural pattern for binary coordination (Haspelmath (17)).
 
 Monosyndetic: 3 attested patterns (of 4 logically possible).
-  A co-B  (prepositive on 2nd: English "A and B")
-  A-co B  (postpositive on 1st: Tibetan "A-daŋ B")
-  A B-co  (postpositive on 2nd: Latin "A B-que")
+  A co-B (prepositive on 2nd: English "A and B")
+  A-co B (postpositive on 1st: Tibetan "A-daŋ B")
+  A B-co (postpositive on 2nd: Latin "A B-que")
 
-  co-A B  — UNATTESTED (Stassen 2000, n=260 languages)
+  co-A B — UNATTESTED (Stassen 2000, n=260 languages)
 
 Bisyndetic: 4 attested patterns.
-  co-A co-B   (prepositive: Yoruba "àtí A àtí B")
-  A-co B-co   (postpositive: Martuthunira "A-thurti B-thurti")
-  A-co co-B   (mixed: Homeric Greek "A-te kaì B")
-  co-A B-co   (mixed: Latin "et A B-que")
+  co-A co-B (prepositive: Yoruba "àtí A àtí B")
+  A-co B-co (postpositive: Martuthunira "A-thurti B-thurti")
+  A-co co-B (mixed: Homeric Greek "A-te kaì B")
+  co-A B-co (mixed: Latin "et A B-que")
 -/
 inductive CoordPattern where
   /-- A co-B: medial prepositive (English "A and B", Lango "A kèdè B") -/
@@ -407,7 +407,7 @@ def persian : ConjunctionSystem :=
 
 /--
 Finnish: "ja" (J, free, prepositive) and "-kin" (MU, bound, additive).
-"-kin" is the additive focus particle "also/too" (Karlsson 2018, §14.5):
+"-kin" is the additive focus particle "also/too":
 *koira-kin kissa-kin* 'dog-too cat-too' = 'both the dog and the cat'.
 Standard conjunction: *koira ja kissa* 'dog and cat' (monosyndetic medial).
 -/
@@ -486,10 +486,9 @@ def ConjunctionSystem.muBoundness (sys : ConjunctionSystem) : Option Boundness :
 /--
 Georgian MU is bound, Hungarian MU is free.
 
-Bill et al. (2025) speculate this morphological difference may explain
+@cite{bill-etal-2025} speculate this morphological difference may explain
 why Georgian children found MU-involving expressions harder than
-Hungarian children did: bound morphemes are harder to segment and acquire
-(Clark 2017).
+Hungarian children did: bound morphemes are harder to segment and acquire.
 -/
 theorem mu_boundness_asymmetry :
     georgian.muBoundness = some .bound ∧
@@ -545,6 +544,8 @@ theorem focus_particle_source_bisyndetic :
 
 /-!
 ## Mitrović & Sauerland's Universal Structure
+@cite{stassen-2000}
+
 
 M&S (2014, 2016) claim that EVERY language has the same underlying structure
 for DP conjunction:
@@ -565,7 +566,7 @@ roundtrip recovers standard `coordEntities` semantics.
 -/
 
 /--
-**Empirical challenge to M&S universality (Bill et al. 2025).**
+**Empirical challenge to M&S universality.**
 
 The M&S decomposition + Transparency Principle predicts J-MU (where all
 semantic pieces are overtly realized) should be EASIEST to acquire. But in
@@ -588,7 +589,7 @@ theorem ms_universality_challenged :
   native_decide
 
 /--
-**The boundness confound (Bill et al. 2025, §5).**
+**The boundness confound.**
 
 Georgian MU (-c) is bound; Hungarian MU (is) is free. Hungarian children
 showed no significant sentence-type effect on either accuracy or replays.
@@ -610,12 +611,12 @@ theorem boundness_confound :
   native_decide
 
 /--
-**Open problem: predict the Bill et al. (2025) acquisition asymmetry.**
+**Open problem: predict the @cite{bill-etal-2025} acquisition asymmetry.**
 
 No existing account predicts the full cross-linguistic pattern:
 - M&S (2016) + Transparency Principle → predicts J-MU easiest. Wrong for Georgian.
-- Szabolcsi (2015) → alternative quantifier-particle analysis. Doesn't predict it.
-- Haslinger et al. (2019) → plural/distributive analysis. Doesn't predict it.
+- @cite{szabolcsi-2015} → alternative quantifier-particle analysis. Doesn't predict it.
+- @cite{haslinger-etal-2019} → plural/distributive analysis. Doesn't predict it.
 
 A complete theory should derive: when MU is morphologically bound, J-MU
 incurs extra acquisition cost (segmentation difficulty outweighs transparency

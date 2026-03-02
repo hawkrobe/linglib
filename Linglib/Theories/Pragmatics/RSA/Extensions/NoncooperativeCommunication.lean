@@ -7,11 +7,11 @@ import Mathlib.Tactic.Linarith
 
 /-!
 # Noncooperative Communication: Unified Argumentative RSA
-@cite{barnett-griffiths-hawkins-2022} @cite{cummins-2025} @cite{cummins-franke-2021} @cite{mazzarella-2018} @cite{merin-1999} @cite{sperber-2010}
+@cite{barnett-griffiths-hawkins-2022} @cite{cummins-2025} @cite{cummins-franke-2021} @cite{mazzarella-2018} @cite{merin-1999} @cite{sperber-2010} @cite{goodman-stuhlmuller-2013} @cite{yoon-etal-2020}
 
-Unifies Cummins & Franke (2021)'s argumentative strength framework and
-Barnett et al. (2022)'s persuasive RSA into a single parameterized model,
-following Cummins (2025)'s analysis of noncooperative communication.
+Unifies @cite{cummins-franke-2021}'s argumentative strength framework and
+@cite{barnett-griffiths-hawkins-2022}'s persuasive RSA into a single parameterized model,
+following @cite{cummins-2025}'s analysis of noncooperative communication.
 
 ## Core Unification
 
@@ -32,7 +32,7 @@ The parameter β controls the cooperativity spectrum:
 
 ## Epistemic Vigilance
 
-Following Sperber et al. (2010), the hearer's interpretation is a
+Following @cite{sperber-2010}, the hearer's interpretation is a
 trust-weighted mixture of pragmatic and literal posteriors:
 
   P_vigilant(w∣u) = τ · P_L1(w∣u) + (1−τ) · P_L0(w∣u)
@@ -41,7 +41,7 @@ where τ ∈ [0,1] is the hearer's trust in speaker cooperativity.
 
 ## Meaning-Level Taxonomy
 
-Cummins (2025) identifies four levels at which falsehood can occur:
+@cite{cummins-2025} identifies four levels at which falsehood can occur:
 assertion, implicature, presupposition, and typicality departure.
 Both C&F and Barnett involve misleading at the typicality/implicature
 level while maintaining truthful assertions — the argumentative speaker
@@ -60,7 +60,7 @@ open RSA.Implementations.BarnettEtAl2022
 -- Section 1: Cooperativity Spectrum (Cummins 2025 §§1–4)
 -- ============================================================
 
-/-- Speaker orientation on the cooperativity spectrum (Cummins 2025).
+/-- Speaker orientation on the cooperativity spectrum.
 
 - cooperative: β=0, speaker maximizes hearer's accurate belief (standard RSA)
 - argumentative: β>0, speaker has a goal G and balances informativity
@@ -174,8 +174,7 @@ theorem positive_argStr_iff_posterior_above_prior
 
 /-- Level of meaning at which falsehood can occur.
 
-Cummins (2025) identifies four levels, ordered by speaker blameworthiness
-(Mazzarella et al. 2018): assertion > implicature > presupposition > typicality.
+@cite{cummins-2025} identifies four levels, ordered by speaker blameworthiness: assertion > implicature > presupposition > typicality.
 
 Both C&F and Barnett involve misleading at the typicality/implicature level
 while maintaining truthful assertions — the argumentative speaker exploits
@@ -188,7 +187,7 @@ inductive MeaningLevel where
   deriving DecidableEq, BEq, Repr
 
 /-- Blameworthiness ordering: false assertions attract most blame,
-typicality departures attract least (Mazzarella et al. 2018). -/
+typicality departures attract least. -/
 def blameworthinessRank : MeaningLevel → Nat
   | .assertion => 3
   | .implicature => 2
@@ -213,7 +212,7 @@ theorem typicality_least_blameworthy :
 
 /-- Epistemic vigilance: the hearer's trust in speaker cooperativity.
 
-Following Sperber et al. (2010) as discussed in Cummins (2025 §4):
+Following @cite{sperber-2010} as discussed in Cummins (2025 §4):
 1. Hearer first interprets as if speaker is cooperative (stance of trust)
 2. Then weighs the pragmatic interpretation by trust level τ
 3. Falls back toward literal interpretation as trust decreases
@@ -280,7 +279,7 @@ Both sides use `combined` (convex interpolation), making the symmetry explicit:
 - Hearer: `combined τ l0Post l1Post` (via vigilantPosterior)
 
 Standard RSA is the special case goalWeight=0, τ=1.
-Barnett et al. (2022) is goalWeight=226/326 (≈ 0.693, from β=2.26), τ=1.
+@cite{barnett-griffiths-hawkins-2022} is goalWeight=226/326 (≈ 0.693, from β=2.26), τ=1.
 A suspicious hearer facing an argumentative speaker would have high goalWeight, low τ. -/
 structure NoncooperativeRSAParams where
   /-- Speaker's goal-orientation weight ∈ [0,1] -/
@@ -297,7 +296,7 @@ structure NoncooperativeRSAParams where
 def standardRSA : NoncooperativeRSAParams :=
   { goalWeight := 0, τ := 1 }
 
-/-- Barnett et al. (2022) fitted model: goalWeight = β/(1+β) = 226/326 ≈ 0.693,
+/-- @cite{barnett-griffiths-hawkins-2022} fitted model: goalWeight = β/(1+β) = 226/326 ≈ 0.693,
 pragmatic group with full trust.
 
 Original paper parameterization: β̂ = 2.26 (additive form).
@@ -534,18 +533,18 @@ inference that can reverse the literal evidence.
 
 **Instances**:
 - *Scalar implicature*: hearing "some" → infer speaker couldn't say "all"
-  → conclude ¬all (Goodman & Stuhlmüller 2013)
+  → conclude ¬all
 - *Weak evidence effect*: seeing stick 4 → infer speaker lacked stick 5
-  → conclude probably not "longer" (Barnett et al. 2022)
+  → conclude probably not "longer"
 - *Polite understatement*: "not terrible" → infer speaker couldn't
-  honestly say "good" → conclude mediocre (Yoon et al. 2020)
+  honestly say "good" → conclude mediocre
 
-**Abstract pattern**: Let U = {u₁, ..., uₙ} be utterances ordered by
+**Abstract pattern**: Let U = {u₁,..., uₙ} be utterances ordered by
 strength, and let L0(goal | uᵢ) be monotone in i. If the speaker is
 goal-oriented (prefers stronger utterances when goal is true), then for
 some non-maximal uᵢ:
 
-  L0(goal | uᵢ) > prior  AND  L1(goal | uᵢ, β) < prior
+  L0(goal | uᵢ) > prior AND L1(goal | uᵢ, β) < prior
 
 The pragmatic listener's inference — "if the speaker had stronger evidence,
 they would have used it" — reverses the literal evidence.

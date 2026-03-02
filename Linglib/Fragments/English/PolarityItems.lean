@@ -72,8 +72,8 @@ inductive LicensingContext where
     - **NonScalar** items (lift a finger) are idiomatic, not scalar.
 
     Israel (1996). Polarity sensitivity as lexical semantics. L&P 19(6).
-    Israel (2011). The Grammar of Polarity. CUP.
-    Schwab (2022). Lexical variation in NPI illusions. -/
+    @cite{israel-2011}. The Grammar of Polarity. CUP.
+    @cite{schwab-2022}. Lexical variation in NPI illusions. -/
 inductive ScalarDirection where
   | strengthening  -- ever, any, jemals: assertion stronger than alternatives
   | attenuating    -- all that, so recht, long: assertion weaker than alternatives
@@ -125,7 +125,7 @@ structure PolarityItemEntry where
   baseForce : BaseForce
   /-- Contexts where licensed (empty = needs positive) -/
   licensingContexts : List LicensingContext
-  /-- Scalar direction: strengthening, attenuating, or non-scalar (Israel 2011) -/
+  /-- Scalar direction: strengthening, attenuating, or non-scalar -/
   scalarDirection : ScalarDirection := .nonScalar
   /-- Has obligatory domain alternatives? (for Chierchia analysis) -/
   obligatoryDomainAlts : Bool := false

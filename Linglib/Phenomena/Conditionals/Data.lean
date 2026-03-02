@@ -26,7 +26,7 @@ open Phenomena
 -- Conditional Perfection
 
 /--
-**Conditional Perfection** (Geis & Zwicky 1971)
+**Conditional Perfection**
 
 The phenomenon where "If A then C" is interpreted as "A iff C".
 
@@ -185,7 +185,7 @@ These have different interpretations:
 - Indicative: epistemic uncertainty, open whether A is true
 - Subjunctive: counterfactual, A is assumed false
 
-Example (Adams 1970):
+Example:
   "If Oswald didn't kill Kennedy, someone else did" (indicative) - TRUE
   "If Oswald hadn't killed Kennedy, someone else would have" (subjunctive) - FALSE/UNCERTAIN
 -/
@@ -245,7 +245,7 @@ def conditionalQuestionExample : ConditionalQuestionDatum := {
 -- Biscuit Conditionals
 
 /--
-**Biscuit Conditionals** (Austin 1956)
+**Biscuit Conditionals**
 
 Non-causal conditionals where the consequent's truth doesn't depend on
 the antecedent.

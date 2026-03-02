@@ -61,7 +61,7 @@ Values of a dot type are pairs `A₁ × A₂` (= `MeetType A₁ A₂`). -/
 
 /-- A dot type: a polysemous type with two aspects and an individuation
 criterion (a `Setoid`). The individuation determines counting under
-copredication. Chatzikyriakidis et al. (2025) §3. -/
+copredication. @cite{chatzikyriakidis-etal-2025} §3. -/
 structure DotType (A₁ A₂ : Type) where
   /-- How to individuate objects of this complex type -/
   individuation : Setoid (A₁ × A₂)
@@ -91,7 +91,7 @@ def countDistinct {α : Type} (s : Setoid α)
 
 /-- Different individuation criteria can yield different counts
 for the same collection. This is the formal content of
-Chatzikyriakidis et al. (2025) §3's counting puzzle. -/
+@cite{chatzikyriakidis-etal-2025} §3's counting puzzle. -/
 theorem individuation_can_diverge :
     ∃ (A₁ A₂ : Type) (_ : DecidableEq A₁) (_ : DecidableEq A₂)
       (xs : List (A₁ × A₂))

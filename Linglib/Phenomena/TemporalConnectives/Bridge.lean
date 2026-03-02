@@ -8,8 +8,8 @@ import Linglib.Fragments.English.TemporalExpressions
 Concrete scenarios verifying that the Anscombe, Rett, and Karttunen
 formalizations produce correct truth-value judgments.
 
-Scenarios 1–6 verify Rett (2020) Table 1 for *before*/*after*.
-Scenarios 7–10 verify Heinämäki (1974) Chs. 6, 8, 9 for *since*, *by*, *till*.
+Scenarios 1–6 verify @cite{rett-2020} Table 1 for *before*/*after*.
+Scenarios 7–10 verify @cite{heinamaki-1974} Chs. 6, 8, 9 for *since*, *by*, *till*.
 
 ## Scenarios (ℕ time points)
 

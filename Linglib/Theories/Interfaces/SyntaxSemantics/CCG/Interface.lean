@@ -467,7 +467,7 @@ theorem john_sees_mary_interp_correct :
 
 /--
 Type-raised "John":
-  John:NP  →  S/(S\NP)  via forward type-raising
+  John:NP → S/(S\NP) via forward type-raising
 -/
 def john_typeraised : DerivStep := .ftr (.lex ⟨"John", NP⟩) S
 
@@ -481,10 +481,10 @@ def john_typeraised : DerivStep := .ftr (.lex ⟨"John", NP⟩) S
 
 /--
 "John sees Mary" via type-raising:
-  John          sees          Mary
-  NP            (S\NP)/NP     NP
+  John sees Mary
+  NP (S\NP)/NP NP
   ↓T(S)
-  S/(S\NP)      (S\NP)/NP     NP
+  S/(S\NP) (S\NP)/NP NP
                 └────>────────┘
                     S\NP
   └──────>──────────────────────┘
@@ -507,8 +507,8 @@ theorem john_sees_mary_via_tr_correct :
 
 /--
 "John likes" as S/NP via type-raising + composition (for coordination):
-  John          likes
-  NP            (S\NP)/NP
+  John likes
+  NP (S\NP)/NP
   ↓T(S)
   S/(S\NP)
   └──────>B────┘

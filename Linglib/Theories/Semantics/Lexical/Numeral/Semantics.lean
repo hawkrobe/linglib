@@ -4,7 +4,7 @@ import Linglib.Theories.Semantics.Lexical.Determiner.Quantifier
 
 /-!
 # Unified Numeral Semantics
-@cite{blok-2015} @cite{goodman-stuhlmuller-2013} @cite{horn-1972} @cite{kennedy-2015}
+@cite{blok-2015} @cite{goodman-stuhlmuller-2013} @cite{horn-1972} @cite{kennedy-2015} @cite{hackl-2000} @cite{link-1983}
 
 Consolidates numeral theory infrastructure into a single module. All numeral meanings
 (bare + modified) flow through `maxMeaning`. The only theory disagreement is the
@@ -19,7 +19,7 @@ Modified numerals are theory-independent — everyone agrees "more than 3" means
 
 ## Sections
 
-1. Ordering relations and modifier classification (Kennedy 2015)
+1. Ordering relations and modifier classification
 2. Unified meaning function (`maxMeaning`)
 3. BareNumeral type and NumeralExpr
 4. Alternative sets (Kennedy §4.1)
@@ -96,7 +96,7 @@ def boundDirectionOf : OrderingRel → BoundDirection
 -- Section 2: Unified Meaning Function
 -- ============================================================================
 
-/-- The unified meaning function for all numeral expressions (Kennedy 2015).
+/-- The unified meaning function for all numeral expressions.
 
 `maxMeaning rel m n` is true iff cardinality `n` stands in relation `rel` to
 threshold `m`. This captures Kennedy's:
@@ -105,9 +105,9 @@ threshold `m`. This captures Kennedy's:
 
 where `n` plays the role of `max{d | #P ≥ d}` and `m` is the numeral.
 
-At the cardinality level, `maxMeaning .eq` also plays the role of Bylinina & Nouwen's (2020)
-MANY operator (Hackl 2000): `MANY(n) = λcard. card = n`. A proper MANY over plural
-individuals (Link 1983) awaits mereological infrastructure; at the `Nat` abstraction the
+At the cardinality level, `maxMeaning.eq` also plays the role of @cite{bylinina-nouwen-2020}
+MANY operator: `MANY(n) = λcard. card = n`. A proper MANY over plural
+individuals awaits mereological infrastructure; at the `Nat` abstraction the
 two are definitionally equal. -/
 @[simp] def maxMeaning (rel : OrderingRel) (m : Nat) (n : Nat) : Bool :=
   match rel with
@@ -167,11 +167,11 @@ def NumeralExpr.meaning (bareRel : OrderingRel) : NumeralExpr → Nat → Bool
 
 /-- A numeral alternative in Kennedy's framework.
 
-Instead of the traditional Horn scale ⟨1, 2, 3, ...⟩, the relevant
+Instead of the traditional Horn scale ⟨1, 2, 3,...⟩, the relevant
 alternatives for numeral n are:
 
-  {bare n, more than n, at least n}  (lower-bound direction)
-  {bare n, fewer than n, at most n}  (upper-bound direction) -/
+  {bare n, more than n, at least n} (lower-bound direction)
+  {bare n, fewer than n, at most n} (upper-bound direction) -/
 inductive NumeralAlternative where
   | bare (n : Nat)
   | modified (rel : OrderingRel) (n : Nat)
@@ -281,9 +281,9 @@ structure NumeralTheory where
 
 The four views on numeral semantics differ in which reading is basic:
 - `exactFromAtLeast`: base meaning is at-least (≥n), exact derived via EXH or scalar implicature.
-  Corresponds to `LowerBound` / Horn (1972) / the modifier–number view.
+  Corresponds to `LowerBound` / @cite{horn-1972} / the modifier–number view.
 - `atLeastFromExact`: base meaning is exact (=n), at-least derived via type-shift or
-  relaxing maximality. Corresponds to `Exact` / Kennedy (2015) / the degree quantifier view. -/
+  relaxing maximality. Corresponds to `Exact` / @cite{kennedy-2015} / the degree quantifier view. -/
 inductive DerivationalDirection where
   | exactFromAtLeast
   | atLeastFromExact
@@ -306,7 +306,7 @@ def NumeralTheory.exprMeaning (T : NumeralTheory) (e : NumeralExpr) (n : Nat) : 
 -- Section 7: Theory Instances
 -- ============================================================================
 
-/-- Lower-bound numeral theory (Horn 1972).
+/-- Lower-bound numeral theory.
 
 "Two" means ≥2. The exact interpretation emerges via scalar implicature. -/
 def LowerBound : NumeralTheory where
@@ -314,7 +314,7 @@ def LowerBound : NumeralTheory where
   citation := "Horn 1972"
   bareRel := .ge
 
-/-- Exact numeral theory (Kennedy 2015).
+/-- Exact numeral theory.
 
 "Two" means =2 (via maximality). No RSA strengthening needed for bare numerals. -/
 def Exact : NumeralTheory where
@@ -322,11 +322,11 @@ def Exact : NumeralTheory where
   citation := "Kennedy 2015"
   bareRel := .eq
 
-/-- Lower-bound meaning is `maxMeaning .ge`. -/
+/-- Lower-bound meaning is `maxMeaning.ge`. -/
 theorem lowerBound_meaning_eq (w : BareNumeral) (n : Nat) :
     LowerBound.meaning w n = maxMeaning .ge w.toNat n := rfl
 
-/-- Exact meaning is `maxMeaning .eq`. -/
+/-- Exact meaning is `maxMeaning.eq`. -/
 theorem exact_meaning_eq (w : BareNumeral) (n : Nat) :
     Exact.meaning w n = maxMeaning .eq w.toNat n := rfl
 
@@ -344,13 +344,13 @@ theorem exact_atLeastFromExact :
 
 /-! ## De-Fregean Type-Shifting: Exact → Lower-Bound
 
-Kennedy (2015, §3.1) shows that the lower-bound meaning of bare numerals can
-be **derived** from the exact (de-Fregean) meaning via Partee's (1987) BE + iota
+@cite{kennedy-2015} shows that the lower-bound meaning of bare numerals can
+be **derived** from the exact (de-Fregean) meaning via @cite{partee-1987}'s BE + iota
 type-shifting operations. The de-Fregean meaning `max{n | D(n)} = m` is basic;
 applying BE derives a property `λn. n = m`; applying iota and existential closure
 yields `∃x[P(x) ∧ #(x) = m]`, which is the one-sided (lower-bound) truth condition.
 
-Key fact: `maxMeaning .ge m n ↔ ∃ k ≥ m, maxMeaning .eq k n`. The lower-bound
+Key fact: `maxMeaning.ge m n ↔ ∃ k ≥ m, maxMeaning.eq k n`. The lower-bound
 reading says "the max is at least m", which holds iff there exists some k ≥ m
 such that the max is exactly k. This is the formal content of the type-shift. -/
 
@@ -363,9 +363,9 @@ def typeLower (exact : Nat → Nat → Bool) (maxN : Nat) (m : Nat) (n : Nat) : 
 
 /-- The lower-bound theory is derivable from the exact theory via type-shifting.
     For each bare numeral and each standard world, the lower-bound meaning
-    equals the type-lowered exact meaning. This formalizes Kennedy's (2015) claim
+    equals the type-lowered exact meaning. This formalizes @cite{kennedy-2015}'s claim
     that `atLeastFromExact` is not just a label but a derivational fact:
-    `maxMeaning .ge m n = typeLower (maxMeaning .eq) 3 m n` for standard worlds. -/
+    `maxMeaning.ge m n = typeLower (maxMeaning.eq) 3 m n` for standard worlds. -/
 theorem lowerBound_from_exact_typeshift :
     standardWorlds.all λ n =>
       [BareNumeral.one, .two, .three].all λ w =>
@@ -404,15 +404,14 @@ theorem universal_closure_fails :
 /-! ## EXH and Type-Shifting Are Inverses
 
 Spector (2013, §6.2) proposes that the exact reading of bare numerals arises from
-a covert exhaustivity operator: `EXH(≥n) = ≥n ∧ ¬(≥n+1) = (=n)`. Kennedy (2015,
-§3.1) proposes the reverse: the lower-bound reading arises from type-shifting the
+a covert exhaustivity operator: `EXH(≥n) = ≥n ∧ ¬(≥n+1) = (=n)`. @cite{kennedy-2015} proposes the reverse: the lower-bound reading arises from type-shifting the
 exact meaning: `typeShift(=n) = ∃k≥n.(=k) = (≥n)`.
 
 These are inverse operations on the same pair of meanings:
 
 ```
     exact ——typeShift——→ lower-bound
-      ↑                       |
+      ↑ |
       └────────EXH────────────┘
 ```
 
@@ -420,7 +419,7 @@ For RSA, only the **pair** {exact, lower-bound} matters — the listener margina
 over both regardless of which is "basic". But type-shifting is preferable to EXH
 because:
 
-1. **Independently motivated**: Partee (1987) type-shifting applies to all NPs,
+1. **Independently motivated**: @cite{partee-1987} type-shifting applies to all NPs,
    not just numerals. It's part of the grammar regardless.
 2. **No free parameters**: The lower-bound meaning is the unique output of
    type-shifting (proved: `typeLower_uniqueness`, `universal_closure_fails`).
@@ -470,7 +469,7 @@ theorem exh_typeShift_roundtrip :
 
 /-- **EXH is redundant given type-shifting.** The pair {exact, lower-bound}
     is obtainable from exact alone (via type-shifting) without EXH.
-    Since type-shifting is independently motivated (Partee 1987) and produces
+    Since type-shifting is independently motivated and produces
     the unique derived meaning (`typeLower_uniqueness`), EXH is not needed
     to generate the ambiguity that RSA marginalizes over.
 
@@ -709,7 +708,7 @@ theorem atLeast_eq_lowerBound_three (n : Nat) :
 -- to the Kennedy maximality view (type ⟨d,t⟩) that `maxMeaning` implements.
 
 open Semantics.Montague Semantics.Lexical.Determiner in
-/-- GQT "at least n" agrees with `maxMeaning .ge` on intersection cardinality. -/
+/-- GQT "at least n" agrees with `maxMeaning.ge` on intersection cardinality. -/
 theorem gqt_atLeast_agrees (m : Model) [Quantifier.FiniteModel m]
     (n : Nat) (R S : m.Entity → Bool) :
     Quantifier.at_least_n_sem m n R S =
@@ -717,7 +716,7 @@ theorem gqt_atLeast_agrees (m : Model) [Quantifier.FiniteModel m]
   rfl
 
 open Semantics.Montague Semantics.Lexical.Determiner in
-/-- GQT "at most n" agrees with `maxMeaning .le` on intersection cardinality. -/
+/-- GQT "at most n" agrees with `maxMeaning.le` on intersection cardinality. -/
 theorem gqt_atMost_agrees (m : Model) [Quantifier.FiniteModel m]
     (n : Nat) (R S : m.Entity → Bool) :
     Quantifier.at_most_n_sem m n R S =
@@ -728,7 +727,7 @@ private theorem decide_eq_beq (a b : Nat) : decide (a = b) = (a == b) := by
   by_cases h : a = b <;> simp [h]
 
 open Semantics.Montague Semantics.Lexical.Determiner in
-/-- GQT "exactly n" agrees with `maxMeaning .eq` on intersection cardinality. -/
+/-- GQT "exactly n" agrees with `maxMeaning.eq` on intersection cardinality. -/
 theorem gqt_exactly_agrees (m : Model) [Quantifier.FiniteModel m]
     (n : Nat) (R S : m.Entity → Bool) :
     Quantifier.exactly_n_sem m n R S =
@@ -795,31 +794,31 @@ This means density predictions (`moreThan_noMaxInf`, `atLeast_hasMaxInf`)
 flow compositionally from `Core.Scale` through numeral semantics. -/
 
 open Core.Scale in
-/-- `maxMeaning .ge m n = true` iff `atLeastDeg id m n`. -/
+/-- `maxMeaning.ge m n = true` iff `atLeastDeg id m n`. -/
 theorem maxMeaning_ge_iff_atLeastDeg (m n : ℕ) :
     maxMeaning .ge m n = true ↔ atLeastDeg id m n := by
   simp [maxMeaning, atLeastDeg]
 
 open Core.Scale in
-/-- `maxMeaning .gt m n = true` iff `moreThanDeg id m n`. -/
+/-- `maxMeaning.gt m n = true` iff `moreThanDeg id m n`. -/
 theorem maxMeaning_gt_iff_moreThanDeg (m n : ℕ) :
     maxMeaning .gt m n = true ↔ moreThanDeg id m n := by
   simp [maxMeaning, moreThanDeg]
 
 open Core.Scale in
-/-- `maxMeaning .eq m n = true` iff `eqDeg id m n`. -/
+/-- `maxMeaning.eq m n = true` iff `eqDeg id m n`. -/
 theorem maxMeaning_eq_iff_eqDeg (m n : ℕ) :
     maxMeaning .eq m n = true ↔ eqDeg id m n := by
   simp [maxMeaning, eqDeg]
 
 open Core.Scale in
-/-- `maxMeaning .le m n = true` iff `atMostDeg id m n`. -/
+/-- `maxMeaning.le m n = true` iff `atMostDeg id m n`. -/
 theorem maxMeaning_le_iff_atMostDeg (m n : ℕ) :
     maxMeaning .le m n = true ↔ atMostDeg id m n := by
   simp [maxMeaning, atMostDeg]
 
 open Core.Scale in
-/-- `maxMeaning .lt m n = true` iff `lessThanDeg id m n`. -/
+/-- `maxMeaning.lt m n = true` iff `lessThanDeg id m n`. -/
 theorem maxMeaning_lt_iff_lessThanDeg (m n : ℕ) :
     maxMeaning .lt m n = true ↔ lessThanDeg id m n := by
   simp [maxMeaning, lessThanDeg]

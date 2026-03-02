@@ -5,7 +5,7 @@ import Linglib.Core.Case.Hierarchy
 # Turkish Case Inventory @cite{blake-1994}
 @cite{goksel-kerslake-2005}
 
-Turkish has **6 cases** with agglutinative suffixes (Blake 1994, §5.4):
+Turkish has **6 cases** with agglutinative suffixes:
 NOM (∅), ACC (-I), GEN (-In), DAT (-A), LOC (-DA), ABL (-DAn).
 
 This inventory is perfectly contiguous on Blake's hierarchy: ranks 6–2

@@ -3,9 +3,9 @@ import Linglib.Theories.Semantics.Degree.Core
 
 /-!
 # Rett's Order-Sensitive MAX Framework
-@cite{rett-2026} @cite{rullmann-1995} @cite{schwarzschild-2008}
+@cite{rett-2026} @cite{rullmann-1995} @cite{schwarzschild-2008} @cite{krifka-2010b}
 
-Rett (2026) "Semantic Ambivalence and Expletive Negation": the
+@cite{rett-2026} "Semantic Ambivalence and Expletive Negation": the
 comparative morpheme is an order-sensitive maximality operator MAX_R
 that picks the R-maximal element of a degree set.
 
@@ -93,7 +93,7 @@ theorem comparative_boundary {α : Type*} [LinearOrder α]
   rw [maxOnScale_ge_atMost]
   simp
 
-/-- Equative boundary reduction (Rett 2026, §4.3.1):
+/-- Equative boundary reduction:
     the equative also depends only on the boundary μ_b. -/
 theorem equative_boundary {α : Type*} [LinearOrder α]
     (μ_a μ_b : α) :
@@ -117,7 +117,7 @@ structure MannerEffect where
 
 /-- EN in ambidirectional constructions (comparatives, *before*-clauses)
     triggers evaluativity but is not atypical — it's a productive pattern
-    cross-linguistically (Cépeda 2018, Krifka 2010b). -/
+    cross-linguistically. -/
 def enEvaluativeEffect : MannerEffect :=
   { evaluative := true, atypical := false }
 

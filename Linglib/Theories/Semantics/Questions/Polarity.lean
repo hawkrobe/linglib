@@ -473,7 +473,7 @@ inductive AltInsistence where
 /-!
 ## On Ladd's INPQ/ONPQ Distinction
 
-Ladd (1981) distinguished:
+@cite{ladd-1981} distinguished:
 - **INPQ** (inner negation): negation scopes narrowly, speaker expects negative answer
 - **ONPQ** (outer negation): negation scopes widely, speaker expects positive answer
 

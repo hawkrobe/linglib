@@ -2,7 +2,7 @@ import Linglib.Theories.Semantics.Polarity.CzechNegation
 
 /-!
 # Czech Diagnostic Particles
-@cite{stakov-2026}
+@cite{stakov-2026} @cite{romero-2015}
 
 Particles and adverbs used as diagnostics for the three-way negation distinction
 in Czech polar questions (Staňková 2026, Table 1).
@@ -44,7 +44,7 @@ inductive ParticleSemantics where
       Requires propositional negation to create "not yet" meaning. -/
   | temporalEndpoint
   /-- Veridical emphasis: strengthens assertion/question commitment.
-      Related to VERUM (Romero 2015). -/
+      Related to VERUM. -/
   | veridicalEmphasis
   /-- General NPI: requires DE licensing. -/
   | npi
@@ -114,7 +114,7 @@ def jeste : ParticleEntry :=
 /-- *fakt* 'really'
 
 Licensed by inner and medial negation, but blocked by outer negation.
-*Fakt* functions as a veridical emphasis marker related to VERUM (Romero 2015).
+*Fakt* functions as a veridical emphasis marker related to VERUM.
 It's incompatible with outer negation because outer negation is FALSUM —
 combining VERUM emphasis with FALSUM creates a pragmatic contradiction.
 

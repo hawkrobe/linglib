@@ -13,7 +13,7 @@ over two binary variables, noisy-OR parameterization, and probability
 distributions with conditional probability, independence, and correlation.
 
 - **CausalRelation**: A→C, C→A, or A⊥C causal structure
-- **NoisyOR**: Noisy-OR parameterization for probabilistic causal links (Cheng 1997)
+- **NoisyOR**: Noisy-OR parameterization for probabilistic causal links
 - **WorldState**: Joint distribution over two binary variables A and C
 
 -/
@@ -23,7 +23,7 @@ namespace Core.CausalBayesNet
 -- Causal Relations
 
 /-- Causal relations between two binary variables A and C.
-    Used by Grusdt, Lassiter & Franke (2022) for conditional semantics. -/
+    Used by @cite{grusdt-lassiter-franke-2022} for conditional semantics. -/
 inductive CausalRelation
   | ACausesC    -- A → C
   | CCausesA    -- C → A
@@ -38,7 +38,7 @@ instance : ToString CausalRelation where
 
 -- Noisy-OR Parameterization
 
-/-- Noisy-OR parameterization for a causal link (Cheng 1997).
+/-- Noisy-OR parameterization for a causal link.
 
     - `background` (b): P(C | ¬A) — background rate
     - `power` (Δ): P(C | A) - P(C | ¬A) — causal power -/
@@ -77,7 +77,7 @@ end NoisyOR
 
 /-- A probability distribution over two binary variables A and C.
 
-    Used by Grusdt et al. (2022): a "world" is a probability distribution
+    Used by @cite{grusdt-lassiter-franke-2022}: a "world" is a probability distribution
     because conditionals make claims about probabilities (P(C|A) > θ). -/
 structure WorldState where
   /-- Marginal probability P(A) -/

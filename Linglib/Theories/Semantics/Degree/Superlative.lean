@@ -7,9 +7,9 @@ import Linglib.Theories.Semantics.Degree.Core
 
 Compositional semantics for the superlative morpheme `-est`/`most`.
 
-## Heim (1999): Absolute vs. Relative
+## @cite{heim-1999}: Absolute vs. Relative
 
-Heim (1999) identifies two readings of superlatives:
+@cite{heim-1999} identifies two readings of superlatives:
 
 - **Absolute**: "Kim climbed the highest mountain" = the mountain that
   is highest of all mountains.

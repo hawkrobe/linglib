@@ -30,10 +30,10 @@ PLA assignment merges variable and pronoun assignments via sum type.
 -/
 abbrev MergedAssignment (E : Type*) := (VarIdx ⊕ PronIdx) → E
 
-/-- Variable dref: projection at .inl i -/
+/-- Variable dref: projection at.inl i -/
 def varDref {E : Type*} (i : VarIdx) : Dref (MergedAssignment E) E := λ g => g (.inl i)
 
-/-- Pronoun dref: projection at .inr i -/
+/-- Pronoun dref: projection at.inr i -/
 def pronDref {E : Type*} (i : PronIdx) : Dref (MergedAssignment E) E := λ g => g (.inr i)
 
 

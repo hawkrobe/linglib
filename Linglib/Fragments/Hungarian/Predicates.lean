@@ -11,7 +11,7 @@ the subject but also with the definiteness of the object.
 
 ## Definite vs Indefinite Conjugation
 
-The conjugation type correlates with complement size (Egressy 2026):
+The conjugation type correlates with complement size:
 - *hogy*-CP complements trigger **definite** conjugation
   (*tud-t-a* know-PST-3SG.DEF)
 - Bare (small clause) complements allow **indefinite** conjugation
@@ -22,7 +22,7 @@ structural size difference between *hogy*-CP and bare complements.
 
 ## Attitude Verbs
 
-The three verbs formalized here are used in Egressy (2026) to
+The three verbs formalized here are used in @cite{egressy-2026} to
 demonstrate size-sensitive SOT:
 - *tud* 'know' — factive, doxastic veridical
 - *mond* 'say' — speech-act verb
@@ -55,7 +55,7 @@ structure HungarianVerbEntry extends VerbCore where
 -- ════════════════════════════════════════════════════════════════
 
 /-- *tud* 'know' — factive doxastic attitude verb.
-    Egressy (2026), exx. (9)–(10): key verb for the size-sensitive SOT contrast.
+    @cite{egressy-2026}, exx. (9)–(10): key verb for the size-sensitive SOT contrast.
     Selects both *hogy*-CP (definite conj.) and bare complement (indefinite conj.). -/
 def tud : HungarianVerbEntry where
   form := "tud"
@@ -74,7 +74,7 @@ def tud : HungarianVerbEntry where
   complementSig := some .mono
 
 /-- *mond* 'say' — speech-act verb.
-    Egressy (2026), ex. (11a): extends SOT pattern to communication verbs.
+    @cite{egressy-2026}, ex. (11a): extends SOT pattern to communication verbs.
     Selects *hogy*-CP (definite conj.); no bare complement frame. -/
 def mond : HungarianVerbEntry where
   form := "mond"
@@ -88,7 +88,7 @@ def mond : HungarianVerbEntry where
   levinClass := some .say
 
 /-- *hisz* 'believe' — doxastic non-veridical attitude verb.
-    Egressy (2026), ex. (11b): extends SOT pattern to belief verbs.
+    @cite{egressy-2026}, ex. (11b): extends SOT pattern to belief verbs.
     Selects *hogy*-CP (definite conj.); no bare complement frame. -/
 def hisz : HungarianVerbEntry where
   form := "hisz"
@@ -112,7 +112,7 @@ def allEntries : List HungarianVerbEntry := [tud, mond, hisz]
 -- ════════════════════════════════════════════════════════════════
 
 /-- Whether a verb form is in the definite conjugation.
-    Used as a clause-size diagnostic (Egressy 2026, §5):
+    Used as a clause-size diagnostic:
     definite conjugation → CP complement (*hogy*-clause). -/
 def HungarianVerbEntry.pastDefForm (v : HungarianVerbEntry) : String :=
   v.formPastDef

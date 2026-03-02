@@ -262,7 +262,7 @@ theorem sdt_luce_odds_ratio (d_prime x : ℝ) :
 
 The Gaussian CDF Phi(x) is well-approximated by the logistic function:
 
-    Phi(x) ≈ 1 / (1 + exp(-k*x))    where k ≈ π/√3 ≈ 1.702
+    Phi(x) ≈ 1 / (1 + exp(-k*x)) where k ≈ π/√3 ≈ 1.702
 
 This means SDT choice probabilities (which involve Phi) can be approximated
 by Luce-logistic choice probabilities (which involve softmax/logistic).

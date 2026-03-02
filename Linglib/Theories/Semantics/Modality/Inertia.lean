@@ -1,7 +1,7 @@
 import Linglib.Theories.Semantics.Modality.Kratzer
 
 /-!
-# Inertial Modality (Dowty 1979) @cite{dowty-1979}
+# Inertial Modality @cite{dowty-1979}
 @cite{fusco-sgrizzi-2025} @cite{kratzer-2012} @cite{portner-1998}
 
 The inertial ordering source ranks accessible worlds by how well they match
@@ -16,10 +16,9 @@ the "normal continuation" of the current state of affairs.
 
 Inertial modality underpins:
 - **Progressive aspect**: "John was crossing the street" → in inertia worlds,
-  John finishes crossing (Dowty 1979; Portner 1998)
+  John finishes crossing
 - **Intention readings**: *convincere a partire* → in inertia worlds of
   the experiencer's rational attitude, the leaving comes about
-  (Fusco & Sgrizzi 2025)
 
 -/
 
@@ -30,7 +29,7 @@ open Semantics.Attitudes.Intensional
 
 /-- Inertial modal parameters: circumstantial base + inertial ordering.
 
-    Dowty (1979): w' is an inertia world of w iff w' matches w up to
+    @cite{dowty-1979}: w' is an inertia world of w iff w' matches w up to
     the reference time and the course of events in w continues without
     interruption in w'.
 

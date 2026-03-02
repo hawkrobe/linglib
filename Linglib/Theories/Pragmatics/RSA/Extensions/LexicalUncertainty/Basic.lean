@@ -11,7 +11,7 @@ the semantic content of utterances. Rather than a fixed lexicon, there is a
 set of possible lexica Λ, and pragmatic inference involves reasoning about
 which lexicon is in use.
 
-### Innovation (Bergen, Levy & Goodman 2016)
+### Innovation
 
 The marginalization over lexica happens at L₁, not L₀:
 - L₀ is still parameterized by a specific lexicon L
@@ -37,7 +37,7 @@ removed. Type definitions and structural properties are preserved. RSA computati
 /--
 A lexicon maps each utterance to a truth function over worlds.
 
-In Bergen et al. (2016) notation:
+In @cite{bergen-levy-goodman-2016} notation:
   L(u, w) = 1 if w ∈ ⟦u⟧_L, else 0
 
 For graded semantics, we allow values in [0,1].

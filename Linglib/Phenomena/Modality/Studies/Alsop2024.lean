@@ -3,7 +3,7 @@ import Linglib.Tactics.RSAPredict
 import Mathlib.Analysis.SpecialFunctions.Pow.Real
 
 /-!
-# Alsop (2024) — Free Choice *Any* as GI-RSA
+# @cite{alsop-2024} — Free Choice *Any* as GI-RSA
 @cite{alsop-2024} @cite{champollion-alsop-grosu-2019} @cite{dayal-1998} @cite{franke-bergen-2020} @cite{szabolcsi-2004} @cite{tessler-franke-2020}
 
 "Disjunction, Free Choice, and Exhaustification" (Chapter 4)
@@ -13,7 +13,7 @@ import Mathlib.Analysis.SpecialFunctions.Pow.Real
 Domain: "You may take any class" with 2 items {S, P}. 7 states based on
 permission structure (which baskets are permitted). 4 utterances. 2 global
 interpretation functions (weak/Szabolcsi vs strong/Dayal), following the
-GI-RSA architecture of Franke & Bergen (2020).
+GI-RSA architecture of @cite{franke-bergen-2020}.
 
 - **L0**: L0(w|u,I) ∝ ⟦u⟧^I(w) (meaning under interpretation I)
 - **S1**: S1(u|w,I) ∝ L0(w|u,I)^α (rpow belief-based)
@@ -46,7 +46,7 @@ open Real (rpow rpow_nonneg)
 -- §1. Domain Types
 -- ============================================================================
 
-/-- The 7 states from Alsop (2024) for a 2-item domain {S, P}.
+/-- The 7 states from @cite{alsop-2024} for a 2-item domain {S, P}.
     Each state is defined by which baskets are permitted:
     w0 (nothing), wS (S only), wP (P only), wSP (both). -/
 inductive FCIState where
@@ -199,8 +199,8 @@ theorem permission_correspondence :
 -- §6. RSAConfig
 -- ============================================================================
 
-/-- Alsop (2024) GI-RSA model for free choice *any*.
-    Two global interpretations serve as latent variables (Franke & Bergen 2020).
+/-- @cite{alsop-2024} GI-RSA model for free choice *any*.
+    Two global interpretations serve as latent variables.
     S1 score is rpow(L0, α) — standard belief-based RSA. -/
 noncomputable def cfg (worldPr : FCIState → ℝ) (hp : ∀ w, 0 ≤ worldPr w) :
     RSA.RSAConfig Utterance FCIState where
@@ -359,7 +359,7 @@ theorem no_fc_under_negation :
 -- §10. Verification
 -- ============================================================================
 
-/-- The 8 qualitative findings from Alsop (2024). -/
+/-- The 8 qualitative findings from @cite{alsop-2024}. -/
 inductive Finding where
   | exclusiveness_derived
   | exclusiveness_robust
@@ -398,7 +398,7 @@ noncomputable def formalize : Finding → Prop
       ¬(negCfg.L1_marginal .mayNotAny hasExclusiveness >
         negCfg.L1_marginal .mayNotAny (fun w => !hasExclusiveness w))
 
-/-- The RSA model accounts for all 8 findings from Alsop (2024). -/
+/-- The RSA model accounts for all 8 findings from @cite{alsop-2024}. -/
 theorem all_findings_verified : ∀ f : Finding, formalize f := by
   intro f; cases f
   · exact exclusiveness_derived

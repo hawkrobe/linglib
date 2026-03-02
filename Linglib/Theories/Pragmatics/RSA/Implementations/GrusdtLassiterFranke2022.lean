@@ -611,7 +611,7 @@ L1 hearing "if A then C" assigns 1/3 probability to each causal relation.
 This reveals a limitation of the current model specification:
 conditional perfection does NOT emerge without additional structure.
 
-The full Grusdt et al. (2022) model requires:
+The full @cite{grusdt-lassiter-franke-2022} model requires:
 1. Priors over world states that depend on causal relation
 2. Or asymmetric semantics for different causal structures
 -/

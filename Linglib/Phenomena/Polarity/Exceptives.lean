@@ -372,7 +372,7 @@ def qforceToExceptiveType : QForce → Option QuantifierType
 
 /-- Universal quantifiers in the Fragment license but-exceptives;
     existential quantifiers don't. This connects Fragment metadata
-    to the empirical generalization in von Fintel (1993).
+    to the empirical generalization in @cite{von-fintel-1993}.
     "Every student but John" ✓ vs "*Some student but John" ✗. -/
 theorem fragment_exceptive_bridge :
     QuantityWord.all.entry.qforce = .universal ∧

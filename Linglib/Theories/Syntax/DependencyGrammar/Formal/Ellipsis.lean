@@ -4,7 +4,7 @@ import Linglib.Theories.Syntax.DependencyGrammar.Formal.Catena
 # Ellipsis as Catena-Targeting
 @cite{osborne-2019} @cite{osborne-gross-2012}
 
-Formalizes Osborne's (2019, Ch 12–13) thesis: ellipsis targets catenae, not
+Formalizes @cite{osborne-2019}'s thesis: ellipsis targets catenae, not
 constituents. This is the primary empirical motivation for the catena concept —
 it explains why VP ellipsis, gapping, pseudogapping, sluicing, stripping, and
 fragment answers all elide connected-but-not-necessarily-complete-subtree material.

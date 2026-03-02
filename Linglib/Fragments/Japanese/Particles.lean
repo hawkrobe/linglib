@@ -18,7 +18,7 @@ directly onto the three layers of the left periphery:
 ## Part 2: Outlook Markers
 
 Adverbs and focus particles that express subjective evaluation and manage
-discourse stances, following Kubota (2026) and Kubota & Ido (2026a,b).
+discourse stances, following @cite{kubota-2026} and Kubota & Ido (2026a,b).
 
 -/
 
@@ -65,7 +65,7 @@ def koto : ParticleEntry :=
 
 /-- *kke* — meta question particle (MQP). Only in matrix questions and quotations.
     Has a "remind-me" presupposition: speaker has forgotten Ans(Q) and believes
-    the addressee knows it (Sauerland & Yatsushiro 2017). -/
+    the addressee knows it. -/
 def kke : ParticleEntry :=
   { form := "っけ", romaji := "kke"
   , layer := .sap
@@ -76,7 +76,7 @@ def allParticles : List ParticleEntry := [ka, no_, koto, kke]
 end Fragments.Japanese.Particles
 
 
-/-! ## Part 2: Outlook Markers (Kubota 2026)
+/-! ## Part 2: Outlook Markers
 
 Japanese adverbs and focus particles that function as "outlook markers" —
 discourse markers with dual-layered secondary meaning (presuppositional +

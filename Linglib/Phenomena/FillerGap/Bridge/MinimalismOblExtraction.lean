@@ -9,7 +9,7 @@ import Linglib.Theories.Syntax.Minimalism.Core.ClauseSpine
 Connects three Minimalist abstractions — ClauseSpine, Agree/feature-valuation,
 and Spellout — to the empirical data on =(y)a' distribution in SJO Mam.
 
-## The Analysis (Elkins, Imanishi & Coon 2026)
+## The Analysis
 
 1. Voice⁰ (and Dir⁰) in Mam carry [uOblique] (an unvalued probe feature).
 2. When an oblique DP undergoes successive-cyclic Ā-movement through
@@ -182,7 +182,7 @@ theorem all_ld_embedded_predictions_match :
 
 /-- Against resumptive-pronoun analysis (§7.1):
     =(y)a' is island-sensitive — it is blocked by syntactic islands.
-    Resumptive pronouns typically rescue island violations (Sells 1984),
+    Resumptive pronouns typically rescue island violations,
     so island sensitivity argues that =(y)a' is a reflex of movement,
     not resumption. -/
 theorem eqya_not_resumptive :
@@ -261,7 +261,7 @@ theorem dir_spellout_eqya :
 
 section Derivation
 
-/-! Models Tree 27 from Elkins et al. (2026), §5.
+/-! Models Tree 27 from @cite{elkins-imanishi-coon-2026}, §5.
 
 The derivation shows the three key steps of the analysis:
 1. Voice⁰ enters the derivation with [uOblique]

@@ -79,13 +79,13 @@ theorem exh_parses_count : exhParses.length = 8 := rfl
 
 /-- Different exhaustification strategies from the literature.
 
-    - `IE`: Innocent Exclusion (Fox 2007, Spector 2016)
+    - `IE`: Innocent Exclusion
       Excludes alternatives that can be consistently excluded in ALL maximal ways.
 
-    - `MW`: Maximal Worlds / Minimal Models (Groenendijk & Stokhof 1984)
+    - `MW`: Maximal Worlds / Minimal Models
       Keeps only minimal worlds relative to the alternative ordering.
 
-    Theorem 9 (Spector 2016): When ALT is closed under ∧, exhIE = exhMW. -/
+    Theorem 9: When ALT is closed under ∧, exhIE = exhMW. -/
 inductive ExhOperator where
   | IE : ExhOperator  -- Innocent Exclusion
   | MW : ExhOperator  -- Maximal Worlds / Minimal Models
@@ -102,7 +102,7 @@ def applyExh {World : Type*} (op : ExhOperator) (ALT : Set (Prop' World))
   | .MW => exhMW ALT φ
 
 /-- When ALT is closed under conjunction, both operators agree.
-    This is Theorem 9 from Spector (2016). -/
+    This is Theorem 9 from @cite{spector-2016}. -/
 theorem ie_eq_mw_when_closed {World : Type*} (ALT : Set (Prop' World)) (φ : Prop' World)
     (hclosed : closedUnderConj ALT) :
     applyExh .IE ALT φ = applyExh .MW ALT φ := by

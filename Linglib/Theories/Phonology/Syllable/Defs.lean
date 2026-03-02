@@ -6,7 +6,7 @@ import Linglib.Theories.Phonology.Features
 Syllable constituency (onset–nucleus–coda), sonority scale, the Sonority
 Sequencing Principle, moraic weight, and OT markedness constraints.
 
-Source: Goldsmith (2011) "The Syllable" in *The Handbook of Phonological
+Source: @cite{goldsmith-2011} "The Syllable" in *The Handbook of Phonological
 Theory* (Ch 6, pp. 164–196). Cross-referenced with Hayes §4.6 and §15.
 
 @cite{goldsmith-2011}
@@ -55,7 +55,7 @@ def sonorityOf (s : Segment) : Nat :=
 -- ============================================================================
 
 /-- A syllable: onset, nucleus, coda. The rhyme (nucleus ++ coda) groups
-    naturally in phonological processes (Goldsmith 2011, §6.2). -/
+    naturally in phonological processes. -/
 structure Syllable where
   onset   : List Segment
   nucleus : List Segment

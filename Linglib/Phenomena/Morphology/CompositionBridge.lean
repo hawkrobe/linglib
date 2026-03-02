@@ -81,10 +81,10 @@ theorem fireman_plural_form : firemanStem.paradigm.head?.map (·.formRule firema
 -- §3: Feature Generation
 -- ============================================================================
 
-/-- Singular base features include `number := some .Sing`. -/
+/-- Singular base features include `number := some.Sing`. -/
 theorem dog_sg_number : dogStem.baseFeatures.number = some .Sing := rfl
 
-/-- Plural rule sets `number := some .Plur`. -/
+/-- Plural rule sets `number := some.Plur`. -/
 theorem dog_pl_number :
     dogStem.paradigm.head?.map (·.featureRule dogStem.baseFeatures |>.number)
     = some (some UD.Number.Plur) := rfl
@@ -125,7 +125,7 @@ theorem john_cat_propn : johnStem.cat = .PROPN := rfl
 /-- Common nouns get category NOUN. -/
 theorem dog_cat_noun : dogStem.cat = .NOUN := rfl
 
-/-- Proper names carry person := some .third. -/
+/-- Proper names carry person := some.third. -/
 theorem john_person : johnStem.baseFeatures.person = some .third := rfl
 
 -- ============================================================================
@@ -193,7 +193,7 @@ theorem mass_noun_zero_rules :
 
 /-- With the mereological plural rule, plural marking is NOT semantically
     vacuous: there exist predicates and entities for which the plural
-    denotation differs from the base. This witnesses Link's (1983) point
+    denotation differs from the base. This witnesses @cite{link-1983}'s point
     that singular and plural nouns denote distinct sets. -/
 theorem plural_changes_truth_conditions :
     ∃ (atomPred : Bool → Bool) (closurePred : (Bool → Bool) → Bool → Bool)
@@ -225,7 +225,7 @@ open Morphology.Diagnostics (CliticAffixProfile)
 /-- The plural `-s` affix is classified as an inflectional affix by
     Zwicky's diagnostics, AND is semantically non-vacuous in the
     MorphRule framework. Both analyses agree that plural marking
-    carries semantic content (Link 1983). -/
+    carries semantic content. -/
 theorem plural_affix_semantic_agreement :
     affixPluralS.classify = .inflAffix ∧
     (pluralNounRule (α := Bool) id id).isVacuous = false := by
@@ -266,7 +266,7 @@ theorem irregular_plurals_match_fragment :
 -- §11: Bridge to Bybee (1985) Relevance Hierarchy
 -- ============================================================================
 
-/-! The Bybee (1985) relevance hierarchy orders morpheme categories by
+/-! The @cite{bybee-1985} relevance hierarchy orders morpheme categories by
 semantic relevance to the verb stem. Categories with *higher* relevance
 rank (e.g., agreement = 8) are *less* semantically relevant — and
 therefore more likely to be semantically vacuous.
@@ -277,7 +277,7 @@ while number on nouns (which changes denotation via Link 1983) is not. -/
 
 open Core.Morphology (MorphCategory)
 
-/-- Verb agreement (3sg `-s`) has `category = .agreement`,
+/-- Verb agreement (3sg `-s`) has `category =.agreement`,
     which has the highest relevance rank (= least relevant to
     verb meaning). This predicts semantic vacuity — and indeed
     `verbAgreement3sg` has `isVacuous = true`. -/
@@ -287,8 +287,8 @@ theorem agreement_highest_rank_is_vacuous :
     (verbAgreement3sg Unit).isVacuous = true :=
   ⟨rfl, rfl, rfl⟩
 
-/-- Plural noun marking has `category = .number`, distinct from
-    `.agreement` — it changes the noun's denotation (Link 1983).
+/-- Plural noun marking has `category =.number`, distinct from
+    `.agreement` — it changes the noun's denotation.
     The full mereological rule has `isVacuous = false`. -/
 theorem plural_number_not_vacuous :
     (pluralNounRule (α := Bool) id id).category = .number ∧

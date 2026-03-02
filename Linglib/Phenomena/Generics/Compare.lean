@@ -59,7 +59,7 @@ open Phenomena.Generics.KindReference
 ## Carlson's Foundational Insights
 @cite{carlson-1977}
 
-Carlson (1977) established the key ideas that all subsequent theories build on:
+@cite{carlson-1977} established the key ideas that all subsequent theories build on:
 
 1. Bare plurals are proper names of kinds (type e, not quantifiers)
 2. Kinds are spatially unbounded (can be "here and there")
@@ -90,7 +90,7 @@ Both introduce existential quantification over instances/stages of the kind,
 then apply the object-level predicate to those instances.
 
 ```
-Carlson:   λk. ∃y[R(y,k) ∧ P(y)]
+Carlson: λk. ∃y[R(y,k) ∧ P(y)]
 Chierchia: λk. ∃x[x ∈ ∪k(w) ∧ P(x)]
 ```
 
@@ -345,7 +345,7 @@ theorem theory_phenomena_alignment :
 /-!
 ## Alternative Theories: Same Predictions, Different Mechanisms
 
-Chierchia (1998) and Krifka (2004) both correctly predict the empirical patterns
+@cite{chierchia-1998} and @cite{krifka-2004} both correctly predict the empirical patterns
 but propose different underlying mechanisms:
 
 | Phenomenon | Chierchia | Krifka |
@@ -440,7 +440,7 @@ theorem chierchia_krifka_observationally_equivalent :
 
 The theories make different predictions for:
 
-1. Scrambling and scope (Le Bruyn & de Swart 2022): See below. This is
+1. Scrambling and scope: See below. This is
    where Krifka is correct and Chierchia fails.
 
 2. Information structure effects: Krifka predicts kind readings require
@@ -660,10 +660,10 @@ theorem theories_diverge_on_scrambling :
 /-!
 ## Theoretical Implications
 
-Le Bruyn & de Swart (2022) conclude:
+@cite{le-bruyn-de-swart-2022} conclude:
 
-1. Krifka (2004) is empirically superior for scrambling languages
-2. Chierchia (1998) needs modification to handle position-sensitive scope
+1. @cite{krifka-2004} is empirically superior for scrambling languages
+2. @cite{chierchia-1998} needs modification to handle position-sensitive scope
 3. Kind reference ≠ narrow scope: Scrambled BPs can be kind-referring
    while taking wide scope, showing these are orthogonal properties
 

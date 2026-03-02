@@ -24,7 +24,7 @@ relativization, clefting).
 Toba Batak's extraction restriction contrasts with:
 - **Tagalog/Seediq** (Austronesian): Philippine-style voice/Case
   determines extraction via agreement morphology — a voice-as-case
-  system. Erlewine (2018, §4.1) argues TB is NOT this type.
+  system. @cite{erlewine-2018} argues TB is NOT this type.
 - **Mam** (Mayan): Extraction is unrestricted, but oblique extraction
   triggers a dedicated morpheme (=(y)a') as an Agree reflex on Voice⁰.
 - **English**: No extraction restriction; gap strategy.

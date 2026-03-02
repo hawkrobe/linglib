@@ -4,22 +4,21 @@ import Linglib.Theories.Semantics.Lexical.Verb.VerbEntry
 import Linglib.Theories.Interfaces.SyntaxSemantics.Linking
 
 /-!
-# Severing Account of θ-Role Assignment (Kratzer 1996; Schäfer 2008)
+# Severing Account of θ-Role Assignment
 
-@cite{kratzer-1996} @cite{schaefer-2008} @cite{alexiadou-schfer-2015} @cite{levin-2004} @cite{schfer-2008}The **severing** account (Kratzer 1996) holds that the Voice head —
+@cite{kratzer-1996} @cite{schaefer-2008} @cite{alexiadou-schfer-2015} @cite{levin-2004} @cite{schfer-2008}The **severing** account holds that the Voice head — @cite{goldberg-1995}
 not the verb root — determines which theta role the external argument
 gets. The verb root is category-neutral; argument structure comes from
 the functional sequence.
 
 Note: this is sometimes called the "constructionist" position, but that
-term is better reserved for Construction Grammar (Goldberg 1995, Borer
-2005), which makes a different (stronger) claim. The Minimalist Voice
+term is better reserved for Construction Grammar, which makes a different (stronger) claim. The Minimalist Voice
 analysis is specifically Kratzer's **severing** of the external argument.
 
 ## The prediction
 
 `VoiceFlavor.thetaRole` maps each Voice flavor to the theta role
-it assigns. The current typology (Kratzer 1996, Schäfer 2008) has
+it assigns. The current typology has
 exactly two θ-assigning flavors:
 
 - Voice_AG → agent
@@ -35,7 +34,7 @@ subjects (know, believe, enjoy) require either:
 
 `compatibleVoices` derives which Voice flavors a verb is compatible
 with, based on independently motivated VerbCore properties. This
-captures Levin's (2004) gradient verb–construction pairing: causative
+captures @cite{levin-2004}'s gradient verb–construction pairing: causative
 alternation verbs (break, melt, open) are compatible with BOTH
 Voice_AG and Voice_nonThematic, while non-alternating verbs have a
 single compatible Voice.
@@ -60,7 +59,7 @@ open _root_.Interfaces.SyntaxSemantics (LinkingTheory ArgPosition)
 -- § 1. Voice flavor → theta role (the severing prediction)
 -- ════════════════════════════════════════════════════════════════════
 
-/-- Severing prediction (Kratzer 1996, Schäfer 2008):
+/-- Severing prediction:
     Voice flavor determines WHICH theta role the external argument gets.
 
     This goes beyond `assignsTheta` (which only says WHETHER there is one)
@@ -95,8 +94,8 @@ theorem nonthematic_predicts_none :
 
     - `causalSource.isSome` → Voice_CAUSE (Class II psych, Kim 2024)
     - `unaccusative` → Voice_nonThematic (anticausative)
-    - `controlType = .raising` → Voice_expletive (no external argument)
-    - `levinClass = .weather` → Voice_expletive (expletive subject)
+    - `controlType =.raising` → Voice_expletive (no external argument)
+    - `levinClass =.weather` → Voice_expletive (expletive subject)
     - default → Voice_AG (agentive) -/
 def selectedVoice (v : VerbCore) : VoiceFlavor :=
   if v.causalSource.isSome then .causer
@@ -114,11 +113,11 @@ def selectedVoice (v : VerbCore) : VoiceFlavor :=
     Most verbs have a single compatible Voice (categorical). Causative
     alternation verbs are compatible with both Voice_AG (transitive)
     and Voice_nonThematic (inchoative) — this is the gradient
-    verb–construction pairing that Levin (2004) identifies.
+    verb–construction pairing that @cite{levin-2004} identifies.
 
     The current implementation uses `selectedVoice` as the sole element.
     TODO: extend to detect alternating verbs via MeaningComponents
-    (changeOfState ∧ causation ∧ ¬instrumentSpec → [.agentive, .nonThematic]). -/
+    (changeOfState ∧ causation ∧ ¬instrumentSpec → [.agentive,.nonThematic]). -/
 def compatibleVoices (v : VerbCore) : List VoiceFlavor :=
   [selectedVoice v]
 
@@ -138,7 +137,7 @@ def severingTheta (v : VerbCore) : Option ThetaRole :=
 -- § 5. LinkingTheory instance
 -- ════════════════════════════════════════════════════════════════════
 
-/-- The severing account (Kratzer 1996) as a `LinkingTheory`.
+/-- The severing account as a `LinkingTheory`.
 
     Structural context = `VoiceFlavor`. The `predict` function ignores
     the verb — Voice alone determines the external argument's theta

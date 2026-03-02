@@ -8,7 +8,7 @@ import Linglib.Theories.Semantics.Conditionals.Basic
 @cite{cornulier-1983} @cite{evcen-bale-barner-2026} @cite{groenendijk-stokhof-1984} @cite{von-fintel-2001}
 
 Formalizes the connection between conditional perfection and speech-act level
-exhaustification, following von Fintel (2001) "Conditional strengthening."
+exhaustification, following @cite{von-fintel-2001} "Conditional strengthening."
 
 ## Key Insight
 
@@ -19,10 +19,9 @@ exhaustification: the answer "A causes C" is exhaustified against the
 alternative "B causes C," yielding "only A causes C." Combined with a coverage
 assumption (every C-event has some trigger), this entails `¬A→¬C`.
 
-This is von Fintel's (2001) reconstruction of Cornulier (1983): when the QUD
+This is @cite{von-fintel-2001}'s reconstruction of @cite{cornulier-1983}: when the QUD
 asks for sufficient conditions for C (antecedent-focus), the conditional answer
-triggers exhaustification over alternative antecedents. Evcen, Bale & Barner
-(2026) experimentally validate this prediction.
+triggers exhaustification over alternative antecedents. @cite{evcen-bale-barner-2026} experimentally validate this prediction.
 
 -/
 
@@ -41,7 +40,7 @@ In a conditional perfection scenario, there is a set of potential triggers
 world. The key QUD is "which trigger causes C?" and the answer "trigger t
 causes C" has alternatives "trigger t' causes C" for each other trigger t'.
 
-This models von Fintel's (2001, §4) analysis: the relevant alternatives are
+This models @cite{von-fintel-2001}'s analysis: the relevant alternatives are
 not propositional alternatives to the conditional, but alternative *answers*
 to the question "under which conditions does C hold?" -/
 structure AnswerSpace (Trigger W : Type*) where
@@ -69,8 +68,8 @@ def answerAlternatives {Trigger W : Type*} (as : AnswerSpace Trigger W)
 /-- Antecedent-focus QUD: partitions worlds by which trigger is active.
 
 Under this QUD, asserting "t causes C" invites exhaustification against
-alternative triggers, following Groenendijk & Stokhof's (1984) theory of
-exhaustive answers applied to conditionals (von Fintel 2001, pp. 15-17). -/
+alternative triggers, following @cite{groenendijk-stokhof-1984} theory of
+exhaustive answers applied to conditionals. -/
 def antecedentFocusQUD {Trigger W : Type*} [DecidableEq Trigger]
     (activeTrigger : W → Option Trigger) : QUD W :=
   QUD.ofDecEq activeTrigger "antecedent-focus"
@@ -90,7 +89,7 @@ def consequentFocusQUD {Effect W : Type*} [DecidableEq Effect]
 /-- The exhaustified answer: assert "t causes C" and innocently exclude
 all alternative triggers.
 
-This is `exhIE` from Spector (2016) applied at the **answer level** rather
+This is `exhIE` from @cite{spector-2016} applied at the **answer level** rather
 than the propositional level — the key move that makes exhaustification yield
 perfection rather than a contradictory specific world.
 
@@ -114,7 +113,7 @@ If:
 
 then `¬p → ¬C`.
 
-This is the core logical step underlying von Fintel's (2001) analysis:
+This is the core logical step underlying @cite{von-fintel-2001}'s analysis:
 exhaustification provides exclusion (only t causes C), the QUD-driven
 coverage assumption closes the gap to perfection (every C has a cause,
 the only cause requires p, so ¬p → ¬C).
@@ -164,7 +163,7 @@ If the exhaustified answer holds at world `w` and alternative trigger `t'`
 is innocently excludable (its negation belongs to every MC-set), then
 `t'` does not cause C at `w`.
 
-This is the key connecting lemma: it bridges `exhIE` (Spector 2016) to the
+This is the key connecting lemma: it bridges `exhIE` to the
 exclusion hypothesis in `perfection_from_exclusion_and_coverage`. Without it,
 `exhaustifiedAnswer` and the perfection theorem are disconnected definitions. -/
 theorem exhaustifiedAnswer_excludes
@@ -227,7 +226,7 @@ is φ or ∼a' for a' ∈ ALT, and all a' = a). The set {φ, ∼a} is itself
 compatible (consistency from `h_consist`). By maximality of E with
 E ⊆ {φ, ∼a}: {φ, ∼a} ⊆ E. Hence ∼a ∈ E for every MC-set E.
 
-This closes the gap between the abstract IE machinery (Spector 2016) and
+This closes the gap between the abstract IE machinery and
 concrete scenarios with a single competing alternative — the typical
 case in conditional perfection with two triggers. -/
 theorem singleton_alt_innocently_excludable

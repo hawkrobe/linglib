@@ -4,15 +4,15 @@ import Linglib.Core.Context.Basic
 import Linglib.Theories.Morphology.Core.Exponence
 
 /-!
-# Tense and Participant Perspective (Lakoff 1970)
+# Tense and Participant Perspective
 @cite{cumming-2026} @cite{lakoff-1970}
 
-**Participant perspective** (Lakoff 1970) — psychological salience and hearer
+**Participant perspective** — psychological salience and hearer
 novelty — is distinct from **temporal perspective** (Kiparsky's π / Tsilia,
 Zhao & Sharvit 2026), which concerns the tense anchor point. This module
 handles the former; `TsiliaEtAl2026.lean` handles the latter.
 
-Lakoff (1970) "Tense and Its Relation to Participants" argues that tense
+@cite{lakoff-1970} "Tense and Its Relation to Participants" argues that tense
 selection is sensitive to speaker/hearer epistemic states, not just temporal
 ordering. The chipmunk *IS* still there, but the speaker uses past tense
 because the event is no longer psychologically **salient**. Likewise, present
@@ -23,7 +23,7 @@ This module extends `EvidentialFrame` with two orthogonal Boolean participant
 dimensions — `speakerSalience` and `hearerNovelty` — and defines Lakoff's
 five key predicates on this enriched structure.
 
-## Relationship to Cumming (2026)
+## Relationship to @cite{cumming-2026}
 
 Cumming's `EvidentialFrame` adds acquisition time A to Reichenbach's (S, R, E),
 capturing the constraint that nonfuture evidence is *downstream* of the event.

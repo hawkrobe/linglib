@@ -73,7 +73,7 @@ structure MustMinimalPair where
 -- §1 — Karttunen's Problem: Bare vs. Must Minimal Pairs
 -- ════════════════════════════════════════════════════════════════════════════
 
-/-- VF&G ex. 3 (Karttunen 1972): "John left" vs. "John must have left."
+/-- VF&G ex. 3: "John left" vs. "John must have left."
     The must-sentence "expresses more conviction" yet is felt to be weaker. -/
 def johnLeft : MustMinimalPair where
   bare := "John left."
@@ -86,7 +86,7 @@ def johnLeft : MustMinimalPair where
   exampleNum := "3"
   notes := "Karttunen (1972): 'intuitively, (3b) makes a weaker claim than (3a)'"
 
-/-- VF&G ex. 4 (Groenendijk & Stokhof 1975): "John must be at home" vs.
+/-- VF&G ex. 4: "John must be at home" vs.
     "John is at home." -/
 def johnHome : MustMinimalPair where
   bare := "John is at home."
@@ -99,7 +99,7 @@ def johnHome : MustMinimalPair where
   exampleNum := "4"
   notes := "G&S: 'A statement like (4a) is weaker than (4b). (4b) expresses more conviction'"
 
-/-- VF&G ex. 5 (Kratzer 1991): "She climbed Mount Toby" vs.
+/-- VF&G ex. 5: "She climbed Mount Toby" vs.
     "She must have climbed Mount Toby." -/
 def mountToby : MustMinimalPair where
   bare := "She climbed Mount Toby."

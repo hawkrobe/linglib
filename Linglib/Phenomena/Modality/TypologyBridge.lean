@@ -6,7 +6,7 @@ import Linglib.Phenomena.Modality.GermanModalsBridge
 # Cross-Linguistic Modal Typology
 
 Empirical modal inventories from 27 languages (17 families) mapped to the
-2×3 force-flavor meaning space, following Imel, Guo, & Steinert-Threlkeld (2026).
+2×3 force-flavor meaning space, following Imel, Guo, & @cite{imel-guo-steinert-threlkeld-2026}.
 
 ## Mapping conventions (raw typological data → 2×3 grid)
 

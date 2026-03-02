@@ -6,7 +6,7 @@ import Linglib.Theories.Semantics.Dynamic.Core.CCP
 
 @cite{veltman-1996}
 
-Veltman (1996) extends update semantics with **expectation patterns** —
+@cite{veltman-1996} extends update semantics with **expectation patterns** —
 normality orderings on worlds — and two new operators:
 
 - **Normally p**: refines the expectation pattern so p-worlds are preferred
@@ -105,7 +105,7 @@ def assertUpdate (φ : W → Prop) (σ : ExpState W) : ExpState W :=
     The information state is unchanged — we don't learn that p is true,
     only that p is *expected*.
 
-    This is the core innovation of Veltman (1996): defaults operate on
+    This is the core innovation of @cite{veltman-1996}: defaults operate on
     the expectation pattern, not on the information state. -/
 def normallyUpdate (φ : W → Prop) (σ : ExpState W) : ExpState W :=
   ⟨σ.info, σ.order.refine φ⟩
@@ -205,7 +205,7 @@ theorem normally_presumably_succeeds (φ : W → Prop) (d : Set W)
     (i.e., the state has accepted "normally p"), then asserting any
     q preserves this. Learning new facts does not undo expectations.
 
-    Veltman (1996), Proposition 3.6(iv). -/
+    @cite{veltman-1996}, Proposition 3.6(iv). -/
 theorem persistence_assert (σ : ExpState W) (φ ψ : W → Prop)
     (h : σ.order.respects φ) :
     (assertUpdate ψ σ).order.respects φ := h
@@ -214,7 +214,7 @@ theorem persistence_assert (σ : ExpState W) (φ ψ : W → Prop)
     then processing "normally q" (for any q) preserves this. Later
     defaults do not undo earlier ones.
 
-    Veltman (1996), Proposition 3.6(iv). -/
+    @cite{veltman-1996}, Proposition 3.6(iv). -/
 theorem persistence_normally (σ : ExpState W) (φ ψ : W → Prop)
     (h : σ.order.respects φ) :
     (normallyUpdate ψ σ).order.respects φ :=
@@ -232,7 +232,7 @@ theorem normally_creates_respect (σ : ExpState W) (φ : W → Prop) :
 /-- **Idempotency**: if the state already accepts "normally φ" (the
     ordering respects φ), then processing "normally φ" again is a no-op.
 
-    Veltman (1996), Proposition 3.6(ii) at the state level. -/
+    @cite{veltman-1996}, Proposition 3.6(ii) at the state level. -/
 theorem normallyUpdate_idempotent (σ : ExpState W) (φ : W → Prop)
     (h : σ.order.respects φ) :
     normallyUpdate φ σ = σ := by

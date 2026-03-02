@@ -6,8 +6,7 @@ import Linglib.Core.Discourse.Epistemicity
 # Tense–Modal Evidentiality Bridge
 @cite{cumming-2026} @cite{von-fintel-gillies-2010} @cite{zheng-2026}
 
-Connects Cumming's (2026) tense evidential constraint to von Fintel & Gillies's
-(2010) kernel semantics for epistemic `must`. Both phenomena reflect the same
+Connects @cite{cumming-2026}'s tense evidential constraint to @cite{von-fintel-gillies-2010} kernel semantics for epistemic `must`. Both phenomena reflect the same
 underlying requirement: the speaker's evidence is *indirect* — causally downstream
 of the target event but not directly settling it.
 

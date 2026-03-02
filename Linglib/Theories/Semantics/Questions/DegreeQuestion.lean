@@ -5,7 +5,7 @@ import Linglib.Core.Logic.ModalLogic
 # Degree Questions and the Universal Density of Measurement
 @cite{beck-rullmann-1999} @cite{fox-2007} @cite{link-1983} @cite{rullmann-1995}
 
-Fox & Hackl (2007) "The universal density of measurement"
+@cite{fox-2007} "The universal density of measurement"
 (*Linguistics and Philosophy* 29:537–586).
 
 ## Core Claim
@@ -22,7 +22,7 @@ Fox & Hackl show that four apparently distinct constructions reduce to
 
 | Construction                          | Formulation                         |
 |---------------------------------------|-------------------------------------|
-| Degree question "How much φ?"         | HasMaxInf φ w (Rullmann 1995)       |
+| Degree question "How much φ?"         | HasMaxInf φ w       |
 | Definite "the amount that φ"          | HasMaxInf φ w (Link 1983 maximality)|
 | Only/EXH "only φ"                     | HasMaxInf φ w (OIG, F&H eq. 6)     |
 | Implicature of bare "φ"              | HasMaxInf φ w (covert EXH)         |
@@ -110,7 +110,7 @@ theorem negativeIsland_noAnswer [DenselyOrdered α]
 /-- Degree property under a **universal modal** (required, certain, have to):
     □φ(d)(w) := ∀w' ∈ R(w). φ(d)(w')
 
-    Fox & Hackl (2007) exx. (13)–(14): the negation ¬□φ = ∃w'. ¬φ(d)(w')
+    @cite{fox-2007} exx. (13)–(14): the negation ¬□φ = ∃w'. ¬φ(d)(w')
     can have a max⊨ element even on dense scales, because two ∃-claims
     about different d can use different witness worlds — so neither entails
     the other, and maximality is achievable. -/

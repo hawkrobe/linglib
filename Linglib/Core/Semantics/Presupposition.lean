@@ -3,12 +3,12 @@ import Linglib.Core.Semantics.Proposition
 
 /-!
 # Presupposition
-@cite{heim-1983} @cite{schlenker-2009} @cite{von-fintel-1999}
+@cite{heim-1983} @cite{schlenker-2009} @cite{von-fintel-1999} @cite{geurts-2005}
 
 Presuppositional propositions and projection mechanisms.
 
 `PrProp` decomposes a proposition into presupposition + assertion.
-Filtering connectives (Heim 1983, Schlenker 2009) model how presuppositions
+Filtering connectives model how presuppositions
 project through logical operators.
 
 -/
@@ -188,7 +188,7 @@ def strawsonEntails (p q : PrProp W) : Prop :=
 def strawsonEquiv (p q : PrProp W) : Prop :=
   strawsonEntails p q ∧ strawsonEntails q p
 
-/-- Flexible accommodation disjunction (Geurts 2005, Aloni 2022, Yagi 2025).
+/-- Flexible accommodation disjunction.
 
 Each disjunct is evaluated only against worlds where its own presupposition
 holds. The overall presupposition is the disjunction of the individual
@@ -198,7 +198,7 @@ but flexible accommodation correctly predicts presupposition p ∨ q and
 allows the disjunction to be false.
 
 Formally, this is the static counterpart of Yagi's dynamic update:
-  s[φ ∨ ψ] = s[χ][φ] ∪ s[ω][ψ],  where s[χ] ∪ s[ω] = s
+  s[φ ∨ ψ] = s[χ][φ] ∪ s[ω][ψ], where s[χ] ∪ s[ω] = s
 When presuppositions conflict, χ = ¬q and ω = ¬p, giving pointwise:
   (p(w) ∧ φ(w)) ∨ (q(w) ∧ ψ(w))
 -/

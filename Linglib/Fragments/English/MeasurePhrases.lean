@@ -2,13 +2,13 @@ import Linglib.Theories.Semantics.Probabilistic.Measurement.Basic
 
 /-!
 # English Measure Phrase Fragment
-@cite{bale-schwarz-2022} @cite{bale-schwarz-2026} @cite{coppock-2022} @cite{scontras-2014}
+@cite{bale-schwarz-2022} @cite{bale-schwarz-2026} @cite{coppock-2022} @cite{scontras-2014} @cite{davidson-1979}
 
 Lexical entries for English measure terms and the preposition *per*.
 
 This fragment provides the English-specific data layer for measurement:
-- Measure term entries (gram, kilo, mile, ...) typed by `Dimension`
-- The preposition *per* with its dual interpretation (Bale & Schwarz 2026)
+- Measure term entries (gram, kilo, mile,...) typed by `Dimension`
+- The preposition *per* with its dual interpretation
 - Context-dependent interpretation selection
 
 ## Architecture
@@ -74,7 +74,7 @@ open Semantics.Probabilistic.Measurement (QuantizingNounClass ContainerReading)
 /-- A quantizing noun entry: an English noun that turns a mass term into a
 countable expression.
 
-Scontras (2014, Ch. 3) identifies three classes, each with different
+@cite{scontras-2014} identifies three classes, each with different
 semantics:
 
 - **Measure terms** (kilo, liter): type ⟨n, ⟨e,t⟩⟩, always quantity-uniform.
@@ -193,17 +193,17 @@ def allAtomizers : List QuantizingNounEntry :=
 -- § 3. Per-Phrase Interpretation
 -- ============================================================================
 
-/-- Interpretation mode for *per*-phrases (Bale & Schwarz 2026).
+/-- Interpretation mode for *per*-phrases.
 
 *Per* exhibits a dual interpretive pattern:
 - **Compositional**: when saturating measure predicates that select for simplex
   dimensions (weight, distance). The grammar computes meaning via multiplication.
 - **Math speak**: when describing quotient dimensions (density, speed). The phrase
   verbalizes quantity calculus notation and gets its meaning from extra-grammatical
-  conventions, parallel to mixed quotation (Davidson 1979). -/
+  conventions, parallel to mixed quotation. -/
 inductive PerInterpretation where
   /-- Grammatically composed: *per* interacts with a covert pronoun *pro*
-      whose value is determined anaphorically (Bale & Schwarz 2022).
+      whose value is determined anaphorically.
       ⟦per⟧ = λq. λx. λr. (μ_dim(q)(x) / q) * r -/
   | compositional
   /-- Math speak: the *per*-phrase verbalizes a quantity calculus expression.

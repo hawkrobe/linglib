@@ -17,13 +17,13 @@ This module demonstrates the Bridge pattern:
 ## Architecture
 
 ```
-Phenomena.Agreement.data         ← Pure strings: "he sleeps" ✓
+Phenomena.Agreement.data ← Pure strings: "he sleeps" ✓
        ↓ (parse via Lexicon)
-Fragments.English.Lexicon        ← Unified lookup
+Fragments.English.Lexicon ← Unified lookup
        ↓ (interpret via FromFragments)
-CCG.FromFragments                ← VerbEntry → CCG.Cat
+CCG.FromFragments ← VerbEntry → CCG.Cat
        ↓ (derive)
-CCG.DerivStep                    ← Syntactic derivation
+CCG.DerivStep ← Syntactic derivation
 ```
 -/
 

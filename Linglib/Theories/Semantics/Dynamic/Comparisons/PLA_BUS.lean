@@ -133,8 +133,8 @@ See `Linglib.Theories.Semantics.Dynamic.BUS.FreeChoice` for the full derivation.
 
 ### PLA Negation (Test)
 ```
-s[¬φ] = s   if s[φ] = ∅
-      = ∅   otherwise
+s[¬φ] = s if s[φ] = ∅
+      = ∅ otherwise
 ```
 This is why ¬¬φ ≠ φ: double negation returns s, not s[φ].
 

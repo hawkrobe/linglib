@@ -1,13 +1,13 @@
 import Linglib.Theories.Semantics.Questions.QParticleLayer
 
 /-!
-# Q-Particle Typology Bridge (Dayal 2025)
+# Q-Particle Typology Bridge
 @cite{bhatt-dayal-2020} @cite{dayal-2025} @cite{sauerland-yatsushiro-2017}
 
 Cross-linguistic Q-particle data classified by left-peripheral layer
 (Dayal 2025: §1.3). This file imports `QParticleLayer` from Theories/
 and connects Q-particle distribution to the three-point left-peripheral
-structure [SAP [PerspP [CP ...]]].
+structure [SAP [PerspP [CP...]]].
 
 The theory-neutral data (clause typing, declarative questions, shiftiness,
 conjunct/disjunct marking) lives in `Phenomena.Questions.Typology`.

@@ -50,7 +50,7 @@ def CoExtensional {W τ : Type*} (f g : Intension W τ) : Prop := ∀ w, f w = g
 /-- Kripke's necessity of identity: if two rigid designators co-refer at any
 world, they are co-extensional (and hence the same intension).
 
-This is the formal kernel of the Kripke (1980) argument: "Hesperus" and
+This is the formal kernel of the @cite{kripke-1980} argument: "Hesperus" and
 "Phosphorus" are both rigid; if they co-refer at the actual world then
 they pick out the same object at every world, so "Hesperus = Phosphorus"
 is necessary if true. -/
@@ -97,7 +97,7 @@ theorem rigid_neq_nonrigid {W τ : Type*} (f g : Intension W τ)
 
 /-- A character is stable iff it assigns the same content at every context.
 
-Kaplan (1989) Remark 5: non-indexical expressions have stable character —
+@cite{kaplan-1989} Remark 5: non-indexical expressions have stable character —
 their content does not depend on the context of utterance. This generalizes
 `constantCharacter` from `Reference/Basic.lean` to the framework-agnostic level. -/
 def StableCharacter {C W τ : Type*} (char : C → Intension W τ) : Prop :=
@@ -111,7 +111,7 @@ theorem stableCharacter_iff_sameContent {C W τ : Type*} (char : C → Intension
   · intro h c₁ c₂; funext w; exact h c₁ c₂ w
 
 /-- Rigid + stable character = fully constant: the same value at every
-context and every world. Kaplan (1989) Remark 10.
+context and every world. @cite{kaplan-1989} Remark 10.
 
 If an expression has stable character (non-indexical) and rigid content
 (designator), then it yields the same extension everywhere. -/
@@ -132,7 +132,7 @@ end Core.Intension
 
 namespace Core.ReferentialMode
 
-/-- Partee's (1973) three-way interpretive classification for referential
+/-- @cite{partee-1973}'s three-way interpretive classification for referential
     expressions. Applies uniformly to pronouns (entity variables) and
     tenses (temporal variables).
 
@@ -142,7 +142,7 @@ namespace Core.ReferentialMode
     | anaphoric | "he" → salient individual| past → salient narrative time  |
     | bound     | "his" in ∀x...his...     | tense in "whenever...is..."    |
 
-    Elbourne (2013) collapses this to a two-way free/bound distinction
+    @cite{elbourne-2013} collapses this to a two-way free/bound distinction
     (`SitVarStatus`); `isFree` provides the coarsening. -/
 inductive ReferentialMode where
   /-- Anchored to utterance context (Kaplan's "I", Partee's deictic tense) -/
@@ -172,7 +172,7 @@ namespace Core.VarAssignment
 
 /-- Generic variable assignment: maps indices to values in domain `D`.
     Instantiate with `D = Entity` for pronoun interpretation (H&K 1998)
-    or `D = Time` for temporal variable interpretation (Partee 1973). -/
+    or `D = Time` for temporal variable interpretation. -/
 abbrev VarAssignment (D : Type*) := ℕ → D
 
 /-- Modified assignment g[n ↦ d]: update index `n` to value `d`. -/

@@ -13,7 +13,7 @@ paradigm system: the number of inflection classes (E-complexity), the
 number of paradigm cells, and information-theoretic measures of paradigm
 predictability (I-complexity).
 
-## Ackerman & Malouf (2013) Sample
+## @cite{ackerman-malouf-2013} Sample
 
 Ten typologically diverse languages from Ackerman & Malouf (2013, Tables
 2–3), spanning three phyla, four macro-areas, and a range from 2 to 109
@@ -32,7 +32,7 @@ namespace Phenomena.Morphology.Typology
 /-- Summary statistics for a language's morphological paradigm system,
     as reported in published studies.
 
-    Fields correspond to Tables 2–3 of Ackerman & Malouf (2013). -/
+    Fields correspond to Tables 2–3 of @cite{ackerman-malouf-2013}. -/
 structure LanguageData where
   /-- Language name -/
   name : String
@@ -158,7 +158,7 @@ def spanish : LanguageData where
 -- §3. The Full Sample
 -- ============================================================================
 
-/-- All 10 languages in the Ackerman & Malouf (2013) sample (Table 3). -/
+/-- All 10 languages in the @cite{ackerman-malouf-2013} sample (Table 3). -/
 def ackermanMalouf2013 : List LanguageData :=
   [fur, ngiti, nuer, kwerba, chinantec, mazatec, finnish, german, russian, spanish]
 
@@ -357,7 +357,7 @@ theorem ch25_total :
 /-- WALS Ch 26: Whether a language predominantly uses prefixes or suffixes
     for inflectional morphology.
 
-    Dryer (2013) classifies languages on a five-point scale from strongly
+    @cite{dryer-haspelmath-2013} classifies languages on a five-point scale from strongly
     suffixing to strongly prefixing, based on the proportion of inflectional
     categories expressed by suffixes vs prefixes. This is one of the most
     robust typological universals: suffixing strongly dominates worldwide

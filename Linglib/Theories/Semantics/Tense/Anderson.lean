@@ -115,7 +115,7 @@ variable {W : Type*}
     the consequent. The antecedent restriction does no work — the
     conditional is vacuously true regardless of what the antecedent says.
 
-    Condoravdi (2002): indicative conditionals with small domains can be
+    @cite{condoravdi-2002}: indicative conditionals with small domains can be
     trivial because every accessible world already satisfies the consequent.
     Domain expansion (via HP/X-marking) resolves this by adding worlds
     where the consequent may fail. -/

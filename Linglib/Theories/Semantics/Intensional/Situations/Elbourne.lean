@@ -6,8 +6,8 @@ import Linglib.Theories.Semantics.Reference.Donnellan
 import Linglib.Core.Discourse.QUD
 
 /-!
-# Elbourne (2013): Situation-Semantic Definite Descriptions @cite{elbourne-2013}
-@cite{barwise-perry-1983} @cite{elbourne-2005} @cite{heim-1982} @cite{postal-1966} @cite{schwarz-2009}
+# @cite{elbourne-2013}: Situation-Semantic Definite Descriptions @cite{elbourne-2013}
+@cite{barwise-perry-1983} @cite{elbourne-2005} @cite{heim-1982} @cite{postal-1966} @cite{schwarz-2009} @cite{kamp-1981} @cite{stanley-szab-2000}
 
 Formalizes the core theoretical machinery from:
 
@@ -18,7 +18,7 @@ Elbourne argues that definite descriptions have a Fregean/Strawsonian
 semantics — they are type e, introduce a presupposition of existence +
 uniqueness, and are evaluated *relative to situations* (parts of worlds).
 
-The single lexical entry ⟦the⟧ = λf.λs : ∃!x f(x)(s) = 1 . ιx f(x)(s) = 1
+The single lexical entry ⟦the⟧ = λf.λs : ∃!x f(x)(s) = 1. ιx f(x)(s) = 1
 unifies:
 - Referential vs attributive uses (Ch 5): free vs bound situation pronoun
 - Presupposition projection (Ch 4): domain conditions + λ-Conversion
@@ -33,7 +33,7 @@ unifies:
 - `the_sit_at_world_eq_the_uniq_w`: specializes to existing `the_uniq_w`
 - `attributive_is_the_sit_bound`: Donnellan's attributive = `the_sit'` (bound s)
 - `donkey_uniqueness_from_minimality`: minimal situations yield uniqueness
-- `pronoun_is_definite_article`: ⟦it⟧ = ⟦the⟧ (Postal 1966, Elbourne 2005)
+- `pronoun_is_definite_article`: ⟦it⟧ = ⟦the⟧
 - `the_sit_assertion_implies_presup`: assertion entails presupposition
 
 -/
@@ -61,7 +61,7 @@ uniqueness and domain restriction.
 
 Based on Barwise & Perry (1983: 7): situations are "individuals having
 properties and standing in relations at various spatiotemporal locations".
-Kratzer (1989): situations are parts of worlds with a mereological structure. -/
+@cite{kratzer-1989}: situations are parts of worlds with a mereological structure. -/
 structure SituationFrame where
   /-- Domain of situations (D_s) — includes both partial situations and worlds -/
   Sit : Type
@@ -94,7 +94,7 @@ def SituationFrame.isMinimal (F : SituationFrame)
 
 /-- ⟦the⟧ in Elbourne's system: the situation-relative Fregean definite.
 
-⟦the⟧ = λf_{⟨e,st⟩}.λs : s ∈ D_s ∧ ∃!x f(x)(s) = 1 . ιx f(x)(s) = 1
+⟦the⟧ = λf_{⟨e,st⟩}.λs : s ∈ D_s ∧ ∃!x f(x)(s) = 1. ιx f(x)(s) = 1
 
 Takes a restrictor (property of entities relative to situations) and a
 situation, presupposes existence+uniqueness *in that situation*, and
@@ -107,7 +107,7 @@ The situation parameter `s` may be:
 
 This single entry, combined with situation binding, replaces the need for
 separate `the_uniq` (uniqueness) and `the_fam` (familiarity) denotations.
-The "two types of definites" (Schwarz 2009) arise from *which* situation
+The "two types of definites" arise from *which* situation
 the pronoun refers to, not from lexical ambiguity.
 
 For compositionality with the existing `PrProp` infrastructure, we package
@@ -156,7 +156,7 @@ theorem the_sit_at_world_eq_the_uniq_w
 
 /-- The presupposition of `the_sit'` is determined solely by the filter result.
 
-The weak/strong article distinction (Schwarz 2009) reduces to situation size:
+The weak/strong article distinction reduces to situation size:
 - Weak article: evaluated at a world-sized situation (global uniqueness)
 - Strong article: evaluated at a discourse-restricted situation (familiarity)
 
@@ -203,8 +203,8 @@ bound (attributive).
 - Free s → s mapped to a salient restrictor situation s* (= referential)
 - Bound s → s bound by an operator (attitude verb, modal, quantifier) (= attributive)
 
-Donnellan (1966) identified a real pragmatic phenomenon (use-types) but
-was wrong to posit a semantic ambiguity (Kripke 1977). -/
+@cite{donnellan-1966} identified a real pragmatic phenomenon (use-types) but
+was wrong to posit a semantic ambiguity. -/
 theorem attributive_is_the_sit_bound
     {W E : Type} (domain : List E) [DecidableEq E]
     (restrictor : E → W → Bool) (scope : E → W → Bool) :
@@ -241,7 +241,7 @@ In a minimal situation where "a farmer owns a donkey", there is exactly
 one farmer and exactly one donkey. The definite article's uniqueness
 presupposition is thus automatically satisfied.
 
-This replaces dynamic-semantic approaches (Kamp 1981, Heim 1982) that
+This replaces dynamic-semantic approaches that
 use discourse referents and file cards. Elbourne achieves the same
 covariation effect through situation binding + minimality.
 
@@ -303,7 +303,7 @@ Evidence: "Hans wants the ghost in his attic to be quiet tonight."
 - Presupposes: Hans BELIEVES there is exactly one ghost in his attic.
 - Does NOT presuppose: there IS a ghost in Hans's attic.
 
-Under Karttunen's (1974) generalization, the presupposition of the
+Un@cite{karttunen-1974}'s generalization, the presupposition of the
 embedded definite projects to the matrix subject's beliefs. This is
 exactly what `the_sit` predicts: the situation variable `s` is bound
 within the scope of `wants`, so uniqueness is evaluated in Hans's
@@ -348,15 +348,15 @@ no language-of-thought variables (contra Stanley 2000). Just situations.
 This is the simplest account: the situation variable that EVERY definite
 already has (for uniqueness) also handles incompleteness for free. -/
 inductive IncompletenessSource where
-  /-- Situation variable restricts domain (Elbourne 2013) -/
+  /-- Situation variable restricts domain -/
   | situationVariable
-  /-- Covert relation variable (von Fintel 1994, Stanley 2000) -/
+  /-- Covert relation variable -/
   | relationVariable
-  /-- Pragmatic enrichment (Sperber & Wilson 1986) -/
+  /-- Pragmatic enrichment -/
   | pragmaticEnrichment
-  /-- Explicit approach (Neale 1990, 2004) -/
+  /-- Explicit approach -/
   | explicitApproach
-  /-- Language of thought relation variable (Elbourne 2008a) -/
+  /-- Language of thought relation variable -/
   | lotRelationVariable
   deriving DecidableEq, BEq, Repr
 
@@ -459,7 +459,7 @@ theorem pronoun_assertion_implies_presup
 -- §11: Bridge to Definiteness Types (Core/Definiteness.lean)
 -- ============================================================================
 
-/-- The weak/strong article distinction (Schwarz 2009) is a distinction
+/-- The weak/strong article distinction is a distinction
 in which situation the definite is evaluated at, not a lexical ambiguity.
 
 - Weak article (uniqueness): evaluated at a WORLD-SIZED situation
@@ -468,7 +468,7 @@ in which situation the definite is evaluated at, not a lexical ambiguity.
   → uniqueness among salient entities only
 
 This connects Core/Definiteness.lean's `DefPresupType` to Elbourne's system:
-both .uniqueness and .familiarity are generated by `the_sit`, differing
+both.uniqueness and.familiarity are generated by `the_sit`, differing
 only in the size of the evaluation situation. -/
 def presupTypeToSitDescription : DefPresupType → String
   | .uniqueness  => "world-sized situation (global uniqueness)"
@@ -488,7 +488,7 @@ Elbourne's situation-binding analysis.
 
 The key advance: Elbourne derives the distinction from independently
 needed situation variables, while Donnellan posits a semantic ambiguity
-that Kripke (1977) argued against. -/
+that @cite{kripke-1977} argued against. -/
 def useModeToSitVar : UseMode → SitVarStatus
   | .referential => .free
   | .attributive => .bound
@@ -551,7 +551,7 @@ inductive UnifiedPhenomenon where
   | fregeStrawsonPresupposition
   /-- Ch 4: Presupposition projection through connectives -/
   | presuppositionProjection
-  /-- Ch 5: Referential vs attributive uses (Donnellan 1966) -/
+  /-- Ch 5: Referential vs attributive uses -/
   | referentialAttributive
   /-- Ch 6: Donkey anaphora covariation -/
   | donkeyAnaphora

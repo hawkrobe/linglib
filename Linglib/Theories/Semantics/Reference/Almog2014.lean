@@ -121,7 +121,7 @@ theorem opacity_from_structured_propositions {W E : Type*} :
 
 /-- Bridge to RSA reference games: L0 = attributive, S1 = referential.
 
-In Frank & Goodman (2012) reference games, the literal listener L0
+In @cite{frank-goodman-2012} reference games, the literal listener L0
 interprets descriptions attributively (checking which referents satisfy
 the description). The pragmatic speaker S1 uses descriptions referentially
 (choosing a description to pick out the intended referent for the listener).

@@ -6,11 +6,11 @@ import Linglib.Fragments.Bulgarian.Evidentials
 import Linglib.Core.Discourse.Evidence
 
 /-!
-# Izvorski (1997) Bridge Theorems @cite{izvorski-1997}
+# @cite{izvorski-1997} Bridge Theorems @cite{izvorski-1997}
 @cite{koev-2017} @cite{kratzer-1981}
 
-Bridge connecting Izvorski's (1997, SALT 7) epistemic modal analysis of the
-Bulgarian evidential to Kratzer's modal semantics and Koev's (2017) non-modal
+Bridge connecting @cite{izvorski-1997}'s epistemic modal analysis of the
+Bulgarian evidential to Kratzer's modal semantics and @cite{koev-2017}'s non-modal
 analysis.
 
 ## The EV Operator (Paper's (17)–(19))

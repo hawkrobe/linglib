@@ -51,6 +51,8 @@ open Semantics.Montague.BayesianSemantics
 
 /-!
 ## Threshold Semantics Equivalences
+@cite{morzycki-2009}
+
 
 We show that the soft meanings defined in ThresholdSemantics.lean
 are equal to the SDS marginals computed via SDSConstraintSystem.
@@ -252,7 +254,7 @@ without explaining why.
 -/
 
 /--
-SDS can detect conflicts that LU-RSA cannot see.
+SDS can detect conflicts that LU-RSA cannot.
 
 A conflict occurs when selectional and scenario factors prefer different values.
 This predicts puns, zeugma, and pragmatic ambiguity.
@@ -344,7 +346,7 @@ theorem lursa_sds_roundtrip_prior (pkg : LURSAPackage) (L : Lexicon pkg.U pkg.W)
 /-!
 ## Scale Structure from SDS Perspective
 
-The Bigness Generalization (Morzycki 2009) follows from SDS structure:
+The Bigness Generalization follows from SDS structure:
 
 ### Positive adjectives (big)
 - min{d : big(d)} = θ_big > 0

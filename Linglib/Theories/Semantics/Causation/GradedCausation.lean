@@ -50,15 +50,15 @@ open NadathurLauer2020.Builder (CausativeBuilder)
 
 /-! ## The Three Measures (§2.2-2.4)
 
-All three are defined within structural causal models (Pearl 2009).
+All three are defined within structural causal models.
 In the general case they are continuous ∈ [0,1] (or ℕ for ALT).
 Our deterministic `CausalDynamics` yields the boundary cases. -/
 
 /-- The three causal measures that jointly predict causative verb acceptability.
 
-- `suf`: Probability of sufficiency (Pearl 2019). Continuous [0,1].
+- `suf`: Probability of sufficiency. Continuous [0,1].
   In the deterministic limit, collapses to `causallySufficient`.
-- `int`: Degree of intention (Halpern & Kleiman-Weiner 2018). Continuous [0,1].
+- `int`: Degree of intention. Continuous [0,1].
   How much the causer intended the outcome relative to alternatives.
 - `alt`: Number of alternative actions available to the causee. ℕ.
   Fewer alternatives → stronger causal influence. -/

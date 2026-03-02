@@ -1,7 +1,7 @@
 import Linglib.Theories.Syntax.Minimalism.Core.Basic
 
 /-!
-# Verbal Decomposition (Cuervo 2003)
+# Verbal Decomposition
 @cite{cuervo-2003}
 
 Sub-eventive verb heads that decompose verbal structure into
@@ -20,7 +20,7 @@ namespace Minimalism
 -- § 1: Sub-Eventive Verb Heads
 -- ============================================================================
 
-/-- Sub-eventive verb heads from Cuervo (2003).
+/-- Sub-eventive verb heads from @cite{cuervo-2003}.
 
     Spanish verbal structure decomposes into:
     - **vDO**: Dynamic subevent where an agent does something
@@ -39,10 +39,10 @@ inductive VerbHead where
 /-- A verb's event-structural decomposition as a list of VerbHeads.
 
     Key patterns:
-    - State:         [vBE]
-    - Activity:      [vDO]
-    - Inchoative:    [vGO, vBE]   (anticausative: "the door opened")
-    - Causative:     [vDO, vGO, vBE] (transitive: "John opened the door") -/
+    - State: [vBE]
+    - Activity: [vDO]
+    - Inchoative: [vGO, vBE] (anticausative: "the door opened")
+    - Causative: [vDO, vGO, vBE] (transitive: "John opened the door") -/
 def isInchoative (heads : List VerbHead) : Bool :=
   heads.contains .vGO && heads.contains .vBE && !heads.contains .vDO
 

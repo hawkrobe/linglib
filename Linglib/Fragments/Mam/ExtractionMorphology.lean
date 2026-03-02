@@ -31,7 +31,7 @@ head along the successive-cyclic movement path (Table 4, §6.2).
 
 ## Data Sources
 
-All data from Elkins, Imanishi & Coon (2026), "Wh-movement and oblique
+All data from @cite{elkins-imanishi-coon-2026}, "Wh-movement and oblique
 extraction in SJO Mam". Examples cited by section/example number.
 
 -/
@@ -48,7 +48,7 @@ namespace Fragments.Mam
 
     - `fullCP`: Full finite clause with aspect — projects Voice
     - `aspectless`: VoiceP-sized complement (no aspect) — projects Voice
-    - `infinitival`: VP-sized complement (Elkins et al. 2026, §6.1) — does NOT project Voice -/
+    - `infinitival`: VP-sized complement — does NOT project Voice -/
 inductive MamClauseType where
   /-- Full finite clause with aspect marking. Projects the full verbal
       spine including Voice. =(y)a' licensed on oblique extraction. -/
@@ -57,7 +57,7 @@ inductive MamClauseType where
       =(y)a' licensed on oblique extraction (Elkins et al. §6.1,
       following Elkins et al. 2025). -/
   | aspectless
-  /-- VP-sized infinitival complement (Elkins et al. 2026, §6.1): no Voice projected.
+  /-- VP-sized infinitival complement: no Voice projected.
       =(y)a' impossible — no Voice⁰ to host [oblique] (Elkins et al. §6.1). -/
   | infinitival
   deriving DecidableEq, BEq, Repr
@@ -73,7 +73,7 @@ def MamClauseType.projectsVoice : MamClauseType → Bool
 -- ============================================================================
 
 /-- Judgment on the status of =(y)a' in a given configuration.
-    Note: =(y)a' is an **optional** enclitic (Elkins et al. 2026, p.11, §8.2).
+    Note: =(y)a' is an **optional** enclitic.
     `licensed` means =(y)a' may grammatically appear; `blocked` means it may
     not. The optionality of =(y)a' when licensed is orthogonal to its
     distributional constraints. -/
@@ -93,7 +93,7 @@ inductive MamExtractionJudgment where
 structure MamExtractionDatum where
   /-- Descriptive label -/
   label : String
-  /-- Section/example reference in Elkins et al. (2026) -/
+  /-- Section/example reference in @cite{elkins-imanishi-coon-2026} -/
   reference : String
   /-- Type of clause -/
   clauseType : MamClauseType
@@ -303,7 +303,7 @@ theorem temporal_is_oblique_but_exempt :
 
     References:
     - Chomsky (2000, 2001) on PIC
-    - Elkins et al. (2026) §7.1 on =(y)a' island sensitivity -/
+    - @cite{elkins-imanishi-coon-2026} §7.1 on =(y)a' island sensitivity -/
 structure MovementReflex where
   /-- The morpheme is a spellout of features valued via Agree with
       a constituent that has undergone Ā-movement through the probe's
@@ -341,7 +341,7 @@ theorem eqya_island_sensitive_derived :
 -- ============================================================================
 
 /-- =(y)a' co-occurs with passive voice morphology (*-njtz*).
-    This is encoded as empirical data: `passiveOblExtraction.judgment = .licensed`.
+    This is encoded as empirical data: `passiveOblExtraction.judgment =.licensed`.
     The co-occurrence is *derivable* from VoiceHead field independence:
     passive *-njtz* is conditioned by VoiceFlavor, while =(y)a' is
     conditioned by features ([+oblique]). These are independent fields

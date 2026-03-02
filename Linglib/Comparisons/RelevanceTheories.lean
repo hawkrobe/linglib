@@ -268,8 +268,8 @@ theorem identity_qud_is_finest
 Sumers et al. Theorem 2: Any partition-based QUD can be recovered
 from some decision problem via an "identity DP over cells".
 
-Given a QUD Q that partitions W into cells {C₁, ..., Cₙ}:
-- Create actions A = {a₁, ..., aₙ} (one per cell)
+Given a QUD Q that partitions W into cells {C₁,..., Cₙ}:
+- Create actions A = {a₁,..., aₙ} (one per cell)
 - Utility U(w, aᵢ) = 1 if w ∈ Cᵢ, else 0
 
 Under this DP, the optimal speaker behavior matches QUD-based communication:
@@ -323,7 +323,7 @@ theorem qud_as_decision_problem
 
 /-- The converse: a DP with cell-structured utility induces a QUD.
 
-If U(w, a) depends only on which cell w is in, the DP is QUD-equivalent.
+If U(w, a) depends only on which cell w is, the DP is QUD-equivalent.
 -/
 def dpToQUD {W A : Type*} [DecidableEq A]
     (dp : DecisionProblem W A) (actions : List A) : GSQuestion W where
@@ -364,7 +364,7 @@ partition semantics.
 /-- Counterexample: Continuous utility DP.
 
 Consider W = ℚ (rational worlds), A = ℚ (rational actions).
-U(w, a) = -|w - a|  (closer guesses are better)
+U(w, a) = -|w - a| (closer guesses are better)
 
 This DP has infinitely many "levels" of utility - no finite partition captures it.
 -/
@@ -525,10 +525,10 @@ theorem blackwell_unifies_relevance
 
 
 /-!
-## Partition-Level Foundations (Merin 1999)
+## Partition-Level Foundations
 
 The Blackwell bridge above connects G&S refinement to question utility.
-Merin (1999) establishes the deeper partition-theoretic foundations in
+@cite{merin-1999} establishes the deeper partition-theoretic foundations in
 `Core.Partition`:
 
 1. **EU compositionality** (`QUD.eu_eq_partitionEU`): Expected utility equals

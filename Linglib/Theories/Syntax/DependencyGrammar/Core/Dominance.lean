@@ -624,7 +624,7 @@ theorem dominates_antisymm (t : DepTree)
     then v dominates a.
 
     **Key proof technique**: induction on the `Dominates` derivation.
-    The last edge in the path v → ... → c terminates at c, so its head
+    The last edge in the path v →... → c terminates at c, so its head
     endpoint must be c's unique parent a. Dropping this last edge gives
     v dominates a.
 

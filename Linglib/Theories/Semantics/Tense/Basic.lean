@@ -4,12 +4,11 @@ import Linglib.Core.Temporal.Reichenbach
 
 /-!
 # Tense Theory Infrastructure: Shared Types
-@cite{abusch-1997} @cite{deal-2020} @cite{heim-kratzer-1998} @cite{klecha-2016} @cite{kratzer-1998} @cite{ogihara-1996} @cite{sharvit-2003} @cite{von-stechow-2009} @cite{wurmbrand-2014} @cite{zeijlstra-2012}
+@cite{abusch-1997} @cite{deal-2020} @cite{heim-kratzer-1998} @cite{klecha-2016} @cite{kratzer-1998} @cite{ogihara-1996} @cite{sharvit-2003} @cite{von-stechow-2009} @cite{wurmbrand-2014} @cite{zeijlstra-2012} @cite{banfield-1982} @cite{comrie-1985} @cite{egressy-2026} @cite{ogihara-sharvit-2012} @cite{schlenker-2003}
 
 Shared types and infrastructure for the tense theories formalized in
-`Semantics.Intensional/Tense/` (Abusch 1997, Von Stechow 2009, Kratzer 1998,
-Ogihara 1996, Klecha 2016, Deal 2020, Sharvit 2003) and
-`Minimalism/Tense/` (Zeijlstra 2012, Wurmbrand 2014).
+`Semantics.Intensional/Tense/` and
+`Minimalism/Tense/`.
 
 ## Design Principle
 
@@ -48,8 +47,8 @@ open Core.Reichenbach
 
     The first 11 are the core comparison set. The next 7 are eventual
     targets documented with data frames. The final 6 are added for
-    Zeijlstra (2012), Wurmbrand (2014), Sharvit (2003), and
-    Tsilia, Zhao & Sharvit (2026) coverage. -/
+    @cite{zeijlstra-2012}, @cite{wurmbrand-2014}, @cite{sharvit-2003}, and
+    @cite{tsilia-zhao-sharvit-2026} coverage. -/
 inductive TensePhenomenon where
   -- Core comparison set (11)
   /-- "John said Mary was sick" — shifted reading (sick before saying) -/
@@ -75,30 +74,25 @@ inductive TensePhenomenon where
   /-- Kratzer (deletion) vs Ogihara (zero tense ambiguity) debate -/
   | deletionVsAmbiguity
   -- Eventual targets (7)
-  /-- "John asked who was sick" — SOT in indirect questions
-      (Sharvit 2003, Ogihara & Sharvit 2012) -/
+  /-- "John asked who was sick" — SOT in indirect questions -/
   | sotInIndirectQuestions
   /-- "She walked to the window. The garden was beautiful." — FID
-      perspective shift without attitude verb (Banfield 1982, Schlenker 2004) -/
+      perspective shift without attitude verb -/
   | freeIndirectDiscourse
-  /-- "Napoleon enters the room. He sees..." — present tense, past reference
-      (Wolfson 1979, Schiffrin 1981) -/
+  /-- "Napoleon enters the room. He sees..." — present tense, past reference -/
   | historicalPresent
-  /-- "John said Mary had been sick" — pluperfect disambiguates to shifted only
-      (Comrie 1985, Ogihara 1996) -/
+  /-- "John said Mary had been sick" — pluperfect disambiguates to shifted only -/
   | perfectTenseInteraction
   /-- "John wanted/planned to leave" — future-oriented complements
-      without standard SOT (Wurmbrand 2014, Grano 2017) -/
+      without standard SOT -/
   | futureOrientedComplements
-  /-- "Before John left, Mary was happy" — tense in temporal adjuncts
-      (Arregui & Kusumoto 1998, Ogihara & Sharvit 2012) -/
+  /-- "Before John left, Mary was happy" — tense in temporal adjuncts -/
   | adjunctClauseTense
-  /-- Amharic/Zazaki: tense shifts under attitudes paralleling pronoun shift
-      (Schlenker 2003, Anand & Nevins 2004) -/
+  /-- Amharic/Zazaki: tense shifts under attitudes paralleling pronoun shift -/
   | indexicalTenseShift
   -- Additional phenomena (5) — Sharvit, Zeijlstra, Wurmbrand coverage
   /-- "John will say Mary is sick" — present under future, simultaneous
-      with future saying time (Sharvit 2003) -/
+      with future saying time -/
   | embeddedPresentPuzzle
   /-- "Aristotle was a philosopher" — past tense ↔ subject no longer
       exists implication (Musan 1995/1997) -/
@@ -107,19 +101,17 @@ inductive TensePhenomenon where
       (Iatridou 2000, beyond Deal's counterfactual tense) -/
   | fakePast
   /-- Hebrew-type optional SOT: "John said Mary {was/is} sick" —
-      both possible with different readings (Sharvit 2003) -/
+      both possible with different readings -/
   | optionalSOT
-  /-- Wurmbrand (2014): three-way classification of infinitival tense
+  /-- @cite{wurmbrand-2014}: three-way classification of infinitival tense
       (future irrealis / propositional / restructuring) -/
   | dependentVsIndependentTense
   /-- Temporal "then" is incompatible with shifted present but compatible
-      with deleted tense — derived from tense presuppositions anchored to π
-      (Tsilia, Zhao & Sharvit 2026) -/
+      with deleted tense — derived from tense presuppositions anchored to π -/
   | thenPresentIncompatibility
   /-- Hungarian-type size-sensitive SOT: simultaneous reading available in
       TP complements but blocked in CP complements. Clause size determines
-      whether [uPAST] can Agree upward across the complement boundary
-      (Egressy 2026) -/
+      whether [uPAST] can Agree upward across the complement boundary -/
   | sizeSensitiveSOT
   deriving DecidableEq, Repr, BEq, Inhabited
 
@@ -150,11 +142,11 @@ structure TenseTheory where
   hasZeroTense : Bool
   /-- Does the theory use SOT deletion for the simultaneous reading? -/
   hasSOTDeletion : Bool
-  /-- Does the theory use syntactic Agree for SOT (Zeijlstra 2012)? -/
+  /-- Does the theory use syntactic Agree for SOT? -/
   hasAgreeBasedSOT : Bool := false
   /-- Does the theory treat tenses as presupposition triggers? -/
   hasPresuppositionalTense : Bool := false
-  /-- Does the theory predict size-sensitive SOT (Egressy 2026)? -/
+  /-- Does the theory predict size-sensitive SOT? -/
   hasSizeSensitiveSOT : Bool := false
   /-- How the theory derives the simultaneous reading -/
   simultaneousMechanism : String
@@ -410,7 +402,7 @@ theorem nonSOT_no_simultaneous :
 -- ════════════════════════════════════════════════════════════════
 
 /-!
-### Abusch's (1997) Upper Limit Constraint
+### @cite{abusch-1997}'s Upper Limit Constraint
 
 In intensional contexts, tense reference cannot exceed the local
 evaluation time. From branching futures: at the attitude event time,
@@ -420,7 +412,7 @@ accessible across all doxastic alternatives.
 ULC: embedded R' ≤ matrix E (= embedded P).
 -/
 
-/-- Abusch's (1997) Upper Limit Constraint.
+/-- @cite{abusch-1997}'s Upper Limit Constraint.
     In intensional contexts, the tense reference cannot exceed the
     local evaluation time. -/
 abbrev upperLimitConstraint {Time : Type*} [LE Time]
@@ -491,7 +483,7 @@ theorem shiftedFrame_from_tense_pronoun {Time : Type*}
     shiftedFrame matrixFrame embeddedR embeddedE := by
   simp [TensePronoun.toFrame, TensePronoun.resolve, shiftedFrame, hIdx, hResolve]
 
-/-- Double-access (Abusch 1997): present-under-past requires the complement
+/-- Double-access: present-under-past requires the complement
     to hold at BOTH speech time AND matrix event time.
 
     This bridges the `doubleAccess` definition from `Core.Tense` to the

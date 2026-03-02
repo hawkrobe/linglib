@@ -3,7 +3,7 @@
 @cite{ippolito-kiss-williams-2025}
 
 Lexical entry for Mandarin *zhǐshì* (只是) — the discourse *only*
-connective (IKW 2025). Allows all clause types as S' except exclamatives.
+connective. Allows all clause types as S' except exclamatives.
 
 -/
 

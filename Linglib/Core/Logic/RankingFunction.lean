@@ -7,7 +7,7 @@ import Linglib.Core.Logic.BeliefRevision
 qualitative, ordinal approach to belief revision that serves as the
 quantitative semantics for System P + Rational Monotonicity.
 
-Spohn (1988) introduced ranking functions as ℕ-valued measures of
+@cite{spohn-1988} introduced ranking functions as ℕ-valued measures of
 disbelief: κ(w) = 0 means w is maximally plausible (believed possible),
 while higher ranks indicate greater implausibility. The normalization
 condition — some world has rank 0 — ensures the agent always has
@@ -109,8 +109,7 @@ def toPreferential (κ : RankingFunction W) : PreferentialConsequence W :=
     For ¬φ-worlds: assign a sentinel value (max rank + 1) ensuring
     they are less plausible than any φ-world.
 
-    This is the natural revision operation for ranking functions
-    (Spohn 1988): conditionalization shifts all φ-worlds down by
+    This is the natural revision operation for ranking functions: conditionalization shifts all φ-worlds down by
     the minimum φ-rank, making the most plausible φ-worlds rank 0.
 
     The sentinel for ¬φ-worlds uses `Fintype.card W` as an upper

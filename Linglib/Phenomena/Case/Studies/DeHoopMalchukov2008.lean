@@ -5,13 +5,13 @@ import Linglib.Phenomena.Case.Typology
 import Linglib.Phenomena.Case.Studies.Aissen2003
 
 /-!
-# De Hoop & Malchukov (2008): Case-Marking Strategies @cite{de-hoop-malchukov-2008}
+# @cite{de-hoop-malchukov-2008}: Case-Marking Strategies @cite{de-hoop-malchukov-2008}
 @cite{aissen-2003} @cite{blutner-2000}
 
 Case-Marking Strategies. Linguistic Inquiry 39(4): 565–587.
 
 Derives the basic case-marking typology from two functional constraints and
-an economy constraint, evaluated in Blutner's (2000) Bidirectional OT:
+an economy constraint, evaluated in @cite{blutner-2000}'s Bidirectional OT:
 
 - **Identify** (I): Case identifies the role — overt marking should match
   argument strength (markedness principle). Penalizes form/strength mismatch.
@@ -21,7 +21,7 @@ an economy constraint, evaluated in Blutner's (2000) Bidirectional OT:
 - **Economy** (*!) / **PaIP**: Avoid overt case marking (general) or
   specifically protect the primary actant from marking (alignment-sensitive).
 
-## Bidirectional OT (Blutner 2000)
+## Bidirectional OT
 
 Standard OT selects the best form for a given meaning (speaker). BiOT adds
 the hearer's perspective via **superoptimality**: a form–meaning pair ⟨f, m⟩
@@ -157,7 +157,7 @@ def distinguishObj : NamedConstraint (CaseForm × Strength) :=
   }
 
 /-- **Economy** (*!): Penalizes any overt case marker.
-    Same as Aissen's (2003) economy family. -/
+    Same as @cite{aissen-2003}'s economy family. -/
 def economy : NamedConstraint (CaseForm × Strength) :=
   { name := "*!"
     family := .faithfulness

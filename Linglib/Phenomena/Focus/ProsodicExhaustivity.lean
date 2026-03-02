@@ -36,9 +36,9 @@ import Linglib.Core.Lexical.Word
 
 /-!
 ## Connection to RSA Theory
-@cite{bergen-goodman-2015}
+@cite{bergen-goodman-2015} @cite{rooth-1992}
 
-This phenomenon is modeled by Bergen & Goodman (2015)'s noisy channel RSA.
+This phenomenon is modeled by @cite{bergen-goodman-2015}'s noisy channel RSA.
 See: `Theories/RSA/Implementations/BergenGoodman2015.lean`
 
 The key insight: prosodic stress reduces noise rate on stressed words.
@@ -190,7 +190,7 @@ def allProsodyData : List ProsodyDatum :=
 -- Part 6: Theoretical Connections
 
 /-!
-## Noisy Channel Account (Bergen & Goodman 2015)
+## Noisy Channel Account
 
 Prosodic stress **reduces noise rate** on stressed words.
 - Louder, longer → more robust to environmental noise
@@ -212,7 +212,7 @@ See: `Theories/RSA/Implementations/BergenGoodman2015.lean`
 
 ## Alternative Accounts
 
-### Focus Semantics (Rooth 1992)
+### Focus Semantics
 
 - Focus introduces alternatives
 - Exhaustivity via exhaustification operator (Exh)

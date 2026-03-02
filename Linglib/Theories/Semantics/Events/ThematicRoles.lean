@@ -21,7 +21,7 @@ import Linglib.Core.Lexical.Word
 -- Thematic Roles (Language-Independent)
 -- ════════════════════════════════════════════════════
 
-/-- Theta roles for argument structure (Dowty 1991, Parsons 1990).
+/-- Theta roles for argument structure.
     Language-independent semantic categories classifying the relationship
     between a verb's arguments and the event it describes. Used by both
     Theory-layer modules (Semantics.Events.ThematicRoles) and Fragment-layer
@@ -47,7 +47,7 @@ open Core.Time
 -- ════════════════════════════════════════════════════
 
 /-- A thematic relation: a two-place predicate relating an entity to an event.
-    The core neo-Davidsonian type (Parsons 1990).
+    The core neo-Davidsonian type.
     Agent(j, e) means "j is the agent of event e". -/
 abbrev ThematicRel (Entity Time : Type*) [LE Time] :=
   Entity → Ev Time → Prop
@@ -59,7 +59,7 @@ abbrev ThematicRel (Entity Time : Type*) [LE Time] :=
 /-- A thematic frame bundles thematic relations for a given model.
     Each field provides the semantic content for one role.
 
-    Note: `holder` is a Theory-level role (Parsons 1990) distinct from
+    Note: `holder` is a Theory-level role distinct from
     `agent` — it selects for states, not actions. The Fragment-layer
     `ThetaRole` enum does not include `holder` since `VendlerClass`
     already encodes dynamicity. -/
@@ -80,7 +80,7 @@ structure ThematicFrame (Entity Time : Type*) [LE Time] where
   instrument : ThematicRel Entity Time
   /-- Stimulus: cause of experience -/
   stimulus : ThematicRel Entity Time
-  /-- Holder: entity in a state (Parsons 1990).
+  /-- Holder: entity in a state.
       Distinct from Agent: selects for states, not actions. -/
   holder : ThematicRel Entity Time
 
@@ -122,7 +122,7 @@ theorem stimulus_toRel : ThetaRole.toRel .stimulus frame = frame.stimulus := rfl
 -- § 5. Thematic Axioms (Aktionsart selection + uniqueness)
 -- ════════════════════════════════════════════════════
 
-/-- Semantic constraints on thematic roles (Parsons 1990, Kratzer 1996).
+/-- Semantic constraints on thematic roles.
 
     - `agent_selects_action`: agents only participate in actions
     - `holder_selects_state`: holders only participate in states
@@ -166,7 +166,7 @@ theorem agent_holder_disjoint {Entity Time : Type*} [LE Time]
 /-- Neo-Davidsonian logical form for a transitive sentence:
     "x V-ed y" ↦ ∃e. V(e) ∧ Agent(x, e) ∧ Patient(y, e)
 
-    The key Parsons (1990) insight: thematic roles are separate
+    The key @cite{parsons-1990} insight: thematic roles are separate
     conjuncts, not part of the verb's argument structure. -/
 def transitiveLogicalForm {Entity Time : Type*} [LE Time]
     (V : EvPred Time) (frame : ThematicFrame Entity Time)
@@ -196,7 +196,7 @@ def ditransitiveLogicalForm {Entity Time : Type*} [LE Time]
 abbrev EventModifier (Time : Type*) [LE Time] := EvPred Time
 
 /-- Apply a modifier to an event predicate via conjunction.
-    This is Davidson's (1967) key insight: adverbial modification is
+    This is @cite{davidson-1967}'s key insight: adverbial modification is
     simply conjunction of event predicates.
     "John kicked the ball quickly" = ∃e. kick(e) ∧ Agent(j,e) ∧ Patient(b,e) ∧ quickly(e) -/
 def modify {Time : Type*} [LE Time]
@@ -229,8 +229,7 @@ theorem modify_assoc {Time : Type*} [LE Time]
     "x is happy" ↦ ∃s. P(s) ∧ Holder(x, s)
 
     Parallel to `intransitiveLogicalForm` but using `holder` instead of
-    `agent`, reflecting that states select for holders, not agents
-    (Parsons 1990). Wellwood (2015, §3.2, p. 81): gradable adjectives
+    `agent`, reflecting that states select for holders, not agents. Wellwood (2015, §3.2, p. 81): gradable adjectives
     predicate of states with mereological structure.
 
     Note: `EventModifier` applies to states since states are events
@@ -240,13 +239,13 @@ def stativeLogicalForm {Entity Time : Type*} [LE Time]
     (x : Entity) : Prop :=
   ∃ s : Ev Time, P s ∧ frame.holder x s
 
-/-- Modified stative logical form (Wellwood 2015, §3.5):
+/-- Modified stative logical form:
     "x is happy in the morning" ↦ ∃s. P(s) ∧ Holder(x, s) ∧ M(s)
 
     State modification is event modification applied to states:
     the modifier M restricts the state variable via conjunction,
     exactly as adverbial modifiers restrict event variables in
-    Davidson (1967). -/
+    @cite{davidson-1967}. -/
 def modifiedStativeLogicalForm {Entity Time : Type*} [LE Time]
     (P : EvPred Time) (frame : ThematicFrame Entity Time)
     (x : Entity) (M : EventModifier Time) : Prop :=

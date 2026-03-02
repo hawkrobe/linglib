@@ -5,8 +5,8 @@ import Linglib.Theories.Semantics.Events.EventStructure
 # Event Structure ↔ Syntactic Heads Bridge
 @cite{cuervo-2003}
 
-Connects Rappaport Hovav & Levin's (1998) event structure templates to
-Cuervo's (2003) syntactic verb head decomposition. This bridges the
+Connects Rappaport @cite{rappaport-hovav-levin-1998} event structure templates to
+@cite{cuervo-2003}'s syntactic verb head decomposition. This bridges the
 semantic layer (Semantics.Events/EventStructure) to the syntactic layer
 (Minimalism/Core/Applicative).
 

@@ -4,7 +4,7 @@ import Linglib.Theories.Pragmatics.RSA.Extensions.InformationTheory.Basic
 # Utility Non-Monotonicity with α < 1 (Stub)
 @cite{zaslavsky-hu-levy-2020}
 
-Formalizes Proposition 2 from Zaslavsky et al. (2020):
+Formalizes Proposition 2 from @cite{zaslavsky-hu-levy-2020}:
 
 > Expected listener utility E[V_L] can decrease during RSA iterations,
 > even though G_α increases monotonically.

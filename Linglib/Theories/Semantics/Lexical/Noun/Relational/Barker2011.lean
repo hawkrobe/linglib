@@ -97,7 +97,7 @@ def canFillRelatum : InterpretationSource → Bool
   | .appliedPi => true         -- π-created slot
   | .noRelation => false       -- No slot
 
-/-- Bridging licensing follows from π-application (Ahn & Zhu 2025).
+/-- Bridging licensing follows from π-application.
 
 Sortal nouns: π creates slot (bridging OK); no π means no slot (blocked).
 Relational nouns: lexical slot exists regardless of π. -/
@@ -157,6 +157,8 @@ def derivation_bare_seat {E S : Type}
 
 /-!
 ## Algebraic Structure
+@cite{ahn-zhu-2025}
+
 
 π and Ex form a pseudo-adjoint pair:
 Ex(π(P, R)) ≈ P (when R is satisfied by some entity).

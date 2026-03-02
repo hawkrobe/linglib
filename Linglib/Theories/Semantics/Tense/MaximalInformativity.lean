@@ -6,7 +6,7 @@ import Linglib.Theories.Semantics.Lexical.Verb.Aspect
 # Maximal Informativity and Temporal *in*-Adverbials
 @cite{beck-rullmann-1999} @cite{fox-hackl-2006} @cite{kennedy-2007} @cite{krifka-1989} @cite{krifka-1998} @cite{rouillard-2026}
 
-Rouillard (2026) "Maximal informativity accounts for the distribution of
+@cite{rouillard-2026} "Maximal informativity accounts for the distribution of
 temporal *in*-adverbials" (*Linguistics and Philosophy* 49:1–56).
 
 ## Core Contribution
@@ -27,11 +27,11 @@ informative (information collapse), the TIA is blocked.
 ## Architecture
 
 ```
-Mereology (CUM, DIV, QUA)  ──▷  scalar properties of derived TIA meanings
-         │                                    │
-     telicity                            informativity
-         │                                    │
-         ▼                                    ▼
+Mereology (CUM, DIV, QUA) ──▷ scalar properties of derived TIA meanings
+         │ │
+     telicity informativity
+         │ │
+         ▼ ▼
 E-TIA licensing ◁───── MIP ─────▷ G-TIA polarity sensitivity
                                          │
                               open PTS + closed runtime
@@ -73,9 +73,9 @@ open Core.Scale (IsMaxInf HasMaxInf InformationCollapse)
 open Core.Scale in
 /-- Upward scalarity for ℕ-indexed families.
     Specialization of `Core.Scale.IsUpwardMonotone` to ℕ.
-    Rouillard (2026) p. 24: outputs of (77) are totally ordered by entailment,
+    @cite{rouillard-2026} p. 24: outputs of (77) are totally ordered by entailment,
     smaller values entail larger ones.
-    Beck & Rullmann (1999): the maximally informative number is the smallest
+    @cite{beck-rullmann-1999}: the maximally informative number is the smallest
     value returning a true proposition. -/
 abbrev UpwardScalar (P : ℕ → W → Prop) : Prop :=
   IsUpwardMonotone P
@@ -100,7 +100,7 @@ theorem upwardScalar_hasMaxInf (P : ℕ → W → Prop) (hUS : UpwardScalar P)
 
 /-- Bimonotone ℕ-families (both upward and downward scalar) make every
     value true at every world where any value is true.
-    Rouillard (2026) p. 25: the property in (80) is both upward and downward
+    @cite{rouillard-2026} p. 25: the property in (80) is both upward and downward
     scalar — equivalently, it is a constant function. This is information
     collapse. Derived from `Core.Scale.bimonotone_constant`. -/
 theorem biscalar_constant_collapse (P : ℕ → W → Prop)
@@ -115,24 +115,24 @@ theorem biscalar_constant_collapse (P : ℕ → W → Prop)
 -- ════════════════════════════════════════════════════
 
 /-- A temporal measure function: assigns positive durations to intervals.
-    Rouillard (2026) §2.2.2, eq. (5)–(7): μ is additive over non-overlapping
+    @cite{rouillard-2026} §2.2.2, eq. (5)–(7): μ is additive over non-overlapping
     times and positive. -/
 structure MeasureFun (Time : Type*) [LinearOrder Time] where
   /-- The measure of an interval in some unit φ -/
   μ : Interval Time → ℕ
   /-- Any interval can be extended to a superinterval with a given larger measure.
-      Rouillard (2026): temporal measure units (days, hours) are additive, so
+      @cite{rouillard-2026}: temporal measure units (days, hours) are additive, so
       any interval can be padded to achieve any target measure ≥ current. -/
   extensible : ∀ (i : Interval Time) (m : ℕ), μ i ≤ m →
     ∃ j : Interval Time, i.subinterval j ∧ μ j = m
   /-- Any interval can be subdivided to a subinterval with a given smaller measure.
-      Rouillard (2026): temporal measure units are additive, so any interval
+      @cite{rouillard-2026}: temporal measure units are additive, so any interval
       can be trimmed to achieve any target measure ≤ current. -/
   subdivisible : ∀ (i : Interval Time) (m : ℕ), m ≤ μ i →
     ∃ j : Interval Time, j.subinterval i ∧ μ j = m
 
 /-- Prior time span: the maximal interval right-bounded by t with measure n.
-    Rouillard (2026) eq. (50):
+    @cite{rouillard-2026} eq. (50):
     pts(n, φ, t¹) := max⊑ᵢ(λt².t² ∈ S ∧ ∃t³[μ_φ(t³) = n ∧ rb(t¹, t²) ∧ t² ⊑ᵢ t³])
     Simplified: pts(n, μ, s) is the interval consisting of every moment
     inclusively ordered between s and the moment n φ-units prior to s. -/
@@ -145,7 +145,7 @@ def pts (n : ℕ) (μ : MeasureFun Time) (s : Time)
 -- ════════════════════════════════════════════════════
 
 /-- The preposition *in* as an event-level adverbial (E-TIA reading).
-    Rouillard (2026) eq. (62): ⟦in⟧ := λM_σi λt λx_σ . M(x) ⊑ᵢ t.
+    @cite{rouillard-2026} eq. (62): ⟦in⟧ := λM_σi λt λx_σ. M(x) ⊑ᵢ t.
     For E-TIAs, M = τ (runtime function): the event's runtime is included
     in the time denoted by the measure phrase.
 
@@ -157,7 +157,7 @@ def inETIA (e : Eventuality Time) (bound : Interval Time) : Prop :=
 /-- E-TIA derived property: for each number n, the property that at world w
     there exists a P-event whose runtime is included in an n-unit time
     ending at g(1).
-    Rouillard (2026) eq. (77):
+    @cite{rouillard-2026} eq. (77):
     λnλw.∃t[μ_d(t) = n ∧ ∃e[P(e)(w) ∧ τ_w(e) ⊑ᵢ g(1) ∧ τ_w(e) ⊑ᵢ t]] -/
 def eTIAProperty (P : EventPred W Time) (μ : MeasureFun Time)
     (g1 : Interval Time) : ℕ → W → Prop :=
@@ -170,7 +170,7 @@ def eTIAProperty (P : EventPred W Time) (μ : MeasureFun Time)
 
 /-- G-TIA derived property: for each number n, the property that at world w
     an event's runtime is included in the prior time span pts(n, d, s).
-    Rouillard (2026) eq. (94), revised with open PTS (101):
+    @cite{rouillard-2026} eq. (94), revised with open PTS (101):
     λnλw.∃e[P(e)(w) ∧ τ_w(e) ⊑ᵢ o(pts(n, d, s))] -/
 def gTIAProperty (P : EventPred W Time) (μ : MeasureFun Time)
     (s : Time) : ℕ → W → Prop :=
@@ -183,9 +183,9 @@ def gTIAProperty (P : EventPred W Time) (μ : MeasureFun Time)
 -- ════════════════════════════════════════════════════
 
 /-- **Maximal Informativity Principle (MIP)**.
-    Rouillard (2026) eq. (92):
+    @cite{rouillard-2026} eq. (92):
     Given a numeral N, a measure word M, an index j, and a map function F,
-    a constituent of the form [ [ N M ] j … [ in F ] tⱼ ] is licensed only
+    a constituent of the form [ [ N M] j … [ in F] tⱼ] is licensed only
     if it is contained in a constituent γ such that, for some w¹,
     max⊨(w¹, λnλw². ⟦γ[N ↦ proₖ]⟧) = ⟦N⟧.
 
@@ -221,7 +221,7 @@ def GTIA_Licensed_Neg (P : EventPred W Time) (μ : MeasureFun Time)
 -- ════════════════════════════════════════════════════
 
 /-- **Subinterval property for event predicates** (mereological version).
-    Rouillard (2026) eq. (82): SUB(P) iff every part of a P-event's runtime
+    @cite{rouillard-2026} eq. (82): SUB(P) iff every part of a P-event's runtime
     that is also the runtime of some event is the runtime of a P-event.
     States and activities have this property; accomplishments/achievements lack it. -/
 def HasSubintervalProp (P : EventPred W Time) : Prop :=
@@ -232,7 +232,7 @@ def HasSubintervalProp (P : EventPred W Time) : Prop :=
     P w e₂
 
 /-- **Closed subinterval property** (CSUB).
-    Rouillard (2026) eq. (111): for any portion t of a P-event's runtime,
+    @cite{rouillard-2026} eq. (111): for any portion t of a P-event's runtime,
     the closed counterpart c(t) is the runtime of some P-event.
     Stronger than SUB: prevents gaps in the runtime of atelic events. -/
 def HasClosedSubintervalProp (P : EventPred W Time) : Prop :=
@@ -245,7 +245,7 @@ def HasClosedSubintervalProp (P : EventPred W Time) : Prop :=
     When a VP predicate has the subinterval property (is atelic/DIV),
     the E-TIA property is both upward and downward monotone (constant),
     so no numeral is maximally informative → the E-TIA is blocked.
-    Rouillard (2026) §4.1.1: the interaction of the subinterval property
+    @cite{rouillard-2026} §4.1.1: the interaction of the subinterval property
     with E-TIAs results in information collapse.
 
     Proof: For any world w where eTIAProperty holds at n, we show it holds
@@ -268,7 +268,7 @@ theorem eTIA_atelic_collapse (P : EventPred W Time) (μ : MeasureFun Time)
     exact ⟨j, hj_μ, e, hP, hg1, hj_sup⟩
 
 /-- **Quantized predicates yield upward scalar E-TIA properties**.
-    Rouillard (2026) §4.1.1: when P is QUA (telic), the E-TIA property in
+    @cite{rouillard-2026} §4.1.1: when P is QUA (telic), the E-TIA property in
     (77) is upward scalar — propositions from smaller n entail those from
     larger n. The maximally informative number is the smallest n returning
     a true proposition (= the actual duration of the event).
@@ -291,7 +291,7 @@ theorem eTIA_telic_upwardScalar (P : EventPred W Time) (μ : MeasureFun Time)
 -- ════════════════════════════════════════════════════
 
 /-- **No smallest open PTS can include a closed runtime**.
-    Rouillard (2026) §4.2.2, key insight: given dense time, if event runtimes
+    @cite{rouillard-2026} §4.2.2, key insight: given dense time, if event runtimes
     are closed and PTSs are open, there can never be a smallest open interval
     to *include* a closed time — because by density, there is always a moment
     between the open boundary and the closed boundary, giving a smaller PTS.
@@ -300,7 +300,7 @@ theorem eTIA_telic_upwardScalar (P : EventPred W Time) (μ : MeasureFun Time)
     information collapse: the G-TIA property is downward scalar with no minimum.
 
     Proof: By density (`DenselyOrdered`), find m with pts_open.left < m <
-    runtime.start. The open interval ]m, pts_open.right[ still contains
+    runtime.start. The open interval]m, pts_open.right[ still contains
     runtime (m < runtime.start and runtime.finish ≤ pts_open.right) and
     is strictly contained in pts_open (pts_open.left < m). -/
 theorem no_smallest_open_including_closed
@@ -328,8 +328,8 @@ theorem no_smallest_open_including_closed
 -- § 9. Bridge: Kennedy Scales ↔ TIA Licensing
 -- ════════════════════════════════════════════════════
 
-/-! The analogy between Kennedy's (2007) scale typology for gradable adjectives
-    and Rouillard's (2026) TIA licensing is structural — both use
+/-! The analogy between @cite{kennedy-2007}'s scale typology for gradable adjectives
+    and @cite{rouillard-2026}'s TIA licensing is structural — both use
     `Core.Scale.Boundedness` to classify their scales, and
     `Boundedness.isLicensed` derives the same licensing prediction from
     the classification:
@@ -390,7 +390,7 @@ theorem atelic_predicts_blocking (c : VendlerClass) (h : c.telicity = .atelic) :
 
 /-- **Revised PERFECT**: the perfect's domain of quantification is restricted
     to open intervals (S ∩ O in Rouillard's notation).
-    Rouillard (2026) eq. (107):
+    @cite{rouillard-2026} eq. (107):
     ⟦PERF⟧ := λI_it λt¹.∃t² ∈ S ∩ O[rb(t¹, t²) ∧ I(t²)]
 
     This revision is the key to deriving G-TIA polarity sensitivity:
@@ -432,7 +432,7 @@ def PERF_open (p : IntervalPred W Time) : PointPred W Time :=
 /-- E-TIA expressions are upward monotone in the numeral: if the event fits
     in an n-unit time, it fits in an m-unit time for m ≥ n. This follows
     from the containment semantics of *in* (τ(e) ⊑ t), not from the
-    numeral being lower-bounded. Compatible with Kennedy (2015) exact
+    numeral being lower-bounded. Compatible with @cite{kennedy-2015} exact
     numerals on closed scales. -/
 theorem eTIA_expression_upward_monotone (P : EventPred W Time) (μ : MeasureFun Time)
     (g1 : Interval Time) (n m : ℕ) (hnm : n ≤ m) (w : W)

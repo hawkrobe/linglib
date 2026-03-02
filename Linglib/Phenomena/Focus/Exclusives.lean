@@ -282,7 +282,7 @@ theorem standard_uses_are_answerable :
     counterexp_texting.contextType = .answerable := by
   refine ⟨rfl, rfl, rfl, rfl, rfl⟩
 
-/-- Emphatic *just* requires extreme adjectives (Morzycki 2012).
+/-- Emphatic *just* requires extreme adjectives.
     With non-extreme adjectives, *just* gets complement-exclusion instead.
 
     "The food was just amazing" → emphatic (amazing is extreme)

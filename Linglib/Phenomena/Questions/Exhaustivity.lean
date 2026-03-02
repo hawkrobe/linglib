@@ -43,7 +43,7 @@ structure MentionSomeDatum where
   deriving Repr
 
 /-- Classic mention-some: "Where can I buy X?"
-    Source: Groenendijk & Stokhof (1984)
+    Source: @cite{groenendijk-stokhof-1984}
 -/
 def whereBuyCoffee : MentionSomeDatum :=
   { question := "Where can I buy coffee?"
@@ -231,7 +231,7 @@ def nonExhMarkerExamples : List NonExhMarkerDatum :=
   [englishForExample, germanZumBeispiel, englishAmongOthers]
 
 
-/-- Van Rooy (2003): Exhaustivity depends on the decision problem.
+/-- @cite{van-rooy-2003}: Exhaustivity depends on the decision problem.
 
     Mention-some arises when:
     - Multiple answers resolve the decision problem equally

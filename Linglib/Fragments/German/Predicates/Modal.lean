@@ -20,7 +20,7 @@ they all satisfy IFF.
 | wollen   | will | necessity   | deontic                |
 
 Note: *wollen* is bouletic, mapped to deontic in the 2×3 space per
-`BouleticFlavor.flavorTag = .deontic`.
+`BouleticFlavor.flavorTag =.deontic`.
 
 Reference: Kratzer, A. (1981). The Notional Category of Modality.
 -/

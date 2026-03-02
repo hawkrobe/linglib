@@ -3,16 +3,16 @@ import Linglib.Theories.Semantics.Dynamic.Core.CCP
 
 /-!
 # Pointwise ↔ Update-Theoretic Bridge
-@cite{charlow-2021} @cite{muskens-1996}
+@cite{charlow-2021} @cite{muskens-1996} @cite{charlow-2019}
 
 Connects the pointwise `DRS S := S → S → Prop` type (Dynamic Ty2, Muskens 1996)
-to the update-theoretic `StateCCP W E := State W E → State W E` type (Charlow 2019).
+to the update-theoretic `StateCCP W E := State W E → State W E` type.
 
-The key operations are Charlow's (2021) ↑ (lift) and ↓ (lower):
+The key operations are @cite{charlow-2021}'s ↑ (lift) and ↓ (lower):
 - `liftPW`: promotes a pointwise DRS to a context-level update
 - `lowerPW`: extracts a pointwise relation from a context update
 
-The central result: `liftPW D` is always distributive (Charlow 2021, §6),
+The central result: `liftPW D` is always distributive,
 meaning pointwise meanings can never produce irreducibly context-level effects.
 Cumulative readings require non-distributive M_v, which lives only in `StateCCP`.
 
@@ -92,7 +92,7 @@ theorem liftPW_preserves_distributive (D : DRS (Assignment E)) :
 
     The simplest witness is `K _ = {(w₀, g₀)}` (constant function ignoring
     input). Then `K ∅ = {(w₀, g₀)}`, but `liftPW (lowerPW K w₀) ∅ = ∅`
-    because ↑ has no input pairs to draw from.
+    because ↑ has no input pairs to draw.
 
     Requires `Nonempty W` and `Nonempty E` to construct the witness. -/
 theorem liftPW_lowerPW_not_id [Nonempty W] [Nonempty E] :

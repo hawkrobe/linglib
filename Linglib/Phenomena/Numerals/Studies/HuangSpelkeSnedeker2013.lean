@@ -3,7 +3,7 @@ import Linglib.Core.Empirical
 open Core.Empirical
 
 /-!
-# Huang, Spelke & Snedeker (2013) — Covered-Box Paradigm
+# @cite{huang-snedeker-2013} — Covered-Box Paradigm
 @cite{huang-snedeker-2013} @cite{musolino-2004} @cite{wynn-1992}
 
 "What Exactly do Numbers Mean?"
@@ -123,7 +123,7 @@ def exp4_adults_some : CoveredBoxDatum :=
 -- Section 3: Two-Knower Scale Knowledge
 -- ============================================================================
 
-/-- Knower level in the Wynn (1992) acquisition sequence.
+/-- Knower level in the @cite{wynn-1992} acquisition sequence.
 
 An empirical classification: children master numeral meanings one at a time.
 A two-knower gives 1 for "one", 2 for "two", and random handfuls for higher

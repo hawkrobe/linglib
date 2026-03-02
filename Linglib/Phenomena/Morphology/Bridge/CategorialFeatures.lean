@@ -5,7 +5,7 @@ import Linglib.Theories.Syntax.Minimalism.Formal.ExtendedProjection.Properties
 /-!
 # Bridge: Categorial Features ↔ Category-Changing Morphology
 
-@cite{panagiotidis-2015} @cite{marantz-1997}Connects the theory-side predictions of Panagiotidis (2015) — substantive
+@cite{panagiotidis-2015} @cite{marantz-1997}Connects the theory-side predictions of @cite{panagiotidis-2015} — substantive
 categorial features [N] and [V] hosted on categorizer heads — to the empirical
 data on category-changing morphology in English.
 
@@ -86,8 +86,7 @@ theorem non_categorizers_no_lexcat :
 -- ════════════════════════════════════════════════════════════════
 
 /-- Does a categorizer produce a category with sortal perspective?
-    Panagiotidis §4.3: [N] = sortal perspective / referentiality
-    (Longobardi 1994). Items bearing [N] have the capacity to introduce
+    Panagiotidis §4.3: [N] = sortal perspective / referentiality. Items bearing [N] have the capacity to introduce
     discourse referents (nouns, adjectives) — items lacking [N] do not
     (verbs). -/
 def producesReferential (c : Cat) : Bool :=
@@ -114,8 +113,7 @@ theorem adjective_both :
 
 /-- The noun–verb asymmetry: nouns have sortal but not temporal perspective;
     verbs have temporal but not sortal perspective. Adjectives have both.
-    This follows from the [N]/[V] feature distribution on categorizers
-    (Panagiotidis 2015, §4.3, §4.6). -/
+    This follows from the [N]/[V] feature distribution on categorizers. -/
 theorem referential_predicative_asymmetry :
     -- Nouns: [N], not [V]
     (categorialFeatures .n).hasN = true ∧ (categorialFeatures .n).hasV = false ∧
@@ -139,7 +137,7 @@ theorem all_categorizer_eps_wellformed :
 
 /-- The F-level jump from lexical head to categorizer is exactly 1 in all cases.
     The uniformity of categorization is Panagiotidis's prediction (§4.4–§4.5);
-    the F-value encoding is Grimshaw's (2005) EP architecture. -/
+    the F-value encoding is @cite{grimshaw-2005}'s EP architecture. -/
 theorem categorization_uniform_fstep :
     fValue .v - fValue .V = 1 ∧
     fValue .n - fValue .N = 1 ∧

@@ -100,7 +100,7 @@ theorem lowerBound_internal_three :
 
 "John doesn't have THREE children" (stressed)
 → ¬(=3)
-→ compatible with 0, 1, 2, 4, 5, ...
+→ compatible with 0, 1, 2, 4, 5,...
 -/
 theorem lowerBound_external_three :
     (negatedMeaning LowerBound .three .external 0 = true) ∧

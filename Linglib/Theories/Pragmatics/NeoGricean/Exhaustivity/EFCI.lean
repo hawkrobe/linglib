@@ -39,7 +39,7 @@ namespace NeoGricean.Exhaustivity.EFCI
 open NeoGricean.Exhaustivity
 
 /--
-Types of alternatives for EFCIs (Chierchia 2013).
+Types of alternatives for EFCIs.
 
 Scalar alternatives differ in quantificational force.
 Domain alternatives differ in domain restriction.
@@ -107,7 +107,7 @@ def singletonAlt (d : Entity) (P : Entity → Prop' World) : Prop' World :=
 /-!
 ## Pre-Exhaustified Domain Alternatives
 
-Following Chierchia (2013), domain alternatives are pre-exhaustified:
+Following @cite{chierchia-2013}, domain alternatives are pre-exhaustified:
 the exhaustification operator applies to them before they enter the
 alternative set for the main exhaustification.
 
@@ -271,7 +271,7 @@ Option A: Prune domain alts → only scalar exh
   (Not what yek-i does in root contexts)
 
 Option B: Prune scalar alts → only domain exh
-  Result: ∃x. P(x) ∧ ¬[only a] ∧ ¬[only b] ∧ ...
+  Result: ∃x. P(x) ∧ ¬[only a] ∧ ¬[only b] ∧...
   For |D| ≥ 2: ∃!x. P(x) = "exactly one satisfies P"
   This IS what yek-i does!
 -/

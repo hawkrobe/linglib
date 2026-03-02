@@ -15,8 +15,8 @@ a core fragment, and identifies where they diverge.
 | Dynamic (CDRT)          | Type-Theoretic (TTR)     | Classical          |
 |-------------------------|--------------------------|--------------------|
 | `DProp.ofStatic p`      | `propT (p i)`            | `p i`              |
-| `DProp.new n ;; test P` | `Σ (x : E), P x`        | `∃ x, P x`        |
-| `DProp.impl (new;;P) Q` | `Π (x : E), P x → Q x`  | `∀ x, P x → Q x`  |
+| `DProp.new n; test P` | `Σ (x : E), P x`        | `∃ x, P x`        |
+| `DProp.impl (new;P) Q` | `Π (x : E), P x → Q x`  | `∀ x, P x → Q x`  |
 
 The first column is state-threading (assignments as side effects).
 The second is type-dependency (witnesses as structure). Both reduce
@@ -89,7 +89,7 @@ TTR handles the same thing via universal purification (`purifyUniv`):
 a Π-type that universally quantifies over all background witnesses.
 Both reduce to `∀ x, P x → Q x`. -/
 
-/-- CDRT donkey: `impl(new n ;; test P, test Q)`.
+/-- CDRT donkey: `impl(new n; test P, test Q)`.
 "For every way of extending the register with a P-entity at n,
 Q holds of that entity." -/
 def cdrt_donkey (n : Nat) (P Q : E → Prop) : DProp E :=
@@ -133,7 +133,7 @@ theorem donkey_classical (P Q : E → Prop) :
 
 /-! "Every farmer who owns a donkey beats it."
 
-CDRT: impl(new 0 ;; farmer(r0) ;; new 1 ;; donkey(r1) ;; owns(r0,r1),
+CDRT: impl(new 0; farmer(r0); new 1; donkey(r1); owns(r0,r1),
            beats(r0, r1))
 
 TTR: ∀ x, farmer x → ∀ y, donkey y → owns x y → beats x y
@@ -230,8 +230,8 @@ effect. CDRT tracks anaphoric potential via the **output register**:
 after processing φ, the output register determines what drefs are
 available for subsequent sentences.
 
-- `new n ;; test P` outputs a register with `n` bound → dref available
-- `neg (new n ;; test P)` outputs `i` unchanged → dref lost
+- `new n; test P` outputs a register with `n` bound → dref available
+- `neg (new n; test P)` outputs `i` unchanged → dref lost
 
 TTR tracks anaphoric potential via **type structure**: the Σ-type
 `(x : E) × P x` makes `x` available as a projection, regardless of

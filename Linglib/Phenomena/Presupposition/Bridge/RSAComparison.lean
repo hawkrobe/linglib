@@ -71,10 +71,10 @@ namespace Phenomena.Presupposition.Bridge.RSAComparison
 
 
 /-!
-## Farkas & Bruce (2010) Framework
-@cite{farkas-bruce-2010} @cite{qing-goodman-lassiter-2016}
+## @cite{farkas-bruce-2010} Framework
+@cite{farkas-bruce-2010} @cite{qing-goodman-lassiter-2016} @cite{degen-tonhauser-2021} @cite{heim-1983}
 
-All three presupposition projection models fit into the Farkas & Bruce (2010)
+All three presupposition projection models fit into the @cite{farkas-bruce-2010}
 discourse state framework. F&B decompose discourse state into:
 
 | Component | Description |
@@ -106,7 +106,7 @@ function (speakerCredence / contextCredence) checks if w ∈ D.
 ### Why S&T Prefer "Private Assumptions"
 
 S&T (2025) footnote 10 explains their terminological choice:
-> "Qing et al. (2016) call these subsets the 'common ground,' but we think
+> "@cite{qing-goodman-lassiter-2016} call these subsets the 'common ground,' but we think
 > 'private assumptions' better captures this component of the model."
 
 Their reasoning: the speaker may assume things not yet in the actual CG.
@@ -116,8 +116,8 @@ what's mutually accepted.
 ### Why Qing/Warstadt Prefer "Common Ground"
 
 The CG interpretation connects directly to:
-- Stalnaker's (1974) notion of presupposition
-- Lewis's (1979) scorekeeping (accommodation updates CG)
+- @cite{stalnaker-1974}'s notion of presupposition
+- @cite{lewis-1979}'s scorekeeping (accommodation updates CG)
 - The intuition that presuppositions constrain felicitous contexts
 
 ### Unified via Semantics.Dynamic.State
@@ -435,7 +435,7 @@ Both models connect to Stalnaker (1974, 2002) differently:
 - **Warstadt**: Focuses on the common ground itself - what's mutually
   accepted. The Context directly represents CG.
 
-### Accommodation (Lewis 1979)
+### Accommodation
 
 Lewis's scorekeeping: Accommodation adds presupposed content to CG.
 
@@ -445,14 +445,14 @@ Lewis's scorekeeping: Accommodation adds presupposed content to CG.
 - **Warstadt**: Accommodation is explicit - L1 directly infers what's
   in CG, and the update IS accommodation.
 
-### Local Context (Heim 1983, Schlenker 2009)
+### Local Context
 
 Neither model currently handles local context effects:
 
 - "If Tom is non-US, Tom doesn't have a green card" - presupposition locally satisfied
 - Would need extension to model embedding environments
 
-### Gradient Projection (Degen & Tonhauser 2021)
+### Gradient Projection
 
 Both models predict gradient effects:
 
@@ -478,7 +478,7 @@ is compatible with both models.
 
 ### Finding
 
-Qing et al. (2016), Scontras & Tonhauser (2025), and Warstadt (2022) are
+@cite{qing-goodman-lassiter-2016}, @cite{scontras-tonhauser-2025}, and @cite{warstadt-2022} are
 **mathematically identical models** with different interpretations:
 
 | Paper | Latent Variable | Interpretation | Domain |
@@ -509,16 +509,16 @@ The only differences are domain-specific (world states, utterances, QUDs).
 ### Complete Coverage
 
 All three domains from the literature are now implemented:
-- ✅ Qing et al. (2016): Change-of-state verbs (`QingEtAl2016.lean`)
-- ✅ Scontras & Tonhauser (2025): Factives (`ScontrasTonhauser2025.lean`)
-- ✅ Warstadt (2022): Genus-species (`RSA_Warstadt2022Bridge.lean`)
+- ✅ @cite{qing-goodman-lassiter-2016}: Change-of-state verbs (`QingEtAl2016.lean`)
+- ✅ @cite{scontras-tonhauser-2025}: Factives (`ScontrasTonhauser2025.lean`)
+- ✅ @cite{warstadt-2022}: Genus-species (`RSA_Warstadt2022Bridge.lean`)
 
 ### Future Work
 
 1. Add empirical data from Qing's QUD manipulation experiments
 2. Explore two-latent-variable extension (A and CG separately)
 3. Connect to local context theory for embedded presuppositions
-4. Add Tonhauser et al. (2013) taxonomy of projective content
+4. Add @cite{tonhauser-beaver-roberts-simons-2013} taxonomy of projective content
 5. Extend to other Class C triggers (only, almost, definites)
 -/
 
@@ -586,17 +586,17 @@ All three implementations follow the same pattern:
 
 ```lean
 -- 1. Define World and LatentState types
-structure WorldState where ...
-inductive LatentState where ...
+structure WorldState where...
+inductive LatentState where...
 
 -- 2. Define compatibility function
-def compatibleBool (c : LatentState) (w : WorldState) : Bool := ...
+def compatibleBool (c : LatentState) (w : WorldState) : Bool :=...
 
 -- 3. Use L1_beliefState_givenGoal
 def projectionMeasure (u : Utterance) : ℚ :=
   let dist := RSA.Eval.L1_beliefState_givenGoal
-    allUtterances allWorlds [()] [()] allLatentStates allQUDs
-    φ worldPrior ... latentPrior ...
+    allUtterances allWorlds [] [] allLatentStates allQUDs
+    φ worldPrior... latentPrior...
     compatibleBool qudProject cost α u q
   -- Sum over latent states that entail the presupposition
   dist.foldl (λ acc (c, p) => if entailsPresup c then acc + p else acc) 0

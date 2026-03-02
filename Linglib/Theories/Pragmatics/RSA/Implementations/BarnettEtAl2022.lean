@@ -4,7 +4,7 @@ import Linglib.Theories.Pragmatics.RSA.Extensions.InformationTheory.Basic
 import Mathlib.Data.Rat.Defs
 
 /-!
-# Barnett, Griffiths & Hawkins (2022): A Pragmatic Account of the Weak Evidence Effect
+# @cite{barnett-griffiths-hawkins-2022}: A Pragmatic Account of the Weak Evidence Effect
 @cite{barnett-griffiths-hawkins-2022}
 
 Extends RSA with a **persuasive speaker** who has a goal state w* that may differ

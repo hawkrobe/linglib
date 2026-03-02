@@ -195,7 +195,7 @@ theorem eatObjectIsObject :
 -- § 5. Bridge to Cruse (1973): Features Derived from Entailments
 -- ════════════════════════════════════════════════════
 
-/-- Source of do-test acceptability (Solstad & Bott 2024; Cruse 1973).
+/-- Source of do-test acceptability.
 
     The do-test ("What X did was VP") can be passed via two routes:
     - `.semantic`: the verb's entailment profile includes volition/causation/movement
@@ -214,7 +214,7 @@ inductive DoTestSource where
     The do-test passes (semantically) iff at least one of
     {volition, causation, movement} holds — these are the P-Agent
     entailments that correspond to Cruse's four features:
-    - Cruse's volitive  ≈ Dowty's volition
+    - Cruse's volitive ≈ Dowty's volition
     - Cruse's effective ≈ Dowty's causation
     - Cruse's agentive_ ≈ Dowty's movement + volition
     - Cruse's initiative ≈ Dowty's causation + volition
@@ -298,7 +298,7 @@ theorem patient_selects_object :
 -- ════════════════════════════════════════════════════
 
 /-- Dowty's P-Patient entailment (b) "incremental theme" is precisely
-    Krifka's (1998) Strict Incrementality (SINC). The `incrementalTheme`
+    @cite{krifka-1998}'s Strict Incrementality (SINC). The `incrementalTheme`
     Bool field marks that a verb's object role satisfies SINC.
 
     Bridge: `build` has `incrementalTheme = true`, connecting to
@@ -432,7 +432,7 @@ theorem buy_sell_equal_pAgent :
 
 /-- "sweep" basic-sense subject: M+IE (movement + independent existence).
     Underspecified for volition — agentivity is pragmatically resolved.
-    Rappaport Hovav & Levin (2024) §3.2: the event structure is
+    Rappaport @cite{rappaport-hovav-levin-2024} §3.2: the event structure is
     "x moves across surface y while x imparts force to y through contact". -/
 def sweepBasicSubjectProfile : EntailmentProfile :=
   ⟨false, false, false, true, true, false, false, false, false, false⟩
@@ -499,7 +499,7 @@ theorem kickObject_is_forceRecipient :
 -- § 14. Bridge to Levin (1993) Meaning Components
 -- ════════════════════════════════════════════════════
 
-/-! Levin's (1993) meaning components are a coarse-grained projection of
+/-! @cite{levin-1993}'s meaning components are a coarse-grained projection of
     Dowty's entailment profiles. Three of the four components correspond
     to specific Dowty entailments:
 

@@ -5,10 +5,10 @@ import Linglib.Core.Empirical
 
 @cite{belletti-rizzi-1988} @cite{kim-2024}
 
-Theory-neutral empirical data on psych verbs from Belletti & Rizzi (1988)
-and Kim (2024).
+Theory-neutral empirical data on psych verbs from @cite{belletti-rizzi-1988}
+and @cite{kim-2024}.
 
-## Belletti & Rizzi (1988) classification
+## @cite{belletti-rizzi-1988} classification
 
 | Class | Subject | Object | Example |
 |-------|---------|--------|---------|
@@ -28,7 +28,7 @@ The Class I/II split is diagnosed by five syntactic tests:
 4. **Backward binding** (§2.1): Class II allows object-to-subject binding; Class I does not
 5. **Passive type** (§1.5): Class II passive is adjectival; Class I is verbal
 
-## Kim (2024) diagnostics
+## @cite{kim-2024} diagnostics
 
 Kim extends B&R with two further diagnostics on the *within*-Class II split:
 5. **Intensionality** (Ch. 4): Stative Class II verbs create intensional
@@ -38,14 +38,14 @@ Kim extends B&R with two further diagnostics on the *within*-Class II split:
 
 namespace Phenomena.PsychVerbs.Data
 
-/-- Belletti & Rizzi (1988) classification of psych verbs. -/
+/-- @cite{belletti-rizzi-1988} classification of psych verbs. -/
 inductive PsychVerbClass where
   | classI    -- Experiencer-subject: enjoy, like, fear / It. temere
   | classII   -- Object-experiencer: frighten, concern / It. preoccupare
   | classIII  -- Dative experiencer (Romance): It. piacere
   deriving DecidableEq, Repr, BEq
 
-/-- Aspectual reading of a Class II psych verb (Kim 2024). -/
+/-- Aspectual reading of a Class II psych verb. -/
 inductive ClassIIReading where
   | eventive  -- External cause: "the noise frightened John"
   | stative   -- Internal cause: "the problem concerns John"
@@ -152,7 +152,7 @@ structure IntensionalityDatum where
   substitutionFails : Bool
   deriving Repr, BEq
 
-/-- Empirical intensionality data from Kim (2024, Ch. 4). -/
+/-- Empirical intensionality data from @cite{kim-2024}. -/
 def intensionalityData : List IntensionalityDatum := [
   ⟨"concern", .stative, true⟩,
   ⟨"interest", .stative, true⟩,
@@ -173,7 +173,7 @@ structure TSMRestriction where
   wellFormed : Bool
   deriving Repr, BEq
 
-/-- Cause and SM cannot cooccur (Kim 2024, Ch. 5). -/
+/-- Cause and SM cannot cooccur. -/
 def tsmData : List TSMRestriction := [
   ⟨true, false, true⟩,    -- Cause only: ✓ "The noise concerned John"
   ⟨false, true, true⟩,    -- SM only: ✓ "John was concerned about the deadline"

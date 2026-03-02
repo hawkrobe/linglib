@@ -2,7 +2,7 @@ import Linglib.Core.Logic.NaturalLogic
 import Linglib.Theories.Semantics.Truthmaker.Basic
 import Linglib.Theories.Semantics.Attitudes.NegRaising
 
-/-! # Attitude Verb Monotonicity (Bondarenko & Elliott 2026)
+/-! # Attitude Verb Monotonicity
 
 Classifies attitude verb complement positions using `EntailmentSig` from
 `Core/NaturalLogic.lean` — the same 9-element lattice used for quantifier
@@ -16,6 +16,8 @@ This file provides only the derivation logic: given an `EntailmentSig`,
 what follows about conjunction distribution and neg-raising?
 
 ## Key contributions
+@cite{bondarenko-elliott-2026}
+
 
 1. **Conjunction distribution derived from EntailmentSig**: An attitude verb
    distributes over conjunction iff its complement signature refines `.mono`.
@@ -89,7 +91,7 @@ def hasEMP (sig : EntailmentSig) : Bool :=
     underpinnings.
 
     Bondarenko & Elliott: monotonicity + EMP → neg-raising
-    Horn (2001): non-veridicality → neg-raising -/
+    @cite{horn-2001}: non-veridicality → neg-raising -/
 def negRaisingFromMono (sig : EntailmentSig) (v : Veridicality) : Bool :=
   hasEMP sig && v == .nonVeridical
 

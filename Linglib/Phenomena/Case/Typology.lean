@@ -8,14 +8,14 @@ import Linglib.Core.Prominence
 Formalizes four chapters from the World Atlas of Language Structures (WALS)
 covering the typology of case systems:
 
-- **Chapter 49**: Number of Cases (Iggesen 2013) -- how many morphological
+- **Chapter 49**: Number of Cases -- how many morphological
   cases a language has, from zero to ten or more.
-- **Chapter 50**: Asymmetrical Case-Marking (Iggesen 2013) -- whether case
+- **Chapter 50**: Asymmetrical Case-Marking -- whether case
   marking is conditioned by NP properties (animacy, definiteness, pronoun
   status). Also known as Differential Case Marking.
-- **Chapter 51**: Position of Case Affixes (Iggesen 2013) -- whether case
+- **Chapter 51**: Position of Case Affixes -- whether case
   markers are suffixes, prefixes, tonal, or mixed.
-- **Chapter 52**: Comitatives and Instrumentals (Stolz et al. 2013) --
+- **Chapter 52**: Comitatives and Instrumentals --
   whether comitative ('with X') and instrumental ('by means of X') are
   marked identically or distinctly.
 
@@ -365,7 +365,7 @@ def german : CaseProfile :=
     affixPosition := .suffixesOnly
     comitativeInstr := .identity }
 
-/-- Japanese: case particles (ga, o, ni, no, de, e, to, kara, made, ...).
+/-- Japanese: case particles (ga, o, ni, no, de, e, to, kara, made,...).
 Postpositional clitics rather than affixes in WALS's classification.
 Differential object marking with -o conditioned by specificity/topicality.
 Comitative -to vs. instrumental -de are distinct. -/
@@ -459,7 +459,7 @@ def georgian : CaseProfile :=
 
 /-- Quechua (Cusco): 12+ cases (nom, acc -ta, gen -pa or -q, dat -man,
 loc -pi, abl -manta, instrum -wan, comit -wan, limit -kama, causal
--rayku, benef -paq, topic -qa, ...). Suffixal agglutinative.
+-rayku, benef -paq, topic -qa,...). Suffixal agglutinative.
 Comitative and instrumental both use -wan (identity). -/
 def quechua : CaseProfile :=
   { name := "Quechua (Cusco)"
@@ -568,7 +568,7 @@ Among the world's languages, suffixal case marking is far more common
 than prefixal. In our sample, every language with case affixes uses
 suffixes (either exclusively or in combination with prefixes). This
 reflects the strong universal preference documented by Hawkins (1983)
-and Dryer (1992). -/
+and @cite{dryer-1992}. -/
 
 theorem case_rich_are_suffixal :
     allProfiles.all (λ p =>
@@ -810,7 +810,7 @@ theorem ch51_same_sample :
 -- Aissen (2003) Prominence Scales and Differential Object Marking
 -- ============================================================================
 
-/-! ## Aissen (2003) DOM Hierarchy
+/-! ## @cite{aissen-2003} DOM Hierarchy
 
 Formalizes the bidimensional DOM predictions from:
 
@@ -820,7 +820,7 @@ Formalizes the bidimensional DOM predictions from:
 The prominence scales (`AnimacyLevel`, `DefinitenessLevel`) and their
 orderings are defined in `Core.Prominence` and re-exported here.
 DOM is the P-flagging specialization of the general differential marking
-framework (Just 2024).
+framework.
 -/
 
 open Core.Prominence
@@ -836,7 +836,7 @@ Each cell `(a, d)` records whether an object with animacy level `a`
 and definiteness level `d` obligatorily receives an overt DOM marker
 (e.g., Spanish `a`, Turkish `-(y)I`, Hindi `-ko`).
 
-DOM is the P-flagging instance of Just's (2024) general differential
+DOM is the P-flagging instance of @cite{just-2024}'s general differential
 marking framework. Monotonicity (`isMonotone`), `isAnimacyOnly`, and
 `isDefinitenessOnly` are all inherited from `DifferentialMarkingProfile`. -/
 abbrev DOMProfile := DifferentialMarkingProfile
@@ -848,44 +848,42 @@ abbrev DOMProfile := DifferentialMarkingProfile
 section DOMLanguages
 
 /-- Spanish: `a`-marking for human direct objects regardless of definiteness.
-One-dimensional (animacy-based), cutoff between human and animate
-(Aissen 2003, §4). -/
+One-dimensional (animacy-based), cutoff between human and animate. -/
 def spanishDOM : DOMProfile :=
   .animacyCutoffP "Spanish" .flagging .human
 
 /-- Russian: animate accusative (genitive form used as accusative for
 animate nouns). One-dimensional (animacy-based), cutoff between animate
-and inanimate (Aissen 2003, §4). -/
+and inanimate. -/
 def russianDOM : DOMProfile :=
   .animacyCutoffP "Russian" .flagging .animate
 
 /-- Turkish: `-(y)I` marking for definite direct objects regardless of
 animacy. One-dimensional (definiteness-based), cutoff between definite
-and indefinite specific (Aissen 2003, §4). -/
+and indefinite specific. -/
 def turkishDOM : DOMProfile :=
   .definitenessCutoffP "Turkish" .flagging .definite
 
 /-- Hebrew: `ʔet` marking for definite direct objects regardless of
-animacy. Same one-dimensional definiteness cutoff as Turkish
-(Aissen 2003, §4). -/
+animacy. Same one-dimensional definiteness cutoff as Turkish. -/
 def hebrewDOM : DOMProfile :=
   .definitenessCutoffP "Hebrew" .flagging .definite
 
 /-- Persian: `-rā` marking for definite direct objects. One-dimensional
 (definiteness-based) for obligatory marking; optional extension to
-specific indefinite animates (Aissen 2003, §5). Modeled here with the
+specific indefinite animates. Modeled here with the
 definiteness-based obligatory core. -/
 def persianDOM : DOMProfile :=
   .definitenessCutoffP "Persian" .flagging .definite
 
 /-- Catalan: `a`-marking restricted to personal pronouns. The most
 restrictive DOM pattern attested: only the highest cell on the
-definiteness scale receives marking (Aissen 2003, §4). -/
+definiteness scale receives marking. -/
 def catalanDOM : DOMProfile :=
   .definitenessCutoffP "Catalan" .flagging .personalPronoun
 
 /-- Hindi-Urdu: `-ko` marking conditioned by BOTH animacy and definiteness.
-Two-dimensional DOM with a staircase cutoff (Aissen 2003, §5, Table 12):
+Two-dimensional DOM with a staircase cutoff:
 - Human objects: marked when indefinite specific or more prominent
 - Animate objects: marked when definite or more prominent
 - Inanimate objects: not obligatorily marked

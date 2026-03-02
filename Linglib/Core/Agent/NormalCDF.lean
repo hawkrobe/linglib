@@ -7,7 +7,7 @@ import Mathlib.MeasureTheory.Measure.Lebesgue.Basic
 
 Shared Gaussian CDF definitions and properties used by both Thurstone's
 discriminal-process theory (§2.D) and Signal Detection Theory (§2.E)
-in Luce (1959).
+in @cite{luce-1959}.
 
 ## Definitions
 

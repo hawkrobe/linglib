@@ -2,7 +2,7 @@ import Linglib.Theories.Semantics.Probabilistic.Measurement.Basic
 import Linglib.Fragments.English.MeasurePhrases
 
 /-!
-# Scontras (2014) — The Semantics of Measurement
+# @cite{scontras-2014} — The Semantics of Measurement
 @cite{chierchia-1998} @cite{krifka-1989} @cite{scontras-2014}
 
 Empirical observations and bridge theorems for Scontras's quantizing noun
@@ -218,7 +218,7 @@ theorem container_QU_depends_on_reading :
 
 We also verify that the Fragment entries used in our observations have
 the same class assignment as the observations themselves. This catches
-the case where someone defines `glass.nounClass := .atomizer` in the
+the case where someone defines `glass.nounClass :=.atomizer` in the
 Fragment but uses `.containerNoun` in the observation. -/
 
 /-- The Fragment's `glass` entry matches the observation's class. -/

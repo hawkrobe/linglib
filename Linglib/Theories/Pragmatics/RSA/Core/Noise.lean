@@ -102,12 +102,12 @@ theorem noiseChannel_discrimination (onMatch onMismatch : ℚ) :
 
 -- Standard Noise Parameters
 
-/-- Color parameters from Degen et al. (2020): low noise -/
+/-- Color parameters from @cite{degen-etal-2020}: low noise -/
 def colorMatch : ℚ := 99/100
 def colorMismatch : ℚ := 1/100
 def colorDiscrimination : ℚ := colorMatch - colorMismatch  -- 0.98
 
-/-- Size parameters from Degen et al. (2020): medium noise -/
+/-- Size parameters from @cite{degen-etal-2020}: medium noise -/
 def sizeMatch : ℚ := 8/10
 def sizeMismatch : ℚ := 2/10
 def sizeDiscrimination : ℚ := sizeMatch - sizeMismatch  -- 0.60

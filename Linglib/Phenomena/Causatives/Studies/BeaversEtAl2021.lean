@@ -1,9 +1,8 @@
 /-!
 # Cross-Linguistic Typology of Change-of-State Verbs
-@cite{dixon-1982} @cite{levin-1993} @cite{beavers-etal-2021}
+@cite{dixon-1982} @cite{levin-1993} @cite{beavers-etal-2021} @cite{rose-nichols-2021}
 
-Empirical data from Beavers, Everdell, Jerro, Kauhanen, Koontz-Garboden,
-LeBovidge & Nichols (2021) "States and changes of state: A crosslinguistic
+Empirical data from Beavers, Everdell, Jerro, Kauhanen, @cite{beavers-etal-2021} "States and changes of state: A crosslinguistic
 study of the roots of verbal meaning." Language 97(3), 439–484.
 
 88-language balanced sample (WALS 100 + additions). For each of 36 property
@@ -38,7 +37,7 @@ namespace Phenomena.Causatives.Studies.BeaversEtAl2021
 
     Classification criteria:
     - PC roots: the root of deadjectival CoS verbs (Levin 1993:245);
-      describe Dixon's (1982) basic property types
+      describe @cite{dixon-1982}'s basic property types
     - Result roots: the root of non-deadjectival CoS verbs;
       describe specific result states (physical damage, cooking, etc.) -/
 inductive CoSRootClass where
@@ -230,7 +229,7 @@ inductive DiagnosticResult where
   deriving DecidableEq, Repr, BEq
 
 /-- Stative form + change denial test (§3.3, ex. 10–11).
-    "The bright photo has never brightened"  → OK (PC)
+    "The bright photo has never brightened" → OK (PC)
     "#The shattered vase has never shattered" → contradictory (result) -/
 def changeDenialTest : CoSRootClass → DiagnosticResult
   | .propertyConcept => .positive  -- stative can hold without change

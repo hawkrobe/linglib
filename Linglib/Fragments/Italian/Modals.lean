@@ -6,14 +6,13 @@ import Linglib.Theories.Semantics.Modality.EventRelativity
 
 @cite{hacquard-2010} @cite{cinque-2004} @cite{hacquard-2006} @cite{rizzi-1978}Italian modal auxiliaries *dovere* ('must') and *potere* ('can'), with
 their behavior under restructuring. These are the primary empirical
-evidence for Hacquard's (2006, 2010) event-relative analysis: when
+evidence for @cite{hacquard-2006}'s event-relative analysis: when
 Italian modals appear in restructuring configurations (syntactically
 low, below AspP), they lose epistemic readings.
 
-## Italian Restructuring (Hacquard 2010, §3)
+## Italian Restructuring
 
-Italian *potere* and *dovere* participate in restructuring (Rizzi 1978,
-Cinque 2004). In restructuring contexts, the modal is syntactically
+Italian *potere* and *dovere* participate in restructuring. In restructuring contexts, the modal is syntactically
 low — merged below AspP, with the lower verb's clitic climbing through
 the modal. Diagnostics:
 
@@ -90,7 +89,7 @@ def dovere : ItalianModalEntry where
 -- § 3. Restructuring Diagnostics
 -- ════════════════════════════════════════════════════
 
-/-- Restructuring diagnostics from Rizzi (1978). -/
+/-- Restructuring diagnostics from @cite{rizzi-1978}. -/
 inductive RestructuringDiagnostic where
   /-- Clitic climbing: clitic raises past the modal to the higher verb -/
   | cliticClimbing

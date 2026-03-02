@@ -5,7 +5,7 @@ import Linglib.Core.Agent.DecisionTheory
 # Decision Problems for Polar Questions (Stub)
 @cite{hawkins-etal-2025} @cite{van-rooy-2003}
 
-Building on Van Rooy (2003), this module defines decision problems for polar questions.
+Building on @cite{van-rooy-2003}, this module defines decision problems for polar questions.
 
 ## Status
 

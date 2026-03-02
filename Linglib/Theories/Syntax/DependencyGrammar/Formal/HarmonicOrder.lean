@@ -5,7 +5,7 @@ import Linglib.Theories.Syntax.DependencyGrammar.Formal.DependencyLength
 @cite{dryer-1992} @cite{futrell-gibson-2020} @cite{gibson-2025} @cite{greenberg-1963}
 
 Gibson (2025, Ch. 5.3) argues that **dependency length minimization** (DLM)
-explains the **head-direction generalization** (Greenberg 1963, Dryer 1992):
+explains the **head-direction generalization**:
 languages overwhelmingly prefer consistent head direction across construction
 types. The argument:
 
@@ -36,8 +36,8 @@ open DepGrammar DependencyLength
 
 /-! ### Chain Total Dependency Length
 
-For a sequence of positions p[0], p[1], ..., p[k] representing a chain of
-dependencies (head → dep₁ → dep₂ → ...), the total dependency length is
+For a sequence of positions p[0], p[1],..., p[k] representing a chain of
+dependencies (head → dep₁ → dep₂ →...), the total dependency length is
 the sum of |p[i+1] - p[i]| for all consecutive pairs.
 
 Key insight: monotone sequences (all ascending or all descending) achieve
@@ -239,7 +239,7 @@ private theorem chainTDL_range' (s n : Nat) :
     rw [show (s + 1) :: List.range' (s + 1 + 1) k = List.range' (s + 1) (k + 1) from rfl]
     rw [ih (s + 1)]; omega
 
-/-- The consecutive sequence [0, 1, ..., k] has chainTDL = k. -/
+/-- The consecutive sequence [0, 1,..., k] has chainTDL = k. -/
 theorem consecutive_tdl (k : Nat) :
     chainTDL (List.range (k + 1)) = k := by
   rw [List.range_eq_range']

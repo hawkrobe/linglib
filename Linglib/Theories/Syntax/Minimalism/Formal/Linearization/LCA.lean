@@ -1,10 +1,10 @@
 import Linglib.Theories.Syntax.Minimalism.Core.Basic
 
 /-!
-# Linear Correspondence Axiom (Kayne 1994)
+# Linear Correspondence Axiom
 @cite{chomsky-1995} @cite{kayne-1994}
 
-Formalizes the core of Kayne's (1994) *The Antisymmetry of Syntax*: the
+Formalizes the core of @cite{kayne-1994}'s *The Antisymmetry of Syntax*: the
 Linear Correspondence Axiom (LCA), which derives linear (temporal)
 precedence of terminal elements from asymmetric c-command in the
 hierarchical structure.
@@ -54,7 +54,7 @@ theorem dominatedTerminals_node (l r : SyntacticObject) :
 /-- Tree-relative LCA precedence.
     Terminal `a` precedes terminal `b` within `root` iff there exist
     subterms X, Y of `root` such that X asymmetrically c-commands Y
-    (within `root`), `a ∈ d(X)`, and `b ∈ d(Y)`. (Kayne 1994, p. 16) -/
+    (within `root`), `a ∈ d(X)`, and `b ∈ d(Y)`. -/
 def lcaPrecedesIn (root a b : SyntacticObject) : Prop :=
   ∃ x y, x ∈ subterms root ∧ y ∈ subterms root ∧
     asymCCommandsIn root x y ∧

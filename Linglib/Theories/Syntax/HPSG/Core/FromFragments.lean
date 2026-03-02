@@ -6,6 +6,8 @@ import Linglib.Fragments.English.Lexicon
 
 /-!
 # HPSG Interpretation of Fragment Entries
+@cite{pollard-sag-1994}
+
 
 Maps Fragment lexical entries to HPSG Signs (words with appropriate Synsem).
 
@@ -23,8 +25,8 @@ and this module provides the HPSG-specific interpretation.
 
 ```
 VerbEntry.sleep (intransitive) → word "sleeps" { cat := VERB, val := { subj := [NOUN] } }
-VerbEntry.eat (transitive)     → word "eats" { cat := VERB, val := { subj := [NOUN], comps := [NOUN] } }
-VerbEntry.give (ditransitive)  → word "gives" { cat := VERB, val := { subj := [NOUN], comps := [NOUN, NOUN] } }
+VerbEntry.eat (transitive) → word "eats" { cat := VERB, val := { subj := [NOUN], comps := [NOUN] } }
+VerbEntry.give (ditransitive) → word "gives" { cat := VERB, val := { subj := [NOUN], comps := [NOUN, NOUN] } }
 ```
 -/
 
@@ -40,7 +42,7 @@ open Fragments.English.Lexicon (LexResult)
 /--
 Map a VerbEntry's complement type to an HPSG Valence.
 
-The mapping follows standard HPSG practice (Pollard & Sag 1994):
+The mapping follows standard HPSG practice:
 - Intransitive: SUBJ ⟨NP⟩, COMPS ⟨⟩
 - Transitive: SUBJ ⟨NP⟩, COMPS ⟨NP⟩
 - Ditransitive: SUBJ ⟨NP⟩, COMPS ⟨NP, NP⟩

@@ -2,7 +2,9 @@ import Linglib.Theories.Pragmatics.RSA.Core.Config
 import Linglib.Tactics.RSAPredict
 
 /-!
-# Kao & Goodman (2015) — Let's Talk (Ironically) About the Weather @cite{kao-goodman-2015}
+# @cite{kao-goodman-2015} — Let's Talk (Ironically) About the Weather @cite{kao-goodman-2015}
+@cite{bergen-goodman-2015}
+
 
 Proceedings of the 37th Annual Meeting of the Cognitive Science Society.
 
@@ -313,7 +315,7 @@ theorem ironic_valence_flip :
   rsa_predict
 
 /-- Ironic speech carries high arousal — the speaker is emotionally
-    engaged, not flat (Colston & O'Brien 2000). -/
+    engaged, not flat. -/
 theorem ironic_high_arousal :
     pleasantCfg.L1_marginal .terrible (fun w => w.2.2 == true) >
     pleasantCfg.L1_marginal .terrible (fun w => w.2.2 == false) := by

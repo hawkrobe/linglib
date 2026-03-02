@@ -4,7 +4,7 @@ import Linglib.Core.Semantics.CommonGround
 import Linglib.Theories.Semantics.Lexical.Expressives.Basic
 
 /-!
-# Goldberg & Shirtz (2025): PAL Constructions — Theoretical Analysis
+# @cite{goldberg-shirtz-2025}: PAL Constructions — Theoretical Analysis
 @cite{goldberg-shirtz-2025}
 
 Formalizes the PAL (Phrasal Adjective-Like) construction and its inheritance

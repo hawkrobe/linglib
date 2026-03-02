@@ -4,10 +4,10 @@ import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Phenomena.TenseAspect.DiagnosticsBridge
 
 /-!
-# Krifka (1989) Bridge: Nominal Reference → VP Telicity
+# @cite{krifka-1989} Bridge: Nominal Reference → VP Telicity
 @cite{krifka-1989}
 
-Connects Krifka's (1989) nominal reference theory (`Events/Krifka1989.lean`) to
+Connects @cite{krifka-1989}'s nominal reference theory (`Events/Krifka1989.lean`) to
 concrete verb-NP composition and telicity diagnostics.
 
 ## What it exercises
@@ -37,7 +37,7 @@ open Phenomena.TenseAspect.Diagnostics (forXPrediction inXPrediction)
 -- § 1. Nominal Reference Classification
 -- ════════════════════════════════════════════════════
 
-/-- Nominal reference type, abstracting Krifka's (1989) CUM/QUA distinction
+/-- Nominal reference type, abstracting @cite{krifka-1989}'s CUM/QUA distinction
     for NPs. Mass nouns and bare plurals are CUM; count nouns, measure
     phrases, and definites are QUA. -/
 inductive NomRef where

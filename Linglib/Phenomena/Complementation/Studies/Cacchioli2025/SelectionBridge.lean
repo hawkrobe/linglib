@@ -5,7 +5,7 @@ import Linglib.Phenomena.Complementation.Typology
 # Complementation-Agree Bridge: CTPClass → FeatureVal
 @cite{cacchioli-2025}
 
-Connects Noonan's (2007) complement-taking predicate typology (CTPClass,
+Connects @cite{noonan-2007}'s complement-taking predicate typology (CTPClass,
 in `Phenomena/Complementation/Typology.lean`) to Minimalist feature checking
 (FeatureVal, in `Theories/Syntax/Minimalism/Core/Agree.lean`).
 
@@ -18,7 +18,7 @@ typological generalization to the syntactic mechanism.
 
 - **Agree.lean**: `FeatureVal.finite`, `FeatureVal.factive` — clause-typing features
 - **Typology.lean**: `CTPClass`, `ctpRealityStatus` — typological classification
-- **Cacchioli (2025)**: Tigrinya prefix selection follows from CTP class → feature mapping
+- **@cite{cacchioli-2025}**: Tigrinya prefix selection follows from CTP class → feature mapping
 -/
 
 namespace Phenomena.Complementation.SelectionBridge
@@ -28,10 +28,10 @@ open Phenomena.Complementation.Typology
 
 /-- Map CTP reality status to [±finite] selection.
 
-    Realis CTPs (utterance, knowledge, commentative, ...) select [+finite]
+    Realis CTPs (utterance, knowledge, commentative,...) select [+finite]
     complements — indicative/realis clauses whose Fin head bears [+finite].
 
-    Irrealis CTPs (desiderative, manipulative, modal, ...) select [-finite]
+    Irrealis CTPs (desiderative, manipulative, modal,...) select [-finite]
     complements — subjunctive/irrealis clauses whose Fin head bears [-finite].
 
     Some classes are variable (perception can take both finite and non-finite

@@ -6,6 +6,8 @@ import Linglib.Fragments.English.NumeralModifiers
 
 /-!
 # Beltrama, Solt & Burnett (2022) @cite{beltrama-solt-burnett-2023}
+@cite{campbell-kibler-2011}
+
 
 Context, precision, and social perception: A sociopragmatic study.
 *Language in Society* 52(5): 805–835. doi:10.1017/S0047404522000240
@@ -29,8 +31,7 @@ PCA-derived evaluation dimensions and four communicative scenarios.
    bare round numbers don't uniformly pattern with either endpoint. On
    competence, underspecified hugs precise; on anti-solidarity, it hugs
    approximate; on warmth, it is genuinely intermediate. This reveals
-   precision and approximation as independent indexical loci
-   (Campbell-Kibler 2011).
+   precision and approximation as independent indexical loci.
 
 4. **Context modulation**: high-precision-demand scenarios (For-the-record,
    Persuasion) amplify competence contrasts; low-demand scenarios (Bonding,
@@ -41,8 +42,8 @@ PCA-derived evaluation dimensions and four communicative scenarios.
 Stimuli use numerals 49 (precise) and 50 (round), with "about" as the
 tolerance modifier:
 - `Core.Roundness.roundnessScore`: 49 → 0, 50 → 4
-- `Semantics.Lexical.Numeral.Precision.inferPrecisionMode`: 49 → .exact,
-  50 → .approximate
+- `Semantics.Lexical.Numeral.Precision.inferPrecisionMode`: 49 →.exact,
+  50 →.approximate
 - `Fragments.English.NumeralModifiers.about`: tolerance modifier
 
 -/
@@ -58,8 +59,7 @@ open Sociolinguistics.SCM
 
 /-- The three precision variants for numeral use (BSB2022 §3).
 
-    Extends the two-way distinction (exact/approximate) in Beltrama & Schwarz
-    (2024) by factoring out bare round numerals as a third, diagnostically
+    Extends the two-way distinction (exact/approximate) in @cite{beltrama-schwarz-2024} by factoring out bare round numerals as a third, diagnostically
     crucial category. -/
 inductive Variant where
   | precise        -- sharp number: "forty-nine minutes"
@@ -199,9 +199,8 @@ theorem antiSol_precise_gt_approx :
     (both favor precise), while warmth reverses (favors approximate).
 
     This is the core sign structure of the precision indexical field. It is
-    consistent with the `precisionField` associations in Beltrama & Schwarz
-    (2024), where `.exact → .competence = +1`, `.exact → .warmth = −1`,
-    and `.exact → .antiSolidarity = +1`. -/
+    consistent with the `precisionField` associations in @cite{beltrama-schwarz-2024}, where `.exact →.competence = +1`, `.exact →.warmth = −1`,
+    and `.exact →.antiSolidarity = +1`. -/
 theorem sign_alignment :
     (exp1Mean .precise .competence > exp1Mean .approximate .competence ∧
      exp1Mean .precise .antiSolidarity > exp1Mean .approximate .antiSolidarity ∧
@@ -249,7 +248,7 @@ theorem opposite_directions (d : SocialDimension) :
 On each dimension, the underspecified variant does not sit uniformly
 between precise and approximate. Its proximity to each endpoint varies
 by dimension, revealing precision and approximation as independent
-indexical loci (Campbell-Kibler 2011).
+indexical loci.
 
 The interpretation (p. 827): when underspecified clusters with precise
 and away from approximate, the contrast is *approximation-driven* (it is

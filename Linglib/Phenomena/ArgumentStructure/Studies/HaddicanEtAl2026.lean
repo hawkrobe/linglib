@@ -1,5 +1,5 @@
 /-!
-# Haddican, Tamminga, den Dikken & Wade (2026) @cite{haddican-tamminga-dendikken-wade-2026}
+# Haddican, @cite{haddican-tamminga-dendikken-wade-2026} @cite{haddican-tamminga-dendikken-wade-2026}
 
 English Particle Verbs Prime Double Object Constructions in Production.
 *Linguistic Inquiry*. doi:10.1162/LING.a.558

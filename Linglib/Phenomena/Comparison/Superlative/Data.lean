@@ -7,7 +7,7 @@ vs. relative reading ambiguity and the interaction with focus.
 
 ## Key Empirical Patterns
 
-1. **Absolute vs. relative readings** (Heim 1999, Szabolcsi 1986):
+1. **Absolute vs. relative readings**:
    "Kim climbed the highest mountain" can mean either "the mountain
    that is highest of all" (absolute) or "the mountain that is
    higher than anyone else climbed" (relative).

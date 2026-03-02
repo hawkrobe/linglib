@@ -112,7 +112,7 @@ def switchesAllBlocks : AllBlocksNonMaxDatum :=
 
 
 /--
-The bank robbery scenario from Krifka (1996).
+The bank robbery scenario from @cite{krifka-1996}.
 
 Shows that non-maximal readings can be very fine-grained,
 not just "existential" weakening.
@@ -120,7 +120,7 @@ not just "existential" weakening.
 Context: Bank vault with 4 doors in a configuration.
 Some doors are parallel paths, others are sequential.
 
-Source: Krifka (1996), dissertation (16), Figure 2.1
+Source: @cite{krifka-1996}, dissertation (16), Figure 2.1
 -/
 structure BankRobberyDatum where
   /-- The sentence -/
@@ -280,7 +280,7 @@ Strong relevance: a proposition "perfectly fits" an issue.
 A proposition p is strongly relevant to issue I iff p is expressible
 as a disjunction of a proper subset of I's partition cells.
 
-Source: Križ & Spector (2021)
+Source: Križ & @cite{kriz-spector-2021}
 -/
 structure StrongRelevanceDatum where
   /-- The proposition (informal) -/

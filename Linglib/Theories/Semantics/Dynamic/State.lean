@@ -85,7 +85,7 @@ structure Issue (W : Type*) where
 
 
 /--
-Discourse State following Farkas & Bruce (2010).
+Discourse State following @cite{farkas-bruce-2010}.
 
 This structure captures the conversational state at a given point in time.
 It's parameterized by the World type for type-safe propositions.
@@ -268,7 +268,7 @@ def fromCG (cg : CG W) : DiscourseState W :=
 RSA models for presupposition projection use different components of the
 discourse state as the latent variable that L1 infers:
 
-### Scontras & Tonhauser (2025): Inferring dcS
+### @cite{scontras-tonhauser-2025}: Inferring dcS
 
 The `BeliefState` type represents different possible values of dcS (what
 the speaker privately assumes). L1 infers which dcS best explains the
@@ -277,7 +277,7 @@ speaker's utterance choice.
 The speaker may assume things not yet in the common ground,
 which is why S&T prefer "private assumptions" over "common ground."
 
-### Warstadt (2022) / Qing et al. (2016): Inferring cg
+### @cite{warstadt-2022} / @cite{qing-goodman-lassiter-2016}: Inferring cg
 
 The `Context` type represents different possible values of cg (what's
 jointly accepted). L1 infers which cg state the speaker is acting on.

@@ -4,7 +4,7 @@
 
 Abstract interface for felicity/oddness predictions, following the
 `ImplicatureTheory` pattern. Provides a unified type for comparing
-K&S (2015), Magri (2009), Spector (2014), Fox & Hackl (2006), and
+K&S (2015), @cite{magri-2009}, @cite{spector-2014}, @cite{fox-hackl-2006}, and
 future felicity theories.
 
 -/

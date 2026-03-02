@@ -3,7 +3,7 @@ import Linglib.Theories.Semantics.Lexical.Adjective.StatesBased
 import Linglib.Theories.Semantics.Attitudes.Confidence
 
 /-!
-# Cariani, Santorio & Wellwood (2024): Theory-to-Data Bridge
+# @cite{cariani-santorio-wellwood-2024}: Theory-to-Data Bridge
 
 @cite{cariani-santorio-wellwood-2024}
 

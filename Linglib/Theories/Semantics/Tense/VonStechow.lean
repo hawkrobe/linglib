@@ -1,7 +1,7 @@
 import Linglib.Theories.Semantics.Tense.Basic
 
 /-!
-# Von Stechow (2009): Tenses in Compositional Semantics
+# @cite{von-stechow-2009}: Tenses in Compositional Semantics
 @cite{von-stechow-2009}
 
 Von Stechow's theory: tense features are checked against a local
@@ -140,7 +140,7 @@ theorem feature_checking_is_fullPresupposition {Time : Type*} [LinearOrder Time]
 -- § Theory Identity Card
 -- ════════════════════════════════════════════════════════════════
 
-/-- Von Stechow (2009) theory identity card. -/
+/-- @cite{von-stechow-2009} theory identity card. -/
 def VonStechow : TenseTheory where
   name := "Von Stechow 2009"
   citation := "Von Stechow, A. (2009). Tenses in compositional semantics. In Klein & Li (eds.), The Expression of Time, 129-166."

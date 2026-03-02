@@ -67,11 +67,11 @@ Direction of gapping in coordinate structures.
 
 Forward: verb in first conjunct, gap in second
   "Dexter ate bread, and Warren, potatoes"
-        ↑                        ↑gap
+        ↑ ↑gap
 
 Backward: gap in first conjunct, verb in second
   "Ken Naomi-o, Erika Sara-o tazuneta"
-       ↑gap                    ↑verb
+       ↑gap ↑verb
 -/
 inductive GappingDirection where
   | forward   -- Gap follows the overt verb (VSO, SVO pattern)

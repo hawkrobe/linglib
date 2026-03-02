@@ -10,12 +10,12 @@ import Linglib.Core.Interfaces.VoiceSystem
 Minimalist infrastructure for the SJO Mam verbal domain, connecting the
 language-specific clause sizes to the ClauseSpine and VoiceHead abstractions.
 
-## Key Claims (Elkins, Imanishi & Coon 2026)
+## Key Claims
 
 1. Mam transitive clauses project Voice⁰, which bears [uOblique].
 2. Mam "aspectless" complements are VoiceP-sized — they lack aspect
    morphology but still project Voice.
-3. Mam infinitival complements are VP-sized (Elkins et al. 2026, §6.1) — they project
+3. Mam infinitival complements are VP-sized — they project
    only V, without Voice, Appl, or v.
 4. The directional auxiliary (Dir⁰) is a Mam-specific head that also
    bears [uOblique] and can host =(y)a'. Dir is modeled as a light verb
@@ -54,7 +54,7 @@ def mamTransitiveSpine : Minimalism.ClauseSpine := Minimalism.ClauseSpine.cP
     Projects V, Appl, v, Voice. Still has Voice → =(y)a' possible. -/
 def mamAspectlessSpine : Minimalism.ClauseSpine := Minimalism.ClauseSpine.voiceP
 
-/-- Mam infinitival complement spine: VP-sized (Elkins et al. 2026, §6.1).
+/-- Mam infinitival complement spine: VP-sized.
     Projects only V — no Voice, no Appl, no v. =(y)a' impossible because
     there is no Voice⁰ to bear [uOblique]. -/
 def mamInfinitivalSpine : Minimalism.ClauseSpine := Minimalism.ClauseSpine.bareVP
@@ -81,7 +81,7 @@ structure MamDirHead where
   /-- Whether this Dir head carries [uOblique], enabling Agree with
       passing obliques. Like Voice⁰, Dir⁰ can independently trigger
       =(y)a' spellout when oblique extraction passes through its
-      domain (Elkins et al. 2026, §3.1, §4.5). -/
+      domain. -/
   hasUOblique : Bool := false
   deriving DecidableEq, BEq, Repr
 

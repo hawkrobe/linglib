@@ -3,7 +3,7 @@ import Linglib.Core.Logic.OT
 import Linglib.Phenomena.Case.Typology
 
 /-!
-# Aissen (2003): Differential Object Marking @cite{aissen-2003}
+# @cite{aissen-2003}: Differential Object Marking @cite{aissen-2003}
 
 Differential Object Marking: Iconicity vs. Economy.
 Natural Language & Linguistic Theory 21(3): 435–483.
@@ -12,9 +12,9 @@ Formalizes the core OT analysis: Harmonic Alignment of prominence scales
 with the relational scale (Subj > Obj) derives two constraint families:
 
 - **Iconicity** (*Ø/X): penalizes zero-marked objects at prominence level X.
-  Fixed ranking: *Ø most prominent >> ... >> *Ø least prominent.
+  Fixed ranking: *Ø most prominent >>... >> *Ø least prominent.
 - **Economy** (*!/X): penalizes marked objects at prominence level X.
-  Fixed ranking: *!/least prominent >> ... >> *!/most prominent.
+  Fixed ranking: *!/least prominent >>... >> *!/most prominent.
 
 Rankings are fixed within each family but free between families. The factorial
 typology over all consistent interleavings predicts exactly the attested DOM
@@ -51,7 +51,7 @@ open Phenomena.Case.Typology
 /-- All interleavings of two lists, preserving internal order of each.
 
     Given two constraint families with fixed internal rankings, this generates
-    all total orders consistent with both (Aissen 2003, §3). The number of
+    all total orders consistent with both. The number of
     interleavings of lists of lengths m and n is C(m+n, m). -/
 def interleavings {α : Type} : List α → List α → List (List α)
   | [], ys => [ys]
@@ -76,7 +76,7 @@ def scale2Cands : List Scale2Cand :=
 
 theorem scale2_nonempty : scale2Cands ≠ [] := by decide
 
-/-- *Ø/High: penalize unmarked High objects (Aissen 2003, §3). -/
+/-- *Ø/High: penalize unmarked High objects. -/
 def starZeroHigh : NamedConstraint Scale2Cand :=
   { name := "*Ø/High", family := .markedness,
     eval := λ c => if c.high then 0 else 1 }

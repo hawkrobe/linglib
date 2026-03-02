@@ -4,7 +4,7 @@ import Linglib.Core.Case.Hierarchy
 /-!
 # Japanese Case Inventory @cite{blake-1994}
 
-Japanese marks case with postpositional particles (Blake 1994, §5.5):
+Japanese marks case with postpositional particles:
 - -ga (NOM), -o (ACC), -no (GEN), -ni (DAT/LOC/ALL)
 - -kara (ABL), -de (INST/LOC), -to (COM), -e (ALL)
 

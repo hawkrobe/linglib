@@ -2,7 +2,7 @@ import Linglib.Theories.Semantics.Modality.EventRelativity
 import Linglib.Theories.Semantics.Modality.Ability
 
 /-!
-# Actuality Entailments: Position × Aspect (Hacquard 2006, 2009)
+# Actuality Entailments: Position × Aspect
   @cite{hacquard-2006} @cite{hacquard-2009} @cite{bhatt-1999} @cite{nadathur-2023}Bridges **event-relative modality** (`EventRelativity.lean`) with the
 **causal model of ability** (`Ability.lean`) to derive actuality
 entailments from the relative scope of aspect and modal.
@@ -16,7 +16,7 @@ interpretation (Bhatt 1999, Hacquard 2006 Ch.1):
 - Root (ability) + IMPF: "Jane **pouvait** prendre le train" → maybe not
 - Epistemic + PFV: "Jane **a pu** prendre le train" → maybe not
 
-## Hacquard's (2006) Solution
+## @cite{hacquard-2006}'s Solution
 
 The relative position of the modal determines which event binder
 captures it:
@@ -28,13 +28,13 @@ captures it:
   Modal scopes over perfective → perfective applies to VP only in
   accessible worlds → no actualization in the actual world.
 
-## Bridge to Nadathur (2023)
+## Bridge to @cite{nadathur-2023}
 
-`Ability.lean` formalizes the causal model: `abilityWithAspect sc .perfective w`
+`Ability.lean` formalizes the causal model: `abilityWithAspect sc.perfective w`
 = ability ∧ actualization. This IS the root/belowAsp case: aspect scopes
 over the modal, so perfective forces both ability and actualization.
 
-The imperfective case `abilityWithAspect sc .imperfective w` = ability only.
+The imperfective case `abilityWithAspect sc.imperfective w` = ability only.
 This corresponds to root + imperfective (aspect over modal, but imperfective
 doesn't force completion).
 
@@ -70,7 +70,7 @@ Root modals are below AspP: aspect quantifies over the modal event.
 Epistemic modals are above AspP: the modal quantifies over aspect.
 
 This structural difference — not lexical semantics — is the sole
-source of the actuality entailment asymmetry (Hacquard 2006, Ch.1). -/
+source of the actuality entailment asymmetry. -/
 inductive AspectModalScope where
   /-- Root: [Asp [Mod [VP]]] — aspect scopes over modal -/
   | aspectOverModal
@@ -106,9 +106,7 @@ Only root + perfective yields an actuality entailment:
 | root (below Asp) | PFV | ✓ | Asp > Mod: PFV forces completion |
 | root (below Asp) | IMPF | ✗ | Asp > Mod: IMPF doesn't force completion |
 | epistemic (above Asp) | PFV | ✗ | Mod > Asp: PFV in accessible worlds only |
-| epistemic (above Asp) | IMPF | ✗ | Mod > Asp: no completion |
-
-(Hacquard 2006, Ch.1; 2009, §3) -/
+| epistemic (above Asp) | IMPF | ✗ | Mod > Asp: no completion | -/
 def actualityEntailmentPredicted (pos : ModalPosition) (asp : ViewpointAspectB) : Bool :=
   match pos, asp with
   | .belowAsp, .perfective => true
@@ -149,9 +147,7 @@ theorem ae_iff_aspect_over_modal_pfv (pos : ModalPosition) (asp : ViewpointAspec
 /-- The same lexical modal yields different actuality patterns depending
 solely on position. This is Hacquard's core argument against lexical
 ambiguity: French *pouvoir*, Greek *boro*, Hindi *saknaa* are single
-lexical items whose actuality behavior is structurally determined.
-
-(Hacquard 2006, Ch.1, pp.43–45):
+lexical items whose actuality behavior is structurally determined.:
 - Root-*pouvoir* (below Asp) + PFV → actuality entailment
 - Epistemic-*pouvoir* (above Asp) + PFV → no actuality entailment -/
 theorem same_modal_different_entailments :
@@ -163,14 +159,13 @@ theorem same_modal_different_entailments :
 -- § 4. Bridge to Nadathur (2023): Ability.lean
 -- ════════════════════════════════════════════════════
 
-/-! `Ability.lean` formalizes the causal semantics of ability modals
-(Nadathur 2023): ability is causal sufficiency in a circumstantial
+/-! `Ability.lean` formalizes the causal semantics of ability modals: ability is causal sufficiency in a circumstantial
 background, modulated by viewpoint aspect. The bridge:
 
-- `abilityWithAspect sc .perfective w` = `abilityAt sc w ∧ complementActualized sc w`
+- `abilityWithAspect sc.perfective w` = `abilityAt sc w ∧ complementActualized sc w`
   → captures the root + PFV case (aspect over modal forces actualization)
 
-- `abilityWithAspect sc .imperfective w` = `abilityAt sc w`
+- `abilityWithAspect sc.imperfective w` = `abilityAt sc w`
   → captures the root + IMPF case (aspect over modal but no completion)
 
 The theorems below make this correspondence explicit. -/
@@ -179,8 +174,8 @@ The theorems below make this correspondence explicit. -/
 ability ∧ actualization, and the theory predicts an actuality entailment.
 
 The bridge works at two levels:
-1. *Prediction*: `actualityEntailmentPredicted .belowAsp .perfective = true`
-2. *Model*: `abilityWithAspect sc .perfective w = abilityAt sc w && complementActualized sc w` -/
+1. *Prediction*: `actualityEntailmentPredicted.belowAsp.perfective = true`
+2. *Model*: `abilityWithAspect sc.perfective w = abilityAt sc w && complementActualized sc w` -/
 theorem root_pfv_matches_ability :
     actualityEntailmentPredicted .belowAsp .perfective = true ∧
     (∀ (sc : AbilityScenario) (w : World),
@@ -234,7 +229,7 @@ theorem causal_structural_agreement :
 The chain: content licensing → position → scope → (no) AE. -/
 
 /-- The full explanatory chain from content licensing to actuality
-entailments, linking EventRelativity §§8–9 to Hacquard (2006) Ch.1.
+entailments, linking EventRelativity §§8–9 to @cite{hacquard-2006} Ch.1.
 
 Step 1: VP events lack content (EventRelativity §8).
 Step 2: Low position = bound to VP event = aspectOverModal.

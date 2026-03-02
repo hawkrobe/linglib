@@ -2,7 +2,7 @@ import Linglib.Theories.Semantics.Questions.Basic
 
 /-!
 # Questions/Hamblin.lean
-@cite{hamblin-1973b} @cite{karttunen-1977} @cite{kratzer-shimoyama-2002b} @cite{partee-rooth-1983}
+@cite{hamblin-1973b} @cite{karttunen-1977} @cite{kratzer-shimoyama-2002b} @cite{partee-rooth-1983} @cite{kratzer-shimoyama-2002}
 
 Hamblin Semantics for Questions.
 
@@ -15,7 +15,7 @@ This contrasts with G&S partition semantics where questions are equivalence
 relations. The Hamblin view is:
 - More directly compositional (questions are the same type as GQs)
 - Naturally conjoinable (type ends in t)
-- Foundation for alternative semantics (Kratzer & Shimoyama 2002)
+- Foundation for alternative semantics
 
 ## Coordination
 

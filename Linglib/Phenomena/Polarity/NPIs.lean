@@ -66,6 +66,8 @@ structure NPIDatum where
 
 /-!
 ## The "Any" Paradigm
+@cite{israel-2011} @cite{kadmon-landman-1993} @cite{ladusaw-1979} @cite{lahiri-1998} @cite{van-rooy-2003}
+
 
 "Any" is the classic English weak NPI. Licensed in DE contexts.
 -/
@@ -420,7 +422,7 @@ structure CrossLingNPI where
   npiItem : String
   gloss : String
   licensingContexts : List String
-  /-- Scalar direction (Israel 2011; Schwab 2022) -/
+  /-- Scalar direction -/
   scalarDirection : ScalarDirection := .nonScalar
   notes : String
 
@@ -457,7 +459,7 @@ def germanJemals : CrossLingNPI :=
   , notes := "Similar distribution to English \"ever\""
   }
 
-/-- German "so recht" — attenuating NPI. Schwab (2022): does NOT show NPI illusion. -/
+/-- German "so recht" — attenuating NPI. @cite{schwab-2022}: does NOT show NPI illusion. -/
 def germanSoRecht : CrossLingNPI :=
   { language := "German"
   , npiItem := "so recht"
@@ -593,7 +595,7 @@ def questionData : List NPIQuestionDatum :=
 /-!
 ## Minimizers vs Non-Minimizers
 
-Israel (2001) notes NPIs like "all that" and "long" that don't denote minimal quantities.
+@cite{israel-2001} notes NPIs like "all that" and "long" that don't denote minimal quantities.
 Their use under negation makes the sentence LESS informative, not more.
 
 This challenges pure informativity-based accounts but supports relevance-based ones.
@@ -645,14 +647,14 @@ def atAllData : List NPIDatum :=
 /-!
 ## Core Empirical Generalizations
 
-### 1. The DE Generalization (Ladusaw 1979)
+### 1. The DE Generalization
 Weak NPIs are licensed in downward-entailing contexts.
 
 Test: If "All As are Bs" entails "All As are Cs", then:
 - In UE contexts: "All As are Bs" entails "All As are Cs"
 - In DE contexts: "All As are Cs" entails "All As are Bs"
 
-### 2. Anti-Additivity for Strong NPIs (Zwarts 1998)
+### 2. Anti-Additivity for Strong NPIs
 Strong NPIs require anti-additive contexts:
 - f(A∨B) = f(A) ∧ f(B)
 
@@ -664,17 +666,17 @@ NPIs involve scalar reversal:
 - In positive contexts: "some" > "any" (some is more informative)
 - In negative contexts: "any" > "some" (any is more informative)
 
-### 4. Domain Widening (Kadmon & Landman 1993)
+### 4. Domain Widening
 "Any" widens the domain beyond contextual restriction:
 - "I don't have an opinion" (contextually restricted)
 - "I don't have any opinion" (widened to all opinions)
 
-### 5. EVEN Theory (Lahiri 1998, Chierchia 2013)
+### 5. EVEN Theory
 NPIs involve covert EVEN:
 - [EVEN anyone] = "even the most unlikely person"
 - In DE contexts: wide domain = least likely = EVEN presupposition satisfied
 
-### 6. Entropy/Utility (van Rooy 2003)
+### 6. Entropy/Utility
 NPIs maximize RELEVANCE (utility):
 - In assertions: strength = informativity (entailment)
 - In questions: strength = entropy (average informativity)
@@ -707,7 +709,7 @@ Local RSA derives NPI effects from polarity-sensitive informativity:
 /-!
 ## N-words and Scale-Minimality
 
-Chierchia (2013) "Logic in Grammar" observes that N-WORDS (negative indefinites
+@cite{chierchia-2013} "Logic in Grammar" observes that N-WORDS (negative indefinites
 that participate in Negative Concord) are constrained to SCALE-MINIMAL elements.
 
 ### What are N-words?

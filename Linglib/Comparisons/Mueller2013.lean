@@ -8,7 +8,7 @@ import Linglib.Theories.Syntax.DependencyGrammar.Formal.NonProjective
 import Linglib.Theories.Syntax.ConstructionGrammar.ArgumentStructure
 
 /-!
-# Müller (2013): Unifying Everything
+# @cite{mueller-2013}: Unifying Everything
 @cite{mueller-2013}
 
 Cross-theory comparison formalizing Müller's central thesis: Minimalism, HPSG,
@@ -138,7 +138,7 @@ All theories implement the head-complement combination:
 - Minimalism: External Merge where one SO selects the other
 - HPSG: Head-Complement Schema (head word combines with complements)
 - CCG: Forward/backward application (functor consumes argument)
-- DG: Core dependency relations (obj, det, comp, ...) -/
+- DG: Core dependency relations (obj, det, comp,...) -/
 
 /-- External Merge with selection is Head-Complement across all theories. -/
 theorem external_merge_is_head_complement :

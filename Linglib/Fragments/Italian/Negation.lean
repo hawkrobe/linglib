@@ -64,7 +64,7 @@ def niente : NWordEntry :=
 def nulla : NWordEntry :=
   { form := "nulla", gloss := "nothing.FORMAL", preverbalAlone := true }
 
-/-- *mai* — never. Requires *non* (typically postverbal: *non ... mai*). -/
+/-- *mai* — never. Requires *non* (typically postverbal: *non... mai*). -/
 def mai : NWordEntry :=
   { form := "mai", gloss := "never", preverbalAlone := false }
 

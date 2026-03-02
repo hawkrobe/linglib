@@ -6,7 +6,7 @@ import Linglib.Theories.Syntax.DependencyGrammar.LongDistance
 # Islands as Constraints on Rising Catenae
 @cite{huang-1982} @cite{osborne-2019} @cite{ross-1967}
 
-Formalizes Osborne's (2019, Ch 9) analysis of islands in dependency grammar.
+Formalizes @cite{osborne-2019}'s analysis of islands in dependency grammar.
 Islands are syntactic configurations that constrain which rising catenae can
 form — they limit the reach of discontinuities.
 
@@ -66,13 +66,13 @@ inductive OsborneIslandType where
 -- Each tree models a sentence where extraction from an island creates a
 -- risen catena whose rising catena violates an island constraint.
 
-/-- **Left branch island**: *"Whose do you like house?" (Osborne 2019, §9.4)
+/-- **Left branch island**: *"Whose do you like house?"
     Words: whose(0) do(1) you(2) like(3) house(4)
     Deps: do(1) → like(3:ccomp), do(1) → you(2:nsubj),
           like(3) → house(4:obj), house(4) → whose(0:det)
 
     Risen catena = {whose(0)} — determiner extracted from left branch.
-    Rising catena = {whose(0), do(1), ..., house(4)}.
+    Rising catena = {whose(0), do(1),..., house(4)}.
     The catena {whose(0), house(4)} has non-contiguous yield.
     Constraint: root of risen catena may NOT be a determiner. -/
 def island_leftBranch : DepTree :=
@@ -225,7 +225,7 @@ theorem whIsland_extraction_risen :
     isRisenCatena island_whIsland [1, 5] = true := by native_decide
 
 /-- Specified NP: {who(0), of(6)} is a risen catena — connected via nmod
-    but did(1)..pictures(5) intervene. -/
+    but did(1).pictures(5) intervene. -/
 theorem specifiedNP_extraction_risen :
     isRisenCatena island_specifiedNP [0, 6] = true := by native_decide
 

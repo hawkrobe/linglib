@@ -2,10 +2,10 @@ import Linglib.Theories.Pragmatics.RSA.Implementations.PottsEtAl2016
 import Linglib.Phenomena.ScalarImplicatures.Basic
 
 /-!
-# Bridge: Potts et al. (2016) RSA Model → Scalar Implicature Phenomena
+# Bridge: @cite{potts-etal-2016} RSA Model → Scalar Implicature Phenomena
 @cite{potts-etal-2016}
 
-Connects the Potts et al. (2016) lexical uncertainty RSA model
+Connects the @cite{potts-etal-2016} lexical uncertainty RSA model
 to empirical DE/UE blocking data from `Phenomena.ScalarImplicatures.Basic`.
 -/
 

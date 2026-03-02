@@ -57,8 +57,8 @@ structure Model (E : Type*) where
 /--
 Evaluate a term given assignment g and witness sequence ê.
 
-⟦x_i⟧^{g,ê} = g(i)    (variables from assignment)
-⟦p_i⟧^{g,ê} = ê(i)    (pronouns from witness sequence)
+⟦x_i⟧^{g,ê} = g(i) (variables from assignment)
+⟦p_i⟧^{g,ê} = ê(i) (pronouns from witness sequence)
 
 Variables and pronouns have different interpretation sources.
 -/
@@ -226,7 +226,7 @@ theorem Formula.sat_resolve {E : Type*} [Nonempty E]
 
 section Examples
 
-/-- "A man walked in. He sat down." -/
+/-- "A man walked. He sat down." -/
 def exManWalkedIn : Formula :=
   (Formula.exists_ 0 (Formula.atom "Man" [.var 0] ⋀ Formula.atom "WalkedIn" [.var 0]))
   ⋀ Formula.atom "SatDown" [.pron 0]

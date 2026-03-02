@@ -4,7 +4,7 @@ import Linglib.Theories.Semantics.Modality.EventRelativity
 # Pragmatic Blocking of High Circumstantial Readings
 
 @cite{hacquard-2010} @cite{grice-1975}Formalizes the pragmatic blocking of circumstantial readings for
-high modals (Hacquard 2010, pp. 110–111). Content licensing does NOT
+high modals. Content licensing does NOT
 rule out circumstantial readings for high modals — `canProjectCircumstantial`
 returns `true` for all event binders. Instead, circumstantial readings of
 high modals are **pragmatically blocked** by more informative epistemic
@@ -132,7 +132,7 @@ PRAGMATICALLY available:
 def pragmaticallyAvailable (b : EventBinder) (flavor : ModalFlavor) : Bool :=
   flavor ∈ b.availableFlavors && !isPragmaticallyBlocked b flavor
 
-/-- The complete (49a–f) pattern from Hacquard (2010):
+/-- The complete (49a–f) pattern from @cite{hacquard-2010}:
 
 | Binder | Flavor | Semantic? | Blocked? | Pragmatic? | Status |
 |--------|--------|-----------|----------|------------|--------|

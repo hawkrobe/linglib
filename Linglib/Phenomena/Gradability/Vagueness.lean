@@ -46,7 +46,7 @@ For individuals near the inferred threshold:
 - Judgments show high variance across informants
 - Neither "A" nor "not A" feels fully appropriate
 
-Source: Lassiter & Goodman (2017) Section 1, Kennedy (2007)
+Source: @cite{lassiter-goodman-2017} Section 1, @cite{kennedy-2007}
 -/
 structure BorderlineDatum where
   /-- The adjective -/
@@ -109,7 +109,7 @@ Empirical observations:
 - People reject the conclusion (the absurd case)
 - People show gradient acceptance as cases approach the threshold
 
-Source: Edgington (1997), Lassiter & Goodman (2017) Section 5
+Source: Edgington (1997), @cite{lassiter-goodman-2017} Section 5
 -/
 structure SoritesDatum where
   adjective : String
@@ -180,11 +180,11 @@ Is there a sharp boundary between "borderline tall" and "clearly tall"?
 - First-order vagueness: borderline cases of "tall"
 - Second-order vagueness: borderline cases of "borderline tall"
 - Third-order vagueness: borderline cases of "borderline borderline tall"
-- ... and so on
+-... and so on
 
 This threatens any theory that posits sharp boundaries anywhere.
 
-Source: Fine (1975), Williamson (1994), Raffman (2014)
+Source: @cite{fine-1975}, @cite{williamson-1994}, Raffman (2014)
 -/
 structure HigherOrderVaguenessData where
   basePredicate : String
@@ -218,7 +218,7 @@ If "Definitely tall" means "clearly tall" (not borderline), then:
 
 Iterating: "definitely definitely tall", etc.
 
-Source: Fine (1975), Williamson (1994)
+Source: @cite{fine-1975}, @cite{williamson-1994}
 -/
 structure DefinitelyOperatorData where
   predicate : String
@@ -250,7 +250,7 @@ These are "penumbral truths" - true in the borderline region.
 Supervaluationism: true iff true on ALL precisifications.
 Degree theories: must explain why these have degree 1.
 
-Source: Fine (1975), Keefe (2000)
+Source: @cite{fine-1975}, @cite{keefe-2000}
 -/
 structure PenumbralConnectionData where
   connectionName : String
@@ -314,7 +314,7 @@ This seems true for vague predicates:
 
 But iterated application leads to absurdity (the sorites).
 
-Source: Wright (1976), Fara (2000)
+Source: Wright (1976), @cite{fara-2000}
 -/
 structure TolerancePrincipleData where
   predicate : String
@@ -347,7 +347,7 @@ def toleranceExamples : List TolerancePrincipleData :=
   [heightTolerance, priceTolerance]
 
 /--
-Probabilistic sorites analysis (Edgington 1997, Lassiter & Goodman 2017).
+Probabilistic sorites analysis.
 
 Each tolerance step is highly probable, not certain.
 
@@ -360,7 +360,7 @@ For N = 762 (mm from 7'4\" to 4'10\"):
 The paradox dissolves: the argument is valid but unsound.
 Each premise is probably true, but the conjunction is probably false.
 
-Source: Edgington (1997), Lassiter & Goodman (2017) Section 5
+Source: Edgington (1997), @cite{lassiter-goodman-2017} Section 5
 -/
 structure ProbabilisticSoritesData where
   predicate : String
@@ -392,7 +392,7 @@ Formal constraints that any adequate theory of vagueness should satisfy.
 These are theory-neutral desiderata. A theory's success is measured
 by how well it accounts for these patterns.
 
-Source: Various (Keefe 2000, Williamson 1994, Lassiter 2017)
+Source: Various
 -/
 structure VaguenessDesideratum where
   name : String
@@ -449,7 +449,7 @@ The extension of a vague gradable adjective can change when an agent's
 This is evidence that the degrees of vague quantities incorporate
 information about interests, not just objective measurements.
 
-Source: Fara (2000, 2008), Dinis & Jacinto (2026) §5.3
+Source: Fara (2000, 2008), @cite{dinis-jacinto-2026} §5.3
 -/
 structure InterestRelativityDatum where
   adjective : String
@@ -497,7 +497,7 @@ def interestRelativityExamples : List InterestRelativityDatum :=
 /--
 Tolerance step non-uniformity.
 
-Not all tolerance steps feel equally acceptable.  In a Soritical sequence
+Not all tolerance steps feel equally acceptable. In a Soritical sequence
 where adjacent elements differ by one precise unit (one hair, one mm,
 one dollar), some steps feel like negligible differences and others feel
 like significant jumps — even though the precise difference is identical.
@@ -505,7 +505,7 @@ like significant jumps — even though the precise difference is identical.
 This is evidence that the *vague* difference between adjacent elements
 is not a simple function of the *precise* difference.
 
-Source: Fara (2000) on salient similarity, Dinis & Jacinto (2026) §6.1
+Source: @cite{fara-2000} on salient similarity, @cite{dinis-jacinto-2026} §6.1
 -/
 structure ToleranceStepDatum where
   adjective : String

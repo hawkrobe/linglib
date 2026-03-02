@@ -3,7 +3,7 @@ import Linglib.Core.Lexical.UD
 /-!
 # Combination Schema
 
-Theory-neutral interface for Müller's (2013) three universal combination schemata.
+Theory-neutral interface for @cite{mueller-2013}'s three universal combination schemata.
 
 All syntactic theories (Minimalism, HPSG, CCG, CxG, DG) converge on three
 fundamental modes of combination:
@@ -25,7 +25,7 @@ though they use different terminology and formalisms. -/
 inductive CombinationKind where
   /-- Head combines with its complement (first-merged argument).
       Minimalism: External Merge (first); HPSG: Head-Complement Schema;
-      CCG: forward/backward application; DG: core dependency (obj, det, ...). -/
+      CCG: forward/backward application; DG: core dependency (obj, det,...). -/
   | headComplement
   /-- Head combines with its specifier (later-merged argument).
       Minimalism: External Merge (later); HPSG: Head-Subject Schema;

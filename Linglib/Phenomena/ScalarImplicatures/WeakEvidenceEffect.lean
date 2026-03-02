@@ -4,7 +4,7 @@ import Mathlib.Data.Rat.Defs
 # Weak Evidence Effect: Empirical Data
 @cite{barnett-griffiths-hawkins-2022}
 
-Experimental data from Barnett, Griffiths & Hawkins (2022) on how weak positive
+Experimental data from @cite{barnett-griffiths-hawkins-2022} on how weak positive
 evidence can backfire when listeners expect speakers to have persuasive goals.
 
 ## The Stick Contest

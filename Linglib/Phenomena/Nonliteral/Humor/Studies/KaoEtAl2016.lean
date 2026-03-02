@@ -1,7 +1,9 @@
 import Mathlib.Data.Rat.Defs
 
 /-!
-# Kao, Levy & Goodman (2016) — A Computational Model of Linguistic Humor in Puns @cite{kao-levy-goodman-2016}
+# @cite{kao-levy-goodman-2016} — A Computational Model of Linguistic Humor in Puns @cite{kao-levy-goodman-2016}
+@cite{bergen-levy-goodman-2016} @cite{goodman-frank-2016}
+
 
 This module contains empirical data from:
 
@@ -240,7 +242,7 @@ def examplePuns : List PhoneticPun := [
 -- Summary
 
 /-!
-## Summary: Kao et al. (2016)
+## Summary: @cite{kao-levy-goodman-2016}
 
 ### Main Contributions
 

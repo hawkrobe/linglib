@@ -21,7 +21,7 @@ Italian distinguishes five core indicative tenses:
 
 The passato prossimo / passato remoto distinction is significant:
 both express past time reference, but they differ in morphological type
-(periphrastic vs synthetic) and, following Lakoff (1970), in whether
+(periphrastic vs synthetic) and, following @cite{lakoff-1970}, in whether
 they allow false-tense interpretations.
 
 ## Kratzer Decomposition

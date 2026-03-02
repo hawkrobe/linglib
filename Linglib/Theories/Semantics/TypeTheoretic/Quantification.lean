@@ -6,7 +6,7 @@ import Mathlib.Data.Finset.Card
 # Type Theory with Records — Chapter 7: Witness-based Quantification
 @cite{barwise-cooper-1981} @cite{cooper-2023} @cite{van-benthem-1984}
 
-Cooper (2023) Chapter 7 replaces classical set-theoretic GQ denotations
+@cite{cooper-2023} Chapter 7 replaces classical set-theoretic GQ denotations
 (cf. `Core.Quantification.GQ`) with *witness sets* — finite sets of
 individuals satisfying cardinality conditions specific to each quantifier.
 
@@ -41,22 +41,22 @@ Purification folds background conditions into the property body:
 variable {E : Type}
 
 /-- A parametric property is *pure* when its background is trivial.
-    Cooper (2023) §7.2.3, eq (7a): P.bg has only the x-field. -/
+    @cite{cooper-2023} §7.2.3, eq (7a): P.bg has only the x-field. -/
 def PPpty.isPure (P : PPpty E) : Prop := Nonempty P.Bg ∧ Subsingleton P.Bg
 
 /-- The type of witnesses for property P.
-    Cooper (2023) §7.2.3, eq (17): a : 𝔗(P) iff 𝔓(P){a} is witnessed.
+    @cite{cooper-2023} §7.2.3, eq (17): a : 𝔗(P) iff 𝔓(P){a} is witnessed.
     For a pure property, 𝔗(P) = {a : E // Nonempty (P a)}. -/
 def WitnessType (P : Ppty E) : Type := {a : E // Nonempty (P a)}
 
 /-- Existential purification of a parametric property.
-    Cooper (2023) §7.2.3, eq (12): 𝔓(P) merges background conditions
+    @cite{cooper-2023} §7.2.3, eq (12): 𝔓(P) merges background conditions
     into the body via existential quantification.
     𝔓(P)(a) = Σ (c : Bg), fg c a. -/
 def purify (P : PPpty E) : Ppty E := λ a => (c : P.Bg) × P.fg c a
 
 /-- Universal purification of a parametric property.
-    Cooper (2023) §7.2.3, eq (13): 𝔓ʸ(P) universally quantifies
+    @cite{cooper-2023} §7.2.3, eq (13): 𝔓ʸ(P) universally quantifies
     over background contexts. Used for strong donkey readings. -/
 def purifyUniv (P : PPpty E) : Ppty E := λ a => (c : P.Bg) → P.fg c a
 
@@ -93,7 +93,7 @@ X : qʷ(P) iff (1) X ⊆ extension of P, and (2) a cardinality condition.
 
 All witness set types share a common `subset` condition (X ⊆ [↓P]).
 This structural requirement is what *derives* conservativity from the
-witness architecture — it's not stipulated as in Barwise & Cooper (1981). -/
+witness architecture — it's not stipulated as in @cite{barwise-cooper-1981}. -/
 
 variable [DecidableEq E]
 
@@ -102,7 +102,7 @@ def fullExtFinset [Fintype E] (P : E → Prop) [DecidablePred P] : Finset E :=
   Finset.univ.filter P
 
 /-- Base witness set condition: X ⊆ extension of P.
-    Cooper (2023) §7.2.4: every witness set type requires this. -/
+    @cite{cooper-2023} §7.2.4: every witness set type requires this. -/
 structure WitnessSet (P : E → Prop) (X : Finset E) : Prop where
   subset : ∀ a ∈ X, P a
 
@@ -189,7 +189,7 @@ Frequentist conditional probability:
   p_𝔉(T₁‖T₂) = |[T₁∧T₂]_𝔉| / |[T₂]_𝔉| -/
 
 /-- An experience base: the agent's memory of categorical judgments.
-    Cooper (2023) §7.3, eq (37): 𝔉 is a finite set of [sit=a, type=T] records.
+    @cite{cooper-2023} §7.3, eq (37): 𝔉 is a finite set of [sit=a, type=T] records.
     Parameterized over entity type E and predicate type P. -/
 structure ExperienceBase (E : Type) (P : Type) [DecidableEq E] [DecidableEq P] where
   /-- The observed entity-predicate judgments -/
@@ -200,7 +200,7 @@ section ExperienceBaseOps
 variable {E : Type} {P : Type} [DecidableEq E] [DecidableEq P]
 
 /-- Extension of predicate p relative to 𝔉.
-    Cooper (2023) §7.3, eq (38): [T]_𝔉 = {a | a :_𝔉 T}. -/
+    @cite{cooper-2023} §7.3, eq (38): [T]_𝔉 = {a | a :_𝔉 T}. -/
 def ExperienceBase.ext (𝔉 : ExperienceBase E P) (p : P) : Finset E :=
   𝔉.judgments.filter (·.2 = p) |>.image Prod.fst
 
@@ -209,13 +209,13 @@ def ExperienceBase.jointExt (𝔉 : ExperienceBase E P) (p q : P) : Finset E :=
   (𝔉.ext p) ∩ (𝔉.ext q)
 
 /-- Frequentist conditional probability estimate (as numerator/denominator).
-    Cooper (2023) §7.3, eq (36):
+    @cite{cooper-2023} §7.3, eq (36):
     p_𝔉(T₁‖T₂) = |[T₁∧T₂]_𝔉| / |[T₂]_𝔉|. -/
 def ExperienceBase.condProb (𝔉 : ExperienceBase E P) (p q : P) : ℕ × ℕ :=
   ((𝔉.jointExt p q).card, (𝔉.ext q).card)
 
 /-- Reliability of a probability estimate (count before log).
-    Cooper (2023) §7.3, eq (40):
+    @cite{cooper-2023} §7.3, eq (40):
     reliability = ln min(|[T₁]_𝔉|, |[T₂]_𝔉|). -/
 def ExperienceBase.reliability (𝔉 : ExperienceBase E P) (p q : P) : ℕ :=
   min (𝔉.ext p).card (𝔉.ext q).card
@@ -236,7 +236,7 @@ Two patterns:
 variable {E : Type}
 
 /-- General witness condition for monotone ↑ quantifiers.
-    Cooper (2023) §7.4, eq (59a):
+    @cite{cooper-2023} §7.4, eq (59a):
     s : q(P,Q) iff s : [X : qʷ(P), f : (a : 𝔗(X)) → 𝔓(Q){a}]
     Each member of X must individually witness Q. -/
 structure GeneralWC_Incr (P Q : Ppty E)
@@ -246,7 +246,7 @@ structure GeneralWC_Incr (P Q : Ppty E)
   f : (a : E) → a ∈ X → Q a
 
 /-- General witness condition for monotone ↓ quantifiers.
-    Cooper (2023) §7.4, eq (59b):
+    @cite{cooper-2023} §7.4, eq (59b):
     Every entity with both P and Q lands in X. -/
 structure GeneralWC_Decr (P Q : Ppty E)
     (isWS : Finset E → Prop) [DecidableEq E] where
@@ -280,7 +280,7 @@ structure ParticularWC_FewComp (P Q : Ppty E) [DecidableEq E] where
   allNotQ : ∀ a ∈ X, IsEmpty (Q a)
 
 /-- The particular exist condition implies the general one (with singleton X).
-    Cooper (2023) §7.4: the particular condition "provides a component
+    @cite{cooper-2023} §7.4: the particular condition "provides a component
     in the witness (in the 'x'-field) which can be picked up on by
     singular anaphora." -/
 def particular_exist_implies_general [DecidableEq E]
@@ -293,7 +293,7 @@ def particular_exist_implies_general [DecidableEq E]
    λ a ha => by rw [Finset.mem_singleton] at ha; rw [ha]; exact h.qWit⟩
 
 /-- Anaphora set predictions per quantifier.
-    Cooper (2023) §7.4.1: witness structure determines available anaphora. -/
+    @cite{cooper-2023} §7.4.1: witness structure determines available anaphora. -/
 inductive AnaphoraRef where
   /-- REFSET: reference to the witness individual/set.
       "A dog barked. It (= that dog) heard an intruder." -/
@@ -307,13 +307,13 @@ inductive AnaphoraRef where
   deriving DecidableEq, Repr
 
 /-- Quantifier names for typed dispatch.
-    Cooper (2023) §7.4.1: the quantifiers of the English fragment. -/
+    @cite{cooper-2023} §7.4.1: the quantifiers of the English fragment. -/
 inductive QuantName where
   | exist | existPl | no | every | most | many | few | aFew
   deriving DecidableEq, Repr
 
 /-- Which anaphora sets each quantifier makes available.
-    Cooper (2023) §7.4.1: summary table. -/
+    @cite{cooper-2023} §7.4.1: summary table. -/
 def anaphoraAvailable : QuantName → List AnaphoraRef
   | .exist   => [.refset]
   | .existPl => [.refset, .maxset]
@@ -330,14 +330,14 @@ Cooper extends contexts with gap and wh-assignments to handle
 extraction, relative clauses, and wh-questions. -/
 
 /-- Context with gap assignment.
-    Cooper (2023) §7.5, eq (115): Cntxt = [𝔰, 𝔤, 𝔠]. -/
+    @cite{cooper-2023} §7.5, eq (115): Cntxt = [𝔰, 𝔤, 𝔠]. -/
 structure CntxtWithGap (AssgnType CntxtType : Type) where
   𝔰 : AssgnType
   𝔤 : AssgnType
   𝔠 : CntxtType
 
 /-- Full context with wh- and gap assignments.
-    Cooper (2023) §7.5, eq (122): Cntxt = [𝔰, 𝔴, 𝔤, 𝔠]. -/
+    @cite{cooper-2023} §7.5, eq (122): Cntxt = [𝔰, 𝔴, 𝔤, 𝔠]. -/
 structure CntxtFull (AssgnType CntxtType : Type) where
   𝔰 : AssgnType
   𝔴 : AssgnType
@@ -345,20 +345,20 @@ structure CntxtFull (AssgnType CntxtType : Type) where
   𝔠 : CntxtType
 
 /-- Slash category: S/i is a sentence missing constituent at gap i.
-    Cooper (2023) §7.5, eq (149): the TTR analogue of slash categories. -/
+    @cite{cooper-2023} §7.5, eq (149): the TTR analogue of slash categories. -/
 structure SlashCat where
   mother : String
   gapIdx : ℕ
   deriving DecidableEq, Repr
 
 /-- WhNP condition.
-    Cooper (2023) §7.5, eq (126): σ : WhNP iff σ : NP and
+    @cite{cooper-2023} §7.5, eq (126): σ : WhNP iff σ : NP and
     Ω.bg ⊑ [𝔴:[xᵢ:Ind]] for some i. -/
 structure IsWhNP where
   whIdx : ℕ
 
 /-- Property conjunction.
-    Cooper (2023) §7.5, eq (153): P₁ & P₂ for relative clauses.
+    @cite{cooper-2023} §7.5, eq (153): P₁ & P₂ for relative clauses.
     "child who Sam hugged" = child ∧ hugged-by-Sam. -/
 def pptyConj (P₁ P₂ : Ppty E) : Ppty E := λ x => P₁ x × P₂ x
 
@@ -369,7 +369,7 @@ theorem pptyConj_nonempty (P₁ P₂ : Ppty E) (x : E)
   ⟨⟨h₁.some, h₂.some⟩⟩
 
 /-- Type-indexed property: properties of objects of type T.
-    Cooper (2023) §7.5, eq (152): P : ᵀPpty iff P.bg ⊑ [x:T]. -/
+    @cite{cooper-2023} §7.5, eq (152): P : ᵀPpty iff P.bg ⊑ [x:T]. -/
 def TypedPpty (T : Type) := T → Type
 
 /-- Type-indexed parametric property. -/
@@ -439,7 +439,7 @@ end Ch7Phenomena
 
 /-! ### Structural theorems
 
-Key theoretical claims of Cooper (2023) Ch 7, connecting witness-based
+Key theoretical claims of @cite{cooper-2023} Ch 7, connecting witness-based
 quantification to classical GQ properties and each other. -/
 
 section Ch7Theorems
@@ -469,10 +469,10 @@ def witnessGQ_every [Fintype E] : GQ E :=
 
 All witness set types require X ⊆ [↓P] (the subset condition).
 This *structurally entails* conservativity: q(P,Q) depends only on
-P ∩ Q, never on Q outside P. Cooper (2023) §7.2.4.
+P ∩ Q, never on Q outside P. @cite{cooper-2023} §7.2.4.
 
 This is significant because conservativity is stipulated as an axiom
-in Barwise & Cooper (1981) but *derived* from the witness architecture. -/
+in @cite{barwise-cooper-1981} but *derived* from the witness architecture. -/
 
 end Ch7Theorems
 
@@ -511,7 +511,7 @@ truth values as the extensional denotations in Semantics.Montague/Quantifier.
 This bridges the three layers of quantification:
   Core.Quantification (logical properties) ← proved via conservativity above
   Semantics.Montague (extensional denotations) ← proved via equivalence below
-  TTR (witness-based)                        ← definitions above -/
+  TTR (witness-based) ← definitions above -/
 
 section WitnessExtensionalBridge
 
@@ -571,7 +571,7 @@ universal purification 𝔓ʸ gives strong donkey readings.
 For pure properties (trivial Bg), both collapse to identity. -/
 
 /-- Purification of a pure property is equivalent to the original.
-    Cooper (2023) §7.2.3: if P.Bg ≅ Unit, then 𝔓(P) ≃ P.fg. -/
+    @cite{cooper-2023} §7.2.3: if P.Bg ≅ Unit, then 𝔓(P) ≃ P.fg. -/
 theorem purify_pure_equiv {E : Type} (P : PPpty E)
     (hPure : P.isPure) (a : E) :
     Nonempty (𝔓 P a) ↔ Nonempty (P.fg (hPure.1.some) a) := by
@@ -594,7 +594,7 @@ theorem purifyUniv_pure_equiv {E : Type} (P : PPpty E)
     rwa [this]
 
 /-- For pure properties, weak and strong donkey readings agree.
-    Cooper (2023) §7.2.3: the distinction only matters when Bg is non-trivial. -/
+    @cite{cooper-2023} §7.2.3: the distinction only matters when Bg is non-trivial. -/
 theorem donkey_readings_agree_when_pure {E : Type} (P : PPpty E)
     (hPure : P.isPure) (a : E) :
     Nonempty (𝔓 P a) ↔ Nonempty (𝔓ʸ P a) := by
@@ -607,7 +607,7 @@ The particular conditions are preferred because they expose finer-grained
 structure for anaphora resolution. -/
 
 /-- Particular no implies general (decreasing) no.
-    Cooper (2023) §7.4, eqs (70) → (59b): if every P-entity lacks Q,
+    @cite{cooper-2023} §7.4, eqs (70) → (59b): if every P-entity lacks Q,
     then the empty witness set satisfies the decreasing condition
     (vacuously: no entity has both P and Q). -/
 def particular_no_implies_general {E : Type} [DecidableEq E]
@@ -629,7 +629,7 @@ cardinality threshold but differ in anaphora predictions because `few`
 
 /-- The complement witness set for `few` satisfies the complement
     cardinality condition.
-    Cooper (2023) §7.4.2, eq (81): X̄ = 𝔗(P) \ X. -/
+    @cite{cooper-2023} §7.4.2, eq (81): X̄ = 𝔗(P) \ X. -/
 theorem comp_witness_card [Fintype E] (P : E → Prop) [DecidablePred P]
     (X : Finset E) (_hSub : ∀ a ∈ X, P a) (θ : ℕ)
     (hFew : X.card ≤ θ)
@@ -639,7 +639,7 @@ theorem comp_witness_card [Fintype E] (P : E → Prop) [DecidablePred P]
   omega
 
 /-- few_a and its complement partition the full extension.
-    Cooper (2023) §7.4.2: X ∪ X̄ = 𝔗(P). -/
+    @cite{cooper-2023} §7.4.2: X ∪ X̄ = 𝔗(P). -/
 theorem few_comp_partition [Fintype E] (P : E → Prop) [DecidablePred P]
     (X : Finset E) (hX : X ⊆ fullExtFinset P) :
     X ∪ (fullExtFinset P \ X) = fullExtFinset P := by
@@ -647,12 +647,12 @@ theorem few_comp_partition [Fintype E] (P : E → Prop) [DecidablePred P]
 
 /-! #### Record path subtraction (⊖) for LDD
 
-Cooper (2023) §7.5, eq (118): T ⊖ π removes a field from a record type.
+@cite{cooper-2023} §7.5, eq (118): T ⊖ π removes a field from a record type.
 This is the operation underlying gap-threading: a transitive verb type
 minus its object field yields the gap-containing type. -/
 
 /-- Record path subtraction: remove a named field from a record.
-    Cooper (2023) §7.5, eq (118): T ⊖ π removes field π from T.
+    @cite{cooper-2023} §7.5, eq (118): T ⊖ π removes field π from T.
     Encoded as filtering on a list of (label, type) pairs. -/
 def recSubtract (fields : List (String × Type)) (path : String) :
     List (String × Type) :=
@@ -675,32 +675,32 @@ theorem recSubtract_preserves (fields : List (String × Type)) (path label : Str
 
 /-! #### Dependency families and generalization (T^π)
 
-Cooper (2023) §7.5, eq (133): T^π = λv.[T ⊖ π ∧ {π : v}].
+@cite{cooper-2023} §7.5, eq (133): T^π = λv.[T ⊖ π ∧ {π : v}].
 A dependency family abstracts over the gap, yielding a function
 from entities to record types. This is the TTR analogue of
 lambda-abstraction over a trace in transformational grammar. -/
 
 /-- Dependency family: abstract over a gap to get a property.
-    Cooper (2023) §7.5, eq (133): T^π(v) fills gap π with v. -/
+    @cite{cooper-2023} §7.5, eq (133): T^π(v) fills gap π with v. -/
 def dependencyFamily {E : Type} (body : E → Ppty E) : Ppty E → Type :=
   λ P => (a : E) × body a a × P a
 
 /-- Merging a dependency family with a quantifier yields a
-    scope-taking constituent. Cooper (2023) §7.5, eq (137):
+    scope-taking constituent. @cite{cooper-2023} §7.5, eq (137):
     "which child Sam hugged" = Quant derived from T^π. -/
 def depFamilyQuant {E : Type} (body : E → Ppty E) (q : Quant E) : Type :=
   q (λ x => (a : E) × body a x)
 
 /-! #### Monotonicity from witness conditions
 
-Cooper (2023) §7.4: the general witness condition for ↑ quantifiers
+@cite{cooper-2023} §7.4: the general witness condition for ↑ quantifiers
 (59a) uses existential evidence per witness (f maps each to Q-evidence),
 while ↓ quantifiers (59b) use universal containment (every P∧Q entity
 is in X). This structural difference predicts monotonicity direction. -/
 
 /-- Upward monotonicity of the increasing witness condition:
     if Q ⊆ Q' (at Type level), any witness for Q also witnesses Q'.
-    Cooper (2023) §7.4, consequence of (59a). -/
+    @cite{cooper-2023} §7.4, consequence of (59a). -/
 def generalWC_incr_mono {E : Type} [DecidableEq E] (P Q Q' : Ppty E)
     (isWS : Finset E → Prop)
     (embed : ∀ a : E, Q a → Q' a)
@@ -709,7 +709,7 @@ def generalWC_incr_mono {E : Type} [DecidableEq E] (P Q Q' : Ppty E)
 
 /-- Downward monotonicity of the decreasing witness condition:
     if Q' ⊆ Q, then the decreasing condition on Q implies it on Q'.
-    Cooper (2023) §7.4, consequence of (59b). -/
+    @cite{cooper-2023} §7.4, consequence of (59b). -/
 def generalWC_decr_mono {E : Type} [DecidableEq E] (P Q Q' : Ppty E)
     (isWS : Finset E → Prop)
     (embed : ∀ a : E, Q' a → Q a)

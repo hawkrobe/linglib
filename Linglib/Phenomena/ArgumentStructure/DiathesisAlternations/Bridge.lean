@@ -4,7 +4,7 @@ import Linglib.Fragments.English.Predicates.Verbal
 /-!
 # Diathesis Alternation Bridge @cite{levin-1993}
 
-Connects empirical alternation data (Levin 1993, pp. 5–10) to the
+Connects empirical alternation data to the
 `LevinClass.participatesIn` prediction function and Fragment verb entries.
 
 ## Agreement

@@ -5,9 +5,9 @@ import Linglib.Theories.Semantics.Degree.Core
 import Mathlib.Tactic.NormNum
 
 /-!
-# Epistemic Threshold Semantics (Ying, Zhi-Xuan, Wong, Mansinghka & Tenenbaum 2025)
+# Epistemic Threshold Semantics
 
-@cite{ying-zhi-xuan-wong-mansinghka-tenenbaum-2025} @cite{baker-jara-ettinger-saxe-tenenbaum-2017} @cite{cariani-santorio-wellwood-2024}  @cite{kennedy-2007} @cite{lassiter-goodman-2017}Epistemic vocabulary — attitude verbs (`believes`, `knows`), modal verbs
+@cite{ying-zhi-xuan-wong-mansinghka-tenenbaum-2025} @cite{baker-jara-ettinger-saxe-tenenbaum-2017} @cite{cariani-santorio-wellwood-2024} @cite{kennedy-2007} @cite{lassiter-goodman-2017}Epistemic vocabulary — attitude verbs (`believes`, `knows`), modal verbs
 (`might`, `must`), and modal adjectives (`likely`, `certain`) — denotes
 **threshold functions over agent credence** Pr(A, φ).
 
@@ -18,18 +18,18 @@ against a threshold (Table 1):
 
     believes(A, φ) ⟺ Pr(A, φ) ≥ θ_believes
     knows_that(A, φ) ⟺ believes(A, φ) ∧ φ
-    certain(A, φ)  ⟺ Pr(A, φ) ≥ θ_certain
-    must(φ)        ⟺ λA. Pr(A, φ) ≥ θ_must
-    likely(φ)      ⟺ λA. Pr(A, φ) ≥ θ_likely
-    might(φ)       ⟺ λA. Pr(A, φ) ≥ θ_might
+    certain(A, φ) ⟺ Pr(A, φ) ≥ θ_certain
+    must(φ) ⟺ λA. Pr(A, φ) ≥ θ_must
+    likely(φ) ⟺ λA. Pr(A, φ) ≥ θ_likely
+    might(φ) ⟺ λA. Pr(A, φ) ≥ θ_might
 
 ## Degree-Threshold Isomorphism
 
 The threshold semantics is structurally identical to the positive form of
-gradable adjectives (Kennedy 2007, Lassiter 2017):
+gradable adjectives:
 
-    ⟦tall⟧(x) = height(x) ≥ θ_tall       (Degree/Core.positiveSem)
-    ⟦believes⟧(A, φ) = Pr(A, φ) ≥ θ_bel  (meetsThreshold)
+    ⟦tall⟧(x) = height(x) ≥ θ_tall (Degree/Core.positiveSem)
+    ⟦believes⟧(A, φ) = Pr(A, φ) ≥ θ_bel (meetsThreshold)
 
 Both are instances of the same degree-threshold architecture: a measure
 function maps an entity to a degree on a scale, and the predicate holds
@@ -45,7 +45,7 @@ This collapses three previously separate treatments in the library:
 1. **Doxastic.lean** (Hintikka): Boolean accessibility. Believes iff φ holds
    at ALL accessible worlds — the θ → 1 limit of threshold semantics.
 
-2. **Confidence.lean** (CSW 2024): Ordinal confidence ordering. Credence
+2. **Confidence.lean**: Ordinal confidence ordering. Credence
    induces the same upward-monotone preorder (`credence_upward_monotone`
    below), but CSW's ordering is explicitly non-probabilistic (conjunction
    fallacy compatible), while LaBToM's Pr is a genuine probability.
@@ -225,7 +225,7 @@ def degree (cr : AgentCredence E W) (a : E) (φ : BProp W) : ℚ :=
 /-- Comparative credence: `more(P, φ, ψ)` = degree(P, A, φ) > degree(P, A, ψ).
 
     The agent's credence in φ strictly exceeds credence in ψ. Mirrors the
-    comparative from `Confidence.lean` (CSW 2024) and from `Degree/Core.lean`. -/
+    comparative from `Confidence.lean` and from `Degree/Core.lean`. -/
 def moreCredent (cr : AgentCredence E W)
     (a : E) (φ ψ : BProp W) : Prop :=
   cr a ψ < cr a φ
@@ -437,15 +437,14 @@ noncomputable def btomCredence
 /-!
 ### Epistemic Expressions as Gradable Predicates
 
-Lassiter (2017) argues that epistemic modals are gradable expressions on
+@cite{lassiter-goodman-2017} argues that epistemic modals are gradable expressions on
 a probability scale. The threshold semantics makes this precise:
 
-    ⟦tall⟧(x) = height(x) ≥ θ_tall       (Degree.positiveSem)
-    ⟦believes⟧(A, φ) = Pr(A, φ) ≥ θ_bel  (meetsThreshold)
+    ⟦tall⟧(x) = height(x) ≥ θ_tall (Degree.positiveSem)
+    ⟦believes⟧(A, φ) = Pr(A, φ) ≥ θ_bel (meetsThreshold)
 
 Both are instances of `μ(entity) ≥ θ`. The epistemic scale is the
-probability interval [0, 1], which is **closed** in the sense of Kennedy
-(2007): it has both an upper bound (certainty, 1) and a lower bound
+probability interval [0, 1], which is **closed** in the sense of @cite{kennedy-2007}: it has both an upper bound (certainty, 1) and a lower bound
 (impossibility, 0).
 
 This has consequences for scale structure:
@@ -466,8 +465,7 @@ expressions.
 /-- The epistemic probability scale is closed: bounded by [0, 1].
 
     This classifies the credence scale as `Boundedness.closed`, meaning
-    epistemic adjectives like `certain` license absolute standards
-    (Kennedy 2007). -/
+    epistemic adjectives like `certain` license absolute standards. -/
 def epistemicBoundedness : Core.Scale.Boundedness := .closed
 
 /-- An epistemic gradable predicate: an `EpistemicEntry` viewed as a
@@ -499,7 +497,7 @@ theorem meetsThreshold_eq_positiveSem (cr : AgentCredence E W) (θ : ℚ)
 
 /-- The epistemic scale is licensed: closed → admits absolute standards.
 
-    Since credence is bounded by [0, 1], Kennedy's (2007) licensing
+    Since credence is bounded by [0, 1], @cite{kennedy-2007}'s licensing
     prediction says epistemic adjectives like `certain` can use endpoint
     standards (θ ≈ 1.0). This unifies with the five-framework licensing
     agreement from `Core/EpistemicScale.lean`. -/
@@ -514,7 +512,7 @@ theorem epistemicScale_licensed :
 ### From Credence to Comparative Likelihood
 
 When `AgentCredence` is a genuine probability measure (probabilistic
-credence), it induces the full Holliday & Icard (2013) hierarchy:
+credence), it induces the full @cite{holliday-icard-2013} hierarchy:
 
     AgentCredence → FinAddMeasure → EpistemicSystemFA
                                     ↓
@@ -573,8 +571,7 @@ def epistemicComparativeScale : Core.Scale.ComparativeScale ℚ where
 /-- Comparative credence is the measure-induced ordering on propositions:
     `moreCredent cr a φ ψ ↔ cr a ψ < cr a φ`.
 
-    This is the analogue of `FinAddMeasure.inducedGe` (Holliday & Icard
-    2013) applied to agent credence: the comparative likelihood ordering
+    This is the analogue of `FinAddMeasure.inducedGe` applied to agent credence: the comparative likelihood ordering
     on propositions is induced by the credence measure. The threshold
     entries from Table 1(b) are then points where we cut this ordering. -/
 theorem moreCredent_iff_degree (cr : AgentCredence E W)
@@ -589,19 +586,19 @@ theorem moreCredent_iff_degree (cr : AgentCredence E W)
 /-!
 ### Kennedy's Reduction: Comparative from Positive
 
-The central formal insight of Kennedy (2007) — applied to epistemic modality
-by Lassiter (2017) Ch. 4 — is that the comparative is not an independent
+The central formal insight of @cite{kennedy-2007} — applied to epistemic modality
+by @cite{lassiter-goodman-2017} Ch. 4 — is that the comparative is not an independent
 primitive but *reduces to* the positive form via existential quantification
 over thresholds:
 
-    "φ more likely than ψ"  ↔  ∃θ. likely_θ(φ) ∧ ¬likely_θ(ψ)
+    "φ more likely than ψ" ↔ ∃θ. likely_θ(φ) ∧ ¬likely_θ(ψ)
 
 In words: φ is more likely than ψ iff there is some threshold that φ's
 credence meets but ψ's doesn't. This means the comparative ordering on
 propositions is *determined by* the family of positive-form predicates
 {meetsThreshold θ | θ ∈ ℚ}. The same reduction works for adjectives:
 
-    "A taller than B"  ↔  ∃θ. tall_θ(A) ∧ ¬tall_θ(B)
+    "A taller than B" ↔ ∃θ. tall_θ(A) ∧ ¬tall_θ(B)
 
 The non-trivial part is that this is a *biconditional*: not only does
 a separating threshold imply the comparative (easy direction), but the
@@ -620,7 +617,7 @@ the structure of threshold semantics on a linear order.
     - Forward: if cr(a,ψ) < cr(a,φ), witness θ = cr(a,φ).
     - Backward: if θ separates, then cr(a,ψ) < θ ≤ cr(a,φ).
 
-    Kennedy (2007) §3; Lassiter (2017) §4.2: the same reduction applies
+    @cite{kennedy-2007} §3; @cite{lassiter-goodman-2017} §4.2: the same reduction applies
     to epistemic modals because credence IS a measure function. -/
 theorem comparative_from_positive (cr : AgentCredence E W)
     (a : E) (φ ψ : BProp W) :
@@ -637,7 +634,7 @@ theorem comparative_from_positive (cr : AgentCredence E W)
     On a linear order, cr(a,φ) ≥ θ iff ¬(cr(a,φ) < θ). This is not
     `rfl` — it requires `not_lt` on `ℚ`'s linear order.
 
-    Lassiter (2017): positive and negative epistemic modals are
+    @cite{lassiter-goodman-2017}: positive and negative epistemic modals are
     contradictories on the probability scale, not contraries. The
     same threshold θ separates "likely" from "unlikely." -/
 theorem meetsThreshold_iff_not_failsThreshold (cr : AgentCredence E W)
@@ -656,7 +653,7 @@ theorem meetsThreshold_iff_not_failsThreshold (cr : AgentCredence E W)
     this *derives* the antonymy connection from `comparative_from_positive`
     + `meetsThreshold_iff_not_failsThreshold`.
 
-    Lassiter (2017) §4.3: likely/unlikely parallel tall/short. -/
+    @cite{lassiter-goodman-2017} §4.3: likely/unlikely parallel tall/short. -/
 theorem antonymy_from_polarity (cr : AgentCredence E W)
     (a : E) (φ ψ : BProp W) :
     moreCredent cr a φ ψ ↔

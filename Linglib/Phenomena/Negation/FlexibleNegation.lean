@@ -16,6 +16,8 @@ This file captures the empirical patterns around flexible negation, where:
   either contradictory or contrary
 
 ## Key Distinction
+@cite{franke-bergen-2020}
+
 
 **Contradictory negation**: P and ¬P partition the space
 - "not happy" (contradictory) = x ≤ θ (complement of x > θ)
@@ -39,7 +41,7 @@ From traditional logic (Square of Opposition) and lexical semantics:
 - **Contraries**: Cannot both be true BUT can both be false
   (gap where neither holds)
 
-Source: Cruse (1986), Horn (1989)
+Source: @cite{cruse-1986}, @cite{horn-1989}
 -/
 inductive NegationType where
   /-- Contradictory: complement (no gap). ¬(x > θ) = x ≤ θ -/
@@ -55,7 +57,7 @@ The key insight: both morphological (un-) and syntactic (not) negation
 can receive either contradictory OR contrary interpretations.
 The interpretation is pragmatically determined.
 
-Source: Tessler & Franke (2020)
+Source: @cite{tessler-franke-2020}
 -/
 inductive NegationMarker where
   /-- Syntactic negation: "not happy" -/
@@ -71,7 +73,7 @@ A judgment about the interpretation of a negated form.
 Captures the empirical observation that negated forms can be
 interpreted as contradictory or contrary, with varying strength.
 
-Source: Tessler & Franke (2020) experiments
+Source: @cite{tessler-franke-2020} experiments
 -/
 structure FlexibleNegationDatum where
   /-- The base (positive) adjective -/
@@ -95,7 +97,7 @@ structure FlexibleNegationDatum where
 Intuition: "unhappy" means positively unhappy (below a low threshold),
 not just "not happy" (anything at or below the happy threshold).
 
-Source: Tessler & Franke (2020) Experiment 1
+Source: @cite{tessler-franke-2020} Experiment 1
 -/
 def unhappy_contrary : FlexibleNegationDatum :=
   { adjective := "happy"
@@ -115,7 +117,7 @@ Intuition: "not happy" can mean either:
 
 The costly form (2 words) licenses the marked (contradictory) reading.
 
-Source: Tessler & Franke (2020) Experiment 1
+Source: @cite{tessler-franke-2020} Experiment 1
 -/
 def not_happy_ambiguous : FlexibleNegationDatum :=
   { adjective := "happy"
@@ -137,7 +139,7 @@ Why? If "unhappy" is contrary (x < θ_neg), then:
 - "happy" = x > θ_pos where θ_pos > θ_neg
 - Gap region: θ_neg ≤ x ≤ θ_pos is "not unhappy" but NOT "happy"
 
-Source: Tessler & Franke (2020) Section 1
+Source: @cite{tessler-franke-2020} Section 1
 -/
 def not_unhappy_not_happy : FlexibleNegationDatum :=
   { adjective := "happy"
@@ -154,7 +156,7 @@ def not_unhappy_not_happy : FlexibleNegationDatum :=
 Note: "sad" is not morphologically derived from "happy" (unlike "unhappy"),
 but still functions as a contrary antonym with a gap.
 
-Source: Kennedy & McNally (2005)
+Source: @cite{kennedy-mcnally-2005}
 -/
 def sad_contrary : FlexibleNegationDatum :=
   { adjective := "happy"
@@ -178,7 +180,7 @@ Data capturing the non-equivalence pattern: "not un-X" ≠ "X".
 This is the central empirical claim: double negation doesn't cancel out
 when the inner negation is contrary.
 
-Source: Tessler & Franke (2020), Horn (1989)
+Source: @cite{tessler-franke-2020}, @cite{horn-1989}
 -/
 structure DoubleNegationDatum where
   /-- The positive adjective -/
@@ -200,7 +202,7 @@ Someone in the gap region (neither happy nor unhappy) is:
 - "not unhappy" ✓ (they're not below θ_neg)
 - "happy" ✗ (they're not above θ_pos)
 
-Source: Tessler & Franke (2020)
+Source: @cite{tessler-franke-2020}
 -/
 def happy_double_neg : DoubleNegationDatum :=
   { positive := "happy"
@@ -216,7 +218,7 @@ def happy_double_neg : DoubleNegationDatum :=
 For closed-scale adjectives with minimum standard, the gap is smaller
 or nonexistent, making double negation closer to canceling.
 
-Source: Kennedy (2007)
+Source: @cite{kennedy-2007}
 -/
 def safe_double_neg : DoubleNegationDatum :=
   { positive := "safe"
@@ -239,7 +241,7 @@ Shorter/simpler forms are cheaper to produce, creating:
 
 This follows Horn's Division of Pragmatic Labor.
 
-Source: Horn (1984), Tessler & Franke (2020)
+Source: @cite{horn-1984}, @cite{tessler-franke-2020}
 -/
 structure CostAsymmetryDatum where
   /-- Shorter/cheaper form -/
@@ -260,7 +262,7 @@ structure CostAsymmetryDatum where
 The cheaper "unhappy" gets the default (contrary) reading.
 The costlier "not happy" is available for the marked (contradictory) reading.
 
-Source: Tessler & Franke (2020)
+Source: @cite{tessler-franke-2020}
 -/
 def unhappy_vs_not_happy : CostAsymmetryDatum :=
   { cheapForm := "unhappy"
@@ -284,7 +286,7 @@ For contrary pairs like happy/unhappy, there are TWO thresholds:
 
 This is the key semantic insight that explains the non-equivalence.
 
-Source: Tessler & Franke (2020), Kennedy (2007)
+Source: @cite{tessler-franke-2020}, @cite{kennedy-2007}
 -/
 structure TwoThresholdModel where
   /-- The positive adjective -/
@@ -307,7 +309,7 @@ The happiness scale has two thresholds creating three regions:
 - Gap: θ_neg ≤ degree ≤ θ_pos (neither/ambivalent)
 - Happy: degree > θ_pos (clearly happy)
 
-Source: Tessler & Franke (2020)
+Source: @cite{tessler-franke-2020}
 -/
 def happyUnhappyThresholds : TwoThresholdModel :=
   { positive := "happy"
@@ -326,7 +328,7 @@ Predictions that a theory of flexible negation should satisfy.
 
 These are the empirical targets for the RSA implementation.
 
-Source: Tessler & Franke (2020)
+Source: @cite{tessler-franke-2020}
 -/
 structure FlexibleNegationPrediction where
   /-- Name of the prediction -/

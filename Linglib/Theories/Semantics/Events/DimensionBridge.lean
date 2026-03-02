@@ -51,7 +51,7 @@ namespace Semantics.Events.DimensionBridge
     atelic → CUM → open. Derived through the compositional chain
     Telicity →.toMereoTag MereoTag →.toBoundedness Boundedness.
     This is the shared core of all four licensing frameworks:
-    Kennedy (2007), Rouillard (2026), Krifka (1989), Zwarts (2005). -/
+    @cite{kennedy-2007}, @cite{rouillard-2026}, @cite{krifka-1989}, @cite{zwarts-2005}. -/
 abbrev telicityToBoundedness (t : Telicity) : Boundedness :=
   t.toMereoTag.toBoundedness
 

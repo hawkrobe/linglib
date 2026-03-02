@@ -1,5 +1,5 @@
 /-!
-# Potts et al. (2016): Embedded Scalar Implicatures @cite{potts-etal-2016}
+# @cite{potts-etal-2016}: Embedded Scalar Implicatures @cite{potts-etal-2016}
 
 Lexical uncertainty model for DE/UE asymmetry in embedded SIs.
 

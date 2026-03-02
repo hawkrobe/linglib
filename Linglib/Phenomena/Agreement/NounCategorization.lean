@@ -10,10 +10,9 @@ import Linglib.Fragments.Italian.Nouns
 # Noun Categorization and Agreement Typology
 @cite{aikhenvald-2000} @cite{chierchia-1998} @cite{dixon-1982} @cite{greenberg-1972}
 
-Cross-linguistic typology of noun categorization systems, following Aikhenvald
-(2000). The central diagnostic is **agreement**: noun class/gender systems
+Cross-linguistic typology of noun categorization systems, following @cite{aikhenvald-2000}. The central diagnostic is **agreement**: noun class/gender systems
 (French) require it; classifier systems (Mandarin, Japanese) lack it. This
-is Dixon's (1982) definitional divide.
+is @cite{dixon-1982}'s definitional divide.
 
 This file provides the cross-linguistic context for the English-specific
 agreement data in `Agreement.Basic`, `Agreement.DetNoun`, and `Agreement.Case`:
@@ -32,7 +31,7 @@ System descriptions are **derived from** Fragment data (single source of truth).
 ## Part II — Universals
 
 Aikhenvald's empirical generalizations (Chapters 11, 15): agreement diagnostics,
-semantic parameter universals, inventory size constraints, Greenberg (1972)
+semantic parameter universals, inventory size constraints, @cite{greenberg-1972}
 classifier–number complementarity.
 
 ## Thread map
@@ -86,7 +85,7 @@ def french : NounCategorizationSystem :=
 -- ============================================================================
 
 /-- Italian noun categorization: 2-class gender system (masc/fem).
-    Like French, [-arg, +pred] (Chierchia 1998). Agreement on determiners
+    Like French, [-arg, +pred]. Agreement on determiners
     (il/la, un/una), adjectives (‑o/‑a), and past participles (‑o/‑a).
     Richer article allomorphy than French (il/lo/la, i/gli/le). -/
 def italian : NounCategorizationSystem :=
@@ -398,13 +397,13 @@ theorem noun_class_more_interactions :
    TODO: Add `hasObligatoryNumber : Bool` to NounCategorizationSystem to state
    this formally. -/
 
-/-- No type-shift blocking in Mandarin (Chierchia 1998). -/
+/-- No type-shift blocking in Mandarin. -/
 theorem mandarin_no_blocking :
     Fragments.Mandarin.Nouns.mandarinBlocking.iotaBlocked = false ∧
     Fragments.Mandarin.Nouns.mandarinBlocking.existsBlocked = false ∧
     Fragments.Mandarin.Nouns.mandarinBlocking.downBlocked = false := ⟨rfl, rfl, rfl⟩
 
-/-- No type-shift blocking in Japanese (Chierchia 1998). -/
+/-- No type-shift blocking in Japanese. -/
 theorem japanese_no_blocking :
     Fragments.Japanese.Nouns.japaneseBlocking.iotaBlocked = false ∧
     Fragments.Japanese.Nouns.japaneseBlocking.existsBlocked = false ∧

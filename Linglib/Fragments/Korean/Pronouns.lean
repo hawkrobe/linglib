@@ -74,7 +74,7 @@ def allPronouns : List PronounEntry :=
 -- Allocutive Particles (SAP-layer)
 -- ============================================================================
 
-/-- *-yo* polite particle (Portner, Pak & Zanuttini 2019). -/
+/-- *-yo* polite particle. -/
 def yo : AllocutiveEntry :=
   { form := "-yo", register := .neutral, gloss := "POL" }
 

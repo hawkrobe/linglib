@@ -531,7 +531,7 @@ example : hasConflict alienMarryStar = true := by native_decide       -- Weak co
 /-!
 ## Summary: Compositional Constraint Interaction
 
-### Key Principles from Erk & Herbelot (2024)
+### Key Principles from @cite{erk-herbelot-2024}
 
 1. Product of Experts: Constraints multiply, they do not add.
    - Both must be satisfied for high probability
@@ -554,7 +554,7 @@ example : hasConflict alienMarryStar = true := by native_decide       -- Weak co
 
 ### Computational Pattern
 
-For word w in context C with concepts {c₁, c₂, ...}:
+For word w in context C with concepts {c₁, c₂,...}:
 
 ```
 P(cᵢ | C) ∝ P_sel(cᵢ | predicate) × P_scen(cᵢ | frame(C))

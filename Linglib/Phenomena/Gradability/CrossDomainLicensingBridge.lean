@@ -7,7 +7,7 @@ import Linglib.Core.Temporal.Time
 
 /-!
 # Cross-Domain Licensing Agreement Bridge
-@cite{champollion-2017} @cite{kennedy-2007} @cite{krifka-1989} @cite{krifka-1998} @cite{rouillard-2026} @cite{zwarts-2005}
+@cite{champollion-2017} @cite{kennedy-2007} @cite{krifka-1989} @cite{krifka-1998} @cite{rouillard-2026} @cite{zwarts-2005} @cite{vendler-1957}
 
 The showcase theorem: six independent classification systems from different
 linguistic subfields all agree on licensing predictions, because they all
@@ -23,15 +23,15 @@ point where the licensing prediction is made:
 VendlerClass ─.telicity─→ Telicity ─.toMereoTag─→ MereoTag ─.toBoundedness─→ Boundedness
 PathShape ─pathShapeToTelicity─→ Telicity ─.toMereoTag─→ MereoTag ─.toBoundedness─→ Boundedness
 SituationBoundedness ─.toMereoTag─→ MereoTag ─.toBoundedness─→ Boundedness
-BoundaryType ─.toBoundedness─→ Boundedness  (direct — concepts are identical)
-EpistemicTag ─.toBoundedness─→ Boundedness  (direct — weak mereological link)
+BoundaryType ─.toBoundedness─→ Boundedness (direct — concepts are identical)
+EpistemicTag ─.toBoundedness─→ Boundedness (direct — weak mereological link)
 ```
 
 Each arrow encodes an independently motivated theoretical insight:
-- `.telicity`: Vendler classes determine telicity (Vendler 1957, Dowty 1979)
-- `pathShapeToTelicity`: bounded paths create telic VPs (Zwarts 2005)
-- `.toMereoTag`: telic = quantized (Krifka 1989, 1998)
-- `.toBoundedness`: quantized = closed scale (Kennedy 2007, Champollion 2017)
+- `.telicity`: Vendler classes determine telicity
+- `pathShapeToTelicity`: bounded paths create telic VPs
+- `.toMereoTag`: telic = quantized
+- `.toBoundedness`: quantized = closed scale
 
 ## The Six Sources
 
@@ -130,7 +130,7 @@ theorem bounded_eq_closedBoundary :
 -- § 5. Epistemic Modal Domain (Lassiter 2017)
 -- ════════════════════════════════════════════════════
 
-/-! Lassiter (2017) Ch. 4: the epistemic probability scale is closed [0,1],
+/-! @cite{lassiter-goodman-2017} Ch. 4: the epistemic probability scale is closed [0,1],
 so epistemic adjectives like "certain" license degree modification ("completely
 certain") for the same structural reason that "full" does — closed-scale
 boundedness routes through `Boundedness.closed → isLicensed = true`.

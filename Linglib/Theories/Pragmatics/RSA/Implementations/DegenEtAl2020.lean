@@ -3,8 +3,8 @@ import Linglib.Theories.Pragmatics.RSA.Core.Noise
 import Linglib.Core.Agent.ProductOfExperts
 
 /-!
-# Degen, Hawkins, Graf, Kreiss & Goodman (2020)
-@cite{degen-etal-2020}
+# Degen, Hawkins, @cite{degen-etal-2020}
+@cite{degen-etal-2020} @cite{kursat-degen-2021}
 
 *When redundancy is useful*. Psychological Review 127(4).
 
@@ -98,14 +98,14 @@ structure SemanticParams where
   typeMismatch : ℚ := 0
   deriving Repr
 
-/-- Default parameters from Degen et al. (2020) -/
+/-- Default parameters from @cite{degen-etal-2020} -/
 def defaultParams : SemanticParams := {}
 
 /-- High-noise size parameter (for comparison) -/
 def highNoiseSizeParams : SemanticParams :=
   { sizeMatch := 7/10, sizeMismatch := 3/10 }
 
-/-- Hypothetical material parameters (Kursat & Degen 2021): lower discrimination than size. -/
+/-- Hypothetical material parameters: lower discrimination than size. -/
 def materialParams : SemanticParams :=
   { colorMatch := 99/100
   , colorMismatch := 1/100

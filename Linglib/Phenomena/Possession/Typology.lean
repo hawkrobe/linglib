@@ -5,11 +5,11 @@ import Linglib.Core.Lexical.Word
 @cite{aikhenvald-2013} @cite{heine-1997} @cite{nichols-1986} @cite{nichols-bickel-2013} @cite{stassen-2009}
 
 Typological data on possessive constructions across languages, drawn from
-two WALS chapters by Nichols & Bickel (2013) and supplemented with data on
-predicative possession strategies (Stassen 2009) and adnominal possession
-marking (Nichols 1986, Heine 1997).
+two WALS chapters by @cite{nichols-bickel-2013} and supplemented with data on
+predicative possession strategies and adnominal possession
+marking.
 
-## Ch 58: Obligatory Possessive Inflection (Nichols & Bickel 2013)
+## Ch 58: Obligatory Possessive Inflection
 
 Whether certain nouns --- typically kinship terms and body-part nouns ---
 obligatorily take a possessive marker even when no specific possessor is
@@ -22,7 +22,7 @@ grammatically differentiated from non-relational nouns.
 Sample: 244 languages. Obligatory possessive inflection exists in about
 one-third of languages sampled (83/244).
 
-## Ch 59: Possessive Classification (Nichols & Bickel 2013)
+## Ch 59: Possessive Classification
 
 Whether the language distinguishes different types or classes of possession
 in its morphosyntax. The classic case is the alienable/inalienable distinction:
@@ -35,7 +35,7 @@ non-edible possessions).
 Sample: 244 languages. No possessive classification is the most common
 pattern (108/244), followed by two-way classification (88/244).
 
-## Predicative Possession (Stassen 2009)
+## Predicative Possession
 
 How languages express clausal possession ("I have a book"). This is a major
 typological parameter with four primary strategies:
@@ -56,7 +56,7 @@ Europe and parts of Africa; locational strategies are widespread in Eurasia
 (the "Uralic-to-Japonic belt"); genitive/dative predicates appear in
 South Asian, Celtic, and Semitic languages.
 
-## Adnominal Possession (Nichols 1986)
+## Adnominal Possession
 
 How languages mark possession within noun phrases ("my book", "John's
 house"). Three major strategies:
@@ -68,8 +68,7 @@ house"). Three major strategies:
 3. **Juxtaposition**: No overt possessive marking; possessor and possessum
    are simply juxtaposed (e.g., Vietnamese `nha toi` 'house I').
 
-These strategies correlate with broader head-vs-dependent marking typology
-(Nichols 1986).
+These strategies correlate with broader head-vs-dependent marking typology.
 
 -/
 
@@ -135,7 +134,7 @@ inductive PossessiveClassification where
 
 /-- How a language expresses predicative (clausal) possession: "I have X".
 
-    The four major strategies identified by Stassen (2009) correspond to
+    The four major strategies identified by @cite{stassen-2009} correspond to
     different syntactic analyses of the possessor:
     - Have-verb: possessor is syntactic subject of a transitive verb
     - Locational: possessor is a locative/oblique argument of an existential
@@ -178,7 +177,7 @@ inductive PredicativePossession where
 /-- How the possessive relationship is marked within a noun phrase
     ("my book", "John's house").
 
-    Nichols (1986) classifies languages by where the possessive morphology
+    @cite{nichols-1986} classifies languages by where the possessive morphology
     appears: on the possessed noun (head-marking), on the possessor
     (dependent-marking), on both (double-marking), or on neither
     (juxtaposition). -/
@@ -954,7 +953,7 @@ theorem all_adnominal_strategies_attested :
 -- The Inalienability Hierarchy
 -- ============================================================================
 
-/-- The inalienability hierarchy (Nichols 1988, Heine 1997, Aikhenvald 2013).
+/-- The inalienability hierarchy.
 
     If a language marks a distinction between alienable and inalienable
     possession, the inalienable class is drawn from the top of this hierarchy:
@@ -998,7 +997,7 @@ theorem inalienability_ordering :
 -- Grammaticalization Pathways
 -- ============================================================================
 
-/-- Diachronic sources of predicative possession constructions (Heine 1997).
+/-- Diachronic sources of predicative possession constructions.
 
     Predicative possession verbs and constructions arise from different
     semantic sources via grammaticalization:

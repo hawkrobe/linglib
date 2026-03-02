@@ -37,7 +37,7 @@ too-local movement outranks maintaining cross-referencing agreement.
 AF is triggered by the *locality of movement*, not simply by agent
 extraction. Long-distance agent extraction does NOT trigger AF:
 successive-cyclic movement through intermediate Spec,CP avoids the
-too-local Spec,TP → Spec,CP step (Erlewine 2016, §2.3).
+too-local Spec,TP → Spec,CP step.
 
 ### Connection to Position.lean
 
@@ -55,7 +55,7 @@ strict ranking — and `satisfaction_ordering_incomparable` shows this
 requires OT's lexicographic comparison, not satisfaction ordering's
 subset inclusion.
 
-## Anti-agreement (Erlewine 2016, §6.2)
+## Anti-agreement
 
 AF is an instance of a broader cross-linguistic pattern: **anti-agreement**.
 When extraction forces a DP to skip an A-position (to avoid SSAL),
@@ -70,7 +70,7 @@ A-position, and agreement with the head at that position fails.
 
 ## Contrast with Toba Batak
 
-Both Kaqchikel and Toba Batak (Erlewine 2018) have extraction
+Both Kaqchikel and Toba Batak have extraction
 restrictions derived from anti-locality in predicate-fronting contexts.
 But the repair strategies differ:
 
@@ -192,7 +192,7 @@ theorem extraction_asymmetry :
 -- ============================================================================
 
 /-- AF is locality-sensitive: long-distance agent extraction does NOT
-    trigger AF (Erlewine 2016, §2.3). When the agent extracts from an
+    trigger AF. When the agent extracts from an
     embedded clause, successive-cyclic movement avoids the too-local
     Spec,TP → Spec,CP step.
 

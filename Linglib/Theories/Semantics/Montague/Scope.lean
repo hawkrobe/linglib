@@ -136,7 +136,7 @@ def scopeYieldsTrue {m : Model}
 -- Scope Entailment (Musolino & Lidz 2003)
 -- ============================================================================
 
-/-- Entailment structure between scope readings (Musolino & Lidz 2003).
+/-- Entailment structure between scope readings.
     Determines whether a quantifier-negation pair is diagnostic for
     scope preferences: independent readings allow contexts where exactly
     one reading is true; nested readings (one entails the other) do not. -/

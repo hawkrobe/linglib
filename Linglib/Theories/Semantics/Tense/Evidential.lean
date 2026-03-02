@@ -5,7 +5,7 @@ import Linglib.Theories.Semantics.Mood.Basic
 import Linglib.Core.Context.Shifts
 
 /-!
-# Tense and Evidence (Cumming 2026)
+# Tense and Evidence
 @cite{cumming-2026} @cite{ninan-2022} @cite{reichenbach-1947}
 
 Cumming (2026, *Linguistics and Philosophy* 49:153–175) argues that English
@@ -37,7 +37,7 @@ design where paradigm entries stored opaque lambdas.
 
 ## Connection to Modal Evidentiality
 
-The tense evidential constraint parallels von Fintel & Gillies's (2010)
+The tense evidential constraint parallels @cite{von-fintel-gillies-2010}
 `kernelMust` presupposition: both require non-direct evidence. The bridge
 between these two phenomena is formalized in `Comparisons/TenseModalEvidentiality.lean`.
 
@@ -119,7 +119,7 @@ def EPCondition.toEvidentialPerspective : EPCondition → Option EvidentialPersp
 -- ════════════════════════════════════════════════════
 
 /-- Utterance perspective constraint shapes attested across the three
-    languages (Cumming 2026). Each value corresponds to a distinct ordering
+    languages. Each value corresponds to a distinct ordering
     on T vs S. -/
 inductive UPCondition where
   /-- T < S: past. -/
@@ -147,7 +147,7 @@ def UPCondition.toConstraint : UPCondition → EvidentialFrame ℤ → Prop
 -- ════════════════════════════════════════════════════
 
 /-- A row in a tense-aspect-mood-evidentiality paradigm table.
-    Generalizes Cumming's (2026) tense-evidential paradigm (Tables 17–22)
+    Generalizes @cite{cumming-2026}'s tense-evidential paradigm (Tables 17–22)
     with optional mood and mirativity fields, enabling unified TAME
     fragment entries. Existing `{ label, ep, up }` constructions still
     work because `mood` and `mirative` have default values (`none`). -/
@@ -208,7 +208,7 @@ theorem EPCondition.nonfuture_implies_downstream
 -- § 7. Presuppositional Nonfuture Meaning
 -- ════════════════════════════════════════════════════
 
-/-- Nonfuture meaning as a presuppositional proposition (Cumming 2026, §5):
+/-- Nonfuture meaning as a presuppositional proposition:
     the presupposition is that evidence is downstream (T ≤ A); the assertion
     is the bare propositional content p.
 
@@ -230,7 +230,7 @@ theorem nonfutureMeaning_presup {W : Type*} (f : EvidentialFrame ℤ) (p : Bool)
 /-!
 ### Evidential Shift as Tower Push
 
-Cumming's (2026) key insight is that nonfuture tenses encode an evidential
+@cite{cumming-2026}'s key insight is that nonfuture tenses encode an evidential
 constraint: T ≤ A (evidence is downstream of the event). In the tower
 framework, this is modeled as a property of the local context at the
 tense's depth: the evidence-acquisition time at that tower layer must be

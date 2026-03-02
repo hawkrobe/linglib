@@ -5,8 +5,7 @@ import Linglib.Core.Interfaces.ExtractionMorphology
 @cite{elkins-imanishi-coon-2026} @cite{henderson-2008} @cite{imanishi-2020} @cite{mondloch-2017}
 
 Theory-neutral data on the extraction particle *wi* in K'iche' (and more
-broadly K'ichean Mayan), contrasted with SJO Mam's =(y)a' (Elkins,
-Imanishi & Coon 2026, §8).
+broadly K'ichean Mayan), contrasted with SJO Mam's =(y)a'.
 
 ## The Phenomenon
 
@@ -17,11 +16,11 @@ key respects:
 
 1. **Locus**: *wi* appears at the extraction site (foot of the Ā-chain),
    while =(y)a' appears on the probe head (Voice⁰/Dir⁰).
-2. **Analysis**: *wi* is copy spellout (Mondloch & Romero 2022),
+2. **Analysis**: *wi* is copy spellout,
    while =(y)a' is an Agree reflex.
 3. **Reason obliques**: *wi* does NOT appear with reason ('why')
    extraction; =(y)a' DOES.
-4. **Fronting Particle Generalization** (Henderson 2008, Imanishi 2020):
+4. **Fronting Particle Generalization**:
    *wi* occurs with phrasal (XP) movement but not head (X⁰) movement.
    This generalization does not hold for =(y)a', which is conditioned
    by clause size and oblique status, not movement type.

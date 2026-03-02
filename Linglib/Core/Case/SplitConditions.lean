@@ -4,7 +4,7 @@ import Linglib.Core.Case.Basic
 # Split-Ergative Conditioning @cite{blake-1994}
 @cite{dixon-1994}
 
-Blake (1994, Ch. 4) documents that **split-ergative** systems condition the
+@cite{blake-1994} documents that **split-ergative** systems condition the
 choice between ergative and accusative alignment on factors such as
 tense/aspect (Hindi: perfective → ERG), person/animacy (Dyirbal: 3rd → ERG),
 clause type, or NP type.
@@ -44,8 +44,7 @@ inductive Aspect where
   | imperfective
   deriving DecidableEq, BEq, Repr
 
-/-- Hindi-style split: perfective → ergative, imperfective → accusative
-    (Blake 1994, Ch. 4, pp. 107–110). -/
+/-- Hindi-style split: perfective → ergative, imperfective → accusative. -/
 def hindiSplit : SplitErgativity Aspect :=
   { ergCondition := fun a => a == .perfective }
 

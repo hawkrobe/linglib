@@ -2,7 +2,7 @@ import Linglib.Phenomena.ImplicitCausality.Studies.SolstadBott2024.Data
 import Linglib.Fragments.English.Predicates.Verbal
 
 /-!
-# Solstad & Bott (2024) — Presupposition Bridge
+# @cite{solstad-bott-2024} — Presupposition Bridge
 
 @cite{solstad-bott-2024}
 
@@ -32,7 +32,7 @@ theorem all_occasion_verbs_soft :
   ⟨rfl, rfl, rfl, rfl⟩
 
 /-- The default `manage` has no presupType — the occasion presupposition
-    is only visible under the Solstad & Bott (2024) analysis. -/
+    is only visible under the @cite{solstad-bott-2024} analysis. -/
 theorem manage_default_no_presup :
     manage.presupType = none := rfl
 

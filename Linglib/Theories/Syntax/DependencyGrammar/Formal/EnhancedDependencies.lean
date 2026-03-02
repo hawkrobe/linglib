@@ -3,7 +3,7 @@ import Linglib.Theories.Syntax.DependencyGrammar.Coordination
 import Linglib.Theories.Syntax.DependencyGrammar.LongDistance
 
 /-!
-# Enhanced Dependencies (de Marneffe & Nivre 2019, §4.2)
+# Enhanced Dependencies
 @cite{de-marneffe-nivre-2019} @cite{schuster-manning-2016}
 
 Basic dependency trees enforce a **unique-heads constraint**: every word (except root)

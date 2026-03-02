@@ -109,7 +109,7 @@ Morphological complexity criterion.
 The form with MORE morphemes is marked.
 This captures cases like un-happy > happy.
 
-From Horn (1984): "Toward a new taxonomy for pragmatic inference"
+From @cite{horn-1984}: "Toward a new taxonomy for pragmatic inference"
 -/
 def morphologicalCriterion : MarkednessCriterion where
   name := "Morphological Complexity"
@@ -128,7 +128,7 @@ Scale direction criterion.
 The NEGATIVE pole is marked.
 This captures cases like short (negative pole) vs tall (positive pole).
 
-From Bierwisch (1989), Kennedy (2007)
+From @cite{bierwisch-1989}, @cite{kennedy-2007}
 -/
 def scaleDirectionCriterion : MarkednessCriterion where
   name := "Scale Direction"
@@ -149,7 +149,7 @@ Forms with negative prefixes (un-, in-, dis-) are marked.
 This is a specific case of morphological complexity that tracks
 derivational direction.
 
-From Cruse (1986)
+From @cite{cruse-1986}
 -/
 def negativePrefixCriterion : MarkednessCriterion where
   name := "Negative Prefix"
@@ -166,7 +166,7 @@ def negativePrefixCriterion : MarkednessCriterion where
 /--
 Default priority ordering for markedness criteria.
 
-Following Rett (2015) and Horn (1984):
+Following @cite{rett-2015} and @cite{horn-1984}:
 1. Morphological complexity (most reliable)
 2. Negative prefix (specific morphological indicator)
 3. Scale direction (fallback for equal morphology)

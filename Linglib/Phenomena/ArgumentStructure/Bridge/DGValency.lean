@@ -17,9 +17,9 @@ phenomena, grounded in the English Fragment lexicon.
 ## Three-Way Connection
 
 ```
-Fragments/English/Predicates/Verbal   (complementType → valence)
-    ↓                                    ↑
-DG ArgStr / LexRule / checkVerbSubcat   ↔   Phenomena/ArgumentStructure data
+Fragments/English/Predicates/Verbal (complementType → valence)
+    ↓ ↑
+DG ArgStr / LexRule / checkVerbSubcat ↔ Phenomena/ArgumentStructure data
 ```
 
 Verb valence is DERIVED from each Fragment entry's `complementType` field
@@ -30,21 +30,21 @@ the corresponding valency frames.
 ## Derivation Chain
 
 ```
-Fragment VerbEntry.complementType      ← lexical data (sleep=.none, kick=.np, give=.np_np)
-    ↓  complementToValence
-VerbEntry.toWord3sg.features.valence   ← intransitive / transitive / ditransitive
+Fragment VerbEntry.complementType ← lexical data (sleep=.none, kick=.np, give=.np_np)
+    ↓ complementToValence
+VerbEntry.toWord3sg.features.valence ← intransitive / transitive / ditransitive
     ↓
-DepTree instances                      ← concrete parse trees
+DepTree instances ← concrete parse trees
     ↓
-satisfiesArgStr (ArgStr frames)        ← frame satisfaction
+satisfiesArgStr (ArgStr frames) ← frame satisfaction
     ↓
-checkVerbSubcat                        ← subcategorization verification
+checkVerbSubcat ← subcategorization verification
     ↓
-passiveRule (LexRule)                   ← valency change derivation
+passiveRule (LexRule) ← valency change derivation
     ↓
-isCatena / isConstituent               ← structural analysis (Ch 4)
+isCatena / isConstituent ← structural analysis (Ch 4)
     ↓
-Phenomena data match                   ← grammaticality predictions
+Phenomena data match ← grammaticality predictions
 ```
 
 -/
@@ -86,19 +86,19 @@ private abbrev kicked_pass := Fragments.English.Predicates.Verbal.kick.toWordPas
 -- The Fragment's complementType determines the DG valence.
 -- ============================================================================
 
-/-- sleep.complementType = .none → intransitive. -/
+/-- sleep.complementType =.none → intransitive. -/
 theorem sleep_valence_from_fragment :
     sleeps.features.valence = some .intransitive := rfl
 
-/-- devour.complementType = .np → transitive. -/
+/-- devour.complementType =.np → transitive. -/
 theorem devour_valence_from_fragment :
     devours.features.valence = some .transitive := rfl
 
-/-- give.complementType = .np_np → ditransitive. -/
+/-- give.complementType =.np_np → ditransitive. -/
 theorem give_valence_from_fragment :
     gives.features.valence = some .ditransitive := rfl
 
-/-- kick.complementType = .np → transitive (active). -/
+/-- kick.complementType =.np → transitive (active). -/
 theorem kick_valence_from_fragment :
     kicked.features.valence = some .transitive := rfl
 
@@ -287,7 +287,7 @@ theorem ditrans_verb_obj_catena_not_constituent :
 /-- **Full valency derivation chain**: from Fragment lexicon through DG
     theory to grammaticality predictions.
 
-    1. Fragment kick.complementType = .np → valence = transitive
+    1. Fragment kick.complementType =.np → valence = transitive
     2. Active tree satisfies transitive frame (argStr_VN) ✓
     3. checkVerbSubcat validates the active tree ✓
     4. Passive rule applies and removes obj slot ✓

@@ -6,7 +6,7 @@ import Mathlib.Analysis.SpecialFunctions.Log.NegMulLog
 # NPIs in Questions: Entropy as Strength
 @cite{van-rooy-2003} @cite{krifka-1995a} @cite{kadmon-landman-1993} @cite{shannon-1948}
 
-Van Rooy (2003): for assertions, strength = informativity; for questions,
+@cite{van-rooy-2003}: for assertions, strength = informativity; for questions,
 strength = entropy. NPIs are licensed when they increase entropy by reducing bias.
 
 ## Architecture
@@ -16,10 +16,10 @@ All entropy definitions use ℝ-valued `Real.negMulLog` from Mathlib, which give
 question `H(Q) = ∑_cell negMulLog(P(cell))` where cell probabilities are computed
 via `Fintype`-based sums.
 
-- van Rooy (2003). Negative Polarity Items in Questions: Strength as Relevance.
-- Shannon (1948). Mathematical Theory of Communication.
-- Krifka (1995). The semantics and pragmatics of polarity items.
-- Kadmon & Landman (1993). Any.
+- @cite{van-rooy-2003}. Negative Polarity Items in Questions: Strength as Relevance.
+- @cite{shannon-1948}. Mathematical Theory of Communication.
+- @cite{krifka-1995a}. The semantics and pragmatics of polarity items.
+- @cite{kadmon-landman-1993}. Any.
 -/
 
 namespace Semantics.Questions.EntropyNPIs
@@ -578,7 +578,7 @@ inductive SpeechAct where
 
 /-- Strength for assertions: surprisal = −log P(φ).
 
-Van Rooy (2003): informativity of an assertion is its surprisal, `-log P(φ)`.
+@cite{van-rooy-2003}: informativity of an assertion is its surprisal, `-log P(φ)`.
 In DE contexts, the assertion is negated, so strength should be computed on the
 negated form. Surprisal is strictly decreasing for `P > 0`, so narrower
 propositions (lower probability) have higher informativity. -/

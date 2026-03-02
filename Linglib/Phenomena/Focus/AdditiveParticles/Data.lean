@@ -245,11 +245,11 @@ def crossLinguisticData : List CrossLinguisticDatum :=
 /-!
 ## Rooth's Focus-Based Analysis
 
-Rooth (1992) §2.2 analyzes "too" via the Focus Interpretation Principle (FIP):
+@cite{rooth-1992} §2.2 analyzes "too" via the Focus Interpretation Principle (FIP):
 - The antecedent must be a **focus alternative** of the prejacent
 - "Mary read Lear, and she read Macbeth too"
 - Focus: MACBETH
-- ⟦Macbeth⟧f = {Lear, Macbeth, Hamlet, ...}
+- ⟦Macbeth⟧f = {Lear, Macbeth, Hamlet,...}
 - Antecedent "Lear" ∈ ⟦Macbeth⟧f ✓
 
 See `Theories/Montague/Sentence/FocusInterpretation.lean` for formalization.
@@ -305,11 +305,11 @@ def roothExamples : List AdditiveParticleDatum :=
 /-!
 ## Ahn's Analysis of "Either"
 
-Ahn (2015) analyzes "either" as the negative polarity counterpart of "too":
+@cite{ahn-2015} analyzes "either" as the negative polarity counterpart of "too":
 - "too" presupposes conjunction: q ∧ p (antecedent q is true, prejacent p is true)
 - "either" presupposes disjunction: ¬q ∨ ¬p (at least one is false)
 
-### Three Key Properties (Ahn 2015)
+### Three Key Properties
 
 1. **Antecedent Requirement**: Both require a salient antecedent
 2. **Focus Sensitivity**: Both associate with focus

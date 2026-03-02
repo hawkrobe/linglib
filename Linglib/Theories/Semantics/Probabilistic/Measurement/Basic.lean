@@ -9,7 +9,7 @@ import Mathlib.Algebra.Order.Field.Rat
 Formal semantics of measurement: measure functions, measure terms, and their
 connection to numeral semantics and degree semantics.
 
-## Theoretical Foundation (Scontras 2014)
+## Theoretical Foundation
 
 Scontras's *The Semantics of Measurement* (Ch. 2) unifies numerals and measure
 terms under a single framework. The key insight: **CARD is just another measure
@@ -54,7 +54,7 @@ This module adds:
 - Multiple measure functions per entity (weight AND volume AND cardinality)
 - The quantity-uniform property (QU_μ: number morphology via measure)
 
-## Connection to Bale & Schwarz (2026)
+## Connection to @cite{bale-schwarz-2026}
 
 The No Division Hypothesis constrains what operations the grammar can perform
 on these measure functions: addition and multiplication are available, but
@@ -91,7 +91,7 @@ inductive Dimension where
 /-- Quotient dimensions: ratios of simplex dimensions.
 
 These exist in the quantity calculus but are not compositionally
-derivable within the grammar (Bale & Schwarz 2026). -/
+derivable within the grammar. -/
 inductive QuotientDimension where
   | density      -- mass / volume
   | speed        -- distance / time
@@ -119,7 +119,7 @@ inductive DimensionType where
 /-- A measure function maps entities to non-negative rational magnitudes
 along a specific dimension.
 
-Scontras (2014, §2.4): degrees are pairs ⟨μ, n⟩ where μ is the measure
+@cite{scontras-2014}: degrees are pairs ⟨μ, n⟩ where μ is the measure
 function and n is the numerical value. A measure function is individuated
 by its dimension: μ_kg measures mass, μ_L measures volume, μ_CARD counts.
 
@@ -147,7 +147,7 @@ def MeasureFn.agrees {E : Type*} (μ₁ μ₂ : MeasureFn E) : Prop :=
 
 /-- A measure term's denotation: λn. λx. μ(x) = n.
 
-Scontras (2014, §2.4.2): measure terms are nouns that name specific
+@cite{scontras-2014}: measure terms are nouns that name specific
 measure functions. Their type is ⟨n, ⟨e,t⟩⟩ — they take a numeral
 and return a predicate.
 
@@ -174,7 +174,7 @@ def MeasureTermSem.applyNumeral {E : Type*} (mt : MeasureTermSem E) (n : ℚ) : 
 
 /-- CARD: the cardinality measure function.
 
-Scontras (2014, §2.1): CARD is a covert measure term whose measure function
+@cite{scontras-2014}: CARD is a covert measure term whose measure function
 is |·|, the cardinality function. It takes a numeral and returns a predicate:
 
     ⟦CARD⟧ = λn. λx. |x| = n
@@ -214,10 +214,10 @@ def IsQuantityUniform {E : Type*} (P : E → Bool) (μ : MeasureFn E)
 structure CompOp (Q : Type*) where
   /-- The operation itself. -/
   op : Q → Q → Q
-  /-- Which dimension the output lives in. -/
+  /-- Which dimension the output lives. -/
   outputDim : Dimension
 
-/-- **No Division Hypothesis** (Bale & Schwarz 2026): quantity division is not
+/-- **No Division Hypothesis**: quantity division is not
 available as an operation for semantic composition.
 
 No lexical item, composition rule, or type-shifting operation in the grammar
@@ -233,7 +233,7 @@ def noDivisionHypothesis (Q : Type*) (ops : List (CompOp Q))
 
 /-- Weaker form: even if a language has a lexical item *per*, its compositional
 semantics can be restated using only multiplication and pure numbers.
-Both Coppock (2022) and Bale & Schwarz (2022) are reformulable this way. -/
+Both @cite{coppock-2022} and @cite{bale-schwarz-2022} are reformulable this way. -/
 def perMultiplicationOnly
     (Quantity : Type*) (mul : Quantity → Quantity → Quantity)
     (perMeaning : Quantity → Quantity → Quantity)
@@ -262,7 +262,7 @@ def MeasureFn.toHasDegree {E : Type} (μ : MeasureFn E) : Core.Scale.HasDegree E
 /-- Classification of quantizing nouns: nouns that turn mass terms into
 countable expressions.
 
-Scontras (2014, Ch. 3) identifies three classes:
+@cite{scontras-2014} identifies three classes:
 - **Measure terms** (kilo, liter): name measure functions directly
 - **Container nouns** (glass, box): ambiguous between CONTAINER and MEASURE readings
 - **Atomizers** (grain, piece): impose a minimal-part structure
@@ -296,8 +296,8 @@ quantity-uniform predicates?
 | Class         | Reading     | QU?   | Reason                                |
 |---------------|-------------|-------|---------------------------------------|
 | measureTerm   | (n/a)       | true  | Names a measure function directly     |
-| containerNoun | .container  | false | Individuated containers don't sum     |
-| containerNoun | .measure    | true  | Functions as a measure term           |
+| containerNoun |.container  | false | Individuated containers don't sum     |
+| containerNoun |.measure    | true  | Functions as a measure term           |
 | atomizer      | (n/a)       | false | Atoms are individuated like containers|
 
 This is the core prediction of Scontras Ch. 3: the CONTAINER/MEASURE ambiguity
@@ -348,7 +348,7 @@ measure term semantics. They're the same operation viewed from different sides.
 /-- A `MeasureTermSem` with the default exact relation (= n) yields the
 predicate μ(x) = n — the same as the MIP applied to "at least".
 
-This connects Scontras Ch. 2 to Kennedy (2015): the measure term denotation
+This connects Scontras Ch. 2 to @cite{kennedy-2015}: the measure term denotation
 ⟦kilo⟧(n)(x) = (μ_kg(x) = n) is precisely what the MIP derives from the
 lower-bound meaning "at least n kilos" when applied to cardinality/mass. -/
 theorem measureTerm_exact {E : Type*} (μ : MeasureFn E) (n : ℚ) (x : E) :
@@ -361,11 +361,11 @@ theorem measureTerm_exact {E : Type*} (μ : MeasureFn E) (n : ℚ) (x : E) :
 
 /-! ### The deep theorem: measure term semantics = MIP(lower-bound)
 
-Scontras (2014) defines measure term meaning as exact:
+@cite{scontras-2014} defines measure term meaning as exact:
     ⟦kilo⟧(n)(x) = (μ_kg(x) = n)
 
-Kennedy (2015) defines bare numeral meaning as lower-bound + MIP:
-    ⟦three⟧_LB = "at least 3"  →  MIP derives "exactly 3"
+@cite{kennedy-2015} defines bare numeral meaning as lower-bound + MIP:
+    ⟦three⟧_LB = "at least 3" → MIP derives "exactly 3"
 
 These are *two different theoretical proposals* for how exact meaning arises.
 The deep claim: they produce identical truth conditions, but ONLY under

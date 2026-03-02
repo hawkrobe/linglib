@@ -30,7 +30,7 @@ open Semantics.Reference.Basic
 
 /-! ## Use Modes -/
 
-/-- The two uses of definite descriptions (Donnellan 1966).
+/-- The two uses of definite descriptions.
 
 - `attributive`: The speaker means "whoever uniquely satisfies the
   description". Content is descriptive (non-rigid in general).
@@ -74,7 +74,7 @@ are presupposed, the assertion is the predicate applied to the unique
 satisfier.
 
 Bridge to `Core.Presupposition.PrProp`: the definite article triggers
-an existence+uniqueness presupposition (Heim & Kratzer 1998). -/
+an existence+uniqueness presupposition. -/
 def definitePrProp {W E : Type*} (domain : List E) (restrictor : E → W → Bool)
     (predicate : E → W → Bool) : PrProp W :=
   { presup := λ w =>

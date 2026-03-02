@@ -34,7 +34,7 @@ open Semantics.Lexical.Verb.ViewpointAspect
 -- § 1. Event Sort (Bach 1986)
 -- ════════════════════════════════════════════════════
 
-/-- Binary ontological sort for eventualities (Bach 1986).
+/-- Binary ontological sort for eventualities.
     Actions involve change; states do not. -/
 inductive EventSort where
   | action  -- dynamic eventualities (run, kick, build)
@@ -45,8 +45,8 @@ inductive EventSort where
 -- § 2. Core Event Type
 -- ════════════════════════════════════════════════════
 
-/-- An event: a temporal individual with ontological sort (Parsons 1990).
-    Events have interval-valued runtimes, following Krifka (1989). -/
+/-- An event: a temporal individual with ontological sort.
+    Events have interval-valued runtimes, following @cite{krifka-1989}. -/
 @[ont_sort] structure Ev (Time : Type*) [LE Time] where
   /-- The temporal extent of this event -/
   runtime : Interval Time
@@ -115,7 +115,7 @@ theorem eventSort_roundtrip (s : EventSort) :
   cases s <;> rfl
 
 /-- VendlerClass dynamicity agrees with EventSort classification.
-    States map to .state sort; all others map to .action sort. -/
+    States map to.state sort; all others map to.action sort. -/
 theorem vendlerClass_sort_agrees (c : VendlerClass) :
     dynamicityToEventSort c.dynamicity = match c with
       | .state => EventSort.state
@@ -157,7 +157,7 @@ def EventPred.liftToEv {W Time : Type*} [LE Time]
 -- § 6. Event Mereology
 -- ════════════════════════════════════════════════════
 
-/-- Axioms for event part-of structure (Bach 1986, Krifka 1989).
+/-- Axioms for event part-of structure.
     Part-of is a partial order on events with temporal and sort constraints. -/
 class EventMereology (Time : Type*) [LinearOrder Time] where
   /-- e₁ is a part of e₂ -/
@@ -216,7 +216,7 @@ def exampleRun : Ev ℤ :=
 /-- A manner: the "how" of an event, individuated as an equivalence class
     of events under a similarity relation.
 
-    Liefke (2024): manners are the ontological category ranged over by
+    @cite{liefke-2024}: manners are the ontological category ranged over by
     *how* in "How did John run?" and modified by manner adverbs (*quickly*,
     *carefully*). They are to events what properties are to individuals.
 

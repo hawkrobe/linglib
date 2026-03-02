@@ -8,8 +8,7 @@ import Linglib.Phenomena.Plurals.Studies.Charlow2021.Data
 # Three-Way Comparison: Cumulative Readings
 @cite{charlow-2021}
 
-Compares three approaches to deriving cumulative readings of modified numerals
-(Charlow 2021):
+Compares three approaches to deriving cumulative readings of modified numerals:
 
 | Approach | Mechanism | Cumulative? | Extra machinery |
 |----------|-----------|-------------|-----------------|

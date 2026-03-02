@@ -116,7 +116,7 @@ An update is a Context Change Potential over PLA possibilities.
 
 We inherit the Monoid structure from `Core.CCP`:
 - Identity: `Core.CCP.id` (leaves state unchanged)
-- Composition: `Core.CCP.seq` (do u, then v), notation `;;`
+- Composition: `Core.CCP.seq` (do u, then v), notation `;`
 - Associativity: guaranteed by the Monoid laws
 -/
 abbrev Update (E : Type*) := Core.CCP (Poss E)
@@ -234,8 +234,8 @@ theorem updates_support_equiv {E : Type*} [Nonempty E]
 /--
 Dynamic conjunction (Observation 4): sequential update, φ then ψ.
 
-Non-commutative: "A man came in. He sat down." ≠ "He sat down. A man came in."
-Non-idempotent: ∃x.φ ; ∃x.φ ≠ ∃x.φ (may introduce different witnesses).
+Non-commutative: "A man came. He sat down." ≠ "He sat down. A man came."
+Non-idempotent: ∃x.φ; ∃x.φ ≠ ∃x.φ (may introduce different witnesses).
 -/
 def Formula.dynConj {E : Type*} [Nonempty E] (M : Model E) (φ ψ : Formula) : Update E :=
   φ.update M ;; ψ.update M
@@ -267,7 +267,7 @@ theorem dynConj_static {E : Type*} [Nonempty E] (M : Model E)
 /--
 Observation 5: existentials are not idempotent.
 
-"A man came in. A man sat down." - may be different men.
+"A man came. A man sat down." - may be different men.
 Each ∃x.φ independently chooses a witness.
 -/
 theorem obs5_exists_domain_grows (x : VarIdx) (φ : Formula) :
@@ -278,7 +278,7 @@ theorem obs5_exists_domain_grows (x : VarIdx) (φ : Formula) :
 /--
 Observation 6: ¬¬φ ≢ φ for dref-introducing φ.
 
-"It's not the case that no man came in. He sat down." - "He" is problematic.
+"It's not the case that no man came. He sat down." - "He" is problematic.
 Negation "traps" drefs: ∃x.P(x) exports x, but ¬¬∃x.P(x) only tests existence.
 This motivates bilateral semantics (BUS), where DNE holds structurally.
 -/
@@ -391,7 +391,7 @@ theorem update_inter {E : Type*} [Nonempty E] (M : Model E) (φ : Formula)
   tauto
 
 /--
-Sequential composition with intersection: (φ ;; ψ)(s) ⊆ φ(s) ∩ ψ(s)
+Sequential composition with intersection: (φ; ψ)(s) ⊆ φ(s) ∩ ψ(s)
 
 Note: this is not equality in general due to the dynamic nature of sequencing.
 -/
@@ -439,7 +439,7 @@ theorem domain_empty_iff_no_exists : ∀ φ : Formula, φ.domain = ∅ ↔
   intro φ
   rw [Finset.eq_empty_iff_forall_notMem]
 
-/-- CCP reducibility: for dref-free formulas, φ ;; ψ = φ ∧ ψ. -/
+/-- CCP reducibility: for dref-free formulas, φ; ψ = φ ∧ ψ. -/
 theorem ccp_reduces_to_static {E : Type*} [Nonempty E] (M : Model E)
     (φ ψ : Formula) (s : InfoState E)
     (hφ : φ.domain = ∅) (hψ : ψ.domain = ∅) :

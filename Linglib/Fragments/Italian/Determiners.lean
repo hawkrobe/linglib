@@ -37,7 +37,7 @@ inductive Monotonicity where
   | nonMonotone
   deriving DecidableEq, Repr, BEq
 
-/-- Weak/strong classification (Barwise & Cooper 1981). -/
+/-- Weak/strong classification. -/
 inductive Strength where
   | weak
   | strong

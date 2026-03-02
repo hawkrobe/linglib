@@ -136,13 +136,13 @@ def jndI (v : A → ℝ) (thr : ℝ) (x y : A) : Prop :=
 /-!
 ## Semiorder axioms
 
-Luce (1959, p. 35) defines a **semiordering** of a set `U` as a pair
+@cite{luce-1959} defines a **semiordering** of a set `U` as a pair
 `(L, I)` of relations satisfying, for all `x, y, z, w ∈ U`:
 
-(i)   **Trichotomy**: exactly one of `xLy`, `yLx`, or `xIy` holds
-(ii)  **I-reflexivity**: `xIx`
+(i) **Trichotomy**: exactly one of `xLy`, `yLx`, or `xIy` holds
+(ii) **I-reflexivity**: `xIx`
 (iii) **Interval condition**: `xLy ∧ yIz ∧ zLw → xLw`
-(iv)  **No sandwiching**: `xLy ∧ yLz → ¬(xIw ∧ wIz)`
+(iv) **No sandwiching**: `xLy ∧ yLz → ¬(xIw ∧ wIz)`
 
 Theorem 5 proves these hold for `(L(π), I(π))` under Axiom 1.
 -/
@@ -247,7 +247,7 @@ theorem jndL_no_sandwich (v : A → ℝ) (hv : ∀ a : A, 0 < v a) (thr : ℝ)
 def traceGe (v : A → ℝ) (x y : A) : Prop :=
   ∀ z : A, pairwiseProb v y z ≤ pairwiseProb v x z
 
-/-- **Theorem 6** (Luce 1959, p. 37): Under Axiom 1, the trace relation
+/-- **Theorem 6**: Under Axiom 1, the trace relation
     is equivalent to `v(x) ≥ v(y)`.
 
     **Proof sketch**: Under Axiom 1, `P(x,z) = v(x)/(v(x)+v(z))`. Since
@@ -267,7 +267,7 @@ theorem trace_iff_scale_ge (v : A → ℝ) (hv : ∀ a : A, 0 < v a) (x y : A) :
   · intro hle z
     rwa [pairwiseProb_mono_iff v hv x y z]
 
-/-- Corollary: `x ≥_T y` iff `P(x, y) ≥ 1/2` (Luce 1959, p. 37). -/
+/-- Corollary: `x ≥_T y` iff `P(x, y) ≥ 1/2`. -/
 theorem trace_iff_pairwiseProb_ge_half (v : A → ℝ) (hv : ∀ a : A, 0 < v a)
     (x y : A) :
     traceGe v x y ↔ 1 / 2 ≤ pairwiseProb v x y := by

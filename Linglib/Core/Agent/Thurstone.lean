@@ -5,7 +5,7 @@ import Mathlib.MeasureTheory.Measure.Haar.OfBasis
 /-!
 # Thurstone's Theory of Discriminal Processes @cite{luce-1959}
 
-Luce (1959) §2.D (pp. 53-60): Thurstone's (1927) Case V model of
+@cite{luce-1959} §2.D (pp. 53-60): Thurstone's (1927) Case V model of
 paired comparison, and the logistic approximation that connects it to the
 Luce choice rule.
 
@@ -139,7 +139,7 @@ theorem ThurstoneCaseV.transitivity_right (m : ThurstoneCaseV Stimulus)
 -- ============================================================================
 
 /-!
-## The Logistic Approximation (Luce 1959, pp. 58-59)
+## The Logistic Approximation
 
 The logistic function `1/(1 + exp(-x))` approximates `Φ(x · π/√3)` with
 maximum absolute deviation ≈ 0.01. This is the key technical fact connecting

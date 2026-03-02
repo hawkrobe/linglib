@@ -5,10 +5,10 @@ import Linglib.Core.Lexical.Word
 @cite{comrie-1989} @cite{de-vries-2002} @cite{keenan-comrie-1977} @cite{hawkins-1987} @cite{comrie-2013}
 
 Cross-linguistic data on relative clause formation strategies from two WALS
-chapters by Comrie & Kuteva (2013), supplemented with the Keenan-Comrie
-Accessibility Hierarchy (Keenan & Comrie 1977).
+chapters by @cite{comrie-2013}, supplemented with the Keenan-Comrie
+Accessibility Hierarchy.
 
-## Ch 122: Relativization on Subjects (Comrie & Kuteva 2013a)
+## Ch 122: Relativization on Subjects
 
 How languages form relative clauses on subject position. The main strategies
 are: gap (the relativized position is simply empty), pronoun retention (a
@@ -21,7 +21,7 @@ Sample: 824 languages. Gap strategy is the most common for subject
 relativization (326/824 = 39.6%), reflecting the high accessibility of the
 subject position on the Keenan-Comrie hierarchy.
 
-## Ch 123: Relativization on Obliques (Comrie & Kuteva 2013b)
+## Ch 123: Relativization on Obliques
 
 Whether oblique positions (instrumentals, locatives, etc.) can be relativized,
 and if so by what strategy. Many languages that use the gap strategy on
@@ -34,7 +34,7 @@ the accessibility hierarchy.
 
 ## Keenan-Comrie Accessibility Hierarchy
 
-The Accessibility Hierarchy (Keenan & Comrie 1977) ranks grammatical
+The Accessibility Hierarchy ranks grammatical
 positions by their accessibility to relativization:
 
   Subject > Direct Object > Indirect Object > Oblique > Genitive > Object of Comparison
@@ -47,7 +47,7 @@ The hierarchy makes two key predictions:
 
 The hierarchy is one of the most robust typological universals in syntax,
 supported by data from hundreds of languages. It correlates with processing
-difficulty (Keenan & Hawkins 1987), frequency of relativization in corpora,
+difficulty, frequency of relativization in corpora,
 and acquisition order.
 
 ## Relative Clause Position
@@ -180,8 +180,7 @@ inductive RelClausePosition where
 
     Subject > DirectObject > IndirectObject > Oblique > Genitive > ObjComparison
 
-    This is one of the most robust implicational universals in syntax
-    (Keenan & Comrie 1977). -/
+    This is one of the most robust implicational universals in syntax. -/
 inductive AHPosition where
   /-- Subject: the most accessible position. Virtually all languages
       with relative clauses can relativize subjects. -/
@@ -331,8 +330,8 @@ structure RelativizationProfile where
   /-- Position of relative clause with respect to head noun. -/
   rcPosition : RelClausePosition
   /-- Lowest position on the AH that can be relativized.
-      If a language can relativize obliques, this is .oblique or lower;
-      if it can only relativize subjects, this is .subject. -/
+      If a language can relativize obliques, this is.oblique or lower;
+      if it can only relativize subjects, this is.subject. -/
   lowestRelativizable : AHPosition
   /-- Whether the language is in Europe (for areal generalization
       about relative pronoun concentration). -/
@@ -655,7 +654,7 @@ def yoruba : RelativizationProfile :=
 Mam (SJO): gap strategy on subjects via Agent Focus (AF) voice alternation.
 Obliques can be extracted with dedicated morphology (=(y)a'), but oblique
 relativization is limited. Extraction is tracked by =(y)a' on Voice⁰/Dir⁰.
-Elkins, Imanishi & Coon (2026).
+@cite{elkins-imanishi-coon-2026}.
 -/
 def mam : RelativizationProfile :=
   { language := "Mam (SJO)"

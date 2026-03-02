@@ -5,7 +5,7 @@ import Linglib.Core.Case.SplitConditions
 /-!
 # Hindi Case Inventory @cite{blake-1994}
 
-Hindi has a **split-ergative** case system (Blake 1994, Ch. 4, pp. 107-110):
+Hindi has a **split-ergative** case system:
 ergative -ne marks the transitive agent in perfective aspect only.
 
 Hindi postpositions mark 7 case functions:
@@ -14,13 +14,13 @@ Hindi postpositions mark 7 case functions:
 - LOC (-mem), ABL/INST (-se, syncretic)
 
 The ACC/DAT syncretism (-ko) and ABL/INST syncretism (-se) are
-cross-linguistically common patterns (Blake 1994, pp. 174-175).
+cross-linguistically common patterns.
 
 ## Split-Ergative Connection
 
 This fragment connects to the `hindiSplit` already defined in
 `Core.Case.SplitConditions`, which formalizes the perfective to
-ergative conditioning (Blake 1994, Ch. 4).
+ergative conditioning.
 
 -/
 

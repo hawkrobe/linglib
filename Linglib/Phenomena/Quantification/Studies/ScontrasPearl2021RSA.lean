@@ -6,9 +6,9 @@ import Linglib.Theories.Semantics.Montague.Scope
 import Mathlib.Analysis.SpecialFunctions.Pow.Real
 
 /-!
-# Scontras & Pearl (2021) — Scope Ambiguity RSA Model
+# @cite{scontras-pearl-2021} — Scope Ambiguity RSA Model
 
-@cite{scontras-pearl-2021} @cite{goodman-frank-2016}"When pragmatics matters more for truth-value judgments:
+@cite{scontras-pearl-2021} @cite{goodman-frank-2016}"When pragmatics matters more for truth-value judgments: @cite{musolino-lidz-2003}
 An investigation of quantifier scope ambiguity"
 *Glossa* 6(1): 110.
 
@@ -18,10 +18,10 @@ Domain: "Every horse didn't jump" with n=2 horses. 3 world states
 (0, 1, 2 jumped). 2 utterances (null, everyNot). 6 latent states
 (2 scopes × 3 QUDs).
 
-- **L0**: L0(w|u,i) ∝ ⟦u⟧ᵢ(w)   (literal semantics, no world prior; footnote 6)
-- **S1**: S1(u|w,i,q) ∝ [L0(q(w)|u,i,q)]^α   (QUD-projected; eq 5)
-- **L1**: L1(w,i,q|u) ∝ P(w) · P(i) · P(q) · S1(u|w,i,q)   (eq 7)
-- **S2**: S2(u|w) ∝ Σ_{i,q} L1(w,i,q|u) = L1(w|u)   (eq 8)
+- **L0**: L0(w|u,i) ∝ ⟦u⟧ᵢ(w) (literal semantics, no world prior; footnote 6)
+- **S1**: S1(u|w,i,q) ∝ [L0(q(w)|u,i,q)]^α (QUD-projected; eq 5)
+- **L1**: L1(w,i,q|u) ∝ P(w) · P(i) · P(q) · S1(u|w,i,q) (eq 7)
+- **S2**: S2(u|w) ∝ Σ_{i,q} L1(w,i,q|u) = L1(w|u) (eq 8)
 - **Endorsement**: P(endorse u | w_obs) = S2(u|w_obs)
 
 Parameters: α = 1 (footnote 12). P(w) = Binomial(n, b_suc).
@@ -211,13 +211,13 @@ def everyNotJumped_surface (w : JumpOutcome) : Bool :=
 def everyNotJumped_inverse (w : JumpOutcome) : Bool :=
   !(every_sem horseModel horse_sem (jumpIn_sem w))
 
-/-- Surface scope grounding: `scopeTruth .surface` derives from
+/-- Surface scope grounding: `scopeTruth.surface` derives from
     compositional ⟦every⟧(horse)(λx.¬jump(x)), not stipulation. -/
 theorem surface_from_every_sem :
     ∀ w, scopeTruth .surface w = every_sem horseModel horse_sem (fun h => !jumpIn_sem w h) := by
   intro w; cases w <;> rfl
 
-/-- Inverse scope grounding: `scopeTruth .inverse` derives from
+/-- Inverse scope grounding: `scopeTruth.inverse` derives from
     negating the compositional ⟦every⟧(horse)(jump). -/
 theorem inverse_from_every_sem :
     ∀ w, scopeTruth .inverse w = !(every_sem horseModel horse_sem (jumpIn_sem w)) := by
@@ -255,8 +255,7 @@ theorem rsa_meaning_from_scope_derivation :
     (everyHorseDidntJump w).meaningAt (readingToScopeConfig lat.scope) := by
   intro lat w; cases lat <;> cases w <;> rfl
 
-/-- The every-not scope pair has surface-entails-inverse structure
-    (Musolino & Lidz 2003): surface scope (none jumped) is a strict
+/-- The every-not scope pair has surface-entails-inverse structure: surface scope (none jumped) is a strict
     subset of inverse scope (not all jumped). This makes universals
     non-diagnostic for scope preferences — no TVJ context can
     distinguish isomorphic from non-isomorphic behavior. -/
@@ -304,7 +303,7 @@ theorem qudProjectInline_nonneg {q : QUD} {f : JumpOutcome → ℝ} {w : JumpOut
 -- §5. RSAConfig
 -- ============================================================================
 
-/-- Scontras & Pearl (2021) RSA model, parametric in three priors (eq 7).
+/-- @cite{scontras-pearl-2021} RSA model, parametric in three priors (eq 7).
     S1 uses QUD-projected rpow with α = 1 (footnote 12).
     L0 does not incorporate the world prior (footnote 6). -/
 noncomputable def cfg
@@ -330,9 +329,9 @@ noncomputable def cfg
 -- ============================================================================
 
 /-! World priors follow Binomial(2, b_suc), unnormalized:
-    - b_suc = 0.1: P(w) ∝ (81, 18, 1)     — horses unlikely to jump
-    - b_suc = 0.5: P(w) ∝ (1, 2, 1)        — symmetric
-    - b_suc = 0.9: P(w) ∝ (1, 18, 81)      — horses likely to jump -/
+    - b_suc = 0.1: P(w) ∝ (81, 18, 1) — horses unlikely to jump
+    - b_suc = 0.5: P(w) ∝ (1, 2, 1) — symmetric
+    - b_suc = 0.9: P(w) ∝ (1, 18, 81) — horses likely to jump -/
 
 /-- Baseline: low base rate (b_suc = 0.1), uniform scope, uniform QUD.
     Best fit to adult Experiment 1 data (§3.2, Figure 2 left). -/

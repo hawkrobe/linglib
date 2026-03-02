@@ -4,8 +4,8 @@ import Linglib.Phenomena.Negation.ExpletiveNegationBridge
 import Linglib.Phenomena.Negation.Typology
 
 /-!
-# Phase-Based Analysis of Surprise Negation (Greco 2020)
-@cite{greco-2020}
+# Phase-Based Analysis of Surprise Negation
+@cite{greco-2020} @cite{chomsky-2001}
 
 Greco, M. (2020). On the syntax of surprise negation sentences: A case
 study on expletive negation. *NLLT* 38(3), 775–825.
@@ -60,7 +60,7 @@ inductive NegMergePosition where
 -- ════════════════════════════════════════════════════
 
 /-- A category is in the CP area iff its f-value is at or above Fin (F3).
-    Rizzi (1997): Fin is the boundary between the inflectional domain and
+    @cite{rizzi-1997}: Fin is the boundary between the inflectional domain and
     the left periphery. -/
 def isCPArea (c : Cat) : Bool := fValue c ≥ fValue .Fin
 
@@ -81,7 +81,7 @@ theorem fin_is_cp_boundary : isCPArea .Fin = true := by decide
 -- ════════════════════════════════════════════════════
 
 /-- Whether a Neg head at this merge position can scope into the vP domain.
-    Under weak PIC (Chomsky 2001): vP complement is accessible until the
+    Under weak PIC: vP complement is accessible until the
     NEXT phase head (C) is merged. Standard NegP (F2) is merged before C,
     so vP is still accessible. CP-area Neg is merged during/after C-phase
     assembly, when vP complement has been transferred. -/
@@ -111,7 +111,7 @@ theorem tp_is_low_en : NegMergePosition.tp.toENEffect = .low := rfl
 -- § 4. Greco's four factors for surprise negation
 -- ════════════════════════════════════════════════════
 
-/-- Greco (2020, §4.4): four necessary conditions for surprise negation.
+/-- @cite{greco-2020}: four necessary conditions for surprise negation.
     (i) a negative morpheme α, (ii) α is a syntactic head (X°),
     (iii) α merges in the CP-phase after vP-phase exhaustion,
     (iv) TP is focused (moves to Spec-FocP). -/

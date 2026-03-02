@@ -68,9 +68,9 @@ def nestedDeps (n : Nat) : List Dependency :=
 /--
 Dutch cross-serial dependency example.
 
-Surface: ... dat Jan Piet Marie zag helpen zwemmen
-Gloss:   ... that Jan Piet Marie saw help   swim
-Meaning: ... that Jan saw Piet help Marie swim
+Surface:... dat Jan Piet Marie zag helpen zwemmen
+Gloss:... that Jan Piet Marie saw help swim
+Meaning:... that Jan saw Piet help Marie swim
 
 Dependencies:
 - Jan (NP₁) → zag (V₁) "saw"

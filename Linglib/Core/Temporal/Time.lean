@@ -5,7 +5,7 @@ import Linglib.Tactics.OntSort
 
 /-!
 # Theory-Neutral Temporal Infrastructure
-@cite{allen-1983} @cite{champollion-2015} @cite{fox-hackl-2006} @cite{kamp-reyle-1993} @cite{klein-1994} @cite{kratzer-1989} @cite{kratzer-2021} @cite{rouillard-2026} @cite{zhao-2025}
+@cite{allen-1983} @cite{champollion-2015} @cite{fox-hackl-2006} @cite{kamp-reyle-1993} @cite{klein-1994} @cite{kratzer-1989} @cite{kratzer-2021} @cite{rouillard-2026} @cite{zhao-2025} @cite{smith-1991}
 
 Framework-agnostic types for temporal reasoning: intervals, temporal relations,
 situations (world–time pairs), and concrete time instances.
@@ -18,7 +18,7 @@ dynamic semantics, and intensional semantics. The theory-specific layer
 ## Key Concepts
 
 1. **Times** as primitives (intervals or instants)
-2. **Situations** as world-time pairs (Kratzer 1989, 2021)
+2. **Situations** as world-time pairs
 3. **Temporal relations** (precedence, overlap, containment)
 4. **Atomic distributivity** (subinterval property, Zhao 2025)
 
@@ -71,7 +71,7 @@ class TimeStructure (Time : Type*) extends LinearOrder Time
 /--
 Temporal interval: a pair of times [start, end].
 
-Following standard interval semantics (Allen 1983, Kamp & Reyle 1993).
+Following standard interval semantics.
 -/
 @[ont_sort] structure Interval (Time : Type*) [LE Time] where
   start : Time
@@ -145,12 +145,12 @@ theorem isAfter_iff_isBefore (i₁ i₂ : Interval Time) :
   Iff.rfl
 
 /-- Final subinterval: i₁ ⊆ i₂ and they share the same right endpoint.
-    Pancheva (2003): PTS(i', i) iff i is a final subinterval of i'. -/
+    @cite{pancheva-2003}: PTS(i', i) iff i is a final subinterval of i'. -/
 def finalSubinterval (i₁ i₂ : Interval Time) : Prop :=
   i₁.subinterval i₂ ∧ i₁.finish = i₂.finish
 
 /-- Initial overlap (∂): i₁ and i₂ overlap, and the start of i₂ is in i₁.
-    Pancheva (2003): i ∂τ(e) — the beginning of the eventuality is included
+    @cite{pancheva-2003}: i ∂τ(e) — the beginning of the eventuality is included
     in the reference interval but the end may not be.
     Used for NEUTRAL viewpoint aspect. -/
 def initialOverlap (i₁ i₂ : Interval Time) : Prop :=
@@ -170,7 +170,7 @@ theorem finalSubinterval_refl (i : Interval Time) : i.finalSubinterval i :=
 -- ════════════════════════════════════════════════════
 
 /-- Whether an interval's boundary is included (closed) or excluded (open).
-    Rouillard (2026) §2.2.4: the distinction between closed and open times
+    @cite{rouillard-2026} §2.2.4: the distinction between closed and open times
     is central to deriving the polarity sensitivity of G-TIAs.
     Event runtimes are closed; PTSs are open intervals. -/
 inductive BoundaryType where
@@ -180,13 +180,13 @@ inductive BoundaryType where
 
 /-- A generalized interval with specified boundary types.
     Extends the basic `Interval` with open/closed annotations on each end.
-    Rouillard (2026) eq. (14a–b), (99a–b). -/
+    @cite{rouillard-2026} eq. (14a–b), (99a–b). -/
 structure GInterval (Time : Type*) [LE Time] where
   /-- Left endpoint -/
   left : Time
   /-- Right endpoint -/
   right : Time
-  /-- Left boundary type: closed [m or open ]m -/
+  /-- Left boundary type: closed [m or open]m -/
   leftType : BoundaryType
   /-- Right boundary type: closed m] or open m[ -/
   rightType : BoundaryType
@@ -198,7 +198,7 @@ namespace GInterval
 variable {Time : Type*} [LinearOrder Time]
 
 /-- A closed interval [m₁, m₂]: both endpoints included.
-    Rouillard (2026) eq. (14a): C := {t | min(t) ⊑ᵢ t ∧ max(t) ⊑ᵢ t}. -/
+    @cite{rouillard-2026} eq. (14a): C := {t | min(t) ⊑ᵢ t ∧ max(t) ⊑ᵢ t}. -/
 def closed (i : Interval Time) : GInterval Time where
   left := i.start
   right := i.finish
@@ -206,8 +206,8 @@ def closed (i : Interval Time) : GInterval Time where
   rightType := .closed
   valid := i.valid
 
-/-- An open interval ]m₁, m₂[: both endpoints excluded.
-    Rouillard (2026) eq. (14b): O := {t | min(t) ⊄ᵢ t ∨ max(t) ⊄ᵢ t}. -/
+/-- An open interval]m₁, m₂[: both endpoints excluded.
+    @cite{rouillard-2026} eq. (14b): O := {t | min(t) ⊄ᵢ t ∨ max(t) ⊄ᵢ t}. -/
 def open_ (i : Interval Time) : GInterval Time where
   left := i.start
   right := i.finish
@@ -216,13 +216,13 @@ def open_ (i : Interval Time) : GInterval Time where
   valid := i.valid
 
 /-- The o(t) operation: open counterpart of a time.
-    Rouillard (2026) eq. (99a): if t is open, o(t) = t; if t is closed,
-    o(t) is the open interval with the same endpoints.  -/
+    @cite{rouillard-2026} eq. (99a): if t is open, o(t) = t; if t is closed,
+    o(t) is the open interval with the same endpoints. -/
 def toOpen (gi : GInterval Time) : GInterval Time :=
   { gi with leftType := .open_, rightType := .open_ }
 
 /-- The c(t) operation: closed counterpart of a time.
-    Rouillard (2026) eq. (99b): if t is closed, c(t) = t; if t is open,
+    @cite{rouillard-2026} eq. (99b): if t is closed, c(t) = t; if t is open,
     c(t) adds the endpoints. -/
 def toClosed (gi : GInterval Time) : GInterval Time :=
   { gi with leftType := .closed, rightType := .closed }
@@ -287,7 +287,7 @@ end Interval
 -- § Aspectual Boundedness
 -- ════════════════════════════════════════════════════
 
-/-- Aspectual boundedness of a situation (Smith 1991, Depraetere 1995).
+/-- Aspectual boundedness of a situation.
 
     Whether a situation is conceptualized as having inherent boundaries:
     - **bounded**: telic / perfective / closed (achievements, accomplishments)
@@ -379,7 +379,7 @@ def tomorrowZ : ℤ := 1
 -- ════════════════════════════════════════════════════
 
 /-- Interval boundary type maps to scale boundedness.
-    Rouillard (2026): closed runtimes correspond to closed scales (licensed);
+    @cite{rouillard-2026}: closed runtimes correspond to closed scales (licensed);
     open PTSs correspond to open scales (blocked/information collapse).
     This is the "interval generalization": `BoundaryType.closed`/`.open_`
     in `Core/Time` is isomorphic to `Boundedness.closed`/`.open_` in
@@ -401,7 +401,7 @@ instance : Core.Scale.LicensingPipeline Interval.BoundaryType where
 -- § Atomic Distributivity (Zhao 2025, Champollion 2015)
 -- ════════════════════════════════════════════════════
 
-/-- An event quantifier (Champollion 2015): a predicate on event predicates.
+/-- An event quantifier: a predicate on event predicates.
     V(P) holds iff "there is an event satisfying P" according to V's
     quantificational force. -/
 abbrev EvQuant (Event : Type*) := (Event → Prop) → Prop
@@ -435,7 +435,7 @@ abbrev AtomDist_d {Event : Type*} {Deg : Type*} [LinearOrder Deg]
     (τ_d : Event → Interval Deg) (V : EvQuant Event) : Prop :=
   AtomDist τ_d V
 
-/-- NOT-ATOM-DIST_α licensing condition (Zhao 2025, Ch. 6):
+/-- NOT-ATOM-DIST_α licensing condition:
     A particle is licensed by an event quantifier V (w.r.t. trace τ) iff
     V does NOT satisfy ATOM-DIST_α. This is the presupposition of
     Mandarin le and mei-you. -/

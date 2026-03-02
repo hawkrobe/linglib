@@ -2,7 +2,7 @@ import Linglib.Core.Lexical.Word
 
 /-!
 # Extraction Morphology Interface
-@cite{elkins-imanishi-coon-2026} @cite{erlewine-2018} @cite{mccloskey-2002}
+@cite{elkins-imanishi-coon-2026} @cite{erlewine-2018} @cite{mccloskey-2002} @cite{erlewine-2016}
 
 Theory-neutral interface for cross-linguistic extraction morphology —
 how languages morphologically mark that a constituent has undergone
@@ -52,12 +52,12 @@ inductive ExtractionMarkingStrategy where
       "pivot"), not by surface morphology but by clause-structural factors
       such as predicate fronting + anti-locality. Voice morphology determines
       *which* argument occupies the pivot, but the restriction itself is
-      structural. E.g., Toba Batak (Erlewine 2018). -/
+      structural. E.g., Toba Batak. -/
   | structuralRestriction
   /-- Clause-local extraction of a specific argument role (typically
       agent/ergative) triggers an alternation in clause structure — a
       "repair" that avoids a locality crash. The canonical case is
-      Kaqchikel Agent Focus (Erlewine 2016): clause-local agent extraction
+      Kaqchikel Agent Focus: clause-local agent extraction
       crashes the normal transitive because movement from Spec,TP to
       Spec,CP violates Spec-to-Spec Anti-Locality (SSAL), so the grammar
       selects an intransitive-like AF structure with distinct verbal
@@ -98,7 +98,7 @@ inductive ExtractionTarget where
 
     Complements `ExtractionTarget` (structural position): ArgumentRole
     identifies *what* is extracted; ExtractionTarget identifies *where*
-    it was extracted from. The two coincide in simple active clauses
+    it was extracted. The two coincide in simple active clauses
     (agent = subject, patient = object) but diverge under voice
     alternation (in OV, the patient becomes the subject). -/
 inductive ArgumentRole where
@@ -119,8 +119,7 @@ def ArgumentRole.defaultPosition : ArgumentRole → ExtractionTarget
 
     This distinction drives the DP/non-DP extraction asymmetry: in
     predicate-fronting languages like Toba Batak, only DP extraction
-    is restricted to the pivot; adjuncts extract freely (Erlewine
-    2018, §4.6). -/
+    is restricted to the pivot; adjuncts extract freely. -/
 inductive Extractee where
   | dpArg : ArgumentRole → Extractee
   | adjunct : Extractee

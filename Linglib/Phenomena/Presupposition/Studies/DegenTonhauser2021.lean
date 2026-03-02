@@ -318,7 +318,7 @@ structure ProjectionFactors where
 /--
 Projected projection strength given multiple factors.
 This is a simplified model of the RSA-based approach suggested by
-Degen & Tonhauser (2021) in their discussion.
+@cite{degen-tonhauser-2021} in their discussion.
 -/
 def predictedProjection (p : Predicate) (factors : ProjectionFactors) : Float :=
   -- Simplified linear combination

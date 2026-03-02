@@ -14,7 +14,7 @@ BToM agents, and decision-theoretic actors.
 ## Architecture
 
 A `RationalAction` agent selects actions with probability proportional to a
-non-negative score function — the **Luce choice rule** (Luce 1959). This is the
+non-negative score function — the **Luce choice rule**. This is the
 unique choice rule satisfying IIA (independence of irrelevant alternatives):
 the relative probability of two actions depends only on their scores.
 
@@ -25,7 +25,7 @@ The key mathematical results characterizing this choice rule are:
 
 2. **Gibbs Variational Principle** (§3): Softmax uniquely maximizes
    `H(p) + α · ⟨p, s⟩` on the probability simplex. This is the mathematical
-   foundation for RSA convergence (Zaslavsky et al. 2020).
+   foundation for RSA convergence.
 
 3. **Maximum Entropy** (§4): Softmax is the max-entropy distribution subject
    to an expected-utility constraint. Equivalently, it minimizes free energy
@@ -46,7 +46,7 @@ open Real BigOperators Finset
 
 /-- A rational action agent: selects actions with probability ∝ score(state, action).
 
-This is the Luce choice rule (Luce 1959). The `score` function is unnormalized;
+This is the Luce choice rule. The `score` function is unnormalized;
 normalization to a proper distribution is derived (see `policy`).
 
 Key instances:
@@ -120,7 +120,7 @@ theorem RationalAction.policy_eq_of_score_eq (ra : RationalAction S A) (s : S)
 
 /-- When totalScore equals the score of action `a`, the policy for `a` is 1.
     Used by the compositional proof builder when all other scores are zero,
-    so `totalScore = score a + 0 + ... + 0 = score a`, making `policy = 1`. -/
+    so `totalScore = score a + 0 +... + 0 = score a`, making `policy = 1`. -/
 theorem RationalAction.policy_eq_one_of_totalScore_eq (ra : RationalAction S A) (s : S)
     (a : A) (h_sum : ra.totalScore s = ra.score s a) (h_pos : 0 < ra.score s a) :
     ra.policy s a = 1 := by
@@ -628,9 +628,9 @@ RSA convergence (Zaslavsky et al. 2020, Proposition 1).
 
 The Gibbs VP reduces to KL non-negativity via three identities:
 
-1. H(p) + KL(p‖q) = -∑ pᵢ log qᵢ          (negMulLog + KL term telescope)
-2. -∑ pᵢ log qᵢ = -α⟨p,s⟩ + log Z          (substitute log qᵢ = α sᵢ - log Z)
-3. H(q) + α⟨q,s⟩ = log Z                    (softmax self-information)
+1. H(p) + KL(p‖q) = -∑ pᵢ log qᵢ (negMulLog + KL term telescope)
+2. -∑ pᵢ log qᵢ = -α⟨p,s⟩ + log Z (substitute log qᵢ = α sᵢ - log Z)
+3. H(q) + α⟨q,s⟩ = log Z (softmax self-information)
 
 Combining: H(p) + α⟨p,s⟩ + KL = log Z = H(q) + α⟨q,s⟩, so KL ≥ 0 ⟹ LHS ≤ RHS.
 

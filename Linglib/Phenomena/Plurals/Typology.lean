@@ -73,7 +73,7 @@ def PluralCodingDistribution.total (d : PluralCodingDistribution) : Nat :=
   d.prefixCount + d.suffixCount + d.stemChange + d.tone + d.reduplication +
   d.mixedMorphological + d.pluralWord + d.pluralClitic + d.noPlural
 
-/-- Actual WALS Ch 33 counts (Dryer 2013). -/
+/-- Actual WALS Ch 33 counts. -/
 def ch33Distribution : PluralCodingDistribution :=
   { prefixCount := 118
   , suffixCount := 495
@@ -118,7 +118,7 @@ def PluralOccurrenceDistribution.total (d : PluralOccurrenceDistribution) : Nat 
   d.noNominalPlural + d.humanOnlyOptional + d.humanOnlyObligatory +
   d.allNounsAlwaysOptional + d.allNounsOptionalInanimates + d.allNounsAlwaysObligatory
 
-/-- Actual WALS Ch 34 counts (Haspelmath 2013). -/
+/-- Actual WALS Ch 34 counts. -/
 def ch34Distribution : PluralOccurrenceDistribution :=
   { noNominalPlural := 28
   , humanOnlyOptional := 20
@@ -164,7 +164,7 @@ def PronounPluralityDistribution.total (d : PronounPluralityDistribution) : Nat 
   d.personNumberStem + d.pnStemPronominalAffix + d.pnStemNominalAffix +
   d.personStemPronominalAffix + d.personStemNominalAffix
 
-/-- Actual WALS Ch 35 counts (Daniel 2013). -/
+/-- Actual WALS Ch 35 counts. -/
 def ch35Distribution : PronounPluralityDistribution :=
   { noIndependentPronouns := 2
   , numberIndifferent := 8
@@ -204,7 +204,7 @@ structure AssociativePluralDistribution where
 def AssociativePluralDistribution.total (d : AssociativePluralDistribution) : Nat :=
   d.sameAsAdditive + d.uniqueAffixal + d.uniquePeriphrastic + d.absent
 
-/-- Actual WALS Ch 36 counts (Daniel & Moravcsik 2013). -/
+/-- Actual WALS Ch 36 counts. -/
 def ch36Distribution : AssociativePluralDistribution :=
   { sameAsAdditive := 104
   , uniqueAffixal := 48
@@ -568,8 +568,7 @@ def PluralityProfile.pronounsDistinguishNumber (p : PluralityProfile) : Bool :=
 /-- In our sample: every language that lacks nominal plural marking still
     distinguishes number in its pronouns.
 
-    This instantiates the hierarchy: pronouns > nouns for number marking
-    (Smith-Stark 1974, Corbett 2000). -/
+    This instantiates the hierarchy: pronouns > nouns for number marking. -/
 theorem pronouns_mark_number_even_without_nominal_plural :
     let noNominal := allLanguages.filter fun p => p.coding == .noPlural
     noNominal.all (·.pronounsDistinguishNumber) = true := by

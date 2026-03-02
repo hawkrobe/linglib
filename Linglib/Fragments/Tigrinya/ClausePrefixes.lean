@@ -3,9 +3,11 @@ import Linglib.Theories.Morphology.Core.Circumfix
 
 /-!
 # Tigrinya Clausal Prefixes @cite{cacchioli-2025}
+@cite{pollock-1989} @cite{rizzi-1997}
+
 
 Lexical entries for Tigrinya's four clause-initial morphemes, analyzed as
-spell-outs of distinct heads in a cartographic left periphery (Rizzi 1997).
+spell-outs of distinct heads in a cartographic left periphery.
 
 ## The four prefixes
 
@@ -73,7 +75,7 @@ structure ClausePrefixEntry where
 -- ============================================================================
 
 /-- zɨ- : relativizer / general subordinator.
-    Spells out Rel (Rizzi 2001). Does not take agreement.
+    Spells out Rel. Does not take agreement.
     "zɨ-mäs'ə" = REL-come = "who came" -/
 def zi : ClausePrefixEntry where
   prefix_ := "zɨ-"
@@ -83,7 +85,7 @@ def zi : ClausePrefixEntry where
   takesAgreementSuffix := false
 
 /-- kɨ- : subjunctive / irrealis marker.
-    Spells out Fin (Rizzi 1997) with [-finite].
+    Spells out Fin with [-finite].
     Selected by desiderative/manipulative verbs.
     "kɨ-mäs'ə" = SBJV-come = "to come" -/
 def ki : ClausePrefixEntry where
@@ -105,7 +107,7 @@ def kemzi : ClausePrefixEntry where
   takesAgreementSuffix := false
 
 /-- ʔay-...-n : negative circumfix.
-    Spells out Neg (Pollock 1989).
+    Spells out Neg.
     The verbal stem is wrapped: ʔay-mäs'ə-n = NEG-come-NEG = "did not come".
     Discontinuous exponence derived from V-to-Neg head movement. -/
 def ay_n : ClausePrefixEntry where

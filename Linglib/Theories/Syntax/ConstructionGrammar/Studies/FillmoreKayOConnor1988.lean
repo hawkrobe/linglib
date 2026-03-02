@@ -3,7 +3,7 @@ import Linglib.Core.Semantics.Presupposition
 import Linglib.Core.Scales.HornScale
 
 /-!
-# Fillmore, Kay & O'Connor (1988): Let Alone
+# @cite{fillmore-oconnor-1988}: Let Alone
 
 Formalization of "Regularity and Idiomaticity in Grammatical Constructions:
 The Case of *Let Alone*" (Language 64(3):501–538).
@@ -30,7 +30,7 @@ open ConstructionGrammar
 /-! ## Section 1: Idiom Typology (§1.1–1.2)
 
 Fillmore et al.'s classification cross-cuts two dimensions:
-- Encoding vs decoding (Makkai 1972)
+- Encoding vs decoding
 - Grammatical vs extragrammatical
 - Substantive (lexically filled) vs formal (open slots)
 -/
@@ -337,7 +337,7 @@ linear order is exactly a HornScale.
 
 We show this by constructing a scalar model from the military rank
 example in the paper (§2.1, ex.21): the scale
-⟨second lieutenant, ... , colonel, general⟩. -/
+⟨second lieutenant,..., colonel, general⟩. -/
 
 /-- Military ranks from the paper's running example. -/
 inductive Rank where

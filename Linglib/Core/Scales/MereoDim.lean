@@ -12,7 +12,7 @@ and `Core/Scale.lean` (ComparativeScale/Boundedness/MIP/degree properties).
 
 The two pillars are independently motivated:
 - **Mereology**: algebraic part-whole structure (Krifka 1989/1998, Champollion 2017)
-- **Scale**: comparative/additive scale structure (Kennedy 2007, Rouillard 2026)
+- **Scale**: comparative/additive scale structure
 
 This file bridges them at four levels:
 
@@ -26,8 +26,8 @@ This file bridges them at four levels:
 The Krifka (1989/1998) linking theory involves two dimension chains:
 
 ```
-Events →θ Entities →μ ℚ       (object dimension)
-Events →τ Times    →dur ℚ     (temporal dimension)
+Events →θ Entities →μ ℚ (object dimension)
+Events →τ Times →dur ℚ (temporal dimension)
 ```
 
 These form a square that commutes *laxly*: the two paths Events → ℚ need not
@@ -49,8 +49,8 @@ namespace Mereology
     Krifka: QUA(P) means P-elements have no P-proper-parts, so
     measurement reaches a definite value at each P-element — the scale
     has an inherent endpoint.
-    Kennedy (2007): closed scales license degree modifiers.
-    Rouillard (2026): closed scales license temporal *in*-adverbials.
+    @cite{kennedy-2007}: closed scales license degree modifiers.
+    @cite{rouillard-2026}: closed scales license temporal *in*-adverbials.
 
     This is the mereological root of the Kennedy–Rouillard isomorphism:
     QUA → telic → closed → licensed. -/
@@ -60,8 +60,8 @@ def quaBoundedness : Core.Scale.Boundedness := .closed
 
     Krifka: CUM(P) means P is closed under ⊔, so measurement can
     always be extended upward — the scale has no inherent endpoint.
-    Kennedy (2007): open scales block degree modifiers.
-    Rouillard (2026): open scales cause information collapse for TIAs.
+    @cite{kennedy-2007}: open scales block degree modifiers.
+    @cite{rouillard-2026}: open scales cause information collapse for TIAs.
 
     This is the mereological root: CUM → atelic → open → blocked. -/
 def cumBoundedness : Core.Scale.Boundedness := .open_
@@ -85,7 +85,7 @@ theorem cum_boundedness_blocked : cumBoundedness.isLicensed = false := rfl
     comes from the mereological property of the source predicate:
     QUA → `.closed`, CUM → `.open_`.
 
-    See also `extMeasure_rouillard` for the Rouillard (2026)
+    See also `extMeasure_rouillard` for the @cite{rouillard-2026}
     direction (negative → `atMostDeg`). -/
 def extMeasure_kennedy {α : Type*} [SemilatticeSup α]
     {μ : α → ℚ} (_hμ : ExtMeasure α μ) (b : Core.Scale.Boundedness) :
@@ -280,7 +280,7 @@ theorem qua_pullback_mereoDim_comp {α β γ : Type*}
 
     This captures the idealized "constant rate" linking two dimensions:
     measuring x is proportional to measuring e whenever R relates them.
-    For instance, in Krifka's (1989) telicity theory, eating twice as much
+    For instance, in @cite{krifka-1989}'s telicity theory, eating twice as much
     food takes twice as long, so the object measure and event duration are
     proportional on θ-related pairs. -/
 structure MeasureProportional {α β : Type*} [SemilatticeSup α] [SemilatticeSup β]
@@ -299,8 +299,8 @@ structure MeasureProportional {α β : Type*} [SemilatticeSup α] [SemilatticeSu
 /-- A lax commutative square of mereological dimensions:
 
     ```
-    α →R γ →f β →μ₂ ℚ        (composed path: μ₂ ∘ f)
-    α →──── μ₁ ────→ ℚ       (direct path)
+    α →R γ →f β →μ₂ ℚ (composed path: μ₂ ∘ f)
+    α →──── μ₁ ────→ ℚ (direct path)
     ```
 
     The two paths α → ℚ commute *laxly*: they don't agree pointwise,
@@ -375,7 +375,7 @@ theorem LaxMeasureSquare.qua_pullback₂ {α β γ : Type*}
 morphism of comparative scales is `Monotone` (between preorders).
 
 ```
-Monotone  ⊇  MereoDim  =  injective Monotone (on partial orders)
+Monotone ⊇ MereoDim = injective Monotone (on partial orders)
 ```
 
 The bridge theorems below make this precise:
@@ -392,10 +392,10 @@ and the `DirectedMeasure` constructors (§2), the entire mereological pipeline
 factors through `ComparativeScale`:
 
 ```
-  (α, ≤)  ——MereoDim d——→  (β, ≤)  ——ExtMeasure μ——→  (ℚ, ≤)
-     ↓                        ↓                          ↓
-ComparativeScale b₁      ComparativeScale b₂     ComparativeScale .closed
-     └─────── Monotone ───────┘                          │
+  (α, ≤) ——MereoDim d——→ (β, ≤) ——ExtMeasure μ——→ (ℚ, ≤)
+     ↓ ↓ ↓
+ComparativeScale b₁ ComparativeScale b₂ ComparativeScale.closed
+     └─────── Monotone ───────┘ │
                 └──────────── Monotone ──────────────────┘
 ```
 -/
@@ -432,8 +432,8 @@ theorem qua_cum_boundedness_coherence :
     Source →f Inter →μ Measure where both legs are MereoDim.
     The three canonical instances:
     - Temporal: Events →τ Intervals →dur ℚ
-    - Spatial:  Events →σ Paths     →dist ℚ
-    - Object:   Events →θ Entities  →μ   ℚ  -/
+    - Spatial: Events →σ Paths →dist ℚ
+    - Object: Events →θ Entities →μ ℚ -/
 structure DimensionChain
     {Source Inter Measure : Type*}
     [PartialOrder Source] [PartialOrder Inter] [PartialOrder Measure]

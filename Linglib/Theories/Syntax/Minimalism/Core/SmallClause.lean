@@ -1,9 +1,9 @@
 import Linglib.Theories.Syntax.Minimalism.Core.Applicative
 
 /-!
-# Small Clause Predication (den Dikken 1995)
+# Small Clause Predication
 
-@cite{dendikken-1995} @cite{baker-1988}Den Dikken's (1995) central thesis: all subject-predicate relationships
+@cite{dendikken-1995} @cite{baker-1988}@cite{dendikken-1995}'s central thesis: all subject-predicate relationships
 are incarnated as small clauses `[SC Subject Predicate]`. The predicate
 head's category determines the construction type:
 
@@ -22,7 +22,7 @@ with differences reduced to the category of the predicate head.
 
 Bantu applicative morphemes (*-il-, -el-*) and Japanese causative *-(s)ase*
 are analyzed as affixal particles: grammaticalized instances of P-to-V
-incorporation (den Dikken 1995, Ch. 5). Low applicatives introduce the
+incorporation. Low applicatives introduce the
 same structural configuration as particles — SC predication between
 a goal and a theme, mediated by a P head.
 
@@ -85,8 +85,7 @@ def SCPredCategory.constructionName : SCPredCategory → String
 -- Applicative connection (den Dikken 1995, Ch. 5)
 -- ============================================================================
 
-/-- Whether an applicative head is analyzable as an affixal particle
-    (den Dikken 1995, Ch. 5).
+/-- Whether an applicative head is analyzable as an affixal particle.
 
     Low applicatives introduce a transfer/possession relation between
     goal and theme — structurally, a P head relating two DPs via SC

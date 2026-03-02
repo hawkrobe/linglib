@@ -53,7 +53,7 @@ structure QuestionParticleEntry where
 -- 吗 ma — basic polar question particle
 -- ============================================================================
 
-/-- 吗 ma — unmarked polar question particle (Li & Thompson 1981).
+/-- 吗 ma — unmarked polar question particle.
 Sentence-final particle that turns a declarative into a yes/no question.
 No bias requirements; compatible with all contexts. CP-layer: appears in
 matrix, subordinated, and quasi-subordinated positions. -/
@@ -72,7 +72,7 @@ def ma : QuestionParticleEntry where
 -- 吧 ba — confirmation-seeking / tag particle
 -- ============================================================================
 
-/-- 吧 ba — confirmation-seeking particle (Chu 1998, Li & Thompson 1981).
+/-- 吧 ba — confirmation-seeking particle.
 Speaker expects a positive answer and seeks confirmation. Comparable to
 English tag questions ("It's raining, isn't it?"). Requires original
 speaker bias for p but no evidential bias. -/
@@ -91,7 +91,7 @@ def ba : QuestionParticleEntry where
 -- 难道 nándào — evidential question particle
 -- ============================================================================
 
-/-- 难道 nándào — evidential question particle (Zheng 2026).
+/-- 难道 nándào — evidential question particle.
 Marks that the speaker has encountered unexpected contextual evidence
 supporting the prejacent. Compatible with neutral epistemic state
 (pure inquiry use, Zheng 2026 ex. 3). -/

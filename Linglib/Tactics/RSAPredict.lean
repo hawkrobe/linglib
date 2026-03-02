@@ -142,8 +142,8 @@ register_option rsa_predict.skipReflection : Bool := {
     - `cfg.L1 u w₁ = cfg.L1 u w₂` — L1 equality (score symmetry)
     - `Σ s, cfg.L1 u (s, a₁) > Σ s, cfg.L1 u (s, a₂)` — marginal comparison
     - `cfg.L1_marginal u P₁ > cfg.L1_marginal u P₂` — marginal via predicate
-    - `cfg.L1 u₁ w₁ + ... > cfg.L1 u₂ w₃ + ...` — cross-utterance sum
-    - `cfg₁.L1 u₁ w₁ + ... > cfg₂.L1 u₂ w₃ + ...` — cross-config sum -/
+    - `cfg.L1 u₁ w₁ +... > cfg.L1 u₂ w₃ +...` — cross-utterance sum
+    - `cfg₁.L1 u₁ w₁ +... > cfg₂.L1 u₂ w₃ +...` — cross-config sum -/
 elab "rsa_predict" : tactic => do
   let goal ← getMainGoal
   let goalType ← goal.getType

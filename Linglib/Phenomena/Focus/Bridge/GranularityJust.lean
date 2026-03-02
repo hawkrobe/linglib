@@ -29,7 +29,7 @@ open Phenomena.Focus.Exclusives
 -- ════════════════════════════════════════════════════
 
 /-- Derive *just* flavor from adjectival construction type.
-    Thomas & Deo (2020) predict:
+    @cite{thomas-deo-2020} predict:
     - comparative + just → precisifying proximity (barely)
     - equative + just → precisifying equality (exactly) -/
 def justFlavorFromConstruction : AdjectivalConstruction → JustFlavor

@@ -5,8 +5,8 @@ import Linglib.Theories.Syntax.Minimalism.Core.Applicative
 # Spanish Verb Entries for the Causative Alternation
 @cite{cuervo-2003} @cite{munoz-perez-2026}
 
-Verbs from Muñoz Pérez (2026) classified by anticausative marking (SE)
-and event-structural decomposition (Cuervo 2003). The key empirical
+Verbs from Muñoz @cite{munoz-perez-2026} classified by anticausative marking (SE)
+and event-structural decomposition. The key empirical
 generalization: stylistic LE is licensed only by verbs with inchoative
 structure (vGO ∧ vBE) that require SE-marking.
 
@@ -41,7 +41,7 @@ inductive AnticausativeMarking where
 /-- A Spanish verb with its causative alternation properties.
 
     Extends `VerbCore` with Spanish-specific fields for anticausative
-    marking and event-structural decomposition (Cuervo 2003). -/
+    marking and event-structural decomposition. -/
 structure SpanishVerbEntry extends VerbCore where
   /-- How the anticausative is marked -/
   anticausativeMarking : AnticausativeMarking

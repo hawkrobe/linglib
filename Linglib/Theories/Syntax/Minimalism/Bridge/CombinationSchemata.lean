@@ -5,8 +5,7 @@ import Linglib.Core.Interface
 # Classification of Merge into Three Combination Schemata
 @cite{mueller-2013}
 
-Explicit classification of Minimalist Merge operations into Müller's (2013)
-three universal combination schemata: Head-Complement, Head-Specifier, Head-Filler.
+Explicit classification of Minimalist Merge operations into @cite{mueller-2013}'s three universal combination schemata: Head-Complement, Head-Specifier, Head-Filler.
 
 The existing `MergeUnification.lean` proves that Internal and External Merge
 are the same operation. This file further classifies Merge by *combination kind*:
@@ -17,7 +16,7 @@ are the same operation. This file further classifies Merge by *combination kind*
 | External (specifier) | neither selects, arg is maximal | Head-Specifier |
 | Internal | `contains target mover` | Head-Filler |
 
-## Connection to Müller (2013)
+## Connection to @cite{mueller-2013}
 
 - §2.1: External Merge with selection ≈ Head-Complement
 - §2.2: External Merge without selection ≈ Head-Specifier

@@ -5,7 +5,7 @@ import Mathlib.Data.List.Dedup
 # Questions/PragmaticAnswerhood.lean
 @cite{groenendijk-stokhof-1984}
 
-Pragmatic answerhood theory from Groenendijk & Stokhof (1984), Chapter IV.
+Pragmatic answerhood theory from @cite{groenendijk-stokhof-1984}, Chapter IV.
 
 ## Insight
 

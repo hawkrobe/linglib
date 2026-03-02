@@ -8,8 +8,8 @@ import Linglib.Theories.Phonology.Autosegmental.Defs
 @cite{goldsmith-1976} @cite{ringen-heinmki-1999}
 
 Finnish has **palatal vowel harmony**: the [±back] feature of root vowels
-propagates rightward through all suffixes (Karlsson 2018, Ch. 2). This is
-a textbook case of autosegmental feature spreading (Goldsmith 1976).
+propagates rightward through all suffixes. This is
+a textbook case of autosegmental feature spreading.
 
 ## Vowel classes (Karlsson §2.1)
 

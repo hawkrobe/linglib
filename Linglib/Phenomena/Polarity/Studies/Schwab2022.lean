@@ -141,7 +141,7 @@ def npiTypeToScalarDirection : NPIType → ScalarDirection
 /-- Predict whether an NPI type shows illusion based on scalar direction.
     Only strengthening NPIs show illusion because the RC environment
     superficially satisfies the "stronger-than-alternatives" licensing
-    condition of ScalAssert (Krifka 1995). -/
+    condition of ScalAssert. -/
 def predictsIllusion (npi : NPIType) : Bool :=
   match npiTypeToScalarDirection npi with
   | .strengthening => true   -- ScalAssert condition superficially met

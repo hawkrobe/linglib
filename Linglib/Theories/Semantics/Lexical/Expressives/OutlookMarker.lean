@@ -4,9 +4,9 @@ import Linglib.Theories.Semantics.Lexical.Expressives.Basic
 
 /-!
 # Outlook Markers: Dual-Layered Secondary Meaning
-@cite{coppock-2018} @cite{farkas-bruce-2010} @cite{kubota-2026} @cite{potts-2007}
+@cite{coppock-2018} @cite{farkas-bruce-2010} @cite{kubota-2026} @cite{potts-2007} @cite{abusch-2002}
 
-Formalization of Kubota (2026) "Outlook Management: 'Subjective' Meanings of
+Formalization of @cite{kubota-2026} "Outlook Management: 'Subjective' Meanings of
 Discourse-Sensitive Adverbs and Particles."
 
 ## Key Insight
@@ -86,7 +86,7 @@ inductive SecondaryMeaningClass where
 
 /-! ## Presupposition Trigger Strength -/
 
-/-- Hard vs soft presupposition triggers (Abusch 2002, 2010; Abrusán 2011).
+/-- Hard vs soft presupposition triggers.
 
 Hard triggers project robustly in all embedding environments.
 Soft triggers allow non-projective readings under epistemic uncertainty.
@@ -160,7 +160,7 @@ end OutlookMeaning
 
 /-! ## Diagnostic Properties
 
-Potts (2007) identifies six properties of expressives. Kubota (2026) shows that
+@cite{potts-2007} identifies six properties of expressives. @cite{kubota-2026} shows that
 outlook markers share some but not all of these, which is what makes them a
 distinct class of secondary meaning. -/
 
@@ -187,7 +187,7 @@ structure SecondaryMeaningProperties where
   requiresDiscourseAntecedent : Bool
   deriving Repr
 
-/-- Canonical properties of expressives (Potts 2007).
+/-- Canonical properties of expressives.
 
 Expressives like epithets and honorifics satisfy all six Potts properties
 and do NOT typically allow perspective shift or require discourse antecedents. -/

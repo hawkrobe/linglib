@@ -2,14 +2,15 @@ import Linglib.Core.RootDimensions
 
 /-!
 # Root: Cross-Cutting Primitive Types
+@cite{beavers-etal-2021} @cite{dixon-1982} @cite{harley-2014} @cite{levin-1993}
+
 
 Framework-agnostic types for characterizing verb roots across theoretical
 modules. These types are used by Semantics (event structure, denotations),
 Syntax (argument structure, Voice), and Morphology (categorization, DM).
 
 The theoretical content — why these types are what they are, and what
-they predict — lives in `Theories/Morphology/RootTypology.lean` (Beavers
-et al. 2021) and `Theories/Morphology/DM/Categorizer.lean` (Harley 2014).
+they predict — lives in `Theories/Morphology/RootTypology.lean` and `Theories/Morphology/DM/Categorizer.lean`.
 -/
 
 -- ════════════════════════════════════════════════════
@@ -18,7 +19,7 @@ et al. 2021) and `Theories/Morphology/DM/Categorizer.lean` (Harley 2014).
 
 /-- Two types of change-of-state verb roots (Beavers et al. 2021 §3.1).
 
-    **Property concept (PC) roots** (Dixon 1982, Thompson 1988): underlie
+    **Property concept (PC) roots**: underlie
     deadjectival CoS verbs. The root describes a gradable property
     (dimension, color, value, etc.). Examples: flat, red, long, warm.
 
@@ -44,7 +45,7 @@ def RootType.entailsChange : RootType → Bool
 
 /-- Whether a root selects an internal (theme) argument.
 
-    Coon (2019): the central division of labor is that **roots determine
+    @cite{coon-2019}: the central division of labor is that **roots determine
     internal arguments** while **functional heads (v/Voice⁰) determine
     external arguments**. This is orthogonal to change entailment. -/
 inductive RootArity where
@@ -79,29 +80,29 @@ inductive RootDenotationType where
 /-- Unified root characterization bundling all classification dimensions.
 
     A root is characterized along five independent axes:
-    1. **Arity** (Coon 2019): does it select an internal argument?
-    2. **Change entailment** (Beavers et al. 2021): does it lexically
+    1. **Arity**: does it select an internal argument?
+    2. **Change entailment**: does it lexically
        entail a prior change event?
     3. **Denotation type** (Coon 2019, (3)): event predicate, measure
        function, or entity predicate.
     4. **Quality dimensions** (Spalek & McNally): within-class root content
-    5. **Class membership** (Levin 1993): verb class taxonomy
+    5. **Class membership**: verb class taxonomy
 
     Axes 1, 2, and 3 cross-classify: Coon's four Chuj root classes are
     recovered as (arity × denotationType) pairs:
     √TV = selectsTheme + eventPred, √ITV = noTheme + eventPred,
     √POS = noTheme + measureFn, √NOM = noTheme + entityPred. -/
 structure Root where
-  /-- Does this root select an internal argument? (Coon 2019) -/
+  /-- Does this root select an internal argument? -/
   arity : RootArity
-  /-- Does this root lexically entail prior change? (Beavers et al. 2021) -/
+  /-- Does this root lexically entail prior change? -/
   changeType : RootType
   /-- Semantic denotation domain (Coon 2019, (3)). Optional — not all
       roots have been annotated. -/
   denotationType : Option RootDenotationType := none
   /-- Within-class quality dimensions (Spalek & McNally) -/
   profile : RootProfile := {}
-  /-- Verb class membership (Levin 1993) -/
+  /-- Verb class membership -/
   levinClass : Option LevinClass := none
   deriving BEq, Repr
 

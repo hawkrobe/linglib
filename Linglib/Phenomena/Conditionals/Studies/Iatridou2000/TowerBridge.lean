@@ -4,10 +4,10 @@ import Linglib.Core.Context.Tower
 import Linglib.Core.Context.Shifts
 
 /-!
-# Iatridou (2000) — ContextTower Bridge @cite{iatridou-2000}
+# @cite{iatridou-2000} — ContextTower Bridge @cite{iatridou-2000}
 
 End-to-end derivation chain connecting the ContextTower infrastructure to
-the counterfactual morphology data in Iatridou (2000). The core insight:
+the counterfactual morphology data in @cite{iatridou-2000}. The core insight:
 ExclF (the Exclusion Feature) is literally `origin ≠ innermost` on the
 tower, and `subjShift` / `temporalShift` produce ExclFs.
 

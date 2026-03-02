@@ -53,7 +53,7 @@ open Semantics.Degree (AdjectivalConstruction)
 /--
 Types of pragmatic alternatives.
 
-Following Horn (1984) and Levinson (2000):
+Following @cite{horn-1984} and @cite{levinson-2000}:
 - Q-alternatives: Compete on informativity (Quantity principle)
 - M-alternatives: Compete on form cost (Manner principle)
 
@@ -141,7 +141,7 @@ def modalSet : HornSet ModalExpr :=
   ⟨[.possible, .necessary]⟩
 
 /--
-The numeral Horn set: {one, two, three, ...}
+The numeral Horn set: {one, two, three,...}
 Uses strings for now (numerals are more complex).
 -/
 def numeralSet : HornSet String :=
@@ -384,7 +384,7 @@ This determines whether M-alternatives exist:
 - Polar-VARIANT: "taller than" ≠ "shorter than" → no M-alternatives
 - Polar-INVARIANT: "as tall as" = "as short as" → M-alternatives exist
 
-From Rett (2015) Chapter 5.
+From @cite{rett-2015} Chapter 5.
 -/
 inductive PolarVariance where
   | variant    -- Different truth conditions (comparatives, positives)

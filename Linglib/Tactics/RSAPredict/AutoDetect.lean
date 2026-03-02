@@ -22,7 +22,7 @@ user's config.
 2. **Detect**: Pattern-match outermost structure (rpow, ite, exp) to classify.
 3. **Extract**: Evaluate meaning/priors/cost pointwise over finite types → ℚ arrays.
 4. **Build**: Construct an `RSAConfigData` Expr with ite-chain functions + sorryAx proofs.
-5. **Bridge**: `native_decide` on `checkL1ScoreGt d ...`, then `isDefEq` to the goal.
+5. **Bridge**: `native_decide` on `checkL1ScoreGt d...`, then `isDefEq` to the goal.
 
 If any step fails, returns `false` — CProof (Tier 3) handles it.
 -/
@@ -404,7 +404,7 @@ def extractCostFromScore (cfg : Expr) (_U _W _L : Expr)
 -- Build ite-Chain Functions (ℚ-valued)
 -- ============================================================================
 
-/-- Build `fun (x : T) => if x = e₁ then v₁ else if x = e₂ then v₂ else ... else vₙ` -/
+/-- Build `fun (x : T) => if x = e₁ then v₁ else if x = e₂ then v₂ else... else vₙ` -/
 def buildUnaryQFn (T : Expr) (elems : Array Expr) (values : Array ℚ) :
     MetaM Expr := do
   withLocalDecl `x .default T fun xVar => do
@@ -498,10 +498,10 @@ def mkMeaningNonnegProof (L U W meaningFn : Expr) : MetaM Expr := do
         mkForallFVars #[lV, uV, wV] le
   return mkSorryProof ty
 
-/-- Build `0 < α` and its sorry proof. -/
+/-- Build `0 < α` and its sorry proof (α : ℚ). -/
 def mkAlphaPosProof (αLit : Expr) : MetaM Expr := do
-  let natZero ← mkAppOptM ``OfNat.ofNat #[mkConst ``Nat, mkRawNatLit 0, none]
-  let ty ← mkAppM ``LT.lt #[natZero, αLit]
+  let ratZero ← mkAppOptM ``OfNat.ofNat #[mkConst ``Rat, mkRawNatLit 0, none]
+  let ty ← mkAppM ``LT.lt #[ratZero, αLit]
   return mkSorryProof ty
 
 /-- Build `∀ (w : W), 0 ≤ wpFn w` and its sorry proof. -/
@@ -574,8 +574,8 @@ def buildConfigData (U W L : Expr)
       -- TODO: implement qudBelief, qudAction, combinedUtility
       return none
 
-  -- Build α
-  let αLit := mkRawNatLit αNat
+  -- Build α as ℚ (cast from ℕ)
+  let αLit ← mkAppOptM ``Nat.cast #[mkConst ``Rat, none, mkRawNatLit αNat]
 
   -- Build worldPrior function: W → ℚ
   let wpFn ← buildUnaryQFn W allWElems wpVals
@@ -595,8 +595,9 @@ def buildConfigData (U W L : Expr)
       some U, some W, none, none, none, none,    -- U, W, Fintype, DecidableEq
       some L, none, none,                         -- Latent, Fintype, DecidableEq
       some meaningFn, some meaningNonneg,         -- meaning, meaning_nonneg
-      some scoreSpec,                             -- scoreSpec
+      some scoreSpec,                             -- s1Spec
       some αLit, some αPos,                       -- α, α_pos
+      none,                                       -- s2Spec (default none)
       some wpFn, some wpNonneg,                   -- worldPrior, worldPrior_nonneg
       some lpFn, some lpNonneg                    -- latentPrior, latentPrior_nonneg
     ]

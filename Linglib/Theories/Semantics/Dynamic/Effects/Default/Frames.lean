@@ -2,7 +2,7 @@ import Linglib.Core.Order.Normality
 import Linglib.Theories.Semantics.Dynamic.Effects.Default.Basic
 
 /-!
-# Expectation Frames — Veltman (1996) §4
+# Expectation Frames — @cite{veltman-1996} §4
 
 @cite{veltman-1996}
 
@@ -57,7 +57,7 @@ variable {W : Type*}
 /-- An **expectation frame**: a function assigning a normality ordering
     to each domain (subset of worlds).
 
-    Veltman (1996), Definition 4.2: π assigns to every d ⊆ W an
+    @cite{veltman-1996}, Definition 4.2: π assigns to every d ⊆ W an
     expectation pattern πd. Different domains may have different
     orderings — this is what enables conditional defaults. -/
 structure ExpFrame (W : Type*) where
@@ -73,7 +73,7 @@ theorem ExpFrame.ext {π₁ π₂ : ExpFrame W}
 
 /-- The **normal worlds** in a domain under the frame.
 
-    Veltman (1996), Definition 4.3(i–ii): w is normal in πd iff w ∈ d
+    @cite{veltman-1996}, Definition 4.3(i–ii): w is normal in πd iff w ∈ d
     and for every subdomain d' ⊆ d such that w ∈ d', w is at least as
     normal as every v ∈ d' under πd'.
 
@@ -88,13 +88,13 @@ def ExpFrame.normal (π : ExpFrame W) (d : Set W) : Set W :=
 /-- A frame is **coherent** if every non-empty domain has at least
     one normal world.
 
-    Veltman (1996), Definition 4.3(iii). -/
+    @cite{veltman-1996}, Definition 4.3(iii). -/
 def ExpFrame.coherent (π : ExpFrame W) : Prop :=
   ∀ d : Set W, d.Nonempty → (π.normal d).Nonempty
 
 /-- e is a **default in πd** iff d ∩ e ≠ ∅ and πd already respects e.
 
-    Veltman (1996), Definition 4.2(ii): e is a default in πd iff
+    @cite{veltman-1996}, Definition 4.2(ii): e is a default in πd iff
     d ∩ e ≠ ∅ and πd ∘ e = πd. Since `refine_of_respects` gives
     the latter iff `respects`, we use `respects` directly. -/
 def ExpFrame.isDefault (π : ExpFrame W) (d : Set W) (e : W → Prop) :
@@ -117,7 +117,7 @@ def ExpFrame.total : ExpFrame W :=
 open Classical in
 /-- **Frame refinement**: refine the ordering at domain d only.
 
-    Veltman (1996), Definition 4.5(ii):
+    @cite{veltman-1996}, Definition 4.5(ii):
     - π_{d∘e}(d') = πd' if d' ≠ d
     - π_{d∘e}(d) = πd ∘ e
 
@@ -179,7 +179,7 @@ open Classical
 
 /-- **Conditional default update**: "if φ then normally ψ".
 
-    Veltman (1996), Definition 4.6. Given σ = ⟨π, s⟩:
+    @cite{veltman-1996}, Definition 4.6. Given σ = ⟨π, s⟩:
     - Let d = ‖φ‖ — the set of *all* φ-worlds (not just those in s)
     - If d ∩ ‖ψ‖ = ∅, crash (the default is vacuous)
     - If π_{d∘ψ} is incoherent, crash
@@ -392,7 +392,7 @@ theorem ExpFrame.const_normal_of_connected (no : NormalityOrder W)
 
 /-- **Applicability**: a default e applies to s within frame π.
 
-    Veltman (1996), Definition 4.9: the d-default e applies to s iff
+    @cite{veltman-1996}, Definition 4.9: the d-default e applies to s iff
     there is no d' ⊇ s such that nπd' ⊆ d and the normal d'-worlds
     all fail e. Simplified for a single default: e applies to s if
     the frame can be coherently refined by e at d (from s's

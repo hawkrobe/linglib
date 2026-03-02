@@ -259,7 +259,9 @@ theorem substitutivity_deRe (R : DoxAccessibility E) (M : Model E)
   exact hp
 
 /-!
-## Quine's Ortcutt Puzzle (Quine 1956)
+## Quine's Ortcutt Puzzle
+@cite{quine-1956}
+
 
 The linguistic puzzle that motivates conceptual covers:
 
@@ -337,7 +339,7 @@ theorem quine_requires_divergence (R : DoxAccessibility E) (M : Model E)
 /-!
 ## Observation 17: Quantifier Scope and Belief
 
-Dekker (2012) Observation 17 (p.88):
+@cite{dekker-2012} Observation 17 (p.88):
 > B(r, ∃x_C Sx) = ∃x_C B(r, Sx)
 
 This equivalence holds when quantification is relativized to a conceptual cover C.
@@ -431,7 +433,7 @@ theorem obs17_narrow_implies_wide (R : DoxAccessibility E) (M : Model E)
 /-!
 ## Observation 18: Knowing Who is Cover-Relative
 
-Dekker (2012) Observation 18 (p.91):
+@cite{dekker-2012} Observation 18 (p.91):
 > "Knowing who" is relative to a conceptual cover.
 
 The Hesperus/Phosphorus puzzle:

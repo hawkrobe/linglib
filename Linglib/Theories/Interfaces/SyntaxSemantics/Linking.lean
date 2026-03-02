@@ -2,7 +2,7 @@ import Linglib.Theories.Semantics.Events.ThematicRoles
 
 /-!
 # Linking Theory Interface
-@cite{beavers-koontz-garboden-2020} @cite{dowty-1991} @cite{goldberg-1995} @cite{kratzer-1996} @cite{levin-2004} @cite{levin-hovav-1995} @cite{pesetsky-1995} @cite{pylkknen-2008} @cite{ramchand-2008}
+@cite{beavers-koontz-garboden-2020} @cite{dowty-1991} @cite{goldberg-1995} @cite{kratzer-1996} @cite{levin-2004} @cite{levin-hovav-1995} @cite{pesetsky-1995} @cite{pylkknen-2008} @cite{ramchand-2008} @cite{brennan-pylkkanen-2008} @cite{rappaport-hovav-levin-1998}
 
 General interface for theories of argument realization — how verbs'
 arguments get their thematic roles.
@@ -25,8 +25,7 @@ with richer decompositions bring their own types.
 The role output is always `ThetaRole` — the shared vocabulary that
 makes theories comparable against fragment data.
 
-The `compatible` field captures gradient verb–construction pairing
-(Levin 2004): a verb may be compatible with multiple structural
+The `compatible` field captures gradient verb–construction pairing: a verb may be compatible with multiple structural
 contexts (causative alternation verbs appear with both agentive and
 non-thematic Voice). Singleton lists express categorical predictions;
 multi-element lists express gradient compatibility.
@@ -37,13 +36,13 @@ Accounts expressible via this interface (non-exhaustive):
 
 | Account | Ctx | compatible | predict uses verb? |
 |---------|-----|------------|-------------------|
-| Severing (Kratzer 1996) | VoiceFlavor | verb-constrained | no |
-| Lexicalist (Levin & RH 1998) | Unit | always [()] | yes |
-| Zero morphology (Pesetsky 1995) | (custom) | verb-constrained | yes |
-| First Phase Syntax (Ramchand 2008) | (custom) | verb-constrained | yes |
-| CxG (Goldberg 1995) | (custom) | broad | no |
-| Proto-roles (Dowty 1991) | Unit | always [()] | yes (via ASP) |
-| Applicatives (Pylkkänen 2008) | (custom) | verb-constrained | no |
+| Severing | VoiceFlavor | verb-constrained | no |
+| Lexicalist | Unit | always [] | yes |
+| Zero morphology | (custom) | verb-constrained | yes |
+| First Phase Syntax | (custom) | verb-constrained | yes |
+| CxG | (custom) | broad | no |
+| Proto-roles | Unit | always [] | yes (via ASP) |
+| Applicatives | (custom) | verb-constrained | no |
 
 -/
 
@@ -78,7 +77,7 @@ inductive ArgPosition where
     - `Ctx`: what the theory considers relevant about the syntactic
       structure beyond the verb itself:
       - `Unit` for theories that derive everything from the verb
-      - `VoiceFlavor` for the severing account (Kratzer 1996)
+      - `VoiceFlavor` for the severing account
       - A richer type for Ramchand, Goldberg, Pylkkänen, etc.
 
     The theory provides two functions:
@@ -88,9 +87,9 @@ inductive ArgPosition where
     This separation captures the key theoretical distinction:
     - **Pure constructional** (Borer, strong Goldberg): `compatible` is
       broad — the verb is promiscuous; structure determines roles
-    - **Pure lexicalist** (Levin): `compatible` always returns `[()]` —
+    - **Pure lexicalist** (Levin): `compatible` always returns `[]` —
       there is nothing structural to vary
-    - **Hybrid** (Pesetsky, Levin 2004): `compatible` returns a
+    - **Hybrid**: `compatible` returns a
       verb-constrained subset — gradient compatibility -/
 structure LinkingTheory (Verb Ctx : Type) where
   /-- Which structural contexts this verb is compatible with.

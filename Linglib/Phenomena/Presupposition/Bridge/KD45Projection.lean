@@ -1,11 +1,11 @@
 import Linglib.Theories.Semantics.Presupposition.BeliefEmbedding
 
 /-!
-# KD45 Projection: The Heim (1992) Know/Believe Asymmetry
+# KD45 Projection: The @cite{heim-1992} Know/Believe Asymmetry
 
 @cite{heim-1992}
 
-Heim (1992) observed that presupposition projection differs under
+@cite{heim-1992} observed that presupposition projection differs under
 knowledge vs. belief predicates:
 
 - "John **knows** Mary stopped smoking" → Mary **actually** smoked
@@ -39,7 +39,7 @@ open Semantics.Presupposition.BeliefEmbedding
 
 /-! ## World Model -/
 
-/-- Two-world model for the Heim (1992) scenario.
+/-- Two-world model for the @cite{heim-1992} scenario.
 
     - `actual`: Mary never smoked (presupposition false)
     - `believed`: Mary used to smoke (presupposition true),
@@ -135,7 +135,7 @@ def knowledgeLocal : BeliefLocalCtx AttWorld Holder :=
 def beliefLocal : BeliefLocalCtx AttWorld Holder :=
   beliefLocalCtxOfFrame frame globalCtx .john
 
-/-! ## Heim (1992) Asymmetry Theorems -/
+/-! ## @cite{heim-1992} Asymmetry Theorems -/
 
 /-- S5 reflexivity forces presupposed content to be true at the actual world.
 
@@ -172,7 +172,7 @@ theorem non_reflexivity_permits_false_presup :
       simp [agentBelievesR, believesR] at this
   · rfl
 
-/-- The Heim (1992) know/believe asymmetry.
+/-- The @cite{heim-1992} know/believe asymmetry.
 
     Under our concrete model where the presupposition is false at the
     actual world:

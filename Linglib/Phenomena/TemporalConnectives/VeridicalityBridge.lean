@@ -26,8 +26,8 @@ For each temporal connective:
 ## The Explanatory Chain
 
 ```
-Theory (Karttunen.lean)                Fragment (TemporalExpressions.lean)
-  after_veridical_complement ───────►  after_.complementVeridical = true
+Theory (Karttunen.lean) Fragment (TemporalExpressions.lean)
+  after_veridical_complement ───────► after_.complementVeridical = true
   before_nonveridical (counterex.) ──► before_.complementVeridical = false
   when_veridical_complement ─────────► when_conn.complementVeridical = true
   until_veridical_complement ────────► until_.complementVeridical = true
@@ -46,7 +46,7 @@ Veridical temporal connectives can be modeled as presuppositional propositions
 (PrProp) where the presupposition is that the complement event is instantiated.
 Non-veridical connectives carry no such presupposition. This connects the
 temporal connective veridicality to the general presupposition projection
-framework (Heim 1983, Schlenker 2009).
+framework.
 
 -/
 
@@ -260,7 +260,7 @@ theorem negation_preserves_presup :
 -- § 5: B&C's Three Readings of *Before* and Presupposition
 -- ============================================================================
 
-/-- Beaver & Condoravdi (2003) identify three readings of *before*,
+/-- @cite{beaver-condoravdi-2003} identify three readings of *before*,
     distinguished by whether the complement event is instantiated
     in the context set. Each corresponds to a different presuppositional
     status of the complement:

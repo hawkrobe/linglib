@@ -6,7 +6,7 @@ import Linglib.Theories.Syntax.Minimalism.Core.Position
 @cite{elkins-imanishi-coon-2026}
 
 Connects the empirical extraction data from Toba Batak to the
-Minimalist analysis in Erlewine (2018).
+Minimalist analysis in @cite{erlewine-2018}.
 
 ## The Analysis (Erlewine 2018, §3–4)
 
@@ -31,7 +31,7 @@ and nominal licensing:
 The descriptive generalization is: extraction of a DP argument is
 grammatical iff it is the pivot for the given voice.
 
-## Connection to Mam (Elkins, Imanishi & Coon 2026)
+## Connection to Mam
 
 Both TB and Mam involve successive-cyclic movement leaving
 morphological traces at clause boundaries. The shared abstraction

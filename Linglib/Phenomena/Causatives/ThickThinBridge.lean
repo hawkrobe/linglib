@@ -2,8 +2,8 @@ import Linglib.Theories.Semantics.Causation.ProductionDependence
 import Linglib.Fragments.English.Predicates.Verbal
 
 /-!
-# Thick vs Thin Causative Verb Data (Martin, Rose & Nichols 2025)
-@cite{martin-rose-nichols-2025}
+# Thick vs Thin Causative Verb Data
+@cite{martin-rose-nichols-2025} @cite{embick-2009}
 
 Corpus survey data from Table 3: 37 English causative verbs classified by
 four binary properties:
@@ -16,7 +16,7 @@ four binary properties:
 ## Key Findings (§4.3)
 
 - 12/13 thick verbs have ASR, 22/24 thin verbs accept omission subjects
-- Thick ≈ causative manner verbs (Embick 2009), but *bury* is thick without ASR
+- Thick ≈ causative manner verbs, but *bury* is thick without ASR
 - The correlation is strong but not perfect: some thick verbs (burn, lift, lock)
   are occasionally found with omission subjects in corpora
 
@@ -58,7 +58,7 @@ end V
 
 /-- A single verb entry from Table 3, extending a Fragment VerbEntry.
     The Levin class, verb form, root profile, etc. are all inherited from
-    the Fragment entry — only the Martin et al. (2025) annotations are new. -/
+    the Fragment entry — only the @cite{martin-rose-nichols-2025} annotations are new. -/
 structure ThickThinEntry extends VerbEntry where
   /-- Participates in causative/anticausative alternation -/
   alternating : Bool
@@ -200,7 +200,7 @@ theorem bury_asr_theory :
 theorem kill_asr_theory :
     kill.thickThinClass.strongASRCompatible = false := rfl
 
-/-! ## Bridge to Levin (1993) classes
+/-! ## Bridge to @cite{levin-1993} classes
 
 The thick/thin distinction cross-cuts Levin classes: verbs in the same
 general domain (change of state, causation) can be thick or thin. The
@@ -222,7 +222,7 @@ theorem break_class_predicts_alternation :
 
 /-- Cut (thick) is in a class that predicts conative and BPPA alternations.
     Unlike break, cut does NOT participate in causative/inchoative because
-    instrument specification blocks the inchoative (Levin 1993, p. 9–10). -/
+    instrument specification blocks the inchoative. -/
 theorem cut_class_rich_alternation :
     LevinClass.cut.participatesIn .causativeInchoative = false
     ∧ LevinClass.cut.participatesIn .conative = true

@@ -109,7 +109,7 @@ theorem thick_mostly_alternate_bridge :
 /-- Alternating thick verbs: the transitive form has agentive Voice,
     the anticausative has non-thematic Voice. Example: break.
     - "John broke the vase" = Voice_AG + vDO + vGO + vBE
-    - "The vase broke"      = Voice_∅  + vGO + vBE -/
+    - "The vase broke" = Voice_∅ + vGO + vBE -/
 theorem break_alternation :
     break_.alternating = true ∧ break_.thick = true := ⟨rfl, rfl⟩
 

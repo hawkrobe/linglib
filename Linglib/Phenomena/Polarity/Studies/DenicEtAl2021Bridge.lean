@@ -4,6 +4,8 @@ import Linglib.Fragments.English.PolarityItems
 
 /-!
 # Bridge: Denić et al. (2021) → Entailment Signatures & Polarity Items
+@cite{israel-2011}
+
 
 Connects the empirical findings to:
 
@@ -42,7 +44,7 @@ The bridge proceeds in six layers:
 ## Scalar direction heterogeneity
 
 The paper's three NPIs are not uniform in scalar direction: *any* and *ever*
-are strengthening, *at all* is attenuating (Israel 2011, Schwab 2022). The
+are strengthening, *at all* is attenuating. The
 paper aggregates across items. Whether scalar direction modulates the
 bidirectional effect is an open question connecting to Schwab's NPI illusion
 asymmetry (formalized in `Studies/Schwab2022.lean`).
@@ -97,7 +99,7 @@ theorem isGloballyUE_from_signature (env : MonotonicityEnv) :
 /-- Any composition of two DE-side signatures is UE under `ContextPolarity`.
 
 This follows from the monoid homomorphism `toContextPolarity_compose`:
-composing polarities gives `.downward.compose .downward = .upward`.
+composing polarities gives `.downward.compose.downward =.upward`.
 The proof is structural — it uses the homomorphism, not case analysis
 on all 4×4 = 16 DE signature pairs.
 
@@ -241,7 +243,7 @@ theorem tested_ppi_is_ppi : some_ppi.isPPI = true := rfl
 -- ============================================================================
 
 /-- The tested NPIs have heterogeneous scalar directions — the paper
-aggregates across items with different scalar properties. Schwab (2022)
+aggregates across items with different scalar properties. @cite{schwab-2022}
 predicts strengthening and attenuating NPIs behave differently for NPI
 illusions. Whether this modulates the bidirectional effect is untestable
 from the reported (aggregated) data. -/

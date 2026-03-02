@@ -5,7 +5,7 @@ import Linglib.Fragments.Hungarian.FunctionWords
 import Linglib.Fragments.Hungarian.TemporalDeictic
 
 /-!
-# Egressy (2026) Bridge: Size-Sensitive SOT → Zeijlstra + PIC
+# @cite{egressy-2026} Bridge: Size-Sensitive SOT → Zeijlstra + PIC
 @cite{egressy-2026} @cite{zeijlstra-2012}Bridge theorems connecting the empirical Hungarian SOT data from
 `Data.lean` to the theoretical infrastructure:
 
@@ -231,7 +231,7 @@ theorem akkor_shifts :
 -- § G. Definite Conjugation as Clause-Size Diagnostic
 -- ════════════════════════════════════════════════════════════════
 
-/-! Egressy (2026, §5) uses the definite/indefinite conjugation split
+/-! @cite{egressy-2026} uses the definite/indefinite conjugation split
     as independent evidence for complement size. *hogy*-CP triggers
     definite conjugation; bare complements may allow indefinite.
 

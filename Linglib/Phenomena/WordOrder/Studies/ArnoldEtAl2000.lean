@@ -1,7 +1,7 @@
 import Linglib.Core.Discourse.InformationStructure
 
 /-!
-# Arnold, Wasow, Losongco & Ginstrom (2000) @cite{arnold-wasow-losongco-ginstrom-2000} @cite{kratzer-selkirk-2020}
+# Arnold, @cite{arnold-wasow-losongco-ginstrom-2000} @cite{arnold-wasow-losongco-ginstrom-2000} @cite{kratzer-selkirk-2020}
 
 Heaviness vs. Newness: The Effects of Structural Complexity and
 Discourse Status on Constituent Ordering. *Language* 76(1):28–55.
@@ -42,7 +42,7 @@ the one that attracts heavy and/or new material.
 
 - `Core.InformationStructure.DiscourseStatus`: Arnold et al.'s given/new
   distinction maps to `.given` and `.new`. Their classification is coarser
-  than Kratzer & Selkirk (2020): it conflates K&S's unmarked "new" with
+  than @cite{kratzer-selkirk-2020}: it conflates K&S's unmarked "new" with
   [FoC]-marked "focused" into a single "new" category.
 - `DependencyLength.lean`: the "heavy last" effect is DLM's short-before-long
   (Behaghel's Gesetz der wachsenden Glieder)
@@ -123,7 +123,7 @@ theorem shifted_much_heavier :
 
 /-- Shift rate (× 1000) by NP length in words. Shows the gradient
     relationship between constituent weight and shift probability.
-    Values approximate from Arnold et al. (2000) results; 4 = "4+ words." -/
+    Values approximate from @cite{arnold-wasow-losongco-ginstrom-2000} results; 4 = "4+ words." -/
 def shiftRate1w : Nat :=  41  -- 1-word NPs: ~4.1% shifted
 def shiftRate2w : Nat := 178  -- 2-word NPs: ~17.8% shifted
 def shiftRate3w : Nat := 429  -- 3-word NPs: ~42.9% shifted
@@ -141,7 +141,7 @@ theorem shift_rate_monotone :
 -- ============================================================================
 
 /-- Logistic regression results: which factors significantly predict ordering.
-    Based on Arnold et al. (2000) §3–4. -/
+    Based on @cite{arnold-wasow-losongco-ginstrom-2000} §3–4. -/
 structure FactorResult where
   label : String
   /-- Structural weight (word count) is a significant predictor -/

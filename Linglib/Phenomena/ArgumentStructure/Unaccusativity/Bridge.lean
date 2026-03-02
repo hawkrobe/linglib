@@ -13,27 +13,27 @@ Connects empirical diagnostic data to lexical annotations, syntactic theory
 (Voice, TransitivityClass, auxiliary selection, smuggling), and semantic
 proto-role predictions.
 
-## Storment (2026): QI via Smuggling
+## @cite{storment-2026}: QI via Smuggling
 
 Quotative inversion (QI) is an unaccusativity diagnostic: manner-of-speaking
 verbs like *whisper* permit QI ("whispered Mary") because they are unaccusative,
 while agentive communication verbs like *speak* block QI (*"spoke Mary") because
 they are unergative.
 
-The **syntactic mechanism** is smuggling (Collins 2005): VP moves to
+The **syntactic mechanism** is smuggling: VP moves to
 Spec-VoiceP, making the theme subject accessible to T⁰ for Case licensing.
 This is possible iff Voice is not a phase head (non-thematic Voice),
 which correlates with unaccusativity.
 
 ## QI ∥ LI (Unified Smuggling)
 
-Storment (2026, §6) argues QI and locative inversion share the same mechanism:
+@cite{storment-2026} argues QI and locative inversion share the same mechanism: @cite{collins-2005} @cite{dowty-1991} @cite{lu-degen-2025}
 smuggling of VP to Spec-VoiceP. Both are blocked by the transitivity constraint
 (§5) and both require non-phase Voice. They differ in input (quote vs locative PP).
 
 ## Dowty Divergence
 
-Proto-role counting (Dowty 1991) predicts MoS verb subjects as proto-agents
+Proto-role counting predicts MoS verb subjects as proto-agents
 (volitional, sentient speaker), yet QI classifies these verbs as unaccusative.
 This is a known divergence: unaccusativity is a syntactic diagnostic that does
 not always align with semantic proto-role predictions.
@@ -272,7 +272,7 @@ theorem mos_not_unaccusative_by_counting :
     predictsUnaccusative mosSubjectProfile = false := by native_decide
 
 /-- Divergence: Dowty predicts MoS subjects are unergative,
-    but QI (Storment 2026) classifies them as unaccusative. -/
+    but QI classifies them as unaccusative. -/
 theorem whisper_dowty_diverges :
     predictsUnergative mosSubjectProfile = true ∧
     whisper.unaccusative = true := ⟨by native_decide, rfl⟩
@@ -292,7 +292,7 @@ theorem whisper_dowty_diverges :
     when applied to the Voice and complement type derived from each verb's
     lexical entry. -/
 
-/-- Derive whether a verb has a complement (ComplementType ≠ .none). -/
+/-- Derive whether a verb has a complement (ComplementType ≠.none). -/
 def hasComplement (v : Core.Verbs.VerbCore) : Bool :=
   v.complementType != .none
 
@@ -413,7 +413,7 @@ theorem qi_li_diverge_on_whisper :
 
 /-- LI blocks transitive verbs; QI with just a quote complement
     is fine, but both show a transitivity constraint with multiple
-    DP arguments (Storment 2026, §5). -/
+    DP arguments. -/
 theorem li_blocks_transitive :
     li_kick.result = .fails ∧
     qi_whisper_transitive.result = .passes := ⟨rfl, rfl⟩
@@ -443,9 +443,9 @@ theorem li_arrive_smuggling_unified :
 
 /-! MoS verbs participate in two seemingly opposite phenomena:
 
-    1. **MoS islands** (Lu, Pan & Degen 2025): wh-extraction FROM WITHIN
+    1. **MoS islands**: wh-extraction FROM WITHIN
        the complement is degraded (discourse backgroundedness)
-    2. **Quotative inversion** (Storment 2026): VP-smuggling to Spec-VoiceP
+    2. **Quotative inversion**: VP-smuggling to Spec-VoiceP
        is grammatical (A-movement, not extraction from complement)
 
     These are not contradictory — they're different operations:
@@ -510,7 +510,7 @@ structure QIDerivation where
   quotePosition : QIPosition
   deriving Repr, BEq
 
-/-- The smuggling derivation of QI (Storment 2026, §4). -/
+/-- The smuggling derivation of QI. -/
 def qiSmuggling : QIDerivation where
   themePosition := .specTP
   agentPosition := .specvP
@@ -587,7 +587,7 @@ theorem vp_smuggling_ordering :
 -- § 13. Levin (1993) Class Bridge
 -- ════════════════════════════════════════════════════
 
-/-! Levin & Rappaport Hovav (1995) predict unaccusativity from verb class
+/-! Levin & Rappaport @cite{levin-hovav-1995} predict unaccusativity from verb class
     membership: CoS classes (§45) predict unaccusative for their inchoative
     alternant, manner-of-motion (§51.3) predicts unergative, inherently
     directed motion (§51.1) predicts unaccusative, and emission classes

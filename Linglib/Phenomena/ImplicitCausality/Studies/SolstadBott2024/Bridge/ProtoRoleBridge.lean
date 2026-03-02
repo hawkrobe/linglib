@@ -6,14 +6,14 @@ import Linglib.Fragments.English.Predicates.Verbal
 /-!
 # Psych Verb IC Bias — Proto-Role Bridge
 
-@cite{solstad-bott-2022} @cite{solstad-bott-2024} @cite{dowty-1991}
+@cite{solstad-bott-2022} @cite{solstad-bott-2024} @cite{dowty-1991} @cite{kehler-2002}
 
-Connects IC bias predictions to Dowty (1991) proto-role infrastructure and
-coherence relations (Kehler 2002).
+Connects IC bias predictions to @cite{dowty-1991} proto-role infrastructure and
+coherence relations.
 
 ## Core argument
 
-IC bias tracks the **stimulus** argument (Au 1986; Solstad & Bott 2022, §1.1):
+IC bias tracks the **stimulus** argument:
 explanations in *because*-continuations target the participant whose entailment
 profile includes causation (the stimulus/cause), regardless of whether that
 participant is the subject or the object.
@@ -42,7 +42,7 @@ open Fragments.English.Predicates.Verbal
 
 /-- Stimulus-experiencer verb subject profile: causation + independent existence.
     The subject is a stimulus/cause (B&R Class II, Levin 31.1 amuse class).
-    Solstad & Bott (2022): STIM-EXP verbs show NP1 I-Caus bias. -/
+    @cite{solstad-bott-2022}: STIM-EXP verbs show NP1 I-Caus bias. -/
 def stimExpSubjectProfile : EntailmentProfile :=
   ⟨false, false, true, false, true, false, false, false, false, false⟩
 
@@ -53,7 +53,7 @@ def stimExpObjectProfile : EntailmentProfile :=
 
 /-- Experiencer-stimulus verb subject profile: sentience + independent existence.
     The subject is an experiencer (B&R Class I, temere class).
-    Solstad & Bott (2022): EXP-STIM verbs show NP2 I-Caus bias. -/
+    @cite{solstad-bott-2022}: EXP-STIM verbs show NP2 I-Caus bias. -/
 def expStimSubjectProfile : EntailmentProfile :=
   ⟨false, true, false, false, true, false, false, false, false, false⟩
 
@@ -150,7 +150,7 @@ theorem because_triggers_causal_search :
 
 /-- IC bias prediction: under Explanation (because), the continuation targets
     the STIMULUS argument — the participant whose entailment profile includes
-    causation (Au 1986; Solstad & Bott 2022).
+    causation.
 
     - StimExp: subject has causation → explanation about subject → NP1
     - ExpStim: subject has sentience only → explanation about object → NP2

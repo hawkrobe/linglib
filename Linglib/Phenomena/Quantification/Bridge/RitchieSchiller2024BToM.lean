@@ -5,8 +5,8 @@ import Linglib.Core.Semantics.CommonGround
 /-!
 # DDRP–BToM–Common Ground Integration
 
-@cite{ritchie-schiller-2024} @cite{baker-jara-ettinger-saxe-tenenbaum-2017} @cite{clark-1996} @cite{stalnaker-2002}Connects Ritchie & Schiller's (2024) DDRPs to Baker et al.'s (2017) BToM
-architecture and Stalnaker's (2002) common ground.
+@cite{ritchie-schiller-2024} @cite{baker-jara-ettinger-saxe-tenenbaum-2017} @cite{clark-1996} @cite{stalnaker-2002}Connects @cite{ritchie-schiller-2024} DDRPs to Baker et al.'s (2017) BToM
+architecture and @cite{stalnaker-2002}'s common ground.
 
 ## The Argument
 

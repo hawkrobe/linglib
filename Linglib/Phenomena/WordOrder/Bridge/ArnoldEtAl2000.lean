@@ -4,16 +4,16 @@ import Linglib.Theories.Syntax.CCG.Core.Combinators
 import Linglib.Core.Discourse.InformationStructure
 
 /-!
-# Arnold et al. (2000): Competing Accounts and Their Derived Limitations
+# @cite{arnold-wasow-losongco-ginstrom-2000}: Competing Accounts and Their Derived Limitations
 @cite{arnold-wasow-losongco-ginstrom-2000}
 
-Formalizes the three accounts Arnold, Wasow, Losongco & Ginstrom (2000)
+Formalizes the three accounts Arnold, @cite{arnold-wasow-losongco-ginstrom-2000}
 argue against, then derives each account's structural limitations from its
 own definitions:
 
-- `DependencyLength.totalDepLength` — the pure-weight account (Hawkins 1994)
-- `Core.InformationStructure.DiscourseStatus` — the pure-discourse account (Givón 1988)
-- `CCG.Combinators.ShiftFeature` — the CCG categorical account (Steedman 2000)
+- `DependencyLength.totalDepLength` — the pure-weight account
+- `Core.InformationStructure.DiscourseStatus` — the pure-discourse account
+- `CCG.Combinators.ShiftFeature` — the CCG categorical account
 
 Each limitation is proved, not stipulated: it follows from the function
 signatures and type structure already present in the theory files.
@@ -43,7 +43,7 @@ words — form, category, features, discourse status — enters the computation.
 /-- **DLM word-invariance.** `totalDepLength` yields the same value for any
 two trees sharing the same dependency structure, regardless of the words.
 
-Proof: `rfl`. The body `t.deps.foldl ...` never mentions `t.words`.
+Proof: `rfl`. The body `t.deps.foldl...` never mentions `t.words`.
 
 Arnold et al. consequence: DLM correctly predicts the weight effect
 (heavier NPs shift more, aligning with `heavyNPShiftOptimal < Suboptimal`
@@ -144,7 +144,7 @@ theorem pure_discourse_overpredicts_shift :
 /-!
 ## CCG ±SHIFT: Too coarse for gradient data
 
-Steedman (2000, p. 62–64) controls heavy NP shift via backward crossed
+@cite{steedman-2000} controls heavy NP shift via backward crossed
 composition restricted by `ShiftFeature`:
 - `+SHIFT`: argument can undergo heavy NP shift (via ⟨B×)
 - `−SHIFT`: argument cannot shift (dative NP, PP complement)

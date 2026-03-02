@@ -18,7 +18,7 @@ classification from `Theories.Semantics.Lexical.Verb.Aspect`.
 
 ## Known gaps
 
-- Sorace (2000) gradient hierarchy not yet formalized
+- @cite{sorace-2000} gradient hierarchy not yet formalized
 -/
 
 namespace Phenomena.AuxiliaryVerbs.Selection.Bridge

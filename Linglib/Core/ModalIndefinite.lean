@@ -10,7 +10,7 @@ component (e.g., Chuj *yalnhej*, Spanish *algún*, German *irgendein*).
 
 ## Three Dimensions of Variation
 
-Following Alonso-Ovalle & Royer (2024):
+Following @cite{alonso-ovalle-royer-2024}:
 
 1. **Status**: Is the modal component at-issue or not-at-issue?
 2. **Content**: Which modal flavors does the component support?
@@ -30,7 +30,7 @@ open Core.ModalLogic (ModalFlavor)
 /-- Whether the modal component of a modal indefinite is at-issue
 or not-at-issue.
 
-Diagnostics (Alonso-Ovalle & Royer 2024, §3.2):
+Diagnostics:
 - **At-issue**: targetable by direct denial ("No, that's not true —
   you know exactly which book you bought")
 - **Not-at-issue**: targetable by "Hey, wait a minute!" but not by
@@ -50,7 +50,7 @@ inductive ModalComponentStatus where
 -- ════════════════════════════════════════════════════
 
 /-- A cross-linguistic modal indefinite entry parameterized along
-Alonso-Ovalle & Royer's (2024) three dimensions of variation. -/
+@cite{alonso-ovalle-royer-2024} three dimensions of variation. -/
 structure ModalIndefiniteEntry where
   /-- Language name -/
   language : String

@@ -3,7 +3,7 @@ import Linglib.Theories.Syntax.Minimalism.Core.Voice
 import Linglib.Theories.Syntax.Minimalism.Movement.Smuggling
 
 /-!
-# Minimalism Bridge: Passive as Smuggling (Collins 2005)
+# Minimalism Bridge: Passive as Smuggling
 
 @cite{collins-2005} @cite{chomsky-2001} @cite{legate-2003}Connects the empirical passive data in `Phenomena.ArgumentStructure.Passive`
 to the smuggling theory in `Theories.Syntax.Minimalism.Movement.Smuggling`
@@ -11,7 +11,7 @@ and the Voice/phase infrastructure in `Theories.Syntax.Minimalism.Core.Voice`.
 
 ## The Analysis
 
-Collins (2005) argues that passive involves **smuggling**: PartP (= [Part V DP])
+@cite{collins-2005} argues that passive involves **smuggling**: PartP (= [Part V DP])
 is the complement of v. In passive, PartP moves to Spec-VoiceP, carrying the
 object past the external argument in Spec-vP. The object can then raise to
 Spec-TP without violating Relativized Minimality.
@@ -22,14 +22,14 @@ Spec-TP without violating Relativized Minimality.
 2. **Feature dissociation**: active v checks Case AND assigns θ;
    passive v assigns θ only — Case-checking dissociates to Voice/*by*
 3. **Phase status**: passive v is NOT v* (not a phase head) because
-   Case-checking is what makes v* a strong phase (Chomsky 2001)
+   Case-checking is what makes v* a strong phase
 4. **PartP licensing**: PartP is licensed by either (a) *have* c-selecting
    it or (b) movement to Spec-VoiceP
 
 ### Derivation
 
 ```
-Active:  [TP DP_obj [T' T [VoiceP Voice [vP DP_ext [v' v [VP V DP_obj]]]]]]
+Active: [TP DP_obj [T' T [VoiceP Voice [vP DP_ext [v' v [VP V DP_obj]]]]]]
   — v checks Case on DP_obj, DP_ext gets θ from v, DP_ext raises to Spec-TP
 
 Passive: [TP DP_obj [T' T [VoiceP [PartP Part V t_obj] [Voice' by [vP DP_ext [v' v t_PartP]]]]]]
@@ -49,7 +49,7 @@ open Minimalism
 -- ============================================================================
 
 /-- Passive Voice permits smuggling (not a phase head).
-    Collins (2005, p. 98): "neither the moved PartP nor an unaccusative
+    @cite{collins-2005}: "neither the moved PartP nor an unaccusative
     vP are strong phases." -/
 theorem passive_permits_smuggling :
     voicePassive.permitsSmuggling = true := rfl
@@ -57,7 +57,7 @@ theorem passive_permits_smuggling :
 /-- Passive Voice and anticausative Voice share the smuggling property.
     Both have phaseHead = false. The structural parallelism between
     passive and unaccusative is Collins' central insight and extends
-    to Storment's (2026) QI analysis. -/
+    to @cite{storment-2026}'s QI analysis. -/
 theorem passive_anticausative_both_smuggle :
     voicePassive.permitsSmuggling = voiceAnticausative.permitsSmuggling := rfl
 
@@ -128,8 +128,8 @@ theorem smuggling_predicts_ccommand :
 -- ============================================================================
 
 /-- Passive, QI, and anticausative all share the same structural
-    precondition for smuggling: non-phase Voice. Collins (2005) passive,
-    Storment (2026) QI, and standard unaccusatives are all instances of
+    precondition for smuggling: non-phase Voice. @cite{collins-2005} passive,
+    @cite{storment-2026} QI, and standard unaccusatives are all instances of
     complement extraction enabled by defective (non-phase) v. -/
 theorem unified_smuggling :
     voicePassive.permitsSmuggling = true ∧

@@ -2,7 +2,7 @@
 # Cross-Categorial Comparison Constructions
 @cite{bresnan-1973} @cite{hackl-2000} @cite{wellwood-2015}
 
-Construction-level data on Wellwood's (2015) cross-categorial parallels:
+Construction-level data on @cite{wellwood-2015}'s cross-categorial parallels:
 comparison constructions apply uniformly across nominal, verbal, and
 adjectival domains, sharing the same DegP template.
 
@@ -55,7 +55,7 @@ def crossCategorialExamples : List CrossCategorialDatum :=
 -- § 2. Bresnan's Decomposition (Morphosyntax)
 -- ════════════════════════════════════════════════════
 
-/-- Bresnan (1973): `more` = `much` + `-er`.
+/-- @cite{bresnan-1973}: `more` = `much` + `-er`.
 
     This decomposition predicts:
     - `much` is the degree head (selecting the measured domain)

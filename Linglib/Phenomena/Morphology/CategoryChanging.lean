@@ -1,13 +1,14 @@
 /-!
 # Category-Changing Morphology: English Root Families
+@cite{marantz-1997}
+
 
 Theory-neutral empirical data on English roots that surface across multiple
 lexical categories via different morphological processes.
 
 ## Data Source
 
-Standard examples from the Distributed Morphology literature
-(Marantz 1997, Harley 2014, Panagiotidis 2015).
+Standard examples from the Distributed Morphology literature.
 
 ## Empirical Generalization
 

@@ -3,7 +3,7 @@ import Linglib.Theories.Semantics.Tense.TemporalConnectives.Anscombe
 import Linglib.Theories.Semantics.Tense.TemporalConnectives.Rett
 
 /-!
-# Ogihara & Steinert-Threlkeld (2024): Event-Level Temporal Connectives
+# @cite{ogihara-steinert-threlkeld-2024}: Event-Level Temporal Connectives
 @cite{ogihara-steinert-threlkeld-2024}
 
 An interval-based semantics for *before* and *after* that operates at
@@ -89,7 +89,7 @@ theorem OST.after_veridical_main (P Q : EvPred Time) :
 /-- *Before* is non-veridical: there exist P, Q such that `before(P, Q)` holds
     but Q has no witnesses.
 
-    Concretely: if P has a witness and Q is empty, then ∀e₂, Q(e₂) → ... is
+    Concretely: if P has a witness and Q is empty, then ∀e₂, Q(e₂) →... is
     vacuously true. -/
 theorem OST.before_nonveridical :
     ∃ (P Q : EvPred ℤ), OST.before P Q ∧ ¬∃ e : Ev ℤ, Q e := by

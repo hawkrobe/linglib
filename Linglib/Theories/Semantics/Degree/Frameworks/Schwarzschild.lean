@@ -5,7 +5,7 @@ import Linglib.Theories.Semantics.Degree.Core
 # Schwarzschild's Interval Semantics
 @cite{schwarzschild-2005} @cite{schwarzschild-2008} @cite{schwarzschild-wilkinson-2002}
 
-Schwarzschild (2008) "The Semantics of Comparatives and Other Degree
+@cite{schwarzschild-2008} "The Semantics of Comparatives and Other Degree
 Constructions": degrees are reified as **intervals** on a scale, and
 degree morphology manipulates these intervals.
 

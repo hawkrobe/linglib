@@ -44,7 +44,7 @@ open Semantics.Lexical.Verb.Aspect
 -- § Core Types
 -- ════════════════════════════════════════════════════
 
-/-- An eventuality with interval-valued runtime (Davidson 1967, Krifka 1989). @cite{pancheva-2003}
+/-- An eventuality with interval-valued runtime. @cite{pancheva-2003}
     Unlike `Situation` (point-valued τ), eventualities occupy temporal intervals. -/
 structure Eventuality (Time : Type*) [LE Time] where
   /-- The temporal extent of this eventuality -/
@@ -122,23 +122,23 @@ def ViewpointType.ttTSitRelation {Time : Type*} [LinearOrder Time]
 variable {Time : Type*} [LinearOrder Time] {W : Type*}
 
 /-- **IMPERFECTIVE**: reference time properly contained in event runtime.
-    Klein (1994): TT INCL TSit. Knick & Sharf (2026) eq. 25. -/
+    @cite{klein-1994}: TT INCL TSit. @cite{knick-sharf-2026} eq. 25. -/
 def IMPF (P : EventPred W Time) : IntervalPred W Time :=
   λ w t => ∃ e : Eventuality Time, t.properSubinterval e.τ ∧ P w e
 
 /-- **PERFECTIVE**: event runtime contained in reference time.
-    Klein (1994): TT AT TSit (simplified to TSit ⊆ TT, following Smith 1991).
-    Knick & Sharf (2026) eq. 28. -/
+    @cite{klein-1994}: TT AT TSit (simplified to TSit ⊆ TT, following Smith 1991).
+    @cite{knick-sharf-2026} eq. 28. -/
 def PRFV (P : EventPred W Time) : IntervalPred W Time :=
   λ w t => ∃ e : Eventuality Time, e.τ.subinterval t ∧ P w e
 
 /-- **PROSPECTIVE**: reference time before situation time.
-    Klein (1994): TT BEFORE TSit. -/
+    @cite{klein-1994}: TT BEFORE TSit. -/
 def PROSP (P : EventPred W Time) : IntervalPred W Time :=
   λ w t => ∃ e : Eventuality Time, t.isBefore e.τ ∧ P w e
 
 /-- **NEUTRAL**: initial overlap between reference time and event runtime.
-    Pancheva (2003) eq. 7b: ⟦NEUTRAL⟧ = λP.λi.∃e[i ∂τ(e) & P(e)]
+    @cite{pancheva-2003} eq. 7b: ⟦NEUTRAL⟧ = λP.λi.∃e[i ∂τ(e) & P(e)]
     The beginning of the eventuality is in the reference interval,
     but the end may extend beyond. Derives Experiential perfect readings. -/
 def NEUTRAL (P : EventPred W Time) : IntervalPred W Time :=
@@ -155,12 +155,12 @@ def RB (pts : Interval Time) (t : Time) : Prop := pts.finish = t
 def LB (tLB : Time) (pts : Interval Time) : Prop := pts.start = tLB
 
 /-- **PERFECT**: introduces Perfect Time Span.
-    Knick & Sharf (2026) eq. 22b. -/
+    @cite{knick-sharf-2026} eq. 22b. -/
 def PERF (p : IntervalPred W Time) : PointPred W Time :=
   λ s => ∃ pts : Interval Time, RB pts s.time ∧ p s.world pts
 
 /-- **PERFECT with Extended Now** (domain-restricted left boundary).
-    Knick & Sharf (2026) eq. 23b.
+    @cite{knick-sharf-2026} eq. 23b.
     The domain restriction tᵣ constrains where the LB can be placed.
     Narrow focus on BEEN generates alternatives over tᵣ. -/
 def PERF_XN (p : IntervalPred W Time) (tᵣ : Set Time) : PointPred W Time :=
@@ -312,7 +312,7 @@ theorem impf_prfv_opposite_containment (P : EventPred W Time) (w : W) (t : Inter
 -- § Pancheva (2003): Higher Aspect and Perfect Types
 -- ════════════════════════════════════════════════════
 
-/-! Pancheva (2003) decomposes perfect participles into two aspect heads:
+/-! @cite{pancheva-2003} decomposes perfect participles into two aspect heads:
     [T [Asp₁=PERFECT [Asp₂=VIEWPOINT [vP]]]]. The inner Asp₂ (UNBOUNDED,
     NEUTRAL, or BOUNDED) determines the perfect type (universal, experiential,
     or resultative). The outer Asp₁ = PERFECT introduces the PTS via a
@@ -362,7 +362,7 @@ theorem perf_p_monotone (p q : IntervalPred W Time)
     PERF_P p w i → PERF_P q w i :=
   λ ⟨pts, hFin, hp⟩ => ⟨pts, hFin, h w pts hp⟩
 
-/-- Pancheva (2003) perfect type classification.
+/-- @cite{pancheva-2003} perfect type classification.
     The embedded Asp₂ determines the perfect reading:
     - universal = PERFECT(UNBOUNDED): event ongoing throughout PTS
     - experiential = PERFECT(NEUTRAL): event began within PTS

@@ -18,9 +18,9 @@ a common `QuantifierInventory` structure, following the pattern established in
 
 ## Data sources
 
-- English: Barwise & Cooper (1981)
-- Mandarin: Li (1998), Cheng & Sybesma (1999)
-- Japanese: Shimoyama (2006), Nakanishi (2007)
+- English: @cite{barwise-cooper-1981}
+- Mandarin: @cite{li-1998}, @cite{cheng-sybesma-1999}
+- Japanese: @cite{shimoyama-2006}, @cite{nakanishi-2007}
 
 -/
 

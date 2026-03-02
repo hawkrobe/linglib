@@ -6,6 +6,8 @@ import Linglib.Core.Register
 
 /-!
 # Modal Logic
+@cite{rotter-liu-2025}
+
 
 Kripke semantics for normal modal logics. Formalizes frames, frame conditions,
 correspondence theorems, and the lattice of normal modal logics.
@@ -292,11 +294,11 @@ theorem identityR_refl {W : Type*} [DecidableEq W] : Refl (identityR (W := W)) :
 Theory-neutral vocabulary for cross-linguistic modal typology.
 A modal's meaning is a set of force-flavor pairs (Imel, Guo, & Steinert-Threlkeld 2026).
 
-* Kratzer (1981). The Notional Category of Modality.
-* Imel, Guo, & Steinert-Threlkeld (2026). An Efficient Communication Analysis of Modal Typology.
+* @cite{kratzer-1981}. The Notional Category of Modality.
+* Imel, Guo, & @cite{imel-guo-steinert-threlkeld-2026}. An Efficient Communication Analysis of Modal Typology.
 -/
 
-/-- Modal flavor: the contextual source of modality (Kratzer 1981).
+/-- Modal flavor: the contextual source of modality.
     Theory-neutral: avoids commitment to how flavor is semantically encoded.
     Teleological is subsumed under circumstantial (both concern facts/abilities). -/
 inductive ModalFlavor where
@@ -321,7 +323,7 @@ def ModalForce.all : List ModalForce := [.necessity, .possibility]
 /-- A force-flavor pair: one point in the modal semantic space P.
     |P| = |Force| × |Flavor| = 2 × 3 = 6.
 
-    Imel, Guo, & Steinert-Threlkeld (2026): modal meanings are subsets of P. -/
+    Imel, Guo, & @cite{imel-guo-steinert-threlkeld-2026}: modal meanings are subsets of P. -/
 structure ForceFlavor where
   force : ModalForce
   flavor : ModalFlavor
@@ -370,7 +372,7 @@ structure ModalItem where
 
 /-- Two modal items share force if at least one ForceFlavor pair in each
     has the same force. This is the structural precondition for modal
-    concord (Liu & Rotter 2025, Geurts & Huitink 2006). -/
+    concord. -/
 def ModalItem.sharesForce (a b : ModalItem) : Bool :=
   a.meaning.any fun ff1 => b.meaning.any fun ff2 => ff1.force == ff2.force
 
@@ -403,15 +405,14 @@ def ConcordType.fromModalForce : ModalForce → ConcordType
 
 /-! ## Modal Decomposability
 
-Werner (2006), Condoravdi (2002): some modals resist the standard
+@cite{werner-2006}, @cite{condoravdi-2002}: some modals resist the standard
 force × flavor decomposition. "Will" and other temporal-modal elements
 do not factor cleanly into a modal force and a conversational background
 flavor. This annotation distinguishes decomposable modals (standard
 Kratzerian analysis) from unitary ones. -/
 
 /-- Whether a modal meaning decomposes into independent force and flavor
-    dimensions (Kratzer 1981) or is a unitary, non-decomposable operator
-    (Werner 2006, Condoravdi 2002). -/
+    dimensions or is a unitary, non-decomposable operator. -/
 inductive ModalDecomposition where
   | decomposable  -- ⟦m⟧ = fo(m) × fl(m)
   | unitary       -- ⟦m⟧ ≠ fo(m) × fl(m)

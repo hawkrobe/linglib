@@ -7,11 +7,11 @@ import Linglib.Theories.Semantics.TypeTheoretic.Copredication
 
 Bridge theorems connecting copredication data to the TTR dot-type
 infrastructure. We model the "book" examples from §3 of
-Chatzikyriakidis et al. (2025) and prove that:
+@cite{chatzikyriakidis-etal-2025} and prove that:
 
 1. Copredication is well-typed via meet-type projection
 2. Different individuation criteria yield different counts
-3. The counting puzzle from Gotham (2017) is reproduced
+3. The counting puzzle from @cite{gotham-2017} is reproduced
 
 -/
 
@@ -32,7 +32,7 @@ structure Info where
   deriving Repr, DecidableEq
 
 /-- "book" as a dot type: physical × informational, individuated physically.
-Gotham (2017): the default criterion for "book" counts physical volumes. -/
+@cite{gotham-2017}: the default criterion for "book" counts physical volumes. -/
 def bookDot : DotType PhysObj Info := DotType.byAspect₁
 
 /-- "heavy": a predicate on the physical aspect. -/
@@ -49,7 +49,7 @@ theorem book_heavy_and_interesting (b : PhysObj × Info) (h : b.1.weight > 500) 
 
 /-! ## Counting under copredication
 
-Model the scenario from Gotham (2017) / Chatzikyriakidis et al. (2025) §3:
+Model the scenario from @cite{gotham-2017} / @cite{chatzikyriakidis-etal-2025} §3:
 Two physical copies of one novel, plus one copy of a different novel.
 Physical count = 3, informational count = 2. -/
 

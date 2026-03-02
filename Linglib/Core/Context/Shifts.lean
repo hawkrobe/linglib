@@ -25,7 +25,7 @@ variable {W : Type*} {E : Type*} {P : Type*} {T : Type*}
     (to an attitude-accessible world). Addressee, time, and position
     are preserved.
 
-    Schlenker (2003): "John said that I am happy" — under the monster
+    @cite{schlenker-2003}: "John said that I am happy" — under the monster
     analysis, the attitude verb shifts agent to John. Under Kaplan's
     thesis, English uses `identityShift` instead. -/
 def attitudeShift (holder : E) (attWorld : W) : ContextShift (KContext W E P T) where
@@ -35,7 +35,7 @@ def attitudeShift (holder : E) (attWorld : W) : ContextShift (KContext W E P T) 
 /-- Temporal shift: changes time only. Used for sequence of tense,
     where embedded tense is evaluated relative to the matrix event time.
 
-    Von Stechow (2009): the attitude verb transmits its event time to
+    @cite{von-stechow-2009}: the attitude verb transmits its event time to
     the embedded clause's perspective time. -/
 def temporalShift (newTime : T) : ContextShift (KContext W E P T) where
   apply := λ c => { c with time := newTime }

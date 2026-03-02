@@ -5,7 +5,6 @@ import Linglib.Phenomena.Allomorphy.SlavicVerbalizer.Data
 /-!
 # Slavic Verbalizer — OT Analysis @cite{stojkovic-2026}
 
-
 OT evaluation connecting constraint rankings to the empirical surface
 forms of the Slavic verbalizer (VBLZ). Stojković (2026) argues the VBLZ
 has a single abstract underlying representation (a defective diphthong)
@@ -191,7 +190,7 @@ theorem ov_optimal :
 
 /-- The [ov]/[ev] ranking selects [ev] as optimal in the palatal context.
     (In the non-palatal context, [ev] and [iv] are unavailable because
-    there is no palatal to share [−back] from; [ov] wins trivially.) -/
+    there is no palatal to share [−back]; [ov] wins trivially.) -/
 theorem ev_optimal :
     (buildTableau allCandidates ovEvRanking allCandidates_nonempty).optimal
       = [.ev] := by native_decide

@@ -3,8 +3,10 @@ import Linglib.Theories.Phonology.FeatureGeometry
 
 /-!
 # Autosegmental Representations
+@cite{goldsmith-1976}
 
-Autosegmental phonology (Goldsmith 1976) adds **feature sharing** to segmental
+
+Autosegmental phonology adds **feature sharing** to segmental
 representations: when adjacent segments share a geometric node's features, they
 are linked to a single autosegmental element on that node's tier. This module
 builds on the feature geometry (`FeatureGeometry.lean`) and segment type

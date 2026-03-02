@@ -92,7 +92,7 @@ def morphDistribution : List MorphDistributionDatum :=
 -- ════════════════════════════════════════════════════
 
 /-- Comparative deletion data: the standard of comparison may be
-    implicitly recovered from context (Kennedy 1999, §2).
+    implicitly recovered from context.
 
     "Kim is taller" — standard = contextually supplied comparison class.
     This connects to the evaluative/positive reading of bare gradable

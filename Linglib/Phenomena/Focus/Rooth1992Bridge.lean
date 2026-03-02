@@ -8,7 +8,7 @@ import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Phenomena.Focus.Basic
 
 /-!
-# Rooth (1992) Bridge — Focus Interpretation @cite{rooth-1992}
+# @cite{rooth-1992} Bridge — Focus Interpretation @cite{rooth-1992}
 
 Bridges the empirical data in `Focus/Basic.lean` to the formal theory
 in `Focus/Interpretation.lean` (FIP, Q-A congruence), with a full
@@ -18,7 +18,7 @@ connection to English fragment entries.
 ## Pipeline
 
 ```
-Fragments/English/Nouns  ──▷  Montague Lexicon  ──▷  SynTree
+Fragments/English/Nouns ──▷ Montague Lexicon ──▷ SynTree
                                                         │
                                                     interpTree
                                                         │
@@ -202,7 +202,7 @@ theorem infoStructure_extracts_background :
 -- §6  Q-A Congruence: FIP at the Propositional Level
 -- ═══════════════════════════════════════════════════════════════════════
 
-/-! Rooth (1992) §2.4, constraint (26d):
+/-! @cite{rooth-1992} §2.4, constraint (26d):
     In a Q-A pair ⟨ψ, α⟩, ⟦ψ⟧° ⊆ ⟦α⟧f.
     The ordinary semantic value of the question is a subset of the
     focus semantic value of the answer. -/
@@ -255,7 +255,7 @@ theorem fip_fails_object_focus :
 theorem maryAteBeans_answers_question :
     isAnswer q_whoAteBeans maryAteBeans = true := by native_decide
 
-/-- ...but is NOT in the object-focus alternative set. -/
+/--...but is NOT in the object-focus alternative set. -/
 theorem maryAteBeans_not_in_objectFocus :
     isAnswer fv_objectFocus maryAteBeans = false := by native_decide
 

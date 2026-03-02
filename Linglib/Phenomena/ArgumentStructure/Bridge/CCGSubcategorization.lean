@@ -9,8 +9,8 @@ Connects CCG category assignments to the subcategorization data in
 
 CCG captures subcategorization through category assignment:
 
-    IV  = S\NP           (intransitive: needs subject only)
-    TV  = (S\NP)/NP      (transitive: needs object then subject)
+    IV = S\NP (intransitive: needs subject only)
+    TV = (S\NP)/NP (transitive: needs object then subject)
     DTV = ((S\NP)/NP)/NP (ditransitive: needs two objects then subject)
 
 A verb assigned TV cannot appear without an object (no valid derivation),

@@ -19,7 +19,7 @@ ambidirectionality, manner implicature) is in `Degree/Frameworks/Rett.lean`.
    μ(A) < μ(B) (negative).
 2. **Antonymy as scale reversal**: "A taller than B" ↔ "B shorter than A".
 3. **DE-ness of than-clauses**: universal quantification over the standard
-   domain is anti-monotone (Hoeksema 1983, von Stechow 1984).
+   domain is anti-monotone.
 
 -/
 

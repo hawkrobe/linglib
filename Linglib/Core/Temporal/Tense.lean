@@ -6,18 +6,17 @@ import Linglib.Core.Context.Shifts
 
 /-!
 # Unified Tense Pronoun Architecture
-@cite{abusch-1997} @cite{heim-kratzer-1998} @cite{kratzer-1998} @cite{partee-1973} @cite{von-stechow-2009}
+@cite{abusch-1997} @cite{heim-kratzer-1998} @cite{kratzer-1998} @cite{partee-1973} @cite{von-stechow-2009} @cite{ogihara-1989}
 
-Abusch's (1997) insight: a tense morpheme is a **temporal pronoun** — a variable
-(Partee 1973) with a presupposed temporal constraint (Prior, reinterpreted) and
+@cite{abusch-1997}'s insight: a tense morpheme is a **temporal pronoun** — a variable with a presupposed temporal constraint (Prior, reinterpreted) and
 a binding mode (indexical/anaphoric/bound). This single concept projects onto
 five representations of temporal reference in the codebase:
 
 1. **Priorean operators** (PAST/PRES/FUT): `constraint.constrains`
 2. **Reichenbach frames** (S, P, R, E): `TensePronoun.toFrame`
-3. **Referential variables** (Partee 1973): `TensePronoun.resolve`
-4. **Kaplan indexicals** (rigid to speech time): `mode = .indexical`
-5. **Attitude binding** (zero tense, Ogihara 1989): `mode = .bound`
+3. **Referential variables**: `TensePronoun.resolve`
+4. **Kaplan indexicals** (rigid to speech time): `mode =.indexical`
+5. **Attitude binding** (zero tense, Ogihara 1989): `mode =.bound`
 
 The existing ad-hoc bridge theorems (`referential_past_decomposition`,
 `temporallyBound_gives_simultaneous`, `indexical_tense_matches_opNow`,
@@ -109,7 +108,7 @@ inductive SOTParameter where
 -- § TenseInterpretation
 -- ════════════════════════════════════════════════════════════════
 
-/-- Tense interpretation modes (Partee 1973, Kratzer 1998).
+/-- Tense interpretation modes.
     Tenses parallel pronouns: indexical (deictic), anaphoric
     (discourse-bound), and bound variable (zero tense).
 
@@ -161,7 +160,7 @@ abbrev temporalLambdaAbs {Time α : Type*} (n : ℕ)
     TemporalAssignment Time → Time → α :=
   varLambdaAbs n body
 
-/-- Project a situation assignment to a temporal assignment (Kratzer 1998).
+/-- Project a situation assignment to a temporal assignment.
     This is the formal bridge between situation semantics and tense semantics:
     the temporal coordinate of each situation is extracted. -/
 def situationToTemporal {W Time : Type*}
@@ -174,7 +173,7 @@ theorem situation_temporal_commutes {W Time : Type*}
     (g : ℕ → Situation W Time) (n : ℕ) :
     interpTense n (situationToTemporal g) = (g n).time := rfl
 
-/-- Zero tense (Ogihara 1989): a bound tense variable contributes no independent
+/-- Zero tense: a bound tense variable contributes no independent
     temporal constraint. When an attitude verb binds it, the variable receives
     the matrix event time. This is the SOT mechanism: the "past" morphology on
     the embedded verb is agreement, not a semantic tense. -/
@@ -206,9 +205,9 @@ abbrev SitProp (W Time : Type*) := Situation W Time → Prop
 -- § TensePronoun (Abusch 1997)
 -- ════════════════════════════════════════════════════════════════
 
-/-- Abusch's (1997) unified tense denotation.
+/-- @cite{abusch-1997}'s unified tense denotation.
 
-    A tense morpheme introduces a temporal variable (Partee 1973) with:
+    A tense morpheme introduces a temporal variable with:
     - A variable index in the temporal assignment
     - A presupposed temporal constraint (past/present/future)
     - A binding mode (indexical, anaphoric, or bound)
@@ -217,16 +216,16 @@ abbrev SitProp (W Time : Type*) := Situation W Time → Prop
     - **Priorean**: `constraint.constrains` (temporal ordering)
     - **Reichenbach**: `resolve g` = R, perspective time = P
     - **Referential**: `resolve g = interpTense varIndex g`
-    - **Kaplan indexical**: `mode = .indexical` → rigid to speech time
-    - **Attitude binding**: `mode = .bound` → zero tense -/
+    - **Kaplan indexical**: `mode =.indexical` → rigid to speech time
+    - **Attitude binding**: `mode =.bound` → zero tense -/
 structure TensePronoun where
   varIndex : ℕ
   constraint : GramTense
   mode : TenseInterpretation
   /-- Index of the evaluation time variable in the temporal assignment.
       Default 0 = speech time slot. Under embedding, attitude verbs update
-      this index to point at the matrix event time (Von Stechow 2009).
-      Klecha (2016): modals can also shift the eval time index. -/
+      this index to point at the matrix event time.
+      @cite{klecha-2016}: modals can also shift the eval time index. -/
   evalTimeIndex : ℕ := 0
   deriving DecidableEq, Repr, BEq
 
@@ -311,7 +310,7 @@ theorem TensePronoun.bound_present_simultaneous {Time : Type*}
   simp only [TensePronoun.toFrame, ReichenbachFrame.isPresent]
   exact hBind
 
-/-- Double-access (Abusch 1997): present-under-past requires the complement
+/-- Double-access: present-under-past requires the complement
     to hold at BOTH speech time (indexical rigidity) AND matrix event time
     (attitude accessibility). -/
 def doubleAccess {Time : Type*} (p : Time → Prop)
@@ -382,13 +381,13 @@ theorem Overtness.bound_nonlocal_is_overt :
 -- § Temporal Tower Bridge (Abusch 1997 ↔ ContextTower)
 -- ════════════════════════════════════════════════════════════════
 
-/-! The key bridge showing that Abusch's (1997) De Bruijn temporal indexing is already
+/-! The key bridge showing that @cite{abusch-1997}'s De Bruijn temporal indexing is already
 tower-style depth access. `TensePronoun.evalTimeIndex` is a depth-relative index
 into the tower: when the temporal assignment encodes tower time coordinates
 (`g k = (tower.contextAt k).time`), `interpTense` agrees with `AccessPattern.resolve`.
 
 - `tensePronounAccessPattern` — converts `TensePronoun.evalTimeIndex` to an
-  `AccessPattern` with `depth := .relative tp.evalTimeIndex`
+  `AccessPattern` with `depth :=.relative tp.evalTimeIndex`
 - `tense_tower_bridge` — when `g` encodes tower time coordinates, `interpTense`
   agrees with `AccessPattern.resolve`
 - `tense_root_bridge` — root clause: `evalTimeIndex = 0` means origin time
@@ -462,7 +461,7 @@ theorem tensePronounAccessPattern_root_resolves
   simp only [tensePronounAccessPattern, AccessPattern.resolve, hEval,
              DepthSpec.relative_resolve, ContextTower.root_contextAt]
 
-/-- Von Stechow's (2009) perspective shift — the attitude verb transmits
+/-- @cite{von-stechow-2009}'s perspective shift — the attitude verb transmits
     its event time to the embedded clause — corresponds to pushing a
     `temporalShift` onto the tower.
 

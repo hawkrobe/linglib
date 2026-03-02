@@ -202,14 +202,16 @@ end Modals
 
 /-!
 ### Numerals and Horn Scales
+@cite{horn-1972} @cite{kennedy-2015}
+
 
 Numerals are NOT represented as a `HornScale` here because:
 
-1. Under **lower-bound** semantics (Horn 1972), numerals do form a scale
-   (⟨1, 2, 3, ...⟩), but it is **infinite** — a finite `HornScale` list
+1. Under **lower-bound** semantics, numerals do form a scale
+   (⟨1, 2, 3,...⟩), but it is **infinite** — a finite `HornScale` list
    can't represent it correctly ("five" would have no stronger alternatives).
 
-2. Under **bilateral** semantics (Kennedy 2015), numerals are non-monotonic
+2. Under **bilateral** semantics, numerals are non-monotonic
    and do NOT form a Horn scale at all. The relevant alternatives are
    {bare n, Class A n, Class B n}, not other numerals.
 

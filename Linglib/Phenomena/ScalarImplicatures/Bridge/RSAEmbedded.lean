@@ -11,7 +11,7 @@ to empirical data from `Phenomena.ScalarImplicatures.Basic`.
 ## Bridge content
 
 - `empirical_pattern_documented`: Verifies the DE blocking / UE allowing
-  pattern from Geurts (2010) against the `someAllBlocking` data.
+  pattern from @cite{geurts-2010} against the `someAllBlocking` data.
 -/
 
 
@@ -23,7 +23,7 @@ open Phenomena.ScalarImplicatures
 /--
 **Connection to empirical pattern**.
 
-The empirical data (Geurts 2010) shows:
+The empirical data shows:
 - DE: implicature blocked (global preferred)
 - UE: implicature arises (local preferred)
 

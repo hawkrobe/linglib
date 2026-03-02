@@ -69,8 +69,8 @@ variable {W E : Type*}
 Atomic proposition: lift a classical proposition to bilateral form.
 
 For an atomic proposition p:
-- s[p]⁺ = { w ∈ s | p(w) }     (keep worlds where p holds)
-- s[p]⁻ = { w ∈ s | ¬p(w) }   (keep worlds where p fails)
+- s[p]⁺ = { w ∈ s | p(w) } (keep worlds where p holds)
+- s[p]⁻ = { w ∈ s | ¬p(w) } (keep worlds where p fails)
 -/
 def atom (pred : W → Bool) : BilateralDen W E :=
   { positive := λ s => s.update pred
@@ -136,8 +136,8 @@ theorem neg_involutive : Function.Involutive (neg : BilateralDen W E → Bilater
 Conjunction: sequence positive updates, combine negative updates.
 
 For conjunction φ ∧ ψ:
-- s[φ ∧ ψ]⁺ = s[φ]⁺[ψ]⁺   (sequence: first assert φ, then ψ)
-- s[φ ∧ ψ]⁻ = s[φ]⁻ ∪ (s[φ]⁺ ∩ s[ψ]⁻)   (fail if φ fails OR φ succeeds but ψ fails)
+- s[φ ∧ ψ]⁺ = s[φ]⁺[ψ]⁺ (sequence: first assert φ, then ψ)
+- s[φ ∧ ψ]⁻ = s[φ]⁻ ∪ (s[φ]⁺ ∩ s[ψ]⁻) (fail if φ fails OR φ succeeds but ψ fails)
 
 The negative update reflects: a conjunction is denied if either conjunct
 could be denied.
@@ -159,8 +159,8 @@ theorem conj_assoc_positive (φ ψ χ : BilateralDen W E) (s : InfoState W E) :
 Standard disjunction: choice between updates.
 
 For standard disjunction φ ∨ ψ:
-- s[φ ∨ ψ]⁺ = s[φ]⁺ ∪ s[ψ]⁺   (either disjunct holds)
-- s[φ ∨ ψ]⁻ = s[φ]⁻ ∩ s[ψ]⁻   (both must fail to deny)
+- s[φ ∨ ψ]⁺ = s[φ]⁺ ∪ s[ψ]⁺ (either disjunct holds)
+- s[φ ∨ ψ]⁻ = s[φ]⁻ ∩ s[ψ]⁻ (both must fail to deny)
 -/
 def disj (φ ψ : BilateralDen W E) : BilateralDen W E :=
   { positive := λ s => φ.positive s ∪ ψ.positive s
@@ -179,8 +179,8 @@ theorem de_morgan_disj (φ ψ : BilateralDen W E) (s : InfoState W E) :
 Existential quantification: introduce a discourse referent.
 
 For ∃x.φ:
-- s[∃x.φ]⁺ = s[x:=?][φ]⁺   (introduce x, then assert φ)
-- s[∃x.φ]⁻ = { p ∈ s | ∀e, p[x↦e] ∉ s[x:=?][φ]⁺ }   (no witness makes φ true)
+- s[∃x.φ]⁺ = s[x:=?][φ]⁺ (introduce x, then assert φ)
+- s[∃x.φ]⁻ = { p ∈ s | ∀e, p[x↦e] ∉ s[x:=?][φ]⁺ } (no witness makes φ true)
 -/
 def exists_ (x : Nat) (domain : Set E) (φ : BilateralDen W E) : BilateralDen W E :=
   { positive := λ s => φ.positive (s.randomAssign x domain)

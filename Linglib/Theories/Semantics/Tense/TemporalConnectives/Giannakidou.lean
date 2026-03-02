@@ -3,13 +3,13 @@ import Linglib.Theories.Semantics.Lexical.Verb.ViewpointAspect
 
 /-!
 # Viewpoint Aspect × Temporal Connective Interaction
-@cite{giannakidou-2002} @cite{karttunen-1974} @cite{klein-1994} @cite{mittwoch-1977}Giannakidou (2002) shows that viewpoint aspect determines negation scope
+@cite{giannakidou-2002} @cite{karttunen-1974} @cite{klein-1994} @cite{mittwoch-1977}@cite{giannakidou-2002} shows that viewpoint aspect determines negation scope
 with *until*:
 
 - **Imperfective main clause** (states/progressives): the main clause is
   homogeneous (subinterval property), satisfying durative *until*'s
-  selectional restriction. Negation can scope wide (Mittwoch 1977) or
-  narrow (Karttunen 1974).
+  selectional restriction. Negation can scope wide or
+  narrow.
 
 - **Perfective main clause** (achievements/accomplishments): the event is
   bounded (no subinterval property). Only narrow-scope negation is available:
@@ -22,8 +22,8 @@ connective layer by projecting `EventPred` through viewpoint aspect to
 `SentDenotation`:
 
 ```
-EventPred Unit Time  ──[impfDenotation]──▷  SentDenotation Time  (homogeneous)
-EventPred Unit Time  ──[prfvDenotation]──▷  SentDenotation Time  (quantized)
+EventPred Unit Time ──[impfDenotation]──▷ SentDenotation Time (homogeneous)
+EventPred Unit Time ──[prfvDenotation]──▷ SentDenotation Time (quantized)
 ```
 
 The world parameter is fixed to `Unit`: temporal connectives are
@@ -53,7 +53,7 @@ variable {Time : Type*} [LinearOrder Time]
     aspect. The result is homogeneous: for each event satisfying P, the
     denotation includes all subintervals of the event runtime.
 
-    This captures Klein's (1994) IMPF: the reference time (TT) is properly
+    This captures @cite{klein-1994}'s IMPF: the reference time (TT) is properly
     inside the situation time (TSit), so the event extends beyond any
     particular reference point. Every subinterval of the event runtime is
     a valid reference window into the ongoing event.
@@ -66,7 +66,7 @@ def impfDenotation (P : EventPred Unit Time) : SentDenotation Time :=
 /-- Project an event predicate to a sentence denotation via **perfective**
     aspect. The result is quantized: only the exact event runtime is included.
 
-    This captures Klein's (1994) PRFV: the situation time (TSit) is contained
+    This captures @cite{klein-1994}'s PRFV: the situation time (TSit) is contained
     in the reference time (TT), so the event is viewed as complete. The
     denotation contains only the event's actual runtime — the bounded interval
     during which the event occurred. -/
@@ -81,7 +81,7 @@ def prfvDenotation (P : EventPred Unit Time) : SentDenotation Time :=
     the denotation (i.e., `t ⊆ τ(e)` for some event `e`), then every
     subinterval of `t` is also in the denotation.
 
-    This is exactly the homogeneity property that Karttunen (1974) requires
+    This is exactly the homogeneity property that @cite{karttunen-1974} requires
     of the main clause of durative *until*. The imperfective viewpoint
     provides this automatically: since the event extends beyond any reference
     interval, every sub-window into the event is equally valid. -/
@@ -187,7 +187,7 @@ theorem timeTrace_impf_eq_prfv (P : EventPred Unit Time) :
 -- § 5: Giannakidou's Scope Readings
 -- ============================================================================
 
-/-- **Wide-scope negation** over imperfective *until* (Mittwoch 1977):
+/-- **Wide-scope negation** over imperfective *until*:
 
     ¬∃t [t ∈ timeTrace(IMPF(A)) ∧ t ∈ timeTrace(B)]
 
@@ -216,7 +216,7 @@ def narrowScopeNotUntil (A : EventPred Unit Time) (B : SentDenotation Time) : Pr
 -- ============================================================================
 
 /-- Narrow-scope ¬*until* is exactly ¬*before* (by definition).
-    This is Karttunen's (1974, eq. 33) identity, now made explicit in the
+    This is @cite{karttunen-1974}'s identity, now made explicit in the
     aspectual decomposition. -/
 theorem narrowScope_eq_not_before (A : EventPred Unit Time) (B : SentDenotation Time) :
     narrowScopeNotUntil A B ↔ ¬ Anscombe.before (prfvDenotation A) B :=
@@ -303,7 +303,7 @@ theorem scope_readings_independent :
 -- § 7: Giannakidou's Generalization (Data)
 -- ============================================================================
 
-/-- Giannakidou's (2002) generalization about viewpoint aspect and scope.
+/-- @cite{giannakidou-2002}'s generalization about viewpoint aspect and scope.
     This is an empirical generalization, not a logical entailment — it
     describes which readings are *available* in natural language, not which
     are logically possible.

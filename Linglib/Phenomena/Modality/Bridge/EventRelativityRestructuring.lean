@@ -5,9 +5,9 @@ import Linglib.Theories.Semantics.Modality.EventRelativity
 # Bridge: Italian Restructuring ↔ Event-Relative Modality
 
 @cite{hacquard-2010} @cite{cinque-2004} @cite{rizzi-1978}Connects the Italian restructuring data (Fragments/Italian/Modals) to
-Hacquard's (2010) content licensing theory (EventRelativity §8).
+@cite{hacquard-2010}'s content licensing theory (EventRelativity §8).
 
-## The Argument (Hacquard 2010, §3)
+## The Argument
 
 1. Italian *potere*/*dovere* can restructure (appear below AspP).
 2. When restructured, these modals lose epistemic readings.
@@ -101,7 +101,7 @@ appears high (with epistemic) and low (without epistemic). This rules
 out lexical ambiguity as an explanation — the flavor restriction follows
 from structural position alone.
 
-Hacquard (2010, p.93): "Importantly, in Italian, epistemic and root
+@cite{hacquard-2010}: "Importantly, in Italian, epistemic and root
 modals are the same lexical items. [...] the availability of epistemic
 readings tracks the syntactic position of the modal." -/
 theorem same_lexical_items :

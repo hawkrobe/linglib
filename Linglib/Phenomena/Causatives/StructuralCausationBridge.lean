@@ -6,7 +6,7 @@ import Linglib.Theories.Semantics.Causation.Necessity
 @cite{hall-2004} @cite{nadathur-lauer-2020} @cite{pearl-2000}
 
 Verification that `Core.StructuralEquationModel` correctly models classic causal
-structures from the philosophy and linguistics literature.  Each section
+structures from the philosophy and linguistics literature. Each section
 sets up a concrete `CausalDynamics`, states the expected causal profile,
 and proves the predictions match via `native_decide`.
 
@@ -30,12 +30,12 @@ open NadathurLauer2020.Necessity
 
 /-! ## 1. Early preemption
 
-Billy and Suzy both throw rocks at a bottle.  Suzy's rock arrives first
-and shatters the bottle.  Billy's rock would have shattered it otherwise.
+Billy and Suzy both throw rocks at a bottle. Suzy's rock arrives first
+and shatters the bottle. Billy's rock would have shattered it otherwise.
 
-Model: two independent laws, both causes present.  This is structurally
+Model: two independent laws, both causes present. This is structurally
 identical to overdetermination in the Causation API (both sufficient,
-neither necessary).  The API does not distinguish temporal preemption
+neither necessary). The API does not distinguish temporal preemption
 from symmetric overdetermination — both reduce to disjunctive causation. -/
 
 section Preemption
@@ -93,7 +93,7 @@ A surgeon operates (S), which prevents the patient from dying (D).
 Without surgery the disease (B) would kill the patient.
 
 Model: B → D (disease causes death), S ∧ B → ¬D is modeled by making
-surgery block the disease law.  We model this as: B → D is the only law,
+surgery block the disease law. We model this as: B → D is the only law,
 and surgery removes B from the situation (counterfactual intervention). -/
 
 section Prevention
@@ -127,7 +127,7 @@ end Prevention
 
 /-! ## 3. Enabling conditions
 
-Oxygen is present (background).  Striking a match (M) causes fire (F)
+Oxygen is present (background). Striking a match (M) causes fire (F)
 only when oxygen (O) is present: O ∧ M → F.
 
 The match is an *agent cause*; oxygen is an *enabling condition*.
@@ -179,7 +179,7 @@ end Enabling
 
 /-! ## 4. Causal chain with bypass
 
-A → B → C, but also A → C directly.  B is an intermediate that is
+A → B → C, but also A → C directly. B is an intermediate that is
 not necessary because A has a direct path to C.
 
 Model: two laws: A → B, A → C. -/

@@ -112,7 +112,7 @@ inductive GoalForm where
 
 /-- Try to parse an expression as `cfg.L1_marginal u P`.
     If successful, evaluates `P w` for each `w : W` at meta level,
-    returning `(cfg, u, #[w₁, w₂, ...])` for matching worlds. -/
+    returning `(cfg, u, #[w₁, w₂,...])` for matching worlds. -/
 def parseL1Marginal (e : Expr) : MetaM (Option (Expr × Expr × Array Expr)) := do
   let mut current := e
   for _ in List.range 5 do

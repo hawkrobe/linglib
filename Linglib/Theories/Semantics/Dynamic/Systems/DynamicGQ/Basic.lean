@@ -6,7 +6,7 @@ import Linglib.Core.Mereology
 @cite{brasoveanu-2007} @cite{charlow-2021}
 
 Muskens/Brasoveanu-style dynamic GQ operators defined over the pointwise
-`DRS S := S → S → Prop` type. These correspond to Charlow (2021) §2.
+`DRS S := S → S → Prop` type. These correspond to @cite{charlow-2021} §2.
 
 The key operators:
 - `Evar`: existential dref introduction (equation 17)
@@ -56,7 +56,7 @@ def exactlyN_pw [AssignmentStructure S E] [PartialOrder E] [Fintype E]
 
 /-- Pseudo-cumulative formula (5): M_v scopes over the cardinality test on u.
     "Exactly 3 boys saw exactly 5 movies" with pseudo-cumulative reading:
-    M_v(E^v boys ; M_u(E^u movies ; saw u v) ; 5_u) ; 3_v -/
+    M_v(E^v boys; M_u(E^u movies; saw u v); 5_u); 3_v -/
 def pseudoCumulative [AssignmentStructure S E] [PartialOrder E] [Fintype E]
     (v u : Dref S E) (boys movies : E → Prop) (saw' : E → E → Prop) : DRS S :=
   dseq
@@ -65,7 +65,7 @@ def pseudoCumulative [AssignmentStructure S E] [PartialOrder E] [Fintype E]
     (CardTest v 3)
 
 /-- Cumulative formula (6): cardinality tests scope outside both M operators.
-    M_v(E^v boys ; M_u(E^u movies ; saw u v)) ; 5_u ; 3_v -/
+    M_v(E^v boys; M_u(E^u movies; saw u v)); 5_u; 3_v -/
 def cumulative [AssignmentStructure S E] [PartialOrder E] [Fintype E]
     (v u : Dref S E) (boys movies : E → Prop) (saw' : E → E → Prop) : DRS S :=
   dseq (dseq

@@ -8,7 +8,7 @@ Empirical data for intentional identity — the phenomenon where
 two attitude reports appear to be "about the same thing" even
 when that thing may not exist.
 
-## The Geach puzzle (Geach 1967)
+## The Geach puzzle
 
 "Hob thinks a witch has blighted Bob's mare,
  and Nob wonders whether she killed Cob's sow."
@@ -44,7 +44,7 @@ structure IntentionalIdentityDatum where
   deriving Repr
 
 /-- Geach's original Hob-Nob example.
-Geach (1967): "Hob thinks a witch has blighted Bob's mare,
+@cite{geach-1967}: "Hob thinks a witch has blighted Bob's mare,
 and Nob wonders whether she killed Cob's sow." -/
 def hobNob : IntentionalIdentityDatum :=
   { sentence := "Hob thinks a witch has blighted Bob's mare, and Nob wonders whether she killed Cob's sow"

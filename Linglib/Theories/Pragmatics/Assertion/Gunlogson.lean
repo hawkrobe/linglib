@@ -3,9 +3,9 @@ import Linglib.Core.Interfaces.AssertionTheory
 import Linglib.Core.Discourse.DiscourseRole
 
 /-!
-# Gunlogson (2004): Source-Marked Commitments
+# @cite{gunlogson-2004}: Source-Marked Commitments
 
-@cite{gunlogson-2004} @cite{gunlogson-2001} @cite{gunlogson-2003}Models the distinction between falling and rising declaratives via
+@cite{gunlogson-2004} @cite{gunlogson-2001} @cite{gunlogson-2003}Models the distinction between falling and rising declaratives via @cite{bring-gunlogson-2000}
 source-marked discourse commitments. The key innovation: commitments
 carry a tag indicating whether they are self-generated (from the
 speaker's own evidence) or other-generated (attributed to the addressee).
@@ -126,8 +126,7 @@ def cbcMet (s : GunlogsonState W) (p : BProp W) : Prop :=
 
     Returns the updated state when the CBC is met, `none` otherwise.
     Also accepts a coarser `ContextualEvidence` tag for compatibility
-    with the polar question bias framework (Büring & Gunlogson 2000,
-    Romero 2024). -/
+    with the polar question bias framework. -/
 def risingDeclarativeFelicitous (s : GunlogsonState W) (p : BProp W)
     (evidence : ContextualEvidence) : Option (GunlogsonState W) :=
   match evidence with

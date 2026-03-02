@@ -7,7 +7,7 @@ import Linglib.Core.Scales.EpistemicScale.Cancellation
 /-!
 # Epistemic Comparative Likelihood — Main Theorems
 
-@cite{holliday-icard-2013} @cite{halpern-2003}
+@cite{holliday-icard-2013} @cite{halpern-2003} @cite{kraft-pratt-seidenberg-1959}
 
 Re-exports `EpistemicScale.Defs` (core definitions, Fin 1/2/3/5) and
 `EpistemicScale.Fin4` (Fin 4 representation theorem), then states the
@@ -19,7 +19,7 @@ namespace Core.Scale
 -- ── Theorem 8 (Kraft, Pratt & Seidenberg 1959) ───
 
 set_option maxHeartbeats 1600000 in
-/-- **Theorem 8a** (Kraft, Pratt & Seidenberg 1959): for |W| < 5,
+/-- **Theorem 8a**: for |W| < 5,
     every FA model is representable by a finitely additive probability
     measure. Below 5 worlds, the logics FA and FP∞ coincide.
 
@@ -50,7 +50,7 @@ theorem theorem8a {W : Type*} [Fintype W]
     obtain ⟨m', hm'⟩ := theorem8a_fin4 (transportFA e sys)
     exact ⟨transportMeasure e m', transfer_repr e sys m' hm'⟩
 
-/-- **Theorem 8b** (Kraft, Pratt & Seidenberg 1959): for |W| ≥ 5,
+/-- **Theorem 8b**: for |W| ≥ 5,
     FA is strictly weaker than FP∞ — there exists a 5-element type
     with an FA ordering admitting no finitely additive measure
     representation. -/

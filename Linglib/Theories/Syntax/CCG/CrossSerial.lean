@@ -60,7 +60,7 @@ In Dutch verb-raising constructions, the infinitive's subject appears
 in what looks like an object position. This category allows the embedded
 subject to be picked up via composition.
 
-  zwemmen : (S\NP)/NP  -- "swim" needing its subject as argument
+  zwemmen : (S\NP)/NP -- "swim" needing its subject as argument
 
 This differs from the simple intransitive VP = S\NP.
 -/
@@ -72,7 +72,7 @@ def InfSubj : Cat := (S \ NP) / NP
 -- This is already in CCG.Basic as `forwardComp`.
 
 /--
-Forward Composition² (B²): X/Y  (Y/Z)/W  →  (X/Z)/W
+Forward Composition² (B²): X/Y (Y/Z)/W → (X/Z)/W
 
 Allows "reaching through" one extra argument.
 -/
@@ -82,7 +82,7 @@ def forwardComp2 : Cat → Cat → Option Cat
   | _, _ => none
 
 /--
-Forward Composition³ (B³): X/Y  ((Y/Z)/W)/V  →  ((X/Z)/W)/V
+Forward Composition³ (B³): X/Y ((Y/Z)/W)/V → ((X/Z)/W)/V
 
 Allows "reaching through" two extra arguments.
 -/

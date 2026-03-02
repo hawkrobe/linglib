@@ -6,7 +6,7 @@ Framework-agnostic vocabulary for definiteness phenomena. These types classify
 definite descriptions, article systems, and presupposition types without
 committing to any particular semantic theory.
 
-The organizing principle is `DefPresupType` (.uniqueness | .familiarity) —
+The organizing principle is `DefPresupType` (.uniqueness |.familiarity) —
 every other type in this module is a dimension that maps into this binary
 distinction: article morphology, pragmatic use type, bridging relation, etc.
 
@@ -25,7 +25,7 @@ namespace Core.Definiteness
 
 /-- The two presupposition types underlying definite descriptions.
 
-Schwarz (2009): these correspond to two morphologically distinct articles
+@cite{schwarz-2009}: these correspond to two morphologically distinct articles
 in languages like German, Fering, Lakhota, and Akan. Every classification
 in this module ultimately maps into this binary type. -/
 inductive DefPresupType where
@@ -34,14 +34,14 @@ inductive DefPresupType where
   deriving DecidableEq, BEq, Repr
 
 /-- Demonstratives (this/that) project D_deix — the familiarity/strong-article
-layer. Schwarz (2013) §5.5 and PG&G (2017). -/
+layer. @cite{schwarz-2013} §5.5 and PG&G (2017). -/
 def demonstrativePresupType : DefPresupType := .familiarity
 
 -- ============================================================================
 -- §2: Article Types (Schwarz 2009)
 -- ============================================================================
 
-/-- Schwarz (2009): article type in the D-domain.
+/-- @cite{schwarz-2009}: article type in the D-domain.
 
 Schwarz argues for two structurally distinct definite articles:
 - Weak: situational uniqueness
@@ -77,7 +77,7 @@ theorem one_layer_one_presup_type :
 -- ============================================================================
 
 /-- Hawkins' (1978) four use types for definite descriptions.
-Schwarz (2013) shows these map systematically onto weak vs strong articles. -/
+@cite{schwarz-2013} shows these map systematically onto weak vs strong articles. -/
 inductive DefiniteUseType where
   | anaphoric          -- Antecedent in prior discourse (strong article)
   | immediateSituation -- Referent present in utterance situation (weak article)
@@ -104,7 +104,7 @@ German and Fering show that bridging splits across the two article forms:
 - Part-whole bridging → weak article (situational uniqueness)
 - Relational bridging → strong article (anaphoric link)
 
-Schwarz's "producer bridging" (e.g., "the play ... the author") is the
+Schwarz's "producer bridging" (e.g., "the play... the author") is the
 prototypical case of relational bridging. -/
 inductive BridgingSubtype where
   | partWhole   -- "the fridge ... the crisper" (weak: situational uniqueness)
@@ -122,7 +122,7 @@ def bridgingPresupType : BridgingSubtype → DefPresupType
 
 /-- How a language expresses the weak/strong article contrast.
 
-Schwarz (2013) surveys languages along two dimensions:
+@cite{schwarz-2013} surveys languages along two dimensions:
 - How many overt article forms? (0, 1, or 2)
 - What expresses weak-article definites? (bare nominal, overt article, etc.) -/
 inductive WeakArticleStrategy where
@@ -142,7 +142,7 @@ inductive WeakArticleStrategy where
 - **Definite** (the): presupposes existence (+ uniqueness or familiarity).
   Retrieves an EXISTING referent.
 
-Heim (1982): indefinites are novel, definites are familiar.
+@cite{heim-1982}: indefinites are novel, definites are familiar.
 This is the dynamic semantics version of the ∃/ι contrast. -/
 inductive Definiteness where
   | indefinite  -- ∃: introduces new dref, no presupposition

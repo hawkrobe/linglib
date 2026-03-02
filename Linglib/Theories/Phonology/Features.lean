@@ -1,7 +1,7 @@
 /-!
 # Phonological Features
 
-Complete segmental feature inventory following Hayes (2009) *Introductory
+Complete segmental feature inventory following @cite{hayes-2009} *Introductory
 Phonology*, Ch 4. The 26 binary features are organized into manner (root),
 laryngeal, and place (labial, coronal, dorsal) categories.
 

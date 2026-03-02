@@ -4,7 +4,7 @@ import Linglib.Phenomena.FillerGap.Islands.Data
 # Manner-of-Speaking Island Effects: Experimental Data
 @cite{lu-degen-2025}
 
-Empirical data from Lu, Pan & Degen (2025), "Evidence for a discourse account
+Empirical data from @cite{lu-degen-2025}, "Evidence for a discourse account
 of manner-of-speaking islands," *Language* 101(4): 627–659.
 
 Five acceptability judgment experiments testing the causal relationship between
@@ -58,7 +58,7 @@ Prosodic focus on the embedded object ameliorates the MoS island effect.
 N = 94 (after exclusions). Within-subjects: 2 focus conditions × MoS verbs.
 
 Example stimuli (9):
-- Verb-focus:     "John didn't **WHISPER** that Mary met with the lawyer."
+- Verb-focus: "John didn't **WHISPER** that Mary met with the lawyer."
                   "Then who did John whisper that Mary met with?"
 - Embedded-focus: "John didn't whisper that Mary met with the **LAWYER**."
                   "Then who did John whisper that Mary met with?"
@@ -199,7 +199,7 @@ the MoS island effect. This is predicted ONLY by the backgroundedness account.
 N = 93. Say vs Say+Adverb.
 
 Example stimuli (18):
-- *Say*:        "John didn't say that Mary met with the lawyer."
+- *Say*: "John didn't say that Mary met with the lawyer."
                 "Then who did John say that Mary met with?"
 - *Say+Adverb*: "John didn't say softly that Mary met with the lawyer."
                 "Then who did John say softly that Mary met with?"
@@ -242,9 +242,9 @@ in Experiment 3a is discourse-driven, not a structural complexity artifact.
 N = 94. 2 focus conditions (adverb-focus vs embedded-focus).
 
 Example stimuli (20):
-- Adverb-focus:    "John didn't say **SOFTLY** that Mary met with the lawyer."
+- Adverb-focus: "John didn't say **SOFTLY** that Mary met with the lawyer."
                    "Then who did John say softly that Mary met with?"
-- Embedded-focus:  "John didn't say softly that Mary met with the **LAWYER**."
+- Embedded-focus: "John didn't say softly that Mary met with the **LAWYER**."
                    "Then who did John say softly that Mary met with?"
 
 (Figure 17)
@@ -278,7 +278,7 @@ end Experiment3b
 
 Verb-frame frequency and sentence complement ratio (SCR) do not significantly
 predict the MoS island effect in ANY experiment. This rules out the
-verb-frame frequency account (Liu et al. 2019, 2022; Kothari 2008). -/
+verb-frame frequency account. -/
 
 section FrequencyNullEffects
 

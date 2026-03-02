@@ -2,7 +2,7 @@ import Linglib.Theories.Semantics.Lexical.Adjective.Theory
 
 /-! # Adjectival Predicate Lexicon Fragment
 
-Gradable adjective entries following Kennedy (2007). Scale type, dimension, antonyms.
+Gradable adjective entries following @cite{kennedy-2007}. Scale type, dimension, antonyms.
 -/
 
 namespace Fragments.English.Predicates.Adjectival

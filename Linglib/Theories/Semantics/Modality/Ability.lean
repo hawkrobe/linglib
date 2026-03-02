@@ -142,7 +142,7 @@ def abilityAsKratzerPossibility (sc : AbilityScenario) (w : World) : Bool :=
 
 /-- **Central result**: perfective ability entails complement actualization.
 
-    If `abilityWithAspect sc .perfective w = true`, then the complement
+    If `abilityWithAspect sc.perfective w = true`, then the complement
     is actualized at `w`. This is the formal account of actuality inferences
     for ability modals.
 
@@ -269,7 +269,7 @@ def causalAbilityEvent (sc : AbilityScenario) (w : World) : Bool :=
 /-- **Aspect-compositionality bridge**: perfective ability is equivalent
     to the existence of a "causal ability event".
 
-    `abilityWithAspect sc .perfective w` = `causalAbilityEvent sc w`.
+    `abilityWithAspect sc.perfective w` = `causalAbilityEvent sc w`.
 
     The left side is our Boolean model of "PFV + ability modal".
     The right side is what you get by asserting the existence of a

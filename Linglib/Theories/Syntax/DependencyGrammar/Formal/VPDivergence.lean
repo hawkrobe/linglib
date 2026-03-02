@@ -67,7 +67,7 @@ theorem strict_containment_star4 :
 theorem tree9_non_constituent_catenae_count :
     (nonConstituentCatenae 4 tree9).length = 6 := by native_decide
 
-/-- **Universal witness for strict containment** (Osborne 2019, p. 108–109):
+/-- **Universal witness for strict containment**:
 
     For any tree with ≥2 nodes and an edge (v, w), the singleton {v} is a
     catena (trivially connected: any singleton is connected in the dep graph)
@@ -137,8 +137,8 @@ def PSTree.hasConstituent (t : PSTree) (ws : List String) : Bool :=
 DG analysis:
 ```
     plays(0)
-   /       \
-Bill(1)  chess(2)
+   / \
+Bill(1) chess(2)
 ```
 - 3 DG constituents: {Bill}, {chess}, {Bill, plays, chess}
 - 6 catenae: {Bill}, {plays}, {chess}, {Bill,plays}, {plays,chess}, {Bill,plays,chess}
@@ -148,7 +148,7 @@ PSG analysis:
 ```
        S
       / \
-   Bill   VP
+   Bill VP
          / \
       plays chess
 ```
@@ -202,7 +202,7 @@ def sheReadsEverything_psg : PSTree :=
 DG analysis — flat tree from `will`:
 ```
         will(0)
-      / |    \      \       \
+      / | \ \ \
 They(1) get(2) teacher(3) present(4) the(5)
                                       |
                                       a(6)
@@ -220,16 +220,16 @@ Simplified DG (UD-style): get(0) → They(1), get(0) → will(2), get(0) → tea
 PSG analysis — deeply layered:
 ```
          S
-       /   \
-    They    VP
+       / \
+    They VP
            / \
-         will  VP
+         will VP
               / \
-           get    VP
-                 /  \
-           the teacher  NP
-                       /  \
-                      a  present
+           get VP
+                 / \
+           the teacher NP
+                       / \
+                      a present
 ```
 Multiple constituents DG doesn't recognize.
 -/

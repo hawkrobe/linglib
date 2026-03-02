@@ -3,7 +3,7 @@ import Linglib.Core.Agent.BToM
 /-!
 # Emotion as Post-Inference Appraisal @cite{houlihan-kleiman-weiner-hewitt-tenenbaum-saxe-2023}
 
-Houlihan, Kleiman-Weiner, Hewitt, Tenenbaum & Saxe (2023) show that emotions
+Houlihan, Kleiman-Weiner, @cite{houlihan-kleiman-weiner-hewitt-tenenbaum-saxe-2023} show that emotions
 are not primitive mental states — they are **computed** from more basic cognitive
 variables via a three-layer architecture:
 
@@ -53,7 +53,7 @@ namespace Core.Agent.Emotion
 -- § 1. Core Types
 -- ════════════════════════════════════════════════════════════════
 
-/-- The four appraisal computation types from Houlihan et al. (2023).
+/-- The four appraisal computation types from @cite{houlihan-kleiman-weiner-hewitt-tenenbaum-saxe-2023}.
 
 Each type is a different way of evaluating an outcome relative
 to the agent's inferred mental states:
@@ -329,7 +329,7 @@ def confusion : EmotionProfile :=
 def excitement : EmotionProfile :=
   ⟨"excitement", ⟨⟨.positive, .irrelevant⟩, ⟨.positive, .positive⟩, O, O⟩, .retrospective⟩
 
-/-- All 20 emotion concepts from Houlihan et al. (2023). -/
+/-- All 20 emotion concepts from @cite{houlihan-kleiman-weiner-hewitt-tenenbaum-saxe-2023}. -/
 def allEmotions : List EmotionProfile :=
   [joy, surprise, pride, gratitude, relief, amusement,
    disappointment, annoyance, fury, embarrassment,

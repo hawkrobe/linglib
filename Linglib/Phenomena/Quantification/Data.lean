@@ -617,7 +617,7 @@ def german_97 : GermanScopeExample :=
   , wordOrder := .verbProjectionRaising
   , observed := .surfaceOnly }
 
-/-- West Flemish data from Haegeman & van Riemsdijk (1986). -/
+/-- West Flemish data from @cite{haegeman-van-riemsdijk-1986}. -/
 structure WestFlemishScopeExample where
   surface : String
   translation : String
@@ -637,7 +637,7 @@ def westFlemish_98b : WestFlemishScopeExample :=
   , wordOrder := .verbProjectionRaising
   , observed := .surfaceOnly }
 
-/-- Dutch equi verb data from Steedman (2000). -/
+/-- Dutch equi verb data from @cite{steedman-2000}. -/
 structure DutchScopeExample where
   surface : String
   translation : String

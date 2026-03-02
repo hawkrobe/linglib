@@ -320,8 +320,8 @@ private theorem permB_not_ie :
            fun h => Eq.mpr (congrFun h .onlyB) id trivial⟩
   exact hNotIn (hIE _ mc_set_without_neg_permB)
 
-/-- Helper: dispatch IE-excludability at .separatelyAB. For any IE-excludable q,
-    (∼q) .separatelyAB holds. -/
+/-- Helper: dispatch IE-excludability at.separatelyAB. For any IE-excludable q,
+    (∼q).separatelyAB holds. -/
 private theorem ie_neg_at_separatelyAB (q : Prop' FCWorld)
     (hqIE : isInnocentlyExcludable fcALT fcPrejacent q) : (∼q) FCWorld.separatelyAB := by
   have hq_in := hqIE.1
@@ -333,7 +333,7 @@ private theorem ie_neg_at_separatelyAB (q : Prop' FCWorld)
   · exact id  -- (∼permAandB) .separatelyAB = ¬False
 
 /-- Helper: For any II-compatible R, adding a target alternative that holds at
-    .separatelyAB and is implied by permAandB preserves II-compatibility. -/
+.separatelyAB and is implied by permAandB preserves II-compatibility. -/
 private theorem extend_II_with_target
     (target : Prop' FCWorld)
     (htarget_alt : target ∈ fcALT)
@@ -374,7 +374,7 @@ private theorem extend_II_with_target
             exact absurd (hAandB_implies u₀ (hu₀ permAandB (Set.mem_union_right _ hψR))) htarg
         · rw [Set.mem_singleton_iff.mp hψT]; exact htarget_sep
 
-/-- Helper: a target alternative in fcALT that holds at .separatelyAB and is
+/-- Helper: a target alternative in fcALT that holds at.separatelyAB and is
     implied by permAandB is innocently includable. -/
 private theorem target_in_II
     (target : Prop' FCWorld)

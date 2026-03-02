@@ -38,7 +38,7 @@ open Core.Proposition
 
 
 /--
-A two-dimensional meaning following Potts (2005).
+A two-dimensional meaning following @cite{potts-2005}.
 
 The key insight: linguistic expressions contribute to TWO independent
 dimensions of meaning that compose by different rules.
@@ -131,7 +131,7 @@ def imp (p q : TwoDimProp W) : TwoDimProp W :=
 
 
 /--
-CI projects through negation (Potts 2005).
+CI projects through negation.
 
 Presuppositions can be filtered by antecedents; CIs cannot.
 -/
@@ -144,8 +144,8 @@ CI projects through conditional antecedent.
 Unlike presuppositions, CIs in the antecedent of a conditional
 are not filtered; they project to the root.
 
-"If the king of France is bald, ..." - presupposes king exists (filtered)
-"If that bastard calls, ..." - CI projects (speaker thinks he's bastard)
+"If the king of France is bald,..." - presupposes king exists (filtered)
+"If that bastard calls,..." - CI projects (speaker thinks he's bastard)
 -/
 theorem ci_projects_from_antecedent (p q : TwoDimProp W) (w : W) :
     (imp p q).ci w = (p.ci w && q.ci w) := rfl
@@ -174,7 +174,7 @@ end TwoDimProp
 
 
 /--
-Types of CI-contributing expressions (Potts 2005, McCready 2010).
+Types of CI-contributing expressions.
 
 Following Potts' taxonomy:
 - **Supplements**: Appositives, parentheticals, supplementary relatives
@@ -254,7 +254,7 @@ def supplementaryAdverb {W : Type*}
 
 
 /--
-CI informativeness ordering (Gutzmann 2015, Lo Guercio 2025).
+CI informativeness ordering.
 
 φ has stronger CI than ψ iff the contexts where φ is felicitous
 are a proper subset of contexts where ψ is felicitous.
@@ -285,7 +285,7 @@ def ciWeakerThan {W : Type*} (φ ψ : TwoDimProp W) : Prop :=
 
 
 /--
-A context for evaluating CI felicity (Gutzmann 2015).
+A context for evaluating CI felicity.
 
 Following Kaplan/Gutzmann, CI meaning restricts the set of
 contexts in which an expression can be felicitously used.
@@ -318,7 +318,7 @@ def isFelicitous (exprType : CIExprType) (target : String) (ctx : CIContext) : B
 /-!
 ## CI Lift: Presupposition → Two-Dimensional Meaning
 
-Wang & Buccola (2025) analyze de re presupposition by bifurcating a
+@cite{wang-2025} analyze de re presupposition by bifurcating a @cite{gutzmann-2015}
 presuppositional meaning into two dimensions using Potts' (2004) CI type system:
 
 - **At-issue**: the assertion component (identity function on the propositional content)
@@ -342,7 +342,7 @@ CI lift: type-shift a presuppositional proposition into a two-dimensional meanin
 The presupposition becomes CI content (projects universally), while the
 assertion becomes at-issue content (composes truth-functionally).
 
-This is the ⟦CI⟧ operator from Wang & Buccola (2025).
+This is the ⟦CI⟧ operator from @cite{wang-2025}.
 -/
 def ciLift {W : Type*} (p : Core.Presupposition.PrProp W) : TwoDimProp W :=
   { atIssue := p.assertion

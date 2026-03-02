@@ -2,7 +2,7 @@ import Linglib.Phenomena.Negation.CzechThreeWayNegTypologyBridge
 
 /-!
 # Staňková & Šimík (2024): Negation in Czech Polar Questions
-@cite{stakov-imk-2024}
+@cite{stakov-imk-2024} @cite{gartner-gyuris-2017}
 
 Experimental data from three naturalness judgment experiments on negation
 in Czech polar questions (Staňková & Šimík, FASL 32 / JSL 33).
@@ -213,7 +213,7 @@ for p (e.g., Eva winning first place → "Didn't Eva win a prize?").
 Median rating = 6 (biased) vs 5 (neutral), Likert 1–7.
 
 This confirms Czech outer negation (FALSUM) is compatible with positive
-evidential bias, unlike English HiNQs (Gärtner & Gyuris 2017). -/
+evidential bias, unlike English HiNQs. -/
 structure PositiveEvidenceSubexp where
   /-- Median rating in positively biased context -/
   medianBiased : Nat

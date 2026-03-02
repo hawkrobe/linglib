@@ -4,10 +4,10 @@ import Linglib.Theories.Semantics.Modality.BiasedPQ
 
 /-!
 # Czech Three-Way Negation: Cross-Linguistic Typology
-@cite{repp-2013} @cite{romero-2024} @cite{stakov-2026} @cite{stakov-imk-2024}
+@cite{repp-2013} @cite{romero-2024} @cite{stakov-2026} @cite{stakov-imk-2024} @cite{gartner-gyuris-2017}
 
 Bridges between the core three-way negation distinction (CzechThreeWayNeg.lean)
-and cross-linguistic frameworks: Romero (2024) PQ typology, Šimík (2024) Czech
+and cross-linguistic frameworks: @cite{romero-2024} PQ typology, Šimík (2024) Czech
 PQ forms, Staňková & Šimík (2024) verb position / context sensitivity.
 
 Also contains example data (CzechNegDatum), bias profiles, and corpus data.
@@ -450,7 +450,7 @@ Each cell records which Czech PQ forms are felicitous under a given
 combination of contextual evidence × original speaker bias. Empty list = no
 form is natural.
 
-Uses `ContextualEvidence` and `OriginalBias` from BiasedPQ (Romero 2024)
+Uses `ContextualEvidence` and `OriginalBias` from BiasedPQ
 rather than Czech-specific copies — these are the same bias dimensions.
 
 Table 2 (glossing over details):
@@ -602,7 +602,7 @@ theorem context_tracks_bias_strength :
 
 /-- Czech outer negation (FALSUM) is compatible with all types of
 evidential bias — positive, negative, and neutral — unlike English HiNQs
-which require negative or neutral evidence (Gärtner & Gyuris 2017).
+which require negative or neutral evidence.
 
 This is confirmed by the positive-evidence subexperiment (S&Š ex. 14):
 V1 PQs with positive evidential bias were rated very natural (median 6/7).

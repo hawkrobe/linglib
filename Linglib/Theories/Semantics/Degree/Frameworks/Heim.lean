@@ -6,7 +6,7 @@ import Linglib.Theories.Semantics.Degree.Frameworks.Kennedy
 # Heim's Sentential Operator Approach
 @cite{heim-2001} @cite{heim-2006}
 
-Heim (2001) "Degree Operators and Scope": the comparative morpheme
+@cite{heim-2001} "Degree Operators and Scope": the comparative morpheme
 `-er` is a sentential operator that introduces degree variables via
 λ-abstraction, rather than being a degree quantifier as in Kennedy's
 approach.

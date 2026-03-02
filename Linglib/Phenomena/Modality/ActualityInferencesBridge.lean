@@ -46,7 +46,7 @@ structure ActualityDatum where
 -- ════════════════════════════════════════════════════
 
 /-- Greek *boro* + perfective (aorist): "She was-able.PFV to swim across"
-    → She swam across. (Hacquard 2006) -/
+    → She swam across. -/
 def greek_pfv : ActualityDatum where
   language := "Greek"
   modalForm := "boro"
@@ -55,7 +55,7 @@ def greek_pfv : ActualityDatum where
   gloss := "Borese na kolimbisi apenant (She was-able.AOR to swim across)"
 
 /-- Greek *boro* + imperfective: "She was-able.IMPF to swim across"
-    ↛ She swam across. (Hacquard 2006) -/
+    ↛ She swam across. -/
 def greek_impf : ActualityDatum where
   language := "Greek"
   modalForm := "boro"
@@ -68,7 +68,7 @@ def greek_impf : ActualityDatum where
 -- ════════════════════════════════════════════════════
 
 /-- Hindi *saknaa* + perfective: "She was-able.PFV to swim across"
-    → She swam across. (Bhatt 1999) -/
+    → She swam across. -/
 def hindi_pfv : ActualityDatum where
   language := "Hindi"
   modalForm := "saknaa"
@@ -77,7 +77,7 @@ def hindi_pfv : ActualityDatum where
   gloss := "Voh pair ke tair sakii (She was-able.PFV to swim across)"
 
 /-- Hindi *saknaa* + imperfective: "She was-able.IMPF to swim across"
-    ↛ She swam across. (Bhatt 1999) -/
+    ↛ She swam across. -/
 def hindi_impf : ActualityDatum where
   language := "Hindi"
   modalForm := "saknaa"
@@ -90,7 +90,7 @@ def hindi_impf : ActualityDatum where
 -- ════════════════════════════════════════════════════
 
 /-- French *pouvoir* + passé composé (perfective): "She was-able.PFV to swim across"
-    → She swam across. (Mari & Martin 2007) -/
+    → She swam across. -/
 def french_pfv : ActualityDatum where
   language := "French"
   modalForm := "pouvoir"
@@ -99,7 +99,7 @@ def french_pfv : ActualityDatum where
   gloss := "Elle a pu traverser à la nage (She was-able.PC to swim across)"
 
 /-- French *pouvoir* + imparfait (imperfective): "She was-able.IMPF to swim across"
-    ↛ She swam across. (Mari & Martin 2007) -/
+    ↛ She swam across. -/
 def french_impf : ActualityDatum where
   language := "French"
   modalForm := "pouvoir"
@@ -112,7 +112,7 @@ def french_impf : ActualityDatum where
 -- ════════════════════════════════════════════════════
 
 /-- English *be able* + episodic (perfective-like): "She was able to swim across"
-    → She swam across. (Bhatt 1999) -/
+    → She swam across. -/
 def english_pfv : ActualityDatum where
   language := "English"
   modalForm := "be able"
@@ -121,7 +121,7 @@ def english_pfv : ActualityDatum where
   gloss := "She was able to swim across (episodic reading)"
 
 /-- English *be able* + habitual (imperfective-like): "She was able to swim across"
-    ↛ She swam across on that occasion. (Bhatt 1999) -/
+    ↛ She swam across on that occasion. -/
 def english_impf : ActualityDatum where
   language := "English"
   modalForm := "be able"
@@ -159,9 +159,9 @@ theorem imperfective_no_entailment :
     impfData.all (·.complementEntailed == false) = true := by native_decide
 
 /-- **Central empirical generalization**: across all 8 data points,
-    `complementEntailed` tracks `aspect == .perfective` exactly.
+    `complementEntailed` tracks `aspect ==.perfective` exactly.
 
-    This is the empirical observation that Nadathur (2023) explains
+    This is the empirical observation that @cite{nadathur-2023} explains
     via the causal sufficiency + aspect interaction. -/
 theorem empirical_matches_theory :
     allData.all (λ d => (d.aspect == .perfective) == d.complementEntailed) = true := by
@@ -187,10 +187,10 @@ open Semantics.Modality.EventRelativity (ModalPosition)
 
 /-- Every datum's `complementEntailed` field matches the position × aspect
 prediction for root modals. All data involves root/ability modals
-(below AspP), so the prediction is `actualityEntailmentPredicted .belowAsp d.aspect`.
+(below AspP), so the prediction is `actualityEntailmentPredicted.belowAsp d.aspect`.
 
 This connects the theory-neutral empirical data (§§ above) to
-Hacquard's (2006) structural explanation: root modals are below Asp,
+@cite{hacquard-2006}'s structural explanation: root modals are below Asp,
 so perfective forces actualization. -/
 theorem data_matches_position_theory :
     allData.all (λ d =>

@@ -8,10 +8,10 @@ import Mathlib.Tactic.Linarith
 @cite{roberts-2012} @cite{tonhauser-beaver-degen-2018}
 
 At-issueness and projectivity are **gradient**, not binary, and **anti-correlated**.
-Tonhauser, Beaver & Degen (2018) report r = .85 (9 expression types) and
+@cite{tonhauser-beaver-degen-2018} report r = .85 (9 expression types) and
 r = .99 (12 predicates) for the positive correlation between not-at-issueness
 and projectivity, equivalently a negative correlation between at-issueness
-and projectivity. This module lifts at-issueness from a binary enum (Roberts 2012)
+and projectivity. This module lifts at-issueness from a binary enum
 to a bounded rational degree with threshold semantics, mirroring the pattern
 used for gradable adjectives (degree > θ → positive meaning).
 
@@ -119,7 +119,7 @@ structure GradientPair where
 /-- Anti-correlation property: across a list of expression ratings,
     higher at-issueness systematically co-occurs with lower projectivity.
 
-    Tonhauser, Beaver & Degen (2018) report r = .85 across 9 expression
+    @cite{tonhauser-beaver-degen-2018} report r = .85 across 9 expression
     types (Exp 1a) and r = .99 across 12 clause-embedding predicates
     (Exp 1b), for the positive correlation between not-at-issueness and
     projectivity. This is equivalent to an anti-correlation between
@@ -143,7 +143,7 @@ structure AntiCorrelation where
 /-- Qualitative connection between QUD and at-issueness: content that
     doesn't distinguish QUD cells has low at-issueness.
 
-    Roberts (2012): at-issue content is content that addresses the QUD.
+    @cite{roberts-2012}: at-issue content is content that addresses the QUD.
     Content that yields the same truth value across all worlds within
     each QUD cell is backgrounded (not at-issue).
 

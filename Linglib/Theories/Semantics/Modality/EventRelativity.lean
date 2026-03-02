@@ -2,10 +2,10 @@ import Linglib.Core.Semantics.Proposition
 import Linglib.Core.Logic.ModalLogic
 
 /-!
-# Event-Relative Modality (Hacquard 2006, 2009, 2010)
-  @cite{hacquard-2006} @cite{hacquard-2009} @cite{hacquard-2010} @cite{alonso-ovalle-royer-2024} @cite{kratzer-1981}Modal domains are projected from event arguments, not stipulated at the
+# Event-Relative Modality
+  @cite{hacquard-2006} @cite{hacquard-2009} @cite{hacquard-2010} @cite{alonso-ovalle-royer-2024} @cite{kratzer-1981}Modal domains are projected from event arguments, not stipulated at the @cite{heim-1999}
 clause level. An **anchoring function** maps events to conversational
-backgrounds (Kratzer 1981): the event type determines the modal flavor.
+backgrounds: the event type determines the modal flavor.
 
 ## Core Architecture
 
@@ -18,7 +18,7 @@ Kratzer background.
 ## Content Licensing (§8–9)
 
 The position → flavor correlation is DERIVED from a single predicate:
-**content licensing** (Hacquard 2010, §6). Epistemic modal bases require
+**content licensing**. Epistemic modal bases require
 a contentful event — one with propositional content. Three event binders:
 
 | Binder | Event | Content? | Epistemic? |
@@ -35,7 +35,7 @@ distinction needed for embedded contexts.
 
 ## Application: Modal Indefinites (§3–7)
 
-Modal indefinites (Alonso-Ovalle & Royer 2024) are existential quantifiers
+Modal indefinites are existential quantifiers
 carrying a modal component whose domain is projected from an event
 argument via an anchoring function.
 
@@ -53,7 +53,7 @@ open Core.ModalLogic (ModalFlavor)
 
 /-- An anchoring function maps events to conversational backgrounds.
 
-This is Hacquard's (2006) central innovation: modal bases are not
+This is @cite{hacquard-2006}'s central innovation: modal bases are not
 global context parameters but projected from event arguments.
 
 The type `AnchoringFn Ev W = Ev → W → List (BProp W)` specializes
@@ -70,13 +70,13 @@ def anchor {Ev W : Type*} (f : AnchoringFn Ev W) (e : Ev) : W → List (BProp W)
 that collapses the contentful cases (speech act, attitude) into
 `speechEvent` and the contentless case (VP event) into `describedEvent`.
 
-This captures the matrix-clause application (Alonso-Ovalle & Royer 2024)
+This captures the matrix-clause application
 where only two anchor types matter. For the full three-way distinction
 needed for embedded contexts, use `EventBinder` directly.
 
-Hacquard (2006): the speech event projects epistemic modality;
+@cite{hacquard-2006}: the speech event projects epistemic modality;
 the described event projects circumstantial/root modality.
-Alonso-Ovalle & Royer (2024) refine circumstantial to include
+@cite{alonso-ovalle-royer-2024} refine circumstantial to include
 random choice as a subtype. -/
 inductive AnchorType where
   /-- Anchored to a contentful event (speech act or attitude) → epistemic available -/
@@ -159,12 +159,12 @@ this one for `AnchoringFn` and `possibility`. -/
 --      (Hacquard 2010, §5–6)
 -- ════════════════════════════════════════════════════
 
-/-! Hacquard (2010) identifies THREE event binders that can supply a
+/-! @cite{hacquard-2010} identifies THREE event binders that can supply a
 modal's event argument. The closest c-commanding binder determines
 which event the modal is relative to:
 
 - e₀: the speech act event (bound by ASSERT / illocutionary force)
-- e₁: an attitude event (bound by attitude verbs: *believe*, *want*, ...)
+- e₁: an attitude event (bound by attitude verbs: *believe*, *want*,...)
 - e₂: the VP event (bound by aspect: IMPF/PRFV)
 
 The binary `AnchorType` (§1) omits e₁ (irrelevant in A-O&R's
@@ -173,7 +173,7 @@ distinction. `EventBinder` adds e₁, which matters because attitude
 events are **contentful** (like speech events), not contentless (like
 VP events).
 
-The key insight (Hacquard 2010, §6): epistemic modal bases require a
+The key insight: epistemic modal bases require a
 contentful event — one with propositional content CON(e). Speech acts
 and attitudes have content; VP events (running, screaming) do not.
 This single predicate derives the position → flavor correlation. -/
@@ -182,13 +182,13 @@ This single predicate derives the position → flavor correlation. -/
 inductive EventBinder where
   /-- e₀: the utterance event (bound by ASSERT) -/
   | speechAct
-  /-- e₁: an attitude verb's event (believe, want, think, ...) -/
+  /-- e₁: an attitude verb's event (believe, want, think,...) -/
   | attitude
   /-- e₂: the VP's described event (bound by aspect) -/
   | vpEvent
   deriving DecidableEq, BEq, Repr
 
-/-- Whether an event has propositional content (Hacquard 2010, §6).
+/-- Whether an event has propositional content.
 
 ⟦f_epis(e)⟧ = {w' : w' compatible with CON(e)} — but CON(e) is
 only defined for events with propositional content. Speech acts
@@ -229,7 +229,7 @@ Contentful events (speech acts, attitudes): epistemic + circumstantial.
 Contentless events (VP events): circumstantial only.
 
 NB: This captures the epistemic/non-epistemic divide from content
-licensing (Hacquard 2010, §6) but omits deontic. Deontic licensing
+licensing but omits deontic. Deontic licensing
 depends on a separate predicate — addressee availability (Hacquard
 2006, (235c)) — not on content. See `hasAddressee` and
 `fullAvailableFlavors` for the complete picture. -/
@@ -256,7 +256,7 @@ theorem speechAct_has_content : EventBinder.speechAct.hasContent = true := rfl
 theorem attitude_has_content : EventBinder.attitude.hasContent = true := rfl
 theorem vpEvent_lacks_content : EventBinder.vpEvent.hasContent = false := rfl
 
-/-- Content licensing: epistemic availability ↔ content (Hacquard 2010, §6). -/
+/-- Content licensing: epistemic availability ↔ content. -/
 theorem epistemic_iff_content (b : EventBinder) :
     b.canProjectEpistemic = b.hasContent := rfl
 
@@ -298,12 +298,12 @@ theorem high_modal_epistemic :
 
 /-- Low modals (bound to VP event by aspect) cannot be epistemic.
 This is the core prediction: Italian restructuring forces modals low
-(below Asp), blocking epistemic readings (Hacquard 2010, §3.2). -/
+(below Asp), blocking epistemic readings. -/
 theorem low_modal_not_epistemic :
     EventBinder.vpEvent.canProjectEpistemic = false := rfl
 
 /-- Contentful events yield both flavors; contentless events yield
-only circumstantial. Derives the pattern in Hacquard's (2010) (49a–f). -/
+only circumstantial. Derives the pattern in @cite{hacquard-2010}'s (49a–f). -/
 theorem content_determines_flavors :
     EventBinder.speechAct.availableFlavors = [.epistemic, .circumstantial] ∧
     EventBinder.attitude.availableFlavors = [.epistemic, .circumstantial] ∧
@@ -382,8 +382,7 @@ Content licensing explains (49e): VP events lack content → no epistemic.
 The remaining unattested combinations (49b: speech act + circumstantial,
 49d: attitude + circumstantial) are semantically possible but
 pragmatically blocked — circumstantial readings of high modals are
-pre-empted by the more informative epistemic reading (Hacquard 2010,
-pp.110–111). -/
+pre-empted by the more informative epistemic reading. -/
 theorem unattested_49e_explained :
     -- (49e) VP event + epistemic: ruled out by content licensing
     EventBinder.vpEvent.canProjectEpistemic = false ∧
@@ -426,8 +425,8 @@ in `Theories/Semantics/Lexical/Verb/ViewpointAspect.lean` to the
 event-relative framework. -/
 
 /-- Position of a modal relative to Aspect in the clause.
-Hacquard (2010, §5.3): this is the structural correlate of the
-Cinque (1999) high/low modal distinction. -/
+@cite{hacquard-2010}: this is the structural correlate of the
+@cite{cinque-1999} high/low modal distinction. -/
 inductive ModalPosition where
   /-- Above AspP: bound by ASSERT (matrix) or attitude verb (embedded) -/
   | aboveAsp
@@ -487,7 +486,7 @@ theorem full_position_flavor_table :
 `ConvBackground = World → List (BProp World)` (in
 `Theories/Semantics/Modality/Kratzer.lean`).
 
-    anchor f e : W → List (BProp W)  ≡  ConvBackground
+    anchor f e : W → List (BProp W) ≡ ConvBackground
 
 This is definitional: `anchor f e = f e`. Event-relative modality
 IS Kratzer modality with the conversational background projected
@@ -516,7 +515,7 @@ theorem accessible_is_background_filter {Ev W : Type*}
 -- ════════════════════════════════════════════════════
 
 /-! The modal evaluation in §2 omits Kratzer's ordering source g. The
-full Hacquard (2010) semantics (29) is:
+full @cite{hacquard-2010} semantics (29) is:
 
     ⟦modal⟧(p)(e)(w) = ∀/∃ w' ∈ max_{g(e)(w)}(∩f(e)(w)). p(w')
 
@@ -530,8 +529,7 @@ might project the speaker's normative standards, while a VP event
 might project stereotypical ordering (inertia). -/
 
 /-- An event-relative ordering source: maps events to world-orderings.
-The ordering source determines how accessible worlds are ranked
-(Kratzer 1981, 2012). Applied to event e and world w, it yields the
+The ordering source determines how accessible worlds are ranked. Applied to event e and world w, it yields the
 set of propositions characterizing the ideal (norms, stereotypes, goals). -/
 abbrev OrderingFn (Ev W : Type*) := Ev → W → List (BProp W)
 
@@ -585,7 +583,7 @@ theorem empty_ordering_reduces {Ev W : Type*} [DecidableEq W]
 --       (Hacquard 2006, §4.1, pp.131–136)
 -- ════════════════════════════════════════════════════
 
-/-! Hacquard (2006, §4.1) proposes that accessibility relations take
+/-! @cite{hacquard-2006} proposes that accessibility relations take
 EVENT arguments (193): `R_f := λe.λw. w is compatible with f(e)`.
 Events project to (individual, time) pairs via two functions:
 
@@ -608,8 +606,8 @@ primitive. Three advantages:
 
 /-- An individual-time pair: the traditional modal parameter.
 
-Kratzer (1981) relativizes accessibility to circumstances at a world.
-Von Fintel & Heim (1999) relativize to an (individual, time). Hacquard
+@cite{kratzer-1981} relativizes accessibility to circumstances at a world.
+@cite{von-fintel-1999} relativize to an (individual, time). Hacquard
 derives the pair from events, making it redundant as a primitive. -/
 structure IndTimePair (Individual TimePoint : Type*) where
   individual : Individual
@@ -618,12 +616,12 @@ structure IndTimePair (Individual TimePoint : Type*) where
 
 /-- Event projection: how events map to individuals and times.
 
-`holder` extracts the thematic participant (Hacquard 2006, p.134):
+`holder` extracts the thematic participant:
 "the agent and temporal trace of the event quantified by Aspect."
 For speech events: the speaker. For attitudes: the experiencer.
 For VP events: the agent or experiencer.
 
-`time` extracts the temporal trace τ (Hacquard 2006, p.135):
+`time` extracts the temporal trace τ:
 the time at which the event occurs, hence the time at which the
 accessibility relation is evaluated. -/
 structure EventProjection (Ev Individual TimePoint : Type*) where
@@ -669,7 +667,7 @@ theorem factored_reduces {Ev W Individual TimePoint : Type*}
 
 /-! (201) "Jane a dû prendre le train."
      Jane must-PST-PFV take the train.
-  a. Given MY evidence NOW, Jane must have taken the train.    [epistemic]
+  a. Given MY evidence NOW, Jane must have taken the train. [epistemic]
   b. Given JANE'S circumstances THEN, Jane had to take the train. [root]
 
 The sentence is ambiguous between an epistemic and a goal-oriented

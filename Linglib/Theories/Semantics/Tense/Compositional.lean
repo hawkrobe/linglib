@@ -118,7 +118,7 @@ def futSimple {Time : Type*} [LT Time] (P : Time → Prop) (eventTime speechTime
 
 /--
 Apply a tense to a Reichenbach frame, constraining R relative to P.
-Tense locates reference time relative to perspective time (Kiparsky 2002),
+Tense locates reference time relative to perspective time,
 not speech time. In root clauses P = S, so this reduces to the standard
 Reichenbach analysis. In SOT languages, embedded P shifts to the matrix
 event time, making the embedded tense relative.
@@ -249,6 +249,8 @@ end Examples
 
 /-!
 ### composeTense Properties
+@cite{kiparsky-2002}
+
 
 `composeTense` is a stipulative function defining how surface tenses compose
 under embedding. The following theorems establish its algebraic properties.

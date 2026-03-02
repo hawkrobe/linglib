@@ -1,11 +1,11 @@
 import Linglib.Theories.Semantics.Modality.EventRelativity
 
 /-!
-# Modal Indefinite Semantics (Alonso-Ovalle & Royer 2024)
+# Modal Indefinite Semantics
 
 @cite{alonso-ovalle-royer-2024} @cite{alonso-ovalle-menendez-benito-2010} @cite{hacquard-2006}Formal denotation of modal indefinites: existential quantifiers carrying a
 modal component whose domain is projected from an event argument via an
-anchoring function (Hacquard 2006). Extracted from EventRelativity §§3–7.
+anchoring function. Extracted from EventRelativity §§3–7.
 
 ## Core Denotation (A-O&R 2024, (59))
 
@@ -86,8 +86,7 @@ for all domain members to satisfy Q.
 
     ⟦MI_UB⟧ = ⟦MI⟧ ∧ ¬∀x[P(x)(w) → Q(x)(w)]
 
-This is the anti-singleton inference of *algún*
-(Alonso-Ovalle & Menéndez-Benito 2010). Items like *yalnhej* lack
+This is the anti-singleton inference of *algún*. Items like *yalnhej* lack
 this condition and are compatible with all P being Q. -/
 def upperBoundedSat {Ev W Entity : Type*}
     (f : AnchoringFn Ev W) (e : Ev) (allW : List W)

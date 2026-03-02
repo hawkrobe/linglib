@@ -102,7 +102,7 @@ instance : Nonempty CausalWorld := ⟨⟨false, false, false⟩⟩
 /--
 Semantics of causal expressions in terms of causal aspects.
 
-From Beller & Gerstenberg (2025):
+From @cite{beller-gerstenberg-2025}:
 - affected: W ∨ H ∨ S (any causal involvement)
 - enabled: W ∨ S (necessity or sufficiency, but not just how)
 - caused: H ∧ (W ∨ S) (process + counterfactual dependence)
@@ -261,7 +261,7 @@ This captures the scalar implicature pattern: stronger expressions
 implicate the presence of stronger causal aspects.
 -/
 
-/-! ## Bridge to Structural Causal Models (Nadathur & Lauer 2020)
+/-! ## Bridge to Structural Causal Models
 
 Beller & Gerstenberg's W, H, S dimensions can be COMPUTED from
 structural causal models, grounding the primitive Boolean features
@@ -332,7 +332,7 @@ theorem overdetermination_world :
 
     The initial cause is sufficient (S) and necessary (W), but NOT
     directly connected (H=false) — it operates through an intermediate.
-    This is Levin's (2019) "intervening causer" scenario. -/
+    This is @cite{levin-2019}'s "intervening causer" scenario. -/
 theorem chain_world :
     causalWorldFromModel chainModel Situation.empty mA mC =
     ⟨true, false, true⟩ := by native_decide
@@ -354,7 +354,7 @@ theorem solo_cause_expression_caused :
 
     Despite sufficiency and necessity, the lack of direct connection
     (H=false) means "caused" doesn't apply. B&G predict speakers will
-    use "enabled" instead — capturing Levin's (2019) intuition that
+    use "enabled" instead — capturing @cite{levin-2019}'s intuition that
     indirect causation is expressed differently. -/
 theorem chain_not_caused :
     expressionMeaning (causalWorldFromModel chainModel Situation.empty mA mC)

@@ -2,7 +2,7 @@ import Mathlib.Order.WithBot
 
 /-!
 # Strong Kleene Three-Valued Logic
-@cite{kleene-1952}
+@cite{kleene-1952} @cite{beaver-2001}
 
 Three-valued truth values and propositional logic following Strong Kleene semantics.
 
@@ -195,7 +195,7 @@ def andWeak : TVal -> TVal -> TVal
   | some a, some b => some (a && b)
   | _, _ => unk
 
-/-- Meta-assertion operator (Beaver & Krahmer 2001): maps * to 0.
+/-- Meta-assertion operator: maps * to 0.
 Makes any trivalent value bivalent by treating undefinedness as falsity. -/
 def metaAssert : TVal -> TVal
   | some b => some b

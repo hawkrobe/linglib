@@ -3,7 +3,7 @@ import Linglib.Core.Semantics.Proposition
 import Linglib.Theories.Semantics.Modality.Kratzer
 
 /-!
-# Neo-Stalnakerian Formalization of Assertion (Rudin 2025)
+# Neo-Stalnakerian Formalization of Assertion
 @cite{rudin-2025} @cite{stalnaker-1978} @cite{veltman-1996} @cite{kratzer-1981}
 
 Rudin proposes that when a speaker asserts a sentence s, she predicates her
@@ -14,8 +14,8 @@ epistemic states compatible with knowing s.
 
 Applied uniformly to all declaratives, this single mechanism derives:
 1. Standard Stalnakerian intersective update for non-epistemic sentences (§4.1)
-2. Veltman's (1996) consistency-test semantics for epistemic *might* (§4.2)
-3. A novel ordering-source update for *might* on Kratzer (1981) semantics (§5)
+2. @cite{veltman-1996}'s consistency-test semantics for epistemic *might* (§4.2)
+3. A novel ordering-source update for *might* on @cite{kratzer-1981} semantics (§5)
 
 The key insight: epistemic modals get nonstandard updates not because they
 have special update semantics, but because they are speaker-orientedly
@@ -46,14 +46,14 @@ def liftProp (p : BProp W) : InfoSensDen W := λ _ => p
     ⟦might-p⟧ⁱ(w) = true iff ∃w' ∈ i, p(w') = true.
     Truth is insensitive to the evaluation world w.
 
-    Rudin (2025) eq. (25); adapted from Yalcin (2007). -/
+    @cite{rudin-2025} eq. (25); adapted from Yalcin (2007). -/
 def mightSimple (p : BProp W) : InfoSensDen W :=
   λ i _ => i.any p
 
 /-- Simple quantificational semantics for epistemic *must*:
     ⟦must-p⟧ⁱ(w) = true iff ∀w' ∈ i, p(w') = true.
 
-    Rudin (2025) Appendix A, eq. (57). -/
+    @cite{rudin-2025} Appendix A, eq. (57). -/
 def mustSimple (p : BProp W) : InfoSensDen W :=
   λ i _ => i.all p
 
@@ -67,26 +67,26 @@ def mustSimple (p : BProp W) : InfoSensDen W :=
     When a speaker asserts s, she presents herself as though her epistemic
     state is a member of MI(s).
 
-    Rudin (2025) Definition (10). -/
+    @cite{rudin-2025} Definition (10). -/
 def MI (sem : InfoSensDen W) (i : List W) : Prop :=
   ∀ w, w ∈ i → sem i w = true
 
 /-- Refinement: i' refines i iff i' ⊆ i.
     Removing worlds monotonically increases information.
 
-    Rudin (2025) Definition (13). -/
+    @cite{rudin-2025} Definition (13). -/
 def refines (i' i : List W) : Prop :=
   ∀ w, w ∈ i' → w ∈ i
 
 /-- A context c is s-compatible iff some non-empty refinement is in MI(s).
 
-    Rudin (2025) Definition (18). -/
+    @cite{rudin-2025} Definition (18). -/
 def sCompatible (sem : InfoSensDen W) (c : List W) : Prop :=
   ∃ c', refines c' c ∧ MI sem c' ∧ c' ≠ []
 
 /-- Rejection of s is licensed when the rejector's state is not s-compatible.
 
-    Rudin (2025) Definition (20). -/
+    @cite{rudin-2025} Definition (20). -/
 def rejectionLicensed (sem : InfoSensDen W) (i_rejector : List W) : Prop :=
   ¬sCompatible sem i_rejector
 
@@ -95,7 +95,7 @@ def rejectionLicensed (sem : InfoSensDen W) (i_rejector : List W) : Prop :=
 /-- MI for non-epistemic sentences: i ∈ MI(p) iff every world in i satisfies p.
     Equivalently, i ⊆ ext(p) — the downward closure of the proposition's extension.
 
-    Rudin (2025) eqs. (22)–(23). -/
+    @cite{rudin-2025} eqs. (22)–(23). -/
 theorem MI_liftProp (p : BProp W) (i : List W) :
     MI (liftProp p) i ↔ ∀ w, w ∈ i → p w = true :=
   Iff.rfl
@@ -104,7 +104,7 @@ theorem MI_liftProp (p : BProp W) (i : List W) :
     The universal quantifier in MI collapses because might's truth conditions
     are insensitive to the evaluation world.
 
-    Rudin (2025) eq. (27b): MI(might-p) = { i : i ∩ p ≠ ∅ }. -/
+    @cite{rudin-2025} eq. (27b): MI(might-p) = { i : i ∩ p ≠ ∅ }. -/
 theorem MI_mightSimple (p : BProp W) (i : List W) (hi : i ≠ []) :
     MI (mightSimple p) i ↔ i.any p = true := by
   constructor
@@ -118,7 +118,7 @@ theorem MI_mightSimple (p : BProp W) (i : List W) (hi : i ≠ []) :
     Since must universally quantifies over the same set i that MI quantifies
     over, the two collapse: MI(must-p) = { i : i ⊆ p }.
 
-    Rudin (2025) Appendix A, eq. (58). -/
+    @cite{rudin-2025} Appendix A, eq. (58). -/
 theorem MI_mustSimple (p : BProp W) (i : List W) (hi : i ≠ []) :
     MI (mustSimple p) i ↔ ∀ w, w ∈ i → p w = true := by
   constructor
@@ -139,20 +139,20 @@ theorem MI_must_eq_MI_lift (p : BProp W) (i : List W) (hi : i ≠ []) :
 /-- NSF update for non-epistemic sentences: intersect with proposition.
     The most conservative refinement of c that lands in MI(liftProp p).
 
-    Rudin (2025) eq. (24). -/
+    @cite{rudin-2025} eq. (24). -/
 def nsfUpdateNonEpistemic (p : BProp W) (c : List W) : List W :=
   c.filter p
 
 /-- NSF update for might-p (simple semantics): consistency test.
     Leave context unchanged if c has p-worlds; anomaly otherwise.
 
-    Rudin (2025) eq. (29). -/
+    @cite{rudin-2025} eq. (29). -/
 def nsfUpdateMight (p : BProp W) (c : List W) : List W :=
   if c.any p then c else []
 
 /-- NSF update for must-p (simple semantics): same as non-epistemic.
 
-    Rudin (2025) Appendix A, eq. (59). -/
+    @cite{rudin-2025} Appendix A, eq. (59). -/
 def nsfUpdateMust (p : BProp W) (c : List W) : List W :=
   c.filter p
 
@@ -188,16 +188,16 @@ theorem no_p_worlds_not_compatible (p : BProp W) (c : List W)
 
     Given solipsistic contextualist truth conditions for might and the
     NSF's assertive machinery, the update potential for might-p is:
-    - c[might-p] = c   if c ∩ p ≠ ∅  (test passes)
-    - c[might-p] = ∅   if c ∩ p = ∅  (anomaly)
+    - c[might-p] = c if c ∩ p ≠ ∅ (test passes)
+    - c[might-p] = ∅ if c ∩ p = ∅ (anomaly)
 
-    This is exactly Veltman (1996), derived rather than stipulated.
+    This is exactly @cite{veltman-1996}, derived rather than stipulated.
     The derivation uses `context_in_MI_might` (compatible case) and
     `no_p_worlds_not_compatible` (incompatible case).
 
     Bridges `nsfUpdateMight` to `Update.might` from UpdateSemantics.
 
-    Rudin (2025) §4.2; cf. Veltman (1996), Yalcin (2007, 2011). -/
+    @cite{rudin-2025} §4.2; cf. @cite{veltman-1996}, Yalcin (2007, 2011). -/
 theorem nsfUpdateMight_spec (p : BProp W) (c : List W) :
     nsfUpdateMight p c = (if c.any p then c else []) :=
   rfl
@@ -205,7 +205,7 @@ theorem nsfUpdateMight_spec (p : BProp W) (c : List W) :
 /-- NSF update for must-p equals update for its prejacent.
     Must-p updates identically to a non-epistemic assertion of p.
 
-    Rudin (2025) Appendix A, eq. (59). -/
+    @cite{rudin-2025} Appendix A, eq. (59). -/
 theorem nsfUpdateMust_eq_nonEpistemic (p : BProp W) (c : List W) :
     nsfUpdateMust p c = nsfUpdateNonEpistemic p c :=
   rfl
@@ -214,7 +214,7 @@ theorem nsfUpdateMust_eq_nonEpistemic (p : BProp W) (c : List W) :
 
     For sentences whose denotation doesn't vary with the information
     parameter, the NSF update is intersection with the proposition —
-    exactly Stalnaker's (1978) original formalization.
+    exactly @cite{stalnaker-1978}'s original formalization.
 
     Bridges `nsfUpdateNonEpistemic` to `ContextSet.update` from CommonGround:
     both compute c ∩ p (filter c to p-worlds). -/
@@ -255,10 +255,10 @@ theorem rejection_nonEpistemic (p : BProp W) (i : List W) (_ : i ≠ []) :
     *assertor's*. The assertor's might-claim can be true (she has
     p-worlds) while the rejector is licensed to reject (he has none).
 
-    This predicts Khoo's (2015) finding that might-claims can be
+    This predicts @cite{khoo-2015}'s finding that might-claims can be
     simultaneously not-judged-false and rejected.
 
-    Rudin (2025) §4.2.1. -/
+    @cite{rudin-2025} §4.2.1. -/
 theorem rejection_mightSimple (p : BProp W) (i : List W) :
     rejectionLicensed (mightSimple p) i ↔ ¬(sCompatible (mightSimple p) i) :=
   Iff.rfl
@@ -281,8 +281,8 @@ open Semantics.Attitudes.Intensional (World allWorlds)
 /-- Epistemic state (ordering version): a modal base (set of worlds)
     paired with an ordering source (set of propositions ranking those worlds).
 
-    Rudin (2025) Definition (43):
-      D_i = { ⟨b_i, o_i⟩ : b_i ∈ D_st ∧ o_i ∈ ℘D_st }  -/
+    @cite{rudin-2025} Definition (43):
+      D_i = { ⟨b_i, o_i⟩ : b_i ∈ D_st ∧ o_i ∈ ℘D_st } -/
 structure OrdEpistemicState where
   /-- Modal base: the set of epistemically accessible worlds -/
   base : List World
@@ -293,29 +293,29 @@ structure OrdEpistemicState where
     A world w is strictly dominated by w' iff w' satisfies a proper superset
     of the ordering propositions that w satisfies.
 
-    Rudin (2025) eq. (44); Kratzer (1981, 1991). -/
+    @cite{rudin-2025} eq. (44); Kratzer (1981, 1991). -/
 def OrdEpistemicState.bestWorlds (s : OrdEpistemicState) : List World :=
   s.base.filter λ w =>
     !s.base.any λ w' =>
       atLeastAsGoodAs s.ordering w' w && !atLeastAsGoodAs s.ordering w w'
 
-/-- Ordering semantics for might (Kratzer 1981, 1991):
+/-- Ordering semantics for might:
     ⟦might-p⟧ⁱ(w) = true iff ∃w' ∈ BEST_{b_i,o_i}, p(w') = true.
 
-    Rudin (2025) eq. (45). -/
+    @cite{rudin-2025} eq. (45). -/
 def mightOrdering (p : BProp World) (s : OrdEpistemicState) (_ : World) : Bool :=
   s.bestWorlds.any p
 
 /-- MI for ordering-semantic might-p: the set of epistemic states whose
     BEST worlds include at least one p-world.
 
-    Rudin (2025) eq. (54b). -/
+    @cite{rudin-2025} eq. (54b). -/
 def MI_ord (p : BProp World) (s : OrdEpistemicState) : Prop :=
   s.bestWorlds.any p = true
 
 /-- Refinement (ordering version): only the modal base is refined.
 
-    Rudin (2025) Definition (46). -/
+    @cite{rudin-2025} Definition (46). -/
 def OrdEpistemicState.refines (c' c : OrdEpistemicState) : Prop :=
   ∀ w, w ∈ c'.base → w ∈ c.base
 
@@ -326,7 +326,7 @@ def OrdEpistemicState.refines (c' c : OrdEpistemicState) : Prop :=
     ordering source. This makes p-worlds more likely to be among the BEST
     worlds, yielding an informative (non-trivial) update.
 
-    Rudin (2025) eq. (56). -/
+    @cite{rudin-2025} eq. (56). -/
 def nsfUpdateMightOrd (p : BProp World) (c : OrdEpistemicState) : OrdEpistemicState :=
   if (c.base.filter p).isEmpty then
     { base := [], ordering := c.ordering }  -- anomaly
@@ -439,7 +439,7 @@ private theorem strict_dom_more_sat
     maximum satisfaction count is maximal. Since the base has p-worlds,
     BEST_{b, A+p} ∩ p ≠ ∅.
 
-    Rudin (2025) §5.3, pp. 77–78. -/
+    @cite{rudin-2025} §5.3, pp. 77–78. -/
 theorem ordering_update_commensurate
     (c : OrdEpistemicState) (p : BProp World)
     (hCompat : c.base.any p = true) :
@@ -492,7 +492,7 @@ theorem ordering_update_commensurate
     does not guarantee that the resulting context will entail anything
     not already entailed by might-p.
 
-    Rudin (2025) §5.3. -/
+    @cite{rudin-2025} §5.3. -/
 theorem ordering_update_conservative
     (c : OrdEpistemicState) (p : BProp World)
     (hCompat : c.base.any p = true) :
@@ -509,7 +509,7 @@ theorem ordering_update_conservative
 /-- Non-epistemic sentences still get standard intersective update
     in the ordering version: the ordering source is unchanged.
 
-    Rudin (2025) eq. (52). -/
+    @cite{rudin-2025} eq. (52). -/
 theorem ordering_nonEpistemic_preserves_ordering
     (c : OrdEpistemicState) (p : BProp World) :
     let c' : OrdEpistemicState :=
@@ -519,17 +519,17 @@ theorem ordering_nonEpistemic_preserves_ordering
 
 /-! ### Appendix A2: Must on ordering semantics -/
 
-/-- Ordering semantics for must (Kratzer 1981, 1991):
+/-- Ordering semantics for must:
     ⟦must-p⟧ⁱ(w) = true iff ∀w' ∈ BEST_{b_i,o_i}, p(w') = true.
 
-    Rudin (2025) eq. (60). -/
+    @cite{rudin-2025} eq. (60). -/
 def mustOrdering (p : BProp World) (s : OrdEpistemicState) (_ : World) : Bool :=
   s.bestWorlds.all p
 
 /-- MI for ordering-semantic must-p: the set of epistemic states whose
     BEST worlds are all p-worlds.
 
-    Rudin (2025) eq. (61). -/
+    @cite{rudin-2025} eq. (61). -/
 def MI_ord_must (p : BProp World) (s : OrdEpistemicState) : Prop :=
   ∀ w, w ∈ s.bestWorlds → p w = true
 
@@ -550,7 +550,7 @@ def pDisjoint (p q : BProp World) (base : List World) : Bool :=
     keep non-p-worlds in BEST. Removing them ensures all BEST worlds
     satisfy p.
 
-    Rudin (2025) eq. (64). -/
+    @cite{rudin-2025} eq. (64). -/
 def nsfUpdateMustOrd (p : BProp World) (c : OrdEpistemicState) : OrdEpistemicState :=
   if (c.base.filter p).isEmpty then
     { base := [], ordering := c.ordering }  -- anomaly
@@ -581,11 +581,11 @@ section RelationalSemantics
 open Semantics.Modality.Kratzer
 open Semantics.Attitudes.Intensional (World allWorlds)
 
-/-- Relational semantics for might (Kratzer 1977):
+/-- Relational semantics for might:
     ⟦might-p⟧ⁱ(w) = true iff ∃w' ∈ f_i(w), p(w') = true,
     where f_i is the epistemic accessibility function determined by i.
 
-    Rudin (2025) eq. (65). -/
+    @cite{rudin-2025} eq. (65). -/
 def mightRelational (f : World → List World) (p : BProp World) (w : World) : Bool :=
   (f w).any p
 
@@ -594,18 +594,18 @@ def mightRelational (f : World → List World) (p : BProp World) (w : World) : B
     the speaker's epistemic state maps each accessible world to
     the full epistemic state.
 
-    Rudin (2025) eq. (67). -/
+    @cite{rudin-2025} eq. (67). -/
 def EpistemicClosure (f : World → List World) (i : List World) : Prop :=
   ∀ w, w ∈ i → f w = i
 
 /-- Under epistemic closure, MI(might-p) on relational semantics
     is { i : i ∩ p ≠ ∅ } — identical to the domain semantics result.
 
-    Proof follows Rudin (2025) eq. (69a–c):
+    Proof follows @cite{rudin-2025} eq. (69a–c):
     - If i ∩ p ≠ ∅, then for any w ∈ i, f(w) = i has p-worlds ✓
     - If i ∩ p = ∅, then for any w ∈ i, f(w) = i has no p-worlds ✗
 
-    Rudin (2025) Appendix B1, eq. (69c). -/
+    @cite{rudin-2025} Appendix B1, eq. (69c). -/
 theorem MI_relational_might_eq_domain
     (f : World → List World) (i : List World) (p : BProp World)
     (hClosed : EpistemicClosure f i) (hi : i ≠ []) :
@@ -629,7 +629,7 @@ def mustRelational (f : World → List World) (p : BProp World) (w : World) : Bo
 /-- Under epistemic closure, MI(must-p) on relational semantics
     is { i : i ⊆ p } — identical to the domain semantics result.
 
-    Rudin (2025) Appendix B1 (analogous to eq. 69). -/
+    @cite{rudin-2025} Appendix B1 (analogous to eq. 69). -/
 theorem MI_relational_must_eq_domain
     (f : World → List World) (i : List World) (p : BProp World)
     (hClosed : EpistemicClosure f i) (_hi : i ≠ []) :
@@ -650,7 +650,7 @@ theorem MI_relational_must_eq_domain
     ⟦might-p⟧ⁱ(w) = true iff ∃w' ∈ BEST_{f_i(w), g_i(w)}, p(w') = true,
     where g_i maps worlds to ordering sources.
 
-    Rudin (2025) eq. (70). -/
+    @cite{rudin-2025} eq. (70). -/
 def mightRelOrd (f : World → List World) (g : World → List (BProp World))
     (p : BProp World) (w : World) : Bool :=
   let s : OrdEpistemicState := { base := f w, ordering := g w }
@@ -658,7 +658,7 @@ def mightRelOrd (f : World → List World) (g : World → List (BProp World))
 
 /-- Ordering closure: g maps every world in b_i to the same ordering o_i.
 
-    Rudin (2025) eq. (71). -/
+    @cite{rudin-2025} eq. (71). -/
 def OrderingClosure (g : World → List (BProp World))
     (base : List World) (ordering : List (BProp World)) : Prop :=
   ∀ w, w ∈ base → g w = ordering
@@ -667,7 +667,7 @@ def OrderingClosure (g : World → List (BProp World))
     relational ordering semantics equals { i : BEST_{b_i,o_i} has p-world }
     — identical to the domain ordering result.
 
-    Rudin (2025) Appendix B2, eq. (73). -/
+    @cite{rudin-2025} Appendix B2, eq. (73). -/
 theorem MI_relOrd_might_eq_domain
     (f : World → List World) (g : World → List (BProp World))
     (i : OrdEpistemicState) (p : BProp World)
@@ -725,11 +725,11 @@ theorem nonEpistemic_truth_acceptance_biconditional
     - Rejection depends on the *rejector's* information parameter
     - These are different parameters that can diverge
 
-    This predicts the empirical pattern in Khoo (2015): participants
+    This predicts the empirical pattern in @cite{khoo-2015}: participants
     reject might-claims (mean Likert rejection ~5.03) without judging
     them false (mean Likert falsity ~2.42).
 
-    Rudin (2025) §4.3, bridging §4.2.1. -/
+    @cite{rudin-2025} §4.3, bridging §4.2.1. -/
 theorem might_truth_acceptance_dissociate
     (p : BProp W) (c_assertor c_rejector : List W)
     (h_assertor_has_p : c_assertor.any p = true)

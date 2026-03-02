@@ -1,5 +1,5 @@
 /-!
-# Ozaki (2025) — Japanese Accusative/Ablative Alternation: Data
+# @cite{ozaki-2025} — Japanese Accusative/Ablative Alternation: Data
 @cite{ozaki-2025}
 
 Empirical data from Ozaki (2025, CLS 61) on Japanese departure verbs

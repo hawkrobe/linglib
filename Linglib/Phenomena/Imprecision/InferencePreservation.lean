@@ -52,7 +52,7 @@ The alternatives of a numeral n include nearby numerals.
 If n contradicts m on precise reading, imprecise construal can't
 be compatible with m.
 
-Source: Dissertation Chapter 6, Sauerland & Stateva (2007)
+Source: Dissertation Chapter 6, @cite{sauerland-stateva-2007}
 -/
 structure NumeralBlockingDatum where
   /-- The numeral -/
@@ -174,7 +174,7 @@ Numeral-modified definites: "the four doors"
 These have homogeneity gaps but resist non-maximality.
 The numeral creates subdomain alternatives.
 
-Source: Brisson (1998), Križ (2015), dissertation Chapter 7
+Source: @cite{brisson-1998}, Križ (2015), dissertation Chapter 7
 -/
 structure NumeralDefiniteBlockingDatum where
   /-- The sentence -/

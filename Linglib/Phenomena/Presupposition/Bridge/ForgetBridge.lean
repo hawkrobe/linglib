@@ -4,6 +4,8 @@ import Linglib.Fragments.English.Predicates.Verbal
 
 /-!
 # Forget Bridge: Pre-Existence Theory vs. Empirical Data
+@cite{white-2014}
+
 
 Connects the pre-existence theory (from `PreExistence.lean`) to
 empirical data about *forget*'s presuppositions (from
@@ -14,7 +16,7 @@ empirical data about *forget*'s presuppositions (from
 1. **Pre-existence predictions match data** — `needsModalInsertion`
    correctly predicts which frames get modal vs. non-modal presuppositions
 
-2. **MCA overprediction** — the Modalized Complement Analysis (White 2014)
+2. **MCA overprediction** — the Modalized Complement Analysis
    wrongly predicts a modal presupposition for the gerund case
 
 3. **Fragment consistency** — the two Fragment entries for *forget*
@@ -35,7 +37,7 @@ open Fragments.English.Predicates.Verbal
 
 /-! The pre-existence theory predicts: modal presupposition iff the
     complement type does NOT satisfy pre-existence. We verify this
-    against each judgment from Williams (2025). -/
+    against each judgment from @cite{ippolito-kiss-williams-2025}. -/
 
 /-- Finite CP: pre-existence satisfied → non-modal presupposition.
     Matches: "forgot that she stopped" presupposes she stopped. -/
@@ -45,7 +47,7 @@ theorem preEx_correct_finiteCP :
   ⟨rfl, rfl⟩
 
 /-- Gerund: pre-existence satisfied → non-modal presupposition.
-    Matches: "forgot stopping by" presupposes stopped by.
+    Matches: "forgot stopping by" presupposes stopped.
     This is the case that refutes the MCA's overprediction. -/
 theorem preEx_correct_gerund :
     needsModalInsertion forget_gerund.frame = false ∧
@@ -53,7 +55,7 @@ theorem preEx_correct_gerund :
   ⟨rfl, rfl⟩
 
 /-- Plain infinitive: pre-existence NOT satisfied → modal presupposition.
-    Matches: "forgot to stop by" presupposes was supposed to stop by. -/
+    Matches: "forgot to stop by" presupposes was supposed to stop. -/
 theorem preEx_correct_infinitival :
     needsModalInsertion forget_infinitival.frame = true ∧
     forget_infinitival.content = .modal :=
@@ -70,7 +72,7 @@ theorem preEx_matches_all_data :
 -- §2. MCA Overprediction
 -- ============================================================================
 
-/-! The Modalized Complement Analysis (White 2014) predicts modal
+/-! The Modalized Complement Analysis predicts modal
     presuppositions for ALL non-finite complements. This overgenerates
     for gerunds: "forgot stopping by" has a non-modal presupposition. -/
 
@@ -107,7 +109,7 @@ theorem preEx_score :
     - `forget` (implicative, infinitival complement): "forgot to VP"
     - `forget_rog` (factive/rogative, finite complement): "forgot that p"
 
-    Under Williams (2025), these are NOT two distinct lexical items but
+    Un@cite{ippolito-kiss-williams-2025}, these are NOT two distinct lexical items but
     one verb with uniform factivity. The Fragment's split is a practical
     choice: it separates the implicative entailment pattern (forgot to VP
     → didn't VP) from the rogative/factive pattern (forgot that p / forgot

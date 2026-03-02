@@ -6,7 +6,7 @@ import Linglib.Theories.Syntax.Minimalism.Formal.ExtendedProjection.Basic
 # Italian Verb Entries @cite{fusco-sgrizzi-2025}
 
 Italian attitude and causative-attitude verbs, with emphasis on the
-*di*/*a* infinitival alternation documented in Fusco & Sgrizzi (2025).
+*di*/*a* infinitival alternation documented in @cite{fusco-sgrizzi-2025}.
 
 ## The *di*/*a* Alternation
 
@@ -71,7 +71,7 @@ structure ItalianVerbEntry extends VerbCore where
 /-- *convincere* 'convince' — causative attitude verb with dual infinitival
     selection. Takes *di*-infinitives (belief) and *a*-infinitives (intention).
 
-    Fusco & Sgrizzi (2025), ex. (1)–(2):
+    @cite{fusco-sgrizzi-2025}, ex. (1)–(2):
     - (1a) Maria ha convinto Paolo di essere in pericolo (belief)
     - (1b) Maria ha convinto Paolo a partire (intention) -/
 def convincere : ItalianVerbEntry :=
@@ -89,7 +89,7 @@ def convincere : ItalianVerbEntry :=
 /-- *persuadere* 'persuade' — intention-only causative attitude verb.
     Selects only *a*-infinitives (no belief reading).
 
-    Fusco & Sgrizzi (2025), §2: *persuadere* patterns exclusively with
+    @cite{fusco-sgrizzi-2025}, §2: *persuadere* patterns exclusively with
     *a*-complements, unlike *convincere* which alternates. -/
 def persuadere : ItalianVerbEntry :=
   { form := "persuadere"

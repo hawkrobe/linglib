@@ -94,7 +94,7 @@ theorem size_determines_reading (cs : ComplementSize) :
     proposition ∃e. P(e), yielding a belief-compatible propositional content.
 
     This is `existsClosureW` from event semantics, re-exported under the
-    name used in Fusco & Sgrizzi (2025). -/
+    name used in @cite{fusco-sgrizzi-2025}. -/
 abbrev closure {W Time : Type*} [LE Time] := @existsClosureW W Time _
 
 -- ════════════════════════════════════════════════════════════════

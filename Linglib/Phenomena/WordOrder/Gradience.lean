@@ -3,12 +3,11 @@ import Linglib.Phenomena.WordOrder.Studies.HahnDegenFutrell2021
 import Linglib.Phenomena.WordOrder.Studies.FutrellEtAl2020
 
 /-!
-# Gradient Word-Order Measures (Levshina, Namboodiripad et al. 2023)
+# Gradient Word-Order Measures
 @cite{levshina-stoynova-2023}
 
 Levshina, Namboodiripad, Allassonnière-Tang, Kramer, Talamo, Verkerk, Wilmoth,
-Garrido Rodriguez, Gupton, Kidd, Liu, Naccarato, Nordlinger, Panova & Stoynova
-(2023) "Why we need a gradient approach to word order" (*Linguistics*
+Garrido Rodriguez, Gupton, Kidd, Liu, Naccarato, Nordlinger, @cite{levshina-stoynova-2023} "Why we need a gradient approach to word order" (*Linguistics*
 61(4):825–883) argues that word-order typology should use continuous measures
 (proportions, Shannon entropy, mutual information) rather than categorical labels
 (SVO, SOV, "rigid", "flexible").

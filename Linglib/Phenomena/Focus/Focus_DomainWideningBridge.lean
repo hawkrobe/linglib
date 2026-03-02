@@ -27,7 +27,7 @@ open Semantics.Questions
 -- A. Alternative Source
 -- ============================================================================
 
-/-- Where the alternatives for *just* come from.
+/-- Where the alternatives for *just* come.
     Roothian alternatives are the standard focus-semantic alternatives;
     the other sources are what distinguish *just* from *only*. -/
 inductive AlternativeSource where

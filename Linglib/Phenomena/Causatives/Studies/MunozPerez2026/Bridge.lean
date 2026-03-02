@@ -6,7 +6,7 @@ import Linglib.Fragments.Spanish.Predicates
 import Linglib.Fragments.Spanish.Clitics
 
 /-!
-# Muñoz Pérez (2026) — Bridge Theorems
+# Muñoz @cite{munoz-perez-2026} — Bridge Theorems
 @cite{munoz-perez-2026}
 
 Derives the paper's empirical predictions by connecting the generic

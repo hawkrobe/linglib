@@ -86,7 +86,7 @@ def dare_ka : JapaneseQuantEntry :=
 
 /-- 誰も dare_mo "everyone / nobody" — universal (affirmative) or
     negative universal (with clausemate negation: dare-mo...nai).
-    Shimoyama (2006): -mo is Hamblin universal over indeterminate set. -/
+    @cite{shimoyama-2006}: -mo is Hamblin universal over indeterminate set. -/
 def dare_mo : JapaneseQuantEntry :=
   { form := "誰も"
   , romaji := "dare-mo"
@@ -157,7 +157,7 @@ theorem dare_mo_indeterminate :
   ⟨rfl, rfl⟩
 
 /-- Particle shift: same indeterminate base, different force.
-    ka → existential, mo → universal (Shimoyama 2006). -/
+    ka → existential, mo → universal. -/
 theorem particle_force_shift :
     dare_ka.qforce = .existential ∧ dare_mo.qforce = .universal :=
   ⟨rfl, rfl⟩

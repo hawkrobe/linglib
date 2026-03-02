@@ -10,7 +10,7 @@ Bridges between Hamblin/partition question types and the inquisitive
 `Discourse.Issue` type (defined in Core/Discourse/QUD.lean).
 
 Core types (`Discourse.InfoState`, `Discourse.Issue`, `Discourse.supports`,
-`Discourse.propEntails`) and Roberts (2012) QUD structure
+`Discourse.propEntails`) and @cite{roberts-2012} QUD structure
 (`Discourse.moveRelevant`, `Discourse.partiallyAnswers`,
 `Discourse.questionEntails`) are defined in `Core/Discourse/QUD.lean`.
 

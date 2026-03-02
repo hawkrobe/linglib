@@ -8,8 +8,7 @@ Closed-class functional items relevant to Hungarian clause structure.
 
 ## Complementizer *hogy*
 
-The complementizer *hogy* 'that' is the key structural marker in Egressy
-(2026): its presence signals a full CP complement (phase boundary, opaque
+The complementizer *hogy* 'that' is the key structural marker in @cite{egressy-2026}: its presence signals a full CP complement (phase boundary, opaque
 to tense Agree), while its absence signals a bare TP complement
 (transparent to tense Agree).
 
@@ -37,7 +36,7 @@ structure HungarianCompEntry where
   deriving Repr, BEq
 
 /-- *hogy* 'that' — complementizer projecting a full CP.
-    Egressy (2026): *hogy*-clauses constitute CP phase boundaries,
+    @cite{egressy-2026}: *hogy*-clauses constitute CP phase boundaries,
     blocking upward Agree for [uPAST]. -/
 def hogy : HungarianCompEntry where
   form := "hogy"

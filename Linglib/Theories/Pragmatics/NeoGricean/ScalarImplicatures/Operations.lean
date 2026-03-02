@@ -45,7 +45,7 @@ namespace NeoGricean
 /--
 Operations on scalar implicatures.
 
-Following Horn (1972), speakers can:
+Following @cite{horn-1972}, speakers can:
 - Assert/reinforce the implicature ("just two", "only two")
 - Contradict/cancel the implicature ("not just two, but three")
 - Suspend the implicature ("at least two", "two if not more")
@@ -111,7 +111,7 @@ structure OperationExamples where
   contradictExamples : List String
   suspendExamples : List String
 
-/-- Examples for "two" following Horn (1972) -/
+/-- Examples for "two" following @cite{horn-1972} -/
 def twoExamples : OperationExamples where
   numeral := .two
   assertExamples := [

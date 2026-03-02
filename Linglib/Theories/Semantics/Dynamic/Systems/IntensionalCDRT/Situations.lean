@@ -332,7 +332,7 @@ theorem dynIND_same_world {W Time E : Type*}
 /--
 Temporal shift is parasitic on modal donkey anaphora.
 
-Mendes (2025) §3.2: the future-oriented interpretation of SF is not due
+@cite{mendes-2025} §3.2: the future-oriented interpretation of SF is not due
 to an independent temporal operator. Instead, it follows from:
 
 1. SUBJ introduces s₁ ∈ hist(s₀) - modal component
@@ -510,7 +510,7 @@ Step-by-step derivation following paper's formulas.
 (58) ⟦atender⟧ = λxλs. answer(x)(s)
 (59) ⟦ela⟧ = λP.P(maria) (bound to Maria in discourse)
 (60) Full antecedent: SUBJ^s₁_{s₀}[FUT; at-home(maria)(s₁)]
-(61) Full consequent: answer(maria)(s₁)  -- anchored to s₁
+(61) Full consequent: answer(maria)(s₁) -- anchored to s₁
 (62) Conditional: ∀(g,s₀)∈c: if ⟦antecedent⟧ then ⟦consequent⟧
 (63) Result: Universal over historical alternatives where Maria is home
 -/

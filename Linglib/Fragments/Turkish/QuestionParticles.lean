@@ -8,7 +8,7 @@ import Linglib.Theories.Semantics.Questions.QParticleLayer
 Turkish polar question particle *mI* (with vowel-harmony allomorphs
 mı/mi/mu/mü). Following Turk, Hirsch & İnce (2026), *mI* heads PolP
 and bears focus (Σ_F). Its UPOS category is `PART`, which is
-crucial for category-match alternative computation (Fox & Katzir 2011):
+crucial for category-match alternative computation:
 modals are `AUX`, so category match excludes them from mI's alternatives.
 
 -/

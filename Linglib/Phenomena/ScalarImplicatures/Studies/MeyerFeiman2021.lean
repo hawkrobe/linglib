@@ -2,7 +2,7 @@ import Linglib.Phenomena.ScalarImplicatures.Basic
 import Linglib.Phenomena.Modality.FreeChoice
 
 /-!
-# Meyer & Feiman (2021) — Composing Alternatives
+# @cite{meyer-feiman-2021} — Composing Alternatives
 @cite{bar-lev-fox-2017} @cite{chierchia-2004} @cite{fox-2007} @cite{meyer-feiman-2021}
 
 Structural priming evidence that scalar and free choice implicatures
@@ -60,7 +60,7 @@ Meyer & Feiman's key theoretical distinction (§1.2, §5):
 - `online`: alternatives computed from the Horn scale at processing time
   (e.g., *some* → {*most*, *all*} derived from ⟨some, most, all⟩)
 - `offline`: alternatives stored with the lexical entry
-  (e.g., *three* → {*one*, *two*, *four*, ...} stored in the numeral system) -/
+  (e.g., *three* → {*one*, *two*, *four*,...} stored in the numeral system) -/
 inductive AltGenSource where
   /-- Computed from Horn scale at processing time -/
   | online
@@ -221,7 +221,7 @@ def exp6 : PrimingExperiment :=
   , nParticipants := 100
   , effectDescription := "FC 'or' computation does not facilitate 'three→exactly three'" }
 
-/-- All experiments from Meyer & Feiman (2021). -/
+/-- All experiments from @cite{meyer-feiman-2021}. -/
 def allExperiments : List PrimingExperiment :=
   [exp1_2, exp3_4, exp5, exp6]
 

@@ -9,7 +9,7 @@ Xiang, Yimei (2022). Relativized Exhaustivity: mention-some and uniqueness.
 
 ## Key Definitions
 
-- `dayalEP`: Dayal (1996)'s Exhaustivity Presupposition — the question
+- `dayalEP`: @cite{dayal-1996}'s Exhaustivity Presupposition — the question
   presupposes that there exists a strongest true answer (one whose proposition
   entails all other true answers' propositions).
 - `relExh`: Xiang's Relativized Exhaustivity — EP is evaluated relative to
@@ -100,7 +100,7 @@ def relExh {W P : Type _}
 
 /-! ### Fox 2018: Partition by Exhaustification @cite{fox-2018}
 
-Fox (2018) "Partition by Exhaustification" derives Dayal's EP from the
+@cite{fox-2018} "Partition by Exhaustification" derives Dayal's EP from the
 exhaustification operator Exh. The key insight: a question partitions
 the logical space iff every world has exactly one exhaustified true answer.
 

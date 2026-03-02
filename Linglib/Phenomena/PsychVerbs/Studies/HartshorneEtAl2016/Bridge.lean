@@ -3,13 +3,13 @@ import Linglib.Theories.Semantics.Causation.PsychCausation
 import Linglib.Theories.Semantics.Causation.PsychCausalLink
 
 /-!
-# Bridge: Hartshorne et al. (2016) ↔ Kim (2024) Causal Source
+# Bridge: @cite{hartshorne-etal-2016} ↔ @cite{kim-2024} Causal Source
 
 @cite{hartshorne-etal-2016}
 @cite{kim-2024}
 
 Connects Hartshorne et al.'s (2016) empirical semantic type distinction
-(habitual attitude vs caused episode) to Kim's (2024) causal source
+(habitual attitude vs caused episode) to @cite{kim-2024}'s causal source
 distinction (internal vs external), showing that:
 
 1. SemanticType ↔ CausalSource is an isomorphism

@@ -6,9 +6,9 @@ Empirical data on non-projective structures in dependency treebanks.
 
 ## Sources
 
-- Kuhlmann & Nivre (2006). Mildly Non-Projective Dependency Structures.
+- @cite{kuhlmann-nivre-2006}. Mildly Non-Projective Dependency Structures.
   COLING/ACL 2006, Table 1.
-- Kuhlmann (2013). Mildly Non-Projective Dependency Grammar.
+- @cite{kuhlmann-2013}. Mildly Non-Projective Dependency Grammar.
   Computational Linguistics 39(2), Tables 3-4.
 -/
 
@@ -18,7 +18,7 @@ namespace Phenomena.WordOrder.NonProjectivity
 -- §1: Treebank Coverage (Kuhlmann & Nivre 2006, Table 1)
 -- ============================================================================
 
-/-- Treebank coverage data from Kuhlmann & Nivre (2006), Table 1.
+/-- Treebank coverage data from @cite{kuhlmann-nivre-2006}, Table 1.
     Percentages scaled x100 for Nat arithmetic. -/
 structure TreebankCoverage where
   name : String
@@ -57,7 +57,7 @@ def ddt : TreebankCoverage :=
 -- §2: LCFRS Coverage (Kuhlmann 2013, Tables 3-4)
 -- ============================================================================
 
-/-- Kuhlmann (2013) Table 3: rule/tree loss under fan-out bounds.
+/-- @cite{kuhlmann-2013} Table 3: rule/tree loss under fan-out bounds.
     Five languages from the CoNLL 2006 shared task. -/
 structure LCFRSCoverage where
   name : String

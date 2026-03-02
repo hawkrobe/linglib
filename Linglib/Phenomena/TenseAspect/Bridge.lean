@@ -15,6 +15,8 @@ import Linglib.Fragments.German.Tense
 
 /-!
 # Tense Phenomena: Bridge Theorems
+@cite{lakoff-1970}
+
 
 Per-theory × per-phenomenon derivation theorems connecting the empirical
 data in `Data.lean` to the nine tense theories in
@@ -141,21 +143,21 @@ end Morphology
 section EnglishFragment
 open Fragments.English.Tense
 
-/-- English simple past perspective entry has `gramTense = .past`. -/
+/-- English simple past perspective entry has `gramTense =.past`. -/
 theorem eng_simplePast_gramTense :
     simplePastPerspective.gramTense = .past := rfl
 
-/-- English simple present perspective entry has `gramTense = .present`. -/
+/-- English simple present perspective entry has `gramTense =.present`. -/
 theorem eng_simplePresent_gramTense :
     simplePresentPerspective.gramTense = .present := rfl
 
-/-- Synthetic forms allow false tense (Lakoff 1970). -/
+/-- Synthetic forms allow false tense. -/
 theorem eng_synthetic_allows_false :
     simplePastPerspective.allowsFalseTense = true ∧
     simplePresentPerspective.allowsFalseTense = true :=
   ⟨rfl, rfl⟩
 
-/-- Periphrastic forms block false tense (Lakoff 1970). -/
+/-- Periphrastic forms block false tense. -/
 theorem eng_periphrastic_blocks_false :
     usedTo.allowsFalseTense = false ∧
     goingTo.allowsFalseTense = false :=
@@ -661,7 +663,7 @@ operators → composed semantics → Reichenbach data → empirical phenomena.
 The chain for English simple past:
 ```
 Fragment entry (kratzerSimplePast)
-  ↓ .tensePronoun.constraint = .present   (.hasPerfect = true)
+  ↓.tensePronoun.constraint =.present (.hasPerfect = true)
 Theory operators (TensePronoun + PERF + PRFV from ViewpointAspect)
   ↓ evalPres (PERF (PRFV V))
 Composed semantics = presPerfSimple (from TenseAspectComposition)
@@ -670,13 +672,13 @@ Reichenbach frame: R = P (isPresent) — present time-sphere
   ↓ matches §28 data
 Phenomena: perfectVisitedParis.isPresent ✓
 
-Fragment: canBeDeictic = true  →  Data: outOfTheBlue = true ✓
+Fragment: canBeDeictic = true → Data: outOfTheBlue = true ✓
 ```
 
 The chain for German Preterit:
 ```
 Fragment entry (kratzerPreterit)
-  ↓ .tensePronoun.constraint = .past   (.hasPerfect = false)
+  ↓.tensePronoun.constraint =.past (.hasPerfect = false)
 Theory operators (TensePronoun with genuine PAST)
   ↓ evalPast (PRFV V).atPoint
 Composed semantics = simplePast (from TenseAspectComposition)
@@ -685,7 +687,7 @@ Reichenbach frame: R < P (isPast) — past time-sphere
   ↓ matches §28 data
 Phenomena: preteritVisitedParis.isPast ✓
 
-Fragment: canBeDeictic = false  →  Data: outOfTheBlue = false ✓
+Fragment: canBeDeictic = false → Data: outOfTheBlue = false ✓
 ```
 -/
 

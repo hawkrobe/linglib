@@ -82,7 +82,7 @@ def reallyBias : NegativeQuestionDatum := {
 
 -- Part 2: Ladd's PI/NI Ambiguity
 
-/-- Ladd's (1981) ambiguity: same form, opposite implicatures -/
+/-- @cite{ladd-1981}'s ambiguity: same form, opposite implicatures -/
 structure LaddAmbiguityDatum where
   /-- The question form -/
   question : String

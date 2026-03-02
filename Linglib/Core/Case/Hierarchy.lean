@@ -7,10 +7,10 @@ import Linglib.Core.Case.Basic
 The **case hierarchy** (Blake 1994, §5.8, example 68) is an implicational
 tendency over case inventories:
 
-    NOM  ACC/ERG  GEN  DAT  LOC  ABL/INST  others
+    NOM ACC/ERG GEN DAT LOC ABL/INST others
 
 If a language has a case at position *n*, it *usually* has at least one case
-from each position to the left (Blake 1994, p. 157). Blake hedges this as
+from each position to the left. Blake hedges this as
 holding "with overwhelmingly greater than chance frequency" (borrowing Greenberg
 1963). Gaps occur when higher grammatical relations are marked by bound pronouns
 or word order (p. 89).

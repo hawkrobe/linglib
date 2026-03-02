@@ -5,10 +5,10 @@ import Linglib.Core.Semantics.Presupposition
 import Linglib.Fragments.Bulgarian.Evidentials
 
 /-!
-# Koev (2017) Bridge Theorems @cite{koev-2017}
+# @cite{koev-2017} Bridge Theorems @cite{koev-2017}
 @cite{cumming-2026} @cite{izvorski-1997}
 
-Bridge theorems connecting Koev's (2017) spatiotemporal distance analysis
+Bridge theorems connecting @cite{koev-2017}'s spatiotemporal distance analysis
 to existing linglib infrastructure, organized around the paper's four
 properties (property 6):
 
@@ -18,7 +18,7 @@ properties (property 6):
 
 Plus structural bridges:
 - **△ vs. temporal ordering** — these are independent constraints: §4
-- **Bridge to Cumming (2026)** — △ → T ≤ A (downstream evidence): §7
+- **Bridge to @cite{cumming-2026}** — △ → T ≤ A (downstream evidence): §7
 - **Bridge to nfutL** — existing fragment connection: §8
 
 ## Central Claim: Learning Events
@@ -49,7 +49,7 @@ open Fragments.Bulgarian.Evidentials
 -- § 1. Learning Scenarios (Koev 2017, §4)
 -- ════════════════════════════════════════════════════
 
-/-- A learning scenario (Koev 2017, §4): the evidential introduces a
+/-- A learning scenario: the evidential introduces a
     learning event e_l — the event through which the speaker acquired
     the reported information — paired with the described event e.
 
@@ -290,7 +290,7 @@ theorem direct_presup_fails {W : Type*} (p : W → Bool) (w : W) :
 theorem assertion_is_scope (s : LearningScenario ℤ) {W : Type*} (p : W → Bool) :
     (s.toEvidentialProp p).assertion = p := rfl
 
-/-- A modal evidential (Izvorski 1997) would assert □_e(p) — "p must be
+/-- A modal evidential would assert □_e(p) — "p must be
     true given evidence e" — a DIFFERENT proposition from p.
 
     This is a simplified stub; the full Kratzer-grounded version is

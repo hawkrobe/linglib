@@ -205,7 +205,7 @@ theorem rigidification_not_synonymy {W E : Type*}
 exists. Numbers are strongly rigid (2 exists at every world); people are
 not (Nixon might not have existed).
 
-Kripke (1980, p. 48): a strongly rigid designator designates an object
+@cite{kripke-1980}: a strongly rigid designator designates an object
 that exists in every possible world. -/
 def IsStronglyRigid {W E : Type*} (exists_ : E → W → Prop)
     (f : Intension W E) : Prop :=

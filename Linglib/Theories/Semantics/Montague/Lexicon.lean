@@ -32,7 +32,7 @@ private def word_laughs : Word := ⟨"laughs", .VERB, { valence := some .intrans
 
 Numerals are excluded: under lower-bound semantics they form an infinite
 scale (not representable as a finite `HornScale`), and under bilateral
-semantics they don't form a scale at all (Kennedy 2015). See
+semantics they don't form a scale at all. See
 `Theories/Semantics.Montague/Determiner/Numeral/Semantics.lean`. -/
 inductive ScaleMembership where
   | quantifier (pos : Quantifiers.QuantExpr)

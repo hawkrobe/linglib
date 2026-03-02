@@ -3,7 +3,9 @@ import Linglib.Core.Empirical
 open Core.Empirical
 
 /-!
-# Bale et al. (2025) — Competence by Default @cite{bale-etal-2025}
+# @cite{bale-etal-2025} — Competence by Default @cite{bale-etal-2025}
+@cite{geurts-2010} @cite{levinson-2000} @cite{soames-1982}
+
 
 Bale, A. C., Noguchi, H., Rolland, M. & Barner, D. (2025). Competence by
 default: Do listeners assume that speakers are knowledgeable when computing
@@ -24,11 +26,11 @@ or must be contextually licensed. The 5-step derivation:
 Step 5 depends on the **competence assumption**: the listener assumes the
 speaker knows whether ψ. Three hypotheses about when this is applied:
 
-- **Competence-by-default** (Geurts 2010): competence is assumed by default;
+- **Competence-by-default**: competence is assumed by default;
   cancellation requires effortful integration of contextual evidence
-- **SSI-by-default** (Levinson 2000): the entire SSI is a default; load
+- **SSI-by-default**: the entire SSI is a default; load
   disrupts SI computation itself
-- **Contextual licensing** (Soames 1982, Horn 1989, Zimmermann 2000):
+- **Contextual licensing**:
   competence must be contextually justified; it is not a default
 
 ## Experimental Design
@@ -208,15 +210,14 @@ theorem interaction_magnitude :
 inductive CompetenceHypothesis where
   /-- Competence is assumed by default; cancellation requires effortful
       processing. Load impairs cancellation → more SSIs when speaker is
-      actually ignorant (Geurts 2010). -/
+      actually ignorant. -/
   | competenceByDefault
   /-- The entire SI derivation is a default; load disrupts SI computation
-      itself. Predicts load decreases SSI rates (Levinson 2000). -/
+      itself. Predicts load decreases SSI rates. -/
   | ssiByDefault
   /-- Competence must be contextually licensed; it is not a default.
       Load should not increase SSI rates for ignorant speakers — competence
-      was never assumed, so there is nothing to fail to cancel
-      (Soames 1982, Horn 1989, Zimmermann 2000). -/
+      was never assumed, so there is nothing to fail to cancel. -/
   | contextualLicensing
   deriving DecidableEq, BEq, Repr
 

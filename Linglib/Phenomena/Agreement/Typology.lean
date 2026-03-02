@@ -2,7 +2,7 @@ import Linglib.Core.Lexical.PersonCategory
 import Linglib.Fragments.Finnish.Negation
 
 /-!
-# Paradigmatic Structure of Person Marking (Cysouw 2009)
+# Paradigmatic Structure of Person Marking
 @cite{cysouw-2009} @cite{greenberg-1963} @cite{ingram-1978}
 
 Formalizes the typological framework from:
@@ -14,7 +14,7 @@ Formalizes the typological framework from:
 
 Person marking is analyzed not via traditional "person × number" grids but via
 **participant groups**: sets of speech act participants that are marked by a
-single morpheme.  "Plural" is reanalyzed as qualitative group composition
+single morpheme. "Plural" is reanalyzed as qualitative group composition
 (who is included?) rather than quantitative number (how many?).
 
 The 8-cell paradigmatic scheme (Fig 10.1) comprises:
@@ -47,7 +47,7 @@ export Core.PersonCategory (PersonCategory)
 -- ============================================================================
 
 /-- A paradigmatic structure assigns each of the 8 person categories to a
-morpheme class.  Categories assigned the same natural number are realized
+morpheme class. Categories assigned the same natural number are realized
 by the same morpheme (homophonous).
 
 This is the central representational device: all of Cysouw's typological
@@ -167,7 +167,7 @@ def ParadigmaticStructure.hasSingularHomophony (s : ParadigmaticStructure) : Boo
 excluding the first person complex internal structure).
 
 Cysouw §10.1.6: "the various kinds of homophony between the categories of the
-first person complex are not included under this heading."  So we only check
+first person complex are not included under this heading." So we only check
 mergers between the first person complex and {2+3, 3+3}, or between 2+3 and 3+3. -/
 def ParadigmaticStructure.hasVerticalHomophony (s : ParadigmaticStructure) : Bool :=
   let fpc := [PersonCategory.minIncl, .augIncl, .excl]
@@ -181,7 +181,7 @@ def ParadigmaticStructure.hasVerticalHomophony (s : ParadigmaticStructure) : Boo
 -- §6: Explicitness Hierarchy (10.7)
 -- ============================================================================
 
-/-- Explicitness level of a paradigm (Cysouw 2009, §10.1.7).
+/-- Explicitness level of a paradigm.
 
 Measures how many person oppositions are grammaticalized in the paradigm.
 Higher = more explicit (more distinct morphemes). -/
@@ -217,7 +217,7 @@ def ParadigmaticStructure.explicitnessLevel
 -- §7: Horizontal Homophony Hierarchy (10.1, 10.2)
 -- ============================================================================
 
-/-- Horizontal Homophony Hierarchy (Cysouw 2009, §10.1.4).
+/-- Horizontal Homophony Hierarchy.
 
 If horizontal homophony occurs, it follows the person hierarchy 1 > 2 > 3:
 first attested in 3rd person, then 2nd, then 1st (exclusive). -/
@@ -233,7 +233,7 @@ inductive HorizHomophonyLevel where
 -- §8: Implicational Universals
 -- ============================================================================
 
-/-- Addressee Inclusion Implication I (Cysouw 2009, 3.23):
+/-- Addressee Inclusion Implication I:
     Exclusive → Inclusive.
     If there is a specialized exclusive morpheme, there is also a
     specialized inclusive morpheme. -/
@@ -244,7 +244,7 @@ def addresseeInclusionImplication (s : ParadigmaticStructure) : Prop :=
   (s.morphClass .minIncl ≠ s.morphClass .s1 ∨
    s.morphClass .augIncl ≠ s.morphClass .s1)
 
-/-- Split Inclusive Implication (Cysouw 2009, 3.24):
+/-- Split Inclusive Implication:
     Split inclusive → Exclusive.
     If the inclusive is split into minimal and augmented,
     then the exclusive is specialized. -/
@@ -252,7 +252,7 @@ def splitInclusiveImplication (s : ParadigmaticStructure) : Prop :=
   (s.morphClass .minIncl ≠ s.morphClass .augIncl) →
   (s.morphClass .excl ≠ s.morphClass .s1)
 
-/-- Homophony Implication (Cysouw 2009, 10.4):
+/-- Homophony Implication:
     Singular homophony → inflectional paradigm. -/
 def homophonyImplication (s : ParadigmaticStructure) : Prop :=
   s.hasSingularHomophony → s.isInflectional
@@ -540,7 +540,7 @@ theorem piraha_maximal_horizontal :
 -- §14: First Person Hierarchy (3.26)
 -- ============================================================================
 
-/-- The First Person Hierarchy (Cysouw 2009, 3.26):
+/-- The First Person Hierarchy:
     no-we < unified-we < only-inclusive < inclusive/exclusive < minimal/augmented
 
 Verified: the hierarchy corresponds to increasing number of forms for 'we'.
@@ -606,7 +606,7 @@ theorem czech_fragment_pa :
 /-! ### Bridge 5: Morphological status ↔ Explicitness
 
 Cysouw (2009, Table 10.4, Fig 10.10) shows that inflectional paradigms
-correlate with lower explicitness.  Our data confirms: all inflectional
+correlate with lower explicitness. Our data confirms: all inflectional
 paradigms have explicitness ≤ unified-we (i.e., singular or vertical
 homophony, or unified-we). -/
 

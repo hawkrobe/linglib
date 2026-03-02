@@ -3,11 +3,11 @@ import Linglib.Theories.Syntax.Minimalism.Core.Features
 
 /-!
 # Derivational Positions
-@cite{abels-2012} @cite{brillman-hirsch-2016} @cite{erlewine-2016} @cite{erlewine-2018}
+@cite{abels-2012} @cite{brillman-hirsch-2016} @cite{erlewine-2016} @cite{erlewine-2018} @cite{chomsky-1995}
 
 Derives positional information (specifier vs. complement) from merge
 history, following the Minimalist view that position is derivational,
-not representational (Chomsky 1995, 2000).
+not representational.
 
 In bare phrase structure, `node X Y` does not encode which daughter is
 the specifier and which is the complement. That information lives in
@@ -23,15 +23,15 @@ fronting extraction restriction from them.
 
 Two variants are formalized:
 
-1. **Complement-to-Spec** (Abels 2012): the complement of a head H
+1. **Complement-to-Spec**: the complement of a head H
    cannot move to Spec,HP. Restated positionally here; the original
    formulation is in `Phase.lean`.
 
-2. **Spec-to-Spec** (Erlewine 2016, Brillman & Hirsch 2016): movement
+2. **Spec-to-Spec**: movement
    from Spec,XP to Spec,YP is blocked when YP immediately dominates XP
    (no intervening maximal projection). This interacts with Toba Batak's
    clause structure (Erlewine 2018, fn. 24) and drives Agent Focus in
-   Kaqchikel (Erlewine 2016).
+   Kaqchikel.
 
 -/
 
@@ -112,7 +112,7 @@ def movedToSpecOf (events : List MergeEvent) (x y : SyntacticObject) : Prop :=
 -- § 4: Anti-Locality
 -- ============================================================================
 
-/-- Complement-to-Spec anti-locality (Abels 2012), restated positionally.
+/-- Complement-to-Spec anti-locality, restated positionally.
 
     If X is the complement of H, then X cannot move to Spec,HP.
     This is the positional restatement of `Phase.antiLocality`. -/
@@ -120,7 +120,7 @@ def compToSpecAntiLocality
     (events : List MergeEvent) (x h : SyntacticObject) : Prop :=
   isCompIn events x h → ¬movedToSpecOf events x h
 
-/-- Spec-to-Spec anti-locality (Erlewine 2016, Brillman & Hirsch 2016).
+/-- Spec-to-Spec anti-locality.
 
     Movement from Spec,XP to Spec,YP is blocked when YP immediately
     dominates XP — i.e., when there is no intervening maximal projection.
@@ -164,7 +164,7 @@ def isStranded (pf : PredicateFronting) (x : SyntacticObject) : Prop :=
 /-- After predicate fronting, a constituent X is "trapped" if it IS
     inside the fronted predicate. Trapped elements are inaccessible:
     the fronted phrase is a moved constituent and acts as a freezing
-    domain (Wexler & Culicover 1980). -/
+    domain. -/
 def isTrapped (pf : PredicateFronting) (x : SyntacticObject) : Prop :=
   contains pf.predicate x
 

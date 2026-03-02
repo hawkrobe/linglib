@@ -34,7 +34,7 @@ inductive Dynamicity where
 
 end Features
 
-/-- Telicity → MereoTag: telic = quantized (Krifka 1989, 1998).
+/-- Telicity → MereoTag: telic = quantized.
     Telic predicates are QUA (no proper part of a telic event is telic);
     atelic predicates are CUM (the sum of two atelic events is atelic). -/
 def Telicity.toMereoTag : Telicity → Core.Scale.MereoTag
@@ -43,7 +43,7 @@ def Telicity.toMereoTag : Telicity → Core.Scale.MereoTag
 
 section VendlerClassification
 
-/-- Vendler's four-way classification of eventualities (Vendler 1957, Dowty 1979). -/
+/-- Vendler's four-way classification of eventualities. -/
 inductive VendlerClass where
   | state         -- [-dynamic, +durative]  know, love
   | activity      -- [+dynamic, +durative, -telic]  run, swim
@@ -277,7 +277,7 @@ theorem atomDist_implies_homogeneous (c : VendlerClass)
     c.toProfile.isHomogeneous = true := by
   cases c <;> simp_all [VendlerClass.predictsAtomDist]; rfl
 
-/-- ATOM-DIST_t prediction is the negation of dynamicity = .dynamic. -/
+/-- ATOM-DIST_t prediction is the negation of dynamicity =.dynamic. -/
 theorem predictsAtomDist_iff_not_dynamic (c : VendlerClass) :
     (c.predictsAtomDist = false) ↔ (c.dynamicity = .dynamic) := by
   cases c <;> simp [VendlerClass.predictsAtomDist, VendlerClass.dynamicity]

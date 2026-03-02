@@ -2,7 +2,7 @@ import Mathlib.Data.Rat.Defs
 import Linglib.Theories.Sociolinguistics.PropertySpace
 
 /-!
-# Stereotype Content Model (Fiske et al. 2002, 2007)
+# Stereotype Content Model
 @cite{fiske-cuddy-glick-2007}
 
 The SCM property space: 6 properties organized as 3 bipolar dimensions

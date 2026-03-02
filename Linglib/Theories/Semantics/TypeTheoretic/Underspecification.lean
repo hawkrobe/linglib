@@ -6,7 +6,7 @@ import Linglib.Core.Interface
 # Type Theory with Records — Chapter 8: Type-Based Underspecification
 @cite{chomsky-1981} @cite{cooper-2023} @cite{kanazawa-1994} @cite{scontras-pearl-2021}
 
-Cooper (2023) Chapter 8 introduces *content types* that replace specific
+@cite{cooper-2023} Chapter 8 introduces *content types* that replace specific
 contents with types whose witnesses are fully specified readings. This module
 formalizes the chapter's mechanisms at two levels:
 
@@ -41,7 +41,7 @@ formalizes the chapter's mechanisms at two levels:
 
 - `QStore.isPlugged` bridges to `Parametric.trivial` (no pending scope)
 - Scope witnesses bridge to `ParticularWC_Exist` / `existPQ` (Ch7)
-- `TwoQuantScope.𝔖` bridges to `ScopeConfig` (Scontras & Pearl 2021)
+- `TwoQuantScope.𝔖` bridges to `ScopeConfig`
 - `localizeConditional` derives the correct strong donkey reading
 - `crossSententialResolve` bridges discourse merge to pronoun resolution
 
@@ -63,7 +63,7 @@ composition and await scope assignment via retrieval. -/
 variable {E : Type}
 
 /-- A quantifier store: a list of quantifiers awaiting scope resolution.
-    Cooper (2023) Ch8 §8.3: stored quantifiers are later retrieved at
+    @cite{cooper-2023} Ch8 §8.3: stored quantifiers are later retrieved at
     scope positions, and retrieval order determines scope. -/
 structure QStore (E : Type) where
   /-- The stored quantifiers, ordered by storage time -/
@@ -73,7 +73,7 @@ structure QStore (E : Type) where
 def QStore.empty : QStore E := ⟨[]⟩
 
 /-- A store is *plugged* when all quantifiers have taken scope.
-    Cooper (2023) Ch8: plugged content is fully scope-resolved. -/
+    @cite{cooper-2023} Ch8: plugged content is fully scope-resolved. -/
 def QStore.isPlugged (qs : QStore E) : Prop := qs.stored = []
 
 /-- A store is *unplugged* when quantifiers remain to be scoped. -/
@@ -104,7 +104,7 @@ Store moves a quantifier from content into the qstore, leaving behind
 a variable (trace) in the content. -/
 
 /-- Store a quantifier: push it onto the front of the store.
-    Cooper (2023) Ch8 §8.3: store(Q) moves Q into the qstore. -/
+    @cite{cooper-2023} Ch8 §8.3: store(Q) moves Q into the qstore. -/
 def QStore.store (qs : QStore E) (q : Quant E) : QStore E :=
   ⟨q :: qs.stored⟩
 
@@ -119,7 +119,7 @@ Retrieve pops a quantifier from the store and applies it at a scope
 position. The order of retrieval determines relative scope. -/
 
 /-- Retrieve the first quantifier from the store.
-    Cooper (2023) Ch8 §8.3: retrieve pops the outermost stored quantifier.
+    @cite{cooper-2023} Ch8 §8.3: retrieve pops the outermost stored quantifier.
     Returns the quantifier and the remaining store, or `none` if plugged. -/
 def QStore.retrieve (qs : QStore E) :
     Option (Quant E × QStore E) :=
@@ -146,10 +146,10 @@ theorem store_then_retrieve (qs : QStore E) (q : Quant E) :
 
 For sentences with two quantifiers and a binary relation, the two
 possible retrieval orders produce exactly two scope readings.
-Cooper (2023) Ch8: "every boy hugged a dog" has ∀>∃ and ∃>∀ readings. -/
+@cite{cooper-2023} Ch8: "every boy hugged a dog" has ∀>∃ and ∃>∀ readings. -/
 
 /-- A two-quantifier scope configuration: two quantifiers and a relation.
-    Cooper (2023) Ch8: the minimal underspecified content for a
+    @cite{cooper-2023} Ch8: the minimal underspecified content for a
     doubly-quantified sentence. -/
 structure TwoQuantScope (E : Type) where
   /-- The binary relation (e.g., hug) -/
@@ -160,7 +160,7 @@ structure TwoQuantScope (E : Type) where
   q₂ : Quant E
 
 /-- Surface scope reading: Q₁ scopes over Q₂.
-    Cooper (2023) Ch8: retrieving Q₁ first = outermost scope.
+    @cite{cooper-2023} Ch8: retrieving Q₁ first = outermost scope.
     For "every boy hugged a dog": ∀x.boy(x) → ∃y.dog(y) ∧ hug(x,y). -/
 def TwoQuantScope.surfaceScope (s : TwoQuantScope E) : Type :=
   s.q₁ (λ x => s.q₂ (λ y => s.rel x y))
@@ -172,7 +172,7 @@ def TwoQuantScope.inverseScope (s : TwoQuantScope E) : Type :=
 
 /-- The underspecification closure 𝔖 for two quantifiers:
     the join of all possible scope readings.
-    Cooper (2023) Ch8 §8.4: each witness of 𝔖(content) is one
+    @cite{cooper-2023} Ch8 §8.4: each witness of 𝔖(content) is one
     fully specified reading. With two quantifiers, |𝔖| = 2. -/
 def TwoQuantScope.𝔖 (s : TwoQuantScope E) : Type :=
   JoinType s.surfaceScope s.inverseScope
@@ -193,8 +193,8 @@ def TwoQuantScope.inverseToUnderspec (s : TwoQuantScope E)
   Sum.inr w
 
 /-- Select a scope reading by ScopeConfig.
-    Cooper (2023) Ch8 → Scontras & Pearl (2021) bridge:
-    retrieval order corresponds to ScopeConfig.surface / .inverse. -/
+    @cite{cooper-2023} Ch8 → @cite{scontras-pearl-2021} bridge:
+    retrieval order corresponds to ScopeConfig.surface /.inverse. -/
 def TwoQuantScope.readingAt (s : TwoQuantScope E)
     (sc : Semantics.Scope.ScopeConfig) : Type :=
   match sc with
@@ -212,7 +212,7 @@ predicted by retrieve. Each ScopeConfig selects one reading, and every
 witness of 𝔖 comes from exactly one reading.
 
 This connects TTR's type-based underspecification to the `ScopeConfig`
-infrastructure used by Scontras & Pearl (2021) in the RSA implementation. -/
+infrastructure used by @cite{scontras-pearl-2021} in the RSA implementation. -/
 
 open Semantics.Scope (ScopeConfig)
 
@@ -246,7 +246,7 @@ end ScopeInfrastructure
 
 /-! ### Scope ambiguity in "every boy hugged a dog"
 
-Cooper (2023) Ch8: the classic scope ambiguity example.
+@cite{cooper-2023} Ch8: the classic scope ambiguity example.
 Two boys, two dogs; each boy hugs a different dog.
 Surface scope is true but inverse scope is false. -/
 
@@ -384,7 +384,7 @@ end ScopeBridge
 
 /-! ### Localization
 
-Cooper (2023) Ch8 §8.5: localization moves a stored quantifier's
+@cite{cooper-2023} Ch8 §8.5: localization moves a stored quantifier's
 background into the domain of a property, absorbing the context
 dependency. This is the Ch8 mechanism for donkey anaphora:
 
@@ -400,7 +400,7 @@ section Localization
 variable {E : Type}
 
 /-- Localization: absorb a parametric property's background into its body.
-    Cooper (2023) Ch8 §8.5: 𝔏(P) moves context material into the
+    @cite{cooper-2023} Ch8 §8.5: 𝔏(P) moves context material into the
     property's domain type, enabling donkey anaphora.
 
     Before 𝔏: restrictor is parametric (depends on which donkey).
@@ -408,7 +408,7 @@ variable {E : Type}
 def localize (P : PPpty E) : Ppty E := λ a => (c : P.Bg) × P.fg c a
 
 /-- Universal localization: strong donkey reading variant.
-    Cooper (2023) Ch8: 𝔏ʸ(P) uses universal instead of existential binding.
+    @cite{cooper-2023} Ch8: 𝔏ʸ(P) uses universal instead of existential binding.
     "Every farmer who owns a donkey beats it" with strong reading:
     every donkey a farmer owns, the farmer beats. -/
 def localizeUniv (P : PPpty E) : Ppty E := λ a => (c : P.Bg) → P.fg c a
@@ -418,12 +418,12 @@ def localizeUniv (P : PPpty E) : Ppty E := λ a => (c : P.Bg) → P.fg c a
     where `gate c a` is inhabited.
 
     The three localization variants form a hierarchy:
-    - 𝔏 P a  = (c : P.Bg) × P.fg c a           (existential / weak donkey)
-    - 𝔏ʸ P a = (c : P.Bg) → P.fg c a           (unconditional universal / too strong)
+    - 𝔏 P a = (c : P.Bg) × P.fg c a (existential / weak donkey)
+    - 𝔏ʸ P a = (c : P.Bg) → P.fg c a (unconditional universal / too strong)
     - localizeConditional P gate a
-            = (c : P.Bg) → gate c a → P.fg c a  (conditional universal / correct strong)
+            = (c : P.Bg) → gate c a → P.fg c a (conditional universal / correct strong)
 
-    Kanazawa (1994): the correct strong donkey reading is conditional —
+    @cite{kanazawa-1994}: the correct strong donkey reading is conditional —
     "beats every donkey *it owns*", not "beats every donkey *that exists*". -/
 def localizeConditional (P : PPpty E) (gate : P.Bg → E → Type) : Ppty E :=
   λ a => (c : P.Bg) → gate c a → P.fg c a
@@ -593,7 +593,7 @@ def ownsGate : DonkeyBg → DonkeyInd → Type :=
     farmer to own every donkey), the conditional version only requires
     beating donkeys that are actually owned.
 
-    Kanazawa (1994): the strong reading of "every farmer who owns
+    @cite{kanazawa-1994}: the strong reading of "every farmer who owns
     a donkey beats it" means ∀d[donkey(d) ∧ owns(x,d) → beats(x,d)],
     not ∀d[donkey(d) → owns(x,d) ∧ beats(x,d)]. -/
 def strongDonkeyConditional : Ppty DonkeyInd := λ x =>
@@ -653,7 +653,7 @@ end DonkeyAnaphora
 
 /-! ### Reflexivization and anaphoric operations
 
-Cooper (2023) Ch8 introduces two operations for binding:
+@cite{cooper-2023} Ch8 introduces two operations for binding:
 
 1. **ℜ(P)** (eq 84): *Reflexivization* — removes the reflexive marking (r-field)
    from the context and binds the reflexive pronoun to the subject variable
@@ -679,7 +679,7 @@ section BindingTheory
 variable {E : Type}
 
 /-- Reflexivization: identify the two arguments of a binary relation.
-    Cooper (2023) Ch8, eq (84): ℜ(P) removes the reflexive marking
+    @cite{cooper-2023} Ch8, eq (84): ℜ(P) removes the reflexive marking
     (r-field) from the context and replaces the dependency on the
     assignment variable 𝔤.xᵢ with the domain variable r.x.
 
@@ -736,7 +736,7 @@ end BindingTheory
 
 /-! ### Binding in "Sam likes himself" / "Sam likes him"
 
-Cooper (2023) Ch8, eqs (67)–(73): "Sam likes him" has two fields x and y
+@cite{cooper-2023} Ch8, eqs (67)–(73): "Sam likes him" has two fields x and y
 for individuals (68a). When y=x, the fields are filled by the same individual
 (68b,c). Reflexivization ℜ forces this identification.
 
@@ -748,7 +748,7 @@ The complementary distribution:
 section BindingPhenomenon
 
 /-- Individuals for the binding example.
-    Cooper (2023) Ch8: Sam is the subject; Bill is a potential
+    @cite{cooper-2023} Ch8: Sam is the subject; Bill is a potential
     non-local antecedent for "him". -/
 inductive BindInd where
   | sam | bill | kim
@@ -757,7 +757,7 @@ inductive BindInd where
 /-- "like" as a non-trivial binary relation.
     Sam likes everyone, Bill likes Kim and himself, Kim likes herself only.
     This makes binding witnesses non-trivially constrained: ℜ(like₈)(Kim)
-    is inhabited but like₈ .kim .sam is not, so reflexivization genuinely
+    is inhabited but like₈.kim.sam is not, so reflexivization genuinely
     restricts which argument pairs are witnessable. -/
 def like₈ : BindInd → BindInd → Type
   | .sam, _ => PUnit       -- Sam likes everyone
@@ -807,8 +807,8 @@ theorem param_reflexivize_agrees :
     anaphoricResolve likeParam id = ℜ like₈ := rfl
 
 /-- ℜ genuinely constrains: Kim can like herself (ℜ) but NOT Bill
-    (pronoun resolution). This is non-trivial because like₈ .kim .bill
-    is Empty while like₈ .kim .kim is PUnit. -/
+    (pronoun resolution). This is non-trivial because like₈.kim.bill
+    is Empty while like₈.kim.kim is PUnit. -/
 theorem reflexive_constrains_kim :
     Nonempty (ℜ like₈ .kim) ∧ IsEmpty (like₈ .kim .bill) :=
   ⟨⟨PUnit.unit⟩, ⟨fun h => nomatch h⟩⟩
@@ -1013,7 +1013,7 @@ section GeneralizedClosure
 
 variable {E : Type}
 
-/-- Cooper (2023) eq (20). -/
+/-- @cite{cooper-2023} eq (20). -/
 abbrev ContType₈ (_E : Type) := Type
 
 /-- 𝔖(T): underspecification closure, eq (89). 7 clauses:

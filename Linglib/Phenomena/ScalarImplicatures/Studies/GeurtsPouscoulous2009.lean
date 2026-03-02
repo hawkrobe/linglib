@@ -444,7 +444,7 @@ structure LiteratureDatum where
   deriving Repr
 
 /--
-Sample of experimental data from Geurts (2010) Table 1.
+Sample of experimental data from @cite{geurts-2010} Table 1.
 -/
 def literatureData : List LiteratureDatum :=
   [ { citation := "Paris (1973)", scalarTerm := "or", upperBoundRate := 25 }

@@ -9,14 +9,14 @@ linglib has multiple frame-like structures — ThematicFrame (neo-Davidsonian
 role bundles), HPSG Sign (typed feature structures), Frame2 (TTR records) —
 each with its own composition mechanism.
 
-Löbner (2021) claims these are all instances of D-frames, and that their
+@cite{loebner-2021} claims these are all instances of D-frames, and that their
 composition should be understood as frame unification. This module makes the
 structural identity explicit and shows where unification and Montague FA
 make different predictions.
 
 ## Key Comparisons
 
-**ThematicFrame is a D-frame.** Its fields (agent, patient, theme, ...)
+**ThematicFrame is a D-frame.** Its fields (agent, patient, theme,...)
 are functional attributes mapping entities to event participation.
 The `agent_unique` axiom in ThematicAxioms is exactly Löbner's
 functional-attribute constraint: each event has *at most one* agent.

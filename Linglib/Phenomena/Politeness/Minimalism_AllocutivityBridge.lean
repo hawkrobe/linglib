@@ -130,7 +130,7 @@ structure HonRelation (E : Type*) where
   level : HonLevel
 
 /-- HonP: a functional projection in the nominal spine that hosts [iHON].
-    Wraps a DP's SO with an honorific feature (Alok 2020). -/
+    Wraps a DP's SO with an honorific feature. -/
 structure HonP where
   /-- The underlying DP -/
   dp : SyntacticObject
@@ -156,7 +156,7 @@ theorem aa_is_agree (rel : AgreeRelation) (root : SyntacticObject)
     (hValid : validAgree rel root) : validAgree rel root := hValid
 
 /-- SA-based allocutive agreement is root-only.
-    Follows directly from SAP being the highest phase (Speas & Tenny 2003). -/
+    Follows directly from SAP being the highest phase. -/
 theorem sa_based_aa_root_only :
     predictEmbeddability .SA = .rootOnly := rfl
 
@@ -204,7 +204,7 @@ theorem sa_alloc_parallels_sa_questions :
   · rfl
   · native_decide
 
-/-- Bridge to Yoon et al. (2020) politeness: social utility (φ weighting
+/-- Bridge to @cite{yoon-etal-2020} politeness: social utility (φ weighting
     informational vs social goals) is the pragmatic analogue of syntactic
     [iHON]. Both encode social relations between discourse participants.
 

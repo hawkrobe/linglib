@@ -5,7 +5,7 @@ import Linglib.Theories.Pragmatics.RSA.Core.Config
 open Core.Empirical
 
 /-!
-# Qing & Franke (2015) @cite{qing-franke-2015}
+# @cite{qing-franke-2015} @cite{qing-franke-2015}
 @cite{frank-goodman-2012}
 
 "Variations on a Bayesian Theme: Comparing Bayesian Models of Referential Reasoning"
@@ -21,14 +21,14 @@ Utterances: {square, circle, green, blue}
 ## The Decomposition
 
 The paper decomposes Bayesian reference games along 3 orthogonal dimensions,
-yielding a family of models that includes Frank & Goodman (2012) as one instance:
+yielding a family of models that includes @cite{frank-goodman-2012} as one instance:
 
 ### Speaker Belief (y ∈ {U, S}): What does L0 assume?
 
 - **Uniform (U)**: L0 treats all referents equally:
-  U(t|m) = ⟦m⟧(t) / |⟦m⟧|                              [Eq. 1]
+  U(t|m) = ⟦m⟧(t) / |⟦m⟧| [Eq. 1]
 - **Salience (S)**: L0 weights by perceptual salience:
-  S(t|m) = S(t) · ⟦m⟧(t) / Σ_t' S(t') · ⟦m⟧(t')       [Eq. 2]
+  S(t|m) = S(t) · ⟦m⟧(t) / Σ_t' S(t') · ⟦m⟧(t') [Eq. 2]
 
 This enters the RSAConfig via `meaning`: uniform uses constant 1 for true worlds;
 salience uses S(w) for true worlds.
@@ -36,18 +36,18 @@ salience uses S(w) for true worlds.
 ### Speaker Goal (x ∈ {a, b}): What does the speaker optimize?
 
 - **Belief-oriented (b)**: maximize log-probability of correct belief
-  σ_b(m|t) ∝ exp(λ_S · (log y(t|m) - Cost(m)))          [Eq. 10]
+  σ_b(m|t) ∝ exp(λ_S · (log y(t|m) - Cost(m))) [Eq. 10]
 - **Action-oriented (a)**: maximize probability of correct action
-  σ_a(m|t) ∝ exp(λ_S · (y(t|m) - Cost(m)))              [Eq. 9]
+  σ_a(m|t) ∝ exp(λ_S · (y(t|m) - Cost(m))) [Eq. 9]
 
 This enters via `s1Score`: belief-oriented uses log L0; action-oriented uses raw L0.
 
 ### Listener Action: How does the listener choose?
 
 - **Belief-oriented (b)**: standard Bayesian update
-  ρ_b(t|m) ∝ v(t) · σ(m|t)                              [Eq. 13/15]
+  ρ_b(t|m) ∝ v(t) · σ(m|t) [Eq. 13/15]
 - **Action-oriented (a)**: softmax over Bayesian posterior
-  ρ_a(t|m) ∝ exp(α_L · ρ_b(t|m))                        [Eq. 14]
+  ρ_a(t|m) ∝ exp(α_L · ρ_b(t|m)) [Eq. 14]
 
 The belief-oriented listener IS `RSAConfig.L1`. The action-oriented listener is
 a composable extension defined as `softmax ∘ L1`.
@@ -61,7 +61,7 @@ a composable extension defined as `softmax ∘ L1`.
 | σ_bS  | belief | salience | exp(λ · (log S(t\|m) - C(m))) |
 | σ_aS  | action | salience | exp(λ · (S(t\|m) - C(m))) |
 
-σ_bU is standard RSA (Frank & Goodman 2012) with utterance costs.
+σ_bU is standard RSA with utterance costs.
 
 ## Key Findings
 
@@ -104,7 +104,7 @@ def citation : String :=
 def measure : MeasureSpec :=
   { scale := .proportion, task := .forcedChoice, unit := "proportion" }
 
-/-- The 6 qualitative findings from Qing & Franke (2015). -/
+/-- The 6 qualitative findings from @cite{qing-franke-2015}. -/
 inductive Finding where
   /-- For green_square targets, speakers prefer the unique shape word "square"
       over the shared color word "green". Evidence: 40/42 trials. -/
@@ -283,7 +283,7 @@ noncomputable def mkConfig
 -- ============================================================================
 
 /-- σ_bU: Belief-oriented speaker, uniform L0.
-    This IS standard RSA (Frank & Goodman 2012) with utterance costs.
+    This IS standard RSA with utterance costs.
     S1 score = exp(λ · (log U(t|m) - Cost(m))). -/
 @[reducible]
 noncomputable def σ_bU (cost : Utterance → ℝ) (lp : Object → ℝ) (lp_nn : ∀ w, 0 ≤ lp w) :
@@ -349,7 +349,7 @@ noncomputable def salienceCfg : RSAConfig Utterance Object :=
 -- §9. Action-Oriented Listener (Listener Dimension)
 -- ============================================================================
 
-/-- Action-oriented listener: ρ_a(t|m) ∝ exp(α_L · ρ_b(t|m))  [Eq. 14].
+/-- Action-oriented listener: ρ_a(t|m) ∝ exp(α_L · ρ_b(t|m)) [Eq. 14].
 
     Applies a second softmax to the belief-oriented L1 posterior. This models a
     listener who soft-maximizes over Bayesian beliefs rather than reporting beliefs
@@ -697,7 +697,7 @@ theorem all_findings_verified : ∀ f : Finding, formalize f := by
 is **completely independent of λ** (the rationality parameter). Since `exp`
 is strictly monotone and multiplication by λ > 0 preserves strict order:
 
-    exp(λ · a) > exp(λ · b) ⟺ a > b    (for λ > 0)
+    exp(λ · a) > exp(λ · b) ⟺ a > b (for λ > 0)
 
 **Consequence**: The qualitative predictions (findings 1–4) hold for ALL λ > 0.
 The paper's strong rejection of λ = 1 (p. 8) affects only the *magnitude* of
@@ -750,10 +750,10 @@ theorem actionGoal_gt_iff
 
 /-! The σ_aU tie at c = 1/2 (§13a) is the **exact boundary**: σ_aU predicts
 "blue" > "circle" for blue_circle iff c < 1/2. Action-oriented scoring uses
-raw L0:  1 − c > 1/2 − 0  ⟺  c < 1/2.
+raw L0: 1 − c > 1/2 − 0 ⟺ c < 1/2.
 
 Belief-oriented scoring (σ_bU) uses log L0, giving a wider threshold of
-c < ln 2 ≈ 0.693:  log 1 − c > log(1/2) − 0  ⟺  c < ln 2.
+c < ln 2 ≈ 0.693: log 1 − c > log(1/2) − 0 ⟺ c < ln 2.
 
 The paper's best-fit c for σ_bU is 1.77, which exceeds ln 2 — meaning
 the MAP estimate actually reverses the blue_circle prediction. But the
@@ -801,7 +801,7 @@ theorem σ_bU_blue_circ_threshold
 /-- Speaker production data from Table 3 (N = 42 per target object).
 
     - green_square: 40 "square", 2 "green" (95.2% unique shape)
-    - blue_circle:  36 "blue", 6 "circle" (85.7% unique color)
+    - blue_circle: 36 "blue", 6 "circle" (85.7% unique color)
     - green_circle: 30 "circle", 12 "green" (71.4% preferred noun) -/
 def speakerData : Object → Utterance → Nat
   | .green_square, .square => 40
@@ -815,7 +815,7 @@ def speakerData : Object → Utterance → Nat
 /-- Listener comprehension data from Table 4 (N = 21 per ambiguous utterance).
 
     - "circle": 14 blue_circle, 7 green_circle (66.7% salience direction)
-    - "green":  12 green_square, 9 green_circle (57.1% salience direction) -/
+    - "green": 12 green_square, 9 green_circle (57.1% salience direction) -/
 def listenerData : Utterance → Object → Nat
   | .circle, .blue_circle  => 14
   | .circle, .green_circle => 7
@@ -853,7 +853,7 @@ theorem listenerData_matches_salience :
 -- §18. FG2012 Bridge
 -- ============================================================================
 
-/-! σ_bU with zero cost IS Frank & Goodman (2012)'s model. FG2012 defines:
+/-! σ_bU with zero cost IS @cite{frank-goodman-2012}'s model. FG2012 defines:
 
     s1Score l0 α _ w u := if l0 u w = 0 then 0 else exp(α * log(l0 u w))
 
@@ -921,7 +921,7 @@ theorem zeroCost_beliefGoal_eq
    that majority choices match model predictions.
 
 10. **FG2012 bridge** (§18): `zeroCost_beliefGoal_eq` proves that belief-oriented
-    scoring at zero cost recovers Frank & Goodman (2012)'s scoring rule.
+    scoring at zero cost recovers @cite{frank-goodman-2012}'s scoring rule.
 -/
 
 end Phenomena.Reference.Studies.QingFranke2015

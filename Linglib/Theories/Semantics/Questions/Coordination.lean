@@ -6,8 +6,8 @@ import Linglib.Theories.Semantics.Questions.Partition
 
 Q1 ^ Q2 = meet (coarsest common refinement), Q1 v Q2 = join (finest common coarsening).
 
-- Groenendijk & Stokhof (1984). Studies on the Semantics of Questions. Ch. VI, Section 3.1.
-- Szabolcsi (1997). Ways of Scope Taking.
+- @cite{groenendijk-stokhof-1984}. Studies on the Semantics of Questions. Ch. VI, Section 3.1.
+- @cite{szabolcsi-1997}. Ways of Scope Taking.
 -/
 
 namespace Semantics.Questions.Coordination
@@ -172,7 +172,7 @@ section Sluicing
 the same partition as the antecedent question Q_antecedent.
 
 G&S 1984: In "Someone called, but I don't know who ⟨called⟩", the sluiced
-wh-phrase recovers a question Q that is identical to (or at least refined by)
+wh-phrase recovers a question Q that is identical to (or at least refined)
 the antecedent question.
 
 This theorem states the core constraint: if the sluice inherits its question

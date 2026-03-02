@@ -29,7 +29,7 @@ open Semantics.Lexical.Verb.Aspect
 -- ============================================================================
 
 /-- Syntactic position of a temporal adverbial.
-    Rouillard (2026) schemata (57), (61):
+    @cite{rouillard-2026} schemata (57), (61):
     - `eventLevel`: modifies VP (E-TIA reading)
     - `perfectLevel`: modifies AspP (G-TIA reading) -/
 inductive AdverbialPosition where
@@ -38,7 +38,7 @@ inductive AdverbialPosition where
   deriving DecidableEq, BEq, Repr
 
 /-- Map function type: what does *in* relate to time?
-    Rouillard (2026) eqs. (62)--(64), (70):
+    @cite{rouillard-2026} eqs. (62)--(64), (70):
     - `runtime`: M = τ (temporal trace); used for E-TIAs
     - `identity`: M = id; used for G-TIAs (times map to themselves) -/
 inductive MapFunction where
@@ -47,14 +47,14 @@ inductive MapFunction where
   deriving DecidableEq, BEq, Repr
 
 /-- Temporal adverbial type.
-    Rouillard (2026) terminology. -/
+    @cite{rouillard-2026} terminology. -/
 inductive TIAType where
   | eTIA  -- Event TIA: measures event durations
   | gTIA  -- Gap TIA: measures durations devoid of events
   deriving DecidableEq, BEq, Repr
 
 /-- Aspect required by the adverbial's LF (E-perfect vs U-perfect).
-    Rouillard (2026) Table 1. -/
+    @cite{rouillard-2026} Table 1. -/
 inductive AspectReq where
   | perfective    -- PFV (E-perfect)
   | imperfective  -- IMPV (U-perfect)
@@ -94,7 +94,7 @@ structure TIAEntry where
 -- ============================================================================
 
 /-- *in* as E-TIA: "wrote a paper in three days".
-    Rouillard (2026) eq. (62): ⟦in⟧ := λM λt λx. M(x) ⊑ t.
+    @cite{rouillard-2026} eq. (62): ⟦in⟧ := λM λt λx. M(x) ⊑ t.
     Position: event-level (VP-adjacent).
     Map function: τ (runtime).
     Licensed when VP is telic. Not an NPI. -/
@@ -110,7 +110,7 @@ def inETIA : TIAEntry :=
     isNPI := false }
 
 /-- *in* as G-TIA: "hasn't been sick in three days".
-    Rouillard (2026) eq. (70): ⟦id⟧ := id.
+    @cite{rouillard-2026} eq. (70): ⟦id⟧ := id.
     Position: perfect-level (AspP-adjacent).
     Map function: id (times map to themselves).
     Licensed only under negation in the perfect. NPI. -/
@@ -152,8 +152,8 @@ structure TemporalAdvEntry where
   deriving Repr, BEq
 
 /-- "since Monday": left-bounds the PTS.
-    Durative adverbial (Iatridou et al. 2001): specifies LB.
-    von Fintel & Iatridou (2019): not lexically ambiguous. -/
+    Durative adverbial: specifies LB.
+    @cite{von-fintel-iatridou-2019}: not lexically ambiguous. -/
 def since : TemporalAdvEntry :=
   { form := "since"
     advType := .since_
@@ -163,7 +163,7 @@ def since : TemporalAdvEntry :=
 
 /-- "for three days": event-level duration.
     Ambiguous between event-level (measures event) and perfect-level
-    (measures PTS). Rouillard (2026) fn. 10. -/
+    (measures PTS). @cite{rouillard-2026} fn. 10. -/
 def forAdv : TemporalAdvEntry :=
   { form := "for"
     advType := .for_
@@ -184,8 +184,8 @@ def ago : TemporalAdvEntry :=
 -- ============================================================================
 
 /-- E-TIA vs G-TIA is determined by syntactic position.
-    Rouillard (2026) schemata (61):
-    (a) ASP [ VP E-TIA ]   (b) [ ASP VP ] G-TIA -/
+    @cite{rouillard-2026} schemata (61):
+    (a) ASP [ VP E-TIA] (b) [ ASP VP] G-TIA -/
 def TIAEntry.isEventLevel (e : TIAEntry) : Bool :=
   e.position == .eventLevel
 

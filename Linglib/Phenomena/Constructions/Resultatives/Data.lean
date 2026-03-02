@@ -5,7 +5,7 @@ import Linglib.Phenomena.Constructions.Studies.FillmoreKayOConnor1988
 @cite{goldberg-jackendoff-2004}
 
 Theory-neutral grammaticality judgments and aspectual contrasts for
-English resultative constructions, drawn from Goldberg & Jackendoff (2004)
+English resultative constructions, drawn from @cite{goldberg-jackendoff-2004}
 "The English Resultative as a Family of Constructions" (Language 80(3):532–568).
 
 ## Phenomena covered

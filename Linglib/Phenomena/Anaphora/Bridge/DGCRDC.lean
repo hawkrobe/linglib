@@ -4,7 +4,7 @@ import Linglib.Phenomena.Anaphora.Coreference
 /-!
 # Bridge: CRDC (Conjunct Referential Dependency Constraint) → Coreference Phenomena
 
-Connects Osborne & Li's (2023) valency-based binding theory (CRDC) to the
+Connects @cite{osborne-li-2023} valency-based binding theory (CRDC) to the
 empirical coreference data in `Phenomena.Anaphora.Coreference`.
 
 Proves that the CRDC analysis captures all reflexive coreference patterns,

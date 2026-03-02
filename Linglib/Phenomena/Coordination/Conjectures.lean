@@ -17,12 +17,12 @@ open Phenomena.Coordination.Typology
 open Phenomena.Coordination.Studies.BillEtAl2025
 
 /--
-**Open problem: predict the Bill et al. (2025) acquisition asymmetry.**
+**Open problem: predict the @cite{bill-etal-2025} acquisition asymmetry.**
 
 No existing account predicts the full cross-linguistic pattern:
 - M&S (2016) + Transparency Principle → predicts J-MU easiest. Wrong for Georgian.
-- Szabolcsi (2015) → alternative quantifier-particle analysis. Doesn't predict it.
-- Haslinger et al. (2019) → plural/distributive analysis. Doesn't predict it.
+- @cite{szabolcsi-2015} → alternative quantifier-particle analysis. Doesn't predict it.
+- @cite{haslinger-etal-2019} → plural/distributive analysis. Doesn't predict it.
 
 A complete theory should derive: when MU is morphologically bound, J-MU
 incurs extra acquisition cost (segmentation difficulty outweighs transparency

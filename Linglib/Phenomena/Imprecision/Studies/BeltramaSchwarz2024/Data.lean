@@ -2,10 +2,10 @@ import Linglib.Core.Scales.Roundness
 import Mathlib.Tactic.NormNum
 
 /-!
-# Beltrama & Schwarz (2024): Empirical Data
+# @cite{beltrama-schwarz-2024}: Empirical Data
 @cite{beltrama-schwarz-2024}
 
-Experimental data from Beltrama & Schwarz (2024), showing that speaker
+Experimental data from @cite{beltrama-schwarz-2024}, showing that speaker
 persona stereotypes affect imprecision resolution for round numerals.
 
 ## Experiments

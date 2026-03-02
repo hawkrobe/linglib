@@ -12,8 +12,8 @@ namespace Semantics.Polarity.CzechNegation
 
 /-- The three LF positions for negation in Czech PQs (Staňková 2026 §3, ex. 16).
 
-  [CP ... [PolP ne-    [ModP ne-     [TP ne-    ]]]]
-              OUTER          MEDIAL       INNER
+  [CP... [PolP ne- [ModP ne- [TP ne-]]]]
+              OUTER MEDIAL INNER
 -/
 inductive NegPosition where
   /-- Inner negation: in TP, propositional ¬p. Narrow scope.

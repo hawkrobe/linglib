@@ -18,7 +18,7 @@ HPSG's three immediate dominance schemata.
 - `HeadFillerRule` — filler combines with `S[SLASH {XP}]`, discharging the gap
 - `HPSGSchema` — unifies all three schemata
 
-## Connection to Müller (2013)
+## Connection to @cite{mueller-2013}
 
 Müller §2.3: "the formalization of internal Merge and that of the head-filler
 schema are very similar" — both handle displacement by pairing a moved element
@@ -73,12 +73,12 @@ def SynsemSlash.cat (ss : SynsemSlash) : UD.UPOS := ss.local_.cat
 
 /-- Head-Filler Schema: filler XP combines with a clause containing a gap.
 
-Schema 3 (Pollard & Sag 1994, Ch. 9):
+Schema 3:
 ```
        S
       / \
-   XP    S[SLASH {XP}]
-(filler)  (head)
+   XP S[SLASH {XP}]
+(filler) (head)
 ```
 
 The filler's category must match one of the gaps in the head's SLASH set.
@@ -102,7 +102,7 @@ structure HeadFillerRule where
 /-- All three HPSG immediate dominance schemata, unified.
 
 This inductive covers the complete set of phrase structure schemata
-needed for HPSG phrase building. Müller (2013) argues these three
+needed for HPSG phrase building. @cite{mueller-2013} argues these three
 correspond to the three universal combination modes. -/
 inductive HPSGSchema where
   /-- Head-Complement: head combines with complements (Schema 1) -/
@@ -148,7 +148,7 @@ theorem slash_discharged_default (filler headPhrase result : Sign) (headSlash : 
 
 /-! ### Islands as GAP restrictions
 
-Sag (2010, p.514) argues that island constraints are construction-specific
+@cite{hofmeister-sag-2010} argues that island constraints are construction-specific
 restrictions on the GAP value, not universal Subjacency. This eliminates
 the need for a separate island module in the grammar.
 
@@ -158,7 +158,7 @@ the need for a separate island module in the grammar.
   (e.g., wh-islands allow NP extraction but not PP)
 - **Unrestricted**: any GAP value permeates (no island constraint) -/
 
-/-- GAP restriction on a construction (Sag 2010, p.514).
+/-- GAP restriction on a construction.
 
 This classifies constructions by what kinds of gaps they permit,
 deriving island effects from the same feature system used for

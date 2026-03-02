@@ -70,7 +70,7 @@ The Minimalist T-to-C analysis correctly captures all 4 core SAI data points:
 |-------|----------------------------|------------|------------|
 | ex01  | What can John eat?         | ✓ gram.    | ✓ licensed |
 | ex02  | *What John can eat?        | ✗ ungram.  | ✗ blocked  |
-| ex07  | ...what John can eat       | ✓ gram.    | ✓ licensed |
+| ex07  |...what John can eat       | ✓ gram.    | ✓ licensed |
 | ex08  | *...what can John eat      | ✗ ungram.  | ✗ blocked  |
 
 Note: The Minimalist theory file uses T-position (finding `.AUX` tokens)

@@ -23,7 +23,7 @@ open Core.InformationStructure
 are discourse-sourced because the island effect arises from QUD-determined
 backgroundedness, not syntactic configuration or processing load.
 
-The classification `constraintSource .mannerOfSpeaking = .discourse` is not
+The classification `constraintSource.mannerOfSpeaking =.discourse` is not
 stipulated arbitrarily — it follows from the formal model: the island effect
 is predicted by `complementStatus (defaultDimension v)` which depends on
 QUD selection (information structure), not syntax or processing. -/
@@ -37,7 +37,7 @@ theorem discourse_source_from_model :
 islands are weak (ameliorable) because prosodic focus overrides the default
 QUD, changing the complement from backgrounded to discourse-new.
 
-The classification `constraintStrength .mannerOfSpeaking = .weak` follows
+The classification `constraintStrength.mannerOfSpeaking =.weak` follows
 from the existence of `prosodic_focus_ameliorates`. -/
 theorem weak_strength_from_model (v : VerbDecomp) (h : v.hasMannerWeight = true) :
     -- Without focus: backgrounded (island)

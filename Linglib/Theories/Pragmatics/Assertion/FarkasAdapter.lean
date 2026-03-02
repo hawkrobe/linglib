@@ -2,7 +2,7 @@ import Linglib.Theories.Semantics.Dynamic.State
 import Linglib.Core.Interfaces.AssertionTheory
 
 /-!
-# Farkas & Bruce (2010) Assertion Adapter
+# @cite{farkas-bruce-2010} Assertion Adapter
 
 @cite{farkas-bruce-2010}
 

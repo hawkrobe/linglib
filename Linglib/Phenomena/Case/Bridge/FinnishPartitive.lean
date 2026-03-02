@@ -11,13 +11,13 @@ The case of the direct object determines — or reflects — the telicity of
 the VP:
 
 - **Accusative/genitive object** → telic (bounded, resultative):
-  *Luin   kirja-n.*  'I read the book (completely).'
+  *Luin kirja-n.* 'I read the book (completely).'
 
 - **Partitive object** → atelic (unbounded, irresultative):
-  *Luin   kirja-a.*  'I read the book / was reading the book (partially).'
+  *Luin kirja-a.* 'I read the book / was reading the book (partially).'
 
 The partitive also appears obligatorily under negation:
-  *En lukenut kirja-a.*  'I didn't read the book.'
+  *En lukenut kirja-a.* 'I didn't read the book.'
 
 This is the first bridge in linglib connecting `Core.Case` to
 `Semantics.Lexical.Verb.Aspect.Telicity`, making the case–aspect
@@ -25,8 +25,7 @@ interaction formally verifiable.
 
 ## Theoretical significance
 
-Finnish partitive is evidence for the **Incremental Theme** hypothesis
-(Krifka 1989, 1992): the object's referential properties (bounded vs.
+Finnish partitive is evidence for the **Incremental Theme** hypothesis: the object's referential properties (bounded vs.
 unbounded) compose with the verb's event structure to determine VP-level
 telicity. The case morphology makes this composition visible.
 

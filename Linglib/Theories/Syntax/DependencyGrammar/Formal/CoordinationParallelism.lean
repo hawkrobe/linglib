@@ -6,7 +6,7 @@ import Linglib.Theories.Syntax.DependencyGrammar.Coordination
 # Coordination Parallelism and Sharing
 @cite{osborne-2019}
 
-Formalizes Osborne's (2019, Ch 10–11) analysis of coordination: conjuncts
+Formalizes @cite{osborne-2019}'s analysis of coordination: conjuncts
 must have parallel structure, shared dependents form catenae, and the CSC
 falls out from the parallelism requirement.
 

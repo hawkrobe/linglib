@@ -1,8 +1,8 @@
 /-!
-# Futrell, Levy & Gibson (2020): Crosslinguistic Dependency Length Data
-@cite{futrell-gibson-2020}
+# @cite{futrell-gibson-2020}: Crosslinguistic Dependency Length Data
+@cite{futrell-gibson-2020} @cite{zaslavsky-hu-levy-2020}
 
-Empirical data from Table 2 of Futrell, Levy & Gibson (2020) "Dependency
+Empirical data from Table 2 of @cite{futrell-gibson-2020} "Dependency
 locality as an explanatory principle for word order", Language 96(2):371–412.
 
 53 languages from Universal Dependencies corpora, measuring:

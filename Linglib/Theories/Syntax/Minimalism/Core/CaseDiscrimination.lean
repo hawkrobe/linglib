@@ -1,9 +1,8 @@
 /-!
 # Case Discrimination in Agreement @cite{preminger-2014}
-@cite{bobaljik-2008} @cite{moravcsik-1974}
+@cite{bobaljik-2008} @cite{moravcsik-1974} @cite{scott-2023}
 
-Preminger (2014, Ch. 8) formalizes the **Moravcsik hierarchy**
-(Moravcsik 1974, Bobaljik 2008): agreement is case-discriminating —
+@cite{preminger-2014} formalizes the **Moravcsik hierarchy**: agreement is case-discriminating —
 probes are sensitive to the case of their potential targets.
 
 ## The Moravcsik Hierarchy
@@ -22,7 +21,7 @@ threshold is a contiguous prefix: {unmarked}, {unmarked, dependent},
 or {all}. Crucially, a probe CANNOT target dependent-case DPs without
 also targeting unmarked-case DPs.
 
-## The Typological Gap (Bobaljik 2008)
+## The Typological Gap
 
 The hierarchy predicts an asymmetry:
 - NOM-ACC case + NOM-ACC agreement: ✓ (English, French)
@@ -55,7 +54,7 @@ namespace Minimalism
 -- § 1: Case Accessibility Levels
 -- ============================================================================
 
-/-- Case accessibility for agreement (Moravcsik 1974, Bobaljik 2008).
+/-- Case accessibility for agreement.
 
     The hierarchy determines which DPs are visible to agreement probes.
     Higher accessibility = more likely to be targeted by a probe. -/
@@ -110,7 +109,7 @@ def ergAbs : CaseAlignment :=
   ⟨.unmarked, .dependent, .unmarked⟩
 
 /-- Tripartite alignment: S gets unmarked (ABS), A gets dependent
-    (ERG), P gets dependent (ACC). Mam (Scott 2023). -/
+    (ERG), P gets dependent (ACC). Mam. -/
 def tripartite : CaseAlignment :=
   ⟨.unmarked, .dependent, .dependent⟩
 
@@ -155,7 +154,7 @@ def thresholds : List CaseAccessibility :=
     unmarked = NOM). Therefore, the pattern S=P≠A (ergative-absolutive
     agreement) is impossible: you cannot target S without also targeting A.
 
-    This is Bobaljik's (2008) typological gap: NOM-ACC case + ERG-ABS
+    This is @cite{bobaljik-2008}'s typological gap: NOM-ACC case + ERG-ABS
     agreement is unattested. -/
 theorem nomAcc_a_equals_s (threshold : CaseAccessibility) :
     (agreementFromThreshold nomAcc threshold).aAgrees =
@@ -229,7 +228,7 @@ def dativeVisibleToProbe (threshold : CaseAccessibility) : Bool :=
     The dative intervenes (blocks the probe by locality/minimality)
     if it has matching phi-features. But it cannot be a valid goal
     because its case (lexical) is below the threshold. The probe
-    fails without crashing (Preminger 2014, §8.4).
+    fails without crashing.
 
     This is modeled as: if a dative is present AND the dative's
     case is below the threshold (so the probe can't Agree with it)

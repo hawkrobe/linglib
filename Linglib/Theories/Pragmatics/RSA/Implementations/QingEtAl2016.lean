@@ -2,10 +2,10 @@ import Linglib.Theories.Semantics.Lexical.Verb.ChangeOfState.Theory
 import Mathlib.Data.Rat.Defs
 
 /-!
-# Qing, Goodman & Lassiter (2016) @cite{qing-goodman-lassiter-2016} @cite{scontras-tonhauser-2025} @cite{warstadt-2022}
+# @cite{qing-goodman-lassiter-2016} @cite{qing-goodman-lassiter-2016} @cite{scontras-tonhauser-2025} @cite{warstadt-2022}
 
 RSA Projective Content Model. The original formulation of the joint-inference-over-(world, context) model
-for presupposition projection. Scontras & Tonhauser (2025) and Warstadt (2022)
+for presupposition projection. @cite{scontras-tonhauser-2025} and @cite{warstadt-2022}
 are mathematically equivalent instances applied to different domains.
 
 ## The Model
@@ -228,9 +228,9 @@ def contextPrior : ContextSet → ℚ
 
 
 /-!
-## Connection to S&T (2025) and Warstadt (2022)
+## Connection to S&T (2025) and @cite{warstadt-2022}
 
-This implementation demonstrates that Qing et al. (2016) uses the same
+This implementation demonstrates that @cite{qing-goodman-lassiter-2016} uses the same
 mathematical structure as S&T and Warstadt:
 
 | Component | Qing 2016 | S&T 2025 | Warstadt 2022 |

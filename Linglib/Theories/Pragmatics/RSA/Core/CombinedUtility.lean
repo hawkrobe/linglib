@@ -175,18 +175,18 @@ def normalizeWeights3 (wA wB wC : ℚ) : ℚ × ℚ × ℚ :=
 /-- Goal-oriented speaker utility: U_epi + β · U_goal.
 
 This parameterization naturally models argumentative/persuasive speakers:
-- Barnett et al. (2022): U_goal = ln P_L0(w*|u), β controls persuasive bias
-- Cummins & Franke (2021): U_goal = argStr(u, G), β → ∞ for pure argStr speaker
+- @cite{barnett-griffiths-hawkins-2022}: U_goal = ln P_L0(w*|u), β controls persuasive bias
+- @cite{cummins-franke-2021}: U_goal = argStr(u, G), β → ∞ for pure argStr speaker
 
 Equivalent to combinedWeighted(1, β, U_epi, U_goal). The parameter β controls
-the cooperativity spectrum (Cummins 2025):
+the cooperativity spectrum:
 - β = 0: fully cooperative (standard RSA)
 - 0 < β < ∞: partially argumentative
 - β → ∞: purely argumentative -/
 def goalOrientedUtility (uEpi uGoal : ℚ) (β : ℚ) : ℚ :=
   uEpi + β * uGoal
 
-/-- Goal-oriented utility = combinedWeighted(1, β, ...) -/
+/-- Goal-oriented utility = combinedWeighted(1, β,...) -/
 theorem goalOriented_eq_combinedWeighted (uEpi uGoal β : ℚ) :
     goalOrientedUtility uEpi uGoal β = combinedWeighted 1 β uEpi uGoal := by
   unfold goalOrientedUtility combinedWeighted; ring
@@ -247,7 +247,7 @@ theorem lamToBeta_betaToLam_inv (β : ℚ) (hβ : 0 ≤ β) :
   have h1ne : (1 : ℚ) + β ≠ 0 := by linarith
   field_simp [h1ne]; ring
 
-/-- The key bridge: goalOrientedUtility = (1+β) · combined(β/(1+β), ...).
+/-- The key bridge: goalOrientedUtility = (1+β) · combined(β/(1+β),...).
 
 `U_epi + β·U_goal = (1+β) · ((1 - β/(1+β))·U_epi + β/(1+β)·U_goal)`
 

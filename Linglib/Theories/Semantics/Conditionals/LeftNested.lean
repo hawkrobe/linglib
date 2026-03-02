@@ -132,7 +132,7 @@ end InnerConditionalContent
 /--
 Interpret an LNC given discourse context and content type.
 
-The main result of Lassiter (2025): bare LNCs default to PC interpretation.
+The main result of @cite{cao-white-lassiter-2025}: bare LNCs default to PC interpretation.
 -/
 def interpretLNC {W : Type*} (ds : DiscourseState W) (lnc : LNC W)
     (content : InnerConditionalContent) (worlds : List W) : ConditionalType :=
@@ -262,7 +262,7 @@ The embedded consequent patterns are diagnostic because:
 /--
 Polarity licensing in the embedded consequent position.
 
-Following Lassiter (2025): the embedded consequent of an LNC (the B position
+Following @cite{cao-white-lassiter-2025}: the embedded consequent of an LNC (the B position
 in "if (B if A), C") shows polarity patterns consistent with PC reading.
 -/
 structure EmbeddedConsequentPolarity where

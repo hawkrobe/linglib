@@ -978,7 +978,7 @@ def buildL1PolicyCProof (cfg u w : Expr)
     allUElems allWElems allLElems wpValues lpValues αNat isBeliefBased s1Cache leafCache
   buildL1PolicyFromScores cfg u w allWElems allScoreProofs totalProof
 
-/-- Build CProof for (cfg.L1_latent_agent u).score () l =
+/-- Build CProof for (cfg.L1_latent_agent u).score  l =
     Σ_w worldPrior(w) · latentPrior(w,l) · S1(l,w,u). -/
 def buildL1LatentScoreCProof (cfg u l : Expr)
     (allUElems allWElems allLElems : Array Expr)

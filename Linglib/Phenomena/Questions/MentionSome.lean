@@ -17,8 +17,8 @@ This file contains theory-neutral empirical data on:
 
 ## Sources
 
-- Groenendijk & Stokhof (1984). Studies on the Semantics of Questions. Ch. VI, Sec. 5.
-- Belnap (1982). Questions and Answers in Montague Grammar.
+- @cite{groenendijk-stokhof-1984}. Studies on the Semantics of Questions. Ch. VI, Sec. 5.
+- @cite{belnap-1982}. Questions and Answers in Montague Grammar.
 -/
 
 namespace Phenomena.Questions.MentionSome

@@ -17,20 +17,20 @@ categories (nominal, verbal, adjectival — Wellwood 2015).
 
 ```
 Comparison/
-├── Data.lean              — this file: cross-construction overview
+├── Data.lean — this file: cross-construction overview
 ├── Comparative/
-│   ├── Data.lean          — basic comparative judgments, phrasal vs. clausal
-│   ├── Differential.lean  — "3 inches taller", factor phrases
-│   └── Subcomparative.lean — "longer than the desk is wide"
+│ ├── Data.lean — basic comparative judgments, phrasal vs. clausal
+│ ├── Differential.lean — "3 inches taller", factor phrases
+│ └── Subcomparative.lean — "longer than the desk is wide"
 ├── Equative/
-│   └── Data.lean          — "as tall as", at-least vs. exactly readings
+│ └── Data.lean — "as tall as", at-least vs. exactly readings
 ├── Superlative/
-│   └── Data.lean          — absolute vs. relative, focus
+│ └── Data.lean — absolute vs. relative, focus
 ├── DegreeQuestion/
-│   └── Data.lean          — "how tall", negative islands, modal obviation
-├── CrossCategorial.lean   — construction-level Wellwood-style parallels
-├── Typology.lean          — WALS 121 cross-linguistic typology (from Gradability/)
-└── TypologyBridge.lean    — typology–fragment bridge (from Gradability/)
+│ └── Data.lean — "how tall", negative islands, modal obviation
+├── CrossCategorial.lean — construction-level Wellwood-style parallels
+├── Typology.lean — WALS 121 cross-linguistic typology (from Gradability/)
+└── TypologyBridge.lean — typology–fragment bridge (from Gradability/)
 ```
 
 -/
@@ -71,7 +71,7 @@ inductive ComparativeStrategy where
 -- ════════════════════════════════════════════════════
 
 /-- What is being compared — the syntactic category of the gradable
-    expression, following Wellwood (2015).
+    expression, following @cite{wellwood-2015}.
 
     The key insight: comparison constructions apply uniformly across
     categories; what varies is the measured domain (entity, event, state). -/

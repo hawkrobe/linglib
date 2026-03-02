@@ -10,11 +10,13 @@ tense, mood, and often agreement for the entire chain.
 
 Clause chaining is typologically distinct from both coordination (syntactically
 equal independent clauses) and subordination (embedded dependent clauses).
-Following Foley & Van Valin (1984) and Longacre (2007), chained medial clauses
+Following @cite{foley-r-d-van-valin-1984} and @cite{longacre-2007}, chained medial clauses
 are **dependent but not embedded** — what Role & Reference Grammar calls
 "cosubordination."
 
 ## Core structural asymmetry
+@cite{chomsky-1981} @cite{dryer-1992} @cite{givon-1983}
+
 
 The medial/final asymmetry is the defining property. Medial verbs carry a
 **reduced** morphological paradigm: some TAM categories are absent or restricted,
@@ -28,7 +30,7 @@ verb to all preceding medial clauses.
 Many clause-chaining languages mark **switch-reference** (SR) on medial verbs:
 morphology tracking whether the subject of the next clause is the same as (SS)
 or different from (DS) the current clause's subject. SR is orthogonal to binding
-theory (Chomsky 1981): binding constrains intra-clausal coreference via syntactic
+theory: binding constrains intra-clausal coreference via syntactic
 configuration, while SR tracks inter-clausal participant continuity via verbal
 morphology. Some languages (Greater Awyu) track topical participants rather than
 syntactic subjects, revealing SR as discourse-pragmatic rather than purely
@@ -43,7 +45,7 @@ The formalization captures five parameter dimensions:
 | Chain direction | medial-final, initial-medial | most SOV langs, some V-initial |
 | SR system | none, SS/DS, SS/DS+temporal, multi-track | Korean, Nungon, Korowai |
 | Medial morphology | per-category retention (full/restricted/absent) | 5 TAM dimensions |
-| Interclausal semantics | 9 relation types marked on medial verbs | sequential, simultaneous, ... |
+| Interclausal semantics | 9 relation types marked on medial verbs | sequential, simultaneous,... |
 | Bridging constructions | recapitulative, summary | tail-head linkage, generic verb |
 
 -/
@@ -78,10 +80,10 @@ inductive ClauseStatus where
     Medial-final order is overwhelmingly dominant, correlating strongly with
     verb-final (SOV/SOV-flexible) word order. Initial-medial order is rare,
     attested in some verb-initial languages. The correlation follows from the
-    head-direction generalization (Dryer 1992): the final verb is the "head"
+    head-direction generalization: the final verb is the "head"
     of the chain, and its position mirrors the language's general head direction.
 
-    Sarvasy & Aikhenvald (2025) §1.2. -/
+    @cite{sarvasy-aikhenvald-2025} §1.2. -/
 inductive ChainDirection where
   /-- Medial clauses precede the final clause. By far the most common pattern,
       strongly correlated with verb-final (OV) word order.
@@ -114,7 +116,7 @@ def ChainDirection.predictedHeadDirection : ChainDirection → HeadDirection
     TAM distinctions while lacking others. This three-way scale captures the
     cross-linguistic variation. The ordering is full > restricted > absent.
 
-    Sarvasy & Aikhenvald (2025) §§1.3-1.5; de Vries (2025) §2. -/
+    @cite{sarvasy-aikhenvald-2025} §§1.3-1.5; @cite{de-vries-2025} §2. -/
 inductive CategoryRetention where
   /-- Full paradigm: medial verbs mark this category with the same range of
       values as independent verbs. E.g., Turkish converbs retain aspect. -/
@@ -206,8 +208,8 @@ def MedialMorphProfile.udVerbForm (p : MedialMorphProfile) : UD.VerbForm :=
     binding constrains coreference within a clause via syntactic configuration
     (c-command); SR tracks coreference between clauses via verbal morphology.
 
-    Sarvasy & Aikhenvald (2025) §§1.4-1.5; de Vries (2025) §§3-4;
-    Aikhenvald (2025) §3. -/
+    @cite{sarvasy-aikhenvald-2025} §§1.4-1.5; @cite{de-vries-2025} §§3-4;
+    @cite{sarvasy-aikhenvald-2025} §3. -/
 inductive SRSystem where
   /-- No SR morphology. The language may still have clause chaining (e.g.,
       Korean, Turkish, Japanese) but does not grammatically mark whether
@@ -239,7 +241,7 @@ inductive SRTarget where
       E.g., Nungon, Ku Waru, most Papuan and Amerindian languages. -/
   | subjectOnly
   /-- Track both subject and object. Rare.
-      E.g., some Panoan languages (Fleck 2003). -/
+      E.g., some Panoan languages. -/
   | subjectAndObject
   /-- Track the topical participant, which may not be the syntactic subject.
       The tracked referent is determined by discourse prominence rather than
@@ -253,7 +255,7 @@ inductive SRTarget where
     Cross-linguistically, SS forms tend to be morphologically simpler (shorter,
     less marked) than DS forms. This asymmetry reflects the discourse-pragmatic
     default: subject continuity is the unmarked expectation in connected
-    discourse (Givon 1983). -/
+    discourse. -/
 inductive SRMarkedness where
   /-- SS is the morphologically unmarked member (shorter, zero, or suffix-only).
       DS carries overt marking. The cross-linguistically dominant pattern. -/
@@ -274,7 +276,7 @@ inductive SRMarkedness where
     or converbal suffixes), inferred from context, or signaled by the SR system
     (e.g., SS-sequential vs. SS-simultaneous as distinct forms).
 
-    Sarvasy & Aikhenvald (2025) §1.4; Longacre (2007). -/
+    @cite{sarvasy-aikhenvald-2025} §1.4; @cite{longacre-2007}. -/
 inductive InterclauseRelation where
   | sequential    -- medial event precedes next event (iconic temporal order)
   | simultaneous  -- medial event overlaps temporally with next event
@@ -311,7 +313,7 @@ def InterclauseRelation.encodableViaSR : InterclauseRelation → Bool
     These are characteristic of oral narrative in clause-chaining languages
     and serve to structure discourse into episodes.
 
-    Sarvasy & Aikhenvald (2025) §1.6; de Vries (2005); Aikhenvald (2025) §3.3. -/
+    @cite{sarvasy-aikhenvald-2025} §1.6; de Vries (2005); @cite{sarvasy-aikhenvald-2025} §3.3. -/
 inductive BridgingType where
   /-- Recapitulative (tail-head) linkage: the first medial clause of a new chain
       repeats (wholly or in reduced form) the final clause of the preceding chain.
@@ -328,7 +330,7 @@ inductive BridgingType where
 -- § Clause-linking strategy (shared vocabulary)
 -- ============================================================================
 
-/-- The three major clause-linking strategies, following Foley & Van Valin (1984).
+/-- The three major clause-linking strategies, following @cite{foley-r-d-van-valin-1984}.
 
     This type provides shared vocabulary across the clause-combining phenomenon
     directories (Coordination, Complementation, FillerGap, ClauseChaining).

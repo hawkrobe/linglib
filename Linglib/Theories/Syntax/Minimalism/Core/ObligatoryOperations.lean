@@ -4,12 +4,12 @@ import Linglib.Theories.Syntax.Minimalism.Core.Agree
 # Obligatory Operations @cite{preminger-2014}
 @cite{chomsky-2001}
 
-Preminger (2014, Ch. 5) argues that φ-agreement is an **obligatory
+@cite{preminger-2014} argues that φ-agreement is an **obligatory
 operation** that can **fail without crashing** the derivation. This
-contrasts with the standard Minimalist view (Chomsky 2001) where
+contrasts with the standard Minimalist view where
 unvalued features at the interfaces cause the derivation to crash.
 
-## The Standard Model (Chomsky 2001)
+## The Standard Model
 
 Probes carry uninterpretable/unvalued features ([uφ]). If [uφ] reaches
 the interfaces (PF/LF) without being valued by Agree, the derivation
@@ -64,7 +64,7 @@ namespace Minimalism
 -- ============================================================================
 
 /-- Two models of what happens when a probe fails to find a matching
-    goal (Preminger 2014, Ch. 5).
+    goal.
 
     - **crashOnFailure**: the standard Minimalist model. Unvalued
       features at the interfaces cause the derivation to crash.
@@ -73,7 +73,7 @@ namespace Minimalism
       (the probe must attempt to Agree), but failure to find a goal
       does NOT crash — default morphology surfaces instead. -/
 inductive AgreementModel where
-  /-- Standard: unvalued features at interface → crash (Chomsky 2001). -/
+  /-- Standard: unvalued features at interface → crash. -/
   | crashOnFailure
   /-- Preminger: obligatory but failure → default, no crash. -/
   | obligatoryNocrash
@@ -223,7 +223,7 @@ theorem present_unvalued_vs_absent :
     operation (which returns `Option FeatureBundle`) and Preminger's
     obligatory-but-failable model (which distinguishes valued from unvalued).
 
-    The key insight (Preminger 2014, Ch. 5): the Agree mechanism itself
+    The key insight: the Agree mechanism itself
     doesn't decide what happens on failure — that's the job of the
     `AgreementModel`. This function extracts the binary outcome so the
     model can decide convergence. -/

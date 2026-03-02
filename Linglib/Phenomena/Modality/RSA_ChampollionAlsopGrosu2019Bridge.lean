@@ -5,7 +5,7 @@ import Linglib.Phenomena.Modality.FreeChoice
 # Bridge: RSA Free Choice Disjunction → Phenomena Data
 @cite{champollion-alsop-grosu-2019}
 
-Connects the RSA free choice model from Champollion, Alsop & Grosu (2019)
+Connects the RSA free choice model from @cite{champollion-alsop-grosu-2019}
 to empirical data in `Phenomena.Modality.FreeChoice`.
 
 ## Bridge Theorems

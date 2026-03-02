@@ -3,9 +3,9 @@ import Linglib.Core.Temporal.Reichenbach
 
 /-!
 # Kaplanian Context of Utterance
-@cite{kaplan-1989}
+@cite{kaplan-1989} @cite{speas-tenny-2003}
 
-The full context tuple ⟨agent, world, time, position⟩ from Kaplan (1989)
+The full context tuple ⟨agent, world, time, position⟩ from @cite{kaplan-1989}
 "Demonstratives" §XVIII. Framework-agnostic infrastructure used by reference
 theory, tense semantics, mood, and RSA.
 
@@ -20,12 +20,12 @@ open Core (Situation)
 
 /-- Full Kaplanian context of utterance: ⟨agent, world, time, position⟩.
 
-Kaplan (1989) §XVIII: "A context is a tuple ⟨cₐ, cw, ct, cp⟩ where cₐ is
+@cite{kaplan-1989} §XVIII: "A context is a tuple ⟨cₐ, cw, ct, cp⟩ where cₐ is
 the agent, cw the world, ct the time, and cp the position." -/
 structure KContext (W : Type*) (E : Type*) (P : Type*) (T : Type*) where
   /-- The agent (speaker) of the context -/
   agent : E
-  /-- The addressee (hearer) of the context (Speas & Tenny 2003) -/
+  /-- The addressee (hearer) of the context -/
   addressee : E
   /-- The world of the context -/
   world : W
@@ -36,7 +36,7 @@ structure KContext (W : Type*) (E : Type*) (P : Type*) (T : Type*) where
 
 /-- Proper context: the agent exists at the context's world.
 
-Kaplan (1989) §XVIII Remark 3: contexts are proper only if the agent exists
+@cite{kaplan-1989} §XVIII Remark 3: contexts are proper only if the agent exists
 at the world of the context. This validates ⊨ Exist I. -/
 def ProperContext {W E P T : Type*} (c : KContext W E P T)
     (exists_ : E → W → Prop) : Prop :=

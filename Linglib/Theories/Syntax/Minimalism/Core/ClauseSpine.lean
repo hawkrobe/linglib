@@ -7,7 +7,7 @@ import Linglib.Theories.Syntax.Minimalism.Formal.ExtendedProjection.Basic
 `ComplementSize` (ExtendedProjection/Basic.lean) classifies clausal complements
 by their highest functional head, which works well for tense-Agree transparency
 and CTP classification. But it can't distinguish VoiceP from ApplP, since both
-have fValue = 1. Languages like Mam (Elkins, Imanishi & Coon 2026) need this
+have fValue = 1. Languages like Mam need this
 distinction: =(y)a' appears when Voice⁰ is projected but not when only Appl⁰ is.
 
 `ClauseSpine` records the full list of projected heads, enabling per-head
@@ -81,7 +81,7 @@ def ClauseSpine.applP : ClauseSpine :=
   ⟨[.V, .Appl], by decide⟩
 
 /-- Bare VP: [V]. Minimal clause — just the lexical verb.
-    In Mam, this is the size of infinitival complements (Elkins et al. 2026, §6.1):
+    In Mam, this is the size of infinitival complements:
     the embedded clause is just VP, lacking Voice, Appl, v. -/
 def ClauseSpine.bareVP : ClauseSpine :=
   ⟨[.V], by decide⟩

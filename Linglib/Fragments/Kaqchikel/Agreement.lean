@@ -8,10 +8,10 @@ import Linglib.Core.Case.Hierarchy
 # Kaqchikel Agreement Fragment @cite{preminger-2014}
 
 Agreement morphology for Kaqchikel (K'ichean, Mayan), formalizing
-Preminger (2014) *Agreement and Its Failures*, Chapters 3-4 and
+@cite{preminger-2014} *Agreement and Its Failures*, Chapters 3-4 and @cite{chomsky-2001}
 Appendix 9.A.
 
-## The System (Preminger 2014, Ch. 3)
+## The System
 
 Kaqchikel has two agreement paradigms on the verb:
 - **Set A** (ERG): prefixes on Voice/v cross-referencing the transitive agent
@@ -59,13 +59,12 @@ Two probes in the AF clause:
 - **π⁰**: seeks [participant], triggers clitic doubling of full φ-set
 - **#⁰**: seeks [plural], triggers number agreement
 
-## Obligatory Operations (Preminger 2014, Ch. 5)
+## Obligatory Operations
 
 Preminger's central theoretical claim: φ-agreement is **obligatory** —
 the grammar must attempt it — but can **fail without crashing**. When
 the probe finds no suitable goal, no agreement obtains and a default
-(3SG = ∅) surfaces. This contrasts with the standard Minimalist view
-(Chomsky 2001) where unvalued features cause the derivation to crash.
+(3SG = ∅) surfaces. This contrasts with the standard Minimalist view where unvalued features cause the derivation to crash.
 
 -/
 
@@ -150,7 +149,7 @@ def setAVocab : Vocabulary :=
 -- ============================================================================
 
 /-- Set B (ABS) markers: preverbal markers on Infl/T cross-referencing
-    the absolutive argument (Preminger 2014, Ch. 3). The 3SG form (∅) is
+    the absolutive argument. The 3SG form (∅) is
     also the Elsewhere entry — the default when no more specific entry
     matches, as in the failure case of obligatory agreement (Ch. 5). -/
 def setBExponent : PersonNumber → String
@@ -172,7 +171,7 @@ def setBVocab : Vocabulary :=
 -- § 5: Argument Positions
 -- ============================================================================
 
-/-- Argument positions in a Kaqchikel clause (Preminger 2014, Ch. 3). -/
+/-- Argument positions in a Kaqchikel clause. -/
 inductive KaqArgPosition where
   /-- A: transitive agent (external argument, Spec,vP → Spec,TP) -/
   | agent
@@ -214,7 +213,7 @@ def kaqArgPositions : List KaqArgPosition :=
 -- § 6: AF Agreement — Omnivorous Hierarchy
 -- ============================================================================
 
-/-- The omnivorous agreement hierarchy for AF (Preminger 2014, §3.3).
+/-- The omnivorous agreement hierarchy for AF.
 
     Derived from `probeResolutionRank` (PersonGeometry.lean), which
     computes rank from the two-probe system:
@@ -331,8 +330,7 @@ def AgreeOutcome.exponent : AgreeOutcome → String
   | .success pn => setBExponent pn
   | .failure    => "∅"
 
-/-- Failed agreement surfaces as 3SG — the Elsewhere entry
-    (Preminger 2014, §5.2). -/
+/-- Failed agreement surfaces as 3SG — the Elsewhere entry. -/
 theorem failed_agreement_is_3sg :
     AgreeOutcome.failure.exponent = setBExponent .p3sg := rfl
 

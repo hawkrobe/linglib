@@ -1,8 +1,8 @@
 import Linglib.Theories.Syntax.Minimalism.Core.Agree
 
 /-!
-# Dependent Case Theory (Marantz 1991; Baker 2015)
-@cite{baker-2015} @cite{deal-2010} @cite{marantz-1991} @cite{ozaki-2025}
+# Dependent Case Theory
+@cite{baker-2015} @cite{deal-2010} @cite{marantz-1991} @cite{ozaki-2025} @cite{scott-2023}
 
 An alternative to Agree-based case assignment. Case is determined by
 the structural configuration of NPs within a Spell-Out domain:
@@ -27,12 +27,12 @@ dependent ergative (to the higher NP) and dependent accusative (to the
 lower NP) in the same domain, with ABS as the unmarked default (surfacing
 only when no case competitor exists — i.e., intransitives).
 
-**Note**: Not all tripartite systems use dependent case. SJA Mam (Scott 2023)
+**Note**: Not all tripartite systems use dependent case. SJA Mam
 achieves tripartite alignment via inherent case from Voice (ERG for agents,
 ACC for objects) plus structural case from Infl (ABS for intransitive S).
 See `Fragments.Mam.Agreement` for the Agree-based analysis.
 
-## Key Application: Ozaki (2025)
+## Key Application: @cite{ozaki-2025}
 
 Japanese departure verbs (*hanareru* 'leave', *deru* 'exit') are dyadic
 unaccusatives with two internal arguments and no thematic Voice. Accusative

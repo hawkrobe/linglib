@@ -3,7 +3,7 @@ import Linglib.Theories.Semantics.Causation.PsychCausation
 import Linglib.Theories.Semantics.Causation.PsychCausalLink
 
 /-!
-# Psych Verb Syntax-Semantics Interface (Pesetsky 1995; Kim 2024)
+# Psych Verb Syntax-Semantics Interface
 
 @cite{pesetsky-1995} @cite{kim-2024} @cite{kratzer-1996} @cite{schfer-2008}## Directions of determination
 
@@ -11,17 +11,17 @@ The psych verb interface involves three layers with distinct directions
 of determination:
 
 ```
-    SYNTAX determines          SEMANTICS determines
-    ─────────────────          ────────────────────
-    Voice_CAUSE head     →     ∃ causer argument
-         ↑                          ↓
-    (that's all)          DP denotation (percept vs representation)
+    SYNTAX determines SEMANTICS determines
+    ───────────────── ────────────────────
+    Voice_CAUSE head → ∃ causer argument
+         ↑ ↓
+    (that's all) DP denotation (percept vs representation)
                                     ↓
                               CausalSource (external vs internal)
                                     ↓
                           ┌─────────┴──────────┐
-                    StimulusType          opacity, temporality,
-                    (T vs SM)            event sort, transition
+                    StimulusType opacity, temporality,
+                    (T vs SM) event sort, transition
                           ↓
                     PP frame (*of* vs *about*)
                     Cause cooccurrence
@@ -39,7 +39,7 @@ to the syntax. From this single semantic property, all other properties
 follow: CausalSource, StimulusType, opacity, temporal structure, event
 sort, PP frame selection, and Cause cooccurrence.
 
-**The zero syntax thesis** (Pesetsky 1995, Ch. 5): the syntactic
+**The zero syntax thesis**: the syntactic
 structure is *invariant* across the two DP types. No head, feature, or
 morpheme distinguishes percept from representation DPs. The syntax is
 blind to the T/SM distinction. All variation is semantic.
@@ -206,7 +206,7 @@ theorem semantics_determines_all {Time : Type*} [LinearOrder Time] :
 -- § 4. Zero syntax: syntax is invariant across DP denotations
 -- ════════════════════════════════════════════════════════════════════
 
-/-- **Zero syntax thesis** (Pesetsky 1995, Ch. 5): the syntactic
+/-- **Zero syntax thesis**: the syntactic
     head projected is the same regardless of DP denotation.
 
     The syntax contributes exactly Voice_CAUSE in both cases. There

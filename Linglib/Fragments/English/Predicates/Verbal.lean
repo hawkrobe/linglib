@@ -92,9 +92,9 @@ structure VerbEntry extends VerbCore where
 
     Usage:
     ```
-    def kick : VerbEntry := .mkRegular {
-      form := "kick", complementType := .np,
-      subjectTheta := some .agent, objectTheta := some .patient }
+    def kick : VerbEntry :=.mkRegular {
+      form := "kick", complementType :=.np,
+      subjectTheta := some.agent, objectTheta := some.patient }
     ``` -/
 def VerbEntry.mkRegular (core : VerbCore) : VerbEntry :=
   { toVerbCore := core
@@ -209,7 +209,7 @@ def put : VerbEntry where
   vendlerClass := some .achievement
   levinClass := some .put
 
-/-- "weigh" — measure predicate selecting for mass/weight (Bale & Schwarz 2026). -/
+/-- "weigh" — measure predicate selecting for mass/weight. -/
 def weigh : VerbEntry := .mkRegular {
   form := "weigh"
   complementType := .np
@@ -219,7 +219,7 @@ def weigh : VerbEntry := .mkRegular {
   selectsDimension := some .mass
   levinClass := some .measure }
 
-/-- "cover" — motion/extent predicate selecting for distance (Bale & Schwarz 2026). -/
+/-- "cover" — motion/extent predicate selecting for distance. -/
 def cover : VerbEntry := .mkRegular {
   form := "cover"
   complementType := .np
@@ -468,7 +468,7 @@ def keep : VerbEntry where
 
 /-- "manage" — positive implicative: "managed to VP" entails "VP".
     Traditional analysis: agentive subject controls the complement.
-    See also `manage_occasion` for the Solstad & Bott (2024) analysis. -/
+    See also `manage_occasion` for the @cite{solstad-bott-2024} analysis. -/
 def manage : VerbEntry := .mkRegular {
   form := "manage"
   complementType := .infinitival
@@ -788,7 +788,7 @@ def kill : VerbEntry := .mkRegular {
   } }
 
 /-- "break" — thick lexical causative (Levin 45.1 Break Verbs; Embick 2009 break-class).
-    Pure change-of-state verb: change in "material integrity" (Hale & Keyser 1987)
+    Pure change-of-state verb: change in "material integrity"
     with no specification of how the change comes about (Levin 1993:242). -/
 def break_ : VerbEntry where
   form := "break"
@@ -1447,15 +1447,15 @@ def forget_rog : VerbEntry where
 
 /-! Occasion verbs presuppose a prior occasioning eventuality and have
     experiencer (agent-evocator) subjects. They pattern with AgExp verbs
-    for implicit causality bias (Solstad & Bott 2024).
+    for implicit causality bias.
 
     "manage" has two entries: `manage` (`.default`, agentive subject — traditional
     implicative analysis) and `manage_occasion` (`.occasion`, experiencer subject —
-    Solstad & Bott's agent-evocator analysis). This mirrors Kim's (2024) observation
+    Solstad & Bott's agent-evocator analysis). This mirrors @cite{kim-2024}'s observation
     that the same verb can project different effective argument structures
     depending on the interpretive context. -/
 
-/-- "manage" occasion sense — agent-evocator subject (Solstad & Bott 2024).
+/-- "manage" occasion sense — agent-evocator subject.
     Same implicative semantics as `manage`, but subject is experiencer
     (sentience + independent existence, no entailed volition/causation).
     The do-test passes pragmatically because the complement denotes a
@@ -1505,7 +1505,7 @@ def hesitate : VerbEntry := .mkRegular {
 -- § Verb Entries — Agent-Experiencer (Solstad & Bott 2024)
 -- ════════════════════════════════════════════════════
 
-/-! Levin (1993) class 31.2 (admire). Subject = experiencer, object = stimulus.
+/-! @cite{levin-1993} class 31.2 (admire). Subject = experiencer, object = stimulus.
     NP1 (subject) IC bias. -/
 
 /-- "enjoy" — AgExp verb (experiencer-subject) -/
@@ -1605,7 +1605,7 @@ def dread_np : VerbEntry := .mkRegular {
 -- § Verb Entries — Stimulus-Experiencer (Solstad & Bott 2024)
 -- ════════════════════════════════════════════════════
 
-/-! Levin (1993) class 31.1 (amuse). Subject = stimulus, object = experiencer.
+/-! @cite{levin-1993} class 31.1 (amuse). Subject = stimulus, object = experiencer.
     NP2 (object) IC bias. -/
 
 /-- "frighten" — StimExp verb (stimulus-subject, eventive: Kim 2024 UPH) -/
@@ -1812,7 +1812,7 @@ def worry_eventive : VerbEntry := .mkRegular {
   levinClass := some .amuse }
 
 /-- "worry" (stative) — Class II, internal cause. "The situation worries John."
-    Kim (2024) UPH: same theta grid as worry_eventive, different causal source. -/
+    @cite{kim-2024} UPH: same theta grid as worry_eventive, different causal source. -/
 def worry_stative : VerbEntry := .mkRegular {
   form := "worry"
   complementType := .np
@@ -3002,7 +3002,7 @@ theorem causative_builders_distinguished :
     force.causativeBuilder ≠ let_.causativeBuilder := by
   refine ⟨by decide, by decide, by decide⟩
 
-/-! ## Lexical causative theorems (Martin, Rose & Nichols 2025) -/
+/-! ## Lexical causative theorems -/
 
 /-- All lexical causatives use the `.make` builder. -/
 theorem lexical_causatives_use_make :

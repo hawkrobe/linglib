@@ -6,7 +6,7 @@ import Mathlib.Tactic.FinCases
 import Mathlib.Tactic.IntervalCases
 
 /-!
-# Epistemic Comparative Likelihood (Holliday & Icard 2013)
+# Epistemic Comparative Likelihood
 
 @cite{holliday-icard-2013} @cite{halpern-2003}
 
@@ -14,7 +14,7 @@ Epistemic likelihood scales: the `EpistemicScale` arm of the categorical
 diagram in `Core/Scale.lean`. Extracted here because this domain-specific
 theory has a single downstream consumer (`Comparisons/KratzerEpistemicRSA.lean`).
 
-Holliday & Icard (2013) study the logic of "at least as likely as" (≿) on
+@cite{holliday-icard-2013} study the logic of "at least as likely as" (≿) on
 propositions, defining a hierarchy of axiom systems (W ⊂ F ⊂ FA) whose
 qualitative additivity axiom is the epistemic counterpart of `AdditiveScale.fa`.
 
@@ -89,7 +89,7 @@ end EpistemicAxiom
 -- ── Logic Hierarchy ─────────────────────────────
 
 /-- System W: the weakest epistemic likelihood logic.
-    Reflexivity + monotonicity (Holliday & Icard 2013, Table 1). -/
+    Reflexivity + monotonicity. -/
 structure EpistemicSystemW (W : Type*) where
   ge : Set W → Set W → Prop
   refl : EpistemicAxiom.R ge
@@ -153,8 +153,7 @@ theorem inducedGe_axiomT (m : FinAddMeasure W) :
   exact le_add_of_nonneg_right (m.nonneg (B \ A))
 
 /-- A finitely additive measure induces System FA.
-    This is the soundness direction of **Theorem 6** (Holliday & Icard
-    2013; van der Hoek 1996). -/
+    This is the soundness direction of **Theorem 6**. -/
 def toSystemFA (m : FinAddMeasure W) : EpistemicSystemFA W where
   ge := m.inducedGe
   refl := m.inducedGe_axiomR
@@ -218,7 +217,7 @@ end FinAddMeasure
     for disjoint A, B. Instead it requires the weaker **qualitative additivity**
     condition: μ(A) ≥ μ(B) ↔ μ(A \ B) ≥ μ(B \ A).
 
-    Holliday & Icard (2013) Theorem 6: System FA is sound and complete
+    @cite{holliday-icard-2013} Theorem 6: System FA is sound and complete
     with respect to qualitatively additive measure models. -/
 structure QualAddMeasure (W : Type*) where
   /-- The measure function -/
@@ -266,7 +265,7 @@ noncomputable def FinAddMeasure.toQualAdd {W : Type*} (m : FinAddMeasure W) : Qu
 
 /-- Lewis's *l*-lifting: a preorder on worlds induces a comparison on
     propositions. A ≿ B iff for every b ∈ B, ∃ a ∈ A with a ≥_w b.
-    Holliday & Icard (2013) §3; see also their injection-based *m*-lifting
+    @cite{holliday-icard-2013} §3; see also their injection-based *m*-lifting
     (Theorem 7), which yields a complete logic for world-ordering models. -/
 def halpernLift {W : Type*} (ge_w : W → W → Prop) (A B : Set W) : Prop :=
   ∀ b, b ∈ B → ∃ a, a ∈ A ∧ ge_w a b
@@ -316,7 +315,7 @@ private def finsetIdx (s : Finset (Fin 5)) : ℕ :=
   s.sum (λ i => 2 ^ i.val)
 
 /-- The KPS rank table: maps bitmask index to rank (0–31).
-    Ordering from Kraft, Pratt & Seidenberg (1959), Section 4.
+    Ordering from @cite{kraft-pratt-seidenberg-1959}, Section 4.
     Elements: p=0, q=1, r=2, s=3, t=4.
     ∅ < q < r < s < qr < qs < p < pq < rs < t < qrs < rp < ps < tq < qrp < rt
     and complements in reverse (by supplementation, from axiom A). -/

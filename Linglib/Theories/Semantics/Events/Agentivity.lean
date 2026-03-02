@@ -265,10 +265,10 @@ theorem make_lexicalizes_sufficient_initiative :
 
     Witness: "John is standing" — volitive (John can stop standing)
     but stative (no change over the interval). The do-test passes
-    via the volitive feature, even though e.sort = .state.
+    via the volitive feature, even though e.sort =.state.
 
     This shows the do-test is strictly broader than Parsons' `agent`
-    role, which requires e.sort = .action. -/
+    role, which requires e.sort =.action. -/
 theorem stative_can_pass_doTest :
     ∃ (profile : AgentivityProfile Unit ℤ) (x : Unit) (e : Ev ℤ),
       e.sort = .state ∧ passesDoTest x e profile := by

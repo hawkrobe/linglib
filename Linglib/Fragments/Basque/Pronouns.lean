@@ -68,7 +68,7 @@ def allPronouns : List PronounEntry :=
 -- Allocutive Markers (verbal suffixes)
 -- ============================================================================
 
-/-- *-n* familiar allocutive suffix (Oyharçabal 1993). -/
+/-- *-n* familiar allocutive suffix. -/
 def allocFamiliar : AllocutiveEntry :=
   { form := "-n", register := .informal, gloss := "2sg.familiar.alloc" }
 

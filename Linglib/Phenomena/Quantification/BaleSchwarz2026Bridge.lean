@@ -3,7 +3,7 @@ import Linglib.Theories.Semantics.Probabilistic.Measurement.Basic
 import Linglib.Fragments.English.MeasurePhrases
 
 /-!
-# Bale & Schwarz (2026) — Natural Language and External Conventions: Re-examining *per*
+# @cite{bale-schwarz-2026} — Natural Language and External Conventions: Re-examining *per*
 @cite{bale-schwarz-2022} @cite{bale-schwarz-2026} @cite{coppock-2022} @cite{davidson-1979}
 
 Linguistics and Philosophy 49: 133--151
@@ -20,12 +20,11 @@ Linguistics and Philosophy 49: 133--151
    speed), they are instances of **math speak** --- verbalizations of quantity calculus
    notation whose meanings come from extra-grammatical conventions.
 
-3. **Multiplication-only reformulation**: Both Coppock's (2022) and Bale & Schwarz's
-   (2022) lexical entries for *per* can be restated using only pure numbers and
+3. **Multiplication-only reformulation**: Both @cite{coppock-2022}'s and @cite{bale-schwarz-2022} lexical entries for *per* can be restated using only pure numbers and
    multiplication, without any appeal to division.
 
 4. **Mixed quotation parallel**: Non-compositional *per*-phrases are unified with
-   mixed quotation (Davidson 1979) --- expressions that simultaneously convey
+   mixed quotation --- expressions that simultaneously convey
    propositional content and quote an external symbolic system.
 
 ## Diagnostics

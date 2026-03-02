@@ -321,7 +321,7 @@ def standardEquivalenceConditions : EquivalenceConditions where
 /-!
 ## Information-Theoretic Connection to NeoGricean
 
-Zaslavsky et al. (2020) show that RSA optimizes:
+@cite{zaslavsky-hu-levy-2020} show that RSA optimizes:
   G_α = H_S(U|M) + α · E[V_L]
 
 As α → ∞:
@@ -378,7 +378,7 @@ def isNeoGriceanLimit (α : ℚ) : Bool :=
 1. **IBR = exhMW**: Full proof that IBR fixed point equals exhMW
 2. **Closure connection**: Under conjunction closure, exhMW = exhIE (Spector Thm 9)
 
-### Information-Theoretic Perspective (Zaslavsky et al. 2020)
+### Information-Theoretic Perspective
 1. **G_α objective**: RSA optimizes H_S + α·E[V_L]
 2. **NeoGricean as limit**: As α → ∞, H_S contribution vanishes
 3. **Categorical = pure informativity**: argmax replaces softmax
@@ -387,10 +387,10 @@ def isNeoGriceanLimit (α : ℚ) : Bool :=
 ### The Limit Chain
 
 ```
-RSA S1 (softmax)  ──α→∞──>  IBR S1 (argmax)  ────>  exhMW  ──closure──>  exhIE
-     ↑                           ↑                    ↑                    ↑
-  PROVED                      PROVED              (TODO)              (Spector)
-  rsa_to_ibr_limit         (trivial)          ibr_equals_exhMW      Theorem 9
+RSA S1 (softmax) ──α→∞──> IBR S1 (argmax) ────> exhMW ──closure──> exhIE
+     ↑ ↑ ↑ ↑
+  PROVED PROVED (TODO) (Spector)
+  rsa_to_ibr_limit (trivial) ibr_equals_exhMW Theorem 9
 ```
 
 ### Future Work

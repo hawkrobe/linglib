@@ -3,7 +3,7 @@ import Linglib.Theories.Semantics.Lexical.Numeral.Semantics
 import Linglib.Theories.Semantics.Lexical.Noun.Kind.Chierchia1998
 
 /-!
-# Number Word Polysemy (Snyder 2026)
+# Number Word Polysemy
 @cite{mendia-2020} @cite{snyder-2026}
 
 Three polymorphic analyses of number words and their type-shifting maps.
@@ -20,11 +20,11 @@ Partee type-shifting.
 ```
   (numeral, kind-ref, token-ref)
         ↑ IOTA
-  λx_a. two(x)  ——CARD——→  (predicative)  ——PM——→  (attributive)
+  λx_a. two(x) ——CARD——→ (predicative) ——PM——→ (attributive)
                                    |                      |
-                                  NOM                     A
-                                   ↓                      ↓
-                           (specificational)      (quantificational)
+                                  NOM A
+                                   ↓ ↓
+                           (specificational) (quantificational)
 ```
 
 -/

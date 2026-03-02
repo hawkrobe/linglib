@@ -43,7 +43,7 @@ open Semantics.Dynamic.IntensionalCDRT.ModalDonkeyAnaphora
 A presupposition: a condition that must be satisfied for an expression
 to have a defined truth value.
 
-Following Heim (1983), presuppositions are definedness conditions on
+Following @cite{heim-1983}, presuppositions are definedness conditions on
 the input context.
 -/
 def Presupposition (W : Type*) := W → Prop
@@ -208,7 +208,7 @@ Relative clause with indicative.
 "todo livro [que Maria ler.IND]"
 "every book [that Maria reads.IND]"
 
-Structure: ∀x[book(x) ∧ reads(m,x,s₀)] → ...
+Structure: ∀x[book(x) ∧ reads(m,x,s₀)] →...
 Presupposes existence of books Maria reads at s₀.
 -/
 def relClauseIND {W Time E : Type*}
@@ -223,7 +223,7 @@ Relative clause with SF.
 "todo livro [que Maria ler.SF]"
 "every book [that Maria reads.SF]"
 
-Structure: ∀s₁∈hist(s₀): ∀x[book(x,s₁) ∧ reads(m,x,s₁)] → ...
+Structure: ∀s₁∈hist(s₀): ∀x[book(x,s₁) ∧ reads(m,x,s₁)] →...
 No categorical existence presupposition.
 -/
 def relClauseSF {W Time E : Type*} [LE Time]

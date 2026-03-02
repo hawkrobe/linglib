@@ -6,7 +6,7 @@ import Linglib.Theories.Semantics.Degree.Comparative
 # Heim Framework on Comparative Data
 @cite{heim-2001}
 
-Bridge connecting Heim's (2001) sentential operator approach to the
+Bridge connecting @cite{heim-2001}'s sentential operator approach to the
 comparative construction data.
 
 ## Key Distinctions from Kennedy

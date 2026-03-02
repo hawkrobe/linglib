@@ -5,7 +5,7 @@ import Linglib.Theories.Semantics.Degree.Core
 # Kennedy's Measure Function Approach
 @cite{kennedy-2007} @cite{kennedy-mcnally-2005}
 
-Kennedy (2007) "Vagueness and Grammar": gradable adjectives denote
+@cite{kennedy-2007} "Vagueness and Grammar": gradable adjectives denote
 relations between individuals and degrees, mediated by a measure
 function μ.
 
@@ -83,7 +83,7 @@ def kennedyComparative {Entity D : Type*} [LinearOrder D]
 -- ════════════════════════════════════════════════════
 
 /-- Positive form standard: how the contextual threshold is determined.
-    Kennedy (2007, §4): for open scales, the standard is the contextual
+    @cite{kennedy-2007}: for open scales, the standard is the contextual
     norm; for closed scales, it's the relevant endpoint. -/
 inductive PositiveStandard where
   | contextual    -- open-scale: θ = norm relative to comparison class
@@ -105,7 +105,7 @@ def interpretiveEconomy (b : Boundedness) : PositiveStandard :=
 -- § 4. Scale Structure Constraints
 -- ════════════════════════════════════════════════════
 
-/-- Kennedy (2007) Class A vs. Class B adjectives.
+/-- @cite{kennedy-2007} Class A vs. Class B adjectives.
     - **Class A** (relative): open scale, contextual standard.
       "tall", "expensive", "heavy"
     - **Class B** (absolute): closed scale, endpoint standard.

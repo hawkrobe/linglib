@@ -22,9 +22,9 @@ inference fills this gap by assuming the agent has a settled opinion.
 ```
         contraries
   Bel(p) ────────── Bel(¬p)
-    │                  │
-    │                  │
-    │                  │
+    │ │
+    │ │
+    │ │
   ◇p ──────────────── ¬Bel(p)
        subcontraries
 ```

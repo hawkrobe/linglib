@@ -5,7 +5,7 @@ import Linglib.Theories.Semantics.Lexical.Verb.Aspect
 @cite{moens-steedman-1988} @cite{vendler-1957}Theory-neutral empirical data on how temporal connectives interact with the
 aspectual class (Vendler class) of their complement and main clauses.
 
-## Key Empirical Generalizations (Moens & Steedman 1988)
+## Key Empirical Generalizations
 
 1. **Selectional restrictions**: *until* and *since* require durative
    (stative/activity) main clauses. *When* triggers coercion to punctual.

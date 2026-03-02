@@ -82,7 +82,7 @@ structure CountingDatum where
   deriving Repr
 
 /-- "Three books were mastered and burned" with two copies of the same novel.
-Gotham (2017): physical count = 3, informational count = 2 (if one novel
+@cite{gotham-2017}: physical count = 3, informational count = 2 (if one novel
 has two copies). -/
 def masteredAndBurned : CountingDatum :=
   { sentence := "Three books were mastered and burned"

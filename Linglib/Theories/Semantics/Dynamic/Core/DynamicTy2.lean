@@ -70,7 +70,7 @@ def test (C : Condition S) : DRS S :=
 
 notation "[" C "]" => test C
 
-/-- Dynamic conjunction (sequencing): D₁ ; D₂ -/
+/-- Dynamic conjunction (sequencing): D₁; D₂ -/
 def dseq (D₁ D₂ : DRS S) : DRS S :=
   λ i j => ∃ h, D₁ i h ∧ D₂ h j
 
@@ -166,7 +166,7 @@ DPL variables xₙ become drefs uₙ : S → E (projection functions).
 |-----|-------------|
 | R(x₁,...,xₙ) | [λi. R(u₁i,...,uₙi)] |
 | x₁ = x₂ | [λi. u₁i = u₂i] |
-| φ ; ψ | TR(φ) ⨟ TR(ψ) |
+| φ; ψ | TR(φ) ⨟ TR(ψ) |
 | ~φ | [∼TR(φ)] |
 | [x] | [uₓ] (random assignment) |
 
@@ -212,7 +212,7 @@ def trueAt (D : DRS S) (i : S) : Prop := ∃ j, D i j
 /-- A DRS D is valid iff true at all inputs -/
 def valid (D : DRS S) : Prop := ∀ i, trueAt D i
 
-/-- Dynamic entailment: D₁ ⊨ D₂ iff D₁ ; D₂ has same outputs as D₁ -/
+/-- Dynamic entailment: D₁ ⊨ D₂ iff D₁; D₂ has same outputs as D₁ -/
 def entails (D₁ D₂ : DRS S) : Prop :=
   ∀ i, (∃ j, D₁ i j) → ∀ j, D₁ i j → ∃ k, D₂ j k
 

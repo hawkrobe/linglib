@@ -2,11 +2,11 @@ import Linglib.Core.Lexical.Word
 
 /-!
 # Cross-Linguistic Typology of Articles and Demonstratives (WALS)
-@cite{bhat-2013} @cite{greenberg-1978} @cite{himmelmann-1997}
+@cite{bhat-2013} @cite{greenberg-1978} @cite{himmelmann-1997} @cite{dryer-haspelmath-2013}
 
 Typological data on definiteness marking, indefinite articles, and demonstrative
 systems across languages, drawn from five chapters of the World Atlas of Language
-Structures (Dryer & Haspelmath 2013):
+Structures:
 
 - **Ch 37** (Dryer): Definite articles -- whether a language has a definite article
   as a word distinct from demonstratives, an affix, a demonstrative used for
@@ -20,7 +20,7 @@ Structures (Dryer & Haspelmath 2013):
   the two demonstrative uses have the same form, different stems, or different
   inflectional features.
 - **Ch 43** (Bhat): Third-person pronouns and demonstratives -- whether
-  3rd-person pronouns are identical to, derived from, or unrelated to
+  3rd-person pronouns are identical to, derived, or unrelated to
   demonstratives.
 
 ## Key Generalizations
@@ -34,8 +34,7 @@ Structures (Dryer & Haspelmath 2013):
    relationship to demonstratives -- the diachronic pathway demonstrative ->
    3rd-person pronoun is well attested.
 4. The grammaticalization cline demonstrative -> definite article -> definite
-   affix is a well-established diachronic pathway (Greenberg 1978, Himmelmann
-   1997).
+   affix is a well-established diachronic pathway.
 
 -/
 
@@ -50,7 +49,7 @@ Definite article type (WALS Ch 37, Dryer 2013).
 
 Classifies languages by how (or whether) they mark definiteness on nouns.
 The categories are ordered along a grammaticalization cline:
-demonstrative -> definite word -> definite affix (Greenberg 1978).
+demonstrative -> definite word -> definite affix.
 -/
 inductive DefiniteArticleType where
   /-- Definite word distinct from demonstratives (e.g. English "the"). -/
@@ -128,7 +127,7 @@ In a distance-oriented system (e.g. Hunzib), all three terms indicate
 relative distance from the speaker. In a person-oriented system (e.g. Japanese),
 one term specifically denotes proximity to the hearer.
 
-Diessel (2013) notes that about 2/3 of three-way systems are distance-oriented
+@cite{diessel-2013} notes that about 2/3 of three-way systems are distance-oriented
 and about 1/3 are person-oriented.
 -/
 inductive DemOrientationType where
@@ -275,7 +274,7 @@ def french : ArticleDemProfile :=
     Definite article "der/die/das" distinct from demonstratives.
     Indefinite article "ein" = numeral 'one' (phonological reduction in speech).
     Distance-neutral adnominal demonstratives: "dieser" and stressed "der/die/das"
-    are deictically noncontrastive (Diessel 2013); distance expressed by adding
+    are deictically noncontrastive; distance expressed by adding
     adverbial "hier"/"da". Classified as no-contrast in WALS Ch 41.
     Different inflectional features: pronominal demonstratives inflect for case
     while adnominal demonstratives co-occur with inflected nouns.
@@ -516,7 +515,7 @@ def danish : ArticleDemProfile :=
     No definite article; no standard indefinite article (WALS Ch 37 value 5).
     Four-way person-oriented demonstrative system: nan (near speaker),
     nan (near hearer, tonal difference), can (away from both), can (far away).
-    Hausa is a key example of a four-or-more-way system (Wolff 1993).
+    Hausa is a key example of a four-or-more-way system.
     Same forms for pronominal and adnominal demonstratives.
     3rd-person pronouns related to demonstratives. -/
 def hausa : ArticleDemProfile :=
@@ -559,7 +558,7 @@ def allLanguages : List ArticleDemProfile :=
 -- WALS Distribution Data: Aggregate Counts
 -- ============================================================================
 
-/-- WALS Ch 37: Definite article distribution across 566 languages (Dryer 2013). -/
+/-- WALS Ch 37: Definite article distribution across 566 languages. -/
 structure DefiniteArticleCounts where
   definiteWord : Nat          -- value 1
   demonstrativeUsed : Nat     -- value 2
@@ -579,7 +578,7 @@ def walsDefiniteArticle : DefiniteArticleCounts :=
   , noDefButIndef := 41
   , noArticle := 188 }
 
-/-- WALS Ch 38: Indefinite article distribution across 473 languages (Dryer 2013). -/
+/-- WALS Ch 38: Indefinite article distribution across 473 languages. -/
 structure IndefiniteArticleCounts where
   indefiniteWord : Nat        -- value 1
   numeralOne : Nat            -- value 2
@@ -599,7 +598,7 @@ def walsIndefiniteArticle : IndefiniteArticleCounts :=
   , noIndefButDef := 81
   , noArticle := 188 }
 
-/-- WALS Ch 41: Demonstrative distance contrasts across 234 languages (Diessel 2013). -/
+/-- WALS Ch 41: Demonstrative distance contrasts across 234 languages. -/
 structure DemDistanceCounts where
   noContrast : Nat            -- value 1
   twoWay : Nat                -- value 2
@@ -619,7 +618,7 @@ def walsDemDistance : DemDistanceCounts :=
   , fourWay := 8
   , fiveOrMore := 4 }
 
-/-- WALS Ch 42: Pronominal/adnominal demonstrative form across 201 languages (Diessel 2013). -/
+/-- WALS Ch 42: Pronominal/adnominal demonstrative form across 201 languages. -/
 structure DemFormCounts where
   sameForms : Nat             -- value 1
   differentStems : Nat        -- value 2
@@ -635,7 +634,7 @@ def walsDemForm : DemFormCounts :=
   , differentStems := 37
   , differentInflection := 21 }
 
-/-- WALS Ch 43: Third-person pronoun ~ demonstrative relationship across 225 languages (Bhat 2013). -/
+/-- WALS Ch 43: Third-person pronoun ~ demonstrative relationship across 225 languages. -/
 structure PronounDemCounts where
   unrelated : Nat             -- value 1
   relatedAll : Nat            -- value 2
@@ -729,7 +728,7 @@ example : walsPronounDem.relatedNonhuman = 17 := by native_decide
 Two-way demonstrative systems (proximal/distal) are the most common type,
 accounting for 127 of 234 languages in the WALS sample (54.3%).
 
-Diessel (2013): "The vast majority of the world's languages employ two or
+@cite{diessel-2013}: "The vast majority of the world's languages employ two or
 three distance-marked demonstratives: 54.3 per cent of all languages shown
 on the map have adnominal demonstratives that express a two-way contrast."
 -/
@@ -791,7 +790,7 @@ In a majority of languages surveyed (125 of 225 = 55.6%), third-person
 pronouns show some relationship to demonstratives. This supports the
 well-documented diachronic pathway: demonstrative -> 3rd-person pronoun.
 
-Bhat (2013) distinguishes "two-person languages" (3rd-person pronouns are
+@cite{bhat-2013} distinguishes "two-person languages" (3rd-person pronouns are
 demonstrative-derived, so the language really only has 1st/2nd person
 pronouns plus demonstratives) from "three-person languages" (3rd-person
 pronouns are independent).
@@ -845,7 +844,7 @@ This is supported by the WALS data:
 The 56 "demonstrative used as definite marker" languages represent the
 transitional stage where this grammaticalization is actively underway.
 
-See Greenberg (1978), Himmelmann (1997) for theoretical discussion.
+See @cite{greenberg-1978}, @cite{himmelmann-1997} for theoretical discussion.
 -/
 theorem grammaticalization_cline_attested :
     -- All three stages of the cline are well attested
@@ -1037,7 +1036,7 @@ theorem prondem_related_count :
 
 /--
 The grammaticalization hierarchy for definiteness marking, attested
-cross-linguistically (Greenberg 1978, Himmelmann 1997):
+cross-linguistically:
 
   Stage 0: No definiteness marking (bare nouns, e.g. Mandarin, Russian)
   Stage 1: Demonstrative used for definiteness (e.g. Swahili, Ojibwa)

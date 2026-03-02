@@ -5,7 +5,7 @@ import Linglib.Core.Lexical.Word
 @cite{munoz-perez-2026}
 
 The full Spanish clitic paradigm, with syncretism data critical for
-Muñoz Pérez (2026). The key observation: 1SG and 2SG are syncretic
+Muñoz @cite{munoz-perez-2026}. The key observation: 1SG and 2SG are syncretic
 across accusative, dative, and reflexive, while 3SG/PL are not.
 This syncretism drives the availability of stylistic applicatives.
 
@@ -102,7 +102,7 @@ def isSyncretic (p : Person) (n : Number) (c1 c2 : CliticCase) : Bool :=
   | _, _ => false
 
 /-- The set of person/number combinations where DAT and REFL are syncretic.
-    This is the key condition for SE-optionality (Muñoz Pérez 2026). -/
+    This is the key condition for SE-optionality. -/
 def datReflSyncretic (p : Person) (n : Number) : Bool :=
   isSyncretic p n .dative .reflexive
 

@@ -165,7 +165,7 @@ theorem responsive_rejects_quasi :
 /-- Under negation, responsives allow quasi-subordination.
     DERIVED: negation removes knowledge entailment → PerspP consistent.
     "*I remember [was Henry a communist↑]" vs
-    "I don't remember [was Henry a communist↑]" (McCloskey 2006). -/
+    "I don't remember [was Henry a communist↑]". -/
 theorem responsive_shifts_under_negation :
     allowsQuasiSub .responsive true false = true := rfl
 
@@ -201,7 +201,7 @@ def classifyCrossLingVerb : String → SelectionClass
 
 /-! ## H1. Derive SelectionClass from VerbEntry
 
-Instead of classifying verbs by string matching (`classifyVerb "know" => .responsive`),
+Instead of classifying verbs by string matching (`classifyVerb "know" =>.responsive`),
 we derive the selection class from the primitive fields already encoded in
 each `VerbEntry`: `factivePresup`, `speechActVerb`, `opaqueContext`, `complementType`,
 `attitudeBuilder`, `takesQuestionBase`.
@@ -344,7 +344,7 @@ predicates are correct *because* they track the compositional story.
 def verbEntryIsVeridical (v : VerbEntry) : Bool :=
   v.factivePresup
 
-/-- The derived selection class assigns .responsive exactly to verbs whose
+/-- The derived selection class assigns.responsive exactly to verbs whose
     factivePresup is true and which can embed questions.
     This connects the structural derivation to the semantic one. -/
 theorem responsive_iff_veridical_question_taker (v : VerbEntry)
@@ -396,11 +396,11 @@ breaks exactly one per-verb theorem below.
 
     | Class           | Condition                                                |
     |-----------------|----------------------------------------------------------|
-    | uninterrogative | !takesQuestionBase && complementType != .question         |
+    | uninterrogative | !takesQuestionBase && complementType !=.question         |
     | responsive      | factivePresup && takesQuestionBase                        |
-    | rogativeSAP     | complementType == .question && speechActVerb              |
-    | rogativePerspP  | complementType == .question && opaqueContext              |
-    | rogativeCP      | complementType == .question (fallthrough)                 |
+    | rogativeSAP     | complementType ==.question && speechActVerb              |
+    | rogativePerspP  | complementType ==.question && opaqueContext              |
+    | rogativeCP      | complementType ==.question (fallthrough)                 |
 -/
 def fieldSelectionClass (v : VerbEntry) : SelectionClass :=
   if !v.takesQuestionBase && v.complementType != .question then .uninterrogative
@@ -516,7 +516,7 @@ theorem rogative_allows_perspP_comp {W : Type*}
     perspPPresupComp ignorantModel q w = true := by
   simp [perspPPresupComp, ignorantModel]
 
-/-- The Boolean `perspPConsistent .responsive false false = false` is consistent
+/-- The Boolean `perspPConsistent.responsive false false = false` is consistent
     with the compositional derivation: both say responsive blocks PerspP.
 
     The Boolean layer says: responsive + not negated + not questioned → inconsistent.

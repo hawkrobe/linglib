@@ -2,22 +2,21 @@
 # Discourse Coherence Relations
 @cite{hobbs-1979} @cite{kehler-2002}
 
-Coherence relations (Hobbs 1979, Kehler 2002) classify how adjacent discourse
+Coherence relations classify how adjacent discourse
 segments connect. Each relation belongs to one of three classes (resemblance,
 cause–effect, contiguity) and has a directionality that determines which segment
 provides the cause/explanation.
 
 ## Key insight for IC bias
 
-Kehler (2002) argues that coherence relations determine which participant
+@cite{kehler-2002} argues that coherence relations determine which participant
 listeners seek as a cause/explanation in sentence continuations:
 - **Explanation** ("because"): backward causal — listeners seek the *cause* of the
   event described in the first clause
 - **Result** ("so"): forward causal — listeners infer the *effect*
 - **Occasion** ("and then"): temporal contiguity — no causal search
 
-This interacts with verb semantics to produce implicit causality (IC) bias
-(Solstad & Bott 2022). @cite{solstad-bott-2022} @cite{solstad-bott-2024}
+This interacts with verb semantics to produce implicit causality (IC) bias. @cite{solstad-bott-2022} @cite{solstad-bott-2024}
 
 -/
 
@@ -127,8 +126,7 @@ theorem although_not_causal :
 theorem andThen_not_causal :
     (Connective.toRelation .andThen).selectsCause = false := rfl
 
-/-- "because" and "and so" are both causal but in opposite directions
-    (Solstad & Bott 2022, §1.4): I-Caus is backward, I-Cons is forward. -/
+/-- "because" and "and so" are both causal but in opposite directions: I-Caus is backward, I-Cons is forward. -/
 theorem because_andSo_opposite_directions :
     (Connective.toRelation .because).causalDirection = .backward ∧
     (Connective.toRelation .andSo).causalDirection = .forward := ⟨rfl, rfl⟩

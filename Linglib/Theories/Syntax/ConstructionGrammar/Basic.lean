@@ -8,7 +8,7 @@ import Linglib.Core.Semantics.CommonGround
 
 Minimal infrastructure for Construction Grammar (CxG), the framework in which
 constructions — learned pairings of form and function — are the basic units
-of grammatical knowledge (Goldberg 1995, 2006; Diessel 2023).
+of grammatical knowledge.
 
 -/
 
@@ -28,7 +28,7 @@ inductive Specificity where
   | fullyAbstract
   deriving Repr, DecidableEq, BEq
 
-/-- Inheritance mode between constructions (Goldberg 1995, Diessel 2023).
+/-- Inheritance mode between constructions.
 
 Normal inheritance allows overriding of inherited defaults;
 complete inheritance requires strict preservation of all properties. -/

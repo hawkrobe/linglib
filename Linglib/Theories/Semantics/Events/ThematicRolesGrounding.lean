@@ -4,7 +4,7 @@ import Linglib.Fragments.English.Predicates.Verbal
 /-!
 # Thematic Role Grounding
 
-Bridge theorems connecting Fragment-layer verb entries (kick, give, see)
+Bridge theorems connecting Fragment-layer verb entries (kick, give,)
 to Theory-layer thematic role infrastructure. These verify that the
 theta role annotations in the lexicon correctly map to ThematicFrame
 fields via `ThetaRole.toRel`.

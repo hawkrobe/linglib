@@ -2,6 +2,8 @@ import Linglib.Core.Lexical.UD
 
 /-!
 # Word
+@cite{biberauer-roberts-2014} @cite{dryer-1992}
+
 
 The lexical unit and its building blocks: morphological feature types (aliased
 to Universal Dependencies), the `Features` bundle, and the `Word` structure.
@@ -106,8 +108,8 @@ inductive Valence where
   deriving Repr, DecidableEq, Inhabited
 
 /-- Head direction of a syntactic construction.
-    Used for word-order typology (Dryer 1992, Greenberg 1963) and
-    constraints like FOFC (Biberauer, Holmberg & Roberts 2014). -/
+    Used for word-order typology and
+    constraints like FOFC. -/
 inductive HeadDirection where
   | headInitial  -- head precedes complement (VO, preposition, head-initial FocP, ...)
   | headFinal    -- head follows complement (OV, postposition, head-final FocP, ...)

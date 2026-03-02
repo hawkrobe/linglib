@@ -44,7 +44,7 @@ def MorphScale.toHornScale (ms : MorphScale) : HornScale String :=
 
 /-- Extract a degree scale from a stem's paradigm.
 
-    Looks for rules with `category = .degree` and `value = "comp"` / `"super"`,
+    Looks for rules with `category =.degree` and `value = "comp"` / `"super"`,
     and builds a 3-point scale `[positive, comparative, superlative]`.
     Returns `none` if either the comparative or superlative rule is missing. -/
 def adjectiveScale {σ : Type} (stem : Stem σ) : Option MorphScale :=

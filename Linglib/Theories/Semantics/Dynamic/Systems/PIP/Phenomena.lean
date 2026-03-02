@@ -6,7 +6,7 @@ import Linglib.Theories.Semantics.Dynamic.Systems.PIP.Connectives
 @cite{keshet-abney-2024} @cite{karttunen-1969} @cite{partee-1972} @cite{roberts-1989} @cite{stone-1997}Concrete examples demonstrating how PIP handles the core anaphora puzzles
 via description-based retrieval over finite models:
 
-1. **Stone's puzzle**: "A wolf might come in. It would eat you first."
+1. **Stone's puzzle**: "A wolf might come. It would eat you first."
 2. **Bathroom sentences**: "Either there's no bathroom, or it's upstairs."
 3. **Paycheck pronouns**: "John spent his paycheck. Bill saved it."
 
@@ -72,7 +72,7 @@ def comesIn (g : ICDRTAssignment SWorld SEntity) (w : SWorld) : Bool :=
   g.indiv vWolf == .some .wolf && w == .wolfIn
 
 /--
-Stone's sentence 1: "A wolf might come in."
+Stone's sentence 1: "A wolf might come."
 
   might(∃^αWolf x. wolf(x) ∧ comeIn(x))
 
@@ -118,7 +118,7 @@ def stoneSentence2 : PUpdate SWorld SEntity :=
       (atom (λ g _w => g.indiv vWolf != .star)))  -- eats you (simplified)
 
 /--
-The full Stone's puzzle discourse: sentence 1 ; sentence 2.
+The full Stone's puzzle discourse: sentence 1; sentence 2.
 
 The discourse is well-defined (non-trivially consistent) because:
 1. Sentence 1 registers αWolf and filters to worlds where a wolf might come in
@@ -183,19 +183,19 @@ private theorem g_wolf_in_retrieve :
 /--
 End-to-end test: Stone's discourse is consistent on a concrete model.
 
-After processing "A wolf might come in. It would eat you first.", the
+After processing "A wolf might come. It would eat you first.", the
 discourse state is non-empty: the assignment g_wolf (with vWolf ↦ wolf)
 at the actual world survives the full pipeline:
 
-1. **might**: g_wolf at .actual survives because (g_wolf, .wolfIn) is in
-   the body result (the wolf exists at .wolfIn via `existsLabeled`)
+1. **might**: g_wolf at.actual survives because (g_wolf,.wolfIn) is in
+   the body result (the wolf exists at.wolfIn via `existsLabeled`)
 2. **retrieveDef αWolf**: succeeds because the label was registered
-3. **would/must**: g_wolf at .actual survives because `modalExpand` adds
-   (g_wolf, .wolfIn) and (g_wolf, .noWolf) to the body's input, and the
+3. **would/must**: g_wolf at.actual survives because `modalExpand` adds
+   (g_wolf,.wolfIn) and (g_wolf,.noWolf) to the body's input, and the
    atom predicate (vWolf ≠ ⋆) holds for all of them
 
 Without `modalExpand`, step 3 would fail: must would check accessible
-worlds .wolfIn/.noWolf but find no pairs there in the body result.
+worlds.wolfIn/.noWolf but find no pairs there in the body result.
 -/
 theorem stone_discourse_consistent :
     (stoneDiscourse stone_d₀).info.Nonempty := by
@@ -213,8 +213,8 @@ theorem stone_discourse_consistent :
 /--
 Negative test: an assignment with **unbound** wolf variable does NOT survive
 Stone's discourse. The existsLabeled in sentence 1 extends assignments
-with `vWolf ↦ .some .wolf`, and the atom predicate `isWolf` requires
-`g.indiv vWolf == .some .wolf`. An unbound assignment (vWolf = ⋆)
+with `vWolf ↦.some.wolf`, and the atom predicate `isWolf` requires
+`g.indiv vWolf ==.some.wolf`. An unbound assignment (vWolf = ⋆)
 fails this predicate check, so it cannot appear in the body result
 of might, and is correctly rejected.
 
@@ -330,7 +330,7 @@ private def bath_d₀ : Discourse BWorld BEntity :=
 End-to-end test: the full bathroom sentence is consistent on a concrete model.
 
 Given a universal input (all assignment-world pairs), the bathroom sentence
-produces a non-empty output. The witness (g₀, .noBath) survives via the
+produces a non-empty output. The witness (g₀,.noBath) survives via the
 first disjunct (negation): g₀ doesn't bind vBath to any entity, so it's
 NOT in the existsLabeled output, meaning negation keeps it.
 
@@ -364,7 +364,7 @@ is rejected by the full bathroom sentence.
 At `.noBath`, both disjuncts fail:
 - First (negation): g_bath IS in the existential's output (it matches
   the `isBathroom` predicate), so negation removes it
-- Second (upstairs): `isUpstairs` requires `w == .bath`, but w = `.noBath`
+- Second (upstairs): `isUpstairs` requires `w ==.bath`, but w = `.noBath`
 
 This tests the genuine semantic content: the sentence says either there's
 no bathroom OR the bathroom is upstairs. A bathroom that isn't upstairs
@@ -403,7 +403,7 @@ end Bathroom
 section Paycheck
 
 /--
-Paycheck pronouns (Karttunen 1969):
+Paycheck pronouns:
 
   "John spent his paycheck. Bill saved it."
 
@@ -535,7 +535,7 @@ end Summation
 -- ============================================================
 
 /--
-The three systems compared in Keshet & Abney (2024):
+The three systems compared in @cite{keshet-abney-2024}:
 
 1. **Value-based**: Pronouns store entity values directly.
    Works for simple anaphora, fails for modal/negation/paycheck cases.

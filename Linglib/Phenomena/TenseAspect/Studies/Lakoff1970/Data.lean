@@ -1,10 +1,10 @@
 import Linglib.Theories.Morphology.Core.Exponence
 
 /-!
-# Lakoff (1970) Grammaticality Judgments
+# @cite{lakoff-1970} Grammaticality Judgments
 @cite{lakoff-1970}
 
-Pure empirical data from Lakoff (1970) "Tense and Its Relation to Participants."
+Pure empirical data from @cite{lakoff-1970} "Tense and Its Relation to Participants."
 No theoretical commitments — just the paper's acceptability judgments organized
 by phenomenon.
 
@@ -39,7 +39,7 @@ inductive TenseUseType where
   | falseTense
   deriving DecidableEq, Repr, BEq
 
-/-- A grammaticality judgment from Lakoff (1970). -/
+/-- A grammaticality judgment from @cite{lakoff-1970}. -/
 structure TenseJudgment where
   /-- Example number in the paper (e.g., "4a", "8a") -/
   exNumber : String

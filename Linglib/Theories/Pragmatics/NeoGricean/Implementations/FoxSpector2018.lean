@@ -319,7 +319,7 @@ Economy Condition on Exhaustification (ECE):
 exh(phi) is licensed at a parse point only if exh is neither
 incrementally vacuous nor incrementally weakening.
 
-This is the main formal contribution of Fox & Spector (2018).
+This is the main formal contribution of @cite{fox-spector-2018}.
 -/
 def economyConditionMet (ALT : Set (Prop' World)) (φ : Prop' World)
     (conts : Set (Continuation World)) : Prop :=
@@ -611,7 +611,7 @@ def embeddedImplicatureAvailable (pol : ContextPolarity) : Prop :=
   | .nonMonotonic => false  -- NM: implicature blocked
 
 /--
-Fox & Spector (2018) prediction: Economy condition determines availability.
+@cite{fox-spector-2018} prediction: Economy condition determines availability.
 
 In UE contexts, exh is incrementally strengthening → licensed.
 In DE contexts, exh is incrementally weakening → blocked.
@@ -623,7 +623,7 @@ def foxSpectorPrediction (pol : ContextPolarity) : Bool :=
   | .nonMonotonic => false  -- NM: blocked
 
 /--
-Potts et al. (2016) prediction: Lexical uncertainty determines reading.
+@cite{potts-etal-2016} prediction: Lexical uncertainty determines reading.
 
 In UE contexts, local (refined) reading wins.
 In DE contexts, global (base) reading wins.
@@ -635,7 +635,7 @@ def pottsPrediction (pol : ContextPolarity) : Bool :=
   | .nonMonotonic => false  -- NM: global reading
 
 /--
-Fox & Spector (2018) and Potts et al. (2016) make identical predictions
+@cite{fox-spector-2018} and @cite{potts-etal-2016} make identical predictions
 about embedded implicature availability across DE/UE contexts.
 -/
 theorem foxSpector_potts_agreement :

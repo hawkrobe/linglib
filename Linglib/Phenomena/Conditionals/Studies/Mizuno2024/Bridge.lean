@@ -3,9 +3,9 @@ import Linglib.Theories.Semantics.Conditionals.Anderson
 import Linglib.Fragments.Japanese.Conditionals
 
 /-!
-# Mizuno (2024) — Bridge @cite{mizuno-2024}
+# @cite{mizuno-2024} — Bridge @cite{mizuno-2024}
 
-Connects the crosslinguistic data from Mizuno (2024) to the Anderson
+Connects the crosslinguistic data from @cite{mizuno-2024} to the Anderson
 conditional strategy typology in `Semantics.Conditionals.Anderson`.
 
 ## Bridge Structure

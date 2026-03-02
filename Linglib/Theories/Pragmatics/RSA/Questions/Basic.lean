@@ -37,7 +37,7 @@ structure Params where
   costWeight : ℚ := 3/10
   deriving Repr, BEq
 
-/-- Default parameters (Hawkins et al. 2025) -/
+/-- Default parameters -/
 def defaultParams : Params := {}
 
 def pureInformativityParams : Params := { defaultParams with β := 0 }

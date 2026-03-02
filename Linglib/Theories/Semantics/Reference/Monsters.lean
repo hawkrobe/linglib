@@ -5,16 +5,16 @@ import Linglib.Theories.Semantics.Reference.Kaplan
 # Kaplan's Anti-Monster Thesis (Tower Formulation)
 @cite{anand-nevins-2004} @cite{kaplan-1989} @cite{schlenker-2003}
 
-Kaplan (1989) "Demonstratives" VIII: the claim that natural language
+@cite{kaplan-1989} "Demonstratives" VIII: the claim that natural language
 operators are *content operators* (shifting circumstances of evaluation)
 rather than *context operators* (shifting contexts of utterance).
 
 Under the tower analysis, a monster is a non-identity context shift:
-an embedding operator that pushes a shift where .apply c != c for some c.
+an embedding operator that pushes a shift where.apply c != c for some c.
 Kaplan's thesis for English says attitude verbs push identity shifts —
 they embed without changing the context of utterance.
 
-Cross-linguistic counterexamples (Schlenker 2003, Anand & Nevins 2004)
+Cross-linguistic counterexamples
 are languages where attitude verbs push non-identity shifts (e.g.,
 `attitudeShift` changes the agent to the attitude holder).
 
@@ -143,7 +143,7 @@ structure SchlenkerCounterexample where
   /-- Description of the shift -/
   description : String
 
-/-- Amharic indexical shift (Schlenker 2003).
+/-- Amharic indexical shift.
 
 In Amharic, the first person pronoun can shift under 'say' to refer to
 the subject of the attitude verb rather than the actual speaker.
@@ -157,7 +157,7 @@ def amharicShift : SchlenkerCounterexample :=
   , citation := "Schlenker (2003)"
   , description := "'I' shifts to refer to the attitude holder under 'say'" }
 
-/-- Zazaki indexical shift (Anand & Nevins 2004).
+/-- Zazaki indexical shift.
 
 In Zazaki, both first and second person indexicals can shift under
 attitude verbs, with all shifted indexicals referring to the same
@@ -175,7 +175,7 @@ Kaplan's thesis holds for English (and most European languages). It is
 challenged by Amharic, Zazaki, Slave, Navajo, and other languages with
 indexical shift under attitude verbs.
 
-The leading analysis (Anand & Nevins 2004) treats attitude verbs in these
+The leading analysis treats attitude verbs in these
 languages as context-shifting operators: the embedded clause is evaluated
 relative to a *shifted context* whose agent is the attitude holder.
 
@@ -195,7 +195,7 @@ def monsterDebate : MonsterDebate :=
   , consensus := "Thesis holds for English person indexicals; " ++
       "challenged cross-linguistically and by English temporal adverbials" }
 
-/-- Schlenker (2003) also argues that English temporal adverbials show
+/-- @cite{schlenker-2003} also argues that English temporal adverbials show
 monster-like behavior: "yesterday" can shift under attitude verbs to
 refer to the day before the reported speech act, not the actual one.
 

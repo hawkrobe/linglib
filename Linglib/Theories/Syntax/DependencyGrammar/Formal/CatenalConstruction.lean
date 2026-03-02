@@ -178,7 +178,7 @@ private theorem bidir_in_projection (deps : List Dependency) (root u v : Nat)
   bidir_trans (bidir_symm (bidir_of_dominates deps root u (dominates_of_mem_projection hu)))
     (bidir_of_dominates deps root v (dominates_of_mem_projection hv))
 
-/-- **Constituent → Catena** (Osborne et al. 2012, p. 360): every constituent
+/-- **Constituent → Catena**: every constituent
     is a catena. Constituents are complete subtrees (projections rooted at some
     node), and complete subtrees are connected in the dependency tree.
 

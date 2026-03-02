@@ -27,7 +27,7 @@ that question selection is a special case of optimal experiment design.
 
 ## Relationship to existing infrastructure
 
-The `Core.DecisionTheory` module formalizes Van Rooy (2003)'s EUV for
+The `Core.DecisionTheory` module formalizes @cite{van-rooy-2003}'s EUV for
 **deterministic** observations (partition cells). This module generalizes
 to **stochastic** observations, with a bridge theorem showing that
 EIG with deterministic observations recovers EUV.
@@ -119,7 +119,7 @@ theorem posterior_sum_one (om : ObservationModel W E O) (prior : W → ℝ)
     (generalization of Van Rooy's EUV from partitions to stochastic observations).
 
     When V = −H(·) (negative entropy), this is the mutual information I(W;O|e),
-    which equals Lindley's (1956) expected information gain. -/
+    which equals @cite{lindley-1956}'s expected information gain. -/
 noncomputable def eig (om : ObservationModel W E O) (prior : W → ℝ)
     (valueFn : (W → ℝ) → ℝ) (e : E) : ℝ :=
   (∑ o : O, marginalObs om prior e o * valueFn (posterior om prior e o))

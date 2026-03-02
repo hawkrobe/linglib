@@ -6,16 +6,15 @@ import Linglib.Core.Semantics.Intension
 
 /-!
 # Tenses and Pronouns: Partee's Structural Analogy
-@cite{abusch-1997} @cite{elbourne-2013} @cite{heim-kratzer-1998} @cite{kaplan-1989} @cite{kratzer-1998} @cite{partee-1973}
+@cite{abusch-1997} @cite{elbourne-2013} @cite{heim-kratzer-1998} @cite{kaplan-1989} @cite{kratzer-1998} @cite{partee-1973} @cite{klecha-2016}
 
-Formalizes Partee (1973): tenses in English exhibit the same three-way
+Formalizes @cite{partee-1973}: tenses in English exhibit the same three-way
 interpretive ambiguity as pronouns — indexical, anaphoric, and bound-variable
 — and share the same formal mechanisms (assignment functions, variable
 lookup, lambda abstraction).
 
-The unifying type for all five views of tense is `Core.Tense.TensePronoun`
-(Abusch 1997): a variable index + a presupposed temporal constraint + a
-binding mode + an eval time index (Klecha 2016). The bridges in this file —
+The unifying type for all five views of tense is `Core.Tense.TensePronoun`: a variable index + a presupposed temporal constraint + a
+binding mode + an eval time index. The bridges in this file —
 `referential_past_decomposition`, `indexical_tense_matches_opNow`,
 `toSitVarStatus` — are projections of `TensePronoun` onto specific
 theoretical vocabularies.
@@ -75,7 +74,7 @@ is anchored to the speaker. Kaplan's `opNow cT φ` evaluates φ at context
 time cT — this IS the indexical tense interpretation.
 
     Kaplan `pronI` : character = λc. rigid(c.agent) — "I" → speaker
-    Temporal parallel :       character = λc. rigid(c.time) — present → speech time -/
+    Temporal parallel : character = λc. rigid(c.time) — present → speech time -/
 
 /-- An indexically interpreted tense is equivalent to Kaplan's Now:
     both fix the temporal coordinate to a context-given value,
@@ -89,7 +88,7 @@ theorem indexical_tense_matches_opNow {W T : Type*}
 -- § 4. Partee → Elbourne: TenseInterpretation → SitVarStatus
 -- ════════════════════════════════════════════════════════════════
 
-/-! Elbourne (2013) generalizes Partee from times to situations (world–time
+/-! @cite{elbourne-2013} generalizes Partee from times to situations (world–time
 pairs). His `SitVarStatus` (free/bound) collapses Partee's three-way
 distinction: indexical and anaphoric tenses both have FREE variables,
 differing only in how the free variable is pragmatically resolved
@@ -127,7 +126,7 @@ theorem toSitVarStatus_not_injective :
 operator that constrains temporal relations — existential quantification
 over past times.
 
-**Partee (1973)**: `interpTense n g = g n`. Tense is a variable that
+**@cite{partee-1973}**: `interpTense n g = g n`. Tense is a variable that
 refers to a specific contextual time.
 
 Partee's argument: "I didn't turn off the stove" under Prior's analysis
@@ -168,7 +167,7 @@ def narrativeAnaphora {Time : Type*} (P Q : Time → Bool)
 
 /-! The Priorean operators `PAST`/`PRES`/`FUT` in `Tense/Basic.lean` and the
 referential analysis (`interpTense`, `temporalLambdaAbs`) are not competitors
-but complementary layers. Ogihara (1989) §2.3: tense is a variable (picks a
+but complementary layers. @cite{ogihara-1989} §2.3: tense is a variable (picks a
 time) that must satisfy a temporal presupposition (the picked time is
 past/present/future). The following theorems make this reconciliation formal. -/
 
@@ -180,7 +179,7 @@ past/present/future). The following theorems make this reconciliation formal. -/
     the TIME; the operator analysis (Prior) imposes the CONSTRAINT. They are
     not competitors but complementary layers.
 
-    Ogihara (1989) §2.3: tense is a variable (picks a time) that must satisfy
+    @cite{ogihara-1989} §2.3: tense is a variable (picks a time) that must satisfy
     a temporal presupposition (the picked time is past/present/future). -/
 theorem referential_past_decomposition {W Time : Type*} [LT Time]
     (P : SitProp W Time) (g : TemporalAssignment Time) (n : ℕ)
@@ -263,7 +262,7 @@ theorem zero_tense_parallels_reflexive (n : ℕ) :
 
 /-- The Partee analogy extended from three to four dimensions:
 
-    | Dimension | Original Partee (1973) | + Kratzer (1998) |
+    | Dimension | Origin@cite{partee-1973} | + @cite{heim-kratzer-1998} |
     |-----------|----------------------|------------------|
     | Domain    | Entity ↔ Time         | + Situation       |
     | Mode      | Indexical/Anaphoric/Bound | (same)       |

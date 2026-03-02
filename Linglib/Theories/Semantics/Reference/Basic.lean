@@ -32,7 +32,7 @@ open Core.Intension (Intension rigid IsRigid rigid_isRigid evalAt CoRefer CoExte
 /-- A Kaplanian context of utterance.
 
 Contexts supply the parameters that indexicals depend on: who is speaking,
-what world is actual, etc. Following Kaplan (1989), characters are functions
+what world is actual, etc. Following @cite{kaplan-1989}, characters are functions
 from contexts to contents. -/
 structure Context (W : Type*) (E : Type*) where
   /-- The agent of the context (the speaker) -/
@@ -76,7 +76,7 @@ structure ReferringExpression (C : Type*) (W : Type*) (E : Type*) where
 
 /-- An expression is directly referential iff its content is rigid at every context.
 
-Kaplan (1989): "For directly referential terms, the referent determines
+@cite{kaplan-1989}: "For directly referential terms, the referent determines
 the content; once we fix the referent, the content is just the referent
 itself." -/
 def isDirectlyReferential {C W E : Type*} (char : Character C W E) : Prop :=
@@ -119,7 +119,7 @@ theorem properName_content_eq_rigid {C W E : Type*} (e : E) (c : C) :
 /-- De jure rigidity: the expression is rigid *by mechanism* — its linguistic
 meaning guarantees rigidity. Proper names and indexicals are de jure rigid.
 
-Cf. Kripke (1980): "one meter" is de facto rigid (happens to pick out the
+Cf. @cite{kripke-1980}: "one meter" is de facto rigid (happens to pick out the
 same length at every world) but not de jure rigid (its character involves
 a description). -/
 def IsDeJureRigid {C W E : Type*} (expr : ReferringExpression C W E) : Prop :=

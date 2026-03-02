@@ -1,7 +1,9 @@
 import Mathlib.Order.Basic
 
 /-!
-# Marginality Scales (Dinis & Jacinto 2026)
+# Marginality Scales
+@cite{dinis-jacinto-2026}
+
 
 ML theory enriches a linear order with a primitive "marginally smaller than"
 relation M. From R (= `<`) and M one derives L (largely smaller than):

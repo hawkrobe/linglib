@@ -4,7 +4,7 @@ import Linglib.Fragments.English.Nouns
 import Linglib.Fragments.English.FunctionWords
 
 /-!
-# Percus (2000): Situation Variable Constraints — Empirical Predictions @cite{percus-2000}
+# @cite{percus-2000}: Situation Variable Constraints — Empirical Predictions @cite{percus-2000}
 
 End-to-end derivation chain from Fragment lexical entries through
 Percus's situation variable theory to concrete de re / de dicto
@@ -14,16 +14,16 @@ predictions.
 
 ```
 Fragments/English/Predicates/Verbal.lean
-  "believe": opaqueContext = true, attitudeBuilder = .doxastic .nonVeridical
-  "think":   opaqueContext = true, attitudeBuilder = .doxastic .nonVeridical
-    ↓  (opaqueContext = true → introduces situation binder λs)
-    ↓  (doxastic .nonVeridical → universal quantification, no veridicality)
+  "believe": opaqueContext = true, attitudeBuilder =.doxastic.nonVeridical
+  "think": opaqueContext = true, attitudeBuilder =.doxastic.nonVeridical
+    ↓ (opaqueContext = true → introduces situation binder λs)
+    ↓ (doxastic.nonVeridical → universal quantification, no veridicality)
 Theories/Semantics/Intensional/Situations/Percus.lean
   believeSit: ∀s' ∈ Dox(s). complement(g[n ↦ s'])
-  alwaysAt:   ∀s' ∈ domain(ssh). scope(g[n ↦ s'])
+  alwaysAt: ∀s' ∈ domain(ssh). scope(g[n ↦ s'])
   genXWellFormed / genYWellFormed: filter readings
-    ↓  (concrete model + predicate denotations)
-Phenomena/Reference/Studies/Percus2000.lean  (this file)
+    ↓ (concrete model + predicate denotations)
+Phenomena/Reference/Studies/Percus2000.lean (this file)
   reading computations → truth values → match empirical judgments
 ```
 
@@ -209,21 +209,21 @@ def doxMary : Sit → List Sit
 
 1. **"believes"** = Fragment `Verbal.believe`
    - `opaqueContext = true` → introduces situation binder λs₂
-   - `attitudeBuilder = .doxastic .nonVeridical` → uses `believeSit`
-2. **"Mary"** = Fragment `Nouns.mary` → `entityOf mary = .mary`
-3. **"John"** = Fragment `Nouns.john` → `entityOf john = .john`
+   - `attitudeBuilder =.doxastic.nonVeridical` → uses `believeSit`
+2. **"Mary"** = Fragment `Nouns.mary` → `entityOf mary =.mary`
+3. **"John"** = Fragment `Nouns.john` → `entityOf john =.john`
 4. **"is Canadian"** = `isCanadian` (situation-dependent predicate)
 5. **Gen X**: "isCanadian" must use s₂ (closest binder = λs₂)
 
 LF (Gen X compliant): `[λs₁ Mary believes_s₁ [λs₂ John isCanadian_s₂]]`
-LF (Gen X violation):  `[λs₁ Mary believes_s₁ [λs₂ John isCanadian_s₁]]` -/
+LF (Gen X violation): `[λs₁ Mary believes_s₁ [λs₂ John isCanadian_s₁]]` -/
 
 section Example1
 
 private def g₀ : SituationAssignment W Unit := λ _ => sActual
 
 /-- De dicto reading (Gen X compliant). Uses `believeSit` because
-    `believe.attitudeBuilder = .doxastic .nonVeridical`.
+    `believe.attitudeBuilder =.doxastic.nonVeridical`.
     Predicate uses s₂ (embedded binder) per Gen X. -/
 def reading1_deDicto : Bool :=
   believeSit (λ _ => doxMary)
@@ -338,9 +338,9 @@ end Example2
 
 1. **"thinks"** = Fragment `Verbal.think`
    - `opaqueContext = true` → introduces λs₂
-   - `attitudeBuilder = .doxastic .nonVeridical` → `believeSit`
+   - `attitudeBuilder =.doxastic.nonVeridical` → `believeSit`
 2. **"always"** = Fragment `FunctionWords.always`
-   - `force = .universal` → `alwaysAt` (universal situation quantification)
+   - `force =.universal` → `alwaysAt` (universal situation quantification)
    - Gen Y: ssh must use nearest λ (= λs₂ under "thinks")
 3. **"won"** = `wonGame` (situation-dependent predicate)
    - Gen X: must use s₃ (nearest binder = λs₃ from "always")
@@ -375,9 +375,9 @@ def doxMaryR : RSit → List RSit
 
 private def g₃ : SituationAssignment W Round := λ _ => rSit .actual .r1
 
-/-- Gen Y compliant: "always" (from Fragment, force = .universal) uses
+/-- Gen Y compliant: "always" (from Fragment, force =.universal) uses
     ssh = s₂ (embedded binder, nearest λ per Gen Y).
-    Uses `alwaysAt` because `FunctionWords.always.force = .universal`. -/
+    Uses `alwaysAt` because `FunctionWords.always.force =.universal`. -/
 def genY_compliant : Bool :=
   believeSit (λ _ => doxMaryR) (entityOf Fragments.English.Nouns.mary) 2
     (λ g =>

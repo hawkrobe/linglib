@@ -2,12 +2,14 @@ import Linglib.Theories.Semantics.Conditionals.ConditionalType
 
 /-!
 # Japanese Conditional Markers
+@cite{iatridou-1991} @cite{mizuno-2024}
+
 
 Conditional morphemes in Japanese and their HC/PC restrictions.
 
 ## Markers
 
-- **-ra / -tara**: HC-only. Cannot mark premise conditionals (Iatridou 1991).
+- **-ra / -tara**: HC-only. Cannot mark premise conditionals.
 - **nara**: Can mark both HC and PC. PC reading available when antecedent
   echoes prior discourse (Lassiter 2025, ex. 15).
 - **-(r)eba**: Can mark both HC and PC. Used in Anderson conditionals with
@@ -42,7 +44,7 @@ def nara : ConditionalMarker where
 
 /-- Japanese -(r)eba: HC and PC conditional marker.
 
-    Used in Anderson conditionals (Mizuno 2024). With Non-Past
+    Used in Anderson conditionals. With Non-Past
     consequent, yields Anderson reading; with Past consequent,
     yields counterfactual reading. -/
 def eba : ConditionalMarker where

@@ -1,8 +1,8 @@
 /-!
-# Iatridou (2000) — Morphological Data @cite{iatridou-2000}
+# @cite{iatridou-2000} — Morphological Data @cite{iatridou-2000}
 
 Theory-neutral cross-linguistic data on counterfactual morphology from
-Iatridou (2000) "The Grammatical Ingredients of Counterfactuality",
+@cite{iatridou-2000} "The Grammatical Ingredients of Counterfactuality",
 *Linguistic Inquiry* 31(2): 231–270.
 
 ## Key Empirical Generalizations
@@ -18,7 +18,7 @@ Iatridou (2000) "The Grammatical Ingredients of Counterfactuality",
 
 ## Data Sources
 
-- Tables 1–2 of Iatridou (2000)
+- Tables 1–2 of @cite{iatridou-2000}
 - Example sentences from §2
 -/
 
@@ -70,7 +70,7 @@ structure SubjRequirementDatum where
 -- § English Data
 -- ════════════════════════════════════════════════════════════════
 
-/-- English FLV: "If he were to take the exam tomorrow, ..." -/
+/-- English FLV: "If he were to take the exam tomorrow,..." -/
 def english_flv : CFMorphologyDatum where
   language := "English"
   cfType := "FLV"
@@ -82,7 +82,7 @@ def english_flv : CFMorphologyDatum where
   pastLayers := 1
   gloss := "If he were to take the exam tomorrow, he would pass."
 
-/-- English PresCF: "If he knew the answer, ..." -/
+/-- English PresCF: "If he knew the answer,..." -/
 def english_presCF : CFMorphologyDatum where
   language := "English"
   cfType := "PresCF"
@@ -94,7 +94,7 @@ def english_presCF : CFMorphologyDatum where
   pastLayers := 1
   gloss := "If he knew the answer, he would tell us."
 
-/-- English PastCF: "If he had taken the exam, ..." -/
+/-- English PastCF: "If he had taken the exam,..." -/
 def english_pastCF : CFMorphologyDatum where
   language := "English"
   cfType := "PastCF"
@@ -112,7 +112,7 @@ def english_pastCF : CFMorphologyDatum where
 
 /-- Greek FLV: "An + past + impf, tha + past + impf"
 
-Based on Iatridou (2000, p.234), example (6). Greek FLV and PresCF have
+Based on @cite{iatridou-2000}, example (6). Greek FLV and PresCF have
 identical morphological form; the FLV/PresCF distinction is made by
 predicate type and temporal adverbials, not by morphology. -/
 def greek_flv : CFMorphologyDatum where
@@ -128,7 +128,7 @@ def greek_flv : CFMorphologyDatum where
 
 /-- Greek PresCF: "An + past + impf, tha + past + impf"
 
-Based on Iatridou (2000, p.234), example (6). Morphologically identical
+Based on @cite{iatridou-2000}, example (6). Morphologically identical
 to FLV in Greek; the counterfactual reading arises from the stative
 predicate. -/
 def greek_presCF : CFMorphologyDatum where
@@ -144,7 +144,7 @@ def greek_presCF : CFMorphologyDatum where
 
 /-- Greek PastCF: "An + past + past + impf, tha + past + past + impf"
 
-Based on Iatridou (2000, p.234), example (6c). The additional past
+Based on @cite{iatridou-2000}, example (6c). The additional past
 layer (the pluperfect ixe + participle) distinguishes PastCF from
 PresCF/FLV. -/
 def greek_pastCF : CFMorphologyDatum where
@@ -212,7 +212,7 @@ def english_subj : SubjRequirementDatum where
 
 Greek CFs use past + imperfective morphology (indicative), not subjunctive.
 Greek has a subjunctive-like particle (na), but this is not used in
-counterfactual conditionals (Iatridou 2000, p.244–245). -/
+counterfactual conditionals. -/
 def greek_subj : SubjRequirementDatum where
   language := "Greek"
   hasPastSubjunctive := false
@@ -233,8 +233,7 @@ def french_subj : SubjRequirementDatum where
 Italian CFs require the congiuntivo (subjunctive), which has a robust
 past form (congiuntivo trapassato). This is one of the positive cases
 for Iatridou's generalization (42): "A CF can contain a subjunctive
-morpheme only if that subjunctive morpheme has a past tense form."
-(Iatridou 2000, p.247) -/
+morpheme only if that subjunctive morpheme has a past tense form." -/
 def italian_subj : SubjRequirementDatum where
   language := "Italian"
   hasPastSubjunctive := true

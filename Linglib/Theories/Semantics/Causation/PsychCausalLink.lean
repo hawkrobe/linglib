@@ -4,11 +4,11 @@ import Linglib.Theories.Semantics.Events.Basic
 import Linglib.Theories.Semantics.Conditionals.Counterfactual
 
 /-!
-# Psych Verb Causal Links (Kim 2024, §3.3)
+# Psych Verb Causal Links
 
-@cite{kim-2024} @cite{allen-1983} @cite{bach-1986} @cite{kratzer-2000}Formal integration of Kim's (2024) maintenance relation with existing
-infrastructure: temporal intervals (Allen 1983), event sorts (Bach 1986),
-and counterfactual semantics (Lewis 1973, Stalnaker 1968).
+@cite{kim-2024} @cite{allen-1983} @cite{bach-1986} @cite{kratzer-2000}Formal integration of @cite{kim-2024}'s maintenance relation with existing @cite{lewis-1973}
+infrastructure: temporal intervals, event sorts,
+and counterfactual semantics.
 
 Kim's core claim (§3.3): stative Class II psych verbs involve a
 **maintenance** causal relation, not eventive causation. The two flavors
@@ -22,7 +22,7 @@ differ along three dimensions:
 | Counterfactual | effect persists after cause ceases | effect ceases with cause |
 
 The first three properties are formalized using existing Linglib types:
-`EventSort` (Bach 1986), `Interval.precedes`/`.overlaps` (Allen 1983).
+`EventSort`, `Interval.precedes`/`.overlaps`.
 The fourth uses `universalCounterfactualB` from `Counterfactual.lean`.
 
 ## Key results
@@ -86,7 +86,7 @@ def eventiveLink (Time : Type*) [LinearOrder Time] : PsychCausalLink Time :=
     representation and John's concern state coexist; if the representation
     ceased, the concern would cease.
 
-    Kim (2024, §3.3) identifies three defining properties:
+    @cite{kim-2024} identifies three defining properties:
     (a) Relates two eventualities (both states)
     (b) Temporal contemporaneity (τ(cause) overlaps τ(effect))
     (c) Counterfactual dependence (effect ceases when cause ceases) -/
@@ -114,7 +114,7 @@ def CausalSource.toLink (Time : Type*) [LinearOrder Time] :
 
 /-- Maintenance is temporally symmetric: if cause overlaps effect,
     effect overlaps cause. This follows from `Interval.overlaps`
-    being symmetric (Allen 1983). -/
+    being symmetric. -/
 theorem maintenance_temporal_symmetric {Time : Type*} [LinearOrder Time]
     (i₁ i₂ : Interval Time)
     (h : (maintenanceLink Time).temporalConstraint i₁ i₂) :
@@ -224,7 +224,7 @@ theorem dependent_excludes_persistent {W : Type*} [DecidableEq W]
 -- ════════════════════════════════════════════════════
 
 /-- The three defining properties of maintenance causation from
-    Kim (2024, §3.3), formalized using existing infrastructure:
+    @cite{kim-2024}, formalized using existing infrastructure:
 
     (a) Relates two eventualities — both are states (`EventSort.state`)
     (b) Temporal contemporaneity — `Interval.overlaps`

@@ -9,16 +9,16 @@ variable assignments through interpretation, allowing one sentence to bind
 variables that later sentences can access.
 
 This module collects state-based semantic frameworks:
-- **File Change Semantics** (Heim 1982, 1983): meanings as context change potentials
+- **File Change Semantics**: meanings as context change potentials
   over files (sets of world-assignment pairs)
-- **Update Semantics** (Veltman 1996): propositional update with epistemic modals
+- **Update Semantics**: propositional update with epistemic modals
 
 Both are instances of the state effect: they differ in whether the state tracks
 assignments (FCS) or just worlds (Update Semantics).
 -/
 
 /-!
-## File Change Semantics (Heim 1982, 1983)
+## File Change Semantics
 
 Heim's File Metaphor:
 - The context is a "file" of information about discourse referents
@@ -165,7 +165,7 @@ end Semantics.Dynamic.FileChangeSemantics
 
 
 /-!
-## Update Semantics (Veltman 1996)
+## Update Semantics
 
 In Update Semantics:
 - Information states are sets of worlds (not assignments)

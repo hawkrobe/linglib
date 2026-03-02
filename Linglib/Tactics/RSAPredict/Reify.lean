@@ -53,8 +53,8 @@ def extractIntExpr (e : Expr) : MetaM (Option ℤ) := do
     at index 0 and reading the resulting ℚ literal.
 
     CauSeq ℚ abs is a Subtype { val : ℕ → ℚ // IsCauSeq abs val }, so we project
-    .val (field 0 of Subtype), apply to 0, and whnf-reduce to get a concrete Rat
-    constructor (Rat.mk num den proof₁ proof₂). Then project .num and .den to
+.val (field 0 of Subtype), apply to 0, and whnf-reduce to get a concrete Rat
+    constructor (Rat.mk num den proof₁ proof₂). Then project.num and.den to
     extract the ℚ value.
 
     This handles fractions (2/3, 1/3, etc.) that findEmbeddedNat cannot,

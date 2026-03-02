@@ -2,7 +2,7 @@ import Linglib.Core.Lexical.Word
 
 /-!
 # Questions: Basic Types and Shared Infrastructure
-@cite{dayal-2016} @cite{groenendijk-stokhof-1984} @cite{krifka-2011}
+@cite{dayal-2016} @cite{groenendijk-stokhof-1984} @cite{krifka-2011} @cite{anand-hardt-mccloskey-2021}
 
 Theory-neutral types for question-answer phenomena.
 
@@ -12,8 +12,7 @@ namespace Phenomena.Questions
 
 /-- Semantic type of a wh-phrase, classifying what domain the wh-word
     ranges over. The taxonomy is empirically motivated by distributional
-    patterns in the Santa Cruz Sluicing Corpus (Anand, Hardt & McCloskey
-    2021), where these types show radically different frequencies. -/
+    patterns in the Santa Cruz Sluicing Corpus, where these types show radically different frequencies. -/
 inductive WhSemanticType where
   | entity          -- who, what, which N — ranges over individuals
   | degree          -- how much, how many, how ADJ — ranges over degrees

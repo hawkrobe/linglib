@@ -9,11 +9,11 @@ import Linglib.Phenomena.Case.Studies.Aissen2003
 
 Connects the three layers of the case pipeline end-to-end:
 
-1. **Dependent Case** (Marantz 1991, Baker 2015) assigns abstract Case to NPs
+1. **Dependent Case** assigns abstract Case to NPs
    by structural configuration: in accusative transitives, the object gets ACC.
-2. **DOM** (Aissen 2003) determines which ACC-bearing objects receive overt
+2. **DOM** determines which ACC-bearing objects receive overt
    morphological marking, conditioned by animacy and definiteness.
-3. **OT Factorial Typology** (Aissen 2003, §4) constrains which DOM patterns
+3. **OT Factorial Typology** constrains which DOM patterns
    are possible: only monotone (staircase) patterns survive harmonic alignment.
 
 The end-to-end theorem: in accusative transitives, the object receives
@@ -25,12 +25,12 @@ And the OT analysis guarantees that overt marking is monotone in prominence
 ## The Pipeline
 
 ```
-  Structural Configuration     Prominence Properties     OT Constraint Ranking
-        (syntax)                  (semantics)               (morphology)
-           │                          │                          │
-           ▼                          ▼                          ▼
-     assignCases ──►  ACC   ──►  DOMProfile.marks  ──►  only monotone
-     (all objects)              (some objects overt)     patterns possible
+  Structural Configuration Prominence Properties OT Constraint Ranking
+        (syntax) (semantics) (morphology)
+           │ │ │
+           ▼ ▼ ▼
+     assignCases ──► ACC ──► DOMProfile.marks ──► only monotone
+     (all objects) (some objects overt) patterns possible
 ```
 
 -/

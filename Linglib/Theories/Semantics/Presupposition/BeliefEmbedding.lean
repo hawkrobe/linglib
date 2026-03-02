@@ -64,7 +64,7 @@ believes at a given world.
 
 `Dox agent w` = the set of worlds compatible with what `agent` believes at `w`
 
-This is the standard modal semantics for belief (Hintikka 1962).
+This is the standard modal semantics for belief.
 -/
 def DoxasticAccessibility (W : Type*) (Agent : Type*) :=
   Agent → W → ContextSet W
@@ -92,7 +92,7 @@ The local context at φ is the set of (w*, w) pairs where:
 - w* is in the global context C
 - w is compatible with what agent believes at w*
 
-Following Schlenker (2009) Section 3.1.2, this is a function from
+Following @cite{schlenker-2009} Section 3.1.2, this is a function from
 "context of utterance" (w*) to context sets.
 -/
 structure BeliefLocalCtx (W : Type*) (Agent : Type*) where
@@ -284,6 +284,8 @@ theorem belief_filtering_condition (blc : BeliefLocalCtx W Agent) (p : PrProp W)
 
 /-!
 ### Bridging Bool-valued and Prop-valued Accessibility
+@cite{hintikka-1969}
+
 
 `CommonGround.MultiAgent` uses Bool-valued `AgentAccessRel W E = E → W → W → Bool`.
 `BeliefEmbedding` uses Prop-valued `DoxasticAccessibility W E = E → W → ContextSet W`

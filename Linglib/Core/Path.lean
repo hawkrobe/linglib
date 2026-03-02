@@ -9,7 +9,7 @@ Framework-agnostic types for spatial paths and their boundedness
 classification. Paths are the spatial analog of temporal intervals
 (`Core.Time.Interval`): directed stretches of space between locations.
 
-The key linguistic insight (Zwarts 2005): the boundedness of a directional
+The key linguistic insight: the boundedness of a directional
 PP determines whether the VP it creates is telic or atelic. Bounded PPs
 ("to the store") yield telic VPs; unbounded PPs ("towards the store")
 yield atelic VPs. This parallels the QUA/CUM mereological classification
@@ -31,7 +31,7 @@ namespace Core.Path
 
 set_option linter.dupNamespace false in
 /-- Spatial path: a directed trajectory between locations.
-    Zwarts (2005): paths are directed stretches of space with a
+    @cite{zwarts-2005}: paths are directed stretches of space with a
     source (starting point) and goal (endpoint).
 
     Parallels `Core.Time.Interval` for the temporal domain. Unlike
@@ -48,7 +48,7 @@ set_option linter.dupNamespace false in
 -- ════════════════════════════════════════════════════
 
 /-- Directional PP boundedness classification.
-    Zwarts (2005): the boundedness of a directional PP determines
+    @cite{zwarts-2005}: the boundedness of a directional PP determines
     whether the VP it creates is telic or atelic.
 
     - `bounded`: goal-oriented ("to the store", "into the room")
@@ -78,7 +78,7 @@ def PathShape.toBoundedness : PathShape → Core.Scale.Boundedness
   | .unbounded => .open_
 
 /-- Bounded paths are licensed (closed scale → admits degree modification).
-    Zwarts (2005): "to the store" creates a telic VP because the path
+    @cite{zwarts-2005}: "to the store" creates a telic VP because the path
     set is bounded, corresponding to a closed scale. -/
 theorem bounded_path_licensed :
     PathShape.bounded.toBoundedness.isLicensed = true := rfl
@@ -88,7 +88,7 @@ theorem source_path_licensed :
     PathShape.source.toBoundedness.isLicensed = true := rfl
 
 /-- Unbounded paths are blocked (open scale → no inherent endpoint).
-    Zwarts (2005): "towards the store" creates an atelic VP because
+    @cite{zwarts-2005}: "towards the store" creates an atelic VP because
     the path set is unbounded, corresponding to an open scale. -/
 theorem unbounded_path_blocked :
     PathShape.unbounded.toBoundedness.isLicensed = false := rfl

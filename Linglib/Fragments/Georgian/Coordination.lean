@@ -11,7 +11,7 @@ all three M&S conjunction strategies: J-only, MU-only, and J-MU.
 
 The MU particle *-c* is also Georgian's additive/focus particle, confirming
 the M&S prediction. Crucially, *-c* is a **bound clitic**, unlike Hungarian
-*is* (free). Bill et al. (2025) speculate this morphological difference may
+*is* (free). @cite{bill-etal-2025} speculate this morphological difference may
 explain why Georgian children found MU-involving strategies harder.
 
 Connection to Typology.lean: `Phenomena.Coordination.Typology.georgian`

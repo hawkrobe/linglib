@@ -60,8 +60,8 @@ We use `List (BProp W)` as an extensional representation of question meanings.
 This is equivalent to the intensional `Hamblin.QuestionDen W := (W → Bool) → Bool`
 from `Semantics.Montague.Questions.Hamblin`, but more convenient for computation.
 
-The connection: a list `[p₁, p₂, ...]` represents the characteristic function
-`λ p. p ∈ {p₁, p₂, ...}`.
+The connection: a list `[p₁, p₂,...]` represents the characteristic function
+`λ p. p ∈ {p₁, p₂,...}`.
 
 See `toHamblin` and `fromHamblin` for conversions.
 -/
@@ -79,15 +79,15 @@ abbrev ThresholdFunction (W : Type*) := QuestionDen W → ℚ
 ## Grounding in Hamblin Semantics
 @cite{uegaki-sudo-2019} @cite{villalta-2008} @cite{hamblin-1973} @cite{rooth-1992}
 
-Questions are **alternative sets** (Hamblin 1973). Our `QuestionDen W` is the
+Questions are **alternative sets**. Our `QuestionDen W` is the
 extensional representation of `Semantics.Questions.Hamblin.QuestionDen W`.
 
 ### Why This Matters for TSP
 
-Uegaki & Sudo (2019) derive TSP from the interaction of:
-1. Degree semantics (μ(x,p) > θ) — from Villalta (2008)
-2. Alternative semantics (questions as Hamblin sets) — from Hamblin (1973)
-3. Focus-induced presuppositions — from Rooth (1992)
+@cite{uegaki-sudo-2019} derive TSP from the interaction of:
+1. Degree semantics (μ(x,p) > θ) — from @cite{villalta-2008}
+2. Alternative semantics (questions as Hamblin sets) — from @cite{hamblin-1973b}
+3. Focus-induced presuppositions — from @cite{rooth-1992}
 
 The key insight: **questions introduce alternatives**, and combining a degree
 predicate with alternatives triggers significance presuppositions.
@@ -95,11 +95,11 @@ predicate with alternatives triggers significance presuppositions.
 ### The Derivation Chain
 
 ```
-Hamblin question Q = {p₁, p₂, ...}     [Hamblin 1973]
+Hamblin question Q = {p₁, p₂,...} [Hamblin 1973]
         ↓
-Alternatives trigger focus semantics    [Rooth 1992]
+Alternatives trigger focus semantics [Rooth 1992]
         ↓
-Focus triggers significance presup      [Kennedy 2007]
+Focus triggers significance presup [Kennedy 2007]
         ↓
 For positive valence: significance = ∃p ∈ C. μ(x,p) > θ = TSP
 ```
@@ -250,14 +250,14 @@ inductive AttitudeValence where
 
 ### Background: Significance in Degree Constructions
 
-Kennedy (2007) observes that degree constructions carry **significance presuppositions**.
+@cite{kennedy-2007} observes that degree constructions carry **significance presuppositions**.
 The positive form of a gradable adjective presupposes the scale is "significant" in context:
 
   "John is tall" presupposes height is relevant/significant
 
 ### Application to Preferential Predicates
 
-Villalta (2008) shows preferential predicates ARE gradable predicates with degree semantics:
+@cite{villalta-2008} shows preferential predicates ARE gradable predicates with degree semantics:
 
   ⟦x hopes p⟧ = μ_hope(x, p) > θ(C)
 
@@ -674,19 +674,19 @@ example : classifyNVP false .positive = .class1_nonCDist := rfl
 /-!
 ## Veridical vs Non-Veridical Preferential Predicates
 
-Uegaki & Sudo (2019) established a crucial distinction:
+@cite{uegaki-sudo-2019} established a crucial distinction:
 
 ### Non-Veridical (hope) - TRIVIAL
 ```
-Presup (TSP):  ∃p ∈ C. μ(x,p) > θ(C)
-Assertion:     ∃p ∈ Q. μ(x,p) > θ(C)
-When Q ⊆ C:    Assertion ⊆ TSP → TRIVIAL
+Presup (TSP): ∃p ∈ C. μ(x,p) > θ(C)
+Assertion: ∃p ∈ Q. μ(x,p) > θ(C)
+When Q ⊆ C: Assertion ⊆ TSP → TRIVIAL
 ```
 
 ### Veridical (be happy) - NOT TRIVIAL
 ```
-Presup:        ∃p ∈ Q. p(w) ∧ μ(x,p) > θ(C)
-Assertion:     ∃p ∈ Q. p(w) ∧ μ(x,p) > θ(C)
+Presup: ∃p ∈ Q. p(w) ∧ μ(x,p) > θ(C)
+Assertion: ∃p ∈ Q. p(w) ∧ μ(x,p) > θ(C)
                        ^^^^
                        TRUTH REQUIREMENT breaks triviality!
 ```
@@ -810,7 +810,7 @@ Even when:
 The question assertion can still be FALSE for veridical predicates,
 because no TRUE answer in w may be the preferred one.
 
-This is the key insight from Uegaki & Sudo (2019): non-veridicality
+This is the key insight from @cite{uegaki-sudo-2019}: non-veridicality
 is a NECESSARY condition for the triviality that makes predicates
 anti-rogative.
 

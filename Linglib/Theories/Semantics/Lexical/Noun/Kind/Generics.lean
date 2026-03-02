@@ -257,7 +257,7 @@ def thresholdGeneric
 GEN is eliminable via threshold semantics.
 
 The theorem `gen_eliminable` proving this is in `Theories/Comparisons/GenericSemantics.lean`,
-which connects traditional GEN to Tessler & Goodman's (2019) RSA approach.
+which connects traditional GEN to @cite{tessler-goodman-2019} RSA approach.
 -/
 
 -- Example: Dogs Bark

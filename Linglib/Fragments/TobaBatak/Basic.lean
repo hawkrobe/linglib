@@ -23,7 +23,7 @@ voice morphemes determine which argument is the pivot (= subject):
 The restriction on extraction follows from nominal licensing: only the
 pivot (Case-licensed by T's [PROBE:D] in Spec,TP) can undergo
 Ā-movement; a non-pivot DP fronted to Spec,CP would lack a Case
-licensor (Erlewine 2018, §4). This is NOT a voice-as-Case system in
+licensor. This is NOT a voice-as-Case system in
 the Philippine sense; it is a structural consequence of how probing
 and Case assignment interact with predicate fronting.
 
@@ -155,7 +155,7 @@ def tbExtractionProfile : Interfaces.ExtractionProfile :=
     Unlike Philippine-type languages (Tagalog: 4+ voices including
     locative, instrumental), Toba Batak has only actor and object
     voice. The system is symmetrical — neither voice is morphologically
-    basic (Erlewine 2018). -/
+    basic. -/
 def tbVoiceSystem : Interfaces.VoiceSystemProfile :=
   { language := "Toba Batak"
     voices := [ ⟨"Actor Voice", .agent⟩, ⟨"Object Voice", .patient⟩ ]

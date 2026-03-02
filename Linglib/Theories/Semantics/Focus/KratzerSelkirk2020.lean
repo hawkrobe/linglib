@@ -159,7 +159,7 @@ variable {W : Type*} {Entity : Type}
 
 Neither [FoC] nor [G] changes the truth-conditional (at-issue) content of
 the expression it attaches to. Both contribute use-conditional / expressive
-meaning (Kaplan 1999, Kratzer 2004, Potts 2005, Gutzmann 2015).
+meaning.
 
 This grounds K&S's features in Potts' two-dimensional semantics, already
 formalized in `Expressives/Basic.lean`. -/
@@ -184,7 +184,7 @@ theorem g_at_issue_unchanged (atIssue givennessPresup : BProp W) :
     (gAsTwoDim atIssue givennessPresup).atIssue = atIssue := rfl
 
 /-- Both features project their use-conditional content through negation,
-    just like conventional implicatures (Potts 2005).
+    just like conventional implicatures.
 
     "It's not the case that [ELIZA]_{FoC} mailed the caramels" still
     contrasts Eliza with alternatives. -/
@@ -201,12 +201,12 @@ theorem g_projects_through_neg (atIssue givennessPresup : BProp W) :
 /-! ## §8 (49). Contrast Representation
 
 An expression α represents a contrast with discourse referent a iff:
-(i)   a ∈ ⟦α⟧_{A,C}           — the referent is among the alternatives
-(ii)  a ≠ ⟦α⟧_{O,C}           — the referent differs from the actual value
+(i) a ∈ ⟦α⟧_{A,C} — the referent is among the alternatives
+(ii) a ≠ ⟦α⟧_{O,C} — the referent differs from the actual value
 (iii) There is no FoC/G-variant β of α with ⟦β⟧_{A,C} ⊂ ⟦α⟧_{A,C}
-      and a ∈ ⟦β⟧_{A,C}       — no smaller alternatives set also captures a
+      and a ∈ ⟦β⟧_{A,C} — no smaller alternatives set also captures a
 
-Condition (iii) prevents over-FoCusing (Schwarzschild 1993). -/
+Condition (iii) prevents over-FoCusing. -/
 
 /-- Conditions (i) and (ii) of Contrast (K&S 49).
     Condition (iii) — the minimality condition — is structural and requires
@@ -383,7 +383,7 @@ The second "Sid" is [FoC]-marked (it associates with *only*) but sits inside
 a [G]-marked constituent. The ranking [G]=No-φ >> [FoC]=φ-Level-Head
 predicts: Sid gets ω-level head status but NOT φ-level prominence.
 Result: an H accent but no phrase-level pitch scaling — exactly what
-Beaver et al. (2007) found experimentally. -/
+@cite{beaver-2007} found experimentally. -/
 
 /-- A Second Occurrence Focus datum: [FoC] inside [G]. -/
 structure SOFDatum where
@@ -401,7 +401,7 @@ structure SOFDatum where
   source : String := ""
   deriving Repr
 
-/-- Beaver et al. (2007) SOF example. -/
+/-- @cite{beaver-2007} SOF example. -/
 def beaverEtAl2007_sid : SOFDatum := {
   sentence := "Even the prosecutor only named Sid in court today"
   sofWord := "Sid"
@@ -457,7 +457,7 @@ in Standard American and British English.
      Represent non-trivial contrasts with salient discourse referents.
 
 These are not semantic/syntactic constraints but PRAGMATIC pressures,
-possibly reducible to Maximize Presuppositions (Heim 1991). -/
+possibly reducible to Maximize Presuppositions. -/
 
 /-- Pragmatic pressure for [G]-marking (K&S 61). -/
 structure PressureForG where
@@ -477,7 +477,7 @@ structure PressureForFoC where
   /-- Would failure to [FoC]-mark violate Pressure for [FoC]-Marking? -/
   faultedIfMissed : Bool := true
 
-/-! ## Bridge: K&S vs Schwarzschild (1999)
+/-! ## Bridge: K&S vs @cite{schwarzschild-1999}
 
 Schwarzschild's "A-Givenness" (within Rooth's Alternatives Semantics)
 falls out as a special case of K&S's [G]-feature.

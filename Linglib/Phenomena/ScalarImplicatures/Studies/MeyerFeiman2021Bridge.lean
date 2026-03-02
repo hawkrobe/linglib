@@ -3,7 +3,7 @@ import Linglib.Phenomena.ScalarImplicatures.Basic
 import Linglib.Phenomena.Modality.FreeChoice
 
 /-!
-# Meyer & Feiman (2021) — Bridge Theorems
+# @cite{meyer-feiman-2021} — Bridge Theorems
 @cite{meyer-feiman-2021}
 
 Connects the process profile classification to the observed priming data
@@ -107,7 +107,7 @@ The process profile classification aligns with Horn scale properties. -/
 theorem quantifier_scale_online :
     (scaleProfile Phenomena.ScalarImplicatures.quantifierScale).altGen = .online := rfl
 
-/-- The numeral scale ⟨1, 2, 3, ...⟩ has an offline ALT-GEN profile. -/
+/-- The numeral scale ⟨1, 2, 3,...⟩ has an offline ALT-GEN profile. -/
 theorem numeral_scale_offline :
     (scaleProfile Phenomena.ScalarImplicatures.numeralScale).altGen = .offline := rfl
 

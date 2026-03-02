@@ -9,7 +9,7 @@ import Linglib.Core.Logic.ModalLogic
 # Type Theory with Records — Core Foundations
 @cite{barwise-perry-1983} @cite{cooper-2023} @cite{martin-lf-1984} @cite{montague-1973}
 
-Type-theoretic foundations for TTR (Cooper 2023), organized by conceptual role:
+Type-theoretic foundations for TTR, organized by conceptual role:
 
 **Types & Judgments**: IType, PredType/Ppty, records (DepRecordType, SituationRec),
   SubtypeOf, IsTrue/IsFalse.
@@ -78,7 +78,7 @@ For the purposes of connecting to linguistic theory, we introduce a
 lightweight wrapper that makes TTR's intensional type identity explicit. -/
 
 /-- An intensional type: a named type that carries identity beyond its extension.
-Cooper (2023) §1.3: "there is nothing which prevents two types from being
+@cite{cooper-2023} §1.3: "there is nothing which prevents two types from being
 associated with exactly the same set of objects" — types are intensional.
 
 The `name` field distinguishes types even when they have the same carrier.
@@ -135,7 +135,7 @@ abbrev PredType (E : Type) := E → Type
 abbrev PredType2 (E : Type) := E → E → Type
 
 /-- A ptype: the type of situations where predicate `P` holds of argument `a`.
-Cooper (2023) §1.4.1, Def 7: if `Arity(P) = ⟨T₁,...,Tₙ⟩` and `aᵢ : Tᵢ`,
+@cite{cooper-2023} §1.4.1, Def 7: if `Arity(P) = ⟨T₁,...,Tₙ⟩` and `aᵢ : Tᵢ`,
 then `P(a₁,...,aₙ) ∈ PType`. -/
 abbrev ptype {E : Type} (P : PredType E) (a : E) := P a
 
@@ -161,8 +161,8 @@ the infrastructure — we identify Lean structures with TTR records and prove
 the key properties Cooper establishes. -/
 
 /-- A simple (non-dependent) record type with two fields.
-Models Cooper (2023) §1.4.3, ex (18a):
-  [ x : Ind, y : Ind, e : hug(x,y) ]
+Models @cite{cooper-2023} §1.4.3, ex (18a):
+  [ x : Ind, y : Ind, e : hug(x,y)]
 but without dependency (the hug field's type doesn't reference x,y). -/
 structure SimpleRecordType2 (T₁ T₂ : Type) where
   fst : T₁
@@ -170,15 +170,15 @@ structure SimpleRecordType2 (T₁ T₂ : Type) where
 
 /-- A dependent record type: the second field's type depends on the first.
 This captures Cooper's dependent fields (§1.4.3.1, ex 25):
-  [ x : Ind, c₁ : boy(x) ]
+  [ x : Ind, c₁ : boy(x)]
 where the type of c₁ depends on which individual x is. -/
 structure DepRecordType (T₁ : Type) (T₂ : T₁ → Type) where
   fst : T₁
   snd : T₂ fst
 
 /-- A situation record: the canonical TTR record type for event semantics.
-Models Cooper (2023) §1.4.3, ex (18a):
-  [ x : Ind, y : Ind, e : hug(x,y) ] -/
+Models @cite{cooper-2023} §1.4.3, ex (18a):
+  [ x : Ind, y : Ind, e : hug(x,y)] -/
 structure SituationRec (E : Type) (R : E → E → Type) where
   x : E
   y : E
@@ -197,7 +197,7 @@ This is the reverse of what you might expect from set inclusion:
 the type with MORE constraints has FEWER witnesses. -/
 
 /-- Subtyping: `T₁` is a subtype of `T₂` when every witness of `T₁`
-is also a witness of `T₂`. Cooper (2023) §1.4.3.5, Def 55. -/
+is also a witness of `T₂`. @cite{cooper-2023} §1.4.3.5, Def 55. -/
 class SubtypeOf (T₁ T₂ : Type) where
   /-- The coercion witnessing the subtype relation -/
   up : T₁ → T₂
@@ -205,8 +205,8 @@ class SubtypeOf (T₁ T₂ : Type) where
 infixl:50 " ⊑ " => SubtypeOf
 
 /-- Record type with more fields is a subtype of one with fewer fields.
-Cooper (2023) ex (53): [ x:Ind, c₁:boy(x), y:Ind, c₂:dog(y), e:hug(x,y) ]
-is a subtype of [ x:Ind, c₁:boy(x), y:Ind, c₂:dog(y) ].
+@cite{cooper-2023} ex (53): [ x:Ind, c₁:boy(x), y:Ind, c₂:dog(y), e:hug(x,y)]
+is a subtype of [ x:Ind, c₁:boy(x), y:Ind, c₂:dog(y)].
 
 We demonstrate this with Lean's structure inheritance: -/
 structure BoyAndDog (E : Type) (Boy Dog : E → Prop) where
@@ -240,10 +240,10 @@ The central semantic thesis of TTR: types play the role of propositions.
 - A type is **false** when it is empty (has no witness).
 - `hug(a,b)` is true iff there exists a situation of that type.
 
-This connects to Martin-Löf's (1984) propositions-as-types and to
+This connects to @cite{martin-lf-1984}'s propositions-as-types and to
 constructive mathematics' proof-by-witness. -/
 
-/-- A TTR type is "true" (inhabited). Cooper (2023) §1.5. -/
+/-- A TTR type is "true" (inhabited). @cite{cooper-2023} §1.5. -/
 abbrev IsTrue (T : Type) : Prop := Nonempty T
 
 /-- A TTR type is "false" (empty). -/
@@ -322,7 +322,7 @@ We formalize the connection: a modal type system over `W` possibilities
 with Bool-valued predicates is exactly a `BProp W`. -/
 
 /-- A modal type system: for each possibility and predicate, whether the
-predicate has witnesses. Cooper (2023) §1.4.3.5, Def 54. -/
+predicate has witnesses. @cite{cooper-2023} §1.4.3.5, Def 54. -/
 abbrev ModalTypeSystem (W : Type) (Pred : Type) := W → Pred → Bool
 
 /-- A predicate in a modal type system yields a BProp. -/
@@ -332,7 +332,7 @@ def ModalTypeSystem.toBProp {W Pred : Type} (mts : ModalTypeSystem W Pred)
 
 /-- Subtyping in a modal type system: T₁ ⊑ T₂ iff at every possibility
 where T₁ has witnesses, T₂ also has witnesses. This is exactly
-propositional entailment. Cooper (2023) Def 55. -/
+propositional entailment. @cite{cooper-2023} Def 55. -/
 def ModalTypeSystem.subtypeBProp {W Pred : Type} (mts : ModalTypeSystem W Pred)
     (P₁ P₂ : Pred) : Prop :=
   ∀ w, mts w P₁ = true → mts w P₂ = true
@@ -356,7 +356,7 @@ to the framework-agnostic intension machinery. -/
 
 /-- An IType in a modal type system induces an intension.
     At each possibility w, the type either has witnesses (true) or not (false).
-    Cooper (2023) Def 54: possibilities index witness assignments. -/
+    @cite{cooper-2023} Def 54: possibilities index witness assignments. -/
 def IType.toIntension {W : Type} (mts : ModalTypeSystem W String)
     (T : IType) : Core.Intension.Intension W Bool :=
   mts.toBProp T.name
@@ -386,19 +386,19 @@ theorem IType.coext_not_intEq {W : Type}
 /-! ## § 2.2 String theory of events
 
 Events have temporal extent and can be decomposed into strings (sequences)
-of sub-events. A game of fetch decomposes into: pick_up ⌢ throw ⌢ run_after ⌢ ...
+of sub-events. A game of fetch decomposes into: pick_up ⌢ throw ⌢ run_after ⌢...
 In TTR, a string type `T⁺` is the type of non-empty strings of events of type T.
 We model this with lists, which Lean handles natively. -/
 
 /-- A string type: a non-empty sequence of typed events.
-Cooper (2023) §2.2: events decompose into strings of sub-events.
+@cite{cooper-2023} §2.2: events decompose into strings of sub-events.
 The field `ne` ensures non-emptiness (TTR uses T⁺, not T*). -/
 structure StringType (T : Type) where
   events : List T
   ne : events ≠ []
 
 /-- String concatenation: combining two event strings.
-Cooper (2023) §2.2, string concatenation `s₁ ⌢ s₂`. -/
+@cite{cooper-2023} §2.2, string concatenation `s₁ ⌢ s₂`. -/
 def StringType.concat {T : Type} (s₁ s₂ : StringType T) : StringType T where
   events := s₁.events ++ s₂.events
   ne := by
@@ -427,9 +427,9 @@ Agents interact with types through three fundamental acts:
 - **Create**: bring into existence a witness of a type
 
 These correspond to the three basic speech acts: assertion, question, command.
-Cooper (2023) §2.3.1, ex (30–32). -/
+@cite{cooper-2023} §2.3.1, ex (30–32). -/
 
-/-- The three fundamental type acts. Cooper (2023) §2.3.1. -/
+/-- The three fundamental type acts. @cite{cooper-2023} §2.3.1. -/
 inductive TypeAct where
   | judge   -- classify an object as being of a type
   | query   -- ask whether an object is of a type
@@ -445,12 +445,12 @@ These are the type-theoretic analogues of conjunction and disjunction,
 and they correspond exactly to Lean's `Prod` and `Sum`. -/
 
 /-- Meet type: `a : T₁ ∧ T₂` iff `a : T₁` and `a : T₂`.
-Cooper (2023) §2.6, Def 97. In Lean, this is `T₁ × T₂`.
+@cite{cooper-2023} §2.6, Def 97. In Lean, this is `T₁ × T₂`.
 We introduce an alias to make the TTR connection explicit. -/
 abbrev MeetType (T₁ T₂ : Type) := T₁ × T₂
 
 /-- Join type: `a : T₁ ∨ T₂` iff `a : T₁` or `a : T₂`.
-Cooper (2023) §2.3.3, ex (47). In Lean, this is `Sum T₁ T₂`. -/
+@cite{cooper-2023} §2.3.3, ex (47). In Lean, this is `Sum T₁ T₂`. -/
 abbrev JoinType (T₁ T₂ : Type) := Sum T₁ T₂
 
 /-- Meet of inhabited types is inhabited. -/
@@ -468,7 +468,7 @@ theorem join_true_of_right {T₁ T₂ : Type} (h : IsTrue T₂) :
   ⟨Sum.inr h.some⟩
 
 /-- Meet type is a subtype of each component (projection).
-Cooper (2023) ex (98c,d). -/
+@cite{cooper-2023} ex (98c,d). -/
 instance meetSubtypeLeft (T₁ T₂ : Type) : SubtypeOf (MeetType T₁ T₂) T₁ where
   up := Prod.fst
 
@@ -476,7 +476,7 @@ instance meetSubtypeRight (T₁ T₂ : Type) : SubtypeOf (MeetType T₁ T₂) T�
   up := Prod.snd
 
 /-- Each component is a subtype of the join type (injection).
-Cooper (2023) §2.3.3. -/
+@cite{cooper-2023} §2.3.3. -/
 instance joinSubtypeLeft (T₁ T₂ : Type) : SubtypeOf T₁ (JoinType T₁ T₂) where
   up := Sum.inl
 
@@ -498,7 +498,7 @@ theorem join_true_iff {T₁ T₂ : Type} :
 
 /-! ## Appendix A11.7: Restriction (T ∥ r)
 
-Cooper (2023) Appendix A11.7: a *restriction* of type T by predicate r
+@cite{cooper-2023} Appendix A11.7: a *restriction* of type T by predicate r
 is the type of objects of T satisfying r. This is exactly Lean's native
 `Subtype` (refinement type): `{ x : T // P x }`.
 
@@ -507,7 +507,7 @@ Using Lean's `Subtype` directly gives us the full API for free:
 
 /-- Cooper's restriction T ∥ r = Lean's `Subtype`:
 the type of elements of `T` satisfying predicate `P`.
-Cooper (2023) Appendix A11.7. -/
+@cite{cooper-2023} Appendix A11.7. -/
 abbrev Restriction (T : Type) (P : T → Prop) := { x : T // P x }
 
 /-- Restriction preserves the subtype relation: (T ∥ P) ⊑ T.
@@ -528,14 +528,14 @@ theorem restriction_implies_base {T : Type} {P : T → Prop}
 
 /-! ## Appendix A11.3: Record merges
 
-Cooper (2023) Appendix A11.3 defines two kinds of record merge:
+@cite{cooper-2023} Appendix A11.3 defines two kinds of record merge:
 - **Symmetric merge** μ(T₁, T₂): the type with fields from both records.
   This is `MeetType T₁ T₂ = T₁ × T₂` (Lean's `Prod`).
 - **Asymmetric merge** μ_asym(T₁, T₂): T₂ fields override T₁ fields.
   Modeled as a base-override pair. -/
 
 /-- Symmetric merge is meet (product type).
-Cooper (2023) A11.3: μ(T₁, T₂) combines all fields of both records. -/
+@cite{cooper-2023} A11.3: μ(T₁, T₂) combines all fields of both records. -/
 theorem symmetric_merge_is_meet (T₁ T₂ : Type) :
     MeetType T₁ T₂ = (T₁ × T₂) := rfl
 
@@ -547,7 +547,7 @@ def symmetric_merge_comm (T₁ T₂ : Type) : MeetType T₁ T₂ ≃ MeetType T�
   right_inv := λ ⟨_, _⟩ => rfl
 
 /-- Merging with Unit is identity (up to equivalence).
-Cooper (2023) A11.3: the empty record type acts as a merge identity. -/
+@cite{cooper-2023} A11.3: the empty record type acts as a merge identity. -/
 def merge_unit_right (T : Type) : MeetType T Unit ≃ T where
   toFun := Prod.fst
   invFun := λ t => ⟨t, ()⟩
@@ -555,7 +555,7 @@ def merge_unit_right (T : Type) : MeetType T Unit ≃ T where
   right_inv := λ _ => rfl
 
 /-- Asymmetric merge: T₂ fields override T₁ fields.
-Cooper (2023) A11.3: μ_asym(T₁, T₂) takes T₁ as base and T₂ as override.
+@cite{cooper-2023} A11.3: μ_asym(T₁, T₂) takes T₁ as base and T₂ as override.
 Accessors prefer override fields when both provide the same label. -/
 structure AsymMerge (T₁ T₂ : Type) where
   /-- The base record -/
@@ -579,7 +579,7 @@ def asymMerge_unit_override (T : Type) : AsymMerge T Unit ≃ T where
 A sign pairs a speech event with its content. -/
 
 /-- A TTR sign: a pairing of speech event type and content type.
-Cooper (2023) §2.5, ex (70). -/
+@cite{cooper-2023} §2.5, ex (70). -/
 structure TTRSign (Phon Cont : Type) where
   sEvent : Phon
   cont : Cont
@@ -591,7 +591,7 @@ structure TTRSign (Phon Cont : Type) where
 section CorePhenomena
 
 /-- `groundhog` and `woodchuck` as intensional types: same carrier, different names.
-Cooper (2023) §1.3: types are not sets; two types can share all witnesses
+@cite{cooper-2023} §1.3: types are not sets; two types can share all witnesses
 yet remain distinct. -/
 def groundhog : IType := ⟨Unit, "groundhog"⟩
 def woodchuck : IType := ⟨Unit, "woodchuck"⟩
@@ -607,7 +607,7 @@ theorem groundhog_ne_woodchuck : ¬ groundhog.intEq woodchuck := by
   simp [IType.intEq, groundhog, woodchuck]
 
 /-- `round_square` and `even_prime_gt_2` are both empty but distinct.
-Cooper (2023) §1.3: possible worlds cannot distinguish these since both
+@cite{cooper-2023} §1.3: possible worlds cannot distinguish these since both
 have empty extension at every world. TTR can: they are different types. -/
 def roundSquare : IType := ⟨Empty, "round_square"⟩
 def evenPrimeGt2 : IType := ⟨Empty, "even_prime_gt_2"⟩
@@ -619,7 +619,7 @@ theorem even_prime_gt2_empty : IsFalse evenPrimeGt2.carrier :=
 theorem empty_types_distinct : ¬ roundSquare.intEq evenPrimeGt2 := by
   simp [IType.intEq, roundSquare, evenPrimeGt2]
 
-/-- Subtyping example from Cooper (2023) ex (53):
+/-- Subtyping example from @cite{cooper-2023} ex (53):
 A situation with a boy hugging a dog is a subtype of a situation with
 a boy and a dog (regardless of what is going on between them). -/
 example (E : Type) (Boy Dog : E → Prop) (Hug : E → E → Prop)
@@ -639,7 +639,7 @@ Events have hierarchical structure beyond flat string types. -/
 
 section HierarchicalEvents
 
-/-- Events in a bus trip. Cooper (2023) §3.2, ex (1–2). -/
+/-- Events in a bus trip. @cite{cooper-2023} §3.2, ex (1–2). -/
 inductive BusEvent where
   | waitAtBusstop | busArrive | getOnBus
   | travelOnBus | getOffBus
@@ -659,11 +659,11 @@ end HierarchicalEvents
 
 /-! ## § 3.3 Syntactic categories
 
-Cooper (2023) §3.3, ex (12): Cat is a basic type with witnesses
+@cite{cooper-2023} §3.3, ex (12): Cat is a basic type with witnesses
 s, np, det, n, v, vp — the categories needed for the English fragment. -/
 
 /-- Syntactic categories for Cooper's English fragment.
-Cooper (2023) §3.3, ex (12). -/
+@cite{cooper-2023} §3.3, ex (12). -/
 inductive Cat where
   | s   -- sentence
   | np  -- noun phrase
@@ -691,7 +691,7 @@ theorem cat_lexical_has_upos (c : Cat) (h : c.isLexical = true) :
   cases c <;> simp [Cat.isLexical] at h <;> simp [Cat.toUPOS?]
 
 /-- A grammatical sign with syntactic structure.
-Cooper (2023) §3.3, ex (11). -/
+@cite{cooper-2023} §3.3, ex (11). -/
 inductive GSign (Phon Cont : Type) where
   | mk (sEvent : Phon) (cat : Cat)
        (daughters : List (GSign Phon Cont)) (cont : Cont)
@@ -723,7 +723,7 @@ def toTTRSign (s : GSign Phon Cont) : TTRSign Phon Cont where
 end GSign
 
 /-- Create a lexical sign (no daughters).
-Cooper (2023) §3.3, ex (18). -/
+@cite{cooper-2023} §3.3, ex (18). -/
 def lexSign {Phon Cont : Type} (phon : Phon) (c : Cat) (cont : Cont) :
     GSign Phon Cont :=
   .mk phon c [] cont
@@ -736,13 +736,13 @@ theorem lexSign_isLexical {Phon Cont : Type}
 /-! ## § 3.3 Phrase structure rules -/
 
 /-- A phrase structure rule: mother category and ordered daughter categories.
-Cooper (2023) §3.3, ex (27). -/
+@cite{cooper-2023} §3.3, ex (27). -/
 structure PSRule where
   mother : Cat
   daughters : List Cat
   deriving Repr, DecidableEq
 
-/-- S → NP VP. Cooper (2023) §3.3, ex (29). -/
+/-- S → NP VP. @cite{cooper-2023} §3.3, ex (29). -/
 def rule_S_NP_VP : PSRule := ⟨.s, [.np, .vp]⟩
 /-- NP → Det N. -/
 def rule_NP_Det_N : PSRule := ⟨.np, [.det, .n]⟩
@@ -778,19 +778,19 @@ theorem ruleDaughters_not_lexical {Phon Cont : Type}
 
 /-! ## § 3.4 Property and quantifier types
 
-Cooper (2023) §3.4 introduces the semantic type hierarchy:
+@cite{cooper-2023} §3.4 introduces the semantic type hierarchy:
 - **Ppty** = [x:Ind] → RecType: maps individuals to situation types (properties)
 - **Quant** = Ppty → RecType: maps properties to types (quantifiers)
 
 These are the TTR analogues of Montague's ⟨e,t⟩ and ⟨⟨e,t⟩,t⟩. -/
 
 /-- A property type: maps an individual to a type of situations.
-Cooper (2023) §3.4, ex (30): Ppty = [x:Ind] → RecType.
+@cite{cooper-2023} §3.4, ex (30): Ppty = [x:Ind] → RecType.
 Alias for `PredType E`. Montague type: ⟨e,t⟩. -/
 abbrev Ppty (E : Type) := PredType E
 
 /-- A quantifier type: maps a property to a type.
-Cooper (2023) §3.4: Quant = Ppty → RecType.
+@cite{cooper-2023} §3.4: Quant = Ppty → RecType.
 Montague type: ⟨⟨e,t⟩,t⟩ — a generalized quantifier. -/
 abbrev Quant (E : Type) := Ppty E → Type
 
@@ -800,38 +800,38 @@ theorem ppty_eq_predType (E : Type) : Ppty E = PredType E := rfl
 /-! ## § 3.4 Compositional semantics functions -/
 
 /-- Common noun content: wrap a predicate as a property.
-Cooper (2023) §3.4, ex (30). -/
+@cite{cooper-2023} §3.4, ex (30). -/
 def semCommonNoun {E : Type} (p : E → Type) : Ppty E := p
 
-/-- Proper name content as a generalized quantifier (Montague 1973).
-Cooper (2023) §3.4, ex (33): SemPropName(a) = λP:Ppty . P([x=a]). -/
+/-- Proper name content as a generalized quantifier.
+@cite{cooper-2023} §3.4, ex (33): SemPropName(a) = λP:Ppty. P([x=a]). -/
 def semPropName {E : Type} (a : E) : Quant E := λ P => P a
 
 /-- The existential witness record type.
-Cooper (2023) §3.4, ex (37). -/
+@cite{cooper-2023} §3.4, ex (37). -/
 structure ExistWitness (E : Type) (restr scope : Ppty E) where
   individual : E
   restrWit : restr individual
   scopeWit : scope individual
 
 /-- Indefinite article content: maps a restrictor property to a quantifier.
-Cooper (2023) §3.4, ex (37). -/
+@cite{cooper-2023} §3.4, ex (37). -/
 def semIndefArt {E : Type} (restr : Ppty E) : Quant E :=
   λ scope => ExistWitness E restr scope
 
 /-- Copula "be" for predicate nominal constructions.
-Cooper (2023) §3.4, ex (78). -/
+@cite{cooper-2023} §3.4, ex (78). -/
 def semBe {E : Type} (Q : Quant E) : Ppty E :=
   λ x => Q (λ y => propT (x = y))
 
 /-! ## § 3.4 Property extension and existential quantification -/
 
 /-- Property extension: whether an individual has property P.
-Cooper (2023) §3.4, ex (46). -/
+@cite{cooper-2023} §3.4, ex (46). -/
 def propExtension {E : Type} (P : Ppty E) (a : E) : Prop := Nonempty (P a)
 
 /-- Existential quantification as property-extension overlap.
-Cooper (2023) §3.4, ex (55). -/
+@cite{cooper-2023} §3.4, ex (55). -/
 def existPQ {E : Type} (P Q : Ppty E) : Prop :=
   ∃ a : E, Nonempty (P a) ∧ Nonempty (Q a)
 
@@ -933,7 +933,7 @@ end DerivationPhenomena
 
 /-! ## Proposition granularity: Prop' W vs TTR types
 
-Chatzikyriakidis et al. (2025) §2 argue that the choice of proposition
+@cite{chatzikyriakidis-etal-2025} §2 argue that the choice of proposition
 type determines what distinctions a semantic theory can make. We formalize
 the granularity hierarchy:
 

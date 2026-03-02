@@ -7,8 +7,8 @@ import Mathlib.Analysis.SpecialFunctions.Log.Basic
 open Core.Empirical
 
 /-!
-# Frank & Goodman (2012) @cite{frank-goodman-2012}
-@cite{degen-2023} @cite{tenenbaum-griffiths-2001}
+# @cite{frank-goodman-2012} @cite{frank-goodman-2012}
+@cite{degen-2023} @cite{tenenbaum-griffiths-2001} @cite{heim-kratzer-1998}
 
 "Predicting Pragmatic Reasoning in Language Games"
 Science 336(6084): 998
@@ -23,11 +23,11 @@ Utterances: {blue, green, square, circle}
 
 ## Architecture (SM Eq. S1–S4)
 
-    ⟦w⟧(o)              Boolean denotation: does word w apply to object o?
-    L0(rₛ|w)        =   ⟦w⟧(rₛ) / Σ_o ⟦w⟧(o)                   (Eq. S4)
-    U(w; rₛ, C)     =   log L0(rₛ|w) − D(w)                     (Eq. S2)
-    P_S1(w|rₛ, C)  ∝   e^{α · U(w; rₛ, C)}                      (Eq. S1)
-    L1(rₛ|w)       ∝   P_S1(w|rₛ, C) · P(rₛ)                    (Eq. 1)
+    ⟦w⟧(o) Boolean denotation: does word w apply to object o?
+    L0(rₛ|w) = ⟦w⟧(rₛ) / Σ_o ⟦w⟧(o) (Eq. S4)
+    U(w; rₛ, C) = log L0(rₛ|w) − D(w) (Eq. S2)
+    P_S1(w|rₛ, C) ∝ e^{α · U(w; rₛ, C)} (Eq. S1)
+    L1(rₛ|w) ∝ P_S1(w|rₛ, C) · P(rₛ) (Eq. 1)
 
 With D(w) = 0 (no word cost) and α = 1 (Luce choice rule).
 No latent variables, uniform priors.
@@ -54,7 +54,7 @@ use `rsa_predict`.
 - **S1 predictions** (§6b): Speaker informativity preferences proved via `rsa_predict`
 - **Size principle** (§6c): Eq. 2 demonstrated — S1 prefers smaller extensions
 - **Montague grounding** (§5b): Feature semantics grounded in intersective
-  predicate modification (Heim & Kratzer 1998)
+  predicate modification
 - **Structural properties** (§5): Feature uniqueness/ambiguity proved by `rfl`
 
 -/
@@ -75,7 +75,7 @@ def citation : String :=
 def measure : MeasureSpec :=
   { scale := .proportion, task := .forcedChoice, unit := "probability 0-1" }
 
-/-- The 4 qualitative findings from Frank & Goodman (2012).
+/-- The 4 qualitative findings from @cite{frank-goodman-2012}.
 
     Each finding is an L1 comparison between two objects given a word.
     Findings 1–2 are the core pragmatic results (ambiguous words get
@@ -138,13 +138,13 @@ def Feature.appliesTo (f : Feature) (o : Object) : Bool :=
 -- ============================================================================
 
 open RSA Real in
-/-- Frank & Goodman (2012) reference game as RSA model.
+/-- @cite{frank-goodman-2012} reference game as RSA model.
 
     SM Eq. S1–S4:
-    ⟦w⟧(o)         =  1 if w applies to o, 0 otherwise   (Eq. S3, Boolean semantics)
-    L0(rₛ|w)       =  ⟦w⟧(rₛ) / Σ_o ⟦w⟧(o)              (Eq. S4, literal listener)
-    U(w; rₛ, C)    =  log L0(rₛ|w) − D(w)                (Eq. S2, informativity − cost)
-    P(w|rₛ, C)    ∝  e^{α · U(w; rₛ, C)}                 (Eq. S1, soft-max speaker)
+    ⟦w⟧(o) = 1 if w applies to o, 0 otherwise (Eq. S3, Boolean semantics)
+    L0(rₛ|w) = ⟦w⟧(rₛ) / Σ_o ⟦w⟧(o) (Eq. S4, literal listener)
+    U(w; rₛ, C) = log L0(rₛ|w) − D(w) (Eq. S2, informativity − cost)
+    P(w|rₛ, C) ∝ e^{α · U(w; rₛ, C)} (Eq. S1, soft-max speaker)
 
     With D(w) = 0 and α = 1 (Luce choice rule). -/
 noncomputable def cfg : RSAConfig Feature Object where
@@ -200,7 +200,7 @@ theorem square_ambiguous :
 -- ============================================================================
 
 /-! The feature semantics (`Feature.appliesTo`) is compositionally grounded
-in Montague intersective predicate modification (Heim & Kratzer 1998, Ch. 4).
+in Montague intersective predicate modification.
 
 Each feature word denotes an intersective ⟨e,t⟩ predicate. Objects in the
 reference game context are uniquely characterized by predicate modification
@@ -234,8 +234,8 @@ theorem objects_from_predMod :
 is inversely proportional to its extension size |⟦u⟧|.
 
 In RSA with α = 1 and belief-based scoring:
-    S1_score(w, u) = L0(w|u)¹ = 1/|⟦u⟧|    (for true utterances)
-    S1_score(w, u) = 0                        (for false utterances)
+    S1_score(w, u) = L0(w|u)¹ = 1/|⟦u⟧| (for true utterances)
+    S1_score(w, u) = 0 (for false utterances)
 
 Features with smaller extensions are more *informative* and thus preferred
 by S1. The S1 predictions in §6b demonstrate this: unique features (size 1)
@@ -257,9 +257,9 @@ theorem extension_sizes :
 
 /-! All RSA levels derive from `cfg`:
 
-- `cfg.L0 () u w` — L0 posterior P(w|u)
-- `cfg.S1 () w u` — S1 policy P(u|w)
-- `cfg.L1 u w`    — L1 posterior P(w|u)
+- `cfg.L0  u w` — L0 posterior P(w|u)
+- `cfg.S1  w u` — S1 policy P(u|w)
+- `cfg.L1 u w` — L1 posterior P(w|u)
 
 The pragmatic inferences arise because S1 prefers informative utterances:
 a speaker wanting green_square says "green" (unique), so "square" signals
@@ -358,7 +358,7 @@ theorem all_findings_verified : ∀ f : Finding, formalize f := by
 -- §8. Parameterized Context Types
 -- ============================================================================
 
-/-! Frank & Goodman (2012) tested RSA predictions across **7 distinct context types**
+/-! @cite{frank-goodman-2012} tested RSA predictions across **7 distinct context types**
 varying feature overlap between a target object and 2 distractors. The contexts
 are characterized by how many feature dimensions each distractor shares with the
 target (Table 1, Figure 2).

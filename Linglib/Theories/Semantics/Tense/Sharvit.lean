@@ -2,7 +2,7 @@ import Linglib.Theories.Semantics.Tense.Basic
 import Linglib.Core.Temporal.Tense
 
 /-!
-# Sharvit (2003): Simultaneous Tense as a Genuine Tense
+# @cite{sharvit-2003}: Simultaneous Tense as a Genuine Tense
 @cite{ogihara-sharvit-2012} @cite{sharvit-2003}
 
 Sharvit's theory: the simultaneous reading under attitudes arises from a
@@ -71,7 +71,7 @@ open Semantics.Tense
     - Bound variable (Abusch): a variable receiving the matrix event time
 
     The simultaneous tense is a first-class tense with its own denotation:
-    ⟦SIM⟧ = λt. λe. time(e) = t   (event time = evaluation time) -/
+    ⟦SIM⟧ = λt. λe. time(e) = t (event time = evaluation time) -/
 structure SimultaneousTense (Time : Type*) where
   /-- The local evaluation time (set by the matrix verb) -/
   evalTime : Time
@@ -153,7 +153,7 @@ theorem embedded_present_is_simultaneous {Time : Type*}
 
     Unlike English (obligatory SOT), Hebrew allows both:
     - "John said Mary was sick" (simultaneous tense → simultaneous reading)
-    - "John said Mary is sick"  (present tense → also simultaneous, but
+    - "John said Mary is sick" (present tense → also simultaneous, but
       with double-access pragmatics)
 
     The availability of both forms with similar (but not identical) meanings
@@ -234,10 +234,10 @@ theorem sharvit_derives_rc_tense {Time : Type*}
 -- § Identity Card
 -- ════════════════════════════════════════════════════════════════
 
-/-- Sharvit (2003) identity card.
+/-- @cite{sharvit-2003} identity card.
 
-    Sharvit (2003) does not treat tenses as presupposition triggers;
-    the presuppositional extension is Tsilia, Zhao & Sharvit (2026),
+    @cite{sharvit-2003} does not treat tenses as presupposition triggers;
+    the presuppositional extension is @cite{tsilia-zhao-sharvit-2026},
     formalized in `TsiliaEtAl2026.lean`. -/
 def Sharvit : TenseTheory where
   name := "Sharvit 2003"

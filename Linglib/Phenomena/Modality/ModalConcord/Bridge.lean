@@ -6,7 +6,7 @@ import Linglib.Theories.Semantics.Modality.Typology
 
 /-!
 # Modal Concord Bridge — Register Approach
-@cite{dieuleveut-hsu-bhatt-2025}
+@cite{dieuleveut-hsu-bhatt-2025} @cite{van-de-pol-etal-2023} @cite{zeijlstra-2007}
 
 Connects the empirical data from Dieuleveut, Hsu & Bhatt (2025) to
 the English modal fragment and modal typology infrastructure.
@@ -29,7 +29,7 @@ field and the `Core.Register.Level` type, not stipulated locally.
 
 ## Section C: Competing predictions
 
-The register approach and the syntactic agreement approach (Zeijlstra 2007)
+The register approach and the syntactic agreement approach
 make different predictions about the formality of stacked modals. The data
 confirms the register approach.
 
@@ -117,12 +117,12 @@ theorem shared_deontic_core :
 Two theories of modal concord make different predictions about the
 formality of stacked modals:
 
-**Register approach** (Dieuleveut, Hsu & Bhatt 2025):
+**Register approach**:
 - *Must* and *have to* are register variants of the same meaning
 - Stacking creates a "split register" construction
 - **Prediction**: intermediate formality (between *must* and *have to*)
 
-**Syntactic agreement** (Zeijlstra 2007):
+**Syntactic agreement**:
 - One modal carries interpretable [iNec], the other uninterpretable [uNec]
 - The [uNec] modal is semantically vacuous (like negative concord)
 - **Prediction**: formality of stacked form = formality of single form
@@ -168,7 +168,7 @@ theorem concord_preserves_force :
 /-! ## Section D: Connection to modal typology
 
 Modal concord only arises between forms with overlapping force-flavor
-meanings. The IFF universal (Steinert-Threlkeld, Imel & Guo 2023)
+meanings. The IFF universal
 predicts that natural-language modals have Cartesian-product meanings.
 Since Cartesian products with the same force axis share all force-flavor
 pairs, IFF-satisfying necessity modals are natural concord candidates. -/

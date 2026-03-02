@@ -104,7 +104,7 @@ introduces a situation that the consequent can anaphorically access.
 
 Example:
   "Se Maria estiver em casa, ela vai atender."
-       ↑ SUBJ introduces s₁          ↑ IND retrieves s₁
+       ↑ SUBJ introduces s₁ ↑ IND retrieves s₁
 -/
 def crossClausualBinding {W Time E : Type*} [LE Time]
     (history : WorldHistory W Time)
@@ -134,7 +134,7 @@ theorem cross_clausal_same_world {W Time E : Type*} [LE Time]
 
 
 /--
-The SUBJ-IND anaphoric chain (Mendes 2025, §4.3).
+The SUBJ-IND anaphoric chain.
 
 This represents the complete anaphoric dependency:
 1. SUBJ^v introduces situation s₁ ∈ hist(s₀)

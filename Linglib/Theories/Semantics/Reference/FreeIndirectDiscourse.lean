@@ -40,7 +40,7 @@ open Core.Context
 
     Each coordinate of the context (agent, time, world, position) gets
     its own `DepthSpec`, allowing fine-grained control over which tower
-    layer each coordinate reads from. -/
+    layer each coordinate reads. -/
 structure FIDProfile where
   /-- Which depth to read the agent from -/
   agentDepth : DepthSpec

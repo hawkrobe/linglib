@@ -6,7 +6,7 @@ import Mathlib.Tactic.Linarith
 # Eckert-Montague Lift (Burnett 2019, Definition 3.4)
 @cite{burnett-2019}
 
-Burnett's set-theoretic reinterpretation of Eckert's (2008) indexical
+Burnett's set-theoretic reinterpretation of @cite{eckert-2008}'s indexical
 field. A variant's social meaning is formalized as the set of personae
 compatible with the properties it indexes.
 

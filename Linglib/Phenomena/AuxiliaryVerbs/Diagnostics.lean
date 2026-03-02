@@ -1,7 +1,7 @@
 import Linglib.Fragments.English.FunctionWords
 
 /-!
-# English Auxiliary Diagnostics: NICE Properties (Huddleston 1976)
+# English Auxiliary Diagnostics: NICE Properties
 @cite{huddleston-1976} @cite{palmer-2001}
 
 NICE = Negation, Inversion, Code (VP ellipsis), Emphasis.

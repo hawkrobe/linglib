@@ -22,11 +22,11 @@ Pragmatically: ◇(A ∨ B) → ◇A ∧ ◇B (free choice!)
 
 ## Theories Compared
 
-1. **Bar-Lev & Fox (2020)**: Innocent Inclusion (II) + Innocent Exclusion (IE)
-2. **Champollion et al. (2019)**: RSA with semantic uncertainty (disjunction)
-3. **Alsop (2024)**: RSA with Global Intentions (universal *any*)
-4. **Aloni (2022)**: BSML - Bilateral State-based Modal Logic (team semantics)
-5. **Elliott & Sudo (2025)**: BUS - Bilateral Update Semantics (dynamic)
+1. **@cite{bar-lev-fox-2020}**: Innocent Inclusion (II) + Innocent Exclusion (IE)
+2. **@cite{champollion-alsop-grosu-2019}**: RSA with semantic uncertainty (disjunction)
+3. **@cite{alsop-2024}**: RSA with Global Intentions (universal *any*)
+4. **@cite{aloni-2022}**: BSML - Bilateral State-based Modal Logic (team semantics)
+5. **@cite{elliott-sudo-2025}**: BUS - Bilateral Update Semantics (dynamic)
 
 -/
 
@@ -80,7 +80,7 @@ theorem fci_is_captured : coffeeOrTea.isPragmaticInference = true := rfl
 /-!
 ## Neo-Gricean Account: Innocent Inclusion
 
-Bar-Lev & Fox (2020) extend Fox's (2007) Innocent Exclusion with **Innocent Inclusion**.
+@cite{bar-lev-fox-2020} extend @cite{fox-2007}'s Innocent Exclusion with **Innocent Inclusion**.
 
 ### The Mechanism
 
@@ -122,7 +122,7 @@ theorem barlevfox_derives_fc :
 /-!
 ## RSA Account: Semantic Uncertainty
 
-Champollion et al. (2019) use RSA with multiple interpretation functions
+@cite{champollion-alsop-grosu-2019} use RSA with multiple interpretation functions
 (following Bergen et al. 2016's lexical uncertainty).
 
 ### The Mechanism
@@ -168,8 +168,8 @@ theorem champollion_fc_robust :
 /-!
 ## RSA Account for Universal *Any*: Global Intentions
 
-Alsop (2024) extends the RSA approach to universal free choice items like *any*,
-using the Global Intentions model from Franke & Bergen (2020).
+@cite{alsop-2024} extends the RSA approach to universal free choice items like *any*,
+using the Global Intentions model from @cite{franke-bergen-2020}.
 
 ### The Mechanism
 
@@ -219,7 +219,7 @@ theorem alsop_not_every_sensitive :
 /-!
 ## Semantic Account: BSML (Bilateral State-based Modal Logic)
 
-Aloni (2022) derives FC **semantically** using team semantics.
+@cite{aloni-2022} derives FC **semantically** using team semantics.
 
 ### The Mechanism
 
@@ -256,7 +256,7 @@ theorem aloni_dne {W : Type*} [DecidableEq W] (M : BSMLModel W)
 /-!
 ## Semantic Account: BUS (Bilateral Update Semantics)
 
-Elliott & Sudo (2025) derive FC **semantically** using dynamic bilateral updates.
+@cite{elliott-sudo-2025} derive FC **semantically** using dynamic bilateral updates.
 
 ### The Mechanism
 

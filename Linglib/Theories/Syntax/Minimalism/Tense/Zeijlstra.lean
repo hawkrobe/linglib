@@ -4,7 +4,7 @@ import Linglib.Theories.Syntax.Minimalism.Formal.ExtendedProjection.Basic
 import Linglib.Core.Temporal.Tense
 
 /-!
-# Zeijlstra (2012): SOT as Upward Agree
+# @cite{zeijlstra-2012}: SOT as Upward Agree
 @cite{chomsky-2000} @cite{zeijlstra-2012}
 
 Zeijlstra's theory: Sequence of Tense is syntactic concord, structurally
@@ -52,7 +52,7 @@ open Minimalism (FeatureVal GramFeature)
 -- § Tense Feature Interpretability
 -- ════════════════════════════════════════════════════════════════
 
-/-- Tense feature interpretability. Following Zeijlstra (2012):
+/-- Tense feature interpretability. Following @cite{zeijlstra-2012}:
     - Interpretable [iPAST]: contributes past semantics
     - Uninterpretable [uPAST]: checked by Agree, semantically vacuous -/
 inductive TenseFeatureStatus where
@@ -81,7 +81,7 @@ def TenseHead.isSemanticallyActive (th : TenseHead) : Bool :=
 -- ════════════════════════════════════════════════════════════════
 
 /-- Zeijlstra's upward Agree: the goal c-commands the probe.
-    Standard Agree (Chomsky 2000): probe c-commands goal.
+    Standard Agree: probe c-commands goal.
     Zeijlstra: reverse -- [uF] is valued by a c-commanding [iF].
 
     This is the key innovation: the c-command direction is reversed.
@@ -296,7 +296,7 @@ theorem zeijlstra_simultaneousFrame {Time : Type*}
 
 /-! ### Size-Sensitive SOT
 
-Egressy (2026) shows that Hungarian is a partial SOT language:
+@cite{egressy-2026} shows that Hungarian is a partial SOT language:
 the simultaneous reading is available in TP complements but blocked
 in CP complements. This follows from PIC blocking upward Agree for
 [uPAST] across the CP phase boundary.
@@ -308,7 +308,7 @@ and goal ([iPAST] on matrix T). CP is a phase (Phase.lean), so
 
 /-- Available embedded tense readings given complement size.
 
-    In a size-sensitive SOT language (Egressy 2026):
+    In a size-sensitive SOT language:
     - Small complements (< CP): both shifted and simultaneous
     - Large complements (≥ CP): shifted only (simultaneous blocked) -/
 def availableReadingsBySize (cs : ComplementSize) :
@@ -349,7 +349,7 @@ theorem simultaneous_blocked_in_cp :
 
 /-! ### The Williams Cycle
 
-The Williams Cycle (van Gelderen 2004, 2011) is the diachronic process
+The Williams Cycle is the diachronic process
 by which formerly transparent clause boundaries become opaque. A language
 at stage N of the cycle has some complement types that are transparent
 to tense Agree and others that are opaque.
@@ -358,7 +358,7 @@ to tense Agree and others that are opaque.
 - **Stage 1** (partial SOT, e.g., Hungarian): CP opaque, TP transparent
 - **Stage 2** (full SOT, e.g., English): all boundaries transparent
 
-Egressy (2026) argues Hungarian is at Stage 1: mid-cycle, with the
+@cite{egressy-2026} argues Hungarian is at Stage 1: mid-cycle, with the
 CP boundary having become opaque while TP remains transparent. -/
 
 /-- Williams Cycle stage for SOT.
@@ -402,7 +402,7 @@ theorem partialSOT_size_sensitive :
       ComplementSize.transparentToTenseAgree, ComplementSize.fLevel,
       ComplementSize.cP, fValue]
 
-/-- Bridge to SOTParameter: full SOT = .relative, no SOT = .absolute.
+/-- Bridge to SOTParameter: full SOT =.relative, no SOT =.absolute.
     Partial SOT has no SOTParameter equivalent — it is genuinely a
     third option that the binary parameter cannot express. -/
 theorem williams_bridges_sotparam :
@@ -414,7 +414,7 @@ theorem williams_bridges_sotparam :
 -- § Identity Card
 -- ════════════════════════════════════════════════════════════════
 
-/-- Zeijlstra (2012) identity card, extended with Egressy (2026)
+/-- @cite{zeijlstra-2012} identity card, extended with @cite{egressy-2026}
     size-sensitive SOT prediction. -/
 def Zeijlstra : TenseTheory where
   name := "Zeijlstra 2012"

@@ -39,7 +39,7 @@ Examples:
 - 5'10" is tall for a jockey but not tall for a basketball player
 - $500,000 is expensive for Atlanta but cheap for San Francisco
 
-Source: Kennedy (2007), Fara (2000), Lassiter & Goodman (2017)
+Source: @cite{kennedy-2007}, @cite{fara-2000}, @cite{lassiter-goodman-2017}
 -/
 structure ContextShiftDatum where
   /-- The adjective being used -/
@@ -102,7 +102,7 @@ Empirical pattern: Antonym pairs share a scale with reversed polarity.
 directions. This creates the "excluded middle gap" where neither applies
 clearly (the borderline region).
 
-Source: Kennedy (2007), Lassiter & Goodman (2017)
+Source: @cite{kennedy-2007}, @cite{lassiter-goodman-2017}
 -/
 structure AntonymDatum where
   /-- The positive adjective -/
@@ -155,7 +155,7 @@ The key distinction:
   - Maximum standard: full, straight, closed, dry
   - Minimum standard: wet, bent, open, dirty
 
-Source: Kennedy (2007), Kennedy & McNally (2005)
+Source: @cite{kennedy-2007}, @cite{kennedy-mcnally-2005}
 -/
 inductive AdjectiveClass where
   | relativeGradable     -- tall, expensive, big (context-dependent threshold)
@@ -171,7 +171,7 @@ Key diagnostic: behavior with degree modifiers
 - AGA-max: "slightly bent", "completely straight" (natural)
 - AGA-min: "slightly wet", "??completely wet" (asymmetric)
 
-Source: Kennedy (2007) Section 3
+Source: @cite{kennedy-2007} Section 3
 -/
 structure AdjectiveTypologyDatum where
   /-- The adjective -/
@@ -290,7 +290,7 @@ Key modifiers:
 - Intensifiers: "very", "extremely", "incredibly"
 - Diminishers: "slightly", "somewhat", "a bit"
 
-Source: Kennedy & McNally (2005), Burnett (2017)
+Source: @cite{kennedy-mcnally-2005}, @cite{burnett-2017}
 -/
 inductive DegreeModifierType where
   | proportional    -- half, completely, partially (require bounded scale)
@@ -308,7 +308,7 @@ Answer: Proportional modifiers require a BOUNDED scale (endpoints).
 - "Full" has a maximum → "completely full" works
 - "Tall" has no maximum → "??completely tall" is odd
 
-Source: Kennedy & McNally (2005)
+Source: @cite{kennedy-mcnally-2005}
 -/
 structure DegreeModifierDatum where
   modifier : String
@@ -372,9 +372,9 @@ Formal constraint: Proportional modifiers require a CLOSED scale.
 
 This explains:
 - "completely full" ✓ (fullness scale: empty to full)
-- "??completely tall" ✗ (height scale: 0 to ... what?)
+- "??completely tall" ✗ (height scale: 0 to... what?)
 
-Source: Kennedy & McNally (2005), Rotstein & Winter (2004)
+Source: @cite{kennedy-mcnally-2005}, Rotstein & Winter (2004)
 -/
 structure ScaleClosurePuzzle where
   closedScaleAdj : String
@@ -498,7 +498,7 @@ def positionExamples : List PositionGeneralizationDatum :=
   [bigIdiotAttributive, bigIdiotPredicative]
 
 
-/-- Types of nominal scales (de Vries 2010) -/
+/-- Types of nominal scales -/
 inductive NominalScaleType where
   | evaluative  -- idiot, genius (quality judgment)
   | enthusiasm  -- fan, lover, supporter (degree of devotion)
@@ -615,7 +615,7 @@ def crossLinguisticExamples : List CrossLinguisticDatum :=
 
 ### Adjectival Phenomena
 
-1. **Scale structure**: RGA vs AGA distinction (Kennedy 2007)
+1. **Scale structure**: RGA vs AGA distinction
    - RGAs have context-dependent thresholds
    - AGAs have scale-structure-determined thresholds
 

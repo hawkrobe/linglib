@@ -2,11 +2,11 @@ import Linglib.Phenomena.Modality.Studies.Khoo2015
 import Linglib.Theories.Semantics.Dynamic.Effects.Epistemic.Basic
 
 /-!
-# Bridge: Khoo (2015) × Neo-Stalnakerian Framework
+# Bridge: @cite{khoo-2015} × Neo-Stalnakerian Framework
 @cite{khoo-2015}
 
 Connects the modal disagreement data in `Phenomena.Modality.Studies.Khoo2015`
-to predictions from Rudin's (2025) Neo-Stalnakerian Framework formalized in
+to predictions from @cite{rudin-2025}'s Neo-Stalnakerian Framework formalized in
 `Theories.Semantics.Dynamic.Effects.Epistemic.Basic`.
 
 ## Predictions verified

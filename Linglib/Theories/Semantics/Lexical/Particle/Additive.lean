@@ -6,12 +6,12 @@ import Linglib.Theories.Semantics.Questions.Basic
 # Additive Particles: too, also, either
 @cite{heim-1992} @cite{kripke-2009} @cite{thomas-2026}
 
-Felicity conditions for additive particles following Thomas (2026)
+Felicity conditions for additive particles following @cite{thomas-2026}
 "A probabilistic, question-based approach to additivity".
 
 ## Insight: Argument-Building Use
 
-The novel contribution of Thomas (2026) is explaining the "argument-building"
+The novel contribution of @cite{thomas-2026} is explaining the "argument-building"
 use of "too" where the antecedent and prejacent aren't focus alternatives
 but jointly build an argument for some conclusion.
 
@@ -75,7 +75,7 @@ def AdditiveParticle.isLicensed (p : AdditiveParticle) (positive : Bool) : Bool 
 
 /-- Discourse context for evaluating additive particle felicity.
 
-Thomas (2026) requires:
+@cite{thomas-2026} requires:
 - A resolved question (RQ) in the discourse
 - An antecedent proposition (ANT) that answers RQ
 - A prior probability distribution -/
@@ -154,7 +154,7 @@ def maximalityCondition {W : Type*} [Fintype W]
 
 /-- Full felicity conditions for TOO(π) with explicit world list.
 
-Definition 64 from Thomas (2026). -/
+Definition 64 from @cite{thomas-2026}. -/
 def tooFelicitousWith {W : Type*} [Fintype W]
     (ctx : AdditiveContext W) (prejacent : W → Bool)
     (worlds : List W) : Bool :=
@@ -272,7 +272,7 @@ noncomputable def classifyUse {W : Type*} [Fintype W]
 /-!
 ## Central Theorems
 
-These theorems capture the key linguistic insights of Thomas (2026):
+These theorems capture the key linguistic insights of @cite{thomas-2026}:
 
 1. **Standard Use Reduction**: When π directly determines an alternative of RQ,
    the probabilistic felicity conditions reduce to the traditional analysis.

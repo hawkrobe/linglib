@@ -2,7 +2,7 @@ import Linglib.Theories.Semantics.Tense.Basic
 import Linglib.Core.Temporal.Tense
 
 /-!
-# Wurmbrand (2014): Tense and Aspect in English Infinitives
+# @cite{wurmbrand-2014}: Tense and Aspect in English Infinitives
 @cite{wurmbrand-2014}
 
 Wurmbrand's three-way classification of infinitival complements by tense
@@ -44,7 +44,7 @@ open Semantics.Tense
 -- § Infinitival Tense Classification
 -- ════════════════════════════════════════════════════════════════
 
-/-- Wurmbrand's (2014) three-way classification of infinitival tense. -/
+/-- @cite{wurmbrand-2014}'s three-way classification of infinitival tense. -/
 inductive InfinitivalTenseClass where
   /-- decide, want: tenseless + woll -> future-oriented -/
   | futureIrrealis
@@ -207,7 +207,7 @@ theorem futureIrrealis_matches_wantedToLeave :
 -- § Identity Card
 -- ════════════════════════════════════════════════════════════════
 
-/-- Wurmbrand (2014) identity card. -/
+/-- @cite{wurmbrand-2014} identity card. -/
 def Wurmbrand : TenseTheory where
   name := "Wurmbrand 2014"
   citation := "Wurmbrand, S. (2014). Tense and aspect in English infinitives. LI 45(3): 403-447."

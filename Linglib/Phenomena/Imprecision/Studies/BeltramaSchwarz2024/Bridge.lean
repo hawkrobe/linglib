@@ -5,12 +5,12 @@ import Linglib.Theories.Sociolinguistics.SCM
 import Mathlib.Tactic.NormNum
 
 /-!
-# Beltrama & Schwarz (2024): Theory Bridge
-@cite{beltrama-schwarz-2024}
+# @cite{beltrama-schwarz-2024}: Theory Bridge
+@cite{beltrama-schwarz-2024} @cite{fiske-cuddy-glick-2007} @cite{silverstein-2003}
 
 Connects B&S's empirical data to their theoretical apparatus: the
 precision indexical field (from Beltrama, Solt & Burnett 2022), persona
-mappings onto the Stereotype Content Model (Fiske et al. 2007),
+mappings onto the Stereotype Content Model,
 bidirectionality between production and comprehension, and the
 prejudiciality-based account of task asymmetry.
 
@@ -68,7 +68,7 @@ inductive PrecisionVariant where
     structure: exact→competence and approximate→warmth are positive, and
     the two variants are anti-symmetric across dimensions.
 
-    The variable is third-order (Silverstein 2003): stereotyped and
+    The variable is third-order: stereotyped and
     subject to overt metapragmatic commentary. -/
 def precisionField : IndexicalField PrecisionVariant SocialDimension :=
   { association := λ v d => match v, d with

@@ -418,16 +418,16 @@ theorem empty_not_inquisitive {W : Type*} :
 /-- A proposition p partially answers an issue q if p entails at least one
 of q's alternatives.
 
-Roberts (2012): a partial answer to Q is a proposition that, when added to
+@cite{roberts-2012}: a partial answer to Q is a proposition that, when added to
 the common ground, resolves at least one alternative. We use the strong
-version: p entails (is a subset of) some alternative of q. -/
+version: p entails (is a subset) some alternative of q. -/
 def partiallyAnswers {W : Type*} (p : W → Bool) (q : Issue W) (worlds : List W) : Bool :=
   q.alternatives.any fun alt => propEntails p alt worlds
 
 /-- Question q₁ entails question q₂ iff every alternative of q₁ entails
 some alternative of q₂.
 
-Roberts (2012) Def. 8 (following Groenendijk & Stokhof 1984:16):
+@cite{roberts-2012} Def. 8 (following Groenendijk & Stokhof 1984:16):
 "One interrogative q₁ entails another q₂ iff every proposition that
 answers q₁ answers q₂ as well."
 
@@ -440,7 +440,7 @@ def questionEntails {W : Type*} (q₁ q₂ : Issue W) (worlds : List W) : Bool :
 /-- q is a subquestion of Q iff Q entails q: answering Q yields a
 complete answer to q.
 
-Roberts (2012) Def. 8–9. At the partition level, this is `QUD.refines`:
+@cite{roberts-2012} Def. 8–9. At the partition level, this is `QUD.refines`:
 the parent question's partition is a refinement of the subquestion's. -/
 def isSubquestion {W : Type*} (q parent : Issue W) (worlds : List W) : Bool :=
   questionEntails parent q worlds
@@ -448,7 +448,7 @@ def isSubquestion {W : Type*} (q parent : Issue W) (worlds : List W) : Bool :=
 /-- A discourse move (assertion or question) is relevant to the QUD if
 it partially answers the QUD or a subquestion.
 
-Roberts (2012) Def. 15 / IKW (2025) assumption iii, p. 225:
+@cite{roberts-2012} Def. 15 / IKW (2025) assumption iii, p. 225:
 "S is relevant to QUD if S is either a subquestion of QUD or an answer
 to a subquestion q of QUD."
 

@@ -28,7 +28,7 @@ open FreeMagma
 
 /-! ## The isomorphism -/
 
-/-- Map SO to FreeMagma: leaf ↦ of, node ↦ mul -/
+/-- Map SO to FreeMagma: leaf ↦, node ↦ mul -/
 def toFreeMagma : SyntacticObject → FreeMagma LIToken
   | .leaf tok => .of tok
   | .node a b => toFreeMagma a * toFreeMagma b

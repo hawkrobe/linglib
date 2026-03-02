@@ -2,7 +2,7 @@ import Linglib.Core.Grammar
 
 /-!
 # Subject-Auxiliary Inversion: Empirical Data
-@cite{radford-2009} @cite{adger-2003} @cite{sag-wasow-bender-2003} @cite{chomsky-1957}
+@cite{radford-2009} @cite{adger-2003} @cite{sag-wasow-bender-2003} @cite{chomsky-1957} @cite{henry-1995} @cite{klima-1964} @cite{mccloskey-2006}
 
 Theory-neutral data on subject-auxiliary inversion (SAI) in English and beyond.
 
@@ -15,17 +15,17 @@ conditionals, exclamatives, and shows systematic dialectal variation.
 ## Classic Data
 
 The core SAI pattern has been a central case study in generative syntax
-since Chomsky (1957). Textbook presentations: Radford (2009) Ch. 5,
-Adger (2003) Ch. 8, Sag, Wasow & Bender (2003) Ch. 3.
+since @cite{chomsky-1957}. Textbook presentations: @cite{radford-2009} Ch. 5,
+@cite{adger-2003} Ch. 8, @cite{sag-wasow-bender-2003} Ch. 3.
 
 ## Boundary Cases
 
 Several phenomena push beyond the textbook treatment:
-- Negative inversion (Klima 1964)
+- Negative inversion
 - Conditional inversion
-- Embedded inversion in non-standard varieties (Henry 1995, McCloskey 2006)
-- Do-support and verb movement (Pollock 1989, Arregi & Pietraszko 2021)
-- Verb-specific acquisition of inversion (Westergaard 2009)
+- Embedded inversion in non-standard varieties
+- Do-support and verb movement
+- Verb-specific acquisition of inversion
 
 -/
 
@@ -333,9 +333,9 @@ def ex22 : SAIDatum :=
 /-! Standard English prohibits SAI in embedded questions, but several dialects
 productively allow it. This is a key testing ground for syntactic theory:
 
-- **Belfast English** (Henry 1995): Embedded inversion with specific verbs
+- **Belfast English**: Embedded inversion with specific verbs
   (wonder, ask, know) but not others (tell).
-- **Hiberno-English** (McCloskey 2006): More general embedded inversion,
+- **Hiberno-English**: More general embedded inversion,
   including with 'if' complements.
 The dialectal data challenges any analysis that categorically ties SAI to
 root CP structure. It suggests the [+Q] or [+wh] feature can license
@@ -377,7 +377,7 @@ def ex26 : SAIDatum :=
 -- § 7  The French/English Verb Movement Contrast (Pollock 1989)
 -- ============================================================================
 
-/-! Pollock (1989) established that French and English differ fundamentally in
+/-! @cite{pollock-1989} established that French and English differ fundamentally in
 verb movement. French lexical verbs obligatorily raise to I (T), placing them
 before adverbs, negation, and floating quantifiers. English lexical verbs
 stay in situ, below adverbs and negation.
@@ -388,24 +388,24 @@ when T must be spelled out in C (for SAI) or above negation, a dummy 'do'
 is inserted instead.
 
   (Pollock 2) Negation:
-    a. *John likes not Mary.          (English: V cannot raise past negation)
-    b.  Jean n'aime pas Marie.        (French: V raises past negation)
+    a. *John likes not Mary. (English: V cannot raise past negation)
+    b. Jean n'aime pas Marie. (French: V raises past negation)
 
   (Pollock 3) Questions / SAI:
-    a. *Likes he Mary?                (English: lexical V cannot invert)
-    b.  Aime-t-il Marie?             (French: lexical V inverts)
+    a. *Likes he Mary? (English: lexical V cannot invert)
+    b. Aime-t-il Marie? (French: lexical V inverts)
 
   (Pollock 4) Adverb placement:
-    a. *John kisses often Mary.       (English: V cannot raise past adverb)
-    b.  Jean embrasse souvent Marie.  (French: V raises past adverb)
-    c.  John often kisses Mary.       (English: adverb precedes V)
-    d. *Jean souvent embrasse Marie.  (French: adverb cannot precede V)
+    a. *John kisses often Mary. (English: V cannot raise past adverb)
+    b. Jean embrasse souvent Marie. (French: V raises past adverb)
+    c. John often kisses Mary. (English: adverb precedes V)
+    d. *Jean souvent embrasse Marie. (French: adverb cannot precede V)
 
   (Pollock 5) Floating quantifiers:
-    a. *My friends love all Mary.     (English: V cannot raise past FQ)
-    b.  Mes amis aiment tous Marie.   (French: V raises past FQ)
-    c.  My friends all love Mary.     (English: FQ precedes V)
-    d. *Mes amis tous aiment Marie.   (French: FQ cannot precede V)
+    a. *My friends love all Mary. (English: V cannot raise past FQ)
+    b. Mes amis aiment tous Marie. (French: V raises past FQ)
+    c. My friends all love Mary. (English: FQ precedes V)
+    d. *Mes amis tous aiment Marie. (French: FQ cannot precede V)
 
 The four diagnostics converge: French V raises, English V does not. English
 auxiliaries *do* raise (hence "John has often eaten" is grammatical), which
@@ -530,7 +530,7 @@ def ex_p12 : SAIDatum :=
 /-! SAI interacts with do-support: when no auxiliary is present, 'do' is
 inserted to host tense and carry out inversion.
 
-Arregi & Pietraszko (2021) unify upward displacement (T-to-C in SAI) and
+@cite{arregi-pietraszko-2021} unify upward displacement (T-to-C in SAI) and
 downward displacement (T-to-V lowering) as a single operation: Generalized
 Head Movement (GenHM). Under GenHM, the same mechanism of M-value sharing
 drives both. The crucial empirical support is that lexical verbs trigger
@@ -539,15 +539,15 @@ verum focus, and SAI — while auxiliaries invert directly in all three.
 This parallel is predicted if SAI and T-lowering are the same operation
 (displacement of T) with spelling out at the highest strong terminal.
 
-  (A&P 36)  Lexical verbs — do-support in negation / verum / SAI:
-    a. Sue does not eat fish.      (*Sue not eats fish)
-    b. Sue DOES eat fish.          (*Sue EATS fish [verum])
-    c. Where does Sue eat fish?    (*Where eats Sue fish?)
+  (A&P 36) Lexical verbs — do-support in negation / verum / SAI:
+    a. Sue does not eat fish. (*Sue not eats fish)
+    b. Sue DOES eat fish. (*Sue EATS fish [verum])
+    c. Where does Sue eat fish? (*Where eats Sue fish?)
 
-  (A&P 37)  Auxiliaries — direct displacement, no do-support:
-    a. Sue is not eating fish.     (*Sue does not be eating fish)
-    b. Sue IS eating fish.         (*Sue DOES be eating fish [verum])
-    c. Where is Sue eating fish?   (*Where does Sue be eating fish?)
+  (A&P 37) Auxiliaries — direct displacement, no do-support:
+    a. Sue is not eating fish. (*Sue does not be eating fish)
+    b. Sue IS eating fish. (*Sue DOES be eating fish [verum])
+    c. Where is Sue eating fish? (*Where does Sue be eating fish?)
 
 The do-support facts raise a puzzle for T-to-C analyses: if T moves to C,
 why is a dummy 'do' needed rather than affix-lowering simply being blocked?
@@ -689,7 +689,7 @@ def ex41 : SAIDatum :=
 -- § 9  Verb-Specific Acquisition (Westergaard 2009)
 -- ============================================================================
 
-/-! Westergaard (2009) shows that children acquiring English learn SAI on a
+/-! @cite{westergaard-2009} shows that children acquiring English learn SAI on a
 verb-by-verb basis rather than as a single abstract rule. Children produce
 inversion with 'is' and 'can' before 'does' and 'has', suggesting
 item-specific learning.
@@ -744,7 +744,7 @@ def nonInterrogativeData : List SAIDatum :=
 def dialectalData : List SAIDatum :=
   allData.filter λ d => d.context == .embeddedDialectal
 
-/-- French/English verb movement contrast (Pollock 1989). -/
+/-- French/English verb movement contrast. -/
 def pollockData : List SAIDatum :=
   [ex_p01, ex_p02, ex_p03, ex_p04, ex_p05, ex_p06,
    ex_p07, ex_p08, ex_p09, ex_p10, ex_p11, ex_p12]
@@ -753,7 +753,7 @@ def pollockData : List SAIDatum :=
 def crossLinguisticData : List SAIDatum :=
   allData.filter (·.language != "English")
 
-/-- Do-support interaction data (Arregi & Pietraszko 2021). -/
+/-- Do-support interaction data. -/
 def doSupportData : List SAIDatum :=
   [ex27, ex28, ex29, ex30, ex31, ex32, ex33, ex34, ex35,
    ex36, ex37, ex38, ex39, ex40, ex41]

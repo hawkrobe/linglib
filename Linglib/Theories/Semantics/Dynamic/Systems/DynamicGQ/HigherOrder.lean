@@ -5,14 +5,14 @@ import Linglib.Theories.Semantics.Dynamic.Systems.DynamicGQ.Basic
 # Higher-Order Dynamic Generalized Quantifiers
 @cite{barker-shan-2014} @cite{charlow-2021}
 
-Charlow's (2021) first solution to cumulative readings: higher-order
+@cite{charlow-2021}'s first solution to cumulative readings: higher-order
 dynamic GQs using a "tower" continuation type. A modified numeral like
 "exactly 3" denotes a *scope-taking* dynamic meaning — type
 `((DRS S → DRS S) → DRS S) → DRS S` — rather than a flat `DRS S`.
 
 The key insight: the tower structure allows the nuclear scope (VP body) to
 be placed INSIDE maximization while the cardinality test escapes OUTSIDE,
-producing genuine cumulative readings via LOWER (Barker & Shan 2014).
+producing genuine cumulative readings via LOWER.
 
 The simpler `HODGQ` type `(DRS S → DRS S) → DRS S` (= `Cont (DRS S) (DRS S)`)
 cannot achieve this because its continuation receives an already-maximized
@@ -63,9 +63,9 @@ def lowerGQ (m : HODGQ S) : DRS S := Cont.lower m
 abbrev TowerGQ (S : Type*) := ((DRS S → DRS S) → DRS S) → DRS S
 
 /-- "Exactly N" as tower GQ (equation 24):
-    `λk. k(λbody. M_v(E^v P ; body)) ; n_v`
+    `λk. k(λbody. M_v(E^v P; body)); n_v`
 
-    The continuation `k` receives a scope-taker `λbody. M_v(E^v P ; body)`,
+    The continuation `k` receives a scope-taker `λbody. M_v(E^v P; body)`,
     allowing the nuclear scope to be threaded inside maximization.
     The cardinality test `n_v` is placed OUTSIDE the continuation,
     ensuring it scopes over any embedded operators. -/
@@ -92,7 +92,7 @@ def cumulativeTower [AssignmentStructure S E] [PartialOrder E] [Fintype E]
 
     The higher-order derivation threads the `saw'` relation through both
     maximization operators, placing both cardinality tests OUTSIDE:
-    `M_v(E^v boys ; M_u(E^u movies ; saw')) ; 5_u ; 3_v`
+    `M_v(E^v boys; M_u(E^u movies; saw')); 5_u; 3_v`
 
     This matches `cumulative` from `Basic.lean` and is what distinguishes
     the cumulative reading from the pseudo-cumulative reading, where at

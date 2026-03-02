@@ -4,7 +4,7 @@ import Linglib.Core.Lexical.MorphRule
 # Finnish Suffix Order vs. Bybee's Relevance Hierarchy @cite{karlsson-2017}
 @cite{bybee-1985}
 
-Finnish nominal morphology follows a strict suffix order (Karlsson 2018, Ch. 7):
+Finnish nominal morphology follows a strict suffix order:
 
     STEM + NUMBER + CASE + POSSESSIVE + CLITIC
 
@@ -17,7 +17,7 @@ Example: *talo-i-ssa-ni-kin* ('in my houses too')
 
 ## Bybee's hierarchy and nominal morphology
 
-Bybee's (1985) relevance hierarchy was designed for **verbal** morphology:
+@cite{bybee-1985}'s relevance hierarchy was designed for **verbal** morphology:
 
     stem < derivation < valence < voice < aspect < tense < mood < negation < agreement
 

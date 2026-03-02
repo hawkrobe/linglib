@@ -124,7 +124,7 @@ every PLA possibility is the projection of some Core possibility.
 For Unit-world states, this gives an isomorphism between PLA and Core:
 
 ```
-  PLAInfoState E  ≃  InfoState Unit E
+  PLAInfoState E ≃ InfoState Unit E
 ```
 
 This is the formal content of Muskens's claim that DPL (and PLA) embed

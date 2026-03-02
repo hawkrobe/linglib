@@ -3,7 +3,7 @@ import Linglib.Phenomena.ClauseChaining.Typology
 /-! # Clause Chaining Data @cite{sarvasy-aikhenvald-2025}
 
 Language-specific clause chaining parameters for six typologically diverse
-languages, drawn from Sarvasy & Aikhenvald (2025). The sample is designed to
+languages, drawn from @cite{sarvasy-aikhenvald-2025}. The sample is designed to
 cover the major parameter combinations:
 
 | Language | Family | SR | Direction | Morphology |
@@ -16,6 +16,8 @@ cover the major parameter combinations:
 | Korowai | Trans-New Guinea | multi-track | medial-final | reduced |
 
 ## Implicational universals
+@cite{givon-1983} @cite{sarvasy-2015}
+
 
 Several implicational universals are stated as theorems:
 
@@ -40,7 +42,7 @@ open Typology
     temporal encoding: four distinct medial forms (SS-SEQ, SS-SIM,
     DS-SEQ, DS-SIM). Medial verbs are maximally reduced (bare stem +
     SR suffix). The final verb alone carries tense, agreement, and full mood.
-    Non-canonical stand-alone medial clauses are attested (Sarvasy 2015). -/
+    Non-canonical stand-alone medial clauses are attested. -/
 def nungon : ClauseChainingParams where
   direction           := .medialFinal
   srSystem            := .ssDsTemporal
@@ -247,7 +249,7 @@ theorem sr_languages_have_target :
 
     Cross-linguistically, SS tends to be shorter / less marked than DS. This
     reflects the discourse-pragmatic default: subject continuity is expected
-    in connected discourse (Givon 1983). -/
+    in connected discourse. -/
 theorem sr_languages_ss_unmarked :
     allLanguages.all (λ p =>
       !p.hasSR || p.srMarkedness == some .ssUnmarked) = true := by

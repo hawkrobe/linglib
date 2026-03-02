@@ -5,7 +5,7 @@ import Linglib.Theories.Semantics.Modality.Ability
 import Linglib.Theories.Semantics.Lexical.Verb.ViewpointAspect
 
 /-!
-# Causal Verb Frame (Nadathur 2023)
+# Causal Verb Frame
 @cite{nadathur-2023} @cite{nadathur-lauer-2020}
 
 Deep foundation for complement-entailing constructions: implicative verbs
@@ -306,7 +306,7 @@ def CausalFrame.ofAbility (sc : Nadathur2023.Ability.AbilityScenario) :
 -- ════════════════════════════════════════════════════
 
 open Nadathur2023.Implicative in
-/-- The generic frame's sufficiency at `()` matches `manageSem`'s
+/-- The generic frame's sufficiency at `` matches `manageSem`'s
     sufficiency check. -/
 theorem implicative_sufficiency_matches (sc : ImplicativeScenario) :
     (CausalFrame.ofImplicative sc).sufficientAt () =

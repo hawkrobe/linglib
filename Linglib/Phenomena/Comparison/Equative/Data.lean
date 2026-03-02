@@ -12,7 +12,7 @@ at-least vs. exactly ambiguity and cross-linguistic variation.
    (the pragmatically enriched reading).
 2. **Scalar implicature**: the "exactly" reading arises via scalar
    implicature from the "at least" meaning, parallel to numeral
-   strengthening (Kennedy 2007, Rett 2020).
+   strengthening.
 3. **Negative equatives**: "not as tall as" is typically interpreted as
    strict inequality, not "not exactly as tall".
 
@@ -55,7 +55,7 @@ def equativeExamples : List EquativeJudgment :=
 -- § 2. Cross-Linguistic Equative Strategies
 -- ════════════════════════════════════════════════════
 
-/-- Equative encoding strategy (Haspelmath & Buchholz 1998, Rett 2020). -/
+/-- Equative encoding strategy. -/
 inductive EquativeStrategy where
   | parameterMarker  -- "as...as" (English, German)
   | reach            -- "tall reaching/to X" (many West African languages)

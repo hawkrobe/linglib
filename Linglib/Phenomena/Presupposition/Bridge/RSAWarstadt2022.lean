@@ -2,7 +2,7 @@ import Linglib.Phenomena.Presupposition.Studies.Warstadt2022
 import Linglib.Core.Semantics.CommonGround
 
 /-!
-# Bridge: RSA Presupposition Accommodation → Warstadt (2022)
+# Bridge: RSA Presupposition Accommodation → @cite{warstadt-2022}
 @cite{warstadt-2022} @cite{qing-goodman-lassiter-2016} @cite{scontras-tonhauser-2025}
 
 Connects RSA presupposition accommodation models to the empirical domain
@@ -12,7 +12,7 @@ from `Phenomena.Presupposition.Studies.Warstadt2022`.
 
 The latent variable is a **context** (subset of worlds), representing what
 is established in the common ground. L1 jointly infers (world, context)
-given the utterance and QUD, following Qing, Goodman & Lassiter (2016).
+given the utterance and QUD, following @cite{qing-goodman-lassiter-2016}.
 
 ## Key Predictions
 
@@ -24,8 +24,8 @@ given the utterance and QUD, following Qing, Goodman & Lassiter (2016).
 ## Connection to Other Models
 
 This model is computationally identical to:
-- Qing, Goodman & Lassiter (2016) — the original formulation
-- Scontras & Tonhauser (2025) — applied to factives
+- @cite{qing-goodman-lassiter-2016} — the original formulation
+- @cite{scontras-tonhauser-2025} — applied to factives
 
 See `Phenomena.Presupposition.Compare` for the formal comparison.
 

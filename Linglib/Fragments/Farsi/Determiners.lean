@@ -4,7 +4,7 @@ import Mathlib.Data.Rat.Defs
 /-! # Farsi Determiner and Indefinite Lexicon
 
 *yek-i* as EFCI: uniqueness in root, free choice under deontic, modal variation
-under epistemic (Alonso-Ovalle & Moghiseh 2025).
+under epistemic.
 -/
 
 namespace Fragments.Farsi.Determiners

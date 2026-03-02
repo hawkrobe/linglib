@@ -10,7 +10,7 @@ representation theorem for conservative GQs.
 
 ## Overview
 
-Elliott (2025) argues that determiners denote sets of **polarized
+@cite{elliott-2025} argues that determiners denote sets of **polarized
 individuals** — entity–polarity pairs `(e, ±)` that encode whether an
 entity witnesses the restrictor ∩ scope (positive) or the restrictor ∖
 scope (negative). The conservative GQ lattice (`ConsGQ`, §12 of
@@ -53,7 +53,7 @@ namespace Core.Quantification
     - `pos`: entity is in restrictor ∩ scope
     - `neg`: entity is in restrictor ∖ scope
     - `blank`: entity is irrelevant (not constrained by the quantifier)
-    Elliott (2025), §4.3. -/
+    @cite{elliott-2025}, §4.3. -/
 inductive Tri where
   | pos   : Tri
   | neg   : Tri
@@ -132,17 +132,17 @@ def triPositive (f : α → Tri) : α → Bool :=
 -- ============================================================================
 
 /-- Map a predicate on trivalent functions to a GQ.
-    Elliott (2025), §4.3.2, equation (44). -/
+    @cite{elliott-2025}, §4.3.2, equation (44). -/
 def predToGQ (P : (α → Tri) → Bool) : GQ α :=
   λ R S => P (triFunction R S)
 
 /-- Map a conservative GQ to a predicate on trivalent functions.
-    Elliott (2025), §4.3.1, equation (40). -/
+    @cite{elliott-2025}, §4.3.1, equation (40). -/
 def gqToPred (Q : GQ α) : (α → Tri) → Bool :=
   λ f => Q (triSupport f) (triPositive f)
 
 /-- **Conservativity for free**: any predicate on trivalent functions
-    yields a conservative GQ. This is the central insight of Elliott (2025):
+    yields a conservative GQ. This is the central insight of @cite{elliott-2025}:
     conservativity is a structural consequence of the predicative theory,
     not an additional constraint. -/
 private theorem triFunction_and_absorb (R S : α → Bool) :
@@ -174,7 +174,7 @@ theorem predToConsGQ_gqToPred (Q : ConsGQ α) :
 @[simp] theorem predToConsGQ_val (P : (α → Tri) → Bool) (R S : α → Bool) :
     (predToConsGQ P).1 R S = P (triFunction R S) := rfl
 
-/-- **Birkhoff Representation for ConsGQ** (Elliott 2025, §4.3).
+/-- **Birkhoff Representation for ConsGQ**.
 
     Conservative GQs are order-isomorphic to predicates on trivalent
     functions (= the powerset of the polarized domain D_e^±).
@@ -200,7 +200,7 @@ def consGQOrderIso : ConsGQ α ≃o ((α → Tri) → Bool) :=
     replaces S with R ∩ S. Conservative GQs are exactly those for which
     this substitution is the identity. Non-conservative determiners
     cannot be expressed as predicates on trivalent functions.
-    Elliott (2025), §4.3, eq. (43). -/
+    @cite{elliott-2025}, §4.3, eq. (43). -/
 theorem predToGQ_gqToPred_eq (Q : GQ α) (R S : α → Bool) :
     predToGQ (gqToPred Q) R S = Q R (λ x => R x && S x) := by
   simp only [predToGQ, gqToPred, triSupport_triFunction, triPositive_triFunction]
@@ -220,8 +220,8 @@ variable {α : Type*}
 
 /-- GQ denotation via polarized functional application.
     `⟦(e, p)⟧(R, S) = R(e) ∧ (S(e) ↔ p)`.
-    - `(e, true)`:  `R(e) ∧ S(e)`    — entity in restrictor ∩ scope
-    - `(e, false)`: `R(e) ∧ ¬S(e)`   — entity in restrictor ∖ scope -/
+    - `(e, true)`: `R(e) ∧ S(e)` — entity in restrictor ∩ scope
+    - `(e, false)`: `R(e) ∧ ¬S(e)` — entity in restrictor ∖ scope -/
 def toGQ (x : PolInd α) : GQ α :=
   λ R S => R x.1 && (S x.1 == x.2)
 

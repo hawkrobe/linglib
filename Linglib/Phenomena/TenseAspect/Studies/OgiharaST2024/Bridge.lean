@@ -5,7 +5,7 @@ import Linglib.Fragments.English.TemporalExpressions
 import Linglib.Fragments.Japanese.TemporalConnectives
 
 /-!
-# Ogihara & Steinert-Threlkeld (2024) — Bridge
+# @cite{ogihara-steinert-threlkeld-2024} — Bridge
 @cite{ogihara-steinert-threlkeld-2024}
 
 Connects the empirical veridicality data to:
@@ -21,7 +21,7 @@ Connects the empirical veridicality data to:
 ## Derivation Pipeline
 
 ```
-Theory: OST.after_veridical         (∃∃ structure entails complement)
+Theory: OST.after_veridical (∃∃ structure entails complement)
     ↓ derives
 Fragment: after_.complementVeridical = true
     ↓ matches
@@ -31,7 +31,7 @@ Data: after_veridical.complementEntailed = true
 The same pipeline for *before*, in the non-veridical direction:
 
 ```
-Theory: OST.before_nonveridical     (∀ over complement is vacuously true)
+Theory: OST.before_nonveridical (∀ over complement is vacuously true)
     ↓ derives
 Fragment: before_.complementVeridical = false
     ↓ matches
@@ -69,7 +69,7 @@ theorem fragment_veridicality_asymmetry :
 -- ════════════════════════════════════════════════════════════════
 
 /-- O&ST's theory derives *after*'s veridicality from the double-existential
-    quantificational structure: ∃e₁∃e₂[P(e₁) ∧ Q(e₂) ∧ ...] entails ∃e₂, Q(e₂).
+    quantificational structure: ∃e₁∃e₂[P(e₁) ∧ Q(e₂) ∧...] entails ∃e₂, Q(e₂).
 
     This is not a stipulation in the Fragment — it follows from the semantics. -/
 theorem after_veridicality_derived :
@@ -77,7 +77,7 @@ theorem after_veridicality_derived :
   fun P Q h => OST.after_veridical P Q h
 
 /-- O&ST's theory derives *before*'s non-veridicality from the universal
-    quantification over the complement: ∃e₁[P(e₁) ∧ ∀e₂[Q(e₂) → ...]] is
+    quantification over the complement: ∃e₁[P(e₁) ∧ ∀e₂[Q(e₂) →...]] is
     vacuously true when Q has no witnesses.
 
     Concretely: any P-event with an empty Q yields `before(P, Q)`. -/

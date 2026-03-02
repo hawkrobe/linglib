@@ -227,7 +227,7 @@ theorem allEntries_toStem_lemma :
     allEntries.map (λ a => (a.toStem Unit).lemma_)
     = allEntries.map (·.form) := rfl
 
-/-- Degree paradigm rules all have `category = .degree`. -/
+/-- Degree paradigm rules all have `category =.degree`. -/
 theorem tall_all_degree_category :
     tallStem.paradigm.all (·.category == .degree) = true := rfl
 

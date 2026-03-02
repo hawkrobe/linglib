@@ -3,7 +3,7 @@ import Linglib.Core.Agent.BToM
 
 /-!
 # RSAConfig — Unified RSA Configuration
-@cite{baker-tenenbaum-2009} @cite{degen-2023} @cite{frank-goodman-2012}
+@cite{baker-tenenbaum-2009} @cite{degen-2023} @cite{frank-goodman-2012} @cite{bergen-levy-goodman-2016} @cite{kao-etal-2014-hyperbole} @cite{qing-franke-2013}
 
 A streamlined RSA configuration grounded in rational action theory. Each RSA
 model decomposes into two orthogonal dimensions:
@@ -15,17 +15,17 @@ model decomposes into two orthogonal dimensions:
 
 All three RSA levels are `RationalAction` instances:
 
-    L0agent(l) : RationalAction U W    score(u, w) = meaning(l, u, w)
-    S1agent(l) : RationalAction W U    score(w, u) = s1Score(L0.policy, α, l, w, u)
-    L1agent    : RationalAction U W    score(u, w) = prior(w) · Σ_l prior(l|w) · S1(u|w,l)
+    L0agent(l) : RationalAction U W score(u, w) = meaning(l, u, w)
+    S1agent(l) : RationalAction W U score(w, u) = s1Score(L0.policy, α, l, w, u)
+    L1agent : RationalAction U W score(u, w) = prior(w) · Σ_l prior(l|w) · S1(u|w,l)
 
 L0 scores are just the meaning function — any prior the paper wants in L0
 is baked into `meaning`. The empirical `worldPrior` (object salience, base
 rates) enters only at L1, keeping L0 fixed under iterated updates.
 
 Latent variables (QUDs, lexicons, thresholds) can enter at two levels:
-- **L0 (meaning)**: e.g., lexical uncertainty (Bergen et al. 2016)
-- **S1 (s1Score)**: e.g., QUD projection (Kao et al. 2014)
+- **L0 (meaning)**: e.g., lexical uncertainty
+- **S1 (s1Score)**: e.g., QUD projection
 
 The `s1Score` field takes the latent variable `l` so each paper can specify
 exactly where its latent variables enter:
@@ -39,7 +39,7 @@ exactly where its latent variables enter:
 S1 score examples:
 - Belief-based (F&G 2012): score = rpow(L0(w|u), α). rpow(0,α)=0.
 - Action-based (Q&F 2013): score = exp(α · (L0(w|u) - cost(u)))
-- QUD-based (Kao et al. 2014): score = exp(α · (ln L0(g(s,a)|u) - C(u)))
+- QUD-based: score = exp(α · (ln L0(g(s,a)|u) - C(u)))
 
 ## BToM Grounding (§5)
 
@@ -192,7 +192,7 @@ under iterated prior updates.
 
 In reference games, L1 is choosing a target object.
 In other settings, L1 is updating beliefs about the world.
-Either way, the math is the same (Qing & Franke 2013). -/
+Either way, the math is the same. -/
 noncomputable def L1agent (cfg : RSAConfig U W) :
     RationalAction U W where
   score u w := cfg.worldPrior w * ∑ l : cfg.Latent, cfg.latentPrior w l * cfg.S1 l w u
@@ -244,7 +244,7 @@ noncomputable def L1_marginal (cfg : RSAConfig U W) (u : U) (P : W → Bool) : �
 /-- S2 agent: pragmatic speaker conditioning on observed world.
 
     S2 inverts L1 via Bayes' rule over utterances (eq 8, Scontras & Pearl 2021):
-    S2(u|w) ∝ P_{L1}(w|u) = L1(u, w)   [the normalized L1 posterior]
+    S2(u|w) ∝ P_{L1}(w|u) = L1(u, w) [the normalized L1 posterior]
 
     Used for endorsement tasks: "would you endorse utterance u given that
     you observed world w?" This differs from L1 because L1 conditions on

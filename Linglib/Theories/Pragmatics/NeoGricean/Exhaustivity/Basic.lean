@@ -278,7 +278,7 @@ This is cleaner than Zorn and avoids chain-union consistency issues.
 Well-foundedness for finite ALT: The strict ordering <_ALT is well-founded
 when ALT is finite.
 
-Proof idea: For any infinite descending chain w₁ >_ALT w₂ >_ALT ...,
+Proof idea: For any infinite descending chain w₁ >_ALT w₂ >_ALT...,
 the set of true alternatives strictly increases at each step.
 Since ALT is finite, this cannot continue indefinitely.
 -/
@@ -1616,7 +1616,7 @@ theorem exhIE_or_not_wBoth : ¬exhIE orAndALT sangOrDanced wBoth := by
 /-!
 ## Maximize Strength
 
-Chierchia (2013) "Logic in Grammar" proposes that scalar implicature computation
+@cite{chierchia-2013} "Logic in Grammar" proposes that scalar implicature computation
 follows the Maximize Strength principle:
 
 > "Don't add an implicature if it leads to weakening, unless you have to"
@@ -1780,7 +1780,7 @@ Positive sentence: C = id (identity context)
 - C(exh(φ)) ⊆ C(φ) ✓ Strengthens
 - Prediction: SI computed → "not all"
 
-### Example: "If some students passed, ..." (antecedent)
+### Example: "If some students passed,..." (antecedent)
 
 Conditional antecedent: C = (λp. p → q) is DE
 - φ = "some students passed"
@@ -1847,7 +1847,7 @@ def maximizeStrengthExamples : List MaximizeStrengthExample :=
 /-!
 ## exh_mx: The Third Exhaustification Operator
 
-Wang (2025) "Presupposition, Competition, and Coherence" introduces `exh_mx`,
+@cite{wang-2025} "Presupposition, Competition, and Coherence" introduces `exh_mx`,
 which yields one exhaustified proposition per maximal consistent subset (MC-set),
 rather than intersecting all MC-sets (as `exh_ie` does).
 
@@ -1873,7 +1873,7 @@ Unlike `exh_ie` (which is the conjunction of the *intersection* of all MC-sets),
 `exh_mx` gives one reading per MC-set. When MC-sets disagree about which
 alternatives to exclude, `exh_mx` captures the resulting ambiguity.
 
-Wang (2025) Ch4: "exh_mx(ALT, φ, w) = φ(w) ∧ ∀q ∈ Max(φ, ALT)[¬q(w)]"
+@cite{wang-2025} Ch4: "exh_mx(ALT, φ, w) = φ(w) ∧ ∀q ∈ Max(φ, ALT)[¬q(w)]"
 where Max is a specific maximal consistent subset.
 -/
 def exhMXReading (E : Set (Prop' World)) : Prop' World :=
@@ -1982,13 +1982,13 @@ end ExhMX
 /-!
 ## FLAT: Collapsing Nested Alternative Sets
 
-Wang (2025) Ch4 defines the FLAT operator for collapsing nested alternative sets
+@cite{wang-2025} Ch4 defines the FLAT operator for collapsing nested alternative sets
 (sets of sets of propositions) into a flat set via cross-product conjunction.
 
-Given S = {A₁, A₂, ...} where each Aᵢ is a set of propositions,
+Given S = {A₁, A₂,...} where each Aᵢ is a set of propositions,
 FLAT(S) = {⋀{f(Aᵢ) | i} | f is a choice function picking one from each Aᵢ}
 
-This is proved equivalent to Groenendijk & Stokhof's (1984) pointwise
+This is proved equivalent to @cite{groenendijk-stokhof-1984} pointwise
 answerhood (Ans_PW).
 
 -/
@@ -2002,7 +2002,7 @@ FLAT: Collapse a family of alternative sets into a flat set via cross-product
 conjunction. Each element of FLAT(S) is the conjunction of one choice from
 each alternative set in S.
 
-Wang (2025) Ch4: FLAT({A₁,...,Aₙ}) = {a₁ ∧ ... ∧ aₙ | aᵢ ∈ Aᵢ}
+@cite{wang-2025} Ch4: FLAT({A₁,...,Aₙ}) = {a₁ ∧... ∧ aₙ | aᵢ ∈ Aᵢ}
 
 Uses a total choice function restricted to S to avoid dependent types.
 -/
@@ -2056,10 +2056,10 @@ end FlatOperator
 /-!
 ## Innocent Inclusion
 
-From Bar-Lev & Fox (2020), Definition (51):
+From @cite{bar-lev-fox-2020}, Definition (51):
 
 > II(p, C) = ∩{C'' ⊆ C : C'' is maximal s.t.
->            {r : r ∈ C''} ∪ {p} ∪ {¬q : q ∈ IE(p,C)} is consistent}
+> {r : r ∈ C''} ∪ {p} ∪ {¬q : q ∈ IE(p,C)} is consistent}
 
 After computing IE, find all maximal subsets of alternatives that
 can consistently be assigned TRUE (given that IE alternatives are false).
@@ -2109,8 +2109,8 @@ def isInnocentlyIncludable (a : Prop' World) : Prop :=
 
   ⟦Exh^{IE+II}⟧(ALT)(φ)(w) ⇔
     φ(w) ∧
-    ∀q ∈ IE(ALT,φ)[¬q(w)] ∧    -- exclude IE alternatives
-    ∀r ∈ II(ALT,φ)[r(w)]        -- include II alternatives
+    ∀q ∈ IE(ALT,φ)[¬q(w)] ∧ -- exclude IE alternatives
+    ∀r ∈ II(ALT,φ)[r(w)] -- include II alternatives
 
 This is Bar-Lev & Fox's key operator that derives free choice.
 -/

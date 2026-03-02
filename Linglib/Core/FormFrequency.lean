@@ -4,7 +4,7 @@ import Linglib.Core.Prominence
 # Form-Frequency Correspondence @cite{haspelmath-2021}
 @cite{zipf-1935}
 
-Haspelmath's (2021, §10.2) deeper explanation of argument-coding splits:
+@cite{haspelmath-2021}'s deeper explanation of argument-coding splits:
 the Role-Reference Association Universal (Universal 1) itself reduces to a
 general cognitive tendency for frequent expressions to be short.
 
@@ -14,7 +14,7 @@ The key chain of explanation:
    frequent than others (e.g., "I saw him" is more frequent than "He saw
    me"; animate agents are more frequent than inanimate agents).
 
-2. **Form-frequency correspondence** (Zipf 1935, Haspelmath 2021, §8):
+2. **Form-frequency correspondence**:
    More frequent expressions tend to get shorter forms. This is a
    diachronic process — frequent forms erode phonologically and resist
    analogical extension of explicit markers.
@@ -79,7 +79,7 @@ def respectsFormFrequency {α : Type} [DecidableEq α]
     usual role-reference associations (high frequency) should get shorter
     coding than unusual ones (low frequency).
 
-    This is the core claim of Haspelmath (2021, §10.2): differential marking
+    This is the core claim of @cite{haspelmath-2021}: differential marking
     patterns are explained by frequency asymmetries, not by grammatical
     function per se. -/
 def argumentCodingRespectsFrequency
@@ -128,7 +128,7 @@ theorem frequency_proxy_matches_default (role : ArgumentRole)
 -- § 4: Voice Direction and Ditransitive Frames (Haspelmath 2021, §9)
 -- ============================================================================
 
-/-- Verb voice direction for direct/inverse systems (Haspelmath 2021, §9).
+/-- Verb voice direction for direct/inverse systems.
     Direct forms mark downstream (usual) scenarios; inverse forms mark
     upstream (unusual) scenarios with morphologically more complex marking. -/
 inductive VoiceDirection where
@@ -136,7 +136,7 @@ inductive VoiceDirection where
   | inverse  -- upstream scenario, morphologically more complex
   deriving DecidableEq, BEq, Repr
 
-/-- Ditransitive frame alternation (Haspelmath 2021, §9).
+/-- Ditransitive frame alternation.
     Double-object construction is shorter; prepositional dative is longer. -/
 inductive DitransitiveFrame where
   | doubleObject        -- V NP NP (shorter)

@@ -219,7 +219,7 @@ structure SemanticRole (Concept : Type) where
 SDS selectional preferences can be encoded as LU-RSA lexicon priors.
 
 Given:
-- A word w with concepts C = {c₁, c₂, ...}
+- A word w with concepts C = {c₁, c₂,...}
 - Selectional preference P_sel(c | role)
 
 The equivalent LU-RSA setup:
@@ -242,7 +242,7 @@ P(concept | scenario) = P(bat=EQUIPMENT | SPORTS-frame)
 
 In RSA, this maps to:
 - World priors that encode typical scenarios
-- Or: QUD-sensitive interpretation (Kao et al. 2014)
+- Or: QUD-sensitive interpretation
 
 ### Example: "A player was holding a bat"
 
@@ -256,7 +256,7 @@ LU-RSA equivalent:
 
 ### Connection to QUD-RSA
 
-Kao et al. (2014) QUD-sensitive RSA:
+@cite{kao-etal-2014-hyperbole} QUD-sensitive RSA:
 ```
 L₁(w | u, q) ∝ S₁(u | w, q) × P(w | q)
 ```

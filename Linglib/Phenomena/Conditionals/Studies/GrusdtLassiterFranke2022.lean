@@ -294,7 +294,7 @@ def claim4_MissingLinkInfelicity : TheoreticalClaim := {
 -- Summary
 
 /--
-Summary of empirical findings from Grusdt, Lassiter & Franke (2022).
+Summary of empirical findings from @cite{grusdt-lassiter-franke-2022}.
 -/
 def summary : String :=
 "The experiments support an RSA model of conditionals where:

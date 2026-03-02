@@ -3,7 +3,7 @@ import Linglib.Theories.Semantics.Degree.Core
 
 /-!
 # Equative Semantics
-@cite{kennedy-2007} @cite{rett-2020} @cite{schwarzschild-2008}
+@cite{kennedy-2007} @cite{rett-2020} @cite{schwarzschild-2008} @cite{thomas-deo-2020}
 
 Compositional semantics for equative constructions ("as tall as").
 
@@ -19,7 +19,7 @@ three" and is strengthened to "exactly three" by implicature.
 
 ## Alternative: Granularity-Based Account
 
-`Degree.Granularity` (Thomas & Deo 2020) offers a different explanation:
+`Degree.Granularity` offers a different explanation:
 the "exactly" reading arises because *just* signals finest granularity,
 and the finest equative is already the strongest (so *just*'s negative
 component is vacuous). See `just_vacuous_iff` in `Degree.Granularity`.

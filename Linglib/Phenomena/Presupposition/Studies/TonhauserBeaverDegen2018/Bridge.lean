@@ -6,17 +6,17 @@ import Linglib.Phenomena.Presupposition.ProjectiveContent
 # TBD2018 Bridge: Gradient At-Issueness ↔ Existing Infrastructure
 @cite{tonhauser-beaver-degen-2018} @cite{tonhauser-beaver-roberts-simons-2013}
 
-Connects the empirical data from Tonhauser, Beaver & Degen (2018) to:
+Connects the empirical data from @cite{tonhauser-beaver-degen-2018} to:
 
 1. **Core.Discourse.AtIssueness** — lifts raw ℚ ratings to bounded degree types
-2. **ProjectiveContent.lean** — recovers the Tonhauser et al. (2013) 4-class
+2. **ProjectiveContent.lean** — recovers the @cite{tonhauser-beaver-roberts-simons-2013} 4-class
    taxonomy from gradient data and shows binary AtIssueness is a thresholding
 3. **AntiCorrelation** — instantiates the deterministic anti-monotonicity
    property for Exp 1b verb data
 
 ## Taxonomy Recovery
 
-The 4-class taxonomy from Tonhauser et al. (2013) is recoverable from the
+The 4-class taxonomy from @cite{tonhauser-beaver-roberts-simons-2013} is recoverable from the
 gradient data: Class B triggers (NRRC, appositive, possNP) have the highest
 mean projectivity, Class C triggers (stop, know, discover, annoyed) are in
 the middle, and focus-sensitive/adjectival triggers are lower.
@@ -84,7 +84,7 @@ def classCMeanProjectivity : ℚ :=
    projectivityRating ExpressionType.stop) / 4
 
 /-- Class B triggers have higher mean projectivity than Class C triggers.
-    This is consistent with the Tonhauser et al. (2013) taxonomy where
+    This is consistent with the @cite{tonhauser-beaver-roberts-simons-2013} taxonomy where
     Class B triggers (appositives, NRRCs) are "more projective"
     than Class C triggers (factives). -/
 theorem classB_higher_projectivity_than_classC :
@@ -176,7 +176,7 @@ theorem exp1a_non_monotone_witness :
     across experiments.
 
     TBD2018 projectivity: beAnnoyed .94, confess .65, discover .86,
-    establish .43, reveal .77, see .90. -/
+    establish .43, reveal .77,.90. -/
 theorem shared_predicates_gradient :
     verbProjectivity Predicate.beAnnoyed > 1/2 ∧
     verbProjectivity Predicate.discover > 1/2 ∧

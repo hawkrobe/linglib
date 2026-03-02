@@ -4,7 +4,7 @@ import Linglib.Core.Discourse.Evidence
 
 /-!
 # Rich Context
-@cite{aikhenvald-2004} @cite{condoravdi-2002} @cite{cumming-2026}
+@cite{aikhenvald-2004} @cite{condoravdi-2002} @cite{cumming-2026} @cite{iatridou-2000}
 
 `RichContext` extends `KContext` with a domain of accessible worlds and an
 evidential source. This supports two phenomena that plain `KContext` cannot
@@ -14,7 +14,7 @@ express:
    expand the set of historical alternatives because more futures branch from
    earlier times.
 
-2. **Evidential perspective** (Cumming 2026): the evidence grounding an
+2. **Evidential perspective**: the evidence grounding an
    assertion has a source type (direct, hearsay, inference) that interacts
    with tense morphology.
 
@@ -45,7 +45,7 @@ open Core.Evidence
     in time expands this set (more futures branch from earlier times).
 
     The `evidence` field tracks the evidential source for the assertion,
-    connecting to Cumming's (2026) tense-evidential constraints. -/
+    connecting to @cite{cumming-2026}'s tense-evidential constraints. -/
 structure RichContext (W : Type*) (E : Type*) (P : Type*) (T : Type*) where
   /-- The underlying Kaplanian context -/
   base : KContext W E P T
@@ -107,7 +107,7 @@ theorem KContext.toRich_base (c : KContext W E P T) :
 /-- A context shift is domain-expanding if it can only enlarge the
     accessible-world set, never shrink it.
 
-    This captures Condoravdi's (2002) observation: backward temporal
+    This captures @cite{condoravdi-2002}'s observation: backward temporal
     shifts expand the historical alternatives because more futures
     branch from earlier times. -/
 def DomainExpanding (σ : ContextShift (RichContext W E P T)) : Prop :=
@@ -155,12 +155,12 @@ theorem hpShift_expanding (newTime : T) (expandedDomain : Set W)
 -- § X-Marking Shift (Iatridou 2000)
 -- ════════════════════════════════════════════════════════════════
 
-/-- X-marking shift: the morphological "fake past" (Iatridou 2000) on
+/-- X-marking shift: the morphological "fake past" on
     counterfactual conditionals, reanalyzed as a domain-expanding shift.
 
     Iatridou's insight: subjunctive/past morphology on conditionals doesn't
     locate the event in the past — it signals exclusion from the actual world.
-    Under branching time (Condoravdi 2002), this exclusion IS domain expansion:
+    Under branching time, this exclusion IS domain expansion:
     the X-marked conditional quantifies over a wider set of historical
     alternatives than the indicative, because the past morphology shifts
     the evaluation time backward, expanding the branch set.

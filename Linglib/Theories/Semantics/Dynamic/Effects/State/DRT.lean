@@ -63,7 +63,7 @@ structure DRSFull (E : Type*) where
 /--
 DRS merge: combine two DRSs.
 
-K₁ ; K₂ combines drefss and conditions.
+K₁; K₂ combines drefss and conditions.
 -/
 def DRS.merge {E : Type*} (k1 k2 : DRS E) : DRS E :=
   { drefs := k1.drefs ∪ k2.drefs

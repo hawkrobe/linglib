@@ -7,8 +7,8 @@ import Linglib.Phenomena.Focus.DiscourseOnly
 # Bridge: DTS ↔ Discourse *only*
 @cite{ippolito-kiss-williams-2025} @cite{merin-1999}
 
-Connects the CI of discourse *only* (Ippolito, Kiss & Williams 2025) to
-Merin's (1999) Decision-Theoretic Semantics, specifically the notion of
+Connects the CI of discourse *only* to
+@cite{merin-1999}'s Decision-Theoretic Semantics, specifically the notion of
 unexpectedness from the analysis of *but*.
 
 ## Key Connection
@@ -32,10 +32,10 @@ discourse *only*, but not vice versa.
 ## Architecture
 
 ```
-Support.lean           → probSupports / probAntiSupports (probabilistic)
+Support.lean → probSupports / probAntiSupports (probabilistic)
     ↕ (this bridge)
 DecisionTheoretic/Core → posRelevant / negRelevant (Bayes factor)
-DecisionTheoretic/But  → cip_contrariness_implies_unexpectedness
+DecisionTheoretic/But → cip_contrariness_implies_unexpectedness
 ```
 
 -/

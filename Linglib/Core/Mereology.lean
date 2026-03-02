@@ -24,8 +24,8 @@ with part-whole structure.
 3. Key Theorems (CUM/DIV/QUA interactions)
 4. Sum Homomorphism
 5. Overlap and Extensive Measures (Krifka 1998 §2.2)
-6. QMOD: Quantizing Modification (Krifka 1989)
-7. Maximality and Atom Counting (Charlow 2021)
+6. QMOD: Quantizing Modification
+7. Maximality and Atom Counting
 8. QUA/CUM Pullback (contravariant functoriality)
 9. ExtMeasure → StrictMono Bridge
 10. IsSumHom + Injective → StrictMono
@@ -42,7 +42,7 @@ namespace Mereology
 
 /-- Algebraic closure of a predicate P under join (⊔):
     *P is the smallest set containing P and closed under ⊔.
-    Corresponds to Champollion (2017) Ch. 2, §2.3.4. -/
+    Corresponds to @cite{champollion-2017} Ch. 2, §2.3.4. -/
 inductive AlgClosure {α : Type*} [SemilatticeSup α] (P : α → Prop) : α → Prop where
   /-- Base case: everything in P is in *P. -/
   | base {x : α} : P x → AlgClosure P x
@@ -54,25 +54,25 @@ inductive AlgClosure {α : Type*} [SemilatticeSup α] (P : α → Prop) : α →
 -- ════════════════════════════════════════════════════
 
 /-- Cumulative reference (CUM): P is closed under join.
-    Champollion (2017) §2.3.2: CUM(P) ⇔ ∀x,y. P(x) ∧ P(y) → P(x ⊕ y).
+    @cite{champollion-2017} §2.3.2: CUM(P) ⇔ ∀x,y. P(x) ∧ P(y) → P(x ⊕ y).
     Activities and states are canonically cumulative. -/
 def CUM {α : Type*} [SemilatticeSup α] (P : α → Prop) : Prop :=
   ∀ (x y : α), P x → P y → P (x ⊔ y)
 
 /-- Divisive reference (DIV): P is closed downward under ≤.
-    Champollion (2017) §2.3.3: DIV(P) ⇔ ∀x,y. P(x) ∧ y ≤ x → P(y).
+    @cite{champollion-2017} §2.3.3: DIV(P) ⇔ ∀x,y. P(x) ∧ y ≤ x → P(y).
     This is the mereological analog of the subinterval property. -/
 def DIV {α : Type*} [PartialOrder α] (P : α → Prop) : Prop :=
   ∀ (x y : α), P x → y ≤ x → P y
 
 /-- Quantized reference (QUA): no proper part of a P-entity is also P.
-    Champollion (2017) §2.3.5: QUA(P) ⇔ ∀x,y. P(x) ∧ y < x → ¬P(y).
+    @cite{champollion-2017} §2.3.5: QUA(P) ⇔ ∀x,y. P(x) ∧ y < x → ¬P(y).
     Telic predicates are canonically quantized. -/
 def QUA {α : Type*} [PartialOrder α] (P : α → Prop) : Prop :=
   ∀ (x y : α), P x → y < x → ¬ P y
 
 /-- Mereological atom: x has no proper part.
-    Champollion (2017) §2.2: Atom(x) ⇔ ¬∃y. y < x.
+    @cite{champollion-2017} §2.2: Atom(x) ⇔ ¬∃y. y < x.
     Defined without OrderBot since many domains lack a natural
     bottom element. -/
 def Atom {α : Type*} [PartialOrder α] (x : α) : Prop :=
@@ -82,7 +82,7 @@ def Atom {α : Type*} [PartialOrder α] (x : α) : Prop :=
 -- § 3. Key Theorems
 -- ════════════════════════════════════════════════════
 
-/-- *P is always cumulative (Champollion 2017, §2.3.4).
+/-- *P is always cumulative.
     This is the fundamental property of algebraic closure. -/
 theorem algClosure_cum {α : Type*} [SemilatticeSup α]
     {P : α → Prop} : CUM (AlgClosure P) :=
@@ -95,7 +95,7 @@ theorem subset_algClosure {α : Type*} [SemilatticeSup α]
   AlgClosure.base h
 
 /-- QUA predicates cannot be cumulative (for predicates with ≥ 2 elements).
-    Champollion (2017) §2.3.5: QUA and CUM are incompatible for non-singletons. -/
+    @cite{champollion-2017} §2.3.5: QUA and CUM are incompatible for non-singletons. -/
 theorem qua_cum_incompatible {α : Type*} [SemilatticeSup α]
     {P : α → Prop} (hQ : QUA P)
     {x y : α} (hx : P x) (hy : P y) (hne : x ≠ y) :
@@ -129,7 +129,7 @@ theorem div_closed_under_le {α : Type*} [PartialOrder α]
 
 /-- CUM and QUA partition event predicates (for non-trivial predicates):
     a predicate with ≥ 2 distinct elements cannot be both CUM and QUA.
-    Champollion (2017) §2.3.5. -/
+    @cite{champollion-2017} §2.3.5. -/
 theorem cum_qua_disjoint {α : Type*} [SemilatticeSup α]
     {P : α → Prop}
     (hne : ∃ (x y : α), P x ∧ P y ∧ x ≠ y) :
@@ -186,7 +186,7 @@ def algClosureOp {α : Type*} [SemilatticeSup α] :
 -- ════════════════════════════════════════════════════
 
 /-- A sum homomorphism preserves the join operation.
-    Champollion (2017) §2.5: thematic roles and τ are sum homomorphisms.
+    @cite{champollion-2017} §2.5: thematic roles and τ are sum homomorphisms.
     f(x ⊕ y) = f(x) ⊕ f(y). -/
 class IsSumHom {α β : Type*} [SemilatticeSup α] [SemilatticeSup β]
     (f : α → β) : Prop where
@@ -237,12 +237,12 @@ theorem IsSumHom.cum_preimage {α β : Type*}
 -- ════════════════════════════════════════════════════
 
 /-- Mereological overlap: x and y share a common part.
-    Krifka (1998) eq. (1e): O(x, y) ⇔ ∃z. z ≤ x ∧ z ≤ y. -/
+    @cite{krifka-1998} eq. (1e): O(x, y) ⇔ ∃z. z ≤ x ∧ z ≤ y. -/
 def Overlap {γ : Type*} [PartialOrder γ] (x y : γ) : Prop :=
   ∃ z, z ≤ x ∧ z ≤ y
 
 /-- Extensive measure function: additive over non-overlapping entities.
-    Krifka (1998) §2.2, eq. (7): μ(x ⊕ y) = μ(x) + μ(y) when ¬O(x,y).
+    @cite{krifka-1998} §2.2, eq. (7): μ(x ⊕ y) = μ(x) + μ(y) when ¬O(x,y).
     Examples: weight, volume, number (cardinality). -/
 class ExtMeasure (α : Type*) [SemilatticeSup α]
     (μ : α → ℚ) : Prop where
@@ -258,7 +258,7 @@ class ExtMeasure (α : Type*) [SemilatticeSup α]
 
 /-- Measure phrases create QUA predicates: {x : μ(x) = n} is QUA
     whenever μ is an extensive measure.
-    Krifka (1998) §2.2: "two kilograms of flour" is QUA because
+    @cite{krifka-1998} §2.2: "two kilograms of flour" is QUA because
     no proper part of a 2kg entity also weighs 2kg. -/
 theorem extMeasure_qua {α : Type*} [SemilatticeSup α]
     {μ : α → ℚ} [hμ : ExtMeasure α μ] (n : ℚ) (_hn : 0 < n) :
@@ -273,7 +273,7 @@ theorem extMeasure_qua {α : Type*} [SemilatticeSup α]
 -- ════════════════════════════════════════════════════
 
 /-- Quantizing modification: intersect predicate R with a measure constraint.
-    Krifka (1989): QMOD(R, μ, n) = λx. R(x) ∧ μ(x) = n.
+    @cite{krifka-1989}: QMOD(R, μ, n) = λx. R(x) ∧ μ(x) = n.
     "three kilos of rice" = QMOD(rice, μ_kg, 3).
     This is the operation that turns a CUM mass noun into a QUA measure phrase. -/
 def QMOD {α μTy : Type*} (R : α → Prop) (μ : α → μTy) (n : μTy) : α → Prop :=
@@ -289,12 +289,12 @@ theorem qmod_sub {α μTy : Type*} {R : α → Prop} {μ : α → μTy} {n : μT
 -- ════════════════════════════════════════════════════
 
 /-- Maximal in P under ≤: x is in P and no proper extension of x is in P.
-    Used by Charlow (2021) for the M_v operator (mereological maximization). -/
+    Used by @cite{charlow-2021} for the M_v operator (mereological maximization). -/
 def isMaximal {α : Type*} [PartialOrder α] (P : α → Prop) (x : α) : Prop :=
   P x ∧ ∀ (y : α), P y → x ≤ y → x = y
 
 /-- Count atoms below x, using classical decidability.
-    Used by Charlow (2021) for cardinality tests on plural individuals. -/
+    Used by @cite{charlow-2021} for cardinality tests on plural individuals. -/
 noncomputable def atomCount (α : Type*) [PartialOrder α] [Fintype α]
     (x : α) : Nat :=
   @Finset.card α (Finset.univ.filter (λ a => @decide (Atom a ∧ a ≤ x) (Classical.dec _)))
@@ -475,7 +475,7 @@ theorem IsSumHom.strictMono_of_injective {α β : Type*}
     relational proof (needing UP + MSO) reduces to functional
     `qua_pullback` via `StrictMono`.
 
-    This is the functional special case of Krifka (1998) §3.3:
+    This is the functional special case of @cite{krifka-1998} §3.3:
     SINC(θ) ∧ QUA(OBJ) → QUA(VP θ OBJ), where θ is a function
     rather than a relation, and SINC reduces to IsSumHom + Injective.
 

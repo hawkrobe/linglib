@@ -5,7 +5,7 @@ import Linglib.Theories.Syntax.ConstructionGrammar.Studies.GoldbergShirtz2025
 /-!
 # Slot/Filler Verification
 
-@cite{dunn-2026} @cite{kay-fillmore-1999}
+@cite{dunn-2026} @cite{kay-fillmore-1999} @cite{goldberg-shirtz-2025}
 
 Per-datum verification that `derivedSpecificity` (computed from the typed
 slot structure) matches the `Specificity` values stipulated in existing
@@ -37,7 +37,7 @@ def ditransitiveForm : TypedForm String :=
   , { filler := .open_ .NOUN, role := some "recipient" }
   , { filler := .open_ .NOUN, role := some "theme" } ]
 
-/-- must-VERB typed form (Goldberg & Shirtz 2025): [fixed("must") V N].
+/-- must-VERB typed form: [fixed("must") V N].
 
 "must" is a fixed lexeme; the verb and noun slots are open.
 "a must-see movie", "a must-read book". -/
@@ -46,7 +46,7 @@ def mustVerbForm : TypedForm String :=
   , { filler := .open_ .VERB, role := some "predicate", isHead := true }
   , { filler := .open_ .NOUN, role := some "theme" } ]
 
-/-- *Let alone* typed form (FKO 1988): [A_NP fixed("let") fixed("alone") B_NP].
+/-- *Let alone* typed form: [A_NP fixed("let") fixed("alone") B_NP].
 
 Simplified from the full form F⟨X A Y let alone B⟩ to highlight the
 fixed/open distinction. "let" and "alone" are fixed; the focus positions
@@ -213,8 +213,7 @@ theorem wxdy_what_constraints :
     hasConstraint wxdyForm .refEmpty = true := ⟨rfl, rfl⟩
 
 /-- WXDY-doing cannot be negated ([neg -]): "*What's X not doing Y?"
-    is ungrammatical on the incredulity reading (Kay & Fillmore 1999,
-    p. 14). -/
+    is ungrammatical on the incredulity reading. -/
 theorem wxdy_doing_negMinus :
     hasConstraint wxdyForm .negMinus = true := rfl
 

@@ -199,7 +199,7 @@ def liftToKind (P : Individual Atom → Bool) : Kind World Atom → World → Pr
 -- The Nominal Mapping Parameter
 
 /--
-The Nominal Mapping Parameter (Chierchia 1998).
+The Nominal Mapping Parameter.
 
 Languages vary in what they let their NPs denote:
 - [+arg]: NPs can be argumental (type e, denoting kinds)
@@ -362,10 +362,10 @@ def fallbackToExists (isKindDenoting : Bool) (bp : BlockingPrinciple) : Bool :=
 
 /-!
 ## Computational DKP
-@cite{krifka-2004}
+@cite{krifka-2004} @cite{chierchia-1998}
 
 Simplified, decidable formalization of Chierchia's DKP for concrete
-scrambling comparisons with Krifka (2004). Uses `List Entity` and `Bool`
+scrambling comparisons with @cite{krifka-2004}. Uses `List Entity` and `Bool`
 (rather than `Set Atom` and `Prop`) so that examples reduce by `rfl`.
 
 The parallel Krifka machinery is in `Krifka2004.lean`; both are
@@ -493,7 +493,7 @@ structure KindFormation (Atom : Type) where
 def isSubkindOf {Atom : Type} (k₁ k₂ : Set Atom) : Prop :=
   k₁ ⊆ k₂
 
-/-- Carlson's (1977) Disjointness Condition: subkinds induced by an
+/-- @cite{carlson-1977}'s Disjointness Condition: subkinds induced by an
     equivalence relation are pairwise disjoint in any context. -/
 theorem disjointness_condition {Atom : Type} [DecidableEq Atom]
     (kf : KindFormation Atom) (a b : Atom) (h : ¬kf.rel a b) :

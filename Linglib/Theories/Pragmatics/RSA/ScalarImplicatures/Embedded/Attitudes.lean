@@ -186,7 +186,7 @@ def utteranceMeaning (u : AttitudeUtterance) (interp : AttitudeInterpretation)
 /--
 Under **global** interpretation:
 - "John believes some" is true in worlds where John believes ≥1 passed
-- This includes both johnBelieves = .someO AND johnBelieves = .allO
+- This includes both johnBelieves =.someO AND johnBelieves =.allO
 -/
 theorem global_includes_all_belief :
     believesSomeMeaning .global ⟨.allO, .allO⟩ = true := rfl
@@ -194,7 +194,7 @@ theorem global_includes_all_belief :
 /--
 Under **local** interpretation:
 - "John believes some" is true only when John believes some-but-not-all
-- johnBelieves = .allO makes it FALSE
+- johnBelieves =.allO makes it FALSE
 -/
 theorem local_excludes_all_belief :
     believesSomeMeaning .local_ ⟨.allO, .allO⟩ = false := rfl

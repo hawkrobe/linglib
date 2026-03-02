@@ -5,9 +5,9 @@ import Linglib.Core.Lexical.Word
 @cite{aikhenvald-2010} @cite{van-der-auwera-2006} @cite{van-der-auwera-lejeune-2013}
 
 Cross-linguistic data on imperative and related mood systems from four WALS
-chapters, all authored by Johan van der Auwera and Ludo Lejeune (2013).
+chapters, all authored by Johan van der Auwera and Ludo @cite{van-der-auwera-lejeune-2013}.
 
-## Ch 70: The Morphological Imperative (van der Auwera & Lejeune 2013)
+## Ch 70: The Morphological Imperative
 
 Whether a language has a dedicated morphological form for second-person
 imperatives. Three values: (1) a second-person-only morphological imperative,
@@ -18,7 +18,7 @@ word order, intonation, or bare stems identical to the indicative).
 Sample: 495 languages. The vast majority (388/495 = 78.4%) have a
 dedicated morphological imperative of some kind; only 107 lack one entirely.
 
-## Ch 71: The Prohibitive (van der Auwera & Lejeune 2013)
+## Ch 71: The Prohibitive
 
 How negative imperatives ("Don't!") are formed relative to regular
 imperatives and regular negation. Four structural types based on whether
@@ -33,7 +33,7 @@ in declaratives or *special*:
 Sample: 495 languages. Type 4 (special+special) is the most common
 (182/495 = 36.8%).
 
-## Ch 72: Imperative-Hortative Systems (van der Auwera & Lejeune 2013)
+## Ch 72: Imperative-Hortative Systems
 
 Whether the language has dedicated morphological forms for first-person
 hortatives ("let's go") and/or third-person jussives ("let him go"), in
@@ -44,7 +44,7 @@ Sample: 495 languages. Imperative-only systems are the most common
 (263/495 = 53.1%); systems with all three forms are the least common
 (43/495 = 8.7%).
 
-## Ch 73: The Optative (van der Auwera & Lejeune 2013)
+## Ch 73: The Optative
 
 Whether the language has a morphologically dedicated optative construction
 ("may it rain", "if only she were here"). Binary feature: present or absent.

@@ -6,7 +6,7 @@ import Linglib.Theories.Semantics.Tense.Kratzer
 # English Tense Fragment (Cumming 2026 + Lakoff 1970)
 @cite{cumming-2026} @cite{lakoff-1970}
 
-Paradigm entries for English tense forms from Cumming (2026), Tables 20 and 22.
+Paradigm entries for English tense forms from @cite{cumming-2026}, Tables 20 and 22.
 Each entry specifies evidential perspective (EP) and utterance perspective (UP)
 constraints via `EPCondition` and `UPCondition` enums.
 
@@ -201,8 +201,8 @@ theorem simplePast_presentPerfect_same_decomposition :
     kratzerSimplePast.hasPerfect = kratzerPresentPerfect.hasPerfect :=
   ⟨rfl, rfl⟩
 
-/-- The Lakoff `gramTense = .past` records the surface morphology;
-    the Kratzer `constraint = .present` records the underlying tense head.
+/-- The Lakoff `gramTense =.past` records the surface morphology;
+    the Kratzer `constraint =.present` records the underlying tense head.
     These are DIFFERENT for English simple past — that's Kratzer's point. -/
 theorem lakoff_kratzer_diverge :
     simplePastPerspective.gramTense = GramTense.past ∧

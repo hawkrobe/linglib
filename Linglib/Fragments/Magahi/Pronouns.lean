@@ -71,7 +71,7 @@ def allPronouns : List PronounEntry :=
 -- Allocutive Markers (verbal agreement suffixes)
 -- ============================================================================
 
-/-- *-l* non-honorific past suffix (Alok 2020). -/
+/-- *-l* non-honorific past suffix. -/
 def suffNH : AllocutiveEntry :=
   { form := "-l", register := .informal, gloss := "PST.NH" }
 

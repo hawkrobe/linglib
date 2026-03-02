@@ -258,8 +258,7 @@ def zar : BiasParticle :=
   , gloss := "RAZVE.SR"
   , outerNeg := true, innerNeg := true }
 
-/-- Russian *razve* is compatible with both inner and outer negation
-(Repp & Geist 2022). It stays constant across VERUM and FALSUM
+/-- Russian *razve* is compatible with both inner and outer negation. It stays constant across VERUM and FALSUM
 because both involve a conflict between epistemic and evidential bias. -/
 theorem razve_both_negations :
     razve.outerNeg = true ∧ razve.innerNeg = true := ⟨rfl, rfl⟩

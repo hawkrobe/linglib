@@ -2,7 +2,7 @@ import Linglib.Core.Lexical.Word
 
 /-!
 # Word-Order Typology (Dryer 2013 / WALS)
-@cite{dryer-1992} @cite{dryer-haspelmath-2013} @cite{gibson-2025} @cite{greenberg-1963}
+@cite{dryer-1992} @cite{dryer-haspelmath-2013} @cite{gibson-2025} @cite{greenberg-1963} @cite{derbyshire-1977} @cite{hale-1983}
 
 WALS data from Gibson (2025, Ch. 5.3, Tables 1–3): cross-linguistic counts
 of harmonic vs disharmonic word-order pairings. Dryer (1992, 2013) documents
@@ -23,7 +23,7 @@ the second construction. Harmonic cells (both HI or both HF) dominate.
 
 Some constructions show *disharmonic* tendencies cross-linguistically:
 adjective-noun, demonstrative-noun, intensifier-adjective, negator-verb.
-Gibson (2025) argues these are cases where the dependent is a single word
+@cite{gibson-2025} argues these are cases where the dependent is a single word
 (no recursive subtree), so head direction is irrelevant to DLM.
 
 -/
@@ -81,7 +81,7 @@ def CrossTab.harmonicDominant (t : CrossTab) : Bool :=
 -- ============================================================================
 
 /-- Table 1: Verb-Object order × Adposition order (Dryer 2013, WALS).
-    Gibson (2025) Table 1. 981 languages. -/
+    @cite{gibson-2025} Table 1. 981 languages. -/
 def voAdposition : CrossTab :=
   { name := "VO × Adposition"
     construction1 := "Verb-Object"
@@ -92,7 +92,7 @@ def voAdposition : CrossTab :=
     hfhf := ⟨.headFinal, .headFinal, 472⟩ }
 
 /-- Table 2: Verb-Object order × Subordinator order (Dryer 2013, WALS).
-    Gibson (2025) Table 2. 456 languages. -/
+    @cite{gibson-2025} Table 2. 456 languages. -/
 def voSubordinator : CrossTab :=
   { name := "VO × Subordinator"
     construction1 := "Verb-Object"
@@ -103,7 +103,7 @@ def voSubordinator : CrossTab :=
     hfhf := ⟨.headFinal, .headFinal, 91⟩ }
 
 /-- Table 3: Verb-Object order × Relative clause order (Dryer 2013, WALS).
-    Gibson (2025) Table 3. 665 languages. -/
+    @cite{gibson-2025} Table 3. 665 languages. -/
 def voRelativeClause : CrossTab :=
   { name := "VO × Relative clause"
     construction1 := "Verb-Object"
@@ -113,7 +113,7 @@ def voRelativeClause : CrossTab :=
     hfhi := ⟨.headFinal, .headInitial, 113⟩
     hfhf := ⟨.headFinal, .headFinal, 132⟩ }
 
-/-- All three tables from Gibson (2025) Ch. 5.3. -/
+/-- All three tables from @cite{gibson-2025} Ch. 5.3. -/
 def allTables : List CrossTab :=
   [voAdposition, voSubordinator, voRelativeClause]
 
@@ -162,7 +162,7 @@ theorem voRelativeClause_harmonic_dominant :
 /-- The head-direction generalization: across all three construction pairs,
     harmonic word-order pairings dominate.
 
-    This is the core empirical observation that Gibson (2025) Ch. 5.3
+    This is the core empirical observation that @cite{gibson-2025} Ch. 5.3
     argues DLM explains: consistent head direction keeps recursive spine
     dependencies local. -/
 theorem head_direction_generalization :
@@ -245,7 +245,7 @@ def WALSCount.totalOf (cs : List WALSCount) : Nat :=
 -- Chapter 81: Basic Order of Subject, Object, and Verb
 -- ============================================================================
 
-/-- WALS Ch 81: The six-way classification of basic constituent order (Dryer 2013).
+/-- WALS Ch 81: The six-way classification of basic constituent order.
 
     The "basic" order is determined by the dominant order in pragmatically
     neutral, declarative clauses with full NP arguments. Languages where no
@@ -285,7 +285,7 @@ inductive BasicOrder where
   deriving DecidableEq, BEq, Repr
 
 /-- Chapter 81 distribution: basic order of S, O, V (N = 1377).
-    Counts from Dryer (2013), WALS Online. -/
+    Counts from @cite{dryer-haspelmath-2013}, WALS Online. -/
 def ch81Counts : List WALSCount :=
   [ ⟨"SOV", 565⟩
   , ⟨"SVO", 488⟩
@@ -302,7 +302,7 @@ theorem ch81_total : WALSCount.totalOf ch81Counts = 1377 := by native_decide
 -- Chapter 82: Order of Subject and Verb
 -- ============================================================================
 
-/-- WALS Ch 82: Binary classification of S-V order (Dryer 2013).
+/-- WALS Ch 82: Binary classification of S-V order.
 
     Collapses the six-way classification to just the relative order of
     subject and verb. Languages where the subject typically precedes the
@@ -323,7 +323,7 @@ inductive SVOrder where
   deriving DecidableEq, BEq, Repr
 
 /-- Chapter 82 distribution: order of subject and verb (N = 1377).
-    Counts from Dryer (2013), WALS Online. -/
+    Counts from @cite{dryer-haspelmath-2013}, WALS Online. -/
 def ch82Counts : List WALSCount :=
   [ ⟨"SV", 1048⟩
   , ⟨"VS", 197⟩
@@ -341,7 +341,7 @@ theorem ch81_ch82_same_sample :
 -- Chapter 83: Order of Object and Verb
 -- ============================================================================
 
-/-- WALS Ch 83: Binary classification of O-V order (Dryer 2013).
+/-- WALS Ch 83: Binary classification of O-V order.
 
     The most theoretically significant binary parameter: whether the object
     precedes the verb (OV = head-final VP) or follows it (VO = head-initial VP).
@@ -362,7 +362,7 @@ inductive OVOrder where
   deriving DecidableEq, BEq, Repr
 
 /-- Chapter 83 distribution: order of object and verb (N = 1370).
-    Counts from Dryer (2013), WALS Online. -/
+    Counts from @cite{dryer-haspelmath-2013}, WALS Online. -/
 def ch83Counts : List WALSCount :=
   [ ⟨"OV", 713⟩
   , ⟨"VO", 488⟩
@@ -556,7 +556,7 @@ def welsh : BasicOrderProfile :=
 -- ---- VOS languages ----
 
 /-- Malagasy: VOS with prepositions. The best-known VOS language,
-    extensively studied in formal syntax (e.g., Pearson 2005). -/
+    extensively studied in formal syntax. -/
 def malagasy : BasicOrderProfile :=
   { language := "Malagasy"
   , iso := "mlg"
@@ -577,7 +577,7 @@ def tzotzil : BasicOrderProfile :=
 -- ---- OVS languages ----
 
 /-- Hixkaryana (Cariban; Brazil): the first language for which OVS basic
-    order was convincingly demonstrated (Derbyshire 1977). This discovery
+    order was convincingly demonstrated. This discovery
     refuted the earlier claim that OVS and OSV orders were unattested. -/
 def hixkaryana : BasicOrderProfile :=
   { language := "Hixkaryana"
@@ -603,7 +603,7 @@ def germanV2 : BasicOrderProfile :=
 
 /-- Warlpiri (Pama-Nyungan; Australia): radically free word order, with
     all six permutations of S, O, V attested in natural discourse.
-    The canonical non-configurational language (Hale 1983). -/
+    The canonical non-configurational language. -/
 def warlpiri : BasicOrderProfile :=
   { language := "Warlpiri"
   , iso := "wbp"

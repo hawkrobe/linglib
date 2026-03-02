@@ -24,9 +24,9 @@ formal `SyntacticObject` type from `SyntacticObjects.lean`.
 ## Example
 
 ```
-VerbEntry.sleep (intransitive) → .leaf ⟨.simple .V [], "sleeps"⟩
-VerbEntry.eat (transitive)     → .leaf ⟨.simple .V [.D], "eats"⟩
-VerbEntry.give (ditransitive)  → .leaf ⟨.simple .V [.D, .D], "gives"⟩
+VerbEntry.sleep (intransitive) →.leaf ⟨.simple.V [], "sleeps"⟩
+VerbEntry.eat (transitive) →.leaf ⟨.simple.V [.D], "eats"⟩
+VerbEntry.give (ditransitive) →.leaf ⟨.simple.V [.D,.D], "gives"⟩
 ```
 -/
 

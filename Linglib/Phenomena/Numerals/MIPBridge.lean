@@ -7,12 +7,12 @@ import Linglib.Theories.Semantics.Lexical.Numeral.Semantics
 
 Surfaces the abstract `Core.Scale` maximal informativity theorems at the
 Phenomena level, connecting numeral semantics (`maxMeaning`) to the
-`HasMaxInf` / `IsMaxInf` infrastructure and the Fox & Hackl (2006)
+`HasMaxInf` / `IsMaxInf` infrastructure and the @cite{fox-hackl-2006}
 density predictions.
 
 ## Bridge Structure
 
-1. **maxMeaning ↔ atLeastDeg**: `maxMeaning .ge` is the decidable
+1. **maxMeaning ↔ atLeastDeg**: `maxMeaning.ge` is the decidable
    restriction of `atLeastDeg id`, proved via `maxMeaning_ge_iff_atLeastDeg`.
 
 2. **HasMaxInf for "at least"**: `atLeast_hasMaxInf` gives the existence
@@ -35,12 +35,12 @@ open Semantics.Lexical.Numeral
 -- § 1. maxMeaning ↔ Core.Scale Degree Properties
 -- ════════════════════════════════════════════════════
 
-/-- `maxMeaning .ge` (numeral "at least") matches `atLeastDeg id`. -/
+/-- `maxMeaning.ge` (numeral "at least") matches `atLeastDeg id`. -/
 theorem atLeast_3_is_atLeastDeg :
     ∀ n, maxMeaning .ge 3 n = true ↔ atLeastDeg id 3 n :=
   fun n => maxMeaning_ge_iff_atLeastDeg 3 n
 
-/-- `maxMeaning .gt` (numeral "more than") matches `moreThanDeg id`. -/
+/-- `maxMeaning.gt` (numeral "more than") matches `moreThanDeg id`. -/
 theorem moreThan_3_is_moreThanDeg :
     ∀ n, maxMeaning .gt 3 n = true ↔ moreThanDeg id 3 n :=
   fun n => maxMeaning_gt_iff_moreThanDeg 3 n
@@ -80,7 +80,7 @@ theorem moreThan_has_maxInf_nat :
 
 /-- max⊨ of "at least n" at world w ↔ the true value equals n.
     This is the MIP derivation of exact meaning from lower-bound semantics:
-    Kennedy's (2015) "de-Fregean" type-shift IS the MIP. -/
+    @cite{kennedy-2015}'s "de-Fregean" type-shift IS the MIP. -/
 theorem mip_derives_exact (m n : ℕ) :
     IsMaxInf (atLeastDeg (α := ℕ) id) m n ↔ n = m :=
   isMaxInf_atLeast_iff_eq id m n Function.surjective_id
@@ -89,7 +89,7 @@ theorem mip_derives_exact (m n : ℕ) :
 -- § 5. Fox & Hackl Asymmetry Data
 -- ════════════════════════════════════════════════════
 
-/-- The Fox & Hackl (2006) implicature asymmetry prediction:
+/-- The @cite{fox-hackl-2006} implicature asymmetry prediction:
     - "at least n" generates scalar implicatures (HasMaxInf) ✓
     - "more than n" on dense scales does NOT (moreThan_noMaxInf)
     - "more than n" on ℕ DOES (discrete rescue)

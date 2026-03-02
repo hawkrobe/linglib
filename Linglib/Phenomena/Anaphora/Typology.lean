@@ -7,7 +7,7 @@ import Linglib.Phenomena.Reference.DirectReference
 # Pronoun Typology: PER/DEM Classification + Gradient Measures
 @cite{cardinaletti-starke-1999} @cite{dchaine-wiltschko-2002} @cite{elbourne-2005} @cite{patel-grosz-grosz-2017} @cite{postal-1966} @cite{schwarz-2009} @cite{schwarz-2013} @cite{levshina-stoynova-2023}
 
-Patel-Grosz & Grosz (2017) "Revisiting Pronominal Typology" (LI 48(2)) argue
+@cite{patel-grosz-grosz-2017} "Revisiting Pronominal Typology" (LI 48(2)) argue
 that 3rd-person pronouns split into two structural types:
 - **PER** (personal): D_det + NP (weak article only)
 - **DEM** (demonstrative): D_deix + D_det + NP (strong article)
@@ -19,11 +19,11 @@ Minimize DP! makes PER the default; DEM requires pragmatic licensing
 
 1. If a language has DEM pronouns, it also has PER pronouns (DEM ⊂ PER)
 2. DEM use requires pragmatic licensing (Minimize DP!)
-3. Article system predicts D-layer structure (Schwarz 2009)
+3. Article system predicts D-layer structure
 
 ## Gradient Component
 
-Following Levshina et al. (2023) / `WordOrder/Gradience.lean`, we encode
+Following @cite{levshina-stoynova-2023} / `WordOrder/Gradience.lean`, we encode
 continuous measures of pronoun system complexity: inventory sizes, licensing
 context counts, and strength-level counts.
 
@@ -50,7 +50,7 @@ inductive PronounClass where
   deriving DecidableEq, BEq, Repr
 
 
-/-- Cardinaletti & Starke (1999): pronoun strength.
+/-- @cite{cardinaletti-starke-1999}: pronoun strength.
 
 Three-way typology based on phonological/syntactic deficiency:
 - Strong: full, stressed (can be coordinated, modified, focused)
@@ -96,7 +96,7 @@ structure PronounSystemDatum where
   isoCode : String
   /-- Available 3rd-person pronoun forms -/
   forms : List PronounForm
-  /-- Article system type (Schwarz 2009) -/
+  /-- Article system type -/
   articleType : ArticleType
   /-- Number of D-layers: 1 = D_det only (PER), 2 = D_deix + D_det (PER+DEM) -/
   dLayers : Nat
@@ -237,7 +237,7 @@ theorem allData_count : allData.length = 11 := by native_decide
 /-- Finnish: "hän" (3sg human, PER, no gender), "he" (3pl human, PER),
     "se" (3sg non-human / DEM), "tämä" (proximal DEM), "tuo" (distal DEM).
     No articles. "se" is productively used as 3rd-person reference in
-    colloquial Finnish (Karlsson 2018, §8.1).
+    colloquial Finnish.
     Not part of PG&G 2017 sample — a counterexample to the article-DEM
     productivity correlation (2 D-layers, productive DEM, but no articles). -/
 def finnishData : PronounSystemDatum :=
@@ -395,13 +395,13 @@ morphology (German, Bavarian) have productive DEM. Languages with
 2 D-layers but no overt articles (Hebrew, Czech) or limited article
 systems restrict DEM.
 
-Schwarz (2013) §5.5 provides the theoretical link: the strong article
+@cite{schwarz-2013} §5.5 provides the theoretical link: the strong article
 conventionalizes the D_deix layer, making DEM pronouns (which also
 project D_deix) more accessible. Without overt strong articles, D_deix
 is available syntactically but not conventionalized for reference tracking.
 
 Open question: *why* does article-system conventionalization affect pronoun
-productivity? PG&G suggest familiarity/frequency; Schwarz (2013) suggests
+productivity? PG&G suggest familiarity/frequency; @cite{schwarz-2013} suggests
 the strong article's anaphoric function naturally extends to pronominal use. -/
 theorem dem_productivity_from_article_system :
     (allData.filter (λ d => d.dLayers == 2 ∧ d.demProductive)).all
@@ -416,10 +416,10 @@ theorem dem_productivity_from_article_system :
 Types and mappings are defined in `Core/Definiteness.lean`:
 `DefiniteUseType`, `BridgingSubtype`, `useTypeToPresupType`, `bridgingPresupType`. -/
 
-/-! ### Schwarz (2013) cross-linguistic article paradigm data -/
+/-! ### @cite{schwarz-2013} cross-linguistic article paradigm data -/
 
 
-/-- Per-language article paradigm from Schwarz (2013). -/
+/-- Per-language article paradigm from @cite{schwarz-2013}. -/
 structure SchwarzArticleDatum where
   language : String
   isoCode : String
@@ -508,14 +508,14 @@ def schwarz_haitianCreole : SchwarzArticleDatum :=
     weakForUniqueness := true    -- §4.3: ex. (39)
     bridgingSplit := false }     -- §4.3: la used for both bridging types
 
-/-- All 7 languages from Schwarz (2013) survey. -/
+/-- All 7 languages from @cite{schwarz-2013} survey. -/
 def allSchwarzData : List SchwarzArticleDatum :=
   [ schwarz_german, schwarz_fering, schwarz_akan, schwarz_mauritianCreole
   , schwarz_lakhota, schwarz_hausa, schwarz_haitianCreole ]
 
 theorem allSchwarzData_count : allSchwarzData.length = 7 := by native_decide
 
-/-! ### Schwarz (2013) verified generalizations -/
+/-! ### @cite{schwarz-2013} verified generalizations -/
 
 /-- **Strong article → anaphoric use** (Schwarz 2013 §3.1.1):
 All surveyed languages use the strong article for anaphoric definites. -/
@@ -548,9 +548,8 @@ theorem haitian_creole_no_split :
 
 /-! ### Bridge: Schwarz article types ↔ PG&G pronoun D-layers
 
-Schwarz (2013) §5.5 explicitly connects the article contrast to
-pronouns: "pronouns are definite articles without overt NP" (Postal
-1969, Elbourne 2005). German d-pronouns (der/die/das) are identical
+@cite{schwarz-2013} §5.5 explicitly connects the article contrast to
+pronouns: "pronouns are definite articles without overt NP". German d-pronouns (der/die/das) are identical
 to strong articles. The pronominal domain shows parallel contrasts
 (Bosch et al. 2003/2007, Hinterwimmer 2009, Kaiser 2010/2011).
 
@@ -558,7 +557,7 @@ The structural mapping:
 - Schwarz weak article = PG&G D_det layer = PER pronoun
 - Schwarz strong article = PG&G D_deix + D_det = DEM pronoun -/
 
-/-- Languages with two overt article forms in Schwarz (2013) correspond to
+/-- Languages with two overt article forms in @cite{schwarz-2013} correspond to
 2-D-layer languages in PG&G (2017). Verified for German, which appears
 in both datasets. -/
 theorem schwarz_pgg_german_consistent :
@@ -630,7 +629,7 @@ theorem per_only_directly_referential :
 
 /-! ### Bridge 4: Article system ↔ D-layer count
 
-Schwarz (2009) establishes that the weak/strong article distinction
+@cite{schwarz-2009} establishes that the weak/strong article distinction
 is structurally real (D_det vs D_deix + D_det). PG&G build on this:
 languages with both article types have the structural space for DEM. -/
 

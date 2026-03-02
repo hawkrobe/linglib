@@ -75,7 +75,7 @@ In a scenario with 10 switches:
 - None on: positive false, negative true
 - 5 on: neither clearly true nor false
 
-Source: Križ (2015), Križ & Chemla (2015)
+Source: Križ (2015), Križ & @cite{kriz-chemla-2015}
 -/
 def switchesExample : HomogeneityDatum :=
   { positiveSentence := "The switches are on."
@@ -92,9 +92,9 @@ def switchesExample : HomogeneityDatum :=
   }
 
 /--
-Books example from Križ & Chemla (2015) experimental design.
+Books example from Križ & @cite{kriz-chemla-2015} experimental design.
 
-Source: Križ & Chemla (2015)
+Source: Križ & @cite{kriz-chemla-2015}
 -/
 def booksExample : HomogeneityDatum :=
   { positiveSentence := "Ann liked the books."
@@ -136,7 +136,7 @@ def conjunctionExample : HomogeneityDatum :=
 /--
 The contrast between conjunctions and plural definites for non-maximality.
 
-Source: Brisson (1998), Križ (2015), dissertation (18)
+Source: @cite{brisson-1998}, Križ (2015), dissertation (18)
 -/
 structure ConjunctionVsPluralDatum where
   /-- The conjunction sentence -/
@@ -185,7 +185,7 @@ def summativeExample : HomogeneityDatum :=
 /--
 Bare conditionals exhibit homogeneity over situations.
 
-Source: von Fintel (1997), Gajewski (2005), Križ (2015)
+Source: von Fintel (1997), @cite{gajewski-2005}, Križ (2015)
 -/
 def conditionalExample : HomogeneityDatum :=
   { positiveSentence := "They play soccer if the sun shines."

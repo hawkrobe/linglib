@@ -35,7 +35,7 @@ open Semantics.Reference.Basic (ReferringExpression isDirectlyReferential
 
 /-- A demonstration: an act that presents an individual in a context.
 
-Kaplan (1989) §IX: "A demonstration is, roughly, a visual presentation of
+@cite{kaplan-1989} §IX: "A demonstration is, roughly, a visual presentation of
 a local object discriminated by a pointing." The demonstration provides the
 *manner of presentation* — different demonstrations of the same object
 constitute different modes of presentation. -/
@@ -61,7 +61,7 @@ def constantDemonstration {C E : Type*} (e : E) (desc : String) : Demonstration 
 
 /-- A true demonstrative: a demonstrative expression completed by a demonstration.
 
-Kaplan (1989) §XV: "that [pointing at Venus in the evening] is bright."
+@cite{kaplan-1989} §XV: "that [pointing at Venus in the evening] is bright."
 The demonstration completes the character; without it, "that" is incomplete. -/
 structure TrueDemonstrative (C : Type*) (W : Type*) (E : Type*) where
   /-- The associated demonstration -/

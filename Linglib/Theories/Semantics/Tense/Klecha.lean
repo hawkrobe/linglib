@@ -1,7 +1,7 @@
 import Linglib.Theories.Semantics.Tense.Basic
 
 /-!
-# Klecha (2016): Modality and Embedded Temporal Operators
+# @cite{klecha-2016}: Modality and Embedded Temporal Operators
 @cite{klecha-2016}
 
 Klecha's theory: **modals shift the evaluation time**, not just attitude
@@ -115,7 +115,7 @@ theorem evalTimeIndex_grounds_klecha {Time : Type*}
 -- § Theory Identity Card
 -- ════════════════════════════════════════════════════════════════
 
-/-- Klecha (2016) theory identity card. -/
+/-- @cite{klecha-2016} theory identity card. -/
 def Klecha : TenseTheory where
   name := "Klecha 2016"
   citation := "Klecha, P. (2016). Modality and embedded temporal operators. S&P 9(9): 1-55."

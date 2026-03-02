@@ -4,7 +4,7 @@ import Linglib.Theories.Syntax.Minimalism.Core.Basic
 
 /-!
 # Voice and Applicative Derivations
-@cite{kratzer-1996} @cite{pylkknen-2008} @cite{schfer-2008}
+@cite{kratzer-1996} @cite{pylkknen-2008} @cite{schfer-2008} @cite{cuervo-2003}
 
 Classic examples testing the Voice/Appl heads in Minimalist derivations.
 
@@ -48,7 +48,7 @@ structure VoiceApplDerivation where
   voice : Option VoiceHead
   /-- Applicative type (if present) -/
   appl : Option ApplType
-  /-- Event-structural heads (Cuervo 2003) -/
+  /-- Event-structural heads -/
   verbHeads : List VerbHead
   /-- External argument present? -/
   hasExternalArg : Bool

@@ -35,7 +35,7 @@ namespace Fragments.Mandarin.Particles
 
 open NeoGricean.Presuppositions (PresupTrigger AltStructure PresupTriggerEntry)
 
-/-- Mandarin presupposition triggers studied in Wang (2025) Experiments 1-2. -/
+/-- Mandarin presupposition triggers studied in @cite{wang-2025} Experiments 1-2. -/
 inductive MandarinTrigger where
   | ye     -- 也 'also' (additive)
   | you    -- 又 'again' (repetitive)
@@ -119,7 +119,7 @@ def er : PresupParticle :=
   , triggerEntry := { trigger := .iterative, altStructure := .replacement, altForm := some "和" }
   , dataTrigger := .er }
 
-/-- All particles studied in Wang (2025). -/
+/-- All particles studied in @cite{wang-2025}. -/
 def wang2025Particles : List PresupParticle :=
   [ye, you, reng, jiu, zhidao, buzai, kaishi, faner, er]
 
@@ -146,10 +146,10 @@ theorem obligatory_all_deletion :
 theorem blocked_no_alt :
     jiu.triggerEntry.altStructure = .none := rfl
 
-/-- ye links to experimental data trigger .ye -/
+/-- ye links to experimental data trigger.ye -/
 theorem ye_data_link : ye.dataTrigger = .ye := rfl
 
-/-- jiu links to experimental data trigger .jiu -/
+/-- jiu links to experimental data trigger.jiu -/
 theorem jiu_data_link : jiu.dataTrigger = .jiu := rfl
 
 

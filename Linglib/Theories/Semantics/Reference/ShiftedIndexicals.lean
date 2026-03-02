@@ -12,9 +12,9 @@ person shifts but time does not.
 ## Key Definitions
 
 - `amharic_pronI`: Amharic first person — `⟨.local, KContext.agent⟩`
-- `UniformShiftParam`: Anand & Nevins (2004) constraint — all shifted
+- `UniformShiftParam`: @cite{anand-nevins-2004} constraint — all shifted
   indexicals in a language read from the same depth
-- `MixedShiftLexicon`: Deal (2020) — person shifts but time doesn't (Nez Perce)
+- `MixedShiftLexicon`: @cite{deal-2020} — person shifts but time doesn't (Nez Perce)
 - `schlenker_counterexample`: English "I" and Amharic "I" diverge in the
   same tower configuration
 
@@ -37,7 +37,7 @@ variable {W : Type*} {E : Type*} {P : Type*} {T : Type*}
     "John yä-nä Ïnä dässïtäñ alä" ≈ "John said that I am happy"
     where "I" refers to John (the shifted agent), not the actual speaker.
 
-    Schlenker (2003): Amharic attitude verbs are context-shifting operators
+    @cite{schlenker-2003}: Amharic attitude verbs are context-shifting operators
     (monsters). Under the tower analysis, the monster pushes an attitude
     shift, and the shifted "I" reads from `.local` rather than `.origin`. -/
 def amharic_pronI : AccessPattern (KContext W E P T) E :=
@@ -61,7 +61,7 @@ def amharic_opHere : AccessPattern (KContext W E P T) P :=
     Amharic "I" reads from the innermost context (shifted to the attitude
     holder).
 
-    This is the formal content of Schlenker's (2003) counterexample to
+    This is the formal content of @cite{schlenker-2003}'s counterexample to
     Kaplan's thesis: the SAME lexical item ("I") receives different
     interpretations cross-linguistically because of a depth parameter. -/
 theorem schlenker_counterexample
@@ -89,7 +89,7 @@ theorem no_shift_agreement (c : KContext W E P T) :
 -- § Uniform Shift Parameter (Anand & Nevins 2004)
 -- ════════════════════════════════════════════════════════════════
 
-/-- Anand & Nevins (2004) Uniform Shift: in languages with indexical
+/-- @cite{anand-nevins-2004} Uniform Shift: in languages with indexical
     shift, ALL shifted indexicals must shift to the same depth.
 
     In Zazaki, if "I" shifts under an attitude verb, then "you" must
@@ -132,7 +132,7 @@ theorem uniform_depth (u : UniformShiftParam) :
 -- § Mixed Shift Lexicon (Deal 2020)
 -- ════════════════════════════════════════════════════════════════
 
-/-- Deal (2020): Nez Perce exhibits MIXED shifting — person indexicals
+/-- @cite{deal-2020}: Nez Perce exhibits MIXED shifting — person indexicals
     shift under attitude verbs but temporal indexicals do not.
 
     "Hii-pe-n'wi-ye kuhet hi-ppeew-n-e"

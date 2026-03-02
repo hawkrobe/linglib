@@ -74,7 +74,7 @@ def allPronouns : List PronounEntry :=
 -- Allocutive Particles (SAP-layer)
 -- ============================================================================
 
-/-- *-desu* polite copula / *-masu* polite verbal (Miyagawa 2012). -/
+/-- *-desu* polite copula / *-masu* polite verbal. -/
 def desuMasu : AllocutiveEntry :=
   { form := "-desu/-masu", register := .formal, gloss := "POL" }
 

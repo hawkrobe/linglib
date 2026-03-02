@@ -16,12 +16,12 @@ Both theories consume the same `SemDeriv.Derivation` (syntax-agnostic interface)
          (from CCG, HPSG, etc.)
                   │
          ┌───────┴───────┐
-         ▼               ▼
-    NeoGricean          RSA
-         │               │
-         ▼               ▼
-    ¬Bel(all)      P(¬all) high
-         │               │
+         ▼ ▼
+    NeoGricean RSA
+         │ │
+         ▼ ▼
+    ¬Bel(all) P(¬all) high
+         │ │
          └───────┬───────┘
                  ▼
          BOTH derive "not all"

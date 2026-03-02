@@ -45,7 +45,7 @@ open Phenomena.Nonliteral.Humor.Studies.KaoEtAl2016
 
 ### Kao's Model
 
-Given sentence w = {w_1, ..., w_n} with ambiguous word h (homophone of h'):
+Given sentence w = {w_1,..., w_n} with ambiguous word h (homophone of h'):
 - Meaning m ∈ {m_a, m_b} identified with h and h'
 - Each word w_i is either relevant (f_i = 1) or noise (f_i = 0)
 - P(w_i | m, f_i=1) ∝ semantic relatedness of w_i to m
@@ -54,7 +54,7 @@ Given sentence w = {w_1, ..., w_n} with ambiguous word h (homophone of h'):
 ### SDS Model
 
 Given ambiguous word in context:
-- Concept c ∈ {c_1, c_2, ...}
+- Concept c ∈ {c_1, c_2,...}
 - Selectional factor: P(c | predicate constraints)
 - Scenario factor: P(c | context/frame constraints)
 - Posterior: P(c) ∝ selectional(c) × scenario(c)
@@ -371,7 +371,7 @@ def hasConflict (sys : α) : Bool :=
 
 The proof requires:
 1. Case analysis on whether `listArgmax` returns `some` or `none`
-2. Showing that `some θ₁, some θ₂ => θ₁ != θ₂` is equivalent to `∃ c1 c2, ... ∧ c1 != c2`
+2. Showing that `some θ₁, some θ₂ => θ₁ != θ₂` is equivalent to `∃ c1 c2,... ∧ c1 != c2`
 
 This is straightforward but tedious due to Option type handling.
 
@@ -418,8 +418,8 @@ noncomputable def relevanceGivenMeaning (model : KaoModel W M) (m : M) : W → �
 /-- Symmetrized KL divergence -/
 noncomputable def symmetrizedKL (p q : W → ℚ) (support : List W) : ℚ :=
   support.foldl (λ acc w =>
-    acc + (p w - q w) * (Real.log (p w) - Real.log (q w))  -- needs real log
-  ) 0
+    acc + (p w - q w) * (Real.log (p w) - Real.log (q w)) -- needs real log
+) 0
 
 /-- Kao's distinctiveness measure -/
 noncomputable def distinctiveness (model : KaoModel W M) : ℚ :=
@@ -448,14 +448,14 @@ def kaoToSDS (model : KaoModel W M) : SDSSystem M where
       if model.relatedness w model.meanings.1 > model.relatedness w model.meanings.2
       then acc * model.relatedness w m
       else acc
-    ) 1
+) 1
   -- Scenario factor: aggregate evidence from words favoring m_b
   scenarioFactor m :=
     model.words.foldl (λ acc w =>
       if model.relatedness w model.meanings.2 > model.relatedness w model.meanings.1
       then acc * model.relatedness w m
       else acc
-    ) 1
+) 1
 ```
 
 #### Step 5: The Main Theorem
@@ -470,8 +470,8 @@ theorem conflict_implies_high_distinctiveness
   -- Proof sketch:
   -- 1. h_conflict means argmax(sel) ≠ argmax(scen)
   -- 2. By construction of kaoToSDS, this means:
-  --    - Words favoring m_a collectively prefer m_a
-  --    - Words favoring m_b collectively prefer m_b
+  -- - Words favoring m_a collectively prefer m_a
+  -- - Words favoring m_b collectively prefer m_b
   -- 3. This separation implies F_a and F_b have different supports
   -- 4. Different supports → high KL divergence → high distinctiveness
   sorry
@@ -515,7 +515,7 @@ For the two-meaning case with symmetric word distributions, we can simplify:
 ```lean
 /-- In the symmetric binary case, conflict and distinctiveness are equivalent -/
 theorem binary_symmetric_equivalence
-    (model : KaoModel W Bool)  -- Bool for two meanings
+    (model : KaoModel W Bool) -- Bool for two meanings
     (h_symmetric : ∀ w, model.relatedness w true + model.relatedness w false = 1)
     (sds := kaoToSDS model) :
     hasConflict sds = true ↔ distinctiveness model > 0 := by

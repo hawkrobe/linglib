@@ -89,7 +89,7 @@ def presPerfSimple (V : EventPred W Time) (tc : Time) (w : W) : Prop :=
   evalPres (PERF (PRFV V)) tc w
 
 /-- **Present perfect progressive with Extended Now**: PRES(PERF_XN(IMPF(V), tᵣ)).
-    Knick & Sharf (2026) eq. 39b: the U-perf reading.
+    @cite{knick-sharf-2026} eq. 39b: the U-perf reading.
     "John has been running (since Monday)" with domain restriction tᵣ on LB. -/
 def presPerfProgXN (V : EventPred W Time) (tᵣ : Set Time) (tc : Time) (w : W) : Prop :=
   evalPres (PERF_XN (IMPF V) tᵣ) tc w

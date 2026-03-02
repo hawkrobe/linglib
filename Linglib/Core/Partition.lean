@@ -17,9 +17,9 @@ import Mathlib.Algebra.Order.Ring.Rat
 Refinement, coarsening, and cell enumeration for partitions (`QUD`).
 
 Partitions arise wherever a domain is classified into mutually exclusive,
-exhaustive categories. Groenendijk & Stokhof (1984) use them for question
+exhaustive categories. @cite{groenendijk-stokhof-1984} use them for question
 denotations, but the lattice structure is domain-general: it applies equally
-to attribute spaces (Carnap 1971, Merin 1999), conceptual categories, and
+to attribute spaces, conceptual categories, and
 any classificatory scheme.
 
 ## Lattice Structure
@@ -33,7 +33,7 @@ Partitions form a bounded lattice ordered by refinement:
 
 ## Decision-Theoretic Significance
 
-Merin (1999) argues that partitions are decision-theoretically privileged:
+@cite{merin-1999} argues that partitions are decision-theoretically privileged:
 coarsening preserves compositionality of expected value, while arbitrary
 restructuring does not. Negative attributes are products of proper coarsening —
 an epistemic, syntax-independent characterization of negativity.
@@ -60,7 +60,7 @@ scoped infix:50 " ⊑ " => QUD.refines
 /-- Q coarsens Q' iff Q' refines Q (dual of refinement).
 
 Coarsening merges cells: where Q' distinguishes elements, Q may not.
-Merin (1999) defines negative attributes in terms of coarsening:
+@cite{merin-1999} defines negative attributes in terms of coarsening:
 negation is the linguistic device that produces coarsenings on the fly. -/
 def coarsens (q q' : QUD M) : Prop := q' ⊑ q
 
@@ -362,12 +362,12 @@ theorem toCells_nonempty (q : QUD M) (w : M) (ws : List M) :
   rw [this] at hw
   exact List.not_mem_nil hw
 
-/-! ### Proper Coarsening (Merin 1999) -/
+/-! ### Proper Coarsening -/
 
 /-- Q is a proper coarsening of Q' over a finite domain iff Q coarsens Q'
 and has strictly fewer cells.
 
-Merin (1999) defines negative attributes via proper coarsening:
+@cite{merin-1999} defines negative attributes via proper coarsening:
 R is a *negative attribute* with respect to partition F iff for some Q ∈ F,
 {R, Q} is a proper coarsening of F. This characterization is purely epistemic
 and syntax-independent — negativity is a matter of partition kinetics, not
@@ -375,14 +375,14 @@ morphological form. -/
 def isProperCoarsening (q q' : QUD M) (elements : List M) : Prop :=
   q.coarsens q' ∧ q.numCells elements < q'.numCells elements
 
-/-! ### Binary Partitions (Merin 1999) -/
+/-! ### Binary Partitions -/
 
 /-- Binary partition from a Boolean predicate. Two elements are equivalent
  iff the predicate gives the same value on both.
 
 Binary partitions are the building blocks of coarsening: every proper
 coarsening can be decomposed into steps that merge exactly two cells,
-each corresponding to a binary partition. Merin (1999) characterizes
+each corresponding to a binary partition. @cite{merin-1999} characterizes
 negative attributes entirely in terms of binary partition coarsening. -/
 abbrev binaryPartition (p : M → Bool) : QUD M := ofProject p
 
@@ -408,7 +408,7 @@ theorem binaryPartition_coarsens (q : QUD M) (p : M → Bool)
 /-- A predicate R is a *negative attribute* with respect to partition Q over
 a finite domain iff the binary partition of R is a proper coarsening of Q.
 
-Merin (1999): negativity is not a syntactic property (presence of "un-",
+@cite{merin-1999}: negativity is not a syntactic property (presence of "un-",
 "not", etc.) but a partition-kinetic one. R is negative relative to Q when
 the R/¬R distinction is strictly coarser than Q's partition — answering
 whether R holds loses information that Q distinguishes. -/
@@ -423,7 +423,7 @@ Two elements are equivalent iff they are Q-equivalent AND agree on P.
 This is the meet of Q with the binary partition of P: the finest partition
 that is coarser than both Q and binaryPartition P.
 
-Merin (1999): for any proposition P and partition Q, this is the unique
+@cite{merin-1999}: for any proposition P and partition Q, this is the unique
 coarsest partition that refines Q while still distinguishing P-worlds
 from ¬P-worlds within each Q-cell. -/
 def coarsestPreserving (q : QUD M) (P : M → Bool) : QUD M :=
@@ -473,7 +473,7 @@ by the cell's probability.
 
 EU_Q(a) = Σ_{c ∈ cells(Q)} P(c) · EU(a | c)
 
-This is the partition-relative expected utility that Merin (1999) shows is
+This is the partition-relative expected utility that @cite{merin-1999} shows is
 compositional under coarsening. Uses `Finpartition` for exhaustivity and
 disjointness, replacing ~200 lines of custom foldl arithmetic. -/
 def partitionEU [Fintype M] [DecidableEq M] {A : Type*}
@@ -507,7 +507,7 @@ private theorem cellProb_mul_conditionalEU [DecidableEq M] {A : Type*}
     congr 1; ext w; field_simp
 
 open Core.DecisionTheory in
-/-- Law of total expectation for partition-relative EU (Merin 1999).
+/-- Law of total expectation for partition-relative EU.
 
 The unconditional expected utility equals the partition-relative EU for
 any partition, because partitions are exhaustive and mutually exclusive.
@@ -544,7 +544,7 @@ theorem coarsening_preserves_eu [Fintype M] [DecidableEq M] {A : Type*}
   (eu_eq_partitionEU dp a q hprior).symm.trans
     (eu_eq_partitionEU dp a q' hprior)
 
-/-! ### Blackwell Ordering (Blackwell 1953) -/
+/-! ### Blackwell Ordering -/
 
 section BlackwellHelpers
 
@@ -692,7 +692,7 @@ open Core.DecisionTheory in
 
 V_Q(D, W) = Σ_{c ∈ cells(Q,W)} max_a [Σ_{w∈c} p(w)·u(w,a)]
 
-Following Merin (1999, p. 264), this uses raw weighted sums directly
+Following @cite{merin-1999}, this uses raw weighted sums directly
 rather than factoring through conditional EU. The equivalence
 `P(c) · max_a condEU(a,c) = max_a [Σ_{w∈c} p(w)·u(w,a)]` holds when
 priors are non-negative. The raw form makes Blackwell's theorem a
@@ -770,7 +770,7 @@ as valuable as coarser ones, for any decision problem.
 
 V_Q(D) ≥ V_{Q'}(D) for all decision problems D, whenever Q ⊑ Q'.
 
-**Proof** (Merin 1999, p. 264): Working directly with raw weighted sums
+**Proof**: Working directly with raw weighted sums
 `Σ_{w∈c} p(w)·u(w,a)`:
 
 1. Each coarse cell's sum decomposes into fine cells (`Finset.sum_biUnion`)

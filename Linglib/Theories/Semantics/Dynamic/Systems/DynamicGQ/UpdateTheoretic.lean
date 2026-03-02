@@ -6,7 +6,7 @@ import Linglib.Core.Mereology
 @cite{charlow-2021}
 
 Same operators as `DynamicGQ.Basic`, but defined directly over
-`StateCCP W E := State W E → State W E` — Charlow's (2021) main contribution.
+`StateCCP W E := State W E → State W E` — @cite{charlow-2021}'s main contribution.
 
 The key insight: `Mvar_u` (equation 78) maximizes over **the entire context**,
 not per-assignment. This makes it non-distributive, which is exactly what
@@ -53,7 +53,7 @@ def dseq_u (L R : StateCCP W E) : StateCCP W E := R ∘ L
 infixl:65 " ⨟ᵤ " => dseq_u
 
 /-- Composed update-theoretic "exactly N" (equation 81):
-    E^v_u ; M_v_u ; n_v_u -/
+    E^v_u; M_v_u; n_v_u -/
 def exactlyN_u (v : Nat) (P : E → Prop) (n : Nat) [PartialOrder E] [Fintype E] :
     StateCCP W E :=
   dseq_u (dseq_u (Evar_u v P) (Mvar_u v (Evar_u v P))) (CardTest_u v n)
@@ -63,7 +63,7 @@ def exactlyN_u (v : Nat) (P : E → Prop) (n : Nat) [PartialOrder E] [Fintype E]
 -- ════════════════════════════════════════════════════
 
 /-- M_v is NOT distributive: it surveys the entire context to determine
-    which assignments have maximal v-values (Charlow 2021, §6).
+    which assignments have maximal v-values.
     TODO: Prove by exhibiting a 2-element context where per-element
     maximization differs from whole-context maximization. -/
 theorem Mvar_u_nondistributive [PartialOrder E] :

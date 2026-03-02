@@ -6,11 +6,11 @@ import Linglib.Theories.Syntax.Minimalism.Core.Voice
 # Categorizing Heads (Distributed Morphology) @cite{harley-2014}
 @cite{acquaviva-2008} @cite{embick-2004} @cite{marantz-1997} @cite{pfau-2000}
 
-Harley (2014) "On the identity of roots" addresses three questions about
+@cite{harley-2014} "On the identity of roots" addresses three questions about
 roots in DM:
 
 1. **What are roots?** (§2) Root terminal nodes are individuated by arbitrary
-   indices (Pfau 2000, Acquaviva 2008), not by phonological or semantic content.
+   indices, not by phonological or semantic content.
    The **Categorization Assumption** holds: roots must merge with a categorizing
    head (n, v, a) to enter the syntax.
 
@@ -184,8 +184,7 @@ theorem denominal_yields_verbal (r : Root) :
           cr.category = Cat.V :=
   ⟨⟨r, .v⟩, rfl, rfl⟩
 
-/-- Deadjectival derivation (a → v) connects to Embick's (2004)
-    resultStative structure: what RootTypology calls
+/-- Deadjectival derivation (a → v) connects to @cite{embick-2004}'s resultStative structure: what RootTypology calls
     `AdjectivalStructure.resultStative` is, in DM terms, a root
     first categorized by a, then further categorized by v. -/
 theorem deadjectival_source_target :

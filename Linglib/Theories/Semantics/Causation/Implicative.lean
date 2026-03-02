@@ -27,7 +27,7 @@ the complement developed. `failSem` holds when the complement did NOT develop.
 
 ## Grounding
 
-The `VerbEntry.implicativeBuilder := some .positive` for *manage*
+The `VerbEntry.implicativeBuilder := some.positive` for *manage*
 in `Fragments/English/Predicates/Verbal.lean` is **grounded** by
 `manage_entails_complement`: if `manageSem` holds, the complement is true.
 
@@ -77,7 +77,7 @@ def failSem (sc : ImplicativeScenario) : Bool :=
 /-- **Central grounding theorem**: if `manageSem` holds, the complement
     is true after normal development.
 
-    This grounds `VerbEntry.implicativeBuilder := some .positive` for *manage*:
+    This grounds `VerbEntry.implicativeBuilder := some.positive` for *manage*:
     the entailment is not stipulated but follows from causal sufficiency. -/
 theorem manage_entails_complement (sc : ImplicativeScenario)
     (h : manageSem sc = true) :
@@ -208,7 +208,7 @@ theorem entailsComplement_negative :
 -- Karttunen's Full Verb Classification (Nadathur 2023, Chapter 3)
 -- ════════════════════════════════════════════════════
 
-/-- Directionality of complement entailment (Karttunen 1971).
+/-- Directionality of complement entailment.
 
     - **oneWay**: entailment only in the affirmative ("be able to VP" + PFV → VP)
     - **twoWay**: entailment in both affirmative and negative
@@ -218,7 +218,7 @@ inductive Directionality where
   | twoWay    -- both affirmative and negative (manage, fail)
   deriving DecidableEq, Repr, BEq
 
-/-- Full classification of complement-entailing verbs (Karttunen 1971; Nadathur 2023).
+/-- Full classification of complement-entailing verbs.
 
     The three parameters:
     - **polarity**: positive (manage: success → complement true) vs

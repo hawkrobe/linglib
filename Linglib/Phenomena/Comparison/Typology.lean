@@ -5,13 +5,13 @@ import Linglib.Core.Lexical.Word
 @cite{beck-2009} @cite{dixon-2012} @cite{haspelmath-2001} @cite{kennedy-2007} @cite{stassen-1985} @cite{stassen-2013}
 
 Cross-linguistic data on how languages express comparison of inequality
-("X is taller than Y"), based on Stassen (2013) in WALS Online. Stassen
+("X is taller than Y"), based on @cite{stassen-2013} in WALS Online. Stassen
 identifies five major construction types attested across a sample of 167
 languages, classified by how the standard of comparison (the entity being
 compared to) is encoded.
 
 The typology intersects with two further dimensions:
-- **Degree word typology** (Beck et al. 2009): whether a language has an overt
+- **Degree word typology**: whether a language has an overt
   degree word like English "more" or achieves comparison morphologically or
   without any degree marker.
 - **Superlative strategies**: how superlatives are formed (elative, definite
@@ -19,14 +19,14 @@ The typology intersects with two further dimensions:
 
 ## Key typological generalizations
 
-1. Locational comparatives are the most common type worldwide (Stassen 2013).
+1. Locational comparatives are the most common type worldwide.
 2. Particle comparatives concentrate in Europe (a Standard Average European
    feature; Haspelmath 2001).
 3. Exceed comparatives concentrate in West Africa and mainland Southeast Asia.
 4. Conjoined comparatives are the least common type, concentrated in Papuan
    and Australian languages.
 5. SOV languages strongly favor locational comparatives; SVO languages split
-   between exceed and particle types (Stassen 1985, 2013).
+   between exceed and particle types.
 
 -/
 
@@ -76,7 +76,7 @@ inductive ComparativeType where
 
 /-- Whether a language has an overt degree word in comparatives.
 
-    Beck et al. (2009) classify languages into three types based on the
+    @cite{beck-2009} classify languages into three types based on the
     presence and nature of degree morphology in comparison constructions:
     - Languages with a dedicated degree word (English "more", German "mehr")
     - Languages with comparative morphology but no free degree word
@@ -140,7 +140,7 @@ def WALSCount.totalOf (cs : List WALSCount) : Nat :=
 
 /-- Chapter 121 distribution: comparative construction types (N = 167).
 
-    Values from Stassen (2013), WALS Online feature 121A.
+    Values from @cite{stassen-2013}, WALS Online feature 121A.
     The locational type is most frequent, followed by particle.
     Conjoined comparatives are by far the rarest single type. -/
 def ch121Counts : List WALSCount :=
@@ -169,7 +169,7 @@ structure ComparativeProfile where
   iso : String
   /-- WALS Ch 121 comparative type. -/
   comparativeType : ComparativeType
-  /-- Degree word typology (Beck et al. 2009). -/
+  /-- Degree word typology. -/
   degreeWord : DegreeWordType
   /-- Primary superlative strategy. -/
   superlative : SuperlativeStrategy
@@ -570,7 +570,7 @@ theorem conjoined_rarest :
 -- ============================================================================
 
 /-- In our sample, particle comparative languages are all Indo-European
-    languages of Europe. This reflects Haspelmath's (2001) identification of
+    languages of Europe. This reflects @cite{haspelmath-2001}'s identification of
     the comparative particle as a Standard Average European feature. -/
 def particleLanguages : List ComparativeProfile :=
   allLanguages.filter (·.hasType .particle)

@@ -1,7 +1,7 @@
 import Linglib.Theories.Semantics.Tense.Basic
 
 /-!
-# Abusch (1997): Sequence of Tense and Temporal De Re
+# @cite{abusch-1997}: Sequence of Tense and Temporal De Re
 @cite{abusch-1997} @cite{sharvit-2003}
 
 Abusch's theory: tense morphemes are temporal pronouns (variables with
@@ -190,7 +190,7 @@ theorem abusch_derives_temporal_de_re {Time : Type*} [LinearOrder Time]
 -- § Theory Identity Card
 -- ════════════════════════════════════════════════════════════════
 
-/-- Abusch (1997) theory identity card. -/
+/-- @cite{abusch-1997} theory identity card. -/
 def Abusch : TenseTheory where
   name := "Abusch 1997"
   citation := "Abusch, D. (1997). Sequence of tense and temporal de re. L&P 20(1): 1-50."

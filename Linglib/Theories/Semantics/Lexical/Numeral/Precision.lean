@@ -3,9 +3,9 @@ import Mathlib.Data.Rat.Defs
 
 /-!
 # Pragmatic Halo and Precision Modes
-@cite{krifka-2007} @cite{lasersohn-1999} @cite{woodin-winter-bhatt-2024}
+@cite{krifka-2007} @cite{lasersohn-1999} @cite{woodin-winter-bhatt-2024} @cite{kao-etal-2014-hyperbole}
 
-Rounding semantics for numeral imprecision (Lasersohn 1999, Krifka 2007, Kao et al. 2014).
+Rounding semantics for numeral imprecision.
 Round numbers (100, 1000) are interpreted imprecisely; sharp numbers (103, 1001)
 are interpreted precisely. This is the "pragmatic halo" effect.
 
@@ -13,7 +13,7 @@ are interpreted precisely. This is the "pragmatic halo" effect.
 
 namespace Semantics.Lexical.Numeral.Precision
 
-/-- Precision mode for numeral interpretation (Kao et al. 2014). -/
+/-- Precision mode for numeral interpretation. -/
 inductive PrecisionMode where
   | exact       -- f_e(s) = s
   | approximate -- f_a(s) = Round(s)
@@ -71,7 +71,7 @@ def adaptiveTolerance (n : Nat) (baseTol : ℚ) : ℚ :=
 
 open Core.Roundness in
 
-/-- Pragmatic halo width as a function of roundness score (Lasersohn 1999). -/
+/-- Pragmatic halo width as a function of roundness score. -/
 def haloWidth (n : Nat) : ℚ :=
   let score := Core.Roundness.roundnessScore n
   let magnitudeFactor : ℚ := if n ≥ 1000 then 50

@@ -65,7 +65,7 @@ export _root_.Mereology (AlgClosure CUM DIV QUA Atom
 
 /-- Classical Extensional Mereology for events: enriches `EventMereology`
     with binary sum (⊔) via `SemilatticeSup (Ev Time)`.
-    Champollion (2017) Ch. 2: event domain forms a join semilattice. -/
+    @cite{champollion-2017} Ch. 2: event domain forms a join semilattice. -/
 class EventCEM (Time : Type*) [LinearOrder Time]
     extends EventMereology Time where
   /-- Events form a join semilattice (binary sum ⊕ exists). -/
@@ -76,7 +76,7 @@ class EventCEM (Time : Type*) [LinearOrder Time]
   /-- Intervals form a join semilattice (for τ homomorphism). -/
   intervalSemilatticeSup : SemilatticeSup (Interval Time)
   /-- τ is a sum homomorphism: τ(e₁ ⊕ e₂) = τ(e₁) ⊕ τ(e₂).
-      Champollion (2017) §2.5.1. -/
+      @cite{champollion-2017} §2.5.1. -/
   τ_hom : ∀ (e₁ e₂ : Ev Time),
     (@SemilatticeSup.sup _ evSemilatticeSup e₁ e₂).runtime =
      @SemilatticeSup.sup _ intervalSemilatticeSup e₁.runtime e₂.runtime
@@ -93,7 +93,7 @@ noncomputable instance eventCEMSemilatticeSup (Time : Type*) [LinearOrder Time]
 /-- Lexical cumulativity for event predicates: the event-specific
     instantiation of CUM. A verb predicate V is lexically cumulative
     iff for any two V-events, their sum is also a V-event.
-    Champollion (2017) §3.2: activities and states are lexically cumulative. -/
+    @cite{champollion-2017} §3.2: activities and states are lexically cumulative. -/
 def LexCum (Time : Type*) [LinearOrder Time] [cem : EventCEM Time]
     (P : EvPred Time) : Prop :=
   ∀ (e₁ e₂ : Ev Time), P e₁ → P e₂ →
@@ -114,7 +114,7 @@ theorem cum_iff_lexCum (Time : Type*) [LinearOrder Time] [cem : EventCEM Time]
 
 /-- A thematic-role sum homomorphism: the function mapping each event
     to its θ-role filler preserves ⊕.
-    Champollion (2017) §2.5.1 eq. 34–35: Agent(e₁ ⊕ e₂) = Agent(e₁) ⊕ Agent(e₂).
+    @cite{champollion-2017} §2.5.1 eq. 34–35: Agent(e₁ ⊕ e₂) = Agent(e₁) ⊕ Agent(e₂).
 
     This is stated as: given a function `θ : Ev Time → Entity` extracting
     the unique role-filler, θ is a sum homomorphism. -/
@@ -139,7 +139,7 @@ class RoleHom (Entity Time : Type*) [LinearOrder Time] [cem : EventCEM Time]
 
 /-- τ is a sum homomorphism: follows directly from EventCEM.τ_hom.
     τ(e₁ ⊕ e₂) = τ(e₁) ⊕ τ(e₂).
-    Champollion (2017) §2.5.1: the runtime function preserves sums. -/
+    @cite{champollion-2017} §2.5.1: the runtime function preserves sums. -/
 theorem τ_is_sum_hom (Time : Type*) [LinearOrder Time] [cem : EventCEM Time] :
     ∀ (e₁ e₂ : Ev Time),
       (@SemilatticeSup.sup _ cem.evSemilatticeSup e₁ e₂).runtime =
@@ -160,8 +160,7 @@ noncomputable instance instIsSumHomRuntime (Time : Type*) [LinearOrder Time]
 -- § 5. Bridges to Existing Types
 -- ════════════════════════════════════════════════════
 
-/-- Atelic Vendler classes yield predicates that are naturally cumulative
-    (Champollion 2017, §3.2). States and activities have the subinterval
+/-- Atelic Vendler classes yield predicates that are naturally cumulative. States and activities have the subinterval
     property, which entails CUM for their event predicates. -/
 theorem vendlerClass_atelic_implies_cum_intent
     (c : VendlerClass) (h : c.telicity = .atelic) :
@@ -169,8 +168,7 @@ theorem vendlerClass_atelic_implies_cum_intent
   cases c <;> simp [VendlerClass.telicity] at h <;> try exact Or.inl rfl
   · exact Or.inr rfl
 
-/-- Telic Vendler classes yield predicates that are naturally quantized
-    (Champollion 2017, §3.3). Achievements and accomplishments lack
+/-- Telic Vendler classes yield predicates that are naturally quantized. Achievements and accomplishments lack
     the subinterval property, corresponding to QUA. -/
 theorem vendlerClass_telic_implies_qua_intent
     (c : VendlerClass) (h : c.telicity = .telic) :

@@ -156,7 +156,7 @@ The key result: if you have
 Then the "graded" truth value emerges:
 - `tall(x) = E_θ[tall_θ(x)] = P(height(x) > θ)`
 
-This is Lassiter & Goodman (2017)'s central insight, formalized here.
+This is @cite{lassiter-goodman-2017}'s central insight, formalized here.
 -/
 
 /--
@@ -348,7 +348,7 @@ L1 inverts S1: given utterance, infer world.
 L1 u := do
   w ← worldPrior
   -- Condition on "speaker would choose u at world w"
-  observe (S1 w chose u)  -- Condition on speaker choice
+  observe (S1 w chose u) -- Condition on speaker choice
   pure w
 ```
 
@@ -369,9 +369,9 @@ The RSA recursion has this structure:
 
 ```
 program := do
-  w ← worldPrior           -- Sample world
-  u ← S1_at w              -- Speaker chooses utterance (choose, not observe)
-  w' ← L1_given u          -- Listener infers world (observe + Bayes)
+  w ← worldPrior -- Sample world
+  u ← S1_at w -- Speaker chooses utterance (choose, not observe)
+  w' ← L1_given u -- Listener infers world (observe + Bayes)
   pure (w, u, w')
 ```
 
@@ -410,7 +410,7 @@ For Boolean semantics (φ ∈ {0,1}), this is exactly:
 ```
 L0 u := do
   w ← worldPrior
-  observe (φ u w = 1)  -- filter by truth
+  observe (φ u w = 1) -- filter by truth
   pure w
 ```
 
@@ -496,7 +496,7 @@ In monadic terms:
 ```
 L1 u := do
   (w, i, l, a, q) ← jointPrior
-  weight ← S1_prob w i l a q u  -- soft conditioning
+  weight ← S1_prob w i l a q u -- soft conditioning
   pure (w, weight)
 ```
 -/
@@ -541,9 +541,9 @@ Grove & White's δ-rules are *program transformations* that preserve
 meaning. For example:
 
 ```
-δ-observe: observe true; k  =  k
-δ-fail:    observe false; k =  fail
-δ-bind:    pure v >>= k     =  k v
+δ-observe: observe true; k = k
+δ-fail: observe false; k = fail
+δ-bind: pure v >>= k = k v
 ```
 
 These let us simplify RSA computations while proving correctness.

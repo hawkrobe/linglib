@@ -1,11 +1,11 @@
 import Linglib.Phenomena.Reference.Studies.SikosEtAl2021
 
 /-!
-# Bridge: Sikos et al. (2021) -- Structural Model Relationships
+# Bridge: @cite{sikos-etal-2021} -- Structural Model Relationships
 @cite{sikos-etal-2021}
 
 This bridge file formalizes the *structural* relationship between the
-models compared in Sikos et al. (2021):
+models compared in @cite{sikos-etal-2021}:
 
 1. The baseline model (prior × literal semantics) IS RSA's L0.
 2. In trivial contexts (unique referent), L1 = L0.

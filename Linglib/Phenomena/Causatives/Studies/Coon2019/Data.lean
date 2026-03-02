@@ -1,8 +1,8 @@
 /-!
-# Chuj Verb Building: Empirical Data (Coon 2019)
+# Chuj Verb Building: Empirical Data
 @cite{coon-2019}
 
-Theory-neutral empirical data from Coon (2019) "Building verbs in Chuj:
+Theory-neutral empirical data from @cite{coon-2019} "Building verbs in Chuj:
 Consequences for the nature of roots." *Journal of Linguistics* 55(1): 35–81.
 
 Chuj is a Q'anjob'alan (Mayan) language spoken in Guatemala and Mexico.
@@ -156,10 +156,10 @@ def ajOnAntipassive (apt : AntipassiveType) : Bool :=
     "chi yuj" ('on purpose') is grammatical with -ch but not -j.
 
     (47) Ix-mak'-ch-aj-i nok' wakax (yuj ix) chi yuj.
-         'The cow was hit (by her) on purpose.'  ✓
+         'The cow was hit (by her) on purpose.' ✓
 
     (48) *Ix-mak'-j-i nok' wakax chi yuj.
-         'The cow was hit on purpose.'  ✗ -/
+         'The cow was hit on purpose.' ✗ -/
 def agentAdverbOK (vs : ChujVoiceSuffix) : Bool :=
   match vs with
   | .null => true   -- active: agent is overt
@@ -170,9 +170,9 @@ def agentAdverbOK (vs : ChujVoiceSuffix) : Bool :=
 /-- By-phrase test (§4.1, exx. 47, 49).
     "yuj ix" ('by her') is grammatical with -ch but not -j.
 
-    (47) ... (yuj ix) ... 'by her'  ✓ with -ch
+    (47)... (yuj ix)... 'by her' ✓ with -ch
     (49) *Ix-mak'-j-i nok' wakax yuj ix.
-         'The cow was hit by her.'  ✗ with -j -/
+         'The cow was hit by her.' ✗ with -j -/
 def byPhraseOK (vs : ChujVoiceSuffix) : Bool :=
   match vs with
   | .null => false  -- active: agent is already overt

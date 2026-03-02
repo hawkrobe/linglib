@@ -5,7 +5,7 @@ import Linglib.Core.Order.Normality
 /-!
 # Belief Revision and Preferential Reasoning
 
-@cite{halpern-2003} @cite{alchourrn-makinson-1985} @cite{kraus-magidor-1990}Halpern (2003, Ch. 8) connects three frameworks — default reasoning
+@cite{halpern-2003} @cite{alchourrn-makinson-1985} @cite{kraus-magidor-1990}@cite{halpern-2003} connects three frameworks — default reasoning @cite{kratzer-1981} @cite{kratzer-2012}
 (System P), AGM belief revision, and conditional plausibility measures —
 showing they are algebraically equivalent. This file formalizes:
 
@@ -19,13 +19,13 @@ showing they are algebraically equivalent. This file formalizes:
 ## The Connection
 
 ```
-Kratzer ordering source    (Theories/Semantics/Modality/Kratzer.lean)
+Kratzer ordering source (Theories/Semantics/Modality/Kratzer.lean)
     ↓
-Preferential structure     (this file: System P axioms)
+Preferential structure (this file: System P axioms)
     ↓
-Conditional plausibility   (EpistemicScale/Conditional.lean)
+Conditional plausibility (EpistemicScale/Conditional.lean)
     ↓
-AGM revision operator      (this file: K*1–K*5)
+AGM revision operator (this file: K*1–K*5)
 ```
 
 -/
@@ -45,8 +45,7 @@ abbrev BeliefSet (W : Type*) := Set (Prop' W)
 /-- An AGM revision operator with fixed prior beliefs.
 
     The prior belief set K is determined by the measure (the probability-1
-    propositions), not freely chosen. This matches Halpern's (2003, §8.4)
-    representation theorem, where the AGM postulates hold for the specific
+    propositions), not freely chosen. This matches @cite{halpern-2003}'s representation theorem, where the AGM postulates hold for the specific
     K induced by the conditional plausibility measure.
 
     K*3 (inclusion) is stated in logical-consequence form: K*φ ⊆ Cn(K ∪ {φ}),
@@ -89,8 +88,8 @@ structure AGMRevision (W : Type*) where
 
 /-- A preferential consequence relation: `φ |~ ψ` reads "normally, if φ then ψ".
 
-    System P (Kraus, Lehmann & Magidor 1990) axiomatizes the minimal
-    properties of default reasoning. Halpern (2003, §8.1) shows that
+    System P axiomatizes the minimal
+    properties of default reasoning. @cite{halpern-2003} shows that
     System P is sound and complete for preferential models — structures
     where worlds are ordered by plausibility, and `φ |~ ψ` iff ψ holds
     at all most-plausible φ-worlds. -/
@@ -125,7 +124,7 @@ structure PreferentialConsequence (W : Type*) where
 
 /-- Rational Monotonicity: if φ |~ χ and ¬(φ |~ ¬ψ), then (φ ∧ ψ) |~ χ.
 
-    This is strictly stronger than System P. Halpern (2003, §8.1) shows
+    This is strictly stronger than System P. @cite{halpern-2003} shows
     it corresponds to ranked (well-ordered) plausibility models, not
     merely preferential ones. -/
 def rationalMonotonicity {W : Type*} (pc : PreferentialConsequence W) : Prop :=
@@ -163,7 +162,7 @@ def PlausibilityOrder.minimal {W : Type*} (po : PlausibilityOrder W)
 /-- A plausibility ordering induces a preferential consequence relation:
     φ |~ ψ iff all minimal φ-worlds satisfy ψ.
 
-    Halpern (2003), Theorem 8.1.1: System P is sound and complete for
+    @cite{halpern-2003}, Theorem 8.1.1: System P is sound and complete for
     this semantics. -/
 def PlausibilityOrder.toPreferential {W : Type*}
     (po : PlausibilityOrder W) : PreferentialConsequence W where
@@ -198,9 +197,9 @@ def PlausibilityOrder.toPreferential {W : Type*}
 
 /-- Kratzer's ordering source induces a plausibility ordering on worlds.
 
-    Given propositions A₁, ..., Aₙ in the ordering source, world w is
+    Given propositions A₁,..., Aₙ in the ordering source, world w is
     at least as plausible as v iff every Aᵢ satisfied by v is also
-    satisfied by w (Kratzer 1981, 2012).
+    satisfied by w.
 
     This is exactly Kratzer's `atLeastAsGoodAs`, repackaged as a
     `PlausibilityOrder`. The bridge connects:
@@ -265,7 +264,7 @@ def kratzerPlausibility {W : Type*} [Fintype W] [DecidableEq W]
 /-- The preferential consequence relation induced by Kratzer's ordering
     source: φ |~ ψ iff all most-plausible φ-worlds (given the ordering
     source) satisfy ψ. This is the formal content of Kratzer's claim that
-    "modal base + ordering source = conditional" (Kratzer 2012, Ch. 2). -/
+    "modal base + ordering source = conditional". -/
 def kratzerDefault {W : Type*} [Fintype W] [DecidableEq W]
     (orderingSource : List (BProp W)) : PreferentialConsequence W :=
   (kratzerPlausibility orderingSource).toPreferential
@@ -389,7 +388,7 @@ open Core.Scale in
     For the ratio construction `FinAddMeasure.toCondMeasure`, regularity
     is equivalent to: every singleton has positive measure.
 
-    Halpern's (2003, §8.4) regularity condition. -/
+    @cite{halpern-2003}'s regularity condition. -/
 structure Core.Scale.RegularCondMeasure (W : Type*) extends Core.Scale.CondMeasure W where
   regular : ∀ (φ : Set W), (∃ w, w ∈ φ) → condMu φ φ ≠ 0
   muPositive : ∀ (φ : Set W), (∃ w, w ∈ φ) → 0 < mu φ
@@ -419,7 +418,7 @@ private theorem revised_entails {W : Type*}
   exact absurd (hbeliefs (fun v => v ≠ w) hcompl) (not_not.mpr rfl)
 
 open Core.Scale in
-/-- **Theorem** (Halpern 2003, §8.4): every regular conditional plausibility
+/-- **Theorem**: every regular conditional plausibility
     measure induces an AGM revision operator on finite W.
 
     Construction:

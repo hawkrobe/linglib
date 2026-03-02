@@ -1,7 +1,7 @@
 import Mathlib.Data.Rat.Defs
 
 /-!
-# Claus & Walch (2024): Evaluative Valence Distinguishes "at most" from "up to"
+# @cite{claus-walch-2024}: Evaluative Valence Distinguishes "at most" from "up to"
 @cite{blok-2015} @cite{claus-walch-2024} @cite{kennedy-2015}
 
 Empirical data from two experiments showing that "at most" and "up to" have identical
@@ -12,7 +12,7 @@ truth conditions but divergent framing effects due to evaluative valence.
 Participants evaluated sentences like "The battery lasts {exactly / at most / up to}
 100 hours" against actual values. Key finding: "at most 100" and "up to 100" have
 the same truth conditions (accepted when actual ≤ 100), confirming they are both
-Class B upper-bound modifiers (Kennedy 2015).
+Class B upper-bound modifiers.
 
 ## Experiment 2: Framing Effects
 
@@ -22,7 +22,7 @@ Key findings:
 - "up to": standard framing (higher endorsement in positive contexts)
 - "at most": REVERSED framing (higher endorsement in NEGATIVE contexts)
 
-This reversal is predicted by Blok's (2015) evaluative valence distinction:
+This reversal is predicted by @cite{blok-2015}'s evaluative valence distinction:
 - "at most" carries negative evaluative valence → endorsed in negative contexts
 - "up to" carries positive evaluative valence → endorsed in positive contexts
 
@@ -166,7 +166,7 @@ theorem atMost_upTo_same_truth_conditions :
 
 /-- "at most" shows REVERSED framing: higher endorsement in negative context.
 
-This is the key empirical finding of Claus & Walch (2024). -/
+This is the key empirical finding of @cite{claus-walch-2024}. -/
 theorem atMost_reverses_framing :
     exp2_atMost_reversed.endorsementRate > exp2_atMost_standard.endorsementRate := by
   native_decide

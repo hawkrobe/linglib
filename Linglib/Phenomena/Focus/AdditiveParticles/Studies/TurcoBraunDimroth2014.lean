@@ -3,10 +3,10 @@ import Linglib.Fragments.Dutch.Particles
 import Linglib.Fragments.German.PolarityMarking
 
 /-!
-# Turco, Braun & Dimroth (2014) — Production Data
+# @cite{turco-braun-dimroth-2014} — Production Data
 @cite{turco-braun-dimroth-2014}
 
-Empirical data from Turco, Braun & Dimroth (2014), who compare how Dutch and
+Empirical data from @cite{turco-braun-dimroth-2014}, who compare how Dutch and
 German speakers produce polarity-switch utterances (negation → affirmation)
 in contrast vs. correction contexts.
 

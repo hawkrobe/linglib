@@ -9,17 +9,17 @@ import Linglib.Fragments.Mam.Agreement
 
 Three competing theories of abstract case assignment in Minimalism:
 
-1. **Agree-based case** (Chomsky 2000, 2001): Case is a feature valued
+1. **Agree-based case**: Case is a feature valued
    via the Agree operation. T values NOM on its specifier; v* values ACC
    on its complement. Case requires a specific functional head as assigner.
    The Case Filter (`CaseFilter.lean`) enforces that all DPs receive Case.
 
-2. **Dependent case** (Marantz 1991; Baker 2015): Case is determined by
+2. **Dependent case**: Case is determined by
    the configuration of NPs in a Spell-Out domain. An NP c-commanded by
    another caseless NP gets ACC (in accusative languages); unmarked NPs
    get NOM. No specific head is needed.
 
-3. **Inherent/Voice-based case** (Woolford 1997, 2006; Scott 2023):
+3. **Inherent/Voice-based case**:
    ERG is inherent case assigned by Voice (tied to the agent θ-role),
    ACC is structural from Voice (object licensing), ABS is structural
    from Infl. Case is directly determined by argument structure, not by
@@ -94,7 +94,7 @@ theorem transitive_acc :
 -- § 3: Voice-Based Case (Woolford / Scott)
 -- ============================================================================
 
-/-! Scott (2023) argues for Mam that case is assigned by three different
+/-! @cite{scott-2023} argues for Mam that case is assigned by three different
     heads: Voice assigns ERG (inherent, to agent) and ACC (structural,
     to patient), while Infl assigns ABS (structural, to intransitive S).
     This is neither Agree-based (no probe on T for NOM) nor dependent
@@ -155,7 +155,7 @@ theorem dependent_case_ignores_voice :
 -- § 5: Case Filter Connection
 -- ============================================================================
 
-/-- The Case Filter (Chomsky 2001) is the Agree-based enforcement:
+/-- The Case Filter is the Agree-based enforcement:
     every DP must have valued Case at the interfaces. This presupposes
     Agree-based case assignment (DPs start with [uCase]).
 

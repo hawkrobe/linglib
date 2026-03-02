@@ -2,11 +2,11 @@ import Linglib.Theories.Pragmatics.RSA.Extensions.LexicalUncertainty.Basic
 
 /-!
 # RSA Analysis of Hurford's Constraint
-@cite{hurford-1974} @cite{singh-2008}
+@cite{hurford-1974} @cite{singh-2008} @cite{potts-levy-2015}
 
 Models Hurford's constraint as a consequence of speaker rationality in RSA.
 
-Hurford's constraint (Potts & Levy 2015): "#A or B" is infelicitous when A ⊆ B or B ⊆ A.
+Hurford's constraint: "#A or B" is infelicitous when A ⊆ B or B ⊆ A.
 
 In RSA, felicity = speaker rationality. A speaker wouldn't say "A or B" if:
 1. One disjunct is redundant (B⊆A makes B add nothing)

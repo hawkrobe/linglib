@@ -30,7 +30,7 @@ open NeoGricean
 
 
 /--
-Competence+ (Soames 1982): Speaker's belief matches truth.
+Competence+: Speaker's belief matches truth.
 
 This is stronger than basic competence:
 - Basic: Bel_S(ψ) ∨ Bel_S(¬ψ) (speaker has an opinion)

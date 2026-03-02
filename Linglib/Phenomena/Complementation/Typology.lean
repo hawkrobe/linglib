@@ -3,7 +3,9 @@
 Cross-linguistic data on complement types, complement-taking predicates (CTPs),
 and subordination strategies.
 
-## Part I: CTP Typology (Noonan 2007)
+## Part I: CTP Typology
+@cite{dixon-2006} @cite{dryer-haspelmath-2013} @cite{noonan-2007}
+
 
 Based on:
 - Noonan, M. (2007). Complementation. In T. Shopen (ed.), Language Typology
@@ -20,8 +22,8 @@ Key contributions:
 ## Part II: Subordination Strategies (WALS Chapters 94--95)
 
 WALS data on the cross-linguistic distribution of subordination structures:
-- **Ch 94**: Order of Adverbial Subordinator and Clause (Dryer 2013a)
-- **Ch 95**: Relationship between OV Order and Adposition Order (Dryer 2013b)
+- **Ch 94**: Order of Adverbial Subordinator and Clause
+- **Ch 95**: Relationship between OV Order and Adposition Order
 
 Additional dimensions beyond WALS:
 - Complementizer position (initial, final, none)
@@ -692,7 +694,7 @@ theorem indicative_hierarchy_japanese :
 
 /-! ## H. WALS Chapter 94: Order of Adverbial Subordinator and Clause
 
-Dryer (2013a) classifies languages by where the adverbial subordinator
+@cite{dryer-2013a} classifies languages by where the adverbial subordinator
 (e.g., "because", "when", "if") appears relative to its clause. The
 fundamental distinction is between word-level and suffix-level subordinators,
 crossed with initial vs final position.
@@ -706,7 +708,7 @@ order. This is one of the strongest head-direction correlations.
 -/
 
 /-- WALS Ch 94: How adverbial subordinators are positioned relative to
-    their clause (Dryer 2013a).
+    their clause.
 
     Five categories: subordinator word or suffix, initial or final position,
     plus a mixed/no-dominant category.
@@ -747,7 +749,7 @@ def WALSCount.totalOf (cs : List WALSCount) : Nat :=
   cs.foldl (λ acc c => acc + c.count) 0
 
 /-- Chapter 94 distribution: subordinator order (N = 611).
-    Counts from Dryer (2013a), WALS Online, Ch 94. -/
+    Counts from @cite{dryer-2013a}, WALS Online, Ch 94. -/
 def ch94Counts : List WALSCount :=
   [ ⟨"Initial subordinator word", 378⟩
   , ⟨"Final subordinator word", 58⟩
@@ -758,9 +760,7 @@ def ch94Counts : List WALSCount :=
 /-- Ch 94 total: 611 languages. -/
 theorem ch94_total : WALSCount.totalOf ch94Counts = 611 := by native_decide
 
-/-! ## I. WALS Chapter 95: OV Order and Adposition Order
-
-Dryer (2013b) examines the correlation between verb-object order and
+/-! ## I. WALS Chapter 95: OV Order and Adposition Or@cite{dryer-2013b} examines the correlation between verb-object order and
 adposition type. This is one of the strongest head-direction correlations
 in typology: OV languages overwhelmingly use postpositions, and VO languages
 overwhelmingly use prepositions.
@@ -773,7 +773,7 @@ OV+prepositions) are extremely rare.
 -/
 
 /-- WALS Ch 95: Four-way classification combining verb-object order
-    with adposition type (Dryer 2013b).
+    with adposition type.
 
     The two "harmonic" patterns (matching head direction) dominate;
     the two "disharmonic" patterns are rare. -/
@@ -795,7 +795,7 @@ inductive OVAdpositionType where
   deriving DecidableEq, BEq, Repr
 
 /-- Chapter 95 distribution: OV order × adposition type (N = 981).
-    Counts from Dryer (2013b), WALS Online, Ch 95. -/
+    Counts from @cite{dryer-2013b}, WALS Online, Ch 95. -/
 def ch95Counts : List WALSCount :=
   [ ⟨"VO & Prepositions", 454⟩
   , ⟨"OV & Postpositions", 472⟩
@@ -833,7 +833,7 @@ inductive ComplementizerPosition where
 
 /-- Position of the relative clause with respect to the head noun.
 
-    WALS Ch 90 (Dryer 2013) documents the cross-linguistic distribution.
+    WALS Ch 90 documents the cross-linguistic distribution.
     Post-nominal is the global majority, but pre-nominal dominates in
     East and Central Asia. -/
 inductive RelativeClausePosition where
@@ -861,7 +861,7 @@ inductive RelativeClausePosition where
     The purpose clause strategy correlates with finiteness availability:
     languages with productive infinitives use infinitive purpose clauses,
     while languages lacking infinitives use subjunctive, nominalization,
-    or serial verb constructions (Dixon 2006, Noonan 2007). -/
+    or serial verb constructions. -/
 inductive PurposeClauseStrategy where
   /-- Purpose clause uses subjunctive/irrealis mood.
       E.g., Greek "gia na fiji" 'for SUBJ leave.3SG'. -/
@@ -1539,7 +1539,7 @@ theorem mandarin_disharmonic :
 /-! ### Q9. Correlative RCs are restricted to South Asian languages
 
 In our sample, only Hindi-Urdu has correlative RCs. This is an areal
-feature of South Asian languages (Hock 1989, Srivastav 1991).
+feature of South Asian languages.
 -/
 
 /-- Exactly one language in our sample has correlative RCs. -/

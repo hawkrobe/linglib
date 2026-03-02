@@ -1,5 +1,5 @@
 /-!
-# Ogihara & Steinert-Threlkeld (2024) — Data
+# @cite{ogihara-steinert-threlkeld-2024} — Data
 @cite{ogihara-steinert-threlkeld-2024}
 
 Theory-neutral empirical data on the veridicality asymmetry between

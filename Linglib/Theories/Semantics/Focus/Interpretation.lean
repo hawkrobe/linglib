@@ -44,7 +44,7 @@ abbrev PropFocusValue (W : Type*) := (W → Bool) → Bool
 
 /-- The ~ operator introduces a focus constraint via anaphor Γ.
 
-    Rooth (1992) §2: "α ~ Γ" where:
+    @cite{rooth-1992} §2: "α ~ Γ" where:
     - α is an expression with focus marking
     - Γ is an anaphoric variable resolved to a contextual set of alternatives
     - FIP requires: Γ ⊆ ⟦α⟧f -/
@@ -55,7 +55,7 @@ structure Squiggle (W : Type*) where
 /-- Focus Interpretation Principle (FIP):
     The contextual contrast set Γ must be a subset of the focus semantic value.
 
-    Rooth (1992) §2: "Γ ⊆ ⟦α⟧f" -/
+    @cite{rooth-1992} §2: "Γ ⊆ ⟦α⟧f" -/
 def fip {W : Type*} (gamma : (W → Bool) → Bool) (focusValue : (W → Bool) → Bool) : Prop :=
   ∀ p, gamma p → focusValue p
 
@@ -65,7 +65,7 @@ def fip {W : Type*} (gamma : (W → Bool) → Bool) (focusValue : (W → Bool) �
     propositional focus semantic values.
 
     This is the foundation of Q-A congruence: the focus value of an answer
-    should equal (or be a superset of) the question denotation. -/
+    should equal (or be a superset) the question denotation. -/
 theorem hamblin_is_focus_type (W : Type*) :
     Semantics.Questions.Hamblin.QuestionDen W = ((W → Bool) → Bool) := rfl
 
@@ -74,7 +74,7 @@ theorem hamblin_is_focus_type (W : Type*) :
 /-- Q-A Congruence: An answer is congruent to a question iff the focus
     semantic value of the answer equals the question denotation.
 
-    Rooth (1992) §4: Focus on the answer must match the wh-position in the question.
+    @cite{rooth-1992} §4: Focus on the answer must match the wh-position in the question.
 
     Example:
     - Q: "Who ate the beans?" = {λw. ate(x, beans, w) | x ∈ D}
@@ -105,11 +105,11 @@ def FIPApplication.description : FIPApplication → String
 /-!
 ## Additive Particles and FIP
 
-Rooth (1992) §2.2 analyzes "too" via FIP:
+@cite{rooth-1992} §2.2 analyzes "too" via FIP:
 
 "Mary read Lear, and she read Macbeth too"
 - Focus: MACBETH
-- ⟦Macbeth⟧f = {Lear, Macbeth, Hamlet, ...} (works of Shakespeare)
+- ⟦Macbeth⟧f = {Lear, Macbeth, Hamlet,...} (works of Shakespeare)
 - Antecedent "Lear" must be in ⟦Macbeth⟧f ✓
 - FIP: The antecedent is in the focus alternatives
 

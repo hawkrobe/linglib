@@ -166,7 +166,7 @@ theorem compositionalRSA_global_allows_SA :
 /-!
 ## The IBR Perspective
 
-Franke (2011) shows that IBR (the α→∞ limit of RSA) equals exhMW.
+@cite{franke-2011} shows that IBR (the α→∞ limit of RSA) equals exhMW.
 But this is still SCOPE-BLIND - it's exhMW applied to the WHOLE sentence.
 
 The IBR/exhMW analysis of "every student read some book":
@@ -229,7 +229,7 @@ theorem ibr_is_global_not_local :
    - Compositional RSA approximates this
 
 Standard RSA ⊂ Compositional RSA ≈ EXH. Standard RSA cannot express local
-exhaustification. The RSA → IBR → exhMW chain (Franke 2011) only captures
+exhaustification. The RSA → IBR → exhMW chain only captures
 global readings. For local readings, the scope-aware approach of
 ScontrasPearl2021, LexicalUncertainty, or compositional RSA is needed.
 -/

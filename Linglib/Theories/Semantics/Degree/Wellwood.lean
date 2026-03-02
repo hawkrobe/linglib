@@ -5,7 +5,7 @@ import Linglib.Theories.Semantics.Degree.Comparative
 /-!
 # Compositional Comparative Derivation (Wellwood 2015, §2–3)
 
-@cite{wellwood-2015} @cite{cariani-santorio-wellwood-2024} @cite{schwarzschild-2008}Wellwood (2015) argues that comparatives across nominal, verbal, and
+@cite{wellwood-2015} @cite{cariani-santorio-wellwood-2024} @cite{schwarzschild-2008}@cite{wellwood-2015} argues that comparatives across nominal, verbal, and
 adjectival domains share a uniform DegP pipeline yielding truth conditions
 of the form:
 
@@ -43,7 +43,7 @@ open Semantics.Lexical.Measurement (DimensionallyRestricted
 -- § 1. Comparative Domain
 -- ════════════════════════════════════════════════════
 
-/-- The three comparative domains of Wellwood (2015).
+/-- The three comparative domains of @cite{wellwood-2015}.
     Each domain determines the thematic relation (role), extraction
     function, and measured ontological sort. -/
 inductive ComparativeDomain where

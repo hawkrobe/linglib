@@ -53,7 +53,7 @@ theorem nungon_ds_paradigm_complete :
     dsParadigm.length = 9 := rfl
 
 /-- Nungon SS suffixes are exactly 2: sequential and simultaneous.
-    This matches the `relationsMarked = [.sequential, .simultaneous]` in the
+    This matches the `relationsMarked = [.sequential,.simultaneous]` in the
     parameter bundle — the two temporal relations are the only semantics
     encoded on SS medial verbs. -/
 theorem nungon_ss_matches_relations :

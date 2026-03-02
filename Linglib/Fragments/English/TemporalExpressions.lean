@@ -3,7 +3,7 @@ import Linglib.Fragments.English.FunctionWords
 
 /-!
 # English Temporal Expressions Fragment
-@cite{alstott-aravind-2026} @cite{heinamaki-1974} @cite{rett-2020}
+@cite{alstott-aravind-2026} @cite{heinamaki-1974} @cite{rett-2020} @cite{karttunen-1974} @cite{ogihara-steinert-threlkeld-2024}
 
 Lexical entries for temporal expressions: subordinating connectives (*before*,
 *after*, *while*, *until*, *when*, *since*, *till*) and adverbial modifiers
@@ -14,7 +14,7 @@ The connective/modifier distinction is captured by the `ComplementType` field
 `complementVeridical` — are shared, enabling uniform pattern theorems across
 both categories. This matters because *by* has the same temporal-ordering
 semantics as *before* (weakened to ≤) and should participate in the
-veridicality and NPI-licensing generalizations (Heinämäki 1974).
+veridicality and NPI-licensing generalizations.
 
 -/
 
@@ -61,7 +61,7 @@ inductive ComplementType where
 
 /-- Lexical entry for any temporal expression — subordinating connective
     or adverbial modifier. Unifies the semantic fields (ordering direction,
-    NPI licensing, veridicality) that Heinämäki (1974) shows are shared
+    NPI licensing, veridicality) that @cite{heinamaki-1974} shows are shared
     across both syntactic categories.
 
     The `complementType` field records the syntactic distinction (clausal
@@ -74,7 +74,7 @@ structure TemporalExprEntry where
   complementType : ComplementType
   /-- Temporal ordering direction -/
   order : TemporalOrder
-  /-- Does this expression license NPIs in its complement? (Heinämäki 1974) -/
+  /-- Does this expression license NPIs in its complement? -/
   licensesNPI : Bool
   /-- Reading obtained without coercion (Rett's strong default) -/
   defaultReading : Reading
@@ -82,12 +82,12 @@ structure TemporalExprEntry where
   coercedReading : Option Reading
   /-- Does telicity of the embedded clause affect interpretation? -/
   embeddedTelicityEffect : Bool
-  /-- Attested in all 17 languages of Rett's (2020) typological survey -/
+  /-- Attested in all 17 languages of @cite{rett-2020}'s typological survey -/
   crossLinguisticBasic : Bool
   /-- Does the expression entail the truth of its complement?
       *after* is veridical: "He left after she arrived" entails she arrived.
       *before* is non-veridical: "He left before she arrived" is compatible
-      with her not arriving. (Ogihara & Steinert-Threlkeld 2024) -/
+      with her not arriving. -/
   complementVeridical : Bool
   /-- Does this expression force a punctual (point-like) reading? -/
   forcesPunctual : Bool
@@ -148,7 +148,7 @@ def while_conn : TemporalExprEntry :=
   , triggeredCoercion := none }
 
 /-- *until*: durative persistence up to complement time.
-    Has two uses (Karttunen 1974):
+    Has two uses:
     - **Durative**: "John slept until 3pm" — main clause is stative, *until*
       marks minimum extent. Truth-conditionally = temporal overlap.
     - **Punctual** (with negation): "He didn't wake up until 3pm" — logical
@@ -171,7 +171,7 @@ def until_ : TemporalExprEntry :=
 
 /-- *when*: temporal coincidence, no coercion. Veridical complement.
     "John arrived when Mary left" — the two events overlap in time.
-    Symmetric: "A when B" ↔ "B when A" (Karttunen 1974). -/
+    Symmetric: "A when B" ↔ "B when A". -/
 def when_conn : TemporalExprEntry :=
   { form := "when"
   , complementType := .clausal
@@ -188,7 +188,7 @@ def when_conn : TemporalExprEntry :=
 /-- *since*: starting-point connective. Veridical complement.
     "He's been happy since she arrived" entails she arrived.
     Requires durative (stative/activity) main clause, like *until*.
-    Does not license NPIs. (Heinämäki 1974, Ch. 6) -/
+    Does not license NPIs. -/
 def since_conn : TemporalExprEntry :=
   { form := "since"
   , complementType := .clausal
@@ -202,7 +202,7 @@ def since_conn : TemporalExprEntry :=
   , forcesPunctual := false
   , triggeredCoercion := none }
 
-/-- *till*: dialectal variant of *until* (Heinämäki 1974, Ch. 9).
+/-- *till*: dialectal variant of *until*.
     Identical semantic properties to *until*. Dialectally restricted:
     not universal across English varieties. -/
 def till_conn : TemporalExprEntry :=
@@ -258,7 +258,7 @@ def at_punct : TemporalExprEntry :=
     "He arrived by 3pm" = at or before 3pm.
     Weaker than *before* (allows coincidence). Does not force punctual
     reading: "He had finished the book by Tuesday" is fine with an
-    accomplishment. (Heinämäki 1974, Ch. 8) -/
+    accomplishment. -/
 def by_deadline : TemporalExprEntry :=
   { form := "by"
   , complementType := .nominal
@@ -277,8 +277,7 @@ def by_deadline : TemporalExprEntry :=
 -- ============================================================================
 
 /-- *as long as*: temporal containment, synonymous with *while*.
-    "I'll stay as long as you need me." Same ∀-containment semantics as *while*
-    (Heinämäki 1974, Ch. 3). Carries an additional conditional flavor in many
+    "I'll stay as long as you need me." Same ∀-containment semantics as *while*. Carries an additional conditional flavor in many
     uses ("As long as it rains, we stay inside"), but truth-conditionally
     equivalent to *while*. -/
 def asLongAs : TemporalExprEntry :=
@@ -294,7 +293,7 @@ def asLongAs : TemporalExprEntry :=
   , forcesPunctual := false
   , triggeredCoercion := none }
 
-/-- *whenever*: universally quantified temporal overlap (Heinämäki 1974).
+/-- *whenever*: universally quantified temporal overlap.
     "Whenever it rains, I carry an umbrella." Every occasion of B has a
     corresponding occurrence of A. Truth-conditionally ∀t∈B, t∈A (= while
     with arguments swapped). Implies habitual/generic interpretation.
@@ -312,8 +311,7 @@ def whenever_conn : TemporalExprEntry :=
   , forcesPunctual := false
   , triggeredCoercion := none }
 
-/-- *as soon as*: strengthened *after* with temporal proximity implicature
-    (Heinämäki 1974). "He left as soon as she arrived." Truth-conditionally
+/-- *as soon as*: strengthened *after* with temporal proximity implicature. "He left as soon as she arrived." Truth-conditionally
     equivalent to *after* (∃∃ ordering), but pragmatically implies minimal
     temporal gap between the two events. Veridical complement. -/
 def asSoonAs : TemporalExprEntry :=
@@ -392,7 +390,7 @@ theorem only_before_nonveridical :
 /-- NPI licensing pattern: only *before*, *until*, and *till* license NPIs.
     For *before*, this follows from downward entailment of the complement.
     For *until*/*till*, this arises in the punctual (*not...until*) construction,
-    which is truth-conditionally ¬*before* (Karttunen 1974).
+    which is truth-conditionally ¬*before*.
     No modifiers license NPIs. -/
 theorem npi_pattern :
     before_.licensesNPI = true ∧

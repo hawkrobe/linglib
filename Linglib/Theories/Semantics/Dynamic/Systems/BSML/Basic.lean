@@ -2,9 +2,9 @@ import Linglib.Theories.Semantics.Dynamic.TeamSemantics
 
 /-!
 # Bilateral State-based Modal Logic (BSML) — Core
-@cite{aloni-yang-2024}
+@cite{aloni-yang-2024} @cite{aloni-2022}
 
-Core definitions for BSML (Aloni 2022): formulas, models, bilateral support/anti-support,
+Core definitions for BSML: formulas, models, bilateral support/anti-support,
 and double negation elimination.
 
 BSML evaluates formulas bilaterally against teams (sets of worlds):

@@ -9,7 +9,7 @@ import Linglib.Fragments.Italian.Negation
 @cite{greco-2018} @cite{greco-2019} @cite{halm-huszr-2021} @cite{jin-koenig-2021} @cite{kennedy-mcnally-2005} @cite{napoli-nespor-1976} @cite{rett-2026}
 
 Expletive negation (EN) is truth-conditionally vacuous negation that appears
-in specific grammatical environments cross-linguistically. Rett (2026) unifies
+in specific grammatical environments cross-linguistically. @cite{rett-2026} unifies
 the licensing conditions: EN is licensed exactly in **ambidirectional**
 constructions — those where negating an argument doesn't change truth
 conditions because MAX picks the same informative bound from both B and ¬B.
@@ -25,7 +25,7 @@ conditions because MAX picks the same informative bound from both B and ¬B.
 | comparative   | ✓               | ✓ (6+ langs) | Jin & Koenig 2021    |
 | *fear/worry*  | ✓               | ✓ (39 langs) | Jin & Koenig 2021    |
 
-## High vs Low EN (Greco 2018, 2019, 2020) @cite{greco-2020}
+## High vs Low EN @cite{greco-2020}
 
 Two types of EN with different syntactic positions and licensing:
 - **High EN**: targets non-truth-conditional content (exclamatives, surprise);
@@ -45,8 +45,7 @@ open Fragments.English.Modifiers.Adjectives (AdjModifierEntry)
 -- § 1. High vs Low EN
 -- ════════════════════════════════════════════════════
 
-/-- Two syntactic types of expletive negation (Greco 2018, 2019;
-    Halm & Huszár 2021).
+/-- Two syntactic types of expletive negation.
 
     **High EN** appears above TP, targets non-truth-conditional content
     (exclamatives, surprise negation). It is obligatory where licensed.
@@ -81,7 +80,7 @@ structure ENDatum where
   mannerEffect : Option MannerEffect := none
   deriving Repr
 
-/-! ### Jin & Koenig (2021) survey data
+/-! ### @cite{jin-koenig-2021} survey data
 
 Cross-linguistic distribution from a 70-language sample:
 - *before*-clauses: 50/70 languages have EN
@@ -118,14 +117,14 @@ def frenchFear : ENDatum :=
   , negMarker := "ne", enType := .low, isOptional := true
   , licensesWeakNPIs := false }
 
-/-- Greco (2018): Italian *until*-clauses license both EN and weak NPIs. -/
+/-- @cite{greco-2018}: Italian *until*-clauses license both EN and weak NPIs. -/
 def italianUntil : ENDatum :=
   { language := "Italian", construction := "finché"
   , negMarker := Fragments.Italian.Negation.negMarker
   , enType := .low, isOptional := true
   , licensesWeakNPIs := true }
 
-/-- Italian wh-exclamatives: high EN (Greco 2018). -/
+/-- Italian wh-exclamatives: high EN. -/
 def italianExclamative : ENDatum :=
   { language := "Italian", construction := "wh-exclamative"
   , negMarker := Fragments.Italian.Negation.negMarker
@@ -141,7 +140,7 @@ def italianSneg : ENDatum :=
   , enType := .high, isOptional := false
   , licensesWeakNPIs := false }
 
-/-- Brazilian Portuguese surprise negation (Greco 2020, §5.1): *é que não*
+/-- Brazilian Portuguese surprise negation: *é que não*
     construction. High EN — obligatory, non-truth-conditional. -/
 def brazilianPortugueseSneg : ENDatum :=
   { language := "Brazilian Portuguese", construction := "é que não (Sneg)"
@@ -154,7 +153,7 @@ def allENData : List ENDatum :=
   , frenchFear, italianUntil, italianExclamative
   , italianSneg, brazilianPortugueseSneg ]
 
-/-- High EN blocks weak NPIs (Greco 2020, Table 1): in our sample,
+/-- High EN blocks weak NPIs: in our sample,
     every high-EN construction has `licensesWeakNPIs = false`. Low EN
     may or may not license NPIs (Italian *prima che* and *finché* do). -/
 theorem high_en_blocks_npis :
@@ -167,7 +166,7 @@ theorem high_en_blocks_npis :
 
 /-! ### The ambidirectionality–EN correspondence
 
-Rett (2026) proposes that low EN is licensed **iff** the embedding
+@cite{rett-2026} proposes that low EN is licensed **iff** the embedding
 construction is ambidirectional. We formalize this as a correspondence
 between an enumeration of EN-relevant constructions (with their
 theory-derived ambidirectionality classification) and the empirical
@@ -207,7 +206,7 @@ inductive ENConstruction where
     - `comparative`: ambidirectional on degree relatives
       (cf. `comparative_boundary` in Comparative.lean)
     - `fear`: ambidirectional — *fear p* and *fear ¬p* share the
-      worry-worthy possibility (Rett 2026, §7) -/
+      worry-worthy possibility -/
 def ENConstruction.isAmbidirectional : ENConstruction → Bool
   | .before      => true
   | .after       => false
@@ -217,7 +216,7 @@ def ENConstruction.isAmbidirectional : ENConstruction → Bool
   | .fear        => true
 
 /-- Empirically observed: does the construction license EN
-    cross-linguistically? Based on Jin & Koenig (2021) 70-language survey. -/
+    cross-linguistically? Based on @cite{jin-koenig-2021} 70-language survey. -/
 def ENConstruction.hasEN : ENConstruction → Bool
   | .before      => true   -- 50/70 languages
   | .after       => false
@@ -230,7 +229,7 @@ def ENConstruction.hasEN : ENConstruction → Bool
     ambidirectional. Verified exhaustively over all EN-relevant
     constructions.
 
-    This is the central empirical claim of Rett (2026): the
+    This is the central empirical claim of @cite{rett-2026}: the
     ambidirectionality classification (derived from the semantics of
     MAX on closed intervals) perfectly predicts the cross-linguistic
     distribution of EN (observed in Jin & Koenig 2021). -/
@@ -309,17 +308,17 @@ vacuous but pragmatically meaningful. The use of the marked negated form
 (vs the unmarked positive form) triggers a **manner implicature**
 (see `MannerEffect` in `Adjective.Comparative`):
 
-1. **French *avant que ... ne***: "before ¬B" → "well before B" (temporal
+1. **French *avant que... ne***: "before ¬B" → "well before B" (temporal
    distance reading; Cépeda 2018, Krifka 2010b).
 
 2. **Italian comparative + *non***: "più alto di quanto non sia" →
    "much taller than" (evaluative reading; Napoli & Nespor 1976).
 
 3. **Negative verbs (doubt, fear, worry)**: These are "ambidirectional"
-   embedding verbs (Rett 2026, §7) — *fear that p* and *fear that ¬p*
+   embedding verbs — *fear that p* and *fear that ¬p*
    share the same worry-worthy proposition, because the feared event's
    mere possibility (whether p or ¬p) triggers the attitude. EN in
-   complements of fear is attested in 39 languages (Jin & Koenig 2021). -/
+   complements of fear is attested in 39 languages. -/
 
 /-- A manner implicature datum: EN triggers evaluativity in a construction. -/
 structure MannerImplicatureDatum where

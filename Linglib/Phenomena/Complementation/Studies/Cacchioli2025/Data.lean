@@ -1,9 +1,9 @@
 import Linglib.Core.Lexical.Word
 
 /-!
-# Cacchioli (2025) — Empirical Data @cite{cacchioli-2025}
+# @cite{cacchioli-2025} — Empirical Data @cite{cacchioli-2025}
 
-Pure empirical data from Cacchioli (2025) "The Syntax of Clausal Prefixes
+Pure empirical data from @cite{cacchioli-2025} "The Syntax of Clausal Prefixes
 in Tigrinya." No theory imports — this file contains only observed patterns,
 grammaticality judgments, and co-occurrence restrictions.
 
@@ -72,7 +72,7 @@ structure SelectionDatum where
   grammatical : Bool := true
   deriving Repr, BEq
 
-/-- Verb class selection data from Cacchioli (2025). -/
+/-- Verb class selection data from @cite{cacchioli-2025}. -/
 def selectionData : List SelectionDatum := [
   -- Knowledge verbs → kəmzi- (factive)
   { verb := "fälätä", verbGloss := "know", verbClass := "knowledge",

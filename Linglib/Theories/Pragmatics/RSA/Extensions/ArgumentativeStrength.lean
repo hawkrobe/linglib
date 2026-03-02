@@ -6,9 +6,9 @@ import Mathlib.Data.Rat.Defs
 # Argumentative Strength for Quantity Expressions
 @cite{cummins-franke-2021} @cite{merin-1999} @cite{macuch-silva-etal-2024}
 
-Merin (1999)'s log-likelihood ratio measure of argumentative strength, as applied
-to numerical quantity expressions in Cummins & Franke (2021) and quantifier choice
-in Macuch Silva et al. (2024).
+@cite{merin-1999}'s log-likelihood ratio measure of argumentative strength, as applied
+to numerical quantity expressions in @cite{cummins-franke-2021} and quantifier choice
+in Macuch @cite{macuch-silva-etal-2024}.
 
 ## Core Idea
 
@@ -16,11 +16,11 @@ Rather than maximizing informativity (standard RSA), speakers choose quantity
 expressions to serve *argumentative goals*: making a conclusion G more or less
 credible. The argumentative strength of utterance u for goal G is:
 
-  argStr(u, G) = log₂(P(u|G) / P(u|¬G))     (C&F Eq. 17)
+  argStr(u, G) = log₂(P(u|G) / P(u|¬G)) (C&F Eq. 17)
 
 A pragmatic variant replaces literal truth with assertability:
 
-  pragArgStr(u, G) = log₂(P_a(u|G) / P_a(u|¬G))   (C&F Eq. 25)
+  pragArgStr(u, G) = log₂(P_a(u|G) / P_a(u|¬G)) (C&F Eq. 25)
 
 ## Key Results
 
@@ -102,7 +102,7 @@ instance (a b c d : ℚ) : Decidable (argumentativelyStronger a b c d) :=
 -- ============================================================
 
 /-- Argumentative difficulty: proportion of truthful states where the strongest
-available quantifier is weak. From Macuch Silva et al. (2024).
+available quantifier is weak. From Macuch @cite{macuch-silva-etal-2024}.
 
 For a given direction (positive/negative), difficulty measures how hard it is
 to frame the state in that direction truthfully. High difficulty → speakers

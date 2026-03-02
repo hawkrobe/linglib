@@ -43,7 +43,7 @@ open Core.Context (KContext)
 
 /-- Pragmatic roles determined by structural position in SAP.
 
-    Speas & Tenny (2003): these are NOT primitives — they are configurationally
+    @cite{speas-tenny-2003}: these are NOT primitives — they are configurationally
     assigned by position in the Speech Act Phrase:
     - SPEAKER = Spec-SAP (external argument of SA)
     - HEARER = complement of SA (internal argument)
@@ -87,7 +87,7 @@ def deriveMood (contentFinite hearerCCommandsContent : Bool) : SAPMood :=
 
 open Core.Discourse (IllocutionaryMood)
 
-/-- Map configurational mood (Speas & Tenny 2003) to framework-agnostic
+/-- Map configurational mood to framework-agnostic
     illocutionary mood. The mapping is injective: all four `SAPMood`
     constructors embed into `IllocutionaryMood`, but `.exclamative`
     has no `SAPMood` counterpart (exclamatives are not derived in S&T's
@@ -269,7 +269,7 @@ theorem discourse_role_from_person (p : Fragments.English.Pronouns.PronounEntry)
 -- Section G: Sentience Domain (Speas & Tenny 2003, §2)
 -- ============================================================================
 
-/-- Functional projections in the Sentience Domain (Speas & Tenny 2003, §2).
+/-- Functional projections in the Sentience Domain.
 
     Below SAP, the Sentience Domain mediates between the speech act layer
     and the propositional content. It hosts two projections:

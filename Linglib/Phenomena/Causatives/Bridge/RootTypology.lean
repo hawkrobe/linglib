@@ -29,7 +29,7 @@ Connects the theory-side predictions of `Theories/Morphology/RootTypology.lean`
 
 5. **Fragment grounding**: The Chuj fragment's `Root` values instantiate the
    theory's predictions — e.g., `rootTV_res.entailsChange = true` matches the
-   theory's `RootType.entailsChange .result = true`.
+   theory's `RootType.entailsChange.result = true`.
 
 ## Derivational chain
 
@@ -37,9 +37,9 @@ Connects the theory-side predictions of `Theories/Morphology/RootTypology.lean`
 Core/Root.lean (types: RootType, RootArity, Root)
     ↓
 Theories/Morphology/RootTypology.lean (predictions: grand_unification)
-    ↓                                      ↓
-Fragments/Chuj/VerbBuilding.lean     THIS BRIDGE FILE
-    ↓                                      ↓
+    ↓ ↓
+Fragments/Chuj/VerbBuilding.lean THIS BRIDGE FILE
+    ↓ ↓
     └──────────────────────────────→ Phenomena/Causatives/Studies/BeaversEtAl2021.lean
 ```
 
@@ -80,8 +80,8 @@ theorem roundtrip_right (rc : CoSRootClass) :
 
 /-- The phenomena's `changeDenialTest` agrees with the theory's `entailsChange`.
 
-    Theory: `RootType.entailsChange .result = true` (result roots entail change)
-    Phenomena: `changeDenialTest .result = .negative` ("#The shattered vase
+    Theory: `RootType.entailsChange.result = true` (result roots entail change)
+    Phenomena: `changeDenialTest.result =.negative` ("#The shattered vase
     has never shattered" is contradictory — the state entails prior change)
 
     The relationship is: entailsChange = true ↔ changeDenial = negative.

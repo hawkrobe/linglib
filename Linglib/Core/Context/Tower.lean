@@ -25,7 +25,7 @@ it with a stack of shifts.
 
 FA takes two meanings (function and argument). Both are parameterized by the same
 tower. FA applies the function to the argument at that tower. The tower is threaded
-as a reader parameter — `ContextTower C → ...` is the enriched meaning type.
+as a reader parameter — `ContextTower C →...` is the enriched meaning type.
 
 -/
 

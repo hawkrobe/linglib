@@ -17,9 +17,9 @@ A vestigial **locative** survives for a few nouns (place names, *domī*
 that satisfies Blake's contiguity; the standard 6-case inventory has a gap
 at rank 3 (LOC) between DAT and ABL.
 
-## Syncretism (Blake 1994, pp. 19–24)
+## Syncretism
 
-Latin syncretism patterns divide into two groups (Blake 1994, p. 22):
+Latin syncretism patterns divide into two groups:
 - NOM + ACC: neuter nouns (2nd, 3rd, 4th declension)
 - DAT + ABL: plural across all declensions
 

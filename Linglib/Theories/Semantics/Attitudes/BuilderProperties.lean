@@ -135,7 +135,7 @@ def VerbEntry.isAntiRogative (v : VerbEntry) : Bool :=
 /--
 Can this verb canonically embed a question?
 
-Based on Qing et al. (2025) classification:
+Based on @cite{qing-uegaki-2025} classification:
 - Class 1 (non-C-distributive): Yes
 - Class 2 (C-dist + negative): Yes
 - Class 3 (C-dist + positive): No (anti-rogative)

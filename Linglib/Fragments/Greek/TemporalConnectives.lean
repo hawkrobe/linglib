@@ -17,7 +17,7 @@ through mood selection:
 
 - **όταν / otan** ('when'): veridical complement, temporal coincidence.
 
-The subjunctive/indicative mood split (Giannakidou 2002, §3) independently
+The subjunctive/indicative mood split independently
 diagnoses the veridicality distinction: subjunctive signals non-veridicality
 (the complement event is presented as unrealized), while indicative signals
 veridicality (the complement event is presented as factual). This parallels
@@ -108,12 +108,12 @@ theorem two_until_lexicalized :
     prin.order ≠ mexri.order := by
   exact ⟨by decide, by decide⟩
 
-/-- *Prin* is semantically *before* (order = .before), confirming
+/-- *Prin* is semantically *before* (order =.before), confirming
     Karttunen's identity: NPI-*until* = ¬*before*. -/
 theorem prin_is_before :
     prin.order = .before := rfl
 
-/-- *Mexri* is semantically *until* (order = .until_),
+/-- *Mexri* is semantically *until* (order =.until_),
     the true durative endpoint connective. -/
 theorem mexri_is_until :
     mexri.order = .until_ := rfl

@@ -13,9 +13,9 @@ and θ (thematic role, `RoleHom`) as the third Krifka/Zwarts dimension.
 ## Three-Dimension Picture
 
 ```
-Temporal:  Events →τ Intervals →dur ℚ     (temporal dimension)
-Spatial:   Events →σ Paths     →dist ℚ    (spatial dimension)
-Object:    Events →θ Entities  →μ   ℚ     (object dimension)
+Temporal: Events →τ Intervals →dur ℚ (temporal dimension)
+Spatial: Events →σ Paths →dist ℚ (spatial dimension)
+Object: Events →θ Entities →μ ℚ (object dimension)
 ```
 
 All three use the same QUA/CUM pullback mechanism via `MereoDim`.
@@ -55,7 +55,7 @@ open _root_.Mereology
 namespace Semantics.Events
 
 /-- Spatial trace: maps events to their spatial trajectories.
-    Zwarts (2005), Gawron (2009): σ(e) is the path traversed in event e.
+    @cite{zwarts-2005}, @cite{gawron-2009}: σ(e) is the path traversed in event e.
     Parallels τ (temporal trace) from EventCEM.
 
     σ is required to be a sum homomorphism: σ(e₁ ⊕ e₂) = σ(e₁) ⊕ σ(e₂).
@@ -113,7 +113,7 @@ def σ_mereoDim {Loc Time : Type*} [LinearOrder Time]
     "Walk to the store" is telic because "to the store" is QUA
     (no proper subpath of a to-the-store path is also to-the-store)
     and QUA pulls back through σ.
-    Zwarts (2005): bounded PPs yield telic VPs. -/
+    @cite{zwarts-2005}: bounded PPs yield telic VPs. -/
 theorem bounded_path_telic {Loc Time : Type*} [LinearOrder Time]
     [cem : EventCEM Time] [SemilatticeSup (Path Loc)]
     [st : SpatialTrace Loc Time]
@@ -127,7 +127,7 @@ theorem bounded_path_telic {Loc Time : Type*} [LinearOrder Time]
 /-- Unbounded path predicate → atelic VP.
     "Walk towards the store" is atelic because "towards the store" is CUM
     and CUM pulls back through the σ sum homomorphism.
-    Zwarts (2005): unbounded PPs yield atelic VPs. -/
+    @cite{zwarts-2005}: unbounded PPs yield atelic VPs. -/
 theorem unbounded_path_atelic {Loc Time : Type*} [LinearOrder Time]
     [cem : EventCEM Time] [SemilatticeSup (Path Loc)]
     [st : SpatialTrace Loc Time]
@@ -140,7 +140,7 @@ theorem unbounded_path_atelic {Loc Time : Type*} [LinearOrder Time]
 -- ════════════════════════════════════════════════════
 
 /-- Map PathShape to Telicity: bounded/source → telic, unbounded → atelic.
-    Zwarts (2005): the boundedness of a directional PP determines
+    @cite{zwarts-2005}: the boundedness of a directional PP determines
     whether the VP it creates is telic or atelic.
 
     This is the spatial analog of the QUA/CUM ↔ telic/atelic correspondence
@@ -178,7 +178,7 @@ end Semantics.Events.SpatialTrace
     Inherently directed motion verbs (Levin 51.1: arrive, come, go)
     lexicalize a bounded path. Manner-of-motion verbs (51.3: run, walk)
     are path-neutral — the path comes from a PP complement.
-    Talmy (2000): verb-framed vs. satellite-framed distinction. -/
+    @cite{talmy-2000}: verb-framed vs. satellite-framed distinction. -/
 def LevinClass.pathSpec : LevinClass → Option Core.Path.PathShape
   | .inherentlyDirectedMotion => some .bounded
   | .leave => some .source

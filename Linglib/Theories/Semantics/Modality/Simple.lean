@@ -162,7 +162,7 @@ theorem simpleReflexive_isNormal : SimpleReflexive.isNormal :=
 
 end Normality
 
-/-! Kripke correspondence: R properties correspond to modal axioms (Kripke 1963). -/
+/-! Kripke correspondence: R properties correspond to modal axioms. -/
 
 section TAxiom
 

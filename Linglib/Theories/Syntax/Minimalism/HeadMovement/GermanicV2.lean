@@ -39,10 +39,10 @@ namespace Minimalism.Phenomena.HeadMovement.GermanicV2
 
 /-! ## Part 1: The Lexicon
 
-We define the lexical items for the German sentence from Harizanov (2019).
+We define the lexical items for the German sentence from @cite{harizanov-gribanova-2019}.
 
     Diesen Film haben die Kinder gesehen.
-    this   film have  the children seen
+    this film have the children seen
 -/
 
 /-- The COMPLEX finite verb "haben" (have): both V and C features @cite{harizanov-gribanova-2019}
@@ -72,14 +72,14 @@ def nounFilm : LIToken := ⟨.simple .N [], 303⟩
 
 ```
         CP
-       /  \
-    haben  TP
-          /  \
-    die Kinder  T'
-               /  \
-              T    VP
-                  /  \
-              haben  diesen Film
+       / \
+    haben TP
+          / \
+    die Kinder T'
+               / \
+              T VP
+                  / \
+              haben diesen Film
 ```
 -/
 

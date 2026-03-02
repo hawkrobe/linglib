@@ -21,8 +21,8 @@ and use `Finset.sum`. Functions that iterate for argmax/min keep `List A`
 (since `Finset.toList` is noncomputable in Mathlib).
 Question-related types (`Question W = List (W → Bool)`) remain List-based.
 
-- Van Rooy (2003). Questioning to Resolve Decision Problems. L&P 26.
-- Blackwell (1953). Equivalent Comparisons of Experiments.
+- @cite{van-rooy-2003}. Questioning to Resolve Decision Problems. L&P 26.
+- @cite{blackwell-1953}. Equivalent Comparisons of Experiments.
 -/
 
 namespace Core.DecisionTheory
@@ -143,7 +143,7 @@ abbrev Question (W : Type*) := List (W -> Bool)
 
 /-- C resolves decision problem if some action dominates after learning C.
 
-Per Van Rooy (2003, p.736): C resolves DP iff after learning C, there exists
+Per @cite{van-rooy-2003}: C resolves DP iff after learning C, there exists
 an action a ∈ A that weakly dominates all other actions on every world in C. -/
 def resolves {W A : Type*} [DecidableEq A]
     (dp : DecisionProblem W A) (worlds : List W) (actions : List A)

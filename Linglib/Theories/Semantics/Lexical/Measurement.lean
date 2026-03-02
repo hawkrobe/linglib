@@ -7,7 +7,7 @@ import Linglib.Theories.Semantics.Lexical.Noun.Kind.Dayal2004
 /-!
 # Cross-Categorial Measurement Semantics
 
-@cite{wellwood-2015} @cite{schwarzschild-2006}Wellwood (2015) argues that all comparative sentences contain a covert `much`
+@cite{wellwood-2015} @cite{schwarzschild-2006}@cite{wellwood-2015} argues that all comparative sentences contain a covert `much` @cite{kennedy-2007}
 morpheme whose semantics is a measure function μ assigned by a variable
 assignment A (eq. 28):
 
@@ -15,7 +15,7 @@ assignment A (eq. 28):
 
 The measure function must be **monotonic** (eq. 26): for all α, β in a
 part-whole ordered domain, if α ≺^Part β then μ(α) ≺^Deg μ(β). This is
-Schwarzschild's (2002, 2006) monotonicity condition, and corresponds exactly
+@cite{schwarzschild-wilkinson-2002}'s monotonicity condition, and corresponds exactly
 to `StrictMono` / `MereoDim` / CSW's `admissibleMeasure` in linglib.
 
 The key insight is a three-way cross-categorial parallel:
@@ -79,7 +79,7 @@ inductive MereologicalStatus where
   | quantized
   deriving DecidableEq, BEq, Repr
 
-/-- Map mereological status to Kennedy scale boundedness (Kennedy 2007).
+/-- Map mereological status to Kennedy scale boundedness.
 
     CUM → no inherent endpoint → open scale (→ blocked degree modifiers)
     QUA → inherent endpoint → closed scale (→ licensed degree modifiers)
@@ -134,14 +134,14 @@ theorem muchSem_of_mereoDim
 -- § 3. Cross-Categorial Bridges
 -- ════════════════════════════════════════════════════
 
-/-- Telicity determines mereological status (Wellwood 2015, §2.2, p. 74–76):
+/-- Telicity determines mereological status:
     atelic VPs have CUM domains (activities, states), telic VPs have QUA
     domains (achievements, accomplishments). -/
 def telicityToStatus : Telicity → MereologicalStatus
   | .atelic => .cumulative
   | .telic  => .quantized
 
-/-- Number feature determines mereological status (Wellwood 2015, §2.1, p. 73–74):
+/-- Number feature determines mereological status:
     mass nouns have CUM domains; count nouns (sg/pl) have QUA domains.
 
     Note: plural count nouns are CUM at the plurality level (p. 92:
@@ -152,8 +152,7 @@ def numberToStatus : NumberFeature → MereologicalStatus
   | .sg   => .quantized
   | .pl   => .quantized
 
-/-- Gradable adjectives predicate of states that "form mereologies"
-    (Wellwood 2015, §3.2, p. 81), enabling monotonic measurement by `much`.
+/-- Gradable adjectives predicate of states that "form mereologies", enabling monotonic measurement by `much`.
 
     Interpretive note: Wellwood does not explicitly use the label CUM for
     GA state domains. She argues they have mereological structure (ordered
@@ -163,7 +162,7 @@ def numberToStatus : NumberFeature → MereologicalStatus
 def gradableToStatus : MereologicalStatus := .cumulative
 
 /-- Non-gradable adjectives (wooden, triangular) predicate of "atomic,
-    unordered objects" (Wellwood 2015, §3.1, p. 80). Their state domains
+    unordered objects". Their state domains
     lack both mereological structure and comparative ordering, making
     them not measurable by `much`.
 
@@ -188,8 +187,7 @@ theorem accomplishment_is_quantized : vendlerToStatus .accomplishment = .quantiz
 -- § 4. Aspectual Shift Bridges
 -- ════════════════════════════════════════════════════
 
-/-- Telicization shifts measurement status from cumulative to quantized
-    (Wellwood 2015, §5, p. 91–93).
+/-- Telicization shifts measurement status from cumulative to quantized.
 
     Adding a goal PP to an atelic VP ("ran" → "ran to the park") changes
     the predicate's mereological status, blocking extensive dimensions
@@ -218,7 +216,7 @@ theorem atelicize_shifts_status (p : AspectualProfile) (h : p.telicity = .telic)
 
 /-- A domain is dimensionally restricted when any two admissible measure
     functions (StrictMono maps to ℚ) agree on the comparative ordering
-    of all elements (Wellwood 2015, §3.4, p. 85–86).
+    of all elements.
 
     This captures Wellwood's claim that GAs lexically fix a single
     dimension while nouns/verbs allow contextual dimension selection:

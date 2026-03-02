@@ -326,7 +326,7 @@ For "short basketball player" with SUPERORDINATE comparison:
 -- Connection to Lassiter & Goodman (2017)
 
 /-!
-## Relation to Lassiter & Goodman (2017)
+## Relation to @cite{lassiter-goodman-2017}
 
 ### What LG2017 Covers
 - Threshold inference: P(theta | "tall")

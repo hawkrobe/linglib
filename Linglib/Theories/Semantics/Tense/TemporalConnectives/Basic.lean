@@ -16,11 +16,11 @@ a sentence's truth. Two canonical patterns:
 sets (Level 1). This is the lower half of the three-level projection chain:
 
 ```
-Level 3: EvPred Time              (event predicates)
-    ↓ eventDenotation             (see EventBridge.lean)
-Level 2: SentDenotation Time      (interval sets — this file)
+Level 3: EvPred Time (event predicates)
+    ↓ eventDenotation (see EventBridge.lean)
+Level 2: SentDenotation Time (interval sets — this file)
     ↓ timeTrace
-Level 1: Set Time                 (point sets)
+Level 1: Set Time (point sets)
 ```
 
 -/
@@ -42,7 +42,7 @@ abbrev SentDenotation (Time : Type*) [LE Time] := Set (Interval Time)
 
 /-- The set of all time points contained in some interval of a denotation.
     This projects from interval-set representation to time-set representation,
-    which is what Rett's (2020) formalization quantifies over. -/
+    which is what @cite{rett-2020}'s formalization quantifies over. -/
 def timeTrace (p : SentDenotation Time) : Set Time :=
   { t | ∃ i ∈ p, i.contains t }
 

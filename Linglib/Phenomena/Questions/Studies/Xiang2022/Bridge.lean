@@ -26,8 +26,8 @@ a shared concrete scenario, exercising both and proving agreement.
 - Ability modal base: mb(w0) = [w1, w2], mb(w1) = [w1], mb(w2) = [w2]
 
 Under the FO interpretation, "Who can chair?" gets overlapping cells:
-- ◇chair(a) = {w0, w1}  (a can chair at w0 via w1, and trivially at w1)
-- ◇chair(b) = {w0, w2}  (b can chair at w0 via w2, and trivially at w2)
+- ◇chair(a) = {w0, w1} (a can chair at w0 via w1, and trivially at w1)
+- ◇chair(b) = {w0, w2} (b can chair at w0 via w2, and trivially at w2)
 
 These overlap at w0 → EP fails → but RelExh passes → MS licensed.
 
@@ -295,7 +295,7 @@ theorem partCells_no_overlap :
 
 /-! ## Part IV: Fox 2018 Exhaustification @cite{fox-2018}
 
-Fox (2018) "Partition by Exhaustification" derives Dayal's EP from the
+@cite{fox-2018} "Partition by Exhaustification" derives Dayal's EP from the
 exhaustification operator Exh. We exercise the Bool-valued Exh/IE/MC-set
 machinery from Questions.Exhaustivity on three question denotations:
 

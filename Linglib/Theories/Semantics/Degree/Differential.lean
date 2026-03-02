@@ -11,7 +11,7 @@ Compositional semantics for measure phrase differentials in comparatives:
 
 ## Measure Phrase Composition
 
-Schwarzschild (2005): measure phrases modify the degree argument of the
+@cite{schwarzschild-2005}: measure phrases modify the degree argument of the
 comparative, specifying the gap between matrix and standard degrees.
 
     "A is 3 inches taller than B" iff height(A) - height(B) = 3 inches

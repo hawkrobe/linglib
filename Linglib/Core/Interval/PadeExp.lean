@@ -14,7 +14,7 @@ so the error bound `1/4000000` provides a 2.3× safety margin.
 ## Strategy
 
 For small |x| ≤ 1:
-  exp(x) ≈ padeNum(x) / padeDen(x)   (within padeErrorBound)
+  exp(x) ≈ padeNum(x) / padeDen(x) (within padeErrorBound)
 
 For large |x|:
   1. Choose k so x/2^k ∈ [-1, 1]

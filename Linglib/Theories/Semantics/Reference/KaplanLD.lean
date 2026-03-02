@@ -159,7 +159,7 @@ def opDiamond {W T : Type*} (worlds : List W) (φ : W → T → Prop) : W → T 
 
 /-- ⊨ Exist I: at every (proper) context, the agent exists.
 
-Follows directly from `LDStructure.proper`. Kaplan (1989) §XVIII Remark 3. -/
+Follows directly from `LDStructure.proper`. @cite{kaplan-1989} §XVIII Remark 3. -/
 theorem exist_i_valid (ld : LDStructure) (c : ld.C) :
     ld.exists_ (ld.cAgent c) (ld.cWorld c) :=
   ld.proper c

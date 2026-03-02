@@ -51,6 +51,8 @@ structure FocusStructure (α : Type) where
 
 /-!
 ## Covert EVEN (Lahiri 1998, Crnič 2014)
+@cite{rooth-1992}
+
 
 EVEN has two semantic contributions:
 
@@ -153,7 +155,7 @@ theorem npi_unlicensed_ue (npiDomain regularDomain : Set Entity)
 -- Only: The Exhaustification Particle
 
 /-!
-## Overt "only" (Rooth 1992)
+## Overt "only"
 
 "Only" is the overt counterpart of EXH:
 - Presupposes: The prejacent is true

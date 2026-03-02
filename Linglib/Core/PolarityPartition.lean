@@ -6,7 +6,7 @@ import Linglib.Core.Logic.NaturalLogic
 @cite{icard-2012} @cite{merin-1999}
 
 Connects the natural logic algebra (`Core.NaturalLogic`) to partition
-structure (`Core.Partition`), formalizing Merin's (1999) central insight:
+structure (`Core.Partition`), formalizing @cite{merin-1999}'s central insight:
 **negativity is coarsening**.
 
 ## Key connections
@@ -61,7 +61,7 @@ theorem complements_same_partition (p q : M → Bool) (h : AreComplements p q)
 
 /-- Double complement returns to the same partition.
 
-Partition-theoretic content of `negationSig ^ 2 = addMult` (Icard 2012):
+Partition-theoretic content of `negationSig ^ 2 = addMult`:
 complement ∘ complement is the identity on partitions. The algebraic
 fact that the anti-morphism signature is self-inverse is *visible* in
 partition structure as double complement preserving all cells. -/

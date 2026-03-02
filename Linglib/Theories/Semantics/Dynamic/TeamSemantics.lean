@@ -9,7 +9,7 @@ Team semantics evaluates formulas relative to sets of evaluation points
 
 ## Background
 
-Team semantics originated in logic (Hodges 1997, Väänänen 2007) and has been
+Team semantics originated in logic and has been
 applied to linguistics for:
 - Inquisitive Semantics: questions as issues (sets of info states)
 - Free Choice: Aloni's BSML derives FC via non-emptiness constraints
@@ -24,7 +24,7 @@ applied to linguistics for:
 ## Architecture
 
 This module provides general infrastructure. Specific applications:
-- `Systems/BSML/`: Bilateral State-based Modal Logic (Aloni 2022)
+- `Systems/BSML/`: Bilateral State-based Modal Logic
 - `Questions/Inquisitive.lean`: Inquisitive semantics for questions
 
 -/

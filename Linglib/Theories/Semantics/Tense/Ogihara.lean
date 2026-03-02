@@ -1,7 +1,7 @@
 import Linglib.Theories.Semantics.Tense.Basic
 
 /-!
-# Ogihara (1996): Tense, Attitudes, and Scope
+# @cite{ogihara-1996}: Tense, Attitudes, and Scope
 @cite{ogihara-1989} @cite{ogihara-1996}
 
 Ogihara's theory: embedded past is **ambiguous** between a genuine past
@@ -104,7 +104,7 @@ theorem ogihara_derives_shifted {Time : Type*} [LinearOrder Time]
 -- § Theory Identity Card
 -- ════════════════════════════════════════════════════════════════
 
-/-- Ogihara (1996) theory identity card. -/
+/-- @cite{ogihara-1996} theory identity card. -/
 def Ogihara : TenseTheory where
   name := "Ogihara 1996"
   citation := "Ogihara, T. (1996). Tense, Attitudes, and Scope. Kluwer."

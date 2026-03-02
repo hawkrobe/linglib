@@ -6,7 +6,7 @@ import Linglib.Core.Context.Tower
 # Declerck's Tense Theory (1991/2006)
 @cite{declerck-1991} @cite{declerck-2006} @cite{reichenbach-1947}
 
-Declerck's descriptive theory of English tense differs from Reichenbach (1947)
+Declerck's descriptive theory of English tense differs from @cite{reichenbach-1947}
 in three structural ways:
 
 1. **TO-chain architecture**: Tenses express *chains* of binary temporal
@@ -102,7 +102,7 @@ inductive TimeSphere where
     the next TO inward by a temporal relation.
 
     Example: in the past perfect schema `TS simul TO_sit before TO₂ before TO₁`,
-    the link for TO₂ is `⟨"TO₂", .before, t₂⟩` — meaning TO₂ stands in the
+    the link for TO₂ is `⟨"TO₂",.before, t₂⟩` — meaning TO₂ stands in the
     `before` relation to the next TO outward (TO₁). -/
 structure TOLink (Time : Type*) where
   /-- Identifier (e.g., "TO_sit", "TO₂", "TO₃") -/
@@ -453,7 +453,7 @@ theorem preterit_presentPerfect_same_frame (t0 toSit : ℤ) :
     (preterit t0 toSit).toFrame = (presentPerfect t0 toSit).toFrame := by
   simp [preterit, presentPerfect, DeclercianSchema.toFrame, DeclercianSchema.toSit]
 
-/-- ... but they differ in time-sphere. -/
+/--... but they differ in time-sphere. -/
 theorem preterit_presentPerfect_differ_sphere (t0 toSit : ℤ) :
     (preterit t0 toSit).timeSphere ≠ (presentPerfect t0 toSit).timeSphere := by
   simp [preterit, presentPerfect]
@@ -517,7 +517,7 @@ theorem futurePerfect_vague_sit_t0 :
     the chain relates TO_sit to TO₂ and TO₂ to TO₁, but NOT
     TO_sit to TO₁. All three scenarios are consistent.
 
-    Reichenbach's (1947) three separate schemata for the conditional
+    @cite{reichenbach-1947}'s three separate schemata for the conditional
     (S–R–E, R–S–E, R–E–S) are NOT distinct tenses — they are instances
     of a single vague schema. -/
 theorem conditional_vague_sit_t0 :

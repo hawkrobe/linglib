@@ -7,7 +7,7 @@ import Linglib.Core.Lexical.Word
 Cross-linguistic data on grammatical evidentiality from the World Atlas of
 Language Structures, covering two parameters:
 
-- **Ch 77: Semantic Distinctions of Evidentiality** (de Haan 2013a): How many
+- **Ch 77: Semantic Distinctions of Evidentiality**: How many
   and which evidential distinctions a language grammaticalizes. Evidentials
   encode the speaker's source of information for a proposition --- whether they
   witnessed it directly, inferred it from indirect evidence, or received it via
@@ -16,7 +16,7 @@ Language Structures, covering two parameters:
   Quechua). The majority of the world's languages (181/318 = 57%) lack
   grammatical evidentials entirely.
 
-- **Ch 78: Coding of Evidentiality** (de Haan 2013b): How evidentiality is
+- **Ch 78: Coding of Evidentiality**: How evidentiality is
   morphologically expressed in languages that have it. Four strategies: verbal
   affix (the dominant pattern, 131/191 = 69%), clitic, modal particle, or
   fusion with the TAM (tense-aspect-mood) system. Only languages with
@@ -24,7 +24,7 @@ Language Structures, covering two parameters:
 
 ## Key findings
 
-De Haan (2013) observes that evidentiality is areally concentrated: it is
+@cite{de-haan-2013} observes that evidentiality is areally concentrated: it is
 pervasive in the Americas (especially the Andes and Amazonia), common across
 Central and Inner Asia (Tibetan, Turkic), and well-attested in the Balkans
 and Caucasus. In other parts of the world --- most of Africa, most of
@@ -259,7 +259,7 @@ Japanese (Japonic).
 No grammatical evidentials in the strict sense. The hearsay particle
 "soo da" (そうだ) and inferential "rashii" (らしい) have evidential-like
 functions but are analyzed as modal rather than evidential morphology by
-de Haan (2013). WALS classifies Japanese as lacking grammatical evidentials.
+@cite{de-haan-2013}. WALS classifies Japanese as lacking grammatical evidentials.
 -/
 def japanese : EvidentialityProfile :=
   { language := "Japanese", iso := "jpn", family := "Japonic"
@@ -443,7 +443,7 @@ def abkhaz : EvidentialityProfile :=
 Finnish (Uralic).
 No grammatical evidentiality system. Finnish has modal verbs (*voida* 'can',
 *täytyä* 'must', *saattaa* 'may') but evidential meanings are expressed
-lexically, not as part of obligatory verbal morphology (Karlsson 2018, §10).
+lexically, not as part of obligatory verbal morphology.
 -/
 def finnish : EvidentialityProfile :=
   { language := "Finnish", iso := "fin", family := "Uralic"

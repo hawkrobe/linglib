@@ -6,7 +6,7 @@ import Mathlib.Data.Fintype.Basic
 # Property Spaces and Personae (Burnett 2019, Definitions 3.1–3.3)
 @cite{burnett-2019}
 
-Burnett's formalization of Eckert's (2008) indexical field as a
+Burnett's formalization of @cite{eckert-2008}'s indexical field as a
 *property space* — a set of social properties with incompatibility
 constraints — from which *personae* emerge as maximal consistent subsets.
 

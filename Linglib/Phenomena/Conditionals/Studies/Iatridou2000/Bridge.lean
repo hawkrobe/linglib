@@ -3,9 +3,9 @@ import Linglib.Theories.Semantics.Conditionals.Iatridou
 import Linglib.Theories.Semantics.Tense.Deal
 
 /-!
-# Iatridou (2000) — Bridge @cite{iatridou-2000}
+# @cite{iatridou-2000} — Bridge @cite{iatridou-2000}
 
-Connects the cross-linguistic morphological data from Iatridou (2000) to the
+Connects the cross-linguistic morphological data from @cite{iatridou-2000} to the
 ExclF formalization in `Semantics.Conditionals.Iatridou`.
 
 ## Bridge Structure

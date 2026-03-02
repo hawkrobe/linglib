@@ -16,41 +16,41 @@ The passive:
 
 ## The Data
 
-  (1a)  John kicked the ball.           ✓  active transitive
-  (1b)  The ball was kicked.            ✓  passive (short)
-  (1c)  The ball was kicked by John.    ✓  passive with agent
+  (1a) John kicked the ball. ✓ active transitive
+  (1b) The ball was kicked. ✓ passive (short)
+  (1c) The ball was kicked by John. ✓ passive with agent
 
-  (2a)  Mary chased the cat.            ✓  active transitive
-  (2b)  The cat was chased.             ✓  passive (short)
-  (2c)  The cat was chased by Mary.     ✓  passive with agent
+  (2a) Mary chased the cat. ✓ active transitive
+  (2b) The cat was chased. ✓ passive (short)
+  (2c) The cat was chased by Mary. ✓ passive with agent
 
-  (3a) *The ball was kicked the game.   ✗  passive with object (impossible)
-  (3b) *Was kicked John.                ✗  passive missing subject
+  (3a) *The ball was kicked the game. ✗ passive with object (impossible)
+  (3b) *Was kicked John. ✗ passive missing subject
 
-## Collins (2005) Data @cite{collins-2005}
+## @cite{collins-2005} Data @cite{collins-2005}
 
 ### C-command asymmetries (§3)
 
 In passive, the derived subject (= original object) c-commands the
 by-phrase (= original subject). Evidence:
 
-  (10a)  Every letter₁ was signed by its₁ author.   ✓  bound variable
-  (10b) *Its₁ author was arrested by every cop₁.    ✗  no binding into subject
-  (10c)  No letter was signed by anyone.             ✓  NPI licensed in by-phrase
-  (10d) *Anyone was fired by no manager.             ✗  no NPI licensing of subject
+  (10a) Every letter₁ was signed by its₁ author. ✓ bound variable
+  (10b) *Its₁ author was arrested by every cop₁. ✗ no binding into subject
+  (10c) No letter was signed by anyone. ✓ NPI licensed in by-phrase
+  (10d) *Anyone was fired by no manager. ✗ no NPI licensing of subject
 
 ### Particle placement (§3.1)
 
-  (15a)  The cat was let out.                        ✓  passive with particle
-  (16a) *The cat was let out the dog.                ✗  no post-particle object in passive
-  (16b) *The cat was let the dog out.                ✗  no intercalated object in passive
+  (15a) The cat was let out. ✓ passive with particle
+  (16a) *The cat was let out the dog. ✗ no post-particle object in passive
+  (16b) *The cat was let the dog out. ✗ no intercalated object in passive
 
 ### Auxiliary selection (§3.3)
 
-  (23a)  John has kicked the ball.                   ✓  have + past participle
-  (23b)  The ball was kicked.                        ✓  be + past participle
-  (23c) *John has kicking the ball.                  ✗  have requires participle
-  (23d) *The ball was kick.                          ✗  be-passive requires participle
+  (23a) John has kicked the ball. ✓ have + past participle
+  (23b) The ball was kicked. ✓ be + past participle
+  (23c) *John has kicking the ball. ✗ have requires participle
+  (23d) *The ball was kick. ✗ be-passive requires participle
 -/
 
 namespace Phenomena.ArgumentStructure.Passive
@@ -161,7 +161,7 @@ def auxiliaryData : StringPhenomenonData := {
 /-- Idiom chunks preserved under passivization show that the object
     originates in the same VP-internal position in both active and passive.
     This supports UTAH: the external argument is generated in Spec-vP
-    in both active and passive (Collins 2005, p. 95). -/
+    in both active and passive. -/
 def idiomData : StringPhenomenonData := {
   name := "Idiom Preservation Under Passive"
   generalization := "Idiom chunks survive passivization (supports UTAH)"

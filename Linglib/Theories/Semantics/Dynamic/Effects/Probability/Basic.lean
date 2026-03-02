@@ -29,6 +29,8 @@ namespace Semantics.Dynamic.Probabilistic
 
 /-!
 ## The Probability Monad
+@cite{lassiter-goodman-2017}
+
 
 We define `P α` abstractly as a structure with `pure` and `bind` operations
 satisfying the monad laws. This allows us to reason about probabilistic
@@ -250,7 +252,7 @@ RSA's S1 isn't just conditioning - it's *choosing* an utterance weighted by util
 This requires a `choose` operation in addition to `observe`.
 
 ```
-choose : (α → ℚ) → P α   -- sample from weighted distribution
+choose : (α → ℚ) → P α -- sample from weighted distribution
 ```
 
 The relationship:
@@ -299,8 +301,7 @@ end ChoiceProbMonad
 /-!
 ## Threshold Semantics
 
-Threshold semantics + threshold uncertainty produces graded truth values
-(Lassiter & Goodman 2017). This is a special case of the PDS framework.
+Threshold semantics + threshold uncertainty produces graded truth values. This is a special case of the PDS framework.
 
 For a gradable adjective like "tall":
 - `measure : Entity → ℝ` gives heights

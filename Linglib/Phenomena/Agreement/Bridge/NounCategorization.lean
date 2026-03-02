@@ -2,7 +2,7 @@ import Linglib.Phenomena.Agreement.NounCategorization
 import Linglib.Theories.Semantics.Lexical.Noun.Kind.Chierchia1998
 
 /-!
-# Bridge: Noun Categorization × Chierchia (1998) Nominal Mapping Parameter
+# Bridge: Noun Categorization × @cite{chierchia-1998} Nominal Mapping Parameter
 @cite{chierchia-1998}
 
 Connects the cross-linguistic noun categorization typology in
@@ -37,16 +37,16 @@ def nominalMappingToClassifierType : NominalMapping → Option ClassifierType
   | .predOnly => some .nounClass          -- French, Italian
   | .argAndPred => none                   -- English: no productive system
 
-/-- French mapping is [-arg, +pred] (Chierchia 1998). -/
+/-- French mapping is [-arg, +pred]. -/
 theorem french_mapping : Fragments.French.Nouns.frenchMapping = .predOnly := rfl
 
-/-- Mandarin mapping is [+arg, -pred] (Chierchia 1998). -/
+/-- Mandarin mapping is [+arg, -pred]. -/
 theorem mandarin_mapping : Fragments.Mandarin.Nouns.mandarinMapping = .argOnly := rfl
 
-/-- Japanese mapping is [+arg, -pred] (Chierchia 1998). -/
+/-- Japanese mapping is [+arg, -pred]. -/
 theorem japanese_mapping : Fragments.Japanese.Nouns.japaneseMapping = .argOnly := rfl
 
-/-- Italian mapping is [-arg, +pred] (Chierchia 1998). Italian is the
+/-- Italian mapping is [-arg, +pred]. Italian is the
     star witness for `predOnly`: bare arguments are restricted and D
     must be projected for argumenthood. -/
 theorem italian_mapping : Fragments.Italian.Nouns.italianMapping = .predOnly := rfl

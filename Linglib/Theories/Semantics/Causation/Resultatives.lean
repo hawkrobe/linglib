@@ -9,13 +9,13 @@ import Linglib.Theories.Semantics.Causation.ProductionDependence
 # Resultatives as Concealed Causatives
 @cite{baglini-bar-asher-siegal-2025} @cite{goldberg-jackendoff-2004} @cite{levin-2019} @cite{martin-rose-nichols-2025} @cite{nadathur-lauer-2020}
 
-Connects the resultative construction (Goldberg & Jackendoff 2004) to the
+Connects the resultative construction to the
 causative semantics infrastructure:
 
 1. **Causal Dynamics**: causative resultatives modeled as concrete
-   `CausalDynamics` with structural sufficiency proofs (Nadathur & Lauer 2020)
+   `CausalDynamics` with structural sufficiency proofs
    and CC-selection constraints (Baglini & Bar-Asher Siegal 2025)
-2. **Tightness via Causal Necessity**: Levin (2019) concealed causative
+2. **Tightness via Causal Necessity**: @cite{levin-2019} concealed causative
    constraint — intervening causers with independent energy sources
    disrupt necessity under counterfactual intervention, formalized
    through `completesForEffect` (not graph-structural checks)
@@ -44,8 +44,7 @@ open MartinRoseNichols2025
 
 /-! ## Causal Dynamics (Nadathur & Lauer 2020; Baglini & Bar-Asher Siegal 2025)
 
-The constructional CAUSE in causative resultatives maps to Nadathur & Lauer's
-(2020) causal sufficiency: the verbal subevent is sufficient for the
+The constructional CAUSE in causative resultatives maps to @cite{nadathur-lauer-2020} causal sufficiency: the verbal subevent is sufficient for the
 constructional result. We build concrete `CausalDynamics` and prove
 structural sufficiency/necessity results.
 
@@ -264,7 +263,7 @@ theorem resultative_cause_differs_from_cause_verb :
 theorem prevent_incompatible_with_resultative :
     CausativeBuilder.prevent ≠ resultativeCausativeBuilder := by decide
 
-/-! ## Levin's (2019) Tightness via Causal Necessity
+/-! ## @cite{levin-2019}'s Tightness via Causal Necessity
 
 Resultatives require tightness: no intervening causer with its own energy
 source. Tightness ≡ `completesForEffect` (sufficiency + necessity). The

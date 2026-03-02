@@ -36,7 +36,7 @@ def tailSuffix (ranking : List A) (i : Nat) : Finset A :=
   (ranking.drop i).toFinset
 
 /-- Probability of a single step in the ranking: choosing `ranking[i]` from
-    the remaining alternatives `{ranking[i], ranking[i+1], ...}`. -/
+    the remaining alternatives `{ranking[i], ranking[i+1],...}`. -/
 noncomputable def rankStepProb (ra : RationalAction S A) (s : S)
     (ranking : List A) (i : Nat) : ℝ :=
   match ranking[i]? with
@@ -44,13 +44,13 @@ noncomputable def rankStepProb (ra : RationalAction S A) (s : S)
   | some a => ra.pChoice s (tailSuffix ranking i) a
 
 /-- **Ranking probability** (Luce 1959, Theorem 9):
-    The probability of observing the complete rank ordering `a₁ > a₂ > ... > aₙ`
+    The probability of observing the complete rank ordering `a₁ > a₂ >... > aₙ`
     is the product of successive top-choices from shrinking sets:
 
-    `P(a₁ > a₂ > ... > aₙ) = P(a₁ | {a₁,...,aₙ}) · P(a₂ | {a₂,...,aₙ}) · ... · P(aₙ₋₁ | {aₙ₋₁, aₙ})`
+    `P(a₁ > a₂ >... > aₙ) = P(a₁ | {a₁,...,aₙ}) · P(a₂ | {a₂,...,aₙ}) ·... · P(aₙ₋₁ | {aₙ₋₁, aₙ})`
 
     Under the Luce model with ratio scale `v`, this becomes:
-    `P(a₁ > ... > aₙ) = ∏ᵢ v(aᵢ) / ∑ⱼ≥ᵢ v(aⱼ)` -/
+    `P(a₁ >... > aₙ) = ∏ᵢ v(aᵢ) / ∑ⱼ≥ᵢ v(aⱼ)` -/
 noncomputable def rankProb (ra : RationalAction S A) (s : S) (ranking : List A) : ℝ :=
   (List.range ranking.length).foldl (λ acc i => acc * rankStepProb ra s ranking i) 1
 

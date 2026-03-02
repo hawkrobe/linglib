@@ -12,7 +12,7 @@ Reichenbach frames) lives in `Core.Time` and `Core.Reichenbach`.
 
 ## Key Concepts
 
-1. **Historical modal base** (Thomason 1984) for future branching
+1. **Historical modal base** for future branching
 2. **Temporal propositions** evaluated at situations
 
 -/
@@ -38,7 +38,7 @@ def WorldHistory (W Time : Type*) := Situation W Time → Set W
 Historical modal base: situations whose worlds agree with s up to τ(s),
 and whose times are at or after τ(s).
 
-Following Thomason (1984) and Condoravdi (2002):
+Following @cite{thomason-1984} and @cite{condoravdi-2002}:
 - Past is fixed (determined)
 - Future branches (open)
 

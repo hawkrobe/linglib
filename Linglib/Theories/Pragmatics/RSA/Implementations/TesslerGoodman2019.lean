@@ -37,7 +37,7 @@ namespace RSA.TesslerGoodman2019
 
 -- Domain: Prevalence as Scale (parallel to LassiterGoodman2017's Height)
 
-/-- Discretized prevalence: 0%, 10%, ..., 100% -/
+/-- Discretized prevalence: 0%, 10%,..., 100% -/
 inductive Prevalence where
   | p0 | p1 | p2 | p3 | p4 | p5 | p6 | p7 | p8 | p9 | p10
   deriving Repr, DecidableEq, BEq, Fintype

@@ -169,7 +169,7 @@ def qi_say : DiagnosticDatum :=
 -- ════════════════════════════════════════════════════
 
 /-- MoS verb with quote complement + PP goal still permits QI.
-    Storment (2026, §5): QI is blocked only when multiple DP arguments
+    @cite{storment-2026}: QI is blocked only when multiple DP arguments
     compete for Case licensing. A PP goal does not need Case. -/
 def qi_whisper_transitive : DiagnosticDatum :=
   { verbForm := "whisper"
@@ -215,12 +215,12 @@ def qi_whisper_double_obj : DiagnosticDatum :=
 
     1. **Fronted constituent**: QI requires a quote; LI requires a locative PP
     2. **Transitivity constraint**: both QI and LI are blocked with multiple
-       DP arguments, due to Case licensing (Storment 2026, §5)
+       DP arguments, due to Case licensing
     3. **Pronominal subjects**: QI degrades with pronouns (§3); LI blocks them
     4. **Verb class**: QI targets MoS verbs; LI applies more broadly -/
 
 /-- LI with transitive verb is ungrammatical. The transitivity constraint
-    (Case licensing) applies to both QI and LI (Storment 2026, §5). -/
+    (Case licensing) applies to both QI and LI. -/
 def li_kick : DiagnosticDatum :=
   { verbForm := "kick"
   , diagnostic := .locativeInversion

@@ -10,8 +10,7 @@ import Linglib.Core.Case.SplitConditions
 Georgian (Kartvelian) has a polypersonal agreement system where the finite
 verb indexes both subject and object. Object agreement is
 **person-conditioned**: indirect objects (dative-marked) are cross-referenced
-on the verb for 1st/2nd person but not for 3rd person (Harris 1981,
-Just 2024, Table 1).
+on the verb for 1st/2nd person but not for 3rd person.
 
 This is **differential P indexing** conditioned by person prominence.
 
@@ -31,7 +30,7 @@ The object markers are prefixed to the verb stem:
 
 ## Split-Ergative Case
 
-Georgian has a tense/aspect-conditioned split ergative system (Harris 1981):
+Georgian has a tense/aspect-conditioned split ergative system:
 - Present series: NOM-DAT alignment
 - Aorist series: ERG-NOM alignment
 - Evidential series: DAT-NOM (inversion)
@@ -72,7 +71,7 @@ def PersonNumber.isSAP (pn : PersonNumber) : Bool :=
 -- § 2: Object Agreement Markers
 -- ============================================================================
 
-/-- Object agreement prefix on the verb (Harris 1981).
+/-- Object agreement prefix on the verb.
     SAP objects receive an overt marker; 3rd person objects receive none. -/
 def objectPrefix : PersonNumber → Option String
   | .p1sg => some "m-"
@@ -139,12 +138,11 @@ inductive TenseSeries where
   | evidential  -- sometimes called "perfect" or "inversion"
   deriving DecidableEq, BEq, Repr
 
-/-- Georgian split-ergative system (Harris 1981): only the aorist series
+/-- Georgian split-ergative system: only the aorist series
     uses ergative alignment. Present uses NOM-DAT framing and evidential
     uses DAT-NOM "inversion" — both non-ergative.
 
-    This instantiates `Core.SplitErgativity` from Blake's (1994, Ch. 4)
-    typology of tense/aspect-conditioned splits. -/
+    This instantiates `Core.SplitErgativity` from @cite{blake-1994}'s typology of tense/aspect-conditioned splits. -/
 def georgianSplit : Core.SplitErgativity TenseSeries :=
   { ergCondition := fun ts => ts == .aorist }
 

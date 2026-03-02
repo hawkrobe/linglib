@@ -3,8 +3,8 @@ import Linglib.Theories.Phonology.Features
 /-!
 # SPE Phonological Rules
 
-Rule-based phonology following the SPE formalism (Chomsky & Halle 1968),
-as presented in Hayes (2009) *Introductory Phonology*, Chapter 6.
+Rule-based phonology following the SPE formalism,
+as presented in @cite{hayes-2009} *Introductory Phonology*, Chapter 6.
 
 The core notation is `A → B / C __ D`: a segment matching natural class A
 undergoes structural change B when preceded by context C and followed by
@@ -198,7 +198,7 @@ def derive (rules : List PhonRule) (input : List Segment) : List Segment :=
 -- ============================================================================
 
 /-- Preglottalization (Hayes p.125):
-    `[-cont, -voice] → [+c.g.] / __ ]word`
+    `[-cont, -voice] → [+c.g.] / __]word`
 
     Voiceless stops become glottalized word-finally. -/
 def preglottalization : PhonRule where

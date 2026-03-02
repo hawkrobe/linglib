@@ -174,7 +174,7 @@ def uniformPrior : CWSPrior where
 
 -- Anti-Exhaustivity Condition (Equation 6)
 
-/-- The anti-exhaustivity condition from Cremers et al. (2023), Equation 6.
+/-- The anti-exhaustivity condition from @cite{cremers-wilcox-spector-2023}, Equation 6.
 
     In baseline RSA:
     L1(w_ab | A) > P(w_ab) iff P(w_ab) / P(w_a) > c(A∧¬B) / c(A∧B)

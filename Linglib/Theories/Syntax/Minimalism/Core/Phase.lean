@@ -31,7 +31,7 @@ namespace Minimalism
 
 /-- Identify phase heads from the formal category system.
 
-    C and v are phase heads (Chomsky 2000, 2001).
+    C and v are phase heads.
     This is DERIVED from `labelCat`, not stipulated.
 
     **Voice/v* correspondence**: In the Kratzer/Schäfer framework,
@@ -54,8 +54,8 @@ def isDPhaseHead (so : SyntacticObject) : Bool :=
   | some .D => true
   | _ => false
 
-/-- SA as a phase head (Speas & Tenny 2003).
-    SAP is the highest phase — since it cannot embed (Dayal 2025),
+/-- SA as a phase head.
+    SAP is the highest phase — since it cannot embed,
     allocutive agreement probing from SA is root-only. -/
 def isSAPhaseHead (so : SyntacticObject) : Bool :=
   match labelCat so with
@@ -108,8 +108,8 @@ structure Phase where
 /-- Phase Impenetrability Condition: material inside a phase complement
     is inaccessible to operations outside the phase.
 
-    Under the strong PIC (Chomsky 2000), the complement is frozen
-    as soon as the phase head is merged. Under the weak PIC (Chomsky 2001),
+    Under the strong PIC, the complement is frozen
+    as soon as the phase head is merged. Under the weak PIC,
     it is frozen when the next phase head is merged. -/
 def phaseImpenetrable (strength : PICStrength) (phase goal : SyntacticObject) : Prop :=
   match strength with
@@ -132,7 +132,7 @@ def phaseImpenetrable (strength : PICStrength) (phase goal : SyntacticObject) : 
 /-- Anti-locality: the complement of a phase head H cannot move to Spec-H.
 
     This is "too local" — movement must cross at least one maximal projection.
-    Abels (2012) derives this from the independently motivated ban on
+    @cite{abels-2012} derives this from the independently motivated ban on
     complement-to-specifier movement within a single phase.
 
     This is a derivational constraint: a derivation that applies Internal Merge
@@ -148,7 +148,7 @@ def antiLocality (head complement mover : SyntacticObject) : Prop :=
 -- Part 6: Stranding Generalization
 -- ============================================================================
 
-/-- Stranding Generalization (Abels 2003, 2012):
+/-- Stranding Generalization:
     Complements of phase heads cannot be stranded by movement of the head.
 
     DERIVED from Anti-locality + PIC:

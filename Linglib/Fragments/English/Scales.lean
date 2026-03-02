@@ -100,7 +100,7 @@ def likeLove : Scale DegreeExpr :=
 Evaluative adjective expressions for quality judgments.
 
 This scale is used in:
-- Yoon et al. (2020) politeness model
+- @cite{yoon-etal-2020} politeness model
 - Review/feedback contexts
 
 The scale goes from strongly negative to strongly positive:
@@ -201,12 +201,12 @@ def scalarImplicatures {α : Type} [BEq α] [Repr α] (s : Scale α) (x : α) : 
 A crucial property for exhaustification: whether the alternative set is
 CLOSED UNDER CONJUNCTION.
 
-### Spector (2016) Theorem 9
+### @cite{spector-2016} Theorem 9
 
 When alternatives are closed under ∧, the two exhaustivity operators
 exh_mw and exh_ie are EQUIVALENT.
 
-### Chierchia (2013) EFCI Analysis
+### @cite{chierchia-2013} EFCI Analysis
 
 The puzzle of Free Choice Items depends on alternatives NOT being closed:
 - Standard scalar alternatives ⟨some, all⟩: closed under ∧
@@ -341,7 +341,7 @@ def predictExhEffect (isClosed : Bool) : ClosureEffect :=
 /-!
 ## Spector's Theorem 9
 
-**Theorem 9** (Spector 2016, p.25):
+**Theorem 9**:
 When ALT is closed under conjunction, exh_mw = exh_ie.
 
 This is proven in `Theories/NeoGricean/Exhaustivity/Basic.lean`.

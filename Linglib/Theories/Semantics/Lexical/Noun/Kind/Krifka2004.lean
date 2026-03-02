@@ -88,10 +88,10 @@ theorem bare_singular_blocked (restriction : BareSingularRestriction)
 
 /-- ∃-shift is position-sensitive: it applies at the surface position of the
 bare NP. Scrambled BPs scope wide; unscrambled BPs scope narrow.
-Evidence: Dutch/German scrambling (Le Bruyn & de Swart 2022). -/
+Evidence: Dutch/German scrambling. -/
 def existentialShiftPositionSensitive : Bool := true
 
-/-- Type shifts available for properties (Partee 1987). -/
+/-- Type shifts available for properties. -/
 inductive TypeShift where
   | exists_  -- ∃ shift: P → λQ.∃x[P(x) ∧ Q(x)]
   | iota     -- ι shift: P → ιx.P(x)
@@ -189,7 +189,7 @@ def krifkaPredictions : TheoryComparison :=
 
 -- Arguments for the Properties View
 
-/-- Modified bare plurals can scope wide (Carlson 1977):
+/-- Modified bare plurals can scope wide:
 "Parts of that machine are everywhere" allows wide-scope ∃. -/
 structure ModifiedBarePlural where
   np : String
@@ -210,6 +210,8 @@ def simpleTypeShiftVariation : Bool := true
 
 /-!
 ## Position-Sensitive ∃-Shift
+@cite{carlson-1977} @cite{le-bruyn-de-swart-2022} @cite{partee-1987}
+
 
 ∃-shift applies at the surface position of the bare plural,
 predicting that scrambled BPs take wide scope over negation.

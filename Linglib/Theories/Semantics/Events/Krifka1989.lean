@@ -4,7 +4,7 @@ import Linglib.Theories.Semantics.Events.StratifiedReference
 import Linglib.Theories.Semantics.Probabilistic.Measurement.Basic
 
 /-!
-# Krifka (1989) "Nominal Reference, Temporal Constitution and Quantification"
+# @cite{krifka-1989} "Nominal Reference, Temporal Constitution and Quantification"
 @cite{champollion-2017} @cite{krifka-1989} @cite{krifka-1998} @cite{scontras-2014}
 
 The foundational paper connecting nominal reference properties (mass/count/plural)
@@ -37,15 +37,15 @@ open Semantics.Lexical.Verb.Aspect
 -- ════════════════════════════════════════════════════
 
 /-- Mass nouns have cumulative reference: water ⊕ water = water.
-    Krifka (1989) §2: mass nouns denote predicates satisfying CUM. -/
+    @cite{krifka-1989} §2: mass nouns denote predicates satisfying CUM. -/
 abbrev MassNoun {α : Type*} [SemilatticeSup α] (P : α → Prop) : Prop := CUM P
 
 /-- Count nouns have quantized reference: no proper part of a cat is a cat.
-    Krifka (1989) §2: count nouns denote predicates satisfying QUA. -/
+    @cite{krifka-1989} §2: count nouns denote predicates satisfying QUA. -/
 abbrev CountNoun {α : Type*} [PartialOrder α] (P : α → Prop) : Prop := QUA P
 
 /-- Bare plurals are algebraic closures: *CAT = the closure of CAT under ⊕.
-    Krifka (1989) §2: bare plurals denote *P, the smallest superset of P
+    @cite{krifka-1989} §2: bare plurals denote *P, the smallest superset of P
     closed under sum formation. -/
 abbrev BarePlural {α : Type*} [SemilatticeSup α] (P : α → Prop) : α → Prop :=
   AlgClosure P
@@ -62,7 +62,7 @@ theorem barePlural_cum {α : Type*} [SemilatticeSup α] {P : α → Prop} :
 variable {α β : Type*} [SemilatticeSup α] [SemilatticeSup β]
 
 /-- QMOD produces QUA predicates when μ is extensive and n > 0.
-    Krifka (1989) §2: "three kilos of rice" is QUA because no proper
+    @cite{krifka-1989} §2: "three kilos of rice" is QUA because no proper
     part of a 3kg entity also weighs 3kg (extensivity of weight).
     Chains to `extMeasure_qua` from Krifka1998. -/
 theorem qmod_qua
@@ -90,14 +90,14 @@ theorem qmod_of_cum_is_qua
 /-- Duration measure: maps events to the length of their runtime.
     This is a wrapper around τ (runtime extraction) composed with
     an interval-length function.
-    Krifka (1989): temporal adverbials modify via QMOD on duration. -/
+    @cite{krifka-1989}: temporal adverbials modify via QMOD on duration. -/
 def durationMeasure {Time : Type*} [LinearOrder Time]
     (len : Interval Time → ℚ) : Ev Time → ℚ :=
   λ e => len e.runtime
 
 /-- "V for δ" as QMOD: the for-adverbial restricts VP events to those
-    whose duration equals δ. This connects Krifka's (1989) QMOD analysis
-    to Champollion's (2017) `forAdverbialMeaning`.
+    whose duration equals δ. This connects @cite{krifka-1989}'s QMOD analysis
+    to @cite{champollion-2017}'s `forAdverbialMeaning`.
 
     Krifka: "run for an hour" = QMOD(run, duration, 1hr)
     Champollion: "run for δ" = λe. run(e) ∧ τ(e) = δ ∧ SSR(run)(e)
@@ -174,10 +174,10 @@ theorem measure_phrase_makes_qua
 
 /-! ### Scontras vs. Krifka: different properties, different predicates
 
-Scontras's (2014) QU (quantity-uniform) applies to the **base predicate**:
+@cite{scontras-2014}'s QU (quantity-uniform) applies to the **base predicate**:
 QU_μ(rice) says that rice-quantities of the same μ-measure can be summed.
 
-Krifka's (1989) QUA applies to the **modified predicate**: QUA("three kilos
+@cite{krifka-1989}'s QUA applies to the **modified predicate**: QUA("three kilos
 of rice") says no proper part of a 3kg-of-rice entity is also 3kg-of-rice.
 
 These are complementary: QU is a precondition on the base noun for measure

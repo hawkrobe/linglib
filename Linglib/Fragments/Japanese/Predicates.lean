@@ -2,9 +2,9 @@ import Linglib.Theories.Semantics.Lexical.Verb.VerbEntry
 
 /-!
 # Japanese Predicate Lexicon Fragment
-@cite{qing-uegaki-2025}
+@cite{qing-uegaki-2025} @cite{ozaki-2025}
 
-Japanese predicates relevant to Qing et al. (2025). Properties like
+Japanese predicates relevant to @cite{qing-uegaki-2025}. Properties like
 C-distributivity and NVP class are DERIVED from the `attitudeBuilder` field.
 -/
 
@@ -118,7 +118,7 @@ def tabe_sase : JapaneseVerbEntry where
 theorem ik_ase_is_make :
     ik_ase.causativeBuilder = some .make := rfl
 
-/-! ## Accusative/Ablative Alternation Verbs (Ozaki 2025)
+/-! ## Accusative/Ablative Alternation Verbs
 
 Departure verbs that allow source marking with ACC *-o* or ABL *kara*.
 These are dyadic unaccusatives: two internal arguments, no thematic Voice.

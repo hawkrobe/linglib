@@ -1,5 +1,5 @@
 /-!
-# Koev (2017) Empirical Data @cite{koev-2017}
+# @cite{koev-2017} Empirical Data @cite{koev-2017}
 
 Theory-neutral data from Koev (2017, *Journal of Semantics* 34(1):1–38).
 The Bulgarian evidential (the -l participle in evidential contexts) is
@@ -37,7 +37,7 @@ inductive SpatialRelation where
 -- § 2. Evidential Datum Structure
 -- ════════════════════════════════════════════════════
 
-/-- An evidential felicity datum from Koev (2017).
+/-- An evidential felicity datum from @cite{koev-2017}.
     Each records the spatiotemporal configuration of the described event
     and the learning event, and whether the evidential is felicitous. -/
 structure EvidentialDatum where
@@ -47,7 +47,7 @@ structure EvidentialDatum where
   spatial : SpatialRelation
   /-- Whether the Bulgarian evidential is felicitous in this configuration -/
   evidentialFelicitous : Bool
-  /-- Example number in Koev (2017) -/
+  /-- Example number in @cite{koev-2017} -/
   exampleNum : String
   deriving Repr, BEq
 
@@ -86,12 +86,12 @@ def smokeFromChimney : EvidentialDatum where
 
 /-- The evidential does not weaken commitment: "EV(p) and I know
     because I was there" is not contradictory (unlike a modal which
-    would predict contradiction). Koev (2017), §3. -/
+    would predict contradiction). @cite{koev-2017}, §3. -/
 def commitmentDatum : Bool := true
 
 /-- The evidential contribution projects past negation: "It is not the
     case that Ivan EV-came" presupposes indirect evidence while negating
-    the proposition. Koev (2017), §5. -/
+    the proposition. @cite{koev-2017}, §5. -/
 def projectionDatum : Bool := true
 
 -- ════════════════════════════════════════════════════

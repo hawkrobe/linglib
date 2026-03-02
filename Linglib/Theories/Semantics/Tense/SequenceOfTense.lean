@@ -81,7 +81,7 @@ The attitude side (`SituationDependent.temporallyBound`) and the tense side
 reading — using different formal vocabularies. The following theorems prove
 their equivalence, completing the missing edge in the dependency graph.
 
-Ogihara (1989): the bound (zero) tense variable receives the matrix event
+@cite{ogihara-1989}: the bound (zero) tense variable receives the matrix event
 time via lambda abstraction. The Reichenbach frame has R = P (simultaneous).
 The situation-semantic formulation imposes time-equality on accessible
 situations. All three descriptions collapse to the same truth condition.

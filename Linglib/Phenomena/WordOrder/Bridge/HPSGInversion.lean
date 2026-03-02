@@ -3,12 +3,14 @@ import Linglib.Phenomena.WordOrder.SubjectAuxInversion
 
 /-!
 # Bridge: HPSG → Subject-Auxiliary Inversion Data
+@cite{sag-wasow-bender-2003}
+
 
 Connects the HPSG [INV ±] analysis of inversion
 (`Theories/Syntax/HPSG/Inversion.lean`) to the theory-neutral SAI data
 (`Phenomena/WordOrder/SubjectAuxInversion.lean`).
 
-The HPSG analysis (Sag, Wasow & Bender 2003) uses a binary [INV] feature:
+The HPSG analysis uses a binary [INV] feature:
 - Matrix questions require [INV +], forcing auxiliary-before-subject order.
 - Embedded questions require [INV −], forcing subject-before-auxiliary order.
 
@@ -87,7 +89,7 @@ The HPSG [INV ±] analysis correctly captures all 6 core SAI data points:
 | ex02  | *What John can eat?        | ✗ ungram.  | ✗ blocked  |
 | ex04  | Can John eat pizza?        | ✓ gram.    | ✓ licensed |
 | ex05  | *John can eat pizza?       | ✗ ungram.  | ✗ blocked  |
-| ex07  | ...what John can eat       | ✓ gram.    | ✓ licensed |
+| ex07  |...what John can eat       | ✓ gram.    | ✓ licensed |
 | ex08  | *...what can John eat      | ✗ ungram.  | ✗ blocked  |
 -/
 

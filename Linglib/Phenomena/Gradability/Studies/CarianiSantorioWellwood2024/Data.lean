@@ -1,5 +1,5 @@
 /-!
-# Cariani, Santorio & Wellwood (2024): Empirical Data
+# @cite{cariani-santorio-wellwood-2024}: Empirical Data
 
 @cite{cariani-santorio-wellwood-2024}
 

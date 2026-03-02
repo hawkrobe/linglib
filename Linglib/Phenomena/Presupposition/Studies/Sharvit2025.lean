@@ -3,13 +3,13 @@ import Linglib.Core.Semantics.Presupposition
 /-!
 # Rooth-Partee Conditionals: Empirical Data
 
-@cite{sharvit-2025} @cite{rooth-partee-1982}Theory-neutral data for Sharvit (2025) "Rooth-Partee Conditionals."
+@cite{sharvit-2025} @cite{rooth-partee-1982}Theory-neutral data for @cite{sharvit-2025} "Rooth-Partee Conditionals."
 
 ## The puzzle
 
 (85) "If Mia is penniless or proud of her money, Sue shouldn't lend her any."
 
-Two readings (Rooth & Partee 1982):
+Two readings:
 
 - **(86a) if-over-∃**: If [penniless ∨ proud-of-money], shouldn't-lend.
   Single conditional with disjunctive antecedent.

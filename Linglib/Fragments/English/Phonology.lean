@@ -13,7 +13,7 @@ Core inventory for demo alternations: /p t k b d m n ŋ s w r æ ɪ ə/.
 
 ## Rules
 
-1. **Preglottalization** (Hayes p.125): `[-cont, -voice] → [+c.g.] / __ ]word`
+1. **Preglottalization** (Hayes p.125): `[-cont, -voice] → [+c.g.] / __]word`
 2. **Postnasal /t/ Deletion** (Hayes p.133): `[-cont, +cor, +ant, -voice] → ∅ / [+nasal] __ [+syll]`
 
 @cite{hayes-2009}
@@ -122,7 +122,7 @@ def schwa : Segment := Segment.ofSpecs
 -- ============================================================================
 
 /-- Preglottalization (Hayes p.125):
-    `[-cont, -voice] → [+c.g.] / __ ]word`
+    `[-cont, -voice] → [+c.g.] / __]word`
 
     Voiceless stops become glottalized word-finally. -/
 def preglottalization : PhonRule where

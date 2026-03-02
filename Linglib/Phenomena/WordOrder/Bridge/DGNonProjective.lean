@@ -5,8 +5,7 @@ import Linglib.Phenomena.WordOrder.NonProjectivity
 # Bridge: DG Non-Projective Theory → Treebank Non-Projectivity Data
 @cite{kuhlmann-2013} @cite{kuhlmann-nivre-2006}
 
-Connects the structural theory of non-projectivity (Kuhlmann & Nivre 2006,
-Kuhlmann 2013) to empirical treebank data on the prevalence of
+Connects the structural theory of non-projectivity to empirical treebank data on the prevalence of
 well-nestedness, gap degree, and fan-out constraints.
 
 ## Key Results

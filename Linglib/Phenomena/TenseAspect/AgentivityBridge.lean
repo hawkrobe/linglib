@@ -5,7 +5,7 @@ import Linglib.Phenomena.TenseAspect.DiagnosticsBridge
 # Bridge: Agentivity → Aspect Diagnostics
 @cite{cruse-1973}
 
-Connects Cruse (1973) agentivity decomposition to VendlerClass diagnostic
+Connects @cite{cruse-1973} agentivity decomposition to VendlerClass diagnostic
 predictions from `Phenomena.TenseAspect.DiagnosticsBridge`.
 
 The do-test prediction for each Vendler class is derived from the agentivity

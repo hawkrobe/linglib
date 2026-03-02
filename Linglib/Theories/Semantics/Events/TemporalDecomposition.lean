@@ -13,7 +13,7 @@ Accomplishments and achievements have internal temporal structure: an activity
 phase and a result phase with ordering constraints. States and activities are
 temporally simple. This module makes that structure explicit via
 `TemporalDecomposition`, enabling the perfect polysemy analysis in
-`PerfectPolysemy.lean` (Kiparsky 2002).
+`PerfectPolysemy.lean`.
 
 ## Key Definitions
 
@@ -23,7 +23,7 @@ temporally simple. This module makes that structure explicit via
 - `DecomposedEv`: event enriched with decomposition
 - `phasePred`: converts an interval (event phase) into an `EventPred` for
   ViewpointAspect operators
-- `MoensSteedmanClass`: five-way event classification (Moens & Steedman 1988)
+- `MoensSteedmanClass`: five-way event classification
 - `Nucleus`: tripartite event structure (prep process → culmination → cons state)
 - `WhenTarget`: what *when* accesses in each event type
 
@@ -315,7 +315,7 @@ theorem impf_activity_prfv_full_incompatible {Time : Type*} [LinearOrder Time]
 -- § 8. Moens & Steedman (1988) Event Types
 -- ════════════════════════════════════════════════════
 
-/-- Moens & Steedman's (1988) aspectual profile. Extends Vendler's
+/-- @cite{moens-steedman-1988} aspectual profile. Extends Vendler's
     three-feature `AspectualProfile` with ±consequent state, so the
     Vendler classification is inherited rather than stipulated.
     @cite{moens-steedman-1988} -/
@@ -324,7 +324,7 @@ structure MoensSteedmanProfile extends AspectualProfile where
   hasConsequentState : Bool
   deriving DecidableEq, Repr, BEq
 
-/-- Moens & Steedman's (1988) five-way event classification.
+/-- @cite{moens-steedman-1988} five-way event classification.
     Refines Vendler by splitting `achievement` along ±consequent state:
 
     | Class             | Atomic? | +ConsState? | Vendler        |
@@ -414,14 +414,14 @@ theorem MoensSteedmanClass.when_needs_coercion_iff (c : MoensSteedmanClass) :
 -- § 10. The Nucleus (Tripartite Event Structure)
 -- ════════════════════════════════════════════════════
 
-/-- The Moens & Steedman (1988) nucleus: tripartite event structure for
+/-- The @cite{moens-steedman-1988} nucleus: tripartite event structure for
     events with a culmination point. Makes the culmination explicit —
     it is implicit in `SubeventPhases` as the boundary between
     activityTrace and resultTrace.
 
     ```
-    SubeventPhases:  |---activity---|    |---result---|
-    Nucleus:         |---prep-------|•c  |---cons-----|
+    SubeventPhases: |---activity---| |---result---|
+    Nucleus: |---prep-------|•c |---cons-----|
                                      ↑
                              explicit culmination
     ```

@@ -66,7 +66,7 @@ end BindingConditions
 
 section Continuations
 
-/-- Duplicator combinator `W = λκ λx. κ x x` (Barker & Shan 2014). -/
+/-- Duplicator combinator `W = λκ λx. κ x x`. -/
 def W {A B : Type} (κ : A → A → B) (x : A) : B := κ x x
 
 example : W (λ x y => x == y) 5 = true := rfl

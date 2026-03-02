@@ -2,11 +2,11 @@ import Linglib.Core.Lexical.Word
 
 /-!
 # Gender and Noun Class Typology (WALS Chapters 30--32)
-@cite{corbett-1991} @cite{dryer-haspelmath-2013} @cite{corbett-2013}
+@cite{corbett-1991} @cite{dryer-haspelmath-2013} @cite{corbett-2013} @cite{dixon-1972}
 
 Formalizes three chapters from the World Atlas of Language Structures (WALS)
 covering the typology of gender and noun class systems, all authored by
-Corbett (2013):
+@cite{corbett-2013}:
 
 - **Chapter 30**: Number of Genders -- how many gender/noun class distinctions
   a language makes. Values range from none (no gender system) through 2, 3, 4,
@@ -33,7 +33,7 @@ Corbett (2013):
 
 The boundary between "gender" (2--3 categories, typically sex-based) and
 "noun class" (4+ categories, often with semantic and formal assignment) is
-gradient rather than categorical. Corbett (1991) treats them as a single
+gradient rather than categorical. @cite{corbett-1991} treats them as a single
 phenomenon at different scales.
 
 Corbett's Agreement Hierarchy governs where gender agreement surfaces:
@@ -540,7 +540,7 @@ def romanian : GenderProfile :=
 -- 4-gender languages (Ch 30 = four)
 -- ────────────────────────────────────────────────────
 
-/-- Dyirbal (Australia): 4 genders (Dixon 1972).
+/-- Dyirbal (Australia): 4 genders.
     I: males, most animate beings; II: females, water, fire, fighting;
     III: edible plants and fruit; IV: residual (everything else).
     Non-sex-based in the sense that the system includes categories organized
@@ -920,7 +920,7 @@ theorem non_canonical_non_european :
 -- The Gender-Number Scale
 -- ============================================================================
 
-/-- The gender-number scale (Corbett 1991): languages can be ordered from
+/-- The gender-number scale: languages can be ordered from
     no gender (0 categories) through systems with progressively more
     categories. In our sample, the scale spans from 0 (English) to 20 (Fula). -/
 theorem gender_scale_range :

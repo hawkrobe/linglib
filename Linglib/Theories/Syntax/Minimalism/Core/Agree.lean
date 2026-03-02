@@ -427,7 +427,7 @@ theorem rel_features_match :
 /-- How a probe's search can be terminated.
 
     Standard Agree assumes a probe is satisfied only by finding a matching
-    valued feature (simple feature match). Deal (2021) argues for richer
+    valued feature (simple feature match). @cite{deal-2021} argues for richer
     conditions to capture e.g. Mam's Infl probe, which is satisfied by
     EITHER matching φ-features OR encountering transitive Voice:
 
@@ -439,14 +439,14 @@ theorem rel_features_match :
     This turns the Mam bridge's prose account into a computable derivation:
     ```
     def mamInflSatisfaction : SatisfactionCond :=
-      .disjunctive [.featureMatch (.phi (.person .third)), .headEncounter .v]
+.disjunctive [.featureMatch (.phi (.person.third)),.headEncounter.v]
     ```
 -/
 inductive SatisfactionCond where
   /-- Standard: probe is satisfied by finding a matching valued feature. -/
   | featureMatch : FeatureVal → SatisfactionCond
   /-- Disjunctive: probe is satisfied by ANY of these conditions.
-      Models Deal's (2021) interaction-based probes. -/
+      Models @cite{deal-2021}'s interaction-based probes. -/
   | disjunctive : List SatisfactionCond → SatisfactionCond
   /-- Head encounter: probe is satisfied by encountering a head of this
       category, even without feature matching. The probe stops but copies
@@ -490,7 +490,7 @@ def SatisfactionCond.copiedFeatures (cond : SatisfactionCond) (fb : FeatureBundl
     | _ => false  -- head encounter or nested → no features copied
   | .headEncounter _ => false
 
-/-- Mam's Infl probe satisfaction condition (Deal 2021; Scott 2023):
+/-- Mam's Infl probe satisfaction condition:
     satisfied by EITHER matching φ-features OR encountering transitive Voice. -/
 def mamInflSatisfaction : SatisfactionCond :=
   .disjunctive [.featureMatch (.phi (.person .third)), .headEncounter .v]
@@ -502,7 +502,7 @@ theorem mam_intransitive_satisfied :
       [.valued (.phi (.person .first)), .valued (.phi (.number false))]
       none = true := by native_decide
 
-/-- Transitive environment: the probe encounters Voice_TR (category .v).
+/-- Transitive environment: the probe encounters Voice_TR (category.v).
     Head encounter is satisfied → probe stops without copying features. -/
 theorem mam_transitive_satisfied :
     mamInflSatisfaction.isSatisfied [] (some .v) = true := by native_decide

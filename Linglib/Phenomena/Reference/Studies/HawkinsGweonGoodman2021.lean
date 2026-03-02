@@ -20,7 +20,7 @@ The paper extends RSA with **resource-rational perspective-taking**:
 
 ## Insight: The Director-Matcher Task
 
-In the classic Keysar et al. (2003) paradigm:
+In the classic @cite{keysar-etal-2003} paradigm:
 - Speaker (director) sees some objects
 - Listener (matcher) sees those objects PLUS hidden ones
 - Speaker knows listener has "known unknowns" behind occlusions
@@ -37,7 +37,7 @@ The question: How do speakers and listeners allocate perspective-taking effort?
 ### Experiment 2: Listener Comprehension
 - 116 dyads
 - Scripted vs unscripted speaker condition
-- Replication of Keysar et al. (2003) materials
+- Replication of @cite{keysar-etal-2003} materials
 
 ## Key Empirical Findings
 
@@ -207,7 +207,7 @@ def optimalSpeakerWeight : ℚ := 36/100   -- w*_S = 0.36
 def optimalListenerWeight : ℚ := 51/100  -- w*_L = 0.51
 
 
-/-- Critical item from Keysar et al. (2003) replication -/
+/-- Critical item from @cite{keysar-etal-2003} replication -/
 structure CriticalItem where
   instruction : String       -- What speaker says
   target : String            -- Intended target object

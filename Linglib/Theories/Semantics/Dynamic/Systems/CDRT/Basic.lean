@@ -69,7 +69,7 @@ def DProp.ofStatic {E : Type*} (p : SProp E) : DProp E :=
 /--
 Dynamic conjunction: relational composition.
 
-⟦φ ; ψ⟧(i, o) iff ∃k. ⟦φ⟧(i, k) ∧ ⟦ψ⟧(k, o)
+⟦φ; ψ⟧(i, o) iff ∃k. ⟦φ⟧(i, k) ∧ ⟦ψ⟧(k, o)
 -/
 def DProp.seq {E : Type*} (φ ψ : DProp E) : DProp E :=
   λ i o => ∃ k, φ i k ∧ ψ k o
@@ -115,7 +115,7 @@ def GQ (E : Type*) := (E → DProp E) → DProp E
 /--
 Indefinite "a/an": introduces dref and applies predicate.
 
-⟦a⟧ = λP.λQ. new n ; P(rn) ; Q(rn)
+⟦a⟧ = λP.λQ. new n; P(rn); Q(rn)
 
 where rn is the register lookup at n.
 -/

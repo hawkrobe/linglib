@@ -4,10 +4,11 @@ import Linglib.Core.Case.Hierarchy
 
 /-!
 # Mam Agreement Fragment @cite{scott-2023}
+@cite{deal-2021} @cite{woolford-1997}
+
 
 Agreement morphology and pronoun realization data for San Juan Atitán (SJA)
-Mam, a Mayan language with morphologically tripartite agreement alignment
-(Scott 2023, p. 113): S, A, and O each trigger distinct marking patterns
+Mam, a Mayan language with morphologically tripartite agreement alignment: S, A, and O each trigger distinct marking patterns
 on the verb.
 
 ## The System
@@ -16,17 +17,17 @@ Mam has two agreement paradigms on the verb:
 - **Set A** (ERG): prefixes on Voice cross-referencing the transitive agent
 - **Set B** (ABS): preverbal markers on Infl cross-referencing the absolutive
   argument (intransitive S). In transitives, Infl's φ-probe is blocked by
-  transitive VoiceP (Deal 2021, Keine 2019) and default Set B (∅/tz'=)
+  transitive VoiceP and default Set B (∅/tz'=)
   appears instead.
 
 Crucially, transitive *objects* are NOT cross-referenced by either set.
 Objects co-occur with default Set B and require full overt pronouns
 (Scott 2023, ch. 3–4).
 
-## Case Licensing (Scott 2023, §3.4)
+## Case Licensing
 
 Case is NOT assigned via dependent case. Instead:
-- **ERG**: inherent case from Voice (Woolford 1997, 2006; Legate 2008)
+- **ERG**: inherent case from Voice
 - **ACC**: structural case from Voice (object licensing; low-abs syntax)
 - **ABS**: structural case from Infl (high-abs morphology; for intransitive S)
 
@@ -52,7 +53,7 @@ open Minimalism
 -- § 1: Agreement Marker Vocabulary (Set A / Set B)
 -- ============================================================================
 
-/-- Set A (ERG) vocabulary entries: φ-features on Voice (mapped to .v)
+/-- Set A (ERG) vocabulary entries: φ-features on Voice (mapped to.v)
     yield the morphological exponent.
     Set A markers are prefixes/proclitics that cross-reference the
     transitive agent (Scott 2023, Table 2.8). -/
@@ -76,7 +77,7 @@ def setAVocab : Vocabulary :=
     , exponent := "ky-"
     , context := some .v } ]
 
-/-- Set B (ABS) vocabulary entries: φ-features on Infl (mapped to .T)
+/-- Set B (ABS) vocabulary entries: φ-features on Infl (mapped to.T)
     yield the morphological exponent (Scott 2023, Table 3.5).
 
     Crucially, the 2/3SG form (∅/tz'=) is the **Elsewhere entry** —
@@ -115,7 +116,7 @@ inductive MamArgPosition where
   | intranS  -- S: intransitive subject (sole argument, moves to Spec,TP)
   deriving DecidableEq, BEq, Repr
 
-/-- The case each argument position receives (Scott 2023, §3.4).
+/-- The case each argument position receives.
     A gets ERG (inherent, from Voice), P gets ACC (structural, from Voice),
     S gets ABS (structural, from Infl). Three distinct underlying cases. -/
 def MamArgPosition.case : MamArgPosition → CaseVal
@@ -128,7 +129,7 @@ def MamArgPosition.case : MamArgPosition → CaseVal
     Agent: Voice probes for φ, finds agent in Spec,VoiceP → Set A
     Intransitive S: Infl probes for φ, finds S → Set B
     Patient: Infl's φ-probe has a disjunctive satisfaction condition
-    [SAT: φ or Voice_TR] (Deal 2021, Keine 2019). In transitives, the
+    [SAT: φ or Voice_TR]. In transitives, the
     probe encounters transitive Voice and stops — no φ-features are
     copied, and default Set B (the Elsewhere form) surfaces. -/
 def MamArgPosition.isPhiAgreed : MamArgPosition → Bool
@@ -137,7 +138,7 @@ def MamArgPosition.isPhiAgreed : MamArgPosition → Bool
   | .intranS => true   -- φ-Agreed by Infl → Set B
 
 /-- Which head φ-Agrees with this argument (if any)?
-    Returns the category of the probe head. Voice is mapped to .v. -/
+    Returns the category of the probe head. Voice is mapped to.v. -/
 def MamArgPosition.agreeProbe : MamArgPosition → Option Cat
   | .agent   => some .v   -- Voice probes, agent in Spec,VoiceP
   | .patient => none      -- Infl probe blocked by Voice_TR

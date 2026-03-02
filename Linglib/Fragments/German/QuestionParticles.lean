@@ -13,10 +13,9 @@ Lexical entries for German interrogative/flavoring particles.
 | denn | highlighting-sensitive flavoring particle | PerspP | +evidential |
 
 German *denn* parallels Mandarin *nandao*: both require contextual evidence
-prompting the question. Key difference: *denn* is compatible with wh-questions
-(Theiler 2021), while *nandao* is restricted to polar questions (Zheng 2026).
+prompting the question. Key difference: *denn* is compatible with wh-questions, while *nandao* is restricted to polar questions.
 
-Theiler (2021) analyzes *denn* as highlighting-sensitive: it signals that the
+@cite{theiler-2021} analyzes *denn* as highlighting-sensitive: it signals that the
 question is prompted by the highlighted/salient proposition in context.
 In polar questions, this creates an evidential requirement; in wh-questions,
 it merely signals informational need.
@@ -44,7 +43,7 @@ structure QParticleEntry where
   requiresEpistemicBias : Bool
   deriving Repr, DecidableEq, BEq
 
-/-- denn — highlighting-sensitive flavoring particle (Theiler 2021).
+/-- denn — highlighting-sensitive flavoring particle.
 Signals the question is prompted by salient contextual evidence.
 Compatible with both polar and wh-questions (unlike nandao). -/
 def denn : QParticleEntry where

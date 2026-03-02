@@ -72,7 +72,7 @@ def gradData : List GRADDatum :=
 /-- Whether a verb's incrementality class predicts GRAD.
     SINC and INC verbs exhibit gradual change (more object → more event);
     cumOnly and unannotated verbs do not.
-    Krifka (1998) §6: GRAD requires strict incrementality (or INC). -/
+    @cite{krifka-1998} §6: GRAD requires strict incrementality (or INC). -/
 def predictsGRAD : Option VerbIncClass → Bool
   | some .sinc => true
   | some .inc => true
@@ -136,11 +136,11 @@ theorem all_grad_data_matches :
     actual numerical measurements), but we document the structure:
 
     For "eat":
-      θ       = theme role (eating → food mapping)
-      μ_obj   = weight/volume measure on food (extensive)
-      τ       = runtime extraction (event → interval)
-      dur     = duration measure on intervals (extensive)
-      rate    = eating rate (grams per second)
+      θ = theme role (eating → food mapping)
+      μ_obj = weight/volume measure on food (extensive)
+      τ = runtime extraction (event → interval)
+      dur = duration measure on intervals (extensive)
+      rate = eating rate (grams per second)
 
     The `krifkaGRADSquare` constructor from `Krifka1989.lean` packages
     these assumptions into a `GRADSquare`, and `GRADSquare.grad` derives

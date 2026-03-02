@@ -42,7 +42,7 @@ open Core.Scale (ComparativeScale Boundedness)
 -- § 1. States-Based Entry
 -- ════════════════════════════════════════════════════
 
-/-- A states-based gradable predicate entry (CSW 2024, §3.3).
+/-- A states-based gradable predicate entry.
 
     Each entry names a positive region on a background ordering of states.
     The `contrastPoint` determines the lower bound of the positive region:

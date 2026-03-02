@@ -6,13 +6,13 @@ import Linglib.Theories.Syntax.DependencyGrammar.LongDistance
 # Discontinuities as Risen Catenae
 @cite{osborne-2019} @cite{osborne-gross-2012}
 
-Formalizes Osborne's (2019, Ch 7–8) analysis of discontinuities in dependency
+Formalizes @cite{osborne-2019}'s analysis of discontinuities in dependency
 grammar. The central concept is the **risen catena**: a catena that takes on a
 word as its head that is not its governor, producing a non-contiguous yield.
 
 ## Core Concepts
 
-A **catena** (Osborne et al. 2012) is a connected subgraph of a dependency tree.
+A **catena** is a connected subgraph of a dependency tree.
 When a dependent is displaced from its canonical position (e.g., by topicalization,
 wh-fronting, or extraposition), the displaced element and its governor still form
 a catena — they are connected in the tree — but their string yield is no longer

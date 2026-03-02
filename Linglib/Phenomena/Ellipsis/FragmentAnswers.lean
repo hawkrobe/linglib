@@ -33,7 +33,7 @@ import Linglib.Core.Lexical.Word
 ## Connection to RSA Theory
 @cite{bergen-goodman-2015}
 
-This phenomenon is modeled by Bergen & Goodman (2015)'s noisy channel RSA.
+This phenomenon is modeled by @cite{bergen-goodman-2015}'s noisy channel RSA.
 See: `Theories/RSA/Implementations/BergenGoodman2015.lean`
 
 The key insight: fragments are interpreted via noise inference.
@@ -228,7 +228,7 @@ def fragmentConstraints : List FragmentConstraintDatum := [
 -- Part 5: Connection to Noisy Channel Model
 
 /-!
-## Noisy Channel Account (Bergen & Goodman 2015)
+## Noisy Channel Account
 
 The noisy channel model explains fragment interpretation via:
 
@@ -247,8 +247,8 @@ See: `Theories/RSA/Implementations/BergenGoodman2015.lean`
 
 ```lean
 theorem fragment_interpretation :
-    getScore l0_bob .bobWent > getScore l0_bob .aliceWent ∧
-    getScore l0_bob .bobWent > getScore l0_bob .nobodyWent
+    getScore l0_bob.bobWent > getScore l0_bob.aliceWent ∧
+    getScore l0_bob.bobWent > getScore l0_bob.nobodyWent
 ```
 
 ### Alternative Accounts

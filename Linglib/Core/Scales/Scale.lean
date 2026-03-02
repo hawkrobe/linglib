@@ -11,7 +11,7 @@ import Linglib.Tactics.OntSort
 
 /-!
 # Scales
-@cite{fox-hackl-2006} @cite{holliday-icard-2013} @cite{kennedy-2007} @cite{krantz-1971} @cite{krifka-1989} @cite{rouillard-2026}
+@cite{fox-hackl-2006} @cite{holliday-icard-2013} @cite{kennedy-2007} @cite{krantz-1971} @cite{krifka-1989} @cite{rouillard-2026} @cite{link-1983} @cite{rett-2026} @cite{rullmann-1995}
 
 Root algebraic infrastructure for all scale-based reasoning in linglib.
 
@@ -21,16 +21,16 @@ The file defines a category of scales with two levels of enrichment:
 
 ```
                     ComparativeScale (α, ≤, boundedness)
-                    ╱              ╲
-          (+ join, ⊥, FA)    (linear, μ, direction)
-              ╱                      ╲
-      AdditiveScale              DirectedMeasure
-        ╱        ╲                    │
-MereoScale   EpistemicScale (†)      │
-    │              │                  │
-    │  additive    │  additive        │  μ
-    │  representation  representation │
-    ▼              ▼                  ▼
+                    ╱ ╲
+          (+ join, ⊥, FA) (linear, μ, direction)
+              ╱ ╲
+      AdditiveScale DirectedMeasure
+        ╱ ╲ │
+MereoScale EpistemicScale (†) │
+    │ │ │
+    │ additive │ additive │ μ
+    │ representation representation │
+    ▼ ▼ ▼
                   (ℚ, ≤)
 
 (†) See `Core/EpistemicScale.lean` for the epistemic arm.
@@ -44,7 +44,7 @@ MereoScale   EpistemicScale (†)      │
 
 **Enriched subcategory**: `AdditiveScale α` — comparative scale with join and
   finite additivity (FA). Two independent instances:
-  - Mereological: `ExtMeasure.additive` (Krifka 1989)
+  - Mereological: `ExtMeasure.additive`
   - Epistemic: `EpistemicSystemFA` + `FinAddMeasure` (Holliday & Icard 2013, § 14)
 
 **Linear specialization**: `DirectedMeasure` — comparative scale with a linear
@@ -58,8 +58,7 @@ via measure functions. All three paths factor through `ComparativeScale`.
 ## Measurement Scales
 
 Below the root structures, the file provides measurement scale infrastructure
-shared by degree semantics (Kennedy 2007) and temporal measurement (Krifka 1989,
-Rouillard 2026):
+shared by degree semantics and temporal measurement:
 
 | Kennedy (Adjectives)                | Rouillard (TIAs)                     |
 |-------------------------------------|--------------------------------------|
@@ -68,7 +67,7 @@ Rouillard 2026):
 | → "??completely tall"               | → "*was sick in three days"          |
 | Closed scale (full, empty)          | Telic VP / QUA predicate             |
 | → "completely full" ✓               | → "wrote a paper in three days" ✓   |
-| Interpretive Economy (Kennedy 2007) | MIP (Rouillard 2026)                 |
+| Interpretive Economy | MIP                 |
 
 Both domains use `Boundedness` to classify scales, and `Boundedness.isLicensed`
 derives the licensing prediction. Actual scale types encode boundedness via
@@ -83,8 +82,8 @@ namespace Core.Scale
 -- ════════════════════════════════════════════════════
 
 /-- Classification of scale boundedness.
-    Kennedy (2007): four scale types based on which endpoints exist.
-    Rouillard (2026): temporal domains have similar boundary structure
+    @cite{kennedy-2007}: four scale types based on which endpoints exist.
+    @cite{rouillard-2026}: temporal domains have similar boundary structure
     (closed intervals have both bounds, open intervals lack them).
 
     This enum is the **lexical data tag** for classifying scales in fragment
@@ -111,8 +110,8 @@ def Boundedness.hasMin : Boundedness → Bool
 /-- Licensing prediction: a bounded scale (any endpoint exists) admits a
     maximally informative element, licensing degree modifiers (Kennedy) or
     TIA numerals (Rouillard). An open scale does not.
-    Kennedy (2007): Interpretive Economy requires non-trivial scale contribution.
-    Rouillard (2026): MIP requires the numeral to be maximally informative. -/
+    @cite{kennedy-2007}: Interpretive Economy requires non-trivial scale contribution.
+    @cite{rouillard-2026}: MIP requires the numeral to be maximally informative. -/
 def Boundedness.isLicensed : Boundedness → Bool
   | .closed | .lowerBounded | .upperBounded => true
   | .open_ => false
@@ -167,7 +166,7 @@ instance : LicensingPipeline MereoTag where
 
 /-- The universal licensing theorem: any two pipeline inputs that map to
     the same Boundedness yield the same licensing prediction, regardless
-    of which framework they come from. -/
+    of which framework they come. -/
 theorem universal {α β : Type*} [LicensingPipeline α] [LicensingPipeline β]
     (a : α) (b : β) (h : toBoundedness a = toBoundedness b) :
     isLicensed a = isLicensed b := by
@@ -187,7 +186,7 @@ end LicensingPipeline
     The ordering comes from the ambient `[Preorder α]` — no redundant
     `le`/`le_refl`/`le_trans` fields. Morphisms are Mathlib's `Monotone`.
 
-    Krantz et al. (1971): a comparative scale is an ordered set with
+    @cite{krantz-1971}: a comparative scale is an ordered set with
     enough structure to support qualitative comparison. -/
 @[ont_sort] structure ComparativeScale (α : Type*) [Preorder α] where
   /-- Scale boundedness classification -/
@@ -195,8 +194,8 @@ end LicensingPipeline
 
 /-- An additive scale: a comparative scale enriched with join and finite
     additivity (FA). Two independent instances exist in linglib:
-    - Mereological: `ExtMeasure.additive` (Krifka 1989)
-    - Epistemic: probability FA (Holliday & Icard 2013)
+    - Mereological: `ExtMeasure.additive`
+    - Epistemic: probability FA
 
     The FA axiom says disjoint augmentation preserves order: if z is
     disjoint from both x and y, then x ≤ y ↔ x ⊔ z ≤ y ⊔ z. This
@@ -288,7 +287,7 @@ structure ScaleRepresentation (S : Type*) [Preorder S] (D : Type*) [Preorder D] 
 
     The degree property (`atLeastDeg` for positive, `atMostDeg` for
     negative) is **derived** from direction, not stored. This captures
-    the insight from Lassiter (2017) that the binary direction choice
+    the insight from @cite{lassiter-goodman-2017} that the binary direction choice
     (which side of the threshold counts as "satisfying the predicate")
     is the fundamental parameter, and the degree property follows.
 
@@ -355,11 +354,11 @@ No wrapper classes needed — use Mathlib directly:
 - **Open scale**: `[LinearOrder α] [NoMaxOrder α] [NoMinOrder α]`
 
 Instances:
-- Degree scales for gradable adjectives (Kennedy 2007)
-- Duration measurement for temporal adverbials (Krifka 1989)
-- Numeral scales for number words (Fox & Hackl 2006)
+- Degree scales for gradable adjectives
+- Duration measurement for temporal adverbials
+- Numeral scales for number words
 
-Fox & Hackl (2007) UDM: all natural language scales satisfy `DenselyOrdered`.
+@cite{fox-2007} UDM: all natural language scales satisfy `DenselyOrdered`.
 Use `[DenselyOrdered α]` when density matters for the derivation. -/
 
 -- ════════════════════════════════════════════════════
@@ -429,11 +428,11 @@ theorem bimonotone_no_optimum {W : Type*} (P : α → W → Prop)
     at world `w` iff `P x w` is true and `P x` entails `P y` for every
     other true `P y w`.
 
-    Fox & Hackl (2007) §4: the unified exhaustivity requirement underlying
-    implicatures (*only*), degree questions (Rullmann 1995), and definite
-    descriptions (Link 1983).
+    @cite{fox-2007} §4: the unified exhaustivity requirement underlying
+    implicatures (*only*), degree questions, and definite
+    descriptions.
 
-    Rouillard (2026) eq. (75): max⊨(w, P) specializes this to temporal domains.
+    @cite{rouillard-2026} eq. (75): max⊨(w, P) specializes this to temporal domains.
     This definition is domain-general. -/
 def IsMaxInf {W : Type*} (P : α → W → Prop) (x : α) (w : W) : Prop :=
   P x w ∧ ∀ y, P y w → (∀ w', P x w' → P y w')
@@ -696,7 +695,7 @@ theorem maxOnScale_gt_closedInterval {α : Type*} [LinearOrder α]
     exact ⟨⟨hsf, le_refl _⟩, fun x' ⟨_, hx'f⟩ hne =>
       lt_of_le_of_ne hx'f hne⟩
 
-/-- A scalar construction f is **ambidirectional** (Rett 2026, §3) iff
+/-- A scalar construction f is **ambidirectional** iff
     applying f to a set B and to its complement Bᶜ yields the same result,
     because MAX picks the same informative boundary from both.
     This is the mechanism behind expletive negation licensing: when
@@ -766,8 +765,8 @@ theorem isMaxInf_atMost_iff_eq {W : Type*} (μ : W → α) (m : α) (w : W)
 
 /-! ### The Maximal Informativity Principle as a universal mechanism
 
-Kennedy (2015) proposes a de-Fregean type-shift that maps lower-bound numeral
-meanings to exact meanings for Class B items (closed scales). Rouillard (2026)
+@cite{kennedy-2015} proposes a de-Fregean type-shift that maps lower-bound numeral
+meanings to exact meanings for Class B items (closed scales). @cite{rouillard-2026}
 proposes the MIP as the licensing condition for temporal *in*-adverbials.
 
 These are the SAME mechanism: given a measure function μ and a monotone degree
@@ -790,23 +789,23 @@ namespace DirectedMeasure
 
 variable {α : Type*} [LinearOrder α] {W : Type*}
 
-/-- Kennedy (2015) numeral domain: "at least n" over cardinality.
+/-- @cite{kennedy-2015} numeral domain: "at least n" over cardinality.
     Closed scale (ℕ well-ordered) → always licensed.
     Type-shift to exact = MIP applied to atLeastDeg. -/
 def kennedyNumeral (μ : W → α) : DirectedMeasure α W :=
   { boundedness := .closed, μ := μ }
 
-/-- Kennedy (2007) gradable adjective domain.
+/-- @cite{kennedy-2007} gradable adjective domain.
     Boundedness varies by adjective class (tall: open, full: closed). -/
 def kennedyAdjective (μ : W → α) (b : Boundedness) : DirectedMeasure α W :=
   { boundedness := b, μ := μ }
 
-/-- Rouillard (2026) E-TIA domain: event runtime ≤ interval size.
+/-- @cite{rouillard-2026} E-TIA domain: event runtime ≤ interval size.
     Boundedness determined by Vendler class (telic → closed, atelic → open). -/
 def rouillardETIA (μ : W → α) (b : Boundedness) : DirectedMeasure α W :=
   { boundedness := b, μ := μ, direction := .negative }
 
-/-- Rouillard (2026) G-TIA domain: PTS extent on open intervals.
+/-- @cite{rouillard-2026} G-TIA domain: PTS extent on open intervals.
     Always open → always blocked (information collapse). -/
 def rouillardGTIA (μ : W → α) : DirectedMeasure α W :=
   { boundedness := .open_, μ := μ, direction := .negative }
@@ -846,10 +845,10 @@ theorem kennedy_rouillard_same_licensing (μ₁ μ₂ : W → α) :
     (kennedyNumeral μ₁).licensed = (rouillardETIA μ₂ .closed).licensed := rfl
 
 /-- All four frameworks agree: licensing depends solely on boundedness.
-    Kennedy (2007): closed-scale adjectives license degree modifiers.
-    Rouillard (2026): closed-runtime VPs license E-TIAs.
-    Krifka (1989): QUA predicates yield telic (bounded) VPs.
-    Zwarts (2005): bounded paths yield telic VPs.
+    @cite{kennedy-2007}: closed-scale adjectives license degree modifiers.
+    @cite{rouillard-2026}: closed-runtime VPs license E-TIAs.
+    @cite{krifka-1989}: QUA predicates yield telic (bounded) VPs.
+    @cite{zwarts-2005}: bounded paths yield telic VPs.
     All four route through Boundedness.isLicensed. -/
 theorem four_frameworks_agree
     (b : Boundedness) {W : Type*} (μ₁ μ₂ : W → α) :
@@ -869,7 +868,7 @@ end DirectedMeasure
     degree properties, regardless of monotonicity direction.
 
     `isMaxInf_atLeast_iff_eq`: max⊨(atLeastDeg μ, m, w) ↔ μ(w) = m
-    `isMaxInf_atMost_iff_eq`:  max⊨(atMostDeg μ, m, w)  ↔ μ(w) = m
+    `isMaxInf_atMost_iff_eq`: max⊨(atMostDeg μ, m, w) ↔ μ(w) = m
 
     Both directions yield `eqDeg μ m w` — exact meaning. -/
 

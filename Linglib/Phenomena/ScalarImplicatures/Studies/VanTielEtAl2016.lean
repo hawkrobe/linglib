@@ -59,7 +59,7 @@ def GrammaticalClass.isClosedClass : GrammaticalClass → Bool
   | _ => false
 
 /--
-Complete data for each scale tested in van Tiel et al. (2016).
+Complete data for each scale tested in @cite{van-tiel-geurts-2016}.
 
 Fields capture all predictors tested in the paper:
 - SI rates from Experiments 1 and 2
@@ -483,7 +483,7 @@ def contentHappy : ScaleDatum :=
 
 end Scales
 
-/-- All 43 scales tested in van Tiel et al. (2016) -/
+/-- All 43 scales tested in @cite{van-tiel-geurts-2016} -/
 def allScales : List ScaleDatum := [
   Scales.cheapFree,
   Scales.sometimesAlways,
@@ -679,19 +679,19 @@ theorem semanticRelatedness_not_significant : semanticRelatednessEffect.p > 0.05
 
 
 /-!
-## Connection to Ronai (2024)
+## Connection to @cite{ronai-2024}
 @cite{ronai-2024} @cite{van-tiel-geurts-2016} @cite{geurts-pouscoulous-2009}
 
-Van Tiel et al. (2016) established scalar diversity for **global** SI.
-Ronai (2024) extends this to **embedded** SI, showing:
+@cite{van-tiel-geurts-2016} established scalar diversity for **global** SI.
+@cite{ronai-2024} extends this to **embedded** SI, showing:
 
 1. The same predictors (semantic distance, boundedness) work for embedded SI
 2. Correlation between global and embedded SI rates: r = 0.76-0.80
 
-## Connection to Geurts & Pouscoulous (2009)
+## Connection to @cite{geurts-pouscoulous-2009}
 
 Van Tiel et al. cite G&P's finding of 0% embedded SI for ⟨some, all⟩.
-However, Ronai (2024) shows this varies by scale - it's not uniformly absent.
+However, @cite{ronai-2024} shows this varies by scale - it's not uniformly absent.
 
 ## Theoretical Implications
 
@@ -722,7 +722,7 @@ def mainConclusion : String :=
 -- SUMMARY
 
 /-!
-## Summary of van Tiel et al. (2016)
+## Summary of @cite{van-tiel-geurts-2016}
 
 ### Data Provided
 - 43 scales with SI rates from two experiments
@@ -738,12 +738,12 @@ def mainConclusion : String :=
 ### Theoretical Impact
 - Refutes the uniformity assumption
 - Identifies distinctness as the key factor
-- Foundational for embedded SI research (Ronai 2024)
+- Foundational for embedded SI research
 
 ### Connection to Linglib
 - Provides empirical foundation for `Fragments/Scales.lean`
 - Informs RSA model priors over alternative salience
-- Complements Ronai (2024) embedded SI data
+- Complements @cite{ronai-2024} embedded SI data
 -/
 
 end Phenomena.ScalarImplicatures.Studies.VanTielEtAl2016

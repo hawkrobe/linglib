@@ -9,7 +9,7 @@ Cross-linguistic data on Serbian *pre* ('before') and *posle* ('after')
 showing overt viewpoint aspect morphology (PFV/IMPF) in embedded temporal
 clauses.
 
-Serbian provides direct morphological evidence for Rett's (2020) coercion
+Serbian provides direct morphological evidence for @cite{rett-2020}'s coercion
 account: the PFV/IMPF distinction on the embedded verb overtly marks what
 English leaves covert (COMPLET/INCHOAT).
 

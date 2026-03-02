@@ -12,7 +12,7 @@ Kaqchikel, a K'ichean (Mayan) language. When the transitive agent is
 Ā-extracted clause-locally, the verb obligatorily appears in a special
 AF form: Set A (ergative) agreement is lost and the suffix *-Vn* appears.
 
-## The Paradigm (Erlewine 2016, §2)
+## The Paradigm
 
 | Extracted arg      | Verb form | Agreement     |
 |--------------------|-----------|---------------|
@@ -25,7 +25,7 @@ AF is obligatory for clause-local agent extraction and ungrammatical
 for patient extraction or long-distance agent extraction — it is not a
 free alternation but a locality-sensitive, structurally conditioned repair.
 
-## Clause Structures (Erlewine 2016, §3)
+## Clause Structures
 
 Both derivations share the same clausal spine (CP > TP > vP > VP). The
 difference is in the v head and the agent's movement path:
@@ -166,8 +166,7 @@ def AFCandidate.violatesXRef : AFCandidate → Bool
 -- § 4: OT Constraint Ranking
 -- ============================================================================
 
-/-- Constraints for Kaqchikel AF, ranked from highest to lowest
-    (Erlewine 2016, §5):
+/-- Constraints for Kaqchikel AF, ranked from highest to lowest:
 
     1. **SSAL** (highest): Spec-to-Spec Anti-Locality. Movement from
        Spec,XP to Spec,YP is banned when YP immediately dominates XP.
@@ -280,7 +279,7 @@ theorem af_obeys_antilocality :
 
 /-- AF is lexicographically optimal: it satisfies the higher-ranked
     constraint (SSAL) at the cost of the lower-ranked one (XRef).
-    This is the central result of Erlewine (2016, §5). -/
+    This is the central result of @cite{erlewine-2016}. -/
 theorem af_is_optimal :
     agentExtractionTableau.optimal = [.agentFocusExtraction] := by
   native_decide
@@ -300,7 +299,7 @@ theorem kaq_has_voice :
 theorem kaq_voice_is_agentive : kaqVoice.flavor = .agentive := rfl
 
 /-- AF is locality-sensitive: clause-local agent extraction triggers AF,
-    but long-distance agent extraction does NOT (Erlewine 2016, §2.3).
+    but long-distance agent extraction does NOT.
     The paper's deepest empirical claim: AF is about the *locality of
     movement*, not about agent extraction per se. -/
 theorem af_locality_sensitive :

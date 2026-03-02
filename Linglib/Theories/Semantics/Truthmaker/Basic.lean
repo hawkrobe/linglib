@@ -1,6 +1,6 @@
 import Linglib.Core.Mereology
 
-/-! # Truthmaker Semantics (Fine 2017) @cite{fine-2017} @cite{bondarenko-elliott-2026}
+/-! # Truthmaker Semantics @cite{fine-2017} @cite{bondarenko-elliott-2026}
 
 State-based propositions grounded in `Core/Mereology.lean`. Propositions are
 sets of *verifying states*, where states form a join-semilattice (the same
@@ -9,7 +9,7 @@ sets of *verifying states*, where states form a join-semilattice (the same
 ## Part I: Unilateral Propositions (§§1–6)
 
 The first part formalizes the unilateral fragment needed by
-Bondarenko & Elliott (2026): propositions as sets of verifiers,
+@cite{bondarenko-elliott-2026}: propositions as sets of verifiers,
 conjunction via fusion, content parthood, and attitude distribution.
 
 ## Part II: Bilateral Propositions (§§7–13)
@@ -269,9 +269,9 @@ theorem bilNot_involutive {S : Type*} (p : BilProp S) :
     - Verifiers of ¬(A ∧ B) = falsifiers of A ∧ B = {s | A.fal s ∨ B.fal s}
     - Verifiers of ¬A ∨ ¬B = {s | (¬A).ver s ∨ (¬B).ver s} = {s | A.fal s ∨ B.fal s}
 
-    - Falsifiers of ¬(A ∧ B) = verifiers of A ∧ B = {s | ∃ s₁ s₂, ...}
-    - Falsifiers of ¬A ∨ ¬B = {s | ∃ s₁ s₂, (¬A).fal s₁ ∧ (¬B).fal s₂ ∧ ...}
-      = {s | ∃ s₁ s₂, A.ver s₁ ∧ B.ver s₂ ∧ ...} -/
+    - Falsifiers of ¬(A ∧ B) = verifiers of A ∧ B = {s | ∃ s₁ s₂,...}
+    - Falsifiers of ¬A ∨ ¬B = {s | ∃ s₁ s₂, (¬A).fal s₁ ∧ (¬B).fal s₂ ∧...}
+      = {s | ∃ s₁ s₂, A.ver s₁ ∧ B.ver s₂ ∧...} -/
 theorem deMorgan_and {S : Type*} [SemilatticeSup S] (p q : BilProp S) :
     bilNot (bilAnd p q) = bilOr (bilNot p) (bilNot q) := rfl
 

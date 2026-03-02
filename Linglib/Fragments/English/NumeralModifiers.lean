@@ -32,7 +32,7 @@ Modifiers can be:
 - Tolerance-based: "around n" = λx. |n-x| ≤ y (with hidden tolerance y)
 - Interval-based: "between a b" = λx. a ≤ x ≤ b
 - Exactifier: "exactly n" = λx. x = n
-- Bound-setting: "at least n", "more than n", etc. (Kennedy 2015)
+- Bound-setting: "at least n", "more than n", etc.
 -/
 inductive ModifierType where
   | tolerance    -- "around", "approximately", "roughly"
@@ -55,7 +55,7 @@ inductive PragmaticFunction where
   | boundSignal     -- Signals bound on the distribution (at least, at most, etc.)
   deriving Repr, DecidableEq, BEq
 
-/-- Evaluative valence of a bound-setting modifier (Blok 2015, Claus & Walch 2024).
+/-- Evaluative valence of a bound-setting modifier.
 
 Distinguishes modifiers with the same truth conditions but different framing:
 - "at most 100" (negative valence) → reversed framing (endorsed more in negative contexts)
@@ -178,7 +178,7 @@ def roughly : NumeralModifierEntry :=
 -- ============================================================================
 
 /--
-"between ... and ...": interval specification.
+"between... and...": interval specification.
 
 ⟦between a and b⟧ = λx. a ≤ x ≤ b
 Pragmatically signals flat distribution over [a,b].
@@ -255,8 +255,8 @@ def atLeast : NumeralModifierEntry :=
 
 /-- "at most n": Class B upper bound (max ≤ n).
 
-Generates ignorance implicatures. NEGATIVE evaluative valence (Blok 2015):
-"at most" is endorsed more in negative contexts. Claus & Walch (2024) show
+Generates ignorance implicatures. NEGATIVE evaluative valence:
+"at most" is endorsed more in negative contexts. @cite{claus-walch-2024} show
 this produces reversed framing effects. -/
 def atMost : NumeralModifierEntry :=
   { form := "at most"
@@ -307,8 +307,7 @@ def fewerThan : NumeralModifierEntry :=
 
 /-- "up to n": Class B upper bound (max ≤ n).
 
-Same truth conditions as "at most n", but POSITIVE evaluative valence
-(Blok 2015). Claus & Walch (2024) show "up to" follows standard framing
+Same truth conditions as "at most n", but POSITIVE evaluative valence. @cite{claus-walch-2024} show "up to" follows standard framing
 (endorsed more in positive contexts), unlike "at most". -/
 def upTo : NumeralModifierEntry :=
   { form := "up to"
@@ -347,7 +346,7 @@ def fromOn : NumeralModifierEntry :=
 /--
 "almost": proximal approximation with polar exclusion.
 
-⟦almost n⟧ = λx. close(x, n) ∧ ¬(x = n)  [or ¬(x ≥ n) under LB]
+⟦almost n⟧ = λx. close(x, n) ∧ ¬(x = n) [or ¬(x ≥ n) under LB]
 
 Unlike tolerance modifiers ("around"), "almost" EXCLUDES the target value
 (the polar component). This creates a key LB/BL divergence:
@@ -356,7 +355,7 @@ Unlike tolerance modifiers ("around"), "almost" EXCLUDES the target value
 
 Empirically, "almost three" means ~2 (below only), favoring LB.
 
-Source: Nouwen (2006) "Remarks on the Polar Orientation of Almost";
+Source: @cite{nouwen-2006} "Remarks on the Polar Orientation of Almost";
   Penka (2006); Sadock (1981).
 -/
 def almost : NumeralModifierEntry :=
@@ -483,7 +482,7 @@ theorem classA_no_ignorance :
 /-- "at most" and "up to" differ only in evaluative valence.
 
 Same modType, modClass, boundDir, but different evaluativeValence.
-This is the key Blok (2015) / Claus & Walch (2024) observation. -/
+This is the key @cite{blok-2015} / @cite{claus-walch-2024} observation. -/
 theorem atMost_upTo_differ_only_in_valence :
     atMost.modType = upTo.modType ∧
     atMost.modClass = upTo.modClass ∧

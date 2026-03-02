@@ -37,7 +37,7 @@ Core/Root.lean
     ↓
 Theories/Morphology/RootTypology.lean
     ↓
-Fragments/Chuj/VerbBuilding.lean  ←→  THIS BRIDGE  ←→  Data.lean
+Fragments/Chuj/VerbBuilding.lean ←→ THIS BRIDGE ←→ Data.lean
 ```
 
 -/
@@ -242,8 +242,8 @@ theorem denotation_type_alignment :
 
 /-- √TV and √ITV share semantic type (event predicate) but differ in arity.
     This is the formal content of the observation that both compose with
-    an entity argument per Davis (1997), but only √TV projects a syntactic
-    complement (Coon 2019, p. 40). -/
+    an entity argument per @cite{davis-1997}, but only √TV projects a syntactic
+    complement. -/
 theorem tv_itv_same_type_different_arity :
     (toFragmentRoot .tv).denotationType = (toFragmentRoot .itv).denotationType ∧
     (toFragmentRoot .tv).arity ≠ (toFragmentRoot .itv).arity := by

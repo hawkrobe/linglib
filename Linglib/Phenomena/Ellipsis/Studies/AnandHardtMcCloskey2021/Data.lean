@@ -1,7 +1,7 @@
 import Linglib.Core.Lexical.Word
 
 /-!
-# Anand, Hardt & McCloskey (2021) — Corpus Data
+# @cite{anand-hardt-mccloskey-2021} — Corpus Data
 
 @cite{anand-hardt-mccloskey-2021}
 
@@ -131,7 +131,7 @@ structure CorpusSummary where
   antecedentlessCount : Nat
   deriving Repr
 
-/-- The SCSS corpus summary (Anand et al. 2021). -/
+/-- The SCSS corpus summary. -/
 def scss : CorpusSummary where
   totalSluices := 4700
   sproutingPctTenths := 655

@@ -127,7 +127,7 @@ private def boolToRat (b : Bool) : ℚ := if b then 1 else 0
 
 /-- lexContinuous is an instance of the unified noise channel.
 
-This connects Waldon & Degen (2021) to the unified noise theory in
+This connects @cite{waldon-degen-2021} to the unified noise theory in
 RSA.Core.Noise. The continuous lexical semantics L^C(r, i) is exactly
 the noise channel with:
 - onMatch = v^i (semantic value / reliability)
@@ -135,7 +135,7 @@ the noise channel with:
 - b = 1 if item i is true of referent r, 0 otherwise
 
 Note: This uses the simplified Waldon & Degen parameterization where
-mismatch = 1 - match, rather than the more general Degen et al. (2020)
+mismatch = 1 - match, rather than the more gener@cite{degen-etal-2020}
 formulation with independent match/mismatch parameters.
 -/
 theorem lexContinuous_as_noiseChannel (r : Referent) (i : LexItem) :

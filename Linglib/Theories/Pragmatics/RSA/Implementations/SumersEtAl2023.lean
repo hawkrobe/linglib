@@ -61,6 +61,8 @@ open RSA.CombinedUtility
 
 /-!
 ## Signaling Bandits
+@cite{frank-goodman-2012}
+
 
 Unlike Lewis signaling games where world state = correct action,
 signaling bandits separate abstract knowledge (feature values) from
@@ -144,7 +146,7 @@ structure Context where
 
 /-- Utterance: claim about a feature's value.
 
-Example: "Spots are +1" = {feature := .spotted, value := .pos1}
+Example: "Spots are +1" = {feature :=.spotted, value :=.pos1}
 -/
 structure Utterance where
   feature : Feature
@@ -391,7 +393,7 @@ theorem manipulation_affects_lambda :
 
 Sumers et al. bridges several research traditions:
 
-1. **Standard RSA** (Frank & Goodman 2012): Pure epistemic utility.
+1. **Standard RSA**: Pure epistemic utility.
    Recovered when lambda = 0 and listener has identity decision problem.
 
 2. **Game-theoretic pragmatics** (Benz, Parikh): Decision-theoretic relevance.

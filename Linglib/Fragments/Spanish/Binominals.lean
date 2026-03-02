@@ -4,7 +4,7 @@ import Linglib.Phenomena.Ellipsis.NPEllipsis
 # Spanish Binominal Nouns @cite{saab-2026}
 
 Lexical entries for Spanish nouns appearing in binominal constructions,
-classified by their structural type (Saab 2026).
+classified by their structural type.
 
 ## Noun Classes
 

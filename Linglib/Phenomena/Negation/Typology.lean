@@ -6,7 +6,7 @@ import Linglib.Core.Lexical.Word
 
 Cross-linguistic data on clausal negation from four WALS chapters:
 
-## Ch 112: Negative Morphemes (Dryer 2013)
+## Ch 112: Negative Morphemes
 
 How standard (clausal) negation is expressed. Six categories based on
 morpheme type: negative affix, negative particle, negative auxiliary verb,
@@ -18,7 +18,7 @@ Sample: 1011 languages. Negative particles are the most common strategy
 Negative auxiliary verbs are rare (45/1011 = 4.5%), concentrated in
 northern Eurasia (Finland to western Siberia).
 
-## Ch 113: Symmetric and Asymmetric Standard Negation (Miestamo 2013)
+## Ch 113: Symmetric and Asymmetric Standard Negation
 
 Whether negation changes clause structure beyond adding a negative marker.
 Symmetric negation adds only the negator; asymmetric negation introduces
@@ -28,7 +28,7 @@ or tense-aspect marking). Three types: Sym only, Asy only, or both.
 Sample: 297 languages. Most languages show both symmetric and asymmetric
 negation (130/297), followed by symmetric only (114/297).
 
-## Ch 114: Subtypes of Asymmetric Standard Negation (Miestamo 2013)
+## Ch 114: Subtypes of Asymmetric Standard Negation
 
 For languages with asymmetric negation, what structural domain is affected:
 finiteness (A/Fin), reality status (A/NonReal), or other grammatical
@@ -36,7 +36,7 @@ categories (A/Cat). Languages may combine subtypes.
 
 Sample: 297 languages (114 symmetric = non-assignable).
 
-## Ch 115: Negative Indefinite Pronouns and Predicate Negation (Haspelmath 2013)
+## Ch 115: Negative Indefinite Pronouns and Predicate Negation
 
 How negative indefinites ('nobody', 'nothing') interact with clausal
 negation. Whether they co-occur with predicate negation (negative concord,
@@ -274,7 +274,7 @@ structure NegationProfile where
   /-- Illustrative negative marker form(s). -/
   negMarkers : List String := []
   /-- Is the negation marker a syntactic head (X°) rather than a phrase (XP)?
-      Relevant for Greco (2020): only head-status markers can merge in CP
+      Relevant for @cite{greco-2020}: only head-status markers can merge in CP
       to produce surprise negation. -/
   negIsHead : Option Bool := none
   /-- Notes on the negation system. -/
@@ -708,10 +708,9 @@ theorem italian_is_particle : italian.morphemeType == .particle := by native_dec
 theorem italian_is_symmetric : italian.symmetry == .symmetric := by native_decide
 theorem italian_is_mixed : italian.negIndefinite == some .mixed := by native_decide
 /-- Italian *non* is a syntactic head (X°): preverbal clitic,
-    cannot be focused or coordinated (Greco 2020, §4). -/
+    cannot be focused or coordinated. -/
 theorem italian_neg_is_head : italian.negIsHead == some true := by native_decide
-/-- Spanish *no* is a phrase (XP): can be focused and coordinated
-    (Greco 2020, §5.2). -/
+/-- Spanish *no* is a phrase (XP): can be focused and coordinated. -/
 theorem spanish_neg_is_phrase : spanish.negIsHead == some false := by native_decide
 /-- French *ne* is a syntactic head (X°): weak clitic. -/
 theorem french_neg_is_head : french.negIsHead == some true := by native_decide

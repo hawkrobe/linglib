@@ -2,9 +2,9 @@ import Linglib.Fragments.English.TemporalExpressions
 
 /-!
 # Finnish Temporal Connectives Fragment
-@cite{heinamaki-1974} @cite{karttunen-1974}
+@cite{heinamaki-1974} @cite{karttunen-1974} @cite{rett-2020}
 
-Finnish lexicalizes the two-*until* distinction that Karttunen (1974) argues
+Finnish lexicalizes the two-*until* distinction that @cite{karttunen-1974} argues
 is covert in English:
 
 - **kunnes** / **siihen saakka** (durative *until*): "John slept until 3pm."
@@ -254,7 +254,7 @@ theorem kunnes_covers_till :
     (inessive of 'going') or *viimeistään* ('at the latest').
 
     This is not a gap in Finnish — it reflects that *since* and *by* are
-    typologically less basic than *before*/*after*/*when*/*until* (Rett 2020). -/
+    typologically less basic than *before*/*after*/*when*/*until*. -/
 theorem since_by_not_single_lexeme : True := trivial
 
 -- ============================================================================

@@ -6,9 +6,8 @@ import Mathlib.Algebra.Order.Ring.Rat
 
 @cite{dunn-2026} @cite{kay-fillmore-1999} @cite{dunn-2025} @cite{fillmore-oconnor-1988} @cite{goldberg-1995}Constructions are sequences of slots, where each slot is either fixed
 (a specific lexeme), open (any word of a given syntactic category),
-or headed (a phrase headed by a specific lexeme). Dunn's (2025)
-variationist CxG treats abstraction as continuous (the proportion of
-open slots). Kay & Fillmore (1999) add grammatical functions,
+or headed (a phrase headed by a specific lexeme). @cite{dunn-2025}'s variationist CxG treats abstraction as continuous (the proportion of
+open slots). @cite{kay-fillmore-1999} add grammatical functions,
 coreference indices, and syntactic constraints to the slot representation.
 
 ## Architecture
@@ -48,13 +47,13 @@ namespace ConstructionGrammar
 
 /-- A slot's filler: the representation level of slot content.
 
-Dunn (2025) distinguishes three representation levels for slot content:
+@cite{dunn-2025} distinguishes three representation levels for slot content:
 - **LEX** (lexeme): a specific word form → `fixed "must"`
-- **SYN** (syntactic): any word of a given POS category → `open_ .VERB`
+- **SYN** (syntactic): any word of a given POS category → `open_.VERB`
 - **SEM+** (semantic): any expression satisfying a semantic constraint →
   `semantic "animate"` (any animate NP)
 
-Kay & Fillmore (1999) add headed phrases: `headed "doing" .VERB` (a VP
+@cite{kay-fillmore-1999} add headed phrases: `headed "doing".VERB` (a VP
 headed by *doing*). These are LEX-level (they fix the head lexeme).
 
 Parameterized over `Lex` (the lexeme type) so the same representation
@@ -62,8 +61,8 @@ works for strings, morphemes, or phonological forms. -/
 inductive SlotFiller (Lex : Type) where
   | fixed : Lex → SlotFiller Lex
   | open_ : UD.UPOS → SlotFiller Lex
-  /-- A phrase headed by a specific lexeme (Kay & Fillmore 1999).
-      `headed "doing" .VERB` means "a VP headed by *doing*" — the slot
+  /-- A phrase headed by a specific lexeme.
+      `headed "doing".VERB` means "a VP headed by *doing*" — the slot
       is phrasal, not the bare word. Contrast with `fixed "doing"`. -/
   | headed : Lex → UD.UPOS → SlotFiller Lex
   /-- A semantically constrained slot (Dunn 2025, SEM+ level).
@@ -145,7 +144,7 @@ variable {Lex : Type}
 /-- Proportion of open slots: a continuous [0,1] measure of abstraction.
 
 This computes the fraction of slots that are open (SYN or SEM+).
-Dunn (2025) defines four discrete abstraction *orders* based on
+@cite{dunn-2025} defines four discrete abstraction *orders* based on
 which representation levels appear (1st = all LEX, 2nd = mostly LEX,
 3rd = mixed, 4th = all abstract). This function computes the continuous
 proportion underlying those orders; `derivedSpecificity` (below)

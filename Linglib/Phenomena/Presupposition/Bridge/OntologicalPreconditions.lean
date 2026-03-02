@@ -3,8 +3,10 @@ import Linglib.Phenomena.Presupposition.Diagnostics
 
 /-!
 # Bridge: Ontological Preconditions -> Presupposition Diagnostics
+@cite{roberts-simons-2024}
 
-Connects the ontological preconditions theory (Roberts & Simons 2024) to the
+
+Connects the ontological preconditions theory to the
 empirical diagnostic data in `Phenomena.Presupposition.Diagnostics`.
 
 The theory predicts that preconditions (which project) pass "allows for"

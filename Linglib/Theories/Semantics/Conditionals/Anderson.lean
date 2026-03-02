@@ -3,17 +3,17 @@ import Linglib.Theories.Semantics.Reference.Kaplan
 
 /-!
 # Anderson Conditionals: Crosslinguistic Marking Strategies
-@cite{mizuno-2024} @cite{anderson-1951}Formalizes the crosslinguistic typology of Anderson conditionals from
-Mizuno (2024) "Strategies for Anderson Conditionals", *Semantics and
+@cite{mizuno-2024} @cite{anderson-1951}Formalizes the crosslinguistic typology of Anderson conditionals from @cite{iatridou-2000}
+@cite{mizuno-2024} "Strategies for Anderson Conditionals", *Semantics and
 Pragmatics* 17(8): 1–14.
 
 ## Anderson Conditionals
 
-Anderson conditionals (Anderson 1951) are counterfactuals where the speaker
+Anderson conditionals are counterfactuals where the speaker
 believes the antecedent is actually true:
 
 > "If Jones had taken arsenic, he would have shown exactly the symptoms
->  he is *actually* showing."
+> he is *actually* showing."
 
 The speaker believes Jones *did* take arsenic, and uses the conditional
 to argue from the observed symptoms to that conclusion. The challenge:
@@ -26,7 +26,7 @@ Mizuno identifies two crosslinguistic strategies:
 
 - **X-marking** (English): Counterfactual morphology (fake past) in the
   antecedent shifts the evaluation world away from the actual world,
-  producing modal ExclF (Iatridou 2000). "Actually" in the consequent
+  producing modal ExclF. "Actually" in the consequent
   recovers the actual world via Kaplanian origin access.
 
 - **O-marking** (Japanese): Non-Past / Historical Present in the consequent.
@@ -43,9 +43,9 @@ Mizuno identifies two crosslinguistic strategies:
 ## FLV Correlation
 
 The availability of X-marking for Anderson conditionals correlates with its
-availability for Future Less Vivid conditionals (Iatridou 2000, §4.2):
+availability for Future Less Vivid conditionals:
 - English: X-marking available for both Anderson and FLV
-- Japanese: X-marking available for neither (Ogihara 2014)
+- Japanese: X-marking available for neither
 - Mandarin: X-marking available for neither
 
 -/
@@ -63,7 +63,7 @@ open Semantics.Mood (subjShift)
 
 /-- The two crosslinguistic marking strategies for Anderson conditionals.
 
-Mizuno (2024): languages differ in whether they use X-marking (counterfactual
+@cite{mizuno-2024}: languages differ in whether they use X-marking (counterfactual
 morphology) or O-marking (indicative/non-past) to express Anderson conditionals.
 English requires X-marking; Japanese requires O-marking. -/
 inductive MarkingStrategy where
@@ -73,7 +73,7 @@ inductive MarkingStrategy where
   | xMarking
   /-- O-marking: Non-Past/Historical Present — no CF morphology, actual world
       directly accessible.
-      Japanese: "Jones-ga ... nom-*eba*, ... mise-*ru* (hazuda)." -/
+      Japanese: "Jones-ga... nom-*eba*,... mise-*ru* (hazuda)." -/
   | oMarking
   deriving DecidableEq, Repr, BEq
 
@@ -141,7 +141,7 @@ theorem xMarking_produces_exclF (c : KContext W E P T) (w' : W) (t' : T)
 
     In an Anderson conditional with X-marking, the CF morphology pushes
     the tower (shifting the evaluation world). But "actually" — being a
-    Kaplanian indexical with `depth = .origin` — resolves to the speech-act
+    Kaplanian indexical with `depth =.origin` — resolves to the speech-act
     world regardless. This is what makes Anderson conditionals felicitous
     despite the counterfactual morphology: "actually" reaches through the
     CF layer to access the actual world.
@@ -165,7 +165,7 @@ theorem oMarking_no_exclF (c : KContext W E P T) :
 
 /-- X-marking is available for FLV where it's available for Anderson.
 
-    Mizuno (2024, §4.2): "the availability of X-marking for Anderson
+    @cite{mizuno-2024}: "the availability of X-marking for Anderson
     conditionals and the availability of X-marking for Future Less Vivid
     conditionals seem to stand or fall together."
 

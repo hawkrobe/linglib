@@ -84,8 +84,7 @@ Proof:
 The "normalcy" parameter is (1) not observable (covert), (2)
 context-dependent (varies by property), and (3) potentially circular
 (defined to give right results). It can be replaced by observable
-prevalence plus uncertain threshold. The RSA model (Tessler & Goodman
-2019) then explains how the threshold is inferred pragmatically from
+prevalence plus uncertain threshold. The RSA model then explains how the threshold is inferred pragmatically from
 priors over prevalence.
 -/
 theorem gen_eliminable
@@ -165,7 +164,7 @@ theorem gen_false_implies_threshold_false
 ## How RSA Explains Generic Judgments
 @cite{tessler-goodman-2019}
 
-Tessler & Goodman (2019) go further than just showing GEN is eliminable.
+@cite{tessler-goodman-2019} go further than just showing GEN is eliminable.
 They explain WHY certain generics are judged true despite low prevalence.
 
 The threshold θ is uncertain and integrated out:

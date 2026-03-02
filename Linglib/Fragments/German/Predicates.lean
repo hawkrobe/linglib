@@ -2,7 +2,7 @@ import Linglib.Theories.Semantics.Lexical.Verb.VerbEntry
 
 /-!
 # German Predicate Lexicon Fragment
-@cite{qing-uegaki-2025} @cite{song-1996}
+@cite{qing-uegaki-2025} @cite{song-1996} @cite{solstad-bott-2024}
 
 German causative and attitude verb entries, extending `VerbCore` with the
 German inflectional paradigm (3sg present, Präteritum, Partizip II).
@@ -12,9 +12,9 @@ German inflectional paradigm (3sg present, Präteritum, Partizip II).
 German has both analytic and lexical causatives:
 - *lassen* — permissive COMPACT causative (like French *laisser*)
 - *machen* — productive analytic causative ("make")
-- *töten*, *zerbrechen* — lexical COMPACT causatives (Song 1996)
+- *töten*, *zerbrechen* — lexical COMPACT causatives
 
-## Attitude verbs (Qing et al. 2025)
+## Attitude verbs
 
 German preferential attitudes pattern with other Indo-European languages:
 - *hoffen* / *wünschen* — Class 3 (positive, C-distributive, anti-rogative)
@@ -161,7 +161,7 @@ def sorgen : GermanVerbEntry where
 -- ============================================================================
 
 /-! German interpersonal occasion verbs presuppose a prior occasioning
-    eventuality (Solstad & Bott 2024, Table 1). The subject performs an
+    eventuality. The subject performs an
     interpersonal action triggered by the object's prior behavior.
 
     These verbs were tested for projectivity in Experiments 1–3 of the
@@ -354,7 +354,7 @@ theorem sorgen_is_uncertainty :
 -- ============================================================================
 
 /-- German *fürchten* matches Japanese 恐れ *osore* and Turkish *kork-*:
-    all are Class 2 negative preferential (degreeComparison .negative). -/
+    all are Class 2 negative preferential (degreeComparison.negative). -/
 theorem fuerchten_matches_crosslinguistic :
     fuerchten.attitudeBuilder =
       some (.preferential (.degreeComparison .negative)) := rfl

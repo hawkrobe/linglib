@@ -32,7 +32,7 @@ open Semantics.Lexical.Verb.Aspect
 -- § 1. Stratified Reference (eq. 62)
 -- ════════════════════════════════════════════════════
 
-/-- Stratified Reference: the core unified property from Champollion (2017)
+/-- Stratified Reference: the core unified property from @cite{champollion-2017}
     eq. (62). SR_{d,g}(P)(x) holds iff x can be decomposed into P-parts
     whose images under dimension d satisfy granularity g.
 
@@ -51,7 +51,7 @@ def SR {α β : Type*} [SemilatticeSup α]
 -- ════════════════════════════════════════════════════
 
 /-- Universal Stratified Reference: every P-entity has SR.
-    Champollion (2017) eq. (63): SR_{d,g}(P) = ∀x. P(x) → SR_{d,g}(P)(x).
+    @cite{champollion-2017} eq. (63): SR_{d,g}(P) = ∀x. P(x) → SR_{d,g}(P)(x).
     When this holds, P is "stratified" along dimension d at granularity g. -/
 def SR_univ {α β : Type*} [SemilatticeSup α]
     (d : α → β) (g : β → Prop) (P : α → Prop) : Prop :=
@@ -64,7 +64,7 @@ def SR_univ {α β : Type*} [SemilatticeSup α]
 /-- Stratified Distributive Reference: dimension is a thematic role θ,
     granularity is Atom. SDR_{θ}(P)(e) holds iff e can be decomposed
     into P-parts whose θ-fillers are atoms (individuals).
-    Champollion (2017) eq. (24)/(59).
+    @cite{champollion-2017} eq. (24)/(59).
 
     SDR captures *distributivity*: "The boys each saw a movie" distributes
     over atomic agents. -/
@@ -84,7 +84,7 @@ def SDR_univ {α β : Type*} [SemilatticeSup α] [PartialOrder β]
 /-- Proper subinterval granularity relative to a fixed outer event e.
     Used by SSR: the runtime of each part must be a proper subinterval
     of the runtime of the whole.
-    Champollion (2017) eq. (38)/(60). -/
+    @cite{champollion-2017} eq. (38)/(60). -/
 def SSRGranularity {Time : Type*} [LinearOrder Time]
     (outer inner : Ev Time) : Prop :=
   inner.runtime.properSubinterval outer.runtime
@@ -93,7 +93,7 @@ def SSRGranularity {Time : Type*} [LinearOrder Time]
     granularity requires proper subinterval of the outer event's runtime.
     SSR(P)(e) holds iff e can be built from P-parts with strictly
     smaller runtimes.
-    Champollion (2017) eq. (38)/(60).
+    @cite{champollion-2017} eq. (38)/(60).
 
     SSR captures *atelicity*: predicates compatible with "for"-adverbials
     have SSR. "John ran for an hour" → run has SSR. -/
@@ -114,7 +114,7 @@ def SSR_univ {Time : Type*} [LinearOrder Time] [SemilatticeSup (Ev Time)]
     granularity requires strictly smaller measure value.
     SMR_{μ}(P)(x) holds iff x can be decomposed into P-parts with
     strictly smaller μ-values.
-    Champollion (2017) eq. (53)/(61).
+    @cite{champollion-2017} eq. (53)/(61).
 
     SMR captures *measurement*: "three pounds of apples" has SMR
     along the weight measure. -/
@@ -145,7 +145,7 @@ abbrev DistConstr {α β : Type*} [SemilatticeSup α]
 
 /-- "each" distributes over atomic θ-fillers.
     Map = θ (thematic role), granularity = Atom.
-    Champollion (2017) §6.4. -/
+    @cite{champollion-2017} §6.4. -/
 abbrev eachConstr {α β : Type*} [SemilatticeSup α] [PartialOrder β]
     (θ : α → β) (Share : α → Prop) (x : α) : Prop :=
   SDR θ Share x
@@ -153,7 +153,7 @@ abbrev eachConstr {α β : Type*} [SemilatticeSup α] [PartialOrder β]
 /-- "for"-adverbials require SSR: the predicate must have stratified
     subinterval reference (atelicity).
     Map = τ, granularity = proper subinterval.
-    Champollion (2017) §5.3. -/
+    @cite{champollion-2017} §5.3. -/
 abbrev forConstr {Time : Type*} [LinearOrder Time] [SemilatticeSup (Ev Time)]
     (Share : Ev Time → Prop) (e : Ev Time) : Prop :=
   SSR Share e
@@ -163,7 +163,7 @@ abbrev forConstr {Time : Type*} [LinearOrder Time] [SemilatticeSup (Ev Time)]
 -- ════════════════════════════════════════════════════
 
 /-- SR_univ entails SR for any specific element (instantiation).
-    Champollion (2017) eq. (32): universal → restricted. -/
+    @cite{champollion-2017} eq. (32): universal → restricted. -/
 theorem sr_univ_entails_restricted {α β : Type*} [SemilatticeSup α]
     {d : α → β} {g : β → Prop} {P : α → Prop}
     (h : SR_univ d g P) {x : α} (hx : P x) : SR d g P x :=
@@ -211,10 +211,10 @@ class VerbDistributivity (Entity Time : Type*) [LinearOrder Time]
   /-- "kill" has SDR along the theme role. -/
   kill_theme_sdr : SDR_univ themeOf kill
   /-- "kill" does NOT have SDR along the agent role (collective causation).
-      Champollion (2017) §6.3: group agents can collectively cause death. -/
+      @cite{champollion-2017} §6.3: group agents can collectively cause death. -/
   kill_agent_not_sdr : ¬ SDR_univ agentOf kill
   /-- "meet" does NOT have SDR along the agent role (inherently collective).
-      Champollion (2017) §6.3: meeting requires multiple participants. -/
+      @cite{champollion-2017} §6.3: meeting requires multiple participants. -/
   meet_agent_not_sdr : ¬ SDR_univ agentOf meet
 
 -- ════════════════════════════════════════════════════
@@ -232,7 +232,7 @@ theorem forAdverbial_requires_ssr
   h_for_ok
 
 /-- SSR implies CUM: if P has universal SSR, then P is cumulative.
-    Champollion (2017) §4.4: SSR is strictly stronger than CUM. -/
+    @cite{champollion-2017} §4.4: SSR is strictly stronger than CUM. -/
 theorem ssr_univ_implies_cum
     {Time : Type*} [LinearOrder Time] [SemilatticeSup (Ev Time)]
     {P : Ev Time → Prop}
@@ -257,7 +257,7 @@ def forAdverbialMeaning {Time : Type*} [LinearOrder Time]
   V e ∧ e.runtime = duration ∧ SSR V e
 
 /-- "in"-adverbials are incompatible with SSR (they require telicity).
-    Champollion (2017) §5.4: "V in δ" requires QUA, which is incompatible
+    @cite{champollion-2017} §5.4: "V in δ" requires QUA, which is incompatible
     with SSR for non-trivial predicates. -/
 theorem in_adverbial_incompatible_with_ssr
     {Time : Type*} [LinearOrder Time] [SemilatticeSup (Ev Time)]

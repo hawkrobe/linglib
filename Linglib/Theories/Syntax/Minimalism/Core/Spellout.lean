@@ -6,11 +6,11 @@ import Linglib.Theories.Syntax.Minimalism.Core.Agree
 
 Bridges the gap between Agree (which values features in narrow syntax) and
 PF (which realizes valued feature bundles as phonological exponents). In
-Distributed Morphology terms (Halle & Marantz 1993), this is Vocabulary
+Distributed Morphology terms, this is Vocabulary
 Insertion: a Vocabulary Item is inserted into a terminal node if its
 features are a subset of the node's features.
 
-The key mechanism is the **Elsewhere Condition** (Kiparsky 1973): when
+The key mechanism is the **Elsewhere Condition**: when
 multiple Vocabulary Items match, the most specific one (most features)
 wins. This captures e.g. Mam =(y)a' appearing specifically when Voice⁰
 bears [+oblique], while a less specific entry would yield the default

@@ -7,8 +7,7 @@ import Linglib.Theories.Semantics.Degree.Core
 
 Compositional semantics of degree questions ("how tall is Kim?"),
 connecting the syntactic structure of degree questions to the
-maximality-based analysis in `Theories/Semantics/Questions/DegreeQuestion.lean`
-(Fox & Hackl 2007).
+maximality-based analysis in `Theories/Semantics/Questions/DegreeQuestion.lean`.
 
 ## Compositional Structure
 

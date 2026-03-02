@@ -3,7 +3,7 @@
 
 Theory-neutral data for two classic default reasoning examples:
 
-1. **Tweety Triangle** (Reiter 1980): Birds normally fly. Tweety is a
+1. **Tweety Triangle**: Birds normally fly. Tweety is a
    bird. Tweety is a penguin. Penguins are birds. Penguins normally
    don't fly. Conclusion: Tweety presumably doesn't fly (the more
    specific default wins).

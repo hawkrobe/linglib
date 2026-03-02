@@ -265,7 +265,7 @@ particular sentence structure (each operator must push one shift).
 
 /-- When each embedding operator pushes exactly one shift onto the tower,
     the local context depth at the corresponding position equals the
-    tower depth. This connects Schlenker's (2009) incremental depth
+    tower depth. This connects @cite{schlenker-2009}'s incremental depth
     tracking to the tower's structural depth.
 
     Concretely: `localCtxNegation` increments depth by 1, and pushing

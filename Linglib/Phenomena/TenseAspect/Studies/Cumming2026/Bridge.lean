@@ -3,7 +3,7 @@ import Linglib.Fragments.Korean.Evidentials
 import Linglib.Fragments.Bulgarian.Evidentials
 
 /-!
-# Cumming (2026) Verification Theorems
+# @cite{cumming-2026} Verification Theorems
 @cite{cumming-2026}
 
 Verification theorems for the cross-linguistic nonfuture downstream
@@ -76,7 +76,7 @@ theorem nfutL_nonfuture : nfutL.isNonfuture = true := rfl
 -- § 3. Master Downstream Theorem
 -- ════════════════════════════════════════════════════
 
-/-- **Generic nonfuture downstream** (Cumming 2026, §5): any paradigm entry
+/-- **Generic nonfuture downstream**: any paradigm entry
     whose EP constraint is nonfuture entails T ≤ A (downstream evidence).
     Delegates to `EPCondition.nonfuture_implies_downstream`. -/
 theorem nonfuture_downstream (p : TAMEEntry) (f : EvidentialFrame ℤ)
@@ -140,7 +140,7 @@ theorem future_no_downstream :
 -- § 6. Korean EP/UP Factorization
 -- ════════════════════════════════════════════════════
 
-/-- **Korean -te and -ney EP diverge on the same tense** (Cumming 2026, §4):
+/-- **Korean -te and -ney EP diverge on the same tense**:
     for present tense, -te requires T = A (contemporaneous evidence) while
     -ney requires T = A ∧ T = S (contemporaneous + speech-time present).
     The UP constraints differ: -te has T < S, -ney has T = S. This shows

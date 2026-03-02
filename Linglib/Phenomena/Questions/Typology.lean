@@ -1,9 +1,9 @@
 /-!
-# Cross-Linguistic Question Typology (Dayal 2025)
+# Cross-Linguistic Question Typology
 @cite{bhatt-dayal-2020} @cite{dayal-2025} @cite{mccloskey-2006} @cite{zu-2018}
 
 Theory-neutral cross-linguistic data on question formation and embedding,
-following Dayal (2025). Covers:
+following @cite{dayal-2025}. Covers:
 
 1. **Clause-typing variation**: forced (English, Italian) vs delayed (Hindi-Urdu)
 2. **Simplex polar questions**: subordination restricted by clause-typing strategy

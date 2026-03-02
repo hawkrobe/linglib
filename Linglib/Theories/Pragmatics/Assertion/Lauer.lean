@@ -3,7 +3,7 @@ import Linglib.Core.Interfaces.AssertionTheory
 import Mathlib.Data.Rat.Defs
 
 /-!
-# Lauer (2013): Probabilistic Assertion
+# @cite{lauer-2013}: Probabilistic Assertion
 
 @cite{lauer-2013}
 

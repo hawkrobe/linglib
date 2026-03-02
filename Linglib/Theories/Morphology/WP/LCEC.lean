@@ -62,7 +62,7 @@ open Core.InformationTheory
     stem). In practice, classes are identified by their *pattern* of
     allomorphic alternations, not by absolute forms. -/
 structure InflectionClass (numCells : Nat) where
-  /-- Realization of each cell (indexed 0..numCells-1) -/
+  /-- Realization of each cell (indexed 0.numCells-1) -/
   realize : Fin numCells → String
 
 instance {n : Nat} : BEq (InflectionClass n) where
@@ -144,7 +144,7 @@ def conditionalCellEntropy {n : Nat} (ps : ParadigmSystem n)
 
     I-complexity = (1 / n(n-1)) · Σᵢ≠ⱼ H(Cᵢ | Cⱼ)
 
-    This is Ackerman & Malouf's (2013) central measure. It quantifies
+    This is @cite{ackerman-malouf-2013} central measure. It quantifies
     how hard it is, on average, to predict one paradigm cell from another.
     The LCEC asserts this is uniformly low across languages. -/
 def iComplexity {n : Nat} (ps : ParadigmSystem n) : ℚ :=
@@ -183,7 +183,7 @@ def isImplicative {n : Nat} (ps : ParadigmSystem n)
     implicative — knowing any one cell fully determines all others.
 
     This is the strongest form of low I-complexity (I-complexity = 0).
-    It corresponds to Carstairs-McCarthy's (2010) No Blur Principle /
+    It corresponds to @cite{carstairs-mccarthy-2010}'s No Blur Principle /
     synonymy avoidance, which the LCEC subsumes as a special case. -/
 def isTransparent {n : Nat} (ps : ParadigmSystem n) : Prop :=
   ∀ (ci cj : Fin n), ci ≠ cj → isImplicative ps ci cj

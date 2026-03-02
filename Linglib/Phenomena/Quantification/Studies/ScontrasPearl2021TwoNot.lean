@@ -3,7 +3,7 @@ import Linglib.Phenomena.Quantification.Studies.ScontrasPearl2021
 import Mathlib.Analysis.SpecialFunctions.Pow.Real
 
 /-!
-# Scontras & Pearl (2021) §4 — Two-Not RSA Model @cite{scontras-pearl-2021} @cite{kennedy-2015} @cite{musolino-2004}
+# @cite{scontras-pearl-2021} §4 — Two-Not RSA Model @cite{scontras-pearl-2021} @cite{kennedy-2015} @cite{musolino-2004}
 
 The two-not model extends the every-not model (§3) to "two horses didn't jump"
 with n=4 horses. The key innovation: when n exceeds the numeral's value,
@@ -16,10 +16,10 @@ Domain: "Two horses didn't jump" with n=4 horses. 5 world states
 (0–4 jumped). 2 utterances (null, twoNot). 10 latent states
 (2 scopes × 5 QUDs).
 
-- **L0**: L0(w|u,i) ∝ ⟦u⟧ᵢ(w)   (literal semantics)
-- **S1**: S1(u|w,i,q) ∝ [L0(q(w)|u,i,q)]^α   (QUD-projected)
+- **L0**: L0(w|u,i) ∝ ⟦u⟧ᵢ(w) (literal semantics)
+- **S1**: S1(u|w,i,q) ∝ [L0(q(w)|u,i,q)]^α (QUD-projected)
 - **L1**: L1(w,i,q|u) ∝ P(w) · P(i) · P(q) · S1(u|w,i,q)
-- **S2**: S2(u|w) ∝ L1(w|u)   (endorsement)
+- **S2**: S2(u|w) ∝ L1(w|u) (endorsement)
 
 Parameters: α = 1. P(w) = Binomial(4, b_suc).
 
@@ -41,7 +41,7 @@ informativity → lower S2 endorsement at w=2.
 
 This predicts that adults endorse "two horses didn't jump" more readily
 in 2-of-4 contexts under exact numeral semantics — converging with
-Kennedy (2015) and acquisition data from Musolino (2004).
+@cite{kennedy-2015} and acquisition data from @cite{musolino-2004}.
 
 -/
 

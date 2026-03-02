@@ -6,11 +6,11 @@ import Linglib.Theories.Syntax.DependencyGrammar.Core.Dominance
 
 Formalizes the structural theory of non-projectivity from:
 
-- Kuhlmann & Nivre (2006). Mildly Non-Projective Dependency Structures.
+- @cite{kuhlmann-nivre-2006}. Mildly Non-Projective Dependency Structures.
   COLING/ACL 2006, pp. 507–514.
-- Kuhlmann (2013). Mildly Non-Projective Dependency Grammar.
+- @cite{kuhlmann-2013}. Mildly Non-Projective Dependency Grammar.
   Computational Linguistics 39(2):355–387.
-- Müller (2013). Unifying Everything. Language 89(4):920–950.
+- @cite{mueller-2013}. Unifying Everything. Language 89(4):920–950.
 - Hudson (1984, 1990, 2007). Word Grammar.
 
 ## Core Concepts
@@ -29,7 +29,7 @@ Five structural constraints on dependency trees, ordered by restrictiveness:
 ## Key Results
 
 - Well-nestedness + gap degree ≤ 1 covers 99.89% of PDT and DDT (K&N 2006 Table 1)
-- Block-degree = fan-out of extracted LCFRS grammar (Kuhlmann 2013, §7.3)
+- Block-degree = fan-out of extracted LCFRS grammar
 - Bounded block-degree + well-nestedness → polynomial parsing (Kuhlmann 2013, Lemma 10)
 
 ## Bridges
@@ -150,8 +150,7 @@ def DepTree.isWellNested (t : DepTree) : Bool :=
 -- §5: Edge Degree (Kuhlmann & Nivre 2006, Definition 9)
 -- ============================================================================
 
-/-- The **span** of an edge (i, j): the interval [min(i,j), max(i,j)].
-    (Kuhlmann & Nivre 2006, §3.3) -/
+/-- The **span** of an edge (i, j): the interval [min(i,j), max(i,j)]. -/
 def edgeSpan (d : Dependency) : List Nat :=
   let lo := min d.headIdx d.depIdx
   let hi := max d.headIdx d.depIdx
@@ -389,7 +388,6 @@ theorem projective_iff_gapDegree_zero (t : DepTree) :
     exact List.eq_nil_of_length_eq_zero this
 
 /-- **Projective ⟺ block-degree 1**: every node has exactly one block.
-    (Kuhlmann 2013, §7.1)
     Requires at least one word (blockDegree of empty tree is 0, not 1).
 
     Proof: projective ↔ gap degree 0 (Theorem 1). When gap degree = 0,

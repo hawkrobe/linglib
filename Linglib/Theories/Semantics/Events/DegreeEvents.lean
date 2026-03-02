@@ -2,7 +2,7 @@ import Linglib.Theories.Semantics.Events.Basic
 import Linglib.Tactics.OntSort
 
 /-!
-# Degree Events (Zhao 2025, Ch. 4) @cite{zhao-2025}
+# Degree Events @cite{zhao-2025}
 
 Gradable predicates introduce events with degree traces τ_d parallel to
 temporal traces τ_i. Comparison involves thematic roles [STD], [TAR], [DIFF]
@@ -45,7 +45,7 @@ def DegreeEv.τ_d {Time Deg : Type*} [LE Time] [LE Deg]
     (e : DegreeEv Time Deg) : Interval Deg :=
   e.degTrace
 
-/-- Comparison thematic roles (Zhao 2025, Ch. 4).
+/-- Comparison thematic roles.
     In comparative constructions, events have participants playing
     degree-related roles analogous to standard thematic roles. -/
 inductive ComparisonRole where

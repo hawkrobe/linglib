@@ -10,10 +10,10 @@ Basque (isolate) has a rich agreement system where the finite verb indexes
 up to three arguments: ergative (A), absolutive (S/P), and dative (R).
 Crucially, object (P/R) agreement is **person-conditioned**: the verb
 cross-references 1st/2nd person objects but not 3rd person objects in many
-constructions (Laka 1996, Preminger 2014, Just 2024).
+constructions.
 
 This is a classic case of **differential P indexing** conditioned by
-person prominence (Just 2024, Table 1): SAP objects are indexed, 3rd
+person prominence: SAP objects are indexed, 3rd
 person objects are not.
 
 ## Agreement Paradigm Overview
@@ -74,7 +74,7 @@ inductive ArgPosition where
 /-- Whether a P argument at a given person-number is indexed on the verb.
 
     Basque cross-references SAP objects (1st/2nd person) but not 3rd
-    person objects in the relevant constructions (Just 2024, Table 1).
+    person objects in the relevant constructions.
     A and S arguments are always indexed regardless of person. -/
 def pIsIndexed (pn : PersonNumber) : Bool := pn.isSAP
 

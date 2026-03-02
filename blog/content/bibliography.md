@@ -275,7 +275,7 @@ cited in: [RSAWarstadt2022](https://github.com/hawkrobe/linglib/blob/main/Lingli
 
 **Yoon, E. J., Tessler, M. H., Goodman, N. D. & Frank, M. C.** (2020). Polite Speech Emerges From Competing Social Goals. *Open Mind, 4, 71–87*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/RSA/Implementations/YoonEtAl2020.lean)\
-cited in: [RSA_YoonEtAl2020Bridge](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Politeness/RSA_YoonEtAl2020Bridge.lean), [YoonEtAl2020RSA](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Politeness/Studies/YoonEtAl2020RSA.lean), [YoonEtAl2020](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/RSA/Implementations/YoonEtAl2020.lean)
+cited in: [YoonEtAl2020RSA](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Politeness/Studies/YoonEtAl2020RSA.lean)
 
 **Zaslavsky, N., Hu, J. & Levy, R.** (2020). A Rate-Distortion View of Human Pragmatic Reasoning.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/RSA/Extensions/InformationTheory/Basic.lean)\
@@ -1330,10 +1330,6 @@ cited in: [Typology](https://github.com/hawkrobe/linglib/blob/main/Linglib/Pheno
 [cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Modality/Typology.lean)\
 cited in: [Typology](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Modality/Typology.lean)
 
-**Dieuleveut, A., Hsu, B. & Bhatt, R.** (2025). A Register Approach to Modal Non-Concord in English: An Experimental Study of Linguistic and Social Meaning. *English Language \& Linguistics*.\
-[formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Modality/ModalConcord/Data.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Modality/ModalConcord/Bridge.lean)\
-cited in: [Bridge](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Modality/ModalConcord/Bridge.lean), [Data](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Modality/ModalConcord/Data.lean), [LiuRotter2025Bridge](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Modality/ModalConcord/LiuRotter2025Bridge.lean)
-
 **Domaneschi, F., Romero, M. & Braun, B.** (2017). Bias in polar questions: Evidence from English and German production experiments. *Glossa: a journal of general linguistics, 2(1)*.\
 [cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Modality/BiasedPQ.lean)\
 cited in: [BiasedPQ](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Modality/BiasedPQ.lean)
@@ -1344,6 +1340,9 @@ cited in: [RationalAttitude](https://github.com/hawkrobe/linglib/blob/main/Lingl
 
 **Edgington** (1995). On Conditionals.\
 [cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Conditionals/Assertability.lean)
+
+**Elliott, P. D. & Sudo, Y.** (2025). Free Choice with Anaphora. *Semantics and Pragmatics, 18(2)*.\
+[cited]
 
 **Frana, I. & Rawlins, K.** (2019). Attitudes in Discourse: Italian Polar Questions and the Particle \emphmica. *Semantics and Pragmatics, 12(16), 1–55*.\
 [cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Modality/BiasedPQ.lean)\
@@ -1396,6 +1395,9 @@ cited in: [KratzerEpistemicRSA](https://github.com/hawkrobe/linglib/blob/main/Li
 [cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Conditionals/LeftNested/Data.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Conditionals/ConditionalType.lean)\
 cited in: [Data](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Conditionals/LeftNested/Data.lean)
 
+**Imel, N., Guo, Q. & Steinert-Threlkeld, S.** (2026). An Efficient Communication Analysis of Modal Typology. *Open Mind, 10, 1–28*.\
+[cited]
+
 **Kamp, H.** (1973). Free Choice Permission. *Proceedings of the Aristotelian Society.*.\
 [cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Modality/FreeChoice.lean)
 
@@ -1426,6 +1428,9 @@ cited in: [KratzerEpistemicRSA](https://github.com/hawkrobe/linglib/blob/main/Li
 **Kratzer, A.** (2012). Modals and Conditionals. *Oxford University Press*.\
 [foundational] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Modality/Kratzer.lean)\
 cited in: [KratzerEpistemicRSA](https://github.com/hawkrobe/linglib/blob/main/Linglib/Comparisons/KratzerEpistemicRSA.lean), [TemporalOrientationBridge](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Modality/Bridge/TemporalOrientationBridge.lean), [Restrictor](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Conditionals/Restrictor.lean), [Directive](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Modality/Directive.lean), [Inertia](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Modality/Inertia.lean), [Temporal](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Modality/Temporal.lean)
+
+**Kripke, S. A.** (1963). Semantical Considerations on Modal Logic. *Acta Philosophica Fennica, 16, 83–94*.\
+[cited]
 
 **Lewis, D.** (1973). Counterfactuals.\
 [cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Causation/Basic.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Causation/Necessity.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Conditionals/Basic.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Conditionals/Counterfactual.lean)
@@ -1478,6 +1483,10 @@ cited in: [Sharvit2025](https://github.com/hawkrobe/linglib/blob/main/Linglib/Ph
 **Ross, A.** (1944). Imperatives and Logic. *Theoria.*.\
 [cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Modality/FreeChoice.lean)
 
+**Rotter, S. & Liu, M.** (2025). A Register Approach to Modal (Non-)Concord in English: An Experimental Study of Linguistic and Social Meaning. *English Language \& Linguistics, 29(3), 478–504*.\
+[formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Modality/ModalConcord/Data.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Modality/ModalConcord/Bridge.lean)\
+cited in: [Bridge](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Modality/ModalConcord/Bridge.lean), [Data](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Modality/ModalConcord/Data.lean), [LiuRotter2025Bridge](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Modality/ModalConcord/LiuRotter2025Bridge.lean)
+
 **Stalnaker, R.** (1968). A Theory of Conditionals.\
 [cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Conditionals/Basic.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Conditionals/Counterfactual.lean)
 
@@ -1522,6 +1531,9 @@ cited in: [Temporal](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theor
 **Willett, T.** (1988). A cross-linguistic survey of the grammaticalization of evidentiality. *Studies in Language 12: 51–97.*.\
 [cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Modality/Typology.lean)\
 cited in: [Typology](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Modality/Typology.lean)
+
+**Zeijlstra, H.** (2007). Modal Concord. *Proceedings of SALT 17, 317–332*.\
+[cited]
 
 ## Semantics — Modality & Conditionals
 
@@ -1659,6 +1671,9 @@ cited in: [BackgroundedIslands](https://github.com/hawkrobe/linglib/blob/main/Li
 **Hamblin, C.** (1973). Questions in Montague English. *Foundations of Language.*.\
 [cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/RSA/ScalarImplicatures/Embedded/Questions.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Focus/Interpretation.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Questions/Hamblin.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Questions/LeftPeriphery.lean)\
 cited in: [Questions](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/RSA/ScalarImplicatures/Embedded/Questions.lean), [Hamblin](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Questions/Hamblin.lean)
+
+**Höhle, T. N.** (1992). \"Uber Verum-Fokus im Deutschen. *Informationsstruktur und Grammatik, 112–141*.\
+[cited]
 
 **Ippolito, M., Kiss, A. & Williams, W.** (2025). Discourse \emphonly. *Proceedings of the 41st West Coast Conference on Formal Linguistics (WCCFL 41), 222–231*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Lexical/Particle/DiscourseOnly.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Focus/DiscourseOnly.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Focus/Bridge/DTSDiscourseOnly.lean)\
@@ -2310,6 +2325,9 @@ cited in: [Bridge](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenome
 [foundational] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Questions/Partition.lean)\
 cited in: [Partition](https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/Partition.lean), [Basic](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Questions/Basic.lean), [MentionSome](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Questions/MentionSome.lean), [Basic](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/NeoGricean/Exhaustivity/Basic.lean), [Basic](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/RSA/Questions/Basic.lean), [Exhaustivity](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Conditionals/Exhaustivity.lean), [Coordination](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Questions/Coordination.lean), [GSVanRooyBridge](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Questions/GSVanRooyBridge.lean), [LiftedTypes](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Questions/LiftedTypes.lean), [MentionSome](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Questions/MentionSome.lean), [Partition](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Questions/Partition.lean), [PragmaticAnswerhood](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Questions/PragmaticAnswerhood.lean), [ProbabilisticAnswerhood](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Questions/ProbabilisticAnswerhood.lean), [ScopeReadings](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Questions/ScopeReadings.lean)
 
+**Gärtner, H. & Gyuris, B.** (2017). On Delimiting the Space of Bias Profiles for Polar Interrogatives. *Linguistische Berichte, 251, 26–49*.\
+[cited]
+
 **Hamblin, C. L.** (1976). Questions in Montague English. *Montague Grammar, 247–259*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Questions/Hamblin.lean)\
 cited in: [Preferential](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Attitudes/Preferential.lean)
@@ -2471,6 +2489,9 @@ cited in: [Embedding](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phen
 [cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Presupposition/Basic.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Presupposition/Bridge/NeoGricean.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/NeoGricean/Presuppositions.lean)\
 cited in: [NeoGricean](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Presupposition/Bridge/NeoGricean.lean)
 
+**Kriz, M. & Chemla, E.** (2015). Two Methods to Find Truth-Value Gaps and Their Application to the Projection Problem of Homogeneity. *Natural Language Semantics, 23(3), 205–248*.\
+[cited]
+
 **Landman, F.** (1986). Conflicting Presuppositions and Modal Subordination. *Papers from the 22nd Regional Meeting of the Chicago Linguistic Society, 195–207*.\
 [cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Presupposition/Studies/Yagi2025.lean)
 
@@ -2503,6 +2524,9 @@ cited in: [SharvitCLOS](https://github.com/hawkrobe/linglib/blob/main/Linglib/Ph
 **Simons, M. T. J. B. D. & Roberts, C.** (2010). What projects and why. *SALT 20.*.\
 [cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/Discourse/AtIssueness.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Presupposition/ProjectiveContent.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Presupposition/Studies/TonhauserBeaverDegen2018/Data.lean)\
 cited in: [Data](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Presupposition/Studies/TonhauserBeaverDegen2018/Data.lean)
+
+**Soames, S.** (1982). How Presuppositions are Inherited: A Solution to the Projection Problem. *Linguistic Inquiry, 13(3), 483–545*.\
+[cited]
 
 **Solstad, T. & Bott, O.** (2024). Cataphoric Resolution of Projective Content: The Case of Occasion Verbs. *Semantics \& Pragmatics, 17(11)*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/ImplicitCausality/Studies/SolstadBott2024/Data.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/ImplicitCausality/Studies/SolstadBott2024/Bridge/PresuppositionBridge.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/ImplicitCausality/Studies/SolstadBott2024/Bridge/ProtoRoleBridge.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/ImplicitCausality/Studies/SolstadBott2024/Bridge/ProjectivityBridge.lean)\
@@ -2540,6 +2564,9 @@ cited in: [Preferential](https://github.com/hawkrobe/linglib/blob/main/Linglib/T
 **von Fintel, K.** (1999). NPI licensing, Strawson entailment, and context dependency. *Journal of Semantics, 16(2), 97–148*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Entailment/StrawsonEntailment.lean)\
 cited in: [Presupposition](https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/Semantics/Presupposition.lean), [PolarityBuilderBridge](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Polarity/PolarityBuilderBridge.lean), [Conditionals](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/RSA/ScalarImplicatures/Embedded/Conditionals.lean), [PolarityBuilder](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Entailment/PolarityBuilder.lean)
+
+**Wang, Y.** (2025). Revisit de re Presuppositions. *Proceedings of the Linguistic Society of America, 10, 5915*.\
+[cited]
 
 **White, A. S.** (2014). Factive-Implicatives and Modalized Complements. *Proceedings of SALT 24, 116–135*.\
 [cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Presupposition/ForgetPresuppositions.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Attitudes/PreExistence.lean)\
@@ -2786,6 +2813,9 @@ cited in: [Position](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theor
 
 **Bruening, B.** (2001). QR Obeys Superiority: Frozen Scope and ACD. *Linguistic Inquiry, 32(2), 233–273*.\
 [cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Quantification/Data.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/Minimalism/Scope.lean)
+
+**Bruening, B.** (2021). Implicit Arguments in English Double Object Constructions. *Natural Language \& Linguistic Theory, 39(4), 1023–1085*.\
+[cited]
 
 **Burzio, L.** (1986). Italian Syntax. *Reidel.*.\
 [cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/ArgumentStructure/Unaccusativity/Data.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/AuxiliaryVerbs/Selection.lean)\

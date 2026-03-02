@@ -24,7 +24,7 @@ structure PrevalenceAsymmetry where
   judgment2 : ℚ
   source : String
 
-/-- Classic asymmetry: "lays eggs" vs "is female" (Leslie 2008) -/
+/-- Classic asymmetry: "lays eggs" vs "is female" -/
 def laysEggsVsIsFemale : PrevalenceAsymmetry :=
   { sentence1 := "Robins lay eggs"
   , sentence2 := "Robins are female"

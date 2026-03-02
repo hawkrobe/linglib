@@ -29,7 +29,6 @@ all definitions here apply directly.
 - **§4–§8 Theorems**: duality, symmetry/strength, Boolean closure,
   type ⟨1⟩, van Benthem characterization
 - **§12 Conservative GQ lattice**: `ConsGQ α` bounded distributive lattice
-  (Elliott 2025)
 
 -/
 
@@ -47,11 +46,10 @@ variable {α : Type*}
 -- §1.1 Barwise & Cooper (1981) --
 
 /--
-Conservativity (Barwise & Cooper 1981): `Q(A, B) = Q(A, A ∩ B)`.
+Conservativity: `Q(A, B) = Q(A, A ∩ B)`.
 
 Only the elements of B that are also in A matter for the quantifier's
-truth value. Also called "lives on" (B&C) or "intersectivity"
-(Higginbotham & May 1981). All simple (lexicalized) determiners
+truth value. Also called "lives on" (B&C) or "intersectivity". All simple (lexicalized) determiners
 are conservative.
 -/
 def Conservative (q : GQ α) : Prop :=
@@ -118,8 +116,7 @@ def NegativeStrong (q : GQ α) : Prop :=
     EXT must be stated as an additional axiom. For `GQ α`, EXT holds
     trivially since there is no universe parameter — it's a design theorem.
 
-    Significance: EXT + CONS characterize "well-behaved" determiners
-    (van Benthem 1984). See `vanBenthem_cons_ext`.
+    Significance: EXT + CONS characterize "well-behaved" determiners. See `vanBenthem_cons_ext`.
 
     Reference: Peters & Westerståhl Ch.4 Def 4.1. -/
 def Extension (_q : GQ α) : Prop := True
@@ -214,7 +211,7 @@ def Filtrating (q : GQ α) : Prop :=
 /-- QUANT (Isomorphism closure): Q is invariant under permutations of the
     domain. Model-agnostic version: Q(A,B) depends only on the pointwise
     Boolean pattern, not on which specific elements satisfy A and B.
-    This is the model-agnostic formulation of Mostowski (1957).
+    This is the model-agnostic formulation of @cite{mostowski-1957}.
 
     The model-specific version in `Semantics.Lexical.Determiner.Quantifier.Quantity`
     uses cardinalities directly, which requires `FiniteModel`. This version
@@ -487,13 +484,13 @@ theorem conservative_iff_livesOn (q : GQ α) :
 /-- Every `GQ α` satisfies Extension: the representation is universe-free. -/
 theorem extension_trivial (q : GQ α) : Extension q := trivial
 
-/-- Van Benthem (1984): Under Extension (free for GQ α), Conservativity
+/-- @cite{van-benthem-1984}: Under Extension (free for GQ α), Conservativity
     is equivalent to LivesOn — the restricted quantifier depends only on
     elements of its restrictor. This is the `CONS + EXT ↔ Rel(⟨1⟩)`
     characterization of "well-behaved" type ⟨1,1⟩ quantifiers.
 
     Our `conservative_iff_livesOn` doesn't need an EXT hypothesis because
-    `GQ α` already bakes it in. -/
+    `GQ α` already bakes it. -/
 theorem vanBenthem_cons_ext (q : GQ α) :
     Extension q → (Conservative q ↔ ∀ A, LivesOn (restrict q A) A) :=
   λ _ => conservative_iff_livesOn q
@@ -608,7 +605,7 @@ theorem individual_meet_closed (a : α) (P Q : α → Bool) :
 -- §8 Van Benthem (1984) Characterization
 -- ============================================================================
 
-/-- Van Benthem (1984) Theorem 3.1.1: Under conservativity, inclusion (⊆)
+/-- @cite{van-benthem-1984} Theorem 3.1.1: Under conservativity, inclusion (⊆)
     is the only reflexive antisymmetric quantifier.
 
     This is the "Aristotle reversed" cornerstone: the inferential properties
@@ -714,7 +711,7 @@ open Core.NaturalLogic (EntailmentSig ContextPolarity)
 
 /--
 Map a pair of entailment signatures (restrictor, scope) to `DoubleMono`,
-the van Benthem (1984) double monotonicity classification.
+the @cite{van-benthem-1984} double monotonicity classification.
 
 Returns `none` for signature pairs that don't correspond to a standard
 generalized quantifier pattern.
@@ -913,8 +910,7 @@ def conservativeSublattice : Sublattice (GQ α) where
   infClosed' q₁ hq₁ q₂ hq₂ := conservative_gqMeet q₁ q₂ hq₁ hq₂
 
 /-- Conservative GQs: the subtype of `GQ α` satisfying conservativity.
-    Forms a bounded distributive lattice under pointwise Boolean operations
-    (Elliott 2025, §4.3). Meet is `∧`, join is `∨`, the order is
+    Forms a bounded distributive lattice under pointwise Boolean operations. Meet is `∧`, join is `∨`, the order is
     pointwise implication. The Birkhoff representation theorem applied to
     this lattice yields polarized individuals as join-irreducible elements.
 

@@ -119,7 +119,7 @@ theorem mem_cartesianProduct (ff : ForceFlavor) (fos : List ModalForce)
 
 /-- Any Cartesian product of forces and flavors satisfies IFF.
 
-    This is the formal content of Kratzer's (1981) insight that force
+    This is the formal content of @cite{kratzer-1981}'s insight that force
     (quantificational) and flavor (contextual) are **independent** parameters
     in the semantics of modals. -/
 theorem cartesianProduct_satisfies_iff

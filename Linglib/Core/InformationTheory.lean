@@ -6,7 +6,7 @@ import Mathlib.Algebra.Order.Ring.Rat
 
 Domain-agnostic information-theoretic functions over rational numbers, suitable
 for decidable computation. These are used by both pragmatic models (RSA) and
-morphological complexity metrics (Ackerman & Malouf 2013).
+morphological complexity metrics.
 
 For the ℝ-valued counterpart, see `Core.shannonEntropy` in
 `Linglib/Core/Agent/RationalAction.lean` (§4), which uses `Real.log` and
@@ -79,7 +79,7 @@ def conditionalEntropy {α β : Type} [BEq α] [BEq β]
 JSD(p, q) = H(m) - (H(p) + H(q)) / 2 where m(x) = (p(x) + q(x)) / 2.
 Symmetric, bounded (0 ≤ JSD ≤ 1 bit), and a metric (after sqrt).
 
-Used for grammar distance (Dunn 2025), register comparison, and anywhere
+Used for grammar distance, register comparison, and anywhere
 KL divergence's asymmetry is undesirable. -/
 def jsdOf {α : Type} [BEq α] (xs : List α) (p q : α → ℚ) : ℚ :=
   let distP := xs.map fun x => (x, p x)
@@ -87,12 +87,12 @@ def jsdOf {α : Type} [BEq α] (xs : List α) (p q : α → ℚ) : ℚ :=
   let distM := xs.map fun x => (x, (p x + q x) / 2)
   entropy distM - (entropy distP + entropy distQ) / 2
 
-/-- ΔP: directional association measure (Ellis 2006, Dunn 2025).
+/-- ΔP: directional association measure.
 
 ΔP(x → y) = P(y | x) - P(y | ¬x)
 
 Measures how much knowing x changes the probability of y. Used by
-Dunn (2025) to identify constructions from corpus data: a slot-filler
+@cite{dunn-2025} to identify constructions from corpus data: a slot-filler
 pair (x, y) is constructional when ΔP is high in both directions.
 
 Properties:
@@ -118,7 +118,7 @@ Given observed counts:
 
 ΔP(x → y) = a/(a+b) - c/(c+d)
 
-This is the form used in corpus-based CxG (Dunn 2025): count how often
+This is the form used in corpus-based CxG: count how often
 a filler appears in a slot (a) vs not (b), and how often it appears
 elsewhere (c) vs not (d). -/
 def deltaPCounts (a b c d : ℕ) : ℚ :=

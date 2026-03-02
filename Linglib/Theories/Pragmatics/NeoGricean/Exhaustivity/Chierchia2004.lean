@@ -142,7 +142,7 @@ theorem pneg_isDE : IsDE (World := World) pneg := by
 
 /-- Strong Application (84): DE-sensitive function application.
 
-    This is the formal heart of Chierchia (2004).
+    This is the formal heart of @cite{chierchia-2004}.
 
     **Non-DE case** (UE contexts): Pass strengthened meanings through.
       ‖[f g]‖^S = f^S(g^S)
@@ -347,12 +347,12 @@ theorem root_ue_bridge (φ : Prop' World) (ALT : Set (Prop' World))
 
 /-- Strength relation for scalar licensing.
 
-    Krifka (1995) and Chierchia (2004) treat all NPIs as STRENGTHENING:
+    @cite{krifka-1995a} and @cite{chierchia-2004} treat all NPIs as STRENGTHENING:
     the NPI makes the assertion stronger than its scalar alternatives,
     so under negation the negated NPI statement is informationally weaker
     (= more conservative), which is the hallmark of DE environments.
 
-    Schwab (2022) observes that ATTENUATING NPIs (like German "so recht")
+    @cite{schwab-2022} observes that ATTENUATING NPIs (like German "so recht")
     work in the opposite direction: they make the assertion WEAKER than
     alternatives. Under negation, the negated attenuating statement is
     actually STRONGER — which means attenuating NPIs should NOT produce
@@ -384,7 +384,7 @@ def scalarLicensing (rel : StrengthRelation) (φ : Prop' World)
     , strong := φ ∧ₚ (⋁ { ψ | ∃ a ∈ ALT, ψ = a ∧ (a ⊆ₚ φ) ∧ ¬(φ ⊆ₚ a) })
     , alternatives := ALT }
 
-/-- Bridge: `scalarLicensing .strongerThan` is exactly `krifkaRule`. -/
+/-- Bridge: `scalarLicensing.strongerThan` is exactly `krifkaRule`. -/
 theorem scalarLicensing_strongerThan_eq_krifkaRule (φ : Prop' World)
     (ALT : Set (Prop' World)) :
     scalarLicensing .strongerThan φ ALT = krifkaRule φ ALT := rfl

@@ -1,7 +1,7 @@
 import Linglib.Theories.Semantics.Causation.Builder
 
 /-!
-# Burning Facts: Thick and Thin Causatives (Martin, Rose & Nichols 2025)
+# Burning Facts: Thick and Thin Causatives
 @cite{embick-2009} @cite{martin-rose-nichols-2025} @cite{rose-nichols-2021} @cite{wolff-2003}
 
 Two concepts of CAUSE underlie lexical causative verb semantics:
@@ -75,7 +75,7 @@ while thin causatives specify only the result state. -/
     - `thin`: Result-only — silent on manner, compatible with any cause type. -/
 inductive ThickThinClass where
   /-- Thick via event predicate: root is a predicate of the causing event.
-      *break*, *burn*, *melt*, *cut* — Embick (2009) break-class.
+      *break*, *burn*, *melt*, *cut* — @cite{embick-2009} break-class.
       Compatible with strong adjectival resultatives (*burn clean*). -/
   | thickManner
   /-- Thick via state property: result state reveals production process.
@@ -187,8 +187,7 @@ This is a pragmatic constraint arising from competition between the lexical
     When a thick causative is used in its physical sense, the CAUSE operator
     preferably receives a production-based interpretation. This is because
     the manner information makes P-CAUSE a salient alternative, and the
-    more specific lexical form specializes in the more specific meaning
-    (Kiparsky 1982, Blutner & Solstad 2001). -/
+    more specific lexical form specializes in the more specific meaning. -/
 def productionConstraint (cls : ThickThinClass) : CausationType :=
   if cls.isThick then .production else .dependence
 
@@ -237,7 +236,7 @@ theorem production_asserts_sufficiency :
 theorem dependence_asserts_necessity :
     CausationType.dependence.analogousBuilder.assertsNecessity = true := rfl
 
-/-! ## Bridge to Resultatives (Embick 2009)
+/-! ## Bridge to Resultatives
 
 Thick causative manner verbs (break-class) are compatible with strong
 adjectival resultatives (*break open*, *burn clean*). This connects to
@@ -245,7 +244,7 @@ the resultative infrastructure in GoldbergJackendoff2004/Bridge.lean,
 where the constructional CAUSE uses `CausativeBuilder.make`. -/
 
 /-- Causative manner verbs (thickManner) are compatible with strong ASR.
-    This is the Embick (2009) generalization formalized as a derived property.
+    This is the @cite{embick-2009} generalization formalized as a derived property.
 
     Thin verbs and thick-state verbs (*bury*) are NOT compatible. -/
 def ThickThinClass.strongASRCompatible : ThickThinClass → Bool
@@ -271,7 +270,7 @@ theorem thick_state_not_asr :
     When a verb encodes P-CAUSE (energy transfer), the causal relation
     is necessarily direct: for energy to transfer, there must be physical
     contact or at least no intervening causer at the same level of
-    granularity (Wolff 2003). This is why the directness constraint
+    granularity. This is why the directness constraint
     holds specifically for thick causatives. -/
 def productionEntailsDirectness (ct : CausationType) : Bool :=
   ct == .production

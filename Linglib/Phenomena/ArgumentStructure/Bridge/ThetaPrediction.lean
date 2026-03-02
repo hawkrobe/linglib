@@ -3,6 +3,8 @@ import Linglib.Theories.Interfaces.SyntaxSemantics.Minimalism.VoiceTheta
 
 /-!
 # Bridge: Linking Theory Predictions → Hand-Annotated θ-Roles
+@cite{kratzer-1996}
+
 
 Two accounts of argument realization make predictions about external
 argument theta roles. This bridge file tests each account's predictions
@@ -10,7 +12,7 @@ independently against hand-annotated `subjectTheta` in the English
 verb fragment. Both are instantiated as `LinkingTheory` (see
 `Theories/Interfaces/SyntaxSemantics/Linking.lean`).
 
-## Account 1: Severing (Kratzer 1996, Schäfer 2008)
+## Account 1: Severing
 
 Voice flavor determines the theta role: Voice_AG → agent, Voice_CAUSE →
 stimulus. The prediction chain is: verb → Voice selection → theta role.
@@ -19,10 +21,10 @@ stimulus. The prediction chain is: verb → Voice selection → theta role.
 The current Voice typology has only two θ-assigning flavors, so it can
 only distinguish agent from stimulus. It correctly predicts ~71% of verbs
 (all agents + all stimuli), but systematically fails for:
-- **Experiencer subjects** (know, believe, enjoy, ...): Voice_AG predicts
+- **Experiencer subjects** (know, believe, enjoy,...): Voice_AG predicts
   agent, but the actual role is experiencer. The typology lacks a
   Voice_EXPERIENCER flavor.
-- **Theme subjects** (arrive, glow, whisper, ...): Voice_nonThematic
+- **Theme subjects** (arrive, glow, whisper,...): Voice_nonThematic
   predicts none (no external argument), but the subject IS the internal
   argument that moved. The severing account correctly predicts no
   *external* argument; the subject's theta role comes from V, not Voice.

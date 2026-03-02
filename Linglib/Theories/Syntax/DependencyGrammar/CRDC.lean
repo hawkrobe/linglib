@@ -63,7 +63,7 @@ inductive ValentType where
 
 /-- A slot in a valency frame
 
-    Captures the notation from Osborne (2019):
+    Captures the notation from @cite{osborne-2019}:
     - `isArgument` corresponds to the `a` subscript
     - `isRaised` corresponds to the `↑` marker
     - `label` captures grammatical function (subj, obj, etc.) -/
@@ -80,7 +80,7 @@ structure ValentSlot where
 
 /-- A valency frame specifies the combinatory potential of a word
 
-    Following Osborne (2019), valents are ordered by obliqueness:
+    Following @cite{osborne-2019}, valents are ordered by obliqueness:
     subject > direct object > indirect object > oblique -/
 structure ValencyFrame where
   /-- The word this frame belongs to -/

@@ -1,7 +1,7 @@
 import Linglib.Core.Lexical.UD
 
 /-!
-# Person Categories (Cysouw 2009)
+# Person Categories
 @cite{cysouw-2009}
 
 The 8 referential person categories from Cysouw's paradigmatic framework,

@@ -2,7 +2,7 @@ import Linglib.Phenomena.Modality.ModalConcord.LiuRotter2025
 import Linglib.Fragments.English.FunctionWords
 
 /-!
-# Modal Concord Bridge — Liu & Rotter (2025)
+# Modal Concord Bridge — @cite{rotter-liu-2025}
 @cite{liu-rotter-2025} @cite{dieuleveut-hsu-bhatt-2025}
 
 Connects Liu & Rotter's empirical data to the English modal and adverb
@@ -143,7 +143,7 @@ necessity MC → competence, possibility MC → solidarity. This connects
 to negative concord, which also indexes solidarity.
 
 The `socialIndex` mapping is defined here (not in Core) because it
-encodes an empirical claim from Liu & Rotter (2025) §4. -/
+encodes an empirical claim from @cite{rotter-liu-2025} §4. -/
 
 /-- Social indexation of each concord type.
     NC and MC possibility both index solidarity;
@@ -163,7 +163,7 @@ theorem possibility_mc_solidarity :
 
 /-- **Possibility MC patterns with negative concord**: Both are
     solidarity-indexing concord phenomena. This is the cross-phenomenon
-    generalization from Liu & Rotter (2025) §4. -/
+    generalization from @cite{rotter-liu-2025} §4. -/
 theorem possibility_mc_like_nc :
     socialIndex (ConcordType.fromModalForce .possibility) =
     socialIndex .negation := rfl

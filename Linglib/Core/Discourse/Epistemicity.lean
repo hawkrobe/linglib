@@ -11,7 +11,7 @@ dimensions to the model-theoretic level (`KContext` / `ContextTower`).
 
 ## Motivation
 
-Gawne & Spronck (2024) identify 10 concept areas forming a coherent epistemic
+@cite{gawne-spronck-2024} identify 10 concept areas forming a coherent epistemic
 domain. Linglib already covers evidential source (`Core/Evidence.lean`), epistemic
 modality (`Modality/Kernel.lean`), and mirativity (`Core/Evidence.lean`), but these
 are scattered with no connective tissue. The main gap is **egophoricity** -- the

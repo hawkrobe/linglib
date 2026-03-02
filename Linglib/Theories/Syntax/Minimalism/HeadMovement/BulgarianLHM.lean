@@ -37,11 +37,11 @@ namespace Minimalism.Phenomena.HeadMovement.BulgarianLHM
 
 /-! ## Part 1: The Lexicon
 
-We define the lexical items for the Bulgarian sentence from Harizanov (2019).
+We define the lexical items for the Bulgarian sentence from @cite{harizanov-gribanova-2019}.
 Each item has a category (V, N, D, T) and selectional requirements.
 
-    Pročeli   bjaha      studentite     statijata.
-    read      be.3p.pst  the.students   the.article
+    Pročeli bjaha studentite statijata.
+    read be.3p.pst the.students the.article
 -/
 
 /-- The participle "pročeli" (read): category V, selects a D (object).
@@ -67,13 +67,13 @@ This corresponds to Harizanov's structure (52) on p.21, before V raises.
 
 ```
          T'
-        /  \
-       T    VP
-    bjaha  /  \
-         DP    V'
-   studentite /  \
-             V    DP
-         pročeli  statijata
+        / \
+       T VP
+    bjaha / \
+         DP V'
+   studentite / \
+             V DP
+         pročeli statijata
 ```
 -/
 
@@ -101,14 +101,14 @@ The participle moves to Spec-TP, yielding verb-initial order:
 
 ```
         TP
-       /  \
-  pročeli  T'
-          /  \
-         T    VP
-       bjaha /  \
-           DP    V'
-      studentite /  \
-               (V)   DP
+       / \
+  pročeli T'
+          / \
+         T VP
+       bjaha / \
+           DP V'
+      studentite / \
+               (V) DP
                    statijata
 ```
 
@@ -116,7 +116,7 @@ The participle now appears at the LEFT edge (specifier position).
 Under copy theory, a copy remains in VP.
 
 This derives: "Pročeli bjaha studentite statijata"
-             (read   had   the.students the.article)
+             (read had the.students the.article)
 -/
 
 /-- TP after movement = {participle, T'} -/
@@ -152,7 +152,7 @@ The crucial claim: the participle is MAXIMAL at Spec-TP.
 Being "maximal" means: NOT PROJECTING (not passing its label upward).
 At Spec-TP, the participle doesn't project because T' projects instead.
 
-We formalize this using POSITION-SPECIFIC maximality (Collins & Stabler 2016):
+We formalize this using POSITION-SPECIFIC maximality:
 - A position is a path from the root (here: "go left" = Spec)
 - We check projection only at THAT position
 - This handles copy theory correctly (verb projects in VP but not at Spec-TP)

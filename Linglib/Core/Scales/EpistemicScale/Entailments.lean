@@ -5,7 +5,7 @@ import Linglib.Core.Scales.EpistemicScale.Defs
 
 @cite{holliday-icard-2013}
 
-Holliday & Icard (2013) Figure 1 lists 13 validity patterns (V1–V13) and
+@cite{holliday-icard-2013} Figure 1 lists 13 validity patterns (V1–V13) and
 3 invalidity patterns (I1–I3) for epistemic comparatives. This file defines
 each pattern as a `Prop`-valued predicate on a comparison relation `ge`, then
 proves which patterns hold (or fail) in each of three semantic classes:

@@ -1,7 +1,7 @@
 import Linglib.Theories.Pragmatics.NeoGricean.Exhaustivity.Basic
 
 /-!
-# Core Theorems from Chierchia (2013) *Logic in Grammar*
+# Core Theorems from @cite{chierchia-2013} *Logic in Grammar*
 @cite{chierchia-2013} @cite{fox-2007} @cite{spector-2016}
 
 Deep integration of Chierchia's central results connecting polarity,
@@ -10,7 +10,7 @@ scalar implicatures, free choice, and intervention — all with real proofs.
 ## Main results
 
 1. **Free Choice via Double Exhaustification** (Ch. 2, 5):
-   `Exh(Exh(◇(p ∨ q)))  ↔  ◇p ∧ ◇q`
+   `Exh(Exh(◇(p ∨ q))) ↔ ◇p ∧ ◇q`
 
 2. **SI–NPI Generalization** (Ch. 1–2):
    Scalar implicatures are vacuous in exactly DE contexts.
@@ -95,7 +95,7 @@ def altPQ : Prop := diamond (a.p ∧ₚ a.q)
 def exh1 : Prop := a.assertion ∧ ¬a.altPQ
 
 /-- The strengthened alternatives after first Exh:
-    Exh(◇p) = ◇p ∧ ¬◇q  and  Exh(◇q) = ◇q ∧ ¬◇p
+    Exh(◇p) = ◇p ∧ ¬◇q and Exh(◇q) = ◇q ∧ ¬◇p
 
     These are the alternatives to the *exhaustified* sentence, obtained
     by exhaustifying each subdomain alternative the same way. -/
@@ -115,9 +115,9 @@ end FCAltSet
 
 /-- **Theorem 1 (Free Choice via Double Exhaustification).**
 
-Chierchia (2013) Ch. 2, 5; Fox (2007):
+@cite{chierchia-2013} Ch. 2, 5; @cite{fox-2007}:
 
-  Exh(Exh(◇(p ∨ q)))  →  ◇p ∧ ◇q
+  Exh(Exh(◇(p ∨ q))) → ◇p ∧ ◇q
 
 Double exhaustification of a disjunction under a possibility modal
 yields the conjunctive (free choice) reading.
@@ -151,7 +151,7 @@ theorem free_choice_forward (a : FCAltSet World) (h : a.exh2) : a.freeChoice := 
 
 /-- **Theorem 1 (converse direction).**
 
-  ◇p ∧ ◇q ∧ ¬◇(p ∧ q)  →  Exh(Exh(◇(p ∨ q)))
+  ◇p ∧ ◇q ∧ ¬◇(p ∧ q) → Exh(Exh(◇(p ∨ q)))
 
 When both disjuncts are individually possible but their conjunction is not,
 we get exactly the double-exhaustified meaning. -/
@@ -182,7 +182,7 @@ end FreeChoice
 /-!
 ## The SI–NPI Generalization
 
-Chierchia (2013) Ch. 1–2, building on Chierchia (2004):
+@cite{chierchia-2013} Ch. 1–2, building on @cite{chierchia-2004}:
 
 Scalar implicatures are blocked in exactly the environments that
 license NPIs — namely, Downward Entailing environments.
@@ -244,7 +244,7 @@ end SINPIGeneralization
 /-!
 ## Domain Widening and Informativity
 
-Chierchia (2013) Ch. 1, 3, building on Kadmon & Landman (1993):
+@cite{chierchia-2013} Ch. 1, 3, building on @cite{kadmon-landman-1993}:
 
 NPIs like "any" are indefinites with obligatory domain widening.
 - In UE contexts, widening the domain is *weakening* (less informative) → bad
@@ -304,7 +304,7 @@ end DomainWidening
 /-!
 ## Intervention Effects
 
-Chierchia (2013) Ch. 7:
+@cite{chierchia-2013} Ch. 7:
 
 Scalar triggers embedded between an NPI licensor and the NPI can
 disrupt licensing. This is because exhaustification (EXH) applied
@@ -367,7 +367,7 @@ end Intervention
 /-!
 ## Scalar Reversal in DE Contexts
 
-Chierchia (2013) Ch. 1:
+@cite{chierchia-2013} Ch. 1:
 
 The same Horn scale produces opposite effects depending on polarity:
 - In UE: "some" implicates "not all" (negate stronger alternative)
@@ -414,7 +414,7 @@ end ScalarReversal
 /-!
 ## Free Choice Duality
 
-Chierchia (2013) Ch. 5–6:
+@cite{chierchia-2013} Ch. 5–6:
 
 The Free Choice derivation is *uniform* across modal forces. Both
 existential FC (◇(p∨q) → ◇p ∧ ◇q) and universal FC (□(p∨q) → □p ∧ □q,
@@ -499,7 +499,7 @@ end FCDuality
 /-!
 ## Polarity Composition Laws
 
-Chierchia (2013) Ch. 1 §1.1.3:
+@cite{chierchia-2013} Ch. 1 §1.1.3:
 
 The four composition rules for monotonicity, grounded in Mathlib's
 order theory. These are the foundation for all of Chierchia's results.
@@ -509,25 +509,25 @@ section PolarityComposition
 
 variable {World : Type*}
 
-/-- Double negation restores UE: "Nobody doubts that ..." is UE.
+/-- Double negation restores UE: "Nobody doubts that..." is UE.
     DE ∘ DE = UE, from Mathlib's `Antitone.comp`. -/
 theorem double_negation_ue {f g : Prop' World → Prop' World}
     (hf : Antitone f) (hg : Antitone g) : Monotone (f ∘ g) :=
   hf.comp hg
 
-/-- DE under UE stays DE: "It's true that nobody ..." is DE.
+/-- DE under UE stays DE: "It's true that nobody..." is DE.
     UE ∘ DE = DE -/
 theorem ue_under_de {f g : Prop' World → Prop' World}
     (hf : Monotone f) (hg : Antitone g) : Antitone (f ∘ g) :=
   hf.comp_antitone hg
 
-/-- UE under DE stays DE: "Nobody said ..." is DE when "said" is UE.
+/-- UE under DE stays DE: "Nobody said..." is DE when "said" is UE.
     DE ∘ UE = DE -/
 theorem de_under_ue {f g : Prop' World → Prop' World}
     (hf : Antitone f) (hg : Monotone g) : Antitone (f ∘ g) :=
   hf.comp_monotone hg
 
-/-- UE under UE stays UE: "Somebody said ..." is UE.
+/-- UE under UE stays UE: "Somebody said..." is UE.
     UE ∘ UE = UE -/
 theorem ue_under_ue {f g : Prop' World → Prop' World}
     (hf : Monotone f) (hg : Monotone g) : Monotone (f ∘ g) :=
@@ -542,7 +542,7 @@ end PolarityComposition
 /-!
 ## Maximize Strength as Exhaustification
 
-Chierchia (2013) Ch. 1 §1.1.4:
+@cite{chierchia-2013} Ch. 1 §1.1.4:
 
 Maximize Strength says: among alternative parses, prefer the one that
 generates the strongest (most informative) proposition. This is

@@ -6,7 +6,7 @@ import Linglib.Theories.Semantics.Questions.Partition
 # Economy of Structure and Information
 @cite{heim-1991} @cite{hurford-1974} @cite{katzir-2007} @cite{katzir-singh-2015} @cite{magri-2009} @cite{magri-2011} @cite{spector-2014}
 
-Katzir & Singh (2015). Proceedings of Sinn und Bedeutung 19, pp. 322–339.
+@cite{katzir-singh-2015}. Proceedings of Sinn und Bedeutung 19, pp. 322–339.
 
 Two felicity conditions on assertions:
 
@@ -14,15 +14,14 @@ Two felicity conditions on assertions:
    one not trivially settled by the common ground.
 
 2. **Answer Condition** (def 15): An assertion must not be needlessly inferior
-   to any alternative — where inferiority combines structural complexity
-   (Katzir 2007) with semantic strength.
+   to any alternative — where inferiority combines structural complexity with semantic strength.
 
 These two conditions unify:
-- Magri (2009) oddness (# Some Italians come from a warm country)
-- Spector (2014) oddness (# All Italians...; # John has one wife)
+- @cite{magri-2009} oddness (# Some Italians come from a warm country)
+- @cite{spector-2014} oddness (# All Italians...; # John has one wife)
 - Hurford's constraint (# John visited France or Paris)
 - Maximize Presupposition! (# A sun is shining)
-- DE reversal of oddness patterns (Magri 2011)
+- DE reversal of oddness patterns
 
 Open problem: oddness under embedding (K&S §4) — the conditions are
 stated globally but oddness persists in embedded constituents.
@@ -38,7 +37,7 @@ namespace Semantics.Questions.EconomyOddness
 /-- Discourse scenario packaging meaning, complexity, context, and QUD.
 
 - `meaning`: interpretation of each utterance at each world
-- `complexity`: structural complexity (Katzir 2007); lower = simpler
+- `complexity`: structural complexity; lower = simpler
 - `context`: common knowledge; `context w = true` iff w is CK-compatible
 - `qud`: question under discussion (equivalence relation on worlds)
 - `utterances`: speaker's available alternatives
@@ -171,7 +170,7 @@ CK: Italy is a warm country. Since all Italians come from Italy,
 the QUD "Do [some/all] Italians come from a warm country?" is
 trivially settled → Question Condition violation.
 
-Both K&S and Spector (2014) predict oddness here (§1.2). -/
+Both K&S and @cite{spector-2014} predict oddness here (§1.2). -/
 
 section MagriSpector
 
@@ -210,7 +209,7 @@ theorem magri_some_odd :
 theorem magri_all_odd :
     magriScenario.isOdd .all_ = true := by native_decide
 
-/-- Bridge: Spector (2014) makes the same prediction (all alternatives trivial). -/
+/-- Bridge: @cite{spector-2014} makes the same prediction (all alternatives trivial). -/
 theorem spector_agrees_magri :
     allAlternativesTrivial [ItalyWorld.allWarm, .noneWarm]
       (λ w => w == .allWarm)
@@ -225,15 +224,15 @@ end MagriSpector
 
 /-! K&S ex. (14)/(17): "In this department, every professor gives the same
 grade to all of his students. Kim is a professor."
-  (a) # This year, Kim assigned an A to some of his students  — ODD
-  (b)   This year, Kim assigned an A to all of his students  — OK
+  (a) # This year, Kim assigned an A to some of his students — ODD
+  (b) This year, Kim assigned an A to all of his students — OK
 
 The QUD is good (we don't know Kim's grade). But "some" is needlessly
 weak: "all" is equally complex and semantically stronger.
 
 Connects to Core.Scale: the ⟦all⟧ ⊆ ⟦some⟧ entailment that drives
 the Answer Condition is the same relationship captured by
-`Core.Scale.Quantifiers.entails .all .some_ = true`. -/
+`Core.Scale.Quantifiers.entails.all.some_ = true`. -/
 
 section NeedlesslyWeak
 

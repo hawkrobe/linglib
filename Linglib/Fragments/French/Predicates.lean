@@ -5,7 +5,7 @@ import Linglib.Theories.Semantics.Lexical.Verb.VerbEntry
 @cite{kayne-1975} @cite{song-1996}
 
 French causative predicates, centered on the *faire* causative.
-Song (1996) classifies *faire* as a COMPACT causative with free morpheme
+@cite{song-1996} classifies *faire* as a COMPACT causative with free morpheme
 realization: the causative and effect verbs form a tight syntactic unit
 despite being separate words.
 

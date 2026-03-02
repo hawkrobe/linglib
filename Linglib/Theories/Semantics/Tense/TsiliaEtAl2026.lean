@@ -3,7 +3,7 @@ import Linglib.Core.Temporal.Reichenbach
 import Linglib.Theories.Semantics.Tense.Basic
 
 /-!
-# Tsilia, Zhao & Sharvit (2026): Tense and Perspective
+# @cite{tsilia-zhao-sharvit-2026}: Tense and Perspective
 @cite{tsilia-zhao-sharvit-2026} @cite{sharvit-2003} @cite{zhao-2025}The cross-linguistic incompatibility of temporal ⌈then⌉ with shifted present
 tense is derived from **tense presuppositions** anchored to a perspectival
 parameter π. This creates the architecturally significant import edge from
@@ -21,7 +21,7 @@ R = P. The incompatibility arises because OP_π forces P = local evaluation
 time, while ⌈then⌉ requires P ≠ local evaluation time — a direct
 contradiction.
 
-## Connection to Sharvit (2003)
+## Connection to @cite{sharvit-2003}
 
 Sharvit's simultaneous tense is the special case where the embedded tense
 presupposition is trivially satisfied at the shifted perspective: the
@@ -168,7 +168,7 @@ theorem presAsPrProp_defined_iff {Time : Type*} [DecidableEq Time]
 -- § 7. Identity Card + Sharvit Bridge
 -- ════════════════════════════════════════════════════════════════
 
-/-- Tsilia, Zhao & Sharvit (2026) identity card.
+/-- @cite{tsilia-zhao-sharvit-2026} identity card.
     The theory treats tenses as presupposition triggers (the key innovation)
     and uses SOT deletion for the then-deleted tense compatibility. -/
 def TsiliaEtAl2026 : TenseTheory where
@@ -181,7 +181,7 @@ def TsiliaEtAl2026 : TenseTheory where
   hasPresuppositionalTense := true
   simultaneousMechanism := "tense presuppositions anchored to perspective parameter π"
 
-/-- The Sharvit (2003) simultaneous reading is the special case where a PRES
+/-- The @cite{sharvit-2003} simultaneous reading is the special case where a PRES
     presupposition is trivially satisfied at the shifted perspective.
     `simultaneousFrame` has R = P' = E_matrix, satisfying presPresup. -/
 theorem sharvit_simultaneous_satisfies_presPresup {Time : Type*} [LinearOrder Time]

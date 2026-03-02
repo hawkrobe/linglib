@@ -1,8 +1,8 @@
 import Linglib.Core.ContentIndividual
 
 /-!
-# Content Composition (Kratzer 2006; Moulton 2015) @cite{moulton-2015}
-@cite{grimshaw-1990} @cite{kratzer-2006}
+# Content Composition @cite{moulton-2015}
+@cite{grimshaw-1990} @cite{kratzer-2006} @cite{heim-kratzer-1998} @cite{hintikka-1969}
 
 CPs as predicates of content individuals, not propositions.
 
@@ -14,7 +14,7 @@ Kratzer/Moulton: ⟦that p⟧ = λx_c. CONT(x_c) = p (type ⟨e,st⟩ — a pred
 on content individuals)
 
 The complementizer C identifies a proposition as the content of a content
-individual using Kratzer's (2006) CONT function. Attitude verbs select for
+individual using @cite{kratzer-2006}'s CONT function. Attitude verbs select for
 content individuals (type e), and the that-clause combines via existential
 closure:
 
@@ -26,7 +26,7 @@ closure:
    individuals — same type as CPs — so they combine by Predicate Modification
 2. That-clauses are NOT arguments of the verb; they are predicates that
    modify the ∃-closed vP
-3. Attitude verb nominalizations are NASNs (Grimshaw 1990), not ASNs,
+3. Attitude verb nominalizations are NASNs, not ASNs,
    because the content individual is ∃-bound (not an external argument)
 
 ## Cross-Linguistic Variation
@@ -51,7 +51,7 @@ open Core (ContentIndividual)
 
     ⟦C⟧(p)(x_c) ⟺ CONT(x_c) = p
 
-    This is Moulton (2015) (15). The result is type ⟨e,st⟩ — a predicate
+    This is @cite{moulton-2015} (15). The result is type ⟨e,st⟩ — a predicate
     on content individuals — not a proposition ⟨s,t⟩. -/
 def compC {W : Type*} (p : BProp W) (xc : ContentIndividual W) : Prop :=
   xc.cont = p
@@ -63,7 +63,7 @@ def compC {W : Type*} (p : BProp W) (xc : ContentIndividual W) : Prop :=
 /-- A content noun: a world-indexed predicate on content individuals.
 
     Content nouns — *belief*, *claim*, *rumor*, *idea*, *wish* — denote
-    properties of content individuals (Moulton 2015, §2). They are type
+    properties of content individuals. They are type
     ⟨e,st⟩, the same semantic type as CPs. -/
 abbrev ContentNoun (W : Type*) := ContentIndividual W → W → Prop
 
@@ -72,7 +72,7 @@ abbrev ContentNoun (W : Type*) := ContentIndividual W → W → Prop
     ⟦belief that p⟧ = λx_c.λw. belief(x_c)(w) ∧ CONT(x_c) = p
 
     Because both the content noun and the CP are type ⟨e,st⟩, they combine
-    by intersection (Predicate Modification, Heim & Kratzer 1998). -/
+    by intersection. -/
 def contentNounCP {W : Type*} (noun : ContentNoun W) (p : BProp W)
     : ContentNoun W :=
   fun xc w => noun xc w ∧ compC p xc
@@ -118,7 +118,7 @@ def existsContentClosure {W E : Type*}
 
       V(agent, x_c, w) ⟺ CONT(x_c) = R(agent)(w)
 
-    This shows that the classical doxastic semantics (Hintikka 1969) is a
+    This shows that the classical doxastic semantics is a
     special case of the content-individual architecture: there is one
     canonical content individual per agent-world pair, namely
     `ContentIndividual.fromAccessibility R agent w`. -/
@@ -129,7 +129,7 @@ def hintikkaVerb {W E : Type*}
 /-- Under a Hintikka verb, *identity* closure reduces to propositional
     identity with the accessibility set.
 
-    ∃x_c[hintikkaVerb(R)(a, x_c, w) ∧ CONT(x_c) = p]  ⟺  R(a)(w) = p
+    ∃x_c[hintikkaVerb(R)(a, x_c, w) ∧ CONT(x_c) = p] ⟺ R(a)(w) = p
 
     The existential is uniquely witnessed by the canonical content individual
     `fromAccessibility R a w`. -/
@@ -168,7 +168,7 @@ theorem existsClosure_implies_entailsClosure {W E : Type*}
     universal modal — the classical Hintikka semantics.
 
     ∃x_c[hintikkaVerb(R)(a, x_c, w) ∧ CONT(x_c) ⊆ p]
-      ⟺  ∀w'. R(a, w, w') = true → p(w') = true
+      ⟺ ∀w'. R(a, w, w') = true → p(w') = true
 
     Compare with `hintikka_existsClosure` (§4), where *identity* closure
     reduces to R(a)(w) = p. The two results together make the distinction

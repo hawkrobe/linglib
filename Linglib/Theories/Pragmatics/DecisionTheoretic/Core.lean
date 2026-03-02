@@ -9,7 +9,7 @@ import Mathlib.Algebra.Order.BigOperators.Group.Finset
 import Mathlib.Algebra.Order.Field.Basic
 
 /-!
-# Decision-Theoretic Semantics: Core (Merin 1999)
+# Decision-Theoretic Semantics: Core
 @cite{merin-1999}
 
 Core definitions for Merin's Decision-Theoretic Semantics (DTS). Meaning is

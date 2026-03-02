@@ -43,7 +43,7 @@ variable (World Atom : Type)
 -- Type-Shifting Operations (with Ranking)
 
 /--
-Type-shifting operations from Partee (1987) / Dayal (2004).
+Type-shifting operations from @cite{partee-1987} / @cite{dayal-2004}.
 
 These convert between semantic types:
 - ∩ (down/cap): Property → Kind (nominalization)
@@ -512,7 +512,7 @@ def englishBlocking : BlockingPrinciple :=
 Dayal's framework is consistent with Chierchia's for English.
 
 When Chierchia predicts bare plurals are licensed (∩ defined and not blocked),
-Dayal's selectShift returns .down (the kind-forming shift).
+Dayal's selectShift returns.down (the kind-forming shift).
 -/
 theorem dayal_consistent_english_bare_plural :
     let ctx := chierchiaToContext englishBlocking .count true

@@ -2,7 +2,7 @@ import Linglib.Theories.Semantics.Lexical.Numeral.Semantics
 
 /-!
 # Numeral Embedding Semantics
-@cite{bylinina-nouwen-2020} @cite{coppock-beaver-2014} @cite{gajewski-2007} @cite{horn-1972} @cite{kaufmann-2012} @cite{kennedy-2015} @cite{meier-2003} @cite{musolino-2004} @cite{nouwen-2006} @cite{solt-waldon-2019}
+@cite{bylinina-nouwen-2020} @cite{coppock-beaver-2014} @cite{gajewski-2007} @cite{horn-1972} @cite{kaufmann-2012} @cite{kennedy-2015} @cite{meier-2003} @cite{musolino-2004} @cite{nouwen-2006} @cite{solt-waldon-2019} @cite{kiparsky-kiparsky-1970}
 
 Formal predictions of lower-bound vs exact numeral theories under embedding:
 negation, modals, "exactly" modification, conditionals, exhaustification,
@@ -153,7 +153,7 @@ theorem entailment_reversal_under_negation :
 
 /-- "Exactly" is redundant under Exact: "exactly three" = "three" (BL).
 
-Both reduce to `maxMeaning .eq` — definitionally equal. -/
+Both reduce to `maxMeaning.eq` — definitionally equal. -/
 theorem exactly_redundant_exact (w : BareNumeral) (n : Nat) :
     exactlyMeaning w n = Exact.meaning w n := rfl
 
@@ -217,7 +217,7 @@ theorem conditional_restrictor_divergence :
 /-- Universal restrictor: different domains.
 
 "Every student who read three books passed"
-- LB restrictor includes {3, 4, 5, ...}
+- LB restrictor includes {3, 4, 5,...}
 - BL restrictor includes only {3} -/
 theorem restrictor_domain_differs :
     (LowerBound.meaning .three 3 = true ∧ LowerBound.meaning .three 4 = true) ∧
@@ -348,18 +348,17 @@ def extendedWorlds : List Nat := [0, 1, 2, 3, 4, 5]
 /-- Convexity: the set of true values on sorted worlds has no internal gaps.
 
 For every pair of true values a < c, all intermediate b must also be true.
-Non-convex denotations are predicted to be infelicitous in neutral QUD contexts
-(Solt & Waldon 2019). -/
+Non-convex denotations are predicted to be infelicitous in neutral QUD contexts. -/
 def isConvex (worlds : List Nat) (f : Nat → Bool) : Bool :=
   worlds.all fun a => worlds.all fun c =>
     if f a && f c && decide (a < c) then
       worlds.all fun b => !(decide (a < b) && decide (b < c)) || f b
     else true
 
-/-- Negation convexity divergence (Solt & Waldon 2019).
+/-- Negation convexity divergence.
 
-¬(≥3) on [0..5] = {0,1,2} — convex (no gaps).
-¬(=3) on [0..5] = {0,1,2,4,5} — non-convex (gap at 3).
+¬(≥3) on [0.5] = {0,1,2} — convex (no gaps).
+¬(=3) on [0.5] = {0,1,2,4,5} — non-convex (gap at 3).
 
 BL correctly predicts "She doesn't have 40 sheep" is infelicitous
 in neutral context (non-convex answer). LB incorrectly predicts felicity. -/
@@ -402,7 +401,7 @@ With individuals [3, 4] (one answered 3, one answered 4):
 
 Contrast with the modal case (`exh_scope_diverges_lowerBound`), where BOTH
 EXH-under-◇ and EXH-over-◇ are available. The asymmetry is precisely what
-the degree quantifier analysis (Kennedy 2015) predicts via QR constraints. -/
+the degree quantifier analysis predicts via QR constraints. -/
 theorem heimKennedy_nominal_blocked :
     exhUnderNominalQ LowerBound .three [3, 4] = true ∧
     exhOverNominalQ LowerBound .three [3, 4] = false := by native_decide
@@ -422,7 +421,7 @@ theorem heimKennedy_vacuous_exact :
 -- Section 13: Additional Embedding Divergences
 -- ============================================================================
 
-/-- Imperative compliance divergence (Kaufmann 2012).
+/-- Imperative compliance divergence.
 
 "Read three books!" — reading 5 books:
 - LB: 5 ≥ 3 → compliant
@@ -431,14 +430,14 @@ theorem imperative_compliance_divergence :
     LowerBound.meaning .three 5 = true ∧
     Exact.meaning .three 5 = false := by native_decide
 
-/-- Neg-raising "doubt" reduces to negation (Gajewski 2007).
+/-- Neg-raising "doubt" reduces to negation.
 
 "I doubt three students passed" ≈ believe(¬(three passed)). -/
 theorem doubt_as_neg_raising :
     negatedMeaning LowerBound .three 4 = false ∧
     negatedMeaning Exact .three 4 = true := by native_decide
 
-/-- Factive presupposition divergence (Kiparsky & Kiparsky 1970).
+/-- Factive presupposition divergence.
 
 "I'm surprised three students passed" presupposes the numeral meaning.
 At world 5: LB presupposition satisfied (5 ≥ 3), BL violated (5 ≠ 3). -/
@@ -446,7 +445,7 @@ theorem factive_presupposition_divergence :
     LowerBound.meaning .three 5 = true ∧
     Exact.meaning .three 5 = false := by native_decide
 
-/-- Degree "too" monotonicity (Meier 2003).
+/-- Degree "too" monotonicity.
 
 "Three is too many" — under LB, entails "four is too many" (both satisfy ≥3).
 Under BL, no such entailment (4 does not satisfy =3). -/
@@ -457,7 +456,7 @@ theorem degree_too_monotonicity :
     (Exact.meaning .three 3 = true ∧ Exact.meaning .three 4 = false) := by
   native_decide
 
-/-- Acquisition prediction (Musolino 2004).
+/-- Acquisition prediction.
 
 "Two horses jumped" when 3 jumped:
 - LB: 3 ≥ 2 → should be accepted

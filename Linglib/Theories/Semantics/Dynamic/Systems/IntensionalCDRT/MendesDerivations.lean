@@ -32,7 +32,7 @@ open Semantics.Dynamic.IntensionalCDRT.Situations
 
 
 /--
-Basic CDRT types following Muskens (1996) and Mendes (2025).
+Basic CDRT types following @cite{muskens-1996} and @cite{mendes-2025}.
 
 | Type | Interpretation |
 |------|----------------|
@@ -116,7 +116,7 @@ def lexSF := @subordinateFuture W Time E _ _
 /--
 (58) ela -- "she" (pronoun bound to Maria in discourse).
 
-⟦ela⟧ = λP.P(maria)  -- In this context, bound to Maria
+⟦ela⟧ = λP.P(maria) -- In this context, bound to Maria
 
 Type: ((e ⇒ c ⇒ c) ⇒ c ⇒ c)
 -/
@@ -128,7 +128,7 @@ def lexShe (maria : E)
 /--
 (59) vai -- future auxiliary "will".
 
-⟦vai⟧ = λVPλsλc. VP(s)(c)  -- Transparent, temporal info from SF
+⟦vai⟧ = λVPλsλc. VP(s)(c) -- Transparent, temporal info from SF
 
 In this analysis, "vai" doesn't independently contribute future;
 the future comes from SF in the antecedent via modal anaphora.
@@ -193,7 +193,7 @@ Step 3: consequent derivation.
 
 ⟦ela vai atender⟧
 = ⟦ela⟧(λx.⟦vai⟧(⟦atender⟧(x)))
-= [| answer(maria)(s₁)]  -- s₁ retrieved via IND
+= [| answer(maria)(s₁)] -- s₁ retrieved via IND
 
 The temporal anchor s₁ comes from the antecedent via modal anaphora.
 -/
@@ -362,7 +362,7 @@ theorem derivation_conditional_holds
 
 
 /--
-Table 3 from Mendes (2025): temporal reference patterns.
+Table 3 from @cite{mendes-2025}: temporal reference patterns.
 
 | Construction      | Matrix Mood | Embedded Mood | Time Reference |
 |-------------------|-------------|---------------|----------------|

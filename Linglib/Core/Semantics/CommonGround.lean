@@ -6,9 +6,9 @@ import Linglib.Core.Scales.EpistemicScale.Defs
 # Common Ground and Common Knowledge
 
 @cite{halpern-2003} @cite{fagin-vardi-1995} @cite{stalnaker-1974} @cite{stalnaker-2002}Conversational common ground following Stalnaker (1974, 2002), with
-multi-agent epistemic operators from Halpern (2003, Ch. 7).
+multi-agent epistemic operators from @cite{halpern-2003}.
 
-Common ground IS common knowledge (Stalnaker 2002): a proposition is
+Common ground IS common knowledge: a proposition is
 in the common ground iff it is common knowledge among the discourse
 participants. This file connects Stalnaker's informal notion to the
 formal fixed-point characterization from epistemic logic.
@@ -19,7 +19,7 @@ formal fixed-point characterization from epistemic logic.
 |----------|--------|------------|
 | Individual knowledge | Kᵢ(φ) | φ at all i-accessible worlds |
 | Everyone knows | E_G(φ) | ∧ᵢ∈G Kᵢ(φ) |
-| Common knowledge | C_G(φ) | φ ∧ E(φ) ∧ E(E(φ)) ∧ ... |
+| Common knowledge | C_G(φ) | φ ∧ E(φ) ∧ E(E(φ)) ∧... |
 | Distributed knowledge | D_G(φ) | φ at all (∩ᵢ Rᵢ)-accessible worlds |
 
 -/
@@ -247,7 +247,7 @@ theorem everyoneKnows_implies_knows {W E : Type*} [FiniteWorlds W]
 /-! ## Common Knowledge
 
 C_G(φ) is the greatest fixed point of X = φ ∧ E_G(X). Equivalently,
-C_G(φ) = φ ∧ E_G(φ) ∧ E_G(E_G(φ)) ∧ ... (infinite conjunction).
+C_G(φ) = φ ∧ E_G(φ) ∧ E_G(E_G(φ)) ∧... (infinite conjunction).
 
 For computation on finite worlds, we iterate E_G until fixpoint. Since
 there are finitely many truth assignments, this terminates. -/
@@ -459,7 +459,7 @@ theorem believes_not_veridical :
 
 /-! ## Common Ground as Common Knowledge
 
-Stalnaker (2002): the common ground is the set of propositions that
+@cite{stalnaker-2002}: the common ground is the set of propositions that
 are common knowledge among the discourse participants. -/
 
 /-- A common ground is grounded in common knowledge when its context

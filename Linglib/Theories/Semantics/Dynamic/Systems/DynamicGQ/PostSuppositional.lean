@@ -5,7 +5,7 @@ import Mathlib.Data.Fintype.Basic
 # Post-Suppositional Dynamic GQs
 @cite{brasoveanu-2012} @cite{charlow-2021}
 
-Charlow's (2021) §5: bi-dimensional meanings using a Writer-like monad.
+@cite{charlow-2021}'s §5: bi-dimensional meanings using a Writer-like monad.
 A `PostSupp S A` carries both a value and accumulated post-suppositional
 content (a DRS that constrains but doesn't change the assignment).
 
@@ -58,7 +58,7 @@ def PostSupp.trueAt (p : PostSupp S (DRS S)) (i : S) : Prop :=
   ∃ (j : S), p.val i j ∧ ∃ (k : S), p.postsup j k
 
 /-- "Exactly N" as post-suppositional meaning (equation 53):
-    `⟨M_v(E^v P ; []), n_v⟩`
+    `⟨M_v(E^v P; []), n_v⟩`
     The at-issue content introduces and maximizes v; the cardinality test
     is the post-supposition. -/
 def exactlyN_postsup {S E : Type*} [AssignmentStructure S E] [PartialOrder E] [Fintype E]

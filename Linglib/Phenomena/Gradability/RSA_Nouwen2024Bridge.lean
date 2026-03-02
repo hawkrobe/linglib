@@ -5,7 +5,7 @@ import Mathlib.Data.Rat.Defs
 import Mathlib.Tactic.Ring
 
 /-!
-# Bridge: Nouwen (2024) RSA Model → Gradability Phenomena
+# Bridge: @cite{nouwen-2024} RSA Model → Gradability Phenomena
 @cite{lassiter-goodman-2017} @cite{nouwen-2024}
 
 "The semantics and probabilistic pragmatics of deadjectival intensifiers"
@@ -13,14 +13,14 @@ Linguistics and Philosophy.
 
 ## Innovation
 
-Extends Lassiter & Goodman (2017) threshold RSA with **evaluative measures**:
+Extends @cite{lassiter-goodman-2017} threshold RSA with **evaluative measures**:
 deadjectival adverbs (horribly, pleasantly) derive their degree function
 from the evaluative meaning of their adjectival base.
 
 ## Two-Threshold Intersecting Semantics
 
-Standard RSA:       P_L1(h, θ | u) ∝ P_S1(u | h, θ) × P(h) × P(θ)
-Intensifier RSA:    P_L1(h, θ, θ_e | u) ∝ P_S1(u | h, θ, θ_e) × P(h) × P(θ) × P(θ_e)
+Standard RSA: P_L1(h, θ | u) ∝ P_S1(u | h, θ) × P(h) × P(θ)
+Intensifier RSA: P_L1(h, θ, θ_e | u) ∝ P_S1(u | h, θ, θ_e) × P(h) × P(θ) × P(θ_e)
 
 The listener jointly infers:
 - h: the height/degree of the entity

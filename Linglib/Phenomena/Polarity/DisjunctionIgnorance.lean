@@ -28,7 +28,7 @@ Empirical pattern: Disjunction and speaker ignorance.
 1. Speaker doesn't know Harry is in Antwerp
 2. Speaker doesn't know Harry is in Brussels
 
-Source: Gazdar (1979), Geurts (2010) Ch. 3.3
+Source: @cite{gazdar-1979}, @cite{geurts-2010} Ch. 3.3
 -/
 structure DisjunctionIgnoranceDatum where
   /-- The disjunctive statement -/
@@ -45,7 +45,7 @@ structure DisjunctionIgnoranceDatum where
 
 /--
 Classic example: Harry's location.
-Source: Geurts (2010) p.61
+Source: @cite{geurts-2010} p.61
 -/
 def harryLocation : DisjunctionIgnoranceDatum :=
   { disjunction := "Harry is in Antwerp or Brussels"
@@ -137,7 +137,7 @@ For "A or B or C", we get ignorance about each disjunct:
 - Speaker doesn't know B
 - Speaker doesn't know C
 
-Source: Geurts (2010) p.61-64
+Source: @cite{geurts-2010} p.61-64
 -/
 structure LongDisjunctionIgnoranceDatum where
   /-- The disjunctive statement -/
@@ -150,7 +150,7 @@ structure LongDisjunctionIgnoranceDatum where
 
 /--
 Three-way disjunction example.
-Source: Geurts (2010) p.61
+Source: @cite{geurts-2010} p.61
 -/
 def threeWayLocation : LongDisjunctionIgnoranceDatum :=
   { disjunction := "Harry is in Antwerp, Brussels, or Copenhagen"
@@ -278,7 +278,7 @@ def quantifiedIgnoranceExamples : List QuantifiedIgnoranceDatum :=
 /-!
 ## Positional Asymmetry in Disjunction Interpretation
 
-Chierchia (2013) "Logic in Grammar" Ch.1 observes that the same lexical
+@cite{chierchia-2013} "Logic in Grammar" Ch.1 observes that the same lexical
 material yields different preferred readings based on structural position:
 
 | Position | Polarity | Preferred Reading |

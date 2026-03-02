@@ -380,7 +380,7 @@ theorem georgian_child_j_vs_mu_not_significant :
 -- The Prediction and Its Failure
 
 /--
-The Transparency Principle (van Hout 1998):
+The Transparency Principle:
 Learning is easier for overt and unambiguous (1-to-1) form-meaning mappings
 than for covert and/or conflated (many-to-1) mappings.
 -/
@@ -412,6 +412,8 @@ theorem georgian_contradicts_transparency :
 
 /-!
 ## Link to Phenomena/Gradability/Imprecision/FormMeaning.lean
+@cite{van-hout-1998}
+
 
 The Transparency Principle is the acquisition-side counterpart of
 the No Needless Manner Violations principle formalized in FormMeaning.lean.
@@ -439,8 +441,8 @@ Japanese "mo" (listed as an additive particle in AdditiveParticles/Data.lean)
 is the canonical MU particle in Mitrović & Sauerland's framework.
 In conjunction, "mo...mo" = MU-only strategy:
 
-  Taroo-mo  Hanako-mo  neta
-  Taro-MU   Hanako-MU  slept
+  Taroo-mo Hanako-mo neta
+  Taro-MU Hanako-MU slept
   "Both Taro and Hanako slept"
 
 Similarly, Hungarian "is" and Georgian "-c" serve as both additive

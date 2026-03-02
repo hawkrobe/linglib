@@ -4,7 +4,7 @@ import Linglib.Core.Temporal.Tense
 
 /-!
 # Tense Phenomena: Empirical Data
-@cite{abusch-1997} @cite{anand-nevins-2004} @cite{banfield-1982} @cite{comrie-1985} @cite{deal-2020} @cite{declerck-1991} @cite{declerck-2006} @cite{heim-kratzer-1998} @cite{iatridou-2000} @cite{klecha-2016} @cite{kratzer-1998} @cite{ogihara-sharvit-2012} @cite{schlenker-2004} @cite{sharvit-2003} @cite{von-stechow-2009} @cite{wurmbrand-2014}
+@cite{abusch-1997} @cite{anand-nevins-2004} @cite{banfield-1982} @cite{comrie-1985} @cite{deal-2020} @cite{declerck-1991} @cite{declerck-2006} @cite{heim-kratzer-1998} @cite{iatridou-2000} @cite{klecha-2016} @cite{kratzer-1998} @cite{ogihara-sharvit-2012} @cite{schlenker-2004} @cite{sharvit-2003} @cite{von-stechow-2009} @cite{wurmbrand-2014} @cite{condoravdi-2002} @cite{schlenker-2003}
 
 Unified entry point for tense phenomena. Absorbs the former
 `Phenomena/SequenceOfTense/Data.lean` and extends coverage to
@@ -45,7 +45,7 @@ are in `Bridge.lean`.
 19. Lifetime effects: "Aristotle was a philosopher"
 20. Fake past: "If John were taller..."
 21. Optional SOT (Hebrew-type)
-22. Dependent vs independent tense (Wurmbrand 2014)
+22. Dependent vs independent tense
 
 ### Discourse-level phenomena (6) — Declerck 1991/2006
 23. Temporal domain shift vs subordination
@@ -73,8 +73,8 @@ open Core.Tense
     against which all embedded and discourse-level phenomena are
     measured.
 
-    "John left."       — simple past
-    "It rains."        — simple present
+    "John left." — simple past
+    "It rains." — simple present
     "John will leave." — simple future
 
     All three are root clauses (P = S), perfective aspect (E = R),
@@ -171,7 +171,7 @@ theorem simpleFuture_not_present : ¬ simpleFutureWillLeave.isPresent := by
     - SIMULTANEOUS: Mary's being sick overlaps with John's saying
     - SHIFTED: Mary's being sick precedes John's saying -/
 
-/-- Matrix frame for "John said ..." (past tense, perfective).
+/-- Matrix frame for "John said..." (past tense, perfective).
     Speech time S = 0, saying event at t = -2. -/
 def matrixSaid : ReichenbachFrame ℤ where
   speechTime := 0
@@ -217,7 +217,7 @@ def embeddedSickPresent : ReichenbachFrame ℤ where
 -- ════════════════════════════════════════════════════════════════
 
 /-- Embedded frame for "Mary would leave" — FUTURE under PAST.
-    "Would" = PAST + FUTURE (Condoravdi 2002): the leaving is
+    "Would" = PAST + FUTURE: the leaving is
     after the saying but before or at speech time. -/
 def embeddedWouldLeave : ReichenbachFrame ℤ where
   speechTime := 0
@@ -230,7 +230,7 @@ def embeddedWouldLeave : ReichenbachFrame ℤ where
 -- § 4. SOT vs Non-SOT: English vs Japanese
 -- ════════════════════════════════════════════════════════════════
 
-/-- Japanese matrix frame: "Taroo-ga ... to itta" (Taro said ...).
+/-- Japanese matrix frame: "Taroo-ga... to itta" (Taro said...).
     Same temporal structure as English matrix. -/
 def matrixItta : ReichenbachFrame ℤ where
   speechTime := 0
@@ -293,7 +293,7 @@ def rcWasTallUnderPast : ReichenbachFrame ℤ where
 /-- Modal-past frame: "John might have left"
     The past tense "have left" is under the modal "might".
     The leaving is past relative to... what? Speech time? Modal eval time?
-    Klecha (2016): relative to the modal's evaluation time. -/
+    @cite{klecha-2016}: relative to the modal's evaluation time. -/
 def modalPast : ReichenbachFrame ℤ where
   speechTime := 0
   perspectiveTime := 0    -- modal evaluated at speech time
@@ -352,10 +352,10 @@ def temporalDeRe : ReichenbachFrame ℤ where
 
     The question embedding adds a layer: the embedded wh-clause's
     tense interacts with both the question semantics and the matrix
-    tense. Sharvit (2003) and Ogihara & Sharvit (2012) argue this
+    tense. @cite{sharvit-2003} and @cite{ogihara-sharvit-2012} argue this
     is not a simple extension of declarative SOT. -/
 
-/-- Matrix frame for "John asked ..." (past tense, perfective). -/
+/-- Matrix frame for "John asked..." (past tense, perfective). -/
 def matrixAsked : ReichenbachFrame ℤ where
   speechTime := 0
   perspectiveTime := 0
@@ -394,7 +394,7 @@ def indirectQShifted : ReichenbachFrame ℤ where
     (Abusch, Von Stechow, Kratzer, Ogihara) — there is no attitude verb
     to trigger the shift.
 
-    Banfield (1982), Schlenker (2004), Sharvit (2008). -/
+    @cite{banfield-1982}, @cite{schlenker-2004}, Sharvit (2008). -/
 
 /-- FID matrix: "She walked to the window" (past, narrated event at -3). -/
 def fidWalked : ReichenbachFrame ℤ where
@@ -457,7 +457,7 @@ theorem historicalPresent_is_present :
     This is a useful test case because it disambiguates between
     theories' predictions about what triggers the simultaneous reading.
 
-    Comrie (1985), Ogihara (1996) ch. 4. -/
+    @cite{comrie-1985}, @cite{ogihara-1996} ch. 4. -/
 
 /-- Pluperfect under past: "John said Mary had been sick."
     Only the shifted reading: sickness before saying.
@@ -491,7 +491,7 @@ theorem pluperfect_is_past :
 
     The leaving is AFTER the wanting, but there is no future tense
     morphology. The futurity comes from the verb's lexical semantics,
-    not from tense. Wurmbrand (2014): the temporal orientation is
+    not from tense. @cite{wurmbrand-2014}: the temporal orientation is
     part of the verb's selection, not tense composition.
 
     "John planned to leave" — the leaving is strictly after the planning.
@@ -531,7 +531,7 @@ theorem wantedToLeave_future_oriented :
     more like an independent temporal reference anchored by the
     temporal connective (*before*, *after*).
 
-    Arregui & Kusumoto (1998), Ogihara & Sharvit (2012). -/
+    Arregui & Kusumoto (1998), @cite{ogihara-sharvit-2012}. -/
 
 /-- Adjunct clause: "Before John left, Mary was happy."
     John's leaving is before Mary's happiness.
@@ -562,14 +562,14 @@ theorem adjunct_before_matrix :
 /-! In some languages, tense can shift under attitude verbs in
     ways that parallel the shift of indexical pronouns.
 
-    **Amharic** (Schlenker 2003): the present tense in an attitude
+    **Amharic**: the present tense in an attitude
     complement can be interpreted relative to the attitude holder's
     "now" rather than the speaker's speech time.
 
-    **Zazaki** (Anand & Nevins 2004): similar indexical shift for tense
+    **Zazaki**: similar indexical shift for tense
     under reportative evidentials.
 
-    This directly bears on the Partee (1973) analogy between tenses
+    This directly bears on the @cite{partee-1973} analogy between tenses
     and pronouns: if both can undergo indexical shift in the same
     environments, the structural parallel runs deeper than English
     data alone suggests.
@@ -605,7 +605,7 @@ theorem indexicalShift_not_at_speech :
 -- § 18. Embedded Present Puzzle: "John will say Mary is sick"
 -- ════════════════════════════════════════════════════════════════
 
-/-! The embedded present puzzle (Sharvit 2003): present tense under
+/-! The embedded present puzzle: present tense under
     a future matrix verb gets a simultaneous reading with the FUTURE
     saying time, not with speech time.
 
@@ -617,7 +617,7 @@ theorem indexicalShift_not_at_speech :
     locates it at the future saying time. Sharvit: the "present" is
     a simultaneous tense evaluated at the future saying time. -/
 
-/-- Matrix frame for "John will say ..." (future tense).
+/-- Matrix frame for "John will say..." (future tense).
     Speech time S = 0, saying event at t = 3 (future). -/
 def matrixWillSay : ReichenbachFrame ℤ where
   speechTime := 0
@@ -669,14 +669,13 @@ def lifetimeAristotle : ReichenbachFrame ℤ where
 -- § 20. Fake Past: "If John were taller..."
 -- ════════════════════════════════════════════════════════════════
 
-/-! Fake past (Iatridou 2000): past morphology with non-past semantics
+/-! Fake past: past morphology with non-past semantics
     in subjunctive/counterfactual contexts.
 
     "If John were taller, he would play basketball."
 
     The "were" is morphologically past but does not locate the event
-    before speech time. Rather, it expresses counterfactual distance
-    (Iatridou 2000) or modal remoteness (Deal 2020).
+    before speech time. Rather, it expresses counterfactual distance or modal remoteness.
 
     This differs from Deal's `counterfactualTense` in specificity:
     fake past is the broader phenomenon (Iatridou's cross-linguistic
@@ -698,14 +697,14 @@ def fakePastSubjunctive : ReichenbachFrame ℤ where
 -- § 21. Optional SOT (Hebrew-type)
 -- ════════════════════════════════════════════════════════════════
 
-/-! Optional SOT in Hebrew-type languages (Sharvit 2003).
+/-! Optional SOT in Hebrew-type languages.
 
     In English, SOT is obligatory: "John said Mary was sick" is the
     only form for the simultaneous reading. In Hebrew, both forms
     are grammatical:
 
     "John said Mary was sick" → simultaneous reading (simultaneous tense)
-    "John said Mary is sick"  → simultaneous reading (present tense)
+    "John said Mary is sick" → simultaneous reading (present tense)
 
     Both forms are available with slightly different pragmatic profiles.
     The past-form version uses Sharvit's simultaneous tense; the
@@ -734,7 +733,7 @@ def optionalSOTPresentForm : ReichenbachFrame ℤ where
 -- § 22. Dependent vs Independent Tense (Wurmbrand 2014)
 -- ════════════════════════════════════════════════════════════════
 
-/-! Wurmbrand (2014) classifies infinitival tense into three types:
+/-! @cite{wurmbrand-2014} classifies infinitival tense into three types:
 
     1. **Future irrealis** (decide, want): no independent tense;
        future orientation comes from woll.
@@ -950,9 +949,9 @@ theorem triedToLeave_same_domain :
     domains. Temporal ordering is recovered pragmatically, not
     structurally.
 
-    Declerck (1991) ch. 2 §12–14. -/
+    @cite{declerck-1991} ch. 2 §12–14. -/
 
-/-- "He left ..." — past domain anchor (subordination pair).
+/-- "He left..." — past domain anchor (subordination pair).
     Speech time S = 0, leaving event at t = -5. -/
 def domainSubordLeft : ReichenbachFrame ℤ where
   speechTime := 0
@@ -969,7 +968,7 @@ def domainSubordWouldReturn : ReichenbachFrame ℤ where
   referenceTime := -3     -- R > P': posterior within domain
   eventTime := -3
 
-/-- "He left ..." — independent past domain (shift pair). -/
+/-- "He left..." — independent past domain (shift pair). -/
 def domainShiftLeft : ReichenbachFrame ℤ where
   speechTime := 0
   perspectiveTime := 0
@@ -1027,7 +1026,7 @@ theorem domainSubord_shifted_perspective :
     analyzes this as a shift of temporal perspective from present to past,
     exploiting the metaphor between temporal remoteness and social distance.
 
-    Declerck (1991) ch. 2 §20–21. -/
+    @cite{declerck-1991} ch. 2 §20–21. -/
 
 /-- "I wanted to ask you something." — false past.
     Past morphology ("wanted") but present-time reference:
@@ -1079,9 +1078,9 @@ theorem falsePast_same_structure_as_counterfactual :
     typical temporal anchoring: the if-clause is future and the
     matrix clause is present.
 
-    Declerck (1991) ch. 4 §2. -/
+    @cite{declerck-1991} ch. 4 §2. -/
 
-/-- PPS if-clause: "If he comes ..." — present morphology,
+/-- PPS if-clause: "If he comes..." — present morphology,
     future pragmatic reference. R = P (present tense form). -/
 def ppsIfComes : ReichenbachFrame ℤ where
   speechTime := 0
@@ -1096,7 +1095,7 @@ def ppsWillBeHappy : ReichenbachFrame ℤ where
   referenceTime := 3      -- future: R > P
   eventTime := 3
 
-/-- FPS if-clause: "If he will go to China ..." — future in
+/-- FPS if-clause: "If he will go to China..." — future in
     the if-clause (non-standard). -/
 def fpsIfWillGo : ReichenbachFrame ℤ where
   speechTime := 0
@@ -1148,9 +1147,9 @@ theorem pps_ifClause_future_event :
     The preterit `arrived` expresses simultaneity with an implicit TO
     that is posterior to John's leaving.
 
-    Declerck (1991) ch. 2 §24–25. -/
+    @cite{declerck-1991} ch. 2 §24–25. -/
 
-/-- "Bill will have left ..." — future perfect.
+/-- "Bill will have left..." — future perfect.
     E < R (perfect: leaving before reference) and R > P (future). -/
 def futPerfLeft : ReichenbachFrame ℤ where
   speechTime := 0
@@ -1167,7 +1166,7 @@ def whenArrives : ReichenbachFrame ℤ where
   referenceTime := 5      -- R = P' (present relative to implicit TO)
   eventTime := 5          -- arriving at the implicit TO
 
-/-- "John had left ..." — past perfect (before-clause pair).
+/-- "John had left..." — past perfect (before-clause pair).
     E < R (perfect) and R < P (past). -/
 def hadLeftBefore : ReichenbachFrame ℤ where
   speechTime := 0
@@ -1222,7 +1221,7 @@ theorem hadLeft_is_perfect :
 
     These are pragmatic defaults, not semantic entailments.
 
-    Declerck (1991) ch. 3 §1.2. -/
+    @cite{declerck-1991} ch. 3 §1.2. -/
 
 /-- A Reichenbach frame paired with its aspectual boundedness. -/
 structure BoundedFrame where
@@ -1304,7 +1303,7 @@ theorem inclusion_mixed_boundedness :
     "I visited Paris." (past time-sphere: E = R < P,
       situation detached from present)
 
-    Declerck (1991) ch. 7 §1,3; Declerck (2006). -/
+    @cite{declerck-1991} ch. 7 §1,3; @cite{declerck-2006}. -/
 
 /-- "I have visited Paris." — present perfect.
     Pre-present sector: E < R and R = P (present time-sphere).
@@ -1361,7 +1360,7 @@ theorem preterit_is_perfective :
 -- § 29. Cross-Linguistic Tense Referential Mode (Kratzer 1998)
 -- ════════════════════════════════════════════════════════════════
 
-/-! Kratzer (1998) predicts that the distribution of deictic vs anaphoric
+/-! @cite{heim-kratzer-1998} predicts that the distribution of deictic vs anaphoric
 past tense varies cross-linguistically because surface "past" can decompose
 differently:
 
@@ -1373,8 +1372,8 @@ head is PAST (anaphoric), requiring a discourse antecedent.
 
 The empirical contrast:
   English: "I didn't turn off the stove." ✓ (out of the blue)
-  German:  #"Ich schaltete den Herd nicht aus." ✗ (out of the blue)
-  German:  "Ich habe den Herd nicht ausgeschaltet." ✓ (present perfect)
+  German: #"Ich schaltete den Herd nicht aus." ✗ (out of the blue)
+  German: "Ich habe den Herd nicht ausgeschaltet." ✓ (present perfect)
 
 This data is tested against the theory in `Bridge.lean` §29. -/
 

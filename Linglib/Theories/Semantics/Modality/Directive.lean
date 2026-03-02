@@ -4,7 +4,7 @@ import Linglib.Theories.Semantics.Modality.Kratzer
 # Directive Modality: Strong and Weak Necessity
 @cite{kolodny-macfarlane-2010} @cite{kratzer-2012} @cite{von-fintel-iatridou-2008}
 
-von Fintel & Iatridou (2008) argue that natural languages systematically
+@cite{von-fintel-iatridou-2008} argue that natural languages systematically
 distinguish **strong necessity** ("must", "have to") from **weak necessity**
 ("ought", "should"). The difference is not in modal force — both are universal
 quantifiers over best worlds — but in the ordering source.
@@ -121,7 +121,7 @@ theorem best_refines (f : ModalBase) (g g' : OrderingSource) (w : World) :
 /-- **Strong entails weak**: if "must φ" holds (under ordering g), then
     "ought φ" holds (under any refinement g ∪ g').
 
-    ∀w' ∈ Best(f,g). φ(w')  →  ∀w' ∈ Best(f, g∪g'). φ(w')
+    ∀w' ∈ Best(f,g). φ(w') → ∀w' ∈ Best(f, g∪g'). φ(w')
 
     This captures the linguistic intuition: "must φ" is a stronger claim
     than "ought φ" — the former entails the latter but not vice versa. -/

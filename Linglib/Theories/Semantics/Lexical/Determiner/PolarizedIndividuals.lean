@@ -10,10 +10,10 @@ decomposition from `Core.Logic.PolarizedIndividuals`.
 The four corners of the square of opposition arise from entity-polarity
 pairs via the `ConsGQ` Boolean algebra:
 
-- `some  = ⋁_e (e, +)`        — existential: at least one positive witness
-- `every = (⋁_e (e, -))ᶜ`     — universal: no negative witness
-- `no    = (⋁_e (e, +))ᶜ`     — negative universal: no positive witness
-- `not_all = ⋁_e (e, -)`      — negative existential: at least one negative
+- `some = ⋁_e (e, +)` — existential: at least one positive witness
+- `every = (⋁_e (e, -))ᶜ` — universal: no negative witness
+- `no = (⋁_e (e, +))ᶜ` — negative universal: no positive witness
+- `not_all = ⋁_e (e, -)` — negative existential: at least one negative
 
 The key compositional fact for split scope is `pos_sup_neg`:
 `(e,+) ⊔ (e,-) = λR S. R(e)`, already proved in

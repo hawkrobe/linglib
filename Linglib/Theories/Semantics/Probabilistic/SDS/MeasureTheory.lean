@@ -40,6 +40,8 @@ namespace Semantics.Probabilistic.SDS.MeasureTheory
 
 /-!
 ## SDSMeasureSystem Design
+@cite{lassiter-goodman-2017}
+
 
 A measure-theoretic SDS constraint system would be the continuous analogue
 of `SDSConstraintSystem`, where:
@@ -123,7 +125,7 @@ The soft meaning becomes:
 
 For uniform prior p(θ) = 1, this gives ⟦tall⟧(x) = height(x).
 
-### Result (Lassiter & Goodman 2017)
+### Result
 
 With uniform threshold prior:
 - softMeaning(x) = measure(x)

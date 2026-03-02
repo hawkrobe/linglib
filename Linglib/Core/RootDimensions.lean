@@ -28,7 +28,7 @@ the fact that verbs are compatible with a range of event types.
 
 ## Levin class taxonomy
 
-The full verb class taxonomy from Levin (1993) Part II is encoded in § 4.
+The full verb class taxonomy from @cite{levin-1993} Part II is encoded in § 4.
 This provides a standardized reference for verb classification; individual
 verb entries in `Fragments/` are tagged with their Levin class.
 
@@ -45,10 +45,10 @@ all entries that constrain that dimension. This is by design.
 -- § 1. Levin (1993) Meaning Components
 -- ════════════════════════════════════════════════════
 
-/-- Binary meaning components that define Levin (1993) verb classes.
+/-- Binary meaning components that define @cite{levin-1993} verb classes.
 
     These describe **surface** verb behavior, not root-level entailments.
-    Beavers & Koontz-Garboden (2020) argue that surface CoS and causation
+    @cite{beavers-koontz-garboden-2020} argue that surface CoS and causation
     can come from either the template or the root; see `RootEntailments`
     (§ 3b) for the root-level decomposition.
 
@@ -60,8 +60,8 @@ all entries that constrain that dimension. This is by design.
 
     The four canonical classes from Levin's Introduction:
     - *break* = [+CoS, −contact, −motion, +causation]
-    - *cut*   = [+CoS, +contact, +motion, +causation]
-    - *hit*   = [−CoS, +contact, +motion, −causation]
+    - *cut* = [+CoS, +contact, +motion, +causation]
+    - *hit* = [−CoS, +contact, +motion, −causation]
     - *touch* = [−CoS, +contact, −motion, −causation]
 
     Additional binary features (from class descriptions in Part II):
@@ -171,7 +171,7 @@ inductive ForceLevel where
 
 /-- Spatial pattern of force application.
 
-    Talmy (2000, Ch. 7): force vectors have directional parameters.
+    @cite{talmy-2000}: force vectors have directional parameters.
     Spalek & McNally: *tear* implies contrary-direction force (pulling
     apart); *rasgar* implies unidirectional force (gash-like). -/
 inductive ForceDirection where
@@ -194,13 +194,12 @@ inductive Robustness where
 
 /-- Nature of the physical change produced by the event.
 
-    Grounded in Levin's (1993) class descriptions and Hale & Keyser's
-    (1987) notion of "separation in material integrity":
+    Grounded in @cite{levin-1993}'s class descriptions and @cite{hale-keyser-1987} notion of "separation in material integrity":
     - 45.1 Break: loss of material integrity (break, crack, shatter, tear)
     - 45.2 Bend: change in shape without loss of integrity
     - 44 Destroy: total destruction (no specific resulting state)
     - 21 Cut: separation via instrument contact
-    Refined by Beavers & Koontz-Garboden (2020) on CoS root types. -/
+    Refined by @cite{beavers-koontz-garboden-2020} on CoS root types. -/
 inductive ResultType where
   | separation      -- loss of integrity via pulling apart (tear)
   | surfaceBreach   -- gash-like damage to surface (rasgar)
@@ -255,17 +254,17 @@ inductive AgentControl where
     3. Root structural entailments (B&KG 2020)
     4. Root-specific quality features (ranges, from detailed lexical analysis) -/
 structure RootProfile where
-  /-- Force magnitude: Talmy (1988). -/
+  /-- Force magnitude: @cite{talmy-1988}. -/
   forceMag : Range ForceLevel := none
-  /-- Force directionality: Talmy (2000), Spalek & McNally. -/
+  /-- Force directionality: @cite{talmy-2000}, Spalek & McNally. -/
   forceDir : Range ForceDirection := none
   /-- Patient material robustness: Spalek & McNally. -/
   patientRob : Range Robustness := none
-  /-- Type of physical change: Levin (1993), Beavers & Koontz-Garboden (2020). -/
+  /-- Type of physical change: @cite{levin-1993}, @cite{beavers-koontz-garboden-2020}. -/
   resultType : Range ResultType := none
-  /-- Agent volitionality: Dowty (1991) P1, Ausensi (2021). -/
+  /-- Agent volitionality: @cite{dowty-1991} P1, Ausensi (2021). -/
   agentVolition : Range Volitionality := none
-  /-- Agent control: Dowty (1991) P2, Spalek & McNally. -/
+  /-- Agent control: @cite{dowty-1991} P2, Spalek & McNally. -/
   agentControl : Range AgentControl := none
   deriving BEq, Repr, Inhabited
 
@@ -273,7 +272,7 @@ structure RootProfile where
 -- § 3b. Root Structural Entailments (B&KG 2020)
 -- ════════════════════════════════════════════════════
 
-/-- Root-level structural entailments from Beavers & Koontz-Garboden (2020).
+/-- Root-level structural entailments from @cite{beavers-koontz-garboden-2020}.
 
     B&KG argue against Bifurcation (roots only contribute idiosyncratic
     content) and Manner/Result Complementarity (no root encodes both).
@@ -384,7 +383,7 @@ end RootEntailments
 -- § 4. Levin (1993) Verb Class Taxonomy
 -- ════════════════════════════════════════════════════
 
-/-- Verb class taxonomy from Levin (1993) Part II.
+/-- Verb class taxonomy from @cite{levin-1993} Part II.
 
     Section numbers follow the book. Class names are Levin's labels.
     This provides a standardized, widely-cited reference for verb
@@ -536,7 +535,7 @@ inductive LevinClass where
   | weather            -- 57: rain, snow, ...
   deriving DecidableEq, BEq, Repr
 
-/-- Section number in Levin (1993) for each class. -/
+/-- Section number in @cite{levin-1993} for each class. -/
 def LevinClass.section : LevinClass → String
   | .put => "9.1" | .funnel => "9.3" | .pour => "9.5"
   | .coil => "9.6" | .sprayLoad => "9.7"
@@ -733,7 +732,7 @@ def LevinClass.meaningComponents : LevinClass → MeaningComponents
 -- § 5. Diathesis Alternation Diagnostics
 -- ════════════════════════════════════════════════════
 
-/-- Diathesis alternations from Levin (1993) Part One that serve as diagnostics
+/-- Diathesis alternations from @cite{levin-1993} Part One that serve as diagnostics
     for verb class membership. The first four are the canonical diagnostics
     from the Introduction (pp. 5–10); others are class-specific. -/
 inductive DiathesisAlternation where
@@ -824,7 +823,7 @@ theorem touch_alternations :
     ∧ LevinClass.touch.participatesIn .bodyPartPossessorAscension = true := ⟨rfl, rfl, rfl, rfl⟩
 
 /-- Instrument specification blocks the causative/inchoative alternation
-    for any verb, regardless of other meaning components (Levin 1993, p. 10).
+    for any verb, regardless of other meaning components.
     Because the instrument must be wielded by an agent, the agentless
     inchoative variant is unavailable. -/
 theorem MeaningComponents.instrumentSpec_blocks_ci (mc : MeaningComponents)
@@ -884,7 +883,7 @@ theorem cut_no_resultative_break_resultative :
 
 /-- Predicted unaccusativity from Levin class membership.
 
-    Based on Levin & Rappaport Hovav (1995): unaccusativity correlates with
+    Based on Levin & Rappaport @cite{levin-hovav-1995}: unaccusativity correlates with
     internally caused change of state or directed change, while unergativity
     correlates with agentive activity.
 
@@ -894,7 +893,7 @@ theorem cut_no_resultative_break_resultative :
     existence, appearance), this predicts unaccusativity outright.
 
     **Key omission**: manner-of-speaking verbs (§37.3) are predicted
-    unergative here (agentive manner), but Storment (2026) shows they
+    unergative here (agentive manner), but @cite{storment-2026} shows they
     are empirically unaccusative. This is a documented divergence. -/
 def LevinClass.predictsUnaccusative : LevinClass → Bool
   -- §45 Change of State: inchoative alternant is unaccusative
@@ -983,8 +982,7 @@ def RootProfile.overlaps (rp₁ rp₂ : RootProfile) : Bool :=
 
 /-- Root structural entailments for each Levin class.
 
-    Assignments marked (B&KG) are directly from Beavers & Koontz-Garboden
-    (2020) Table 12 and Chapters 2–5. Others are inferred from class
+    Assignments marked (B&KG) are directly from @cite{beavers-koontz-garboden-2020} Table 12 and Chapters 2–5. Others are inferred from class
     semantics following B&KG's framework:
     - Externally caused CoS → `causativeResult` (√CRACK pattern)
     - Internally caused CoS → `pureResult` (√BLOSSOM pattern)

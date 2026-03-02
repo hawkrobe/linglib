@@ -157,7 +157,7 @@ theorem wish_isCDistributive {W E : Type*}
 ## Why Worry/Care are NOT C-Distributive
 @cite{elliott-etal-2017}
 
-The key insight from Elliott et al. (2017) is that predicates like "worry"
+The key insight from @cite{elliott-etal-2017} is that predicates like "worry"
 and "care" have question semantics that go beyond existential quantification.
 
 ### Worry Semantics
@@ -194,7 +194,7 @@ Axiom: There exist semantics for "worry" that are not C-distributive.
 
 The full proof requires modeling epistemic states and uncertainty,
 which involves decidability issues in Lean. We assert this as an axiom
-based on the linguistic argument from Elliott et al. (2017).
+based on the linguistic argument from @cite{elliott-etal-2017}.
 -/
 axiom exists_nonCDistributive_worry :
     ∃ (W E : Type) (V_prop : E → BProp W → W → Bool)
@@ -291,7 +291,7 @@ theorem degreeComparisonLike_implies_cDistributive {W E : Type*}
 
 ## Significance
 
-This transforms the Qing et al. (2025) analysis from an encoding to a derivation:
+This transforms the @cite{qing-uegaki-2025} analysis from an encoding to a derivation:
 - C-distributivity is no longer a stipulated property
 - It follows from the semantic structure of the predicate
 - The classification into NVP classes has genuine explanatory force

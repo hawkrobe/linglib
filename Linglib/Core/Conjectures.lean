@@ -56,8 +56,8 @@ def rigid_iff_common_ground (W E τ : Type*)
 When do the Rational Speech Acts pragmatic theory and grammatical
 exhaustification make identical predictions?
 
-- Frank & Goodman (2012); Bergen, Levy & Goodman (2016) — RSA
-- Fox (2007); Chierchia, Fox & Spector (2012) — EXH
+- @cite{frank-goodman-2012}; @cite{bergen-levy-goodman-2016} — RSA
+- @cite{fox-2007}; @cite{chierchia-fox-spector-2012} — EXH
 -/
 
 /-- RSA and EXH coincide under specific conditions:
@@ -137,7 +137,7 @@ def almog_independence_conjecture (Mechanism : Type*) (exprs : List (List Mechan
 
 Phases as local computation domains for pragmatic inference.
 Charlow (2014, 2020): scope islands = evaluation boundaries.
-Chierchia/Fox/Spector (2012): Exh applies at scope positions.
+Chierchia/Fox/@cite{chierchia-fox-spector-2012}: Exh applies at scope positions.
 Hypothesis: phase boundaries delimit where Exh/RSA applies.
 -/
 
@@ -167,7 +167,7 @@ def rsa_phase_locality {U W : Type*}
 /-- Phase-bounded alternative computation: alternatives for an expression
     are computed from material within the same phase, not globally.
 
-    This connects to Chierchia (2006) / Fox & Katzir (2011):
+    This connects to Chierchia (2006) / @cite{fox-katzir-2011}:
     the set of alternatives depends on what's locally available. -/
 def phase_bounded_alternatives {U : Type*}
     (local_alts : U → List U)
@@ -178,7 +178,7 @@ def phase_bounded_alternatives {U : Type*}
 
 /-! ## Simplicity Explains Semantic Universals
 
-Van de Pol et al. (2023): quantifiers satisfying the Barwise & Cooper
+@cite{van-de-pol-etal-2023}: quantifiers satisfying the Barwise & Cooper
 universals (conservativity, quantity, monotonicity) have shorter minimal
 description length, measured by Lempel-Ziv complexity on truth-table
 representations.
@@ -226,7 +226,7 @@ Opposition but leave the O-corner (particular negative) unlexicalized:
 | O      | not-every | —     | ✗            |
 
 The O-corner is always expressed periphrastically (outer negation of A:
-"not every", "doesn't have to"). Horn (2001) argues this gap is
+"not every", "doesn't have to"). @cite{horn-2001} argues this gap is
 pragmatically explained: the scalar implicature of I (some → not all)
 recovers O's content, making a dedicated lexical item for O redundant.
 
@@ -250,7 +250,7 @@ the strong term (¬A = "not all" = O). Since O is always recoverable
 from I via Gricean reasoning, there is no communicative pressure to
 lexicalize it.
 
-Reference: Horn (2001), A Natural History of Negation, §4.5. -/
+Reference: @cite{horn-2001}, A Natural History of Negation, §4.5. -/
 def o_corner_pragmatic_explanation
     (Utt : Type*) (meaning : Utt → Prop)
     (I_utt : Utt) (O_content : Prop)

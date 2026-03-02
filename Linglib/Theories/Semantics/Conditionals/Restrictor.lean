@@ -90,7 +90,7 @@ theorem restricted_accessible_eq (f : ModalBase) (α : BProp World) (w : World) 
     `Kratzer.lean`) equals "□_f(α → β)" (strict conditional from
     `Conditionals/Basic.lean`).
 
-    ∀w' ∈ Best(f+α, ∅, w). β(w')  ⟺  ∀w' ∈ ∩f(w). α(w') → β(w')
+    ∀w' ∈ Best(f+α, ∅, w). β(w') ⟺ ∀w' ∈ ∩f(w). α(w') → β(w')
 
     This connects `Modality/Kratzer.lean` to `Conditionals/Basic.lean`. -/
 theorem restrictor_eq_strict (f : ModalBase) (α β : BProp World) (w : World) :

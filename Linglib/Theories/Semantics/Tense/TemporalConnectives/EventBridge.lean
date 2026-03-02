@@ -8,11 +8,11 @@ import Linglib.Theories.Semantics.Events.Basic
 The projection from event predicates (Level 3) to interval sets (Level 2):
 
 ```
-Level 3: EvPred Time              (event predicates — O&ST, future theories)
-    ↓ eventDenotation             (this file)
-Level 2: SentDenotation Time      (interval sets — Anscombe, Rett)
-    ↓ timeTrace                   (Basic.lean)
-Level 1: Set Time                 (point sets)
+Level 3: EvPred Time (event predicates — O&ST, future theories)
+    ↓ eventDenotation (this file)
+Level 2: SentDenotation Time (interval sets — Anscombe, Rett)
+    ↓ timeTrace (Basic.lean)
+Level 1: Set Time (point sets)
 ```
 
 `eventDenotation` is the **τ-image** of an event predicate: the set of runtime

@@ -3,7 +3,7 @@ import Linglib.Theories.Semantics.Lexical.Determiner.Quantifier
 /-!
 # Quantifier Domain Restriction
 
-@cite{ritchie-schiller-2024} @cite{bach-1994} @cite{cutting-vishton-1995} @cite{previc-1998} @cite{stanley-szab-2000} @cite{von-fintel-1994}Ritchie, H. & Schiller, K. (2024). Default Domain Restriction Possibilities.
+@cite{ritchie-schiller-2024} @cite{bach-1994} @cite{cutting-vishton-1995} @cite{previc-1998} @cite{stanley-szab-2000} @cite{von-fintel-1994}Ritchie, H. & Schiller, K. (2024). Default Domain Restriction Possibilities. @cite{barwise-cooper-1981}
 *Semantics & Pragmatics* 17, Article 13: 1–49.
 
 ## Core Idea
@@ -20,8 +20,8 @@ then selects among.
 ## Nested Spatial Regions
 
 The cognitive heuristic account is grounded in ecological psychology's parsing
-of space into nested regions. Cutting & Vishton (1995) distinguish three zones
-(personal, action, vista); Previc (1998) proposes four (peripersonal, focal
+of space into nested regions. @cite{cutting-vishton-1995} distinguish three zones
+(personal, action, vista); @cite{previc-1998} proposes four (peripersonal, focal
 extrapersonal, action extrapersonal, ambient extrapersonal). We adopt a hybrid
 terminology with four levels:
 
@@ -33,7 +33,7 @@ of candidate domain restrictions. Pragmatic reasoning selects among them.
 ## Connection to Conservativity
 
 Domain restriction via C-intersection is well-defined because all natural language
-determiners are conservative (Barwise & Cooper 1981): Q(R, S) = Q(R, R ∩ S).
+determiners are conservative: Q(R, S) = Q(R, R ∩ S).
 Combined with Extension (spectator irrelevance), restricting the domain to entities
 satisfying C is equivalent to restricting the restrictor to C ∩ R.
 
@@ -138,10 +138,9 @@ theorem no_restricted_anti_mono {m : Model} [FiniteModel m]
 
 /-- Domain-restricted ⟦every⟧ is conservative:
     ⟦every⟧_C(R, S) = ⟦every⟧_C(R, R ∩ S).
-    Domain restriction preserves the fundamental GQ property (Barwise & Cooper
-    1981). This is the formal justification for the `every_restricted` definition:
+    Domain restriction preserves the fundamental GQ property. This is the formal justification for the `every_restricted` definition:
     conservativity guarantees that restricting the restrictor to C ∩ R preserves
-    the quantifier's meaning (von Fintel 1994). -/
+    the quantifier's meaning. -/
 theorem every_restricted_conservative {m : Model} [FiniteModel m]
     (C : DomainRestrictor m.Entity) (R S : m.Entity → Bool) :
     every_restricted m C R S = every_restricted m C R (λ x => R x && S x) := by
@@ -165,10 +164,10 @@ theorem every_restricted_spectator {m : Model} [FiniteModel m]
 -- §5. Spatial Scale & DDRP
 -- ============================================================================
 
-/-- Spatial scales from ecological psychology (Cutting & Vishton 1995; Previc 1998).
+/-- Spatial scales from ecological psychology.
 
-    Cutting & Vishton (1995) distinguish three zones (personal, action, vista).
-    Previc (1998) proposes four (peripersonal, focal extrapersonal, action
+    @cite{cutting-vishton-1995} distinguish three zones (personal, action, vista).
+    @cite{previc-1998} proposes four (peripersonal, focal extrapersonal, action
     extrapersonal, ambient extrapersonal). We adopt a hybrid:
     - **Peripersonal**: Within arm's reach (~2m). Direct manipulation.
     - **Action**: Accessible by locomotion (~30m).
@@ -216,7 +215,7 @@ instance : OrderBot SpatialScale where
 
     Parameterized by a scale type `S` with a preorder and top element,
     enabling reuse for non-spatial heuristics. `SpatialScale` is the
-    canonical instantiation (Cutting & Vishton 1995; Previc 1998). -/
+    canonical instantiation. -/
 structure DDRP (S E : Type*) [Preorder S] [OrderTop S] where
   /-- Each scale level induces a predicate on entities. -/
   region : S → DomainRestrictor E

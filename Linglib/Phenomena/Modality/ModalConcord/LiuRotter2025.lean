@@ -2,8 +2,8 @@ import Linglib.Phenomena.Modality.ModalConcord.Data
 import Linglib.Core.Logic.ModalLogic
 
 /-!
-# Modal Concord: Commitment and Social Meaning — Liu & Rotter (2025)
-@cite{liu-rotter-2025}
+# Modal Concord: Commitment and Social Meaning — @cite{rotter-liu-2025}
+@cite{liu-rotter-2025} @cite{zeijlstra-2007}
 
 Empirical data from "Non-redundant modal concord: Evidence from speaker
 commitment and social meaning."
@@ -13,8 +13,7 @@ commitment and social meaning."
 Modal concord (MC) is **not semantically vacuous**: necessity MC (*must
 certainly*) strengthens speaker commitment, while possibility MC (*may
 possibly*) weakens it. This FORCE × NUMBER interaction is not predicted by
-syntactic agreement (Zeijlstra 2007), semantic identity (Geurts & Huitink
-2006), or the register approach (Dieuleveut et al. 2025).
+syntactic agreement, semantic identity, or the register approach.
 
 MC also carries social meaning: necessity MC signals competence (higher SES,
 education, formality, confidence), while possibility MC signals warmth (higher
@@ -98,7 +97,7 @@ theorem force_number_interaction :
 
 /-- **MC is semantically non-vacuous**: Both necessity and possibility
     MC differ from their single-modal counterparts. The syntactic
-    agreement approach (Zeijlstra 2007), which treats one modal as
+    agreement approach, which treats one modal as
     semantically vacuous, incorrectly predicts MC = SM. -/
 theorem mc_not_vacuous :
     (commitmentRating necMC).mean ≠ (commitmentRating necSM).mean ∧
@@ -137,7 +136,7 @@ inductive SocialDimension where
   | coolness     -- Coolness
   deriving DecidableEq, BEq, Repr
 
-/-- Competence/warmth classification (Fiske, Cuddy, Glick & Xu 2002).
+/-- Competence/warmth classification.
     Necessity MC increases competence dimensions, decreases warmth.
     Possibility MC does the reverse. -/
 inductive DimensionClass where

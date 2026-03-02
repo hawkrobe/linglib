@@ -6,7 +6,7 @@ import Linglib.Phenomena.Presupposition.ProjectiveContent
 @cite{schlenker-2009} @cite{tonhauser-beaver-roberts-simons-2013}
 
 Connects Schlenker's local context theory to the empirical taxonomy of
-Tonhauser et al. (2013). Contains trigger classification theorems, the
+@cite{tonhauser-beaver-roberts-simons-2013}. Contains trigger classification theorems, the
 four-class taxonomy structure, and the main theorem showing that
 Schlenker derives Tonhauser.
 

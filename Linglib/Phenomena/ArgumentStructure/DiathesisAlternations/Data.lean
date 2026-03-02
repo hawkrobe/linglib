@@ -1,7 +1,9 @@
 import Linglib.Core.RootDimensions
 
 /-!
-# Diathesis Alternation Data (Levin 1993, pp. 5–10)
+# Diathesis Alternation Data
+@cite{levin-1993}
+
 
 Theory-neutral empirical data on diathesis alternation participation.
 
@@ -241,7 +243,7 @@ def dat_send : AlternationDatum :=
 -- § Collections
 -- ════════════════════════════════════════════════════
 
-/-- The canonical diagnostic quadruple (Levin 1993, pp. 5–10). -/
+/-- The canonical diagnostic quadruple. -/
 def canonicalData : List AlternationDatum :=
   [ ci_break, mid_break, con_break, bppa_break
   , ci_cut, mid_cut, con_cut, bppa_cut

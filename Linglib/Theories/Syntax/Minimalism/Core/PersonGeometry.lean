@@ -17,7 +17,7 @@ This decomposition drives **relativized probing**: a probe seeking
 that lack it (singulars), targeting only plurals.
 
 The two-probe system derives the **omnivorous agreement hierarchy**
-in Kaqchikel Agent Focus (Preminger 2014, §3.3):
+in Kaqchikel Agent Focus:
 
     [+participant] (π⁰) > [+plural] (#⁰) > default (3SG)
 
@@ -28,7 +28,7 @@ fails, #⁰ provides the result; if both fail, the default surfaces.
 ## Person Type
 
 `decomposePerson` takes `Core.Prominence.PersonLevel` (`.first |
-.second | .third`) — the canonical person type shared across the
+.second |.third`) — the canonical person type shared across the
 library — rather than a raw `Nat`. This eliminates meaningless
 person values and grounds the decomposition in the same type used
 by `DifferentialIndexing`, `Prominence.PersonLevel.isSAP`, etc.
@@ -87,7 +87,7 @@ def decomposePerson : PersonLevel → DecomposedPerson
 -- § 3: Probe Targets
 -- ============================================================================
 
-/-- What a phi-probe seeks (Preminger 2014, §4.3).
+/-- What a phi-probe seeks.
 
     In the AF construction, two probes operate:
     - **π⁰** seeks [participant]: targets 1st/2nd person DPs
@@ -95,14 +95,14 @@ def decomposePerson : PersonLevel → DecomposedPerson
 
     π⁰ structurally outranks #⁰ (person probing > number probing). -/
 inductive ProbeTarget where
-  /-- π⁰: person probe, seeks [participant] (Preminger 2014, §4.3). -/
+  /-- π⁰: person probe, seeks [participant]. -/
   | participant
-  /-- #⁰: number probe, seeks [plural] (Preminger 2014, §4.3). -/
+  /-- #⁰: number probe, seeks [plural]. -/
   | plural
   deriving DecidableEq, BEq, Repr
 
 /-- Is a DP visible to this probe? Relativized probing: probes skip
-    DPs that lack the feature they seek (Preminger 2014, §4.3).
+    DPs that lack the feature they seek.
 
     A DP with person value `person` and number `isPlural` is visible
     to the probe iff it bears the probe's target feature. -/
@@ -115,7 +115,7 @@ def probeVisible (target : ProbeTarget) (person : PersonLevel) (isPlural : Bool)
 -- § 4: Probe Resolution Rank
 -- ============================================================================
 
-/-- Omnivorous probe resolution rank for a DP (Preminger 2014, §3.3).
+/-- Omnivorous probe resolution rank for a DP.
 
     Determines which DP an omnivorous probe targets when multiple DPs
     are in its domain. Higher rank = more likely to be targeted.

@@ -3,9 +3,9 @@ import Linglib.Core.Root
 
 /-!
 # Root Typology: States and Changes of State (Beavers et al. 2021, B&KG 2020) @cite{beavers-etal-2021} @cite{beavers-koontz-garboden-2020} @cite{coon-2019}
-@cite{arad-2005} @cite{dixon-1982} @cite{embick-2004}
+@cite{arad-2005} @cite{dixon-1982} @cite{embick-2004} @cite{dowty-1991} @cite{embick-2009} @cite{rose-nichols-2021}
 
-Beavers, Everdell, Jerro, Kauhanen, Koontz-Garboden, LeBovidge & Nichols (2021)
+Beavers, Everdell, Jerro, Kauhanen, @cite{beavers-etal-2021}
 "States and changes of state: A crosslinguistic study of the roots of verbal
 meaning." Language 97(3), 439–484.
 
@@ -16,7 +16,7 @@ Change-of-state verb roots split into two types:
 - **Result roots**: crack, break, shatter — underlie non-deadjectival CoS verbs
 
 The key semantic distinction: result roots **lexically entail change**, while PC
-roots do not. This refutes the **Bifurcation Thesis** (Embick 2009, Arad 2005):
+roots do not. This refutes the **Bifurcation Thesis**:
 contra bifurcation, some roots introduce templatic meaning (change = BECOME).
 
 ## The deepest theorem
@@ -41,7 +41,7 @@ between functional head and root.
 
 ## Unified Root (§§15–17)
 
-Extends the file with the `Root` structure (§16) bundling Coon's (2019) arity
+Extends the file with the `Root` structure (§16) bundling @cite{coon-2019}'s arity
 dimension (does the root select an internal argument?) with Beavers et al.'s
 change-entailment dimension. The two axes cross-classify orthogonally
 (`arity_changeType_orthogonal`): knowing whether a root selects a theme tells
@@ -174,7 +174,7 @@ def RootType.allowsRestitutiveAgain : RootType → Bool
 -- § 4. The Deepest Theorem: Semantic-Morphosyntactic Biconditional
 -- ════════════════════════════════════════════════════
 
-/-- **The main theorem of Beavers et al. (2021).**
+/-- **The main theorem of @cite{beavers-etal-2021}.**
 
     A root's entailment of change determines ALL of its morphosyntactic
     behavior in a single four-way biconditional. This is the paper's
@@ -229,7 +229,7 @@ theorem pc_determines_morphosyntax (rt : RootType) :
 def bifurcationThesis (rootEntailsChange : RootType → Bool) : Prop :=
   ∀ rt, rootEntailsChange rt = false
 
-/-- Beavers et al. (2021) main result: bifurcation does not hold.
+/-- @cite{beavers-etal-2021} main result: bifurcation does not hold.
     Result roots entail change, violating the thesis (§§3.3, 3.6, 9). -/
 theorem bifurcation_fails :
     ¬ bifurcationThesis RootType.entailsChange := by
@@ -247,7 +247,7 @@ theorem pc_roots_consistent_with_bifurcation :
 
 /-- **B&KG (2020) strengthened bifurcation failure via RootEntailments.**
 
-    Beavers et al. (2021) show roots can entail CHANGE (one templatic notion).
+    @cite{beavers-etal-2021} show roots can entail CHANGE (one templatic notion).
     B&KG (2020) show roots can entail CHANGE, CAUSATION, and MANNER —
     ALL notions traditionally reserved for templates. This is a strictly
     stronger refutation: even if one accepted that change is "special",
@@ -342,11 +342,11 @@ theorem markedness_from_semantics (rt : RootType) :
 -- ════════════════════════════════════════════════════
 
 /-- A root's denotation: a state predicate over entities and states.
-    Beavers et al. (2021) eq. 20a: ⟦√FLAT⟧ = λx.λs[flat'(x, s)]. -/
+    @cite{beavers-etal-2021} eq. 20a: ⟦√FLAT⟧ = λx.λs[flat'(x, s)]. -/
 abbrev RootDenotation (Entity State : Type) := Entity → State → Prop
 
 /-- A meaning postulate: the root's state predicate entails a prior
-    change event. Beavers et al. (2021) eq. 21a:
+    change event. @cite{beavers-etal-2021} eq. 21a:
     ∀x.∀s[cracked'(x, s) → ∃e'[become'(e', s)]]. -/
 def MeaningPostulateEntailsChange
     {Entity State Event : Type}
@@ -366,7 +366,7 @@ def MeaningPostulateEntailsChange
     - √FLAT = λxλs[flat'(x,s)] — pure state, no change in truth conditions
     - √CRACK = λxλs[cracked'(x,s) ∧ ∃e'[become'(s,e')]] — change IN the root
 
-    The earlier Beavers et al. (2021) analysis used a separate structure
+    The earlier @cite{beavers-etal-2021} analysis used a separate structure
     with an external meaning postulate constraining result roots. B&KG
     argue the change IS what the root means, not an external constraint.
 
@@ -748,8 +748,8 @@ theorem hit_diagnostics_match_entailments :
     precisely the result root entailment. An object bearing a result
     root's state predicate has `changeOfState = true`.
 
-    This bridges the root typology (Beavers et al. 2021) to the
-    entailment profile (Dowty 1991) via the shared property. -/
+    This bridges the root typology to the
+    entailment profile via the shared property. -/
 def rootTypeFromChangeEntailment (p : EntailmentProfile) : RootType :=
   if p.changeOfState then .result else .propertyConcept
 
@@ -832,7 +832,7 @@ theorem root_stative_vendler :
 -- § 11. Embick (2004) Adjectival Structures (§3.2, eq. 8)
 -- ════════════════════════════════════════════════════
 
-/-- Embick (2004) posits two adjectival structures:
+/-- @cite{embick-2004} posits two adjectival structures:
 
     (8a) BASIC STATIVES: [AspP AspS √ROOT]
          Simple adjective directly combining with stativizer.
@@ -864,7 +864,7 @@ theorem admitsBasicStative_iff_no_change (rt : RootType) :
 -- § 12. The Again Diagnostic (§3.4, eq. 14–16)
 -- ════════════════════════════════════════════════════
 
-/-- Sublexical modifier 'again' has two readings (von Stechow 1995, 1996):
+/-- Sublexical modifier 'again' has two readings:
 
     (14a) RESTITUTIVE: again attaches to just the root
           → restores a prior state (one sharpening event)
@@ -904,7 +904,7 @@ theorem pc_has_restitutive :
 -- § 12b. Again Diagnostic: Compositional Derivation (B&KG 2020 §2.5)
 -- ════════════════════════════════════════════════════
 
-/-- What *again* presupposes at a given scope position (von Stechow 1995, 1996).
+/-- What *again* presupposes at a given scope position.
 
     *again* is a presupposition trigger: attaching it to constituent C
     presupposes that C's denotation held at some prior time. The distinction
@@ -1008,9 +1008,9 @@ theorem telic_iff_actual_possession (c : DitransitiveRootClass) :
     Parallel to `RootDen.againOverRoot` (§12b): root-constitutive content
     makes root-scope and vP-scope *again* collapse.
 
-    - .withPossession: root carries possession → *again* over root
+    -.withPossession: root carries possession → *again* over root
       presupposes prior possession (= prior change) → collapse
-    - .simple: root has no possession → *again* over root presupposes
+    -.simple: root has no possession → *again* over root presupposes
       prior event only (= prior state) → distinct readings -/
 def DitransitiveDen.againOverRoot {Entity Event : Type} :
     DitransitiveDen Entity Event → AgainPresupposition
@@ -1370,7 +1370,7 @@ def FullRootSpec.toss : FullRootSpec := ⟨.fullSpec, .adjoined⟩
 
 /-- √HAND: same entailments + position as √TOSS. The difference is in
     the ditransitive layer (DitransitiveRootClass.causedPossession vs
-    .ballisticMotion), not in FullRootSpec's 4+1 features. -/
+.ballisticMotion), not in FullRootSpec's 4+1 features. -/
 abbrev FullRootSpec.hand : FullRootSpec := FullRootSpec.toss
 
 /-- √EXIST: −S −M −R −C, complement. Minimal stative root. -/

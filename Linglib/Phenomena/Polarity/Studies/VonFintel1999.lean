@@ -37,7 +37,7 @@ structure StrawsonDEDatum where
   grammatical : Bool
   /-- Is the context classically (not Strawson-) DE? -/
   isClassicallyDE : Bool
-  /-- Von Fintel (1999) example number -/
+  /-- @cite{von-fintel-1999} example number -/
   exampleNum : String := ""
   /-- Additional notes -/
   notes : String := ""

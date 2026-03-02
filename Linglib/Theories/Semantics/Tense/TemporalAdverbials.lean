@@ -45,7 +45,7 @@ variable {W Time : Type*} [LinearOrder Time]
     Adverbials restrict which PTS intervals are admissible. -/
 abbrev PTSConstraint (Time : Type*) [LE Time] := Interval Time → Prop
 
-/-- Iatridou et al. (2001) adverbial type classification.
+/-- @cite{iatridou-anagnostopoulou-izvorski-2001} adverbial type classification.
     - `durative`: specifies the left boundary (e.g., "since Monday")
     - `inclusive`: does not specify the left boundary (e.g., "before Monday") -/
 inductive AdverbialType where

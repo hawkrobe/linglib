@@ -2,7 +2,7 @@ import Linglib.Core.Scales.Roundness
 import Mathlib.Data.Rat.Defs
 
 /-!
-# Woodin, Winter & Bhatt (2024): Numeral Frequency and Roundness
+# @cite{woodin-winter-bhatt-2024}: Numeral Frequency and Roundness
 @cite{sigurd-1988} @cite{woodin-winter-bhatt-2024}
 
 Corpus study showing number frequency is predicted by:

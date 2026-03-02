@@ -9,6 +9,8 @@ Chierchia's `predOnly` parameter: nouns denote predicates and require
 a determiner to be argumental.
 
 ## Determiner System
+@cite{chierchia-1998}
+
 
 Italian has a richer article paradigm than French, with allomorphy
 conditioned by gender, number, and phonological context:
@@ -63,7 +65,7 @@ structure NounEntry where
 -- § 3: Chierchia Parameters
 -- ============================================================================
 
-/-- Italian is a [-arg, +pred] language (Chierchia 1998). -/
+/-- Italian is a [-arg, +pred] language. -/
 def italianMapping : NominalMapping := .predOnly
 
 /-- Italian has a rich article system that blocks most bare arguments. -/

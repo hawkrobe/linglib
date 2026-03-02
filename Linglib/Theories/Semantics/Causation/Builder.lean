@@ -10,7 +10,7 @@ following the same pattern as `PreferentialBuilder` for attitude verbs.
 
 ## Design principle
 
-The builder names a **force-dynamic mechanism** (Wolff 2003, Talmy 1988),
+The builder names a **force-dynamic mechanism**,
 not a causal-model property. Properties like "asserts sufficiency" or
 "asserts necessity" are **derived** from the builder via theorems.
 
@@ -32,7 +32,7 @@ open NadathurLauer2020.Necessity
 
 /-- How a causative verb's semantics is built from causal model infrastructure.
 
-    The builder names a **force-dynamic mechanism** (Wolff 2003), not a
+    The builder names a **force-dynamic mechanism**, not a
     causal-model property. `toSemantics` maps each builder to its
     truth-condition function; properties like sufficiency/necessity are
     derived via theorems.
@@ -121,7 +121,7 @@ def CausativeBuilder.assertsNecessity : CausativeBuilder → Bool
 /-- Does this builder encode coercion (overcoming resistance)?
 
     Force-dynamic property: `.force` encodes that the causer overcame
-    the causee's resistance (Wolff 2003). -/
+    the causee's resistance. -/
 def CausativeBuilder.isCoercive : CausativeBuilder → Bool
   | .force => true
   | _ => false
@@ -129,7 +129,7 @@ def CausativeBuilder.isCoercive : CausativeBuilder → Bool
 /-- Does this builder encode permissivity (barrier removal)?
 
     Force-dynamic property: `.enable` encodes that the causer removed
-    a barrier, allowing the effect to occur naturally (Talmy 1988). -/
+    a barrier, allowing the effect to occur naturally. -/
 def CausativeBuilder.isPermissive : CausativeBuilder → Bool
   | .enable => true
   | _ => false

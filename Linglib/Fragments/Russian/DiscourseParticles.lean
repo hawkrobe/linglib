@@ -3,7 +3,7 @@
 @cite{ippolito-kiss-williams-2025}
 
 Lexical entry for Russian *tol'ko* (только) — the discourse *only*
-connective (IKW 2025). Allows all clause types as S'.
+connective. Allows all clause types as S'.
 
 -/
 

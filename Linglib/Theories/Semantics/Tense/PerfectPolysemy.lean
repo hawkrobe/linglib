@@ -5,7 +5,7 @@ import Linglib.Core.Temporal.Reichenbach
 import Linglib.Theories.Semantics.Tense.Compositional
 
 /-!
-# Perfect Polysemy (Kiparsky 2002)
+# Perfect Polysemy
 @cite{iatridou-anagnostopoulou-izvorski-2001} @cite{kiparsky-2002} @cite{pancheva-2003}
 
 Kiparsky's "Event Structure and the Perfect" argues that the English perfect's
@@ -137,7 +137,7 @@ theorem resultative_requires_complex {Time : Type*} [LinearOrder Time]
 -- § 4. Pancheva (2003) Bridge
 -- ════════════════════════════════════════════════════
 
-/-- Map Pancheva's (2003) perfect types to Kiparsky's readings.
+/-- Map @cite{pancheva-2003}'s perfect types to Kiparsky's readings.
     - experiential → existential
     - universal → universal
     - resultative → resultative -/
@@ -217,8 +217,7 @@ theorem past_perfect_allows_adverbs {Time : Type*} [LinearOrder Time]
 /-! ### Puzzle 3: Wh-Puzzle
 
 In the resultative reading, the activity is presupposed and the result state is
-asserted. Wh-extraction from presupposed content is blocked (Szabolcsi & Zwarts
-1993). This explains why *"What has John eaten?" resists the resultative reading
+asserted. Wh-extraction from presupposed content is blocked. This explains why *"What has John eaten?" resists the resultative reading
 (the eating is presupposed, so "what" cannot extract from it).
 
 TODO: Full formalization requires bridging to presupposition semantics

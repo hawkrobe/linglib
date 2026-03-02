@@ -48,7 +48,7 @@ def degreeQuestionExamples : List DegreeQuestionDatum :=
 -- § 2. Negative Islands
 -- ════════════════════════════════════════════════════
 
-/-- Fox & Hackl (2007) negative island data. -/
+/-- @cite{fox-2007} negative island data. -/
 def negativeIslandExamples : List DegreeQuestionDatum :=
   [ { sentence := "*How tall isn't Kim?"
     , acceptable := false
@@ -64,7 +64,7 @@ def negativeIslandExamples : List DegreeQuestionDatum :=
 -- § 3. Modal Obviation
 -- ════════════════════════════════════════════════════
 
-/-- Fox & Hackl (2007) modal obviation data. -/
+/-- @cite{fox-2007} modal obviation data. -/
 def modalObviationExamples : List DegreeQuestionDatum :=
   [ { sentence := "How tall is Kim required to be?"
     , acceptable := true

@@ -2,7 +2,7 @@ import Linglib.Theories.Pragmatics.RSA.Implementations.VanTielEtAl2021
 import Linglib.Phenomena.ScalarImplicatures.Studies.VanTielEtAl2021
 
 /-!
-# Bridge: van Tiel et al. (2021) RSA Model → Scalar Implicature Phenomena
+# Bridge: @cite{van-tiel-franke-sauerland-2021} RSA Model → Scalar Implicature Phenomena
 @cite{van-tiel-franke-sauerland-2021}
 
 Connects the RSA quantity-word production model to empirical

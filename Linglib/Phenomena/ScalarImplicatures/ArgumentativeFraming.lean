@@ -7,9 +7,9 @@ import Mathlib.Data.Rat.Defs
 Empirical observations from two papers on how speakers use quantity expressions
 to serve argumentative goals:
 
-1. **Cummins & Franke (2021)**: REF case study showing universities choose "top M"
+1. **@cite{cummins-franke-2021}**: REF case study showing universities choose "top M"
    claims strategically — always round numbers near their actual rank.
-2. **Macuch Silva et al. (2024)**: Production experiments showing quantifier choice
+2. **Macuch @cite{macuch-silva-etal-2024}**: Production experiments showing quantifier choice
    is driven by argumentative difficulty and framing direction.
 
 ## Data Sources

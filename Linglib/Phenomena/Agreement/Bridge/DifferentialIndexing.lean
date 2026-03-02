@@ -10,14 +10,14 @@ import Linglib.Fragments.Hungarian.Predicates
 # Bridge: Differential Indexing ↔ DOM, PersonGeometry, Kaqchikel
 @cite{aissen-2003} @cite{just-2024} @cite{preminger-2014}
 
-Connects Just (2024) differential indexing to three existing formalizations:
+Connects @cite{just-2024} differential indexing to three existing formalizations:
 
-1. **Aissen (2003) DOM profiles** (`Phenomena/Case/Typology`): DOM is the
+1. **@cite{aissen-2003} DOM profiles** (`Phenomena/Case/Typology`): DOM is the
    P-flagging specialization of the general differential marking framework.
    This bridge proves that DOM profiles and P-indexing profiles share the
    same monotonicity constraint over the same scales.
 
-2. **Preminger (2014) PersonGeometry** (`Theories/Syntax/Minimalism/Core/`):
+2. **@cite{preminger-2014} PersonGeometry** (`Theories/Syntax/Minimalism/Core/`):
    Just's binary person split (SAP vs 3rd) is precisely Preminger's
    [±participant] feature. This bridge makes the connection explicit.
 
@@ -85,7 +85,7 @@ theorem personLevel_rank_matches_probe_rank :
     person-number combinations. This is a NON-differential system: there is
     no prominence-based asymmetry in which arguments get indexed.
 
-    Just (2024, §1) defines differential indexing against this kind of
+    @cite{just-2024} defines differential indexing against this kind of
     baseline: a differential system is one where indexing depends on
     prominence properties. -/
 
@@ -133,8 +133,7 @@ theorem erg_abs_matches_AP :
 -- ============================================================================
 
 /-! Person is the dominant conditioning factor for both P indexing and
-    A indexing (Just 2024, §4.1). This connects to Preminger's (2014)
-    observation that person features are structurally more prominent
+    A indexing. This connects to @cite{preminger-2014}'s observation that person features are structurally more prominent
     in the φ-geometry ([participant] outranks [plural]). -/
 
 /-- Person dominates for both P and A indexing (derived from fragments). -/
@@ -220,7 +219,7 @@ theorem georgian_indexing_grounded :
 
 /-- Hungarian verbs have distinct definite vs indefinite conjugation forms.
     This IS the morphological reflex of differential P indexing by
-    definiteness (Just 2024, Table 1; Coppock & Wechsler 2012). -/
+    definiteness. -/
 theorem hungarian_conjugation_split :
     Fragments.Hungarian.Predicates.tud.formPastDef ≠
       Fragments.Hungarian.Predicates.tud.formPastIndef ∧

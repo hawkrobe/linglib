@@ -2,7 +2,7 @@ import Mathlib.Data.Rat.Defs
 
 /-!
 # Modal Concord Data — Dieuleveut, Hsu & Bhatt (2025)
-@cite{dieuleveut-hsu-bhatt-2025}
+@cite{dieuleveut-hsu-bhatt-2025} @cite{zeijlstra-2007}
 
 Empirical data from "A Register Approach to Modal Non-Concord in English:
 An Experimental Study of Linguistic and Social Meaning."
@@ -80,7 +80,7 @@ theorem formality_gradient :
 /-- **Intermediate formality**: The stacked form is strictly between the
     two single-modal forms. This is the key prediction of the register
     approach (Dieuleveut, Hsu & Bhatt 2025 §4) and is NOT predicted by
-    the syntactic agreement approach (Zeijlstra 2007), which treats one
+    the syntactic agreement approach, which treats one
     modal as semantically vacuous. -/
 theorem intermediate_formality :
     (formalityRating .haveTo).mean < (formalityRating .mustHaveTo).mean ∧

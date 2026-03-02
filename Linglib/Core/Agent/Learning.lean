@@ -4,7 +4,7 @@ import Mathlib.Topology.Order.Basic
 import Mathlib.Topology.Algebra.Order.LiminfLimsup
 
 /-!
-# Luce (1959) Chapter 4: Learning @cite{luce-1959}
+# @cite{luce-1959} Chapter 4: Learning @cite{luce-1959}
 @cite{bush-mosteller-1955}
 
 Luce extends the choice axiom to dynamic settings where choice probabilities

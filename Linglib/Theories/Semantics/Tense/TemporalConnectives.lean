@@ -8,23 +8,23 @@ import Linglib.Theories.Semantics.Tense.TemporalConnectives.BeaverCondoravdi
 
 /-!
 # Temporal Connective Semantics
-@cite{anscombe-1964} @cite{beaver-condoravdi-2003} @cite{karttunen-1974} @cite{krifka-2010b} @cite{ogihara-steinert-threlkeld-2024} @cite{rett-2020}
+@cite{anscombe-1964} @cite{beaver-condoravdi-2003} @cite{karttunen-1974} @cite{krifka-2010b} @cite{ogihara-steinert-threlkeld-2024} @cite{rett-2020} @cite{heinamaki-1974}
 
 Hub module re-exporting all temporal connective theories. Five semantic
 analyses operate at four distinct levels of abstraction:
 
 ```
-Level 4: World–Time pairs + branching    (Beaver & Condoravdi 2003)
-Level 3: Event predicates + τ-image      (Ogihara & Steinert-Threlkeld 2024)
-Level 2: Interval sets + MAX on scales   (Rett 2020)
-Level 1: Point sets + ∀/∃               (Anscombe 1964; Karttunen 1974)
+Level 4: World–Time pairs + branching
+Level 3: Event predicates + τ-image
+Level 2: Interval sets + MAX on scales
+Level 1: Point sets + ∀/∃
 ```
 
 The projection chain connects them:
 
 ```
-EvPred Time  →[eventDenotation]→  SentDenotation Time  →[timeTrace]→  Set Time
-  (Level 3)                          (Level 2)                        (Level 1)
+EvPred Time →[eventDenotation]→ SentDenotation Time →[timeTrace]→ Set Time
+  (Level 3) (Level 2) (Level 1)
 ```
 
 Level 4 (B&C) is orthogonal: it adds a modal dimension (historical alternatives)
@@ -35,9 +35,9 @@ At Level 1, the eight English temporal connectives reduce to four primitives
 plus two ≤-ordering variants:
 *before* (∃∀ strict), *after* (∃∃ strict), *when* (∃ overlap),
 *while* (∀ containment). *Until* is derived: durative ≡ *when*,
-punctual ≡ ¬*before* (Karttunen 1974). *Till* ≡ durative *until*.
+punctual ≡ ¬*before*. *Till* ≡ durative *until*.
 *Since* (∃∈B ∀∈A ≤) and *by* (∃∈A ∀∈B ≤) are the non-strict
-counterparts of the Anscombe connectives (Heinämäki 1974).
+counterparts of the Anscombe connectives.
 
 ## Submodules
 

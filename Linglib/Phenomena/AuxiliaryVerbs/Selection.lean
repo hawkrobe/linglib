@@ -6,7 +6,7 @@ import Linglib.Core.Lexical.Word
 
 Many European languages select between *be* and *have* as the perfect auxiliary
 based on the transitivity/unaccusativity of the lexical verb. The canonical
-"Auxiliary Selection Hierarchy" (Sorace 2000):
+"Auxiliary Selection Hierarchy":
 
 - **Unaccusative** verbs → *be* (Italian *è arrivato*, French *est arrivé*)
 - **Unergative/transitive** verbs → *have* (Italian *ha mangiato*, French *a mangé*)

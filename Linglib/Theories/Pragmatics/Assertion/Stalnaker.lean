@@ -18,7 +18,7 @@ and the baseline against which richer theories are compared.
 
 ## Stalnaker's Norm
 
-Stalnaker (1978) identifies three norms on assertion:
+@cite{stalnaker-1978} identifies three norms on assertion:
 1. The proposition expressed is true (sincerity)
 2. The speaker believes the proposition (knowledge)
 3. The proposition is not already in the common ground (informativity)

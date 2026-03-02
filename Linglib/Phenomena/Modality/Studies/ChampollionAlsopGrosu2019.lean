@@ -3,7 +3,7 @@ import Linglib.Tactics.RSAPredict
 import Mathlib.Analysis.SpecialFunctions.Pow.Real
 
 /-!
-# Champollion, Alsop & Grosu (2019) — Free Choice Disjunction as RSA
+# @cite{champollion-alsop-grosu-2019} — Free Choice Disjunction as RSA
 
 @cite{champollion-alsop-grosu-2019} @cite{bergen-levy-goodman-2016} @cite{fox-2007} @cite{franke-2011}"Free choice disjunction as a rational speech act"
 Proceedings of SALT 29: 238-257.
@@ -12,7 +12,7 @@ Proceedings of SALT 29: 238-257.
 
 Domain: "You may take an apple or a pear" with 2 items {A, B}. 5 states
 based on permission structure. 4 utterances. 2 interpretation functions
-(I₁ literal vs I₂ exhaustified), following Bergen et al. (2016).
+(I₁ literal vs I₂ exhaustified), following @cite{bergen-levy-goodman-2016}.
 
 - **L0**: L0(w|u,I) ∝ I(u,w) (meaning under interpretation I)
 - **S1**: S1(u|w,I) ∝ L0(w|u,I)^α (rpow belief-based)
@@ -24,11 +24,10 @@ where "L1 assigns only 70% probability to the FCI states" — p. 249).
 ## Key Innovation
 
 Standard RSA cannot derive free choice because disjunction is always less
-informative than its disjuncts. Adding **semantic uncertainty** (Bergen et al.
-2016) — speakers and listeners reason about which interpretation function is
+informative than its disjuncts. Adding **semantic uncertainty** — speakers and listeners reason about which interpretation function is
 being used — creates an avoidance pattern that drives the inference.
 
-The two interpretation functions represent optional exhaustification (Fox 2007):
+The two interpretation functions represent optional exhaustification:
 - I₁: Literal meanings (unexhaustified)
 - I₂: Strengthened meanings (exhaustified)
 
@@ -145,7 +144,7 @@ def I1 : Utterance → FCState → Bool
   | .and_, _ => false
 
 /-- Interpretation function I₂ (exhaustified) from (7).
-    Strengthened via innocent exclusion (Fox 2007):
+    Strengthened via innocent exclusion:
     - ⟦A⟧^I₂ = {Only A}
     - ⟦B⟧^I₂ = {Only B}
     - ⟦Or⟧^I₂ = {Only A, Only B, Only One, Any Number}
@@ -192,8 +191,8 @@ theorem I2_a_singleton : ∀ w, I2 .a w = true ↔ w = .onlyA := by
 -- §5. RSAConfig
 -- ============================================================================
 
-/-- Champollion et al. (2019) RSA model with semantic uncertainty.
-    Two interpretation functions serve as latent variables (Bergen et al. 2016).
+/-- @cite{champollion-alsop-grosu-2019} RSA model with semantic uncertainty.
+    Two interpretation functions serve as latent variables.
     S1 score is rpow(L0, α) — standard belief-based RSA. -/
 noncomputable def cfg (worldPr : FCState → ℝ) (hp : ∀ w, 0 ≤ worldPr w) :
     RSA.RSAConfig Utterance FCState where
@@ -254,7 +253,7 @@ theorem ei_prior_sensitive :
 -- §7. Verification
 -- ============================================================================
 
-/-- The 4 qualitative findings from Champollion et al. (2019). -/
+/-- The 4 qualitative findings from @cite{champollion-alsop-grosu-2019}. -/
 inductive Finding where
   | fci_derived
   | fci_robust_to_prior
@@ -277,7 +276,7 @@ noncomputable def formalize : Finding → Prop
       ¬(biasedCfg.L1_marginal .or_ hasEI >
         biasedCfg.L1_marginal .or_ (fun w => !hasEI w))
 
-/-- The RSA model accounts for all 4 findings from Champollion et al. (2019). -/
+/-- The RSA model accounts for all 4 findings from @cite{champollion-alsop-grosu-2019}. -/
 theorem all_findings_verified : ∀ f : Finding, formalize f := by
   intro f; cases f
   · exact fci_derived

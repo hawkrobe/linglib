@@ -4,7 +4,7 @@ import Linglib.Theories.Semantics.Dynamic.Systems.DynamicGQ.Basic
 # Subtype Polymorphism for Dynamic GQs
 @cite{charlow-2021}
 
-Charlow's (2021) §4: a type system that distinguishes "complete" (T) from
+@cite{charlow-2021}'s §4: a type system that distinguishes "complete" (T) from
 "incomplete" (t) dynamic meanings. Modified numerals contribute incomplete
 meanings (the cardinality test hasn't fired yet), and maximization expects
 incomplete input. The subtyping relation t ⊏ T ensures that incomplete
@@ -61,7 +61,7 @@ def CardTest_type : Completeness := complete
 def dynConj_type (c : Completeness) : Completeness := c
 
 /-- The cumulative formula is well-typed (equation 45):
-    M_v(E^v ; M_u(E^u ; saw)) : t (incomplete), then ; 5_u : T, ; 3_v : T.
+    M_v(E^v; M_u(E^u; saw)) : t (incomplete), then; 5_u : T,; 3_v : T.
     Since t ⊏ T, the outer cardinality tests can accept incomplete input. -/
 theorem cumulative_welltyped :
     subtypeOf (dynConj_type (dynConj_type Mvar_type)) CardTest_type := by

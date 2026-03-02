@@ -50,51 +50,51 @@ open Semantics.Lexical.Verb.Aspect
 variable {α β : Type*} [SemilatticeSup α] [SemilatticeSup β]
 
 /-- Uniqueness of Participant (UP): each event has at most one θ-filler.
-    Krifka (1998) eq. (43): θ(x,e) ∧ θ(y,e) → x = y. -/
+    @cite{krifka-1998} eq. (43): θ(x,e) ∧ θ(y,e) → x = y. -/
 def UP (θ : α → β → Prop) : Prop :=
   ∀ (x y : α) (e : β), θ x e → θ y e → x = y
 
 /-- Cumulative theta (CumTheta): θ preserves sums.
-    Krifka (1998) eq. (44): θ(x,e) ∧ θ(y,e') → θ(x⊕y, e⊕e').
+    @cite{krifka-1998} eq. (44): θ(x,e) ∧ θ(y,e') → θ(x⊕y, e⊕e').
     This is the relational analog of IsSumHom. -/
 def CumTheta (θ : α → β → Prop) : Prop :=
   ∀ (x y : α) (e e' : β), θ x e → θ y e' → θ (x ⊔ y) (e ⊔ e')
 
 /-- Mapping to Events (ME): object parts map to event parts.
-    Krifka (1998) eq. (45): θ(x,e) ∧ y ≤ x → ∃e'. e' ≤ e ∧ θ(y,e'). -/
+    @cite{krifka-1998} eq. (45): θ(x,e) ∧ y ≤ x → ∃e'. e' ≤ e ∧ θ(y,e'). -/
 def ME (θ : α → β → Prop) : Prop :=
   ∀ (x : α) (e : β) (y : α), θ x e → y ≤ x → ∃ e', e' ≤ e ∧ θ y e'
 
 /-- Mapping to Strict subEvents (MSE): proper object parts map to proper subevents.
-    Krifka (1998) eq. (46): θ(x,e) ∧ y < x → ∃e'. e' < e ∧ θ(y,e'). -/
+    @cite{krifka-1998} eq. (46): θ(x,e) ∧ y < x → ∃e'. e' < e ∧ θ(y,e'). -/
 def MSE (θ : α → β → Prop) : Prop :=
   ∀ (x : α) (e : β) (y : α), θ x e → y < x → ∃ e', e' < e ∧ θ y e'
 
 /-- Uniqueness of Events (UE): each object part maps to a unique event part.
-    Krifka (1998) eq. (47): θ(x,e) ∧ y ≤ x → ∃!e'. e' ≤ e ∧ θ(y,e'). -/
+    @cite{krifka-1998} eq. (47): θ(x,e) ∧ y ≤ x → ∃!e'. e' ≤ e ∧ θ(y,e'). -/
 def UE (θ : α → β → Prop) : Prop :=
   ∀ (x : α) (e : β) (y : α), θ x e → y ≤ x →
     ∃ e', e' ≤ e ∧ θ y e' ∧ ∀ e'', e'' ≤ e → θ y e'' → e'' = e'
 
 /-- Mapping to Objects (MO): event parts map to object parts.
-    Krifka (1998) eq. (48): θ(x,e) ∧ e' ≤ e → ∃y. y ≤ x ∧ θ(y,e'). -/
+    @cite{krifka-1998} eq. (48): θ(x,e) ∧ e' ≤ e → ∃y. y ≤ x ∧ θ(y,e'). -/
 def MO (θ : α → β → Prop) : Prop :=
   ∀ (x : α) (e : β) (e' : β), θ x e → e' ≤ e → ∃ y, y ≤ x ∧ θ y e'
 
 /-- Mapping to Strict subObjects (MSO): proper subevents map to proper object parts.
-    Krifka (1998) eq. (49): θ(x,e) ∧ e' < e → ∃y. y < x ∧ θ(y,e'). -/
+    @cite{krifka-1998} eq. (49): θ(x,e) ∧ e' < e → ∃y. y < x ∧ θ(y,e'). -/
 def MSO (θ : α → β → Prop) : Prop :=
   ∀ (x : α) (e : β) (e' : β), θ x e → e' < e → ∃ y, y < x ∧ θ y e'
 
 /-- Uniqueness of Objects (UO): each event part maps to a unique object part.
-    Krifka (1998) eq. (50): θ(x,e) ∧ e' ≤ e → ∃!y. y ≤ x ∧ θ(y,e'). -/
+    @cite{krifka-1998} eq. (50): θ(x,e) ∧ e' ≤ e → ∃!y. y ≤ x ∧ θ(y,e'). -/
 def UO (θ : α → β → Prop) : Prop :=
   ∀ (x : α) (e : β) (e' : β), θ x e → e' ≤ e →
     ∃ y, y ≤ x ∧ θ y e' ∧ ∀ z, z ≤ x → θ z e' → z = y
 
 /-- Generalized Uniqueness of Events (GUE): each object participates in
     at most one event.
-    Krifka (1998) eq. (52): θ(x,e) ∧ θ(x,e') → e = e'. -/
+    @cite{krifka-1998} eq. (52): θ(x,e) ∧ θ(x,e') → e = e'. -/
 def GUE (θ : α → β → Prop) : Prop :=
   ∀ (x : α) (e e' : β), θ x e → θ x e' → e = e'
 
@@ -104,10 +104,10 @@ def GUE (θ : α → β → Prop) : Prop :=
 
 /-- Strict Incrementality (SINC): the conjunction of MSO, UO, MSE, UE
     plus a non-degeneracy condition requiring extended entities.
-    Krifka (1998) eq. (51):
+    @cite{krifka-1998} eq. (51):
 
     SINC(θ) iff
-      (i)  MSO(θ) ∧ UO(θ) ∧ MSE(θ) ∧ UE(θ)
+      (i) MSO(θ) ∧ UO(θ) ∧ MSE(θ) ∧ UE(θ)
       (ii) ∃x,y∈U_P ∃e,e'∈U_E [y < x ∧ e' < e ∧ θ(x,e) ∧ θ(y,e')]
 
     Condition (i) guarantees a bijective correspondence between the part
@@ -126,7 +126,7 @@ structure SINC (θ : α → β → Prop) : Prop where
   /-- Each object part has a unique event counterpart. -/
   ue  : UE θ
   /-- Non-degeneracy: θ applies to at least one extended entity pair.
-      Krifka (1998) eq. (51.ii): the relation must involve entities with
+      @cite{krifka-1998} eq. (51.ii): the relation must involve entities with
       proper parts, not just atoms. -/
   extended : ∃ (x y : α) (e e' : β), y < x ∧ e' < e ∧ θ x e ∧ θ y e'
 
@@ -141,7 +141,7 @@ structure SINC (θ : α → β → Prop) : Prop where
 -- UP must be assumed separately where needed (e.g., in `qua_propagation`).
 
 /-- MSE implies ME: weaken strict to non-strict.
-    Krifka (1998): if proper parts map to proper subevents, then
+    @cite{krifka-1998}: if proper parts map to proper subevents, then
     parts (including the whole) also map, taking e' = e when y = x. -/
 theorem me_of_mse {θ : α → β → Prop} (h : MSE θ) : ME θ := by
   intro x e y hθ hle
@@ -181,7 +181,7 @@ theorem mo_of_sinc {θ : α → β → Prop} (h : SINC θ) : MO θ :=
 -- ════════════════════════════════════════════════════
 
 /-- VP predicate formed by existential closure over the object argument.
-    Krifka (1998) eq. (53): VP_θ,OBJ = λe.∃y[OBJ(y) ∧ θ(y,e)].
+    @cite{krifka-1998} eq. (53): VP_θ,OBJ = λe.∃y[OBJ(y) ∧ θ(y,e)].
     "eat apples" = λe.∃y[apples(y) ∧ eat.theme(y,e)]. -/
 def VP (θ : α → β → Prop) (OBJ : α → Prop) : β → Prop :=
   fun e => ∃ y, OBJ y ∧ θ y e
@@ -191,7 +191,7 @@ def VP (θ : α → β → Prop) (OBJ : α → Prop) : β → Prop :=
 -- ════════════════════════════════════════════════════
 
 /-- **CUM propagation**: cumulative θ transmits CUM from NP to VP.
-    Krifka (1998) §3.3: CumTheta(θ) ∧ CUM(OBJ) → CUM(VP θ OBJ).
+    @cite{krifka-1998} §3.3: CumTheta(θ) ∧ CUM(OBJ) → CUM(VP θ OBJ).
 
     "eat apples" is CUM because:
     - APPLES is CUM (mass/bare-plural NPs are cumulative)
@@ -208,7 +208,7 @@ theorem cum_propagation {θ : α → β → Prop} {OBJ : α → Prop}
   exact ⟨y₁ ⊔ y₂, hObj y₁ y₂ hobj₁ hobj₂, hCum y₁ y₂ e₁ e₂ hθ₁ hθ₂⟩
 
 /-- **QUA propagation**: UP + MSO + UO transmit QUA from NP to VP.
-    Krifka (1998) §3.3: UP(θ) ∧ MSO(θ) ∧ UO(θ) ∧ QUA(OBJ) → QUA(VP θ OBJ).
+    @cite{krifka-1998} §3.3: UP(θ) ∧ MSO(θ) ∧ UO(θ) ∧ QUA(OBJ) → QUA(VP θ OBJ).
 
     "eat two apples" is QUA because:
     - TWO-APPLES is QUA (quantized NPs have no P-proper-parts)
@@ -249,7 +249,7 @@ theorem qua_propagation_sinc {θ : α → β → Prop} {OBJ : α → Prop}
 -- ════════════════════════════════════════════════════
 
 /-- Graduality (GRAD): more object measure entails more event measure.
-    Krifka (1989): GRAD(θ, μ_obj, μ_ev) ⇔ ∀x,y,e,e'. θ(x,e) ∧ θ(y,e') ∧
+    @cite{krifka-1989}: GRAD(θ, μ_obj, μ_ev) ⇔ ∀x,y,e,e'. θ(x,e) ∧ θ(y,e') ∧
     μ_obj(x) < μ_obj(y) → μ_ev(e) < μ_ev(e').
     GRAD captures the intuition that eating more food takes more time. -/
 def GRAD (θ : α → β → Prop) (μ_obj : α → ℚ) (μ_ev : β → ℚ) : Prop :=
@@ -257,7 +257,7 @@ def GRAD (θ : α → β → Prop) (μ_obj : α → ℚ) (μ_ev : β → ℚ) : 
     μ_obj x < μ_obj y → μ_ev e < μ_ev e'
 
 /-- SINC + extensive measures + measure proportionality → GRAD.
-    Krifka (1989): strictly incremental themes with extensive measures
+    @cite{krifka-1989}: strictly incremental themes with extensive measures
     and a constant consumption rate exhibit gradual change.
 
     Proof: if μ_ev(e) = c · μ_obj(x) and μ_ev(e') = c · μ_obj(y),
@@ -346,7 +346,7 @@ theorem GRADSquare.qua_pullback_ev {α β γ : Type*}
 -- ════════════════════════════════════════════════════
 
 /-- Incrementality annotations for verbs.
-    Krifka (1998) §3.2–3.7: verbs differ in which thematic role properties
+    @cite{krifka-1998} §3.2–3.7: verbs differ in which thematic role properties
     their incremental theme satisfies. -/
 inductive VerbIncClass where
   /-- Strictly incremental: consumption/creation verbs (eat, build).
@@ -386,7 +386,7 @@ class VerbIncrementality (α β : Type*) [SemilatticeSup α] [SemilatticeSup β]
 
 /-- General Incrementality (INC): θ is the closure of some strictly
     incremental θ' under sum formation.
-    Krifka (1998) eq. (59): θ is incremental iff there exists a SINC θ'
+    @cite{krifka-1998} eq. (59): θ is incremental iff there exists a SINC θ'
     such that θ(x,e) holds iff (x,e) can be decomposed into θ'-pairs
     that sum to (x,e). This handles "read the article" (allows
     re-reading/backups): reading events are built from strictly
@@ -423,7 +423,7 @@ theorem inc_of_sinc {θ : α → β → Prop} (h : SINC θ) (hCum : CumTheta θ)
 /-- Bridge: CUM propagation via CumTheta + CUM(OBJ).
     CumTheta(θ) ∧ CUM(OBJ) → CUM(VP θ OBJ).
     In CEM models, SINC implies CumTheta, so this covers the
-    "SINC verb + CUM noun → CUM VP" case from Krifka (1998) §3.3. -/
+    "SINC verb + CUM noun → CUM VP" case from @cite{krifka-1998} §3.3. -/
 theorem sinc_cum_propagation {θ : α → β → Prop} {OBJ : α → Prop}
     (hCumTheta : CumTheta θ) (hObj : CUM OBJ) :
     CUM (VP θ OBJ) :=

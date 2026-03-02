@@ -9,7 +9,7 @@ import Linglib.Phenomena.Questions.PolarAnswers
 
 Connects the empirical judgments in `PolarAnswers.lean` (modal answers
 are infelicitous to Turkish polar questions) to the formal explanation:
-Fox & Katzir (2011) category match over UPOS tags.
+@cite{fox-katzir-2011} category match over UPOS tags.
 
 ## The Problem
 
@@ -92,7 +92,7 @@ def opLexicon : List (CatItem (PolarWorld → Bool)) :=
 def typeTheoAlternatives : List (PolarWorld → Bool) :=
   typeTheoAlts opLexicon
 
-/-- Category-match alternatives (Fox & Katzir 2011): only `PART`-tagged
+/-- Category-match alternatives: only `PART`-tagged
     operators → {p, ¬p}. Correct. -/
 def catMatchAlternatives : List (PolarWorld → Bool) :=
   categoryMatchAlts .PART opLexicon
@@ -174,13 +174,13 @@ theorem theory_overgen_without_catmatch :
 -- §7  Bridge: K&S 2020 AltMeaning
 -- ═══════════════════════════════════════════════════════════════════════
 
-/-! The connection to Kratzer & Selkirk (2020) is via the A-value of
+/-! The connection to @cite{kratzer-selkirk-2020} is via the A-value of
     a [FoC]-marked expression. In Rooth/K&S's framework, the A-value
     of a [FoC]-marked constituent is the set of alternatives of the
     same semantic type — i.e., exactly the type-theoretic D_τ computation.
 
     Turk et al.'s contribution is showing that this over-generates for
-    Turkish polar questions, and that category match (Fox & Katzir 2011)
+    Turkish polar questions, and that category match
     is the correct constraint on alternative computation. -/
 
 /-- Applying [FoC] with type-theoretic A-value yields the over-generating set. -/

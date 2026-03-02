@@ -3,13 +3,13 @@ import Linglib.Core.Lexical.Word
 /-! # Conjunction Distribution: Empirical Data
 
 Theory-neutral empirical judgments about conjunction distribution with
-attitude verbs (Bondarenko & Elliott 2026).
+attitude verbs.
 
 The empirical generalization: some attitude verbs distribute over
 conjunction in their complement, and some do not.
 
-  "John believes p and q" ↔ "John believes p and John believes q"   ✓
-  "John is surprised that p and q" ↛ "John is surprised that p ..."  ✗
+  "John believes p and q" ↔ "John believes p and John believes q" ✓
+  "John is surprised that p and q" ↛ "John is surprised that p..." ✗
 
 -/
 
@@ -27,7 +27,7 @@ structure ConjDistDatum where
   citation : String
   deriving Repr, BEq
 
-/-- Empirical data from Bondarenko & Elliott (2026) §1.
+/-- Empirical data from @cite{bondarenko-elliott-2026} §1.
     Upward-monotone attitudes distribute; non-monotone ones do not. -/
 def data : List ConjDistDatum := [
   -- Upward-monotone: distribute

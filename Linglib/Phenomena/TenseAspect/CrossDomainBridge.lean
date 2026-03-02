@@ -2,7 +2,7 @@ import Linglib.Theories.Semantics.Lexical.Verb.Aspect
 import Linglib.Fragments.Mandarin.AspectComparison
 
 /-!
-# Cross-Domain Bridge: VendlerClass ↔ Mandarin Particles (Zhao 2025)
+# Cross-Domain Bridge: VendlerClass ↔ Mandarin Particles
 @cite{zhao-2025}
 
 Bridges VendlerClass ATOM-DIST predictions (from Theories/) to the

@@ -2,35 +2,34 @@ import Linglib.Core.Lexical.Word
 
 /-!
 # Cross-Linguistic Typology of Tense and Aspect (WALS Chapters 65--69)
- @cite{comrie-1985} @cite{dryer-haspelmath-2013} @cite{dahl-velupillai-2013}
+ @cite{comrie-1985} @cite{dryer-haspelmath-2013} @cite{dahl-velupillai-2013} @cite{de-haan-2013}
 
 Cross-linguistic data on tense-aspect systems from the World Atlas of Language
 Structures (WALS), covering five parameters:
 
 - **Ch 65 (Perfective/Imperfective Aspect)**: Whether a language grammaticalizes
   the perfective/imperfective distinction. 222 languages, two values.
-  (Dahl & Velupillai 2013a)
 
 - **Ch 66 (The Past Tense)**: Whether a language has grammatical marking of
   past tense, and if so how many remoteness distinctions it makes. 222 languages,
-  four values. (Dahl & Velupillai 2013b)
+  four values.
 
 - **Ch 67 (The Future Tense)**: Whether a language has inflectional marking of
-  future tense. 222 languages, two values. (Dahl & Velupillai 2013c)
+  future tense. 222 languages, two values.
 
 - **Ch 68 (The Perfect)**: Whether a language has a distinct perfect category
   (resultative + experiential uses), and its diachronic source. 222 languages,
-  four values. (Dahl & Velupillai 2013d)
+  four values.
 
 - **Ch 69 (Position of Tense-Aspect Affixes)**: How tense-aspect is
-  morphologically expressed. 1062 languages, five values. (Dryer 2013)
+  morphologically expressed. 1062 languages, five values.
 
 ## Key findings
 
-Dahl & Velupillai (2013) note that there is no evidence for a typological
+@cite{dahl-velupillai-2013} note that there is no evidence for a typological
 division into "tense languages" vs "aspect languages" -- languages that have
 aspectual marking tend also to have tense marking. Suffixing is overwhelmingly
-the dominant strategy for tense-aspect morphology (Dryer 2013). South-East
+the dominant strategy for tense-aspect morphology. South-East
 Asian languages consistently lack morphological tense-aspect marking.
 
 -/
@@ -528,7 +527,7 @@ theorem suffix_absolute_majority :
 /-- In the sample, languages with BOTH aspect and past marking outnumber
     languages with ONLY one of the two.
 
-    Dahl & Velupillai (2013): "there are considerably more languages in the
+    @cite{dahl-velupillai-2013}: "there are considerably more languages in the
     sample that have both the aspectual and the temporal categories, or
     neither of the alternatives, than have one only." -/
 def hasAspectAndPast (p : TAProfile) : Bool :=
@@ -569,7 +568,7 @@ def lacksMajorTAGrams (p : TAProfile) : Bool :=
     no grammaticalized perfective/imperfective, no past marking, no inflectional
     future.
 
-    Dahl & Velupillai (2013): "The languages in this area lack not only past
+    @cite{dahl-velupillai-2013}: "The languages in this area lack not only past
     tenses but also marking of the imperfective/perfective distinction and
     inflectional futures."
 
@@ -683,7 +682,7 @@ theorem ta_empty_nonempty :
 /-- Languages that lack all four T/A categories AND have no T/A inflection
     form the core of the South-East Asian isolating cluster.
 
-    This matches the pattern described by Dahl & Velupillai (2013):
+    This matches the pattern described by @cite{dahl-velupillai-2013}:
     the same languages that lack tense and aspect grams are the
     isolating languages that lack inflectional morphology.
 
@@ -699,7 +698,7 @@ theorem ta_empty_and_no_inflection :
 -- Types: WALS Chapter 78 — Coding of Evidentiality
 -- ============================================================================
 
-/-- WALS Ch 78: How evidentiality is coded in the language (de Haan 2013).
+/-- WALS Ch 78: How evidentiality is coded in the language.
 
     "Evidentiality" here means grammaticalized marking of information source.
     Languages differ in whether evidentiality is part of the tense system,
@@ -781,7 +780,7 @@ def quechuaTAME : TAMEProfile :=
 /--
 Korean (Koreanic). Evidentiality via verbal suffixes:
 -te (retrospective evidential), -ney (contemporaneous evidential).
-Cumming (2026) analyzes these as tense-evidential interactions.
+@cite{cumming-2026} analyzes these as tense-evidential interactions.
 -/
 def koreanTAME : TAMEProfile :=
   { language := "Korean", iso := "kor", family := "Koreanic"

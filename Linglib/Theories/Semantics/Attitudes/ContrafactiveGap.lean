@@ -366,7 +366,7 @@ theorem strongContrafactive_fails_in_neutral_ctx :
     then verify it's satisfied in a factive context.
 
     This closes the full chain:
-    `know.attitudeBuilder → .veridical → deriveCGRequirement → .factive → satisfied`
+    `know.attitudeBuilder →.veridical → deriveCGRequirement →.factive → satisfied`
 -/
 theorem know_factive_satisfied_endtoend :
     (deriveCGReqFromVerb know.toVerbCore).map

@@ -10,13 +10,13 @@ to the BToM-grounded RSA model (`Theories.Pragmatics.RSA.Implementations`).
 
 ## The Pipeline
 
-    Core/BToM.lean                    (BToMModel, beliefExpectation)
+    Core/BToM.lean (BToMModel, beliefExpectation)
         ↓
-    Theories/RSA/ScontrasTonhauser2025  (HasBelief, HasComplement, assumesCIndicator)
+    Theories/RSA/ScontrasTonhauser2025 (HasBelief, HasComplement, assumesCIndicator)
         ↓
-    this file                          (bridge theorems)
+    this file (bridge theorems)
         ↑
-    Phenomena/Presupposition/Studies/ScontrasTonhauser2025  (experimental data)
+    Phenomena/Presupposition/Studies/ScontrasTonhauser2025 (experimental data)
 
 ## What This Proves
 

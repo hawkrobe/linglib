@@ -12,8 +12,8 @@ import Linglib.Phenomena.Constructions.Studies.KayFillmore1999
 import Linglib.Phenomena.TenseAspect.DiagnosticsBridge
 
 /-!
-# Kay & Fillmore (1999): *What's X Doing Y?* Construction
-@cite{kay-fillmore-1999}
+# @cite{kay-fillmore-1999}: *What's X Doing Y?* Construction
+@cite{kay-fillmore-1999} @cite{dayal-2025} @cite{potts-2005}
 
 Formalization of "Grammatical Constructions and Linguistic Generalizations:
 The *What's X doing Y?* Construction" (Language 75(1):1–33).
@@ -27,7 +27,7 @@ LeftPeriphery + Expressives + Presupposition infrastructure can derive:
 - **Interrogative form**: +WH feature, wh-fronting, subject-aux inversion
 - **Expressive function**: CI content (unexpectedness), presupposed proposition
 
-The two readings are distinguished by the PerspectiveP layer (Dayal 2025):
+The two readings are distinguished by the PerspectiveP layer:
 - **Literal**: speaker is ignorant → PerspP satisfied → genuine question
 - **Incredulity**: speaker knows the answer → PerspP blocked → not a real question
 
@@ -60,7 +60,7 @@ open Phenomena.Constructions.Studies.FillmoreKayOConnor1988
 
 /-- The WXDY construction as a `Construction`.
 
-Form: [CP What's [TP NP doing [VP/PP ...]]]
+Form: [CP What's [TP NP doing [VP/PP...]]]
 - Interrogative form: wh-fronting, subject-aux inversion, +WH
 - *doing* is frozen progressive: licenses the construction
 - Complement: locative PP, participial VP, or instrumental PP -/
@@ -189,7 +189,7 @@ def wxdyCIProperties : CIExprProperties :=
   , immediate := true
   , independent := true }
 
-/-- CI projects through negation (Potts 2005): the unexpectedness meaning
+/-- CI projects through negation: the unexpectedness meaning
 survives under negation. Delegates to `TwoDimProp.ci_projects_through_neg`. -/
 theorem wxdy_ci_projects_through_neg {W : Type*}
     (embeddedProp unexpectedness : W → Bool) :
@@ -312,7 +312,7 @@ open Phenomena.TenseAspect.Diagnostics
 
 /-- WXDY's *doing* selects for activities and accomplishments — predicates
 that are durative ∧ dynamic. This connects to the progressive diagnostic:
-`progressivePrediction = .accept ↔ durative ∧ dynamic`.
+`progressivePrediction =.accept ↔ durative ∧ dynamic`.
 
 The progressive requirement in WXDY reflects the same aspectual constraint
 as the standard progressive: it selects predicates with internal stages. -/

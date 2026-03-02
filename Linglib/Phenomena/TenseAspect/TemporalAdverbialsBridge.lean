@@ -5,11 +5,11 @@ import Linglib.Core.Temporal.Time
 import Linglib.Fragments.English.TemporalAdverbials
 
 /-!
-# Rouillard (2026): Temporal *in*-Adverbials — Empirical Data
-@cite{kennedy-2007} @cite{rouillard-2026} @cite{vendler-1957}
+# @cite{rouillard-2026}: Temporal *in*-Adverbials — Empirical Data
+@cite{kennedy-2007} @cite{rouillard-2026} @cite{vendler-1957} @cite{ladusaw-1979}
 
 Empirical distributional data and verification theorems for temporal
-*in*-adverbials (TIAs), following Rouillard (2026) "Maximal informativity
+*in*-adverbials (TIAs), following @cite{rouillard-2026} "Maximal informativity
 accounts for the distribution of temporal *in*-adverbials" (*L&P* 49:1–56).
 
 ## Data Points
@@ -166,7 +166,7 @@ def gTIAData : List GTIADatum :=
 -- ════════════════════════════════════════════════════
 
 /-- G-TIA acceptability predicted by: requires BOTH negative polarity AND perfect.
-    Rouillard (2026) Table 1: only NEG + G-TIA + PFV reading is acceptable. -/
+    @cite{rouillard-2026} Table 1: only NEG + G-TIA + PFV reading is acceptable. -/
 def gTIA_predicted (d : GTIADatum) : Bool :=
   (d.isNegative && d.hasPerfect) == d.acceptable
 
@@ -209,7 +209,7 @@ theorem shared_preposition_from_fragment :
 -- § 6. The Perfect Readings (Table 1)
 -- ════════════════════════════════════════════════════
 
-/-- Rouillard (2026) Table 1: readings for "*Mary has been sick in three days"
+/-- @cite{rouillard-2026} Table 1: readings for "*Mary has been sick in three days"
     and its negation, crossed with aspect and TIA type. -/
 structure Table1Entry where
   polarity : Bool    -- true = positive, false = negative
@@ -267,8 +267,8 @@ theorem nonhomogeneous_implies_closed_scale (p : AspectualProfile)
 -- § 8. NPI Bridge: G-TIAs as NPIs Licensed by MIP
 -- ════════════════════════════════════════════════════
 
-/-! Rouillard (2026) §6.1 argues that G-TIAs are NPIs licensed by maximal
-    informativity, NOT by downward entailment (Ladusaw 1979). The key evidence:
+/-! @cite{rouillard-2026} §6.1 argues that G-TIAs are NPIs licensed by maximal
+    informativity, NOT by downward entailment. The key evidence:
 
     1. DE-based accounts (Hoeksema 2006, Gajewski 2005/2007) incorrectly predict
        E-TIAs should also be polarity-sensitive (they aren't — E-TIAs are aspect-
@@ -366,15 +366,15 @@ theorem since_fragment_bridge :
 -- § 10. TIA Stacking Constraint (§3.2, ex. 60)
 -- ════════════════════════════════════════════════════
 
-/-! Rouillard (2026) §3.2, ex. (60): when two TIAs are stacked, the inner
+/-! @cite{rouillard-2026} §3.2, ex. (60): when two TIAs are stacked, the inner
     (VP-adjacent) one must be an E-TIA and the outer one a G-TIA. The reverse
     order is ungrammatical.
 
-    (60a)  "Mary hasn't written up a paper in three days in two weeks." ✓
+    (60a) "Mary hasn't written up a paper in three days in two weeks." ✓
            inner = "in three days" (E-TIA, modifies VP)
            outer = "in two weeks" (G-TIA, modifies AspP)
 
-    (60b)  "#Mary hasn't written up a paper in two weeks in three days." ✗
+    (60b) "#Mary hasn't written up a paper in two weeks in three days." ✗
            inner = "in two weeks" (G-TIA?), outer = "in three days" (E-TIA?)
            — violates the syntactic position constraint -/
 

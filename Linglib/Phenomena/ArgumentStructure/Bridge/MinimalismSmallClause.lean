@@ -6,9 +6,9 @@ import Linglib.Phenomena.Constructions.ParticleVerbs.Data
 /-!
 # PVC–DOC Structural Priming — Small Clause Bridge
 
-@cite{haddican-tamminga-dendikken-wade-2026} @cite{dendikken-1995}
+@cite{haddican-tamminga-dendikken-wade-2026} @cite{dendikken-1995} @cite{halle-marantz-1993} @cite{johnson-1991}
 
-Haddican, Tamminga, den Dikken & Wade (2026) report a production priming
+Haddican, @cite{haddican-tamminga-dendikken-wade-2026} report a production priming
 experiment (N=238) showing PVCs ("put down the vase") prime DOCs
 ("gave Hsu the book") relative to non-PVC controls (β=0.296, p=.005).
 PVC and DOC primes do not differ in priming magnitude (β=−0.069, p=.503),
@@ -17,8 +17,7 @@ consistent with identical structural representations.
 The results "do not uniquely support SC approaches to PVCs and DOCs,
 but rather any framework that yields structural isomorphism between them
 that is not shared with PDs" (p.10). We formalize the four analyses the
-paper compares, plus den Dikken's (1995) broader SC family and Bruening's
-(2021) complex predicate alternative, and prove which pairs yield
+paper compares, plus @cite{dendikken-1995}'s broader SC family and @cite{bruening-2021}'s complex predicate alternative, and prove which pairs yield
 tree-shape isomorphism.
 
 ## Analyses formalized (paper's examples)
@@ -31,7 +30,7 @@ tree-shape isomorphism.
 | 4 | PVC | Complex predicate: `[VP [V+Prt] DP]` | Johnson 1991 | (5) |
 | 5 | PD  | `[VP [V' V DP] [PP P DP]]` | (control) | — |
 
-## Den Dikken (1995) SC family
+## @cite{dendikken-1995} SC family
 
 Den Dikken's thesis (1995:25, ex. 41–42) is that all subject-predicate
 relationships are incarnated as small clauses `[SC Subj Pred]`:
@@ -49,11 +48,11 @@ DOCs. See `Phenomena.Constructions.Resultatives.Data` for resultative data.
 
 ## Caveats
 
-Bruening's (2021) complex predicate approach to *both* DOC and PVC would
+@cite{bruening-2021}'s complex predicate approach to *both* DOC and PVC would
 furnish isomorphism at the process level (both involve V+Head complex
 predicate formation) rather than tree-shape identity — "We know of no
 priming literature testing specifically whether movement or other syntactic
-operations can feed priming" (p.11). Pylkkänen's (2008) low ApplP and
+operations can feed priming" (p.11). @cite{brennan-pylkkanen-2008}'s low ApplP and
 Wood & Marantz's (2017) i* head are also noted as potential sources of
 isomorphism (nn. 13, 15).
 
@@ -103,15 +102,14 @@ theorem experimental_pvcs_in_inventory :
       (· == Phenomena.Constructions.ParticleVerbs.put_down)) = true := by
   constructor <;> native_decide
 
-/-- The ApplP analysis uses a LOW applicative (Marantz 1993; Pylkkänen 2008).
+/-- The ApplP analysis uses a LOW applicative.
     Low applicatives relate the applied argument (goal) to the theme,
     consistent with transfer/possession semantics ("give X to Y"). -/
 def doc_appl_type : ApplType := .low
 
 /-! ## §2. Structural analyses (Haddican et al.) -/
 
-/-- **DOC, Small Clause** (Kayne 1984, 1985; Harley 1997, 2002;
-    Beck & Johnson 2004): `[VP V [SC DP_goal DP_theme]]` — paper's (3).
+/-- **DOC, Small Clause**: `[VP V [SC DP_goal DP_theme]]` — paper's (3).
     Den Dikken (1995:25, ex. 41e): the dative is an instance of SC
     predication, with the goal as SC subject and theme as predicate. -/
 def doc_sc : SyntacticObject :=
@@ -119,7 +117,7 @@ def doc_sc : SyntacticObject :=
 
 /-- **DOC, Applicative** (Marantz 1993; Bruening 2010a,b):
     `[ApplP DP_goal [Appl' Appl [VP V DP_theme]]]` — paper's (6)/(9).
-    Uses a low applicative (`doc_appl_type = .low`), relating goal to theme. -/
+    Uses a low applicative (`doc_appl_type =.low`), relating goal to theme. -/
 def doc_appl : SyntacticObject :=
   merge DP_hsu (merge Appl_h (merge V_give DP_book))
 
@@ -132,7 +130,7 @@ def doc_appl : SyntacticObject :=
 def pvc_sc : SyntacticObject :=
   merge V_lift (merge DP_hsu Prt_up)
 
-/-- **PVC, Complex predicate** (Johnson 1991; Radford 1997; McIntyre 2015):
+/-- **PVC, Complex predicate**:
     `[VP [V lift+up] DP]` — paper's (5). V and particle form a composite
     terminal (complex head via head incorporation), not a phrase. Uses the
     existing `LexicalItem.combine` infrastructure for head-to-head movement. -/
@@ -153,22 +151,22 @@ def pd : SyntacticObject :=
 def transitive_control : SyntacticObject :=
   merge V_lift DP_hsu
 
-/-! ## §3. Den Dikken (1995) SC family
+/-! ## §3. @cite{dendikken-1995} SC family
 
-Den Dikken's (1995) monograph title is "Particles: On the Syntax of
+@cite{dendikken-1995}'s monograph title is "Particles: On the Syntax of
 Verb-Particle, *Triadic*, and *Causative* Constructions." His central
 thesis (Ch.1, ex. 42) is that all subject-predicate relationships are
 incarnated as small clauses:
 
-    [SC subject [XP predicate]]       (den Dikken 1995:27, ex. 44)
+    [SC subject [XP predicate]] (den Dikken 1995:27, ex. 44)
 
 He identifies a family of constructions sharing this template (p.25, ex. 41):
 
-    a. John is a fool/foolish.               (copular)
-    b. They consider John a fool/foolish.     (ECM)
-    c. They hammered the metal flat.          (resultative)
-    d. They put the books on the shelf.       (PVC / locative)
-    e. They gave the books to Mary.           (triadic / dative)
+    a. John is a fool/foolish. (copular)
+    b. They consider John a fool/foolish. (ECM)
+    c. They hammered the metal flat. (resultative)
+    d. They put the books on the shelf. (PVC / locative)
+    e. They gave the books to Mary. (triadic / dative)
 
 All share the abstract tree shape `V [SC X Y]` = `node(leaf, node(leaf, leaf))`.
 See also `Phenomena.Constructions.Resultatives.Data` for resultative data. -/
@@ -180,7 +178,7 @@ See also `Phenomena.Constructions.Resultatives.Data` for resultative data. -/
 def resultative_sc : SyntacticObject :=
   merge V_hammer (merge DP_metal AP_flat)
 
-/-- **Causative, Small Clause** (den Dikken 1995, Ch. 5):
+/-- **Causative, Small Clause**:
     `[VP V [SC DP VP]]` — "She made the child laugh."
     The embedded VP is the SC predicate; the causee DP is the
     SC subject. See also `Minimalism.buildDecomposition` for the
@@ -218,7 +216,7 @@ theorem causative_sc_shape :
 
 /-! ## §5. Structural isomorphism (Haddican et al. analyses)
 
-The linking hypothesis (Bock 1986; Branigan & Pickering 2017): structural
+The linking hypothesis: structural
 priming is sensitive to abstract constituent structure. Shared tree shape
 predicts cross-construction priming; distinct shape predicts none. -/
 
@@ -319,7 +317,7 @@ theorem sc_family_all_differ_from_pd :
     structurallyIsomorphic causative_sc pd = false := by
   refine ⟨?_, ?_, ?_⟩ <;> native_decide
 
-/-! ## §6a. SC family categorization (den Dikken 1995)
+/-! ## §6a. SC family categorization
 
 Each SC construction is tagged with its predicate category from
 `SmallClause.lean`. This connects the geometric analysis (§§5–6) to
@@ -331,7 +329,7 @@ category of the predicate head. -/
 def pvc_category : SCPredCategory := .P
 
 /-- DOC is a P-predicate SC — the dative P "to" is the SC predicate,
-    incorporated into V in the DOC surface form (den Dikken 1995, Ch. 3).
+    incorporated into V in the DOC surface form.
     This is den Dikken's deep claim: DOC and PVC share category P because
     dative P is structurally a particle. -/
 def doc_category : SCPredCategory := .P
@@ -360,13 +358,13 @@ theorem sc_family_covers_all_categories :
     copular_category = .N := by
   exact ⟨rfl, rfl, rfl, rfl⟩
 
-/-! ## §6b. Nested SC for DOC (den Dikken 1995, Ch. 3)
+/-! ## §6b. Nested SC for DOC
 
 Den Dikken's DOC analysis: the theme is the SC subject (paralleling
 the object's role in PVCs), and the PP `[PP to Goal]` is the SC
 predicate — a P head with a goal complement:
 
-    `V [SC Theme [PP P Goal]]`   =   `give [SC book [PP to Hsu]]`
+    `V [SC Theme [PP P Goal]]` = `give [SC book [PP to Hsu]]`
 
 P-incorporation into V yields the DOC surface ("give Hsu the book");
 P in situ yields the PP-dative ("give the books to Mary"). This
@@ -379,7 +377,7 @@ The nested analysis has more internal structure than the flat
 SC template `V [SC Subj XP]`. -/
 
 /-- Nested SC DOC: `give [SC book [PP to Hsu]]`.
-    Den Dikken (1995, Ch. 3): the theme (book) is the SC subject —
+    @cite{dendikken-1995}: the theme (book) is the SC subject —
     paralleling PVCs where the object is SC subject — and the PP
     "to Hsu" is the SC predicate (P head with goal complement).
     P-incorporation yields DOC; P in situ yields PP-dative. -/
@@ -401,9 +399,9 @@ theorem doc_nested_not_flat :
 theorem doc_nested_matches_appl :
     structurallyIsomorphic doc_nested doc_appl = true := by native_decide
 
-/-! ## §7. Bruening (2021): process-level vs tree-shape isomorphism
+/-! ## §7. @cite{bruening-2021}: process-level vs tree-shape isomorphism
 
-Bruening (2021) proposes complex predicate formation (V+Head) for BOTH
+@cite{bruening-2021} proposes complex predicate formation (V+Head) for BOTH
 DOC and PVC. The paper notes this would "also furnish isomorphism, but
 at the process level (both involve V+Head complex predicate formation)
 rather than tree-shape identity" (p.11).
@@ -418,7 +416,7 @@ single complement), but both derivations involve the same operation
 driven by shared derivational operations (not just shared tree shapes),
 Bruening's analysis also predicts PVC→DOC priming. -/
 
-/-- Bruening (2021) DOC: `[VP [V+R] DP_goal DP_theme]`. V incorporates
+/-- @cite{bruening-2021} DOC: `[VP [V+R] DP_goal DP_theme]`. V incorporates
     a relational head R, yielding a complex predicate with two DP
     complements. -/
 def doc_bruening : SyntacticObject :=

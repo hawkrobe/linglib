@@ -71,7 +71,7 @@ inductive CIAlternativeType where
 /--
 A CI alternative pair: weaker and stronger CI expressions.
 
-Following Fox & Katzir (2011), alternatives must be:
+Following @cite{fox-katzir-2011}, alternatives must be:
 1. Formal alternatives (constructible by substitution)
 2. At most as complex as the original
 3. Contextually relevant
@@ -135,7 +135,7 @@ structure MCIsResult where
 /--
 Apply MCIs! to derive an ACI.
 
-Following Lo Guercio (2025) Definition 15:
+Following @cite{lo-guercio-2025} Definition 15:
 - If speaker used φ with weaker CI
 - And there's a formal alternative φ' with stronger CI
 - Then infer speaker couldn't felicitously use φ'
@@ -207,7 +207,7 @@ Example (50): "Juan called Maria or that bastard Pedro"
 - ACI: not(Maria is a bastard)
 - Stronger alternative has different assertive content (and vs or)
 
-CI content is independent of at-issue content (Potts 2005).
+CI content is independent of at-issue content.
 -/
 theorem aci_independent_of_assertion :
     -- Constructive witness: ACI arises despite different assertions
@@ -314,8 +314,8 @@ def aciProperties : ScalarInferenceComparison :=
 
 /--
 The ACI mechanism is grounded in:
-1. Potts (2005): CI content is independent of at-issue content
-2. Fox & Katzir (2011): Formal alternatives are structurally constrained
+1. @cite{potts-2005}: CI content is independent of at-issue content
+2. @cite{fox-katzir-2011}: Formal alternatives are structurally constrained
 3. Gricean reasoning: Cooperative speakers maximize informativeness
 
 Given these, MCIs! derives ACIs compositionally: if the speaker used φ

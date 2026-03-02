@@ -8,7 +8,7 @@ Connects the formal proof that CCG is strictly more expressive than CFG
 (from `GenerativeCapacity`) to the empirical cross-serial dependency
 classification in `Phenomena.FillerGap.CrossSerial`.
 
-The key bridge: the phenomenal `crossSerialRequires = .mildlyContextSensitive`
+The key bridge: the phenomenal `crossSerialRequires =.mildlyContextSensitive`
 classification agrees with the theory-level classification, justified by
 the formal proof that {a^n b^n c^n d^n} is not context-free.
 -/

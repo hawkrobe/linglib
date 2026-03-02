@@ -1,10 +1,10 @@
 import Linglib.Fragments.Japanese.Particles
 
 /-!
-# Empirical Data: Kubota (2026) "Outlook Management"
+# Empirical Data: @cite{kubota-2026} "Outlook Management"
 @cite{kubota-2026}
 
-Empirical observations on Japanese outlook markers from Kubota (2026).
+Empirical observations on Japanese outlook markers from @cite{kubota-2026}.
 
 ## Key Phenomena
 
@@ -39,7 +39,7 @@ structure FelicityDatum where
   felicitous : Bool
   /-- Why it is or isn't felicitous -/
   explanation : String
-  /-- Example number in Kubota (2026) -/
+  /-- Example number in @cite{kubota-2026} -/
   exampleNum : String
   deriving Repr
 

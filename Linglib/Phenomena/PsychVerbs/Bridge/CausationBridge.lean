@@ -11,7 +11,7 @@ import Linglib.Phenomena.ImplicitCausality.Studies.SolstadBott2024.Bridge.ProtoR
 @cite{belletti-rizzi-1988} @cite{kim-2024}
 
 Bridge theorems connecting fragment entries to the B&R (1988) classification
-and Kim's (2024) Uniform Projection Hypothesis for Class II psych verbs.
+and @cite{kim-2024}'s Uniform Projection Hypothesis for Class II psych verbs.
 
 ## Architecture
 
@@ -21,7 +21,7 @@ The fragment entries in `Verbal.lean` set four fields independently:
 - `objectTheta` (experiencer vs stimulus)
 - `opaqueContext` (true vs false)
 
-Kim's (2024) theory predicts these fields must covary:
+@cite{kim-2024}'s theory predicts these fields must covary:
 - All Class II verbs share the same theta grid (UPH)
 - `opaqueContext` is determined by `subjectIntensional` applied to `causalSource`
 - `causalSource` determines temporal and event-structural behavior
@@ -57,7 +57,7 @@ open Semantics.Events.ProtoRoles
 -- ════════════════════════════════════════════════════
 
 /-- A Class II (object-experiencer) psych verb entry is internally consistent
-    when its four independently-set fields agree with Kim's (2024) predictions:
+    when its four independently-set fields agree with @cite{kim-2024}'s predictions:
 
     (a) It has a causal source (external or internal)
     (b) UPH theta grid: stimulus subject, experiencer object

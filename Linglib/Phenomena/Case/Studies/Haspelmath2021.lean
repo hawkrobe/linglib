@@ -6,7 +6,7 @@ import Linglib.Phenomena.Case.Studies.DeHoopMalchukov2008
 import Linglib.Phenomena.Alignment.Typology
 
 /-!
-# Haspelmath (2021): Explaining Argument-Coding Splits @cite{haspelmath-2021}
+# @cite{haspelmath-2021}: Explaining Argument-Coding Splits @cite{haspelmath-2021}
 
 Explaining argument-coding splits with role-reference associations.
 Linguistics 59(5): 1231–1270.
@@ -182,13 +182,13 @@ theorem universal3_single_argument_coding :
     asymmetric split in P flagging depending on some prominence scale, then
     the special flag is used on the prominent P-argument."
 
-    This is Aissen's (2003) core result: the OT factorial typology generates
+    This is @cite{aissen-2003}'s core result: the OT factorial typology generates
     only monotone DOM patterns — marking always starts from the prominent
     end of the animacy/definiteness scale. -/
 
 /-- Universal 4: All OT-generated animacy DOM patterns are monotone
     (prominent Ps marked before non-prominent Ps).
-    Re-exported from Aissen (2003). -/
+    Re-exported from @cite{aissen-2003}. -/
 theorem universal4_split_P_flagging : animOptima.all (λ opts =>
     opts.all (λ c =>
       (if c.an then c.hu else true) &&
@@ -199,7 +199,7 @@ theorem universal4_split_P_flagging : animOptima.all (λ opts =>
 -- § 5: Universal 5 — Scenario Coding Universal
 -- ============================================================================
 
-/-! **Universal 5** (Haspelmath 2021, §3):
+/-! **Universal 5**:
 
     The scenario coding universal: if a language has an asymmetric scenario
     split, then the coding is longest for upstream scenarios (P more
@@ -250,12 +250,11 @@ theorem universal5_trichotomy_exhaustive :
     asymmetric split in A flagging depending on some prominence scale, then
     the special flag is used on the non-prominent A-argument."
 
-    The mirror image of Universal 4. Verified via De Hoop & Malchukov's
-    (2008) Distinguish constraint: weak (non-prominent) subjects get overt
+    The mirror image of Universal 4. Verified via @cite{de-hoop-malchukov-2008} Distinguish constraint: weak (non-prominent) subjects get overt
     ergative marking. -/
 
 /-- Universal 6: Under Distinguish, weak subjects are marked (Fore pattern).
-    Re-exported from De Hoop & Malchukov (2008). -/
+    Re-exported from @cite{de-hoop-malchukov-2008}. -/
 theorem universal6_split_A_flagging :
     superoptimal allPairs (profileFor [distinguishSubj, economy])
     = [(CaseForm.zero, Strength.strong), (CaseForm.overt, Strength.weak)] :=
@@ -309,7 +308,7 @@ theorem T_monotone_like_P (profile : DifferentialMarkingProfile) :
 -- § 8: Universal 9 — Monotransitive Scenario Splits
 -- ============================================================================
 
-/-! **Universal 9** (Haspelmath 2021, §6): Monotransitive scenario splits.
+/-! **Universal 9**: Monotransitive scenario splits.
 
     When argument coding depends on the person combination (A-person ×
     P-person), coding is longest for upstream scenarios (3→SAP) and
@@ -358,9 +357,7 @@ theorem ditransitive_parallels_monotransitive :
 -- ============================================================================
 
 /-! The correlation between DOM and accusative alignment, and between DSM
-    and ergative alignment, is independently derived in De Hoop & Malchukov
-    (2008) via the PaIP (Primary Actant Immunity Principle). Haspelmath
-    (2021) discusses this as background but does not number it as one of
+    and ergative alignment, is independently derived in @cite{de-hoop-malchukov-2008} via the PaIP (Primary Actant Immunity Principle). @cite{haspelmath-2021} discusses this as background but does not number it as one of
     his 14 universals.
 
     This theorem re-exports the De Hoop & Malchukov result for reference. -/
@@ -382,7 +379,7 @@ theorem alignment_correlation_deHoopMalchukov :
 
 open Core.InformationStructure
 
-/-- Usual discourse-status association (Haspelmath 2021, §9):
+/-- Usual discourse-status association:
     A/R tend to be given (topical); P/T tend to be new (focal).
     This bridges ArgumentRole (Prominence) and DiscourseStatus
     (InformationStructure) in the study file to keep Core loosely coupled. -/
@@ -394,7 +391,7 @@ def usualDiscourseStatus : ArgumentRole → DiscourseStatus
 -- § 12: Universal 10 — Ditransitive Person-Role Constraint (§7)
 -- ============================================================================
 
-/-! **Universal 10** (Haspelmath 2021, §7):
+/-! **Universal 10**:
 
     "If a language has a person-role constraint in its ditransitive
     construction, it is restricted to T=SAP, R=3."
@@ -422,7 +419,7 @@ theorem universal10_ditrans_downstream :
 -- § 13: Universal 11 — Relative Scenario Splits (§8)
 -- ============================================================================
 
-/-! **Universal 11** (Haspelmath 2021, §8):
+/-! **Universal 11**:
 
     "If a language has a relative scenario split, then the coding of
     upstream scenarios is longer (or at least not shorter) than the
@@ -440,7 +437,7 @@ theorem universal11_relative_scenario :
 -- § 14: Universal 12 — Inverse (§9)
 -- ============================================================================
 
-/-! **Universal 12** (Haspelmath 2021, §9):
+/-! **Universal 12**:
 
     "Inverse verb forms (marking upstream scenarios) tend to be
     morphologically more complex than direct verb forms."
@@ -454,7 +451,7 @@ theorem universal12_inverse :
 -- § 15: Universal 13 — Passive (§9)
 -- ============================================================================
 
-/-! **Universal 13** (Haspelmath 2021, §9):
+/-! **Universal 13**:
 
     "Passive voice is preferred when A is non-given (unusual for A) and/or
     P is non-new (unusual for P)."
@@ -477,7 +474,7 @@ theorem universal13_passive :
 -- § 16: Universal 14 — Dative Alternation (§9)
 -- ============================================================================
 
-/-! **Universal 14** (Haspelmath 2021, §9):
+/-! **Universal 14**:
 
     "The prepositional dative (longer form) is preferred when R is non-given
     and/or T is non-new."

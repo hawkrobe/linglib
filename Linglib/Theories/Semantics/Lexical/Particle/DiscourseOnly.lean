@@ -2,7 +2,7 @@ import Linglib.Theories.Semantics.Questions.Support
 import Linglib.Theories.Semantics.Lexical.Expressives.Basic
 
 /-!
-# Discourse *only* (Ippolito, Kiss & Williams 2025) @cite{ippolito-kiss-williams-2025}
+# Discourse *only* @cite{ippolito-kiss-williams-2025}
 @cite{potts-2005} @cite{roberts-2012} @cite{thomas-2026}
 
 Semantics of discourse *only*: a connective that takes two clausal arguments
@@ -20,7 +20,7 @@ the evidential trajectory of the first:
 - Hungarian: *csak* ("A ház szép, csak drága")
 - Mandarin: *zhǐshì* ("房子很好, 只是太贵了")
 
-## Definition 16 (IKW 2025)
+## Definition 16
 
 ⟦S [only S']⟧^c is defined only if S and S' are relevant to QUD in c and
 ∃α ∈ QUD s.t. S supports α. If defined:
@@ -78,7 +78,7 @@ structure Context (W : Type*) [Fintype W] where
   partialAnswers : List (W → Bool)
   /-- Subquestions of the QUD established by the discourse context.
 
-  Roberts (2012) Def. 8–9: q is a subquestion of Q iff answering Q
+  @cite{roberts-2012} Def. 8–9: q is a subquestion of Q iff answering Q
   (contextually) entails a complete answer to q. IKW (2025) §5.1:
   "Answering this question requires answering its plausible subquestions,
   such as *Is the house beautiful? Is the house expensive?*"
@@ -123,7 +123,7 @@ def atIssueContent (d : Sentence W) : W → Bool :=
 IKW (2025) Def. 16: ⟦S [only S']⟧ is defined only if S and S' are
 "relevant" to the QUD and ∃α ∈ QUD s.t. S supports α.
 
-Relevance is structural, following Roberts (2012) Def. 15 and IKW
+Relevance is structural, following @cite{roberts-2012} Def. 15 and IKW
 assumption iii (p. 225): "S is relevant to QUD if S is either a
 subquestion of QUD or an answer to a subquestion q of QUD."
 
@@ -237,7 +237,7 @@ theorem interrogative_blocks_support {W : Type*} [Fintype W]
 /-- Interrogative prejacents trivially satisfy the CI's condition (ii).
 
 When S' is an info-seeking question whose speaker doesn't believe any answer,
-fullSupport fails for S', so ¬fullSupport ctx.dox d.s'Den ... = true. The
+fullSupport fails for S', so ¬fullSupport ctx.dox d.s'Den... = true. The
 prejacent "automatically" fails to support any direction, which is why
 interrogative prejacents are typically fine cross-linguistically.
 

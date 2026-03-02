@@ -232,7 +232,7 @@ def BinominalType.hasIndexicalEmptyNoun : BinominalType → Bool
 
 /-- Qualitative binominals contain an equative phrase (EquP)
     establishing a predication relation between the expressive
-    noun and the referent (den Dikken 2006). -/
+    noun and the referent. -/
 def BinominalType.hasEquP : BinominalType → Bool
   | .pseudoPartitive  => false
   | .quantificational => false

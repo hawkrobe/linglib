@@ -3,7 +3,7 @@ import Linglib.Core.Semantics.CommonGround
 
 /-!
 # Discourse Commitments
-@cite{brandom-1994} @cite{gunlogson-2001} @cite{krifka-2015}
+@cite{brandom-1994} @cite{gunlogson-2001} @cite{krifka-2015} @cite{bring-gunlogson-2000} @cite{romero-2024}
 
 Shared types for modeling public commitments in discourse, used by
 multiple theories of assertion (Krifka, Brandom, Gunlogson).
@@ -12,9 +12,9 @@ A `CommitmentSlate` is an agent's public discourse commitments — the
 propositions they have publicly committed to (which may differ from
 their private beliefs). This separation is crucial for:
 
-- **Krifka (2015)**: commitment ≠ belief; lying = commitment without belief
-- **Brandom (1994)**: commitments are normative statuses tracked by scorekeepers
-- **Gunlogson (2001)**: source-marking distinguishes self-generated from
+- **@cite{krifka-2015}**: commitment ≠ belief; lying = commitment without belief
+- **@cite{brandom-1994}**: commitments are normative statuses tracked by scorekeepers
+- **@cite{gunlogson-2001}**: source-marking distinguishes self-generated from
   other-generated commitments
 
 -/
@@ -31,7 +31,7 @@ open Core.CommonGround (ContextSet CG)
 /-- An agent's public discourse commitments: a list of propositions
     the agent has publicly committed to.
 
-    Following Krifka (2015): the commitment slate tracks what an agent
+    Following @cite{krifka-2015}: the commitment slate tracks what an agent
     is publicly committed to, which may diverge from what they privately
     believe (as in lying, hedging, or performing). -/
 structure CommitmentSlate (W : Type*) where
@@ -90,7 +90,7 @@ end CommitmentSlate
 
 /-- The source of a discourse commitment.
 
-    Gunlogson (2001): commitments are marked by their epistemic source.
+    @cite{gunlogson-2001}: commitments are marked by their epistemic source.
     - `.selfGenerated`: the agent generated the commitment from their own evidence
     - `.otherGenerated`: the commitment originates from another participant
 
@@ -149,12 +149,12 @@ end TaggedSlate
 -- § 3. Contextual Evidence (Büring & Gunlogson 2000)
 -- ════════════════════════════════════════════════════
 
-/-- Contextual evidence bias (Büring & Gunlogson 2000).
+/-- Contextual evidence bias.
 
     Expectation about p induced by evidence available in the current
     discourse situation. Used as:
-    - A felicity condition on rising declaratives (Gunlogson 2001)
-    - A bias dimension for polar questions (Romero 2024)
+    - A felicity condition on rising declaratives
+    - A bias dimension for polar questions
 
     This type is shared between assertion theory and question bias
     theory because the same notion of contextual evidence governs

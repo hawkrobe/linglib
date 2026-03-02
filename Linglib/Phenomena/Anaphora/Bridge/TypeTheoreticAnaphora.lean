@@ -80,8 +80,7 @@ theorem strongDominant_readings_available :
 Connect TTR's reflexivization and anaphoric resolution to the theory-neutral binding
 data in `Phenomena.Anaphora.Coreference`.
 
-Cooper (2023) Ch8 section 8.3 gives a type-theoretic account of Chomsky's (1981)
-binding conditions:
+@cite{cooper-2023} Ch8 section 8.3 gives a type-theoretic account of @cite{chomsky-1981}'s binding conditions:
 - **Condition A** (reflexives must be locally bound): reflexivization forces argument identity
 - **Condition B** (pronouns must be locally free): anaphoric resolution with disjoint reference
 - **Complementary distribution**: reflexivization vs anaphoric resolution for the same position
@@ -129,7 +128,7 @@ theorem complementary_distribution_predicted :
 
     1. Reflexivization forces local coreference (Condition A): Cooper eq (84)
     2. Anaphoric resolution allows disjoint reference (Condition B): Cooper eq (28)
-    3. The empirical coreference patterns match: Chomsky (1981)
+    3. The empirical coreference patterns match: @cite{chomsky-1981}
     4. Reflexivization = anaphoricResolve with id: reflexivization is a special case -/
 theorem reflexive_predicts_binding :
     -- Reflexivization forces identity (Condition A)

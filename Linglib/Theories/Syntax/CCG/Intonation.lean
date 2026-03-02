@@ -94,9 +94,9 @@ def ProsodicCat.phrasal (c : Cat) : ProsodicCat := ⟨c, .φ⟩
 A prosodic lexical entry: word + pitch accent → prosodic category.
 
 The pitch accent determines the INFORMATION feature:
-- H*    → ρ (rheme)
-- L+H*  → θ (theme)
-- null  → unmarked
+- H* → ρ (rheme)
+- L+H* → θ (theme)
+- null → unmarked
 -/
 structure ProsodicLexEntry where
   form : String

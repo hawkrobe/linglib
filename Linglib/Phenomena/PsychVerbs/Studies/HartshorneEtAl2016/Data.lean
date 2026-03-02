@@ -1,7 +1,7 @@
 import Linglib.Phenomena.PsychVerbs.Data
 
 /-!
-# Hartshorne, O'Donnell & Tenenbaum (2016) — Empirical Data
+# @cite{hartshorne-etal-2016} — Empirical Data
 
 @cite{hartshorne-etal-2016}
 
@@ -239,7 +239,7 @@ structure VerbDatum where
   brClass : PsychVerbClass
   deriving BEq, Repr
 
-/-- Representative verb data from Hartshorne et al. (2016).
+/-- Representative verb data from @cite{hartshorne-etal-2016}.
     Fear-type verbs are habitual attitudes, frighten-type are caused episodes. -/
 def verbData : List VerbDatum := [
   -- Fear-type (exp-subject, habitual attitude)

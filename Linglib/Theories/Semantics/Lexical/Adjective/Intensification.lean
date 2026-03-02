@@ -43,7 +43,7 @@ This is distinct from scalar polarity (positive/negative scale direction):
 - **negative**: the adjective denotes a bad/undesirable property (horrible, terrible)
 - **neutral**: no inherent evaluative content (usual, possible)
 
-Nouwen (2024) argues that evaluative valence, not scalar polarity,
+@cite{nouwen-2024} argues that evaluative valence, not scalar polarity,
 determines the intensifier's degree class.
 -/
 inductive EvaluativeValence where

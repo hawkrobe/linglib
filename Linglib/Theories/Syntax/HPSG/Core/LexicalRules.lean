@@ -6,7 +6,7 @@ import Linglib.Theories.Syntax.HPSG.Core.Basic
 
 Formalization of valence-changing lexical rules in HPSG.
 
-Müller (2013, §1) argues that valence-changing operations (passive,
+@cite{mueller-2013} argues that valence-changing operations (passive,
 resultative, causative) are best analyzed as *lexical rules* — operations
 that transform a sign's valence (subj/comps lists) while preserving its
 head features. This is the HPSG tradition from Pollard & Sag (1987, 1994).
@@ -51,13 +51,13 @@ def applyLexRule (rule : LexicalRule) : Sign → Sign
 
 /-! ## Specific lexical rules -/
 
-/-- Passive lexical rule (Pollard & Sag 1987, 1994).
+/-- Passive lexical rule.
 
 Passive promotes the first complement (direct object) to subject position
 and optionally adds a `by`-PP to the complement list.
 
-Input:  `SUBJ ⟨NP⟩, COMPS ⟨NP, ...⟩`
-Output: `SUBJ ⟨NP⟩, COMPS ⟨(PP_by), ...⟩` -/
+Input: `SUBJ ⟨NP⟩, COMPS ⟨NP,...⟩`
+Output: `SUBJ ⟨NP⟩, COMPS ⟨(PP_by),...⟩` -/
 def passiveRule : LexicalRule :=
   { name := "passive"
   , transformVal := λ val =>
@@ -72,7 +72,7 @@ def passiveRule : LexicalRule :=
 
 Adds a result predicate argument (AP or PP) to the complement list.
 
-Input:  `SUBJ ⟨NP⟩, COMPS ⟨NP⟩`  (e.g., "hammer the metal")
+Input: `SUBJ ⟨NP⟩, COMPS ⟨NP⟩` (e.g., "hammer the metal")
 Output: `SUBJ ⟨NP⟩, COMPS ⟨NP, AP⟩` (e.g., "hammer the metal flat") -/
 def resultativeRule : LexicalRule :=
   { name := "resultative"
@@ -84,8 +84,8 @@ def resultativeRule : LexicalRule :=
 
 Transforms prepositional dative to double object construction.
 
-Input:  `SUBJ ⟨NP⟩, COMPS ⟨NP, PP_to⟩` (e.g., "give a book to Mary")
-Output: `SUBJ ⟨NP⟩, COMPS ⟨NP, NP⟩`   (e.g., "give Mary a book") -/
+Input: `SUBJ ⟨NP⟩, COMPS ⟨NP, PP_to⟩` (e.g., "give a book to Mary")
+Output: `SUBJ ⟨NP⟩, COMPS ⟨NP, NP⟩` (e.g., "give Mary a book") -/
 def dativeShiftRule : LexicalRule :=
   { name := "dative-shift"
   , transformVal := λ val =>

@@ -3,10 +3,10 @@ import Linglib.Fragments.Mandarin.Particles
 import Mathlib.Data.Rat.Defs
 
 /-!
-# Wang (2025) Experimental Data
+# @cite{wang-2025} Experimental Data
 @cite{wang-2025}
 
-Theory-neutral experimental data from Wang (2025) "Presupposition, Competition,
+Theory-neutral experimental data from @cite{wang-2025} "Presupposition, Competition,
 and Coherence" — three experiments on Mandarin presupposition triggers.
 
 ## Experiment 1: Naturalness Judgments (9 triggers × 3 contexts)

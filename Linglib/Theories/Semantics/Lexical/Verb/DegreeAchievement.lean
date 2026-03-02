@@ -5,7 +5,7 @@ import Linglib.Theories.Semantics.Lexical.Verb.Aspect
 # Degree Achievements
 @cite{kennedy-levin-2008}
 
-Kennedy & Levin (2007) show that degree achievements (rust, cool, widen, increase)
+@cite{kennedy-2007} show that degree achievements (rust, cool, widen, increase)
 have **variable telicity** determined by the boundedness of the underlying adjectival
 scale:
 
@@ -30,16 +30,16 @@ namespace Semantics.Lexical.Verb.DegreeAchievement
 open Core.Scale (Boundedness LicensingPipeline)
 open Semantics.Lexical.Verb.Aspect (VendlerClass Telicity)
 
-/-- A degree achievement's base scale structure (Kennedy & Levin 2007).
+/-- A degree achievement's base scale structure.
 
     The key claim: the telicity of a degree achievement verb is determined
     by the boundedness of the scale inherited from the base adjective.
     Scales with a maximum (closed, upper-bounded) yield telic VPs;
     scales without a maximum (open, lower-bounded) yield atelic VPs. -/
 structure DegreeAchievementScale where
-  /-- The adjectival base's scale boundedness (Kennedy 2007). -/
+  /-- The adjectival base's scale boundedness. -/
   scaleBoundedness : Boundedness
-  /-- The dimension of change (height, temperature, fullness, ...). -/
+  /-- The dimension of change (height, temperature, fullness,...). -/
   dimension : String
   /-- Citation form of the base adjective (if deadjectival). -/
   baseAdjective : Option String := none
@@ -98,7 +98,7 @@ theorem open_scale_activity :
 
 end
 
-/-- defaultVendlerClass always returns .accomplishment or .activity —
+/-- defaultVendlerClass always returns.accomplishment or.activity —
     degree achievements are always dynamic and durative. -/
 theorem default_vendler_is_dynamic (s : DegreeAchievementScale) :
     s.defaultVendlerClass = .accomplishment ∨ s.defaultVendlerClass = .activity := by

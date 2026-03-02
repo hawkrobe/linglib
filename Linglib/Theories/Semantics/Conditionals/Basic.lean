@@ -224,6 +224,8 @@ theorem variably_strict_implies_material {W : Type*} (sim : SimilarityOrdering W
 
 /-!
 ## Kratzer Conditionals
+@cite{nadathur-lauer-2020}
+
 
 This section provides a **polymorphic, Set-based** version of Kratzer's
 conditional semantics for use in mathematical proofs.
@@ -232,8 +234,8 @@ For the **computable, List-based** version with concrete examples and
 proven properties (preorder, duality, K axiom, etc.), see:
   `Linglib.Theories.Semantics.Modality.Kratzer`
 
-Both use the same CORRECT subset-based ordering from Kratzer (1981, p. 39):
-  w₁ ≤_A w₂  iff  {p ∈ A : w₂ ∈ p} ⊆ {p ∈ A : w₁ ∈ p}
+Both use the same CORRECT subset-based ordering from @cite{kratzer-1981}:
+  w₁ ≤_A w₂ iff {p ∈ A : w₂ ∈ p} ⊆ {p ∈ A : w₁ ∈ p}
 -/
 
 /--
@@ -256,7 +258,7 @@ Kratzer's ordering relation (Set-based version for proofs).
 w₁ is at least as good as w₂ according to ordering source `os` iff
 every proposition in `os` satisfied by w₂ is also satisfied by w₁.
 
-This is the **correct** subset-based ordering from Kratzer (1981, p. 39).
+This is the **correct** subset-based ordering from @cite{kratzer-1981}.
 Equivalent to `atLeastAsGoodAs` in `Kratzer.lean` (which uses Lists for computation).
 
 **NOT** a counting-based ordering (which would be incorrect).
@@ -333,7 +335,7 @@ Key distinction from Lewis:
 - Lewis: Universal quantification over all closest A-worlds
 - Stalnaker: Selection of a single A-world (with supervaluation for ties)
 
-This is formalized for use in Ramotowska et al. (2025) analysis of
+This is formalized for use in @cite{ramotowska-santorio-2025} analysis of
 counterfactual force under quantifiers.
 -/
 
@@ -403,7 +405,7 @@ to make A true at w (Pearl's do(A)).
 This connects:
 - Stalnaker selection → Causal intervention
 - "If A were" → do(A)
-- Counterfactual dependence → Causal necessity (Nadathur & Lauer 2020)
+- Counterfactual dependence → Causal necessity
 
 See `Theories/NadathurLauer2020/` for the causal model infrastructure.
 -/
@@ -413,7 +415,7 @@ See `Theories/NadathurLauer2020/` for the causal model infrastructure.
 /-!
 ## Assertability vs Truth
 
-The key insight from Grusdt et al. (2022) is that the ASSERTABILITY of a
+The key insight from @cite{grusdt-lassiter-franke-2022} is that the ASSERTABILITY of a
 conditional depends on P(C|A), not its truth conditions.
 
 A conditional "if A then C" is assertable when P(C|A) is high (> θ).

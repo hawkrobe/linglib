@@ -11,11 +11,11 @@ for FocP within a single language family.
 
 ## The head-direction contrast
 
-- Standard Yorùbá: `[FocP Foc(ni) [TP ...]]` — head-initial FocP
-- Ìkálẹ̀:          `[FocP XP_F [TP ...] Foc(ín)]` — head-final FocP
+- Standard Yorùbá: `[FocP Foc(ni) [TP...]]` — head-initial FocP
+- Ìkálẹ̀: `[FocP XP_F [TP...] Foc(ín)]` — head-final FocP
 
 The Ìkálẹ̀ pattern places a head-final FocP over a head-initial TP,
-creating an apparent FOFC violation (Biberauer, Holmberg & Roberts 2014).
+creating an apparent FOFC violation.
 
 ## In-situ focus
 
@@ -87,7 +87,7 @@ def ni : FocusParticleEntry :=
 
 /-- Ìkálẹ̀ *ín* — clause-final focus marker.
     "Olú ó rà ìwé ín" = "It is Olú that bought a book."
-    Aremu (2026) ex. (5): head-final Foc⁰. -/
+    @cite{aremu-2026} ex. (5): head-final Foc⁰. -/
 def in_ : FocusParticleEntry :=
   { form := "ín"
   , dialects := [.ikale, .ondo, .okitipupa]

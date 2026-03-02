@@ -2,7 +2,7 @@ import Linglib.Phenomena.Coordination.Studies.BillEtAl2025
 import Linglib.Theories.Semantics.Montague.Conjunction
 
 /-!
-# Bridge: Bill et al. (2025) × Semantics.Montague Conjunction
+# Bridge: @cite{bill-etal-2025} × Semantics.Montague Conjunction
 @cite{bill-etal-2025}
 
 Connects the empirical child acquisition data in
@@ -36,8 +36,8 @@ The M&S decomposition maps onto three operations already formalized:
 | ☉         | {x} formation     | `typeRaise` (e → ⟨⟨e,t⟩,t⟩) |
 
 The full derivation of "Mary and Susan sleep":
-1. ☉(Mary) = λP.P(Mary)    — typeRaise
-2. MU(☉(Mary), sleep) = {Mary} ⊆ ⟦sleep⟧  — inclFunc
+1. ☉(Mary) = λP.P(Mary) — typeRaise
+2. MU(☉(Mary), sleep) = {Mary} ⊆ ⟦sleep⟧ — inclFunc
 3. Similarly for Susan
 4. J combines the two MU-results via conjunction — genConj at type t
 

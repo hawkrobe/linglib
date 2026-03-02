@@ -250,7 +250,7 @@ def deDictoAnswer {W E : Type*} [DecidableEq E]
 
     Proof: Given description(w₀) ≠ description(v₀), let pred(e,_) := (e = description(w₀))
     and q := trivial (all worlds equivalent). Then:
-    - de dicto at w₀ = pred(description(w₀), w₀) = true  (reflexivity)
+    - de dicto at w₀ = pred(description(w₀), w₀) = true (reflexivity)
     - de dicto at v₀ = pred(description(v₀), v₀) = false (non-rigidity)
 
     N.B. The original statement universally quantified `pred`, which is false —

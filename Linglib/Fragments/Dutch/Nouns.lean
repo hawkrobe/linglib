@@ -8,8 +8,8 @@ import Linglib.Theories.Semantics.Lexical.Noun.Kind.Chierchia1998
 Dutch-specific noun entries with scrambling support. Dutch allows scrambling:
 objects can move across negation/adverbs, affecting bare plural scope.
 
-Based on Le Bruyn & de Swart (2022): scrambled BPs take wide scope but can
-still be kind-referring, supporting Krifka (2004) over Chierchia (1998).
+Based on @cite{le-bruyn-de-swart-2022}: scrambled BPs take wide scope but can
+still be kind-referring, supporting @cite{krifka-2004} over @cite{chierchia-1998}.
 -/
 
 namespace Fragments.Dutch.Nouns

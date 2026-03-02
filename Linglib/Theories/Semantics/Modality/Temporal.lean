@@ -12,7 +12,7 @@ with time-indexed conversational backgrounds and derives the static
 ## Core Extension
 
 Kratzer.lean defines `ConvBackground := World → List (BProp World)`.
-Kratzer (2012) Ch. 4 argues that this should be `World → Time → List (BProp World)`:
+@cite{kratzer-2012} Ch. 4 argues that this should be `World → Time → List (BProp World)`:
 the modal base and ordering source can vary with the temporal perspective.
 
 This distinction matters for:
@@ -103,7 +103,7 @@ theorem temporal_duality {Time : Type*}
      !temporalPossibility f g t (λ w' => !p w') w) = true :=
   duality (f.atTime t) (g.atTime t) p w
 
-/-! ## Historical accessibility (Condoravdi 2002)
+/-! ## Historical accessibility
 
 Worlds share history up to time t: they agree on all facts prior to t.
 This gives the "branching futures" model: the past is settled, the future

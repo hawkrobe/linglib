@@ -14,9 +14,9 @@ import Linglib.Theories.Syntax.Minimalism.Tense.Wurmbrand
 @cite{abusch-1997} @cite{von-stechow-2009} @cite{kratzer-1998} @cite{ogihara-1996} @cite{klecha-2016} @cite{deal-2020} @cite{sharvit-2003} @cite{tsilia-zhao-sharvit-2026} @cite{zeijlstra-2012} @cite{wurmbrand-2014}
 
 Comparison matrix for ten tense theories:
-- Semantic: Abusch (1997), Von Stechow (2009), Kratzer (1998), Ogihara (1996),
-  Klecha (2016), Deal (2020), Sharvit (2003), Tsilia, Zhao & Sharvit (2026)
-- Syntactic: Zeijlstra (2012), Wurmbrand (2014)
+- Semantic: @cite{abusch-1997}, @cite{von-stechow-2009}, @cite{heim-kratzer-1998}, @cite{ogihara-1996},
+  @cite{klecha-2016}, @cite{deal-2020}, @cite{sharvit-2003}, @cite{tsilia-zhao-sharvit-2026}
+- Syntactic: @cite{zeijlstra-2012}, @cite{wurmbrand-2014}
 
 Verdicts are **assembled from derivation theorems** proved in each theory's
 file, not stipulated here. This file proves cross-cutting theorems about
@@ -35,7 +35,7 @@ where theories converge, diverge, and where each is silent.
 
 This file compares **tense theory identity cards** — what mechanism each
 theory uses for SOT, where it is silent, and how theories relate
-structurally. For Partee's (1973) tense–pronoun structural analogy
+structurally. For @cite{partee-1973}'s tense–pronoun structural analogy
 (indexical/anaphoric/bound-variable interpretations of tense morphemes),
 see `Comparisons/Partee1973.lean`.
 
@@ -151,7 +151,7 @@ theorem only_abusch_has_temporal_de_re :
   ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
 
 /-- Klecha is the only theory designed specifically for modal-tense
-    interaction (Klecha 2016). Deal also addresses modals but through
+    interaction. Deal also addresses modals but through
     the counterfactual lens. -/
 theorem klecha_specializes_in_modal_tense :
     Klecha.name = "Klecha 2016" := rfl
@@ -326,7 +326,7 @@ theorem semantic_vs_syntactic_divide :
 -- § 7. Presuppositional Tense and Then-Present Incompatibility
 -- ════════════════════════════════════════════════════════════════
 
-/-- Only Tsilia, Zhao & Sharvit (2026) treats tenses as presupposition
+/-- Only @cite{tsilia-zhao-sharvit-2026} treats tenses as presupposition
     triggers. All other theories have `hasPresuppositionalTense = false`. -/
 theorem only_tsilia_has_presuppositional_tense :
     TsiliaEtAl2026.hasPresuppositionalTense = true ∧
@@ -363,7 +363,7 @@ theorem all_ten_theories_distinct :
 /-! Only Zeijlstra's Agree-based account predicts size-sensitive SOT.
     All semantic theories (Abusch, Von Stechow, Kratzer, Ogihara, etc.)
     treat SOT as a whole-language parameter, not as structurally conditioned.
-    Egressy (2026) argues this is evidence for the syntactic (Agree-based)
+    @cite{egressy-2026} argues this is evidence for the syntactic (Agree-based)
     approach over purely semantic ones. -/
 
 /-- Only Zeijlstra predicts size-sensitive SOT. -/
@@ -380,7 +380,7 @@ theorem only_zeijlstra_predicts_size_sensitive_sot :
     Wurmbrand.hasSizeSensitiveSOT = false :=
   ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
 
-/-- Egressy's (2026) core argument: among the ten implemented theories,
+/-- @cite{egressy-2026}'s core argument: among the ten implemented theories,
     the only theory that predicts size-sensitive SOT is one that uses
     Agree-based SOT. All purely semantic theories (which lack structurally-
     local SOT mechanisms) predict uniform SOT within a language.

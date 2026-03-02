@@ -204,7 +204,7 @@ theorem same_upper_bounds_same_command {Node : Type} (T : AbstractTree Node) (P 
     For subject position s, if there is exactly one node x that properly dominates s,
     and x ∈ P ↔ x ∈ Q, then C_P and C_Q agree on pairs from s.
 
-    In a standard clause [S [NP_subj] [VP ...]], the only node properly dominating
+    In a standard clause [S [NP_subj] [VP...]], the only node properly dominating
     the subject NP is S. So any P containing S agrees with any Q containing S. -/
 theorem unique_upper_bound_equivalence {Node : Type} (T : AbstractTree Node) (P Q : Set Node)
     (s x : Node) (h_unique : ∀ y, T.properDom y s ↔ y = x)
@@ -282,7 +282,7 @@ def sister : Address → Option Address
   | [Dir.R] => some [Dir.L]
   | d :: rest => (sister rest).map (d :: ·)
 
-/-- **C-command** (Reinhart 1976):
+/-- **C-command**:
     A c-commands B iff A's sister dominates B (or equals B).
 
     This is the standard definition for binary branching trees. -/
@@ -306,7 +306,7 @@ def findIdx {α : Type} [DecidableEq α] (xs : List α) (a : α) : Option Nat :=
     | x :: rest => if x == a then some i else go rest (i + 1)
   go xs 0
 
-/-- **O-command** (Pollard & Sag 1994):
+/-- **O-command**:
     A o-commands B iff A precedes B in the argument structure.
 
     Position in arg-st = obliqueness rank. Earlier = less oblique. -/
@@ -337,7 +337,7 @@ def DepGraph.hasDep {α : Type} [DecidableEq α] (g : DepGraph α) (a h : α) : 
 def DepGraph.labelOf {α : Type} [DecidableEq α] (g : DepGraph α) (a h : α) : Option String :=
   (g.edges.find? (λ e => e.dependent == a && e.head == h)).map (·.label)
 
-/-- **D-command** (Hudson 1990):
+/-- **D-command**:
     A d-commands B iff A and B are co-dependents of the same head,
     and A bears the "subj" relation (designated binder). -/
 def dCommand {α : Type} [DecidableEq α] (g : DepGraph α) (a b : α) : Bool :=
@@ -1184,8 +1184,8 @@ theorem command_closure_system {Node : Type} (T : AbstractTree Node) :
 -- PART I: B&P COVERAGE SUMMARY
 
 /-!
-## Barker & Pullum (1990) Formalization Coverage
-@cite{barker-pullum-1990}
+## @cite{barker-pullum-1990} Formalization Coverage
+@cite{barker-pullum-1990} @cite{hudson-1990} @cite{pollard-sag-1994} @cite{reinhart-1976}
 
 ### Fully Proved Theorems
 
@@ -1254,7 +1254,7 @@ are unified through B&P's algebraic framework. When the structural assumptions a
 -- PART J: KRACHT (1993) - DISTRIBUTOID STRUCTURE
 
 /-!
-## Kracht (1993) "Mathematical Aspects of Command Relations"
+## @cite{kracht-1993} "Mathematical Aspects of Command Relations"
 
 Kracht shows that command relations have richer algebraic structure than B&P
 identified:
@@ -1295,10 +1295,10 @@ generator x dominates the commanded element b.
     In a tree, this is the "minimal P-dominator" of a (if it exists).
 
     Properties (Kracht Conditions 1-5):
-    1. f(r) = r  (root maps to itself)
-    2. f(x) dominates x  (f(x) is an upper bound)
+    1. f(r) = r (root maps to itself)
+    2. f(x) dominates x (f(x) is an upper bound)
     3. f is monotone: x dom y → f(x) dom f(y)
-    4. f(f(x)) = f(x)  (idempotent on range)
+    4. f(f(x)) = f(x) (idempotent on range)
     5. (Tightness) x < f(y) → f(x) ≤ f(y) -/
 structure AssociatedFunction {Node : Type} (T : AbstractTree Node) where
   /-- The function mapping each node to its "minimal P-dominator" -/
@@ -1635,7 +1635,7 @@ theorem union_elimination_reverse {Node : Type} (T : AbstractTree Node) (P Q : S
 `Set α` is a `CompleteAtomicBooleanAlgebra` and hence a `HeytingAlgebra`.
 The Heyting implication for sets is: `A ⇨ B = Aᶜ ∪ B`
 
-Kracht (1993) shows command relations form a Heyting algebra. Since command
+@cite{kracht-1993} shows command relations form a Heyting algebra. Since command
 relations are a subset of `Set (Node × Node)`, and the latter is already
 a Heyting algebra, we show:
 
@@ -1802,7 +1802,7 @@ theorem normalForm_meet_is_union {Node : Type} (T : AbstractTree Node) (P Q : Se
 -- J.9: Summary - Kracht's Algebraic Theory
 
 /-!
-### Kracht (1993) Coverage Summary
+### @cite{kracht-1993} Coverage Summary
 
 | Kracht Reference | Name | Status |
 |------------------|------|--------|

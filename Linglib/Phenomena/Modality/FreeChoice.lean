@@ -44,7 +44,7 @@ structure FreeChoiceDatum where
 
 /--
 Classic free choice example.
-Source: Ross (1944), Kamp (1973)
+Source: @cite{ross-1944}, @cite{kamp-1973}
 -/
 def coffeeOrTea : FreeChoiceDatum :=
   { permission := "You may have coffee or tea"
@@ -57,7 +57,7 @@ def coffeeOrTea : FreeChoiceDatum :=
 
 /--
 Free choice with activities.
-Source: Kamp (1973)
+Source: @cite{kamp-1973}
 -/
 def readOrSleep : FreeChoiceDatum :=
   { permission := "You may read or sleep"
@@ -94,7 +94,7 @@ From "Post the letter" we can infer "Post the letter or burn it"
 (by or-introduction). But intuitively, permission to post doesn't
 give permission to burn!
 
-Source: Ross (1944)
+Source: @cite{ross-1944}
 -/
 structure RossParadoxDatum where
   /-- The original imperative/permission -/
@@ -109,7 +109,7 @@ structure RossParadoxDatum where
 
 /--
 Classic Ross's paradox example.
-Source: Ross (1944)
+Source: @cite{ross-1944}
 -/
 def postOrBurn : RossParadoxDatum :=
   { original := "Post the letter"
@@ -151,7 +151,7 @@ structure ModalFreeChoiceDatum where
 
 /--
 Deontic permission (classic case).
-Source: Kamp (1973)
+Source: @cite{kamp-1973}
 -/
 def deonticFC : ModalFreeChoiceDatum :=
   { modalType := "deontic (permission)"
@@ -162,7 +162,7 @@ def deonticFC : ModalFreeChoiceDatum :=
 
 /--
 Epistemic possibility.
-Source: Zimmermann (2000)
+Source: @cite{zimmermann-2000}
 -/
 def epistemicFC : ModalFreeChoiceDatum :=
   { modalType := "epistemic"
@@ -239,7 +239,7 @@ to disjunctive free choice but involve universal quantification.
 - You may take Syntax (specifically)
 - You may take Phonology (specifically)
 - You may take Semantics (specifically)
-- ... (for all classes)
+-... (for all classes)
 
 This is the exclusiveness inference: permission applies to each individual
 alternative, not just to "some class or other".
@@ -273,7 +273,7 @@ structure FCIAnyDatum where
 
 /--
 Free choice *any* with classes.
-Source: Alsop (2024)
+Source: @cite{alsop-2024}
 -/
 def anyClass : FCIAnyDatum :=
   { sentence := "You may take any class"
@@ -286,7 +286,7 @@ def anyClass : FCIAnyDatum :=
 
 /--
 Free choice *any* with fruits (simplified domain).
-Source: Based on Kadmon & Landman (1993)
+Source: Based on @cite{kadmon-landman-1993}
 -/
 def anyFruit : FCIAnyDatum :=
   { sentence := "You may take any fruit"
@@ -370,7 +370,7 @@ def fcComparisonData : List FCComparisonDatum :=
 /-!
 ## FC with Anaphora: Bathroom Disjunctions
 
-Elliott & Sudo (2025) identify a novel FC pattern where cross-disjunct
+@cite{elliott-sudo-2025} identify a novel FC pattern where cross-disjunct
 anaphora interacts with Free Choice:
 
 "Either there's no bathroom or it's in a funny place"
@@ -411,7 +411,7 @@ structure BathroomDisjunctionDatum where
 
 /--
 Classic bathroom disjunction.
-Source: Elliott & Sudo (2025)
+Source: @cite{elliott-sudo-2025}
 -/
 def bathroomClassic : BathroomDisjunctionDatum :=
   { sentence := "Either there's no bathroom or it's in a funny place"

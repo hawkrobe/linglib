@@ -70,7 +70,7 @@ def epSemanticType : Cat → EPSemanticType
     Functional heads (v, D, T, C) do not introduce new theta roles —
     they provide functional structure (agreement, tense, force, determination).
 
-    Grimshaw (2005) Definition 10: theta-role assignment is restricted
+    @cite{grimshaw-2005} Definition 10: theta-role assignment is restricted
     to the lexical level of projection. -/
 def canAssignTheta (c : Cat) : Bool := isLHead c
 
@@ -96,7 +96,7 @@ def isEPInternal (daughter parent : Cat) : Bool :=
   categoryConsistent daughter parent && (fValue daughter < fValue parent)
 
 /-- EP-external: either different family or not lower F-value.
-    Specifiers are typically EP-external to the projection they sit in. -/
+    Specifiers are typically EP-external to the projection they sit. -/
 def isEPExternal (daughter parent : Cat) : Bool :=
   !isEPInternal daughter parent
 
@@ -110,15 +110,14 @@ def fullVerbalEP : List Cat := [.V, .v, .T, .C]
 
 /-- Full nominal EP: N → n → Q → Num → D.
     Q (classifier / individuation) is below Num (number / counting)
-    per Borer (2005): individuation must precede counting.
-    (Ritter 1991, Grimshaw 2005, Borer 2005). -/
+    per @cite{borer-2005}: individuation must precede counting. -/
 def fullNominalEP : List Cat := [.N, .n, .Q, .Num, .D]
 
 /-- Small clause EP: just the lexical head, no functional layers.
     E.g., "consider [SC him intelligent]" — the SC has no T or C. -/
 def smallClauseVerbalEP : List Cat := [.V]
 
-/-- Adjectival EP: A → a (Panagiotidis 2015).
+/-- Adjectival EP: A → a.
     The minimal adjectival extended projection, parallel to the
     verbal (V → v) and nominal (N → n) categorizer layers.
     Further adjectival functional structure (DegP, etc.) is
@@ -275,7 +274,7 @@ theorem full_nominal_ep_wellformed :
     allCategoryConsistent fullNominalEP = true ∧
     allFMonotone fullNominalEP = true := by decide
 
-/-- Adjectival EP is well-formed: consistent and monotone (Panagiotidis 2015). -/
+/-- Adjectival EP is well-formed: consistent and monotone. -/
 theorem adjectival_ep_wellformed :
     allCategoryConsistent adjectivalEP = true ∧
     allFMonotone adjectivalEP = true := by decide

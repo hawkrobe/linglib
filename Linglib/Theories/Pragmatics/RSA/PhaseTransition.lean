@@ -4,7 +4,7 @@ import Linglib.Theories.Pragmatics.RSA.Extensions.InformationTheory.Basic
 # Rate-Distortion View of RSA (Stub)
 @cite{cover-thomas-2006} @cite{zaslavsky-hu-levy-2020}
 
-Formalizes the main results from Zaslavsky, Hu & Levy (2020),
+Formalizes the main results from @cite{zaslavsky-hu-levy-2020},
 "A Rate-Distortion view of human pragmatic reasoning" (arXiv:2005.06641).
 
 ## Results (to be restated for RSAConfig)

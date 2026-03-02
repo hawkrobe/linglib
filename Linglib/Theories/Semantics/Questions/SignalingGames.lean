@@ -168,11 +168,11 @@ def isPoolingEquilibrium {T M A : Type*} [DecidableEq A] [DecidableEq M]
 /-!
 ## Credibility: When Can Messages Be Trusted?
 
-Self-Committing (Farrell 1988):
+Self-Committing:
 If the receiver believes message m, it creates an incentive for the
 sender to fulfill the commitment.
 
-Self-Signaling (Farrell & Rabin 1996):
+Self-Signaling:
 The sender would want m to be believed only if it is true.
 
 Credible = Self-Committing ∧ Self-Signaling
@@ -264,7 +264,7 @@ def isTruthful {T M : Type*} [DecidableEq M]
 -- Crawford-Sobel: Partition Equilibria
 
 /-!
-## Crawford & Sobel (1982): How Much Communication?
+## @cite{crawford-sobel-1982}: How Much Communication?
 
 In cheap-talk games, the amount of credible communication depends on
 how aligned sender and receiver preferences are.

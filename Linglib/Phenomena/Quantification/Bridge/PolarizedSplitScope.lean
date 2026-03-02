@@ -15,15 +15,15 @@ interpreted at different positions in the semantic derivation. The
 classic case is negative quantifiers under modals:
 
   (1) You need to read no book.
-      a. Surface: ¬∃x[book(x) ∧ need(read(x))]     — "no" takes wide scope
-      b. Split:   need(¬∃x[book(x) ∧ read(x)])      — neg above, ∃ below
+      a. Surface: ¬∃x[book(x) ∧ need(read(x))] — "no" takes wide scope
+      b. Split: need(¬∃x[book(x) ∧ read(x)]) — neg above, ∃ below
 
 Reading (b) is the "split" reading: negation scopes above the modal
 while the existential restrictor scopes below it.
 
 ## Lattice-Theoretic Analysis
 
-Elliott (2025) derives split scope from the polarized individual
+@cite{elliott-2025} derives split scope from the polarized individual
 decomposition: `no` = `(⋁_e (e,+))ᶜ`. Since complement distributes
 over scope position changes, the negative and existential components
 can end up at different heights.

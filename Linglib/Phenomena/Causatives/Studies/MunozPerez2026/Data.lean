@@ -3,10 +3,10 @@ import Linglib.Core.Empirical
 open Core.Empirical
 
 /-!
-# Muñoz Pérez (2026) — Empirical Data
+# Muñoz @cite{munoz-perez-2026} — Empirical Data
 @cite{munoz-perez-2026}
 
-Grammaticality judgments from Muñoz Pérez (2026) "Stylistic applicatives:
+Grammaticality judgments from Muñoz @cite{munoz-perez-2026} "Stylistic applicatives:
 A lens into the nature of anticausative SE" (*Glossa* 11(1)).
 
 ## Key Data Points

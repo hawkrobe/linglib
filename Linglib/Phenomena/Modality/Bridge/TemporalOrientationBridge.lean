@@ -4,8 +4,7 @@ import Linglib.Theories.Semantics.Modality.Temporal
 /-!
 # Bridge: Event Projection → Temporal Orientation
 
-@cite{hacquard-2006} @cite{hacquard-2010} @cite{condoravdi-2002} @cite{kratzer-2012}Derives the temporal orientation of modals from event projection
-(Hacquard 2006, §4.1). High modals get the speech time (present
+@cite{hacquard-2006} @cite{hacquard-2010} @cite{condoravdi-2002} @cite{kratzer-2012}Derives the temporal orientation of modals from event projection. High modals get the speech time (present
 perspective); low modals get the event time (past perspective).
 
 ## The Pattern
@@ -22,8 +21,8 @@ Individual-time pairs are DERIVED from events via projection functions
 low modals bind to the VP event, their temporal parameters differ:
 
 - "Jane a dû prendre le train" (Hacquard 2006, (201)):
-  - Epistemic (high): τ(e₀) = now → "Given my evidence NOW, ..."
-  - Root (low): τ(e₂) = then → "Given Jane's circumstances THEN, ..."
+  - Epistemic (high): τ(e₀) = now → "Given my evidence NOW,..."
+  - Root (low): τ(e₂) = then → "Given Jane's circumstances THEN,..."
 
 This connects `EventProjection` (EventRelativity §11) to the temporal
 modal evaluation framework in `Temporal.lean`.

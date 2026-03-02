@@ -296,9 +296,9 @@ theorem speaker_options_le_true_messages (G : InterpGame) (H : HearerStrategy G)
 
 /-!
 ## IBR = EXH (Franke Main Result)
-@cite{franke-2011}
+@cite{franke-2011} @cite{spector-2016}
 
-The key insight of Franke (2011) is that IBR reasoning yields exactly
+The key insight of @cite{franke-2011} is that IBR reasoning yields exactly
 the same interpretation as exhaustive interpretation (exhMW).
 
 **Theorem (Franke 2011, Section 9.3)**: For an interpretation game G,
@@ -770,8 +770,8 @@ theorem ibr_fp_keeps_minimal (G : InterpGame) (H : HearerStrategy G)
 ## RSA → IBR as α → ∞
 
 RSA uses softmax instead of argmax:
-- RSA S₁(m | s) ∝ exp(α · log L₀(s | m))  -- softmax
-- IBR S₁(m | s) = argmax_m L₀(s | m)       -- hard argmax
+- RSA S₁(m | s) ∝ exp(α · log L₀(s | m)) -- softmax
+- IBR S₁(m | s) = argmax_m L₀(s | m) -- hard argmax
 
 As the rationality parameter α → ∞, softmax becomes argmax.
 This connects the probabilistic RSA model to the deterministic IBR model.
@@ -988,13 +988,13 @@ This section states the full limit theorem connecting RSA to EXH, combining:
 
 ```
 RSA S1 (softmax)
-    │ α → ∞  [rsa_to_ibr_limit - PROVED]
+    │ α → ∞ [rsa_to_ibr_limit - PROVED]
     ↓
 IBR S1 (argmax) = R₁
     │ Fact 1 [r1_subset_exhMW] (Franke 2011 Appendix A)
     ↓
 ExhMW (minimal worlds)
-    │ Theorem 9 [fact4_exhMW_eq_exhIE_closed] (Spector 2016)
+    │ Theorem 9 [fact4_exhMW_eq_exhIE_closed]
     ↓
 ExhIE (innocent exclusion)
 ```
@@ -1004,7 +1004,7 @@ ExhIE (innocent exclusion)
 1. **rsa_to_ibr_limit** (proved above): RSA S1 → IBR S1 as α → ∞
 2. **Fact 1** (r1_subset_exhMW): IBR R₁ ⊆ ExhMW (Franke 2011 Appendix A)
 3. **Fact 3** (fact3_exhMW_subset_exhIE): ExhMW ⊆ ExhIE (Franke 2011 Appendix A)
-4. **Theorem 9** (fact4_exhMW_eq_exhIE_closed): Under closure, ExhMW = ExhIE (Spector 2016)
+4. **Theorem 9** (fact4_exhMW_eq_exhIE_closed): Under closure, ExhMW = ExhIE
 
 Combined: Under closure, lim_{α→∞} RSA = IBR = ExhMW = ExhIE
 

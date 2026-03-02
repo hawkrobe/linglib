@@ -3,7 +3,7 @@ import Linglib.Fragments.English.FunctionWords
 import Linglib.Fragments.Finnish.Negation
 
 /-!
-# Auxiliary Verb Construction Typology (Anderson 2006)
+# Auxiliary Verb Construction Typology
 @cite{anderson-2006} @cite{huddleston-1976}
 
 Cross-linguistic classification of auxiliary verb constructions (AVCs) based on

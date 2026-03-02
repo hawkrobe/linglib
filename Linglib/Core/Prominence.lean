@@ -4,8 +4,8 @@
 
 Framework-agnostic prominence hierarchies for referential properties. These
 scales underlie both **differential flagging** (case marking: DOM, DSM) and
-**differential indexing** (verbal agreement), as argued by Just (2024) and
-building on Aissen (2003).
+**differential indexing** (verbal agreement), as argued by @cite{just-2024} and
+building on @cite{aissen-2003}.
 
 ## Scales
 
@@ -14,7 +14,7 @@ Three independently motivated prominence hierarchies:
 - **Animacy**: Human > Animate > Inanimate
 - **Definiteness**: Personal Pronoun > Proper Name > Definite NP >
   Indefinite Specific > Non-specific
-- **Person**: 1st > 2nd > 3rd (Haspelmath 2021, §6)
+- **Person**: 1st > 2nd > 3rd
 
 These are the same scales for all argument roles (A, P, R, T),
 but the **polarity** of differential marking depends on argument role:
@@ -32,12 +32,12 @@ Five roles span monotransitive and ditransitive clauses:
 - **R**: recipient-like argument of ditransitive (higher role rank, like A)
 - **T**: theme-like argument of ditransitive (lower role rank, like P)
 
-## Marking Channels (Just 2024, §2)
+## Marking Channels
 
 Differential argument marking has two independent realization channels:
 
-- **Flagging**: morphological case on the NP (Aissen 2003)
-- **Indexing**: verbal agreement / cross-referencing (Just 2024)
+- **Flagging**: morphological case on the NP
+- **Indexing**: verbal agreement / cross-referencing
 
 These serve different functions — flagging disambiguates roles, indexing
 tracks referents through discourse — but both are governed by the same
@@ -51,7 +51,7 @@ namespace Core.Prominence
 -- § 1: Animacy Scale (Aissen 2003, §2)
 -- ============================================================================
 
-/-- Levels of the animacy prominence scale (Aissen 2003, §2).
+/-- Levels of the animacy prominence scale.
     Human > Animate > Inanimate. -/
 inductive AnimacyLevel where
   /-- Most prominent: human referents -/
@@ -77,7 +77,7 @@ theorem AnimacyLevel.all_length : AnimacyLevel.all.length = 3 := by native_decid
 -- § 2: Definiteness Scale (Aissen 2003, §2)
 -- ============================================================================
 
-/-- Levels of the definiteness prominence scale (Aissen 2003, §2).
+/-- Levels of the definiteness prominence scale.
     Personal Pronoun > Proper Name > Definite NP > Indefinite Specific NP >
     Non-specific NP. -/
 inductive DefinitenessLevel where
@@ -135,7 +135,7 @@ theorem definiteness_indSp_gt_nonSp :
 -- § 4: Person Scale (Haspelmath 2021, §6)
 -- ============================================================================
 
-/-- Person prominence scale (Haspelmath 2021, §6; Silverstein 1976).
+/-- Person prominence scale.
     1st > 2nd > 3rd. SAP (speech-act participants, 1st/2nd) are more
     prominent than 3rd person. -/
 inductive PersonLevel where
@@ -171,7 +171,7 @@ theorem person_second_gt_third :
 
 /-- Argument roles spanning monotransitive and ditransitive clauses.
 
-    Follows Comrie (1978) and Haspelmath (2021) in using S/A/P/R/T
+    Follows @cite{comrie-1978} and @cite{haspelmath-2021} in using S/A/P/R/T
     (not subject/object) to avoid theory-dependent constituency assumptions.
 
     Role rank determines the direction of differential marking:
@@ -193,7 +193,7 @@ inductive ArgumentRole where
   | T
   deriving DecidableEq, BEq, Repr
 
-/-- Role rank (Haspelmath 2021, §7): A > P for monotransitives,
+/-- Role rank: A > P for monotransitives,
     R > T for ditransitives. S is in between. Higher rank = higher
     default prominence expectation. -/
 def ArgumentRole.roleRank : ArgumentRole → Nat
@@ -283,8 +283,8 @@ structure DifferentialMarkingProfile where
   marks : AnimacyLevel → DefinitenessLevel → Bool
 
 /-- Monotonicity for P marking (upper set): if a cell is marked, all more
-    prominent cells are also marked. This is Aissen's (2003) staircase
-    prediction, extended to P indexing by Just (2024). -/
+    prominent cells are also marked. This is @cite{aissen-2003}'s staircase
+    prediction, extended to P indexing by @cite{just-2024}. -/
 def DifferentialMarkingProfile.isMonotoneP (p : DifferentialMarkingProfile) : Bool :=
   AnimacyLevel.all.all λ a =>
     DefinitenessLevel.all.all λ d =>
@@ -297,7 +297,7 @@ def DifferentialMarkingProfile.isMonotoneP (p : DifferentialMarkingProfile) : Bo
 
 /-- Anti-monotonicity for A marking (lower set): if a cell is marked, all
     less prominent cells are also marked. This is the "mirror image"
-    predicted by Just (2024, §3): A indexing marks non-prominent As. -/
+    predicted by @cite{just-2024}: A indexing marks non-prominent As. -/
 def DifferentialMarkingProfile.isMonotoneA (p : DifferentialMarkingProfile) : Bool :=
   AnimacyLevel.all.all λ a =>
     DefinitenessLevel.all.all λ d =>
@@ -310,7 +310,7 @@ def DifferentialMarkingProfile.isMonotoneA (p : DifferentialMarkingProfile) : Bo
 
 /-- Role-appropriate monotonicity: low-default roles (P, T) must be monotone
     (upper set), high-default roles (A, R) must be anti-monotone (lower set).
-    S profiles are vacuously monotone (Haspelmath 2021, §7). -/
+    S profiles are vacuously monotone. -/
 def DifferentialMarkingProfile.isMonotone (p : DifferentialMarkingProfile) : Bool :=
   match p.role with
   | .P => p.isMonotoneP
@@ -411,7 +411,7 @@ theorem animacy_mirror_image (cutoff : AnimacyLevel) :
     Scenario splits arise when argument coding depends not on a single
     argument's prominence but on the *combination* of A-person and P-person.
     E.g., 1→3 ("I see him") vs. 3→1 ("He sees me") may get different
-    flagging or indexing (Haspelmath 2021, §6). -/
+    flagging or indexing. -/
 structure Scenario where
   /-- Person of the A argument -/
   aPerson : PersonLevel
@@ -419,14 +419,14 @@ structure Scenario where
   pPerson : PersonLevel
   deriving DecidableEq, BEq, Repr
 
-/-- Whether a scenario is "downstream" (Haspelmath 2021, §3): A has higher
+/-- Whether a scenario is "downstream": A has higher
     person rank than P. This is the "usual" direction — the role-reference
     association predicts high-rank roles (A) to have high-prominence referents.
     Downstream scenarios tend to get the shortest coding. -/
 def Scenario.isDownstream (s : Scenario) : Bool :=
   s.aPerson.rank > s.pPerson.rank
 
-/-- Whether a scenario is "upstream" (Haspelmath 2021, §3): P has higher
+/-- Whether a scenario is "upstream": P has higher
     person rank than A. This is the "unusual" direction — against the
     role-reference association. Upstream scenarios tend to get the longest
     coding. -/
@@ -439,8 +439,7 @@ def Scenario.isBalanced (s : Scenario) : Bool :=
   s.aPerson.rank == s.pPerson.rank
 
 /-- Whether a scenario is "local": both arguments are SAP (1st or 2nd).
-    Local scenarios (1↔2) are frequent and tend to get short coding
-    (Haspelmath 2021, §6). -/
+    Local scenarios (1↔2) are frequent and tend to get short coding. -/
 def Scenario.isLocal (s : Scenario) : Bool :=
   s.aPerson.isSAP && s.pPerson.isSAP
 

@@ -4,19 +4,18 @@ import Linglib.Core.Prominence
 
 /-!
 # Morphosyntactic Alignment Typology (WALS Chapters 98--100)
-@cite{bickel-nichols-2009} @cite{comrie-1978} @cite{comrie-2013} @cite{dixon-1994} @cite{dryer-haspelmath-2013}
+@cite{bickel-nichols-2009} @cite{comrie-1978} @cite{comrie-2013} @cite{dixon-1994} @cite{dryer-haspelmath-2013} @cite{dixon-1972}
 
 Formalizes three chapters from the World Atlas of Language Structures (WALS)
 covering morphosyntactic alignment -- the way languages mark the core
 grammatical relations S (sole argument of intransitive), A (agent of
 transitive), and P (patient of transitive):
 
-- **Chapter 98**: Alignment of Case Marking of Full Noun Phrases
-  (Comrie 2013). How full NPs are case-marked for S, A, P roles.
-- **Chapter 99**: Alignment of Case Marking of Pronouns (Comrie 2013).
+- **Chapter 98**: Alignment of Case Marking of Full Noun Phrases. How full NPs are case-marked for S, A, P roles.
+- **Chapter 99**: Alignment of Case Marking of Pronouns.
   Same dimension but restricted to pronominal arguments, which frequently
   diverge from full NP marking.
-- **Chapter 100**: Alignment of Verbal Person Marking (Comrie 2013).
+- **Chapter 100**: Alignment of Verbal Person Marking.
   How person agreement on the verb distinguishes S, A, P.
 
 ## Alignment Types
@@ -33,7 +32,7 @@ Five alignment patterns recur across all three domains:
 
 Accusative alignment dominates cross-linguistically in all three domains.
 However, the three domains frequently diverge within a single language --
-the phenomenon of **split ergativity**. Dixon (1994) established the
+the phenomenon of **split ergativity**. @cite{dixon-1994} established the
 generalization that ergative case marking is more common for full NPs
 than for pronouns: many "ergative" languages are ergative for NPs but
 accusative for pronouns (e.g., Dyirbal, many Australian languages).
@@ -299,7 +298,7 @@ def basque : AlignmentProfile :=
     notes := "Consistently ergative; -k on A; verb cross-references abs and erg" }
 
 /-- Dyirbal (Pama-Nyungan, Australia): the textbook case of split
-    ergativity (Dixon 1972). Full NPs have ergative case marking, but
+    ergativity. Full NPs have ergative case marking, but
     1st/2nd person pronouns follow accusative alignment. Verb has
     no person agreement (neutral). -/
 def dyirbal : AlignmentProfile :=
@@ -571,7 +570,7 @@ theorem gen1_accusative_most_common_pronouns :
 /-! ### Generalization 2: Ergative NP marking is more common than ergative
 pronoun marking (Dixon's generalization).
 
-Dixon (1994) established that in the animacy/nominal hierarchy, ergative
+@cite{dixon-1994} established that in the animacy/nominal hierarchy, ergative
 case marking is more likely to appear on full NPs than on pronouns. In
 our sample, more languages have ergative NP alignment than ergative
 pronoun alignment. -/
@@ -810,7 +809,7 @@ theorem active_np_implies_active_pron :
 
 /-! ### Silverstein's Hierarchy
 
-Silverstein (1976) predicts that ergative marking targets the **less prominent**
+@cite{silverstein-1976} predicts that ergative marking targets the **less prominent**
 end of the animacy/definiteness scale. More prominent NPs (pronouns, 1st/2nd
 person) get accusative treatment; less prominent NPs (full NPs, 3rd person,
 inanimate) get ergative treatment.
@@ -837,7 +836,7 @@ private def toAlignmentType : Core.AlignmentFamily → AlignmentType
   | .ergative => .ergative
 
 /-- Silverstein's hierarchy: NPs at or above the prominence threshold get
-    accusative alignment; those below get ergative (Silverstein 1976). -/
+    accusative alignment; those below get ergative. -/
 def silverstein (threshold : Nat) (npProminence : Nat) : Core.AlignmentFamily :=
   if npProminence ≥ threshold then .accusative else .ergative
 

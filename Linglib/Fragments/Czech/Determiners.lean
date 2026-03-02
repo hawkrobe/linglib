@@ -18,7 +18,7 @@ on determiners is the primary scope diagnostic for negation position.
 ## Cross-linguistic connections
 
 - The žádný/nějaký contrast mirrors English *any* (NPI) vs *some* (PPI),
-  but Czech žádný is an NCI requiring Agree with ¬ (Zeijlstra 2004),
+  but Czech žádný is an NCI requiring Agree with ¬,
   not just DE licensing.
 - Bridges to `Phenomena.Negation.CzechThreeWayNeg.Diagnostic` for per-position
   compatibility.
@@ -35,7 +35,7 @@ open Semantics.Polarity.CzechNegation
 
 /-- Polarity sensitivity type for Czech determiners. -/
 inductive PolarityType where
-  /-- Negative Concord Item: requires Agree with ¬ (Zeijlstra 2004).
+  /-- Negative Concord Item: requires Agree with ¬.
       Stricter than NPI — needs structural relation, not just DE. -/
   | nci
   /-- Positive Polarity Item: must outscope negation.
@@ -74,7 +74,7 @@ structure DetEntry where
 /-- *žádný* 'no, any (NCI)' — the prototypical Czech NCI.
 
 Paradigm: žádný/žádná/žádné (masc/fem/neut), declined for case/number.
-Requires licensing by ¬ via Agree at LF (Zeijlstra 2004).
+Requires licensing by ¬ via Agree at LF.
 Only licensed under inner negation (TP-level ¬), where the Agree relation
 holds between ne- and žádný. Medial and outer negation are too high. -/
 def zadny : DetEntry :=

@@ -4,13 +4,13 @@ import Linglib.Theories.Syntax.Minimalism.VoiceAppl
 import Linglib.Fragments.Japanese.Predicates
 
 /-!
-# Ozaki (2025) — Bridge: Dependent Case × Minimalist Syntax
-@cite{baker-2015} @cite{marantz-1991} @cite{ozaki-2025}
+# @cite{ozaki-2025} — Bridge: Dependent Case × Minimalist Syntax
+@cite{baker-2015} @cite{marantz-1991} @cite{ozaki-2025} @cite{kratzer-1996}
 
-Connects the empirical data from Ozaki (2025) to:
-1. **Dependent case theory** (Marantz 1991; Baker 2015) — explains the
+Connects the empirical data from @cite{ozaki-2025} to:
+1. **Dependent case theory** — explains the
    ACC/ABL alternation without appealing to a transitive Voice head
-2. **Minimalist Voice decomposition** (Kratzer 1996; Schäfer 2025) —
+2. **Minimalist Voice decomposition** —
    departure verbs select non-thematic Voice (no agent, no phase head)
 3. **Fragment entries** — Japanese verb entries in `Fragments.Japanese.Predicates`
 

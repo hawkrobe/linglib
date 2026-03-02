@@ -5,6 +5,8 @@ import Linglib.Core.Agent.ExperimentDesign
 
 /-!
 # PRIOR-PQ as RSAConfig @cite{hawkins-etal-2025}
+@cite{frank-goodman-2012}
+
 
 Hawkins, R. D., Tsvilodub, P., Bergey, C., Goodman, N. D. & Franke, M. (2025).
 "Relevant answers to polar questions." Phil. Trans. R. Soc. B 380: 20230505.
@@ -21,7 +23,7 @@ questions. The **respondent IS S1** and the **questioner IS L1**:
 
 Decision-problem marginalization is baked into `s1Score` (Latent = Unit),
 making the model a standard RSAConfig. This shows that the same machinery
-handles both assertion-based RSA (Frank & Goodman 2012) and
+handles both assertion-based RSA and
 question-answering RSA (this paper).
 
 ## Model equations
@@ -160,8 +162,8 @@ noncomputable def dpPrior : DP → ℝ
 /-- Expected action relevance E_D[V(D, r)], marginalized over DPs.
 
     Precomputed from `dpPrior` (5:1:1:1, total = 8) and `actionValue`:
-    - taciturn:   17/5 = 3.4 (U_fail, same for all DPs)
-    - mentionIC:  (5·5693 + 9521 + 3959 + 2547) / 8000 = 11123/2000 ≈ 5.56
+    - taciturn: 17/5 = 3.4 (U_fail, same for all DPs)
+    - mentionIC: (5·5693 + 9521 + 3959 + 2547) / 8000 = 11123/2000 ≈ 5.56
     - mentionSoda: (5·3611 + 3815 + 9504 + 2537) / 8000 = 33911/8000 ≈ 4.24
     - mentionChard: (5·2369 + 2485 + 2615 + 9565) / 8000 = 2651/800 ≈ 3.31
     - exhaustive: (5·5693 + 9521 + 9504 + 9565) / 8000 = 11411/1600 ≈ 7.13 -/
@@ -201,7 +203,7 @@ noncomputable def w_c : ℝ := 24/25
     The respondent (R₁) IS S1. The questioner (Q) IS L1.
     Decision problems are marginalized into s1Score (Latent = Unit).
 
-    s1Score(L0, α, (), w, r) =
+    s1Score(L0, α, w, r) =
       if L0(w|r) = 0 then 0
       else exp(α · ((1−β)·log L0(w|r) + β·E_D[V(D,r)] − w_c·C(r))) -/
 noncomputable def cfg : RSAConfig Response World where
@@ -343,7 +345,7 @@ noncomputable def questionerValue : (World → ℝ) → ℝ :=
 /-- The questioner Q IS an optimal experiment designer.
 
     Q selects questions to maximize expected decision value after observing
-    R₀'s response. This is eq. 2.3 of Hawkins et al. (2025):
+    R₀'s response. This is eq. 2.3 of @cite{hawkins-etal-2025}:
 
     U_Q(q) = E_{w~prior}[E_{r~R₀(·|w,q)}[V(D^{r,q})]]
 
