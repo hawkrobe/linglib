@@ -38,6 +38,26 @@ namespace RSA
 open BigOperators Real Finset
 
 -- ============================================================================
+-- S1UtilityTerm
+-- ============================================================================
+
+/-- Utility term component for `combinedUtility` scoring.
+    Each term contributes an additive component to the S1 utility:
+    `score = exp(α · Σ_i term_i)`. -/
+inductive S1UtilityTerm (U W L : Type*) where
+  /-- weight(l) · log L0(u, w) — log-informativity at the true world. -/
+  | logInformativity (weight : L → ℚ)
+  /-- weight(l) · Σ_w' L0(u,w') · value(w') — expected value under L0. -/
+  | expectedValue (weight : L → ℚ) (value : W → ℚ)
+  /-- fn(l, u) — per-(latent, utterance) constant (cost, bonus, etc.). -/
+  | constant (fn : L → U → ℚ)
+
+/-- Does this term use log(L0), requiring L0 > 0? -/
+def S1UtilityTerm.isLogTerm {U W L : Type*} : S1UtilityTerm U W L → Bool
+  | .logInformativity _ => true
+  | _ => false
+
+-- ============================================================================
 -- S1ScoreSpec
 -- ============================================================================
 
@@ -78,6 +98,10 @@ inductive S1ScoreSpec (U W L : Type*) where
       Belief-weighted expected log-informativity, gated by quality.
       Used by Goodman & Stuhlmüller 2013. -/
   | beliefWeighted (belief : L → W → ℚ) (quality : L → U → Bool)
+  /-- score = if (hasLog ∧ L0=0) then 0 else exp(α · Σ_i term_i(l, u, w, L0)).
+      Arbitrary sum of utility terms. Subsumes `weightedBeliefAction`.
+      Used by Yoon et al. 2020 (politeness). -/
+  | combinedUtility (terms : List (S1UtilityTerm U W L))
 
 -- ============================================================================
 -- RSAConfigData
@@ -123,6 +147,14 @@ attribute [instance] RSAConfigData.latentFintype RSAConfigData.latentDecEq
 
 variable {U W L : Type*} [Fintype U] [Fintype W] [Fintype L] [DecidableEq W]
 
+/-- Evaluate a utility term in ℝ, given L0 policy and current (l, u, w). -/
+noncomputable def S1UtilityTerm.evalR
+    (term : S1UtilityTerm U W L) (l0 : U → W → ℝ) (l : L) (u : U) (w : W) : ℝ :=
+  match term with
+  | .logInformativity weight => ↑(weight l) * log (l0 u w)
+  | .expectedValue weight value => ↑(weight l) * ∑ w' : W, l0 u w' * ↑(value w')
+  | .constant fn => ↑(fn l u)
+
 /-- QUD projection: sum L0 over the equivalence class of w under latent l.
     {w' | project w' l = project w l} -/
 noncomputable def qudProjectR [DecidableEq L]
@@ -155,6 +187,13 @@ noncomputable def S1ScoreSpec.toS1Score [DecidableEq L]
     if quality l u then
       exp (α * ∑ s : W, ↑(belief l s) * log (l0 u s))
     else 0
+  | .combinedUtility terms => fun l0 α l w u =>
+    -- Gate: if any logInformativity term has nonzero weight for this latent and L0=0
+    let hasActiveLog := terms.any fun t => match t with
+      | .logInformativity weight => weight l != 0
+      | _ => false
+    if hasActiveLog = true ∧ l0 u w = 0 then 0
+    else exp (α * terms.foldl (fun acc t => acc + t.evalR l0 l u w) 0)
 
 set_option linter.unusedSectionVars false in
 /-- Non-negativity of s1Score for each ScoreSpec variant. -/
@@ -190,6 +229,11 @@ theorem S1ScoreSpec.toS1Score_nonneg [DecidableEq L]
     split
     · exact le_of_lt (exp_pos _)
     · exact le_refl 0
+  | .combinedUtility _ =>
+    simp only [toS1Score]
+    split
+    · exact le_refl 0
+    · exact le_of_lt (exp_pos _)
 
 -- ============================================================================
 -- toRSAConfig

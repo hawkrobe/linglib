@@ -122,6 +122,28 @@ def evalS1Score {U W L : Type*} [Fintype W] [DecidableEq W] [DecidableEq L]
       let scaled := argInterval.mul (QInterval.exact (↑α))
       expInterval scaled
     else QInterval.exact 0
+  | .combinedUtility terms =>
+    let p := evalL0Exact meaning l u w
+    -- Gate only when a logInformativity term has nonzero weight for this latent
+    let hasActiveLog := terms.any fun t => match t with
+      | .logInformativity weight => weight l != 0
+      | _ => false
+    if hasActiveLog && p == 0 then QInterval.exact 0
+    else
+      -- Evaluate each term as a QInterval
+      let termInterval := terms.foldl (fun acc t =>
+        QInterval.add acc (match t with
+          | .logInformativity weight =>
+            if hp : 0 < p then
+              (QInterval.exact (weight l)).mul (logPoint p hp)
+            else QInterval.exact 0
+          | .expectedValue weight value =>
+            let ev := Finset.univ.sum fun w' => evalL0Exact meaning l u w' * value w'
+            QInterval.exact (weight l * ev)
+          | .constant fn => QInterval.exact (fn l u))
+        ) (QInterval.exact 0)
+      let scaled := (QInterval.exact (↑α)).mul termInterval
+      expInterval scaled
 
 -- ============================================================================
 -- S1 Policy: score / total

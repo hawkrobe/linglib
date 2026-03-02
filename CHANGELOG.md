@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.227.81] - 2026-03-02
+
+### Added
+- **`S1UtilityTerm` + `combinedUtility` S1ScoreSpec variant**: new RSA scoring pattern for arbitrary weighted utility sums (`logInformativity`, `expectedValue`, `constant` terms). Added to ConfigData, RSAEval, RSAVerify, and AutoDetect. Subsumes `weightedBeliefAction` for models where the speaker balances multiple utility components.
+- **Yoon et al. (2020) RSA politeness model** (`Phenomena/Politeness/Studies/YoonEtAl2020RSA.lean`): reimplementation using `combinedUtility` with φ-interpolated informativity and social value. Verifies 13 predictions: MAP state inference for all 4 direct utterances, negation shift for "not terrible"/"not bad", and φ-dependent speaker behavior (informative→direct, social→indirect).
+
+### Removed
+- **`RSA_YoonEtAl2020Bridge.lean`**: replaced by the new RSA study file. Compositional negation theorems (softNot properties) remain in the data file.
+
 ## [0.227.80] - 2026-03-02
 
 ### Changed

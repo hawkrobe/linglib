@@ -161,6 +161,26 @@ def computeS1ScoreBounds {U W L : Type*} [Fintype W] [DecidableEq W] [DecidableE
       let scaled : Bounds := ⟨↑α * argLo, ↑α * argHi⟩
       expIntervalBounds scaled
     else Bounds.zero
+  | .combinedUtility terms =>
+    let p := computeL0Rat meaning l u w
+    -- Gate only when a logInformativity term has nonzero weight for this latent
+    let hasActiveLog := terms.any fun t => match t with
+      | .logInformativity weight => weight l != 0
+      | _ => false
+    if hasActiveLog && p == 0 then Bounds.zero
+    else
+      let evalTerm : RSA.S1UtilityTerm U W L → Bounds := fun t => match t with
+        | .logInformativity weight =>
+          if hp : 0 < p then
+            (Bounds.exact (weight l)).mul ⟨(logPoint p hp).lo, (logPoint p hp).hi⟩
+          else Bounds.zero
+        | .expectedValue weight value =>
+          let ev := Finset.univ.sum fun w' => computeL0Rat meaning l u w' * value w'
+          Bounds.exact (weight l * ev)
+        | .constant fn => Bounds.exact (fn l u)
+      let termSum := terms.foldl (fun acc t => acc.add (evalTerm t)) Bounds.zero
+      let scaled : Bounds := ⟨↑α * termSum.lo, ↑α * termSum.hi⟩
+      expIntervalBounds scaled
 
 -- ============================================================================
 -- S1 Policy Bounds
