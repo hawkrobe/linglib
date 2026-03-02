@@ -1,7 +1,7 @@
 import Mathlib.Data.Rat.Defs
 
 /-!
-# Modal Concord Data — Rotter & Liu (2025)
+# Modal Concord Data — @cite{rotter-liu-2025}
 @cite{rotter-liu-2025} @cite{zeijlstra-2007}
 
 Empirical data from "A Register Approach to Modal Non-Concord in English:

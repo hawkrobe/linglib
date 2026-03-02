@@ -8,7 +8,7 @@ import Linglib.Theories.Semantics.Modality.Typology
 # Modal Concord Bridge — Register Approach
 @cite{rotter-liu-2025} @cite{van-de-pol-etal-2023} @cite{zeijlstra-2007}
 
-Connects the empirical data from Rotter & Liu (2025) to
+Connects the empirical data from @cite{rotter-liu-2025} to
 the English modal fragment and modal typology infrastructure.
 
 ## Section A: Semantic equivalence
