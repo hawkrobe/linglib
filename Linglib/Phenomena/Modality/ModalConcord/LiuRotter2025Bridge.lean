@@ -3,11 +3,10 @@ import Linglib.Fragments.English.FunctionWords
 
 /-!
 # Modal Concord Bridge — @cite{rotter-liu-2025}
-@cite{liu-rotter-2025} @cite{dieuleveut-hsu-bhatt-2025}
+@cite{liu-rotter-2025} @cite{rotter-liu-2025}
 
 Connects Liu & Rotter's empirical data to the English modal and adverb
-fragments, the general concord infrastructure, and Dieuleveut, Hsu &
-Bhatt (2025).
+fragments, the general concord infrastructure, and Rotter & Liu (2025).
 
 ## Section A: Semantic overlap via ModalItem
 
@@ -19,7 +18,7 @@ the shared `ModalItem` type. This is the structural precondition for concord.
 The paper's FORCE × NUMBER interaction can be predicted from modal force:
 necessity doubling strengthens, possibility doubling weakens.
 
-## Section C: Connection to Dieuleveut et al. (2025)
+## Section C: Connection to Rotter & Liu (2025)
 
 Both studies find that MC preserves modal force (single reading, not double).
 
@@ -117,7 +116,7 @@ theorem possibility_matches_prediction :
     (commitmentRating posMC).mean < (commitmentRating posSM).mean :=
   ⟨rfl, possibility_mc_weakens⟩
 
-/-! ## Section C: Connection to Dieuleveut et al. (2025)
+/-! ## Section C: Connection to Rotter & Liu (2025)
 
 Both studies agree that MC preserves modal force (single reading). -/
 

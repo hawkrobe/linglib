@@ -1529,7 +1529,7 @@ cited in: [FreeChoice](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phe
 
 **Rotter, S. & Liu, M.** (2025). A Register Approach to Modal (Non-)Concord in English: An Experimental Study of Linguistic and Social Meaning. *English Language \& Linguistics, 29(3), 478–504*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Modality/ModalConcord/Data.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Modality/ModalConcord/Bridge.lean)\
-cited in: [ModalLogic](https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/Logic/ModalLogic.lean), [LiuRotter2025](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Modality/ModalConcord/LiuRotter2025.lean), [LiuRotter2025Bridge](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Modality/ModalConcord/LiuRotter2025Bridge.lean)
+cited in: [ModalLogic](https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/Logic/ModalLogic.lean), [Bridge](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Modality/ModalConcord/Bridge.lean), [Data](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Modality/ModalConcord/Data.lean), [LiuRotter2025](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Modality/ModalConcord/LiuRotter2025.lean), [LiuRotter2025Bridge](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Modality/ModalConcord/LiuRotter2025Bridge.lean)
 
 **Stalnaker, R.** (1968). A Theory of Conditionals.\
 [cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Conditionals/Basic.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Conditionals/Counterfactual.lean)
