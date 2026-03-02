@@ -3,6 +3,7 @@ import Linglib.Theories.Pragmatics.RSA.Core.Noise
 
 /-!
 # Bridge: Kursat & Degen (2021) × RSA Noise Model
+@cite{kursat-degen-2021}
 
 Connects the perceptual difficulty data in
 `Phenomena.KursatDegen2021` to the noise discrimination parameters

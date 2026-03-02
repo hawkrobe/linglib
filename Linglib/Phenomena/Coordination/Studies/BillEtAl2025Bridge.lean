@@ -3,6 +3,7 @@ import Linglib.Theories.Semantics.Montague.Conjunction
 
 /-!
 # Bridge: Bill et al. (2025) × Semantics.Montague Conjunction
+@cite{bill-etal-2025}
 
 Connects the empirical child acquisition data in
 `Phenomena.Coordination.Studies.BillEtAl2025` to the Montague-style

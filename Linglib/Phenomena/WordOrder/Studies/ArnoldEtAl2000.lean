@@ -1,7 +1,7 @@
 import Linglib.Core.Discourse.InformationStructure
 
 /-!
-# Arnold, Wasow, Losongco & Ginstrom (2000) @cite{arnold-wasow-losongco-ginstrom-2000}
+# Arnold, Wasow, Losongco & Ginstrom (2000) @cite{arnold-wasow-losongco-ginstrom-2000} @cite{kratzer-selkirk-2020}
 
 Heaviness vs. Newness: The Effects of Structural Complexity and
 Discourse Status on Constituent Ordering. *Language* 76(1):28–55.

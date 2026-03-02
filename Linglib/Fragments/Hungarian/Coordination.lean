@@ -1,6 +1,6 @@
 /-!
 # Hungarian Coordination Morphemes
-@cite{szabolcsi-2015}
+@cite{szabolcsi-2015} @cite{bill-etal-2025}
 
 Hungarian is one of two languages in our sample (with Georgian) that attests
 all three M&S conjunction strategies: J-only, MU-only, and J-MU.

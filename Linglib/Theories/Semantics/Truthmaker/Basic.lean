@@ -1,6 +1,6 @@
 import Linglib.Core.Mereology
 
-/-! # Truthmaker Semantics (Fine 2017) @cite{fine-2017}
+/-! # Truthmaker Semantics (Fine 2017) @cite{fine-2017} @cite{bondarenko-elliott-2026}
 
 State-based propositions grounded in `Core/Mereology.lean`. Propositions are
 sets of *verifying states*, where states form a join-semilattice (the same

@@ -2,7 +2,7 @@ import Linglib.Core.Lexical.Word
 
 /-!
 # Gender and Noun Class Typology (WALS Chapters 30--32)
-@cite{corbett-1991} @cite{dryer-haspelmath-2013}
+@cite{corbett-1991} @cite{dryer-haspelmath-2013} @cite{corbett-2013}
 
 Formalizes three chapters from the World Atlas of Language Structures (WALS)
 covering the typology of gender and noun class systems, all authored by

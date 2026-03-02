@@ -163,6 +163,7 @@ theorem gen_false_implies_threshold_false
 
 /-!
 ## How RSA Explains Generic Judgments
+@cite{tessler-goodman-2019}
 
 Tessler & Goodman (2019) go further than just showing GEN is eliminable.
 They explain WHY certain generics are judged true despite low prevalence.

@@ -3,6 +3,7 @@ import Linglib.Theories.Semantics.Degree.Core
 
 /-!
 # Bridge: Machino et al. (2025) × Adjective Theory
+@cite{machino-goodman-2025}
 
 Connects the cross-cultural intensifier data in
 `Phenomena.Politeness.Studies.MachinoEtAl2025` to the modifier

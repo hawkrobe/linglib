@@ -263,6 +263,7 @@ def fromCG (cg : CG W) : DiscourseState W :=
 
 /-!
 ## Connection to RSA Presupposition Models
+@cite{scontras-tonhauser-2025} @cite{warstadt-2022} @cite{qing-goodman-lassiter-2016}
 
 RSA models for presupposition projection use different components of the
 discourse state as the latent variable that L1 infers:

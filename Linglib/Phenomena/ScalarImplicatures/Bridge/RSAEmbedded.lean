@@ -3,6 +3,7 @@ import Linglib.Phenomena.ScalarImplicatures.Basic
 
 /-!
 # Bridge: RSA Embedded Scalar Implicatures → Phenomena
+@cite{geurts-2010}
 
 Connects the RSA embedded scalar implicature model (`RSA.EmbeddedScalars`)
 to empirical data from `Phenomena.ScalarImplicatures.Basic`.

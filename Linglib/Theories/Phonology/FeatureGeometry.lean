@@ -1,7 +1,7 @@
 import Linglib.Theories.Phonology.Features
 
 /-!
-# Feature Geometry @cite{clements-1985}
+# Feature Geometry @cite{clements-1985} @cite{sagey-1986}
 
 Hierarchical organization of phonological features following the standard
 feature geometry model. The tree synthesizes three sources:

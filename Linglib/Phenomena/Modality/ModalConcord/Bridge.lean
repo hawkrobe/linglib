@@ -6,6 +6,7 @@ import Linglib.Theories.Semantics.Modality.Typology
 
 /-!
 # Modal Concord Bridge — Register Approach
+@cite{dieuleveut-hsu-bhatt-2025}
 
 Connects the empirical data from Dieuleveut, Hsu & Bhatt (2025) to
 the English modal fragment and modal typology infrastructure.

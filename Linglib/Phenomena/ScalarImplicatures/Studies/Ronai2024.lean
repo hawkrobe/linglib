@@ -76,6 +76,7 @@ def ScaleDatum.name (s : ScaleDatum) : String :=
 
 /-!
 ## Scale Data
+@cite{ronai-2024} @cite{van-tiel-geurts-2016}
 
 Data extracted from Ronai (2024) Figures 2, 3, 5, 6 and van Tiel et al. (2016).
 The 42 scales are from van Tiel et al.'s original study.

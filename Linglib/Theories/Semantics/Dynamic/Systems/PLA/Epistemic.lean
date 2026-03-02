@@ -278,6 +278,7 @@ def Concept.fromPron (i : PronIdx) : Concept E := λ p => p.2 i
 
 /-!
 ## Relationship to Kratzer (1981) Modal Semantics
+@cite{kratzer-1981}
 
 PLA's epistemic operators share deep structure with Kratzer's modal semantics
 from `Semantics.Modality.Kratzer`. Both frameworks implement:

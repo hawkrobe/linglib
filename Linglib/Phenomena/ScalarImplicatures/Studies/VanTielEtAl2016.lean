@@ -680,6 +680,7 @@ theorem semanticRelatedness_not_significant : semanticRelatednessEffect.p > 0.05
 
 /-!
 ## Connection to Ronai (2024)
+@cite{ronai-2024} @cite{van-tiel-geurts-2016} @cite{geurts-pouscoulous-2009}
 
 Van Tiel et al. (2016) established scalar diversity for **global** SI.
 Ronai (2024) extends this to **embedded** SI, showing:

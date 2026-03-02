@@ -31,6 +31,7 @@ import Linglib.Core.Lexical.Word
 
 /-!
 ## Connection to RSA Theory
+@cite{bergen-goodman-2015}
 
 This phenomenon is modeled by Bergen & Goodman (2015)'s noisy channel RSA.
 See: `Theories/RSA/Implementations/BergenGoodman2015.lean`

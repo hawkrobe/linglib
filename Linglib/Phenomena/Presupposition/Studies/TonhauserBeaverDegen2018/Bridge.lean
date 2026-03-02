@@ -4,7 +4,7 @@ import Linglib.Phenomena.Presupposition.ProjectiveContent
 
 /-!
 # TBD2018 Bridge: Gradient At-Issueness ↔ Existing Infrastructure
-@cite{tonhauser-beaver-degen-2018}
+@cite{tonhauser-beaver-degen-2018} @cite{tonhauser-beaver-roberts-simons-2013}
 
 Connects the empirical data from Tonhauser, Beaver & Degen (2018) to:
 

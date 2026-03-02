@@ -5,6 +5,7 @@ import Linglib.Phenomena.TenseAspect.DiagnosticsBridge
 
 /-!
 # Krifka (1989) Bridge: Nominal Reference → VP Telicity
+@cite{krifka-1989}
 
 Connects Krifka's (1989) nominal reference theory (`Events/Krifka1989.lean`) to
 concrete verb-NP composition and telicity diagnostics.

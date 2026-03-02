@@ -4,6 +4,7 @@ open Core.Empirical
 
 /-!
 # Khoo (2015): Modal Disagreements
+@cite{khoo-2015}
 
 Empirical data from Khoo's experiment on epistemic modal disagreements.
 The key finding: speakers reject might-claims (high rejection rating)

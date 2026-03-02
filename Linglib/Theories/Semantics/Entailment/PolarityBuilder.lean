@@ -4,7 +4,7 @@ import Linglib.Fragments.English.PolarityItems
 
 /-!
 # Polarity Builder — Derived NPI Licensing from Entailment Signatures
-@cite{deni-chemla-2021} @cite{von-fintel-1999}
+@cite{deni-chemla-2021} @cite{von-fintel-1999} @cite{icard-2012}
 
 Bridge between the theory-neutral Fragment (`DEStrength`) and the formal
 monotonicity hierarchy (`IsDE`, `IsAntiAdditive`, `IsAntiMorphic`, `IsStrawsonDE`).

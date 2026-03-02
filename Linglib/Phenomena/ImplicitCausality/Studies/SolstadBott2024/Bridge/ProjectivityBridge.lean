@@ -7,7 +7,7 @@ import Linglib.Fragments.English.Predicates.Verbal
 /-!
 # Solstad & Bott (2024) — Projectivity Bridge
 
-@cite{solstad-bott-2024}
+@cite{solstad-bott-2024} @cite{tonhauser-beaver-roberts-simons-2013} @cite{heim-1983}
 
 Connects occasion verb presupposition to the Tonhauser et al. (2013) taxonomy
 and formalizes the cataphoric resolution result from Experiment 3.

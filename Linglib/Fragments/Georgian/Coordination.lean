@@ -1,6 +1,6 @@
 /-!
 # Georgian Coordination Morphemes
-@cite{haspelmath-2007}
+@cite{haspelmath-2007} @cite{bill-etal-2025}
 
 Georgian is one of two languages in our sample (with Hungarian) that attests
 all three M&S conjunction strategies: J-only, MU-only, and J-MU.

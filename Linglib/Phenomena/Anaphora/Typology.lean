@@ -5,7 +5,7 @@ import Linglib.Phenomena.Reference.DirectReference
 
 /-!
 # Pronoun Typology: PER/DEM Classification + Gradient Measures
-@cite{cardinaletti-starke-1999} @cite{dchaine-wiltschko-2002} @cite{elbourne-2005} @cite{patel-grosz-grosz-2017} @cite{postal-1966} @cite{schwarz-2009} @cite{schwarz-2013}
+@cite{cardinaletti-starke-1999} @cite{dchaine-wiltschko-2002} @cite{elbourne-2005} @cite{patel-grosz-grosz-2017} @cite{postal-1966} @cite{schwarz-2009} @cite{schwarz-2013} @cite{levshina-stoynova-2023}
 
 Patel-Grosz & Grosz (2017) "Revisiting Pronominal Typology" (LI 48(2)) argue
 that 3rd-person pronouns split into two structural types:

@@ -1,5 +1,5 @@
 /-!
-# Exhaustivity Presuppositions for Questions @cite{xiang-2022}
+# Exhaustivity Presuppositions for Questions @cite{xiang-2022} @cite{dayal-1996}
 
 Formalizes Dayal's Exhaustivity Presupposition (EP, definition 90) and Xiang's
 Relativized Exhaustivity (RelExh, definition 91) from:

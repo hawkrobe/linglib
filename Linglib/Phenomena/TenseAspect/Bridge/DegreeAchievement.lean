@@ -6,6 +6,7 @@ import Linglib.Theories.Semantics.Events.DimensionBridge
 
 /-!
 # Degree Achievement Bridge
+@cite{kennedy-levin-2008}
 
 Kennedy & Levin (2007): the telicity of degree achievements is **derived** from
 the boundedness of the underlying adjectival scale. This bridge file verifies

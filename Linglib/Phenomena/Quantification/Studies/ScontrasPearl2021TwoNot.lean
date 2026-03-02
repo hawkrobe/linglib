@@ -3,7 +3,7 @@ import Linglib.Phenomena.Quantification.Studies.ScontrasPearl2021
 import Mathlib.Analysis.SpecialFunctions.Pow.Real
 
 /-!
-# Scontras & Pearl (2021) §4 — Two-Not RSA Model @cite{scontras-pearl-2021}
+# Scontras & Pearl (2021) §4 — Two-Not RSA Model @cite{scontras-pearl-2021} @cite{kennedy-2015} @cite{musolino-2004}
 
 The two-not model extends the every-not model (§3) to "two horses didn't jump"
 with n=4 horses. The key innovation: when n exceeds the numeral's value,

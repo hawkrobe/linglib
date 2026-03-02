@@ -17,7 +17,7 @@ import Linglib.Phenomena.Questions.Basic
 namespace Phenomena.Questions.PolarAnswers
 
 
-/-- G&S 1984: Yes and No are T⁰ (sentence adverbs, category S/S).
+/-- G&S 1984: Yes and No are T⁰ (sentence adverbs, category S/S). @cite{fox-katzir-2011}
     - yes ~ λp.p(a)   (affirms the proposition)
     - no  ~ λp.¬p(a)  (negates the proposition)
 

@@ -3,7 +3,7 @@ import Linglib.Theories.Phonology.RuleBased.Defs
 
 /-!
 # Finnish Consonant Gradation @cite{karlsson-2017}
-@cite{hayes-2009b}
+@cite{hayes-2009}
 
 Consonant gradation is a morphophonological alternation affecting stops at
 morpheme-internal syllable boundaries in Finnish (Karlsson 2018, Chs. 4–5).

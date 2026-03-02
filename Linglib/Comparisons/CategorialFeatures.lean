@@ -3,7 +3,7 @@ import Linglib.Theories.Syntax.Minimalism.Formal.ExtendedProjection.Basic
 /-!
 # Categorial Feature Theories: Chomsky (1970) vs. Panagiotidis (2015)
 
-@cite{panagiotidis-2015}
+@cite{panagiotidis-2015} @cite{grimshaw-2005} @cite{chomsky-1970}
 
 Two theories of what makes a noun a noun and a verb a verb:
 

@@ -4,6 +4,7 @@ import Linglib.Phenomena.Modality.FreeChoice
 
 /-!
 # Meyer & Feiman (2021) — Bridge Theorems
+@cite{meyer-feiman-2021}
 
 Connects the process profile classification to the observed priming data
 and to the broader scalar implicature and free choice phenomena in linglib.

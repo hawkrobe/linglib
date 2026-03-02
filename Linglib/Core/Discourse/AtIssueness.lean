@@ -5,7 +5,7 @@ import Mathlib.Tactic.Linarith
 
 /-!
 # Gradient At-Issueness and Projectivity
-@cite{roberts-2012}
+@cite{roberts-2012} @cite{tonhauser-beaver-degen-2018}
 
 At-issueness and projectivity are **gradient**, not binary, and **anti-correlated**.
 Tonhauser, Beaver & Degen (2018) report r = .85 (9 expression types) and

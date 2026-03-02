@@ -2,7 +2,7 @@ import Linglib.Core.Lexical.Word
 
 /-!
 # Copula and Predication Typology (WALS Chapters 117--120)
-@cite{hengeveld-1992} @cite{pustet-2003} @cite{stassen-1997}
+@cite{hengeveld-1992} @cite{pustet-2003} @cite{stassen-1997} @cite{stassen-2013}
 
 Cross-linguistic data on predication strategies and copulas from four WALS
 chapters, all authored by Leon Stassen (2013). These chapters address a

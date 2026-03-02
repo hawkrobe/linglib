@@ -3,6 +3,7 @@ import Linglib.Theories.Semantics.Lexical.Noun.Kind.Chierchia1998
 
 /-!
 # Bridge: Noun Categorization × Chierchia (1998) Nominal Mapping Parameter
+@cite{chierchia-1998}
 
 Connects the cross-linguistic noun categorization typology in
 `Phenomena.Agreement.NounCategorization` to the Nominal Mapping

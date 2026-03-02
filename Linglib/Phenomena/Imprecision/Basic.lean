@@ -82,8 +82,9 @@ See `ROADMAP.md` for the formalization plan.
   *Semantics and Pragmatics* 14.
 
 ### Experimental Work
-- Augurzky, P., Franke, M., & Reinert, C. (2023). Homogeneity and non-maximality
-  under quantification. *Journal of Semantics*.
+- Augurzky, P., Bonnet, M., Breheny, R., Cremers, A., Ebert, C., Mayr, C.,
+  Romoli, J., Steinbach, M., & Sudo, Y. (2023). Putting plural definites into
+  context. *Proceedings of Sinn und Bedeutung* 27, 19–32.
 - Tieu, L., Križ, M., & Chemla, E. (2019). Children's acquisition of homogeneity
   in plural definite descriptions. *Frontiers in Psychology*.
 

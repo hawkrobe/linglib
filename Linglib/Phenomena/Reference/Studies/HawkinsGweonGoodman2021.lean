@@ -10,6 +10,7 @@ import Mathlib.Data.Rat.Defs
 
 /-!
 ## Theoretical Framework
+@cite{keysar-etal-2003}
 
 The paper extends RSA with **resource-rational perspective-taking**:
 

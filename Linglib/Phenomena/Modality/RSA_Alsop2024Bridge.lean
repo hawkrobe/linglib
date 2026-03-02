@@ -3,6 +3,7 @@ import Linglib.Phenomena.Modality.FreeChoice
 
 /-!
 # Bridge: RSA Free Choice Any → Phenomena Data
+@cite{alsop-2024}
 
 Connects the RSA free choice *any* model from Alsop (2024) to empirical
 data in `Phenomena.Modality.FreeChoice`.

@@ -233,6 +233,7 @@ theorem mos_is_weak :
 
 /-!
 ## Gradience in Island Effects
+@cite{hofmeister-sag-2010}
 
 Hofmeister & Sag (2010) argue that the binary strong/weak classification
 (Szabolcsi 2006) is insufficient. Island effects are **gradient** along multiple

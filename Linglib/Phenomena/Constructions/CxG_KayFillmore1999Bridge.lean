@@ -13,6 +13,7 @@ import Linglib.Phenomena.TenseAspect.DiagnosticsBridge
 
 /-!
 # Kay & Fillmore (1999): *What's X Doing Y?* Construction
+@cite{kay-fillmore-1999}
 
 Formalization of "Grammatical Constructions and Linguistic Generalizations:
 The *What's X doing Y?* Construction" (Language 75(1):1–33).

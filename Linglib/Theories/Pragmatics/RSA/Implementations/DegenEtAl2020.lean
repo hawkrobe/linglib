@@ -4,6 +4,7 @@ import Linglib.Core.Agent.ProductOfExperts
 
 /-!
 # Degen, Hawkins, Graf, Kreiss & Goodman (2020)
+@cite{degen-etal-2020}
 
 *When redundancy is useful*. Psychological Review 127(4).
 

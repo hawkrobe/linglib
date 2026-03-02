@@ -2,6 +2,7 @@ import Linglib.Core.Grammar
 
 /-!
 # Subject-Auxiliary Inversion: Empirical Data
+@cite{radford-2009} @cite{adger-2003} @cite{sag-wasow-bender-2003} @cite{chomsky-1957}
 
 Theory-neutral data on subject-auxiliary inversion (SAI) in English and beyond.
 

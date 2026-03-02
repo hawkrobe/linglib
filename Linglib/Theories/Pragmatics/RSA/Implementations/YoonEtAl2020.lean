@@ -33,6 +33,7 @@ import Linglib.Core.Semantics.Proposition
 namespace RSA.Implementations.YoonEtAl2020
 
 /-!
+@cite{yoon-etal-2020}
 This file previously contained the full Yoon et al. (2020) RSA implementation.
 All definitions and theorems depend on Phenomena types (HeartState, Utterance, SoftProp,
 adjMeaning, utteranceSemantics, PolitenessConfig, InferredWeights, GoalCondition, etc.)

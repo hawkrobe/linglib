@@ -362,6 +362,7 @@ def fallbackToExists (isKindDenoting : Bool) (bp : BlockingPrinciple) : Bool :=
 
 /-!
 ## Computational DKP
+@cite{krifka-2004}
 
 Simplified, decidable formalization of Chierchia's DKP for concrete
 scrambling comparisons with Krifka (2004). Uses `List Entity` and `Bool`

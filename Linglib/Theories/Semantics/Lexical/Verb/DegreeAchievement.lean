@@ -3,6 +3,7 @@ import Linglib.Theories.Semantics.Lexical.Verb.Aspect
 
 /-!
 # Degree Achievements
+@cite{kennedy-levin-2008}
 
 Kennedy & Levin (2007) show that degree achievements (rust, cool, widen, increase)
 have **variable telicity** determined by the boundedness of the underlying adjectival

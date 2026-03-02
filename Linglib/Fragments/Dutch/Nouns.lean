@@ -3,6 +3,7 @@ import Linglib.Theories.Semantics.Lexical.Noun.Kind.Chierchia1998
 
 /-!
 # Dutch Noun Lexicon Fragment
+@cite{krifka-2004} @cite{chierchia-1998} @cite{le-bruyn-de-swart-2022}
 
 Dutch-specific noun entries with scrambling support. Dutch allows scrambling:
 objects can move across negation/adverbs, affecting bare plural scope.

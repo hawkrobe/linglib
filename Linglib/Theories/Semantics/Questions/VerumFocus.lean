@@ -269,6 +269,7 @@ theorem preposed_negation_forces_verum :
 
 /-!
 ## Relationship to Polarity.lean
+@cite{romero-han-2004}
 
 Van Rooy & Šafářová (2003) and Romero & Han (2004) are complementary:
 

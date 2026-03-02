@@ -3,6 +3,7 @@ import Linglib.Fragments.English.FunctionWords
 
 /-!
 # Modal Concord Bridge — Liu & Rotter (2025)
+@cite{liu-rotter-2025} @cite{dieuleveut-hsu-bhatt-2025}
 
 Connects Liu & Rotter's empirical data to the English modal and adverb
 fragments, the general concord infrastructure, and Dieuleveut, Hsu &

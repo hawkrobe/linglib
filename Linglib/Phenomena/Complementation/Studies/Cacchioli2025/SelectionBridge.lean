@@ -3,6 +3,7 @@ import Linglib.Phenomena.Complementation.Typology
 
 /-!
 # Complementation-Agree Bridge: CTPClass → FeatureVal
+@cite{cacchioli-2025}
 
 Connects Noonan's (2007) complement-taking predicate typology (CTPClass,
 in `Phenomena/Complementation/Typology.lean`) to Minimalist feature checking

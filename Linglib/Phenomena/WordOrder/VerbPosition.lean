@@ -13,6 +13,7 @@ namespace Phenomena.WordOrder.VerbPosition
 
 /-!
 ## Bulgarian: Participle Fronting
+@cite{harizanov-gribanova-2019}
 
 From Lambova (2004c:274, (15)), cited in Harizanov (2019) examples (29), (48), (52).
 

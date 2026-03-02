@@ -1,7 +1,7 @@
 import Linglib.Core.Lexical.UD
 import Linglib.Core.Lexical.Word
 
-/-! # Clause Chaining Typology @cite{sarvasy-aikhenvald-2025}
+/-! # Clause Chaining Typology @cite{sarvasy-aikhenvald-2025} @cite{foley-r-d-van-valin-1984} @cite{longacre-2007}
 
 Cross-linguistic typology of clause chaining: multi-clause constructions in which
 one or more **medial** (dependent, morphologically reduced) clauses combine with

@@ -3,6 +3,7 @@ import Linglib.Phenomena.Causatives.Typology
 
 /-!
 # Bridge: Memory-Surprisal MorphemeOrder → Causatives Typology
+@cite{song-1996}
 
 Connects the Japanese causative -(s)ase morpheme order analysis from
 `MemorySurprisal.MorphemeOrder` to Song (1996)'s causative typology

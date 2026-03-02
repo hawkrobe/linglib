@@ -3,6 +3,7 @@ import Linglib.Core.Logic.ModalLogic
 
 /-!
 # Modal Concord: Commitment and Social Meaning — Liu & Rotter (2025)
+@cite{liu-rotter-2025}
 
 Empirical data from "Non-redundant modal concord: Evidence from speaker
 commitment and social meaning."

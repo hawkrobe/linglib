@@ -12,7 +12,7 @@ open Core.Scale (Boundedness)
 open Semantics.Lexical.Adjective (NegationType)
 
 
-/--
+/-- @cite{kennedy-2007}
 An adjectival predicate entry.
 
 This is an alias for `GradableAdjEntry` from the Theory module, re-exported

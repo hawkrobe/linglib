@@ -4,7 +4,7 @@ import Mathlib.Data.Rat.Defs
 
 /-!
 # Argumentative Strength for Quantity Expressions
-@cite{cummins-franke-2021} @cite{merin-1999}
+@cite{cummins-franke-2021} @cite{merin-1999} @cite{macuch-silva-etal-2024}
 
 Merin (1999)'s log-likelihood ratio measure of argumentative strength, as applied
 to numerical quantity expressions in Cummins & Franke (2021) and quantifier choice

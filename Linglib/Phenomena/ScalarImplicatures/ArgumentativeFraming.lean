@@ -2,7 +2,7 @@ import Mathlib.Data.Rat.Defs
 
 /-!
 # Argumentative Framing: Empirical Data
-@cite{cummins-franke-2021}
+@cite{cummins-franke-2021} @cite{macuch-silva-etal-2024}
 
 Empirical observations from two papers on how speakers use quantity expressions
 to serve argumentative goals:

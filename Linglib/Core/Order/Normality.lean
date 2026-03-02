@@ -2,6 +2,7 @@ import Mathlib.Data.Set.Basic
 
 /-!
 # Normality Orderings
+@cite{kraus-magidor-1990} @cite{veltman-1996} @cite{rudin-2025}
 
 A normality ordering is a preorder on worlds encoding relative normalcy.
 This structure appears in four places across formal semantics:

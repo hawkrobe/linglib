@@ -2,7 +2,7 @@ import Linglib.Core.Lexical.Word
 
 /-!
 # Cross-Linguistic Typology of Tense and Aspect (WALS Chapters 65--69)
-@cite{bybee-pagliuca-1994} @cite{comrie-1985} @cite{dryer-haspelmath-2013}
+@cite{bybee-pagliuca-1994} @cite{comrie-1985} @cite{dryer-haspelmath-2013} @cite{dahl-velupillai-2013}
 
 Cross-linguistic data on tense-aspect systems from the World Atlas of Language
 Structures (WALS), covering five parameters:

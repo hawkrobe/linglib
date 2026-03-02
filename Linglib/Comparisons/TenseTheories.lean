@@ -11,6 +11,7 @@ import Linglib.Theories.Syntax.Minimalism.Tense.Wurmbrand
 
 /-!
 # Tense Theories: Cross-Cutting Comparison
+@cite{abusch-1997} @cite{von-stechow-2009} @cite{kratzer-1998} @cite{ogihara-1996} @cite{klecha-2016} @cite{deal-2020} @cite{sharvit-2003} @cite{tsilia-zhao-sharvit-2026} @cite{zeijlstra-2012} @cite{wurmbrand-2014}
 
 Comparison matrix for ten tense theories:
 - Semantic: Abusch (1997), Von Stechow (2009), Kratzer (1998), Ogihara (1996),

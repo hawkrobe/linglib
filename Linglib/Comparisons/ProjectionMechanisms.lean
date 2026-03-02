@@ -3,6 +3,7 @@ import Linglib.Theories.Semantics.Presupposition.LocalContext
 
 /-!
 # Projection Mechanisms: Compositional Filtering vs. RSA BToM
+@cite{scontras-tonhauser-2025}
 
 Compares two theories of presupposition projection:
 

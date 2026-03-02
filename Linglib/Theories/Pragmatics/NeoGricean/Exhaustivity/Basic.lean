@@ -1,6 +1,6 @@
 /-
 # Exhaustivity Operators: exh_mw and exh_ie
-@cite{groenendijk-stokhof-1984} @cite{spector-2016} @cite{wang-2025}
+@cite{groenendijk-stokhof-1984} @cite{spector-2016} @cite{wang-2025} @cite{chierchia-2013}
 
 Formalization of Spector (2016) "Comparing exhaustivity operators"
 Semantics & Pragmatics Volume 9, Article 11: 1–33.

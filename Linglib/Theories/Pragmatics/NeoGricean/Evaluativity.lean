@@ -724,6 +724,7 @@ theorem grounded_matches_simple_short_equative :
 
 /-!
 ## Rett (2015) Core Predictions
+@cite{rett-2015}
 
 These theorems formalize the key empirical predictions from Rett's account:
 

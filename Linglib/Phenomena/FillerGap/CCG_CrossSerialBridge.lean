@@ -3,7 +3,7 @@ import Linglib.Phenomena.FillerGap.CrossSerial
 
 /-!
 # CCG Cross-Serial Bridge
-@cite{al-1982} @cite{steedman-2000}
+@cite{bresnan-etal-1982} @cite{steedman-2000}
 
 Connects CCG derivations (from `Theories.Syntax.CCG.CrossSerial`) to
 empirical cross-serial dependency data (from `Phenomena.FillerGap.CrossSerial`).

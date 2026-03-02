@@ -1185,6 +1185,7 @@ theorem command_closure_system {Node : Type} (T : AbstractTree Node) :
 
 /-!
 ## Barker & Pullum (1990) Formalization Coverage
+@cite{barker-pullum-1990}
 
 ### Fully Proved Theorems
 

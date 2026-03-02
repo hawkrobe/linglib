@@ -3,6 +3,7 @@ import Linglib.Core.Semantics.CommonGround
 
 /-!
 # Bridge: RSA Presupposition Accommodation → Warstadt (2022)
+@cite{warstadt-2022} @cite{qing-goodman-lassiter-2016} @cite{scontras-tonhauser-2025}
 
 Connects RSA presupposition accommodation models to the empirical domain
 from `Phenomena.Presupposition.Studies.Warstadt2022`.

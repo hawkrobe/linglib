@@ -296,6 +296,7 @@ theorem speaker_options_le_true_messages (G : InterpGame) (H : HearerStrategy G)
 
 /-!
 ## IBR = EXH (Franke Main Result)
+@cite{franke-2011}
 
 The key insight of Franke (2011) is that IBR reasoning yields exactly
 the same interpretation as exhaustive interpretation (exhMW).

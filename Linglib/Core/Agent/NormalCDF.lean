@@ -3,6 +3,7 @@ import Mathlib.MeasureTheory.Measure.Lebesgue.Basic
 
 /-!
 # Standard Normal CDF Infrastructure
+@cite{luce-1959}
 
 Shared Gaussian CDF definitions and properties used by both Thurstone's
 discriminal-process theory (§2.D) and Signal Detection Theory (§2.E)

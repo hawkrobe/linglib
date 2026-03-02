@@ -6,7 +6,7 @@ import Linglib.Fragments.English.Predicates.Verbal
 /-!
 # Psych Verb IC Bias — Proto-Role Bridge
 
-@cite{solstad-bott-2022} @cite{solstad-bott-2024}
+@cite{solstad-bott-2022} @cite{solstad-bott-2024} @cite{dowty-1991}
 
 Connects IC bias predictions to Dowty (1991) proto-role infrastructure and
 coherence relations (Kehler 2002).

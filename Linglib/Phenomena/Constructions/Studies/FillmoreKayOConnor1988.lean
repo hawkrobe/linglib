@@ -2,6 +2,7 @@ import Linglib.Core.Lexical.Word
 
 /-!
 # Fillmore, Kay & O'Connor (1988): *Let Alone* — Empirical Data
+@cite{fillmore-oconnor-1988}
 
 Theory-neutral grammaticality judgments and contrasts from "Regularity and
 Idiomaticity in Grammatical Constructions: The Case of *Let Alone*"

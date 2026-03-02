@@ -2,6 +2,7 @@ import Linglib.Theories.Semantics.Lexical.Verb.VerbEntry
 
 /-!
 # Mandarin Predicate Lexicon Fragment
+@cite{qing-uegaki-2025}
 
 Mandarin predicates relevant to Qing et al. (2025). Properties like
 C-distributivity and NVP class are DERIVED from the `attitudeBuilder` field.

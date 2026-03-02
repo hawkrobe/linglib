@@ -3,7 +3,7 @@ import Linglib.Fragments.English.TemporalExpressions
 
 /-!
 # Temporal Connective Truth-Condition Examples
-@cite{heinamaki-1974} @cite{heinamki-1974} @cite{rett-2020}
+@cite{heinamaki-1974} @cite{rett-2020}
 
 Concrete scenarios verifying that the Anscombe, Rett, and Karttunen
 formalizations produce correct truth-value judgments.

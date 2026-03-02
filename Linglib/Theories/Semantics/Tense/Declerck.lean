@@ -4,7 +4,7 @@ import Linglib.Core.Context.Tower
 
 /-!
 # Declerck's Tense Theory (1991/2006)
-@cite{declerck-1991} @cite{declerck-2006}
+@cite{declerck-1991} @cite{declerck-2006} @cite{reichenbach-1947}
 
 Declerck's descriptive theory of English tense differs from Reichenbach (1947)
 in three structural ways:

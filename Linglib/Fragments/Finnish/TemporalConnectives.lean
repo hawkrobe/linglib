@@ -2,7 +2,7 @@ import Linglib.Fragments.English.TemporalExpressions
 
 /-!
 # Finnish Temporal Connectives Fragment
-@cite{heinamaki-1974} @cite{heinamki-1974} @cite{karttunen-1974}
+@cite{heinamaki-1974} @cite{karttunen-1974}
 
 Finnish lexicalizes the two-*until* distinction that Karttunen (1974) argues
 is covert in English:

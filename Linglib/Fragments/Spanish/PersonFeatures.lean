@@ -2,7 +2,7 @@ import Linglib.Core.Lexical.PersonCategory
 
 /-!
 # Person Feature Decomposition for Spanish Clitics
-@cite{cysouw-2009}
+@cite{cysouw-2009} @cite{munoz-perez-2026}
 
 Bridges Cysouw's (2009) `PersonCategory` to the person feature
 decomposition used in Muñoz Pérez (2026): [±PART], [±AUTHOR], [±SING].

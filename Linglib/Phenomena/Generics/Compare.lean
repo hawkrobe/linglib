@@ -57,6 +57,7 @@ open Phenomena.Generics.KindReference
 
 /-!
 ## Carlson's Foundational Insights
+@cite{carlson-1977}
 
 Carlson (1977) established the key ideas that all subsequent theories build on:
 

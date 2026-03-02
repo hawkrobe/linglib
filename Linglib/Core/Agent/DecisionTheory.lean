@@ -4,6 +4,7 @@ import Mathlib.Tactic.Linarith
 
 /-!
 # Core Decision Theory
+@cite{van-rooy-2003} @cite{blackwell-1953}
 
 Theory-neutral decision-theoretic infrastructure: decision problems, expected
 utility, maximin, and mention-some/mention-all classification.

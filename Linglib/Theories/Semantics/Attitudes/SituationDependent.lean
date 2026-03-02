@@ -3,7 +3,7 @@ import Linglib.Theories.Semantics.Attitudes.Doxastic
 
 /-!
 # Situation-Dependent Attitude Semantics
-@cite{heim-kratzer-1998} @cite{kratzer-1998} @cite{lewis-1979} @cite{von-stechow-2009}
+@cite{heim-kratzer-1998} @cite{kratzer-1998} @cite{lewis-1979} @cite{von-stechow-2009} @cite{ogihara-1989}
 
 Attitude operators with temporal parameters: `believe`'s complement type shifts
 from `st` (propositions = W → Bool) to `s(it)` (situation-dependent propositions =

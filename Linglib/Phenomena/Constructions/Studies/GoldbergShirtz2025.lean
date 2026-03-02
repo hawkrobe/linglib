@@ -2,6 +2,7 @@ import Mathlib.Data.Rat.Defs
 
 /-!
 # Goldberg & Shirtz (2025): PAL Constructions — Empirical Data
+@cite{goldberg-shirtz-2025}
 
 Experimental results from five studies on Phrasal Adjective-Like (PAL)
 constructions, plus cross-linguistic attestation data.

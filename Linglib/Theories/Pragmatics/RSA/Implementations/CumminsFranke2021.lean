@@ -6,7 +6,7 @@ import Mathlib.Data.Rat.Defs
 
 /-!
 # Cummins & Franke (2021): Argumentative Strength of Numerical Quantity
-@cite{cummins-franke-2021}
+@cite{cummins-franke-2021} @cite{macuch-silva-etal-2024}
 
 Formalizes the conference registration scenario (C&F pp. 7–8) demonstrating that
 semantic and pragmatic argumentative strength can *reverse* the ordering of

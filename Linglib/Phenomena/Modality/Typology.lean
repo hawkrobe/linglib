@@ -2,7 +2,7 @@ import Linglib.Core.Lexical.Word
 
 /-!
 # Cross-Linguistic Typology of Evidentiality (WALS Chapters 77--78)
-@cite{aikhenvald-2004} @cite{de-haan-1999} @cite{willett-1988}
+@cite{aikhenvald-2004} @cite{de-haan-1999} @cite{willett-1988} @cite{de-haan-2013}
 
 Cross-linguistic data on grammatical evidentiality from the World Atlas of
 Language Structures, covering two parameters:

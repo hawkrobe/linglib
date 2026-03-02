@@ -1,6 +1,7 @@
 import Linglib.Theories.Syntax.DependencyGrammar.Core.Basic
 
 /-!
+@cite{kuhlmann-nivre-2006} @cite{kuhlmann-2013}
 Projection theory for dependency trees: BFS-based projection computation,
 interval/gap/block analysis, Prop-level Dominance (reflexive-transitive
 closure), and the bridge theorems connecting BFS membership to dominance.

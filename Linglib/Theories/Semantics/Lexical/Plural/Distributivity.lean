@@ -113,6 +113,7 @@ theorem distTolerant_allows_exceptions (P : Atom → W → Bool)
 
 /-!
 ## The Križ & Spector (2021) Account
+@cite{kriz-spector-2021}
 
 The K&S theory explains both homogeneity and non-maximality through:
 

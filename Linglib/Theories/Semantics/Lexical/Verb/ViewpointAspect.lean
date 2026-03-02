@@ -44,7 +44,7 @@ open Semantics.Lexical.Verb.Aspect
 -- § Core Types
 -- ════════════════════════════════════════════════════
 
-/-- An eventuality with interval-valued runtime (Davidson 1967, Krifka 1989).
+/-- An eventuality with interval-valued runtime (Davidson 1967, Krifka 1989). @cite{pancheva-2003}
     Unlike `Situation` (point-valued τ), eventualities occupy temporal intervals. -/
 structure Eventuality (Time : Type*) [LE Time] where
   /-- The temporal extent of this eventuality -/

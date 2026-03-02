@@ -39,6 +39,7 @@ import Linglib.Core.Agent.DecisionTheory
 namespace RSA.PriorPQ
 
 /-!
+@cite{hawkins-etal-2025}
 This file previously contained the full Hawkins et al. (2025) PRIOR-PQ RSA implementation.
 All definitions and theorems depend on Phenomena types (ResponseType, cs1/cs2/cs3 data,
 etc.) and have been moved to

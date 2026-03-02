@@ -1,6 +1,6 @@
 /-
 # Doxastic Attitude Semantics
-@cite{pearl-2000}
+@cite{pearl-2000} @cite{glass-2025}
 
 Modal/accessibility-based semantics for doxastic attitude verbs like
 `believe`, `know`, `think`.

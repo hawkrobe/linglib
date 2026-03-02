@@ -2,7 +2,7 @@ import Linglib.Phenomena.Nonliteral.Irony.KaoEtAl2015
 import Mathlib.Analysis.SpecialFunctions.Pow.Real
 
 /-!
-# Spinoso-Di Piano et al. (2025) — (RSA)² @cite{spinoso-di-piano-etal-2025}
+# Spinoso-Di Piano et al. (2025) — (RSA)² @cite{spinoso-di-piano-etal-2025} @cite{kao-goodman-2015}
 
 (RSA)²: A Rhetorical-Strategy-Aware Rational Speech Act Framework for
 Figurative Language Understanding (ACL 2025).

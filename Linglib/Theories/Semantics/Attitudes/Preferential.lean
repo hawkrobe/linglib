@@ -77,6 +77,7 @@ abbrev ThresholdFunction (W : Type*) := QuestionDen W → ℚ
 
 /-!
 ## Grounding in Hamblin Semantics
+@cite{uegaki-sudo-2019} @cite{villalta-2008} @cite{hamblin-1973} @cite{rooth-1992}
 
 Questions are **alternative sets** (Hamblin 1973). Our `QuestionDen W` is the
 extensional representation of `Semantics.Questions.Hamblin.QuestionDen W`.

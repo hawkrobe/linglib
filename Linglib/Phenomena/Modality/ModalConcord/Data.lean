@@ -2,6 +2,7 @@ import Mathlib.Data.Rat.Defs
 
 /-!
 # Modal Concord Data — Dieuleveut, Hsu & Bhatt (2025)
+@cite{dieuleveut-hsu-bhatt-2025}
 
 Empirical data from "A Register Approach to Modal Non-Concord in English:
 An Experimental Study of Linguistic and Social Meaning."

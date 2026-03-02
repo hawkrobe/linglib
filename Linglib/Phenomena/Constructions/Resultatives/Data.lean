@@ -2,6 +2,7 @@ import Linglib.Phenomena.Constructions.Studies.FillmoreKayOConnor1988
 
 /-!
 # Resultative Construction — Empirical Data
+@cite{goldberg-jackendoff-2004}
 
 Theory-neutral grammaticality judgments and aspectual contrasts for
 English resultative constructions, drawn from Goldberg & Jackendoff (2004)

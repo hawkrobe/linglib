@@ -7,6 +7,7 @@ import Mathlib.Tactic.Linarith
 
 /-!
 # Bridge: RSA Politeness Model → Phenomena Data
+@cite{yoon-etal-2020}
 
 Connects the RSA politeness model for Yoon et al. (2020) to empirical data
 in `Phenomena.Politeness.Studies.YoonEtAl2020`.

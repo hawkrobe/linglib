@@ -2,6 +2,7 @@ import Linglib.Theories.Semantics.Dynamic.Systems.BSML.FreeChoice
 
 /-!
 # Aloni (2022): BSML Applied to Permission Disjunction
+@cite{aloni-2022}
 
 Phenomena-level instantiation of BSML for the classic free choice example:
 "You may have coffee or tea" → "You may have coffee AND you may have tea."

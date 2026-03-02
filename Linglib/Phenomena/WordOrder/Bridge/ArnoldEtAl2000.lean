@@ -5,6 +5,7 @@ import Linglib.Core.Discourse.InformationStructure
 
 /-!
 # Arnold et al. (2000): Competing Accounts and Their Derived Limitations
+@cite{arnold-wasow-losongco-ginstrom-2000}
 
 Formalizes the three accounts Arnold, Wasow, Losongco & Ginstrom (2000)
 argue against, then derives each account's structural limitations from its

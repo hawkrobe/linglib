@@ -2,7 +2,7 @@ import Linglib.Theories.Syntax.Minimalism.Formal.HeadMovement.Basic
 
 /-!
 # Verb Movement Parameter (Pollock 1989)
-@cite{chomsky-1995}
+@cite{chomsky-1995} @cite{pollock-1989}
 
 Pollock (1989) established that languages differ parametrically in whether
 lexical verbs raise to T (Inflection). French lexical verbs obligatorily raise

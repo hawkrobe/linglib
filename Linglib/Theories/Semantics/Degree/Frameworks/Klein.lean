@@ -2,7 +2,7 @@ import Linglib.Theories.Semantics.Degree.Core
 
 /-!
 # Klein's Delineation Approach
-@cite{burnett-2014} @cite{klein-1980} @cite{van-rooij-2011}
+@cite{burnett-2014} @cite{klein-1980} @cite{van-rooij-2011} @cite{kennedy-2007}
 
 Klein (1980) "A Semantics for Positive and Comparative Adjectives":
 a degree-free analysis where gradable adjectives are simple predicates

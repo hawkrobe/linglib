@@ -1,6 +1,6 @@
 /-!
 # Cross-Linguistic Typology of Change-of-State Verbs
-@cite{dixon-1982} @cite{levin-1993}
+@cite{dixon-1982} @cite{levin-1993} @cite{beavers-etal-2021}
 
 Empirical data from Beavers, Everdell, Jerro, Kauhanen, Koontz-Garboden,
 LeBovidge & Nichols (2021) "States and changes of state: A crosslinguistic

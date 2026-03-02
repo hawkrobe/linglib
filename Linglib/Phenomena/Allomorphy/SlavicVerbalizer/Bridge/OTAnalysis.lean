@@ -4,7 +4,7 @@ import Linglib.Phenomena.Allomorphy.SlavicVerbalizer.Data
 
 /-!
 # Slavic Verbalizer — OT Analysis @cite{stojkovic-2026}
-@cite{stojkovi-2026}
+
 
 OT evaluation connecting constraint rankings to the empirical surface
 forms of the Slavic verbalizer (VBLZ). Stojković (2026) argues the VBLZ

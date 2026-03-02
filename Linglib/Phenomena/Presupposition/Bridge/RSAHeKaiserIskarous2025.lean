@@ -5,6 +5,7 @@ import Linglib.Theories.Semantics.Entailment.Polarity
 
 /-!
 # Bridge: RSA Polarity Asymmetry Models → Phenomena Data
+@cite{he-kaiser-iskarous-2025}
 
 Connects the RSA polarity asymmetry models for He, Kaiser & Iskarous (2025)
 to empirical data in `Phenomena.Presupposition.Studies.HeKaiserIskarous2025`.

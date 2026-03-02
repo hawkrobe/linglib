@@ -72,6 +72,7 @@ namespace Phenomena.Presupposition.Bridge.RSAComparison
 
 /-!
 ## Farkas & Bruce (2010) Framework
+@cite{farkas-bruce-2010} @cite{qing-goodman-lassiter-2016}
 
 All three presupposition projection models fit into the Farkas & Bruce (2010)
 discourse state framework. F&B decompose discourse state into:

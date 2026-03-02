@@ -4,7 +4,7 @@ import Linglib.Theories.Semantics.Questions.Partition
 
 /-!
 # Inquisitive Semantics Bridge
-@cite{ciardelli-groenendijk-roelofsen-2019} @cite{thomas-2026}
+@cite{ciardelli-groenendijk-roelofsen-2019} @cite{thomas-2026} @cite{roberts-2012}
 
 Bridges between Hamblin/partition question types and the inquisitive
 `Discourse.Issue` type (defined in Core/Discourse/QUD.lean).

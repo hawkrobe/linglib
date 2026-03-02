@@ -4,6 +4,7 @@ import Linglib.Theories.Pragmatics.NeoGricean.Core.Competence
 
 /-!
 # Bale et al. (2025) — Bridge Theorems
+@cite{bale-etal-2025}
 
 Connects Bale et al.'s experimental findings to the NeoGricean competence
 formalization in `Theories.Pragmatics.NeoGricean.Core`.

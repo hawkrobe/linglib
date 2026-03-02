@@ -3,7 +3,7 @@ import Linglib.Theories.Syntax.HPSG.Core.Basic
 
 /-!
 # Frame Composition: Unification vs. Function Application
-@cite{pollard-sag-1994}
+@cite{pollard-sag-1994} @cite{loebner-2021}
 
 linglib has multiple frame-like structures — ThematicFrame (neo-Davidsonian
 role bundles), HPSG Sign (typed feature structures), Frame2 (TTR records) —

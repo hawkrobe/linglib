@@ -3,6 +3,7 @@ import Linglib.Core.Interface
 
 /-!
 # Classification of Merge into Three Combination Schemata
+@cite{mueller-2013}
 
 Explicit classification of Minimalist Merge operations into Müller's (2013)
 three universal combination schemata: Head-Complement, Head-Specifier, Head-Filler.

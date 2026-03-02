@@ -3,6 +3,7 @@ import Linglib.Theories.Semantics.Dynamic.Effects.Epistemic.Basic
 
 /-!
 # Bridge: Khoo (2015) × Neo-Stalnakerian Framework
+@cite{khoo-2015}
 
 Connects the modal disagreement data in `Phenomena.Modality.Studies.Khoo2015`
 to predictions from Rudin's (2025) Neo-Stalnakerian Framework formalized in

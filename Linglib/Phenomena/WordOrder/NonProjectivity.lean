@@ -1,5 +1,6 @@
 /-!
 # Treebank Non-Projectivity Data
+@cite{kuhlmann-nivre-2006} @cite{kuhlmann-2013}
 
 Empirical data on non-projective structures in dependency treebanks.
 

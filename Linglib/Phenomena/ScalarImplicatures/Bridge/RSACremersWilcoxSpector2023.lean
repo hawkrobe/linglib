@@ -2,6 +2,7 @@ import Linglib.Phenomena.ScalarImplicatures.Studies.CremersWilcoxSpector2023
 
 /-!
 # Bridge: Cremers, Wilcox & Spector (2023) RSA Models → Scalar Implicature Phenomena
+@cite{cremers-wilcox-spector-2023}
 
 RSA models for exhaustivity and anti-exhaustivity. Baseline RSA predicts anti-exhaustivity
 under biased priors, which contradicts human behavior. EXH-LU blocks this via exhaustification.

@@ -24,6 +24,7 @@ import Linglib.Theories.Pragmatics.NeoGricean.Exhaustivity.Interface
 namespace RSA.Implementations.FrankeBergen2020
 
 /-!
+@cite{franke-bergen-2020}
 This file previously contained the full Franke & Bergen (2020) RSA implementation.
 All definitions and theorems depend on Phenomena types (AristQuant, NestedAristotelian,
 allSentences, exhParses, getPosterior, etc.) and have been moved to

@@ -3,7 +3,7 @@ import Linglib.Theories.Semantics.Lexical.Numeral.Semantics
 import Linglib.Theories.Pragmatics.NeoGricean.NegationScope
 
 /-!
-# Numeral Semantics Bridge for Scontras & Pearl (2021) @cite{scontras-pearl-2021}
+# Numeral Semantics Bridge for Scontras & Pearl (2021) @cite{scontras-pearl-2021} @cite{kennedy-2015} @cite{musolino-2004}
 
 Connects S&P's `twoNotTruth` truth conditions to linglib's numeral
 semantics infrastructure (`maxMeaning` in `Numeral.Semantics`).

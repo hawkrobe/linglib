@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.227.78] - 2026-03-01
+
+### Changed
+- **Bib audit round 8**: fix @cite keys across 150 Lean files to match corrected bib entry keys (heinamki→heinamaki, kri→kriz, gksel→goksel, stojkovi→stojkovic, al-2018→cohn-gordon-goodman-potts-2019, al-1982→bresnan-etal-1982). Clean WALS entries with full metadata (comrie-2013, daniel-2013, iggesen-2013, miestamo-2013, nichols-bickel-2013). Add new entries: keysar-etal-2003, meyer-feiman-2021, augurzky-etal-2023, chandra-2025, stone-1997, rooth-partee-1982, von-fintel-iatridou-2008, khoo-2015, dieuleveut-hsu-bhatt-2025, liu-rotter-2025, de-haan-2013, frege-1892, karttunen-peters-1979, dahl-velupillai-2013, kennedy-levin-2008, dayal-1996, shannon-1948. Fix cohen-erteschik-shir-2002 (mangled title→proper article). Fix kriz-2015 (@misc→@phdthesis). 833 validated, 177 unvalidated, 1010 total.
+
 ## [0.227.77] - 2026-03-01
 
 ### Changed

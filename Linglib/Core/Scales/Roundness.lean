@@ -1,6 +1,6 @@
 /-!
 # Graded Numeral Roundness (k-ness Model)
-@cite{krifka-2007} @cite{sigurd-1988} @cite{woodin-winter-bhatt-2024}
+@cite{krifka-2007} @cite{sigurd-1988} @cite{woodin-winter-bhatt-2024} @cite{jansen-pollmann-2001}
 
 Framework-agnostic infrastructure for graded numeral roundness,
 following Sigurd (1988), Jansen & Pollmann (2001), and Woodin et al. (2024).

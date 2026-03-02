@@ -2,7 +2,7 @@ import Linglib.Theories.Semantics.Lexical.Verb.VerbEntry
 
 /-!
 # Presuppositions of *forget* Across Complement Frames
-@cite{kiparsky-kiparsky-1970} @cite{williams-2025}
+@cite{kiparsky-kiparsky-1970} @cite{williams-2025} @cite{white-2014}
 @misc{white-2014}
 
 Theory-neutral empirical data from Williams (2025), who shows that

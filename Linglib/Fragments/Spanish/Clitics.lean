@@ -2,6 +2,7 @@ import Linglib.Core.Lexical.Word
 
 /-!
 # Spanish Clitic Paradigm
+@cite{munoz-perez-2026}
 
 The full Spanish clitic paradigm, with syncretism data critical for
 Muñoz Pérez (2026). The key observation: 1SG and 2SG are syncretic

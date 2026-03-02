@@ -2,6 +2,7 @@ import Linglib.Theories.Semantics.Questions.Partition
 
 /-!
 # Coordination of Interrogatives
+@cite{groenendijk-stokhof-1984} @cite{szabolcsi-1997}
 
 Q1 ^ Q2 = meet (coarsest common refinement), Q1 v Q2 = join (finest common coarsening).
 

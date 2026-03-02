@@ -4,6 +4,7 @@ import Linglib.Phenomena.Imprecision.Studies.EgreEtAl2023
 
 /-!
 # Bridge: RSA Imprecision Model → Phenomena Data
+@cite{egre-etal-2023}
 
 Connects the BIR closed-form predictions from Egre et al. (2023)
 to empirical data in `Phenomena.Imprecision.Studies.EgreEtAl2023`.

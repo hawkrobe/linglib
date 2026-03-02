@@ -2,7 +2,7 @@ import Linglib.Theories.Syntax.HPSG.Core.Basic
 
 /-!
 # Head-Filler Schema and SLASH Feature
-@cite{ginzburg-sag-2000} @cite{pollard-sag-1994}
+@cite{ginzburg-sag-2000} @cite{pollard-sag-1994} @cite{mueller-2013}
 
 HPSG's third combination schema: the Head-Filler Schema handles long-distance
 dependencies (extraction, wh-movement). A filler XP combines with a sentence

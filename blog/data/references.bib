@@ -928,13 +928,17 @@
   sources   = {Phenomena/ScalarImplicatures/Studies/MeyerFeiman2021.lean}
 }
 % REF: Cohn-Gordon et al. (2018). An incremental iterated response model.
-@misc{al-2018,
-  author    = {Cohn-Gordon et al},
-  year      = {2018},
-  title     = {An incremental iterated response model},
+@inproceedings{cohn-gordon-goodman-potts-2019,
+  author    = {Cohn-Gordon, Reuben and Goodman, Noah and Potts, Christopher},
+  year      = {2019},
+  title     = {An Incremental Iterated Response Model of Pragmatics},
+  booktitle = {Proceedings of the Society for Computation in Linguistics (SCiL) 2019},
+  pages     = {81--90},
+  doi       = {10.7275/cprc-8x17},
+  url       = {https://aclanthology.org/W19-0109},
   subfield  = {pragmatics/rsa},
   role      = {cited},
-  validated = {false},
+  validated = {true},
   sources   = {Theories/Pragmatics/RSA/Implementations/WaldonDegen2021.lean}
 }
 % REF: Gotzner, N. & Romoli, J. (2018). The scalar inferences of strong scalar terms under negative quantifiers. Journal of Sem
@@ -1031,6 +1035,21 @@
   sources   = {Phenomena/Politeness/Studies/MachinoEtAl2025.lean}
 }
 
+@article{keysar-etal-2003,
+  author    = {Keysar, Boaz and Lin, Shuhong and Barr, Dale J.},
+  year      = {2003},
+  title     = {Limits on Theory of Mind Use in Adults},
+  journal   = {Cognition},
+  volume    = {89},
+  number    = {1},
+  pages     = {25--41},
+  doi       = {10.1016/s0010-0277(03)00064-7},
+  subfield  = {pragmatics/rsa},
+  validated = {false},
+  role      = {cited},
+  sources   = {Phenomena/Reference/Studies/HawkinsGweonGoodman2021.lean}
+}
+
 % ══════════════════════════════════════════════════════════════════════════════
 %  pragmatics/neogricean
 
@@ -1088,6 +1107,20 @@
   role      = {cited},
   sources   = {Comparisons/RSAExhExpressivity.lean;Comparisons/RSANeoGricean.lean;Theories/Pragmatics/NeoGricean/Exhaustivity/Spector2016.lean}
 }
+
+@article{meyer-feiman-2021,
+  author    = {Meyer, Marie-Christine and Feiman, Roman},
+  year      = {2021},
+  title     = {Composing Alternatives: The Structural Source of Scalar and Free Choice Implicatures},
+  journal   = {Journal of Memory and Language},
+  volume    = {121},
+  pages     = {104279},
+  subfield  = {pragmatics/neogricean},
+  validated = {false},
+  role      = {formalized},
+  sources   = {Phenomena/ScalarImplicatures/Studies/MeyerFeiman2021.lean;Phenomena/ScalarImplicatures/Studies/MeyerFeiman2021Bridge.lean}
+}
+
 % ══════════════════════════════════════════════════════════════════════════════
 
 @article{bale-etal-2025,
@@ -3135,13 +3168,17 @@
   sources   = {Theories/Semantics/Montague/Modification.lean}
 }
 % REF: Cohen & Erteschik-Shir (2002), Carlson (1977), Kratzer (1995), Diesing (1992)
-@misc{cohen-erteschik-shir-2002,
-  author    = {Cohen and Erteschik-Shir},
+@article{cohen-erteschik-shir-2002,
+  author    = {Cohen, Ariel and Erteschik-Shir, Nomi},
   year      = {2002},
-  title     = {, Carlson (1977), Kratzer (1995), Diesing (1992)},
+  title     = {Topic, Focus, and the Interpretation of Bare Plurals},
+  journal   = {Natural Language Semantics},
+  volume    = {10},
+  pages     = {125--165},
+  doi       = {10.1023/A:1016576614139},
   subfield  = {semantics/compositional},
   role      = {cited},
-  validated = {false},
+  validated = {true},
   sources   = {Phenomena/Generics/BarePlurals.lean}
 }
 % REF: Kehler, A. (2002). *Coherence, Reference, and the Theory of Grammar*. CSLI.
@@ -3799,11 +3836,13 @@
 }
 % REF: Comrie, B. (2013). Alignment of Case Marking of Full Noun Phrases. In Dryer, M. S. & Haspelmath, M. (eds.), WALS Online 
 @incollection{comrie-2013,
-  author    = {Comrie, B},
+  author    = {Comrie, Bernard},
   year      = {2013},
   title     = {Alignment of Case Marking of Full Noun Phrases},
-  booktitle = {WALS Online (v2020)},
-  editor    = {Dryer, M. S. and Haspelmath, M},
+  booktitle = {The World Atlas of Language Structures Online},
+  editor    = {Dryer, Matthew S. and Haspelmath, Martin},
+  publisher = {Max Planck Institute for Evolutionary Anthropology},
+  url       = {https://wals.info/chapter/98},
   subfield  = {semantics/compositional},
   role      = {cited},
   validated = {false},
@@ -3811,11 +3850,13 @@
 }
 % REF: Daniel, M. (2013). Plurality in Independent Personal Pronouns. In Dryer & Haspelmath (eds.), WALS Online (v2020.3). http
 @incollection{daniel-2013,
-  author    = {Daniel, M},
+  author    = {Daniel, Michael},
   year      = {2013},
   title     = {Plurality in Independent Personal Pronouns},
-  booktitle = {WALS Online (v2020.3). https://wals.info/chapter/35},
-  editor    = {Dryer and Haspelmath},
+  booktitle = {The World Atlas of Language Structures Online},
+  editor    = {Dryer, Matthew S. and Haspelmath, Martin},
+  publisher = {Max Planck Institute for Evolutionary Anthropology},
+  url       = {https://wals.info/chapter/35},
   subfield  = {semantics/compositional},
   role      = {cited},
   validated = {false},
@@ -3851,11 +3892,13 @@
 }
 % REF: Iggesen, O. A. (2013). Number of Cases. In Dryer, M. S. & Haspelmath, M. (eds.), WALS Online (v2020). Ch. 49.
 @incollection{iggesen-2013,
-  author    = {Iggesen, O. A},
+  author    = {Iggesen, Oliver A.},
   year      = {2013},
   title     = {Number of Cases},
-  booktitle = {WALS Online (v2020)},
-  editor    = {Dryer, M. S. and Haspelmath, M},
+  booktitle = {The World Atlas of Language Structures Online},
+  editor    = {Dryer, Matthew S. and Haspelmath, Martin},
+  publisher = {Max Planck Institute for Evolutionary Anthropology},
+  url       = {https://wals.info/chapter/49},
   subfield  = {semantics/compositional},
   role      = {cited},
   validated = {false},
@@ -3863,11 +3906,13 @@
 }
 % REF: Miestamo, M. (2013). Symmetric and asymmetric standard negation. In Dryer & Haspelmath (eds.), WALS Online. https://wals
 @incollection{miestamo-2013,
-  author    = {Miestamo, M},
+  author    = {Miestamo, Matti},
   year      = {2013},
-  title     = {Symmetric and asymmetric standard negation},
-  booktitle = {WALS Online. https://wals.info/chapter/113},
-  editor    = {Dryer and Haspelmath},
+  title     = {Symmetric and Asymmetric Standard Negation},
+  booktitle = {The World Atlas of Language Structures Online},
+  editor    = {Dryer, Matthew S. and Haspelmath, Martin},
+  publisher = {Max Planck Institute for Evolutionary Anthropology},
+  url       = {https://wals.info/chapter/113},
   subfield  = {semantics/compositional},
   role      = {cited},
   validated = {false},
@@ -3875,11 +3920,13 @@
 }
 % REF: Nichols, J. & B. Bickel (2013). Obligatory possessive inflection. In Dryer & Haspelmath (eds.), WALS Online (v2020.3). h
 @incollection{nichols-bickel-2013,
-  author    = {Nichols, J. and B. Bickel},
+  author    = {Nichols, Johanna and Bickel, Balthasar},
   year      = {2013},
-  title     = {Obligatory possessive inflection},
-  booktitle = {WALS Online (v2020.3). https://wals.info/chapter/58},
-  editor    = {Dryer and Haspelmath},
+  title     = {Obligatory Possessive Inflection},
+  booktitle = {The World Atlas of Language Structures Online},
+  editor    = {Dryer, Matthew S. and Haspelmath, Martin},
+  publisher = {Max Planck Institute for Evolutionary Anthropology},
+  url       = {https://wals.info/chapter/58},
   subfield  = {semantics/compositional},
   role      = {cited},
   validated = {false},
@@ -3998,13 +4045,15 @@
   sources   = {Phenomena/Numerals/Compare.lean;Theories/Pragmatics/NeoGricean/Constraints/NumericalExpressions.lean}
 }
 % REF: Križ, M. (2015). Aspects of Homogeneity in the Semantics of Natural Language.
-@misc{kri-2015,
-  author    = {Križ, M},
+@phdthesis{kriz-2015,
+  author    = {Kri{\v{z}}, Manuel},
   year      = {2015},
   title     = {Aspects of Homogeneity in the Semantics of Natural Language},
+  school    = {University of Vienna},
+  url       = {https://manuel.kriz.fr/wp-content/uploads/Kriz-2015-Aspects-of-Homogeneity.pdf},
   subfield  = {semantics/compositional},
   role      = {cited},
-  validated = {false},
+  validated = {true},
   sources   = {Phenomena/Imprecision/InferencePreservation.lean;Phenomena/Imprecision/Numerals.lean;Phenomena/Imprecision/Projection.lean;Phenomena/Plurals/Basic.lean;Phenomena/Plurals/Homogeneity.lean;Theories/Semantics/Conditionals/Counterfactual.lean}
 }
 % REF: Sarvasy, H. S. (2015). Breaking the clause chains: non-canonical medial clauses in Nungon. Studies in Language 39(3):664
@@ -4243,14 +4292,18 @@
   validated = {true},
   sources   = {Phenomena/Polarity/Studies/Schwab2022.lean}
 }
-% REF: Augurzky et al. (2023): every/no/not every asymmetry
-@misc{al-2023,
-  author    = {Augurzky et al},
+% REF: Augurzky et al. (2023). Putting plural definites into context. SuB 27.
+@inproceedings{augurzky-etal-2023,
+  author    = {Augurzky, Petra and Bonnet, Marion and Breheny, Richard and Cremers, Alexandre and Ebert, Cornelia and Mayr, Clemens and Romoli, Jacopo and Steinbach, Markus and Sudo, Yasutada},
   year      = {2023},
-  title     = {: every/no/not every asymmetry},
+  title     = {Putting plural definites into context},
+  booktitle = {Proceedings of Sinn und Bedeutung},
+  volume    = {27},
+  pages     = {19--32},
+  doi       = {10.18148/sub/2023.v27.1050},
   subfield  = {semantics/compositional},
   role      = {cited},
-  validated = {false},
+  validated = {true},
   sources   = {Phenomena/Imprecision/Projection.lean}
 }
 % REF: Solt (2023). Imprecision without homogeneity.
@@ -4325,13 +4378,18 @@
   sources   = {Phenomena/Negation/CzechThreeWayNegTypologyBridge.lean;Phenomena/Negation/Studies/StankovaSimik2024.lean;Phenomena/Negation/Studies/StankovaSimik2024/Data.lean}
 }
 % REF: Chandra, Goodman, Meylan, Hawkins et al. (2025). memo.
-@misc{chandra-2025,
-  author    = {Chandra, Goodman, Meylan, Hawkins et al},
+@article{chandra-2025,
+  author    = {Chandra, Kartik and Chen, Tony and Tenenbaum, Joshua B. and Ragan-Kelley, Jonathan},
   year      = {2025},
-  title     = {memo},
+  title     = {A Domain-Specific Probabilistic Programming Language for Reasoning about Reasoning (or: a memo on memo)},
+  journal   = {Proceedings of the ACM on Programming Languages},
+  volume    = {9},
+  number    = {OOPSLA2},
+  pages     = {784--814},
+  doi       = {10.1145/3763078},
   subfield  = {semantics/compositional},
   role      = {cited},
-  validated = {false},
+  validated = {true},
   sources   = {Core/ContentIndividual.lean}
 }
 % REF: de Vries, L. (2025). Clause chaining in Greater Awyu. In Sarvasy & Aikhenvald (eds.), Clause Chaining in the Languages o
@@ -4373,20 +4431,6 @@
   validated = {true},
   sources   = {Fragments/English/MeasurePhrases.lean;Phenomena/Quantification/BaleSchwarz2026Bridge.lean;Theories/Semantics/Probabilistic/Measurement/Basic.lean}
 }
-% REF: Muñoz Pérez, C. (2026). Stylistic applicatives: A lens into the nature of anticausative SE. *Glossa* 11(1).
-@article{muoz-prez-2026,
-  author    = {Muñoz Pérez, C},
-  year      = {2026},
-  title     = {Stylistic applicatives: A lens into the nature of anticausative SE},
-  journal   = {Glossa},
-  volume    = {11},
-  number    = {1},
-  doi       = {10.16995/glossa.17369},
-  subfield  = {semantics/compositional},
-  role      = {cited},
-  validated = {true},
-  sources   = {Fragments/Spanish/Clitics.lean;Fragments/Spanish/PersonFeatures.lean;Fragments/Spanish/Predicates.lean;Phenomena/Causatives/Studies/MunozPerez2026/Bridge.lean;Phenomena/Causatives/Studies/MunozPerez2026/Data.lean;Theories/Morphology/DM/Fission.lean;Theories/Syntax/Minimalism/Core/Voice.lean}
-}
 % REF: Snyder, E. (2026). Numbers as kinds. *L&P* 49, 57–100.
 @article{snyder-2026,
   author    = {Snyder, Eric},
@@ -4402,16 +4446,6 @@
   sources   = {Phenomena/Numerals/Snyder2026Bridge.lean;Theories/Semantics/Lexical/Numeral/Polysemy.lean}
 }
 % REF: Stojković, J. (2026). Same Form, Different Grammars: The Slavic [ov]∼[u] Alternation. In *Advances in Formal Slavic Ling
-@incollection{stojkovi-2026,
-  author    = {Stojković, J},
-  year      = {2026},
-  title     = {Same Form, Different Grammars: The Slavic [ov]∼[u] Alternation},
-  booktitle = {Advances in Formal Slavic Linguistics 2023},
-  subfield  = {semantics/compositional},
-  role      = {cited},
-  validated = {false},
-  sources   = {Phenomena/Allomorphy/SlavicVerbalizer/Bridge/OTAnalysis.lean}
-}
 
 % ══════════════════════════════════════════════════════════════════════════════
 %  semantics/modality
@@ -4429,11 +4463,13 @@
   sources   = {Theories/Semantics/Modality/ModalIndefinites.lean}
 }
 
-@misc{stone-1997,
+@techreport{stone-1997,
   author    = {Stone, Matthew},
   year      = {1997},
   title     = {The Anaphoric Parallel between Modality and Tense},
-  note      = {IRCS Technical Report 97-06, University of Pennsylvania},
+  institution = {University of Pennsylvania, Department of Computer and Information Science},
+  number    = {MS-CIS-97-09},
+  url       = {https://repository.upenn.edu/handle/20.500.14332/7078},
   subfield  = {semantics/modality},
   validated = {true},
   role      = {cited},
@@ -4769,11 +4805,11 @@
   sources   = {Phenomena/Conditionals/LeftNested/Data.lean;Theories/Semantics/Conditionals/LeftNested.lean}
 }
 % REF: Rooth, M. & Partee, B. (1982). Conjunction, type ambiguity, and wide scope or. WCCFL 1.
-@incollection{rooth-partee-1982,
-  author    = {Rooth, M. and Partee, B},
+@inproceedings{rooth-partee-1982,
+  author    = {Rooth, Mats and Partee, Barbara},
   year      = {1982},
-  title     = {Conjunction, type ambiguity, and wide scope or},
-  booktitle = {WCCFL 1.},
+  title     = {Conjunction, Type Ambiguity, and Wide Scope Or},
+  booktitle = {Proceedings of the 1st West Coast Conference on Formal Linguistics (WCCFL 1)},
   subfield  = {semantics/modality},
   role      = {cited},
   validated = {false},
@@ -5003,13 +5039,17 @@
   sources   = {Phenomena/Modality/ActualityInferencesBridge.lean}
 }
 % REF: von Fintel, K. & Iatridou, S. (2008). How to say ought in every language. Ms., MIT.
-@book{von-fintel-iatridou-2008,
-  author    = {von Fintel, K. and Iatridou, S},
+@incollection{von-fintel-iatridou-2008,
+  author    = {von Fintel, Kai and Iatridou, Sabine},
   year      = {2008},
-  title     = {How to say ought in every language},
+  title     = {How to Say Ought in Foreign: The Composition of Weak Necessity Modals},
+  booktitle = {Time and Modality},
+  editor    = {Gu\'{e}ron, Jacqueline and Lecarme, Jacqueline},
+  publisher = {Springer},
+  doi       = {10.1007/978-1-4020-8354-9_6},
   subfield  = {semantics/modality},
   role      = {cited},
-  validated = {false},
+  validated = {true},
   sources   = {Theories/Semantics/Modality/Directive.lean}
 }
 % REF: Pérez Carballo, A. (2009). Toward a dissolution of the proviso problem.
@@ -5166,6 +5206,57 @@
   sources   = {Theories/Semantics/Conditionals/Counterfactual.lean}
 }
 
+@article{khoo-2015,
+  author    = {Khoo, Justin},
+  year      = {2015},
+  title     = {Modal Disagreements},
+  journal   = {Inquiry},
+  volume    = {58},
+  number    = {5},
+  pages     = {511--534},
+  doi       = {10.1080/0020174X.2015.1033005},
+  subfield  = {semantics/modality},
+  validated = {false},
+  role      = {formalized},
+  sources   = {Phenomena/Modality/Studies/Khoo2015.lean;Phenomena/Modality/Studies/Khoo2015Bridge.lean}
+}
+
+@article{dieuleveut-hsu-bhatt-2025,
+  author    = {Dieuleveut, Anouk and Hsu, Brian and Bhatt, Rajesh},
+  year      = {2025},
+  title     = {A Register Approach to Modal Non-Concord in {E}nglish: An Experimental Study of Linguistic and Social Meaning},
+  journal   = {English Language \& Linguistics},
+  subfield  = {semantics/modality},
+  validated = {false},
+  role      = {formalized},
+  sources   = {Phenomena/Modality/ModalConcord/Data.lean;Phenomena/Modality/ModalConcord/Bridge.lean}
+}
+
+@misc{liu-rotter-2025,
+  author    = {Liu, Mingya and Rotter, Stephanie},
+  year      = {2025},
+  title     = {Non-Redundant Modal Concord: Evidence from Speaker Commitment and Social Meaning},
+  subfield  = {semantics/modality},
+  validated = {false},
+  role      = {formalized},
+  sources   = {Phenomena/Modality/ModalConcord/LiuRotter2025.lean;Phenomena/Modality/ModalConcord/LiuRotter2025Bridge.lean}
+}
+
+@incollection{de-haan-2013,
+  author    = {de Haan, Ferdinand},
+  year      = {2013},
+  title     = {Semantic Distinctions of Evidentiality},
+  booktitle = {The World Atlas of Language Structures Online},
+  editor    = {Dryer, Matthew S. and Haspelmath, Martin},
+  publisher = {Max Planck Institute for Evolutionary Anthropology},
+  address   = {Leipzig},
+  url       = {https://wals.info/chapter/77},
+  subfield  = {semantics/modality},
+  validated = {false},
+  role      = {cited},
+  sources   = {Phenomena/Modality/Typology.lean}
+}
+
 % ══════════════════════════════════════════════════════════════════════════════
 %  semantics/reference
 
@@ -5313,13 +5404,17 @@
 }
 
 % REF: Frege, G. (1892). Über Sinn und Bedeutung.
-@misc{frege-1892,
-  author    = {Frege, G},
+@article{frege-1892,
+  author    = {Frege, Gottlob},
   year      = {1892},
-  title     = {Über Sinn und Bedeutung},
+  title     = {{\"U}ber {S}inn und {B}edeutung},
+  journal   = {Zeitschrift f{\"u}r Philosophie und philosophische Kritik},
+  volume    = {100},
+  pages     = {25--50},
+  doi       = {10.1515/9783110853933.63},
   subfield  = {semantics/reference},
   role      = {cited},
-  validated = {false},
+  validated = {true},
   sources   = {Phenomena/Reference/DirectReference.lean}
 }
 % REF: Kripke, S. (1977). Speaker's Reference and Semantic Reference.
@@ -5335,15 +5430,18 @@
 }
 % REF: Greenberg, J. H. (1978). Generalizations about Numeral Systems. In Greenberg (ed.), Universals of Human Language, vol. 3
 @incollection{greenberg-1978,
-  author    = {Greenberg, J. H},
+  author    = {Greenberg, Joseph H.},
   year      = {1978},
-  title     = {Generalizations about Numeral Systems},
-  booktitle = {Universals of Human Language, vol. 3, 249--295},
-  editor    = {Greenberg},
+  title     = {Generalizations About Numeral Systems},
+  booktitle = {Universals of Human Language},
+  editor    = {Greenberg, Joseph H.},
+  volume    = {3},
+  pages     = {249--295},
   publisher = {Stanford University Press},
+  doi       = {10.1515/9781503623217-014},
   subfield  = {semantics/reference},
   role      = {cited},
-  validated = {false},
+  validated = {true},
   sources   = {Phenomena/Numerals/Typology.lean;Phenomena/Reference/Typology.lean}
 }
 % REF: Banfield, A. (1982). Unspeakable Sentences. Routledge.
@@ -5623,13 +5721,17 @@
   sources   = {Theories/Pragmatics/RSA/ScalarImplicatures/Embedded/Questions.lean;Theories/Semantics/Focus/Interpretation.lean;Theories/Semantics/Questions/Hamblin.lean;Theories/Semantics/Questions/LeftPeriphery.lean}
 }
 % REF: Karttunen, L. & Peters, S. (1979). Conventional implicature.
-@misc{karttunen-peters-1979,
-  author    = {Karttunen, L. and Peters, S},
+@incollection{karttunen-peters-1979,
+  author    = {Karttunen, Lauri and Peters, Stanley},
   year      = {1979},
-  title     = {Conventional implicature},
+  title     = {Conventional Implicature},
+  booktitle = {Presupposition},
+  editor    = {Oh, C.-K. and Dinneen, D. A.},
+  publisher = {Brill},
+  doi       = {10.1163/9789004368880_002},
   subfield  = {semantics/focus},
   role      = {cited},
-  validated = {false},
+  validated = {true},
   sources   = {Theories/Semantics/Focus/Particles.lean}
 }
 % REF: Rooth, M. (1985). Association with Focus. PhD Dissertation.
@@ -6812,6 +6914,21 @@
   sources   = {Theories/Semantics/Events/EventStructure.lean;Theories/Semantics/Events/ProtoRoles.lean}
 }
 
+@incollection{dahl-velupillai-2013,
+  author    = {Dahl, \"{O}sten and Velupillai, Viveka},
+  year      = {2013},
+  title     = {The Past Tense},
+  booktitle = {The World Atlas of Language Structures Online},
+  editor    = {Dryer, Matthew S. and Haspelmath, Martin},
+  publisher = {Max Planck Institute for Evolutionary Anthropology},
+  address   = {Leipzig},
+  url       = {https://wals.info/chapter/66},
+  subfield  = {semantics/tense},
+  validated = {false},
+  role      = {cited},
+  sources   = {Phenomena/TenseAspect/Typology.lean}
+}
+
 % ══════════════════════════════════════════════════════════════════════════════
 %  semantics/lexical
 
@@ -7050,6 +7167,21 @@
   sources   = {Theories/Semantics/Lexical/Adjective/Theory.lean}
 }
 
+@incollection{kennedy-levin-2008,
+  author    = {Kennedy, Christopher and Levin, Beth},
+  year      = {2008},
+  title     = {Measure of Change: The Adjectival Core of Degree Achievements},
+  booktitle = {Adjectives and Adverbs: Syntax, Semantics, and Discourse},
+  editor    = {McNally, Louise and Kennedy, Christopher},
+  publisher = {Oxford University Press},
+  pages     = {156--182},
+  doi       = {10.1093/oso/9780199211616.003.0007},
+  subfield  = {semantics/lexical},
+  validated = {false},
+  role      = {formalized},
+  sources   = {Theories/Semantics/Lexical/Verb/DegreeAchievement.lean}
+}
+
 @article{kennedy-mcnally-2005,
   author    = {Kennedy, Christopher and McNally, Louise},
   year      = {2005},
@@ -7229,7 +7361,7 @@
   subfield  = {semantics/lexical},
   validated = {true},
   role      = {formalized},
-  sources   = {Theories/Semantics/Lexical/Plural/Distributivity.lean}
+  sources   = {Phenomena/Plurals/Homogeneity.lean;Phenomena/Plurals/NonMaximality.lean;Theories/Semantics/Lexical/Plural/Distributivity.lean}
 }
 
 @article{haslinger-etal-2025,
@@ -7675,18 +7807,6 @@
   role      = {cited},
   validated = {true},
   sources   = {Phenomena/Negation/FlexibleNegation.lean;Theories/Pragmatics/RSA/Implementations/TesslerFranke2020.lean;Theories/Semantics/Lexical/Adjective/Theory.lean}
-}
-% REF: Križ & Spector (2021). Interpreting plural predication. L&P.
-@article{kri-spector-2021,
-  author    = {Križ and Spector},
-  year      = {2021},
-  title     = {Interpreting plural predication},
-  journal   = {L&P.},
-  subfield  = {semantics/lexical},
-  role      = {cited},
-  doi       = {10.1007/s10988-020-09311-w},
-  validated = {true},
-  sources   = {Phenomena/Plurals/Homogeneity.lean;Phenomena/Plurals/NonMaximality.lean;Theories/Semantics/Lexical/Plural/Distributivity.lean}
 }
 % REF: Cariani, F., Santorio, P. & Wellwood, A. (2023). Positive gradable adjective ascriptions without positive morphemes. SuB
 @inproceedings{cariani-wellwood-2023,
@@ -8167,6 +8287,35 @@
   sources   = {Fragments/Russian/QuestionParticles.lean;Phenomena/Questions/SlavicPQStrategies.lean}
 }
 
+@book{dayal-1996,
+  author    = {Dayal, Veneeta},
+  year      = {1996},
+  title     = {Locality in {WH} Quantification: Questions and Relative Clauses in {H}indi},
+  publisher = {Kluwer Academic Publishers},
+  series    = {Studies in Linguistics and Philosophy},
+  number    = {62},
+  doi       = {10.1007/978-94-011-4808-5},
+  subfield  = {semantics/questions},
+  validated = {false},
+  role      = {cited},
+  sources   = {Theories/Semantics/Questions/Exhaustivity.lean}
+}
+
+@article{shannon-1948,
+  author    = {Shannon, Claude E.},
+  year      = {1948},
+  title     = {A Mathematical Theory of Communication},
+  journal   = {Bell System Technical Journal},
+  volume    = {27},
+  number    = {3},
+  pages     = {379--423},
+  doi       = {10.1002/j.1538-7305.1948.tb01338.x},
+  subfield  = {semantics/questions},
+  validated = {false},
+  role      = {cited},
+  sources   = {Theories/Semantics/Questions/EntropyNPIs.lean}
+}
+
 % ══════════════════════════════════════════════════════════════════════════════
 %  semantics/presupposition
 
@@ -8542,14 +8691,19 @@
   validated = {true},
   sources   = {Theories/Semantics/Attitudes/CDistributivity.lean}
 }
-% REF: Elliott et al. (2017). Predicates of relevance and theories of question embedding.
-@misc{al-2017,
-  author    = {Elliott et al},
+% REF: Elliott et al. (2017). Predicates of relevance and theories of question embedding. JoS 34(3):547–554.
+@article{elliott-etal-2017,
+  author    = {Elliott, Patrick D. and Klinedinst, Nathan and Sudo, Yasutada and Uegaki, Wataru},
   year      = {2017},
-  title     = {Predicates of relevance and theories of question embedding},
+  title     = {Predicates of Relevance and Theories of Question Embedding},
+  journal   = {Journal of Semantics},
+  volume    = {34},
+  number    = {3},
+  pages     = {547--554},
+  doi       = {10.1093/jos/ffx008},
   subfield  = {semantics/presupposition},
   role      = {cited},
-  validated = {false},
+  validated = {true},
   sources   = {Theories/Semantics/Attitudes/BuilderProperties.lean;Theories/Semantics/Attitudes/CDistributivity.lean}
 }
 % REF: Bondarenko, T. (2019). From think to remember. SALT 29.
@@ -8849,6 +9003,33 @@
   role      = {cited},
   sources   = {Theories/Semantics/Dynamic/Core/DiscourseRef.lean;Theories/Semantics/Dynamic/Systems/IntensionalCDRT/Basic.lean}
 }
+
+@article{barker-2002,
+  author    = {Barker, Chris},
+  year      = {2002},
+  title     = {Continuations and the Nature of Quantification},
+  journal   = {Natural Language Semantics},
+  volume    = {10},
+  number    = {3},
+  pages     = {211--242},
+  doi       = {10.1023/A:1022183511876},
+  subfield  = {semantics/dynamic},
+  validated = {false},
+  role      = {cited},
+  sources   = {Theories/Semantics/Dynamic/Effects/Continuation/Basic.lean}
+}
+
+@phdthesis{shan-2005,
+  author    = {Shan, Chung-chieh},
+  year      = {2005},
+  title     = {Linguistic Side Effects},
+  school    = {Harvard University},
+  subfield  = {semantics/dynamic},
+  validated = {false},
+  role      = {cited},
+  sources   = {Theories/Semantics/Dynamic/Effects/Continuation/Basic.lean}
+}
+
 % ══════════════════════════════════════════════════════════════════════════════
 
 @article{groenendijk-stokhof-1991,
@@ -9125,9 +9306,12 @@
 }
 % REF: Elbourne, P. (2005). Situations and Individuals. MIT Press.
 @book{elbourne-2005,
-  author    = {Elbourne, P},
+  author    = {Elbourne, Paul D.},
   year      = {2005},
   title     = {Situations and Individuals},
+  series    = {Current Studies in Linguistics},
+  publisher = {MIT Press},
+  isbn      = {9780262050807},
   subfield  = {semantics/dynamic},
   role      = {cited},
   validated = {false},
@@ -9158,13 +9342,16 @@
   sources   = {Theories/Semantics/Dynamic/Core/DynamicTy2.lean;Theories/Semantics/Dynamic/Systems/DynamicGQ/Basic.lean}
 }
 % REF: Dekker, P. (2008). A Guide to Dynamic Semantics.
-@misc{dekker-2008,
-  author    = {Dekker, P},
+@incollection{dekker-2008,
+  author    = {Dekker, Paul},
   year      = {2008},
-  title     = {A Guide to Dynamic Semantics},
+  title     = {Dynamic Semantics},
+  booktitle = {Semantics: An International Handbook of Natural Language Meaning},
+  publisher = {De Gruyter Mouton},
+  doi       = {10.1515/9783110226614.923},
   subfield  = {semantics/dynamic},
   role      = {cited},
-  validated = {false},
+  validated = {true},
   sources   = {Theories/Semantics/Dynamic/Systems/PLA/Basic.lean}
 }
 % REF: Schwarz, F. (2009). Two Types of Definites in Natural Language. UMass diss.
@@ -9379,12 +9566,39 @@
   sources   = {Comparisons/CommandRelations.lean;Phenomena/Anaphora/Coreference.lean}
 }
 
+@book{chomsky-1957,
+  author    = {Chomsky, Noam},
+  year      = {1957},
+  title     = {Syntactic Structures},
+  publisher = {Mouton},
+  doi       = {10.1515/9783112316009},
+  subfield  = {syntax},
+  validated = {false},
+  role      = {foundational},
+  sources   = {Phenomena/WordOrder/SubjectAuxInversion.lean}
+}
+
+@incollection{chomsky-1970,
+  author    = {Chomsky, Noam},
+  year      = {1970},
+  title     = {Remarks on Nominalization},
+  booktitle = {Readings in English Transformational Grammar},
+  editor    = {Jacobs, Roderick A. and Rosenbaum, Peter S.},
+  publisher = {Ginn},
+  pages     = {184--221},
+  subfield  = {syntax},
+  validated = {false},
+  role      = {foundational},
+  sources   = {Comparisons/CategorialFeatures.lean}
+}
+
 @book{may-1985,
   author    = {May, Robert},
   year      = {1985},
   title     = {Logical Form: Its Structure and Derivation},
   publisher = {MIT Press},
   isbn      = {9780262631020},
+  series    = {Linguistic Inquiry Monographs},
   subfield  = {syntax},
   validated = {false},
   role      = {foundational},
@@ -9615,10 +9829,10 @@
   volume    = {11},
   number    = {1},
   doi       = {10.16995/glossa.17369},
-  subfield  = {syntax},
+  subfield  = {semantics/compositional},
   validated = {true},
   role      = {cited},
-  sources   = {Phenomena/Causatives/Compare.lean;Theories/Syntax/Minimalism/Core/Applicative.lean}
+  sources   = {Fragments/Spanish/Clitics.lean;Fragments/Spanish/PersonFeatures.lean;Fragments/Spanish/Predicates.lean;Phenomena/Causatives/Compare.lean;Phenomena/Causatives/Studies/MunozPerez2026/Bridge.lean;Phenomena/Causatives/Studies/MunozPerez2026/Data.lean;Theories/Morphology/DM/Fission.lean;Theories/Syntax/Minimalism/Core/Applicative.lean;Theories/Syntax/Minimalism/Core/Voice.lean}
 }
 % ══════════════════════════════════════════════════════════════════════════════
 
@@ -9779,7 +9993,8 @@
   title     = {Case},
   series    = {Cambridge Textbooks in Linguistics},
   publisher = {Cambridge University Press},
-  isbn      = {0-521-44114-5},
+  isbn      = {9780521014915},
+  edition   = {2},
   subfield  = {syntax},
   validated = {false},
   role      = {foundational},
@@ -9926,7 +10141,7 @@
   year      = {1995},
   title     = {Constructions: A Construction Grammar Approach to Argument Structure},
   publisher = {University of Chicago Press},
-  isbn      = {9780226300856},
+  isbn      = {9780226300863},
   subfield  = {syntax},
   validated = {false},
   role      = {foundational},
@@ -10095,9 +10310,10 @@
   year      = {1995},
   title     = {Belfast {E}nglish and {S}tandard {E}nglish: Dialect Variation and Parameter Setting},
   publisher = {Oxford University Press},
-  isbn      = {978-0-19-508292-0},
+  isbn      = {9780195082913},
+  doi       = {10.1093/oso/9780195082913.001.0001},
   subfield  = {syntax},
-  validated = {false},
+  validated = {true},
   role      = {cited},
   sources   = {Phenomena/WordOrder/SubjectAuxInversion.lean}
 }
@@ -10271,14 +10487,16 @@
 }
 % REF: Greenberg, J. (1963). Some universals of grammar. In Greenberg (ed.), Universals of Language.
 @incollection{greenberg-1963,
-  author    = {Greenberg, J},
+  author    = {Greenberg, Joseph H.},
   year      = {1963},
-  title     = {Some universals of grammar},
+  title     = {Some Universals of Grammar with Particular Reference to the Order of Meaningful Elements},
   booktitle = {Universals of Language},
-  editor    = {Greenberg},
+  editor    = {Greenberg, Joseph H.},
+  publisher = {MIT Press},
+  doi       = {10.1515/9781503623217-005},
   subfield  = {syntax},
   role      = {cited},
-  validated = {false},
+  validated = {true},
   sources   = {Phenomena/Agreement/Typology.lean;Phenomena/WordOrder/Typology.lean;Theories/Syntax/DependencyGrammar/Formal/HarmonicOrder.lean}
 }
 % REF: Doke, C. M. & Mofokeng, S. M. (1967). Textbook of Southern Sotho Grammar.
@@ -10404,7 +10622,7 @@
   sources   = {Phenomena/ArgumentStructure/Unaccusativity/Data.lean}
 }
 % REF: Bresnan et al. (1982) "Cross-serial dependencies in Dutch"
-@incollection{al-1982,
+@incollection{bresnan-etal-1982,
   author    = {Bresnan, Joan and Kaplan, Ronald M. and Peters, Stanley and Zaenen, Annie},
   year      = {1982},
   title     = {Cross-Serial Dependencies in Dutch},
@@ -10497,15 +10715,18 @@
   sources   = {Phenomena/FillerGap/Compare.lean;Theories/Syntax/Minimalism/Coreference.lean;Theories/Syntax/Minimalism/Formal/XBar.lean}
 }
 % REF: Keenan, E. L. & J. A. Hawkins (1987). The psychological validity of the Accessibility Hierarchy. In Keenan (ed.), Univer
-@incollection{keenan-hawkins-1987,
-  author    = {Keenan, E. L. and J. A. Hawkins},
+@incollection{hawkins-1987,
+  author    = {Hawkins, Sarah},
   year      = {1987},
-  title     = {The psychological validity of the Accessibility Hierarchy},
-  booktitle = {Universal Grammar: 15 Essays. Croom Helm},
-  editor    = {Keenan},
+  title     = {The Psychological Validity of the Accessibility Hierarchy},
+  booktitle = {Universal Grammar: 15 Essays},
+  editor    = {Keenan, Edward L.},
+  publisher = {Croom Helm},
+  isbn      = {9781138986527},
+  url       = {https://www.taylorfrancis.com/chapters/edit/10.4324/9781315880259-4},
   subfield  = {syntax},
   role      = {cited},
-  validated = {false},
+  validated = {true},
   sources   = {Phenomena/FillerGap/Typology.lean}
 }
 % REF: Pollard, C. & Sag, I. (1987). Information-Based Syntax and Semantics. Vol. 1.
@@ -10774,9 +10995,12 @@
 }
 % REF: Siewierska, A. (2004). Person. Cambridge University Press.
 @book{siewierska-2004,
-  author    = {Siewierska, A},
+  author    = {Siewierska, Anna},
   year      = {2004},
   title     = {Person},
+  series    = {Cambridge Textbooks in Linguistics},
+  publisher = {Cambridge University Press},
+  isbn      = {9780521776691},
   subfield  = {syntax},
   role      = {cited},
   validated = {false},
@@ -11151,14 +11375,16 @@
   validated = {true},
   sources   = {Theories/Syntax/DependencyGrammar/Formal/MemorySurprisal/FedzechkinaEtAl2017.lean}
 }
-% REF: Haslinger et al. (2019). A plural analysis of distributive conjunctions.
-@misc{al-2019,
-  author    = {Haslinger et al},
+% REF: Haslinger et al. (2019). A plural analysis of distributive conjunctions. Ms.
+@unpublished{haslinger-etal-2019,
+  author    = {Haslinger, Nina and Panzirsch, Valentin and Rosina, Eva and Roszkowski, Magdalena and Schmitt, Viola and Wurm, Valerie},
   year      = {2019},
-  title     = {A plural analysis of distributive conjunctions},
-  subfield  = {syntax},
+  title     = {A plural analysis of distributive conjunctions: {E}vidence from two cross-linguistic asymmetries},
+  note      = {Manuscript},
+  url       = {https://semanticsarchive.net/Archive/Dg0MmY5N/conjunction_paper.pdf},
+  subfield  = {semantics/compositional},
   role      = {cited},
-  validated = {false},
+  validated = {true},
   sources   = {Phenomena/Coordination/Studies/BillEtAl2025.lean}
 }
 % REF: de Marneffe, M.-C. & Nivre, J. (2019). Dependency Grammar. Annual Review of Linguistics 5:197–218. §4.2, Figure 9.
@@ -11313,6 +11539,21 @@
   role      = {cited},
   validated = {true},
   sources   = {Phenomena/FillerGap/BackgroundedIslandsBridge.lean;Phenomena/FillerGap/Compare.lean;Phenomena/FillerGap/Islands/MannerOfSpeaking.lean;Theories/Semantics/Focus/BackgroundedIslands.lean}
+}
+
+@article{goldberg-shirtz-2025,
+  author    = {Goldberg, Adele E. and Shirtz, Shahar},
+  year      = {2025},
+  title     = {The {E}nglish Phrase-as-Lemma Construction: When a Phrase Masquerades as a Word, People Play Along},
+  journal   = {Language},
+  volume    = {101},
+  number    = {2},
+  pages     = {291--320},
+  doi       = {10.1353/lan.2025.a962899},
+  subfield  = {syntax},
+  validated = {false},
+  role      = {formalized},
+  sources   = {Theories/Syntax/ConstructionGrammar/Studies/GoldbergShirtz2025.lean;Phenomena/Constructions/Studies/GoldbergShirtz2025.lean;Phenomena/Constructions/CxG_GoldbergShirtz2025Bridge.lean}
 }
 
 % ══════════════════════════════════════════════════════════════════════════════
@@ -11570,20 +11811,14 @@
   sources   = {Fragments/Mandarin/Classifiers.lean}
 }
 % REF: Heinamäki, O. (1974). *Semantics of English temporal connectives*. PhD, Indiana University.
-@phdthesis{heinamki-1974,
-  author    = {Heinamäki, O},
-  year      = {1974},
-  title     = {Semantics of English temporal connectives},
-  subfield  = {morphology},
-  role      = {cited},
-  validated = {false},
-  sources   = {Fragments/Finnish/TemporalConnectives.lean;Theories/Semantics/Tense/TemporalConnectives/Karttunen.lean}
-}
 % REF: Kayne, R. (1975). French Syntax. MIT Press. (faire-infinitive)
 @book{kayne-1975,
-  author    = {Kayne, R},
+  author    = {Kayne, Richard S.},
   year      = {1975},
-  title     = {French Syntax},
+  title     = {French Syntax: The Transformational Cycle},
+  series    = {Current Studies in Linguistics},
+  publisher = {MIT Press},
+  isbn      = {9780262110556},
   subfield  = {morphology},
   role      = {cited},
   validated = {false},
@@ -11591,9 +11826,12 @@
 }
 % REF: Comrie, B. (1976). Aspect. Cambridge University Press.
 @book{comrie-1976,
-  author    = {Comrie, B},
+  author    = {Comrie, Bernard},
   year      = {1976},
   title     = {Aspect},
+  series    = {Cambridge Textbooks in Linguistics},
+  publisher = {Cambridge University Press},
+  isbn      = {9780521290456},
   subfield  = {morphology},
   role      = {cited},
   validated = {false},
@@ -11611,11 +11849,11 @@
 }
 % REF: Rizzi, L. (1978). A restructuring rule in Italian syntax. In Keyser (ed.), Recent Transformational Studies in European L
 @incollection{rizzi-1978,
-  author    = {Rizzi, L},
+  author    = {Rizzi, Luigi},
   year      = {1978},
-  title     = {A restructuring rule in Italian syntax},
+  title     = {A Restructuring Rule in Italian Syntax},
   booktitle = {Recent Transformational Studies in European Languages},
-  editor    = {Keyser},
+  editor    = {Keyser, Samuel Jay},
   publisher = {MIT Press},
   subfield  = {morphology},
   role      = {cited},
@@ -11624,9 +11862,12 @@
 }
 % REF: Harris, A. C. (1981). Georgian Syntax: A Study in Relational Grammar. Cambridge University Press.
 @book{harris-1981,
-  author    = {Harris, A. C},
+  author    = {Harris, Alice C.},
   year      = {1981},
   title     = {Georgian Syntax: A Study in Relational Grammar},
+  series    = {Cambridge Studies in Linguistics},
+  publisher = {Cambridge University Press},
+  isbn      = {9780521235846},
   subfield  = {morphology},
   role      = {cited},
   validated = {false},
@@ -11725,11 +11966,12 @@
 }
 % REF: Krifka, M. (1992). Thematic relations as links between nominal reference and temporal constitution. In Sag, I. & Szabolc
 @incollection{krifka-1992,
-  author    = {Krifka, M},
+  author    = {Krifka, Manfred},
   year      = {1992},
-  title     = {Thematic relations as links between nominal reference and temporal constitution},
-  booktitle = {Lexical Matters. CSLI},
-  editor    = {Sag, I. and Szabolcsi, A},
+  title     = {Thematic Relations as Links between Nominal Reference and Temporal Constitution},
+  booktitle = {Lexical Matters},
+  editor    = {Sag, Ivan and Szabolcsi, Anna},
+  publisher = {CSLI Publications},
   subfield  = {morphology},
   role      = {cited},
   validated = {false},
@@ -11797,13 +12039,16 @@
 }
 % REF: Kornfilt, J. (1997). Turkish. Routledge.
 @book{kornfilt-1997,
-  author    = {Kornfilt, J},
+  author    = {Kornfilt, Jaklin},
   year      = {1997},
   title     = {Turkish},
+  series    = {Descriptive Grammars},
+  publisher = {Routledge},
+  doi       = {10.4324/9781315823652},
   subfield  = {morphology},
   role      = {cited},
-  validated = {false},
-  sources   = {Fragments/Turkish/MedialVerbs.lean}
+  validated = {true},
+  sources   = {Fragments/Turkish/Case.lean;Fragments/Turkish/MedialVerbs.lean}
 }
 % REF: Noyer, R. (1997). *Features, Positions and Affixes in Autonomous Morphological Structure*. Garland.
 @book{noyer-1997,
@@ -11986,24 +12231,17 @@
   sources   = {Theories/Morphology/RootTypology.lean}
 }
 % REF: Göksel, A. & Kerslake, C. (2005). *Turkish: A Comprehensive Grammar*. Routledge.
-@book{gksel-kerslake-2005,
-  author    = {Göksel, A. and Kerslake, C},
-  year      = {2005},
-  title     = {Turkish: A Comprehensive Grammar},
-  subfield  = {morphology},
-  role      = {cited},
-  validated = {false},
-  sources   = {Fragments/Turkish/Case.lean}
-}
 % REF: Goksel, A. & C. Kerslake (2005). Turkish: A Comprehensive Grammar. Routledge.
 @book{goksel-kerslake-2005,
-  author    = {Goksel, A. and C. Kerslake},
+  author    = {G{\"{o}}ksel, Asl{\i} and Kerslake, Celia},
   year      = {2005},
   title     = {Turkish: A Comprehensive Grammar},
+  publisher = {Routledge},
+  doi       = {10.4324/9780203340769},
   subfield  = {morphology},
   role      = {cited},
-  validated = {false},
-  sources   = {Fragments/Turkish/MedialVerbs.lean}
+  validated = {true},
+  sources   = {Fragments/Turkish/Case.lean;Fragments/Turkish/MedialVerbs.lean}
 }
 % REF: Blevins, J. P. (2006). Word-based morphology. *Journal of Linguistics* 42(3), 531–573.
 @article{blevins-2006,
@@ -12068,15 +12306,6 @@
   sources   = {Fragments/Kiche/ExtractionMorphology.lean;Phenomena/FillerGap/Bridge/MayanExtractionComparison.lean}
 }
 % REF: Hayes, B. (2009). *Introductory Phonology*. Blackwell. Ch 6 (SPE rules).
-@book{hayes-2009b,
-  author    = {Hayes, B},
-  year      = {2009},
-  title     = {Introductory Phonology},
-  subfield  = {morphology},
-  role      = {cited},
-  validated = {false},
-  sources   = {Fragments/Finnish/ConsonantGradation.lean;Theories/Morphology/Core/WordStructure.lean}
-}
 % REF: Dimroth, C. (2010). The acquisition of negation. In L. Horn (ed.), *The Expression of Negation*, 39–72. de Gruyter.
 @incollection{dimroth-2010,
   author    = {Dimroth, C},
@@ -12128,12 +12357,14 @@
 }
 % REF: Stump, G. & Finkel, R. A. (2013). Morphological Typology: From Word to Paradigm. CUP.
 @book{stump-finkel-2013,
-  author    = {Stump, G. and Finkel, R. A},
+  author    = {Stump, Gregory T. and Finkel, Raphael A.},
   year      = {2013},
   title     = {Morphological Typology: From Word to Paradigm},
+  publisher = {Cambridge University Press},
+  doi       = {10.1017/cbo9781139248860},
   subfield  = {morphology},
   role      = {cited},
-  validated = {false},
+  validated = {true},
   sources   = {Theories/Morphology/WP/LCEC.lean}
 }
 % REF: Bhatt, R. & V. Dayal (2014). Polar kyaa: Y/N or speech act operator.
@@ -12426,6 +12657,17 @@
   sources   = {Theories/Phonology/FeatureGeometry.lean}
 }
 
+@phdthesis{sagey-1986,
+  author    = {Sagey, Elizabeth C.},
+  year      = {1986},
+  title     = {The Representation of Features and Relations in Non-Linear Phonology},
+  school    = {Massachusetts Institute of Technology},
+  subfield  = {phonology},
+  validated = {false},
+  role      = {cited},
+  sources   = {Theories/Phonology/FeatureGeometry.lean}
+}
+
 @incollection{stojkovic-2026,
   author    = {Stojkovi{\'c}, Jelena},
   year      = {2026},
@@ -12449,7 +12691,7 @@
   subfield  = {phonology},
   validated = {false},
   role      = {foundational},
-  sources   = {Theories/Phonology/Features.lean;Theories/Phonology/RuleBased/Defs.lean;Fragments/Korean/Phonology.lean;Fragments/English/Phonology.lean}
+  sources   = {Theories/Phonology/Features.lean;Theories/Phonology/RuleBased/Defs.lean;Fragments/Korean/Phonology.lean;Fragments/English/Phonology.lean;Fragments/Finnish/ConsonantGradation.lean;Theories/Morphology/Core/WordStructure.lean}
 }
 
 @book{goldsmith-2011,
@@ -12511,6 +12753,22 @@
   role      = {cited},
   sources   = {Phenomena/WordOrder/Typology.lean;Phenomena/Case/Typology.lean}
 }
+
+@incollection{corbett-2013,
+  author    = {Corbett, Greville G.},
+  year      = {2013},
+  title     = {Number of Genders},
+  booktitle = {The World Atlas of Language Structures Online},
+  editor    = {Dryer, Matthew S. and Haspelmath, Martin},
+  publisher = {Max Planck Institute for Evolutionary Anthropology},
+  address   = {Leipzig},
+  url       = {https://wals.info/chapter/30},
+  subfield  = {comparative},
+  validated = {false},
+  role      = {cited},
+  sources   = {Phenomena/Gender/Typology.lean}
+}
+
 % ══════════════════════════════════════════════════════════════════════════════
 
 % REF: Blackwell, D. (1953). Equivalent Comparisons of Experiments.
@@ -12633,13 +12891,17 @@
   sources   = {Comparisons/CaseTheories.lean}
 }
 % REF: von Fintel, K. & Gillies, A. (2010). Must...stay...strong! *NLS* 18:351–383.
-@misc{von-fintel-gillies-2010,
-  author    = {von Fintel, K. and Gillies, A},
+@article{von-fintel-gillies-2010,
+  author    = {von Fintel, Kai and Gillies, Anthony S.},
   year      = {2010},
-  title     = {Must...stay...strong! NLS 18:351–383},
+  title     = {Must{\ldots}Stay{\ldots}Strong!},
+  journal   = {Natural Language Semantics},
+  volume    = {18},
+  pages     = {351--383},
+  doi       = {10.1007/s11050-010-9058-2},
   subfield  = {comparative},
   role      = {cited},
-  validated = {false},
+  validated = {true},
   sources   = {Comparisons/TenseModalEvidentiality.lean;Core/Discourse/Evidence.lean;Phenomena/Modality/EpistemicEvidentiality.lean;Theories/Semantics/Modality/Kernel.lean}
 }
 % REF: Osborne & Li (2023). Conjunct Referential Dependency Constraint. (recent DG binding)

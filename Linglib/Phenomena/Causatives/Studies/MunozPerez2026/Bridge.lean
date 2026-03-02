@@ -7,6 +7,7 @@ import Linglib.Fragments.Spanish.Clitics
 
 /-!
 # Muñoz Pérez (2026) — Bridge Theorems
+@cite{munoz-perez-2026}
 
 Derives the paper's empirical predictions by connecting the generic
 Fission framework (Theory) to the Spanish clitic and verb data (Fragment).

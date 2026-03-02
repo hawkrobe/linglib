@@ -2,7 +2,7 @@ import Linglib.Theories.Semantics.Polarity.CzechNegation
 
 /-!
 # Czech Three-Way Negation in Polar Questions
-@cite{stakov-2026} @cite{zeijlstra-2004}
+@cite{stakov-2026} @cite{zeijlstra-2004} @cite{romero-2024}
 
 Core empirical data for Staňková (2026), who proposes that negation in Czech
 occupies three distinct LF positions in polar questions:

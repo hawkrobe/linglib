@@ -2,6 +2,7 @@ import Linglib.Phenomena.Questions.Basic
 
 /-!
 # Phenomena/Questions/MentionSome.lean
+@cite{groenendijk-stokhof-1984} @cite{belnap-1982}
 
 Empirical data on mention-some interpretations from G&S 1984, Chapter VI, Section 5.
 

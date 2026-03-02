@@ -3,6 +3,7 @@ import Linglib.Theories.Semantics.Lexical.Verb.Aspect
 
 /-!
 # Bridge: Auxiliary Selection × Vendler Aspect Classes
+@cite{sorace-2000}
 
 Connects the auxiliary selection data in
 `Phenomena.AuxiliaryVerbs.Selection` to Vendler's aspectual

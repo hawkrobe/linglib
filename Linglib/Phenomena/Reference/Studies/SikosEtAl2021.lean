@@ -3,7 +3,7 @@ import Linglib.Core.Empirical
 open Core.Empirical
 
 /-!
-# Sikos et al. (2021) @cite{sikos-etal-2021}
+# Sikos et al. (2021) @cite{sikos-etal-2021} @cite{frank-goodman-2012}
 
 Sikos, L., Venhuizen, N. J., Drenhaus, H. & Crocker, M. W. (2021).
 Reevaluating pragmatic reasoning in language games.

@@ -9,6 +9,7 @@ import Linglib.Theories.Syntax.ConstructionGrammar.ArgumentStructure
 
 /-!
 # Müller (2013): Unifying Everything
+@cite{mueller-2013}
 
 Cross-theory comparison formalizing Müller's central thesis: Minimalism, HPSG,
 CCG, Construction Grammar, and Dependency Grammar converge on three universal

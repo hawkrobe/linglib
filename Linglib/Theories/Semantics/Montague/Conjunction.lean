@@ -67,6 +67,7 @@ theorem genDisj_comm_t (m : Model) (p q : Bool) :
 
 /-!
 ## Partee & Rooth (1983) Key Facts
+@cite{partee-rooth-1983}
 
 - Fact 6a: `φ ∩ ψ = λz[φ(z) ∩ ψ(z)]`
 - Fact 6b: `[φ ∩ ψ](α) = φ(α) ∩ ψ(α)`

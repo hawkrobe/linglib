@@ -2,6 +2,7 @@ import Linglib.Theories.Syntax.DependencyGrammar.Core.Dominance
 
 /-!
 # Mildly Non-Projective Dependency Structures
+@cite{kuhlmann-nivre-2006} @cite{kuhlmann-2013} @cite{mueller-2013}
 
 Formalizes the structural theory of non-projectivity from:
 

@@ -45,7 +45,7 @@ We define the lexical items for the German sentence from Harizanov (2019).
     this   film have  the children seen
 -/
 
-/-- The COMPLEX finite verb "haben" (have): both V and C features
+/-- The COMPLEX finite verb "haben" (have): both V and C features @cite{harizanov-gribanova-2019}
 
     Following Harizanov (Section 5.2), V2 verbs are categorially complex:
     - V-component projects in base position

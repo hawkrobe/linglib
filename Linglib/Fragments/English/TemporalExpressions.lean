@@ -3,7 +3,7 @@ import Linglib.Fragments.English.FunctionWords
 
 /-!
 # English Temporal Expressions Fragment
-@cite{alstott-aravind-2026} @cite{heinamaki-1974} @cite{heinamki-1974} @cite{rett-2020}
+@cite{alstott-aravind-2026} @cite{heinamaki-1974} @cite{rett-2020}
 
 Lexical entries for temporal expressions: subordinating connectives (*before*,
 *after*, *while*, *until*, *when*, *since*, *till*) and adverbial modifiers

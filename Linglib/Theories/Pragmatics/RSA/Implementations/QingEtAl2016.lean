@@ -2,7 +2,7 @@ import Linglib.Theories.Semantics.Lexical.Verb.ChangeOfState.Theory
 import Mathlib.Data.Rat.Defs
 
 /-!
-# Qing, Goodman & Lassiter (2016) @cite{qing-goodman-lassiter-2016}
+# Qing, Goodman & Lassiter (2016) @cite{qing-goodman-lassiter-2016} @cite{scontras-tonhauser-2025} @cite{warstadt-2022}
 
 RSA Projective Content Model. The original formulation of the joint-inference-over-(world, context) model
 for presupposition projection. Scontras & Tonhauser (2025) and Warstadt (2022)

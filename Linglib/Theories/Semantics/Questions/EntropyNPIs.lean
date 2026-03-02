@@ -4,6 +4,7 @@ import Mathlib.Analysis.SpecialFunctions.Log.NegMulLog
 
 /-!
 # NPIs in Questions: Entropy as Strength
+@cite{van-rooy-2003} @cite{krifka-1995a} @cite{kadmon-landman-1993} @cite{shannon-1948}
 
 Van Rooy (2003): for assertions, strength = informativity; for questions,
 strength = entropy. NPIs are licensed when they increase entropy by reducing bias.

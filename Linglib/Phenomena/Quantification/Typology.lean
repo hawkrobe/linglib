@@ -4,7 +4,7 @@ import Linglib.Fragments.Japanese.Determiners
 
 /-!
 # Cross-Linguistic Quantifier Typology
-@cite{barwise-cooper-1981} @cite{peters-westerstahl-2006}
+@cite{barwise-cooper-1981} @cite{peters-westerstahl-2006} @cite{cheng-sybesma-1999} @cite{shimoyama-2006} @cite{nakanishi-2007}
 
 Empirical quantifier inventories from three languages (three families) mapped to
 a common `QuantifierInventory` structure, following the pattern established in

@@ -43,7 +43,7 @@ open Core.Morphology.Tense
 -- § 1. TAMEEntry Instances
 -- ════════════════════════════════════════════════════════════════
 
-/-- Italian passato prossimo (present perfect): ho mangiato 'I have eaten'.
+/-- Italian passato prossimo (present perfect): ho mangiato 'I have eaten'. @cite{lakoff-1970}
     EP downstream (T ≤ A), UP past (T < S). -/
 def passatoProssimo : TAMEEntry where
   label := "passato prossimo"

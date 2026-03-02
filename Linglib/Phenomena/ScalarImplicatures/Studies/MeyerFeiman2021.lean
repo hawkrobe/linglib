@@ -3,7 +3,7 @@ import Linglib.Phenomena.Modality.FreeChoice
 
 /-!
 # Meyer & Feiman (2021) — Composing Alternatives
-@cite{bar-lev-fox-2017} @cite{chierchia-2004} @cite{fox-2007}
+@cite{bar-lev-fox-2017} @cite{chierchia-2004} @cite{fox-2007} @cite{meyer-feiman-2021}
 
 Structural priming evidence that scalar and free choice implicatures
 decompose into independently parameterizable sub-computations.

@@ -3,7 +3,7 @@ import Linglib.Theories.Syntax.Minimalism.Core.Applicative
 
 /-!
 # Spanish Verb Entries for the Causative Alternation
-@cite{cuervo-2003}
+@cite{cuervo-2003} @cite{munoz-perez-2026}
 
 Verbs from Muñoz Pérez (2026) classified by anticausative marking (SE)
 and event-structural decomposition (Cuervo 2003). The key empirical
