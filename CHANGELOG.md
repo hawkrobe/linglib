@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.227.73] - 2026-03-01
+
+### Changed
+- **Bib audit round 3**: fix chomsky-2015 (@misc→@incollection, add DOI/booktitle/pages), hackl-2009 (@misc→@article, add journal/volume/pages/subtitle), kiparsky-1973 (clean booktitle, add editor/publisher/ISBN), keenan-comrie-1977 (fix wrong DOI→JSTOR URL, expand authors), alonso-ovalle-2006 (@misc→@phdthesis, remove wrong DOI, add school/URL), popper-1955 (fix title, add journal/volume/pages), jansen-pollmann-2001 (@misc→@article, fix title from CrossRef, add full metadata). 581 validated, 420 unvalidated, 1001 total.
+
 ## [0.227.72] - 2026-03-01
 
 ### Changed
