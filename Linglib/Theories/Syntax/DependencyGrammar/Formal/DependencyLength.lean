@@ -119,7 +119,7 @@ Formalized: every dependency in the tree has length ≤ threshold. -/
 def oberstesGesetz (t : DepTree) (threshold : Nat) : Bool :=
   t.deps.all λ d => depLength d ≤ threshold
 
-/-- Behaghel's Gesetz der wachsenden Glieder (1909):
+/-- @cite{behaghel-1909}'s Gesetz der wachsenden Glieder:
 "Dependents on the same side of their head are ordered by increasing
 subtree size (shorter constituents closer to the head)."
 

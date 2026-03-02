@@ -704,7 +704,7 @@ theorem greenberg_universal_1 :
     subj_before_obj > obj_before_subj * 28 := by
   native_decide
 
-/-- Generalization 7: SV (1048) overwhelmingly dominates VS (197) in Ch 82.
+/-- Generalization 7: SV overwhelmingly dominates VS in Ch 82 (1048 vs 197).
     SV languages outnumber VS languages by more than 5 to 1. -/
 theorem sv_dominant :
     WALSCount.forLabel ch82Counts "SV" > WALSCount.forLabel ch82Counts "VS" * 5 := by

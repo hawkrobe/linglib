@@ -99,7 +99,7 @@ def linked (deps : List Dependency) (a b : Nat) : Bool :=
     sentence without crossing. Formally: no nodes a < b < c < d with
     linked(a,c) ∧ linked(b,d).
 
-    (Kuhlmann & Nivre 2006, Definition 4; traced to Mel'čuk 1988) -/
+    (@cite{kuhlmann-nivre-2006}, Definition 4; traced to @cite{melcuk-1988}) -/
 def DepTree.isPlanar (t : DepTree) : Bool :=
   let deps := t.deps
   let n := t.words.length

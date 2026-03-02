@@ -4,7 +4,7 @@
 Formalizes Dayal's Exhaustivity Presupposition (EP, definition 90) and Xiang's
 Relativized Exhaustivity (RelExh, definition 91) from:
 
-Xiang, Yimei (2022). Relativized Exhaustivity: mention-some and uniqueness.
+@cite{xiang-2022}. Relativized Exhaustivity: mention-some and uniqueness.
 *Natural Language Semantics* 30:311–362.
 
 ## Key Definitions

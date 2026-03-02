@@ -2,7 +2,7 @@
 # Xiang 2022: Relativized Exhaustivity @cite{xiang-2022}
 
 Empirical data on mention-some and uniqueness from:
-Xiang, Yimei (2022). Relativized Exhaustivity: mention-some and uniqueness.
+@cite{xiang-2022}. Relativized Exhaustivity: mention-some and uniqueness.
 *Natural Language Semantics* 30:311–362.
 
 ## Overview
