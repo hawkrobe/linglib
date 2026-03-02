@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.227.74] - 2026-03-01
+
+### Changed
+- **Bib audit round 4**: add 110 DOIs via CrossRef search + verification (92 auto-verified, 15 rescued subtitle-difference matches, 3 manual fixes). Clean 5 entries with venue info stuffed in title (huang-snedeker-2013, embick-noyer-2001, harizanov-gribanova-2019, barker-pullum-1990, de-marneffe-zeman-2021 → proper @article with journal/volume/pages). Fix al-1982 (Bresnan et al. cross-serial dependencies → @incollection with DOI). 691 validated, 310 unvalidated, 1001 total.
+
 ## [0.227.73] - 2026-03-01
 
 ### Changed

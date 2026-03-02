@@ -573,7 +573,7 @@ cited in: [RankingFunction](https://github.com/hawkrobe/linglib/blob/main/Lingli
 [cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Quantification/BaleSchwarz2026Bridge.lean)\
 cited in: [BaleSchwarz2026Bridge](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Quantification/BaleSchwarz2026Bridge.lean)
 
-**de Marneffe, M. C. M. J. N. & D. Zeman** (2021). "Universal Dependencies." Computational Linguistics 47(2):255-308.\
+**de Marneffe, M., Manning, C. D., Nivre, J. & Zeman, D.** (2021). Universal Dependencies. *Computational Linguistics, 47(2), 255–308*.\
 [cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/Lexical/UD.lean)
 
 **de Vries, L.** (2025). Clause chaining in Greater Awyu languages of West Papua. *In Sarvasy & Aikhenvald (eds.), Clause Chaining in the Languages of the World.*.\
@@ -787,7 +787,7 @@ cited in: [FlexibleNegation](https://github.com/hawkrobe/linglib/blob/main/Lingl
 [cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/Logic/SquareOfOpposition.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Attitudes/NegRaising.lean)\
 cited in: [SquareOfOpposition](https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/Logic/SquareOfOpposition.lean), [NegRaising](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Attitudes/NegRaising.lean)
 
-**Huang, Y. S. E. & Snedeker, J.** (2013). What exactly do numbers mean? Language Learning and Development 9(2), 105-129.\
+**Huang, Y. T., Spelke, E. & Snedeker, J.** (2013). What Exactly Do Numbers Mean?. *Language Learning and Development, 9(2), 105–129*.\
 [cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Numerals/Studies/HuangSpelkeSnedeker2013.lean)\
 cited in: [HuangSpelkeSnedeker2013](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Numerals/Studies/HuangSpelkeSnedeker2013.lean)
 
@@ -2714,7 +2714,7 @@ cited in: [CaseDiscrimination](https://github.com/hawkrobe/linglib/blob/main/Lin
 [cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/Minimalism/Formal/ExtendedProjection/Basic.lean)\
 cited in: [Borer2005](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Interfaces/SyntaxSemantics/Borer2005.lean)
 
-**Bresnan et al** (1982). "Cross-serial dependencies in Dutch".\
+**Bresnan, J., Kaplan, R. M., Peters, S. & Zaenen, A.** (1982). Cross-Serial Dependencies in Dutch. *The Formal Complexity of Natural Language, 286–319*.\
 [cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/FillerGap/CCG_CrossSerialBridge.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/FillerGap/CrossSerial.lean)\
 cited in: [CCG_CrossSerialBridge](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/FillerGap/CCG_CrossSerialBridge.lean)
 
@@ -2860,7 +2860,7 @@ cited in: [ExtractionMorphology](https://github.com/hawkrobe/linglib/blob/main/L
 [cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/InformationTheory.lean)\
 cited in: [InformationTheory](https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/InformationTheory.lean)
 
-**Embick, D. & R. Noyer** (2001). "Movement operations after syntax." Linguistic Inquiry 32:555-595.\
+**Embick, D. & Noyer, R.** (2001). Movement Operations After Syntax. *Linguistic Inquiry, 32(4), 555–595*.\
 [cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/Minimalism/Formal/Amalgamation.lean)
 
 **Erlewine, M. Y.** (2016). Anti-locality and Optimality in Kaqchikel Agent Focus. *Natural Language \& Linguistic Theory, 34(2), 429–479*.\
@@ -2927,7 +2927,7 @@ cited in: [MinimalismSmallClause](https://github.com/hawkrobe/linglib/blob/main/
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/DependencyGrammar/Formal/MemorySurprisal/Basic.lean)\
 cited in: [DGMemorySurprisal](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/WordOrder/Bridge/DGMemorySurprisal.lean), [HahnDegenFutrell2021](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/WordOrder/Studies/HahnDegenFutrell2021.lean), [Basic](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/DependencyGrammar/Formal/MemorySurprisal/Basic.lean), [FedzechkinaEtAl2017](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/DependencyGrammar/Formal/MemorySurprisal/FedzechkinaEtAl2017.lean), [MorphemeOrder](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/DependencyGrammar/Formal/MemorySurprisal/MorphemeOrder.lean)
 
-**Harizanov, B. & V. Gribanova** (2019). "Whither head movement?" Natural Language and Linguistic Theory 37:461-522.\
+**Harizanov, B. & Gribanova, V.** (2019). Whither Head Movement?. *Natural Language \& Linguistic Theory, 37, 461–522*.\
 [cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/Minimalism/Formal/Amalgamation.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/Minimalism/Formal/HeadMovement/Basic.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/Minimalism/Formal/MergeUnification.lean)
 
 **Haslinger et al** (2019). A plural analysis of distributive conjunctions.\
@@ -3570,7 +3570,7 @@ cited in: [OTAnalysis](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phe
 
 ## Cross-Framework Comparisons
 
-**Barker, C. & G. Pullum** (1990). "A Theory of Command Relations." Linguistics and Philosophy 13:1-34.\
+**Barker, C. & Pullum, G. K.** (1990). A Theory of Command Relations. *Linguistics and Philosophy, 13, 1–34*.\
 [cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Comparisons/CommandRelations.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/Minimalism/Formal/Amalgamation.lean)
 
 **Blackwell, D.** (1953). Equivalent Comparisons of Experiments.\
