@@ -948,8 +948,8 @@ import Linglib.Theories.Semantics.Lexical.Determiner.Quantifier
 import Linglib.Theories.Semantics.Lexical.Expressives.Basic
 import Linglib.Theories.Semantics.Lexical.Expressives.OutlookMarker
 import Linglib.Theories.Semantics.Probabilistic.Scenarios.Basic
-import Linglib.Theories.Semantics.Probabilistic.Graded.BayesianSemantics
-import Linglib.Theories.Semantics.Probabilistic.Graded.GradedProposition
+import Linglib.Theories.Semantics.Probabilistic.BayesianSemantics
+import Linglib.Core.Semantics.GradedProposition
 import Linglib.Theories.Pragmatics.RSA.Core.SemanticBackend
 import Linglib.Theories.Interfaces.SyntaxSemantics.SyntaxInterface
 import Linglib.Theories.Interfaces.SyntaxSemantics.Borer2005
@@ -1201,7 +1201,6 @@ import Linglib.Theories.Pragmatics.RSA.Implementations.TesslerGoodman2019
 import Linglib.Theories.Pragmatics.RSA.Implementations.TesslerGoodman2022
 import Linglib.Theories.Pragmatics.RSA.Implementations.VanTielEtAl2021
 import Linglib.Theories.Pragmatics.RSA.Implementations.WaldonDegen2021
-import Linglib.Theories.Pragmatics.RSA.Implementations.YoonEtAl2020
 import Linglib.Theories.Pragmatics.RSA.Questions.Basic
 import Linglib.Theories.Pragmatics.RSA.Questions.PolarQuestions
 import Linglib.Theories.Pragmatics.RSA.Questions.ResponseSelection

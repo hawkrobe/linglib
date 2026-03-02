@@ -6,6 +6,7 @@ Empirical data structures for "Polite Speech Emerges From Competing Social Goals
 
 import Mathlib.Data.Rat.Defs
 import Linglib.Fragments.English.Scales
+import Linglib.Core.Semantics.GradedProposition
 
 /-!
 
@@ -27,6 +28,8 @@ This is the signature of indirect speech driven by self-presentation.
 
 namespace Phenomena.Politeness.Studies.YoonEtAl2020
 
+open Core.GradedProposition (GProp neg)
+
 
 /-- Heart state: 0-3 hearts representing true quality -/
 inductive HeartState where
@@ -42,9 +45,6 @@ def HeartState.toNat : HeartState → Nat
   | .h1 => 1
   | .h2 => 2
   | .h3 => 3
-
-/-- All heart states -/
-def allHeartStates : List HeartState := [.h0, .h1, .h2, .h3]
 
 /-- Utterance types: 4 adjectives × positive/negative -/
 inductive Utterance where
@@ -143,9 +143,13 @@ theorem good_alt_amazing :
 
 
 /--
-Soft semantic meaning: P(state | adjective) from literal meaning norming.
+Soft semantic meaning: approximate P(state | adjective).
 
-From Supplemental Materials (N=51 participants):
+The paper infers literal meanings as parameters constrained by norming
+data (N=51, see Supplemental Materials). The values below are approximate;
+the exact posterior means would require running the paper's BDA.
+
+Qualitative pattern:
 - "terrible" → mostly 0 hearts
 - "bad" → mostly 0-1 hearts
 - "good" → mostly 2-3 hearts
@@ -173,29 +177,11 @@ def softSemantics : Adjective → HeartState → ℚ
   | .amazing, .h2 => 10/100
   | .amazing, .h3 => 90/100
 
--- PART 2b: Compositional Negation
+-- PART 2b: Compositional Negation (via Core.GradedProposition)
 
-/--
-Soft proposition: a function from states to degrees of truth in [0,1].
-
-This is the probabilistic analog of `Prop' = World → Bool` in Montague semantics.
--/
-abbrev SoftProp := HeartState → ℚ
-
-/--
-**Compositional soft negation operator.**
-
-This is the soft analog of `pnot : Prop' → Prop'` from Montague/Entailment/Polarity.
-
-Key properties (proven in YoonEtAl2020.lean):
-- Involution: `softNot (softNot p) = p`
-- Antitone: If `p ≤ q` pointwise, then `softNot q ≤ softNot p`
-- Coincides with Boolean negation when restricted to {0, 1}
--/
-def softNot (p : SoftProp) : SoftProp := λ s => 1 - p s
-
-/-- Base adjective meaning (positive form) -/
-def adjMeaning : Adjective → SoftProp
+/-- Base adjective meaning (positive form).
+    Returns a graded proposition `GProp HeartState = HeartState → ℚ`. -/
+def adjMeaning : Adjective → GProp HeartState
   | .terrible => softSemantics .terrible
   | .bad => softSemantics .bad
   | .good => softSemantics .good
@@ -204,27 +190,24 @@ def adjMeaning : Adjective → SoftProp
 /--
 **Compositionally derived utterance semantics.**
 
-Negated utterances are derived by applying `softNot` to base meanings:
-- ⟦not terrible⟧ = softNot(⟦terrible⟧)
+Negated utterances are derived by applying `Core.GradedProposition.neg`
+to base meanings:
+- ⟦not terrible⟧ = neg(⟦terrible⟧)
 
-This mirrors Montague's compositional semantics where
-⟦not φ⟧ = pnot(⟦φ⟧).
+This mirrors Montague's compositional semantics where ⟦not φ⟧ = pnot(⟦φ⟧),
+lifted to graded propositions (see `neg_involutive`, `neg_antitone`).
 -/
-def utteranceSemantics : Utterance → SoftProp
+def utteranceSemantics : Utterance → GProp HeartState
   -- Positive forms: base adjective meaning
   | .terrible => adjMeaning .terrible
   | .bad => adjMeaning .bad
   | .good => adjMeaning .good
   | .amazing => adjMeaning .amazing
-  -- Negated forms: compositionally derived via softNot
-  | .notTerrible => softNot (adjMeaning .terrible)
-  | .notBad => softNot (adjMeaning .bad)
-  | .notGood => softNot (adjMeaning .good)
-  | .notAmazing => softNot (adjMeaning .amazing)
-
-/-- Legacy helper for compatibility -/
-def negatedSemantics (adj : Adjective) : SoftProp := softNot (adjMeaning adj)
-
+  -- Negated forms: compositionally derived via graded negation
+  | .notTerrible => neg (adjMeaning .terrible)
+  | .notBad => neg (adjMeaning .bad)
+  | .notGood => neg (adjMeaning .good)
+  | .notAmazing => neg (adjMeaning .amazing)
 
 /-- Utterance cost: number of words -/
 def utteranceCost : Utterance → ℕ
@@ -243,20 +226,6 @@ def subjectiveValue : HeartState → ℚ
   | .h1 => 1
   | .h2 => 2
   | .h3 => 3
-
-
-/-- Model configuration parameters -/
-structure PolitenessConfig where
-  /-- Speaker optimality parameter -/
-  alpha : ℕ := 3
-  /-- Cost scaling factor -/
-  costScale : ℚ := 1
-  /-- Number of discretization points for goal weight φ -/
-  phiSteps : ℕ := 5
-  deriving Repr
-
-/-- Default configuration -/
-def defaultConfig : PolitenessConfig := {}
 
 
 /--

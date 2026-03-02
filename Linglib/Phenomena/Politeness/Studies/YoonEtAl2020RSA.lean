@@ -4,23 +4,32 @@ import Linglib.Core.Interval.RSAEval
 import Linglib.Core.Interval.RSAVerify
 
 /-!
-# Yoon et al. (2020) — RSA Politeness Model
+# Yoon et al. (2020) — S1 Submodel
 @cite{yoon-etal-2020}
 
 "Polite Speech Emerges From Competing Social Goals"
 
-## The Model
+## Scope
+
+The paper's full model is L0 → S1 → L1 → **S2**, where S2 adds
+*presentational* utility (the speaker's desire to appear kind/honest).
+This file implements the **S1 + L1 submodel only**, which captures the
+informativity–social tradeoff that drives negation but not the S2-level
+presentational dynamics. The full S2 model would require a second speaker
+layer with ω-weighted informativity, social, and presentational terms.
+
+## The S1 Model
 
 The S1 speaker's utility is a weighted sum of **informativity** and
-**social value**, interpolated by a latent kindness weight φ ∈ {0, ¼, ½, ¾, 1}:
+**social value**, interpolated by a latent kindness weight φ:
 
-    U_S1(u, s; φ) = φ · log L0(u,s) + (1−φ) · E_L0[V|u] − cost(u)
+    U_S1(u, s; φ) = φ · log L0(u,s) + (1−φ) · E_L0[V|u] − c · l(u)
 
 where:
 - `log L0(u,s)` = informativity at the true state s
 - `E_L0[V|u] = Σ_s' L0(u,s') · V(s')` = expected subjective value under L0
 - `V(s) = s` = listener prefers higher states
-- `cost(u)` = number of words (2 for direct, 3 for negated)
+- `c · l(u)` = cost weight × utterance length in words
 
 L1 marginalizes over φ to infer both the true state and the speaker's
 kindness weight:
@@ -30,6 +39,14 @@ kindness weight:
 This uses `combinedUtility` with three terms: `logInformativity` for the
 informativity component, `expectedValue` for the social component, and
 `constant` for utterance cost.
+
+## Parameter Choices
+
+The paper infers α, c, and soft lexicon values via Bayesian data analysis
+with priors α ~ Uniform(0, 20) and c ~ Uniform(1, 10). This implementation
+uses fixed approximate values (α = 3, c = 1) and discretized φ ∈ {0, ¼, ½, ¾, 1}
+(the paper uses continuous φ ~ Uniform(0, 1)). These suffice for qualitative
+predictions but do not reproduce the paper's quantitative model fits.
 
 ## Key Insight
 
@@ -79,7 +96,8 @@ instance : Fintype Utterance where
 -- §2. Latent Variable: Kindness Weight φ
 -- ============================================================================
 
-/-- Discretized kindness weight φ ∈ {0, 1/4, 1/2, 3/4, 1}.
+/-- Discretized kindness weight. The paper uses continuous φ ~ Uniform(0, 1);
+    we discretize to {0, 1/4, 1/2, 3/4, 1} for computable verification.
     Higher φ = speaker prioritizes informativity over social value. -/
 inductive Phi where
   | p0    -- φ = 0   (pure social)
@@ -105,21 +123,24 @@ def Phi.val : Phi → ℚ
 -- §3. RSAConfigData
 -- ============================================================================
 
-/-- Yoon et al. (2020) politeness RSA model.
+/-- Yoon et al. (2020) S1 submodel.
 
-    S1 utility = φ · log L0(u,s) + (1−φ) · E_L0[V|u] − cost(u)
+    S1 utility = φ · log L0(u,s) + (1−φ) · E_L0[V|u] − l(u)
 
     This uses `combinedUtility` with three terms:
     - `logInformativity`: φ · log L0 (informativity at true state)
     - `expectedValue`: (1−φ) · E_L0[V|u] (social value)
-    - `constant`: −cost(u) (utterance cost) -/
+    - `constant`: −l(u) (utterance length cost, with c = 1)
+
+    The paper infers α from data (prior: Uniform(0, 20)); α = 3 is an
+    approximate value chosen for qualitative predictions. -/
 def cfg : RSA.RSAConfigData Utterance HeartState where
   Latent := Phi
   meaning := fun _φ u s => utteranceSemantics u s
   meaning_nonneg := by
     intro _l u w
     cases u <;> cases w <;>
-    simp only [utteranceSemantics, adjMeaning, softNot, softSemantics] <;> norm_num
+    simp only [utteranceSemantics, adjMeaning, Core.GradedProposition.neg, softSemantics] <;> norm_num
   scoreSpec := .combinedUtility [
     .logInformativity (fun φ => φ.val),
     .expectedValue (fun φ => 1 - φ.val) subjectiveValue,
@@ -208,9 +229,9 @@ theorem social_prefers_indirect :
   native_decide
 
 /-- Even at φ=1/4, the speaker still prefers "terrible" over "not terrible"
-    at h0. The informativity penalty of "not terrible" at h0 (log L0 ≈ −4.1)
-    outweighs the social benefit until φ drops to 0.
-    This shows the crossover is between φ=0 and φ=1/4. -/
+    at h0. The informativity penalty of "not terrible" at h0 outweighs the
+    social benefit until φ drops to 0. This shows the crossover between
+    direct and indirect preference is between φ=0 and φ=1/4. -/
 theorem slight_informativity_prefers_direct :
     RSA.Verify.checkS1PolicyGt cfg .p25 .h0 .terrible .notTerrible = true := by
   native_decide
@@ -235,11 +256,11 @@ theorem informative_prefers_direct_positive :
 /-- The model uses soft semantics: meaning values are in [0,1]. -/
 theorem meaning_bounded : ∀ u s, 0 ≤ utteranceSemantics u s ∧ utteranceSemantics u s ≤ 1 := by
   intro u s; cases u <;> cases s <;>
-  simp only [utteranceSemantics, adjMeaning, softNot, softSemantics] <;>
+  simp only [utteranceSemantics, adjMeaning, Core.GradedProposition.neg, softSemantics] <;>
   constructor <;> norm_num
 
 /-- Negated utterances cost more than direct ones. -/
-theorem negation_costlier' : ∀ u : Utterance, u.isNegated → utteranceCost u = 3 := by
+theorem negation_costlier : ∀ u : Utterance, u.isNegated → utteranceCost u = 3 := by
   intro u h; cases u <;> simp [Utterance.isNegated] at h <;> rfl
 
 /-- Direct utterances cost less. -/

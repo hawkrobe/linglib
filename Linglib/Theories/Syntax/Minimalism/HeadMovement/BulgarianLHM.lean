@@ -44,7 +44,8 @@ Each item has a category (V, N, D, T) and selectional requirements.
     read      be.3p.pst  the.students   the.article
 -/
 
-/-- The participle "pročeli" (read): category V, selects a D (object) -/ @cite{harizanov-gribanova-2019}
+/-- The participle "pročeli" (read): category V, selects a D (object).
+    @cite{harizanov-gribanova-2019} -/
 def verbProceli : LIToken := ⟨.simple .V [.D], 201⟩
 
 /-- The auxiliary "bjaha" (be.3p.pst): category T, selects V -/
