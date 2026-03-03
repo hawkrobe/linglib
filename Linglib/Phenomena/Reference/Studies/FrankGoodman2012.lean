@@ -71,9 +71,6 @@ open Phenomena
 -- §1. Empirical Data
 -- ============================================================================
 
-def citation : String :=
-  "Frank & Goodman (2012). Science 336(6084): 998."
-
 def measure : MeasureSpec :=
   { scale := .proportion, task := .forcedChoice, unit := "probability 0-1" }
 

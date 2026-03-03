@@ -101,9 +101,6 @@ open Real (exp log exp_pos exp_lt_exp)
 -- §1. Empirical Data
 -- ============================================================================
 
-def citation : String :=
-  "Qing & Franke (2015). In Bayesian Natural Language Semantics and Pragmatics, pp. 201-220."
-
 def measure : MeasureSpec :=
   { scale := .proportion, task := .forcedChoice, unit := "proportion" }
 

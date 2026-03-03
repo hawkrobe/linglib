@@ -35,13 +35,6 @@ open Core.CausalBayesNet
 
 -- Study Metadata
 
-/-- Citation for this study -/
-def citation : String :=
-  "Grusdt, Lassiter & Franke (2022). Probabilistic modeling of rational communication with conditionals. PLoS ONE."
-
-/-- General paradigm used -/
-def paradigm : String :=
-  "Online experiments with forced-choice and rating tasks"
 
 -- Experiment 1: Dependency Inference
 

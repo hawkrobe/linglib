@@ -50,9 +50,6 @@ open Phenomena
 -- §1. Empirical Data
 -- ============================================================================
 
-def citation : String :=
-  "Goodman & Stuhlmuller (2013). Topics in Cognitive Science 5(1): 173-184."
-
 def measure : MeasureSpec :=
   { scale := .continuous, task := .forcedChoice, unit := "dollars (out of $100)" }
 
