@@ -1,3 +1,7 @@
+import Linglib.Theories.Syntax.Minimalism.Core.DependentCase
+import Linglib.Theories.Syntax.Minimalism.VoiceAppl
+import Linglib.Fragments.Japanese.Predicates
+
 /-!
 # @cite{ozaki-2025} — Japanese Accusative/Ablative Alternation: Data
 @cite{ozaki-2025}
@@ -266,5 +270,132 @@ theorem argumenthood_count : argumenthoodData.length = 4 := rfl
 
 /-- Three unaccusativity data points total. -/
 theorem unaccusativity_count : unaccusativityData.length = 3 := rfl
+
+-- ============================================================================
+-- § Bridge: Dependent Case × Minimalist Syntax
+-- ============================================================================
+
+open Minimalism
+open Minimalism.Phenomena.VoiceAppl
+open Fragments.Japanese.Predicates
+
+/-- Derivation for departure verbs: non-thematic Voice, inchoative,
+    two internal arguments (leaver + source), no external argument. -/
+def departureVerbDerivation : VoiceApplDerivation where
+  voice := some voiceAnticausative
+  appl := none
+  verbHeads := [.vGO, .vBE]
+  hasExternalArg := false
+  hasAppliedArg := false
+  hasTheme := false
+
+/-- Departure verbs predict no external argument. -/
+theorem departure_no_external :
+    predictsExternalArg departureVerbDerivation = false := rfl
+
+/-- Departure verbs have inchoative event structure (vGO + vBE, no vDO). -/
+theorem departure_is_inchoative :
+    isInchoativeDerivation departureVerbDerivation = true := by native_decide
+
+/-- Non-thematic Voice assigns no θ-role. -/
+theorem departure_voice_no_theta :
+    voiceAnticausative.assignsTheta = false := rfl
+
+/-- Departure verb derivation matches the anticausative pattern. -/
+theorem departure_matches_anticausative_core :
+    departureVerbDerivation.voice = anticausative_break.voice ∧
+    departureVerbDerivation.verbHeads = anticausative_break.verbHeads := ⟨rfl, rfl⟩
+
+/-- ACC variant produces dependent ACC on source, unmarked NOM on leaver. -/
+theorem acc_derivation_correct :
+    getCaseOf "source" accVariantResult = some .acc ∧
+    getCaseOf "leaver" accVariantResult = some .nom := by native_decide
+
+/-- ABL variant produces lexical ABL on source, unmarked NOM on leaver. -/
+theorem abl_derivation_correct :
+    getCaseOf "source" ablVariantResult = some .abl ∧
+    getCaseOf "leaver" ablVariantResult = some .nom := by native_decide
+
+/-- In the ACC variant, source case is dependent. -/
+theorem acc_source_from_configuration :
+    getSourceOf "source" accVariantResult = some .dependent := by native_decide
+
+/-- In the ABL variant, source case is lexical. -/
+theorem abl_source_from_lexical_p :
+    getSourceOf "source" ablVariantResult = some .lexical := by native_decide
+
+/-- Anticausative Voice is not a phase head. -/
+theorem agree_acc_needs_phase_head :
+    voiceAnticausative.phaseHead = false := rfl
+
+/-- Agentive Voice IS a phase head. -/
+theorem agentive_has_phase_head :
+    voiceAgent.phaseHead = true := rfl
+
+/-- The accusative unaccusative paradox. -/
+theorem accusative_unaccusative_paradox :
+    voiceAnticausative.assignsTheta = false ∧
+    voiceAnticausative.phaseHead = false ∧
+    getCaseOf "source" accVariantResult = some .acc ∧
+    getSourceOf "source" accVariantResult = some .dependent := by
+  exact ⟨rfl, rfl, by native_decide, by native_decide⟩
+
+/-- Fragment entry for *hanareru* is marked unaccusative. -/
+theorem hanareru_is_unaccusative :
+    Fragments.Japanese.Predicates.hanareru.unaccusative = true := rfl
+
+/-- Fragment entry for *deru* is marked unaccusative. -/
+theorem deru_is_unaccusative :
+    Fragments.Japanese.Predicates.deru.unaccusative = true := rfl
+
+/-- Fragment entry for *hanareru* is not passivizable. -/
+theorem hanareru_not_passivizable :
+    Fragments.Japanese.Predicates.hanareru.passivizable = false := rfl
+
+/-- Fragment entry for *deru* is not passivizable. -/
+theorem deru_not_passivizable :
+    Fragments.Japanese.Predicates.deru.passivizable = false := rfl
+
+/-- Fragment *hanareru* assigns source θ-role to object. -/
+theorem hanareru_source_theta :
+    Fragments.Japanese.Predicates.hanareru.objectTheta = some .source := rfl
+
+/-- Fragment *deru* assigns source θ-role to object. -/
+theorem deru_source_theta :
+    Fragments.Japanese.Predicates.deru.objectTheta = some .source := rfl
+
+/-- Fragment *hanareru* assigns theme θ-role to subject. -/
+theorem hanareru_theme_subject :
+    Fragments.Japanese.Predicates.hanareru.subjectTheta = some .theme := rfl
+
+/-- Fragment *deru* assigns theme θ-role to subject. -/
+theorem deru_theme_subject :
+    Fragments.Japanese.Predicates.deru.subjectTheta = some .theme := rfl
+
+/-- Non-passivizability aligns with direct passive being ungrammatical. -/
+theorem passive_data_matches_fragment :
+    hanareru_direct_passive.grammatical = false ∧
+    Fragments.Japanese.Predicates.hanareru.passivizable = false := ⟨rfl, rfl⟩
+
+/-- Non-passivizability follows from Voice theory. -/
+theorem passive_follows_from_voice :
+    voiceAnticausative.assignsTheta = false ∧
+    Fragments.Japanese.Predicates.hanareru.passivizable = false := ⟨rfl, rfl⟩
+
+/-- Verb forms in Data match Fragment entries. -/
+theorem hanareru_form_matches :
+    hanareru_acc.verb = Fragments.Japanese.Predicates.hanareru.form := rfl
+
+theorem deru_form_matches :
+    deru_acc.verb = Fragments.Japanese.Predicates.deru.form := rfl
+
+/-- All argumenthood diagnostics succeed. -/
+theorem source_is_argument_both_frames :
+    argumenthoodData.all (·.grammatical) = true := by native_decide
+
+/-- The source's θ-role is invariant across case frames. -/
+theorem source_theta_invariant :
+    Fragments.Japanese.Predicates.hanareru.objectTheta = some .source ∧
+    Fragments.Japanese.Predicates.deru.objectTheta = some .source := ⟨rfl, rfl⟩
 
 end Phenomena.Case.Ozaki2025.Data

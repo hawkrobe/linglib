@@ -266,8 +266,7 @@ import Linglib.Phenomena.Assertion.Studies.BringGunlogson2000
 import Linglib.Phenomena.Assertion.Studies.Krifka2015
 import Linglib.Phenomena.Case.Data
 import Linglib.Phenomena.Case.Typology
-import Linglib.Phenomena.Case.Studies.Ozaki2025.Data
-import Linglib.Phenomena.Case.Studies.Ozaki2025.Bridge
+import Linglib.Phenomena.Case.Studies.Ozaki2025
 import Linglib.Phenomena.Case.Studies.DependentCaseInventories
 import Linglib.Phenomena.Case.Studies.Aissen2003
 import Linglib.Phenomena.Case.Studies.DeHoopMalchukov2008
@@ -434,8 +433,7 @@ import Linglib.Phenomena.Imprecision.InferencePreservation
 import Linglib.Phenomena.Imprecision.Numerals
 import Linglib.Phenomena.Numerals.Studies.WoodinEtAl2024
 import Linglib.Phenomena.Imprecision.Studies.EgreEtAl2023
-import Linglib.Phenomena.Imprecision.Studies.BeltramaSchwarz2024.Data
-import Linglib.Phenomena.Imprecision.Studies.BeltramaSchwarz2024.Bridge
+import Linglib.Phenomena.Imprecision.Studies.BeltramaSchwarz2024
 import Linglib.Phenomena.Imprecision.Studies.BeltramaSoltBurnett2022
 import Linglib.Phenomena.Imprecision.Studies.LassiterGoodman2017
 import Linglib.Phenomena.Imprecision.Projection
@@ -536,8 +534,7 @@ import Linglib.Phenomena.Presupposition.Studies.Wang2025
 import Linglib.Phenomena.Presupposition.Studies.Warstadt2022
 import Linglib.Phenomena.Presupposition.Studies.Yagi2025
 import Linglib.Phenomena.Presupposition.Studies.Sharvit2025
-import Linglib.Phenomena.Presupposition.Studies.TonhauserBeaverDegen2018.Data
-import Linglib.Phenomena.Presupposition.Studies.TonhauserBeaverDegen2018.Bridge
+import Linglib.Phenomena.Presupposition.Studies.TonhauserBeaverDegen2018
 import Linglib.Phenomena.Presupposition.Studies.Schlenker2009
 import Linglib.Phenomena.Presupposition.Studies.Heim1983
 import Linglib.Phenomena.Presupposition.Studies.RobertsSimons2024

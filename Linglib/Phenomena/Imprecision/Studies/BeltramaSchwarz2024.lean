@@ -1,4 +1,7 @@
 import Linglib.Core.Scales.Roundness
+import Linglib.Core.SocialMeaning
+import Linglib.Theories.Semantics.Lexical.Numeral.Precision
+import Linglib.Theories.Sociolinguistics.SCM
 import Mathlib.Tactic.NormNum
 
 /-!
@@ -224,5 +227,171 @@ theorem exp1_no_interactions :
     Exp 1 (|β| = 0.67). -/
 theorem chill_effect_larger_in_exp2 :
     exp2_chill.beta > -exp1_chill.beta := by native_decide
+
+-- ============================================================================
+-- § Precision Indexical Field and Theory Bridge
+-- ============================================================================
+
+open Core.SocialMeaning
+open Sociolinguistics.SCM
+open Semantics.Lexical.Numeral.Precision
+
+/-- Precision variants for numeral use. -/
+inductive PrecisionVariant where
+  | exact
+  | approximate
+  deriving DecidableEq, BEq, Repr
+
+/-- The indexical field for numeral precision. -/
+def precisionField : IndexicalField PrecisionVariant SocialDimension :=
+  { association := λ v d => match v, d with
+    | .exact,       .competence      =>  1
+    | .exact,       .warmth          => -1
+    | .exact,       .antiSolidarity  =>  1
+    | .approximate, .warmth          =>  1
+    | .approximate, .competence      => -1
+    | .approximate, .antiSolidarity  => -1
+  , order := .third }
+
+/-- The precision variant favored by a given persona condition. -/
+def personaPrecision : PersonaCondition → Option PrecisionVariant
+  | .nerdy     => some .exact
+  | .chill     => some .approximate
+  | .noPersona => none
+
+/-- Persona conditions mapped to SCM social dimensions. -/
+def personaDimension : PersonaCondition → Option SocialDimension
+  | .nerdy     => some .competence
+  | .chill     => some .warmth
+  | .noPersona => none
+
+/-- **Bidirectionality theorem**: production and comprehension mappings cohere. -/
+theorem bidirectionality
+    (p : PersonaCondition) (d : SocialDimension) (v : PrecisionVariant)
+    (hd : personaDimension p = some d) (hv : personaPrecision p = some v) :
+    precisionField.indexes v d := by
+  cases p with
+  | nerdy =>
+    simp [personaDimension] at hd
+    simp [personaPrecision] at hv
+    subst hd; subst hv
+    show (1 : ℚ) > 0; norm_num
+  | chill =>
+    simp [personaDimension] at hd
+    simp [personaPrecision] at hv
+    subst hd; subst hv
+    show (1 : ℚ) > 0; norm_num
+  | noPersona =>
+    simp [personaDimension] at hd
+
+theorem scm_coherence_nerdy :
+    precisionField.indexes .exact .competence :=
+  bidirectionality .nerdy .competence .exact rfl rfl
+
+theorem scm_coherence_chill :
+    precisionField.indexes .approximate .warmth :=
+  bidirectionality .chill .warmth .approximate rfl rfl
+
+/-- Exact and approximate use have opposite associations with every dimension. -/
+theorem opposite_directions (d : SocialDimension) :
+    precisionField.association .exact d =
+    - precisionField.association .approximate d := by
+  cases d <;> simp [precisionField]
+
+-- ============================================================================
+-- § Task Asymmetry from Prejudiciality
+-- ============================================================================
+
+inductive ResponseShift where
+  | towardRejection
+  | towardAcceptance
+  deriving DecidableEq, BEq, Repr
+
+def shiftDirection : PrecisionVariant → ResponseShift
+  | .exact       => .towardRejection
+  | .approximate => .towardAcceptance
+
+def rejectionIsPrejudicial : TaskType → Prop
+  | .coveredScreen      => False
+  | .truthValueJudgment => True
+
+instance (t : TaskType) : Decidable (rejectionIsPrejudicial t) :=
+  match t with
+  | .coveredScreen      => .isFalse id
+  | .truthValueJudgment => .isTrue trivial
+
+def shiftManifests (shift : ResponseShift) (task : TaskType) : Prop :=
+  match shift with
+  | .towardAcceptance => True
+  | .towardRejection  => ¬ rejectionIsPrejudicial task
+
+def personaEffectPredicted (persona : PersonaCondition) (task : TaskType) : Prop :=
+  match personaPrecision persona with
+  | none   => False
+  | some v => shiftManifests (shiftDirection v) task
+
+theorem acceptance_never_blocked (task : TaskType) :
+    shiftManifests .towardAcceptance task := trivial
+
+theorem rejection_manifests_in_cst :
+    shiftManifests .towardRejection .coveredScreen :=
+  id
+
+theorem rejection_blocked_in_tvjt :
+    ¬ shiftManifests .towardRejection .truthValueJudgment :=
+  fun h => h trivial
+
+/-- Both personae's effects manifest in CST. -/
+theorem cst_both_manifest :
+    personaEffectPredicted .nerdy .coveredScreen ∧
+    personaEffectPredicted .chill .coveredScreen := by
+  constructor
+  · exact rejection_manifests_in_cst
+  · exact acceptance_never_blocked .coveredScreen
+
+/-- Only Chill's effect manifests in TVJT. -/
+theorem tvjt_chill_only :
+    personaEffectPredicted .chill .truthValueJudgment ∧
+    ¬ personaEffectPredicted .nerdy .truthValueJudgment := by
+  constructor
+  · exact acceptance_never_blocked .truthValueJudgment
+  · exact rejection_blocked_in_tvjt
+
+theorem noPersona_no_effect (task : TaskType) :
+    ¬ personaEffectPredicted .noPersona task :=
+  id
+
+/-- Combined task asymmetry matches empirical significance pattern. -/
+theorem task_asymmetry_derived :
+    (personaEffectPredicted .nerdy .coveredScreen ∧
+     personaEffectPredicted .chill .coveredScreen) ∧
+    (personaEffectPredicted .chill .truthValueJudgment ∧
+     ¬ personaEffectPredicted .nerdy .truthValueJudgment) ∧
+    (exp1_nerdy.significant = true ∧ exp1_chill.significant = true) ∧
+    (exp2_chill.significant = true ∧ exp2_nerdy.significant = false) :=
+  ⟨cst_both_manifest, tvjt_chill_only, ⟨rfl, rfl⟩, ⟨rfl, rfl⟩⟩
+
+-- ============================================================================
+-- § Roundness Gating
+-- ============================================================================
+
+/-- Whether imprecise readings are available for a numeral. -/
+def impreciseReadingAvailable (n : Nat) : Prop :=
+  inferPrecisionMode n = .approximate
+
+instance (n : Nat) : Decidable (impreciseReadingAvailable n) :=
+  inferInstanceAs (Decidable (inferPrecisionMode n = .approximate))
+
+/-- Roundness gates persona effects: $200 supports imprecision, $193 does not. -/
+theorem roundness_gates_persona :
+    impreciseReadingAvailable exampleStatedAmount ∧
+    ¬ impreciseReadingAvailable exampleImpreciseAmount := by
+  constructor <;> native_decide
+
+/-- Multiples of 10 always have imprecise readings. -/
+theorem div10_enables_imprecision (n : Nat) (h10 : n % 10 = 0) :
+    impreciseReadingAvailable n := by
+  unfold impreciseReadingAvailable inferPrecisionMode
+  exact if_pos (Core.Roundness.score_ge_two_of_div10 n h10)
 
 end Phenomena.Imprecision.Studies.BeltramaSchwarz2024
