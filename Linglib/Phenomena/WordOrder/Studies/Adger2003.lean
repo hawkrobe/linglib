@@ -2,7 +2,8 @@ import Linglib.Theories.Syntax.Minimalism.Inversion
 import Linglib.Phenomena.WordOrder.SubjectAuxInversion
 
 /-!
-# Bridge: Minimalism → Subject-Auxiliary Inversion Data
+# Minimalist Analysis of Subject-Auxiliary Inversion
+@cite{adger-2003}
 
 Connects the Minimalist T-to-C analysis of inversion
 (`Theories/Syntax/Minimalism/Inversion.lean`) to the theory-neutral SAI data
@@ -12,12 +13,12 @@ The Minimalist analysis derives SAI from head movement:
 - Matrix questions have [+Q] on C, triggering T-to-C movement → T precedes subject.
 - Embedded questions satisfy [+Q] via the embedding verb → no T-to-C → subject precedes T.
 
-Each bridge theorem pairs a Data judgment with the corresponding Minimalist
+Each theorem pairs a Data judgment with the corresponding Minimalist
 licensing result, verifying that the theory's predictions match the
 empirical pattern.
 -/
 
-namespace Phenomena.WordOrder.Bridge.MinimalismInversion
+namespace Phenomena.WordOrder.Studies.Adger2003
 
 open Phenomena.WordOrder.SubjectAuxInversion
 
@@ -27,7 +28,7 @@ private abbrev john := Fragments.English.Nouns.john.toWordSg
 private abbrev eat := Fragments.English.Predicates.Verbal.eat.toWordPl
 
 -- ============================================================================
--- Bridge Theorems: SAI Data ↔ Minimalist Licensing
+-- SAI Data ↔ Minimalist Licensing
 -- ============================================================================
 
 /-! ### Matrix wh-questions
@@ -79,4 +80,4 @@ ground as HPSG but through different formal machinery (derivational
 movement vs. declarative feature constraint).
 -/
 
-end Phenomena.WordOrder.Bridge.MinimalismInversion
+end Phenomena.WordOrder.Studies.Adger2003

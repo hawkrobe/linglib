@@ -2,7 +2,8 @@ import Linglib.Theories.Syntax.Minimalism.Formal.HeadMovement.VerbMovement
 import Linglib.Phenomena.WordOrder.SubjectAuxInversion
 
 /-!
-# Bridge: Verb Movement Theory → Pollock / Do-Support Data
+# Pollock's Verb Movement Diagnostics
+@cite{pollock-1989}
 
 Connects the Minimalist verb movement parameter
 (`Theories/Syntax/Minimalism/Formal/HeadMovement/VerbMovement.lean`) to the
@@ -10,12 +11,12 @@ theory-neutral verb movement and do-support data in SubjectAuxInversion.lean.
 
 ## Structure
 
-**§1 Pollock diagnostic bridges**: Each of Pollock's 12 examples is paired
+**§1 Pollock diagnostics**: Each of Pollock's 12 examples is paired
 with the theory's prediction via `verbPrecedesDiagnostic`. French examples
 (V raises) are grammatical when V precedes the diagnostic; English examples
 (V in situ) are ungrammatical in the same configuration.
 
-**§2 Do-support bridges**: Each do-support datum is paired with
+**§2 Do-support**: Each do-support datum is paired with
 `needsDoSupport`. Lexical verb contexts that need do-support are grammatical
 when do-support is used and ungrammatical without it.
 
@@ -25,7 +26,7 @@ when do-support is used and ungrammatical without it.
 
 -/
 
-namespace Phenomena.WordOrder.Bridge.MinimalismVerbMovement
+namespace Phenomena.WordOrder.Studies.Pollock1989
 
 open Phenomena.WordOrder.SubjectAuxInversion
 open Minimalism
@@ -205,4 +206,4 @@ theorem doSupport_iff_no_raising (p : VMovementParam) (ctx : TenseSupportContext
     needsDoSupport p ctx = !verbPrecedesDiagnostic p .negation :=
   doSupport_anticorrelates_raising p ctx
 
-end Phenomena.WordOrder.Bridge.MinimalismVerbMovement
+end Phenomena.WordOrder.Studies.Pollock1989

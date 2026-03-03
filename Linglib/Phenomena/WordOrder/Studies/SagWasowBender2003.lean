@@ -2,7 +2,7 @@ import Linglib.Theories.Syntax.HPSG.Inversion
 import Linglib.Phenomena.WordOrder.SubjectAuxInversion
 
 /-!
-# Bridge: HPSG → Subject-Auxiliary Inversion Data
+# HPSG Analysis of Subject-Auxiliary Inversion
 @cite{sag-wasow-bender-2003}
 
 Connects the HPSG [INV ±] analysis of inversion
@@ -13,12 +13,12 @@ The HPSG analysis uses a binary [INV] feature:
 - Matrix questions require [INV +], forcing auxiliary-before-subject order.
 - Embedded questions require [INV −], forcing subject-before-auxiliary order.
 
-Each bridge theorem pairs a Data judgment with the corresponding HPSG
+Each theorem pairs a Data judgment with the corresponding HPSG
 licensing result, verifying that the theory's predictions match the
 empirical pattern.
 -/
 
-namespace Phenomena.WordOrder.Bridge.HPSGInversion
+namespace Phenomena.WordOrder.Studies.SagWasowBender2003
 
 open Phenomena.WordOrder.SubjectAuxInversion
 
@@ -29,7 +29,7 @@ private abbrev eat := Fragments.English.Predicates.Verbal.eat.toWordPl
 private abbrev pizza := Fragments.English.Nouns.pizza.toWordSg
 
 -- ============================================================================
--- Bridge Theorems: SAI Data ↔ HPSG Licensing
+-- SAI Data ↔ HPSG Licensing
 -- ============================================================================
 
 /-! ### Matrix wh-questions
@@ -92,4 +92,4 @@ The HPSG [INV ±] analysis correctly captures all 6 core SAI data points:
 | ex08  | *...what can John eat      | ✗ ungram.  | ✗ blocked  |
 -/
 
-end Phenomena.WordOrder.Bridge.HPSGInversion
+end Phenomena.WordOrder.Studies.SagWasowBender2003

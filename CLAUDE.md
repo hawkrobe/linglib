@@ -68,28 +68,22 @@ The dependency arrow is always **downstream**: Phenomena imports Fragments + The
 
 **Fragments never import Phenomena.** Fragment entries are "pure" lexical data typed by Theory types. They don't know about empirical observations.
 
-**Phenomena import Fragments and prove bridges.** Phenomena files are the "test suite" — they import Fragment entries and Theory predicates, then prove that the Fragment data matches empirical reality via the Theory's predictions.
+**Phenomena use a Data/Studies split.** Each phenomenon directory separates observations from explanations:
 
-**Phenomena use a Data/Bridge directory split.** Each phenomenon directory separates pure empirical facts from theory-dependent verification:
+- **Data files** (top level of each phenomenon directory): Pure empirical observations — judgments, experimental results, cross-linguistic patterns. Imports only `Core.*`. No imports from `Theories/`. These are the shared facts that any theory must account for.
+- **`Studies/` subdirectory**: Theoretical analyses of the data. Each study file connects a theory to the observations, proving predictions, deriving judgments, or replicating a paper's model. Study files can import `Theories/`, `Fragments/`, and data files from the same phenomenon.
 
-- **Data files** (top level of each phenomenon directory): Pure empirical data with minimal imports (mostly `Core.*`). Contains judgments, experimental results, observed patterns, and concrete data structures. No imports from `Theories/` — these are theory-neutral facts.
-- **`Bridge/` subdirectory**: Contains bridge files that import data + `Fragments/*` + `Theories/*`, then prove theorems connecting them. Per-datum verification, grounding theorems, form-type matching, and derivation proofs. Bridge files are never imported by Data files.
+Study files are **self-contained**: they include the paper's data, model, and predictions in one file. This makes it easy to formalize a new paper — everything about that paper lives in one place. If data from a study later proves useful to other theories, it can be promoted to a top-level data file, but there's no pressure to separate prematurely.
 
-Bridge file naming uses PascalCase with theory prefix: `Bridge/CCGDerivations.lean`, `Bridge/MinimalismInversion.lean`, `Bridge/DGHarmonicOrder.lean`. No "Bridge" suffix — the directory makes the role clear.
+Study file naming uses author-year format: `Studies/Pollock1989.lean`, `Studies/SagWasowBender2003.lean`, `Studies/KaoEtAl2014.lean`. The study is the natural unit — whether it's an RSA paper replication, a Minimalist analysis, or a corpus study.
 
-Namespace convention: `Phenomena.{Phenomenon}.Bridge.{Name}`, matching the file path. Example: `Phenomena.WordOrder.Bridge.MinimalismInversion`.
-
-**Each bridge file should connect one theory to one phenomenon.** If a theory's predictions span multiple phenomena (e.g., CCG derivations for both word order and argument structure), create separate bridge files in each phenomenon's `Bridge/` directory rather than one file that imports from multiple phenomenon directories.
-
-This separation ensures Data files remain theory-neutral (changeable without touching proofs) and Bridge files make the connection between data and theory explicit and verifiable.
+Namespace convention: `Phenomena.{Phenomenon}.Studies.{AuthorYear}`, matching the file path. Example: `Phenomena.WordOrder.Studies.Pollock1989`.
 
 **Derive, don't duplicate.** When Phenomena files reference Fragment data (e.g., particle forms, bias properties), they should derive values from Fragment fields rather than duplicating them as string literals. This makes the connection true by construction rather than requiring bridge theorems that test redundant copies.
 
 **Dependency discipline is fully enforced**: 0 violations in both directions (Theories→Phenomena and Fragments→Phenomena).
 
-**Bridge files live in `Phenomena/`, not `Theories/`.** Files that import both `Theories/` and `Phenomena/` data belong in the relevant phenomenon's `Bridge/` subdirectory.
-
-**RSA implementations live in `Phenomena/X/Studies/`.** Each RSA paper replication is filed under the phenomenon it models — e.g., `Phenomena/Modality/Studies/Alsop2024.lean` (free choice), `Phenomena/Nonliteral/Metaphor/KaoEtAl2014.lean` (metaphor). They do NOT live in `Theories/Pragmatics/RSA/Implementations/` — that directory is only for pure RSA theory (types, operators) that doesn't reference empirical data.
+**Study files live in `Phenomena/`, not `Theories/`.** Files that import both `Theories/` and `Phenomena/` data belong in the relevant phenomenon's `Studies/` subdirectory. `Theories/Pragmatics/RSA/Implementations/` is only for pure RSA theory (types, operators) that doesn't reference empirical data.
 
 ### Directory Structure
 
@@ -118,7 +112,7 @@ Linglib/
 │   │   └── DTS/             # Decision-Theoretic Semantics
 │   └── Morphology/          # Morphological theory
 │
-├── Phenomena/               # Empirical data + theory-to-data bridges (see below)
+├── Phenomena/               # Empirical data + studies (see below)
 │
 └── Comparisons/             # Cross-theory comparisons (28 files)
 ```
@@ -198,27 +192,25 @@ Smart constructors: `RSAScenario.basic`, `.ambiguous`, `.qud`, `.mentalState`, `
 
 ### Phenomena/ - Empirical Data & Theory Bridges
 
-`Phenomena/` contains ~260 files organized into 38 basic-level phenomenon categories plus 3 theory-bridge subtrees:
+`Phenomena/` contains ~260 files organized into 38 basic-level phenomenon categories:
 
 ```
 Phenomena/
-├── # Each phenomenon category has data files + Bridge/ subdirectory
 │   WordOrder/
-│   │   ├── Basic.lean                 # Theory-neutral data
-│   │   ├── SubjectAuxInversion.lean   # Theory-neutral data
-│   │   ├── Typology.lean              # Theory-neutral data
-│   │   ├── Studies/                   # Study-specific data
-│   │   └── Bridge/                    # Theory → data connections
-│   │       ├── CCGDerivations.lean
-│   │       ├── HPSGInversion.lean
-│   │       ├── MinimalismInversion.lean
-│   │       ├── MinimalismVerbMovement.lean
-│   │       ├── DGInversion.lean
+│   │   ├── Basic.lean                 # Observations (theory-neutral)
+│   │   ├── SubjectAuxInversion.lean   # Observations (theory-neutral)
+│   │   ├── Typology.lean              # Observations (theory-neutral)
+│   │   └── Studies/                   # Theoretical analyses
+│   │       ├── Pollock1989.lean       # Verb movement analysis
+│   │       ├── SagWasowBender2003.lean # HPSG inversion analysis
+│   │       ├── Hudson1990.lean        # DG inversion analysis
 │   │       └── ...
-│   ArgumentStructure/
-│   │   ├── Subcategorization.lean     # Theory-neutral data
-│   │   └── Bridge/
-│   │       └── CCGSubcategorization.lean
+│   ScalarImplicatures/
+│   │   ├── Basic.lean                 # Observations
+│   │   └── Studies/
+│   │       ├── VanTielEtAl2016.lean   # Scale diversity data + analysis
+│   │       ├── Ronai2024.lean         # Processing study
+│   │       └── ...
 │   ... (30+ phenomenon categories)
 ```
 
@@ -228,13 +220,13 @@ Phenomena/
 
 Phenomena are organized at the **basic level** — the level at which a linguist would naturally describe the phenomenon being studied, not at the level of individual studies or at overly broad superordinate categories.
 
-**1. Group by phenomenon, not by study.** Directories are named for the phenomenon (`ScalarImplicatures/`, `Gradability/`), not for the paper (`GoodmanStuhlmuller2013/`). Individual studies go inside the phenomenon directory as `Data.lean`/`Bridge.lean` pairs. When a study has its own directory, it goes under `Studies/` within the phenomenon (e.g., `Aspect/Studies/AlstottAravind2026/`).
+**1. Group by phenomenon, not by study.** Directories are named for the phenomenon (`ScalarImplicatures/`, `Gradability/`), not for the paper (`GoodmanStuhlmuller2013/`). Individual studies go inside the phenomenon's `Studies/` subdirectory (e.g., `ScalarImplicatures/Studies/VanTielEtAl2016.lean`). When a study is complex enough, it gets its own subdirectory (e.g., `Aspect/Studies/AlstottAravind2026/`).
 
 **2. Merge singletons into broader categories.** A phenomenon that would have only 1-2 files at the top level should be merged into a broader category. For example, `Metaphor/` and `Humor/` merge into `Nonliteral/`; `WeakEvidenceEffect/` and `ArgumentativeFraming/` merge into `ScalarImplicatures/`; `Islands/` merges into `FillerGap/`; `Honorifics/` merges into `Politeness/`.
 
 **3. Aim for basic-level categories.** The right granularity is approximately 30-40 top-level directories. Categories should be neither too specific (one study per directory) nor too broad (dozens of unrelated files lumped together). Each directory should represent a recognizable subfield that a linguist could name.
 
-**4. Theory bridges live in the phenomenon's `Bridge/` subdirectory.** Files that connect a specific theory (CCG, RSA, event semantics) to empirical data go in the `Bridge/` subdirectory of the phenomenon they test. These never live in `Theories/` because they import from `Phenomena/`. Each bridge file connects one theory to one phenomenon — don't create cross-phenomenon bridge files.
+**4. Studies live in `Studies/`, not in `Theories/`.** Files that import both `Theories/` and `Phenomena/` data belong in the relevant phenomenon's `Studies/` subdirectory. Each study file should connect theories to one phenomenon — don't create cross-phenomenon study files.
 
 **5. Cross-cutting phenomena stay at the top level.** Phenomena like `Negation/` or `Coordination/` that span syntax, semantics, and pragmatics are not forced into a single linguistic level — they stay as top-level phenomenon directories.
 

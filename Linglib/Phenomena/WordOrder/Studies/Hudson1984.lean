@@ -1,4 +1,11 @@
-/-
+import Linglib.Fragments.English.Nouns
+import Linglib.Fragments.English.Pronouns
+import Linglib.Fragments.English.Predicates.Verbal
+import Linglib.Fragments.English.FunctionWords
+import Linglib.Theories.Syntax.DependencyGrammar.Core.LexicalRules
+import Linglib.Phenomena.WordOrder.SubjectAuxInversion
+
+/-!
 # Word Grammar Analysis of Subject-Auxiliary Inversion
 @cite{hudson-1984}
 
@@ -11,14 +18,7 @@ Word Grammar handles inversion via:
 Reference: @cite{hudson-1990}, @cite{gibson-2025}
 -/
 
-import Linglib.Fragments.English.Nouns
-import Linglib.Fragments.English.Pronouns
-import Linglib.Fragments.English.Predicates.Verbal
-import Linglib.Fragments.English.FunctionWords
-import Linglib.Theories.Syntax.DependencyGrammar.Core.LexicalRules
-import Linglib.Phenomena.WordOrder.SubjectAuxInversion
-
-namespace Phenomena.WordOrder.Bridge.DGInversion
+namespace Phenomena.WordOrder.Studies.Hudson1984
 
 open DepGrammar
 
@@ -80,7 +80,7 @@ def johnCanEatPizzaTree : DepTree :=
     rootIdx := 1 }
 
 -- ============================================================================
--- Bridge Theorems
+-- Licensing Theorems
 -- ============================================================================
 
 /-- "What can John eat?" is licensed as a matrix question -/
@@ -129,4 +129,4 @@ The key insight from Gibson: Inversion is captured by the lexical rule that
 changes the subject's direction from LEFT to RIGHT in the argument structure.
 -/
 
-end Phenomena.WordOrder.Bridge.DGInversion
+end Phenomena.WordOrder.Studies.Hudson1984

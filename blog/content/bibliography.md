@@ -39,7 +39,8 @@ cited in: [ConfigData](https://github.com/hawkrobe/linglib/blob/main/Linglib/The
 cited in: [SocialMeaning](https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/SocialMeaning.lean), [Bridge](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Imprecision/Studies/BeltramaSchwarz2024/Bridge.lean), [Data](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Imprecision/Studies/BeltramaSchwarz2024/Data.lean), [BeltramaSoltBurnett2022](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Imprecision/Studies/BeltramaSoltBurnett2022.lean)
 
 **Benz, J. & van Rooij** (2005). Game theory and pragmatics.\
-[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/RSA/Implementations/Franke2011.lean)
+[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/RSA/Implementations/Franke2011.lean)\
+cited in: [Franke2011](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/RSA/Implementations/Franke2011.lean)
 
 **Bergen, L. & Goodman, N. D.** (2015). The Strategic Use of Noise in Pragmatic Reasoning. *Topics in Cognitive Science, 7(2), 336–350*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/RSA/Implementations/BergenGoodman2015.lean)\
@@ -254,7 +255,8 @@ cited in: [SpinosoDiPiano2025](https://github.com/hawkrobe/linglib/blob/main/Lin
 cited in: [RelevanceTheories](https://github.com/hawkrobe/linglib/blob/main/Linglib/Comparisons/RelevanceTheories.lean), [SumersEtAl2023](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Imperatives/Studies/SumersEtAl2023.lean), [CombinedUtility](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/RSA/Core/CombinedUtility.lean), [SumersEtAl2023](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/RSA/Implementations/SumersEtAl2023.lean)
 
 **Tessler, M. H. & Franke, M.** (2019). Not Unreasonable: Why Two Negatives Don't Make a Positive. *PsyArXiv*.\
-[formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/RSA/Implementations/TesslerFranke2020.lean)
+[formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/RSA/Implementations/TesslerFranke2020.lean)\
+cited in: [TesslerFranke2020](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/RSA/Implementations/TesslerFranke2020.lean)
 
 **Tessler, M. H. & Goodman, N. D.** (2019). The Language of Generalization. *Psychological Review, 126(3), 395–436*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/RSA/Implementations/TesslerGoodman2019.lean)\
@@ -265,7 +267,8 @@ cited in: [GenericSemantics](https://github.com/hawkrobe/linglib/blob/main/Lingl
 cited in: [ComparisonClass](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Gradability/ComparisonClass.lean), [TesslerGoodman2022](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/RSA/Implementations/TesslerGoodman2022.lean)
 
 **van Rooij & Schulz** (2004). Exhaustive interpretation of complex sentences.\
-[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/RSA/ScalarImplicatures/Embedded/Questions.lean)
+[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/RSA/ScalarImplicatures/Embedded/Questions.lean)\
+cited in: [Questions](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/RSA/ScalarImplicatures/Embedded/Questions.lean)
 
 **van Tiel, B. V. M. E. Z. N. & Geurts, B.** (2016). Scalar diversity. *Journal of Semantics, 33(1), 137–175*.\
 [cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/ScalarImplicatures/Studies/Ronai2024.lean)\
@@ -358,14 +361,16 @@ cited in: [HornScale](https://github.com/hawkrobe/linglib/blob/main/Linglib/Core
 cited in: [NeoGricean_AlternativesBridge](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Gradability/NeoGricean_AlternativesBridge.lean), [FormMeaning](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Imprecision/FormMeaning.lean), [FlexibleNegation](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Negation/FlexibleNegation.lean), [Alternatives](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/NeoGricean/Core/Alternatives.lean), [Markedness](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/NeoGricean/Core/Markedness.lean), [Evaluativity](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/NeoGricean/Evaluativity.lean)
 
 **Jespersen, O.** (1917). Negation in English and Other Languages. *A.F. H\ost*.\
-[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/NeoGricean/NegationScope.lean)
+[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/NeoGricean/NegationScope.lean)\
+cited in: [NegationScope](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/NeoGricean/NegationScope.lean)
 
 **Lo Guercio, N.** (2025). Maximize Conventional Implicatures! S&P 18(9).\
 [cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/NeoGricean/ConventionalImplicatures.lean)\
 cited in: [LoGuercio2025](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Presupposition/Studies/LoGuercio2025.lean), [ConventionalImplicatures](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/NeoGricean/ConventionalImplicatures.lean)
 
 **McCready, E.** (2019). The Semantics and Pragmatics of Honorification.\
-[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/NeoGricean/ConventionalImplicatures.lean)
+[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/NeoGricean/ConventionalImplicatures.lean)\
+cited in: [ConventionalImplicatures](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/NeoGricean/ConventionalImplicatures.lean)
 
 **Meyer, M. & Feiman, R.** (2021). Composing Alternatives: The Structural Source of Scalar and Free Choice Implicatures. *Journal of Memory and Language, 121, 104279*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/ScalarImplicatures/Studies/MeyerFeiman2021.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/ScalarImplicatures/Studies/MeyerFeiman2021Bridge.lean)\
@@ -392,7 +397,8 @@ cited in: [Interface](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theo
 cited in: [Scales](https://github.com/hawkrobe/linglib/blob/main/Linglib/Fragments/English/Scales.lean), [Basic](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/NeoGricean/Exhaustivity/Basic.lean), [Chierchia2004](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/NeoGricean/Exhaustivity/Chierchia2004.lean), [Chierchia2013](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/NeoGricean/Exhaustivity/Chierchia2013.lean), [Interface](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/NeoGricean/Exhaustivity/Interface.lean), [BarLevFox2020](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/NeoGricean/Implementations/BarLevFox2020.lean), [MontagueExhaustivity](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/NeoGricean/Implementations/MontagueExhaustivity.lean), [Franke2011](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/RSA/Implementations/Franke2011.lean), [Exhaustivity](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Conditionals/Exhaustivity.lean)
 
 **van Benthem** (1989). Logical constants across types.\
-[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/NeoGricean/Analyticity.lean)
+[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/NeoGricean/Analyticity.lean)\
+cited in: [Analyticity](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/NeoGricean/Analyticity.lean)
 
 **von Fintel, K.** (1993). Exceptive constructions. *Natural Language \& Linguistic Theory, 11(1), 123–148*.\
 [cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Polarity/Exceptives.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/NeoGricean/Analyticity.lean)\
@@ -575,10 +581,12 @@ cited in: [Bridge](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenome
 cited in: [CausalBayesNet](https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/CausalBayesNet.lean)
 
 **Chierchia, G. & McConnell-Ginet, S.** (2000). Meaning and Grammar: An Introduction to Semantics. *MIT Press*.\
-[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Entailment/PresuppositionPolarity.lean)
+[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Entailment/PresuppositionPolarity.lean)\
+cited in: [PresuppositionPolarity](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Entailment/PresuppositionPolarity.lean)
 
 **Cohen, A. & Erteschik-Shir, N.** (2002). Topic, Focus, and the Interpretation of Bare Plurals. *Natural Language Semantics, 10, 125–165*.\
-[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Generics/BarePlurals.lean)
+[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Generics/BarePlurals.lean)\
+cited in: [BarePlurals](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Generics/BarePlurals.lean)
 
 **Comrie, B.** (1978). Ergativity. *Syntactic Typology*.\
 [cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/Case/Basic.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Alignment/Typology.lean)\
@@ -617,7 +625,8 @@ cited in: [RankingFunction](https://github.com/hawkrobe/linglib/blob/main/Lingli
 cited in: [MeasurePhrases](https://github.com/hawkrobe/linglib/blob/main/Linglib/Fragments/English/MeasurePhrases.lean), [BaleSchwarz2026Bridge](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Quantification/BaleSchwarz2026Bridge.lean)
 
 **de Marneffe, M., Manning, C. D., Nivre, J. & Zeman, D.** (2021). Universal Dependencies. *Computational Linguistics, 47(2), 255–308*.\
-[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/Lexical/UD.lean)
+[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/Lexical/UD.lean)\
+cited in: [UD](https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/Lexical/UD.lean)
 
 **de Vries, L.** (2025). Clause chaining in Greater Awyu languages of West Papua. *Clause Chaining in the Languages of the World*.\
 [cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/ClauseChaining/Data.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/ClauseChaining/Typology.lean)\
@@ -692,7 +701,8 @@ cited in: [UtilityTheory](https://github.com/hawkrobe/linglib/blob/main/Linglib/
 cited in: [Embedding](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Numerals/Embedding.lean), [NegRaising](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Attitudes/NegRaising.lean), [Embedding](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Lexical/Numeral/Embedding.lean)
 
 **Gallin, D.** (1975). Intensional and Higher-Order Modal Logic.\
-[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/Semantics/Intension.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Dynamic/Core/DynamicTy2.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Intensional/Basic.lean)
+[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/Semantics/Intension.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Dynamic/Core/DynamicTy2.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Intensional/Basic.lean)\
+cited in: [Intension](https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/Semantics/Intension.lean), [DynamicTy2](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Dynamic/Core/DynamicTy2.lean), [Basic](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Intensional/Basic.lean)
 
 **Gasparri, L.** (2025). Bare singular names and genericity. *Journal of Semantics 42: 127-135.*.\
 [cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Generics/BareNames.lean)\
@@ -827,7 +837,8 @@ cited in: [CoherenceRelation](https://github.com/hawkrobe/linglib/blob/main/Ling
 cited in: [Comparative](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Degree/Comparative.lean)
 
 **Hoeksema, J.** (1995). The Semantics of Exception Phrases. *Quantifiers, Logic and Language, 145–177*.\
-[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Polarity/Exceptives.lean)
+[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Polarity/Exceptives.lean)\
+cited in: [Exceptives](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Polarity/Exceptives.lean)
 
 **Hofmeister, P. & Sag, I. A.** (2010). Cognitive Constraints and Island Effects. *Language, 86(2), 366–415*.\
 [cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/ProcessingModel.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/FillerGap/Compare.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/FillerGap/DG_IslandsBridge.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/FillerGap/Studies/Sag2010.lean)\
@@ -910,7 +921,8 @@ cited in: [Data](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena
 cited in: [Kleene](https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/Semantics/Kleene.lean)
 
 **Klein & Sag** (1985). Type-Driven Translation.\
-[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Montague/Composition.lean)
+[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Montague/Composition.lean)\
+cited in: [Composition](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Montague/Composition.lean)
 
 **Krantz, D. H., Luce, R. D., Suppes, P. & Tversky, A.** (1971). Foundations of Measurement, Volume I: Additive and Polynomial Representations. *Academic Press*.\
 [cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/Scales/Scale.lean)\
@@ -969,7 +981,8 @@ cited in: [NaturalLogic](https://github.com/hawkrobe/linglib/blob/main/Linglib/C
 cited in: [NPIs](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Polarity/NPIs.lean), [Particles](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Focus/Particles.lean)
 
 **Larson, R. K.** (1988). On the Double Object Construction. *Linguistic Inquiry, 19(3), 335–391*.\
-[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Quantification/Data.lean)
+[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Quantification/Data.lean)\
+cited in: [Data](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Quantification/Data.lean)
 
 **Le Bruyn, B. & de Swart, H.** (2022). Exceptional wide scope of bare nominals.\
 [cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Generics/Compare.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Lexical/Noun/Kind/Krifka2004.lean)\
@@ -988,7 +1001,8 @@ cited in: [Linking](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theori
 cited in: [RootDimensions](https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/RootDimensions.lean), [Bridge](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/ArgumentStructure/Unaccusativity/Bridge.lean), [Data](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/ArgumentStructure/Unaccusativity/Data.lean), [Linking](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Interfaces/SyntaxSemantics/Linking.lean)
 
 **Lewis, R. L. & Vasishth, S.** (2005). An Activation-Based Model of Sentence Processing as Skilled Memory Retrieval. *Cognitive Science, 29, 375–419*.\
-[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/ProcessingModel.lean)
+[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/ProcessingModel.lean)\
+cited in: [ProcessingModel](https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/ProcessingModel.lean)
 
 **Liefke, K.** (2024). Natural Language Ontology and Semantic Theory. *Cambridge Elements in Semantics.*.\
 [cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/ContentIndividual.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Tactics/OntSort.lean)\
@@ -1015,7 +1029,8 @@ cited in: [NaturalLogic](https://github.com/hawkrobe/linglib/blob/main/Linglib/C
 cited in: [SignalDetection](https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/Agent/SignalDetection.lean)
 
 **Malamud, S.** (2012). The meaning of plural definites: A decision-theoretic approach.\
-[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Plurals/Basic.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Plurals/NonMaximality.lean)
+[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Plurals/Basic.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Plurals/NonMaximality.lean)\
+cited in: [Basic](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Plurals/Basic.lean), [NonMaximality](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Plurals/NonMaximality.lean)
 
 **Marantz, A.** (1997). No escape from syntax: Don't try morphological analysis in the privacy of your own lexicon. *University of Pennsylvania Working Papers in Linguistics, 4(2), 201–225*.\
 [cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Morphology/Bridge/CategorialFeatures.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Morphology/DM/Categorizer.lean)\
@@ -1042,7 +1057,8 @@ cited in: [Negation](https://github.com/hawkrobe/linglib/blob/main/Linglib/Fragm
 cited in: [Typology](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Negation/Typology.lean)
 
 **Moltmann, F.** (1995). Exception sentences and polyadic quantification.\
-[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Polarity/Exceptives.lean)
+[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Polarity/Exceptives.lean)\
+cited in: [Exceptives](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Polarity/Exceptives.lean)
 
 **Montague, R.** (1973). The Proper Treatment of Quantification in Ordinary English. *Approaches to Natural Language*.\
 [foundational] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Montague/PTQ.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Montague/Basic.lean)\
@@ -1117,7 +1133,8 @@ cited in: [Prosody](https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/P
 cited in: [Conditional](https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/Scales/EpistemicScale/Conditional.lean)
 
 **Portner, P.** (2018). Mood. *Oxford Handbook of Modality and Mood.*.\
-[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Mood/Basic.lean)
+[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Mood/Basic.lean)\
+cited in: [Basic](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Mood/Basic.lean)
 
 **Potts, C.** (2005). The Logic of Conventional Implicatures. *Oxford University Press*.\
 [cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/NeoGricean/ConventionalImplicatures.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Presupposition/ProjectiveContent.lean)\
@@ -1255,7 +1272,8 @@ cited in: [CzechThreeWayNegTypologyBridge](https://github.com/hawkrobe/linglib/b
 cited in: [Psychophysics](https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/Agent/Psychophysics.lean)
 
 **Strawson, P.** (1952). Introduction to Logical Theory.\
-[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Entailment/StrawsonEntailment.lean)
+[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Entailment/StrawsonEntailment.lean)\
+cited in: [StrawsonEntailment](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Entailment/StrawsonEntailment.lean)
 
 **Szabolcsi, A.** (1986). Comparative Superlatives. *MIT Working Papers in Linguistics, 8*.\
 [cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Comparison/Superlative/Data.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Degree/Superlative.lean)\
@@ -1328,7 +1346,8 @@ cited in: [MorphRule](https://github.com/hawkrobe/linglib/blob/main/Linglib/Core
 ## Semantics — Modality & Conditionals
 
 **Adams** (1975). The Logic of Conditionals.\
-[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Conditionals/Assertability.lean)
+[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Conditionals/Assertability.lean)\
+cited in: [Assertability](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Conditionals/Assertability.lean)
 
 **Aloni, M.** (2022). Logic and Conversation: The Case of Free Choice. *Semantics and Pragmatics, 15*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Comparisons/FreeChoice/Aloni2022.lean)\
@@ -1351,7 +1370,8 @@ cited in: [BiasedPQ](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theor
 cited in: [Data](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Conditionals/Studies/Mizuno2024/Data.lean), [Anderson](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Conditionals/Anderson.lean)
 
 **Bhatt & Pancheva** (2006). Conditionals.\
-[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Conditionals/ConditionalType.lean)
+[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Conditionals/ConditionalType.lean)\
+cited in: [ConditionalType](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Conditionals/ConditionalType.lean)
 
 **Bhatt, R.** (1999). Covert Modality in Non-finite Contexts. *PhD dissertation*.\
 [cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Modality/ActualityInferencesBridge.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Modality/ActualityEntailments.lean)\
@@ -1402,7 +1422,8 @@ cited in: [FreeChoice](https://github.com/hawkrobe/linglib/blob/main/Linglib/Com
 cited in: [BiasedPQ](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Modality/BiasedPQ.lean)
 
 **Geis, M. & Zwicky, A. M.** (1971). On Invited Inferences. *Linguistic Inquiry, 2(4), 561–566*.\
-[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Conditionals/Data.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Conditionals/Exhaustivity.lean)
+[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Conditionals/Data.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Conditionals/Exhaustivity.lean)\
+cited in: [Data](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Conditionals/Data.lean), [Exhaustivity](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Conditionals/Exhaustivity.lean)
 
 **Gibbard** (1981). Two recent theories of conditionals.\
 [cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Conditionals/LeftNested/Data.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Conditionals/LeftNested.lean)\
@@ -1525,7 +1546,8 @@ cited in: [ActualityInferencesBridge](https://github.com/hawkrobe/linglib/blob/m
 cited in: [Typology](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Modality/Typology.lean)
 
 **P\'erez Carballo, A.** (2009). Toward a Dissolution of the Proviso Problem. *Proceedings of MIT Workshop on Presupposition*.\
-[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Conditionals/Presuppositional.lean)
+[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Conditionals/Presuppositional.lean)\
+cited in: [Presuppositional](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Conditionals/Presuppositional.lean)
 
 **Phillips-Brown, M.** (2025). Some-Things-Considered Desire. *Semantics and Pragmatics*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Modality/PhillipsBrown.lean)\
@@ -1580,7 +1602,8 @@ cited in: [Alsop2024](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phen
 cited in: [Assert](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Modality/Assert.lean)
 
 **van der Auwera** (1997). Pragmatics in the last quarter century: The case of conditional perfection.\
-[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Conditionals/Data.lean)
+[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Conditionals/Data.lean)\
+cited in: [Data](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Conditionals/Data.lean)
 
 **Vander Klok, J.** (2013). Pure Possibility and Pure Necessity Modals in Paciran Javanese. *Oceanic Linguistics, 52(2), 341–374*.\
 [cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/manual)\
@@ -1599,7 +1622,8 @@ cited in: [EpistemicEvidentiality](https://github.com/hawkrobe/linglib/blob/main
 cited in: [Bridge](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Conditionals/Studies/EvcenBaleBarner2026/Bridge.lean), [Data](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Conditionals/Studies/EvcenBaleBarner2026/Data.lean), [Exhaustivity](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Conditionals/Exhaustivity.lean)
 
 **von Fintel, K. & Heim, I.** (2011). Intensional Semantics. *Lecture notes, MIT*.\
-[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/Semantics/Intension.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Conditionals/Data.lean)
+[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/Semantics/Intension.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Conditionals/Data.lean)\
+cited in: [Intension](https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/Semantics/Intension.lean), [Data](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Conditionals/Data.lean)
 
 **von Fintel, K. & Iatridou, S.** (2008). How to Say Ought in Foreign: The Composition of Weak Necessity Modals. *Time and Modality*.\
 [cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Modality/Directive.lean)\
@@ -1678,7 +1702,8 @@ cited in: [FreeIndirectDiscourse](https://github.com/hawkrobe/linglib/blob/main/
 cited in: [Partee1973](https://github.com/hawkrobe/linglib/blob/main/Linglib/Comparisons/Partee1973.lean), [Intension](https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/Semantics/Intension.lean), [Elbourne2013](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Reference/Studies/Elbourne2013.lean), [Elbourne](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Intensional/Situations/Elbourne.lean)
 
 **Frege, G.** (1892). \"Uber Sinn und Bedeutung. *Zeitschrift für Philosophie und philosophische Kritik, 100, 25–50*.\
-[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Reference/DirectReference.lean)
+[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Reference/DirectReference.lean)\
+cited in: [DirectReference](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Reference/DirectReference.lean)
 
 **Greenberg, J. H.** (1978). Generalizations About Numeral Systems. *Universals of Human Language, 3, 249–295*.\
 [cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Numerals/Typology.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Reference/Typology.lean)\
@@ -1735,17 +1760,20 @@ cited in: [Data](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena
 cited in: [FocusParticles](https://github.com/hawkrobe/linglib/blob/main/Linglib/Fragments/Yoruba/FocusParticles.lean)
 
 **Beaver, D. & Clark, B.** (2008). Sense and Sensitivity.\
-[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Focus/Exclusives.lean)
+[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Focus/Exclusives.lean)\
+cited in: [Exclusives](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Focus/Exclusives.lean)
 
 **Beaver, D. e. a.** (2007). When semantics meets phonetics. *Language 83: 245-276.*.\
 [cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Focus/KratzerSelkirk2020.lean)\
 cited in: [KratzerSelkirk2020](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Focus/KratzerSelkirk2020.lean)
 
 **Beltrama, A.** (2021). Just Perfect, Simply the Best: An Analysis of Emphatic Exclusion. *Linguistics and Philosophy, 45(2), 321–364*.\
-[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Focus/Exclusives.lean)
+[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Focus/Exclusives.lean)\
+cited in: [Exclusives](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Focus/Exclusives.lean)
 
 **Crnič, L.** (2014). Non-monotonicity in NPI licensing.\
-[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Focus/Particles.lean)
+[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Focus/Particles.lean)\
+cited in: [Particles](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Focus/Particles.lean)
 
 **Deo, A. & Thomas, W.** (2025). Addressing the widest answerable question: English "just" as a domain widening strategy.\
 [cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Focus/Bridge/GranularityJust.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Focus/Exclusives.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Focus/Focus_DomainWideningBridge.lean)\
@@ -1772,10 +1800,12 @@ cited in: [InformationStructure](https://github.com/hawkrobe/linglib/blob/main/L
 cited in: [QUD](https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/Discourse/QUD.lean), [DiscourseParticles](https://github.com/hawkrobe/linglib/blob/main/Linglib/Fragments/Hungarian/DiscourseParticles.lean), [DiscourseParticles](https://github.com/hawkrobe/linglib/blob/main/Linglib/Fragments/Italian/DiscourseParticles.lean), [DiscourseParticles](https://github.com/hawkrobe/linglib/blob/main/Linglib/Fragments/Mandarin/DiscourseParticles.lean), [DiscourseParticles](https://github.com/hawkrobe/linglib/blob/main/Linglib/Fragments/Russian/DiscourseParticles.lean), [DTSDiscourseOnly](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Focus/Bridge/DTSDiscourseOnly.lean), [DiscourseOnlyDerivations](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Focus/Bridge/DiscourseOnlyDerivations.lean), [DiscourseOnly](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Focus/DiscourseOnly.lean), [ForgetBridge](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Presupposition/Bridge/ForgetBridge.lean), [ForgetPresuppositions](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Presupposition/ForgetPresuppositions.lean), [PreExistence](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Attitudes/PreExistence.lean), [DiscourseOnly](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Lexical/Particle/DiscourseOnly.lean), [Support](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Questions/Support.lean)
 
 **Jackendoff, R.** (1972). Semantic Interpretation in Generative Grammar.\
-[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Focus/Basic.lean)
+[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Focus/Basic.lean)\
+cited in: [Basic](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Focus/Basic.lean)
 
 **Karttunen, L. & Peters, S.** (1979). Conventional Implicature. *Presupposition*.\
-[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Focus/Particles.lean)
+[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Focus/Particles.lean)\
+cited in: [Particles](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Focus/Particles.lean)
 
 **Knick, A. & Sharf, M.** (2026). On Focus and the Perfect Aspect.\
 [cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Lexical/Verb/ViewpointAspect.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Tense/TenseAspectComposition.lean)\
@@ -1802,7 +1832,8 @@ cited in: [InformationStructure](https://github.com/hawkrobe/linglib/blob/main/L
 cited in: [KratzerSelkirk2020](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Focus/KratzerSelkirk2020.lean)
 
 **Selkirk, E.** (2008). Contrastive focus, givenness, and the unmarked status of "discourse-new". *Acta Linguistica Hungarica 55: 1-16.*.\
-[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Focus/KratzerSelkirk2020.lean)
+[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Focus/KratzerSelkirk2020.lean)\
+cited in: [KratzerSelkirk2020](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Focus/KratzerSelkirk2020.lean)
 
 **Thomas, W. & Deo, A.** (2020). The Interaction of \emphjust with Modified Scalar Predicates. *Proceedings of Sinn und Bedeutung, 24, 354–372*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Degree/Granularity.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Focus/Bridge/GranularityJust.lean)\
@@ -1817,10 +1848,12 @@ cited in: [Thomas2026](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phe
 cited in: [InformationStructure](https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/Discourse/InformationStructure.lean), [Particles](https://github.com/hawkrobe/linglib/blob/main/Linglib/Fragments/Dutch/Particles.lean), [PolarityMarking](https://github.com/hawkrobe/linglib/blob/main/Linglib/Fragments/German/PolarityMarking.lean), [TurcoBraunDimroth2014](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Focus/AdditiveParticles/Studies/TurcoBraunDimroth2014.lean), [Data](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Focus/AdditiveParticles/Studies/TurcoBraunDimroth2014/Data.lean)
 
 **Warstadt, A.** (2020). On the role of discourse particles.\
-[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Focus/Exclusives.lean)
+[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Focus/Exclusives.lean)\
+cited in: [Exclusives](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Focus/Exclusives.lean)
 
 **Wiegand, M.** (2018). Exclusive Morphemes. *PhD dissertation, Cornell University*.\
-[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Focus/Exclusives.lean)
+[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Focus/Exclusives.lean)\
+cited in: [Exclusives](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Focus/Exclusives.lean)
 
 ## Semantics — Causation
 
@@ -1919,7 +1952,8 @@ cited in: [ProtoRoles](https://github.com/hawkrobe/linglib/blob/main/Linglib/The
 cited in: [TemporalExpressions](https://github.com/hawkrobe/linglib/blob/main/Linglib/Fragments/English/TemporalExpressions.lean), [MinimalismSmallClause](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/ArgumentStructure/Bridge/MinimalismSmallClause.lean), [AlstottAravind2026](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/TenseAspect/Studies/AlstottAravind2026.lean), [Bridge](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/TenseAspect/Studies/AlstottAravind2026/Bridge.lean), [Data](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/TenseAspect/Studies/AlstottAravind2026/Data.lean), [Linking](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Interfaces/SyntaxSemantics/Linking.lean), [Applicative](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/Minimalism/Core/Applicative.lean), [Basic](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/Minimalism/Core/Basic.lean), [Basic](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/Minimalism/Formal/ExtendedProjection/Basic.lean), [Properties](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/Minimalism/Formal/ExtendedProjection/Properties.lean)
 
 **Bybee, J., Perkins, R. & Pagliuca, W.** (1994). The Evolution of Grammar: Tense, Aspect, and Modality in the Languages of the World. *University of Chicago Press*.\
-[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/TenseAspect/Typology.lean)
+[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/TenseAspect/Typology.lean)\
+cited in: [Typology](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/TenseAspect/Typology.lean)
 
 **Comrie, B.** (1985). Tense.\
 [cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Conditionals/Studies/SubordinateFuture.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/TenseAspect/Data.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/TenseAspect/Typology.lean)\
@@ -2086,7 +2120,8 @@ cited in: [Reichenbach](https://github.com/hawkrobe/linglib/blob/main/Linglib/Co
 cited in: [TemporalExpressions](https://github.com/hawkrobe/linglib/blob/main/Linglib/Fragments/English/TemporalExpressions.lean), [TemporalConnectives](https://github.com/hawkrobe/linglib/blob/main/Linglib/Fragments/Finnish/TemporalConnectives.lean), [TemporalConnectives](https://github.com/hawkrobe/linglib/blob/main/Linglib/Fragments/Serbian/TemporalConnectives.lean), [TemporalConnectives](https://github.com/hawkrobe/linglib/blob/main/Linglib/Fragments/Tagalog/TemporalConnectives.lean), [Data](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Comparison/Equative/Data.lean), [AspectInteractionBridge](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/TemporalConnectives/AspectInteractionBridge.lean), [AspectInteractionData](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/TemporalConnectives/AspectInteractionData.lean), [Bridge](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/TemporalConnectives/Bridge.lean), [Compare](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/TemporalConnectives/Compare.lean), [AlstottAravind2026](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/TenseAspect/Studies/AlstottAravind2026.lean), [Bridge](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/TenseAspect/Studies/AlstottAravind2026/Bridge.lean), [Data](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/TenseAspect/Studies/AlstottAravind2026/Data.lean), [Equative](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Degree/Equative.lean), [TemporalConnectives](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Tense/TemporalConnectives.lean), [Basic](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Tense/TemporalConnectives/Basic.lean), [BeaverCondoravdi](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Tense/TemporalConnectives/BeaverCondoravdi.lean), [Rett](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Tense/TemporalConnectives/Rett.lean)
 
 **Rothstein, S.** (2004). Structuring Events.\
-[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/TenseAspect/DiagnosticsBridge.lean)
+[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/TenseAspect/DiagnosticsBridge.lean)\
+cited in: [DiagnosticsBridge](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/TenseAspect/DiagnosticsBridge.lean)
 
 **Rouillard, V.** (2026). Maximal Informativity Accounts for the Distribution of Temporal \emphin-Adverbials. *Linguistics and Philosophy, 49, 1–56*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Tense/MaximalInformativity.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/TenseAspect/TemporalAdverbialsBridge.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/Time.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/Scale.lean)\
@@ -2159,7 +2194,8 @@ cited in: [Bridge](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenome
 cited in: [Compare](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Generics/Compare.lean), [KindReference](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Generics/KindReference.lean), [Carlson1977](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Lexical/Noun/Kind/Carlson1977.lean), [Chierchia1998](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Lexical/Noun/Kind/Chierchia1998.lean), [Krifka2004](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Lexical/Noun/Kind/Krifka2004.lean), [Almog2014](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Reference/Almog2014.lean)
 
 **Chierchia, G.** (1995). Individual-Level Predicates as Inherent Generics. *The Generic Book, 176–223*.\
-[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Lexical/Noun/Kind/Generics.lean)
+[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Lexical/Noun/Kind/Generics.lean)\
+cited in: [Generics](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Lexical/Noun/Kind/Generics.lean)
 
 **Chierchia, G.** (1998). Reference to Kinds across Language. *Natural Language Semantics, 6(4), 339–405*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Lexical/Noun/Kind/Chierchia1998.lean)\
@@ -2186,7 +2222,8 @@ cited in: [RitchieSchiller2024](https://github.com/hawkrobe/linglib/blob/main/Li
 cited in: [Compare](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Generics/Compare.lean), [Carlson1977](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Lexical/Noun/Kind/Carlson1977.lean), [Dayal2004](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Lexical/Noun/Kind/Dayal2004.lean)
 
 **Dowty, D. R.** (1972). Studies in the Logic of Verb Aspect and Time Reference in English. *PhD dissertation, University of Texas at Austin*.\
-[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Lexical/Noun/Kind/Carlson1977.lean)
+[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Lexical/Noun/Kind/Carlson1977.lean)\
+cited in: [Carlson1977](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Lexical/Noun/Kind/Carlson1977.lean)
 
 **Giannakidou, A.** (1998). Polarity Sensitivity as (Non)Veridical Dependency. *John Benjamins*.\
 [foundational] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Polarity/NPIs.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Polarity/Typology.lean)\
@@ -2209,7 +2246,8 @@ cited in: [Compare](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenom
 cited in: [PolarityItems](https://github.com/hawkrobe/linglib/blob/main/Linglib/Fragments/English/PolarityItems.lean), [NPIs](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Polarity/NPIs.lean), [DenicEtAl2021Bridge](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Polarity/Studies/DenicEtAl2021Bridge.lean), [Core](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Degree/Core.lean)
 
 **Kaplan, D.** (1999). The Meaning of Ouch and Oops. *Manuscript, UCLA*.\
-[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Lexical/Expressives/Basic.lean)
+[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Lexical/Expressives/Basic.lean)\
+cited in: [Basic](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Lexical/Expressives/Basic.lean)
 
 **Kaufmann, M.** (2012). Interpreting Imperatives.\
 [cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Numerals/Embedding.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Lexical/Numeral/Embedding.lean)\
@@ -2279,7 +2317,8 @@ cited in: [Root](https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/Root
 cited in: [FillmoreKayOConnor1988](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/ConstructionGrammar/Studies/FillmoreKayOConnor1988.lean)
 
 **McCready, E.** (2010). Varieties of Conventional Implicature. *Semantics and Pragmatics, 3(8)*.\
-[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Lexical/Expressives/Basic.lean)
+[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Lexical/Expressives/Basic.lean)\
+cited in: [Basic](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Lexical/Expressives/Basic.lean)
 
 **Meier, C.** (2003). The meaning of too, enough, and so...that. *Natural Language Semantics.*.\
 [cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Numerals/Embedding.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Causation/DegreeCausation.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Lexical/Numeral/Embedding.lean)\
@@ -2342,7 +2381,8 @@ cited in: [Compare](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenom
 cited in: [Carlson1977](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Lexical/Noun/Kind/Carlson1977.lean)
 
 **Simons, M.** (2001). On the conversational basis of some presuppositions.\
-[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Lexical/Verb/ChangeOfState/Theory.lean)
+[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Lexical/Verb/ChangeOfState/Theory.lean)\
+cited in: [Theory](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Lexical/Verb/ChangeOfState/Theory.lean)
 
 **Smith, C.** (1991). The Parameter of Aspect.\
 [cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/TenseAspect/DiagnosticsBridge.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Lexical/Verb/ViewpointAspect.lean)\
@@ -2353,7 +2393,8 @@ cited in: [Time](https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/Temp
 cited in: [CoherenceRelation](https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/Discourse/CoherenceRelation.lean), [Predicates](https://github.com/hawkrobe/linglib/blob/main/Linglib/Fragments/German/Predicates.lean), [ProtoRoleBridge](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/ImplicitCausality/Studies/SolstadBott2024/Bridge/ProtoRoleBridge.lean), [Data](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/ImplicitCausality/Studies/SolstadBott2024/Data.lean)
 
 **Solstad, T. & Bott, O.** (2023). Implicit Causality and Consequentiality of Action Verbs. *Frontiers in Language Sciences, 2(1143214)*.\
-[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/ImplicitCausality/Studies/SolstadBott2024/Data.lean)
+[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/ImplicitCausality/Studies/SolstadBott2024/Data.lean)\
+cited in: [Data](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/ImplicitCausality/Studies/SolstadBott2024/Data.lean)
 
 **Stanley, J. & Szabó, Z.** (2000). On quantifier domain restriction. *Mind \& Language, 15(3)*.\
 [cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Lexical/Determiner/DomainRestriction.lean)\
@@ -2384,7 +2425,8 @@ cited in: [Roundness](https://github.com/hawkrobe/linglib/blob/main/Linglib/Core
 cited in: [Path](https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/Path.lean), [Scale](https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/Scales/Scale.lean), [CrossDomainLicensingBridge](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Gradability/CrossDomainLicensingBridge.lean), [DimensionBridge](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Events/DimensionBridge.lean), [SpatialTrace](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Events/SpatialTrace.lean)
 
 **Zwicky, A. M.** (1970). Greek-Letter Variables and the Sanskrit \emphruki Class. *Linguistic Inquiry, 1(4), 549–555*.\
-[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Gradability/IntensifiersBridge.lean)
+[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Gradability/IntensifiersBridge.lean)\
+cited in: [IntensifiersBridge](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Gradability/IntensifiersBridge.lean)
 
 ## Semantics — Questions
 
@@ -2401,7 +2443,8 @@ cited in: [Data](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena
 cited in: [MentionSome](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Questions/MentionSome.lean), [MentionSome](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Questions/MentionSome.lean)
 
 **Bennett, J. & Belnap, N.** (1970). Conditional Assertion and Restricted Quantification. *No\^us, 4(1), 1–12*.\
-[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Questions/Answerhood.lean)
+[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Questions/Answerhood.lean)\
+cited in: [Answerhood](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Questions/Answerhood.lean)
 
 **Bhatt, R. & Dayal, V.** (2020). Polar Question Particles: Hindi-Urdu \emphkya. *Natural Language \& Linguistic Theory, 38, 1115–1144*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Fragments/HindiUrdu/Particles.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Questions/Typology.lean)\
@@ -2444,13 +2487,16 @@ cited in: [Bridge](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenome
 cited in: [Particles](https://github.com/hawkrobe/linglib/blob/main/Linglib/Fragments/Czech/Particles.lean), [CzechThreeWayNegTypologyBridge](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Negation/CzechThreeWayNegTypologyBridge.lean)
 
 **Grimshaw, J.** (1979). Complement Selection and the Lexicon. *Linguistic Inquiry, 10(2), 279–326*.\
-[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Questions/Embedding.lean)
+[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Questions/Embedding.lean)\
+cited in: [Embedding](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Questions/Embedding.lean)
 
 **Groenendijk & Roelofsen** (2009). Inquisitive Semantics and Pragmatics.\
-[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Questions/Inquisitive.lean)
+[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Questions/Inquisitive.lean)\
+cited in: [Inquisitive](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Questions/Inquisitive.lean)
 
 **Groenendijk & Stokhof** (1997). Questions. *Handbook of Logic and Language.*.\
-[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Questions/Partition.lean)
+[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Questions/Partition.lean)\
+cited in: [Partition](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Questions/Partition.lean)
 
 **Groenendijk, J. & Stokhof, M.** (1984). Studies on the Semantics of Questions and the Pragmatics of Answers. *PhD dissertation, University of Amsterdam*.\
 [foundational] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Questions/Partition.lean)\
@@ -2563,7 +2609,8 @@ cited in: [Typology](https://github.com/hawkrobe/linglib/blob/main/Linglib/Pheno
 cited in: [NegRaising](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Attitudes/NegRaising.lean)
 
 **Beaver & Geurts** (2014). Presupposition. *SEP.*.\
-[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Presupposition/Basic.lean)
+[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Presupposition/Basic.lean)\
+cited in: [Basic](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Presupposition/Basic.lean)
 
 **Beaver, D.** (2001). Presupposition and Assertion in Dynamic Semantics. *CSLI Publications*.\
 [cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Presupposition/Studies/Yagi2025.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/NeoGricean/Presuppositions.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Dynamic/Systems/IntensionalCDRT/PresuppositionWeakening.lean)\
@@ -2618,7 +2665,8 @@ cited in: [Predicates](https://github.com/hawkrobe/linglib/blob/main/Linglib/Fra
 cited in: [ContentComposition](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Attitudes/ContentComposition.lean)
 
 **Hausser, R.** (1976). Presuppositions in Montague grammar.\
-[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Presupposition/Studies/Yagi2025.lean)
+[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Presupposition/Studies/Yagi2025.lean)\
+cited in: [Yagi2025](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Presupposition/Studies/Yagi2025.lean)
 
 **Heim, I.** (1983). On the Projection Problem for Presuppositions. *Proceedings of the West Coast Conference on Formal Linguistics, 2, 114–125*.\
 [cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Comparisons/ProjectionMechanisms.lean)\
@@ -2629,7 +2677,8 @@ cited in: [ProjectionMechanisms](https://github.com/hawkrobe/linglib/blob/main/L
 cited in: [Data](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Focus/AdditiveParticles/Data.lean), [KD45Projection](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Presupposition/Bridge/KD45Projection.lean), [Presuppositional](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Conditionals/Presuppositional.lean), [Additive](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Lexical/Particle/Additive.lean), [VerbEntry](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Lexical/Verb/VerbEntry.lean)
 
 **Hintikka, J.** (1962). Knowledge and Belief: An Introduction to the Logic of the Two Notions. *Cornell University Press*.\
-[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/ContentIndividual.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Attitudes/Doxastic.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Attitudes/EpistemicThreshold.lean)
+[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/ContentIndividual.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Attitudes/Doxastic.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Attitudes/EpistemicThreshold.lean)\
+cited in: [ContentIndividual](https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/ContentIndividual.lean), [Doxastic](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Attitudes/Doxastic.lean), [EpistemicThreshold](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Attitudes/EpistemicThreshold.lean)
 
 **Kiparsky, P. & Kiparsky, C.** (1970). Fact. *Progress in Linguistics*.\
 [foundational] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Attitudes/Factivity.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Presupposition/ForgetPresuppositions.lean)\
@@ -2644,7 +2693,8 @@ cited in: [NeoGricean](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phe
 cited in: [Projection](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Imprecision/Projection.lean), [Homogeneity](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Plurals/Homogeneity.lean)
 
 **Landman, F.** (1986). Conflicting Presuppositions and Modal Subordination. *Papers from the 22nd Regional Meeting of the Chicago Linguistic Society, 195–207*.\
-[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Presupposition/Studies/Yagi2025.lean)
+[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Presupposition/Studies/Yagi2025.lean)\
+cited in: [Yagi2025](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Presupposition/Studies/Yagi2025.lean)
 
 **Noonan, M.** (2007). Complementation. *Language Typology and Syntactic Description, vol. 2, 2nd ed*.\
 [cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Complementation/Bridge.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Complementation/DG_ControlBridge.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Complementation/Typology.lean)\
@@ -2655,7 +2705,8 @@ cited in: [Bridge](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenome
 cited in: [Verbal](https://github.com/hawkrobe/linglib/blob/main/Linglib/Fragments/English/Predicates/Verbal.lean), [Predicates](https://github.com/hawkrobe/linglib/blob/main/Linglib/Fragments/German/Predicates.lean), [Predicates](https://github.com/hawkrobe/linglib/blob/main/Linglib/Fragments/Japanese/Predicates.lean), [Predicates](https://github.com/hawkrobe/linglib/blob/main/Linglib/Fragments/Mandarin/Predicates.lean), [Predicates](https://github.com/hawkrobe/linglib/blob/main/Linglib/Fragments/Turkish/Predicates.lean), [TypologyBridge](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Modality/TypologyBridge.lean), [QingEtAl2025](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Plurals/Studies/QingEtAl2025.lean), [BuilderProperties](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Attitudes/BuilderProperties.lean), [CDistributivity](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Attitudes/CDistributivity.lean), [Preferential](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Attitudes/Preferential.lean), [VerbEntry](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Lexical/Verb/VerbEntry.lean)
 
 **Roberts & Özyıldız** (2025). A causal explanation for the contrafactive gap.\
-[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Attitudes/ContrafactiveGap.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Attitudes/Doxastic.lean)
+[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Attitudes/ContrafactiveGap.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Attitudes/Doxastic.lean)\
+cited in: [ContrafactiveGap](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Attitudes/ContrafactiveGap.lean), [Doxastic](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Attitudes/Doxastic.lean)
 
 **Roberts, C. & Simons, M.** (2024). Preconditions and Projection: Explaining Non-Anaphoric Presupposition. *Linguistics and Philosophy, 47(4), 703–748*.\
 [cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Presupposition/Diagnostics.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Attitudes/Doxastic.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Presupposition/OntologicalPreconditions.lean)\
@@ -2690,7 +2741,8 @@ cited in: [Basic](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomen
 cited in: [CoherenceRelation](https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/Discourse/CoherenceRelation.lean), [Verbal](https://github.com/hawkrobe/linglib/blob/main/Linglib/Fragments/English/Predicates/Verbal.lean), [Predicates](https://github.com/hawkrobe/linglib/blob/main/Linglib/Fragments/German/Predicates.lean), [PresuppositionBridge](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/ImplicitCausality/Studies/SolstadBott2024/Bridge/PresuppositionBridge.lean), [ProjectivityBridge](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/ImplicitCausality/Studies/SolstadBott2024/Bridge/ProjectivityBridge.lean), [ProtoRoleBridge](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/ImplicitCausality/Studies/SolstadBott2024/Bridge/ProtoRoleBridge.lean), [Data](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/ImplicitCausality/Studies/SolstadBott2024/Data.lean), [ProjectiveContent](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Presupposition/ProjectiveContent.lean), [CausationBridge](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/PsychVerbs/Bridge/CausationBridge.lean), [VerbEntry](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Lexical/Verb/VerbEntry.lean)
 
 **Spector & Egré** (2015). A uniform semantics for embedded interrogatives.\
-[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Attitudes/CDistributivity.lean)
+[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Attitudes/CDistributivity.lean)\
+cited in: [CDistributivity](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Attitudes/CDistributivity.lean)
 
 **Stalnaker, R.** (1974). Pragmatic Presuppositions.\
 [cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/Semantics/CommonGround.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Presupposition/Bridge/RSAComparison.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Dynamic/State.lean)\
@@ -2725,7 +2777,8 @@ cited in: [ContentLayer](https://github.com/hawkrobe/linglib/blob/main/Linglib/C
 cited in: [BuilderProperties](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Attitudes/BuilderProperties.lean), [Preferential](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Attitudes/Preferential.lean)
 
 **von Fintel** (2004). Would You Believe It? The King of France is Back! (Presuppositions and Truth-Value Intuitions).\
-[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Presupposition/Diagnostics.lean)
+[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Presupposition/Diagnostics.lean)\
+cited in: [Diagnostics](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Presupposition/Diagnostics.lean)
 
 **von Fintel, K.** (1999). NPI licensing, Strawson entailment, and context dependency. *Journal of Semantics, 16(2), 97–148*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Entailment/StrawsonEntailment.lean)\
@@ -2757,7 +2810,8 @@ cited in: [Basic](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories
 cited in: [Belief](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Dynamic/Systems/PLA/Belief.lean)
 
 **Alonso-Ovalle, L.** (2006). Disjunction in Alternative Semantics. *PhD dissertation, University of Massachusetts Amherst*.\
-[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Dynamic/Effects/Bilateral/FreeChoice.lean)
+[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Dynamic/Effects/Bilateral/FreeChoice.lean)\
+cited in: [FreeChoice](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Dynamic/Effects/Bilateral/FreeChoice.lean)
 
 **Asher, N. & Lascarides, A.** (1998). Bridging. *Journal of Semantics.*.\
 [cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Anaphora/Bridging.lean)\
@@ -2800,7 +2854,8 @@ cited in: [Bridging](https://github.com/hawkrobe/linglib/blob/main/Linglib/Pheno
 cited in: [Basic](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Dynamic/Systems/PLA/Basic.lean), [Belief](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Dynamic/Systems/PLA/Belief.lean), [Epistemic](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Dynamic/Systems/PLA/Epistemic.lean), [Quantifiers](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Dynamic/Systems/PLA/Quantifiers.lean), [Semantics](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Dynamic/Systems/PLA/Semantics.lean), [Update](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Dynamic/Systems/PLA/Update.lean)
 
 **Dekker, P.** (2008). Dynamic Semantics. *Semantics: An International Handbook of Natural Language Meaning*.\
-[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Dynamic/Systems/PLA/Basic.lean)
+[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Dynamic/Systems/PLA/Basic.lean)\
+cited in: [Basic](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Dynamic/Systems/PLA/Basic.lean)
 
 **Déchaine, R. & M. Wiltschko** (2002). Decomposing Pronouns. *Linguistic Inquiry, 33(3)*.\
 [cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Anaphora/Typology.lean)\
@@ -2815,7 +2870,8 @@ cited in: [Typology](https://github.com/hawkrobe/linglib/blob/main/Linglib/Pheno
 cited in: [Basic](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Dynamic/Systems/BUS/Basic.lean)
 
 **Evans, G.** (1977). Pronouns, Quantifiers, and Relative Clauses.\
-[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Anaphora/DonkeyAnaphora.lean)
+[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Anaphora/DonkeyAnaphora.lean)\
+cited in: [DonkeyAnaphora](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Anaphora/DonkeyAnaphora.lean)
 
 **Frank, A.** (1997). Context Dependence in Modal Constructions. *PhD dissertation*.\
 [cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Dynamic/Systems/PIP/Connectives.lean)\
@@ -2826,7 +2882,8 @@ cited in: [Connectives](https://github.com/hawkrobe/linglib/blob/main/Linglib/Th
 cited in: [PIPAnaphora](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Anaphora/Bridge/PIPAnaphora.lean)
 
 **Groenendijk, J. & Stokhof, M.** (1990). Dynamic Montague Grammar. *Papers from the Second Symposium on Logic and Language*.\
-[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Dynamic/Effects/State/DPL.lean)
+[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Dynamic/Effects/State/DPL.lean)\
+cited in: [DPL](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Dynamic/Effects/State/DPL.lean)
 
 **Groenendijk, J. & Stokhof, M.** (1991). Dynamic Predicate Logic. *Linguistics and Philosophy, 14(1), 39–100*.\
 [foundational] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Dynamic/Effects/Nondeterminism/Charlow2019.lean)\
@@ -2849,7 +2906,8 @@ cited in: [ModalSubordination](https://github.com/hawkrobe/linglib/blob/main/Lin
 cited in: [DRT](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Dynamic/Effects/State/DRT.lean), [Elbourne](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Intensional/Situations/Elbourne.lean), [Definite](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Lexical/Determiner/Definite.lean)
 
 **Kaplan, D.** (1968). Quantifying In.\
-[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Dynamic/Systems/PLA/Belief.lean)
+[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Dynamic/Systems/PLA/Belief.lean)\
+cited in: [Belief](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Dynamic/Systems/PLA/Belief.lean)
 
 **Karttunen, L.** (1969). Pronouns and Variables. *CLS 5.*.\
 [cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Anaphora/CrossSentential.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Dynamic/Systems/PIP/Phenomena.lean)\
@@ -2864,10 +2922,12 @@ cited in: [ParasiticAttitudes](https://github.com/hawkrobe/linglib/blob/main/Lin
 cited in: [PIPAnaphora](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Anaphora/Bridge/PIPAnaphora.lean), [Basic](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Dynamic/Systems/PIP/Basic.lean), [Connectives](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Dynamic/Systems/PIP/Connectives.lean), [Phenomena](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Dynamic/Systems/PIP/Phenomena.lean)
 
 **Krahmer, E. & Muskens, R.** (1995). Negation and Disjunction in Discourse Representation Theory.\
-[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Dynamic/Effects/Bilateral/Basic.lean)
+[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Dynamic/Effects/Bilateral/Basic.lean)\
+cited in: [Basic](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Dynamic/Effects/Bilateral/Basic.lean)
 
 **König, E. & P. Siemund** (2000). Intensifiers and Reflexives.\
-[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Anaphora/Coreference.lean)
+[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Anaphora/Coreference.lean)\
+cited in: [Coreference](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Anaphora/Coreference.lean)
 
 **Lewis, D.** (1979). Scorekeeping in a Language Game. *Journal of Philosophical Logic, 8(1), 339–359*.\
 [foundational] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Dynamic/State.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Presupposition/TonhauserDerivation.lean)\
@@ -2893,7 +2953,8 @@ cited in: [Definiteness](https://github.com/hawkrobe/linglib/blob/main/Linglib/C
 cited in: [Typology](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Anaphora/Typology.lean), [Elbourne2013](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Reference/Studies/Elbourne2013.lean), [Elbourne](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Intensional/Situations/Elbourne.lean)
 
 **Prince, E. F.** (1981). Toward a Taxonomy of Given--New Information. *Radical Pragmatics, 223–255*.\
-[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Anaphora/Bridging.lean)
+[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Anaphora/Bridging.lean)\
+cited in: [Bridging](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Anaphora/Bridging.lean)
 
 **Quine, W.** (1956). Quantifiers and Propositional Attitudes.\
 [cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Dynamic/Systems/PLA/Belief.lean)\
@@ -2998,7 +3059,8 @@ cited in: [CCG_CrossSerialBridge](https://github.com/hawkrobe/linglib/blob/main/
 cited in: [Position](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/Minimalism/Core/Position.lean)
 
 **Bruening, B.** (2001). QR Obeys Superiority: Frozen Scope and ACD. *Linguistic Inquiry, 32(2), 233–273*.\
-[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Quantification/Data.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/Minimalism/Scope.lean)
+[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Quantification/Data.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/Minimalism/Scope.lean)\
+cited in: [Data](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Quantification/Data.lean), [Scope](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/Minimalism/Scope.lean)
 
 **Bruening, B.** (2010). Ditransitive Asymmetries and a Head Movement Analysis. *Linguistic Inquiry, 41(1), 75–132*.\
 [cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/crossref)\
@@ -3065,10 +3127,12 @@ cited in: [CaseTheories](https://github.com/hawkrobe/linglib/blob/main/Linglib/C
 cited in: [CaseTheories](https://github.com/hawkrobe/linglib/blob/main/Linglib/Comparisons/CaseTheories.lean), [Agreement](https://github.com/hawkrobe/linglib/blob/main/Linglib/Fragments/Kaqchikel/Agreement.lean), [MinimalismPassive](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/ArgumentStructure/Bridge/MinimalismPassive.lean), [PhaseEN](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Negation/Bridge/PhaseEN.lean), [CaseFilter](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/Minimalism/Core/CaseFilter.lean), [Features](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/Minimalism/Core/Features.lean), [ObligatoryOperations](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/Minimalism/Core/ObligatoryOperations.lean), [Phase](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/Minimalism/Core/Phase.lean), [Voice](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/Minimalism/Core/Voice.lean), [Smuggling](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/Minimalism/Movement/Smuggling.lean)
 
 **Chomsky, N.** (2013). Problems of Projection. *Lingua, 130, 33–49*.\
-[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/Minimalism/Core/Basic.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/Minimalism/Core/Labeling.lean)
+[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/Minimalism/Core/Basic.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/Minimalism/Core/Labeling.lean)\
+cited in: [Basic](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/Minimalism/Core/Basic.lean), [Labeling](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/Minimalism/Core/Labeling.lean)
 
 **Chomsky, N.** (2015). Problems of Projection: Extensions. *Structures, Strategies and Beyond, 3–16*.\
-[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/Minimalism/Core/Labeling.lean)
+[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/Minimalism/Core/Labeling.lean)\
+cited in: [Labeling](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/Minimalism/Core/Labeling.lean)
 
 **Chung, S. L. W. & McCloskey, J.** (1995). Sluicing and Logical Form.\
 [cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Ellipsis/Sluicing.lean)\
@@ -3103,7 +3167,8 @@ cited in: [Typology](https://github.com/hawkrobe/linglib/blob/main/Linglib/Pheno
 cited in: [Typology](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/FillerGap/Typology.lean)
 
 **Connes, A. & Kreimer, D.** (1998). "Hopf Algebras, Renormalization and Noncommutative Geometry".\
-[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/Minimalism/Formal/MCB2023/Coproduct.lean)
+[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/Minimalism/Formal/MCB2023/Coproduct.lean)\
+cited in: [Coproduct](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/Minimalism/Formal/MCB2023/Coproduct.lean)
 
 **Cuervo, M. C.** (2003). Datives at Large. *PhD dissertation, Massachusetts Institute of Technology*.\
 [cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/Minimalism/Core/Applicative.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Fragments/Spanish/Predicates.lean)\
@@ -3134,7 +3199,8 @@ cited in: [DependentCase](https://github.com/hawkrobe/linglib/blob/main/Linglib/
 cited in: [Agreement](https://github.com/hawkrobe/linglib/blob/main/Linglib/Fragments/Mam/Agreement.lean), [MamAgreeSpellout](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Agreement/Bridge/MamAgreeSpellout.lean), [Agree](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/Minimalism/Core/Agree.lean)
 
 **Deane, P.** (1991). Limits to attention: A cognitive theory of island phenomena.\
-[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/FillerGap/Compare.lean)
+[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/FillerGap/Compare.lean)\
+cited in: [Compare](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/FillerGap/Compare.lean)
 
 **Demuth, K.** (1992). Acquisition of Sesotho. *The Crosslinguistic Study of Language Acquisition, vol. 3, 557–638*.\
 [cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/DependencyGrammar/Formal/MemorySurprisal/MorphemeOrder.lean)\
@@ -3181,7 +3247,8 @@ cited in: [ExtractionMorphology](https://github.com/hawkrobe/linglib/blob/main/L
 cited in: [InformationTheory](https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/InformationTheory.lean)
 
 **Embick, D. & Noyer, R.** (2001). Movement Operations After Syntax. *Linguistic Inquiry, 32(4), 555–595*.\
-[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/Minimalism/Formal/Amalgamation.lean)
+[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/Minimalism/Formal/Amalgamation.lean)\
+cited in: [Amalgamation](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/Minimalism/Formal/Amalgamation.lean)
 
 **Erlewine, M. Y.** (2016). Anti-locality and Optimality in Kaqchikel Agent Focus. *Natural Language \& Linguistic Theory, 34(2), 429–479*.\
 [cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/Minimalism/Core/Position.lean)\
@@ -3217,7 +3284,7 @@ cited in: [DGMemorySurprisal](https://github.com/hawkrobe/linglib/blob/main/Ling
 
 **Gibson, E.** (2025). Syntax. *MIT Press*.\
 [cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/WordOrder/Bridge/DGMemorySurprisal.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/FillerGap/LongDistance.lean)\
-cited in: [Data](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Coordination/Data.lean), [LongDistance](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/FillerGap/LongDistance.lean), [DGHarmonicOrder](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/WordOrder/Bridge/DGHarmonicOrder.lean), [DGMemorySurprisal](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/WordOrder/Bridge/DGMemorySurprisal.lean), [Hudson1990](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/WordOrder/Studies/Hudson1990.lean), [Typology](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/WordOrder/Typology.lean), [Coordination](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/DependencyGrammar/Coordination.lean), [Basic](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/DependencyGrammar/Core/Basic.lean), [LexicalRules](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/DependencyGrammar/Core/LexicalRules.lean), [Coreference](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/DependencyGrammar/Coreference.lean), [HarmonicOrder](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/DependencyGrammar/Formal/HarmonicOrder.lean), [LongDistance](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/DependencyGrammar/LongDistance.lean)
+cited in: [Data](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Coordination/Data.lean), [LongDistance](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/FillerGap/LongDistance.lean), [DGHarmonicOrder](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/WordOrder/Bridge/DGHarmonicOrder.lean), [DGMemorySurprisal](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/WordOrder/Bridge/DGMemorySurprisal.lean), [Hudson1984](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/WordOrder/Studies/Hudson1984.lean), [Typology](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/WordOrder/Typology.lean), [Coordination](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/DependencyGrammar/Coordination.lean), [Basic](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/DependencyGrammar/Core/Basic.lean), [LexicalRules](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/DependencyGrammar/Core/LexicalRules.lean), [Coreference](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/DependencyGrammar/Coreference.lean), [HarmonicOrder](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/DependencyGrammar/Formal/HarmonicOrder.lean), [LongDistance](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/DependencyGrammar/LongDistance.lean)
 
 **Ginzburg, J. & Sag, I. A.** (2000). Interrogative Investigations. *CSLI Publications*.\
 [cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/FillerGap/Studies/Sag2010.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/HPSG/Core/HeadFiller.lean)\
@@ -3288,10 +3355,12 @@ cited in: [Islands](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theori
 cited in: [Typology](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Agreement/Typology.lean)
 
 **Jackendoff, R.** (1977). X-Bar Syntax: A Study of Phrase Structure. *MIT Press*.\
-[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/Minimalism/Formal/XBar.lean)
+[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/Minimalism/Formal/XBar.lean)\
+cited in: [XBar](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/Minimalism/Formal/XBar.lean)
 
 **Joshi, A.** (1985). Tree Adjoining Grammars.\
-[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/CCG/Formal/GenerativeCapacity.lean)
+[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/CCG/Formal/GenerativeCapacity.lean)\
+cited in: [GenerativeCapacity](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/CCG/Formal/GenerativeCapacity.lean)
 
 **Just, E.** (2024). A Structural and Functional Comparison of Differential A and P Indexing. *Linguistics, 62(2), 295–321*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/Prominence.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Agreement/DifferentialIndexing.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Agreement/Bridge/DifferentialIndexing.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Fragments/Basque/Agreement.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Fragments/Georgian/Agreement.lean)\
@@ -3382,7 +3451,8 @@ cited in: [Accessible](https://github.com/hawkrobe/linglib/blob/main/Linglib/The
 cited in: [Typology](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/ArgumentStructure/Typology.lean)
 
 **May, R.** (1985). Logical Form: Its Structure and Derivation. *MIT Press*.\
-[foundational] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/Minimalism/Scope.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Quantification/Data.lean)
+[foundational] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/Minimalism/Scope.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Quantification/Data.lean)\
+cited in: [Data](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Quantification/Data.lean), [Scope](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/Minimalism/Scope.lean)
 
 **McCloskey, J.** (2006). Questions and Questioning in a Local English. *Crosslinguistic Research in Syntax and Semantics: Negation, Tense, and Clausal Architecture, 87–126*.\
 [cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/WordOrder/SubjectAuxInversion.lean)\
@@ -3406,13 +3476,11 @@ cited in: [Coordination](https://github.com/hawkrobe/linglib/blob/main/Linglib/F
 
 **Mitrovi\'c, M. & Sauerland, U.** (2016). Two Conjunctions Are Better Than One. *Acta Linguistica Hungarica, 63(4), 471–494*.\
 [cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Coordination/Data.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Coordination/Typology.lean)\
-cited in: [Conjectures](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Coordination/Conjectures.lean), [BillEtAl2025](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Coordination/Studies/BillEtAl2025.lean), [BillEtAl2025Bridge](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Coordination/Studies/BillEtAl2025Bridge.lean), [Typology](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Coordination/Typology.lean)
+cited in: [Coordination](https://github.com/hawkrobe/linglib/blob/main/Linglib/Fragments/Latin/Coordination.lean), [Conjectures](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Coordination/Conjectures.lean), [BillEtAl2025](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Coordination/Studies/BillEtAl2025.lean), [BillEtAl2025Bridge](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Coordination/Studies/BillEtAl2025Bridge.lean), [Typology](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Coordination/Typology.lean)
 
 **Mitrović** (2021). Superparticles.\
-[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Coordination/Typology.lean)
-
-**Mitrović & Sauerland** (2016). Two conjunctions are better than one. *Acta Linguistica Hungarica, 63(4), 471–494*.\
-[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Fragments/Georgian/Coordination.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Fragments/Hungarian/Coordination.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Fragments/Latin/Coordination.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Coordination/Studies/BillEtAl2025.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Coordination/Typology.lean)
+[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Coordination/Typology.lean)\
+cited in: [Typology](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Coordination/Typology.lean)
 
 **Osborne, T.** (2019). A Dependency Grammar of English: An Introduction and Beyond. *John Benjamins Publishing Company*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/ArgumentStructure/Bridge/DGValency.lean)\
@@ -3463,7 +3531,8 @@ cited in: [CommandRelations](https://github.com/hawkrobe/linglib/blob/main/Lingl
 cited in: [ClausePrefixes](https://github.com/hawkrobe/linglib/blob/main/Linglib/Fragments/Tigrinya/ClausePrefixes.lean), [Pollock1989](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/WordOrder/Studies/Pollock1989.lean), [SubjectAuxInversion](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/WordOrder/SubjectAuxInversion.lean), [Basic](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/Minimalism/Core/Basic.lean), [Features](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/Minimalism/Core/Features.lean), [Basic](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/Minimalism/Formal/ExtendedProjection/Basic.lean), [Properties](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/Minimalism/Formal/ExtendedProjection/Properties.lean), [VerbMovement](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/Minimalism/Formal/HeadMovement/VerbMovement.lean)
 
 **Portner, P., Pak, M. & Zanuttini, R.** (2019). The Speaker-Addressee Relation at the Syntax-Semantics Interface. *Language, 95(1), 1–36*.\
-[formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Politeness/Honorifics.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Politeness/Minimalism_AllocutivityBridge.lean)
+[formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Politeness/Honorifics.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Politeness/Minimalism_AllocutivityBridge.lean)\
+cited in: [Honorifics](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Politeness/Honorifics.lean), [Minimalism_AllocutivityBridge](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Politeness/Minimalism_AllocutivityBridge.lean)
 
 **Preminger, O.** (2014). Agreement and Its Failures. *MIT Press*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Fragments/Kaqchikel/Agreement.lean)\
@@ -3486,7 +3555,8 @@ cited in: [MinimalismNPEllipsis](https://github.com/hawkrobe/linglib/blob/main/L
 cited in: [CCG_GappingBridge](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Ellipsis/CCG_GappingBridge.lean), [Gapping](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Ellipsis/Gapping.lean)
 
 **Ross, J.** (1969). Guess who? (introduced "sluicing").\
-[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Ellipsis/Sluicing.lean)
+[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Ellipsis/Sluicing.lean)\
+cited in: [Sluicing](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Ellipsis/Sluicing.lean)
 
 **Ross, J. R.** (1967). Constraints on Variables in Syntax. *PhD dissertation, Massachusetts Institute of Technology*.\
 [foundational] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/FillerGap/Compare.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/FillerGap/Islands/Data.lean)\
@@ -3497,7 +3567,8 @@ cited in: [DG_IslandsBridge](https://github.com/hawkrobe/linglib/blob/main/Lingl
 cited in: [Binominals](https://github.com/hawkrobe/linglib/blob/main/Linglib/Fragments/Spanish/Binominals.lean), [MinimalismNPEllipsis](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Ellipsis/Bridge/MinimalismNPEllipsis.lean), [NPEllipsis](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Ellipsis/NPEllipsis.lean), [Features](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/Minimalism/Core/Features.lean), [FormalMatching](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/Minimalism/Formal/Sluicing/FormalMatching.lean)
 
 **Sag, I.** (2010). English filler-gap constructions. *Language, 86(3), 486–545*.\
-[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/FillerGap/Studies/Sag2010.lean)
+[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/FillerGap/Studies/Sag2010.lean)\
+cited in: [Sag2010](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/FillerGap/Studies/Sag2010.lean)
 
 **Sag, I. A., Wasow, T. & Bender, E. M.** (2003). Syntactic Theory: A Formal Introduction. *CSLI Publications*.\
 [foundational] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/WordOrder/SubjectAuxInversion.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/HPSG/Inversion.lean)\
@@ -3528,7 +3599,8 @@ cited in: [Typology](https://github.com/hawkrobe/linglib/blob/main/Linglib/Pheno
 cited in: [CaseTheories](https://github.com/hawkrobe/linglib/blob/main/Linglib/Comparisons/CaseTheories.lean), [Agreement](https://github.com/hawkrobe/linglib/blob/main/Linglib/Fragments/Kaqchikel/Agreement.lean), [Agreement](https://github.com/hawkrobe/linglib/blob/main/Linglib/Fragments/Mam/Agreement.lean), [MamAgreeSpellout](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Agreement/Bridge/MamAgreeSpellout.lean), [Agree](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/Minimalism/Core/Agree.lean), [CaseDiscrimination](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/Minimalism/Core/CaseDiscrimination.lean), [DependentCase](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/Minimalism/Core/DependentCase.lean)
 
 **Shieber** (1985). "Evidence against the context-freeness of natural language".\
-[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/FillerGap/CrossSerial.lean)
+[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/FillerGap/CrossSerial.lean)\
+cited in: [CrossSerial](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/FillerGap/CrossSerial.lean)
 
 **Siewierska, A.** (2013). Passive constructions. *WALS Online*.\
 [cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/ArgumentStructure/Typology.lean)\
@@ -3567,7 +3639,8 @@ cited in: [RootDimensions](https://github.com/hawkrobe/linglib/blob/main/Linglib
 cited in: [MinimalismSmallClause](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/ArgumentStructure/Bridge/MinimalismSmallClause.lean)
 
 **Szabolcsi** (2010). Quantification.\
-[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/Minimalism/Scope.lean)
+[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/Minimalism/Scope.lean)\
+cited in: [Scope](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/Minimalism/Scope.lean)
 
 **Szabolcsi, A.** (2006). "Strong vs.\
 [cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/FillerGap/Islands/Data.lean)\
@@ -3586,10 +3659,12 @@ cited in: [HMC](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/S
 cited in: [BillEtAl2025](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Coordination/Studies/BillEtAl2025.lean)
 
 **Vijay-Shanker, K. & Weir, D. J.** (1994). The Equivalence of Four Extensions of Context-Free Grammars. *Mathematical Systems Theory, 27(6), 511–546*.\
-[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/CCG/Formal/GenerativeCapacity.lean)
+[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/CCG/Formal/GenerativeCapacity.lean)\
+cited in: [GenerativeCapacity](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/CCG/Formal/GenerativeCapacity.lean)
 
 **Westergaard, M.** (2009). The Acquisition of Word Order: Micro-Cues, Information Structure, and Economy. *John Benjamins*.\
-[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/WordOrder/SubjectAuxInversion.lean)
+[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/WordOrder/SubjectAuxInversion.lean)\
+cited in: [SubjectAuxInversion](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/WordOrder/SubjectAuxInversion.lean)
 
 **Wood, J. & Marantz, A.** (2017). The interpretation of external arguments. *The Verbal Domain*.\
 [cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/crossref)\
@@ -3782,7 +3857,8 @@ cited in: [FinnishPartitive](https://github.com/hawkrobe/linglib/blob/main/Lingl
 cited in: [Particles](https://github.com/hawkrobe/linglib/blob/main/Linglib/Fragments/Japanese/Particles.lean), [OutlookMarkers](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Modality/OutlookMarkers.lean), [OutlookMarker](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Lexical/Expressives/OutlookMarker.lean)
 
 **L\'opez Ixcoy, C. D.** (2022). Extraction Morphology in K'iche'. *PhD dissertation, University of Maryland*.\
-[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Fragments/Kiche/ExtractionMorphology.lean)
+[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Fragments/Kiche/ExtractionMorphology.lean)\
+cited in: [ExtractionMorphology](https://github.com/hawkrobe/linglib/blob/main/Linglib/Fragments/Kiche/ExtractionMorphology.lean)
 
 **Laka, I.** (1996). A Brief Grammar of Euskara, the Basque Language. *University of the Basque Country*.\
 [cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Fragments/Basque/Agreement.lean)\
@@ -3801,7 +3877,8 @@ cited in: [QuestionParticles](https://github.com/hawkrobe/linglib/blob/main/Ling
 cited in: [Typology](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Quantification/Typology.lean)
 
 **Mac Cong\'ail, N.** (2004). Irish Grammar Book. *Cl\'o Iar-Chonnacht*.\
-[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Fragments/Irish/Coordination.lean)
+[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Fragments/Irish/Coordination.lean)\
+cited in: [Coordination](https://github.com/hawkrobe/linglib/blob/main/Linglib/Fragments/Irish/Coordination.lean)
 
 **Marantz, A.** (2001). Words. *WCCFL XX Handout, USC*.\
 [cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/manual)\
@@ -3868,7 +3945,8 @@ cited in: [Predicates](https://github.com/hawkrobe/linglib/blob/main/Linglib/Fra
 cited in: [MedialVerbs](https://github.com/hawkrobe/linglib/blob/main/Linglib/Fragments/Korean/MedialVerbs.lean), [Data](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/ClauseChaining/Data.lean)
 
 **Solt, S.** (2014). An alternative theory of imprecision.\
-[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Fragments/English/NumeralModifiers.lean)
+[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Fragments/English/NumeralModifiers.lean)\
+cited in: [NumeralModifiers](https://github.com/hawkrobe/linglib/blob/main/Linglib/Fragments/English/NumeralModifiers.lean)
 
 **Spencer, A. & A. Zwicky** (1998). The Handbook of Morphology.\
 [cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Morphology/Core/Circumfix.lean)\
@@ -3927,7 +4005,8 @@ cited in: [MedialVerbs](https://github.com/hawkrobe/linglib/blob/main/Linglib/Fr
 cited in: [MorphRule](https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/Lexical/MorphRule.lean), [FunctionWords](https://github.com/hawkrobe/linglib/blob/main/Linglib/Fragments/English/FunctionWords.lean), [CompositionBridge](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Morphology/CompositionBridge.lean), [ZwickyPullum1983Bridge](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Morphology/ZwickyPullum1983Bridge.lean), [CliticVsAffix](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Morphology/Core/CliticVsAffix.lean)
 
 **Égré, P. S. B. M. A. & Verheyen, S.** (2023). On the optimality of vagueness. *Linguistics and Philosophy, 46, 1101–1130*.\
-[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Fragments/English/NumeralModifiers.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Imprecision/Studies/EgreEtAl2023.lean)
+[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Fragments/English/NumeralModifiers.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Imprecision/Studies/EgreEtAl2023.lean)\
+cited in: [NumeralModifiers](https://github.com/hawkrobe/linglib/blob/main/Linglib/Fragments/English/NumeralModifiers.lean), [EgreEtAl2023](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Imprecision/Studies/EgreEtAl2023.lean)
 
 ## Phonology
 
@@ -4007,7 +4086,7 @@ cited in: [Coordination](https://github.com/hawkrobe/linglib/blob/main/Linglib/F
 
 **Hudson, R.** (1990). English Word Grammar. *Basil Blackwell*.\
 [cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Comparisons/CommandRelations.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/DependencyGrammar/Formal/HeadCriteria.lean)\
-cited in: [CommandRelations](https://github.com/hawkrobe/linglib/blob/main/Linglib/Comparisons/CommandRelations.lean), [DGCoreference](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Anaphora/Bridge/DGCoreference.lean), [Hudson1990](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/WordOrder/Studies/Hudson1990.lean), [CRDC](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/DependencyGrammar/CRDC.lean), [Coordination](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/DependencyGrammar/Coordination.lean), [Coreference](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/DependencyGrammar/Coreference.lean), [HeadCriteria](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/DependencyGrammar/Formal/HeadCriteria.lean), [LongDistance](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/DependencyGrammar/LongDistance.lean)
+cited in: [CommandRelations](https://github.com/hawkrobe/linglib/blob/main/Linglib/Comparisons/CommandRelations.lean), [DGCoreference](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Anaphora/Bridge/DGCoreference.lean), [Hudson1984](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/WordOrder/Studies/Hudson1984.lean), [CRDC](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/DependencyGrammar/CRDC.lean), [Coordination](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/DependencyGrammar/Coordination.lean), [Coreference](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/DependencyGrammar/Coreference.lean), [HeadCriteria](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/DependencyGrammar/Formal/HeadCriteria.lean), [LongDistance](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Syntax/DependencyGrammar/LongDistance.lean)
 
 **Keefe, R.** (2000). Theories of Vagueness.\
 [cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Comparisons/VaguenessTheories.lean)\
@@ -4022,7 +4101,8 @@ cited in: [DGCRDC](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenome
 cited in: [CommandRelations](https://github.com/hawkrobe/linglib/blob/main/Linglib/Comparisons/CommandRelations.lean)
 
 **Sumers, T. H. M. G. T. & Hawkins, R.** (2023). Reconciling truthfulness and relevance as epistemic and decision-theoretic utility.\
-[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Comparisons/RelevanceTheories.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/RSA/Core/CombinedUtility.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/RSA/Implementations/SumersEtAl2023.lean)
+[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Comparisons/RelevanceTheories.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/RSA/Core/CombinedUtility.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/RSA/Implementations/SumersEtAl2023.lean)\
+cited in: [RelevanceTheories](https://github.com/hawkrobe/linglib/blob/main/Linglib/Comparisons/RelevanceTheories.lean), [CombinedUtility](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/RSA/Core/CombinedUtility.lean), [SumersEtAl2023](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/RSA/Implementations/SumersEtAl2023.lean)
 
 **Sutton, P.** (2024). Types and Type Theories in Natural Language Analysis. *Annual Review of Linguistics, 10(1), 107–126*.\
 [formalized] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Comparisons/CNsAsTypes.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/TypeTheoretic/Selectional.lean)\

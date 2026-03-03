@@ -747,17 +747,17 @@ import Linglib.Theories.Syntax.DependencyGrammar.Formal.MemorySurprisal.Morpheme
 import Linglib.Theories.Syntax.DependencyGrammar.Coordination
 import Linglib.Theories.Syntax.DependencyGrammar.Coreference
 import Linglib.Theories.Syntax.DependencyGrammar.CRDC
-import Linglib.Phenomena.WordOrder.Bridge.DGInversion
 import Linglib.Phenomena.WordOrder.Bridge.DGHarmonicOrder
 import Linglib.Phenomena.WordOrder.Bridge.DGNonProjective
-import Linglib.Phenomena.WordOrder.Bridge.HPSGInversion
-import Linglib.Phenomena.WordOrder.Bridge.MinimalismInversion
-import Linglib.Phenomena.WordOrder.Bridge.MinimalismVerbMovement
 import Linglib.Phenomena.WordOrder.Bridge.MinimalismBulgarianLHM
 import Linglib.Phenomena.WordOrder.Bridge.MinimalismGermanicV2
 import Linglib.Phenomena.WordOrder.Bridge.MinimalismDerivations
 import Linglib.Phenomena.WordOrder.Bridge.ArnoldEtAl2000
 import Linglib.Phenomena.WordOrder.Studies.ArnoldEtAl2000
+import Linglib.Phenomena.WordOrder.Studies.SagWasowBender2003
+import Linglib.Phenomena.WordOrder.Studies.Adger2003
+import Linglib.Phenomena.WordOrder.Studies.Pollock1989
+import Linglib.Phenomena.WordOrder.Studies.Hudson1984
 import Linglib.Theories.Syntax.DependencyGrammar.LongDistance
 
 -- Theories: Dynamic Semantics
