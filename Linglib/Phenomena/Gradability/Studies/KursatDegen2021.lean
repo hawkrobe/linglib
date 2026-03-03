@@ -3,9 +3,9 @@ import Linglib.Theories.Pragmatics.RSA.Core.Noise
 /-!
 # @cite{kursat-degen-2021}
 
-Perceptual difficulty differences predict asymmetries in redundant
-modification. *Proceedings of the 43rd Annual Meeting of the Cognitive
-Science Society*, 2021.
+Perceptual difficulty differences predict asymmetry in redundant
+modification with color and material adjectives. *Proceedings of the
+Linguistic Society of America* 6(1): 676-688, 2021.
 
 ## Core Argument
 
@@ -18,14 +18,16 @@ difficulty of property verification.
 
 ## Experiments
 
-- **Exp 1** (§2, N = 199): Perceptual difficulty norms. Participants
-  verified whether an adjective applied to an object. Material adjectives
-  produced higher error rates (β = 0.48) and slower RTs (β = 5.44).
-- **Exp 2** (§3, N = 188): Redundant modifier production. Speakers
-  described objects in contexts where one property was sufficient.
-  Color was used redundantly more than material (β = 2.32).
-- **Exp 3** (§4, N = 54): Perceptual difficulty measured with Exp 2
-  displays. Material remained harder (error β = 0.96, RT β = 0.24).
+- **Exp 1** (§2, N = 105: 120 recruited, 15 excluded): Perceptual difficulty
+  norms. Participants verified whether an adjective applied to an object.
+  Material adjectives produced higher error rates (β = 0.48) and slower
+  RTs (β = 5.44).
+- **Exp 2** (§3, N ≈ 95: 100 recruited, 5 excluded): Redundant modifier
+  production. Speakers described objects in contexts where one property
+  was sufficient. Color was used redundantly more than material (β = 2.32).
+- **Exp 3** (§4, N = 376: 400 recruited, 24 excluded): Perceptual difficulty
+  measured with Exp 2 displays. Material remained harder (error β = 0.96,
+  RT β = 0.24).
 
 ## Verified Data
 
@@ -80,7 +82,7 @@ structure RegressionResult where
   deriving Repr
 
 -- ============================================================================
--- § Experiment 1: Perceptual Difficulty Norms (§2, N = 199)
+-- § Experiment 1: Perceptual Difficulty Norms (§2, N = 105)
 -- ============================================================================
 
 /-- Material → higher error rates (§2.3: β = 0.48, SE = 0.12, p < .0001).
@@ -89,12 +91,14 @@ def exp1_error : RegressionResult :=
   { beta := 0.48, se := 0.12, significant := true }
 
 /-- Material → slower RTs (§2.3: β = 5.44, SE = 4.74, t = 11.49, p < .0001).
-    RT difference in ms (material − color). -/
+    RT difference in ms (material − color).
+    NOTE: The paper's SE and t are inconsistent (5.44/4.74 ≈ 1.15 ≠ 11.49);
+    likely SE = 0.474 (giving 5.44/0.474 ≈ 11.48). Values as printed. -/
 def exp1_rt : RegressionResult :=
   { beta := 5.44, se := 4.74, tStat := some 11.49, significant := true }
 
 -- ============================================================================
--- § Experiment 2: Redundant Modifier Production (§3, N = 188)
+-- § Experiment 2: Redundant Modifier Production (§3, N ≈ 95)
 -- ============================================================================
 
 /-- Color used redundantly more than material (§3.3: β = 2.32, SE = 0.64,
@@ -108,7 +112,7 @@ def exp2_redundancy : RegressionResult :=
 def strongVersionSupported : Bool := false
 
 -- ============================================================================
--- § Experiment 3: Perceptual Difficulty in Context (§4, N = 54)
+-- § Experiment 3: Perceptual Difficulty in Context (§4, N = 376)
 -- ============================================================================
 
 /-- Material → higher error rates in context (§4.3: β = 0.96, SE = 0.09,

@@ -1,5 +1,7 @@
-/-
-# Bill, Gonzalez, @cite{bill-etal-2025}
+import Linglib.Theories.Semantics.Montague.Conjunction
+
+/-!
+# @cite{bill-etal-2025} — DP Conjunction Complexity
 
 "Is DP conjunction always complex? The view from child Georgian and Hungarian"
 Semantics & Pragmatics 18, Article 5, 1-20.
@@ -39,14 +41,7 @@ The M&S decomposition maps directly onto Montague/Conjunction.lean:
 
 -/
 
-import Linglib.Core.Empirical
-import Linglib.Theories.Semantics.Montague.Conjunction
-
-open Core.Empirical
-
 namespace Phenomena.Coordination.Studies.BillEtAl2025
-
-open Phenomena
 
 -- Conjunction Particle Typology
 
@@ -139,12 +134,6 @@ theorem georgian_mu_bound : georgian_c.boundMorpheme = true := rfl
 theorem hungarian_mu_free : hungarian_is.boundMorpheme = false := rfl
 
 -- Experimental Design
-
-def actOutMeasure : MeasureSpec :=
-  { scale := .binary, task := .actOut, unit := "correct/incorrect" }
-
-def sentencePlayedMeasure : MeasureSpec :=
-  { scale := .continuous, task := .actOut, unit := "log(replay count)" }
 
 inductive Group where
   | adult | child
