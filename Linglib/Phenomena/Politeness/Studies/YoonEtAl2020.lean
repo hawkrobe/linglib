@@ -6,7 +6,6 @@ import Linglib.Core.Semantics.GradedProposition
 
 /-!
 # @cite{yoon-etal-2020} — Polite Speech Emerges From Competing Social Goals
-@cite{yoon-etal-2020}
 
 ## Overview
 
