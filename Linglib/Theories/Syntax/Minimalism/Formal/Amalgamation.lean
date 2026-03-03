@@ -350,4 +350,22 @@ Barker & Pullum's algebraic theory of command relations.
 | Verb doubling         | Yes (copies)      | No           |
 -/
 
+-- Part 9: Extended Classification with GenHM
+
+/-
+## GenHM as a Third Option (@cite{arregi-pietraszko-2021})
+
+Arregi & Pietraszko argue that head displacement includes a third mechanism
+beyond syntactic movement and amalgamation: Generalized Head Movement (GenHM),
+an Agree-based operation where terminals share M-values. The direction of
+displacement is determined postsyntactically at PF.
+
+See `HeadMovement/GenHM.lean` for the full formalization.
+
+The extended classification is defined there as `HeadDisplacementExt`:
+- Syntactic movement (narrow syntax)
+- Amalgamation (PF, local)
+- GenHM (Agree + PF spell-out)
+-/
+
 end Minimalism
