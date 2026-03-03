@@ -154,14 +154,14 @@ example : sentenceTrue john_eats_pizza_sem := rfl
 /-
 The CCG derivation structure directly mirrors semantic composition:
 
-Syntax:                    Semantics:
-John:NP   sees:(S\NP)/NP   john:e   sees:e→e→t
+Syntax: Semantics:
+John:NP sees:(S\NP)/NP john:e sees:e→e→t
                |                        |
-          Mary:NP                  mary:e
-               ↓                        ↓
-          sees Mary:S\NP           sees(mary):e→t
-               ↓                        ↓
-        John sees Mary:S         sees(mary)(john):t
+          Mary:NP mary:e
+               ↓ ↓
+          sees Mary:S\NP sees(mary):e→t
+               ↓ ↓
+        John sees Mary:S sees(mary)(john):t
 
 Each syntactic combination corresponds to function application.
 This is the "transparency" of the syntax-semantics interface.

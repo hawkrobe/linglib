@@ -103,7 +103,7 @@ theorem bridge_ex_p11 :
 do-support examples confirm that English lexical verbs need it; ungrammatical
 examples confirm that auxiliaries do not. -/
 
-/-- ex27 "Does John eat pizza?" — do-support in question (lexical verb needs it) -/
+/-- ex27 "Where does Sue eat fish?" — do-support in question (lexical verb needs it) -/
 theorem bridge_ex27 :
     ex27.acceptability == .grammatical ∧
     needsDoSupport englishLexical .question = true := ⟨rfl, rfl⟩
@@ -163,7 +163,7 @@ theorem bridge_ex38 :
     ex38.acceptability == .grammatical ∧
     needsDoSupport englishLexical .vpEllipsis = true := ⟨rfl, rfl⟩
 
-/-- ex39 "She DOES like him" — verum focus with do-support (lexical verb) -/
+/-- ex39 "Sue DOES eat fish" — verum focus with do-support (lexical verb) -/
 theorem bridge_ex39 :
     ex39.acceptability == .grammatical ∧
     needsDoSupport englishLexical .verumFocus = true := ⟨rfl, rfl⟩

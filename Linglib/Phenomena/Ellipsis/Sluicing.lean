@@ -1,5 +1,6 @@
 /-
 # Sluicing: Empirical Data
+@cite{chung-mccloskey-1995}
 
 Theory-neutral data on sluicing and related ellipsis phenomena.
 
@@ -20,7 +21,7 @@ The elided material ("left") is reconstructed from the antecedent clause.
 
 ## Theoretical Connections (Promissory Notes)
 
-### Continuation-Based Analysis (B&S 2014, Ch. 16)
+### Continuation-Based Analysis (@cite{barker-shan-2014}, Ch. 16)
 
 Barker & Shan analyze sluicing as anaphora to a continuation:
 - The sluice = wh-phrase + (antecedent − inner-antecedent)
@@ -31,7 +32,7 @@ This connects to `Theories/Montague/Anaphora.lean`:
 - Sluicing as continuation anaphora parallels binding as duplication (W combinator)
 - Both involve "reusing" semantic material from elsewhere
 
-### Answer Ban (Chung, Ladusaw & McCloskey 1995)
+### Answer Ban
 
 The antecedent clause must not resolve the sluiced interrogative's issue.
 This is a pragmatic constraint connecting to question semantics.

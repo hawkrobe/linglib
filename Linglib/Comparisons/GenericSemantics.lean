@@ -1,8 +1,8 @@
 /-
 # Generic Semantics: Traditional GEN vs RSA Threshold
 
-Connects the traditional GEN operator (Krifka et al. 1995) to
-Tessler & Goodman's (2019) threshold-based RSA approach.
+Connects the traditional GEN operator to
+@cite{tessler-goodman-2019} threshold-based RSA approach.
 
 ## Result
 
@@ -162,7 +162,7 @@ theorem gen_false_implies_threshold_false
 
 /-!
 ## How RSA Explains Generic Judgments
-@cite{tessler-goodman-2019}
+@cite{tessler-goodman-2019} @cite{krifka-etal-1995}
 
 @cite{tessler-goodman-2019} go further than just showing GEN is eliminable.
 They explain WHY certain generics are judged true despite low prevalence.

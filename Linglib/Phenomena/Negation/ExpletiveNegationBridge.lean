@@ -243,7 +243,7 @@ theorem rett_generalization (c : ENConstruction) :
 
 /-! ### Connecting Fragment entries to EN predictions
 
-Rett (2026, fn. on @cite{kennedy-mcnally-2005}) predicts that EN in
+@cite{rett-2026} predicts that EN in
 comparatives is sensitive to scale type. The mechanism:
 - The *than*-clause denotes a degree set with a boundary at μ(b).
 - Ambidirectionality requires that this boundary is **shared** between

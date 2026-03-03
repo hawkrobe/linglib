@@ -1,5 +1,5 @@
 /-
-# Ramotowska et al. (2025) - Counterfactuals and Quantificational Force
+# @cite{ramotowska-santorio-2025} - Counterfactuals and Quantificational Force
 
 Experimental data from:
 Ramotowska, S., Marty, P., Romoli, J. & Santorio, P. (2025).

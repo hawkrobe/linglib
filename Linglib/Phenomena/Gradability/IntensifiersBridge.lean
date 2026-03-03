@@ -1,7 +1,7 @@
 /-
 # Deadjectival Intensifiers: Empirical Patterns
 
-Nouwen (2024) "The semantics and probabilistic pragmatics of deadjectival
+@cite{nouwen-2024} "The semantics and probabilistic pragmatics of deadjectival
 intensifiers" identifies two generalizations about adverbs derived from
 evaluative adjectives (e.g., "horribly warm", "pleasantly warm"):
 

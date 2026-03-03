@@ -8,7 +8,7 @@ import Linglib.Phenomena.ArgumentStructure.Subcategorization
 import Linglib.Phenomena.ArgumentStructure.Passive
 
 /-!
-# DG Valency Bridge: Osborne (2019, Ch 6) @cite{osborne-2019}
+# DG Valency Bridge: @cite{osborne-2019} @cite{osborne-2019}
 @cite{tesnire-1959}
 
 Full derivation chain from DG valency theory to argument structure
@@ -179,7 +179,7 @@ def passive_with_obj : DepTree :=
 
 -- ============================================================================
 -- LEVEL 1: Valency Frame Satisfaction
--- Osborne (2019, Ch 6): each verb selects a specific argument frame
+-- @cite{osborne-2019}: each verb selects a specific argument frame
 -- ============================================================================
 
 /-- Intransitive tree satisfies intransitive frame (V0). -/
@@ -221,7 +221,7 @@ theorem ditrans_noobj_subcat_fail : checkVerbSubcat ditrans_no_obj = false := rf
 
 -- ============================================================================
 -- LEVEL 3: Passive Lexical Rule Derivation
--- Osborne (2019, Ch 6 §6.7): passive changes valency
+-- @cite{osborne-2019}: passive changes valency
 -- ============================================================================
 
 /-- The passive rule applies to transitive "kicked". -/
@@ -253,7 +253,7 @@ theorem long_passive_satisfies_VPassive :
 
 -- ============================================================================
 -- LEVEL 4: Catena vs Constituent Analysis
--- Osborne (2019, Ch 4): verb + ALL args = constituent;
+-- @cite{osborne-2019}: verb + ALL args = constituent;
 --                        verb + SUBSET = catena (not constituent)
 -- ============================================================================
 
@@ -346,19 +346,19 @@ theorem passive_data_match :
 
 ```
 Fragments/English/Predicates/Verbal
-    sleep.complementType = .none          →  valence = .intransitive
-    devour.complementType = .np           →  valence = .transitive
-    kick.complementType = .np             →  valence = .transitive
-    give.complementType = .np_np          →  valence = .ditransitive
-        ↓  VerbEntry.toWord3sg / complementToValence
+    sleep.complementType =.none → valence =.intransitive
+    devour.complementType =.np → valence =.transitive
+    kick.complementType =.np → valence =.transitive
+    give.complementType =.np_np → valence =.ditransitive
+        ↓ VerbEntry.toWord3sg / complementToValence
 DepTree instances (words carry Fragment-derived valence)
-        ↓  satisfiesArgStr
+        ↓ satisfiesArgStr
 argStr_V0 / argStr_VN / argStr_VNN / argStr_VPassive
-        ↓  checkVerbSubcat
-grammatical ✓  /  ungrammatical ✗
-        ↓  passiveRule.transform
+        ↓ checkVerbSubcat
+grammatical ✓ / ungrammatical ✗
+        ↓ passiveRule.transform
 obj removed → intransitive surface valence
-        ↓  matches
+        ↓ matches
 Phenomena.ArgumentStructure.Subcategorization.data
 Phenomena.ArgumentStructure.Passive.data
 ```

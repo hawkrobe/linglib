@@ -65,7 +65,7 @@ inductive DiscontinuityType where
   deriving Repr, DecidableEq
 
 /-- Direction of displacement relative to canonical position.
-    Osborne (2019, Ch 8 Table 19): wh-fronting, topicalization,
+    @cite{osborne-2019}: wh-fronting, topicalization,
     NP-internal fronting, and scrambling displace leftward;
     extraposition displaces rightward. -/
 inductive DisplacementDir where
@@ -83,7 +83,7 @@ def displacementDir : DiscontinuityType → DisplacementDir
   | .extraposition    => .lowering
 
 /-- Whether a discontinuity type involves constituent or non-constituent rising.
-    Osborne (2019, Ch 7 §7.11): constituent rising = risen catena is a
+    @cite{osborne-2019}: constituent rising = risen catena is a
     constituent; non-constituent rising = risen catena is not a constituent. -/
 inductive RisingType where
   | constituent     -- Risen catena is a constituent
@@ -111,12 +111,12 @@ def isRisenCatena (t : DepTree) (nodes : List Nat) : Bool :=
 
 /-- Classify a dependency as rising or lowering based on whether the
     dependent precedes or follows its head in linear order.
-    Osborne (2019, Ch 8 Table 19). -/
+    @cite{osborne-2019}. -/
 def classifyDisplacement (d : Dependency) : DisplacementDir :=
   if d.depIdx < d.headIdx then .rising else .lowering
 
 -- ============================================================================
--- §3: Example Trees — From Osborne (2019, Ch 7–8)
+-- §3: Example Trees — From @cite{osborne-2019}
 -- ============================================================================
 
 /-- **Wh-fronting**: "What did you eat?" (@cite{osborne-2019}, Ch 8 §8.2)
@@ -165,7 +165,7 @@ def topicalizationArc : Dependency := ⟨4, 1, .obj⟩
 
     Risen catena = {uns(1)} — scrambled to pre-subject position.
     The catena {uns(1), gebacken(4)} has non-contiguous yield.
-    Osborne (2019, Ch 8 §8.5, example 33d variant). -/
+    @cite{osborne-2019}. -/
 def scramblingTree : DepTree :=
   { words := [ Word.mk' "dass" .SCONJ, Word.mk' "uns" .PRON
              , Word.mk' "Maria" .PROPN, Word.mk' "etwas" .PRON
@@ -239,7 +239,7 @@ theorem extraposition_risen_catena :
 theorem rightDislocation_risen_catena :
     isRisenCatena rightDislocationTree [2, 4] = true := by native_decide
 
-/-- Osborne (2019, Ch 8): all discontinuity types produce risen catenae. -/
+/-- @cite{osborne-2019}: all discontinuity types produce risen catenae. -/
 theorem all_discontinuities_are_risen_catenae :
     isRisenCatena whFrontingTree [0, 3] = true ∧
     isRisenCatena topicalizationTree [1, 4] = true ∧

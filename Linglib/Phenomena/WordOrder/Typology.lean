@@ -4,8 +4,8 @@ import Linglib.Core.Lexical.Word
 # Word-Order Typology (@cite{dryer-haspelmath-2013} / WALS)
 @cite{dryer-1992} @cite{dryer-haspelmath-2013} @cite{gibson-2025} @cite{greenberg-1963} @cite{derbyshire-1977} @cite{hale-1983}
 
-WALS data from Gibson (2025, Ch. 5.3, Tables 1–3): cross-linguistic counts
-of harmonic vs disharmonic word-order pairings. Dryer (1992, 2013) documents
+WALS data from @cite{gibson-2025}: cross-linguistic counts
+of harmonic vs disharmonic word-order pairings. @cite{dryer-1992} documents
 that languages overwhelmingly prefer consistent head direction across
 construction types (the **head-direction generalization**, @cite{greenberg-1963}).
 
@@ -113,7 +113,7 @@ def voRelativeClause : CrossTab :=
     hfhi := ⟨.headFinal, .headInitial, 113⟩
     hfhf := ⟨.headFinal, .headFinal, 132⟩ }
 
-/-- All three tables from @cite{gibson-2025} Ch. 5.3. -/
+/-- All three cross-tabulations from @cite{gibson-2025}. -/
 def allTables : List CrossTab :=
   [voAdposition, voSubordinator, voRelativeClause]
 
@@ -162,7 +162,7 @@ theorem voRelativeClause_harmonic_dominant :
 /-- The head-direction generalization: across all three construction pairs,
     harmonic word-order pairings dominate.
 
-    This is the core empirical observation that @cite{gibson-2025} Ch. 5.3
+    This is the core empirical observation that @cite{gibson-2025}
     argues DLM explains: consistent head direction keeps recursive spine
     dependencies local. -/
 theorem head_direction_generalization :

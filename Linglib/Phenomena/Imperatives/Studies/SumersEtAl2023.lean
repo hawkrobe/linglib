@@ -1,5 +1,5 @@
 /-
-# Sumers et al. (2023): Experimental Data
+# @cite{sumers-etal-2023}: Experimental Data
 
 "Reconciling truthfulness and relevance as epistemic and decision-theoretic utility"
 Cognitive Science 47(3), e13252.

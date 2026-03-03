@@ -1,7 +1,7 @@
 /-
 # X-Bar Theory
 
-Formalization of X-Bar structure following Adger (2003) Chapter 2.
+Formalization of X-Bar structure following @cite{adger-2003} Chapter 2.
 
 ## The X-Bar Schema
 
@@ -9,10 +9,10 @@ X-Bar theory provides a template for phrase structure:
 
 ```
       XP (maximal projection)
-     /  \
-  Spec   X' (intermediate projection)
-        /  \
-       X    Complement
+     / \
+  Spec X' (intermediate projection)
+        / \
+       X Complement
      (head)
 ```
 

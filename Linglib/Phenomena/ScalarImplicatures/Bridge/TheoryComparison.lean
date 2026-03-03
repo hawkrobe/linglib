@@ -25,7 +25,7 @@ manipulations (QUD changes). A compositional RSA model could potentially
 derive these effects.
 
 ### Empirical Fit (where comparable)
-Geurts & Pouscoulous (2009) verification task: 34% SI rate
+@cite{geurts-pouscoulous-2009} verification task: 34% SI rate
 - NeoGricean (35%): 1% difference ✓
 - RSA (50%): 16% difference (but model may be incomplete here too)
 
@@ -380,7 +380,7 @@ A **complete** RSA model would need:
 
 ### Empirical Fit (where comparable)
 
-| Theory | Predicted | Observed (G&P 2009) | Difference |
+| Theory | Predicted | Observed (@cite{geurts-pouscoulous-2009}) | Difference |
 |--------|-----------|---------------------|------------|
 | NeoGricean | 35% | 34% | 1% ✓ |
 | RSA | 50% | 34% | 16% |
@@ -399,7 +399,7 @@ RSA with proper priors might predict differently.
 ### What This Comparison Shows
 
 1. **NeoGricean is more complete**: It explicitly models DE blocking and
-   task effects, matching Geurts & Pouscoulous (2009) findings.
+   task effects, matching @cite{geurts-pouscoulous-2009} findings.
 
 2. **RSA needs extension**: The current model only handles simple cases.
    Extending it to embedded contexts is a research direction.

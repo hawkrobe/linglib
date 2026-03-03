@@ -1,9 +1,9 @@
 /-
 # Viewpoint Aspect Operators
 
-Klein (1994) viewpoint aspect formalized as interval relations between
+@cite{klein-1994} viewpoint aspect formalized as interval relations between
 Topic Time (TT) and Situation Time (TSit), with compositional operators
-following Knick & Sharf (2026).
+following @cite{knick-sharf-2026}.
 
 ## Klein's Aspect Definitions (Chapter 6, p. 108)
 
@@ -14,13 +14,13 @@ following Knick & Sharf (2026).
 | 3a | TT AFTER TSit | PERFECT | TT in posttime of TSit |
 | 3b | TT BEFORE TSit | PROSPECTIVE | TT in pretime of TSit |
 
-## Compositional Architecture (Knick & Sharf 2026)
+## Compositional Architecture
 
 ```
 EventPred ──[IMPF/PRFV]──▷ IntervalPred ──[PERF]──▷ PointPred ──[TENSE]──▷ Prop
 ```
 
-Equations (Knick & Sharf 2026):
+Equations:
 - (25) ⟦IMPF⟧ = λP.λt.∃e[t ⊂ τ(e) ∧ P(e)]
 - (28) ⟦PRFV⟧ = λP.λt.∃e[τ(e) ⊆ t ∧ P(e)]
 - (22b) ⟦PERF⟧ = λp.λt.∃tPTS[RB(tPTS, t) ∧ p(tPTS)]
@@ -71,7 +71,7 @@ abbrev PointPred (W Time : Type*) := Situation W Time → Prop
 -- § Klein's Viewpoint Classification
 -- ════════════════════════════════════════════════════
 
-/-- Klein's (1994: 108) viewpoint aspect types. -/
+/-- @cite{klein-1994} viewpoint aspect types. -/
 inductive ViewpointType where
   | imperfective  -- TT INCL TSit
   | perfective    -- TT AT TSit
@@ -377,13 +377,13 @@ inductive PerfectType where
 
 /-- Universal perfect: PERF_P(UNBOUNDED(V)).
     "has been running" — event ongoing throughout PTS.
-    Pancheva (2003: 285): explains why universal reading requires imperfective. -/
+    @cite{pancheva-2003}: explains why universal reading requires imperfective. -/
 abbrev universalPerfect (P : EventPred W Time) : IntervalPred W Time :=
   PERF_P (UNBOUNDED P)
 
 /-- Experiential perfect: PERF_P(NEUTRAL(V)).
     "has visited Paris" — event began within PTS.
-    Pancheva (2003: 287): neutral aspect allows event to extend beyond PTS. -/
+    @cite{pancheva-2003}: neutral aspect allows event to extend beyond PTS. -/
 abbrev experientialPerfect (P : EventPred W Time) : IntervalPred W Time :=
   PERF_P (NEUTRAL P)
 

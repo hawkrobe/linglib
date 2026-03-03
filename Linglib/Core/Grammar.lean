@@ -26,6 +26,32 @@ inductive ClauseType where
   deriving Repr, DecidableEq
 
 -- ============================================================================
+-- Word Order
+-- ============================================================================
+
+/-- Does some word satisfying `p` precede some word satisfying `q`? -/
+def precedes (p q : Word → Bool) (ws : List Word) : Bool :=
+  match ws.findIdx? p, ws.findIdx? q with
+  | some i, some j => i < j
+  | _, _ => false
+
+/-- Is this a nominal category that can be a subject? -/
+def isSubjectCat (c : UD.UPOS) : Bool :=
+  c == .PROPN || c == .NOUN || c == .PRON
+
+/-- Is this word a non-wh subject? -/
+def isSubject (w : Word) : Bool :=
+  isSubjectCat w.cat && !w.features.wh
+
+/-- Does the auxiliary precede the subject? -/
+def auxPrecedesSubject (ws : List Word) : Bool :=
+  precedes (·.cat == .AUX) isSubject ws
+
+/-- Does the subject precede the auxiliary? -/
+def subjectPrecedesAux (ws : List Word) : Bool :=
+  precedes isSubject (·.cat == .AUX) ws
+
+-- ============================================================================
 -- Grammar Typeclasses
 -- ============================================================================
 

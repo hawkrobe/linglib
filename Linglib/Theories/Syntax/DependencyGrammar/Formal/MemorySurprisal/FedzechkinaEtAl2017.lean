@@ -5,8 +5,7 @@ import Linglib.Theories.Syntax.DependencyGrammar.Formal.DependencyLength
 # Study 1: Artificial Language Learning (@cite{fedzechkina-newport-2012}/2017)
 @cite{fedzechkina-newport-2012} @cite{fedzechkina-newport-2017} @cite{hahn-degen-futrell-2021}
 
-@cite{hahn-degen-futrell-2021} Study 1 reanalyzes Fedzechkina, Jaeger & Newport (2012,
-2017): learners of an artificial language with flexible word order converge
+@cite{hahn-degen-futrell-2021} Study 1 reanalyzes @cite{fedzechkina-newport-2012}: learners of an artificial language with flexible word order converge
 toward orders that minimize dependency length — and these orders also
 achieve more efficient memory-surprisal trade-offs.
 

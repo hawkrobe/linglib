@@ -1,5 +1,5 @@
 /-
-# Generalized Conjunction (Partee & Rooth 1983)
+# Generalized Conjunction
 
 Conjunction and disjunction defined recursively over the type structure:
 - Base case: Boolean operations at type `t`

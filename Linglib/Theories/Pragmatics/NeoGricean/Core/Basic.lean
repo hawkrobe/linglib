@@ -1,7 +1,7 @@
 /-
 # Neo-Gricean Pragmatics: Basic Definitions
 
-Core formalization of the Standard Recipe from Geurts (2010) Chapter 2.
+Core formalization of the Standard Recipe from @cite{geurts-2010} Chapter 2.
 
 ## Key Concepts
 

@@ -1,12 +1,10 @@
 /-
-# Parasitic Attitudes: Karttunen (1973) Puzzle
+# Parasitic Attitudes: @cite{karttunen-1973} Puzzle
 
 Theory-neutral empirical data on presupposition projection across attitude sequences,
-the puzzle that motivates Maier (2015)'s parasitic attitude analysis.
+the puzzle that motivates @cite{maier-2015}'s parasitic attitude analysis.
 
-## The Puzzle
-
-Karttunen (1973) observed an asymmetry in presupposition projection:
+## The Puzz@cite{karttunen-1973} observed an asymmetry in presupposition projection:
 
   "Bill believed Fred had been beating his wife and he hoped Fred would stop"
   → Does not presuppose Fred was beating his wife (to speaker)

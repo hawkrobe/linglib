@@ -2,7 +2,7 @@ import Linglib.Theories.Semantics.Questions.Partition
 import Linglib.Theories.Semantics.Questions.Hamblin
 
 /-
-The ANS operator and the answerhood thesis (Groenendijk & Stokhof 1984, Ch. I).
+The ANS operator and the answerhood thesis (@cite{groenendijk-stokhof-1984}, Ch. I).
 
 -/
 

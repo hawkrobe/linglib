@@ -1,8 +1,8 @@
 /-
-# Free Choice with Anaphora (Elliott & Sudo 2025)
+# Free Choice with Anaphora
 
 This module derives Free Choice (FC) inferences using Bilateral Update Semantics,
-following Elliott & Sudo (2025) "Free choice with anaphora".
+following @cite{elliott-sudo-2025} "Free choice with anaphora".
 
 ## The Puzzle
 

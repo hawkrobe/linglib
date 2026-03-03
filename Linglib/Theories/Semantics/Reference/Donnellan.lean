@@ -1,7 +1,7 @@
 /-
 # Donnellan's Referential/Attributive Distinction
 
-Formalizes Donnellan (1966): definite descriptions have two uses:
+Formalizes @cite{donnellan-1966}: definite descriptions have two uses:
 - **Attributive**: "The φ is ψ" means whoever uniquely satisfies φ is ψ
 - **Referential**: "The φ is ψ" means the speaker's intended individual is ψ
 

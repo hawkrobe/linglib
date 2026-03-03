@@ -1,14 +1,15 @@
 /-
 # Neo-Gricean Pragmatics: Competence
+@cite{soames-1982}
 
-Detailed competence analysis from Geurts (2010) Chapter 2.3.
+Detailed competence analysis from @cite{geurts-2010} Chapter 2.3.
 
 ## Key Concepts
 
 1. Competence (basic): Bel_S(ψ) ∨ Bel_S(¬ψ)
    Speaker knows whether ψ.
 
-2. Competence+ (Soames 1982): Bel_S(ψ) ↔ ψ
+2. Competence+: Bel_S(ψ) ↔ ψ
    Speaker's belief matches truth. Stronger than basic competence.
 
 3. Disjunction Blocks Competence

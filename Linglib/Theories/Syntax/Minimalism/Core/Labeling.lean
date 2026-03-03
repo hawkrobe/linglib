@@ -342,7 +342,7 @@ The key insight: a HEAD is an LI that projects. A PHRASE is a maximal projection
 /-
 ## Position vs Occurrence (Harizanov footnote 11, p.9)
 
-Following Collins & Stabler (2016), a POSITION is a path from the root to
+Following @cite{collins-stabler-2016}, a POSITION is a path from the root to
 an element. An OCCURRENCE is a pair of (element, position).
 
 In multidominant structures (copy theory), the same element can appear at

@@ -1,5 +1,5 @@
 /-
-# Ronai (2024) Embedded Scalar Diversity Data
+# @cite{ronai-2024} Embedded Scalar Diversity Data
 
 Experimental data on embedded scalar implicatures from:
 Ronai, E. (2024). Embedded scalar diversity. SALT 34, 110-131.
@@ -23,22 +23,21 @@ properties of alternatives predict this variation?
 ## Theoretical Implications
 
 Results support alternative-based accounts of embedded SI:
-- Grammatical theory (Chierchia 2004; Chierchia, Fox & Spector 2012)
-- Modified neo-Gricean (Sauerland 2004)
-- Neo-Gricean uncertainty RSA-LU (Potts et al. 2015)
+- Grammatical theory (@cite{chierchia-2004}; Chierchia, @cite{chierchia-fox-spector-2012})
+- Modified neo-Gricean
+- Neo-Gricean uncertainty RSA-LU
 
 Results are less compatible with:
-- Unconstrained uncertainty RSA-LU (Bergen et al. 2016)
+- Unconstrained uncertainty RSA-LU
 
 This is because the alternative-free unconstrained model cannot explain
 why the same alternative-driven variation arises in both global and
 embedded contexts.
 
-## Connection to Geurts & Pouscoulous (2009)
+## Connection to @cite{geurts-pouscoulous-2009}
 
-This paper directly responds to G&P 2009 (also in Linglib), which found
-limited evidence for embedded SIs. Ronai's methodology uses the Gotzner &
-Romoli (2018) paradigm and tests 42 scales, finding robust embedded SIs
+This paper directly responds to @cite{geurts-pouscoulous-2009} (also in Linglib), which found
+limited evidence for embedded SIs. Ronai's methodology uses the @cite{gotzner-romoli-2018} paradigm and tests 42 scales, finding robust embedded SIs
 with predictable cross-scale variation.
 
 -/

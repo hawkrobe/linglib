@@ -237,7 +237,7 @@ MoS verbs, due to their manner component, activate manner alternatives and
 make the manner QUD salient by default. Bridge verbs like *say*, lacking a
 manner component, default to the content QUD.
 
-This follows from Roberts (1996, 2012): the QUD is determined by what
+This follows from @cite{roberts-1996}: the QUD is determined by what
 alternatives are salient, and manner components activate manner alternatives.
 -/
 

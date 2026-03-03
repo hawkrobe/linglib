@@ -3,7 +3,7 @@ import Linglib.Core.Agent.RationalAction
 /-!
 # Algebraic Approximations (@cite{luce-1959}, §1.G, pp. 34–37) @cite{luce-1959}
 
-Luce (1959, §1.G) develops the connection between choice probabilities and
+@cite{luce-1959} develops the connection between choice probabilities and
 ordinal preference structures via **just noticeable differences** (jnds).
 
 When stimuli are "close" in value, subjects cannot reliably discriminate

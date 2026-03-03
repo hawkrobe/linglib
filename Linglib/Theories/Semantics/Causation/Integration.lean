@@ -1,5 +1,5 @@
 /-
-# Integration with Grusdt, Lassiter & Franke (2022)
+# Integration with @cite{grusdt-lassiter-franke-2022}
 
 Bridge between structural causation (Nadathur & Lauer) and
 probabilistic causation (Grusdt, Lassiter & Franke).

@@ -1,7 +1,7 @@
 /-
 # Accessible Terms and Workspace Counting
 
-Formalizes §2 of Marcolli, Chomsky & Berwick (2023): accessible terms,
+Formalizes §2 of @cite{marcolli-chomsky-berwick-2023}: accessible terms,
 workspace counting functions, and the counting behavior of External vs
 Internal Merge (Proposition 2.17 and Corollary 2.22).
 

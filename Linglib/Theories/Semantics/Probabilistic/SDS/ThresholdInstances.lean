@@ -4,9 +4,9 @@
 This module shows that all three threshold semantics domains from
 `ThresholdSemantics.lean` are instances of `SDSConstraintSystem`:
 
-1. **Gradable adjectives** (Lassiter & Goodman 2017)
-2. **Generics** (Tessler & Goodman 2019)
-3. **Gradable nouns** (Morzycki 2009)
+1. **Gradable adjectives**
+2. **Generics**
+3. **Gradable nouns**
 
 ## The Unified Pattern
 
@@ -51,6 +51,7 @@ def thresholdRange : List ℚ :=
 
 /-!
 ## Gradable Adjectives as SDS
+@cite{lassiter-goodman-2017} @cite{tessler-goodman-2019}
 
 For a gradable adjective like "tall":
 - **Param**: threshold values θ ∈ [0,1]

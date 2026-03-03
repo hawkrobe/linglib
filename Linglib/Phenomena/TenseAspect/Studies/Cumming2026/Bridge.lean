@@ -7,7 +7,7 @@ import Linglib.Fragments.Bulgarian.Evidentials
 @cite{cumming-2026}
 
 Verification theorems for the cross-linguistic nonfuture downstream
-generalization from Cumming (2026, *L&P* 49:153–175). Paradigm data
+generalization from @cite{cumming-2026}. Paradigm data
 lives in Fragment files; this file imports them and proves the empirical
 predictions.
 

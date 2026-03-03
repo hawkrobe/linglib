@@ -6,7 +6,7 @@ generic sentences like "Dogs bark", "Birds fly", etc.
 
 ## The Traditional Account
 
-In the standard analysis (Krifka et al. 1995, Carlson 1977), generics involve:
+In the standard analysis, generics involve:
 1. A covert quantifier GEN over situations/cases
 2. A restrictor (the kind)
 3. A nuclear scope (the property)
@@ -28,7 +28,7 @@ The `normal` parameter is doing all the work, but it's:
 
 ## Comparison with RSA Treatment
 
-Tessler & Goodman (2019) eliminate GEN via threshold semantics:
+@cite{tessler-goodman-2019} eliminate GEN via threshold semantics:
 - Generic is true iff prevalence exceeds threshold
 - Threshold is uncertain, inferred pragmatically
 - Prior over prevalence varies by property

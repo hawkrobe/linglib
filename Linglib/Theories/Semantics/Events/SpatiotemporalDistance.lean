@@ -5,7 +5,7 @@ import Linglib.Core.Temporal.Time
 # Spatiotemporal Distance @cite{koev-2017}
 @cite{cumming-2026}
 
-Koev (2017, *Journal of Semantics* 34(1):1–38) argues that the Bulgarian
+@cite{koev-2017}:1–38) argues that the Bulgarian
 evidential introduces a **learning event** — the event through which the
 speaker acquired the reported information — that must be **spatiotemporally
 distant** (△) from the described event. The key predicate (Definition 24):

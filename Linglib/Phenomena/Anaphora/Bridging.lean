@@ -1,5 +1,6 @@
 /-
 # Bridging Anaphora: Empirical Data
+@cite{asher-lascarides-1998} @cite{clark-1975}
 
 Theory-neutral data on bridging anaphora (associative anaphora, indirect anaphora).
 
@@ -13,7 +14,7 @@ being coreferent with it.
 - "the seat" is not coreferent with "a bicycle"
 - But "the seat" is inferentially accessible via part-whole relation
 
-## Two Types of Bridging (Clark 1975, Asher & Lascarides 1998)
+## Two Types of Bridging
 
 1. Part-whole bridging: the bridged entity is a part of the antecedent.
    - "a bicycle" → "the seat" (seat is part of bicycle)
@@ -23,7 +24,7 @@ being coreferent with it.
    - "a book" → "the author" (author is the one who wrote it)
    - Mediated by familiarity (the author must be contextually salient)
 
-## Cross-Linguistic Variation (Ahn & Zhu 2025)
+## Cross-Linguistic Variation
 
 Mandarin vs English contrast in bridging:
 - Mandarin bare nouns accept both bridging types freely.

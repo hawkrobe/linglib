@@ -1,7 +1,7 @@
 /-
 # CCG Intonation and Information Structure
 
-Steedman's (2000) theory of how prosodic structure aligns with CCG derivations.
+@cite{steedman-2000}'s theory of how prosodic structure aligns with CCG derivations.
 
 ## Insight
 
@@ -9,8 +9,8 @@ CCG's "spurious ambiguity" is not spurious: different derivations correspond to
 different Information Structures, disambiguated by intonation in speech.
 
 The sentence "Anna married Manny" has multiple CCG derivations:
-1. [Anna] [married Manny]  — traditional subject-predicate
-2. [Anna married] [Manny]  — via composition: theme "Anna married _", rheme "Manny"
+1. [Anna] [married Manny] — traditional subject-predicate
+2. [Anna married] [Manny] — via composition: theme "Anna married _", rheme "Manny"
 
 Intonation selects among these:
 - "ANNA married" (L+H* LH%) "MANNY" (H* LL%) → theme/rheme split at "married"
@@ -280,8 +280,8 @@ instance : HasInfoStructure (List ProsodicPhrase) ProsodicDeriv where
 /-
 Context: "What did Fred eat?"
 Answer: "(FRED ate) (the BEANS)"
-         L+H* LH%   H*  LL%
-         Theme      Rheme
+         L+H* LH% H* LL%
+         Theme Rheme
 
 Derivation:
 1. FRED: NP with L+H* → NPθ
@@ -342,15 +342,14 @@ def anna_married_manny : List ProsodicPhrase := [anna_married_theme, manny_rheme
 -- Constraint: Prosody must align with CCG constituency
 
 /-
-Prosodic boundaries can only occur at CCG constituent boundaries
-(Steedman 2000). This explains Selkirk's "Sense Unit Condition" as a theorem.
+Prosodic boundaries can only occur at CCG constituent boundaries. This explains Selkirk's "Sense Unit Condition" as a theorem.
 
 Allowed:
-  (FRED ate) (the BEANS)   -- "Fred ate" is a CCG constituent (S/NP)
+  (FRED ate) (the BEANS) -- "Fred ate" is a CCG constituent (S/NP)
 
 Disallowed:
-  *(FRED ate the) (BEANS)  -- "Fred ate the" is not a constituent
-  *(The beans that FRED) (ate were DELICIOUS)  -- violates island
+  *(FRED ate the) (BEANS) -- "Fred ate the" is not a constituent
+  *(The beans that FRED) (ate were DELICIOUS) -- violates island
 -/
 
 /-- Check if a prosodic derivation is well-formed (simplified) -/

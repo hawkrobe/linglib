@@ -1,5 +1,5 @@
 /-
-# Bergen & Goodman (2015)
+# @cite{bergen-goodman-2015}
 
 "The Strategic Use of Noise in Pragmatic Reasoning"
 Topics in Cognitive Science 7(2): 336-350
@@ -26,7 +26,7 @@ Standard RSA assumes perfect transmission. This model adds:
 - Speaker utility considers expected listener accuracy over noise
 - Listener reasons about what speaker intended given perceived utterance
 
-## Relation to Degen et al. (2020)
+## Relation to @cite{degen-etal-2020}
 
 Two different noise models in RSA:
 - **Bergen & Goodman (channel noise)**: P_N(u_p|u_i) - words can be deleted/inserted

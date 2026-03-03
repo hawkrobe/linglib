@@ -1,12 +1,11 @@
 /-
-# Kratzer & Selkirk (2020): Deconstructing Information Structure
+# @cite{kratzer-selkirk-2020}: Deconstructing Information Structure
 
 Formalization of Kratzer & Selkirk's two-feature theory of information structure.
 
 ## Core Insight
 
-What has traditionally been analyzed as a single [F]-feature (Rooth 1985, 1992;
-Schwarzschild 1999) must be decomposed into TWO privative morphosyntactic features:
+What has traditionally been analyzed as a single [F]-feature must be decomposed into TWO privative morphosyntactic features:
 
 - **[FoC]** (FoCus): Introduces alternatives, signals contrast via ~ operator
 - **[G]** (Givenness): Presupposes discourse salience, signals match

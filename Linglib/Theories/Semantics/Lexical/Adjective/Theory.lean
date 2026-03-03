@@ -20,15 +20,14 @@ This module adds adjective-specific infrastructure:
 - `NegationType`: Contradictory vs. contrary antonyms
 - `ThresholdPair`: Two thresholds for contrary antonyms with gap
 - Negation semantics functions
-- Degree modifiers (Kennedy & McNally 2005, Israel 2011)
+- Degree modifiers
 
 ## Relationship to Degree.Core
 
 This module uses concrete `Degree max` (= `Fin (max+1)`) for computation
 in RSA models and Fragment entries. `Degree.Core` uses abstract types
 (`Entity D : Type*` with `LinearOrder D`) for framework-level theorems.
-See also `Degree.Granularity` for granularity-sensitive degree morphology
-(Thomas & Deo 2020).
+See also `Degree.Granularity` for granularity-sensitive degree morphology.
 
 ## Comparison with ModalTheory
 

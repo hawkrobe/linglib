@@ -1,7 +1,7 @@
 /-
 # Scalar Implicatures: Exhaustivity and Gricean Reasoning
 
-Formalization of Spector (2007) "Scalar implicatures: exhaustivity and Gricean reasoning"
+Formalization of @cite{spector-2007} "Scalar implicatures: exhaustivity and Gricean reasoning"
 Proceedings of the ESSLLI 2003 Student Session (revised 2007).
 
 ## Main Result
@@ -377,7 +377,7 @@ theorem Exhaust_entails_I (P : Proposition Atom) (_hpos : isPositive Atom P) :
   exact hV_min V' (hi_sub_P hV'i) hV'_ssub
 
 /--
-Spector (2007, Section 3.3.2):
+@cite{spector-2007}:
 
 For any positive proposition P, Max(P) = {Exhaust(P)}.
 

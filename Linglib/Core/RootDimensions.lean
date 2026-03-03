@@ -11,13 +11,13 @@ cross-linguistic translation equivalence (Spalek & McNally, forthcoming).
 ## Three-level architecture
 
 **Level 1 — Levin meaning components** (§ 1). Binary features that define verb
-classes, diagnosed by diathesis alternation behavior. From Levin (1993:5–10):
+classes, diagnosed by diathesis alternation behavior. From @cite{levin-1993}:
 the four verbs *break*, *cut*, *hit*, and *touch* are distinguished by the
 presence or absence of change of state, contact, motion, and causation.
 
 **Level 2 — Root structural entailments** (§ 3b). Binary features capturing
 what the verb root itself entails about event structure: state, manner, result,
-and cause. From Beavers & Koontz-Garboden (2020, Table 12). These sit between
+and cause. From @cite{beavers-koontz-garboden-2020}. These sit between
 template-level event structure and surface meaning components, explaining
 *why* surface verbs have the components they do.
 
@@ -159,7 +159,7 @@ end Range
 
 /-- Magnitude of force involved in the event.
 
-    Talmy (1988:52–54) identifies force magnitude as a core parameter of
+    @cite{talmy-1988} identifies force magnitude as a core parameter of
     force-dynamic schemas. Spalek & McNally: *tear* implies considerable
     force; *rasgar* implies less (enough to damage something flimsy). -/
 inductive ForceLevel where
@@ -211,11 +211,11 @@ inductive ResultType where
 
 /-- Whether the agent acts with volitional intent.
 
-    Dowty (1991:572): Proto-Agent entailment P1 = "volitional involvement
-    in the event or state." Ausensi (2021, 2024): killing verb roots impose
+    @cite{dowty-1991}: Proto-Agent entailment P1 = "volitional involvement
+    in the event or state." @cite{ausensi-yu-smith-2021}: killing verb roots impose
     specific intentionality requirements on the agent (*murder* requires
     intentional agent; *kill* does not).
-    Levin (1993:242): some *break* verbs "allow unintentional, action
+    @cite{levin-1993}: some *break* verbs "allow unintentional, action
     interpretations with body-part objects." -/
 inductive Volitionality where
   | nonvolitional  -- unintentional / accidental
@@ -225,7 +225,7 @@ inductive Volitionality where
 
 /-- Whether the action can be performed with care and control.
 
-    Dowty (1991:572): Proto-Agent entailment P2 = "sentience
+    @cite{dowty-1991}: Proto-Agent entailment P2 = "sentience
     (and/or perception)," enabling controlled action.
     Spalek & McNally: *tear* is compatible with careful action
     ("carefully tore the tin foil"); *rasgar* is not
@@ -581,7 +581,7 @@ def LevinClass.section : LevinClass → String
 
 /-- Meaning components associated with each Levin class.
 
-    Profiles are assigned using the diagnostic criteria from Levin (1993:5–10):
+    Profiles are assigned using the diagnostic criteria from @cite{levin-1993}:
     - `changeOfState`: middle alternation (*the glass broke* / *this bread cuts easily*)
     - `contact`: body-part possessor ascension (*I hit him on the arm* / *I hit his arm*)
     - `motion`: conative alternation requires motion + contact (*I cut at the bread*)
@@ -754,7 +754,7 @@ inductive DiathesisAlternation where
 
 /-- Predicted alternation participation derived from meaning components.
 
-    The core claim of Levin (1993:5–10): meaning components — diagnosed by
+    The core claim of @cite{levin-1993}: meaning components — diagnosed by
     alternation participation — form the bridge between verb semantics and
     verb syntax. Each diagnostic alternation corresponds to a specific
     configuration of meaning components:

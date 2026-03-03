@@ -1,7 +1,7 @@
 /-
 # Verum Focus: VERUM Operator and Unbalanced Partitions
 
-Semantic analysis of verum focus following Romero & Han (2004).
+Semantic analysis of verum focus following @cite{romero-han-2004}.
 
 ## Core Idea
 

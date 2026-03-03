@@ -1,5 +1,5 @@
 /-
-# A Unified Analysis of the English Bare Plural (Carlson 1977)
+# A Unified Analysis of the English Bare Plural
 
 Formalizes Carlson's foundational analysis from "A Unified Analysis of the
 English Bare Plural" (Linguistics & Philosophy 1:413-457, 1977).
@@ -27,7 +27,7 @@ Following Carlson:
 
 ## The Stage/Individual-Level Distinction
 
-Milsark (1974) and Siegel (1976) distinguished:
+@cite{milsark-1974} and @cite{siegel-1976} distinguished:
 - States: hungry, available, sick (physical), in the room -- predicated of stages
 - Properties: intelligent, tall, sick (mental) -- predicated of individuals
 

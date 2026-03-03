@@ -1,5 +1,5 @@
 /-
-# Phillips-Brown (2025): Question-Based Desire Semantics
+# @cite{phillips-brown-2025}: Question-Based Desire Semantics
 
 ⟦S wants p⟧^c = 1 iff all best answers in Q_c-Bel_S are p-answers.
 

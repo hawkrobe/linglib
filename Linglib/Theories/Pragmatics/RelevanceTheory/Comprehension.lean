@@ -1,7 +1,7 @@
 import Mathlib.Data.Rat.Defs
 
 /-!
-# The Comprehension Procedure — Sperber & Wilson (1986/95)
+# The Comprehension Procedure — @cite{sperber-wilson-1986}
 
 The comprehension procedure is the heart of RT's account of utterance
 understanding. S&W (2nd ed, Postface):

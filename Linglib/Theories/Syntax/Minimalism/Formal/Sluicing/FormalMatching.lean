@@ -1,8 +1,8 @@
 /-
 # Sluicing: Syntactic Isomorphism Condition
 
-Formalization of Anand, Hardt & McCloskey (2025) Syntactic Isomorphism Condition
-for sluicing, building on Grimshaw (2005) Extended Projection.
+Formalization of @cite{anand-mccloskey-2025} Syntactic Isomorphism Condition
+for sluicing, building on @cite{grimshaw-2005} Extended Projection.
 
 ## Key Ideas
 
@@ -20,7 +20,7 @@ Sluicing is licensed when the **argument domain** of the ellipsis site is
 
 ## Predictions
 
-- **Voice mismatch**: v[agentive] ≠ v[nonThematic] within argument domain → SIC violation (AHM 2025)
+- **Voice mismatch**: v[agentive] ≠ v[nonThematic] within argument domain → SIC violation
 - **Case matching**: Case is assigned within the argument domain → must match
 - **Small clause antecedents**: Smaller argument domain → more permissive matching
 

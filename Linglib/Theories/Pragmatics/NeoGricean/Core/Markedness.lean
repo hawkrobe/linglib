@@ -1,7 +1,7 @@
 /-
 # Neo-Gricean Markedness Infrastructure
 
-Formalization of markedness computation for Rett (2015) Chapters 5-6.
+Formalization of markedness computation for @cite{rett-2015} Chapters 5-6.
 
 ## Insight
 
@@ -11,7 +11,7 @@ member of an antonym pair is marked.
 
 ## Markedness Criteria
 
-Following Horn (1984) and Rett (2015):
+Following @cite{horn-1984} and @cite{rett-2015}:
 
 1. **Morphological complexity**: un-happy > happy (more morphemes = marked)
 2. **Scale direction**: negative pole is typically marked
@@ -299,7 +299,7 @@ theorem marked_costs_more :
 ### Criteria
 * `morphologicalCriterion`: More morphemes means marked
 * `scaleDirectionCriterion`: Negative pole means marked
-* `negativePrefixCriterion`: Has negative prefix (un, in, dis) means marked
+* `negativePrefixCriterion`: Has negative prefix (un, dis) means marked
 
 ### Key Functions
 * `computeMarked`: Determine marked form using default criteria

@@ -4,7 +4,7 @@ Auxiliaries are heads; lexical rules derive new entries; argument structures spe
 
 Dependency relations use UD.DepRel from Core/UD.lean (Universal Dependencies v2).
 
-References: Hudson (1984, 1990, 2007), Gibson (2025) Syntax, MIT Press.
+References: @cite{hudson-1984}, @cite{gibson-2025} Syntax, MIT Press.
 -/
 
 import Linglib.Core.Grammar

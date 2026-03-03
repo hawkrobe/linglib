@@ -73,7 +73,7 @@ Here we just flag the exceptional behavior.
 /-- 以为 "yǐwéi" — be under the impression that (weak contrafactive).
 
 **Exceptional**: Has postsupposition ◇¬p (CG compatible with ¬p after utterance).
-This cannot be derived from veridicality; see Glass (2022, 2025).
+This cannot be derived from veridicality; see @cite{glass-2025}.
 -/
 def yiwei : MandarinVerbEntry := .mk' {
   form := "yiwei"

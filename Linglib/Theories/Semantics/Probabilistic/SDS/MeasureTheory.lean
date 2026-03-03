@@ -17,11 +17,11 @@ design. Full Mathlib measure theory integration is pending.
 ## Architecture
 
 ```
-SDSConstraintSystem (discrete, ℚ)     SDSMeasureSystem (continuous, ℝ)
-            ↓                                    ↓
-    List-based support                   MeasurableSpace Θ
-    foldl for summation                  ∫ for integration
-    ℚ for exact computation              ℝ≥0∞ for measures
+SDSConstraintSystem (discrete, ℚ) SDSMeasureSystem (continuous, ℝ)
+            ↓ ↓
+    List-based support MeasurableSpace Θ
+    foldl for summation ∫ for integration
+    ℚ for exact computation ℝ≥0∞ for measures
 ```
 
 ## Key Mathlib Dependencies (for future implementation)

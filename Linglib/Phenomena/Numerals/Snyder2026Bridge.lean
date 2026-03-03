@@ -4,7 +4,7 @@ import Linglib.Theories.Semantics.Lexical.Numeral.Polysemy
 # @cite{snyder-2026}: Number Word Polysemy Data
 @cite{snyder-2026}
 
-Key example sentences from Snyder (2026, *L&P* 49:57–100) illustrating the
+Key example sentences from @cite{snyder-2026} illustrating the
 nine semantic functions of number words. These examples motivate Polymorphic
 Contextualism: any adequate theory of number words must derive all nine uses
 from a single lexical entry.

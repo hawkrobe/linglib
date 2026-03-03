@@ -1,7 +1,7 @@
 /-
 # Economy and Embedded Exhaustification
 
-Formalization of Fox & Spector (2018) "Economy and embedded exhaustification"
+Formalization of @cite{fox-spector-2018} "Economy and embedded exhaustification"
 Natural Language Semantics 26:1–50.
 
 ## Paper Structure
@@ -61,8 +61,8 @@ open Semantics.Entailment.Polarity (ContextPolarity)
 of the disjuncts entails the other."
 
 Examples from the paper (p.4):
-- #"John is American or Californian"  (Californian ⊂ American)
-- #"John is a bachelor or unmarried"  (bachelor ⊂ unmarried)
+- #"John is American or Californian" (Californian ⊂ American)
+- #"John is a bachelor or unmarried" (bachelor ⊂ unmarried)
 -/
 
 variable {World : Type*}
@@ -108,7 +108,7 @@ structure HurfordDisjunction (World : Type*) where
 
 /-
 Some Hurford disjunctions are acceptable because embedded exh
-breaks the entailment (Fox & Spector 2018).
+breaks the entailment.
 
 "Mary read some of the books or all of them" is OK because:
   exh(Mary read some) = Mary read some but not all
@@ -198,7 +198,7 @@ def satisfiesIFG (pol : ContextPolarity) (focused : Bool) : Prop :=
 -- SECTION 4: SINGH'S ASYMMETRY
 
 /-
-Singh (2008) observed an asymmetry:
+@cite{singh-2008} observed an asymmetry:
   (a) "Mary read [A or B] or [A and B]" ✓
   (b) "Mary read [A and B] or [A or B]" #
 
@@ -582,10 +582,10 @@ def dedIsAcceptable (d : DED) : Prop :=
 -- SECTION 8: CONNECTION TO POTTS ET AL. (2016)
 
 /-
-Fox & Spector (2018) and Potts et al. (2016) make the same core predictions
+@cite{fox-spector-2018} and @cite{potts-etal-2016} make the same core predictions
 about the DE/UE asymmetry:
 
-| Context | Fox & Spector (2018) | Potts et al. (2016) |
+| Context | @cite{fox-spector-2018} | @cite{potts-etal-2016} |
 |---------|---------------------|---------------------|
 | UE      | exh licensed (strengthening) | Local reading preferred |
 | DE      | exh blocked (weakening) | Global reading preferred |

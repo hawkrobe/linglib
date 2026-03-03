@@ -2,7 +2,7 @@
 # Two-Dimensional Semantics for Conventional Implicatures
 @cite{potts-2005} @cite{wang-2025}
 
-Formalization of Potts (2005) "The Logic of Conventional Implicatures" (LCI).
+Formalization of @cite{potts-2005} "The Logic of Conventional Implicatures" (LCI).
 
 ## Insight
 

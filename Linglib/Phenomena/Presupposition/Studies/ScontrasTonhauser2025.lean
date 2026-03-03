@@ -1,5 +1,5 @@
 /-
-# Scontras & Tonhauser (2025): Projection Experimental Data
+# @cite{scontras-tonhauser-2025}: Projection Experimental Data
 
 Empirical findings from "Projection without lexically-specified presupposition:
 A model for know" (SuB 29).

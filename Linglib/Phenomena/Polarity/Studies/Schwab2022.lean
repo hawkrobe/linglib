@@ -1,5 +1,6 @@
 /-
-# Schwab (2022): Lexical Variation in NPI Illusions
+# @cite{schwab-2022}: Lexical Variation in NPI Illusions
+@cite{krifka-1995a}
 
 Experimental data from "Lexical variation in NPI illusions" (JML).
 Core finding: NPI illusions (acceptance of NPIs in non-licensing environments)
@@ -21,7 +22,7 @@ grammaticality) but attenuating NPIs do not.
 
 ## Theoretical Account
 
-The illusion arises because the parser applies scalar licensing (Krifka 1995)
+The illusion arises because the parser applies scalar licensing
 to the NPI. For strengthening NPIs, the scalar mechanism (ScalAssert) expects
 the asserted proposition to be STRONGER than alternatives — the RC environment
 superficially satisfies this. For attenuating NPIs, the mechanism expects

@@ -1,7 +1,7 @@
 /-
 # Local Context Computation
 
-Formalizes Schlenker (2009)'s local contexts algorithm for computing
+Formalizes @cite{schlenker-2009}'s local contexts algorithm for computing
 presupposition projection compositionally.
 
 ## Insight

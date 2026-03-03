@@ -19,8 +19,8 @@ separately. Negation simply swaps the two dimensions.
 
 ```
 BilateralDen W E = {
-  positive : InfoState W E → InfoState W E  -- What survives assertion
-  negative : InfoState W E → InfoState W E  -- What survives denial
+  positive : InfoState W E → InfoState W E -- What survives assertion
+  negative : InfoState W E → InfoState W E -- What survives denial
 }
 ```
 

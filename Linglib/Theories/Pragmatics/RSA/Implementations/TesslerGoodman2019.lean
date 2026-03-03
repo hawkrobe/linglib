@@ -1,12 +1,12 @@
 /-
-# Tessler & Goodman (2019): The Language of Generalization
+# @cite{tessler-goodman-2019}: The Language of Generalization
 
 Psychological Review, 126(3), 395-436.
 
 ## Core Insight
 
 Generics ("Robins lay eggs") use the SAME uncertain threshold semantics
-as gradable adjectives (Lassiter & Goodman 2017). The scale is **prevalence**
+as gradable adjectives. The scale is **prevalence**
 rather than height/degree:
 
 ```

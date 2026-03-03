@@ -1,8 +1,9 @@
 /-
 # Unified Exhaustification Interface
+@cite{fox-2007}
 
 Provides a single entry point for applying exhaustification operators at parse positions.
-Unifies exhIE (Fox 2007), exhMW (Groenendijk-Stokhof), and connects to Spector 2007.
+Unifies exhIE, exhMW (Groenendijk-Stokhof), and connects to @cite{spector-2007}.
 
 ## Design Principle
 
@@ -232,7 +233,7 @@ theorem Exhaustifiable.literal_is_literal {S W : Type} [inst : Exhaustifiable S 
 
 
 /-
-Spector (2007) defines exhaustification for propositional logic:
+@cite{spector-2007} defines exhaustification for propositional logic:
 
   Exhaust(P) = {V ∈ P | ¬∃V' ∈ P, V' ⊂ V}
 
@@ -243,10 +244,10 @@ This is "keep minimal valuations" - equivalent to `exhMW` when:
 
 The connection:
 - `exhMW` keeps minimal worlds relative to <_ALT
-- Spector 2007's `Exhaust` keeps minimal valuations relative to ⊂
+- @cite{spector-2007}'s `Exhaust` keeps minimal valuations relative to ⊂
 - These are the same when the ALT-ordering matches set inclusion
 
-Theorem (Spector 2007): For positive propositions P, Max(P) = {Exhaust(P)},
+Theorem: For positive propositions P, Max(P) = {Exhaust(P)},
 showing that Gricean reasoning derives exhaustive interpretation.
 
 This provides the theoretical justification for why we exhaustify.

@@ -15,8 +15,7 @@ predictability (I-complexity).
 
 ## @cite{ackerman-malouf-2013} Sample
 
-Ten typologically diverse languages from Ackerman & Malouf (2013, Tables
-2–3), spanning three phyla, four macro-areas, and a range from 2 to 109
+Ten typologically diverse languages from @cite{ackerman-malouf-2013}, spanning three phyla, four macro-areas, and a range from 2 to 109
 inflection classes. The central empirical finding: despite wildly varying
 E-complexity, I-complexity (average conditional entropy) is uniformly low
 across all ten languages.

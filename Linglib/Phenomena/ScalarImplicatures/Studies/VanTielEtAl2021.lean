@@ -1,5 +1,5 @@
 /-
-# van Tiel, Franke & Sauerland (2021) - Experimental Data
+# @cite{van-tiel-franke-sauerland-2021} - Experimental Data
 
 "Probabilistic pragmatics explains gradience and focality in natural language quantification"
 PNAS 118(9): e2005453118

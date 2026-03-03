@@ -197,7 +197,7 @@ theorem no_p_worlds_not_compatible (p : BProp W) (c : List W)
 
     Bridges `nsfUpdateMight` to `Update.might` from UpdateSemantics.
 
-    @cite{rudin-2025} §4.2; cf. @cite{veltman-1996}, Yalcin (2007, 2011). -/
+    @cite{rudin-2025} §4.2; cf. @cite{veltman-1996}, @cite{yalcin-2007}. -/
 theorem nsfUpdateMight_spec (p : BProp W) (c : List W) :
     nsfUpdateMight p c = (if c.any p then c else []) :=
   rfl
@@ -293,7 +293,7 @@ structure OrdEpistemicState where
     A world w is strictly dominated by w' iff w' satisfies a proper superset
     of the ordering propositions that w satisfies.
 
-    @cite{rudin-2025} eq. (44); Kratzer (1981, 1991). -/
+    @cite{rudin-2025} eq. (44); @cite{kratzer-1981}. -/
 def OrdEpistemicState.bestWorlds (s : OrdEpistemicState) : List World :=
   s.base.filter λ w =>
     !s.base.any λ w' =>

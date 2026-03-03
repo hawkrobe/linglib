@@ -2,7 +2,7 @@
 # Innocent Inclusion and Free Choice
 @cite{bar-lev-fox-2020} @cite{fox-2007} @cite{spector-2016}
 
-Formalization of Bar-Lev & Fox (2020) "Free choice, simplification, and Innocent Inclusion"
+Formalization of @cite{bar-lev-fox-2020} "Free choice, simplification, and Innocent Inclusion"
 Natural Language Semantics 28:175-223.
 
 ## The Key Innovation

@@ -1,7 +1,8 @@
 /-
 # Adjective Semantics and Predicate Modification
+@cite{kamp-1975} @cite{kamp-partee-1995} @cite{parsons-1970}
 
-The adjective hierarchy (Kamp 1975, Parsons 1970, Kamp & Partee 1995):
+The adjective hierarchy:
 1. Intersective: `⟦gray cat⟧ = ⟦gray⟧ ∩ ⟦cat⟧`
 2. Subsective: `⟦skillful surgeon⟧ ⊆ ⟦surgeon⟧`
 3. Non-subsective/modal: no entailment ("alleged")

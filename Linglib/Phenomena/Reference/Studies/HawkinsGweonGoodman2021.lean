@@ -1,5 +1,5 @@
 /-
-# Hawkins, Gweon & Goodman (2021): Division of Labor in Communication
+# @cite{hawkins-gweon-goodman-2021}: Division of Labor in Communication
 
 Empirical data from "The Division of Labor in Communication: Speakers Help
 Listeners Account for Asymmetries in Visual Perspective"

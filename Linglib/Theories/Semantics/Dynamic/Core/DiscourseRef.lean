@@ -2,7 +2,7 @@
 # Discourse Referents
 
 Types for individual and propositional discourse referents, following
-Hofmann (2025) "Anaphoric accessibility with flat update".
+@cite{hofmann-2025} "Anaphoric accessibility with flat update".
 
 ## Key Types
 

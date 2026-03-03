@@ -1,7 +1,7 @@
 /-
-# Agentivity Decomposition (Cruse 1973)
+# Agentivity Decomposition
 
-Cruse (1973) "Some Thoughts on Agentivity" argues that agentivity is not a
+@cite{cruse-1973} "Some Thoughts on Agentivity" argues that agentivity is not a
 single feature but decomposes into 4 independent sub-features:
 
 | Feature    | Cruse's gloss                         | Example              |
@@ -12,13 +12,13 @@ single feature but decomposes into 4 independent sub-features:
 | agentive   | using own body's internal energy      | John ran             |
 
 The **do-test** ("NP did something") passes iff at least one feature is
-present. Parsons' (1990) neo-Davidsonian `agent` role captures specifically
+present. @cite{parsons-1990} neo-Davidsonian `agent` role captures specifically
 the `agentive` sub-feature (own energy + dynamic), which is strictly
 narrower than passing the do-test.
 
 This module formalizes the decomposition and connects it to:
-- `ThematicRoles.ThematicFrame.agent` (Parsons 1990)
-- `CoerciveImplication.ActionType` (Nadathur & Lauer 2020)
+- `ThematicRoles.ThematicFrame.agent`
+- `CoerciveImplication.ActionType`
 - `CausativeBuilder` (initiative ↔ causative constructions)
 - `VendlerClass` / `DiagnosticResult` (aspect diagnostics)
 

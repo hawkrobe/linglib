@@ -1,10 +1,10 @@
 /-
-# SDS and Humor: Formal Correspondence with Kao et al. (2016)
+# SDS and Humor: Formal Correspondence with @cite{kao-levy-goodman-2016}
 @cite{erk-herbelot-2024} @cite{kao-levy-goodman-2016} @cite{raskin-1985}
 
 This module establishes the formal connection between:
-1. **Kao et al. (2016)** - Computational model of pun humor
-2. **SDS** - Situation Description Systems (Erk & Herbelot 2024)
+1. **@cite{kao-levy-goodman-2016}** - Computational model of pun humor
+2. **SDS** - Situation Description Systems
 
 ## Insight
 

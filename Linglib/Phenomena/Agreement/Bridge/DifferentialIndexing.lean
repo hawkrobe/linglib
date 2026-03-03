@@ -158,7 +158,7 @@ theorem preminger_participant_outranks :
 -- ============================================================================
 
 /-! The Basque agreement fragment (`Fragments.Basque.Agreement`) encodes
-    the same person-conditioned P indexing that Just (2024, Table 1) reports.
+    the same person-conditioned P indexing that @cite{just-2024} reports.
     We prove that the Fragment's `pIsIndexed` matches the survey data. -/
 
 /-- Basque Fragment's P indexing matches the Just survey: SAP → indexed,

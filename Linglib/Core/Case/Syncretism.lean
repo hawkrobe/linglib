@@ -5,8 +5,7 @@ import Linglib.Core.Case.Hierarchy
 @cite{baerman-2005} @cite{caha-2009}
 
 Syncretism is the systematic neutralization of case distinctions: two or more
-cases share a single morphological exponent in some paradigm cells. Blake
-(1994, Ch. 2, pp. 19–24) documents syncretism patterns in Latin, Greek, and
+cases share a single morphological exponent in some paradigm cells. @cite{blake-1994} documents syncretism patterns in Latin, Greek, and
 other IE languages. He observes that syncretisms cluster into groups
 (NOM+ACC vs. DAT+ABL) that are "significant on other grounds" (p. 22).
 

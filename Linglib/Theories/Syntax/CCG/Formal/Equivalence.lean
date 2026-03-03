@@ -1,5 +1,6 @@
 /-
 # Semantic Equivalence and Spurious Ambiguity
+@cite{eisner-1996} @cite{hepple-morrill-1989}
 
 CCG derivations fall into equivalence classes: multiple derivations yield
 identical interpretations due to the associativity of functional composition.
@@ -134,7 +135,7 @@ theorem composition_order_irrelevant {α β γ δ : Type}
 The number of ways to fully bracket n items is the (n-1)th Catalan number:
   C₀ = 1
   C₁ = 1
-  C₂ = 2      (e.g., "a b c" → "(ab)c" or "a(bc)")
+  C₂ = 2 (e.g., "a b c" → "(ab)c" or "a(bc)")
   C₃ = 5
   C₄ = 14
   Cₙ = (2n)! / ((n+1)! n!)
@@ -319,8 +320,8 @@ derivation strategies that select exactly one representative from each
 equivalence class.
 
 Common approaches:
-1. Leftmost composition (Hepple & Morrill 1989): Always compose left-to-right
-2. Eisner normal form (Eisner 1996): Constraints on when composition applies
+1. Leftmost composition: Always compose left-to-right
+2. Eisner normal form: Constraints on when composition applies
 
 If only one derivation per equivalence class is needed, constraints can
 eliminate the others without losing coverage.
@@ -351,7 +352,7 @@ theorem strategy_irrelevant {α : Type}
 In chart parsing for CCG, when we build a new constituent, we check if an
 equivalent entry already exists in the chart. If so, we don't add it.
 
-This is the "matching entry test" from Karttunen (1989) and Pareschi (1989).
+This is the "matching entry test" from @cite{karttunen-1989} and @cite{pareschi-1989}.
 
 The test:
 1. Same span (positions i, j in the string)

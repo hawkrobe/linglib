@@ -5,7 +5,7 @@ CCG categories for gapping constructions, proving that:
 1. The "gapped" right conjunct IS a constituent (via type-raising + composition)
 2. Gapping direction follows from lexical verb categories
 
-## Insight (Steedman 2000, Chapter 7)
+## Insight (@cite{steedman-2000}, Chapter 7)
 
 Gapping is not a special ellipsis rule but ordinary constituent coordination.
 
@@ -16,8 +16,8 @@ In "Dexter ate bread, and Warren, potatoes":
 
 ## The Category of the Gapped Conjunct
 
-  Warren       potatoes
-  T\(T/NP₁)    T\(T/NP₂)
+  Warren potatoes
+  T\(T/NP₁) T\(T/NP₂)
   ─────────────────────── <B
        T\((T/NP₂)/NP₁)
 

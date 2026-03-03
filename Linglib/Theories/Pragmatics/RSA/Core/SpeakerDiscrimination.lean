@@ -6,7 +6,7 @@ import Linglib.Core.Agent.ChoiceApproximations
 @cite{degen-2023} @cite{luce-1959}
 
 Applies the just-noticeable-difference (JND) and trace infrastructure from
-Luce (1959, §1.G) — formalized in `ChoiceApproximations.lean` — to S1's
+@cite{luce-1959} — formalized in `ChoiceApproximations.lean` — to S1's
 utterance choice in RSA.
 
 ## Key idea

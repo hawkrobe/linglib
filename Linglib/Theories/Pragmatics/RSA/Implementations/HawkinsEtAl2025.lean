@@ -1,5 +1,5 @@
 /-
-# Hawkins et al. (2025): PRIOR-PQ
+# @cite{hawkins-etal-2025}: PRIOR-PQ
 
 "Relevant answers to polar questions"
 Phil. Trans. R. Soc. B 380: 20230505.
@@ -17,19 +17,19 @@ The question choice itself signals information about the questioner's goals.
 The respondent uses Theory of Mind to infer the likely decision problem
 and tailor their response accordingly.
 
-## Grounding in Van Rooy (2003)
+## Grounding in @cite{van-rooy-2003}
 
 Van Rooy's decision-theoretic semantics assumes the respondent *knows* the
 questioner's decision problem. PRIOR-PQ extends this by having the respondent
 *infer* the decision problem via Theory of Mind from the question choice itself.
 
 ```
-Van Rooy (2003):  Decision Problem → Question Meaning → Answer Selection
+@cite{van-rooy-2003}: Decision Problem → Question Meaning → Answer Selection
                         ↓ known
                    Respondent
 
-Hawkins et al. (2025):  Decision Problem ← Inferred from Question
-                             ↑ ToM          ↓
+@cite{hawkins-etal-2025}: Decision Problem ← Inferred from Question
+                             ↑ ToM ↓
                         Respondent → Answer Selection
 ```
 -/

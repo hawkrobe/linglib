@@ -1,10 +1,10 @@
 import Linglib.Theories.Semantics.Lexical.Noun.Relational.Barker2011
 
 /-
-# Mandarin Demonstrative Semantics (Ahn & Zhu 2025)
+# Mandarin Demonstrative Semantics
 
 Formalizes Ahn & Zhu's analysis of Mandarin *na* as a relationalizing operator,
-building on Barker (2011)'s type-shifting framework.
+building on @cite{barker-2011}'s type-shifting framework.
 
 **Key Integration**: This module USES Barker's π operator rather than defining
 its own. The bridging licensing results DERIVE from Barker's theory.
@@ -24,7 +24,7 @@ The bridging asymmetry FOLLOWS from compositional structure.
 ## The Core Insight
 
 The difference between:
-- `E → S → Bool`  (1-place: no relatum slot)
+- `E → S → Bool` (1-place: no relatum slot)
 - `E → E → S → Bool` (2-place: has relatum slot)
 
 is not just notational — it's the structural basis for bridging.

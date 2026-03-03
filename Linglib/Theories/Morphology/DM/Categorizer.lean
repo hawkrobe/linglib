@@ -202,8 +202,7 @@ theorem deadjectival_source_target :
       above the first categorizer (*editorial* = related to editing,
       *classifieds* = classified ads, *nationalize* = make state-owned).
    2. Phrasal idioms (*kick the bucket*) involve idiosyncratic interpretation
-      up to VoiceP but the external argument is always compositional
-      (Kratzer 1996, Marantz 1997).
+      up to VoiceP but the external argument is always compositional.
    3. Agentive Voice introduces the external argument and closes off the
       domain of idiosyncratic interpretation.
 

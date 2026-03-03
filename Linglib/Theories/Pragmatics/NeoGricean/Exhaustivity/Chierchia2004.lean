@@ -1,7 +1,7 @@
 /-
-# Parallel Recursive Strengthening: Chierchia (2004)
+# Parallel Recursive Strengthening: @cite{chierchia-2004}
 
-Formalizes the core architecture of Chierchia (2004) "Scalar Implicatures,
+Formalizes the core architecture of @cite{chierchia-2004} "Scalar Implicatures,
 Polarity Phenomena, and the Syntax/Pragmatics Interface" (§3).
 
 Every expression gets both a plain meaning ‖α‖ and a strengthened meaning ‖α‖^S,

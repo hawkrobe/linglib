@@ -1,7 +1,7 @@
 /-
 Traditional HAB operator and frequency-based threshold semantics for habituals.
 HAB quantifies over "characteristic" occasions; threshold semantics replaces this
-with observable frequency > θ, where θ is pragmatically inferred (Tessler & Goodman 2019).
+with observable frequency > θ, where θ is pragmatically inferred.
 
 - Carlson, G.N. (1977). Reference to Kinds in English.
 - Krifka, M. et al. (1995). Genericity: An Introduction.

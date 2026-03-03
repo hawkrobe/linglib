@@ -1,6 +1,6 @@
 /-
 Selectional preferences: semantic constraints on argument slots.
-Integrates with Erk & Herbelot (2024) Product of Experts for disambiguation.
+Integrates with @cite{erk-herbelot-2024} Product of Experts for disambiguation.
 
 - Resnik, P. (1996). Selectional constraints: An information-theoretic model.
 - Erk, K. (2007). A simple, similarity-based model for selectional preferences.

@@ -1,8 +1,9 @@
 /-
 # Anaphora and Binding
+@cite{barker-shan-2014}
 
-Assignment-based binding (Heim & Kratzer 1998 Ch. 5) and its equivalence
-with the continuation approach (Barker & Shan 2014).
+Assignment-based binding (@cite{heim-kratzer-1998} Ch. 5) and its equivalence
+with the continuation approach.
 
 -/
 

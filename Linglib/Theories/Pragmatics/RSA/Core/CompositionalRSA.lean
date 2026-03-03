@@ -1,12 +1,12 @@
 /-
 # Compositional RSA: Extending RSA → EXH to Local Readings
 
-The standard RSA → IBR → exhMW chain (Franke 2011) only captures global readings.
+The standard RSA → IBR → exhMW chain only captures global readings.
 This file formalizes Compositional RSA, which extends the chain to local readings.
 
 EXH is a compositional operator that can scope at different positions:
 - Global: EXH [∀x. some(x)] = ∀x. some(x) ∧ ¬(∀x. all(x))
-- Local:  ∀x. [EXH some(x)] = ∀x. [some(x) ∧ ¬all(x)]
+- Local: ∀x. [EXH some(x)] = ∀x. [some(x) ∧ ¬all(x)]
 
 To capture local readings, RSA must operate compositionally:
 - At each node of the derivation, there are local alternatives
@@ -14,7 +14,7 @@ To capture local readings, RSA must operate compositionally:
 - In the α→∞ limit, local RSA → local EXH
 - Composition of local EXH gives scope-sensitive readings
 
-Potts, Lassiter, Levy & Frank's LU-RSA (Bergen et al. 2016) puts uncertainty
+Potts, Lassiter, Levy & Frank's LU-RSA puts uncertainty
 on the lexicon (word meanings), not on the scope of EXH. LU models listener
 uncertainty about whether "some" means "at least one" or "at least one but not
 all" (lexical refinement), but does not model where in the compositional
@@ -32,7 +32,7 @@ not the structural level.
 
 1. `LocalAltNode`: A node with local alternatives and meaning
 2. `localExhMW`: EXH using only local alternatives
-3. `local_limit_theorem`: Local RSA → Local EXH (reuses Franke 2011)
+3. `local_limit_theorem`: Local RSA → Local EXH (reuses @cite{franke-2011})
 4. `composed_local_equals_localExh`: Composed local EXH = local reading
 5. `lu_cannot_express_local`: LU is scope-blind like standard RSA
 
@@ -79,7 +79,7 @@ def localExhMW {World Alt : Type} (node : LocalAltNode World Alt) : Prop' World 
 
 /-!
 ## LU-RSA: What It Can and Cannot Do
-@cite{potts-etal-2016}
+@cite{potts-etal-2016} @cite{bergen-levy-goodman-2016}
 
 ### The LU Approach
 

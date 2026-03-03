@@ -1,20 +1,20 @@
 /-
 # Neo-Gricean Pragmatics: Alternative Generation
 
-Formalization of Horn sets and alternative generation from Geurts (2010) Ch. 3.1-3.2,
-extended with M-alternatives for manner implicatures (Horn 1984, Rett 2015).
+Formalization of Horn sets and alternative generation from @cite{geurts-2010} Ch. 3.1-3.2,
+extended with M-alternatives for manner implicatures.
 
 ## Two Types of Pragmatic Alternatives
 
 ### Q-Alternatives (Quantity/Informativity)
-From Geurts (2010):
+From @cite{geurts-2010}:
 - Differ in INFORMATIVITY (logical strength)
 - Example: "some" vs "all" — different truth conditions
 - Generate Q-implicatures via Quantity maxim
 - Context-sensitive: strength depends on polarity (UE vs DE)
 
 ### M-Alternatives (Manner/Form Cost)
-From Horn (1984), Rett (2015):
+From @cite{horn-1984}, @cite{rett-2015}:
 - Differ in FORM COST (markedness)
 - Example: "as tall as" vs "as short as" — same truth conditions in equatives
 - Generate R-implicatures via Manner maxim (Division of Pragmatic Labor)
@@ -25,11 +25,11 @@ From Horn (1984), Rett (2015):
 1. Horn Sets, Not Scales (Geurts p.58)
    Use sets not ordered scales. Ordering comes from sentence-level semantics.
 
-2. Q vs M Distinction (Horn 1984)
+2. Q vs M Distinction
    Q-alternatives compete on informativity; M-alternatives compete on form cost.
    These are orthogonal dimensions of pragmatic competition.
 
-3. Polar Variance (Rett 2015)
+3. Polar Variance
    M-alternatives only exist in polar-invariant constructions where
    antonyms have the same truth conditions.
 

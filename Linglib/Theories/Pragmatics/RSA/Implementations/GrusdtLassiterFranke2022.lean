@@ -1,5 +1,5 @@
 /-
-# Grusdt, Lassiter & Franke (2022)
+# @cite{grusdt-lassiter-franke-2022}
 
 "Probabilistic modeling of rational communication with conditionals"
 

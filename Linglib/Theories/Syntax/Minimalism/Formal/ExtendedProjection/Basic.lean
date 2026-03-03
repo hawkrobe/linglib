@@ -1,7 +1,7 @@
 /-
 # Extended Projection
 
-Formalization of Grimshaw (2005) Extended Projection theory.
+Formalization of @cite{grimshaw-2005} Extended Projection theory.
 
 ## Key Ideas
 

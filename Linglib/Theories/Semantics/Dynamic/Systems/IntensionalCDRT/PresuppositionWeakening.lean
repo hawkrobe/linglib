@@ -1,5 +1,5 @@
 /-
-# Presupposition Weakening with SF (Mendes 2025 §2.2)
+# Presupposition Weakening with SF (@cite{mendes-2025} §2.2)
 
 The Subordinate Future (SF) weakens existential presuppositions of
 strong quantifiers in restrictors.

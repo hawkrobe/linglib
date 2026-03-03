@@ -1,7 +1,7 @@
 /-
 # Global Intentions: RSA with Exhaustification Ambiguity
 
-Implementation of Franke & Bergen (2020) "Theory-driven statistical modeling
+Implementation of @cite{franke-bergen-2020} "Theory-driven statistical modeling
 for semantics and pragmatics" - the Global Intentions (GI) model.
 
 ## Insight

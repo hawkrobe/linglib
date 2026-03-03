@@ -56,7 +56,7 @@ inductive SharingType where
     Parallel = same set of core argument relations (nsubj, obj, iobj) from head,
     ignoring coordination-specific (conj, cc) and function-word (aux, mark, det)
     relations which don't affect parallelism.
-    Osborne (2019, Ch 10 §10.3). -/
+    @cite{osborne-2019}. -/
 def parallelConjuncts (t : DepTree) (c1 c2 : Nat) : Bool :=
   let isCoreArg (r : UD.DepRel) := r == .nsubj || r == .obj || r == .iobj
   let rels1 := t.deps.filter (λ d => d.headIdx == c1 && isCoreArg d.depType)
@@ -81,7 +81,7 @@ def sharedDepTypes (t : DepTree) (c1 c2 : Nat) : List UD.DepRel :=
     Deps: eats(1) → John(0:nsubj), eats(1) → drinks(3:conj), eats(1) → beer(4:obj),
           drinks(3) → and(2:cc)
     Shared = {John(0)} — nsubj of eats, implicitly of drinks too.
-    Osborne (2019, Ch 10). -/
+    @cite{osborne-2019}. -/
 def ex_forwardSharing : DepTree :=
   { words := [ Word.mk' "John" .PROPN, Word.mk' "eats" .VERB
              , Word.mk' "and" .CCONJ, Word.mk' "drinks" .VERB
@@ -121,7 +121,7 @@ def ex_gapping_preEllipsis : DepTree :=
     Deps: buy(3) → John(2:nsubj), buy(3) → what(0:obj), buy(3) → did(1:aux),
           buy(3) → sell(6:conj), sell(6) → Mary(5:nsubj), sell(6) → and(4:cc)
     Symmetric extraction from both conjuncts — grammatical.
-    Osborne (2019, Ch 11). -/
+    @cite{osborne-2019}. -/
 def ex_atbExtraction : DepTree :=
   { words := [ ⟨"what", .PRON, { wh := true }⟩, Word.mk' "did" .AUX
              , Word.mk' "John" .PROPN, Word.mk' "buy" .VERB
@@ -181,7 +181,7 @@ theorem atb_conjuncts_parallel_enhanced :
 
 /-- Check if extraction from coordination is across-the-board (ATB):
     the filler is an argument of ALL conjuncts in the enhanced graph.
-    Osborne (2019, Ch 11): asymmetric extraction violates parallelism. -/
+    @cite{osborne-2019}: asymmetric extraction violates parallelism. -/
 def isATBExtraction (enhanced : DepGraph) (fillerIdx : Nat)
     (conjuncts : List Nat) : Bool :=
   conjuncts.all λ c =>

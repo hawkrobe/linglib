@@ -4,7 +4,7 @@ import Linglib.Phenomena.Constructions.Resultatives.Data
 /-!
 # Resultative — Small Clause Bridge
 
-@cite{dendikken-1995} @cite{goldberg-jackendoff-2004}Den Dikken (1995:25, ex. 41c): resultative constructions instantiate
+@cite{dendikken-1995} @cite{goldberg-jackendoff-2004}@cite{dendikken-1995}: resultative constructions instantiate
 SC predication with an adjectival or prepositional predicate:
 
     "They hammered the metal flat" → V [SC DP AP]

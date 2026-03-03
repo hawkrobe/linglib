@@ -1,7 +1,7 @@
 /-
 # Adjective Semantics Phenomena
 
-Empirical data testing the adjective hierarchy (Kamp 1975, Partee 1995, 2001).
+Empirical data testing the adjective hierarchy.
 
 ## The Phenomena
 
@@ -15,15 +15,15 @@ Adjectives differ in their entailment patterns. A semantic theory must predict:
 ## Key Test Cases
 
 - The "skillful surgeon" test: Francis is a skillful surgeon + violinist ≠ skillful violinist
-- The "Is that gun real or fake?" test: noun includes both denotations (Partee 2001)
+- The "Is that gun real or fake?" test: noun includes both denotations
 - The "alleged murderer" test: neither entails nor anti-entails "murderer"
 
 ## Data Sources
 
-- Kamp (1975) "Two theories about adjectives"
-- Parsons (1970) "Some problems concerning the logic of grammatical modifiers"
-- Kamp & Partee (1995) "Prototype theory and compositionality"
-- Partee (2001) "Privative Adjectives: Subsective plus Coercion"
+- @cite{kamp-1975} "Two theories about adjectives"
+- @cite{parsons-1970} "Some problems concerning the logic of grammatical modifiers"
+- @cite{kamp-partee-1995} "Prototype theory and compositionality"
+- @cite{partee-2001} "Privative Adjectives: Subsective plus Coercion"
 -/
 
 import Linglib.Core.Empirical
@@ -252,7 +252,7 @@ def putativeFather_not_entails_father : AdjectiveEntailment :=
 Traditional view: ⟦A N⟧ ∩ ⟦N⟧ = ∅
 "A fake gun is not a gun."
 
-Partee (2001): Actually subsective + noun coercion.
+@cite{partee-2001}: Actually subsective + noun coercion.
 "fake gun" = subsective within coerced "gun*" (= guns ∪ fake-guns)
 
 Evidence: "Is that gun real or fake?" - the noun must include both.

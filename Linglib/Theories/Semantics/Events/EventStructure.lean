@@ -1,12 +1,12 @@
 /-
-# Event Structure Templates (Rappaport Hovav & Levin 1998, 2010, 2024)
+# Event Structure Templates
 
 Verbs decompose into **templates** (structural meaning that determines
 argument realization) filled by **roots** (idiosyncratic content).
 Templates compose via CAUSE; which sub-predicate determines argument
 realization yields different syntactic frames.
 
-Key insight from R&L (2024): verbs of motion + sustained contact (sweep,
+Key insight from @cite{rappaport-hovav-levin-2024}: verbs of motion + sustained contact (sweep,
 rub, scrape) have two grammatically relevant predicates — MOVE and CONTACT.
 Which predicate determines argument realization yields variable agentivity
 and distinct syntactic frames.

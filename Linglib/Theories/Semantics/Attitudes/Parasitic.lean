@@ -1,12 +1,12 @@
 /-
-# Parasitic Attitudes (Maier 2015)
+# Parasitic Attitudes
 
 Formalizes the asymmetric dependency between doxastic and non-doxastic attitudes
 for presupposition projection.
 
 ## The Problem
 
-Karttunen (1973) observed:
+@cite{karttunen-1973} observed: @cite{maier-2015}
 
   "Bill believed Fred had been beating his wife and he hoped Fred would stop"
   → Presupposition of "stop" is FILTERED by preceding belief

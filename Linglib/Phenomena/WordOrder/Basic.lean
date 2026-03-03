@@ -8,12 +8,12 @@ The subject precedes the verb, and the object follows the verb.
 
 ## The Data
 
-  (1a)  John sees Mary.              ✓  SVO order
-  (1b) *John Mary sees.              ✗  SOV order
-  (1c) *Sees John Mary.              ✗  VSO order
+  (1a) John sees Mary. ✓ SVO order
+  (1b) *John Mary sees. ✗ SOV order
+  (1c) *Sees John Mary. ✗ VSO order
 
-  (2a)  The cat eats pizza.          ✓  SVO order
-  (2b) *The cat pizza eats.          ✗  SOV order
+  (2a) The cat eats pizza. ✓ SVO order
+  (2b) *The cat pizza eats. ✗ SOV order
 -/
 
 import Linglib.Core.Grammar

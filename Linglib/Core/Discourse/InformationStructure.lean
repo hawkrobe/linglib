@@ -48,7 +48,7 @@ def AltMeaning.unfeatured {α : Type} (x : α) : AltMeaning α :=
     Pairs a semantic value with a UD part-of-speech tag, enabling
     category-gated alternative computation.
 
-    Fox & Katzir argue that Rooth's (1985/1992) type-theoretic
+    Fox & Katzir argue that @cite{rooth-1985} type-theoretic
     alternative computation (D_τ) over-generates: any expression of the
     same semantic type counts as an alternative. Category match restricts
     alternatives to expressions sharing the same UPOS tag. -/

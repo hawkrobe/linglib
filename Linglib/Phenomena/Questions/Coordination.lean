@@ -1,7 +1,7 @@
 /-
 # Interrogative Coordination
 
-Conjunction and disjunction of interrogatives from G&S 1984, Chapter VI.
+Conjunction and disjunction of interrogatives from @cite{groenendijk-stokhof-1984}, Chapter VI.
 
 ## Conjunctive Interrogatives
 

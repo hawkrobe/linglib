@@ -342,7 +342,7 @@ structure SinceWhenDatum where
   deriving Repr
 
 /-- (131) "Since when has Mary been sick?" -- U-perfect only.
-    von Fintel and Iatridou (2003, 2019): since-when Qs lack E- vs U-perfect ambiguity. -/
+    @cite{von-fintel-iatridou-2003}: since-when Qs lack E- vs U-perfect ambiguity. -/
 def sinceWhen_131 : SinceWhenDatum :=
   { sentence := "Since when has Mary been sick?"
     uPerfect := true

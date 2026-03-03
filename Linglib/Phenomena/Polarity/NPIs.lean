@@ -14,10 +14,10 @@ Theory-neutral data about NPI licensing and distribution.
 
 ## Main Generalizations
 
-- **Ladusaw (1979)**: NPIs licensed in downward-entailing (DE) contexts
-- **Fauconnier (1975)**: NPIs appear where scalar reversal occurs
-- **Giannakidou (1998)**: NPIs licensed in nonveridical contexts
-- **Chierchia (2013)**: NPIs involve covert EVEN + domain widening
+- **@cite{ladusaw-1979}**: NPIs licensed in downward-entailing (DE) contexts
+- **@cite{fauconnier-1975}**: NPIs appear where scalar reversal occurs
+- **@cite{giannakidou-1998}**: NPIs licensed in nonveridical contexts
+- **@cite{chierchia-2013}**: NPIs involve covert EVEN + domain widening
 
 -/
 

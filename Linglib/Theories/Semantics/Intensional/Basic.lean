@@ -10,10 +10,10 @@ values like `Bool`. But RSA needs `meaning : World → Bool` to compute L0:
 
 ```lean
 -- Current (extensional)
-meaning : m.interpTy .t  -- just Bool
+meaning : m.interpTy.t -- just Bool
 
 -- Desired (intensional)
-meaning : World → Bool   -- varies with world
+meaning : World → Bool -- varies with world
 ```
 
 ## Solution
@@ -31,7 +31,7 @@ possible worlds to extensions:
 RSA's L0 can now evaluate compositional semantics directly:
 
 ```lean
-L0(u, w) = ⟦u⟧(w)  -- where ⟦u⟧ : World → Bool
+L0(u, w) = ⟦u⟧(w) -- where ⟦u⟧ : World → Bool
 ```
 
 -/

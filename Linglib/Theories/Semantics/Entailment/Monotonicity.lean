@@ -1,7 +1,7 @@
 /-
 Upward and downward entailing contexts with monotonicity proofs.
 UE: A |= B -> f(A) |= f(B). DE: A |= B -> f(B) |= f(A).
-Reference: van Benthem (1986), Ladusaw (1980), Barwise & Cooper (1981).
+Reference: @cite{van-benthem-1986}, @cite{ladusaw-1980}, @cite{barwise-cooper-1981}.
 -/
 
 import Linglib.Theories.Semantics.Entailment.Basic

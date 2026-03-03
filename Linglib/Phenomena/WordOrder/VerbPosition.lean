@@ -15,7 +15,7 @@ namespace Phenomena.WordOrder.VerbPosition
 ## Bulgarian: Participle Fronting
 @cite{harizanov-gribanova-2019}
 
-From Lambova (2004c:274, (15)), cited in @cite{harizanov-gribanova-2019} examples (29), (48), (52).
+From @cite{lambova-2004c}), cited in @cite{harizanov-gribanova-2019} examples (29), (48), (52).
 
 Both word orders are grammatical with the same meaning:
 
@@ -52,7 +52,7 @@ def bulgarianExample : BulgarianParticipleData := {}
 /-!
 ## German: V2 Word Order
 
-From Vikner (1995:32, (11d)), cited in @cite{harizanov-gribanova-2019} example (35).
+From @cite{vikner-1995}), cited in @cite{harizanov-gribanova-2019} example (35).
 
 The finite verb appears in different positions depending on clause type:
 

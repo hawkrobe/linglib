@@ -1,5 +1,6 @@
 /-
 # Gapping and Constituent Order
+@cite{steedman-2000}
 
 Empirical data on gapping patterns across SOV, VSO, and SVO languages.
 
@@ -8,8 +9,8 @@ Empirical data on gapping patterns across SOV, VSO, and SVO languages.
 Gapping involves the apparent "ellipsis" of a verb in coordinated structures:
 
   "Dexter ate bread, and Warren, potatoes."
-       ↑                    ↑
-    overt verb           "gapped" verb
+       ↑ ↑
+    overt verb "gapped" verb
 
 ## Ross's Generalization (1970)
 
@@ -26,7 +27,7 @@ The directionality of gapping correlates with basic word order:
   SVO languages: forward gapping (SVO and SO)
     "Dexter ate bread, and Warren, potatoes"
 
-## Insight (Steedman 2000)
+## Insight
 
 Gapping direction depends on the availability of verb categories:
 - Forward gapping requires rightward-combining verbs

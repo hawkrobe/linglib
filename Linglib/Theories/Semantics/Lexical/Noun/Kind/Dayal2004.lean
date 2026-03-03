@@ -1,5 +1,5 @@
 /-
-# Kind Reference and Number Marking (Dayal 2004)
+# Kind Reference and Number Marking
 
 Formalizes Dayal's "Number Marking and (In)definiteness in Kind Terms"
 which extends Chierchia's NMP analysis with:

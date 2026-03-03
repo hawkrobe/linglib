@@ -18,7 +18,7 @@ Theory-neutral empirical patterns for scalar implicatures.
 - Gazdar, G. (1979). Pragmatics: Implicature, Presupposition, and Logical Form.
 - Singh, R. (2008). On the interpretation of disjunction.
 - Geurts, B. (2010). Quantity Implicatures. Cambridge University Press. Ch. 2-3.
-- Fox & Spector (2018). Economy and embedded exhaustification.
+- @cite{fox-spector-2018}. Economy and embedded exhaustification.
 -/
 
 namespace Phenomena.ScalarImplicatures

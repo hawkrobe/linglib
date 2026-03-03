@@ -10,20 +10,20 @@ Some determiners (the, some) are compatible with either.
 
 ## The Data
 
-  (1a)  a girl                       ✓  sg det, sg noun
-  (1b) *a girls                      ✗  sg det, pl noun
+  (1a) a girl ✓ sg det, sg noun
+  (1b) *a girls ✗ sg det, pl noun
 
-  (2a)  this book                    ✓  sg det, sg noun
-  (2b) *this books                   ✗  sg det, pl noun
+  (2a) this book ✓ sg det, sg noun
+  (2b) *this books ✗ sg det, pl noun
 
-  (3a)  these books                  ✓  pl det, pl noun
-  (3b) *these book                   ✗  pl det, sg noun
+  (3a) these books ✓ pl det, pl noun
+  (3b) *these book ✗ pl det, sg noun
 
-  (4a)  many cats                    ✓  pl det, pl noun
-  (4b) *many cat                     ✗  pl det, sg noun
+  (4a) many cats ✓ pl det, pl noun
+  (4b) *many cat ✗ pl det, sg noun
 
-  (5a)  the girl                     ✓  neutral det, sg noun
-  (5b)  the girls                    ✓  neutral det, pl noun
+  (5a) the girl ✓ neutral det, sg noun
+  (5b) the girls ✓ neutral det, pl noun
 -/
 
 import Linglib.Core.Grammar

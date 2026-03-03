@@ -1,7 +1,7 @@
 /-
 # Agree (Minimalist Feature Checking)
 
-Formalization of Agree following Chomsky (2000, 2001) and Adger (2003).
+Formalization of Agree following @cite{chomsky-2000} and @cite{adger-2003}.
 
 ## The Agree Operation
 
@@ -19,10 +19,10 @@ the feature *types* (PhiFeature, FeatureVal, etc.), see `Features.lean`.
 For the *failure model* (what happens when Agree fails), see
 `ObligatoryOperations.lean`. For the Case Filter, see `CaseFilter.lean`.
 
-## Satisfaction Conditions (Deal 2021)
+## Satisfaction Conditions
 
 Standard Agree assumes a probe is satisfied by finding a matching valued
-feature. Deal (2021) and Keine (2019) argue for richer conditions:
+feature. @cite{deal-2021} and @cite{keine-2019} argue for richer conditions:
 - **Feature match**: the standard case
 - **Head encounter**: probe is satisfied by encountering a head of a
   particular category (e.g., Infl's probe stopped by transitive Voice)

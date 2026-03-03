@@ -6,7 +6,7 @@ import Mathlib.Tactic.SplitIfs
 # Causal Sufficiency
 
 Causal sufficiency semantics for the verb "make" based on
-Nadathur & Lauer (2020) Definition 23.
+@cite{nadathur-lauer-2020} Definition 23.
 
 ## Insight
 

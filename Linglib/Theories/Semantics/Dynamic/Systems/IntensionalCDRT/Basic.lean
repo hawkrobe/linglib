@@ -1,7 +1,7 @@
 /-
 # Intensional Compositional DRT (ICDRT)
 
-Core types for Hofmann (2025) with propositional discourse referents enabling
+Core types for @cite{hofmann-2025} with propositional discourse referents enabling
 anaphora to indefinites under negation.
 
 ## Main definitions

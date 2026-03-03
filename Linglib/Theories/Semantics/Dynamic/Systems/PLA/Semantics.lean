@@ -1,12 +1,13 @@
 /-
 # PLA Semantics
+@cite{dekker-2012}
 
-Satisfaction and truth for Predicate Logic with Anaphora (Dekker 2012, §2).
+Satisfaction and truth for Predicate Logic with Anaphora.
 
 ## Key Concepts
 
 ### Witness Sequences
-Pronouns are interpreted via witness sequences ê = (e₁, ..., eₙ).
+Pronouns are interpreted via witness sequences ê = (e₁,..., eₙ).
 Unlike variables (interpreted by assignments), pronouns get their values
 from outside the formula through the witness sequence.
 

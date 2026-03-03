@@ -8,15 +8,15 @@ Three influential RSA approaches to presupposition projection are
 
 | Paper | Latent Variable Name | Domain |
 |-------|---------------------|--------|
-| Qing et al. (2016) | "context set" C | Change-of-state verbs |
-| Scontras & Tonhauser (2025) | "private assumptions" A | Factives (know/think) |
-| Warstadt (2022) | "context set" C | Genus-species |
+| @cite{qing-goodman-lassiter-2016} | "context set" C | Change-of-state verbs |
+| @cite{scontras-tonhauser-2025} | "private assumptions" A | Factives (know/think) |
+| @cite{warstadt-2022} | "context set" C | Genus-species |
 
 S&T footnote 10 explicitly acknowledges this equivalence:
-> "Qing et al. (2016) call these subsets the 'common ground,' but we think
+> "@cite{qing-goodman-lassiter-2016} call these subsets the 'common ground,' but we think
 > 'private assumptions' better captures this component of the model."
 
-## The Shared Model (Qing et al. 2016)
+## The Shared Model
 
 All three papers implement the same RSA equations:
 
@@ -427,7 +427,7 @@ def allPapersEquivalent : List ProjectionModel := [
 
 ### Stalnaker's Framework
 
-Both models connect to Stalnaker (1974, 2002) differently:
+Both models connect to @cite{stalnaker-1974} differently:
 
 - **S&T**: Focuses on speaker's "taking for granted" - what speaker assumes
   the listener will accept. The BeliefState represents this.

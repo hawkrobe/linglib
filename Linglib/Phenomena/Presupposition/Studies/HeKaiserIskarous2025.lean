@@ -1,5 +1,5 @@
 /-
-# He, Kaiser & Iskarous (2025): Sentence Polarity Asymmetries
+# @cite{he-kaiser-iskarous-2025}: Sentence Polarity Asymmetries
 
 Empirical data and domain types for modeling sentence polarity asymmetries
 with fuzzy interpretations in a possibly wonky world.

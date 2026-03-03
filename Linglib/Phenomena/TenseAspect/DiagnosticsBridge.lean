@@ -15,7 +15,7 @@ Empirical tests for determining aspectual class.
 
 ## "For X" vs "In X" Tests
 
-The classic tests from Vendler (1957) and Dowty (1979):
+The classic tests from @cite{vendler-1957} and @cite{dowty-1979}:
 
 - "for an hour" — compatible with atelic predicates
   - "John ran for an hour" ✓ (activity)

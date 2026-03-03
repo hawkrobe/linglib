@@ -190,7 +190,7 @@ theorem RationalAction.policy_list_sum_gt (ra : RationalAction S A) (s : S)
 /-!
 ## Luce's Choice Axiom
 
-Luce (1959, Chapter 1) showed that the ratio rule `P(a|s) = v(a)/Σv(b)` is
+@cite{luce-1959} showed that the ratio rule `P(a|s) = v(a)/Σv(b)` is
 characterized by the **independence of irrelevant alternatives** (IIA): the
 relative probability of two actions depends only on their scores, not on what
 other actions are available.
@@ -1311,7 +1311,7 @@ end UniquenessCharacterization
 /-!
 ## Alternative Forms of Axiom 1
 
-Luce (1959, Appendix 1) proves three equivalent formulations of the choice
+@cite{luce-1959} proves three equivalent formulations of the choice
 axiom:
 
 **(a) Ratio form**: There exists a positive function `v` such that

@@ -1,5 +1,5 @@
 /-
-# Krifka (1998) "The Origins of Telicity"
+# @cite{krifka-1998} "The Origins of Telicity"
 
 Krifka's foundational linking theory explaining *why* incremental-theme
 verbs transmit mereological properties from the NP to the VP. The core
@@ -22,7 +22,7 @@ MSO, UO) combining into **strict incrementality (SINC)**, plus the
 3. Derived Properties (SINC → UP, ME, MO, CumTheta)
 4. VP Formation (§3.3, eq. 53)
 5. Telicity Theorems (§3.3) — THE PAYOFF
-6. GRAD: Gradual Change (Krifka 1989)
+6. GRAD: Gradual Change
 6b. GRAD Square: SINC Extension of LaxMeasureSquare
 7. Verb Annotations (Meaning Postulates)
 8. General Incrementality (§3.6, eq. 59)

@@ -1,20 +1,20 @@
 /-
 # Left-Nested Conditionals (LNCs)
 
-Formalizes the analysis of left-nested conditionals following Lassiter (2025)
+Formalizes the analysis of left-nested conditionals following @cite{cao-white-lassiter-2025}
 "Sorting out left-nested conditionals."
 
 ## Overview
 
 A left-nested conditional (LNC) has another conditional in the antecedent:
-  "If (B if A), then C"  =  "If A → B, then C"
+  "If (B if A), then C" = "If A → B, then C"
 
-Example (Gibbard 1981):
+Example:
   "If Kripke was there if Strawson was, then Anscomb was there"
 
 ## Key Claim
 
-Lassiter (2025) argues that bare LNCs are preferentially interpreted as
+@cite{cao-white-lassiter-2025} argues that bare LNCs are preferentially interpreted as
 **premise conditionals** (PCs), not hypothetical conditionals (HCs).
 
 ### Why?
@@ -243,6 +243,7 @@ end AnnotatedLNC
 
 /-!
 ## Polarity Patterns (@cite{cao-white-lassiter-2025}, Section 4)
+@cite{gibbard-1981}
 
 The PC analysis of LNCs predicts specific polarity patterns:
 

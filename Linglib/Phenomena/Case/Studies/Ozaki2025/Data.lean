@@ -2,7 +2,7 @@
 # @cite{ozaki-2025} — Japanese Accusative/Ablative Alternation: Data
 @cite{ozaki-2025}
 
-Empirical data from Ozaki (2025, CLS 61) on Japanese departure verbs
+Empirical data from @cite{ozaki-2025} on Japanese departure verbs
 that alternate between accusative *-o* and ablative *kara* marking
 on the source argument.
 

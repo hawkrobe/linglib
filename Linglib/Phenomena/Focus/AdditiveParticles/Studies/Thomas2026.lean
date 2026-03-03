@@ -1,7 +1,7 @@
 /-
-# Thomas (2026): Argument-Building Additives
+# @cite{thomas-2026}: Argument-Building Additives
 
-Empirical data from Thomas (2026) on argument-building uses of additive particles where antecedent and prejacent jointly support a conclusion rather than being focus alternatives.
+Empirical data from @cite{thomas-2026} on argument-building uses of additive particles where antecedent and prejacent jointly support a conclusion rather than being focus alternatives.
 
 ## Main definitions
 

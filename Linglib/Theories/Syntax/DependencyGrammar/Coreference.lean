@@ -2,7 +2,7 @@
 Dependency grammar coreference (binding) via dependency paths and d-command.
 Reflexives require short dependency paths; locality = same subgraph rooted at verb.
 
-References: Hudson (1990) Ch. 6, Gibson (2025) Ch. 7.
+References: @cite{hudson-1990}, @cite{gibson-2025}
 -/
 
 import Linglib.Theories.Syntax.DependencyGrammar.Core.Nominal

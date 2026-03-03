@@ -8,7 +8,7 @@ feature geometry model. The tree synthesizes three sources:
 
 - **@cite{clements-1985}**: root, laryngeal, supralaryngeal, and place nodes
 - **@cite{sagey-1986}**: articulator sub-nodes under Place (labial, coronal, dorsal)
-- **Hayes (2009, Ch 4)**: complete 26-feature inventory mapped to geometric nodes
+- **@cite{hayes-2009}**: complete 26-feature inventory mapped to geometric nodes
 
     Root [±syll, ±cons, ±son, ±approx, ±nas, ±del.rel., ±tap, ±trill]
     ├── Laryngeal [±voice, ±s.g., ±c.g.]

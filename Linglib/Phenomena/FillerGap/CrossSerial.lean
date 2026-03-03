@@ -9,7 +9,7 @@ In Dutch subordinate clauses, multiple NPs can precede multiple verbs,
 with each NP interpreted as the argument of a corresponding verb:
 
   "... dat Jan Piet Marie zag helpen zwemmen"
-  "... that Jan Piet Marie saw help   swim"
+  "... that Jan Piet Marie saw help swim"
   = "that Jan saw Piet help Marie swim"
 
 The dependencies are cross-serial (not nested):

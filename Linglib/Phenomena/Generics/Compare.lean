@@ -1,27 +1,26 @@
 /-
 # Kind Reference: Theory-Phenomena Integration
 
-Connects the theoretical frameworks (Carlson 1977, Chierchia 1998, Dayal 2004,
-Krifka 2004) to empirical phenomena, demonstrating that the theories correctly
+Connects the theoretical frameworks to empirical phenomena, demonstrating that the theories correctly
 predict the observed cross-linguistic patterns.
 
 ## Theoretical Lineage
 
-Carlson 1977 is the foundational paper that all subsequent theories build on:
+@cite{carlson-1977} is the foundational paper that all subsequent theories build on:
 
 ```
-Carlson 1977 (bare plurals = proper names of kinds)
+@cite{carlson-1977} (bare plurals = proper names of kinds)
     │
-    ├──→ Chierchia 1998 (kinds + ∩/∪ operators + DKP + NMP)
-    │         │
-    │         └──→ Dayal 2004 (singular kinds + Meaning Preservation)
+    ├──→ @cite{chierchia-1998} (kinds + ∩/∪ operators + DKP + NMP)
+    │ │
+    │ └──→ @cite{dayal-2004} (singular kinds + Meaning Preservation)
     │
-    └──→ Krifka 2004 (bare NPs = properties, position-sensitive ∃-shift)
+    └──→ @cite{krifka-2004} (bare NPs = properties, position-sensitive ∃-shift)
 ```
 
 ## Key Equivalences
 
-| Carlson 1977 | Chierchia 1998 | Krifka 2004 |
+| @cite{carlson-1977} | @cite{chierchia-1998} | @cite{krifka-2004} |
 |--------------|----------------|-------------|
 | Realization relation R(y,x) | ∪ operator (up) | Instance relation |
 | Stage-level predication | DKP (Derived Kind Predication) | ∃-shift |
@@ -35,7 +34,7 @@ Carlson 1977 (bare plurals = proper names of kinds)
 3. Scopelessness: DKP locality (Chierchia) / local binding (Krifka) predicts narrow scope
 4. Predicate classification: Kind-level vs object-level predicate behavior
 5. Theory comparison: Chierchia vs Krifka -- equivalent for English, differ for scrambling
-6. Scrambling (Le Bruyn & de Swart 2022): Dutch/German data distinguishes the theories
+6. Scrambling: Dutch/German data distinguishes the theories
 
 -/
 

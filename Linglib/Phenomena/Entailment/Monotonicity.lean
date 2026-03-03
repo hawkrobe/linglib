@@ -10,15 +10,15 @@ substitute a subset for a superset (or vice versa).
 
 Given: dogs ⊆ animals
 
-- "Every dog barks" → "Every animal barks"?  NO (DE in restrictor)
-- "Some dog barks" → "Some animal barks"?   YES (UE in restrictor)
-- "No dog barks" → "No animal barks"?        NO (DE in restrictor)
+- "Every dog barks" → "Every animal barks"? NO (DE in restrictor)
+- "Some dog barks" → "Some animal barks"? YES (UE in restrictor)
+- "No dog barks" → "No animal barks"? NO (DE in restrictor)
 
 ## Data Source
 
-- Ladusaw (1980) on polarity sensitivity
-- van Benthem (1986) on monotonicity
-- Barwise & Cooper (1981) on generalized quantifiers
+- @cite{ladusaw-1980} on polarity sensitivity
+- @cite{van-benthem-1986} on monotonicity
+- @cite{barwise-cooper-1981} on generalized quantifiers
 -/
 
 import Linglib.Core.Empirical

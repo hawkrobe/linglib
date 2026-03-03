@@ -1,7 +1,7 @@
 /-
 # Negation Scope in Numeral Interpretation
 
-Formalization of the negation scope asymmetry from Horn (1972), following Jespersen.
+Formalization of the negation scope asymmetry from @cite{horn-1972}, following Jespersen.
 
 ## The Asymmetry
 

@@ -143,7 +143,7 @@ theorem quantity_universal :
    automatically satisfies EXT. See `Core.Quantification.extension_trivial`.
    No axiom needed — it holds by construction.
 
-   EXT + CONS together yield the van Benthem (1984) characterization:
+   EXT + CONS together yield the @cite{van-benthem-1984} characterization:
    determiners can be represented as type ⟨1⟩ quantifiers that "live on"
    their restrictor. See `Core.Quantification.vanBenthem_cons_ext`. -/
 
@@ -322,7 +322,7 @@ theorem positive_strong_determiners_upward_monotone :
 -- @cite{van-benthem-1984} §3.3: Aristotle Reversed — Square of Opposition
 -- ============================================================================
 
-/- Van Benthem 1984 §3.3: Under VAR*, the Square of Opposition is completely
+/- @cite{van-benthem-1984} §3.3: Under VAR*, the Square of Opposition is completely
    determined by inferential (relational) conditions:
    - all: transitive + reflexive
    - some: symmetric + quasi-reflexive

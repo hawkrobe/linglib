@@ -605,7 +605,7 @@ theorem czech_fragment_pa :
 
 /-! ### Bridge 5: Morphological status ↔ Explicitness
 
-Cysouw (2009, Table 10.4, Fig 10.10) shows that inflectional paradigms
+@cite{cysouw-2009} shows that inflectional paradigms
 correlate with lower explicitness. Our data confirms: all inflectional
 paradigms have explicitness ≤ unified-we (i.e., singular or vertical
 homophony, or unified-we). -/

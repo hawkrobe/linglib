@@ -1,7 +1,8 @@
 /-
 # Predicate Logic with Anaphora (PLA)
+@cite{dekker-2012}
 
-Dekker's foundational system for dynamic semantics (Dekker 2012, Ch. 2).
+Dekker's foundational system for dynamic semantics.
 
 ## Innovation
 

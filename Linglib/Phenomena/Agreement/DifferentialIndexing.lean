@@ -179,7 +179,7 @@ def IndexingFragment.polarityCorrect (f : IndexingFragment) : Bool :=
     indexed). For conditioning scales, the predicate marks the prominent
     end as `true` and the non-prominent end as `false`.
 
-    Source references are from Just (2024, Table 1). -/
+    Source references are from @cite{just-2024}. -/
 
 section PIndexing
 
@@ -315,7 +315,7 @@ end PIndexing
     As (3rd person, inanimate, indefinite) are MORE likely to be indexed.
     The polarity is REVERSED relative to P indexing.
 
-    Source references from Just (2024, Table 2). -/
+    Source references from @cite{just-2024}. -/
 
 section AIndexing
 

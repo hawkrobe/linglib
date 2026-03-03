@@ -302,7 +302,7 @@ theorem temporal_is_oblique_but_exempt :
     2. Movement is phase-bounded (from PIC)
 
     References:
-    - Chomsky (2000, 2001) on PIC
+    - @cite{chomsky-2000} on PIC
     - @cite{elkins-imanishi-coon-2026} §7.1 on =(y)a' island sensitivity -/
 structure MovementReflex where
   /-- The morpheme is a spellout of features valued via Agree with

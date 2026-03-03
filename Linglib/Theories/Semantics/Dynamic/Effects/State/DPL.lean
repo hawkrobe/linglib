@@ -1,5 +1,6 @@
 /-
-# Dynamic Predicate Logic (Groenendijk & Stokhof 1991)
+# Dynamic Predicate Logic
+@cite{groenendijk-stokhof-1991}
 
 Stub for Dynamic Predicate Logic (DPL), the foundational dynamic semantic
 theory that treats meanings as relations between assignments.

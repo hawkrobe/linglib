@@ -1,5 +1,6 @@
 /-
 # Core.Prosody
+@cite{steedman-2000}
 
 Theory-neutral prosodic types: pitch accents, boundary tones, and the
 prosodic hierarchy.
@@ -7,8 +8,8 @@ prosodic hierarchy.
 ## Overview
 
 These types are used across multiple theories:
-- CCG/Intonation (Steedman 2000): prosodic CCG derivations
-- Information Structure (Kratzer & Selkirk 2020): spellout constraints
+- CCG/Intonation: prosodic CCG derivations
+- Information Structure: spellout constraints
 - Focus theory: prosodic realization of focus/givenness
 
 -/

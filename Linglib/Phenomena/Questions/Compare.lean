@@ -10,23 +10,23 @@ This module integrates three related frameworks for polar questions:
 | Framework | Focus | Mechanism |
 |-----------|-------|-----------|
 | **Van Rooy & Šafářová (2003)** | Question *choice* | UV(q) > UV(¬q) → PPQ |
-| **Romero & Han (2004)** | Epistemic *bias* | VERUM creates unbalanced partition |
-| **Hawkins et al. (2025)** | Response *selection* | ToM infers goals from question |
+| **@cite{romero-han-2004}** | Epistemic *bias* | VERUM creates unbalanced partition |
+| **@cite{hawkins-etal-2025}** | Response *selection* | ToM infers goals from question |
 
 ## The Theoretical Progression
 
 ```
-                Questioner Side                    Respondent Side
-                ==============                    ================
+                Questioner Side Respondent Side
+                ============== ================
 
-Van Rooy (2003):    D → argmax UV(q)              [assumes D known]
+@cite{van-rooy-2003}: D → argmax UV(q) [assumes D known]
                          ↓
-Van Rooy & Šafářová: UV(q) vs UV(¬q) → PPQ/NPQ    [not addressed]
+Van Rooy & Šafářová: UV(q) vs UV(¬q) → PPQ/NPQ [not addressed]
                          ↓
-Romero & Han (2004): VERUM encodes epistemic bias [not addressed]
+@cite{romero-han-2004}: VERUM encodes epistemic bias [not addressed]
                          ↓
-Hawkins et al. (2025): Q(q|D) ∝ exp(α·EU)    →    P(D|q) ∝ Q(q|D)·P(D)
-                       [formalized in RSA]         [ToM inference]
+@cite{hawkins-etal-2025}: Q(q|D) ∝ exp(α·EU) → P(D|q) ∝ Q(q|D)·P(D)
+                       [formalized in RSA] [ToM inference]
 ```
 
 ## Insight: Questions Signal Goals
@@ -123,7 +123,7 @@ theorem priorpq_limit_is_vrs (params : Params) :
 
 /- Cross-theory claim: vR&Š grounds PRIOR-PQ's ToM inference.
 
-Van Rooy (2003) §4.1: The questioner chooses questions to maximize
+@cite{van-rooy-2003} §4.1: The questioner chooses questions to maximize
 expected utility of the answer.
 
 PRIOR-PQ: Q(q|D) ∝ exp(α · EU_answer(q|D))

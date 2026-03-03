@@ -1,5 +1,5 @@
 /-
-# Kind-Level Semantics (Chierchia 1998)
+# Kind-Level Semantics
 
 Formalizes Chierchia's "Reference to Kinds Across Languages" framework for
 bare plural composition and the Nominal Mapping Parameter.
@@ -19,7 +19,7 @@ Languages vary in what they let their NPs denote:
 
 ## Ontology
 
-Following Link (1983) and Chierchia (1998):
+Following @cite{link-1983} and @cite{chierchia-1998}:
 - Domain U is a complete atomic join semilattice
 - Atoms are singular individuals
 - Non-atoms are pluralities (modeled as sets)

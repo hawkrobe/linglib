@@ -88,7 +88,7 @@ def theCartNP : NPDatum :=
 -- § 2. VP Telicity Composition
 -- ════════════════════════════════════════════════════
 
-/-- Krifka (1989/1998) composition: VerbIncClass + NP reference → VP reference.
+/-- @cite{krifka-1989} composition: VerbIncClass + NP reference → VP reference.
     - sinc/inc: NP reference transfers to VP (QUA NP → QUA VP, CUM NP → CUM VP)
     - cumOnly: VP is always CUM regardless of NP
     This captures: "eat two apples" (telic) vs "eat apples" (atelic) vs

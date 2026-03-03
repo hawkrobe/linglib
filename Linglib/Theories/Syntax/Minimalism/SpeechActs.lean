@@ -1,5 +1,5 @@
 /-
-# Configurational Point-of-View Roles (Speas & Tenny 2003)
+# Configurational Point-of-View Roles
 
 Pragmatic roles (SPEAKER, HEARER, SEAT OF KNOWLEDGE) are configurationally
 determined by structural position in SAP, not primitive. Four moods derived
@@ -19,7 +19,7 @@ c-commands content.
 - **Phase.lean**: `isSAPhaseHead` — SAP is highest phase
 - **Allocutivity.lean**: `sa_based_aa_root_only` — root-only from SAP phase
 - **LeftPeriphery.lean**: `rogativeSAP` — "ask" selects full SAP with P-roles
-- **ExtendedProjection/Basic.lean**: `fValue .SA = 7` > `fValue .C = 6`
+- **ExtendedProjection/Basic.lean**: `fValue.SA = 7` > `fValue.C = 6`
 - **RSA/YoonEtAl2020**: HEARER (structural) ↔ addressee in social utility
 
 -/

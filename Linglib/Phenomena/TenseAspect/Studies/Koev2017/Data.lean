@@ -1,7 +1,7 @@
 /-!
 # @cite{koev-2017} Empirical Data @cite{koev-2017}
 
-Theory-neutral data from Koev (2017, *Journal of Semantics* 34(1):1–38).
+Theory-neutral data from @cite{koev-2017}:1–38).
 The Bulgarian evidential (the -l participle in evidential contexts) is
 felicitous when the speaker's evidence acquisition is **spatiotemporally
 distant** from the described event: either temporally non-overlapping

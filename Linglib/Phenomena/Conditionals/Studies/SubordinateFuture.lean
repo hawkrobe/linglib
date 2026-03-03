@@ -1,7 +1,7 @@
 /-
 # Subordinate Future (SF) Data
 
-Empirical data from Mendes (2025) "Indefiniteness in future reference"
+Empirical data from @cite{mendes-2025} "Indefiniteness in future reference"
 Semantics & Pragmatics 18(10).
 
 ## What is the Subordinate Future?

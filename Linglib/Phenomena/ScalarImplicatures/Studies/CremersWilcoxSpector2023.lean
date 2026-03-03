@@ -1,5 +1,5 @@
 /-
-# Cremers, Wilcox & Spector (2023): Exhaustivity and Anti-Exhaustivity in RSA
+# @cite{cremers-wilcox-spector-2023}: Exhaustivity and Anti-Exhaustivity in RSA
 
 Empirical data and domain types for RSA exhaustivity models.
 

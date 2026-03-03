@@ -16,10 +16,10 @@ head-to-head movement CAN violate the HMC.
 
 ## The Empirical Pattern
 
-German root clauses show V2 order (Vikner 1995:32, (11d)):
+German root clauses show V2 order (@cite{vikner-1995}:32, (11d)):
 
     Diesen Film haben die Kinder gesehen.
-    this   film have  the children seen
+    this film have the children seen
     'The children have seen this film.'
 
 The finite verb "haben" occupies C, preceding the subject.

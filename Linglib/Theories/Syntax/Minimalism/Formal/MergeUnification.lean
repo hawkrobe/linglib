@@ -1,5 +1,6 @@
 /-
 # Merge Unification: Internal and External Merge are the Same Operation
+@cite{chomsky-2004} @cite{harizanov-gribanova-2019}
 
 Formalization of the claim that Internal and External Merge reduce to the
 same fundamental operation, differing only in their input conditions.
@@ -10,7 +11,7 @@ In the syntax literature, Merge is typically divided into:
 - **External Merge**: Combines two SOs with no prior structural relation
 - **Internal Merge**: Re-merges an SO already contained in the structure (movement)
 
-## The Unification (Chomsky 2004, Harizanov 2019)
+## The Unification
 
 The key insight is that this is a distinction in *preconditions*, not in the
 *operation itself*. Both:
@@ -637,7 +638,7 @@ theorem head_vs_phrasal_projection (im : InternalMerge)
 /-
 ## Why the Partition is Algebraic, Not Stipulated
 
-Collins & Stabler (2016) note that "various modifications of derive-by-Merge
+@cite{collins-stabler-2016} note that "various modifications of derive-by-Merge
 would yield other possibilities" including sideward merge. This might suggest
 the Internal/External distinction is arbitrary.
 

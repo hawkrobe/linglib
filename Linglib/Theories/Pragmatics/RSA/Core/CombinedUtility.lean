@@ -1,14 +1,15 @@
 /-
 # RSA/Core/CombinedUtility.lean
+@cite{hawkins-etal-2025}
 
 Combined utility models for trading off multiple objectives.
 
 ## Overview
 
 Many RSA models involve trading off two (or more) utility components:
-- **Sumers et al. (2023)**: truthfulness vs relevance
-- **PRIOR-PQ (Hawkins et al. 2025)**: informativity vs action-relevance
-- **Yoon et al. (2020)**: informativity vs social utility
+- **@cite{sumers-etal-2023}**: truthfulness vs relevance
+- **PRIOR-PQ**: informativity vs action-relevance
+- **@cite{yoon-etal-2020}**: informativity vs social utility
 
 This module provides a unified framework for such combined utility models.
 

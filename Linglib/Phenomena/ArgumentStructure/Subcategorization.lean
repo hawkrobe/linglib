@@ -10,15 +10,15 @@ Verbs select for a specific number and type of arguments.
 
 ## The Data
 
-  (1a)  John sleeps.                 ✓  intransitive, no object
-  (1b) *John sleeps the bed.         ✗  intransitive with object
+  (1a) John sleeps. ✓ intransitive, no object
+  (1b) *John sleeps the bed. ✗ intransitive with object
 
-  (2a)  John devours pizza.          ✓  transitive with object
-  (2b) *John devours.                ✗  transitive without object
+  (2a) John devours pizza. ✓ transitive with object
+  (2b) *John devours. ✗ transitive without object
 
-  (3a)  John gives Mary the book.    ✓  ditransitive with two objects
-  (3b) *John gives Mary.             ✗  ditransitive with one object
-  (3c) *John gives the book.         ✗  ditransitive with one object
+  (3a) John gives Mary the book. ✓ ditransitive with two objects
+  (3b) *John gives Mary. ✗ ditransitive with one object
+  (3c) *John gives the book. ✗ ditransitive with one object
 -/
 
 import Linglib.Core.Grammar

@@ -1,7 +1,7 @@
 /-
 # CCG Scope Theory
 
-CCG derivational structure determines available scope readings (Steedman 2000 Ch. 6).
+CCG derivational structure determines available scope readings (@cite{steedman-2000} Ch. 6).
 -/
 
 import Linglib.Theories.Syntax.CCG.Core.Basic

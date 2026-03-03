@@ -1,7 +1,7 @@
 /-
 # Worked Examples of SDS Derivations
 
-This module provides concrete worked examples from Erk & Herbelot (2024)
+This module provides concrete worked examples from @cite{erk-herbelot-2024}
 "How to Marry a Star: Probabilistic Constraints for Meaning in Context"
 demonstrating how SDS constraint systems compute disambiguations.
 

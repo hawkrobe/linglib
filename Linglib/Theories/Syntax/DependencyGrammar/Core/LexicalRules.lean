@@ -1,8 +1,9 @@
 /-
 # Lexical Rules for Dependency Grammar
+@cite{hudson-1984}
 
 Lexical rules derive new lexical entries from existing ones.
-Following Word Grammar (Hudson 1984, 1990) and HPSG (Pollard & Sag 1994).
+Following Word Grammar and HPSG.
 
 Key lexical rules:
 1. Auxiliary Inversion: V+aux → V+aux,+inv (subject moves from left to right)
@@ -10,8 +11,8 @@ Key lexical rules:
 3. Dative Alternation: VN,N → VN,PP (double object ↔ prepositional dative)
 
 References:
-- Gibson (2025) "Syntax", MIT Press, Section 3.9
-- Pollard & Sag (1994) "Head-Driven Phrase Structure Grammar"
+- @cite{gibson-2025}
+- @cite{pollard-sag-1994} "Head-Driven Phrase Structure Grammar"
 -/
 
 import Linglib.Fragments.English.Nouns

@@ -20,7 +20,7 @@ open Theories.Phonology (Segment Feature)
 -- § 1: Sonority Scale
 -- ============================================================================
 
-/-- Sonority rank (0 = least sonorous). Following Hayes (2009, Table 4.1),
+/-- Sonority rank (0 = least sonorous). Following @cite{hayes-2009},
     the 5-level hierarchy is decomposed by four features:
 
     | Class     | son | approx | cons | syll | Rank |

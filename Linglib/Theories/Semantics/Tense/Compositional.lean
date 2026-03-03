@@ -10,7 +10,7 @@ Tense operators impose temporal constraints on propositions:
 - **PRES**: Event time equals reference time (τ(s) = τ(s'))
 - **FUT**: Event time follows reference time (τ(s) > τ(s'))
 
-Following Kratzer (1998), tenses are like pronouns for times:
+Following @cite{heim-kratzer-1998}, tenses are like pronouns for times:
 they introduce or retrieve temporal reference points.
 
 ## Two Frameworks

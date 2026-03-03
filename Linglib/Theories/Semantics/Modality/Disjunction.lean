@@ -1,12 +1,13 @@
 /-
 # Disjunctions as Modals
+@cite{yagi-2025}
 
-Formalizes Geurts (2005) "Entertaining Alternatives: Disjunctions as Modals"
+Formalizes @cite{geurts-2005} "Entertaining Alternatives: Disjunctions as Modals"
 (Natural Language Semantics 13:383–410).
 
 ## Thesis
 
-Following Zimmermann (2000), disjunctions are conjunctions of modal propositions.
+Following @cite{zimmermann-2000}, disjunctions are conjunctions of modal propositions.
 "S₁ or … or Sₙ" has logical form A₁M₁B₁ ∧ … ∧ AₙMₙBₙ, where:
 - Aᵢ is a **modal domain** (subset of background C)
 - Mᵢ is a **modal quantifier** (◇ or □, from overt modal or covert default)
@@ -25,7 +26,7 @@ Three innovations over Zimmermann:
 
 ## Bridge Theorems
 
-- `PrProp.orFlex` (Yagi 2025) is the special case where domains = presuppositions
+- `PrProp.orFlex` is the special case where domains = presuppositions
 - Free choice (◇(A∨B) → ◇A ∧ ◇B) follows from the structure
 - Exclusive 'or' follows from Disjointness, not scalar implicature
 

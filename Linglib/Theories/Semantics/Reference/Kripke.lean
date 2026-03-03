@@ -1,7 +1,7 @@
 /-
 # Kripke's Modal Argument and the Scope-Rigidity Equivalence
 
-Kripke (1980) *Naming and Necessity*, Lecture I.
+@cite{kripke-1980} *Naming and Necessity*, Lecture I.
 
 The central formalization: rigidity is equivalent to scope-invariance.
 A designator is rigid if and only if de re (wide scope) and de dicto

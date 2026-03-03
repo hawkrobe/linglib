@@ -1,7 +1,7 @@
 /-
 # Minimalist Coreference (Binding)
 
-Coreference constraints via c-command and locality following Chomsky (1981, 1986).
+Coreference constraints via c-command and locality following @cite{chomsky-1981}.
 
 ## Main definitions
 

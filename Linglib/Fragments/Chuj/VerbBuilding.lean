@@ -13,7 +13,7 @@ Consequences for the nature of roots."
 
 1. **Four root classes** (√TV, √ITV, √POS, √NOM) distinguished primarily
    by complement projection. √TV projects a complement DP; the others
-   do not. Semantically, Coon (2019, (3)) assigns:
+   do not. Semantically, @cite{coon-2019}) assigns:
    √TV ⟨e, ⟨s,t⟩⟩, √ITV ⟨e, ⟨s,t⟩⟩, √POS ⟨e, ⟨s,d⟩⟩, √NOM ⟨e,t⟩.
    Note: √TV and √ITV share the same semantic type following @cite{davis-1997},
    but differ in whether their entity argument surfaces as a complement (√TV)

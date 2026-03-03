@@ -3,7 +3,7 @@
 @cite{bhatt-dayal-2014} @cite{bhatt-dayal-2020} @cite{dayal-2025}
 
 Particles related to question formation in Hindi-Urdu, following
-Bhatt & Dayal (2014, 2020) and Dayal (2025: §§1.3, 4.4).
+@cite{bhatt-dayal-2014} and @cite{dayal-2025}.
 
 Hindi-Urdu lacks a dedicated *wh*-complementizer for polar questions (unlike
 English *whether* or Italian *se*). Instead, it uses:

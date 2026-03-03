@@ -1,11 +1,11 @@
 /-
-Gradable nouns as measure functions with degree arguments (Morzycki 2009).
+Gradable nouns as measure functions with degree arguments.
 
 Size adjectives in degree readings use MEASN; the Bigness Generalization
 follows from scale structure (min{d : small(d)} = d0, making "small" vacuous).
 
-- Morzycki (2009). Degree modification of gradable nouns. NLS 17:175-203.
-- Kennedy & McNally (2005). Scale structure, degree modification. Language 81(2).
+- @cite{morzycki-2009}. Degree modification of gradable nouns. NLS 17:175-203.
+- @cite{kennedy-mcnally-2005}. Scale structure, degree modification. Language 81(2).
 -/
 
 import Mathlib.Data.Rat.Defs

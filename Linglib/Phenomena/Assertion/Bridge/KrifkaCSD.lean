@@ -5,7 +5,7 @@ import Linglib.Theories.Pragmatics.Assertion.Krifka
 @cite{krifka-2015}
 
 Worked examples exercising the tree-based commitment space operations
-from Krifka (2015, §2–5). Each test uses a concrete 2-world model
+from @cite{krifka-2015}. Each test uses a concrete 2-world model
 (rain vs no rain) and verifies specific predictions about how assertions,
 questions, acceptance, and rejection interact.
 

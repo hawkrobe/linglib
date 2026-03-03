@@ -5,7 +5,7 @@ Theory-neutral presupposition examples and empirical patterns.
 
 ## Classic Examples
 
-1. **The King Example (Karttunen 1974)**
+1. **The King Example**
    "If the king exists, the king is bald"
    → Does not presuppose king exists (filtering)
 
@@ -21,7 +21,7 @@ Theory-neutral presupposition examples and empirical patterns.
 
 ## Projection Patterns
 
-Following Karttunen (1974) and Heim (1983):
+Following @cite{karttunen-1974} and @cite{heim-1983}:
 - Negation: preserves presupposition
 - Conjunction: filtering (left-to-right)
 - Conditional: filtering (antecedent → consequent)

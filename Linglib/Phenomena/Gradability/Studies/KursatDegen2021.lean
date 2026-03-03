@@ -1,5 +1,6 @@
 /-
-# Kursat & Degen (2021): Perceptual Difficulty and Redundant Modification
+# @cite{kursat-degen-2021}: Perceptual Difficulty and Redundant Modification
+@cite{waldon-degen-2021}
 
 Perceptual difficulty predicts redundant modifier use. Material adjectives are harder to perceive and less redundantly used than color adjectives.
 

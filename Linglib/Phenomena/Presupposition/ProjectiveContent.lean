@@ -1,8 +1,7 @@
 /-
 # Projective Content Taxonomy
 
-Formalizes the taxonomy of projective contents from Tonhauser, Beaver,
-Roberts & Simons (2013) "Toward a Taxonomy of Projective Content", Language 89(1).
+Formalizes the taxonomy of projective contents from Tonhauser, @cite{tonhauser-beaver-roberts-simons-2013} "Toward a Taxonomy of Projective Content", Language 89(1).
 
 ## Insight
 
@@ -411,7 +410,7 @@ The occasion verb "punish" has:
 - Projective content: Peter did something wrong (the occasioning eventuality)
 - Class C: SCF=no (can be informative), OLE=yes (attributed to attitude holder)
 
-Established in Solstad & Bott (2024, S&P 17:11), Experiments 1–2.
+Established in @cite{solstad-bott-2024}, Experiments 1–2.
 -/
 example : ProjectiveTrigger.occasion_verb.toClass = .classC := rfl
 

@@ -8,7 +8,7 @@ import Linglib.Core.Context.Shifts
 # Tense and Evidence
 @cite{cumming-2026} @cite{ninan-2022} @cite{reichenbach-1947}
 
-Cumming (2026, *Linguistics and Philosophy* 49:153–175) argues that English
+@cite{cumming-2026} argues that English
 nonfuture tenses encode an evidential constraint: the speaker's evidence must
 be causally downstream of the described event. The formal backbone is a triple
 (S, A, T) — speech time, evidence-acquisition time, topic-event time — with

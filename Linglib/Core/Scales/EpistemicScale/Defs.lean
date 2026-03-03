@@ -57,7 +57,7 @@ def F {W : Type*} (ge : Set W → Set W → Prop) : Prop :=
   ge Set.univ ∅
 
 /-- Axiom BT: ¬(∅ ≿ Ω) — contradiction is NOT at least as likely as tautology.
-    The non-triviality condition from Holliday & Icard (2013, Figure 6).
+    The non-triviality condition from @cite{holliday-icard-2013}.
     Without this, the degenerate ordering (all sets equivalent) would satisfy
     FA but admit no finitely additive measure representation (since μ(∅) = 0
     but μ(Ω) = 1). -/
@@ -108,8 +108,7 @@ structure EpistemicSystemF (W : Type*) extends EpistemicSystemW W where
     Strictly weaker than FP∞ (finitely additive measures) for |W| ≥ 5
     (Kraft, @cite{kraft-pratt-seidenberg-1959}, Theorem 8).
 
-    Totality and transitivity are part of the FA logic in Holliday & Icard
-    (2013, Figure 6): FA = Bot + BT + Tot + Tran + A. -/
+    Totality and transitivity are part of the FA logic in @cite{holliday-icard-2013}: FA = Bot + BT + Tot + Tran + A. -/
 structure EpistemicSystemFA (W : Type*) extends EpistemicSystemF W where
   total : ∀ A B : Set W, ge A B ∨ ge B A
   trans : ∀ A B C : Set W, ge A B → ge B C → ge A C

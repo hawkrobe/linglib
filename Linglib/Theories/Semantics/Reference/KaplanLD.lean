@@ -1,7 +1,7 @@
 /-
 # Kaplan's LD Formal System
 
-The model-theoretic semantics from Kaplan (1989) "Demonstratives" §XVIII-XIX:
+The model-theoretic semantics from @cite{kaplan-1989} "Demonstratives" §XVIII-XIX:
 the formal logic LD (Logic of Demonstratives) with its operators, dthat,
 and metatheorems.
 

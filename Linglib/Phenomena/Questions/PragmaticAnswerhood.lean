@@ -8,7 +8,7 @@ Pragmatic notions of answerhood relativized to information sets.
 Semantic answerhood is a limit case of pragmatic answerhood.
 When J = I (total ignorance), pragmatic answerhood reduces to semantic answerhood.
 
-## Key Definitions (G&S 1984, pp. 352-358)
+## Key Definitions (@cite{groenendijk-stokhof-1984}, pp. 352-358)
 
 - Q is a question in J iff ∃X∃Y: X,Y ∈ J/Q & X ≠ Y
 - P is a pragmatic answer to Q in J iff P∩J ∈ J/Q

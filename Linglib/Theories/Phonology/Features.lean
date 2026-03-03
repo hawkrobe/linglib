@@ -22,7 +22,7 @@ namespace Theories.Phonology
 
 /-- Distinctive phonological features (binary-valued).
 
-    Complete segmental inventory from Hayes (2009, Ch 4, Tables 4.7–4.10):
+    Complete segmental inventory from @cite{hayes-2009}:
 
     - **Manner (root)**: syllabic, consonantal, sonorant, approximant,
       continuant, delayedRelease, nasal, lateral, strident, tap, trill

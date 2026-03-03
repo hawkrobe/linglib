@@ -2,7 +2,7 @@
 # Thematic Roles (Neo-Davidsonian)
 
 Neo-Davidsonian thematic roles as two-place predicates relating entities
-to events (Parsons 1990). This module provides:
+to events. This module provides:
 
 - `ThematicRel`: the type `Entity → Ev Time → Prop`
 - `ThematicFrame`: a model's assignment of role relations
@@ -229,7 +229,7 @@ theorem modify_assoc {Time : Type*} [LE Time]
     "x is happy" ↦ ∃s. P(s) ∧ Holder(x, s)
 
     Parallel to `intransitiveLogicalForm` but using `holder` instead of
-    `agent`, reflecting that states select for holders, not agents. Wellwood (2015, §3.2, p. 81): gradable adjectives
+    `agent`, reflecting that states select for holders, not agents. @cite{wellwood-2015}: gradable adjectives
     predicate of states with mereological structure.
 
     Note: `EventModifier` applies to states since states are events

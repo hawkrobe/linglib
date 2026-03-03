@@ -1,5 +1,5 @@
 /-
-# Haslinger et al. (2025): Distributivity ≠ Maximality
+# @cite{haslinger-etal-2025}: Distributivity ≠ Maximality
 
 Empirical data from "On the relation between distributivity and maximality"
 (Semantics & Pragmatics 18, Article 1).

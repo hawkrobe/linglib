@@ -95,7 +95,7 @@ inductive GramFunction where
 
 /-- Referential index for cross-slot coreference constraints.
     Slots sharing the same RefIndex must have their semantic values
-    unified. Kay & Fillmore (1999, Figure 12) use #1, #2, etc. to
+    unified. @cite{kay-fillmore-1999} use #1, #2, etc. to
     express identity between a construction's semantic arguments
     and its valence members' semantic values. -/
 abbrev RefIndex := Nat

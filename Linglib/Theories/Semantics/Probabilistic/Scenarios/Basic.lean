@@ -5,7 +5,7 @@ Probabilistic scenario constraints for meaning in context.
 
 ## Overview
 
-Frames (Fillmore 1982) and scenarios/scripts (Schank & Abelson 1977)
+Frames and scenarios/scripts
 provide background knowledge that constrains interpretation:
 
 - RESTAURANT scenario: waiter, menu, bill, tip
@@ -14,7 +14,7 @@ provide background knowledge that constrains interpretation:
 
 ## Connection to SDS
 
-Erk & Herbelot (2024) model scenarios as distributions over concepts:
+@cite{erk-herbelot-2024} model scenarios as distributions over concepts:
 ```
 P(concept | scenario) = topic-word distribution (LDA-style)
 ```
@@ -41,6 +41,7 @@ namespace Semantics.Probabilistic.Scenarios
 
 /-!
 ## Frames as Distributions over Concepts
+@cite{fillmore-1982} @cite{schank-abelson-1977}
 
 A frame/scenario is a coherent situation type that makes certain
 concepts more or less likely.

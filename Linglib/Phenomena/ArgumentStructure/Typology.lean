@@ -698,8 +698,8 @@ def causativeMorphExamples : List CausativeMorphologyExample :=
   , { language := "Swahili",    morpheme := "-ish-/-esh-",   position := "suffix" }
   , { language := "Hindi",      morpheme := "-aa/-vaa",      position := "suffix" }
   , { language := "Korean",     morpheme := "-i/-hi/-li/-ki", position := "suffix" }
-  , { language := "Finnish",    morpheme := "-tta-/-ttä-",   position := "suffix" }
-  , { language := "Hungarian",  morpheme := "-tat-/-tet-",   position := "suffix" }
+, { language := "Finnish", morpheme := "-tta-/-ttä-", position := "suffix" }
+, { language := "Hungarian", morpheme := "-tat-/-tet-",   position := "suffix" }
   , { language := "Abkhaz",     morpheme := "r-",            position := "prefix" }
   , { language := "Lepcha",     morpheme := "-y-",           position := "infix" }
   , { language := "Georgian",   morpheme := "a-...-ineb",    position := "circumfix" } ]

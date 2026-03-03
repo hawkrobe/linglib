@@ -1,7 +1,7 @@
 /-
 # Coproduct Structure and Merge on Workspaces
 
-Formalizes §2.2–2.3 of Marcolli, Chomsky & Berwick (2023): quotient trees T/Tᵥ,
+Formalizes §2.2–2.3 of @cite{marcolli-chomsky-berwick-2023}: quotient trees T/Tᵥ,
 admissible cuts, the leading coproduct term, and Merge as a workspace operator.
 
 The coproduct Δ(T) decomposes a tree into pairs (subtree, quotient) and is the

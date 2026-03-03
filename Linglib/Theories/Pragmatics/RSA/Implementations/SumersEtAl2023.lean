@@ -1,5 +1,5 @@
 /-
-# Sumers et al. (2023): Reconciling Truthfulness and Relevance
+# @cite{sumers-etal-2023}: Reconciling Truthfulness and Relevance
 
 "Reconciling truthfulness and relevance as epistemic and decision-theoretic utility"
 

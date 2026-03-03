@@ -1,5 +1,5 @@
 /-
-Where is the destructive update problem? (Charlow 2019).
+Where is the destructive update problem?.
 
 Destructive update is not empirically problematic: assignment modification
 is shared between static and dynamic systems. The static/dynamic divide

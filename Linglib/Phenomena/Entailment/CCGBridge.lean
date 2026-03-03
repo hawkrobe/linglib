@@ -9,9 +9,9 @@ This module demonstrates the complete CCG → Montague pipeline:
 ## The Pipeline
 
 ```
-CCG.DerivStep                    Semantics.Montague.Ty
-├── john_sleeps : DerivStep      ├── catToTy S = t (Bool)
-└── .interp toySemLexicon        └── meaning : Bool
+CCG.DerivStep Semantics.Montague.Ty
+├── john_sleeps : DerivStep ├── catToTy S = t (Bool)
+└──.interp toySemLexicon └── meaning : Bool
     ↓
 TruthConditions.TruthJudgment
 ├── judgedTrue = true
@@ -215,7 +215,7 @@ Theories/CCG/Basic.lean
     ↑ provides: DerivStep, Cat, combinatory rules
 ```
 
-This is the **second complete pipeline analysis** in Linglib (after Scontras & Pearl 2021),
+This is the **second complete pipeline analysis** in Linglib (after @cite{scontras-pearl-2021}),
 demonstrating that the architecture generalizes across phenomena.
 -/
 

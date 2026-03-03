@@ -1,5 +1,6 @@
 /-
 # Builder Properties: Derived Properties from Fragment Lexical Features
+@cite{elliott-etal-2017} @cite{villalta-2008}
 
 This module connects Fragment lexical entries to Theory-derived properties.
 It provides the derivation functions that compute theoretical properties
@@ -8,13 +9,13 @@ It provides the derivation functions that compute theoretical properties
 ## Architecture
 
 The Fragment layer defines `PreferentialBuilder` as minimal lexical features:
-- `degreeComparison`: Degree-comparison semantics (Villalta 2008)
-- `uncertaintyBased`: Uncertainty-based semantics (Elliott et al. 2017)
+- `degreeComparison`: Degree-comparison semantics
+- `uncertaintyBased`: Uncertainty-based semantics
 - `relevanceBased`: Relevance-based semantics
 
 This module derives theoretical properties from those features:
 - C-distributivity: from semantic structure (proved in CDistributivity.lean)
-- NVP class: from C-distributivity + valence (Qing et al. 2025)
+- NVP class: from C-distributivity + valence
 
 ## Why This File Exists
 

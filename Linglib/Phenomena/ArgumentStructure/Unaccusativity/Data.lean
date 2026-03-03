@@ -241,7 +241,7 @@ def li_arrive_pronoun : DiagnosticDatum :=
 -- ════════════════════════════════════════════════════
 
 /-! Setswana quotative inversion data from @cite{collins-1997}, discussed
-    extensively in Storment (2026, §2–§3). Setswana QI uses class 17
+    extensively in @cite{storment-2026}. Setswana QI uses class 17
     default subject agreement (SM17 `go`), never tracking the agent. -/
 
 /-- Setswana QI with 'botsa' (ask). @cite{collins-1997}, cited as Storment ex. (4). -/

@@ -67,7 +67,7 @@ Example: "some students passed"
 - quant = some_sem
 - noun = isStudent
 - form = "some"
-- scaleMembership = .quantifier .some_
+- scaleMembership =.quantifier.some_
 
 The VP is provided separately (world-indexed) to enable evaluation at
 different worlds.

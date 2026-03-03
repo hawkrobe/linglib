@@ -1,5 +1,6 @@
 /-
-# Égré, Spector, Mortier & Verheyen (2023)
+# Égré, @cite{cremers-wilcox-spector-2023}
+@cite{egre-etal-2023}
 
 "On the optimality of vagueness: 'around', 'between', and the Sorites"
 Linguistics and Philosophy 46:1101–1130

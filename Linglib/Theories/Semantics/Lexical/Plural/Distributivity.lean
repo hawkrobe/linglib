@@ -2,7 +2,7 @@
 # Plural Distributivity and Non-Maximality
 
 Formalizes the independence of distributivity and maximality,
-following Križ & Spector (2021) and Haslinger et al. (2025).
+following Križ & @cite{kriz-spector-2021} and @cite{haslinger-etal-2025}.
 
 ## Insight
 

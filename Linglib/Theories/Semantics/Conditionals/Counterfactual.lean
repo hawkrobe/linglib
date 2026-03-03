@@ -2,7 +2,7 @@
 # Counterfactual Conditionals: Three Theories
 
 Formalization of three competing theories of counterfactual conditionals,
-following Ramotowska, Marty, Romoli & Santorio (2025).
+following Ramotowska, @cite{ramotowska-santorio-2025}.
 
 ## The Three Theories
 

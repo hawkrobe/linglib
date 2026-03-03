@@ -1,7 +1,7 @@
 /-
 # The Proper Treatment of Quantification in Ordinary English (PTQ)
 
-Formalization of Montague (1973), the foundational paper establishing
+Formalization of @cite{montague-1973}, the foundational paper establishing
 the homomorphism between natural language syntax and model-theoretic semantics.
 
 ## Innovations
@@ -158,10 +158,10 @@ structure LexEntry (m : PTQModel) where
 Basic Expressions (BₐC for each category C)
 
 Examples from PTQ:
-- Bₐₑ = {John, Mary, Bill, ...} (proper names)
-- BₐCN = {man, woman, fish, pen, unicorn, ...} (common nouns)
-- BₐIV = {walk, talk, run, ...} (intransitive verbs)
-- BₐTV = {love, find, seek, ...} (transitive verbs)
+- Bₐₑ = {John, Mary, Bill,...} (proper names)
+- BₐCN = {man, woman, fish, pen, unicorn,...} (common nouns)
+- BₐIV = {walk, talk, run,...} (intransitive verbs)
+- BₐTV = {love, find, seek,...} (transitive verbs)
 -/
 
 -- Section 6: Syntactic Rules (S1-S17)

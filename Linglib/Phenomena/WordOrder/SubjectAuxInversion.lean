@@ -15,8 +15,8 @@ conditionals, exclamatives, and shows systematic dialectal variation.
 ## Classic Data
 
 The core SAI pattern has been a central case study in generative syntax
-since @cite{chomsky-1957}. Textbook presentations: @cite{radford-2009} Ch. 5,
-@cite{adger-2003} Ch. 8, @cite{sag-wasow-bender-2003} Ch. 3.
+since @cite{chomsky-1957}. Textbook presentations: @cite{radford-2009},
+@cite{adger-2003}, @cite{sag-wasow-bender-2003}.
 
 ## Boundary Cases
 
@@ -65,7 +65,7 @@ inductive SAIContext where
   | tagQuestion
   /-- VP ellipsis (stranded tense): "She runs faster than he does" -/
   | vpEllipsis
-  /-- Emphatic/verum focus: "She DOES like him" -/
+  /-- Emphatic/verum focus: "Sue DOES eat fish" -/
   | emphatic
   deriving DecidableEq, Repr, BEq
 
@@ -143,7 +143,7 @@ def ex05 : SAIDatum :=
     context := .matrixYN
     acceptability := .ungrammatical
     description := "Polar question without inversion"
-    citation := "Radford (2009) Ch. 5" }
+    citation := "Radford (2009)" }
 
 def ex06 : SAIDatum :=
   { sentence := "Is the cat sleeping?"
@@ -190,31 +190,6 @@ def ex10 : SAIDatum :=
     context := .echo
     acceptability := .grammatical
     description := "Echo question — wh-in-situ, no inversion" }
-
--- ============================================================================
--- § 2  Core Minimal Pairs as StringPhenomenonData
--- ============================================================================
-
-/-! For compatibility with the Grammar.capturesPhenomenon interface and
-existing bridge modules, the core data is also available as minimal pairs. -/
-
-def coreData : StringPhenomenonData :=
-  { name := "Subject-Auxiliary Inversion"
-    generalization := "Matrix questions require aux-subject order; " ++
-      "embedded questions require subject-aux order"
-    pairs :=
-      [ { grammatical := "What can John eat?"
-          ungrammatical := "What John can eat?"
-          clauseType := .matrixQuestion
-          description := "Matrix wh-question requires inversion" }
-      , { grammatical := "Can John eat pizza?"
-          ungrammatical := "John can eat pizza?"
-          clauseType := .matrixQuestion
-          description := "Matrix yes-no question requires inversion" }
-      , { grammatical := "I wonder what John can eat"
-          ungrammatical := "I wonder what can John eat"
-          clauseType := .embeddedQuestion
-          description := "Embedded question prohibits inversion" } ] }
 
 -- ============================================================================
 -- § 3  Negative Inversion (@cite{klima-1964})
@@ -557,11 +532,11 @@ decision, independent of the syntactic feature-sharing operation. -/
 /-- Do-support with lexical verbs in SAI -/
 
 def ex27 : SAIDatum :=
-  { sentence := "Does John eat pizza?"
+  { sentence := "Where does Sue eat fish?"
     inverted := true
-    context := .matrixYN
+    context := .matrixWh
     acceptability := .grammatical
-    description := "Do-support in polar question (lexical verb)"
+    description := "Do-support in wh-question (lexical verb)"
     citation := "Arregi & Pietraszko (2021) (36c)" }
 
 def ex28 : SAIDatum :=
@@ -662,7 +637,7 @@ def ex38 : SAIDatum :=
 
 /-- Verum focus (emphatic 'do') -/
 def ex39 : SAIDatum :=
-  { sentence := "She DOES like him"
+  { sentence := "Sue DOES eat fish"
     inverted := false
     context := .emphatic
     acceptability := .grammatical
@@ -684,31 +659,6 @@ def ex41 : SAIDatum :=
     acceptability := .ungrammatical
     description := "Do-support with auxiliary is ungrammatical even for verum"
     citation := "Arregi & Pietraszko (2021) (37b)" }
-
--- ============================================================================
--- § 9  Verb-Specific Acquisition (@cite{westergaard-2009})
--- ============================================================================
-
-/-! @cite{westergaard-2009} shows that children acquiring English learn SAI on a
-verb-by-verb basis rather than as a single abstract rule. Children produce
-inversion with 'is' and 'can' before 'does' and 'has', suggesting
-item-specific learning.
-
-This has implications for both constructionist (usage-based) and generative
-accounts: if SAI were a single parameter or rule, we would expect uniform
-acquisition across auxiliaries.
-
-Experimental work on frequency effects confirms this: children's inversion
-errors are inversely correlated with input frequency of specific
-auxiliary+wh combinations. -/
-
-/-- Auxiliaries ordered by approximate acquisition timeline -/
-def acquisitionOrder : List (String × String) :=
-  [ ("is",    "early — high frequency, salient copula")
-  , ("can",   "early — high frequency modal")
-  , ("will",  "intermediate — medium frequency")
-  , ("does",  "late — low frequency, requires do-support")
-  , ("has",   "late — low frequency, less salient") ]
 
 -- ============================================================================
 -- Aggregate Collections
@@ -793,7 +743,7 @@ def doSupportData : List SAIDatum :=
 #guard ex33.acceptability == .ungrammatical -- *Sue not eats fish
 
 -- Do-support is the grammatical alternative for lexical verbs.
-#guard ex27.acceptability == .grammatical   -- Does John eat pizza?
+#guard ex27.acceptability == .grammatical   -- Where does Sue eat fish?
 #guard ex32.acceptability == .grammatical   -- Sue does not eat fish
 
 -- Pollock: French lexical verbs raise; English lexical verbs do not.
@@ -813,7 +763,7 @@ def doSupportData : List SAIDatum :=
 #guard ex38.acceptability == .grammatical     -- She runs faster than he does
 
 -- Verum focus: do-support for lexical verbs, direct auxiliary for auxiliaries.
-#guard ex39.acceptability == .grammatical     -- She DOES like him
+#guard ex39.acceptability == .grammatical     -- Sue DOES eat fish
 #guard ex40.acceptability == .grammatical     -- She IS eating fish
 #guard ex41.acceptability == .ungrammatical   -- *She DOES be eating fish
 

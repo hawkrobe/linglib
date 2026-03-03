@@ -3,8 +3,7 @@
 @cite{aikhenvald-2025}
 
 Medial clause markers (clause chain linkers) in Manambu (Ndu family, East Sepik,
-Papua New Guinea). Data from Aikhenvald (2008: 538-561) and Aikhenvald (2025:
-Table 3, p. 156).
+Papua New Guinea). Data from @cite{aikhenvald-2008} and @cite{sarvasy-aikhenvald-2025}.
 
 Manambu has a rich system of medial clause markers that encode:
 1. **Switch-reference**: SS (same subject) vs. DS (different subject), or neutral

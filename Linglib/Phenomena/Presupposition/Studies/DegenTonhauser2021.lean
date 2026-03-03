@@ -1,5 +1,6 @@
 /-
-# Degen & Tonhauser (2021): Are There Factive Predicates?
+# @cite{degen-tonhauser-2021}: Are There Factive Predicates?
+@cite{heim-1983} @cite{schlenker-2009} @cite{van-der-sandt-1992}
 
 Empirical data from "Are there factive predicates? An empirical investigation"
 by Judith Degen and Judith Tonhauser.
@@ -33,11 +34,11 @@ variability in projection strength.
 2. Definition 3b (CC is presupposed AND entailed) not supported:
    - Set of "factive" predicates is either empty or heterogeneous
 
-3. For projection analyses (Heim 1983, van der Sandt 1992, Schlenker 2009):
+3. For projection analyses:
    - Unclear which predicates the analyses apply to
    - Need to account for gradient projection
 
-## Connection to Tonhauser et al. (2013)
+## Connection to @cite{tonhauser-beaver-roberts-simons-2013}
 
 This paper extends and empirically tests the Tonhauser taxonomy:
 - SCF (Strong Contextual Felicity) relates to whether content must be established

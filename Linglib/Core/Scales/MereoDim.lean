@@ -23,7 +23,7 @@ This file bridges them at four levels:
 
 ## The lax measure square
 
-The Krifka (1989/1998) linking theory involves two dimension chains:
+The @cite{krifka-1989} linking theory involves two dimension chains:
 
 ```
 Events →θ Entities →μ ℚ (object dimension)

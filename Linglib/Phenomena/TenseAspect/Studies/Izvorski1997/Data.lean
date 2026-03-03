@@ -3,7 +3,7 @@ import Linglib.Core.Discourse.Evidence
 /-!
 # @cite{izvorski-1997}: The Present Perfect as an Epistemic Modal — Data @cite{izvorski-1997}
 
-Empirical data from Izvorski (1997, SALT 7). In Bulgarian, Turkish, Norwegian,
+Empirical data from @cite{izvorski-1997}. In Bulgarian, Turkish, Norwegian,
 and other languages, present perfect morphology doubles as an indirect evidential
 (the "Perfect of Evidentiality" = PE). The paper's central proposal (8):
 

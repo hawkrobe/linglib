@@ -10,16 +10,16 @@ Key constraints:
 
 ## The Data
 
-  (1a)  John and Mary sleep           ✓  NP coordination
-  (1b) *John and sleeps               ✗  category mismatch (D + V)
+  (1a) John and Mary sleep ✓ NP coordination
+  (1b) *John and sleeps ✗ category mismatch (D + V)
 
-  (2a)  John sleeps and Mary sleeps   ✓  S coordination
-  (2b) *John sleeps and Mary          ✗  incomplete second conjunct
+  (2a) John sleeps and Mary sleeps ✓ S coordination
+  (2b) *John sleeps and Mary ✗ incomplete second conjunct
 
-  (3a)  John sees and hears Mary      ✓  VP coordination (shared args)
-  (3b) *John sees and sleeps Mary     ✗  valence mismatch (trans + intrans)
+  (3a) John sees and hears Mary ✓ VP coordination (shared args)
+  (3b) *John sees and sleeps Mary ✗ valence mismatch (trans + intrans)
 
-Reference: Gibson (2025) "Syntax", MIT Press, Section 3.8
+Reference: @cite{gibson-2025}
 -/
 
 import Linglib.Core.Grammar
@@ -104,8 +104,8 @@ Yet it behaves as a unit for coordination purposes.
 3. Each predication shares the same object ("beans")
 
 References:
-- Steedman (2000) "The Syntactic Process" Ch. 3
-- Dowty (1988) "Type raising, functional composition, and non-constituent conjunction"
+- @cite{steedman-2000} "The Syntactic Process" Ch. 3
+- @cite{dowty-1988} "Type raising, functional composition, and non-constituent conjunction"
 -/
 
 /--

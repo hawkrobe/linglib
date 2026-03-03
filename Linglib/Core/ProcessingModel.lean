@@ -15,7 +15,7 @@ theory's predictions.
 
 | Dimension | Cognitive Correlate |
 |-----------|-------------------|
-| `locality` | Working memory decay (Gibson 2000, Lewis & Vasishth 2005) |
+| `locality` | Working memory decay |
 | `boundaries` | Clause/phrase boundaries increase retrieval interference |
 | `referentialLoad` | Referential processing from intervening material |
 | `ease` | Retrieval facilitation (filler complexity, predictability) |

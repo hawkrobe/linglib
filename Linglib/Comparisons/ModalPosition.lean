@@ -18,7 +18,7 @@ position–flavor correlation is STIPULATED: epistemic modals are high
 because there is an Epistemic Modality Phrase above TP; root modals are
 low because there is an Ability/Root Modality Phrase below AspP.
 
-## Hacquard (2006, 2010): Content Licensing Derivation
+## @cite{hacquard-2006}: Content Licensing Derivation
 
 Hacquard derives the same correlation from a single principle: epistemic
 modal bases require a **contentful** event (one with propositional

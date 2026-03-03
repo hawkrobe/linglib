@@ -2,7 +2,7 @@
 # Exhaustivity Operators: exh_mw and exh_ie
 @cite{groenendijk-stokhof-1984} @cite{spector-2016} @cite{wang-2025} @cite{chierchia-2013}
 
-Formalization of Spector (2016) "Comparing exhaustivity operators"
+Formalization of @cite{spector-2016} "Comparing exhaustivity operators"
 Semantics & Pragmatics Volume 9, Article 11: 1–33.
 
 ## Paper Structure
@@ -51,7 +51,7 @@ open Semantics.Entailment.Polarity (ContextPolarity)
 "The proposition expressed by a sentence is the set of worlds in which this
 sentence is true."
 
-"To mean that a proposition φ is true (resp. false) in a world u ... I write
+"To mean that a proposition φ is true (resp. false) in a world u... I write
 φ(u) = 1 (resp. φ(u) = 0), rather than u ∈ φ (resp. u ∉ φ)."
 -/
 
@@ -260,7 +260,7 @@ def closedUnderDisj : Prop :=
 /-
 ## Spector's Approach to MC-set Existence
 
-Following Spector (2016) Section 5.3, we do not use Zorn's lemma.
+Following @cite{spector-2016} Section 5.3, we do not use Zorn's lemma.
 Instead, MC-set existence follows from minimal world existence via Lemma 1:
 
   u is minimal ⟺ X(u) is an MC-set

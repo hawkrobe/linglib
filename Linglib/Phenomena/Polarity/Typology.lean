@@ -870,7 +870,7 @@ theorem every_language_has_direct_neg :
 
 In our sample, free choice and comparative are always covered by the
 same series. This reflects their shared universal/widened-domain semantics.
-Haspelmath (1997:48): "the comparative function is semantically similar
+@cite{haspelmath-1997}: "the comparative function is semantically similar
 to free choice." -/
 
 /-- Free choice and comparative are always in the same series. -/

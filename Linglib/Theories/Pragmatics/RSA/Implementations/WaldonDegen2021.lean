@@ -1,14 +1,15 @@
 /-
 # Continuous-Incremental RSA (CI-RSA)
+@cite{cohn-gordon-goodman-potts-2019}
 
-Implements Waldon & Degen (2021) "Modeling cross-linguistic production of
-referring expressions" (SCiL 2021).
+Implements @cite{waldon-degen-2021} "Modeling cross-linguistic production of
+referring expressions".
 
 ## Overview
 
 CI-RSA synthesizes two RSA extensions:
-1. **Incremental RSA** (Cohn-Gordon et al. 2018): Word-by-word production
-2. **Continuous semantics** (Degen et al. 2020): Noisy adjective reliability
+1. **Incremental RSA**: Word-by-word production
+2. **Continuous semantics**: Noisy adjective reliability
 
 ## Key Equations
 

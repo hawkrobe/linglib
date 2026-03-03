@@ -1,7 +1,7 @@
 /-
-# Almog (2014): Referential Mechanics — Synthesis
+# @cite{almog-2014}: Referential Mechanics — Synthesis
 
-The central thesis of Almog (2014): the three mechanisms of direct reference
+The central thesis of @cite{almog-2014}: the three mechanisms of direct reference
 — designation, singular propositions, and referential use — are logically
 independent. An expression can exhibit any subset of the three.
 

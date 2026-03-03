@@ -1,5 +1,5 @@
 /-
-# Franke & Bergen (2020): Nested Aristotelian Interpretation
+# @cite{franke-bergen-2020}: Nested Aristotelian Interpretation
 
 Model comparison for doubly-quantified sentences. Global Intentions (GI) achieves 0.956 posterior probability, dramatically outperforming vanilla RSA (0.000) and lexical uncertainty (0.044).
 

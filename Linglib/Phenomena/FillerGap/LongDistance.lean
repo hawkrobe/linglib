@@ -12,19 +12,19 @@ from its canonical position, leaving a "gap":
 
 ## The Data
 
-  (1a)  What did John see?           ✓  object wh-question
-  (1b) *Did John see what?           ✗  wh-in-situ in matrix question
+  (1a) What did John see? ✓ object wh-question
+  (1b) *Did John see what? ✗ wh-in-situ in matrix question
 
-  (2a)  Who saw Mary?                ✓  subject wh-question (no aux needed)
-  (2b) *Did who see Mary?            ✗  subject extraction with do-support
+  (2a) Who saw Mary? ✓ subject wh-question (no aux needed)
+  (2b) *Did who see Mary? ✗ subject extraction with do-support
 
-  (3a)  the book that John read      ✓  object relative clause
-  (3b) *the book that read John      ✗  wrong word order in relative
+  (3a) the book that John read ✓ object relative clause
+  (3b) *the book that read John ✗ wrong word order in relative
 
-  (4a)  John wonders what Mary saw   ✓  embedded wh-question
-  (4b) *John wonders what saw Mary   ✗  wrong word order in embedded
+  (4a) John wonders what Mary saw ✓ embedded wh-question
+  (4b) *John wonders what saw Mary ✗ wrong word order in embedded
 
-Reference: Gibson (2025) "Syntax", MIT Press, Section 3.9
+Reference: @cite{gibson-2025}
 -/
 
 import Linglib.Core.Grammar

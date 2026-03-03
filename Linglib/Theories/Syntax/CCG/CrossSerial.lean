@@ -7,9 +7,9 @@ CCG derivations for Dutch cross-serial dependencies using generalized compositio
 
 CCG handles cross-serial dependencies via generalized composition:
 
-  Forward Composition (B):   X/Y  Y/Z  →  X/Z
-  Forward Composition² (B²): X/Y  Y/Z/W  →  X/Z/W
-  Forward Composition³ (B³): X/Y  Y/Z/W/V  →  X/Z/W/V
+  Forward Composition (B): X/Y Y/Z → X/Z
+  Forward Composition² (B²): X/Y Y/Z/W → X/Z/W
+  Forward Composition³ (B³): X/Y Y/Z/W/V → X/Z/W/V
 
 These allow a transitive verb to "inherit" arguments from an
 embedded verb, creating the cross-serial pattern.
@@ -18,10 +18,10 @@ embedded verb, creating the cross-serial pattern.
 
 For "Jan Piet zag zwemmen" (Jan saw Piet swim):
 
-  Jan        Piet       zag           zwemmen
-  NP         NP         (S\NP)/VP     VP/NP
-  ↓T                    ↓
-  S/(S\NP)              (S\NP)/VP     VP/NP
+  Jan Piet zag zwemmen
+  NP NP (S\NP)/VP VP/NP
+  ↓T ↓
+  S/(S\NP) (S\NP)/VP VP/NP
              ↓T
              VP/(VP\NP)
                         └────>B──────┘
@@ -179,8 +179,8 @@ For "Jan Piet zag zwemmen" (Jan saw Piet swim):
 The key insight is that zwemmen in verb-raising has category (S\NP)/NP,
 allowing it to pick up its subject (Piet) as an argument via composition.
 
-  Jan        Piet       zag              zwemmen
-  NP         NP         (S\NP)/(S\NP)    (S\NP)/NP
+  Jan Piet zag zwemmen
+  NP NP (S\NP)/(S\NP) (S\NP)/NP
                         └─────────>B─────────────┘
                                (S\NP)/NP
                         └────────────>────────────┘

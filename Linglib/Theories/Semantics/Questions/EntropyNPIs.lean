@@ -261,7 +261,7 @@ theorem ppi_increases_entropy_when_positively_biased {W : Type*} [Fintype W]
 
 Non-negativity and reduction to binary entropy.
 
-Note: Van Rooy (2003, Section 5.3) shows that entropy equals expected utility
+Note: @cite{van-rooy-2003} shows that entropy equals expected utility
 for the log-scoring decision problem, grounding the entropy measure in decision
 theory. A formal bridge to the ℚ-valued `questionUtility` in `Core.DecisionTheory`
 requires ℝ-valued decision theory infrastructure.

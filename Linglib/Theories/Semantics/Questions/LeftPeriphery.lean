@@ -1,9 +1,9 @@
 /-
-# The Interrogative Left Periphery (Dayal 2025)
+# The Interrogative Left Periphery
 
 Question meaning is built at three points in the left periphery:
 
-    [SAP SA_ASK [PerspectiveP PRO Persp_CQ [CP C_±WH [TP ...]]]]
+    [SAP SA_ASK [PerspectiveP PRO Persp_CQ [CP C_±WH [TP...]]]]
 
 1. **CP** (C_±WH): Clause-typing — shifts proposition ⟨s,t⟩ to set of propositions ⟨⟨s,t⟩,t⟩
 2. **PerspectiveP** (Persp_CQ): Centering — introduces PRO (perspectival center)

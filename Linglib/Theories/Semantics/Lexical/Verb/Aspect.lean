@@ -1,7 +1,7 @@
 import Linglib.Core.Scales.Scale
 
 /-
-Aspectual categories following Vendler (1957) and Dowty (1979).
+Aspectual categories following @cite{vendler-1957} and @cite{dowty-1979}.
 Three binary features (telicity, duration, dynamicity) yield four Vendler classes.
 Aspectual shifts (telicize, atelicize, duratize) model compositional coercion.
 

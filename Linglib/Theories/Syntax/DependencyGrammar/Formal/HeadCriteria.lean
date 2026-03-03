@@ -2,10 +2,10 @@
 # Head Determination Criteria
 
 Formalizes the six criteria for identifying head-dependent relations in
-dependency grammar, following Zwicky (1985) and Hudson (1990).
+dependency grammar, following @cite{zwicky-1985} and @cite{hudson-1990}.
 
 The concept of "head" has a prototype structure: typical instances satisfy
-all or most criteria, while more peripheral instances satisfy fewer (Hudson 1990).
+all or most criteria, while more peripheral instances satisfy fewer.
 
 ## The Six Criteria
 

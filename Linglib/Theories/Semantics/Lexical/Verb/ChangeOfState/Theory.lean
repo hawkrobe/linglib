@@ -21,11 +21,11 @@ This maps directly to `PrProp` from `Core.Presupposition`:
 ## Examples
 
 "Mary stopped smoking" at world w where she was smoking, now isn't:
-  - presup(w) = w.priorSmokes = true    ✓
-  - assertion(w) = ¬w.currentSmokes = ¬false = true  ✓
+  - presup(w) = w.priorSmokes = true ✓
+  - assertion(w) = ¬w.currentSmokes = ¬false = true ✓
 
 "Mary started smoking" at same world:
-  - presup(w) = ¬w.priorSmokes = false   ✗ (presupposition failure)
+  - presup(w) = ¬w.priorSmokes = false ✗ (presupposition failure)
 
 -/
 

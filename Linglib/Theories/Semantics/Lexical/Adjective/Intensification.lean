@@ -1,7 +1,7 @@
 /-
 # Evaluative Measure Semantics for Deadjectival Intensifiers
 
-Nouwen (2024) proposes that deadjectival intensifiers derive their degree
+@cite{nouwen-2024} proposes that deadjectival intensifiers derive their degree
 function from the evaluative meaning of their adjectival base.
 
 ## Core Idea

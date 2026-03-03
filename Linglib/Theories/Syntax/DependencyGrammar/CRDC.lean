@@ -1,14 +1,15 @@
 /-
 # Valency-Based Binding: CRDC
+@cite{hudson-1990} @cite{tesnire-1959}
 
-Implements Osborne & Li's (2023) Conjunct Referential Dependency Constraint,
+Implements @cite{osborne-li-2023} Conjunct Referential Dependency Constraint,
 a valency-based approach to binding in Dependency Grammar.
 
 ## Key Concepts
 
-1. **Valency Frame**: The combinatory potential of a predicate (Tesnière 1959)
+1. **Valency Frame**: The combinatory potential of a predicate
 2. **Argument vs. Valent**: Arguments are semantically selected; valents are syntactic
-   dependents that may or may not be arguments (Osborne 2019, Ch. 6)
+   dependents that may or may not be arguments
 3. **Full Valent vs. Conjunct Valent**: Full valents can bind conjunct valents
 
 ## The CRDC
@@ -18,7 +19,7 @@ antecedent must be a full valent of P that precedes it in the valency frame.
 
 ## How This Differs from D-Command
 
-| D-Command (Hudson 1990) | CRDC (Osborne & Li 2023) |
+| D-Command | CRDC |
 |-------------------------|--------------------------|
 | Co-dependents of same head | Valents in same frame |
 | Subject label = binder | Full valent = binder |
@@ -28,7 +29,7 @@ For simple transitives, predictions are identical. Differences emerge with:
 - Raising constructions (valent ≠ argument)
 - Complex valency patterns (ditransitives, control)
 
-## Valency Frame Notation (from Osborne 2019)
+## Valency Frame Notation (from @cite{osborne-2019})
 
 - `Na` = Nominal argument (subscript `a` marks argument status)
 - `N` = Nominal valent (no subscript = not semantically selected)

@@ -11,7 +11,7 @@ Formalizes the structural theory of non-projectivity from:
 - @cite{kuhlmann-2013}. Mildly Non-Projective Dependency Grammar.
   Computational Linguistics 39(2):355–387.
 - @cite{mueller-2013}. Unifying Everything. Language 89(4):920–950.
-- Hudson (1984, 1990, 2007). Word Grammar.
+- @cite{hudson-1984}. Word Grammar.
 
 ## Core Concepts
 

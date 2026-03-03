@@ -1,7 +1,7 @@
 import Mathlib.Data.Rat.Defs
 
 /-!
-# Cognitive Environments — Sperber & Wilson (1986/95)
+# Cognitive Environments — @cite{sperber-wilson-1986}
 
 The cognitive environment of an individual is the set of all facts that are
 manifest to them. Manifestness is graded: perceptually obvious facts are

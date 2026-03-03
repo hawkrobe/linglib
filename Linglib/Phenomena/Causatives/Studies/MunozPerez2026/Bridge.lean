@@ -60,7 +60,7 @@ def spanishFissionRule : FissionRule PersonCategory where
     cl2Form := "le"
   }
 
-/-- Muñoz Pérez (2026, ex. 58): Non-thematic Voice must be overtly
+/-- Muñoz @cite{munoz-perez-2026}: Non-thematic Voice must be overtly
     marked by a reflexive-like element at PF. -/
 def spanishAnticausativePF : PFMarkingCondition where
   isSatisfied := fun cs => cs.any (fun c => c == "se" || c == "me" || c == "te" || c == "nos")

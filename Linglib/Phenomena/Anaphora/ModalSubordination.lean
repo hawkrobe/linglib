@@ -6,7 +6,7 @@ anaphora to entities introduced under modals is licensed.
 
 ## The Phenomenon
 
-"A wolf might come in. It would eat you first."
+"A wolf might come. It would eat you first."
 
 The pronoun "it" in the second sentence refers to the wolf introduced
 under "might" in the first sentence. This is surprising because:
@@ -17,7 +17,7 @@ under "might" in the first sentence. This is surprising because:
 
 1. Modals can establish contexts that persist across sentences.
 2. Certain modals (would, could) continue the modal context.
-3. "A wolf might come in. It eats you." is odd (indicative blocks).
+3. "A wolf might come. It eats you." is odd (indicative blocks).
 4. The pattern is similar to counterfactual conditionals.
 
 -/

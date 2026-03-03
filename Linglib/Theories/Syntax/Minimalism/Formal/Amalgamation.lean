@@ -1,7 +1,7 @@
 /-
 # Amalgamation: A Lattice-Theoretic Characterization
 
-Formalization of postsyntactic amalgamation following Harizanov & Gribanova (2019)
+Formalization of postsyntactic amalgamation following @cite{harizanov-gribanova-2019}
 "Whither head movement?" (NLLT 37:461-522).
 
 ## Insight
@@ -108,13 +108,13 @@ Heads are leaves and can't contain anything. But their projections can.
 
 Example:
 ```
-      TP        <- T's maximal projection
-     /  \
-    T    vP     <- v's maximal projection
-        /  \
-       v    VP  <- V's maximal projection
-           /  \
-          V   DP
+      TP <- T's maximal projection
+     / \
+    T vP <- v's maximal projection
+        / \
+       v VP <- V's maximal projection
+           / \
+          V DP
 ```
 
 T immediately c-commands v ↔ TP covers vP (TP contains vP, no intervening head projection)
@@ -319,7 +319,7 @@ axiom word_formation_implies_amalgamation :
    - Syntactic (can violate covering, creates copies, possible interp effects)
    - Amalgamation (restricted to covering, no copies, no interp effects)
 
-## Connection to Barker & Pullum (1990)
+## Connection to @cite{barker-pullum-1990}
 
 Their framework defines command relations via upper bounds:
 - UB(x, P) = {y ∈ P | y properly dominates x}

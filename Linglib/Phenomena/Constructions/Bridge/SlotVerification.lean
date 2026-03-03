@@ -125,7 +125,7 @@ theorem ditransitive_embedding_consistent :
 -- § 5. WXDY (@cite{kay-fillmore-1999}, Figure 12)
 -- ============================================================================
 
-/-! Kay & Fillmore (1999, Figure 12) formalize the WXDY construction
+/-! @cite{kay-fillmore-1999} formalize the WXDY construction
     as a hierarchical AVM with valence sets, grammatical functions,
     coreference indices (#1, #2), and feature constraints ([loc -],
     [neg -], [ref ∅]). This flat projection captures the key structural

@@ -1,7 +1,7 @@
 /-
 # Conflicting Presuppositions in Disjunction
 
-Formalizes Yagi (2025) "Conflicting presuppositions in disjunction" (S&P 18:7).
+Formalizes @cite{yagi-2025} "Conflicting presuppositions in disjunction" (S&P 18:7).
 
 ## Problem
 

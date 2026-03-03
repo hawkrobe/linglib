@@ -3,16 +3,16 @@
 
 Fragment entries for numeral modification expressions, covering:
 - **Tolerance modifiers**: "around", "approximately", "roughly"
-- **Interval modifiers**: "between ... and ..."
+- **Interval modifiers**: "between... and..."
 - **Exactifiers**: "exactly", "precisely"
 - **Bound-setting modifiers**: "at least", "at most", "more than", "fewer than",
-  "up to", "from ... on"
+  "up to", "from... on"
 
-The bound-setting modifiers are classified following Kennedy (2015):
+The bound-setting modifiers are classified following @cite{kennedy-2015}:
 - Class A (strict: >, <): "more than", "fewer than" — no ignorance implicature
 - Class B (non-strict: ≥, ≤): "at least", "at most", "up to", "from...on" — ignorance
 
-Evaluative valence (Blok 2015, Claus & Walch 2024) distinguishes "at most" (negative)
+Evaluative valence distinguishes "at most" (negative)
 from "up to" (positive), predicting divergent framing effects.
 
 -/

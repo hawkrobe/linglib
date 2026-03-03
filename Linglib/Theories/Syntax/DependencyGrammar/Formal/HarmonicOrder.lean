@@ -4,7 +4,7 @@ import Linglib.Theories.Syntax.DependencyGrammar.Formal.DependencyLength
 # Harmonic Word Order via Dependency Length Minimization
 @cite{dryer-1992} @cite{futrell-gibson-2020} @cite{gibson-2025} @cite{greenberg-1963}
 
-Gibson (2025, Ch. 5.3) argues that **dependency length minimization** (DLM)
+@cite{gibson-2025} argues that **dependency length minimization** (DLM)
 explains the **head-direction generalization**:
 languages overwhelmingly prefer consistent head direction across construction
 types. The argument:
@@ -392,7 +392,7 @@ theorem leaf_direction_irrelevant_bridge (h d : Nat) :
 
 /-! ### Harmonic vs Disharmonic Trees
 
-Gibson (2025, examples 122–123) pattern: a recursive embedding where
+@cite{gibson-2025} pattern: a recursive embedding where
 the verb takes a clausal complement. With 3 levels of embedding:
 
     V₁ — S₁ — V₂ — S₂ — V₃ — O₃

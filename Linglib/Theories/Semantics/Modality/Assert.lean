@@ -3,8 +3,7 @@ import Linglib.Core.Discourse.DiscourseRole
 
 /-!
 # The ASSERT Operator and Speech Act Phrase
-  @cite{hacquard-2006} @cite{portner-2001} @cite{tenny-speas-2004}Formalizes the Speech Act Phrase (SAP) from Hacquard (2006, §4.2.1.2, @cite{speas-tenny-2003}
-pp.141–144), following @cite{tenny-speas-2004}. Every matrix clause is
+  @cite{hacquard-2006} @cite{portner-2001} @cite{tenny-speas-2004}Formalizes the Speech Act Phrase (SAP) from @cite{hacquard-2006}, following @cite{tenny-speas-2004}. Every matrix clause is
 headed by a SAP that introduces a speech event e* with propositional
 CONTENT. The type of speech act determines the content:
 
@@ -46,7 +45,7 @@ open Core.Discourse (IllocutionaryMood)
 
 /-- The type of speech act heading the Speech Act Phrase.
 
-Hacquard (2006, §4.2.1.2, p.144): "The content of the speech event
+@cite{hacquard-2006}: "The content of the speech event
 is different depending on the type of speech act."
 
 Now unified with `IllocutionaryMood` from `Core.Discourse`. The five

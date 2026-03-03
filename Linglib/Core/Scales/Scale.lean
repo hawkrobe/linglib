@@ -635,7 +635,7 @@ theorem moreThan_nat_hasMaxInf {W : Type*} (μ : W → ℕ) (w : W) (hw : moreTh
 
 /-! ### Scale-sensitive maximality operator
 
-Rett (2026, def. 1, adapting @cite{rullmann-1995}): MAX_R(X) picks the element(s)
+@cite{rett-2026}: MAX_R(X) picks the element(s)
 of X that R-dominate all other members. For the `<` scale this is the GLB
 (earliest / smallest), for `>` the LUB (latest / largest). The same operator
 underlies both temporal connectives (*before*/*after*) and degree comparatives.

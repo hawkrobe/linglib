@@ -2,9 +2,9 @@
 # Unified Threshold Semantics
 
 A comparison showing how threshold semantics appears across three domains:
-1. **Gradable adjectives** (Lassiter & Goodman 2017)
-2. **Generics/habituals** (Tessler & Goodman 2019)
-3. **Gradable nouns** (Morzycki 2009)
+1. **Gradable adjectives**
+2. **Generics/habituals**
+3. **Gradable nouns**
 
 ## The Common Pattern
 
@@ -27,7 +27,7 @@ Where:
 
 ## The Bigness/Smallness Asymmetry
 
-Morzycki (2009) shows why "big idiot" works but "small idiot" doesn't:
+@cite{morzycki-2009} shows why "big idiot" works but "small idiot" doesn't:
 - For BIG: min{d : big(d)} = some positive threshold → substantive requirement
 - For SMALL: min{d : small(d)} = d₀ (scale minimum) → vacuous!
 

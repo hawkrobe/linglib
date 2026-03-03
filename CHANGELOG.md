@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.227.87] - 2026-03-02
+
+### Changed
+- **Citation cleanup round 6**: extend script to process plain `/- ... -/` block comments (not just `/-! ... -/` and `/-- ... -/`); permissive trailing content in parenthesized citations (section refs, chapter numbers, colon-pages, multi-year, slash-editions). 18 new bib entries (Hudson 1984, Curry & Feys 1958, Smullyan 1985, van der Sandt 1992, Muskens 1991, Parsons 1970, Selkirk 1984, Schönfinkel 1924, Pareschi 1989, Eisner 1996, Bernardy et al. 2018, Horn 2000, Kratzer 1977, Charlow 2014/2020, Haspelmath 2005, von Fintel & Iatridou 2003). 426 files modified across two passes, 297 new @cite tags. Total: 1197 bib entries, 3362 valid @cite references, 0 unknown.
+
 ## [0.227.86] - 2026-03-02
 
 ### Added

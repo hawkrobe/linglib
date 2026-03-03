@@ -1,5 +1,5 @@
 /-
-# Cremers, Wilcox & Spector (2023): RSA Exhaustivity Models
+# @cite{cremers-wilcox-spector-2023}: RSA Exhaustivity Models
 
 RSA models for exhaustivity and anti-exhaustivity. Baseline RSA predicts anti-exhaustivity
 under biased priors, which contradicts human behavior. EXH-LU blocks this via exhaustification.

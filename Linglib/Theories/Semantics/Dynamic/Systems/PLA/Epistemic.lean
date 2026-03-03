@@ -1,7 +1,7 @@
 /-
 # PLA Epistemic Operators
 
-Dekker (2012) Chapter 4: Epistemic and doxastic modals.
+@cite{dekker-2012} Chapter 4: Epistemic and doxastic modals.
 
 ## Key Concepts
 

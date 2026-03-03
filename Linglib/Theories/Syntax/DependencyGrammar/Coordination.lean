@@ -1,13 +1,14 @@
 /-
 # Word Grammar Analysis of Coordination
+@cite{de-marneffe-nivre-2019} @cite{hudson-1984}
 
-Word Grammar (Hudson 1984, 1990) analysis of coordination structures.
+Word Grammar analysis of coordination structures.
 Coordination is represented directly using DepTree (basic) and DepGraph (enhanced).
 The basic tree attaches shared dependents to the first conjunct only; the enhanced
 graph propagates them to all conjuncts, making implicit predicate-argument relations
-explicit (de Marneffe & Nivre 2019, §4.2).
+explicit.
 
-Reference: Hudson (1990), Gibson (2025) Section 3.8
+Reference: @cite{hudson-1990}, @cite{gibson-2025}
 -/
 
 import Linglib.Fragments.English.Nouns

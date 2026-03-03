@@ -2,9 +2,9 @@
 # Temporal Adverbials and the Perfect
 
 Temporal adverbials constrain the Perfect Time Span (PTS), connecting to the
-Extended Now (PERF_XN) framework from Knick & Sharf (2026).
+Extended Now (PERF_XN) framework from @cite{knick-sharf-2026}.
 
-## Iatridou et al. (2001) Classification
+## @cite{iatridou-anagnostopoulou-izvorski-2001} Classification
 
 | Type       | Example           | LB constraint     |
 |------------|-------------------|--------------------|

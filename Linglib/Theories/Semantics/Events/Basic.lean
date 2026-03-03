@@ -1,19 +1,19 @@
 /-
 # Neo-Davidsonian Event Semantics
 
-Foundational event semantics following Davidson (1967) and Parsons (1990).
+Foundational event semantics following @cite{davidson-1967} and @cite{parsons-1990}.
 Verbs denote predicates of events; thematic roles are independent two-place
 predicates (see `ThematicRoles.lean`).
 
 This module provides:
-- Event sorts (action vs state, following Bach 1986)
+- Event sorts (action vs state, following @cite{bach-1986})
 - The `Ev` type: temporal individuals with sort
 - Bridges to `Verb.Aspect.Dynamicity` and `ViewpointAspect.Eventuality`
 - Event mereology (part-of as partial order)
 - Event predicates (`EvPred`, `EvPredW`) and existential closure
 
 Syntax-neutral: no commitment to Voice heads or specific composition
-principles. Kratzer (1996) Event Identification deferred to optional
+principles. @cite{kratzer-1996} Event Identification deferred to optional
 later module.
 
 -/

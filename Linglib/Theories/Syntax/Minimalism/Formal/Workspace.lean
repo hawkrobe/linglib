@@ -1,8 +1,8 @@
 /-
 # Workspace and Numeration
 
-Formalization of the derivational workspace following Chomsky (1995, 2000)
-and Adger (2003) Chapter 3.
+Formalization of the derivational workspace following @cite{chomsky-1995}
+and @cite{adger-2003} Chapter 3.
 
 ## Key Concepts
 
@@ -13,7 +13,7 @@ and Adger (2003) Chapter 3.
 
 ## The Derivational Model
 
-1. Start with a Numeration N = {LI₁^n₁, LI₂^n₂, ...}
+1. Start with a Numeration N = {LI₁^n₁, LI₂^n₂,...}
 2. Select items from N into the Workspace W
 3. Apply Merge to combine items in W
 4. Continue until N is exhausted and W contains a single SO

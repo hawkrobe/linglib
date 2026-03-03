@@ -7,7 +7,7 @@ Empirical data on focus interpretation effects (association with focus, contrast
 
 - `FocusDatum`: Data structure for focus examples
 - `FIPApplication`: Types of focus interpretation effects
-- Classic examples from Rooth (1992)
+- Classic examples from @cite{rooth-1992}
 
 -/
 

@@ -1,7 +1,7 @@
 /-
 # SyntacticObject ≅ FreeMagma LIToken
 
-The key observation of Marcolli, Chomsky & Berwick (2023) is that Merge
+The key observation of @cite{marcolli-chomsky-berwick-2023} is that Merge
 endows syntactic objects with free magma structure. We make this precise:
 `SyntacticObject` (leaf/node) and mathlib's `FreeMagma LIToken` (of/mul)
 are literally the same inductive type.

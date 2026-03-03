@@ -7,7 +7,7 @@ import Linglib.Core.Discourse.QUD
 
 /-!
 # @cite{elbourne-2013}: Situation-Semantic Definite Descriptions @cite{elbourne-2013}
-@cite{barwise-perry-1983} @cite{elbourne-2005} @cite{heim-1982} @cite{postal-1966} @cite{schwarz-2009} @cite{kamp-1981} @cite{stanley-szab-2000} @cite{tonhauser-beaver-roberts-simons-2013}
+@cite{barwise-perry-1983} @cite{elbourne-2005} @cite{heim-1982} @cite{postal-1966} @cite{schwarz-2009} @cite{kamp-1981} @cite{stanley-szab-2000} @cite{tonhauser-beaver-roberts-simons-2013} @cite{roberts-2012}
 
 Formalizes the core theoretical machinery from:
 
@@ -59,7 +59,7 @@ Worlds are maximal situations. Properties and quantifiers are evaluated
 relative to situations rather than worlds, enabling situation-dependent
 uniqueness and domain restriction.
 
-Based on Barwise & Perry (1983: 7): situations are "individuals having
+Based on @cite{barwise-perry-1983}: situations are "individuals having
 properties and standing in relations at various spatiotemporal locations".
 @cite{kratzer-1989}: situations are parts of worlds with a mereological structure. -/
 structure SituationFrame where
@@ -371,15 +371,15 @@ def elbournePreferred : IncompletenessSource := .situationVariable
 -- ============================================================================
 
 /-
-Elbourne's thesis (Ch 10, building on Postal 1966 and Elbourne 2005):
+Elbourne's thesis (Ch 10, building on @cite{postal-1966} and @cite{elbourne-2005}):
 
   ⟦it⟧ = ⟦the⟧
 
 Pronouns have the same semantics as the definite article. They differ
 only in that their NP complement is phonologically null (NP-deletion).
 
-  [[the NP] s_i]    (overt definite description)
-  [[it  NP] s_i]    (pronoun = definite article + deleted NP)
+  [[the NP] s_i] (overt definite description)
+  [[it NP] s_i] (pronoun = definite article + deleted NP)
 
 The deleted NP's content is recovered from:
 - A linguistic antecedent (anaphora, §10.3)
@@ -582,7 +582,7 @@ def phenomenonMechanism : UnifiedPhenomenon → String
 
 /-
 A QUD partitions the space of worlds into equivalence classes: two worlds are
-QUD-equivalent when they "answer the question the same way" (Roberts 2012).
+QUD-equivalent when they "answer the question the same way".
 Situations are subworld parts — ontological restrictions of worlds to just the
 facts that matter.
 
@@ -595,9 +595,9 @@ The conjecture: these are two sides of the same coin.
   exactly this Q-relevant situation.
 
 This connects:
-- Roberts (1996/2012): QUDs as discourse-organizing questions
-- Kratzer (2004): Situation variables as domain restrictors
-- Elbourne (2013): Situation binding as the mechanism for referential/
+- @cite{roberts-1996}: QUDs as discourse-organizing questions
+- @cite{kratzer-2004}: Situation variables as domain restrictors
+- @cite{elbourne-2013}: Situation binding as the mechanism for referential/
   attributive, donkey, and incomplete-definite readings
 
 If correct, the pragmatics (what question are we addressing?) determines the

@@ -7,17 +7,17 @@ In English, the verb must agree with its subject in number (and person for some 
 
 ## The Data
 
-  (1a)  He walks.                    ✓  3sg subject, 3sg verb
-  (1b) *He walk.                     ✗  3sg subject, pl verb
+  (1a) He walks. ✓ 3sg subject, 3sg verb
+  (1b) *He walk. ✗ 3sg subject, pl verb
 
-  (2a)  They walk.                   ✓  pl subject, pl verb
-  (2b) *They walks.                  ✗  pl subject, 3sg verb
+  (2a) They walk. ✓ pl subject, pl verb
+  (2b) *They walks. ✗ pl subject, 3sg verb
 
-  (3a)  The cat sleeps.              ✓  sg subject, sg verb
-  (3b) *The cat sleep.               ✗  sg subject, pl verb
+  (3a) The cat sleeps. ✓ sg subject, sg verb
+  (3b) *The cat sleep. ✗ sg subject, pl verb
 
-  (4a)  The cats sleep.              ✓  pl subject, pl verb
-  (4b) *The cats sleeps.             ✗  pl subject, sg verb
+  (4a) The cats sleep. ✓ pl subject, pl verb
+  (4b) *The cats sleeps. ✗ pl subject, sg verb
 -/
 
 import Linglib.Core.Grammar

@@ -6,8 +6,8 @@ Bridging Theorems: QUD-Based vs Decision-Theoretic Relevance.
 ## Overview
 
 This module formalizes the connections between QUD-based (partition) semantics
-and decision-theoretic semantics for questions, based on Sumers et al. (2023)
-and the foundational work of Van Rooy (2003) and Groenendijk & Stokhof (1984).
+and decision-theoretic semantics for questions, based on @cite{sumers-etal-2023}
+and the foundational work of @cite{van-rooy-2003} and @cite{groenendijk-stokhof-1984}.
 
 ## Results
 

@@ -1,5 +1,5 @@
 /-
-# NP Type-Shifting Principles (Partee 1987)
+# NP Type-Shifting Principles
 
 The type-shifting triangle between three NP semantic types:
 - `e` : referential (proper names, pronouns)
@@ -7,11 +7,11 @@ The type-shifting triangle between three NP semantic types:
 - `⟨⟨e,t⟩,t⟩` : quantificational (generalized quantifiers)
 
 ```
-         e  ——lift——→  ⟨⟨e,t⟩,t⟩
-         ↑  ←—lower——    ↑
-       iota              BE
-         ↑               ↑
-        ⟨e,t⟩  ——A——→  ⟨⟨e,t⟩,t⟩
+         e ——lift——→ ⟨⟨e,t⟩,t⟩
+         ↑ ←—lower—— ↑
+       iota BE
+         ↑ ↑
+        ⟨e,t⟩ ——A——→ ⟨⟨e,t⟩,t⟩
          ↑
        ident
          ↑

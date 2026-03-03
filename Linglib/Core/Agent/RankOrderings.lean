@@ -3,7 +3,7 @@ import Linglib.Core.Agent.RationalAction
 /-!
 # Rank Orderings @cite{luce-1959}
 
-Luce (1959, §2.F, pp. 66–72): the probability of observing a complete rank
+@cite{luce-1959}: the probability of observing a complete rank
 ordering under the Luce choice rule. The key insight is that ranking
 probability decomposes into a product of successive top-choices from
 shrinking alternative sets — a direct consequence of IIA.
@@ -171,7 +171,7 @@ def rankOf (ranking : List A) (a : A) : Nat :=
 
     `E[rank(a)] = ∑_σ P(σ) · rank(a, σ)`
 
-    Luce (1959, Theorem 10) shows this relates to the ratio scale value:
+    @cite{luce-1959} shows this relates to the ratio scale value:
     alternatives with higher `v(a)` have lower (better) expected rank. -/
 noncomputable def expectedRank (ra : RationalAction S A) (s : S)
     (T : Finset A) (a : A) : ℝ :=

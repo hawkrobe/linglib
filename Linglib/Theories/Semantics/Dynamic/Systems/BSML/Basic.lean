@@ -111,7 +111,7 @@ def generateSubteams {W : Type*} [DecidableEq W] (t : Team W) (worlds : List W) 
 -- ============================================================================
 
 /-
-Positive support: t ⊨⁺ φ (Definition 2 from Aloni 2022)
+Positive support: t ⊨⁺ φ (Definition 2 from @cite{aloni-2022})
 
 Negative support (anti-support): t ⊨⁻ φ
 

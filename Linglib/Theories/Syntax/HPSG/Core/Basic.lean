@@ -1,6 +1,6 @@
 /-
 HPSG formalization: typed feature structures, signs, and phrase structure schemata.
-Pollard & Sag (1994), Sag, Wasow & Bender (2003), Ginzburg & Sag (2000).
+@cite{pollard-sag-1994}, @cite{sag-wasow-bender-2003}, @cite{ginzburg-sag-2000}.
 -/
 
 import Linglib.Core.Grammar
@@ -142,58 +142,14 @@ end HPSGGrammarDef
 
 section WordOrder
 
-/-- Find the position of the first auxiliary. -/
-def findAuxPosition (ws : List Word) : Option Nat :=
-  ws.findIdx? (·.cat == .AUX)
-
-/-- Is this a nominal category that can be a subject? -/
-def isSubjectCat (c : UD.UPOS) : Bool :=
-  c == .PROPN || c == .NOUN || c == .PRON
-
-/-- Find the position of the first subject (non-wh DP). -/
-def findSubjectPosition (ws : List Word) : Option Nat :=
-  ws.findIdx? λ w => isSubjectCat w.cat && !w.features.wh
-
-/-- Auxiliary precedes subject. -/
-def auxPrecedesSubject (ws : List Word) : Bool :=
-  match findAuxPosition ws, findSubjectPosition ws with
-  | some a, some s => a < s
-  | _, _ => false
-
-/-- Subject precedes auxiliary. -/
-def subjectPrecedesAux (ws : List Word) : Bool :=
-  match findAuxPosition ws, findSubjectPosition ws with
-  | some a, some s => s < a
-  | _, _ => false
-
 /-- [INV +] correlates with aux-before-subject order. -/
 def invPlusImpliesAuxFirst (inv : Inv) (ws : List Word) : Prop :=
-  inv = .plus → auxPrecedesSubject ws = true
+  inv = .plus → _root_.auxPrecedesSubject ws = true
 
 /-- [INV -] correlates with subject-before-aux order. -/
 def invMinusImpliesSubjectFirst (inv : Inv) (ws : List Word) : Prop :=
-  inv = .minus → subjectPrecedesAux ws = true
+  inv = .minus → _root_.subjectPrecedesAux ws = true
 
 end WordOrder
-
-section WordOrderTheorems
-
-/-- INV+ and INV- are mutually exclusive. -/
-theorem inv_exclusive (i : Inv) : i = .plus ∨ i = .minus := by
-  cases i <;> simp
-
-/-- If we have aux-first order, INV+ is possible. -/
-theorem aux_first_allows_inv_plus (ws : List Word)
-    (h : auxPrecedesSubject ws = true) :
-    invPlusImpliesAuxFirst .plus ws := by
-  intro _; exact h
-
-/-- If we have subject-first order, INV- is possible. -/
-theorem subject_first_allows_inv_minus (ws : List Word)
-    (h : subjectPrecedesAux ws = true) :
-    invMinusImpliesSubjectFirst .minus ws := by
-  intro _; exact h
-
-end WordOrderTheorems
 
 end HPSG

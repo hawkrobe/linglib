@@ -8,22 +8,22 @@ with a concrete linguistic example: "the book that John read _"
 
 ```
                   DP
-                 /  \
-               the   NP
-                    /  \
-                  book  CP
-                       /  \
-                      Op₁  IP
-                          /  \
-                       John   VP
-                             /  \
-                           read  t₁
+                 / \
+               the NP
+                    / \
+                  book CP
+                       / \
+                      Op₁ IP
+                          / \
+                       John VP
+                             / \
+                           read t₁
 ```
 
 ## Semantic Composition
 
 1. **Trace interpretation**: ⟦t₁⟧^g = g(1)
-2. **VP composition**: ⟦read t₁⟧^g = read(g(1))  (applied to subject later)
+2. **VP composition**: ⟦read t₁⟧^g = read(g(1)) (applied to subject later)
 3. **IP composition**: ⟦John read t₁⟧^g = read(j, g(1))
 4. **Predicate Abstraction at CP**: ⟦Op₁ [John read t₁]⟧^g = λx. read(j, x)
 5. **Predicate Modification with head noun**: λx. book(x) ∧ read(j, x)

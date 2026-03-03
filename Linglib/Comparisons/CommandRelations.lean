@@ -2,13 +2,13 @@
 # Coreference: Cross-Theoretic Comparison
 
 Compares how different syntactic theories handle coreference patterns, unified through
-Barker & Pullum (1990)'s algebraic theory of command relations.
+@cite{barker-pullum-1990}'s algebraic theory of command relations.
 
-## Part A: Abstract Framework (Barker & Pullum 1990)
+## Part A: Abstract Framework
 
 Command relations form a **complete lattice** and the map P ↦ C_P is **antitone**:
 
-    C_{P∪Q} = C_P ∩ C_Q    (Intersection Theorem)
+    C_{P∪Q} = C_P ∩ C_Q (Intersection Theorem)
 
 The **Configurational Equivalence Corollary** explains WHY theories agree:
 when upper bounds coincide for a node, all command relations agree on that node.

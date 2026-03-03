@@ -50,7 +50,7 @@ def AreComplements (p q : M → Bool) : Prop :=
 binary partitions. This grounds the set-theoretic NL relation in
 partition structure: complements carry the same information content.
 
-This is Merin (1999, Fact 1) via the NL relation algebra. -/
+This is @cite{merin-1999} via the NL relation algebra. -/
 theorem complements_same_partition (p q : M → Bool) (h : AreComplements p q)
     (w v : M) :
     (QUD.binaryPartition p).sameAnswer w v =

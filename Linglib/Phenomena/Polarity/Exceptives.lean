@@ -5,7 +5,7 @@ import Linglib.Fragments.English.Determiners
 
 Empirical patterns for "X but Y" exceptive constructions.
 
-## Pattern (von Fintel 1993)
+## Pattern
 
 But-exceptives require universal quantifiers (positive or negative):
 
@@ -26,7 +26,7 @@ The but-exceptive:
 ## Theoretical Analysis
 
 See:
-- `Core/Analyticity.lean`: L-analyticity explanation (Gajewski 2002)
+- `Core/Analyticity.lean`: L-analyticity explanation
 - The semantics should go in `Theories/Montague/Lexicon/` when added
 
 -/
@@ -200,6 +200,7 @@ def predictExceptiveGrammaticality (qt : QuantifierType) : Bool :=
 
 /-!
 ## Exception Uniqueness
+@cite{gajewski-2002}
 
 The but-exceptive typically requires that the exception be unique:
 

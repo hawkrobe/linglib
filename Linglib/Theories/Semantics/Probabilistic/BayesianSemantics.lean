@@ -13,7 +13,7 @@ Three approaches to probabilistic/graded semantics:
 - Compose using probabilistic operations (×, +−pq)
 - Simple but ad hoc
 
-### 2. Marginalize over Parameters (Bernardy et al. 2018)
+### 2. Marginalize over Parameters
 - Define Boolean semantics `P_θ : Entity → Bool`
 - Put a prior over θ
 - Graded truth = E_θ[P_θ(x)]
@@ -240,6 +240,7 @@ end FeaturePred
 
 /-!
 ## Compositional Structure
+@cite{bernardy-blanck-chatzikyriakidis-lappin-2018}
 
 ### Two Strategies
 

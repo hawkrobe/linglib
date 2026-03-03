@@ -3,7 +3,7 @@
 
 Semantic operators for grammatical mood (IND, SUBJ).
 
-## Core Idea (Mendes 2025)
+## Core Idea
 
 Mood operators function like determiners for situations:
 - **SUBJ** (Subjunctive): Introduces a new situation dref (like indefinite "a")
@@ -29,7 +29,7 @@ The main clause "vai atender" is evaluated relative to s₁'s time.
 
 ## CDRT Connection
 
-In CDRT (Muskens 1996), these operators compose dynamically:
+In CDRT, these operators compose dynamically:
 - SUBJ introduces a situation variable and updates the context
 - IND retrieves a situation from the context
 
@@ -356,7 +356,7 @@ theorem subj_nonveridical {W Time : Type*} [LE Time]
 
 /-!
 ### SUBJ as Temporal Anchor
-@cite{giannakidou-1998} @cite{mendes-2025}
+@cite{giannakidou-1998} @cite{mendes-2025} @cite{muskens-1996}
 
 Both SUBJ's situation introduction and attitude embedding create new temporal
 reference points for embedded clauses:

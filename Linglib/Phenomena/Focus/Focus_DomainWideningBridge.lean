@@ -1,7 +1,7 @@
 /-
 # Domain Widening: *just* as addressing the widest answerable question
 
-Formalizes Deo & Thomas (2025): *just* signals that the speaker addresses the
+Formalizes @cite{deo-thomas-2025}: *just* signals that the speaker addresses the
 **widest answerable construal** of an underspecified question (UQ). The 7 flavors
 arise from how the widest construal is determined by Quality and Relevance.
 

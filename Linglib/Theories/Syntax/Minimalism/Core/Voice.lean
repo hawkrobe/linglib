@@ -126,7 +126,7 @@ def voiceImpersonal : VoiceHead :=
 
     **Contested**: @cite{legate-2003} argues passive v IS a phase head based
     on reconstruction and parasitic gap data. The current formalization
-    follows @cite{collins-2005} and Chomsky (2001, 2008). -/
+    follows @cite{collins-2005} and @cite{chomsky-2001}. -/
 def voicePassive : VoiceHead :=
   { flavor := .passive, hasD := true, phaseHead := false, checksCase := true }
 

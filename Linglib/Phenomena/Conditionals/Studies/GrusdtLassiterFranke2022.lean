@@ -1,12 +1,12 @@
 /-
-# Grusdt, Lassiter & Franke (2022) - Experimental Data
+# @cite{grusdt-lassiter-franke-2022} - Experimental Data
 
 "Probabilistic modeling of rational communication with conditionals"
 PLoS ONE
 
 ## Overview
 
-This file contains the empirical data from Grusdt, Lassiter & Franke (2022).
+This file contains the empirical data from @cite{grusdt-lassiter-franke-2022}.
 The paper presents three experiments testing the RSA model of conditionals.
 
 ## Experiments

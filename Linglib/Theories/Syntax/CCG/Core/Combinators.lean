@@ -4,9 +4,9 @@
 CCG combinatory rules correspond to combinators from combinatory logic.
 T = CI, C is definable from B and T, and BTS is equivalent to the lambda-I calculus.
 
-- Curry & Feys (1958). Combinatory Logic.
-- Steedman (2000). The Syntactic Process, Chapters 3 and 8.
-- Smullyan (1985). To Mock a Mockingbird.
+- @cite{curry-feys-1958}. Combinatory Logic.
+- @cite{steedman-2000}. The Syntactic Process, Chapters 3 and 8.
+- @cite{smullyan-1985}. To Mock a Mockingbird.
 -/
 
 import Linglib.Theories.Syntax.CCG.Core.Basic
@@ -174,7 +174,7 @@ Derivation with combinators:
 2. >T: John' ↦ T(John') = λf.f(John') : (e→t)→t
 3. likes:(S\NP)/NP → likes':e→e→t
 4. >B: T(John') ∘ likes' = B (T John') likes' = λy.likes'(y)(John') : e→t
-   ... wait, that's not quite right. Let's redo:
+... wait, that's not quite right. Let's redo:
 
 Actually:
 1. John:NP → john':e
@@ -191,7 +191,7 @@ Actually:
    - B applied: λy. (T john') (likes' y) : e → t
      where (T john') : (e→t) → t
      and likes' y : e → t
-     so (T john') (likes' y) : t  ✓
+     so (T john') (likes' y) : t ✓
 -/
 
 /--
@@ -261,7 +261,7 @@ def ccgCombinatorCorrespondence : CombinatorCorrespondence where
 /-
 ## The Formal Rule System
 
-From Steedman (2000, Chapter 3), the complete CCG rule system consists of:
+From @cite{steedman-2000}, the complete CCG rule system consists of:
 
 1. **Functional Application** (p. 34, rule 6)
 2. **Coordination** (p. 39, rule 18/20)
@@ -275,13 +275,13 @@ From Steedman (2000, Chapter 3), the complete CCG rule system consists of:
 ## Functional Application (Steedman p. 34)
 
 (6) The functional application rules
-    a. X/Y  Y  ⇒  X    (>)
-    b. Y  X\Y  ⇒  X    (<)
+    a. X/Y Y ⇒ X (>)
+    b. Y X\Y ⇒ X (<)
 
 With semantics (p. 37):
 (14) Functional application
-    a. X/Y:f  Y:a  ⇒  X:fa    (>)
-    b. Y:a  X\Y:f  ⇒  X:fa    (<)
+    a. X/Y:f Y:a ⇒ X:fa (>)
+    b. Y:a X\Y:f ⇒ X:fa (<)
 -/
 
 /-- Forward application: functor on left, argument on right -/
@@ -298,16 +298,16 @@ theorem forward_backward_same_semantics {α β : Type} (f : α → β) (a : α) 
 ## Forward Composition - The B Combinator (Steedman p. 40-41)
 
 (23) Forward composition (>B)
-     X/Y  Y/Z  ⇒B  X/Z
+     X/Y Y/Z ⇒B X/Z
 
 (24) Bfgx ≡ f(gx)
 (25) Bfg ≡ λx.f(gx)
 
 (27) Forward composition (>B)
-     X/Y:f  Y/Z:g  ⇒B  X/Z:λx.f(gx)
+     X/Y:f Y/Z:g ⇒B X/Z:λx.f(gx)
 
 "The combinator that composes two functions f and g is called B by Curry,
-and is the Bluebird in Smullyan's (1985) combinatory fable."
+and is the Bluebird in @cite{smullyan-1985}'s combinatory fable."
 -/
 
 /-- Steedman's definition of B (p. 24): Bfgx ≡ f(gx) -/
@@ -322,7 +322,7 @@ theorem forward_comp_semantics {α β γ : Type} (f : β → γ) (g : α → β)
 ## Backward Composition (Steedman p. 46)
 
 (41) Backward composition (<B)
-     Y\Z  X\Y  ⇒B  X\Z
+     Y\Z X\Y ⇒B X\Z
 
 The mirror image of forward composition.
 -/
@@ -335,7 +335,7 @@ theorem backward_comp_semantics {α β γ : Type} (g : α → β) (f : β → γ
 ## Generalized Composition (Steedman p. 42)
 
 (31) Generalized forward composition (>Bⁿ)
-     X/Y:f  (Y/Z)/$₁:...λz.gz...  ⇒Bⁿ  (X/Z)/$₁:...λz.f(gz...)
+     X/Y:f (Y/Z)/$₁:...λz.gz... ⇒Bⁿ (X/Z)/$₁:...λz.f(gz...)
 
 "The semantics of each instance depends on the value of n and is one of
 the series of combinators called B, B², B³."
@@ -360,9 +360,9 @@ theorem B2_is_B_B {α β γ δ : Type} (f : γ → δ) (g : α → β → γ) :
 (34) Tx ≡ λf.fx
 
 (38) Type-raising
-     a. X:a  ⇒T  T/(T\X):λf.fa    (>T)
+     a. X:a ⇒T T/(T\X):λf.fa (>T)
         where T\X is a parametrically licensed category
-     b. X:a  ⇒T  T\(T/X):λf.fa    (<T)
+     b. X:a ⇒T T\(T/X):λf.fa (<T)
         where T/X is a parametrically licensed category
 
 "Type-raising was first used by Lewis and Montague as a semantic device
@@ -383,18 +383,18 @@ theorem type_raise_to_gq {α β : Type} (a : α) :
 ## Backward Crossed Substitution - The S Combinator (Steedman p. 50-51)
 
 (54) Backward crossed substitution (<S×)
-     Y/Z  (X\Y)/Z  ⇒S  X/Z
+     Y/Z (X\Y)/Z ⇒S X/Z
 
 (57) Sfgx ≡ fx(gx)
 (58) Sfg ≡ λx.fx(gx)
 
 (60) Backward crossed substitution (<S×)
-     Y/Z:g  (X\Y)/Z:f  ⇒S  X/Z:λx.fx(gx)
+     Y/Z:g (X\Y)/Z:f ⇒S X/Z:λx.fx(gx)
      where Y = S\$
 
 "This rule... is the only further rule type that will be needed. It corresponds
 to a third very basic combinator in Curry's system, called S. It is called here
-'functional substitution' and is the Starling in Smullyan's (1985) fable."
+'functional substitution' and is the Starling in @cite{smullyan-1985}'s fable."
 
 This rule handles parasitic gaps: "articles which I will file without reading"
 -/
@@ -410,9 +410,9 @@ theorem S_distributes {α β γ : Type} (f : α → β → γ) (g : α → β) :
 /-
 ## The Complete Combinatory Rule System
 
-From Steedman (2000), the full CCG for English uses:
+From @cite{steedman-2000}, the full CCG for English uses:
 - Application: > and <
-- Composition: >B, <B, >B², <B², ...
+- Composition: >B, <B, >B², <B²,...
 - Type-raising: >T, <T
 - Substitution: <S× (for parasitic gaps)
 -/
@@ -513,12 +513,12 @@ respectively, are x, y, and y → x, then the term fa is the only normalized
 combinatory rules we will consider."
 -/
 
--- Steedman (2000, Chapter 2): The Syntactic Process
+-- @cite{steedman-2000}: The Syntactic Process
 
 /-
 ## The Constituent Condition on Rules
 
-From Steedman (2000, p. 12):
+From @cite{steedman-2000}:
 "To say that syntax and semantics are related rule-to-rule is to say no more
 than that every syntactic rule has a semantic interpretation. However, it
 immediately follows that the syntactic entities that are combined by a
@@ -541,11 +541,11 @@ theorem ccg_satisfies_constituent_condition (d : DerivStep) :
 /-
 ## Variable-Free Semantics
 
-From Steedman (2000, p. 27-28):
+From @cite{steedman-2000}:
 "It is interesting to note that there are alternative systems to the λ-calculus
 for capturing the notion of abstraction, and that these systems entirely avoid
 the use of bound variables. They are the combinatory systems invented by
-Schönfinkel (1924) and Curry and Feys (1958)."
+@cite{schoenfinkel-1924} and @cite{curry-feys-1958}."
 
 The key insight: CCG uses combinators (B, T, S) directly for composition,
 avoiding the need for traces or movement. This is why our formalization
@@ -573,7 +573,7 @@ def ccgVariableFree : VariableFreeSemantics where
 /-
 ## Nesting vs. Intercalating Dependencies
 
-From Steedman (2000, p. 24-26):
+From @cite{steedman-2000}:
 
 English has NESTING dependencies (pushdown automaton / context-free):
   "a violin which [this sonata] is hard to play upon"
@@ -601,7 +601,7 @@ def ccg_handles_pattern : DependencyPattern → Prop
 /-
 ## Ross's Gapping Universal
 
-From Steedman (2000, p. 26):
+From @cite{steedman-2000}:
 
 "In SVO languages, the verb that goes missing is in the RIGHT conjunct.
  In SOV languages, the verb that goes missing is in the LEFT conjunct."
@@ -643,7 +643,7 @@ def gappingViolation (order : WordOrder) (gap : GapPosition) : Bool :=
 /-
 ## The Sense Unit Condition
 
-From Steedman (2000, p. 20), citing Selkirk (1984):
+From @cite{steedman-2000}, citing @cite{selkirk-1984}:
 
 Certain fragments cannot form constituents for coordination or intonation:
   *"(Three CATS)(in ten prefer CORDUROY)"
@@ -659,7 +659,7 @@ def senseUnitCondition {m : Model} (cat : Cat) (_meaning : m.interpTy (catToTy c
 /-
 ## Summary: CCG as Combinatory Logic in Linguistic Clothing
 
-From Steedman (2000, p. 29):
+From @cite{steedman-2000}:
 "The predicate-argument relations that hold in sentences of natural languages
 are projected onto long-range syntactic dependencies from the relations
 defined locally in the lexicon by syntactic operations corresponding to
@@ -701,7 +701,7 @@ structure PrincipleOfAdjacency where
 
 The "principal function" is the function that determines the range of the
 result (always X in our notation). This principle excludes rules like:
-  X\Y  Y  ⇏  X   (functor looks left but argument is on right)
+  X\Y Y ⇏ X (functor looks left but argument is on right)
 -/
 
 /-- Direction a functor seeks its argument -/
@@ -726,7 +726,7 @@ def principleOfConsistency (functorDir : SlashDir) (argOnRight : Bool) : Bool :=
     directionality for the corresponding argument(s) in the input function(s).
 
 This excludes rules like:
-  X/Y  Y/Z  ⇏  X\Z   (output slash differs from input)
+  X/Y Y/Z ⇏ X\Z (output slash differs from input)
 -/
 
 /-- The Principle of Inheritance: output slashes inherit from inputs -/
@@ -740,16 +740,16 @@ Together the three principles amount to a simple statement that combinatory
 rules may not contradict the directionality specified in the lexicon.
 
 (8) Functional composition
-    a. X/Y  Y/Z  ⇒B  X/Z       (>B)   order-preserving
-    b. X/Y  Y\Z  ⇒B  X\Z       (>B×)  crossed
-    c. Y\Z  X\Y  ⇒B  X\Z       (<B)   order-preserving
-    d. Y/Z  X\Y  ⇒B  X/Z       (<B×)  crossed
+    a. X/Y Y/Z ⇒B X/Z (>B) order-preserving
+    b. X/Y Y\Z ⇒B X\Z (>B×) crossed
+    c. Y\Z X\Y ⇒B X\Z (<B) order-preserving
+    d. Y/Z X\Y ⇒B X/Z (<B×) crossed
 
 (9) Functional substitution
-    a. (X/Y)/Z  Y/Z  ⇒S  X/Z   (>S)   order-preserving
-    b. (X/Y)\Z  Y\Z  ⇒S  X\Z   (>S×)  crossed
-    c. Y\Z  (X\Y)\Z  ⇒S  X\Z   (<S)   order-preserving
-    d. Y/Z  (X\Y)/Z  ⇒S  X/Z   (<S×)  crossed
+    a. (X/Y)/Z Y/Z ⇒S X/Z (>S) order-preserving
+    b. (X/Y)\Z Y\Z ⇒S X\Z (>S×) crossed
+    c. Y\Z (X\Y)\Z ⇒S X\Z (<S) order-preserving
+    d. Y/Z (X\Y)/Z ⇒S X/Z (<S×) crossed
 -/
 
 /-- Classification of combinatory rules by order-preservation -/
@@ -818,12 +818,12 @@ arguments of the same verb depend upon asymmetries in the directionality
 of those arguments.
 
 In SVO languages like English:
-  ✓ "a man whom I think that Dexter likes"  (object extraction)
-  ✗ "a man whom I think that likes Dexter"  (subject extraction blocked)
+  ✓ "a man whom I think that Dexter likes" (object extraction)
+  ✗ "a man whom I think that likes Dexter" (subject extraction blocked)
 
 This follows because subject extraction would require crossed forward
 composition >B×:
-  S/S  S\NP  ⇒  S\NP
+  S/S S\NP ⇒ S\NP
 which would collapse English word order entirely if allowed generally.
 
 The ECP (Empty Category Principle) effects follow from directionality
@@ -849,7 +849,7 @@ theorem extraction_asymmetry_from_directionality :
 Backward crossed composition is needed for heavy NP shift:
 
 (24) Backward crossed composition (<B×)
-     Y/Z  X\Y  ⇒B  X/Z
+     Y/Z X\Y ⇒B X/Z
      where X, Y = S$
 
 Examples:
@@ -925,8 +925,8 @@ def geachParallelScope : Prop :=
 ## Distributivity and Binding (Steedman p. 80-82)
 
 Distributivity is subject to the same c-command condition as binding:
-  ✓ "I showed the dogs themselves/each other"  (IO binds/distributes over DO)
-  ✗ "I showed themselves/each other the dogs"  (DO cannot bind IO)
+  ✓ "I showed the dogs themselves/each other" (IO binds/distributes over DO)
+  ✗ "I showed themselves/each other the dogs" (DO cannot bind IO)
 
   ✓ "I showed three dogs some rabbit" (ambiguous - IO can scope over DO)
   ✗ "I showed some dog three rabbits" (unambiguous - DO cannot scope over IO)

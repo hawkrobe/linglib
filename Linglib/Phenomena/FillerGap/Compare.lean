@@ -15,11 +15,11 @@ explain the gradient nature of island effects.
 
 - Nonstructural manipulations (filler complexity, NP definiteness) dramatically
   alter island acceptability while leaving the island configuration intact.
-  Which account predicts this? (H&S 2010 → Processing)
+  Which account predicts this? (@cite{hofmeister-sag-2010} → Processing)
 
 - Prosodic focus on embedded objects ameliorates MoS islands; adding manner
   adverbs to bridge verbs creates new islands. Which account predicts this?
-  (Lu et al. 2025 → Discourse)
+  (@cite{lu-degen-2025} → Discourse)
 
 -/
 

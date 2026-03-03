@@ -39,7 +39,7 @@ def dlmWalsConsistent (t : CrossTab) : Bool :=
 /-- For all 3 construction pairs, DLM predicts harmonic is cheaper AND
     WALS confirms harmonic is more common.
 
-    This is @cite{gibson-2025} Ch. 5.3's central claim: DLM explains the
+    This is @cite{gibson-2025}'s central claim: DLM explains the
     head-direction generalization. -/
 theorem dlm_explains_head_direction_generalization :
     allTables.all dlmWalsConsistent = true := by native_decide

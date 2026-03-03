@@ -218,7 +218,7 @@ theorem enough_matches_frame (sc : DegreeScenario) (asp : ViewpointAspectB)
 /-- **Structural unity**: ability modals and "enough" are the same
     frame pattern, differing only in what the trigger represents.
 
-    This is the key claim of Nadathur (2023, Chapter 7): ability modals
+    This is the key claim of @cite{nadathur-2023}: ability modals
     and degree constructions are unified by the causal frame. -/
 theorem enough_same_pattern_as_ability :
     ∀ (sc : DegreeScenario), sc.toFrame.actualization = .aspectual := by

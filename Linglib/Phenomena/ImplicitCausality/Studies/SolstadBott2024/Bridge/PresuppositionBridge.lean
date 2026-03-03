@@ -7,7 +7,7 @@ import Linglib.Fragments.English.Predicates.Verbal
 @cite{solstad-bott-2024}
 
 Bridge theorems connecting English occasion verb fragment entries to the
-presupposition analysis from Solstad & Bott (2024, S&P 17:11).
+presupposition analysis from @cite{solstad-bott-2024}.
 
 For the deeper projectivity analysis (Tonhauser classification, cataphoric
 resolution, symmetric filtering), see `ProjectivityBridge.lean`.

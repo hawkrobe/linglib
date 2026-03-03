@@ -9,17 +9,17 @@ English pronouns show morphological case:
 
 ## The Data
 
-  (1a)  He sees her.                 ✓  nom subject, acc object
-  (1b) *Him sees her.                ✗  acc in subject position
-  (1c) *He sees she.                 ✗  nom in object position
+  (1a) He sees her. ✓ nom subject, acc object
+  (1b) *Him sees her. ✗ acc in subject position
+  (1c) *He sees she. ✗ nom in object position
 
-  (2a)  They help us.                ✓  nom subject, acc object
-  (2b) *Them help us.                ✗  acc in subject position
-  (2c) *They help we.                ✗  nom in object position
+  (2a) They help us. ✓ nom subject, acc object
+  (2b) *Them help us. ✗ acc in subject position
+  (2c) *They help we. ✗ nom in object position
 
-  (3a)  I see him.                   ✓  nom subject, acc object
-  (3b) *Me see him.                  ✗  acc in subject position
-  (3c) *I see he.                    ✗  nom in object position
+  (3a) I see him. ✓ nom subject, acc object
+  (3b) *Me see him. ✗ acc in subject position
+  (3c) *I see he. ✗ nom in object position
 -/
 
 import Linglib.Core.Grammar

@@ -1,5 +1,5 @@
 /-
-# Von Fintel (1999) — Empirical Data
+# @cite{von-fintel-1999} — Empirical Data
 
 Theory-neutral empirical observations from:
 

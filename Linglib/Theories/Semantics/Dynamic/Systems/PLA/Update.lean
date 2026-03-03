@@ -1,7 +1,7 @@
 /-
 # PLA Dynamic Update Semantics
 
-Dekker (2012) Chapter 3: Updates and Information Exchange.
+@cite{dekker-2012} Chapter 3: Updates and Information Exchange.
 
 ## Three Equivalent Views
 

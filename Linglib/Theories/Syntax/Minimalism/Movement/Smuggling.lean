@@ -15,7 +15,7 @@ to Spec-VoiceP, smuggling the object past the external argument in Spec-vP.
 The object can then raise to Spec-TP without violating Relativized Minimality,
 because the intervening external argument no longer c-commands it.
 
-Storment (2026, NLLT) extends this to quotative inversion (QI): VP moves
+@cite{storment-2026} extends this to quotative inversion (QI): VP moves
 to Spec-VoiceP, making the theme subject accessible to T⁰ for Case
 licensing. The quote is clause-external (adjoined high). This yields
 surface order *"Quote" V Subject*.

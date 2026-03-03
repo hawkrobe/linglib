@@ -1,19 +1,20 @@
 /-
 # Minimalism-Montague Semantics Interface
+@cite{heim-kratzer-1998}
 
 Traces left by movement are interpreted as variables bound by
-λ-abstraction at the landing site (Heim and Kratzer 1998).
+λ-abstraction at the landing site.
 
 ## Architecture
 
 This module bridges Minimalist syntax and Montague semantics:
 
 ```
-SyntacticObjects.lean          Montague/Variables.lean
-       ↓                              ↓
-    SyntacticObject with       Assignment functions
-    mkTrace/isTrace                    ↓
-              ↘                    ↙
+SyntacticObjects.lean Montague/Variables.lean
+       ↓ ↓
+    SyntacticObject with Assignment functions
+    mkTrace/isTrace ↓
+              ↘ ↙
          Minimalism/Bridge/Interface.lean
                      ↓
          interpTrace: traces → g(n)
@@ -27,7 +28,7 @@ SyntacticObjects.lean          Montague/Variables.lean
 
 2. Predicate Abstraction: At the landing site of movement,
    λ-abstract over the trace's index
-   ⟦[CP Op_n ... t_n ...]⟧^g = λx. ⟦... t_n ...⟧^{g[n↦x]}
+   ⟦[CP Op_n... t_n...]⟧^g = λx. ⟦... t_n...⟧^{g[n↦x]}
 
 ## Trace Convention
 

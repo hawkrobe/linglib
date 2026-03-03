@@ -2,7 +2,7 @@
 # Tense–Aspect Composition
 
 End-to-end composition chain bridging viewpoint aspect operators to tense
-evaluation, following Knick & Sharf (2026).
+evaluation, following @cite{knick-sharf-2026}.
 
 ## The Pipeline
 
@@ -24,7 +24,7 @@ The eval* operators instantiate the situation (fixing world and time).
 | `presPerfProgXN`    | PRES(PERF_XN(IMPF(V),tᵣ))| "John has been running (since…)" |
 | `pastPerfProg`      | PAST(PERF(IMPF(V)))      | "John had been running" |
 
-## Key Results (Knick & Sharf 2026)
+## Key Results
 
 - U-perf(tᵣ) entails simple present for all tᵣ (Theorem 3)
 - U-perf(Set.univ) ↔ simple present (broad focus, Theorem 4)

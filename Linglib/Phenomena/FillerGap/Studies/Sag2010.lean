@@ -2,7 +2,7 @@
 # Filler-Gap Construction Typology
 
 Parametric variation across the five types of English filler-gap clauses,
-following Sag (2010). The core empirical contribution: F-G clauses share
+following @cite{hofmeister-sag-2010}. The core empirical contribution: F-G clauses share
 a common filler–gap structure but differ systematically along 7 parameters.
 
 ## The Five F-G Clause Types (§2.1, examples 1–5)

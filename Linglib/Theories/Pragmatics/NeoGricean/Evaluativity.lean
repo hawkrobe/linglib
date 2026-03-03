@@ -1,7 +1,7 @@
 /-
 # Neo-Gricean Account of Evaluativity
 
-Formalization of Rett (2015) "The Semantics of Evaluativity" Chapters 3-5.
+Formalization of @cite{rett-2015} "The Semantics of Evaluativity" Chapters 3-5.
 
 ## Insight
 
@@ -943,7 +943,7 @@ theorem complete_derivation_as_tall_as :
 
 
 /-
-## Summary: Neo-Gricean Evaluativity (Rett 2015 Chs. 3-6)
+## Summary: Neo-Gricean Evaluativity (@cite{rett-2015} Chs. 3-6)
 
 ### Key Types
 - `Polarity`: positive (unmarked) vs negative (marked)
@@ -1007,7 +1007,7 @@ Prediction-matching theorems are in `Phenomena.Gradability.NeoGricean_Evaluativi
 - Uses `AdjectivalConstruction` from `Phenomena/Semantics/Evaluativity.lean`
 - Uses `Markedness` from `NeoGricean/Core/Markedness.lean` (NEW)
 - Uses M-alternatives from `NeoGricean/Core/Alternatives.lean`
-- RSA alternative in `Theories/RSA/` (Lassiter & Goodman 2017)
+- RSA alternative in `Theories/RSA/`
 
 ### Architecture
 Markedness is COMPUTED from objective properties (morphology, scale direction),

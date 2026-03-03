@@ -1,10 +1,10 @@
 /-
 # Direct Reference: Core Infrastructure
 
-Almog's (2014) three-mechanism taxonomy of direct reference:
-1. **Designation**: A term rigidly picks out an object (Kripke 1980)
-2. **Singular proposition**: Content is a structured ⟨individual, property⟩ (Kaplan 1989)
-3. **Referential use**: Speaker intends a particular individual (Donnellan 1966)
+@cite{almog-2014}'s three-mechanism taxonomy of direct reference:
+1. **Designation**: A term rigidly picks out an object
+2. **Singular proposition**: Content is a structured ⟨individual, property⟩
+3. **Referential use**: Speaker intends a particular individual
 
 These mechanisms are independent: a term can exhibit any subset.
 

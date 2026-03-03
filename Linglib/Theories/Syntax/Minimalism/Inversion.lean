@@ -50,31 +50,6 @@ theorem embedded_has_subject_before_t (tPos : TPosition)
   have : tPos = .inT := h rfl
   simp [this, subjectPrecedesT, tPronouncedAt, structurallyPrecedes]
 
--- Connecting to Word Lists
-
-/-- Find auxiliary (T) position in word list -/
-def findAuxInWords (ws : List Word) : Option Nat :=
-  ws.findIdx? (·.cat == .AUX)
-
-/-- Is this a nominal category that can be a subject? -/
-def isSubjectCat (c : UD.UPOS) : Bool :=
-  c == .PROPN || c == .NOUN || c == .PRON
-
-/-- Find subject position in word list -/
-def findSubjectInWords (ws : List Word) : Option Nat :=
-  ws.findIdx? λ w => isSubjectCat w.cat && !w.features.wh
-
-/-- Word list has T-before-subject order -/
-def wordsHaveTBeforeSubject (ws : List Word) : Bool :=
-  match findAuxInWords ws, findSubjectInWords ws with
-  | some t, some s => t < s
-  | _, _ => false
-
-/-- Word list has subject-before-T order -/
-def wordsHaveSubjectBeforeT (ws : List Word) : Bool :=
-  match findAuxInWords ws, findSubjectInWords ws with
-  | some t, some s => s < t
-  | _, _ => false
 
 -- Licensing
 
@@ -86,8 +61,8 @@ structure Clause where
 
 /-- Word order must match the structural prediction -/
 def wordOrderMatchesStructure (c : Clause) : Prop :=
-  (tPrecedesSubject c.tPosition = true → wordsHaveTBeforeSubject c.words = true) ∧
-  (subjectPrecedesT c.tPosition = true → wordsHaveSubjectBeforeT c.words = true)
+  (tPrecedesSubject c.tPosition = true → _root_.auxPrecedesSubject c.words = true) ∧
+  (subjectPrecedesT c.tPosition = true → _root_.subjectPrecedesAux c.words = true)
 
 /-- Well-formed clause -/
 def wellFormed (c : Clause) : Prop :=
@@ -103,7 +78,7 @@ def licenses (ws : List Word) (ct : ClauseType) : Prop :=
 
 /-- Matrix questions with T-first word order are licensed -/
 theorem licenses_matrix_t_first (ws : List Word)
-    (h : wordsHaveTBeforeSubject ws = true) :
+    (h : _root_.auxPrecedesSubject ws = true) :
     licenses ws .matrixQuestion := by
   refine ⟨.inC, ⟨?_, ?_⟩, ?_, ?_⟩
   · simp only [tPrecedesSubject, tPronouncedAt, structurallyPrecedes]
@@ -115,20 +90,20 @@ theorem licenses_matrix_t_first (ws : List Word)
 
 /-- Matrix questions with subject-first are NOT licensed -/
 theorem not_licenses_matrix_subject_first (ws : List Word)
-    (h : wordsHaveTBeforeSubject ws = false) :
+    (h : _root_.auxPrecedesSubject ws = false) :
     ¬ licenses ws .matrixQuestion := by
   intro ⟨tPos, wf⟩
   obtain ⟨⟨hword, _⟩, htrig, _⟩ := wf
   have hpos : tPos = .inC := htrig rfl
   have ht : tPrecedesSubject tPos = true := by
     simp [hpos, tPrecedesSubject, tPronouncedAt, structurallyPrecedes]
-  have hws : wordsHaveTBeforeSubject ws = true := hword ht
+  have hws : _root_.auxPrecedesSubject ws = true := hword ht
   rw [h] at hws
   cases hws
 
 /-- Embedded questions with subject-first are licensed -/
 theorem licenses_embedded_subject_first (ws : List Word)
-    (h : wordsHaveSubjectBeforeT ws = true) :
+    (h : _root_.subjectPrecedesAux ws = true) :
     licenses ws .embeddedQuestion := by
   refine ⟨.inT, ⟨?_, ?_⟩, ?_, ?_⟩
   · simp only [tPrecedesSubject, tPronouncedAt, structurallyPrecedes]
@@ -140,14 +115,14 @@ theorem licenses_embedded_subject_first (ws : List Word)
 
 /-- Embedded questions with T-first are NOT licensed -/
 theorem not_licenses_embedded_t_first (ws : List Word)
-    (h : wordsHaveSubjectBeforeT ws = false) :
+    (h : _root_.subjectPrecedesAux ws = false) :
     ¬ licenses ws .embeddedQuestion := by
   intro ⟨tPos, wf⟩
   obtain ⟨⟨_, hword⟩, _, hemb⟩ := wf
   have hpos : tPos = .inT := hemb rfl
   have ht : subjectPrecedesT tPos = true := by
     simp [hpos, subjectPrecedesT, tPronouncedAt, structurallyPrecedes]
-  have hws : wordsHaveSubjectBeforeT ws = true := hword ht
+  have hws : _root_.subjectPrecedesAux ws = true := hword ht
   rw [h] at hws
   cases hws
 

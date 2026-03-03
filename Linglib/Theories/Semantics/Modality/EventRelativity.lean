@@ -408,7 +408,7 @@ binds the event variable of any modal in its scope. A modal ABOVE
 AspP is bound by the speech act or attitude event (whichever is
 closest); a modal BELOW AspP is bound by aspect's event quantifier.
 
-The full clausal ordering derived in Hacquard (2006, (255), p.160):
+The full clausal ordering derived in @cite{hacquard-2006}, p.160):
 
     Mod_epis > T > CF > Asp > Mod_circ
 

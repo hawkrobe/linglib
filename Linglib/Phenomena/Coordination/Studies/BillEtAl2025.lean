@@ -1,14 +1,14 @@
 /-
-# Bill, Gonzalez, Driemel, Makharoblidze & Pintér (2025)
+# Bill, Gonzalez, @cite{bill-etal-2025}
 
 "Is DP conjunction always complex? The view from child Georgian and Hungarian"
 Semantics & Pragmatics 18, Article 5, 1-20.
 
 ## Main Question
 
-Mitrović & Sauerland (2014, 2016) claim DP conjunction universally decomposes
+Mitrović & @cite{mitrovi-sauerland-2014} claim DP conjunction universally decomposes
 into J (set intersection) + MU (subset) + ☉ (type-shifter). Combined with the
-Transparency Principle (van Hout 1998) — children prefer 1-to-1 form-meaning
+Transparency Principle — children prefer 1-to-1 form-meaning
 mappings — this predicts J-MU expressions (where all pieces are overt) should
 be easier for children to comprehend than J-only or MU-only.
 
@@ -28,7 +28,7 @@ objects to match. Two DVs: accuracy and sentence-played-n (replay count).
 ## Theoretical Significance
 
 Results challenge both Mitrović & Sauerland's universal decomposition and
-alternative accounts (Szabolcsi 2015, Haslinger et al. 2019).
+alternative accounts.
 
 ## Semantic Connection
 
@@ -52,7 +52,7 @@ open Phenomena
 /--
 Cross-linguistic conjunction strategy.
 
-Mitrović & Sauerland (2014, 2016) decompose DP conjunction into three
+Mitrović & @cite{mitrovi-sauerland-2014} decompose DP conjunction into three
 semantic pieces: J (set intersection), MU (subset), ☉ (type-shifter).
 Languages vary in which pieces are overtly realized.
 -/
@@ -412,7 +412,7 @@ theorem georgian_contradicts_transparency :
 
 /-!
 ## Link to Phenomena/Gradability/Imprecision/FormMeaning.lean
-@cite{van-hout-1998}
+@cite{van-hout-1998} @cite{haslinger-etal-2019} @cite{szabolcsi-2015}
 
 The Transparency Principle is the acquisition-side counterpart of
 the No Needless Manner Violations principle formalized in FormMeaning.lean.

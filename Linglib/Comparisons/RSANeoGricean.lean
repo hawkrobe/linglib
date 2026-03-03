@@ -13,9 +13,9 @@ NeoGricean is a **limiting case** of RSA:
 ## The Limit Chain (Proved)
 
 ```
-RSA S1 (softmax)  ──α→∞──>  IBR S1 (argmax)  ────>  exhMW  ──closure──>  exhIE
-     ↑                           ↑                    ↑                    ↑
-  proved                      proved              (WIP)               (Spector)
+RSA S1 (softmax) ──α→∞──> IBR S1 (argmax) ────> exhMW ──closure──> exhIE
+     ↑ ↑ ↑ ↑
+  proved proved (WIP) (Spector)
 ```
 
 - `rsa_to_ibr_limit`: RSA S1 → IBR S1 as α → ∞ (Franke2011.lean)

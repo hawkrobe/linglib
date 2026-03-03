@@ -4,7 +4,7 @@ import Linglib.Core.Semantics.Presupposition
 # Kernel Semantics for Epistemic Modals
 @cite{von-fintel-gillies-2010} @cite{von-fintel-gillies-2021}
 
-Von Fintel & Gillies (2010, 2021) kernel semantics. Epistemic modals carry an
+@cite{von-fintel-gillies-2010} kernel semantics. Epistemic modals carry an
 evidential presupposition that the prejacent is not *directly settled* by the
 kernel K ⊆ B_K. The central result (`entailment_settling_gap`) is that B_K can
 entail φ without K directly settling it, making the presupposition non-trivial.

@@ -1,7 +1,7 @@
 /-
-# Modal Donkey Anaphora (Mendes 2025 §3.1)
+# Modal Donkey Anaphora (@cite{mendes-2025} §3.1)
 
-The central theoretical insight of Mendes (2025): the Subordinate Future (SF)
+The central theoretical insight of @cite{mendes-2025}: the Subordinate Future (SF)
 enables modal donkey anaphora -- subjunctive binds situation variables
 across clause boundaries, just like indefinites bind individual variables
 in classic donkey sentences.

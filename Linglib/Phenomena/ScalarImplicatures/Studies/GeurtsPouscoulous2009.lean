@@ -1,5 +1,5 @@
 /-
-# Geurts & Pouscoulous (2009) Experimental Data
+# @cite{geurts-pouscoulous-2009} Experimental Data
 
 Experimental data on scalar implicature rates from:
 Geurts, B. & Pouscoulous, N. (2009). Embedded implicatures?!

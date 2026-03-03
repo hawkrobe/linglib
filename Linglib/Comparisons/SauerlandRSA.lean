@@ -1,7 +1,7 @@
 /-
 # Sauerland-RSA Correspondence
 
-Formalizes the connection between Sauerland (2004)'s epistemic implicature
+Formalizes the connection between @cite{sauerland-2004}'s epistemic implicature
 framework and RSA's probabilistic reasoning.
 
 ## Sauerland's Framework

@@ -1,12 +1,13 @@
 /-
 # Word Grammar Analysis of Long-Distance Dependencies
+@cite{de-marneffe-nivre-2019} @cite{hudson-1984}
 
-Word Grammar (Hudson 1984, 1990) analysis using SLASH features and filler-gap tracking.
+Word Grammar analysis using SLASH features and filler-gap tracking.
 Long-distance dependencies are represented directly using DepTree (basic) and DepGraph
 (enhanced). The basic tree represents the surface structure; the enhanced graph fills
-gaps with explicit argument edges (de Marneffe & Nivre 2019, §4.2).
+gaps with explicit argument edges.
 
-Reference: Hudson (1990), Gibson (2025) Section 3.9
+Reference: @cite{hudson-1990}, @cite{gibson-2025}
 -/
 
 import Linglib.Fragments.English.Nouns

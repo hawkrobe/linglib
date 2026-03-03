@@ -449,7 +449,7 @@ The extension of a vague gradable adjective can change when an agent's
 This is evidence that the degrees of vague quantities incorporate
 information about interests, not just objective measurements.
 
-Source: Fara (2000, 2008), @cite{dinis-jacinto-2026} §5.3
+Source: @cite{fara-2000}, @cite{dinis-jacinto-2026} §5.3
 -/
 structure InterestRelativityDatum where
   adjective : String

@@ -1,7 +1,7 @@
 /-
 # PLA Generalized Quantifiers
 
-Dekker (2012) Chapter 4, §4.1: Generalized Quantifiers in Dynamic Semantics.
+@cite{dekker-2012} Chapter 4, §4.1: Generalized Quantifiers in Dynamic Semantics.
 
 ## Key Concepts
 
@@ -33,7 +33,7 @@ We formalize:
 `Core.Quantification` defines a parallel Bool-based GQ type:
   `GQ α = (α → Bool) → (α → Bool) → Bool`
 with model-agnostic properties (`Conservative`, `ScopeUpwardMono`, etc.)
-and van Benthem (1984) relational characterizations.
+and @cite{van-benthem-1984} relational characterizations.
 
 This module uses the Set-based `GQRel α = Set α → Set α → Prop` because
 PLA's dynamic updates operate on `Set`-valued info states. The two

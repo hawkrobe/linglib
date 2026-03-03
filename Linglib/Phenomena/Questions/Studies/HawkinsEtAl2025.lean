@@ -1,5 +1,5 @@
 /-
-# Hawkins, Tsvilodub, Bergey, Goodman & Franke (2025): PRIOR-PQ
+# Hawkins, Tsvilodub, @cite{hawkins-etal-2025}: PRIOR-PQ
 
 Empirical data from "Relevant answers to polar questions"
 Phil. Trans. R. Soc. B 380: 20230505.

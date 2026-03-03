@@ -1,5 +1,5 @@
 /-
-# Strawson Entailment (von Fintel 1999)
+# Strawson Entailment
 
 Strawson-DE: a weakened downward entailingness that checks DE inferences
 only when presuppositions of the conclusion are satisfied. This rescues the

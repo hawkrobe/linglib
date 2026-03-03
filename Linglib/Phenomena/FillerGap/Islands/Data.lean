@@ -11,28 +11,28 @@ observed across diverse theoretical frameworks.
 
 ### Wh-Islands (Embedded Question Constraint)
 
-  (1a)  What did John buy?                    ✓
-  (1b) *What do you wonder who bought?        ✗  wh-word separated by another wh
+  (1a) What did John buy? ✓
+  (1b) *What do you wonder who bought? ✗ wh-word separated by another wh
 
 ### Complex NP Constraint (CNPC)
 
-  (2a)  Who did you see?                      ✓
-  (2b) *Who did you meet the man that saw?    ✗  wh-word associated into relative clause
+  (2a) Who did you see? ✓
+  (2b) *Who did you meet the man that saw? ✗ wh-word associated into relative clause
 
 ### Adjunct Clause Constraint
 
-  (3a)  What did John buy?                    ✓
-  (3b) *What did John leave before buying?    ✗  wh-word associated into adjunct
+  (3a) What did John buy? ✓
+  (3b) *What did John leave before buying? ✗ wh-word associated into adjunct
 
 ### Coordinate Structure Constraint (CSC)
 
-  (4a)  What did John buy?                    ✓
-  (4b) *What did John buy books and?          ✗  asymmetric: wh from one conjunct
+  (4a) What did John buy? ✓
+  (4b) *What did John buy books and? ✗ asymmetric: wh from one conjunct
 
 ### Subject Constraint
 
-  (5a)  Who did you see pictures of?          ✓  wh from object
-  (5b) *Who did pictures of please you?       ✗  wh from subject
+  (5a) Who did you see pictures of? ✓ wh from object
+  (5b) *Who did pictures of please you? ✗ wh from subject
 
 -/
 

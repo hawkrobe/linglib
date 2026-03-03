@@ -1,6 +1,6 @@
 /-
-The DE < Anti-Additive < Anti-Morphic hierarchy (Zwarts 1996).
-Reference: Zwarts (1996), Chierchia (2013) section 1.4.3, Ladusaw (1980).
+The DE < Anti-Additive < Anti-Morphic hierarchy.
+Reference: @cite{zwarts-1996}, @cite{chierchia-2013} section 1.4.3, @cite{ladusaw-1980}.
 -/
 
 import Mathlib.Order.Monotone.Defs

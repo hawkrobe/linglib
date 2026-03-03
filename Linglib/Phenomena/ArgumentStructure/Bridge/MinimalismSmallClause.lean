@@ -110,7 +110,7 @@ def doc_appl_type : ApplType := .low
 /-! ## §2. Structural analyses (Haddican et al.) -/
 
 /-- **DOC, Small Clause**: `[VP V [SC DP_goal DP_theme]]` — paper's (3).
-    Den Dikken (1995:25, ex. 41e): the dative is an instance of SC
+    @cite{dendikken-1995}: the dative is an instance of SC
     predication, with the goal as SC subject and theme as predicate. -/
 def doc_sc : SyntacticObject :=
   merge V_give (merge DP_hsu DP_book)
@@ -123,7 +123,7 @@ def doc_appl : SyntacticObject :=
 
 /-- **PVC, Small Clause** (@cite{aarts-1989}; @cite{dendikken-1995}; @cite{svenonius-1996a},b):
     `[VP V [SC DP Prt]]` — paper's (4a), underlying obj-particle order.
-    Den Dikken (1995:25, ex. 41d): the particle is an SC predicate
+    @cite{dendikken-1995}: the particle is an SC predicate
     ascribing a resultant state/location to the DP subject.
     Experimental primes used particle-object surface order ("put down the
     vase") to control for V-NP-X string similarity with DOC targets (p.5). -/
@@ -341,7 +341,7 @@ def resultative_category : SCPredCategory := .A
 def causative_category : SCPredCategory := .V
 
 /-- Copular/ECM is an N-predicate SC: "consider John a fool."
-    Den Dikken (1995:25, ex. 41a-b). -/
+    @cite{dendikken-1995}. -/
 def copular_category : SCPredCategory := .N
 
 /-- DOC and PVC share SC predicate category P. This is one of

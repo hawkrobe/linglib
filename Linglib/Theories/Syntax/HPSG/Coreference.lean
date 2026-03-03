@@ -2,7 +2,7 @@
 HPSG Coreference (Binding).
 
 O-command-based binding using obliqueness hierarchy and LOCAL feature domains.
-Pollard & Sag (1994) Ch. 6, Sag, Wasow & Bender (2003) Ch. 5.
+@cite{pollard-sag-1994} Ch. 6, @cite{sag-wasow-bender-2003} Ch. 5.
 -/
 
 import Linglib.Fragments.English.Nouns

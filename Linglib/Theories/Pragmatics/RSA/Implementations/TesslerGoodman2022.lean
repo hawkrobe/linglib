@@ -1,17 +1,17 @@
 /-
-# Tessler & Goodman (2022)
+# @cite{tessler-goodman-2022}
 
 "Warm (for Winter): Inferring Comparison Classes in Communication"
 Unpublished manuscript (extension of Cognition 2019 paper)
 
-This paper extends Lassiter & Goodman (2017) by modeling how listeners infer
+This paper extends @cite{lassiter-goodman-2017} by modeling how listeners infer
 not just the threshold theta but also the COMPARISON CLASS c.
 
 ## Innovation
 
-Lassiter & Goodman (2017): `P_L1(x, theta | u) proportional to P_S1(u | x, theta) * P(x) * P(theta)`
+@cite{lassiter-goodman-2017}: `P_L1(x, theta | u) proportional to P_S1(u | x, theta) * P(x) * P(theta)`
 
-Tessler & Goodman (2022): `P_L1(x, c | u, k) proportional to P_S1(u | x, c) * P(x | k) * P(c | k)`
+@cite{tessler-goodman-2022}: `P_L1(x, c | u, k) proportional to P_S1(u | x, c) * P(x | k) * P(c | k)`
 
 Key additions:
 - k = KIND (the nominal, e.g., "basketball player")
@@ -368,7 +368,7 @@ the comparison class (theta = tallThreshold c k), avoiding the extra variable.
 -- Summary
 
 /-
-## Tessler & Goodman 2022: Key Results
+## @cite{tessler-goodman-2022}: Key Results
 
 ### Main Equation
 P_L1(h, c | u, k) proportional to P_S1(u | h, c, k) * P(h | k) * P(c | k)

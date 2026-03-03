@@ -3,8 +3,8 @@
 @cite{bergen-levy-goodman-2016} @cite{erk-herbelot-2024} @cite{kao-etal-2014-hyperbole} @cite{kao-etal-2014-metaphor}
 
 This module establishes the correspondence between:
-- **SDS**: Situation Description Systems (Erk & Herbelot 2024)
-- **LU-RSA**: Lexical Uncertainty RSA (Bergen et al. 2016)
+- **SDS**: Situation Description Systems
+- **LU-RSA**: Lexical Uncertainty RSA
 
 ## Insight
 
@@ -18,14 +18,14 @@ SDS concept disambiguation is structurally equivalent to LU-RSA lexicon inferenc
 | Scenario constraint S(c) | Structured lexicon |
 | Product: R(c) × S(c) | Marginalization Σ_L |
 
-## Paper Summary: Erk & Herbelot (2024)
+## Paper Summary: @cite{erk-herbelot-2024}
 
 "How to Marry a Star: Probabilistic Constraints for Meaning in Context"
 (Journal of Semantics, 2024)
 
 ### Core Mechanism
 
-For a word w with multiple possible concepts {c₁, c₂, ...}:
+For a word w with multiple possible concepts {c₁, c₂,...}:
 
 ```
 P(c | context) ∝ P_selectional(c | role) × P_scenario(c | frame)
@@ -46,7 +46,7 @@ P(c | context) ∝ P_selectional(c | role) × P_scenario(c | frame)
    - Selectional: MARRY wants human → star = CELEBRITY
    - Scenario: ASTRONOMER frame → star = CELESTIAL
 
-## Reference: Bergen et al. (2016)
+## Reference: @cite{bergen-levy-goodman-2016}
 
 "Pragmatic reasoning through semantic inference"
 

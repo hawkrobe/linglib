@@ -1,5 +1,5 @@
 /-
-Kratzer (1981) Modal Semantics.
+@cite{kratzer-1981} Modal Semantics.
 
 Accessibility is derived from two conversational backgrounds: modal base f
 (relevant facts) and ordering source g (criteria for ranking worlds).

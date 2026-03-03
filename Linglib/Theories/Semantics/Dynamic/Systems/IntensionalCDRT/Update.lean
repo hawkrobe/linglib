@@ -1,13 +1,13 @@
 /-
 # Flat Update Operations for ICDRT
 
-Hofmann (2025) §2.3-2.4: The core innovation of flat update semantics.
+@cite{hofmann-2025} §2.3-2.4: The core innovation of flat update semantics.
 
 ## Flat Update
 
 In standard DRT, discourse referents introduced under negation are
 inaccessible for later anaphora:
-  "There's no bathroom. #It is upstairs."  -- standard DRT: infelicitous
+  "There's no bathroom. #It is upstairs." -- standard DRT: infelicitous
 
 Hofmann's flat update changes this:
 1. All drefs are introduced globally (at the top level)

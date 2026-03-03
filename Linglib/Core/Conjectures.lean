@@ -136,7 +136,7 @@ def almog_independence_conjecture (Mechanism : Type*) (exprs : List (List Mechan
 /-! ## Phase-Bounded Exhaustification
 
 Phases as local computation domains for pragmatic inference.
-Charlow (2014, 2020): scope islands = evaluation boundaries.
+@cite{charlow-2014}: scope islands = evaluation boundaries.
 Chierchia/Fox/@cite{chierchia-fox-spector-2012}: Exh applies at scope positions.
 Hypothesis: phase boundaries delimit where Exh/RSA applies.
 -/

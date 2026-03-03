@@ -1194,7 +1194,7 @@ def claim : VerbEntry := .mkRegular {
 -- ════════════════════════════════════════════════════
 
 /-! Manner-of-speaking (MoS) verbs specify *how* something is said.
-    Storment (2026, NLLT) shows these divide into two classes:
+    @cite{storment-2026} shows these divide into two classes:
     - **QI-permitting** (unaccusative): whisper, murmur, mumble, mutter, shout,
       cry, scream, shriek, yell, groan, grumble, hiss, sigh, whimper, snap
     - **Non-QI** (unergative): speak, talk -/

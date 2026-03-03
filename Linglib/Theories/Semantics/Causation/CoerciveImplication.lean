@@ -1,5 +1,5 @@
 /-
-# Coercive Implication (Nadathur & Lauer 2020 §6)
+# Coercive Implication (@cite{nadathur-lauer-2020} §6)
 
 "X made Y do Z" with volitional Z implies coercion: sufficiency
 (Z was determined) + volitionality (Y could choose otherwise) →

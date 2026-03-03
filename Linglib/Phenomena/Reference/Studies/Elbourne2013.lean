@@ -160,7 +160,7 @@ def voldemortExample : PronounAsDefinite :=
 
 /-! ### Setup
 
-@cite{donnellan-1966}'s classic scenario, analyzed via Elbourne (2013, Ch 5):
+@cite{donnellan-1966}'s classic scenario, analyzed via @cite{elbourne-2013}:
 
 The speaker is at Smith's murder trial. Jones sits in the dock,
 behaving very strangely. The speaker says:

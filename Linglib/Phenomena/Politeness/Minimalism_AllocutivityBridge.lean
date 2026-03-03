@@ -1,15 +1,16 @@
 /-
 # Allocutive Agreement as Agree
+@cite{chomsky-2000}
 
-Minimalist analysis of allocutive agreement (AA) following Alok & Bhalla (2026).
+Minimalist analysis of allocutive agreement (AA) following @cite{alok-bhalla-2026}.
 AA is not special machinery — it IS phi-agreement (Agree) between a functional
 head (Fin or SA) and a null addressee DP.
 
 ## Key Claims
 
-1. AA reduces to standard Agree (Chomsky 2000, 2001)
+1. AA reduces to standard Agree
 2. Probe locus (SA vs Fin) predicts embeddability:
-   - SA-based AA → root-only (SAP does not embed; Dayal 2025)
+   - SA-based AA → root-only (SAP does not embed; @cite{dayal-2025})
    - Fin-based AA → freely embeddable (FinP embeds under C)
 3. [iHON] is a relational feature: ⟦iHON⟧ = λx. S_i ≺ x
 

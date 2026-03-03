@@ -1,7 +1,7 @@
 /-
-# Discourse State (Farkas & Bruce 2010)
+# Discourse State
 
-Formalizes the discourse state model from Farkas & Bruce (2010) "On Reacting
+Formalizes the discourse state model from @cite{farkas-bruce-2010} "On Reacting
 to Assertions and Polar Questions", which provides a unified framework for
 understanding how conversation advances through assertions and questions.
 
@@ -22,8 +22,8 @@ Farkas & Bruce decompose the discourse state into five components:
 Current RSA models for presupposition projection use the `BeliefState` slot
 for different components of the discourse state:
 
-- Scontras & Tonhauser (2025): BeliefState = dcS (speaker's private assumptions)
-- Warstadt (2022) / Qing et al. (2016): BeliefState = cg (common ground)
+- @cite{scontras-tonhauser-2025}: BeliefState = dcS (speaker's private assumptions)
+- @cite{warstadt-2022} / @cite{qing-goodman-lassiter-2016}: BeliefState = cg (common ground)
 
 This module provides explicit types for these components, making the
 theoretical distinctions clear while maintaining computational compatibility

@@ -8,7 +8,7 @@ Theory-neutral data on fragment answers to questions.
 Sentence fragments can communicate full propositions:
 
   A: "Who went to the movies?"
-  B: "Bob"  →  interpreted as "Bob went to the movies"
+  B: "Bob" → interpreted as "Bob went to the movies"
 
 Key observation: Fragments have NO literal truth conditions,
 yet are routinely used and correctly interpreted.
@@ -21,9 +21,9 @@ Fragment answers differ from sluicing:
 
 ## Theoretical Approaches
 
-1. **Noisy Channel** (Bergen & Goodman 2015): Listener infers noise deleted words
-2. **Syntactic Ellipsis** (Merchant 2004): Fragments have full syntactic structure
-3. **Direct Interpretation** (Stainton 2006): Fragments interpreted without ellipsis
+1. **Noisy Channel**: Listener infers noise deleted words
+2. **Syntactic Ellipsis**: Fragments have full syntactic structure
+3. **Direct Interpretation**: Fragments interpreted without ellipsis
 
 -/
 
@@ -31,7 +31,7 @@ import Linglib.Core.Lexical.Word
 
 /-!
 ## Connection to RSA Theory
-@cite{bergen-goodman-2015}
+@cite{bergen-goodman-2015} @cite{merchant-2004} @cite{stainton-2006}
 
 This phenomenon is modeled by @cite{bergen-goodman-2015}'s noisy channel RSA.
 See: `Theories/RSA/Implementations/BergenGoodman2015.lean`

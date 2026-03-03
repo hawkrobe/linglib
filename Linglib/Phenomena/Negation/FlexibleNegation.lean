@@ -2,7 +2,7 @@
 # Flexible Negation: Empirical Data
 @cite{cruse-1986} @cite{horn-1989} @cite{kennedy-mcnally-2005}
 
-Tessler & Franke (2020) "Not unreasonable: Why two negatives don't make a positive"
+@cite{tessler-franke-2020} "Not unreasonable: Why two negatives don't make a positive"
 -/
 
 import Mathlib.Data.Rat.Defs

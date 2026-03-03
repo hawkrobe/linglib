@@ -165,8 +165,7 @@ def sorgen : GermanVerbEntry where
     interpersonal action triggered by the object's prior behavior.
 
     These verbs were tested for projectivity in Experiments 1–3 of the
-    S&P paper and for IC bias (as "agent-evocator" verbs) in Solstad &
-    Bott (2022, 2023). -/
+    S&P paper and for IC bias (as "agent-evocator" verbs) in @cite{solstad-bott-2022}. -/
 
 /-- *bestrafen* — "punish": presupposes the object did something wrong -/
 def bestrafen : GermanVerbEntry where

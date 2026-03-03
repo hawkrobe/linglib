@@ -1,5 +1,5 @@
 /-
-# Stratified Reference (Champollion 2017)
+# Stratified Reference
 
 Champollion's unified Stratified Reference property SR_{d,g} and its
 three instantiations:

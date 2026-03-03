@@ -391,7 +391,7 @@ theorem noun_class_more_interactions :
 -- §13: @cite{greenberg-1972} universal
 -- ============================================================================
 
-/- Greenberg (1972): Numeral classifiers and obligatory number marking are
+/- @cite{greenberg-1972}: Numeral classifiers and obligatory number marking are
    in complementary distribution. Witnessed by Mandarin (no number morphology)
    and Japanese (optional -tachi) vs. French (obligatory singular/plural).
    TODO: Add `hasObligatoryNumber : Bool` to NounCategorizationSystem to state

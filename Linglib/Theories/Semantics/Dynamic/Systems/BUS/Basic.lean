@@ -1,5 +1,6 @@
 /-
-# Bilateral Update Semantics (Elliott 2023; Elliott & Sudo 2025)
+# Bilateral Update Semantics
+@cite{elliott-2023} @cite{elliott-sudo-2025}
 
 Dynamic semantics with two update dimensions (positive and negative) that validates DNE and handles cross-disjunct anaphora.
 

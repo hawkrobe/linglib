@@ -40,7 +40,7 @@ open DepGrammar
 -- ============================================================================
 
 /-- A morphosyntactic feature that a head can govern on its dependent.
-    Osborne (2019, Ch 4 §4.8). -/
+    @cite{osborne-2019}. -/
 inductive GovernedFeature where
   | case_      -- Prepositions/verbs govern case (e.g., German accusative)
   | vform      -- Verbs govern verb form of complement (infinitive, gerund, participle)
@@ -49,7 +49,7 @@ inductive GovernedFeature where
   deriving Repr, DecidableEq
 
 /-- A government requirement: head requires dependent to have specific feature value.
-    Osborne (2019, Ch 5). -/
+    @cite{osborne-2019}. -/
 structure GovRequirement where
   headCat : UD.UPOS
   depRel : UD.DepRel
@@ -62,31 +62,31 @@ structure GovRequirement where
 -- ============================================================================
 
 /-- Verb + to-infinitive: "want to go" — want governs infinitival form.
-    Osborne (2019, Ch 5). -/
+    @cite{osborne-2019}. -/
 def govVerbInfinitive : GovRequirement :=
   ⟨.VERB, .xcomp, .vform, "infinitive"⟩
 
 /-- Verb + bare infinitive: "make him go" — make governs base form.
-    Osborne (2019, Ch 5). -/
+    @cite{osborne-2019}. -/
 def govVerbBareInf : GovRequirement :=
   ⟨.VERB, .xcomp, .vform, "base"⟩
 
 /-- Verb + gerund: "enjoy swimming" — enjoy governs gerund form.
-    Osborne (2019, Ch 5). -/
+    @cite{osborne-2019}. -/
 def govVerbGerund : GovRequirement :=
   ⟨.VERB, .xcomp, .vform, "gerund"⟩
 
 /-- Verb + finite that-clause: "think that..." — think governs finite complement.
-    Osborne (2019, Ch 5). -/
+    @cite{osborne-2019}. -/
 def govVerbFinite : GovRequirement :=
   ⟨.VERB, .ccomp, .finiteness, "finite"⟩
 
 /-- Preposition + accusative: "with him/*he" — preposition governs accusative case.
-    Osborne (2019, Ch 5). -/
+    @cite{osborne-2019}. -/
 def govPrepAcc : GovRequirement :=
   ⟨.ADP, .obj, .case_, "acc"⟩
 
-/-- All English government requirements from Osborne (2019, Ch 5). -/
+/-- All English government requirements from @cite{osborne-2019}. -/
 def englishGovRequirements : List GovRequirement :=
   [govVerbInfinitive, govVerbBareInf, govVerbGerund, govVerbFinite, govPrepAcc]
 
@@ -157,7 +157,7 @@ def makeGov : GovernmentPattern :=
   ⟨"make", [govVerbBareInf]⟩
 
 /-- Government and valency are orthogonal: valency says WHAT dependents,
-    government says WHAT FORM. Osborne (2019, Ch 5).
+    government says WHAT FORM. @cite{osborne-2019}.
     A verb can have the same valency (transitive, taking xcomp) but different
     government (infinitive vs gerund complement).
 

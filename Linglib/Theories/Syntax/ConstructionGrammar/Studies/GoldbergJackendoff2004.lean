@@ -5,7 +5,7 @@ import Linglib.Theories.Semantics.Lexical.Verb.Aspect
 # @cite{goldberg-jackendoff-2004}: The English Resultative as a Family of Constructions
 @cite{goldberg-jackendoff-2004}
 
-Formalization of the core claims from Goldberg & Jackendoff (2004, Language 80(3):532–568).
+Formalization of the core claims from @cite{goldberg-jackendoff-2004}:532–568).
 
 ## Key claims
 

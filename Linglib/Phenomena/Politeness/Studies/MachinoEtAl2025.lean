@@ -1,12 +1,12 @@
 /-
-# Machino et al. (2025): Minding the Politeness Gap
+# @cite{machino-goodman-2025}: Minding the Politeness Gap
 
 Cross-cultural RSA model for intensifier/hedging interpretation, extending
-Yoon et al. (2020) with culture-specific literal semantics and pragmatic weights.
+@cite{yoon-etal-2020} with culture-specific literal semantics and pragmatic weights.
 
 ## Key Contribution
 
-Degree modifiers (slightly, kind of, quite, very, extremely) function as
+Degree modifiers (slightly, kind, quite, very, extremely) function as
 hedging/intensifying devices in politeness contexts. Their interpretation
 varies cross-culturally:
 - **"quite"** is a downtoner in BrE ("quite good" ≈ "fairly good") but an
@@ -21,7 +21,7 @@ varies cross-culturally:
 
 ## Model
 
-Extended Yoon et al. (2020) RSA with:
+Extended @cite{yoon-etal-2020} RSA with:
 - Culture-specific literal semantics (θ + δ vs θ - δ threshold shifts)
 - Social utility weight (ω_social) varies by culture
 - Information utility weight (ω_info) varies by culture

@@ -3,16 +3,16 @@
 
 Two complementary typological frameworks for coordination:
 
-## 1. Structural Typology (Haspelmath 2007)
+## 1. Structural Typology
 
 Classifies coordination by overt form:
 - **Syndesis**: asyndetic (A B), monosyndetic (A co-B), bisyndetic (co-A co-B)
 - **Coordinator position**: prepositive (co-A) vs postpositive (A-co)
-- **Universal gap**: the pattern co-A B is unattested (Stassen 2000, n=260)
+- **Universal gap**: the pattern co-A B is unattested (@cite{stassen-2000}, n=260)
 - **Diachronic sources**: comitative ("with") → monosyndetic J;
   additive focus particle ("also") → bisyndetic MU
 
-## 2. Semantic Decomposition (Mitrović & Sauerland 2014, 2016)
+## 2. Semantic Decomposition (Mitrović & @cite{mitrovi-sauerland-2014}, 2016)
 
 Classifies by underlying semantic structure:
 - J (set intersection) + MU (subset/additive) + ☉ (type-shifter)

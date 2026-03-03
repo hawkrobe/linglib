@@ -12,17 +12,17 @@ The choice depends on information structure and other factors.
 
 ## The Data
 
-  (1a)  John gives Mary the book.       ✓  double object
-  (1b)  John gives the book to Mary.    ✓  prepositional dative
+  (1a) John gives Mary the book. ✓ double object
+  (1b) John gives the book to Mary. ✓ prepositional dative
 
-  (2a)  Mary sends John a letter.       ✓  double object
-  (2b)  Mary sends a letter to John.    ✓  prepositional dative
+  (2a) Mary sends John a letter. ✓ double object
+  (2b) Mary sends a letter to John. ✓ prepositional dative
 
-  (3a) *John gives Mary.                ✗  ditransitive missing object
-  (3b) *John gives the book.            ✗  ditransitive missing recipient
+  (3a) *John gives Mary. ✗ ditransitive missing object
+  (3b) *John gives the book. ✗ ditransitive missing recipient
 
-  (4a) *John puts the book.             ✗  locative missing PP
-  (4b)  John puts the book on the table. ✓  locative with PP
+  (4a) *John puts the book. ✗ locative missing PP
+  (4b) John puts the book on the table. ✓ locative with PP
 
 ## Note on lexical entries
 

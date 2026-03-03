@@ -1,5 +1,5 @@
 /-
-# Bare NPs as Properties (Krifka 2003/2004)
+# Bare NPs as Properties (@cite{krifka-2003}/2004)
 
 Formalizes Krifka's analysis from "Bare NPs: Kind-referring, Indefinites,
 Both, or Neither?" (SALT 2003 / EISS5 2004).
@@ -9,7 +9,7 @@ readings depending on context. Count nouns carry a number argument
 (`⟨s,⟨n,⟨e,t⟩⟩⟩`); pluralization existentially binds it locally.
 Kind readings require topic position.
 
-| Aspect | Chierchia 1998 | Krifka 2004 |
+| Aspect | @cite{chierchia-1998} | @cite{krifka-2004} |
 |--------|----------------|-------------|
 | Basic denotation | Kind (via ∩) | Property |
 | Existential reading | DKP coercion | Direct ∃ type shift |

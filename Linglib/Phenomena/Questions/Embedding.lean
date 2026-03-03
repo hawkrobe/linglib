@@ -2,17 +2,17 @@
 # Embedding of Interrogatives under Attitude Predicates
 
 Empirical data on which predicates embed which types of interrogative clauses,
-following Dayal (2025). The key contrast is between subordination (standard
+following @cite{dayal-2025}. The key contrast is between subordination (standard
 embedding), quasi-subordination (embedded inversion + matrix intonation), and
 quotation.
 
-## Core observations (Dayal 2025: §§1–3)
+## Core observations (@cite{dayal-2025}: §§1–3)
 
 1. Rogative predicates (wonder, ask, investigate) embed interrogatives;
    responsive predicates (know) embed both declaratives and interrogatives
 2. Only a subset of rogatives allow embedded inversion (quasi-subordination)
 3. Responsive predicates allow quasi-subordination only when negated or questioned
-   ("shiftiness", McCloskey 2006)
+   ("shiftiness", @cite{mccloskey-2006})
 
 -/
 

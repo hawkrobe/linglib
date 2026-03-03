@@ -1,5 +1,5 @@
 /-
-# Beller & Gerstenberg (2025)
+# @cite{beller-gerstenberg-2025}
 @cite{levin-2019} @cite{nadathur-lauer-2020}
 
 RSA model for causal expression choice based on whether-causation (W),

@@ -2,8 +2,8 @@
 # Belief Embedding and Local Contexts
 
 Formalizes how presuppositions project under belief predicates, following
-Schlenker (2009) Section 3.1.2. This provides the machinery for deriving
-Obligatory Local Effect (OLE) from Tonhauser et al. (2013).
+@cite{schlenker-2009} Section 3.1.2. This provides the machinery for deriving
+Obligatory Local Effect (OLE) from @cite{tonhauser-beaver-roberts-simons-2013}.
 
 ## Insight
 
@@ -19,7 +19,7 @@ For "John believes that pp'" uttered in context C:
 - Presupposition p projects iff p is NOT entailed by this local context
 - Result: p must be part of John's beliefs (attributed to attitude holder)
 
-## Connection to Tonhauser et al. (2013)
+## Connection to @cite{tonhauser-beaver-roberts-simons-2013}
 
 OLE = yes (Class A, Class C): Presupposition attributed to attitude holder
   - Predicted by computing local context from attitude holder's beliefs

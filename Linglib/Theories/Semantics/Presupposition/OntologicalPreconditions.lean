@@ -114,7 +114,7 @@ theorem continue_consequence_is_assertion (P : W → Bool) :
 /-
 ## The Aboutness Mechanism
 
-Why do preconditions project through negation? Roberts & Simons (2024) argue:
+Why do preconditions project through negation? @cite{roberts-simons-2024} argue:
 
 1. Sentences refer to event types (not just assert propositions)
 2. Event types have inherent preconditions (ontological requirements)

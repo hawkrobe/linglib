@@ -12,7 +12,7 @@ consequentiality (I-Cons) for psych verbs. The experimental data comes from
 experiencer-stimulus (EXP-STIM) verb classes in German.
 
 The theoretical framework connecting occasion verbs, projectivity, and
-IC bias comes from Solstad & Bott (2024, S&P 17:11).
+IC bias comes from @cite{solstad-bott-2024}.
 
 ## Verb classes
 

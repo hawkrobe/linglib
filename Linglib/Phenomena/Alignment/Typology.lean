@@ -890,7 +890,7 @@ end SilversteinSplit
 /-! Ditransitive alignment classifies how a language codes R (recipient)
     and T (theme) relative to the monotransitive roles A and P.
 
-    The terminology follows Haspelmath (2005, 2021):
+    The terminology follows @cite{haspelmath-2005}:
     - **Indirective**: T = P, R distinctly marked (like accusative for
       monotransitives: the "subject-like" argument is unmarked)
     - **Secundative**: R = P, T distinctly marked (like ergative for

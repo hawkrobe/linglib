@@ -1,10 +1,10 @@
 /-
 # Dynamic Ty2: The Unification Point for Dynamic Semantics
 
-Following Muskens (1996) and Brasoveanu (2007), Dynamic Ty2 is the
+Following @cite{muskens-1996} and @cite{brasoveanu-2007}, Dynamic Ty2 is the
 type-logical foundation into which ALL dynamic semantic systems embed.
 
-## Core Idea (Muskens 1991)
+## Core Idea
 
 "Instead of modeling discourse referents as atomic entities (variables)
 and info states as functions taking dref's as arguments (i.e. variable

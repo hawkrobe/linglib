@@ -1,5 +1,6 @@
 /-
-# Tessler & Franke (2020) "Not unreasonable"
+# @cite{tessler-franke-2020} "Not unreasonable"
+@cite{franke-bergen-2020}
 
 RSA model for flexible negation: why two negatives don't make a positive.
 
@@ -161,7 +162,7 @@ theorem not_unhappy_differs_from_happy_semantically :
 -- Summary
 
 /-
-## Tessler & Franke (2020): Not unreasonable
+## @cite{tessler-franke-2020}: Not unreasonable
 
 ### The Puzzle
 Why does "not unhappy" != "happy"?

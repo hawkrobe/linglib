@@ -1,7 +1,7 @@
 /-
-# Nadathur & Lauer (2020): Causal Necessity and Sufficiency
+# @cite{nadathur-lauer-2020}: Causal Necessity and Sufficiency
 
-Formalization of Nadathur & Lauer's (2020) analysis of causative verbs
+Formalization of @cite{nadathur-lauer-2020} analysis of causative verbs
 "cause" and "make" in terms of causal necessity and sufficiency.
 
 ## Main Results
@@ -26,7 +26,7 @@ Formalization of Nadathur & Lauer's (2020) analysis of causative verbs
 - `Necessity`: Causal necessity, semantics of "cause"
 - `Examples`: Fire scenario, circuit, causal chains
 - `CoerciveImplication`: Volitionality and coercion inference
-- `Integration`: Bridge to Grusdt et al. (2022) probabilistic model
+- `Integration`: Bridge to @cite{grusdt-lassiter-franke-2022} probabilistic model
 
 ## Usage
 

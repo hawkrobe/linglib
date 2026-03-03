@@ -33,7 +33,7 @@ alongside factive verbs (*know*) and change-of-state verbs (*stop*).
 LEFT of i only → presuppositions in the antecedent cannot be resolved by
 the consequent.
 
-Schlenker (2008, 2009): local context considers material on BOTH sides →
+@cite{schlenker-2008}: local context considers material on BOTH sides →
 cataphoric resolution is predicted.
 
 Solstad & Bott's Experiment 3 supports symmetric filtering: occasion verb

@@ -1,8 +1,8 @@
 /-
 # Existential Free Choice Items: Exhaustification Framework
 
-Formalization of Alonso-Ovalle & Moghiseh (2025) analysis of EFCIs,
-based on Chierchia (2013) exhaustification with domain alternatives.
+Formalization of @cite{alonso-ovalle-moghiseh-2025} analysis of EFCIs,
+based on @cite{chierchia-2013} exhaustification with domain alternatives.
 
 ## Key Concepts
 

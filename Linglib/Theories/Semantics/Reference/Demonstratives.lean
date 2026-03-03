@@ -1,7 +1,7 @@
 /-
 # True Demonstratives and Demonstrations
 
-Kaplan (1989) "Demonstratives" §IX, XV, XVI: the theory of true
+@cite{kaplan-1989} "Demonstratives" §IX, XV, XVI: the theory of true
 demonstratives ("that", "this") as opposed to pure indexicals ("I", "now").
 
 True demonstratives require a *demonstration* — an act of pointing, directing

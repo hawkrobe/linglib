@@ -6,7 +6,7 @@ Formalization of quantifier scope in the Minimalist tradition.
 ## Core Mechanisms
 
 1. **Quantifier Raising (QR)**: Covert A'-movement of quantifiers to adjoin to TP/CP
-2. **Scope Economy (Fox 2000)**: QR only applies if it yields a distinct interpretation
+2. **Scope Economy**: QR only applies if it yields a distinct interpretation
 3. **Locality**: QR is clause-bounded and blocked by certain structural barriers
 
 ## Scope Freezing in Minimalism

@@ -6,12 +6,12 @@ Unifies PLA (Dekker) and Core (Muskens-style) infrastructures.
 ## The Problem
 
 PLA uses:
-  `Poss E = (VarIdx → E) × (PronIdx → E)`  (no worlds, explicit pronouns)
+  `Poss E = (VarIdx → E) × (PronIdx → E)` (no worlds, explicit pronouns)
 
 Core uses:
-  `Possibility W E = { world : W, assignment : Nat → E }`  (worlds, no pronouns)
+  `Possibility W E = { world : W, assignment : Nat → E }` (worlds, no pronouns)
 
-## The Solution (Following Muskens 1996)
+## The Solution
 
 1. PLA to Core: set W = Unit, merge assignment and witnesses
 2. Core to PLA: split assignment, use trivial world
@@ -114,6 +114,7 @@ def CCP.toPLACCP {E : Type*} (φ : CCP (Possibility Unit E)) : PLACCP E :=
 
 /-!
 ## Why This Works
+@cite{muskens-1996}
 
 The embedding `PLAPoss.toCore` is injective: different PLA possibilities
 map to different Core possibilities.

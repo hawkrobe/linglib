@@ -5,7 +5,7 @@ import Linglib.Theories.Semantics.Modality.EventRelativity
 # Bridge: Psych Verb Contentfulness ↔ Modal Content Licensing
 
 @cite{kim-2024} @cite{hacquard-2010} @cite{hacquard-2006}Connects @cite{kim-2024}'s causal source distinction for psych verbs to
-Hacquard (2006, 2010)'s content licensing principle for modal flavor
+@cite{hacquard-2006}'s content licensing principle for modal flavor
 availability.
 
 ## The Connection

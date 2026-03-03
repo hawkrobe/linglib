@@ -5,7 +5,7 @@ import Linglib.Theories.Syntax.DependencyGrammar.Formal.EnhancedDependencies
 import Linglib.Phenomena.Complementation.Typology
 
 /-!
-# DG Control/Raising Bridge: Osborne (2019, Ch 6 §6.8–6.9)
+# DG Control/Raising Bridge: @cite{osborne-2019}
 @cite{de-marneffe-nivre-2019} @cite{noonan-2007} @cite{osborne-2019}
 
 Derivation chain from DG enhanced dependency analysis to complementation
@@ -228,7 +228,7 @@ theorem raising_classified :
 
 -- ============================================================================
 -- §7: Control ↔ Raising Structural Identity
--- Osborne (2019, Ch 6 §6.9): DG treats control and raising identically at
+-- @cite{osborne-2019}: DG treats control and raising identically at
 -- the syntactic level. Both produce the same tree geometry; the difference
 -- is purely semantic (theta role assignment).
 -- ============================================================================

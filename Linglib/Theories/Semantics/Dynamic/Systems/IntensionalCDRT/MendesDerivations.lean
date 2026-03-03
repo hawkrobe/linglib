@@ -1,8 +1,8 @@
 /-
-# Complete CDRT Derivations (Mendes 2025 §4.3.1)
+# Complete CDRT Derivations (@cite{mendes-2025} §4.3.1)
 
 This module provides the full compositional CDRT derivations from
-Mendes (2025), matching formulas (54)-(63) of the paper.
+@cite{mendes-2025}, matching formulas (54)-(63) of the paper.
 
 ## Target Example (53)
 
@@ -11,7 +11,7 @@ Mendes (2025), matching formulas (54)-(63) of the paper.
 
 ## Derivation Strategy
 
-Following Muskens (1996) CDRT:
+Following @cite{muskens-1996} CDRT:
 1. Lexical entries are typed λ-terms with dynamic semantics
 2. Composition via function application and abstraction
 3. Discourse referents introduced at top level (flat update)

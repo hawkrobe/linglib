@@ -55,7 +55,7 @@ def Anscombe.after (A B : SentDenotation Time) : Prop :=
 interval associated with B — and defines *before*/*after* by comparison
 with that interval's boundary. This is the most standard textbook analysis.
 
-B&C (2003, Theorem 1): Under two conditions — **left-boundedness** (B has
+@cite{beaver-condoravdi-2003}: Under two conditions — **left-boundedness** (B has
 a leftmost point) and **instantiation** (B is nonempty) — Anscombe and
 Heinämäki are truth-conditionally equivalent.
 

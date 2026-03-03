@@ -9,15 +9,15 @@ This module connects:
 ## Architecture
 
 ```
-Fragments (theory-neutral)          Theory (interprets data)
-──────────────────────              ──────────────────────
-VerbEntry                           Doxastic.lean
-├── attitudeBuilder                 ├── CausalModel, PLC
-│   (.doxastic .veridical, etc)     ├── CGRequirement typology
-│                                   │
-│                                   ContrafactiveGap.lean (this file)
-│                                   ├── deriveCGReq : VerbEntry → Option CGReq
-│                                   ├── Per-verb verification theorems
+Fragments (theory-neutral) Theory (interprets data)
+────────────────────── ──────────────────────
+VerbEntry Doxastic.lean
+├── attitudeBuilder ├── CausalModel, PLC
+│ (.doxastic.veridical, etc) ├── CGRequirement typology
+│ │
+│ ContrafactiveGap.lean (this file)
+│ ├── deriveCGReq : VerbEntry → Option CGReq
+│ ├── Per-verb verification theorems
 └───────────────────────────────────┴── yǐwéi exception handled HERE
 ```
 
@@ -87,7 +87,7 @@ theorem yiwei_is_exceptional :
 /--
 **Theorem**: yǐwéi's effective CG requirement is weak contrafactive.
 
-This captures Glass (2022, 2025): yǐwéi requires CG ◇ ¬p.
+This captures @cite{glass-2025}: yǐwéi requires CG ◇ ¬p.
 -/
 theorem yiwei_effective_cg :
     effectiveCGReq "yiwei" Fragments.Mandarin.Predicates.yiwei.toVerbCore =

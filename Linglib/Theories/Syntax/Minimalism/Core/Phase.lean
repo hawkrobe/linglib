@@ -1,17 +1,17 @@
 /-
 # Phase Theory
 
-Formalization of derivational phases following Chomsky (2000, 2001, 2008),
-Abels (2012), and Citko (2014).
+Formalization of derivational phases following @cite{chomsky-2000},
+@cite{abels-2012}, and @cite{citko-2014}.
 
 ## Key Ideas
 
 - CP and v*P are **phases**: derivational domains shipped to PF/LF incrementally
 - **Phase Impenetrability Condition (PIC)**: material inside a phase complement
   becomes inaccessible once the phase is complete
-- **Anti-locality** (Abels 2012): complements of phase heads cannot move to
+- **Anti-locality**: complements of phase heads cannot move to
   Spec of the same phase head
-- **Feature Inheritance** (Chomsky 2008): C→T and v*→V inheritance
+- **Feature Inheritance**: C→T and v*→V inheritance
 
 ## Design
 

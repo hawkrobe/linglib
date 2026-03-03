@@ -1,13 +1,14 @@
 /-
 # Word Grammar Analysis of Subject-Auxiliary Inversion
+@cite{hudson-1984}
 
-Word Grammar (Hudson 1984, 1990) handles inversion via:
+Word Grammar handles inversion via:
 1. Lexical entries with argument structures specifying direction
 2. Non-inverted aux: subject LEFT, main verb RIGHT
 3. Inverted aux: subject RIGHT, main verb RIGHT
 4. Lexical rule derives inverted from non-inverted
 
-Reference: Hudson (1990), Gibson (2025) Section 3.5-3.6
+Reference: @cite{hudson-1990}, @cite{gibson-2025}
 -/
 
 import Linglib.Fragments.English.Nouns
@@ -28,47 +29,17 @@ private abbrev eat := Fragments.English.Predicates.Verbal.eat.toWordPl
 private abbrev pizza := Fragments.English.Nouns.pizza.toWordSg
 
 -- ============================================================================
--- Inversion via Argument Structure Direction
--- ============================================================================
-
-/-- Is this a nominal category that can be a subject? -/
-def isSubjectCat (c : UD.UPOS) : Bool :=
-  c == .PROPN || c == .NOUN || c == .PRON
-
-/-- Is this word a potential subject? Must be nominal and non-wh. -/
-def isSubjectWord (w : Word) : Bool :=
-  isSubjectCat w.cat && !w.features.wh
-
-/-- Check if auxiliary precedes subject (inverted order) -/
-def auxPrecedesSubject (ws : List Word) : Bool :=
-  let auxPos := ws.findIdx? (·.cat == .AUX)
-  let subjPos := ws.findIdx? isSubjectWord
-  match auxPos, subjPos with
-  | some a, some s => a < s
-  | _, _ => false
-
-/-- Check if subject precedes auxiliary (non-inverted order) -/
-def subjectPrecedesAux (ws : List Word) : Bool :=
-  let auxPos := ws.findIdx? (·.cat == .AUX)
-  let subjPos := ws.findIdx? isSubjectWord
-  match auxPos, subjPos with
-  | some a, some s => s < a
-  | _, _ => false
-
--- ============================================================================
 -- Licensing via Argument Structure
 -- ============================================================================
 
-/-- License a sentence based on clause type and word order
-    - Matrix questions require aux-before-subject (inverted)
-    - Declaratives require subject-before-aux (non-inverted)
-    - Embedded questions require subject-before-aux in embedded clause -/
+/-- License a sentence based on clause type and word order.
+    Uses shared `auxPrecedesSubject`/`subjectPrecedesAux` from Core. -/
 def depGrammarLicenses (ws : List Word) (ct : ClauseType) : Bool :=
   match ct with
   | .matrixQuestion => auxPrecedesSubject ws
   | .declarative => subjectPrecedesAux ws || !ws.any (·.cat == .AUX)
-  | .embeddedQuestion => subjectPrecedesAux ws  -- No inversion in embedded
-  | .echo => true  -- Echo questions don't require inversion
+  | .embeddedQuestion => subjectPrecedesAux ws
+  | .echo => true
 
 -- ============================================================================
 -- Example Trees
@@ -109,23 +80,7 @@ def johnCanEatPizzaTree : DepTree :=
     rootIdx := 1 }
 
 -- ============================================================================
--- Tests
--- ============================================================================
-
--- ============================================================================
--- Dependency Grammar as Grammar Instance
--- ============================================================================
-
-/-- Dependency grammar for inversion -/
-structure DepGrammarInversion where
-
-instance : Grammar DepGrammarInversion where
-  Derivation := List Word × ClauseType
-  realizes d ws ct := d.1 = ws ∧ d.2 = ct
-  derives _ ws ct := depGrammarLicenses ws ct = true
-
--- ============================================================================
--- Proofs for Pair 1: Matrix wh-question
+-- Bridge Theorems
 -- ============================================================================
 
 /-- "What can John eat?" is licensed as a matrix question -/

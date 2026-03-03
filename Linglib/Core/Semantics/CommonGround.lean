@@ -5,7 +5,7 @@ import Linglib.Core.Scales.EpistemicScale.Defs
 /-!
 # Common Ground and Common Knowledge
 
-@cite{halpern-2003} @cite{fagin-vardi-1995} @cite{stalnaker-1974} @cite{stalnaker-2002}Conversational common ground following Stalnaker (1974, 2002), with
+@cite{halpern-2003} @cite{fagin-vardi-1995} @cite{stalnaker-1974} @cite{stalnaker-2002}Conversational common ground following @cite{stalnaker-1974}, with
 multi-agent epistemic operators from @cite{halpern-2003}.
 
 Common ground IS common knowledge: a proposition is

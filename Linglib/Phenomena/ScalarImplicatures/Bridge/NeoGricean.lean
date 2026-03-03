@@ -31,7 +31,7 @@ open Phenomena.ScalarImplicatures.Studies.GeurtsPouscoulous2009
 ## Connecting Theory to Empirical Data
 
 The NeoGricean theory makes specific predictions that should match
-the experimental findings from Geurts & Pouscoulous (2009).
+the experimental findings from @cite{geurts-pouscoulous-2009}.
 -/
 
 /--

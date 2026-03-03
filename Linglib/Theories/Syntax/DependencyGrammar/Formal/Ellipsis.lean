@@ -47,7 +47,7 @@ inductive EllipsisType where
     Pre-ellipsis second clause: cook(0) → he(1:nsubj), will(2:aux), dinner(3:obj).
     Elided = {0, 3} (cook + dinner): connected via obj → **catena**.
     Subtree of cook = {0,1,2,3} ≠ {0,3} → **NOT constituent**.
-    Osborne (2019, Ch 12). -/
+    @cite{osborne-2019}. -/
 def vpEllipsisTree : DepTree :=
   { words := [ Word.mk' "cook" .VERB, Word.mk' "he" .PRON
              , Word.mk' "will" .AUX, Word.mk' "dinner" .NOUN ]
@@ -61,7 +61,7 @@ def vpEllipsisElided : List Nat := [0, 3]
     Pre-ellipsis second clause: eats(0) → Jim(1:nsubj), rice(2:obj).
     Elided = {0} (eats only): singleton → **catena**.
     Subtree of eats = {0,1,2} ≠ {0} → **NOT constituent**.
-    Osborne (2019, Ch 12). -/
+    @cite{osborne-2019}. -/
 def gappingTree : DepTree :=
   { words := [ Word.mk' "eats" .VERB, Word.mk' "Jim" .PROPN
              , Word.mk' "rice" .NOUN ]
@@ -74,7 +74,7 @@ def gappingElided : List Nat := [0]
 /-- **Pseudogapping**: "She has helped him, and he has her too"
     Pre-ellipsis: helped(0) → he(1:nsubj), has(2:aux), her(3:obj), too(4:advmod).
     Elided = {0} (helped only): singleton → **catena**, **NOT constituent**.
-    Osborne (2019, Ch 12). -/
+    @cite{osborne-2019}. -/
 def pseudogappingTree : DepTree :=
   { words := [ Word.mk' "helped" .VERB, Word.mk' "he" .PRON
              , Word.mk' "has" .AUX, Word.mk' "her" .PRON
@@ -89,7 +89,7 @@ def pseudogappingElided : List Nat := [0]
     Embedded clause (pre-ellipsis): helped(0) → she(1:nsubj), someone(2:obj).
     Elided = {0, 1} (helped + she): connected via nsubj → **catena**.
     Subtree of helped = {0,1,2} ≠ {0,1} → **NOT constituent**.
-    Osborne (2019, Ch 13). -/
+    @cite{osborne-2019}. -/
 def sluicingTree : DepTree :=
   { words := [ Word.mk' "helped" .VERB, Word.mk' "she" .PRON
              , Word.mk' "someone" .PRON ]
@@ -102,7 +102,7 @@ def sluicingElided : List Nat := [0, 1]
 /-- **Fragment answer**: "Who helped? — Him."
     Full answer: helped(0) → him(1:obj).
     Elided = {0} (helped): singleton → **catena**, **NOT constituent**.
-    Osborne (2019, Ch 13). -/
+    @cite{osborne-2019}. -/
 def fragmentTree : DepTree :=
   { words := [ Word.mk' "helped" .VERB, Word.mk' "him" .PRON ]
     deps := [⟨0, 1, .obj⟩]
@@ -169,7 +169,7 @@ theorem fragment_elided_not_constituent :
 -- §4: Osborne's Generalization
 -- ============================================================================
 
-/-- Osborne (2019, Ch 12): All five types of ellipsis target catenae.
+/-- @cite{osborne-2019}: All five types of ellipsis target catenae.
     Verified for all example trees. -/
 theorem all_ellipsis_targets_catenae :
     isCatena vpEllipsisTree.deps vpEllipsisElided = true ∧
@@ -179,7 +179,7 @@ theorem all_ellipsis_targets_catenae :
     isCatena fragmentTree.deps fragmentElided = true := by
   refine ⟨?_, ?_, ?_, ?_, ?_⟩ <;> native_decide
 
-/-- Osborne (2019, Ch 12): ALL five ellipsis types target non-constituent
+/-- @cite{osborne-2019}: ALL five ellipsis types target non-constituent
     catenae. This is the empirical advantage of catenae over constituents:
     a constituent-based theory cannot capture these ellipsis patterns. -/
 theorem all_ellipsis_not_constituent :

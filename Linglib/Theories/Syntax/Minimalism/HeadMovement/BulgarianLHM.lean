@@ -2,14 +2,14 @@
 # Bulgarian Long Head Movement: A Formal Analysis
 
 This file proves that Bulgarian Long Head Movement (LHM) violates the
-Head Movement Constraint (HMC), formalizing the argument in Harizanov (2019).
+Head Movement Constraint (HMC), formalizing the argument in @cite{harizanov-gribanova-2019}.
 
 ## The Empirical Pattern
 
-Bulgarian participle fronting (Lambova 2004c:274, (15)):
+Bulgarian participle fronting (@cite{lambova-2004c}:274, (15)):
 
-    Pročeli   bjaha      studentite     statijata.
-    read      be.3p.pst  the.students   the.article
+    Pročeli bjaha studentite statijata.
+    read be.3p.pst the.students the.article
     'The students had read the article.'
 
 The participle "pročeli" appears BEFORE the auxiliary "bjaha", suggesting it has

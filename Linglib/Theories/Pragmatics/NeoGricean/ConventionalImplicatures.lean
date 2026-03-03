@@ -1,7 +1,7 @@
 /-
 # Anti-Conventional Implicatures (ACIs)
 
-Formalization of Lo Guercio (2025) "Maximize Conventional Implicatures!"
+Formalization of @cite{lo-guercio-2025} "Maximize Conventional Implicatures!"
 Semantics & Pragmatics 18(9).
 
 ## Thesis
@@ -17,9 +17,9 @@ The mechanism parallels:
 ## The MCIs! Principle (Lo Guercio Definition 15)
 
 Do not use φ if there's a formal alternative φ' ∈ F(φ) such that:
-a. ⟦φ'⟧ᵘ ⊂ ⟦φ⟧ᵘ  (CI-stronger)
-b. φ' ∈ C  (contextually relevant)
-c. ¬⟦φ'⟧ᵘ doesn't contradict C given φ  (innocently excludable)
+a. ⟦φ'⟧ᵘ ⊂ ⟦φ⟧ᵘ (CI-stronger)
+b. φ' ∈ C (contextually relevant)
+c. ¬⟦φ'⟧ᵘ doesn't contradict C given φ (innocently excludable)
 
 ## Key Expressions
 

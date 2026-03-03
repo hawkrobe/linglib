@@ -1,8 +1,8 @@
 /-
 # Kaplan's Character/Content Semantics
 
-Formalizes Kaplan (1989) "Demonstratives": the two-stage semantics for
-indexicals and the theory of singular propositions (Almog 2014, Ch 2).
+Formalizes @cite{kaplan-1989} "Demonstratives": the two-stage semantics for
+indexicals and the theory of singular propositions (@cite{almog-2014}, Ch 2).
 
 ## Key Results
 

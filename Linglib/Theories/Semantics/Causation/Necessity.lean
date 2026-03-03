@@ -2,7 +2,7 @@
 # Causal Necessity
 
 Causal necessity semantics for the verb "cause" based on
-Nadathur & Lauer (2020) Definition 24.
+@cite{nadathur-lauer-2020} Definition 24.
 
 ## Insight
 

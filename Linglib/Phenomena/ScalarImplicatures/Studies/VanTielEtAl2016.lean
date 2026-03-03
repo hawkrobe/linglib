@@ -1,5 +1,5 @@
 /-
-# Van Tiel et al. (2016) - Scalar Diversity
+# @cite{van-tiel-geurts-2016} - Scalar Diversity
 
 Foundational experimental data on cross-scale variation in scalar implicature rates.
 
@@ -22,7 +22,7 @@ https://doi.org/10.1093/jos/ffu017
 - Challenges the "uniformity assumption" that all scales behave alike
 - Most SI research had focused on ⟨some, all⟩ and ⟨or, and⟩
 - Shows ⟨some, all⟩ is an extreme case (96%), not representative
-- Provides foundation for later work (Ronai 2024 on embedded SI diversity)
+- Provides foundation for later work (@cite{ronai-2024} on embedded SI diversity)
 
 ## Experiments
 

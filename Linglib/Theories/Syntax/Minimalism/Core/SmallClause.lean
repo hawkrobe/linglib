@@ -32,7 +32,7 @@ namespace Minimalism
 
 /-- Category of the predicate head in a small clause.
 
-    Den Dikken (1995:25, ex. 43): X ∈ {A, N, P, V} — the four
+    @cite{dendikken-1995}: X ∈ {A, N, P, V} — the four
     LEXICAL categories. The SC family is parameterized by which
     lexical category serves as the predicate head. -/
 inductive SCPredCategory where

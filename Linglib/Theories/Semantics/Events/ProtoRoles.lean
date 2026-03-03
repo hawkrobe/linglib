@@ -1,7 +1,7 @@
 /-
-# Dowty (1991) Proto-Roles and Argument Selection
+# @cite{dowty-1991} Proto-Roles and Argument Selection
 
-Dowty (1991) "Thematic Proto-Roles and Argument Selection" replaces discrete
+@cite{dowty-1991} "Thematic Proto-Roles and Argument Selection" replaces discrete
 thematic roles (agent, patient, etc.) with **cluster concepts**: Proto-Agent
 and Proto-Patient are each defined by a list of independent entailments.
 Argument selection follows from *counting* which argument has more P-Agent
@@ -20,9 +20,9 @@ vs P-Patient entailments.
 
 ## Bridges
 
-- Cruse (1973) agentivity features derived from P-Agent entailments (§5)
+- @cite{cruse-1973} agentivity features derived from P-Agent entailments (§5)
 - ThetaRole (Fragment enum) mapped to canonical profiles (§6)
-- Krifka (1998) SINC = P-Patient entailment (b) incrementalTheme (§7)
+- @cite{krifka-1998} SINC = P-Patient entailment (b) incrementalTheme (§7)
 - ChangeOfState/CoSType = P-Patient entailment (a) changeOfState (§8)
 - CausativeBuilder = P-Agent entailment (c) causation (§9)
 - VerbEntry.unaccusative prediction from entailment counting (§10)
@@ -593,9 +593,9 @@ theorem levin_causation_implies_both (mc : MeaningComponents)
 -- ════════════════════════════════════════════════════
 
 /-
-## Future extensions (Beavers 2010, Rappaport Hovav & Levin 2024)
+## Future extensions (@cite{beavers-2010}, Rappaport @cite{rappaport-hovav-levin-2024})
 
-Beavers (2010) "The structure of lexical meaning" generalizes Dowty's
+@cite{beavers-2010} "The structure of lexical meaning" generalizes Dowty's
 discrete entailments (a) changeOfState and (b) incrementalTheme into a
 unified **scalar change** framework. Under this view:
 - changeOfState = change along a 2-point property scale

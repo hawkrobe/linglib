@@ -1,7 +1,7 @@
 /-
 # Implicature Operations
 
-Formalization of scalar implicature operations from Horn (1972, §1.22).
+Formalization of scalar implicature operations from @cite{horn-1972}.
 
 ## The Three Operations
 

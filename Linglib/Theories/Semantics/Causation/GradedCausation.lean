@@ -1,14 +1,14 @@
 /-
-# Graded Causative Verb Semantics (Cao, White & Lassiter 2025)
+# Graded Causative Verb Semantics
 
 Causative verbs *cause*, *make*, and *force* encode not just sufficiency
 or necessity but a **unique blend of three graded measures**:
 
 | Measure | Definition | Source |
 |---------|-----------|--------|
-| SUF | Probability of sufficiency | Pearl (2019) |
-| INT | Degree of intention | Halpern & Kleiman-Weiner (2018) |
-| ALT | Number of causee alternatives | Frankfurt (1969) |
+| SUF | Probability of sufficiency | @cite{pearl-2019} |
+| INT | Degree of intention | @cite{halpern-kleiman-weiner-2018} |
+| ALT | Number of causee alternatives | @cite{frankfurt-1969} |
 
 ## Key Finding
 

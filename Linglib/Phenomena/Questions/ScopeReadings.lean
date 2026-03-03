@@ -1,7 +1,7 @@
 /-
 # Scope Readings in Embedded Questions
 
-Pair-list and choice readings from G&S 1984, Chapter VI, Sections 2.1-2.2.
+Pair-list and choice readings from @cite{groenendijk-stokhof-1984}, Chapter VI, Sections 2.1-2.2.
 
 ## Pair-List Readings (Section 2.1)
 
@@ -10,7 +10,7 @@ answer becomes a function: for each element in the quantifier's domain,
 what's the wh-answer?
 
 "Which student did each professor recommend?"
-→ "Prof. A recommended Alice, Prof. B recommended Bob, ..."
+→ "Prof. A recommended Alice, Prof. B recommended Bob,..."
 
 ## Choice Readings (Section 2.2)
 

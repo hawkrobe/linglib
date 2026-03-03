@@ -1,5 +1,5 @@
 /-
-# Causative Verb Acceptability Data (Cao, White & Lassiter 2025)
+# Causative Verb Acceptability Data
 
 Experimental data from a tic-tac-toe-based judgment study of
 *cause*, *make*, and *force* in periphrastic causative constructions.

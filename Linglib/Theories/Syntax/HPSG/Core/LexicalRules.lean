@@ -9,7 +9,7 @@ Formalization of valence-changing lexical rules in HPSG.
 @cite{mueller-2013} argues that valence-changing operations (passive,
 resultative, causative) are best analyzed as *lexical rules* — operations
 that transform a sign's valence (subj/comps lists) while preserving its
-head features. This is the HPSG tradition from Pollard & Sag (1987, 1994).
+head features. This is the HPSG tradition from @cite{pollard-sag-1987}.
 
 ## Key types
 

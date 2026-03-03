@@ -12,11 +12,11 @@ grammatical sentences can be built via formal Merge (from SyntacticObjects.lean)
 
 ## Architecture
 
-  Fragments/English/...             →  Lexical entries (VerbEntry, PronounEntry, etc.)
+  Fragments/English/... → Lexical entries (VerbEntry, PronounEntry, etc.)
           ↓
-  Theories/Minimalism/FromFragments →  Interpretation: Entry → SyntacticObject
+  Theories/Minimalism/FromFragments → Interpretation: Entry → SyntacticObject
           ↓
-  Theories/Minimalism/Derivations   →  Minimalist derivations (this file)
+  Theories/Minimalism/Derivations → Minimalist derivations (this file)
 -/
 
 namespace Minimalism.Phenomena.Derivations

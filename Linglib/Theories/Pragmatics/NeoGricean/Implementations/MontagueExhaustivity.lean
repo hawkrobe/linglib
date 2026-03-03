@@ -14,7 +14,7 @@ Connects compositional Montague semantics to exhaustivity operators.
 
 The scalar implicature "some → not all" is derived from:
 - Compositional semantics (Montague)
-- Exhaustification (Spector 2016)
+- Exhaustification
 - Theorem 9 (exhMW ≡ exhIE)
 
 This grounds the NeoGricean analysis in compositional semantics.
@@ -83,13 +83,13 @@ def passedAt (w : Fin 4) : studentModel.interpTy (.e ⇒ .t) := λ s =>
   = [[some]]([[student]])([[passed]])
   = some_sem isStudent (passedAt w)
   = ∃x. isStudent(x) ∧ passedAt(w)(x)
-  = ∃x. passedAt(w)(x)  (since all entities are students)
+  = ∃x. passedAt(w)(x) (since all entities are students)
 
 "All students passed" at world w:
   = [[every]]([[student]])([[passed]])
   = every_sem isStudent (passedAt w)
   = ∀x. isStudent(x) → passedAt(w)(x)
-  = ∀x. passedAt(w)(x)  (since all entities are students)
+  = ∀x. passedAt(w)(x) (since all entities are students)
 -/
 
 /-- "Some students passed" computed compositionally -/
@@ -279,7 +279,7 @@ theorem exhIE_somePassed_at_w1 :
 
 This closes the gap identified in CLAUDE.md:
 > "Entailment ungrounded: NeoGricean's entailment checker is hardcoded,
->  not proven to match Montague"
+> not proven to match Montague"
 
 Now the scalar implicature derivation is grounded in compositional semantics.
 -/

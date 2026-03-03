@@ -1,5 +1,6 @@
 /-
 # Negative Questions: Empirical Data
+@cite{hohle-1992} @cite{romero-han-2004}
 
 Theory-neutral data on negative yes/no questions and epistemic bias.
 
@@ -11,7 +12,7 @@ Negative questions exhibit systematic asymmetries in interpretation:
    - "Doesn't John drink?" → speaker expects "yes" (positive bias)
    - "Does John not drink?" → neutral information-seeking possible
 
-2. PI/NI ambiguity (Ladd 1981):
+2. PI/NI ambiguity:
    - "Isn't Jane coming too?" → positive implicature (PI)
    - "Isn't Jane coming either?" → negative implicature (NI)
 
@@ -20,9 +21,9 @@ Negative questions exhibit systematic asymmetries in interpretation:
 ## Theoretical Analyses
 
 Different theories explain these facts:
-- Verum Focus (Höhle 1992, Romero & Han 2004): Covert VERUM operator
+- Verum Focus: Covert VERUM operator
 - Decision Theory (van Rooy & Šafářová 2003): Utility-based question choice
-- Structural ambiguity (Ladd 1981): p/¬p scope ambiguity
+- Structural ambiguity: p/¬p scope ambiguity
 
 This file records the phenomena; theories belong in Theories/.
 

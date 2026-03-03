@@ -1,7 +1,7 @@
 /-
 Semantic entailment over a finite world semantics.
 A |= B iff every model satisfying A also satisfies B.
-Reference: van Benthem (1986), Ladusaw (1980), Barwise & Cooper (1981).
+Reference: @cite{van-benthem-1986}, @cite{ladusaw-1980}, @cite{barwise-cooper-1981}.
 -/
 
 import Linglib.Core.Semantics.Proposition

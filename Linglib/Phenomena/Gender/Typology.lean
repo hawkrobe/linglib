@@ -199,7 +199,7 @@ theorem ch32_no_purely_formal :
 
 /-- Morphosyntactic targets where gender agreement can surface.
 
-    Corbett (1991, Ch 6) establishes an implicational hierarchy:
+    @cite{corbett-1991} establishes an implicational hierarchy:
       attributive > predicate > relative pronoun > personal pronoun > verb
     If a language shows gender agreement on a lower target, it shows
     agreement on all higher targets. This is the Agreement Hierarchy. -/

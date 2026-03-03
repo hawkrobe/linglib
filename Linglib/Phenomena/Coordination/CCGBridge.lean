@@ -1,5 +1,6 @@
 /-
 # CCG Analysis of Non-Constituent Coordination
+@cite{pickering-barry-1991} @cite{steedman-2000}
 
 ## The Phenomenon
 
@@ -15,7 +16,6 @@ Yet native speakers accept this sentence as grammatical.
 
 1. Non-constituent coordination is GRAMMATICAL
 2. Non-constituent coordination is HARDER TO PROCESS than standard coordination
-   (Pickering & Barry 1991; Steedman 2000)
 
 ## CCG's Solution
 

@@ -1,5 +1,5 @@
 /-
-# Lo Guercio (2025) - Empirical Data on Anti-Conventional Implicatures
+# @cite{lo-guercio-2025} - Empirical Data on Anti-Conventional Implicatures
 
 Phenomena from "Maximize Conventional Implicatures!" Semantics & Pragmatics 18(9).
 

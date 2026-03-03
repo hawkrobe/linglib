@@ -388,7 +388,7 @@ abbrev binaryPartition (p : M → Bool) : QUD M := ofProject p
 
 /-- Complement predicates induce the same binary partition.
 
-Merin (1999, Fact 1): a proposition and its negation carry exactly the same
+@cite{merin-1999}: a proposition and its negation carry exactly the same
 information. {P-worlds, ¬P-worlds} = {¬P-worlds, P-worlds} as partitions. -/
 theorem complement_same_partition (p : M → Bool) (w v : M) :
     (binaryPartition p).sameAnswer w v =

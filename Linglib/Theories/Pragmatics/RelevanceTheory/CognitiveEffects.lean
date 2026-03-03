@@ -1,7 +1,7 @@
 import Mathlib.Data.Rat.Defs
 
 /-!
-# Cognitive Effects — Sperber & Wilson (1986/95)
+# Cognitive Effects — @cite{sperber-wilson-1986}
 
 Cognitive effects are changes in an individual's beliefs from processing an
 input in a context. Three types:

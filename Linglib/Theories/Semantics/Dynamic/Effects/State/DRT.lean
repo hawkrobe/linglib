@@ -1,5 +1,5 @@
 /-
-# Discourse Representation Theory (Kamp 1981; Kamp & Reyle 1993)
+# Discourse Representation Theory
 @cite{kamp-1981} @cite{kamp-reyle-1993}
 
 Discourse Representation Theory (DRT), the pioneering framework

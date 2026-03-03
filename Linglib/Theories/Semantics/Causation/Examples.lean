@@ -2,7 +2,7 @@
 # Examples: Fire, Circuit, and Overdetermination
 
 Concrete examples demonstrating the necessity/sufficiency distinction
-from Nadathur & Lauer (2020).
+from @cite{nadathur-lauer-2020}.
 
 ## Fire Scenario (Section 3.1)
 

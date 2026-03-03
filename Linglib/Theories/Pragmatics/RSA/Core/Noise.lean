@@ -1,5 +1,6 @@
 /-
 # Unified Noise Theory for RSA
+@cite{waldon-degen-2021}
 
 This module provides a unified treatment of noise in RSA models.
 
@@ -7,9 +8,9 @@ This module provides a unified treatment of noise in RSA models.
 
 | Paper | Noise Type | Location |
 |-------|-----------|----------|
-| Bergen & Goodman 2015 | Channel | Transmission |
-| Degen et al. 2020 | Semantic | Perception |
-| Kursat & Degen 2021 | Perceptual | Verification |
+| @cite{bergen-goodman-2015} | Channel | Transmission |
+| @cite{degen-etal-2020} | Semantic | Perception |
+| @cite{kursat-degen-2021} | Perceptual | Verification |
 
 ## Insight
 
@@ -57,7 +58,7 @@ The current "discrimination" measure (match - mismatch) is a proxy for
 informativeness but not actual mutual information I(X;Y). A proper
 treatment would compute channel capacity:
 ```
-C = 1 - H(ε)  -- for binary symmetric channel with error rate ε
+C = 1 - H(ε) -- for binary symmetric channel with error rate ε
 ```
 
 -/

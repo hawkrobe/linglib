@@ -1,7 +1,7 @@
 /-
 # Extended Projection: Derived Properties
 
-Properties derived from Grimshaw (2005) Extended Projection theory.
+Properties derived from @cite{grimshaw-2005} Extended Projection theory.
 
 ## Key Ideas
 

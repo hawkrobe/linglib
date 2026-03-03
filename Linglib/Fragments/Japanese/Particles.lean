@@ -6,7 +6,7 @@ import Linglib.Theories.Semantics.Lexical.Expressives.OutlookMarker
 
 ## Part 1: Interrogative Particles
 
-Q-morphemes and related particles in Japanese, following Dayal (2025: §1.3).
+Q-morphemes and related particles in Japanese, following @cite{dayal-2025}.
 
 Japanese has a three-way distinction in interrogative particles that maps
 directly onto the three layers of the left periphery:
@@ -109,7 +109,7 @@ inductive OutlookCat where
 /-- An outlook marker lexical entry.
 
 Encodes the form, stance type, syntactic category, and modal selectional
-restrictions following Kubota (2026: §3). -/
+restrictions following @cite{kubota-2026}. -/
 structure OutlookEntry where
   form : String
   romaji : String
@@ -139,7 +139,7 @@ private def deonticOnly : ModalCompatibility :=
 /-! ### Adverbs (@cite{kubota-2026}: (1)) -/
 
 /-- *dōse* 'anyway' — signals pessimistic/defeatist outlook.
-    Kubota (2026: (3a)): "I can't win a gold medal anyway." -/
+    @cite{kubota-2026}): "I can't win a gold medal anyway." -/
 def dōse : OutlookEntry :=
   { form := "どうせ", romaji := "dōse", gloss := "anyway"
   , cat := .adverb, stance := .negative, modalCompat := allModals }
@@ -161,32 +161,32 @@ def kekkyoku : OutlookEntry :=
   , cat := .adverb, stance := .emphasis, modalCompat := allModals }
 
 /-- *masani* 'precisely/exactly' — emphatic confirmation.
-    Kubota (2026: (5a)): "It is precisely you who should go." -/
+    @cite{kubota-2026}): "It is precisely you who should go." -/
 def masani : OutlookEntry :=
   { form := "まさに", romaji := "masani", gloss := "precisely"
   , cat := .adverb, stance := .emphasis, modalCompat := allModals }
 
 /-- *mushiro* 'rather' — contrary to expected evaluation.
-    Kubota (2026: (6a)): "Frankly admitting your mistake actually leaves a better impression."
+    @cite{kubota-2026}): "Frankly admitting your mistake actually leaves a better impression."
     Incompatible with *igai-ni* 'unexpectedly' (@cite{kubota-2026}: (11)). -/
 def mushiro : OutlookEntry :=
   { form := "むしろ", romaji := "mushiro", gloss := "rather"
   , cat := .adverb, stance := .contrary, modalCompat := allModals }
 
 /-- *kaette* 'rather/on the contrary' — contrary to expectation.
-    Kubota (2026: (1c)). -/
+    @cite{kubota-2026}). -/
 def kaette : OutlookEntry :=
   { form := "かえって", romaji := "kaette", gloss := "rather/on the contrary"
   , cat := .adverb, stance := .contrary, modalCompat := allModals }
 
 /-- *yoppodo* 'much more/rather' — strong contrary evaluation.
-    Kubota (2026: (6b)): "Frankly admitting your mistake leaves a far better impression." -/
+    @cite{kubota-2026}): "Frankly admitting your mistake leaves a far better impression." -/
 def yoppodo : OutlookEntry :=
   { form := "よっぽど", romaji := "yoppodo", gloss := "much more/rather"
   , cat := .adverb, stance := .contrary, modalCompat := allModals }
 
 /-- *semete* 'at least' — minimum standard, settling for less.
-    Kubota (2026: (4a), (46)): compatible with desiderative *-tai* and deontic *-beki*
+    @cite{kubota-2026}, (46)): compatible with desiderative *-tai* and deontic *-beki*
     but NOT with epistemic *hazu* or ability *-eru*. -/
 def semete : OutlookEntry :=
   { form := "せめて", romaji := "semete", gloss := "at least"
@@ -201,20 +201,20 @@ def mashite : OutlookEntry :=
 /-! ### Focus Particles (@cite{kubota-2026}: (2)) -/
 
 /-- *nanka* 'anything like' — negative evaluation focus particle.
-    Kubota (2026: (3b), (9), (37)–(42)): the prototypical outlook marker.
+    @cite{kubota-2026}, (9), (37)–(42)): the prototypical outlook marker.
     Requires a salient counterstance; allows perspective shift under embedding. -/
 def nanka : OutlookEntry :=
   { form := "なんか", romaji := "nanka", gloss := "anything like"
   , cat := .focusParticle, stance := .negative, modalCompat := allModals }
 
 /-- *kurai* 'at least' — minimum standard focus particle.
-    Kubota (2026: (4b)): "Why don't you have something light, like some tea?" -/
+    @cite{kubota-2026}): "Why don't you have something light, like some tea?" -/
 def kurai : OutlookEntry :=
   { form := "くらい", romaji := "kurai", gloss := "at least"
   , cat := .focusParticle, stance := .minimum, modalCompat := allModals }
 
 /-- *koso* 'precisely' — emphatic confirmation focus particle.
-    Kubota (2026: (5b)): "It is you who should go." -/
+    @cite{kubota-2026}): "It is you who should go." -/
 def koso : OutlookEntry :=
   { form := "こそ", romaji := "koso", gloss := "precisely"
   , cat := .focusParticle, stance := .emphasis, modalCompat := allModals }

@@ -1,7 +1,7 @@
 /-
 # PLA Belief Reports
 
-Dekker (2012) Chapter 4, §4.2: Belief Reports and Conceptual Covers.
+@cite{dekker-2012} Chapter 4, §4.2: Belief Reports and Conceptual Covers.
 
 ## Key Concepts
 
@@ -20,7 +20,7 @@ Dekker (2012) Chapter 4, §4.2: Belief Reports and Conceptual Covers.
   The belief is about whoever satisfies "the winner" in John's belief worlds.
   Uses descriptive concept - may pick out different individuals.
 
-### Conceptual Covers (Aloni 2001, Dekker §4.3)
+### Conceptual Covers (@cite{aloni-2001}, Dekker §4.3)
 A conceptual cover is a set of concepts that:
 1. Covers the domain (every entity is picked out by some concept)
 2. Is functional (each concept picks out at most one entity per possibility)

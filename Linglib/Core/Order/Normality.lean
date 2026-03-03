@@ -7,7 +7,7 @@ import Mathlib.Data.Set.Basic
 A normality ordering is a preorder on worlds encoding relative normalcy.
 This structure appears in four places across formal semantics:
 
-1. **Kratzer (1981, 1991)**: ordering sources induce normality orderings
+1. **@cite{kratzer-1981}**: ordering sources induce normality orderings
    for modal semantics (`Theories/Semantics/Modality/Kratzer.lean`)
 2. **@cite{kraus-magidor-1990}**: plausibility orderings interpret
    default consequence, System P (`Core/Logic/BeliefRevision.lean`)

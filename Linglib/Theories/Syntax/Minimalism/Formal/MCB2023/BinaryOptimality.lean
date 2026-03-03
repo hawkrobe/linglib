@@ -1,7 +1,7 @@
 /-
 # Binary Optimality of Merge
 
-Formalizes §4 of Marcolli, Chomsky & Berwick (2023): binary Merge uniquely
+Formalizes §4 of @cite{marcolli-chomsky-berwick-2023}: binary Merge uniquely
 achieves all possible string lengths (Lemma 4.4), and the Catalan number
 connection for counting SO shapes.
 

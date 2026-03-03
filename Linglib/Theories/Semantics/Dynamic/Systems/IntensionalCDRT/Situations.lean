@@ -3,7 +3,7 @@
 
 Extension of ICDRT with situation discourse referents (SDrefs).
 
-## Motivation: Mendes (2025)
+## Motivation: @cite{mendes-2025}
 
 Mendes argues that the Portuguese Subordinate Future (SF) is a subjunctive
 that introduces a situation dref -- parallel to how indefinites introduce

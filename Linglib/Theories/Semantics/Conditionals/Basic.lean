@@ -16,7 +16,7 @@ The material conditional (p → q ≡ ¬p ∨ q) has well-known problems:
 - "If pigs fly, then the moon is cheese" comes out true
 - It doesn't capture "If A, then C" as speakers use it
 
-However, following Grusdt et al. (2022), we can maintain classical semantics
+However, following @cite{grusdt-lassiter-franke-2022}, we can maintain classical semantics
 while deriving apparent exceptions through RSA pragmatics. The key is that
 conditionals assert high conditional probability, not material implication.
 

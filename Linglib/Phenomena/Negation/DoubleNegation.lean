@@ -9,8 +9,8 @@ with anaphora in dynamic semantics.
 In classical logic, ¬¬φ ↔ φ (Double Negation Elimination).
 
 In standard dynamic semantics, this fails for anaphora:
-- "A man walked in. He sat down." (OK)
-- "It's not the case that no man walked in. He sat down." (??)
+- "A man walked. He sat down." (OK)
+- "It's not the case that no man walked. He sat down." (??)
 
 The puzzle: semantically these should be equivalent, but anaphora differs.
 

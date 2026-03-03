@@ -1,5 +1,6 @@
 /-
-# Compositional DRT (Muskens 1996)
+# Compositional DRT
+@cite{muskens-1996}
 
 Stub for Compositional DRT, which combines DRT with Montague grammar
 for fully compositional dynamic semantics.

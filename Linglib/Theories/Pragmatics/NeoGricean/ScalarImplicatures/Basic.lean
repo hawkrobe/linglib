@@ -1,7 +1,7 @@
 /-
 # Neo-Gricean Pragmatics: Scalar Implicatures
 
-Scalar implicature specifics from Geurts (2010) Chapter 3.2-3.3,
+Scalar implicature specifics from @cite{geurts-2010} Chapter 3.2-3.3,
 plus scale semantics and predictions.
 
 ## Key Topics

@@ -9,11 +9,11 @@ different answers. This is the wh-analogue of polar question polarity.
 Consider a domain with John, Mary, Bill where John and Mary walk.
 
 - Q1: "Who walks?"
-  Partition: {{w: walkers = {j,m}}, {w: walkers = {j}}, ...}
+  Partition: {{w: walkers = {j,m}}, {w: walkers = {j}},...}
   Correct answer: "John and Mary"
 
 - Q2: "Who doesn't walk?"
-  Partition: {{w: non-walkers = {b}}, {w: non-walkers = {j,b}}, ...}
+  Partition: {{w: non-walkers = {b}}, {w: non-walkers = {j,b}},...}
   Correct answer: "Bill"
 
 Both questions partition the same space, but:

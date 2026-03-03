@@ -1,5 +1,6 @@
 /-
 # Presupposition Projection and Polarity
+@cite{schlenker-2009}
 
 Connects presupposition projection to the existing polarity infrastructure.
 
@@ -13,7 +14,7 @@ This parallels how polarity affects scalar implicature:
 - UE contexts: stronger alternatives matter (some → not all)
 - DE contexts: weaker alternatives matter (polarity reversal)
 
-## Connection to Local Contexts (Schlenker 2009)
+## Connection to Local Contexts
 
 Local context theory unifies presupposition projection and implicature:
 - Both depend on the "local context" at the embedded position

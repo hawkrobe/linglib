@@ -1,9 +1,9 @@
 /-
 # Head Movement Types
 
-Formalization of head movement following Harizanov's (2019) typology.
+Formalization of head movement following @cite{harizanov-gribanova-2019}'s typology.
 
-## The Core Distinction (Harizanov 2019)
+## The Core Distinction
 
 Two distinct types of syntactic head movement:
 
@@ -236,7 +236,7 @@ theorem head_to_head_is_local
 /-
 ## Position-Specific Maximality
 
-Following Collins & Stabler (2016, cited in Harizanov footnote 11), maximality
+Following @cite{collins-stabler-2016}, maximality
 is evaluated at a POSITION (path from root), not globally.
 
 In multidominant structures (copy theory), the same element can be:

@@ -2,7 +2,7 @@ import Mathlib.Data.Fintype.Basic
 import Linglib.Core.Logic.Quantification
 
 /-
-# Possessives and Relational Nouns (Barker 2011)
+# Possessives and Relational Nouns
 
 Barker's type-shifting analysis: π relationalizes sortals, Ex detransitivizes relations.
 
@@ -157,7 +157,7 @@ def derivation_bare_seat {E S : Type}
 
 /-!
 ## Algebraic Structure
-@cite{ahn-zhu-2025}
+@cite{ahn-zhu-2025} @cite{barker-2011}
 
 π and Ex form a pseudo-adjoint pair:
 Ex(π(P, R)) ≈ P (when R is satisfied by some entity).

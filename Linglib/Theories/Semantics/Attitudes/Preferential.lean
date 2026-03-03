@@ -2,7 +2,7 @@
 # Preferential Attitude Semantics
 
 Degree-based semantics for preferential attitude verbs like `hope`, `fear`,
-`worry`, `wish`, `expect`, following Villalta (2008) and Romero (2015).
+`worry`, `wish`, `expect`, following @cite{villalta-2008} and @cite{romero-2015}.
 
 ## Semantic Mechanism
 
@@ -16,7 +16,7 @@ Where:
 - θ_hope : ComparisonClass → Degree (contextual threshold)
 - C : the comparison class of propositions
 
-## Key Properties (Qing et al. 2025)
+## Key Properties
 
 1. **C-distributivity**: Does `x V Q` ⟺ `∃p ∈ Q. x V p`?
 2. **Valence**: Evaluatively positive (hope) vs. negative (fear)
@@ -77,7 +77,7 @@ abbrev ThresholdFunction (W : Type*) := QuestionDen W → ℚ
 
 /-!
 ## Grounding in Hamblin Semantics
-@cite{uegaki-sudo-2019} @cite{villalta-2008} @cite{hamblin-1973} @cite{rooth-1992}
+@cite{uegaki-sudo-2019} @cite{villalta-2008} @cite{hamblin-1973} @cite{rooth-1992} @cite{qing-uegaki-2025}
 
 Questions are **alternative sets**. Our `QuestionDen W` is the
 extensional representation of `Semantics.Questions.Hamblin.QuestionDen W`.
