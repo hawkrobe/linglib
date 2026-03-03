@@ -5,7 +5,6 @@ open Core.Empirical
 
 /-!
 # @cite{khoo-2015}: Modal Disagreements
-@cite{khoo-2015}
 
 Empirical data from Khoo's experiment on epistemic modal disagreements.
 The key finding: speakers reject might-claims (high rejection rating)
@@ -14,10 +13,11 @@ between rejection and falsity judgments is predicted by @cite{rudin-2025}'s Neo-
 depends on the *assertor's* information while rejection depends on the
 *rejector's* information.
 
-## Experimental Design
+## Experimental Design (§II)
 
 - 60 participants on Amazon Mechanical Turk
-- 2 × 2 between-subjects: {Control, Modal} × {False, Rejection}
+- 2 × 2 mixed design: between-subjects on response type (False vs
+  Rejection), within-subjects on sentence type (Control vs Modal)
 - 7-point Likert scale (1 = completely disagree, 7 = completely agree)
 - Control vignette: non-modal assertion ("Jim is at home right now")
 - Modal vignette: epistemic might ("Fat Tony might be dead")
