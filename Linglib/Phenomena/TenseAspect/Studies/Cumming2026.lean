@@ -22,7 +22,7 @@ predictions.
 
 -/
 
-namespace Phenomena.TenseAspect.Studies.Cumming2026.Bridge
+namespace Phenomena.TenseAspect.Studies.Cumming2026
 
 open Semantics.Tense.Evidential
 open Fragments.English.Tense
@@ -162,4 +162,4 @@ theorem korean_te_ney_ep_diverge :
     · show (0 : ℤ) = 0; rfl
     · show ¬ ((0 : ℤ) < 0); omega
 
-end Phenomena.TenseAspect.Studies.Cumming2026.Bridge
+end Phenomena.TenseAspect.Studies.Cumming2026

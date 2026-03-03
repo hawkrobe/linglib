@@ -1,5 +1,8 @@
 import Linglib.Core.Empirical
 import Linglib.Fragments.English.TemporalExpressions
+import Linglib.Theories.Semantics.Tense.TemporalConnectives.Rett
+import Linglib.Fragments.Tagalog.TemporalConnectives
+import Linglib.Fragments.Serbian.TemporalConnectives
 
 open Core.Empirical
 
@@ -265,5 +268,86 @@ def processingMeasure : MeasureSpec :=
 theorem pragmatic_vs_semantic_delay :
     exp2_rt.region = .verbPlus2 ∧ exp1b_rt.region = .verbPlus1 :=
   ⟨rfl, rfl⟩
+
+-- ============================================================================
+-- § Bridge: Fragment–Experiment and Cross-Linguistic Connections
+-- ============================================================================
+
+open Fragments.English.TemporalExpressions
+
+theorem exp2_tests_before_coercion :
+    exp2_rt.coercionType = .completive ∧
+    before_.coercedReading = some .beforeFinish :=
+  ⟨rfl, rfl⟩
+
+theorem exp4_tests_after_coercion :
+    exp4_rt.coercionType = .inchoative ∧
+    after_.coercedReading = some .afterStart :=
+  ⟨rfl, rfl⟩
+
+theorem exp1b_tests_at_modifier_coercion :
+    exp1b_rt.coercionType = .completive ∧
+    at_punct.triggeredCoercion = some "COMPLET" :=
+  ⟨rfl, rfl⟩
+
+theorem exp1a_tests_within_modifier_coercion :
+    exp1a_rt.coercionType = .inchoative ∧
+    within_.triggeredCoercion = some "INCHOAT" :=
+  ⟨rfl, rfl⟩
+
+theorem complet_consistently_costly :
+    exp1b_rt.significant = true ∧
+    exp2_rt.significant = true ∧
+    exp1b_rt.coercionType = .completive ∧
+    exp2_rt.coercionType = .completive :=
+  ⟨rfl, rfl, rfl, rfl⟩
+
+theorem inchoat_construction_specific :
+    exp4_rt.significant = true ∧
+    exp1a_rt.significant = false ∧
+    exp3_rt.significant = false ∧
+    exp4_rt.coercionType = .inchoative ∧
+    exp1a_rt.coercionType = .inchoative ∧
+    exp3_rt.coercionType = .inchoative :=
+  ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
+
+theorem complet_effect_exceeds_inchoat :
+    exp1b_rt.effectBeta > exp1a_rt.effectBeta :=
+  by native_decide
+
+theorem rt_naturalness_converge :
+    (exp1b_rt.significant = exp1b_naturalness.significant) ∧
+    (exp2_rt.significant = exp2_naturalness.significant) ∧
+    (exp4_rt.significant = exp4_naturalness.significant) ∧
+    (exp1a_rt.significant = exp1a_naturalness.significant) ∧
+    (exp3_rt.significant = exp3_naturalness.significant) :=
+  ⟨rfl, rfl, rfl, rfl, rfl⟩
+
+theorem tagalog_overt_coercion :
+    Fragments.Tagalog.TemporalConnectives.bago_aia.culminating = true ∧
+    Fragments.Tagalog.TemporalConnectives.bago_aia.reading = .beforeFinish ∧
+    Fragments.Tagalog.TemporalConnectives.bago_neut.culminating = false ∧
+    Fragments.Tagalog.TemporalConnectives.bago_neut.reading = .beforeStart :=
+  ⟨rfl, rfl, rfl, rfl⟩
+
+theorem serbian_overt_coercion :
+    Fragments.Serbian.TemporalConnectives.pre_pfv.culminating = true ∧
+    Fragments.Serbian.TemporalConnectives.pre_pfv.reading = .beforeFinish ∧
+    Fragments.Serbian.TemporalConnectives.pre_impf.culminating = false ∧
+    Fragments.Serbian.TemporalConnectives.pre_impf.reading = .beforeStart :=
+  ⟨rfl, rfl, rfl, rfl⟩
+
+theorem complet_triple_convergence :
+    exp2_rt.significant = true ∧
+    exp2_rt.coercionType = .completive ∧
+    Fragments.Tagalog.TemporalConnectives.bago_aia.culminating = true ∧
+    Fragments.Serbian.TemporalConnectives.pre_pfv.culminating = true :=
+  ⟨rfl, rfl, rfl, rfl⟩
+
+theorem connective_later_spillover :
+    exp2_rt.region = .verbPlus2 ∧
+    exp4_rt.region = .verbPlus2 ∧
+    exp1b_rt.region = .verbPlus1 :=
+  ⟨rfl, rfl, rfl⟩
 
 end Phenomena.TenseAspect.Studies.AlstottAravind2026

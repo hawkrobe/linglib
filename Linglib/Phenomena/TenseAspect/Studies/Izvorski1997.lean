@@ -1,4 +1,8 @@
 import Linglib.Core.Discourse.Evidence
+import Linglib.Theories.Semantics.Modality.Kratzer
+import Linglib.Core.Semantics.Presupposition
+import Linglib.Theories.Semantics.Tense.Evidential
+import Linglib.Fragments.Bulgarian.Evidentials
 
 /-!
 # @cite{izvorski-1997}: The Present Perfect as an Epistemic Modal — Data @cite{izvorski-1997}
@@ -151,5 +155,94 @@ theorem all_mustAllowsBoth :
 /-- All diagnostics confirm presupposition status (not implicature). -/
 theorem all_evidentialSurvives :
     presupData.all (·.evidentialSurvives) = true := by native_decide
+
+-- ════════════════════════════════════════════════════
+-- § Bridge: EV Operator and Modal Semantics
+-- ════════════════════════════════════════════════════
+
+open Semantics.Modality.Kratzer
+open Semantics.Attitudes.Intensional (World allWorlds)
+open Core.Presupposition
+open Core.Evidence
+open Semantics.Tense.Evidential
+open Fragments.Bulgarian.Evidentials
+open Core.Proposition (World4)
+
+/-- Izvorski's EV operator (formalization of (17)–(19) + (8ii)). -/
+def izvorskiEv (f : ModalBase) (g : OrderingSource)
+    (p : BProp World) : PrProp World where
+  presup := λ w => !(accessibleWorlds f w).isEmpty
+  assertion := λ w => necessity f g p w
+
+def johnDrank : BProp World
+  | .w0 => true
+  | .w1 => true
+  | .w2 => false
+  | .w3 => false
+
+def bottlesEmpty : BProp World
+  | .w0 => true
+  | .w1 => false
+  | .w2 => true
+  | .w3 => false
+
+def evBase : ModalBase := λ _ => [bottlesEmpty]
+
+def mustBase : ModalBase := λ _ => [bottlesEmpty, johnDrank]
+
+def beliefOrdering : OrderingSource := λ _ => [johnDrank]
+
+theorem ev_presup_satisfied (w : World) :
+    (izvorskiEv evBase beliefOrdering johnDrank).presup w = true := by
+  cases w <;> native_decide
+
+theorem ev_asserts_drank (w : World) :
+    (izvorskiEv evBase beliefOrdering johnDrank).assertion w = true := by
+  cases w <;> native_decide
+
+theorem must_accessible_subset_ev (w w' : World)
+    (hw' : w' ∈ accessibleWorlds mustBase w) :
+    w' ∈ accessibleWorlds evBase w := by
+  cases w <;> cases w' <;> simp_all [accessibleWorlds, propIntersection,
+    mustBase, evBase, bottlesEmpty, johnDrank, allWorlds,
+    Core.Proposition.FiniteWorlds.worlds]
+
+theorem restricted_base_enlarges_access
+    (f_ev f_must : ModalBase)
+    (h : ∀ w p, p ∈ f_ev w → p ∈ f_must w)
+    (w w' : World)
+    (hw' : w' ∈ accessibleWorlds f_must w) :
+    w' ∈ accessibleWorlds f_ev w := by
+  rw [accessible_is_extension] at hw' ⊢
+  exact extension_antitone (f_ev w) (f_must w) w' (h w) hw'
+
+theorem ev_and_must_agree_here (w : World) :
+    (izvorskiEv evBase beliefOrdering johnDrank).assertion w =
+    necessity mustBase beliefOrdering johnDrank w := by
+  cases w <;> native_decide
+
+private def pOnlyW0 : BProp World
+  | .w0 => true
+  | _ => false
+
+theorem izvorski_koev_diverge :
+    ∃ (f : ModalBase) (g : OrderingSource) (p : BProp World) (w : World),
+      (izvorskiEv f g p).assertion w ≠ p w :=
+  ⟨emptyBackground, emptyBackground, pOnlyW0, .w0, by native_decide⟩
+
+theorem izvorski_collapses_to_koev_when_realistic
+    (f : ModalBase) (p : BProp World) (w : World)
+    (hTotal : accessibleWorlds f w = [w]) :
+    (izvorskiEv f emptyBackground p).assertion w = p w := by
+  simp only [izvorskiEv, necessity]
+  rw [empty_ordering_emptyBackground]
+  rw [hTotal]
+  simp only [List.all_cons, List.all_nil, Bool.and_true]
+
+theorem izvorski_projection (f : ModalBase) (g : OrderingSource) (p : BProp World) :
+    (PrProp.neg (izvorskiEv f g p)).presup = (izvorskiEv f g p).presup :=
+  PrProp.neg_presup _
+
+theorem nfutL_compatible_with_izvorski : nfutL.ep = .downstream := rfl
 
 end Phenomena.TenseAspect.Studies.Izvorski1997.Data

@@ -1,4 +1,6 @@
 import Linglib.Theories.Morphology.Core.Exponence
+import Linglib.Fragments.English.Tense
+import Linglib.Theories.Semantics.Tense.ParticipantPerspective
 
 /-!
 # @cite{lakoff-1970} Grammaticality Judgments
@@ -195,5 +197,77 @@ theorem periphrastic_count : periphrasticJudgments.length = 2 := rfl
 /-- The only ungrammatical false-tense-with-periphrastic example is ex8a. -/
 theorem false_periphrastic_ungrammatical :
     (falseTenseJudgments.filter (·.formType == .periphrastic)).length = 1 := rfl
+
+-- ════════════════════════════════════════════════════
+-- § Bridge: Fragment and Theory Connections
+-- ════════════════════════════════════════════════════
+
+open Fragments.English.Tense
+open Semantics.Tense.ParticipantPerspective
+open Semantics.Tense
+open Core.Morphology.Tense
+
+theorem ex4a_formType :
+    ex4a.formType = simplePastPerspective.formType := rfl
+
+theorem ex8a_formType :
+    ex8a.formType = usedTo.formType := rfl
+
+theorem ex9a_formType :
+    ex9a.formType = usedTo.formType := rfl
+
+theorem synthetic_allows_false_tense :
+    falseTenseRequiresSynthetic .falseTense .synthetic = true := rfl
+
+theorem periphrastic_blocks_false_tense :
+    falseTenseRequiresSynthetic .falseTense .periphrastic = false := rfl
+
+theorem true_tense_any_form :
+    falseTenseRequiresSynthetic .trueTense .periphrastic = true := rfl
+
+theorem usedTo_entry_blocks_false :
+    usedTo.allowsFalseTense = false := rfl
+
+theorem simplePast_entry_allows_false :
+    simplePastPerspective.allowsFalseTense = true := rfl
+
+theorem false_past_is_temporally_present (f : TensePerspective ℤ)
+    (h : falsePast f) :
+    f.eventTime = f.speechTime :=
+  h.1
+
+theorem false_past_classified_correctly (f : TensePerspective ℤ)
+    (h : falsePast f) :
+    classifyUse .past f = TenseUse.falseTense := by
+  simp only [classifyUse]
+  have h_eq := h.1
+  split
+  · omega
+  · rfl
+
+theorem novel_info_licenses_present (f : TensePerspective ℤ)
+    (h : novelInfoPresent f) :
+    f.hearerNovelty = true ∧ f.eventTime = f.speechTime :=
+  ⟨h.1, h.2⟩
+
+theorem perfect_salience_required (f : TensePerspective ℤ)
+    (h : perfectRequiresSalience f) :
+    f.speakerSalience = true :=
+  h
+
+theorem will_deletion_requires_future_and_salience (f : TensePerspective ℤ)
+    (h : willDeletion f) :
+    f.speechTime < f.eventTime ∧ f.speakerSalience = true :=
+  ⟨h.1, h.2⟩
+
+theorem grammatical_false_tense_all_synthetic :
+    (falseTenseJudgments.filter
+      (λ j => j.acceptability == .grammatical)).all
+      (λ j => j.formType == .synthetic) = true := rfl
+
+theorem false_periphrastic_is_ungrammatical :
+    (ex8a.tenseUse == .falseTense &&
+     ex8a.formType == .periphrastic &&
+     ex8a.acceptability == .ungrammatical) = true := rfl
 
 end Phenomena.TenseAspect.Studies.Lakoff1970.Data

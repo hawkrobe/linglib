@@ -250,8 +250,7 @@ import Linglib.Fragments.Chuj.VerbBuilding
 import Linglib.Fragments.Chuj.ModalIndefinites
 -- Phenomena
 import Linglib.Phenomena.Causatives.Studies.SpalekMcNally.Data
-import Linglib.Phenomena.TenseAspect.Studies.AlstottAravind2026.Data
-import Linglib.Phenomena.TenseAspect.Studies.AlstottAravind2026.Bridge
+import Linglib.Phenomena.TenseAspect.Studies.AlstottAravind2026
 import Linglib.Phenomena.Focus.AdditiveParticles.Studies.TurcoBraunDimroth2014.Data
 import Linglib.Phenomena.TemporalConnectives.AspectInteractionBridge
 import Linglib.Phenomena.TemporalConnectives.AspectInteractionData
@@ -323,9 +322,8 @@ import Linglib.Phenomena.AuxiliaryVerbs.SelectionBridge
 import Linglib.Phenomena.AuxiliaryVerbs.Typology
 import Linglib.Phenomena.Plurals.Studies.Charlow2021.Data
 import Linglib.Phenomena.Plurals.Studies.Charlow2021.CumulativeReadings
-import Linglib.Phenomena.TenseAspect.Studies.Cumming2026.Bridge
-import Linglib.Phenomena.TenseAspect.Studies.Lakoff1970.Data
-import Linglib.Phenomena.TenseAspect.Studies.Lakoff1970.Bridge
+import Linglib.Phenomena.TenseAspect.Studies.Cumming2026
+import Linglib.Phenomena.TenseAspect.Studies.Lakoff1970
 import Linglib.Phenomena.Conditionals.Data
 import Linglib.Phenomena.Conditionals.LeftNested.Data
 import Linglib.Phenomena.Conditionals.LeftNested.Bridge
@@ -611,13 +609,11 @@ import Linglib.Phenomena.TemporalConnectives.NegationData
 import Linglib.Phenomena.TemporalConnectives.VeridicalityBridge
 import Linglib.Phenomena.TenseAspect.Typology
 import Linglib.Phenomena.TenseAspect.AgentivityBridge
-import Linglib.Phenomena.TenseAspect.Studies.AlstottAravind2026
 import Linglib.Phenomena.TenseAspect.Studies.OgiharaST2024.Data
 import Linglib.Phenomena.TenseAspect.Studies.OgiharaST2024.Bridge
 import Linglib.Phenomena.TenseAspect.Studies.Koev2017.Data
 import Linglib.Phenomena.TenseAspect.Studies.Koev2017.Bridge
-import Linglib.Phenomena.TenseAspect.Studies.Izvorski1997.Data
-import Linglib.Phenomena.TenseAspect.Studies.Izvorski1997.Bridge
+import Linglib.Phenomena.TenseAspect.Studies.Izvorski1997
 import Linglib.Phenomena.WordOrder.Basic
 import Linglib.Phenomena.WordOrder.SubjectAuxInversion
 import Linglib.Phenomena.WordOrder.Typology
