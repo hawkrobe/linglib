@@ -16,10 +16,9 @@ of the environment. This paper shows it does.
 
 ## Design
 
-Three experiments, 4 × 4 design:
-- **Environments**: UE, DE, NM (non-monotone), DN (doubly negative)
-- **PI conditions**: NPI (*any/ever/at all*), PPI (*some*), no-PI simple,
-  no-PI complex
+Four experiments (§3–§7):
+- **Environments**: UE, DE, NM (Exps 1–4); DN added in Exps 3–4
+- **PI conditions**: NPI (*any/ever/at all*), PPI (*some*), no-PI
 
 Participants rated sentence pairs (related by a narrowing substitution) for
 both UE-ness and DE-ness on 7-point scales. The directional rating (UE − DE)
@@ -27,11 +26,12 @@ gives a single bipolar measure.
 
 ## Core findings
 
-1. **NPI in NM**: directional ratings shift toward DE (significant)
-2. **PPI in DN**: directional ratings shift toward UE (significant)
+1. **NPI in NM**: directional ratings shift toward DE (significant across all exps)
+2. **PPI in DN**: directional ratings shift toward UE (significant in Exp 3)
 3. **UE and DE**: no PI effects (ceiling/floor)
-4. **Exp 3**: NPI effect persists when controlling for domain-widening
-   semantics, arguing against a purely scalar side-effect account
+4. Scalar side-effect not the sole mechanism: the NPI effect holds across
+   NPIs with heterogeneous scalar properties (e.g., "ever" lacks domain
+   widening; §10.2)
 
 ## Significance for linglib
 
@@ -105,11 +105,11 @@ def exp1_npi_NM : PIInfluence :=
   , significant := true, shiftDirection := some .DE
   , evidence := "NPI < no-PI in NM; significant interaction" }
 
-/-- PPI in DN: shifts directional ratings toward UE. -/
+/-- PPI in DN: shifts directional ratings toward UE (Exp 3, §6.3). -/
 def exp1_ppi_DN : PIInfluence :=
-  { experiment := 1, environment := .DN, piCondition := .ppi
+  { experiment := 3, environment := .DN, piCondition := .ppi
   , significant := true, shiftDirection := some .UE
-  , evidence := "PPI > no-PI in DN; significant interaction" }
+  , evidence := "PPI > no-PI in DN; P(β>0)=.998 (Exp 3)" }
 
 /-- NPI in UE: no effect (ceiling). -/
 def exp1_npi_UE : PIInfluence :=
@@ -135,11 +135,11 @@ def exp1_ppi_DE : PIInfluence :=
   , significant := false, shiftDirection := none
   , evidence := "PPI ≈ no-PI in DE; n.s." }
 
-/-- NPI in DN: no significant effect. -/
+/-- NPI in DN: no significant effect (Exp 3, §6.3). -/
 def exp1_npi_DN : PIInfluence :=
-  { experiment := 1, environment := .DN, piCondition := .npi
+  { experiment := 3, environment := .DN, piCondition := .npi
   , significant := false, shiftDirection := none
-  , evidence := "NPI ≈ no-PI in DN; n.s." }
+  , evidence := "NPI ≈ no-PI in DN; P(β<0)=.887 (Exp 3, below threshold)" }
 
 /-- PPI in NM: no significant effect. -/
 def exp1_ppi_NM : PIInfluence :=
@@ -156,13 +156,14 @@ def experiment1 : List PIInfluence :=
 -- Experiment 3: Controlling for Scalar Side-Effects
 -- ============================================================================
 
-/-- Experiment 3 controls for mechanism (b): the scalar side-effect hypothesis.
-NPIs whose semantics don't involve domain widening (e.g., "ever") still shift
-NM ratings toward DE, ruling out domain widening as the sole mechanism. -/
+/-- NPI effect in NM replicates in Experiment 3 (§6.3).
+The NPI effect holds across NPIs with heterogeneous scalar properties
+(any = domain widening, ever = non-domain-widening), which argues
+against scalar side-effects as the sole mechanism (§10.2). -/
 def exp3_npi_NM_controlled : PIInfluence :=
   { experiment := 3, environment := .NM, piCondition := .npi
   , significant := true, shiftDirection := some .DE
-  , evidence := "NPI effect in NM persists without domain-widening semantics" }
+  , evidence := "NPI effect in NM replicates in Exp 3; P(β<0)>.95" }
 
 -- ============================================================================
 -- Empirical Generalizations
