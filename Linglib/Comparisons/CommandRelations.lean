@@ -39,8 +39,8 @@ import Linglib.Theories.Syntax.DependencyGrammar.Coreference
 import Linglib.Theories.Syntax.DependencyGrammar.CRDC
 import Linglib.Phenomena.Anaphora.Bridge.MinimalismCoreference
 import Linglib.Phenomena.Anaphora.Bridge.HPSGCoreference
-import Linglib.Phenomena.Anaphora.Bridge.DGCoreference
-import Linglib.Phenomena.Anaphora.Bridge.DGCRDC
+import Linglib.Phenomena.Anaphora.Studies.Hudson1990
+import Linglib.Phenomena.Anaphora.Studies.OsborneLi2023
 import Linglib.Core.Interface
 import Mathlib.Data.Set.Basic
 import Mathlib.Order.GaloisConnection.Basic
@@ -485,15 +485,15 @@ All four theories correctly predict the reflexive coreference patterns.
 theorem all_theories_capture_reflexive_coreference :
     Phenomena.Anaphora.Bridge.MinimalismCoreference.capturesCoreferenceData reflexiveCoreferenceData = true ∧
     Phenomena.Anaphora.Bridge.HPSGCoreference.capturesCoreferenceData reflexiveCoreferenceData = true ∧
-    Phenomena.Anaphora.Bridge.DGCoreference.capturesCoreferenceData reflexiveCoreferenceData = true ∧
-    Phenomena.Anaphora.Bridge.DGCRDC.capturesCoreferenceData reflexiveCoreferenceData = true := by
+    Phenomena.Anaphora.Studies.Hudson1990.capturesCoreferenceData reflexiveCoreferenceData = true ∧
+    Phenomena.Anaphora.Studies.OsborneLi2023.capturesCoreferenceData reflexiveCoreferenceData = true := by
   constructor
   · exact Phenomena.Anaphora.Bridge.MinimalismCoreference.captures_reflexive_coreference
   constructor
   · exact Phenomena.Anaphora.Bridge.HPSGCoreference.captures_reflexive_coreference
   constructor
-  · exact Phenomena.Anaphora.Bridge.DGCoreference.captures_reflexive_coreference
-  · exact Phenomena.Anaphora.Bridge.DGCRDC.captures_reflexive_coreference
+  · exact Phenomena.Anaphora.Studies.Hudson1990.captures_reflexive_coreference
+  · exact Phenomena.Anaphora.Studies.OsborneLi2023.captures_reflexive_coreference
 
 /--
 **Main Agreement Theorem: Complementary Distribution**
@@ -501,15 +501,15 @@ theorem all_theories_capture_reflexive_coreference :
 theorem all_theories_capture_complementary_distribution :
     Phenomena.Anaphora.Bridge.MinimalismCoreference.capturesCoreferenceData complementaryDistributionData = true ∧
     Phenomena.Anaphora.Bridge.HPSGCoreference.capturesCoreferenceData complementaryDistributionData = true ∧
-    Phenomena.Anaphora.Bridge.DGCoreference.capturesCoreferenceData complementaryDistributionData = true ∧
-    Phenomena.Anaphora.Bridge.DGCRDC.capturesCoreferenceData complementaryDistributionData = true := by
+    Phenomena.Anaphora.Studies.Hudson1990.capturesCoreferenceData complementaryDistributionData = true ∧
+    Phenomena.Anaphora.Studies.OsborneLi2023.capturesCoreferenceData complementaryDistributionData = true := by
   constructor
   · exact Phenomena.Anaphora.Bridge.MinimalismCoreference.captures_complementary_distribution
   constructor
   · exact Phenomena.Anaphora.Bridge.HPSGCoreference.captures_complementary_distribution
   constructor
-  · exact Phenomena.Anaphora.Bridge.DGCoreference.captures_complementary_distribution
-  · exact Phenomena.Anaphora.Bridge.DGCRDC.captures_complementary_distribution
+  · exact Phenomena.Anaphora.Studies.Hudson1990.captures_complementary_distribution
+  · exact Phenomena.Anaphora.Studies.OsborneLi2023.captures_complementary_distribution
 
 /--
 **Main Agreement Theorem: Pronominal Disjoint Reference**
@@ -517,15 +517,15 @@ theorem all_theories_capture_complementary_distribution :
 theorem all_theories_capture_pronominal_disjoint_reference :
     Phenomena.Anaphora.Bridge.MinimalismCoreference.capturesCoreferenceData pronominalDisjointReferenceData = true ∧
     Phenomena.Anaphora.Bridge.HPSGCoreference.capturesCoreferenceData pronominalDisjointReferenceData = true ∧
-    Phenomena.Anaphora.Bridge.DGCoreference.capturesCoreferenceData pronominalDisjointReferenceData = true ∧
-    Phenomena.Anaphora.Bridge.DGCRDC.capturesCoreferenceData pronominalDisjointReferenceData = true := by
+    Phenomena.Anaphora.Studies.Hudson1990.capturesCoreferenceData pronominalDisjointReferenceData = true ∧
+    Phenomena.Anaphora.Studies.OsborneLi2023.capturesCoreferenceData pronominalDisjointReferenceData = true := by
   constructor
   · exact Phenomena.Anaphora.Bridge.MinimalismCoreference.captures_pronominal_disjoint_reference
   constructor
   · exact Phenomena.Anaphora.Bridge.HPSGCoreference.captures_pronominal_disjoint_reference
   constructor
-  · exact Phenomena.Anaphora.Bridge.DGCoreference.captures_pronominal_disjoint_reference
-  · exact Phenomena.Anaphora.Bridge.DGCRDC.captures_pronominal_disjoint_reference
+  · exact Phenomena.Anaphora.Studies.Hudson1990.captures_pronominal_disjoint_reference
+  · exact Phenomena.Anaphora.Studies.OsborneLi2023.captures_pronominal_disjoint_reference
 
 -- D.2: Interface-Based Comparison
 

@@ -31,7 +31,7 @@ onto SC predicate categories:
 - `Phenomena.ArgumentStructure.Bridge.MinimalismSmallClause`: SC family
   geometry; `resultative_sc` defined there has shape
   `node(leaf, node(leaf, leaf))`, same as PVC and DOC.
-- `Phenomena.Constructions.ParticleVerbs.Bridge.MinimalismParticleSC`:
+- `Phenomena.Constructions.ParticleVerbs.Studies.Dendikken1995`:
   path resultatives share SC predicate category P with PVCs.
 
 -/

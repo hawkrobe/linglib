@@ -3,8 +3,8 @@ import Linglib.Theories.Semantics.Events.SpatialTrace
 import Linglib.Theories.Semantics.Lexical.Verb.DegreeAchievement
 import Linglib.Phenomena.TenseAspect.DiagnosticsBridge
 import Linglib.Phenomena.TenseAspect.Bridge.GradualChange
-import Linglib.Phenomena.TenseAspect.Bridge.Krifka1989
-import Linglib.Phenomena.Plurals.Bridge.StratifiedReference
+import Linglib.Phenomena.TenseAspect.Studies.Krifka1989
+import Linglib.Phenomena.Plurals.Studies.Champollion2017
 
 /-!
 # Cross-Bridge Consistency Tests
@@ -36,7 +36,7 @@ open Semantics.Events.Krifka1998 (VerbIncClass)
 open Core.Scale (LicensingPipeline Boundedness MereoTag)
 open Phenomena.TenseAspect.Diagnostics (forXPrediction inXPrediction)
 open Phenomena.TenseAspect.Bridge.GradualChange (predictsGRAD)
-open Phenomena.Plurals.Bridge.StratifiedReference (predictsSSR)
+open Phenomena.Plurals.Studies.Champollion2017 (predictsSSR)
 open Core.Path (PathShape)
 open Semantics.Lexical.Verb.DegreeAchievement (DegreeAchievementScale)
 
