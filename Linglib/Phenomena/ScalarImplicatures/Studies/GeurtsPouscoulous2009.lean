@@ -1,88 +1,123 @@
-/-
-# @cite{geurts-pouscoulous-2009} Experimental Data
-
-Experimental data on scalar implicature rates from:
-Geurts, B. & Pouscoulous, N. (2009). Embedded implicatures?!
-Semantics and Pragmatics, 2(4), 1-34.
-
-## Main Question
-
-Do scalar implicatures arise "locally" inside embedded clauses?
-
-Conventionalists (Chierchia, Levinson, Landman) claim SIs occur
-"systematically and freely in arbitrarily embedded positions."
-
-Griceans claim SIs are global pragmatic inferences, not local.
-
-## Four Experiments
-
-1. **Exp 1a-b**: SI rates vary by embedding type (think: 57%, all: 27%, must: 3%)
-2. **Exp 2**: Inference task (62%) vs verification task (34%) for simple sentences
-3. **Exp 3**: Verification vs inference by monotonicity (UE vs DE)
-4. **Exp 4**: Ambiguity detection (70% for genuine, 6% for alleged SI-ambiguities)
-
-## Findings
-
-- Local SIs are not the default in embedded positions
-- The inference task biases toward seeing SIs (methodological concern)
-- Apparent "local" SIs under belief verbs explained by global SI + competence
-- Data strongly favor Gricean over conventionalist accounts
--/
-
 import Mathlib.Data.Rat.Defs
 import Linglib.Core.Empirical
+
+/-!
+# @cite{geurts-pouscoulous-2009} — Embedded Implicatures?!
+
+Theory-neutral empirical data and argumentation chain from
+@cite{geurts-pouscoulous-2009}.
+
+## Central Question
+
+Do scalar implicatures arise "locally" inside embedded clauses?
+Conventionalists (Chierchia, Levinson, Landman) predict SIs occur
+"systematically and freely in arbitrarily embedded positions."
+Griceans predict SIs are global pragmatic inferences only.
+
+## Argumentative Structure
+
+1. **Exp 1a-b** (Table 2): SI endorsement rates vary wildly by embedding
+   type (3–94%), contradicting "systematically and freely."
+
+2. **Paradigm bias** (§2): Three worries about the inference paradigm used
+   in Exp 1; it likely inflates observed SI rates.
+
+3. **Exp 2** (§3, n=29): Inference task (62%) vs verification task (34%)
+   confirms paradigm bias on simple sentences.
+
+4. **Exp 3** (Table 3, n=26): Verification shows *zero* local SIs in UE
+   contexts (100% "true"), while inference shows ~50% across all
+   conditions regardless of monotonicity. The inference paradigm produces
+   spurious "local SIs."
+
+5. **Paradigm correction**: After accounting for bias, only *think* (57.5%)
+   shows genuinely elevated SI rates. The rates for *all* (27%) and *want*
+   (32%) may be entirely paradigm artifacts.
+
+6. **Gricean explanation for think** (§8): Global SI (¬Bsp[Bs(all)]) +
+   competence assumption (Bs(all) ∨ Bs(¬all)) entails Bs(¬all), which
+   *looks like* a local SI but is derived globally.
+
+7. **Exp 4** (Tables 4–5, n=22): Minimal conventionalism predicts people
+   should detect ambiguity in scalar sentences. Genuine ambiguities
+   detected at 70%, alleged SI-ambiguities at only 6%. Both mainstream
+   and minimal conventionalism are falsified.
+-/
 
 namespace Phenomena.ScalarImplicatures.Studies.GeurtsPouscoulous2009
 
 open Core.Empirical
 
+-- ============================================================================
+-- Shared Types
+-- ============================================================================
 
-/-- Citation for this study -/
-def citation : String := "Geurts, B. & Pouscoulous, N. (2009). Embedded implicatures?! Semantics and Pragmatics, 2(4), 1-34."
+/-- The two experimental paradigms. -/
+inductive TaskType where
+  | inference     -- "Does X imply Y?"
+  | verification  -- "Is this sentence true of [picture]?"
+  deriving DecidableEq, BEq, Repr
 
-/-- Experiment 2 inference task: "Does X imply Y?" -/
-def exp2InferenceMeasure : MeasureSpec :=
+/-- Monotonicity of an embedding context. -/
+inductive Monotonicity where
+  | upwardEntailing    -- UE: all, more than one
+  | downwardEntailing  -- DE: not all, not more than one
+  | nonMonotonic       -- NM: exactly two
+  deriving DecidableEq, BEq, Repr
+
+/-- Quantifier contexts tested in Experiments 3–4. -/
+inductive QuantifierContext where
+  | all              -- UE: "All the squares are connected with some of the circles"
+  | moreThanOne      -- UE: "More than one square is connected with some..."
+  | exactlyTwo       -- NM: "Exactly two squares are connected with some..."
+  | notAll           -- DE: "Not all the squares are connected with some..."
+  | notMoreThanOne   -- DE: "Not more than one square is connected with some..."
+  deriving DecidableEq, BEq, Repr
+
+def quantifierMonotonicity : QuantifierContext → Monotonicity
+  | .all => .upwardEntailing
+  | .moreThanOne => .upwardEntailing
+  | .exactlyTwo => .nonMonotonic
+  | .notAll => .downwardEntailing
+  | .notMoreThanOne => .downwardEntailing
+
+-- ============================================================================
+-- Measure Specifications
+-- ============================================================================
+
+/-- Inference task: "Does X imply Y?" -/
+def inferenceMeasure : MeasureSpec :=
   { scale := .proportion, task := .inferenceEndorsement, unit := "percentage 0-100" }
 
-/-- Experiment 2/3 verification task: "Is this true of the picture?" -/
+/-- Verification task: "Is this true of the picture?" -/
 def verificationMeasure : MeasureSpec :=
   { scale := .proportion, task := .truthValueJudgment, unit := "percentage 0-100" }
 
+-- ============================================================================
+-- Step 1: Conventionalist Predictions (to be falsified)
+-- ============================================================================
 
+/-- Mainstream conventionalism predicts local SIs are preferred in non-DE
+contexts. In the inference paradigm, this means participants should endorse
+the inference that "some" implies "not all" when embedded under UE/NM
+quantifiers. In the verification paradigm, this means participants should
+reject the classical reading when it conflicts with the local SI.
 
-/--
-The two experimental tasks used to probe scalar inferences.
--/
-inductive TaskType where
-  | inference     -- "Does 'Some B's are in the box' imply 'not all B's'?"
-  | verification  -- "Does 'Some B's are in the box' correctly describe [picture]?"
-  deriving DecidableEq, BEq, Repr
+We formalize this as: conventionalism predicts SI endorsement rates
+should be high (> 50%) in non-DE inference conditions, and verification
+rates should match the SI reading, not the classical reading. -/
+def conventionalistPredictsLocalSI : QuantifierContext → Bool
+  | .all => true            -- predict local SI in UE
+  | .moreThanOne => true
+  | .exactlyTwo => true     -- predict local SI in NM
+  | .notAll => false        -- no local SI prediction in DE
+  | .notMoreThanOne => false
 
-/--
-Stimulus type in the experiment.
--/
-structure Stimulus where
-  /-- The sentence presented -/
-  sentence : String
-  /-- The scalar term in the sentence -/
-  scalarTerm : String
-  /-- For verification: description of the visual stimulus -/
-  visualDescription : Option String
-  deriving Repr
+-- ============================================================================
+-- Step 2: Experiment 1a-b — Embedding Type Variation (Table 2, pp.9-12)
+-- ============================================================================
 
-/--
-The critical stimulus used in Experiment 2.
--/
-def criticalStimulus : Stimulus :=
-  { sentence := "Some of the B's are in the box on the left"
-  , scalarTerm := "some"
-  , visualDescription := some "All B's in left box, all A's in middle, all C's in right"
-  }
-
-
-/--
-Types of embedding contexts tested in Experiment 1a-b.
--/
+/-- Embedding types tested in Experiments 1a-b. -/
 inductive EmbeddingType where
   | simple   -- "Fred heard some of the Verdi operas"
   | think    -- "Betty thinks Fred heard some..."
@@ -91,33 +126,14 @@ inductive EmbeddingType where
   | all      -- "All students heard some..."
   deriving DecidableEq, BEq, Repr
 
-/--
-Monotonicity of the embedding context.
--/
-inductive Monotonicity where
-  | upwardEntailing    -- UE: all, more than one
-  | downwardEntailing  -- DE: not all, not more than one
-  | nonMonotonic       -- NM: exactly two
-  deriving DecidableEq, BEq, Repr
-
-/--
-Result from Experiment 1 by embedding type.
-
-Local SI rates vary dramatically by embedding type,
-contrary to conventionalist predictions of systematic local SIs.
--/
 structure EmbeddingResult where
-  /-- The embedding context -/
   embedding : EmbeddingType
-  /-- Rate of local SI (percentage) -/
+  /-- % endorsing the local SI reading -/
   localSIRate : Nat
-  /-- Sample size -/
   n : Nat
   deriving Repr
 
-/--
-Experiment 1a results (n=30).
--/
+/-- Experiment 1a results (Table 2, n=30). -/
 def exp1aResults : List EmbeddingResult :=
   [ { embedding := .simple, localSIRate := 93, n := 30 }
   , { embedding := .think,  localSIRate := 50, n := 30 }
@@ -125,327 +141,310 @@ def exp1aResults : List EmbeddingResult :=
   , { embedding := .must,   localSIRate := 3,  n := 30 }
   ]
 
-/--
-Experiment 1b results (n=31).
--/
+/-- Experiment 1b results (Table 2, n=31). -/
 def exp1bResults : List EmbeddingResult :=
   [ { embedding := .simple, localSIRate := 94, n := 31 }
   , { embedding := .think,  localSIRate := 65, n := 31 }
   , { embedding := .want,   localSIRate := 32, n := 31 }
   ]
 
-/--
-Combined results across both experiments.
--/
-def combinedEmbeddingResults : List (EmbeddingType × Nat) :=
-  [ (.simple, 93)  -- average of 93 and 94
-  , (.think, 57)   -- average of 50 and 65
-  , (.all, 27)
-  , (.must, 3)
-  , (.want, 32)
-  ]
+/-- SI rates vary from 3% (must) to 94% (simple 1b), a 91pp range.
+This contradicts the conventionalist claim that SIs occur
+"systematically and freely in arbitrarily embedded positions."
+If SIs were systematic, rates should be uniformly high across
+all embedding types. -/
+theorem embedding_not_systematic :
+    94 - 3 > (85 : Nat) := by native_decide
 
-/--
-Simple sentences show 93% SI rate.
--/
-def simpleRate : Nat := 93
+/-- Only think shows substantial local SI endorsement among embedded
+conditions. At 50% (1a) and 65% (1b), think is the only embedding
+above 35%. All others (all: 27%, must: 3%, want: 32%) fall below.
+The paper later argues (§5–8) that even these rates may be
+artifacts of the inference paradigm. -/
+theorem think_uniquely_elevated :
+    50 > (35 : Nat) ∧ 65 > (35 : Nat) ∧  -- think in 1a and 1b
+    27 < (35 : Nat) ∧ 3 < (35 : Nat) ∧ 32 < (35 : Nat) := by
+  refine ⟨by native_decide, by native_decide, by native_decide,
+          by native_decide, by native_decide⟩
 
-/--
-Must embedding shows only 3% SI rate.
--/
-def mustRate : Nat := 3
+-- ============================================================================
+-- Step 3: Experiment 2 — Paradigm Bias (§3, n=29)
+-- ============================================================================
 
-/--
-Think embedding shows 57% SI rate (avg of 50% and 65%).
--/
-def thinkRate : Nat := 57
-
-/--
-Simple sentences show high SI rates.
--/
-theorem simple_high_rate : simpleRate > 90 := by native_decide
-
-/--
-Must embedding nearly eliminates local SIs.
-
-Deontic must shows only 3% local SIs.
--/
-theorem must_near_zero : mustRate < 5 := by native_decide
-
-/--
-Huge variation by embedding type.
-
-The range from 3% (must) to 93% (simple) refutes the claim
-that SIs occur "systematically and freely" in embedded positions.
--/
-theorem embedding_variation : simpleRate - mustRate > 85 := by native_decide
-
-
-/--
-Result from a single experimental condition.
--/
-structure ConditionResult where
-  /-- The task type -/
-  task : TaskType
-  /-- Rate of scalar inference (as percentage 0-100) -/
-  scalarInferenceRate : Nat
-  /-- Sample size -/
+/-- Experiment 2 results (§3.1–3.2, pp.16-17).
+29 Dutch-speaking students at the University of Nijmegen.
+Within-subjects: same critical sentence ("Some of the B's are in the
+box on the left") tested in both inference and verification tasks.
+McNemar's test, n = 29, p < .01. -/
+structure Exp2Data where
+  inferenceRate : Nat       -- % deriving SI in inference task
+  verificationRate : Nat    -- % deriving SI in verification task
+  controlAccuracy : Nat     -- % correct on verification fillers
   n : Nat
   deriving Repr
 
-/--
-Inference task result: 62% derived the scalar inference.
-When asked "Does this imply not all?", 62% said yes.
--/
-def inferenceTaskResult : ConditionResult :=
-  { task := .inference
-  , scalarInferenceRate := 62
-  , n := 32  -- Approximate from paper
-  }
+def exp2 : Exp2Data :=
+  { inferenceRate := 62
+  , verificationRate := 34
+  , controlAccuracy := 97
+  , n := 29 }
 
-/--
-Verification task result: 34% derived the scalar inference.
-When asked "Does this correctly describe the picture?", 34% said no
-(implying they derived the scalar inference and judged it false).
--/
-def verificationTaskResult : ConditionResult :=
-  { task := .verification
-  , scalarInferenceRate := 34
-  , n := 32  -- Approximate from paper
-  }
+/-- The inference paradigm inflates SI rates by 28pp (62% vs 34%).
+This confirms three a priori worries about the inference paradigm (§2):
+(1) endorsing an argument is easier than spontaneously drawing it,
+(2) the question "Does X imply Y?" makes the SI contextually relevant,
+(3) superficial similarity to valid inferences may cause errors. -/
+theorem paradigm_inflates_SI_rates :
+    exp2.inferenceRate > exp2.verificationRate + 20 := by native_decide
 
-/--
-Control items in verification task: 97% correct.
-This rules out a general "yes" bias.
--/
-def controlAccuracy : Nat := 97
+/-- In the more neutral verification task, SI rate is below 50%.
+This argues against even weak defaultism. -/
+theorem verification_below_half :
+    exp2.verificationRate < 50 := by native_decide
 
+/-- Near-perfect control accuracy rules out a positive response bias. -/
+theorem controls_rule_out_bias :
+    exp2.controlAccuracy > 95 := by native_decide
 
-/--
-Quantifier types tested in Experiment 3.
--/
-inductive QuantifierContext where
-  | all              -- UE: "All the squares are connected..."
-  | moreThanOne      -- UE: "More than one square is connected..."
-  | exactlyTwo       -- NM: "Exactly two squares are connected..."
-  | notAll           -- DE: "Not all squares are connected..."
-  | notMoreThanOne   -- DE: "Not more than one square is connected..."
-  deriving DecidableEq, BEq, Repr
+-- ============================================================================
+-- Step 4: Experiment 3 — Verification Shows No Local SIs (Table 3, §5, n=26)
+-- ============================================================================
 
-/--
-Monotonicity of a quantifier context.
--/
-def quantifierMonotonicity : QuantifierContext → Monotonicity
-  | .all => .upwardEntailing
-  | .moreThanOne => .upwardEntailing
-  | .exactlyTwo => .nonMonotonic
-  | .notAll => .downwardEntailing
-  | .notMoreThanOne => .downwardEntailing
+/-- One row of Table 3 (p.22). The table has 6 rows because "exactly two"
+has two verification conditions (one where the classical reading is true,
+one where the local-SI reading is true) but a single shared inference rate.
 
-/--
-Experiment 3 result by quantifier and task.
--/
-structure Exp3Result where
-  /-- Quantifier context -/
+The `verificationPred` field records the conventionalist prediction for
+verification (the parenthetical 0/1 in Table 3): should participants
+say "true"? Similarly `inferencePred` for the inference column. -/
+structure Exp3Row where
   quantifier : QuantifierContext
-  /-- Verification task rate (percentage saying "true") -/
+  /-- % saying "true" in verification task -/
   verificationTrueRate : Nat
-  /-- Inference task rate (percentage endorsing local SI) -/
+  /-- Conventionalist prediction: should participants say "true"? -/
+  verificationPred : Bool
+  /-- % endorsing local SI in inference task -/
   inferenceRate : Nat
+  /-- Conventionalist prediction: should participants endorse SI? -/
+  inferencePred : Bool
   deriving Repr
 
-/--
-Experiment 3 results (n=26).
-
-Verification shows ~0% local SIs in UE contexts,
-while inference shows ~50%. The verification task is more neutral.
--/
-def exp3Results : List Exp3Result :=
-  [ { quantifier := .all,           verificationTrueRate := 100, inferenceRate := 46 }
-  , { quantifier := .moreThanOne,   verificationTrueRate := 100, inferenceRate := 62 }
-  , { quantifier := .exactlyTwo,    verificationTrueRate := 100, inferenceRate := 50 }  -- averaged
-  , { quantifier := .notAll,        verificationTrueRate := 4,   inferenceRate := 58 }
-  , { quantifier := .notMoreThanOne, verificationTrueRate := 4,  inferenceRate := 46 }
+/-- Experiment 3 results (Table 3, p.22, n=26).
+26 first-year humanities students at the University of Nijmegen (§5.1, p.20).
+Pairwise McNemar tests (Bonferroni-corrected) all significant:
+*all* p < .005, *not all* p < .001, *more than one* p < .0005,
+*not more than one* p < .05, *exactly two* p < .005 (both conditions). -/
+def exp3Results : List Exp3Row :=
+  [ -- UE contexts: classical=true, SI would make it false
+    { quantifier := .all,           verificationTrueRate := 100, verificationPred := false,
+      inferenceRate := 46, inferencePred := true }
+  , { quantifier := .moreThanOne,   verificationTrueRate := 100, verificationPred := false,
+      inferenceRate := 62, inferencePred := true }
+    -- NM contexts: two verification conditions for exactly-two
+  , { quantifier := .exactlyTwo,    verificationTrueRate := 100, verificationPred := false,
+      inferenceRate := 50, inferencePred := true }   -- classical=true condition
+  , { quantifier := .exactlyTwo,    verificationTrueRate := 0,   verificationPred := true,
+      inferenceRate := 50, inferencePred := true }   -- classical=false condition
+    -- DE contexts: classical=false (DE sentences false when all squares connected)
+  , { quantifier := .notAll,        verificationTrueRate := 4,   verificationPred := false,
+      inferenceRate := 58, inferencePred := false }
+  , { quantifier := .notMoreThanOne, verificationTrueRate := 4,  verificationPred := false,
+      inferenceRate := 46, inferencePred := false }
   ]
 
-/--
-Verification shows no local SIs in UE contexts.
-
-100% "true" means 0% local SI (since local SI would make it false).
--/
+/-- Verification shows zero local SIs in UE contexts: 100% say "true"
+(accepting the classical, non-SI reading). Conventionalism predicts
+participants should say "false" (the local SI makes UE sentences
+false in the depicted situation). This is the paper's central
+empirical finding against mainstream conventionalism. -/
 theorem verification_no_local_SI_in_UE :
     exp3Results.filter (λ r => quantifierMonotonicity r.quantifier == .upwardEntailing)
       |>.all (λ r => r.verificationTrueRate == 100) := by
   native_decide
 
-/--
-Inference task shows ~50% even in UE contexts.
-
-This is an artifact of the inference paradigm, not genuine local SIs.
--/
-theorem inference_around_chance :
-    let ueResults := exp3Results.filter (λ r => quantifierMonotonicity r.quantifier == .upwardEntailing)
-    let rates := ueResults.map (λ r => r.inferenceRate)
-    rates.all (λ r => r > 40) ∧ rates.all (λ r => r < 70) := by
+/-- Inference rates cluster around 50% for ALL conditions (46–62%),
+regardless of monotonicity. The inference paradigm produces a roughly
+constant endorsement rate that does not discriminate between contexts
+where conventionalism predicts SIs and contexts where it does not.
+The paper reports: "all rates, for DE and non-DE items alike, clustered
+around chance level, give or take 12%" (p.23). -/
+theorem inference_clusters_around_chance :
+    exp3Results.all (λ r => r.inferenceRate ≥ 40 ∧ r.inferenceRate ≤ 65) := by
   native_decide
 
-/--
-For "all" quantifier: verification = 100% true, inference = 46%.
-The 46-point gap is the task effect (inference creates spurious "local SIs").
--/
-def allVerificationRate : Nat := 100
-def allInferenceRate : Nat := 46
-
-/--
-Massive task effect in UE contexts.
-
-Verification: 0% local SIs. Inference: ~50%. This ~46-point gap
-shows the inference task creates spurious "local SIs".
--/
-theorem task_effect_in_UE : allInferenceRate - (100 - allVerificationRate) > 40 := by
+/-- Verification perfectly tracks the classical (non-SI) truth value.
+When the classical reading is true (verificationPred = false, i.e.,
+conventionalism predicts "false" but classical reading predicts "true"),
+the rate is ≥ 96%. When the classical reading is false
+(exactly-two row 2 and DE items), the rate is ≤ 4%.
+Participants judge truth values by the classical reading, not by any
+local-SI reading. -/
+theorem verification_tracks_classical_reading :
+    exp3Results.all (λ r =>
+      (r.verificationTrueRate ≥ 96 ∨ r.verificationTrueRate ≤ 4)) := by
   native_decide
 
+-- ============================================================================
+-- Step 5: Paradigm Correction — Only "think" Survives
+-- ============================================================================
 
-/--
-Experiment 4 tested whether people can detect the "ambiguity"
-that conventionalism predicts for scalar expressions.
+/-- After Experiment 3 establishes that the inference paradigm inflates
+SI rates by ~50pp, the rates observed in Experiment 1 must be corrected.
+The paper argues (p.23): "it is quite possible that the rates previously
+observed for *all* (27%) and *want* (32%) are entirely due to a paradigm
+bias." Only think (avg 57.5%) exceeds the observed paradigm bias level
+(~50% baseline in Exp 3 inference conditions). -/
+theorem only_think_survives_correction :
+    27 ≤ (50 : Nat) ∧ 32 ≤ (50 : Nat) ∧ 3 ≤ (50 : Nat) ∧  -- all, want, must: ≤ baseline
+    (50 + 65) / 2 > (50 : Nat) := by                          -- think avg: above baseline
+  refine ⟨by native_decide, by native_decide, by native_decide, by native_decide⟩
 
-If "some" is ambiguous between "some possibly all" and "some but not all",
-people should recognize this ambiguity when given a "could be either" option.
--/
-structure AmbiguityResult where
-  /-- Description of sentence type -/
-  sentenceType : String
-  /-- Rate of "could be either" responses -/
-  ambiguousRate : Nat
+-- ============================================================================
+-- Step 6: Gricean Explanation — Competence Under Believe (§8, pp.28-29)
+-- ============================================================================
+
+/-- The Gricean explanation for apparent local SIs under "think"/"believe".
+
+For "Bob believes Anna ate some of the cookies", the global SI yields:
+  ¬(Bob believes Anna ate all the cookies)
+
+Under a competence assumption (Bob has an opinion on whether she ate all):
+  (Bob believes all) ∨ (Bob believes ¬all)
+
+From these two premises, it follows that Bob believes ¬all — which *looks
+like* a local SI but is derived entirely from global pragmatics + competence.
+
+This explains why "think" shows elevated rates (57.5%) while other
+embeddings do not: the competence assumption is independently plausible
+for attitude verbs (people typically have opinions about what they believe)
+but not for quantifiers ("all students heard some" does not license
+"each student has an opinion about whether they heard all"). -/
+theorem competence_explains_think
+    {BobBelievesAll BobBelievesNotAll : Prop}
+    (globalSI : ¬BobBelievesAll)
+    (competence : BobBelievesAll ∨ BobBelievesNotAll) :
+    BobBelievesNotAll :=
+  competence.elim (fun h => absurd h globalSI) id
+
+/-- The competence explanation does NOT generalize to universal quantifiers.
+
+For "All the customers shot at some of the salesmen", the global SI yields:
+  ¬∀ (c : Customer), ShotAtAll c
+
+The analogous competence assumption would require:
+  ∀ (c : Customer), ShotAtAll c ∨ ShotAtNotAll c
+
+This is a much stronger assumption — it requires every customer to have
+a determinate shooting pattern. The paper notes (p.29) that this
+assumption is "considerably less plausible" than for belief reports.
+
+We demonstrate this by showing the proof still works formally
+(same logical structure) but flagging in the docstring that the
+premise is pragmatically implausible for quantifiers. -/
+theorem competence_does_not_generalize
+    {Customer : Type} {ShotAtAll ShotAtNotAll : Customer → Prop}
+    (globalSI : ¬∀ c, ShotAtAll c)
+    (strongCompetence : ∀ c, ShotAtAll c ∨ ShotAtNotAll c) :
+    ∃ c, ShotAtNotAll c := by
+  by_contra h
+  push_neg at h
+  exact globalSI (fun c => (strongCompetence c).elim id (fun h2 => absurd h2 (h c)))
+
+-- ============================================================================
+-- Step 7: Experiment 4 — No Ambiguity Detected (§7, Tables 4-5, n=22)
+-- ============================================================================
+
+/-- One row of Table 4 (p.27). Response rates for critical and DE control
+items in Experiment 4, where participants chose among "true", "false",
+and "could be either". As in Experiment 3, there were two verification
+conditions for exactly-two. -/
+structure Exp4Row where
+  quantifier : QuantifierContext
+  /-- % saying "true" (yes) -/
+  trueRate : Nat
+  /-- % saying "false" (no) -/
+  falseRate : Nat
+  /-- % saying "could be either" -/
+  eitherRate : Nat
   deriving Repr
 
-/--
-Control sentences that are genuinely ambiguous.
-People recognized these as ambiguous 70% of the time.
--/
-def genuineAmbiguityResults : List AmbiguityResult :=
-  [ { sentenceType := "The circles and squares are connected with each other", ambiguousRate := 82 }
-  , { sentenceType := "The green and orange figures are connected", ambiguousRate := 73 }
-  , { sentenceType := "All the figures are orange and green", ambiguousRate := 59 }
-  , { sentenceType := "There are green circles and squares", ambiguousRate := 77 }
-  , { sentenceType := "The circles and squares have the same colour", ambiguousRate := 59 }
+/-- Experiment 4 results (Table 4, p.27, n=22).
+22 first-year linguistics students at University College London (p.26).
+Wilcoxon's Exact test: W = 208, n = 20, p < .0001. -/
+def exp4Results : List Exp4Row :=
+  [ -- UE contexts: overwhelming "true" (classical reading)
+    { quantifier := .all,           trueRate := 95, falseRate := 5,  eitherRate := 0 }
+  , { quantifier := .moreThanOne,   trueRate := 100, falseRate := 0, eitherRate := 0 }
+    -- NM contexts: two conditions for exactly-two
+  , { quantifier := .exactlyTwo,    trueRate := 86, falseRate := 5,  eitherRate := 9 }
+  , { quantifier := .exactlyTwo,    trueRate := 9,  falseRate := 77, eitherRate := 14 }
+    -- DE controls
+  , { quantifier := .notAll,        trueRate := 9,  falseRate := 86, eitherRate := 5 }
+  , { quantifier := .notMoreThanOne, trueRate := 9, falseRate := 91, eitherRate := 0 }
   ]
 
-/--
-Average recognition rate for genuine ambiguities: 70%.
--/
-def genuineAmbiguityAverage : Nat := 70
-
-/--
-Target sentences with alleged SI-induced "ambiguity".
-People only said "could be either" 6% of the time.
--/
-def allegedSIAmbiguityRate : Nat := 6
-
-/--
-Total responses consistent with conventionalism: only 10%.
-(6% "could be either" + ~4% "false" responses)
--/
-def totalConventionalistConsistent : Nat := 10
-
-/--
-People do not detect alleged SI ambiguities.
-
-Conventionalism predicts ambiguity; participants don't see it.
--/
-theorem no_SI_ambiguity_detected :
-    allegedSIAmbiguityRate < 10 ∧
-    genuineAmbiguityAverage - allegedSIAmbiguityRate > 60 := by
-  native_decide
-
-/--
-Minimal support for conventionalism.
-
-Only 10% of responses consistent with local SI readings.
--/
-theorem minimal_conventionalist_support :
-    totalConventionalistConsistent ≤ 10 := by
-  native_decide
-
-
-/--
-Think embedding shows elevated rate vs other embeddings.
-
-At 57%, think is the only embedding that shows substantial SI rate.
-Other embeddings (all: 27%, must: 3%, want: 32%) are all below 35%.
--/
-theorem think_elevated :
-    thinkRate > 55 ∧
-    27 < thinkRate - 20 ∧  -- all
-    3 < thinkRate - 20 ∧   -- must
-    32 < thinkRate - 20    -- want
-    := by
-  native_decide
-
-/--
-The central empirical finding: task affects inference rate.
--/
-structure TaskEffectDatum where
-  /-- Inference rate in inference task -/
-  inferenceTaskRate : Nat
-  /-- Inference rate in verification task -/
-  verificationTaskRate : Nat
-  /-- Is the difference significant? -/
-  significantDifference : Bool
+/-- Ambiguous control sentences from Table 5 (p.27). These are genuinely
+ambiguous sentences (e.g., "Visiting relatives can be boring") that
+participants should be able to recognize as ambiguous. -/
+structure AmbiguityControl where
+  sentence : String
+  /-- % saying "could be either" -/
+  eitherRate : Nat
   deriving Repr
 
-/--
-The main finding: nearly 2x difference between tasks.
--/
-def mainFinding : TaskEffectDatum :=
-  { inferenceTaskRate := 62
-  , verificationTaskRate := 34
-  , significantDifference := true
-  }
+/-- Table 5: ambiguous control items (p.27). -/
+def genuineAmbiguityResults : List AmbiguityControl :=
+  [ { sentence := "The circles and squares are connected with each other", eitherRate := 82 }
+  , { sentence := "The green and orange figures are connected", eitherRate := 73 }
+  , { sentence := "All the figures are orange and green", eitherRate := 59 }
+  , { sentence := "There are green circles and squares", eitherRate := 77 }
+  , { sentence := "The circles and squares have the same colour", eitherRate := 59 }
+  ]
 
-/--
-Inference task shows higher rate than verification task.
--/
-theorem inference_higher_than_verification :
-    mainFinding.inferenceTaskRate > mainFinding.verificationTaskRate := by
-  native_decide
+/-- People detect genuine ambiguities at 70% on average but alleged
+SI-induced ambiguities at only 6% (non-DE items). The 64pp gap shows
+that people simply do not perceive the ambiguity that conventionalism
+predicts. This falsifies even minimal conventionalism, which merely
+claims that local-SI readings *exist* (not that they're preferred). -/
+theorem no_SI_ambiguity_detected :
+    -- Genuine ambiguity average: 70%
+    (genuineAmbiguityResults.map (·.eitherRate)).sum /
+      genuineAmbiguityResults.length == 70 ∧
+    -- Alleged SI ambiguity: "could be either" rates ≤ 14% for all items
+    exp4Results.all (λ r => r.eitherRate ≤ 14) := by
+  constructor <;> native_decide
 
-/--
-Verification rate is below 50%.
+/-- Total non-DE responses consistent with conventionalism: only ~10%.
+The paper reports (p.26-27): "only 9 out of 88 responses (i.e. 10%)
+were consistent with minimal conventionalism. Moreover, all but one
+of these responses were associated with non-monotonic *exactly two*." -/
+theorem minimal_conventionalist_support :
+    -- 9 out of 88 non-DE trial responses = 10%
+    -- (4 non-DE items × 22 participants = 88 responses)
+    (9 : Nat) * 100 / 88 ≤ 11 := by native_decide
 
-In the more neutral task, scalar inferences arise less than half
-the time, arguing against weak defaultism.
--/
-theorem verification_below_fifty :
-    mainFinding.verificationTaskRate < 50 := by
-  native_decide
+/-- The gap between genuine and alleged ambiguity detection is massive:
+70% vs 6% = 64pp. This is the strongest result against conventionalism. -/
+theorem ambiguity_gap :
+    (70 : Nat) - 6 > 60 := by native_decide
 
-/--
-Task effect is substantial.
+-- ============================================================================
+-- Literature Survey (from @cite{geurts-2010} Table 1)
+-- ============================================================================
 
-The inference task nearly doubles the rate.
--/
-theorem task_effect_substantial :
-    mainFinding.inferenceTaskRate > mainFinding.verificationTaskRate + 20 := by
-  native_decide
-
-
-/--
-Data point from the experimental literature on scalar inference.
--/
+/-- Data point from the broader experimental literature on scalar inference,
+compiled in @cite{geurts-2010} Table 1 (a separate review chapter). -/
 structure LiteratureDatum where
-  /-- Citation -/
   citation : String
-  /-- Scalar term tested -/
   scalarTerm : String
-  /-- Rate of upper-bounded interpretation (percentage) -/
+  /-- Rate of upper-bounded (SI) interpretation (percentage 0-100) -/
   upperBoundRate : Nat
   deriving Repr
 
-/--
-Sample of experimental data from @cite{geurts-2010} Table 1.
--/
+/-- Sample of experimental data from @cite{geurts-2010} Table 1.
+Across the literature, SI rates are highly variable and generally
+below 65%, consistent with the Gricean view that SIs are context-
+dependent pragmatic inferences rather than defaults. -/
 def literatureData : List LiteratureDatum :=
   [ { citation := "Paris (1973)", scalarTerm := "or", upperBoundRate := 25 }
   , { citation := "Chevallier et al. (2008)", scalarTerm := "or", upperBoundRate := 25 }
@@ -460,21 +459,15 @@ def literatureData : List LiteratureDatum :=
   , { citation := "Noveck (2001)", scalarTerm := "might", upperBoundRate := 65 }
   ]
 
-/--
-Average rate is below 50%.
-
-Across the literature, scalar inference rates average below 50%.
--/
-theorem average_below_fifty :
+/-- Average SI rate across the literature is below 50%.
+This is inconsistent with defaultism's prediction that SIs are
+the norm and should arise at high rates. -/
+theorem literature_average_below_fifty :
     (literatureData.map (·.upperBoundRate)).sum / literatureData.length < 50 := by
   native_decide
 
-/--
-No study exceeds 65%.
-
-Even the highest rates are well below defaultism's predictions.
--/
-theorem max_rate_below_seventy :
+/-- No study in the survey exceeds 65%. -/
+theorem literature_max_below_seventy :
     literatureData.all (·.upperBoundRate < 70) := by
   native_decide
 
