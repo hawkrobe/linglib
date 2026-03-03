@@ -1,40 +1,53 @@
-/-
-# @cite{van-tiel-geurts-2016} - Scalar Diversity
+import Mathlib.Data.Rat.Defs
+import Linglib.Core.Empirical
 
-Foundational experimental data on cross-scale variation in scalar implicature rates.
+/-!
+# @cite{van-tiel-geurts-2016} — Scalar Diversity
+@cite{van-tiel-geurts-2016} @cite{ronai-2024}
 
-## Citation
+Theory-neutral empirical data and argumentation chain from
+@cite{van-tiel-geurts-2016}.
 
-van Tiel, B., van Miltenburg, E., Zevakhina, N., & Geurts, B. (2016).
-Scalar Diversity. Journal of Semantics, 33(1), 137-175.
-https://doi.org/10.1093/jos/ffu017
+## Central Question
 
-## Findings
+Do all scalar expressions yield scalar implicatures at comparable rates?
+The "uniformity assumption" — implicit in decades of SI research focused
+on ⟨some, all⟩ and ⟨or, and⟩ — predicts yes.
 
-1. **Scalar Diversity**: SI rates vary from 4% to 100% across 43 scales
-2. **Distinctness matters**: Semantic distance and boundedness predict SI rates
-3. **Availability doesn't matter**: Association strength, grammatical class,
-   word frequency, and semantic relatedness have no significant effect
-4. **Boundedness**: Bounded scales (stronger term = endpoint) yield higher SI rates
+## Argumentative Structure
 
-## Theoretical Impact
+1. **Scalar diversity is real** (Exps 1–2, §2): SI rates vary continuously
+   from 4% (⟨content, happy⟩) to 100% (⟨cheap, free⟩) across 43 scales.
+   Experiment 1 (N=25) uses neutral content (pronouns); Experiment 2
+   (N=29) uses non-neutral content (full NPs). Results correlate highly
+   (r=.91), confirming robustness to sentential context.
 
-- Challenges the "uniformity assumption" that all scales behave alike
-- Most SI research had focused on ⟨some, all⟩ and ⟨or, and⟩
-- Shows ⟨some, all⟩ is an extreme case (96%), not representative
-- Provides foundation for later work (@cite{ronai-2024} on embedded SI diversity)
+2. **Availability does not explain diversity** (Exp 3, §4): Four
+   operationalisations of scale availability all fail to predict SI rates:
+   - Association strength (modified cloze task, Exp 3, N=60): β=0.16, n.s.
+   - Grammatical class (open vs closed): β=−0.38, n.s.
+   - Relative word frequency (corpus log-ratio): β=−0.15, n.s.
+   - Semantic relatedness (LSA cosine): β=0.01, n.s.
 
-## Experiments
+3. **Distinctness does explain diversity** (Exp 4, §5): Two measures of
+   how easy it is to distinguish scalemates both predict SI rates:
+   - Semantic distance (7-point rating, Exp 4, N=24): β=0.65, p=.018
+   - Boundedness (stronger term is endpoint): β=−1.87, p<.001
 
-- **Experiment 1**: Inference task with neutral content (pronouns)
-- **Experiment 2**: Inference task with non-neutral content (full NPs)
-- **Experiment 3**: Modified cloze task (association strength)
-- **Experiment 4**: Semantic distance ratings (1-7 scale)
+4. **Combined model** (§6, Table 5): Mixed model with all six predictors
+   explains R²=0.52 of variance (0.22 fixed effects, 0.30 random). Of the
+   fixed-effects variance, boundedness alone accounts for 10.8%, distance
+   for 2.7%, and all four availability measures combined for <1%.
+
+5. **Remaining variance** (§6): ~78% of variance is unexplained, suggesting
+   item-specific statistical learning from language use — hearers track
+   frequencies of upper-bounding inferences for individual scales and use
+   Gricean reasoning to combine prior likelihoods with the current context.
 -/
 
-import Mathlib.Data.Rat.Defs
-
 namespace Phenomena.ScalarImplicatures.Studies.VanTielEtAl2016
+
+open Phenomena
 
 
 /--
@@ -549,201 +562,153 @@ def numBounded : Nat := boundedScales.length
 def numNonBounded : Nat := nonBoundedScales.length
 
 
-/--
-Main finding: SI rates vary enormously (4% to 100%).
-The "uniformity assumption" is false.
--/
-structure DiversityFinding where
-  minSIRate : Nat := 4      -- content/happy
-  maxSIRate : Nat := 100    -- cheap/free, sometimes/always
-  meanSIRateExp1 : Nat := 42  -- approximate
-  meanSIRateExp2 : Nat := 44  -- approximate
+-- ============================================================================
+-- Computed Data Properties
+-- ============================================================================
 
-def diversityFinding : DiversityFinding := {}
+/-- SI rates span 96 percentage points: 4% to 100%.
+⟨content, happy⟩ is the floor, ⟨cheap, free⟩ the ceiling. -/
+theorem si_range :
+    allScales.all (·.siRateExp1 ≥ 4) ∧
+    allScales.all (·.siRateExp1 ≤ 100) ∧
+    allScales.any (·.siRateExp1 == 4) ∧
+    allScales.any (·.siRateExp1 == 100) := by
+  refine ⟨?_, ?_, ?_, ?_⟩ <;> native_decide
 
-/--
-Regression model results (Table 5).
-Full model R² = 0.52, fixed effects R² = 0.22
--/
-structure RegressionResults where
-  /-- Total variance explained by full model -/
-  totalR2 : Float := 0.52
-  /-- Variance explained by fixed effects -/
-  fixedEffectsR2 : Float := 0.22
-  /-- Variance from random effects (participants + items) -/
-  randomEffectsR2 : Float := 0.30
+/-- Bounded scales yield far more SIs than non-bounded scales.
 
-/-- Predictor effect sizes from regression (Table 5) -/
-structure PredictorEffect where
+Total SI rate (Exp 1) across 21 bounded scales: 1287%.
+Total SI rate (Exp 1) across 22 non-bounded scales: 465%.
+Even though bounded scales have *fewer* items, their total is nearly 3× higher.
+The paper reports mean bounded ≈ 62% vs mean non-bounded ≈ 25%. -/
+theorem bounded_total_exceeds_nonbounded :
+    (boundedScales.map (·.siRateExp1)).foldl (· + ·) 0 >
+    (nonBoundedScales.map (·.siRateExp1)).foldl (· + ·) 0 := by native_decide
+
+/-- ⟨some, all⟩ — the "workhorse" of SI research — sits near the top at 96%,
+far above the mean. Generalizing from ⟨some, all⟩ to all scales is unjustified. -/
+theorem someAll_above_median :
+    Scales.someAll.siRateExp1 > 50 := by native_decide
+
+/-- In this sample, every closed-class scale is also bounded.
+This confound partially explains the nonsignificant grammatical-class effect:
+closed-class scales look high-SI because they're all bounded, not because
+the search space for alternatives is smaller. -/
+theorem closed_class_subsumes_bounded :
+    allScales.all (λ s => !s.category.isClosedClass || s.bounded) = true := by
+  native_decide
+
+/-- Experiments 1 and 2 agree directionally: no scale reverses from high to low
+or vice versa (defined as >50% in one experiment and <15% in the other). -/
+theorem exp1_exp2_directional_agreement :
+    allScales.all (λ s =>
+      !(s.siRateExp1 > 50 && s.siRateExp2 < 15) &&
+      !(s.siRateExp2 > 50 && s.siRateExp1 < 15)) = true := by
+  native_decide
+
+-- ============================================================================
+-- Regression Model (Table 5)
+-- ============================================================================
+
+/-- A row from the mixed-effects regression in Table 5.
+
+The model predicts SI rates from Exps 1–2 using six fixed-effect predictors
+(four availability measures, two distinctness measures) plus random slopes
+and intercepts for participants and items. -/
+structure RegressionRow where
+  /-- Name of the predictor -/
   name : String
-  beta : Float
-  se : Float
-  z : Float
-  p : Float
-  r2 : Float
+  /-- Estimated coefficient -/
+  beta : ℚ
+  /-- Standard error -/
+  se : ℚ
+  /-- z-statistic -/
+  z : ℚ
+  /-- p-value (two-tailed) -/
+  p : ℚ
+  /-- Marginal R² (variance explained by this predictor alone) -/
+  r2 : ℚ
+  deriving Repr
 
-/-- Boundedness effect: significant predictor -/
-def boundednessEffect : PredictorEffect :=
-  { name := "boundedness"
-  , beta := -1.87  -- negative because bounded = higher SI
-  , se := 0.40
-  , z := -4.72
-  , p := 0.000
-  , r2 := 0.108 }  -- explains 10.8% of variance
+-- Availability predictors (§4): none significant
 
-/-- Semantic distance effect: significant predictor -/
-def semanticDistanceEffect : PredictorEffect :=
-  { name := "semantic_distance"
-  , beta := 0.65
-  , se := 0.27
-  , z := 2.36
-  , p := 0.018
-  , r2 := 0.027 }  -- explains 2.7% of variance
-
-/-- Association strength: NOT significant -/
-def associationStrengthEffect : PredictorEffect :=
+/-- Association strength (lenient cloze, Exp 3): β=0.16, p=.611. -/
+def associationStrength : RegressionRow :=
   { name := "association_strength"
-  , beta := 0.16
-  , se := 0.31
-  , z := 0.51
-  , p := 0.611
-  , r2 := 0.000 }
+  , beta := 16/100, se := 31/100, z := 51/100
+  , p := 611/1000, r2 := 0 }
 
-/-- Grammatical class: NOT significant -/
-def grammaticalClassEffect : PredictorEffect :=
+/-- Grammatical class (open/closed): β=−0.38, p=.606.
+Confounded with boundedness — all closed-class scales in this sample
+are also bounded (see `closed_class_subsumes_bounded`). -/
+def grammaticalClass : RegressionRow :=
   { name := "grammatical_class"
-  , beta := -0.38
-  , se := 0.74
-  , z := -0.52
-  , p := 0.606
-  , r2 := 0.001 }
+  , beta := -38/100, se := 74/100, z := -52/100
+  , p := 606/1000, r2 := 1/1000 }
 
-/-- Relative frequency: NOT significant -/
-def frequencyEffect : PredictorEffect :=
+/-- Relative word frequency (log ratio weaker/stronger): β=−0.15, p=.461. -/
+def relativeFrequency : RegressionRow :=
   { name := "relative_frequency"
-  , beta := -0.15
-  , se := 0.21
-  , z := -0.74
-  , p := 0.461
-  , r2 := 0.003 }
+  , beta := -15/100, se := 21/100, z := -74/100
+  , p := 461/1000, r2 := 3/1000 }
 
-/-- Semantic relatedness (LSA): NOT significant -/
-def semanticRelatednessEffect : PredictorEffect :=
+/-- Semantic relatedness (LSA cosine): β=0.01, p=.355. -/
+def semanticRelatedness : RegressionRow :=
   { name := "semantic_relatedness"
-  , beta := 0.10
-  , se := 0.10
-  , z := 0.93
-  , p := 0.355
-  , r2 := 0.006 }
+  , beta := 1/100, se := 1/100, z := 93/100
+  , p := 355/1000, r2 := 6/1000 }
 
+-- Distinctness predictors (§5): both significant
 
-/-- ⟨some, all⟩ is in the top tier (96%) -/
-theorem someAll_high_rate : Scales.someAll.siRateExp1 = 96 := rfl
+/-- Semantic distance (7-point rating, Exp 4): β=0.65, p=.018. -/
+def semanticDistance : RegressionRow :=
+  { name := "semantic_distance"
+  , beta := 65/100, se := 27/100, z := 236/100
+  , p := 18/1000, r2 := 27/1000 }
 
-/-- ⟨content, happy⟩ is in the bottom tier (4%) -/
-theorem contentHappy_low_rate : Scales.contentHappy.siRateExp1 = 4 := rfl
+/-- Boundedness (stronger term is endpoint): β=−1.87, p<.001.
+Negative β because the coding is bounded=1, so bounded scales are
+associated with *higher* SI rates (higher positive response = lower
+log-odds of "no"). Largest single predictor: R²=10.8%. -/
+def boundedness : RegressionRow :=
+  { name := "boundedness"
+  , beta := -187/100, se := 40/100, z := -472/100
+  , p := 0, r2 := 108/1000 }  -- p reported as .000 in Table 5
 
-/-- Minimum SI rate in the data -/
-def minSIRate : Nat := 4
+/-- All six predictor rows, for iteration. -/
+def regressionRows : List RegressionRow :=
+  [associationStrength, grammaticalClass, relativeFrequency,
+   semanticRelatedness, semanticDistance, boundedness]
 
-/-- Maximum SI rate in the data -/
-def maxSIRate : Nat := 100
+-- ============================================================================
+-- Regression Significance Theorems
+-- ============================================================================
 
--- Bounded scales have higher mean SI rate than non-bounded
--- Mean bounded ≈ 62%, mean non-bounded ≈ 25%
--- This is stated as the main finding, verified by examining the data
+/-- Both distinctness predictors are significant (p < .05). -/
+theorem distinctness_both_significant :
+    semanticDistance.p < 5/100 ∧ boundedness.p < 5/100 := by
+  constructor <;> native_decide
 
-/-- Boundedness is a significant predictor (p < 0.01) -/
-theorem boundedness_significant : boundednessEffect.p < 0.01 := by
-  native_decide
+/-- No availability predictor is significant (all p > .05). -/
+theorem availability_none_significant :
+    associationStrength.p > 5/100 ∧
+    grammaticalClass.p > 5/100 ∧
+    relativeFrequency.p > 5/100 ∧
+    semanticRelatedness.p > 5/100 := by
+  refine ⟨?_, ?_, ?_, ?_⟩ <;> native_decide
 
-/-- Semantic distance is a significant predictor (p < 0.05) -/
-theorem semanticDistance_significant : semanticDistanceEffect.p < 0.05 := by
-  native_decide
+/-- Boundedness alone explains more variance than all four availability
+predictors combined. R²(boundedness) = 0.108 > 0 + 0.001 + 0.003 + 0.006 = 0.010. -/
+theorem boundedness_dominates_availability :
+    boundedness.r2 >
+    associationStrength.r2 + grammaticalClass.r2 +
+    relativeFrequency.r2 + semanticRelatedness.r2 := by native_decide
 
-/-- Association strength is NOT significant (p > 0.05) -/
-theorem associationStrength_not_significant : associationStrengthEffect.p > 0.05 := by
-  native_decide
-
-/-- Grammatical class is NOT significant (p > 0.05) -/
-theorem grammaticalClass_not_significant : grammaticalClassEffect.p > 0.05 := by
-  native_decide
-
-/-- Frequency is NOT significant (p > 0.05) -/
-theorem frequency_not_significant : frequencyEffect.p > 0.05 := by
-  native_decide
-
-/-- Semantic relatedness is NOT significant (p > 0.05) -/
-theorem semanticRelatedness_not_significant : semanticRelatednessEffect.p > 0.05 := by
-  native_decide
-
-
-/-!
-## Connection to @cite{ronai-2024}
-@cite{ronai-2024} @cite{van-tiel-geurts-2016} @cite{geurts-pouscoulous-2009}
-
-@cite{van-tiel-geurts-2016} established scalar diversity for **global** SI.
-@cite{ronai-2024} extends this to **embedded** SI, showing:
-
-1. The same predictors (semantic distance, boundedness) work for embedded SI
-2. Correlation between global and embedded SI rates: r = 0.76-0.80
-
-## Connection to @cite{geurts-pouscoulous-2009}
-
-Van Tiel et al. cite G&P's finding of 0% embedded SI for ⟨some, all⟩.
-However, @cite{ronai-2024} shows this varies by scale - it's not uniformly absent.
-
-## Theoretical Implications
-
-1. **Against uniformity**: Can't generalize from ⟨some, all⟩ to all scales
-2. **Distinctness matters**: Formal (boundedness) and gradient (distance) properties
-3. **Availability doesn't matter**: Challenges activation-based accounts
-4. **Statistical patterns**: Suggests item-specific learning of SI rates
--/
-
-/-- Predictor categories from van Tiel et al. -/
-inductive PredictorCategory where
-  | availability  -- association, class, frequency, relatedness
-  | distinctness  -- semantic distance, boundedness
-  deriving DecidableEq, Repr
-
-/-- Whether a predictor was significant -/
-def PredictorCategory.hasSignificantPredictors : PredictorCategory → Bool
-  | .availability => false  -- none significant
-  | .distinctness => true   -- both significant
-
-/-- Main theoretical conclusion -/
-def mainConclusion : String :=
-  "The likelihood of a scalar inference depends on the distinctness of " ++
-  "the scale members (semantic distance and boundedness), not on the " ++
-  "availability of the scale (association strength, grammatical class, " ++
-  "word frequency, or semantic relatedness)."
-
--- SUMMARY
-
-/-!
-## Summary of @cite{van-tiel-geurts-2016}
-
-### Data Provided
-- 43 scales with SI rates from two experiments
-- Predictor values: cloze scores, frequency, LSA, semantic distance, boundedness
-- Regression results with effect sizes
-
-### Findings
-1. SI rates vary from 4% to 100% across scales
-2. Distinctness (distance + boundedness) predicts SI rates
-3. Availability measures (cloze, frequency, LSA, class) do not predict
-4. ⟨some, all⟩ (96%) is extreme, not representative
-
-### Theoretical Impact
-- Refutes the uniformity assumption
-- Identifies distinctness as the key factor
-- Foundational for embedded SI research
-
-### Connection to Linglib
-- Provides empirical foundation for `Fragments/Scales.lean`
-- Informs RSA model priors over alternative salience
-- Complements @cite{ronai-2024} embedded SI data
--/
+/-- Distinctness explains >10× more variance than availability.
+(27 + 108)/1000 = 135/1000 vs (0 + 1 + 3 + 6)/1000 = 10/1000. -/
+theorem distinctness_exceeds_availability_tenfold :
+    (semanticDistance.r2 + boundedness.r2) * 1000 >
+    (associationStrength.r2 + grammaticalClass.r2 +
+     relativeFrequency.r2 + semanticRelatedness.r2) * 10000 := by native_decide
 
 end Phenomena.ScalarImplicatures.Studies.VanTielEtAl2016
