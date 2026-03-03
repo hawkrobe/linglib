@@ -534,11 +534,11 @@ partial def buildRealExprProof (e : Expr) : TacticM CProof := do
     -- (Nat.cast path), because the goal expression came from a ℚ→ℝ coercion and
     -- Nat.cast n ≢ Rat.cast (n : ℚ) definitionally for the kernel.
     if e.getAppFn.isConstOf ``Real.ofCauchy then
-      if let some q ← extractRatFromCauchy e then
-        let qE ← mkRatExpr q
+      if let some (qVal, _) ← extractRatFromCauchy e then
+        let qE ← mkRatExpr qVal
         let iExpr ← mkAppM ``QInterval.exact #[qE]
         let proof ← mkAppM ``QInterval.exact_containsReal #[qE]
-        return ⟨iExpr, proof, q, q⟩
+        return ⟨iExpr, proof, qVal, qVal⟩
       -- extractRatFromCauchy failed; try extractRat as fallback
       if let some q ← try some <$> extractRat e catch _ => pure none then
         let qE ← mkRatExpr q

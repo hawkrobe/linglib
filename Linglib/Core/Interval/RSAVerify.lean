@@ -172,7 +172,7 @@ def computeS1ScoreBounds {U W L : Type*} [Fintype W] [DecidableEq W] [DecidableE
       let scaled : Bounds := ⟨α * argLo, α * argHi⟩
       expIntervalBounds scaled
     else Bounds.zero
-  | .combinedUtility terms =>
+  | .combinedUtility terms _ =>
     let p := computeL0Rat meaning l u w
     let hasActiveLog := terms.any fun t => match t with
       | .logInformativity weight => weight l != 0

@@ -49,8 +49,84 @@ def extractIntExpr (e : Expr) : MetaM (Option ℤ) := do
   else
     return none
 
+/-- Try to extract ℚ from a `Rat`-typed expression that may involve opaque
+    arithmetic operations (`Rat.mul`, `Rat.inv`, etc.). These are `@[extern]`
+    in Lean 4 and don't reduce under `whnf`/`reduce`, so we recursively
+    decompose arithmetic operators and evaluate at the meta level.
+
+    Handles: `Rat.mul`, `Rat.inv`, `Rat.add`, `Rat.sub`, `Rat.neg`, `Rat.div`,
+    `Rat.ofScientific`, `OfNat.ofNat`, `Rat.mk'` constructor, and
+    `Rat.num`/`Rat.den` projections. -/
+partial def extractRatQ (e : Expr) : MetaM (Option ℚ) := do
+  let e' ← whnf e
+  let fn := e'.getAppFn
+  let args := e'.getAppArgs
+  -- Rat.mk' constructor: Rat.mk' num den ...
+  if fn.isConstOf ``Rat.mk' && args.size ≥ 2 then
+    let some num ← extractIntExpr args[0]! | return none
+    let some den := (← whnf args[1]!).rawNatLit? | return none
+    if den == 0 then return none
+    return some (mkRat num den)
+  -- Rat.mul a b
+  if fn.isConstOf ``Rat.mul && args.size ≥ 2 then
+    let some a ← extractRatQ args[0]! | return none
+    let some b ← extractRatQ args[1]! | return none
+    return some (a * b)
+  -- Rat.inv a
+  if fn.isConstOf ``Rat.inv && args.size ≥ 1 then
+    let some a ← extractRatQ args[0]! | return none
+    if a ≠ 0 then return some (1 / a)
+    return some 0
+  -- Rat.add a b
+  if fn.isConstOf ``Rat.add && args.size ≥ 2 then
+    let some a ← extractRatQ args[0]! | return none
+    let some b ← extractRatQ args[1]! | return none
+    return some (a + b)
+  -- Rat.sub a b
+  if fn.isConstOf ``Rat.sub && args.size ≥ 2 then
+    let some a ← extractRatQ args[0]! | return none
+    let some b ← extractRatQ args[1]! | return none
+    return some (a - b)
+  -- Rat.neg a
+  if fn.isConstOf ``Rat.neg && args.size ≥ 1 then
+    let some a ← extractRatQ args[0]! | return none
+    return some (-a)
+  -- Rat.div a b
+  if fn.isConstOf ``Rat.div && args.size ≥ 2 then
+    let some a ← extractRatQ args[0]! | return none
+    let some b ← extractRatQ args[1]! | return none
+    if b ≠ 0 then return some (a / b)
+    return some 0
+  -- Rat.ofScientific m s e (m × 10^(±e))
+  if fn.isConstOf ``Rat.ofScientific && args.size ≥ 3 then
+    let some m := (← whnf args[0]!).rawNatLit? | return none
+    let sW ← whnf args[1]!
+    let some exp := (← whnf args[2]!).rawNatLit? | return none
+    let isNeg := sW.isConstOf ``Bool.true
+    if isNeg then
+      return some (mkRat (Int.ofNat m) (10 ^ exp))
+    else
+      return some ((m : ℚ) * (10 ^ exp : ℚ))
+  -- OfNat.ofNat / Natural literal
+  if let some n := getOfNat? e' then return some (n : ℚ)
+  if let some n := e'.rawNatLit? then return some (n : ℚ)
+  -- Rat.num / Rat.den projections (from whnf of constructor)
+  let numExpr ← whnf (mkProj ``Rat 0 e')
+  let denExpr ← whnf (mkProj ``Rat 1 e')
+  let some den := denExpr.rawNatLit? | return none
+  if den == 0 then return none
+  let some num ← extractIntExpr numExpr | return none
+  return some (mkRat num den)
+
 /-- Extract ℚ from a Real.ofCauchy expression by evaluating the Cauchy sequence
     at index 0 and reading the resulting ℚ literal.
+
+    Returns `(ℚ value, original ℚ Expr)`. The ℚ value is used for bounds; the
+    original Expr is used in `RExpr.ratCast` so that `denote` produces an expression
+    definitionally equal to the goal. This is critical because `Rat.mul`/`Rat.inv`
+    are `@[extern]` and opaque to the kernel — using `mkRatExpr` would produce a
+    normalized form (e.g., `19/20`) that the kernel can't equate with the original
+    (`Rat.mul 95 (Rat.inv 100)`).
 
     CauSeq ℚ abs is a Subtype { val : ℕ → ℚ // IsCauSeq abs val }, so we project
 .val (field 0 of Subtype), apply to 0, and whnf-reduce to get a concrete Rat
@@ -59,7 +135,7 @@ def extractIntExpr (e : Expr) : MetaM (Option ℤ) := do
 
     This handles fractions (2/3, 1/3, etc.) that findEmbeddedNat cannot,
     since findEmbeddedNat only scans for the first raw nat literal. -/
-def extractRatFromCauchy (e : Expr) : MetaM (Option ℚ) := do
+def extractRatFromCauchy (e : Expr) : MetaM (Option (ℚ × Expr)) := do
   let args := e.getAppArgs
   if args.isEmpty then return none
   let mut seq := args.back!
@@ -71,13 +147,23 @@ def extractRatFromCauchy (e : Expr) : MetaM (Option ℚ) := do
     seq := seqW.getAppArgs.back!
   -- Project Subtype.val (field 0), apply to 0, and reduce
   let fAtZero ← whnf (mkApp (mkProj ``Subtype 0 seq) (mkRawNatLit 0))
-  -- Project Rat.num (field 0) and Rat.den (field 1)
+  -- Try direct Rat.num/Rat.den projection first (fast path)
   let numExpr ← whnf (mkProj ``Rat 0 fAtZero)
   let denExpr ← whnf (mkProj ``Rat 1 fAtZero)
-  let some den := denExpr.rawNatLit? | return none
-  if den == 0 then return none
-  let some num ← extractIntExpr numExpr | return none
-  return some (mkRat num den)
+  if let some den := denExpr.rawNatLit? then
+    if den ≠ 0 then
+      if let some num ← extractIntExpr numExpr then
+        let q := mkRat num den
+        -- Use mkRatExpr for the expression (it's definitionally equal
+        -- since Rat.num/den projected successfully)
+        let qE ← mkRatExpr q
+        return some (q, qE)
+  -- Fallback: fAtZero may be an opaque Rat operation (Rat.mul, Rat.inv, etc.)
+  -- that doesn't reduce under whnf. Use recursive ℚ extractor for the VALUE,
+  -- but preserve the ORIGINAL expression for the RExpr (kernel compatibility).
+  if let some q ← extractRatQ fAtZero then
+    return some (q, fAtZero)
+  return none
 
 -- ============================================================================
 -- Recursive Reifier
@@ -133,8 +219,7 @@ partial def reifyToRExpr (cache : ReifyCache) (e : Expr) (depth : ℕ) :
   -- matching the goal expression. (RExpr.nat would produce Nat.cast which
   -- is not definitionally equal to Rat.cast for the kernel.)
   if fn.isConstOf ``Real.ofCauchy then
-    if let some q ← extractRatFromCauchy e then
-      let qE ← mkRatExpr q
+    if let some (q, qE) ← extractRatFromCauchy e then
       let rexpr := mkApp (mkConst ``RExpr.ratCast) qE
       return ← cacheReturn cache key (rexpr, ⟨q, q⟩)
     -- Fallback: scan for embedded nat (handles cases where Cauchy structure is unusual)
@@ -390,8 +475,7 @@ partial def reifyToRExpr (cache : ReifyCache) (e : Expr) (depth : ℕ) :
   if eType.isConstOf ``Real then
     -- Fast path: check Cauchy form before the isDefEq loop
     if e.getAppFn.isConstOf ``Real.ofCauchy then
-      if let some q ← extractRatFromCauchy e then
-        let qE ← mkRatExpr q
+      if let some (q, qE) ← extractRatFromCauchy e then
         let rexpr := mkApp (mkConst ``RExpr.ratCast) qE
         return ← cacheReturn cache key (rexpr, ⟨q, q⟩)
       if let some n := findEmbeddedNat e then
@@ -566,7 +650,7 @@ partial def extractRat (e : Expr) : MetaM ℚ := do
   -- Extract ℚ from Cauchy form by evaluating the sequence at index 0
   let eType ← inferType e'
   if e'.getAppFn.isConstOf ``Real.ofCauchy then
-    if let some q ← extractRatFromCauchy e' then return q
+    if let some (q, _) ← extractRatFromCauchy e' then return q
     if let some n := findEmbeddedNat e' then return (n : ℚ)
   if eType.isConstOf ``Real then
     -- Try isDefEq for small numbers (handles Real.one✝, Real.zero✝, etc.)
@@ -581,7 +665,7 @@ partial def extractRat (e : Expr) : MetaM ℚ := do
     -- multiple nats (numerator AND denominator) and findEmbeddedNat would pick
     -- up only the first one.
     if e'.getAppFn.isConstOf ``Real.ofCauchy then
-      if let some q ← extractRatFromCauchy e' then return q
+      if let some (q, _) ← extractRatFromCauchy e' then return q
       if let some n := findEmbeddedNat e' then return (n : ℚ)
   -- 5. isDefEq fallback for binary ops after whnf
   -- Handles internal names like Real.mul, Real.add that don't match HMul/HAdd

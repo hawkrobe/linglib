@@ -789,7 +789,7 @@ def tryAutoDetectL1Compare (goal : MVarId) (cfg u w₁ w₂ : Expr) : TacticM Bo
     | .weightedBeliefAction => "weightedBeliefAction"
     | .actionBased => "actionBased"
     | .beliefWeighted => "beliefWeighted"
-    | .combinedUtility => "combinedUtility"
+    | .combinedUtility .. => "combinedUtility"
   logInfo m!"rsa_predict: [auto-detect] detected {patternName}"
 
   -- Extract ℚ parameters
@@ -914,7 +914,7 @@ def tryAutoDetectL1NotGt (goal : MVarId) (cfg u w₁ w₂ : Expr) : TacticM Bool
     | .qudAction => "qudAction" | .beliefAction => "beliefAction"
     | .weightedBeliefAction => "weightedBeliefAction"
     | .actionBased => "actionBased" | .beliefWeighted => "beliefWeighted"
-    | .combinedUtility => "combinedUtility"
+    | .combinedUtility .. => "combinedUtility"
   logInfo m!"rsa_predict: [auto-detect/¬L1] detected {patternName}"
 
   let some meaningVals ← extractMeaningValues cfg allLElems allUElems allWElems | do

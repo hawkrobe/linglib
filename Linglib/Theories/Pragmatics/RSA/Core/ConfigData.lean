@@ -24,13 +24,13 @@ Each `S1ScoreSpec` variant has:
 
 | Variant | Formula | Papers |
 |---------|---------|--------|
-| `beliefBased` | `L0(w\|u)^α` | Frank & Goodman 2012, Beller & Gerstenberg 2025 |
-| `qudBelief` | `(Σ_{w'∼w} L0(w'\|u))^α` | Kao et al. 2014 Metaphor/Irony |
-| `qudAction` | `if proj=0 then 0 else exp(α·(log proj - cost u))` | Kao et al. 2014 Hyperbole |
-| `beliefAction` | `if L0=0 then 0 else exp(α·(log L0 - cost u))` | Qing & Franke 2015 σ_b |
-| `actionBased` | `exp(α·(L0(w\|u) - cost u))` | Qing & Franke 2015 σ_a |
-| `weightedBeliefAction` | `if L0=0 then 0 else exp(α·(γ·log L0 + bonus u))` | Hawkins et al. 2025 |
-| `beliefWeighted` | `if qualOk then exp(α·Σ_s b(l,s)·log L0(u,s)) else 0` | Goodman & Stuhlmüller 2013 |
+| `beliefBased` | `L0(w\|u)^α` | @cite{frank-goodman-2012}, @cite{beller-gerstenberg-2025} |
+| `qudBelief` | `(Σ_{w'∼w} L0(w'\|u))^α` | @cite{kao-etal-2014-hyperbole} Metaphor/Irony |
+| `qudAction` | `if proj=0 then 0 else exp(α·(log proj - cost u))` | @cite{kao-etal-2014-hyperbole} Hyperbole |
+| `beliefAction` | `if L0=0 then 0 else exp(α·(log L0 - cost u))` | @cite{qing-franke-2015} σ_b |
+| `actionBased` | `exp(α·(L0(w\|u) - cost u))` | @cite{qing-franke-2015} σ_a |
+| `weightedBeliefAction` | `if L0=0 then 0 else exp(α·(γ·log L0 + bonus u))` | @cite{hawkins-etal-2025} |
+| `beliefWeighted` | `if qualOk then exp(α·Σ_s b(l,s)·log L0(u,s)) else 0` | @cite{goodman-stuhlmuller-2013} |
 -/
 
 namespace RSA
@@ -69,39 +69,45 @@ def S1UtilityTerm.isLogTerm {U W L : Type*} : S1UtilityTerm U W L → Bool
 inductive S1ScoreSpec (U W L : Type*) where
   /-- score = L0(w|u)^α.
       Standard belief-based informativity.
-      Used by Frank & Goodman 2012, Beller & Gerstenberg 2025. -/
+      Used by @cite{frank-goodman-2012}, @cite{beller-gerstenberg-2025}. -/
   | beliefBased
   /-- score = (Σ_{w': project w' l = project w l} L0(w'|u))^α.
       QUD-projected belief-based informativity (no cost).
-      Used by Kao et al. 2014 Metaphor, Kao et al. 2015 Irony. -/
+      Used by @cite{kao-etal-2014-hyperbole} Metaphor, @cite{kao-goodman-2015} Irony. -/
   | qudBelief (project : W → L → ℕ)
   /-- score = if projected = 0 then 0 else exp(α · (log projected - cost u))
       where projected = Σ_{w': project w' l = project w l} L0(w'|u).
       QUD-projected with utterance cost.
-      Used by Kao et al. 2014 Hyperbole. -/
+      Used by @cite{kao-etal-2014-hyperbole} Hyperbole. -/
   | qudAction (cost : U → ℚ) (project : W → L → ℕ)
   /-- score = if L0(w|u) = 0 then 0 else exp(α · (log L0(w|u) - cost u)).
       Belief-oriented with utterance cost (gated).
-      Used by Qing & Franke 2015 σ_b. -/
+      Used by @cite{qing-franke-2015} σ_b. -/
   | beliefAction (cost : U → ℚ)
   /-- score = exp(α · (L0(w|u) - cost u)).
       Action-oriented: raw L0 probability, no log.
-      Used by Qing & Franke 2015 σ_a. -/
+      Used by @cite{qing-franke-2015} σ_a. -/
   | actionBased (cost : U → ℚ)
   /-- score = if L0(w|u) = 0 then 0 else exp(α · (infWeight · log L0(w|u) + bonus u)).
       Weighted belief-action: informativity weight γ on log L0, plus a per-utterance
       bonus that can encode action relevance, cost, or any u-dependent term.
       Subsumes `beliefAction`: `beliefAction(cost) = weightedBeliefAction 1 (fun u => -cost u)`.
-      Used by Hawkins et al. 2025 (PRIOR-PQ). -/
+      Used by @cite{hawkins-etal-2025} (PRIOR-PQ). -/
   | weightedBeliefAction (infWeight : ℚ) (bonus : U → ℚ)
   /-- score = if quality(l, u) then exp(α · Σ_w belief(l, w) · log L0(u, w)) else 0.
       Belief-weighted expected log-informativity, gated by quality.
-      Used by Goodman & Stuhlmüller 2013. -/
+      Used by @cite{goodman-stuhlmuller-2013}. -/
   | beliefWeighted (belief : L → W → ℚ) (quality : L → U → Bool)
-  /-- score = if (hasLog ∧ L0=0) then 0 else exp(α · Σ_i term_i(l, u, w, L0)).
+  /-- score = if (logActive(l) ∧ L0=0) then 0 else exp(α · Σ_i term_i(l, u, w, L0)).
       Arbitrary sum of utility terms. Subsumes `weightedBeliefAction`.
-      Used by Yoon et al. 2020 (politeness). -/
-  | combinedUtility (terms : List (S1UtilityTerm U W L))
+      Used by @cite{yoon-etal-2020} (politeness).
+
+      The `logActive` gate controls when L0=0 forces score=0. When the
+      informativity weight is 0 (pure social speaker), setting `logActive l = false`
+      allows utterances incompatible with the true state to receive positive scores.
+      Default: always gate (safe for models where all latent values have non-zero
+      informativity weight). -/
+  | combinedUtility (terms : List (S1UtilityTerm U W L)) (logActive : L → Bool := fun _ => true)
 
 -- ============================================================================
 -- S2ScoreSpec
@@ -215,12 +221,9 @@ noncomputable def S1ScoreSpec.toS1Score [DecidableEq L]
     if quality l u then
       exp (α * ∑ s : W, ↑(belief l s) * log (l0 u s))
     else 0
-  | .combinedUtility terms => fun l0 α l w u =>
-    -- Gate: if any logInformativity term has nonzero weight for this latent and L0=0
-    let hasActiveLog := terms.any fun t => match t with
-      | .logInformativity weight => weight l != 0
-      | _ => false
-    if hasActiveLog = true ∧ l0 u w = 0 then 0
+  | .combinedUtility terms logActive => fun l0 α l w u =>
+    if l0 u w = 0 then
+      if logActive l then 0 else exp (α * terms.foldl (fun acc t => acc + t.evalR l0 l u w) 0)
     else exp (α * terms.foldl (fun acc t => acc + t.evalR l0 l u w) 0)
 
 set_option linter.unusedSectionVars false in
@@ -257,10 +260,12 @@ theorem S1ScoreSpec.toS1Score_nonneg [DecidableEq L]
     split
     · exact le_of_lt (exp_pos _)
     · exact le_refl 0
-  | .combinedUtility _ =>
+  | .combinedUtility _ _ =>
     simp only [toS1Score]
     split
-    · exact le_refl 0
+    · split
+      · exact le_refl 0
+      · exact le_of_lt (exp_pos _)
     · exact le_of_lt (exp_pos _)
 
 -- ============================================================================

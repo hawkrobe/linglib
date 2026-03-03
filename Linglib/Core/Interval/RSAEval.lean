@@ -137,7 +137,7 @@ def evalS1Score {U W L : Type*} [Fintype W] [DecidableEq W] [DecidableEq L]
       let scaled := argInterval.mul (QInterval.exact α)
       expInterval scaled
     else QInterval.exact 0
-  | .combinedUtility terms =>
+  | .combinedUtility terms _ =>
     let p := evalL0Exact meaning l u w
     -- Gate only when a logInformativity term has nonzero weight for this latent
     let hasActiveLog := terms.any fun t => match t with
