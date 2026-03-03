@@ -561,6 +561,10 @@ def numBounded : Nat := boundedScales.length
 /-- Number of non-bounded scales -/
 def numNonBounded : Nat := nonBoundedScales.length
 
+#guard numBounded == 21
+#guard numNonBounded == 22
+#guard numBounded + numNonBounded == numScales
+
 
 -- ============================================================================
 -- Computed Data Properties
