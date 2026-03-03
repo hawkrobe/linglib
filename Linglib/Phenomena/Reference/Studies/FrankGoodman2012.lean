@@ -7,7 +7,7 @@ import Mathlib.Analysis.SpecialFunctions.Log.Basic
 open Core.Empirical
 
 /-!
-# @cite{frank-goodman-2012} @cite{frank-goodman-2012}
+# @cite{frank-goodman-2012}
 @cite{degen-2023} @cite{tenenbaum-griffiths-2001} @cite{heim-kratzer-1998}
 
 "Predicting Pragmatic Reasoning in Language Games"
@@ -24,7 +24,7 @@ Utterances: {blue, green, square, circle}
 ## Architecture (SM Eq. S1–S4)
 
     ⟦w⟧(o) Boolean denotation: does word w apply to object o?
-    L0(rₛ|w) = ⟦w⟧(rₛ) / Σ_o ⟦w⟧(o) (Eq. S4)
+    L0(rₛ|w) = ⟦w⟧(rₛ) / Σ_o ⟦w⟧(o) (Eq. S3)
     U(w; rₛ, C) = log L0(rₛ|w) − D(w) (Eq. S2)
     P_S1(w|rₛ, C) ∝ e^{α · U(w; rₛ, C)} (Eq. S1)
     L1(rₛ|w) ∝ P_S1(w|rₛ, C) · P(rₛ) (Eq. 1)
@@ -45,8 +45,10 @@ reasoning about rational, informative speakers.
 | 3 | Unique reference | "green" | green_sq > blue_sq | "green" applies only to green_sq |
 | 4 | Unique reference | "circle" | blue_circ > blue_sq | "circle" applies only to blue_circ |
 
-Model predictions correlate r² = 0.99 with human judgments. All proofs
-use `rsa_predict`.
+Model predictions correlate r = 0.99 with human judgments (combined
+salience + informativeness; r = 0.98 for speaker alone; r = 0.87 for
+listener excluding trivial predictions). N = 745 (206 speaker, 276
+salience, 263 listener). All proofs use `rsa_predict`.
 
 ## Formalization Coverage
 
@@ -141,8 +143,8 @@ open RSA Real in
 /-- @cite{frank-goodman-2012} reference game as RSA model.
 
     SM Eq. S1–S4:
-    ⟦w⟧(o) = 1 if w applies to o, 0 otherwise (Eq. S3, Boolean semantics)
-    L0(rₛ|w) = ⟦w⟧(rₛ) / Σ_o ⟦w⟧(o) (Eq. S4, literal listener)
+    ⟦w⟧(o) = 1 if w applies to o, 0 otherwise (Boolean semantics)
+    L0(rₛ|w) = ⟦w⟧(rₛ) / Σ_o ⟦w⟧(o) (Eq. S3, literal listener)
     U(w; rₛ, C) = log L0(rₛ|w) − D(w) (Eq. S2, informativity − cost)
     P(w|rₛ, C) ∝ e^{α · U(w; rₛ, C)} (Eq. S1, soft-max speaker)
 

@@ -514,7 +514,8 @@ theorem salience_green_green_sq :
   rsa_predict
 
 /-- Finding 6: Salience reversal for "green". Uniform and salience priors make
-    opposite L1 predictions, and human data matches the salience direction. -/
+    opposite L1 predictions. Human data matches the *pragmatic* (uniform)
+    direction: 115/180 chose green_circle (Table 2). -/
 theorem salience_reversal_green :
     (costCfg.L1 .green .green_circle > costCfg.L1 .green .green_square) ∧
     (salienceCfg.L1 .green .green_square > salienceCfg.L1 .green .green_circle) :=
@@ -801,7 +802,7 @@ theorem σ_bU_blue_circ_threshold
   constructor <;> intro h <;> linarith
 
 -- ============================================================================
--- §17. Raw Experimental Data (Tables 3–4)
+-- §17. Raw Experimental Data (Tables 1–2)
 -- ============================================================================
 
 /-! Production and comprehension counts from the experiment (N = 1032 total:
