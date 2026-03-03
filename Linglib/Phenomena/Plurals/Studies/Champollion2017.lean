@@ -1,7 +1,7 @@
 import Linglib.Theories.Semantics.Events.StratifiedReference
 import Linglib.Theories.Semantics.Events.Mereology
 import Linglib.Fragments.English.Predicates.Verbal
-import Linglib.Phenomena.TenseAspect.DiagnosticsBridge
+import Linglib.Phenomena.TenseAspect.Studies.Rothstein2004
 
 /-!
 # Stratified Reference: Distributivity → Fragment Verbs

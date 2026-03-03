@@ -1,4 +1,4 @@
-import Linglib.Phenomena.Entailment.Montague_TruthConditionsBridge
+import Linglib.Phenomena.Entailment.MontagueTruthConditions
 import Linglib.Phenomena.Entailment.Basic
 
 /-!

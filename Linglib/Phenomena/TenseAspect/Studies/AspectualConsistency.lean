@@ -1,7 +1,7 @@
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Theories.Semantics.Events.SpatialTrace
 import Linglib.Theories.Semantics.Lexical.Verb.DegreeAchievement
-import Linglib.Phenomena.TenseAspect.DiagnosticsBridge
+import Linglib.Phenomena.TenseAspect.Studies.Rothstein2004
 import Linglib.Phenomena.TenseAspect.Studies.Krifka1998
 import Linglib.Phenomena.TenseAspect.Studies.Krifka1989
 import Linglib.Phenomena.Plurals.Studies.Champollion2017

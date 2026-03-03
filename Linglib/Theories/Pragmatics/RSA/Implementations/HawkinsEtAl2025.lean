@@ -43,7 +43,7 @@ namespace RSA.PriorPQ
 This file previously contained the full @cite{hawkins-etal-2025} PRIOR-PQ RSA implementation.
 All definitions and theorems depend on Phenomena types (ResponseType, cs1/cs2/cs3 data,
 etc.) and have been moved to
-`Linglib.Phenomena.Questions.RSA_HawkinsEtAl2025Bridge`.
+`Linglib.Phenomena.Questions.Studies.HawkinsEtAl2025`.
 -/
 
 end RSA.PriorPQ

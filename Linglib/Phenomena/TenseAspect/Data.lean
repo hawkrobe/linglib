@@ -12,7 +12,7 @@ Unified entry point for tense phenomena. Absorbs the former
 
 Theory-neutral empirical data only — no theoretical commitments.
 Bridge theorems connecting this data to specific tense theories
-are in `Bridge.lean`.
+are in `Studies/HeimKratzer1998.lean`.
 
 ## Phenomena Covered
 
@@ -1375,7 +1375,7 @@ The empirical contrast:
   German: #"Ich schaltete den Herd nicht aus." ✗ (out of the blue)
   German: "Ich habe den Herd nicht ausgeschaltet." ✓ (present perfect)
 
-This data is tested against the theory in `Bridge.lean` §29. -/
+This data is tested against the theory in `Studies/HeimKratzer1998.lean` §29. -/
 
 open Core.Tense
 open Core.ReferentialMode (ReferentialMode)

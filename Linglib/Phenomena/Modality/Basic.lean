@@ -12,7 +12,7 @@ This module covers modal semantics phenomena:
 -/
 
 import Linglib.Phenomena.Modality.FreeChoice
-import Linglib.Phenomena.Modality.TypologyBridge
+import Linglib.Phenomena.Modality.Studies.ImelGuoST2026
 
 namespace Phenomena.Modality
 

@@ -127,7 +127,7 @@ theorem deletedTensePresup : True := trivial
 /-- General then-perspective incompatibility:
     OP_π sets P = localEval, ⌈then⌉ requires P ≠ localEval → contradiction.
 
-    The root-clause case (in `ThenPresentBridge.lean`) has localEval = S
+    The root-clause case (in `TenseAspect/Studies/Zhao2025ThenPresent.lean`) has localEval = S
     and hOP = isSimpleCase. The embedded case has localEval = attitudeTime
     and hOP comes from OP_π. -/
 theorem then_perspective_clash {Time : Type*}

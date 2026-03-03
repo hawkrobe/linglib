@@ -1,6 +1,6 @@
 import Linglib.Theories.Syntax.Minimalism.Core.Phase
 import Linglib.Theories.Syntax.Minimalism.Formal.ExtendedProjection.Basic
-import Linglib.Phenomena.Negation.ExpletiveNegationBridge
+import Linglib.Phenomena.Negation.Studies.Rett2026
 import Linglib.Phenomena.Negation.Typology
 
 /-!

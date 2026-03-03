@@ -1,7 +1,7 @@
 import Linglib.Theories.Morphology.Core.Exponence
 import Linglib.Fragments.English.Nouns
 import Linglib.Fragments.English.Predicates.Verbal
-import Linglib.Phenomena.Morphology.ZwickyPullum1983Bridge
+import Linglib.Phenomena.Morphology.Studies.ZwickyPullum1983
 
 /-!
 # Morphological Composition: Phenomena

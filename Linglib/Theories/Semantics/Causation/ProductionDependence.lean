@@ -26,7 +26,7 @@ d-causes without producing anything.
 | P-CAUSE (deterministic) | `causallySufficient` + directness | Sufficiency.lean |
 | D-CAUSE (deterministic) | `causallyNecessary` | Necessity.lean |
 | Thick → P-CAUSE preference | production constraint | (this file) |
-| Thick → strong ASR | resultative compatibility | Bridge.lean |
+| Thick → strong ASR | resultative compatibility | Causatives/Studies/MartinRoseNichols2025.lean |
 | Builder `.make` | sufficiency = P-CAUSE in deterministic limit | Builder.lean |
 
 -/
@@ -240,7 +240,7 @@ theorem dependence_asserts_necessity :
 
 Thick causative manner verbs (break-class) are compatible with strong
 adjectival resultatives (*break open*, *burn clean*). This connects to
-the resultative infrastructure in GoldbergJackendoff2004/Bridge.lean,
+the resultative infrastructure in ArgumentStructure/Studies/TheoryComparison.lean,
 where the constructional CAUSE uses `CausativeBuilder.make`. -/
 
 /-- Causative manner verbs (thickManner) are compatible with strong ASR.

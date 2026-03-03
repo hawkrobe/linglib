@@ -1,7 +1,7 @@
 import Linglib.Theories.Semantics.Events.Krifka1989
 import Linglib.Theories.Semantics.Events.Krifka1998
 import Linglib.Fragments.English.Predicates.Verbal
-import Linglib.Phenomena.TenseAspect.DiagnosticsBridge
+import Linglib.Phenomena.TenseAspect.Studies.Rothstein2004
 
 /-!
 # @cite{krifka-1989} Bridge: Nominal Reference → VP Telicity

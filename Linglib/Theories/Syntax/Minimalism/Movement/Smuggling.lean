@@ -113,7 +113,7 @@ theorem no_theta_permits_smuggling (v : VoiceHead)
     - Quote complement (something to front)
 
     `hasComplement` corresponds to `ComplementType ≠.none` at the
-    VerbEntry level; the bridge in Unaccusativity/Bridge.lean verifies
+    VerbEntry level; the bridge in ArgumentStructure/Studies/Storment2026.lean verifies
     this against the English fragment. -/
 def licensesQI (voice : VoiceHead) (hasComplement : Bool) : Bool :=
   voice.permitsSmuggling && hasComplement

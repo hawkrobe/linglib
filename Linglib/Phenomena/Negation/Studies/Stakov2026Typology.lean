@@ -1,4 +1,4 @@
-import Linglib.Phenomena.Negation.CzechThreeWayNegBridge
+import Linglib.Phenomena.Negation.Studies.Stakov2026
 import Linglib.Theories.Semantics.Polarity.CzechNegation
 import Linglib.Theories.Semantics.Modality.BiasedPQ
 

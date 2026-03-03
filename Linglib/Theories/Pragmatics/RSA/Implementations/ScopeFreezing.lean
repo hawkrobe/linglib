@@ -72,7 +72,7 @@ def rescueWorldPrior : World → ℚ
 
 Definitions and theorems that depend on Phenomena types (Availability, Example,
 possessor_baseline, possessor_frozen, etc.) have been moved to
-`Linglib.Phenomena.Quantification.RSA_ScopeFreezingBridge`.
+`Linglib.Phenomena.Quantification.Studies.RSAScopeFreezing`.
 
 This includes: `interpPriorFromAvailability`, `interpPriorFromExample`,
 `baseline`, `frozen`, `grammarInterpPrior`, and all associated theorems.

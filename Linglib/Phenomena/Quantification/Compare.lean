@@ -20,7 +20,7 @@ Comparing how different theories explain scope freezing phenomena.
 import Linglib.Core.Interface
 import Linglib.Core.ProcessingModel
 import Linglib.Phenomena.Quantification.Data
-import Linglib.Phenomena.Quantification.MinimalismBridge
+import Linglib.Phenomena.Quantification.MinimalismScope
 import Linglib.Theories.Syntax.CCG.Scope
 
 namespace Phenomena.Quantification.Compare

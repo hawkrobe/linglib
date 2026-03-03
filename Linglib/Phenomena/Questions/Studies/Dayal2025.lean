@@ -1,7 +1,7 @@
 import Linglib.Theories.Semantics.Questions.LeftPeriphery
 import Linglib.Phenomena.Questions.Embedding
 import Linglib.Phenomena.Questions.Typology
-import Linglib.Phenomena.Questions.TypologyBridge
+import Linglib.Phenomena.Questions.Studies.BhattDayal2020
 
 /-!
 # Bridge: Left Periphery Theory -> Embedding/Typology Data

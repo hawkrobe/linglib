@@ -1,4 +1,4 @@
-import Linglib.Phenomena.Negation.CzechThreeWayNegTypologyBridge
+import Linglib.Phenomena.Negation.Studies.Stakov2026Typology
 
 /-!
 # Staňková & Šimík (2024): Negation in Czech Polar Questions

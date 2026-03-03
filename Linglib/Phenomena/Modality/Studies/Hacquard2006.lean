@@ -1,5 +1,8 @@
 import Linglib.Theories.Semantics.Modality.EventRelativity
 import Linglib.Theories.Semantics.Modality.Temporal
+import Mathlib.Data.List.Defs
+import Linglib.Theories.Semantics.Lexical.Verb.ViewpointAspect
+import Linglib.Theories.Semantics.Modality.ActualityEntailments
 
 /-!
 # Event Projection → Temporal Orientation
@@ -176,3 +179,226 @@ theorem jane_train_orientation :
 
 
 end Phenomena.Modality.Studies.Hacquard2006
+
+/-! ## Bridge content (merged from ActualityInferencesBridge.lean) -/
+
+/-!
+# Actuality Inference Data (Cross-Linguistic)
+@cite{bhatt-1999} @cite{hacquard-2006} @cite{mari-martin-2007} @cite{nadathur-2023}
+
+Cross-linguistic empirical data on actuality inferences with ability modals,
+following the pattern of `Phenomena/Causatives/Data.lean`.
+
+## Key Generalization (@cite{nadathur-2023}, Chapter 1)
+
+Across languages, ability modals with **perfective** aspect entail the
+complement, while those with **imperfective** aspect do not.
+
+| Language | Modal | PFV entails? | IMPF entails? |
+|----------|-------|-------------|---------------|
+| Greek | *boro* | Yes | No |
+| Hindi | *saknaa* | Yes | No |
+| French | *pouvoir* | Yes | No |
+| English | *be able* | Yes (episodic) | No (habitual) |
+
+-/
+
+namespace Phenomena.Modality.ActualityInferencesBridge
+
+open Semantics.Lexical.Verb.ViewpointAspect (ViewpointAspectB)
+
+/-- A single cross-linguistic data point for actuality inferences. -/
+structure ActualityDatum where
+  /-- Language name -/
+  language : String
+  /-- The modal form in that language -/
+  modalForm : String
+  /-- Viewpoint aspect of the sentence -/
+  aspect : ViewpointAspectB
+  /-- Does the complement entailment hold? -/
+  complementEntailed : Bool
+  /-- Example sentence gloss -/
+  gloss : String
+  deriving Repr, DecidableEq, BEq
+
+-- ════════════════════════════════════════════════════
+-- Greek: boro 'can/be able'
+-- ════════════════════════════════════════════════════
+
+/-- Greek *boro* + perfective (aorist): "She was-able.PFV to swim across"
+    → She swam across. -/
+def greek_pfv : ActualityDatum where
+  language := "Greek"
+  modalForm := "boro"
+  aspect := .perfective
+  complementEntailed := true
+  gloss := "Borese na kolimbisi apenant (She was-able.AOR to swim across)"
+
+/-- Greek *boro* + imperfective: "She was-able.IMPF to swim across"
+    ↛ She swam across. -/
+def greek_impf : ActualityDatum where
+  language := "Greek"
+  modalForm := "boro"
+  aspect := .imperfective
+  complementEntailed := false
+  gloss := "Boruse na kolimbisi apenant (She was-able.IMPF to swim across)"
+
+-- ════════════════════════════════════════════════════
+-- Hindi: saknaa 'can/be able'
+-- ════════════════════════════════════════════════════
+
+/-- Hindi *saknaa* + perfective: "She was-able.PFV to swim across"
+    → She swam across. -/
+def hindi_pfv : ActualityDatum where
+  language := "Hindi"
+  modalForm := "saknaa"
+  aspect := .perfective
+  complementEntailed := true
+  gloss := "Voh pair ke tair sakii (She was-able.PFV to swim across)"
+
+/-- Hindi *saknaa* + imperfective: "She was-able.IMPF to swim across"
+    ↛ She swam across. -/
+def hindi_impf : ActualityDatum where
+  language := "Hindi"
+  modalForm := "saknaa"
+  aspect := .imperfective
+  complementEntailed := false
+  gloss := "Voh pair ke tair saktii thii (She was-able.IMPF to swim across)"
+
+-- ════════════════════════════════════════════════════
+-- French: pouvoir 'can/be able'
+-- ════════════════════════════════════════════════════
+
+/-- French *pouvoir* + passé composé (perfective): "She was-able.PFV to swim across"
+    → She swam across. -/
+def french_pfv : ActualityDatum where
+  language := "French"
+  modalForm := "pouvoir"
+  aspect := .perfective
+  complementEntailed := true
+  gloss := "Elle a pu traverser à la nage (She was-able.PC to swim across)"
+
+/-- French *pouvoir* + imparfait (imperfective): "She was-able.IMPF to swim across"
+    ↛ She swam across. -/
+def french_impf : ActualityDatum where
+  language := "French"
+  modalForm := "pouvoir"
+  aspect := .imperfective
+  complementEntailed := false
+  gloss := "Elle pouvait traverser à la nage (She was-able.IMP to swim across)"
+
+-- ════════════════════════════════════════════════════
+-- English: be able (episodic vs habitual)
+-- ════════════════════════════════════════════════════
+
+/-- English *be able* + episodic (perfective-like): "She was able to swim across"
+    → She swam across. -/
+def english_pfv : ActualityDatum where
+  language := "English"
+  modalForm := "be able"
+  aspect := .perfective
+  complementEntailed := true
+  gloss := "She was able to swim across (episodic reading)"
+
+/-- English *be able* + habitual (imperfective-like): "She was able to swim across"
+    ↛ She swam across on that occasion. -/
+def english_impf : ActualityDatum where
+  language := "English"
+  modalForm := "be able"
+  aspect := .imperfective
+  complementEntailed := false
+  gloss := "She was able to swim across (habitual/generic reading)"
+
+-- ════════════════════════════════════════════════════
+-- Dataset
+-- ════════════════════════════════════════════════════
+
+/-- All actuality inference data points. -/
+def allData : List ActualityDatum :=
+  [greek_pfv, greek_impf, hindi_pfv, hindi_impf,
+   french_pfv, french_impf, english_pfv, english_impf]
+
+/-- The perfective subset. -/
+def perfData : List ActualityDatum :=
+  allData.filter (·.aspect == .perfective)
+
+/-- The imperfective subset. -/
+def impfData : List ActualityDatum :=
+  allData.filter (·.aspect == .imperfective)
+
+-- ════════════════════════════════════════════════════
+-- Verification Theorems
+-- ════════════════════════════════════════════════════
+
+/-- All 4 perfective data points have `complementEntailed = true`. -/
+theorem perfective_entails :
+    perfData.all (·.complementEntailed) = true := by native_decide
+
+/-- All 4 imperfective data points have `complementEntailed = false`. -/
+theorem imperfective_no_entailment :
+    impfData.all (·.complementEntailed == false) = true := by native_decide
+
+/-- **Central empirical generalization**: across all 8 data points,
+    `complementEntailed` tracks `aspect ==.perfective` exactly.
+
+    This is the empirical observation that @cite{nadathur-2023} explains
+    via the causal sufficiency + aspect interaction. -/
+theorem empirical_matches_theory :
+    allData.all (λ d => (d.aspect == .perfective) == d.complementEntailed) = true := by
+  native_decide
+
+/-- We have data from 4 distinct languages. -/
+theorem four_languages :
+    (allData.map (·.language)).dedup.length = 4 := by native_decide
+
+/-- Each language contributes exactly one perfective and one imperfective datum. -/
+theorem balanced_design :
+    perfData.length = 4 ∧ impfData.length = 4 := by
+  constructor <;> native_decide
+
+
+-- ════════════════════════════════════════════════════
+-- Bridge: Data → Position × Aspect Theory
+-- (@cite{hacquard-2006}, via ActualityEntailments.lean)
+-- ════════════════════════════════════════════════════
+
+open Semantics.Modality.ActualityEntailments (actualityEntailmentPredicted)
+open Semantics.Modality.EventRelativity (ModalPosition)
+
+/-- Every datum's `complementEntailed` field matches the position × aspect
+prediction for root modals. All data involves root/ability modals
+(below AspP), so the prediction is `actualityEntailmentPredicted.belowAsp d.aspect`.
+
+This connects the theory-neutral empirical data (§§ above) to
+@cite{hacquard-2006}'s structural explanation: root modals are below Asp,
+so perfective forces actualization. -/
+theorem data_matches_position_theory :
+    allData.all (λ d =>
+      d.complementEntailed == actualityEntailmentPredicted .belowAsp d.aspect
+    ) = true := by native_decide
+
+/-- Per-language bridge: Greek data matches position theory. -/
+theorem greek_matches_theory :
+    greek_pfv.complementEntailed = actualityEntailmentPredicted .belowAsp .perfective ∧
+    greek_impf.complementEntailed = actualityEntailmentPredicted .belowAsp .imperfective :=
+  ⟨rfl, rfl⟩
+
+/-- Per-language bridge: Hindi data matches position theory. -/
+theorem hindi_matches_theory :
+    hindi_pfv.complementEntailed = actualityEntailmentPredicted .belowAsp .perfective ∧
+    hindi_impf.complementEntailed = actualityEntailmentPredicted .belowAsp .imperfective :=
+  ⟨rfl, rfl⟩
+
+/-- Per-language bridge: French data matches position theory. -/
+theorem french_matches_theory :
+    french_pfv.complementEntailed = actualityEntailmentPredicted .belowAsp .perfective ∧
+    french_impf.complementEntailed = actualityEntailmentPredicted .belowAsp .imperfective :=
+  ⟨rfl, rfl⟩
+
+/-- Per-language bridge: English data matches position theory. -/
+theorem english_matches_theory :
+    english_pfv.complementEntailed = actualityEntailmentPredicted .belowAsp .perfective ∧
+    english_impf.complementEntailed = actualityEntailmentPredicted .belowAsp .imperfective :=
+  ⟨rfl, rfl⟩
+
+end Phenomena.Modality.ActualityInferencesBridge

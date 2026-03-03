@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.227.91] - 2026-03-03
+
+### Changed
+- **Migrate 87 phenomenon-level Bridge files to Studies/**: moved 66 Bridge files to `Studies/AuthorYear.lean` via git mv, renamed 8 infrastructure bridges in place (dropped Bridge suffix), merged 12 bridge files into existing Studies files, flattened `ScalarImplicatures/GoodmanStuhlmuller2013/{Bridge,Data}.lean` into `Studies/GoodmanStuhlmuller2013.lean`, deleted 1 forwarding stub. Updated all import paths, Linglib.lean entries, and stale docstring references across 127 files. Zero Bridge files remain in `Phenomena/`.
+
 ## [0.227.90] - 2026-03-03
 
 ### Changed

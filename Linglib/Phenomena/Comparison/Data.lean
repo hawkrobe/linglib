@@ -30,7 +30,7 @@ Comparison/
 │ └── Data.lean — "how tall", negative islands, modal obviation
 ├── CrossCategorial.lean — construction-level Wellwood-style parallels
 ├── Typology.lean — WALS 121 cross-linguistic typology (from Gradability/)
-└── TypologyBridge.lean — typology–fragment bridge (from Gradability/)
+└── Studies/Kennedy2007Typology.lean — typology–fragment bridge (from Gradability/)
 ```
 
 -/

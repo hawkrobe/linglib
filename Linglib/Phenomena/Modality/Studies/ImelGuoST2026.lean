@@ -1,6 +1,6 @@
 import Linglib.Theories.Semantics.Modality.Typology
 import Linglib.Fragments.English.FunctionWords
-import Linglib.Phenomena.Modality.GermanModalsBridge
+import Linglib.Phenomena.Modality.GermanModals
 
 /-!
 # Cross-Linguistic Modal Typology

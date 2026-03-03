@@ -252,6 +252,6 @@ theorem gapping_is_catena_ellipsis :
   constructor <;> native_decide
 
 -- Bridge → Phenomena/Ellipsis/Gapping.lean: sharing direction ↔ gapping direction
--- is proven in Phenomena.Ellipsis.DG_CoordinationParallelismBridge.lean
+-- is proven in Phenomena.Ellipsis.Studies.Osborne2019Parallelism.lean
 
 end DepGrammar.CoordinationParallelism

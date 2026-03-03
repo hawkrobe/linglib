@@ -1,7 +1,7 @@
 import Linglib.Theories.Semantics.Lexical.Verb.DegreeAchievement
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Fragments.English.Predicates.Adjectival
-import Linglib.Phenomena.TenseAspect.DiagnosticsBridge
+import Linglib.Phenomena.TenseAspect.Studies.Rothstein2004
 import Linglib.Theories.Semantics.Events.DimensionBridge
 
 /-!

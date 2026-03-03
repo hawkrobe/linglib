@@ -35,7 +35,7 @@ expletive negation licensing.
 
 - `maxOnScale` and `isAmbidirectional` are defined in `Core.Scale`
 - The comparative morpheme `comparativeSem` is now in `Degree.Comparative`
-- EN predictions are in `Phenomena/Negation/ExpletiveNegationBridge.lean`
+- EN predictions are in `Phenomena/Negation/Studies/Rett2026.lean`
 
 -/
 

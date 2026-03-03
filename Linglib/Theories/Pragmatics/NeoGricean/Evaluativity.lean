@@ -1001,7 +1001,7 @@ theorem complete_derivation_as_tall_as :
 - `grounded_matches_simple_*`: Lexicon-grounded matches simple derivation
 
 ### Predictions Match Data
-Prediction-matching theorems are in `Phenomena.Gradability.NeoGricean_EvaluativityBridge.lean`.
+Prediction-matching theorems are in `Phenomena.Gradability.Studies.Rett2015NeoGricean.lean`.
 
 ### Connection to Other Modules
 - Uses `AdjectivalConstruction` from `Phenomena/Semantics/Evaluativity.lean`

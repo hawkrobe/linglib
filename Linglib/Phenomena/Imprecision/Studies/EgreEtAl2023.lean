@@ -16,6 +16,7 @@ Theory-neutral empirical observations from "On the optimality of vagueness."
 
 import Linglib.Phenomena.Imprecision.Numerals
 import Mathlib.Data.Rat.Defs
+import Linglib.Theories.Pragmatics.RSA.Implementations.EgreEtAl2023
 
 namespace Phenomena.Imprecision.Studies.EgreEtAl2023
 
@@ -220,3 +221,37 @@ def closedFormData : List ClosedFormDatum :=
   [closedForm_center, closedForm_offset5]
 
 end Phenomena.Imprecision.Studies.EgreEtAl2023
+
+/-! ## Bridge content (merged from RSA_EgreEtAl2023Bridge.lean) -/
+
+/-!
+# Bridge: RSA Imprecision Model → Phenomena Data
+@cite{egre-etal-2023}
+
+Connects the BIR closed-form predictions from @cite{egre-etal-2023}
+to empirical data in `Phenomena.Imprecision.Studies.EgreEtAl2023`.
+
+## Bridge Theorems
+
+- `closed_form_matches_phenomena_center`: BIR closed form = data for center value
+- `closed_form_matches_phenomena_offset5`: BIR closed form = data for offset-5 value
+-/
+
+
+namespace Phenomena.Imprecision.RSA_EgreEtAl2023Bridge
+
+open RSA.EgreEtAl2023
+
+/-- Closed form matches Phenomena datum for center: P(x=20 | around 20) = 21/441. -/
+theorem closed_form_matches_phenomena_center :
+    birClosedForm 20 20 =
+    Phenomena.Imprecision.Studies.EgreEtAl2023.closedForm_center.expectedProb := by
+  native_decide
+
+/-- Closed form matches Phenomena datum for offset: P(x=15 | around 20) = 16/441. -/
+theorem closed_form_matches_phenomena_offset5 :
+    birClosedForm 20 15 =
+    Phenomena.Imprecision.Studies.EgreEtAl2023.closedForm_offset5.expectedProb := by
+  native_decide
+
+end Phenomena.Imprecision.RSA_EgreEtAl2023Bridge

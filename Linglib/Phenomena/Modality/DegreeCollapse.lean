@@ -1,4 +1,4 @@
-import Linglib.Phenomena.Modality.ConditionalModalityScenarioBridge
+import Linglib.Phenomena.Modality.Studies.Kratzer2012Scenario
 import Mathlib.Data.Rat.Cast.Order
 
 /-!

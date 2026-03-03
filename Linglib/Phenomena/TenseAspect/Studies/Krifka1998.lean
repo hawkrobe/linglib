@@ -3,7 +3,7 @@ import Linglib.Theories.Semantics.Events.Krifka1989
 import Linglib.Theories.Semantics.Events.Mereology
 import Linglib.Theories.Semantics.Lexical.Verb.Aspect
 import Linglib.Fragments.English.Predicates.Verbal
-import Linglib.Phenomena.TenseAspect.DiagnosticsBridge
+import Linglib.Phenomena.TenseAspect.Studies.Rothstein2004
 
 /-!
 # @cite{krifka-1998} Bridge: Telicity Propagation → Fragment Verbs

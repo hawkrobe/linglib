@@ -1,5 +1,5 @@
 import Linglib.Theories.Semantics.Events.Agentivity
-import Linglib.Phenomena.TenseAspect.DiagnosticsBridge
+import Linglib.Phenomena.TenseAspect.Studies.Rothstein2004
 
 /-!
 # Bridge: Agentivity → Aspect Diagnostics
