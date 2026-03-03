@@ -1,9 +1,5 @@
-import Linglib.Core.Empirical
-
-open Core.Empirical
-
 /-!
-# @cite{sikos-etal-2021} @cite{sikos-etal-2021} @cite{frank-goodman-2012}
+# @cite{sikos-etal-2021}
 
 Sikos, L., Venhuizen, N. J., Drenhaus, H. & Crocker, M. W. (2021).
 Reevaluating pragmatic reasoning in language games.
@@ -54,18 +50,6 @@ RSA may be all that's needed.
 -/
 
 namespace Phenomena.Reference.Studies.SikosEtAl2021
-
-open Phenomena
-
-
-/-! ## Measure Specifications -/
-
-/-- Listener comprehension measure: forced choice among context objects. -/
-def listenerMeasure : MeasureSpec :=
-  { scale := .proportion
-  , task := .forcedChoice
-  , unit := "probability 0-1" }
-
 
 /-! ## Context Types
 

@@ -1,12 +1,8 @@
-import Linglib.Core.Empirical
 import Linglib.Theories.Pragmatics.NeoGricean.Core.Basic
 import Linglib.Theories.Pragmatics.NeoGricean.Core.Competence
 
-open Core.Empirical
-
 /-!
-# @cite{bale-etal-2025} — Competence by Default @cite{bale-etal-2025}
-@cite{geurts-2010} @cite{levinson-2000} @cite{soames-1982}
+# @cite{bale-etal-2025} — Competence by Default
 
 Bale, A. C., Noguchi, H., Rolland, M. & Barner, D. (2025). Competence by
 default: Do listeners assume that speakers are knowledgeable when computing
@@ -56,20 +52,7 @@ competence assumption.
 
 namespace Phenomena.ScalarImplicatures.Studies.BaleEtAl2025
 
-open Phenomena
-
-
-/-! ## Measure Specification -/
-
-/-- Three-way forced choice: "Yes" (literal, no SI), "No" (SSI computed,
-    speaker meant "some but not all"), "I don't know" (uncertain).
-    Key DV is proportion of "No" responses. -/
-def measure : MeasureSpec :=
-  { scale := .proportion
-  , task := .forcedChoice
-  , unit := "proportion 'No' responses (SSI computed)" }
-
-/-- Total participants. -/
+/-- Total participants (N = 60, n = 30 per load group). -/
 def nTotal : Nat := 60
 
 
