@@ -8,23 +8,24 @@ import Mathlib.Analysis.SpecialFunctions.Pow.Real
 /-!
 # @cite{scontras-pearl-2021} — Scope Ambiguity RSA Model
 
-@cite{scontras-pearl-2021} @cite{goodman-frank-2016}"When pragmatics matters more for truth-value judgments: @cite{musolino-lidz-2003}
+@cite{scontras-pearl-2021}
+"When pragmatics matters more for truth-value judgments:
 An investigation of quantifier scope ambiguity"
 *Glossa* 6(1): 110.
 
-## The Model (eqs 1–8)
+## The Model (§3.1)
 
 Domain: "Every horse didn't jump" with n=2 horses. 3 world states
 (0, 1, 2 jumped). 2 utterances (null, everyNot). 6 latent states
 (2 scopes × 3 QUDs).
 
-- **L0**: L0(w|u,i) ∝ ⟦u⟧ᵢ(w) (literal semantics, no world prior; footnote 6)
-- **S1**: S1(u|w,i,q) ∝ [L0(q(w)|u,i,q)]^α (QUD-projected; eq 5)
-- **L1**: L1(w,i,q|u) ∝ P(w) · P(i) · P(q) · S1(u|w,i,q) (eq 7)
-- **S2**: S2(u|w) ∝ Σ_{i,q} L1(w,i,q|u) = L1(w|u) (eq 8)
+- **L0**: L0(w|u,i) ∝ δ_{⟦u⟧ⁱ(w)} (literal semantics, no world prior; footnote 6)
+- **S1**: S1(u|w,i,q) ∝ exp(α · log L0(⟦q⟧(w)|u,i,q)) (QUD-projected)
+- **L1**: L1(w,i,q|u) ∝ P(w) · P(i) · P(q) · S1(u|w,i,q)
+- **S2**: S2(u|w) ∝ exp(log Σ_{i,q} L1(w,i,q|u)) = L1(w|u)
 - **Endorsement**: P(endorse u | w_obs) = S2(u|w_obs)
 
-Parameters: α = 1 (footnote 12). P(w) = Binomial(n, b_suc).
+Parameters: α = 1 (§3.2, p.15). P(w) = Binomial(n, b_suc).
 
 ## QUDs (eqs 3–4)
 
@@ -303,8 +304,8 @@ theorem qudProjectInline_nonneg {q : QUD} {f : JumpOutcome → ℝ} {w : JumpOut
 -- §5. RSAConfig
 -- ============================================================================
 
-/-- @cite{scontras-pearl-2021} RSA model, parametric in three priors (eq 7).
-    S1 uses QUD-projected rpow with α = 1 (footnote 12).
+/-- @cite{scontras-pearl-2021} RSA model, parametric in three priors.
+    S1 uses QUD-projected rpow with α = 1 (§3.2).
     L0 does not incorporate the world prior (footnote 6). -/
 noncomputable def cfg
     (worldPr : JumpOutcome → ℝ) (hwp : ∀ w, 0 ≤ worldPr w)
@@ -438,14 +439,17 @@ theorem ambiguity_boosts_partial :
 
 set_option rsa_predict.skipReflection true in
 set_option maxHeartbeats 800000 in
-/-- Baseline S2: w0 > w1 (matches 92% > 59% in Experiment 1). -/
+/-- Baseline S2: w0 > w1. The model predicts higher endorsement of
+    "every horse didn't jump" when no horses jumped (none-scenario)
+    than when one horse jumped (not-all scenario). -/
 theorem baseline_S2_w0_gt_w1 :
     baselineCfg.S2 .zero .everyNot > baselineCfg.S2 .one .everyNot := by
   rsa_predict
 
 set_option rsa_predict.skipReflection true in
 set_option maxHeartbeats 800000 in
-/-- Baseline S2: w1 > w2 (matches 59% > 18% in Experiment 1). -/
+/-- Baseline S2: w1 > w2. Endorsement in the not-all scenario
+    exceeds the all scenario. -/
 theorem baseline_S2_w1_gt_w2 :
     baselineCfg.S2 .one .everyNot > baselineCfg.S2 .two .everyNot := by
   rsa_predict
