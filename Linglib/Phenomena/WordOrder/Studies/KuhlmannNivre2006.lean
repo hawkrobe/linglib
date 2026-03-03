@@ -2,8 +2,8 @@ import Linglib.Theories.Syntax.DependencyGrammar.Formal.NonProjective
 import Linglib.Phenomena.WordOrder.NonProjectivity
 
 /-!
-# Bridge: DG Non-Projective Theory → Treebank Non-Projectivity Data
-@cite{kuhlmann-2013} @cite{kuhlmann-nivre-2006}
+# Treebank Non-Projectivity Constraints
+@cite{kuhlmann-nivre-2006} @cite{kuhlmann-2013}
 
 Connects the structural theory of non-projectivity to empirical treebank data on the prevalence of
 well-nestedness, gap degree, and fan-out constraints.
@@ -14,10 +14,9 @@ well-nestedness, gap degree, and fan-out constraints.
 - Gap degree ≤ 1 covers ≥99% of both treebanks
 - Planarity is insufficient (covers far less than well-nestedness)
 - Fan-out ≤ 2 (block-degree ≤ 2) loses very few trees across all languages
-
 -/
 
-namespace Phenomena.WordOrder.Bridge.DGNonProjective
+namespace Phenomena.WordOrder.Studies.KuhlmannNivre2006
 
 open Phenomena.WordOrder.NonProjectivity
 
@@ -54,4 +53,4 @@ theorem fanout2_good_coverage :
   exact ⟨by native_decide, by native_decide, by native_decide,
          by native_decide, by native_decide⟩
 
-end Phenomena.WordOrder.Bridge.DGNonProjective
+end Phenomena.WordOrder.Studies.KuhlmannNivre2006

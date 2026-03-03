@@ -2,24 +2,22 @@ import Linglib.Theories.Syntax.DependencyGrammar.Formal.HarmonicOrder
 import Linglib.Phenomena.WordOrder.Typology
 
 /-!
-# Bridge: DG Harmonic Order → WALS Word-Order Typology
+# DLM and the Head-Direction Generalization
 @cite{dryer-1992} @cite{gibson-2025}
 
 Connects the DLM (dependency length minimization) prediction that harmonic
-word order is cheaper (§4 of `HarmonicOrder.lean`) to the WALS typological
-observation that harmonic word order is more common across languages
-(`Phenomena.WordOrder.Typology`).
+word order is cheaper to the WALS typological observation that harmonic
+word order is more common across languages (`Phenomena.WordOrder.Typology`).
 
-For each of the 3 construction pairs in WALS (@cite{gibson-2025} Tables 1–3):
+For each of the 3 construction pairs in WALS:
 - **DLM predicts**: disharmonic order is costly (higher TDL in recursive structures)
 - **WALS observes**: disharmonic order is rare (fewer languages)
 
 Also verifies well-formedness, projectivity, and Behaghel's law for the
 example trees from `HarmonicOrder.lean`.
-
 -/
 
-namespace Phenomena.WordOrder.Bridge.DGHarmonicOrder
+namespace Phenomena.WordOrder.Studies.Dryer1992
 
 open DepGrammar DependencyLength DepGrammar.HarmonicOrder
 open Phenomena.WordOrder.Typology
@@ -79,4 +77,4 @@ example : oberstesGesetz harmonicHF 2 = true := by native_decide
 example : oberstesGesetz disharmonicHF 2 = false := by native_decide
 example : oberstesGesetz disharmonicFH 2 = false := by native_decide
 
-end Phenomena.WordOrder.Bridge.DGHarmonicOrder
+end Phenomena.WordOrder.Studies.Dryer1992

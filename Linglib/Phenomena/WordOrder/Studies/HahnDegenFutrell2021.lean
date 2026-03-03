@@ -1,10 +1,10 @@
-/-!
-# @cite{hahn-degen-futrell-2021}: 54-Language Efficiency Data
-@cite{hahn-degen-futrell-2021}
+import Linglib.Theories.Syntax.DependencyGrammar.Formal.MemorySurprisal.Basic
+import Linglib.Phenomena.WordOrder.Studies.FutrellEtAl2020
+import Linglib.Theories.Syntax.DependencyGrammar.Formal.HarmonicOrder
 
-Empirical data from Study 2 of @cite{hahn-degen-futrell-2021} "Modeling Word
-and Morpheme Order as an Efficient Trade-Off of Memory and Surprisal",
-*Psychological Review* 128(4):726–756.
+/-!
+# 54-Language Word-Order Efficiency
+@cite{hahn-degen-futrell-2021}
 
 54 languages from Universal Dependencies corpora, measuring whether real
 word orders achieve more efficient memory-surprisal trade-offs than
@@ -15,20 +15,9 @@ word-order freedom (high branching direction entropy).
 ## Values
 
 - `moreEfficient`: whether the real language's trade-off AUC < baseline AUC
-  (G ≥ 0.5 in the LSTM-based estimator from the main paper)
-- `gMean1000`: bootstrapped mean of the precision-based stopping criterion G × 1000
-  (from SI Figure 2). G = E[N₊] / E[N₊ + N₋] where N₊ = proportion of baselines
-  less optimal than the real language. G = 1.0 means fully optimized.
+- `gMean1000`: bootstrapped mean G × 1000 (G = 1.0 means fully optimized)
 - `branchDirEntropy1000`: branching direction entropy × 1000 (higher = more
-  word-order freedom). Approximate from discussion in §5.4.
-
-## Data Source
-
-Language list from SI Table 2 (54 languages with corpus sizes).
-G values from SI Figure 2 (bootstrapped estimates).
-AUC values from <https://github.com/m-hahn/memory-surprisal>
-(`results/tradeoff/listener-curve-auc.tsv`).
-
+  word-order freedom)
 -/
 
 namespace Phenomena.WordOrder.Studies.HahnDegenFutrell2021
@@ -341,5 +330,62 @@ theorem slovak_lowest_g :
 /-- Most efficient languages have G = 1.0 (44 out of 50). -/
 theorem most_efficient_fully_optimized :
     (efficientLanguages.filter (·.gMean1000 = 1000)).length ≥ 40 := by native_decide
+
+-- ============================================================================
+-- Crosslinguistic Bridge to @cite{futrell-gibson-2020}
+-- ============================================================================
+
+open Phenomena.WordOrder.DependencyLength.FutrellEtAl2020
+
+/-- ISO codes appearing in @cite{futrell-gibson-2020}'s 32-language dataset. -/
+def futrellIsoCodes : List String :=
+  Phenomena.WordOrder.DependencyLength.FutrellEtAl2020.languages.map (·.isoCode)
+
+/-- ISO codes appearing in this study's 54-language dataset. -/
+def hahnIsoCodes : List String :=
+  allLanguages.map (·.isoCode)
+
+/-- Languages in both datasets (by ISO code). -/
+def sharedIsoCodes : List String :=
+  futrellIsoCodes.filter (hahnIsoCodes.contains ·)
+
+/-- At least 20 languages appear in both datasets. -/
+theorem many_shared_languages :
+    sharedIsoCodes.length ≥ 20 := by native_decide
+
+/-- All but one shared language (Polish) are efficient in this study. -/
+theorem shared_languages_mostly_efficient :
+    (sharedIsoCodes.filter (λ iso =>
+      (allLanguages.filter (·.isoCode == iso)).all (·.moreEfficient)
+    )).length ≥ sharedIsoCodes.length - 1 := by native_decide
+
+/-- Polish is the only shared language that is an exception. -/
+theorem polish_only_shared_exception :
+    (sharedIsoCodes.filter (λ iso =>
+      (allLanguages.filter (·.isoCode == iso)).any (! ·.moreEfficient)
+    )) = ["pl"] := by native_decide
+
+-- ============================================================================
+-- Bridge to HarmonicOrder (DLM explains head-direction generalization)
+-- ============================================================================
+
+/-- The DLM harmonic order prediction holds (from HarmonicOrder.lean). -/
+theorem harmonic_dlm_holds :
+    DepGrammar.HarmonicOrder.dlmPredictsHarmonicCheaper = true := by native_decide
+
+/-- Strongly head-final languages (low branching entropy) are all efficient. -/
+theorem rigid_order_languages_efficient :
+    (allLanguages.filter (·.branchDirEntropy1000 < 400)).all (·.moreEfficient) = true := by
+  native_decide
+
+/-- All 4 exceptions have entropy ≥ 720 (in the top quartile). -/
+theorem exceptions_all_high_entropy :
+    exceptionLanguages.all (·.branchDirEntropy1000 ≥ 720) = true := by native_decide
+
+/-- Not all high-entropy languages are exceptions: word-order freedom is
+necessary but not sufficient for being an exception. -/
+theorem high_entropy_not_sufficient :
+    (allLanguages.filter (·.branchDirEntropy1000 ≥ 720)).any (·.moreEfficient) = true := by
+  native_decide
 
 end Phenomena.WordOrder.Studies.HahnDegenFutrell2021

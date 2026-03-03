@@ -1,10 +1,10 @@
 import Linglib.Core.Discourse.InformationStructure
+import Linglib.Theories.Syntax.DependencyGrammar.Formal.DependencyLength
+import Linglib.Theories.Syntax.CCG.Core.Combinators
 
 /-!
-# Arnold, @cite{arnold-wasow-losongco-ginstrom-2000} @cite{arnold-wasow-losongco-ginstrom-2000} @cite{kratzer-selkirk-2020}
-
-Heaviness vs. Newness: The Effects of Structural Complexity and
-Discourse Status on Constituent Ordering. *Language* 76(1):28–55.
+# Heaviness vs. Newness in Constituent Ordering
+@cite{arnold-wasow-losongco-ginstrom-2000}
 
 Two corpus studies (Switchboard) disentangle two confounded predictors of
 English constituent ordering:
@@ -187,5 +187,117 @@ def arnoldNew : DiscourseStatus := .new
     Arnold's "given" = K&S given, Arnold's "new" ⊇ K&S new. -/
 theorem given_aligns : arnoldGiven = DiscourseStatus.given := rfl
 theorem new_aligns   : arnoldNew   = DiscourseStatus.new   := rfl
+
+-- ============================================================================
+-- §5: The Pure-Weight Account (DLM / @cite{hawkins-1994})
+-- ============================================================================
+
+open DepGrammar DepGrammar.DependencyLength
+open CCG.Combinators
+
+/-!
+## DLM: Correct on weight, blind to discourse
+
+`totalDepLength` is defined over `Dependency` = `(headIdx × depIdx × DepRel)`.
+The function never accesses `t.words`, so no property of the words — form,
+category, features, discourse status — enters the computation.
+-/
+
+/-- **DLM word-invariance.** `totalDepLength` yields the same value for any
+two trees sharing the same dependency structure, regardless of the words. -/
+theorem totalDepLength_word_invariant (deps : List Dependency) (rootIdx : Nat)
+    (words1 words2 : List Word) :
+    totalDepLength { words := words1, deps := deps, rootIdx := rootIdx } =
+    totalDepLength { words := words2, deps := deps, rootIdx := rootIdx } := by
+  rfl
+
+/-- DLM assigns identical cost to trees differing only in whether NPs are
+discourse-given or discourse-new. -/
+theorem dlm_discourse_blind
+    (deps : List Dependency) (rootIdx : Nat)
+    (givenWords newWords : List Word) :
+    totalDepLength { words := givenWords, deps := deps, rootIdx := rootIdx } =
+    totalDepLength { words := newWords, deps := deps, rootIdx := rootIdx } :=
+  totalDepLength_word_invariant deps rootIdx givenWords newWords
+
+/-- Even at the single-dependency level, `depLength` ignores the grammatical
+relation. The cost is purely `|headIdx - depIdx|`. -/
+theorem depLength_ignores_relation (h d : Nat) (r1 r2 : UD.DepRel) :
+    depLength ⟨h, d, r1⟩ = depLength ⟨h, d, r2⟩ := by
+  rfl
+
+/-- DLM correctly predicts the weight direction. Heavy NP shift reduces
+dependency length. -/
+theorem dlm_predicts_heavy_shift :
+    totalDepLength heavyNPShiftOptimal < totalDepLength heavyNPShiftSuboptimal := by
+  native_decide
+
+/-- DLM's short-before-long matches Table 1: both DO and PD place the
+heavier NP in second position. -/
+theorem heavy_last_consistent_with_dlm :
+    doLengths.second100 > doLengths.first100 ∧
+    pdLengths.second100 > pdLengths.first100 :=
+  heavy_last
+
+-- ============================================================================
+-- §6: The Pure-Discourse Account (@cite{givon-1988})
+-- ============================================================================
+
+/-- A pure-discourse ordering model: the preference for placing a constituent
+in late position is determined solely by its discourse status. -/
+structure PureDiscourseModel where
+  latePref : DiscourseStatus → Nat
+  /-- The core Givón claim: new material prefers late position. -/
+  new_after_given : latePref .new > latePref .given
+
+/-- A pure-discourse model is weight-blind by type. -/
+theorem pure_discourse_weight_blind (m : PureDiscourseModel)
+    (s : DiscourseStatus) (_weight1 _weight2 : Nat) :
+    m.latePref s = m.latePref s := rfl
+
+/-- A pure-discourse model cannot simultaneously match even two of the four
+shift rates. -/
+theorem pure_discourse_cannot_match_gradient (m : PureDiscourseModel)
+    (s : DiscourseStatus)
+    (h1 : m.latePref s = shiftRate1w)
+    (h2 : m.latePref s = shiftRate2w) : False :=
+  absurd (h1.symm.trans h2) (by native_decide)
+
+/-- The pure-discourse model overpredicts: newness is NOT significant for
+NP shift. -/
+theorem pure_discourse_overpredicts_shift :
+    shiftResult.newnessSig = false := by native_decide
+
+-- ============================================================================
+-- §7: The CCG Categorical Account (@cite{steedman-2000})
+-- ============================================================================
+
+/-- `canHeavyShift` is binary: its range is exactly `{true, false}`. -/
+theorem canHeavyShift_binary (f : ShiftFeature) :
+    canHeavyShift f = true ∨ canHeavyShift f = false := by
+  cases f <;> simp [canHeavyShift]
+
+/-- **Pigeonhole.** For any assignment of four weight classes to `ShiftFeature`
+values, `canHeavyShift` must give the same answer for at least two classes. -/
+theorem shift_feature_conflates
+    (w1 w2 w3 w4 : ShiftFeature) :
+    canHeavyShift w1 = canHeavyShift w2 ∨
+    canHeavyShift w1 = canHeavyShift w3 ∨
+    canHeavyShift w1 = canHeavyShift w4 ∨
+    canHeavyShift w2 = canHeavyShift w3 ∨
+    canHeavyShift w2 = canHeavyShift w4 ∨
+    canHeavyShift w3 = canHeavyShift w4 := by
+  cases w1 <;> cases w2 <;> cases w3 <;> cases w4 <;> simp [canHeavyShift]
+
+/-- The four shift rates ARE pairwise distinct. -/
+theorem shift_rates_pairwise_distinct :
+    shiftRate1w ≠ shiftRate2w ∧ shiftRate1w ≠ shiftRate3w ∧
+    shiftRate1w ≠ shiftRate4w ∧ shiftRate2w ≠ shiftRate3w ∧
+    shiftRate2w ≠ shiftRate4w ∧ shiftRate3w ≠ shiftRate4w := by
+  native_decide
+
+/-- The minimal adequate model type: a function of both weight and discourse
+status, encoding Arnold et al.'s central finding. -/
+abbrev OrderingModel := Nat → DiscourseStatus → Nat
 
 end Phenomena.WordOrder.Studies.ArnoldEtAl2000

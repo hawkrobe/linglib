@@ -690,7 +690,7 @@ import Linglib.Phenomena.Agreement.DifferentialIndexing
 import Linglib.Phenomena.Agreement.Bridge.DifferentialIndexing
 import Linglib.Phenomena.Coordination.CCGBridge
 import Linglib.Theories.Syntax.CCG.CrossSerial
-import Linglib.Phenomena.WordOrder.Bridge.CCGDerivations
+-- CCGDerivations moved to Studies/Steedman2000
 import Linglib.Theories.Syntax.CCG.Gapping
 import Linglib.Phenomena.Entailment.CCGBridge
 import Linglib.Theories.Syntax.CCG.Formal.Equivalence
@@ -742,18 +742,17 @@ import Linglib.Theories.Syntax.DependencyGrammar.Formal.Islands
 import Linglib.Theories.Syntax.DependencyGrammar.Formal.CoordinationParallelism
 import Linglib.Theories.Syntax.DependencyGrammar.Formal.MemorySurprisal.Basic
 import Linglib.Theories.Syntax.DependencyGrammar.Formal.MemorySurprisal.FedzechkinaEtAl2017
-import Linglib.Phenomena.WordOrder.Bridge.DGMemorySurprisal
+-- DGMemorySurprisal merged into Studies/HahnDegenFutrell2021
 import Linglib.Theories.Syntax.DependencyGrammar.Formal.MemorySurprisal.MorphemeOrder
 import Linglib.Theories.Syntax.DependencyGrammar.Coordination
 import Linglib.Theories.Syntax.DependencyGrammar.Coreference
 import Linglib.Theories.Syntax.DependencyGrammar.CRDC
-import Linglib.Phenomena.WordOrder.Bridge.DGHarmonicOrder
-import Linglib.Phenomena.WordOrder.Bridge.DGNonProjective
-import Linglib.Phenomena.WordOrder.Bridge.MinimalismBulgarianLHM
-import Linglib.Phenomena.WordOrder.Bridge.MinimalismGermanicV2
-import Linglib.Phenomena.WordOrder.Bridge.MinimalismDerivations
-import Linglib.Phenomena.WordOrder.Bridge.ArnoldEtAl2000
 import Linglib.Phenomena.WordOrder.Studies.ArnoldEtAl2000
+import Linglib.Phenomena.WordOrder.Studies.Dryer1992
+import Linglib.Phenomena.WordOrder.Studies.KuhlmannNivre2006
+import Linglib.Phenomena.WordOrder.Studies.HarizanovGribanova2019
+import Linglib.Phenomena.WordOrder.Studies.Steedman2000
+import Linglib.Phenomena.WordOrder.Studies.Chomsky1995
 import Linglib.Phenomena.WordOrder.Studies.SagWasowBender2003
 import Linglib.Phenomena.WordOrder.Studies.Adger2003
 import Linglib.Phenomena.WordOrder.Studies.Pollock1989

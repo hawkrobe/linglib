@@ -2,16 +2,14 @@ import Linglib.Theories.Syntax.Minimalism.Derivations
 import Linglib.Phenomena.WordOrder.Basic
 
 /-!
-# Bridge: Minimalist Derivations → Word Order Data
+# Minimalist Derivations of Word Order
+@cite{chomsky-1995}
 
-Connects Minimalist Merge derivations to the word order data in
-`Phenomena/WordOrder/Basic.lean`.
-
-Verifies that Minimalist derivations model SVO sentences from the
+Verifies that Minimalist Merge derivations model SVO sentences from the
 phenomena data, with phonological yields matching expected word order.
 -/
 
-namespace Phenomena.WordOrder.Bridge.MinimalismDerivations
+namespace Phenomena.WordOrder.Studies.Chomsky1995
 
 open Minimalism.Phenomena.Derivations
 
@@ -23,4 +21,4 @@ theorem models_svo_word_order :
 /-- Verify the phonological yield of a derivation matches expected word order -/
 example : john_sees_mary.phonYield = ["John", "sees", "Mary"] := rfl
 
-end Phenomena.WordOrder.Bridge.MinimalismDerivations
+end Phenomena.WordOrder.Studies.Chomsky1995
