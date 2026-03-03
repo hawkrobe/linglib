@@ -4,7 +4,7 @@ import Linglib.Core.Agent.BToM
 import Linglib.Core.Agent.Emotion
 import Linglib.Core.StructuralEquationModel
 import Linglib.Theories.Semantics.Intensional.Situations.Elbourne
-import Linglib.Phenomena.PsychVerbs.Studies.HartshorneEtAl2016.Bridge
+import Linglib.Phenomena.PsychVerbs.Studies.HartshorneEtAl2016
 import Linglib.Theories.Semantics.Attitudes.Preferential
 
 /-!
@@ -43,7 +43,7 @@ From this single denotation, properties are **derived**, not stipulated:
 | §8 BToM bridge | Baker et al. 2017 | `Core.BToM.BToMModel` |
 | §9 CausalFrame | Nadathur & Lauer 2020 | `Core.StructuralEquationModel` |
 | §10 Situations | Elbourne 2005/2013 | `Situations.Elbourne.SitVarStatus` |
-| §11 Hartshorne | Hartshorne et al. 2016 | `HartshorneEtAl2016.Bridge` |
+| §11 Hartshorne | Hartshorne et al. 2016 | `HartshorneEtAl2016` |
 | §12 Emotion appraisals | Houlihan et al. 2023 | `Core.Agent.Emotion` |
 -/
 
@@ -425,7 +425,7 @@ end Situations
 
 section Hartshorne
 open Phenomena.PsychVerbs.Studies.HartshorneEtAl2016 (SemanticType)
-open Phenomena.PsychVerbs.Studies.HartshorneEtAl2016.Bridge (semanticTypeToCausalSource)
+open Phenomena.PsychVerbs.Studies.HartshorneEtAl2016 (semanticTypeToCausalSource)
 
 /-- Map Hartshorne et al.'s semantic type to CausalPathway. -/
 def semanticTypeToPathway : SemanticType → CausalPathway

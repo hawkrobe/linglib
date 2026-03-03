@@ -330,8 +330,7 @@ import Linglib.Phenomena.Conditionals.LeftNested.Bridge
 import Linglib.Phenomena.Conditionals.Studies.GrusdtLassiterFranke2022
 import Linglib.Phenomena.Conditionals.Studies.RamotowskaEtAl2025
 import Linglib.Phenomena.Conditionals.Studies.SubordinateFuture
-import Linglib.Phenomena.Conditionals.Studies.EvcenBaleBarner2026.Data
-import Linglib.Phenomena.Conditionals.Studies.EvcenBaleBarner2026.Bridge
+import Linglib.Phenomena.Conditionals.Studies.EvcenBaleBarner2026
 import Linglib.Phenomena.Conditionals.Studies.Iatridou2000
 import Linglib.Phenomena.Conditionals.Studies.Mizuno2024
 import Linglib.Phenomena.DefaultReasoning.TweetyNixon
@@ -354,12 +353,9 @@ import Linglib.Phenomena.Causatives.Data
 import Linglib.Phenomena.Causatives.Typology
 import Linglib.Phenomena.Causatives.ThickThinBridge
 import Linglib.Phenomena.Causatives.StructuralCausationBridge
-import Linglib.Phenomena.Causatives.Studies.MunozPerez2026.Data
-import Linglib.Phenomena.Causatives.Studies.MunozPerez2026.Bridge
+import Linglib.Phenomena.Causatives.Studies.MunozPerez2026
 import Linglib.Phenomena.Causatives.Compare
 import Linglib.Phenomena.Causatives.Studies.Coon2019
-import Linglib.Phenomena.Causatives.Studies.Coon2019.Data
-import Linglib.Phenomena.Causatives.Studies.Coon2019.Bridge
 import Linglib.Phenomena.Coordination.Data
 import Linglib.Phenomena.Coordination.Studies.BillEtAl2025
 import Linglib.Phenomena.Coordination.Typology
@@ -371,8 +367,7 @@ import Linglib.Phenomena.Ellipsis.Sluicing
 import Linglib.Phenomena.Ellipsis.VPEllipsis
 import Linglib.Phenomena.Ellipsis.NPEllipsis
 import Linglib.Phenomena.Ellipsis.Studies.Saab2026
-import Linglib.Phenomena.Ellipsis.Studies.AnandHardtMcCloskey2021.Data
-import Linglib.Phenomena.Ellipsis.Studies.AnandHardtMcCloskey2021.Bridge
+import Linglib.Phenomena.Ellipsis.Studies.AnandHardtMcCloskey2021
 import Linglib.Phenomena.Entailment.Basic
 import Linglib.Phenomena.Entailment.Monotonicity
 import Linglib.Phenomena.FillerGap.Basic
@@ -577,8 +572,7 @@ import Linglib.Phenomena.Questions.Studies.HawkinsEtAl2025
 import Linglib.Phenomena.Questions.WhComplement
 import Linglib.Phenomena.Questions.Compare
 import Linglib.Phenomena.Questions.Studies.TurkHirschInce2026
-import Linglib.Phenomena.Questions.Studies.Xiang2022.Data
-import Linglib.Phenomena.Questions.Studies.Xiang2022.Bridge
+import Linglib.Phenomena.Questions.Studies.Xiang2022
 import Linglib.Phenomena.Reference.Studies.AnandNevins2004
 import Linglib.Phenomena.Reference.DirectReference
 import Linglib.Phenomena.Reference.Studies.FrankGoodman2012
@@ -609,10 +603,9 @@ import Linglib.Phenomena.TemporalConnectives.NegationData
 import Linglib.Phenomena.TemporalConnectives.VeridicalityBridge
 import Linglib.Phenomena.TenseAspect.Typology
 import Linglib.Phenomena.TenseAspect.AgentivityBridge
-import Linglib.Phenomena.TenseAspect.Studies.OgiharaST2024.Data
-import Linglib.Phenomena.TenseAspect.Studies.OgiharaST2024.Bridge
-import Linglib.Phenomena.TenseAspect.Studies.Koev2017.Data
-import Linglib.Phenomena.TenseAspect.Studies.Koev2017.Bridge
+import Linglib.Phenomena.TenseAspect.Studies.OgiharaST2024
+import Linglib.Phenomena.TenseAspect.Studies.Koev2017
+import Linglib.Phenomena.TenseAspect.Studies.Egressy2026
 import Linglib.Phenomena.TenseAspect.Studies.Izvorski1997
 import Linglib.Phenomena.WordOrder.Basic
 import Linglib.Phenomena.WordOrder.SubjectAuxInversion
@@ -1129,7 +1122,6 @@ import Linglib.Theories.Pragmatics.RSA.Implementations.CremersWilcoxSpector2023
 import Linglib.Theories.Pragmatics.RSA.Implementations.CumminsFranke2021
 import Linglib.Theories.Pragmatics.RSA.Implementations.EgreEtAl2023
 import Linglib.Theories.Pragmatics.RSA.Implementations.Franke2011
-import Linglib.Theories.Pragmatics.RSA.Implementations.FrankeBergen2020
 import Linglib.Theories.Pragmatics.RSA.Implementations.GrusdtLassiterFranke2022
 import Linglib.Theories.Pragmatics.RSA.Implementations.HardingGerstenbergIcard2025
 import Linglib.Theories.Pragmatics.RSA.Implementations.HawkinsEtAl2025

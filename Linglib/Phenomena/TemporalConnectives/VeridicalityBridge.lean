@@ -1,7 +1,7 @@
 import Linglib.Theories.Semantics.Tense.TemporalConnectives
 import Linglib.Fragments.English.TemporalExpressions
 import Linglib.Core.Semantics.Presupposition
-import Linglib.Phenomena.TenseAspect.Studies.OgiharaST2024.Data
+import Linglib.Phenomena.TenseAspect.Studies.OgiharaST2024
 
 /-!
 # Veridicality ↔ Presupposition Bridge
