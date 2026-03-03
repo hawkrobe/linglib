@@ -1,5 +1,6 @@
 import Linglib.Theories.Pragmatics.RSA.Core.Noise
 import Linglib.Theories.Pragmatics.RSA.Implementations.DegenEtAl2020
+import Linglib.Theories.Pragmatics.RSA.Implementations.WaldonDegen2021
 
 /-!
 # @cite{kursat-degen-2021}
@@ -262,5 +263,25 @@ theorem noise_predicts_redundancy :
     exp1_error.significant ∧ exp1_error.beta > 0 ∧
     exp3_error.significant ∧ exp3_error.beta > 0 := by
   refine ⟨by native_decide, rfl, ?_, rfl, ?_, rfl, ?_⟩ <;> native_decide
+
+-- ============================================================================
+-- § Incremental Model Connection
+-- ============================================================================
+
+/-! The full redundancy prediction requires the incremental CI-RSA model
+(@cite{waldon-degen-2021}), which processes utterances word-by-word. The
+incremental model's three predictions are verified as theorems in
+`WaldonDegen2021.lean` — here we re-export the key result showing that
+redundant color > redundant size in English, which is the color/size
+analogue of the color/material asymmetry tested in Exp 2. -/
+
+/-- The CI-RSA incremental model predicts English speakers use redundant
+    color more than redundant size (Waldon & Degen 2021, Prediction 1).
+    This is the color/size version of the color/material asymmetry
+    observed in Exp 2. -/
+theorem incremental_model_predicts_color_asymmetry :
+    RSA.Implementations.WaldonDegen2021.englishColorSizeAsymmetry
+      RSA.Implementations.WaldonDegen2021.α_incremental = true :=
+  RSA.Implementations.WaldonDegen2021.prediction1_english_asymmetry
 
 end Phenomena.Gradability.Studies.KursatDegen2021
