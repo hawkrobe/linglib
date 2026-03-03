@@ -1,6 +1,7 @@
 /-
 # Agree (Minimalist Feature Checking)
 
+@cite{hiraiwa-2005}
 Formalization of Agree following @cite{chomsky-2000} and @cite{adger-2003}.
 
 ## The Agree Operation

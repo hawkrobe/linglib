@@ -5,7 +5,7 @@ import Linglib.Theories.Semantics.Conditionals.Basic
 
 /-!
 # Conditional Perfection via Answer-Level Exhaustification
-@cite{cornulier-1983} @cite{evcen-bale-barner-2026} @cite{groenendijk-stokhof-1984} @cite{von-fintel-2001}
+@cite{cornulier-1983} @cite{evcen-bale-barner-2026} @cite{groenendijk-stokhof-1984} @cite{von-fintel-2001} @cite{geis-zwicky-1971}
 
 Formalizes the connection between conditional perfection and speech-act level
 exhaustification, following @cite{von-fintel-2001} "Conditional strengthening."

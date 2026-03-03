@@ -1,5 +1,6 @@
 /-
 # Conditional Phenomena - Empirical Data
+@cite{geis-zwicky-1971} @cite{van-der-auwera-1997} @cite{von-fintel-heim-2011}
 
 Theory-neutral empirical observations about conditional sentences.
 

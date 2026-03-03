@@ -1,5 +1,6 @@
 /-
 # Labeling and Projection
+@cite{chomsky-2013} @cite{chomsky-2015}
 
 Formalization of labeling, projection, and the head/phrase distinction.
 

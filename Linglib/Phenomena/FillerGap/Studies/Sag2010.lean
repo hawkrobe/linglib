@@ -230,7 +230,7 @@ theorem all_fillers_nonverbal :
 
 /-! ### Connection to `ConstraintType` in Islands/Data
 
-@cite{hofmeister-sag-2010} argues that island constraints are construction-specific
+@cite{hofmeister-sag-2010} @cite{sag-2010} argues that island constraints are construction-specific
 GAP restrictions, not universal Subjacency. The topicalization construction
 has `[GAP ⟨⟩]` on its mother, making it an absolute extraction island. This
 matches the `ConstraintType` classification from Islands/Data. -/

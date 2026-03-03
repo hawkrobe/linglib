@@ -1,5 +1,6 @@
 /-
 # Égré et al. (2023) — Empirical Data
+@cite{egre-verheyen-2023}
 
 Theory-neutral empirical observations from "On the optimality of vagueness."
 

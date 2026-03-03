@@ -334,7 +334,7 @@ theorem cnpc_acceptability_range :
 
 /-! ### @cite{hofmeister-sag-2010}'s construction-based island analysis
 
-@cite{hofmeister-sag-2010} argues that island constraints are construction-specific
+@cite{hofmeister-sag-2010} @cite{deane-1991} argues that island constraints are construction-specific
 GAP restrictions, not universal Subjacency. This means:
 - The grammar **overgerates** (licenses extractions freely)
 - Construction-specific constraints (GAP restrictions) block some extractions

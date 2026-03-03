@@ -1,5 +1,6 @@
 /-
 # Conditional Type: Hypothetical vs Premise Conditionals
+@cite{bhatt-pancheva-2006}
 
 Formalizes the distinction between Hypothetical Conditionals (HCs) and
 Premise Conditionals (PCs) as described in the linguistics literature.

@@ -1,6 +1,7 @@
 /-
 # Neo-Gricean Pragmatics: Alternative Generation
 
+@cite{charlow-2020}
 Formalization of Horn sets and alternative generation from @cite{geurts-2010} Ch. 3.1-3.2,
 extended with M-alternatives for manner implicatures.
 

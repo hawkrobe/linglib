@@ -2,7 +2,7 @@ import Linglib.Core.Interfaces.ExtractionMorphology
 
 /-!
 # K'iche' Extraction Morphology Fragment
-@cite{elkins-imanishi-coon-2026} @cite{henderson-2008} @cite{imanishi-2020} @cite{mondloch-2017}
+@cite{elkins-imanishi-coon-2026} @cite{henderson-2008} @cite{imanishi-2020} @cite{mondloch-2017} @cite{lopez-ixcoy-2022}
 
 Theory-neutral data on the extraction particle *wi* in K'iche' (and more
 broadly K'ichean Mayan), contrasted with SJO Mam's =(y)a'.

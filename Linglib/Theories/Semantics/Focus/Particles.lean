@@ -5,7 +5,7 @@ Traditional semantic treatments of focus-sensitive particles.
 
 ## EVEN and NPI Licensing
 
-@cite{lahiri-1998} and Crnič (2014) propose that NPIs like "anyone" are licensed
+@cite{lahiri-1998} @cite{crnic-2014} @cite{karttunen-peters-1979} and Crnič (2014) propose that NPIs like "anyone" are licensed
 by a covert EVEN operator that contributes:
 
 1. **Presupposition**: The focused element is the LEAST LIKELY alternative

@@ -4,7 +4,7 @@ import Mathlib.Data.Rat.Defs
 
 /-!
 # @cite{wang-2025} Experimental Data
-@cite{wang-2025}
+@cite{wang-2025} @cite{wang-yaxuan-2025}
 
 Theory-neutral experimental data from @cite{wang-2025} "Presupposition, Competition,
 and Coherence" — three experiments on Mandarin presupposition triggers.

@@ -1,6 +1,6 @@
 /-
 # Presupposition Projection and Polarity
-@cite{schlenker-2009}
+@cite{schlenker-2009} @cite{chierchia-mcconnell-ginet-2000}
 
 Connects presupposition projection to the existing polarity infrastructure.
 

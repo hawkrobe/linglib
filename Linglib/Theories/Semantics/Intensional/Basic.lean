@@ -1,5 +1,6 @@
 /-
 # Intensional Montague Semantics
+@cite{gallin-1975}
 
 World-parameterized meanings for RSA integration.
 

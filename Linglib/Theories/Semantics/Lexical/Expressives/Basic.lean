@@ -1,6 +1,6 @@
 /-
 # Two-Dimensional Semantics for Conventional Implicatures
-@cite{potts-2005} @cite{wang-2025}
+@cite{potts-2005} @cite{wang-2025} @cite{kaplan-1999} @cite{mccready-2010}
 
 Formalization of @cite{potts-2005} "The Logic of Conventional Implicatures" (LCI).
 

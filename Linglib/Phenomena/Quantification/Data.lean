@@ -1,5 +1,6 @@
 /-
 # Quantification Phenomena — Data
+@cite{bruening-2001} @cite{larson-1988} @cite{may-1985}
 
 Theory-neutral empirical data on quantifier scope and numeral semantics.
 

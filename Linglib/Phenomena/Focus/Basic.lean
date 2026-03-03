@@ -1,5 +1,6 @@
 /-
 # Focus Phenomena
+@cite{jackendoff-1972}
 
 Empirical data on focus interpretation effects (association with focus, contrast, Q-A congruence).
 

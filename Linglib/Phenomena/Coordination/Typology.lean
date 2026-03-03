@@ -12,7 +12,7 @@ Classifies coordination by overt form:
 - **Diachronic sources**: comitative ("with") → monosyndetic J;
   additive focus particle ("also") → bisyndetic MU
 
-## 2. Semantic Decomposition (Mitrović & @cite{mitrovi-sauerland-2014}, 2016)
+## 2. Semantic Decomposition (@cite{mitrovic-sauerland-2014}, @cite{mitrovic-sauerland-2016})
 
 Classifies by underlying semantic structure:
 - J (set intersection) + MU (subset/additive) + ☉ (type-shifter)
@@ -486,7 +486,7 @@ def ConjunctionSystem.muBoundness (sys : ConjunctionSystem) : Option Boundness :
 /--
 Georgian MU is bound, Hungarian MU is free.
 
-@cite{bill-etal-2025} speculate this morphological difference may explain
+@cite{bill-etal-2025} @cite{mitrovic-2021} speculate this morphological difference may explain
 why Georgian children found MU-involving expressions harder than
 Hungarian children did: bound morphemes are harder to segment and acquire.
 -/

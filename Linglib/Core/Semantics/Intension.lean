@@ -97,7 +97,7 @@ theorem rigid_neq_nonrigid {W τ : Type*} (f g : Intension W τ)
 
 /-- A character is stable iff it assigns the same content at every context.
 
-@cite{kaplan-1989} Remark 5: non-indexical expressions have stable character —
+@cite{kaplan-1989} @cite{gallin-1975} @cite{von-fintel-heim-2011} Remark 5: non-indexical expressions have stable character —
 their content does not depend on the context of utterance. This generalizes
 `constantCharacter` from `Reference/Basic.lean` to the framework-agnostic level. -/
 def StableCharacter {C W τ : Type*} (char : C → Intension W τ) : Prop :=

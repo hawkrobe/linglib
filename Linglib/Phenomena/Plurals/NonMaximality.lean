@@ -1,5 +1,6 @@
 /-
 # Non-Maximality: Empirical Data
+@cite{malamud-2012}
 
 Theory-neutral empirical patterns for non-maximal readings of plural sentences.
 

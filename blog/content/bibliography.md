@@ -1173,7 +1173,8 @@ cited in: [Basic](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories
 cited in: [PolarityItems](https://github.com/hawkrobe/linglib/blob/main/Linglib/Fragments/English/PolarityItems.lean), [NPIs](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Polarity/NPIs.lean), [DenicEtAl2021Bridge](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Polarity/Studies/DenicEtAl2021Bridge.lean), [Schwab2022](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Polarity/Studies/Schwab2022.lean), [Chierchia2004](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/NeoGricean/Exhaustivity/Chierchia2004.lean)
 
 **Schwab, J. & Liu, M.** (2020). The Role of Scalar Properties in NPI Illusions. *Proceedings of Sinn und Bedeutung 24*.\
-[cited]
+[cited]\
+cited in: [NPIs](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Polarity/NPIs.lean)
 
 **Schwarzschild, R.** (1996). Pluralities. *Kluwer.*.\
 [cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Plurals/Basic.lean)\
@@ -2310,7 +2311,8 @@ cited in: [Compare](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenom
 cited in: [Root](https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/Root.lean), [RootDimensions](https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/RootDimensions.lean), [Verbal](https://github.com/hawkrobe/linglib/blob/main/Linglib/Fragments/English/Predicates/Verbal.lean), [ThetaPrediction](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/ArgumentStructure/Bridge/ThetaPrediction.lean), [Bridge](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/ArgumentStructure/DiathesisAlternations/Bridge.lean), [Data](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/ArgumentStructure/DiathesisAlternations/Data.lean), [Bridge](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/ArgumentStructure/Unaccusativity/Bridge.lean), [BeaversEtAl2021](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Causatives/Studies/BeaversEtAl2021.lean), [ThickThinBridge](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Causatives/ThickThinBridge.lean), [VoiceTheta](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Interfaces/SyntaxSemantics/Minimalism/VoiceTheta.lean), [RootTypology](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Morphology/RootTypology.lean), [EventStructure](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Events/EventStructure.lean), [ProtoRoles](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Events/ProtoRoles.lean), [VerbEntry](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Lexical/Verb/VerbEntry.lean)
 
 **Levin, B.** (2022). Proto-Roles at 30. *Thematic Roles, 337–367*.\
-[cited]
+[cited]\
+cited in: [ProtoRoles](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Events/ProtoRoles.lean)
 
 **Makkai, A.** (1972). Idiom Structure in English. *Mouton*.\
 [cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/manual)\
@@ -2785,7 +2787,8 @@ cited in: [Diagnostics](https://github.com/hawkrobe/linglib/blob/main/Linglib/Ph
 cited in: [Presupposition](https://github.com/hawkrobe/linglib/blob/main/Linglib/Core/Semantics/Presupposition.lean), [PolarityBuilderBridge](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Polarity/PolarityBuilderBridge.lean), [VonFintel1999](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Polarity/Studies/VonFintel1999.lean), [Conditionals](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Pragmatics/RSA/ScalarImplicatures/Embedded/Conditionals.lean), [PolarityBuilder](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Entailment/PolarityBuilder.lean), [StrawsonEntailment](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Entailment/StrawsonEntailment.lean), [EventRelativity](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Modality/EventRelativity.lean)
 
 **Wang, Y.** (2025). Revisit de re Presuppositions. *Proceedings of the Linguistic Society of America, 10, 5915*.\
-[cited]
+[cited]\
+cited in: [Wang2025](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Presupposition/Studies/Wang2025.lean)
 
 **White, A. S.** (2014). Factive-Implicatives and Modalized Complements. *Proceedings of SALT 24, 116–135*.\
 [cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Presupposition/ForgetPresuppositions.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Attitudes/PreExistence.lean)\
@@ -2938,7 +2941,8 @@ cited in: [RSAComparison](https://github.com/hawkrobe/linglib/blob/main/Linglib/
 cited in: [ParasiticAttitudes](https://github.com/hawkrobe/linglib/blob/main/Linglib/Phenomena/Anaphora/Studies/ParasiticAttitudes.lean), [Parasitic](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Attitudes/Parasitic.lean), [VerbEntry](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Lexical/Verb/VerbEntry.lean)
 
 **Muskens, R.** (1991). Anaphora and the Logic of Change. *Logics in AI: European Workshop, JELIA '91, 412–427*.\
-[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/manual)
+[cited] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/manual)\
+cited in: [DPL](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Dynamic/Effects/State/DPL.lean)
 
 **Muskens, R.** (1996). Combining Montague semantics and discourse representation. *Linguistics and Philosophy, 19(2), 143–186*.\
 [foundational] · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Dynamic/Core/DynamicTy2.lean) · [source](https://github.com/hawkrobe/linglib/blob/main/Linglib/Theories/Semantics/Dynamic/Core/Translation.lean)\

@@ -155,7 +155,7 @@ theorem wish_isCDistributive {W E : Type*}
 
 /-!
 ## Why Worry/Care are NOT C-Distributive
-@cite{elliott-etal-2017}
+@cite{elliott-etal-2017} @cite{spector-egr-2015}
 
 The key insight from @cite{elliott-etal-2017} is that predicates like "worry"
 and "care" have question semantics that go beyond existential quantification.

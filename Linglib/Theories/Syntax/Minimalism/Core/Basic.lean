@@ -1,5 +1,6 @@
 /-
 # Syntactic Objects and Containment
+@cite{chomsky-2013}
 
 Foundation module for the Minimalist Program formalization.
 

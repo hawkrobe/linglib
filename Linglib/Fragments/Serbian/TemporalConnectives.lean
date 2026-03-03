@@ -3,7 +3,7 @@ import Linglib.Fragments.English.TemporalExpressions
 
 /-!
 # Serbian Temporal Connectives Fragment
-@cite{rett-2020} @cite{todorovi-2015}
+@cite{rett-2020} @cite{todorovic-2015}
 
 Cross-linguistic data on Serbian *pre* ('before') and *posle* ('after')
 showing overt viewpoint aspect morphology (PFV/IMPF) in embedded temporal

@@ -5,7 +5,7 @@ import Linglib.Core.Partition
 # Questions/Partition.lean
 @cite{groenendijk-stokhof-1984}
 
-@cite{groenendijk-stokhof-1984} Partition Semantics for Questions.
+@cite{groenendijk-stokhof-1984} @cite{groenendijk-stokhof-1997} Partition Semantics for Questions.
 
 ## Core Ideas
 

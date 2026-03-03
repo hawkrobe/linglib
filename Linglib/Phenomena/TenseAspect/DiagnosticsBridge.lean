@@ -1,5 +1,6 @@
 /-
 # Aspectual Diagnostics
+@cite{rothstein-2004}
 
 Empirical tests for determining aspectual class.
 

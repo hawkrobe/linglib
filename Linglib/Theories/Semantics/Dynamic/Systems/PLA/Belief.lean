@@ -1,7 +1,7 @@
 /-
 # PLA Belief Reports
 
-@cite{dekker-2012} Chapter 4, §4.2: Belief Reports and Conceptual Covers.
+@cite{dekker-2012} @cite{kaplan-1968} Chapter 4, §4.2: Belief Reports and Conceptual Covers.
 
 ## Key Concepts
 

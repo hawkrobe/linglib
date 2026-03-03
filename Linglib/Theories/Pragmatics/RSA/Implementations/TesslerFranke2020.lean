@@ -1,6 +1,6 @@
 /-
 # @cite{tessler-franke-2020} "Not unreasonable"
-@cite{franke-bergen-2020}
+@cite{franke-bergen-2020} @cite{tessler-franke-2019}
 
 RSA model for flexible negation: why two negatives don't make a positive.
 

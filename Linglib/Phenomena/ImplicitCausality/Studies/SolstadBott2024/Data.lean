@@ -4,7 +4,7 @@ import Mathlib.Tactic.NormNum
 /-!
 # Implicit Causality Data for Psych Verbs
 
-@cite{solstad-bott-2022} @cite{solstad-bott-2024}
+@cite{solstad-bott-2022} @cite{solstad-bott-2024} @cite{solstad-bott-2023}
 
 Theory-neutral experimental data on implicit causality (I-Caus) and implicit
 consequentiality (I-Cons) for psych verbs. The experimental data comes from

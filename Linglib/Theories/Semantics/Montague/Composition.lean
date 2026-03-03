@@ -1,5 +1,6 @@
 /-
 # Type-Driven Interpretation (@cite{heim-kratzer-1998}, Ch. 3-4)
+@cite{klein-sag-1985}
 
 Composition principles:
 1. Terminal Nodes (TN): lexical lookup

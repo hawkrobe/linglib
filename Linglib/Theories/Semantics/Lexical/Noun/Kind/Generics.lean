@@ -28,7 +28,7 @@ The `normal` parameter is doing all the work, but it's:
 
 ## Comparison with RSA Treatment
 
-@cite{tessler-goodman-2019} eliminate GEN via threshold semantics:
+@cite{tessler-goodman-2019} @cite{chierchia-1995} eliminate GEN via threshold semantics:
 - Generic is true iff prevalence exceeds threshold
 - Threshold is uncertain, inferred pragmatically
 - Prior over prevalence varies by property

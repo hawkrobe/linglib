@@ -1,5 +1,6 @@
 /-
 # Universal Dependencies Types
+@cite{de-marneffe-zeman-2021}
 
 Universal part-of-speech tags (UPOS), morphological features, and dependency
 relations from UD v2.

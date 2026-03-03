@@ -1,5 +1,6 @@
 /-
 # Bilateral Denotations
+@cite{krahmer-muskens-1995}
 
 The bilateral denotation structure for dynamic semantics. Bilateral semantics
 tracks both positive and negative update dimensions, enabling Double Negation

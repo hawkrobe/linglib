@@ -1,6 +1,6 @@
 /-
 # Bridging Anaphora: Empirical Data
-@cite{asher-lascarides-1998} @cite{clark-1975}
+@cite{asher-lascarides-1998} @cite{clark-1975} @cite{prince-1981}
 
 Theory-neutral data on bridging anaphora (associative anaphora, indirect anaphora).
 

@@ -1,5 +1,5 @@
 /-
-@cite{franke-2011}. Quantity implicatures, exhaustive interpretation, and
+@cite{franke-2011} @cite{benz-van-rooij-2005}. Quantity implicatures, exhaustive interpretation, and
 rational conversation. S&P 4(1):1-82.
 
 IBR (iterated best response) converges to exhaustive interpretation (exhMW).

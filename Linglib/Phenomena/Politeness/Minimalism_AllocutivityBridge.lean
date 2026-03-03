@@ -1,6 +1,6 @@
 /-
 # Allocutive Agreement as Agree
-@cite{chomsky-2000}
+@cite{chomsky-2000} @cite{portner-pak-zanuttini-2019}
 
 Minimalist analysis of allocutive agreement (AA) following @cite{alok-bhalla-2026}.
 AA is not special machinery — it IS phi-agreement (Agree) between a functional

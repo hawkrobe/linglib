@@ -1,5 +1,6 @@
 /-
 # Cross-Serial Dependencies
+@cite{shieber-1985}
 
 Empirical data on cross-serial dependencies in Dutch verb clusters.
 

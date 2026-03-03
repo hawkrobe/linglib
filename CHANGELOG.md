@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.227.89] - 2026-03-03
+
+### Changed
+- **Bibliography orphan audit**: fixed 10 encoding-broken bib keys (mitrović→mitrovic, Crnič→crnic, Égré→egre, König→konig, López→lopez, Pérez→perez, Mac Congáil→mac-congail, Özyıldız→ozyildiz, Todorović→todorovic); deleted 1 duplicate (mitrovi-sauerland-2016); added @cite{} tags for all 89 orphan entries across 86 files. Total: 1196 bib entries, 3472 valid @cite references, 0 orphans.
+
 ## [0.227.88] - 2026-03-03
 
 ### Changed

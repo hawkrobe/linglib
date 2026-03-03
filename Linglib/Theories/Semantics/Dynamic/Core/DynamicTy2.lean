@@ -1,5 +1,6 @@
 /-
 # Dynamic Ty2: The Unification Point for Dynamic Semantics
+@cite{gallin-1975}
 
 Following @cite{muskens-1996} and @cite{brasoveanu-2007}, Dynamic Ty2 is the
 type-logical foundation into which ALL dynamic semantic systems embed.

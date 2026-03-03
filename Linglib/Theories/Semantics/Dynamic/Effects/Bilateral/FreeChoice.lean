@@ -1,5 +1,6 @@
 /-
 # Free Choice with Anaphora
+@cite{alonso-ovalle-2006}
 
 This module derives Free Choice (FC) inferences using Bilateral Update Semantics,
 following @cite{elliott-sudo-2025} "Free choice with anaphora".

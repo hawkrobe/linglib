@@ -528,7 +528,7 @@ theorem blackwell_unifies_relevance
 ## Partition-Level Foundations
 
 The Blackwell bridge above connects G&S refinement to question utility.
-@cite{merin-1999} establishes the deeper partition-theoretic foundations in
+@cite{merin-1999} @cite{sumers-hawkins-2023} establishes the deeper partition-theoretic foundations in
 `Core.Partition`:
 
 1. **EU compositionality** (`QUD.eu_eq_partitionEU`): Expected utility equals

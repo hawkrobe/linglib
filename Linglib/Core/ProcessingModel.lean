@@ -1,5 +1,6 @@
 /-
 # Processing Model
+@cite{lewis-vasishth-2005}
 
 Shared infrastructure for processing-based explanations across comparison modules.
 

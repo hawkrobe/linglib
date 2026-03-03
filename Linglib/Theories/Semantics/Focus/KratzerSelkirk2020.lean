@@ -382,7 +382,7 @@ The second "Sid" is [FoC]-marked (it associates with *only*) but sits inside
 a [G]-marked constituent. The ranking [G]=No-φ >> [FoC]=φ-Level-Head
 predicts: Sid gets ω-level head status but NOT φ-level prominence.
 Result: an H accent but no phrase-level pitch scaling — exactly what
-@cite{beaver-2007} found experimentally. -/
+@cite{beaver-2007} @cite{selkirk-2008} found experimentally. -/
 
 /-- A Second Occurrence Focus datum: [FoC] inside [G]. -/
 structure SOFDatum where

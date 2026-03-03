@@ -27,7 +27,7 @@ Following Carlson:
 
 ## The Stage/Individual-Level Distinction
 
-@cite{milsark-1974} and @cite{siegel-1976} distinguished:
+@cite{milsark-1974} @cite{dowty-1972} and @cite{siegel-1976} distinguished:
 - States: hungry, available, sick (physical), in the room -- predicated of stages
 - Properties: intelligent, tall, sick (mental) -- predicated of individuals
 

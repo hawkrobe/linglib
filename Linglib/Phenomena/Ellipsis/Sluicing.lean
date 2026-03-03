@@ -1,6 +1,6 @@
 /-
 # Sluicing: Empirical Data
-@cite{chung-mccloskey-1995}
+@cite{chung-mccloskey-1995} @cite{ross-1969}
 
 Theory-neutral data on sluicing and related ellipsis phenomena.
 

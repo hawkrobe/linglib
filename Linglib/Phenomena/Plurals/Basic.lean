@@ -1,5 +1,6 @@
 /-
 # Plural Phenomena
+@cite{malamud-2012}
 
 Empirical patterns related to plural semantics: distributivity, homogeneity,
 non-maximality, and bare plurals.

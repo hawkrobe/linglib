@@ -1,5 +1,6 @@
 /-
 # Direct Reference Phenomena
+@cite{frege-1892}
 
 Classic empirical phenomena motivating the theory of direct reference.
 These are framework-neutral observations — the theoretical accounts live

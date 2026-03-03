@@ -6,7 +6,7 @@ Semantics & Pragmatics 18, Article 5, 1-20.
 
 ## Main Question
 
-Mitrović & @cite{mitrovi-sauerland-2014} claim DP conjunction universally decomposes
+@cite{mitrovic-sauerland-2014} claim DP conjunction universally decomposes
 into J (set intersection) + MU (subset) + ☉ (type-shifter). Combined with the
 Transparency Principle — children prefer 1-to-1 form-meaning
 mappings — this predicts J-MU expressions (where all pieces are overt) should
@@ -52,7 +52,7 @@ open Phenomena
 /--
 Cross-linguistic conjunction strategy.
 
-Mitrović & @cite{mitrovi-sauerland-2014} decompose DP conjunction into three
+@cite{mitrovic-sauerland-2014} decompose DP conjunction into three
 semantic pieces: J (set intersection), MU (subset), ☉ (type-shifter).
 Languages vary in which pieces are overtly realized.
 -/

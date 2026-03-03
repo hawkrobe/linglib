@@ -1,6 +1,6 @@
 /-!
 # Irish Coordination Morphemes
-@cite{haspelmath-2007} @cite{stenson-1981}
+@cite{haspelmath-2007} @cite{stenson-1981} @cite{mac-congail-2004}
 
 Irish coordination morphemes. Irish is a J-only language for conjunction:
 "agus" is the sole conjunctive coordinator. There is no MU (additive

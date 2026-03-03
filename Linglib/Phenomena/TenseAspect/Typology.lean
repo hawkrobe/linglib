@@ -26,7 +26,7 @@ Structures (WALS), covering five parameters:
 
 ## Key findings
 
-@cite{dahl-velupillai-2013} note that there is no evidence for a typological
+@cite{dahl-velupillai-2013} @cite{bybee-perkins-pagliuca-1994} note that there is no evidence for a typological
 division into "tense languages" vs "aspect languages" -- languages that have
 aspectual marking tend also to have tense marking. Suffixing is overwhelmingly
 the dominant strategy for tense-aspect morphology. South-East

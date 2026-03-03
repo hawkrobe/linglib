@@ -1,5 +1,6 @@
 /-
 # @cite{dowty-1991} Proto-Roles and Argument Selection
+@cite{levin-2022}
 
 @cite{dowty-1991} "Thematic Proto-Roles and Argument Selection" replaces discrete
 thematic roles (agent, patient, etc.) with **cluster concepts**: Proto-Agent

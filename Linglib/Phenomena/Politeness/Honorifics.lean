@@ -1,5 +1,6 @@
 /-
 # Allocutive Agreement and Honorifics: Crosslinguistic Data
+@cite{portner-pak-zanuttini-2019}
 
 Theory-neutral typological data on allocutive agreement (AA) — where verbs
 encode addressee features — and the morphosyntactic expression of honorifics.
