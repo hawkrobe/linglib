@@ -10,10 +10,10 @@ Bridge theorems connecting English occasion verb fragment entries to the
 presupposition analysis from @cite{solstad-bott-2024}.
 
 For the deeper projectivity analysis (Tonhauser classification, cataphoric
-resolution, symmetric filtering), see `ProjectivityBridge.lean`.
+resolution, symmetric filtering), see `Projectivity.lean`.
 -/
 
-namespace Phenomena.ImplicitCausality.Studies.SolstadBott2024.Bridge
+namespace Phenomena.ImplicitCausality.Studies.SolstadBott2024.Presupposition
 
 open Fragments.English.Predicates.Verbal
 
@@ -60,4 +60,4 @@ theorem occasion_verbs_subject_control :
     hesitate.controlType = .subjectControl :=
   ⟨rfl, rfl, rfl, rfl⟩
 
-end Phenomena.ImplicitCausality.Studies.SolstadBott2024.Bridge
+end Phenomena.ImplicitCausality.Studies.SolstadBott2024.Presupposition

@@ -40,7 +40,7 @@ Solstad & Bott's Experiment 3 supports symmetric filtering: occasion verb
 presuppositions in the antecedent CAN be satisfied by the consequent.
 -/
 
-namespace Phenomena.ImplicitCausality.Studies.SolstadBott2024.Bridge.Projectivity
+namespace Phenomena.ImplicitCausality.Studies.SolstadBott2024.Projectivity
 
 open Semantics.Presupposition.LocalContext
 open Semantics.Presupposition.OntologicalPreconditions
@@ -196,4 +196,4 @@ theorem manage_projection_vs_implicature :
     Fragments.English.Predicates.Verbal.manage_occasion.presupType = some .softTrigger :=
   ⟨rfl, rfl, rfl, rfl⟩
 
-end Phenomena.ImplicitCausality.Studies.SolstadBott2024.Bridge.Projectivity
+end Phenomena.ImplicitCausality.Studies.SolstadBott2024.Projectivity

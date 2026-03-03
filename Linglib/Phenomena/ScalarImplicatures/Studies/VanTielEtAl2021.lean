@@ -1,3 +1,5 @@
+import Linglib.Theories.Pragmatics.RSA.Implementations.VanTielEtAl2021
+
 /-
 # @cite{van-tiel-franke-sauerland-2021} - Experimental Data
 
@@ -263,5 +265,38 @@ def exp4_participants : Nat := 200
 
 /-- These 17 quantity words account for 87% of production data -/
 def coveragePercent : Nat := 87
+
+-- ============================================================================
+-- RSA Bridge: Monotonicity Agreement
+-- ============================================================================
+
+/-! Connects the RSA quantity-word production model to the empirical
+monotonicity classifications. -/
+
+open RSA.VanTielEtAl2021
+
+/-- Convert RSA model's QuantityWord to empirical data type. -/
+def toDataWord : VanTielQuantity.Utterance → QuantityWord
+  | .none_ => .none_
+  | .few   => .few
+  | .some_ => .some_
+  | .half  => .half
+  | .most  => .most
+  | .all   => .all
+
+/-- Monotonicity matches empirical classification for clear cases (excluding "half").
+
+Note: "half" is classified as nonMonotone in the three-way system but as
+"increasing" in the binary empirical classification. -/
+theorem monotonicity_matches_data_increasing (q : VanTielQuantity.Utterance) :
+    q ≠ .half →
+    (RSA.VanTielEtAl2021.monotonicity q = Fragments.English.Determiners.Monotonicity.increasing) ↔
+    (monotonicity (toDataWord q) = Monotonicity.increasing) := by
+  cases q <;> native_decide
+
+theorem monotonicity_matches_data_decreasing (q : VanTielQuantity.Utterance) :
+    (RSA.VanTielEtAl2021.monotonicity q = Fragments.English.Determiners.Monotonicity.decreasing) ↔
+    (monotonicity (toDataWord q) = Monotonicity.decreasing) := by
+  cases q <;> native_decide
 
 end Phenomena.ScalarImplicatures.Studies.VanTielEtAl2021

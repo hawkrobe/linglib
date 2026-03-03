@@ -1,5 +1,5 @@
 import Linglib.Core.Interface
-import Linglib.Theories.Syntax.Minimalism.Bridge.CombinationSchemata
+import Linglib.Theories.Syntax.Minimalism.CombinationSchemata
 import Linglib.Theories.Syntax.Minimalism.Core.Labeling
 import Linglib.Theories.Syntax.HPSG.Core.HeadFiller
 import Linglib.Theories.Syntax.HPSG.Core.LexicalRules

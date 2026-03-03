@@ -341,4 +341,35 @@ def exhBlocksAntiExhaustivityClaim : String :=
   "Grammatical EXH strengthens 'A' to 'A ∧ ¬B', which is false in w_ab. " ++
   "This blocks anti-exhaustive interpretations regardless of prior bias."
 
+-- ============================================================================
+-- RSA Bridge: Structural Definitions
+-- ============================================================================
+
+/-! Parse-dependent meaning, wonky goal projection, and structural
+verification theorems. -/
+
+/-- Meaning with parse-dependent exhaustification.
+    - literal parse: literal semantics
+    - exh parse: exhaustified semantics (EXH(A) = A ∧ ¬B) -/
+def parseMeaning : CWSParse → CWSWorld → CWSUtterance → Bool
+  | .literal, w, u => literalTruth w u
+  | .exh, w, u => exhMeaning w u
+
+/-- BwRSA goal projection: how goals partition worlds.
+    - informative: Full partition (distinguish all worlds)
+    - wonky: Trivial partition (all worlds equivalent) -/
+def wonkyGoalProject : WonkyGoal → CWSWorld → CWSWorld → Bool
+  | .informative, w1, w2 => w1 == w2
+  | .wonky, _, _ => true
+
+theorem utterance_count : allUtterances.length = 3 := rfl
+theorem world_count : allWorlds.length = 2 := rfl
+theorem parse_count : allParses.length = 2 := rfl
+theorem lexica_count : allLexica.length = 4 := rfl
+theorem wonky_goals_count : allWonkyGoals.length = 2 := rfl
+
+/-- EXH blocks anti-exhaustivity because EXH(A) = A ∧ ¬B is false in w_ab. -/
+theorem exh_meaning_blocks_wab :
+    exhMeaning .w_ab .A = false := by rfl
+
 end CremersWilcoxSpector2023

@@ -3,7 +3,7 @@ import Linglib.Theories.Semantics.Causation.PsychCausalLink
 import Linglib.Theories.Semantics.Events.ProtoRoles
 import Linglib.Phenomena.PsychVerbs.Data
 import Linglib.Fragments.English.Predicates.Verbal
-import Linglib.Phenomena.ImplicitCausality.Studies.SolstadBott2024.Bridge.ProtoRoleBridge
+import Linglib.Phenomena.ImplicitCausality.Studies.SolstadBott2024.ProtoRole
 
 /-!
 # Psych Verb Causation (@cite{belletti-rizzi-1988}, @cite{kim-2024} UPH)
@@ -48,7 +48,7 @@ open Semantics.Causation.PsychCausalLink
 open Core.Time (Interval)
 open Fragments.English.Predicates.Verbal
 open Phenomena.PsychVerbs.Data
-open Phenomena.ImplicitCausality.Studies.SolstadBott2024.Bridge
+open Phenomena.ImplicitCausality.Studies.SolstadBott2024.ProtoRole
   (stimExpSubjectProfile stimExpObjectProfile expStimSubjectProfile)
 open Semantics.Events.ProtoRoles
 

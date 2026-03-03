@@ -1,5 +1,7 @@
 import Mathlib.Data.Rat.Defs
 import Linglib.Core.Empirical
+import Linglib.Theories.Pragmatics.NeoGricean.ScalarImplicatures.Basic
+import Linglib.Phenomena.ScalarImplicatures.Basic
 
 /-!
 # @cite{geurts-pouscoulous-2009} — Embedded Implicatures?!
@@ -470,5 +472,169 @@ theorem literature_average_below_fifty :
 theorem literature_max_below_seventy :
     literatureData.all (·.upperBoundRate < 70) := by
   native_decide
+
+-- ============================================================================
+-- Part II: NeoGricean Bridge — Theory Predictions vs Empirical Data
+-- ============================================================================
+
+/-! Connects NeoGricean scalar implicature theory (@cite{geurts-2010}) to the
+experimental findings above.
+
+- Embedding predictions match experimental SI rates
+- DE blocking matches verification data
+- Contextualism vs Defaultism adjudicated by task effects
+- Hurford rescue/violation predictions match felicity judgments
+- Singh asymmetry predictions match felicity judgments
+-/
+
+open NeoGricean.ScalarImplicatures
+open NeoGricean.Alternatives
+open Phenomena.ScalarImplicatures
+
+/-- Exp 1a simple rate (Table 2). -/
+def simpleRate : Nat := 93
+
+/-- Exp 1a think rate (Table 2). -/
+def thinkRate : Nat := 50
+
+/-- Exp 1a must rate (Table 2). -/
+def mustRate : Nat := 3
+
+/-- Exp 3 verification rate for all+some in UE: 100% classical reading. -/
+def allVerificationRate : Nat := 100
+
+/-- Gricean prediction for embedding types. -/
+structure EmbeddingPrediction where
+  embedding : EmbeddingType
+  predictsElevatedRate : Bool
+  explanation : String
+  deriving Repr
+
+def griceanEmbeddingPredictions : List EmbeddingPrediction :=
+  [ { embedding := .simple, predictsElevatedRate := true
+    , explanation := "Global SI arises normally in unembedded contexts" }
+  , { embedding := .think, predictsElevatedRate := true
+    , explanation := "Global SI + competence assumption yields apparent local SI" }
+  , { embedding := .want, predictsElevatedRate := false
+    , explanation := "Want doesn't support competence assumption; no local SI" }
+  , { embedding := .must, predictsElevatedRate := false
+    , explanation := "Deontic must doesn't support competence; no local SI" }
+  , { embedding := .all, predictsElevatedRate := false
+    , explanation := "Universal quantifier doesn't support local SI" }
+  ]
+
+/-- Gricean predictions match experimental pattern. -/
+theorem gricean_predicts_embedding_pattern :
+    (griceanEmbeddingPredictions.find? (λ p => p.embedding == .simple)).isSome ∧
+    simpleRate > 90 ∧
+    (griceanEmbeddingPredictions.find? (λ p => p.embedding == .think)).isSome ∧
+    thinkRate ≥ 50 ∧
+    mustRate < 5 := by
+  native_decide
+
+/-- NeoGricean predicts SIs arise in UE contexts. -/
+theorem ue_implicature_matches_data :
+    someAllBlocking.implicatureInUE = true := by native_decide
+
+/-- DE blocking prediction matches Experiment 3 verification data. -/
+theorem de_blocking_matches_data :
+    someNotAll_DE.implicatureArises = false ∧
+    allVerificationRate = 100 := by
+  native_decide
+
+/-- Gricean account supported over conventionalism. -/
+theorem gricean_supported :
+    simpleRate - mustRate > 85 ∧
+    thinkRate ≥ 50 ∧
+    allVerificationRate = 100 := by
+  native_decide
+
+/-- Competence-based explanation for belief reports. -/
+def competenceExplainsBelief : Bool :=
+  thinkRate > mustRate + 40
+
+theorem competence_explains_think_bridge :
+    competenceExplainsBelief = true := by native_decide
+
+-- Comparing Neo-Gricean variants
+
+open _root_.NeoGricean
+
+theorem defaultism_predicts_high_rate :
+    predictsHighNeutralRate levinsonParams = true := by native_decide
+
+theorem contextualism_predicts_moderate_rate :
+    predictsHighNeutralRate geurtsParams = false := by native_decide
+
+theorem only_contextualism_predicts_task_effect :
+    predictsTaskEffect levinsonParams = false ∧
+    predictsTaskEffect geurtsParams = true := by native_decide
+
+theorem variants_make_different_predictions :
+    levinsonParams.predictedNeutralRate ≠ geurtsParams.predictedNeutralRate ∧
+    predictsTaskEffect levinsonParams ≠ predictsTaskEffect geurtsParams := by
+  native_decide
+
+theorem verification_matches_contextualism :
+    let predicted := geurtsParams.predictedNeutralRate
+    let observed := exp2.verificationRate
+    (max predicted observed) - (min predicted observed) < 5 := by
+  native_decide
+
+theorem verification_far_from_defaultism :
+    let predicted := levinsonParams.predictedNeutralRate
+    let observed := exp2.verificationRate
+    predicted - observed > 50 := by
+  native_decide
+
+theorem task_effect_observed :
+    exp2.inferenceRate > exp2.verificationRate + 20 := by
+  native_decide
+
+theorem data_supports_contextualism_over_defaultism :
+    predictsTaskEffect geurtsParams = true ∧
+    (exp2.inferenceRate > exp2.verificationRate + 20) = true ∧
+    (max geurtsParams.predictedNeutralRate exp2.verificationRate) -
+    (min geurtsParams.predictedNeutralRate exp2.verificationRate) < 5 ∧
+    levinsonParams.predictedNeutralRate - exp2.verificationRate > 50 := by
+  native_decide
+
+-- NeoGricean vs RSA agreement
+
+/-- NeoGricean derives "not all" from "some". -/
+theorem neogricean_derives_not_all :
+    hasImplicature someStudentsSleep_result "all" = true := by
+  native_decide
+
+/-- NeoGricean explicitly blocks SIs in DE contexts. -/
+theorem de_blocking :
+    hasImplicature someStudentsSleep_DE_result "all" = false := by
+  native_decide
+
+-- Hurford and Singh prediction bridges
+
+theorem someOrAll_prediction_matches_data :
+    someOrAll_semantic.isRescued ↔ someOrAll.felicitous = true := by
+  constructor
+  · intro _; rfl
+  · intro _; exact someOrAll_is_rescued
+
+theorem americanCalifornian_prediction_matches_data :
+    ¬americanCalifornian_semantic.isRescuedFromBA ↔ americanCalifornian.felicitous = false := by
+  constructor
+  · intro _; rfl
+  · intro _; exact americanCalifornian_not_rescued
+
+theorem orThenBoth_prediction_matches_data :
+    orThenBoth_semantic.predictedFelicitous ↔ orThenBoth.felicitous = true := by
+  constructor
+  · intro _; rfl
+  · intro _; exact orThenBoth_predicted_felicitous
+
+theorem bothThenOr_prediction_matches_data :
+    ¬bothThenOr_semantic.predictedFelicitous ↔ bothThenOr.felicitous = false := by
+  constructor
+  · intro _; rfl
+  · intro _; exact bothThenOr_not_predicted_felicitous
 
 end Phenomena.ScalarImplicatures.Studies.GeurtsPouscoulous2009

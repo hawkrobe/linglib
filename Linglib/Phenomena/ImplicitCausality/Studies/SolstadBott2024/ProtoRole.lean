@@ -30,7 +30,7 @@ participant is the subject or the object.
 | AgPat    | V + S + C + M + IE       | all five                 |
 -/
 
-namespace Phenomena.ImplicitCausality.Studies.SolstadBott2024.Bridge
+namespace Phenomena.ImplicitCausality.Studies.SolstadBott2024.ProtoRole
 
 open Semantics.Events.ProtoRoles
 open Core.Discourse.CoherenceRelation
@@ -208,4 +208,4 @@ theorem manage_senses_diverge_on_theta :
 theorem manage_senses_share_semantics :
     manage.implicativeBuilder = manage_occasion.implicativeBuilder := rfl
 
-end Phenomena.ImplicitCausality.Studies.SolstadBott2024.Bridge
+end Phenomena.ImplicitCausality.Studies.SolstadBott2024.ProtoRole

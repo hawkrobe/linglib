@@ -1,7 +1,7 @@
 /-
 # Relative Clause Semantics: A Worked Example
 
-Demonstrates the full machinery from Minimalism/Bridge/Interface.lean
+Demonstrates the full machinery from Interfaces/SyntaxSemantics/Minimalism/Interface.lean
 with a concrete linguistic example: "the book that John read _"
 
 ## The Derivation
@@ -34,7 +34,7 @@ with a concrete linguistic example: "the book that John read _"
 import Linglib.Theories.Interfaces.SyntaxSemantics.Minimalism.Interface
 import Linglib.Theories.Syntax.Minimalism.Core.Basic
 
-namespace Minimalism.Bridge.RelativeClauses
+namespace Minimalism.RelativeClauses
 
 open Semantics.Montague Semantics.Montague.Variables Semantics.Montague.Modification
 open Minimalism.Semantics
@@ -286,4 +286,4 @@ Extracting the trace index from a syntactic object.
 -/
 theorem trace_example_has_index : getTraceIndex traceExample = some 1 := rfl
 
-end Minimalism.Bridge.RelativeClauses
+end Minimalism.RelativeClauses

@@ -431,9 +431,9 @@ import Linglib.Phenomena.Imperatives.Studies.SumersEtAl2023
 import Linglib.Phenomena.Imperatives.Typology
 -- Phenomena: Implicit Causality (Solstad & Bott 2022, 2024)
 import Linglib.Phenomena.ImplicitCausality.Studies.SolstadBott2024.Data
-import Linglib.Phenomena.ImplicitCausality.Studies.SolstadBott2024.Bridge.PresuppositionBridge
-import Linglib.Phenomena.ImplicitCausality.Studies.SolstadBott2024.Bridge.ProtoRoleBridge
-import Linglib.Phenomena.ImplicitCausality.Studies.SolstadBott2024.Bridge.ProjectivityBridge
+import Linglib.Phenomena.ImplicitCausality.Studies.SolstadBott2024.Presupposition
+import Linglib.Phenomena.ImplicitCausality.Studies.SolstadBott2024.ProtoRole
+import Linglib.Phenomena.ImplicitCausality.Studies.SolstadBott2024.Projectivity
 -- Phenomena: Imprecision (extracted from Gradability/)
 import Linglib.Phenomena.Imprecision.Basic
 import Linglib.Phenomena.Imprecision.FormMeaning
@@ -549,7 +549,6 @@ import Linglib.Phenomena.Presupposition.Studies.TonhauserBeaverDegen2018.Bridge
 import Linglib.Phenomena.Presupposition.Studies.Schlenker2009
 import Linglib.Phenomena.Presupposition.Studies.Heim1983
 import Linglib.Phenomena.Presupposition.Studies.RobertsSimons2024
-import Linglib.Phenomena.Presupposition.Bridge.TonhauserDerivation
 import Linglib.Phenomena.Presupposition.Studies.QingGoodmanLassiter2016
 import Linglib.Phenomena.Presupposition.Bridge.TowerBridge
 import Linglib.Phenomena.Presupposition.Studies.Heim1992
@@ -569,9 +568,7 @@ import Linglib.Phenomena.Quantification.Studies.ScontrasPearl2021
 import Linglib.Phenomena.Quantification.Studies.ScontrasPearl2021RSA
 import Linglib.Phenomena.Quantification.Studies.ScontrasPearl2021TwoNot
 import Linglib.Phenomena.Quantification.Studies.RitchieSchiller2024
-import Linglib.Phenomena.Quantification.Bridge.NumeralSemanticsBridge
 import Linglib.Phenomena.Quantification.Studies.Elliott2025
-import Linglib.Phenomena.Quantification.Bridge.RitchieSchiller2024BToM
 import Linglib.Phenomena.Quantification.Compare
 import Linglib.Phenomena.Questions.Basic
 import Linglib.Phenomena.Questions.Typology
@@ -619,7 +616,6 @@ import Linglib.Phenomena.TenseAspect.Studies.Abusch1997
 import Linglib.Phenomena.TenseAspect.Studies.Krifka1998
 import Linglib.Phenomena.TenseAspect.Bridge.SpatialTrace
 import Linglib.Phenomena.TenseAspect.Studies.Krifka1989
-import Linglib.Phenomena.TenseAspect.Bridge.GradualChange
 import Linglib.Phenomena.TenseAspect.Bridge.DimensionCoherence
 import Linglib.Phenomena.TenseAspect.Bridge.CrossBridgeConsistency
 import Linglib.Phenomena.TenseAspect.Studies.KennedyLevin2008
@@ -643,16 +639,11 @@ import Linglib.Phenomena.WordOrder.Gradience
 import Linglib.Phenomena.WordOrder.Studies.HahnDegenFutrell2021
 import Linglib.Phenomena.TenseAspect.TemporalAdverbialsBridge
 import Linglib.Phenomena.ScalarImplicatures.WeakEvidenceEffect
-import Linglib.Phenomena.ScalarImplicatures.Bridge.BaleEtAl2025
 import Linglib.Phenomena.ScalarImplicatures.Studies.Horn1972
-import Linglib.Phenomena.ScalarImplicatures.Bridge.NeoGricean
 import Linglib.Phenomena.ScalarImplicatures.Bridge.RelevanceTheory
-import Linglib.Phenomena.ScalarImplicatures.Bridge.RSACremersWilcoxSpector2023
 import Linglib.Phenomena.ScalarImplicatures.Studies.Geurts2010
 import Linglib.Phenomena.ScalarImplicatures.Bridge.RSAHurford
 import Linglib.Phenomena.ScalarImplicatures.Studies.PottsEtAl2016
-import Linglib.Phenomena.ScalarImplicatures.Bridge.RSAVanTielEtAl2021
-import Linglib.Phenomena.ScalarImplicatures.Bridge.TheoryAgreement
 import Linglib.Phenomena.ScalarImplicatures.Bridge.TheoryComparison
 import Linglib.Phenomena.ScalarImplicatures.GoodmanStuhlmuller2013.Data
 import Linglib.Phenomena.ScalarImplicatures.GoodmanStuhlmuller2013.Bridge
@@ -861,8 +852,8 @@ import Linglib.Theories.Syntax.Minimalism.Core.Phase
 import Linglib.Theories.Syntax.Minimalism.Formal.MergeUnification
 import Linglib.Theories.Syntax.Minimalism.Scope
 import Linglib.Theories.Interfaces.SyntaxSemantics.Minimalism.Interface
-import Linglib.Theories.Syntax.Minimalism.Bridge.CombinationSchemata
-import Linglib.Theories.Syntax.Minimalism.Bridge.RelativeClauses
+import Linglib.Theories.Syntax.Minimalism.CombinationSchemata
+import Linglib.Theories.Syntax.Minimalism.RelativeClauses
 import Linglib.Theories.Syntax.Minimalism.Core.Structure
 import Linglib.Theories.Syntax.Minimalism.Core.Basic
 import Linglib.Theories.Syntax.Minimalism.Core.Voice

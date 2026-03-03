@@ -2,7 +2,7 @@ import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Theories.Semantics.Events.SpatialTrace
 import Linglib.Theories.Semantics.Lexical.Verb.DegreeAchievement
 import Linglib.Phenomena.TenseAspect.DiagnosticsBridge
-import Linglib.Phenomena.TenseAspect.Bridge.GradualChange
+import Linglib.Phenomena.TenseAspect.Studies.Krifka1998
 import Linglib.Phenomena.TenseAspect.Studies.Krifka1989
 import Linglib.Phenomena.Plurals.Studies.Champollion2017
 
@@ -35,7 +35,7 @@ open Semantics.Lexical.Verb.Aspect (VendlerClass Telicity)
 open Semantics.Events.Krifka1998 (VerbIncClass)
 open Core.Scale (LicensingPipeline Boundedness MereoTag)
 open Phenomena.TenseAspect.Diagnostics (forXPrediction inXPrediction)
-open Phenomena.TenseAspect.Bridge.GradualChange (predictsGRAD)
+open Phenomena.TenseAspect.Studies.Krifka1998 (predictsGRAD)
 open Phenomena.Plurals.Studies.Champollion2017 (predictsSSR)
 open Core.Path (PathShape)
 open Semantics.Lexical.Verb.DegreeAchievement (DegreeAchievementScale)

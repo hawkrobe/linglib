@@ -1,10 +1,13 @@
 import Linglib.Theories.Semantics.Lexical.Determiner.DomainRestriction
 import Linglib.Theories.Pragmatics.RSA.Core.Config
+import Linglib.Theories.Pragmatics.RSA.Core.BToMGrounding
+import Linglib.Core.Semantics.CommonGround
 
 /-!
 # @cite{ritchie-schiller-2024} — Default Domain Restriction Possibilities
 
-@cite{ritchie-schiller-2024} @cite{cutting-vishton-1995}
+@cite{ritchie-schiller-2024} @cite{cutting-vishton-1995} @cite{baker-jara-ettinger-saxe-tenenbaum-2017}
+@cite{clark-1996} @cite{stalnaker-2002}
 
 Ritchie, H. & Schiller, K. (2024). Default Domain Restriction Possibilities.
 *Semantics & Pragmatics* 17, Article 13: 1–49.
@@ -302,5 +305,139 @@ theorem l0_reflects_every_false (s : SpatialScale) (w : World)
     (h : everyBottleEmpty s w = false) :
     domainRestrictionRSA.meaning s .everyEmpty w = 0 := by
   simp [domainRestrictionRSA, utteranceMeaning, h]
+
+-- ============================================================================
+-- §9. BToM–Common Ground Integration
+-- ============================================================================
+
+/-! Connects DDRPs to @cite{baker-jara-ettinger-saxe-tenenbaum-2017}'s BToM
+architecture and @cite{stalnaker-2002}'s common ground.
+
+1. **Perception-generated DDRPs**: A spatial scene induces a DDRP via
+   `sceneToDDRP`. Monotonicity follows from transitivity of ≤ on `SpatialScale`.
+
+2. **BToM instantiation**: `RSAConfig.toBToM` gives a BToM model; the
+   bridge theorem `L1_eq_btom_worldMarginal` proves L1 IS BToM world-marginal.
+
+3. **Common-ground constraint**: When the scene is common ground, speaker
+   and hearer derive the same DDRP (@cite{clark-1996} on joint attention).
+
+4. **Perfect-perception collapse**: Under perfect perception, the
+   perception-generated DDRP equals the hand-written one.
+
+5. **Imperfect perception**: Different perceptual access → different DDRPs,
+   motivating R&S's requirement of perceptual co-presence.
+-/
+
+open Core.BToM
+open Core.CommonGround
+
+/-- A spatial scene: each entity occupies a spatial zone. -/
+def SpatialScene (E : Type*) := E → SpatialScale
+
+/-- Entities perceivable at a given scale threshold: those whose zone ≤ threshold. -/
+def perceivable {E : Type*} (scene : SpatialScene E) (threshold : SpatialScale)
+    (e : E) : Bool :=
+  decide (scene e ≤ threshold)
+
+/-- A spatial scene induces a DDRP. Region s contains entities in zone ≤ s. -/
+def sceneToDDRP {E : Type*} (scene : SpatialScene E) : DDRP SpatialScale E where
+  region s := perceivable scene s
+  monotone {s₁ s₂} h e hr := by
+    simp only [perceivable, decide_eq_true_eq] at hr ⊢
+    exact le_trans hr h
+  top_total e := by
+    simp only [perceivable, decide_eq_true_eq]
+    exact le_top
+
+/-- The dinner-party scene: b1,b2 peripersonal, b3 action, b4 vista. -/
+def dinnerScene : SpatialScene Entity
+  | .b1 => .peripersonal
+  | .b2 => .peripersonal
+  | .b3 => .action
+  | .b4 => .vista
+
+/-- `sceneToDDRP dinnerScene` agrees with `sceneDDRP`. -/
+theorem sceneToDDRP_eq_sceneDDRP :
+    (sceneToDDRP dinnerScene).region = sceneDDRP.region := by
+  funext s e; cases s <;> cases e <;> native_decide
+
+/-- The RSA-BToM bridge applies to the domain restriction RSA config. -/
+theorem rsa_btom_bridge (u : Utterance) (w : World) :
+    domainRestrictionRSA.L1agent.score u w =
+      (domainRestrictionRSA.toBToM).worldMarginal u w :=
+  RSA.RSAConfig.L1_eq_btom_worldMarginal domainRestrictionRSA u w
+
+/-- The actual scene at each world. -/
+def actualScene (_w : World) : SpatialScene Entity := dinnerScene
+
+/-- A DDRP is grounded in common ground when the spatial scene is
+    common knowledge among discourse participants. -/
+def ddprGroundedInCG (scene : SpatialScene Entity) (cg : BContextSet World)
+    : Prop :=
+  ∀ w, cg w = true → actualScene w = scene
+
+/-- The dinner scene is common ground. -/
+theorem dinnerScene_is_cg :
+    ddprGroundedInCG dinnerScene (λ _ => true) := by
+  intro _ _; rfl
+
+/-- When the scene is common ground, speaker and hearer derive the same DDRP. -/
+theorem shared_scene_shared_ddrp (scene : SpatialScene Entity)
+    (cg : BContextSet World)
+    (hcg : ddprGroundedInCG scene cg) :
+    ∀ w, cg w = true →
+      sceneToDDRP (actualScene w) = sceneToDDRP scene := by
+  intro w hw
+  exact congrArg sceneToDDRP (hcg w hw)
+
+/-- Under perfect perception, the perception-generated DDRP yields the
+    same truth conditions as the hand-written one. -/
+theorem perception_generates_rsa_ddrp :
+    ∀ (s : SpatialScale) (w : World),
+      everyBottleEmpty s w =
+        every_restricted bottleModel ((sceneToDDRP dinnerScene).region s)
+          isBottle (emptyIn w) := by
+  intro s w
+  cases s <;> cases w <;> native_decide
+
+/-- SpatialScale is a mental state (speaker's private choice). -/
+def scaleCategory : LatentCategory := .mental
+
+/-- The spatial scene is shared (perceptual co-presence). -/
+def sceneCategory : LatentCategory := .shared
+
+theorem scale_is_mental : scaleCategory = LatentCategory.mental := rfl
+theorem scene_is_shared : sceneCategory = LatentCategory.shared := rfl
+
+/-- Full latent classification for the domain restriction model. -/
+def ddprClassification : RSA.BToMGrounding.LatentClassification SpatialScale where
+  classify _ := .mental
+  dynamics _ := .episodic
+
+/-- An alternative scene where b3 is behind a partition. -/
+def partitionScene : SpatialScene Entity
+  | .b1 => .peripersonal
+  | .b2 => .peripersonal
+  | .b3 => .vista
+  | .b4 => .vista
+
+theorem scenes_differ_on_b3 :
+    dinnerScene .b3 ≠ partitionScene .b3 := by native_decide
+
+/-- Different spatial scenes yield different DDRPs. -/
+theorem different_scenes_different_ddrps :
+    (sceneToDDRP dinnerScene).region ≠ (sceneToDDRP partitionScene).region := by
+  intro h
+  exact absurd (congrFun (congrFun h .action) .b3) (by native_decide)
+
+/-- Without perceptual co-presence, domain-restricted quantifiers can
+    receive different truth values. -/
+theorem perception_mismatch_changes_truth :
+    every_restricted bottleModel ((sceneToDDRP dinnerScene).region .action)
+      isBottle (emptyIn .nearEmpty) = false ∧
+    every_restricted bottleModel ((sceneToDDRP partitionScene).region .action)
+      isBottle (emptyIn .nearEmpty) = true := by
+  constructor <;> native_decide
 
 end Phenomena.Quantification.Studies.RitchieSchiller2024

@@ -1,4 +1,5 @@
 import Linglib.Theories.Semantics.Events.Krifka1998
+import Linglib.Theories.Semantics.Events.Krifka1989
 import Linglib.Theories.Semantics.Events.Mereology
 import Linglib.Theories.Semantics.Lexical.Verb.Aspect
 import Linglib.Fragments.English.Predicates.Verbal
@@ -249,5 +250,75 @@ theorem cumOnly_verbs_are_activities :
     pull.toVerbCore.vendlerClass = some .activity ∧
     carry.toVerbCore.vendlerClass = some .activity ∧
     drag.toVerbCore.vendlerClass = some .activity := ⟨rfl, rfl, rfl, rfl⟩
+
+-- ============================================================================
+-- Part II: Gradual Change (GRAD) Predictions
+-- ============================================================================
+
+/-! Connects GRAD/GRADSquare theory from `Events/Krifka1998.lean` and
+`Events/Krifka1989.lean` to concrete verb entries. -/
+
+/-- A gradual change datum. -/
+structure GRADDatum where
+  verb : String
+  objectMeasure : String
+  expectsGRAD : Bool
+  deriving Repr, DecidableEq, BEq
+
+def eatGRAD : GRADDatum :=
+  { verb := "eat", objectMeasure := "weight/volume", expectsGRAD := true }
+def buildGRAD : GRADDatum :=
+  { verb := "build", objectMeasure := "proportion done", expectsGRAD := true }
+def readGRAD : GRADDatum :=
+  { verb := "read", objectMeasure := "pages", expectsGRAD := true }
+def pushNoGRAD : GRADDatum :=
+  { verb := "push", objectMeasure := "weight", expectsGRAD := false }
+def kickNoGRAD : GRADDatum :=
+  { verb := "kick", objectMeasure := "force", expectsGRAD := false }
+
+def gradData : List GRADDatum :=
+  [eatGRAD, buildGRAD, readGRAD, pushNoGRAD, kickNoGRAD]
+
+/-- Whether a verb's incrementality class predicts GRAD. -/
+def predictsGRAD : Option VerbIncClass → Bool
+  | some .sinc => true
+  | some .inc => true
+  | some .cumOnly => false
+  | none => false
+
+theorem grad_decidable :
+    (predictsGRAD (some .sinc) = true) ∧
+    (predictsGRAD (some .inc) = true) ∧
+    (predictsGRAD (some .cumOnly) = false) ∧
+    (predictsGRAD none = false) := ⟨rfl, rfl, rfl, rfl⟩
+
+-- Per-verb GRAD verification
+
+theorem eat_predicts_grad :
+    predictsGRAD eat.toVerbCore.verbIncClass = true := rfl
+theorem build_predicts_grad :
+    predictsGRAD build.toVerbCore.verbIncClass = true := rfl
+theorem read_predicts_grad :
+    predictsGRAD read.toVerbCore.verbIncClass = true := rfl
+theorem push_no_grad :
+    predictsGRAD push.toVerbCore.verbIncClass = false := rfl
+theorem kick_no_grad :
+    predictsGRAD kick.toVerbCore.verbIncClass = false := rfl
+
+/-- All GRAD data matches fragment verb annotations. -/
+theorem all_grad_data_matches :
+    gradData.all (λ d => predictsGRAD (match d.verb with
+      | "eat" => eat.toVerbCore.verbIncClass
+      | "build" => build.toVerbCore.verbIncClass
+      | "read" => read.toVerbCore.verbIncClass
+      | "push" => push.toVerbCore.verbIncClass
+      | "kick" => kick.toVerbCore.verbIncClass
+      | _ => none) == d.expectsGRAD) = true := by
+  native_decide
+
+/-- sinc verbs have prerequisites for GRADSquare; cumOnly verbs don't. -/
+theorem grad_requires_incrementality :
+    (predictsGRAD (some .sinc) = true) ∧
+    (predictsGRAD (some .cumOnly) = false) := ⟨rfl, rfl⟩
 
 end Phenomena.TenseAspect.Studies.Krifka1998

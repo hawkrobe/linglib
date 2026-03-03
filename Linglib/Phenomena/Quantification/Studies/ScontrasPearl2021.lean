@@ -1,6 +1,9 @@
+import Linglib.Theories.Semantics.Lexical.Numeral.Semantics
+import Linglib.Theories.Pragmatics.NeoGricean.NegationScope
+
 /-!
 # @cite{scontras-pearl-2021}: Quantifier Scope Ambiguity @cite{scontras-pearl-2021} @cite{musolino-lidz-2003}
-@cite{horn-1972} @cite{kennedy-2015}
+@cite{horn-1972} @cite{kennedy-2015} @cite{partee-1987} @cite{musolino-2004}
 
 "When pragmatics matters more for truth-value judgments:
 An investigation of quantifier scope ambiguity"
@@ -209,5 +212,70 @@ def ml2003_exp2_unmatched : AcceptanceRate := ⟨11, 40⟩
     Affirmative context rescues non-isomorphic (inverse scope) access → 92.5%.
     Modeled by @cite{scontras-pearl-2021}'s `supportiveCfg`. -/
 def ml2003_exp3_affirmative : AcceptanceRate := ⟨37, 40⟩
+
+-- ============================================================================
+-- §5. Numeral Semantics Grounding
+-- ============================================================================
+
+/-! Connects S&P's `twoNotTruth` truth conditions to linglib's numeral
+semantics infrastructure (`maxMeaning` in `Numeral.Semantics`).
+
+The truth conditions in the data file are grounded in `maxMeaning`:
+- Exact surface: "exactly 2 didn't jump" = `maxMeaning.eq 2 (4 - w)`
+- Exact inverse: "¬(exactly 2 jumped)" = `!(maxMeaning.eq 2 w)`
+- At-least surface: "≥2 didn't jump" = `maxMeaning.ge 2 (4 - w)`
+- At-least inverse: "¬(≥2 jumped)" = `!(maxMeaning.ge 2 w)`
+
+Convergent evidence for exact semantics from @cite{kennedy-2015}
+(de-Fregean semantics where bare numerals mean =n) and @cite{musolino-2004}
+(acquisition data — children reject "two" at w=3).
+-/
+
+open Semantics.Lexical.Numeral (maxMeaning OrderingRel)
+
+/-- Exact surface: "exactly two didn't jump" (out of 4) ↔ exactly two jumped.
+    Matches `maxMeaning.eq 2` applied to the complement count (4 - w). -/
+theorem twoNotExact_surface_matches_maxMeaning :
+    ∀ w : JumpOutcome4,
+    twoNotTruth .exact .surface w = maxMeaning .eq 2 (4 - w.toNat) := by
+  intro w; cases w <;> rfl
+
+/-- Exact inverse: "¬(exactly two jumped)" ↔ `!(maxMeaning.eq 2 w)`. -/
+theorem twoNotExact_inverse_matches_maxMeaning :
+    ∀ w : JumpOutcome4,
+    twoNotTruth .exact .inverse w = !(maxMeaning .eq 2 w.toNat) := by
+  intro w; cases w <;> rfl
+
+/-- At-least surface: "at least two didn't jump" ↔ at most two jumped.
+    Matches `maxMeaning.ge 2` applied to the complement count. -/
+theorem twoNotAtLeast_surface_matches_maxMeaning :
+    ∀ w : JumpOutcome4,
+    twoNotTruth .atLeast .surface w = maxMeaning .ge 2 (4 - w.toNat) := by
+  intro w; cases w <;> rfl
+
+/-- At-least inverse: "¬(at least two jumped)" ↔ `!(maxMeaning.ge 2 w)`. -/
+theorem twoNotAtLeast_inverse_matches_maxMeaning :
+    ∀ w : JumpOutcome4,
+    twoNotTruth .atLeast .inverse w = !(maxMeaning .ge 2 w.toNat) := by
+  intro w; cases w <;> rfl
+
+/-- The negation-scope asymmetry collapses under exact semantics:
+    internal and external negation of "three" give the same result. -/
+theorem exact_collapses_negation_scope :
+    NeoGricean.negatedMeaning Semantics.Lexical.Numeral.Exact .three .internal 4 =
+    NeoGricean.negatedMeaning Semantics.Lexical.Numeral.Exact .three .external 4 := by
+  native_decide
+
+/-- Lower-bound semantics preserves the negation-scope distinction. -/
+theorem lowerBound_preserves_negation_scope :
+    NeoGricean.negatedMeaning Semantics.Lexical.Numeral.LowerBound .three .internal 4 ≠
+    NeoGricean.negatedMeaning Semantics.Lexical.Numeral.LowerBound .three .external 4 := by
+  native_decide
+
+/-- @cite{kennedy-2015}'s resolution: exact meaning is basic, lower-bound is derived
+    via type-shift. Both meanings are grammatically available. -/
+theorem typeshift_resolves_tension :
+    Semantics.Lexical.Numeral.typeLower (maxMeaning .eq) 4 2 2 =
+    maxMeaning .ge 2 2 := by native_decide
 
 end Phenomena.Quantification.Studies.ScontrasPearl2021

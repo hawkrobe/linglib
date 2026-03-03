@@ -1,4 +1,6 @@
 import Linglib.Core.Empirical
+import Linglib.Theories.Pragmatics.NeoGricean.Core.Basic
+import Linglib.Theories.Pragmatics.NeoGricean.Core.Competence
 
 open Core.Empirical
 
@@ -237,5 +239,95 @@ theorem only_competenceByDefault_predicts_interaction :
       predictsPositiveInteraction
     = [.competenceByDefault] := by native_decide
 
+
+-- ============================================================================
+-- Part II: NeoGricean Competence Bridge
+-- ============================================================================
+
+/-! Connects the experimental findings to the NeoGricean competence
+formalization in `Theories.Pragmatics.NeoGricean.Core`. -/
+
+open NeoGricean NeoGricean.Competence
+
+/-- Map speaker knowledge to NeoGricean belief state about the stronger
+    alternative ψ. FK speaker knows ¬ψ; PK speaker has no opinion. -/
+def toBeliefState : SpeakerKnowledge → BeliefState
+  | .fullKnowledge    => .disbelief
+  | .partialKnowledge => .noOpinion
+
+theorem fk_competent : competent (toBeliefState .fullKnowledge) = true := rfl
+theorem pk_not_competent : competent (toBeliefState .partialKnowledge) = false := rfl
+
+/-- FK speaker: `processAlternative` yields a strong SI. -/
+theorem fk_yields_strong :
+    let p := processAlternative true (toBeliefState .fullKnowledge)
+    p.weakHolds = true ∧ p.competenceAssumed = true ∧ p.strongDerived = true := by
+  native_decide
+
+/-- PK speaker (correctly identified): weak-only SI. -/
+theorem pk_yields_weak_only :
+    let p := processAlternative true (toBeliefState .partialKnowledge)
+    p.weakHolds = true ∧ p.competenceAssumed = false ∧ p.strongDerived = false := by
+  native_decide
+
+/-- The default belief state: listeners assume speakers are competent. -/
+def defaultBeliefState : BeliefState := .disbelief
+
+/-- Context integration: no load → yes; load → no. -/
+def canIntegrateContext : LoadCondition → Bool
+  | .noLoad => true
+  | .load   => false
+
+/-- The effective belief state after (possibly failed) context integration. -/
+def effectiveBeliefState (k : SpeakerKnowledge) (l : LoadCondition) : BeliefState :=
+  if canIntegrateContext l then
+    toBeliefState k
+  else
+    defaultBeliefState
+
+theorem noLoad_fk_correct :
+    effectiveBeliefState .fullKnowledge .noLoad = .disbelief := rfl
+theorem noLoad_pk_correct :
+    effectiveBeliefState .partialKnowledge .noLoad = .noOpinion := rfl
+theorem load_fk_default :
+    effectiveBeliefState .fullKnowledge .load = .disbelief := rfl
+theorem load_pk_defaults_to_competent :
+    effectiveBeliefState .partialKnowledge .load = .disbelief := rfl
+
+/-- Under load + PK, the default competence yields a strong SI (10% → 23.3%). -/
+theorem load_pk_yields_strong :
+    let b := effectiveBeliefState .partialKnowledge .load
+    let p := processAlternative true b
+    p.strongDerived = true := by native_decide
+
+/-- Under no-load + PK, correct context integration yields weak-only (10%). -/
+theorem noLoad_pk_yields_weak :
+    let b := effectiveBeliefState .partialKnowledge .noLoad
+    let p := processAlternative true b
+    p.strongDerived = false := by native_decide
+
+/-- The crossover prediction: load flips PK from weak to strong,
+    but leaves FK unchanged. -/
+theorem crossover_prediction :
+    let pk_noLoad := processAlternative true (effectiveBeliefState .partialKnowledge .noLoad)
+    let pk_load   := processAlternative true (effectiveBeliefState .partialKnowledge .load)
+    let fk_noLoad := processAlternative true (effectiveBeliefState .fullKnowledge .noLoad)
+    let fk_load   := processAlternative true (effectiveBeliefState .fullKnowledge .load)
+    pk_noLoad.strongDerived = false ∧ pk_load.strongDerived = true ∧
+    fk_noLoad.strongDerived = true ∧ fk_load.strongDerived = true := by
+  native_decide
+
+/-- Simple assertion context = competence assumed by default. -/
+theorem simpleAssertion_assumes_competence :
+    shouldAssumeCompetence .simpleAssertion = true := rfl
+
+theorem default_matches_competent_disbelief :
+    defaultBeliefState = .disbelief := rfl
+
+/-- Bale et al. validate `.simpleAssertion` as the cognitive default. -/
+theorem competence_default_is_simpleAssertion :
+    shouldAssumeCompetence .simpleAssertion = true ∧
+    shouldAssumeCompetence .uncertain = false := by
+  exact ⟨rfl, rfl⟩
 
 end Phenomena.ScalarImplicatures.Studies.BaleEtAl2025
