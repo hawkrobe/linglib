@@ -7,7 +7,7 @@ import Mathlib.Tactic.DeriveFintype
 import Mathlib.Data.Fintype.Prod
 
 /-!
-# @cite{lassiter-goodman-2017} @cite{lassiter-goodman-2017}
+# @cite{lassiter-goodman-2017}
 
 Adjectival vagueness in a Bayesian model of interpretation.
 Synthese 194:3801–3836.
@@ -18,9 +18,9 @@ Standard RSA models fix the literal meaning of each utterance. Threshold RSA
 introduces a free semantic variable — the threshold θ — that the pragmatic
 listener L1 jointly infers alongside the world state:
 
-  P_L1(s, θ | u) ∝ P_S1(u | s, θ) · P(s) · P(θ) (Eq. 24)
+  P_L1(s, θ | u) ∝ P_S1(u | s, θ) · P(s) · P(θ)
 
-This yields three key predictions (Section 4.3):
+This yields three key predictions (§4.3–4.4):
 1. **Information transmission**: hearing "tall"/"short" shifts the height
    posterior above/below the prior mean despite vague semantics
 2. **Pragmatic sweet spot**: the threshold posterior peaks at an intermediate
@@ -28,13 +28,13 @@ This yields three key predictions (Section 4.3):
    low information gain); high θ makes it implausible
 3. **Context sensitivity**: shifting the reference class prior (e.g., from
    the general population to basketball players) shifts both the height
-   and threshold posteriors (Section 5, Figure 7)
+   and threshold posteriors (§4.4, Figure 7)
 
-## Semantics (Section 3.2)
+## Semantics (§4.1)
 
-Scalar adjectives have a free threshold variable (Eqs. 21–22):
-- ⟦tall⟧(θ)(x) = 1 iff height(x) > θ
-- ⟦short⟧(θ)(x) = 1 iff height(x) < θ
+Scalar adjectives have a free threshold variable (Eqs. 22–23):
+- ⟦tall⟧(θ)(x) = 1 iff height(x) > θ  (Eq. 22)
+- ⟦short⟧(θ)(x) = 1 iff height(x) < θ  (Eq. 23)
 
 ## RSAConfig Mapping
 
@@ -42,23 +42,23 @@ Scalar adjectives have a free threshold variable (Eqs. 21–22):
 - **W** = `Height` (Degree 10, 11 values: h0–h10)
 - **Latent** = `Threshold` (Threshold 10, 10 values: θ0–θ9)
 - **meaning(θ, u, h)** = `prior(h)` if ⟦u⟧_θ(h), else 0
-  (Eq. 20: L0 includes the world prior)
-- **s1Score** = `exp(α · (log L0(h|u,θ) − C(u)))` (Eq. 23)
-- **worldPrior(h)** = `prior(h)` (Eq. 24)
-- **latentPrior** = uniform (Section 4.2: "P(V) is thus uniform")
-- **α** = 4 (Section 4.4: optimal value from simulation)
-- **C(tall) = C(short) = 2** (Section 4.4: C(u) = 2/3 × |u| in words,
+  (§4.2: L0 includes the world prior)
+- **s1Score** = `exp(α · (log L0(h|u,θ) − C(u)))` (§4.2)
+- **worldPrior(h)** = `prior(h)`
+- **latentPrior** = uniform (§4.2: "P(V) is thus uniform")
+- **α** = 4 (§4.4)
+- **C(tall) = C(short) = 2** (§4.4: C(u) = 2/3 × |u| in words,
   |"Sam is tall"| = 3), **C(∅) = 0**
 
 The prior enters at both L0 (baked into `meaning`) and L1 (`worldPrior`),
-matching the paper's Eqs. 20 and 24 where P_{L0}(s) = P_{L1}(s).
+matching §4.2 where P_{L0}(s) = P_{L1}(s).
 
 ## Verified Predictions
 
-1. Hearing "tall" shifts height posterior upward (Section 4.3, Figure 5)
-2. Hearing "short" shifts height posterior downward (Section 4.3, Figure 6)
-3. Threshold posterior peaks at intermediate θ given "tall" (Section 4.3)
-4. Basketball prior shifts L1("tall") toward taller heights (Section 5)
+1. Hearing "tall" shifts height posterior upward (§4.4, Figure 5)
+2. Hearing "short" shifts height posterior downward (§4.4, Figure 6)
+3. Threshold posterior peaks at intermediate θ given "tall" (§4.4)
+4. Basketball prior shifts L1("tall") toward taller heights (§4.4, Figure 7)
 -/
 
 namespace RSA.LassiterGoodman2017
@@ -95,7 +95,7 @@ inductive Utterance where
   deriving Repr, DecidableEq, BEq, Fintype
 
 -- ============================================================================
--- Semantics (Section 3.2, Eqs. 21–22)
+-- Semantics (§4.1, Eqs. 22–23)
 -- ============================================================================
 
 open Semantics.Degree (positiveMeaning negativeMeaning)
@@ -144,7 +144,7 @@ def heightPrior (h : Height) : ℚ :=
     for the elements of V." -/
 def thresholdPrior : Threshold → ℚ := fun _ => 1
 
-/-- Basketball player height prior: peak shifted to h7 (Section 5, Figure 7).
+/-- Basketball player height prior: peak shifted to h7 (§4.4, Figure 7).
 
     The paper uses "two input priors with different means" to demonstrate
     context sensitivity. We shift the same bell shape rightward by 2 steps,
@@ -181,7 +181,7 @@ def utteranceCost (costWord : ℚ) : Utterance → ℚ
 def paperCost : ℚ := 2
 
 -- ============================================================================
--- RSAConfig (Section 4.2, Eqs. 20–24)
+-- RSAConfig (§4.2)
 -- ============================================================================
 
 open Real (rpow rpow_nonneg exp log exp_pos)
@@ -231,11 +231,11 @@ theorem beliefScore_nonneg :
     Decouples the reference class prior from model structure so that
     `defaultCfg` and `basketballCfg` share the same architecture.
 
-    Both L0 and L1 use the same prior (Eqs. 20, 24):
+    Both L0 and L1 use the same prior (§4.2):
     - L0: P_{L0}(s|u,V) ∝ P(s) · ⟦u⟧_V(s)
     - L1: P_{L1}(s,V|u) ∝ P_{S1}(u|s,V) · P(s) · P(V)
 
-    α = 4 is the optimal value from Section 4.4. -/
+    α = 4 (§4.4). -/
 @[reducible]
 noncomputable def mkThresholdCfg
     (prior : Height → ℝ) (hp : ∀ h, 0 ≤ prior h) :
@@ -257,7 +257,7 @@ noncomputable def defaultCfg : RSA.RSAConfig Utterance Height :=
   mkThresholdCfg heightPriorR heightPriorR_nonneg
 
 /-- Basketball config: basketball player prior (peak at h7).
-    Tests context sensitivity (Section 5, Figure 7). -/
+    Tests context sensitivity (§4.4, Figure 7). -/
 @[reducible]
 noncomputable def basketballCfg : RSA.RSAConfig Utterance Height :=
   mkThresholdCfg basketballPriorR basketballPriorR_nonneg
@@ -317,7 +317,7 @@ theorem tall_threshold_peak_gt_high :
   rsa_predict
 
 -- ============================================================================
--- Context Sensitivity (Section 5, Figure 7)
+-- Context Sensitivity (§4.4, Figure 7)
 -- ============================================================================
 
 /-! ### Basketball context shifts height inference
