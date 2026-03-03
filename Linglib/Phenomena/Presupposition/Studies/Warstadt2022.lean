@@ -258,4 +258,87 @@ theorem fgsWorldPrior_sum :
     fgsWorldPrior .otherAthlete + fgsWorldPrior .nonAthlete = 1 := by
   native_decide
 
+-- ============================================================================
+-- Part II: RSA Context Types and PrProp Connection
+-- ============================================================================
+
+
+/-! ## Green Card: Context Types -/
+
+/-- A context is a subset of GCWorlds. -/
+structure GCContext where
+  usCitizen : Bool
+  gcHolder : Bool
+  nonUS : Bool
+  deriving DecidableEq, BEq, Repr, Inhabited
+
+/-- All 2³ = 8 contexts (subsets of GCWorld). -/
+def allGCContexts : List GCContext :=
+  [false, true].flatMap λ a =>
+    [false, true].flatMap λ b =>
+      [false, true].map λ c =>
+        ⟨a, b, c⟩
+
+theorem allGCContexts_length : allGCContexts.length = 8 := rfl
+
+/-- A world is compatible with a context iff the context includes it. -/
+def gcCompatible (c : GCContext) (w : GCWorld) : Bool :=
+  match w with
+  | .usCitizen => c.usCitizen
+  | .gcHolder => c.gcHolder
+  | .nonUS => c.nonUS
+
+def gcContextPrior (_c : GCContext) : ℚ := 1 / 8
+
+/-! ## Family-Genus-Species: Context Types -/
+
+/-- A context is a subset of FGSWorlds. -/
+structure FGSContext where
+  olympicSprinter : Bool
+  runner : Bool
+  otherAthlete : Bool
+  nonAthlete : Bool
+  deriving DecidableEq, BEq, Repr, Inhabited
+
+/-- All 2⁴ = 16 contexts. -/
+def allFGSContexts : List FGSContext :=
+  [false, true].flatMap λ a =>
+    [false, true].flatMap λ b =>
+      [false, true].flatMap λ c =>
+        [false, true].map λ d =>
+          ⟨a, b, c, d⟩
+
+theorem allFGSContexts_length : allFGSContexts.length = 16 := rfl
+
+def fgsCompatible (c : FGSContext) (w : FGSWorld) : Bool :=
+  match w with
+  | .olympicSprinter => c.olympicSprinter
+  | .runner => c.runner
+  | .otherAthlete => c.otherAthlete
+  | .nonAthlete => c.nonAthlete
+
+def fgsContextPrior (_c : FGSContext) : ℚ := 1 / 16
+
+inductive FGSQUD where
+  | identity
+  deriving DecidableEq, BEq, Repr, Inhabited
+
+def allFGSQUDs : List FGSQUD := [.identity]
+
+def fgsQUDProjectBridge : FGSQUD → FGSWorld → FGSWorld → Bool
+  | .identity, w1, w2 => fgsQUDProject w1 w2
+
+/-! ## PrProp Connection -/
+
+/-- The Boolean meaning of "green card" decomposes as presupposition ∧ assertion. -/
+theorem greenCard_meaning_from_prprop (w : GCWorld) :
+    gcMeaning .greenCard w =
+    (greenCardPrProp.presup w && greenCardPrProp.assertion w) :=
+  gcMeaning_greenCard_eq_prprop w
+
+/-- "not green card" is Boolean negation — no presupposition in the semantics. -/
+theorem notGreenCard_is_boolean_negation (w : GCWorld) :
+    gcMeaning .notGreenCard w = !gcMeaning .greenCard w :=
+  gcMeaning_notGreenCard_eq_neg w
+
 end Phenomena.Presupposition.Studies.Warstadt2022

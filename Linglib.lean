@@ -261,7 +261,6 @@ import Linglib.Phenomena.Focus.AdditiveParticles.Studies.Thomas2026
 import Linglib.Phenomena.Agreement.Basic
 import Linglib.Phenomena.Agreement.DetNoun
 import Linglib.Phenomena.Assertion.Basic
-import Linglib.Phenomena.Assertion.Bridge.KrifkaLayers
 import Linglib.Phenomena.Assertion.Studies.Gunlogson2001
 import Linglib.Phenomena.Assertion.Studies.BringGunlogson2000
 import Linglib.Phenomena.Assertion.Studies.Krifka2015
@@ -273,9 +272,7 @@ import Linglib.Phenomena.Case.Bridge.DependentCaseInventories
 import Linglib.Phenomena.Case.Studies.Aissen2003
 import Linglib.Phenomena.Case.Studies.DeHoopMalchukov2008
 import Linglib.Phenomena.Case.Studies.Haspelmath2021
-import Linglib.Phenomena.Case.Bridge.DependentCaseDOM
 import Linglib.Phenomena.Case.Studies.Karlsson2017
-import Linglib.Phenomena.Case.Bridge.FinnishSuffixOrder
 import Linglib.Phenomena.ClauseChaining.Typology
 import Linglib.Phenomena.ClauseChaining.Data
 import Linglib.Phenomena.ClauseChaining.Studies.SarvasyAikhenvald2025
@@ -313,7 +310,6 @@ import Linglib.Phenomena.ArgumentStructure.Studies.Osborne2019
 import Linglib.Phenomena.ArgumentStructure.Bridge.TheoryComparison
 import Linglib.Phenomena.ArgumentStructure.Studies.HaddicanEtAl2026
 import Linglib.Phenomena.ArgumentStructure.Studies.Collins2005
-import Linglib.Phenomena.ArgumentStructure.Bridge.MinimalismSmallClause
 import Linglib.Phenomena.ArgumentStructure.Studies.Kratzer1996
 import Linglib.Phenomena.ScalarImplicatures.ArgumentativeFraming
 import Linglib.Phenomena.Modality.ActualityInferencesBridge
@@ -554,13 +550,9 @@ import Linglib.Phenomena.Presupposition.Studies.Schlenker2009
 import Linglib.Phenomena.Presupposition.Studies.Heim1983
 import Linglib.Phenomena.Presupposition.Studies.RobertsSimons2024
 import Linglib.Phenomena.Presupposition.Bridge.TonhauserDerivation
-import Linglib.Phenomena.Presupposition.Bridge.RSAHeKaiserIskarous2025
-import Linglib.Phenomena.Presupposition.Bridge.RSAWarstadt2022
 import Linglib.Phenomena.Presupposition.Studies.QingGoodmanLassiter2016
-import Linglib.Phenomena.Presupposition.Bridge.ScontrasTonhauser2025BToM
 import Linglib.Phenomena.Presupposition.Bridge.TowerBridge
 import Linglib.Phenomena.Presupposition.Studies.Heim1992
-import Linglib.Phenomena.Presupposition.Bridge.SharvitCLOS
 import Linglib.Phenomena.Presupposition.ForgetPresuppositions
 import Linglib.Phenomena.Presupposition.Studies.White2014
 import Linglib.Phenomena.Modality.OutlookMarkers

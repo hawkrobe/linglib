@@ -1,6 +1,7 @@
 import Linglib.Core.Prominence
 import Linglib.Core.Logic.OT
 import Linglib.Phenomena.Case.Typology
+import Linglib.Theories.Syntax.Minimalism.Core.DependentCase
 
 /-!
 # @cite{aissen-2003}: Differential Object Marking @cite{aissen-2003}
@@ -349,5 +350,127 @@ theorem two_element_excludes_one : scale2Cands.length = 4 ∧ types2.length = 3 
 theorem ranking_counts :
     rankings2.length = 6 ∧ animRankings.length = 20 := by
   constructor <;> native_decide
+
+-- ============================================================================
+-- Part II: Dependent Case → DOM Pipeline
+-- ============================================================================
+
+open Minimalism
+open Phenomena.Case.Typology
+
+-- ============================================================================
+-- § Prominence-Annotated NPs
+-- ============================================================================
+
+/-- An NP enriched with referential prominence properties.
+
+    Structural case assignment (dependent case) is blind to these properties —
+    it cares only about c-command and lexical case. DOM then consults prominence
+    to decide overt realization. -/
+structure ProminentNP where
+  label : String
+  lexicalCase : Option CaseVal
+  animacy : AnimacyLevel
+  definiteness : DefinitenessLevel
+  deriving DecidableEq, BEq, Repr
+
+/-- Strip prominence, yielding the NP that the case algorithm sees. -/
+def ProminentNP.toNP (pnp : ProminentNP) : NPInDomain :=
+  ⟨pnp.label, pnp.lexicalCase⟩
+
+-- ============================================================================
+-- § Transitive Pipeline
+-- ============================================================================
+
+/-- A transitive clause: subject c-commands object. -/
+structure TransClause where
+  subject : ProminentNP
+  object  : ProminentNP
+  deriving DecidableEq, BEq, Repr
+
+/-- Run the dependent case algorithm on a transitive clause. -/
+def derivation (lang : CaseLanguageType) (tc : TransClause) : List CasedNP :=
+  assignCases lang [tc.subject.toNP, tc.object.toNP]
+
+/-- Abstract case assigned to the object. -/
+def objectCase (lang : CaseLanguageType) (tc : TransClause) : Option CaseVal :=
+  getCaseOf tc.object.label (derivation lang tc)
+
+/-- Whether the object receives overt case morphology.
+
+    Two conditions:
+    1. The dependent case algorithm assigns ACC (syntax).
+    2. The DOM profile marks this prominence cell (morphology). -/
+def objectOvert (lang : CaseLanguageType) (dom : DOMProfile)
+    (tc : TransClause) : Bool :=
+  objectCase lang tc == some .acc &&
+  dom.marks tc.object.animacy tc.object.definiteness
+
+-- ============================================================================
+-- § Standard Transitive Template
+-- ============================================================================
+
+/-- A standard transitive clause with a fixed subject (human pronoun)
+    and a variable-prominence object. Both lack lexical case. -/
+def mkTrans (a : AnimacyLevel) (d : DefinitenessLevel) : TransClause :=
+  { subject := ⟨"subj", none, .human, .personalPronoun⟩
+    object  := ⟨"obj",  none, a, d⟩ }
+
+-- ============================================================================
+-- § Layer 1 — Object Always Gets ACC
+-- ============================================================================
+
+/-- In accusative transitives, the object receives abstract ACC regardless
+    of its animacy or definiteness. Dependent case is prominence-blind. -/
+theorem object_always_acc :
+    AnimacyLevel.all.all (λ a =>
+      DefinitenessLevel.all.all (λ d =>
+        objectCase .accusative (mkTrans a d) == some CaseVal.acc)) = true := by
+  native_decide
+
+/-- The subject always gets NOM (unmarked case). -/
+theorem subject_always_nom :
+    AnimacyLevel.all.all (λ a =>
+      DefinitenessLevel.all.all (λ d =>
+        getCaseOf "subj" (derivation .accusative (mkTrans a d)) == some CaseVal.nom)) = true := by
+  native_decide
+
+-- ============================================================================
+-- § Layer 3 — OT Constrains the Pipeline
+-- ============================================================================
+
+/-- The overt marking profile produced by running the full pipeline
+    (dependent case + DOM filter). -/
+def overtProfile (lang : CaseLanguageType) (dom : DOMProfile) : DOMProfile :=
+  { name := dom.name ++ " (pipeline)", role := .P, channel := .flagging
+    marks := λ a d => objectOvert lang dom (mkTrans a d) }
+
+/-- Every OT-predicted animacy type, run through the full pipeline,
+    produces a monotone overt marking profile. -/
+theorem ot_pipeline_monotone :
+    animOptima.all (λ opts =>
+      opts.all (λ c =>
+        (overtProfile .accusative (animCandToDOM c)).isMonotone)) = true := by
+  native_decide
+
+/-- The pipeline preserves monotonicity for all attested DOM languages. -/
+theorem attested_pipeline_monotone :
+    allDOMProfiles.all (λ dom =>
+      (overtProfile .accusative dom).isMonotone) = true := by native_decide
+
+-- ============================================================================
+-- § End-to-End Summary
+-- ============================================================================
+
+/-- All 8 attested DOM profiles, run through the accusative case pipeline,
+    produce overt marking that is faithful to the DOM input AND monotone. -/
+theorem full_pipeline_faithful_and_monotone :
+    allDOMProfiles.all (λ dom =>
+      -- Faithful: pipeline output = DOM input
+      AnimacyLevel.all.all (λ a =>
+        DefinitenessLevel.all.all (λ d =>
+          (overtProfile .accusative dom).marks a d = dom.marks a d)) &&
+      -- Monotone: overt marking pattern is an upper set
+      (overtProfile .accusative dom).isMonotone) = true := by native_decide
 
 end Phenomena.Case.Studies.Aissen2003

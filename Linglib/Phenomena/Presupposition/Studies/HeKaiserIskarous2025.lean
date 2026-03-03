@@ -1,5 +1,13 @@
-/-
-# @cite{he-kaiser-iskarous-2025}: Sentence Polarity Asymmetries
+import Linglib.Core.Semantics.Proposition
+import Linglib.Theories.Semantics.Montague.Basic
+import Linglib.Theories.Semantics.Entailment.Polarity
+import Mathlib.Data.Rat.Defs
+import Mathlib.Data.Fintype.Basic
+import Mathlib.Data.FinEnum
+
+/-!
+# Sentence Polarity Asymmetries
+@cite{he-kaiser-iskarous-2025}
 
 Empirical data and domain types for modeling sentence polarity asymmetries
 with fuzzy interpretations in a possibly wonky world.
@@ -29,10 +37,6 @@ Part-whole relations (e.g., house-bathroom, classroom-stove):
 | funkyRSA | Combination of fuzzy + wonky |
 
 -/
-
-import Mathlib.Data.Rat.Defs
-import Mathlib.Data.Fintype.Basic
-import Mathlib.Data.FinEnum
 
 namespace Phenomena.Presupposition.Studies.HeKaiserIskarous2025
 
@@ -260,5 +264,182 @@ def asymmetryHypothesis1 : String :=
 def asymmetryHypothesis2 : String :=
   "Negation presupposes that its positive-polarity counterpart is " ++
   "relevant or prominent in the common ground, not the other way around."
+
+-- ============================================================================
+-- Part II: RSA Compositional Grounding
+-- ============================================================================
+
+/-- Simple sigmoid approximation using rational arithmetic. -/
+def sigmoidApprox (x : ℚ) (L k x0 c : ℚ) : ℚ :=
+  let threshold := if k > 0 then 1 / k else 1/10
+  if x < x0 - threshold then
+    c
+  else if x > x0 + threshold then
+    L + c
+  else
+    let slope := L / (2 * threshold)
+    let midpoint := c + L / 2
+    midpoint + slope * (x - x0)
+
+/-- Fuzzy interpretation for negative utterances.
+    [[u_neg]](s_neg) = n (constant)
+    [[u_neg]](s_pos) = 1 - n -/
+def fuzzyNegInterpretation (n : ℚ) : HKIState → ℚ
+  | .neg => n
+  | .pos => 1 - n
+
+/-- Fuzzy interpretation for positive utterances. -/
+def fuzzyPosInterpretation (p_pos : ℚ) (params : FuzzyParams) : HKIState → ℚ :=
+  let sig := sigmoidApprox p_pos params.L params.k params.x0 params.c
+  λ s => match s with
+    | .pos => sig
+    | .neg => 1 - sig
+
+/-- Fuzzy interpretation for null utterance (no information). -/
+def fuzzyNullInterpretation : HKIState → ℚ
+  | _ => 1
+
+/-- Combined fuzzy meaning function for fuzzyRSA. -/
+def fuzzyMeaning (cfg : HKIConfig) (u : HKIUtterance) (s : HKIState) : ℚ :=
+  match u with
+  | .uNeg => fuzzyNegInterpretation cfg.fuzzyParams.n s
+  | .uPos => fuzzyPosInterpretation cfg.prior.p_pos cfg.fuzzyParams s
+  | .uNull => fuzzyNullInterpretation s
+
+/-- World-conditioned prior for wonkyRSA. -/
+def worldConditionedPrior (cfg : HKIConfig) : WorldType → HKIState → ℚ
+  | .wonky, _ => 1/2
+  | .normal, s => cfg.prior.prob s
+
+/-- Goal projection for wonkyRSA. -/
+def wonkyGoalProject : WorldType → HKIState → HKIState → Bool
+  | _, s1, s2 => s1 == s2
+
+/-- Standard scenario has correct dimensions. -/
+theorem standard_dimensions :
+    allUtterances.length = 3 ∧
+    allStates.length = 2 :=
+  ⟨rfl, rfl⟩
+
+/-- wonkyRSA has 2 goals (normal, wonky). -/
+theorem wonky_dimensions :
+    allWorldTypes.length = 2 :=
+  rfl
+
+/-- Negative utterances have higher cost in our model. -/
+theorem neg_higher_cost :
+    utteranceCost .uNeg > utteranceCost .uPos := by
+  native_decide
+
+/-- fuzzyRSA with low prior: positive utterance becomes less reliable. -/
+theorem fuzzy_low_prior_effect :
+    fuzzyMeaning lowPriorConfig .uPos .pos <
+    fuzzyMeaning highPriorConfig .uPos .pos := by
+  native_decide
+
+/-- Negative interpretation is constant regardless of prior. -/
+theorem neg_interpretation_constant :
+    fuzzyMeaning lowPriorConfig .uNeg .neg =
+    fuzzyMeaning highPriorConfig .uNeg .neg :=
+  rfl
+
+/-- Map He et al.'s sentence polarity to compositional context polarity. -/
+def toContextPolarity : Polarity → Semantics.Entailment.Polarity.ContextPolarity
+  | .positive => .upward
+  | .negative => .downward
+  | .null => .upward
+
+/-- Cost aligns with UE/DE distinction: DE costs more. -/
+theorem cost_reflects_polarity :
+    utteranceCost .uPos < utteranceCost .uNeg := by
+  native_decide
+
+-- ============================================================================
+-- § Compositional Analysis of He et al. Sentences
+-- ============================================================================
+
+section CompositionalGrounding
+
+open Semantics.Montague
+
+/-- A simple model for part-whole relations. -/
+inductive PWEntity where
+  | house | classroom | bathroom | stove
+  deriving DecidableEq, BEq, Repr
+
+/-- Part-whole model. -/
+def pwModel : Model where
+  Entity := PWEntity
+  decEq := inferInstance
+
+/-- The "has" relation: which containers have which parts. -/
+def has_sem : pwModel.interpTy (.e ⇒ .e ⇒ .t) :=
+  λ part container => match container, part with
+    | .house, .bathroom => true
+    | .classroom, .stove => false
+    | _, _ => false
+
+/-- Positive sentence meaning: "A has B". -/
+def posMeaning (container part : PWEntity) : pwModel.interpTy .t :=
+  interpSVO pwModel container has_sem part
+
+/-- Negative sentence meaning: "A doesn't have B" = neg(has(A, B)). -/
+def negMeaning (container part : PWEntity) : pwModel.interpTy .t :=
+  neg (posMeaning container part)
+
+/-- Key theorem: negative meaning is compositionally derived via `neg`. -/
+theorem neg_is_compositional (container part : PWEntity) :
+    negMeaning container part = neg (posMeaning container part) := rfl
+
+theorem house_has_bathroom : posMeaning .house .bathroom = true := rfl
+theorem house_doesnt_have_bathroom : negMeaning .house .bathroom = false := rfl
+theorem classroom_doesnt_have_stove : negMeaning .classroom .stove = true := rfl
+
+open Semantics.Entailment.Polarity
+open Core.Proposition
+
+/-- Lift He et al. sentences to world-indexed propositions. -/
+def liftToWorlds (s : HKIState) : BProp HKIState :=
+  λ w => w == s
+
+/-- Negative sentence meaning as world-indexed proposition.
+    ⟦"A doesn't have B"⟧ = pnot(⟦"A has B"⟧) -/
+def negMeaningW : BProp HKIState :=
+  Decidable.pnot HKIState (liftToWorlds .pos)
+
+/-- Negation reverses entailment (DE property). -/
+theorem pnot_reverses_entailment_HKI (p q : BProp HKIState)
+    (h : ∀ w, p w = true → q w = true) :
+    ∀ w, Decidable.pnot HKIState q w = true → Decidable.pnot HKIState p w = true :=
+  Decidable.pnot_reverses_entailment p q h
+
+/-- The grounded polarity from Entailment.Polarity (uses `pnot`). -/
+def negSentencePolarity : GroundedPolarity := negationPolarity
+
+/-- Negative sentences have DE polarity (from Montague's proof). -/
+theorem neg_sentence_is_de :
+    negSentencePolarity.toContextPolarity = .downward := rfl
+
+/-- Positive sentences have UE polarity (identity = no negation). -/
+theorem pos_sentence_is_ue :
+    identityPolarity.toContextPolarity = .upward := rfl
+
+/-- Structural complexity: count of functional heads in the derivation. -/
+def structuralComplexity : HKIUtterance → ℕ
+  | .uNull => 0
+  | .uPos => 1
+  | .uNeg => 2
+
+/-- Utterance cost equals structural complexity. -/
+theorem cost_from_structure :
+    ∀ u : HKIUtterance, utteranceCost u = structuralComplexity u := by
+  intro u
+  cases u <;> rfl
+
+/-- Negation adds exactly one unit of complexity (the Neg functional head). -/
+theorem negation_adds_one_head :
+    structuralComplexity .uNeg = structuralComplexity .uPos + 1 := rfl
+
+end CompositionalGrounding
 
 end HeKaiserIskarous2025

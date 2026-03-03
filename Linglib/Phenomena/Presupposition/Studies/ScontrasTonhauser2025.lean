@@ -1,5 +1,9 @@
-/-
-# @cite{scontras-tonhauser-2025}: Projection Experimental Data
+import Linglib.Theories.Pragmatics.RSA.Implementations.ScontrasTonhauser2025
+import Linglib.Core.Agent.BToM
+
+/-!
+# Projection Experimental Data
+@cite{scontras-tonhauser-2025}
 
 Empirical findings from "Projection without lexically-specified presupposition:
 A model for know" (SuB 29).
@@ -74,5 +78,48 @@ def directionCorrect : Hypothesis → Bool
 example : directionCorrect .utterance = true := by native_decide
 example : directionCorrect .prior = true := by native_decide
 example : directionCorrect .qud = true := by native_decide
+
+-- ============================================================================
+-- Part II: BToM Theoretical Connection
+-- ============================================================================
+
+open RSA.ScontrasTonhauser2025
+open Core.BToM
+
+/-- The model's BeliefState is a mental state in BToM's ontology. -/
+theorem beliefState_is_mental : beliefStateCategory = LatentCategory.mental := rfl
+
+/-- The model's QUD is a shared state in BToM's ontology. -/
+theorem qud_is_shared : qudCategory = LatentCategory.shared := rfl
+
+/-- In "know" worlds (BEL ∧ C), C always holds. -/
+theorem know_worlds_entail_c : ∀ w : WorldState,
+    literalMeaning .knowPos w = true → w.c = true :=
+  know_entails_c
+
+/-- "think" worlds do NOT entail C. -/
+theorem think_worlds_not_entail_c : ∃ w : WorldState,
+    literalMeaning .thinkPos w = true ∧ w.c = false :=
+  think_not_entails_c
+
+/-- Exactly 3 of 9 belief states assume C (indicator = 1). -/
+theorem three_of_nine_assume_c :
+    (List.filter (fun bs => assumesC bs) allBeliefStates).length = 3 := by
+  native_decide
+
+/-- The remaining 6 belief states do not assume C (indicator = 0). -/
+theorem six_of_nine_not_assume_c :
+    (List.filter (fun bs => !assumesC bs) allBeliefStates).length = 6 := by
+  native_decide
+
+/-- The empirical utterance effect direction (know > think) matches the model. -/
+theorem utterance_effect_direction_matches :
+    directionCorrect .utterance = true := by
+  native_decide
+
+/-- The empirical QUD effect direction (BEL? > C?) matches the model. -/
+theorem qud_effect_direction_matches :
+    directionCorrect .qud = true := by
+  native_decide
 
 end Phenomena.Presupposition.Studies.ScontrasTonhauser2025

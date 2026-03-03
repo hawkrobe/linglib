@@ -1,8 +1,9 @@
 import Linglib.Core.Case.Basic
 import Linglib.Theories.Semantics.Lexical.Verb.Aspect
+import Linglib.Core.Lexical.MorphRule
 
 /-!
-# Finnish Partitive–Aspect Bridge @cite{karlsson-2017}
+# Finnish Case System @cite{karlsson-2017}
 @cite{kiparsky-1998} @cite{krifka-1989} @cite{krifka-1992}
 
 The Finnish partitive case is the primary formal link between case marking
@@ -33,7 +34,6 @@ telicity. The case morphology makes this composition visible.
 
 namespace Phenomena.Case.Studies.Karlsson2017
 
-open Core (Case)
 open Semantics.Lexical.Verb.Aspect (Telicity)
 
 -- ============================================================================
@@ -42,7 +42,7 @@ open Semantics.Lexical.Verb.Aspect (Telicity)
 
 /-- The case of the Finnish direct object maps to VP telicity.
     Accusative/genitive → telic; partitive → atelic. -/
-def objectCaseToTelicity : Case → Option Telicity
+def objectCaseToTelicity : Core.Case → Option Telicity
   | .acc | .gen => some .telic     -- bounded object → telic VP
   | .part      => some .atelic    -- unbounded object → atelic VP
   | _          => none            -- not an object case
@@ -61,7 +61,7 @@ inductive PartitiveLicensor where
 structure PartitiveDatum where
   finnish : String
   gloss : String
-  objectCase : Case
+  objectCase : Core.Case
   licensor : Option PartitiveLicensor
   vpTelicity : Telicity
   deriving Repr, BEq
@@ -140,5 +140,79 @@ theorem accusative_implies_telic :
 theorem partitive_has_licensor :
     (allData.filter (·.objectCase == .part)).all
       (fun d => d.licensor.isSome) = true := by native_decide
+
+-- ============================================================================
+-- Part II: Suffix Order vs. Bybee's Relevance Hierarchy
+-- ============================================================================
+
+open Core.Morphology (MorphCategory respectsRelevanceHierarchy)
+
+-- ============================================================================
+-- § 5: Finnish Nominal Suffix Slots
+-- ============================================================================
+
+/-- A morpheme slot in Finnish nominal morphology. -/
+inductive NominalSlot where
+  | stem
+  | number      -- plural marker -i-, -j-
+  | case_       -- 15 case suffixes
+  | possessive  -- -ni, -si, -nsA, -mme, -nne
+  | clitic      -- -kin, -kAAn, -pA, -hAn
+  deriving DecidableEq, BEq, Repr
+
+/-- Finnish nominal suffix order (Karlsson §7.1). -/
+def finnishNominalOrder : List NominalSlot :=
+  [.stem, .number, .case_, .possessive, .clitic]
+
+-- ============================================================================
+-- § 6: Mapping to Bybee Categories
+-- ============================================================================
+
+/-- Map nominal slots to Bybee `MorphCategory` where possible.
+    Case has no Bybee equivalent — this is the gap. -/
+def slotToBybeeCat : NominalSlot → Option MorphCategory
+  | .stem       => some .stem
+  | .number     => some .number
+  | .case_      => none          -- no Bybee category for case
+  | .possessive => some .agreement
+  | .clitic     => none          -- clitics are outside Bybee's scope
+
+/-- The Bybee-mappable subset of Finnish nominal slots, in suffix order. -/
+def bybeeSlots : List MorphCategory :=
+  finnishNominalOrder.filterMap slotToBybeeCat
+
+-- ============================================================================
+-- § 7: Suffix Order Verification
+-- ============================================================================
+
+/-- Finnish nominal morphology has exactly 5 suffix slots. -/
+theorem five_slots : finnishNominalOrder.length = 5 := by native_decide
+
+/-- Only 3 of 5 nominal slots have Bybee equivalents (stem, number, agreement). -/
+theorem three_bybee_mappable : bybeeSlots.length = 3 := by native_decide
+
+/-- The Bybee-mappable slots are: stem, number, agreement. -/
+theorem bybee_slots_are :
+    bybeeSlots = [.stem, .number, .agreement] := by native_decide
+
+/-- The Bybee-mappable nominal slots respect the relevance hierarchy:
+    stem (0) < number (3) < agreement (8). -/
+theorem nominal_respects_bybee :
+    respectsRelevanceHierarchy bybeeSlots = true := by native_decide
+
+/-- Case has no Bybee category — this is the gap that Finnish nominal
+    morphology reveals in Bybee's verb-centric hierarchy. -/
+theorem case_no_bybee_category :
+    slotToBybeeCat .case_ = none := rfl
+
+/-- Clitic is also outside Bybee's scope. -/
+theorem clitic_no_bybee_category :
+    slotToBybeeCat .clitic = none := rfl
+
+/-- Number (rank 3) is more stem-relevant than possessive agreement (rank 8),
+    consistent with number appearing closer to the stem in Finnish. -/
+theorem number_closer_than_agreement :
+    MorphCategory.relevanceRank .number <
+    MorphCategory.relevanceRank .agreement := by decide
 
 end Phenomena.Case.Studies.Karlsson2017

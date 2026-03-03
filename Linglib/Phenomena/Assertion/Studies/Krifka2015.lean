@@ -1,7 +1,8 @@
 import Linglib.Theories.Pragmatics.Assertion.Krifka
+import Linglib.Phenomena.Assertion.Basic
 
 /-!
-# Krifka Bridge: Commitment Space Development (CSD) Tests
+# Commitment Space Development
 @cite{krifka-2015}
 
 Worked examples exercising the tree-based commitment space operations
@@ -257,5 +258,100 @@ theorem matching_tag_accept_eq_assert :
     matchingTagState.acceptContinuation.space.root.all (· .noRain) =
     (s₀.assert isRaining).space.root.all (· .noRain) :=
   ⟨rfl, rfl⟩
+
+-- ============================================================================
+-- Part II: Layered Clause Structure (JP/ComP)
+-- ============================================================================
+
+open Phenomena.Assertion
+
+-- ============================================================================
+-- § 8: Hedges as JP Modifiers
+-- ============================================================================
+
+/-- A hedge modifies the JP layer (epistemic status) to `weak`.
+
+    "I think p" = assertion with `epistemicStatus :=.weak`.
+    The TP content (p) is unchanged; only the JP layer is modified. -/
+def hedgeAsJP {W : Type*} (la : LayeredAssertion W) : LayeredAssertion W :=
+  { la with epistemicStatus := .weak }
+
+/-- Hedging preserves content (TP is untouched by JP modification). -/
+theorem hedge_preserves_content {W : Type*} (la : LayeredAssertion W) :
+    (hedgeAsJP la).content = la.content := rfl
+
+/-- Hedging reduces epistemic status to weak. -/
+theorem hedge_weakens {W : Type*} (la : LayeredAssertion W) :
+    (hedgeAsJP la).epistemicStatus = .weak := rfl
+
+/-- Hedging does not affect commitment strength. -/
+theorem hedge_preserves_commitment {W : Type*} (la : LayeredAssertion W) :
+    (hedgeAsJP la).commitmentStrength = la.commitmentStrength := rfl
+
+-- ============================================================================
+-- § 9: Oaths as ComP Modifiers
+-- ============================================================================
+
+/-- An oath modifies the ComP layer (commitment strength) to `strong`.
+
+    "I swear p" = assertion with `commitmentStrength :=.strong`.
+    The TP content (p) is unchanged; only the ComP layer is modified. -/
+def oathAsComP {W : Type*} (la : LayeredAssertion W) : LayeredAssertion W :=
+  { la with commitmentStrength := .strong }
+
+/-- Oaths preserve content (TP is untouched by ComP modification). -/
+theorem oath_preserves_content {W : Type*} (la : LayeredAssertion W) :
+    (oathAsComP la).content = la.content := rfl
+
+/-- Oaths increase commitment strength to strong. -/
+theorem oath_strengthens {W : Type*} (la : LayeredAssertion W) :
+    (oathAsComP la).commitmentStrength = .strong := rfl
+
+/-- Oaths do not affect epistemic status. -/
+theorem oath_preserves_epistemic {W : Type*} (la : LayeredAssertion W) :
+    (oathAsComP la).epistemicStatus = la.epistemicStatus := rfl
+
+-- ============================================================================
+-- § 10: JP/ComP Independence
+-- ============================================================================
+
+/-- JP and ComP can co-occur: hedging + oath on the same assertion.
+
+    "I think I swear p": epistemicStatus = weak, commitmentStrength = strong.
+    "I swear I think p": same result (layers are independent). -/
+def hedgedOath {W : Type*} (la : LayeredAssertion W) : LayeredAssertion W :=
+  { la with epistemicStatus := .weak, commitmentStrength := .strong }
+
+/-- Order doesn't matter: hedge(oath(la)) = oath(hedge(la)). -/
+theorem jp_comp_commute {W : Type*} (la : LayeredAssertion W) :
+    hedgeAsJP (oathAsComP la) = oathAsComP (hedgeAsJP la) := rfl
+
+/-- Hedged oath is weak epistemic + strong commitment. -/
+theorem hedged_oath_profile {W : Type*} (la : LayeredAssertion W) :
+    (hedgedOath la).epistemicStatus = .weak ∧
+    (hedgedOath la).commitmentStrength = .strong :=
+  ⟨rfl, rfl⟩
+
+/-- Both modifications preserve TP content. -/
+theorem both_preserve_content {W : Type*} (la : LayeredAssertion W) :
+    (hedgedOath la).content = la.content := rfl
+
+-- ============================================================================
+-- § 11: Layered Clause Structure ↔ Data
+-- ============================================================================
+
+/-- Hedge data matches JP modification:
+    All canonical hedges reduce commitment, and JP → weak is the mechanism. -/
+theorem hedge_data_bridge :
+    hedgeExamples.all (·.reducesCommitment) = true ∧
+    CommitmentStrength.weak.rank < CommitmentStrength.standard.rank :=
+  ⟨rfl, by decide⟩
+
+/-- Oath data matches ComP modification:
+    All canonical oaths increase commitment, and ComP → strong is the mechanism. -/
+theorem oath_data_bridge :
+    oathExamples.all (·.increasesCommitment) = true ∧
+    CommitmentStrength.strong.rank > CommitmentStrength.standard.rank :=
+  ⟨rfl, by decide⟩
 
 end Phenomena.Assertion.Studies.Krifka2015
