@@ -1,3 +1,8 @@
+import Linglib.Theories.Semantics.Conditionals.Iatridou
+import Linglib.Theories.Semantics.Tense.Deal
+import Linglib.Core.Context.Tower
+import Linglib.Core.Context.Shifts
+
 /-!
 # @cite{iatridou-2000} — Morphological Data @cite{iatridou-2000}
 
@@ -262,5 +267,165 @@ theorem pastCF_has_more_layers :
     greek_pastCF.pastLayers > greek_presCF.pastLayers ∧
     french_pastCF.pastLayers > french_presCF.pastLayers := by
   decide
+
+-- ════════════════════════════════════════════════════════════════
+-- § Bridge: ExclF, Classification, Deal
+-- ════════════════════════════════════════════════════════════════
+
+open Semantics.Conditionals.Iatridou
+open Semantics.Tense.Deal
+
+/-- English FLV: 1 past layer = 1 ExclF (FLV). -/
+theorem english_flv_layers :
+    english_flv.pastLayers = CounterfactualType.flv.exclFCount := rfl
+
+/-- English PresCF: 1 past layer = 1 ExclF (PresCF). -/
+theorem english_presCF_layers :
+    english_presCF.pastLayers = CounterfactualType.presCF.exclFCount := rfl
+
+/-- English PastCF: 2 past layers = 2 ExclFs (PastCF). -/
+theorem english_pastCF_layers :
+    english_pastCF.pastLayers = CounterfactualType.pastCF.exclFCount := rfl
+
+/-- Greek FLV: 1 past layer = 1 ExclF (FLV). -/
+theorem greek_flv_layers :
+    greek_flv.pastLayers = CounterfactualType.flv.exclFCount := rfl
+
+/-- Greek PresCF: 1 past layer = 1 ExclF (PresCF). -/
+theorem greek_presCF_layers :
+    greek_presCF.pastLayers = CounterfactualType.presCF.exclFCount := rfl
+
+/-- Greek PastCF: 2 past layers = 2 ExclFs (PastCF). -/
+theorem greek_pastCF_layers :
+    greek_pastCF.pastLayers = CounterfactualType.pastCF.exclFCount := rfl
+
+/-- French FLV: 1 past layer = 1 ExclF (FLV). -/
+theorem french_flv_layers :
+    french_flv.pastLayers = CounterfactualType.flv.exclFCount := rfl
+
+/-- French PresCF: 1 past layer = 1 ExclF (PresCF). -/
+theorem french_presCF_layers :
+    french_presCF.pastLayers = CounterfactualType.presCF.exclFCount := rfl
+
+/-- French PastCF: 2 past layers = 2 ExclFs (PastCF). -/
+theorem french_pastCF_layers :
+    french_pastCF.pastLayers = CounterfactualType.pastCF.exclFCount := rfl
+
+/-- English: no past subjunctive, no CF subjunctive required. -/
+theorem english_subj_gen :
+    iatridouSubjGeneralization english_subj.hasPastSubjunctive
+      english_subj.cfRequiresSubjunctive := rfl
+
+/-- Greek: no past subjunctive, no CF subjunctive required. -/
+theorem greek_subj_gen :
+    iatridouSubjGeneralization greek_subj.hasPastSubjunctive
+      greek_subj.cfRequiresSubjunctive := rfl
+
+/-- French: no productive past subjunctive, no CF subjunctive required. -/
+theorem french_subj_gen :
+    iatridouSubjGeneralization french_subj.hasPastSubjunctive
+      french_subj.cfRequiresSubjunctive := rfl
+
+/-- Italian: has past subjunctive, CF requires subjunctive. -/
+theorem italian_subj_gen :
+    iatridouSubjGeneralization italian_subj.hasPastSubjunctive
+      italian_subj.cfRequiresSubjunctive := rfl
+
+/-- "If he knew French" (ILP + 1 modal ExclF) → PresCF. -/
+theorem knew_french_is_presCF :
+    classifyCounterfactual true false .ilp = some .presCF := rfl
+
+/-- "If he were to leave" (telic + 1 modal ExclF) → FLV. -/
+theorem leave_tomorrow_is_flv :
+    classifyCounterfactual true false .telic = some .flv := rfl
+
+/-- "If he had left" (telic + 2 ExclFs) → PastCF. -/
+theorem had_left_is_pastCF :
+    classifyCounterfactual true true .telic = some .pastCF := rfl
+
+/-- "If he were sick" (stative + 1 modal ExclF) → PresCF. -/
+theorem were_sick_is_presCF :
+    classifyCounterfactual true false .stative = some .presCF := rfl
+
+/-- "If he had known" (ILP + 2 ExclFs) → PastCF. -/
+theorem had_known_is_pastCF :
+    classifyCounterfactual true true .ilp = some .pastCF := rfl
+
+/-- PastCF is exempt from ULC via Deal's refined ULC. -/
+theorem pastCF_exempt_from_ulc {T : Type*} [LE T] (R E : T) :
+    refinedULC .counterfactual R E :=
+  trivial
+
+-- ════════════════════════════════════════════════════════════════
+-- § ContextTower Bridge
+-- ════════════════════════════════════════════════════════════════
+
+open Core.Context
+open Semantics.Mood (subjShift)
+
+abbrev CFCtx := KContext Bool Unit Unit ℤ
+
+/-- The actual context: world = true (actual), time = 0 (now). -/
+def actualCtx : CFCtx :=
+  { world := true, agent := (), addressee := (), time := 0, position := () }
+
+/-- Root tower: the actual speech-act context, depth 0. -/
+def actualTower : ContextTower CFCtx := ContextTower.root actualCtx
+
+/-- FLV/PresCF: one subjunctive shift to a counterfactual world.
+    The counterfactual world (false) differs from the actual world (true). -/
+def presCFTower : ContextTower CFCtx :=
+  actualTower.push (subjShift false 0)
+
+/-- The tower has depth 1 — matching 1 past morpheme layer. -/
+theorem presCF_depth : presCFTower.depth = 1 := rfl
+
+/-- Modal ExclF holds: counterfactual world ≠ actual world. -/
+theorem presCF_modal_exclF :
+    ExclF .modal presCFTower := by
+  unfold ExclF presCFTower actualTower actualCtx subjShift; decide
+
+/-- Temporal ExclF does NOT hold: time is unchanged (0 = 0). -/
+theorem presCF_no_temporal_exclF :
+    ¬ ExclF .temporal presCFTower := by
+  unfold ExclF presCFTower actualTower actualCtx subjShift; decide
+
+/-- Tower depth (1) matches English FLV past layers (1). -/
+theorem flv_tower_depth_matches_data :
+    presCFTower.depth = english_flv.pastLayers := rfl
+
+/-- Tower depth (1) matches English PresCF past layers (1). -/
+theorem presCF_tower_depth_matches_data :
+    presCFTower.depth = english_presCF.pastLayers := rfl
+
+/-- PastCF: two shifts — one modal (subjunctive, world shift) and one
+    temporal (additional past layer, time shift to -5). -/
+def pastCFTower : ContextTower CFCtx :=
+  presCFTower.push (temporalShift (-5))
+
+/-- Tower depth is 2 — matching 2 past morpheme layers. -/
+theorem pastCF_depth : pastCFTower.depth = 2 := rfl
+
+/-- Modal ExclF holds: counterfactual world ≠ actual world. -/
+theorem pastCF_modal_exclF :
+    ExclF .modal pastCFTower := by
+  unfold ExclF pastCFTower presCFTower actualTower actualCtx subjShift; decide
+
+/-- Temporal ExclF holds: shifted time (-5) ≠ speech time (0). -/
+theorem pastCF_temporal_exclF :
+    ExclF .temporal pastCFTower := by
+  unfold ExclF pastCFTower presCFTower actualTower actualCtx subjShift temporalShift; decide
+
+/-- Tower depth (2) matches English PastCF past layers (2). -/
+theorem pastCF_tower_depth_matches_data :
+    pastCFTower.depth = english_pastCF.pastLayers := rfl
+
+/-- Tower depth (2) matches Greek PastCF past layers (2). -/
+theorem pastCF_tower_depth_matches_greek :
+    pastCFTower.depth = greek_pastCF.pastLayers := rfl
+
+/-- Even in a PastCF tower (depth 2), the origin context is preserved. -/
+theorem pastCF_origin_preserved :
+    pastCFTower.origin = actualCtx := rfl
 
 end Phenomena.Conditionals.Studies.Iatridou2000

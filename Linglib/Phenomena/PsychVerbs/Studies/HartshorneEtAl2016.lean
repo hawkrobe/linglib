@@ -1,4 +1,6 @@
 import Linglib.Phenomena.PsychVerbs.Data
+import Linglib.Theories.Semantics.Causation.PsychCausation
+import Linglib.Theories.Semantics.Causation.PsychCausalLink
 
 /-!
 # @cite{hartshorne-etal-2016} — Empirical Data
@@ -280,5 +282,108 @@ theorem class_type_alignment :
       | .classII => d.semanticType == .causedEpisode
       | .classIII => true  -- not tested
     ) = true := by native_decide
+
+-- ════════════════════════════════════════════════════
+-- § Bridge: SemanticType ↔ CausalSource
+-- ════════════════════════════════════════════════════
+
+open Semantics.Causation.PsychCausation (CausalSource)
+open Semantics.Causation.PsychCausalLink (PsychCausalLink eventiveLink maintenanceLink
+  CausalSource.toLink)
+
+/-- Map Hartshorne et al.'s semantic type to Kim's CausalSource.
+    Habitual attitudes = internal (mental representation maintains state);
+    caused episodes = external (percept triggers state change). -/
+def semanticTypeToCausalSource : SemanticType → CausalSource
+  | .habitualAttitude => .internal
+  | .causedEpisode => .external
+
+/-- Map Kim's CausalSource back to semantic type. -/
+def causalSourceToSemanticType : CausalSource → SemanticType
+  | .internal => .habitualAttitude
+  | .external => .causedEpisode
+
+/-- Roundtrip: SemanticType → CausalSource → SemanticType. -/
+theorem semanticType_source_roundtrip (t : SemanticType) :
+    causalSourceToSemanticType (semanticTypeToCausalSource t) = t := by
+  cases t <;> rfl
+
+/-- Roundtrip: CausalSource → SemanticType → CausalSource. -/
+theorem source_semanticType_roundtrip (s : CausalSource) :
+    semanticTypeToCausalSource (causalSourceToSemanticType s) = s := by
+  cases s <;> rfl
+
+-- ════════════════════════════════════════════════════
+-- § Deriving Empirical Properties from CausalSource
+-- ════════════════════════════════════════════════════
+
+/-- Derive the expected empirical profile from CausalSource.
+
+    - External: short duration (episode), causal stimulus, involves BECOME
+    - Internal: long duration (attitude), no causal stimulus, no BECOME -/
+def causalSourceToProfile : CausalSource → SemanticTypeProfile
+  | .external => episodeProfile
+  | .internal => attitudeProfile
+
+/-- Duration: internal source → longer duration (enduring attitude). -/
+theorem internal_longer_duration :
+    (causalSourceToProfile .internal).longerDuration = true := rfl
+
+/-- Duration: external source → shorter duration (transient episode). -/
+theorem external_shorter_duration :
+    (causalSourceToProfile .external).longerDuration = false := rfl
+
+/-- Causation: external source → stimulus is causal. -/
+theorem external_stimulus_causal :
+    (causalSourceToProfile .external).stimulusCausal = true := rfl
+
+/-- Causation: internal source → stimulus not causal. -/
+theorem internal_stimulus_not_causal :
+    (causalSourceToProfile .internal).stimulusCausal = false := rfl
+
+/-- Transition: external source → involves BECOME. -/
+theorem external_involves_become :
+    (causalSourceToProfile .external).involvesBecome = true := rfl
+
+/-- Transition: internal source → no BECOME. -/
+theorem internal_no_become :
+    (causalSourceToProfile .internal).involvesBecome = false := rfl
+
+/-- The two causal sources predict opposite empirical profiles. -/
+theorem sources_differ_on_all :
+    causalSourceToProfile .external ≠ causalSourceToProfile .internal := by
+  decide
+
+-- ════════════════════════════════════════════════════
+-- § Consistency with SemanticType.expectedProfile
+-- ════════════════════════════════════════════════════
+
+/-- The profile derived via CausalSource agrees with the profile derived
+    directly from SemanticType. This is non-trivial: we defined the two
+    mappings independently and they agree. -/
+theorem profile_agreement (t : SemanticType) :
+    causalSourceToProfile (semanticTypeToCausalSource t) =
+      t.expectedProfile := by
+  cases t <;> rfl
+
+-- ════════════════════════════════════════════════════
+-- § Temporal Predictions via PsychCausalLink
+-- ════════════════════════════════════════════════════
+
+/-- External source predicts transition (BECOME). -/
+theorem external_predicts_transition (Time : Type*) [LinearOrder Time] :
+    (CausalSource.toLink Time .external).involvesTransition = true := rfl
+
+/-- Internal source predicts no transition. -/
+theorem internal_predicts_no_transition (Time : Type*) [LinearOrder Time] :
+    (CausalSource.toLink Time .internal).involvesTransition = false := rfl
+
+/-- Consistency: PsychCausalLink's transition prediction agrees with the
+    empirical profile derived from SemanticType.
+    Both are derived independently — the agreement is a genuine check. -/
+theorem transition_prediction_consistent (t : SemanticType) (Time : Type*) [LinearOrder Time] :
+    (CausalSource.toLink Time (semanticTypeToCausalSource t)).involvesTransition =
+      (causalSourceToProfile (semanticTypeToCausalSource t)).involvesBecome := by
+  cases t <;> rfl
 
 end Phenomena.PsychVerbs.Studies.HartshorneEtAl2016
