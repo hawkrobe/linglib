@@ -1,7 +1,4 @@
-import Linglib.Core.Empirical
 import Linglib.Theories.Semantics.Dynamic.Effects.Epistemic.Basic
-
-open Core.Empirical
 
 /-!
 # @cite{khoo-2015}: Modal Disagreements
@@ -9,13 +6,14 @@ open Core.Empirical
 Empirical data from Khoo's experiment on epistemic modal disagreements.
 The key finding: speakers reject might-claims (high rejection rating)
 without judging them false (low falsity rating). This dissociation
-between rejection and falsity judgments is predicted by @cite{rudin-2025}'s Neo-Stalnakerian Framework, which derives it from the fact that truth
+between rejection and falsity judgments is predicted by @cite{rudin-2025}'s
+Neo-Stalnakerian Framework, which derives it from the fact that truth
 depends on the *assertor's* information while rejection depends on the
 *rejector's* information.
 
 ## Experimental Design (§II)
 
-- 60 participants on Amazon Mechanical Turk
+- N = 60 participants on Amazon Mechanical Turk
 - 2 × 2 mixed design: between-subjects on response type (False vs
   Rejection), within-subjects on sentence type (Control vs Modal)
 - 7-point Likert scale (1 = completely disagree, 7 = completely agree)
@@ -24,26 +22,20 @@ depends on the *assertor's* information while rejection depends on the
 - False condition: "Do you agree that what [speaker] said is false?"
 - Rejection condition: "Would you respond by saying 'No,...'?"
 
-## Key Finding: The Difference Observation
+## Key Finding: The Difference Observation (footnote 13)
 
 When presented with **Modal**, ordinary speakers are strongly inclined to
 reject Smith's assertion (M = 5.03) but are also strongly inclined to
 *disagree* that what Smith said is false (M = 2.42). This dissociation
 is absent in **Control**, where rejection and falsity ratings are similar.
 
+The interaction is the core result: the rejection–falsity gap *reverses
+direction* between Modal (rejection ≫ falsity) and Control (falsity ≥
+rejection).
+
 -/
 
 namespace Phenomena.Modality.Studies.Khoo2015
-
-open Phenomena
-
-/-- Citation for this study. -/
-def citation : String :=
-  "Khoo, J. (2015). Modal Disagreements. Inquiry, 58(5), 511-534."
-
-/-- Likert measure (1-7 scale). -/
-def likertMeasure : MeasureSpec :=
-  { scale := .ordinal, task := .acceptabilityRating, unit := "Likert 1-7" }
 
 /-! ## Experimental Conditions -/
 
@@ -107,6 +99,14 @@ theorem modal_gap_large :
 /-- The rejection–falsity gap is small for control (< 1 point). -/
 theorem control_gap_small :
     meanRating ⟨.control, .false_⟩ - meanRating ⟨.control, .rejection⟩ < 1.0 := by native_decide
+
+/-- The interaction: the rejection–falsity gap reverses direction between
+    Modal and Control. For Modal, rejection exceeds falsity; for Control,
+    falsity exceeds rejection. This is Khoo's "Difference Observation." -/
+theorem interaction_reversal :
+    meanRating ⟨.modal, .rejection⟩ > meanRating ⟨.modal, .false_⟩ ∧
+    meanRating ⟨.control, .false_⟩ ≥ meanRating ⟨.control, .rejection⟩ := by
+  constructor <;> native_decide
 
 -- ============================================================================
 -- § Neo-Stalnakerian Framework Grounding
