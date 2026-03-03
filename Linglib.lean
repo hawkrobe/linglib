@@ -323,7 +323,7 @@ import Linglib.Phenomena.AuxiliaryVerbs.Selection
 import Linglib.Phenomena.AuxiliaryVerbs.SelectionBridge
 import Linglib.Phenomena.AuxiliaryVerbs.Typology
 import Linglib.Phenomena.Plurals.Studies.Charlow2021.Data
-import Linglib.Phenomena.Plurals.Studies.Charlow2021.CumulativeReadingsBridge
+import Linglib.Phenomena.Plurals.Studies.Charlow2021.CumulativeReadings
 import Linglib.Phenomena.TenseAspect.Studies.Cumming2026.Bridge
 import Linglib.Phenomena.TenseAspect.Studies.Lakoff1970.Data
 import Linglib.Phenomena.TenseAspect.Studies.Lakoff1970.Bridge
@@ -422,7 +422,6 @@ import Linglib.Phenomena.Comparison.CrossCategorial
 import Linglib.Phenomena.Comparison.Typology
 import Linglib.Phenomena.Comparison.TypologyBridge
 import Linglib.Phenomena.Comparison.Studies.Wellwood2015.Data
-import Linglib.Phenomena.Comparison.Studies.Wellwood2015.Bridge
 import Linglib.Phenomena.Nonliteral.Humor.Studies.KaoEtAl2016
 import Linglib.Phenomena.Nonliteral.Hyperbole.KaoEtAl2014
 import Linglib.Phenomena.Imperatives.Studies.SumersEtAl2023
@@ -547,7 +546,7 @@ import Linglib.Phenomena.Presupposition.Studies.Schlenker2009
 import Linglib.Phenomena.Presupposition.Studies.Heim1983
 import Linglib.Phenomena.Presupposition.Studies.RobertsSimons2024
 import Linglib.Phenomena.Presupposition.Studies.QingGoodmanLassiter2016
-import Linglib.Phenomena.Presupposition.Studies.TowerBridge
+import Linglib.Phenomena.Presupposition.Studies.TowerDerivation
 import Linglib.Phenomena.Presupposition.Studies.Heim1992
 import Linglib.Phenomena.Presupposition.ForgetPresuppositions
 import Linglib.Phenomena.Presupposition.Studies.White2014
@@ -612,7 +611,7 @@ import Linglib.Phenomena.TenseAspect.Studies.Krifka1998
 import Linglib.Phenomena.TenseAspect.Studies.SpatialTrace
 import Linglib.Phenomena.TenseAspect.Studies.Krifka1989
 import Linglib.Phenomena.TenseAspect.Studies.DimensionCoherence
-import Linglib.Phenomena.TenseAspect.Studies.CrossBridgeConsistency
+import Linglib.Phenomena.TenseAspect.Studies.AspectualConsistency
 import Linglib.Phenomena.TenseAspect.Studies.KennedyLevin2008
 import Linglib.Phenomena.TemporalConnectives.Compare
 import Linglib.Phenomena.TemporalConnectives.NegationData

@@ -1,3 +1,6 @@
+import Linglib.Theories.Semantics.Lexical.Measurement
+import Linglib.Theories.Semantics.Events.ThematicRoles
+
 /-!
 # @cite{wellwood-2015}: Empirical Data
 
@@ -311,5 +314,148 @@ def happyMorningDatum : StateModificationDatum :=
 def patientPlaygroundDatum : StateModificationDatum :=
   { adjective := "patient", modifier := "with Mary on the playground"
   , form := "patient with Mary on the playground" }
+
+-- ============================================================================
+-- § Theory–Data Bridge
+-- ============================================================================
+
+open Semantics.Lexical.Measurement
+open Semantics.Lexical.Verb.Aspect (AspectualProfile)
+
+/-- Map `LexCat` to `MereologicalStatus` using the theory's bridges. -/
+def lexCatToStatus : LexCat → MereologicalStatus
+  | .massNoun       => numberToStatus .mass
+  | .countNoun      => numberToStatus .sg
+  | .atelicVP       => telicityToStatus .atelic
+  | .telicVP        => telicityToStatus .telic
+  | .gradableAdj    => gradableToStatus
+  | .nonGradableAdj => nonGradableToStatus
+
+/-- The theory predicts: cumulative → felicitous with `much`. -/
+def statusPredictsFelicitous : MereologicalStatus → Bool
+  | .cumulative => true
+  | .quantized  => false
+
+-- Per-datum felicity verification
+
+theorem massNoun_felicity :
+    statusPredictsFelicitous (lexCatToStatus .massNoun) =
+      massNounDatum.felicitousWithMuch := rfl
+
+theorem countNoun_felicity :
+    statusPredictsFelicitous (lexCatToStatus .countNoun) =
+      countNounDatum.felicitousWithMuch := rfl
+
+theorem atelicVP_felicity :
+    statusPredictsFelicitous (lexCatToStatus .atelicVP) =
+      atelicVPDatum.felicitousWithMuch := rfl
+
+theorem telicVP_felicity :
+    statusPredictsFelicitous (lexCatToStatus .telicVP) =
+      telicVPDatum.felicitousWithMuch := rfl
+
+theorem gradableAdj_felicity :
+    statusPredictsFelicitous (lexCatToStatus .gradableAdj) =
+      gradableAdjDatum.felicitousWithMuch := rfl
+
+theorem nonGradableAdj_felicity :
+    statusPredictsFelicitous (lexCatToStatus .nonGradableAdj) =
+      nonGradableAdjDatum.felicitousWithMuch := rfl
+
+-- Cross-categorial parallel
+
+theorem massNoun_atelicVP_same_status :
+    lexCatToStatus .massNoun = lexCatToStatus .atelicVP := rfl
+
+theorem countNoun_telicVP_same_status :
+    lexCatToStatus .countNoun = lexCatToStatus .telicVP := rfl
+
+theorem gradableAdj_patterns_with_cum :
+    lexCatToStatus .gradableAdj = lexCatToStatus .massNoun := rfl
+
+theorem nonGradableAdj_patterns_with_qua :
+    lexCatToStatus .nonGradableAdj = lexCatToStatus .countNoun := rfl
+
+-- Grammar shift bridges
+
+theorem run_shift_via_telicize :
+    let p : AspectualProfile := Semantics.Lexical.Verb.Aspect.activityProfile
+    telicityToStatus p.telicity = .cumulative ∧
+    telicityToStatus p.telicize.telicity = .quantized :=
+  telicize_shifts_status _ rfl
+
+theorem build_shift_via_atelicize :
+    let p : AspectualProfile := Semantics.Lexical.Verb.Aspect.accomplishmentProfile
+    telicityToStatus p.telicity = .quantized ∧
+    telicityToStatus p.atelicize.telicity = .cumulative :=
+  atelicize_shifts_status _ rfl
+
+theorem rock_shift_status :
+    lexCatToStatus .massNoun = .cumulative ∧
+    lexCatToStatus .countNoun = .quantized := ⟨rfl, rfl⟩
+
+-- Boundedness bridge
+
+theorem massNoun_open_scale :
+    (lexCatToStatus .massNoun).toBoundedness = .open_ := rfl
+
+theorem countNoun_closed_scale :
+    (lexCatToStatus .countNoun).toBoundedness = .closed := rfl
+
+theorem atelicVP_open_scale :
+    (lexCatToStatus .atelicVP).toBoundedness = .open_ := rfl
+
+theorem telicVP_closed_scale :
+    (lexCatToStatus .telicVP).toBoundedness = .closed := rfl
+
+-- Dimension reversal bridges (§3.4)
+
+def measuredDomainRestricted : MeasuredDomain → Bool
+  | .state  => true
+  | .entity => false
+  | .event  => false
+
+theorem hotter_restricted :
+    measuredDomainRestricted hotterDatum.measuredDomain = hotterDatum.intensive := rfl
+
+theorem harder_restricted :
+    measuredDomainRestricted harderDatum.measuredDomain = harderDatum.intensive := rfl
+
+theorem moreCoffee_not_restricted :
+    measuredDomainRestricted moreCoffeeDatum.measuredDomain = moreCoffeeDatum.intensive := rfl
+
+theorem morePlastic_not_restricted :
+    measuredDomainRestricted morePlasticDatum.measuredDomain = morePlasticDatum.intensive := rfl
+
+theorem fuller_not_restricted :
+    measuredDomainRestricted fullerDatum.measuredDomain = fullerDatum.intensive := rfl
+
+theorem heavier_not_restricted :
+    measuredDomainRestricted heavierDatum.measuredDomain = heavierDatum.intensive := rfl
+
+theorem moreHeat_restricted :
+    measuredDomainRestricted moreHeatDatum.measuredDomain = moreHeatDatum.intensive := rfl
+
+theorem moreFirmness_restricted :
+    measuredDomainRestricted moreFirmnessDatum.measuredDomain = moreFirmnessDatum.intensive := rfl
+
+theorem spedUpMore_restricted :
+    measuredDomainRestricted spedUpMoreDatum.measuredDomain = spedUpMoreDatum.intensive := rfl
+
+theorem droveMore_not_restricted :
+    measuredDomainRestricted droveMoreDatum.measuredDomain = droveMoreDatum.intensive := rfl
+
+-- State modification bridge (§3.5)
+
+open Semantics.Events (Ev EvPred)
+open Semantics.Events.ThematicRoles (ThematicFrame EventModifier
+  modifiedStativeLogicalForm stativeLogicalForm modify modified_stative_is_pm)
+
+theorem state_mod_pm_bridge {Entity Time : Type*} [LE Time]
+    (P : EvPred Time) (frame : ThematicFrame Entity Time)
+    (x : Entity) (M : EventModifier Time) :
+    modifiedStativeLogicalForm P frame x M ↔
+      stativeLogicalForm (modify P M) frame x :=
+  modified_stative_is_pm P frame x M
 
 end Phenomena.Comparison.Wellwood2015

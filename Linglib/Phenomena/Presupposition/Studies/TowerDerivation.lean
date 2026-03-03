@@ -37,7 +37,7 @@ Phenomena.Presupposition.Basic (king example, factive verbs, projection patterns
 
 -/
 
-namespace Phenomena.Presupposition.Studies.TowerBridge
+namespace Phenomena.Presupposition.Studies.TowerDerivation
 
 open Core.Context
 open Semantics.Presupposition.LocalContext
@@ -202,4 +202,4 @@ theorem projection_pattern_summary :
     conjunctionPattern.projects = false ∧
     disjunctionPattern.projects = false := ⟨rfl, rfl, rfl, rfl⟩
 
-end Phenomena.Presupposition.Studies.TowerBridge
+end Phenomena.Presupposition.Studies.TowerDerivation

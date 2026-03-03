@@ -28,7 +28,7 @@ verifies that the *cross-cutting invariants* hold:
   Boundedness) converge at the same licensing prediction
 -/
 
-namespace Phenomena.TenseAspect.Studies.CrossBridgeConsistency
+namespace Phenomena.TenseAspect.Studies.AspectualConsistency
 
 open Fragments.English.Predicates.Verbal
 open Semantics.Lexical.Verb.Aspect (VendlerClass Telicity)
@@ -503,4 +503,4 @@ def daVendlerConsistent (v : VerbEntry) : Bool :=
 theorem all_verbs_da_vendler_consistent :
     allVerbs.all daVendlerConsistent = true := by native_decide
 
-end Phenomena.TenseAspect.Studies.CrossBridgeConsistency
+end Phenomena.TenseAspect.Studies.AspectualConsistency
