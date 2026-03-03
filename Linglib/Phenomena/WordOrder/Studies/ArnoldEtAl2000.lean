@@ -1,53 +1,61 @@
 import Linglib.Core.Discourse.InformationStructure
 import Linglib.Theories.Syntax.DependencyGrammar.Formal.DependencyLength
-import Linglib.Theories.Syntax.CCG.Core.Combinators
 
 /-!
 # Heaviness vs. Newness in Constituent Ordering
 @cite{arnold-wasow-losongco-ginstrom-2000}
 
-Two corpus studies (Switchboard) disentangle two confounded predictors of
-English constituent ordering:
+A corpus analysis and an elicitation experiment disentangle two confounded
+predictors of English constituent ordering:
 
-1. **Heaviness** — structural complexity, measured by word count
-2. **Newness** — discourse status: given (mentioned in prior discourse)
-   vs. new (not previously mentioned)
+1. **Heaviness** — structural complexity, measured by relative word count
+2. **Newness** — discourse status: given/inferable vs. new
 
 These factors are naturally confounded: new referents require more descriptive
 material, so they tend to be heavier. Arnold et al. use logistic regression
-to show that in the **dative alternation**, both weight and newness independently
-predict construction choice; in **NP shift** (particle placement), only weight
-is significant.
+to show that in **both** constructions studied — dative alternation and heavy
+NP shift — both weight and newness independently predict construction choice.
+
+## Studies
+
+- **Corpus analysis** (§2): Aligned-Hansard corpus (Canadian parliament debates).
+  Examines dative alternation (verb *give*, N=269) and heavy NP shift
+  (*bring...to* N=223, *take...into account* N=167). Both heaviness and newness
+  significantly predict ordering in both constructions; no interactions.
+
+- **Give experiment** (§3): Elicitation experiment, 48 participants (24 pairs),
+  Stanford community. Dative alternation only (*give*), N=1684 instructions
+  post-exclusion. Both factors significant, plus a significant interaction:
+  heaviness has the largest effect when both constituents share newness status.
 
 ## Constructions
 
 - **Double Object (DO)**: V Recipient Theme — "give Mary the book"
 - **Prepositional Dative (PD)**: V Theme to-Recipient — "give the book to Mary"
-- **Shifted**: V Particle NP — "pick up the heavy box"
-- **Unshifted**: V NP Particle — "pick the box up"
+- **Nonshifted (HNPS)**: V DO PP — "bring the news to the committee"
+- **Shifted (HNPS)**: V PP DO — "bring to the committee the news that..."
 
 The "heavy/new last" principle: speakers place heavier and newer constituents
-in later position. DO puts the theme last; PD puts the recipient last. Shift
-puts the NP after the particle (later). In all cases, the later position is
-the one that attracts heavy and/or new material.
+later. In DA, DO puts the theme last; PD puts the recipient last. In HNPS,
+shifting puts the direct object after the PP (later position).
 
-## Data
+## Central Finding
 
-- Study 1: Dative alternation, N = 637 (Switchboard corpus)
-- Study 2: NP shift in particle constructions, N = 307 (Switchboard corpus)
-- Mean NP lengths from Table 1 of the paper
-- All length values × 100; proportions × 1000 (permille)
+Both heaviness and newness independently contribute to ordering in both
+constructions. Neither factor can be reduced to the other. The interaction
+between them (significant only in the experiment) shows they function as
+competing constraints: each factor's effect is larger when the other is
+less constraining.
 
 ## Bridges
 
-- `Core.InformationStructure.DiscourseStatus`: Arnold et al.'s given/new
-  distinction maps to `.given` and `.new`. Their classification is coarser
-  than @cite{kratzer-selkirk-2020}: it conflates K&S's unmarked "new" with
-  [FoC]-marked "focused" into a single "new" category.
+- `Core.InformationStructure.DiscourseStatus`: Arnold et al. collapse
+  @cite{prince-1981}'s three-way given/inferable/new into two categories.
+  Their "given" (given + inferable) is coarser than
+  @cite{kratzer-selkirk-2020}'s partition.
 - `DependencyLength.lean`: the "heavy last" effect is DLM's short-before-long
-  (Behaghel's Gesetz der wachsenden Glieder)
-- `Phenomena.ArgumentStructure.DativeAlternation`: records both frames as
-  grammatical — the precondition for this ordering study
+  (Behaghel's Gesetz der wachsenden Glieder). But DLM cannot model the
+  independent newness effect that Arnold et al. demonstrate.
 -/
 
 namespace Phenomena.WordOrder.Studies.ArnoldEtAl2000
@@ -55,145 +63,322 @@ namespace Phenomena.WordOrder.Studies.ArnoldEtAl2000
 open Core.InformationStructure
 
 -- ============================================================================
--- §1: Study 1 — Dative Alternation (Switchboard)
+-- §1: Corpus Analysis — Aligned-Hansard (§2 of paper)
 -- ============================================================================
 
-def dative_nDO : Nat := 323
-def dative_nPD : Nat := 314
-def dative_n   : Nat := 637
+/-- Constructions studied in the corpus analysis. -/
+inductive Construction where
+  /-- Dative alternation with "give": DO (V Rec Theme) vs. PD (V Theme to-Rec). -/
+  | dativeAlternation
+  /-- Heavy NP shift: nonshifted (V DO PP) vs. shifted (V PP DO).
+      Uses "bring...to" and "take...into account." -/
+  | heavyNPShift
+  deriving DecidableEq, BEq, Repr
 
-theorem dative_total : dative_nDO + dative_nPD = dative_n := by native_decide
+/-- Corpus verb token counts (Table 1). -/
+structure VerbData where
+  verb : String
+  construction : Construction
+  n : Nat
+  deriving Repr
 
-/-- Neither frame exceeds 51% — the alternation is a genuine choice,
-    not a strong default with rare exceptions. -/
-theorem dative_genuine_alternation :
-    dative_nDO * 1000 / dative_n ≤ 510 ∧
-    dative_nPD * 1000 / dative_n ≤ 510 := by native_decide
+def bringTo : VerbData :=
+  { verb := "bring...to", construction := .heavyNPShift, n := 223 }
 
--- Table 1: Mean NP length by construction and position
+def takeIntoAccount : VerbData :=
+  { verb := "take...into account", construction := .heavyNPShift, n := 167 }
 
-/-- Mean NP length (× 100) in first vs. second postverbal position. -/
-structure PositionLengths where
+def giveCorpus : VerbData :=
+  { verb := "give", construction := .dativeAlternation, n := 269 }
+
+/-- Total corpus examples: 659 (Table 1). -/
+theorem corpus_total :
+    bringTo.n + takeIntoAccount.n + giveCorpus.n = 659 := by native_decide
+
+/-- HNPS subcorpus: 390 examples. -/
+theorem hnps_total :
+    bringTo.n + takeIntoAccount.n = 390 := by native_decide
+
+-- ============================================================================
+-- §2: Heaviness Categories and Cell Sizes
+-- ============================================================================
+
+/-- Heaviness categories for dative alternation (Table 2).
+    Measured as relative length: theme NP length − goal NP length. -/
+inductive DAHeaviness where
+  /-- Theme shorter: theme − goal ≤ −2 -/
+  | themeShorter
+  /-- Theme ≈ goal: theme − goal between −1 and 1 -/
+  | themeEqualGoal
+  /-- Theme longer: theme − goal ≥ 2 -/
+  | themeLonger
+  deriving DecidableEq, BEq, Repr
+
+/-- Heaviness categories for heavy NP shift (Table 3).
+    Measured as relative length: DO length − PP length. -/
+inductive HNPSHeaviness where
+  /-- DO ≪ PP: DO − PP ≤ −4 -/
+  | doMuchShorter
+  /-- DO < PP: DO − PP between −3 and −1 -/
+  | doShorter
+  /-- DO = PP: DO − PP = 0 -/
+  | doEqual
+  /-- DO > PP: DO − PP between 1 and 3 -/
+  | doLonger
+  /-- DO ≫ PP: DO − PP ≥ 4 -/
+  | doMuchLonger
+  deriving DecidableEq, BEq, Repr
+
+/-- Figure 1 cell sizes: "give" dative corpus, by heaviness category. -/
+def fig1n : DAHeaviness → Nat
+  | .themeShorter  => 26
+  | .themeEqualGoal => 89
+  | .themeLonger   => 154
+
+/-- Figure 1 cell sizes sum to the give corpus total. -/
+theorem fig1_sums_to_give :
+    fig1n .themeShorter + fig1n .themeEqualGoal + fig1n .themeLonger =
+    giveCorpus.n := by native_decide
+
+/-- Most DA items have theme longer than goal (57%): English datives
+    typically have longer themes, consistent with the heavy-last tendency. -/
+theorem da_skews_theme_heavy :
+    fig1n .themeLonger > fig1n .themeShorter + fig1n .themeEqualGoal := by
+  native_decide
+
+/-- Figure 2 cell sizes: HNPS corpus, by heaviness category. -/
+def fig2n : HNPSHeaviness → Nat
+  | .doMuchShorter => 48
+  | .doShorter     => 114
+  | .doEqual       => 38
+  | .doLonger      => 57
+  | .doMuchLonger  => 133
+
+/-- Figure 2 cell sizes sum to the HNPS total. -/
+theorem fig2_sums_to_hnps :
+    fig2n .doMuchShorter + fig2n .doShorter + fig2n .doEqual +
+    fig2n .doLonger + fig2n .doMuchLonger =
+    bringTo.n + takeIntoAccount.n := by native_decide
+
+/-- The DO ≫ PP category is the largest single cell (133/390 = 34%),
+    reflecting the prevalence of heavy direct objects in shifted constructions. -/
+theorem hnps_doMuchLonger_largest :
+    fig2n .doMuchLonger > fig2n .doMuchShorter ∧
+    fig2n .doMuchLonger > fig2n .doShorter ∧
+    fig2n .doMuchLonger > fig2n .doEqual ∧
+    fig2n .doMuchLonger > fig2n .doLonger := by
+  refine ⟨by native_decide, by native_decide, by native_decide, by native_decide⟩
+
+-- ============================================================================
+-- §3: Give Experiment (§3 of paper)
+-- ============================================================================
+
+/-- 48 participants (24 pairs), 42 sessions included post-exclusion,
+    1684 instructions in final analysis. -/
+def exp_participants : Nat := 48
+def exp_pairs : Nat := 24
+def exp_sessions_included : Nat := 42
+def exp_n : Nat := 1684
+
+/-- Newness conditions in the experiment. -/
+inductive ExpNewness where
+  /-- Theme is given (= goal is new) -/
+  | themeGiven
+  /-- Both constituents are given -/
+  | bothGiven
+  /-- Goal is given (= theme is new) -/
+  | goalGiven
+  deriving DecidableEq, BEq, Repr
+
+/-- Figure 8 cell sizes by newness condition. -/
+def fig8n : ExpNewness → Nat
+  | .themeGiven => 808
+  | .bothGiven  => 27
+  | .goalGiven  => 849
+
+/-- Figure 8 cell sizes sum to experiment total. -/
+theorem fig8_sums_to_exp :
+    fig8n .themeGiven + fig8n .bothGiven + fig8n .goalGiven = exp_n := by
+  native_decide
+
+/-- "Both given" is extremely rare (< 2%), confirming the experiment
+    successfully manipulated newness as a between-constituent contrast. -/
+theorem both_given_rare :
+    fig8n .bothGiven * 100 / exp_n < 2 := by native_decide
+
+-- ============================================================================
+-- §4: Logistic Regression Results
+-- ============================================================================
+
+/-- Which factors were selected by the logistic regression for each analysis. -/
+structure RegressionResult where
   label : String
-  first100 : Nat   -- mean word count of first postverbal NP × 100
-  second100 : Nat  -- mean word count of second postverbal NP × 100
-  deriving Repr, DecidableEq, BEq
-
-/-- Table 1, row 1: DO (V Recipient Theme).
-    First NP = recipient (1.60 words), second NP = theme (2.99 words). -/
-def doLengths : PositionLengths :=
-  { label := "DO: V Rec Theme", first100 := 160, second100 := 299 }
-
-/-- Table 1, row 2: PD (V Theme to-Recipient).
-    First NP = theme (1.85 words), second NP = recipient (2.55 words). -/
-def pdLengths : PositionLengths :=
-  { label := "PD: V Theme to-Rec", first100 := 185, second100 := 255 }
-
-/-- **Heavy Last**: in both frames, the second NP is heavier than the first.
-    Consistent with Behaghel's Gesetz der wachsenden Glieder and DLM's
-    short-before-long prediction (cf. `DependencyLength.lean`). -/
-theorem heavy_last :
-    doLengths.second100 > doLengths.first100 ∧
-    pdLengths.second100 > pdLengths.first100 :=
-  ⟨by native_decide, by native_decide⟩
-
-/-- The weight gap is larger in DO (Δ = 1.39) than PD (Δ = 0.70):
-    speakers prefer DO especially when the theme is much heavier. -/
-theorem do_stronger_weight_asymmetry :
-    doLengths.second100 - doLengths.first100 >
-    pdLengths.second100 - pdLengths.first100 := by native_decide
-
--- ============================================================================
--- §2: Study 2 — NP Shift in Particle Constructions (Switchboard)
--- ============================================================================
-
-def shift_nShifted   : Nat := 88
-def shift_nUnshifted : Nat := 219
-def shift_n          : Nat := 307
-
-theorem shift_total : shift_nShifted + shift_nUnshifted = shift_n := by native_decide
-
-/-- Mean NP length (× 100) by shift status. -/
-def shifted_length100   : Nat := 505  -- 5.05 words
-def unshifted_length100 : Nat := 159  -- 1.59 words
-
-/-- Shifted NPs are > 3× longer than unshifted NPs on average. -/
-theorem shifted_much_heavier :
-    shifted_length100 > 3 * unshifted_length100 := by native_decide
-
-/-- Shift rate (× 1000) by NP length in words. Shows the gradient
-    relationship between constituent weight and shift probability.
-    Values approximate from @cite{arnold-wasow-losongco-ginstrom-2000} results; 4 = "4+ words." -/
-def shiftRate1w : Nat :=  41  -- 1-word NPs: ~4.1% shifted
-def shiftRate2w : Nat := 178  -- 2-word NPs: ~17.8% shifted
-def shiftRate3w : Nat := 429  -- 3-word NPs: ~42.9% shifted
-def shiftRate4w : Nat := 714  -- 4+-word NPs: ~71.4% shifted
-
-/-- Shift rate increases monotonically with NP length. -/
-theorem shift_rate_monotone :
-    shiftRate1w < shiftRate2w ∧
-    shiftRate2w < shiftRate3w ∧
-    shiftRate3w < shiftRate4w :=
-  ⟨by native_decide, by native_decide, by native_decide⟩
-
--- ============================================================================
--- §3: Core Finding — Factor Independence
--- ============================================================================
-
-/-- Logistic regression results: which factors significantly predict ordering.
-    Based on @cite{arnold-wasow-losongco-ginstrom-2000} §3–4. -/
-structure FactorResult where
-  label : String
-  /-- Structural weight (word count) is a significant predictor -/
-  weightSig : Bool
-  /-- Discourse newness (given vs. new) is a significant predictor -/
+  /-- Heaviness is a significant predictor -/
+  heavinessSig : Bool
+  /-- Newness is a significant predictor -/
   newnessSig : Bool
+  /-- Newness × heaviness interaction is significant -/
+  interactionSig : Bool
   deriving Repr, DecidableEq, BEq
 
-def dativeResult : FactorResult :=
-  { label := "Dative Alternation", weightSig := true, newnessSig := true }
+/-- Corpus DA: both heaviness and newness significant, no interaction. -/
+def daCorpusResult : RegressionResult :=
+  { label := "DA corpus (give)"
+    heavinessSig := true
+    newnessSig := true
+    interactionSig := false }
 
-def shiftResult : FactorResult :=
-  { label := "NP Shift (particles)", weightSig := true, newnessSig := false }
+/-- Corpus HNPS: heaviness, newness, AND verb significant, no interactions.
+    (Verb effect: *take into account* has higher shifting rate than *bring to*,
+    likely because it is an opaque collocation.) -/
+def hnpsCorpusResult : RegressionResult :=
+  { label := "HNPS corpus (bring to + take into account)"
+    heavinessSig := true
+    newnessSig := true
+    interactionSig := false }
 
-/-- Dative: both weight and newness independently predict ordering. -/
-theorem dative_both_factors :
-    dativeResult.weightSig ∧ dativeResult.newnessSig := ⟨rfl, rfl⟩
+/-- Experiment DA: heaviness, newness, AND their interaction significant.
+    (Production difficulty also significant but omitted from structure.) -/
+def daExperimentResult : RegressionResult :=
+  { label := "DA experiment (give)"
+    heavinessSig := true
+    newnessSig := true
+    interactionSig := true }
 
-/-- NP Shift: only weight predicts ordering; newness does not. -/
-theorem shift_weight_only :
-    shiftResult.weightSig ∧ !shiftResult.newnessSig := ⟨rfl, rfl⟩
+/-- **Central finding**: BOTH factors significantly predict ordering in ALL
+    analyses. Neither can be reduced to the other. -/
+theorem both_factors_in_all_analyses :
+    daCorpusResult.heavinessSig ∧ daCorpusResult.newnessSig ∧
+    hnpsCorpusResult.heavinessSig ∧ hnpsCorpusResult.newnessSig ∧
+    daExperimentResult.heavinessSig ∧ daExperimentResult.newnessSig :=
+  ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
 
-/-- The constructions weight factors differently: newness matters for
-    datives but not for NP shift. This is the paper's central finding. -/
-theorem constructions_differ :
-    dativeResult.newnessSig ≠ shiftResult.newnessSig := by decide
+/-- No interaction in either corpus analysis: heaviness and newness contribute
+    independently. -/
+theorem corpus_no_interactions :
+    !daCorpusResult.interactionSig ∧ !hnpsCorpusResult.interactionSig :=
+  ⟨rfl, rfl⟩
+
+/-- The experiment finds a significant interaction: heaviness has the largest
+    effect when both constituents share newness status, and vice versa. -/
+theorem experiment_has_interaction :
+    daExperimentResult.interactionSig := rfl
 
 -- ============================================================================
--- §4: Bridge — Arnold et al.'s "given/new" ↔ DiscourseStatus
+-- §5: Effect Size Comparison
 -- ============================================================================
 
-/-- Arnold et al.'s "given" (mentioned in prior 10 clauses) maps to
-    `DiscourseStatus.given` ([G]-marked in @cite{kratzer-selkirk-2020}). -/
+/-- −2 × Log Likelihood Ratio values (× 10 for integer encoding) from the
+    paper's logistic regressions. Larger values = stronger predictor. -/
+
+-- Corpus DA
+def daCorpus_heavinessLR : Nat := 995   -- −2*Log LR = 99.5, p < .001
+def daCorpus_newnessLR   : Nat := 70    -- −2*Log LR = 7.0, p < .01
+
+-- Corpus HNPS
+def hnpsCorpus_heavinessLR : Nat := 1209  -- −2*Log LR = 120.9, p < .001
+def hnpsCorpus_newnessLR   : Nat := 235   -- −2*Log LR = 23.5, p < .001
+def hnpsCorpus_verbLR      : Nat := 314   -- −2*Log LR = 31.4, p < .001
+
+-- Experiment DA
+def daExp_newnessLR    : Nat := 2980  -- −2*Log LR = 298, p < .001
+def daExp_heavinessLR  : Nat := 95    -- −2*Log LR = 9.5, p < .005
+def daExp_interactionLR : Nat := 200  -- −2*Log LR = 20, p < .001
+
+/-- In the corpus, heaviness has a far larger effect size than newness
+    in both constructions. -/
+theorem corpus_heaviness_dominates :
+    daCorpus_heavinessLR > daCorpus_newnessLR ∧
+    hnpsCorpus_heavinessLR > hnpsCorpus_newnessLR := by
+  constructor <;> native_decide
+
+/-- In the experiment, newness dominates: its effect is 30× larger than
+    heaviness. This reversal reflects the narrower heaviness range in the
+    experiment (Table 6: range −8 to 20 words) vs. corpus (−29 to 35). -/
+theorem experiment_newness_dominates :
+    daExp_newnessLR > daExp_heavinessLR := by native_decide
+
+/-- Heaviness effect is stronger in the corpus than in the experiment,
+    consistent with the wider weight range in naturally occurring data. -/
+theorem heaviness_stronger_in_corpus :
+    daCorpus_heavinessLR > daExp_heavinessLR := by native_decide
+
+/-- Newness effect is stronger in the experiment than in the corpus,
+    consistent with the experiment's more controlled newness manipulation
+    (immediate mention vs. within-agenda-item mention). -/
+theorem newness_stronger_in_experiment :
+    daExp_newnessLR > daCorpus_newnessLR := by native_decide
+
+-- ============================================================================
+-- §6: Table 6 — Heaviness Range Comparison
+-- ============================================================================
+
+/-- Average difference in NP length (phrase 1 − phrase 2, × 10) for each
+    heaviness category, from Table 6. Shows the actual weight contrasts
+    across the three data sets.
+
+    For DA: phrase 1 = theme NP, phrase 2 = goal NP.
+    For HNPS: phrase 1 = direct object NP, phrase 2 = prepositional phrase. -/
+structure LengthDiffRange where
+  label : String
+  rangeMin : Int   -- minimum raw difference in words
+  rangeMax : Int   -- maximum raw difference in words
+  deriving Repr
+
+def hnpsRange : LengthDiffRange :=
+  { label := "HNPS corpus", rangeMin := -21, rangeMax := 44 }
+
+def daCorpusRange : LengthDiffRange :=
+  { label := "DA corpus", rangeMin := -29, rangeMax := 35 }
+
+def daExpRange : LengthDiffRange :=
+  { label := "DA experiment", rangeMin := -8, rangeMax := 20 }
+
+/-- The corpus data spans a far wider heaviness range than the experiment.
+    This explains why heaviness dominates in the corpus but not the experiment:
+    with less variation in weight, there is less for the weight factor to
+    predict. -/
+theorem corpus_wider_range :
+    daCorpusRange.rangeMax - daCorpusRange.rangeMin >
+    daExpRange.rangeMax - daExpRange.rangeMin := by native_decide
+
+/-- HNPS has the widest heaviness range overall, spanning 65 words of
+    difference between the lightest and heaviest items. -/
+theorem hnps_widest_range :
+    hnpsRange.rangeMax - hnpsRange.rangeMin >
+    daCorpusRange.rangeMax - daCorpusRange.rangeMin ∧
+    hnpsRange.rangeMax - hnpsRange.rangeMin >
+    daExpRange.rangeMax - daExpRange.rangeMin := by
+  constructor <;> native_decide
+
+-- ============================================================================
+-- §7: Bridge — Discourse Status Classification
+-- ============================================================================
+
+/-- Arnold et al.'s "given" (previously mentioned or inferable from something
+    mentioned within the current agenda item in the corpus; established by
+    question or mention in the immediately preceding utterance in the
+    experiment) maps to `DiscourseStatus.given`.
+
+    Their classification collapses @cite{prince-1981}'s three-way
+    given/inferable/new into two categories: inferables are grouped with
+    given. -/
 def arnoldGiven : DiscourseStatus := .given
 
-/-- Arnold et al.'s "new" (not previously mentioned) maps to
-    `DiscourseStatus.new` (unmarked default in @cite{kratzer-selkirk-2020}).
-    Note: Arnold et al.'s "new" is broader than K&S's `.new` — it includes
-    material that K&S would mark as `.focused` ([FoC]-marked, contrasted). -/
+/-- Arnold et al.'s "new" (not previously mentioned and not inferable) maps
+    to `DiscourseStatus.new`. This is broader than
+    @cite{kratzer-selkirk-2020}'s `.new` — it includes material that K&S
+    would mark as `.focused` ([FoC]-marked, contrasted). -/
 def arnoldNew : DiscourseStatus := .new
 
-/-- The two-way classification aligns with the K&S three-way partition:
-    Arnold's "given" = K&S given, Arnold's "new" ⊇ K&S new. -/
 theorem given_aligns : arnoldGiven = DiscourseStatus.given := rfl
 theorem new_aligns   : arnoldNew   = DiscourseStatus.new   := rfl
 
 -- ============================================================================
--- §5: The Pure-Weight Account (DLM / @cite{hawkins-1994})
+-- §8: Bridge — DLM: Correct on Weight, Blind to Discourse
 -- ============================================================================
 
 open DepGrammar DepGrammar.DependencyLength
-open CCG.Combinators
 
 /-!
 ## DLM: Correct on weight, blind to discourse
@@ -201,6 +386,10 @@ open CCG.Combinators
 `totalDepLength` is defined over `Dependency` = `(headIdx × depIdx × DepRel)`.
 The function never accesses `t.words`, so no property of the words — form,
 category, features, discourse status — enters the computation.
+
+Arnold et al.'s finding that newness significantly predicts ordering in BOTH
+constructions (even after controlling for heaviness) means DLM alone is
+insufficient as a complete account of constituent ordering.
 -/
 
 /-- **DLM word-invariance.** `totalDepLength` yields the same value for any
@@ -226,75 +415,35 @@ theorem depLength_ignores_relation (h d : Nat) (r1 r2 : UD.DepRel) :
     depLength ⟨h, d, r1⟩ = depLength ⟨h, d, r2⟩ := by
   rfl
 
-/-- DLM correctly predicts the weight direction. Heavy NP shift reduces
+/-- DLM correctly predicts the weight direction: heavy NP shift reduces
 dependency length. -/
 theorem dlm_predicts_heavy_shift :
     totalDepLength heavyNPShiftOptimal < totalDepLength heavyNPShiftSuboptimal := by
   native_decide
 
-/-- DLM's short-before-long matches Table 1: both DO and PD place the
-heavier NP in second position. -/
-theorem heavy_last_consistent_with_dlm :
-    doLengths.second100 > doLengths.first100 ∧
-    pdLengths.second100 > pdLengths.first100 :=
-  heavy_last
-
 -- ============================================================================
--- §6: The Pure-Discourse Account (@cite{givon-1988})
+-- §9: Minimal Adequate Model
 -- ============================================================================
 
 /-- A pure-discourse ordering model: the preference for placing a constituent
 in late position is determined solely by its discourse status. -/
 structure PureDiscourseModel where
   latePref : DiscourseStatus → Nat
-  /-- The core Givón claim: new material prefers late position. -/
+  /-- The core given-before-new claim. -/
   new_after_given : latePref .new > latePref .given
 
-/-- A pure-discourse model is weight-blind by type. -/
+/-- A pure-discourse model is weight-blind by type: for a fixed discourse
+status, it assigns the same preference regardless of constituent length. -/
 theorem pure_discourse_weight_blind (m : PureDiscourseModel)
     (s : DiscourseStatus) (_weight1 _weight2 : Nat) :
     m.latePref s = m.latePref s := rfl
 
-/-- A pure-discourse model cannot simultaneously match even two of the four
-shift rates. -/
-theorem pure_discourse_cannot_match_gradient (m : PureDiscourseModel)
-    (s : DiscourseStatus)
-    (h1 : m.latePref s = shiftRate1w)
-    (h2 : m.latePref s = shiftRate2w) : False :=
-  absurd (h1.symm.trans h2) (by native_decide)
-
-/-- The pure-discourse model overpredicts: newness is NOT significant for
-NP shift. -/
-theorem pure_discourse_overpredicts_shift :
-    shiftResult.newnessSig = false := by native_decide
-
--- ============================================================================
--- §7: The CCG Categorical Account (@cite{steedman-2000})
--- ============================================================================
-
-/-- `canHeavyShift` is binary: its range is exactly `{true, false}`. -/
-theorem canHeavyShift_binary (f : ShiftFeature) :
-    canHeavyShift f = true ∨ canHeavyShift f = false := by
-  cases f <;> simp [canHeavyShift]
-
-/-- **Pigeonhole.** For any assignment of four weight classes to `ShiftFeature`
-values, `canHeavyShift` must give the same answer for at least two classes. -/
-theorem shift_feature_conflates
-    (w1 w2 w3 w4 : ShiftFeature) :
-    canHeavyShift w1 = canHeavyShift w2 ∨
-    canHeavyShift w1 = canHeavyShift w3 ∨
-    canHeavyShift w1 = canHeavyShift w4 ∨
-    canHeavyShift w2 = canHeavyShift w3 ∨
-    canHeavyShift w2 = canHeavyShift w4 ∨
-    canHeavyShift w3 = canHeavyShift w4 := by
-  cases w1 <;> cases w2 <;> cases w3 <;> cases w4 <;> simp [canHeavyShift]
-
-/-- The four shift rates ARE pairwise distinct. -/
-theorem shift_rates_pairwise_distinct :
-    shiftRate1w ≠ shiftRate2w ∧ shiftRate1w ≠ shiftRate3w ∧
-    shiftRate1w ≠ shiftRate4w ∧ shiftRate2w ≠ shiftRate3w ∧
-    shiftRate2w ≠ shiftRate4w ∧ shiftRate3w ≠ shiftRate4w := by
-  native_decide
+/-- Arnold et al.'s corpus results refute pure-discourse accounts:
+heaviness is significant in BOTH constructions even after controlling
+for newness. A weight-blind model cannot explain these results. -/
+theorem heaviness_refutes_pure_discourse :
+    daCorpusResult.heavinessSig ∧ hnpsCorpusResult.heavinessSig :=
+  ⟨rfl, rfl⟩
 
 /-- The minimal adequate model type: a function of both weight and discourse
 status, encoding Arnold et al.'s central finding. -/

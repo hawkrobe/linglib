@@ -51,7 +51,8 @@ vonFintel_strictly_stronger_than_horn (per-trigger > existential)
 Prediction: perfection iff QUD provides alternatives AND speaker is competent
     ↓
 Data: antecedent-focused > neutral ≈ consequent-focused (Exp 1)
-      full knowledge >> partial knowledge (Exp 2)
+      overly informative ≈ optimally informative (Exp 2)
+      full knowledge >> partial knowledge (Exp 3)
 ```
 -/
 
@@ -246,10 +247,10 @@ theorem horn_not_entails_vonFintel :
   -- von Fintel: ∀ t'≠A, ¬causes t' → B causes sound. ✗
   refine ⟨.pressB_plays, ?_, ?_⟩
   · exact ⟨.C, Or.inr (Or.inr rfl), Button3Trigger.noConfusion,
-      by simp [button3AnswerSpace, cCausesSound, hornPrediction]⟩
+      by simp [button3AnswerSpace, cCausesSound]⟩
   · intro h
     have := h .B (Or.inr (Or.inl rfl)) Button3Trigger.noConfusion
-    simp [button3AnswerSpace, bCausesSound, vonFintelPrediction] at this
+    simp [button3AnswerSpace, bCausesSound] at this
 
 /-- **Von Fintel is strictly stronger than Horn.**
 
@@ -298,48 +299,50 @@ theorem coverage_without_exclusion_insufficient :
   · exact ⟨false, Bool.false_ne_true, trivial⟩
 
 -- ============================================================================
--- Section F: Competence Licenses Exhaustification
+-- Section F: Prerequisites for Exhaustification
 -- ============================================================================
 
-/-- **Speaker competence determines whether exhaustification is licensed.**
+/-- Whether a QUD makes alternative antecedents salient.
 
-The paper's Experiment 2 directly tests this: when the speaker has full
-knowledge (has tested all buttons), perfection is high (69.9%); when the
-speaker has partial knowledge (tested only the mentioned button), perfection
-drops to 20.4%.
+Antecedent-focused QUDs ("Which button will play a dog sound?") partition
+the answer space by antecedent, making alternative triggers salient for
+exhaustification. Consequent-focused and neutral QUDs do not. -/
+def qudProvidesAlternatives : QUDType → Bool
+  | .antecedentFocused => true
+  | .consequentFocused => false
+  | .neutral => false
 
-The formal connection:
-- Full knowledge → hearer assumes speaker competence → speaker's silence about
-  B and C is informative → exhaustification is licensed → exclusion → perfection
-- Partial knowledge → no competence assumption → speaker's silence reflects
-  ignorance, not exclusion → exhaustification is not licensed → no perfection
+/-- Whether a speaker's epistemic state licenses the competence assumption.
 
-This bridges `NeoGricean.Competence.shouldAssumeCompetence` to the
-exhaustification mechanism. -/
+When the speaker has tested all buttons (full knowledge), the hearer can
+assume competence: the speaker's silence about other buttons is informative,
+licensing exclusion. With partial knowledge, silence reflects ignorance. -/
+def speakerCompetenceAssumed : KnowledgeCondition → Bool
+  | .fullKnowledge => true
+  | .partialKnowledge => false
+
+/-- **Exhaustification is licensed iff both prerequisites hold.**
+
+The theory predicts perfection only when:
+1. The QUD makes alternative antecedents salient (→ alternatives for Exh)
+2. The speaker is assumed competent (→ exclusion of alternatives)
+
+This is derived from the conjunction of the two independent prerequisites,
+not stipulated as a single function. -/
 def exhaustificationLicensed (knowledge : KnowledgeCondition) (qud : QUDType) : Bool :=
-  -- Both prerequisites must hold:
-  -- 1. The QUD makes alternative antecedents salient
-  -- 2. The speaker is assumed competent about those alternatives
-  let qudProvidesAlternatives := match qud with
-    | .antecedentFocused => true
-    | .consequentFocused => false
-    | .neutral => false
-  let competenceAssumed := match knowledge with
-    | .fullKnowledge => true
-    | .partialKnowledge => false
-  qudProvidesAlternatives && competenceAssumed
+  qudProvidesAlternatives qud && speakerCompetenceAssumed knowledge
 
 /-- With antecedent-focused QUD and full knowledge, exhaustification is licensed. -/
 theorem licensed_with_both :
     exhaustificationLicensed .fullKnowledge .antecedentFocused = true := rfl
 
 /-- With consequent-focused QUD, exhaustification is not licensed
-(even with full knowledge). -/
+(even with full knowledge) — because the QUD doesn't provide alternatives. -/
 theorem not_licensed_without_qud :
     exhaustificationLicensed .fullKnowledge .consequentFocused = false := rfl
 
 /-- With partial knowledge, exhaustification is not licensed
-(even with antecedent-focused QUD). -/
+(even with antecedent-focused QUD) — because competence isn't assumed. -/
 theorem not_licensed_without_knowledge :
     exhaustificationLicensed .partialKnowledge .antecedentFocused = false := rfl
 
@@ -352,21 +355,54 @@ theorem not_licensed_without_knowledge :
 The theory predicts higher perfection under antecedent-focused QUDs (which
 make alternative triggers salient, licensing exhaustification) than under
 consequent-focused or neutral QUDs (which don't). Experiment 1 confirms
-both orderings. -/
+both orderings, and antecedent-focused maximizes across all QUD types. -/
 theorem antecedentFocused_highest :
-    exp1_antecedentFocused.perfectionRate > exp1_consequentFocused.perfectionRate ∧
-    exp1_antecedentFocused.perfectionRate > exp1_neutral.perfectionRate := by
+    (exp1Data .antecedentFocused).perfectionRate >
+    (exp1Data .consequentFocused).perfectionRate ∧
+    (exp1Data .antecedentFocused).perfectionRate >
+    (exp1Data .neutral).perfectionRate := by
+  constructor <;> native_decide
+
+/-- **Data confirms: overly informative answers trigger perfection.**
+
+The theory predicts that if exhaustification operates over QUD-relevant
+alternatives, both optimally and overly informative answers should trigger
+perfection (since both are answers to the QUD). Experiment 2 confirms:
+both types yield high perfection rates with no significant difference. -/
+theorem overlyInformative_also_triggers_perfection :
+    (exp2Data .overlyInformative).perfectionRate > 1/2 ∧
+    (exp2Data .optimallyInformative).perfectionRate -
+    (exp2Data .overlyInformative).perfectionRate < 1/10 := by
   constructor <;> native_decide
 
 /-- **Data confirms: speaker knowledge promotes perfection.**
 
 The theory predicts higher perfection when the speaker is knowledgeable
 (licensing the assumption that unmentioned alternatives are false, hence
-exclusion) than when ignorant (no exclusion license). Experiment 2 confirms
-with a large effect (49.5pp difference). -/
+exclusion) than when ignorant (no exclusion license). Experiment 3 confirms
+with a large effect (51pp difference). -/
 theorem fullKnowledge_highest :
-    exp2_fullKnowledge.perfectionRate > exp2_partialKnowledge.perfectionRate := by
+    (exp3Data .fullKnowledge).perfectionRate >
+    (exp3Data .partialKnowledge).perfectionRate := by
   native_decide
+
+/-- **Theory predicts the data pattern: perfection is high only when
+both prerequisites are met.**
+
+The exhaustification theory predicts perfection should be high only when
+`exhaustificationLicensed` returns true (antecedent-focused QUD + full
+knowledge). The data confirms: only the antecedent-focused condition (Exp 1)
+and the full-knowledge condition (Exp 3) show high perfection rates, while
+conditions missing either prerequisite show low rates. -/
+theorem high_perfection_matches_licensing :
+    -- Licensed conditions produce high perfection (> 50%)
+    (exp1Data .antecedentFocused).perfectionRate > 1/2 ∧
+    (exp3Data .fullKnowledge).perfectionRate > 1/2 ∧
+    -- Unlicensed conditions produce low perfection (< 30%)
+    (exp1Data .consequentFocused).perfectionRate < 3/10 ∧
+    (exp1Data .neutral).perfectionRate < 3/10 ∧
+    (exp3Data .partialKnowledge).perfectionRate < 3/10 := by
+  refine ⟨?_, ?_, ?_, ?_, ?_⟩ <;> native_decide
 
 /-- **Convergent evidence: CP is pragmatic.**
 
@@ -382,8 +418,10 @@ confirm the pragmatic nature:
 theorem cp_is_pragmatic :
     (∃ (W : Type) (p q : Prop' W) (w : W),
       materialImp p q w ∧ ¬(conditionalPerfection p q w)) ∧
-    exp1_antecedentFocused.perfectionRate ≠ exp1_consequentFocused.perfectionRate ∧
-    exp2_fullKnowledge.perfectionRate ≠ exp2_partialKnowledge.perfectionRate := by
+    (exp1Data .antecedentFocused).perfectionRate ≠
+    (exp1Data .consequentFocused).perfectionRate ∧
+    (exp3Data .fullKnowledge).perfectionRate ≠
+    (exp3Data .partialKnowledge).perfectionRate := by
   exact ⟨perfection_not_entailed, by native_decide, by native_decide⟩
 
 end Phenomena.Conditionals.Studies.EvcenBaleBarner2026.Bridge
