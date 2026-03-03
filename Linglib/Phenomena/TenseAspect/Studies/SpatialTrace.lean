@@ -25,7 +25,7 @@ Connects the spatial dimension theory (`Events/SpatialTrace.lean`,
 4. **Diagnostic bridge** — connect path telicity to for/in compatibility
 -/
 
-namespace Phenomena.TenseAspect.Bridge.SpatialTrace
+namespace Phenomena.TenseAspect.Studies.SpatialTrace
 
 open Fragments.English.Predicates.Verbal
 open Semantics.Events.SpatialTrace (pathShapeToTelicity)
@@ -163,4 +163,4 @@ theorem motion_vendler_path_coherence :
       LevinClass.mannerOfMotion.pathSpec = none) :=
   ⟨⟨rfl, rfl⟩, ⟨rfl, rfl⟩, ⟨rfl, rfl⟩⟩
 
-end Phenomena.TenseAspect.Bridge.SpatialTrace
+end Phenomena.TenseAspect.Studies.SpatialTrace

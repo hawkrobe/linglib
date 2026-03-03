@@ -33,7 +33,7 @@ Both derive "some → not all", but by different mechanisms:
 
 set_option autoImplicit false
 
-namespace Phenomena.ScalarImplicatures.Bridge.RelevanceTheory
+namespace Phenomena.ScalarImplicatures.Studies.RelevanceTheory
 
 open Theories.Pragmatics.RelevanceTheory
 open Phenomena.ScalarImplicatures
@@ -254,4 +254,4 @@ theorem rt_matches_weak_strong :
     someStudents.strongRequiresCompetence = true := by
   exact ⟨rfl, rfl⟩
 
-end Phenomena.ScalarImplicatures.Bridge.RelevanceTheory
+end Phenomena.ScalarImplicatures.Studies.RelevanceTheory

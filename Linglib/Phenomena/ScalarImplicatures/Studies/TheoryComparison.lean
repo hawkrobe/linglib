@@ -35,7 +35,7 @@ import Linglib.Core.Interface
 import Linglib.Theories.Pragmatics.NeoGricean.ScalarImplicatures.Basic
 import Linglib.Theories.Pragmatics.RSA.ScalarImplicatures.Basic
 
-namespace Phenomena.ScalarImplicatures.Bridge.TheoryComparison
+namespace Phenomena.ScalarImplicatures.Studies.TheoryComparison
 
 open Interfaces
 
@@ -416,4 +416,4 @@ To make RSA comparable on DE blocking and task effects:
 3. Model QUD effects on pragmatic reasoning
 -/
 
-end Phenomena.ScalarImplicatures.Bridge.TheoryComparison
+end Phenomena.ScalarImplicatures.Studies.TheoryComparison

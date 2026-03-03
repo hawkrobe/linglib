@@ -268,7 +268,7 @@ import Linglib.Phenomena.Case.Data
 import Linglib.Phenomena.Case.Typology
 import Linglib.Phenomena.Case.Studies.Ozaki2025.Data
 import Linglib.Phenomena.Case.Studies.Ozaki2025.Bridge
-import Linglib.Phenomena.Case.Bridge.DependentCaseInventories
+import Linglib.Phenomena.Case.Studies.DependentCaseInventories
 import Linglib.Phenomena.Case.Studies.Aissen2003
 import Linglib.Phenomena.Case.Studies.DeHoopMalchukov2008
 import Linglib.Phenomena.Case.Studies.Haspelmath2021
@@ -284,9 +284,9 @@ import Linglib.Phenomena.Anaphora.BathroomSentences
 import Linglib.Phenomena.Anaphora.Bridging
 import Linglib.Phenomena.Anaphora.Studies.OsborneLi2023
 import Linglib.Phenomena.Anaphora.Studies.Hudson1990
-import Linglib.Phenomena.Anaphora.Bridge.DGNominal
-import Linglib.Phenomena.Anaphora.Bridge.HPSGCoreference
-import Linglib.Phenomena.Anaphora.Bridge.MinimalismCoreference
+import Linglib.Phenomena.Anaphora.Studies.DGNominal
+import Linglib.Phenomena.Anaphora.Studies.HPSGCoreference
+import Linglib.Phenomena.Anaphora.Studies.MinimalismCoreference
 import Linglib.Phenomena.Anaphora.Studies.Cooper2023
 import Linglib.Phenomena.Anaphora.Studies.KeshetAbney2024
 import Linglib.Phenomena.Anaphora.Coreference
@@ -304,10 +304,10 @@ import Linglib.Phenomena.ArgumentStructure.Unaccusativity.Data
 import Linglib.Phenomena.ArgumentStructure.Unaccusativity.Bridge
 import Linglib.Phenomena.ArgumentStructure.DiathesisAlternations.Data
 import Linglib.Phenomena.ArgumentStructure.DiathesisAlternations.Bridge
-import Linglib.Phenomena.ArgumentStructure.Bridge.CCGSubcategorization
-import Linglib.Phenomena.ArgumentStructure.Bridge.MinimalismSubcategorization
+import Linglib.Phenomena.ArgumentStructure.Studies.CCGSubcategorization
+import Linglib.Phenomena.ArgumentStructure.Studies.MinimalismSubcategorization
 import Linglib.Phenomena.ArgumentStructure.Studies.Osborne2019
-import Linglib.Phenomena.ArgumentStructure.Bridge.TheoryComparison
+import Linglib.Phenomena.ArgumentStructure.Studies.TheoryComparison
 import Linglib.Phenomena.ArgumentStructure.Studies.HaddicanEtAl2026
 import Linglib.Phenomena.ArgumentStructure.Studies.Collins2005
 import Linglib.Phenomena.ArgumentStructure.Studies.Kratzer1996
@@ -455,7 +455,7 @@ import Linglib.Phenomena.FillerGap.Studies.Erlewine2016
 import Linglib.Phenomena.FillerGap.Studies.ElkinsImanishiCoon2026
 import Linglib.Phenomena.Nonliteral.Irony.KaoEtAl2015
 import Linglib.Phenomena.Nonliteral.Irony.Studies.SpinosoDiPiano2025
-import Linglib.Phenomena.Nonliteral.Bridge.RelevanceTheory
+import Linglib.Phenomena.Nonliteral.Studies.RelevanceTheory
 import Linglib.Phenomena.Nonliteral.Metaphor.KaoEtAl2014
 import Linglib.Phenomena.Numerals.Studies.ClausWalch2024
 import Linglib.Phenomena.Numerals.Snyder2026Bridge
@@ -550,7 +550,7 @@ import Linglib.Phenomena.Presupposition.Studies.Schlenker2009
 import Linglib.Phenomena.Presupposition.Studies.Heim1983
 import Linglib.Phenomena.Presupposition.Studies.RobertsSimons2024
 import Linglib.Phenomena.Presupposition.Studies.QingGoodmanLassiter2016
-import Linglib.Phenomena.Presupposition.Bridge.TowerBridge
+import Linglib.Phenomena.Presupposition.Studies.TowerBridge
 import Linglib.Phenomena.Presupposition.Studies.Heim1992
 import Linglib.Phenomena.Presupposition.ForgetPresuppositions
 import Linglib.Phenomena.Presupposition.Studies.White2014
@@ -614,10 +614,10 @@ import Linglib.Phenomena.TenseAspect.Bridge
 import Linglib.Phenomena.TenseAspect.ThenPresentBridge
 import Linglib.Phenomena.TenseAspect.Studies.Abusch1997
 import Linglib.Phenomena.TenseAspect.Studies.Krifka1998
-import Linglib.Phenomena.TenseAspect.Bridge.SpatialTrace
+import Linglib.Phenomena.TenseAspect.Studies.SpatialTrace
 import Linglib.Phenomena.TenseAspect.Studies.Krifka1989
-import Linglib.Phenomena.TenseAspect.Bridge.DimensionCoherence
-import Linglib.Phenomena.TenseAspect.Bridge.CrossBridgeConsistency
+import Linglib.Phenomena.TenseAspect.Studies.DimensionCoherence
+import Linglib.Phenomena.TenseAspect.Studies.CrossBridgeConsistency
 import Linglib.Phenomena.TenseAspect.Studies.KennedyLevin2008
 import Linglib.Phenomena.TemporalConnectives.Compare
 import Linglib.Phenomena.TemporalConnectives.NegationData
@@ -640,15 +640,15 @@ import Linglib.Phenomena.WordOrder.Studies.HahnDegenFutrell2021
 import Linglib.Phenomena.TenseAspect.TemporalAdverbialsBridge
 import Linglib.Phenomena.ScalarImplicatures.WeakEvidenceEffect
 import Linglib.Phenomena.ScalarImplicatures.Studies.Horn1972
-import Linglib.Phenomena.ScalarImplicatures.Bridge.RelevanceTheory
+import Linglib.Phenomena.ScalarImplicatures.Studies.RelevanceTheory
 import Linglib.Phenomena.ScalarImplicatures.Studies.Geurts2010
-import Linglib.Phenomena.ScalarImplicatures.Bridge.RSAHurford
+import Linglib.Phenomena.ScalarImplicatures.Studies.RSAHurford
 import Linglib.Phenomena.ScalarImplicatures.Studies.PottsEtAl2016
-import Linglib.Phenomena.ScalarImplicatures.Bridge.TheoryComparison
+import Linglib.Phenomena.ScalarImplicatures.Studies.TheoryComparison
 import Linglib.Phenomena.ScalarImplicatures.GoodmanStuhlmuller2013.Data
 import Linglib.Phenomena.ScalarImplicatures.GoodmanStuhlmuller2013.Bridge
 import Linglib.Phenomena.PhonologicalAlternation.Data
-import Linglib.Phenomena.PhonologicalAlternation.Bridge.SPEDerivations
+import Linglib.Phenomena.PhonologicalAlternation.Studies.SPEDerivations
 import Linglib.Phenomena.PhonologicalAlternation.Studies.Clements1985
 import Linglib.Phenomena.PhonologicalAlternation.Studies.Storme2026
 -- Theories: CCG
@@ -658,7 +658,7 @@ import Linglib.Theories.Syntax.CCG.Core.FromFragments
 import Linglib.Theories.Interfaces.SyntaxSemantics.CCG.Interface
 import Linglib.Theories.Interfaces.SyntaxSemantics.CCG.Homomorphism
 import Linglib.Theories.Interfaces.SyntaxSemantics.CCG.Derivation
-import Linglib.Phenomena.Agreement.Bridge.CCGAgreement
+import Linglib.Phenomena.Agreement.Studies.CCGAgreement
 import Linglib.Phenomena.Agreement.Studies.Scott2023
 import Linglib.Phenomena.Agreement.DifferentialIndexing
 import Linglib.Phenomena.Agreement.Studies.Aissen2003

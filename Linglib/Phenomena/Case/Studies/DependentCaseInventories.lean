@@ -53,7 +53,7 @@ and ERG-specific coverage for ergative alignment, noting that ABS → NOM
 is a morphological identity, not a gap in the theory.
 -/
 
-namespace Phenomena.Case.Bridge.DependentCaseInventories
+namespace Phenomena.Case.Studies.DependentCaseInventories
 
 open Minimalism
 
@@ -480,4 +480,4 @@ theorem georgian_present_in_inventory :
         (· == np.case.toCase)) = true := by
   native_decide
 
-end Phenomena.Case.Bridge.DependentCaseInventories
+end Phenomena.Case.Studies.DependentCaseInventories

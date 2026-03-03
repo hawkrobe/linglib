@@ -42,7 +42,7 @@ the interpretation achieves relevance.
 
 set_option autoImplicit false
 
-namespace Phenomena.Nonliteral.Bridge.RelevanceTheory
+namespace Phenomena.Nonliteral.Studies.RelevanceTheory
 
 open Theories.Pragmatics.RelevanceTheory
 
@@ -219,4 +219,4 @@ theorem obscure_fails :
   · show 1 < obscureUtterance.threshold + obscureUtterance.effortWeight * obscureUtterance.effort .metaphorical
     simp [obscureUtterance]
 
-end Phenomena.Nonliteral.Bridge.RelevanceTheory
+end Phenomena.Nonliteral.Studies.RelevanceTheory

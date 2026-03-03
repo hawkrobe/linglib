@@ -11,7 +11,7 @@ Verifies that Minimalist derivations model intransitive, transitive, and
 ditransitive patterns, with phonological yields matching expected word order.
 -/
 
-namespace Phenomena.ArgumentStructure.Bridge.MinimalismSubcategorization
+namespace Phenomena.ArgumentStructure.Studies.MinimalismSubcategorization
 
 open Minimalism.Phenomena.Derivations
 
@@ -36,4 +36,4 @@ example : john_sleeps.phonYield = ["John", "sleeps"] := rfl
 
 example : john_devours_pizza.phonYield = ["John", "devours", "pizza"] := by native_decide
 
-end Phenomena.ArgumentStructure.Bridge.MinimalismSubcategorization
+end Phenomena.ArgumentStructure.Studies.MinimalismSubcategorization
