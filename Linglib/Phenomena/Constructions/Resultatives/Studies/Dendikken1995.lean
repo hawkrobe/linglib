@@ -36,7 +36,7 @@ onto SC predicate categories:
 
 -/
 
-namespace Phenomena.Constructions.Resultatives.Bridge.MinimalismResultativeSC
+namespace Phenomena.Constructions.Resultatives.Studies.Dendikken1995
 
 open Minimalism
 open Phenomena.Constructions.Resultatives
@@ -143,4 +143,4 @@ theorem path_res_shares_cat_with_pvc :
     resToSCPred .noncausativePath = .P :=
   ⟨rfl, rfl⟩
 
-end Phenomena.Constructions.Resultatives.Bridge.MinimalismResultativeSC
+end Phenomena.Constructions.Resultatives.Studies.Dendikken1995

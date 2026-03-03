@@ -3,7 +3,7 @@ import Linglib.Fragments.Mam.VoiceSystem
 import Linglib.Theories.Syntax.Minimalism.Core.ObligatoryOperations
 
 /-!
-# Minimalism Bridge: Agree-Conditioned Pronoun Spellout in Mam
+# Minimalism Agree-Conditioned Pronoun Spellout in Mam
 
 @cite{scott-2023} @cite{chomsky-2000} @cite{deal-2021} @cite{elkins-imanishi-coon-2026} @cite{preminger-2014}
 
@@ -52,7 +52,7 @@ both paths.
 
 -/
 
-namespace Phenomena.Agreement.Bridge.MamAgreeSpellout
+namespace Phenomena.Agreement.Studies.Scott2023
 
 open Minimalism Fragments.Mam
 
@@ -363,7 +363,7 @@ This section makes the unity explicit by running both pipelines in
 parallel and showing they produce different exponents from the same
 mechanism.
 
-See also: `Phenomena.FillerGap.Bridge.MinimalismOblExtraction` for the
+See also: `Phenomena.FillerGap.Studies.ElkinsImanishiCoon2026` for the
 full =(y)a' analysis. -/
 
 /-- Voice's oblique probe features (from VoiceSystem). -/
@@ -396,4 +396,4 @@ theorem phi_and_oblique_agree_parallel :
     spellout [eqYaVocab] [.valued (.oblique true)] (some .Voice) = some "=(y)a'" := by
   exact ⟨by native_decide, by native_decide, by native_decide, by native_decide⟩
 
-end Phenomena.Agreement.Bridge.MamAgreeSpellout
+end Phenomena.Agreement.Studies.Scott2023

@@ -3,7 +3,7 @@ import Linglib.Theories.Morphology.RootTypology
 import Linglib.Fragments.Chuj.VerbBuilding
 
 /-!
-# Bridge: Root Typology Theory ↔ BeaversEtAl2021 Empirical Data
+Root Typology Theory ↔ BeaversEtAl2021 Empirical Data
 @cite{coon-2019}
 
 Connects the theory-side predictions of `Theories/Morphology/RootTypology.lean`
@@ -45,7 +45,7 @@ Fragments/Chuj/VerbBuilding.lean THIS BRIDGE FILE
 
 -/
 
-namespace Phenomena.Causatives.Bridge.RootTypology
+namespace Phenomena.Causatives.Studies.Coon2019
 
 open Phenomena.Causatives.Studies.BeaversEtAl2021
 
@@ -256,4 +256,4 @@ theorem subclass_counts_match :
      .killing, .destroying, .calibratableCoS, .inherentlyDirectedMotion].length :=
   ⟨rfl, rfl⟩
 
-end Phenomena.Causatives.Bridge.RootTypology
+end Phenomena.Causatives.Studies.Coon2019

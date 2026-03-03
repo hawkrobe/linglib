@@ -4,7 +4,6 @@
 A Lean 4 library for formal linguistics, covering semantics, pragmatics,
 and their interfaces. See README.md for documentation links.
 -/
-
 -- Core
 import Linglib.Core.Lexical.Word
 import Linglib.Core.Grammar
@@ -121,7 +120,6 @@ import Linglib.Core.Interval.LogInterval
 import Linglib.Tactics.NonnegOfForall
 import Linglib.Tactics.RSAPredict
 import Linglib.Tactics.OntSort
-
 -- Fragments
 import Linglib.Fragments.Dutch.Nouns
 import Linglib.Fragments.Dutch.Particles
@@ -250,7 +248,6 @@ import Linglib.Fragments.Kaqchikel.Agreement
 import Linglib.Fragments.Kiche.ExtractionMorphology
 import Linglib.Fragments.Chuj.VerbBuilding
 import Linglib.Fragments.Chuj.ModalIndefinites
-
 -- Phenomena
 import Linglib.Phenomena.Causatives.Studies.SpalekMcNally.Data
 import Linglib.Phenomena.TenseAspect.Studies.AlstottAravind2026.Data
@@ -266,7 +263,7 @@ import Linglib.Phenomena.Agreement.DetNoun
 import Linglib.Phenomena.Assertion.Basic
 import Linglib.Phenomena.Assertion.Bridge.KrifkaLayers
 import Linglib.Phenomena.Assertion.Studies.Gunlogson2001
-import Linglib.Phenomena.Assertion.Bridge.GunlogsonBias
+import Linglib.Phenomena.Assertion.Studies.BringGunlogson2000
 import Linglib.Phenomena.Assertion.Studies.Krifka2015
 import Linglib.Phenomena.Case.Data
 import Linglib.Phenomena.Case.Typology
@@ -281,8 +278,7 @@ import Linglib.Phenomena.Case.Studies.Karlsson2017
 import Linglib.Phenomena.Case.Bridge.FinnishSuffixOrder
 import Linglib.Phenomena.ClauseChaining.Typology
 import Linglib.Phenomena.ClauseChaining.Data
-import Linglib.Phenomena.ClauseChaining.Bridge.FragmentBridge
-import Linglib.Phenomena.ClauseChaining.Bridge.TowerBridge
+import Linglib.Phenomena.ClauseChaining.Studies.SarvasyAikhenvald2025
 import Linglib.Phenomena.Copulas.Typology
 import Linglib.Phenomena.Complementation.Attitudes.IntensionalExamplesBridge
 import Linglib.Phenomena.Complementation.Attitudes.IntentionalIdentity.Data
@@ -321,10 +317,8 @@ import Linglib.Phenomena.ArgumentStructure.Bridge.MinimalismSmallClause
 import Linglib.Phenomena.ArgumentStructure.Studies.Kratzer1996
 import Linglib.Phenomena.ScalarImplicatures.ArgumentativeFraming
 import Linglib.Phenomena.Modality.ActualityInferencesBridge
-import Linglib.Phenomena.Modality.Bridge.EventRelativityRestructuring
 import Linglib.Phenomena.Modality.Studies.Hacquard2006
-import Linglib.Phenomena.Modality.Bridge.ModalPositionFragmentBridge
-import Linglib.Phenomena.Modality.Bridge.PragmaticBlockingBridge
+import Linglib.Phenomena.Modality.Studies.Hacquard2010
 import Linglib.Phenomena.TenseAspect.CrossDomainBridge
 import Linglib.Phenomena.TenseAspect.DiagnosticsBridge
 import Linglib.Phenomena.AuxiliaryVerbs.Diagnostics
@@ -366,7 +360,7 @@ import Linglib.Phenomena.Constructions.Studies.OsborneGross2012.Data
 import Linglib.Phenomena.Constructions.Resultatives.Data
 import Linglib.Phenomena.Constructions.ParticleVerbs.Data
 import Linglib.Phenomena.Constructions.ParticleVerbs.Studies.Dendikken1995
-import Linglib.Phenomena.Constructions.Resultatives.Bridge.MinimalismResultativeSC
+import Linglib.Phenomena.Constructions.Resultatives.Studies.Dendikken1995
 import Linglib.Phenomena.Causatives.Studies.BeaversEtAl2021
 import Linglib.Phenomena.Causatives.Data
 import Linglib.Phenomena.Causatives.Typology
@@ -375,7 +369,7 @@ import Linglib.Phenomena.Causatives.StructuralCausationBridge
 import Linglib.Phenomena.Causatives.Studies.MunozPerez2026.Data
 import Linglib.Phenomena.Causatives.Studies.MunozPerez2026.Bridge
 import Linglib.Phenomena.Causatives.Compare
-import Linglib.Phenomena.Causatives.Bridge.RootTypology
+import Linglib.Phenomena.Causatives.Studies.Coon2019
 import Linglib.Phenomena.Causatives.Studies.Coon2019.Data
 import Linglib.Phenomena.Causatives.Studies.Coon2019.Bridge
 import Linglib.Phenomena.Coordination.Data
@@ -403,8 +397,7 @@ import Linglib.Phenomena.Focus.Rooth1992Bridge
 import Linglib.Phenomena.Focus.PolarityStress
 import Linglib.Phenomena.Focus.ProsodicExhaustivity
 import Linglib.Phenomena.Focus.DiscourseOnly
-import Linglib.Phenomena.Focus.Bridge.DTSDiscourseOnly
-import Linglib.Phenomena.Focus.Bridge.DiscourseOnlyDerivations
+import Linglib.Phenomena.Focus.Studies.IppolitoKissWilliams2025
 import Linglib.Phenomena.Focus.Studies.ThomasDeo2020
 import Linglib.Phenomena.Generics.BareNames
 import Linglib.Phenomena.Generics.BarePlurals
@@ -463,8 +456,7 @@ import Linglib.Phenomena.FillerGap.Islands.MannerOfSpeaking
 import Linglib.Phenomena.FillerGap.Compare
 import Linglib.Phenomena.FillerGap.OblExtraction
 import Linglib.Phenomena.FillerGap.Studies.Erlewine2016
-import Linglib.Phenomena.FillerGap.Bridge.MinimalismOblExtraction
-import Linglib.Phenomena.FillerGap.Bridge.MayanExtractionComparison
+import Linglib.Phenomena.FillerGap.Studies.ElkinsImanishiCoon2026
 import Linglib.Phenomena.Nonliteral.Irony.KaoEtAl2015
 import Linglib.Phenomena.Nonliteral.Irony.Studies.SpinosoDiPiano2025
 import Linglib.Phenomena.Nonliteral.Bridge.RelevanceTheory
@@ -573,7 +565,7 @@ import Linglib.Phenomena.Presupposition.ForgetPresuppositions
 import Linglib.Phenomena.Presupposition.Studies.White2014
 import Linglib.Phenomena.Modality.OutlookMarkers
 import Linglib.Phenomena.Agreement.NounCategorization
-import Linglib.Phenomena.Agreement.Bridge.NounCategorization
+import Linglib.Phenomena.Agreement.Studies.Chierchia1998
 import Linglib.Phenomena.Agreement.Typology
 import Linglib.Phenomena.Quantification.Basic
 import Linglib.Phenomena.Quantification.Data
@@ -676,7 +668,6 @@ import Linglib.Phenomena.PhonologicalAlternation.Data
 import Linglib.Phenomena.PhonologicalAlternation.Bridge.SPEDerivations
 import Linglib.Phenomena.PhonologicalAlternation.Studies.Clements1985
 import Linglib.Phenomena.PhonologicalAlternation.Studies.Storme2026
-
 -- Theories: CCG
 import Linglib.Theories.Syntax.CCG.Core.Basic
 import Linglib.Theories.Syntax.CCG.Core.Combinators
@@ -685,9 +676,9 @@ import Linglib.Theories.Interfaces.SyntaxSemantics.CCG.Interface
 import Linglib.Theories.Interfaces.SyntaxSemantics.CCG.Homomorphism
 import Linglib.Theories.Interfaces.SyntaxSemantics.CCG.Derivation
 import Linglib.Phenomena.Agreement.Bridge.CCGAgreement
-import Linglib.Phenomena.Agreement.Bridge.MamAgreeSpellout
+import Linglib.Phenomena.Agreement.Studies.Scott2023
 import Linglib.Phenomena.Agreement.DifferentialIndexing
-import Linglib.Phenomena.Agreement.Bridge.DifferentialIndexing
+import Linglib.Phenomena.Agreement.Studies.Aissen2003
 import Linglib.Phenomena.Coordination.CCGBridge
 import Linglib.Theories.Syntax.CCG.CrossSerial
 -- CCGDerivations moved to Studies/Steedman2000
@@ -698,7 +689,6 @@ import Linglib.Theories.Syntax.CCG.Formal.FormalLanguageTheory
 import Linglib.Theories.Syntax.CCG.Formal.GenerativeCapacity
 import Linglib.Theories.Syntax.CCG.Scope
 import Linglib.Theories.Syntax.CCG.Intonation
-
 -- Comparisons (pure metatheory)
 import Linglib.Comparisons.CommandRelations
 import Linglib.Comparisons.GenericSemantics
@@ -720,7 +710,6 @@ import Linglib.Comparisons.AssertionTheories
 import Linglib.Comparisons.CaseTheories
 import Linglib.Comparisons.FrameComposition
 import Linglib.Comparisons.CategorialFeatures
-
 -- Theories: Dependency Grammar
 import Linglib.Theories.Syntax.DependencyGrammar.Core.Basic
 import Linglib.Theories.Syntax.DependencyGrammar.Core.Projection
@@ -758,7 +747,6 @@ import Linglib.Phenomena.WordOrder.Studies.Adger2003
 import Linglib.Phenomena.WordOrder.Studies.Pollock1989
 import Linglib.Phenomena.WordOrder.Studies.Hudson1984
 import Linglib.Theories.Syntax.DependencyGrammar.LongDistance
-
 -- Theories: Dynamic Semantics
 -- Theories: Dynamic Semantics — Core
 import Linglib.Theories.Semantics.Dynamic.Core.Basic
@@ -835,7 +823,6 @@ import Linglib.Theories.Semantics.TypeTheoretic.FrameBridge
 import Linglib.Theories.Semantics.TypeTheoretic.Modality
 import Linglib.Theories.Semantics.TypeTheoretic.Quantification
 import Linglib.Theories.Semantics.TypeTheoretic.Underspecification
-
 -- Theories: Construction Grammar
 import Linglib.Theories.Syntax.ConstructionGrammar.Basic
 import Linglib.Theories.Syntax.ConstructionGrammar.Studies.FillmoreKayOConnor1988
@@ -847,7 +834,6 @@ import Linglib.Phenomena.Constructions.Studies.Dunn2026
 import Linglib.Phenomena.Constructions.CxG_KayFillmore1999Bridge
 import Linglib.Phenomena.Constructions.DG_OsborneGross2012Bridge
 import Linglib.Theories.Syntax.ConstructionGrammar.Studies.GoldbergJackendoff2004
-
 -- Theories: HPSG
 import Linglib.Theories.Syntax.HPSG.Core.Basic
 import Linglib.Theories.Syntax.HPSG.Core.FromFragments
@@ -855,10 +841,8 @@ import Linglib.Theories.Syntax.HPSG.Core.HeadFiller
 import Linglib.Theories.Syntax.HPSG.Core.LexicalRules
 import Linglib.Theories.Syntax.HPSG.Coreference
 import Linglib.Theories.Syntax.HPSG.Inversion
-
 -- Theories: Information Structure (now in Focus/)
 import Linglib.Theories.Semantics.Focus.KratzerSelkirk2020
-
 -- Theories: Minimalism
 import Linglib.Theories.Syntax.Minimalism.Core.Features
 import Linglib.Theories.Syntax.Minimalism.Core.Agree
@@ -907,7 +891,6 @@ import Linglib.Theories.Syntax.Minimalism.Formal.MCB2023.Coproduct
 import Linglib.Theories.Syntax.Minimalism.Formal.Workspace
 import Linglib.Theories.Syntax.Minimalism.Formal.XBar
 import Linglib.Theories.Syntax.Minimalism.Formal.Linearization.LCA
-
 -- Theories: Semantics.Degree (degree semantics frameworks)
 import Linglib.Theories.Semantics.Degree.Core
 import Linglib.Theories.Semantics.Degree.Comparative
@@ -923,7 +906,6 @@ import Linglib.Theories.Semantics.Degree.Frameworks.Klein
 import Linglib.Theories.Semantics.Degree.Frameworks.Schwarzschild
 import Linglib.Theories.Semantics.Degree.Frameworks.Rett
 import Linglib.Theories.Semantics.Degree.Granularity
-
 -- Theories: Semantics.Montague (Montague architecture)
 import Linglib.Theories.Semantics.Lexical.Adjective.Intensification
 import Linglib.Theories.Semantics.Lexical.Adjective.Theory
@@ -947,7 +929,6 @@ import Linglib.Theories.Semantics.Lexical.Determiner.Definite
 import Linglib.Theories.Semantics.Lexical.Determiner.DomainRestriction
 import Linglib.Theories.Semantics.Lexical.Determiner.PolarizedIndividuals
 import Linglib.Theories.Semantics.Lexical.Determiner.Quantifier
-
 import Linglib.Theories.Semantics.Lexical.Expressives.Basic
 import Linglib.Theories.Semantics.Lexical.Expressives.OutlookMarker
 import Linglib.Theories.Semantics.Probabilistic.Scenarios.Basic
@@ -1005,7 +986,6 @@ import Linglib.Theories.Semantics.Lexical.Verb.ChangeOfState.Theory
 import Linglib.Theories.Semantics.Lexical.Verb.Habituals
 import Linglib.Theories.Semantics.Lexical.Verb.SelectionalPreferences
 import Linglib.Theories.Semantics.Lexical.Verb.ViewpointAspect
-
 -- Theories: Semantics.Events (neo-Davidsonian)
 import Linglib.Theories.Semantics.Events.Basic
 import Linglib.Theories.Semantics.Events.DegreeEvents
@@ -1023,7 +1003,6 @@ import Linglib.Theories.Semantics.Events.SpatialTrace
 import Linglib.Theories.Semantics.Events.DimensionBridge
 import Linglib.Theories.Semantics.Events.TemporalDecomposition
 import Linglib.Theories.Semantics.Events.SpatiotemporalDistance
-
 -- Theories: Semantics.Intensional (possible-worlds semantics)
 import Linglib.Theories.Semantics.Intensional.Basic
 import Linglib.Theories.Semantics.Attitudes.BuilderProperties
@@ -1107,7 +1086,6 @@ import Linglib.Theories.Semantics.Tense.Deal
 import Linglib.Theories.Semantics.Tense.Sharvit
 import Linglib.Theories.Syntax.Minimalism.Tense.Zeijlstra
 import Linglib.Theories.Syntax.Minimalism.Tense.Wurmbrand
-
 -- Theories: Semantics.Questions
 import Linglib.Theories.Semantics.Questions.Answerhood
 import Linglib.Theories.Semantics.Questions.Basic
@@ -1131,7 +1109,6 @@ import Linglib.Theories.Semantics.Questions.ScopeReadings
 import Linglib.Theories.Semantics.Questions.SignalingGames
 import Linglib.Theories.Semantics.Questions.DegreeQuestion
 import Linglib.Theories.Semantics.Questions.VerumFocus
-
 -- Theories: NeoGricean
 import Linglib.Theories.Pragmatics.NeoGricean.Analyticity
 import Linglib.Theories.Pragmatics.NeoGricean.ConventionalImplicatures
@@ -1157,7 +1134,6 @@ import Linglib.Theories.Pragmatics.NeoGricean.ScalarImplicatures.Basic
 import Linglib.Theories.Pragmatics.NeoGricean.Constraints.NumericalExpressions
 import Linglib.Theories.Pragmatics.NeoGricean.Constraints.Wang2025
 import Linglib.Theories.Pragmatics.NeoGricean.ScalarImplicatures.Operations
-
 -- Theories: RSA
 import Linglib.Theories.Pragmatics.RSA.Core.BToMGrounding
 import Linglib.Theories.Pragmatics.RSA.Core.CombinedUtility
@@ -1219,7 +1195,6 @@ import Linglib.Theories.Pragmatics.Assertion.Krifka
 import Linglib.Theories.Pragmatics.Assertion.Brandom
 import Linglib.Theories.Pragmatics.Assertion.Gunlogson
 import Linglib.Theories.Pragmatics.Assertion.Lauer
-
 -- Theories: Phonology
 import Linglib.Theories.Phonology.Features
 import Linglib.Theories.Phonology.FeatureGeometry
@@ -1227,13 +1202,11 @@ import Linglib.Theories.Phonology.Autosegmental.Defs
 import Linglib.Theories.Phonology.Syllable.Defs
 import Linglib.Theories.Phonology.RuleBased.Defs
 import Linglib.Theories.Phonology.HarmonicGrammar.MaxEnt
-
 -- Theories: Sociolinguistics
 import Linglib.Theories.Sociolinguistics.PropertySpace
 import Linglib.Theories.Sociolinguistics.SCM
 import Linglib.Theories.Sociolinguistics.EckertMontague
 import Linglib.Theories.Sociolinguistics.SMG
-
 -- Theories: SDS
 import Linglib.Theories.Semantics.Probabilistic.SDS.Core
 import Linglib.Theories.Semantics.Probabilistic.SDS.Examples
@@ -1242,4 +1215,3 @@ import Linglib.Theories.Semantics.Probabilistic.SDS.Marginalization
 import Linglib.Theories.Semantics.Probabilistic.SDS.MeasureTheory
 import Linglib.Theories.Semantics.Probabilistic.SDS.ThresholdInstances
 import Linglib.Theories.Semantics.Probabilistic.SDS.ThresholdSemantics
-

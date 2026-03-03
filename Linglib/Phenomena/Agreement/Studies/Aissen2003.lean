@@ -7,7 +7,7 @@ import Linglib.Fragments.Georgian.Agreement
 import Linglib.Fragments.Hungarian.Predicates
 
 /-!
-# Bridge: Differential Indexing ↔ DOM, PersonGeometry, Kaqchikel
+Differential Indexing ↔ DOM, PersonGeometry, Kaqchikel
 @cite{aissen-2003} @cite{just-2024} @cite{preminger-2014}
 
 Connects @cite{just-2024} differential indexing to three existing formalizations:
@@ -29,7 +29,7 @@ Connects @cite{just-2024} differential indexing to three existing formalizations
 
 -/
 
-namespace Phenomena.Agreement.Bridge.DifferentialIndexing
+namespace Phenomena.Agreement.Studies.Aissen2003
 
 open Core.Prominence
 open Phenomena.Agreement.DifferentialIndexing
@@ -238,4 +238,4 @@ theorem hungarian_definiteness_conditioned :
 theorem hungarian_not_person_conditioned :
     hungarian.personConditioned = false := by native_decide
 
-end Phenomena.Agreement.Bridge.DifferentialIndexing
+end Phenomena.Agreement.Studies.Aissen2003

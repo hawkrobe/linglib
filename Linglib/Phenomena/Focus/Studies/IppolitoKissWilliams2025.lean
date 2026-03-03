@@ -1,14 +1,18 @@
 import Linglib.Theories.Semantics.Lexical.Particle.DiscourseOnly
+import Linglib.Theories.Pragmatics.DecisionTheoretic.But
+import Linglib.Theories.Pragmatics.DecisionTheoretic.Core
 import Linglib.Phenomena.Focus.DiscourseOnly
 
 /-!
-# End-to-End Derivation Chains for Discourse *only*
-@cite{ippolito-kiss-williams-2025}
+# Discourse *only*
+@cite{ippolito-kiss-williams-2025} @cite{merin-1999}
+
+## Part I: End-to-End Derivation Chains
 
 Concrete instantiations of the discourse *only* theory (@cite{ippolito-kiss-williams-2025} Def. 16)
 that derive the acceptability of specific cross-linguistic examples.
 
-## Architecture
+### Architecture
 
 The discourse *only* theory (in `Lexical/Particle/DiscourseOnly.lean`) defines
 `isDefined` and `ciContent` as computable `Bool` functions over abstract types.
@@ -16,7 +20,7 @@ This file instantiates those functions with a concrete 8-world model of the
 house-buying scenario used throughout IKW §7, then proves that the theory's
 predictions match the empirical data in `Phenomena/Focus/DiscourseOnly.lean`.
 
-## The House Model
+### The House Model
 
 8 worlds varying on three binary properties: beautiful, expensive, renovated.
 The QUD "Should we buy the house?" is answered affirmatively only when the house
@@ -25,7 +29,7 @@ is beautiful, affordable, AND renovated (w₀). This ensures:
 - "expensive" anti-supports buying (P(buy|expensive) = 0)
 - "renovated" is relevant to buying (P(buy|renovated) > P(buy))
 
-## Derivation Chains
+### Derivation Chains
 
 Each derivation theorem proves:
 1. `isDefined` = true (the presupposition is satisfied)
@@ -36,9 +40,36 @@ For interrogative S' examples (30a, 31a, etc.), the derivation shows that
 the speaker's uncertainty about the answer blocks `fullSupport` for S' on
 all QUD answers, trivially satisfying the CI's condition (ii).
 
+## Part II: DTS Connection
+
+Connects the CI of discourse *only* to
+@cite{merin-1999}'s Decision-Theoretic Semantics, specifically the notion of
+unexpectedness from the analysis of *but*.
+
+### Key Connection
+
+Both *but* and discourse *only* express a form of evidential contrast:
+
+- *but*: A is positively relevant and B is negatively relevant to H
+  → B is unexpected given A (Theorem 8)
+- discourse *only*: S supports α but S' does not support α
+  → S' undermines the evidential direction
+
+### The *but*/*only* Asymmetry (@cite{ippolito-kiss-williams-2025} §6)
+
+*but* requires `negRelevant` (BF < 1): the second clause must actively
+provide counter-evidence. Discourse *only* only requires `¬probSupports`:
+the second clause merely fails to support the direction. Since
+`negRelevant → ¬probSupports` (anti-support implies non-support), *but*'s
+condition is strictly stronger. This means every *but* context could license
+discourse *only*, but not vice versa.
 -/
 
-namespace Phenomena.Focus.Bridge.DiscourseOnlyDerivations
+namespace Phenomena.Focus.Studies.IppolitoKissWilliams2025
+
+-- ============================================================================
+-- Part I: End-to-End Derivation Chains
+-- ============================================================================
 
 open Discourse
 open Semantics.Questions.ProbabilisticAnswerhood
@@ -47,7 +78,7 @@ open Semantics.Lexical.Particle.DiscourseOnly
 open Phenomena.Focus.DiscourseOnly
 
 -- ============================================================================
--- World Type and Propositions
+-- § 1: World Type and Propositions
 -- ============================================================================
 
 /-- 8-world model for the house-buying scenario.
@@ -89,7 +120,7 @@ def prior : Prior W := fun _ => 1 / 8
 def worlds : List W := List.finRange 8
 
 -- ============================================================================
--- QUD and Denotations
+-- § 2: QUD and Denotations
 -- ============================================================================
 
 /-- QUD: "Should we buy the house?" — binary issue. -/
@@ -105,7 +136,7 @@ def s'Expensive : Issue W := ⟨[expensive]⟩
 def s'RenovatedQ : Issue W := Issue.polar renovated
 
 -- ============================================================================
--- Doxastic States
+-- § 3: Doxastic States
 -- ============================================================================
 
 /-- Speaker who asserts "beautiful" and "expensive": believes both.
@@ -118,7 +149,7 @@ DOX_sp = {w₀, w₁, w₂, w₃} (beautiful). -/
 def doxB : InfoState W := fun w => beautiful w
 
 -- ============================================================================
--- Contexts
+-- § 4: Contexts
 -- ============================================================================
 
 /-- Context for core examples: S = "beautiful", S' = "expensive".
@@ -150,7 +181,7 @@ def clauseTypeCtx : Context W :=
                      Issue.polar renovated] }
 
 -- ============================================================================
--- Sentences
+-- § 5: Sentences
 -- ============================================================================
 
 /-- "The house is beautiful, only it's expensive" (core declarative-declarative). -/
@@ -164,7 +195,7 @@ def polarQSentence : Sentence W :=
   , s'Den := s'RenovatedQ }
 
 -- ============================================================================
--- Core Derivation: Declarative S + Declarative S'
+-- § 6: Core Derivation: Declarative S + Declarative S'
 -- ============================================================================
 
 section CoreDerivation
@@ -217,7 +248,7 @@ theorem english_house_predicted :
 end CoreDerivation
 
 -- ============================================================================
--- Clause-Type Derivation: Declarative S + Polar Q S'
+-- § 7: Clause-Type Derivation: Declarative S + Polar Q S'
 -- ============================================================================
 
 section PolarQDerivation
@@ -256,7 +287,7 @@ theorem mandarin_polarQ_predicted :
 end PolarQDerivation
 
 -- ============================================================================
--- Abstract Theorem: Any Interrogative S' Where Speaker Doesn't Know Answer
+-- § 8: Abstract Theorem: Any Interrogative S' Where Speaker Doesn't Know Answer
 -- ============================================================================
 
 /-- For any context where S supports some QUD answer and S' is an interrogative
@@ -290,4 +321,139 @@ theorem interrogative_s'_ci_satisfied {W' : Type*} [Fintype W']
   · exact fullSupport_fails_unbelieved ctx.dox sent.s'Den ctx.prior α
       ctx.worlds hNoBelief
 
-end Phenomena.Focus.Bridge.DiscourseOnlyDerivations
+-- ============================================================================
+-- Part II: DTS Connection
+-- ============================================================================
+
+open Core.Proposition
+open Theories.DTS
+open Theories.DTS.But
+
+-- ============================================================================
+-- § 9: Binary Issue Conversion
+-- ============================================================================
+
+/-- Convert a DTS dichotomic issue {H, ¬H} to an inquisitive `Issue`.
+
+A DTS `Issue W` is a single topic H (with ¬H implicit). The corresponding
+inquisitive issue has two alternatives: H and ¬H. -/
+def dtsToInquisitive {W : Type*} (topic : BProp W) : Discourse.Issue W :=
+  Discourse.Issue.polar topic
+
+/-- The DTS issue and inquisitive issue have matching alternatives. -/
+theorem dtsToInquisitive_alternatives {W : Type*} (topic : BProp W) :
+    (dtsToInquisitive topic).alternatives = [topic, λ w => !topic w] := rfl
+
+-- ============================================================================
+-- § 10: Witness Structure
+-- ============================================================================
+
+/-- A witness for the discourse *only* → DTS unexpectedness connection.
+
+Bundles a DTS context, a discourse *only* configuration (as raw propositions
+for the binary case), and evidence that S is positively relevant to the
+topic H. Unlike the *but* witness, this does NOT require S' to be negatively
+relevant — discourse *only* only requires S' to fail to support, which is
+strictly weaker than negative relevance. -/
+structure DTSDiscourseOnlyWitness (W : Type*) [Fintype W] where
+  /-- The DTS context (dichotomic issue H + prior) -/
+  dtsCtx : DTSContext W
+  /-- Left clausal argument S (as a proposition for the binary case) -/
+  s : W → Bool
+  /-- Right clausal argument S' (as a proposition for the binary case) -/
+  s' : W → Bool
+  /-- S is positively relevant to H -/
+  sPosRelevant : posRelevant dtsCtx s
+
+-- ============================================================================
+-- § 11: Bridge Theorems
+-- ============================================================================
+
+/-- For binary issues, probabilistic `probSupports` (P(H|S) > P(H)) is
+equivalent to DTS `posRelevant` (BF_H(S) > 1).
+
+Both capture the same intuition — S provides evidence for H — but via
+different formalizations: `probSupports` uses the absolute probability boost,
+while `posRelevant` uses the Bayes factor ratio.
+
+Proof sketch: For binary issue {H, ¬H}, `probSupports prior S H` means
+P(H|S) > P(H), i.e., `evidentialBoost S H prior > 0`. Meanwhile,
+`posRelevant ctx S` means `bayesFactor ctx S > 1`, i.e.,
+P(S|H)/P(S|¬H) > 1, i.e., P(S|H) > P(S|¬H). By Bayes' theorem,
+P(H|S) > P(H) ↔ P(S|H) > P(S) ↔ P(S|H) > P(S|H)P(H) + P(S|¬H)P(¬H)
+↔ P(S|H)(1−P(H)) > P(S|¬H)P(¬H) ↔ P(S|H)P(¬H) > P(S|¬H)P(¬H)
+↔ P(S|H) > P(S|¬H) (when P(¬H) > 0) ↔ BF > 1. -/
+theorem probSupports_implies_posRelevant_binary {W : Type*} [Fintype W]
+    (prior : Prior W) (topic : BProp W) (evidence : W → Bool)
+    (hH_pos : probOfProp prior topic > 0)
+    (hNH_pos : probOfProp prior (λ w => !topic w) > 0)
+    (hS_pos : probOfProp prior evidence > 0) :
+    probSupports prior evidence topic = true →
+    posRelevant ⟨⟨topic⟩, prior⟩ evidence := by
+  sorry
+
+/-- Negative relevance (DTS) implies non-support (probabilistic).
+
+If S' is negatively relevant to H (BF < 1, i.e., P(S'|H) < P(S'|¬H)),
+then S' does not probabilistically support H. This is the formal content
+of IKW's observation that *but*'s condition on the second clause is strictly
+stronger than discourse *only*'s.
+
+Proof sketch: negRelevant means BF < 1, i.e., P(S'|H)/P(S'|¬H) < 1.
+By the Bayes theorem argument (reverse of above), this gives P(H|S') < P(H),
+i.e., evidentialBoost < 0, which means isNegativeEvidence = true. Since
+evidentialBoost < 0 ↔ ¬(evidentialBoost > 0), we get ¬isPositiveEvidence
+= ¬probSupports. -/
+theorem negRelevant_implies_not_probSupports {W : Type*} [Fintype W]
+    (prior : Prior W) (topic : BProp W) (evidence : W → Bool)
+    (hH_pos : probOfProp prior topic > 0)
+    (hNH_pos : probOfProp prior (λ w => !topic w) > 0)
+    (hS_pos : probOfProp prior evidence > 0)
+    (hNeg : negRelevant ⟨⟨topic⟩, prior⟩ evidence) :
+    probSupports prior evidence topic = false := by
+  sorry
+
+/-- Every *but* context can license discourse *only*.
+
+When S is posRelevant and S' is negRelevant (the *but* condition), S'
+also fails to probabilistically support H (the *only* condition). This
+formalizes @cite{ippolito-kiss-williams-2025} §6's claim that discourse *only* is strictly weaker
+than *but*. -/
+theorem but_sufficient_for_only {W : Type*} [Fintype W]
+    (prior : Prior W) (topic : BProp W)
+    (s s' : W → Bool)
+    (hH_pos : probOfProp prior topic > 0)
+    (hNH_pos : probOfProp prior (λ w => !topic w) > 0)
+    (_hS_pos : probOfProp prior s > 0)
+    (hS'_pos : probOfProp prior s' > 0)
+    (_hSpos : posRelevant ⟨⟨topic⟩, prior⟩ s)
+    (hS'neg : negRelevant ⟨⟨topic⟩, prior⟩ s') :
+    probSupports prior s' topic = false :=
+  negRelevant_implies_not_probSupports prior topic s' hH_pos hNH_pos hS'_pos hS'neg
+
+/-- Discourse *only*'s CI implies unexpectedness when the QUD is binary,
+S' is negatively relevant, and CIP holds.
+
+When S is posRelevant and S' is negRelevant (the stronger *but* condition),
+Merin's Theorem 8 gives P(S'|S) < P(S'): S' is unexpected given S.
+
+Note: this theorem uses the stronger *but* condition (negRelevant) rather than
+the weaker discourse *only* condition (¬probSupports). Unexpectedness in
+Merin's sense requires active counter-relevance, not just failure to support.
+This means unexpectedness is a consequence when discourse *only* sentences
+happen to meet the stronger *but* threshold. -/
+theorem discOnly_implies_unexpectedness_under_but {W : Type*} [Fintype W]
+    (w : DTSDiscourseOnlyWitness W)
+    (hS'neg : negRelevant w.dtsCtx w.s')
+    (hPrior : ∀ x, w.dtsCtx.prior x ≥ 0)
+    (hNorm : probSum w.dtsCtx.prior (Decidable.top W) = 1)
+    (hS_pos : 0 < probSum w.dtsCtx.prior w.s)
+    (hH_pos : 0 < probSum w.dtsCtx.prior w.dtsCtx.issue.topic)
+    (hNH_pos : 0 < probSum w.dtsCtx.prior (Decidable.pnot W w.dtsCtx.issue.topic))
+    (hCIP : CIP w.dtsCtx w.s w.s') :
+    condProb w.dtsCtx.prior w.s' w.s <
+    margProb w.dtsCtx.prior w.s' := by
+  exact cip_contrariness_implies_unexpectedness w.dtsCtx w.s w.s'
+    hPrior hNorm hCIP (.inl ⟨w.sPosRelevant, hS'neg⟩) hS_pos hH_pos hNH_pos
+
+end Phenomena.Focus.Studies.IppolitoKissWilliams2025

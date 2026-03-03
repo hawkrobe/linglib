@@ -2,7 +2,7 @@ import Linglib.Phenomena.Agreement.NounCategorization
 import Linglib.Theories.Semantics.Lexical.Noun.Kind.Chierchia1998
 
 /-!
-# Bridge: Noun Categorization × @cite{chierchia-1998} Nominal Mapping Parameter
+Noun Categorization × @cite{chierchia-1998} Nominal Mapping Parameter
 @cite{chierchia-1998}
 
 Connects the cross-linguistic noun categorization typology in
@@ -22,7 +22,7 @@ Parameter from `Theories.Semantics.Lexical.Noun.Kind.Chierchia1998`.
 - English [+arg, +pred] prediction (no system) not yet connected to data
 -/
 
-namespace Phenomena.Agreement.Bridge.NounCategorization
+namespace Phenomena.Agreement.Studies.Chierchia1998
 
 open Core.NounCategorization
 open Semantics.Lexical.Noun.Kind.Chierchia1998 (NominalMapping)
@@ -90,4 +90,4 @@ theorem french_italian_same_mapping :
     Fragments.French.Nouns.frenchMapping =
       Fragments.Italian.Nouns.italianMapping := rfl
 
-end Phenomena.Agreement.Bridge.NounCategorization
+end Phenomena.Agreement.Studies.Chierchia1998

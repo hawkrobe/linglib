@@ -3,7 +3,7 @@ import Linglib.Theories.Pragmatics.Assertion.Gunlogson
 import Linglib.Theories.Pragmatics.Assertion.Stalnaker
 
 /-!
-# Bridge: Gunlogson Felicity ↔ Contextual Evidence Bias
+Gunlogson Felicity ↔ Contextual Evidence Bias
 @cite{bring-gunlogson-2000} @cite{gunlogson-2001} @cite{romero-2024}
 
 Connects @cite{gunlogson-2001}'s felicity condition on rising declaratives
@@ -25,7 +25,7 @@ This derivation is formalized in `Gunlogson.cbc_from_uninformativeness`.
 
 -/
 
-namespace Phenomena.Assertion.Bridge.GunlogsonBias
+namespace Phenomena.Assertion.Studies.BringGunlogson2000
 
 open Theories.Pragmatics.Assertion.Gunlogson
 open Core.Discourse.Commitment
@@ -138,4 +138,4 @@ theorem rising_is_not_partition {W : Type*}
     s.addresseeSlate.commitments.length = 1 :=
   rfl
 
-end Phenomena.Assertion.Bridge.GunlogsonBias
+end Phenomena.Assertion.Studies.BringGunlogson2000
