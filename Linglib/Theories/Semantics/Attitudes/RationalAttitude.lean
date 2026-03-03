@@ -165,8 +165,8 @@ theorem CausativeAttitude.readings_from_single_denote {E Time : Type*} [LE Time]
     v.intentionReading VP = v.denote VP :=
   ⟨rfl, rfl⟩
 
--- TODO: Formalize CAUSE*(s, e, w') — causal self-referentiality (Searle 1983;
--- Grano 2024). In the paper's (25), *a* contributes CAUSE*(s, e, w') requiring
+-- TODO: Formalize CAUSE*(s, e, w') — causal self-referentiality (@cite{searle-1983};
+-- @cite{grano-2024}). In the paper's (25), *a* contributes CAUSE*(s, e, w') requiring
 -- the attitude state s to causally bring about event e in inertia world w'.
 -- This distinguishes intentions (world-to-mind fit) from beliefs (mind-to-world).
 -- Requires world-parameterized events; deferred until Events/ supports this.

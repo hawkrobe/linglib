@@ -97,7 +97,7 @@ def GenderCount.contains (gc : GenderCount) (n : Nat) : Bool :=
   | .four     => n == 4
   | .fivePlus => n >= 5
 
-/-- WALS Chapter 30 distribution (Corbett 2013a, 257-language sample). -/
+/-- WALS Chapter 30 distribution (@cite{corbett-2013}, 257-language sample). -/
 def ch30Distribution : List WALSCount :=
   [ ⟨"None (no gender)",   145⟩
   , ⟨"Two genders",         50⟩
@@ -128,7 +128,7 @@ inductive GenderBasis where
 
 instance : Inhabited GenderBasis := ⟨.noGender⟩
 
-/-- WALS Chapter 31 distribution (Corbett 2013b, 254-language sample). -/
+/-- WALS Chapter 31 distribution (@cite{corbett-2013b}, 254-language sample). -/
 def ch31Distribution : List WALSCount :=
   [ ⟨"No gender",            145⟩
   , ⟨"Sex-based",             84⟩
@@ -161,7 +161,7 @@ inductive AssignmentSystem where
 
 instance : Inhabited AssignmentSystem := ⟨.noGender⟩
 
-/-- WALS Chapter 32 distribution (Corbett 2013c, 256-language sample). -/
+/-- WALS Chapter 32 distribution (@cite{corbett-2013c}, 256-language sample). -/
 def ch32Distribution : List WALSCount :=
   [ ⟨"No gender",                  145⟩
   , ⟨"Semantic",                    53⟩

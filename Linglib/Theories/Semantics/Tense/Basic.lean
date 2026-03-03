@@ -95,7 +95,7 @@ inductive TensePhenomenon where
       with future saying time -/
   | embeddedPresentPuzzle
   /-- "Aristotle was a philosopher" — past tense ↔ subject no longer
-      exists implication (Musan 1995/1997) -/
+      exists implication (@cite{musan-1995}/1997) -/
   | lifetimeEffects
   /-- "If John were taller..." — past morphology, non-past semantics
       (@cite{iatridou-2000}, beyond Deal's counterfactual tense) -/

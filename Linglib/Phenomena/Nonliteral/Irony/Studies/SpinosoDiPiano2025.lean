@@ -5,7 +5,6 @@ import Mathlib.Analysis.SpecialFunctions.Pow.Real
 # Spinoso-@cite{spinoso-di-piano-etal-2025} — (RSA)² @cite{spinoso-di-piano-etal-2025} @cite{kao-goodman-2015}
 @cite{bergen-goodman-2015}
 
-
 (RSA)²: A Rhetorical-Strategy-Aware Rational Speech Act Framework for
 Figurative Language Understanding.
 

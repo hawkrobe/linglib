@@ -70,7 +70,7 @@ def personaDescriptors : PersonaCondition → List String
 -- ============================================================================
 
 /-- A coefficient from a mixed-effects logistic regression model.
-    Models fitted via `glmer` in R (lme4; Bates et al. 2015). -/
+    Models fitted via `glmer` in R (lme4; @cite{bates-etal-2015}). -/
 structure RegressionCoefficient where
   predictor : String
   /-- Coefficient estimate (log-odds) -/

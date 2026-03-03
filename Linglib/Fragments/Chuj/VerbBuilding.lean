@@ -26,8 +26,7 @@ Consequences for the nature of roots."
    arguments. The causative alternation follows from this split.
 4. **-aj as Existential Closure** (p. 76): The suffix -aj is the overt
    morphological reflex of existential binding of an implicit argument.
-5. **Voice alternations are root-derived** (p. 77, citing Alexiadou et al.
-   2006): each voice form is built independently from root + v/Voice⁰,
+5. **Voice alternations are root-derived** (p. 77, citing @cite{alexiadou-anagnostopoulou-schaefer-2006}): each voice form is built independently from root + v/Voice⁰,
    not derived from another voice form (e.g., passive is not derived
    from active).
 
@@ -189,7 +188,7 @@ theorem v_j_no_event : v_j.flavor.eventContribution = none := rfl
 
 -- Core combinations from @cite{coon-2019} §4–5.
 -- Each voice form is built independently from root + v/Voice⁰ (p. 77,
--- citing Alexiadou et al. 2006): passive is not derived from active.
+-- citing @cite{alexiadou-anagnostopoulou-schaefer-2006}): passive is not derived from active.
 
 /-- √TV result + Ø → causative [vDO, vGO, vBE] (active transitive). -/
 theorem tv_res_active :

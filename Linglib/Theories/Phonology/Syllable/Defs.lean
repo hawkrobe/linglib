@@ -127,7 +127,7 @@ inductive SyllWeight where
   deriving DecidableEq, BEq, Repr
 
 /-- Mora count. `codaMoraic = true` means coda consonants contribute weight
-    (the "Weight-by-Position" parameter of Hayes 1989). -/
+    (the "Weight-by-Position" parameter of @cite{hayes-1989}). -/
 def Syllable.moraCount (σ : Syllable) (codaMoraic : Bool := true) : Nat :=
   σ.nucleus.length + if codaMoraic then σ.coda.length else 0
 

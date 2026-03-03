@@ -44,7 +44,7 @@ namespace Fragments.Mam
 
 /-- The three clause sizes relevant for =(y)a' distribution in Mam.
     These correspond to different structural sizes of the verbal domain
-    (@cite{elkins-imanishi-coon-2026} §6.1, following @cite{coon-2019} and Elkins et al. 2025):
+    (@cite{elkins-imanishi-coon-2026} §6.1, following @cite{coon-2019} and @cite{elkins-imanishi-coon-2026}):
 
     - `fullCP`: Full finite clause with aspect — projects Voice
     - `aspectless`: VoiceP-sized complement (no aspect) — projects Voice
@@ -55,7 +55,7 @@ inductive MamClauseType where
   | fullCP
   /-- VoiceP-sized complement: lacks aspect but projects Voice.
       =(y)a' licensed on oblique extraction (Elkins et al. §6.1,
-      following Elkins et al. 2025). -/
+      following @cite{elkins-imanishi-coon-2026}). -/
   | aspectless
   /-- VP-sized infinitival complement: no Voice projected.
       =(y)a' impossible — no Voice⁰ to host [oblique] (Elkins et al. §6.1). -/

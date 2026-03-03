@@ -156,7 +156,7 @@ def crossCategorialData : CrossCategorialParallel :=
 
     `much` occurs with CUM-like predicates (mass nouns, atelic VPs).
     `many` is a suppletive variant of `much` for count/QUA domains
-    (Wellwood 2014, fn. 11). -/
+    (@cite{wellwood-2014}, fn. 11). -/
 structure MuchManyDistribution where
   /-- `much` occurs with CUM-like predicates -/
   much_with_cum : Bool

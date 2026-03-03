@@ -83,7 +83,7 @@ def closeAppositive {m : Semantics.Montague.Model}
     : Option (m.interpTy .e) :=
   Semantics.Lexical.Noun.TypeShifting.iota domain (fun x => n1 x && n2 x)
 
-/-- Specificational copula: ⟦be⟧ = λx.λy_i. ∨y_i = x (Romero 2005, (34)).
+/-- Specificational copula: ⟦be⟧ = λx.λy_i. ∨y_i = x (@cite{romero-2005}, (34)).
     Maps individual concepts to their actual present values. -/
 def specCopula {α β : Type} (actualValue : α → β) (x : α) : β := actualValue x
 

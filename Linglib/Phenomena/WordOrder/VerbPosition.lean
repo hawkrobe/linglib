@@ -9,7 +9,7 @@ import Linglib.Core.Lexical.Word
 
 namespace Phenomena.WordOrder.VerbPosition
 
--- Bulgarian Participle Fronting (Lambova 2004c, @cite{harizanov-gribanova-2019})
+-- Bulgarian Participle Fronting (@cite{lambova-2004c}, @cite{harizanov-gribanova-2019})
 
 /-!
 ## Bulgarian: Participle Fronting
@@ -47,7 +47,7 @@ structure BulgarianParticipleData where
 
 def bulgarianExample : BulgarianParticipleData := {}
 
--- Germanic V2 (Vikner 1995, @cite{harizanov-gribanova-2019})
+-- Germanic V2 (@cite{vikner-1995}, @cite{harizanov-gribanova-2019})
 
 /-!
 ## German: V2 Word Order

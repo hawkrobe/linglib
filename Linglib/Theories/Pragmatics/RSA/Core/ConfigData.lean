@@ -189,6 +189,17 @@ noncomputable def S1UtilityTerm.evalR
   | .expectedValue weight value => ↑(weight l) * ∑ w' : W, l0 u w' * ↑(value w')
   | .constant fn => ↑(fn l u)
 
+/-- Evaluate an S2 utility term in ℝ, given L1 state and latent marginals. -/
+noncomputable def S2UtilityTerm.evalR
+    (term : S2UtilityTerm U W L)
+    (l1 : U → W → ℝ) (l1_latent : U → L → ℝ)
+    (w : W) (u : U) : ℝ :=
+  match term with
+  | .logStateMarginal ω => ↑ω * log (l1 u w)
+  | .expectedValue ω value => ↑ω * ∑ w' : W, l1 u w' * ↑(value w')
+  | .logLatentMarginal ω target => ↑ω * log (l1_latent u target)
+  | .constant fn => ↑(fn u)
+
 /-- QUD projection: sum L0 over the equivalence class of w under latent l.
     {w' | project w' l = project w l} -/
 noncomputable def qudProjectR [DecidableEq L]
@@ -322,5 +333,27 @@ theorem RSAConfigData.toRSAConfig_eq [DecidableEq U] [DecidableEq W]
     simp only [toRSAConfig]
     congr 1
     all_goals first | rfl | exact Subsingleton.elim _ _
+
+-- ============================================================================
+-- S2Utility: ℝ-valued S2 utility for rsa_predict
+-- ============================================================================
+
+/-- S2 utility for comparison-based prediction.
+
+    For **endorsement** models, returns the L1 posterior (S2 score ∝ L1).
+    For **utility-maximizing** models, returns the raw utility sum
+    U_S2(w, u) = Σ_i term_i(L1, L1_latent, w, u). Since S2 score ∝ exp(α₂·U)
+    and exp is monotone, U₁ > U₂ iff S2(u₁|w) > S2(u₂|w) (when α₂ > 0).
+
+    This enables `rsa_predict` to handle S2 predictions via:
+    `d.S2Utility w u₁ > d.S2Utility w u₂` -/
+noncomputable def RSAConfigData.S2Utility [DecidableEq U] [DecidableEq W]
+    (d : RSAConfigData U W) (w : W) (u : U) : ℝ :=
+  match d.s2Spec with
+  | none => 0
+  | some .endorsement => d.toRSAConfig.L1 u w
+  | some (.utilityMaximizing _α₂ terms) =>
+      let cfg := d.toRSAConfig
+      terms.foldl (fun acc t => acc + t.evalR cfg.L1 cfg.L1_latent w u) 0
 
 end RSA

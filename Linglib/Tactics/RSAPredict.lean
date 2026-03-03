@@ -138,6 +138,7 @@ register_option rsa_predict.skipReflection : Bool := {
     - `cfg.S1 l w u₁ > cfg.S1 l w u₂` — S1 speaker comparison
     - `¬(cfg.S1 l w u₁ > cfg.S1 l w u₂)` — S1 non-strict
     - `cfg.S2 w₁ u > cfg.S2 w₂ u` — S2 cross-world endorsement
+    - `d.S2Utility w u₁ > d.S2Utility w u₂` — S2 utility comparison
     - `cfg.S1 l w u₁ = cfg.S1 l w u₂` — S1 equality (score symmetry)
     - `cfg.L1 u w₁ = cfg.L1 u w₂` — L1 equality (score symmetry)
     - `Σ s, cfg.L1 u (s, a₁) > Σ s, cfg.L1 u (s, a₂)` — marginal comparison
@@ -832,6 +833,16 @@ elab "rsa_predict" : tactic => do
     let proof ← mkAppM ``Core.RationalAction.policy_gt_of_score_gt #[s1Agent, w, u₁, u₂, hgt]
     assignWithCastFallback goal proof
     logInfo m!"rsa_predict: ✓ proved via compositional proof (S1 comparison)"
+
+  | .s2UtilityCompare d w u₁ u₂ => do
+    logInfo m!"rsa_predict: parsed goal as S2 utility comparison"
+    let lhs ← mkAppM ``RSA.RSAConfigData.S2Utility #[d, w, u₁]
+    let rhs ← mkAppM ``RSA.RSAConfigData.S2Utility #[d, w, u₂]
+    if ← tryDirectRExprCompare goal lhs rhs then
+      logInfo m!"rsa_predict: ✓ proved via reflection (S2 utility)"
+      return
+    throwError "rsa_predict: S2 utility comparison failed — intervals not separated.\n\
+      Try increasing maxHeartbeats."
 
   | .s2Compare cfg w₁ w₂ u => do
     logInfo m!"rsa_predict: parsed goal as S2 cross-world comparison"

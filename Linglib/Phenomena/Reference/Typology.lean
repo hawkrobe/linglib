@@ -479,7 +479,7 @@ def latin : ArticleDemProfile :=
     ku (near hearer), ce (away from both).
     Different stems: pronominal demonstratives formed by combining i/ku/ce
     with a "defective noun" like "il" (thing/fact), giving "i-il", "ku-il", etc.
-    (Sohn 1994: 295, @cite{diessel-2013}).
+    (@cite{sohn-1994}: 295, @cite{diessel-2013}).
     3rd-person pronoun "ku" related to medial demonstrative "ku". -/
 def korean : ArticleDemProfile :=
   { language := "Korean"
@@ -536,7 +536,7 @@ def hausa : ArticleDemProfile :=
     with hori (medial) yielding a three-way system.
     Same forms for pronominal and adnominal demonstratives.
     3rd-person pronouns: hau/hori/hura function as both demonstratives
-    and 3rd-person pronouns (Saltarelli et al. 1988: 213). -/
+    and 3rd-person pronouns (@cite{saltarelli-etal-1988}: 213). -/
 def basque : ArticleDemProfile :=
   { language := "Basque"
   , family := "Isolate"

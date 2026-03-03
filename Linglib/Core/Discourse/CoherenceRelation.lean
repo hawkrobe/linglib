@@ -23,7 +23,7 @@ This interacts with verb semantics to produce implicit causality (IC) bias. @cit
 namespace Core.Discourse.CoherenceRelation
 
 -- ════════════════════════════════════════════════════
--- § 1. Coherence Classes (@cite{kehler-2002}, after Hume 1748)
+-- § 1. Coherence Classes (@cite{kehler-2002}, after @cite{hume-1748})
 -- ════════════════════════════════════════════════════
 
 /-- Kehler's three coherence classes, corresponding to Hume's three

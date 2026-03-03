@@ -207,7 +207,7 @@ theorem confidence_upward_monotone {E W : Type*}
 
 /-- Confidence orderings need not respect logical conjunction:
     it is consistent to be confident that (p ∧ q) without being
-    confident that p (CSW (52), Tversky & Kahneman 1983).
+    confident that p (CSW (52), @cite{tversky-kahneman-1983}).
 
     Witness: ℕ with contrast point 1 — the state ranked 2 is in the
     positive region (2 ≥ 1) while the state ranked 0 is not (0 < 1).

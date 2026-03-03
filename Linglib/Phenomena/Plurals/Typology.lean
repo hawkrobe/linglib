@@ -594,7 +594,7 @@ theorem all_sample_pronouns_distinguish_number :
 -- The Animacy Hierarchy for Plural Marking
 -- ============================================================================
 
-/-- The animacy hierarchy for nominal plural marking (Smith-Stark 1974,
+/-- The animacy hierarchy for nominal plural marking (@cite{smith-stark-1974},
     @cite{corbett-2000}, Haspelmath WALS Ch 34). Languages mark plural on nouns
     according to an implicational scale:
 

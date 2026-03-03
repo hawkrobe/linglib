@@ -1,5 +1,6 @@
 import Lean
 import Linglib.Theories.Pragmatics.RSA.Core.Config
+import Linglib.Theories.Pragmatics.RSA.Core.ConfigData
 import Linglib.Tactics.RSAPredict.Helpers
 
 set_option autoImplicit false
@@ -69,6 +70,21 @@ def parseS1Policy (e : Expr) : MetaM (Option (Expr × Expr × Expr × Expr)) := 
       else break
   return none
 
+/-- Try to parse an expression as `d.S2Utility w u`.
+    Returns (d, w, u) where the expression is `RSAConfigData.S2Utility d w u`. -/
+def parseS2Utility (e : Expr) : MetaM (Option (Expr × Expr × Expr)) := do
+  let mut current := e
+  for _ in List.range 10 do
+    let fn := current.getAppFn
+    let args := current.getAppArgs
+    -- @RSAConfigData.S2Utility U W instFinU instFinW instDecU instDecW d w u
+    if fn.isConstOf ``RSA.RSAConfigData.S2Utility && args.size ≥ 9 then
+      return some (args[6]!, args[7]!, args[8]!)
+    if let some e' ← unfoldDefinition? current then
+      current := e'.headBeta
+    else break
+  return none
+
 /-- Extract RSA config and arguments from an S2 policy expression.
     Returns (cfg, w, u) where the expression is `cfg.S2 w u`. -/
 def parseS2Policy (e : Expr) : MetaM (Option (Expr × Expr × Expr)) := do
@@ -105,6 +121,8 @@ inductive GoalForm where
   | s1Compare (cfg l w u₁ u₂ : Expr)
   /-- cfg.S2 w₁ u > cfg.S2 w₂ u -/
   | s2Compare (cfg : Expr) (w₁ w₂ u : Expr)
+  /-- d.S2Utility w u₁ > d.S2Utility w u₂ -/
+  | s2UtilityCompare (d : Expr) (w u₁ u₂ : Expr)
 
 -- ============================================================================
 -- L1_marginal Parsing
@@ -265,6 +283,12 @@ def parseGoalForm (lhs rhs : Expr) : MetaM GoalForm := do
       if ← isDefEq cfg cfg₂ then
         return .s1Compare cfg l w u₁ u₂
 
+  -- Path B2b: d.S2Utility w u₁ > d.S2Utility w u₂
+  if let some (d, w, u₁) ← parseS2Utility lhs then
+    if let some (d₂, _w₂, u₂) ← parseS2Utility rhs then
+      if ← isDefEq d d₂ then
+        return .s2UtilityCompare d w u₁ u₂
+
   -- Path B3: cfg.S2 w₁ u > cfg.S2 w₂ u
   if let some (cfg, w₁, u) ← parseS2Policy lhs then
     if let some (cfg₂, w₂, _u₂) ← parseS2Policy rhs then
@@ -302,6 +326,7 @@ def parseGoalForm (lhs rhs : Expr) : MetaM GoalForm := do
     • cfg.L1_latent u l₁ > cfg.L1_latent u l₂\n\
     • cfg.S1 l w u₁ > cfg.S1 l w u₂\n\
     • cfg.S2 w₁ u > cfg.S2 w₂ u\n\
+    • d.S2Utility w u₁ > d.S2Utility w u₂\n\
     • Σ ... cfg.L1 u ... > Σ ... cfg.L1 u ...\n\
     • (cfg.L1 u₁ w₁ + ...) > (cfg.L1 u₂ w₃ + ...)\n\
     • (cfg₁.L1 u₁ w₁ + ...) > (cfg₂.L1 u₂ w₃ + ...)"

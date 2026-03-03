@@ -300,7 +300,7 @@ def CARD (μ : m.interpTy .e → Nat) (n : Nat) : m.interpTy Ty.et :=
 def PM (P Q : m.interpTy Ty.et) : m.interpTy Ty.et :=
   fun x => P x && Q x
 
-/-- NOM: Nominalization (@cite{partee-1986}, Chierchia 1984, (10a)).
+/-- NOM: Nominalization (@cite{partee-1986}, @cite{chierchia-1984}, (10a)).
     Maps a property to its individual property correlate.
     In the finite setting, returns the unique entity satisfying P if singleton. -/
 def NOM (domain : List m.Entity) (P : m.interpTy Ty.et) : Option (m.interpTy .e) :=

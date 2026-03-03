@@ -63,7 +63,7 @@ structure KicheExtractionDatum where
 
 /-- Spatial oblique extraction: *wi* licensed.
     "Where did you buy it?" — *wi* appears at extraction site.
-    Romero 2012; @cite{mondloch-2017}. -/
+    @cite{romero-2012}; @cite{mondloch-2017}. -/
 def spatialOblExtraction : KicheExtractionDatum :=
   { label := "Spatial oblique extraction (wi)"
   , reference := "Romero 2012; Elkins et al. §2, §8"
@@ -110,7 +110,7 @@ def subjectExtraction : KicheExtractionDatum :=
 
 /-- Object extraction: *wi* NOT licensed.
     "What did you buy?" — no *wi*.
-    Romero 2012. -/
+    @cite{romero-2012}. -/
 def objectExtraction : KicheExtractionDatum :=
   { label := "Object extraction (no wi)"
   , reference := "Romero 2012"

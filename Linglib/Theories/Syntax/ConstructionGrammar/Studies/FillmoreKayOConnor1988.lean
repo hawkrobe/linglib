@@ -35,7 +35,7 @@ Fillmore et al.'s classification cross-cuts two dimensions:
 - Substantive (lexically filled) vs formal (open slots)
 -/
 
-/-- Encoding vs decoding idioms (§1.1.1, Makkai 1972).
+/-- Encoding vs decoding idioms (§1.1.1, @cite{makkai-1972}).
 
 A *decoding* idiom cannot be interpreted without prior learning
 ("kick the bucket"). An *encoding* idiom can be understood but its

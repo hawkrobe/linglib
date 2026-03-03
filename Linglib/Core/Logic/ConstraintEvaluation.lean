@@ -7,7 +7,7 @@ two comparison modes:
 
 1. **Lexicographic** (Optimality Theory): constraints are strictly ranked;
    the first constraint where candidates differ determines the winner.
-   Used in phonology (Prince & Smolensky 1993/2004) and syntactic
+   Used in phonology (@cite{prince-smolensky-1993}/2004) and syntactic
    competition.
 
 2. **Subset inclusion** (Satisfaction ordering): a candidate is at least

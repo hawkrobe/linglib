@@ -27,7 +27,7 @@ open Core.InformationStructure
 open CCG.Combinators
 
 -- ============================================================================
--- §1: The Pure-Weight Account (DLM / Hawkins 1994)
+-- §1: The Pure-Weight Account (DLM / @cite{hawkins-1994})
 -- ============================================================================
 
 /-!

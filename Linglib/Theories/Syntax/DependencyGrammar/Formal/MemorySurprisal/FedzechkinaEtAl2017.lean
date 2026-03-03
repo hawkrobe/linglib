@@ -2,7 +2,7 @@ import Linglib.Theories.Syntax.DependencyGrammar.Formal.MemorySurprisal.Basic
 import Linglib.Theories.Syntax.DependencyGrammar.Formal.DependencyLength
 
 /-!
-# Study 1: Artificial Language Learning (Fedzechkina et al. 2013/2017)
+# Study 1: Artificial Language Learning (@cite{fedzechkina-newport-2012}/2017)
 @cite{fedzechkina-newport-2012} @cite{fedzechkina-newport-2017} @cite{hahn-degen-futrell-2021}
 
 @cite{hahn-degen-futrell-2021} Study 1 reanalyzes Fedzechkina, Jaeger & Newport (2012,

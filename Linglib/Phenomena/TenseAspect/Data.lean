@@ -639,7 +639,7 @@ def embeddedPresentUnderFuture : ReichenbachFrame ℤ where
 -- § 19. Lifetime Effects: "Aristotle was a philosopher"
 -- ════════════════════════════════════════════════════════════════
 
-/-! Lifetime effects (Musan 1995/1997): past tense with individual-level
+/-! Lifetime effects (@cite{musan-1995}/1997): past tense with individual-level
     predicates implicates that the subject no longer exists.
 
     "Aristotle was a philosopher" → Aristotle is dead.

@@ -111,7 +111,7 @@ instance : Fintype Goal where
 
     Derived from Experiment 1 (Figure 4). The paper fits beta distributions
     to participants' emotion ratings projected onto valence and arousal
-    dimensions via PCA (circumplex model of affect, Russell 1980).
+    dimensions via PCA (circumplex model of affect, @cite{russell-1980}).
 
     Valence P(positive|s) follows an S-curve across weather states:
       terrible=1%, bad=15%, ok=50%, good=85%, amazing=99%

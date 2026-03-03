@@ -128,7 +128,7 @@ def DiachronicSource.expectedPattern : DiachronicSource → Syndesis
 
 /--
 Morphological boundness: whether a particle is a clitic/suffix or a free word.
-Relevant to acquisition (Clark 2017: free morphemes acquired more readily).
+Relevant to acquisition (@cite{clark-2017}: free morphemes acquired more readily).
 -/
 inductive Boundness where
   | free    -- independent word (Hungarian "is", English "and")
@@ -271,7 +271,7 @@ def slovenian : ConjunctionSystem :=
 /--
 Lango (Nilotic, Uganda): "kèdè" is a comitative marker ("with") that also
 serves as coordinator ("and"). The classic AND-language: comitative source
-gives monosyndetic A co-B (Noonan 1992:163, @cite{haspelmath-2007}: (20)).
+gives monosyndetic A co-B (@cite{noonan-1992}:163, @cite{haspelmath-2007}: (20)).
 -/
 def lango : ConjunctionSystem :=
   { language := "Lango"
@@ -299,7 +299,7 @@ def hausa : ConjunctionSystem :=
 /--
 Yoruba (Kwa, Nigeria): "àtí" in the pattern "àtí A àtí B" is the canonical
 example of prepositive bisyndetic coordination
-(Rowlands 1969:201ff, @cite{haspelmath-2007}: (25)).
+(@cite{rowlands-1969}:201ff, @cite{haspelmath-2007}: (25)).
 -/
 def yoruba : ConjunctionSystem :=
   { language := "Yoruba"
@@ -311,7 +311,7 @@ def yoruba : ConjunctionSystem :=
 
 /--
 Kannada (Dravidian, southern India): postpositive "-u" on each coordinand
-gives A-co B-co (Sridhar 1990:106, @cite{haspelmath-2007}: (5)).
+gives A-co B-co (@cite{sridhar-1990}:106, @cite{haspelmath-2007}: (5)).
 "-u" is also the additive/focus particle in Dravidian.
 -/
 def kannada : ConjunctionSystem :=
@@ -325,7 +325,7 @@ def kannada : ConjunctionSystem :=
 
 /--
 Martuthunira (Pama-Nyungan, W. Australia): "-thurti" on each coordinand
-gives A-co B-co (Dench 1995:98, @cite{haspelmath-2007}: (26)).
+gives A-co B-co (@cite{dench-1995}:98, @cite{haspelmath-2007}: (26)).
 -/
 def martuthunira : ConjunctionSystem :=
   { language := "Martuthunira"
@@ -337,7 +337,7 @@ def martuthunira : ConjunctionSystem :=
 
 /--
 Classical Tibetan: "-daŋ" is postpositive on first coordinand, giving A-co B.
-Derives from comitative source (Beyer 1992:240, @cite{haspelmath-2007}: (21)).
+Derives from comitative source (@cite{beyer-1992}:240, @cite{haspelmath-2007}: (21)).
 -/
 def classicalTibetan : ConjunctionSystem :=
   { language := "Classical Tibetan"

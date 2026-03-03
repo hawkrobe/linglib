@@ -122,7 +122,7 @@ theorem heim_antecedent_projects {W : Type*}
   simp [hpresup_false] at this
 
 -- ════════════════════════════════════════════════════
--- § 4. Symmetric Filtering (Schlenker 2008, 2009)
+-- § 4. Symmetric Filtering (@cite{schlenker-2008}, 2009)
 -- ════════════════════════════════════════════════════
 
 /-- Under symmetric filtering, material from the consequent IS available

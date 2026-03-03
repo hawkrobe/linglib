@@ -50,7 +50,7 @@ inductive Experiment where
 inductive CoercionType where
   | inchoative   -- INCHOAT: atelic → onset point (GLB)
   | completive   -- COMPLET: telic → telos point (LUB)
-  | complement   -- Complement coercion (sanity check; Traxler et al. 2002)
+  | complement   -- Complement coercion (sanity check; @cite{traxler-etal-2002})
   deriving DecidableEq, Repr, BEq, Inhabited
 
 /-- Spillover region where an effect was measured. -/

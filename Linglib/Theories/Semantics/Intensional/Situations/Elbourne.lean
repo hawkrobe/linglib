@@ -342,7 +342,7 @@ in a *situationally restricted* domain.
 Elbourne (Ch 9 §9.2.5) argues for the "syntactic situation variable
 approach": the situation parameter on the definite article IS the
 mechanism of domain restriction. No covert relation variable (contra
-@cite{von-fintel-1994}), no pragmatic enrichment (contra Sperber & Wilson 1986),
+@cite{von-fintel-1994}), no pragmatic enrichment (contra @cite{sperber-wilson-1986}),
 no language-of-thought variables (contra @cite{stanley-szab-2000}). Just situations.
 
 This is the simplest account: the situation variable that EVERY definite
@@ -577,7 +577,7 @@ def phenomenonMechanism : UnifiedPhenomenon → String
   | .pronounsAsDefinites         => "⟦it⟧ = ⟦the⟧ + NP-deletion (Postal 1966)"
 
 -- ============================================================================
--- §15: QUD–Situation Bridge (Roberts 1996, Kratzer 2004, @cite{elbourne-2013})
+-- §15: QUD–Situation Bridge (@cite{roberts-1996}, @cite{kratzer-2004}, @cite{elbourne-2013})
 -- ============================================================================
 
 /-

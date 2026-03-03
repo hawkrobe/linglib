@@ -551,7 +551,7 @@ theorem haitian_creole_no_split :
 @cite{schwarz-2013} §5.5 explicitly connects the article contrast to
 pronouns: "pronouns are definite articles without overt NP". German d-pronouns (der/die/das) are identical
 to strong articles. The pronominal domain shows parallel contrasts
-(Bosch et al. 2003/2007, Hinterwimmer 2009, Kaiser 2010/2011).
+(@cite{bosch-rozario-zhao-2003}/2007, @cite{hinterwimmer-2009}, @cite{kaiser-2010}/2011).
 
 The structural mapping:
 - Schwarz weak article = PG&G D_det layer = PER pronoun

@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.227.86] - 2026-03-02
+
+### Added
+- **52 new bib entries** for previously-unmatched citations: Alexiadou et al. 2006, Bates et al. 2015, Beyer 1992, Bosch et al. 2003, Chierchia 1984, Clark 2017, Corbett 2013b/c, DeLancey 1997, Dench 1995, Dixon 1979, Douven 2008, Gibson 1998, Givón 1984, Grano 2024, Grodner & Gibson 2005, Harley 2002, Haspelmath 1993, Hawkins 1994/1999, Hayes 1989, Heath 1976, Hinterwimmer 2009, Hume 1748, Kaiser 2010, Kratzer 2004, Lambova 2004c, Makkai 1972, Musan 1995, Noonan 1992, Ochs 1992, Prince & Smolensky 1993, Roberts 1996, Romero 2005/2012, Rowlands 1969, Russell 1980, Saltarelli et al. 1988, Schlenker 2008, Searle 1983, Smith-Stark 1974, Sohn 1994, Sperber & Wilson 1986, Sridhar 1990, Svenonius 2004, Tversky & Kahneman 1983, Tucker et al. 2018, van der Sandt & Maier 2003, Vikner 1995, Wang et al. 2005, Wellwood 2014. Total: 1180 bib entries, 3082 valid @cite references.
+
 ## [0.227.85] - 2026-03-02
 
 ### Changed

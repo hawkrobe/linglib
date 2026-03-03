@@ -82,7 +82,7 @@ inductive ParadigmPosition where
   deriving DecidableEq, Repr, BEq
 
 /-- Morphological relationship codes between forms (@cite{beavers-etal-2021}
-    eq. 41, generalizing Haspelmath 1993:90–92). -/
+    eq. 41, generalizing @cite{haspelmath-1993}:90–92). -/
 inductive MorphRelation where
   | input      -- (i) X is the input to a rule forming Y_k
   | derived    -- (d) X is the output of a rule on Y_k

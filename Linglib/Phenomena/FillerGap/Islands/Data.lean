@@ -252,7 +252,7 @@ See `Phenomena.FillerGap.Compare` for the competence vs. performance comparison.
 filler-gap dependencies inside islands. -/
 inductive ProcessingFactor where
   /-- Distance between filler and gap increases memory load (§3.1).
-  Confirmed by: Gibson 1998, 2000; Hawkins 1999; Grodner & Gibson 2005. -/
+  Confirmed by: @cite{gibson-1998}, 2000; @cite{hawkins-1999}; @cite{grodner-gibson-2005}. -/
   | locality
   /-- Referential processing of intervening constituents depletes resources (§3.2).
   Definites trigger referent search; proper names > definites > indefinites > pronouns

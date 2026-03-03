@@ -24,7 +24,7 @@ tree-shape isomorphism.
 
 | # | Construction | Analysis | Source | Example |
 |---|-------------|----------|--------|---------|
-| 1 | DOC | Small Clause: `V [SC DP_goal DP_theme]` | @cite{kayne-1984}; Harley 2002 | (3) |
+| 1 | DOC | Small Clause: `V [SC DP_goal DP_theme]` | @cite{kayne-1984}; @cite{harley-2002} | (3) |
 | 2 | DOC | ApplP: `[ApplP DP [Appl' Appl [VP V DP]]]` | @cite{halle-marantz-1993} | (6)/(9) |
 | 3 | PVC | Small Clause: `V [SC DP Prt]` | @cite{dendikken-1995} | (4a) |
 | 4 | PVC | Complex predicate: `[VP [V+Prt] DP]` | @cite{johnson-1991} | (5) |

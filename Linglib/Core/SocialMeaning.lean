@@ -81,7 +81,7 @@ theorem first_lt_second : IndexicalOrder.first < IndexicalOrder.second := by dec
 theorem second_lt_third : IndexicalOrder.second < IndexicalOrder.third := by decide
 
 -- ============================================================================
--- Stances and qualities (Ochs 1992, @cite{eckert-2008})
+-- Stances and qualities (@cite{ochs-1992}, @cite{eckert-2008})
 -- ============================================================================
 
 /-- Eckert's distinction between momentary interactional positions and

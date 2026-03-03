@@ -45,7 +45,7 @@ def isPhaseHead (so : SyntacticObject) : Bool :=
   | some .v => true    -- v*P phase
   | _ => false
 
-/-- D as a phase head (@cite{citko-2014} §2.5, Svenonius 2004).
+/-- D as a phase head (@cite{citko-2014} §2.5, @cite{svenonius-2004}).
 
     Some analyses treat DP as a phase. This is a weaker claim
     used for scope barriers (QR cannot escape DP). -/

@@ -132,7 +132,7 @@ def hungarianStrategies : List ConjunctionStrategy := [.jOnly, .muOnly, .jMu]
 Key morphological difference: Georgian MU (-c) is a bound clitic,
 Hungarian MU (is) is a free morpheme.
 This may be relevant to the cross-linguistic difference in results
-(Clark 2017: free morphemes may be acquired more readily than bound).
+(@cite{clark-2017}: free morphemes may be acquired more readily than bound).
 -/
 theorem georgian_mu_bound : georgian_c.boundMorpheme = true := rfl
 theorem hungarian_mu_free : hungarian_is.boundMorpheme = false := rfl
