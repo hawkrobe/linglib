@@ -1,696 +1,486 @@
-/-
-# @cite{ronai-2024} Embedded Scalar Diversity Data
+import Linglib.Phenomena.ScalarImplicatures.Studies.VanTielEtAl2016
+import Mathlib.Data.Rat.Defs
 
-Experimental data on embedded scalar implicatures from:
-Ronai, E. (2024). Embedded scalar diversity. SALT 34, 110-131.
+/-!
+# @cite{ronai-2024} — Embedded Scalar Diversity
+@cite{ronai-2024} @cite{van-tiel-geurts-2016} @cite{gotzner-romoli-2018}
+@cite{chierchia-2004} @cite{chierchia-fox-spector-2012} @cite{bergen-levy-goodman-2016}
+@cite{potts-levy-2015} @cite{sauerland-2004} @cite{geurts-pouscoulous-2009}
 
-## Main Question
+Theory-neutral empirical data from @cite{ronai-2024}.
+
+## Central Question
 
 Do embedded scalar implicatures (under universal quantifiers) show the same
 cross-scale variation ("scalar diversity") as global SIs? And do the same
 properties of alternatives predict this variation?
 
-## Findings
+## Argumentative Structure
 
-1. Embedded SIs arise: strong inferences like "Every soup was warm" →
-   "No soup was hot" are computed by hearers.
+1. **Embedded SIs exist** (Exp 1, §3, N=118): Using @cite{gotzner-romoli-2018}'s
+   sliding-scale paradigm with 42 scales under *every*, the "strong" condition
+   (e.g., "Every soup was warm" → "No soup was hot") is rated significantly
+   above the false control (Estimate=−26.12, SE=1.47, t=−17.81, p<.001),
+   confirming participants compute embedded SIs.
 
-2. Scalar diversity extends to embedded SIs: cross-scale variation in
-   embedded SI rates parallels global SI variation (r=0.76-0.80).
+2. **Embedded scalar diversity mirrors global** (Exp 1, §3.3): Strong inference
+   rates vary across the 42 scales and correlate strongly with
+   @cite{van-tiel-geurts-2016}'s global SI rates (r=0.76, p<.001).
 
-3. Semantic distance and boundedness predict both global and embedded SI rates.
+3. **Alternative-based predictors explain the variation** (Exp 1, §3.3):
+   - Semantic distance: Estimate=7.28, SE=3.29, t=2.21, p<.05
+   - Boundedness: Estimate=18.37, SE=4.41, t=4.17, p<.001
 
-## Theoretical Implications
+4. **Binary replication rules out baseline concerns** (Exp 2, §4, N=45):
+   Using @cite{van-tiel-geurts-2016}'s Yes/No inference task, the same pattern
+   emerges: global–embedded correlation r=0.80 (p<.001), with both semantic
+   distance (Estimate=0.63, SE=0.31, z=2.05, p<.05) and boundedness
+   (Estimate=1.54, SE=0.39, z=3.91, p<.001) significant.
 
-Results support alternative-based accounts of embedded SI:
-- Grammatical theory (@cite{chierchia-2004}; Chierchia, @cite{chierchia-fox-spector-2012})
-- Modified neo-Gricean
-- Neo-Gricean uncertainty RSA-LU
+5. **Alternative-based accounts supported** (§5): Results favor accounts that
+   build in scalar alternatives — the grammatical theory (@cite{chierchia-2004};
+   @cite{chierchia-fox-spector-2012}), modified neo-Gricean (@cite{sauerland-2004}),
+   or neo-Gricean RSA-LU (@cite{potts-levy-2015}) — over unconstrained RSA-LU
+   (@cite{bergen-levy-goodman-2016}), which cannot explain why alternative-driven
+   variation arises in both global and embedded contexts.
 
-Results are less compatible with:
-- Unconstrained uncertainty RSA-LU
+## Data Provenance
 
-This is because the alternative-free unconstrained model cannot explain
-why the same alternative-driven variation arises in both global and
-embedded contexts.
+Scale properties (global SI rate, semantic distance, boundedness) are imported
+from `VanTielEtAl2016.Scales` rather than duplicated. The 42 scales are
+@cite{van-tiel-geurts-2016}'s 43 minus ⟨few, none⟩.
 
-## Connection to @cite{geurts-pouscoulous-2009}
-
-This paper directly responds to @cite{geurts-pouscoulous-2009} (also in Linglib), which found
-limited evidence for embedded SIs. Ronai's methodology uses the @cite{gotzner-romoli-2018} paradigm and tests 42 scales, finding robust embedded SIs
-with predictable cross-scale variation.
-
+Embedded SI rates are approximate values read from scatter plots (Figures 2–3,
+5–6). Scales whose Exp 2 values could not be reliably read from the figure
+are marked `none`. Three scales (⟨intelligent, brilliant⟩, ⟨funny, hilarious⟩,
+⟨ugly, hideous⟩) were unlabeled in the scatter plots and have estimated
+Exp 1 values flagged UNVERIFIED.
 -/
-
-import Mathlib.Data.Rat.Defs
 
 namespace Phenomena.ScalarImplicatures.Studies.Ronai2024
 
 
-/--
-A lexical scale with properties from @cite{van-tiel-geurts-2016} and
-embedded SI data from @cite{ronai-2024}.
--/
-structure ScaleDatum where
-  /-- The weaker scalar term (e.g., "some", "warm") -/
-  weakerTerm : String
-  /-- The stronger scalar term (e.g., "all", "hot") -/
-  strongerTerm : String
-  /-- Semantic distance (1-7 Likert scale, from @cite{van-tiel-geurts-2016} Exp 4) -/
-  semanticDistance : Option Float
-  /-- Is the scale bounded? (stronger term = endpoint) -/
-  bounded : Bool
-  /-- Global SI rate from @cite{van-tiel-geurts-2016} Exp 2 (percentage 0-100) -/
-  globalSIRate : Option Nat
-  /-- Strong inference rate from @cite{ronai-2024} Exp 1 (sliding scale 0-100) -/
-  embeddedSIRate_Exp1 : Option Nat
-  /-- Strong inference rate from @cite{ronai-2024} Exp 2 (percentage Yes responses) -/
-  embeddedSIRate_Exp2 : Option Nat
+-- ============================================================================
+-- Data Structure
+-- ============================================================================
+
+/-- Embedded SI data for a single scale.
+
+Scale properties (global SI rate, semantic distance, boundedness) reference
+@cite{van-tiel-geurts-2016} directly rather than duplicating values.
+Embedded SI rates are from @cite{ronai-2024}'s two experiments. -/
+structure EmbeddedSIDatum where
+  /-- VT2016 scale entry (provides global SI rate, semantic distance, bounded) -/
+  vt2016 : VanTielEtAl2016.ScaleDatum
+  /-- Strong inference rate from Exp 1 (0–100 sliding scale), from Figure 2 -/
+  exp1Rate : Nat
+  /-- Strong inference rate from Exp 2 (% "Yes"), from Figure 5.
+      None where value could not be reliably read from the scatter plot. -/
+  exp2Rate : Option Nat
   deriving Repr
 
-/-- Display name for a scale -/
-def ScaleDatum.name (s : ScaleDatum) : String :=
-  s!"⟨{s.weakerTerm}, {s.strongerTerm}⟩"
+/-- Global SI rate from @cite{van-tiel-geurts-2016} Exp 2 (%). -/
+def EmbeddedSIDatum.globalSIRate (d : EmbeddedSIDatum) : Nat := d.vt2016.siRateExp2
+
+/-- Semantic distance from @cite{van-tiel-geurts-2016} Exp 4 (1–7 Likert). -/
+def EmbeddedSIDatum.semanticDistance (d : EmbeddedSIDatum) : Float :=
+  d.vt2016.semanticDistance
+
+/-- Boundedness from @cite{van-tiel-geurts-2016} (author-annotated). -/
+def EmbeddedSIDatum.bounded (d : EmbeddedSIDatum) : Bool := d.vt2016.bounded
 
 
-/-!
-## Scale Data
-@cite{ronai-2024} @cite{van-tiel-geurts-2016} @cite{bergen-levy-goodman-2016} @cite{chierchia-2004} @cite{potts-levy-2015} @cite{sauerland-2004}
+-- ============================================================================
+-- Scale Data (42 scales = VT2016's 43 minus ⟨few, none⟩)
+-- ============================================================================
 
-Data extracted from @cite{ronai-2024} Figures 2, 3, 5, 6 and @cite{van-tiel-geurts-2016}.
-The 42 scales are from van Tiel et al.'s original study.
+-- Exp 1 rates: approximate, read from Ronai (2024) Figure 2.
+-- Exp 2 rates: approximate, read from Ronai (2024) Figure 5.
 
-Semantic distance: 1 = "equally strong" to 7 = "much stronger"
-Boundedness: true if stronger term denotes scale endpoint
--/
+def someAll : EmbeddedSIDatum :=
+  { vt2016 := VanTielEtAl2016.Scales.someAll
+  , exp1Rate := 49, exp2Rate := some 44 }
 
--- Quantifier scales (bounded)
-def someAll : ScaleDatum :=
-  { weakerTerm := "some", strongerTerm := "all"
-  , semanticDistance := some 5.3
-  , bounded := true
-  , globalSIRate := some 89
-  , embeddedSIRate_Exp1 := some 49
-  , embeddedSIRate_Exp2 := some 44 }
+def possibleCertain : EmbeddedSIDatum :=
+  { vt2016 := VanTielEtAl2016.Scales.possibleCertain
+  , exp1Rate := 57, exp2Rate := some 64 }
 
--- Modal scales (bounded)
-def possibleCertain : ScaleDatum :=
-  { weakerTerm := "possible", strongerTerm := "certain"
-  , semanticDistance := some 5.8
-  , bounded := true
-  , globalSIRate := some 81
-  , embeddedSIRate_Exp1 := some 57
-  , embeddedSIRate_Exp2 := some 64 }
+def allowedObligatory : EmbeddedSIDatum :=
+  { vt2016 := VanTielEtAl2016.Scales.allowedObligatory
+  , exp1Rate := 56, exp2Rate := some 47 }
 
-def allowedObligatory : ScaleDatum :=
-  { weakerTerm := "allowed", strongerTerm := "obligatory"
-  , semanticDistance := some 5.2
-  , bounded := true
-  , globalSIRate := some 72
-  , embeddedSIRate_Exp1 := some 56
-  , embeddedSIRate_Exp2 := some 47 }
+def mayHaveTo : EmbeddedSIDatum :=
+  { vt2016 := VanTielEtAl2016.Scales.mayHaveTo
+  , exp1Rate := 58, exp2Rate := some 53 }
 
-def mayHaveTo : ScaleDatum :=
-  { weakerTerm := "may", strongerTerm := "have to"
-  , semanticDistance := some 5.5
-  , bounded := true
-  , globalSIRate := some 72
-  , embeddedSIRate_Exp1 := some 58
-  , embeddedSIRate_Exp2 := some 53 }
+def mayWill : EmbeddedSIDatum :=
+  { vt2016 := VanTielEtAl2016.Scales.mayWill
+  , exp1Rate := 18, exp2Rate := some 9 }
 
-def mayWill : ScaleDatum :=
-  { weakerTerm := "may", strongerTerm := "will"
-  , semanticDistance := some 6.2
-  , bounded := true
-  , globalSIRate := some 100
-  , embeddedSIRate_Exp1 := some 18
-  , embeddedSIRate_Exp2 := some 9 }
+def sometimesAlways : EmbeddedSIDatum :=
+  { vt2016 := VanTielEtAl2016.Scales.sometimesAlways
+  , exp1Rate := 43, exp2Rate := some 38 }
 
--- Frequency/temporal scales (bounded)
-def sometimesAlways : ScaleDatum :=
-  { weakerTerm := "sometimes", strongerTerm := "always"
-  , semanticDistance := some 5.5
-  , bounded := true
-  , globalSIRate := some 69
-  , embeddedSIRate_Exp1 := some 43
-  , embeddedSIRate_Exp2 := some 38 }
+def cheapFree : EmbeddedSIDatum :=
+  { vt2016 := VanTielEtAl2016.Scales.cheapFree
+  , exp1Rate := 63, exp2Rate := some 51 }
 
--- Achievement scales (bounded)
-def cheapFree : ScaleDatum :=
-  { weakerTerm := "cheap", strongerTerm := "free"
-  , semanticDistance := some 6.0
-  , bounded := true
-  , globalSIRate := some 94
-  , embeddedSIRate_Exp1 := some 63
-  , embeddedSIRate_Exp2 := some 51 }
+def difficultImpossible : EmbeddedSIDatum :=
+  { vt2016 := VanTielEtAl2016.Scales.difficultImpossible
+  , exp1Rate := 42, exp2Rate := some 33 }
 
-def difficultImpossible : ScaleDatum :=
-  { weakerTerm := "difficult", strongerTerm := "impossible"
-  , semanticDistance := some 5.7
-  , bounded := true
-  , globalSIRate := some 67
-  , embeddedSIRate_Exp1 := some 42
-  , embeddedSIRate_Exp2 := some 33 }
+def hardUnsolvable : EmbeddedSIDatum :=
+  { vt2016 := VanTielEtAl2016.Scales.hardUnsolvable
+  , exp1Rate := 47, exp2Rate := some 27 }
 
-def hardUnsolvable : ScaleDatum :=
-  { weakerTerm := "hard", strongerTerm := "unsolvable"
-  , semanticDistance := some 5.4
-  , bounded := true
-  , globalSIRate := some 50
-  , embeddedSIRate_Exp1 := some 47
-  , embeddedSIRate_Exp2 := some 27 }
+def rareExtinct : EmbeddedSIDatum :=
+  { vt2016 := VanTielEtAl2016.Scales.rareExtinct
+  , exp1Rate := 50, exp2Rate := some 38 }
 
-def rareExtinct : ScaleDatum :=
-  { weakerTerm := "rare", strongerTerm := "extinct"
-  , semanticDistance := some 5.8
-  , bounded := true
-  , globalSIRate := some 64
-  , embeddedSIRate_Exp1 := some 50
-  , embeddedSIRate_Exp2 := some 38 }
+def scarceUnavailable : EmbeddedSIDatum :=
+  { vt2016 := VanTielEtAl2016.Scales.scarceUnavailable
+  , exp1Rate := 38, exp2Rate := some 24 }
 
-def scarceUnavailable : ScaleDatum :=
-  { weakerTerm := "scarce", strongerTerm := "unavailable"
-  , semanticDistance := some 5.0
-  , bounded := true
-  , globalSIRate := some 44
-  , embeddedSIRate_Exp1 := some 38
-  , embeddedSIRate_Exp2 := some 24 }
+def lowDepleted : EmbeddedSIDatum :=
+  { vt2016 := VanTielEtAl2016.Scales.lowDepleted
+  , exp1Rate := 44, exp2Rate := some 29 }
 
-def lowDepleted : ScaleDatum :=
-  { weakerTerm := "low", strongerTerm := "depleted"
-  , semanticDistance := some 5.2
-  , bounded := true
-  , globalSIRate := some 53
-  , embeddedSIRate_Exp1 := some 44
-  , embeddedSIRate_Exp2 := some 29 }
+def startFinish : EmbeddedSIDatum :=
+  { vt2016 := VanTielEtAl2016.Scales.startFinish
+  , exp1Rate := 24, exp2Rate := none }
 
--- Process/result scales (bounded)
-def startFinish : ScaleDatum :=
-  { weakerTerm := "start", strongerTerm := "finish"
-  , semanticDistance := some 4.7
-  , bounded := true
-  , globalSIRate := some 25
-  , embeddedSIRate_Exp1 := some 24
-  , embeddedSIRate_Exp2 := none }
+def trySucceed : EmbeddedSIDatum :=
+  { vt2016 := VanTielEtAl2016.Scales.trySucceed
+  , exp1Rate := 32, exp2Rate := some 18 }
 
-def trySucceed : ScaleDatum :=
-  { weakerTerm := "try", strongerTerm := "succeed"
-  , semanticDistance := some 4.8
-  , bounded := true
-  , globalSIRate := some 42
-  , embeddedSIRate_Exp1 := some 32
-  , embeddedSIRate_Exp2 := some 18 }
+def participateWin : EmbeddedSIDatum :=
+  { vt2016 := VanTielEtAl2016.Scales.participateWin
+  , exp1Rate := 25, exp2Rate := some 4 }
 
-def participateWin : ScaleDatum :=
-  { weakerTerm := "participate", strongerTerm := "win"
-  , semanticDistance := some 5.0
-  , bounded := true
-  , globalSIRate := some 17
-  , embeddedSIRate_Exp1 := some 25
-  , embeddedSIRate_Exp2 := some 4 }
+def believeKnow : EmbeddedSIDatum :=
+  { vt2016 := VanTielEtAl2016.Scales.believeKnow
+  , exp1Rate := 28, exp2Rate := some 9 }
 
--- Epistemic scales (bounded)
-def believeKnow : ScaleDatum :=
-  { weakerTerm := "believe", strongerTerm := "know"
-  , semanticDistance := some 4.6
-  , bounded := true
-  , globalSIRate := some 47
-  , embeddedSIRate_Exp1 := some 28
-  , embeddedSIRate_Exp2 := some 9 }
+def goodPerfect : EmbeddedSIDatum :=
+  { vt2016 := VanTielEtAl2016.Scales.goodPerfect
+  , exp1Rate := 42, exp2Rate := some 20 }
 
--- Quality scales (bounded)
-def goodPerfect : ScaleDatum :=
-  { weakerTerm := "good", strongerTerm := "perfect"
-  , semanticDistance := some 4.5
-  , bounded := true
-  , globalSIRate := some 39
-  , embeddedSIRate_Exp1 := some 42
-  , embeddedSIRate_Exp2 := some 20 }
+def memorableUnforgettable : EmbeddedSIDatum :=
+  { vt2016 := VanTielEtAl2016.Scales.memorableUnforgettable
+  , exp1Rate := 42, exp2Rate := some 42 }
 
-def memorableUnforgettable : ScaleDatum :=
-  { weakerTerm := "memorable", strongerTerm := "unforgettable"
-  , semanticDistance := some 4.8
-  , bounded := true
-  , globalSIRate := some 42
-  , embeddedSIRate_Exp1 := some 42
-  , embeddedSIRate_Exp2 := some 42 }
+def specialUnique : EmbeddedSIDatum :=
+  { vt2016 := VanTielEtAl2016.Scales.specialUnique
+  , exp1Rate := 11, exp2Rate := some 2 }
 
-def specialUnique : ScaleDatum :=
-  { weakerTerm := "special", strongerTerm := "unique"
-  , semanticDistance := some 4.0
-  , bounded := true
-  , globalSIRate := some 8
-  , embeddedSIRate_Exp1 := some 11
-  , embeddedSIRate_Exp2 := some 2 }
+def warmHot : EmbeddedSIDatum :=
+  { vt2016 := VanTielEtAl2016.Scales.warmHot
+  , exp1Rate := 40, exp2Rate := some 31 }
 
--- Temperature scales (non-bounded)
-def warmHot : ScaleDatum :=
-  { weakerTerm := "warm", strongerTerm := "hot"
-  , semanticDistance := some 5.1
-  , bounded := false
-  , globalSIRate := some 50
-  , embeddedSIRate_Exp1 := some 40
-  , embeddedSIRate_Exp2 := some 31 }
+def coolCold : EmbeddedSIDatum :=
+  { vt2016 := VanTielEtAl2016.Scales.coolCold
+  , exp1Rate := 29, exp2Rate := some 13 }
 
-def coolCold : ScaleDatum :=
-  { weakerTerm := "cool", strongerTerm := "cold"
-  , semanticDistance := some 4.4
-  , bounded := false
-  , globalSIRate := some 28
-  , embeddedSIRate_Exp1 := some 29
-  , embeddedSIRate_Exp2 := some 13 }
+def goodExcellent : EmbeddedSIDatum :=
+  { vt2016 := VanTielEtAl2016.Scales.goodExcellent
+  , exp1Rate := 38, exp2Rate := some 16 }
 
--- Evaluative scales (non-bounded)
-def goodExcellent : ScaleDatum :=
-  { weakerTerm := "good", strongerTerm := "excellent"
-  , semanticDistance := some 4.6
-  , bounded := false
-  , globalSIRate := some 31
-  , embeddedSIRate_Exp1 := some 38
-  , embeddedSIRate_Exp2 := some 16 }
+def adequateGood : EmbeddedSIDatum :=
+  { vt2016 := VanTielEtAl2016.Scales.adequateGood
+  , exp1Rate := 35, exp2Rate := some 16 }
 
-def adequateGood : ScaleDatum :=
-  { weakerTerm := "adequate", strongerTerm := "good"
-  , semanticDistance := some 3.5
-  , bounded := false
-  , globalSIRate := some 8
-  , embeddedSIRate_Exp1 := some 35
-  , embeddedSIRate_Exp2 := some 16 }
+def palatableDelicious : EmbeddedSIDatum :=
+  { vt2016 := VanTielEtAl2016.Scales.palatableDelicious
+  , exp1Rate := 36, exp2Rate := some 20 }
 
-def palatableDelicious : ScaleDatum :=
-  { weakerTerm := "palatable", strongerTerm := "delicious"
-  , semanticDistance := some 5.3
-  , bounded := false
-  , globalSIRate := some 58
-  , embeddedSIRate_Exp1 := some 36
-  , embeddedSIRate_Exp2 := some 20 }
+def bigEnormous : EmbeddedSIDatum :=
+  { vt2016 := VanTielEtAl2016.Scales.bigEnormous
+  , exp1Rate := 22, exp2Rate := none }
 
--- Size scales (non-bounded)
-def bigEnormous : ScaleDatum :=
-  { weakerTerm := "big", strongerTerm := "enormous"
-  , semanticDistance := some 4.5
-  , bounded := false
-  , globalSIRate := some 14
-  , embeddedSIRate_Exp1 := some 22
-  , embeddedSIRate_Exp2 := none }
+def smallTiny : EmbeddedSIDatum :=
+  { vt2016 := VanTielEtAl2016.Scales.smallTiny
+  , exp1Rate := 15, exp2Rate := some 4 }
 
-def smallTiny : ScaleDatum :=
-  { weakerTerm := "small", strongerTerm := "tiny"
-  , semanticDistance := some 4.2
-  , bounded := false
-  , globalSIRate := some 19
-  , embeddedSIRate_Exp1 := some 15
-  , embeddedSIRate_Exp2 := some 4 }
+def oldAncient : EmbeddedSIDatum :=
+  { vt2016 := VanTielEtAl2016.Scales.oldAncient
+  , exp1Rate := 18, exp2Rate := some 4 }
 
--- Age scales (non-bounded)
-def oldAncient : ScaleDatum :=
-  { weakerTerm := "old", strongerTerm := "ancient"
-  , semanticDistance := some 4.6
-  , bounded := false
-  , globalSIRate := some 14
-  , embeddedSIRate_Exp1 := some 18
-  , embeddedSIRate_Exp2 := some 4 }
+def darkBlack : EmbeddedSIDatum :=
+  { vt2016 := VanTielEtAl2016.Scales.darkBlack
+  , exp1Rate := 13, exp2Rate := some 0 }
 
--- Color scales (non-bounded)
-def darkBlack : ScaleDatum :=
-  { weakerTerm := "dark", strongerTerm := "black"
-  , semanticDistance := some 4.2
-  , bounded := false
-  , globalSIRate := some 8
-  , embeddedSIRate_Exp1 := some 13
-  , embeddedSIRate_Exp2 := some 0 }
+def contentHappy : EmbeddedSIDatum :=
+  { vt2016 := VanTielEtAl2016.Scales.contentHappy
+  , exp1Rate := 15, exp2Rate := none }
 
--- Emotion/attitude scales (non-bounded)
-def contentHappy : ScaleDatum :=
-  { weakerTerm := "content", strongerTerm := "happy"
-  , semanticDistance := some 3.7
-  , bounded := false
-  , globalSIRate := some 8
-  , embeddedSIRate_Exp1 := some 15
-  , embeddedSIRate_Exp2 := none }
+def likeLove : EmbeddedSIDatum :=
+  { vt2016 := VanTielEtAl2016.Scales.likeLove
+  , exp1Rate := 15, exp2Rate := some 9 }
 
-def likeLove : ScaleDatum :=
-  { weakerTerm := "like", strongerTerm := "love"
-  , semanticDistance := some 5.0
-  , bounded := false
-  , globalSIRate := some 44
-  , embeddedSIRate_Exp1 := some 15
-  , embeddedSIRate_Exp2 := some 9 }
+def dislikeLoathe : EmbeddedSIDatum :=
+  { vt2016 := VanTielEtAl2016.Scales.dislikeLoathe
+  , exp1Rate := 17, exp2Rate := some 16 }
 
-def dislikeLoathe : ScaleDatum :=
-  { weakerTerm := "dislike", strongerTerm := "loathe"
-  , semanticDistance := some 4.7
-  , bounded := false
-  , globalSIRate := some 22
-  , embeddedSIRate_Exp1 := some 17
-  , embeddedSIRate_Exp2 := some 16 }
+def waryScared : EmbeddedSIDatum :=
+  { vt2016 := VanTielEtAl2016.Scales.waryScared
+  , exp1Rate := 18, exp2Rate := none }
 
-def waryScared : ScaleDatum :=
-  { weakerTerm := "wary", strongerTerm := "scared"
-  , semanticDistance := some 4.5
-  , bounded := false
-  , globalSIRate := some 25
-  , embeddedSIRate_Exp1 := some 18
-  , embeddedSIRate_Exp2 := none }
+def unsettlingHorrific : EmbeddedSIDatum :=
+  { vt2016 := VanTielEtAl2016.Scales.unsettlingHorrific
+  , exp1Rate := 31, exp2Rate := some 31 }
 
-def unsettlingHorrific : ScaleDatum :=
-  { weakerTerm := "unsettling", strongerTerm := "horrific"
-  , semanticDistance := some 5.0
-  , bounded := false
-  , globalSIRate := some 36
-  , embeddedSIRate_Exp1 := some 31
-  , embeddedSIRate_Exp2 := some 31 }
+def tiredExhausted : EmbeddedSIDatum :=
+  { vt2016 := VanTielEtAl2016.Scales.tiredExhausted
+  , exp1Rate := 14, exp2Rate := none }
 
-def tiredExhausted : ScaleDatum :=
-  { weakerTerm := "tired", strongerTerm := "exhausted"
-  , semanticDistance := some 4.8
-  , bounded := false
-  , globalSIRate := some 31
-  , embeddedSIRate_Exp1 := some 14
-  , embeddedSIRate_Exp2 := none }
+def hungryStarving : EmbeddedSIDatum :=
+  { vt2016 := VanTielEtAl2016.Scales.hungryStarving
+  , exp1Rate := 21, exp2Rate := none }
 
-def hungryStarving : ScaleDatum :=
-  { weakerTerm := "hungry", strongerTerm := "starving"
-  , semanticDistance := some 5.2
-  , bounded := false
-  , globalSIRate := some 36
-  , embeddedSIRate_Exp1 := some 21
-  , embeddedSIRate_Exp2 := none }
+def attractiveStunning : EmbeddedSIDatum :=
+  { vt2016 := VanTielEtAl2016.Scales.attractiveStunning
+  , exp1Rate := 28, exp2Rate := some 0 }
 
--- Appearance scales (non-bounded)
-def attractiveStunning : ScaleDatum :=
-  { weakerTerm := "attractive", strongerTerm := "stunning"
-  , semanticDistance := some 4.8
-  , bounded := false
-  , globalSIRate := some 17
-  , embeddedSIRate_Exp1 := some 28
-  , embeddedSIRate_Exp2 := some 0 }
+def prettyBeautiful : EmbeddedSIDatum :=
+  { vt2016 := VanTielEtAl2016.Scales.prettyBeautiful
+  , exp1Rate := 20, exp2Rate := none }
 
-def prettyBeautiful : ScaleDatum :=
-  { weakerTerm := "pretty", strongerTerm := "beautiful"
-  , semanticDistance := some 4.5
-  , bounded := false
-  , globalSIRate := some 28
-  , embeddedSIRate_Exp1 := some 20
-  , embeddedSIRate_Exp2 := none }
+def sillyRidiculous : EmbeddedSIDatum :=
+  { vt2016 := VanTielEtAl2016.Scales.sillyRidiculous
+  , exp1Rate := 18, exp2Rate := none }
 
--- Intensity scales (non-bounded)
-def sillyRidiculous : ScaleDatum :=
-  { weakerTerm := "silly", strongerTerm := "ridiculous"
-  , semanticDistance := some 3.9
-  , bounded := false
-  , globalSIRate := some 17
-  , embeddedSIRate_Exp1 := some 18
-  , embeddedSIRate_Exp2 := none }
+def snugTight : EmbeddedSIDatum :=
+  { vt2016 := VanTielEtAl2016.Scales.snugTight
+  , exp1Rate := 10, exp2Rate := some 2 }
 
-def snugTight : ScaleDatum :=
-  { weakerTerm := "snug", strongerTerm := "tight"
-  , semanticDistance := some 3.1
-  , bounded := false
-  , globalSIRate := some 11
-  , embeddedSIRate_Exp1 := some 10
-  , embeddedSIRate_Exp2 := some 2 }
+-- UNVERIFIED: exp1Rate estimated from Figure 2 scatter plot position (unlabeled)
+def intelligentBrilliant : EmbeddedSIDatum :=
+  { vt2016 := VanTielEtAl2016.Scales.intelligentBrilliant
+  , exp1Rate := 13, exp2Rate := none }
 
-/-- All 42 scales tested in the study -/
-def allScales : List ScaleDatum := [
-  -- Bounded scales
+-- UNVERIFIED: exp1Rate estimated from Figure 2 scatter plot position (unlabeled)
+def funnyHilarious : EmbeddedSIDatum :=
+  { vt2016 := VanTielEtAl2016.Scales.funnyHilarious
+  , exp1Rate := 18, exp2Rate := none }
+
+-- UNVERIFIED: exp1Rate estimated from Figure 2 scatter plot position (unlabeled)
+def uglyHideous : EmbeddedSIDatum :=
+  { vt2016 := VanTielEtAl2016.Scales.uglyHideous
+  , exp1Rate := 18, exp2Rate := none }
+
+
+-- ============================================================================
+-- Scale Lists
+-- ============================================================================
+
+/-- All 42 scales tested in @cite{ronai-2024}. -/
+def allScales : List EmbeddedSIDatum := [
+  -- Bounded scales (20 = VT2016's 21 minus ⟨few, none⟩)
   someAll, possibleCertain, allowedObligatory, mayHaveTo, mayWill,
   sometimesAlways, cheapFree, difficultImpossible, hardUnsolvable,
   rareExtinct, scarceUnavailable, lowDepleted, startFinish,
   trySucceed, participateWin, believeKnow, goodPerfect,
-  memorableUnforgettable, specialUnique,
-  -- Non-bounded scales
+  memorableUnforgettable, specialUnique, darkBlack,
+  -- Non-bounded scales (22)
   warmHot, coolCold, goodExcellent, adequateGood, palatableDelicious,
-  bigEnormous, smallTiny, oldAncient, darkBlack, contentHappy,
+  bigEnormous, smallTiny, oldAncient, contentHappy,
   likeLove, dislikeLoathe, waryScared, unsettlingHorrific,
   tiredExhausted, hungryStarving, attractiveStunning, prettyBeautiful,
-  sillyRidiculous, snugTight
+  sillyRidiculous, snugTight, intelligentBrilliant, funnyHilarious,
+  uglyHideous
 ]
 
-/-- Bounded scales -/
-def boundedScales : List ScaleDatum := allScales.filter (·.bounded)
+#guard allScales.length == 42
 
-/-- Non-bounded scales -/
-def nonBoundedScales : List ScaleDatum := allScales.filter (!·.bounded)
+/-- Bounded scales (by VT2016 annotation). -/
+def boundedScales : List EmbeddedSIDatum := allScales.filter (·.bounded)
+
+/-- Non-bounded scales. -/
+def nonBoundedScales : List EmbeddedSIDatum := allScales.filter (!·.bounded)
+
+#guard boundedScales.length == 20
+#guard nonBoundedScales.length == 22
 
 
-/--
-Experiment 1 design (@cite{gotzner-romoli-2018} paradigm).
+-- ============================================================================
+-- Experiment Metadata
+-- ============================================================================
 
-Participants judged to what extent Sentence 1 "suggests" Sentence 2
-on a 0-100 sliding scale.
+/-- Experiment 1: @cite{gotzner-romoli-2018} sliding-scale paradigm.
+119 recruited, 1 excluded (bilingual), N=118.
+Within-subjects (Latin Square), 42 critical items × 4 conditions. -/
+def exp1N : Nat := 118
 
-Four conditions per scale:
-- strong: "Every soup was warm" → "No soup was hot"
-- weak: "Every soup was warm" → "Not every soup was hot"
-- true: "Every soup was warm" → "At least one soup was warm"
-- false: "Every soup was warm" → "Not every soup was warm"
--/
-structure Exp1Design where
-  /-- Number of participants -/
-  n : Nat
-  /-- Number of scales tested -/
-  nScales : Nat
-  deriving Repr
+/-- Experiment 2: @cite{van-tiel-geurts-2016} binary inference task (Yes/No).
+N=45 (all data reported). Within-subjects, 42 critical items. -/
+def exp2N : Nat := 45
 
-def exp1Design : Exp1Design :=
-  { n := 118, nScales := 42 }
 
-/--
-Experiment 1 aggregate results by condition (averaged across scales).
--/
-structure Exp1AggregateResult where
-  /-- Mean response for true control (0-100) -/
+-- ============================================================================
+-- Experiment 1: Aggregate Results (approximate from Figure 1)
+-- ============================================================================
+
+/-- Mean sliding scale response by condition, approximate from Figure 1.
+Reference level is "strong"; contrasts reported in the paper:
+true−strong: Estimate=55.6, SE=2.75, t=20.19, p<.001
+weak−strong: Estimate=12.79, SE=1.93, t=6.62, p<.001
+false−strong: Estimate=−26.12, SE=1.47, t=−17.81, p<.001 -/
+structure Exp1Aggregate where
   trueControl : Nat
-  /-- Mean response for weak inference (0-100) -/
   weakInference : Nat
-  /-- Mean response for strong inference (0-100) -/
   strongInference : Nat
-  /-- Mean response for false control (0-100) -/
   falseControl : Nat
   deriving Repr
 
-/--
-Aggregate results from Experiment 1 Figure 1.
--/
-def exp1Aggregate : Exp1AggregateResult :=
+def exp1Aggregate : Exp1Aggregate :=
   { trueControl := 85
   , weakInference := 45
   , strongInference := 32
   , falseControl := 6 }
 
-/-- Response ordering matches prediction: true > weak > strong > false. -/
+/-- Response ordering: true > weak > strong > false.
+This replicates @cite{gotzner-romoli-2018}'s finding across 42 scales. -/
 theorem exp1_ordering :
     exp1Aggregate.trueControl > exp1Aggregate.weakInference ∧
     exp1Aggregate.weakInference > exp1Aggregate.strongInference ∧
     exp1Aggregate.strongInference > exp1Aggregate.falseControl := by
   native_decide
 
-/-- Strong inference (32%) significantly above false control (6%),
-    indicating embedded SIs are computed. -/
+/-- Strong inference significantly above false control: embedded SIs exist.
+The 26-point gap corresponds to Estimate=−26.12, t=−17.81 in the regression. -/
 theorem exp1_strong_above_false :
     exp1Aggregate.strongInference > exp1Aggregate.falseControl + 20 := by
   native_decide
 
 
-/--
-Experiment 2 design (@cite{van-tiel-geurts-2016} inference task).
+-- ============================================================================
+-- Regression Results (ℚ, from paper text)
+-- ============================================================================
 
-Binary Yes/No responses to:
-"Mary: Every soup was warm.
- Would you conclude from this that, according to Mary, no soup was hot?"
--/
-structure Exp2Design where
-  /-- Number of participants -/
-  n : Nat
-  /-- Number of scales tested -/
-  nScales : Nat
-  deriving Repr
-
-def exp2Design : Exp2Design :=
-  { n := 45, nScales := 42 }
-
-
-/--
-Correlation between global SI rates and
-embedded SI rates.
--/
-structure CorrelationResult where
-  /-- Pearson correlation coefficient -/
-  r : Float
-  /-- p-value (significance) -/
-  p : Float
-  /-- Is significant at p < 0.001? -/
-  significant : Bool
-  deriving Repr
-
-/--
-Exp 1: Strong correlation between global and embedded SI rates.
--/
-def exp1_globalEmbeddedCorrelation : CorrelationResult :=
-  { r := 0.76, p := 0.001, significant := true }
-
-/--
-Exp 2: Strong correlation between global and embedded SI rates.
--/
-def exp2_globalEmbeddedCorrelation : CorrelationResult :=
-  { r := 0.80, p := 0.001, significant := true }
-
-/-- Both experiments show strong positive correlation (r > 0.7),
-    suggesting a shared mechanism for global and embedded SIs. -/
-theorem high_correlations :
-    exp1_globalEmbeddedCorrelation.r > 0.7 ∧
-    exp2_globalEmbeddedCorrelation.r > 0.7 := by
-  native_decide
-
-
-/--
-Effect of a predictor on SI rates.
--/
-structure PredictorEffect where
-  /-- Name of the predictor -/
+/-- Mixed-effects regression coefficient. -/
+structure RegressionCoeff where
   predictor : String
-  /-- Direction of effect (positive = more SI) -/
-  direction : String
-  /-- Is the effect significant? -/
-  significant : Bool
-  /-- p-value -/
-  p : Float
+  /-- Estimate (unstandardized) -/
+  estimate : ℚ
+  /-- Standard error -/
+  se : ℚ
+  /-- Test statistic (t for LMER in Exp 1, z for GLMER in Exp 2) -/
+  statistic : ℚ
   deriving Repr
 
-/--
-Semantic distance effect: larger distance → more embedded SI.
--/
-def semanticDistanceEffect_Exp1 : PredictorEffect :=
-  { predictor := "Semantic Distance"
-  , direction := "positive"
-  , significant := true
-  , p := 0.05 }
+-- Exp 1: Linear mixed effects, strong condition only.
+-- Predicting Response (0–100) by predictor, with by-participant and
+-- by-item random intercepts.
 
-def semanticDistanceEffect_Exp2 : PredictorEffect :=
-  { predictor := "Semantic Distance"
-  , direction := "positive"
-  , significant := true
-  , p := 0.05 }
+/-- Exp 1: Semantic distance → strong inference (p<.05). -/
+def exp1_semanticDistance : RegressionCoeff :=
+  { predictor := "semantic_distance"
+  , estimate := 728 / 100   -- 7.28
+  , se := 329 / 100         -- 3.29
+  , statistic := 221 / 100  -- t = 2.21
+  }
 
-/--
-Boundedness effect: bounded scales → more embedded SI.
--/
-def boundednessEffect_Exp1 : PredictorEffect :=
-  { predictor := "Boundedness"
-  , direction := "positive"
-  , significant := true
-  , p := 0.001 }
+/-- Exp 1: Boundedness → strong inference (p<.001). -/
+def exp1_boundedness : RegressionCoeff :=
+  { predictor := "boundedness"
+  , estimate := 1837 / 100   -- 18.37
+  , se := 441 / 100          -- 4.41
+  , statistic := 417 / 100   -- t = 4.17
+  }
 
-def boundednessEffect_Exp2 : PredictorEffect :=
-  { predictor := "Boundedness"
-  , direction := "positive"
-  , significant := true
-  , p := 0.001 }
+-- Exp 2: Logistic mixed effects (binary Yes/No).
+-- Predicting Response (Yes vs No) by predictor, same random effects.
 
-/-- Both predictors significant in both experiments. -/
-theorem predictors_significant :
-    semanticDistanceEffect_Exp1.significant ∧
-    semanticDistanceEffect_Exp2.significant ∧
-    boundednessEffect_Exp1.significant ∧
-    boundednessEffect_Exp2.significant := by
-  native_decide
+/-- Exp 2: Semantic distance → strong inference (p<.05). -/
+def exp2_semanticDistance : RegressionCoeff :=
+  { predictor := "semantic_distance"
+  , estimate := 63 / 100    -- 0.63
+  , se := 31 / 100          -- 0.31
+  , statistic := 205 / 100  -- z = 2.05
+  }
 
-
-/--
-Mean embedded SI rate by boundedness (Exp 1).
-From Figure 4.
--/
-def boundedMean_Exp1 : Nat := 38
-def nonBoundedMean_Exp1 : Nat := 21
-
-/--
-Mean embedded SI rate by boundedness (Exp 2).
-From Figure 7.
--/
-def boundedMean_Exp2 : Nat := 23
-def nonBoundedMean_Exp2 : Nat := 10
-
-/-- Bounded scales show higher embedded SI rates. -/
-theorem bounded_higher :
-    boundedMean_Exp1 > nonBoundedMean_Exp1 ∧
-    boundedMean_Exp2 > nonBoundedMean_Exp2 := by
-  native_decide
+/-- Exp 2: Boundedness → strong inference (p<.001). -/
+def exp2_boundedness : RegressionCoeff :=
+  { predictor := "boundedness"
+  , estimate := 154 / 100   -- 1.54
+  , se := 39 / 100          -- 0.39
+  , statistic := 391 / 100  -- z = 3.91
+  }
 
 
-/--
-Theoretical accounts evaluated in the paper.
--/
-inductive TheoryType where
-  /-- Grammatical theory -/
-  | grammatical
-  /-- Modified neo-Gricean -/
-  | neoGricean
-  /-- RSA-LU with neo-Gricean uncertainty -/
-  | rsaLU_neoGricean
-  /-- RSA-LU with unconstrained uncertainty -/
-  | rsaLU_unconstrained
-  deriving DecidableEq, Repr
+-- ============================================================================
+-- Correlation Results (ℚ)
+-- ============================================================================
 
-/--
-Does a theory use scalar alternatives in the SI derivation?
--/
-def usesAlternatives : TheoryType → Bool
-  | .grammatical => true
-  | .neoGricean => true
-  | .rsaLU_neoGricean => true
-  | .rsaLU_unconstrained => false
+/-- Exp 1: Pearson r between VT2016 global SI rate and Exp 1 strong inference.
+r=0.76, p<.001. -/
+def exp1Correlation : ℚ := 76 / 100
 
-/--
-Is a theory supported by the finding that alternative-based predictors
-(semantic distance, boundedness) predict embedded SI variation?
--/
-def supportedByData : TheoryType → Bool
-  | .grammatical => true
-  | .neoGricean => true
-  | .rsaLU_neoGricean => true
-  | .rsaLU_unconstrained => false
-
-/-- Theories that use alternatives are supported by the data. -/
-theorem alternatives_supported :
-    ∀ t : TheoryType, usesAlternatives t = supportedByData t := by
-  intro t
-  cases t <;> native_decide
+/-- Exp 2: Pearson r between VT2016 global SI rate and Exp 2 strong inference.
+r=0.80, p<.001. -/
+def exp2Correlation : ℚ := 80 / 100
 
 
-/--
-Prior studies on embedded SI discussed in the paper.
--/
-structure PriorStudy where
-  /-- Citation -/
-  citation : String
-  /-- Did they find evidence for embedded SI? -/
-  foundEmbeddedSI : Bool
-  /-- Number of scales tested -/
-  nScales : Nat
-  deriving Repr
+-- ============================================================================
+-- Computed Theorems
+-- ============================================================================
 
-/-- Prior studies on embedded SIs. -/
-def priorStudies : List PriorStudy := [
-  { citation := "Geurts & Pouscoulous (2009)"
-  , foundEmbeddedSI := false  -- Limited evidence
-  , nScales := 1 },           -- Only some/all
-  { citation := "Gotzner & Romoli (2018)"
-  , foundEmbeddedSI := true
-  , nScales := 1 },           -- Only some/all
-  { citation := "Sun, Tian & Breheny (2018)"
-  , foundEmbeddedSI := true   -- But no predictor effects
-  , nScales := 43 },
-  { citation := "Bleotu & Benz (to appear)"
-  , foundEmbeddedSI := true   -- With predictor effects
-  , nScales := 43 }
-]
+/-- Both predictors are significant in Exp 1 (t > 1.96). -/
+theorem exp1_both_predictors_significant :
+    exp1_semanticDistance.statistic > 196 / 100 ∧
+    exp1_boundedness.statistic > 196 / 100 := by
+  constructor <;> native_decide
 
-/-- @cite{ronai-2024} combines the Gotzner & Romoli paradigm with
-    van Tiel et al.'s 42 scales. -/
-theorem comprehensive_test :
-    exp1Design.nScales = 42 ∧
-    exp2Design.nScales = 42 := by
-  native_decide
+/-- Both predictors are significant in Exp 2 (z > 1.96). -/
+theorem exp2_both_predictors_significant :
+    exp2_semanticDistance.statistic > 196 / 100 ∧
+    exp2_boundedness.statistic > 196 / 100 := by
+  constructor <;> native_decide
+
+/-- Boundedness has a larger effect than semantic distance in both experiments.
+This parallels @cite{van-tiel-geurts-2016}'s finding that boundedness
+dominates the combined model. -/
+theorem boundedness_dominates_distance :
+    exp1_boundedness.estimate > exp1_semanticDistance.estimate ∧
+    exp2_boundedness.estimate > exp2_semanticDistance.estimate := by
+  constructor <;> native_decide
+
+/-- Exp 2 correlation is at least as strong as Exp 1.
+The binary task (less noisy) yields a tighter global–embedded relationship. -/
+theorem exp2_correlation_at_least_exp1 :
+    exp2Correlation ≥ exp1Correlation := by native_decide
+
+/-- Both correlations are strong (r > 0.70). -/
+theorem both_correlations_strong :
+    exp1Correlation > 70 / 100 ∧ exp2Correlation > 70 / 100 := by
+  constructor <;> native_decide
+
+/-- Bounded scales yield more embedded SIs than non-bounded (Exp 1).
+Total Exp 1 rate across 20 bounded scales exceeds total across 22 non-bounded,
+despite having fewer items — the mean difference is ~17 points. -/
+theorem bounded_higher_exp1 :
+    (boundedScales.map (·.exp1Rate)).foldl (· + ·) 0 >
+    (nonBoundedScales.map (·.exp1Rate)).foldl (· + ·) 0 := by native_decide
+
+/-- ⟨some, all⟩ embedded SI rate (49) substantially above the median,
+consistent with it being a "workhorse" scale for SI research. -/
+theorem someAll_embedded_above_median :
+    someAll.exp1Rate > 30 := by native_decide
+
+/-- ⟨may, will⟩ is an outlier: very high global SI rate (VT2016 Exp 2 = 89%)
+but low embedded SI rate (Exp 1 = 18), suggesting embedding under *every*
+disrupts SI for this modal scale specifically. -/
+theorem mayWill_outlier :
+    mayWill.globalSIRate > 80 ∧ mayWill.exp1Rate < 20 := by native_decide
+
+/-- The global SI rate for each scale is derived from VT2016, not stored
+independently. This structural test verifies the derivation: ⟨some, all⟩'s
+global SI rate matches VT2016 Exp 2 by construction. -/
+theorem globalSIRate_is_vt2016_exp2 :
+    someAll.globalSIRate = VanTielEtAl2016.Scales.someAll.siRateExp2 := rfl
+
+/-- Boundedness is derived from VT2016, not stored independently. -/
+theorem bounded_is_vt2016 :
+    darkBlack.bounded = VanTielEtAl2016.Scales.darkBlack.bounded := rfl
 
 end Phenomena.ScalarImplicatures.Studies.Ronai2024
