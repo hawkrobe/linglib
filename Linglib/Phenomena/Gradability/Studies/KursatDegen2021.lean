@@ -67,9 +67,9 @@ inductive PropertyType where
 -- ============================================================================
 
 /-- A regression result from one of the paper's mixed-effects models.
-    Positive β means the material condition produced higher values
-    (more errors, slower RTs, more redundant use of the compared
-    property). -/
+    Sign convention varies by experiment: in Exps 1/3, positive β means
+    material > color (harder); in Exp 2, positive β means color > material
+    (more redundant). See individual def docstrings for interpretation. -/
 structure RegressionResult where
   /-- Fixed-effect coefficient -/
   beta : Float
@@ -158,13 +158,15 @@ theorem color_more_redundant :
 
 /-- The core finding: perceptual difficulty and redundant use are
     anti-correlated across property types. Material is harder to perceive
-    (Exps 1, 3) AND less redundantly used (Exp 2). -/
+    (positive β in Exps 1, 3) AND less redundantly used (positive β in
+    Exp 2 means color > material). All effects significant. -/
 theorem difficulty_predicts_redundancy :
-    -- Material is harder
-    exp1_error.significant ∧ exp3_error.significant ∧
-    -- Color is more redundantly used
-    exp2_redundancy.significant :=
-  ⟨rfl, rfl, rfl⟩
+    -- Material is harder (positive β = material > color)
+    exp1_error.significant ∧ exp1_error.beta > 0 ∧
+    exp3_error.significant ∧ exp3_error.beta > 0 ∧
+    -- Color is more redundantly used (positive β = color > material)
+    exp2_redundancy.significant ∧ exp2_redundancy.beta > 0 := by
+  refine ⟨rfl, ?_, rfl, ?_, rfl, ?_⟩ <;> native_decide
 
 -- ============================================================================
 -- § RSA Noise Grounding
