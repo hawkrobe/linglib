@@ -1,15 +1,18 @@
-/-
-# Continuous-Incremental RSA (CI-RSA)
-@cite{cohn-gordon-goodman-potts-2019}
+import Linglib.Theories.Pragmatics.RSA.Core.Noise
 
-Implements @cite{waldon-degen-2021} "Modeling cross-linguistic production of
-referring expressions".
+/-!
+# @cite{waldon-degen-2021} — Continuous-Incremental RSA (CI-RSA)
+@cite{cohn-gordon-goodman-potts-2019} @cite{degen-etal-2020}
+
+Waldon, B. & Degen, J. (2021). Modeling cross-linguistic production of
+referring expressions. *Proceedings of the Society for Computation in
+Linguistics (SCiL)* 4, 206-215.
 
 ## Overview
 
 CI-RSA synthesizes two RSA extensions:
-1. **Incremental RSA**: Word-by-word production
-2. **Continuous semantics**: Noisy adjective reliability
+1. **Incremental RSA** (@cite{cohn-gordon-goodman-potts-2019}): Word-by-word production
+2. **Continuous semantics** (@cite{degen-etal-2020}): Noisy adjective reliability
 
 ## Key Equations
 
@@ -36,10 +39,8 @@ CI-RSA synthesizes two RSA extensions:
 
 ## Connections
 
-This implementation connects to the broader RSA ecosystem:
-
 - **Continuous semantics**: Shares theoretical foundation with
-  `RSA.ContinuousSemantics` (DegenEtAl2020.lean). Both use noisy adjective
+  `RSA.ContinuousSemantics` (@cite{degen-etal-2020}). Both use noisy adjective
   semantics where v^color > v^size, explaining redundant modification.
 
 - **Noise theory**: The lexContinuous function instantiates the unified
@@ -47,10 +48,7 @@ This implementation connects to the broader RSA ecosystem:
 
 - **Word order**: Captures cross-linguistic variation in adjective ordering
   (prenominal English vs postnominal Spanish).
-
 -/
-
-import Linglib.Theories.Pragmatics.RSA.Core.Noise
 
 namespace RSA.Implementations.WaldonDegen2021
 
@@ -135,9 +133,10 @@ the noise channel with:
 - onMismatch = 1 - v^i
 - b = 1 if item i is true of referent r, 0 otherwise
 
-Note: This uses the simplified Waldon & Degen parameterization where
-mismatch = 1 - match, rather than the more gener@cite{degen-etal-2020}
-formulation with independent match/mismatch parameters.
+Note: This uses the simplified @cite{waldon-degen-2021} parameterization
+where mismatch = 1 - match, rather than the more general
+@cite{degen-etal-2020} formulation with independent match/mismatch
+parameters.
 -/
 theorem lexContinuous_as_noiseChannel (r : Referent) (i : LexItem) :
     lexContinuous r i =
