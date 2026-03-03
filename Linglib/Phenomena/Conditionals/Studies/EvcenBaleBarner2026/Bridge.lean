@@ -1,37 +1,58 @@
 import Linglib.Phenomena.Conditionals.Studies.EvcenBaleBarner2026.Data
 import Linglib.Theories.Semantics.Conditionals.Exhaustivity
 import Linglib.Theories.Semantics.Conditionals.Basic
+import Linglib.Theories.Pragmatics.NeoGricean.Core.Competence
 
 /-!
-# @cite{evcen-bale-barner-2026} — Bridge @cite{evcen-bale-barner-2026}
-@cite{von-fintel-2001}
+# @cite{evcen-bale-barner-2026} — Bridge
+@cite{von-fintel-2001} @cite{horn-2000} @cite{cornulier-1983}
 
 Connects the experimental findings of @cite{evcen-bale-barner-2026} to the
-answer-level exhaustification theory of conditional perfection
-as formalized in `Semantics.Conditionals.Exhaustivity`.
+answer-level exhaustification theory of conditional perfection.
+
+## Full Argument Chain
+
+The paper's argument proceeds in four steps:
+
+1. **Semantics**: The material conditional "if A then C" does not semantically
+   entail the biconditional (established in `Conditionals.Basic`).
+
+2. **Pragmatic mechanism**: Conditional perfection arises from answer-level
+   exhaustification (@cite{von-fintel-2001}, following @cite{cornulier-1983}).
+   The QUD "which trigger causes C?" makes alternative triggers salient;
+   exhaustifying the answer "A causes C" against these alternatives yields
+   "only A causes C"; combined with coverage, this entails ¬A → ¬C.
+
+3. **Two prerequisites for perfection**:
+   - **QUD**: The QUD must make alternative antecedents salient
+     (antecedent-focused), triggering exhaustification.
+   - **Speaker competence**: The speaker must be assumed to know about
+     the alternative triggers, licensing exclusion of unmentioned alternatives.
+   Without either, perfection fails.
+
+4. **Against @cite{horn-2000}**: Horn proposes the alternative to "if A then C"
+   is the unconditional "C regardless." This yields only an existential
+   inference (some circumstance where ¬C), not the per-trigger universal
+   that participants produce. The data support von Fintel's per-trigger
+   alternatives.
 
 ## Dependency Chain
 
-The theory makes a directional prediction through the following chain:
-
 ```
-exhaustifiedAnswer_excludes (exhIE → local exclusion for IE alternatives)
+exhaustifiedAnswer (exhIE at answer level)
+    ↓ all_alt_innocently_excludable (3-button IE)
+exhaustification_yields_perfection (IE + coverage → perfection)
     ↓
-exhaustification_yields_perfection (exhIE + all alts IE + coverage → perfection)
+theory_chain_3button_perfection (instantiated for experimental scenario)
     ↓
-theory_chain_button_perfection (chain instantiated for the experimental scenario)
+coverage_without_exclusion_insufficient (exclusion is necessary)
+vonFintel_strictly_stronger_than_horn (per-trigger > existential)
     ↓
-coverage_without_exclusion_insufficient (without exclusion → perfection fails)
+Prediction: perfection iff QUD provides alternatives AND speaker is competent
     ↓
-Prediction: perfection iff exclusion is available
-    ↓
-antecedent_focus_highest (data confirms: QUDs providing exclusion > those without)
+Data: antecedent-focused > neutral ≈ consequent-focused (Exp 1)
+      full knowledge >> partial knowledge (Exp 2)
 ```
-
-The theory predicts an asymmetry: perfection when exhaustification provides
-exclusion (antecedent-focus QUD, knowledgeable speaker), no perfection when
-exclusion is unavailable (consequent-focus QUD, ignorant speaker). The
-experimental data confirm exactly this pattern.
 -/
 
 namespace Phenomena.Conditionals.Studies.EvcenBaleBarner2026.Bridge
@@ -44,142 +65,223 @@ private theorem Bool.of_not_eq_true {b : Bool} (h : ¬(b = true)) : b = false :=
   cases b <;> simp_all
 
 -- ============================================================================
--- Section A: Experimental Scenario
+-- Section A: 3-Button Experimental Scenario
 -- ============================================================================
 
-/-- Triggers in the experimental paradigm: two buttons. -/
-inductive Button2Trigger where
-  | A | B
+/-- Triggers in the experimental paradigm: three buttons. -/
+inductive Button3Trigger where
+  | A | B | C
   deriving DecidableEq, BEq, Repr
 
-/-- The 4 possible worlds in a 2-button scenario. -/
-inductive Button2World where
+/-- The 6 possible worlds in a 3-button scenario.
+
+Each world represents pressing one button and observing whether the target
+sound plays. -/
+inductive Button3World where
   | pressA_plays
   | pressA_silent
   | pressB_plays
   | pressB_silent
+  | pressC_plays
+  | pressC_silent
   deriving DecidableEq, BEq, Repr
 
-instance : Fintype Button2World where
-  elems := {.pressA_plays, .pressA_silent, .pressB_plays, .pressB_silent}
+instance : Fintype Button3World where
+  elems := {.pressA_plays, .pressA_silent, .pressB_plays,
+            .pressB_silent, .pressC_plays, .pressC_silent}
   complete := fun x => by cases x <;> simp
 
 /-- Button A is pressed. -/
-def pressA : BProp Button2World
-  | .pressA_plays => true | .pressA_silent => true | _ => false
+def pressA : BProp Button3World
+  | .pressA_plays | .pressA_silent => true
+  | _ => false
 
-/-- Music plays. -/
-def musicPlays : BProp Button2World
-  | .pressA_plays => true | .pressB_plays => true | _ => false
+/-- The target sound plays. -/
+def soundPlays : BProp Button3World
+  | .pressA_plays | .pressB_plays | .pressC_plays => true
+  | _ => false
 
-/-- Button A causes music (at this world). -/
-def aCausesMusic : BProp Button2World
+/-- Button A causes the target sound. -/
+def aCausesSound : BProp Button3World
   | .pressA_plays => true | _ => false
 
-/-- Button B causes music (at this world). -/
-def bCausesMusic : BProp Button2World
+/-- Button B causes the target sound. -/
+def bCausesSound : BProp Button3World
   | .pressB_plays => true | _ => false
 
-/-- The answer space for the experimental paradigm.
+/-- Button C causes the target sound. -/
+def cCausesSound : BProp Button3World
+  | .pressC_plays => true | _ => false
 
-Maps the 2-button scenario into the `AnswerSpace` structure from the
-exhaustification theory, with boolean causation lifted to `Prop`. -/
-def buttonAnswerSpace : AnswerSpace Button2Trigger Button2World :=
+/-- The answer space for the 3-button experimental paradigm.
+
+Maps the scenario into the `AnswerSpace` structure: three triggers (buttons),
+each with a causal relation to the target sound. -/
+def button3AnswerSpace : AnswerSpace Button3Trigger Button3World :=
   { causes := fun t w => match t with
-      | .A => aCausesMusic w = true
-      | .B => bCausesMusic w = true
-    triggers := {.A, .B} }
+      | .A => aCausesSound w = true
+      | .B => bCausesSound w = true
+      | .C => cCausesSound w = true
+    triggers := {.A, .B, .C} }
 
 -- ============================================================================
--- Section B: Theory Chain Applied to Scenario
+-- Section B: Theory Chain — Exhaustification → Perfection (3 Buttons)
 -- ============================================================================
 
-/-- **Theory chain: exhaustification yields perfection in the button scenario.**
+/-- **Theory chain: exhaustification yields perfection in the 3-button scenario.**
 
-This instantiates `exhaustification_yields_perfection` for the experimental
-paradigm. The theorem says: if the exhaustified answer holds at `w`
-(triggered by antecedent-focus QUD) and all alternative triggers are
-innocently excludable (licensed by speaker knowledge), then ¬pressA → ¬music.
+This instantiates `exhaustification_yields_perfection` for the 3-button
+experimental paradigm. With 3 buttons, there are 2 alternative triggers
+(B and C). The `all_alt_innocently_excludable` lemma establishes that both
+are innocently excludable — the key step that requires the general lemma
+rather than the singleton version.
 
 The hypotheses map to experimental conditions:
-- `h_exh`: exhaustified answer holds (antecedent-focus QUD triggers EXH)
-- `h_coverage`: every music event has a button cause (closed domain)
+- `h_exh`: exhaustified answer holds (antecedent-focus QUD + speaker knowledge)
+- `h_coverage`: every sound event has a button cause (closed domain)
 - `hnp`: button A is not pressed
 
-The IE condition is discharged by `singleton_alt_innocently_excludable`:
-in the 2-button scenario, ALT = {answerProp.B} is a singleton, and the
-witness `pressA_plays` establishes joint consistency of φ ∧ ∼a. -/
-theorem theory_chain_button_perfection
-    (w : Button2World)
-    (h_exh : exhaustifiedAnswer buttonAnswerSpace .A w)
-    (h_coverage : musicPlays w = true →
-      ∃ t' ∈ buttonAnswerSpace.triggers, buttonAnswerSpace.causes t' w)
-    (hnp : pressA w = false) : musicPlays w = false := by
-  -- Step 1: Prepare hypotheses for the theory chain
-  -- h_t_requires_p: if trigger A fires at w', button A was pressed at w'
-  have h_trp : ∀ w', buttonAnswerSpace.causes .A w' → pressA w' = true := by
-    intro w' h; cases w' <;> simp_all [buttonAnswerSpace, aCausesMusic, pressA]
-  -- h_all_ie: all alternative triggers are IE
-  -- In the 2-button scenario, the only alternative to A is B (singleton ALT).
-  -- By singleton_alt_innocently_excludable, B is IE given the witness pressA_plays.
-  have h_ie : ∀ t' ∈ buttonAnswerSpace.triggers, t' ≠ .A →
+The IE condition is discharged by `all_alt_innocently_excludable`:
+the witness `pressA_plays` establishes consistency of φ ∧ ∀a∈ALT. ¬a
+(at pressA_plays, A causes the sound but B and C do not). -/
+theorem theory_chain_3button_perfection
+    (w : Button3World)
+    (h_exh : exhaustifiedAnswer button3AnswerSpace .A w)
+    (h_coverage : soundPlays w = true →
+      ∃ t' ∈ button3AnswerSpace.triggers, button3AnswerSpace.causes t' w)
+    (hnp : pressA w = false) : soundPlays w = false := by
+  -- Step 1: Trigger A requires pressing A
+  have h_trp : ∀ w', button3AnswerSpace.causes .A w' → pressA w' = true := by
+    intro w' h; cases w' <;> simp_all [button3AnswerSpace, aCausesSound, pressA]
+  -- Step 2: All alternative triggers are IE (via general lemma)
+  have h_ie : ∀ t' ∈ button3AnswerSpace.triggers, t' ≠ .A →
       NeoGricean.Exhaustivity.isInnocentlyExcludable
-        (answerAlternatives buttonAnswerSpace .A)
-        (answerProp buttonAnswerSpace .A)
-        (answerProp buttonAnswerSpace t') := by
+        (answerAlternatives button3AnswerSpace .A)
+        (answerProp button3AnswerSpace .A)
+        (answerProp button3AnswerSpace t') := by
     intro t' _ht' hne
-    -- t' ∈ {.A, .B} and t' ≠ .A, so t' = .B
-    cases t' with
-    | A => exact absurd rfl hne
-    | B =>
-      apply singleton_alt_innocently_excludable
-      -- h_mem: answerProp .B ∈ answerAlternatives .A
-      · exact ⟨.B, Or.inr rfl, Button2Trigger.noConfusion, rfl⟩
-      -- h_all_eq: all alternatives equal answerProp .B
-      · intro a' ⟨t'', ht''_mem, ht''_ne, ht''_eq⟩
-        cases t'' with
-        | A => exact absurd rfl ht''_ne
-        | B => exact ht''_eq
-      -- h_consist: ∃ w, (answerProp .A) w ∧ ¬((answerProp .B) w)
-      · exact ⟨.pressA_plays, rfl, by simp [answerProp, buttonAnswerSpace, bCausesMusic]⟩
-  -- h_not_p: ¬(pressA w = true)
+    -- Apply the general IE lemma: all alternatives are IE when full exclusion
+    -- is consistent. Witness: pressA_plays (A causes, B and C do not).
+    apply all_alt_innocently_excludable
+    · -- Consistency: ∃ w, φ w ∧ ∀ a ∈ ALT, ¬(a w)
+      refine ⟨.pressA_plays, rfl, ?_⟩
+      intro a ⟨t'', ht''_mem, ht''_ne, ht''_eq⟩
+      cases t'' with
+      | A => exact absurd rfl ht''_ne
+      | B => subst ht''_eq; simp [answerProp, button3AnswerSpace, bCausesSound]
+      | C => subst ht''_eq; simp [answerProp, button3AnswerSpace, cCausesSound]
+    · -- t' ∈ ALT
+      cases t' with
+      | A => exact absurd rfl hne
+      | B => exact ⟨.B, Or.inr (Or.inl rfl), Button3Trigger.noConfusion, rfl⟩
+      | C => exact ⟨.C, Or.inr (Or.inr rfl), Button3Trigger.noConfusion, rfl⟩
+  -- Step 3: ¬(pressA w = true)
   have h_not_p : ¬(pressA w = true) := by simp [hnp]
-  -- Step 2: Apply the theory chain
-  -- exhaustifiedAnswer → exclusion (via IE) → perfection (with coverage)
-  have h_not_music : ¬(musicPlays w = true) :=
-    exhaustification_yields_perfection buttonAnswerSpace .A
-      (fun w => pressA w = true) (fun w => musicPlays w = true) w
+  -- Step 4: Apply the theory chain
+  have h_not_sound : ¬(soundPlays w = true) :=
+    exhaustification_yields_perfection button3AnswerSpace .A
+      (fun w => pressA w = true) (fun w => soundPlays w = true) w
       h_trp h_ie h_coverage h_exh h_not_p
-  -- Step 3: Convert ¬(musicPlays w = true) to musicPlays w = false
-  exact Bool.of_not_eq_true h_not_music
+  exact Bool.of_not_eq_true h_not_sound
 
 -- ============================================================================
 -- Section C: Direct Verification (Agrees with Theory Chain)
 -- ============================================================================
 
-/-- **Direct verification: exclusion + ¬pressA → ¬music.**
+/-- **Direct verification: exclusion of B and C + ¬pressA → ¬sound.**
 
-Verified by exhaustive case analysis on the 4-world type. This serves as
-a sanity check: the result of the theory chain (Section B) agrees with
-brute-force verification. -/
-theorem two_button_perfection :
-    ∀ w : Button2World,
-      bCausesMusic w = false → pressA w = false → musicPlays w = false := by
+Verified by exhaustive case analysis on the 6-world type. Sanity check:
+the theory chain agrees with brute-force verification. -/
+theorem three_button_perfection :
+    ∀ w : Button3World,
+      bCausesSound w = false → cCausesSound w = false →
+      pressA w = false → soundPlays w = false := by
   native_decide
 
 -- ============================================================================
--- Section D: Theory Predicts Asymmetry
+-- Section D: Horn's Alternative — Why It's Too Weak
+-- ============================================================================
+
+/-- What @cite{von-fintel-2001}'s account predicts about non-asserted triggers:
+each specific alternative trigger is excluded (universal, per-trigger). -/
+def vonFintelPrediction {Trigger W : Type*}
+    (as : AnswerSpace Trigger W) (t : Trigger) (w : W) : Prop :=
+  ∀ t' ∈ as.triggers, t' ≠ t → ¬as.causes t' w
+
+/-- What @cite{horn-2000}'s account predicts: some non-asserted trigger is
+excluded, but we don't know which (existential, unspecified). -/
+def hornPrediction {Trigger W : Type*}
+    (as : AnswerSpace Trigger W) (t : Trigger) (w : W) : Prop :=
+  ∃ t' ∈ as.triggers, t' ≠ t ∧ ¬as.causes t' w
+
+/-- **Von Fintel entails Horn**: per-trigger exclusion implies existential exclusion.
+
+If we know that every specific alternative trigger is excluded (von Fintel),
+then certainly some trigger is excluded (Horn). -/
+theorem vonFintel_entails_horn
+    {Trigger W : Type*} (as : AnswerSpace Trigger W) (t : Trigger) (w : W)
+    (h_other : ∃ t' ∈ as.triggers, t' ≠ t)
+    (h_vf : vonFintelPrediction as t w) : hornPrediction as t w := by
+  obtain ⟨t', ht'_mem, ht'_ne⟩ := h_other
+  exact ⟨t', ht'_mem, ht'_ne, h_vf t' ht'_mem ht'_ne⟩
+
+/-- **Horn does NOT entail von Fintel**: existential exclusion does not
+determine which trigger is excluded.
+
+Counterexample: in the 3-button scenario at world `pressB_plays`, trigger B
+causes the sound and C does not. Horn's prediction holds (C doesn't cause it),
+but von Fintel's fails (B *does* cause it). The existential "some other button
+doesn't play the sound" is strictly weaker than the universal "each other
+button doesn't play the sound."
+
+This is the paper's key argument against Horn: participants respond "No" to
+*specific* other buttons (per-trigger judgment), not just "some other button
+won't play it." -/
+theorem horn_not_entails_vonFintel :
+    ∃ (w : Button3World),
+      hornPrediction button3AnswerSpace .A w ∧
+      ¬vonFintelPrediction button3AnswerSpace .A w := by
+  -- At pressB_plays: B causes sound (✓), C doesn't (✓)
+  -- Horn: ∃ t'≠A, ¬causes t' → C. ✓
+  -- von Fintel: ∀ t'≠A, ¬causes t' → B causes sound. ✗
+  refine ⟨.pressB_plays, ?_, ?_⟩
+  · exact ⟨.C, Or.inr (Or.inr rfl), Button3Trigger.noConfusion,
+      by simp [button3AnswerSpace, cCausesSound, hornPrediction]⟩
+  · intro h
+    have := h .B (Or.inr (Or.inl rfl)) Button3Trigger.noConfusion
+    simp [button3AnswerSpace, bCausesSound, vonFintelPrediction] at this
+
+/-- **Von Fintel is strictly stronger than Horn.**
+
+Combining the two: von Fintel's per-trigger alternatives generate strictly
+stronger predictions than Horn's unconditional alternative. The 3-button
+paradigm discriminates between the two accounts. -/
+theorem vonFintel_strictly_stronger_than_horn :
+    -- von Fintel → Horn (forward direction)
+    (∀ w : Button3World, vonFintelPrediction button3AnswerSpace .A w →
+      hornPrediction button3AnswerSpace .A w) ∧
+    -- Horn ↛ von Fintel (backward direction fails)
+    (∃ w : Button3World, hornPrediction button3AnswerSpace .A w ∧
+      ¬vonFintelPrediction button3AnswerSpace .A w) := by
+  constructor
+  · intro w h
+    exact vonFintel_entails_horn button3AnswerSpace .A w
+      ⟨.B, Or.inr (Or.inl rfl), Button3Trigger.noConfusion⟩ h
+  · exact horn_not_entails_vonFintel
+
+-- ============================================================================
+-- Section E: Theory Predicts Asymmetry
 -- ============================================================================
 
 /-- **Without exclusion, perfection fails.**
 
 Coverage alone (every C-event has some trigger) does NOT yield ¬p → ¬C.
-Witness: a 2-trigger scenario where trigger t requires p but trigger t' fires
-at ¬p-worlds. Coverage holds, but ¬p ∧ C.
+Witness: a scenario where trigger t requires p but trigger t' fires at ¬p-worlds.
+Coverage holds, but ¬p ∧ C.
 
 This is the other half of the theory's prediction: perfection requires
 exclusion (from exhaustification), not just coverage. Without exclusion
-(e.g., under consequent-focus QUD or ignorant speaker), the theory predicts
+(e.g., consequent-focus QUD or partial speaker knowledge), the theory predicts
 no perfection — matching the experimental findings. -/
 theorem coverage_without_exclusion_insufficient :
     ∃ (W Trigger : Type)
@@ -196,26 +298,74 @@ theorem coverage_without_exclusion_insufficient :
   · exact ⟨false, Bool.false_ne_true, trivial⟩
 
 -- ============================================================================
--- Section E: Data Confirms the Predicted Asymmetry
+-- Section F: Competence Licenses Exhaustification
 -- ============================================================================
 
-/-- **Data confirms: antecedent-focus QUD promotes perfection.**
+/-- **Speaker competence determines whether exhaustification is licensed.**
 
-The theory predicts higher perfection under antecedent-focus QUDs (which
-trigger exhaustification and hence exclusion) than under consequent-focus
-QUDs or no QUD (which don't). Experiment 1 confirms both orderings. -/
-theorem antecedent_focus_highest :
-    exp1_antecedentFocus.perfectionRate > exp1_consequentFocus.perfectionRate ∧
-    exp1_antecedentFocus.perfectionRate > exp1_noQUD.perfectionRate := by
+The paper's Experiment 2 directly tests this: when the speaker has full
+knowledge (has tested all buttons), perfection is high (69.9%); when the
+speaker has partial knowledge (tested only the mentioned button), perfection
+drops to 20.4%.
+
+The formal connection:
+- Full knowledge → hearer assumes speaker competence → speaker's silence about
+  B and C is informative → exhaustification is licensed → exclusion → perfection
+- Partial knowledge → no competence assumption → speaker's silence reflects
+  ignorance, not exclusion → exhaustification is not licensed → no perfection
+
+This bridges `NeoGricean.Competence.shouldAssumeCompetence` to the
+exhaustification mechanism. -/
+def exhaustificationLicensed (knowledge : KnowledgeCondition) (qud : QUDType) : Bool :=
+  -- Both prerequisites must hold:
+  -- 1. The QUD makes alternative antecedents salient
+  -- 2. The speaker is assumed competent about those alternatives
+  let qudProvidesAlternatives := match qud with
+    | .antecedentFocused => true
+    | .consequentFocused => false
+    | .neutral => false
+  let competenceAssumed := match knowledge with
+    | .fullKnowledge => true
+    | .partialKnowledge => false
+  qudProvidesAlternatives && competenceAssumed
+
+/-- With antecedent-focused QUD and full knowledge, exhaustification is licensed. -/
+theorem licensed_with_both :
+    exhaustificationLicensed .fullKnowledge .antecedentFocused = true := rfl
+
+/-- With consequent-focused QUD, exhaustification is not licensed
+(even with full knowledge). -/
+theorem not_licensed_without_qud :
+    exhaustificationLicensed .fullKnowledge .consequentFocused = false := rfl
+
+/-- With partial knowledge, exhaustification is not licensed
+(even with antecedent-focused QUD). -/
+theorem not_licensed_without_knowledge :
+    exhaustificationLicensed .partialKnowledge .antecedentFocused = false := rfl
+
+-- ============================================================================
+-- Section G: Data Confirms the Predicted Asymmetry
+-- ============================================================================
+
+/-- **Data confirms: antecedent-focused QUD promotes perfection.**
+
+The theory predicts higher perfection under antecedent-focused QUDs (which
+make alternative triggers salient, licensing exhaustification) than under
+consequent-focused or neutral QUDs (which don't). Experiment 1 confirms
+both orderings. -/
+theorem antecedentFocused_highest :
+    exp1_antecedentFocused.perfectionRate > exp1_consequentFocused.perfectionRate ∧
+    exp1_antecedentFocused.perfectionRate > exp1_neutral.perfectionRate := by
   constructor <;> native_decide
 
 /-- **Data confirms: speaker knowledge promotes perfection.**
 
 The theory predicts higher perfection when the speaker is knowledgeable
 (licensing the assumption that unmentioned alternatives are false, hence
-exclusion) than when ignorant (no exclusion license). Experiment 3 confirms. -/
-theorem knowledge_promotes_perfection :
-    exp3_knowledgeable.perfectionRate > exp3_ignorant.perfectionRate := by
+exclusion) than when ignorant (no exclusion license). Experiment 2 confirms
+with a large effect (49.5pp difference). -/
+theorem fullKnowledge_highest :
+    exp2_fullKnowledge.perfectionRate > exp2_partialKnowledge.perfectionRate := by
   native_decide
 
 /-- **Convergent evidence: CP is pragmatic.**
@@ -232,8 +382,8 @@ confirm the pragmatic nature:
 theorem cp_is_pragmatic :
     (∃ (W : Type) (p q : Prop' W) (w : W),
       materialImp p q w ∧ ¬(conditionalPerfection p q w)) ∧
-    exp1_antecedentFocus.perfectionRate ≠ exp1_consequentFocus.perfectionRate ∧
-    exp3_knowledgeable.perfectionRate ≠ exp3_ignorant.perfectionRate := by
+    exp1_antecedentFocused.perfectionRate ≠ exp1_consequentFocused.perfectionRate ∧
+    exp2_fullKnowledge.perfectionRate ≠ exp2_partialKnowledge.perfectionRate := by
   exact ⟨perfection_not_entailed, by native_decide, by native_decide⟩
 
 end Phenomena.Conditionals.Studies.EvcenBaleBarner2026.Bridge

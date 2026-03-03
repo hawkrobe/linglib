@@ -269,4 +269,57 @@ theorem singleton_alt_innocently_excludable
     -- Step 4: ∼a ∈ E
     exact h_sup (Set.mem_insert_iff.mpr (Or.inr (Set.mem_singleton_iff.mpr rfl)))
 
+-- ============================================================================
+-- Section G: General IE for Arbitrary Alternative Sets
+-- ============================================================================
+
+/-- **All alternatives are innocently excludable when full exclusion is consistent.**
+
+When there exists a world where φ holds and every alternative in ALT is false,
+every alternative is innocently excludable. This generalizes
+`singleton_alt_innocently_excludable` from singleton to arbitrary ALT.
+
+**Proof**: The set S = {φ} ∪ {∼a | a ∈ ALT} is the unique MC-set: it is
+compatible by hypothesis, and every compatible set is a subset of it (by the
+compatibility constraint, every element is φ or ∼a for some a ∈ ALT). By
+maximality, every MC-set equals S. Since ∼a ∈ S for all a ∈ ALT, every
+alternative is in IE.
+
+This covers conditional perfection scenarios with any number of alternative
+triggers — e.g., 3 buttons in @cite{evcen-bale-barner-2026}'s experimental
+paradigm. -/
+theorem all_alt_innocently_excludable
+    {World : Type*}
+    (ALT : Set (Core.Proposition.Prop' World))
+    (φ : Core.Proposition.Prop' World)
+    (h_consist : ∃ w, φ w ∧ ∀ a ∈ ALT, ¬(a w))
+    : ∀ a ∈ ALT, NeoGricean.Exhaustivity.isInnocentlyExcludable ALT φ a := by
+  open NeoGricean.Exhaustivity in
+  intro a ha_mem
+  constructor
+  · exact ha_mem
+  · -- Goal: ∼a ∈ IE ALT φ, i.e., ∀ E, isMCSet ALT φ E → ∼a ∈ E
+    intro E hE_mc
+    -- S_max = {ψ | ψ = φ ∨ ∃ a ∈ ALT, ψ = ∼a} (= {φ} ∪ {∼a | a ∈ ALT})
+    -- Defined as a predicate so membership unfolds directly.
+    let S_max : Set (Prop' World) := fun ψ => ψ = φ ∨ ∃ a ∈ ALT, ψ = ∼a
+    -- Step 1: E ⊆ S_max (from compatibility: every element is φ or ∼a')
+    have h_sub : E ⊆ S_max := by
+      intro ψ hψ
+      rcases hE_mc.1.2.1 ψ hψ with h | ⟨a', ha'_mem, ha'_eq⟩
+      · exact Or.inl h
+      · exact Or.inr ⟨a', ha'_mem, ha'_eq⟩
+    -- Step 2: S_max is compatible (φ ∈ S_max, every element is φ or ∼a, consistent)
+    have h_compat : isCompatible ALT φ S_max := by
+      refine ⟨Or.inl rfl, fun ψ hψ => hψ, ?_⟩
+      obtain ⟨w, hw_phi, hw_not⟩ := h_consist
+      exact ⟨w, fun ψ hψ => by
+        rcases hψ with h | ⟨a', ha', heq⟩
+        · rw [h]; exact hw_phi
+        · rw [heq]; exact hw_not a' ha'⟩
+    -- Step 3: By maximality of E, S_max ⊆ E
+    have h_sup : S_max ⊆ E := hE_mc.2 _ h_compat h_sub
+    -- Step 4: ∼a ∈ S_max, so ∼a ∈ E
+    exact h_sup (Or.inr ⟨a, ha_mem, rfl⟩)
+
 end Semantics.Conditionals.Exhaustivity

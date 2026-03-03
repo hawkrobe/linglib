@@ -2,27 +2,35 @@ import Linglib.Core.Empirical
 import Mathlib.Data.Rat.Defs
 
 /-!
-# @cite{evcen-bale-barner-2026} — Conditional Perfection Data @cite{evcen-bale-barner-2026}
-@cite{von-fintel-2001}
+# @cite{evcen-bale-barner-2026} — Conditional Perfection Data
+@cite{von-fintel-2001} @cite{horn-2000}
 
-Theory-neutral empirical data on conditional perfection from three experiments
+Theory-neutral empirical data from two experiments on conditional perfection (CP)
 by @cite{evcen-bale-barner-2026}.
+
+## Paradigm
+
+Three-button toy: each button can play a sound. A confederate (who has or has
+not tested the buttons) answers a question and produces a conditional like
+"If you press the blue button, it will play a dog barking." Participants then
+judge whether pressing a *different* button will play the sound, choosing
+between "No" (= perfected: the other button does NOT play the sound) and
+"Can't tell" (= not perfected).
 
 ## Key Findings
 
-1. **Antecedent-focus QUDs** ("Which buttons play sound X?") increase perfection
-2. **Both optimally and overly informative answers** get perfected similarly
-3. **Speaker knowledge** increases perfection
+1. **QUD** (Experiment 1): Antecedent-focused QUDs ("Which of these buttons
+   will play a dog sound?") yield significantly more "No" responses than
+   consequent-focused ("What happens when I press the blue button?") or
+   neutral ("What happens when I press the buttons?") QUDs.
 
-These findings support the answer-level exhaustification account of conditional
-perfection: perfection arises when the QUD makes
-alternative antecedents salient and the speaker is assumed to be exhaustive.
+2. **Speaker knowledge** (Experiment 2): Speakers who have tested all buttons
+   (full knowledge) yield far more "No" responses than speakers who tested
+   only the mentioned button (partial knowledge).
 
-## Note on Data Values
-
-Perfection rates are approximate pending verification against the published
-paper. The qualitative ordering (which condition has higher perfection) is
-the empirically robust finding; exact values should be updated when available.
+Both findings support @cite{von-fintel-2001}'s exhaustivity account over
+@cite{horn-2000}: perfection tracks the availability of alternatives (made
+salient by QUD) and the license to exclude them (from speaker competence).
 -/
 
 namespace Phenomena.Conditionals.Studies.EvcenBaleBarner2026
@@ -33,30 +41,38 @@ open Phenomena
 -- Experimental Conditions
 -- ============================================================================
 
-/-- QUD manipulation (Experiment 1). -/
+/-- QUD manipulation (Experiment 1).
+
+The question asked *before* the confederate's conditional answer. -/
 inductive QUDType where
-  /-- "Which buttons play sound X?" — antecedent-focus -/
-  | antecedentFocus
-  /-- "What sound does button X play?" — consequent-focus -/
-  | consequentFocus
-  /-- No explicit QUD -/
-  | noExplicitQUD
+  /-- "Which of these buttons will play a dog sound?" — antecedent-focus.
+  Makes alternative antecedents (other buttons) salient. -/
+  | antecedentFocused
+  /-- "What happens when I press the blue button?" — consequent-focus.
+  Makes consequences of the mentioned button salient, not alternatives. -/
+  | consequentFocused
+  /-- "What happens when I press the buttons?" — neutral.
+  No specific focus on antecedents or consequences. -/
+  | neutral
   deriving DecidableEq, BEq, Repr
 
-/-- Informativity manipulation (Experiment 2). -/
-inductive InformativityCondition where
-  /-- Answer mentions exactly the relevant trigger -/
-  | optimallyInformative
-  /-- Answer includes additional information beyond what is needed -/
-  | overlyInformative
-  deriving DecidableEq, BEq, Repr
+/-- Speaker knowledge manipulation (Experiment 2).
 
-/-- Speaker knowledge manipulation (Experiment 3). -/
+Whether the confederate has tested all buttons or only the mentioned one. -/
 inductive KnowledgeCondition where
-  /-- Speaker knows full causal structure -/
-  | knowledgeable
-  /-- Speaker has limited knowledge -/
-  | ignorant
+  /-- Speaker has pressed each button several times — full knowledge. -/
+  | fullKnowledge
+  /-- Speaker has pressed only the mentioned button — partial knowledge. -/
+  | partialKnowledge
+  deriving DecidableEq, BEq, Repr
+
+/-- Response type: binary forced choice. -/
+inductive CPResponse where
+  /-- "No" — participant infers the other button does NOT play the sound.
+  This is the conditional perfection response. -/
+  | no
+  /-- "Can't tell" — participant does not draw the perfection inference. -/
+  | cantTell
   deriving DecidableEq, BEq, Repr
 
 -- ============================================================================
@@ -65,119 +81,116 @@ inductive KnowledgeCondition where
 
 /-- A conditional perfection data point.
 
-Each datum records a mean perfection rate (proportion of participants
-endorsing the biconditional reading) for a given experimental condition. -/
+Each datum records the mean percentage of "No" responses (perfection) for a
+given experimental condition. The DV is binary (No vs Can't tell), and the
+reported value is the proportion choosing "No" across participants and items. -/
 structure CPDatum where
   /-- Description of the experimental condition -/
   description : String
-  /-- QUD type (Experiment 1) -/
-  qudType : QUDType
-  /-- Mean perfection rate (proportion endorsing biconditional reading) -/
+  /-- Mean percentage of "No" responses (perfection rate) -/
   perfectionRate : ℚ
-  /-- Experiment number (1, 2, or 3) -/
+  /-- Experiment number (1 or 2) -/
   experiment : Nat
-  /-- Number of participants -/
+  /-- Number of participants in this condition -/
   n : Nat
-  /-- Additional notes -/
-  notes : String := ""
   deriving Repr
 
 -- ============================================================================
 -- Experiment 1: QUD Manipulation
 -- ============================================================================
 
-/-- Experiment 1, antecedent-focus condition.
-QUD: "Which buttons play sound X?" -/
-def exp1_antecedentFocus : CPDatum := {
-  description := "Antecedent-focus QUD: 'Which buttons play sound X?'"
-  qudType := .antecedentFocus
-  perfectionRate := 78/100  -- approximate, pending verification
+/-- Experiment 1, antecedent-focused condition.
+QUD: "Which of these buttons will play a dog sound?"
+
+This QUD makes alternative antecedents (other buttons) salient, licensing
+exhaustification over them. -/
+def exp1_antecedentFocused : CPDatum := {
+  description := "Antecedent-focused QUD: 'Which buttons play a dog sound?'"
+  perfectionRate := 5574 / 10000  -- 55.74%
   experiment := 1
-  n := 40
-  notes := "QUD makes alternative antecedents salient"
+  n := 36
 }
 
-/-- Experiment 1, consequent-focus condition.
-QUD: "What sound does button X play?" -/
-def exp1_consequentFocus : CPDatum := {
-  description := "Consequent-focus QUD: 'What sound does button X play?'"
-  qudType := .consequentFocus
-  perfectionRate := 45/100  -- approximate, pending verification
+/-- Experiment 1, consequent-focused condition.
+QUD: "What happens when I press the blue button?"
+
+This QUD makes consequences salient, not alternative antecedents.
+No exhaustification over other buttons is triggered. -/
+def exp1_consequentFocused : CPDatum := {
+  description := "Consequent-focused QUD: 'What happens when I press the blue button?'"
+  perfectionRate := 2778 / 10000  -- 27.78%
   experiment := 1
-  n := 40
-  notes := "QUD does not make alternative antecedents salient"
+  n := 36
 }
 
-/-- Experiment 1, no explicit QUD condition. -/
-def exp1_noQUD : CPDatum := {
-  description := "No explicit QUD"
-  qudType := .noExplicitQUD
-  perfectionRate := 55/100  -- approximate, pending verification
+/-- Experiment 1, neutral condition.
+QUD: "What happens when I press the buttons?"
+
+No specific antecedent or consequent focus. -/
+def exp1_neutral : CPDatum := {
+  description := "Neutral QUD: 'What happens when I press the buttons?'"
+  perfectionRate := 3333 / 10000  -- 33.33%
   experiment := 1
-  n := 40
-  notes := "Baseline without QUD manipulation"
+  n := 36
 }
 
 -- ============================================================================
--- Experiment 2: Informativity
+-- Experiment 2: Speaker Knowledge
 -- ============================================================================
 
-/-- Experiment 2, optimally informative condition. -/
-def exp2_optimallyInformative : CPDatum := {
-  description := "Optimally informative answer"
-  qudType := .noExplicitQUD
-  perfectionRate := 72/100  -- approximate, pending verification
+/-- Experiment 2, full knowledge condition.
+Speaker has pressed each button several times.
+
+Full knowledge licenses the competence assumption: the speaker knows about
+all buttons and chose not to mention the others, so exhaustification yields
+exclusion. -/
+def exp2_fullKnowledge : CPDatum := {
+  description := "Full knowledge: speaker has tested all buttons"
+  perfectionRate := 6990 / 10000  -- 69.90%
   experiment := 2
-  n := 40
-  notes := "Answer mentions exactly the relevant trigger"
+  n := 54
 }
 
-/-- Experiment 2, overly informative condition. -/
-def exp2_overlyInformative : CPDatum := {
-  description := "Overly informative answer"
-  qudType := .noExplicitQUD
-  perfectionRate := 68/100  -- approximate, pending verification
+/-- Experiment 2, partial knowledge condition.
+Speaker has pressed only the mentioned button.
+
+Partial knowledge blocks the competence assumption: the speaker's silence
+about other buttons reflects ignorance, not exclusion. -/
+def exp2_partialKnowledge : CPDatum := {
+  description := "Partial knowledge: speaker has tested only the mentioned button"
+  perfectionRate := 2037 / 10000  -- 20.37%
   experiment := 2
-  n := 40
-  notes := "Answer includes additional information; similar perfection rate"
-}
-
--- ============================================================================
--- Experiment 3: Speaker Knowledge
--- ============================================================================
-
-/-- Experiment 3, knowledgeable speaker. -/
-def exp3_knowledgeable : CPDatum := {
-  description := "Knowledgeable speaker"
-  qudType := .noExplicitQUD
-  perfectionRate := 75/100  -- approximate, pending verification
-  experiment := 3
-  n := 40
-  notes := "Speaker knows full causal structure"
-}
-
-/-- Experiment 3, ignorant speaker. -/
-def exp3_ignorant : CPDatum := {
-  description := "Ignorant speaker"
-  qudType := .noExplicitQUD
-  perfectionRate := 55/100  -- approximate, pending verification
-  experiment := 3
-  n := 40
-  notes := "Speaker has limited knowledge of causal structure"
+  n := 54
 }
 
 -- ============================================================================
 -- Ordering Theorems
 -- ============================================================================
 
-/-- Antecedent-focus QUDs promote perfection more than consequent-focus QUDs. -/
-theorem antecedent_focus_promotes_perfection :
-    exp1_antecedentFocus.perfectionRate > exp1_consequentFocus.perfectionRate := by
+/-- Antecedent-focused QUDs promote perfection more than consequent-focused. -/
+theorem antecedentFocused_gt_consequentFocused :
+    exp1_antecedentFocused.perfectionRate > exp1_consequentFocused.perfectionRate := by
   native_decide
 
-/-- Speaker knowledge promotes perfection. -/
-theorem knowledge_promotes_perfection :
-    exp3_knowledgeable.perfectionRate > exp3_ignorant.perfectionRate := by
+/-- Antecedent-focused QUDs promote perfection more than neutral. -/
+theorem antecedentFocused_gt_neutral :
+    exp1_antecedentFocused.perfectionRate > exp1_neutral.perfectionRate := by
+  native_decide
+
+/-- Full speaker knowledge promotes perfection more than partial knowledge. -/
+theorem fullKnowledge_gt_partialKnowledge :
+    exp2_fullKnowledge.perfectionRate > exp2_partialKnowledge.perfectionRate := by
+  native_decide
+
+/-- The knowledge effect is larger than the QUD effect.
+
+Full knowledge (69.90%) vs partial knowledge (20.37%) is a 49.53pp difference.
+Antecedent-focused (55.74%) vs consequent-focused (27.78%) is a 27.96pp
+difference. Speaker knowledge has a larger effect on perfection than QUD type,
+consistent with competence being a prerequisite for exhaustification. -/
+theorem knowledge_effect_larger_than_qud_effect :
+    exp2_fullKnowledge.perfectionRate - exp2_partialKnowledge.perfectionRate >
+    exp1_antecedentFocused.perfectionRate - exp1_consequentFocused.perfectionRate := by
   native_decide
 
 end Phenomena.Conditionals.Studies.EvcenBaleBarner2026
