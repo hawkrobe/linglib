@@ -1,7 +1,3 @@
-import Linglib.Core.Empirical
-
-open Core.Empirical
-
 /-!
 # @cite{huang-snedeker-2013} — Covered-Box Paradigm
 @cite{huang-snedeker-2013} @cite{musolino-2004} @cite{wynn-1992}
@@ -50,10 +46,6 @@ inductive BoxChoice where
   | lowerBounded -- visible box satisfying LB but not exact reading
   | covered      -- hidden box (inferred to contain exact match)
   deriving Repr, DecidableEq, BEq
-
-/-- Interpretation measure. -/
-def measure : MeasureSpec :=
-  { scale := .proportion, task := .forcedChoice, unit := "percentage" }
 
 -- ============================================================================
 -- Section 2: Covered-Box Data

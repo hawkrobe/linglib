@@ -1,8 +1,5 @@
-import Linglib.Core.Empirical
 import Linglib.Tactics.RSAPredict
 import Linglib.Theories.Pragmatics.RSA.Core.Config
-
-open Core.Empirical
 
 /-!
 # @cite{qing-franke-2015}
@@ -100,9 +97,6 @@ open Real (exp log exp_pos exp_lt_exp)
 -- ============================================================================
 -- §1. Empirical Data
 -- ============================================================================
-
-def measure : MeasureSpec :=
-  { scale := .proportion, task := .forcedChoice, unit := "proportion" }
 
 /-- The 6 qualitative findings from @cite{qing-franke-2015}. -/
 inductive Finding where

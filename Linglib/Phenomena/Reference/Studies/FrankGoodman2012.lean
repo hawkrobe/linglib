@@ -1,10 +1,7 @@
-import Linglib.Core.Empirical
 import Linglib.Tactics.RSAPredict
 import Linglib.Theories.Pragmatics.RSA.Core.Config
 import Linglib.Theories.Semantics.Montague.Modification
 import Mathlib.Analysis.SpecialFunctions.Log.Basic
-
-open Core.Empirical
 
 /-!
 # @cite{frank-goodman-2012}
@@ -70,9 +67,6 @@ open Phenomena
 -- ============================================================================
 -- §1. Empirical Data
 -- ============================================================================
-
-def measure : MeasureSpec :=
-  { scale := .proportion, task := .forcedChoice, unit := "probability 0-1" }
 
 /-- The 4 qualitative findings from @cite{frank-goodman-2012}.
 

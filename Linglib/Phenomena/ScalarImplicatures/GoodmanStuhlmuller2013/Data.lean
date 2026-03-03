@@ -1,7 +1,3 @@
-import Linglib.Core.Empirical
-
-open Core.Empirical
-
 /-!
 # @cite{goodman-stuhlmuller-2013}: Empirical Data
 @cite{goodman-stuhlmuller-2013}
@@ -49,9 +45,6 @@ open Phenomena
 -- ============================================================================
 -- §1. Empirical Data
 -- ============================================================================
-
-def measure : MeasureSpec :=
-  { scale := .continuous, task := .forcedChoice, unit := "dollars (out of $100)" }
 
 def nPerExperiment : Nat := 50
 def nObjects : Nat := 3
