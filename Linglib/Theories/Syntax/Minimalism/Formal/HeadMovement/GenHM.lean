@@ -18,9 +18,13 @@ at PF, based on which terminal in the chain spells out the shared M-value.
    sharing an M-value (tense/phi features) between them → chain ⟨X, Y⟩.
 2. **PF Chain Resolution**: The M-value is pronounced on exactly one terminal.
    - Default: the M-value lowers to the goal (V) — affix hopping.
-   - When an intervening head *splits* the chain, the M-value is stranded
-     on the probe (T) — looks like "raising".
-3. **Do-support**: When the M-value is stranded on a probe (T) that has no
+   - When the chain is *split*, the M-value is stranded on the probe (T) —
+     looks like "raising".
+3. **Chain-splitting** occurs for three structurally distinct reasons:
+   - A weak terminal (Neg, Foc) intervenes (Split-by-Intervention)
+   - The probe is displaced away from the goal (Split-by-Displacement, e.g., SAI)
+   - The goal is absent or deleted (Split-by-Deletion, e.g., VP ellipsis, tags)
+4. **Do-support**: When the M-value is stranded on a probe (T) that has no
    independent lexical content, a dummy verb *do* is inserted at PF.
 
 ## Key Result
@@ -28,7 +32,8 @@ at PF, based on which terminal in the chain spells out the shared M-value.
 The parallelism of do-support across five contexts (negation, SAI, verum
 focus, tag questions, VP ellipsis) is DERIVED from GenHM chain structure,
 not stipulated. All five contexts share the same structural property:
-a split chain stranding the M-value on a contentless T.
+a split chain stranding the M-value on a contentless T. The specific
+*reason* for the split is irrelevant to the do-support prediction.
 
 -/
 
@@ -90,21 +95,23 @@ structure GenHMRelation where
   goal : SyntacticObject
   /-- The shared morphological features -/
   mValue : MValue
+  /-- The feature type being shared (tense, phi, etc.) -/
+  feature : FeatureVal
   /-- The containing tree -/
   root : SyntacticObject
   /-- Structural condition: probe c-commands goal -/
   probe_commands_goal : cCommandsIn root probe goal
   /-- The goal bears valued M-features -/
-  goal_has_mvalue : hasValuedFeature mValue (.tense true) = true
+  goal_has_mvalue : hasValuedFeature mValue feature = true
   /-- The probe bears unvalued M-features -/
-  probe_needs_mvalue : hasUnvaluedFeature mValue (.tense true) = true
+  probe_needs_mvalue : hasUnvaluedFeature mValue feature = true
 
 /-- GenHM is an instance of Agree: it relates a probe with unvalued features
     to a goal with valued features under c-command. -/
 def genHM_to_agree (g : GenHMRelation) : AgreeRelation :=
   { probe := g.probe
     goal := g.goal
-    feature := .tense true
+    feature := g.feature
     probeFeatures := g.mValue
     goalFeatures := g.mValue }
 
@@ -117,46 +124,61 @@ theorem genHM_is_agree (g : GenHMRelation) :
   · exact g.goal_has_mvalue
 
 -- ============================================================================
--- § 4  Intervention and Chain Structure
+-- § 4  Chain-Splitting and Chain Structure
 -- ============================================================================
 
-/-- A GenHM chain: the ordered sequence of terminals between probe and goal.
+/-- The reason a GenHM chain is split, preventing M-value lowering.
 
-    The chain may be split by intervening heads. The key property of each
-    intervener is its strength: weak interveners (Neg, Foc) split the chain,
-    preventing the M-value from reaching the goal. -/
+    @cite{arregi-pietraszko-2021} identify three structurally distinct
+    configurations that split a chain (§4.1):
+
+    1. **Split-by-Intervention**: A weak terminal (Neg, Foc) between probe
+       and goal blocks M-value transmission.
+    2. **Split-by-Displacement**: The probe is displaced (e.g., T to C in SAI),
+       breaking the structural adjacency needed for lowering.
+    3. **Split-by-Deletion**: The goal is absent — deleted at PF (VP ellipsis)
+       or anaphoric (tag questions) — so lowering has no target.
+
+    All three produce the same PF effect: the M-value cannot lower and is
+    stranded on the probe. -/
+inductive ChainSplitReason where
+  /-- A weak terminal intervenes between probe and goal (e.g., Neg in
+      "Sue does not eat fish", Foc in "Sue DOES eat fish") -/
+  | weakIntervener (cat : Cat)
+  /-- The probe is displaced away from the goal (e.g., T displaced to C
+      in SAI: "Where does Sue eat fish?") -/
+  | probeDisplaced
+  /-- The goal is absent — deleted (VP ellipsis: "She runs faster than he does")
+      or anaphoric (tag questions: "She likes him, doesn't she?") -/
+  | goalAbsent
+  deriving DecidableEq, Repr, BEq
+
+/-- A GenHM chain between a probe and a goal, possibly split.
+
+    The chain captures the structural configuration relevant for PF
+    spell-out: whether the M-value can lower from probe to goal, or
+    is stranded on the probe. The `splitReason` field tracks both
+    whether the chain is split and why. -/
 structure GenHMChain where
-  /-- The higher terminal (probe) -/
-  probe : SyntacticObject
-  /-- The lower terminal (goal) -/
-  goal : SyntacticObject
-  /-- Intervening terminals between probe and goal -/
-  interveners : List SyntacticObject
-  /-- Category of the probe (for strength lookup) -/
+  /-- Category of the probe (T or C) -/
   probeCat : Cat
-  /-- Category of the goal (for strength lookup) -/
+  /-- Category of the goal (V) -/
   goalCat : Cat
-  /-- Categories of interveners (parallel to `interveners` list) -/
-  intervenerCats : List Cat
-  /-- Length consistency -/
-  cats_match : interveners.length = intervenerCats.length
+  /-- Why the chain is split, if at all. `none` = clear chain. -/
+  splitReason : Option ChainSplitReason
   /-- The strength assignment for this language -/
   strength : TerminalStrengthAssignment
 
-/-- Does the chain have a weak intervener?
+/-- Is the chain split? A split chain strands the M-value on the probe. -/
+def GenHMChain.isSplit (chain : GenHMChain) : Bool :=
+  chain.splitReason.isSome
 
-    A weak intervener (e.g., Neg, Foc) splits the GenHM chain,
-    stranding the M-value on the probe. -/
-def GenHMChain.hasWeakIntervener (chain : GenHMChain) : Bool :=
-  chain.intervenerCats.any (chain.strength · == .weak)
-
-/-- Are all interveners weak? -/
-def GenHMChain.allIntervenersWeak (chain : GenHMChain) : Bool :=
-  chain.intervenerCats.all (chain.strength · == .weak)
-
-/-- Does the chain have no interveners? -/
-def GenHMChain.noInterveners (chain : GenHMChain) : Bool :=
-  chain.interveners.isEmpty
+/-- A chain is well-formed when split-by-intervention involves a genuinely
+    weak head in the given strength assignment. -/
+def GenHMChain.wellFormed (chain : GenHMChain) : Bool :=
+  match chain.splitReason with
+  | some (.weakIntervener cat) => chain.strength cat == .weak
+  | _ => true
 
 -- ============================================================================
 -- § 5  PF Spell-Out Rule
@@ -174,10 +196,10 @@ inductive SpellOutTarget where
 /-- Determine where the M-value is spelled out.
 
     The M-value surfaces on the goal (lower terminal) unless the chain
-    is split by a weak intervener, in which case it is stranded on the
-    probe (higher terminal). -/
+    is split, in which case it is stranded on the probe (higher terminal).
+    The reason for the split is irrelevant — only whether it is split. -/
 def spellOutTarget (chain : GenHMChain) : SpellOutTarget :=
-  if chain.hasWeakIntervener then .onProbe else .onGoal
+  if chain.isSplit then .onProbe else .onGoal
 
 -- ============================================================================
 -- § 6  Do-Support
@@ -210,31 +232,31 @@ theorem doSupport_is_lastResort (chain : GenHMChain) (probeHasContent : Bool) :
 -- § 7  Key Theorems
 -- ============================================================================
 
-/-- **Theorem 1: Lowering when no intervener.**
+/-- **Theorem 1: Lowering when chain is clear.**
 
-    When no weak terminal intervenes between T and V, the M-value surfaces
-    on V (= T-lowering / affix hopping). -/
-theorem lowering_when_no_intervener (chain : GenHMChain)
-    (h : chain.hasWeakIntervener = false) :
+    When the chain is not split, the M-value surfaces on the goal
+    (= T-lowering / affix hopping). -/
+theorem lowering_when_not_split (chain : GenHMChain)
+    (h : chain.isSplit = false) :
     spellOutTarget chain = .onGoal := by
   simp [spellOutTarget, h]
 
-/-- **Theorem 2: Raising when weak intervener.**
+/-- **Theorem 2: Raising when chain is split.**
 
-    When a weak terminal (Neg, Foc) intervenes, the M-value surfaces on T
-    (= raising / stranding). -/
-theorem raising_when_weak_intervener (chain : GenHMChain)
-    (h : chain.hasWeakIntervener = true) :
+    When the chain is split (by intervention, displacement, or deletion),
+    the M-value surfaces on the probe (= "raising" / stranding). -/
+theorem raising_when_split (chain : GenHMChain)
+    (h : chain.isSplit = true) :
     spellOutTarget chain = .onProbe := by
   simp [spellOutTarget, h]
 
-/-- **Theorem 3: Do-support iff blocked and empty.**
+/-- **Theorem 3: Do-support iff split and contentless.**
 
-    Do-support is triggered iff (a) a weak intervener blocks lowering AND
+    Do-support is triggered iff (a) the chain is split AND
     (b) the probe has no lexical content. -/
-theorem doSupport_iff_blocked_and_empty (chain : GenHMChain) (probeContent : Bool) :
+theorem doSupport_iff_split_and_empty (chain : GenHMChain) (probeContent : Bool) :
     needsDoSupportGenHM chain probeContent = true ↔
-    (chain.hasWeakIntervener = true ∧ probeContent = false) := by
+    (chain.isSplit = true ∧ probeContent = false) := by
   constructor
   · intro h
     have ⟨hTarget, hContent⟩ := doSupport_is_lastResort chain probeContent h
@@ -243,17 +265,18 @@ theorem doSupport_iff_blocked_and_empty (chain : GenHMChain) (probeContent : Boo
     split at hTarget
     · assumption
     · exact absurd hTarget (by simp)
-  · intro ⟨hWeak, hContent⟩
-    simp [needsDoSupportGenHM, spellOutTarget, hWeak, hContent]
+  · intro ⟨hSplit, hContent⟩
+    simp [needsDoSupportGenHM, spellOutTarget, hSplit, hContent]
 
 /-- **Theorem 4: Do-support is uniform across contexts.**
 
-    For ANY GenHM chain with the same structural properties (same intervener
-    configuration, same probe content), do-support is triggered or not
-    uniformly. The parallelism theorem. -/
+    For ANY GenHM chain with the same split status and probe content,
+    do-support is triggered or not uniformly. The specific reason for
+    the split (intervention, displacement, deletion) is irrelevant.
+    This is the parallelism theorem. -/
 theorem doSupport_uniform_across_contexts
     (chain₁ chain₂ : GenHMChain) (content₁ content₂ : Bool)
-    (h_same_split : chain₁.hasWeakIntervener = chain₂.hasWeakIntervener)
+    (h_same_split : chain₁.isSplit = chain₂.isSplit)
     (h_same_content : content₁ = content₂) :
     needsDoSupportGenHM chain₁ content₁ = needsDoSupportGenHM chain₂ content₂ := by
   simp only [needsDoSupportGenHM, spellOutTarget, h_same_split, h_same_content]
@@ -261,7 +284,7 @@ theorem doSupport_uniform_across_contexts
 /-- **Theorem 5: Auxiliaries don't need do-support.**
 
     When the probe IS the auxiliary (T = Aux with lexical content), do-support
-    is never needed, even with interveners. -/
+    is never needed, regardless of chain structure. -/
 theorem auxiliaries_dont_need_doSupport (chain : GenHMChain) :
     needsDoSupportGenHM chain true = false := by
   simp [needsDoSupportGenHM]
@@ -269,7 +292,7 @@ theorem auxiliaries_dont_need_doSupport (chain : GenHMChain) :
 
 /-- **Corollary: Lexical verbs need do-support when chain is split.** -/
 theorem lexical_verb_needs_doSupport_when_split (chain : GenHMChain)
-    (h : chain.hasWeakIntervener = true) :
+    (h : chain.isSplit = true) :
     needsDoSupportGenHM chain false = true := by
   simp [needsDoSupportGenHM, spellOutTarget, h]
 
@@ -304,13 +327,13 @@ def genHM_to_vMovementParam (chain : GenHMChain) : VMovementParam :=
 
 /-- When the chain is clear, the surface pattern is V-raising. -/
 theorem genHM_clear_chain_is_raises (chain : GenHMChain)
-    (h : chain.hasWeakIntervener = false) :
+    (h : chain.isSplit = false) :
     genHM_to_vMovementParam chain = .raises := by
   simp [genHM_to_vMovementParam, spellOutTarget, h]
 
 /-- When the chain is split, the surface pattern is V-in-situ. -/
 theorem genHM_split_chain_is_inSitu (chain : GenHMChain)
-    (h : chain.hasWeakIntervener = true) :
+    (h : chain.isSplit = true) :
     genHM_to_vMovementParam chain = .inSitu := by
   simp [genHM_to_vMovementParam, spellOutTarget, h]
 
