@@ -1,186 +1,191 @@
 import Linglib.Theories.Pragmatics.RSA.Core.Noise
 
-/-
-# @cite{kursat-degen-2021}: Perceptual Difficulty and Redundant Modification
-@cite{waldon-degen-2021}
+/-!
+# @cite{kursat-degen-2021}
 
-Perceptual difficulty predicts redundant modifier use. Material adjectives are harder to perceive and less redundantly used than color adjectives.
+Perceptual difficulty differences predict asymmetries in redundant
+modification. *Proceedings of the 43rd Annual Meeting of the Cognitive
+Science Society*, 2021.
 
-## Main definitions
+## Core Argument
 
-`PropertyType`, `PerceptualDifficultyDatum`, `ProductionDatum`, `Exp1Stats`, `Exp2Stats`, `Exp3Stats`, `PerceptualDifficultyHypothesis`
+Material adjectives are harder to perceive than color adjectives
+(Exps 1, 3), and color adjectives are used redundantly more often than
+material adjectives (Exp 2). This anti-correlation between perceptual
+difficulty and redundant-use rate supports a noise-based RSA account
+(@cite{waldon-degen-2021}) where the noise parameter reflects perceptual
+difficulty of property verification.
 
+## Experiments
+
+- **Exp 1** (§2, N = 199): Perceptual difficulty norms. Participants
+  verified whether an adjective applied to an object. Material adjectives
+  produced higher error rates (β = 0.48) and slower RTs (β = 5.44).
+- **Exp 2** (§3, N = 188): Redundant modifier production. Speakers
+  described objects in contexts where one property was sufficient.
+  Color was used redundantly more than material (β = 2.32).
+- **Exp 3** (§4, N = 54): Perceptual difficulty measured with Exp 2
+  displays. Material remained harder (error β = 0.96, RT β = 0.24).
+
+## Verified Data
+
+All regression coefficients verified against paper text (§2.3, §3.3,
+§4.3). Approximate figure-estimated values from the previous version
+have been removed — the regression stats capture the same comparisons
+with exact values.
+
+## Bridge to RSA Noise
+
+The RSA Noise module assigns discrimination values (color > size >
+material). This ordering matches the empirical difficulty ordering
+established here: easier-to-perceive properties have higher
+discrimination, predicting higher redundant use.
+
+Note: the material noise parameters in `RSA.Noise` (0.70/0.30) are
+hypothetical, not derived from this paper. This paper establishes the
+*ordering* (color easier than material), not the specific channel
+parameters.
 -/
 
-import Linglib.Core.Lexical.Word
+namespace Phenomena.Gradability.Studies.KursatDegen2021
 
-namespace Phenomena.KursatDegen2021
+-- ============================================================================
+-- § Property Types
+-- ============================================================================
 
--- Property Types
-
-/-- Property type tested. -/
+/-- Property types tested across experiments. -/
 inductive PropertyType where
-  | color
-  | material
-  | size
+  | color     -- e.g., "the blue cup"
+  | material  -- e.g., "the wooden cup"
+  | size      -- e.g., "the big cup" (not the focus, but in the Noise module)
   deriving DecidableEq, BEq, Repr
 
--- Experiment 1: Perceptual Difficulty Norms
-
-/-- Perceptual difficulty datum from Exp 1. -/
-structure PerceptualDifficultyDatum where
-  property : PropertyType
-  accuracy : Float
-  responseTime : Float
-  accuracySE : Float := 0
-  rtSE : Float := 0
-  notes : String := ""
-  deriving Repr
-
-/-- Exp 1 results: Color is easier to perceive than material -/
-def exp1_color : PerceptualDifficultyDatum := {
-  property := .color
-  accuracy := 0.95      -- ~95% accuracy (estimated from Figure 2a)
-  responseTime := 650   -- ~650ms (estimated from Figure 2b)
-  notes := "Color adjectives: low error rates, fast responses"
-}
-
-def exp1_material : PerceptualDifficultyDatum := {
-  property := .material
-  accuracy := 0.80      -- ~80% accuracy (estimated from Figure 2a)
-  responseTime := 950   -- ~950ms (estimated from Figure 2b)
-  notes := "Material adjectives: higher error rates, slower responses"
-}
-
-/-- Statistical results from Exp 1 -/
-structure Exp1Stats where
-  /-- Log odds of error for material vs color -/
-  errorBeta : Float := 0.48
-  errorSE : Float := 0.12
-  errorP : String := "p < .0001"
-  /-- RT difference (material - color) -/
-  rtBeta : Float := 5.44
-  rtSE : Float := 4.74
-  rtT : Float := 11.49
-  rtP : String := "p < .0001"
-  deriving Repr
-
-def exp1_stats : Exp1Stats := {}
-
--- Experiment 2: Redundant Modifier Production
-
-/-- Production datum from Exp 2. -/
-structure ProductionDatum where
-  redundantProperty : PropertyType
-  redundantUseRate : Float
-  notes : String := ""
-  deriving Repr
-
-/-- Exp 2: Color is used redundantly more often than material -/
-def exp2_colorRedundant : ProductionDatum := {
-  redundantProperty := .color
-  redundantUseRate := 0.75  -- ~75% redundant color use (from Figure 5)
-  notes := "When color was redundant, speakers still mentioned it 75% of time"
-}
-
-def exp2_materialRedundant : ProductionDatum := {
-  redundantProperty := .material
-  redundantUseRate := 0.25  -- ~25% redundant material use (from Figure 5)
-  notes := "When material was redundant, speakers mentioned it only 25% of time"
-}
-
-/-- Statistical results from Exp 2 -/
-structure Exp2Stats where
-  /-- Effect of redundant property (material vs color) on redundant use -/
-  beta : Float := 2.32
-  se : Float := 0.64
-  p : String := "p < .0001"
-  deriving Repr
-
-def exp2_stats : Exp2Stats := {}
-
--- Experiment 3: Perceptual Difficulty in Context
-
-/-- Exp 3 results: Replication with displays from Exp 2 -/
-def exp3_color : PerceptualDifficultyDatum := {
-  property := .color
-  accuracy := 0.92      -- ~92% accuracy (estimated from Figure 7a)
-  responseTime := 1100  -- ~1100ms (estimated from Figure 7b)
-  notes := "Color in context: still easier than material"
-}
-
-def exp3_material : PerceptualDifficultyDatum := {
-  property := .material
-  accuracy := 0.78      -- ~78% accuracy (estimated from Figure 7a)
-  responseTime := 2200  -- ~2200ms (estimated from Figure 7b)
-  notes := "Material in context: still harder than color"
-}
-
-/-- Statistical results from Exp 3 -/
-structure Exp3Stats where
-  /-- Log odds of error for material vs color -/
-  errorBeta : Float := 0.96
-  errorSE : Float := 0.09
-  errorP : String := "p < .0001"
-  /-- RT difference (log-transformed) -/
-  rtBeta : Float := 0.24
-  rtSE : Float := 0.018
-  rtT : Float := -59.62
-  rtP : String := "p < .0001"
-  deriving Repr
-
-def exp3_stats : Exp3Stats := {}
-
-
-/-- Perceptual difficulty hypothesis summary. -/
-structure PerceptualDifficultyHypothesis where
-  claim : String :=
-    "The noise term in cs-RSA reflects perceptual difficulty of property verification"
-  prediction : String :=
-    "More perceptually difficult properties are used redundantly less often"
-  weakVersion : String :=
-    "Color vs material asymmetry explained by perceptual difficulty asymmetry"
-  strongVersion : String :=
-    "Within property type, easier items used redundantly more often"
-  weakEvidence : Bool := true
-  strongEvidence : Bool := false
-  deriving Repr
-
-def hypothesis : PerceptualDifficultyHypothesis := {}
-
--- Collected Data
-
-def perceptualDifficultyData : List PerceptualDifficultyDatum :=
-  [exp1_color, exp1_material, exp3_color, exp3_material]
-
-def productionData : List ProductionDatum :=
-  [exp2_colorRedundant, exp2_materialRedundant]
-
-
-/-- Hypothetical material parameters based on perceptual difficulty findings -/
-structure MaterialParams where
-  materialMatch : Float := 0.70
-  materialMismatch : Float := 0.30
-  discrimination : Float := 0.40
-  notes : String := "Hypothetical values based on Kursat & Degen (2021)"
-  deriving Repr
-
-def hypotheticalMaterialParams : MaterialParams := {}
-
 -- ============================================================================
--- § RSA Noise Model Grounding
+-- § Regression Results
 -- ============================================================================
 
-/-- Map property types to discrimination values. -/
+/-- A regression result from one of the paper's mixed-effects models.
+    Positive β means the material condition produced higher values
+    (more errors, slower RTs, more redundant use of the compared
+    property). -/
+structure RegressionResult where
+  /-- Fixed-effect coefficient -/
+  beta : Float
+  /-- Standard error -/
+  se : Float
+  /-- t-statistic (when reported) -/
+  tStat : Option Float := none
+  /-- All reported effects are p < .0001 -/
+  significant : Bool
+  deriving Repr
+
+-- ============================================================================
+-- § Experiment 1: Perceptual Difficulty Norms (§2, N = 199)
+-- ============================================================================
+
+/-- Material → higher error rates (§2.3: β = 0.48, SE = 0.12, p < .0001).
+    Log odds of incorrect response. -/
+def exp1_error : RegressionResult :=
+  { beta := 0.48, se := 0.12, significant := true }
+
+/-- Material → slower RTs (§2.3: β = 5.44, SE = 4.74, t = 11.49, p < .0001).
+    RT difference in ms (material − color). -/
+def exp1_rt : RegressionResult :=
+  { beta := 5.44, se := 4.74, tStat := some 11.49, significant := true }
+
+-- ============================================================================
+-- § Experiment 2: Redundant Modifier Production (§3, N = 188)
+-- ============================================================================
+
+/-- Color used redundantly more than material (§3.3: β = 2.32, SE = 0.64,
+    p < .0001). Log odds of including the redundant modifier. -/
+def exp2_redundancy : RegressionResult :=
+  { beta := 2.32, se := 0.64, significant := true }
+
+/-- The strong version of the perceptual difficulty hypothesis —
+    within-property-type difficulty predicts item-level redundancy —
+    is not supported (§3.3: insufficient speakers for material items). -/
+def strongVersionSupported : Bool := false
+
+-- ============================================================================
+-- § Experiment 3: Perceptual Difficulty in Context (§4, N = 54)
+-- ============================================================================
+
+/-- Material → higher error rates in context (§4.3: β = 0.96, SE = 0.09,
+    p < .0001). -/
+def exp3_error : RegressionResult :=
+  { beta := 0.96, se := 0.09, significant := true }
+
+/-- Material → slower RTs in context (§4.3: β = 0.24, SE = 0.018,
+    t = −59.62, p < .0001). Log-transformed RT. -/
+def exp3_rt : RegressionResult :=
+  { beta := 0.24, se := 0.018, tStat := some (-59.62), significant := true }
+
+-- ============================================================================
+-- § Bridge: Difficulty Ordering
+-- ============================================================================
+
+/-- Material is harder to perceive than color: both error and RT effects
+    are significant in Exp 1 (isolated properties) and Exp 3 (in context). -/
+theorem material_harder :
+    exp1_error.significant ∧ exp1_rt.significant ∧
+    exp3_error.significant ∧ exp3_rt.significant :=
+  ⟨rfl, rfl, rfl, rfl⟩
+
+/-- All difficulty effects have positive β: material produces more errors
+    and slower RTs than color. -/
+theorem difficulty_direction :
+    exp1_error.beta > 0 ∧ exp1_rt.beta > 0 ∧
+    exp3_error.beta > 0 ∧ exp3_rt.beta > 0 := by
+  refine ⟨?_, ?_, ?_, ?_⟩ <;> native_decide
+
+-- ============================================================================
+-- § Bridge: Redundancy Ordering
+-- ============================================================================
+
+/-- Color is used redundantly more than material: positive β in Exp 2. -/
+theorem color_more_redundant :
+    exp2_redundancy.significant ∧ exp2_redundancy.beta > 0 := by
+  exact ⟨rfl, by native_decide⟩
+
+-- ============================================================================
+-- § Bridge: Difficulty Predicts Redundancy
+-- ============================================================================
+
+/-- The core finding: perceptual difficulty and redundant use are
+    anti-correlated across property types. Material is harder to perceive
+    (Exps 1, 3) AND less redundantly used (Exp 2). -/
+theorem difficulty_predicts_redundancy :
+    -- Material is harder
+    exp1_error.significant ∧ exp3_error.significant ∧
+    -- Color is more redundantly used
+    exp2_redundancy.significant :=
+  ⟨rfl, rfl, rfl⟩
+
+-- ============================================================================
+-- § RSA Noise Grounding
+-- ============================================================================
+
+/-- Map property types to RSA Noise discrimination values. -/
 def propertyToDiscrimination : PropertyType → ℚ
   | .color => RSA.Noise.colorDiscrimination
   | .size => RSA.Noise.sizeDiscrimination
   | .material => RSA.Noise.materialDiscrimination
 
-/-- Verify discrimination ordering matches perceptual difficulty ordering -/
+/-- The RSA Noise module's discrimination ordering (color > size > material)
+    matches the empirical difficulty ordering established in Exps 1 and 3:
+    easier-to-perceive properties have higher discrimination. -/
 theorem discrimination_matches_difficulty :
     propertyToDiscrimination .color > propertyToDiscrimination .size ∧
-    propertyToDiscrimination .size > propertyToDiscrimination .material := by
-  exact RSA.Noise.discrimination_ordering
+    propertyToDiscrimination .size > propertyToDiscrimination .material :=
+  RSA.Noise.discrimination_ordering
 
-end Phenomena.KursatDegen2021
+/-- Higher discrimination → more redundant use: the RSA Noise framework
+    predicts that color (high discrimination) should be used redundantly
+    more than material (low discrimination), matching Exp 2. -/
+theorem noise_predicts_redundancy_ordering :
+    propertyToDiscrimination .color > propertyToDiscrimination .material ∧
+    exp2_redundancy.significant ∧ exp2_redundancy.beta > 0 := by
+  exact ⟨by native_decide, rfl, by native_decide⟩
+
+end Phenomena.Gradability.Studies.KursatDegen2021

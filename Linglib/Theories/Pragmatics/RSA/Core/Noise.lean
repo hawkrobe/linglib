@@ -1,6 +1,11 @@
-/-
+import Mathlib.Data.Rat.Defs
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.Ring
+
+/-!
 # Unified Noise Theory for RSA
-@cite{waldon-degen-2021}
+
+@cite{waldon-degen-2021} @cite{kursat-degen-2021}
 
 This module provides a unified treatment of noise in RSA models.
 
@@ -63,10 +68,6 @@ C = 1 - H(ε) -- for binary symmetric channel with error rate ε
 
 -/
 
-import Mathlib.Data.Rat.Defs
-import Mathlib.Tactic.Linarith
-import Mathlib.Tactic.Ring
-
 namespace RSA.Noise
 
 -- The Unified Noise Channel
@@ -113,7 +114,9 @@ def sizeMatch : ℚ := 8/10
 def sizeMismatch : ℚ := 2/10
 def sizeDiscrimination : ℚ := sizeMatch - sizeMismatch  -- 0.60
 
-/-- Material parameters (hypothetical from @cite{kursat-degen-2021}): high noise -/
+/-- Material parameters (HYPOTHETICAL, not from any paper): high noise.
+    @cite{kursat-degen-2021} establishes the *ordering* (material harder
+    than color) but not specific channel parameters. -/
 def materialMatch : ℚ := 7/10
 def materialMismatch : ℚ := 3/10
 def materialDiscrimination : ℚ := materialMatch - materialMismatch  -- 0.40
