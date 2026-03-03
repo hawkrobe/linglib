@@ -1,3 +1,5 @@
+import Linglib.Theories.Pragmatics.RSA.Core.Noise
+
 /-
 # @cite{kursat-degen-2021}: Perceptual Difficulty and Redundant Modification
 @cite{waldon-degen-2021}
@@ -164,5 +166,21 @@ structure MaterialParams where
   deriving Repr
 
 def hypotheticalMaterialParams : MaterialParams := {}
+
+-- ============================================================================
+-- § RSA Noise Model Grounding
+-- ============================================================================
+
+/-- Map property types to discrimination values. -/
+def propertyToDiscrimination : PropertyType → ℚ
+  | .color => RSA.Noise.colorDiscrimination
+  | .size => RSA.Noise.sizeDiscrimination
+  | .material => RSA.Noise.materialDiscrimination
+
+/-- Verify discrimination ordering matches perceptual difficulty ordering -/
+theorem discrimination_matches_difficulty :
+    propertyToDiscrimination .color > propertyToDiscrimination .size ∧
+    propertyToDiscrimination .size > propertyToDiscrimination .material := by
+  exact RSA.Noise.discrimination_ordering
 
 end Phenomena.KursatDegen2021

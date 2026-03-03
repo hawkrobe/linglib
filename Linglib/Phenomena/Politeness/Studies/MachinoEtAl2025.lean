@@ -1,3 +1,5 @@
+import Linglib.Theories.Semantics.Degree.Core
+
 /-
 # @cite{machino-goodman-2025}: Minding the Politeness Gap
 
@@ -165,5 +167,30 @@ def politeness_very_ame : PolitenessRating :=
 
 -- Downtoners more polite than amplifiers (for negative evaluations)
 #guard politeness_very_ame.rating < politeness_slightly_ame.rating
+
+-- ============================================================================
+-- § Adjective Theory Grounding
+-- ============================================================================
+
+open Semantics.Degree (ModifierDirection) in
+/-- Culture-specific modifier direction.
+    Key finding: "quite" differs across varieties. -/
+def modifierDirection : Culture → Modifier → ModifierDirection
+  | _, .slightly  => .downtoner
+  | _, .kindOf    => .downtoner
+  | .americanEnglish, .quite => .amplifier   -- AmE: "quite good" ≈ "very good"
+  | .britishEnglish, .quite  => .downtoner   -- BrE: "quite good" ≈ "fairly good"
+  | _, .very      => .amplifier
+  | _, .extremely => .amplifier
+
+-- Verify cross-cultural difference for "quite"
+#guard modifierDirection .americanEnglish .quite == .amplifier
+#guard modifierDirection .britishEnglish .quite == .downtoner
+
+-- Verify universal directions
+#guard modifierDirection .americanEnglish .slightly == .downtoner
+#guard modifierDirection .britishEnglish .slightly == .downtoner
+#guard modifierDirection .americanEnglish .very == .amplifier
+#guard modifierDirection .britishEnglish .very == .amplifier
 
 end Phenomena.Politeness.Studies.MachinoEtAl2025

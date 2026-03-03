@@ -1,3 +1,6 @@
+import Linglib.Core.Logic.NaturalLogic
+import Linglib.Fragments.English.PolarityItems
+
 /-!
 # Denić, @cite{denic-homer-rothschild-chemla-2021} @cite{denic-homer-rothschild-chemla-2021}
 
@@ -233,5 +236,194 @@ def ppiItemTested : String := "some"
 
 def citation : String :=
   "Denić, Homer, Rothschild & Chemla (2021). Cognition 215, 104791."
+
+-- ============================================================================
+-- § Entailment Signature Bridge
+-- ============================================================================
+
+open Core.NaturalLogic
+open Fragments.English.PolarityItems
+
+/-- Map the paper's environments to canonical entailment signatures. -/
+def envSignature : MonotonicityEnv → Option EntailmentSig
+  | .UE => some .mono
+  | .DE => some .antiAdd
+  | .DN => some .addMult
+  | .NM => none
+
+/-- The DE environment maps to a DE-side signature. -/
+theorem de_env_is_de :
+    EntailmentSig.toContextPolarity .antiAdd = .downward := by
+  native_decide
+
+/-- `isGloballyUE` is *derived* from the signature map, not stipulated. -/
+theorem isGloballyUE_from_signature (env : MonotonicityEnv) :
+    env.isGloballyUE = match envSignature env with
+      | some sig => EntailmentSig.toContextPolarity sig == ContextPolarity.upward
+      | none => false := by
+  cases env <;> native_decide
+
+/-- Any composition of two DE-side signatures is UE under `ContextPolarity`. -/
+theorem de_composed_is_ue (φ ψ : EntailmentSig)
+    (hφ : EntailmentSig.toContextPolarity φ = .downward)
+    (hψ : EntailmentSig.toContextPolarity ψ = .downward) :
+    EntailmentSig.toContextPolarity (φ * ψ) = .upward := by
+  rw [EntailmentSig.toContextPolarity_compose, hφ, hψ]
+  rfl
+
+/-- `ContextPolarity` cannot distinguish ANY doubly-negative environment
+from simple UE. -/
+theorem contextPolarity_blind_to_dn (φ ψ : EntailmentSig)
+    (hφ : EntailmentSig.toContextPolarity φ = .downward)
+    (hψ : EntailmentSig.toContextPolarity ψ = .downward) :
+    EntailmentSig.toContextPolarity (φ * ψ) =
+    EntailmentSig.toContextPolarity .mono := by
+  rw [de_composed_is_ue φ ψ hφ hψ]
+  native_decide
+
+/-- `EntailmentSig` preserves DN–UE distinctions that `ContextPolarity` erases. -/
+theorem dn_signatures_vary :
+    EntailmentSig.compose .antiAddMult .antiAddMult ≠
+    EntailmentSig.compose .antiAdd .antiMult := by native_decide
+
+/-- UE strength distinguishes DN from UE. -/
+theorem ue_strength_distinguishes_dn_ue :
+    EntailmentSig.toUEStrength .addMult = some .additive ∧
+    EntailmentSig.toUEStrength .mono = some .weak :=
+  ⟨by native_decide, by native_decide⟩
+
+/-- DN has no DE strength. -/
+theorem dn_has_no_de_strength :
+    EntailmentSig.toDEStrength .addMult = none := by
+  native_decide
+
+/-- Central theorem: PPI effect reveals a distinction that
+`ContextPolarity` provably cannot make. -/
+theorem ppi_reveals_coarsening_failure :
+    (∀ φ ψ : EntailmentSig,
+      EntailmentSig.toContextPolarity φ = .downward →
+      EntailmentSig.toContextPolarity ψ = .downward →
+      EntailmentSig.toContextPolarity (φ * ψ) =
+        EntailmentSig.toContextPolarity .mono) ∧
+    (EntailmentSig.toUEStrength .addMult ≠ EntailmentSig.toUEStrength .mono) ∧
+    exp1_ppi_DN.significant = true ∧
+    exp1_ppi_UE.significant = false :=
+  ⟨contextPolarity_blind_to_dn, by native_decide, rfl, rfl⟩
+
+/-- NPI effects target environments with no determinate signature. -/
+theorem npi_targets_signatureless_env :
+    envSignature .NM = none ∧
+    exp1_npi_NM.significant = true ∧
+    exp1_npi_DN.significant = false ∧
+    exp1_npi_UE.significant = false ∧
+    exp1_npi_DE.significant = false :=
+  ⟨rfl, rfl, rfl, rfl, rfl⟩
+
+/-- PPI effects target environments with composite UE signatures. -/
+theorem ppi_targets_composite_ue_env :
+    envSignature .DN = some EntailmentSig.addMult ∧
+    EntailmentSig.addMult ≠ .mono ∧
+    EntailmentSig.toUEStrength .addMult ≠ EntailmentSig.toUEStrength .mono ∧
+    exp1_ppi_DN.significant = true ∧
+    exp1_ppi_UE.significant = false ∧
+    exp1_ppi_DE.significant = false ∧
+    exp1_ppi_NM.significant = false :=
+  ⟨rfl, by decide, by native_decide, rfl, rfl, rfl, rfl⟩
+
+/-- The NPIs tested are classified as NPIs in the Fragment lexicon. -/
+theorem tested_npis_are_npis :
+    any.isNPI = true ∧ ever.isNPI = true ∧ atAll.isNPI = true :=
+  ⟨rfl, rfl, rfl⟩
+
+/-- The PPI tested is classified as a PPI in the Fragment lexicon. -/
+theorem tested_ppi_is_ppi : some_ppi.isPPI = true := rfl
+
+/-- The tested NPIs have heterogeneous scalar directions. -/
+theorem scalar_direction_heterogeneity :
+    any.scalarDirection = .strengthening ∧
+    ever.scalarDirection = .strengthening ∧
+    atAll.scalarDirection = .attenuating :=
+  ⟨rfl, rfl, rfl⟩
+
+/-- Mechanism constraints: effect persists across scalar direction
+heterogeneity and without domain widening. -/
+theorem mechanism_constraints :
+    exp1_npi_NM.significant = true ∧
+    atAll.scalarDirection ≠ any.scalarDirection ∧
+    exp3_npi_NM_controlled.significant = true ∧
+    ever.scalarDirection = .strengthening :=
+  ⟨rfl, by decide, rfl, rfl⟩
+
+/-- Predict NPI significance from signature. -/
+def predictNPIEffect (env : MonotonicityEnv) : Bool :=
+  match envSignature env with
+  | none => true
+  | some _ => false
+
+/-- Predict PPI significance from signature. -/
+def predictPPIEffect (env : MonotonicityEnv) : Bool :=
+  match envSignature env with
+  | some sig => match EntailmentSig.toUEStrength sig with
+    | some .weak => false
+    | some _ => true
+    | none => false
+  | none => false
+
+/-- NPI prediction matches all 4 experimental environments. -/
+theorem npi_prediction_matches_data :
+    predictNPIEffect .NM = exp1_npi_NM.significant ∧
+    predictNPIEffect .DN = exp1_npi_DN.significant ∧
+    predictNPIEffect .UE = exp1_npi_UE.significant ∧
+    predictNPIEffect .DE = exp1_npi_DE.significant :=
+  ⟨rfl, rfl, rfl, rfl⟩
+
+/-- PPI prediction matches all 4 experimental environments. -/
+theorem ppi_prediction_matches_data :
+    predictPPIEffect .NM = exp1_ppi_NM.significant ∧
+    predictPPIEffect .DN = exp1_ppi_DN.significant ∧
+    predictPPIEffect .UE = exp1_ppi_UE.significant ∧
+    predictPPIEffect .DE = exp1_ppi_DE.significant := by
+  exact ⟨by native_decide, by native_decide, by native_decide, by native_decide⟩
+
+/-- Algebraic predictions agree with all 8 empirical data points. -/
+theorem experiment1_predictions_match :
+    experiment1.all (fun f =>
+      (match f.piCondition with
+       | .npi => predictNPIEffect f.environment
+       | .ppi => predictPPIEffect f.environment
+       | _ => f.significant) == f.significant) = true := by
+  native_decide
+
+/-- Observed pattern matches signature-based predictions. -/
+theorem observed_pattern_matches_predictions :
+    observedPattern.npi_affects_NM = predictNPIEffect .NM ∧
+    observedPattern.npi_affects_DN = predictNPIEffect .DN ∧
+    observedPattern.ppi_affects_NM = predictPPIEffect .NM ∧
+    observedPattern.ppi_affects_DN = predictPPIEffect .DN := by
+  exact ⟨by native_decide, rfl, by native_decide, by native_decide⟩
+
+/-- Shift directions match PI polarity. -/
+theorem shift_directions_match_pi_polarity :
+    exp1_npi_NM.shiftDirection = some .DE ∧
+    exp1_npi_NM.piCondition = .npi ∧
+    exp1_ppi_DN.shiftDirection = some .UE ∧
+    exp1_ppi_DN.piCondition = .ppi :=
+  ⟨rfl, rfl, rfl, rfl⟩
+
+/-- Significant findings' environments match predicted environments. -/
+theorem significant_findings_environments :
+    exp1_npi_NM.environment = .NM ∧
+    exp1_ppi_DN.environment = .DN :=
+  ⟨rfl, rfl⟩
+
+/-- Mechanism verdict linked to data file. -/
+theorem mechanism_verdict_linked :
+    exp3_verdict.mechanism = .scalarSideEffect ∧
+    exp3_verdict.ruledOutAsSole = true :=
+  ⟨rfl, rfl⟩
+
+/-- NPI items match Fragment lexicon entries by surface form. -/
+theorem npi_items_match_fragment :
+    npiItemsTested = [any.form, ever.form, atAll.form] := rfl
 
 end Phenomena.Polarity.Studies.DenicEtAl2021

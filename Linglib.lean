@@ -370,7 +370,6 @@ import Linglib.Phenomena.Causatives.Studies.Coon2019.Data
 import Linglib.Phenomena.Causatives.Studies.Coon2019.Bridge
 import Linglib.Phenomena.Coordination.Data
 import Linglib.Phenomena.Coordination.Studies.BillEtAl2025
-import Linglib.Phenomena.Coordination.Studies.BillEtAl2025Bridge
 import Linglib.Phenomena.Coordination.Typology
 import Linglib.Phenomena.Coordination.Conjectures
 import Linglib.Phenomena.WordOrder.Studies.FutrellEtAl2020
@@ -406,7 +405,6 @@ import Linglib.Phenomena.Gradability.Data
 import Linglib.Phenomena.Gradability.ComparisonClass
 import Linglib.Phenomena.Gradability.EvaluativityBridge
 import Linglib.Phenomena.Gradability.Studies.KursatDegen2021
-import Linglib.Phenomena.Gradability.Studies.KursatDegen2021Bridge
 import Linglib.Phenomena.Gradability.IntensifiersBridge
 import Linglib.Phenomena.Gradability.Vagueness
 -- Phenomena: Comparison (extracted from Gradability/)
@@ -481,12 +479,11 @@ import Linglib.Phenomena.Modality.Studies.Alsop2024
 import Linglib.Phenomena.Modality.Studies.ChampollionAlsopGrosu2019
 import Linglib.Phenomena.Modality.Studies.FreeChoiceFarsi
 import Linglib.Phenomena.Modality.Studies.Khoo2015
-import Linglib.Phenomena.Modality.Studies.Khoo2015Bridge
 import Linglib.Phenomena.Modality.Typology
 import Linglib.Phenomena.Modality.TypologyBridge
 import Linglib.Theories.Semantics.Dynamic.Systems.BSML.Basic
 import Linglib.Theories.Semantics.Dynamic.Systems.BSML.FreeChoice
-import Linglib.Phenomena.Modality.Studies.Aloni2022Bridge
+import Linglib.Phenomena.Modality.Studies.Aloni2022
 import Linglib.Comparisons.FreeChoice
 import Linglib.Phenomena.ModalIndefinites.Data
 import Linglib.Phenomena.ModalIndefinites.Studies.AlonsoOvalleRoyer2024
@@ -512,7 +509,7 @@ import Linglib.Phenomena.Negation.Denial
 import Linglib.Phenomena.Plurals.Basic
 import Linglib.Phenomena.Plurals.Homogeneity
 import Linglib.Phenomena.Plurals.NonMaximality
-import Linglib.Phenomena.Plurals.Studies.HaslingerEtAl2025Bridge
+import Linglib.Phenomena.Plurals.Studies.HaslingerEtAl2025
 import Linglib.Phenomena.Plurals.Studies.QingEtAl2025
 import Linglib.Phenomena.Plurals.Compare
 import Linglib.Phenomena.Plurals.Studies.Champollion2017
@@ -520,12 +517,12 @@ import Linglib.Phenomena.Polarity.Basic
 import Linglib.Phenomena.Polarity.DisjunctionIgnorance
 import Linglib.Phenomena.Polarity.Exceptives
 import Linglib.Phenomena.Polarity.NPIs
+import Linglib.Phenomena.Polarity.Studies.DenicEtAl2021
 import Linglib.Phenomena.Polarity.Studies.Schwab2022
 import Linglib.Phenomena.Polarity.Studies.VonFintel1999
 import Linglib.Phenomena.Polarity.Typology
 import Linglib.Phenomena.Politeness.Honorifics
 import Linglib.Phenomena.Politeness.Studies.MachinoEtAl2025
-import Linglib.Phenomena.Politeness.Studies.MachinoEtAl2025Bridge
 import Linglib.Phenomena.Politeness.Studies.YoonEtAl2020
 import Linglib.Phenomena.Polysemy.Data
 import Linglib.Phenomena.Polysemy.CopredBridge
@@ -589,7 +586,7 @@ import Linglib.Phenomena.Questions.SlavicPQStrategies
 import Linglib.Phenomena.Questions.Studies.HawkinsEtAl2025
 import Linglib.Phenomena.Questions.WhComplement
 import Linglib.Phenomena.Questions.Compare
-import Linglib.Phenomena.Questions.Studies.TurkHirschInce2026Bridge
+import Linglib.Phenomena.Questions.Studies.TurkHirschInce2026
 import Linglib.Phenomena.Questions.Studies.Xiang2022.Data
 import Linglib.Phenomena.Questions.Studies.Xiang2022.Bridge
 import Linglib.Phenomena.Reference.Studies.AnandNevins2004
@@ -597,7 +594,6 @@ import Linglib.Phenomena.Reference.DirectReference
 import Linglib.Phenomena.Reference.Studies.FrankGoodman2012
 import Linglib.Phenomena.Reference.Studies.HawkinsGweonGoodman2021
 import Linglib.Phenomena.Reference.Studies.SikosEtAl2021
-import Linglib.Phenomena.Reference.Studies.SikosEtAl2021Bridge
 import Linglib.Phenomena.Reference.Studies.Percus2000
 import Linglib.Phenomena.Reference.Studies.QingFranke2015
 import Linglib.Phenomena.ScalarImplicatures.Basic
@@ -605,7 +601,6 @@ import Linglib.Phenomena.ScalarImplicatures.Studies.BaleEtAl2025
 import Linglib.Phenomena.ScalarImplicatures.Studies.CremersWilcoxSpector2023
 import Linglib.Phenomena.ScalarImplicatures.Studies.GeurtsPouscoulous2009
 import Linglib.Phenomena.ScalarImplicatures.Studies.MeyerFeiman2021
-import Linglib.Phenomena.ScalarImplicatures.Studies.MeyerFeiman2021Bridge
 import Linglib.Phenomena.ScalarImplicatures.Studies.Ronai2024
 import Linglib.Phenomena.ScalarImplicatures.Studies.VanTielEtAl2016
 import Linglib.Phenomena.ScalarImplicatures.Studies.VanTielEtAl2021

@@ -188,4 +188,96 @@ inductive Interpretation where
   deriving DecidableEq, BEq, Repr
 
 
+-- ============================================================================
+-- § Structural Model Relationships
+-- ============================================================================
+
+/-!
+## Structural relationships between models
+
+1. The baseline model (prior × literal semantics) IS RSA's L0.
+2. In trivial contexts (unique referent), L1 = L0.
+3. In pragmatically solvable contexts, L1 ≠ L0 -- RSA's recursive reasoning
+   makes different predictions.
+
+These are mathematical facts about the models, not empirical claims.
+
+**What this does NOT show:** That RSA is empirically vindicated. Sikos et al.'s
+Experiment 3 tested contexts specifically designed to be pragmatically
+solvable (where L0 ≠ L1), and RSA still did not significantly outperform the
+baseline.
+-/
+
+/-- Colors used in the experiments. -/
+inductive Color where
+  | blue | green | red
+  deriving DecidableEq, BEq, Repr
+
+/-- Shapes used in the experiments. -/
+inductive Shape where
+  | square | circle | triangle
+  deriving DecidableEq, BEq, Repr
+
+/-- An object in the reference game. -/
+structure Object where
+  color : Color
+  shape : Shape
+  deriving DecidableEq, BEq, Repr
+
+/-- A feature predicate: either a color or a shape word. -/
+inductive Feature where
+  | color (c : Color)
+  | shape (s : Shape)
+  deriving DecidableEq, BEq, Repr
+
+/-- Literal semantics: does the feature apply to the object? -/
+def featureMeaning (f : Feature) (o : Object) : Bool :=
+  match f with
+  | .color c => o.color == c
+  | .shape s => o.shape == s
+
+/-- How many objects in a context match a given utterance. -/
+def nMatches (ctx : List Object) (u : Feature) : Nat :=
+  (ctx.filter (featureMeaning u)).length
+
+/-- A context-utterance pair is trivial when exactly one object matches. -/
+def isTrivial (ctx : List Object) (u : Feature) : Bool :=
+  nMatches ctx u == 1
+
+/-- Trivial context: each utterance uniquely identifies its referent.
+    {blue_square, green_circle, red_triangle} -/
+def trivialCtx : List Object :=
+  [⟨.blue, .square⟩, ⟨.green, .circle⟩, ⟨.red, .triangle⟩]
+
+/-- Utterances for the trivial context. -/
+def trivialUtts : List Feature :=
+  [.color .blue, .color .green, .color .red,
+   .shape .square, .shape .circle, .shape .triangle]
+
+/-- FG2012's classic solvable context: {blue_square, blue_circle, green_square}.
+    "square" applies to two objects; pragmatic reasoning breaks the tie. -/
+def solvableCtx : List Object :=
+  [⟨.blue, .square⟩, ⟨.blue, .circle⟩, ⟨.green, .square⟩]
+
+/-- Utterances for the solvable context. -/
+def solvableUtts : List Feature :=
+  [.color .blue, .color .green, .shape .square, .shape .circle]
+
+/-- "blue" uniquely identifies blue_square in the trivial context. -/
+theorem trivial_blue_unique :
+    isTrivial trivialCtx (.color .blue) = true := by native_decide
+
+/-- "square" is ambiguous in the solvable context (matches 2 objects). -/
+theorem solvable_square_ambiguous :
+    isTrivial solvableCtx (.shape .square) = false := by native_decide
+
+/-- The trivial context has all utterances trivially predicted. -/
+theorem trivial_ctx_all_trivial :
+    trivialUtts.all (isTrivial trivialCtx) = true := by native_decide
+
+/-- The solvable context has non-trivial utterances. -/
+theorem solvable_ctx_has_nontrivial :
+    (solvableUtts.filter (λ u => !isTrivial solvableCtx u)).length > 0 := by
+  native_decide
+
 end Phenomena.Reference.Studies.SikosEtAl2021

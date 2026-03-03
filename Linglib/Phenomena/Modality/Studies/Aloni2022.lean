@@ -13,7 +13,7 @@ deontic model and verifies the FC predictions computationally.
 
 -/
 
-namespace Phenomena.Modality.Studies.Aloni2022Bridge
+namespace Phenomena.Modality.Studies.Aloni2022
 
 open Semantics.Dynamic.TeamSemantics
 open Semantics.Dynamic.BSML
@@ -139,4 +139,4 @@ def wideScopeDisj : BSMLFormula :=
 -- Verify indisputability
 #eval deonticModel.isIndisputable freeChoiceTeam  -- Expect: true
 
-end Phenomena.Modality.Studies.Aloni2022Bridge
+end Phenomena.Modality.Studies.Aloni2022

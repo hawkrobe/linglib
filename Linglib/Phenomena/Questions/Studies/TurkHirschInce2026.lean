@@ -30,7 +30,7 @@ Four worlds: Ali sleeps/doesn't × deontic must/free.
 
 -/
 
-namespace Phenomena.Questions.Studies.TurkHirschInce2026Bridge
+namespace Phenomena.Questions.Studies.TurkHirschInce2026
 
 open Core.InformationStructure
 open Semantics.Questions.Hamblin
@@ -212,4 +212,4 @@ open Fragments.Turkish.QuestionParticles
 theorem mi_category_matches :
     mi.cat = UD.UPOS.PART := rfl
 
-end Phenomena.Questions.Studies.TurkHirschInce2026Bridge
+end Phenomena.Questions.Studies.TurkHirschInce2026
