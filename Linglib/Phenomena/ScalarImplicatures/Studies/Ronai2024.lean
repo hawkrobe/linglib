@@ -50,11 +50,11 @@ Scale properties (global SI rate, semantic distance, boundedness) are imported
 from `VanTielEtAl2016.Scales` rather than duplicated. The 42 scales are
 @cite{van-tiel-geurts-2016}'s 43 minus ⟨few, none⟩.
 
-Embedded SI rates are approximate values read from scatter plots (Figures 2–3,
-5–6). Scales whose Exp 2 values could not be reliably read from the figure
-are marked `none`. Three scales (⟨intelligent, brilliant⟩, ⟨funny, hilarious⟩,
-⟨ugly, hideous⟩) were unlabeled in the scatter plots and have estimated
-Exp 1 values flagged UNVERIFIED.
+Embedded SI rates are computed from the raw data deposited at
+https://osf.io/kx42p/ — per-scale means of the "strong" condition
+from `exp1_data.csv` (Exp 1, 0–100 sliding scale) and `exp2_data.csv`
+(Exp 2, binary Yes/No converted to % "Yes"). Values are rounded to
+the nearest integer.
 -/
 
 namespace Phenomena.ScalarImplicatures.Studies.Ronai2024
@@ -68,15 +68,15 @@ namespace Phenomena.ScalarImplicatures.Studies.Ronai2024
 
 Scale properties (global SI rate, semantic distance, boundedness) reference
 @cite{van-tiel-geurts-2016} directly rather than duplicating values.
-Embedded SI rates are from @cite{ronai-2024}'s two experiments. -/
+Embedded SI rates are from @cite{ronai-2024}'s two experiments, computed
+from the raw data at https://osf.io/kx42p/. -/
 structure EmbeddedSIDatum where
   /-- VT2016 scale entry (provides global SI rate, semantic distance, bounded) -/
   vt2016 : VanTielEtAl2016.ScaleDatum
-  /-- Strong inference rate from Exp 1 (0–100 sliding scale), from Figure 2 -/
+  /-- Mean strong inference rate from Exp 1 (0–100 sliding scale, rounded) -/
   exp1Rate : Nat
-  /-- Strong inference rate from Exp 2 (% "Yes"), from Figure 5.
-      None where value could not be reliably read from the scatter plot. -/
-  exp2Rate : Option Nat
+  /-- % "Yes" responses in Exp 2 strong condition (rounded) -/
+  exp2Rate : Nat
   deriving Repr
 
 /-- Global SI rate from @cite{van-tiel-geurts-2016} Exp 2 (%). -/
@@ -94,179 +94,177 @@ def EmbeddedSIDatum.bounded (d : EmbeddedSIDatum) : Bool := d.vt2016.bounded
 -- Scale Data (42 scales = VT2016's 43 minus ⟨few, none⟩)
 -- ============================================================================
 
--- Exp 1 rates: approximate, read from Ronai (2024) Figure 2.
--- Exp 2 rates: approximate, read from Ronai (2024) Figure 5.
+-- Per-scale means computed from raw data at https://osf.io/kx42p/
+-- Exp 1: mean of "strong" condition responses (0–100), rounded
+-- Exp 2: % "Yes" in strong condition (N=45 per scale), rounded
 
 def someAll : EmbeddedSIDatum :=
   { vt2016 := VanTielEtAl2016.Scales.someAll
-  , exp1Rate := 49, exp2Rate := some 44 }
+  , exp1Rate := 46, exp2Rate := 40 }
 
 def possibleCertain : EmbeddedSIDatum :=
   { vt2016 := VanTielEtAl2016.Scales.possibleCertain
-  , exp1Rate := 57, exp2Rate := some 64 }
+  , exp1Rate := 66, exp2Rate := 62 }
 
 def allowedObligatory : EmbeddedSIDatum :=
   { vt2016 := VanTielEtAl2016.Scales.allowedObligatory
-  , exp1Rate := 56, exp2Rate := some 47 }
+  , exp1Rate := 55, exp2Rate := 49 }
 
 def mayHaveTo : EmbeddedSIDatum :=
   { vt2016 := VanTielEtAl2016.Scales.mayHaveTo
-  , exp1Rate := 58, exp2Rate := some 53 }
+  , exp1Rate := 67, exp2Rate := 53 }
 
 def mayWill : EmbeddedSIDatum :=
   { vt2016 := VanTielEtAl2016.Scales.mayWill
-  , exp1Rate := 18, exp2Rate := some 9 }
+  , exp1Rate := 7, exp2Rate := 4 }
 
 def sometimesAlways : EmbeddedSIDatum :=
   { vt2016 := VanTielEtAl2016.Scales.sometimesAlways
-  , exp1Rate := 43, exp2Rate := some 38 }
+  , exp1Rate := 39, exp2Rate := 33 }
 
 def cheapFree : EmbeddedSIDatum :=
   { vt2016 := VanTielEtAl2016.Scales.cheapFree
-  , exp1Rate := 63, exp2Rate := some 51 }
+  , exp1Rate := 74, exp2Rate := 49 }
 
 def difficultImpossible : EmbeddedSIDatum :=
   { vt2016 := VanTielEtAl2016.Scales.difficultImpossible
-  , exp1Rate := 42, exp2Rate := some 33 }
+  , exp1Rate := 43, exp2Rate := 31 }
 
 def hardUnsolvable : EmbeddedSIDatum :=
   { vt2016 := VanTielEtAl2016.Scales.hardUnsolvable
-  , exp1Rate := 47, exp2Rate := some 27 }
+  , exp1Rate := 49, exp2Rate := 22 }
 
 def rareExtinct : EmbeddedSIDatum :=
   { vt2016 := VanTielEtAl2016.Scales.rareExtinct
-  , exp1Rate := 50, exp2Rate := some 38 }
+  , exp1Rate := 50, exp2Rate := 33 }
 
 def scarceUnavailable : EmbeddedSIDatum :=
   { vt2016 := VanTielEtAl2016.Scales.scarceUnavailable
-  , exp1Rate := 38, exp2Rate := some 24 }
+  , exp1Rate := 37, exp2Rate := 20 }
 
 def lowDepleted : EmbeddedSIDatum :=
   { vt2016 := VanTielEtAl2016.Scales.lowDepleted
-  , exp1Rate := 44, exp2Rate := some 29 }
+  , exp1Rate := 46, exp2Rate := 29 }
 
 def startFinish : EmbeddedSIDatum :=
   { vt2016 := VanTielEtAl2016.Scales.startFinish
-  , exp1Rate := 24, exp2Rate := none }
+  , exp1Rate := 22, exp2Rate := 7 }
 
 def trySucceed : EmbeddedSIDatum :=
   { vt2016 := VanTielEtAl2016.Scales.trySucceed
-  , exp1Rate := 32, exp2Rate := some 18 }
+  , exp1Rate := 33, exp2Rate := 13 }
 
 def participateWin : EmbeddedSIDatum :=
   { vt2016 := VanTielEtAl2016.Scales.participateWin
-  , exp1Rate := 25, exp2Rate := some 4 }
+  , exp1Rate := 24, exp2Rate := 0 }
 
 def believeKnow : EmbeddedSIDatum :=
   { vt2016 := VanTielEtAl2016.Scales.believeKnow
-  , exp1Rate := 28, exp2Rate := some 9 }
+  , exp1Rate := 29, exp2Rate := 9 }
 
 def goodPerfect : EmbeddedSIDatum :=
   { vt2016 := VanTielEtAl2016.Scales.goodPerfect
-  , exp1Rate := 42, exp2Rate := some 20 }
+  , exp1Rate := 45, exp2Rate := 18 }
 
 def memorableUnforgettable : EmbeddedSIDatum :=
   { vt2016 := VanTielEtAl2016.Scales.memorableUnforgettable
-  , exp1Rate := 42, exp2Rate := some 42 }
+  , exp1Rate := 43, exp2Rate := 44 }
 
 def specialUnique : EmbeddedSIDatum :=
   { vt2016 := VanTielEtAl2016.Scales.specialUnique
-  , exp1Rate := 11, exp2Rate := some 2 }
-
-def warmHot : EmbeddedSIDatum :=
-  { vt2016 := VanTielEtAl2016.Scales.warmHot
-  , exp1Rate := 40, exp2Rate := some 31 }
-
-def coolCold : EmbeddedSIDatum :=
-  { vt2016 := VanTielEtAl2016.Scales.coolCold
-  , exp1Rate := 29, exp2Rate := some 13 }
-
-def goodExcellent : EmbeddedSIDatum :=
-  { vt2016 := VanTielEtAl2016.Scales.goodExcellent
-  , exp1Rate := 38, exp2Rate := some 16 }
-
-def adequateGood : EmbeddedSIDatum :=
-  { vt2016 := VanTielEtAl2016.Scales.adequateGood
-  , exp1Rate := 35, exp2Rate := some 16 }
-
-def palatableDelicious : EmbeddedSIDatum :=
-  { vt2016 := VanTielEtAl2016.Scales.palatableDelicious
-  , exp1Rate := 36, exp2Rate := some 20 }
-
-def bigEnormous : EmbeddedSIDatum :=
-  { vt2016 := VanTielEtAl2016.Scales.bigEnormous
-  , exp1Rate := 22, exp2Rate := none }
-
-def smallTiny : EmbeddedSIDatum :=
-  { vt2016 := VanTielEtAl2016.Scales.smallTiny
-  , exp1Rate := 15, exp2Rate := some 4 }
-
-def oldAncient : EmbeddedSIDatum :=
-  { vt2016 := VanTielEtAl2016.Scales.oldAncient
-  , exp1Rate := 18, exp2Rate := some 4 }
+  , exp1Rate := 16, exp2Rate := 2 }
 
 def darkBlack : EmbeddedSIDatum :=
   { vt2016 := VanTielEtAl2016.Scales.darkBlack
-  , exp1Rate := 13, exp2Rate := some 0 }
+  , exp1Rate := 9, exp2Rate := 0 }
+
+def warmHot : EmbeddedSIDatum :=
+  { vt2016 := VanTielEtAl2016.Scales.warmHot
+  , exp1Rate := 45, exp2Rate := 31 }
+
+def coolCold : EmbeddedSIDatum :=
+  { vt2016 := VanTielEtAl2016.Scales.coolCold
+  , exp1Rate := 25, exp2Rate := 9 }
+
+def goodExcellent : EmbeddedSIDatum :=
+  { vt2016 := VanTielEtAl2016.Scales.goodExcellent
+  , exp1Rate := 39, exp2Rate := 13 }
+
+def adequateGood : EmbeddedSIDatum :=
+  { vt2016 := VanTielEtAl2016.Scales.adequateGood
+  , exp1Rate := 34, exp2Rate := 7 }
+
+def palatableDelicious : EmbeddedSIDatum :=
+  { vt2016 := VanTielEtAl2016.Scales.palatableDelicious
+  , exp1Rate := 35, exp2Rate := 18 }
+
+def bigEnormous : EmbeddedSIDatum :=
+  { vt2016 := VanTielEtAl2016.Scales.bigEnormous
+  , exp1Rate := 21, exp2Rate := 2 }
+
+def smallTiny : EmbeddedSIDatum :=
+  { vt2016 := VanTielEtAl2016.Scales.smallTiny
+  , exp1Rate := 17, exp2Rate := 7 }
+
+def oldAncient : EmbeddedSIDatum :=
+  { vt2016 := VanTielEtAl2016.Scales.oldAncient
+  , exp1Rate := 16, exp2Rate := 7 }
 
 def contentHappy : EmbeddedSIDatum :=
   { vt2016 := VanTielEtAl2016.Scales.contentHappy
-  , exp1Rate := 15, exp2Rate := none }
+  , exp1Rate := 12, exp2Rate := 4 }
 
 def likeLove : EmbeddedSIDatum :=
   { vt2016 := VanTielEtAl2016.Scales.likeLove
-  , exp1Rate := 15, exp2Rate := some 9 }
+  , exp1Rate := 13, exp2Rate := 9 }
 
 def dislikeLoathe : EmbeddedSIDatum :=
   { vt2016 := VanTielEtAl2016.Scales.dislikeLoathe
-  , exp1Rate := 17, exp2Rate := some 16 }
+  , exp1Rate := 14, exp2Rate := 13 }
 
 def waryScared : EmbeddedSIDatum :=
   { vt2016 := VanTielEtAl2016.Scales.waryScared
-  , exp1Rate := 18, exp2Rate := none }
+  , exp1Rate := 16, exp2Rate := 4 }
 
 def unsettlingHorrific : EmbeddedSIDatum :=
   { vt2016 := VanTielEtAl2016.Scales.unsettlingHorrific
-  , exp1Rate := 31, exp2Rate := some 31 }
+  , exp1Rate := 28, exp2Rate := 4 }
 
 def tiredExhausted : EmbeddedSIDatum :=
   { vt2016 := VanTielEtAl2016.Scales.tiredExhausted
-  , exp1Rate := 14, exp2Rate := none }
+  , exp1Rate := 12, exp2Rate := 7 }
 
 def hungryStarving : EmbeddedSIDatum :=
   { vt2016 := VanTielEtAl2016.Scales.hungryStarving
-  , exp1Rate := 21, exp2Rate := none }
+  , exp1Rate := 14, exp2Rate := 4 }
 
 def attractiveStunning : EmbeddedSIDatum :=
   { vt2016 := VanTielEtAl2016.Scales.attractiveStunning
-  , exp1Rate := 28, exp2Rate := some 0 }
+  , exp1Rate := 26, exp2Rate := 0 }
 
 def prettyBeautiful : EmbeddedSIDatum :=
   { vt2016 := VanTielEtAl2016.Scales.prettyBeautiful
-  , exp1Rate := 20, exp2Rate := none }
+  , exp1Rate := 21, exp2Rate := 7 }
 
 def sillyRidiculous : EmbeddedSIDatum :=
   { vt2016 := VanTielEtAl2016.Scales.sillyRidiculous
-  , exp1Rate := 18, exp2Rate := none }
+  , exp1Rate := 18, exp2Rate := 7 }
 
 def snugTight : EmbeddedSIDatum :=
   { vt2016 := VanTielEtAl2016.Scales.snugTight
-  , exp1Rate := 10, exp2Rate := some 2 }
+  , exp1Rate := 13, exp2Rate := 7 }
 
--- UNVERIFIED: exp1Rate estimated from Figure 2 scatter plot position (unlabeled)
 def intelligentBrilliant : EmbeddedSIDatum :=
   { vt2016 := VanTielEtAl2016.Scales.intelligentBrilliant
-  , exp1Rate := 13, exp2Rate := none }
+  , exp1Rate := 15, exp2Rate := 7 }
 
--- UNVERIFIED: exp1Rate estimated from Figure 2 scatter plot position (unlabeled)
 def funnyHilarious : EmbeddedSIDatum :=
   { vt2016 := VanTielEtAl2016.Scales.funnyHilarious
-  , exp1Rate := 18, exp2Rate := none }
+  , exp1Rate := 15, exp2Rate := 4 }
 
--- UNVERIFIED: exp1Rate estimated from Figure 2 scatter plot position (unlabeled)
 def uglyHideous : EmbeddedSIDatum :=
   { vt2016 := VanTielEtAl2016.Scales.uglyHideous
-  , exp1Rate := 18, exp2Rate := none }
+  , exp1Rate := 17, exp2Rate := 7 }
 
 
 -- ============================================================================
@@ -317,10 +315,10 @@ def exp2N : Nat := 45
 
 
 -- ============================================================================
--- Experiment 1: Aggregate Results (approximate from Figure 1)
+-- Experiment 1: Aggregate Results (computed from OSF raw data)
 -- ============================================================================
 
-/-- Mean sliding scale response by condition, approximate from Figure 1.
+/-- Mean sliding scale response by condition, computed from raw data.
 Reference level is "strong"; contrasts reported in the paper:
 true−strong: Estimate=55.6, SE=2.75, t=20.19, p<.001
 weak−strong: Estimate=12.79, SE=1.93, t=6.62, p<.001
@@ -333,10 +331,10 @@ structure Exp1Aggregate where
   deriving Repr
 
 def exp1Aggregate : Exp1Aggregate :=
-  { trueControl := 85
-  , weakInference := 45
-  , strongInference := 32
-  , falseControl := 6 }
+  { trueControl := 86     -- mean=85.5, round to 86
+  , weakInference := 42   -- mean=42.4
+  , strongInference := 30 -- mean=29.8
+  , falseControl := 4 }   -- mean=3.5
 
 /-- Response ordering: true > weak > strong > false.
 This replicates @cite{gotzner-romoli-2018}'s finding across 42 scales. -/
@@ -455,23 +453,26 @@ theorem both_correlations_strong :
     exp1Correlation > 70 / 100 ∧ exp2Correlation > 70 / 100 := by
   constructor <;> native_decide
 
-/-- Bounded scales yield more embedded SIs than non-bounded (Exp 1).
-Total Exp 1 rate across 20 bounded scales exceeds total across 22 non-bounded,
-despite having fewer items — the mean difference is ~17 points. -/
-theorem bounded_higher_exp1 :
+/-- Bounded scales yield more embedded SIs than non-bounded in both experiments.
+Total rates across 20 bounded scales exceed total across 22 non-bounded,
+despite having fewer items. -/
+theorem bounded_higher_both_exps :
     (boundedScales.map (·.exp1Rate)).foldl (· + ·) 0 >
-    (nonBoundedScales.map (·.exp1Rate)).foldl (· + ·) 0 := by native_decide
+    (nonBoundedScales.map (·.exp1Rate)).foldl (· + ·) 0 ∧
+    (boundedScales.map (·.exp2Rate)).foldl (· + ·) 0 >
+    (nonBoundedScales.map (·.exp2Rate)).foldl (· + ·) 0 := by
+  constructor <;> native_decide
 
-/-- ⟨some, all⟩ embedded SI rate (49) substantially above the median,
+/-- ⟨some, all⟩ embedded SI rate substantially above the overall mean (30),
 consistent with it being a "workhorse" scale for SI research. -/
-theorem someAll_embedded_above_median :
-    someAll.exp1Rate > 30 := by native_decide
+theorem someAll_embedded_above_mean :
+    someAll.exp1Rate > exp1Aggregate.strongInference := by native_decide
 
 /-- ⟨may, will⟩ is an outlier: very high global SI rate (VT2016 Exp 2 = 89%)
-but low embedded SI rate (Exp 1 = 18), suggesting embedding under *every*
-disrupts SI for this modal scale specifically. -/
+but extremely low embedded SI rate (Exp 1 = 7), suggesting embedding under
+*every* disrupts SI for this modal scale specifically. -/
 theorem mayWill_outlier :
-    mayWill.globalSIRate > 80 ∧ mayWill.exp1Rate < 20 := by native_decide
+    mayWill.globalSIRate > 80 ∧ mayWill.exp1Rate < 10 := by native_decide
 
 /-- The global SI rate for each scale is derived from VT2016, not stored
 independently. This structural test verifies the derivation: ⟨some, all⟩'s
