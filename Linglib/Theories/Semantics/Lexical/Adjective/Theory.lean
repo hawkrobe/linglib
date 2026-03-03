@@ -240,7 +240,7 @@ theorem contrary_double_neg_differs :
   native_decide
 
 -- ════════════════════════════════════════════════════
--- Marginality Scales Account (Dinis & Jacinto 2026)
+-- Marginality Scales Account (@cite{dinis-jacinto-2026})
 -- ════════════════════════════════════════════════════
 
 open Core.Scale

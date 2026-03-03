@@ -6,7 +6,7 @@ import Linglib.Theories.Syntax.DependencyGrammar.Formal.HeadCriteria
 # Government in Dependency Grammar
 @cite{osborne-2019}
 
-Formalizes government (Osborne 2019, Ch 4 §4.8, Ch 5): the mechanism by which
+Formalizes government (@cite{osborne-2019}, Ch 4 §4.8, Ch 5): the mechanism by which
 a head determines the morphosyntactic form of its dependent.
 
 Government is distinct from:

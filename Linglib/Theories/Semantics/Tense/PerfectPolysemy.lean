@@ -20,7 +20,7 @@ result phase that can anchor the reference time.
 
 This module integrates:
 - `TemporalDecomposition` (subevent phases for telic predicates)
-- `ViewpointAspect.PerfectType` (Pancheva 2003 classification)
+- `ViewpointAspect.PerfectType` (@cite{pancheva-2003} classification)
 - `ReichenbachFrame` with `perspectiveTime` (Kiparsky's P)
 - `Tense/Basic` (tense applies R relative to P)
 
@@ -44,7 +44,7 @@ open Semantics.Lexical.Verb.ViewpointAspect
 open Semantics.Events
 
 -- ════════════════════════════════════════════════════
--- § 1. Perfect Readings (Kiparsky 2002)
+-- § 1. Perfect Readings (@cite{kiparsky-2002})
 -- ════════════════════════════════════════════════════
 
 /-- Kiparsky's four readings of the perfect.

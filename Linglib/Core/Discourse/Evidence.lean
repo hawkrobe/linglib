@@ -60,7 +60,7 @@ def EvidentialSource.toEvidentialPerspective : EvidentialSource → EvidentialPe
   | .inference => .retrospective
 
 /-- Mirativity: whether the propositional content is expected or
-    surprising to the speaker (DeLancey 1997, Aikhenvald 2004 Ch 6). -/
+    surprising to the speaker (DeLancey 1997, @cite{aikhenvald-2004} Ch 6). -/
 inductive MirativityValue where
   | expected
   | unexpected

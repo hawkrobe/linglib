@@ -146,7 +146,7 @@ encodes an empirical claim from @cite{rotter-liu-2025} §4. -/
 
 /-- Social indexation of each concord type.
     NC and MC possibility both index solidarity;
-    MC necessity indexes competence (Liu & Rotter 2025 §4). -/
+    MC necessity indexes competence (@cite{rotter-liu-2025} §4). -/
 def socialIndex : ConcordType → SocialIndex
   | .negation         => .solidarity
   | .modalNecessity   => .competence

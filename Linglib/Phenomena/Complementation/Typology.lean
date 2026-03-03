@@ -41,7 +41,7 @@ Key generalizations:
 
 namespace Phenomena.Complementation.Typology
 
-/-! ## A. Complement types (Noonan 2007 §1) -/
+/-! ## A. Complement types (@cite{noonan-2007} §1) -/
 
 /-- The six major complement types attested cross-linguistically.
     Ordered roughly from most to least "finite" (Noonan's "balanced" to "deranked"). -/
@@ -54,7 +54,7 @@ inductive NoonanCompType where
   | participle     -- Participial complement
   deriving DecidableEq, Repr, BEq
 
-/-! ## B. Complement-taking predicate classes (Noonan 2007 Table 2.1) -/
+/-! ## B. Complement-taking predicate classes (@cite{noonan-2007} Table 2.1) -/
 
 /-- Noonan's twelve CTP classes, organized by semantic contribution.
 
@@ -80,7 +80,7 @@ inductive CTPClass where
   | negative        -- avoid, refrain, prevent
   deriving DecidableEq, Repr, BEq
 
-/-! ## C. Reality status (Noonan 2007 §2.3) -/
+/-! ## C. Reality status (@cite{noonan-2007} §2.3) -/
 
 /-- The fundamental realis/irrealis split that predicts complement type selection.
     Realis CTPs tend toward indicative; irrealis toward subjunctive/infinitive. -/
@@ -89,7 +89,7 @@ inductive RealityStatus where
   | irrealis  -- CTP does not commit to complement truth
   deriving DecidableEq, Repr, BEq
 
-/-- Reality status of each CTP class (Noonan 2007 Table 2.3). -/
+/-- Reality status of each CTP class (@cite{noonan-2007} Table 2.3). -/
 def ctpRealityStatus : CTPClass → RealityStatus
   | .utterance    => .realis
   | .propAttitude => .realis
@@ -130,7 +130,7 @@ structure CTPDatum where
 
 ### English
 
-English attests all six complement types (Noonan 2007 §1.1):
+English attests all six complement types (@cite{noonan-2007} §1.1):
 - Indicative: "John said that he was tired"
 - Subjunctive: "I demand that he leave" (mandative)
 - Paratactic: "John told Mary go away" (marginal)
@@ -312,7 +312,7 @@ def english_continue : CTPDatum where
 /-- ### Latin
 
 Latin uses indicative/subjunctive split along the realis/irrealis line
-(Noonan 2007 §1.3). -/
+(@cite{noonan-2007} §1.3). -/
 
 def latin_dicere : CTPDatum where
   language := "Latin"
@@ -356,7 +356,7 @@ def latin_iubere : CTPDatum where
 
 /-- ### Turkish
 
-Turkish strongly favors nominalized complements (Noonan 2007 §1.4).
+Turkish strongly favors nominalized complements (@cite{noonan-2007} §1.4).
 Key contrast: even realis CTPs use nominalized forms. -/
 
 def turkish_sanmak : CTPDatum where
@@ -392,7 +392,7 @@ def turkish_baslamak : CTPDatum where
 /-- ### Irish
 
 Irish uses a finite/non-finite split with interesting paratactic patterns
-(Noonan 2007 §1.5). -/
+(@cite{noonan-2007} §1.5). -/
 
 def irish_abair : CTPDatum where
   language := "Irish"
@@ -417,7 +417,7 @@ def irish_ceap : CTPDatum where
 /-- ### Persian
 
 Persian shows a clear subjunctive/indicative split along CTP lines
-(Noonan 2007 §2.3). -/
+(@cite{noonan-2007} §2.3). -/
 
 def persian_goftan : CTPDatum where
   language := "Persian"
@@ -452,7 +452,7 @@ def persian_danestan : CTPDatum where
 /-- ### Hindi-Urdu
 
 Hindi-Urdu connects to existing Questions/Typology data.
-Uses subjunctive complement with desideratives (Noonan 2007 §2.3). -/
+Uses subjunctive complement with desideratives (@cite{noonan-2007} §2.3). -/
 
 def hindi_urdu_sochna : CTPDatum where
   language := "Hindi-Urdu"
@@ -570,7 +570,7 @@ def allCTPData : List CTPDatum :=
 
 /-! ## G. Verified generalizations
 
-### G1. Realis/irrealis split (Noonan 2007 Table 2.3)
+### G1. Realis/irrealis split (@cite{noonan-2007} Table 2.3)
 
 Utterance, propAttitude, commentative, knowledge, perception, and phasal
 CTPs are realis; desiderative, manipulative, modal, achievement, pretence,
@@ -598,7 +598,7 @@ theorem reality_status_consistent :
     ∀ d ∈ allCTPData, d.realityStatus = ctpRealityStatus d.ctpClass := by
   decide
 
-/-! ### G2. Equi-deletion restriction (Noonan 2007 §2.1)
+/-! ### G2. Equi-deletion restriction (@cite{noonan-2007} §2.1)
 
 Equi-deletion (subject deletion under coreference) only occurs with
 reduced complement types (infinitive, nominalized), not with finite
@@ -640,7 +640,7 @@ theorem knowledge_no_negative_raising :
       d.ctpClass = .knowledge → d.hasNegativeRaising = false := by
   decide
 
-/-! ### G4. Implicational hierarchy (Noonan 2007 §2.4)
+/-! ### G4. Implicational hierarchy (@cite{noonan-2007} §2.4)
 
 If a language uses indicative for desiderative CTPs, it also uses
 indicative for propositional attitude CTPs. This is checked per-language. -/

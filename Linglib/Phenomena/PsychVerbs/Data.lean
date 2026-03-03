@@ -1,7 +1,7 @@
 import Linglib.Core.Empirical
 
 /-!
-# Psych Verb Data (B&R 1988, Kim 2024)
+# Psych Verb Data (@cite{belletti-rizzi-1988}, @cite{kim-2024})
 
 @cite{belletti-rizzi-1988} @cite{kim-2024}
 
@@ -52,7 +52,7 @@ inductive ClassIIReading where
   deriving DecidableEq, Repr, BEq
 
 -- ════════════════════════════════════════════════════
--- § B&R (1988) Syntactic Diagnostics
+-- § @cite{belletti-rizzi-1988} Syntactic Diagnostics
 -- ════════════════════════════════════════════════════
 
 /-- B&R syntactic diagnostic for discriminating psych verb classes (§§1–2). -/
@@ -72,7 +72,7 @@ structure BRDiagnosticResult where
   classII : Bool
   deriving Repr, BEq
 
-/-- B&R (1988) diagnostic data.
+/-- @cite{belletti-rizzi-1988} diagnostic data.
 
     | Diagnostic | Class I (*temere*) | Class II (*preoccupare*) |
     |---|---|---|

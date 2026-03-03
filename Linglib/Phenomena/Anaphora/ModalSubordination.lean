@@ -213,7 +213,7 @@ def counterfactualIndicative : CounterfactualDatum := {
   source := "Novel example"
 }
 
--- Part 5: Three-way Classification (Hofmann 2025)
+-- Part 5: Three-way Classification (@cite{hofmann-2025})
 
 /--
 @cite{hofmann-2025} distinguishes three accessibility classes:

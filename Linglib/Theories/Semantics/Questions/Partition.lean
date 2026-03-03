@@ -135,7 +135,7 @@ theorem polar_exhaustive {W : Type*} (p : W → Bool) (w : W) :
 /-- An information set J ⊆ I represents what the questioner knows.
 J is the set of indices compatible with the questioner's factual knowledge.
 
-G&S 1984, p. 350: "One may argue that using an information set to represent
+@cite{groenendijk-stokhof-1984}, p. 350: "One may argue that using an information set to represent
 the questioner's informational state involves idealizations. [...] We think
 these idealizations are harmless." -/
 abbrev InfoSet (W : Type*) := W → Bool

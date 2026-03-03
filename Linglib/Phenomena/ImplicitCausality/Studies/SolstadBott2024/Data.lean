@@ -76,7 +76,7 @@ def VerbClass.predictedBias : VerbClass → ICBias
   | .agentPat      => .np1   -- agent is subject → NP1
 
 -- ════════════════════════════════════════════════════
--- § 4. Connectives (Solstad & Bott 2022, Exp 1)
+-- § 4. Connectives (@cite{solstad-bott-2022}, Exp 1)
 -- ════════════════════════════════════════════════════
 
 /-- Connective conditions in @cite{solstad-bott-2022}.
@@ -99,7 +99,7 @@ structure CorefDatum where
   subjectCorefPct : ℚ    -- Percentage of NP1 (subject) coreference
   deriving Repr
 
--- Exp 1, Table 1 (Solstad & Bott 2022, p. 1322)
+-- Exp 1, Table 1 (@cite{solstad-bott-2022}, p. 1322)
 def exp1_stimExp_weil   : CorefDatum := ⟨.stimExp, .weil, 874/10⟩   -- 87.4%
 def exp1_expStim_weil   : CorefDatum := ⟨.expStim, .weil, 40/10⟩    -- 4.0%
 def exp1_stimExp_sodass : CorefDatum := ⟨.stimExp, .sodass, 48/10⟩  -- 4.8%
@@ -125,7 +125,7 @@ theorem expStim_weil_np2_bias :
   show (40 : ℚ)/10 < 50; norm_num
 
 /-- I-Cons (sodass): Biases mirror I-Caus — StimExp → NP2, ExpStim → NP1.
-    (Solstad & Bott 2022, §2.3: "almost perfect negative correlation" r = −0.94) -/
+    (@cite{solstad-bott-2022}, §2.3: "almost perfect negative correlation" r = −0.94) -/
 theorem icons_mirrors_icaus :
     exp1_stimExp_sodass.subjectCorefPct < 50 ∧
     exp1_expStim_sodass.subjectCorefPct > 50 := by

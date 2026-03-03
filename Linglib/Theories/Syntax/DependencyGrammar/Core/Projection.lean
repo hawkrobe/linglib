@@ -28,7 +28,7 @@ section Projection
     and well-nestedness are all defined in terms of projections.
 
     A dependency graph is **projective** iff every projection is an interval
-    (Kuhlmann & Nivre 2006, Definition 3). -/
+    (@cite{kuhlmann-nivre-2006}, Definition 3). -/
 def projection (deps : List Dependency) (root : Nat) : List Nat :=
   let fuel := deps.length * (deps.length + 1) + 2
   let rec go (queue : List Nat) (visited : List Nat) (fuel : Nat) : List Nat :=
@@ -51,7 +51,7 @@ def isInterval (sorted : List Nat) : Bool :=
 
 /-- The **gaps** in a sorted projection: pairs (jₖ, jₖ₊₁) adjacent in the
     projection where jₖ₊₁ − jₖ > 1.
-    (Kuhlmann & Nivre 2006, Definition 6; Kuhlmann 2013, §7.1) -/
+    (@cite{kuhlmann-nivre-2006}, Definition 6; @cite{kuhlmann-2013}, §7.1) -/
 def gaps (sorted : List Nat) : List (Nat × Nat) :=
   sorted.zip (sorted.drop 1) |>.filter λ (a, b) => b - a > 1
 
@@ -72,12 +72,12 @@ def blocks : List Nat → List (List Nat)
     else [a] :: blocks (b :: rest)
 
 /-- **Gap degree** of a node: number of gaps in its projection.
-    (Kuhlmann & Nivre 2006, Definition 6) -/
+    (@cite{kuhlmann-nivre-2006}, Definition 6) -/
 def gapDegreeAt (deps : List Dependency) (root : Nat) : Nat :=
   (gaps (projection deps root)).length
 
 /-- **Gap degree** of a tree: max gap degree over all nodes.
-    (Kuhlmann & Nivre 2006, Definition 7)
+    (@cite{kuhlmann-nivre-2006}, Definition 7)
     Gap degree 0 ⟺ projective. -/
 def DepTree.gapDegree (t : DepTree) : Nat :=
   List.range t.words.length |>.map (gapDegreeAt t.deps) |>.foldl max 0
@@ -90,7 +90,7 @@ def blockDegreeAt (deps : List Dependency) (root : Nat) : Nat :=
 /-- **Block-degree** of a tree: max block-degree over all nodes.
     Block-degree 1 ⟺ projective.
     Bounded block-degree + well-nestedness ⟺ polynomial parsing
-    (Kuhlmann 2013, Lemma 10). -/
+    (@cite{kuhlmann-2013}, Lemma 10). -/
 def DepTree.blockDegree (t : DepTree) : Nat :=
   List.range t.words.length |>.map (blockDegreeAt t.deps) |>.foldl max 0
 
@@ -886,7 +886,7 @@ end FoldlMax
 -- ============================================================================
 
 /-- Check projectivity: every node's projection is an interval.
-    (Kuhlmann & Nivre 2006, Definition 3)
+    (@cite{kuhlmann-nivre-2006}, Definition 3)
 
     Equivalent to: no two dependency arcs cross.
     Equivalent to: gap degree = 0.

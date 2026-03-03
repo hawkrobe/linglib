@@ -5,7 +5,7 @@ import Linglib.Phenomena.Ellipsis.Gapping
 # Bridge: CoordinationParallelism → Gapping Phenomena
 
 Connects the Dependency Grammar coordination parallelism analysis
-(Osborne 2019, Ch 10-11) to the empirical gapping data in
+(@cite{osborne-2019}, Ch 10-11) to the empirical gapping data in
 `Phenomena.Ellipsis.Gapping`.
 
 The key bridge: sharing direction in coordination corresponds to

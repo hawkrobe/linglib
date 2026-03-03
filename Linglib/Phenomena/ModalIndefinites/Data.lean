@@ -56,7 +56,7 @@ def yalnhej : ModalIndefiniteEntry where
   source := "Alonso-Ovalle & Royer 2024"
 
 /-- Chuj *komon*: at-issue random-choice modifier for mass/plural
-    (Alonso-Ovalle & Royer 2021; cited in @cite{alonso-ovalle-royer-2024}, §5). -/
+    (@cite{alonso-ovalle-royer-2021}; cited in @cite{alonso-ovalle-royer-2024}, §5). -/
 def komon : ModalIndefiniteEntry where
   language := "Chuj (Mayan)"
   form := "komon"
@@ -70,11 +70,11 @@ def komon : ModalIndefiniteEntry where
 
 
 -- ════════════════════════════════════════════════════
--- § 2. Spanish *algún* (Alonso-Ovalle & Menéndez-Benito 2010)
+-- § 2. Spanish *algún* (@cite{alonso-ovalle-menendez-benito-2010})
 -- ════════════════════════════════════════════════════
 
 /-- Spanish *algún*: not-at-issue, epistemic only, upper-bounded
-    (§6; Alonso-Ovalle & Menéndez-Benito 2010). -/
+    (§6; @cite{alonso-ovalle-menendez-benito-2010}). -/
 def algún : ModalIndefiniteEntry where
   language := "Spanish"
   form := "algún"
@@ -88,7 +88,7 @@ def algún : ModalIndefiniteEntry where
 
 
 -- ════════════════════════════════════════════════════
--- § 3. German *irgendein* (Kratzer & Shimoyama 2002)
+-- § 3. German *irgendein* (@cite{kratzer-shimoyama-2002})
 -- ════════════════════════════════════════════════════
 
 /-- German *irgendein*: not-at-issue, epistemic + random choice,
@@ -107,7 +107,7 @@ def irgendein : ModalIndefiniteEntry where
 
 
 -- ════════════════════════════════════════════════════
--- § 4. Spanish *uno cualquiera* (Alonso-Ovalle & Menéndez-Benito 2018)
+-- § 4. Spanish *uno cualquiera* (@cite{alonso-ovalle-menendez-benito-2010})
 -- ════════════════════════════════════════════════════
 
 /-- Spanish *uno cualquiera*: at-issue, random choice only,
@@ -125,11 +125,11 @@ def unoCualquiera : ModalIndefiniteEntry where
 
 
 -- ════════════════════════════════════════════════════
--- § 5. French *n'importe quel* (Jayez & Tovena 2006)
+-- § 5. French *n'importe quel* (@cite{jayez-tovena-2006})
 -- ════════════════════════════════════════════════════
 
 /-- French *n'importe quel*: at-issue, random choice only,
-    not upper-bounded (§6; Jayez & Tovena 2006).
+    not upper-bounded (§6; @cite{jayez-tovena-2006}).
 
     Note: at-issue status and non-upper-boundedness are inferred from
     the cited source; @cite{alonso-ovalle-royer-2024} discusses content only. -/
@@ -146,11 +146,11 @@ def nimporteQuel : ModalIndefiniteEntry where
 
 
 -- ════════════════════════════════════════════════════
--- § 6. Italian *un qualsiasi* (Chierchia 2013)
+-- § 6. Italian *un qualsiasi* (@cite{chierchia-2013})
 -- ════════════════════════════════════════════════════
 
 /-- Italian *un qualsiasi*: at-issue, random choice,
-    not upper-bounded (§6; Chierchia 2013, §5.3.2).
+    not upper-bounded (§6; @cite{chierchia-2013}, §5.3.2).
 
     Note: at-issue status and non-upper-boundedness are inferred from
     the cited source; @cite{alonso-ovalle-royer-2024} discusses content only. -/

@@ -1,7 +1,7 @@
 import Linglib.Phenomena.AuxiliaryVerbs.Typology
 
 /-!
-# Negative Auxiliaries (Anderson 2006 §1.7.2)
+# Negative Auxiliaries (@cite{anderson-2006} §1.7.2)
 @cite{anderson-2006} @cite{miestamo-2005}
 
 Some languages express sentential negation through a **negative auxiliary verb**

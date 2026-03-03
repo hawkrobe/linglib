@@ -9,7 +9,7 @@ import Linglib.Fragments.Chuj.ModalIndefinites
 # Bridge: Kratzer Anchoring ↔ Modal Indefinite Data
 @cite{alonso-ovalle-royer-2024} @cite{coon-2019} @cite{hacquard-2006}
 
-Connects the event-relative modality theory (Hacquard 2006, formalized in
+Connects the event-relative modality theory (@cite{hacquard-2006}, formalized in
 `Theories/Semantics/Modality/EventRelativity`) to the empirical data on
 modal indefinites (@cite{alonso-ovalle-royer-2024}, in `Phenomena/ModalIndefinites/Data`).
 
@@ -26,7 +26,7 @@ modal indefinites (@cite{alonso-ovalle-royer-2024}, in `Phenomena/ModalIndefinit
    the verb is volitional (has a decision subevent). Non-volitional
    verbs yield epistemic only even for internal arguments / adjuncts.
 
-4. **Voice → Position**: The Chuj voice system (Coon 2019, formalized in
+4. **Voice → Position**: The Chuj voice system (@cite{coon-2019}, formalized in
    `Fragments/Chuj/VerbBuilding`) determines whether a DP is external
    or internal, which feeds into (1).
 

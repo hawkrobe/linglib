@@ -52,7 +52,7 @@ A tense operator takes:
 abbrev TenseOp (W Time : Type*) := SitProp W Time → Situation W Time → Situation W Time → Prop
 
 /--
-PAST operator (Mendes 2025 style)
+PAST operator (@cite{mendes-2025} style)
 
 ⟦PAST⟧ = λP.λs.λs'. τ(s) < τ(s') ∧ P(s)
 
@@ -64,7 +64,7 @@ def PAST {W Time : Type*} [LT Time] : TenseOp W Time :=
   λ P s s' => s.time < s'.time ∧ P s
 
 /--
-PRES operator (Mendes 2025 style)
+PRES operator (@cite{mendes-2025} style)
 
 ⟦PRES⟧ = λP.λs.λs'. τ(s) = τ(s') ∧ P(s)
 
@@ -76,7 +76,7 @@ def PRES {W Time : Type*} : TenseOp W Time :=
   λ P s s' => s.time = s'.time ∧ P s
 
 /--
-FUT operator (Mendes 2025 style)
+FUT operator (@cite{mendes-2025} style)
 
 ⟦FUT⟧ = λP.λs.λs'. τ(s) > τ(s') ∧ P(s)
 

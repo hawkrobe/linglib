@@ -228,12 +228,12 @@ def contextPrior : ContextSet → ℚ
 
 
 /-!
-## Connection to S&T (2025) and @cite{warstadt-2022}
+## Connection to @cite{scontras-tonhauser-2025} and @cite{warstadt-2022}
 
 This implementation demonstrates that @cite{qing-goodman-lassiter-2016} uses the same
 mathematical structure as S&T and Warstadt:
 
-| Component | Qing 2016 | S&T 2025 | Warstadt 2022 |
+| Component | @cite{qing-goodman-lassiter-2016} | @cite{scontras-tonhauser-2025} | @cite{warstadt-2022} |
 |-----------|-----------|----------|---------------|
 | World | (past, now) | (BEL, C) | (hasDog, sick) |
 | Latent var | ContextSet | BeliefState | Context |

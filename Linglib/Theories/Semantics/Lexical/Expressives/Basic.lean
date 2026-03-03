@@ -193,7 +193,7 @@ inductive CIExprType where
   deriving Repr, DecidableEq, BEq
 
 /--
-Properties of CI expressions (Potts 2005 §2.5).
+Properties of CI expressions (@cite{potts-2005} §2.5).
 -/
 structure CIExprProperties where
   /-- CI is speaker-oriented (vs subject-oriented) -/
@@ -312,7 +312,7 @@ def isFelicitous (exprType : CIExprType) (target : String) (ctx : CIContext) : B
   | _ => true  -- Other types: context-independent
 
 -- ============================================================================
--- CI Bifurcation for De Re Presupposition (Wang & Buccola 2025)
+-- CI Bifurcation for De Re Presupposition (@cite{wang-2025})
 -- ============================================================================
 
 /-!

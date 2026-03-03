@@ -23,7 +23,7 @@ This interacts with verb semantics to produce implicit causality (IC) bias. @cit
 namespace Core.Discourse.CoherenceRelation
 
 -- ════════════════════════════════════════════════════
--- § 1. Coherence Classes (Kehler 2002, after Hume 1748)
+-- § 1. Coherence Classes (@cite{kehler-2002}, after Hume 1748)
 -- ════════════════════════════════════════════════════
 
 /-- Kehler's three coherence classes, corresponding to Hume's three
@@ -91,7 +91,7 @@ def CoherenceRelation.selectsEffect (r : CoherenceRelation) : Bool :=
 -- ════════════════════════════════════════════════════
 
 /-- German/English connective forms used as experimental stimuli
-    (Solstad & Bott 2022, Exps 1–4). -/
+    (@cite{solstad-bott-2022}, Exps 1–4). -/
 inductive Connective where
   | because     -- "weil" / "because" → I-Caus
   | andSo       -- "sodass" / "and so" → I-Cons

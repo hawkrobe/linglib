@@ -218,7 +218,7 @@ See: `Theories/RSA/Implementations/BergenGoodman2015.lean`
 - Exhaustivity via exhaustification operator (Exh)
 - Stress marks what's "at issue"
 
-### Question-Answer Congruence (G&S 1984)
+### Question-Answer Congruence (@cite{groenendijk-stokhof-1984})
 
 - Stressed material must match question's "wh" position
 - Exhaustivity from partition semantics of questions

@@ -37,7 +37,7 @@ open Minimalism
 -- Part 1: Argument Domain
 -- ═══════════════════════════════════════════════════════════════
 
-/-- The argument domain of an extended projection (Anand et al. 2025, Def 4).
+/-- The argument domain of an extended projection (@cite{anand-mccloskey-2025}, Def 4).
 
     The argument domain is the most inclusive projection in the EP that
     denotes type ⟨e,t⟩ (a property). This is the domain relevant for
@@ -77,7 +77,7 @@ def argumentDomainSpine (topCat : Cat) : List Cat → List Cat :=
     iff they have the same category AND complement category. Case is
     included because it is assigned within the argument domain: a V that
     assigns dative is structurally distinct from one that assigns
-    accusative (Merchant 2001, Anand et al. 2021 §5.5). -/
+    accusative (@cite{merchant-2001}, @cite{anand-hardt-mccloskey-2021} §5.5). -/
 structure HeadPair where
   /-- The category of the head -/
   head : Cat
@@ -127,7 +127,7 @@ partial def extractHeadPairs (so : SyntacticObject) (topCat : Cat) : List HeadPa
 -- Part 3: Syntactic Identity
 -- ═══════════════════════════════════════════════════════════════
 
-/-- Lexical identity of head pairs (Anand et al. 2025, Def 5):
+/-- Lexical identity of head pairs (@cite{anand-mccloskey-2025}, Def 5):
     Two head pairs are lexically identical iff they have the same
     head category, complement category, and assigned case (when both
     specify case).
@@ -166,7 +166,7 @@ def matchHeadPairs : List HeadPair → List HeadPair → Bool
     | some remaining => matchHeadPairs rest remaining
     | none => false
 
-/-- Structural identity (Anand et al. 2025, Def 6):
+/-- Structural identity (@cite{anand-mccloskey-2025}, Def 6):
     Two sets of head pairs are structurally identical iff they can be
     put in 1-1 correspondence where each pair is lexically identical.
 
@@ -209,10 +209,10 @@ def mkSluicingLicense (antecedent ellipsis : SyntacticObject)
 -- Part 5: Bridge Theorems — SIC Predictions
 -- ═══════════════════════════════════════════════════════════════
 
--- Voice Mismatch Resolution (AHM 2025)
+-- Voice Mismatch Resolution (@cite{anand-hardt-mccloskey-2021})
 
 /-- Voice is within the argument domain (F1, same level as v).
-    AHM 2025: voice mismatches ARE blocked by the SIC because
+    @cite{anand-hardt-mccloskey-2021}: voice mismatches ARE blocked by the SIC because
     v[agentive] ≠ v[nonThematic] within the argument domain. -/
 theorem voice_flavor_in_argdomain :
     isInArgumentDomain .Voice .C = true := by decide
@@ -354,7 +354,7 @@ theorem case_match_licenses_sluicing :
   native_decide
 
 -- ═══════════════════════════════════════════════════════════════
--- Part 6: e-GIVENness (Merchant 2001)
+-- Part 6: e-GIVENness (@cite{merchant-2001})
 -- ═══════════════════════════════════════════════════════════════
 
 /-- e-GIVENness: the semantic identity condition for ellipsis.
@@ -403,7 +403,7 @@ structure EllipsisLicense (Prop' : Type) where
   nominal : Option NominalEllipsisLicense := none
 
 -- ═══════════════════════════════════════════════════════════════
--- Part 8: Nominal Argument Domain (Saab 2026)
+-- Part 8: Nominal Argument Domain (@cite{saab-2026})
 -- ═══════════════════════════════════════════════════════════════
 
 /-- N is within the nominal argument domain (F0 ≤ F1 = n). -/

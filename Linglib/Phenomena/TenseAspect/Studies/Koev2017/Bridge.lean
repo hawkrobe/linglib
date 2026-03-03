@@ -46,7 +46,7 @@ open Semantics.Tense.Evidential
 open Fragments.Bulgarian.Evidentials
 
 -- ════════════════════════════════════════════════════
--- § 1. Learning Scenarios (Koev 2017, §4)
+-- § 1. Learning Scenarios (@cite{koev-2017}, §4)
 -- ════════════════════════════════════════════════════
 
 /-- A learning scenario: the evidential introduces a

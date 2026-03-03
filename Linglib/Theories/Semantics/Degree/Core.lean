@@ -150,7 +150,7 @@ def antonymMeaning {max : Nat} (d : Degree max) (t : Threshold max) : Bool :=
   d ≤ (t : Degree max)
 
 -- ════════════════════════════════════════════════════
--- § 5. Degree Modifiers (Kennedy & McNally 2005; Israel 2011)
+-- § 5. Degree Modifiers (@cite{kennedy-mcnally-2005}; @cite{israel-2011})
 -- ════════════════════════════════════════════════════
 
 /-- Degree modifier direction — same axis as NPI scalar direction. -/

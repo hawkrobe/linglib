@@ -3,7 +3,7 @@ import Linglib.Core.SocialMeaning
 import Mathlib.Tactic.Linarith
 
 /-!
-# Eckert-Montague Lift (Burnett 2019, Definition 3.4)
+# Eckert-Montague Lift (@cite{burnett-2019}, Definition 3.4)
 @cite{burnett-2019}
 
 Burnett's set-theoretic reinterpretation of @cite{eckert-2008}'s indexical

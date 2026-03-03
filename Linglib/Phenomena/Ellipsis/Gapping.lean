@@ -311,11 +311,11 @@ theorem mixed_allows_both :
   constructor <;> rfl
 
 -- ============================================================================
--- Identity Conditions (AHM 2025)
+-- Identity Conditions (@cite{anand-hardt-mccloskey-2021})
 -- ============================================================================
 
 /-- Does this ellipsis type require syntactic identity (SIC)?
-    AHM 2025: sluicing and gapping require structural matching;
+    @cite{anand-hardt-mccloskey-2021}: sluicing and gapping require structural matching;
     VP ellipsis does not. -/
 def requiresSyntacticIdentity : EllipsisType → Bool
   | .sluicing => true
@@ -324,7 +324,7 @@ def requiresSyntacticIdentity : EllipsisType → Bool
   | .vpEllipsis => false
 
 /-- Does this ellipsis type require semantic identity (e-GIVENness)?
-    AHM 2025: all ellipsis types require e-GIVENness. -/
+    @cite{anand-hardt-mccloskey-2021}: all ellipsis types require e-GIVENness. -/
 def requiresSemanticIdentity : EllipsisType → Bool
   | _ => true
 

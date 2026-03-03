@@ -36,8 +36,7 @@ precede the forgetting.
 
 ## SMINC Generalization
 
-**Selectivity of Modal Insertion in Non-finite Contexts** (Williams
-2025, p. 8, (15)): the covert modal Mod heads the complement of
+**Selectivity of Modal Insertion in Non-finite Contexts** (@cite{ippolito-kiss-williams-2025}, p. 8, (15)): the covert modal Mod heads the complement of
 *forget* just in case the complement is a plain infinitive.
 
 -/
@@ -113,7 +112,7 @@ theorem sminc_finite_no_modal :
     needsModalInsertion .finiteClause = false := rfl
 
 -- ============================================================================
--- §4. Comparison with Modalized Complement Analysis (White 2014)
+-- §4. Comparison with Modalized Complement Analysis (@cite{white-2014})
 -- ============================================================================
 
 /-- The MCA predicts modal insertion for ALL non-finite

@@ -1,7 +1,7 @@
 import Linglib.Theories.Semantics.Modality.Kratzer
 
 /-!
-# Conditional Modality Data — Rain and Wet Streets (Kratzer 2012 §2.9)
+# Conditional Modality Data — Rain and Wet Streets (@cite{kratzer-2012} §2.9)
 
 Four worlds with two properties (rain, wet street) and a causal regularity:
 

@@ -39,7 +39,7 @@ inductive ModifierType where
   | interval     -- "between ... and ..."
   | exactifier   -- "exactly", "precisely"
   | bound        -- "at least", "at most", "more than", "fewer than", "up to", "from...on"
-  | approximator -- "almost", "nearly": proximal + polar (Nouwen 2006)
+  | approximator -- "almost", "nearly": proximal + polar (@cite{nouwen-2006})
   deriving Repr, DecidableEq, BEq
 
 /--
@@ -87,7 +87,7 @@ structure NumeralModifierEntry where
   boundDir : Option BoundDirection := none
   /-- Modifier class (for bound-setting modifiers) -/
   modClass : Option ModifierClass := none
-  /-- Evaluative valence (Blok 2015 / Claus & Walch 2024) -/
+  /-- Evaluative valence (@cite{blok-2015} / @cite{claus-walch-2024}) -/
   evaluativeValence : EvaluativeValence := .neutral
   /-- Does this modifier generate ignorance implicatures? -/
   generatesIgnorance : Bool := false
@@ -233,7 +233,7 @@ def precisely : NumeralModifierEntry :=
   }
 
 -- ============================================================================
--- Bound-Setting Modifiers (Kennedy 2015)
+-- Bound-Setting Modifiers (@cite{kennedy-2015})
 -- ============================================================================
 
 /-- "at least n": Class B lower bound (max ≥ n).
@@ -340,7 +340,7 @@ def fromOn : NumeralModifierEntry :=
   }
 
 -- ============================================================================
--- Approximators (Nouwen 2006)
+-- Approximators (@cite{nouwen-2006})
 -- ============================================================================
 
 /--
@@ -468,7 +468,7 @@ theorem only_tolerance_sorites :
   constructor <;> native_decide
 
 -- ============================================================================
--- Verification: Kennedy 2015 Class A/B Properties
+-- Verification: @cite{kennedy-2015} Class A/B Properties
 -- ============================================================================
 
 /-- All Class B modifiers generate ignorance implicatures. -/

@@ -53,7 +53,7 @@ open Semantics.Lexical.Noun.Kind.Dayal2004
 open Semantics.Lexical.Noun.Kind.Krifka2004
 open Phenomena.Generics.KindReference
 
--- Carlson 1977: The Foundation
+-- @cite{carlson-1977}: The Foundation
 
 /-!
 ## Carlson's Foundational Insights
@@ -69,7 +69,7 @@ open Phenomena.Generics.KindReference
 
 ### How Subsequent Theories Relate
 
-Chierchia 1998 formalizes Carlson's R relation as the ∪ operator:
+@cite{chierchia-1998} formalizes Carlson's R relation as the ∪ operator:
 - Carlson: `R y k` means "y is a stage/realization of k"
 - Chierchia: `x ∈ ∪k(w)` means "x is in the extension of kind k at world w"
 
@@ -77,7 +77,7 @@ Chierchia's DKP is Carlson's stage-level predication:
 - Carlson: `stageLevelPred R P k = ∃y[R(y,k) ∧ P(y)]`
 - Chierchia: `DKP P k w = ∃x[x ∈ ∪k(w) ∧ P(x)]`
 
-Krifka 2004 departs from Carlson:
+@cite{krifka-2004} departs from Carlson:
 - Rejects kinds as basic; bare NPs are properties
 - But keeps the insight: ∃ is introduced locally, yielding narrow scope
 -/
@@ -114,7 +114,7 @@ theorem carlson_chierchia_structural_equivalence :
 /--
 Predicate classification equivalence:
 
-| Carlson 1977 | Chierchia 1998 | Effect |
+| @cite{carlson-1977} | @cite{chierchia-1998} | Effect |
 |--------------|----------------|--------|
 | Stage-level (states) | Object-level | Triggers DKP / R-predication |
 | Individual-level (properties) | Kind-level | Direct predication of kind |
@@ -450,7 +450,7 @@ The theories make different predictions for:
    requires cumulativity.
 -/
 
--- Scrambling: Where Chierchia and Krifka Diverge (Le Bruyn & de Swart 2022)
+-- Scrambling: Where Chierchia and Krifka Diverge (@cite{le-bruyn-de-swart-2022})
 
 /-!
 ## The Scrambling Test Case
@@ -551,7 +551,7 @@ theorem krifka_handles_scrambling_chierchia_doesnt :
   simp [dutchScrambledBoeken, dutchScrambledMensen,
         existentialShiftPositionSensitive, dkpIsLocal]
 
--- Formal Derivations (Le Bruyn & de Swart 2022)
+-- Formal Derivations (@cite{le-bruyn-de-swart-2022})
 
 /-!
 ## Compositional Derivations

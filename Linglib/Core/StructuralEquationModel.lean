@@ -49,7 +49,7 @@ def mkVar (name : String) : Variable := ⟨name⟩
 
 -- Situations (Def 9)
 
-/-- **Situation** (Definition 9 from Nadathur & Lauer 2020)
+/-- **Situation** (Definition 9 from @cite{nadathur-lauer-2020})
 
     A partial valuation: some variables have known values, others are
     undetermined. Situations are *partial* functions — crucial for
@@ -129,7 +129,7 @@ theorem Situation.trueLE_trans {s₁ s₂ s₃ : Situation}
 
 -- Causal Laws (Def 10)
 
-/-- **Causal Law** (Definition 10 from Nadathur & Lauer 2020)
+/-- **Causal Law** (Definition 10 from @cite{nadathur-lauer-2020})
 
     A causal law specifies: if all preconditions hold, the effect follows.
     In notation: ⟨{(v₁, val₁), …, (vₙ, valₙ)}, (vₑ, valₑ)⟩. -/
@@ -688,10 +688,10 @@ def manipulates (dyn : CausalDynamics) (s : Situation)
   valT != valF
 
 -- ============================================================
--- § Counterfactual Queries (N&L 2020 Definitions 23-24)
+-- § Counterfactual Queries (@cite{nadathur-lauer-2020} Definitions 23-24)
 -- ============================================================
 
-/-- **Causal Sufficiency** (N&L 2020, Definition 23).
+/-- **Causal Sufficiency** (@cite{nadathur-lauer-2020}, Definition 23).
     C is causally sufficient for E in situation s iff adding C and
     developing normally produces E. -/
 def causallySufficient (dyn : CausalDynamics) (s : Situation)
@@ -700,7 +700,7 @@ def causallySufficient (dyn : CausalDynamics) (s : Situation)
   let developed := normalDevelopment dyn sWithCause
   developed.hasValue effect true
 
-/-- **Causal Necessity** (N&L 2020, Definition 24).
+/-- **Causal Necessity** (@cite{nadathur-lauer-2020}, Definition 24).
     C is causally necessary for E in situation s iff removing C and
     developing normally does NOT produce E. -/
 def causallyNecessary (dyn : CausalDynamics) (s : Situation)

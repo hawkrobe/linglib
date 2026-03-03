@@ -11,7 +11,7 @@ to the GQ property predicates in `Core.Quantification` and
 
 ## Empirical phenomena verified
 
-1. **Conservativity** (Barwise & Cooper 1981, Conjecture 1): all six English
+1. **Conservativity** (@cite{barwise-cooper-1981}, Conjecture 1): all six English
    quantity words (no, few, some, half, most, every) satisfy CONSERV.
 2. **Quantity/isomorphism closure**: all six satisfy QUANT.
 3. **Monotonicity–strength correlation** (B&C U7): strong determiners are
@@ -53,7 +53,7 @@ open Semantics.Lexical.Determiner.Quantifier (FiniteModel)
 -- ============================================================================
 
 /-- Conservativity holds for all simple (lexicalized) English determiners
-    (Barwise & Cooper 1981, Conjecture 1). Proved individually for each
+    (@cite{barwise-cooper-1981}, Conjecture 1). Proved individually for each
     quantity word via `every_conservative`, `some_conservative`, etc. -/
 theorem conservativity_universal :
   ∀ (q : QuantityWord) (m : Model) [FiniteModel m],
@@ -153,7 +153,7 @@ theorem quantity_universal :
 
 /-- Monotone quantifiers have strictly lower LZ complexity than
     non-monotone ones. This is the strongest of the three effects.
-    (van de Pol et al. 2023, Table 2, Model M|universe=4|) -/
+    (@cite{van-de-pol-etal-2023}, Table 2, Model M|universe=4|) -/
 structure MonotonicitySimplicity where
   /-- Mean LZ complexity of monotone quantifiers (universe size 4) -/
   monotone_mean_lz : ℚ
@@ -190,7 +190,7 @@ structure UniversalsSimplicityRanking where
 
 /-- All English quantity words except "half" are monotone.
     "Half" is the lone non-monotone simple determiner in the scale
-    (van de Pol et al. 2023 classify it as non-monotone). -/
+    (@cite{van-de-pol-etal-2023} classify it as non-monotone). -/
 theorem english_quantifiers_mostly_monotone :
     ([QuantityWord.none_, .few, .some_, .most, .all].map QuantityWord.monotonicity).all
       (· != .nonMonotone) = true := by native_decide

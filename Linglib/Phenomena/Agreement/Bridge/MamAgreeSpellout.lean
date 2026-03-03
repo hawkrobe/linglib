@@ -26,13 +26,13 @@ In a Mam transitive clause with a 3SG agent and 3SG patient:
    filled by the Elsewhere form "∅" (default 2/3SG).
 
 3. **Object is case-licensed by Voice**: The patient receives structural
-   ACC from Voice (low-abs syntax; Scott 2023, §3.4). Infl's probe
+   ACC from Voice (low-abs syntax; @cite{scott-2023}, §3.4). Infl's probe
    never reaches the object because it was satisfied by Voice_TR.
 
 4. **Pronoun realization follows**: Agreed-with arguments (agent, S)
    undergo pronoun reduction — agreement morphology redundantly
    expresses their φ-features, triggering deletion of the pronominal
-   base (Scott 2023, ch. 4). The patient, lacking φ-agreement, must
+   base (@cite{scott-2023}, ch. 4). The patient, lacking φ-agreement, must
    be a full overt pronoun.
 
 ## Two Paths to Set B "∅"
@@ -315,7 +315,7 @@ theorem different_probe_heads :
     MamArgPosition.patient.agreeProbe = none := ⟨rfl, rfl, rfl⟩
 
 -- ============================================================================
--- § 11: Connecting to Obligatory Operations (Preminger 2014, Ch. 5)
+-- § 11: Connecting to Obligatory Operations (@cite{preminger-2014}, Ch. 5)
 -- ============================================================================
 
 /-- The transitive Set B default is an instance of Preminger's probe failure:

@@ -13,7 +13,7 @@ conversational inferences? *Journal of Semantics* 42(1–2): 39–55.
 ## Core Contribution
 
 Tests whether the competence assumption in scalar implicature derivation
-(step 5 of Soames 1982 / Horn 1989 / Sauerland 2004) is a cognitive default
+(step 5 of @cite{soames-1982} / @cite{horn-1989} / @cite{sauerland-2004}) is a cognitive default
 or must be contextually licensed. The 5-step derivation:
 
 1. Speaker said φ (e.g., "some of the marbles are red")

@@ -7,7 +7,7 @@ import Linglib.Core.RootDimensions
 Theory-neutral empirical data on diathesis alternation participation.
 
 The four verbs *break*, *cut*, *hit*, *touch* form a canonical diagnostic
-quadruple (Levin 1993:5–10): each participates in a distinct subset of
+quadruple (@cite{levin-1993}:5–10): each participates in a distinct subset of
 the causative/inchoative, middle, conative, and body-part possessor
 ascension alternations. Additional verbs demonstrate the locative
 (*spray/load*) and dative (*give/send*) alternations.

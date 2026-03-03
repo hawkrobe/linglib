@@ -23,7 +23,7 @@ Theories/) lives in `Questions.TypologyBridge`.
 namespace Phenomena.Questions.Typology
 
 -- ============================================================================
--- B. Clause-typing variation (Dayal 2025: §4.4)
+-- B. Clause-typing variation (@cite{dayal-2025}: §4.4)
 -- ============================================================================
 
 /-- How a language handles clause-typing for polar questions at CP. -/
@@ -57,7 +57,7 @@ def italian_simplex : SimplexPolarDatum :=
 
 -- Hindi-Urdu: simplex polar questions require PerspP (rising intonation activates
 -- +WH at PerspP level). No wh-complementizer → cannot clause-type at CP.
--- Dayal 2025: (70)–(71)
+-- @cite{dayal-2025}: (70)–(71)
 def hindi_urdu_simplex : SimplexPolarDatum :=
   { language := "Hindi-Urdu", clauseTyping := .delayed
   , matrixOk := true, quasiSubOk := true, subordinationOk := false }
@@ -75,7 +75,7 @@ theorem delayed_blocks_simplex_subordination :
     simp_all [english_simplex, italian_simplex, hindi_urdu_simplex]
 
 -- ============================================================================
--- C. Declarative questions and bias (Dayal 2025: §4.3)
+-- C. Declarative questions and bias (@cite{dayal-2025}: §4.3)
 -- ============================================================================
 
 /-- Whether declarative questions in a language are obligatorily biased.
@@ -110,7 +110,7 @@ def allDeclQData : List DeclarativeQuestionDatum :=
   [english_decl_q, hindi_urdu_decl_q, italian_decl_q]
 
 -- ============================================================================
--- D. Hindi-Urdu shiftiness (Dayal 2025: §3.2, (39)–(41))
+-- D. Hindi-Urdu shiftiness (@cite{dayal-2025}: §3.2, (39)–(41))
 -- ============================================================================
 
 /-- Cross-linguistic shiftiness data. Parallels McCloskey's English data.
@@ -125,25 +125,25 @@ structure CrossLingShiftinessDatum where
   quasiSubOk : Bool
   deriving Repr
 
--- Hindi-Urdu: "want to know" (rogative) freely takes kya: (Dayal 2025: (39a))
+-- Hindi-Urdu: "want to know" (rogative) freely takes kya: (@cite{dayal-2025}: (39a))
 def hindi_urdu_want_to_know : CrossLingShiftinessDatum :=
   { language := "Hindi-Urdu", verb := "ja:n-na: ca:h-na: (want to know)"
   , sentence := "anu ja:nna: ca:hti: hai [ki (kya:) tum cai piyoge↑]"
   , negated := false, questioned := false, quasiSubOk := true }
 
--- Hindi-Urdu: "know" (responsive) rejects kya: (Dayal 2025: (39b))
+-- Hindi-Urdu: "know" (responsive) rejects kya: (@cite{dayal-2025}: (39b))
 def hindi_urdu_know_bare : CrossLingShiftinessDatum :=
   { language := "Hindi-Urdu", verb := "ja:n-na: (know)"
   , sentence := "*anu ja:nti: hai [ki (kya:) tum cai piyoge↑]"
   , negated := false, questioned := false, quasiSubOk := false }
 
--- Hindi-Urdu: "nobody knows" + kya: → OK (negation, Dayal 2025: (41a))
+-- Hindi-Urdu: "nobody knows" + kya: → OK (negation, @cite{dayal-2025}: (41a))
 def hindi_urdu_know_negated : CrossLingShiftinessDatum :=
   { language := "Hindi-Urdu", verb := "ja:n-na: (know)"
   , sentence := "koii nahii jaanta [ki kya: TiTo sTa:lin-se mile the↑]"
   , negated := true, questioned := false, quasiSubOk := true }
 
--- Hindi-Urdu: "does anyone know" + kya: → OK (questioning, Dayal 2025: (41b))
+-- Hindi-Urdu: "does anyone know" + kya: → OK (questioning, @cite{dayal-2025}: (41b))
 def hindi_urdu_know_questioned : CrossLingShiftinessDatum :=
   { language := "Hindi-Urdu", verb := "ja:n-na: (know)"
   , sentence := "kisii-ko bhi maalum hai [ki (kya:) TiTo sTa:lin-se mile the↑]"
@@ -162,7 +162,7 @@ theorem hindi_urdu_shiftiness_parallels_english :
   simp [hindi_urdu_know_bare, hindi_urdu_know_negated, hindi_urdu_know_questioned]
 
 -- ============================================================================
--- E. Newari conjunct/disjunct marking (Dayal 2025: §5.2, Zu 2018)
+-- E. Newari conjunct/disjunct marking (@cite{dayal-2025}: §5.2, @cite{zu-2018})
 -- ============================================================================
 
 /-- Newari uses conjunct vs disjunct verb forms sensitive to whether the subject

@@ -2,7 +2,7 @@ import Linglib.Theories.Semantics.Modality.Kratzer
 import Linglib.Core.Discourse.Evidence
 
 /-!
-# Informational Backgrounds — Kratzer 2012 §2.3d
+# Informational Backgrounds — @cite{kratzer-2012} §2.3d
 
 Epistemic modals with an **informational** (potentially non-realistic) modal base.
 

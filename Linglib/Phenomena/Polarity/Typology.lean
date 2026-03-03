@@ -1,7 +1,7 @@
 import Linglib.Core.Lexical.Word
 
 /-!
-# Indefinite Pronoun Typology (Haspelmath 1997 / WALS Ch 46)
+# Indefinite Pronoun Typology (@cite{haspelmath-1997} / WALS Ch 46)
 @cite{haspelmath-1997} @cite{haspelmath-2013} @cite{kadmon-landman-1993} @cite{ladusaw-1979}
 
 Formalizes the core results of @cite{haspelmath-1997}'s cross-linguistic study of

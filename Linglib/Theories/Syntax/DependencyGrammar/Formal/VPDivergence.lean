@@ -5,7 +5,7 @@ import Linglib.Theories.Syntax.DependencyGrammar.Formal.Catena
 @cite{osborne-2019} @cite{osborne-gross-2012}
 
 Formalizes the central empirical disagreement between Dependency Grammar and
-Phrase Structure Grammar regarding the finite VP (Osborne 2019, Ch. 2–4;
+Phrase Structure Grammar regarding the finite VP (@cite{osborne-2019}, Ch. 2–4;
 Osborne, Putnam & Groß 2012, *Syntax* 15:4).
 
 **The core claim**: In DG, the finite VP (verb + complements, excluding subject)
@@ -49,7 +49,7 @@ def nonConstituentCatenae (n : Nat) (deps : List Dependency) : List (List Nat) :
     isCatena deps nodes && !isConstituent deps n nodes)
 
 /-- Strict containment for tree (9): constituents < catenae.
-    (4 constituents < 10 catenae, Osborne et al. 2012, p. 359) -/
+    (4 constituents < 10 catenae, @cite{osborne-gross-2012}, p. 359) -/
 theorem strict_containment_tree9 :
     constituentCount 4 tree9 < catenaeCount 4 tree9 := by native_decide
 
@@ -132,7 +132,7 @@ def PSTree.hasConstituent (t : PSTree) (ws : List String) : Bool :=
 
 -- Word.mk' from Core/Basic.lean replaces the private mkw pattern
 
-/-! ### "Bill plays chess" (Osborne 2019, p. 92, example 24)
+/-! ### "Bill plays chess" (@cite{osborne-2019}, p. 92, example 24)
 
 DG analysis:
 ```
@@ -172,7 +172,7 @@ def billPlaysChess_psg : PSTree :=
     ]
   ]
 
-/-! ### "She reads everything" (Osborne 2019, p. 46, example 12)
+/-! ### "She reads everything" (@cite{osborne-2019}, p. 46, example 12)
 
 DG: reads(0) → she(1), reads(0) → everything(2).
 {reads, everything} is catena not constituent.
@@ -197,7 +197,7 @@ def sheReadsEverything_psg : PSTree :=
     ]
   ]
 
-/-! ### "They will get the teacher a present" (Osborne 2019, p. 95–97, ex. 30–34)
+/-! ### "They will get the teacher a present" (@cite{osborne-2019}, p. 95–97, ex. 30–34)
 
 DG analysis — flat tree from `will`:
 ```
@@ -336,7 +336,7 @@ theorem full_vp_not_constituent_theyWillGet :
 -- Section 5: Constituency Test Predictions
 -- ============================================================================
 
-/-- The five standard constituency tests (Osborne 2019, p. 92, ex. 25). -/
+/-- The five standard constituency tests (@cite{osborne-2019}, p. 92, ex. 25). -/
 inductive ConstituencyTest where
   | topicalization
   | clefting
@@ -358,7 +358,7 @@ instance : BEq TestResult where
              a.observed == b.observed
 
 /-- Constituency test results for the finite VP "plays chess"
-    (Osborne 2019, p. 92, example 25):
+    (@cite{osborne-2019}, p. 92, example 25):
 
     - Topicalization: *"...and plays chess Bill" → FAIL
     - Clefting: *"It is plays chess that Bill does" → FAIL

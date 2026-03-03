@@ -24,7 +24,7 @@ roots in DM:
    the first categorizer (evidence: multiply derived words like *editorial*,
    *classifieds*, *nationalize*). Voice is the phase head.
 
-## DM Three-Lists Architecture (Marantz 1997, Harley 2014 §5)
+## DM Three-Lists Architecture (@cite{marantz-1997}, @cite{harley-2014} §5)
 
 - **List 1**: Root terminal nodes — syntactic atoms with opaque indices
 - **List 2**: Vocabulary Items — phonological realizations competing for insertion
@@ -45,7 +45,7 @@ open Minimalism
 
 /-- A categorizing head that merges with an acategorial root to project
     syntactic structure. The three options correspond to the functional
-    heads n, v, a in Distributed Morphology (Marantz 1997, Harley 2014 §2). -/
+    heads n, v, a in Distributed Morphology (@cite{marantz-1997}, @cite{harley-2014} §2). -/
 inductive Categorizer where
   | n  -- nominal categorizer
   | v  -- verbal categorizer
@@ -63,7 +63,7 @@ def Categorizer.toCategory : Categorizer → Cat
 -- ============================================================================
 
 /-- A root that has been merged with a categorizing head, yielding a
-    syntactically projectable unit (Harley 2014 §2). -/
+    syntactically projectable unit (@cite{harley-2014} §2). -/
 structure CategorizedRoot where
   /-- The acategorial root (arity, change-type, etc.) -/
   root : Root
@@ -82,7 +82,7 @@ def CategorizedRoot.category (cr : CategorizedRoot) : Cat :=
 /-- Same root + different categorizer → different syntactic category.
     This is the formal content of the claim that √HAMMER can surface as
     either a noun (hammer) or a verb (to hammer) — same root, different
-    category, determined entirely by the categorizer (Harley 2014 §2). -/
+    category, determined entirely by the categorizer (@cite{harley-2014} §2). -/
 theorem same_root_different_category (r : Root) (c1 c2 : Categorizer)
     (h : c1 ≠ c2) :
     (CategorizedRoot.mk r c1).category ≠ (CategorizedRoot.mk r c2).category := by
@@ -90,7 +90,7 @@ theorem same_root_different_category (r : Root) (c1 c2 : Categorizer)
   cases c1 <;> cases c2 <;> simp_all
 
 /-- Complement selection is a root-level property, not contributed by the
-    categorizer (Harley 2014 §3). Evidence:
+    categorizer (@cite{harley-2014} §3). Evidence:
 
     1. *one*-replacement in argument structure nominals: "the proud owner
        of a large dog" → "the proud one" — *one* replaces nP including
@@ -108,7 +108,7 @@ theorem complement_selection_at_root_level (r : Root) (c1 c2 : Categorizer) :
     (CategorizedRoot.mk r c1).root.arity = (CategorizedRoot.mk r c2).root.arity := rfl
 
 /-- A theme-selecting root maintains its complement requirement regardless
-    of whether it surfaces as a noun, verb, or adjective (Harley 2014 §3). -/
+    of whether it surfaces as a noun, verb, or adjective (@cite{harley-2014} §3). -/
 theorem theme_selecting_root_always_selects (r : Root) (c : Categorizer)
     (h : r.arity = .selectsTheme) :
     (CategorizedRoot.mk r c).root.arity.hasInternalArg = true := by
@@ -178,7 +178,7 @@ theorem recategorization_changes_category (cr : CategorizedRoot)
     category (V), but have different internal structure. √HAMMER + v gives
     V directly; √HAMMER + n + v also gives V but via layered derivation.
     This structural ambiguity is invisible at the category level
-    (Harley 2014 §2, p. 253). -/
+    (@cite{harley-2014} §2, p. 253). -/
 theorem denominal_yields_verbal (r : Root) :
     ∃ cr, (CategorizedRoot.mk r .n).recategorize .denominal = some cr ∧
           cr.category = Cat.V :=
@@ -210,27 +210,27 @@ theorem deadjectival_source_target :
    Formal consequence: categorizers are never phase heads,
    while `VoiceHead.phaseHead` can be `true`. -/
 
-/-- Categorizers are never phase heads (Harley 2014 §4). -/
+/-- Categorizers are never phase heads (@cite{harley-2014} §4). -/
 def Categorizer.isPhaseHead : Categorizer → Bool
   | _ => false
 
-/-- No categorizer is a phase head (Harley 2014 §4). -/
+/-- No categorizer is a phase head (@cite{harley-2014} §4). -/
 theorem categorizer_never_phase (c : Categorizer) :
     c.isPhaseHead = false := by cases c <;> rfl
 
 /-- Agentive Voice IS a phase head — it demarcates the boundary above which
-    interpretation must be compositional (Harley 2014 §4). -/
+    interpretation must be compositional (@cite{harley-2014} §4). -/
 theorem agentive_voice_is_phase : voiceAgent.phaseHead = true := rfl
 
 /-- The phase-boundary asymmetry: Voice can be a phase head while
     categorizers never are. This is why idiosyncratic interpretation
-    extends past categorizers but not past Voice (Harley 2014 §4). -/
+    extends past categorizers but not past Voice (@cite{harley-2014} §4). -/
 theorem phase_boundary_at_voice_not_categorizer (c : Categorizer) :
     c.isPhaseHead = false ∧ voiceAgent.phaseHead = true :=
   ⟨by cases c <;> rfl, rfl⟩
 
-/-- Voice introduces the external argument (Harley 2014 §4, following
-    Kratzer 1996). The categorizer does NOT introduce arguments —
+/-- Voice introduces the external argument (@cite{harley-2014} §4, following
+    @cite{kratzer-1996}). The categorizer does NOT introduce arguments —
     complement selection is a root property (§3). -/
 theorem voice_introduces_external_arg :
     voiceAgent.hasD = true ∧ voiceAgent.assignsTheta = true :=

@@ -225,16 +225,16 @@ theorem blocking_tracks_mapping :
     Fragments.French.Nouns.frenchBlocking.iotaBlocked = true := ⟨rfl, rfl, rfl⟩
 
 -- ============================================================================
--- Part II: Universals (Aikhenvald 2000, Chapters 11 and 15)
+-- Part II: Universals (@cite{aikhenvald-2000}, Chapters 11 and 15)
 -- ============================================================================
 
 -- ============================================================================
--- §7: Agreement universals (Aikhenvald 2000, Table 15.1)
+-- §7: Agreement universals (@cite{aikhenvald-2000}, Table 15.1)
 -- ============================================================================
 
 /-- U1 (Aikhenvald Table 15.1): Noun class / gender systems require agreement.
     This is definitional — agreement is what makes a noun class system a
-    "class" rather than a "classifier" (Dixon 1982, Table 1.2). -/
+    "class" rather than a "classifier" (@cite{dixon-1982}, Table 1.2). -/
 axiom noun_class_requires_agreement :
   ∀ sys : NounCategorizationSystem,
     isNounClassType sys.classifierType = true →
@@ -249,7 +249,7 @@ axiom numeral_classifier_no_agreement :
     sys.hasAgreement = false
 
 -- ============================================================================
--- §8: Assignment universals (Aikhenvald 2000, §11.1, Table 15.2)
+-- §8: Assignment universals (@cite{aikhenvald-2000}, §11.1, Table 15.2)
 -- ============================================================================
 
 /-- U3 (Aikhenvald §11.1.1): Classifier selection is always at least partly
@@ -269,7 +269,7 @@ theorem assignment_difference :
     japanese.assignment = .semantic := ⟨rfl, rfl, rfl⟩
 
 -- ============================================================================
--- §9: Semantic parameter universals (Aikhenvald 2000, §11.1.1)
+-- §9: Semantic parameter universals (@cite{aikhenvald-2000}, §11.1.1)
 -- ============================================================================
 
 /-- U5 (Aikhenvald §11.1.1): Animacy (animate vs. inanimate or human vs.
@@ -309,7 +309,7 @@ theorem animacy_in_both_classifier_systems :
   constructor <;> native_decide
 
 -- ============================================================================
--- §10: Inventory size universals (Aikhenvald 2000, Table 15.1)
+-- §10: Inventory size universals (@cite{aikhenvald-2000}, Table 15.1)
 -- ============================================================================
 
 /-- U8 (Aikhenvald Table 15.1): Noun class systems have small inventories
@@ -328,7 +328,7 @@ theorem french_smaller_than_classifiers :
   constructor <;> native_decide
 
 -- ============================================================================
--- §11: Scope universals (Aikhenvald 2000, Table 15.1)
+-- §11: Scope universals (@cite{aikhenvald-2000}, Table 15.1)
 -- ============================================================================
 
 /-- U10 (Aikhenvald Table 15.1): Numeral classifiers operate inside

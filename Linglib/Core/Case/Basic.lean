@@ -43,7 +43,7 @@ inductive AlignmentFamily where
 -- § 2: Case Inventory
 -- ============================================================================
 
-/-- Cross-linguistic case inventory (Blake 1994, Chs. 2, 5).
+/-- Cross-linguistic case inventory (@cite{blake-1994}, Chs. 2, 5).
 
     The 19 values cover the morphological cases attested across Blake's
     typological sample. Ordered roughly by the Blake hierarchy (formalized
@@ -85,7 +85,7 @@ inductive Case where
   | ben
   /-- Causal: reason, cause -/
   | caus
-  -- Finnish/Uralic-specific (Karlsson 2018, Blake 1994 "others")
+  -- Finnish/Uralic-specific (@cite{karlsson-2017}, @cite{blake-1994} "others")
   /-- Essive: state or role ('as X') — Finnish -nA -/
   | ess
   /-- Translative: change of state ('becoming X') — Finnish -ksi -/

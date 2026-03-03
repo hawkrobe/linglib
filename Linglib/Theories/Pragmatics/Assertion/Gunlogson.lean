@@ -109,7 +109,7 @@ def canChallenge (src : CommitmentSource) (role : DiscourseRole) : Bool :=
 -- § 1b. Contextual Bias Condition (Ch. 4 §4.2)
 -- ════════════════════════════════════════════════════
 
-/-- The Contextual Bias Condition (Gunlogson 2001, Ch. 4 §4.2).
+/-- The Contextual Bias Condition (@cite{gunlogson-2001}, Ch. 4 §4.2).
 
     A rising declarative about p is felicitous only when the addressee's
     existing commitments already entail p. This is NOT a free parameter —

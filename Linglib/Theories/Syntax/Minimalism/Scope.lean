@@ -90,7 +90,7 @@ def violatesSuperiority (lower upper : PositionedQuantifier) : Bool :=
   -- In double object, IO c-commands DO; QR of DO over IO violates superiority
   lower.inDoubleObject && upper.inDoubleObject
 
--- Scope Economy (Fox 2000)
+-- Scope Economy (@cite{fox-2000})
 
 /--
 Scope Economy: QR is only licensed if it creates a truth-conditional difference.

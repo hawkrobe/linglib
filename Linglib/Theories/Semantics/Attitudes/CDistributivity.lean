@@ -284,7 +284,7 @@ theorem degreeComparisonLike_implies_cDistributive {W E : Type*}
 
 ### Axiomatized:
 4. `exists_nonCDistributive_worry`: Worry-type predicates can have
-   non-C-distributive semantics (based on Elliott et al. 2017).
+   non-C-distributive semantics (based on @cite{elliott-etal-2017}).
 
 5. `exists_nonCDistributive_care`: Care/relevance predicates can have
    non-C-distributive semantics.

@@ -16,7 +16,7 @@ they predict — lives in `Theories/Morphology/RootTypology.lean` and `Theories/
 -- § 1. Root Type: Change Entailment
 -- ════════════════════════════════════════════════════
 
-/-- Two types of change-of-state verb roots (Beavers et al. 2021 §3.1).
+/-- Two types of change-of-state verb roots (@cite{beavers-etal-2021} §3.1).
 
     **Property concept (PC) roots**: underlie
     deadjectival CoS verbs. The root describes a gradable property
@@ -30,7 +30,7 @@ inductive RootType where
   | result           -- crack, break, shatter — non-deadjectival CoS
   deriving DecidableEq, Repr, BEq
 
-/-- Whether a root lexically entails prior change (Beavers et al. 2021 §3.6).
+/-- Whether a root lexically entails prior change (@cite{beavers-etal-2021} §3.6).
 
     PC roots denote simple states that can hold without any prior change event.
     Result roots denote states that entail a prior change event. -/
@@ -61,14 +61,14 @@ def RootArity.hasInternalArg : RootArity → Bool
 -- § 3. Root Denotation Type
 -- ════════════════════════════════════════════════════
 
-/-- The semantic denotation domain of a root (Coon 2019, (3)).
+/-- The semantic denotation domain of a root (@cite{coon-2019}, (3)).
 
     - **eventPred** ⟨e, ⟨s,t⟩⟩: entity → event → truth-value (√TV, √ITV)
-    - **measureFn** ⟨e, ⟨s,d⟩⟩: entity → event → degree (√POS; Henderson 2017)
+    - **measureFn** ⟨e, ⟨s,d⟩⟩: entity → event → degree (√POS; @cite{henderson-2019})
     - **entityPred** ⟨e,t⟩: entity → truth-value, no event (√NOM) -/
 inductive RootDenotationType where
   | eventPred   -- ⟨e, ⟨s,t⟩⟩ (√TV, √ITV)
-  | measureFn   -- ⟨e, ⟨s,d⟩⟩ (√POS; Henderson 2017)
+  | measureFn   -- ⟨e, ⟨s,d⟩⟩ (√POS; @cite{henderson-2019})
   | entityPred  -- ⟨e,t⟩ (√NOM)
   deriving DecidableEq, BEq, Repr
 
@@ -82,7 +82,7 @@ inductive RootDenotationType where
     1. **Arity**: does it select an internal argument?
     2. **Change entailment**: does it lexically
        entail a prior change event?
-    3. **Denotation type** (Coon 2019, (3)): event predicate, measure
+    3. **Denotation type** (@cite{coon-2019}, (3)): event predicate, measure
        function, or entity predicate.
     4. **Quality dimensions** (Spalek & McNally): within-class root content
     5. **Class membership**: verb class taxonomy
@@ -96,7 +96,7 @@ structure Root where
   arity : RootArity
   /-- Does this root lexically entail prior change? -/
   changeType : RootType
-  /-- Semantic denotation domain (Coon 2019, (3)). Optional — not all
+  /-- Semantic denotation domain (@cite{coon-2019}, (3)). Optional — not all
       roots have been annotated. -/
   denotationType : Option RootDenotationType := none
   /-- Within-class quality dimensions (Spalek & McNally) -/

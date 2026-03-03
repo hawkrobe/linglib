@@ -410,13 +410,13 @@ def PERF_open (p : IntervalPred W Time) : PointPred W Time :=
 -- § 11. Numeral Semantics Bridge
 -- ════════════════════════════════════════════════════
 
-/-! E-TIA expressions are upward monotone in the numeral (Rouillard 2026 §3):
+/-! E-TIA expressions are upward monotone in the numeral (@cite{rouillard-2026} §3):
     "wrote a paper in three days" entails "wrote a paper in four days"
     because τ(e) ⊑ t with |t| = 3 implies τ(e) ⊑ t' with |t'| = 4.
 
     This upward monotonicity is a property of the *expression* "in n days"
     (due to the containment semantics of *in*), NOT of the numeral itself.
-    The numeral "three" can be exact (Kennedy 2015 de-Fregean type-shift:
+    The numeral "three" can be exact (@cite{kennedy-2015} de-Fregean type-shift:
     closed scale → Class B → exact meaning), and the expression is still
     upward monotone because containment is monotone in the interval size.
 

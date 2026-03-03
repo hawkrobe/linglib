@@ -47,7 +47,7 @@ are in `Bridge.lean`.
 21. Optional SOT (Hebrew-type)
 22. Dependent vs independent tense
 
-### Discourse-level phenomena (6) — Declerck 1991/2006
+### Discourse-level phenomena (6) — @cite{declerck-1991}/2006
 23. Temporal domain shift vs subordination
 24. False tense: politeness and tentativeness
 25. PPS vs FPS in conditionals
@@ -730,7 +730,7 @@ def optionalSOTPresentForm : ReichenbachFrame ℤ where
 
 
 -- ════════════════════════════════════════════════════════════════
--- § 22. Dependent vs Independent Tense (Wurmbrand 2014)
+-- § 22. Dependent vs Independent Tense (@cite{wurmbrand-2014})
 -- ════════════════════════════════════════════════════════════════
 
 /-! @cite{wurmbrand-2014} classifies infinitival tense into three types:
@@ -1357,17 +1357,17 @@ theorem preterit_is_perfective :
 
 
 -- ════════════════════════════════════════════════════════════════
--- § 29. Cross-Linguistic Tense Referential Mode (Kratzer 1998)
+-- § 29. Cross-Linguistic Tense Referential Mode (@cite{heim-kratzer-1998})
 -- ════════════════════════════════════════════════════════════════
 
 /-! @cite{heim-kratzer-1998} predicts that the distribution of deictic vs anaphoric
 past tense varies cross-linguistically because surface "past" can decompose
 differently:
 
-**English simple past** = PRESENT + PERFECT (Kratzer 1998 §4). The tense
+**English simple past** = PRESENT + PERFECT (@cite{heim-kratzer-1998} §4). The tense
 head is PRESENT (indexical), so it can be used deictically.
 
-**German Preterit** = genuine PAST pronoun (Kratzer 1998 §5). The tense
+**German Preterit** = genuine PAST pronoun (@cite{heim-kratzer-1998} §5). The tense
 head is PAST (anaphoric), requiring a discourse antecedent.
 
 The empirical contrast:

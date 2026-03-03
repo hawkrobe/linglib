@@ -31,14 +31,14 @@ variable {Time : Type*} [LinearOrder Time]
 -- § Anscombe's Truth Conditions
 -- ============================================================================
 
-/-- Anscombe's *before B* as a predicate on times (Krifka 2010b, eq. 13a):
+/-- Anscombe's *before B* as a predicate on times (@cite{krifka-2010b}, eq. 13a):
     λt. ∀t' ∈ times(B), t < t'. All times at which B holds follow t.
 
     "A before B" then holds when some time in A satisfies this predicate. -/
 def Anscombe.before (A B : SentDenotation Time) : Prop :=
   ∃ t ∈ timeTrace A, ∀ t' ∈ timeTrace B, t < t'
 
-/-- Anscombe's *after B* as a predicate on times (Krifka 2010b, eq. 13b):
+/-- Anscombe's *after B* as a predicate on times (@cite{krifka-2010b}, eq. 13b):
     λt. ∃t' ∈ times(B), t' < t. Some time at which B holds precedes t.
 
     "A after B" then holds when some time in A satisfies this predicate. -/
@@ -115,7 +115,7 @@ theorem anscombe_heinamaki_equiv_after
     exact ⟨a, ha, lb, hlb.1, hlt⟩
 
 -- ============================================================================
--- § Logical Properties (Beaver & Condoravdi 2003, §6)
+-- § Logical Properties (@cite{beaver-condoravdi-2003}, §6)
 -- ============================================================================
 
 /-! ### *Before* is a strict order (antisymmetric and transitive)
@@ -189,7 +189,7 @@ theorem Anscombe.after_not_transitive :
     omega
 
 -- ============================================================================
--- § Complement Monotonicity and NPI Licensing (B&C 2003, §5)
+-- § Complement Monotonicity and NPI Licensing (@cite{beaver-condoravdi-2003}, §5)
 -- ============================================================================
 
 /-! ### *Before* is DE; *after* is UE in the complement position
@@ -200,7 +200,7 @@ its monotonicity, which in turn determines NPI licensing:
 - *before* (∃∀): the ∀ over B reverses subset inclusion → DE → licenses NPIs
 - *after* (∃∃): the ∃ over B preserves subset inclusion → UE → blocks NPIs
 
-This is the same insight B&C (2003, §5) express through `earliest`: the
+This is the same insight @cite{beaver-condoravdi-2003} express through `earliest`: the
 universal force of `earliest` (selecting the minimum, which R-dominates
 all other elements) creates a downward-entailing environment. -/
 

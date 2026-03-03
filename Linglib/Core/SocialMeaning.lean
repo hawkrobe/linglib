@@ -28,7 +28,7 @@ identity through this stance → quality pathway.
 **Indexical field**: the constellation of potential meanings associated
 with a variant. Not a fixed meaning but a structured space — each use
 activates a region of the field, contextually selecting among
-ideologically linked traits (Figures 3–4 in Eckert 2008).
+ideologically linked traits (Figures 3–4 in @cite{eckert-2008}).
 
 ## Connections
 
@@ -43,7 +43,7 @@ ideologically linked traits (Figures 3–4 in Eckert 2008).
 namespace Core.SocialMeaning
 
 -- ============================================================================
--- Indexical order (Silverstein 2003)
+-- Indexical order (@cite{silverstein-2003})
 -- ============================================================================
 
 /-- @cite{silverstein-2003}'s indexical order: how a variable's social meaning
@@ -81,7 +81,7 @@ theorem first_lt_second : IndexicalOrder.first < IndexicalOrder.second := by dec
 theorem second_lt_third : IndexicalOrder.second < IndexicalOrder.third := by decide
 
 -- ============================================================================
--- Stances and qualities (Ochs 1992, Eckert 2008)
+-- Stances and qualities (Ochs 1992, @cite{eckert-2008})
 -- ============================================================================
 
 /-- Eckert's distinction between momentary interactional positions and
@@ -99,7 +99,7 @@ inductive StanceLevel where
   deriving DecidableEq, BEq, Repr
 
 -- ============================================================================
--- Indexical field (Eckert 2008)
+-- Indexical field (@cite{eckert-2008})
 -- ============================================================================
 
 /-- An indexical field: the constellation of ideologically
@@ -113,7 +113,7 @@ inductive StanceLevel where
     value. Positive values mean the variant indexes *toward* the trait;
     negative values mean it indexes *away*. The field is context-dependent:
     the same variable may have different fields in different contexts
-    (Eckert 2008: "the field is a space of potential meanings"). -/
+    (@cite{eckert-2008}: "the field is a space of potential meanings"). -/
 structure IndexicalField (Variant : Type) (Trait : Type) where
   /-- How strongly using this variant indexes this trait.
       Positive = toward, negative = away. -/

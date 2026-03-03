@@ -25,7 +25,7 @@ of the target event but not directly settling it.
 
 ## Concrete Scenario: Dripping Raincoat
 
-The dripping-raincoat scenario (Zheng 2026, used in Kernel.lean) provides a
+The dripping-raincoat scenario (@cite{zheng-2026}, used in Kernel.lean) provides a
 concrete bridge: the raincoat evidence is causally downstream of rain (T ≤ A),
 and the kernel {wearingRaincoat} doesn't settle isRaining.
 

@@ -67,7 +67,7 @@ Monosyndetic: 3 attested patterns (of 4 logically possible).
   A-co B (postpositive on 1st: Tibetan "A-daŋ B")
   A B-co (postpositive on 2nd: Latin "A B-que")
 
-  co-A B — UNATTESTED (Stassen 2000, n=260 languages)
+  co-A B — UNATTESTED (@cite{stassen-2000}, n=260 languages)
 
 Bisyndetic: 4 attested patterns.
   co-A co-B (prepositive: Yoruba "àtí A àtí B")
@@ -271,7 +271,7 @@ def slovenian : ConjunctionSystem :=
 /--
 Lango (Nilotic, Uganda): "kèdè" is a comitative marker ("with") that also
 serves as coordinator ("and"). The classic AND-language: comitative source
-gives monosyndetic A co-B (Noonan 1992:163, Haspelmath 2007: (20)).
+gives monosyndetic A co-B (Noonan 1992:163, @cite{haspelmath-2007}: (20)).
 -/
 def lango : ConjunctionSystem :=
   { language := "Lango"
@@ -285,7 +285,7 @@ def lango : ConjunctionSystem :=
 /--
 Hausa (Chadic, Nigeria): "da" means both "with" (comitative) and "and"
 (conjunction). Archetypal comitative → conjunction path
-(Schwartz 1989:32,36; Haspelmath 2007: (12)).
+(@cite{schwartz-1989}:32,36; @cite{haspelmath-2007}: (12)).
 -/
 def hausa : ConjunctionSystem :=
   { language := "Hausa"
@@ -299,7 +299,7 @@ def hausa : ConjunctionSystem :=
 /--
 Yoruba (Kwa, Nigeria): "àtí" in the pattern "àtí A àtí B" is the canonical
 example of prepositive bisyndetic coordination
-(Rowlands 1969:201ff, Haspelmath 2007: (25)).
+(Rowlands 1969:201ff, @cite{haspelmath-2007}: (25)).
 -/
 def yoruba : ConjunctionSystem :=
   { language := "Yoruba"
@@ -311,7 +311,7 @@ def yoruba : ConjunctionSystem :=
 
 /--
 Kannada (Dravidian, southern India): postpositive "-u" on each coordinand
-gives A-co B-co (Sridhar 1990:106, Haspelmath 2007: (5)).
+gives A-co B-co (Sridhar 1990:106, @cite{haspelmath-2007}: (5)).
 "-u" is also the additive/focus particle in Dravidian.
 -/
 def kannada : ConjunctionSystem :=
@@ -325,7 +325,7 @@ def kannada : ConjunctionSystem :=
 
 /--
 Martuthunira (Pama-Nyungan, W. Australia): "-thurti" on each coordinand
-gives A-co B-co (Dench 1995:98, Haspelmath 2007: (26)).
+gives A-co B-co (Dench 1995:98, @cite{haspelmath-2007}: (26)).
 -/
 def martuthunira : ConjunctionSystem :=
   { language := "Martuthunira"
@@ -337,7 +337,7 @@ def martuthunira : ConjunctionSystem :=
 
 /--
 Classical Tibetan: "-daŋ" is postpositive on first coordinand, giving A-co B.
-Derives from comitative source (Beyer 1992:240, Haspelmath 2007: (21)).
+Derives from comitative source (Beyer 1992:240, @cite{haspelmath-2007}: (21)).
 -/
 def classicalTibetan : ConjunctionSystem :=
   { language := "Classical Tibetan"
@@ -466,7 +466,7 @@ theorem all_three_is_rare :
     count == 2 := by
   native_decide
 
-/-- Languages with full M&S strategy classification (from Bill et al. 2025). -/
+/-- Languages with full M&S strategy classification (from @cite{bill-etal-2025}). -/
 def msLanguages : List ConjunctionSystem :=
   [english, japanese, hungarian, georgian, latin, korean, slovenian]
 
@@ -613,7 +613,7 @@ theorem boundness_confound :
 **Open problem: predict the @cite{bill-etal-2025} acquisition asymmetry.**
 
 No existing account predicts the full cross-linguistic pattern:
-- M&S (2016) + Transparency Principle → predicts J-MU easiest. Wrong for Georgian.
+- @cite{mitrovic-sauerland-2016} + Transparency Principle → predicts J-MU easiest. Wrong for Georgian.
 - @cite{szabolcsi-2015} → alternative quantifier-particle analysis. Doesn't predict it.
 - @cite{haslinger-etal-2019} → plural/distributive analysis. Doesn't predict it.
 

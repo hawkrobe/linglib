@@ -250,7 +250,7 @@ open Phenomena.Complementation.Typology
 open Fragments.English.Predicates.Verbal (manage persuade want hope stop start continue_ seem)
 
 /-- Control verbs in the Fragment have corresponding CTPDatum entries
-    with hasEquiDeletion = true (Noonan 2007 §2.1).
+    with hasEquiDeletion = true (@cite{noonan-2007} §2.1).
 
     This connects three independently specified data sources:
     1. Fragment controlType / altControlType (lexical annotation)

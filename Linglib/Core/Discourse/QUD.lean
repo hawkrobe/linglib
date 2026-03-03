@@ -427,7 +427,7 @@ def partiallyAnswers {W : Type*} (p : W → Bool) (q : Issue W) (worlds : List W
 /-- Question q₁ entails question q₂ iff every alternative of q₁ entails
 some alternative of q₂.
 
-@cite{roberts-2012} Def. 8 (following Groenendijk & Stokhof 1984:16):
+@cite{roberts-2012} Def. 8 (following @cite{groenendijk-stokhof-1984}:16):
 "One interrogative q₁ entails another q₂ iff every proposition that
 answers q₁ answers q₂ as well."
 

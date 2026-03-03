@@ -75,7 +75,7 @@ section FunctionalDependence
 /-- Q2 is functionally dependent on Q1 over a world set if there exist worlds
 in the same Q1-cell but different Q2-cells.
 
-G&S 1984, Ch. VI: Functional dependence is what gives rise to pair-list
+@cite{groenendijk-stokhof-1984}, Ch. VI: Functional dependence is what gives rise to pair-list
 readings. When the wh-answer varies across cells of the universal quantifier,
 the full answer requires listing the answer for each element. -/
 def functionallyDependent {W : Type*} (q1 q2 : GSQuestion W) (worlds : List W) : Bool :=
@@ -171,7 +171,7 @@ section Sluicing
 /-- Sluicing as question identity: the elided question Q_sluice is resolved by
 the same partition as the antecedent question Q_antecedent.
 
-G&S 1984: In "Someone called, but I don't know who ⟨called⟩", the sluiced
+@cite{groenendijk-stokhof-1984}: In "Someone called, but I don't know who ⟨called⟩", the sluiced
 wh-phrase recovers a question Q that is identical to (or at least refined)
 the antecedent question.
 

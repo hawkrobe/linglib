@@ -70,7 +70,7 @@ theorem embeddedPresent_means_at_matrix {Time : Type*} [LinearOrder Time]
 
 
 -- ════════════════════════════════════════════════════════════════
--- § Bridge: Attitude Accessibility ↔ Reichenbach (Ogihara 1989)
+-- § Bridge: Attitude Accessibility ↔ Reichenbach (@cite{ogihara-1989})
 -- ════════════════════════════════════════════════════════════════
 
 /-!

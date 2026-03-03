@@ -123,13 +123,13 @@ theorem barlevfox_derives_fc :
 ## RSA Account: Semantic Uncertainty
 
 @cite{champollion-alsop-grosu-2019} use RSA with multiple interpretation functions
-(following Bergen et al. 2016's lexical uncertainty).
+(following @cite{bergen-levy-goodman-2016}'s lexical uncertainty).
 
 ### The Mechanism
 
 **Two Interpretation Functions**:
 - I₁ (literal): Standard modal logic meanings
-- I₂ (exhaustified): Strengthened meanings (à la Fox 2007)
+- I₂ (exhaustified): Strengthened meanings (à @cite{fox-2007})
 
 For "You may A":
 - Under I₁: {Only A, Only One, Any Number, Only Both}
@@ -573,13 +573,13 @@ def allPredictCancellation : Bool := explicitCancellation.felicitous
 ### Five Theories, Two Approaches
 
 **Pragmatic (FC as implicature)**:
-- Bar-Lev & Fox 2020: Innocent Inclusion (categorical)
-- Champollion et al. 2019: RSA + interpretation uncertainty (gradient)
-- Alsop 2024: RSA + parse ambiguity (gradient)
+- @cite{bar-lev-fox-2020}: Innocent Inclusion (categorical)
+- @cite{champollion-alsop-grosu-2019}: RSA + interpretation uncertainty (gradient)
+- @cite{alsop-2024}: RSA + parse ambiguity (gradient)
 
 **Semantic (FC in meaning)**:
-- Aloni 2022: BSML - team semantics + NE enrichment
-- Elliott & Sudo 2025: BUS - bilateral dynamics + modal ∨ precondition
+- @cite{aloni-2022}: BSML - team semantics + NE enrichment
+- @cite{elliott-sudo-2025}: BUS - bilateral dynamics + modal ∨ precondition
 
 ### Key Differentiators
 

@@ -235,9 +235,9 @@ GAP restrictions, not universal Subjacency. The topicalization construction
 has `[GAP ⟨⟩]` on its mother, making it an absolute extraction island. This
 matches the `ConstraintType` classification from Islands/Data. -/
 
-/-- The island constructions in Sag 2010 correspond to specific constraint
+/-- The island constructions in @cite{hofmeister-sag-2010} correspond to specific constraint
 types in the island classification system. The CNPC (complexNP) is the
-island tested in Hofmeister & Sag 2010; Sag's topicalization and exclamative
+island tested in @cite{hofmeister-sag-2010}; Sag's topicalization and exclamative
 islands are additional construction-specific cases. -/
 def islandConstructions : List FGClauseType :=
   [FGClauseType.whInterrogative, .whExclamative, .topicalized,

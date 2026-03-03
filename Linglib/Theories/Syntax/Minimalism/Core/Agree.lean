@@ -225,7 +225,7 @@ theorem matrix_triggers_t_to_c : tToCTriggered matrixCFeatures = true := rfl
 theorem embedded_no_t_to_c : tToCTriggered embeddedCFeatures = false := rfl
 
 -- ============================================================================
--- § 8: Activity Condition (Chomsky 2000, 2001)
+-- § 8: Activity Condition (@cite{chomsky-2000}, 2001)
 -- ============================================================================
 
 /-- Is a feature bundle active? (has at least one unvalued feature)
@@ -301,7 +301,7 @@ def validAgreeWithActivity (a : AgreeRelation) (root : SyntacticObject) : Prop :
   isActive a.goalFeatures = true
 
 -- ============================================================================
--- § 10: Multiple Agree (Hiraiwa 2001, 2005)
+-- § 10: Multiple Agree (@cite{hiraiwa-2001}, 2005)
 -- ============================================================================
 
 /-- Multiple Agree: a probe agreeing with a list of goals -/
@@ -336,7 +336,7 @@ def applyMultipleAgree (ma : MultipleAgree) : Option FeatureBundle :=
         else f)
 
 -- ============================================================================
--- § 11: Defective Intervention (Chomsky 2000)
+-- § 11: Defective Intervention (@cite{chomsky-2000})
 -- ============================================================================
 
 /-- A defective element: has some matching features but incomplete set -/
@@ -421,7 +421,7 @@ theorem rel_features_match :
     featuresMatch (.unvalued (.rel true)) (.valued (.rel false)) = true := rfl
 
 -- ============================================================================
--- § 14: Satisfaction Conditions (Deal 2021; Keine 2019)
+-- § 14: Satisfaction Conditions (@cite{deal-2021}; @cite{keine-2019})
 -- ============================================================================
 
 /-- How a probe's search can be terminated.
@@ -431,7 +431,7 @@ theorem rel_features_match :
     conditions to capture e.g. Mam's Infl probe, which is satisfied by
     EITHER matching φ-features OR encountering transitive Voice:
 
-    **Mam example** (Scott 2023, via Deal 2021):
+    **Mam example** (@cite{scott-2023}, via @cite{deal-2021}):
     - Infl carries [uφ] with satisfaction [SAT: φ or Voice_TR]
     - Intransitive: probe passes through (no Voice_TR) → finds S → real φ-agreement
     - Transitive: probe encounters Voice_TR → satisfied without copying φ → default "∅"

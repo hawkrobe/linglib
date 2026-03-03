@@ -188,7 +188,7 @@ theorem mass_noun_zero_rules :
     waterStem.paradigm.length = 0 := rfl
 
 -- ============================================================================
--- §9: Plural Marking Changes Truth Conditions (Link 1983)
+-- §9: Plural Marking Changes Truth Conditions (@cite{link-1983})
 -- ============================================================================
 
 /-- With the mereological plural rule, plural marking is NOT semantically
@@ -206,7 +206,7 @@ theorem flat_plural_vacuous :
     (pluralNounRuleFlat (α := Unit)).isVacuous = true := rfl
 
 -- ============================================================================
--- §10: Bridge to Zwicky & Pullum 1983 Diagnostics
+-- §10: Bridge to @cite{zwicky-pullum-1983} Diagnostics
 -- ============================================================================
 
 /-! The Zwicky & Pullum `CliticAffixProfile` and the `MorphRule` framework
@@ -273,7 +273,7 @@ therefore more likely to be semantically vacuous.
 
 We verify that `MorphRule.isVacuous` is consistent with Bybee's
 predictions: agreement morphology (rank 8, least relevant) is vacuous,
-while number on nouns (which changes denotation via Link 1983) is not. -/
+while number on nouns (which changes denotation via @cite{link-1983}) is not. -/
 
 open Core.Morphology (MorphCategory)
 

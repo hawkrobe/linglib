@@ -27,7 +27,7 @@ open BigOperators Finset Real
 variable {S A : Type*} [Fintype A] [DecidableEq A]
 
 -- ============================================================================
--- §2.F Rank Orderings (Luce 1959, pp. 66–72)
+-- §2.F Rank Orderings (@cite{luce-1959}, pp. 66–72)
 -- ============================================================================
 
 /-- The tail suffix of a list starting at position `i` (0-indexed).
@@ -43,7 +43,7 @@ noncomputable def rankStepProb (ra : RationalAction S A) (s : S)
   | none => 1
   | some a => ra.pChoice s (tailSuffix ranking i) a
 
-/-- **Ranking probability** (Luce 1959, Theorem 9):
+/-- **Ranking probability** (@cite{luce-1959}, Theorem 9):
     The probability of observing the complete rank ordering `a₁ > a₂ >... > aₙ`
     is the product of successive top-choices from shrinking sets:
 
@@ -118,7 +118,7 @@ theorem mem_allRankings_iff (T : Finset A) (ranking : List A) :
   -- TODO: follows from Multiset.mem_permutations and List.toFinset properties
   sorry
 
-/-- **Ranking probabilities sum to 1** (Luce 1959, Theorem 9 completeness):
+/-- **Ranking probabilities sum to 1** (@cite{luce-1959}, Theorem 9 completeness):
     Over all `n!` permutations of the alternative set, ranking probabilities
     form a proper distribution.
 
@@ -143,7 +143,7 @@ theorem rankProb_sum_eq_one (ra : RationalAction S A) (s : S)
 noncomputable def rankingsStartingWith (T : Finset A) (a : A) : Finset (List A) :=
   (allRankings T).filter (λ r => r.head? = some a)
 
-/-- **Marginal first-choice** (Luce 1959, Theorem 9 corollary):
+/-- **Marginal first-choice** (@cite{luce-1959}, Theorem 9 corollary):
     Summing the ranking probability over all rankings that start with `a`
     recovers the choice probability `pChoice(a, T)`.
 

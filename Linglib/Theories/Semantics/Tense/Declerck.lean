@@ -75,7 +75,7 @@ open Core.Reichenbach (ReichenbachFrame)
 -- § Time-Spheres
 -- ════════════════════════════════════════════════════════════════
 
-/-- The two time-spheres of English (Declerck 1991 ch. 2 §3).
+/-- The two time-spheres of English (@cite{declerck-1991} ch. 2 §3).
 
     The tense system partitions linguistic time into two spheres:
     - **past**: wholly before t₀, containing the preterit, past perfect,

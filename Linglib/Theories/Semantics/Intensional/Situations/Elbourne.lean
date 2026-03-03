@@ -49,7 +49,7 @@ open Semantics.Reference.Donnellan (definitePrProp
   attributiveContent UseMode)
 
 -- ============================================================================
--- §1: Situation Ontology (Barwise & Perry 1983, Kratzer 1989)
+-- §1: Situation Ontology (@cite{barwise-perry-1983}, @cite{kratzer-1989})
 -- ============================================================================
 
 /-- A situation frame: the ontological foundation for Elbourne's system.
@@ -89,7 +89,7 @@ def SituationFrame.isMinimal (F : SituationFrame)
   P s = true ∧ ∀ s', F.le s' s → P s' = true → s' = s
 
 -- ============================================================================
--- §2: The Situation-Relative Definite Article (Elbourne 2013, Ch 3 §3.2)
+-- §2: The Situation-Relative Definite Article (@cite{elbourne-2013}, Ch 3 §3.2)
 -- ============================================================================
 
 /-- ⟦the⟧ in Elbourne's system: the situation-relative Fregean definite.
@@ -188,7 +188,7 @@ theorem the_sit_assertion_implies_presup
   split at h <;> simp_all
 
 -- ============================================================================
--- §4: Referential vs Attributive (Elbourne 2013, Ch 5)
+-- §4: Referential vs Attributive (@cite{elbourne-2013}, Ch 5)
 -- ============================================================================
 
 /-- Donnellan's attributive semantics IS `the_sit'` with a bound situation
@@ -212,7 +212,7 @@ theorem attributive_is_the_sit_bound
     the_sit' domain restrictor scope := rfl
 
 -- ============================================================================
--- §5: Donkey Anaphora via Minimal Situations (Elbourne 2013, Ch 6)
+-- §5: Donkey Anaphora via Minimal Situations (@cite{elbourne-2013}, Ch 6)
 -- ============================================================================
 
 /-- In Elbourne's system, donkey pronouns are definite articles with
@@ -260,11 +260,11 @@ theorem donkey_uniqueness_from_minimality
   exact h_minimal.1
 
 -- ============================================================================
--- §6: De Re / De Dicto (Elbourne 2013, Ch 7)
+-- §6: De Re / De Dicto (@cite{elbourne-2013}, Ch 7)
 -- ============================================================================
 
 /-- The de re / de dicto ambiguity is NOT a matter of DP scope (contra
-Russell 1905). It is a matter of situation variable scope.
+@cite{russell-1905}). It is a matter of situation variable scope.
 
 - De dicto: situation variable BOUND by attitude verb
   → restrictor evaluated in belief-worlds → referent varies
@@ -293,7 +293,7 @@ def sitVarToReading : SitVarStatus → String
   | .bound => "de dicto"
 
 -- ============================================================================
--- §7: Existence Entailments (Elbourne 2013, Ch 8)
+-- §7: Existence Entailments (@cite{elbourne-2013}, Ch 8)
 -- ============================================================================
 
 /-- Elbourne's key argument against Russell: the definite article
@@ -327,7 +327,7 @@ structure ExistenceEntailmentDatum where
   source : String := "Elbourne 2013"
 
 -- ============================================================================
--- §8: Incomplete Definites (Elbourne 2013, Ch 9)
+-- §8: Incomplete Definites (@cite{elbourne-2013}, Ch 9)
 -- ============================================================================
 
 /-- Incomplete definite descriptions are definites whose restrictor
@@ -342,8 +342,8 @@ in a *situationally restricted* domain.
 Elbourne (Ch 9 §9.2.5) argues for the "syntactic situation variable
 approach": the situation parameter on the definite article IS the
 mechanism of domain restriction. No covert relation variable (contra
-von Fintel 1994), no pragmatic enrichment (contra Sperber & Wilson 1986),
-no language-of-thought variables (contra Stanley 2000). Just situations.
+@cite{von-fintel-1994}), no pragmatic enrichment (contra Sperber & Wilson 1986),
+no language-of-thought variables (contra @cite{stanley-szab-2000}). Just situations.
 
 This is the simplest account: the situation variable that EVERY definite
 already has (for uniqueness) also handles incompleteness for free. -/
@@ -367,7 +367,7 @@ downstressed continuations. -/
 def elbournePreferred : IncompletenessSource := .situationVariable
 
 -- ============================================================================
--- §9: Pronouns as Definite Descriptions (Elbourne 2013, Ch 10)
+-- §9: Pronouns as Definite Descriptions (@cite{elbourne-2013}, Ch 10)
 -- ============================================================================
 
 /-
@@ -414,7 +414,7 @@ structure PronounAsDefinite where
   equivalentDefinite : String
   deriving Repr, BEq
 
-/-- Pronoun denotation in Elbourne's system (Postal 1966, Elbourne 2005, 2013 Ch 10).
+/-- Pronoun denotation in Elbourne's system (@cite{postal-1966}, @cite{elbourne-2005}, 2013 Ch 10).
 
 A pronoun with recovered NP content `R` has the SAME denotation as the
 definite article applied to `R`:
@@ -428,7 +428,7 @@ abbrev pronounDenot {W E : Type} (domain : List E) [DecidableEq E]
     (recoveredNP : E → W → Bool) (scope : E → W → Bool) : PrProp W :=
   the_sit' domain recoveredNP scope
 
-/-- Pronouns = definite articles: ⟦it⟧ = ⟦the⟧ (Postal 1966, Elbourne 2005, 2013 Ch 10).
+/-- Pronouns = definite articles: ⟦it⟧ = ⟦the⟧ (@cite{postal-1966}, @cite{elbourne-2005}, 2013 Ch 10).
 
 A pronoun's denotation, given a contextually recovered NP restrictor, is
 extensionally identical to the definite article applied to the same restrictor.
@@ -501,7 +501,7 @@ theorem useMode_sitVar_roundtrip :
   intro m; cases m <;> rfl
 
 -- ============================================================================
--- §13: Situation Binding Operators (Elbourne 2013, Ch 2)
+-- §13: Situation Binding Operators (@cite{elbourne-2013}, Ch 2)
 -- ============================================================================
 
 /-- Elbourne's three situation binders. These bind situation variables
@@ -577,7 +577,7 @@ def phenomenonMechanism : UnifiedPhenomenon → String
   | .pronounsAsDefinites         => "⟦it⟧ = ⟦the⟧ + NP-deletion (Postal 1966)"
 
 -- ============================================================================
--- §15: QUD–Situation Bridge (Roberts 1996, Kratzer 2004, Elbourne 2013)
+-- §15: QUD–Situation Bridge (Roberts 1996, Kratzer 2004, @cite{elbourne-2013})
 -- ============================================================================
 
 /-
@@ -670,7 +670,7 @@ theorem qud_refinement_monotone
   sorry
 
 -- ============================================================================
--- §16: Bridge to ReferentialMode (Partee 1973, Core/Intension.lean)
+-- §16: Bridge to ReferentialMode (@cite{partee-1973}, Core/Intension.lean)
 -- ============================================================================
 
 open Core.ReferentialMode (ReferentialMode)

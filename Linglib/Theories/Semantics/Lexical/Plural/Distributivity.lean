@@ -29,7 +29,7 @@ namespace Semantics.Lexical.Plural.Distributivity
 
 variable {Atom W : Type*} [DecidableEq Atom]
 
--- Tolerance Relations (Križ & Spector 2021, Definition 14)
+-- Tolerance Relations (Križ & @cite{kriz-spector-2021}, Definition 14)
 
 /--
 A tolerance relation determines which sub-pluralities count as
@@ -167,7 +167,7 @@ The trivalent truth value for plural predication "the Xs are P".
 - FALSE: no atoms satisfy P
 - GAP: some but not all satisfy P
 
-This is the core of K&S (2021) Section 2.
+This is the core of @cite{kriz-spector-2021} Section 2.
 -/
 def pluralTruthValue (P : Atom → W → Bool) (x : Finset Atom) (w : W) : TruthValue :=
   if allSatisfy P x w then .true
@@ -246,7 +246,7 @@ def inGap (P : Atom → W → Bool) (x : Finset Atom) (w : W) : Prop :=
   (∃ a ∈ x, P a w = true) ∧ (∃ a ∈ x, P a w = false)
 
 /--
-Homogeneity Theorem (Križ & Spector 2021, Section 2.1).
+Homogeneity Theorem (Križ & @cite{kriz-spector-2021}, Section 2.1).
 
 The gap is symmetric under negation: a world is in the gap for P
 iff it's in the gap for ¬P.
@@ -341,7 +341,7 @@ def candidateProp (P : Atom → W → Bool) (z : Finset Atom) : BProp W :=
 /--
 Full candidate set: all sub-plurality propositions.
 
-This is the set S from K&S (2021) before relevance filtering.
+This is the set S from @cite{kriz-spector-2021} before relevance filtering.
 -/
 def fullCandidateSet (P : Atom → W → Bool) (x : Finset Atom) : Set (BProp W) :=
   { p | ∃ z ∈ x.powerset, z.Nonempty ∧ p = candidateProp P z }
@@ -474,7 +474,7 @@ pluralTruthValue P x w equals:
 -.false iff falseOnAll (fullCandidateSet P x) w
 -.gap iff gapOnCandidates (fullCandidateSet P x) w
 
-This is the central correspondence theorem of K&S (2021), showing that the
+This is the central correspondence theorem of @cite{kriz-spector-2021}, showing that the
 simple trivalent semantics (based on all/some/none) coincides with the more
 sophisticated "truth on all readings" approach.
 
@@ -555,7 +555,7 @@ Strong relevance: a proposition aligns with a QUD's partition.
 A proposition p is strongly relevant to QUD q iff p respects the partition:
 if two worlds are q-equivalent, then p has the same truth value at both.
 
-This is the key filtering mechanism from K&S (2021) Section 3.
+This is the key filtering mechanism from @cite{kriz-spector-2021} Section 3.
 -/
 def isStronglyRelevantProp (q : QUD W) (p : BProp W) : Prop :=
   ∀ w1 w2 : W, q.sameAnswer w1 w2 = true → p w1 = p w2
@@ -607,7 +607,7 @@ theorem trivial_relevant_iff_constant (p : BProp W) :
 Non-Maximality Theorem: With a coarse QUD that groups "all P" with "almost all P",
 the maximal candidate may not be strongly relevant, allowing non-maximal readings.
 
-This is the formal content of K&S (2021) Section 3's relevance filtering.
+This is the formal content of @cite{kriz-spector-2021} Section 3's relevance filtering.
 
 Proof idea:
 - If q groups w_all (where all satisfy P) with w_almost (where not all satisfy),

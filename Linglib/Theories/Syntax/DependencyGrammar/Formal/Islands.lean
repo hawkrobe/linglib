@@ -46,7 +46,7 @@ open DepGrammar Catena Discontinuity
 -- §1: Extended Island Taxonomy
 -- ============================================================================
 
-/-- Island types (Osborne 2019, Ch 9). Each type constrains rising catenae
+/-- Island types (@cite{osborne-2019}, Ch 9). Each type constrains rising catenae
     in a different way. -/
 inductive OsborneIslandType where
   | leftBranch      -- §9.4: *"Whose do you like house?"
@@ -84,7 +84,7 @@ def island_leftBranch : DepTree :=
     rootIdx := 1 }
 
 /-- **Subject island**: *"Which car did the driver of ignore the traffic light?"
-    (Osborne 2019, §9.7, example 48)
+    (@cite{osborne-2019}, §9.7, example 48)
     Simplified: "Which car did the driver of ignore the light?"
     Words: which(0) car(1) did(2) the(3) driver(4) of(5) ignore(6) the_(7) light(8)
     Deps: did(2) → ignore(6:ccomp), did(2) → driver(4:nsubj),
@@ -108,7 +108,7 @@ def island_subject : DepTree :=
     rootIdx := 2 }
 
 /-- **Adjunct island**: *"What do they always argue before one of them cleans?"
-    (Osborne 2019, §9.8, example 50b/59)
+    (@cite{osborne-2019}, §9.8, example 50b/59)
     Simplified: "What do they argue before cleaning?"
     Words: what(0) do(1) they(2) argue(3) before(4) cleaning(5)
     Deps: do(1) → argue(3:ccomp), do(1) → they(2:nsubj),
@@ -129,7 +129,7 @@ def island_adjunct : DepTree :=
     rootIdx := 1 }
 
 /-- **Wh-island**: *"Which judge might they inquire which performance surprised?"
-    (Osborne 2019, §9.9, example 61b')
+    (@cite{osborne-2019}, §9.9, example 61b')
     Simplified: "Which judge might they inquire surprised?"
     Words: which(0) judge(1) might(2) they(3) inquire(4) surprised(5)
     Deps: might(2) → inquire(4:ccomp), might(2) → they(3:nsubj),
@@ -149,7 +149,7 @@ def island_whIsland : DepTree :=
     rootIdx := 2 }
 
 /-- **Specified NP island**: ??"Who did you find those pictures of?"
-    (Osborne 2019, §9.6, example 36b)
+    (@cite{osborne-2019}, §9.6, example 36b)
     Words: who(0) did(1) you(2) find(3) those(4) pictures(5) of(6)
     Deps: did(1) → find(3:ccomp), did(1) → you(2:nsubj),
           find(3) → pictures(5:obj), pictures(5) → those(4:det),

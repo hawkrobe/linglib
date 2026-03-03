@@ -9,7 +9,7 @@ import Linglib.Theories.Morphology.Core.Exponence
 
 **Participant perspective** — psychological salience and hearer
 novelty — is distinct from **temporal perspective** (Kiparsky's π / Tsilia,
-Zhao & Sharvit 2026), which concerns the tense anchor point. This module
+@cite{tsilia-zhao-sharvit-2026}), which concerns the tense anchor point. This module
 handles the former; `TsiliaEtAl2026.lean` handles the latter.
 
 @cite{lakoff-1970} "Tense and Its Relation to Participants" argues that tense

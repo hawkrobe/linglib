@@ -2,7 +2,7 @@ import Linglib.Phenomena.Causatives.Studies.Coon2019.Data
 import Linglib.Fragments.Chuj.VerbBuilding
 
 /-!
-# Coon 2019 — Bridge Theorems
+# @cite{coon-2019} — Bridge Theorems
 @cite{coon-2019}
 
 Connects the Chuj fragment (`Fragments/Chuj/VerbBuilding.lean`) to the
@@ -230,7 +230,7 @@ theorem theme_persists_all_voices :
 -- § 7. Denotation Type Alignment
 -- ════════════════════════════════════════════════════
 
-/-- The four root classes have distinct denotation types (Coon 2019, (3)).
+/-- The four root classes have distinct denotation types (@cite{coon-2019}, (3)).
     The fragment's `denotationType` field captures these:
     √TV/√ITV = eventPred ⟨e,⟨s,t⟩⟩, √POS = measureFn ⟨e,⟨s,d⟩⟩,
     √NOM = entityPred ⟨e,t⟩. -/

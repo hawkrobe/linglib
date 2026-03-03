@@ -20,7 +20,7 @@ dynamic semantics, and intensional semantics. The theory-specific layer
 1. **Times** as primitives (intervals or instants)
 2. **Situations** as world-time pairs
 3. **Temporal relations** (precedence, overlap, containment)
-4. **Atomic distributivity** (subinterval property, Zhao 2025)
+4. **Atomic distributivity** (subinterval property, @cite{zhao-2025})
 
 -/
 
@@ -166,7 +166,7 @@ theorem finalSubinterval_refl (i : Interval Time) : i.finalSubinterval i :=
   ⟨subinterval_refl i, rfl⟩
 
 -- ════════════════════════════════════════════════════
--- § Open/Closed Interval Distinction (Rouillard 2026)
+-- § Open/Closed Interval Distinction (@cite{rouillard-2026})
 -- ════════════════════════════════════════════════════
 
 /-- Whether an interval's boundary is included (closed) or excluded (open).
@@ -276,7 +276,7 @@ end GInterval
 end Interval
 
 -- ════════════════════════════════════════════════════
--- § Dense Time (Fox & Hackl 2006, Rouillard 2026)
+-- § Dense Time (@cite{fox-hackl-2006}, @cite{rouillard-2026})
 -- ════════════════════════════════════════════════════
 
 -- Situation (Core.Situation) is defined at the top of this file and
@@ -398,7 +398,7 @@ instance : Core.Scale.LicensingPipeline Interval.BoundaryType where
   toBoundedness := Interval.BoundaryType.toBoundedness
 
 -- ════════════════════════════════════════════════════
--- § Atomic Distributivity (Zhao 2025, Champollion 2015)
+-- § Atomic Distributivity (@cite{zhao-2025}, @cite{champollion-2015})
 -- ════════════════════════════════════════════════════
 
 /-- An event quantifier: a predicate on event predicates.
@@ -406,7 +406,7 @@ instance : Core.Scale.LicensingPipeline Interval.BoundaryType where
     quantificational force. -/
 abbrev EvQuant (Event : Type*) := (Event → Prop) → Prop
 
-/-- ATOM-DIST_α (Zhao 2025, Def. 5.3): an event quantifier V satisfies
+/-- ATOM-DIST_α (@cite{zhao-2025}, Def. 5.3): an event quantifier V satisfies
     ATOM-DIST with respect to trace function τ iff for every event predicate P
     and subinterval i' of τ(e), V also holds for the restriction of P to
     events whose trace is i'.

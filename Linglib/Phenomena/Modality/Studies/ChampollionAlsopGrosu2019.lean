@@ -102,7 +102,7 @@ instance : Fintype Utterance where
 /-- Two interpretation functions representing optional exhaustification. -/
 inductive Interp where
   | literal     -- I₁: standard modal logic meanings
-  | exhaustified -- I₂: strengthened via covert Exh (Fox 2007)
+  | exhaustified -- I₂: strengthened via covert Exh (@cite{fox-2007})
   deriving DecidableEq, BEq, Repr, Inhabited
 
 instance : Fintype Interp where

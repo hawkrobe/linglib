@@ -5,7 +5,7 @@ import Linglib.Theories.Semantics.Questions.QParticleLayer
 @cite{bhatt-dayal-2020} @cite{dayal-2025} @cite{sauerland-yatsushiro-2017}
 
 Cross-linguistic Q-particle data classified by left-peripheral layer
-(Dayal 2025: §1.3). This file imports `QParticleLayer` from Theories/
+(@cite{dayal-2025}: §1.3). This file imports `QParticleLayer` from Theories/
 and connects Q-particle distribution to the three-point left-peripheral
 structure [SAP [PerspP [CP...]]].
 
@@ -19,7 +19,7 @@ namespace Phenomena.Questions.TypologyBridge
 open Semantics.Questions (QParticleLayer)
 
 -- ============================================================================
--- Q-particle typology (Dayal 2025: §1.3)
+-- Q-particle typology (@cite{dayal-2025}: §1.3)
 -- ============================================================================
 
 /-- A Q-particle datum. -/
@@ -38,7 +38,7 @@ structure QParticleDatum where
   deriving Repr
 
 -- Japanese ka: clause-typing particle (CP)
--- Obligatory in subordinated, optional in matrix (Dayal 2025: §1.1, §1.3)
+-- Obligatory in subordinated, optional in matrix (@cite{dayal-2025}: §1.1, §1.3)
 def japanese_ka : QParticleDatum :=
   { language := "Japanese", form := "ka"
   , layer := .cp
@@ -46,7 +46,7 @@ def japanese_ka : QParticleDatum :=
   , inQuasiSub := true, inQuotation := true }
 
 -- Hindi-Urdu kya:: polar question particle (PQP, PerspP layer)
--- Matrix + quasi-subordinated, NOT subordinated (Bhatt & Dayal 2020)
+-- Matrix + quasi-subordinated, NOT subordinated (@cite{bhatt-dayal-2020})
 def hindi_urdu_kya : QParticleDatum :=
   { language := "Hindi-Urdu", form := "kya:"
   , layer := .perspP
@@ -54,7 +54,7 @@ def hindi_urdu_kya : QParticleDatum :=
   , inQuasiSub := true, inQuotation := false }
 
 -- Japanese kke: meta question particle (MQP, SAP layer)
--- Matrix + quotation only (Sauerland & Yatsushiro 2017)
+-- Matrix + quotation only (@cite{sauerland-yatsushiro-2017})
 def japanese_kke : QParticleDatum :=
   { language := "Japanese", form := "kke"
   , layer := .sap
@@ -62,7 +62,7 @@ def japanese_kke : QParticleDatum :=
   , inQuasiSub := false, inQuotation := true }
 
 -- English quick/quickly: MQP-like adverb (SAP layer)
--- Only matrix questions, ungrammatical in embedded position (Dayal 2025: (19))
+-- Only matrix questions, ungrammatical in embedded position (@cite{dayal-2025}: (19))
 def english_quick : QParticleDatum :=
   { language := "English", form := "quick/quickly"
   , layer := .sap

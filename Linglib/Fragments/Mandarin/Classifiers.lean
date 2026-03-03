@@ -12,7 +12,7 @@ use). This fragment covers the classifiers attested in the noun lexicon.
 
 ## Classifier selection
 
-Classifier selection in Mandarin is semantically motivated (Aikhenvald 2000
+Classifier selection in Mandarin is semantically motivated (@cite{aikhenvald-2000}
 §11.2.3). Sortal classifiers encode inherent properties (animacy, shape,
 function); the general classifier 个 serves as a default/residue.
 

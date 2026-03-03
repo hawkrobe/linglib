@@ -12,7 +12,7 @@ nominal, verbal, and adjectival domains.
 - §2.1: Nominal comparatives (mass vs count nouns)
 - §2.2: Verbal comparatives (atelic vs telic VPs)
 - §3.1–3.2: Adjectival comparatives (gradable vs non-gradable adjectives)
-- §3.3: Morphosyntactic evidence (`more` = `much` + `-er`, Bresnan 1973)
+- §3.3: Morphosyntactic evidence (`more` = `much` + `-er`, @cite{bresnan-1973})
 - §3.4: Dimensional restriction patterns
 - §5: Number morphology and measurement (grammar shifts measurement)
 

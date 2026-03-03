@@ -88,9 +88,9 @@ discourse state framework. F&B decompose discourse state into:
 
 | Model | Latent Variable | F&B Component | What L1 Infers |
 |-------|-----------------|---------------|----------------|
-| S&T 2025 | BeliefState | dcS | Speaker's private assumptions |
-| Warstadt 2022 | Context set | cg | Common ground |
-| Qing 2016 | ContextSet | cg | Common ground |
+| @cite{scontras-tonhauser-2025} | BeliefState | dcS | Speaker's private assumptions |
+| @cite{warstadt-2022} | Context set | cg | Common ground |
+| @cite{qing-goodman-lassiter-2016} | ContextSet | cg | Common ground |
 
 ### The Mathematical Identity
 
@@ -105,7 +105,7 @@ function (speakerCredence / contextCredence) checks if w ∈ D.
 
 ### Why S&T Prefer "Private Assumptions"
 
-S&T (2025) footnote 10 explains their terminological choice:
+@cite{scontras-tonhauser-2025} footnote 10 explains their terminological choice:
 > "@cite{qing-goodman-lassiter-2016} call these subsets the 'common ground,' but we think
 > 'private assumptions' better captures this component of the model."
 
@@ -131,7 +131,7 @@ types to RSA computations.
 /-!
 ## Unified Model Architecture
 
-All three papers (Qing 2016, S&T 2025, Warstadt 2022) implement the same pattern:
+All three papers (@cite{qing-goodman-lassiter-2016}, @cite{scontras-tonhauser-2025}, @cite{warstadt-2022}) implement the same pattern:
 
 ```
 RSAScenario with:
@@ -141,7 +141,7 @@ RSAScenario with:
   - L1_beliefState: Marginal over latent = projection/accommodation measure
 ```
 
-### Qing et al. 2016 (Original)
+### @cite{qing-goodman-lassiter-2016} (Original)
 
 - **World**: ⟨past, now⟩ - John's past/present smoking
 - **Context Set C**: Subsets of worlds taken as common ground
@@ -149,7 +149,7 @@ RSAScenario with:
 - **Domain**: Change-of-state verbs ("stopped smoking")
 - **Measure**: P(+past ∈ C | "didn't stop smoking")
 
-### Scontras & Tonhauser 2025
+### @cite{scontras-tonhauser-2025}
 
 - **World**: ⟨BEL, C⟩ - Cole's belief and complement truth
 - **BeliefState A**: Speaker's private assumptions (same structure as C above)
@@ -157,7 +157,7 @@ RSAScenario with:
 - **Domain**: Factives (know/think)
 - **Measure**: P(C-true ∈ A | "knows C")
 
-### Warstadt 2022
+### @cite{warstadt-2022}
 
 - **World**: GCWorld (usCitizen, gcHolder, nonUS)
 - **Context**: Subsets of worlds (common ground)
@@ -185,7 +185,7 @@ structure ModelApplication where
   /-- Whether QUD variation is explored -/
   exploresQUD : Bool
 
-/-- Qing et al. 2016 - the original model -/
+/-- @cite{qing-goodman-lassiter-2016} - the original model -/
 def qingEtAl2016 : ModelApplication where
   paper := "Qing, Goodman & Lassiter (2016)"
   latentVariableName := "Context set C"
@@ -193,7 +193,7 @@ def qingEtAl2016 : ModelApplication where
   domain := "Change-of-state verbs (stop, start)"
   exploresQUD := true  -- Explores QUD_now, QUD_max, etc.
 
-/-- Scontras & Tonhauser 2025 -/
+/-- @cite{scontras-tonhauser-2025} -/
 def scontrasTonhauser2025 : ModelApplication where
   paper := "Scontras & Tonhauser (2025)"
   latentVariableName := "Private assumptions A"
@@ -201,7 +201,7 @@ def scontrasTonhauser2025 : ModelApplication where
   domain := "Factives (know, think)"
   exploresQUD := true  -- BEL? vs C? QUD
 
-/-- Warstadt 2022 -/
+/-- @cite{warstadt-2022} -/
 def warstadt2022 : ModelApplication where
   paper := "Warstadt (2022)"
   latentVariableName := "Context set C"
@@ -328,7 +328,7 @@ Where:
 - **S1** is the speaker model (optimizes for L0 understanding given C)
 - **P(C)** is the prior over conversational states
 
-The key innovation (from Qing et al. 2016) is **joint inference over (w, C)**,
+The key innovation (from @cite{qing-goodman-lassiter-2016}) is **joint inference over (w, C)**,
 which allows the listener to simultaneously:
 1. Update beliefs about the world
 2. Update beliefs about the conversational context
@@ -483,9 +483,9 @@ is compatible with both models.
 
 | Paper | Latent Variable | Interpretation | Domain |
 |-------|-----------------|----------------|--------|
-| Qing 2016 | Context set C | Common ground | Change-of-state |
-| S&T 2025 | Assumptions A | Speaker beliefs | Factives |
-| Warstadt 2022 | Context set C | Common ground | Genus-species |
+| @cite{qing-goodman-lassiter-2016} | Context set C | Common ground | Change-of-state |
+| @cite{scontras-tonhauser-2025} | Assumptions A | Speaker beliefs | Factives |
+| @cite{warstadt-2022} | Context set C | Common ground | Genus-species |
 
 The math: `L1(w, C | u) ∝ S1(u | w, C) · P(w) · P(C)`
 
@@ -545,7 +545,7 @@ structure UnifiedProjectionInstance where
   latentType : String
   measureName : String
 
-/-- Qing et al. 2016 instance -/
+/-- @cite{qing-goodman-lassiter-2016} instance -/
 def qingInstance : UnifiedProjectionInstance where
   name := "Qing et al. (2016)"
   domain := "Change-of-state verbs"
@@ -555,7 +555,7 @@ def qingInstance : UnifiedProjectionInstance where
   latentType := "ContextSet (past/now constraints)"
   measureName := "projectionOfPast"
 
-/-- Scontras & Tonhauser 2025 instance -/
+/-- @cite{scontras-tonhauser-2025} instance -/
 def stInstance : UnifiedProjectionInstance where
   name := "Scontras & Tonhauser (2025)"
   domain := "Factive attitude verbs"
@@ -565,7 +565,7 @@ def stInstance : UnifiedProjectionInstance where
   latentType := "BeliefState (speaker assumptions)"
   measureName := "projectionOfC"
 
-/-- Warstadt 2022 instance -/
+/-- @cite{warstadt-2022} instance -/
 def warstadtInstance : UnifiedProjectionInstance where
   name := "Warstadt (2022)"
   domain := "Genus-species presuppositions"

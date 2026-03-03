@@ -146,7 +146,7 @@ theorem verb_types_distinct :
     Finnish lacks a true passive — what is traditionally called the
     passive is an impersonal construction where the agent is demoted
     to an implicit generic human referent, not promoted to a by-phrase
-    (Shore 1986, Karlsson 2018 Ch. 11). Active is the basic form. -/
+    (@cite{shore-1986}, @cite{karlsson-2017} Ch. 11). Active is the basic form. -/
 def finnishVoiceSystem : Interfaces.VoiceSystemProfile :=
   { language := "Finnish"
     voices := [ ⟨"Active", .agent⟩, ⟨"Impersonal", .patient⟩ ]

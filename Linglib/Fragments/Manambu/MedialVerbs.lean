@@ -13,7 +13,7 @@ Manambu has a rich system of medial clause markers that encode:
 3. **Subject agreement**: some DS markers trigger subject agreement on the
    medial verb; SS markers do not
 
-## Inventory (Aikhenvald 2025: Table 3)
+## Inventory (@cite{sarvasy-aikhenvald-2025}: Table 3)
 
 | Form | SR | Meaning | Subject marking |
 |------|-----|---------|-----------------|
@@ -51,7 +51,7 @@ structure MarkerEntry where
   deriving Repr, BEq
 
 -- ============================================================================
--- § Marker inventory (Aikhenvald 2025: Table 3)
+-- § Marker inventory (@cite{sarvasy-aikhenvald-2025}: Table 3)
 -- ============================================================================
 
 /-- -ku: SS, temporal completive 'after'. No subject marking. -/

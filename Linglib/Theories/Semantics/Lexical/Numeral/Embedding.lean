@@ -278,7 +278,7 @@ theorem exh_scope_diverges_exact :
     exhOverPossibility Exact .two [2, 3] = false := by native_decide
 
 -- ============================================================================
--- Section 9: "Almost" / Approximators (Nouwen 2006)
+-- Section 9: "Almost" / Approximators (@cite{nouwen-2006})
 -- ============================================================================
 
 /-- Proximity to numeral value: within distance 1. -/
@@ -311,7 +311,7 @@ theorem almost_asymmetry :
      almostMeaning Exact .three 4 = true) := by native_decide
 
 -- ============================================================================
--- Section 10: "Only" + Focus (Coppock & Beaver 2014)
+-- Section 10: "Only" + Focus (@cite{coppock-beaver-2014})
 -- ============================================================================
 
 /-- "Only n" with numeral in focus: assertion + exclusion of stronger alternatives.
@@ -339,7 +339,7 @@ theorem only_informative_lowerBound :
   native_decide
 
 -- ============================================================================
--- Section 11: QUD-Convexity (Solt & Waldon 2019)
+-- Section 11: QUD-Convexity (@cite{solt-waldon-2019})
 -- ============================================================================
 
 /-- Worlds 0 through 5 for extended embedding tests. -/
@@ -368,7 +368,7 @@ theorem negation_convexity_divergence :
   native_decide
 
 -- ============================================================================
--- Section 12: Heim-Kennedy Generalization (Heim 2000; Bylinina & Nouwen 2020 §6)
+-- Section 12: Heim-Kennedy Generalization (@cite{heim-2000}; @cite{bylinina-nouwen-2020} §6)
 -- ============================================================================
 
 /-- EXH scoped under a nominal quantifier (∃): each individual is exhaustified.
@@ -393,7 +393,7 @@ def exhOverNominalQ (T : NumeralTheory) (w : BareNumeral)
     | none => true
 
 /-- Heim-Kennedy generalization: degree operators scope over modals but NOT over
-nominal quantifiers (Heim 2000, B&N 2020 §6, examples 40–41).
+nominal quantifiers (@cite{heim-2000}, @cite{bylinina-nouwen-2020} §6, examples 40–41).
 
 With individuals [3, 4] (one answered 3, one answered 4):
 - Weak reading (EXH under ∃): true — the student with 3 answered exactly 3.

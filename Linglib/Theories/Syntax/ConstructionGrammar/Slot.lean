@@ -16,12 +16,12 @@ coreference indices, and syntactic constraints to the slot representation.
 
 | Field | Type | Source |
 |-------|------|--------|
-| `filler` | `SlotFiller Lex` | Dunn 2025 + Kay & Fillmore 1999 (fixed/open/headed) |
-| `role` | `Option String` | Goldberg 1995 (semantic role) |
+| `filler` | `SlotFiller Lex` | @cite{dunn-2025} + @cite{kay-fillmore-1999} (fixed/open/headed) |
+| `role` | `Option String` | @cite{goldberg-1995} (semantic role) |
 | `isHead` | `Bool` | ArgumentStructure.lean |
-| `gf` | `Option GramFunction` | Kay & Fillmore 1999 (grammatical function) |
-| `refIdx` | `Option RefIndex` | Kay & Fillmore 1999 (coreference index) |
-| `constraints` | `List SlotConstraint` | Kay & Fillmore 1999 (syntactic constraints) |
+| `gf` | `Option GramFunction` | @cite{kay-fillmore-1999} (grammatical function) |
+| `refIdx` | `Option RefIndex` | @cite{kay-fillmore-1999} (coreference index) |
+| `constraints` | `List SlotConstraint` | @cite{kay-fillmore-1999} (syntactic constraints) |
 
 `TypedForm Lex := List (Slot Lex)` is the typed form side of a construction.
 
@@ -65,7 +65,7 @@ inductive SlotFiller (Lex : Type) where
       `headed "doing".VERB` means "a VP headed by *doing*" — the slot
       is phrasal, not the bare word. Contrast with `fixed "doing"`. -/
   | headed : Lex → UD.UPOS → SlotFiller Lex
-  /-- A semantically constrained slot (Dunn 2025, SEM+ level).
+  /-- A semantically constrained slot (@cite{dunn-2025}, SEM+ level).
       `semantic "animate"` means any expression satisfying the semantic
       property "animate". More abstract than SYN (category-based): the
       filler is constrained by meaning, not by syntactic category. -/
@@ -83,7 +83,7 @@ def SlotFiller.isOpen {Lex : Type} : SlotFiller Lex → Bool
   | .headed _ _ => false
   | .semantic _ => true
 
-/-- Grammatical function of a valence member (Kay & Fillmore 1999, Figure 12).
+/-- Grammatical function of a valence member (@cite{kay-fillmore-1999}, Figure 12).
     Distinct from semantic role: a subject (gf) can be an agent, theme,
     or experiencer (role). -/
 inductive GramFunction where
@@ -100,7 +100,7 @@ inductive GramFunction where
     and its valence members' semantic values. -/
 abbrev RefIndex := Nat
 
-/-- Syntactic constraint on a slot (Kay & Fillmore 1999, Figure 12). -/
+/-- Syntactic constraint on a slot (@cite{kay-fillmore-1999}, Figure 12). -/
 inductive SlotConstraint where
   | locMinus   -- [loc -]: must occur left-isolated, not VP-internal
   | negMinus   -- [neg -]: cannot be negated
@@ -120,7 +120,7 @@ structure Slot (Lex : Type) where
   role : Option String := none
   /-- Whether this slot is the head of the construction -/
   isHead : Bool := false
-  /-- Grammatical function (subj, comp, obj, pred) — Kay & Fillmore 1999 -/
+  /-- Grammatical function (subj, comp, obj, pred) — @cite{kay-fillmore-1999} -/
   gf : Option GramFunction := none
   /-- Coreference index: slots sharing an index have unified semantics -/
   refIdx : Option RefIndex := none
@@ -196,7 +196,7 @@ theorem ConstructionSlot.toSlot_isOpen (s : ConstructionSlot) :
     (s.toSlot).filler.isOpen = true := rfl
 
 -- ============================================================================
--- §4. Cross-Slot Constraints (Kay & Fillmore 1999)
+-- §4. Cross-Slot Constraints (@cite{kay-fillmore-1999})
 -- ============================================================================
 
 section CrossSlotConstraints

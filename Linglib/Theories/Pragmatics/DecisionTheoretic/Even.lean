@@ -2,7 +2,7 @@ import Linglib.Theories.Pragmatics.DecisionTheoretic.Core
 import Linglib.Theories.Pragmatics.DecisionTheoretic.But
 
 /-!
-# Decision-Theoretic Semantics: "Even" (Merin 1999 §5)
+# Decision-Theoretic Semantics: "Even" (@cite{merin-1999} §5)
 @cite{anscombre-1973} @cite{francescotti-1995} @cite{kay-1990} @cite{merin-1999}
 
 Merin's DTS account of the scalar particle "even". The felicity of

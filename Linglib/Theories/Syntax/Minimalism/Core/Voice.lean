@@ -9,10 +9,10 @@ import Linglib.Theories.Syntax.Minimalism.Core.VerbalDecomposition
 Voice heads introduce (or fail to introduce) external arguments.
 The key typology from @cite{schfer-2008}:
 
-- **Agentive**: Introduces an agent external argument (Kratzer 1996 Voice_AG)
-- **Causer**: Introduces a causer (Schäfer 2008 Voice_CAUSE)
+- **Agentive**: Introduces an agent external argument (@cite{kratzer-1996} Voice_AG)
+- **Causer**: Introduces a causer (@cite{schfer-2008} Voice_CAUSE)
 - **NonThematic**: Semantically vacuous — no θ-role, but has a [D] feature
-  requiring PF realization (anticausative SE in Romance; Muñoz Pérez 2026)
+  requiring PF realization (anticausative SE in Romance; Muñoz @cite{munoz-perez-2026})
 - **Expletive**: No specifier, no semantics (middle voice, dispositionals)
 
 ## Key Claim
@@ -46,14 +46,14 @@ namespace Minimalism
     Agentive Voice introduces an agent; causer Voice introduces a causer;
     non-thematic Voice has no semantics (anticausative SE);
     expletive Voice has neither specifier nor semantics (middles);
-    passive Voice checks Case without assigning θ (Collins 2005: *by*). -/
+    passive Voice checks Case without assigning θ (@cite{collins-2005}: *by*). -/
 inductive VoiceFlavor where
-  | agentive     -- Introduces external argument with agent θ-role (Kratzer 1996)
-  | causer       -- Introduces causer (Schäfer 2008: Voice_CAUSE)
+  | agentive     -- Introduces external argument with agent θ-role (@cite{kratzer-1996})
+  | causer       -- Introduces causer (@cite{schfer-2008}: Voice_CAUSE)
   | nonThematic  -- Semantically vacuous, no θ-role (anticausative SE, Chuj -j)
   | expletive    -- No specifier, no semantics (middle voice)
   | impersonal   -- Demotes agent to implicit generic human (Finnish "passive")
-  | passive      -- Checks Case but does not assign θ (Collins 2005: *by* heads VoiceP)
+  | passive      -- Checks Case but does not assign θ (@cite{collins-2005}: *by* heads VoiceP)
   deriving DecidableEq, BEq, Repr
 
 -- ============================================================================
@@ -69,7 +69,7 @@ structure VoiceHead where
   /-- Is this Voice head a phase head? (v* = agentive Voice) -/
   phaseHead : Bool
   /-- Does this Voice head check Case? In active, v checks accusative;
-      in passive, Voice/*by* checks it (Collins 2005, p. 96: feature
+      in passive, Voice/*by* checks it (@cite{collins-2005}, p. 96: feature
       dissociation). Default false — only passive Voice checks Case. -/
   checksCase : Bool := false
   /-- Agree-relevant features on Voice (e.g., [uOblique] for Mam =(y)a').
@@ -167,7 +167,7 @@ theorem passive_not_phase : voicePassive.phaseHead = false := rfl
 /-- Passive Voice HAS semantic content (*by* mediates Case-checking). -/
 theorem passive_has_semantics : voicePassive.hasSemantics = true := rfl
 
-/-- Passive Voice checks Case (Collins 2005, p. 96: feature dissociation). -/
+/-- Passive Voice checks Case (@cite{collins-2005}, p. 96: feature dissociation). -/
 theorem passive_checks_case : voicePassive.checksCase = true := rfl
 
 /-- Only agentive and causer Voice assign θ-roles. -/
@@ -177,7 +177,7 @@ theorem theta_implies_agentive_or_causer (v : VoiceHead) :
   cases flavor <;> simp [VoiceHead.assignsTheta]
 
 -- ============================================================================
--- § 5: Voice–VerbHead Bridge (Kratzer 1996 in Cuervo 2003 terms)
+-- § 5: Voice–VerbHead Bridge (@cite{kratzer-1996} in @cite{cuervo-2003} terms)
 -- ============================================================================
 
 /-- The sub-eventive contribution of a Voice flavor.
@@ -270,7 +270,7 @@ theorem voice_determines_causativity_go_be (v : VoiceHead) :
     isCausative, VoiceHead.assignsTheta] <;> decide
 
 -- ============================================================================
--- § 7: Feature Dissociation (Collins 2005, §4)
+-- § 7: Feature Dissociation (@cite{collins-2005}, §4)
 -- ============================================================================
 
 /-- In active, v (= agentive Voice) assigns θ AND controls Case-checking

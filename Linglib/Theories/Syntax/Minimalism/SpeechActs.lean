@@ -266,7 +266,7 @@ theorem discourse_role_from_person (p : Fragments.English.Pronouns.PronounEntry)
   simp [pronounDiscourseRole, hp]
 
 -- ============================================================================
--- Section G: Sentience Domain (Speas & Tenny 2003, §2)
+-- Section G: Sentience Domain (@cite{speas-tenny-2003}, §2)
 -- ============================================================================
 
 /-- Functional projections in the Sentience Domain.

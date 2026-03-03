@@ -47,10 +47,10 @@ open Core.Proposition
 namespace Semantics.Focus.KratzerSelkirk2020
 
 -- ════════════════════════════════════════════════════
--- § IS Features (K&S 2020 §2, §8)
+-- § IS Features (@cite{kratzer-selkirk-2020} §2, §8)
 -- ════════════════════════════════════════════════════
 
-/-- The two privative morphosyntactic features of K&S 2020.
+/-- The two privative morphosyntactic features of @cite{kratzer-selkirk-2020}.
 
 [FoC] and [G] are genuinely syntactic features: crosslinguistically they
 trigger displacement, agreement, and ellipsis (§2). They happen to be
@@ -373,7 +373,7 @@ def englishSpelloutRanking : List SpelloutRanking :=
 
 SOF is the strongest empirical argument for the two-feature system.
 
-Example (Beaver et al. 2007, K&S 42):
+Example (@cite{beaver-2007}, K&S 42):
   "Both Sid and his accomplices should have been named in this morning's
    court session. But the defendant only named [Síd]_{FoC} in court today."
 

@@ -19,7 +19,7 @@ as the antecedent.
 
 ## The TTR solution
 
-In TTR (Cooper 2023, Chatzikyriakidis et al. 2025 §2), the solution
+In TTR (@cite{cooper-2023}, @cite{chatzikyriakidis-etal-2025} §2), the solution
 uses *types* rather than *entities* as the locus of identity:
 
 1. Hob's belief state contains a type `T_witch` (a predicate type

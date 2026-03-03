@@ -37,10 +37,10 @@ open NadathurLauer2020.Builder
 open Core.Time
 
 -- ════════════════════════════════════════════════════
--- § 1. Agentivity Features (Cruse 1973 §pp.17–21)
+-- § 1. Agentivity Features (@cite{cruse-1973} §pp.17–21)
 -- ════════════════════════════════════════════════════
 
-/-- The four independent sub-features of agentivity (Cruse 1973 §pp.17–21).
+/-- The four independent sub-features of agentivity (@cite{cruse-1973} §pp.17–21).
 
     Cruse argues that "agentivity" is not a single binary feature but
     decomposes into at least four independent components, each with
@@ -75,10 +75,10 @@ structure AgentivityProfile (Entity Time : Type*) [LE Time] where
   hasAgentive : Entity → Ev Time → Prop
 
 -- ════════════════════════════════════════════════════
--- § 2. The Do-Test (Cruse 1973 §pp.13–14)
+-- § 2. The Do-Test (@cite{cruse-1973} §pp.13–14)
 -- ════════════════════════════════════════════════════
 
-/-- The do-test (Cruse 1973 §pp.13–14): "NP VP" entails "NP did something"
+/-- The do-test (@cite{cruse-1973} §pp.13–14): "NP VP" entails "NP did something"
     iff at least one agentivity sub-feature is present.
 
     This is the disjunction of all four features. -/
@@ -131,7 +131,7 @@ class CruseIndependence (Entity Time : Type*) [LE Time]
       profile.hasAgentive x e ∧ ¬ profile.hasInitiative x e
 
 -- ════════════════════════════════════════════════════
--- § 4. Bridge to ThematicFrame.agent (Parsons 1990)
+-- § 4. Bridge to ThematicFrame.agent (@cite{parsons-1990})
 -- ════════════════════════════════════════════════════
 
 /-- Link between Parsons' `agent` role and Cruse's `agentive_` sub-feature.
@@ -209,7 +209,7 @@ theorem initiative_toActionType :
 theorem agentive_toActionType :
     AgentivityFeature.agentive_.toActionType = .Ambiguous := rfl
 
-/-- Coercive implication (N&L 2020) arises exactly when the causee's
+/-- Coercive implication (@cite{nadathur-lauer-2020}) arises exactly when the causee's
     action is volitional — i.e., when the causee has at least the
     volitive sub-feature.
 

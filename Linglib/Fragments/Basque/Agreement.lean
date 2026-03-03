@@ -105,7 +105,7 @@ theorem as_indexing_uniform :
     allPersonNumbers.all asIsIndexed = true := by native_decide
 
 -- ============================================================================
--- § 5: Case Inventory Validation (Blake 1994)
+-- § 5: Case Inventory Validation (@cite{blake-1994})
 -- ============================================================================
 
 /-- Basque agreement-relevant case inventory: {ERG, ABS, DAT}.

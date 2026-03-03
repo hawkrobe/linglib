@@ -143,7 +143,7 @@ structure TemporalAdvEntry where
   form : String
   /-- Adverbial type -/
   advType : TemporalAdvType
-  /-- Specifies LB of PTS? (Iatridou et al. 2001 classification) -/
+  /-- Specifies LB of PTS? (@cite{iatridou-anagnostopoulou-izvorski-2001} classification) -/
   specifiesLB : Bool
   /-- Requires the perfect? -/
   requiresPerfect : Bool

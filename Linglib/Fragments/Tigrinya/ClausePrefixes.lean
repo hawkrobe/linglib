@@ -95,7 +95,7 @@ def ki : ClausePrefixEntry where
   takesAgreementSuffix := true
 
 /-- kəmzi- : factive complementizer.
-    Spells out Force (Rizzi 1997 split-CP).
+    Spells out Force (@cite{rizzi-1997} split-CP).
     Selected by knowledge/commentative verbs.
     "kəmzi-mäs'ə" = COMP-come = "that (he) came" (factive) -/
 def kemzi : ClausePrefixEntry where

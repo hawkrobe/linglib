@@ -91,7 +91,7 @@ def ThickThinClass.isThick : ThickThinClass → Bool
   | .thickManner | .thickState => true
   | .thin => false
 
-/-- Is the verb a causative manner verb (Embick 2009 break-class)?
+/-- Is the verb a causative manner verb (@cite{embick-2009} break-class)?
     These are the thick verbs whose root is an event predicate,
     compatible with strong adjectival resultatives. -/
 def ThickThinClass.isCausativeMannerVerb : ThickThinClass → Bool

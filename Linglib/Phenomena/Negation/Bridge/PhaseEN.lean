@@ -52,7 +52,7 @@ open Phenomena.Negation.Typology (NegationProfile italian spanish french)
     Fin and Foc). -/
 inductive NegMergePosition where
   | tp   -- Standard NegP: inflectional domain (F2)
-  | cp   -- CP-area: left periphery (F3+, Greco 2020 §4)
+  | cp   -- CP-area: left periphery (F3+, @cite{greco-2020} §4)
   deriving DecidableEq, BEq, Repr
 
 -- ════════════════════════════════════════════════════
@@ -77,7 +77,7 @@ theorem force_in_cp : isCPArea .Force = true := by decide
 theorem fin_is_cp_boundary : isCPArea .Fin = true := by decide
 
 -- ════════════════════════════════════════════════════
--- § 3. Phase-based scope restriction (Greco 2020, §4.3)
+-- § 3. Phase-based scope restriction (@cite{greco-2020}, §4.3)
 -- ════════════════════════════════════════════════════
 
 /-- Whether a Neg head at this merge position can scope into the vP domain.

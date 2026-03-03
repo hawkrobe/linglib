@@ -2,7 +2,7 @@ import Linglib.Phenomena.Modality.ConditionalModalityScenarioBridge
 import Mathlib.Data.Rat.Cast.Order
 
 /-!
-# Degree Collapse — Kratzer 2012 §2.5
+# Degree Collapse — @cite{kratzer-2012} §2.5
 
 Modal strength as a degree: the proportion of best worlds where the
 prejacent holds. This formalizes Kratzer's observation that ordering sources

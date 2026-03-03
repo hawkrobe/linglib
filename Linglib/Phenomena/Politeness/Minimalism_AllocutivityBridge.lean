@@ -86,10 +86,10 @@ theorem fin_probe_embeddable : predictEmbeddability .Fin = .freelyEmbed := rfl
 
 /-- Probe-locus assignment for each language in the survey. -/
 def probeLocus : String → Cat
-  | "Souletian Basque" => .SA    -- Oyharçabal 1993
+  | "Souletian Basque" => .SA    -- @cite{oyharabal-1993}
   | "Korean"           => .SA    -- particle-based, SAP layer
   | "Japanese"         => .SA    -- particle-based, SAP layer
-  | "Magahi"           => .Fin   -- Alok 2020
+  | "Magahi"           => .Fin   -- @cite{alok-2020}
   | "Galician"         => .Fin   -- clitic pronoun on Fin
   | "Hindi"            => .Fin   -- agreement morpheme in FinP
   | "Maithili"         => .Fin   -- agreement morpheme in FinP

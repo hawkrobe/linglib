@@ -139,7 +139,7 @@ We decompose the presupposition into three conditions:
    doxastic condition (Def. 13) blocks info-seeking questions from supporting
    any answer. -/
 def isDefined (d : Sentence W) (ctx : Context W) : Bool :=
-  -- S is relevant to the QUD (Roberts 2012 Def. 15 / IKW assumption iii)
+  -- S is relevant to the QUD (@cite{roberts-2012} Def. 15 / IKW assumption iii)
   moveRelevant d.sDen ctx.qud ctx.subquestions ctx.worlds &&
   -- S' is relevant to the QUD
   moveRelevant d.s'Den ctx.qud ctx.subquestions ctx.worlds &&
@@ -252,7 +252,7 @@ theorem interrogative_prejacent_satisfies_ci_condition {W : Type*} [Fintype W]
   rfl
 
 /-- Weak non-agreement: when S' can't support any answer, S and S' neither
-agree nor disagree — they "merely don't agree" (IKW 2025 p. 227).
+agree nor disagree — they "merely don't agree" (@cite{ippolito-kiss-williams-2025} p. 227).
 
 This captures a key prediction about interrogative prejacents. When S' is
 an info-seeking question, fullSupport fails for S' on every α (doxastic

@@ -32,13 +32,13 @@ exactly where its latent variables enter:
 
 | Model | meaning uses latent? | s1Score uses latent? |
 |-------|---------------------|---------------------|
-| Frank & Goodman 2012 | no (Unit) | no (Unit) |
-| Kao et al. 2014 (QUD) | no (ignores q) | yes (cell aggregation) |
-| Bergen et al. 2016 (lex) | yes (lexicon) | no (standard rpow) |
+| @cite{frank-goodman-2012} | no (Unit) | no (Unit) |
+| @cite{kao-etal-2014-hyperbole} (QUD) | no (ignores q) | yes (cell aggregation) |
+| @cite{bergen-levy-goodman-2016} (lex) | yes (lexicon) | no (standard rpow) |
 
 S1 score examples:
-- Belief-based (F&G 2012): score = rpow(L0(w|u), α). rpow(0,α)=0.
-- Action-based (Q&F 2013): score = exp(α · (L0(w|u) - cost(u)))
+- Belief-based (@cite{frank-goodman-2012}): score = rpow(L0(w|u), α). rpow(0,α)=0.
+- Action-based (@cite{qing-franke-2013}): score = exp(α · (L0(w|u) - cost(u)))
 - QUD-based: score = exp(α · (ln L0(g(s,a)|u) - C(u)))
 
 ## BToM Grounding (§5)
@@ -69,7 +69,7 @@ e.g., belief-based utility uses `rpow(L0, α)` which correctly zeros out
 false utterances (rpow(0, α) = 0 for α > 0).
 
 The `s1Score` field takes a `Latent` parameter so that latent variables
-can enter at the S1 level (e.g., QUD projection in Kao et al. 2014)
+can enter at the S1 level (e.g., QUD projection in @cite{kao-etal-2014-hyperbole})
 rather than being forced into `meaning`. -/
 structure RSAConfig (U W : Type*) [Fintype U] [Fintype W] where
   /-- Latent variable type (default Unit for basic scenarios). -/
@@ -105,7 +105,7 @@ structure RSAConfig (U W : Type*) [Fintype U] [Fintype W] where
       Default: uniform (ignores world). World-dependent priors support models
       where the latent variable's distribution depends on the world state
       (e.g., observation probability conditioned on true state in
-      Goodman & Stuhlmuller 2013). -/
+      @cite{goodman-stuhlmuller-2013}). -/
   latentPrior : W → Latent → ℝ := fun _ _ => 1
   /-- Latent prior is non-negative. -/
   latentPrior_nonneg : ∀ w l, 0 ≤ latentPrior w l
@@ -243,7 +243,7 @@ noncomputable def L1_marginal (cfg : RSAConfig U W) (u : U) (P : W → Bool) : �
 
 /-- S2 agent: pragmatic speaker conditioning on observed world.
 
-    S2 inverts L1 via Bayes' rule over utterances (eq 8, Scontras & Pearl 2021):
+    S2 inverts L1 via Bayes' rule over utterances (eq 8, @cite{scontras-pearl-2021}):
     S2(u|w) ∝ P_{L1}(w|u) = L1(u, w) [the normalized L1 posterior]
 
     Used for endorsement tasks: "would you endorse utterance u given that

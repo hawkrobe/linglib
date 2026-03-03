@@ -38,7 +38,7 @@ open Core.Proposition
 -- § World type
 -- Example (1c): "Either the King of Buganda is now opening
 -- parliament or the President of Buganda is conducting the
--- ceremony." (Beaver 2001:44)
+-- ceremony." (@cite{beaver-2001}:44)
 -- ══════════════════════════════════════════════════════════
 
 /-- Possible states for the Buganda scenario. -/
@@ -79,7 +79,7 @@ def presConductsCeremony : PrProp W where
 
 
 -- ══════════════════════════════════════════════════════════
--- § Empirical observations (Yagi 2025, observation (2))
+-- § Empirical observations (@cite{yagi-2025}, observation (2))
 -- ══════════════════════════════════════════════════════════
 
 /-- The expected presupposition: the nation has some head of state. -/

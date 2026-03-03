@@ -112,7 +112,7 @@ def sizeMatch : ℚ := 8/10
 def sizeMismatch : ℚ := 2/10
 def sizeDiscrimination : ℚ := sizeMatch - sizeMismatch  -- 0.60
 
-/-- Material parameters (hypothetical from Kursat & Degen 2021): high noise -/
+/-- Material parameters (hypothetical from @cite{kursat-degen-2021}): high noise -/
 def materialMatch : ℚ := 7/10
 def materialMismatch : ℚ := 3/10
 def materialDiscrimination : ℚ := materialMatch - materialMismatch  -- 0.40

@@ -34,8 +34,7 @@ namespace Core.NaturalLogic
 -- ============================================================================
 
 /--
-The seven basic set-theoretic relations between denotations (MacCartney &
-Manning 2009, Icard 2012 §1).
+The seven basic set-theoretic relations between denotations (@cite{maccartney-manning-2009}, @cite{icard-2012} §1).
 
 | Symbol | Name         | Set relation     | Example            |
 |--------|------------- |------------------|--------------------|
@@ -125,7 +124,7 @@ instance : BoundedOrder NLRelation where
   __ := inferInstanceAs (OrderTop NLRelation)
 
 /--
-Join operation ⋈ (Icard 2012, Lemma 1.5).
+Join operation ⋈ (@cite{icard-2012}, Lemma 1.5).
 
 Given xRy and yR'z, determines the strongest relation x(R⋈R')z.
 This is the "join" in the relation algebra sense (not lattice join).
@@ -297,7 +296,7 @@ instance : OrderBot EntailmentSig where bot_le a := by cases a <;> rfl
 
 /--
 Projection of a NL relation through a function of given signature
-(Icard 2012, Lemma 2.4).
+(@cite{icard-2012}, Lemma 2.4).
 
 If xRy and f has signature φ, then f(x) [R]^φ f(y).
 Returns the ≪-maximal relation guaranteed to hold between f(x) and f(y).
@@ -413,7 +412,7 @@ private def fromProjectionPair : NLRelation → NLRelation → EntailmentSig
   | _, _ => .mono  -- unreachable for valid projection pairs
 
 /--
-Composition of entailment signatures (Icard 2012, Lemma 2.7).
+Composition of entailment signatures (@cite{icard-2012}, Lemma 2.7).
 
 **Derived from `project`**: compose(ψ, φ) is the unique signature whose
 projection table matches projecting through φ then ψ. This makes
@@ -668,7 +667,7 @@ theorem toContextPolarity_compose (φ ψ : EntailmentSig) :
 
 /--
 Compute the projectivity signature of a context from the signatures along
-the path from the target position to the root (Icard 2012, Definition 2.9).
+the path from the target position to the root (@cite{icard-2012}, Definition 2.9).
 
 Given a parse tree and a target position (e.g., "dangerous" in
 "Every job that involves a giant squid is dangerous"), the path collects
@@ -721,7 +720,7 @@ end EntailmentSig
 -- ============================================================================
 
 /--
-Projection composition (Icard 2012, Corollary 2.12).
+Projection composition (@cite{icard-2012}, Corollary 2.12).
 
 Projecting through f then g is the same as projecting through g∘f.
 This is the compositionality principle: nested function application

@@ -7,7 +7,7 @@ import Linglib.Theories.Semantics.Modality.EventRelativity
 modal component whose domain is projected from an event argument via an
 anchoring function. Extracted from EventRelativity §§3–7.
 
-## Core Denotation (A-O&R 2024, (59))
+## Core Denotation (A-@cite{alonso-ovalle-royer-2024}, (59))
 
     ⟦MI⟧^{f,e₁} = λP.λQ.λw.
       ∃x[P(x)(w) ∧ Q(x)(w)] ∧
@@ -18,13 +18,13 @@ The existential component is standard; the universal modal component adds
 in some accessible world. The event argument e₁ and anchoring function f
 determine the modal domain (epistemic, circumstantial, random choice).
 
-## Upper-Boundedness (A-O&R 2024, §5)
+## Upper-Boundedness (A-@cite{alonso-ovalle-royer-2024}, §5)
 
 Some modal indefinites (*algún*) impose an anti-singleton inference:
 the speaker considers it possible that not all domain members satisfy
 the scope. Others (*yalnhej*) lack this condition.
 
-## Harmonic Interpretations (A-O&R 2024, §4.3)
+## Harmonic Interpretations (A-@cite{alonso-ovalle-royer-2024}, §4.3)
 
 Under external modals (imperatives, deontic), the MI's anchor can be
 co-indexed with the external modal's event, yielding "any X is fine"
@@ -39,10 +39,10 @@ open Semantics.Modality.EventRelativity
 
 
 -- ════════════════════════════════════════════════════
--- § 1. Modal Indefinite Denotation (A-O&R 2024, (59))
+-- § 1. Modal Indefinite Denotation (A-@cite{alonso-ovalle-royer-2024}, (59))
 -- ════════════════════════════════════════════════════
 
-/-- The modal component of a modal indefinite (A-O&R 2024, (59)):
+/-- The modal component of a modal indefinite (A-@cite{alonso-ovalle-royer-2024}, (59)):
 
     ∀y[P(y)(w) → ◇_{f(e₁)}(Q(y)(w'))]
 
@@ -58,7 +58,7 @@ def modalComponent {Ev W Entity : Type*}
   domain.all λ y => !(P y w) ||
     possibility f e allW (λ w' => Q y w') w
 
-/-- Full modal indefinite denotation (A-O&R 2024, (59)):
+/-- Full modal indefinite denotation (A-@cite{alonso-ovalle-royer-2024}, (59)):
 
     ⟦MI⟧^{f,e₁} = λP.λQ.λw.
       ∃x[P(x)(w) ∧ Q(x)(w)] ∧
@@ -77,7 +77,7 @@ def modalIndefiniteSat {Ev W Entity : Type*}
 
 
 -- ════════════════════════════════════════════════════
--- § 2. Upper-Boundedness (A-O&R 2024, §5)
+-- § 2. Upper-Boundedness (A-@cite{alonso-ovalle-royer-2024}, §5)
 -- ════════════════════════════════════════════════════
 
 /-- An upper-bounded modal indefinite additionally requires that NOT
@@ -168,7 +168,7 @@ theorem yalnhej_not_upper_bounded_abc :
 
 
 -- ════════════════════════════════════════════════════
--- § 4. Non-Maximality (A-O&R 2024, §3.2.4)
+-- § 4. Non-Maximality (A-@cite{alonso-ovalle-royer-2024}, §3.2.4)
 -- ════════════════════════════════════════════════════
 
 /-! Yalnhej is compatible with partial-domain scenarios: the speaker
@@ -210,7 +210,7 @@ theorem yalnhej_three_way_contrast :
 
 
 -- ════════════════════════════════════════════════════
--- § 5. Harmonic Interpretations (A-O&R 2024, §4.3)
+-- § 5. Harmonic Interpretations (A-@cite{alonso-ovalle-royer-2024}, §4.3)
 -- ════════════════════════════════════════════════════
 
 /-! When a modal indefinite occurs under an external modal (imperative,

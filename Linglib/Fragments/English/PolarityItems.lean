@@ -59,7 +59,7 @@ inductive LicensingContext where
   deriving DecidableEq, BEq, Repr
 
 -- ============================================================================
--- Scalar Direction (Israel 1996, 2011; Schwab 2022)
+-- Scalar Direction (@cite{israel-1996}, 2011; @cite{schwab-2022})
 -- ============================================================================
 
 /-- Scalar direction: does this item strengthen or attenuate the assertion?

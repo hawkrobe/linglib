@@ -62,7 +62,7 @@ theorem denn_evidential : denn.requiresEvidentialBias = true := rfl
 theorem denn_no_epistemic : denn.requiresEpistemicBias = false := rfl
 
 /-- Unlike Mandarin nandao, German denn is compatible with wh-questions
-(Theiler 2021 §3). -/
+(@cite{theiler-2021} §3). -/
 theorem denn_wh_ok : denn.whOk = true := rfl
 
 end Fragments.German.QuestionParticles

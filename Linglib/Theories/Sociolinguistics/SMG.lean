@@ -2,7 +2,7 @@ import Linglib.Theories.Sociolinguistics.EckertMontague
 import Linglib.Theories.Pragmatics.RSA.Implementations.Franke2011
 
 /-!
-# Social Meaning Games (Burnett 2019, Definitions 4.1–4.4)
+# Social Meaning Games (@cite{burnett-2019}, Definitions 4.1–4.4)
 @cite{burnett-2019}
 
 Burnett's Social Meaning Game (SMG): a signalling game in which a

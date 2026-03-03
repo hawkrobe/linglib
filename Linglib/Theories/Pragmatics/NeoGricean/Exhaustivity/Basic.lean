@@ -1611,7 +1611,7 @@ theorem exhIE_or_not_wBoth : ¬exhIE orAndALT sangOrDanced wBoth := by
 -- ----------------------------------------------------------------------------
 
 
--- SECTION 7: MAXIMIZE STRENGTH PRINCIPLE (Chierchia 2013)
+-- SECTION 7: MAXIMIZE STRENGTH PRINCIPLE (@cite{chierchia-2013})
 
 /-!
 ## Maximize Strength
@@ -1841,7 +1841,7 @@ def maximizeStrengthExamples : List MaximizeStrengthExample :=
 
 
 -- ============================================================================
--- SECTION 7: exh_mx — Per-MC-Set Exhaustification (Wang 2025)
+-- SECTION 7: exh_mx — Per-MC-Set Exhaustification (@cite{wang-2025})
 -- ============================================================================
 
 /-!
@@ -1960,7 +1960,7 @@ When there is a unique MC-set, all `exh_mx` readings are equivalent.
 
 MC-set uniqueness is a stronger condition than conjunction closure alone.
 It holds when ALT has additional structural properties (e.g., symmetric
-closure under both conjunction and disjunction, per Spector 2016).
+closure under both conjunction and disjunction, per @cite{spector-2016}).
 -/
 theorem exhMX_unique_when_unique_MCset
     {p q : Prop' World}
@@ -1976,7 +1976,7 @@ end ExhMX
 
 
 -- ============================================================================
--- SECTION 8: FLAT Operator (Wang 2025, Groenendijk & Stokhof 1984)
+-- SECTION 8: FLAT Operator (@cite{wang-2025}, @cite{groenendijk-stokhof-1984})
 -- ============================================================================
 
 /-!

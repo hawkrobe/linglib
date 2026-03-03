@@ -142,44 +142,44 @@ def RightAntiAdditive (q : GQ α) : Prop :=
 
 -- §1.3 @cite{van-benthem-1984}: Relational properties --
 
-/-- Transitive: Q(A,B) ∧ Q(B,C) → Q(A,C). Van Benthem 1984 §3.1.
+/-- Transitive: Q(A,B) ∧ Q(B,C) → Q(A,C). @cite{van-benthem-1984} §3.1.
     "all" is the prime transitive quantifier (inclusion is transitive). -/
 def QTransitive (q : GQ α) : Prop :=
   ∀ (A B C : α → Bool), q A B = true → q B C = true → q A C = true
 
 /-- Antisymmetric: Q(A,B) ∧ Q(B,A) → A = B (extensionally).
-    Van Benthem 1984 §3.1: "all" (inclusion) is antisymmetric. -/
+    @cite{van-benthem-1984} §3.1: "all" (inclusion) is antisymmetric. -/
 def QAntisymmetric (q : GQ α) : Prop :=
   ∀ (A B : α → Bool), q A B = true → q B A = true → A = B
 
 /-- Linear (connected): Q(A,B) ∨ Q(B,A) for all A, B.
-    Van Benthem 1984 §3.1: "not all" (non-inclusion) is linear. -/
+    @cite{van-benthem-1984} §3.1: "not all" (non-inclusion) is linear. -/
 def QLinear (q : GQ α) : Prop :=
   ∀ (A B : α → Bool), q A B = true ∨ q B A = true
 
-/-- Quasi-reflexive: Q(A,B) → Q(A,A). Van Benthem 1984 §3.1.
+/-- Quasi-reflexive: Q(A,B) → Q(A,A). @cite{van-benthem-1984} §3.1.
     "some" is quasi-reflexive: overlap implies non-emptiness. -/
 def QuasiReflexive (q : GQ α) : Prop :=
   ∀ (A B : α → Bool), q A B = true → q A A = true
 
-/-- Quasi-universal: Q(A,A) → Q(A,B) for all B. Van Benthem 1984 §3.1.
+/-- Quasi-universal: Q(A,A) → Q(A,B) for all B. @cite{van-benthem-1984} §3.1.
     "no" is quasi-universal: if A∩A = ∅ then A∩B = ∅ for all B. -/
 def QuasiUniversal (q : GQ α) : Prop :=
   ∀ (A B : α → Bool), q A A = true → q A B = true
 
 /-- Almost-connected: Q(A,B) → Q(A,C) ∨ Q(C,B) for all C.
-    Van Benthem 1984 §3.1: equivalent to transitivity of ¬Q.
+    @cite{van-benthem-1984} §3.1: equivalent to transitivity of ¬Q.
     "not all" is almost-connected. -/
 def AlmostConnected (q : GQ α) : Prop :=
   ∀ (A B C : α → Bool), q A B = true → q A C = true ∨ q C B = true
 
 /-- VAR (Variety): Q is non-trivial — it both accepts and rejects some pair.
-    Van Benthem 1984 §2: rules out degenerate quantifiers like "at least 2"
+    @cite{van-benthem-1984} §2: rules out degenerate quantifiers like "at least 2"
     on singleton domains. Used as hypothesis in most uniqueness theorems. -/
 def Variety (q : GQ α) : Prop :=
   (∃ A B, q A B = true) ∧ (∃ A B, q A B = false)
 
-/-- Double monotonicity type (van Benthem 1984 §4.2).
+/-- Double monotonicity type (@cite{van-benthem-1984} §4.2).
     The logical Square of Opposition maps to four double-monotonicity types:
     all = ↓MON↑, some = ↑MON↑, no = ↓MON↓, not all = ↑MON↓. -/
 inductive DoubleMono where
@@ -190,7 +190,7 @@ inductive DoubleMono where
   deriving DecidableEq, Repr, BEq
 
 /-- Right continuity (CONT): if Q(A,B₁) and Q(A,B₂) hold and B₁ ⊆ B ⊆ B₂,
-    then Q(A,B). Van Benthem 1984 §4.3: all right-monotone quantifiers are
+    then Q(A,B). @cite{van-benthem-1984} §4.3: all right-monotone quantifiers are
     continuous. "precisely one" is continuous but non-monotone. -/
 def RightContinuous (q : GQ α) : Prop :=
   ∀ (A B B₁ B₂ : α → Bool),
@@ -199,7 +199,7 @@ def RightContinuous (q : GQ α) : Prop :=
     q A B₁ = true → q A B₂ = true → q A B = true
 
 /-- Filtrating: Q(A,B) ∧ Q(A,C) → Q(A, B∩C).
-    Van Benthem 1984 Thm 4.4.2: "all" is the only filtrating quantifier
+    @cite{van-benthem-1984} Thm 4.4.2: "all" is the only filtrating quantifier
     (under VAR*). This is because filtrating ↔ filter (closure under ∩),
     and only the principal filter at A (= inclusion) satisfies CONSERV. -/
 def Filtrating (q : GQ α) : Prop :=
@@ -217,7 +217,7 @@ def Filtrating (q : GQ α) : Prop :=
     uses cardinalities directly, which requires `FiniteModel`. This version
     captures the same intuition without model infrastructure.
 
-    Van Benthem 1984 §2: CONSERV + QUANT together reduce Q's behavior to
+    @cite{van-benthem-1984} §2: CONSERV + QUANT together reduce Q's behavior to
     pairs (a, b) where a = |A \ B| and b = |A ∩ B|. -/
 def QuantityInvariant (q : GQ α) : Prop :=
   ∀ (A B A' B' : α → Bool) (f : α → α),
@@ -496,7 +496,7 @@ theorem vanBenthem_cons_ext (q : GQ α) :
   λ _ => conservative_iff_livesOn q
 
 -- ============================================================================
--- §6 Boolean Closure (K&S 1986)
+-- §6 Boolean Closure (@cite{keenan-stavi-1986})
 -- ============================================================================
 
 /-- Conservativity is closed under complement (K&S §2.3, negation).
@@ -639,7 +639,7 @@ theorem vanBenthem_refl_antisym_is_inclusion (q : GQ α)
       · simp [hSub x hA]
     rw [this]; exact hRefl A
 
-/-- Van Benthem 1984 Thm 4.1.1 (Zwarts): reflexive + transitive → MON↑.
+/-- @cite{van-benthem-1984} Thm 4.1.1 (Zwarts): reflexive + transitive → MON↑.
     Under CONSERV, if Q is reflexive and transitive, Q is scope-upward-monotone.
 
     Proof: QAB and B ⊆ B' gives QBB' (CONSERV + reflexivity), then QAB'
@@ -657,7 +657,7 @@ theorem zwarts_refl_trans_scopeUp (q : GQ α)
     rw [this]; exact hRefl S
   exact hTrans R S S' hQRS hQSS'
 
-/-- Van Benthem 1984 Thm 4.1.1 (Zwarts): reflexive + transitive → ↓MON.
+/-- @cite{van-benthem-1984} Thm 4.1.1 (Zwarts): reflexive + transitive → ↓MON.
     Under CONSERV, if Q is reflexive and transitive, Q is
     restrictor-downward-monotone (anti-persistent).
 
@@ -676,7 +676,7 @@ theorem zwarts_refl_trans_restrictorDown (q : GQ α)
     rw [this]; exact hRefl R
   exact hTrans R R' S hQRR' hQR'S
 
-/-- Van Benthem 1984 Thm 4.1.3 (Zwarts): for symmetric quantifiers,
+/-- @cite{van-benthem-1984} Thm 4.1.3 (Zwarts): for symmetric quantifiers,
     scope-↑ implies quasi-reflexive, under CONSERV. -/
 theorem zwarts_sym_scopeUp_quasiRefl (q : GQ α)
     (hCons : Conservative q) (_hSym : QSymmetric q)
@@ -686,7 +686,7 @@ theorem zwarts_sym_scopeUp_quasiRefl (q : GQ α)
   exact hUp A (λ x => A x && B x) A
     (fun x hx => by cases hA : A x <;> simp_all) h1
 
-/-- Van Benthem 1984 Thm 4.1.3 (Zwarts): for symmetric quantifiers,
+/-- @cite{van-benthem-1984} Thm 4.1.3 (Zwarts): for symmetric quantifiers,
     scope-↓ implies quasi-universal, under CONSERV. -/
 theorem zwarts_sym_scopeDown_quasiUniv (q : GQ α)
     (hCons : Conservative q) (_hSym : QSymmetric q)
@@ -696,7 +696,7 @@ theorem zwarts_sym_scopeDown_quasiUniv (q : GQ α)
   exact hDown A (λ x => A x && B x) A
     (fun x hx => by cases hA : A x <;> simp_all) hQAA
 
-/-- Right-monotone quantifiers are right-continuous (van Benthem 1984 §4.3). -/
+/-- Right-monotone quantifiers are right-continuous (@cite{van-benthem-1984} §4.3). -/
 theorem scopeUpMono_rightContinuous (q : GQ α)
     (h : ScopeUpwardMono q) : RightContinuous q := by
   intro A B B₁ _ hB₁B _ hQ1 _
@@ -704,7 +704,7 @@ theorem scopeUpMono_rightContinuous (q : GQ α)
 
 
 -- ============================================================================
--- §9 — Entailment Signature Bridge (Icard 2012, Table p.720)
+-- §9 — Entailment Signature Bridge (@cite{icard-2012}, Table p.720)
 -- ============================================================================
 
 open Core.NaturalLogic (EntailmentSig ContextPolarity)
@@ -765,12 +765,12 @@ def notEveryEntailmentSig : EntailmentSig × EntailmentSig := (.additive, .antiM
 #guard EntailmentSig.toContextPolarity notEveryEntailmentSig.1 == .upward  -- not-every restrictor is UE
 
 -- ============================================================================
--- §10 Number-Tree Impossibility Theorems (Van Benthem 1984 §3.2)
+-- §10 Number-Tree Impossibility Theorems (@cite{van-benthem-1984} §3.2)
 -- ============================================================================
 
 /-- Number-tree representation of a conservative, quantity-invariant GQ.
     Under CONSERV + QUANT, a quantifier's truth value depends only on
-    `a = |A ∩ B|` and `b = |A \ B|` (van Benthem 1984 §2, "tree of numbers").
+    `a = |A ∩ B|` and `b = |A \ B|` (@cite{van-benthem-1984} §2, "tree of numbers").
     This is inherently cross-domain: any `(a, b)` pair is realizable in some
     universe of size ≥ a + b. -/
 abbrev NumberTreeGQ := Nat → Nat → Bool
@@ -781,7 +781,7 @@ namespace NumberTreeGQ
 def Variety (q : NumberTreeGQ) : Prop :=
   (∃ a b, q a b = true) ∧ (∃ a b, q a b = false)
 
-/-- Van Benthem 1984 Thm 3.2.1: No asymmetric CONSERV+QUANT quantifiers exist.
+/-- @cite{van-benthem-1984} Thm 3.2.1: No asymmetric CONSERV+QUANT quantifiers exist.
 
     On the number tree, asymmetry means: for all `a b c`,
     `q(a, b) → ¬q(a, c)` — because `|A ∩ B| = a` and `|B \ A| = c` is free
@@ -794,7 +794,7 @@ theorem no_asymmetric (q : NumberTreeGQ) (hVar : q.Variety)
   obtain ⟨⟨a, b, hab⟩, _⟩ := hVar
   exact absurd hab (Bool.eq_false_iff.mp (hAsym a b b hab))
 
-/-- Van Benthem 1984 §3.2 consequence: No strict partial order quantifiers.
+/-- @cite{van-benthem-1984} §3.2 consequence: No strict partial order quantifiers.
 
     On the number tree, irreflexivity is `∀ n, q(n, 0) = false` (since
     `Q(A,A)` has `|A ∩ A| = n`, `|A \ A| = 0`). Transitivity (with C = A
@@ -814,7 +814,7 @@ theorem no_strict_partial_order (q : NumberTreeGQ) (hVar : q.Variety)
     rw [hIrrefl] at this
     exact absurd this (by decide))
 
-/-- Van Benthem 1984 Thm 3.2.3: No Euclidean CONSERV+QUANT quantifiers exist.
+/-- @cite{van-benthem-1984} Thm 3.2.3: No Euclidean CONSERV+QUANT quantifiers exist.
 
     On the number tree (3-set Venn diagram with 7 free size parameters
     `p, q, r, s, t, u` plus one more), the Euclidean property becomes:
@@ -878,10 +878,10 @@ theorem no_euclidean (q : NumberTreeGQ) (hVar : q.Variety)
 end NumberTreeGQ
 
 -- ============================================================================
--- §11 Counting Quantifiers (Van Benthem 1984 §5.4)
+-- §11 Counting Quantifiers (@cite{van-benthem-1984} §5.4)
 -- ============================================================================
 
-/-- Van Benthem 1984 Thm 5.4: On a finite set with n individuals, there are
+/-- @cite{van-benthem-1984} Thm 5.4: On a finite set with n individuals, there are
     exactly 2^((n+1)(n+2)/2) conservative quantifiers (satisfying QUANT).
     The tree of numbers has (n+1)(n+2)/2 points at levels a + b ≤ n. -/
 def conservativeQuantifierCount (n : Nat) : Nat :=
@@ -894,7 +894,7 @@ def conservativeQuantifierCount (n : Nat) : Nat :=
 #eval conservativeQuantifierCount 4  -- 32768
 
 -- ============================================================================
--- §12 — Conservative GQ Lattice (Elliott 2025)
+-- §12 — Conservative GQ Lattice (@cite{elliott-2025})
 -- ============================================================================
 
 /-- Conservative GQs form a sublattice of `GQ α`. The `DistribLattice`

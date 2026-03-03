@@ -4,15 +4,14 @@ import Linglib.Core.Case.Basic
 # Blake's Case Hierarchy @cite{blake-1994}
 @cite{iggesen-2013} @cite{moravcsik-1974}
 
-The **case hierarchy** (Blake 1994, §5.8, example 68) is an implicational
+The **case hierarchy** (@cite{blake-1994}, §5.8, example 68) is an implicational
 tendency over case inventories:
 
     NOM ACC/ERG GEN DAT LOC ABL/INST others
 
 If a language has a case at position *n*, it *usually* has at least one case
 from each position to the left. Blake hedges this as
-holding "with overwhelmingly greater than chance frequency" (borrowing Greenberg
-1963). Gaps occur when higher grammatical relations are marked by bound pronouns
+holding "with overwhelmingly greater than chance frequency" (borrowing @cite{greenberg-1963}). Gaps occur when higher grammatical relations are marked by bound pronouns
 or word order (p. 89).
 
 Ranks 6–2 directly encode Blake's hierarchy. Ranks 1 (COM, ALL, PERL, BEN) and
@@ -36,7 +35,7 @@ namespace Core
 -- § 1: Hierarchy Rank
 -- ============================================================================
 
-/-- Position on Blake's case hierarchy (Blake 1994, §5.8, ex. 68).
+/-- Position on Blake's case hierarchy (@cite{blake-1994}, §5.8, ex. 68).
 
     Higher rank = more likely to exist in a language's case inventory.
 
@@ -79,7 +78,7 @@ private def hasRank (inv : List Case) (r : Nat) : Bool :=
     conjunctions, and a language may have COM without PERL.
 
     Real languages occasionally violate even this weaker check (e.g.,
-    Nanai: Blake 1994, ex. 76, p. 160). -/
+    Nanai: @cite{blake-1994}, ex. 76, p. 160). -/
 def validInventory (inv : List Case) : Bool :=
   inv.all fun c =>
     inv.all fun c' =>

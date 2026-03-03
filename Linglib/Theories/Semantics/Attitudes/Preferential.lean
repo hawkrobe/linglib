@@ -95,11 +95,11 @@ predicate with alternatives triggers significance presuppositions.
 ### The Derivation Chain
 
 ```
-Hamblin question Q = {p₁, p₂,...} [Hamblin 1973]
+Hamblin question Q = {p₁, p₂,...} [@cite{hamblin-1973b}]
         ↓
-Alternatives trigger focus semantics [Rooth 1992]
+Alternatives trigger focus semantics [@cite{rooth-1992}]
         ↓
-Focus triggers significance presup [Kennedy 2007]
+Focus triggers significance presup [@cite{kennedy-2007}]
         ↓
 For positive valence: significance = ∃p ∈ C. μ(x,p) > θ = TSP
 ```
@@ -243,7 +243,7 @@ inductive AttitudeValence where
   | negative   -- fear, worry, dread
   deriving DecidableEq, Repr, BEq
 
--- Significance Presuppositions (Kennedy 2007, Uegaki & Sudo 2019)
+-- Significance Presuppositions (@cite{kennedy-2007}, @cite{uegaki-sudo-2019})
 
 /-!
 ## Deriving TSP from Degree Semantics
@@ -281,7 +281,7 @@ For predicates expressing aversions/threats:
 
 ### Why the Asymmetry?
 
-The key insight (U&S 2019): Positive predicates express **bouletic goals** — states
+The key insight (@cite{uegaki-sudo-2019}): Positive predicates express **bouletic goals** — states
 the agent wants to achieve. Goals inherently presuppose there's something desirable.
 
 Negative predicates express **threats** — states to avoid. Threats don't require
@@ -669,7 +669,7 @@ example : classifyNVP false .negative = .class1_nonCDist := rfl
 /-- Qidai is Class 1 (positive but non-C-distributive, takes questions) -/
 example : classifyNVP false .positive = .class1_nonCDist := rfl
 
--- Veridical Preferential Predicates (U&S 2019)
+-- Veridical Preferential Predicates (@cite{uegaki-sudo-2019})
 
 /-!
 ## Veridical vs Non-Veridical Preferential Predicates
@@ -900,7 +900,7 @@ theorem beSurprised_isCDistributiveAt {W E : Type*}
 -- The Complete Picture: Why Veridicality Matters
 
 /-!
-## The Triviality Conditions (U&S 2019)
+## The Triviality Conditions (@cite{uegaki-sudo-2019})
 
 For a preferential predicate to be anti-rogative (unable to embed questions),
 ALL THREE conditions must hold:
@@ -961,7 +961,7 @@ the triviality derivation that creates anti-rogativity.
 4. `degreeComparison_triviality` / `hope_triviality`: Class 3 predicates
    yield trivial meanings with questions (assertion ⊆ presupposition when Q ⊆ C).
 
-5. **`veridical_breaks_triviality`** (NEW): The core U&S (2019) insight —
+5. **`veridical_breaks_triviality`** (NEW): The core @cite{uegaki-sudo-2019} insight —
    veridical predicates break triviality because even when TSP holds, the
    assertion can be false (no TRUE answer is preferred).
 

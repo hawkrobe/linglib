@@ -94,7 +94,7 @@ def adjNModification : Construction :=
   , meaning := "adjective restricts noun denotation"
   , specificity := .fullyAbstract }
 
-/-! ## Inheritance network (Figure 5 of Goldberg & Shirtz 2025) -/
+/-! ## Inheritance network (Figure 5 of @cite{goldberg-shirtz-2025}) -/
 
 /-- The PAL constructicon: constructions + inheritance links. -/
 def palConstructicon : Constructicon :=
@@ -161,7 +161,7 @@ def palPresupposition (W : Type*) (situationType : BProp W) : PrProp W :=
   { presup := situationType
   , assertion := λ _ => true }
 
-/-- PAL two-dimensional meaning (Potts 2005 two-dimensional semantics).
+/-- PAL two-dimensional meaning (@cite{potts-2005} two-dimensional semantics).
 
 - At-issue: the head noun's denotation (e.g., "lunch" in "grab-and-go lunch")
 - CI: speaker presupposes shared familiarity with the situation type

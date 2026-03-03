@@ -20,7 +20,7 @@ the structural configuration of NPs within a Spell-Out domain:
 
 ## Tripartite Alignment
 
-In tripartite systems (e.g., Nez Perce; Deal 2010), intransitive subjects
+In tripartite systems (e.g., Nez Perce; @cite{deal-2010}), intransitive subjects
 (S), transitive agents (A), and transitive patients (P) each receive
 distinct case. Under dependent case, this follows from applying *both*
 dependent ergative (to the higher NP) and dependent accusative (to the
@@ -53,7 +53,7 @@ namespace Minimalism
     which takes priority over unmarked (default) case. -/
 inductive CaseSource where
   | lexical    -- Assigned by a specific head (P, inherent V case)
-  | dependent  -- Assigned by structural configuration (Baker 2015)
+  | dependent  -- Assigned by structural configuration (@cite{baker-2015})
   | unmarked   -- Default when no other case applies
   deriving DecidableEq, BEq, Repr
 
@@ -65,11 +65,11 @@ inductive CaseSource where
     - Accusative: dependent = ACC (on lower NP), unmarked = NOM
     - Ergative: dependent = ERG (on higher NP), unmarked = ABS
     - Tripartite: dependent = ERG (on higher) + ACC (on lower), unmarked = ABS
-      (Scott 2023: SJA Mam; cf. Nez Perce) -/
+      (@cite{scott-2023}: SJA Mam; cf. Nez Perce) -/
 inductive CaseLanguageType where
   | accusative  -- Japanese, English, Romance, ...
   | ergative    -- Basque, Hindi (split), ...
-  | tripartite  -- Nez Perce (Deal 2010), Warlpiri, ...
+  | tripartite  -- Nez Perce (@cite{deal-2010}), Warlpiri, ...
   deriving DecidableEq, BEq, Repr
 
 -- ============================================================================

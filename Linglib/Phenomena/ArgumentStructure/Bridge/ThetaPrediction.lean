@@ -28,7 +28,7 @@ only distinguish agent from stimulus. It correctly predicts ~71% of verbs
   argument that moved. The severing account correctly predicts no
   *external* argument; the subject's theta role comes from V, not Voice.
 
-## Account 2: Lexicalist (Levin 1993, Rappaport Hovav & Levin 1998)
+## Account 2: Lexicalist (@cite{levin-1993}, Rappaport @cite{rappaport-hovav-levin-1998})
 
 The verb's lexical semantics determines the theta role, bypassing Voice.
 `Ctx = Unit`; `predict` ignores structure. Uses attitudeBuilder,
@@ -47,7 +47,7 @@ open Core.Verbs (VerbCore)
 open Theories.Interfaces.SyntaxSemantics.VoiceTheta (severingTheta selectedVoice)
 
 -- ════════════════════════════════════════════════════════════════════════
--- PART I: Severing account (Kratzer 1996) — Voice flavor → theta role
+-- PART I: Severing account (@cite{kratzer-1996}) — Voice flavor → theta role
 -- ════════════════════════════════════════════════════════════════════════
 
 -- ════════════════════════════════════════════════════
@@ -179,7 +179,7 @@ theorem sev_mismatch_count :
   native_decide
 
 -- ════════════════════════════════════════════════════════════════════════
--- PART II: Lexicalist account (Levin & RH 1998) — verb semantics → theta role
+-- PART II: Lexicalist account (@cite{rappaport-hovav-levin-1998}) — verb semantics → theta role
 -- ════════════════════════════════════════════════════════════════════════
 
 -- ════════════════════════════════════════════════════

@@ -95,7 +95,7 @@ def criterionCount (criteria : List HeadCriterion) (dep : Dependency) (words : L
   criteria.filter (·.satisfied dep words) |>.length
 
 /-- A dependency is a prototypical head-dependent relation if it satisfies
-    most criteria (Hudson 1990's prototype structure). -/
+    most criteria (@cite{hudson-1990}'s prototype structure). -/
 def isPrototypicalHead (criteria : List HeadCriterion) (dep : Dependency)
     (words : List Word) (threshold : Nat := 4) : Bool :=
   criterionCount criteria dep words >= threshold
@@ -139,7 +139,7 @@ def expectedCriteriaCount : RelationClass → Nat
 /-- Two competing analyses of function words.
 
     Function-head: auxiliaries, determiners, prepositions are heads.
-      - Most traditional DG frameworks (Hudson 1990, MTT, FGD)
+      - Most traditional DG frameworks (@cite{hudson-1990}, MTT, FGD)
       - Function words satisfy criteria 3 (obligatory) and 5 (govern form)
 
     Content-head: content words are heads, function words are dependents.

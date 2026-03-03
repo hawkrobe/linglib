@@ -57,7 +57,7 @@ def KContext.toSituation {W E P T : Type*} (c : KContext W E P T) :
 
 /-- Project a KContext into a root-clause ReichenbachFrame.
     Speech time S = context time; perspective time P = S (root clause
-    default, Kiparsky 2002); R and E are supplied per clause. -/
+    default, @cite{kiparsky-2002}); R and E are supplied per clause. -/
 def KContext.toReichenbachFrame {W E P T : Type*}
     (c : KContext W E P T) (R Ev : T) :
     Core.Reichenbach.ReichenbachFrame T where

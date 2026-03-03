@@ -62,7 +62,7 @@ def before_nonveridical : VeridicalityDatum where
 
 /-- "The bomb exploded before anyone defused it" — the complement
     event (defusing) did NOT occur. This is the counterfactual reading
-    of *before* (Beaver & Condoravdi 2003, "barely prevented"). -/
+    of *before* (@cite{beaver-condoravdi-2003}, "barely prevented"). -/
 def before_counterfactual : VeridicalityDatum where
   sentence := "The bomb exploded before anyone defused it"
   connective := "before"
@@ -77,12 +77,12 @@ def after_veridical_2 : VeridicalityDatum where
   gloss := "after(finish, leave) |= leave"
 
 -- ════════════════════════════════════════════════════════════════
--- § 3: Additional Veridicality Data (B&C 2003, §2)
+-- § 3: Additional Veridicality Data (@cite{beaver-condoravdi-2003}, §2)
 -- ════════════════════════════════════════════════════════════════
 
 /-- "The Supreme Court decided the election before the votes were
     counted" — non-committal: compatible with votes eventually being
-    counted or never counted (B&C 2003, ex. 22). -/
+    counted or never counted (@cite{beaver-condoravdi-2003}, ex. 22). -/
 def before_noncommittal : VeridicalityDatum where
   sentence := "The Supreme Court decided the election before the votes were counted"
   connective := "before"
@@ -90,7 +90,7 @@ def before_noncommittal : VeridicalityDatum where
   gloss := "before(decide, count) |/= count (non-committal)"
 
 /-- "Mozart died before he finished the Requiem" — counterfactual:
-    Mozart never finished the Requiem (B&C 2003, ex. 24). -/
+    Mozart never finished the Requiem (@cite{beaver-condoravdi-2003}, ex. 24). -/
 def before_counterfactual_mozart : VeridicalityDatum where
   sentence := "Mozart died before he finished the Requiem"
   connective := "before"
@@ -98,7 +98,7 @@ def before_counterfactual_mozart : VeridicalityDatum where
   gloss := "before(die, finish) ∧ ¬finish (counterfactual)"
 
 -- ════════════════════════════════════════════════════════════════
--- § 4: Logical Property Data (B&C 2003, §1)
+-- § 4: Logical Property Data (@cite{beaver-condoravdi-2003}, §1)
 -- ════════════════════════════════════════════════════════════════
 
 /-- A judgment about a logical property of a temporal connective:
@@ -118,7 +118,7 @@ structure LogicalPropertyDatum where
 
 /-- *Before* is antisymmetric: "Cleo was in America before David was"
     and "David was in America before Cleo was" cannot both be true
-    (with non-overlapping intervals). (B&C 2003, exx. 3-4) -/
+    (with non-overlapping intervals). (@cite{beaver-condoravdi-2003}, exx. 3-4) -/
 def before_antisymmetric : LogicalPropertyDatum where
   property := "antisymmetry"
   connective := "before"
@@ -127,7 +127,7 @@ def before_antisymmetric : LogicalPropertyDatum where
   gloss := "before(A,B) → ¬before(B,A) (when A,B non-overlapping)"
 
 /-- *After* is NOT antisymmetric: overlapping intervals allow both
-    directions. (B&C 2003, exx. 5-7, diagram 7) -/
+    directions. (@cite{beaver-condoravdi-2003}, exx. 5-7, diagram 7) -/
 def after_not_antisymmetric : LogicalPropertyDatum where
   property := "antisymmetry"
   connective := "after"
@@ -136,7 +136,7 @@ def after_not_antisymmetric : LogicalPropertyDatum where
   gloss := "after(A,B) ∧ after(B,A) possible with overlapping intervals"
 
 /-- *Before* is transitive: if A before B and B before C, then A before C.
-    (B&C 2003, exx. 12-14) -/
+    (@cite{beaver-condoravdi-2003}, exx. 12-14) -/
 def before_transitive : LogicalPropertyDatum where
   property := "transitivity"
   connective := "before"
@@ -145,7 +145,7 @@ def before_transitive : LogicalPropertyDatum where
   gloss := "before(A,B) ∧ before(B,C) → before(A,C)"
 
 /-- *After* is NOT transitive: overlapping intervals allow
-    after(A,B) ∧ after(B,C) ∧ ¬after(A,C). (B&C 2003, exx. 8-11) -/
+    after(A,B) ∧ after(B,C) ∧ ¬after(A,C). (@cite{beaver-condoravdi-2003}, exx. 8-11) -/
 def after_not_transitive : LogicalPropertyDatum where
   property := "transitivity"
   connective := "after"
@@ -153,7 +153,7 @@ def after_not_transitive : LogicalPropertyDatum where
   example_ := "Fred after Ginger, Ginger after Delores, but #Fred after Delores"
   gloss := "after(A,B) ∧ after(B,C) ↛ after(A,C)"
 
-/-- *Before* licenses NPIs; *after* does not. (B&C 2003, exx. 15-18) -/
+/-- *Before* licenses NPIs; *after* does not. (@cite{beaver-condoravdi-2003}, exx. 15-18) -/
 def before_licenses_npis : LogicalPropertyDatum where
   property := "NPI licensing"
   connective := "before"
@@ -162,12 +162,12 @@ def before_licenses_npis : LogicalPropertyDatum where
   gloss := "before licenses NPIs; after does not"
 
 -- ════════════════════════════════════════════════════════════════
--- § 5: Pragmatic Oddity Data (B&C 2003, exx. 32-33)
+-- § 5: Pragmatic Oddity Data (@cite{beaver-condoravdi-2003}, exx. 32-33)
 -- ════════════════════════════════════════════════════════════════
 
 /-- "David won the race before he entered it" — pragmatically odd because
     winning temporally presupposes entering: there is no historical
-    alternative where one wins before entering. (B&C 2003, ex. 32) -/
+    alternative where one wins before entering. (@cite{beaver-condoravdi-2003}, ex. 32) -/
 def before_oddity_win : VeridicalityDatum where
   sentence := "David won the race before he entered it"
   connective := "before"
@@ -176,7 +176,7 @@ def before_oddity_win : VeridicalityDatum where
 
 /-- "David entered the race after he won it" — same temporal impossibility
     viewed through *after*: entering after winning reverses the natural
-    temporal order. (B&C 2003, ex. 33) -/
+    temporal order. (@cite{beaver-condoravdi-2003}, ex. 33) -/
 def after_oddity_enter : VeridicalityDatum where
   sentence := "David entered the race after he won it"
   connective := "after"
@@ -184,7 +184,7 @@ def after_oddity_enter : VeridicalityDatum where
   gloss := "after(enter, win) — pragmatically odd: entering presupposes not yet having won"
 
 -- ════════════════════════════════════════════════════════════════
--- § 6: Counterexamples to B&C (O&ST 2024, §5)
+-- § 6: Counterexamples to B&C (O&@cite{ogihara-steinert-threlkeld-2024}, §5)
 -- ════════════════════════════════════════════════════════════════
 
 /-- A datum recording an empirical problem for B&C's branching-time analysis.
@@ -203,7 +203,7 @@ structure BCCounterexampleDatum where
     The complement event (season ending) is in the PAST relative to the
     naming event but also temporally precedes it. B&C's `alt(w,t)` at the
     naming time cannot branch to alternatives where the season doesn't end,
-    because the season ending is already in the past. (O&ST 2024, §5.1) -/
+    because the season ending is already in the past. (O&@cite{ogihara-steinert-threlkeld-2024}, §5.1) -/
 def ost_counterexample_ohtani : BCCounterexampleDatum where
   sentence := "Ohtani was named the 2023 AL MVP before the 2023 MLB season ended"
   reading := "veridical (complement occurred)"
@@ -212,7 +212,7 @@ def ost_counterexample_ohtani : BCCounterexampleDatum where
 /-- "It snowed a lot in 2020 before the pandemic hit."
     Both events are in the past. B&C's analysis requires `alt(w,t)` at the
     snow time to include alternatives where the pandemic doesn't hit, but
-    the pandemic is also in the past. (O&ST 2024, §5.1) -/
+    the pandemic is also in the past. (O&@cite{ogihara-steinert-threlkeld-2024}, §5.1) -/
 def ost_counterexample_snow : BCCounterexampleDatum where
   sentence := "It snowed a lot in 2020 before the pandemic hit"
   reading := "veridical (complement occurred)"
@@ -221,14 +221,14 @@ def ost_counterexample_snow : BCCounterexampleDatum where
 /-- "Nostradamus predicted many things before they happened."
     The complement events (predictions coming true) are in the past relative
     to utterance time. B&C would need alternatives where the predicted events
-    never happen, but these events are already settled. (O&ST 2024, §5.1) -/
+    never happen, but these events are already settled. (O&@cite{ogihara-steinert-threlkeld-2024}, §5.1) -/
 def ost_counterexample_nostradamus : BCCounterexampleDatum where
   sentence := "Nostradamus predicted many things before they happened"
   reading := "veridical (complement occurred)"
   problem := "complement events settled in past; alt cannot 'unbranch' past events"
 
 -- ════════════════════════════════════════════════════════════════
--- § 7: Non-Committal Reading Problems (O&ST 2024, §5.2)
+-- § 7: Non-Committal Reading Problems (O&@cite{ogihara-steinert-threlkeld-2024}, §5.2)
 -- ════════════════════════════════════════════════════════════════
 
 /-- A datum recording asymmetries in the availability of non-committal
@@ -246,7 +246,7 @@ structure NonCommittalDatum where
 /-- "Mary will leave the party before Bill gets drunk."
     Non-committal reading is available: maybe Bill gets drunk, maybe not.
     B&C's Event Continuation Condition is satisfied (Bill getting drunk is
-    a normal continuation). (O&ST 2024, §5.2) -/
+    a normal continuation). (O&@cite{ogihara-steinert-threlkeld-2024}, §5.2) -/
 def noncommittal_available : NonCommittalDatum where
   sentence := "Mary will leave the party before Bill gets drunk"
   nonCommittalAvailable := true
@@ -257,7 +257,7 @@ def noncommittal_available : NonCommittalDatum where
     independence is not a normal continuation of the party. B&C's Event
     Continuation Condition should block this, but the mechanism is unclear
     for *before*-clauses with pragmatically impossible complements.
-    (O&ST 2024, §5.2) -/
+    (O&@cite{ogihara-steinert-threlkeld-2024}, §5.2) -/
 def noncommittal_unavailable : NonCommittalDatum where
   sentence := "Mary will leave the party before Quebec becomes an independent country"
   nonCommittalAvailable := false
@@ -272,7 +272,7 @@ theorem noncommittal_plausibility_sensitive :
   ⟨rfl, rfl⟩
 
 -- ════════════════════════════════════════════════════════════════
--- § 8: Cross-Linguistic Data (O&ST 2024, §3)
+-- § 8: Cross-Linguistic Data (O&@cite{ogihara-steinert-threlkeld-2024}, §3)
 -- ════════════════════════════════════════════════════════════════
 
 /-- Cross-linguistic morphological evidence for the veridicality asymmetry. -/
@@ -292,7 +292,7 @@ structure CrossLinguisticDatum where
 /-- Japanese *mae* ('before') requires non-past tense in its complement,
     even when describing past events. This independently supports the
     non-veridical analysis: the complement is presented as unrealized
-    from the perspective of the main-clause event. (O&ST 2024, §3) -/
+    from the perspective of the main-clause event. (O&@cite{ogihara-steinert-threlkeld-2024}, §3) -/
 def japanese_mae : CrossLinguisticDatum where
   language := "Japanese"
   connective := "mae (前)"
@@ -302,7 +302,7 @@ def japanese_mae : CrossLinguisticDatum where
 
 /-- Japanese *ato* ('after') allows past tense in its complement,
     consistent with the veridical analysis: the complement event
-    is presented as having occurred. (O&ST 2024, §3) -/
+    is presented as having occurred. (O&@cite{ogihara-steinert-threlkeld-2024}, §3) -/
 def japanese_ato : CrossLinguisticDatum where
   language := "Japanese"
   connective := "ato (後)"

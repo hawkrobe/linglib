@@ -57,7 +57,7 @@ inductive TypeShift where
   deriving DecidableEq, Repr, BEq
 
 /--
-Meaning Preservation Ranking (Dayal 2004: 408)
+Meaning Preservation Ranking (@cite{dayal-2004}: 408)
 
 {∩, ι} > ∃
 
@@ -157,7 +157,7 @@ inductive SingularLicense where
   deriving DecidableEq, Repr, BEq
 
 /--
-Singular Kinds (Dayal 2004: 411-423)
+Singular Kinds (@cite{dayal-2004}: 411-423)
 
 Grammatically singular but denoting kinds:
 - "The lion is a predator" (taxonomic)
@@ -180,7 +180,7 @@ structure SingularKind where
 -- Taxonomic Readings
 
 /--
-Taxonomic readings (Dayal 2004: 426-433)
+Taxonomic readings (@cite{dayal-2004}: 426-433)
 
 Common nouns can denote:
 1. Properties of INDIVIDUALS: dog(x) = "x is a dog individual"
@@ -291,7 +291,7 @@ def selectShift (ctx : TypeShiftContext) : Option TypeShift :=
 -- Cross-Linguistic Kind Reference Patterns
 
 /--
-Language-specific parameters for kind reference (Dayal 2004: 433-445).
+Language-specific parameters for kind reference (@cite{dayal-2004}: 433-445).
 
 Languages differ in:
 1. Whether they have definite/indefinite articles
@@ -389,7 +389,7 @@ def requiresDKP : PredicateType → Bool
   | .objectLevel => true
 
 /--
-Kind-level predicates (Dayal 2004: 401-403):
+Kind-level predicates (@cite{dayal-2004}: 401-403):
 - be extinct, be widespread, be rare
 - evolve, originate, die out
 - be invented, be discovered
@@ -405,7 +405,7 @@ def isKindLevelPredicate : String → Bool
 -- Well-Established Kinds
 
 /--
-Well-established kinds (Dayal 2004: 417-420)
+Well-established kinds (@cite{dayal-2004}: 417-420)
 
 For ι to apply to a kind (giving "the NP"), the kind must be
 "well-established" - a recognized natural class.

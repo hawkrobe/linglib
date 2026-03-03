@@ -333,7 +333,7 @@ def formalize : Finding → Prop
   | .one_partial_1v2_canceled =>
       ¬((gsCfgN .a2).L1 .one .s1 > (gsCfgN .a2).L1 .one .s2)
 
-/-- The RSA model accounts for all 11 empirical findings from G&S (2013). -/
+/-- The RSA model accounts for all 11 empirical findings from @cite{goodman-stuhlmuller-2013}. -/
 theorem all_findings_verified : ∀ f : Finding, formalize f := by
   intro f; cases f
   · exact some_full_implicature

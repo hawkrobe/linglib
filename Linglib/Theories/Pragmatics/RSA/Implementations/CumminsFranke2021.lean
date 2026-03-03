@@ -177,7 +177,7 @@ theorem wider_enrichment_weakens_argStr
 
 
 -- ============================================================
--- Section 4: Exam Scenario (Macuch Silva et al. 2024)
+-- Section 4: Exam Scenario (Macuch @cite{macuch-silva-etal-2024})
 -- ============================================================
 
 /-- An exam stimulus: student got nCorrect out of nTotal questions right -/

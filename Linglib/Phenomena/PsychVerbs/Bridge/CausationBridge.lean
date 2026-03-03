@@ -6,11 +6,11 @@ import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Phenomena.ImplicitCausality.Studies.SolstadBott2024.Bridge.ProtoRoleBridge
 
 /-!
-# Psych Verb Causation Bridge (B&R 1988, Kim 2024 UPH)
+# Psych Verb Causation Bridge (@cite{belletti-rizzi-1988}, @cite{kim-2024} UPH)
 
 @cite{belletti-rizzi-1988} @cite{kim-2024} @cite{pesetsky-1995}
 
-Bridge theorems connecting fragment entries to the B&R (1988) classification
+Bridge theorems connecting fragment entries to the @cite{belletti-rizzi-1988} classification
 and @cite{kim-2024}'s Uniform Projection Hypothesis for Class II psych verbs.
 
 ## Architecture
@@ -323,7 +323,7 @@ theorem tsm_onset_conflict :
 -- ════════════════════════════════════════════════════
 
 /-- Class II theta roles map to the canonical Dowty proto-role profiles
-    (bridging Kim 2024 UPH to Solstad & Bott 2024 proto-role infrastructure).
+    (bridging @cite{kim-2024} UPH to @cite{solstad-bott-2024} proto-role infrastructure).
     stimulus → causation + independent existence (P-Agent = 2),
     experiencer → sentience + independent existence (P-Agent = 2). -/
 theorem classII_theta_matches_proto_roles :
@@ -355,7 +355,7 @@ theorem external_implies_extensional :
     subjectIntensional CausalSource.external = false := rfl
 
 -- ════════════════════════════════════════════════════
--- § 8. Derived Stimulus Type (Pesetsky 1995)
+-- § 8. Derived Stimulus Type (@cite{pesetsky-1995})
 -- ════════════════════════════════════════════════════
 
 /-! For Class II verbs, stimulus subtype is DERIVED from causal source

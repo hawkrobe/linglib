@@ -49,7 +49,7 @@ namespace NadathurLauer2020.Necessity
 open Core.StructuralEquationModel
 export Core.StructuralEquationModel (causallyNecessary)
 
-/-- Semantics of "cause": effect occurred AND cause was necessary (N&L 2020 §5.2). -/
+/-- Semantics of "cause": effect occurred AND cause was necessary (@cite{nadathur-lauer-2020} §5.2). -/
 def causeSem (dyn : CausalDynamics) (background : Situation)
     (causeEvent effectEvent : Variable) : Bool :=
   let withCause := background.extend causeEvent true

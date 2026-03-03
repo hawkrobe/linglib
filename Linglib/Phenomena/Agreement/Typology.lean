@@ -79,7 +79,7 @@ def ParadigmaticStructure.distinctForms (s : ParadigmaticStructure) : Nat :=
 -- §3: Singular Homophony Types (Chapter 2)
 -- ============================================================================
 
-/-- The 5 singular homophony types (Cysouw 2009, §2.1–2.5).
+/-- The 5 singular homophony types (@cite{cysouw-2009}, §2.1–2.5).
 
 Classifies how the three singular categories (1, 2, 3) pattern with
 respect to homophony within a paradigm. -/
@@ -107,7 +107,7 @@ def ParadigmaticStructure.singularType (s : ParadigmaticStructure) : SingularTyp
 -- §4: First Person Complex Types (Chapter 3)
 -- ============================================================================
 
-/-- The 5 common types of marking for 'we' (Cysouw 2009, Table 3.2/10.3).
+/-- The 5 common types of marking for 'we' (@cite{cysouw-2009}, Table 3.2/10.3).
 
 Classifies how the three first-person-complex categories (1+2, 1+2+3, 1+3)
 pattern in the paradigm relative to singular 1. -/
@@ -628,7 +628,7 @@ theorem independent_more_explicit :
 -- §16: Number Opposition Hierarchy (Fig 10.8)
 -- ============================================================================
 
-/-- Number opposition stages (Cysouw 2009, Fig 10.8).
+/-- Number opposition stages (@cite{cysouw-2009}, Fig 10.8).
 
 Hierarchical tree of number oppositions, from no number marking (N₁)
 to full number marking with restricted groups (N₃/N₄). -/
@@ -652,7 +652,7 @@ def ParadigmaticStructure.numberStage (s : ParadigmaticStructure) : NumberStage 
 -- §17: Person Differentiation Hierarchy (Fig 10.9)
 -- ============================================================================
 
-/-- Person differentiation stages (Cysouw 2009, Fig 10.9).
+/-- Person differentiation stages (@cite{cysouw-2009}, Fig 10.9).
 
 Measures how finely person is distinguished in non-singular categories. -/
 inductive PersonStage where

@@ -531,7 +531,7 @@ def catenaRatio (n : Nat) (deps : List Dependency) : Nat × Nat :=
   (c, totalCombinations n - c)
 
 -- ============================================================================
--- Example Trees (Osborne et al. 2012)
+-- Example Trees (@cite{osborne-gross-2012})
 -- ============================================================================
 
 /-- Tree (9), p. 359: 4 abstract nodes.
@@ -619,12 +619,12 @@ theorem three_nodes_shape_invariant :
 -- ============================================================================
 
 /-- Flatter trees have strictly more catenae than chain-shaped trees.
-    (Osborne et al. 2012, p. 371: the catena ratio increases with flatness) -/
+    (@cite{osborne-gross-2012}, p. 371: the catena ratio increases with flatness) -/
 theorem flatter_more_catenae :
     catenaeCount 4 star4 > catenaeCount 4 chain4 := by native_decide
 
 /-- Every constituent is a catena — verified exhaustively for tree (9).
-    (Osborne et al. 2012, p. 360: "every 'constituent' is also a catena") -/
+    (@cite{osborne-gross-2012}, p. 360: "every 'constituent' is also a catena") -/
 theorem constituent_is_catena_tree9 :
     (allNonEmptySubsets 4).all (fun nodes =>
       if isConstituent tree9 4 nodes then isCatena tree9 nodes else true

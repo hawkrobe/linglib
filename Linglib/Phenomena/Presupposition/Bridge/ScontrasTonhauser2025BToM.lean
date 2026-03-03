@@ -3,9 +3,9 @@ import Linglib.Theories.Pragmatics.RSA.Implementations.ScontrasTonhauser2025
 import Linglib.Core.Agent.BToM
 
 /-!
-# S&T 2025 BToM Bridge
+# @cite{scontras-tonhauser-2025} BToM Bridge
 
-Connects the S&T 2025 experimental data (`Phenomena.Presupposition.Studies`)
+Connects the @cite{scontras-tonhauser-2025} experimental data (`Phenomena.Presupposition.Studies`)
 to the BToM-grounded RSA model (`Theories.Pragmatics.RSA.Implementations`).
 
 ## The Pipeline

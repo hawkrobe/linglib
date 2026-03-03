@@ -42,7 +42,7 @@ abbrev ScaleDirection := ScalePolarity
 
 variable {Entity : Type*} {α : Type*} [LinearOrder α]
 
-/-- Comparative semantics (Rett 2026 / Schwarzschild 2008):
+/-- Comparative semantics (@cite{rett-2026} / @cite{schwarzschild-2008}):
     "A is Adj-er than B" iff μ(a) exceeds μ(b) on the directed scale. -/
 def comparativeSem (μ : Entity → α) (a b : Entity) (dir : ScaleDirection) : Prop :=
   match dir with

@@ -488,7 +488,7 @@ theorem num_without_q_incoherent :
 Borer and Chierchia offer competing accounts of the mass/count
 distinction and cross-linguistic variation:
 
-| Dimension        | Chierchia 1998            | Borer 2005              |
+| Dimension        | @cite{chierchia-1998}            | @cite{borer-2005}              |
 |------------------|--------------------------|-------------------------|
 | Mass/count       | Lexical (`NounType`)      | Structural (`Div`)      |
 | Cross-ling.      | Parameter (`NominalMapping`)| Functional inventory  |

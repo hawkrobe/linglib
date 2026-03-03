@@ -36,7 +36,7 @@ namespace Phenomena.Ellipsis.NPEllipsis
 -- § 1: Binominal Classification
 -- ═══════════════════════════════════════════════════════════════
 
-/-- The three types of Spanish binominal construction (Saab 2026 §2).
+/-- The three types of Spanish binominal construction (@cite{saab-2026} §2).
     All surface with *de* but differ in internal structure. -/
 inductive BinominalType where
   | pseudoPartitive   -- *un grupo de estudiantes* (group nouns)
@@ -44,7 +44,7 @@ inductive BinominalType where
   | qualitative       -- *una mierda de departamento* (expressive nouns)
   deriving DecidableEq, BEq, Repr
 
-/-- The structural source of the genitive *de* (Saab 2026 §4). -/
+/-- The structural source of the genitive *de* (@cite{saab-2026} §4). -/
 inductive GenitiveSource where
   | primeval    -- @cite{pesetsky-2013}: default case when D blocks structural case
   | equative   -- @cite{dendikken-2006}: EquP predication, not true genitive
@@ -61,7 +61,7 @@ def BinominalType.genitiveSource : BinominalType → GenitiveSource
 -- ═══════════════════════════════════════════════════════════════
 
 /-- Does this binominal type license NP-ellipsis?
-    Saab 2026 §3: pseudo-partitive and quantificational yes;
+    @cite{saab-2026} §3: pseudo-partitive and quantificational yes;
     qualitative no. -/
 def BinominalType.licensesNPE : BinominalType → Bool
   | .pseudoPartitive  => true
@@ -69,7 +69,7 @@ def BinominalType.licensesNPE : BinominalType → Bool
   | .qualitative      => false
 
 /-- Does the Num head in this structure carry [E]?
-    Saab 2026 §4: Num[E] is present iff the complement of Num
+    @cite{saab-2026} §4: Num[E] is present iff the complement of Num
     is a standard nP (not an EquP with an indexical empty noun). -/
 def BinominalType.hasNumE : BinominalType → Bool
   | .pseudoPartitive  => true
@@ -86,16 +86,16 @@ theorem npe_iff_numE (b : BinominalType) :
 -- ═══════════════════════════════════════════════════════════════
 
 /-- Agreement number on the verb in binominal constructions.
-    Saab 2026 §2: the controller is always Num, not QP in Spec,DP. -/
+    @cite{saab-2026} §2: the controller is always Num, not QP in Spec,DP. -/
 inductive AgreementNumber where
   | singular
   | plural
   deriving DecidableEq, BEq, Repr
 
 /-- Which element controls verbal agreement?
-    Saab 2026: Num in all three types, never QP in Spec,DP. -/
+    @cite{saab-2026}: Num in all three types, never QP in Spec,DP. -/
 inductive AgreementController where
-  | num       -- Num head (correct: Saab 2026)
+  | num       -- Num head (correct: @cite{saab-2026})
   | specDP    -- QP in Spec,DP (incorrect alternative)
   deriving DecidableEq, BEq, Repr
 

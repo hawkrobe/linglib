@@ -13,7 +13,7 @@ typological profile for Chuj.
 
 ## Connection to VerbBuilding.lean
 
-The Chuj voice system (Coon 2019, formalized in `VerbBuilding.lean`)
+The Chuj voice system (@cite{coon-2019}, formalized in `VerbBuilding.lean`)
 determines whether a *yalnhej* DP is in external or internal argument
 position, which in turn constrains the available modal flavor:
 

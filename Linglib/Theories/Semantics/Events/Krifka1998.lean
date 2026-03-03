@@ -245,7 +245,7 @@ theorem qua_propagation_sinc {θ : α → β → Prop} {OBJ : α → Prop}
   qua_propagation hUP hSinc.mso hQua
 
 -- ════════════════════════════════════════════════════
--- § 6. GRAD: Gradual Change (Krifka 1989)
+-- § 6. GRAD: Gradual Change (@cite{krifka-1989})
 -- ════════════════════════════════════════════════════
 
 /-- Graduality (GRAD): more object measure entails more event measure.

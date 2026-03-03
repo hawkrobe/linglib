@@ -251,7 +251,7 @@ inductive AgentControl where
     characterization of a verb's semantic content:
     1. Class-defining meaning components (binary, from alternations)
     2. Class membership (Levin taxonomy)
-    3. Root structural entailments (B&KG 2020)
+    3. Root structural entailments (B&@cite{beavers-koontz-garboden-2020})
     4. Root-specific quality features (ranges, from detailed lexical analysis) -/
 structure RootProfile where
   /-- Force magnitude: @cite{talmy-1988}. -/
@@ -269,7 +269,7 @@ structure RootProfile where
   deriving BEq, Repr, Inhabited
 
 -- ════════════════════════════════════════════════════
--- § 3b. Root Structural Entailments (B&KG 2020)
+-- § 3b. Root Structural Entailments (B&@cite{beavers-koontz-garboden-2020})
 -- ════════════════════════════════════════════════════
 
 /-- Root-level structural entailments from @cite{beavers-koontz-garboden-2020}.
@@ -790,7 +790,7 @@ def LevinClass.participatesIn (c : LevinClass) (alt : DiathesisAlternation) : Bo
 /-! ### Canonical diagnostic theorems
 
 The four verbs *break*, *cut*, *hit*, *touch* are distinguished by exactly
-their pattern of alternation participation (Levin 1993:5–10). -/
+their pattern of alternation participation (@cite{levin-1993}:5–10). -/
 
 /-- Break participates in causative/inchoative and middle (CoS + causation). -/
 theorem break_alternations :
@@ -977,7 +977,7 @@ def RootProfile.overlaps (rp₁ rp₂ : RootProfile) : Bool :=
   rp₁.agentControl.overlaps rp₂.agentControl
 
 -- ════════════════════════════════════════════════════
--- § 8. Root Entailment Mapping (B&KG 2020)
+-- § 8. Root Entailment Mapping (B&@cite{beavers-koontz-garboden-2020})
 -- ════════════════════════════════════════════════════
 
 /-- Root structural entailments for each Levin class.

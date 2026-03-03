@@ -23,7 +23,7 @@ live in `Theories/Semantics/Focus/KratzerSelkirk2020.lean`.
 namespace Core.InformationStructure
 
 -- ════════════════════════════════════════════════════
--- § Alternative Semantics (Rooth 1992, Kratzer & Selkirk 2020)
+-- § Alternative Semantics (@cite{rooth-1992}, @cite{kratzer-selkirk-2020})
 -- ════════════════════════════════════════════════════
 
 /-- Two-dimensional meaning in Alternatives Semantics.
@@ -42,7 +42,7 @@ structure AltMeaning (α : Type) where
 def AltMeaning.unfeatured {α : Type} (x : α) : AltMeaning α :=
   { oValue := x, aValue := [x] }
 
--- Category-Gated Alternatives (Fox & Katzir 2011)
+-- Category-Gated Alternatives (@cite{fox-katzir-2011})
 
 /-- A denotation tagged with its UPOS category.
     Pairs a semantic value with a UD part-of-speech tag, enabling
@@ -67,7 +67,7 @@ def categoryMatchAlts {α : Type} (target : UD.UPOS) (lexicon : List (CatItem α
   (lexicon.filter (·.cat == target)).map (·.den)
 
 /-- Type-theoretic alternatives: all denotations regardless of category
-    (Rooth 1985/1992 D_τ computation). -/
+    (@cite{rooth-1985}/1992 D_τ computation). -/
 def typeTheoAlts {α : Type} (lexicon : List (CatItem α)) : List α :=
   lexicon.map (·.den)
 
@@ -172,7 +172,7 @@ class HasInfoStructure (D : Type) (P : Type) where
   infoStructure : D → InfoStructure P
 
 /-- The three-way partition of discourse status.
-    Descriptive type used across multiple theories (K&S 2020, Arnold et al. 2000,
+    Descriptive type used across multiple theories (@cite{kratzer-selkirk-2020}, @cite{arnold-wasow-losongco-ginstrom-2000},
     backgrounded islands). -/
 inductive DiscourseStatus where
   /-- Contrasted with discourse referent -/
@@ -222,7 +222,7 @@ inductive PolaritySwitchContext where
 inductive PolarityMarkingStrategy where
   /-- Sentence-internal affirmative particle (e.g., Dutch *wel*) -/
   | particle
-  /-- Pitch accent on the finite verb (Höhle 1992 Verum focus) -/
+  /-- Pitch accent on the finite verb (@cite{hohle-1992} Verum focus) -/
   | verumFocus
   /-- Other strategy (e.g., pre-utterance particle, intonation pattern) -/
   | other
@@ -252,7 +252,7 @@ structure PolarityMarkingEntry where
   strategy : PolarityMarkingStrategy
   deriving Repr, DecidableEq, BEq
 
-/-! ## Focus Interpretation Principle Applications (Rooth 1992 §2)
+/-! ## Focus Interpretation Principle Applications (@cite{rooth-1992} §2)
 
 Four domains in which focus alternatives interact with context.
 Defined here (rather than in `Theories/Semantics/Focus/` or

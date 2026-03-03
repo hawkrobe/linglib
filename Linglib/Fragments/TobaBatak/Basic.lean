@@ -82,7 +82,7 @@ def ExtractionDatum.extractsPivot (d : ExtractionDatum) : Bool :=
   | .adjunct => false
 
 -- ============================================================================
--- § 4: Monoclausal Data (Erlewine 2018, §2)
+-- § 4: Monoclausal Data (@cite{erlewine-2018}, §2)
 -- ============================================================================
 
 /-- AV + agent extraction: grammatical (agent is pivot in AV). -/

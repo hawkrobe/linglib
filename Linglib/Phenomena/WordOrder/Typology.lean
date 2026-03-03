@@ -1,13 +1,13 @@
 import Linglib.Core.Lexical.Word
 
 /-!
-# Word-Order Typology (Dryer 2013 / WALS)
+# Word-Order Typology (@cite{dryer-haspelmath-2013} / WALS)
 @cite{dryer-1992} @cite{dryer-haspelmath-2013} @cite{gibson-2025} @cite{greenberg-1963} @cite{derbyshire-1977} @cite{hale-1983}
 
 WALS data from Gibson (2025, Ch. 5.3, Tables 1–3): cross-linguistic counts
 of harmonic vs disharmonic word-order pairings. Dryer (1992, 2013) documents
 that languages overwhelmingly prefer consistent head direction across
-construction types (the **head-direction generalization**, Greenberg 1963).
+construction types (the **head-direction generalization**, @cite{greenberg-1963}).
 
 ## Data
 
@@ -80,7 +80,7 @@ def CrossTab.harmonicDominant (t : CrossTab) : Bool :=
 -- Data: @cite{gibson-2025} Tables 1–3
 -- ============================================================================
 
-/-- Table 1: Verb-Object order × Adposition order (Dryer 2013, WALS).
+/-- Table 1: Verb-Object order × Adposition order (@cite{dryer-haspelmath-2013}, WALS).
     @cite{gibson-2025} Table 1. 981 languages. -/
 def voAdposition : CrossTab :=
   { name := "VO × Adposition"
@@ -91,7 +91,7 @@ def voAdposition : CrossTab :=
     hfhi := ⟨.headFinal, .headInitial, 14⟩
     hfhf := ⟨.headFinal, .headFinal, 472⟩ }
 
-/-- Table 2: Verb-Object order × Subordinator order (Dryer 2013, WALS).
+/-- Table 2: Verb-Object order × Subordinator order (@cite{dryer-haspelmath-2013}, WALS).
     @cite{gibson-2025} Table 2. 456 languages. -/
 def voSubordinator : CrossTab :=
   { name := "VO × Subordinator"
@@ -102,7 +102,7 @@ def voSubordinator : CrossTab :=
     hfhi := ⟨.headFinal, .headInitial, 61⟩
     hfhf := ⟨.headFinal, .headFinal, 91⟩ }
 
-/-- Table 3: Verb-Object order × Relative clause order (Dryer 2013, WALS).
+/-- Table 3: Verb-Object order × Relative clause order (@cite{dryer-haspelmath-2013}, WALS).
     @cite{gibson-2025} Table 3. 665 languages. -/
 def voRelativeClause : CrossTab :=
   { name := "VO × Relative clause"
@@ -156,7 +156,7 @@ theorem voRelativeClause_harmonic_dominant :
     voRelativeClause.harmonicDominant = true := by native_decide
 
 -- ============================================================================
--- The Head-Direction Generalization (Greenberg 1963 / Dryer 1992)
+-- The Head-Direction Generalization (@cite{greenberg-1963} / @cite{dryer-1992})
 -- ============================================================================
 
 /-- The head-direction generalization: across all three construction pairs,

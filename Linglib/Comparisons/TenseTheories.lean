@@ -357,7 +357,7 @@ theorem all_ten_theories_distinct :
 
 
 -- ════════════════════════════════════════════════════════════════
--- § 7. Size-Sensitive SOT (Egressy 2026)
+-- § 7. Size-Sensitive SOT (@cite{egressy-2026})
 -- ════════════════════════════════════════════════════════════════
 
 /-! Only Zeijlstra's Agree-based account predicts size-sensitive SOT.

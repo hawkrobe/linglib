@@ -85,7 +85,7 @@ The two situations are:
 abbrev SitPred (W Time : Type*) := Situation W Time → Situation W Time → Prop
 
 /--
-SUBJ operator (Mendes 2025, Definition on p.29).
+SUBJ operator (@cite{mendes-2025}, Definition on p.29).
 
 ⟦SUBJ^{s₁}_{s₀}⟧ = λP. [s₁ | s₁ ∈ hist(s₀)]; P(s₁)(s₀)
 
@@ -104,7 +104,7 @@ def SUBJ {W Time : Type*} [LE Time]
     s₁ ∈ historicalBase history s₀ ∧ P s₁ s₀
 
 /--
-IND operator (Mendes 2025, Definition on p.29).
+IND operator (@cite{mendes-2025}, Definition on p.29).
 
 ⟦IND_{s₁,s₂}⟧ = λP. [| s₂ ≤ w_{s₁}]; P(s₂)(s₁)
 
@@ -201,7 +201,7 @@ def prefersSubjunctive : MoodSelector → Bool
 
 
 /--
-Conditional with SF antecedent (Mendes 2025, main application).
+Conditional with SF antecedent (@cite{mendes-2025}, main application).
 
 "If Maria be.SF home, she will answer"
 

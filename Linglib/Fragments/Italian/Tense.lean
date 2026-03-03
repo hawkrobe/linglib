@@ -83,7 +83,7 @@ def allEntries : List TAMEEntry :=
   [passatoProssimo, passatoRemoto, imperfetto, presente, futuroSemplice]
 
 -- ════════════════════════════════════════════════════════════════
--- § 2. TensePerspectiveEntry Instances (Lakoff 1970)
+-- § 2. TensePerspectiveEntry Instances (@cite{lakoff-1970})
 -- ════════════════════════════════════════════════════════════════
 
 /-- A tense paradigm entry enriched with Lakoff's perspective dimensions. -/

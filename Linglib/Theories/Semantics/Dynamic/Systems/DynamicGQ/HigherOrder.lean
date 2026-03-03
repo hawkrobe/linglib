@@ -51,7 +51,7 @@ def lowerGQ (m : HODGQ S) : DRS S := Cont.lower m
 -- § Tower GQs for cumulative readings
 -- ════════════════════════════════════════════════════
 
-/-- Tower-type dynamic GQ (Charlow 2021 §3, equation 24).
+/-- Tower-type dynamic GQ (@cite{charlow-2021} §3, equation 24).
 
     The continuation receives a *scope-taking function* `DRS S → DRS S`
     rather than a flat DRS. This allows the nuclear scope (VP body) to be

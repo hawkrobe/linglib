@@ -200,7 +200,7 @@ def implicatureSource (fIsDE : Bool) : ImplicatureType :=
 -- G. The SI-NPI Generalization (53)
 -- ============================================================================
 
-/-- The SI-NPI Generalization (Chierchia 2004, (53)):
+/-- The SI-NPI Generalization (@cite{chierchia-2004}, (53)):
 
     Scalar implicatures are systematically SUSPENDED in the same environments
     that LICENSE negative polarity items (NPIs).
@@ -303,7 +303,7 @@ def intervenes (strength : ScalarStrength) : Bool :=
 #guard intervenes .weak == false
 
 -- ============================================================================
--- J. Bridge to exhIE (Fox 2007 / Spector 2016)
+-- J. Bridge to exhIE (@cite{fox-2007} / @cite{spector-2016})
 -- ============================================================================
 
 /-- At a root-level scope site in a UE context, Chierchia's parallel
@@ -342,7 +342,7 @@ theorem root_ue_bridge (φ : Prop' World) (ALT : Set (Prop' World))
     exact hnegs (∼a) ⟨a, ha_ALT, rfl, ha_str, ha_strict⟩
 
 -- ============================================================================
--- K. Scalar Licensing Parametrized by Direction (Schwab 2022)
+-- K. Scalar Licensing Parametrized by Direction (@cite{schwab-2022})
 -- ============================================================================
 
 /-- Strength relation for scalar licensing.

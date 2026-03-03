@@ -94,7 +94,7 @@ def ba : QuestionParticleEntry where
 /-- 难道 nándào — evidential question particle.
 Marks that the speaker has encountered unexpected contextual evidence
 supporting the prejacent. Compatible with neutral epistemic state
-(pure inquiry use, Zheng 2026 ex. 3). -/
+(pure inquiry use, @cite{zheng-2026} ex. 3). -/
 def nandao : QuestionParticleEntry where
   hanzi := "难道"
   pinyin := "nándào"
@@ -139,12 +139,12 @@ theorem ba_polar_only :
 
 -- nandao
 
-/-- nandao is restricted to polar questions (Zheng 2026 ex. 12). -/
+/-- nandao is restricted to polar questions (@cite{zheng-2026} ex. 12). -/
 theorem nandao_polar_only :
     nandao.polarOk = true ∧ nandao.declOk = false ∧ nandao.whOk = false :=
   ⟨rfl, rfl, rfl⟩
 
-/-- nandao requires evidential but not epistemic bias (Zheng 2026 §2). -/
+/-- nandao requires evidential but not epistemic bias (@cite{zheng-2026} §2). -/
 theorem nandao_bias_profile :
     nandao.requiresEvidentialBias = true ∧ nandao.requiresEpistemicBias = false :=
   ⟨rfl, rfl⟩

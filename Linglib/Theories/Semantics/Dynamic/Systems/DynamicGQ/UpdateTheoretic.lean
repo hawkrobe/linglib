@@ -14,7 +14,7 @@ produces cumulative readings automatically.
 
 ## Main results
 
-- `Mvar_u_nondistributive`: M_v is not distributive (Charlow 2021, Theorem 1)
+- `Mvar_u_nondistributive`: M_v is not distributive (@cite{charlow-2021}, Theorem 1)
 - `CardTest_u_distributive`: cardinality tests ARE distributive
 - `exactlyN_u_cumulative`: the composed meaning has cumulative truth conditions
 

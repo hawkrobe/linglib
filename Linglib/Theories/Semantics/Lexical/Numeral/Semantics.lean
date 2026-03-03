@@ -277,7 +277,7 @@ structure NumeralTheory where
   /-- World states to consider (default: 0, 1, 2, 3) -/
   worlds : List Nat := standardWorlds
 
-/-- Derivational direction for the at-least/exactly relationship (Bylinina & Nouwen 2020 §5–6).
+/-- Derivational direction for the at-least/exactly relationship (@cite{bylinina-nouwen-2020} §5–6).
 
 The four views on numeral semantics differ in which reading is basic:
 - `exactFromAtLeast`: base meaning is at-least (≥n), exact derived via EXH or scalar implicature.
@@ -330,16 +330,16 @@ theorem lowerBound_meaning_eq (w : BareNumeral) (n : Nat) :
 theorem exact_meaning_eq (w : BareNumeral) (n : Nat) :
     Exact.meaning w n = maxMeaning .eq w.toNat n := rfl
 
-/-- Lower-bound derives exact from at-least (Horn 1972; Bylinina & Nouwen 2020 §5). -/
+/-- Lower-bound derives exact from at-least (@cite{horn-1972}; @cite{bylinina-nouwen-2020} §5). -/
 theorem lowerBound_exactFromAtLeast :
     LowerBound.derivationalDirection = .exactFromAtLeast := by native_decide
 
-/-- Exact derives at-least from exact (Kennedy 2015; Bylinina & Nouwen 2020 §6). -/
+/-- Exact derives at-least from exact (@cite{kennedy-2015}; @cite{bylinina-nouwen-2020} §6). -/
 theorem exact_atLeastFromExact :
     Exact.derivationalDirection = .atLeastFromExact := by native_decide
 
 -- ============================================================================
--- Section 7b: Type-Shifting (Kennedy 2015 §3.1)
+-- Section 7b: Type-Shifting (@cite{kennedy-2015} §3.1)
 -- ============================================================================
 
 /-! ## De-Fregean Type-Shifting: Exact → Lower-Bound
@@ -647,7 +647,7 @@ theorem only_lowerBound_supports_implicature :
     ∧
     (Exact.compatibleCount .two = 1) := by native_decide
 
--- Empirical Adjudication (G&S 2013)
+-- Empirical Adjudication (@cite{goodman-stuhlmuller-2013})
 
 theorem lowerBound_consistent_with_cancellation :
     LowerBound.hasAmbiguity .two = true := by native_decide
@@ -700,7 +700,7 @@ theorem atLeast_eq_lowerBound_two (n : Nat) :
 theorem atLeast_eq_lowerBound_three (n : Nat) :
     atLeastMeaning 3 n = LowerBound.meaning .three n := rfl
 
--- GQT Bridge (Bylinina & Nouwen 2020)
+-- GQT Bridge (@cite{bylinina-nouwen-2020})
 --
 -- The GQT numeral quantifiers in Quantifier.lean (`exactly_n_sem`, `at_least_n_sem`,
 -- `at_most_n_sem`) compute the same truth values as `maxMeaning` applied to the

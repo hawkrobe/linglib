@@ -29,7 +29,7 @@ open DepGrammar Catena
 -- §1: Ellipsis Type Taxonomy
 -- ============================================================================
 
-/-- Ellipsis types in English (Osborne 2019, Ch 12–13). -/
+/-- Ellipsis types in English (@cite{osborne-2019}, Ch 12–13). -/
 inductive EllipsisType where
   | vpEllipsis       -- "She will help, and he will _ too"
   | gapping          -- "Fred eats beans and Jim _ rice"

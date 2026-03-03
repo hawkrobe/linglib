@@ -57,14 +57,14 @@ open RSA.Implementations.BarnettEtAl2022
 
 
 -- ============================================================
--- Section 1: Cooperativity Spectrum (Cummins 2025 §§1–4)
+-- Section 1: Cooperativity Spectrum (@cite{cummins-2025} §§1–4)
 -- ============================================================
 
 /-- Speaker orientation on the cooperativity spectrum.
 
 - cooperative: β=0, speaker maximizes hearer's accurate belief (standard RSA)
 - argumentative: β>0, speaker has a goal G and balances informativity
-  and persuasion (C&F 2021, Barnett et al. 2022, Macuch Silva et al. 2024)
+  and persuasion (@cite{cummins-franke-2021}, @cite{barnett-griffiths-hawkins-2022}, Macuch @cite{macuch-silva-etal-2024})
 
 The distinction is continuous: β parameterizes the spectrum. -/
 inductive SpeakerOrientation where
@@ -110,7 +110,7 @@ theorem all_cooperative_at_zero (uEpi uGoal : ℚ) :
 
 
 -- ============================================================
--- Section 4: Bridge — C&F (2021) Argumentative Strength
+-- Section 4: Bridge — @cite{cummins-franke-2021} Argumentative Strength
 -- ============================================================
 
 -- C&F's argStr(u, G) = log₂(P(u|G)/P(u|¬G)) measures how much evidence
@@ -169,7 +169,7 @@ theorem positive_argStr_iff_posterior_above_prior
 
 
 -- ============================================================
--- Section 5: Meaning-Level Taxonomy (Cummins 2025 §§3–5)
+-- Section 5: Meaning-Level Taxonomy (@cite{cummins-2025} §§3–5)
 -- ============================================================
 
 /-- Level of meaning at which falsehood can occur.
@@ -207,7 +207,7 @@ theorem typicality_least_blameworthy :
 
 
 -- ============================================================
--- Section 6: Epistemic Vigilance (Sperber et al. 2010)
+-- Section 6: Epistemic Vigilance (@cite{sperber-2010})
 -- ============================================================
 
 /-- Epistemic vigilance: the hearer's trust in speaker cooperativity.
@@ -350,7 +350,7 @@ theorem barnett_eq6_via_combined (uEpi uGoal β : ℚ) (hβ : 0 ≤ β) :
 
 
 -- ============================================================
--- Section 8: Pragmatic Vulnerability (Cummins 2025 §4)
+-- Section 8: Pragmatic Vulnerability (@cite{cummins-2025} §4)
 -- ============================================================
 
 /-- The vigilant posterior is monotone in trust: more trust pulls the
@@ -376,7 +376,7 @@ theorem vigilant_mono_trust_sym (l1Post l0Post : ℚ)
   rw [vigilant_is_combined ev1, vigilant_is_combined ev2]
   exact lower_lambda_when_A_dominates ev1.trustLevel ev2.trustLevel hord l0Post l1Post hne
 
-/-- **Pragmatic vulnerability** (Cummins 2025 §4): pragmatic inference is
+/-- **Pragmatic vulnerability** (@cite{cummins-2025} §4): pragmatic inference is
 exploitable *precisely because* it is rational.
 
 When L1 diverges from L0 (l0 < l1), the fully-pragmatic listener (τ=1) is
@@ -387,7 +387,7 @@ pulls the posterior back toward the immune L0:
 - τ = 0: posterior = L0 (immune) — `vigilant_at_zero_trust`
 - 0 < τ < 1: **L0 < posterior < L1** (partially protected) — THIS THEOREM
 
-The weak evidence effect (Barnett et al. 2022, `weak_evidence_effect_s4`) is
+The weak evidence effect (@cite{barnett-griffiths-hawkins-2022}, `weak_evidence_effect_s4`) is
 a concrete instance: L0 correctly identifies stick 4 as evidence for "longer",
 but L1 at β=2 overshoots in the wrong direction. Reducing τ from 1 would pull
 the posterior back toward L0's correct assessment.

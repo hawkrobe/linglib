@@ -10,7 +10,7 @@ import Linglib.Fragments.Hebrew.TemporalDeictic
 import Linglib.Fragments.Hungarian.TemporalDeictic
 
 /-!
-# Then-Present Puzzle (Zhao 2025, Tsilia, Zhao & Sharvit 2026)
+# Then-Present Puzzle (@cite{zhao-2025}, Tsilia, @cite{tsilia-zhao-sharvit-2026})
 @cite{zhao-2025} @cite{tsilia-zhao-sharvit-2026} @cite{kiparsky-2002}Temporal "then" is cross-linguistically incompatible with present tense.
 @cite{zhao-2025} explains this via a perspective parameter π (= Kiparsky's P):
 present tense requires P = R, but "then" shifts P away from S, making
@@ -83,7 +83,7 @@ theorem all_then_shift_perspective :
 -- § 3. The Then-Present Incompatibility
 -- ════════════════════════════════════════════════════
 
-/-- The then-present incompatibility (Zhao 2025, Part I):
+/-- The then-present incompatibility (@cite{zhao-2025}, Part I):
     In a simple root clause (P = S) with present tense (R = P),
     "then" requires P ≠ S — contradiction.
 

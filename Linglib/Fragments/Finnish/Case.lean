@@ -27,7 +27,7 @@ elative/ablative → ABL, illative/allative → ALL) are collapsed into a
 single rank.
 
 Finnish lacks a dedicated **dative** case — the allative covers recipient
-function (Blake 1994, Ch. 6: ALL → DAT extension). This creates a gap at
+function (@cite{blake-1994}, Ch. 6: ALL → DAT extension). This creates a gap at
 rank 4 (DAT) on Blake's hierarchy, making Finnish a known exception to
 strict contiguity.
 

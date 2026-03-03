@@ -26,7 +26,7 @@ open Semantics.Lexical.Expressives.OutlookMarker
 /-! ## Felicity Judgments
 
 Outlook markers are felicitous only when a counterstance is salient in the
-discourse (Kubota 2026: §3, examples (37)–(39)). -/
+discourse (@cite{kubota-2026}: §3, examples (37)–(39)). -/
 
 /-- Felicity datum for an outlook marker in a discourse context. -/
 structure FelicityDatum where
@@ -87,7 +87,7 @@ def ex39_dōse_Q2_bad : FelicityDatum :=
 /-! ## Non-Cancelability
 
 The evaluative meaning of outlook markers cannot be contradicted by
-preceding context (Kubota 2026: (10)–(12)). -/
+preceding context (@cite{kubota-2026}: (10)–(12)). -/
 
 /-- (10): Preceding clause praising green tea with sugar contradicts *nanka*'s
     negative evaluation → infelicity. -/
@@ -103,7 +103,7 @@ def ex10_nanka_noncancelable : FelicityDatum :=
 /-! ## Denial Targets Prejacent, Not Stance
 
 When B denies A's outlook-marked utterance, denial targets the propositional
-content, not the evaluative component (Kubota 2026: (40)–(41)). This is
+content, not the evaluative component (@cite{kubota-2026}: (40)–(41)). This is
 evidence for descriptive ineffability. -/
 
 /-- Denial datum: what gets denied when responding "no" to an outlook-marked utterance. -/
@@ -140,7 +140,7 @@ def ex41_dōse_denial : DenialDatum :=
 /-! ## Perspective Shift Under Embedding
 
 Under attitude predicates, the evaluative meaning of outlook markers can
-shift to the attitude holder's perspective (Kubota 2026: (42)). This
+shift to the attitude holder's perspective (@cite{kubota-2026}: (42)). This
 distinguishes outlook markers from typical expressives. -/
 
 /-- (42): *dōse*/*nanka* under attitude verb "think" — evaluation shifts to advisor's perspective. -/
@@ -165,7 +165,7 @@ def ex42_perspective_shift : PerspectiveShiftDatum :=
 /-! ## Modal Interaction Patterns
 
 Different outlook markers have different compatibility with modal flavors
-(Kubota 2026: (45)–(46)). -/
+(@cite{kubota-2026}: (45)–(46)). -/
 
 /-- Modal interaction datum: how an outlook marker behaves with a specific modal type. -/
 structure ModalInteractionDatum where

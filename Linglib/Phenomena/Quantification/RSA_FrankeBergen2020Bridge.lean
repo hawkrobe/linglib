@@ -102,7 +102,7 @@ def alternativesAtPosition (s : NestedAristotelian) : AlternativesAtPosition Ali
     - `literalMeaning`: Base meaning before EXH
     - `alternativesAt`: Position-dependent scalar alternatives -/
 instance : Exhaustifiable NestedAristotelian AlienWorld where
-  -- Use Innocent Exclusion (Fox 2007) as the EXH operator
+  -- Use Innocent Exclusion (@cite{fox-2007}) as the EXH operator
   exhOperator := .IE
   -- Standard 8 EXH parses
   parses := exhParses

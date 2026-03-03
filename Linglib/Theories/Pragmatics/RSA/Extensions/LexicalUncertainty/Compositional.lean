@@ -10,7 +10,7 @@ This extends lexical uncertainty to handle **compositional** utterances.
 Instead of refining whole-utterance meanings, we refine **atomic lexical items**
 and then compose meanings via Boolean connectives.
 
-### Innovation (Bergen et al. 2016, Section 5)
+### Innovation (@cite{bergen-levy-goodman-2016}, Section 5)
 
 For compositional LU:
 1. Atomic utterances have refinable meanings in the lexicon

@@ -112,7 +112,7 @@ def ennenkuin : TemporalExprEntry :=
   , triggeredCoercion := none }
 
 -- ============================================================================
--- § 1b: Additional Connective Entries (Heinämäki 1974)
+-- § 1b: Additional Connective Entries (@cite{heinamaki-1974})
 -- ============================================================================
 
 /-- Finnish *sillä aikaa kun* ('while', literally 'that time when'):

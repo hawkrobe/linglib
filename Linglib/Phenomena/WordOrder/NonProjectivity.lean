@@ -15,7 +15,7 @@ Empirical data on non-projective structures in dependency treebanks.
 namespace Phenomena.WordOrder.NonProjectivity
 
 -- ============================================================================
--- §1: Treebank Coverage (Kuhlmann & Nivre 2006, Table 1)
+-- §1: Treebank Coverage (@cite{kuhlmann-nivre-2006}, Table 1)
 -- ============================================================================
 
 /-- Treebank coverage data from @cite{kuhlmann-nivre-2006}, Table 1.
@@ -54,7 +54,7 @@ def ddt : TreebankCoverage :=
   }
 
 -- ============================================================================
--- §2: LCFRS Coverage (Kuhlmann 2013, Tables 3-4)
+-- §2: LCFRS Coverage (@cite{kuhlmann-2013}, Tables 3-4)
 -- ============================================================================
 
 /-- @cite{kuhlmann-2013} Table 3: rule/tree loss under fan-out bounds.

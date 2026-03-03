@@ -222,7 +222,7 @@ theorem modify_assoc {Time : Type*} [LE Time]
                 λ ⟨hp, hm1, hm2⟩ => ⟨⟨hp, hm1⟩, hm2⟩⟩
 
 -- ════════════════════════════════════════════════════
--- § 9. Stative Logical Forms (Wellwood 2015, §3.2)
+-- § 9. Stative Logical Forms (@cite{wellwood-2015}, §3.2)
 -- ════════════════════════════════════════════════════
 
 /-- Neo-Davidsonian logical form for a stative predicate with a holder:

@@ -85,7 +85,7 @@ theorem add_entails (s : CommitmentSlate W) (p : BProp W) (w : W) :
 end CommitmentSlate
 
 -- ════════════════════════════════════════════════════
--- § 2. Source-Marked Commitments (Gunlogson 2001)
+-- § 2. Source-Marked Commitments (@cite{gunlogson-2001})
 -- ════════════════════════════════════════════════════
 
 /-- The source of a discourse commitment.
@@ -146,7 +146,7 @@ def toContextSet (s : TaggedSlate W) : ContextSet W :=
 end TaggedSlate
 
 -- ════════════════════════════════════════════════════
--- § 3. Contextual Evidence (Büring & Gunlogson 2000)
+-- § 3. Contextual Evidence (@cite{bring-gunlogson-2000})
 -- ════════════════════════════════════════════════════
 
 /-- Contextual evidence bias.

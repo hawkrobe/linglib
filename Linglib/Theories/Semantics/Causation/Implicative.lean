@@ -2,7 +2,7 @@ import Linglib.Core.StructuralEquationModel
 import Linglib.Theories.Semantics.Causation.Sufficiency
 
 /-!
-# Implicative Verb Semantics (Nadathur 2023, Chapter 1)
+# Implicative Verb Semantics (@cite{nadathur-2023}, Chapter 1)
 @cite{karttunen-1971} @cite{nadathur-2023}
 
 Implicative verbs (*manage*, *fail*) have complement entailments that arise
@@ -205,7 +205,7 @@ theorem entailsComplement_negative :
     ImplicativeBuilder.negative.entailsComplement = false := rfl
 
 -- ════════════════════════════════════════════════════
--- Karttunen's Full Verb Classification (Nadathur 2023, Chapter 3)
+-- Karttunen's Full Verb Classification (@cite{nadathur-2023}, Chapter 3)
 -- ════════════════════════════════════════════════════
 
 /-- Directionality of complement entailment.

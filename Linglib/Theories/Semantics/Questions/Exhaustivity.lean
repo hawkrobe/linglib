@@ -58,7 +58,7 @@ def foQDen {W P : Type _} (pred : W → P → Bool)
 
 /-! ### Dayal's Exhaustivity Presupposition -/
 
-/-- Dayal's Exhaustivity Presupposition (Dayal 1996; Xiang 2022, definition 90).
+/-- Dayal's Exhaustivity Presupposition (@cite{dayal-1996}; @cite{xiang-2022}, definition 90).
 
 EP holds at `w` iff there exists a true answer α whose proposition entails the
 proposition of every other true answer β:
@@ -77,7 +77,7 @@ def dayalEP {W P : Type _}
 
 /-! ### Relativized Exhaustivity -/
 
-/-- Relativized Exhaustivity (Xiang 2022, definition 91).
+/-- Relativized Exhaustivity (@cite{xiang-2022}, definition 91).
 
 RelExh holds at `w` iff for every singleton modal base {v} where v ∈ mb(w),
 if {v} makes some answer relevant (both true under {v} and true under the full
@@ -98,7 +98,7 @@ def relExh {W P : Type _}
       qden singletonMB α w && qden mb α w)
     !hasRelevant || dayalEP qden singletonMB answers worlds w)
 
-/-! ### Fox 2018: Partition by Exhaustification @cite{fox-2018}
+/-! ### @cite{fox-2018}: Partition by Exhaustification @cite{fox-2018}
 
 @cite{fox-2018} "Partition by Exhaustification" derives Dayal's EP from the
 exhaustification operator Exh. The key insight: a question partitions
@@ -111,7 +111,7 @@ for decidable computation via `native_decide`.
 - `cellMCSets` mirrors `isMCSet` from NeoGricean.Exhaustivity
 - `cellIE` mirrors `IE` from NeoGricean.Exhaustivity
 - `foxExh` mirrors `exhIE` from NeoGricean.Exhaustivity
-- `foxAns` implements Fox 2018, definition 35 (answer operator)
+- `foxAns` implements @cite{fox-2018}, definition 35 (answer operator)
 - `foxPartition` implements Schwarzschild's partition test ((38))
 -/
 
@@ -181,7 +181,7 @@ def foxExh {W : Type _} (cells : List (W → Bool)) (pIdx : Nat)
     (cellIE cells pIdx worlds).all (λ j => !getCell cells j w)
 
 /-- Non-vacuity: Exh(Q)(p) is satisfiable (true at some world).
-Fox 2018 requires non-vacuity for QPM. -/
+@cite{fox-2018} requires non-vacuity for QPM. -/
 def foxNV {W : Type _} (cells : List (W → Bool)) (pIdx : Nat)
     (worlds : List W) : Bool :=
   worlds.any (foxExh cells pIdx worlds)
@@ -228,7 +228,7 @@ def foxAns {W : Type _} (cells : List (W → Bool))
       getCell cells i w && propEntails (getCell cells i) cellId worlds) |>.length
   | _ => 0
 
-/-- Schwarzschild's partition test (Fox 2018, (38)): do the exhaustified
+/-- Schwarzschild's partition test (@cite{fox-2018}, (38)): do the exhaustified
 cells {Exh(Q)(p) : p ∈ Q} partition the world set? Holds iff every world
 has exactly one Exh-true cell. When this holds, Fox's QPM (Definition 34)
 is satisfied and `foxAns` is well-defined at every world. -/

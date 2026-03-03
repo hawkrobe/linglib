@@ -35,7 +35,7 @@ open Semantics.Entailment.AntiAdditivity
 -- ============================================================================
 
 /--
-**Strawson-DE** (von Fintel 1999, Definition 14).
+**Strawson-DE** (@cite{von-fintel-1999}, Definition 14).
 
 A function `f : BProp World → BProp World` is Strawson-DE with respect to a definedness
 predicate `defined` iff: for all p ≤ q, if `defined p` holds (i.e. the
@@ -52,7 +52,7 @@ def IsStrawsonDE (f : BProp World → BProp World) (defined : BProp World → Pr
   ∀ p q : BProp World, (∀ w, p w ≤ q w) → defined p → (∀ w, f q w ≤ f p w)
 
 /--
-**Strawson-valid inference** (von Fintel 1999, Definition 19).
+**Strawson-valid inference** (@cite{von-fintel-1999}, Definition 19).
 
 An inference from premises to conclusion is Strawson-valid iff it is
 classically valid once we add the premise that all presuppositions of the

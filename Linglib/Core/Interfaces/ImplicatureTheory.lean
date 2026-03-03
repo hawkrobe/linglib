@@ -218,7 +218,7 @@ structure DEBlockingTestCase where
   expectedDE : Bool
   deriving Repr
 
-/-- A task effect test case from Geurts & Pouscoulous 2009 -/
+/-- A task effect test case from @cite{geurts-pouscoulous-2009} -/
 structure TaskEffectTestCase where
   /-- Inference task rate (percentage) -/
   inferenceRate : Nat

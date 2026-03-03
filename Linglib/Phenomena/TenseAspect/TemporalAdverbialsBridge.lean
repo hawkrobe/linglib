@@ -270,7 +270,7 @@ theorem nonhomogeneous_implies_closed_scale (p : AspectualProfile)
 /-! @cite{rouillard-2026} §6.1 argues that G-TIAs are NPIs licensed by maximal
     informativity, NOT by downward entailment. The key evidence:
 
-    1. DE-based accounts (Hoeksema 2006, Gajewski 2005/2007) incorrectly predict
+    1. DE-based accounts (@cite{hoeksema-2006}, @cite{gajewski-2005}/2007) incorrectly predict
        E-TIAs should also be polarity-sensitive (they aren't — E-TIAs are aspect-
        sensitive, not polarity-sensitive).
     2. The MIP accounts for BOTH E-TIA (aspect) and G-TIA (polarity) restrictions

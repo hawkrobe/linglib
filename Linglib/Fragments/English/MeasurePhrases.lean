@@ -66,7 +66,7 @@ def allMeasureTerms : List MeasureTermEntry :=
   [gram, kilo, pound, milliliter, liter, mile, kilometer, meter, hour, second_]
 
 -- ============================================================================
--- § 2. Quantizing Noun Entries (Scontras 2014, Ch. 3)
+-- § 2. Quantizing Noun Entries (@cite{scontras-2014}, Ch. 3)
 -- ============================================================================
 
 open Semantics.Probabilistic.Measurement (QuantizingNounClass ContainerReading)

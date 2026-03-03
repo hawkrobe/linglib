@@ -1,7 +1,7 @@
 import Linglib.Core.Scales.EpistemicScale.Defs
 
 /-!
-# Epistemic Entailment Patterns (Holliday & Icard 2013, Figure 1)
+# Epistemic Entailment Patterns (@cite{holliday-icard-2013}, Figure 1)
 
 @cite{holliday-icard-2013}
 

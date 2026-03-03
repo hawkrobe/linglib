@@ -45,7 +45,7 @@ MereoScale EpistemicScale (†) │
 **Enriched subcategory**: `AdditiveScale α` — comparative scale with join and
   finite additivity (FA). Two independent instances:
   - Mereological: `ExtMeasure.additive`
-  - Epistemic: `EpistemicSystemFA` + `FinAddMeasure` (Holliday & Icard 2013, § 14)
+  - Epistemic: `EpistemicSystemFA` + `FinAddMeasure` (@cite{holliday-icard-2013}, § 14)
 
 **Linear specialization**: `DirectedMeasure` — comparative scale with a linear
   order, measure function, and direction. Instances: Kennedy adjectives,
@@ -248,7 +248,7 @@ class PositiveRegion (α : Type*) (θ : Type*) where
   inRegion : α → θ → Bool
 
 -- ════════════════════════════════════════════════════
--- § 1f. Scale Representation (KLST 1971)
+-- § 1f. Scale Representation (@cite{krantz-1971})
 -- ════════════════════════════════════════════════════
 
 /-- A representation of a qualitative ordering by a quantitative measure.
@@ -348,7 +348,7 @@ and boundedness is `OrderTop`/`OrderBot`/`NoMaxOrder`/`NoMinOrder`.
 No wrapper classes needed — use Mathlib directly:
 
 - **Measurement scale**: `[LinearOrder α]`
-- **Dense measurement scale** (Fox & Hackl 2007 UDM): `[LinearOrder α] [DenselyOrdered α]`
+- **Dense measurement scale** (@cite{fox-2007} UDM): `[LinearOrder α] [DenselyOrdered α]`
 - **Upper-bounded scale**: `[LinearOrder α] [OrderTop α]`
 - **Lower-bounded scale**: `[LinearOrder α] [OrderBot α]`
 - **Open scale**: `[LinearOrder α] [NoMaxOrder α] [NoMinOrder α]`
@@ -421,7 +421,7 @@ theorem bimonotone_no_optimum {W : Type*} (P : α → W → Prop)
   fun h => h (bimonotone_constant P hUp hDown)
 
 -- ════════════════════════════════════════════════════
--- § 3b. Maximal Informativity (Fox & Hackl 2007, Rouillard 2026)
+-- § 3b. Maximal Informativity (@cite{fox-2007}, @cite{rouillard-2026})
 -- ════════════════════════════════════════════════════
 
 /-- A scale value `x` is **maximally informative** in a degree property `P`
@@ -522,7 +522,7 @@ theorem closed_isLicensed : Boundedness.closed.isLicensed = true := rfl
 theorem open_notLicensed : Boundedness.open_.isLicensed = false := rfl
 
 -- ════════════════════════════════════════════════════
--- § 6. Degree Properties (Fox & Hackl 2007 §2)
+-- § 6. Degree Properties (@cite{fox-2007} §2)
 -- ════════════════════════════════════════════════════
 
 /-! ### Degree properties for comparison relations
@@ -540,7 +540,7 @@ semantics (`Numeral.Semantics.maxMeaning`) and degree questions
 
 The key divergence: on ℕ, `>` collapses to `≥` with successor, so both
 have `HasMaxInf`. On dense scales, `>` yields an open set with no max⊨.
-This is the UDM prediction (Fox & Hackl 2007 §2). -/
+This is the UDM prediction (@cite{fox-2007} §2). -/
 
 /-- Degree property for "exactly d": the measure at w equals d. -/
 def eqDeg {W : Type*} (μ : W → α) : α → W → Prop :=
@@ -583,7 +583,7 @@ theorem atLeast_hasMaxInf {W : Type*} (μ : W → α) (w : W) :
     HasMaxInf (atLeastDeg μ) w :=
   ⟨μ w, le_refl _, fun _ hd _ hw' => le_trans hd hw'⟩
 
-/-- **Implicature asymmetry** (Fox & Hackl 2007 §2):
+/-- **Implicature asymmetry** (@cite{fox-2007} §2):
     on a dense scale, "more than n" has NO maximally informative element.
 
     For any candidate d₀ < μ(w), density gives d' ∈ (d₀, μ(w)).
@@ -630,12 +630,12 @@ theorem moreThan_nat_hasMaxInf {W : Type*} (μ : W → ℕ) (w : W) (hw : moreTh
   · have : μ w' > μ w - 1 := hw'; have : μ w > d := hd; show μ w' > d; omega
 
 -- ════════════════════════════════════════════════════
--- § 6b. Order-Sensitive MAX (Rett 2026)
+-- § 6b. Order-Sensitive MAX (@cite{rett-2026})
 -- ════════════════════════════════════════════════════
 
 /-! ### Scale-sensitive maximality operator
 
-Rett (2026, def. 1, adapting Rullmann 1995): MAX_R(X) picks the element(s)
+Rett (2026, def. 1, adapting @cite{rullmann-1995}): MAX_R(X) picks the element(s)
 of X that R-dominate all other members. For the `<` scale this is the GLB
 (earliest / smallest), for `>` the LUB (latest / largest). The same operator
 underlies both temporal connectives (*before*/*after*) and degree comparatives.
@@ -643,7 +643,7 @@ underlies both temporal connectives (*before*/*after*) and degree comparatives.
 - Rett, J. (2026). Semantic ambivalence and expletive negation. Ms.
 -/
 
-/-- Order-sensitive maximality (Rett 2026, def. 1):
+/-- Order-sensitive maximality (@cite{rett-2026}, def. 1):
     MAX_R(X) = { x ∈ X | ∀ x' ∈ X, x' ≠ x → R x x' }.
     Domain-general over any relation R and set X. -/
 def maxOnScale {α : Type*} (R : α → α → Prop) (X : Set α) : Set α :=

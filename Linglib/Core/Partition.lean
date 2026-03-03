@@ -415,7 +415,7 @@ whether R holds loses information that Q distinguishes. -/
 def isNegativeAttribute (R : M → Bool) (q : QUD M) (elements : List M) : Prop :=
   isProperCoarsening (binaryPartition R) q elements
 
-/-! ### Coarsest P-Preserving Coarsening (Merin 1999, Fact 3) -/
+/-! ### Coarsest P-Preserving Coarsening (@cite{merin-1999}, Fact 3) -/
 
 /-- The coarsest coarsening of Q that preserves predicate P.
 
@@ -465,7 +465,7 @@ def toFinpartition [Fintype M] [DecidableEq M] (q : QUD M) :
     Finpartition (Finset.univ : Finset M) :=
   Finpartition.ofSetoid q.toSetoid
 
-/-! ### EU Compositionality under Coarsening (Merin 1999, Central Theorem) -/
+/-! ### EU Compositionality under Coarsening (@cite{merin-1999}, Central Theorem) -/
 
 open Core.DecisionTheory in
 /-- Expected utility computed via a partition: weight each cell's conditional EU

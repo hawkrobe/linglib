@@ -19,7 +19,7 @@ structure (marginal vs. large difference) on the same `LinearOrder`.
 
 namespace Semantics.Lexical.Adjective
 
-/-- ML theory (Dinis & Jacinto 2026, Fig. 1): a linear order enriched with
+/-- ML theory (@cite{dinis-jacinto-2026}, Fig. 1): a linear order enriched with
     a primitive "marginally smaller than" relation M satisfying five axioms.
     The strict order `<` from `LinearOrder` is the paper's R;
     L (largely smaller) is derived as R ∧ ¬M. -/

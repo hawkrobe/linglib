@@ -321,7 +321,7 @@ theorem subjunctive_implies_indicative {W : Type*} (sim : SimilarityOrdering W)
     subjunctiveConditional sim domain p q w → indicativeConditional p q w := by
   exact variably_strict_implies_material sim domain p q w hw hp h_centered
 
--- Selection Functions (Stalnaker 1968, Ramotowska et al. 2025)
+-- Selection Functions (@cite{stalnaker-1968}, @cite{ramotowska-santorio-2025})
 
 /-!
 ## Selection Functions
@@ -343,7 +343,7 @@ A **selection function** picks the unique closest antecedent-world.
 
 `s w A` returns the closest A-world to w, or w itself if no A-worlds exist.
 
-Constraints (from Stalnaker 1968):
+Constraints (from @cite{stalnaker-1968}):
 1. Success: If A is non-empty, s(w, A) ∈ A
 2. Strong Centering: If w ∈ A, then s(w, A) = w
 -/

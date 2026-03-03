@@ -2,7 +2,7 @@ import Linglib.Core.Semantics.Proposition
 import Linglib.Tactics.OntSort
 
 /-!
-# Content Individuals (Kratzer 2006; Liefke 2024 §4.3) @cite{kratzer-2006}
+# Content Individuals (@cite{kratzer-2006}; @cite{liefke-2024} §4.3) @cite{kratzer-2006}
 @cite{baker-jara-ettinger-saxe-tenenbaum-2017} @cite{chandra-2025} @cite{liefke-2024} @cite{moulton-2015} @cite{hintikka-1969}
 
 A content individual is a first-class mental state carrying propositional
@@ -12,7 +12,7 @@ content — the denotation of content DPs like *John's belief that p*,
 ## Ontological Status
 
 Content individuals are the shared sort underlying beliefs, desires, and
-percepts (Liefke 2024 §4.3). What distinguishes a belief from a desire or
+percepts (@cite{liefke-2024} §4.3). What distinguishes a belief from a desire or
 a percept is not the ontological sort — it is the attitude relation (the
 verb) that embeds it.
 
@@ -26,8 +26,8 @@ Two ways to relate a content individual x_c to a proposition p:
 
 | Relation    | Definition           | Gloss                  | Source              |
 |-------------|----------------------|------------------------|---------------------|
-| Identity    | CONT(x_c) = p       | p IS the content       | Kratzer 2006        |
-| Entailment  | CONT(x_c) ⊆ p       | p FOLLOWS from content | Hintikka 1969       |
+| Identity    | CONT(x_c) = p       | p IS the content       | @cite{kratzer-2006}        |
+| Entailment  | CONT(x_c) ⊆ p       | p FOLLOWS from content | @cite{hintikka-1969}       |
 
 Identity is strictly stronger (§3 below).
 
@@ -47,7 +47,7 @@ open Core.Proposition
     This is @cite{kratzer-2006}'s *content individual* — the denotation of content
     DPs like *John's belief that p*, *the claim*, *every rumor*, *her wish*.
     It is the shared ontological sort underlying beliefs, desires, and percepts
-    (Liefke 2024 §4.3), and the *frame* created by `thinks[...]` in memo.
+    (@cite{liefke-2024} §4.3), and the *frame* created by `thinks[...]` in memo.
 
     The `cont` field is Kratzer's CONT function: the propositional content
     this mental state carries. Two distinct content individuals can share

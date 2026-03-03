@@ -45,7 +45,7 @@ def isPhaseHead (so : SyntacticObject) : Bool :=
   | some .v => true    -- v*P phase
   | _ => false
 
-/-- D as a phase head (Citko 2014 §2.5, Svenonius 2004).
+/-- D as a phase head (@cite{citko-2014} §2.5, Svenonius 2004).
 
     Some analyses treat DP as a phase. This is a weaker claim
     used for scope barriers (QR cannot escape DP). -/
@@ -67,15 +67,15 @@ def isPhaseHeadExt (so : SyntacticObject) (dpIsPhase : Bool := false) : Bool :=
   isPhaseHead so || (dpIsPhase && isDPhaseHead so)
 
 -- ============================================================================
--- Part 2: PIC Strength (Citko 2014 §2.4)
+-- Part 2: PIC Strength (@cite{citko-2014} §2.4)
 -- ============================================================================
 
 /-- The strength of the Phase Impenetrability Condition.
 
-    - `strong` (PIC₁, Chomsky 2000): Only the edge (specifier) of the
+    - `strong` (PIC₁, @cite{chomsky-2000}): Only the edge (specifier) of the
       immediately lower phase is accessible. The complement is frozen
       as soon as the phase head is merged.
-    - `weak` (PIC₂, Chomsky 2001): The complement of a phase is accessible
+    - `weak` (PIC₂, @cite{chomsky-2001}): The complement of a phase is accessible
       until the next higher phase head is merged. -/
 inductive PICStrength where
   | strong   -- PIC₁: complement frozen immediately
@@ -126,7 +126,7 @@ def phaseImpenetrable (strength : PICStrength) (phase goal : SyntacticObject) : 
     | .leaf _ => False
 
 -- ============================================================================
--- Part 5: Anti-Locality (Abels 2012, Ch. 4)
+-- Part 5: Anti-Locality (@cite{abels-2012}, Ch. 4)
 -- ============================================================================
 
 /-- Anti-locality: the complement of a phase head H cannot move to Spec-H.
@@ -195,7 +195,7 @@ def Transfer.fromPhase (ph : Phase) : Transfer :=
     lf_is_complement := rfl }
 
 -- ============================================================================
--- Part 8: Feature Inheritance (Chomsky 2008)
+-- Part 8: Feature Inheritance (@cite{chomsky-2008})
 -- ============================================================================
 
 /-- Feature Inheritance: phase heads pass features to their complements.

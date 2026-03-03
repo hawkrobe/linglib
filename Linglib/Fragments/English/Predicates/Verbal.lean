@@ -787,9 +787,9 @@ def kill : VerbEntry := .mkRegular {
     agentControl := some [.neutral, .compatible]
   } }
 
-/-- "break" — thick lexical causative (Levin 45.1 Break Verbs; Embick 2009 break-class).
+/-- "break" — thick lexical causative (Levin 45.1 Break Verbs; @cite{embick-2009} break-class).
     Pure change-of-state verb: change in "material integrity"
-    with no specification of how the change comes about (Levin 1993:242). -/
+    with no specification of how the change comes about (@cite{levin-1993}:242). -/
 def break_ : VerbEntry where
   form := "break"
   form3sg := "breaks"
@@ -1402,7 +1402,7 @@ def investigate : VerbEntry := .mkRegular {
   takesQuestionBase := true
   levinClass := some .search }
 
-/-- "depend_on" — rogative, embeds interrogatives only (Dayal 2025: rogativeCP) -/
+/-- "depend_on" — rogative, embeds interrogatives only (@cite{dayal-2025}: rogativeCP) -/
 def depend_on : VerbEntry where
   form := "depend on"
   form3sg := "depends on"
@@ -1442,7 +1442,7 @@ def forget_rog : VerbEntry where
   senseTag := .rogative
 
 -- ════════════════════════════════════════════════════
--- § Verb Entries — Occasion Verbs (Solstad & Bott 2024)
+-- § Verb Entries — Occasion Verbs (@cite{solstad-bott-2024})
 -- ════════════════════════════════════════════════════
 
 /-! Occasion verbs presuppose a prior occasioning eventuality and have
@@ -1502,7 +1502,7 @@ def hesitate : VerbEntry := .mkRegular {
   presupType := some .softTrigger }
 
 -- ════════════════════════════════════════════════════
--- § Verb Entries — Agent-Experiencer (Solstad & Bott 2024)
+-- § Verb Entries — Agent-Experiencer (@cite{solstad-bott-2024})
 -- ════════════════════════════════════════════════════
 
 /-! @cite{levin-1993} class 31.2 (admire). Subject = experiencer, object = stimulus.
@@ -1602,13 +1602,13 @@ def dread_np : VerbEntry := .mkRegular {
   levinClass := some .admire }
 
 -- ════════════════════════════════════════════════════
--- § Verb Entries — Stimulus-Experiencer (Solstad & Bott 2024)
+-- § Verb Entries — Stimulus-Experiencer (@cite{solstad-bott-2024})
 -- ════════════════════════════════════════════════════
 
 /-! @cite{levin-1993} class 31.1 (amuse). Subject = stimulus, object = experiencer.
     NP2 (object) IC bias. -/
 
-/-- "frighten" — StimExp verb (stimulus-subject, eventive: Kim 2024 UPH) -/
+/-- "frighten" — StimExp verb (stimulus-subject, eventive: @cite{kim-2024} UPH) -/
 def frighten : VerbEntry := .mkRegular {
   form := "frighten"
   complementType := .np
@@ -1618,7 +1618,7 @@ def frighten : VerbEntry := .mkRegular {
   causalSource := some .external
   levinClass := some .amuse }
 
-/-- "amuse" — StimExp verb (stimulus-subject, eventive: Kim 2024 UPH) -/
+/-- "amuse" — StimExp verb (stimulus-subject, eventive: @cite{kim-2024} UPH) -/
 def amuse : VerbEntry := .mkRegular {
   form := "amuse"
   complementType := .np
@@ -1628,7 +1628,7 @@ def amuse : VerbEntry := .mkRegular {
   causalSource := some .external
   levinClass := some .amuse }
 
-/-- "fascinate" — StimExp verb (stimulus-subject, eventive: Kim 2024 UPH) -/
+/-- "fascinate" — StimExp verb (stimulus-subject, eventive: @cite{kim-2024} UPH) -/
 def fascinate : VerbEntry := .mkRegular {
   form := "fascinate"
   complementType := .np
@@ -1638,7 +1638,7 @@ def fascinate : VerbEntry := .mkRegular {
   causalSource := some .external
   levinClass := some .amuse }
 
-/-- "irritate" — StimExp verb (stimulus-subject, eventive: Kim 2024 UPH) -/
+/-- "irritate" — StimExp verb (stimulus-subject, eventive: @cite{kim-2024} UPH) -/
 def irritate : VerbEntry := .mkRegular {
   form := "irritate"
   complementType := .np
@@ -1648,7 +1648,7 @@ def irritate : VerbEntry := .mkRegular {
   causalSource := some .external
   levinClass := some .amuse }
 
-/-- "annoy" — StimExp verb (stimulus-subject, eventive: Kim 2024 UPH) -/
+/-- "annoy" — StimExp verb (stimulus-subject, eventive: @cite{kim-2024} UPH) -/
 def annoy : VerbEntry := .mkRegular {
   form := "annoy"
   complementType := .np
@@ -1658,7 +1658,7 @@ def annoy : VerbEntry := .mkRegular {
   causalSource := some .external
   levinClass := some .amuse }
 
-/-- "bore" — StimExp verb (stimulus-subject, eventive: Kim 2024 UPH) -/
+/-- "bore" — StimExp verb (stimulus-subject, eventive: @cite{kim-2024} UPH) -/
 def bore : VerbEntry := .mkRegular {
   form := "bore"
   complementType := .np
@@ -1668,7 +1668,7 @@ def bore : VerbEntry := .mkRegular {
   causalSource := some .external
   levinClass := some .amuse }
 
-/-- "charm" — StimExp verb (stimulus-subject, eventive: Kim 2024 UPH) -/
+/-- "charm" — StimExp verb (stimulus-subject, eventive: @cite{kim-2024} UPH) -/
 def charm : VerbEntry := .mkRegular {
   form := "charm"
   complementType := .np
@@ -1678,7 +1678,7 @@ def charm : VerbEntry := .mkRegular {
   causalSource := some .external
   levinClass := some .amuse }
 
-/-- "impress" — StimExp verb (stimulus-subject, eventive: Kim 2024 UPH) -/
+/-- "impress" — StimExp verb (stimulus-subject, eventive: @cite{kim-2024} UPH) -/
 def impress : VerbEntry := .mkRegular {
   form := "impress"
   complementType := .np
@@ -1688,7 +1688,7 @@ def impress : VerbEntry := .mkRegular {
   causalSource := some .external
   levinClass := some .amuse }
 
-/-- "concern" — stative Class II psych verb (Kim 2024 UPH, internal cause) -/
+/-- "concern" — stative Class II psych verb (@cite{kim-2024} UPH, internal cause) -/
 def concern : VerbEntry := .mkRegular {
   form := "concern"
   complementType := .np
@@ -1699,7 +1699,7 @@ def concern : VerbEntry := .mkRegular {
   opaqueContext := true
   levinClass := some .amuse }
 
-/-- "interest" — stative Class II psych verb (Kim 2024 UPH, internal cause) -/
+/-- "interest" — stative Class II psych verb (@cite{kim-2024} UPH, internal cause) -/
 def interest : VerbEntry := .mkRegular {
   form := "interest"
   complementType := .np
@@ -1823,7 +1823,7 @@ def worry_stative : VerbEntry := .mkRegular {
   opaqueContext := true
   levinClass := some .amuse }
 
-/-- "please" — stative Class II (Kim 2024 UPH, internal cause).
+/-- "please" — stative Class II (@cite{kim-2024} UPH, internal cause).
     "The idea pleases John." Related to B&R Class III It. *piacere*. -/
 def please_psych : VerbEntry := .mkRegular {
   form := "please"
@@ -1835,7 +1835,7 @@ def please_psych : VerbEntry := .mkRegular {
   opaqueContext := true
   levinClass := some .amuse }
 
-/-- "trouble" — stative Class II (Kim 2024 UPH, internal cause).
+/-- "trouble" — stative Class II (@cite{kim-2024} UPH, internal cause).
     "The thought troubles John." -/
 def trouble : VerbEntry := .mkRegular {
   form := "trouble"
@@ -1847,7 +1847,7 @@ def trouble : VerbEntry := .mkRegular {
   opaqueContext := true
   levinClass := some .amuse }
 
-/-- "puzzle" — stative Class II (Kim 2024 UPH, internal cause).
+/-- "puzzle" — stative Class II (@cite{kim-2024} UPH, internal cause).
     "The problem puzzles John." -/
 def puzzle : VerbEntry := .mkRegular {
   form := "puzzle"
@@ -1860,7 +1860,7 @@ def puzzle : VerbEntry := .mkRegular {
   levinClass := some .amuse }
 
 -- ════════════════════════════════════════════════════
--- § Verb Entries — Agent-Patient (Solstad & Bott 2024)
+-- § Verb Entries — Agent-Patient (@cite{solstad-bott-2024})
 -- ════════════════════════════════════════════════════
 
 /-! Agent-patient verbs with full agentive subjects. NP1 IC bias (default).
@@ -2524,7 +2524,7 @@ def increase : VerbEntry := .mkRegular {
   levinClass := some .calibratableCoS }
 
 -- ════════════════════════════════════════════════════
--- § Degree Achievement Verb Pairs (Kennedy & Levin 2007)
+-- § Degree Achievement Verb Pairs (@cite{kennedy-2007})
 -- ════════════════════════════════════════════════════
 
 /-- "straighten" — Closed-scale degree achievement (base adj: straight).
@@ -2777,37 +2777,37 @@ def allVerbs : List VerbEntry := [
   manage, fail, try_, persuade, promise, remember, forget,
   -- Doxastic Attitude
   believe, think,
-  -- Preferential Attitude (Qing et al. 2025)
+  -- Preferential Attitude (@cite{qing-uegaki-2025})
   want, hope, expect, wish,
   fear, dread,
   worry,
   -- Raising
   seem,
-  -- Causative (Nadathur & Lauer 2020 + Wolff 2003)
+  -- Causative (@cite{nadathur-lauer-2020} + @cite{wolff-2003})
   cause,
   make,
   let_, have_caus, get_caus, force,
-  -- Lexical causatives (Martin, Rose & Nichols 2025)
+  -- Lexical causatives (Martin, @cite{martin-rose-nichols-2025})
   kill, break_, tear_, burn, destroy, melt,
   activate, affect, change, damage, eliminate, hurt, restore, trigger,
   bury, drop, lift, lock, shut, spread, stretch, switch,
   -- Communication
   say, tell, claim,
-  -- Manner of Speaking (Storment 2026)
+  -- Manner of Speaking (@cite{storment-2026})
   whisper, murmur, shout, cry, scream, speak, talk,
-  -- Question-embedding (Dayal 2025)
+  -- Question-embedding (@cite{dayal-2025})
   wonder, ask, investigate, depend_on,
   -- Factive question-embedding senses
   remember_rog, forget_rog,
-  -- Occasion Verbs (Solstad & Bott 2024)
+  -- Occasion Verbs (@cite{solstad-bott-2024})
   manage_occasion, dare, bother, hesitate,
-  -- Agent-Experiencer (Solstad & Bott 2024)
+  -- Agent-Experiencer (@cite{solstad-bott-2024})
   enjoy, like, love, hate, admire, envy, respect, value,
-  -- Stimulus-Experiencer (Solstad & Bott 2024)
+  -- Stimulus-Experiencer (@cite{solstad-bott-2024})
   frighten, amuse, fascinate, irritate, annoy, bore, charm, impress,
-  -- Stative Class II (Kim 2024 UPH)
+  -- Stative Class II (@cite{kim-2024} UPH)
   concern, interest,
-  -- Agent-Patient (Solstad & Bott 2024)
+  -- Agent-Patient (@cite{solstad-bott-2024})
   chase, hit, push, pull, carry, drag, call,
   -- Levin § 9 Putting
   place, pour, spray, load,
@@ -2849,7 +2849,7 @@ def allVerbs : List VerbEntry := [
   glow, buzz, bleed,
   -- Levin § 45 Change of State
   bend, boil, rust, increase,
-  -- Degree Achievement Pairs (Kennedy & Levin 2007)
+  -- Degree Achievement Pairs (@cite{kennedy-2007})
   straighten, flatten, open_, lengthen, widen, cool, warm,
   -- Levin § 47–50 Existence, Appearance, Position
   exist, appear, fidget, sit, stand,

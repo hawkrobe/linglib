@@ -46,7 +46,7 @@ structure AspectReadingEntry where
   deriving Repr, BEq
 
 -- ============================================================================
--- § 2: *bago* ('before') Entries (Rett 2020, ex. 12; Dell 1983)
+-- § 2: *bago* ('before') Entries (@cite{rett-2020}, ex. 12; @cite{dell-1983})
 -- ============================================================================
 
 /-- *bago* + PFV.NEUT → before-start (≺ initial).

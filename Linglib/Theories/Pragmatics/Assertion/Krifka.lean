@@ -60,7 +60,7 @@ open Core.Discourse (IllocutionaryMood)
     (ActP, speech act force). Each layer contributes a distinct semantic
     dimension that can be independently modified.
 
-    TODO: Krifka 2015 §4 also posits PolP (Polarity Phrase) between
+    TODO: @cite{krifka-2015} §4 also posits PolP (Polarity Phrase) between
     ComP and TP, hosting verum (⊢) / falsum (⊣). High negation at ComP
     (¬⊢φ = non-commitment to φ) vs TP negation (⊢¬φ = commitment to ¬φ)
     explains the bias asymmetry of negative questions: "Isn't it raining?"
@@ -137,7 +137,7 @@ structure LayeredAssertion (W : Type*) where
   actType : IllocutionaryMood := .declarative
 
 -- ════════════════════════════════════════════════════
--- § 4. Commitment Space: Tree Structure (Krifka 2015, §2)
+-- § 4. Commitment Space: Tree Structure (@cite{krifka-2015}, §2)
 -- ════════════════════════════════════════════════════
 
 /-- Agent type for two-participant discourse. -/
@@ -152,7 +152,7 @@ def KAgent.toDiscourseRole : KAgent → Core.Discourse.DiscourseRole
   | .speaker   => .speaker
   | .addressee => .addressee
 
-/-- A commitment space (Krifka 2015, Definition 3, p.329).
+/-- A commitment space (@cite{krifka-2015}, Definition 3, p.329).
 
     A set of commitment states organized as root + continuations:
 
@@ -187,7 +187,7 @@ variable {W : Type*}
 /-- The empty commitment space: no commitments, no continuations. -/
 def empty : CommitmentSpace W := ⟨[], []⟩
 
-/-- Assert φ: narrow every state by φ (Krifka 2015, (9), p.329).
+/-- Assert φ: narrow every state by φ (@cite{krifka-2015}, (9), p.329).
 
     `C + S⊢φ = {s ∩ ⟦φ⟧ : s ∈ C}`
 
@@ -197,7 +197,7 @@ def assert (cs : CommitmentSpace W) (φ : BProp W) : CommitmentSpace W :=
   { root := φ :: cs.root
     continuations := cs.continuations.map (φ :: ·) }
 
-/-- Question: preserve root, propose φ (Krifka 2015, (14), p.332).
+/-- Question: preserve root, propose φ (@cite{krifka-2015}, (14), p.332).
 
     `C + ?φ = {√C} ∪ (C + S₂⊢φ)`
 
@@ -294,7 +294,7 @@ variable {W : Type*}
 def empty : KrifkaState W :=
   ⟨CommitmentSlate.empty, CommitmentSlate.empty, CommitmentSpace.empty⟩
 
-/-- Krifka's commitment operator `+ S₁⊢p` (Krifka 2015, (9)):
+/-- Krifka's commitment operator `+ S₁⊢p` (@cite{krifka-2015}, (9)):
     speaker commits to p, narrowing the entire space. -/
 def commitOp (s : KrifkaState W) (p : BProp W) : KrifkaState W :=
   { s with
@@ -305,12 +305,12 @@ def commitOp (s : KrifkaState W) (p : BProp W) : KrifkaState W :=
 def accept (s : KrifkaState W) (p : BProp W) : KrifkaState W :=
   { s with addresseeCS := s.addresseeCS.add p }
 
-/-- Assert = commit (Krifka 2015: assertion IS commitment).
+/-- Assert = commit (@cite{krifka-2015}: assertion IS commitment).
     The space is narrowed immediately; the CG reflects the assertion. -/
 def assert (s : KrifkaState W) (p : BProp W) : KrifkaState W :=
   s.commitOp p
 
-/-- Question: speaker proposes φ as a continuation (Krifka 2015, (14)).
+/-- Question: speaker proposes φ as a continuation (@cite{krifka-2015}, (14)).
     The CG (root) is unchanged; a new continuation is added. -/
 def question (s : KrifkaState W) (p : BProp W) : KrifkaState W :=
   { s with space := s.space.question p }
@@ -390,7 +390,7 @@ theorem supports_retraction :
     Interfaces.AssertionTheory.supportsRetraction (T := KrifkaTag) = true := rfl
 
 -- ════════════════════════════════════════════════════
--- § 8. Informative vs Performative Updates (Krifka 2020, §2)
+-- § 8. Informative vs Performative Updates (@cite{krifka-2020}, §2)
 -- ════════════════════════════════════════════════════
 
 /-- Update type for assertions.
@@ -415,7 +415,7 @@ inductive UpdateType where
   deriving DecidableEq, Repr, BEq, Inhabited
 
 /-- Informative update: restrict context set to worlds satisfying φ.
-    Krifka 2020, (7): `c + ·φ = {i | i ∈ c ∧ φ(i)}` -/
+    @cite{krifka-2020}, (7): `c + ·φ = {i | i ∈ c ∧ φ(i)}` -/
 def informativeUpdate {W : Type*} (cs : List W) (φ : BProp W) : List W :=
   cs.filter φ
 
@@ -428,7 +428,7 @@ structure TypedAssertion (W : Type*) extends LayeredAssertion W where
 theorem default_assertion_informative {W : Type*} (p : BProp W) :
     ({ content := p : TypedAssertion W }).updateType = .informative := rfl
 
-/-- Commitment Closure (Krifka 2020, (25)): assertion immediately
+/-- Commitment Closure (@cite{krifka-2020}, (25)): assertion immediately
     narrows the commitment space. The root (CG) after asserting φ
     is the original root with φ prepended.
 
@@ -458,7 +458,7 @@ theorem question_accept_eq_assert_root {W : Type*}
   | cons _ _ => simp [CommitmentSpace.isSettled] at h
 
 -- ════════════════════════════════════════════════════
--- § 9. Actor vs Committer (Krifka 2015, §6)
+-- § 9. Actor vs Committer (@cite{krifka-2015}, §6)
 -- ════════════════════════════════════════════════════
 
 /-- The two discourse roles in a speech act.
@@ -485,7 +485,7 @@ def assertionRoles : ActorCommitter :=
   ⟨.speaker, .speaker⟩
 
 /-- In monopolar questions, speaker acts but addressee commits.
-    Krifka 2015, (16): `C +_{S₁} [? [⊢ p]]` proposes that S₂ commit to p. -/
+    @cite{krifka-2015}, (16): `C +_{S₁} [? [⊢ p]]` proposes that S₂ commit to p. -/
 def questionRoles : ActorCommitter :=
   ⟨.speaker, .addressee⟩
 
@@ -495,13 +495,13 @@ theorem actor_committer_diverge :
     assertionRoles.committer ≠ questionRoles.committer := by decide
 
 -- ════════════════════════════════════════════════════
--- § 10. Speech Act Composition (Krifka 2015, §3–5)
+-- § 10. Speech Act Composition (@cite{krifka-2015}, §3–5)
 -- ════════════════════════════════════════════════════
 
 /-- A speech act in Krifka's framework: ActP content with its
     discourse function (assertion vs question).
 
-    Krifka 2015 clause structure: ActP > ComP > TP (three layers).
+    @cite{krifka-2015} clause structure: ActP > ComP > TP (three layers).
     The 2020 paper refines this to ActP > ComP > JP > TP. -/
 structure SpeechAct (W : Type*) where
   /-- Propositional content (TP layer) -/
@@ -528,7 +528,7 @@ def monopolarQuestion {W : Type*} (φ : BProp W) : SpeechAct W :=
 
 /-- Complex speech act: conjunction or disjunction of atomic acts.
 
-    Krifka 2015, §5: question tags involve composition of speech acts.
+    @cite{krifka-2015}, §5: question tags involve composition of speech acts.
     The difference between matching and reverse tags is conjunction vs
     disjunction:
     - **conj**: both acts performed sequentially (matching tag)

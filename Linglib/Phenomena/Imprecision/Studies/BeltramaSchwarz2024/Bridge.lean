@@ -9,7 +9,7 @@ import Mathlib.Tactic.NormNum
 @cite{beltrama-schwarz-2024} @cite{fiske-cuddy-glick-2007} @cite{silverstein-2003}
 
 Connects B&S's empirical data to their theoretical apparatus: the
-precision indexical field (from Beltrama, Solt & Burnett 2022), persona
+precision indexical field (from Beltrama, @cite{solt-2023}), persona
 mappings onto the Stereotype Content Model,
 bidirectionality between production and comprehension, and the
 prejudiciality-based account of task asymmetry.
@@ -44,7 +44,7 @@ open Sociolinguistics.SCM
 open Semantics.Lexical.Numeral.Precision
 
 -- ============================================================================
--- §5. Precision variants and the indexical field (Beltrama et al. 2022, B&S §2)
+-- §5. Precision variants and the indexical field (@cite{beltrama-solt-burnett-2023}, B&S §2)
 -- ============================================================================
 
 /-- Precision variants for numeral use: the sociolinguistic variable whose
@@ -55,7 +55,7 @@ inductive PrecisionVariant where
   | approximate -- speaker uses round numeral with approximate intended reading
   deriving DecidableEq, BEq, Repr
 
-/-- The indexical field for numeral precision (Beltrama et al. 2022,
+/-- The indexical field for numeral precision (@cite{beltrama-solt-burnett-2023},
     cited in B&S §2).
 
     **Production-side social meaning**: using a numeral exactly vs.

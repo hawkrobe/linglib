@@ -6,7 +6,7 @@ import Linglib.Theories.Phonology.RuleBased.Defs
 @cite{hayes-2009}
 
 Consonant gradation is a morphophonological alternation affecting stops at
-morpheme-internal syllable boundaries in Finnish (Karlsson 2018, Chs. 4–5).
+morpheme-internal syllable boundaries in Finnish (@cite{karlsson-2017}, Chs. 4–5).
 The **strong grade** appears in open syllables; the **weak grade** appears
 in closed syllables (i.e., before a coda consonant).
 

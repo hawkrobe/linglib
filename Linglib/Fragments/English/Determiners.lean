@@ -133,7 +133,7 @@ def many : QuantifierEntry :=
   }
 
 -- ============================================================================
--- Numerical Determiners (Barwise & Cooper 1981; van de Pol et al. 2023)
+-- Numerical Determiners (@cite{barwise-cooper-1981}; @cite{van-de-pol-etal-2023})
 -- ============================================================================
 
 /-- Numerical determiner entry. Parameterized by threshold n.
@@ -421,7 +421,7 @@ denotations and connects them to the `QuantityWord` scale.
 
 From a `QuantityWord` you can reach:
 - **Compositional denotations**: `QuantityWord.gqDenotation` → `every_sem`, `some_sem`, etc.
-- **Semantic universals** (B&C 1981): `Conservative`, `ScopeUpwardMono`, `ScopeDownwardMono`
+- **Semantic universals** (@cite{barwise-cooper-1981}): `Conservative`, `ScopeUpwardMono`, `ScopeDownwardMono`
   — all in `Core.Quantification`. `Quantity`, `SatisfiesUniversals` in
   `Semantics.Lexical.Determiner.Quantifier`
 - **Proved properties**: `every_conservative`, `some_scope_up`, `no_scope_down`, etc.
@@ -441,7 +441,7 @@ From a `QuantityWord` you can reach:
 -- @cite{van-benthem-1984} §3.3: Inferential Characterization
 -- ============================================================================
 
-/-- Van Benthem 1984 §3.3: Inferential characterization of the Square of
+/-- @cite{van-benthem-1984} §3.3: Inferential characterization of the Square of
     Opposition. Each corner is uniquely determined by its relational properties
     under CONSERV + QUANT + VAR*.
 
@@ -463,7 +463,7 @@ def QuantityWord.inferentialClass : QuantityWord → Option InferentialClass
   | .none_ => some .disjointness
   | _      => none
 
-/-- Map quantity words to their double monotonicity type (van Benthem 1984 §4.2). -/
+/-- Map quantity words to their double monotonicity type (@cite{van-benthem-1984} §4.2). -/
 def QuantityWord.doubleMono : QuantityWord → Option Core.Quantification.DoubleMono
   | .all   => some .downUp
   | .some_ => some .upUp

@@ -9,7 +9,7 @@ Formalizes the typological survey from:
 - Just, E. (2024). A structural and functional comparison of differential A
   and P indexing. Linguistics 62(2): 295–321.
 
-## Key Distinction: Flagging vs. Indexing (Haspelmath 2019, Just §2)
+## Key Distinction: Flagging vs. Indexing (@cite{haspelmath-2019}, Just §2)
 
 **Flagging** = case morphology on the NP (e.g., accusative suffix).
 **Indexing** = verbal agreement / cross-referencing (e.g., Bantu object markers).
@@ -162,13 +162,13 @@ def IndexingFragment.aPolarityCorrect (f : IndexingFragment) : Bool :=
 def IndexingFragment.polarityCorrect (f : IndexingFragment) : Bool :=
   match f.role with
   | .P => f.pPolarityCorrect
-  | .T => f.pPolarityCorrect  -- T indexes like P (Haspelmath 2021)
+  | .T => f.pPolarityCorrect  -- T indexes like P (@cite{haspelmath-2021})
   | .A => f.aPolarityCorrect
-  | .R => f.aPolarityCorrect  -- R indexes like A (Haspelmath 2021)
+  | .R => f.aPolarityCorrect  -- R indexes like A (@cite{haspelmath-2021})
   | .S => true                -- S is the reference point
 
 -- ============================================================================
--- § 5: Differential P Indexing Fragments (Just 2024, Table 1)
+-- § 5: Differential P Indexing Fragments (@cite{just-2024}, Table 1)
 -- ============================================================================
 
 /-! Languages where the P argument is differentially indexed. Prominent Ps
@@ -308,7 +308,7 @@ def spokenArabic : IndexingFragment := .mk'
 end PIndexing
 
 -- ============================================================================
--- § 6: Differential A Indexing Fragments (Just 2024, Table 2)
+-- § 6: Differential A Indexing Fragments (@cite{just-2024}, Table 2)
 -- ============================================================================
 
 /-! Languages where the A argument is differentially indexed. Non-prominent
@@ -528,7 +528,7 @@ theorem hungarian_definiteness_only : hungarian.isDefinitenessOnly = true := by 
 theorem easternMansi_definiteness_only : easternMansi.isDefinitenessOnly = true := by native_decide
 
 -- ============================================================================
--- § 14: Family Clustering (Just 2024, §2.2, §3.1)
+-- § 14: Family Clustering (@cite{just-2024}, §2.2, §3.1)
 -- ============================================================================
 
 /-- Bantu languages in the sample all show P indexing. -/

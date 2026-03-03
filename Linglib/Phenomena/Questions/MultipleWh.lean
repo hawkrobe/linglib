@@ -81,7 +81,7 @@ def multipleWhExamples : List MultipleWhDatum :=
 
 
 /-- Constituent and sentential answers express the same proposition.
-    G&S 1984: Both derived from the same abstract + term.
+    @cite{groenendijk-stokhof-1984}: Both derived from the same abstract + term.
 -/
 structure AnswerEquivalence where
   /-- The question -/

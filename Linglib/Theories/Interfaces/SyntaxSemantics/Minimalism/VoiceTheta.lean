@@ -92,7 +92,7 @@ theorem nonthematic_predicts_none :
 /-- Derive the canonical Voice flavor a verb projects from VerbCore
     properties. This is the "default" or most typical configuration.
 
-    - `causalSource.isSome` → Voice_CAUSE (Class II psych, Kim 2024)
+    - `causalSource.isSome` → Voice_CAUSE (Class II psych, @cite{kim-2024})
     - `unaccusative` → Voice_nonThematic (anticausative)
     - `controlType =.raising` → Voice_expletive (no external argument)
     - `levinClass =.weather` → Voice_expletive (expletive subject)
@@ -105,7 +105,7 @@ def selectedVoice (v : VerbCore) : VoiceFlavor :=
   else .agentive
 
 -- ════════════════════════════════════════════════════════════════════
--- § 3. Gradient Voice compatibility (Levin 2004)
+-- § 3. Gradient Voice compatibility (@cite{levin-2004})
 -- ════════════════════════════════════════════════════════════════════
 
 /-- Which Voice flavors is this verb compatible with?
@@ -154,7 +154,7 @@ def severingAccount : LinkingTheory VerbCore VoiceFlavor where
 -- § 6. Lexicalist account as LinkingTheory (for comparison)
 -- ════════════════════════════════════════════════════════════════════
 
-/-- The lexicalist account (Levin 1993, Rappaport Hovav & Levin 1998)
+/-- The lexicalist account (@cite{levin-1993}, Rappaport @cite{rappaport-hovav-levin-1998})
     as a `LinkingTheory`.
 
     Structural context = `Unit` — the verb's lexical semantics

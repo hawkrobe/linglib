@@ -337,7 +337,7 @@ The key insight: a HEAD is an LI that projects. A PHRASE is a maximal projection
 #guard projectsInB (.leaf verbEat) eatPizzaVP       -- V projects in VP
 #guard !projectsInB theDP eatPizzaVP                -- DP doesn't project in VP
 
--- Part 9: Position-Indexed Maximality (Collins & Stabler 2016)
+-- Part 9: Position-Indexed Maximality (@cite{collins-stabler-2016})
 
 /-
 ## Position vs Occurrence (Harizanov footnote 11, p.9)

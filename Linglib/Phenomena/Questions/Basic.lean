@@ -86,10 +86,10 @@ structure QAPair where
   source : String := ""
   deriving Repr
 
--- Term Types (G&S 1984)
+-- Term Types (@cite{groenendijk-stokhof-1984})
 
 /-- Term types determine exhaustive interpretation.
-    Source: G&S 1984, Chapter IV.
+    Source: @cite{groenendijk-stokhof-1984}, Chapter IV.
 -/
 inductive TermType where
   | singular        -- "the student who left"

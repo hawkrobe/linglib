@@ -127,7 +127,7 @@ def lift (q : GSQuestion W) : LiftedQuestion W :=
 def isPrincipal (lq : LiftedQuestion W) : Prop :=
   ∃ q : GSQuestion W, lq = lift q
 
--- Continuation Monad Structure (Barker & Shan 2014)
+-- Continuation Monad Structure (@cite{barker-shan-2014})
 
 /-!
 ### The Continuation Monad

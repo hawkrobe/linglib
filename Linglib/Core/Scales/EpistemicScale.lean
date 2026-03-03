@@ -16,7 +16,7 @@ top-level KPS theorems (8a, 8b) and completeness results.
 
 namespace Core.Scale
 
--- ── Theorem 8 (Kraft, Pratt & Seidenberg 1959) ───
+-- ── Theorem 8 (Kraft, @cite{kraft-pratt-seidenberg-1959}) ───
 
 set_option maxHeartbeats 1600000 in
 /-- **Theorem 8a**: for |W| < 5,
@@ -62,7 +62,7 @@ theorem theorem8b :
 
 -- ── Completeness (Theorems 6–7) ──────────────────
 
-/-- **Theorem 6 completeness** (Holliday & Icard 2013, Theorem 6; van der Hoek 1996):
+/-- **Theorem 6 completeness** (@cite{holliday-icard-2013}, Theorem 6; @cite{van-der-hoek-1996}):
     every EpistemicSystemFA is representable by a **qualitatively additive** measure. -/
 theorem theorem6_completeness {W : Type*} [Fintype W]
     (sys : EpistemicSystemFA W) :
@@ -92,7 +92,7 @@ private lemma ge_of_forall_singleton {W : Type*} [Fintype W]
     exact hJ A _ _ (hsub _ (Finset.mem_insert_self _ _))
       (ih (fun c hc => hsub c (Finset.mem_insert_of_mem hc)))
 
-/-- **Theorem 2 completeness** (Halpern 2003, Thm 2.7.2; Holliday & Icard 2013,
+/-- **Theorem 2 completeness** (@cite{halpern-2003}, Thm 2.7.2; @cite{holliday-icard-2013},
     Thm 2, Figure 4): an epistemic system satisfying R, T, Tran, J (right-union),
     and DS (determination by singletons) is representable by Lewis's l-lifting
     from a reflexive preorder on worlds.

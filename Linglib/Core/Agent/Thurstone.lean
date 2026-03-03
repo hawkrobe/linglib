@@ -49,7 +49,7 @@ open Real MeasureTheory BigOperators Set
 -- §2. Thurstone Case V
 -- ============================================================================
 
-/-- Thurstone's Case V model (Thurstone 1927; Luce 1959, §2.D).
+/-- Thurstone's Case V model (@cite{thurstone-1927}; @cite{luce-1959}, §2.D).
 
     Each stimulus has a scale value `scale(a)` and all stimuli share a common
     discriminal dispersion `sigma > 0`. The choice probability is determined
@@ -189,7 +189,7 @@ which is exactly the Luce model with rationality parameter `k`.
 noncomputable def thurstoneLuceK (sigma : ℝ) : ℝ :=
   Real.pi / (sigma * Real.sqrt 6)
 
-/-- **Thurstone–Luce approximation** (Luce 1959, §2.D, pp. 58-59).
+/-- **Thurstone–Luce approximation** (@cite{luce-1959}, §2.D, pp. 58-59).
 
     With `k = π/(σ · √6)`, the Thurstone Case V probability
     `P_T(a,b) = Φ((u(a)-u(b))/(σ√2))` and the Luce model probability

@@ -118,7 +118,7 @@ def allJointStates : List JointState :=
       (allThresholds 10).map λ θ_e => (h, θ, θ_e)
 
 /--
-Full meaning function (Nouwen 2024, eq. 45).
+Full meaning function (@cite{nouwen-2024}, eq. 45).
 
 - bare_warm: h > θ_adj (standard LG2017)
 - horribly_warm: (h > θ_adj) ∧ (μ_horrible(h) > θ_eval)

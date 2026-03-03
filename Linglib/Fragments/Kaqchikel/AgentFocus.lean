@@ -112,7 +112,7 @@ def patientExtractionTrans : ExtractionDatum :=
     Spec,TP → Spec,CP step within the embedded clause is avoided.
 
     This is the key evidence that AF is triggered by *locality of
-    movement*, not simply by agent extraction (Erlewine 2016, §2.3,
+    movement*, not simply by agent extraction (@cite{erlewine-2016}, §2.3,
     examples 21–22). -/
 def longDistanceAgentExtraction : ExtractionDatum :=
   { extracted := .agent
@@ -227,7 +227,7 @@ def kaqExtractionProfile : Interfaces.ExtractionProfile :=
   , notes := "AF (*-Vn*) obligatory for clause-local agent extraction; Erlewine 2016" }
 
 -- ============================================================================
--- § 7: Mayan AF Typology (Erlewine 2016, §6.1)
+-- § 7: Mayan AF Typology (@cite{erlewine-2016}, §6.1)
 -- ============================================================================
 
 /-- Mayan languages vary in whether AF is available, depending on the

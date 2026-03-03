@@ -124,7 +124,7 @@ def rainUmbrellaExample : MissingLinkDatum := {
 -- Douven's Puzzle
 
 /--
-**Douven's Puzzle** (Douven 2008, discussed in Grusdt et al. 2022)
+**Douven's Puzzle** (Douven 2008, discussed in @cite{grusdt-lassiter-franke-2022})
 
 A puzzle about when conditionals are assertable.
 

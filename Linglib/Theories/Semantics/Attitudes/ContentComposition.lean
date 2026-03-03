@@ -67,7 +67,7 @@ def compC {W : Type*} (p : BProp W) (xc : ContentIndividual W) : Prop :=
     ⟨e,st⟩, the same semantic type as CPs. -/
 abbrev ContentNoun (W : Type*) := ContentIndividual W → W → Prop
 
-/-- Predicate Modification for content nouns and CPs (Moulton 2015, (17)).
+/-- Predicate Modification for content nouns and CPs (@cite{moulton-2015}, (17)).
 
     ⟦belief that p⟧ = λx_c.λw. belief(x_c)(w) ∧ CONT(x_c) = p
 
@@ -94,7 +94,7 @@ theorem contentNounCP_determines_content {W : Type*}
     *believe* : λx_c. λx_agent. λw. believe(x_agent, x_c, w) -/
 abbrev AttitudeVerbCI (W E : Type*) := E → ContentIndividual W → W → Prop
 
-/-- Existential closure over content individuals (Moulton 2015, (21)–(23)).
+/-- Existential closure over content individuals (@cite{moulton-2015}, (21)–(23)).
 
     Closes off the content individual variable at the edge of vP:
 

@@ -98,20 +98,20 @@ def v_j : VoiceHead :=
 -- ============================================================================
 
 /-- √TV root (PC): selects theme, no entailed change-of-state.
-    Semantic type ⟨e, ⟨s,t⟩⟩ (Coon 2019, (3)).
+    Semantic type ⟨e, ⟨s,t⟩⟩ (@cite{coon-2019}, (3)).
     Examples: mak' "hit", tek' "kick". -/
 def rootTV_pc : Root :=
   { arity := .selectsTheme, changeType := .propertyConcept,
     denotationType := some .eventPred }
 
 /-- √TV root (result): selects theme, entails change-of-state.
-    Semantic type ⟨e, ⟨s,t⟩⟩ (Coon 2019, (3)).
+    Semantic type ⟨e, ⟨s,t⟩⟩ (@cite{coon-2019}, (3)).
     Examples: jatz' "hit (breaking)", tzak' "wrap". -/
 def rootTV_res : Root :=
   { arity := .selectsTheme, changeType := .result,
     denotationType := some .eventPred }
 
-/-- √ITV root: semantic type ⟨e, ⟨s,t⟩⟩ (same as √TV per Davis 1997),
+/-- √ITV root: semantic type ⟨e, ⟨s,t⟩⟩ (same as √TV per @cite{davis-1997}),
     but does NOT project a complement — the entity argument becomes the
     subject. The class is morphologically defined: roots that appear
     with null v/Voice⁰ in intransitive stems (p. 40).
@@ -131,7 +131,7 @@ def rootPOS : Root :=
     denotationType := some .measureFn }
 
 /-- √NOM root: nominal base. Semantic type ⟨e,t⟩ — entity predicate
-    with no event argument (Coon 2019, (3)).
+    with no event argument (@cite{coon-2019}, (3)).
     Examples: a' "water", ixim "corn", chanhal "dance". -/
 def rootNOM : Root :=
   { arity := .noTheme, changeType := .propertyConcept,
@@ -286,7 +286,7 @@ theorem w_cross_class :
 -- § 8: Division of Labor Theorems
 -- ============================================================================
 
-/-- Division of labor (Coon 2019, Table (2)/(77), p. 76): the root
+/-- Division of labor (@cite{coon-2019}, Table (2)/(77), p. 76): the root
     determines whether a theme is present; Voice determines whether an
     agent is present. Same root with different Voice → different event type;
     same Voice with different root → same external argument status. -/
@@ -320,7 +320,7 @@ theorem chuj_causative_alternation_result :
   ⟨by native_decide, by native_decide, by native_decide, by native_decide⟩
 
 -- ============================================================================
--- § 9: Four-Way Root Classification Recovery (Coon 2019, (3))
+-- § 9: Four-Way Root Classification Recovery (@cite{coon-2019}, (3))
 -- ============================================================================
 
 /-- Coon's four root classes are recovered as (arity × denotationType) pairs.

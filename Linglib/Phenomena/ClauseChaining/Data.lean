@@ -35,7 +35,7 @@ open Typology
 -- § Language data
 -- ============================================================================
 
-/-- Nungon (Trans-New Guinea, Finisterre-Huon; Sarvasy 2017, 2025 Ch. 7).
+/-- Nungon (Trans-New Guinea, Finisterre-Huon; @cite{sarvasy-2017}, 2025 Ch. 7).
 
     The best-described clause chaining language. Obligatory SR with
     temporal encoding: four distinct medial forms (SS-SEQ, SS-SIM,
@@ -60,7 +60,7 @@ def nungon : ClauseChainingParams where
   hasSummaryLinkage   := false
   medialCanStandAlone := true
 
-/-- Manambu (Ndu family, East Sepik; Aikhenvald 2008, 2025 Ch. 6).
+/-- Manambu (Ndu family, East Sepik; @cite{aikhenvald-2008}, 2025 Ch. 6).
 
     Rich verb morphology with restricted SR system (SS/DS without temporal
     encoding). Medial verbs retain some tense distinctions (yesterday/today/
@@ -85,7 +85,7 @@ def manambu : ClauseChainingParams where
   hasSummaryLinkage   := true
   medialCanStandAlone := true
 
-/-- Ku Waru (Trans-New Guinea, Chimbu-Wahgi; Merlan & Rumsey 1991).
+/-- Ku Waru (Trans-New Guinea, Chimbu-Wahgi; @cite{merlan-rumsey-1991}).
 
     Obligatory SS/DS with reduced medial morphology. Agreement on medial verbs
     is absent (inherited from the final verb in SS chains). Prominent use of
@@ -108,7 +108,7 @@ def kuWaru : ClauseChainingParams where
   hasSummaryLinkage   := true
   medialCanStandAlone := false
 
-/-- Korean (Koreanic; Sohn 1999).
+/-- Korean (Koreanic; @cite{sohn-1999}).
 
     Productive clause chaining via conjunctive (converbal) suffixes on the verb
     stem, but no SR morphology. The conjunctive suffixes directly encode the
@@ -135,7 +135,7 @@ def korean : ClauseChainingParams where
   hasSummaryLinkage   := false
   medialCanStandAlone := true
 
-/-- Turkish (Turkic; Goksel & Kerslake 2005).
+/-- Turkish (Turkic; @cite{goksel-kerslake-2005}).
 
     Productive clause chaining via converbal suffixes (*-ip*, *-(y)arak*,
     *-(y)inca*, etc.), no SR morphology. Rich set of interclausal semantic
@@ -160,7 +160,7 @@ def turkish : ClauseChainingParams where
   hasSummaryLinkage   := false
   medialCanStandAlone := false
 
-/-- Korowai (Trans-New Guinea, Greater Awyu; de Vries 2025 Ch. 5).
+/-- Korowai (Trans-New Guinea, Greater Awyu; @cite{de-vries-2025} Ch. 5).
 
     Multi-track SR system: tracks both subject and object continuity across
     clause boundaries. Medial verb morphology includes three verb types

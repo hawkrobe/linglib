@@ -46,7 +46,7 @@ def WALSCount.totalOf (cs : List WALSCount) : Nat :=
 -- Chapter 49: Number of Cases
 -- ============================================================================
 
-/-- Number-of-cases categories (WALS Ch. 49, Iggesen 2013).
+/-- Number-of-cases categories (WALS Ch. 49, @cite{iggesen-2013}).
 
 Languages are classified by the number of morphological case distinctions
 in their nominal paradigm. "No morphological case-marking" means the
@@ -81,7 +81,7 @@ def CaseCount.contains (cc : CaseCount) (n : Nat) : Bool :=
   | .eightNine => n >= 8 && n <= 9
   | .tenPlus   => n >= 10
 
-/-- WALS Chapter 49 distribution (Iggesen 2013, 261-language sample). -/
+/-- WALS Chapter 49 distribution (@cite{iggesen-2013}, 261-language sample). -/
 def ch49Distribution : List WALSCount :=
   [ ⟨"No morphological case-marking", 100⟩
   , ⟨"2 cases",                         23⟩
@@ -97,7 +97,7 @@ theorem ch49_total : WALSCount.totalOf ch49Distribution = 261 := by native_decid
 -- Chapter 50: Asymmetrical Case-Marking
 -- ============================================================================
 
-/-- Asymmetrical (differential) case-marking types (WALS Ch. 50, Iggesen 2013).
+/-- Asymmetrical (differential) case-marking types (WALS Ch. 50, @cite{iggesen-2013}).
 
 Differential case marking (DCM) means that case marking on a noun phrase
 depends on properties of that NP -- its animacy, definiteness, or whether
@@ -131,7 +131,7 @@ def AsymmetricalCaseMarking.conditionCount : AsymmetricalCaseMarking → Nat
   | .twoConditions => 2
   | .threeConditions => 3
 
-/-- WALS Chapter 50 distribution (Iggesen 2013, 261-language sample). -/
+/-- WALS Chapter 50 distribution (@cite{iggesen-2013}, 261-language sample). -/
 def ch50Distribution : List WALSCount :=
   [ ⟨"No morphological case-marking",           100⟩
   , ⟨"Exclusively borderline case-marking",       19⟩
@@ -149,7 +149,7 @@ theorem ch50_total : WALSCount.totalOf ch50Distribution = 261 := by native_decid
 -- Chapter 51: Position of Case Affixes
 -- ============================================================================
 
-/-- Position of case affixes (WALS Ch. 51, Iggesen 2013).
+/-- Position of case affixes (WALS Ch. 51, @cite{iggesen-2013}).
 
 Classifies where the case morpheme sits relative to the nominal stem.
 Languages with no case affixes at all (either no case or case expressed
@@ -176,7 +176,7 @@ def CaseAffixPosition.hasSuffix : CaseAffixPosition → Bool
   | .bothSuffixPrefix => true
   | _                 => false
 
-/-- WALS Chapter 51 distribution (Iggesen 2013, 261-language sample). -/
+/-- WALS Chapter 51 distribution (@cite{iggesen-2013}, 261-language sample). -/
 def ch51Distribution : List WALSCount :=
   [ ⟨"No case affixes or obligatory case-marking", 105⟩
   , ⟨"Case suffixes only",                         119⟩
@@ -191,7 +191,7 @@ theorem ch51_total : WALSCount.totalOf ch51Distribution = 261 := by native_decid
 -- Chapter 52: Comitatives and Instrumentals
 -- ============================================================================
 
-/-- Comitative-instrumental syncretism (WALS Ch. 52, Stolz et al. 2013).
+/-- Comitative-instrumental syncretism (WALS Ch. 52, @cite{stolz-veselinova-2013}).
 
 In many languages the marker for 'with X' (comitative: accompaniment) and
 'by means of X' (instrumental: means/instrument) is the same morpheme.
@@ -211,7 +211,7 @@ def ComitativeInstrumental.isSyncretic : ComitativeInstrumental → Bool
   | .identity => true
   | _         => false
 
-/-- WALS Chapter 52 distribution (Stolz et al. 2013, 322-language sample). -/
+/-- WALS Chapter 52 distribution (@cite{stolz-veselinova-2013}, 322-language sample). -/
 def ch52Distribution : List WALSCount :=
   [ ⟨"Identity (same marker)",     194⟩
   , ⟨"Differentiation",            102⟩

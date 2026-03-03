@@ -12,7 +12,7 @@ Theory-neutral empirical data on unaccusativity diagnostics.
 
 ## Diagnostics
 
-- **Quotative inversion** (QI): "whispered Mary" vs *"spoke Mary" (Storment 2026, NLLT)
+- **Quotative inversion** (QI): "whispered Mary" vs *"spoke Mary" (@cite{storment-2026}, NLLT)
 - **There-insertion**: "there arrived a letter" vs *"there ran a man"
 - **Locative inversion**: "into the room walked a man"
 - **Resultative predication**: "the river froze solid" vs *"John ran tired"
@@ -49,7 +49,7 @@ structure DiagnosticDatum where
   deriving Repr, BEq
 
 -- ════════════════════════════════════════════════════
--- § Quotative Inversion Data (Storment 2026)
+-- § Quotative Inversion Data (@cite{storment-2026})
 -- ════════════════════════════════════════════════════
 
 def qi_whisper : DiagnosticDatum :=
@@ -154,7 +154,7 @@ def qi_talk : DiagnosticDatum :=
   , result := .fails
   , sentence := "*\"Hello,\" talked Mary." }
 
-/-- `say` passes QI (Storment 2026, ex. 9). Its VerbEntry captures the
+/-- `say` passes QI (@cite{storment-2026}, ex. 9). Its VerbEntry captures the
     transitive indirect-speech frame ("John said that...") rather than the
     QI frame, so it is not connected to the smuggling bridge. -/
 def qi_say : DiagnosticDatum :=
@@ -165,7 +165,7 @@ def qi_say : DiagnosticDatum :=
   , note := "say is a standard QI verb; its VerbEntry captures the transitive indirect-speech frame rather than the QI frame" }
 
 -- ════════════════════════════════════════════════════
--- § Quotative Inversion — Additional English Data (Storment 2026)
+-- § Quotative Inversion — Additional English Data (@cite{storment-2026})
 -- ════════════════════════════════════════════════════
 
 /-- MoS verb with quote complement + PP goal still permits QI.
@@ -186,7 +186,7 @@ def qi_shout_heavysubj : DiagnosticDatum :=
   , sentence := "\"Stop!\" shouted the police officer on duty."
   , note := "Heavy postverbal subject — QI still grammatical" }
 
-/-- Pronominal subjects degrade QI (Storment 2026, §3: pronouns resist
+/-- Pronominal subjects degrade QI (@cite{storment-2026}, §3: pronouns resist
     postverbal position in QI, unlike full DPs). -/
 def qi_whisper_pronoun : DiagnosticDatum :=
   { verbForm := "whisper"
@@ -196,7 +196,7 @@ def qi_whisper_pronoun : DiagnosticDatum :=
   , note := "Pronominal subjects degrade QI — full DPs preferred postverbally (§3)" }
 
 /-- QI blocked with multiple DP arguments: the transitivity constraint
-    (Storment 2026, §5, ex. 125). T⁰ can license only one DP (the theme);
+    (@cite{storment-2026}, §5, ex. 125). T⁰ can license only one DP (the theme);
     a second DP argument has no Case licenser. -/
 def qi_whisper_double_obj : DiagnosticDatum :=
   { verbForm := "whisper"
@@ -206,11 +206,11 @@ def qi_whisper_double_obj : DiagnosticDatum :=
   , note := "QI blocked with two DP arguments — transitivity constraint from Case licensing (§5)" }
 
 -- ════════════════════════════════════════════════════
--- § QI and LI: Distributional Contrasts (Storment 2026, §5–§6)
+-- § QI and LI: Distributional Contrasts (@cite{storment-2026}, §5–§6)
 -- ════════════════════════════════════════════════════
 
 /-! Quotative inversion and locative inversion share the same mechanism
-    (smuggling of VP to Spec-VoiceP, Storment 2026 §6) but differ in
+    (smuggling of VP to Spec-VoiceP, @cite{storment-2026} §6) but differ in
     their inputs and distribution:
 
     1. **Fronted constituent**: QI requires a quote; LI requires a locative PP
@@ -237,14 +237,14 @@ def li_arrive_pronoun : DiagnosticDatum :=
   , note := "LI categorically blocks pronominal subjects (cf. QI which merely degrades them, §3)" }
 
 -- ════════════════════════════════════════════════════
--- § Quotative Inversion — Setswana (Collins 1997, Storment 2026)
+-- § Quotative Inversion — Setswana (@cite{collins-1997}, @cite{storment-2026})
 -- ════════════════════════════════════════════════════
 
 /-! Setswana quotative inversion data from @cite{collins-1997}, discussed
     extensively in Storment (2026, §2–§3). Setswana QI uses class 17
     default subject agreement (SM17 `go`), never tracking the agent. -/
 
-/-- Setswana QI with 'botsa' (ask). Collins 1997, cited as Storment ex. (4). -/
+/-- Setswana QI with 'botsa' (ask). @cite{collins-1997}, cited as Storment ex. (4). -/
 def qi_setswana_botsa : DiagnosticDatum :=
   { verbForm := "botsa"
   , diagnostic := .quotativeInversion
@@ -273,7 +273,7 @@ def qi_setswana_transitivity : DiagnosticDatum :=
   , note := "SM17.PST ask Mpho Seabelo — transitivity constraint: two DPs block QI (§5)" }
 
 -- ════════════════════════════════════════════════════
--- § QI Structural Evidence (Storment 2026, §3)
+-- § QI Structural Evidence (@cite{storment-2026}, §3)
 -- ════════════════════════════════════════════════════
 
 /-! Structural evidence for the VP-smuggling analysis of QI (§3).
@@ -383,7 +383,7 @@ def qi_quote_nongrammatical : QIStructuralDatum :=
   , sentence := "\"Pop!\" goes the weasel."
   , note := "'Pop!' is not a grammatical sentence — quote is clause-external (§3.5)" }
 
--- § Constituent Ordering (Storment 2026, §2)
+-- § Constituent Ordering (@cite{storment-2026}, §2)
 
 /-- Setswana: depictive follows Agent — depictives are vP-external
     adjuncts, so they stay behind when VP smuggles. Storment ex. (11). -/

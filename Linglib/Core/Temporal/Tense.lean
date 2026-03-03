@@ -16,7 +16,7 @@ five representations of temporal reference in the codebase:
 2. **Reichenbach frames** (S, P, R, E): `TensePronoun.toFrame`
 3. **Referential variables**: `TensePronoun.resolve`
 4. **Kaplan indexicals** (rigid to speech time): `mode =.indexical`
-5. **Attitude binding** (zero tense, Ogihara 1989): `mode =.bound`
+5. **Attitude binding** (zero tense, @cite{ogihara-1989}): `mode =.bound`
 
 The existing ad-hoc bridge theorems (`referential_past_decomposition`,
 `temporallyBound_gives_simultaneous`, `indexical_tense_matches_opNow`,
@@ -125,7 +125,7 @@ theorem bound_is_sot_mechanism :
 
 
 -- ════════════════════════════════════════════════════════════════
--- § Temporal Variable Infrastructure (Partee 1973)
+-- § Temporal Variable Infrastructure (@cite{partee-1973})
 -- ════════════════════════════════════════════════════════════════
 
 /-! Temporal assignment functions are the temporal instantiation of
@@ -202,7 +202,7 @@ abbrev SitProp (W Time : Type*) := Situation W Time → Prop
 
 
 -- ════════════════════════════════════════════════════════════════
--- § TensePronoun (Abusch 1997)
+-- § TensePronoun (@cite{abusch-1997})
 -- ════════════════════════════════════════════════════════════════
 
 /-- @cite{abusch-1997}'s unified tense denotation.
@@ -328,10 +328,10 @@ theorem TensePronoun.indexical_present_at_speech {Time : Type*} [LinearOrder Tim
 
 
 -- ════════════════════════════════════════════════════════════════
--- § Overtness (Kratzer 1998)
+-- § Overtness (@cite{heim-kratzer-1998})
 -- ════════════════════════════════════════════════════════════════
 
-/-- Phonological overtness of a referential expression (Kratzer 1998 §3).
+/-- Phonological overtness of a referential expression (@cite{heim-kratzer-1998} §3).
 
     Applies uniformly to pronouns and tenses: English has zero tense
     under SOT (bound present surfaces as ∅); Japanese has zero pronouns
@@ -378,7 +378,7 @@ theorem Overtness.bound_nonlocal_is_overt :
 
 
 -- ════════════════════════════════════════════════════════════════
--- § Temporal Tower Bridge (Abusch 1997 ↔ ContextTower)
+-- § Temporal Tower Bridge (@cite{abusch-1997} ↔ ContextTower)
 -- ════════════════════════════════════════════════════════════════
 
 /-! The key bridge showing that @cite{abusch-1997}'s De Bruijn temporal indexing is already

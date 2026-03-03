@@ -18,7 +18,7 @@ Agree spell-out, not semantic past.
 1. **Tense feature interpretability**: [iPAST] contributes past semantics;
    [uPAST] is checked by Agree, semantically vacuous
 2. **Upward Agree**: the goal c-commands the probe (reverse of standard
-   Chomsky 2000 Agree where probe c-commands goal)
+   @cite{chomsky-2000} Agree where probe c-commands goal)
 3. **SOT as concord**: SOT languages allow [uT] on embedded T; non-SOT
    languages do not, so embedded tense is always interpretable
 4. **Parametric variation**: whether a language has SOT = whether it
@@ -117,7 +117,7 @@ theorem upwardAgree_goal_active (ua : UpwardAgree) :
 -- ════════════════════════════════════════════════════════════════
 
 /-- SOT configuration: [iPAST] > [uPAST] > [uPAST]
-    (Zeijlstra 2012, ex. 22--23).
+    (@cite{zeijlstra-2012}, ex. 22--23).
 
     In an SOT language, the matrix T carries [iPAST] (the only
     semantically active past), and all embedded T heads carry [uPAST]
@@ -291,7 +291,7 @@ theorem zeijlstra_simultaneousFrame {Time : Type*}
 
 
 -- ════════════════════════════════════════════════════════════════
--- § Phase-Bounded Upward Agree (Egressy 2026)
+-- § Phase-Bounded Upward Agree (@cite{egressy-2026})
 -- ════════════════════════════════════════════════════════════════
 
 /-! ### Size-Sensitive SOT

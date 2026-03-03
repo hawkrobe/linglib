@@ -58,7 +58,7 @@ inductive ConditioningMode where
 /-- A conditional probability measure: P(A | B) axiomatized directly.
 
     Extends `FinAddMeasure` with a conditional component satisfying
-    Popper's axioms (Halpern 2003, Ch. 3, Cond1–Cond4). A set B is
+    Popper's axioms (@cite{halpern-2003}, Ch. 3, Cond1–Cond4). A set B is
     **normal** if P(B|B) ≠ 0; for normal B, P(B|B) = 1. The only
     abnormal set (for finite W with positive singletons) is ∅. -/
 structure CondMeasure (W : Type*) extends FinAddMeasure W where

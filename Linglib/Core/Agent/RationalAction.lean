@@ -208,7 +208,7 @@ section LuceChoiceAxiom
 
 variable {S A : Type*} [Fintype A]
 
-/-- Constant Ratio Rule (Luce 1959, Theorem 2):
+/-- Constant Ratio Rule (@cite{luce-1959}, Theorem 2):
     `policy(a₁) · score(a₂) = policy(a₂) · score(a₁)`.
     The odds ratio policy(a₁)/policy(a₂) = score(a₁)/score(a₂). -/
 theorem RationalAction.policy_ratio (ra : RationalAction S A) (s : S) (a₁ a₂ : A) :
@@ -261,7 +261,7 @@ theorem RationalAction.pChoice_sum_eq_one [DecidableEq A] (ra : RationalAction S
 
 /-- IIA core: the ratio of `pChoice` values in any subset equals the score ratio.
     For `a₁, a₂ ∈ T` with `score(a₂) > 0`:
-    `pChoice(a₁, T) · score(a₂) = pChoice(a₂, T) · score(a₁)` (Luce 1959, Axiom 1). -/
+    `pChoice(a₁, T) · score(a₂) = pChoice(a₂, T) · score(a₁)` (@cite{luce-1959}, Axiom 1). -/
 theorem RationalAction.pChoice_ratio [DecidableEq A] (ra : RationalAction S A) (s : S)
     (T : Finset A) (a₁ a₂ : A) (h₁ : a₁ ∈ T) (h₂ : a₂ ∈ T) :
     ra.pChoice s T a₁ * ra.score s a₂ = ra.pChoice s T a₂ * ra.score s a₁ := by
@@ -276,7 +276,7 @@ private theorem RationalAction.pChoice_mem [DecidableEq A] (ra : RationalAction 
     ra.pChoice s T a = ra.score s a / ∑ b ∈ T, ra.score s b := by
   simp only [pChoice, ha, hT, ↓reduceIte]
 
-/-- IIA (Luce 1959, Axiom 1): `P(a, S) = P(a, T) / Σ_{b∈S} P(b, T)` for `S ⊆ T`.
+/-- IIA (@cite{luce-1959}, Axiom 1): `P(a, S) = P(a, T) / Σ_{b∈S} P(b, T)` for `S ⊆ T`.
     Choice probability from a subset is the conditional probability. -/
 theorem RationalAction.iia [DecidableEq A] (ra : RationalAction S A) (s : S)
     (S' T : Finset A) (hST : S' ⊆ T)
@@ -293,7 +293,7 @@ theorem RationalAction.iia [DecidableEq A] (ra : RationalAction S A) (s : S)
   rw [hsum]
   field_simp
 
-/-- Product rule (Luce 1959, Theorem 1):
+/-- Product rule (@cite{luce-1959}, Theorem 1):
     `P(a, T) = P(a, S) · P(S, T)` for `a ∈ S ⊆ T`,
     where `P(S, T) = Σ_{b∈S} score(b) / Σ_{b∈T} score(b)`. -/
 theorem RationalAction.product_rule [DecidableEq A] (ra : RationalAction S A) (s : S)
@@ -315,7 +315,7 @@ noncomputable def RationalAction.scaleBy (ra : RationalAction S A) (k : ℝ) (hk
   score s a := k * ra.score s a
   score_nonneg s a := mul_nonneg (le_of_lt hk) (ra.score_nonneg s a)
 
-/-- Scale invariance (Luce 1959, Theorem 5): scaling scores by `k > 0` preserves policy. -/
+/-- Scale invariance (@cite{luce-1959}, Theorem 5): scaling scores by `k > 0` preserves policy. -/
 theorem RationalAction.scaleBy_policy (ra : RationalAction S A) (s : S) (a : A)
     (k : ℝ) (hk : 0 < k) :
     (ra.scaleBy k hk).policy s a = ra.policy s a := by
@@ -327,7 +327,7 @@ theorem RationalAction.scaleBy_policy (ra : RationalAction S A) (s : S) (a : A)
     simp [hs0, hne]
     field_simp
 
-/-- Uniqueness (forward direction, Luce 1959, Theorem 4):
+/-- Uniqueness (forward direction, @cite{luce-1959}, Theorem 4):
     If scores are proportional (`score'(s,a) = k · score(s,a)` for some `k > 0`),
     then both agents have the same policy. -/
 theorem RationalAction.policy_eq_of_proportional (ra ra' : RationalAction S A) (s : S)
@@ -537,7 +537,7 @@ end SoftmaxBasic
 
 The exponential parameterization `score = exp(α · utility)` is not a design
 choice — it is the **unique** transformation connecting Luce's ratio scale to
-a utility (interval) scale (Luce 1959, §2.A; Adams & Messick 1957).
+a utility (interval) scale (@cite{luce-1959}, §2.A; @cite{adams-messick-1957}).
 
 **Ratio vs interval scales.** Luce's Axiom 1 (IIA) yields a **ratio scale**
 `v`: only ratios `v(a)/v(b)` are meaningful (Theorem 4). Fechner's
@@ -572,7 +572,7 @@ theorem cauchy_mul_exp (g : ℝ → ℝ)
     ∃ k : ℝ, 0 < k ∧ g 0 = 1 ∧ ∀ s, g s = Real.exp (k * s) := by
   sorry -- TODO: classical via additive Cauchy + monotonicity → linearity
 
-/-- **Fechnerian uniqueness** (Luce 1959, §2.A; Adams & Messick 1957):
+/-- **Fechnerian uniqueness** (@cite{luce-1959}, §2.A; @cite{adams-messick-1957}):
     If a ratio scale `v` and interval scale `u` represent the same
     ordering via `v(x)/v(y) = g(u(x) - u(y))` for a strictly monotone
     multiplicative `g`, then `v` is the exponential of `u`.
@@ -622,7 +622,7 @@ theorem RationalAction.fromSoftmax_policy_eq [Nonempty A]
 
 The softmax distribution uniquely maximizes entropy + expected score
 on the probability simplex. This is the mathematical foundation for
-RSA convergence (Zaslavsky et al. 2020, Proposition 1).
+RSA convergence (@cite{zaslavsky-hu-levy-2020}, Proposition 1).
 
 ### Proof strategy
 
@@ -799,6 +799,59 @@ theorem gibbs_variational [Nonempty ι] (s : ι → ℝ) (α : ℝ) (p : ι → 
   linarith
 
 end GibbsVariational
+
+-- ============================================================================
+-- §3b. Softmax → Argmax Limit (OT ↔ MaxEnt Connection)
+-- ============================================================================
+
+/-!
+## Softmax Concentration at High Rationality
+
+As the rationality parameter α → ∞, softmax concentrates all probability mass
+on the action with highest utility — i.e., softmax converges to argmax. This
+connects:
+
+- **MaxEnt phonology ↔ OT**: a MaxEnt grammar with weights `w` becomes
+  categorical (OT-like) as temperature → 0 (equivalently α → ∞).
+- **RSA ↔ neo-Gricean pragmatics**: a soft-rational RSA speaker becomes a
+  hard-rational Gricean reasoner in the α → ∞ limit.
+
+### Proof sketch
+
+From `softmax_odds`, we have `σᵢ / σⱼ = exp(α(sᵢ − sⱼ))`. When `sᵢ > sⱼ`,
+this ratio → ∞ as α → ∞, so `σⱼ / σᵢ → 0`. Since `Σ σₖ = 1`, the maximizer's
+probability → 1 by squeezing: `1 - σ_max = Σ_{k≠max} σₖ`, and each non-maximal
+term → 0 (bounded by `exp(-α · gap)` where gap = sᵢ - sⱼ > 0).
+-/
+
+section SoftmaxLimit
+
+variable {ι : Type*} [Fintype ι] [Nonempty ι] [DecidableEq ι]
+
+/-- **Softmax → argmax limit**: as α → ∞, softmax concentrates on the unique
+    maximizer. For any `i_max` with `s i_max` strictly greater than all other
+    scores, `softmax(s, α)_{i_max} → 1`.
+
+    This is the formal connection between MaxEnt (soft optimization) and OT
+    (hard optimization): OT is the α → ∞ limit of MaxEnt.
+
+    Proof idea: `softmax(s,α)_{i_max} = 1 / (1 + Σ_{j≠max} exp(α(sⱼ - s_max)))`.
+    Each term in the sum has `sⱼ - s_max < 0`, so `exp(α(sⱼ - s_max)) → 0`
+    as α → ∞. Hence the denominator → 1 and `softmax → 1`.
+
+    TODO: prove via Filter.Tendsto and exp_neg_mul_tendsto_zero. -/
+theorem softmax_argmax_limit (s : ι → ℝ) (i_max : ι)
+    (h_max : ∀ j, j ≠ i_max → s j < s i_max) :
+    ∀ ε > 0, ∃ α₀ : ℝ, ∀ α, α > α₀ → |softmax s α i_max - 1| < ε := by
+  sorry
+
+/-- Complement of the limit: non-maximal actions get probability → 0. -/
+theorem softmax_nonmax_limit (s : ι → ℝ) (i_max : ι)
+    (h_max : ∀ j, j ≠ i_max → s j < s i_max) (j : ι) (hj : j ≠ i_max) :
+    ∀ ε > 0, ∃ α₀ : ℝ, ∀ α, α > α₀ → softmax s α j < ε := by
+  sorry
+
+end SoftmaxLimit
 
 -- ============================================================================
 -- §4. Shannon Entropy and Maximum Entropy
@@ -1232,7 +1285,7 @@ theorem RationalAction.proportional_of_policy_eq
   field_simp [h₁_ne]
   linarith
 
-/-- Full uniqueness characterization (Luce 1959, Theorem 4 and its converse):
+/-- Full uniqueness characterization (@cite{luce-1959}, Theorem 4 and its converse):
     Two agents with positive total scores have the same policy if and only if
     their scores are proportional. -/
 theorem RationalAction.policy_eq_iff_proportional
@@ -1252,7 +1305,7 @@ theorem RationalAction.policy_eq_iff_proportional
 end UniquenessCharacterization
 
 -- ============================================================================
--- §7. Appendix 1: Alternative Forms of Axiom 1 (Luce 1959, pp. 129–132)
+-- §7. Appendix 1: Alternative Forms of Axiom 1 (@cite{luce-1959}, pp. 129–132)
 -- ============================================================================
 
 /-!
@@ -1310,7 +1363,7 @@ def ChoiceFn.hasPairwiseIIA (cf : ChoiceFn A) : Prop :=
   ∀ (T : Finset A) (a b : A), a ∈ T → b ∈ T →
     cf.prob T a * cf.prob {a, b} b = cf.prob T b * cf.prob {a, b} a
 
-/-- (a) → (b): Ratio form implies product rule (Luce 1959, Appendix 1). -/
+/-- (a) → (b): Ratio form implies product rule (@cite{luce-1959}, Appendix 1). -/
 theorem ratio_implies_product (cf : ChoiceFn A)
     (h : cf.hasRatioScale) : cf.hasProductRule := by
   intro S T hST hS _hT a ha
@@ -1325,7 +1378,7 @@ theorem ratio_implies_product (cf : ChoiceFn A)
     exact Finset.sum_congr rfl (λ b hb => hv_rule T b (hST hb))
   rw [hsum]; field_simp
 
-/-- (a) → (c): Ratio form implies pairwise IIA (Luce 1959, Appendix 1). -/
+/-- (a) → (c): Ratio form implies pairwise IIA (@cite{luce-1959}, Appendix 1). -/
 theorem ratio_implies_pairwiseIIA (cf : ChoiceFn A)
     (h : cf.hasRatioScale) : cf.hasPairwiseIIA := by
   intro T a b ha hb
@@ -1336,14 +1389,14 @@ theorem ratio_implies_pairwiseIIA (cf : ChoiceFn A)
       hv_rule {a, b} b hab_b, hv_rule {a, b} a hab_a]
   ring
 
-/-- (c) → (a): Pairwise IIA implies ratio form (Luce 1959, Appendix 1).
+/-- (c) → (a): Pairwise IIA implies ratio form (@cite{luce-1959}, Appendix 1).
     The ratio scale is constructed by fixing a reference element x₀ and
     setting v(x) = P(x, {x, x₀}) / P(x₀, {x, x₀}). -/
 theorem pairwiseIIA_implies_ratio (cf : ChoiceFn A)
     (_h : cf.hasPairwiseIIA) : cf.hasRatioScale := by
   sorry -- TODO: construct v from pairwise probabilities and fixed reference
 
-/-- **Axiom 1 equivalence** (Luce 1959, Appendix 1):
+/-- **Axiom 1 equivalence** (@cite{luce-1959}, Appendix 1):
     Ratio form ↔ pairwise IIA. -/
 theorem axiom1_ratio_iff_pairwiseIIA (cf : ChoiceFn A) :
     cf.hasRatioScale ↔ cf.hasPairwiseIIA :=

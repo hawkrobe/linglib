@@ -55,7 +55,7 @@ open Phenomena.PsychVerbs.Data (PsychVerbClass ClassIIReading SubjectRole)
 -- § 1. Semantic Type Distinction
 -- ════════════════════════════════════════════════════
 
-/-- The two semantic types for psych verbs (Hartshorne et al. 2016, Fig. 11).
+/-- The two semantic types for psych verbs (@cite{hartshorne-etal-2016}, Fig. 11).
 
     This is the paper's central theoretical claim: psych verb classes
     correspond to distinct semantic types, not merely different linking
@@ -147,7 +147,7 @@ def SemanticType.prominentRole : SemanticType → SubjectRole
   | .habitualAttitude => .experiencer
   | .causedEpisode => .stimulus
 
-/-- Prominence preservation (Hartshorne et al. 2016, Section 5.4.1):
+/-- Prominence preservation (@cite{hartshorne-etal-2016}, Section 5.4.1):
     the most prominent argument in the semantic decomposition becomes the
     subject. This is the paper's central theoretical claim about HOW
     semantic type determines argument structure.
@@ -164,7 +164,7 @@ theorem prominence_determines_linking (c : PsychVerbClass) (t : SemanticType)
 -- § 4. Cross-Linguistic Data
 -- ════════════════════════════════════════════════════
 
-/-- Languages tested in Hartshorne et al. 2016. -/
+/-- Languages tested in @cite{hartshorne-etal-2016}. -/
 inductive Language where
   | english | mandarin | korean | japanese | russian
   deriving DecidableEq, BEq, Repr

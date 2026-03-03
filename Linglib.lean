@@ -48,6 +48,7 @@ import Linglib.Core.Logic.OT
 import Linglib.Core.Agent.DecisionTheory
 import Linglib.Core.Agent.ExperimentDesign
 import Linglib.Core.Agent.RationalAction
+import Linglib.Core.Agent.CoupledEvaluation
 import Linglib.Core.Agent.SoftmaxOptimality
 import Linglib.Core.Agent.UtilityTheory
 import Linglib.Core.Agent.ChoiceApproximations
@@ -146,6 +147,7 @@ import Linglib.Fragments.Czech.Case
 import Linglib.Fragments.Czech.Determiners
 import Linglib.Fragments.Czech.Particles
 import Linglib.Fragments.Farsi.Determiners
+import Linglib.Fragments.Farsi.Phonology
 import Linglib.Fragments.German.Case
 import Linglib.Fragments.German.Tense
 import Linglib.Fragments.German.TemporalDeictic
@@ -673,6 +675,7 @@ import Linglib.Phenomena.ScalarImplicatures.GoodmanStuhlmuller2013.Bridge
 import Linglib.Phenomena.PhonologicalAlternation.Data
 import Linglib.Phenomena.PhonologicalAlternation.Bridge.SPEDerivations
 import Linglib.Phenomena.PhonologicalAlternation.Bridge.AutosegmentalDerivations
+import Linglib.Phenomena.PhonologicalAlternation.Studies.Storme2026
 
 -- Theories: CCG
 import Linglib.Theories.Syntax.CCG.Core.Basic
@@ -1224,6 +1227,7 @@ import Linglib.Theories.Phonology.FeatureGeometry
 import Linglib.Theories.Phonology.Autosegmental.Defs
 import Linglib.Theories.Phonology.Syllable.Defs
 import Linglib.Theories.Phonology.RuleBased.Defs
+import Linglib.Theories.Phonology.HarmonicGrammar.MaxEnt
 
 -- Theories: Sociolinguistics
 import Linglib.Theories.Sociolinguistics.PropertySpace

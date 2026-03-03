@@ -40,10 +40,10 @@ open Core.CommonGround
 open Core.Proposition
 
 -- ============================================================================
--- §1: PQ Form Typology (Romero 2024 §1)
+-- §1: PQ Form Typology (@cite{romero-2024} §1)
 -- ============================================================================
 
-/-- The three polar question forms (Romero 2024 §1, exx. 1–3).
+/-- The three polar question forms (@cite{romero-2024} §1, exx. 1–3).
 
 These forms are cross-linguistically attested and constitute the fundamental
 typology for polar question bias research. -/
@@ -58,7 +58,7 @@ inductive PQForm where
   deriving DecidableEq, BEq, Repr
 
 -- ============================================================================
--- §2: Bias Typology (Romero 2024 §2)
+-- §2: Bias Typology (@cite{romero-2024} §2)
 -- ============================================================================
 
 /-- Original speaker bias.
@@ -79,10 +79,10 @@ inductive OriginalBias where
 export Core.Discourse.Commitment (ContextualEvidence)
 
 -- ============================================================================
--- §3: Romero's Table 1 — Original Speaker Bias (Ladd 1981, R&H 2004)
+-- §3: Romero's Table 1 — Original Speaker Bias (@cite{ladd-1981}, @cite{romero-han-2004})
 -- ============================================================================
 
-/-- Original speaker bias conditions on PQ forms (Romero 2024 Table 1).
+/-- Original speaker bias conditions on PQ forms (@cite{romero-2024} Table 1).
 
 Only HiNQ *mandatorily* conveys original speaker bias for p. LoNQ can convey
 bias for p but can also be neutral. PosQ is compatible with bias for ¬p or
@@ -98,7 +98,7 @@ def originalBiasOK : PQForm → OriginalBias → Bool
   | .HiNQ, .neutral   => false -- HiNQ is infelicitous without bias
   | .HiNQ, .againstP  => false
 
-/-- HiNQs mandatorily convey original speaker bias for p (Ladd 1981, R&H 2004). -/
+/-- HiNQs mandatorily convey original speaker bias for p (@cite{ladd-1981}, @cite{romero-han-2004}). -/
 theorem hiNQ_requires_bias_for_p :
     originalBiasOK .HiNQ .neutral = false ∧
     originalBiasOK .HiNQ .againstP = false ∧
@@ -111,11 +111,11 @@ theorem posQ_neutral_ok : originalBiasOK .PosQ .neutral = true := rfl
 theorem loNQ_neutral_ok : originalBiasOK .LoNQ .neutral = true := rfl
 
 -- ============================================================================
--- §4: Romero's Table 2 — Contextual Evidence Bias (B&G 2000)
+-- §4: Romero's Table 2 — Contextual Evidence Bias (@cite{bring-gunlogson-2000})
 -- ============================================================================
 
-/-- Contextual evidence bias conditions on PQ forms (Romero 2024 Table 2,
-Büring & Gunlogson 2000).
+/-- Contextual evidence bias conditions on PQ forms (@cite{romero-2024} Table 2,
+@cite{bring-gunlogson-2000}).
 
 PosQ requires evidence for p (or neutral). LoNQ requires evidence against p.
 Outer-HiNQ is felicitous with neutral or against-p evidence. -/
@@ -130,7 +130,7 @@ def evidenceBiasOK : PQForm → ContextualEvidence → Bool
   | .HiNQ, .neutral    => true
   | .HiNQ, .againstP   => true
 
-/-- LoNQs require contextual evidence against p (B&G 2000). -/
+/-- LoNQs require contextual evidence against p (@cite{bring-gunlogson-2000}). -/
 theorem loNQ_requires_evidence_against_p :
     evidenceBiasOK .LoNQ .forP = false ∧
     evidenceBiasOK .LoNQ .neutral = false ∧
@@ -145,10 +145,10 @@ theorem hiNQ_evidence_neutral_ok :
     evidenceBiasOK .HiNQ .neutral = true := rfl
 
 -- ============================================================================
--- §5: VERUM (Romero & Han 2004, Romero 2024 def. 30)
+-- §5: VERUM (@cite{romero-han-2004}, @cite{romero-2024} def. 30)
 -- ============================================================================
 
-/-- VERUM operator (Romero & Han 2004, line b).
+/-- VERUM operator (@cite{romero-han-2004}, line b).
 
 ⟦VERUM_x⟧ = λp. λw. ∀w' ∈ Epi_x(w). ∀w'' ∈ Conv_x(w'). [p ∈ CG]
 
@@ -164,7 +164,7 @@ def verum (epistemic : ModalBase) (conversational : OrderingSource)
     -- p is entailed by the context set at w'
     cg w' && p w'
 
-/-- FALSUM operator (Repp 2013, Romero 2015, Romero 2024 def. 33).
+/-- FALSUM operator (@cite{repp-2013}, @cite{romero-2015}, @cite{romero-2024} def. 33).
 
 At-issue content: ¬p
 CG-management content: ∀w' ∈ Epi(w). ∀w'' ∈ Conv(w'). [p ∉ CG]
@@ -374,7 +374,7 @@ theorem inner_entails_medial (f : EvidentialBiasFlavor) (p : BProp World) (w : W
       simp [hp] at hInner
 
 -- ============================================================================
--- §8: Focus Requirement on FALSUM (Romero 2024 §3.2, Staňková 2026 §4)
+-- §8: Focus Requirement on FALSUM (@cite{romero-2024} §3.2, Staňková 2026 §4)
 -- ============================================================================
 
 /-- Outer negation (FALSUM) is obligatorily focused (Staňková 2026 §3.2, §4).

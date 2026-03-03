@@ -90,7 +90,7 @@ def CatenalCx.isNonConstituentCatena (cx : CatenalCx) : Bool :=
 
 /-- Whether the catena's yield is contiguous in linear order. A catena with
     contiguous yield occupies a consecutive span of positions; a non-contiguous
-    catena is a **risen catena** (Osborne 2019, Ch 7) — connected in the tree
+    catena is a **risen catena** (@cite{osborne-2019}, Ch 7) — connected in the tree
     but separated by intervening material in the string. -/
 def CatenalCx.isContiguous (cx : CatenalCx) : Bool :=
   isInterval (cx.nodes.mergeSort (· ≤ ·))

@@ -27,7 +27,7 @@ SS forms are invariant (no person/number indexing). DS forms obligatorily
 index the person and number of the medial clause's subject argument — the
 participant whose identity *differs* from the following clause's subject.
 
-## DS person/number paradigm (Sarvasy 2025: Table 2)
+## DS person/number paradigm (@cite{sarvasy-aikhenvald-2025}: Table 2)
 
 | Person | Singular | Dual | Plural |
 |--------|----------|------|--------|
@@ -65,7 +65,7 @@ def SRCategory.isSequential : SRCategory → Bool
   | .ssSIM | .dsSIM => false
 
 -- ============================================================================
--- § DS person/number paradigm (Sarvasy 2025: Table 2)
+-- § DS person/number paradigm (@cite{sarvasy-aikhenvald-2025}: Table 2)
 -- ============================================================================
 
 /-- Person/number combination for DS medial verb agreement. -/

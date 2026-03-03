@@ -21,7 +21,7 @@ Mam has two agreement paradigms on the verb:
 
 Crucially, transitive *objects* are NOT cross-referenced by either set.
 Objects co-occur with default Set B and require full overt pronouns
-(Scott 2023, ch. 3–4).
+(@cite{scott-2023}, ch. 3–4).
 
 ## Case Licensing
 
@@ -55,7 +55,7 @@ open Minimalism
 /-- Set A (ERG) vocabulary entries: φ-features on Voice (mapped to.v)
     yield the morphological exponent.
     Set A markers are prefixes/proclitics that cross-reference the
-    transitive agent (Scott 2023, Table 2.8). -/
+    transitive agent (@cite{scott-2023}, Table 2.8). -/
 def setAVocab : Vocabulary :=
   [ { features := [.valued (.phi (.person .first)), .valued (.phi (.number false))]
     , exponent := "n-/w-"
@@ -77,7 +77,7 @@ def setAVocab : Vocabulary :=
     , context := some .v } ]
 
 /-- Set B (ABS) vocabulary entries: φ-features on Infl (mapped to.T)
-    yield the morphological exponent (Scott 2023, Table 3.5).
+    yield the morphological exponent (@cite{scott-2023}, Table 3.5).
 
     Crucially, the 2/3SG form (∅/tz'=) is the **Elsewhere entry** —
     it has no feature specification and is selected when no more specific
@@ -98,7 +98,7 @@ def setBVocab : Vocabulary :=
     , exponent := "chi"
     , context := some .T }
   -- Elsewhere: default 2/3SG (∅/tz'=). No features specified — inserted
-  -- when no more specific entry matches (Kiparsky 1973 Elsewhere Condition).
+  -- when no more specific entry matches (@cite{kiparsky-1973} Elsewhere Condition).
   -- This is what surfaces in transitives when Infl's probe is blocked.
   , { features := []
     , exponent := "∅"
@@ -108,7 +108,7 @@ def setBVocab : Vocabulary :=
 -- § 2: Argument Positions and Agreement Status
 -- ============================================================================
 
-/-- Argument positions in a Mam clause (Scott 2023, ch. 3). -/
+/-- Argument positions in a Mam clause (@cite{scott-2023}, ch. 3). -/
 inductive MamArgPosition where
   | agent    -- A: transitive agent (external argument, Spec,VoiceP)
   | patient  -- P: transitive patient (internal argument, complement of V)
@@ -195,7 +195,7 @@ theorem reduction_iff_phi_agreed :
   native_decide
 
 -- ============================================================================
--- § 5: Case Inventory Validation (Blake 1994)
+-- § 5: Case Inventory Validation (@cite{blake-1994})
 -- ============================================================================
 
 /-- Mam case inventory, derived from argument position case values. -/

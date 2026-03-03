@@ -198,7 +198,7 @@ theorem shared_interactions :
 
 /-! ## Bridge to CausativeBuilder
 
-The force-dynamic builder (Wolff 2003 / Talmy 1988) provides a finer
+The force-dynamic builder (@cite{wolff-2003} / @cite{talmy-1988}) provides a finer
 categorization than sufficiency/necessity alone. The graded model
 reveals that verbs with different builders (e.g., `.make` and `.force`)
 can still differ in their full semantics even when they share the

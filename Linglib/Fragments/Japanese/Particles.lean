@@ -57,7 +57,7 @@ def no_ : ParticleEntry :=
 
 /-- *koto* — complementizer for declarative clauses. Contrast with *ka*:
     having *ka* in the embedded clause suffices for interrogative interpretation,
-    while *koto* marks a declarative (Dayal 2025: (15)). -/
+    while *koto* marks a declarative (@cite{dayal-2025}: (15)). -/
 def koto : ParticleEntry :=
   { form := "こと", romaji := "koto"
   , layer := .cp
@@ -83,7 +83,7 @@ discourse markers with dual-layered secondary meaning (presuppositional +
 expressive-like). They require a salient counterstance in the discourse and
 express the speaker's evaluative stance toward that counterstance.
 
-### Classification (Kubota 2026: (1)–(2))
+### Classification (@cite{kubota-2026}: (1)–(2))
 
 **Adverbs:**
 - (1a) *dōse* 'anyway', *shosen* 'anyway', *yahari* 'after all', *kekkyoku* 'after all'
@@ -119,7 +119,7 @@ structure OutlookEntry where
   /-- Modal selectional restrictions (which modal flavors the marker is compatible with). -/
   modalCompat : ModalCompatibility
   /-- Does this marker require a salient counterstance in the discourse?
-      True for all outlook markers by definition (Kubota 2026: (37)–(38)). -/
+      True for all outlook markers by definition (@cite{kubota-2026}: (37)–(38)). -/
   requiresCounterstance : Bool := true
   deriving Repr, BEq
 
@@ -136,7 +136,7 @@ private def deonticOnly : ModalCompatibility :=
   { epistemic := false, deontic := true, circumstantial := false }
 
 
-/-! ### Adverbs (Kubota 2026: (1)) -/
+/-! ### Adverbs (@cite{kubota-2026}: (1)) -/
 
 /-- *dōse* 'anyway' — signals pessimistic/defeatist outlook.
     Kubota (2026: (3a)): "I can't win a gold medal anyway." -/
@@ -150,7 +150,7 @@ def shosen : OutlookEntry :=
   , cat := .adverb, stance := .negative, modalCompat := allModals }
 
 /-- *yahari* 'after all/as expected' — confirms expected outcome.
-    Incompatible with *igai-ni* 'unexpectedly' (Kubota 2026: (11)). -/
+    Incompatible with *igai-ni* 'unexpectedly' (@cite{kubota-2026}: (11)). -/
 def yahari : OutlookEntry :=
   { form := "やはり", romaji := "yahari", gloss := "after all/as expected"
   , cat := .adverb, stance := .emphasis, modalCompat := allModals }
@@ -168,7 +168,7 @@ def masani : OutlookEntry :=
 
 /-- *mushiro* 'rather' — contrary to expected evaluation.
     Kubota (2026: (6a)): "Frankly admitting your mistake actually leaves a better impression."
-    Incompatible with *igai-ni* 'unexpectedly' (Kubota 2026: (11)). -/
+    Incompatible with *igai-ni* 'unexpectedly' (@cite{kubota-2026}: (11)). -/
 def mushiro : OutlookEntry :=
   { form := "むしろ", romaji := "mushiro", gloss := "rather"
   , cat := .adverb, stance := .contrary, modalCompat := allModals }
@@ -198,7 +198,7 @@ def mashite : OutlookEntry :=
   , cat := .adverb, stance := .minimum, modalCompat := allModals }
 
 
-/-! ### Focus Particles (Kubota 2026: (2)) -/
+/-! ### Focus Particles (@cite{kubota-2026}: (2)) -/
 
 /-- *nanka* 'anything like' — negative evaluation focus particle.
     Kubota (2026: (3b), (9), (37)–(42)): the prototypical outlook marker.

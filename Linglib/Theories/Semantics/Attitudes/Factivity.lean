@@ -9,7 +9,7 @@ projection, and conditional embedding.
 
 These definitions are parametric in the world type `W` via typeclasses,
 allowing instantiation for any model with belief and complement dimensions
-(e.g., Scontras & Tonhauser 2025's projection model).
+(e.g., @cite{scontras-tonhauser-2025}'s projection model).
 
 ## World Dimensions
 

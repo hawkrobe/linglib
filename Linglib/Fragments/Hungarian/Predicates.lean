@@ -51,7 +51,7 @@ structure HungarianVerbEntry extends VerbCore where
 
 
 -- ════════════════════════════════════════════════════════════════
--- § Attitude Verbs (Egressy 2026)
+-- § Attitude Verbs (@cite{egressy-2026})
 -- ════════════════════════════════════════════════════════════════
 
 /-- *tud* 'know' — factive doxastic attitude verb.

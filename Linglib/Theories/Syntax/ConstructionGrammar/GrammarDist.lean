@@ -93,7 +93,7 @@ def GrammarDist.jsd (p q : GrammarDist C) (inventory : List C) : ℚ :=
 end EntropyAndSimilarity
 
 -- ============================================================================
--- §3. Connection to Lexicon (Bergen et al. 2016)
+-- §3. Connection to Lexicon (@cite{bergen-levy-goodman-2016})
 -- ============================================================================
 
 section LexiconConnection

@@ -107,7 +107,7 @@ theorem utilityValue_nonneg (d : PQDecisionProblem) (w : World)
   simp only [responseUtilityValue, dpValueAfterLearning]
   exact sub_nonneg.mpr hValid
 
-/-- EUV(Q) = Sigma_{q in Q} P(q) x UV(q) (Van Rooy 2003 section 4.1). -/
+/-- EUV(Q) = Sigma_{q in Q} P(q) x UV(q) (@cite{van-rooy-2003} section 4.1). -/
 def questionUtility (params : Params) (d : PQDecisionProblem)
     (_q : PolarQuestion) (worlds : List World)
     (responseValues : List (World → ℚ))

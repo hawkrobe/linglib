@@ -143,7 +143,7 @@ theorem stevens_luce_pairwise {σ : StevensScale} {s₁ s₂ : ℝ}
   -- TODO: unfold policy, totalScore, show the sum over Fin 2 matches
   sorry
 
-/-- **Stevens–Fechner equivalence** (Luce 1959, §2.B):
+/-- **Stevens–Fechner equivalence** (@cite{luce-1959}, §2.B):
     Stevens' power law on raw intensity is equivalent to Fechner's
     exponential law on log-intensity.
 
@@ -193,7 +193,7 @@ structure MultidimStimulus (D : Type*) (S : D → Type*) where
   /-- Scale values are positive. -/
   scale_pos : ∀ (d : D) (s : S d), 0 < scale d s
 
-/-- Independence axiom for multi-dimensional stimuli (Luce 1959, §2.C):
+/-- Independence axiom for multi-dimensional stimuli (@cite{luce-1959}, §2.C):
     the relative discriminability along one dimension does not depend
     on the value along the other dimensions.
 
@@ -216,7 +216,7 @@ structure DimensionIndependence {D : Type*} [Fintype D] [DecidableEq D] {S : D �
   ratio_indep : ∀ (d : D) (a : (d : D) → S d) (s : S d),
     v (Function.update a d s) / v a = ms.scale d s / ms.scale d (a d)
 
-/-- **Multidimensional decomposition** (Luce 1959, §2.C, Theorem):
+/-- **Multidimensional decomposition** (@cite{luce-1959}, §2.C, Theorem):
     Under dimension independence, the overall scale function factors
     as a product of per-dimension scales (up to a global constant).
 

@@ -73,7 +73,7 @@ structure EvidentialFrame (Time : Type*) extends ReichenbachFrame Time where
 -- ════════════════════════════════════════════════════
 
 /-- Evidential perspective constraint shapes attested across English, Korean,
-    and Bulgarian (Cumming 2026, Tables 17–22). Each value corresponds to a
+    and Bulgarian (@cite{cumming-2026}, Tables 17–22). Each value corresponds to a
     distinct ordering on T vs A. -/
 inductive EPCondition where
   /-- T ≤ A: evidence downstream of event (English past/progressive, Bulgarian NFUT). -/

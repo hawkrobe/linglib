@@ -22,7 +22,7 @@ namespace Phenomena.Questions.NandaoQs
 
 /-- A nandao-Q felicity datum. -/
 structure NandaoDatum where
-  /-- Example number from Zheng 2026 -/
+  /-- Example number from @cite{zheng-2026} -/
   exampleNum : String
   /-- Context description -/
   context : String

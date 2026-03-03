@@ -138,7 +138,7 @@ theorem kratzer_uses_deletion :
 -- ════════════════════════════════════════════════════════════════
 
 /-- Kratzer's decomposition of surface tense morphology into
-    underlying tense head + optional aspect head (Kratzer 1998 §4).
+    underlying tense head + optional aspect head (@cite{heim-kratzer-1998} §4).
 
     The key insight: surface morphology can fuse tense and aspect,
     hiding the underlying tense head. English "simple past" fuses

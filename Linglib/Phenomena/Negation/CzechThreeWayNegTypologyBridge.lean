@@ -123,7 +123,7 @@ moves to clause-initial position:
 Since Czech negation prefix *ne-* is inseparable from the verb,
 verb position directly determines the syntactic position of negation.
 This creates the surface syntax–negation interpretation mapping
-(Zeijlstra 2004 Agree analysis, S&Š eqs. 11–12). -/
+(@cite{zeijlstra-2004} Agree analysis, S&Š eqs. 11–12). -/
 inductive VerbPosition where
   /-- Verb-initial (interrogative) word order.
       The verb+ne- moves to PolP, within the scope of FALSUM[iNeg].

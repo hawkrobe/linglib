@@ -87,7 +87,7 @@ def data : StringPhenomenonData := {
 }
 
 -- ============================================================================
--- § 2: C-Command Asymmetries (Collins 2005, §3)
+-- § 2: C-Command Asymmetries (@cite{collins-2005}, §3)
 -- ============================================================================
 
 /-- C-command data establishing that the derived subject in passive
@@ -113,7 +113,7 @@ def cCommandData : StringPhenomenonData := {
 }
 
 -- ============================================================================
--- § 3: Particle Evidence (Collins 2005, §3.1)
+-- § 3: Particle Evidence (@cite{collins-2005}, §3.1)
 -- ============================================================================
 
 /-- Particle data showing that in passive, the verb + particle form a
@@ -131,13 +131,13 @@ def particleData : StringPhenomenonData := {
 }
 
 -- ============================================================================
--- § 4: Auxiliary Selection (Collins 2005, §3.3)
+-- § 4: Auxiliary Selection (@cite{collins-2005}, §3.3)
 -- ============================================================================
 
 /-- Auxiliary evidence for PartP as a syntactic constituent.
     Both *have* and passive *be* select a participial complement (PartP).
     *Have* c-selects PartP directly; passive *be* requires PartP to
-    move to Spec-VoiceP for licensing (Collins 2005, conditions 24-25). -/
+    move to Spec-VoiceP for licensing (@cite{collins-2005}, conditions 24-25). -/
 def auxiliaryData : StringPhenomenonData := {
   name := "Auxiliary + Participle Selection"
   generalization := "Passive be and perfect have both require past participle (PartP)"

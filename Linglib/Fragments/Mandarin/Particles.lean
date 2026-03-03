@@ -5,8 +5,8 @@ import Linglib.Theories.Pragmatics.NeoGricean.Presuppositions
 @cite{wang-2025}
 
 Lexical entries for Mandarin presupposition triggers, linking Fragment-level
-lexical data to the NeoGricean trigger typology (Wang 2025 Table 4.1) and
-experimental data (Wang 2025 Experiments 1-3).
+lexical data to the NeoGricean trigger typology (@cite{wang-2025} Table 4.1) and
+experimental data (@cite{wang-2025} Experiments 1-3).
 
 ## Triggers
 

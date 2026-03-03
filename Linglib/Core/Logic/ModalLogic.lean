@@ -291,7 +291,7 @@ theorem identityR_refl {W : Type*} [DecidableEq W] : Refl (identityR (W := W)) :
 /-! ## Modal Flavors and the Modal Semantic Space
 
 Theory-neutral vocabulary for cross-linguistic modal typology.
-A modal's meaning is a set of force-flavor pairs (Imel, Guo, & Steinert-Threlkeld 2026).
+A modal's meaning is a set of force-flavor pairs (Imel, Guo, & @cite{imel-guo-steinert-threlkeld-2026}).
 
 * @cite{kratzer-1981}. The Notional Category of Modality.
 * Imel, Guo, & @cite{imel-guo-steinert-threlkeld-2026}. An Efficient Communication Analysis of Modal Typology.

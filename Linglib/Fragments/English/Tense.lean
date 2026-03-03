@@ -3,7 +3,7 @@ import Linglib.Theories.Semantics.Tense.ParticipantPerspective
 import Linglib.Theories.Semantics.Tense.Kratzer
 
 /-!
-# English Tense Fragment (Cumming 2026 + Lakoff 1970)
+# English Tense Fragment (@cite{cumming-2026} + @cite{lakoff-1970})
 @cite{cumming-2026} @cite{lakoff-1970} @cite{heim-kratzer-1998}
 
 Paradigm entries for English tense forms from @cite{cumming-2026}, Tables 20 and 22.
@@ -90,7 +90,7 @@ def nonfutureEntries : List TAMEEntry :=
   allEntries.filter (·.isNonfuture)
 
 -- ════════════════════════════════════════════════════
--- § 4. Tense Perspective Entries (Lakoff 1970)
+-- § 4. Tense Perspective Entries (@cite{lakoff-1970})
 -- ════════════════════════════════════════════════════
 
 open Semantics.Tense
@@ -157,7 +157,7 @@ theorem usedTo_blocks_false : usedTo.allowsFalseTense = false := rfl
 theorem goingTo_blocks_false : goingTo.allowsFalseTense = false := rfl
 
 -- ════════════════════════════════════════════════════
--- § 6. Kratzer Decomposition (Kratzer 1998)
+-- § 6. Kratzer Decomposition (@cite{heim-kratzer-1998})
 -- ════════════════════════════════════════════════════
 
 open Semantics.Tense.Kratzer

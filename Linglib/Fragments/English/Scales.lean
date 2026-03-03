@@ -192,7 +192,7 @@ def scalarImplicatures {α : Type} [BEq α] [Repr α] (s : Scale α) (x : α) : 
 -- Expected: Scale with items [1, 2, 3, 4, 5]
 
 -- ============================================================================
--- Scale Closure Properties (Chierchia 2013, Spector 2016)
+-- Scale Closure Properties (@cite{chierchia-2013}, @cite{spector-2016})
 -- ============================================================================
 
 /-!

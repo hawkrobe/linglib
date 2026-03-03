@@ -5,7 +5,7 @@ import Linglib.Theories.Semantics.Modality.Kratzer
 @cite{abusch-1997} @cite{condoravdi-2002} @cite{kratzer-2012} @cite{werner-2006}
 
 Modal bases and ordering sources are functions of both world and time
-(Kratzer 2012 Ch. 4, Condoravdi 2002). This module extends `Kratzer.lean`
+(@cite{kratzer-2012} Ch. 4, @cite{condoravdi-2002}). This module extends `Kratzer.lean`
 with time-indexed conversational backgrounds and derives the static
 (time-independent) versions as a special case.
 

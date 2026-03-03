@@ -20,7 +20,7 @@ formalized as a diagnostic profile.
 
 A morpheme that scores affix-like on all six criteria is an inflectional
 affix. A morpheme that scores clitic-like on all six is a simple clitic.
-The surprising result of Zwicky & Pullum 1983 is that English *-n't*
+The surprising result of @cite{zwicky-pullum-1983} is that English *-n't*
 scores affix-like on all six, despite the traditional clitic analysis.
 
 -/
@@ -93,7 +93,7 @@ def CliticAffixProfile.cliticScore (p : CliticAffixProfile) : Nat :=
 A morpheme that scores affix-like on all six criteria is classified
 as an inflectional affix. A morpheme scoring clitic-like on all six
 is a simple clitic. Mixed profiles are classified as special clitics
-(following Zwicky 1977's taxonomy). -/
+(following @cite{zwicky-1977}'s taxonomy). -/
 def CliticAffixProfile.classify (p : CliticAffixProfile) : MorphStatus :=
   if p.affixScore == 6 then .inflAffix
   else if p.cliticScore == 6 then .simpleClitic

@@ -119,7 +119,7 @@ def AlignmentType.isAbsErg : AlignmentType -> Bool
 -- Chapter 98: Alignment of Case Marking of Full Noun Phrases
 -- ============================================================================
 
-/-- WALS Chapter 98 distribution (Comrie 2013, 190-language sample).
+/-- WALS Chapter 98 distribution (@cite{comrie-2013}, 190-language sample).
 
 Case marking alignment of full noun phrases. Accusative alignment
 dominates, but ergative alignment is well represented. Tripartite
@@ -138,7 +138,7 @@ theorem ch98_total : WALSCount.totalOf ch98Distribution = 190 := by native_decid
 -- Chapter 99: Alignment of Case Marking of Pronouns
 -- ============================================================================
 
-/-- WALS Chapter 99 distribution (Comrie 2013, 194-language sample).
+/-- WALS Chapter 99 distribution (@cite{comrie-2013}, 194-language sample).
 
 Case marking alignment of pronouns. Accusative alignment is even more
 dominant for pronouns than for full NPs. Ergative pronoun marking is
@@ -158,7 +158,7 @@ theorem ch99_total : WALSCount.totalOf ch99Distribution = 194 := by native_decid
 -- Chapter 100: Alignment of Verbal Person Marking
 -- ============================================================================
 
-/-- WALS Chapter 100 distribution (Comrie 2013, 378-language sample).
+/-- WALS Chapter 100 distribution (@cite{comrie-2013}, 378-language sample).
 
 Alignment of verbal person marking (agreement). Neutral alignment is
 dominant here because many languages simply lack person agreement on
@@ -804,7 +804,7 @@ theorem active_np_implies_active_pron :
   native_decide
 
 -- ============================================================================
--- Split-Ergative Conditioning (Silverstein 1976)
+-- Split-Ergative Conditioning (@cite{silverstein-1976})
 -- ============================================================================
 
 /-! ### Silverstein's Hierarchy
@@ -859,7 +859,7 @@ theorem silverstein_predicts_dixon :
     silverstein 1 0 = .ergative ∧ silverstein 1 1 = .accusative := ⟨rfl, rfl⟩
 
 /-- Dyirbal-style split by animacy: human/animate → accusative,
-    inanimate → ergative (Dixon 1972, Blake 1994 Ch. 4). -/
+    inanimate → ergative (@cite{dixon-1972}, @cite{blake-1994} Ch. 4). -/
 def dyirbalSplit : Core.SplitErgativity AnimacyLevel :=
   { ergCondition := fun a => a == .inanimate }
 
@@ -884,7 +884,7 @@ theorem dyirbal_split_matches_pron :
 end SilversteinSplit
 
 -- ============================================================================
--- Ditransitive Alignment (Haspelmath 2021, §3)
+-- Ditransitive Alignment (@cite{haspelmath-2021}, §3)
 -- ============================================================================
 
 /-! Ditransitive alignment classifies how a language codes R (recipient)

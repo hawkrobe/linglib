@@ -2,7 +2,6 @@
 # @cite{scontras-pearl-2021}: Quantifier Scope Ambiguity @cite{scontras-pearl-2021} @cite{musolino-lidz-2003}
 @cite{horn-1972} @cite{kennedy-2015}
 
-
 "When pragmatics matters more for truth-value judgments:
 An investigation of quantifier scope ambiguity"
 *Glossa* 6(1): 110.
@@ -83,8 +82,8 @@ def JumpOutcome4.toNat : JumpOutcome4 → Nat
 
 /-- Numeral reading: does "two" mean exactly 2 or at least 2? -/
 inductive NumeralReading where
-  | exact    -- "two" = exactly 2 (Kennedy 2015)
-  | atLeast  -- "two" = at least 2 (Horn 1972)
+  | exact    -- "two" = exactly 2 (@cite{kennedy-2015})
+  | atLeast  -- "two" = at least 2 (@cite{horn-1972})
   deriving DecidableEq, BEq, Repr, Inhabited
 
 /-- Truth conditions for "two horses didn't jump" with n=4 horses (eq 6).
@@ -147,7 +146,7 @@ theorem exact_atleast_diverge_2of4 :
     twoNotTruth .atLeast .inverse .w4 = false := ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
 
 -- ============================================================================
--- §3. Scope Entailment Asymmetry (Musolino & Lidz 2003, pp. 288–289)
+-- §3. Scope Entailment Asymmetry (@cite{musolino-lidz-2003}, pp. 288–289)
 -- ============================================================================
 
 /-- For universals, surface scope (∀>¬: none jumped) ENTAILS inverse scope
@@ -202,13 +201,13 @@ def ml2003_exp2_matched : AcceptanceRate := ⟨40, 40⟩
 /-- Experiment 2, unmatched condition: non-isomorphic reading (not > two) true.
     "Two N didn't V" — context makes only inverse scope true.
     Adults show isomorphism effect (surface scope preference) → 27.5%.
-    This is the key datum that S&P 2021's RSA model explains. -/
+    This is the key datum that @cite{scontras-pearl-2021}'s RSA model explains. -/
 def ml2003_exp2_unmatched : AcceptanceRate := ⟨11, 40⟩
 
 /-- Experiment 3: same as Exp 2 unmatched but preceded by an affirmative
     statement (e.g., "Two frogs jumped... but two frogs didn't jump").
     Affirmative context rescues non-isomorphic (inverse scope) access → 92.5%.
-    Modeled by S&P 2021's `supportiveCfg`. -/
+    Modeled by @cite{scontras-pearl-2021}'s `supportiveCfg`. -/
 def ml2003_exp3_affirmative : AcceptanceRate := ⟨37, 40⟩
 
 end Phenomena.Quantification.Studies.ScontrasPearl2021

@@ -80,7 +80,7 @@ theorem proximity_grounded {D G : Type*} [LinearOrder D]
   just_rules_out p finest g h μ_x hjust
 
 -- ════════════════════════════════════════════════════
--- § 4. Empirical Data (Thomas & Deo 2020: §3)
+-- § 4. Empirical Data (@cite{thomas-deo-2020}: §3)
 -- ════════════════════════════════════════════════════
 
 /-! ### §3 data: *just* with equatives and comparatives

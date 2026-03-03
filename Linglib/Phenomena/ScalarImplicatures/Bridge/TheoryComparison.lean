@@ -107,9 +107,9 @@ theorem different_baseline_rates :
     ImplicatureTheory.predictedBaselineRate (T := RSA.RSATheory) := by
   native_decide
 
--- Part 3: Empirical Comparison: Geurts & Pouscoulous 2009
+-- Part 3: Empirical Comparison: @cite{geurts-pouscoulous-2009}
 
-/-- Observed verification task rate from Geurts & Pouscoulous 2009 -/
+/-- Observed verification task rate from @cite{geurts-pouscoulous-2009} -/
 def geurtsPouscolousVerificationRate : Nat := 34
 
 /-- NeoGricean baseline (35%) is close to observed (34%) -/
@@ -130,7 +130,7 @@ theorem rsa_far_from_observed :
     diff > 10 := by
   native_decide
 
-/-- NeoGricean closer to Geurts & Pouscoulous 2009 data than RSA -/
+/-- NeoGricean closer to @cite{geurts-pouscoulous-2009} data than RSA -/
 theorem neogricean_closer_to_geurts_data :
     let ng_rate := ImplicatureTheory.predictedBaselineRate (T := NeoGricean.NeoGriceanTheory)
     let rsa_rate := ImplicatureTheory.predictedBaselineRate (T := RSA.RSATheory)
@@ -284,7 +284,7 @@ def rsaCoverage : CoverageSummary :=
 
 -- Part 7: Linking to Empirical Data Types
 
-/-- Geurts & Pouscoulous 2009 task effect data as a test case -/
+/-- @cite{geurts-pouscoulous-2009} task effect data as a test case -/
 def geurtsPouscolousTaskEffect : TaskEffectTestCase :=
   { inferenceRate := 62
   , verificationRate := 34

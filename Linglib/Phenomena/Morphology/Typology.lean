@@ -233,7 +233,7 @@ structure WALSCount where
   count : Nat
   deriving Repr, DecidableEq, BEq
 
-/-- WALS Chapter 20 distribution (Bickel & Nichols 2013a, N = 160). -/
+/-- WALS Chapter 20 distribution (@cite{bickel-nichols-2013a}, N = 160). -/
 def ch20Distribution : List WALSCount :=
   [ ⟨"Exclusively concatenative", 58⟩
   , ⟨"Strongly concatenative", 28⟩
@@ -267,7 +267,7 @@ inductive Exponence where
   | noInflection
   deriving DecidableEq, BEq, Repr
 
-/-- WALS Chapter 21 distribution (Bickel & Nichols 2013b, N = 159). -/
+/-- WALS Chapter 21 distribution (@cite{bickel-nichols-2013b}, N = 159). -/
 def ch21Distribution : List WALSCount :=
   [ ⟨"Monoexponential case", 70⟩
   , ⟨"Case + number", 22⟩
@@ -299,7 +299,7 @@ inductive VerbSynthesis where
   | high
   deriving DecidableEq, BEq, Repr
 
-/-- WALS Chapter 22 distribution (Bickel & Nichols 2013c, N = 145). -/
+/-- WALS Chapter 22 distribution (@cite{bickel-nichols-2013c}, N = 145). -/
 def ch22Distribution : List WALSCount :=
   [ ⟨"0-1 categories per word", 5⟩
   , ⟨"2-3 categories per word", 39⟩
@@ -339,7 +339,7 @@ inductive LocusOfMarking where
   | zeroMarking
   deriving DecidableEq, BEq, Repr
 
-/-- WALS Chapter 25 distribution (Nichols & Bickel 2013a, N = 236). -/
+/-- WALS Chapter 25 distribution (@cite{bickel-nichols-2013a}, N = 236). -/
 def ch25Distribution : List WALSCount :=
   [ ⟨"Head-marking", 47⟩
   , ⟨"Dependent-marking", 63⟩
@@ -382,7 +382,7 @@ inductive PrefixSuffix where
   | littleAffixation
   deriving DecidableEq, BEq, Repr
 
-/-- WALS Chapter 26 distribution (Dryer 2013, N = 969). -/
+/-- WALS Chapter 26 distribution (@cite{dryer-haspelmath-2013}, N = 969). -/
 def ch26Distribution : List WALSCount :=
   [ ⟨"Strongly suffixing", 406⟩
   , ⟨"Weakly suffixing", 123⟩
@@ -416,7 +416,7 @@ inductive Reduplication where
   | noProductive
   deriving DecidableEq, BEq, Repr
 
-/-- WALS Chapter 27 distribution (Rubino 2013, N = 368). -/
+/-- WALS Chapter 27 distribution (@cite{rubino-2013}, N = 368). -/
 def ch27Distribution : List WALSCount :=
   [ ⟨"Productive full and partial reduplication", 147⟩
   , ⟨"Productive full reduplication only", 35⟩

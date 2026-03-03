@@ -81,7 +81,7 @@ theorem ne_not_flat {W : Type*} [DecidableEq W] [Inhabited W] (worlds : List W) 
 -- ============================================================================
 
 /--
-Pragmatic enrichment [·]⁺ (Definition 6 from Aloni 2022).
+Pragmatic enrichment [·]⁺ (Definition 6 from @cite{aloni-2022}).
 
 The key insight: add non-emptiness constraints recursively.
 This captures the "neglect-zero" tendency in human cognition.

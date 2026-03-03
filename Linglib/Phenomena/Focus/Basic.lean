@@ -35,7 +35,7 @@ structure FocusDatum where
   source : String := ""
   deriving Repr
 
--- Part 1: Association with Focus (Rooth 1992 §2.1)
+-- Part 1: Association with Focus (@cite{rooth-1992} §2.1)
 
 /-!
 ## "Only" Associates with Focus
@@ -83,7 +83,7 @@ def evenExample : FocusDatum := {
 def focusingAdverbExamples : List FocusDatum :=
   [roothOnlyBill, roothOnlySue, evenExample]
 
--- Part 2: Contrast and Parallelism (Rooth 1992 §3)
+-- Part 2: Contrast and Parallelism (@cite{rooth-1992} §3)
 
 /-!
 ## Contrast in Discourse

@@ -20,7 +20,7 @@ Individual-time pairs are DERIVED from events via projection functions
 `holder(e)` and `τ(e)`. Since high modals bind to the speech event and
 low modals bind to the VP event, their temporal parameters differ:
 
-- "Jane a dû prendre le train" (Hacquard 2006, (201)):
+- "Jane a dû prendre le train" (@cite{hacquard-2006}, (201)):
   - Epistemic (high): τ(e₀) = now → "Given my evidence NOW,..."
   - Root (low): τ(e₂) = then → "Given Jane's circumstances THEN,..."
 
@@ -148,7 +148,7 @@ theorem event_projection_subsumes_temporal :
 -- § 5. Worked Example: "Jane a dû prendre le train"
 -- ════════════════════════════════════════════════════
 
-/-! (Hacquard 2006, (201)): two readings of the same sentence with
+/-! (@cite{hacquard-2006}, (201)): two readings of the same sentence with
 different temporal perspectives, derived from event binding.
 
 Epistemic (high): "Given MY evidence NOW, Jane must have taken the train."

@@ -14,7 +14,7 @@ of grammatical knowledge.
 
 namespace ConstructionGrammar
 
-/-- How specified a construction's form side is (Goldberg 2003:220, Table 8).
+/-- How specified a construction's form side is (@cite{goldberg-2003}:220, Table 8).
 
 | Specificity | Example |
 |---|---|

@@ -48,7 +48,7 @@ structure DegreeAchievementScale where
 instance : Inhabited DegreeAchievementScale where
   default := { scaleBoundedness := .open_, dimension := "" }
 
-/-- Derive default telicity from scale boundedness (K&L 2007 Thm 1).
+/-- Derive default telicity from scale boundedness (@cite{kennedy-levin-2008} Thm 1).
     Scales with a maximum → telic; scales without → atelic.
 
     The mapping follows `Boundedness.hasMax`:

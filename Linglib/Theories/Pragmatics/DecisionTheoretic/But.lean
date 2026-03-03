@@ -1,7 +1,7 @@
 import Linglib.Theories.Pragmatics.DecisionTheoretic.Core
 
 /-!
-# Decision-Theoretic Semantics: "But" (Merin 1999 §4)
+# Decision-Theoretic Semantics: "But" (@cite{merin-1999} §4)
 @cite{harris-1946} @cite{merin-1999}
 
 Merin's DTS account of adversative conjunction. The felicity of "A but B"

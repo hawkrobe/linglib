@@ -158,7 +158,7 @@ theorem perception_generates_rsa_ddrp :
 def scaleCategory : LatentCategory := .mental
 
 /-- The spatial scene is a shared state: perceptual co-presence
-    is intersubjective (R&S §3.1, Clark 1996 on joint attention).
+    is intersubjective (R&S §3.1, @cite{clark-1996} on joint attention).
     Both speaker and hearer can see which bottles are where. -/
 def sceneCategory : LatentCategory := .shared
 

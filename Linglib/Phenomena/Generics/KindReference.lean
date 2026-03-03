@@ -239,7 +239,7 @@ def universalSomeBooks : ScopeDatum :=
   , notes := "'Some books' can scope over 'every student'"
   }
 
--- Scrambling and Scope (Le Bruyn & de Swart 2022)
+-- Scrambling and Scope (@cite{le-bruyn-de-swart-2022})
 
 
 /-- Scrambling position. -/
@@ -273,7 +273,7 @@ def dutchUnscrambledNeg : ScramblingScopeDatum :=
   , notes := "Unscrambled: bare plural narrow scope only"
   }
 
--- Dutch scrambled bare plurals with negation (Le Bruyn & de Swart 2022, ex. 34-35)
+-- Dutch scrambled bare plurals with negation (@cite{le-bruyn-de-swart-2022}, ex. 34-35)
 
 def dutchScrambledMensen : ScramblingScopeDatum :=
   { sentence := "... dat je mensen niet hebt uitgenodigd"
@@ -297,7 +297,7 @@ def dutchScrambledBoeken : ScramblingScopeDatum :=
   , notes := "Scrambled BP: wide scope, not 'I finished no books'"
   }
 
--- Scrambled bare plurals CAN still be kind-referring (Le Bruyn & de Swart 2022, ex. 36-37)
+-- Scrambled bare plurals CAN still be kind-referring (@cite{le-bruyn-de-swart-2022}, ex. 36-37)
 
 def dutchScrambledKindMensen : ScramblingScopeDatum :=
   { sentence := "... dat ik mensen altijd gehaat heb"
@@ -347,7 +347,7 @@ def germanScrambledMenschen : ScramblingScopeDatum :=
   , notes := "German: specific people the speaker didn't recognize"
   }
 
--- Modified bare plurals CAN scope wide even unscrambled (Carlson 1977, Geurts 2010)
+-- Modified bare plurals CAN scope wide even unscrambled (@cite{carlson-1977}, @cite{geurts-2010})
 
 def modifiedBPwideScope : ScramblingScopeDatum :=
   { sentence := "John didn't see parts of that machine"

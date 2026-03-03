@@ -127,7 +127,7 @@ theorem bounded_eq_closedBoundary :
     LicensingPipeline.isLicensed Interval.BoundaryType.closed := rfl
 
 -- ════════════════════════════════════════════════════
--- § 5. Epistemic Modal Domain (Lassiter 2017)
+-- § 5. Epistemic Modal Domain (@cite{lassiter-goodman-2017})
 -- ════════════════════════════════════════════════════
 
 /-! @cite{lassiter-goodman-2017} Ch. 4: the epistemic probability scale is closed [0,1],

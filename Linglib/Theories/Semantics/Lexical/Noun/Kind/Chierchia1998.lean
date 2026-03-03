@@ -111,7 +111,7 @@ def up (k : Kind World Atom) : Property World Atom :=
 
 /--
 A property is mass iff its extension at every world is determined by
-atomic content: `x ∈ P w ↔ ∀ a ∈ x, {a} ∈ P w` (Chierchia 1998 §2.2).
+atomic content: `x ∈ P w ↔ ∀ a ∈ x, {a} ∈ P w` (@cite{chierchia-1998} §2.2).
 
 This implies both cumulative reference (CUM) and divisive reference (DIV):
 mass extensions are closed under union and subset.
@@ -476,7 +476,7 @@ class effects), see:
 -/
 
 -- ============================================================================
--- Kind Formation via Equivalence Relations (Mendia 2020, Snyder 2026 §4.1)
+-- Kind Formation via Equivalence Relations (@cite{mendia-2020}, @cite{snyder-2026} §4.1)
 -- ============================================================================
 
 section KindFormation

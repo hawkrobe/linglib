@@ -24,7 +24,7 @@ namespace Phenomena.Gradability.Intensifiers
 open Semantics.Lexical.Adjective.Intensification (EvaluativeValence)
 
 /--
-Intensifier degree class (Nouwen 2024, Figure 2).
+Intensifier degree class (@cite{nouwen-2024}, Figure 2).
 
 - **H** (high): targets extreme degrees ("horribly warm" ≈ very warm)
 - **M** (moderate): targets moderate degrees ("pleasantly warm" ≈ nicely warm)
@@ -59,7 +59,7 @@ structure IntensifierEntry where
   attested : Bool := true
   deriving Repr
 
--- Intensifier Data (Nouwen 2024, Figure 2)
+-- Intensifier Data (@cite{nouwen-2024}, Figure 2)
 
 -- Negative-evaluative → High degree (H)
 
@@ -147,7 +147,7 @@ def allEntries : List IntensifierEntry :=
   , unusually, surprisingly, impossibly, remarkably
   , usually_, expectedly_, possibly_ ]
 
--- Goldilocks Effect (Nouwen 2024, §3)
+-- Goldilocks Effect (@cite{nouwen-2024}, §3)
 
 /--
 The Goldilocks effect: evaluative valence determines degree class.
@@ -175,7 +175,7 @@ theorem pleasantly_goldilocks : goldilocksHolds pleasantly = true := by native_d
 theorem nicely_goldilocks : goldilocksHolds nicely = true := by native_decide
 theorem decently_goldilocks : goldilocksHolds decently = true := by native_decide
 
--- Zwicky's Generalization (Nouwen 2024, §3.2)
+-- Zwicky's Generalization (@cite{nouwen-2024}, §3.2)
 
 /--
 Zwicky's generalization: modal adjectives with negative polarity

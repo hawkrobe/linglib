@@ -34,11 +34,11 @@ inductive DefPresupType where
   deriving DecidableEq, BEq, Repr
 
 /-- Demonstratives (this/that) project D_deix — the familiarity/strong-article
-layer. @cite{schwarz-2013} §5.5 and PG&G (2017). -/
+layer. @cite{schwarz-2013} §5.5 and @cite{patel-grosz-grosz-2017}. -/
 def demonstrativePresupType : DefPresupType := .familiarity
 
 -- ============================================================================
--- §2: Article Types (Schwarz 2009)
+-- §2: Article Types (@cite{schwarz-2009})
 -- ============================================================================
 
 /-- @cite{schwarz-2009}: article type in the D-domain.
@@ -47,7 +47,7 @@ Schwarz argues for two structurally distinct definite articles:
 - Weak: situational uniqueness
 - Strong: anaphoric familiarity
 
-PG&G (2017) build on this: ArticleType predicts D-layer count and
+@cite{patel-grosz-grosz-2017} build on this: ArticleType predicts D-layer count and
 whether DEM pronouns exist. -/
 inductive ArticleType where
   | none_         -- No articles (Japanese, Korean, Czech, etc.)
@@ -73,7 +73,7 @@ theorem one_layer_one_presup_type :
     (articleTypeToAvailablePresup .weakOnly).length = 1 := rfl
 
 -- ============================================================================
--- §3: Definite Use Types (Hawkins 1978 / Schwarz 2013)
+-- §3: Definite Use Types (@cite{hawkins-1978} / @cite{schwarz-2013})
 -- ============================================================================
 
 /-- @cite{hawkins-1978}'s four use types for definite descriptions.
@@ -85,7 +85,7 @@ inductive DefiniteUseType where
   | bridging           -- Related to antecedent via relation (split: see BridgingSubtype)
   deriving DecidableEq, BEq, Repr
 
-/-- Map definite use type to presupposition type (Schwarz 2013 §3.1).
+/-- Map definite use type to presupposition type (@cite{schwarz-2013} §3.1).
 
 Anaphoric uses require the strong article (familiarity); situational uses
 require the weak article (uniqueness). -/
@@ -96,10 +96,10 @@ def useTypeToPresupType : DefiniteUseType → DefPresupType
   | .bridging           => .uniqueness    -- Default weak (relational bridging overrides)
 
 -- ============================================================================
--- §4: Bridging Subtypes (Schwarz 2013 §3.2)
+-- §4: Bridging Subtypes (@cite{schwarz-2013} §3.2)
 -- ============================================================================
 
-/-- Bridging subtypes (Schwarz 2013 §3.2).
+/-- Bridging subtypes (@cite{schwarz-2013} §3.2).
 German and Fering show that bridging splits across the two article forms:
 - Part-whole bridging → weak article (situational uniqueness)
 - Relational bridging → strong article (anaphoric link)
@@ -111,13 +111,13 @@ inductive BridgingSubtype where
   | relational  -- "the play ... the author" (strong: anaphoric relation)
   deriving DecidableEq, BEq, Repr
 
-/-- Map bridging subtype to presupposition type (Schwarz 2013 §3.2). -/
+/-- Map bridging subtype to presupposition type (@cite{schwarz-2013} §3.2). -/
 def bridgingPresupType : BridgingSubtype → DefPresupType
   | .partWhole  => .uniqueness   -- weak: "the village ... the tower"
   | .relational => .familiarity  -- strong: "the play ... the author"
 
 -- ============================================================================
--- §5: Weak Article Strategy (Schwarz 2013 §4)
+-- §5: Weak Article Strategy (@cite{schwarz-2013} §4)
 -- ============================================================================
 
 /-- How a language expresses the weak/strong article contrast.

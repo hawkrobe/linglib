@@ -41,7 +41,7 @@ def allSentences : List NestedAristotelian :=
 /-- RSA model variants compared in the paper -/
 inductive RSAModel where
   | vanilla : RSAModel          -- Basic RSA
-  | lexicalUncertainty : RSAModel  -- LU (Bergen et al. 2016)
+  | lexicalUncertainty : RSAModel  -- LU (@cite{bergen-levy-goodman-2016})
   | lexicalIntentions : RSAModel   -- LI
   | globalIntentions : RSAModel    -- GI (best performer)
   deriving DecidableEq, BEq, Repr

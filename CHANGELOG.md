@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.227.85] - 2026-03-02
+
+### Changed
+- **Citation cleanup round 4**: extend script with bare-year patterns (`Author Year` without parens) and 60+ abbreviation mappings (G&S, H&K, VF&G, K&S, PG&G, etc.). 485 files modified, 251 new @cite tags, 3019 total valid @cite references.
+
+## [0.227.84] - 2026-03-02
+
+### Added
+- **MaxEnt Harmonic Grammar** (`Theories/Phonology/HarmonicGrammar/MaxEnt.lean`): MaxEnt grammar formalism bridging OT constraint vocabulary (`Core.Logic.OT`) and softmax (`Core.Agent.RationalAction`). Defines `WeightedConstraint`, `harmonyScore`, `MaxEntGrammar`, systemic constraints (`SystemicConstraint`, `homophonyAvoidance`), joint/marginal distributions over product spaces, and factorization theorem (`marginal_eq_classical_when_no_systemic`).
+- **Softmax→argmax limit theorems** (`Core/Agent/RationalAction.lean` §3b): `softmax_argmax_limit` and `softmax_nonmax_limit` formally connect MaxEnt (soft optimization) to OT (hard optimization) as α → ∞.
+- **Persian hiatus fragment** (`Fragments/Farsi/Phonology.lean`): vowel segments /æ/, /ɑ/, hiatus input/output types, candidate sets for Storme's case study.
+- **Storme (2026) replication** (`Phenomena/PhonologicalAlternation/Studies/Storme2026.lean`): MaxEnt analysis of Persian vowel hiatus with \*HOMOPHONY systemic constraint. Verifies classical symmetry, homophony penalty, and joint non-separability — the core prediction that systemic constraints break symmetry between mirror-image inputs.
+- **Coupled evaluation abstraction** (`Core/Agent/CoupledEvaluation.lean`): `CoupledSoftmax` structure formalizing the shared pattern between MaxEnt systemic constraints, RSA lexical uncertainty, and BToM inference — softmax over a product space with per-item and coupling scores. Proves `marginal_sum_eq_one`, `marginal_nonneg`. States `marginal_eq_independent_when_uncoupled` factorization theorem (sorry). Provides `coupledSoftmaxOfMaxEnt` instantiation.
+- Bib entry `storme-2026` for Linguistic Inquiry 57(1).
+
 ## [0.227.83] - 2026-03-02
 
 ### Changed

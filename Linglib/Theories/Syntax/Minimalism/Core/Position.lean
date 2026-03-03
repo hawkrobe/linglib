@@ -30,7 +30,7 @@ Two variants are formalized:
 2. **Spec-to-Spec**: movement
    from Spec,XP to Spec,YP is blocked when YP immediately dominates XP
    (no intervening maximal projection). This interacts with Toba Batak's
-   clause structure (Erlewine 2018, fn. 24) and drives Agent Focus in
+   clause structure (@cite{erlewine-2018}, fn. 24) and drives Agent Focus in
    Kaqchikel.
 
 -/
@@ -128,7 +128,7 @@ def compToSpecAntiLocality
     projection boundary.
 
     In Toba Batak, this prevents the pivot in Spec,TP from moving to
-    Spec,CP clause-internally (fn. 24, Erlewine 2018), though the
+    Spec,CP clause-internally (fn. 24, @cite{erlewine-2018}), though the
     primary extraction restriction derives from nominal licensing. -/
 def specToSpecAntiLocality
     (events : List MergeEvent) (mover xP yP : SyntacticObject) : Prop :=
@@ -175,7 +175,7 @@ theorem stranded_or_trapped (pf : PredicateFronting) (x : SyntacticObject) :
   em (contains pf.predicate x) |>.elim (Or.inr) (Or.inl)
 
 -- ============================================================================
--- § 6: Extraction Restriction (Erlewine 2018)
+-- § 6: Extraction Restriction (@cite{erlewine-2018})
 -- ============================================================================
 
 /-- The extraction restriction in predicate-fronting languages:

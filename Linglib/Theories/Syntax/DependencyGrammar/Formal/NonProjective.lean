@@ -28,9 +28,9 @@ Five structural constraints on dependency trees, ordered by restrictiveness:
 
 ## Key Results
 
-- Well-nestedness + gap degree ≤ 1 covers 99.89% of PDT and DDT (K&N 2006 Table 1)
+- Well-nestedness + gap degree ≤ 1 covers 99.89% of PDT and DDT (@cite{kuhlmann-nivre-2006} Table 1)
 - Block-degree = fan-out of extracted LCFRS grammar
-- Bounded block-degree + well-nestedness → polynomial parsing (Kuhlmann 2013, Lemma 10)
+- Bounded block-degree + well-nestedness → polynomial parsing (@cite{kuhlmann-2013}, Lemma 10)
 
 ## Bridges
 
@@ -47,7 +47,7 @@ namespace DepGrammar
 -- ============================================================================
 
 /-- Two dependencies cross iff their spans overlap without containment.
-    (Kuhlmann & Nivre 2006, implicit in Definition 4) -/
+    (@cite{kuhlmann-nivre-2006}, implicit in Definition 4) -/
 def depsCross (d1 d2 : Dependency) : Bool :=
   if d1 == d2 then false
   else if d1.headIdx == d2.headIdx then false
@@ -87,7 +87,7 @@ structure FillerGapDep where
   nonProj : isNonProjectiveDep tree dep = true
 
 -- ============================================================================
--- §3: Planarity (Kuhlmann & Nivre 2006, Definition 4)
+-- §3: Planarity (@cite{kuhlmann-nivre-2006}, Definition 4)
 -- ============================================================================
 
 /-- Whether two positions are linked by an edge (in either direction). -/
@@ -110,13 +110,13 @@ def DepTree.isPlanar (t : DepTree) : Bool :=
           a < b && b < c && c < d && linked deps a c && linked deps b d)
 
 -- ============================================================================
--- §4: Well-Nestedness (Kuhlmann & Nivre 2006, Definition 8;
---     Kuhlmann 2013, §8.1)
+-- §4: Well-Nestedness (@cite{kuhlmann-nivre-2006}, Definition 8;
+--     @cite{kuhlmann-2013}, §8.1)
 -- ============================================================================
 
 /-- Two subtrees **interleave** if there exist nodes l₁, r₁ in T₁ and
     l₂, r₂ in T₂ such that l₁ < l₂ < r₁ < r₂.
-    (Kuhlmann & Nivre 2006, Definition 8) -/
+    (@cite{kuhlmann-nivre-2006}, Definition 8) -/
 def projectionsInterleave (p1 p2 : List Nat) : Bool :=
   p1.any λ l1 => p2.any λ l2 => p1.any λ r1 => p2.any λ r2 =>
     l1 < l2 && l2 < r1 && r1 < r2
@@ -134,10 +134,10 @@ private theorem disjoint_symm {deps : List Dependency} {u v : Nat}
   exact ⟨h.2, h.1⟩
 
 /-- A dependency tree is **well-nested** if no two disjoint subtrees interleave.
-    (Kuhlmann & Nivre 2006, Definition 8)
+    (@cite{kuhlmann-nivre-2006}, Definition 8)
 
     Equivalent to: no sibling nodes u, v have blocks ū₁, ū₂ of u and
-    v̄₁, v̄₂ of v such that ū₁ < v̄₁ < ū₂ < v̄₂ (Kuhlmann 2013, Lemma 9). -/
+    v̄₁, v̄₂ of v such that ū₁ < v̄₁ < ū₂ < v̄₂ (@cite{kuhlmann-2013}, Lemma 9). -/
 def DepTree.isWellNested (t : DepTree) : Bool :=
   let deps := t.deps
   let n := t.words.length
@@ -147,7 +147,7 @@ def DepTree.isWellNested (t : DepTree) : Bool :=
       projectionsInterleave (projection deps u) (projection deps v))
 
 -- ============================================================================
--- §5: Edge Degree (Kuhlmann & Nivre 2006, Definition 9)
+-- §5: Edge Degree (@cite{kuhlmann-nivre-2006}, Definition 9)
 -- ============================================================================
 
 /-- The **span** of an edge (i, j): the interval [min(i,j), max(i,j)]. -/
@@ -168,7 +168,7 @@ private def findRoot (deps : List Dependency) (node : Nat) (fuel : Nat) : Nat :=
 
 /-- The **degree** of an edge e: the number of connected components in the
     subgraph induced by span(e) whose root is NOT dominated by head(e).
-    (Kuhlmann & Nivre 2006, Definition 9)
+    (@cite{kuhlmann-nivre-2006}, Definition 9)
 
     Edge degree measures intervening "foreign" material within an arc's span. -/
 def edgeDegreeOf (deps : List Dependency) (d : Dependency) (fuel : Nat) : Nat :=
@@ -186,7 +186,7 @@ def edgeDegreeOf (deps : List Dependency) (d : Dependency) (fuel : Nat) : Nat :=
   ) |>.length
 
 /-- **Edge degree** of a tree: max edge degree over all edges.
-    (Kuhlmann & Nivre 2006, Definition 9)
+    (@cite{kuhlmann-nivre-2006}, Definition 9)
     Edge degree 0 ⟺ projective. -/
 def DepTree.edgeDegree (t : DepTree) : Nat :=
   let fuel := t.words.length + 1
@@ -229,7 +229,7 @@ theorem projective_implies_nonProj_wf (t : DepTree) :
 
 /-! ### Figure 3 examples: gap degree, edge degree, well-nestedness -/
 
-/-- K&N 2006 Figure 3a: gd=0, ed=0, well-nested.
+/-- @cite{kuhlmann-nivre-2006} Figure 3a: gd=0, ed=0, well-nested.
     6 nodes, edges form nested (projective) structure.
          j(0) ← 4(root)
          i(1) ← 0
@@ -240,7 +240,7 @@ def kn_fig3a : DepTree :=
             , ⟨1, 2, .dep⟩, ⟨1, 3, .dep⟩, ⟨1, 4, .dep⟩ ]
     rootIdx := 5 }
 
-/-- K&N 2006 Figure 3b: gd=1, ed=1, well-nested.
+/-- @cite{kuhlmann-nivre-2006} Figure 3b: gd=1, ed=1, well-nested.
     Node i has projection [2, 3, 6] — one gap at (3, 6).
     1 ← 0(root), 2 ← 1, 3 ← 2, 4 ← 1 → 5, 2 → 6 -/
 def kn_fig3b : DepTree :=
@@ -249,7 +249,7 @@ def kn_fig3b : DepTree :=
             , ⟨1, 4, .dep⟩, ⟨4, 5, .dep⟩, ⟨2, 6, .dep⟩ ]
     rootIdx := 0 }
 
-/-- K&N 2006 Figure 3c: gd=2, ed=1, NOT well-nested.
+/-- @cite{kuhlmann-nivre-2006} Figure 3c: gd=2, ed=1, NOT well-nested.
     Nodes i and j have interleaving projections.
     i at 1: projection includes {2, 4}; j at 2: includes {3, 5}
     These interleave: 2 < 3 < 4 < 5. -/
@@ -265,7 +265,7 @@ def nonProjectiveTree : DepTree :=
     deps := [ ⟨0, 2, .obj⟩, ⟨1, 3, .obj⟩ ]
     rootIdx := 0 }
 
-/-! ### Cross-serial dependencies (Kuhlmann 2013, Figure 1)
+/-! ### Cross-serial dependencies (@cite{kuhlmann-2013}, Figure 1)
 
 The canonical motivation for non-projectivity. In Dutch, verb–argument
 dependencies cross ("cross-serial"), producing a non-projective tree.
@@ -359,7 +359,7 @@ example : DepTree.isWellNested nonProjectiveTree = false := by native_decide
 
 /-- **Projective ⟺ gap degree 0**: a tree is projective iff no node's
     projection has any gaps.
-    (Kuhlmann & Nivre 2006, Definition 3 + Definition 7) -/
+    (@cite{kuhlmann-nivre-2006}, Definition 3 + Definition 7) -/
 theorem projective_iff_gapDegree_zero (t : DepTree) :
     isProjective t = true ↔ t.gapDegree = 0 := by
   unfold isProjective DepTree.gapDegree
@@ -441,7 +441,7 @@ theorem projective_iff_blockDegree_one (t : DepTree)
     omega
 
 /-- **Block-degree = gap degree + 1** for non-empty projections.
-    (Kuhlmann 2013, §7.1 footnote 2) -/
+    (@cite{kuhlmann-2013}, §7.1 footnote 2) -/
 theorem blockDegree_eq_gapDegree_succ (deps : List Dependency) (root : Nat) :
     blockDegreeAt deps root = gapDegreeAt deps root + 1 := by
   unfold blockDegreeAt gapDegreeAt
@@ -510,7 +510,7 @@ private theorem unique_parent_of_hasUniqueHeads {t : DepTree}
 
 /-- **Projective ⊂ planar** (for well-formed trees): every projective tree
     with unique heads and no cycles is planar.
-    (Kuhlmann & Nivre 2006, §3.5: projectivity implies no crossing edges)
+    (@cite{kuhlmann-nivre-2006}, §3.5: projectivity implies no crossing edges)
 
     The `hasUniqueHeads` precondition is necessary: without it, a node can
     have two heads, and the resulting multi-headed graph can be projective
@@ -1042,7 +1042,7 @@ private theorem interleaving_not_planar (t : DepTree)
 
 /-- **Planar ⊂ well-nested** (for well-formed trees): every planar tree
     with unique heads is well-nested.
-    (Kuhlmann & Nivre 2006, Theorem 1)
+    (@cite{kuhlmann-nivre-2006}, Theorem 1)
 
     Proof: by contrapositive. If ¬wellNested, there exist disjoint subtrees
     u, v whose projections interleave: l₁ < l₂ < r₁ < r₂ with l₁, r₁ ∈ π(u)
@@ -1085,7 +1085,7 @@ theorem planar_implies_wellNested (t : DepTree)
   rw [hplanar] at h_not_planar; exact absurd h_not_planar (by decide)
 
 /-- Dutch cross-serial witnesses the gap: non-projective yet well-nested.
-    (Kuhlmann & Nivre 2006, §4: 99.89% of treebank data is well-nested) -/
+    (@cite{kuhlmann-nivre-2006}, §4: 99.89% of treebank data is well-nested) -/
 theorem wellNested_not_projective_witness :
     DepTree.isWellNested dutchCrossSerial = true ∧
     isProjective dutchCrossSerial = false := by

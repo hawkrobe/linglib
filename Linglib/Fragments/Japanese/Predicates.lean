@@ -80,7 +80,7 @@ def shinpai : JapaneseVerbEntry where
 
 /-! ## Causative predicates
 
-Japanese morphological causative suffix *-(s)ase* (Song 1996: COMPACT type).
+Japanese morphological causative suffix *-(s)ase* (@cite{song-1996}: COMPACT type).
 Case marking on the causee distinguishes coercion from permission:
 - ACC *o* = less causee control → `.make` (coercive reading)
 - DAT *ni* = more causee control → `.enable` (permissive reading)

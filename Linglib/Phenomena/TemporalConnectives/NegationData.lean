@@ -28,7 +28,7 @@ temporal connectives, focusing on:
 namespace Phenomena.TemporalConnectives.NegationData
 
 -- ============================================================================
--- § 1: The Two-*Until* Hypothesis (Giannakidou 2002)
+-- § 1: The Two-*Until* Hypothesis (@cite{giannakidou-2002})
 -- ============================================================================
 
 /-- A judgment about the two-*until* distinction, encoding @cite{giannakidou-2002}'s cross-linguistic evidence.
@@ -41,7 +41,7 @@ namespace Phenomena.TemporalConnectives.NegationData
     Note: Greek has a THIRD element — *para monon* (§§4.2, 6) — which is the
     true NPI-*until* (requires negation, entails actualization). *Prin* shares
     NPI-licensing and non-veridicality with NPI-*until* but differs in that
-    it does NOT entail actualization (Giannakidou 2002, ex. 72–73, 77). -/
+    it does NOT entail actualization (@cite{giannakidou-2002}, ex. 72–73, 77). -/
 structure TwoUntilDatum where
   /-- Language -/
   language : String
@@ -65,14 +65,14 @@ structure TwoUntilDatum where
   deriving Repr
 
 -- ============================================================================
--- § 2: Greek Data (Giannakidou 2002, §§2–4)
+-- § 2: Greek Data (@cite{giannakidou-2002}, §§2–4)
 -- ============================================================================
 
 /-- Greek *prin* (πριν): before-type.
     Requires subjunctive, does not require DE context (unlike English
     NPI-*until* or Greek *para monon*), non-veridical complement, licenses NPIs.
     No actualization entailment: "Efije prin na erthi o Janis" is compatible
-    with Janis never coming (Giannakidou 2002, §6, ex. 72).
+    with Janis never coming (@cite{giannakidou-2002}, §6, ex. 72).
     "Efije prin na erthi o Janis."
     'She left before Janis came.' -/
 def greek_prin : TwoUntilDatum where
@@ -182,7 +182,7 @@ theorem diagnostics_aligned :
   ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
 
 -- ============================================================================
--- § 4: Expletive Negation Data (Greco 2020)
+-- § 4: Expletive Negation Data (@cite{greco-2020})
 -- ============================================================================
 
 /-- An attested instance of expletive negation (EN) in a temporal clause.
@@ -300,7 +300,7 @@ theorem en_iff_ambidirectional :
   ⟨rfl, rfl, rfl, rfl⟩
 
 -- ============================================================================
--- § 6: Cross-Linguistic EN Prevalence (Jin & Koenig 2021)
+-- § 6: Cross-Linguistic EN Prevalence (@cite{jin-koenig-2021})
 -- ============================================================================
 
 /-- Cross-linguistic survey data on EN prevalence.

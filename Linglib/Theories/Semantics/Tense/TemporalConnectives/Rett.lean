@@ -67,7 +67,7 @@ def Rett.after (A B : SentDenotation Time) : Prop :=
 -- § 2: Aspectual Coercion Operators
 -- ============================================================================
 
-/-- Inchoative coercion / GLB (Rett 2020, eq. 19; de Swart 1998; Dölling 2014).
+/-- Inchoative coercion / GLB (@cite{rett-2020}, eq. 19; @cite{de-swart-1998}; @cite{dolling-2014}).
     Maps a process (atelic) denotation to a singleton containing its onset point.
     GLB(T) = ιt[t ∈ T ∧ ∀t' ∈ T, t ≤ t']
 
@@ -80,7 +80,7 @@ def INCHOAT (p : SentDenotation Time) : SentDenotation Time :=
     (∀ t, (∀ j ∈ p, t ≤ j.start) → t ≤ onset) ∧
     i = Interval.point onset }
 
-/-- Completive coercion / LUB (Rett 2020, eq. 21; Dölling 2014).
+/-- Completive coercion / LUB (@cite{rett-2020}, eq. 21; @cite{dolling-2014}).
     Maps a culmination (telic) denotation to a singleton containing its telos.
     LUB(T) = ιt[t ∈ T ∧ ∀t' ∈ T, t ≥ t']
 
@@ -194,7 +194,7 @@ theorem rett_after_implies_anscombe (A B : SentDenotation Time) :
   exact ⟨t, ht, m, hm_mem, htm⟩
 
 -- ============================================================================
--- § 6: Ambidirectionality (Rett 2026)
+-- § 6: Ambidirectionality (@cite{rett-2026})
 -- ============================================================================
 
 /-! ### Expletive negation and ambidirectionality
@@ -202,7 +202,7 @@ theorem rett_after_implies_anscombe (A B : SentDenotation Time) :
 @cite{rett-2026} shows that *before* is **ambidirectional**: negating B
 in "A before B" doesn't change truth conditions. This is why
 *before*-clauses license expletive negation cross-linguistically
-(Jin & Koenig 2021: 50 languages).
+(@cite{jin-koenig-2021}: 50 languages).
 
 The mechanism: for B = [s, f], both B and its
 **pre-event complement** (−∞, s] share s as their "most informative

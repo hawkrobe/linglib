@@ -6,7 +6,7 @@ import Linglib.Theories.Semantics.Questions.MentionSome
 # Questions/ScopeReadings.lean
 @cite{dayal-2016} @cite{groenendijk-stokhof-1984} @cite{szabolcsi-1997}
 
-Pair-List, Choice, and Mention-Some Readings (G&S 1984, Chapter VI, Sections 2-5).
+Pair-List, Choice, and Mention-Some Readings (@cite{groenendijk-stokhof-1984}, Chapter VI, Sections 2-5).
 
 ## The Phenomenon
 
@@ -427,7 +427,7 @@ def ExistentialQuestion.toMentionSomeInterrogative {W E : Type*}
 
 /-- Wide-scope existential implies mention-some is licensed.
 
-G&S 1984, Section 5: When an existential takes wide scope over the wh-phrase,
+@cite{groenendijk-stokhof-1984}, Section 5: When an existential takes wide scope over the wh-phrase,
 the question receives a mention-some interpretation because any witness
 for the existential provides a sufficient answer. -/
 theorem wideScope_existential_licenses_mentionSome {W E : Type*} [DecidableEq E]

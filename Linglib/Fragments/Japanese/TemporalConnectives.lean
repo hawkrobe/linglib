@@ -7,7 +7,7 @@ import Linglib.Fragments.English.TemporalExpressions
 Lexical entries for Japanese temporal subordinating connectives *前 mae*
 ('before') and *後 ato* ('after'), typed by `TemporalExprEntry`.
 
-The key cross-linguistic observation (O&ST 2024, §3): *mae* requires
+The key cross-linguistic observation (O&@cite{ogihara-steinert-threlkeld-2024}, §3): *mae* requires
 non-past tense in its complement even in past-tense contexts, while
 *ato* allows past tense. This morphological asymmetry independently
 supports the veridicality contrast — *mae* presents the complement

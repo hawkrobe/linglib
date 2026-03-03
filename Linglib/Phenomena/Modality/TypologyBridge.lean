@@ -278,7 +278,7 @@ theorem all_have_some_iff :
 -- §11: IFF and Efficient Communication
 -- ============================================================================
 
-/-! ## Efficient Communication (Imel, Guo, & Steinert-Threlkeld 2026)
+/-! ## Efficient Communication (Imel, Guo, & @cite{imel-guo-steinert-threlkeld-2026})
 
 Key computational results (verified over 32,301 generated + 27 natural languages):
 

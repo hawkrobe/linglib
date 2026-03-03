@@ -169,7 +169,7 @@ def normalizeWeights3 (wA wB wC : ℚ) : ℚ × ℚ × ℚ :=
   else (wA / total, wB / total, wC / total)
 
 -- ============================================================
--- Goal-Oriented Utility (Barnett et al. 2022, Cummins & Franke 2021)
+-- Goal-Oriented Utility (@cite{barnett-griffiths-hawkins-2022}, @cite{cummins-franke-2021})
 -- ============================================================
 
 /-- Goal-oriented speaker utility: U_epi + β · U_goal.

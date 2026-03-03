@@ -286,7 +286,6 @@ example : licensesWeakNPI atMost2_student := atMost_isDE_scope
 ## `DEStrength` ↔ Proof Hierarchy
 @cite{icard-2012}
 
-
 | `DEStrength` | Proof Predicate | Example Licensor |
 |--------------|-----------------|------------------|
 | `.weak` | `IsDE` | few, at most n |
@@ -308,7 +307,7 @@ end Definitions
 
 
 -- ============================================================================
--- Section: Upward Entailing Duals (Icard 2012)
+-- Section: Upward Entailing Duals (@cite{icard-2012})
 -- ============================================================================
 
 section UEDuals

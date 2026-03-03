@@ -182,7 +182,7 @@ theorem ranking_rationalMonotonicity (κ : RankingFunction W) :
     exact Nat.le_trans hwu huv
 
 -- ══════════════════════════════════════════════════════════════════════
--- § 2. Iterated Belief Revision (Darwiche & Pearl 1997)
+-- § 2. Iterated Belief Revision (@cite{darwiche-pearl-1997})
 -- ══════════════════════════════════════════════════════════════════════
 
 /-- The belief set of a ranking function: propositions true at all

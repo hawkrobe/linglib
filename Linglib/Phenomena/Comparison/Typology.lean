@@ -21,7 +21,7 @@ The typology intersects with two further dimensions:
 
 1. Locational comparatives are the most common type worldwide.
 2. Particle comparatives concentrate in Europe (a Standard Average European
-   feature; Haspelmath 2001).
+   feature; @cite{haspelmath-2001}).
 3. Exceed comparatives concentrate in West Africa and mainland Southeast Asia.
 4. Conjoined comparatives are the least common type, concentrated in Papuan
    and Australian languages.
@@ -33,7 +33,7 @@ The typology intersects with two further dimensions:
 namespace Phenomena.Comparison.Typology
 
 -- ============================================================================
--- Comparative Construction Types (Stassen 2013)
+-- Comparative Construction Types (@cite{stassen-2013})
 -- ============================================================================
 
 /-- WALS Ch 121: How a language expresses comparison of inequality.
@@ -71,7 +71,7 @@ inductive ComparativeType where
   deriving DecidableEq, BEq, Repr
 
 -- ============================================================================
--- Degree Word Typology (Beck et al. 2009)
+-- Degree Word Typology (@cite{beck-2009})
 -- ============================================================================
 
 /-- Whether a language has an overt degree word in comparatives.

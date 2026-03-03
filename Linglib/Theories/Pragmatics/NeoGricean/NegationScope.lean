@@ -37,7 +37,7 @@ namespace NeoGricean
 /--
 Scope of negation with respect to numeral interpretation.
 
-Following Jespersen (cited in Horn 1972), negation can target:
+Following Jespersen (cited in @cite{horn-1972}), negation can target:
 - The lower bound (internal): "not ≥n" = "<n"
 - The exact reading (external): "not =n" = "≠n"
 -/

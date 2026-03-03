@@ -7,7 +7,7 @@ import Linglib.Fragments.Chuj.VerbBuilding
 @cite{coon-2019}
 
 Connects the theory-side predictions of `Theories/Morphology/RootTypology.lean`
-(Beavers et al. 2021 formalization) to the empirical data in
+(@cite{beavers-etal-2021} formalization) to the empirical data in
 `Phenomena/Causatives/Studies/BeaversEtAl2021.lean`.
 
 ## What this bridge proves

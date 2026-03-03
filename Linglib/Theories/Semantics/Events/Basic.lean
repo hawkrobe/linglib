@@ -31,7 +31,7 @@ open Semantics.Lexical.Verb.Aspect
 open Semantics.Lexical.Verb.ViewpointAspect
 
 -- ════════════════════════════════════════════════════
--- § 1. Event Sort (Bach 1986)
+-- § 1. Event Sort (@cite{bach-1986})
 -- ════════════════════════════════════════════════════
 
 /-- Binary ontological sort for eventualities.
@@ -210,7 +210,7 @@ def exampleRun : Ev ℤ :=
   ⟨⟨1, 5, by omega⟩, .action⟩
 
 -- ════════════════════════════════════════════════════
--- § 9. Manners (Liefke 2024 §4.3; Dik 1975; Alexeyenko 2015)
+-- § 9. Manners (@cite{liefke-2024} §4.3; @cite{dik-1975}; @cite{alexeyenko-2015})
 -- ════════════════════════════════════════════════════
 
 /-- A manner: the "how" of an event, individuated as an equivalence class

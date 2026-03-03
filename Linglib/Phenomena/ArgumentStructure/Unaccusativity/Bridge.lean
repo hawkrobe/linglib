@@ -278,10 +278,10 @@ theorem whisper_dowty_diverges :
     whisper.unaccusative = true := ⟨by native_decide, rfl⟩
 
 -- ════════════════════════════════════════════════════
--- § 8. Smuggling Bridge (Collins 2005 → Storment 2026)
+-- § 8. Smuggling Bridge (@cite{collins-2005} → @cite{storment-2026})
 -- ════════════════════════════════════════════════════
 
-/-! The smuggling analysis (Collins 2005, applied to QI by Storment 2026)
+/-! The smuggling analysis (@cite{collins-2005}, applied to QI by @cite{storment-2026})
     derives QI licensing from two independently motivated properties:
 
     1. **Voice is non-phase** (= unaccusative): complement remains extractable
@@ -390,11 +390,11 @@ theorem qi_data_consistent :
   native_decide
 
 -- ════════════════════════════════════════════════════
--- § 9. QI ∥ LI: Distributional Contrasts (Storment 2026, §6)
+-- § 9. QI ∥ LI: Distributional Contrasts (@cite{storment-2026}, §6)
 -- ════════════════════════════════════════════════════
 
 /-! Quotative inversion and locative inversion share the same mechanism
-    (smuggling of VP to Spec-VoiceP, Storment 2026 §6) but differ in
+    (smuggling of VP to Spec-VoiceP, @cite{storment-2026} §6) but differ in
     their inputs and distribution:
 
     - QI requires a quote complement; LI requires a fronted locative PP
@@ -477,7 +477,7 @@ theorem mos_extraction_asymmetry :
     derivedQI mutter.toVerbCore = true := ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
 
 -- ════════════════════════════════════════════════════
--- § 11. QI Derivation (Storment 2026, §4)
+-- § 11. QI Derivation (@cite{storment-2026}, §4)
 -- ════════════════════════════════════════════════════
 
 /-! The smuggling derivation of QI assigns each major constituent to
@@ -662,7 +662,7 @@ theorem kick_levin_agrees :
 -- The MoS divergence: Levin class predicts unergative, but empirically unaccusative
 
 /-- MoS verbs: Levin class does NOT predict unaccusativity (agentive manner
-    activity), but they ARE empirically unaccusative (Storment 2026 QI
+    activity), but they ARE empirically unaccusative (@cite{storment-2026} QI
     diagnostic). This divergence motivates Storment's syntactic analysis
     (smuggling) over a purely lexical-semantic account of unaccusativity. -/
 theorem mos_levin_diverges :

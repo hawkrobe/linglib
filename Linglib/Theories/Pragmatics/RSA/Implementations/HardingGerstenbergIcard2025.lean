@@ -18,7 +18,7 @@ Explanation is modeled as an RSA communication game where:
 
 Classic "explanatory virtues" — sensitivity to background knowledge,
 preference for invariant relationships, minimality — emerge from pragmatic
-dynamics rather than needing to be stipulated (contra Halpern & Pearl 2005).
+dynamics rather than needing to be stipulated (contra @cite{halpern-pearl-2005}).
 
 ## Scenarios
 

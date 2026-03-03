@@ -29,7 +29,7 @@ namespace Semantics.Questions.LeftPeriphery
 
 /-- The ±WH feature on C, determining declarative vs interrogative clause type.
     `alphaWH` is underspecified — used for Hindi-Urdu simplex polar questions
-    where clause-typing is not forced at CP (Dayal 2025: §4.4). -/
+    where clause-typing is not forced at CP (@cite{dayal-2025}: §4.4). -/
 inductive WHFeature where
   | plusWH   -- Interrogative: ⟨⟨s,t⟩,t⟩
   | minusWH  -- Declarative: ⟨s,t⟩
@@ -84,7 +84,7 @@ def effectiveKnowledge (cls : SelectionClass) (negated questioned : Bool) : Bool
 
     Note: Consistency is necessary but not sufficient for quasi-subordination.
     The full account also requires "potentially active" (de se interest),
-    which is why *forget* doesn't freely quasi-subordinate (Dayal 2025: §3.3). -/
+    which is why *forget* doesn't freely quasi-subordinate (@cite{dayal-2025}: §3.3). -/
 def perspPConsistent (cls : SelectionClass) (negated questioned : Bool) : Bool :=
   !effectiveKnowledge cls negated questioned
 
@@ -255,7 +255,7 @@ open Semantics.Questions.Answerhood
 /-- Whether x possibly doesn't know Ans(Q) at world w:
     ◇¬know(x, Ans(Q)) = ∃w' ∈ R(x,w). ¬(Ans(Q,w) holds at w')
 
-    This is PerspP's not-at-issue presupposition (Dayal 2025: §2.3).
+    This is PerspP's not-at-issue presupposition (@cite{dayal-2025}: §2.3).
     Uses `diaAt` from Doxastic.lean and `ans` from Answerhood.lean. -/
 def possibleIgnorance {W E : Type*} (R : AccessRel W E) (center : E)
     (Q : GSQuestion W) (w : W) (worlds : List W) : Bool :=

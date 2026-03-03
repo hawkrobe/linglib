@@ -4,7 +4,7 @@ import Linglib.Theories.Semantics.Lexical.Noun.Kind.Chierchia1998
 /-! # Italian Noun Lexicon Fragment
 
 Italian NP structure with gender. Bare arguments restricted
-(Chierchia 1998 [-arg, +pred]). Italian is the star witness for
+(@cite{chierchia-1998} [-arg, +pred]). Italian is the star witness for
 Chierchia's `predOnly` parameter: nouns denote predicates and require
 a determiner to be argumental.
 

@@ -3,7 +3,7 @@ import Linglib.Theories.Semantics.Lexical.Noun.Kind.Chierchia1998
 
 /-! # French Noun Lexicon Fragment
 
-French NP structure with gender. Bare arguments restricted (Chierchia 1998 [-arg, +pred]).
+French NP structure with gender. Bare arguments restricted (@cite{chierchia-1998} [-arg, +pred]).
 -/
 
 namespace Fragments.French.Nouns

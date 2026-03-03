@@ -50,7 +50,7 @@ def SCPredCategory.toCat : SCPredCategory → Cat
   | .N => .N
 
 /-- A small clause: subject-predicate pair where the predicate
-    is categorially typed (den Dikken 1995:27, ex. 44).
+    is categorially typed (@cite{dendikken-1995}:27, ex. 44).
 
     `[SC subject predicate]`
 
@@ -82,7 +82,7 @@ def SCPredCategory.constructionName : SCPredCategory → String
   | .N => "copular/ECM"
 
 -- ============================================================================
--- Applicative connection (den Dikken 1995, Ch. 5)
+-- Applicative connection (@cite{dendikken-1995}, Ch. 5)
 -- ============================================================================
 
 /-- Whether an applicative head is analyzable as an affixal particle.

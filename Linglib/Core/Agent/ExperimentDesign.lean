@@ -20,7 +20,7 @@ most informative? The answer depends on three components:
 
 EIG(e) = E_o[V(posterior(·|o,e))] − V(prior)
 
-This IS the structure of PRIOR-PQ's questioner Q (Hawkins et al. 2025,
+This IS the structure of PRIOR-PQ's questioner Q (@cite{hawkins-etal-2025},
 eq. 2.3): question = experiment, R₀'s response = observation,
 V(D^{r,q}) = expected decision value. Formalizing this connection shows
 that question selection is a special case of optimal experiment design.

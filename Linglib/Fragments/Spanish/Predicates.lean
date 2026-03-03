@@ -54,7 +54,7 @@ structure SpanishVerbEntry extends VerbCore where
   deriving Repr, BEq
 
 -- ============================================================================
--- § 3: Verb Data (Muñoz Pérez 2026)
+-- § 3: Verb Data (Muñoz @cite{munoz-perez-2026})
 -- ============================================================================
 
 /-- *abrir* "open" — marked anticausative, licenses stylistic LE. -/
@@ -65,7 +65,7 @@ def abrir : SpanishVerbEntry :=
     licensesStylLE := true }
 
 /-- *romper* "break" — marked anticausative, licenses stylistic LE.
-    (exx. 7–8 in Muñoz Pérez 2026) -/
+    (exx. 7–8 in Muñoz @cite{munoz-perez-2026}) -/
 def romper : SpanishVerbEntry :=
   { form := "romper", complementType := .np,
     anticausativeMarking := .marked,

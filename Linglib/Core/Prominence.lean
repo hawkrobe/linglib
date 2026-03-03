@@ -22,7 +22,7 @@ but the **polarity** of differential marking depends on argument role:
 - P/T marking targets **prominent** referents (departures from low default)
 - A/R marking targets **non-prominent** referents (departures from high default)
 
-## Argument Roles (Haspelmath 2021, §2–5)
+## Argument Roles (@cite{haspelmath-2021}, §2–5)
 
 Five roles span monotransitive and ditransitive clauses:
 
@@ -48,7 +48,7 @@ prominence scales.
 namespace Core.Prominence
 
 -- ============================================================================
--- § 1: Animacy Scale (Aissen 2003, §2)
+-- § 1: Animacy Scale (@cite{aissen-2003}, §2)
 -- ============================================================================
 
 /-- Levels of the animacy prominence scale.
@@ -74,7 +74,7 @@ def AnimacyLevel.all : List AnimacyLevel := [.human, .animate, .inanimate]
 theorem AnimacyLevel.all_length : AnimacyLevel.all.length = 3 := by native_decide
 
 -- ============================================================================
--- § 2: Definiteness Scale (Aissen 2003, §2)
+-- § 2: Definiteness Scale (@cite{aissen-2003}, §2)
 -- ============================================================================
 
 /-- Levels of the definiteness prominence scale.
@@ -132,7 +132,7 @@ theorem definiteness_indSp_gt_nonSp :
     DefinitenessLevel.indefiniteSpecific.rank > DefinitenessLevel.nonSpecific.rank := by decide
 
 -- ============================================================================
--- § 4: Person Scale (Haspelmath 2021, §6)
+-- § 4: Person Scale (@cite{haspelmath-2021}, §6)
 -- ============================================================================
 
 /-- Person prominence scale.
@@ -166,7 +166,7 @@ theorem person_second_gt_third :
     PersonLevel.second.rank > PersonLevel.third.rank := by decide
 
 -- ============================================================================
--- § 5: Argument Role and Marking Channel (Haspelmath 2021, §2–5)
+-- § 5: Argument Role and Marking Channel (@cite{haspelmath-2021}, §2–5)
 -- ============================================================================
 
 /-- Argument roles spanning monotransitive and ditransitive clauses.
@@ -218,7 +218,7 @@ def ArgumentRole.lowDefault : ArgumentRole → Bool
   | _  => false
 
 /-- Two independent channels for marking argument properties on verbs or NPs
-    (Haspelmath 2019, Just 2024 §2).
+    (@cite{haspelmath-2019}, @cite{just-2024} §2).
 
     - **Flagging**: morphological case on the NP (e.g., accusative suffix)
     - **Indexing**: verbal agreement / cross-referencing (e.g., Set A/B markers)
@@ -234,7 +234,7 @@ inductive MarkingChannel where
   deriving DecidableEq, BEq, Repr
 
 -- ============================================================================
--- § 6: Default Prominence (Just 2024, §3; Haspelmath 2021, §7)
+-- § 6: Default Prominence (@cite{just-2024}, §3; @cite{haspelmath-2021}, §7)
 -- ============================================================================
 
 /-- Combined prominence rank for a cell in the animacy × definiteness grid.
@@ -314,9 +314,9 @@ def DifferentialMarkingProfile.isMonotoneA (p : DifferentialMarkingProfile) : Bo
 def DifferentialMarkingProfile.isMonotone (p : DifferentialMarkingProfile) : Bool :=
   match p.role with
   | .P => p.isMonotoneP
-  | .T => p.isMonotoneP  -- T behaves like P (Haspelmath 2021, §3)
+  | .T => p.isMonotoneP  -- T behaves like P (@cite{haspelmath-2021}, §3)
   | .A => p.isMonotoneA
-  | .R => p.isMonotoneA  -- R behaves like A (Haspelmath 2021, §3)
+  | .R => p.isMonotoneA  -- R behaves like A (@cite{haspelmath-2021}, §3)
   | .S => true            -- S is the reference point
 
 /-- Whether a marking profile depends only on animacy (definiteness is irrelevant). -/
@@ -388,7 +388,7 @@ theorem definitenessCutoffA_monotone (ch : MarkingChannel) (cutoff : Definitenes
   cases ch <;> cases cutoff <;> native_decide
 
 -- ============================================================================
--- § 10: Mirror Image Theorem (Just 2024, §3)
+-- § 10: Mirror Image Theorem (@cite{just-2024}, §3)
 -- ============================================================================
 
 /-- For any one-dimensional animacy cutoff, P marking at level `c` and A
@@ -403,7 +403,7 @@ theorem animacy_mirror_image (cutoff : AnimacyLevel) :
   cases cutoff <;> native_decide
 
 -- ============================================================================
--- § 11: Scenarios (Haspelmath 2021, §6)
+-- § 11: Scenarios (@cite{haspelmath-2021}, §6)
 -- ============================================================================
 
 /-- A monotransitive scenario: the person combination of A and P.
@@ -465,7 +465,7 @@ def Scenario.all : List Scenario :=
 theorem Scenario.all_length : Scenario.all.length = 9 := by native_decide
 
 -- ============================================================================
--- § 12: Role-Reference Association (Haspelmath 2021, §2)
+-- § 12: Role-Reference Association (@cite{haspelmath-2021}, §2)
 -- ============================================================================
 
 /-- The direction of differential marking: for a given role, does
@@ -498,7 +498,7 @@ theorem role_rank_ordering :
     ArgumentRole.T.roleRank > ArgumentRole.P.roleRank := by decide
 
 -- ============================================================================
--- § 13: Scenario Frequency Class (Haspelmath 2021, §8)
+-- § 13: Scenario Frequency Class (@cite{haspelmath-2021}, §8)
 -- ============================================================================
 
 /-- Frequency class for scenarios: downstream (usual) most frequent.

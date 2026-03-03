@@ -13,7 +13,7 @@ This result distinguishes RSA from pure information-theoretic optimization:
 the objective G_α can improve while actual communication accuracy temporarily
 decreases.
 
-## Counterexample Requirements (from Zaslavsky et al. 2020, page 3)
+## Counterexample Requirements (from @cite{zaslavsky-hu-levy-2020}, page 3)
 
 Three conditions are necessary for utility non-monotonicity:
 

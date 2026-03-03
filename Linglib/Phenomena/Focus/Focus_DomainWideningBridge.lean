@@ -109,7 +109,7 @@ def classifyContext (ctx : DiscourseContext W) (q : QUD W)
 -- D. Lexical entries for *just* and *only*
 -- ============================================================================
 
-/-- The unified lexical entry for *just* (Deo & Thomas 2025: §3).
+/-- The unified lexical entry for *just* (@cite{deo-thomas-2025}: §3).
 
     Not-at-issue: The CQ is the widest answerable construal of UQ_c.
     At-issue: The prejacent, interpreted relative to CQ's granularity.

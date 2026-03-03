@@ -98,7 +98,7 @@ inductive TensePhenomenon where
       exists implication (Musan 1995/1997) -/
   | lifetimeEffects
   /-- "If John were taller..." — past morphology, non-past semantics
-      (Iatridou 2000, beyond Deal's counterfactual tense) -/
+      (@cite{iatridou-2000}, beyond Deal's counterfactual tense) -/
   | fakePast
   /-- Hebrew-type optional SOT: "John said Mary {was/is} sick" —
       both possible with different readings -/
@@ -130,7 +130,7 @@ inductive TensePhenomenon where
     Fields are Bool because they describe categorical properties
     of the formal system, not graded judgments. -/
 structure TenseTheory where
-  /-- Theory name (e.g., "Abusch 1997") -/
+  /-- Theory name (e.g., "@cite{abusch-1997}") -/
   name : String
   /-- Full citation -/
   citation : String
@@ -266,7 +266,7 @@ def embeddedFrame {Time : Type*} (matrixFrame : ReichenbachFrame Time)
     - **shifted**: the embedded event occurred BEFORE the matrix event
       (R' < P' = E_matrix)
     - **simultaneous**: the embedded event occurred AT the matrix event time
-      (R' = P' = E_matrix), via SOT deletion (Ogihara 1989, §11.2 (83)) -/
+      (R' = P' = E_matrix), via SOT deletion (@cite{ogihara-1989}, §11.2 (83)) -/
 inductive EmbeddedTenseReading where
   | shifted       -- embedded event BEFORE matrix event (back-shifted)
   | simultaneous  -- embedded event AT matrix event time (SOT deletion)
@@ -398,7 +398,7 @@ theorem nonSOT_no_simultaneous :
 
 
 -- ════════════════════════════════════════════════════════════════
--- § Upper Limit Constraint (Abusch 1997)
+-- § Upper Limit Constraint (@cite{abusch-1997})
 -- ════════════════════════════════════════════════════════════════
 
 /-!
@@ -514,7 +514,7 @@ theorem bound_tense_simultaneous {Time : Type*} [LinearOrder Time]
 
 /-- A "then"-type temporal adverb.
     Cross-linguistically, "then" shifts the perspective time P away
-    from the speech time S (Zhao 2025, Tsilia, Zhao & Sharvit 2026). -/
+    from the speech time S (@cite{zhao-2025}, Tsilia, @cite{tsilia-zhao-sharvit-2026}). -/
 structure ThenAdverb where
   /-- Language name -/
   language : String

@@ -9,7 +9,7 @@ Connects the Kaqchikel Agent Focus fragment to the Minimalist analysis:
 anti-locality (Position.lean) drives OT competition (ConstraintEvaluation.lean),
 and the AF derivation emerges as optimal.
 
-## The Derivation (Erlewine 2016, §§3, 5)
+## The Derivation (@cite{erlewine-2016}, §§3, 5)
 
 ### Why the transitive derivation crashes
 

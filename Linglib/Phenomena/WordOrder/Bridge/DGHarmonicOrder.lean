@@ -10,7 +10,7 @@ word order is cheaper (§4 of `HarmonicOrder.lean`) to the WALS typological
 observation that harmonic word order is more common across languages
 (`Phenomena.WordOrder.Typology`).
 
-For each of the 3 construction pairs in WALS (Gibson 2025 Tables 1–3):
+For each of the 3 construction pairs in WALS (@cite{gibson-2025} Tables 1–3):
 - **DLM predicts**: disharmonic order is costly (higher TDL in recursive structures)
 - **WALS observes**: disharmonic order is rare (fewer languages)
 

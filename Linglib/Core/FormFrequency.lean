@@ -125,7 +125,7 @@ theorem frequency_proxy_matches_default (role : ArgumentRole)
   cases role <;> simp [isDefaultZone, frequencyProxy, prominenceRank] at * <;> omega
 
 -- ============================================================================
--- § 4: Voice Direction and Ditransitive Frames (Haspelmath 2021, §9)
+-- § 4: Voice Direction and Ditransitive Frames (@cite{haspelmath-2021}, §9)
 -- ============================================================================
 
 /-- Verb voice direction for direct/inverse systems.

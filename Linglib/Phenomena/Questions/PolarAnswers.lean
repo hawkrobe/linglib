@@ -17,7 +17,7 @@ import Linglib.Phenomena.Questions.Basic
 namespace Phenomena.Questions.PolarAnswers
 
 
-/-- G&S 1984: Yes and No are T⁰ (sentence adverbs, category S/S). @cite{fox-katzir-2011}
+/-- @cite{groenendijk-stokhof-1984}: Yes and No are T⁰ (sentence adverbs, category S/S). @cite{fox-katzir-2011}
     - yes ~ λp.p(a) (affirms the proposition)
     - no ~ λp.¬p(a) (negates the proposition)
 
@@ -58,7 +58,7 @@ def yesNoExamples : List YesNoDatum :=
   [doesJohnWalk_yes, doesJohnWalk_no]
 
 
-/-- G&S 1984, p. 324-326: A conditional answer to a polar question
+/-- @cite{groenendijk-stokhof-1984}, p. 324-326: A conditional answer to a polar question
     receives a BICONDITIONAL interpretation via exhaustification.
 
     "Does John walk?" → "If Mary walks"
@@ -106,7 +106,7 @@ def conditionalBiconditionalPrinciple : String :=
   "when answering a question about their consequent."
 
 
-/-- G&S 1984, p. 327: Similar to conditionals, disjunctions in answers
+/-- @cite{groenendijk-stokhof-1984}, p. 327: Similar to conditionals, disjunctions in answers
     receive exclusive interpretation via exhaustification.
 -/
 structure DisjunctionAnswerDatum where
@@ -144,7 +144,7 @@ def disjunctionAnswerExamples : List DisjunctionAnswerDatum :=
   [cookiesOrChocolates_exclusive, cookiesOrChocolates_inclusive]
 
 
-/-- G&S 1984, p. 331-334: Negation in interrogatives does NOT contribute
+/-- @cite{groenendijk-stokhof-1984}, p. 331-334: Negation in interrogatives does NOT contribute
     to semantic content. Instead, it marks a doxastic attitude:
     the questioner expects a negative answer.
 

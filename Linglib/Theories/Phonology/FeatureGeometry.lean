@@ -32,12 +32,12 @@ namespace Theories.Phonology.FeatureGeometry
 /-- Class nodes in the feature geometry tree. -/
 inductive GeomNode where
   | root           -- Root node (dominates everything)
-  | laryngeal      -- Laryngeal node (Clements 1985)
-  | supralaryngeal -- Supralaryngeal node (Clements 1985)
-  | place          -- Place node (Clements 1985)
-  | labial         -- Labial articulator (Sagey 1986)
-  | coronal        -- Coronal articulator (Sagey 1986)
-  | dorsal         -- Dorsal articulator (Sagey 1986)
+  | laryngeal      -- Laryngeal node (@cite{clements-1985})
+  | supralaryngeal -- Supralaryngeal node (@cite{clements-1985})
+  | place          -- Place node (@cite{clements-1985})
+  | labial         -- Labial articulator (@cite{sagey-1986})
+  | coronal        -- Coronal articulator (@cite{sagey-1986})
+  | dorsal         -- Dorsal articulator (@cite{sagey-1986})
   deriving DecidableEq, BEq, Repr
 
 -- ============================================================================
@@ -45,7 +45,7 @@ inductive GeomNode where
 -- ============================================================================
 
 /-- Parent of each node in the geometry tree. The supralaryngeal node
-    (Clements 1985, diagram (4)) mediates between root and place. -/
+    (@cite{clements-1985}, diagram (4)) mediates between root and place. -/
 def GeomNode.parent : GeomNode → Option GeomNode
   | .root           => none
   | .laryngeal      => some .root
@@ -158,7 +158,7 @@ theorem labial_depth : GeomNode.labial.depth = 3 := rfl
 theorem coronal_depth : GeomNode.coronal.depth = 3 := rfl
 theorem dorsal_depth : GeomNode.dorsal.depth = 3 := rfl
 
--- Natural class counts (Hayes 2009 complete inventory: 26 features)
+-- Natural class counts (@cite{hayes-2009} complete inventory: 26 features)
 
 theorem root_features_count : GeomNode.root.features.length = 26 := by native_decide
 theorem laryngeal_features_count : GeomNode.laryngeal.features.length = 3 := by native_decide

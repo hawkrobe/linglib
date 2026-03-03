@@ -1,7 +1,7 @@
 import Linglib.Phenomena.Modality.ConditionalModalityScenarioBridge
 
 /-!
-# Conditional Modality Bridge — Kratzer 2012 §2.9 Derivations
+# Conditional Modality Bridge — @cite{kratzer-2012} §2.9 Derivations
 
 Proves that specific Kratzer parameter settings yield specific conditional types
 (material, strict, ordered), and that a past-tense antecedent composes

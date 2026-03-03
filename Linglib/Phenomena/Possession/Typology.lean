@@ -129,7 +129,7 @@ inductive PossessiveClassification where
   deriving DecidableEq, BEq, Repr
 
 -- ============================================================================
--- Predicative Possession Strategies (Stassen 2009)
+-- Predicative Possession Strategies (@cite{stassen-2009})
 -- ============================================================================
 
 /-- How a language expresses predicative (clausal) possession: "I have X".
@@ -171,7 +171,7 @@ inductive PredicativePossession where
   deriving DecidableEq, BEq, Repr
 
 -- ============================================================================
--- Adnominal Possession Marking (Nichols 1986)
+-- Adnominal Possession Marking (@cite{nichols-1986})
 -- ============================================================================
 
 /-- How the possessive relationship is marked within a noun phrase

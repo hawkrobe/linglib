@@ -23,7 +23,7 @@ with part-whole structure.
 2. Higher-Order Properties: CUM, DIV, QUA, Atom
 3. Key Theorems (CUM/DIV/QUA interactions)
 4. Sum Homomorphism
-5. Overlap and Extensive Measures (Krifka 1998 §2.2)
+5. Overlap and Extensive Measures (@cite{krifka-1998} §2.2)
 6. QMOD: Quantizing Modification
 7. Maximality and Atom Counting
 8. QUA/CUM Pullback (contravariant functoriality)
@@ -233,7 +233,7 @@ theorem IsSumHom.cum_preimage {α β : Type*}
   exact hCum _ _ hx hy
 
 -- ════════════════════════════════════════════════════
--- § 5. Overlap and Extensive Measures (Krifka 1998 §2.2)
+-- § 5. Overlap and Extensive Measures (@cite{krifka-1998} §2.2)
 -- ════════════════════════════════════════════════════
 
 /-- Mereological overlap: x and y share a common part.
@@ -269,7 +269,7 @@ theorem extMeasure_qua {α : Type*} [SemilatticeSup α]
   exact absurd hsm (Rat.not_lt.mpr Rat.le_refl)
 
 -- ════════════════════════════════════════════════════
--- § 6. QMOD: Quantizing Modification (Krifka 1989)
+-- § 6. QMOD: Quantizing Modification (@cite{krifka-1989})
 -- ════════════════════════════════════════════════════
 
 /-- Quantizing modification: intersect predicate R with a measure constraint.
@@ -285,7 +285,7 @@ theorem qmod_sub {α μTy : Type*} {R : α → Prop} {μ : α → μTy} {n : μT
   h.1
 
 -- ════════════════════════════════════════════════════
--- § 7. Maximality and Atom Counting (Charlow 2021)
+-- § 7. Maximality and Atom Counting (@cite{charlow-2021})
 -- ════════════════════════════════════════════════════
 
 /-- Maximal in P under ≤: x is in P and no proper extension of x is in P.

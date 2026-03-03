@@ -219,7 +219,7 @@ theorem sign_alignment :
     from §5. The underspecified variant gets 0 (neutral) — the diagnostic
     theorem (§7) shows its empirical position varies by dimension.
 
-    The precise/approximate cells have the same signs as B&S 2024's
+    The precise/approximate cells have the same signs as @cite{beltrama-schwarz-2024}'s
     `precisionField` on all three social dimensions. -/
 def bsbField : IndexicalField Variant SocialDimension :=
   { association := λ v d => match v, d with
@@ -233,7 +233,7 @@ def bsbField : IndexicalField Variant SocialDimension :=
   , order := .third }
 
 /-- Precise and approximate have algebraically opposite associations on
-    every dimension — the same anti-symmetry as B&S 2024's `opposite_directions`. -/
+    every dimension — the same anti-symmetry as @cite{beltrama-schwarz-2024}'s `opposite_directions`. -/
 theorem opposite_directions (d : SocialDimension) :
     bsbField.association .precise d = - bsbField.association .approximate d := by
   cases d <;> simp [bsbField]

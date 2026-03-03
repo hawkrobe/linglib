@@ -72,8 +72,7 @@ namespace Semantics.Probabilistic.Measurement
 /-- Physical dimensions that measure functions can target.
 
 Simplex dimensions are directly measurable properties of entities. These
-are the dimensions accessible to compositional semantics (Bale & Schwarz
-2026: the grammar can compose via addition and multiplication along these).
+are the dimensions accessible to compositional semantics (@cite{bale-schwarz-2026}: the grammar can compose via addition and multiplication along these).
 
 Quotient dimensions (density, speed) are ratios of simplex dimensions.
 The grammar cannot derive them compositionally (No Division Hypothesis);
@@ -83,7 +82,7 @@ inductive Dimension where
   | volume       -- volume (milliliters, liters, gallons)
   | distance     -- distance (miles, kilometers, meters)
   | time         -- duration (hours, seconds, minutes)
-  | cardinality  -- counting (Scontras 2014: CARD as measure term)
+  | cardinality  -- counting (@cite{scontras-2014}: CARD as measure term)
   | temperature  -- temperature (degrees Celsius, Fahrenheit)
   | area         -- area (square meters, acres)
   deriving Repr, DecidableEq, BEq
@@ -189,7 +188,7 @@ def card (E : Type*) (cardFn : E → ℚ) (h : ∀ e, cardFn e ≥ 0) : MeasureT
 -- ============================================================================
 
 /-- A predicate P is **quantity-uniform** with respect to measure function μ
-(Scontras 2014, Def. 2.5):
+(@cite{scontras-2014}, Def. 2.5):
 
     QU_μ(P) ↔ ∀ x y, P(x) ∧ P(y) ∧ μ(x) = μ(y) → P(x ⊕ y)
 
@@ -207,7 +206,7 @@ def IsQuantityUniform {E : Type*} (P : E → Bool) (μ : MeasureFn E)
     P (sum x y) = true
 
 -- ============================================================================
--- § 6. No Division Hypothesis (Bale & Schwarz 2026)
+-- § 6. No Division Hypothesis (@cite{bale-schwarz-2026})
 -- ============================================================================
 
 /-- A composition operation on quantities. -/
@@ -256,7 +255,7 @@ def MeasureFn.toHasDegree {E : Type} (μ : MeasureFn E) : Core.Scale.HasDegree E
   { degree := μ.apply }
 
 -- ============================================================================
--- § 8. Quantizing Nouns (Scontras 2014, Ch. 3)
+-- § 8. Quantizing Nouns (@cite{scontras-2014}, Ch. 3)
 -- ============================================================================
 
 /-- Classification of quantizing nouns: nouns that turn mass terms into

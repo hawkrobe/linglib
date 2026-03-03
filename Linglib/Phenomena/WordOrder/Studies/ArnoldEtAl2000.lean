@@ -174,11 +174,11 @@ theorem constructions_differ :
 -- ============================================================================
 
 /-- Arnold et al.'s "given" (mentioned in prior 10 clauses) maps to
-    `DiscourseStatus.given` ([G]-marked in K&S 2020). -/
+    `DiscourseStatus.given` ([G]-marked in @cite{kratzer-selkirk-2020}). -/
 def arnoldGiven : DiscourseStatus := .given
 
 /-- Arnold et al.'s "new" (not previously mentioned) maps to
-    `DiscourseStatus.new` (unmarked default in K&S 2020).
+    `DiscourseStatus.new` (unmarked default in @cite{kratzer-selkirk-2020}).
     Note: Arnold et al.'s "new" is broader than K&S's `.new` — it includes
     material that K&S would mark as `.focused` ([FoC]-marked, contrasted). -/
 def arnoldNew : DiscourseStatus := .new

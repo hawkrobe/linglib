@@ -3,7 +3,7 @@ import Linglib.Theories.Semantics.Dynamic.Systems.DynamicGQ.UpdateTheoretic
 import Linglib.Theories.Semantics.Dynamic.Effects.Nondeterminism.PointwiseUpdate
 
 /-!
-# Charlow 2021: Cumulative Readings Bridge
+# @cite{charlow-2021}: Cumulative Readings Bridge
 @cite{charlow-2021}
 
 Connects the empirical data (Scenario A/B) to the dynamic GQ theory.

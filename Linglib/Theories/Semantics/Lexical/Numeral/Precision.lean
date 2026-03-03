@@ -46,7 +46,7 @@ def matchesPrecision (mode : PrecisionMode) (stated actual : ℚ) (base : ℚ :=
   projectPrecision mode stated base == projectPrecision mode actual base
 
 -- ════════════════════════════════════════════════════
--- Adaptive Pragmatic Halo (Woodin et al. 2024, Krifka 2007, Lasersohn 1999)
+-- Adaptive Pragmatic Halo (@cite{woodin-winter-bhatt-2024}, @cite{krifka-2007}, @cite{lasersohn-1999})
 -- ════════════════════════════════════════════════════
 
 open Core.Roundness in

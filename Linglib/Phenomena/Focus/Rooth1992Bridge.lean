@@ -109,7 +109,7 @@ theorem unfeatured_preserves_oValue :
     altPredicateUnfeatured.oValue = "ate the beans" := rfl
 
 /-- Unfeatured A-value is a singleton containing the O-value.
-    Non-focused expressions evoke no alternatives (Rooth 1992 §1). -/
+    Non-focused expressions evoke no alternatives (@cite{rooth-1992} §1). -/
 theorem unfeatured_singleton_aValue :
     altPredicateUnfeatured.aValue = ["ate the beans"] := rfl
 
@@ -260,7 +260,7 @@ theorem maryAteBeans_not_in_objectFocus :
     isAnswer fv_objectFocus maryAteBeans = false := by native_decide
 
 -- ═══════════════════════════════════════════════════════════════════════
--- §7  "Only" Association (Rooth 1992 §2.1)
+-- §7  "Only" Association (@cite{rooth-1992} §2.1)
 -- ═══════════════════════════════════════════════════════════════════════
 
 /-! Rooth §2.1, constraint (26a): the domain of quantification C of

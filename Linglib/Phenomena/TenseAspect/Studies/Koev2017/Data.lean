@@ -11,7 +11,7 @@ place). Direct witness (same time, same place) is infelicitous.
 The paper also demonstrates that the evidential contribution is
 **not at issue** (projects past negation and modals) and that the speaker
 is **fully committed** to the proposition (non-modal analysis, contra
-Izvorski 1997).
+@cite{izvorski-1997}).
 
 -/
 
@@ -52,7 +52,7 @@ structure EvidentialDatum where
   deriving Repr, BEq
 
 -- ════════════════════════════════════════════════════
--- § 3. Core △ Data (Koev 2017, §4)
+-- § 3. Core △ Data (@cite{koev-2017}, §4)
 -- ════════════════════════════════════════════════════
 
 /-- (3)/(25a): Standard indirect evidence — speaker was not present when

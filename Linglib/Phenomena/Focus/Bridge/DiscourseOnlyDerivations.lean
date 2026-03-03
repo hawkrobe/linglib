@@ -5,7 +5,7 @@ import Linglib.Phenomena.Focus.DiscourseOnly
 # End-to-End Derivation Chains for Discourse *only*
 @cite{ippolito-kiss-williams-2025}
 
-Concrete instantiations of the discourse *only* theory (IKW 2025 Def. 16)
+Concrete instantiations of the discourse *only* theory (@cite{ippolito-kiss-williams-2025} Def. 16)
 that derive the acceptability of specific cross-linguistic examples.
 
 ## Architecture

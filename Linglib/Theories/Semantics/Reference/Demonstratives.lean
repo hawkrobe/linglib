@@ -80,7 +80,7 @@ def TrueDemonstrative.character {C W E : Type*} [Inhabited E]
     | some e => rigid e
     | none   => rigid default
 
-/-- Principle 2 (Kaplan 1989 §XVI): Complete demonstratives are directly
+/-- Principle 2 (@cite{kaplan-1989} §XVI): Complete demonstratives are directly
 referential — at every context, their content is rigid. -/
 theorem demo_directlyReferential {C W E : Type*} [Inhabited E]
     (td : TrueDemonstrative C W E) :

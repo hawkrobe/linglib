@@ -432,7 +432,7 @@ theorem ask_triple_consistency :
     deriveMoodSelector ask = .moodNeutral := by native_decide
 
 -- ============================================================================
--- G. Bridge 5: CTPClass → ComplementSize (Egressy 2026)
+-- G. Bridge 5: CTPClass → ComplementSize (@cite{egressy-2026})
 -- ============================================================================
 
 /-! ## G1. Complement size by CTP class

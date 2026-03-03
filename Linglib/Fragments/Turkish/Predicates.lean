@@ -80,7 +80,7 @@ def endiselen : TurkishVerbEntry where
 
 /-! ## Causative predicates
 
-Turkish morphological causative suffix -dür (Song 1996: COMPACT type).
+Turkish morphological causative suffix -dür (@cite{song-1996}: COMPACT type).
 Allomorphs: -dür, -tür, -dir, -tir (vowel harmony).
 "Ali Hasan-ı öl-dür-dü" = "Ali killed Hasan" (öl 'die' + -dür CAUS) -/
 

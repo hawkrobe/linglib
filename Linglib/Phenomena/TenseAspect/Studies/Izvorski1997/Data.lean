@@ -28,7 +28,7 @@ namespace Phenomena.TenseAspect.Studies.Izvorski1997.Data
 -- § 1. Languages with PE
 -- ════════════════════════════════════════════════════
 
-/-- Languages exhibiting the Perfect of Evidentiality (Izvorski 1997, fn. 1).
+/-- Languages exhibiting the Perfect of Evidentiality (@cite{izvorski-1997}, fn. 1).
     The paper's body text discusses Bulgarian, Turkish, and Norwegian;
     footnote 1 lists ~25 languages across 6 families. -/
 inductive PELanguage where

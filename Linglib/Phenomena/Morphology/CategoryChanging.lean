@@ -53,7 +53,7 @@ def RootFamily.categoryCount (rf : RootFamily) : Nat :=
   cats.length
 
 -- ============================================================================
--- § 3: English Root Families (Panagiotidis 2015 §5.2, Marantz 1997)
+-- § 3: English Root Families (@cite{panagiotidis-2015} §5.2, @cite{marantz-1997})
 -- ============================================================================
 
 /-- √DESTROY: destroy (V), destruction (N), destructive (A) -/

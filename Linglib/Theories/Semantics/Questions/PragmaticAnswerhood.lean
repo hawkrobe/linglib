@@ -12,7 +12,7 @@ Pragmatic answerhood theory from @cite{groenendijk-stokhof-1984}, Chapter IV.
 Semantic answerhood is a **limit case** of pragmatic answerhood.
 When J = I (total ignorance), pragmatic answerhood reduces to semantic answerhood.
 
-## Core Definitions (G&S 1984, pp. 352-358)
+## Core Definitions (@cite{groenendijk-stokhof-1984}, pp. 352-358)
 
 Given:
 - I = set of all indices (worlds)
@@ -37,7 +37,7 @@ namespace Semantics.Questions
 
 /-- P **is** a pragmatic answer to Q in J iff P ∩ J is exactly a cell of J/Q.
 
-G&S 1984, p. 352: "P is a pragmatic answer to Q in J iff P ∩ J ∈ J/Q"
+@cite{groenendijk-stokhof-1984}, p. 352: "P is a pragmatic answer to Q in J iff P ∩ J ∈ J/Q"
 
 This is the strict notion: the intersection must exactly match a cell. -/
 def isPragmaticAnswer {W : Type*} (p : W -> Bool) (q : GSQuestion W)
@@ -50,7 +50,7 @@ def isPragmaticAnswer {W : Type*} (p : W -> Bool) (q : GSQuestion W)
 
 /-- P **gives** a pragmatic answer to Q in J iff P ∩ J ⊆ some cell of J/Q.
 
-G&S 1984, p. 352: "P gives a pragmatic answer to Q in J iff
+@cite{groenendijk-stokhof-1984}, p. 352: "P gives a pragmatic answer to Q in J iff
 P ∩ J ≠ ∅ ∧ ∃P' ∈ J/Q: P ∩ J ⊆ P'"
 
 This is the weaker notion: the intersection is contained in some cell. -/
@@ -67,7 +67,7 @@ def givesPragmaticAnswer {W : Type*} (p : W -> Bool) (q : GSQuestion W)
 
 /-- Giving a pragmatic answer is weaker than being a pragmatic answer.
 
-G&S 1984, p. 352: "If P is a pragmatic answer, then P gives a pragmatic answer." -/
+@cite{groenendijk-stokhof-1984}, p. 352: "If P is a pragmatic answer, then P gives a pragmatic answer." -/
 theorem isPragmaticAnswer_implies_gives {W : Type*}
     (p : W -> Bool) (q : GSQuestion W) (j : InfoSet W) (worlds : List W) :
     isPragmaticAnswer p q j worlds = true ->
@@ -84,7 +84,7 @@ theorem isPragmaticAnswer_implies_gives {W : Type*}
 
 /-- Semantic answerhood is a special case of pragmatic answerhood when J = I.
 
-G&S 1984, p. 355: "Semantic answers are the answers one is to address to a
+@cite{groenendijk-stokhof-1984}, p. 355: "Semantic answers are the answers one is to address to a
 questioner who has no factual information at all."
 
 When the information set is total (J = I) and P is non-vacuous,
@@ -130,7 +130,7 @@ example: W={a,b,c}, Q partitions {a}|{b}|{c}, J'={a,b}, J={a,b,c}, P={a,c}.
 P gives an answer in J' (P∩J'={a} ⊆ cell {a}) but not in J (P∩J={a,c}
 straddles cells).
 
-G&S 1984, p. 355: "Reducing the information set cannot make a non-answer
+@cite{groenendijk-stokhof-1984}, p. 355: "Reducing the information set cannot make a non-answer
 into an answer." This holds when P represents the answerer's evidence,
 which is naturally contained in the current information set. -/
 theorem pragmaticAnswer_monotone_up {W : Type*}
@@ -198,7 +198,7 @@ abbrev TermDenotation (W E : Type*) := W -> E
 
 /-- Pragmatically rigid: term denotes the same individual across all indices in J.
 
-G&S 1984, p. 359: "Your father" is not semantically rigid, but pragmatically
+@cite{groenendijk-stokhof-1984}, p. 359: "Your father" is not semantically rigid, but pragmatically
 rigid for anyone who knows who their father is. -/
 def pragmaticallyRigid {W E : Type*} [DecidableEq E]
     (t : TermDenotation W E) (j : InfoSet W) (worlds : List W) : Bool :=
@@ -209,7 +209,7 @@ def pragmaticallyRigid {W E : Type*} [DecidableEq E]
 
 /-- Semantically rigid: term denotes the same individual across ALL indices.
 
-G&S 1984: Proper names are semantically rigid. Definite descriptions
+@cite{groenendijk-stokhof-1984}: Proper names are semantically rigid. Definite descriptions
 typically are not. -/
 def semanticallyRigid {W E : Type*} [DecidableEq E]
     (t : TermDenotation W E) (worlds : List W) : Bool :=
@@ -217,7 +217,7 @@ def semanticallyRigid {W E : Type*} [DecidableEq E]
 
 /-- Pragmatically definite: term picks out a unique individual in J.
 
-G&S 1984, p. 360: An indefinite "an elderly lady wearing glasses" can be
+@cite{groenendijk-stokhof-1984}, p. 360: An indefinite "an elderly lady wearing glasses" can be
 pragmatically definite if the questioner's information uniquely identifies
 the referent. -/
 def pragmaticallyDefinite {W E : Type*} [DecidableEq E]
@@ -315,7 +315,7 @@ theorem semanticallyRigid_implies_pragmaticallyRigid {W E : Type*} [DecidableEq 
 /-- A term is pragmatically exhaustive for a question Q in J if it picks out
 all and only the individuals satisfying the question's predicate in J.
 
-G&S 1984, p. 358: Quantification is restricted to J. -/
+@cite{groenendijk-stokhof-1984}, p. 358: Quantification is restricted to J. -/
 def pragmaticallyExhaustive {W E : Type*} [DecidableEq E]
     (t : TermDenotation W E) (predicate : W -> E -> Bool)
     (j : InfoSet W) (worlds : List W) : Bool :=
@@ -404,7 +404,7 @@ theorem nonExhaustive_witness {W E : Type} [DecidableEq E]
 
 -- Institutional vs Ordinary Question-Answering
 
-/-- G&S 1984, p. 363, 390: In highly institutionalized settings (courts, etc.),
+/-- @cite{groenendijk-stokhof-1984}, p. 363, 390: In highly institutionalized settings (courts, etc.),
 semantic answers are required because information sets vary widely.
 
 Questions are posed on behalf of a social community with diverse information
@@ -417,7 +417,7 @@ def requiresSemanticAnswer (_institutionalized : Bool) : Bool :=
 /-- The more diverse the audience's information states, the closer
 answers should stay to semantic answerhood.
 
-G&S 1984, p. 355: "Since we know our information about the information
+@cite{groenendijk-stokhof-1984}, p. 355: "Since we know our information about the information
 of others to be imperfect, the safest way to answer a question is to
 stay as close to semantic answers as one can." -/
 theorem diverse_audience_prefers_semantic {W E : Type*} [DecidableEq E]

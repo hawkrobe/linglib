@@ -39,7 +39,7 @@ open Semantics.Events
 -- ════════════════════════════════════════════════════
 
 /-- Two events are temporally disjoint when their temporal traces do not
-    overlap (Koev 2017, first disjunct of Definition 24). This rules out
+    overlap (@cite{koev-2017}, first disjunct of Definition 24). This rules out
     direct perception: if the speaker was present for the event, the
     evidential is infelicitous. -/
 def temporallyDisjoint {Time : Type*} [LinearOrder Time]
@@ -50,7 +50,7 @@ def temporallyDisjoint {Time : Type*} [LinearOrder Time]
 -- § 2. Spatiotemporal Distance △
 -- ════════════════════════════════════════════════════
 
-/-- Spatiotemporal distance △ (Koev 2017, Definition 24).
+/-- Spatiotemporal distance △ (@cite{koev-2017}, Definition 24).
     Two events are spatiotemporally distant if either their temporal traces
     don't overlap or they occur at different locations. Parameterized over
     a location function `loc : Ev Time → L` since `Ev` lacks a built-in
@@ -99,7 +99,7 @@ theorem overlapping_not_disjoint {Time : Type*} [LinearOrder Time]
   fun hd => hd h
 
 /-- Spatial distance alone suffices for △, regardless of temporal
-    overlap (Koev 2017, ex. 25b: smoke from chimney). -/
+    overlap (@cite{koev-2017}, ex. 25b: smoke from chimney). -/
 theorem spatiotemporallyDistant_of_different_location
     {Time : Type*} [LinearOrder Time] {L : Type*} [DecidableEq L]
     (loc : Ev Time → L) (e₁ e₂ : Ev Time)

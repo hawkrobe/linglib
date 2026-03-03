@@ -161,7 +161,7 @@ theorem compositionalRSA_local_excludes_SA :
 theorem compositionalRSA_global_allows_SA :
     compositionalMeaning ⟨.SA, .global⟩ = true := rfl
 
--- SECTION 6: Connection to Franke 2011 and IBR
+-- SECTION 6: Connection to @cite{franke-2011} and IBR
 
 /-!
 ## The IBR Perspective

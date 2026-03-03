@@ -101,7 +101,7 @@ theorem occasion_presup_projects {W : Type*}
     (negative (occasionEventPhase occasion engagement outcome)).presupposition := rfl
 
 -- ════════════════════════════════════════════════════
--- § 3. Asymmetric Filtering (Heim 1983)
+-- § 3. Asymmetric Filtering (@cite{heim-1983})
 -- ════════════════════════════════════════════════════
 
 /-- Under Heim's asymmetric filtering, the local context at the antecedent

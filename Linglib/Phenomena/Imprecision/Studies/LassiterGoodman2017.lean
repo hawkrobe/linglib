@@ -100,11 +100,11 @@ inductive Utterance where
 
 open Semantics.Degree (positiveMeaning negativeMeaning)
 
-/-- ⟦tall⟧(θ)(x) = 1 iff height(x) > θ (Kennedy 2007, positive form). -/
+/-- ⟦tall⟧(θ)(x) = 1 iff height(x) > θ (@cite{kennedy-2007}, positive form). -/
 def tallMeaning (θ : Threshold) (h : Height) : Bool :=
   positiveMeaning h θ
 
-/-- ⟦short⟧(θ)(x) = 1 iff height(x) < θ (Kennedy 2007, negative form). -/
+/-- ⟦short⟧(θ)(x) = 1 iff height(x) < θ (@cite{kennedy-2007}, negative form). -/
 def shortMeaning (θ : Threshold) (h : Height) : Bool :=
   negativeMeaning h θ
 

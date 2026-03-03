@@ -10,9 +10,9 @@ Conditional morphemes in Japanese and their HC/PC restrictions.
 
 - **-ra / -tara**: HC-only. Cannot mark premise conditionals.
 - **nara**: Can mark both HC and PC. PC reading available when antecedent
-  echoes prior discourse (Lassiter 2025, ex. 15).
+  echoes prior discourse (@cite{cao-white-lassiter-2025}, ex. 15).
 - **-(r)eba**: Can mark both HC and PC. Used in Anderson conditionals with
-  Non-Past consequent (Mizuno 2024, ex. 4a).
+  Non-Past consequent (@cite{mizuno-2024}, ex. 4a).
 -/
 
 namespace Fragments.Japanese.Conditionals
@@ -22,7 +22,7 @@ open Semantics.Conditionals (ConditionalMarker ConditionalMarkerType)
 /-- Japanese -ra / -tara: HC-only conditional marker.
 
     Cannot mark premise conditionals. LNCs with -ra are degraded
-    (Lassiter 2025, ex. 16). -/
+    (@cite{cao-white-lassiter-2025}, ex. 16). -/
 def ra : ConditionalMarker where
   language := "Japanese"
   marker := "-ra/-tara"
@@ -33,7 +33,7 @@ def ra : ConditionalMarker where
 /-- Japanese nara: HC and PC conditional marker.
 
     Can mark premise conditionals. LNCs with nara are acceptable
-    (Lassiter 2025, ex. 15). -/
+    (@cite{cao-white-lassiter-2025}, ex. 15). -/
 def nara : ConditionalMarker where
   language := "Japanese"
   marker := "nara"

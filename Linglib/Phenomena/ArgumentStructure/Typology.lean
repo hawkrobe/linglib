@@ -757,12 +757,12 @@ theorem some_languages_have_both_app_and_antipass :
   native_decide
 
 -- ============================================================================
--- Antipassive Alignment Data (from Polinsky 2013, Table 1)
+-- Antipassive Alignment Data (from @cite{polinsky-2013}, Table 1)
 -- ============================================================================
 
 /-- Languages with antipassives classified by alignment, from WALS Ch 108
     Table 1. This is the key empirical evidence for the antipassive-ergativity
-    debate (Silverstein 1976, Dixon 1979 vs Heath 1976, Givon 1984). -/
+    debate (@cite{silverstein-1976}, Dixon 1979 vs Heath 1976, Givon 1984). -/
 structure AntipassiveAlignmentDatum where
   language : String
   alignment : AlignmentType

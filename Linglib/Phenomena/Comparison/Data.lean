@@ -11,7 +11,7 @@ Comparison constructions are distinct from **gradability** (the property of
 predicates that admit degree modification) and **imprecision** (tolerance-based
 approximate truth). A predicate can be gradable without appearing in any
 comparison construction, and comparison constructions apply across syntactic
-categories (nominal, verbal, adjectival — Wellwood 2015).
+categories (nominal, verbal, adjectival — @cite{wellwood-2015}).
 
 ## Organization
 

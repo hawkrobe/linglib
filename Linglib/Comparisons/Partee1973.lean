@@ -39,7 +39,7 @@ don't quantify.
 
 ## Structural Parallel to Variables.lean
 
-The definitions here are the temporal counterparts of H&K (1998) entity
+The definitions here are the temporal counterparts of @cite{heim-kratzer-1998} entity
 variable infrastructure in `Semantics.Montague.Variables`. Both are
 instantiations of the generic `Core.VarAssignment` infrastructure:
 
@@ -162,7 +162,7 @@ def narrativeAnaphora {Time : Type*} (P Q : Time → Bool)
 
 
 -- ════════════════════════════════════════════════════════════════
--- § 7. Referential ↔ Priorean Bridge (Ogihara 1989)
+-- § 7. Referential ↔ Priorean Bridge (@cite{ogihara-1989})
 -- ════════════════════════════════════════════════════════════════
 
 /-! The Priorean operators `PAST`/`PRES`/`FUT` in `Tense/Basic.lean` and the
@@ -201,7 +201,7 @@ theorem bound_tense_receives_attitude_time {Time α : Type*}
 
 
 -- ════════════════════════════════════════════════════════════════
--- § 8. Zero Forms and Locality (Kratzer 1998)
+-- § 8. Zero Forms and Locality (@cite{heim-kratzer-1998})
 -- ════════════════════════════════════════════════════════════════
 
 /-! Kratzer (1998 §3) extends the Partee analogy to a FOURTH parallel:

@@ -28,7 +28,7 @@ open Semantics.Reference.Kaplan
 variable {W : Type*} {E : Type*} {P : Type*} {T : Type*}
 
 -- ════════════════════════════════════════════════════════════════
--- § Amharic Shifted Indexicals (Schlenker 2003)
+-- § Amharic Shifted Indexicals (@cite{schlenker-2003})
 -- ════════════════════════════════════════════════════════════════
 
 /-- Amharic first person pronoun: reads the agent from the innermost
@@ -86,7 +86,7 @@ theorem no_shift_agreement (c : KContext W E P T) :
     ContextTower.depth, List.length_nil, List.take, List.foldl]
 
 -- ════════════════════════════════════════════════════════════════
--- § Uniform Shift Parameter (Anand & Nevins 2004)
+-- § Uniform Shift Parameter (@cite{anand-nevins-2004})
 -- ════════════════════════════════════════════════════════════════
 
 /-- @cite{anand-nevins-2004} Uniform Shift: in languages with indexical
@@ -129,7 +129,7 @@ theorem uniform_depth (u : UniformShiftParam) :
     (u.pronYou (W := W) (E := E) (P := P) (T := T)).depth := rfl
 
 -- ════════════════════════════════════════════════════════════════
--- § Mixed Shift Lexicon (Deal 2020)
+-- § Mixed Shift Lexicon (@cite{deal-2020})
 -- ════════════════════════════════════════════════════════════════
 
 /-- @cite{deal-2020}: Nez Perce exhibits MIXED shifting — person indexicals

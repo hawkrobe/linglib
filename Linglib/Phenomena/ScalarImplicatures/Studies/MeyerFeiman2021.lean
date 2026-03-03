@@ -45,7 +45,7 @@ processing one facilitates processing the other.
 
 The pattern falsifies any uniform account: shared ALT-NEG between *some*
 and numerals, but FC uses an entirely different mechanism (assertion-based
-per Bar-Lev & Fox 2017, not negation-based).
+per @cite{bar-lev-fox-2017}, not negation-based).
 
 -/
 

@@ -3,7 +3,7 @@ import Linglib.Theories.Semantics.Lexical.Measurement
 import Linglib.Theories.Semantics.Degree.Comparative
 
 /-!
-# Compositional Comparative Derivation (Wellwood 2015, §2–3)
+# Compositional Comparative Derivation (@cite{wellwood-2015}, §2–3)
 
 @cite{wellwood-2015} @cite{cariani-santorio-wellwood-2024} @cite{schwarzschild-2008}@cite{wellwood-2015} argues that comparatives across nominal, verbal, and
 adjectival domains share a uniform DegP pipeline yielding truth conditions
@@ -56,7 +56,7 @@ inductive ComparativeDomain where
 -- § 2. Universal Comparative Truth Condition
 -- ════════════════════════════════════════════════════
 
-/-- Universal comparative truth condition (Wellwood 2015, eq. 35/43/59).
+/-- Universal comparative truth condition (@cite{wellwood-2015}, eq. 35/43/59).
 
     "a V-s more than b does" is true iff there exists an eventuality ea
     with `role(a, ea)` and `P(ea)` such that for ALL eventualities eb
@@ -108,7 +108,7 @@ def adjectivalComparative {Entity Time : Type*} [LE Time]
 -- § 4. Maximality Reduction
 -- ════════════════════════════════════════════════════
 
-/-- Maximality reduction (Wellwood 2015, passim).
+/-- Maximality reduction (@cite{wellwood-2015}, passim).
 
     Under unique-event assumptions — each individual has exactly one
     eventuality satisfying P with the appropriate role — the full

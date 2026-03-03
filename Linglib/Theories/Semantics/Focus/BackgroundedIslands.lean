@@ -575,7 +575,7 @@ theorem qud_complementarity :
 
 /-- **Backgroundedness = DiscourseStatus.given**: The paper's notion of
 "backgrounded" maps directly to Kratzer & Selkirk's [G]-marked status
-in the existing K&S 2020 formalization.
+in the existing @cite{kratzer-selkirk-2020} formalization.
 
 This grounds the paper's informal notion of backgroundedness in the
 formal two-feature system already in the codebase. -/

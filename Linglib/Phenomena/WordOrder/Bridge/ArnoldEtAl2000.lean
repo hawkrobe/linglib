@@ -88,7 +88,7 @@ theorem heavy_last_consistent_with_dlm :
   heavy_last
 
 -- ============================================================================
--- §2: The Pure-Discourse Account (Givón 1988)
+-- §2: The Pure-Discourse Account (@cite{givon-1988})
 -- ============================================================================
 
 /-!
@@ -138,7 +138,7 @@ theorem pure_discourse_overpredicts_shift :
     shiftResult.newnessSig = false := by native_decide
 
 -- ============================================================================
--- §3: The CCG Categorical Account (Steedman 2000)
+-- §3: The CCG Categorical Account (@cite{steedman-2000})
 -- ============================================================================
 
 /-!

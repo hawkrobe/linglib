@@ -32,7 +32,7 @@ open Semantics.Reference.Basic (Context Character Content)
 
 /-! ## LD Structure -/
 
-/-- Full LD model structure (Kaplan 1989 §XVIII).
+/-- Full LD model structure (@cite{kaplan-1989} §XVIII).
 
 An LD structure provides the domains (worlds, entities, positions, times),
 context parameters (agent, world, time, position projections), and the
@@ -50,7 +50,7 @@ structure LDStructure where
   C : Type
   /-- Agent of a context -/
   cAgent : C → U
-  /-- Addressee of a context (Speas & Tenny 2003 extension) -/
+  /-- Addressee of a context (@cite{speas-tenny-2003} extension) -/
   cAddressee : C → U
   /-- World of a context -/
   cWorld : C → W

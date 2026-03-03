@@ -63,7 +63,7 @@ def crossSerialDeps (n : Nat) : List Dependency :=
 def nestedDeps (n : Nat) : List Dependency :=
   List.range n |>.map (λ i => ⟨i + 1, n - i⟩)
 
--- Dutch Examples (Steedman 2000)
+-- Dutch Examples (@cite{steedman-2000})
 
 /--
 Dutch cross-serial dependency example.

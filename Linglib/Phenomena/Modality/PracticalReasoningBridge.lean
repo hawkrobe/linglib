@@ -1,7 +1,7 @@
 import Linglib.Theories.Semantics.Modality.Kratzer
 
 /-!
-# Practical Reasoning — Kratzer 2012 §2.8
+# Practical Reasoning — @cite{kratzer-2012} §2.8
 
 Teleological modality: "To get to Harlem, you have to take the A train."
 

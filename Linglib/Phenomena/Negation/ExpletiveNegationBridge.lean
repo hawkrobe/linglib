@@ -18,12 +18,12 @@ conditions because MAX picks the same informative bound from both B and ¬B.
 
 | Construction  | Ambidirectional? | Licenses EN? | Source               |
 |---------------|-----------------|--------------|----------------------|
-| *before*      | ✓               | ✓ (50 langs) | Jin & Koenig 2021    |
-| *after*       | ✗               | ✗            | Rett 2026            |
-| *while*       | ✗               | ✗            | Rett 2026            |
-| *until*       | ✓               | ✓            | Rett 2026 §5         |
-| comparative   | ✓               | ✓ (6+ langs) | Jin & Koenig 2021    |
-| *fear/worry*  | ✓               | ✓ (39 langs) | Jin & Koenig 2021    |
+| *before*      | ✓               | ✓ (50 langs) | @cite{jin-koenig-2021}    |
+| *after*       | ✗               | ✗            | @cite{rett-2026}            |
+| *while*       | ✗               | ✗            | @cite{rett-2026}            |
+| *until*       | ✓               | ✓            | @cite{rett-2026} §5         |
+| comparative   | ✓               | ✓ (6+ langs) | @cite{jin-koenig-2021}    |
+| *fear/worry*  | ✓               | ✓ (39 langs) | @cite{jin-koenig-2021}    |
 
 ## High vs Low EN @cite{greco-2020}
 
@@ -131,7 +131,7 @@ def italianExclamative : ENDatum :=
   , enType := .high, isOptional := false
   , licensesWeakNPIs := false }
 
-/-- Italian surprise negation (Greco 2020, §2–4): *non* merges in the CP
+/-- Italian surprise negation (@cite{greco-2020}, §2–4): *non* merges in the CP
     layer (above FinP) rather than in the TP-internal NegP. High EN —
     obligatory, non-truth-conditional, does not license weak NPIs. -/
 def italianSneg : ENDatum :=
@@ -232,7 +232,7 @@ def ENConstruction.hasEN : ENConstruction → Bool
     This is the central empirical claim of @cite{rett-2026}: the
     ambidirectionality classification (derived from the semantics of
     MAX on closed intervals) perfectly predicts the cross-linguistic
-    distribution of EN (observed in Jin & Koenig 2021). -/
+    distribution of EN (observed in @cite{jin-koenig-2021}). -/
 theorem rett_generalization (c : ENConstruction) :
     c.hasEN = c.isAmbidirectional := by
   cases c <;> rfl
@@ -243,7 +243,7 @@ theorem rett_generalization (c : ENConstruction) :
 
 /-! ### Connecting Fragment entries to EN predictions
 
-Rett (2026, fn. on Kennedy & McNally 2005) predicts that EN in
+Rett (2026, fn. on @cite{kennedy-mcnally-2005}) predicts that EN in
 comparatives is sensitive to scale type. The mechanism:
 - The *than*-clause denotes a degree set with a boundary at μ(b).
 - Ambidirectionality requires that this boundary is **shared** between
@@ -309,10 +309,10 @@ vacuous but pragmatically meaningful. The use of the marked negated form
 (see `MannerEffect` in `Adjective.Comparative`):
 
 1. **French *avant que... ne***: "before ¬B" → "well before B" (temporal
-   distance reading; Cépeda 2018, Krifka 2010b).
+   distance reading; @cite{cepeda-2018}, @cite{krifka-2010b}).
 
 2. **Italian comparative + *non***: "più alto di quanto non sia" →
-   "much taller than" (evaluative reading; Napoli & Nespor 1976).
+   "much taller than" (evaluative reading; @cite{napoli-nespor-1976}).
 
 3. **Negative verbs (doubt, fear, worry)**: These are "ambidirectional"
    embedding verbs — *fear that p* and *fear that ¬p*

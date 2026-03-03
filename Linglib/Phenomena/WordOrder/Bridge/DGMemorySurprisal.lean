@@ -101,7 +101,7 @@ theorem polish_only_shared_exception :
 
 /-! ### Harmonic Consistency ↔ Efficiency
 
-The DLM explanation for the head-direction generalization (Gibson 2025,
+The DLM explanation for the head-direction generalization (@cite{gibson-2025},
 formalized in HarmonicOrder.lean) predicts that languages with consistent
 head direction have shorter dependencies. @cite{hahn-degen-futrell-2021} show that
 languages with shorter dependencies also have more efficient trade-offs.

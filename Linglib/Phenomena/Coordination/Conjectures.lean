@@ -20,7 +20,7 @@ open Phenomena.Coordination.Studies.BillEtAl2025
 **Open problem: predict the @cite{bill-etal-2025} acquisition asymmetry.**
 
 No existing account predicts the full cross-linguistic pattern:
-- M&S (2016) + Transparency Principle → predicts J-MU easiest. Wrong for Georgian.
+- @cite{mitrovic-sauerland-2016} + Transparency Principle → predicts J-MU easiest. Wrong for Georgian.
 - @cite{szabolcsi-2015} → alternative quantifier-particle analysis. Doesn't predict it.
 - @cite{haslinger-etal-2019} → plural/distributive analysis. Doesn't predict it.
 

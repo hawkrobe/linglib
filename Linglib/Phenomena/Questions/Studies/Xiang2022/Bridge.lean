@@ -3,9 +3,9 @@ import Linglib.Theories.Semantics.Questions.Exhaustivity
 import Linglib.Phenomena.Questions.Studies.Xiang2022.Data
 
 /-!
-# Xiang 2022 Bridge: RelExh Derivation + Decision-Theoretic Agreement @cite{xiang-2022}
+# @cite{xiang-2022} Bridge: RelExh Derivation + Decision-Theoretic Agreement @cite{xiang-2022}
 
-Formalizes the derivation chain from Xiang 2022, Section 5.2 (ex. 93):
+Formalizes the derivation chain from @cite{xiang-2022}, Section 5.2 (ex. 93):
 
 1. Define the paper's own scenario (3 worlds, 2 individuals, ability modal base)
 2. Show EP fails for the FO can-question (overlapping answer propositions)
@@ -141,7 +141,7 @@ Models the "complete roster" context. -/
 def identifyAllDP : DecisionProblem XW XW :=
   { completeInformationDP with prior := λ _ => 1 / 3 }
 
-/-! ## Part I: EP/RelExh Derivation Chain (Xiang 2022, Section 5.2)
+/-! ## Part I: EP/RelExh Derivation Chain (@cite{xiang-2022}, Section 5.2)
 
 The derivation follows ex. 93 exactly:
 1. Both a and b are true answers at w0 under FO interpretation
@@ -175,7 +175,7 @@ theorem propExt_b_not_entails_a :
 
 /-! ### Step 3: EP fails -/
 
-/-- **EP fails for the FO can-question at w0** (Xiang 2022, ex. 93).
+/-- **EP fails for the FO can-question at w0** (@cite{xiang-2022}, ex. 93).
 
 Both a and b are true answers at w0, but neither proposition entails the other
 (they overlap at w0 but diverge at w1 vs w2). So there is no strongest true
@@ -186,7 +186,7 @@ theorem canQ_ep_fails :
 
 /-! ### Step 4: RelExh passes -/
 
-/-- **RelExh passes for the FO can-question at w0** (Xiang 2022, ex. 93).
+/-- **RelExh passes for the FO can-question at w0** (@cite{xiang-2022}, ex. 93).
 
 For each v ∈ mb(w0) = {w1, w2}:
 - Singleton {w1}: only a chairs → ◇chair(a) is the unique true answer → EP holds
@@ -293,7 +293,7 @@ theorem partCells_no_overlap :
     answersOverlap partCells allWorlds = false := by
   native_decide
 
-/-! ## Part IV: Fox 2018 Exhaustification @cite{fox-2018}
+/-! ## Part IV: @cite{fox-2018} Exhaustification @cite{fox-2018}
 
 @cite{fox-2018} "Partition by Exhaustification" derives Dayal's EP from the
 exhaustification operator Exh. We exercise the Bool-valued Exh/IE/MC-set
@@ -312,7 +312,7 @@ machinery from Questions.Exhaustivity on three question denotations:
 3. **Partition cells**: trivially `foxAns = 1` → **MA**.
 -/
 
-/-! ### Higher-order question denotation (Fox 2018, Section 4.3) -/
+/-! ### Higher-order question denotation (@cite{fox-2018}, Section 4.3) -/
 
 /-- Higher-order question denotation: adds the disjunctive cell ◇a∨◇b
 to the FO cells. Under Spector's analysis, the wh-variable ranges over

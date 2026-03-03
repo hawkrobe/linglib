@@ -50,7 +50,7 @@ structure FocusStructure (α : Type) where
 -- EVEN: The Traditional Account
 
 /-!
-## Covert EVEN (Lahiri 1998, Crnič 2014)
+## Covert EVEN (@cite{lahiri-1998}, Crnič 2014)
 @cite{rooth-1992}
 
 EVEN has two semantic contributions:

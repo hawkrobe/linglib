@@ -238,7 +238,7 @@ theorem complet_telic_ee :
   complet_bridges_cessation ee_accomplishment
 
 -- ============================================================================
--- § 9: *Since*, *By*, *Till* on Concrete Data (Heinämäki 1974)
+-- § 9: *Since*, *By*, *Till* on Concrete Data (@cite{heinamaki-1974})
 -- ============================================================================
 
 /-- ME: stative [5, 10] — "He has been happy." -/
@@ -328,7 +328,7 @@ theorem till_matches_until_scenario :
   till_iff_until _ _
 
 -- ============================================================================
--- § 10: Punctual *Until* + Negation (Karttunen 1974)
+-- § 10: Punctual *Until* + Negation (@cite{karttunen-1974})
 -- ============================================================================
 
 /-! ### Not...until scenarios

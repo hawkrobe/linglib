@@ -67,10 +67,10 @@ structure ModalIndefiniteEntry where
   /-- Is the available flavor sensitive to syntactic position? -/
   positionSensitive : Bool := false
   /-- Does the item have a plain/unremarkable (non-modal) reading in
-      addition to its modal reading? (A-O&R 2024, §5) -/
+      addition to its modal reading? (A-@cite{alonso-ovalle-royer-2024}, §5) -/
   hasUnremarkableReading : Bool := false
   /-- Can the item appear in predicative position?
-      Correlates with unremarkable readings per A-O&R (2024, §5). -/
+      Correlates with unremarkable readings per A-@cite{alonso-ovalle-royer-2024}. -/
   canBePredicate : Bool := false
   /-- Source citation -/
   source : String := ""

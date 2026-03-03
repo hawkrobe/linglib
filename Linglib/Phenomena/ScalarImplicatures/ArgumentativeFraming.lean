@@ -14,10 +14,10 @@ to serve argumentative goals:
 
 ## Data Sources
 
-- C&F 2021 Table 1 (examples 29–38): UK university "top M" claims
-- C&F 2021 §5.2: Ranking measure preference data (H2)
-- MS et al. 2024 Experiment 1: Quantifier + adjective choice for exam results
-- MS et al. 2024 Experiment 2: Free-form descriptions of exam results
+- @cite{cummins-franke-2021} Table 1 (examples 29–38): UK university "top M" claims
+- @cite{cummins-franke-2021} §5.2: Ranking measure preference data (H2)
+- @cite{macuch-silva-etal-2024} Experiment 1: Quantifier + adjective choice for exam results
+- @cite{macuch-silva-etal-2024} Experiment 2: Free-form descriptions of exam results
 
 -/
 
@@ -44,7 +44,7 @@ inductive QuantifierChoice where
 
 
 -- ============================================================
--- Section 1: C&F 2021 — REF Case Study (§5)
+-- Section 1: @cite{cummins-franke-2021} — REF Case Study (§5)
 -- ============================================================
 
 /-- Hypothesis labels from C&F §5 -/
@@ -112,7 +112,7 @@ theorem h2_majority_preferred :
 
 
 -- ============================================================
--- Section 2: Macuch Silva et al. 2024 — Experiment 1
+-- Section 2: Macuch @cite{macuch-silva-etal-2024} — Experiment 1
 -- ============================================================
 
 /-- An Experiment 1 datum: quantifier + adjective choice for exam results -/
@@ -157,7 +157,7 @@ def exp1_difficulty_weakening_observation : String :=
 
 
 -- ============================================================
--- Section 3: Macuch Silva et al. 2024 — Experiment 2
+-- Section 3: Macuch @cite{macuch-silva-etal-2024} — Experiment 2
 -- ============================================================
 
 /-- Key finding: positive framing bias.

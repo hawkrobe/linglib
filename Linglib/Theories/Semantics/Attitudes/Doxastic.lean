@@ -72,7 +72,7 @@ inductive Veridicality where
   | nonVeridical   -- x V p ⊬ p (belief, opinion)
   deriving DecidableEq, Repr, BEq
 
--- Common Ground Requirements (Glass 2025)
+-- Common Ground Requirements (@cite{glass-2025})
 
 /--
 Common Ground requirement polarity: does the verb place requirements on p or ¬p?
@@ -234,7 +234,7 @@ This asymmetry DERIVES the gap from independent causal-cognitive principles.
 -/
 
 -- ============================================================================
--- Causal Model Infrastructure (Pearl 2000)
+-- Causal Model Infrastructure (@cite{pearl-2000})
 -- ============================================================================
 
 /--

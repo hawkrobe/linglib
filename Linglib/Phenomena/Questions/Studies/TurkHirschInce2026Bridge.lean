@@ -171,7 +171,7 @@ theorem theory_overgen_without_catmatch :
     isAnswer typeTheoQ mustP = true := by native_decide
 
 -- ═══════════════════════════════════════════════════════════════════════
--- §7  Bridge: K&S 2020 AltMeaning
+-- §7  Bridge: @cite{kratzer-selkirk-2020} AltMeaning
 -- ═══════════════════════════════════════════════════════════════════════
 
 /-! The connection to @cite{kratzer-selkirk-2020} is via the A-value of

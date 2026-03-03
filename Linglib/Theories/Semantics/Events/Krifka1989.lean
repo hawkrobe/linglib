@@ -16,7 +16,7 @@ thematic role properties in `Krifka1998.lean` to provide:
    bare plurals = AlgClosure (§1)
 2. **QMOD bridge theorems**: QMOD + extensive measure → QUA (§2)
 3. **Temporal adverbials via QMOD**: "V for δ" as a QMOD instance (§3)
-4. **Unified telicity transfer chain**: the full Krifka 1989 story connecting
+4. **Unified telicity transfer chain**: the full @cite{krifka-1989} story connecting
    nominal reference → VP aspect (§4)
 5. **Bridge to Scontras's measurement framework** (§5)
 6. **GRAD Square Instantiation**: canonical `GRADSquare` for the Krifka event structure (§6)
@@ -73,7 +73,7 @@ theorem qmod_qua
   have hμ_qua := extMeasure_qua (μ := μ) n hn
   exact hμ_qua x y hx_eq hlt hy_eq
 
-/-- The full Krifka 1989 quantizing story: a CUM mass noun combined with
+/-- The full @cite{krifka-1989} quantizing story: a CUM mass noun combined with
     QMOD (via an extensive measure) yields a QUA measure phrase.
     "rice" is CUM → "three kilos of rice" = QMOD(rice, μ_kg, 3) is QUA. -/
 theorem qmod_of_cum_is_qua
@@ -148,7 +148,7 @@ theorem qua_transfer {θ : α → β → Prop} {OBJ : α → Prop}
     QUA (VP θ OBJ) :=
   qua_propagation_sinc hUP hSinc hQua
 
-/-- **The full Krifka 1989 measure phrase story**: QMOD(mass_noun, extensive_μ, n)
+/-- **The full @cite{krifka-1989} measure phrase story**: QMOD(mass_noun, extensive_μ, n)
     + SINC verb → QUA VP (telic).
 
     "eat three kilos of rice" yields a QUA VP because:
@@ -157,7 +157,7 @@ theorem qua_transfer {θ : α → β → Prop} {OBJ : α → Prop}
     3. EAT has a SINC incremental theme with UP
     4. SINC + UP + QUA(QMOD) → QUA(VP) (`qua_propagation_sinc`)
 
-    This is the central result of Krifka 1989: measure phrases turn mass
+    This is the central result of @cite{krifka-1989}: measure phrases turn mass
     nouns into quantized predicates, and quantization propagates through
     strictly incremental verbs to yield telic (QUA) VPs. -/
 theorem measure_phrase_makes_qua

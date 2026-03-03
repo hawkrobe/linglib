@@ -73,12 +73,12 @@ def S {W : Type*} (ge : Set W → Set W → Prop) : Prop :=
 def A {W : Type*} (ge : Set W → Set W → Prop) : Prop :=
   ∀ A B, ge A B ↔ ge (A \ B) (B \ A)
 
-/-- Axiom J (Holliday & Icard 2013, Figure 4): right-union —
+/-- Axiom J (@cite{holliday-icard-2013}, Figure 4): right-union —
     φ ≿ ψ ∧ φ ≿ χ → φ ≿ (ψ ∨ χ). -/
 def J {W : Type*} (ge : Set W → Set W → Prop) : Prop :=
   ∀ A B C, ge A B → ge A C → ge A (B ∪ C)
 
-/-- Axiom DS: determination by singletons (Halpern 2003, Theorem 2.7.2) —
+/-- Axiom DS: determination by singletons (@cite{halpern-2003}, Theorem 2.7.2) —
     A ≿ {b} → ∃ a ∈ A, {a} ≿ {b}. The comparison can be witnessed
     by a single element of the dominating set. -/
 def DS {W : Type*} (ge : Set W → Set W → Prop) : Prop :=
@@ -104,9 +104,9 @@ structure EpistemicSystemF (W : Type*) extends EpistemicSystemW W where
 
 /-- System FA: System F + totality + transitivity + qualitative additivity.
     Sound and complete for **qualitatively additive** measure semantics
-    (Holliday & Icard 2013, Theorem 6; van der Hoek 1996).
+    (@cite{holliday-icard-2013}, Theorem 6; @cite{van-der-hoek-1996}).
     Strictly weaker than FP∞ (finitely additive measures) for |W| ≥ 5
-    (Kraft, Pratt & Seidenberg 1959, Theorem 8).
+    (Kraft, @cite{kraft-pratt-seidenberg-1959}, Theorem 8).
 
     Totality and transitivity are part of the FA logic in Holliday & Icard
     (2013, Figure 6): FA = Bot + BT + Tot + Tran + A. -/
@@ -285,7 +285,7 @@ theorem halpernLift_axiomT {W : Type*} {ge_w : W → W → Prop}
 
 /-- Lewis's *l*-lifting from a reflexive preorder yields System W.
     Soundness direction: world-ordering models with the l-lifting
-    validate System W (Halpern 2003; Holliday & Icard 2013 §3). -/
+    validate System W (@cite{halpern-2003}; @cite{holliday-icard-2013} §3). -/
 def halpernSystemW {W : Type*} (ge_w : W → W → Prop)
     (hRefl : ∀ w, ge_w w w) :
     EpistemicSystemW W where

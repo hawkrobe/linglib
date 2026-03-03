@@ -273,7 +273,7 @@ def by_deadline : TemporalExprEntry :=
   , triggeredCoercion := none }
 
 -- ============================================================================
--- § 4b: Additional Connective Entries (Heinämäki 1974)
+-- § 4b: Additional Connective Entries (@cite{heinamaki-1974})
 -- ============================================================================
 
 /-- *as long as*: temporal containment, synonymous with *while*.

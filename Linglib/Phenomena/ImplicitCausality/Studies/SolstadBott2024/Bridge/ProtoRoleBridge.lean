@@ -180,7 +180,7 @@ theorem predictions_match_data :
   refine ⟨by native_decide, by native_decide, by native_decide⟩
 
 -- ════════════════════════════════════════════════════
--- § 7. Occasion Verbs (Solstad & Bott 2024, S&P 17:11)
+-- § 7. Occasion Verbs (@cite{solstad-bott-2024}, S&P 17:11)
 -- ════════════════════════════════════════════════════
 
 /-- Occasion verbs in the S&P paper's sense (manage, dare, bother, hesitate)

@@ -301,7 +301,7 @@ theorem speaker_options_le_true_messages (G : InterpGame) (H : HearerStrategy G)
 The key insight of @cite{franke-2011} is that IBR reasoning yields exactly
 the same interpretation as exhaustive interpretation (exhMW).
 
-**Theorem (Franke 2011, Section 9.3)**: For an interpretation game G,
+**Theorem (@cite{franke-2011}, Section 9.3)**: For an interpretation game G,
 the IBR fixed point listener's support for message m equals the set of
 minimal m-worlds relative to the alternative ordering.
 
@@ -644,7 +644,7 @@ theorem fact4_exhMW_eq_exhIE_closed (G : InterpGame) (m : G.Message)
 
 --5.5: IBR Fixed Point Theorems (previously in this section)
 
-/-- IBR fixed point equals exhMW (Main theorem - Franke 2011, Section 9.3)
+/-- IBR fixed point equals exhMW (Main theorem - @cite{franke-2011}, Section 9.3)
 
 This is the central result connecting game theory to exhaustification.
 At the fixed point, the IBR listener's interpretation of message m is
@@ -980,9 +980,9 @@ def freeChoiceGame : InterpGame where
 
 This section states the full limit theorem connecting RSA to EXH, combining:
 
-- **Franke 2011**: RSA → IBR as α → ∞; IBR ≈ ExhMW (Appendix A)
-- **Spector 2007**: Iterated exhaustification
-- **Spector 2016**: Theorem 9 (ExhMW = ExhIE under closure)
+- **@cite{franke-2011}**: RSA → IBR as α → ∞; IBR ≈ ExhMW (Appendix A)
+- **@cite{spector-2007}**: Iterated exhaustification
+- **@cite{spector-2016}**: Theorem 9 (ExhMW = ExhIE under closure)
 
 ### The Chain
 
@@ -991,7 +991,7 @@ RSA S1 (softmax)
     │ α → ∞ [rsa_to_ibr_limit - PROVED]
     ↓
 IBR S1 (argmax) = R₁
-    │ Fact 1 [r1_subset_exhMW] (Franke 2011 Appendix A)
+    │ Fact 1 [r1_subset_exhMW] (@cite{franke-2011} Appendix A)
     ↓
 ExhMW (minimal worlds)
     │ Theorem 9 [fact4_exhMW_eq_exhIE_closed]
@@ -1002,8 +1002,8 @@ ExhIE (innocent exclusion)
 ### Results
 
 1. **rsa_to_ibr_limit** (proved above): RSA S1 → IBR S1 as α → ∞
-2. **Fact 1** (r1_subset_exhMW): IBR R₁ ⊆ ExhMW (Franke 2011 Appendix A)
-3. **Fact 3** (fact3_exhMW_subset_exhIE): ExhMW ⊆ ExhIE (Franke 2011 Appendix A)
+2. **Fact 1** (r1_subset_exhMW): IBR R₁ ⊆ ExhMW (@cite{franke-2011} Appendix A)
+3. **Fact 3** (fact3_exhMW_subset_exhIE): ExhMW ⊆ ExhIE (@cite{franke-2011} Appendix A)
 4. **Theorem 9** (fact4_exhMW_eq_exhIE_closed): Under closure, ExhMW = ExhIE
 
 Combined: Under closure, lim_{α→∞} RSA = IBR = ExhMW = ExhIE
@@ -1018,7 +1018,7 @@ Combined: Under closure, lim_{α→∞} RSA = IBR = ExhMW = ExhIE
 
 --8.1: IBR to ExhMW (combining facts from Section 5)
 
-/-- IBR fixed point equals exhMW (Main theorem - Franke 2011, Section 9.3)
+/-- IBR fixed point equals exhMW (Main theorem - @cite{franke-2011}, Section 9.3)
 
 This combines:
 - Equation (107): R₁ selects states with minimum alternative count
@@ -1091,14 +1091,14 @@ theorem rsa_to_exhMW_limit (G : InterpGame) [Nonempty G.Message] (m : G.Message)
 /-- The full limit theorem: RSA → ExhIE under closure as α → ∞.
 
 This combines results from:
-- **Franke 2011**: RSA → IBR (softmax → argmax), IBR = exhMW (Appendix A)
-- **Spector 2007**: Iterated exhaustification
-- **Spector 2016**: Theorem 9 (exhMW = exhIE under closure)
+- **@cite{franke-2011}**: RSA → IBR (softmax → argmax), IBR = exhMW (Appendix A)
+- **@cite{spector-2007}**: Iterated exhaustification
+- **@cite{spector-2016}**: Theorem 9 (exhMW = exhIE under closure)
 
 The chain:
 1. RSA S1 → IBR S1 as α → ∞ (softmax → argmax)
-2. IBR = exhMW (Franke 2011 Appendix A, Fact 1)
-3. exhMW = exhIE under closure (Spector 2016 Theorem 9)
+2. IBR = exhMW (@cite{franke-2011} Appendix A, Fact 1)
+3. exhMW = exhIE under closure (@cite{spector-2016} Theorem 9)
 
 Therefore: Under closure, lim_{α→∞} RSA = exhIE -/
 theorem rsa_to_exhIE_limit (G : InterpGame) [Nonempty G.Message] (m : G.Message) (s : G.State)

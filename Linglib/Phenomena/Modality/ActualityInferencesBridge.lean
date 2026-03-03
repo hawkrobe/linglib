@@ -9,7 +9,7 @@ import Linglib.Theories.Semantics.Modality.ActualityEntailments
 Cross-linguistic empirical data on actuality inferences with ability modals,
 following the pattern of `Phenomena/Causatives/Data.lean`.
 
-## Key Generalization (Nadathur 2023, Chapter 1)
+## Key Generalization (@cite{nadathur-2023}, Chapter 1)
 
 Across languages, ability modals with **perfective** aspect entail the
 complement, while those with **imperfective** aspect do not.
@@ -179,7 +179,7 @@ theorem balanced_design :
 
 -- ════════════════════════════════════════════════════
 -- Bridge: Data → Position × Aspect Theory
--- (Hacquard 2006, via ActualityEntailments.lean)
+-- (@cite{hacquard-2006}, via ActualityEntailments.lean)
 -- ════════════════════════════════════════════════════
 
 open Semantics.Modality.ActualityEntailments (actualityEntailmentPredicted)

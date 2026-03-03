@@ -62,7 +62,7 @@ theorem agentive_blocks_smuggling : voiceAgent.permitsSmuggling = false := rfl
 
 /-- Non-thematic Voice permits smuggling (not a phase head).
     This is why anticausative / unaccusative verbs allow complement fronting
-    (Storment 2026: quotative inversion; Collins 2005: passive). -/
+    (@cite{storment-2026}: quotative inversion; @cite{collins-2005}: passive). -/
 theorem nonthematic_permits_smuggling :
     voiceAnticausative.permitsSmuggling = true := rfl
 
@@ -145,7 +145,7 @@ theorem nonthematic_without_complement_no_qi :
   simp [licensesQI]
 
 -- ============================================================================
--- § 5: Passive as Smuggling Application (Collins 2005)
+-- § 5: Passive as Smuggling Application (@cite{collins-2005})
 -- ============================================================================
 
 /-- A Voice head licenses passive smuggling iff:
@@ -197,7 +197,7 @@ theorem smuggling_shared_precondition :
 /-- Passive Voice checks Case but does not assign θ (feature
     dissociation). This is what makes passive v defective (non-phase):
     Case-checking is the property that distinguishes v* from v
-    (Chomsky 2001, Collins 2005 p. 96). -/
+    (@cite{chomsky-2001}, @cite{collins-2005} p. 96). -/
 theorem passive_dissociation_enables_smuggling :
     voicePassive.checksCase = true ∧
     voicePassive.phaseHead = false ∧

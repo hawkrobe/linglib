@@ -110,7 +110,7 @@ def mentionAllExamples : List MentionAllDatum :=
   [whoCame, whichStudentsPassed]
 
 
-/-- G&S 1984, pp. 296-298: Term type determines exhaustive interpretation.
+/-- @cite{groenendijk-stokhof-1984}, pp. 296-298: Term type determines exhaustive interpretation.
 -/
 structure TermTypeExhDatum where
   /-- The question -/
@@ -173,7 +173,7 @@ def termTypeExamples : List TermTypeExhDatum :=
 /-- Data consistency: for each concrete datum, if the term type predicts exhaustivity
     then the datum confirms it, and if the term type is non-exhaustive then so is the datum.
 
-    This is a per-datum verification over our G&S 1984 examples, not a universal claim
+    This is a per-datum verification over our @cite{groenendijk-stokhof-1984} examples, not a universal claim
     (arbitrary `TermTypeExhDatum` values can violate any pattern). -/
 theorem termType_exhaustivity_data_consistent :
     termTypeExamples.all (λ d => d.termType.exhaustive == d.exhaustive) = true := by

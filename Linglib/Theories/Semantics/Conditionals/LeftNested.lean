@@ -242,7 +242,7 @@ end AnnotatedLNC
 -- Polarity Patterns in LNCs
 
 /-!
-## Polarity Patterns (Lassiter 2025, Section 4)
+## Polarity Patterns (@cite{cao-white-lassiter-2025}, Section 4)
 
 The PC analysis of LNCs predicts specific polarity patterns:
 

@@ -27,7 +27,7 @@ levels of semantic representation:
 ## Empirical Discriminators
 
 The theories make identical truth-conditional predictions for all 6
-scenario/connective combinations (Table 1 of Rett 2020). They diverge on:
+scenario/connective combinations (Table 1 of @cite{rett-2020}). They diverge on:
 
 1. **Processing cost**: Rett predicts coercion costs; Anscombe/O&ST/B&C do not
 2. **Cross-linguistic morphology**: Rett's covert operators have overt reflexes
@@ -49,10 +49,10 @@ open Fragments.English.TemporalExpressions
 
 /-- Theories of temporal connective semantics. -/
 inductive BeforeAfterTheory where
-  | underspecification     -- Anscombe 1964, Krifka 2010b
-  | ambiguity              -- Rett 2020
-  | quantificationalEvent  -- Ogihara & Steinert-Threlkeld 2024
-  | intensionalUniform     -- Beaver & Condoravdi 2003
+  | underspecification     -- @cite{anscombe-1964}, @cite{krifka-2010b}
+  | ambiguity              -- @cite{rett-2020}
+  | quantificationalEvent  -- @cite{ogihara-steinert-threlkeld-2024}
+  | intensionalUniform     -- @cite{beaver-condoravdi-2003}
   deriving DecidableEq, Repr, BEq
 
 /-- Theory profile: what each theory posits and predicts. -/

@@ -1,5 +1,5 @@
 /-!
-# Psych Verb Causation (Kim 2024 UPH)
+# Psych Verb Causation (@cite{kim-2024} UPH)
 
 @cite{kim-2024}
 
@@ -28,7 +28,7 @@ chain; its incompatibility with an overt Cause follows from the Onset Condition.
 
 namespace Semantics.Causation.PsychCausation
 
-/-- Source of causation for psych causatives (Kim 2024 UPH).
+/-- Source of causation for psych causatives (@cite{kim-2024} UPH).
 
     Class II psych verbs uniformly project Cause + Experiencer.
     The aspectual distinction (eventive vs stative) comes from
@@ -81,7 +81,7 @@ def CausalSource.isEventive : CausalSource → Bool
   | .internal => false
 
 -- ════════════════════════════════════════════════════
--- § Stimulus Subtype (Pesetsky 1995)
+-- § Stimulus Subtype (@cite{pesetsky-1995})
 -- ════════════════════════════════════════════════════
 
 /-- @cite{pesetsky-1995}'s subdivision of the stimulus role.

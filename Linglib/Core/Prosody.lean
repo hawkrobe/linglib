@@ -18,7 +18,7 @@ namespace Core.Prosody
 -- Pitch Accents
 
 /--
-Pitch accent types (Pierrehumbert 1980, ToBI conventions).
+Pitch accent types (@cite{pierrehumbert-1980}, ToBI conventions).
 
 Pitch accents mark focus/contrast at the word level:
 - H*: Sharp rise, typically marks rheme focus ("the BEANS")

@@ -1,7 +1,7 @@
 import Linglib.Theories.Pragmatics.DecisionTheoretic.Core
 
 /-!
-# Decision-Theoretic Semantics: Scalar Implicature (Merin 1999 §3)
+# Decision-Theoretic Semantics: Scalar Implicature (@cite{merin-1999} §3)
 @cite{merin-1999}
 
 Merin's DTS account of scalar implicature via *protentive speaker meaning*

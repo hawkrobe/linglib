@@ -50,28 +50,28 @@ structure CatFeatures where
 def catFeatures : Cat → CatFeatures
   | .V     => ⟨true,  false⟩   -- [+V, -N]
   | .v     => ⟨true,  false⟩   -- [+V, -N] (light verb)
-  | .Voice => ⟨true,  false⟩   -- [+V, -N] (Kratzer 1996)
-  | .Appl  => ⟨true,  false⟩   -- [+V, -N] (Pylkkänen 2008)
+  | .Voice => ⟨true,  false⟩   -- [+V, -N] (@cite{kratzer-1996})
+  | .Appl  => ⟨true,  false⟩   -- [+V, -N] (@cite{brennan-pylkkanen-2008})
   | .T     => ⟨true,  false⟩   -- [+V, -N]
-  | .Foc   => ⟨true,  false⟩   -- [+V, -N] (Rizzi 1997 split-CP)
-  | .Top   => ⟨true,  false⟩   -- [+V, -N] (Rizzi 1997 split-CP)
-  | .Fin   => ⟨true,  false⟩   -- [+V, -N] (Rizzi 1997 split-CP)
+  | .Foc   => ⟨true,  false⟩   -- [+V, -N] (@cite{rizzi-1997} split-CP)
+  | .Top   => ⟨true,  false⟩   -- [+V, -N] (@cite{rizzi-1997} split-CP)
+  | .Fin   => ⟨true,  false⟩   -- [+V, -N] (@cite{rizzi-1997} split-CP)
   | .C     => ⟨true,  false⟩   -- [+V, -N]
-  | .SA    => ⟨true,  false⟩   -- [+V, -N] (Speas & Tenny 2003)
-  | .Force => ⟨true,  false⟩   -- [+V, -N] (Rizzi 1997 split-CP)
-  | .Neg   => ⟨true,  false⟩   -- [+V, -N] (Pollock 1989)
-  | .Mod   => ⟨true,  false⟩   -- [+V, -N] (Cinque 1999)
-  | .Rel   => ⟨true,  false⟩   -- [+V, -N] (Rizzi 2001)
-  | .Pol   => ⟨true,  false⟩   -- [+V, -N] (Laka 1990)
-  | .Asp   => ⟨true,  false⟩   -- [+V, -N] (Cinque 1999)
-  | .Evid  => ⟨true,  false⟩   -- [+V, -N] (Cinque 1999)
+  | .SA    => ⟨true,  false⟩   -- [+V, -N] (@cite{speas-tenny-2003})
+  | .Force => ⟨true,  false⟩   -- [+V, -N] (@cite{rizzi-1997} split-CP)
+  | .Neg   => ⟨true,  false⟩   -- [+V, -N] (@cite{pollock-1989})
+  | .Mod   => ⟨true,  false⟩   -- [+V, -N] (@cite{cinque-1999})
+  | .Rel   => ⟨true,  false⟩   -- [+V, -N] (@cite{rizzi-2001})
+  | .Pol   => ⟨true,  false⟩   -- [+V, -N] (@cite{laka-1990})
+  | .Asp   => ⟨true,  false⟩   -- [+V, -N] (@cite{cinque-1999})
+  | .Evid  => ⟨true,  false⟩   -- [+V, -N] (@cite{cinque-1999})
   | .N     => ⟨false, true⟩    -- [-V, +N]
-  | .n     => ⟨false, true⟩    -- [-V, +N] (categorizer/gender, Marantz 2001)
-  | .Num   => ⟨false, true⟩    -- [-V, +N] (number, Ritter 1991)
-  | .Q     => ⟨false, true⟩    -- [-V, +N] (quantity/classifier, Borer 2005)
+  | .n     => ⟨false, true⟩    -- [-V, +N] (categorizer/gender, @cite{marantz-2001})
+  | .Num   => ⟨false, true⟩    -- [-V, +N] (number, @cite{ritter-1991})
+  | .Q     => ⟨false, true⟩    -- [-V, +N] (quantity/classifier, @cite{borer-2005})
   | .D     => ⟨false, true⟩    -- [-V, +N]
   | .A     => ⟨true,  true⟩    -- [+V, +N]
-  | .a     => ⟨true,  true⟩    -- [+V, +N] (adjectival categorizer, Panagiotidis 2015)
+  | .a     => ⟨true,  true⟩    -- [+V, +N] (adjectival categorizer, @cite{panagiotidis-2015})
   | .P     => ⟨false, false⟩   -- [-V, -N]
 
 -- ═══════════════════════════════════════════════════════════════
@@ -116,9 +116,9 @@ def fValue : Cat → Nat
   | .Pol | .Asp | .Evid         => 2   -- specification domain (F2)
   | .Fin | .Num                 => 3   -- inner edge (F3)
   | .Foc | .D                   => 4   -- discourse / referential (F4)
-  | .Top | .Rel                 => 5   -- topic field (F5, Rizzi 1997/2001)
+  | .Top | .Rel                 => 5   -- topic field (F5, @cite{rizzi-1997}/2001)
   | .C | .Force                 => 6   -- complementizer/force (F6)
-  | .SA                         => 7   -- speech act (F7, Speas & Tenny 2003)
+  | .SA                         => 7   -- speech act (F7, @cite{speas-tenny-2003})
 
 -- ═══════════════════════════════════════════════════════════════
 -- Part 3: Category Consistency and Monotonicity
@@ -183,7 +183,7 @@ def catFamily : Cat → CatFamily
     LF-interpretable features with semantic content.
 
     - **[N]** = sortal perspective / referentiality (capacity to introduce a
-      discourse referent, following Longobardi 1994/2005; §4.3 p84)
+      discourse referent, following @cite{longobardi-1994}/2005; §4.3 p84)
     - **[V]** = temporal perspective / eventivity (capacity to anchor to
       time/events; §4.3 p85)
 
@@ -415,7 +415,7 @@ theorem verbal_nominal_parallel :
 
     **Important**: Panagiotidis (§4.5) argues categorizers are NOT functional
     heads — they are the only true *lexical* heads (roots being acategorial).
-    Our F-value system (from Grimshaw 2005) places them at F1, which makes
+    Our F-value system (from @cite{grimshaw-2005}) places them at F1, which makes
     `isFHead` return true for categorizers. This reflects Grimshaw's architectural
     classification, not Panagiotidis's ontological claim about their nature. -/
 def isCategorizer (c : Cat) : Bool :=
@@ -437,7 +437,7 @@ theorem a_in_adjectival_family :
     catFamily .a = .adjectival := by decide
 
 -- ═══════════════════════════════════════════════════════════════
--- Part 8: Split-CP Extended Projection (Rizzi 1997)
+-- Part 8: Split-CP Extended Projection (@cite{rizzi-1997})
 -- ═══════════════════════════════════════════════════════════════
 
 /-- The verbal EP spine with @cite{rizzi-1997}'s split-CP layer:
@@ -504,7 +504,7 @@ theorem nominal_functional_heads :
     catFamily .Q = .nominal := by decide
 
 -- ═══════════════════════════════════════════════════════════════
--- Part 9: Complement Size (Egressy 2026, Wurmbrand 2014)
+-- Part 9: Complement Size (@cite{egressy-2026}, @cite{wurmbrand-2014})
 -- ═══════════════════════════════════════════════════════════════
 
 /-- The structural size of a clausal complement, determined by the

@@ -5,7 +5,7 @@ import Linglib.Theories.Semantics.Modality.Kratzer
 import Linglib.Theories.Semantics.Lexical.Verb.ViewpointAspect
 
 /-!
-# Ability Modals and Actuality Inferences (Nadathur 2023, Chapter 1)
+# Ability Modals and Actuality Inferences (@cite{nadathur-2023}, Chapter 1)
 @cite{hacquard-2006} @cite{kratzer-1981} @cite{nadathur-2023}
 
 Bridges **causality**, **modality**, and **aspect** to derive actuality
@@ -239,7 +239,7 @@ theorem ability_differs_from_implicative :
   exact ⟨sc, .w0, by native_decide, by native_decide⟩
 
 -- ════════════════════════════════════════════════════
--- Aspect-Compositionality Bridge (Nadathur 2023, Chapter 6)
+-- Aspect-Compositionality Bridge (@cite{nadathur-2023}, Chapter 6)
 -- ════════════════════════════════════════════════════
 
 /-! Chapter 6 argues that actuality inferences are not stipulated but

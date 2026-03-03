@@ -267,7 +267,7 @@ noncomputable def classifyUse {W : Type*} [Fintype W]
   else
     .scalar
 
--- Core Theoretical Results (Thomas 2026)
+-- Core Theoretical Results (@cite{thomas-2026})
 
 /-!
 ## Central Theorems

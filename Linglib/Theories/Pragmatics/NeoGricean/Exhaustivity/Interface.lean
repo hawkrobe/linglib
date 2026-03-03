@@ -253,12 +253,12 @@ This provides the theoretical justification for why we exhaustify.
 The operators `exhIE` and `exhMW` provide the MECHANISM for how we exhaustify.
 -/
 
-/-- Spector 2007's insight: Exhaustification is derivable from Gricean maxims.
+/-- @cite{spector-2007}'s insight: Exhaustification is derivable from Gricean maxims.
 
     This doesn't add computational content, but documents the theoretical
     connection between:
-    - WHY we exhaustify (Gricean reasoning, Spector 2007)
-    - HOW we exhaustify (exhIE/exhMW operators, Spector 2016)
+    - WHY we exhaustify (Gricean reasoning, @cite{spector-2007})
+    - HOW we exhaustify (exhIE/exhMW operators, @cite{spector-2016})
     - WHERE we exhaustify (Parse positions, this interface) -/
 def griceanJustification : String :=
   "Exhaustification is not arbitrary. Spector (2007) shows that for positive " ++

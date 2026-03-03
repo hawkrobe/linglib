@@ -21,7 +21,7 @@ The difference is determined by **complement size**:
 - CP complement → CLOSURE applies → propositional content → belief
 - Sub-CP complement → event variable open → intention
 
-## Denotation (Fusco & Sgrizzi 2025, ex. 24)
+## Denotation (@cite{fusco-sgrizzi-2025}, ex. 24)
 
 ⟦convincere⟧ = λP.λx.λy.λe. ∃e'. Convince(e) ∧ Agent(e,y) ∧ Patient(e,x)
                                    ∧ CAUSE(e,e') ∧ RATIONAL-ATTITUDE(e')

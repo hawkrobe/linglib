@@ -40,7 +40,7 @@ open Core.Definiteness (ArticleType DefiniteUseType BridgingSubtype WeakArticleS
 -- §A: Inductive Types
 -- ============================================================================
 
-/-- PG&G (2017): structural classification of 3rd-person pronouns.
+/-- @cite{patel-grosz-grosz-2017}: structural classification of 3rd-person pronouns.
 
 PER pronouns project only D_det (weak article layer).
 DEM pronouns project D_deix + D_det (strong article layer). -/
@@ -62,7 +62,7 @@ inductive PronounStrength where
   | clitic  -- Phonologically deficient, attached to host
   deriving DecidableEq, BEq, Repr
 
-/-- Pragmatic contexts that license DEM pronoun use (PG&G 2017 §3).
+/-- Pragmatic contexts that license DEM pronoun use (@cite{patel-grosz-grosz-2017} §3).
 
 Minimize DP! requires DEM to be pragmatically licensed. These are the
 five licensing contexts identified by PG&G. -/
@@ -87,7 +87,7 @@ structure PronounForm where
   strengths : List PronounStrength := [.strong]
   deriving Repr, BEq
 
-/-- Per-language pronoun system datum (PG&G 2017 + Cardinaletti & Starke 1999).
+/-- Per-language pronoun system datum (@cite{patel-grosz-grosz-2017} + @cite{cardinaletti-starke-1999}).
 
 Each datum records the full 3rd-person pronoun inventory, article system,
 D-layer count, DEM licensing contexts, and DEM productivity. -/
@@ -107,7 +107,7 @@ structure PronounSystemDatum where
   deriving Repr, BEq
 
 -- ============================================================================
--- §C: Language Data (~11 languages from PG&G 2017)
+-- §C: Language Data (~11 languages from @cite{patel-grosz-grosz-2017})
 -- ============================================================================
 
 def germanData : PronounSystemDatum :=
@@ -226,7 +226,7 @@ def englishData : PronounSystemDatum :=
     demLicensing := []
     demProductive := false }
 
-/-- All 11 languages from PG&G (2017) survey. -/
+/-- All 11 languages from @cite{patel-grosz-grosz-2017} survey. -/
 def allData : List PronounSystemDatum :=
   [ germanData, bavarianData, portugueseData, hebrewData, czechData
   , frenchData, italianData, spanishData, catalanData, kutchiGujaratiData
@@ -238,7 +238,7 @@ theorem allData_count : allData.length = 11 := by native_decide
     "se" (3sg non-human / DEM), "tämä" (proximal DEM), "tuo" (distal DEM).
     No articles. "se" is productively used as 3rd-person reference in
     colloquial Finnish.
-    Not part of PG&G 2017 sample — a counterexample to the article-DEM
+    Not part of @cite{patel-grosz-grosz-2017} sample — a counterexample to the article-DEM
     productivity correlation (2 D-layers, productive DEM, but no articles). -/
 def finnishData : PronounSystemDatum :=
   { language := "Finnish", isoCode := "fi"
@@ -321,7 +321,7 @@ theorem finnish_counterexample_to_article_dem :
 
 /-! ### PG&G Core Claims -/
 
-/-- **Minimize DP!** (PG&G 2017 §3): Languages where DEM is productive
+/-- **Minimize DP!** (@cite{patel-grosz-grosz-2017} §3): Languages where DEM is productive
 all require pragmatic licensing (demLicensing is non-empty).
 
 DEM is the marked choice; PER is the default. -/
@@ -340,7 +340,7 @@ theorem dem_implies_per :
       then d.forms.any (·.pronClass == .per)
       else true) = true := by native_decide
 
-/-- **Article-D-layer correlation** (Schwarz 2009 → PG&G):
+/-- **Article-D-layer correlation** (@cite{schwarz-2009} → PG&G):
 Languages with both weak and strong articles have 2 D-layers. -/
 theorem strong_article_two_layers :
     (allData.filter (·.articleType == .weakAndStrong)).all
@@ -411,7 +411,7 @@ theorem dem_productivity_from_article_system :
 -- §F: @cite{schwarz-2013} Article Typology
 -- ============================================================================
 
-/-! ### Definite use types (Hawkins 1978, Schwarz 2013 §2.1)
+/-! ### Definite use types (@cite{hawkins-1978}, @cite{schwarz-2013} §2.1)
 
 Types and mappings are defined in `Core/Definiteness.lean`:
 `DefiniteUseType`, `BridgingSubtype`, `useTypeToPresupType`, `bridgingPresupType`. -/
@@ -437,7 +437,7 @@ structure SchwarzArticleDatum where
   bridgingSplit : Bool
   deriving Repr, BEq
 
--- Germanic (Schwarz 2013 §3)
+-- Germanic (@cite{schwarz-2013} §3)
 
 def schwarz_german : SchwarzArticleDatum :=
   { language := "German", isoCode := "de"
@@ -457,7 +457,7 @@ def schwarz_fering : SchwarzArticleDatum :=
     weakForUniqueness := true    -- §3.1.2: ex. (13), (14)
     bridgingSplit := true }      -- §3.2: ex. (17a) weak, (17b) strong
 
--- Non-Germanic with strong article only (Schwarz 2013 §4.1)
+-- Non-Germanic with strong article only (@cite{schwarz-2013} §4.1)
 
 def schwarz_akan : SchwarzArticleDatum :=
   { language := "Akan", isoCode := "ak"
@@ -477,7 +477,7 @@ def schwarz_mauritianCreole : SchwarzArticleDatum :=
     weakForUniqueness := true    -- §4.1.2: bare nominals, ex. (26)
     bridgingSplit := true }      -- §4.1.2: ex. (28)/(29)
 
--- Languages with two overt articles (Schwarz 2013 §4.2)
+-- Languages with two overt articles (@cite{schwarz-2013} §4.2)
 
 def schwarz_lakhota : SchwarzArticleDatum :=
   { language := "Lakhota", isoCode := "lkt"
@@ -497,7 +497,7 @@ def schwarz_hausa : SchwarzArticleDatum :=
     weakForUniqueness := true    -- §4.2.2: ex. (36) -n for uniqueness
     bridgingSplit := false }     -- insufficient data in @cite{schwarz-2013}
 
--- Exceptional: single form for both uses (Schwarz 2013 §4.3)
+-- Exceptional: single form for both uses (@cite{schwarz-2013} §4.3)
 
 def schwarz_haitianCreole : SchwarzArticleDatum :=
   { language := "Haitian Creole", isoCode := "ht"
@@ -517,31 +517,31 @@ theorem allSchwarzData_count : allSchwarzData.length = 7 := by native_decide
 
 /-! ### @cite{schwarz-2013} verified generalizations -/
 
-/-- **Strong article → anaphoric use** (Schwarz 2013 §3.1.1):
+/-- **Strong article → anaphoric use** (@cite{schwarz-2013} §3.1.1):
 All surveyed languages use the strong article for anaphoric definites. -/
 theorem strong_for_anaphoric :
     allSchwarzData.all (·.strongForAnaphoric) = true := by native_decide
 
-/-- **Weak form → uniqueness/situational use** (Schwarz 2013 §3.1.2):
+/-- **Weak form → uniqueness/situational use** (@cite{schwarz-2013} §3.1.2):
 All surveyed languages use weak articles (or bare nominals) for
 uniqueness-based definites. -/
 theorem weak_for_uniqueness :
     allSchwarzData.all (·.weakForUniqueness) = true := by native_decide
 
-/-- **Bridging split** (Schwarz 2013 §3.2): Most languages split bridging
+/-- **Bridging split** (@cite{schwarz-2013} §3.2): Most languages split bridging
 across article forms (part-whole = weak, producer = strong). 5 of 7
 languages show this pattern; Hausa lacks data, and Haitian Creole
 uses a single form for everything. -/
 theorem bridging_split_is_majority :
     (allSchwarzData.filter (·.bridgingSplit)).length = 5 := by native_decide
 
-/-- **Bare-nominal strategy** (Schwarz 2013 §4.1): Languages with only
+/-- **Bare-nominal strategy** (@cite{schwarz-2013} §4.1): Languages with only
 one overt article form (Akan, Mauritian Creole) use bare nominals
 for weak-article definites. -/
 theorem bare_nominal_languages :
     (allSchwarzData.filter (·.weakStrategy == .bareNominal)).length = 2 := by native_decide
 
-/-- **Haitian Creole is exceptional** (Schwarz 2013 §4.3): single determiner
+/-- **Haitian Creole is exceptional** (@cite{schwarz-2013} §4.3): single determiner
 `la` for both anaphoric and uniqueness uses — no weak/strong split. -/
 theorem haitian_creole_no_split :
     schwarz_haitianCreole.weakStrategy == .sameAsStrong := by native_decide
@@ -558,7 +558,7 @@ The structural mapping:
 - Schwarz strong article = PG&G D_deix + D_det = DEM pronoun -/
 
 /-- Languages with two overt article forms in @cite{schwarz-2013} correspond to
-2-D-layer languages in PG&G (2017). Verified for German, which appears
+2-D-layer languages in @cite{patel-grosz-grosz-2017}. Verified for German, which appears
 in both datasets. -/
 theorem schwarz_pgg_german_consistent :
     schwarz_german.strongForm.isSome ∧
@@ -566,7 +566,7 @@ theorem schwarz_pgg_german_consistent :
     germanData.dLayers == 2 ∧
     germanData.articleType == .weakAndStrong := by native_decide
 
-/-- The semantic mapping is compositional (Schwarz 2013 §2.2):
+/-- The semantic mapping is compositional (@cite{schwarz-2013} §2.2):
 - Weak article contributes uniqueness presupposition (ι-operator)
 - Strong article contributes familiarity/anaphoricity (index variable)
 This parallels PG&G's D_det (weak/uniqueness) vs D_deix (strong/deixis). -/

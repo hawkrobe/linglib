@@ -55,7 +55,7 @@ def depLength (d : Dependency) : Nat :=
 
 /-- Total dependency length of a tree: sum of all individual dependency lengths.
 
-The key quantity minimized in DLM (Futrell et al. 2020, eq. 1). -/
+The key quantity minimized in DLM (@cite{futrell-gibson-2020}, eq. 1). -/
 def totalDepLength (t : DepTree) : Nat :=
   t.deps.foldl (λ acc d => acc + depLength d) 0
 
@@ -169,7 +169,7 @@ theorem short_before_long_savings (s1 s2 : Nat) (h : s1 ≤ s2) :
     (1 + (s2 + 2)) - (1 + (s1 + 2)) = s2 - s1 := by omega
 
 -- ============================================================================
--- Example Sentences (Futrell et al. 2020, §2.2)
+-- Example Sentences (@cite{futrell-gibson-2020}, §2.2)
 -- ============================================================================
 
 /-- "John threw out the old trash" — SVO with particle adjacent to verb.

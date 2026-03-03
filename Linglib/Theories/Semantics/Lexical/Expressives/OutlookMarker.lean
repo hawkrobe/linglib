@@ -23,7 +23,7 @@ but share properties of both — specifically:
 - Unlike expressives: lack independence and nondisplaceability (allow perspective shift)
 - Like presuppositions: require discourse antecedent (counterstance)
 
-## Three-Way Typology of Secondary Meaning (Kubota 2026: (14))
+## Three-Way Typology of Secondary Meaning (@cite{kubota-2026}: (14))
 
 | Class | Examples | Key Property |
 |-------|----------|-------------|
@@ -45,7 +45,7 @@ open Semantics.Lexical.Expressives (TwoDimProp CIExprProperties)
 /-- The type of evaluative stance an outlook marker expresses.
 
 Each stance type characterizes how the speaker situates the prejacent
-relative to a salient counterstance in the discourse (Kubota 2026: §3). -/
+relative to a salient counterstance in the discourse (@cite{kubota-2026}: §3). -/
 inductive StanceType where
   /-- Negative/pessimistic evaluation: the prejacent is undesirable or implausible.
       E.g., *nanka* 'anything like', *dōse* 'anyway' -/
@@ -201,7 +201,7 @@ def expressiveProfile : SecondaryMeaningProperties :=
   , allowsPerspectiveShift := false   -- Potts' default; cf. Wang et al. 2005
   , requiresDiscourseAntecedent := false }
 
-/-- Canonical properties of outlook markers (Kubota 2026: §3).
+/-- Canonical properties of outlook markers (@cite{kubota-2026}: §3).
 
 Outlook markers share descriptive ineffability and immediacy with expressives,
 but crucially lack independence and nondisplaceability. They allow perspective
@@ -302,7 +302,7 @@ different modal flavors. This connects to Kratzer's conversational backgrounds. 
 /-- Modal flavors that an outlook marker is compatible with.
 
 *semete* 'at least' is compatible with deontic *-beki* and desiderative *-tai*
-but NOT with epistemic *hazu* or ability *-eru* (Kubota 2026: (46)).
+but NOT with epistemic *hazu* or ability *-eru* (@cite{kubota-2026}: (46)).
 
 This reflects the fact that minimum-standard outlook markers require that
 the ordering source involve subjective preferences (deontic/bouletic), not

@@ -8,7 +8,7 @@ import Linglib.Theories.Syntax.Minimalism.Core.Position
 Connects the empirical extraction data from Toba Batak to the
 Minimalist analysis in @cite{erlewine-2018}.
 
-## The Analysis (Erlewine 2018, §3–4)
+## The Analysis (@cite{erlewine-2018}, §3–4)
 
 The extraction restriction follows from the interaction of probing
 and nominal licensing:

@@ -69,7 +69,7 @@ instance {C : Type} : SDSConstraintSystem (DisambiguationScenario C) C where
   selectionalFactor s c := s.selectional c
   scenarioFactor s c := s.scenario c
 
--- Example 1: "A bat was sleeping" (Erk & Herbelot 2024)
+-- Example 1: "A bat was sleeping" (@cite{erk-herbelot-2024})
 
 /-!
 ## Example 1: "A bat was sleeping"
@@ -124,7 +124,7 @@ example : batSleepingPosterior .animal > batSleepingPosterior .equipment := by n
 -- No conflict: selectional clearly dominates
 example : hasConflict batSleeping = false := by native_decide
 
--- Example 2: "A player was holding a bat" (Erk & Herbelot 2024)
+-- Example 2: "A player was holding a bat" (@cite{erk-herbelot-2024})
 
 /-!
 ## Example 2: "A player was holding a bat"
@@ -185,7 +185,7 @@ example : playerBatPosterior .equipment > playerBatPosterior .animal := by nativ
 -- (Even though selectional is weak, it still has equipment as argmax)
 example : hasConflict playerHoldingBat = false := by native_decide
 
--- Example 3: "The astronomer married the star" (Erk & Herbelot 2024)
+-- Example 3: "The astronomer married the star" (@cite{erk-herbelot-2024})
 
 /-!
 ## Example 3: "The astronomer married the star"

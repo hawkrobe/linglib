@@ -10,7 +10,7 @@ import Linglib.Core.Discourse.Evidence
 evidential source. This supports two phenomena that plain `KContext` cannot
 express:
 
-1. **Domain expansion** (Condoravdi 2002, Mizuno): backward temporal shifts
+1. **Domain expansion** (@cite{condoravdi-2002}, Mizuno): backward temporal shifts
    expand the set of historical alternatives because more futures branch from
    earlier times.
 
@@ -152,7 +152,7 @@ theorem hpShift_expanding (newTime : T) (expandedDomain : Set W)
     ((hpShift (E := E) (P := P) newTime expandedDomain).apply rc).time = newTime := rfl
 
 -- ════════════════════════════════════════════════════════════════
--- § X-Marking Shift (Iatridou 2000)
+-- § X-Marking Shift (@cite{iatridou-2000})
 -- ════════════════════════════════════════════════════════════════
 
 /-- X-marking shift: the morphological "fake past" on

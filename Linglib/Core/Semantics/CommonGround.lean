@@ -206,7 +206,7 @@ end BContextSet
 end Core.CommonGround
 
 -- ══════════════════════════════════════════════════════════════════════
--- Multi-Agent Epistemic Operators (Halpern 2003, Ch. 7)
+-- Multi-Agent Epistemic Operators (@cite{halpern-2003}, Ch. 7)
 -- ══════════════════════════════════════════════════════════════════════
 
 namespace Core.CommonGround.MultiAgent

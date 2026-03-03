@@ -16,7 +16,7 @@ Connects the empirical veridicality data to:
 3. **Cross-level comparison**: O&ST (Level 3) projects to Anscombe (Level 1) via
    `eventDenotation`, with provable divergence on overlapping runtimes
 4. **Logical properties**: Antisymmetry, transitivity, and their failures verified
-   on concrete scenarios matching B&C (2003) §1
+   on concrete scenarios matching @cite{beaver-condoravdi-2003} §1
 
 ## Derivation Pipeline
 
@@ -139,7 +139,7 @@ theorem scenario_before_projects :
   OST.before_implies_anscombe _ _ scenario_before_punctual
 
 -- ════════════════════════════════════════════════════════════════
--- § 5: Logical Properties (B&C 2003, §1)
+-- § 5: Logical Properties (@cite{beaver-condoravdi-2003}, §1)
 -- ════════════════════════════════════════════════════════════════
 
 /-! The logical properties of *before* and *after* noted by B&C follow
@@ -150,7 +150,7 @@ private def i_cleo_b : Core.Time.Interval ℤ := ⟨1, 5, by omega⟩
 private def i_david_b : Core.Time.Interval ℤ := ⟨8, 12, by omega⟩
 
 /-- *Before* is antisymmetric on non-overlapping statives: if A before B,
-    then ¬(B before A). (B&C 2003, exx. 3-4)
+    then ¬(B before A). (@cite{beaver-condoravdi-2003}, exx. 3-4)
 
     Scenario: Cleo [1,5], David [8,12]. Cleo before David holds;
     David before Cleo does not.
@@ -171,7 +171,7 @@ private def i_cleo_a : Core.Time.Interval ℤ := ⟨1, 8, by omega⟩
 private def i_david_a : Core.Time.Interval ℤ := ⟨5, 12, by omega⟩
 
 /-- *After* is NOT antisymmetric: overlapping intervals allow both
-    after(A,B) and after(B,A). (B&C 2003, exx. 5-7, diagram 7)
+    after(A,B) and after(B,A). (@cite{beaver-condoravdi-2003}, exx. 5-7, diagram 7)
 
     Scenario: Cleo [1,8], David [5,12]. Both Cleo-after-David and
     David-after-Cleo hold because ∃ requires only one witness. -/
@@ -190,7 +190,7 @@ private def i_ginger_t : Core.Time.Interval ℤ := ⟨6, 8, by omega⟩
 private def i_fred_t : Core.Time.Interval ℤ := ⟨11, 13, by omega⟩
 
 /-- *Before* is transitive: A before B ∧ B before C → A before C.
-    (B&C 2003, exx. 12-14)
+    (@cite{beaver-condoravdi-2003}, exx. 12-14)
 
     Scenario: Delores [1,3], Ginger [6,8], Fred [11,13]. -/
 theorem before_transitive_scenario :
@@ -208,7 +208,7 @@ private def i_ginger_a : Core.Time.Interval ℤ := ⟨2, 5, by omega⟩
 private def i_delores_a : Core.Time.Interval ℤ := ⟨4, 7, by omega⟩
 
 /-- *After* is NOT transitive: overlapping intervals allow
-    after(A,B) ∧ after(B,C) ∧ ¬after(A,C). (B&C 2003, exx. 8-11)
+    after(A,B) ∧ after(B,C) ∧ ¬after(A,C). (@cite{beaver-condoravdi-2003}, exx. 8-11)
 
     Scenario: Fred [1,3], Ginger [2,5], Delores [4,7].
     Fred after Ginger: t=3, t'=2. ✓

@@ -186,7 +186,7 @@ inductive ProjectiveTrigger where
   /-- Definite descriptions: existence and uniqueness -/
   | definite_description
   /-- Occasion verbs: prior occasioning eventuality
-      (Solstad & Bott 2024, S&P 17:11). "Punish" presupposes a prior
+      (@cite{solstad-bott-2024}, S&P 17:11). "Punish" presupposes a prior
       offense; "manage" presupposes a prior difficulty. SCF=no (can be
       informative), OLE=yes (attributed to attitude holder). -/
   | occasion_verb

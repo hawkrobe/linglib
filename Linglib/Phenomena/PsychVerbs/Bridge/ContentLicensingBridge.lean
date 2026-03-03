@@ -53,7 +53,7 @@ open Core.ModalLogic (ModalFlavor)
 -- ════════════════════════════════════════════════════
 
 /-- Whether a psych verb's event has propositional content, derived from
-the causal source (Kim 2024 UPH).
+the causal source (@cite{kim-2024} UPH).
 
 Internal causal source → the experiencer's mental state involves
 propositional content (they REPRESENT the stimulus to themselves).

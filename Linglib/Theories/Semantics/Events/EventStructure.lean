@@ -28,12 +28,12 @@ open Semantics.Events.ProtoRoles
 open Semantics.Lexical.Verb.Aspect
 
 -- ════════════════════════════════════════════════════
--- § 1. Event Structure Primitives (R&L 1998 + 2024)
+-- § 1. Event Structure Primitives (@cite{rappaport-hovav-levin-1998} + 2024)
 -- ════════════════════════════════════════════════════
 
 /-- Primitive event structure operators.
-    ACT, CAUSE, BECOME, STATE are from R&L (1998).
-    MOVE and CONTACT are from R&L (2024), decomposing manner verbs
+    ACT, CAUSE, BECOME, STATE are from @cite{rappaport-hovav-levin-1998}.
+    MOVE and CONTACT are from @cite{rappaport-hovav-levin-2024}, decomposing manner verbs
     more finely than the original ACT-based templates. -/
 inductive Primitive where
   | ACT      -- agentive activity
@@ -45,11 +45,11 @@ inductive Primitive where
   deriving DecidableEq, Repr, BEq
 
 -- ════════════════════════════════════════════════════
--- § 2. Event Structure Templates (R&L 1998 + 2024)
+-- § 2. Event Structure Templates (@cite{rappaport-hovav-levin-1998} + 2024)
 -- ════════════════════════════════════════════════════
 
 /-- Canonical event structure templates.
-    The first four are from R&L (1998). `motionContact` is from R&L (2024)
+    The first four are from @cite{rappaport-hovav-levin-1998}. `motionContact` is from @cite{rappaport-hovav-levin-2024}
     for the sweep/rub/scrape class: [x MOVE y] WHILE [x CONTACT y]. -/
 inductive Template where
   | state          -- [x ⟨STATE⟩]
@@ -141,7 +141,7 @@ theorem motionContact_variable_agentivity :
 -- ════════════════════════════════════════════════════
 
 /-- For motionContact verbs, which sub-predicate determines argument
-    realization (R&L 2024 §3.3–3.4). -/
+    realization (@cite{rappaport-hovav-levin-2024} §3.3–3.4). -/
 inductive DeterminingPredicate where
   | motion   -- MOVE determines: unaccusative/transitive+PP frames
   | contact  -- CONTACT determines: simple transitive frame
@@ -159,7 +159,7 @@ theorem motionContact_object_is_forceRecipient :
     isForceRecipient p = true := ⟨_, rfl, rfl⟩
 
 -- ════════════════════════════════════════════════════
--- § 6. Instrument Lexicalization (R&L 2024 §3.5)
+-- § 6. Instrument Lexicalization (@cite{rappaport-hovav-levin-2024} §3.5)
 -- ════════════════════════════════════════════════════
 
 /-- Instrument lexicalization adds agentivity to a template by restricting
@@ -170,7 +170,7 @@ def Template.lexicalizeInstrument : Template → EntailmentProfile
   | t => t.subjectProfile  -- No-op for other templates
 
 /-- Instrument lexicalization strictly increases agentivity for motionContact
-    templates (R&L 2024 §3.5: broom-sweep is more agentive than basic sweep). -/
+    templates (@cite{rappaport-hovav-levin-2024} §3.5: broom-sweep is more agentive than basic sweep). -/
 theorem lexicalize_increases_agentivity :
     (Template.lexicalizeInstrument .motionContact).pAgentScore >
     (Template.subjectProfile .motionContact).pAgentScore := by native_decide

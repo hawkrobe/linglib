@@ -292,7 +292,7 @@ For the cases Potts et al. test (single scalar under quantifier),
 these approaches are empirically equivalent. The question is whether
 they diverge for more complex compositional structures.
 
-Open question (cf. Bergen & Franke 2020 "Global Intentions"):
+Open question (cf. @cite{franke-bergen-2020} "Global Intentions"):
 Does the locus of pragmatic reasoning (global vs. local) matter
 for predicting human behavior in complex embedded contexts?
 -/
@@ -321,7 +321,7 @@ Step 2: Compose with "every"
 
 ### Why This Works
 
-The Franke 2011 limit theorem is parametric in the alternative set:
+The @cite{franke-2011} limit theorem is parametric in the alternative set:
   IBR(alternatives) → exhMW(alternatives)
 
 Instantiating with local alternatives at each node yields local exhMW
@@ -682,7 +682,7 @@ Speaker chooses parse Speaker chooses where to be pragmatic
 ### The Equivalence
 
 In the α → ∞ limit:
-- RSA at node → EXH at node (Franke 2011 limit theorem)
+- RSA at node → EXH at node (@cite{franke-2011} limit theorem)
 - RSA at multiple nodes → EXH at multiple nodes (composition)
 - Reasoning over "where RSA applies" → reasoning over "where EXH is"
 

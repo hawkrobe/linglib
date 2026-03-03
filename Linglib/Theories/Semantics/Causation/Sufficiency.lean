@@ -38,7 +38,7 @@ namespace NadathurLauer2020.Sufficiency
 open Core.StructuralEquationModel
 export Core.StructuralEquationModel (causallySufficient)
 
-/-- Semantics of "make": X was causally sufficient for Y (N&L 2020 §5.1). -/
+/-- Semantics of "make": X was causally sufficient for Y (@cite{nadathur-lauer-2020} §5.1). -/
 def makeSem (dyn : CausalDynamics) (background : Situation)
     (causeEvent effectEvent : Variable) : Bool :=
   causallySufficient dyn background causeEvent effectEvent

@@ -38,7 +38,7 @@ open BigOperators Finset Filter
 -- §1. Response Strength Operators (§4.B) and the Alpha Model (§4.C)
 -- ============================================================================
 
-/-- A linear learner for the Luce ratio-scale model (Luce 1959, §4.B–C).
+/-- A linear learner for the Luce ratio-scale model (@cite{luce-1959}, §4.B–C).
 
 The learning rule is a positive linear operator on ratio-scale values:
 `v_{n+1}(a) = α · v_n(a) + (1-α) · r(a)` where `α ∈ (0,1)` is the retention
@@ -80,7 +80,7 @@ theorem LinearLearner.complementRate_lt_one (ll : LinearLearner A) :
 -- §2. Linear Update & Axiom 1 Preservation (§4.B–C)
 -- ============================================================================
 
-/-- One step of linear learning (Luce 1959, §4.C, Alpha Model):
+/-- One step of linear learning (@cite{luce-1959}, §4.C, Alpha Model):
 `v_{n+1}(s, a) = α · v_n(s, a) + (1 - α) · r(a)`.
 
 The result is a new `RationalAction`, so the Luce choice rule (IIA) holds at
@@ -95,12 +95,12 @@ def LinearLearner.update (ll : LinearLearner A) (ra : RationalAction S A) :
 
 /-- Updated scores are non-negative — a direct consequence of the positivity of α,
 (1-α), the original scores, and the reinforcement values. This is what makes the
-linear learning model a *positive* linear operator (Luce 1959, §4.B). -/
+linear learning model a *positive* linear operator (@cite{luce-1959}, §4.B). -/
 theorem linear_update_nonneg (ll : LinearLearner A) (ra : RationalAction S A)
     (s : S) (a : A) : 0 ≤ (ll.update ra).score s a :=
   (ll.update ra).score_nonneg s a
 
-/-- **Axiom 1 preservation** (Luce 1959, §4.B, Theorem 16):
+/-- **Axiom 1 preservation** (@cite{luce-1959}, §4.B, Theorem 16):
 
 If the Luce choice rule P(a) = v(a)/Σv(b) holds at trial n, then after a
 positive linear update v' = α·v + (1-α)·r, the updated rule
@@ -120,7 +120,7 @@ theorem linear_learning_preserves_axiom1 (ll : LinearLearner A) (ra : RationalAc
 -- §3. Beta Model (§4.D)
 -- ============================================================================
 
-/-- The β-model (Luce 1959, §4.D; Bush & Mosteller 1955):
+/-- The β-model (@cite{luce-1959}, §4.D; @cite{bush-mosteller-1955}):
 
 An alternative learning model operating directly on probabilities rather than
 ratio-scale values:
@@ -137,7 +137,7 @@ structure BetaModel (A : Type*) where
   /-- β is strictly less than 1. -/
   beta_lt_one : beta < 1
 
-/-- One step of β-model update (Luce 1959, §4.D):
+/-- One step of β-model update (@cite{luce-1959}, §4.D):
 `P'(a) = (1-β) · P(a) + β · δ(a, chosen)`.
 
 Takes a probability function and the chosen action, returns updated probabilities. -/
@@ -172,7 +172,7 @@ theorem BetaModel.update_sum_one [DecidableEq A] (bm : BetaModel A) (P : A → �
 -- §4. Iteration of Linear Learning (§4.C continued)
 -- ============================================================================
 
-/-- n-step iteration of linear learning (Luce 1959, §4.C):
+/-- n-step iteration of linear learning (@cite{luce-1959}, §4.C):
 
 Apply the linear update rule n times starting from an initial `RationalAction`.
 At each step, Axiom 1 is preserved because `update` produces a `RationalAction`. -/
@@ -188,7 +188,7 @@ theorem iterate_linear_nonneg (ll : LinearLearner A) (ra : RationalAction S A)
     0 ≤ (iterate_linear ll ra n).score s a :=
   (iterate_linear ll ra n).score_nonneg s a
 
-/-- Closed-form for iterated linear learning (Luce 1959, §4.C):
+/-- Closed-form for iterated linear learning (@cite{luce-1959}, §4.C):
 
 After n iterations with retention rate α and reinforcement r:
 `v_n(s, a) = α^n · v_0(s, a) + (1 - α^n) · r(a)`
@@ -210,7 +210,7 @@ theorem iterate_linear_closed_form (ll : LinearLearner A) (ra : RationalAction S
 -- §5. Asymptotic Convergence (§4.G)
 -- ============================================================================
 
-/-- **Convergence of linear learning** (Luce 1959, §4.G):
+/-- **Convergence of linear learning** (@cite{luce-1959}, §4.G):
 
 Under constant reinforcement, the ratio-scale values converge to the
 reinforcement values: `v_n(s, a) → r(a)` as `n → ∞`.
@@ -234,7 +234,7 @@ theorem linear_convergence (ll : LinearLearner A) (ra : RationalAction S A)
 
 /-- A record of a learning trial: what was available, what was chosen, what
 was the reinforcement. Used for analyzing sequences of choices over trials
-(Luce 1959, §4.C–G). -/
+(@cite{luce-1959}, §4.C–G). -/
 structure TrialRecord (A : Type*) where
   /-- The action chosen on this trial. -/
   chosen : A
@@ -243,7 +243,7 @@ structure TrialRecord (A : Type*) where
 
 /-- An expected choice sequence: the initial agent, a learner, and a history
 of trials. This structure supports analyzing how choice probabilities evolve
-over a sequence of reinforced trials (Luce 1959, §4.C–G). -/
+over a sequence of reinforced trials (@cite{luce-1959}, §4.C–G). -/
 structure ExpectedChoiceSequence (S A : Type*) [Fintype A] where
   /-- The learning model governing updates. -/
   learner : LinearLearner A

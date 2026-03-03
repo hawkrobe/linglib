@@ -45,7 +45,7 @@ namespace Phenomena.Reference.Typology
 -- ============================================================================
 
 /--
-Definite article type (WALS Ch 37, Dryer 2013).
+Definite article type (WALS Ch 37, @cite{dryer-haspelmath-2013}).
 
 Classifies languages by how (or whether) they mark definiteness on nouns.
 The categories are ordered along a grammaticalization cline:
@@ -70,7 +70,7 @@ inductive DefiniteArticleType where
 -- ============================================================================
 
 /--
-Indefinite article type (WALS Ch 38, Dryer 2013).
+Indefinite article type (WALS Ch 38, @cite{dryer-haspelmath-2013}).
 
 Languages either have a dedicated indefinite word (distinct from 'one'),
 use the numeral 'one' as an indefinite marker (the most common
@@ -95,7 +95,7 @@ inductive IndefiniteArticleType where
 -- ============================================================================
 
 /--
-Number of distance contrasts in adnominal demonstratives (WALS Ch 41, Diessel 2013).
+Number of distance contrasts in adnominal demonstratives (WALS Ch 41, @cite{diessel-2013}).
 
 Two-way systems (proximal/distal) are by far the most common (54.3%),
 followed by three-way systems (37.6%). Systems with four or more
@@ -144,7 +144,7 @@ inductive DemOrientationType where
 -- ============================================================================
 
 /--
-Relationship between pronominal and adnominal demonstratives (WALS Ch 42, Diessel 2013).
+Relationship between pronominal and adnominal demonstratives (WALS Ch 42, @cite{diessel-2013}).
 
 English uses the same forms ("this book" / "I like this"); French uses
 different stems (adnominal "ce"/"cette" vs pronominal "celui"/"celle");
@@ -164,7 +164,7 @@ inductive DemFormRelation where
 -- ============================================================================
 
 /--
-Relationship between third-person pronouns and demonstratives (WALS Ch 43, Bhat 2013).
+Relationship between third-person pronouns and demonstratives (WALS Ch 43, @cite{bhat-2013}).
 
 In "two-person languages" (Bhat's term), 3rd-person pronouns are related to
 demonstratives -- the pronoun is either identical to a demonstrative or
@@ -327,7 +327,7 @@ def mandarin : ArticleDemProfile :=
 
 /-- Turkish (Turkic).
     No definite article; indefinite article "bir" = numeral 'one' (different
-    NP position when used as article vs numeral, per Kornfilt 1997).
+    NP position when used as article vs numeral, per @cite{kornfilt-1997}).
     Two-way demonstrative distance: bu (proximal) vs o (distal), with su as
     a restricted medial form. WALS codes as two-way.
     Different inflectional features: pronominal demonstratives inflect for case
@@ -479,7 +479,7 @@ def latin : ArticleDemProfile :=
     ku (near hearer), ce (away from both).
     Different stems: pronominal demonstratives formed by combining i/ku/ce
     with a "defective noun" like "il" (thing/fact), giving "i-il", "ku-il", etc.
-    (Sohn 1994: 295, Diessel 2013).
+    (Sohn 1994: 295, @cite{diessel-2013}).
     3rd-person pronoun "ku" related to medial demonstrative "ku". -/
 def korean : ArticleDemProfile :=
   { language := "Korean"
@@ -570,7 +570,7 @@ structure DefiniteArticleCounts where
 def DefiniteArticleCounts.total (c : DefiniteArticleCounts) : Nat :=
   c.definiteWord + c.demonstrativeUsed + c.definiteAffix + c.noDefButIndef + c.noArticle
 
-/-- WALS Ch 37 distribution (Dryer 2013, n = 566). -/
+/-- WALS Ch 37 distribution (@cite{dryer-haspelmath-2013}, n = 566). -/
 def walsDefiniteArticle : DefiniteArticleCounts :=
   { definiteWord := 197
   , demonstrativeUsed := 56
@@ -590,7 +590,7 @@ structure IndefiniteArticleCounts where
 def IndefiniteArticleCounts.total (c : IndefiniteArticleCounts) : Nat :=
   c.indefiniteWord + c.numeralOne + c.indefiniteAffix + c.noIndefButDef + c.noArticle
 
-/-- WALS Ch 38 distribution (Dryer 2013, n = 473). -/
+/-- WALS Ch 38 distribution (@cite{dryer-haspelmath-2013}, n = 473). -/
 def walsIndefiniteArticle : IndefiniteArticleCounts :=
   { indefiniteWord := 91
   , numeralOne := 90
@@ -610,7 +610,7 @@ structure DemDistanceCounts where
 def DemDistanceCounts.total (c : DemDistanceCounts) : Nat :=
   c.noContrast + c.twoWay + c.threeWay + c.fourWay + c.fiveOrMore
 
-/-- WALS Ch 41 distribution (Diessel 2013, n = 234). -/
+/-- WALS Ch 41 distribution (@cite{diessel-2013}, n = 234). -/
 def walsDemDistance : DemDistanceCounts :=
   { noContrast := 7
   , twoWay := 127
@@ -628,7 +628,7 @@ structure DemFormCounts where
 def DemFormCounts.total (c : DemFormCounts) : Nat :=
   c.sameForms + c.differentStems + c.differentInflection
 
-/-- WALS Ch 42 distribution (Diessel 2013, n = 201). -/
+/-- WALS Ch 42 distribution (@cite{diessel-2013}, n = 201). -/
 def walsDemForm : DemFormCounts :=
   { sameForms := 143
   , differentStems := 37
@@ -654,7 +654,7 @@ def PronounDemCounts.totalRelated (c : PronounDemCounts) : Nat :=
   c.relatedAll + c.relatedRemote + c.relatedNonRemote +
   c.relatedGender + c.relatedNonhuman
 
-/-- WALS Ch 43 distribution (Bhat 2013, n = 225). -/
+/-- WALS Ch 43 distribution (@cite{bhat-2013}, n = 225). -/
 def walsPronounDem : PronounDemCounts :=
   { unrelated := 100
   , relatedAll := 52
@@ -815,7 +815,7 @@ theorem relatedAll_most_common_subtype :
 
 /--
 In most languages (143 of 201 = 71.1%), pronominal and adnominal
-demonstratives have the same forms (Diessel 2013, Ch 42). Languages where
+demonstratives have the same forms (@cite{diessel-2013}, Ch 42). Languages where
 adnominal demonstratives have different stems (37) or different inflectional
 features (21) are the minority.
 

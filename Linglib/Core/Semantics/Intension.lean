@@ -93,7 +93,7 @@ theorem rigid_neq_nonrigid {W τ : Type*} (f g : Intension W τ)
     (hf : IsRigid f) (hg : ¬ IsRigid g) : f ≠ g := by
   intro heq; subst heq; exact hg hf
 
-/-! ## Stable Character (Kaplan 1989 §XIX Remarks 5-8) -/
+/-! ## Stable Character (@cite{kaplan-1989} §XIX Remarks 5-8) -/
 
 /-- A character is stable iff it assigns the same content at every context.
 
@@ -127,7 +127,7 @@ end Core.Intension
 
 
 -- ════════════════════════════════════════════════════════════════
--- Referential Mode (Partee 1973)
+-- Referential Mode (@cite{partee-1973})
 -- ════════════════════════════════════════════════════════════════
 
 namespace Core.ReferentialMode
@@ -165,13 +165,13 @@ end Core.ReferentialMode
 
 
 -- ════════════════════════════════════════════════════════════════
--- Generic Variable Assignment (Partee 1973, Heim & Kratzer 1998)
+-- Generic Variable Assignment (@cite{partee-1973}, @cite{heim-kratzer-1998})
 -- ════════════════════════════════════════════════════════════════
 
 namespace Core.VarAssignment
 
 /-- Generic variable assignment: maps indices to values in domain `D`.
-    Instantiate with `D = Entity` for pronoun interpretation (H&K 1998)
+    Instantiate with `D = Entity` for pronoun interpretation (@cite{heim-kratzer-1998})
     or `D = Time` for temporal variable interpretation. -/
 abbrev VarAssignment (D : Type*) := ℕ → D
 

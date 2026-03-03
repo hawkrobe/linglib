@@ -40,7 +40,7 @@ open Core.Evidence
 open Core.Context
 
 /-- Epistemic authority: WHO has privileged access to the propositional content.
-    Egophoric systems (Tournadre 2008, Floyd 2018, Gawne & Spronck glossary 2)
+    Egophoric systems (@cite{tournadre-2008}, @cite{floyd-2018}, Gawne & Spronck glossary 2)
     grammaticalize the distinction between:
     - ego: speaker has privileged access (1st person knowledge, volition, intention)
     - allocutive: addressee has privileged access (2nd person questions)
@@ -79,7 +79,7 @@ def strongAssertion : EpistemicProfile :=
   { source := .direct, authority := .ego }
 
 /-- Non-ego authority with inferential evidence: the canonical profile
-    for epistemic 'must' (VF&G 2010). Speaker infers, no privileged access. -/
+    for epistemic 'must' (@cite{von-fintel-gillies-2010}). Speaker infers, no privileged access. -/
 def inferentialClaim : EpistemicProfile :=
   { source := .inference, authority := .nonparticipant }
 

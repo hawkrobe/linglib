@@ -44,11 +44,11 @@ open Semantics.Lexical.Verb.ChangeOfState
 open Fragments.English.Predicates.Verbal
 
 -- ════════════════════════════════════════════════════
--- § 1. Entailment Profile (Dowty 1991 pp.572–573)
+-- § 1. Entailment Profile (@cite{dowty-1991} pp.572–573)
 -- ════════════════════════════════════════════════════
 
 /-- The 10 independent entailments defining Proto-Agent and Proto-Patient
-    (Dowty 1991 pp.572–573).
+    (@cite{dowty-1991} pp.572–573).
 
     Proto-Agent entailments (a)–(e):
     - volition, sentience, causation, movement, independent existence
@@ -97,7 +97,7 @@ def EntailmentProfile.pPatientScore (p : EntailmentProfile) : Nat :=
   p.dependentExistence.toNat
 
 -- ════════════════════════════════════════════════════
--- § 3. Argument Selection Principle (Dowty 1991 p.576)
+-- § 3. Argument Selection Principle (@cite{dowty-1991} p.576)
 -- ════════════════════════════════════════════════════
 
 /-- Dowty's ASP: "In predicates with grammatical subject and object, the
@@ -110,7 +110,7 @@ def selectsSubject (p : EntailmentProfile) : Bool :=
 def selectsObject (p : EntailmentProfile) : Bool :=
   p.pPatientScore > p.pAgentScore
 
-/-- Corollary 1 (Dowty 1991 p.579): When subject and object have equal
+/-- Corollary 1 (@cite{dowty-1991} p.579): When subject and object have equal
     P-Agent scores and equal P-Patient scores, alternation is predicted
     (buy/sell, like/please). -/
 def allowsAlternation (subj obj : EntailmentProfile) : Bool :=
@@ -262,7 +262,7 @@ def ThetaRole.canonicalProfile : ThetaRole → EntailmentProfile
   | .goal        => ⟨false, false, false, false, true,  false, false, false, false, false⟩
   | .source      => ⟨false, false, false, false, true,  false, false, false, false, false⟩
 
-/-- Role hierarchy (Dowty 1991 p.576): Agent outscores Instrument/Experiencer
+/-- Role hierarchy (@cite{dowty-1991} p.576): Agent outscores Instrument/Experiencer
     in P-Agent entailments. -/
 theorem agent_outscores_instrument :
     (ThetaRole.canonicalProfile .agent).pAgentScore >
@@ -357,7 +357,7 @@ theorem buildSubject_has_causation :
     buildSubjectProfile.causation = true := by native_decide
 
 -- ════════════════════════════════════════════════════
--- § 10. Unaccusativity (Dowty 1991 Corollary 2)
+-- § 10. Unaccusativity (@cite{dowty-1991} Corollary 2)
 -- ════════════════════════════════════════════════════
 
 /-- Dowty's Corollary 2: intransitive subjects with predominantly P-Patient
@@ -404,7 +404,7 @@ theorem run_unaccusative_agrees :
     Fragments.English.Predicates.Verbal.run.unaccusative := by native_decide
 
 -- ════════════════════════════════════════════════════
--- § 11. Alternation Examples (Dowty 1991 Corollary 1)
+-- § 11. Alternation Examples (@cite{dowty-1991} Corollary 1)
 -- ════════════════════════════════════════════════════
 
 /-- "buy" subject: V+S+C+IE (4 P-Ag) -/
@@ -427,7 +427,7 @@ theorem buy_sell_equal_pAgent :
   native_decide
 
 -- ════════════════════════════════════════════════════
--- § 12. Variable Agentivity (Rappaport Hovav & Levin 2024)
+-- § 12. Variable Agentivity (Rappaport @cite{rappaport-hovav-levin-2024})
 -- ════════════════════════════════════════════════════
 
 /-- "sweep" basic-sense subject: M+IE (movement + independent existence).
@@ -443,7 +443,7 @@ def sweepBroomSubjectProfile : EntailmentProfile :=
   ⟨true, true, true, true, true, false, false, false, false, false⟩
 
 /-- Variable agentivity = the broom sense has strictly more P-Agent
-    entailments than the basic sense (Rappaport Hovav & Levin 2024 §4). -/
+    entailments than the basic sense (Rappaport @cite{rappaport-hovav-levin-2024} §4). -/
 theorem sweep_instr_more_agentive :
     sweepBroomSubjectProfile.pAgentScore >
     sweepBasicSubjectProfile.pAgentScore := by native_decide
@@ -465,16 +465,16 @@ theorem sweep_instr_agentive :
     Fragments.English.Predicates.Verbal.sweep_instr.subjectTheta = some .agent := rfl
 
 -- ════════════════════════════════════════════════════
--- § 13. Effector / Force Recipient (Rappaport Hovav & Levin 2024)
+-- § 13. Effector / Force Recipient (Rappaport @cite{rappaport-hovav-levin-2024})
 -- ════════════════════════════════════════════════════
 
-/-- An effector (Van Valin & Wilkins 1996; Rappaport Hovav & Levin 2024
+/-- An effector (@cite{van-valin-wilkins-1996}; Rappaport @cite{rappaport-hovav-levin-2024}
     principle 45) is a self-energetic force bearer: it has movement and
     exists independently. Effectors are realized as external arguments. -/
 def isEffector (p : EntailmentProfile) : Bool :=
   p.movement && p.independentExistence
 
-/-- A force recipient (Rappaport Hovav & Levin 2024 principle 44) is
+/-- A force recipient (Rappaport @cite{rappaport-hovav-levin-2024} principle 44) is
     causally affected or stationary. Force recipients are realized as
     internal arguments. -/
 def isForceRecipient (p : EntailmentProfile) : Bool :=

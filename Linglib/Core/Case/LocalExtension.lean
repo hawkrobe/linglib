@@ -62,7 +62,7 @@ theorem all_extends_ben : Case.ben ∈ localExtension .all := by simp [localExte
 theorem loc_extends_dat : Case.dat ∈ localExtension .loc := by simp [localExtension]
 
 /-- Core grammatical cases have no extensions — they don't extend to
-    other grammatical functions (Blake 1994, Ch. 6: extensions go from
+    other grammatical functions (@cite{blake-1994}, Ch. 6: extensions go from
     peripheral/spatial to grammatical, never the reverse). -/
 theorem nom_no_extension : localExtension .nom = [] := rfl
 theorem acc_no_extension : localExtension .acc = [] := rfl

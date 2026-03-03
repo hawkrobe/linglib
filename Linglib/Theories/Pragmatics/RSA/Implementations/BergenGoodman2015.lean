@@ -448,13 +448,13 @@ end Prosody
 /-!
 ## Connection to Other Noise Models
 
-### Bergen & Goodman 2015 (This File)
+### @cite{bergen-goodman-2015} (This File)
 - **Channel noise**: P_N(u_p | u_i)
 - Words can be deleted, inserted, replaced
 - Noise is in transmission, not semantics
 - Prosody reduces channel noise
 
-### Degen et al. 2020 (DegenEtAl2020.lean)
+### @cite{degen-etal-2020} (DegenEtAl2020.lean)
 - **Semantic noise**: φ(u, o) ∈ [0,1]
 - Feature matching is probabilistic
 - Noise is in perception of features
@@ -539,7 +539,7 @@ The noisy channel model explains phenomena that standard RSA cannot:
 
 Both emerge from strategic reasoning about noise.
 
-### Relation to Degen et al. 2020
+### Relation to @cite{degen-etal-2020}
 
 | Property | Bergen & Goodman | Degen et al. |
 |----------|------------------|--------------|

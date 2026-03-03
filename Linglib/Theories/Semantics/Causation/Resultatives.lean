@@ -14,13 +14,13 @@ causative semantics infrastructure:
 
 1. **Causal Dynamics**: causative resultatives modeled as concrete
    `CausalDynamics` with structural sufficiency proofs
-   and CC-selection constraints (Baglini & Bar-Asher Siegal 2025)
+   and CC-selection constraints (Baglini & Bar-Asher @cite{baglini-bar-asher-siegal-2025})
 2. **Tightness via Causal Necessity**: @cite{levin-2019} concealed causative
    constraint — intervening causers with independent energy sources
    disrupt necessity under counterfactual intervention, formalized
    through `completesForEffect` (not graph-structural checks)
-3. **Thick/Thin Convergence**: three independent paths (Martin et al. 2025,
-   G&J 2004, Embick 2009) converge on `.make`/`makeSem`
+3. **Thick/Thin Convergence**: three independent paths (@cite{martin-rose-nichols-2025},
+   @cite{goldberg-jackendoff-2004}, @cite{embick-2009}) converge on `.make`/`makeSem`
 4. **Aspect**: resultative telicizes activity verbs via bounded RP
 5. **ChangeOfState**: constructional BECOME maps to CoSType.inception
 6. **Müller decomposability**: all subconstructions decompose into
@@ -42,13 +42,13 @@ open NadathurLauer2020.Builder (CausativeBuilder)
 open Fragments.English.Predicates.Verbal (VerbEntry make cause)
 open MartinRoseNichols2025
 
-/-! ## Causal Dynamics (Nadathur & Lauer 2020; Baglini & Bar-Asher Siegal 2025)
+/-! ## Causal Dynamics (@cite{nadathur-lauer-2020}; Baglini & Bar-Asher @cite{baglini-bar-asher-siegal-2025})
 
 The constructional CAUSE in causative resultatives maps to @cite{nadathur-lauer-2020} causal sufficiency: the verbal subevent is sufficient for the
 constructional result. We build concrete `CausalDynamics` and prove
 structural sufficiency/necessity results.
 
-### CC-selection (Baglini & Bar-Asher Siegal 2025)
+### CC-selection (Baglini & Bar-Asher @cite{baglini-bar-asher-siegal-2025})
 
 The resultative construction performs **CC-selection**: it constrains which
 condition from a causal model can fill the cause role. Causative resultatives
@@ -85,7 +85,7 @@ def sillyVar : Variable := mkVar "silly"
 def laughSillyModel : CausalDynamics :=
   ⟨[CausalLaw.simple laughingVar sillyVar]⟩
 
-/-! ### Sufficiency proofs (N&L 2020 Def 23) -/
+/-! ### Sufficiency proofs (@cite{nadathur-lauer-2020} Def 23) -/
 
 /-- Hammering is causally sufficient for flatness. -/
 theorem hammer_sufficient_for_flat :
@@ -173,7 +173,7 @@ theorem causative_means_have_cause :
     )).all (·.subevents.constructional.hasCause) = true := by
   native_decide
 
-/-! ### CC-selection (Baglini & Bar-Asher Siegal 2025)
+/-! ### CC-selection (Baglini & Bar-Asher @cite{baglini-bar-asher-siegal-2025})
 
 Different causative constructions constrain which condition from a causal
 model can be selected as "the cause." BBS2025 call this CC-selection.
@@ -518,7 +518,7 @@ Three independently-defined modules converge on the same prediction:
 3. **ThickThin.lean**: Thick manner → ASR-compatible (empirical data)
 
 This convergence is non-trivial: each path was formalized independently
-following different papers (Martin et al. 2025, G&J 2004, Embick 2009).
+following different papers (@cite{martin-rose-nichols-2025}, @cite{goldberg-jackendoff-2004}, @cite{embick-2009}).
 The fact that they agree validates the cross-module architecture. -/
 
 /-- Three independent paths converge on `.make`. -/

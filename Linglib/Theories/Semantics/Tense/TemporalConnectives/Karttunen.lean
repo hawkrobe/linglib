@@ -101,7 +101,7 @@ def Karttunen.since (A B : SentDenotation Time) : Prop :=
 def Karttunen.by_ (A B : SentDenotation Time) : Prop :=
   ∃ t ∈ timeTrace A, ∀ t' ∈ timeTrace B, t ≤ t'
 
-/-- Punctual *until* = ¬(*before*) (Karttunen 1974, eq. 33).
+/-- Punctual *until* = ¬(*before*) (@cite{karttunen-1974}, eq. 33).
     "The princess didn't wake up until the prince kissed her"
     = NOT(the princess woke up BEFORE the prince kissed her).
 
@@ -365,7 +365,7 @@ theorem by_not_implies_before :
   omega
 
 -- ============================================================================
--- § 11: *Whenever* — Universal Temporal Overlap (Heinämäki 1974)
+-- § 11: *Whenever* — Universal Temporal Overlap (@cite{heinamaki-1974})
 -- ============================================================================
 
 /-- *Whenever*: universally quantified temporal overlap.

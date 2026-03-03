@@ -61,7 +61,7 @@ See `surface_from_every_sem`, `inverse_from_every_sem`, and
 
 S2 endorsement for "every horse didn't jump" in the partial world (w=1).
 The "Paper value" column is S&P's computed model predictions (not experimental
-data — S&P is a modeling paper explaining Musolino & Lidz 2003 findings):
+data — S&P is a modeling paper explaining @cite{musolino-lidz-2003} findings):
 
 | Config | S2(everyNot|w=1) | Paper value |
 |--------|-----------------|-------------|

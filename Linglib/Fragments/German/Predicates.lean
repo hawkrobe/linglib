@@ -93,7 +93,7 @@ def zerbrechen : GermanVerbEntry where
   causativeBuilder := some .make
 
 -- ============================================================================
--- § 2: Attitude Verbs (Qing et al. 2025)
+-- § 2: Attitude Verbs (@cite{qing-uegaki-2025})
 -- ============================================================================
 
 /-- *hoffen* — "hope" (Class 3: positive, C-distributive, anti-rogative). -/
@@ -157,7 +157,7 @@ def sorgen : GermanVerbEntry where
   attitudeBuilder := some (.preferential .uncertaintyBased)
 
 -- ============================================================================
--- § 3: Occasion Verbs (Solstad & Bott 2024, S&P 17:11)
+-- § 3: Occasion Verbs (@cite{solstad-bott-2024}, S&P 17:11)
 -- ============================================================================
 
 /-! German interpersonal occasion verbs presuppose a prior occasioning

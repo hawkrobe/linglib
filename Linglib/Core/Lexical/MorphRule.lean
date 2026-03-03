@@ -82,7 +82,7 @@ def SelectionDegree.isHighSelection : SelectionDegree → Bool
 
 Classifies forms by their degree of syntactic independence and
 mode of combination. The clitic–affix boundary is the central
-question of Zwicky & Pullum 1983: the criteria A–F serve to
+question of @cite{zwicky-pullum-1983}: the criteria A–F serve to
 locate a given morpheme on this scale. -/
 inductive MorphStatus where
   /-- Syntactically independent word. -/

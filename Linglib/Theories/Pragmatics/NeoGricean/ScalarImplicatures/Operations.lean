@@ -40,7 +40,7 @@ open Semantics.Lexical.Numeral
 
 namespace NeoGricean
 
--- Implicature Operations (Horn 1972, §1.22)
+-- Implicature Operations (@cite{horn-1972}, §1.22)
 
 /--
 Operations on scalar implicatures.
@@ -95,7 +95,7 @@ Simplified check: is there an implicature to operate on?
 def hasImplicatureTarget (T : NumeralTheory) (w : BareNumeral) : Bool :=
   T.hasAmbiguity w
 
--- Example Sentences (Horn 1972, §1.73)
+-- Example Sentences (@cite{horn-1972}, §1.73)
 
 /--
 Example sentences demonstrating the three operations on "two".
@@ -192,7 +192,7 @@ theorem exact_suspension_redundant :
     suspensionNonRedundant Exact .two = false := by
   native_decide
 
--- Reinforcement Analysis (Horn 1972, §1.22)
+-- Reinforcement Analysis (@cite{horn-1972}, §1.22)
 
 /--
 **Reinforcement is ALWAYS non-redundant**
@@ -216,7 +216,7 @@ theorem exact_reinforcement_redundant :
     reinforcementNonRedundant Exact .two = false := by
   native_decide
 
--- Conjunction Redundancy Test (Horn 1972)
+-- Conjunction Redundancy Test (@cite{horn-1972})
 
 /--
 **Conjunction Test for Implicature**

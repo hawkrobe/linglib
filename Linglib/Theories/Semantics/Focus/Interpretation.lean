@@ -34,7 +34,7 @@ open Core.InformationStructure
 
 namespace Semantics.FocusInterpretation
 
--- Focus Semantic Values (Rooth 1985, 1992)
+-- Focus Semantic Values (@cite{rooth-1985}, 1992)
 
 /-- Propositional focus value: set of propositions.
     Type: <<s,t>,t> - same as Hamblin questions! -/

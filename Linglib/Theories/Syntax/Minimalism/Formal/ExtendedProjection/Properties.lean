@@ -41,26 +41,26 @@ inductive EPSemanticType where
 def epSemanticType : Cat → EPSemanticType
   | .V | .N | .A | .P => .property       -- F0: property-denoting
   | .v                 => .intermediate   -- F1: event quantification domain
-  | .n                 => .intermediate   -- F1: categorizer (gender/class, Marantz 2001)
-  | .a                 => .intermediate   -- F1: adjectival categorizer (Panagiotidis 2015)
-  | .Voice             => .intermediate   -- F1: introduces external argument (Kratzer 1996)
-  | .Appl              => .intermediate   -- F1: introduces applied argument (Pylkkänen 2008)
-  | .Num               => .intermediate   -- F2: number inflection (Ritter 1991)
-  | .Q                 => .intermediate   -- F3: quantity/classifier (Borer 2005)
+  | .n                 => .intermediate   -- F1: categorizer (gender/class, @cite{marantz-2001})
+  | .a                 => .intermediate   -- F1: adjectival categorizer (@cite{panagiotidis-2015})
+  | .Voice             => .intermediate   -- F1: introduces external argument (@cite{kratzer-1996})
+  | .Appl              => .intermediate   -- F1: introduces applied argument (@cite{brennan-pylkkanen-2008})
+  | .Num               => .intermediate   -- F2: number inflection (@cite{ritter-1991})
+  | .Q                 => .intermediate   -- F3: quantity/classifier (@cite{borer-2005})
   | .D                 => .entity         -- F4: entity-denoting (in nominal EP)
   | .T                 => .intermediate   -- F2: tense/aspect binding
-  | .Neg               => .intermediate   -- F2: negation (Pollock 1989)
-  | .Mod               => .intermediate   -- F2: modality (Cinque 1999)
-  | .Pol               => .intermediate   -- F2: polarity (Laka 1990)
-  | .Asp               => .intermediate   -- F2: aspect (Cinque 1999)
-  | .Evid              => .intermediate   -- F2: evidential (Cinque 1999)
-  | .Foc               => .intermediate   -- F4: focus (Rizzi 1997 split-CP)
-  | .Top               => .intermediate   -- F5: topic (Rizzi 1997 split-CP)
-  | .Rel               => .intermediate   -- F5: relative (Rizzi 2001)
-  | .Fin               => .intermediate   -- F3: finiteness (Rizzi 1997)
+  | .Neg               => .intermediate   -- F2: negation (@cite{pollock-1989})
+  | .Mod               => .intermediate   -- F2: modality (@cite{cinque-1999})
+  | .Pol               => .intermediate   -- F2: polarity (@cite{laka-1990})
+  | .Asp               => .intermediate   -- F2: aspect (@cite{cinque-1999})
+  | .Evid              => .intermediate   -- F2: evidential (@cite{cinque-1999})
+  | .Foc               => .intermediate   -- F4: focus (@cite{rizzi-1997} split-CP)
+  | .Top               => .intermediate   -- F5: topic (@cite{rizzi-1997} split-CP)
+  | .Rel               => .intermediate   -- F5: relative (@cite{rizzi-2001})
+  | .Fin               => .intermediate   -- F3: finiteness (@cite{rizzi-1997})
   | .C                 => .proposition    -- F6: proposition (force)
-  | .Force             => .proposition    -- F6: force (Rizzi 1997 split-CP)
-  | .SA                => .proposition    -- F7: speech act (Speas & Tenny 2003)
+  | .Force             => .proposition    -- F6: force (@cite{rizzi-1997} split-CP)
+  | .SA                => .proposition    -- F7: speech act (@cite{speas-tenny-2003})
 
 -- ═══════════════════════════════════════════════════════════════
 -- Part 2: Generalized Theta Criterion
@@ -292,7 +292,7 @@ theorem small_clause_is_truncated :
 theorem full_verbal_not_truncated :
     isTruncated fullVerbalEP = false := by decide
 
-/-- F1+ heads cannot assign theta roles (Grimshaw 2005 Definition 10).
+/-- F1+ heads cannot assign theta roles (@cite{grimshaw-2005} Definition 10).
     Note: Panagiotidis (2015 §4.5) argues categorizers (v, n, a) are lexical,
     not functional — but in Grimshaw's F-value system they are F1 (non-lexical).
     The theta restriction here follows Grimshaw, not Panagiotidis. -/

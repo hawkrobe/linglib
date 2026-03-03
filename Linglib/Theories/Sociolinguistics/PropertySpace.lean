@@ -3,7 +3,7 @@ import Mathlib.Data.Finset.Powerset
 import Mathlib.Data.Fintype.Basic
 
 /-!
-# Property Spaces and Personae (Burnett 2019, Definitions 3.1–3.3)
+# Property Spaces and Personae (@cite{burnett-2019}, Definitions 3.1–3.3)
 @cite{burnett-2019}
 
 Burnett's formalization of @cite{eckert-2008}'s indexical field as a

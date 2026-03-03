@@ -87,7 +87,7 @@ def primaryFlavor : SpeechActType → ModalFlavor
 
 This is what the Speech Act Phrase introduces at the top of every
 matrix clause. The `content` field is the conversational background
-that modals in the clause can bind to (Hacquard 2006, (219)–(222)). -/
+that modals in the clause can bind to (@cite{hacquard-2006}, (219)–(222)). -/
 structure SpeechActEvent (W : Type*) where
   /-- The type of speech act -/
   actType : SpeechActType

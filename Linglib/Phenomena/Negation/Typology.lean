@@ -160,7 +160,7 @@ inductive AsymmetrySubtype where
     dominant. The preclusion pattern is concentrated in Western Europe and
     Mesoamerica; the normative criticism of "double negation" as "illogical"
     is a prescriptive artifact rooted in Latin prestige
-    (Haspelmath 1997, sec. 8.2). -/
+    (@cite{haspelmath-1997}, sec. 8.2). -/
 inductive NegIndefiniteStrategy where
   /-- Negative indefinites co-occur with predicate negation (negative concord).
       'Nobody NEG came' = 'Nobody came'.
@@ -442,7 +442,7 @@ def spanish : NegationProfile :=
   , asymmetrySubtype := .nonAssignable
   , negIndefinite := some .mixed
   , negMarkers := ["no"]
-  , negIsHead := some false  -- no can be focused/coordinated (XP; Greco 2020, §5.2)
+  , negIsHead := some false  -- no can be focused/coordinated (XP; @cite{greco-2020}, §5.2)
   , notes := "Position-dependent: preverbal nadie precludes no, " ++
              "postverbal nada requires no" }
 
@@ -758,7 +758,7 @@ theorem aux_verb_implies_afin :
 
 /-- Areal pattern: the negative auxiliary verb type is concentrated in
     northern Eurasia, stretching from Finland to western Siberia
-    (Dryer 2013, sec. 2). Our sample contains Finnish as the representative;
+    (@cite{dryer-haspelmath-2013}, sec. 2). Our sample contains Finnish as the representative;
     other languages in this belt include Estonian, Nenets, Evenki, Khanty. -/
 theorem finnish_neg_aux_representative :
     finnish.morphemeType == .auxVerb ∧

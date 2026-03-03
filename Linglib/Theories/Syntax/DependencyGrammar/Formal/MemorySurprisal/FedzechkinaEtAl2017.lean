@@ -137,7 +137,7 @@ theorem langA_efficient_vs_B :
 /-- Learner convergence rate: proportion choosing Language A's order × 1000.
 
 By end of training, ~67% of productions used the short-dependency order
-(Fedzechkina et al. 2012, Figure 2). This exceeds chance (50%). -/
+(@cite{fedzechkina-newport-2012}, Figure 2). This exceeds chance (50%). -/
 def learnerConvergenceRate : Nat := 670
 
 /-- Learners converge above chance toward the efficient order. -/

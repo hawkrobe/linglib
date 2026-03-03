@@ -136,8 +136,8 @@ theorem unimodal_prior_peaks_at_50 :
 
 | Paper | Domain | Scale | Threshold |
 |-------|--------|-------|-----------|
-| Lassiter & Goodman 2017 | Adjectives | height(x) | theta_tall |
-| Tessler & Goodman 2019 | Generics | prevalence(F,K) | theta_gen |
+| @cite{lassiter-goodman-2017} | Adjectives | height(x) | theta_tall |
+| @cite{tessler-goodman-2019} | Generics | prevalence(F,K) | theta_gen |
 
 Both derive context-sensitivity from pragmatic inference over theta:
 - Adjectives: prior over heights varies by reference class

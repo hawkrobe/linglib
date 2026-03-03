@@ -197,7 +197,7 @@ theorem contentPart_or_not_general :
 
 
 -- ════════════════════════════════════════════════════════════════════════════
--- PART II: BILATERAL PROPOSITIONS (Fine 2017 §5–6)
+-- PART II: BILATERAL PROPOSITIONS (@cite{fine-2017} §5–6)
 -- ════════════════════════════════════════════════════════════════════════════
 
 -- ════════════════════════════════════════════════════
@@ -231,12 +231,12 @@ def TMProp.toBil {S : Type*} (p : TMProp S) : BilProp S :=
 -- § 8. Bilateral Connectives
 -- ════════════════════════════════════════════════════
 
-/-- Negation: swap verifiers and falsifiers (Fine 2017 §5).
+/-- Negation: swap verifiers and falsifiers (@cite{fine-2017} §5).
     s verifies ¬A iff s falsifies A; s falsifies ¬A iff s verifies A. -/
 def bilNot {S : Type*} (p : BilProp S) : BilProp S :=
   ⟨p.fal, p.ver⟩
 
-/-- Conjunction: verified by fusion, falsified by union (Fine 2017 §5).
+/-- Conjunction: verified by fusion, falsified by union (@cite{fine-2017} §5).
     - s verifies A ∧ B iff s = s₁ ⊔ s₂ where s₁ verifies A and s₂ verifies B
     - s falsifies A ∧ B iff s falsifies A or s falsifies B
 
@@ -246,7 +246,7 @@ def bilAnd {S : Type*} [SemilatticeSup S] (p q : BilProp S) : BilProp S where
   ver := tmAnd p.ver q.ver
   fal := tmOr p.fal q.fal
 
-/-- Disjunction: verified by union, falsified by fusion (Fine 2017 §5).
+/-- Disjunction: verified by union, falsified by fusion (@cite{fine-2017} §5).
     - s verifies A ∨ B iff s verifies A or s verifies B
     - s falsifies A ∨ B iff s = s₁ ⊔ s₂ where s₁ falsifies A and s₂ falsifies B
 
@@ -296,7 +296,7 @@ structure Possibility (S : Type*) [Preorder S] where
       If s is possible and t ≤ s, then t is possible. -/
   downClosed : ∀ (s t : S), possible s → t ≤ s → possible t
 
-/-- Two states are compatible iff their fusion is possible (Fine 2017 §4).
+/-- Two states are compatible iff their fusion is possible (@cite{fine-2017} §4).
     Incompatible states represent conflicting information — e.g., a state
     verifying "it's cold" and a state verifying "it's hot" are incompatible
     because their fusion is impossible. -/
@@ -312,7 +312,7 @@ theorem compatible_symm {S : Type*} [SemilatticeSup S] (P : Possibility S)
 -- § 11. Exclusivity and Exhaustivity
 -- ════════════════════════════════════════════════════
 
-/-- Exclusivity (Fine 2017 §5): no verifier is compatible with a falsifier.
+/-- Exclusivity (@cite{fine-2017} §5): no verifier is compatible with a falsifier.
     If s verifies A and t falsifies A, then s ⊔ t is impossible.
 
     This is one direction of bivalence: verification and falsification are
@@ -321,7 +321,7 @@ def Exclusive {S : Type*} [SemilatticeSup S]
     (P : Possibility S) (A : BilProp S) : Prop :=
   ∀ s t, A.ver s → A.fal t → ¬ compatible P s t
 
-/-- Exhaustivity (Fine 2017 §5): every possible state is compatible with
+/-- Exhaustivity (@cite{fine-2017} §5): every possible state is compatible with
     a verifier or a falsifier.
 
     This is the other direction of bivalence: no possible state is
@@ -353,7 +353,7 @@ theorem exhaustive_bilNot {S : Type*} [SemilatticeSup S]
 -- ════════════════════════════════════════════════════
 
 /-- Subject-matter of a proposition: the fusion of all its verifiers
-    (Fine 2017 §II.2). Two sentences can be logically equivalent (true
+    (@cite{fine-2017} §II.2). Two sentences can be logically equivalent (true
     at the same worlds) but differ in subject-matter. -/
 noncomputable def subjectMatter {S : Type*} [SupSet S]
     (A : BilProp S) : S :=

@@ -41,7 +41,7 @@ open Semantics.Reference.Donnellan (definitePrProp attributiveContent)
 -- §1: Uniqueness-Based Definite (Weak Article)
 -- ============================================================================
 
-/-- ⟦the⟧ under uniqueness (Russell/Strawson/Heim & Kratzer 1998):
+/-- ⟦the⟧ under uniqueness (Russell/Strawson/@cite{heim-kratzer-1998}):
 
 Presupposition: exactly one entity in the domain satisfies the restrictor.
 Assertion: the scope predicate holds of that entity.

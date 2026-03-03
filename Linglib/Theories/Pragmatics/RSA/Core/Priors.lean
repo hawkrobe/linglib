@@ -5,7 +5,7 @@ import Mathlib.Data.Real.Basic
 
 Reusable combinators for constructing priors over product spaces and uniform
 distributions. These are common building blocks for RSA models where the
-world space is a product (e.g., `State × Goal` in Kao et al. 2014).
+world space is a product (e.g., `State × Goal` in @cite{kao-etal-2014-hyperbole}).
 -/
 
 set_option autoImplicit false

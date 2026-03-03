@@ -3,7 +3,7 @@ import Linglib.Theories.Semantics.Degree.Core
 
 /-!
 # Compositional "How" — Degree Questions
-@cite{beck-rullmann-1999} @cite{fox-2007} @cite{rullmann-1995}
+@cite{beck-rullmann-1999} @cite{fox-2007} @cite{rullmann-1995} @cite{fox-hackl-2006}
 
 Compositional semantics of degree questions ("how tall is Kim?"),
 connecting the syntactic structure of degree questions to the
@@ -22,7 +22,7 @@ In the Hamblin/Karttunen semantics, the answer set is:
     { p | ∃d. p = λw. height_w(Kim) ≥ d }
 
 The maximally informative answer is the one with d = height(Kim)
-(Fox & Hackl 2007: max⊨ applied to the answer set).
+(@cite{fox-2007}: max⊨ applied to the answer set).
 
 ## Bridge to Fox & Hackl
 

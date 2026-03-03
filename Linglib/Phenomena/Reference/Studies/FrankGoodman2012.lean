@@ -230,7 +230,7 @@ theorem objects_from_predMod :
 -- ============================================================================
 
 /-! The paper's key theoretical contribution is the **size principle**
-(Tenenbaum & Griffiths 2001, Eq. 2): the speaker probability of an utterance
+(@cite{tenenbaum-griffiths-2001}, Eq. 2): the speaker probability of an utterance
 is inversely proportional to its extension size |⟦u⟧|.
 
 In RSA with α = 1 and belief-based scoring:
@@ -346,7 +346,7 @@ def formalize : Finding → Prop
   | .circle_unique_reference =>
       cfg.L1 .circle .blue_circle > cfg.L1 .circle .blue_square
 
-/-- The RSA model accounts for all 4 qualitative findings from F&G (2012). -/
+/-- The RSA model accounts for all 4 qualitative findings from @cite{frank-goodman-2012}. -/
 theorem all_findings_verified : ∀ f : Finding, formalize f := by
   intro f; cases f
   · exact square_pragmatic_narrowing

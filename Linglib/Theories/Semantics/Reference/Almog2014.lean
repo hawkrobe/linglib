@@ -90,7 +90,7 @@ theorem frege_puzzle {W E : Type*} (a b : E) (P : E → W → Bool) (hab : a ≠
 
 /-! ## Cross-Module Bridges -/
 
-/-- Bridge to Carlson 1977: bare plurals as rigid designators.
+/-- Bridge to @cite{carlson-1977}: bare plurals as rigid designators.
 
 Carlson's `bare_plural_rigid_designator` shows that bare plurals behave
 like proper names (type e, no scope interaction). In Almog's taxonomy,

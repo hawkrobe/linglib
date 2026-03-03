@@ -45,8 +45,7 @@ all three categories via Bayesian inversion:
 Note that `P(d | w)` is world-conditioned: in many domains, the prior
 distribution over desires depends on the world state. In RSA, this corresponds
 to `latentPrior(w, l)` — the distribution over speaker latent states may
-depend on the true world (e.g., observation probability in Goodman &
-Stuhlmüller 2013).
+depend on the true world (e.g., observation probability in @cite{goodman-stuhlmuller-2013}).
 
 ## Causal Structure
 

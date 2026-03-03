@@ -194,7 +194,7 @@ def question_books : NumeralEmbeddingDatum where
 -- ============================================================================
 
 /-- "Some students answered three questions correctly" —
-numeral embedded under existential (Bylinina & Nouwen 2020 (38)–(39)).
+numeral embedded under existential (@cite{bylinina-nouwen-2020} (38)–(39)).
 Embedded EXH is blocked in this environment under LB. -/
 def existential_some : NumeralEmbeddingDatum where
   sentence := "Some students answered three questions correctly"
@@ -221,7 +221,7 @@ def collective_dots : NumeralEmbeddingDatum where
   source := "Bylinina & Nouwen 2020 §3"
 
 -- ============================================================================
--- "Almost" / Approximators (Nouwen 2006)
+-- "Almost" / Approximators (@cite{nouwen-2006})
 -- ============================================================================
 
 /-- "Almost three students passed" — the polar orientation diagnostic.
@@ -238,7 +238,7 @@ def almost_passed : NumeralEmbeddingDatum where
   source := "Nouwen 2006; Penka 2006; Sadock 1981"
 
 -- ============================================================================
--- "Only" + Focus (Coppock & Beaver 2014)
+-- "Only" + Focus (@cite{coppock-beaver-2014})
 -- ============================================================================
 
 /-- "Only three students passed" — focus particle + numeral.
@@ -255,7 +255,7 @@ def only_passed : NumeralEmbeddingDatum where
   source := "Fox 2007; Coppock & Beaver 2014"
 
 -- ============================================================================
--- Factive Presupposition (Kiparsky & Kiparsky 1970)
+-- Factive Presupposition (@cite{kiparsky-kiparsky-1970})
 -- ============================================================================
 
 /-- "I'm surprised that three students passed" — emotive factive.
@@ -272,7 +272,7 @@ def factive_surprised : NumeralEmbeddingDatum where
   source := "Kiparsky & Kiparsky 1970; Karttunen 1971"
 
 -- ============================================================================
--- Imperatives (Kaufmann 2012)
+-- Imperatives (@cite{kaufmann-2012})
 -- ============================================================================
 
 /-- "Read three books!" — imperative compliance condition.
@@ -288,7 +288,7 @@ def imperative_read : NumeralEmbeddingDatum where
   source := "Kaufmann 2012"
 
 -- ============================================================================
--- Neg-Raising "doubt" (Gajewski 2007)
+-- Neg-Raising "doubt" (@cite{gajewski-2007})
 -- ============================================================================
 
 /-- "I doubt that three students passed" — neg-raising verb.
@@ -305,7 +305,7 @@ def doubt_passed : NumeralEmbeddingDatum where
   source := "Gajewski 2007; Horn 1978"
 
 -- ============================================================================
--- QUD-Convexity (Solt & Waldon 2019)
+-- QUD-Convexity (@cite{solt-waldon-2019})
 -- ============================================================================
 
 /-- "She doesn't have 40 sheep" — QUD-convexity diagnostic.
@@ -322,7 +322,7 @@ def convexity_sheep : NumeralEmbeddingDatum where
   source := "Solt & Waldon 2019"
 
 -- ============================================================================
--- Acquisition (Musolino 2004)
+-- Acquisition (@cite{musolino-2004})
 -- ============================================================================
 
 /-- "Two of the horses jumped over the fence" — child interpretation.
@@ -340,7 +340,7 @@ def acquisition_horses : NumeralEmbeddingDatum where
   source := "Musolino 2004; Papafragou & Musolino 2003"
 
 -- ============================================================================
--- Degree "too" / "enough" (Meier 2003)
+-- Degree "too" / "enough" (@cite{meier-2003})
 -- ============================================================================
 
 /-- "Three students is too many" — degree construction monotonicity.

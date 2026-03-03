@@ -217,7 +217,7 @@ def coreData : StringPhenomenonData :=
           description := "Embedded question prohibits inversion" } ] }
 
 -- ============================================================================
--- § 3  Negative Inversion (Klima 1964)
+-- § 3  Negative Inversion (@cite{klima-1964})
 -- ============================================================================
 
 /-! When a negative or restrictive adverbial is fronted, SAI is obligatory.
@@ -374,7 +374,7 @@ def ex26 : SAIDatum :=
     citation := "Henry (1995)" }
 
 -- ============================================================================
--- § 7  The French/English Verb Movement Contrast (Pollock 1989)
+-- § 7  The French/English Verb Movement Contrast (@cite{pollock-1989})
 -- ============================================================================
 
 /-! @cite{pollock-1989} established that French and English differ fundamentally in
@@ -524,7 +524,7 @@ def ex_p12 : SAIDatum :=
 
 -- ============================================================================
 -- § 8  Do-Support and Generalized Head Movement
---      (Pollock 1989, Arregi & Pietraszko 2021)
+--      (@cite{pollock-1989}, @cite{arregi-pietraszko-2021})
 -- ============================================================================
 
 /-! SAI interacts with do-support: when no auxiliary is present, 'do' is
@@ -686,7 +686,7 @@ def ex41 : SAIDatum :=
     citation := "Arregi & Pietraszko (2021) (37b)" }
 
 -- ============================================================================
--- § 9  Verb-Specific Acquisition (Westergaard 2009)
+-- § 9  Verb-Specific Acquisition (@cite{westergaard-2009})
 -- ============================================================================
 
 /-! @cite{westergaard-2009} shows that children acquiring English learn SAI on a

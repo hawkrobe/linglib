@@ -72,7 +72,7 @@ def conjunctionStrengthensSupport {W : Type*} [Fintype W]
     (prior : Prior W) : Bool :=
   conjunctionStrengthens p1 p2 conclusion prior
 
--- Doxastic Support (IKW 2025 Def. 13)
+-- Doxastic Support (@cite{ippolito-kiss-williams-2025} Def. 13)
 
 /-- Full SUPPORT predicate from @cite{ippolito-kiss-williams-2025} Definition 13.
 

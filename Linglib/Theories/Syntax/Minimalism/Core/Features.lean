@@ -107,15 +107,15 @@ inductive FeatureVal where
   | q : Bool → FeatureVal            -- [±Q] (question)
   | epp : Bool → FeatureVal          -- EPP (needs specifier)
   | tense : Bool → FeatureVal        -- [±tense]
-  | hon : HonLevel → FeatureVal      -- [iHON] (Alok & Bhalla 2026)
-  | finite : Bool → FeatureVal       -- [±finite] (Fin head, Rizzi 1997)
+  | hon : HonLevel → FeatureVal      -- [iHON] (@cite{alok-bhalla-2026})
+  | finite : Bool → FeatureVal       -- [±finite] (Fin head, @cite{rizzi-1997})
   | factive : Bool → FeatureVal      -- [±factive] (clause-typing)
-  | neg : Bool → FeatureVal          -- [±neg] (NegP, Pollock 1989)
-  | rel : Bool → FeatureVal          -- [±rel] (relative clause typing, Rizzi 2001)
-  | oblique : Bool → FeatureVal     -- [±oblique] (extraction tracking, Elkins et al. 2026)
-  | ellipsis : Bool → FeatureVal   -- [E] feature licensing NP-ellipsis (Lobeck 1995, Saab 2026)
-  | catN : Bool → FeatureVal       -- [N] referentiality (Panagiotidis 2015)
-  | catV : Bool → FeatureVal       -- [V] temporal predication (Panagiotidis 2015)
+  | neg : Bool → FeatureVal          -- [±neg] (NegP, @cite{pollock-1989})
+  | rel : Bool → FeatureVal          -- [±rel] (relative clause typing, @cite{rizzi-2001})
+  | oblique : Bool → FeatureVal     -- [±oblique] (extraction tracking, @cite{elkins-imanishi-coon-2026})
+  | ellipsis : Bool → FeatureVal   -- [E] feature licensing NP-ellipsis (@cite{lobeck-1995}, @cite{saab-2026})
+  | catN : Bool → FeatureVal       -- [N] referentiality (@cite{panagiotidis-2015})
+  | catV : Bool → FeatureVal       -- [V] temporal predication (@cite{panagiotidis-2015})
   deriving Repr, DecidableEq
 
 /-- Do two feature values have the same type, ignoring specific values?

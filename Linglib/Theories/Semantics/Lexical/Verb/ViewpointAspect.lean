@@ -106,7 +106,7 @@ def ViewpointAspectB.toKleinViewpoint : ViewpointAspectB → ViewpointType
 theorem toBoolAspect_toKleinViewpoint (a : ViewpointAspectB) :
     a.toKleinViewpoint.toBoolAspect = some a := by cases a <;> rfl
 
-/-- The TT↔TSit interval relation for each viewpoint (Klein 1994: 108). -/
+/-- The TT↔TSit interval relation for each viewpoint (@cite{klein-1994}: 108). -/
 def ViewpointType.ttTSitRelation {Time : Type*} [LinearOrder Time]
     (v : ViewpointType) (tt tsit : Interval Time) : Prop :=
   match v with
@@ -127,7 +127,7 @@ def IMPF (P : EventPred W Time) : IntervalPred W Time :=
   λ w t => ∃ e : Eventuality Time, t.properSubinterval e.τ ∧ P w e
 
 /-- **PERFECTIVE**: event runtime contained in reference time.
-    @cite{klein-1994}: TT AT TSit (simplified to TSit ⊆ TT, following Smith 1991).
+    @cite{klein-1994}: TT AT TSit (simplified to TSit ⊆ TT, following @cite{smith-1991}).
     @cite{knick-sharf-2026} eq. 28. -/
 def PRFV (P : EventPred W Time) : IntervalPred W Time :=
   λ w t => ∃ e : Eventuality Time, e.τ.subinterval t ∧ P w e
@@ -319,13 +319,13 @@ theorem impf_prfv_opposite_containment (P : EventPred W Time) (w : W) (t : Inter
     **final subinterval** relation rather than a point-based right boundary. -/
 
 /-- Pancheva's UNBOUNDED (Asp₂): non-strict ⊆ variant of IMPF.
-    ⟦UNBOUNDED⟧ = λP.λi.∃e[i ⊆ τ(e) & P(e)] (Pancheva 2003: 282, eq. 7b).
+    ⟦UNBOUNDED⟧ = λP.λi.∃e[i ⊆ τ(e) & P(e)] (@cite{pancheva-2003}: 282, eq. 7b).
     Differs from IMPF in using non-strict ⊆ rather than strict ⊂. -/
 def UNBOUNDED (P : EventPred W Time) : IntervalPred W Time :=
   λ w t => ∃ e : Eventuality Time, t.subinterval e.τ ∧ P w e
 
 /-- Pancheva's BOUNDED (Asp₂): strict ⊂ variant of PRFV.
-    ⟦BOUNDED⟧ = λP.λi.∃e[τ(e) ⊂ i & P(e)] (Pancheva 2003: 282, eq. 7b).
+    ⟦BOUNDED⟧ = λP.λi.∃e[τ(e) ⊂ i & P(e)] (@cite{pancheva-2003}: 282, eq. 7b).
     Differs from PRFV in using strict ⊂ rather than non-strict ⊆. -/
 def BOUNDED (P : EventPred W Time) : IntervalPred W Time :=
   λ w t => ∃ e : Eventuality Time, e.τ.properSubinterval t ∧ P w e
@@ -341,7 +341,7 @@ theorem bounded_entails_prfv (P : EventPred W Time) (w : W) (t : Interval Time) 
   λ ⟨e, hSub, hP⟩ => ⟨e, hSub.1, hP⟩
 
 /-- Pancheva-style interval-level PERFECT (Asp₁).
-    ⟦PERFECT⟧ = λp.λi.∃i'[PTS(i', i) & p(i')] (Pancheva 2003: 284, eq. 9b).
+    ⟦PERFECT⟧ = λp.λi.∃i'[PTS(i', i) & p(i')] (@cite{pancheva-2003}: 284, eq. 9b).
     PTS(i', i) iff i is a final subinterval of i': i ⊆ i' ∧ i.finish = i'.finish. -/
 def PERF_P (p : IntervalPred W Time) : IntervalPred W Time :=
   λ w i => ∃ pts : Interval Time, i.finalSubinterval pts ∧ p w pts
@@ -389,7 +389,7 @@ abbrev experientialPerfect (P : EventPred W Time) : IntervalPred W Time :=
 
 /-- Resultative perfect: PERF_P(BOUNDED(V)).
     "has broken the vase" — event completed within PTS.
-    Simplified: properly involves result state (Pancheva 2003: 288). -/
+    Simplified: properly involves result state (@cite{pancheva-2003}: 288). -/
 abbrev resultativePerfect (P : EventPred W Time) : IntervalPred W Time :=
   PERF_P (BOUNDED P)
 

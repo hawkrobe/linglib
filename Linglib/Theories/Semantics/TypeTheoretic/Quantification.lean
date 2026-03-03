@@ -24,7 +24,7 @@ Key innovations:
 namespace Semantics.TypeTheoretic
 
 -- ============================================================================
--- Chapter 7: Witness-based Quantification (Cooper 2023, §7.1–7.6)
+-- Chapter 7: Witness-based Quantification (@cite{cooper-2023}, §7.1–7.6)
 -- ============================================================================
 
 section Ch7_WitnessQuantification

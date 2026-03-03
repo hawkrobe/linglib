@@ -18,11 +18,11 @@ wh-fronting, or extraposition), the displaced element and its governor still for
 a catena — they are connected in the tree — but their string yield is no longer
 contiguous: other words intervene. This catena is a **risen catena**.
 
-The **rising catena** (Osborne 2019, Ch 9 §9.2) is the minimal catena that
+The **rising catena** (@cite{osborne-2019}, Ch 9 §9.2) is the minimal catena that
 includes the root of the risen catena and the governor of the risen catena.
 Every discontinuity has a rising catena.
 
-**The Rising Principle** (Osborne 2019, Ch 7 §7.12): The head of the risen
+**The Rising Principle** (@cite{osborne-2019}, Ch 7 §7.12): The head of the risen
 catena must dominate the governor of the risen catena. This constrains which
 discontinuities are possible.
 
@@ -55,7 +55,7 @@ open DepGrammar
 -- §1: Discontinuity Classification
 -- ============================================================================
 
-/-- Discontinuity types (Osborne 2019, Ch 8, Table 19). -/
+/-- Discontinuity types (@cite{osborne-2019}, Ch 8, Table 19). -/
 inductive DiscontinuityType where
   | whFronting        -- "Which song do you like?"
   | topicalization    -- "That song, you don't like"
@@ -99,7 +99,7 @@ inductive RisingType where
 def isContiguous (nodes : List Nat) : Bool :=
   isInterval (nodes.mergeSort (· ≤ ·))
 
-/-- A **risen catena** (Osborne 2019, Ch 7 §7.10) is a catena whose string yield
+/-- A **risen catena** (@cite{osborne-2019}, Ch 7 §7.10) is a catena whose string yield
     is not contiguous — the catena is connected in the dependency tree but its
     words are separated by intervening material in linear order.
 
@@ -119,7 +119,7 @@ def classifyDisplacement (d : Dependency) : DisplacementDir :=
 -- §3: Example Trees — From Osborne (2019, Ch 7–8)
 -- ============================================================================
 
-/-- **Wh-fronting**: "What did you eat?" (Osborne 2019, Ch 8 §8.2)
+/-- **Wh-fronting**: "What did you eat?" (@cite{osborne-2019}, Ch 8 §8.2)
     Words: what(0) did(1) you(2) eat(3)
     Deps: eat(3) → you(2:nsubj), eat(3) → what(0:obj), eat(3) → did(1:aux)
 
@@ -136,7 +136,7 @@ def whFrontingTree : DepTree :=
 /-- The displaced dependency: eat(3) → what(0). -/
 def whFrontingArc : Dependency := ⟨3, 0, .obj⟩
 
-/-- **Topicalization**: "...but those ideas I do accept" (Osborne 2019, Ch 8 §8.3)
+/-- **Topicalization**: "...but those ideas I do accept" (@cite{osborne-2019}, Ch 8 §8.3)
     Simplified to core: "Those ideas I do accept"
     Words: those(0) ideas(1) I(2) do(3) accept(4)
     Deps: accept(4) → I(2:nsubj), accept(4) → do(3:aux),
@@ -174,7 +174,7 @@ def scramblingTree : DepTree :=
             , ⟨4, 2, .nsubj⟩, ⟨4, 3, .obj⟩, ⟨4, 1, .iobj⟩ ]
     rootIdx := 0 }
 
-/-- **Extraposition**: "The idea arose to try again" (Osborne 2019, Ch 8 §8.6)
+/-- **Extraposition**: "The idea arose to try again" (@cite{osborne-2019}, Ch 8 §8.6)
     Words: the(0) idea(1) arose(2) to(3) try(4) again(5)
     Deps: arose(2) → idea(1:nsubj), idea(1) → the(0:det),
           idea(1) → try(4:acl), try(4) → to(3:mark), try(4) → again(5:advmod)
@@ -265,7 +265,7 @@ theorem extraposition_is_lowering :
     classifyDisplacement extrapositionArc = .lowering := by native_decide
 
 /-- Rising discontinuities: wh-fronting, topicalization, NP-internal fronting,
-    scrambling. (Osborne 2019, Ch 8 Table 19). -/
+    scrambling. (@cite{osborne-2019}, Ch 8 Table 19). -/
 theorem rising_types :
     displacementDir .whFronting = .rising ∧
     displacementDir .topicalization = .rising ∧
@@ -273,7 +273,7 @@ theorem rising_types :
     displacementDir .scrambling = .rising := by
   exact ⟨rfl, rfl, rfl, rfl⟩
 
-/-- Lowering discontinuity: extraposition. (Osborne 2019, Ch 8 Table 19). -/
+/-- Lowering discontinuity: extraposition. (@cite{osborne-2019}, Ch 8 Table 19). -/
 theorem lowering_types :
     displacementDir .extraposition = .lowering := rfl
 

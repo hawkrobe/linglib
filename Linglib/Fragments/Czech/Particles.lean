@@ -21,7 +21,7 @@ that uniquely identifies each negation position.
 ## Cross-linguistic connections
 
 - *ještě* 'yet' parallels English *yet* (NPI, temporal endpoint)
-- *fakt* 'really' relates to VERUM/FALSUM (Romero 2015, BiasedPQ.lean)
+- *fakt* 'really' relates to VERUM/FALSUM (@cite{romero-2015}, BiasedPQ.lean)
 - *náhodou* 'by chance' modifies the ordering source of FALSUM's
   epistemic possibility component (Staňková §2.2.1)
 

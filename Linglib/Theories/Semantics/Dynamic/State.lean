@@ -143,7 +143,7 @@ def isStable (ds : DiscourseState W) : Bool := ds.table.isEmpty
 /--
 Check if a world is compatible with speaker's commitments.
 
-This is what S&T (2025) call "speakerCredence": the speaker only considers
+This is what @cite{scontras-tonhauser-2025} call "speakerCredence": the speaker only considers
 worlds compatible with their private assumptions.
 -/
 def speakerCompatible (ds : DiscourseState W) (w : W) : Bool :=

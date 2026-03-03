@@ -62,7 +62,7 @@ open Semantics.Lexical.Noun.Kind.Dayal2004 (NumberFeature)
 -- § 1. Mereological Status
 -- ════════════════════════════════════════════════════
 
-/-- Cross-categorial mereological classification (Wellwood 2015, §2–3).
+/-- Cross-categorial mereological classification (@cite{wellwood-2015}, §2–3).
 
     Predicates across nominal, verbal, and adjectival domains fall into
     two classes based on their mereological properties:

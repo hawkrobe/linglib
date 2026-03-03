@@ -25,7 +25,7 @@ conjunction decomposition formalized in
 namespace Phenomena.Coordination.Studies.BillEtAl2025.Bridge
 
 /-!
-## Semantic Decomposition (M&S 2016)
+## Semantic Decomposition (@cite{mitrovic-sauerland-2016})
 
 The M&S decomposition maps onto three operations already formalized:
 

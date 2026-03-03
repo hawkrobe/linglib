@@ -22,7 +22,7 @@ common `ClassifierEntry` type for individual classifier lexical entries.
 namespace Core.NounCategorization
 
 -- ============================================================================
--- §1 Classifier Types (Aikhenvald 2000 Table 15.1)
+-- §1 Classifier Types (@cite{aikhenvald-2000} Table 15.1)
 -- ============================================================================
 
 /-- The 9 focal classifier types on the noun-categorization continuum.
@@ -62,7 +62,7 @@ inductive ClassifierType where
   deriving DecidableEq, Repr, BEq
 
 -- ============================================================================
--- §2 Semantic Parameters (Aikhenvald 2000 §11.1.1)
+-- §2 Semantic Parameters (@cite{aikhenvald-2000} §11.1.1)
 -- ============================================================================
 
 /-- Universal semantic parameters employed in noun categorization.

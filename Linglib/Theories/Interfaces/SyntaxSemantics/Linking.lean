@@ -61,7 +61,7 @@ inductive ArgPosition where
   | directObject    -- Direct object
   | indirectObject  -- Indirect object / dative
   | oblique         -- Oblique / PP complement
-  | applied         -- Applied argument (Pylkkänen 2008)
+  | applied         -- Applied argument (@cite{brennan-pylkkanen-2008})
   deriving DecidableEq, BEq, Repr
 
 -- ════════════════════════════════════════════════════════════════════════

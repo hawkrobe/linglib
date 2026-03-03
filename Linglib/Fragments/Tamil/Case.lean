@@ -11,7 +11,7 @@ NOM (∅), ACC (-ai), DAT (-ukku), GEN (-in / -uṭaiya), LOC (-il),
 ABL (-ilirundu), INST / COM (-āl / -ōṭu), VOC (-ē).
 
 The instrumental and comitative are sometimes syncretic (-ōṭu covers
-both functions), a pattern documented cross-linguistically (Blake 1994;
+both functions), a pattern documented cross-linguistically (@cite{blake-1994};
 WALS Ch. 52).
 
 -/

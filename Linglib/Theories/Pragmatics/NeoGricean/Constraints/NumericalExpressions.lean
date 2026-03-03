@@ -28,7 +28,7 @@ The OT constraints map onto RSA parameters:
 - QSIMP ↔ utterance cost (modifier complexity)
 - NSAL ↔ utterance cost (roundness-based salience)
 
-## Connection to C&F 2021
+## Connection to @cite{cummins-franke-2021}
 
 `enrichmentWidth` predicts pragmatic enrichment range width from roundnessScore.
 100 (score 6) gets a wider enriched range than 110 (score 2), explaining why

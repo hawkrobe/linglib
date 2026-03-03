@@ -134,7 +134,7 @@ def AttitudeBuilder.valence : AttitudeBuilder → Option AttitudeValence
   | .preferential b => some b.valence
 
 /--
-Presupposition trigger type (Tonhauser et al. 2013 classification).
+Presupposition trigger type (@cite{tonhauser-beaver-roberts-simons-2013} classification).
 
 - Hard triggers: Always project (too, again, also)
 - Soft triggers: Context-sensitive projection (stop, know)
@@ -170,7 +170,7 @@ inductive SenseTag where
   | rogative      -- Question-embedding sense
   | causative     -- Causative use of otherwise non-causative verb
   | instrumental  -- Instrument-specific sense
-  | occasion      -- Occasion verb sense (Solstad & Bott 2024): agent-evocator subject
+  | occasion      -- Occasion verb sense (@cite{solstad-bott-2024}): agent-evocator subject
   deriving DecidableEq, BEq, Repr
 
 /--
@@ -284,7 +284,7 @@ structure VerbCore where
   implicativeBuilder : Option ImplicativeBuilder := none
   /-- For causative verbs: which semantic builder (links to compositional semantics). -/
   causativeBuilder : Option CausativeBuilder := none
-  /-- Source of causation for psych causatives (Kim 2024 UPH).
+  /-- Source of causation for psych causatives (@cite{kim-2024} UPH).
       `.external` = mind-external percept, `.internal` = mind-internal representation. -/
   causalSource : Option CausalSource := none
 
@@ -310,7 +310,7 @@ structure VerbCore where
       Most verbs use `.default`; polysemous entries use descriptive tags. -/
   senseTag : SenseTag := .default
 
-  -- === Root Content (Levin 1993; Spalek & McNally) ===
+  -- === Root Content (@cite{levin-1993}; Spalek & McNally) ===
   /-- @cite{levin-1993} verb class (§§ 9–57). -/
   levinClass : Option LevinClass := none
   /-- Root-specific quality dimensions (within-class variation). -/
@@ -322,7 +322,7 @@ structure VerbCore where
 def VerbCore.derivedVendlerClass (v : VerbCore) : Option VendlerClass :=
   v.vendlerClass <|> v.degreeAchievementScale.map (·.defaultVendlerClass)
 
-/-- Lexicalist prediction (Levin 1993; Rappaport Hovav & Levin 1998):
+/-- Lexicalist prediction (@cite{levin-1993}; Rappaport @cite{rappaport-hovav-levin-1998}):
     the verb's lexical semantics determines the external argument's theta role.
 
     This is the lexicalist/projectionist alternative to the severing prediction
@@ -332,10 +332,10 @@ def VerbCore.derivedVendlerClass (v : VerbCore) : Option VendlerClass :=
 
     The derivation uses independently motivated properties:
     - Syntactic: `controlType` (raising → no θ), `unaccusative` (→ theme)
-    - Semantic builders: `causalSource` (Kim 2024 → stimulus),
+    - Semantic builders: `causalSource` (@cite{kim-2024} → stimulus),
       `attitudeBuilder` (→ experiencer)
     - Presupposition: `factivePresup` without attitude builder (→ experiencer)
-    - Polysemy: `senseTag =.occasion` (Solstad & Bott 2024 → experiencer)
+    - Polysemy: `senseTag =.occasion` (@cite{solstad-bott-2024} → experiencer)
     - Verb class: `levinClass` (.weather → none,.flinch/.learn → experiencer,
 .measure → theme)
 

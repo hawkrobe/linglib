@@ -10,7 +10,7 @@ entailments from the relative scope of aspect and modal.
 ## The Puzzle
 
 The same modal verb shows different entailment patterns depending on
-interpretation (Bhatt 1999, Hacquard 2006 Ch.1):
+interpretation (@cite{bhatt-1999}, @cite{hacquard-2006} Ch.1):
 
 - Root (ability) + PFV: "Jane **a pu** prendre le train" → she took it
 - Root (ability) + IMPF: "Jane **pouvait** prendre le train" → maybe not
@@ -61,7 +61,7 @@ open Semantics.Lexical.Verb.ViewpointAspect (ViewpointAspectB)
 
 
 -- ════════════════════════════════════════════════════
--- § 1. Aspect Scope (Hacquard 2006, Ch.1, pp.29–48)
+-- § 1. Aspect Scope (@cite{hacquard-2006}, Ch.1, pp.29–48)
 -- ════════════════════════════════════════════════════
 
 /-- The relative scope of aspect and the modal in the clause structure.

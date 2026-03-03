@@ -133,7 +133,7 @@ def scopeYieldsTrue {m : Model}
   d.meaningAt s
 
 -- ============================================================================
--- Scope Entailment (Musolino & Lidz 2003)
+-- Scope Entailment (@cite{musolino-lidz-2003})
 -- ============================================================================
 
 /-- Entailment structure between scope readings.

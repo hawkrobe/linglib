@@ -295,7 +295,7 @@ def interveningSubtreeNodes (t : DepTree) (headPos depPos : Nat) : Nat :=
     `interveningSubtreeNodes` counts only dep's subtree members in that interval.
     The gap is filled by siblings' subtrees placed between h and d.
 
-    The original equality `depLength = 1 + interveningSubtreeNodes` (Gibson 2025,
+    The original equality `depLength = 1 + interveningSubtreeNodes` (@cite{gibson-2025},
     Ch. 5.3) holds only when d's subtree is the SOLE occupant of the interval
     (h, d) — i.e., no sibling subtrees intervene. That special case is exactly
     the harmonic-order scenario demonstrated concretely in §4 below. -/

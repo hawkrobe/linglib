@@ -33,7 +33,7 @@ namespace Phenomena.Focus.Exclusives
 -- Flavors of *just*
 -- ============================================================================
 
-/-- The 7 interpretive flavors of *just* (Deo & Thomas 2025: §2). -/
+/-- The 7 interpretive flavors of *just* (@cite{deo-thomas-2025}: §2). -/
 inductive JustFlavor where
   | complementExclusion  -- "She just went to Spain and Portugal" → nowhere else
   | rankOrder            -- "She is just an intern" → nothing higher on scale

@@ -2,7 +2,7 @@ import Linglib.Theories.Semantics.Events.EventStructure
 import Linglib.Core.Root
 
 /-!
-# Root Typology: States and Changes of State (Beavers et al. 2021, B&KG 2020) @cite{beavers-etal-2021} @cite{beavers-koontz-garboden-2020} @cite{coon-2019}
+# Root Typology: States and Changes of State (@cite{beavers-etal-2021}, B&@cite{beavers-koontz-garboden-2020}) @cite{beavers-etal-2021} @cite{beavers-koontz-garboden-2020} @cite{coon-2019}
 @cite{arad-2005} @cite{dixon-1982} @cite{embick-2004} @cite{dowty-1991} @cite{embick-2009} @cite{rose-nichols-2021} @cite{levin-1993}
 
 Beavers, Everdell, Jerro, Kauhanen, @cite{beavers-etal-2021}
@@ -61,12 +61,12 @@ open Semantics.Lexical.Verb.ChangeOfState
 open Semantics.Lexical.Verb.Aspect
 
 -- ════════════════════════════════════════════════════
--- § 1. Root Type Subclasses (Beavers et al. 2021 §3.1)
+-- § 1. Root Type Subclasses (@cite{beavers-etal-2021} §3.1)
 -- ════════════════════════════════════════════════════
 
 -- RootType, RootArity, RootDenotationType, and Root are defined in Core/Root.lean.
 
-/-- Property concept root subclasses (Dixon 1982; Beavers et al. 2021 ex. 5). -/
+/-- Property concept root subclasses (@cite{dixon-1982}; @cite{beavers-etal-2021} ex. 5). -/
 inductive PCClass where
   | dimension         -- large/big, small, long, short, deep, wide, tall/high
   | age               -- old/aged
@@ -76,7 +76,7 @@ inductive PCClass where
   | speed             -- fast, slow
   deriving DecidableEq, Repr, BEq
 
-/-- Result root subclasses (Levin 1993; Beavers et al. 2021 ex. 6). -/
+/-- Result root subclasses (@cite{levin-1993}; @cite{beavers-etal-2021} ex. 6). -/
 inductive ResultClass where
   | entitySpecificCoS          -- burned, melted, frozen, decayed, bloomed, rusted
   | cooking                    -- cooked, baked, fried, roasted, boiled
@@ -89,10 +89,10 @@ inductive ResultClass where
   deriving DecidableEq, Repr, BEq
 
 -- ════════════════════════════════════════════════════
--- § 1b. Change Restriction (B&KG 2020 §2.4)
+-- § 1b. Change Restriction (B&@cite{beavers-koontz-garboden-2020} §2.4)
 -- ════════════════════════════════════════════════════
 
-/-- How a result root's change entailment is restricted (B&KG 2020 §2.4).
+/-- How a result root's change entailment is restricted (B&@cite{beavers-koontz-garboden-2020} §2.4).
 
     Break-type result roots (√CRACK, √SHATTER) entail change of ANY kind —
     spatial or temporal. A crack can "run from the tree to the house" without
@@ -104,7 +104,7 @@ inductive ResultClass where
 
     This three-way refinement (PC / break-type / cook-type) is invisible to
     the binary `entailsChange` flag but has consequences for spatial predication
-    and the interpretation of directional PPs (B&KG 2020 §2.4). -/
+    and the interpretation of directional PPs (B&@cite{beavers-koontz-garboden-2020} §2.4). -/
 inductive ChangeRestriction where
   | anyChange      -- break-type: spatial or temporal (√CRACK, √SHATTER, √BEND)
   | temporalOnly   -- cook/kill-type: temporal change only (√COOK, √KILL, √MELT)
@@ -216,8 +216,8 @@ theorem pc_determines_morphosyntax (rt : RootType) :
 -- § 5. The Bifurcation Thesis and Its Refutation (§§2, 3.6, 9)
 -- ════════════════════════════════════════════════════
 
-/-- The Bifurcation Thesis for Roots (Embick 2009:1, Arad 2005:79;
-    Beavers et al. 2021 eq. 2):
+/-- The Bifurcation Thesis for Roots (@cite{embick-2009}:1, @cite{arad-2005}:79;
+    @cite{beavers-etal-2021} eq. 2):
 
     "If a component of meaning is introduced by a semantic rule that
     applies to elements in combination [i.e. by templatic operators],
@@ -283,7 +283,7 @@ inductive Markedness where
   | marked    -- Derived form (overt morphological marking: -en, -ed, etc.)
   deriving DecidableEq, Repr, BEq
 
-/-- The Markedness Generalization (Beavers et al. 2021 eq. 44).
+/-- The Markedness Generalization (@cite{beavers-etal-2021} eq. 44).
 
     Morphological markedness reflects semantic **mismatch** between a
     functional head and its root complement. A form is unmarked when
@@ -355,12 +355,12 @@ def MeaningPostulateEntailsChange
   ∀ x s, rootPred x s → ∃ e, become e s
 
 -- ════════════════════════════════════════════════════
--- § 7b. Root Denotation: Change-in-Denotation Architecture (B&KG 2020 §2.5)
+-- § 7b. Root Denotation: Change-in-Denotation Architecture (B&@cite{beavers-koontz-garboden-2020} §2.5)
 -- ════════════════════════════════════════════════════
 
-/-- Root denotation architecture (B&KG 2020 §2.5, eqs. 37a–b), where
+/-- Root denotation architecture (B&@cite{beavers-koontz-garboden-2020} §2.5, eqs. 37a–b), where
     change is CONSTITUTIVE of the result root's meaning rather than an
-    external meaning postulate (cf. Beavers et al. 2021 eq. 21).
+    external meaning postulate (cf. @cite{beavers-etal-2021} eq. 21).
 
     The formal contrast:
     - √FLAT = λxλs[flat'(x,s)] — pure state, no change in truth conditions
@@ -388,7 +388,7 @@ inductive RootDen (Entity State Event : Type) where
     (become : Event → State → Prop)
     (entailsChange : ∀ x s, statePred x s → ∃ e, become e s)
   /-- Manner+result root: state predicate entailing change AND manner
-      restriction on the causing event (B&KG 2020 §4.5.3, eq. 74).
+      restriction on the causing event (B&@cite{beavers-koontz-garboden-2020} §4.5.3, eq. 74).
       √GUILLOTINE = λxλs[dead'(x,s) ∧ ∃e'∃v[cause'(v,e') ∧ become'(s,e')
                           ∧ ∀v'[cause'(v',e') → guillotining'(v')]]]
       The root packages both the result state AND a restriction on how
@@ -443,7 +443,7 @@ theorem RootDen.meaning_postulate_derived
     MeaningPostulateEntailsChange pred become :=
   h
 
-/-- Whether the root carries a manner restriction on causation (B&KG 2020 §4.5.3).
+/-- Whether the root carries a manner restriction on causation (B&@cite{beavers-koontz-garboden-2020} §4.5.3).
     Only manner+result roots have this — PC and pure result roots do not
     restrict how causation proceeds. -/
 def RootDen.carriesMANNER {Entity State Event : Type} :
@@ -490,10 +490,10 @@ theorem RootDen.mrc_requires_both {Entity State Event : Type}
   exact h
 
 -- ════════════════════════════════════════════════════
--- § 7c. Ditransitive Root Classes (B&KG 2020 Ch. 3)
+-- § 7c. Ditransitive Root Classes (B&@cite{beavers-koontz-garboden-2020} Ch. 3)
 -- ════════════════════════════════════════════════════
 
-/-- What a ditransitive root entails about possession (B&KG 2020 §3.3).
+/-- What a ditransitive root entails about possession (B&@cite{beavers-koontz-garboden-2020} §3.3).
     Templates always introduce PROSPECTIVE possession (via ◇ modality).
     Whether the ROOT adds actual or prospective possession on top
     determines cancellability:
@@ -505,7 +505,7 @@ inductive PossessionEntailment where
   | actual      -- root entails actual possession transfer (√GIVE, √HAND)
   deriving DecidableEq, Repr, BEq
 
-/-- Six classes of ditransitive verb roots (B&KG 2020 §3.6).
+/-- Six classes of ditransitive verb roots (B&@cite{beavers-koontz-garboden-2020} §3.6).
     The ditransitive parallel to the PC/result distinction for CoS roots:
     templates contribute only PROSPECTIVE states; roots can contribute
     ACTUAL states. -/
@@ -528,7 +528,7 @@ structure DitransitiveEntailments where
   accompaniment : Bool  -- root entails agent accompanies theme
   deriving DecidableEq, BEq, Repr
 
-/-- Entailment profile for each ditransitive root class (B&KG 2020 §3.6). -/
+/-- Entailment profile for each ditransitive root class (B&@cite{beavers-koontz-garboden-2020} §3.6). -/
 def DitransitiveRootClass.entailments : DitransitiveRootClass → DitransitiveEntailments
   | .causedPossession  => ⟨.actual,      false, false, false⟩
   | .futureHaving      => ⟨.prospective, false, false, false⟩
@@ -585,10 +585,10 @@ theorem carry_class_carrying :
     LevinClass.ditransitiveRootClass .carry = some .carrying := rfl
 
 -- ════════════════════════════════════════════════════
--- § 7d. Ditransitive Root Denotations (B&KG 2020 §3.5–3.6)
+-- § 7d. Ditransitive Root Denotations (B&@cite{beavers-koontz-garboden-2020} §3.5–3.6)
 -- ════════════════════════════════════════════════════
 
-/-- A ditransitive root's denotation (B&KG 2020 §3.5, eqs. 46–55).
+/-- A ditransitive root's denotation (B&@cite{beavers-koontz-garboden-2020} §3.5, eqs. 46–55).
     Parallel to `RootDen` for CoS roots (§7b).
 
     The formal contrast:
@@ -635,7 +635,7 @@ theorem withPossession_not_cancelable {Entity Event : Type}
       DitransitiveDen Entity Event).possessionCancelable = false := rfl
 
 -- ════════════════════════════════════════════════════
--- § 7e. MRC Diagnostics (B&KG 2020 §§4.2–4.3)
+-- § 7e. MRC Diagnostics (B&@cite{beavers-koontz-garboden-2020} §§4.2–4.3)
 -- ════════════════════════════════════════════════════
 
 /-- The six MRC diagnostics developed in B&KG (2020 §§4.2–4.3).
@@ -901,7 +901,7 @@ theorem pc_has_restitutive :
   simp [RootType.againReadings]
 
 -- ════════════════════════════════════════════════════
--- § 12b. Again Diagnostic: Compositional Derivation (B&KG 2020 §2.5)
+-- § 12b. Again Diagnostic: Compositional Derivation (B&@cite{beavers-koontz-garboden-2020} §2.5)
 -- ════════════════════════════════════════════════════
 
 /-- What *again* presupposes at a given scope position.
@@ -981,11 +981,11 @@ theorem bkg_again_matches_boolean {Entity State Event : Type}
   cases rd <;> rfl
 
 -- ════════════════════════════════════════════════════
--- § 12c. Ditransitive Telicity and *Again* (B&KG 2020 §§3.7, 3.9)
+-- § 12c. Ditransitive Telicity and *Again* (B&@cite{beavers-koontz-garboden-2020} §§3.7, 3.9)
 -- ════════════════════════════════════════════════════
 
 /-- Whether a ditransitive verb is obligatorily telic in the IO frame
-    (B&KG 2020 §3.7).
+    (B&@cite{beavers-koontz-garboden-2020} §3.7).
 
     Telicity correlates with whether the root spells out a state in the
     template. If the root entails actual possession, the template's
@@ -1051,7 +1051,7 @@ theorem give_one_send_two_again :
     (DitransitiveRootClass.againReadings .sending).length = 2 := ⟨rfl, rfl⟩
 
 -- ════════════════════════════════════════════════════
--- § 12d. Manner+Result Roots and *Again* (B&KG 2020 §4.5.2)
+-- § 12d. Manner+Result Roots and *Again* (B&@cite{beavers-koontz-garboden-2020} §4.5.2)
 -- ════════════════════════════════════════════════════
 
 /-- Manner+result roots: root-scope and vP-scope *again* yield THE SAME
@@ -1079,7 +1079,7 @@ theorem mannerResult_no_restitutive {Entity State Event : Type}
     (RootDen.mannerResult sp become manner hc hm :
       RootDen Entity State Event).predictedAgainReadings = [.repetitive] := rfl
 
-/-- The three-way root denotation typology (B&KG 2020 §4.5.5):
+/-- The three-way root denotation typology (B&@cite{beavers-koontz-garboden-2020} §4.5.5):
     PC, result, and manner+result roots ALL correctly predict *again*
     readings via the unified `bkg_again_matches_boolean` bridge.
 
@@ -1213,7 +1213,7 @@ def Root.break_ : Root :=
 
 /-- √HIT: selects theme + does not entail change (Levin 18.1).
     "Hit X" — the root takes a contactee, but hitting does not entail
-    that the patient undergoes a change of state (Levin 1993 pp. 5–8).
+    that the patient undergoes a change of state (@cite{levin-1993} pp. 5–8).
     `.propertyConcept` is used broadly here: the formal content
     (`entailsChange = false`) is what matters, not the label. -/
 def Root.hit : Root :=
@@ -1263,7 +1263,7 @@ theorem change_does_not_determine_arity :
     (∃ r : Root, r.entailsChange = false ∧ r.arity = .noTheme) :=
   ⟨⟨.break_, rfl, rfl⟩, ⟨.die, rfl, rfl⟩, ⟨.hit, rfl, rfl⟩, ⟨.sit, rfl, rfl⟩⟩
 
-/-- **Theme persistence** (Coon 2019 main empirical claim).
+/-- **Theme persistence** (@cite{coon-2019} main empirical claim).
 
     If a root selects a theme, the internal argument persists regardless
     of what v/Voice⁰ head combines with it. In Chuj, √TV roots surface
@@ -1294,10 +1294,10 @@ theorem same_change_same_morphosyntax (r₁ r₂ : Root)
   simp [Root.verbalMarkedness, Root.stativeMarkedness, Root.entailsChange, h]
 
 -- ════════════════════════════════════════════════════
--- § 17. Root Position in Event Structure (B&KG 2020 §5.4.1, Table 12)
+-- § 17. Root Position in Event Structure (B&@cite{beavers-koontz-garboden-2020} §5.4.1, Table 12)
 -- ════════════════════════════════════════════════════
 
-/-- Where a root sits in event structure (B&KG 2020 §5.4.1).
+/-- Where a root sits in event structure (B&@cite{beavers-koontz-garboden-2020} §5.4.1).
 
     - **complement**: under v_become, filling the result/state slot.
       The root provides the state that BECOME operates on.
@@ -1395,10 +1395,10 @@ theorem drown_toss_diff_position :
   simp [FullRootSpec.drown, FullRootSpec.toss]
 
 -- ════════════════════════════════════════════════════
--- § 18. Root → Templatic Head Prediction (B&KG 2020 Table 13)
+-- § 18. Root → Templatic Head Prediction (B&@cite{beavers-koontz-garboden-2020} Table 13)
 -- ════════════════════════════════════════════════════
 
-/-- Templatic functional heads in event structure (B&KG 2020 Table 13).
+/-- Templatic functional heads in event structure (B&@cite{beavers-koontz-garboden-2020} Table 13).
 
     Each root type PREDICTS which templatic heads its verb will entail.
     If the root's own meaning already includes what a template head
@@ -1416,7 +1416,7 @@ inductive TemplateHead where
   deriving DecidableEq, Repr, BEq
 
 /-- Bridge to event structure primitives. The three verbal heads
-    correspond to R&L (1998) primitives; the prepositional heads
+    correspond to @cite{rappaport-hovav-levin-1998} primitives; the prepositional heads
     are not event-structural primitives. -/
 def TemplateHead.toPrimitive : TemplateHead → Option Primitive
   | .vAct => some .ACT
@@ -1508,7 +1508,7 @@ theorem verbal_heads_have_primitives :
     (TemplateHead.vBecome.toPrimitive).isSome = true := ⟨rfl, rfl, rfl⟩
 
 -- ════════════════════════════════════════════════════
--- § 19. Gap Predictions (B&KG 2020 §5.4.1, Table 12)
+-- § 19. Gap Predictions (B&@cite{beavers-koontz-garboden-2020} §5.4.1, Table 12)
 -- ════════════════════════════════════════════════════
 
 /-- Whether a FullRootSpec cell is attested in B&KG's Table 12. -/

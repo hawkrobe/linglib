@@ -3,7 +3,7 @@ import Linglib.Fragments.English.FunctionWords
 import Linglib.Theories.Semantics.Modality.Basic
 
 /-!
-# Zwicky & Pullum 1983: Cliticization vs. Inflection
+# @cite{zwicky-pullum-1983}: Cliticization vs. Inflection
 @cite{zwicky-pullum-1983}
 
 Empirical data and classification theorems for the argument that

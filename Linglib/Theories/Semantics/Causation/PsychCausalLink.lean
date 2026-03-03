@@ -55,7 +55,7 @@ structure PsychCausalLink (Time : Type*) [LinearOrder Time] where
   causeSort : EventSort
   /-- Ontological sort of the caused eventuality -/
   effectSort : EventSort
-  /-- Does the effect involve a transition (BECOME in RH&L 1998)?
+  /-- Does the effect involve a transition (BECOME in @cite{rappaport-hovav-levin-1998})?
       Eventive: [CAUSE [BECOME [STATE]]] — yes.
       Maintenance: [CAUSE [STATE]] — no. -/
   involvesTransition : Bool

@@ -242,7 +242,7 @@ end Homogeneity
 
 section AtomicDistributivity
 
-/-- Whether a VendlerClass predicts ATOM-DIST_t (Zhao 2025, Def. 5.3).
+/-- Whether a VendlerClass predicts ATOM-DIST_t (@cite{zhao-2025}, Def. 5.3).
     States satisfy ATOM-DIST_t (distribute over temporal subintervals);
     dynamic classes do not. Stricter than `isHomogeneous`: activities are
     homogeneous but fail ATOM-DIST_t.

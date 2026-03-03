@@ -11,7 +11,7 @@ namespace Semantics.Questions.Answerhood
 open Semantics.Questions
 open scoped GSQuestion  -- For ⊑ notation
 
-/-- ANS(Q, i) = cell of Q's partition containing i (G&S 1984, p. 14-15). -/
+/-- ANS(Q, i) = cell of Q's partition containing i (@cite{groenendijk-stokhof-1984}, p. 14-15). -/
 def ans {W : Type*} (q : GSQuestion W) (i : W) : W → Bool :=
   λ w => q.sameAnswer i w
 
@@ -50,7 +50,7 @@ theorem ans_disjoint {W : Type*} (q : GSQuestion W) (w v u : W)
   exact absurd hNotEquiv (by simp)
 
 /-- Wh-question refines the polar question for any individual in the domain.
-    Core result of G&S 1984: knowing the answer to "Who walks?" determines
+    Core result of @cite{groenendijk-stokhof-1984}: knowing the answer to "Who walks?" determines
     the answer to "Does John walk?" because the full extension determines
     each individual's value.
     Proof: If the lists `domain.map (pred · w)` and `domain.map (pred · v)` are
@@ -99,7 +99,7 @@ def karttunenCompleteAnswer {W E : Type*} [BEq W]
     W → Bool :=
   λ v => (karttunenDenotation domain pred w worlds).all λ p => p v
 
-/-- G&S ANS implies Karttunen's complete answer (G&S 1984, pp. 53-54).
+/-- G&S ANS implies Karttunen's complete answer (@cite{groenendijk-stokhof-1984}, pp. 53-54).
     If the full extension matches at v (G&S), then a fortiori the positive
     extension matches (Karttunen). This is the sound direction: G&S is
     strictly stronger than Karttunen.
@@ -131,7 +131,7 @@ theorem gs_ans_implies_karttunen {W E : Type*} [BEq W] [DecidableEq E]
 /-- The converse fails: Karttunen's complete answer does NOT imply G&S ANS.
     Karttunen only tracks the positive extension (entities satisfying pred at w),
     while G&S requires the *full* extension to match.
-    Counterexample (G&S 1984, pp. 53-54): domain = {john, mary}.
+    Counterexample (@cite{groenendijk-stokhof-1984}, pp. 53-54): domain = {john, mary}.
     At w: john walks, mary doesn't. At v: both walk.
     Karttunen: true (john walks at v ✓ — all who walk at w also walk at v).
     G&S: false (extension [T,F] ≠ [T,T] — mary's value differs).
@@ -158,7 +158,7 @@ def karttunenEntails {W E : Type*} [BEq W]
     p ∈ karttunenDenotation domain1 pred1 w worlds
 
 /-- Karttunen's intersection-based coordination fails for questions with
-    different predicates (G&S 1984, Ch. VI §3.1).
+    different predicates (@cite{groenendijk-stokhof-1984}, Ch. VI §3.1).
 
     Setup: W = {w₁, w₂}, E = {john, mary}.
     "Who walks?" — john walks at w₁, mary at w₂ (complementary).
@@ -197,7 +197,7 @@ theorem karttunen_coordination_problem :
       (GSQuestion.ofProject (λ w => domain.map (talk · w)))).sameAnswer true false = false := by
   native_decide
 
-/-- Answerhood thesis: complete true answer at any index is determined by Q (G&S 1984, p. 15). -/
+/-- Answerhood thesis: complete true answer at any index is determined by Q (@cite{groenendijk-stokhof-1984}, p. 15). -/
 theorem answerhood_thesis {W : Type*} (q : GSQuestion W) (i : W) :
     ∃ (p : W → Bool), p = ans q i :=
   ⟨ans q i, rfl⟩
@@ -243,7 +243,7 @@ def deDictoAnswer {W E : Type*} [DecidableEq E]
     (description : W → E) (pred : E → W → Bool) : W → Bool :=
   λ w => pred (description w) w
 
-/-- Non-rigid descriptions may fail to be semantic answers (G&S 1984, p. 27).
+/-- Non-rigid descriptions may fail to be semantic answers (@cite{groenendijk-stokhof-1984}, p. 27).
     For any non-rigid description, there exists a predicate and question such that
     the de dicto answer holds at one world but fails at another world in the same
     cell — witnessing that de dicto answers are not semantic (partition-based).

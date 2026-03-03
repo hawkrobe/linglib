@@ -40,7 +40,7 @@ namespace Semantics.TypeTheoretic
 -- ════════════════════════════════════════════════════
 
 /-- A D-frame: a partial function from attributes to values with a
-    designated central node (Löbner 2014; 2021 §1.4).
+    designated central node (@cite{lobner-2014}; 2021 §1.4).
 
     Attributes are *functional* — each maps to at most one value.
     `central` designates the *referential argument*: the node that

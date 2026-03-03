@@ -4,7 +4,7 @@ import Linglib.Core.Semantics.Presupposition
 import Mathlib.Algebra.Order.BigOperators.Group.Finset
 
 /-!
-# Decision-Theoretic Semantics: "Also" (Merin 1999 §5.2–5.4)
+# Decision-Theoretic Semantics: "Also" (@cite{merin-1999} §5.2–5.4)
 @cite{merin-1999}
 
 Merin's DTS account of additive particles. Presupposition is modeled as

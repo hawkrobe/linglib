@@ -135,25 +135,25 @@ section Triviality
 
 variable {W : Type*} (worlds : List W) (C : W → Bool)
 
-/-- C-contradiction: incompatible with context. (Spector 2014, def 4a) -/
+/-- C-contradiction: incompatible with context. (@cite{spector-2014}, def 4a) -/
 def isCContradiction (φ' : W → Bool) : Bool :=
   worlds.all λ w => !C w || !φ' w
 
-/-- C-tautology: entailed by context. (Spector 2014, def 4b) -/
+/-- C-tautology: entailed by context. (@cite{spector-2014}, def 4b) -/
 def isCTautology (φ' : W → Bool) : Bool :=
   worlds.all λ w => !C w || φ' w
 
-/-- C-equivalent to φ: same truth value in context. (Spector 2014, def 4c) -/
+/-- C-equivalent to φ: same truth value in context. (@cite{spector-2014}, def 4c) -/
 def isCEquivalent (φ φ' : W → Bool) : Bool :=
   worlds.all λ w => !C w || (φ w == φ' w)
 
-/-- Trivial in C given φ. (Spector 2014, def 4) -/
+/-- Trivial in C given φ. (@cite{spector-2014}, def 4) -/
 def isTrivialInC (φ φ' : W → Bool) : Bool :=
   isCContradiction worlds C φ' ||
   isCTautology worlds C φ' ||
   isCEquivalent worlds C φ φ'
 
-/-- No Trivial Alternatives violation (Spector 2014, def 5):
+/-- No Trivial Alternatives violation (@cite{spector-2014}, def 5):
 ALL alternatives are trivial in C given φ. -/
 def allAlternativesTrivial (φ : W → Bool) (alts : List (W → Bool)) : Bool :=
   alts.all λ φ' => isTrivialInC worlds C φ φ'

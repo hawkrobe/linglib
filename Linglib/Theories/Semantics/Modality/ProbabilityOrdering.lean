@@ -1,7 +1,7 @@
 import Linglib.Theories.Semantics.Modality.Kratzer
 
 /-!
-# Probability-Ordering Bridge — Kratzer 2012 §2.4
+# Probability-Ordering Bridge — @cite{kratzer-2012} §2.4
 
 Connects probability assignments to Kratzer ordering sources.
 

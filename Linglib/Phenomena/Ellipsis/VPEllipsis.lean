@@ -6,7 +6,7 @@ import Linglib.Core.Lexical.Word
 
 Theory-neutral data on VP ellipsis, focusing on voice mismatch tolerance.
 
-VP ellipsis differs from sluicing in tolerating voice mismatches. This asymmetry is explained by AHM 2025: VP ellipsis
+VP ellipsis differs from sluicing in tolerating voice mismatches. This asymmetry is explained by @cite{anand-hardt-mccloskey-2021}: VP ellipsis
 requires only semantic identity (e-GIVENness), while sluicing requires
 both semantic and syntactic identity (SIC).
 

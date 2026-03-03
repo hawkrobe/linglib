@@ -51,7 +51,7 @@ structure AllocDatum where
   deriving Repr, DecidableEq, BEq
 
 -- ============================================================================
--- Crosslinguistic Data (Alok & Bhalla 2026, Table 1)
+-- Crosslinguistic Data (@cite{alok-bhalla-2026}, Table 1)
 -- ============================================================================
 
 def basque : AllocDatum :=

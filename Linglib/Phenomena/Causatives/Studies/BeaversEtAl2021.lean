@@ -33,10 +33,10 @@ namespace Phenomena.Causatives.Studies.BeaversEtAl2021
 -- ════════════════════════════════════════════════════
 
 /-- Two classes of change-of-state verb roots, defined by morphological
-    and semantic diagnostics (Beavers et al. 2021 §3.1).
+    and semantic diagnostics (@cite{beavers-etal-2021} §3.1).
 
     Classification criteria:
-    - PC roots: the root of deadjectival CoS verbs (Levin 1993:245);
+    - PC roots: the root of deadjectival CoS verbs (@cite{levin-1993}:245);
       describe @cite{dixon-1982}'s basic property types
     - Result roots: the root of non-deadjectival CoS verbs;
       describe specific result states (physical damage, cooking, etc.) -/
@@ -45,7 +45,7 @@ inductive CoSRootClass where
   | result           -- non-deadjectival: break, crack, shatter
   deriving DecidableEq, Repr, BEq
 
-/-- PC subclasses (Dixon 1982; Beavers et al. 2021 ex. 5). -/
+/-- PC subclasses (@cite{dixon-1982}; @cite{beavers-etal-2021} ex. 5). -/
 inductive PCSubclass where
   | dimension         -- large/big, small, long, short, deep, wide, tall/high
   | age               -- old/aged
@@ -55,7 +55,7 @@ inductive PCSubclass where
   | speed             -- fast, slow
   deriving DecidableEq, Repr, BEq
 
-/-- Result root subclasses (Levin 1993; Beavers et al. 2021 ex. 6). -/
+/-- Result root subclasses (@cite{levin-1993}; @cite{beavers-etal-2021} ex. 6). -/
 inductive ResultSubclass where
   | entitySpecificCoS          -- burned, melted, frozen, decayed, bloomed
   | cooking                    -- cooked, baked, fried, roasted, boiled
@@ -71,7 +71,7 @@ inductive ResultSubclass where
 -- § 2. Morphological Paradigm Structure
 -- ════════════════════════════════════════════════════
 
-/-- The five positions in a CoS verb paradigm (Beavers et al. 2021 eq. 40).
+/-- The five positions in a CoS verb paradigm (@cite{beavers-etal-2021} eq. 40).
     Every root meaning is associated with (up to) five forms. -/
 inductive ParadigmPosition where
   | underlyingRoot  -- Position 1: base morphological root
@@ -81,7 +81,7 @@ inductive ParadigmPosition where
   | resultStative   -- Position 5: deverbal stative (participle-like)
   deriving DecidableEq, Repr, BEq
 
-/-- Morphological relationship codes between forms (Beavers et al. 2021
+/-- Morphological relationship codes between forms (@cite{beavers-etal-2021}
     eq. 41, generalizing Haspelmath 1993:90–92). -/
 inductive MorphRelation where
   | input      -- (i) X is the input to a rule forming Y_k

@@ -1,7 +1,7 @@
 import Linglib.Theories.Semantics.Causation.CausalVerb
 
 /-!
-# Degree Constructions and Actuality Inferences (Nadathur 2023, Chapter 5)
+# Degree Constructions and Actuality Inferences (@cite{nadathur-2023}, Chapter 5)
 @cite{meier-2003} @cite{nadathur-2023}
 
 Formalizes the causal analysis of *enough* and *too* constructions:

@@ -53,7 +53,7 @@ def LanguageDLM.isHeadFinal (l : LanguageDLM) : Bool := l.propHeadFinal > 500
 def LanguageDLM.isHeadInitial (l : LanguageDLM) : Bool := l.propHeadFinal ≤ 500
 
 -- ============================================================================
--- Language Data (Futrell et al. 2020, Table 2, representative subset)
+-- Language Data (@cite{futrell-gibson-2020}, Table 2, representative subset)
 -- ============================================================================
 -- Values are approximate from the paper's figures and supplementary materials.
 -- Dep lengths are mean dependency lengths at sentence lengths 10, 15, 20.

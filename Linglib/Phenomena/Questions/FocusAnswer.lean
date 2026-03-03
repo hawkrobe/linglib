@@ -35,7 +35,7 @@ structure FocusAnswerDatum where
   source : String := ""
   deriving Repr
 
-/-- G&S 1984, p. 275: "John called Mary" with different foci -/
+/-- @cite{groenendijk-stokhof-1984}, p. 275: "John called Mary" with different foci -/
 def johnCalledMary_whoSubj : FocusAnswerDatum :=
   { sentence := "John called Mary"
   , question := "Who called Mary?"
@@ -177,7 +177,7 @@ def focusMismatchExamples : List FocusMismatchDatum :=
   [mismatch1, mismatch2]
 
 
-/-- The formal congruence condition (Rooth 1992, building on G&S):
+/-- The formal congruence condition (@cite{rooth-1992}, building on G&S):
 
     An answer A is congruent to question Q iff:
     - The ordinary semantic value of A is in the question denotation

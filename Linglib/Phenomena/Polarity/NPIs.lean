@@ -468,7 +468,7 @@ def germanSoRecht : CrossLingNPI :=
   , notes := "Attenuating NPI; weakens assertion. 'nicht so recht' ≈ 'not all that'"
   }
 
--- NPIs in Questions (van Rooy, Borkin 1971, Krifka)
+-- NPIs in Questions (van Rooy, @cite{borkin-1971}, Krifka)
 
 /-!
 ## NPIs in Questions
@@ -589,7 +589,7 @@ def questionData : List NPIQuestionDatum :=
    liftFingerQuestion, batAnEyeQuestion, aDropQuestion, millionYearsQuestion,
    ppiRatherQuestion, ppiPrettyQuestion]
 
--- Minimizers vs Non-Minimizers (Israel 2001)
+-- Minimizers vs Non-Minimizers (@cite{israel-2001})
 
 /-!
 ## Minimizers vs Non-Minimizers

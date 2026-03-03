@@ -5,7 +5,7 @@ import Linglib.Phenomena.Anaphora.Coreference
 # Bridge: Dependency Grammar d-command binding → Coreference Phenomena
 
 Connects the Dependency Grammar coreference analysis (d-command based binding,
-from Hudson 1990) to the empirical coreference data in
+from @cite{hudson-1990}) to the empirical coreference data in
 `Phenomena.Anaphora.Coreference`.
 
 Proves that the DG analysis captures all reflexive coreference patterns,

@@ -24,10 +24,10 @@ tree-shape isomorphism.
 
 | # | Construction | Analysis | Source | Example |
 |---|-------------|----------|--------|---------|
-| 1 | DOC | Small Clause: `V [SC DP_goal DP_theme]` | Kayne 1984; Harley 2002 | (3) |
-| 2 | DOC | ApplP: `[ApplP DP [Appl' Appl [VP V DP]]]` | Marantz 1993 | (6)/(9) |
-| 3 | PVC | Small Clause: `V [SC DP Prt]` | den Dikken 1995 | (4a) |
-| 4 | PVC | Complex predicate: `[VP [V+Prt] DP]` | Johnson 1991 | (5) |
+| 1 | DOC | Small Clause: `V [SC DP_goal DP_theme]` | @cite{kayne-1984}; Harley 2002 | (3) |
+| 2 | DOC | ApplP: `[ApplP DP [Appl' Appl [VP V DP]]]` | @cite{halle-marantz-1993} | (6)/(9) |
+| 3 | PVC | Small Clause: `V [SC DP Prt]` | @cite{dendikken-1995} | (4a) |
+| 4 | PVC | Complex predicate: `[VP [V+Prt] DP]` | @cite{johnson-1991} | (5) |
 | 5 | PD  | `[VP [V' V DP] [PP P DP]]` | (control) | — |
 
 ## @cite{dendikken-1995} SC family
@@ -115,13 +115,13 @@ def doc_appl_type : ApplType := .low
 def doc_sc : SyntacticObject :=
   merge V_give (merge DP_hsu DP_book)
 
-/-- **DOC, Applicative** (Marantz 1993; Bruening 2010a,b):
+/-- **DOC, Applicative** (@cite{halle-marantz-1993}; @cite{bruening-2010a},b):
     `[ApplP DP_goal [Appl' Appl [VP V DP_theme]]]` — paper's (6)/(9).
     Uses a low applicative (`doc_appl_type =.low`), relating goal to theme. -/
 def doc_appl : SyntacticObject :=
   merge DP_hsu (merge Appl_h (merge V_give DP_book))
 
-/-- **PVC, Small Clause** (Aarts 1989; den Dikken 1995; Svenonius 1996a,b):
+/-- **PVC, Small Clause** (@cite{aarts-1989}; @cite{dendikken-1995}; @cite{svenonius-1996a},b):
     `[VP V [SC DP Prt]]` — paper's (4a), underlying obj-particle order.
     Den Dikken (1995:25, ex. 41d): the particle is an SC predicate
     ascribing a resultant state/location to the DP subject.
@@ -158,7 +158,7 @@ Verb-Particle, *Triadic*, and *Causative* Constructions." His central
 thesis (Ch.1, ex. 42) is that all subject-predicate relationships are
 incarnated as small clauses:
 
-    [SC subject [XP predicate]] (den Dikken 1995:27, ex. 44)
+    [SC subject [XP predicate]] (@cite{dendikken-1995}:27, ex. 44)
 
 He identifies a family of constructions sharing this template (p.25, ex. 41):
 
@@ -171,7 +171,7 @@ He identifies a family of constructions sharing this template (p.25, ex. 41):
 All share the abstract tree shape `V [SC X Y]` = `node(leaf, node(leaf, leaf))`.
 See also `Phenomena.Constructions.Resultatives.Data` for resultative data. -/
 
-/-- **Resultative, Small Clause** (den Dikken 1995:25, ex. 41c):
+/-- **Resultative, Small Clause** (@cite{dendikken-1995}:25, ex. 41c):
     `[VP V [SC DP AP]]` — "They hammered the metal flat."
     The result-state AP is the SC predicate; the direct object DP
     is the SC subject to which the property is ascribed. -/
@@ -226,8 +226,8 @@ theorem sc_doc_pvc_isomorphic :
     structurallyIsomorphic doc_sc pvc_sc = true := by native_decide
 
 /-- ApplP-DOC and ComplexPred-PVC have different shapes.
-    These are the principal competitors to SC (Marantz 1993 for DOC,
-    Johnson 1991 for PVC). -/
+    These are the principal competitors to SC (@cite{halle-marantz-1993} for DOC,
+    @cite{johnson-1991} for PVC). -/
 theorem appl_complexPred_not_isomorphic :
     structurallyIsomorphic doc_appl pvc_complexPred = false := by native_decide
 
@@ -267,7 +267,7 @@ theorem control_matches_complexPred :
     SC-DOC = SC-PVC.
 
     N.B.: This is uniqueness among the analyses *formalized here*. The paper
-    acknowledges other analyses (Bruening 2021, Pylkkänen low ApplP, Wood &
+    acknowledges other analyses (@cite{bruening-2021}, Pylkkänen low ApplP, Wood &
     Marantz i*) that could also yield isomorphism (see §7 below). -/
 theorem sc_unique_among_haddican_analyses :
     -- SC-DOC = SC-PVC (the key match)
@@ -291,7 +291,7 @@ All four members of the SC predication family share the same tree shape:
 priming — resultatives and causatives should also prime DOCs. -/
 
 /-- The SC family shares a single tree shape. PVCs, DOCs, resultatives,
-    and causatives are all `V [SC Subj Pred]` (den Dikken 1995:25). -/
+    and causatives are all `V [SC Subj Pred]` (@cite{dendikken-1995}:25). -/
 theorem sc_family_same_shape :
     doc_sc.shape = pvc_sc.shape ∧
     doc_sc.shape = resultative_sc.shape ∧
@@ -350,7 +350,7 @@ def copular_category : SCPredCategory := .N
 theorem doc_pvc_share_P : doc_category = pvc_category := rfl
 
 /-- The SC family spans all four lexical categories {A, N, P, V}
-    (den Dikken 1995:25, ex. 43). -/
+    (@cite{dendikken-1995}:25, ex. 43). -/
 theorem sc_family_covers_all_categories :
     pvc_category = .P ∧
     resultative_category = .A ∧

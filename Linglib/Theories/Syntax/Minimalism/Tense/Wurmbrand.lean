@@ -67,7 +67,7 @@ structure InfinitivalVerb where
 -- § Woll Decomposition
 -- ════════════════════════════════════════════════════════════════
 
-/-- Woll: abstract future modal (Wurmbrand 2014, section 2.1).
+/-- Woll: abstract future modal (@cite{wurmbrand-2014}, section 2.1).
     *will* = PRES + *woll*; *would* = PAST + *woll*.
 
     This decomposes English future auxiliaries into a tense component

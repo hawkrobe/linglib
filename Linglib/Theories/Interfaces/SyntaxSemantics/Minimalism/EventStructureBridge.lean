@@ -40,7 +40,7 @@ def templateToHeads : Template → List VerbHead
   | .activity       => [.vDO]
   | .achievement    => [.vGO, .vBE]
   | .accomplishment => [.vDO, .vGO, .vBE]
-  | .motionContact  => [.vDO]  -- Manner activity (R&L 2024)
+  | .motionContact  => [.vDO]  -- Manner activity (@cite{rappaport-hovav-levin-2024})
 
 -- ============================================================================
 -- § 2: Bridge Theorems

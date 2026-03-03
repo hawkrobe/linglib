@@ -245,7 +245,7 @@ inductive SRTarget where
   /-- Track the topical participant, which may not be the syntactic subject.
       The tracked referent is determined by discourse prominence rather than
       grammatical function.
-      E.g., Greater Awyu languages (de Vries 2025 §4.4). -/
+      E.g., Greater Awyu languages (@cite{de-vries-2025} §4.4). -/
   | topicBased
   deriving DecidableEq, Repr, BEq, Inhabited
 
@@ -399,7 +399,7 @@ structure ClauseChainingParams where
   /-- Whether summary linkage is attested. -/
   hasSummaryLinkage   : Bool
   /-- Whether medial clauses can occur without a final clause
-      (non-canonical stand-alone medial; Sarvasy 2015). -/
+      (non-canonical stand-alone medial; @cite{sarvasy-2015}). -/
   medialCanStandAlone : Bool
   deriving Repr, BEq
 

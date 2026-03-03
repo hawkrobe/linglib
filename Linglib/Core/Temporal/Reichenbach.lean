@@ -24,7 +24,7 @@ Reichenbach's temporal parameters for tense/aspect analysis,
 extended with @cite{kiparsky-2002}'s perspective time P.
 
 - `speechTime`: When the utterance is made (S)
-- `perspectiveTime`: Origin of temporal deixis (P, Kiparsky 2002)
+- `perspectiveTime`: Origin of temporal deixis (P, @cite{kiparsky-2002})
 - `referenceTime`: The time being talked about (R, Klein's "topic time")
 - `eventTime`: When the described event occurs (E)
 

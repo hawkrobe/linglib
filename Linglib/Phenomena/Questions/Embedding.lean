@@ -89,7 +89,7 @@ def allEmbeddingData : List EmbeddingDatum :=
 -- Key generalizations
 -- ============================================================================
 
-/-- Quasi-subordination implies subordination (Dayal 2025: (20)). -/
+/-- Quasi-subordination implies subordination (@cite{dayal-2025}: (20)). -/
 theorem quasi_sub_implies_sub :
     ∀ d ∈ allEmbeddingData,
       d.quasiSubordination = true → d.subordination = true := by
@@ -98,7 +98,7 @@ theorem quasi_sub_implies_sub :
   rcases hd with rfl | rfl | rfl | rfl | rfl | rfl <;>
     simp_all [investigate_d, depend_on_d, wonder_d, ask_d, know_d, believe_d]
 
-/-- Quotation implies quasi-subordination (Dayal 2025: (20)). -/
+/-- Quotation implies quasi-subordination (@cite{dayal-2025}: (20)). -/
 theorem quotation_implies_quasi_sub :
     ∀ d ∈ allEmbeddingData,
       d.quotation = true → d.quasiSubordination = true := by
@@ -108,7 +108,7 @@ theorem quotation_implies_quasi_sub :
     simp_all [investigate_d, depend_on_d, wonder_d, ask_d, know_d, believe_d]
 
 -- ============================================================================
--- Shiftiness data (McCloskey 2006, Dayal 2025: §3.2)
+-- Shiftiness data (@cite{mccloskey-2006}, @cite{dayal-2025}: §3.2)
 -- ============================================================================
 
 /-- Context-dependent quasi-subordination judgment. -/

@@ -160,7 +160,7 @@ theorem question_accept_eq_assert_context :
 
 /-- A bipolar question asks both "is it raining?" and "is it not raining?"
     This creates two continuations: one where rain holds, one where ¬rain holds.
-    (Krifka 2015, §4: bipolar = two monopolar questions in sequence.) -/
+    (@cite{krifka-2015}, §4: bipolar = two monopolar questions in sequence.) -/
 private def bipolarQuestion : KrifkaState Weather :=
   s₀.question isRaining |>.question isNotRaining
 
@@ -225,7 +225,7 @@ theorem contradictory_cont_empty :
   ⟨by native_decide, by native_decide⟩
 
 -- ════════════════════════════════════════════════════
--- § 8. Matching Tag: Assert + Question (Krifka 2015, §5)
+-- § 8. Matching Tag: Assert + Question (@cite{krifka-2015}, §5)
 -- ════════════════════════════════════════════════════
 
 /-- A matching tag "It's raining, isn't it?" = assert rain THEN question rain.

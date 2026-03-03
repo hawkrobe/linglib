@@ -29,9 +29,9 @@ Set B (ABS) precedes Set A (ERG).
 
 Unlike Mam, where Infl's φ-probe is blocked in transitives and the
 patient goes unagreed, Kaqchikel cross-references *both* transitive
-arguments (Preminger 2014, Ch. 3 vs. Scott 2023 for Mam).
+arguments (@cite{preminger-2014}, Ch. 3 vs. @cite{scott-2023} for Mam).
 
-## Agent Focus Agreement (Preminger 2014, §3.3, table 22)
+## Agent Focus Agreement (@cite{preminger-2014}, §3.3, table 22)
 
 In AF constructions (clause-local agent extraction), the normal two-slot
 agreement collapses to a **single marker** drawn from the absolutive
@@ -44,12 +44,12 @@ The probe does not distinguish subject from object — AF agreement is
 This follows from Preminger's analysis: the probe (π⁰) seeks the
 closest [+participant]-bearing DP regardless of its thematic role.
 
-### Person Restriction (Preminger 2014, (25))
+### Person Restriction (@cite{preminger-2014}, (25))
 
 At most one core argument can bear [+participant]. Combinations like
 ⟨1SG, 2SG⟩ are ungrammatical regardless of subject/object assignment.
 
-## Feature Geometry (Preminger 2014, §4.3, (55))
+## Feature Geometry (@cite{preminger-2014}, §4.3, (55))
 
 Person features decompose as:
 - [φ] → [PERSON] → [participant] → [author]
@@ -102,7 +102,7 @@ def PersonNumber.isPlural : PersonNumber → Bool
   | .p1sg | .p2sg | .p3sg => false
 
 /-- Is this person-number [+participant]? Derived from the feature
-    geometry in `PersonGeometry.lean` (Preminger 2014, §4.3, (55)):
+    geometry in `PersonGeometry.lean` (@cite{preminger-2014}, §4.3, (55)):
     [participant] ⊂ [PERSON] ⊂ [φ]. -/
 def PersonNumber.isParticipant (pn : PersonNumber) : Bool :=
   (decomposePerson pn.person).hasParticipant
@@ -126,7 +126,7 @@ def PersonNumber.toPhiFeatures : PersonNumber → List PhiFeature
 -- ============================================================================
 
 /-- Set A (ERG) markers: prefixes on Voice/v cross-referencing the
-    transitive agent (Preminger 2014, Ch. 3, table (29)).
+    transitive agent (@cite{preminger-2014}, Ch. 3, table (29)).
     Parenthesized segments are dropped in certain phonological
     contexts; the grapheme *j* represents a voiceless velar fricative. -/
 def setAExponent : PersonNumber → String
@@ -193,7 +193,7 @@ def KaqArgPosition.case : KaqArgPosition → CaseVal
     In Kaqchikel, ALL three argument positions trigger agreement:
     agent via Set A on Voice/v, patient and intranS via Set B on
     Infl/T. This contrasts with Mam, where the patient is NOT
-    agreed with (Infl's probe is blocked by VoiceP; Scott 2023). -/
+    agreed with (Infl's probe is blocked by VoiceP; @cite{scott-2023}). -/
 def KaqArgPosition.isPhiAgreed : KaqArgPosition → Bool
   | .agent   => true
   | .patient => true
@@ -226,7 +226,7 @@ def kaqArgPositions : List KaqArgPosition :=
 def PersonNumber.afRank (pn : PersonNumber) : Nat :=
   probeResolutionRank pn.person pn.isPlural
 
-/-- Person restriction (Preminger 2014, (25)): at most one core
+/-- Person restriction (@cite{preminger-2014}, (25)): at most one core
     argument can be [+participant]. Returns `true` if the combination
     is licit. -/
 def personRestrictionOk (subj obj : PersonNumber) : Bool :=
@@ -249,7 +249,7 @@ def afMarker (subj obj : PersonNumber) : Option String :=
   (afAgreementTarget subj obj).map setBExponent
 
 -- ============================================================================
--- § 7: AF Agreement Paradigm (Preminger 2014, table 22)
+-- § 7: AF Agreement Paradigm (@cite{preminger-2014}, table 22)
 -- ============================================================================
 
 /-- An AF agreement datum: subject φ, object φ, and the resulting
@@ -261,7 +261,7 @@ structure AFAgreementDatum where
   marker : Option String
   deriving Repr
 
-/-- The empirical AF agreement paradigm (Preminger 2014, table (22)).
+/-- The empirical AF agreement paradigm (@cite{preminger-2014}, table (22)).
     Each row records the observed agreement marker for a given
     subject-object combination in clause-local agent extraction.
 
@@ -306,7 +306,7 @@ def VerbForm.agreementSlots : VerbForm → Nat
   | .agentFocus => 1
 
 -- ============================================================================
--- § 9: Obligatory Operations (Preminger 2014, Ch. 5)
+-- § 9: Obligatory Operations (@cite{preminger-2014}, Ch. 5)
 -- ============================================================================
 
 /-- The result of an obligatory agreement operation.
@@ -362,7 +362,7 @@ theorem all_positions_agreed :
 -- § 11: Verification Theorems — Feature Decomposition
 -- ============================================================================
 
-/-- [+author] entails [+participant] (Preminger 2014, (55)):
+/-- [+author] entails [+participant] (@cite{preminger-2014}, (55)):
     [author] ⊂ [participant] in the feature geometry. -/
 theorem author_entails_participant :
     personNumbers.all (λ pn =>
@@ -407,7 +407,7 @@ theorem af_paradigm_correct :
   native_decide
 
 /-- AF agreement is commutative: swapping subject and object yields the
-    same marker for ALL person-number combinations (Preminger 2014,
+    same marker for ALL person-number combinations (@cite{preminger-2014},
     §3.3, (67)). This follows from the omnivorous hierarchy — the
     probe sees both arguments symmetrically. -/
 theorem af_commutative :
@@ -460,7 +460,7 @@ theorem trans_has_ergative :
     VerbForm.transitive.agreementSlots = 2 := ⟨rfl, rfl⟩
 
 -- ============================================================================
--- § 15: Case Inventory Validation (Blake 1994)
+-- § 15: Case Inventory Validation (@cite{blake-1994})
 -- ============================================================================
 
 /-- Kaqchikel case inventory, derived from argument position case values. -/

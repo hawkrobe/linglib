@@ -63,7 +63,7 @@ structure KicheExtractionDatum where
 
 /-- Spatial oblique extraction: *wi* licensed.
     "Where did you buy it?" — *wi* appears at extraction site.
-    Romero 2012; Mondloch 2017. -/
+    Romero 2012; @cite{mondloch-2017}. -/
 def spatialOblExtraction : KicheExtractionDatum :=
   { label := "Spatial oblique extraction (wi)"
   , reference := "Romero 2012; Elkins et al. §2, §8"
@@ -72,7 +72,7 @@ def spatialOblExtraction : KicheExtractionDatum :=
 
 /-- Instrumental oblique extraction: *wi* licensed.
     "With what did you hit it?" — *wi* at extraction site.
-    Mondloch 2017. -/
+    @cite{mondloch-2017}. -/
 def instrumentalOblExtraction : KicheExtractionDatum :=
   { label := "Instrumental oblique extraction (wi)"
   , reference := "Mondloch 2017; Elkins et al. §8"
@@ -101,7 +101,7 @@ def reasonOblExtraction : KicheExtractionDatum :=
 
 /-- Subject extraction: *wi* NOT licensed (Agent Focus instead).
     "Who bought it?" — AF morphology *-Vk* instead of *wi*.
-    Henderson 2008; Imanishi 2020. -/
+    @cite{henderson-2008}; @cite{imanishi-2020}. -/
 def subjectExtraction : KicheExtractionDatum :=
   { label := "Subject extraction (AF, no wi)"
   , reference := "Henderson 2008; Imanishi 2020"
@@ -150,7 +150,7 @@ theorem wi_not_core_args :
 theorem temporal_exempt : temporalOblExtraction.wiLicensed = false := rfl
 
 -- ============================================================================
--- § 4: The Fronting Particle Generalization (Henderson 2008; Imanishi 2020)
+-- § 4: The Fronting Particle Generalization (@cite{henderson-2008}; @cite{imanishi-2020})
 -- ============================================================================
 
 /-- The Fronting Particle Generalization: *wi* occurs in clauses where

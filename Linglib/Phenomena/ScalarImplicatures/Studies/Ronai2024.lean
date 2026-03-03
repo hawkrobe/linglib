@@ -57,7 +57,7 @@ structure ScaleDatum where
   weakerTerm : String
   /-- The stronger scalar term (e.g., "all", "hot") -/
   strongerTerm : String
-  /-- Semantic distance (1-7 Likert scale, from van Tiel et al. 2016 Exp 4) -/
+  /-- Semantic distance (1-7 Likert scale, from @cite{van-tiel-geurts-2016} Exp 4) -/
   semanticDistance : Option Float
   /-- Is the scale bounded? (stronger term = endpoint) -/
   bounded : Bool
@@ -436,7 +436,7 @@ def nonBoundedScales : List ScaleDatum := allScales.filter (!·.bounded)
 
 
 /--
-Experiment 1 design (Gotzner & Romoli 2018 paradigm).
+Experiment 1 design (@cite{gotzner-romoli-2018} paradigm).
 
 Participants judged to what extent Sentence 1 "suggests" Sentence 2
 on a 0-100 sliding scale.
@@ -495,7 +495,7 @@ theorem exp1_strong_above_false :
 
 
 /--
-Experiment 2 design (van Tiel et al. 2016 inference task).
+Experiment 2 design (@cite{van-tiel-geurts-2016} inference task).
 
 Binary Yes/No responses to:
 "Mary: Every soup was warm.

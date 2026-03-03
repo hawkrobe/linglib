@@ -212,7 +212,7 @@ theorem ot_rsa_agree_round_preference :
   constructor <;> native_decide
 
 -- ============================================================================
--- Bridge 7: Evaluative Valence → Framing Prediction (Claus & Walch 2024)
+-- Bridge 7: Evaluative Valence → Framing Prediction (@cite{claus-walch-2024})
 -- ============================================================================
 
 /-!
@@ -305,7 +305,7 @@ theorem maxMeaning_ge_from_degree (m n : Nat) :
   congr 1
   exact propext (@Nat.cast_le ℚ _ _ _ _).symm
 
-/-- Exact bare numeral meaning equals degree equality (Bylinina & Nouwen 2020 §4). -/
+/-- Exact bare numeral meaning equals degree equality (@cite{bylinina-nouwen-2020} §4). -/
 theorem maxMeaning_eq_from_degree (m n : Nat) :
     bareMeaning m n = decide (HasDegree.degree n = (m : ℚ)) := by
   simp only [bareMeaning, maxMeaning, HasDegree.degree]

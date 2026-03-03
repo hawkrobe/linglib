@@ -23,7 +23,7 @@ the full chain:
    outside (T, Mod, C — may differ). The corpus confirms both directions:
    0 argument structure mismatches, 129 tense + 394 modal mismatches.
 
-3. **Voice mismatch resolution** (§3): AHM 2025 resolves the voice puzzle:
+3. **Voice mismatch resolution** (§3): @cite{anand-hardt-mccloskey-2021} resolves the voice puzzle:
    v[agentive] ≠ v[nonThematic] within the argument domain, so the SIC
    correctly blocks voice mismatches. The 0 corpus count is predicted.
 
@@ -122,7 +122,7 @@ theorem sic_predicts_germanCaseMatch :
 /-- SIC correctly predicts `germanCaseMismatch` is ungrammatical:
     accusative wh-phrase does not match dative correlate. The SIC
     blocks sluicing because dative ≠ accusative within the argument
-    domain (Merchant 2001: German *wem*/*wen* data). -/
+    domain (@cite{merchant-2001}: German *wem*/*wen* data). -/
 theorem sic_predicts_germanCaseMismatch :
     germanCaseMismatch.grammatical = false ∧
     structurallyIdentical dativeVP accusativeVP = false :=
@@ -171,10 +171,10 @@ theorem sic_partition_confirmed :
   ⟨rfl, rfl, by native_decide, by native_decide⟩
 
 -- ============================================================================
--- § 3: Voice Mismatch Resolution (AHM 2025)
+-- § 3: Voice Mismatch Resolution (@cite{anand-hardt-mccloskey-2021})
 -- ============================================================================
 
--- AHM 2025 resolves the voice puzzle: voice mismatches are correctly
+-- @cite{anand-hardt-mccloskey-2021} resolves the voice puzzle: voice mismatches are correctly
 -- blocked by the SIC because active v[agentive] ≠ passive v[nonThematic]
 -- within the argument domain (v is F1, inside vP). The 0 corpus count
 -- is predicted, not puzzling.
@@ -193,7 +193,7 @@ def passiveTransitiveVP : List HeadPair :=
 
     This resolves the voice puzzle from the earlier analysis. The puzzle
     arose from treating voice as outside the argument domain (like T/Mod),
-    but AHM 2025 shows that voice flavor is encoded on v, which IS inside
+    but @cite{anand-hardt-mccloskey-2021} shows that voice flavor is encoded on v, which IS inside
     the argument domain. -/
 theorem voice_correctly_blocked :
     structurallyIdentical activeTransitiveVP passiveTransitiveVP = false ∧

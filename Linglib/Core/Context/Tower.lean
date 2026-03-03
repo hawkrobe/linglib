@@ -39,7 +39,7 @@ namespace Core.Context
 inductive ShiftLabel where
   | attitude    -- attitude verb embedding (believe, say, want)
   | temporal    -- temporal shift (sequence of tense, historical present)
-  | evidential  -- evidential perspective shift (Cumming 2026)
+  | evidential  -- evidential perspective shift (@cite{cumming-2026})
   | mood        -- mood operator (SUBJ situation introduction)
   | perspective -- full perspective shift (FID: agent + time + world)
   | quotation   -- direct quotation

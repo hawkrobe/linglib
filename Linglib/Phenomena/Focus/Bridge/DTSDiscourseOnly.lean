@@ -20,7 +20,7 @@ Both *but* and discourse *only* express a form of evidential contrast:
 - discourse *only*: S supports α but S' does not support α
   → S' undermines the evidential direction
 
-## The *but*/*only* Asymmetry (IKW 2025 §6)
+## The *but*/*only* Asymmetry (@cite{ippolito-kiss-williams-2025} §6)
 
 *but* requires `negRelevant` (BF < 1): the second clause must actively
 provide counter-evidence. Discourse *only* only requires `¬probSupports`:

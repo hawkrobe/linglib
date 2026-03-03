@@ -121,7 +121,7 @@ structure EpistemicEntry where
   factive : Bool := false
   deriving DecidableEq, Repr, BEq
 
-/-! Standard epistemic thresholds (Ying et al. 2025, Table 1(b)).
+/-! Standard epistemic thresholds (@cite{ying-zhi-xuan-wong-mansinghka-tenenbaum-2025}, Table 1(b)).
 
 These are the best-fit values from LaBToM's comparison against human
 judgments on the Badges and BigToM datasets. The ordering is the

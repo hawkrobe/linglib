@@ -1,18 +1,18 @@
 /-!
 # Degree Questions: Empirical Data
-@cite{beck-rullmann-1999} @cite{fox-2007} @cite{rullmann-1995}
+@cite{beck-rullmann-1999} @cite{fox-2007} @cite{rullmann-1995} @cite{fox-hackl-2006}
 
 Empirical data on degree questions ("how tall is Kim?"), including
 negative islands, modal obviation, and comparative subdeletion.
 
 The theoretical analysis is in `Theories/Semantics/Questions/DegreeQuestion.lean`
-(Fox & Hackl 2007 density-of-measurement) and will also connect to the new
+(@cite{fox-2007} density-of-measurement) and will also connect to the new
 `Theories/Semantics/Degree/DegreeQuestion.lean` (compositional "how").
 
 ## Key Empirical Patterns
 
 1. **Negative islands**: "*How tall isn't Kim?" is unacceptable
-   (Fox & Hackl 2007: density of measurement blocks maximality).
+   (@cite{fox-2007}: density of measurement blocks maximality).
 2. **Modal obviation**: "How tall is Kim required to be?" is acceptable
    (universal modal rescues maximality).
 3. **Existential modal fails**: "*How tall is Kim allowed to be?"

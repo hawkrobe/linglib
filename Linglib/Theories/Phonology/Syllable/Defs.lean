@@ -35,7 +35,7 @@ open Theories.Phonology (Segment Feature)
     fricatives (rank 1) per @cite{clements-1990}, yielding a 6-level scale. -/
 def sonorityOf (s : Segment) : Nat :=
   if s.hasValue .sonorant false then
-    -- Obstruent: stop vs fricative (Clements 1990 refinement)
+    -- Obstruent: stop vs fricative (@cite{clements-1990} refinement)
     if s.hasValue .continuant true then 1 else 0
   else if s.hasValue .approximant false then
     -- Nasal ([+sonorant, −approximant])

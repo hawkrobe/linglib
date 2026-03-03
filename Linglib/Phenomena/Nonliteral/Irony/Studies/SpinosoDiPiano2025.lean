@@ -3,6 +3,8 @@ import Mathlib.Analysis.SpecialFunctions.Pow.Real
 
 /-!
 # Spinoso-@cite{spinoso-di-piano-etal-2025} — (RSA)² @cite{spinoso-di-piano-etal-2025} @cite{kao-goodman-2015}
+@cite{bergen-goodman-2015}
+
 
 (RSA)²: A Rhetorical-Strategy-Aware Rational Speech Act Framework for
 Figurative Language Understanding.
@@ -40,7 +42,7 @@ paper's per-strategy normalization then mixing (Eq 7).
 Both models derive irony from context-dependent pragmatic inference over the
 same weather domain. The key difference:
 
-| Dimension | Kao et al. 2015 | Spinoso-Di Piano et al. 2025 |
+| Dimension | @cite{kao-goodman-2015} | Spinoso-@cite{spinoso-di-piano-etal-2025} |
 |-----------|-----------------|-------------------------------|
 | Latent | QUD (state/valence/arousal) | Strategy (literal/ironic) |
 | World | Weather × Valence × Arousal (20 states) | Weather only (5 states) |
@@ -204,11 +206,11 @@ theorem rhetoricalMeaning_swap (u : Utterance) (w : Weather) :
 -- §5. Context-Specific Configurations
 -- ============================================================================
 
-/-- Pleasant weather context (priors from Kao & Goodman 2015). -/
+/-- Pleasant weather context (priors from @cite{kao-goodman-2015}). -/
 noncomputable abbrev pleasantCfg :=
   cfg pleasantWeather (fun s => by cases s <;> simp [pleasantWeather])
 
-/-- Terrible weather context (priors from Kao & Goodman 2015). -/
+/-- Terrible weather context (priors from @cite{kao-goodman-2015}). -/
 noncomputable abbrev terribleCfg :=
   cfg terribleWeather (fun s => by cases s <;> simp [terribleWeather])
 

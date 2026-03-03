@@ -45,7 +45,7 @@ structure AdjModifierEntry where
   formComp : Option String := none
   /-- Superlative form -/
   formSuper : Option String := none
-  /-- Scale boundedness (from Kennedy 2007) -/
+  /-- Scale boundedness (from @cite{kennedy-2007}) -/
   scaleType : Boundedness := .open_
   /-- What dimension is being measured? -/
   dimension : String := ""

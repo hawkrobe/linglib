@@ -429,7 +429,7 @@ theorem bare_plural_opaque_only
 /-!
 ## Theoretical Legacy
 
-Carlson 1977 established:
+@cite{carlson-1977} established:
 
 1. Unified analysis: One meaning for bare plurals, readings from context
 2. Kinds as individuals: Type e, not a quantifier
@@ -438,18 +438,18 @@ Carlson 1977 established:
 
 Subsequent theories build on or respond to this:
 
-### Chierchia 1998 (`Chierchia1998.lean`)
+### @cite{chierchia-1998} (`Chierchia1998.lean`)
 - Accepts kinds as individuals
 - Adds ∩/∪ operators for property↔kind mapping
 - DKP = derived kind predication ≈ Carlson's stage-level predication
 - Nominal Mapping Parameter for cross-linguistic variation
 
-### Krifka 2004 (`Krifka2004.lean`)
+### @cite{krifka-2004} (`Krifka2004.lean`)
 - Rejects kinds as basic; bare NPs are PROPERTIES
 - ∃-shift is position-sensitive (differs from Carlson)
 - Information structure determines interpretation
 
-### Dayal 2004 (`Dayal2004.lean`)
+### @cite{dayal-2004} (`Dayal2004.lean`)
 - Extends Carlson/Chierchia with singular kinds ("The dodo is extinct")
 - Meaning Preservation ranking for type shifts
 - Number morphology constrains instantiation sets
@@ -485,7 +485,7 @@ example (k : Entity) (P : Entity → Bool) :
 -- Examples from the Paper
 
 /-!
-## Key Examples from Carlson 1977
+## Key Examples from @cite{carlson-1977}
 
 ### Generic readings (individual-level predicates)
 - "Horses are mammals" — mammals ∈ property-set(HORSES)

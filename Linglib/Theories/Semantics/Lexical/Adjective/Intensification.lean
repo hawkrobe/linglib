@@ -108,7 +108,7 @@ def muPleasant (max : Nat) : EvaluativeMeasure max where
 -- Intensified Meaning (Nouwen eq. 45)
 
 /--
-Intensified positive meaning (Nouwen 2024, eq. 45).
+Intensified positive meaning (@cite{nouwen-2024}, eq. 45).
 
 ⟦ADV-ly ADJ⟧(d, θ_adj, θ_eval) = (d > θ_adj) ∧ (μ_eval(d) > θ_eval)
 

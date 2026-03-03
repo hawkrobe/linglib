@@ -342,7 +342,7 @@ theorem few_scope_down : ScopeDownwardMono (few_sem m) := by
       · exact absurd (hSS' x hS) (by simp [hx.2]))
   omega
 
--- === Quantity / Isomorphism Closure (Mostowski 1957) ===
+-- === Quantity / Isomorphism Closure (@cite{mostowski-1957}) ===
 
 /--
 Quantity / Isomorphism closure:
@@ -704,7 +704,7 @@ theorem no_restrictor_down : RestrictorDownwardMono (no_sem m) := by
   have h := hQ x hx
   cases hR : R x <;> simp_all [hRR' x]
 
-/-- `⟦every⟧` has double monotonicity ↓MON↑ (van Benthem 1984 §4.2). -/
+/-- `⟦every⟧` has double monotonicity ↓MON↑ (@cite{van-benthem-1984} §4.2). -/
 theorem every_doubleMono :
     RestrictorDownwardMono (every_sem m) ∧ ScopeUpwardMono (every_sem m) :=
   ⟨every_restrictor_down, every_scope_up⟩

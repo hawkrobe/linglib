@@ -679,7 +679,7 @@ def formalize : Finding → Prop
       (costCfg.L1 .green .green_circle > costCfg.L1 .green .green_square) ∧
       (salienceCfg.L1 .green .green_square > salienceCfg.L1 .green .green_circle)
 
-/-- The RSA model accounts for all 6 qualitative findings from Q&F (2015). -/
+/-- The RSA model accounts for all 6 qualitative findings from @cite{qing-franke-2015}. -/
 theorem all_findings_verified : ∀ f : Finding, formalize f := by
   intro f; cases f
   · exact speaker_prefers_unique_shape

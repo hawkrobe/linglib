@@ -2,7 +2,7 @@ import Linglib.Core.Agent.RationalAction
 import Linglib.Core.Agent.NormalCDF
 
 /-!
-# Signal Detectability Theory (Luce 1959, §2.E) @cite{luce-1959}
+# Signal Detectability Theory (@cite{luce-1959}, §2.E) @cite{luce-1959}
 @cite{green-swets-1966} @cite{macmillan-creelman-2005}
 
 Signal Detection Theory (SDT) models the observer's task of discriminating

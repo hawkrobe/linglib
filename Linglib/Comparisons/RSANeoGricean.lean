@@ -122,7 +122,7 @@ structure RationalityParameter where
   α_nonneg : α ≥ 0
 
 /--
-**The Limit Theorem** (Franke 2011, formalized):
+**The Limit Theorem** (@cite{franke-2011}, formalized):
 
 As α → ∞, RSA S1 probability concentrates on the IBR-optimal message.
 
@@ -316,7 +316,7 @@ def standardEquivalenceConditions : EquivalenceConditions where
   highRationality := true
   matchingAlternatives := true
 
--- Information-Theoretic Perspective (Zaslavsky et al. 2020)
+-- Information-Theoretic Perspective (@cite{zaslavsky-hu-levy-2020})
 
 /-!
 ## Information-Theoretic Connection to NeoGricean

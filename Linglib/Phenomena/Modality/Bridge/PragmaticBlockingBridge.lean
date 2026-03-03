@@ -10,7 +10,7 @@ returns `true` for all event binders. Instead, circumstantial readings of
 high modals are **pragmatically blocked** by more informative epistemic
 readings.
 
-## The Puzzle (Hacquard 2010, (49b, 49d))
+## The Puzzle (@cite{hacquard-2010}, (49b, 49d))
 
 Content licensing predicts:
 - (49a) speech act + epistemic: ✓ attested

@@ -105,7 +105,7 @@ def allPairs : List (CaseForm × Strength) :=
   [(.zero, .strong), (.zero, .weak), (.overt, .strong), (.overt, .weak)]
 
 -- ============================================================================
--- § 2: Constraints (de Hoop & Malchukov 2008, §2)
+-- § 2: Constraints (@cite{de-hoop-malchukov-2008}, §2)
 -- ============================================================================
 
 /-- **Identify** (I): Case should identify the argument's role.

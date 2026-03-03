@@ -224,7 +224,7 @@ def ducksLay : QuantifierContrast :=
   , source := "Leslie 2008"
   }
 
--- Acquisition Data (Cimpian et al. 2010)
+-- Acquisition Data (@cite{cimpian-brandone-gelman-2010})
 
 /-- Child generic acceptance with minimal evidence. -/
 structure AcquisitionDatum where

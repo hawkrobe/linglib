@@ -65,7 +65,7 @@ open Semantics.Questions
 /-!
 ## Partial Answerhood
 
-G&S 1984, Section 5.2: A proposition p gives a partial answer to question q if:
+@cite{groenendijk-stokhof-1984}, Section 5.2: A proposition p gives a partial answer to question q if:
 1. p is compatible with some cell of q (overlaps with the answer)
 2. p is NOT a complete answer (doesn't determine a unique cell)
 
@@ -75,7 +75,7 @@ This captures the intuition that "Not in the drawer" partially answers
 
 /-- Partial answerhood: p overlaps with some cell but doesn't determine a unique cell.
 
-G&S 1984, p. 335: P-ANS(p, q) ≡ ∃i[p(i) ∧ q(a)(i)] ∧ ¬∀a'∃i[p(i) ≡ q(a')(i)]
+@cite{groenendijk-stokhof-1984}, p. 335: P-ANS(p, q) ≡ ∃i[p(i) ∧ q(a)(i)] ∧ ¬∀a'∃i[p(i) ≡ q(a')(i)]
 -/
 def partialAnswer {W : Type*} (p : W -> Bool) (q : GSQuestion W) (worlds : List W) : Bool :=
   -- p overlaps with some world in some cell
@@ -88,7 +88,7 @@ def partialAnswer {W : Type*} (p : W -> Bool) (q : GSQuestion W) (worlds : List 
 
 /-- Positive partial answer: mentions at least one satisfier.
 
-G&S 1984, Section 5.2: The problem with P-ANS is that negative answers like
+@cite{groenendijk-stokhof-1984}, Section 5.2: The problem with P-ANS is that negative answers like
 "Not in the drawer" satisfy P-ANS but are NOT acceptable mention-some answers.
 
 Only POSITIVE partial answers (that mention actual satisfiers) count as mention-some. -/
@@ -121,7 +121,7 @@ theorem partialAnswer_includes_negative :
 /-!
 ## The I-MS Interrogative Formation Rule
 
-G&S 1984, Section 5.3: The proper treatment of mention-some requires a special
+@cite{groenendijk-stokhof-1984}, Section 5.3: The proper treatment of mention-some requires a special
 interrogative formation rule that creates lifted interrogatives.
 
 Standard I-rule: λQ[∀x[P(x) → Q(x)]]
@@ -171,7 +171,7 @@ def MentionSomeInterrogative.applyToProperty {W E : Type*} [DecidableEq E]
 /-!
 ## Embedded Mention-Some
 
-G&S 1984, Section 5.3: Mention-some questions embedded under attitude verbs:
+@cite{groenendijk-stokhof-1984}, Section 5.3: Mention-some questions embedded under attitude verbs:
 
 ### Under "know" (extensional complement)
 
@@ -233,7 +233,7 @@ def askMentionSome {W E : Type*} [DecidableEq E]
 /-!
 ## Distinguishing Choice from Mention-Some
 
-G&S 1984, Section 5.1-5.3: Both choice and mention-some readings yield
+@cite{groenendijk-stokhof-1984}, Section 5.1-5.3: Both choice and mention-some readings yield
 non-exhaustive answers, but they are semantically distinct:
 
 **Choice Reading**: The disjunction/existential takes wide scope.
@@ -269,7 +269,7 @@ structure MentionSomeQuestion' (W E : Type*) where
 /-!
 ## Logical Relations Between Readings
 
-G&S 1984, Section 5.3 establishes:
+@cite{groenendijk-stokhof-1984}, Section 5.3 establishes:
 
 1. **Choice implies mention-some**: If you know the choice-answer
    (for whichever disjunct is relevant), you know a mention-some answer.
@@ -282,7 +282,7 @@ These are important for understanding the logical landscape of readings.
 
 /-- Choice reading implies mention-some reading.
 
-G&S 1984, Section 5.3, p. 538: "The choice reading of (24) implies its
+@cite{groenendijk-stokhof-1984}, Section 5.3, p. 538: "The choice reading of (24) implies its
 mention-some reading. This is correct, to know of a particular pen who
 has that pen, implies to know a person who has a pen."
 
@@ -319,7 +319,7 @@ theorem mentionAll_implies_mentionSome {W E : Type*}
 /-!
 ## Verbs That Block Mention-Some
 
-G&S 1984, Section 5.4: Some verbs BLOCK mention-some readings:
+@cite{groenendijk-stokhof-1984}, Section 5.4: Some verbs BLOCK mention-some readings:
 
 - "It depends on who has a pen" - requires exhaustive answer
 - "It matters who has a pen" - requires exhaustive answer
@@ -336,7 +336,7 @@ In contrast, these verbs ALLOW mention-some:
 
 /-- Does a verb allow mention-some readings?
 
-G&S 1984, Section 5.4: "depends", "matter", "determine" block mention-some
+@cite{groenendijk-stokhof-1984}, Section 5.4: "depends", "matter", "determine" block mention-some
 because they require complete functional information. -/
 def verbAllowsMentionSome : String -> Bool
   | "know" => true
@@ -373,7 +373,7 @@ structure EmbeddedQuestionSentence (W E : Type*) where
 /-!
 ## Mention-Two / Mention-N
 
-G&S 1984, Section 5.3 (following Belnap): Cumulative quantification with
+@cite{groenendijk-stokhof-1984}, Section 5.3 (following Belnap): Cumulative quantification with
 numerals gives "mention-n" readings:
 
 "Where do two unicorns live?"

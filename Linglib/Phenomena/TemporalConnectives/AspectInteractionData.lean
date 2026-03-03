@@ -152,7 +152,7 @@ def until_accomplishment_main : AspectInteraction where
   example_ := "*John built the house until 3pm"
 
 -- ============================================================================
--- § 4: *Before*/*After* + Embedded Clause Telicity (Rett 2020)
+-- § 4: *Before*/*After* + Embedded Clause Telicity (@cite{rett-2020})
 -- ============================================================================
 
 /-- *before* + stative embedded → default before-start reading.
@@ -169,7 +169,7 @@ def before_stative : AspectInteraction where
 /-- *before* + accomplishment embedded → before-start is default;
     before-finish (COMPLET) reading is available with coercion cost.
     "John left before she climbed the mountain." Default: before onset.
-    Coerced: before completion. (Alstott & Aravind 2026, Exp. 2) -/
+    Coerced: before completion. (@cite{alstott-aravind-2026}, Exp. 2) -/
 def before_accomplishment : AspectInteraction where
   connective := "before"
   vendlerClass := .accomplishment
@@ -182,7 +182,7 @@ def before_accomplishment : AspectInteraction where
 /-- *after* + stative embedded → default after-finish; after-start (INCHOAT)
     requires coercion. "John left after she was surprised."
     Default: after end of surprise. Coerced: after onset.
-    (Alstott & Aravind 2026, Exp. 4) -/
+    (@cite{alstott-aravind-2026}, Exp. 4) -/
 def after_stative : AspectInteraction where
   connective := "after"
   vendlerClass := .state
@@ -204,7 +204,7 @@ def after_accomplishment : AspectInteraction where
   example_ := "John left after she climbed the mountain"
 
 -- ============================================================================
--- § 5: *Since* Main Clause Restrictions (Heinämäki 1974)
+-- § 5: *Since* Main Clause Restrictions (@cite{heinamaki-1974})
 -- ============================================================================
 
 /-- *since* + stative main clause → acceptable.

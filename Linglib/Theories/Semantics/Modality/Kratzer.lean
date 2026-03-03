@@ -608,7 +608,7 @@ structure TeleologicalFlavor where
 
 Each flavor structure maps to the theory-neutral `ModalFlavor` enum from
 `Core.ModalLogic`, bridging Kratzer's parameterized semantics to the
-typological meaning space (Imel, Guo, & Steinert-Threlkeld 2026). -/
+typological meaning space (Imel, Guo, & @cite{imel-guo-steinert-threlkeld-2026}). -/
 
 open Core.ModalLogic (ModalFlavor)
 

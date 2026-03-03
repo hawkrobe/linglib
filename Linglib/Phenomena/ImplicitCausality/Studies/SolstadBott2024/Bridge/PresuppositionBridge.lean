@@ -23,7 +23,7 @@ open Fragments.English.Predicates.Verbal
 
 /-- All four English occasion verbs are soft presupposition triggers —
     their occasion presupposition can be locally accommodated.
-    (Solstad & Bott 2024, Exp 2: no strong contextual felicity). -/
+    (@cite{solstad-bott-2024}, Exp 2: no strong contextual felicity). -/
 theorem all_occasion_verbs_soft :
     manage_occasion.presupType = some .softTrigger ∧
     dare.presupType = some .softTrigger ∧

@@ -125,7 +125,7 @@ theorem indexed_iff_sap :
   native_decide
 
 -- ============================================================================
--- § 5: Tense-Conditioned Split-Ergative Case (Harris 1981)
+-- § 5: Tense-Conditioned Split-Ergative Case (@cite{harris-1981})
 -- ============================================================================
 
 /-- Georgian tense series. Case alignment varies by series:

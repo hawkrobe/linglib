@@ -73,7 +73,7 @@ open Phenomena.Alignment.Typology
 -- § 1: Universal 1 — The Role-Reference Association Universal
 -- ============================================================================
 
-/-! **Universal 1** (Haspelmath 2021, §2, statement (5)):
+/-! **Universal 1** (@cite{haspelmath-2021}, §2, statement (5)):
 
     "Deviations from the usual associations of role rank and referential
     prominence tend to be coded by longer grammatical forms (if the coding
@@ -116,7 +116,7 @@ theorem universal1_frequency_grounding (role : ArgumentRole)
 -- § 2: Universal 2 — Usual Role-Reference Associations
 -- ============================================================================
 
-/-! **Universal 2** (Haspelmath 2021, §2, statement (6)):
+/-! **Universal 2** (@cite{haspelmath-2021}, §2, statement (6)):
 
     "Arguments with higher-ranked roles tend to be more referentially
     prominent, and vice versa."
@@ -149,7 +149,7 @@ theorem universal2_role_rank_ordering :
 -- § 3: Universal 3 — Single-Argument Coding Universal
 -- ============================================================================
 
-/-! **Universal 3** (Haspelmath 2021, §3, statement (13)):
+/-! **Universal 3** (@cite{haspelmath-2021}, §3, statement (13)):
 
     "The single-argument flagging universal: If a language has an asymmetric
     single-argument flagging split depending on some prominence scale, then
@@ -176,7 +176,7 @@ theorem universal3_single_argument_coding :
 -- § 4: Universal 4 — Split P Flagging (DOM)
 -- ============================================================================
 
-/-! **Universal 4** (Haspelmath 2021, §4.1, statement (14)):
+/-! **Universal 4** (@cite{haspelmath-2021}, §4.1, statement (14)):
 
     "Split P flagging (Differential Object Marking): If a language has an
     asymmetric split in P flagging depending on some prominence scale, then
@@ -244,7 +244,7 @@ theorem universal5_trichotomy_exhaustive :
 -- § 6: Universal 6 — Split A Flagging (DSM)
 -- ============================================================================
 
-/-! **Universal 6** (Haspelmath 2021, §4.2, statement (21)):
+/-! **Universal 6** (@cite{haspelmath-2021}, §4.2, statement (21)):
 
     "Split A flagging (Differential Subject Marking): If a language has an
     asymmetric split in A flagging depending on some prominence scale, then
@@ -264,7 +264,7 @@ theorem universal6_split_A_flagging :
 -- § 7: Universals 7–8 — Ditransitive Splits (R and T flagging)
 -- ============================================================================
 
-/-! **Universal 7** (Haspelmath 2021, §5, statement (26)):
+/-! **Universal 7** (@cite{haspelmath-2021}, §5, statement (26)):
 
     "Split R flagging: If a language has an asymmetric split in R flagging
     depending on some prominence scale, then the special flag is used on
@@ -273,7 +273,7 @@ theorem universal6_split_A_flagging :
     R behaves like A: both are high-rank roles whose differential marking
     targets the non-prominent end.
 
-    **Universal 8** (Haspelmath 2021, §5, statement (27)):
+    **Universal 8** (@cite{haspelmath-2021}, §5, statement (27)):
 
     "Split T flagging: If a language has an asymmetric split in T flagging
     depending on some prominence scale, then the special flag is used on
@@ -353,7 +353,7 @@ theorem ditransitive_parallels_monotransitive :
     DitransitiveAlignment.secundative.marksR = false := ⟨rfl, rfl, rfl, rfl⟩
 
 -- ============================================================================
--- § 10: DOM ↔ Accusative, DSM ↔ Ergative (De Hoop & Malchukov 2008)
+-- § 10: DOM ↔ Accusative, DSM ↔ Ergative (@cite{de-hoop-malchukov-2008})
 -- ============================================================================
 
 /-! The correlation between DOM and accusative alignment, and between DSM
@@ -362,7 +362,7 @@ theorem ditransitive_parallels_monotransitive :
 
     This theorem re-exports the De Hoop & Malchukov result for reference. -/
 
-/-- DOM ↔ accusative, DSM ↔ ergative (De Hoop & Malchukov 2008, not a
+/-- DOM ↔ accusative, DSM ↔ ergative (@cite{de-hoop-malchukov-2008}, not a
     numbered Haspelmath universal — included for cross-reference). -/
 theorem alignment_correlation_deHoopMalchukov :
     -- Nom-acc: DOM possible, DSM blocked by PaIP
@@ -374,7 +374,7 @@ theorem alignment_correlation_deHoopMalchukov :
   alignment_correlation
 
 -- ============================================================================
--- § 11: Bridge — Usual Discourse Status (Haspelmath 2021, §9)
+-- § 11: Bridge — Usual Discourse Status (@cite{haspelmath-2021}, §9)
 -- ============================================================================
 
 open Core.InformationStructure
@@ -497,7 +497,7 @@ theorem universal14_dative_alternation :
 -- § 17: Form-Frequency Unification
 -- ============================================================================
 
-/-! **Form-frequency unification** (Haspelmath 2021, §10.2, statement 68):
+/-! **Form-frequency unification** (@cite{haspelmath-2021}, §10.2, statement 68):
 
     All 14 universals reduce to Zipf's form-frequency correspondence.
     The scenario-level check: for every pair of scenarios where one is

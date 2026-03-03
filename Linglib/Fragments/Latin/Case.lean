@@ -6,7 +6,7 @@ import Linglib.Core.Case.LocalExtension
 /-!
 # Latin Case Inventory @cite{blake-1994}
 
-Latin has **6 cases** in the standard description (Blake 1994, passim):
+Latin has **6 cases** in the standard description (@cite{blake-1994}, passim):
 NOM, ACC, GEN, DAT, ABL, VOC. Latin is Blake's primary example language
 throughout *Case* — its paradigms illustrate syncretism patterns (Ch. 2,
 pp. 19–24), the core/peripheral distinction, and the ABL's wide functional
@@ -54,7 +54,7 @@ theorem inventory_with_loc_valid :
     Core.validInventory inventoryWithLocative = true := by native_decide
 
 -- ============================================================================
--- § 2: Syncretism Patterns (Blake 1994, pp. 19–24)
+-- § 2: Syncretism Patterns (@cite{blake-1994}, pp. 19–24)
 -- ============================================================================
 
 /-- NOM/ACC syncretism in neuter nouns (2nd, 3rd, 4th declension).
@@ -79,7 +79,7 @@ theorem dat_abl_inventory_adjacent :
     Core.inventoryAdjacent coreInventory .dat .abl = true := by native_decide
 
 -- ============================================================================
--- § 3: Local Case Extension (Blake 1994, Ch. 6)
+-- § 3: Local Case Extension (@cite{blake-1994}, Ch. 6)
 -- ============================================================================
 
 /-- Latin ABL is the textbook case of local case extension: a single

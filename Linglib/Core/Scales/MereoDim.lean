@@ -11,7 +11,7 @@ Cross-pillar connection between `Core/Mereology.lean` (CUM/QUA/ExtMeasure)
 and `Core/Scale.lean` (ComparativeScale/Boundedness/MIP/degree properties).
 
 The two pillars are independently motivated:
-- **Mereology**: algebraic part-whole structure (Krifka 1989/1998, Champollion 2017)
+- **Mereology**: algebraic part-whole structure (@cite{krifka-1989}/1998, @cite{champollion-2017})
 - **Scale**: comparative/additive scale structure
 
 This file bridges them at four levels:
@@ -80,7 +80,7 @@ theorem cum_boundedness_blocked : cumBoundedness.isLicensed = false := rfl
 
     The measure function μ : α → ℚ from `ExtMeasure` becomes the
     measure function of a `DirectedMeasure` (positive direction),
-    with `atLeastDeg` as the derived degree property (Kennedy 2007/2015:
+    with `atLeastDeg` as the derived degree property (@cite{kennedy-2007}/2015:
     "at least n" with type-shift to exact). The boundedness annotation
     comes from the mereological property of the source predicate:
     QUA → `.closed`, CUM → `.open_`.
@@ -95,7 +95,7 @@ def extMeasure_kennedy {α : Type*} [SemilatticeSup α]
 /-- An extensive measure induces a Rouillard-style directed measure.
 
     Same measure function, but with negative direction (deriving
-    `atMostDeg` as the degree property). Rouillard 2026: E-TIA
+    `atMostDeg` as the degree property). @cite{rouillard-2026}: E-TIA
     semantics uses "at most n" for runtime bounds.
     Boundedness again from the mereological source predicate. -/
 def extMeasure_rouillard {α : Type*} [SemilatticeSup α]

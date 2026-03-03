@@ -35,7 +35,7 @@ namespace Core.Logic.BeliefRevision
 open Core.Proposition (Prop' BProp)
 
 -- ══════════════════════════════════════════════════════════════════════
--- § 1. AGM Belief Revision (Alchourrón, Gärdenfors & Makinson 1985)
+-- § 1. AGM Belief Revision (Alchourrón, @cite{alchourrn-makinson-1985})
 -- ══════════════════════════════════════════════════════════════════════
 
 /-- A belief set: a deductively closed set of propositions.

@@ -8,7 +8,7 @@ following @cite{sigurd-1988}, @cite{jansen-pollmann-2001}, and @cite{woodin-wint
 A number n has **k-ness** (for k ∈ {2, 2.5, 5, 10}) if n = m × k × 10^b
 for some b ≥ 1 and 1 ≤ m ≤ 9.
 
-The 6 properties (ordered by frequency effect, Woodin et al. 2024):
+The 6 properties (ordered by frequency effect, @cite{woodin-winter-bhatt-2024}):
 1. 10-ness (β = 4.46) — strongest predictor of frequency
 2. 2.5-ness (β = 3.84)
 3. 5-ness (β = 2.61)

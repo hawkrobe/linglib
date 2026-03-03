@@ -3,7 +3,7 @@ import Linglib.Core.Logic.ModalLogic
 
 /-!
 # Degree Questions and the Universal Density of Measurement
-@cite{beck-rullmann-1999} @cite{fox-2007} @cite{link-1983} @cite{rullmann-1995}
+@cite{beck-rullmann-1999} @cite{fox-2007} @cite{link-1983} @cite{rullmann-1995} @cite{fox-hackl-2006}
 
 @cite{fox-2007} "The universal density of measurement"
 (*Linguistics and Philosophy* 29:537–586).
@@ -23,7 +23,7 @@ Fox & Hackl show that four apparently distinct constructions reduce to
 | Construction                          | Formulation                         |
 |---------------------------------------|-------------------------------------|
 | Degree question "How much φ?"         | HasMaxInf φ w       |
-| Definite "the amount that φ"          | HasMaxInf φ w (Link 1983 maximality)|
+| Definite "the amount that φ"          | HasMaxInf φ w (@cite{link-1983} maximality)|
 | Only/EXH "only φ"                     | HasMaxInf φ w (OIG, F&H eq. 6)     |
 | Implicature of bare "φ"              | HasMaxInf φ w (covert EXH)         |
 
@@ -55,7 +55,7 @@ open Core.ModalLogic (ModalForce)
 variable {α W : Type*} [LinearOrder α]
 
 -- ════════════════════════════════════════════════════
--- § 1. Negative Islands (Fox & Hackl 2007 §3)
+-- § 1. Negative Islands (@cite{fox-2007} §3)
 -- ════════════════════════════════════════════════════
 
 /-- The **negated degree property**: ¬φ(d)(w).
@@ -65,7 +65,7 @@ variable {α W : Type*} [LinearOrder α]
 def negatedDegreeProp (φ : α → W → Prop) : α → W → Prop :=
   fun d w => ¬ φ d w
 
-/-- **Negative island theorem** (Fox & Hackl 2007 §3.3):
+/-- **Negative island theorem** (@cite{fox-2007} §3.3):
 
     "*How much does John not weigh?" is unacceptable because on a dense
     scale, the negated set {d | ¬φ(d)(w)} has no maximally informative element.
@@ -104,7 +104,7 @@ theorem negativeIsland_noAnswer [DenselyOrdered α]
   exact hx_ent_z w' hw'_x hw'_z
 
 -- ════════════════════════════════════════════════════
--- § 2. Modal Obviation (Fox & Hackl 2007 §§2.3, 3.4)
+-- § 2. Modal Obviation (@cite{fox-2007} §§2.3, 3.4)
 -- ════════════════════════════════════════════════════
 
 /-- Degree property under a **universal modal** (required, certain, have to):
@@ -140,7 +140,7 @@ theorem existentialModal_preserves_upMono
   intro x y hxy w ⟨w', hR, hPhi⟩
   exact ⟨w', hR, hMono x y hxy w' hPhi⟩
 
-/-- **Modal obviation** (Fox & Hackl 2007 §§2.3, 3.4, 4.2):
+/-- **Modal obviation** (@cite{fox-2007} §§2.3, 3.4, 4.2):
     ∀-modals can circumvent maximality violations; ∃-modals cannot.
 
     - ¬(∀w'. φ(d)(w')) = ∃w'. ¬φ(d)(w') — different d can use different

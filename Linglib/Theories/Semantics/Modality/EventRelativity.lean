@@ -89,7 +89,7 @@ inductive AnchorType where
 
 Speech event anchoring yields epistemic modality; described event
 anchoring yields circumstantial modality (which subsumes random
-choice, teleological, ability, etc. per Kratzer 1981). -/
+choice, teleological, ability, etc. per @cite{kratzer-1981}). -/
 def AnchorType.toFlavor : AnchorType → ModalFlavor
   | .speechEvent => .epistemic
   | .describedEvent => .circumstantial
@@ -108,7 +108,7 @@ theorem described_is_circumstantial :
 /-- Accessibility: world w' is accessible from w given anchoring
 function f applied to event e.
 
-NB: This omits Kratzer's ordering source g (cf. Hacquard 2010, (29):
+NB: This omits Kratzer's ordering source g (cf. @cite{hacquard-2010}, (29):
 `max_g(e)(∩f(e))`). The ordering source is orthogonal to the
 content-licensing analysis and not needed for the MI application. -/
 def accessible {Ev W : Type*} (f : AnchoringFn Ev W) (e : Ev)
@@ -148,7 +148,7 @@ theorem duality {Ev W : Type*} (f : AnchoringFn Ev W) (e : Ev)
 -- §§ 3–7. Modal Indefinites (extracted to ModalIndefinites.lean)
 -- ════════════════════════════════════════════════════
 
-/-! The modal indefinite denotation (A-O&R 2024), upper-boundedness,
+/-! The modal indefinite denotation (A-@cite{alonso-ovalle-royer-2024}), upper-boundedness,
 non-maximality, and harmonic interpretation types have been extracted to
 `Theories/Semantics/Modality/ModalIndefinites.lean`. That file imports
 this one for `AnchoringFn` and `possibility`. -/
@@ -156,7 +156,7 @@ this one for `AnchoringFn` and `possibility`. -/
 
 -- ════════════════════════════════════════════════════
 -- § 8. Event Binders and Content Licensing
---      (Hacquard 2010, §5–6)
+--      (@cite{hacquard-2010}, §5–6)
 -- ════════════════════════════════════════════════════
 
 /-! @cite{hacquard-2010} identifies THREE event binders that can supply a
@@ -178,7 +178,7 @@ contentful event — one with propositional content CON(e). Speech acts
 and attitudes have content; VP events (running, screaming) do not.
 This single predicate derives the position → flavor correlation. -/
 
-/-- The three event binders (Hacquard 2010, (38), (48)). -/
+/-- The three event binders (@cite{hacquard-2010}, (38), (48)). -/
 inductive EventBinder where
   /-- e₀: the utterance event (bound by ASSERT) -/
   | speechAct
@@ -210,7 +210,7 @@ def EventBinder.canProjectCircumstantial (_ : EventBinder) : Bool :=
 
 /-- Whether an event has an addressee with a to-do list.
 
-Deontic accessibility relations (Hacquard 2006, (235c)) require the
+Deontic accessibility relations (@cite{hacquard-2006}, (235c)) require the
 binding event to have an addressee: `f_deontic(e) = λw. {w' : w'
 compatible with TO-DO-LIST(ADDR(e))}`. Speech acts are directed at
 an addressee; VP events are not.
@@ -230,14 +230,13 @@ Contentless events (VP events): circumstantial only.
 
 NB: This captures the epistemic/non-epistemic divide from content
 licensing but omits deontic. Deontic licensing
-depends on a separate predicate — addressee availability (Hacquard
-2006, (235c)) — not on content. See `hasAddressee` and
+depends on a separate predicate — addressee availability (@cite{hacquard-2006}, (235c)) — not on content. See `hasAddressee` and
 `fullAvailableFlavors` for the complete picture. -/
 def EventBinder.availableFlavors (b : EventBinder) : List ModalFlavor :=
   if b.hasContent then [.epistemic, .circumstantial]
   else [.circumstantial]
 
-/-- Full available flavors including deontic (Hacquard 2006, (235)).
+/-- Full available flavors including deontic (@cite{hacquard-2006}, (235)).
 
 Three accessibility relation types, each with different licensing:
 - **Epistemic** `f_epis(e)`: worlds compatible with CON(e). Requires content.
@@ -265,7 +264,7 @@ theorem epistemic_iff_content (b : EventBinder) :
 theorem speechAct_has_addressee : EventBinder.speechAct.hasAddressee = true := rfl
 theorem vpEvent_no_addressee : EventBinder.vpEvent.hasAddressee = false := rfl
 
-/-- Speech acts license all three accessibility types (Hacquard 2006, (235)):
+/-- Speech acts license all three accessibility types (@cite{hacquard-2006}, (235)):
 epistemic (content), circumstantial (circumstances), and deontic (addressee). -/
 theorem speechAct_full_flavors :
     EventBinder.speechAct.fullAvailableFlavors =
@@ -276,7 +275,7 @@ no addressee (→ no deontic). -/
 theorem vpEvent_full_flavors :
     EventBinder.vpEvent.fullAvailableFlavors = [.circumstantial] := rfl
 
-/-- The three licensing conditions (Hacquard 2006, (235)):
+/-- The three licensing conditions (@cite{hacquard-2006}, (235)):
 - Epistemic needs content (CON(e))
 - Circumstantial needs nothing (CIRC(e) is always available)
 - Deontic needs an addressee (TO-DO-LIST(ADDR(e))) -/
@@ -310,7 +309,7 @@ theorem content_determines_flavors :
     EventBinder.vpEvent.availableFlavors = [.circumstantial] := ⟨rfl, rfl, rfl⟩
 
 /-- Attitude verbs pattern with speech acts, not VP events — both are
-contentful. "John believes Mary might be pregnant" (Hacquard 2010,
+contentful. "John believes Mary might be pregnant" (@cite{hacquard-2010},
 (48b)): the embedded epistemic *might* is bound to the attitude event
 e₁ of *believe*, which has content, licensing epistemic. -/
 theorem attitudes_pattern_with_speech :
@@ -377,7 +376,7 @@ theorem toFlavor_via_projection :
       b.toAnchorType.toFlavor = .epistemic := by
   intro b hb; cases b <;> simp_all [EventBinder.hasContent, EventBinder.toAnchorType, AnchorType.toFlavor]
 
-/-- The six binder × flavor combinations (Hacquard 2010, (49a–f)).
+/-- The six binder × flavor combinations (@cite{hacquard-2010}, (49a–f)).
 Content licensing explains (49e): VP events lack content → no epistemic.
 The remaining unattested combinations (49b: speech act + circumstantial,
 49d: attitude + circumstantial) are semantically possible but
@@ -400,7 +399,7 @@ theorem unattested_49e_explained :
 
 -- ════════════════════════════════════════════════════
 -- § 9. Syntactic Position and Event Binding
---      (Hacquard 2010, §5.3)
+--      (@cite{hacquard-2010}, §5.3)
 -- ════════════════════════════════════════════════════
 
 /-! Syntactic position determines which event binder is closest to the
@@ -511,7 +510,7 @@ theorem accessible_is_background_filter {Ev W : Type*}
 
 -- ════════════════════════════════════════════════════
 -- § 10b. Event-Relative Ordering Source
---        (Hacquard 2010, (29): max_g(e)(∩f(e)))
+--        (@cite{hacquard-2010}, (29): max_g(e)(∩f(e)))
 -- ════════════════════════════════════════════════════
 
 /-! The modal evaluation in §2 omits Kratzer's ordering source g. The
@@ -580,7 +579,7 @@ theorem empty_ordering_reduces {Ev W : Type*} [DecidableEq W]
 
 -- ════════════════════════════════════════════════════
 -- § 11. Individual-Time Pairs from Events
---       (Hacquard 2006, §4.1, pp.131–136)
+--       (@cite{hacquard-2006}, §4.1, pp.131–136)
 -- ════════════════════════════════════════════════════
 
 /-! @cite{hacquard-2006} proposes that accessibility relations take
@@ -592,7 +591,7 @@ Events project to (individual, time) pairs via two functions:
 - `τ(e)`: the temporal trace — the time of the event.
 
 This makes individual-time pairs (the traditional modal parameter per
-Kratzer 1981, von Fintel & Heim 1999) DERIVED from events, not
+@cite{kratzer-1981}, @cite{von-fintel-1999}) DERIVED from events, not
 primitive. Three advantages:
 
 1. **Unification**: The same mechanism (event projection) applies
@@ -662,7 +661,7 @@ theorem factored_reduces {Ev W Individual TimePoint : Type*}
 
 -- ════════════════════════════════════════════════════
 -- § 12. Worked Example: "Jane a dû prendre le train"
---       (Hacquard 2006, (201), pp.135–136)
+--       (@cite{hacquard-2006}, (201), pp.135–136)
 -- ════════════════════════════════════════════════════
 
 /-! (201) "Jane a dû prendre le train."
@@ -818,7 +817,7 @@ theorem events_richer_than_pairs :
 -- ════════════════════════════════════════════════════
 -- § 14. Worked Example: Embedded Epistemic
 --       "Jane thinks Mary might be pregnant"
---       (Hacquard 2006, (247)–(249), pp.155–156)
+--       (@cite{hacquard-2006}, (247)–(249), pp.155–156)
 -- ════════════════════════════════════════════════════
 
 /-! (248c) "Jane thinks Mary might be pregnant."

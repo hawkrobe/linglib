@@ -16,7 +16,7 @@ language data) remains in `Phenomena/Agreement/PersonMarkingTypology.lean`.
 
 namespace Core.PersonCategory
 
-/-- The 8 referential person categories (Cysouw 2009, Fig 10.1).
+/-- The 8 referential person categories (@cite{cysouw-2009}, Fig 10.1).
 
 Three singular categories (individual speech act roles) and five group
 categories (attested combinations of participants). -/

@@ -198,7 +198,7 @@ theorem everyXisY_not_LAnalytic [Inhabited Entity] :
 
 /-- Von Fintel's but-exceptive semantics.
     The first conjunct is the presupposition that the exception set C is
-    nonempty (von Fintel 1993: "but X" presupposes X is non-vacuous). -/
+    nonempty (@cite{von-fintel-1993}: "but X" presupposes X is non-vacuous). -/
 def butExceptive (D : (Entity → Prop) → (Entity → Prop) → Prop)
     (A C P : Entity → Prop) : Prop :=
   (∃ x, C x) ∧

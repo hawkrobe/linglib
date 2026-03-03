@@ -20,8 +20,8 @@ namespace Minimalism
     - **Low**: Below VP, relates applied argument to the theme
       (transfer/source: "I sent him a letter") -/
 inductive ApplType where
-  | high   -- Above VP: affected/benefactive (Pylkkänen 2008)
-  | low    -- Below VP: transfer/source (Pylkkänen 2008)
+  | high   -- Above VP: affected/benefactive (@cite{brennan-pylkkanen-2008})
+  | low    -- Below VP: transfer/source (@cite{brennan-pylkkanen-2008})
   deriving DecidableEq, BEq, Repr
 
 end Minimalism

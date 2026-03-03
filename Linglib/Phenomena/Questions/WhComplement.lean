@@ -55,8 +55,8 @@ structure ComplementPair where
   source : String := ""
   deriving Repr
 
-/-- Classic example from G&S 1984: "Who walks?" vs "Who doesn't walk?"
-    Source: G&S 1984, p. 280
+/-- Classic example from @cite{groenendijk-stokhof-1984}: "Who walks?" vs "Who doesn't walk?"
+    Source: @cite{groenendijk-stokhof-1984}, p. 280
 -/
 def whoWalks : ComplementPair :=
   { positiveQ := "Who walks?"
@@ -101,7 +101,7 @@ def complementPairs : List ComplementPair :=
 
 /-- Key theoretical claim: complement questions induce the same partition.
 
-    Proof sketch (G&S 1984):
+    Proof sketch (@cite{groenendijk-stokhof-1984}):
     - ⟦Who walks?⟧ = λw.λv. [walk_w = walk_v]
     - ⟦Who doesn't walk?⟧ = λw.λv. [¬walk_w = ¬walk_v]
     - But ¬walk_w = ¬walk_v iff walk_w = walk_v (set complement is injective)

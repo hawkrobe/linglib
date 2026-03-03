@@ -5,7 +5,7 @@ import Linglib.Theories.Semantics.Dynamic.Core.CCP
 # Pointwise ↔ Update-Theoretic Bridge
 @cite{charlow-2021} @cite{muskens-1996} @cite{charlow-2019}
 
-Connects the pointwise `DRS S := S → S → Prop` type (Dynamic Ty2, Muskens 1996)
+Connects the pointwise `DRS S := S → S → Prop` type (Dynamic Ty2, @cite{muskens-1996})
 to the update-theoretic `StateCCP W E := State W E → State W E` type.
 
 The key operations are @cite{charlow-2021}'s ↑ (lift) and ↓ (lower):
@@ -68,7 +68,7 @@ theorem liftPW_injective [Nonempty W] (D₁ D₂ : DRS (Assignment E))
     _ = lowerPW (liftPW D₂) w₀ := by rw [h]
     _ = D₂ := lowerPW_liftPW D₂ w₀
 
-/-- Lifted pointwise DRSs are always distributive (Charlow 2021, §6, key lemma).
+/-- Lifted pointwise DRSs are always distributive (@cite{charlow-2021}, §6, key lemma).
 
     `↑D` processes each element of the input state independently — the output
     at `p` depends only on whether some `q ∈ s` satisfies `D q.2 p.2` with

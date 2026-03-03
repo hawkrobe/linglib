@@ -163,7 +163,7 @@ theorem optimal_subset (t : OTTableau Candidate) (c : Candidate) :
   fun hc => (List.mem_filter.mp hc).1
 
 -- ============================================================================
--- § 5: Bidirectional OT — Superoptimality (Blutner 2000)
+-- § 5: Bidirectional OT — Superoptimality (@cite{blutner-2000})
 -- ============================================================================
 
 /-- A pair ⟨f, m⟩ is **blocked** by another pair ⟨f', m'⟩ in set `s` iff:

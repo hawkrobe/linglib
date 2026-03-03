@@ -40,7 +40,7 @@ open DepGrammar Catena
 -- §1: Sharing Typology
 -- ============================================================================
 
-/-- Types of shared material in coordination (Osborne 2019, Ch 10). -/
+/-- Types of shared material in coordination (@cite{osborne-2019}, Ch 10). -/
 inductive SharingType where
   | forward    -- Left-edge sharing: "John [eats and drinks] beer"
   | backward   -- Right-edge sharing (RNR): "John likes and Mary hates [pizza]"

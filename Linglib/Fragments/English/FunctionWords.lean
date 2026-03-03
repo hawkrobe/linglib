@@ -91,7 +91,7 @@ structure AuxEntry where
       Note: "past" modals (*could*, *would*) carry `Past` as a morphological
       feature even when semantically non-past (counterfactual, polite). -/
   tense : Option UD.Tense := none
-  /-- Modal meaning in the force-flavor space (Imel, Guo, & Steinert-Threlkeld 2026).
+  /-- Modal meaning in the force-flavor space (Imel, Guo, & @cite{imel-guo-steinert-threlkeld-2026}).
       Empty for non-modal auxiliaries. -/
   modalMeaning : List ForceFlavor := []
   /-- Register level. Formal items (*must*,
@@ -109,7 +109,7 @@ structure AuxEntry where
 -- Each uses cartesianProduct with singleton force (fixed force, variable flavor).
 private abbrev cp := ForceFlavor.cartesianProduct
 
--- Modals. Negative forms from Zwicky & Pullum 1983, Table 1.
+-- Modals. Negative forms from @cite{zwicky-pullum-1983}, Table 1.
 def can : AuxEntry where
   form := "can"; auxType := .modal
   modalMeaning := cp [.possibility] [.epistemic, .deontic, .circumstantial]
@@ -346,7 +346,7 @@ def only_ : ParticleEntry := { form := "only", requiresSharedCQ := true, nonRoot
 def allParticles : List ParticleEntry := [just_, only_]
 
 -- ============================================================================
--- Adverbial Quantifiers (Percus 2000)
+-- Adverbial Quantifiers (@cite{percus-2000})
 -- ============================================================================
 
 /-- Quantificational force for adverbial quantifiers. -/

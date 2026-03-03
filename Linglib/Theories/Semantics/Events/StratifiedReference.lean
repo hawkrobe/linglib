@@ -188,7 +188,7 @@ theorem sdr_mono {α β : Type*} [SemilatticeSup α] [PartialOrder β]
 -- § 9. Meaning Postulates (per-verb distributivity)
 -- ════════════════════════════════════════════════════
 
-/-- Meaning postulates for verb distributivity (Champollion 2017 §6.2–6.3).
+/-- Meaning postulates for verb distributivity (@cite{champollion-2017} §6.2–6.3).
     These encode which verbs have SDR along which roles.
 
     - `see` is distributive on both agent and theme: "The boys saw the girls"
@@ -221,7 +221,7 @@ class VerbDistributivity (Entity Time : Type*) [LinearOrder Time]
 -- § 10. Aspect Bridge (SSR ↔ atelicity)
 -- ════════════════════════════════════════════════════
 
-/-- for-adverbials require SSR (Champollion 2017 §5.3, eq. 39/66).
+/-- for-adverbials require SSR (@cite{champollion-2017} §5.3, eq. 39/66).
     "John ran for an hour" is felicitous because "run" has SSR.
     "* John arrived for an hour" is infelicitous because "arrive" lacks SSR. -/
 theorem forAdverbial_requires_ssr
@@ -249,7 +249,7 @@ theorem ssr_univ_implies_cum
 -- ════════════════════════════════════════════════════
 
 /-- The "for"-adverbial adds a duration constraint on the event runtime
-    and requires the predicate to have SSR (Champollion 2017 eq. 39).
+    and requires the predicate to have SSR (@cite{champollion-2017} eq. 39).
     "V for δ" = λe. V(e) ∧ τ(e) = δ ∧ SSR(V)(e). -/
 def forAdverbialMeaning {Time : Type*} [LinearOrder Time]
     [SemilatticeSup (Ev Time)]

@@ -69,7 +69,7 @@ inductive ConjunctionStrategy where
 /--
 Number of overt functional morphemes per strategy.
 
-Under M&S (2016), the underlying structure always has 3 semantic pieces
+Under @cite{mitrovic-sauerland-2016}, the underlying structure always has 3 semantic pieces
 (J + MU₁ + MU₂). What varies is how many are pronounced.
 -/
 def ConjunctionStrategy.overtMorphemeCount : ConjunctionStrategy → Nat
@@ -78,13 +78,13 @@ def ConjunctionStrategy.overtMorphemeCount : ConjunctionStrategy → Nat
   | .jMu    => 3  -- J + both MUs pronounced
 
 /--
-Under M&S (2016), there are always 3 semantic pieces.
+Under @cite{mitrovic-sauerland-2016}, there are always 3 semantic pieces.
 The transparency ratio measures how many are overtly realized.
 -/
 def ConjunctionStrategy.semanticPieceCount : Nat := 3
 
 /--
-M&S (2016) + Transparency Principle predicts: more overt morphemes → easier
+@cite{mitrovic-sauerland-2016} + Transparency Principle predicts: more overt morphemes → easier
 to acquire (closer to 1-to-1 form-meaning mapping).
 -/
 def ConjunctionStrategy.predictedTransparency : ConjunctionStrategy → Nat :=
@@ -349,7 +349,7 @@ def hungarianSentencePlayedLRT : List LRTResult :=
 /--
 Georgian children replayed J-MU sentences significantly more than J sentences.
 
-This is the OPPOSITE of what M&S (2016) + Transparency Principle predicts.
+This is the OPPOSITE of what @cite{mitrovic-sauerland-2016} + Transparency Principle predicts.
 The prediction was that J-MU (most transparent) should be EASIEST.
 
 Negative estimate means J < J-MU in replay count (J-MU harder).
@@ -388,7 +388,7 @@ def transparencyPredicts (s1 s2 : ConjunctionStrategy) : Bool :=
   s1.overtMorphemeCount > s2.overtMorphemeCount
 
 /--
-M&S (2016) + Transparency Principle predicts J-MU is more transparent
+@cite{mitrovic-sauerland-2016} + Transparency Principle predicts J-MU is more transparent
 than both J-only and MU-only.
 -/
 theorem jmu_predicted_most_transparent :

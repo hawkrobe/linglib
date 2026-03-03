@@ -85,7 +85,7 @@ theorem english_demonstratives_are_definite :
 /-! ### Bridge 3: Pronouns → the_sit + NP-deletion
 
 Third-person personal pronouns (he/she/it) are `the_sit` with
-phonologically null NP complements (Postal 1966, Elbourne 2005, 2013 Ch 10).
+phonologically null NP complements (@cite{postal-1966}, @cite{elbourne-2005}, 2013 Ch 10).
 The Fragment classifies them as `PronounType.personal` with `person =.third`. -/
 
 /-- "it" is personal, 3rd person, sg.
@@ -124,7 +124,7 @@ theorem referential_is_free :
 theorem attributive_is_bound :
     useModeToSitVar .attributive = .bound := rfl
 
-/-! ### Bridge 5: Pronoun-as-definite examples (Elbourne 2013, Ch 10)
+/-! ### Bridge 5: Pronoun-as-definite examples (@cite{elbourne-2013}, Ch 10)
 
 Concrete instances of the pronoun = definite article analysis. -/
 
@@ -602,7 +602,7 @@ end ExistenceEntailment
 
 /-! ### Setup
 
-The pronoun "it" in donkey sentences = [the donkey s₃] (Elbourne 2013 Ch 10).
+The pronoun "it" in donkey sentences = [the donkey s₃] (@cite{elbourne-2013} Ch 10).
 `pronounDenot` is defined as `the_sit'` — the identity `pronoun_is_definite_article`
 states they are the same function. Here we verify this concretely by showing
 the pronoun's denotation matches the overt definite description. -/

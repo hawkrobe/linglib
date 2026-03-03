@@ -143,7 +143,7 @@ theorem slash_discharged_default (filler headPhrase result : Sign) (headSlash : 
       = headSlash.discharge (filler.synsem.cat) := rfl
 
 -- ============================================================================
--- GAP Restrictions and Island Constraints (Sag 2010, p.514)
+-- GAP Restrictions and Island Constraints (@cite{hofmeister-sag-2010}, p.514)
 -- ============================================================================
 
 /-! ### Islands as GAP restrictions

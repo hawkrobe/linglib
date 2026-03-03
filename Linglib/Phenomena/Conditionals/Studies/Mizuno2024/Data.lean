@@ -65,7 +65,7 @@ structure FLVAvailabilityDatum where
 -- § English Data
 -- ════════════════════════════════════════════════════════════════
 
-/-- English Anderson conditional with X-marking (Mizuno 2024, ex. 1).
+/-- English Anderson conditional with X-marking (@cite{mizuno-2024}, ex. 1).
     @cite{anderson-1951}: "If Jones had taken arsenic, he would have shown
     exactly the symptoms he is actually showing."
 
@@ -81,7 +81,7 @@ def english_xMarking : AndersonDatum where
   gloss := "If Jones had taken arsenic, he would have shown exactly the symptoms he is actually showing."
   translation := "If Jones had taken arsenic, he would have shown exactly the symptoms he is actually showing."
 
-/-- English Anderson conditional with O-marking (Mizuno 2024, ex. 2).
+/-- English Anderson conditional with O-marking (@cite{mizuno-2024}, ex. 2).
     "If Jones takes arsenic, he shows exactly the symptoms he is actually
     showing."
 
@@ -102,7 +102,7 @@ def english_oMarking : AndersonDatum where
 -- § Japanese Data
 -- ════════════════════════════════════════════════════════════════
 
-/-- Japanese Anderson conditional with O-marking (Mizuno 2024, ex. 4a).
+/-- Japanese Anderson conditional with O-marking (@cite{mizuno-2024}, ex. 4a).
     Non-Past -ru in the consequent describes the actual world directly.
     Felicitous for Anderson reading.
 
@@ -120,7 +120,7 @@ def japanese_oMarking : AndersonDatum where
   gloss := "Jones-ga ototoi hiso-o nom-eba, kare-no zissai-no syozyoo-to mattaku onazi syozyoo-o mise-ru hazuda."
   translation := "If Jones had taken arsenic two days ago, he would have shown exactly the same symptoms as his actual symptoms."
 
-/-- Japanese Anderson conditional with X-marking (Mizuno 2024, ex. 4b).
+/-- Japanese Anderson conditional with X-marking (@cite{mizuno-2024}, ex. 4b).
     Past -ta in the consequent gives a counterfactual reading, NOT an
     Anderson reading. The sentence describes counterfactual symptoms,
     not the actual symptoms Jones is showing.
@@ -142,7 +142,7 @@ def japanese_xMarking : AndersonDatum where
 -- § Mandarin Data
 -- ════════════════════════════════════════════════════════════════
 
-/-- Mandarin Anderson conditional with O-marking (Mizuno 2024, ex. 13a).
+/-- Mandarin Anderson conditional with O-marking (@cite{mizuno-2024}, ex. 13a).
     No perfective aspect le in the consequent → Anderson reading available.
 
     Ruguo Jones zuotian he le pishuang, jiu hui chuxian ta xianzai
@@ -159,7 +159,7 @@ def mandarin_oMarking : AndersonDatum where
   gloss := "Ruguo Jones zuotian he le pishuang, jiu hui chuxian ta xianzai shiji chuxian de zheyangde zhengzhuang."
   translation := "If Jones had drunk arsenic yesterday, he would show exactly the symptoms he is actually showing."
 
-/-- Mandarin Anderson conditional with X-marking (Mizuno 2024, ex. 13a).
+/-- Mandarin Anderson conditional with X-marking (@cite{mizuno-2024}, ex. 13a).
     Perfective aspect le in the consequent blocks the Anderson reading.
 
     Ruguo Jones zuotian he le pishuang, jiu hui chuxian ta xianzai

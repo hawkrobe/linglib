@@ -38,7 +38,7 @@ open RSA.CombinedUtility
 
 
 -- ============================================================
--- Section 1: Core Definitions (Merin 1999, C&F 2021 §3)
+-- Section 1: Core Definitions (@cite{merin-1999}, @cite{cummins-franke-2021} §3)
 -- ============================================================
 
 /-- An argumentative goal partitions worlds into G (goal-supporting) vs ¬G. -/
@@ -98,7 +98,7 @@ instance (a b c d : ℚ) : Decidable (argumentativelyStronger a b c d) :=
 
 
 -- ============================================================
--- Section 3: Difficulty Metric (Macuch Silva et al. 2024)
+-- Section 3: Difficulty Metric (Macuch @cite{macuch-silva-etal-2024})
 -- ============================================================
 
 /-- Argumentative difficulty: proportion of truthful states where the strongest

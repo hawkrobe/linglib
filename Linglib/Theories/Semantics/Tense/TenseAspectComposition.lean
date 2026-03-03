@@ -122,7 +122,7 @@ theorem presPerfProgXN_unfold (V : EventPred W Time) (tᵣ : Set Time)
 -- § @cite{knick-sharf-2026} Core Results
 -- ════════════════════════════════════════════════════
 
-/-- **Theorem 3** (K&S 2026): U-perf(tᵣ) entails simple present.
+/-- **Theorem 3** (@cite{knick-sharf-2026}): U-perf(tᵣ) entails simple present.
 
     For any domain restriction tᵣ, the present perfect progressive with
     Extended Now entails the simple present. Intuitively: if there is a PTS
@@ -142,7 +142,7 @@ theorem u_perf_entails_simple_present (V : EventPred W Time)
                (fun h => Or.inl (lt_of_lt_of_le h (le_trans pts.valid (le_of_eq hRB))))
                (fun h => Or.inr (lt_of_eq_of_lt hRB.symm h))⟩, hV⟩
 
-/-- **Theorem 4** (K&S 2026): U-perf with maximal domain ↔ simple present.
+/-- **Theorem 4** (@cite{knick-sharf-2026}): U-perf with maximal domain ↔ simple present.
 
     Under broad focus (tᵣ = Set.univ), the U-perf reading is equivalent to
     the simple present. This is the "degenerate" case where no LB constraint
@@ -159,7 +159,7 @@ theorem broad_focus_equiv (V : EventPred W Time) (tc : Time) (w : W) :
   · intro h
     exact ⟨Interval.point tc, tc, Set.mem_univ _, rfl, rfl, h⟩
 
-/-- **Theorem 5** (K&S 2026): Earlier LB is stronger under IMPF.
+/-- **Theorem 5** (@cite{knick-sharf-2026}): Earlier LB is stronger under IMPF.
 
     If tLB₁ < tLB₂, then PERF_XN(IMPF(V), {tLB₁}) entails
     PERF_XN(IMPF(V), {tLB₂}).
@@ -189,7 +189,7 @@ theorem earlier_lb_stronger_impf (V : EventPred W Time)
     have : tLB = tLB₁ := htLB
     exact Or.inl (lt_of_le_of_lt (this ▸ hLB ▸ hS1) h)
 
-/-- **Theorem 6** (K&S 2026): Later LB is stronger under PRFV.
+/-- **Theorem 6** (@cite{knick-sharf-2026}): Later LB is stronger under PRFV.
 
     If tLB₁ < tLB₂, then PERF_XN(PRFV(V), {tLB₂}) entails
     PERF_XN(PRFV(V), {tLB₁}).
@@ -217,7 +217,7 @@ theorem later_lb_stronger_prfv (V : EventPred W Time)
   · -- e.τ.finish ≤ tc: from e.τ.finish ≤ pts.finish = tc
     exact le_trans hS2 (le_of_eq hRB)
 
-/-- **Theorem 7** (K&S 2026): Converse of Theorem 5 is FALSE.
+/-- **Theorem 7** (@cite{knick-sharf-2026}): Converse of Theorem 5 is FALSE.
 
     PERF_XN(IMPF(V), {tLB₂}) does NOT entail PERF_XN(IMPF(V), {tLB₁})
     when tLB₁ < tLB₂. An event that has been going on since tLB₂ need not
