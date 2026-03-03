@@ -2,7 +2,7 @@ import Linglib.Core.Logic.NaturalLogic
 import Linglib.Fragments.English.PolarityItems
 
 /-!
-# Denić, @cite{denic-homer-rothschild-chemla-2021} @cite{denic-homer-rothschild-chemla-2021}
+# @cite{denic-homer-rothschild-chemla-2021}
 
 The influence of polarity items on inferential judgments.
 *Cognition* 215, 104791.
@@ -233,9 +233,6 @@ def exp3_verdict : MechanismVerdict :=
 
 def npiItemsTested : List String := ["any", "ever", "at all"]
 def ppiItemTested : String := "some"
-
-def citation : String :=
-  "Denić, Homer, Rothschild & Chemla (2021). Cognition 215, 104791."
 
 -- ============================================================================
 -- § Entailment Signature Bridge
