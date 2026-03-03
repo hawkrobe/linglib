@@ -1,7 +1,9 @@
 /-
 # @cite{franke-bergen-2020}: Nested Aristotelian Interpretation
 
-Model comparison for doubly-quantified sentences. Global Intentions (GI) achieves 0.956 posterior probability, dramatically outperforming vanilla RSA (0.000) and lexical uncertainty (0.044).
+Model comparison for doubly-quantified sentences (nested Aristotelians).
+Global Intentions (GI) achieves 0.956 posterior probability (Table 2),
+with LI second at 0.033, LU third at 0.01, and vanilla RSA at 0.
 
 ## Main definitions
 - `NestedAristotelian`, `RSAModel`, `ModelResult`
@@ -62,8 +64,8 @@ structure ModelResult where
 /-- Table 2 results: Model comparison by posterior probability -/
 def modelComparisonResults : List ModelResult :=
   [ ⟨.vanilla, 0⟩              -- 0.000
-  , ⟨.lexicalUncertainty, 44⟩  -- 0.044
-  , ⟨.lexicalIntentions, 0⟩    -- 0.000
+  , ⟨.lexicalUncertainty, 10⟩  -- 0.010
+  , ⟨.lexicalIntentions, 33⟩   -- 0.033
   , ⟨.globalIntentions, 956⟩   -- 0.956
   ]
 
