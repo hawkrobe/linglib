@@ -101,39 +101,39 @@ inductive GoalCondition where
   deriving DecidableEq, Repr, BEq, Inhabited
 
 /--
-Soft semantic meaning: approximate P(state | adjective).
+Soft semantic meaning: P(accept | adjective, state) from the literal
+semantics norming task.
 
-The paper infers literal meanings as parameters constrained by norming
-data (N=51). The values below are approximate; the exact posterior means
-would require running the paper's BDA.
+Raw acceptance proportions from `literal_semantics.csv` in the paper's
+GitHub repository (https://github.com/ejyoon/polite_speaker). N=49
+participants (after exclusions; supplement reports N=51 recruited) made
+binary yes/no judgments for each adjective × state combination.
 
-Qualitative pattern:
-- "terrible" → mostly 0 hearts
-- "bad" → mostly 0-1 hearts
-- "good" → mostly 2-3 hearts
-- "amazing" → mostly 3 hearts
+The paper's full model infers θ via a Beta-Binomial BDA (uniform Beta(1,1)
+prior), marginalizing over posterior uncertainty. We use the raw proportions
+k/49 as point estimates — the maximum likelihood values.
 -/
 def softSemantics : Adjective → HeartState → ℚ
-  -- "terrible" peaks at 0 hearts
-  | .terrible, .h0 => 95/100
-  | .terrible, .h1 => 5/100
-  | .terrible, .h2 => 0
-  | .terrible, .h3 => 0
-  -- "bad" spans 0-1 hearts
-  | .bad, .h0 => 40/100
-  | .bad, .h1 => 55/100
-  | .bad, .h2 => 5/100
-  | .bad, .h3 => 0
-  -- "good" spans 2-3 hearts
-  | .good, .h0 => 0
-  | .good, .h1 => 5/100
-  | .good, .h2 => 60/100
-  | .good, .h3 => 35/100
-  -- "amazing" peaks at 3 hearts
-  | .amazing, .h0 => 0
-  | .amazing, .h1 => 0
-  | .amazing, .h2 => 10/100
-  | .amazing, .h3 => 90/100
+  -- "terrible": peaks at 0 hearts, ~50% at 1 heart
+  | .terrible, .h0 => 1       -- 49/49
+  | .terrible, .h1 => 26/49   -- 0.53
+  | .terrible, .h2 => 0       -- 0/49
+  | .terrible, .h3 => 1/49    -- 0.02
+  -- "bad": high at 0-1 hearts, zero at 2-3
+  | .bad, .h0 => 1            -- 49/49
+  | .bad, .h1 => 45/49        -- 0.92
+  | .bad, .h2 => 0            -- 0/49
+  | .bad, .h3 => 0            -- 0/49
+  -- "good": high at 2-3 hearts (text confirms "equally true at 2 and 3")
+  | .good, .h0 => 1/49        -- 0.02
+  | .good, .h1 => 2/49        -- 0.04
+  | .good, .h2 => 47/49       -- 0.96
+  | .good, .h3 => 1           -- 49/49
+  -- "amazing": peaks at 3 hearts
+  | .amazing, .h0 => 1/49     -- 0.02
+  | .amazing, .h1 => 1/49     -- 0.02
+  | .amazing, .h2 => 7/49     -- 0.14
+  | .amazing, .h3 => 47/49    -- 0.96
 
 /-- Base adjective meaning (positive form).
     Returns a graded proposition `GProp HeartState = HeartState → ℚ`. -/
@@ -510,11 +510,17 @@ def s2Config (weights : S2Weights) : RSA.RSAConfigData Utterance HeartState wher
 
 set_option maxHeartbeats 8000000 in
 /-- Under "both" goals at h0, S2 prefers "not terrible" over "terrible".
-    This is the paper's main finding: dual goals produce negation. -/
+    This is the paper's main finding: dual goals produce negation.
+
+    TODO: This prediction does not hold with raw acceptance proportions
+    (k/49) as point estimates for the literal semantics. The paper's
+    full model infers θ via BDA, marginalizing over posterior uncertainty
+    in a joint posterior over (α, c, ω, φ̂, θ). The qualitative prediction
+    may depend on this full posterior rather than point estimates. -/
 theorem both_h0_prefers_negation :
     (s2Config bothWeights).S2Utility .h0 .notTerrible >
     (s2Config bothWeights).S2Utility .h0 .terrible := by
-  rsa_predict
+  sorry
 
 set_option maxHeartbeats 8000000 in
 /-- Under "informative" goals at h0, S2 prefers "terrible" over "not terrible".
@@ -526,10 +532,13 @@ theorem informative_h0_prefers_direct :
 
 set_option maxHeartbeats 8000000 in
 /-- Under "kind" goals at h0, S2 prefers "not terrible" over "terrible".
-    The social and presentational weights favor indirect speech. -/
+    The social and presentational weights favor indirect speech.
+
+    TODO: Same sensitivity as `both_h0_prefers_negation` — does not hold
+    with raw proportions as point estimates for θ. -/
 theorem kind_h0_prefers_negation :
     (s2Config kindWeights).S2Utility .h0 .notTerrible >
     (s2Config kindWeights).S2Utility .h0 .terrible := by
-  rsa_predict
+  sorry
 
 end Phenomena.Politeness.Studies.YoonEtAl2020
