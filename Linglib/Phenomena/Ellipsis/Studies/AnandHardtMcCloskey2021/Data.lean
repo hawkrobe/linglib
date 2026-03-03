@@ -87,9 +87,8 @@ def MismatchDimension.corpusCount : MismatchDimension → Nat
 
 /-- Discourse contexts licensing polarity reversal under sluicing (§5.3).
 
-    Following Kroll (2016, 2019): polarity reversal is pragmatically
-    conditioned — it requires the discourse context to make the reversed
-    polarity salient. -/
+    Polarity reversal is pragmatically conditioned — it requires the
+    discourse context to make the reversed polarity salient. -/
 inductive PolarityReversalContext where
   | negRaising       -- "I don't think she'll pass, but I don't know why" (ex. 33)
   | withoutAdjunct   -- "without" phrases adjoin to VP (ex. 32)

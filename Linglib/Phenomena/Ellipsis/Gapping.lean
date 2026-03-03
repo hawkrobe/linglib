@@ -12,7 +12,7 @@ Gapping involves the apparent "ellipsis" of a verb in coordinated structures:
        ↑ ↑
     overt verb "gapped" verb
 
-## Ross's Generalization (1970)
+## @cite{ross-1970}'s Generalization
 
 The directionality of gapping correlates with basic word order:
 

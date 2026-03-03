@@ -95,7 +95,7 @@ def personaPrecision : PersonaCondition → Option PrecisionVariant
   | .chill     => some .approximate
   | .noPersona => none
 
-/-- B&S frame the Nerdy/Chill contrast in terms of Fiske et al.'s (2007)
+/-- B&S frame the Nerdy/Chill contrast in terms of @cite{fiske-cuddy-glick-2007}'s
     Stereotype Content Model (§2, §7 p.22): Nerdy traits cluster on
     Competence; Chill traits cluster on Warmth.
 

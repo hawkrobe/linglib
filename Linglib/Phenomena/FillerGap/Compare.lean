@@ -219,7 +219,7 @@ def sayAdverbIsland : IslandManipulation :=
     significance := "β=−0.24, t=−12.4, p<0.001 (Exp 3a)" }
 
 /-- Verb-frame frequency in MoS islands (all experiments).
-Frequency is the mechanism proposed by Liu et al. (2019, 2022). -/
+Frequency is the proposed mechanism. -/
 def frequencyMoS : IslandManipulation :=
   { description := "Verb-frame frequency as predictor of MoS acceptability"
     competencePredictsDifference := false   -- irrelevant to structure

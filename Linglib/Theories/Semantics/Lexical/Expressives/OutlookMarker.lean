@@ -107,7 +107,7 @@ inductive TriggerStrength where
 
 /-- An outlook meaning combines a presuppositional and an expressive component.
 
-The key innovation of Kubota & Ido (2026a,b): these two layers are not independently
+The key innovation of @cite{kubota-2026}: these two layers are not independently
 stipulated but **fall out** from the marker's basic function as a counterstance marker.
 The marker presupposes a salient counterstance in discourse, and the expressive-like
 evaluation arises from the relationship between the prejacent and this counterstance.

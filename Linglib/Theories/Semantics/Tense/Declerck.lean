@@ -3,7 +3,7 @@ import Linglib.Core.Temporal.Reichenbach
 import Linglib.Core.Context.Tower
 
 /-!
-# Declerck's Tense Theory (1991/2006)
+# Declerck's Tense Theory
 @cite{declerck-1991} @cite{declerck-2006} @cite{reichenbach-1947}
 
 Declerck's descriptive theory of English tense differs from @cite{reichenbach-1947}

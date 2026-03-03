@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.227.88] - 2026-03-03
+
+### Changed
+- **Citation cleanup round 7 (final)**: manual cleanup of 14 remaining inline citations across 14 files. Converted 8 to @cite{} (maier-2015, ross-1970, mitrovic-sauerland-2016, pesetsky-1995, fiske-cuddy-glick-xu-2002, fiske-cuddy-glick-2007, potts-etal-2016, osborne-gross-2012). Deleted 6 unvalidated citations with grammar repair (Kubota & Ido 2026a/b, Kroll 2016/2019, Liu et al. 2019/2022, Paillé 2020/2022, Declerck header years). Total: 1197 bib entries, 3367 valid @cite references, 0 unknown.
+
 ## [0.227.87] - 2026-03-02
 
 ### Changed

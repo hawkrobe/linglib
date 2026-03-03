@@ -16,7 +16,7 @@ But the reverse order doesn't filter:
   → Does presuppose someone (contextually salient) will come
   → The hope doesn't filter for the belief
 
-## Maier's Analysis (2015)
+## @cite{maier-2015}'s Analysis
 
 Non-doxastic attitudes (hope, imagine, dream) are parasitic on doxastic
 attitudes (believe, know): their presupposition computation uses the belief

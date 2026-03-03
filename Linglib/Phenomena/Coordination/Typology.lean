@@ -546,7 +546,7 @@ theorem focus_particle_source_bisyndetic :
 ## Mitrović & Sauerland's Universal Structure
 @cite{stassen-2000} @cite{haspelmath-2007} @cite{schwartz-1989}
 
-M&S (2014, 2016) claim that EVERY language has the same underlying structure
+@cite{mitrovic-sauerland-2016} claim that EVERY language has the same underlying structure
 for DP conjunction:
 
   [JP [MuP [DP ☉] MU] [J' J [MuP [DP ☉] MU]]]

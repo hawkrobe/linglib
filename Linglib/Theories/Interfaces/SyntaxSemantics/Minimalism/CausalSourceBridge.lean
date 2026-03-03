@@ -59,7 +59,7 @@ open Core.Time (Interval)
 -- § 1. What syntax determines: the existence of a causer argument
 -- ════════════════════════════════════════════════════════════════════
 
-/-- Pesetsky's CAUS head (1995) is identified with Schäfer's
+/-- @cite{pesetsky-1995}'s CAUS head is identified with Schäfer's
     Voice_CAUSE (@cite{schaefer-2008}). Both introduce a causer external argument.
 
     This identification follows Occam: the two analyses posit the

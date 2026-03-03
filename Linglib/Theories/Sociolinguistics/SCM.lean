@@ -55,7 +55,7 @@ instance : Fintype SCMProperty where
 -- §2. Social Dimensions (axis labels)
 -- ============================================================================
 
-/-- Social-meaning dimensions, grounded in Fiske et al.'s (2002, 2007)
+/-- Social-meaning dimensions, grounded in @cite{fiske-cuddy-glick-xu-2002} @cite{fiske-cuddy-glick-2007}'s
     universal dimensions of social cognition.
 
     * `competence`: precision, intelligence, reliability, education —

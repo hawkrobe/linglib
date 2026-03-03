@@ -165,7 +165,7 @@ Summative predicates: apply to parts of a singular entity.
 
 "The flag is blue" requires all (salient) parts to be blue.
 
-Source: @cite{lobner-2000}, @cite{kriz-2015}, @cite{amiraz-2020}, Paillé (2020, 2022)
+Source: @cite{lobner-2000}, @cite{kriz-2015}, @cite{amiraz-2020}
 -/
 def summativeExample : HomogeneityDatum :=
   { positiveSentence := "The flag is blue."

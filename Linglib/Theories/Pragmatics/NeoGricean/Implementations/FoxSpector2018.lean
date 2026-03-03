@@ -579,7 +579,7 @@ def dedIsAcceptable (d : DED) : Prop :=
   -- There exist intermediate alternatives that can be excluded
   d.stronger.index > d.weaker.index + 1
 
--- SECTION 8: CONNECTION TO POTTS ET AL. (2016)
+-- SECTION 8: CONNECTION TO @cite{potts-etal-2016}
 
 /-
 @cite{fox-spector-2018} and @cite{potts-etal-2016} make the same core predictions

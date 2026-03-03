@@ -18,7 +18,7 @@ directly onto the three layers of the left periphery:
 ## Part 2: Outlook Markers
 
 Adverbs and focus particles that express subjective evaluation and manage
-discourse stances, following @cite{kubota-2026} and Kubota & Ido (2026a,b).
+discourse stances, following @cite{kubota-2026}.
 
 -/
 
