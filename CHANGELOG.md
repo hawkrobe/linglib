@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.227.90] - 2026-03-03
+
+### Changed
+- **Deep audit: Qing & Franke 2015** — fix all fabricated experimental data against PDF Tables 1–2. Speaker data: N=144 per target (was 42), correct counts (135/9, 119/25, 81/63 vs fabricated 40/2, 36/6, 30/12). Listener data: N=180 per utterance (was 21), correct counts. Critical fix: for "green", human data matches pragmatic direction (green_circle 115 > green_square 65), NOT salience as previously claimed. Split `listenerData_matches_salience` into separate `listenerData_circle_matches_salience` and `listenerData_green_matches_pragmatic` theorems. Fix equation/table number references throughout. All RSA model theorems unchanged (mathematically correct).
+
 ## [0.227.89] - 2026-03-03
 
 ### Changed

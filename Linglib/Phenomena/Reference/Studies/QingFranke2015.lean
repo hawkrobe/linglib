@@ -5,7 +5,7 @@ import Linglib.Theories.Pragmatics.RSA.Core.Config
 open Core.Empirical
 
 /-!
-# @cite{qing-franke-2015} @cite{qing-franke-2015}
+# @cite{qing-franke-2015}
 @cite{frank-goodman-2012}
 
 "Variations on a Bayesian Theme: Comparing Bayesian Models of Referential Reasoning"
@@ -26,9 +26,9 @@ yielding a family of models that includes @cite{frank-goodman-2012} as one insta
 ### Speaker Belief (y ∈ {U, S}): What does L0 assume?
 
 - **Uniform (U)**: L0 treats all referents equally:
-  U(t|m) = ⟦m⟧(t) / |⟦m⟧| [Eq. 1]
+  U(t|m) = ⟦m⟧(t) / |⟦m⟧| (Eq. 1)
 - **Salience (S)**: L0 weights by perceptual salience:
-  S(t|m) = S(t) · ⟦m⟧(t) / Σ_t' S(t') · ⟦m⟧(t') [Eq. 2]
+  S(t|m) = S(t) · ⟦m⟧(t) / Σ_t' S(t') · ⟦m⟧(t')
 
 This enters the RSAConfig via `meaning`: uniform uses constant 1 for true worlds;
 salience uses S(w) for true worlds.
@@ -36,18 +36,18 @@ salience uses S(w) for true worlds.
 ### Speaker Goal (x ∈ {a, b}): What does the speaker optimize?
 
 - **Belief-oriented (b)**: maximize log-probability of correct belief
-  σ_b(m|t) ∝ exp(λ_S · (log y(t|m) - Cost(m))) [Eq. 10]
+  σ_b(m|t) ∝ exp(λ_S · (log y(t|m) - Cost(m))) (Eq. 10)
 - **Action-oriented (a)**: maximize probability of correct action
-  σ_a(m|t) ∝ exp(λ_S · (y(t|m) - Cost(m))) [Eq. 9]
+  σ_a(m|t) ∝ exp(λ_S · (y(t|m) - Cost(m))) (Eq. 9)
 
 This enters via `s1Score`: belief-oriented uses log L0; action-oriented uses raw L0.
 
 ### Listener Action: How does the listener choose?
 
 - **Belief-oriented (b)**: standard Bayesian update
-  ρ_b(t|m) ∝ v(t) · σ(m|t) [Eq. 13/15]
+  ρ_b(t|m) ∝ v(t) · σ(m|t) (Eq. 15)
 - **Action-oriented (a)**: softmax over Bayesian posterior
-  ρ_a(t|m) ∝ exp(α_L · ρ_b(t|m)) [Eq. 14]
+  ρ_a(t|m) ∝ exp(α_L · ρ_b(t|m)) (Eq. 14)
 
 The belief-oriented listener IS `RSAConfig.L1`. The action-oriented listener is
 a composable extension defined as `softmax ∘ L1`.
@@ -65,14 +65,17 @@ a composable extension defined as `softmax ∘ L1`.
 
 ## Key Findings
 
-**Speaker data** (Table 3): σ_bU and σ_aU best explain production data.
-Salience in the speaker does NOT help. Cost preference exists (c > 0).
+**Speaker data** (Table 1, N=144 per target): σ_bU and σ_aU best explain production
+data (Table 3). Salience in the speaker does NOT help. Cost preference exists (c > 0).
 
-**Listener data** (Table 4): Salience-prior models dominate. The action-oriented
-listener ρ_a provides additional flexibility. Best overall: ρ_aS(σ_aU).
+**Listener data** (Table 2, N=180 per utterance): Salience-prior models dominate in
+model comparison (Table 4). Best overall: ρ_aS(σ_aU) with informed-correlated
+hyperprior.
 
 **Salience reversal**: Uniform and salience priors make **opposite** L1 predictions
-for ambiguous utterances. Human listener data matches the salience direction.
+for ambiguous utterances. For "circle", human data matches the salience direction
+(blue_circle: 117/180 = 65%). For "green", human data matches the pragmatic
+direction (green_circle: 115/180 = 64%), NOT salience.
 
 ## Qualitative Findings
 
@@ -107,24 +110,26 @@ def measure : MeasureSpec :=
 /-- The 6 qualitative findings from @cite{qing-franke-2015}. -/
 inductive Finding where
   /-- For green_square targets, speakers prefer the unique shape word "square"
-      over the shared color word "green". Evidence: 40/42 trials. -/
+      over the shared color word "green". Evidence: 135/144 trials (Table 1). -/
   | speaker_prefers_unique_shape
   /-- For blue_circle targets, speakers prefer the unique color word "blue"
-      over the shared shape word "circle". Evidence: 36/42 trials. -/
+      over the shared shape word "circle". Evidence: 119/144 trials (Table 1). -/
   | speaker_prefers_unique_color
   /-- For green_circle targets, cost breaks the symmetry between the two
       ambiguous words: S1 prefers "circle" (noun, cost=0) over "green"
-      (adjective, cost=1/2). Evidence: 30/42 chose "circle". -/
+      (adjective, cost=1/2). Evidence: 81/144 chose "circle" (Table 1). -/
   | cost_breaks_symmetry
   /-- Without cost, the two ambiguous words for green_circle are symmetric:
       neither dominates the other. -/
   | no_cost_symmetry
   /-- Salience reversal for "circle": uniform L1 predicts green_circ > blue_circ,
-      but salience L1 predicts blue_circ > green_circ (matching human data: 66%).
-      This is the paper's central finding. -/
+      but salience L1 predicts blue_circ > green_circ. Human data matches the
+      salience direction: 117/180 chose blue_circle (Table 2). -/
   | salience_reversal_circle
   /-- Salience reversal for "green": uniform L1 predicts green_circ > green_sq,
-      but salience L1 predicts green_sq > green_circ (matching human data: 56%). -/
+      but salience L1 predicts green_sq > green_circ. Human data matches the
+      *pragmatic* direction: 115/180 chose green_circle (Table 2). The model
+      predictions are correct; human data here follows pragmatics, not salience. -/
   | salience_reversal_green
   deriving DecidableEq, BEq, Repr
 
@@ -175,7 +180,7 @@ def Utterance.appliesTo : Utterance → Object → Bool
 -- ============================================================================
 
 /-- Adjective cost: shape words (nouns) cost 0, color words (adjectives) cost c.
-    From Q&F Eq. (11): Cost(m) = c if m is an adjective, 0 otherwise. -/
+    From @cite{qing-franke-2015} Eq. 11: Cost(m) = c if m is an adjective, 0 otherwise. -/
 noncomputable def adjCost (c : ℝ) : Utterance → ℝ
   | .square | .circle => 0
   | .green  | .blue   => c
@@ -420,14 +425,14 @@ theorem green_ambiguous :
 
 /-- Finding 1: For green_square, S1 prefers "square" (unique, cost=0) over "green"
     (ambiguous, cost=1/2). Both informativity and cost favor "square".
-    Evidence: 40/42 speakers chose "square" (Table 3). -/
+    Evidence: 135/144 speakers chose "square" (Table 1). -/
 theorem speaker_prefers_unique_shape :
     costCfg.S1 () .green_square .square > costCfg.S1 () .green_square .green := by
   rsa_predict
 
 /-- Finding 2: For blue_circle, S1 prefers "blue" (unique, cost=1/2) over "circle"
     (ambiguous, cost=0). Informativity dominates cost.
-    Evidence: 36/42 speakers chose "blue" (Table 3). -/
+    Evidence: 119/144 speakers chose "blue" (Table 1). -/
 theorem speaker_prefers_unique_color :
     costCfg.S1 () .blue_circle .blue > costCfg.S1 () .blue_circle .circle := by
   rsa_predict
@@ -435,7 +440,8 @@ theorem speaker_prefers_unique_color :
 /-- Finding 3: For green_circle, cost breaks the tie between the two ambiguous
     words: S1 prefers "circle" (cost=0) over "green" (cost=1/2). Both are equally
     informative (each applies to 2 objects), so cost is the tiebreaker.
-    Evidence: 30/42 chose "circle", 12/42 chose "green" (Table 3). -/
+    Evidence: 81/144 chose "circle", 63/144 chose "green" (Table 1;
+    not statistically significant: χ²=2.25, p=0.13). -/
 theorem cost_breaks_symmetry :
     costCfg.S1 () .green_circle .circle > costCfg.S1 () .green_circle .green := by
   rsa_predict
@@ -475,7 +481,8 @@ theorem uniform_circle_green_circ :
   rsa_predict
 
 /-- Salience L1 for "circle": blue_circle > green_circle.
-    Salience (139 vs 30) overrides pragmatic narrowing. Matches human data (66%). -/
+    Salience (139 vs 30) overrides pragmatic narrowing. Matches human data
+    (Table 2: 117/180 = 65% chose blue_circle). -/
 theorem salience_circle_blue_circ :
     salienceCfg.L1 .circle .blue_circle > salienceCfg.L1 .circle .green_circle := by
   rsa_predict
@@ -499,7 +506,9 @@ theorem uniform_green_green_circ :
   rsa_predict
 
 /-- Salience L1 for "green": green_square > green_circle.
-    Salience (71 vs 30) overrides pragmatic narrowing. Matches human data (56%). -/
+    Salience (71 vs 30) overrides pragmatic narrowing in the model. However,
+    human data goes in the opposite (pragmatic) direction: Table 2 shows
+    115/180 = 64% chose green_circle. -/
 theorem salience_green_green_sq :
     salienceCfg.L1 .green .green_square > salienceCfg.L1 .green .green_circle := by
   rsa_predict
@@ -636,8 +645,8 @@ theorem σ_aS_green_circ :
 
 /-- σ_bU uniquely predicts "blue" > "circle" for blue_circle.
 
-    The blue_circle observation is the decisive test: 36/42 speakers chose "blue"
-    over "circle" (Table 3). σ_bU is the only model that predicts this:
+    The blue_circle observation is the decisive test: 119/144 speakers chose "blue"
+    over "circle" (Table 1). σ_bU is the only model that predicts this:
     - σ_bU: blue > circle (correct) — log transform amplifies informativity
     - σ_aU: blue = circle (tie) — raw probability and cost exactly cancel
     - σ_bS: circle > blue (reversal) — salience makes "circle" informative
@@ -700,7 +709,7 @@ is strictly monotone and multiplication by λ > 0 preserves strict order:
     exp(λ · a) > exp(λ · b) ⟺ a > b (for λ > 0)
 
 **Consequence**: The qualitative predictions (findings 1–4) hold for ALL λ > 0.
-The paper's strong rejection of λ = 1 (p. 8) affects only the *magnitude* of
+The paper's strong rejection of λ = 1 (§5) affects only the *magnitude* of
 preferences (softmax temperature), not their *direction*. The existing
 `rsa_predict` proofs at α = 1 establish log(L0) − cost orderings that hold
 at every positive α.
@@ -755,9 +764,9 @@ raw L0: 1 − c > 1/2 − 0 ⟺ c < 1/2.
 Belief-oriented scoring (σ_bU) uses log L0, giving a wider threshold of
 c < ln 2 ≈ 0.693: log 1 − c > log(1/2) − 0 ⟺ c < ln 2.
 
-The paper's best-fit c for σ_bU is 1.77, which exceeds ln 2 — meaning
-the MAP estimate actually reverses the blue_circle prediction. But the
-marginal likelihood (integrating over all c) still favors σ_bU overall. -/
+Figure 4 shows that the posterior over c for σ_bU peaks around c ≈ 0.15,
+well below the ln 2 ≈ 0.693 threshold. So the MAP cost estimate is
+consistent with σ_bU correctly predicting blue > circle. -/
 
 /-- σ_aU cost threshold for blue_circle: "blue" > "circle" ⟺ c < 1/2.
 
@@ -795,45 +804,48 @@ theorem σ_bU_blue_circ_threshold
 -- §17. Raw Experimental Data (Tables 3–4)
 -- ============================================================================
 
-/-! Production and comprehension counts from the experiment (N = 42 speakers,
-21 listeners). These connect model predictions to empirical observations. -/
+/-! Production and comprehension counts from the experiment (N = 1032 total:
+432 speakers, 600 listeners). These connect model predictions to empirical
+observations. -/
 
-/-- Speaker production data from Table 3 (N = 42 per target object).
+/-- Speaker production data from Table 1 (N = 144 per target object).
 
-    - green_square: 40 "square", 2 "green" (95.2% unique shape)
-    - blue_circle: 36 "blue", 6 "circle" (85.7% unique color)
-    - green_circle: 30 "circle", 12 "green" (71.4% preferred noun) -/
+    - green_square: 135 "square", 9 "green" (93.8% unique shape)
+    - blue_circle: 119 "blue", 25 "circle" (82.6% unique color)
+    - green_circle: 81 "circle", 63 "green" (56.3% preferred noun; n.s.) -/
 def speakerData : Object → Utterance → Nat
-  | .green_square, .square => 40
-  | .green_square, .green  => 2
-  | .blue_circle,  .blue   => 36
-  | .blue_circle,  .circle => 6
-  | .green_circle, .circle => 30
-  | .green_circle, .green  => 12
+  | .green_square, .square => 135
+  | .green_square, .green  => 9
+  | .blue_circle,  .blue   => 119
+  | .blue_circle,  .circle => 25
+  | .green_circle, .circle => 81
+  | .green_circle, .green  => 63
   | _, _                    => 0
 
-/-- Listener comprehension data from Table 4 (N = 21 per ambiguous utterance).
+/-- Listener comprehension data from Table 2 (N = 180 per ambiguous utterance).
 
-    - "circle": 14 blue_circle, 7 green_circle (66.7% salience direction)
-    - "green": 12 green_square, 9 green_circle (57.1% salience direction) -/
+    - "circle": 117 blue_circle, 62 green_circle, 1 green_square (65% salience)
+    - "green": 65 green_square, 115 green_circle (64% pragmatic direction) -/
 def listenerData : Utterance → Object → Nat
-  | .circle, .blue_circle  => 14
-  | .circle, .green_circle => 7
-  | .green,  .green_square => 12
-  | .green,  .green_circle => 9
+  | .circle, .blue_circle  => 117
+  | .circle, .green_circle => 62
+  | .circle, .green_square => 1
+  | .green,  .green_square => 65
+  | .green,  .green_circle => 115
   | _, _                    => 0
 
-/-- Speaker data sums to N = 42 per target. -/
+/-- Speaker data sums to N = 144 per target. -/
 theorem speakerData_consistent :
-    speakerData .green_square .square + speakerData .green_square .green = 42 ∧
-    speakerData .blue_circle .blue + speakerData .blue_circle .circle = 42 ∧
-    speakerData .green_circle .circle + speakerData .green_circle .green = 42 :=
+    speakerData .green_square .square + speakerData .green_square .green = 144 ∧
+    speakerData .blue_circle .blue + speakerData .blue_circle .circle = 144 ∧
+    speakerData .green_circle .circle + speakerData .green_circle .green = 144 :=
   ⟨rfl, rfl, rfl⟩
 
-/-- Listener data sums to N = 21 per ambiguous utterance. -/
+/-- Listener data sums to N = 180 per ambiguous utterance. -/
 theorem listenerData_consistent :
-    listenerData .circle .blue_circle + listenerData .circle .green_circle = 21 ∧
-    listenerData .green .green_square + listenerData .green .green_circle = 21 :=
+    listenerData .circle .blue_circle + listenerData .circle .green_circle
+      + listenerData .circle .green_square = 180 ∧
+    listenerData .green .green_square + listenerData .green .green_circle = 180 :=
   ⟨rfl, rfl⟩
 
 /-- Speaker majority choice agrees with σ_bU S1 ranking (findings 1–3). -/
@@ -843,11 +855,18 @@ theorem speakerData_matches_model :
     speakerData .green_circle .circle > speakerData .green_circle .green :=
   ⟨by decide, by decide, by decide⟩
 
-/-- Listener majority agrees with salience L1 direction (findings 5–6). -/
-theorem listenerData_matches_salience :
-    listenerData .circle .blue_circle > listenerData .circle .green_circle ∧
-    listenerData .green .green_square > listenerData .green .green_circle :=
-  ⟨by decide, by decide⟩
+/-- For "circle", listener majority matches the salience L1 direction (finding 5):
+    blue_circle (117) > green_circle (62). -/
+theorem listenerData_circle_matches_salience :
+    listenerData .circle .blue_circle > listenerData .circle .green_circle :=
+  by decide
+
+/-- For "green", listener majority matches the pragmatic/uniform L1 direction,
+    NOT the salience direction: green_circle (115) > green_square (65).
+    The paper notes this explicitly (p. 212). -/
+theorem listenerData_green_matches_pragmatic :
+    listenerData .green .green_circle > listenerData .green .green_square :=
+  by decide
 
 -- ============================================================================
 -- §18. FG2012 Bridge
@@ -859,11 +878,11 @@ theorem listenerData_matches_salience :
 
 which equals `beliefGoalScore (fun _ => 0)` since `x − 0 = x` (`sub_zero`).
 
-The two papers use different reference game contexts (FG2012: {blue_square,
-blue_circle, green_square}; QF2015: {green_square, blue_circle, green_circle}),
-so their RSAConfigs operate on different types. But the scoring rule, the
-compositional pattern, and the RSAConfig structure are identical — QF2015's
-contribution is decomposing along the cost, goal, and salience dimensions. -/
+FG2012 uses multiple reference game contexts across 7 conditions; Q&F's
+experiment (§4) focuses on one configuration: {green_square, green_circle,
+blue_circle}. The scoring rule, compositional pattern, and RSAConfig structure
+are identical — Q&F's contribution is decomposing along the cost, goal, and
+salience dimensions. -/
 
 /-- Zero-cost belief-oriented scoring equals FG2012's scoring rule.
 
@@ -916,9 +935,11 @@ theorem zeroCost_beliefGoal_eq
    for each model's blue_circle prediction. The log transform in σ_bU
    widens the viable cost range.
 
-9. **Raw data** (§17): `speakerData` and `listenerData` formalize Tables 3–4.
-   `speakerData_matches_model` and `listenerData_matches_salience` verify
-   that majority choices match model predictions.
+9. **Raw data** (§17): `speakerData` and `listenerData` formalize Tables 1–2.
+   `speakerData_matches_model` verifies that speaker majority choices match
+   σ_bU predictions. `listenerData_circle_matches_salience` confirms "circle"
+   follows salience; `listenerData_green_matches_pragmatic` confirms "green"
+   follows pragmatics — a richer pattern than uniform salience dominance.
 
 10. **FG2012 bridge** (§18): `zeroCost_beliefGoal_eq` proves that belief-oriented
     scoring at zero cost recovers @cite{frank-goodman-2012}'s scoring rule.
