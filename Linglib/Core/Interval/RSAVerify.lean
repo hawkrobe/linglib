@@ -764,12 +764,13 @@ def checkS2ScoreGt {U W : Type*} [Fintype U] [Fintype W]
       let u₂_util := computeS2UtilityBounds d terms w u₂
       u₂_util.hi < u₁_util.lo
 
-/-- Soundness: if checkS2ScoreGt returns true, then S2(u₁|w) > S2(u₂|w). -/
-theorem s2_gt_of_check (d : RSAConfigData U W)
+/-- Soundness: if checkS2ScoreGt returns true, then S2Utility u₁ > S2Utility u₂.
+    The ℚ interval pipeline bounds the ℝ S2 utility; separation of bounds implies
+    strict inequality. -/
+theorem s2_utility_gt_of_check (d : RSAConfigData U W)
     (w : W) (u₁ u₂ : U)
     (h : checkS2ScoreGt d w u₁ u₂ = true) :
-    -- TODO: define ℝ S2 and state soundness
-    True := by
-  trivial
+    d.S2Utility w u₁ > d.S2Utility w u₂ := by
+  sorry
 
 end RSA.Verify

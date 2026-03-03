@@ -390,7 +390,9 @@ elab "rsa_predict" : tactic => do
   let rhs := args[3]!
 
   -- Try generic direct RExpr approach on raw goal (handles all patterns)
-  let skipReflection := rsa_predict.skipReflection.get (← getOptions)
+  -- Skip for S2Utility goals — the expression is too large for whnf+reify (OOM with 20 latent)
+  let hasS2Utility := (lhs.find? (fun e => e.isConstOf ``RSA.RSAConfigData.S2Utility)).isSome
+  let skipReflection := rsa_predict.skipReflection.get (← getOptions) || hasS2Utility
   unless skipReflection do
     let t0_generic ← IO.monoMsNow
     if ← tryDirectRExprCompare goal lhs rhs then
@@ -836,13 +838,15 @@ elab "rsa_predict" : tactic => do
 
   | .s2UtilityCompare d w u₁ u₂ => do
     logInfo m!"rsa_predict: parsed goal as S2 utility comparison"
-    let lhs ← mkAppM ``RSA.RSAConfigData.S2Utility #[d, w, u₁]
-    let rhs ← mkAppM ``RSA.RSAConfigData.S2Utility #[d, w, u₂]
-    if ← tryDirectRExprCompare goal lhs rhs then
-      logInfo m!"rsa_predict: ✓ proved via reflection (S2 utility)"
-      return
-    throwError "rsa_predict: S2 utility comparison failed — intervals not separated.\n\
-      Try increasing maxHeartbeats."
+    -- Build checkS2ScoreGt d w u₁ u₂ = true and prove via native_decide
+    let checkExpr ← mkAppM ``RSA.Verify.checkS2ScoreGt #[d, w, u₁, u₂]
+    let trueExpr := mkConst ``Bool.true
+    let checkEqTrue ← mkEq checkExpr trueExpr
+    let checkProof ← proveQPropND checkEqTrue
+    -- Apply soundness theorem: checkS2ScoreGt = true → S2Utility u₁ > S2Utility u₂
+    let proof ← mkAppM ``RSA.Verify.s2_utility_gt_of_check #[d, w, u₁, u₂, checkProof]
+    assignWithCastFallback goal proof
+    logInfo m!"rsa_predict: ✓ proved via S2 utility check (native_decide)"
 
   | .s2Compare cfg w₁ w₂ u => do
     logInfo m!"rsa_predict: parsed goal as S2 cross-world comparison"

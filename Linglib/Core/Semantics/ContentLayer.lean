@@ -24,11 +24,11 @@ existing linglib distinctions:
 
 ## The Three Layers
 
-| Layer | Label | Projection | Denial target | QUD-relevant |
-|-------|-------|------------|---------------|--------------|
-| Presupposition | `pr` | Projects by default | "Hey wait a minute!" | No |
-| At-issue | `fr` | Does not project | "No, that's not true" | Yes |
-| Implicature | `imp` | Cancelable | "No, I didn't mean..." | Derived |
+| Layer | Label | Denial example |
+|-------|-------|----------------|
+| Presupposition | `pr` | "The king of France is NOT bald — there is no king" (30b) |
+| At-issue | `fr` | "Mary is NOT happy — she's miserable" (5) |
+| Implicature | `imp` | "It's not POSSIBLE — it's NECESSARY" (29b) |
 
 ## Design Note
 
@@ -36,6 +36,14 @@ existing linglib distinctions:
 Bridges to `Core/Discourse/AtIssueness` and `Phenomena/Presupposition/
 ProjectiveContent.Challengeability` live downstream in bridge files,
 preserving the independence of `Core/Semantics/` and `Core/Discourse/`.
+
+## Scope
+
+This module captures the layer taxonomy and the `Off` function (which
+layers are offensive = inconsistent with a correction). It does NOT
+capture the full directed reverse anaphora (RA*) mechanism, which
+requires DRT resolution infrastructure (binding, accommodation,
+subordination) that is not yet implemented.
 -/
 
 set_option linter.dupNamespace false
@@ -57,21 +65,18 @@ inductive ContentLayer where
       Targeted by direct denial ("No, that's not true").
       Example: "The king is bald" asserts baldness. -/
   | atIssue
-  /-- Pragmatically derived enrichment. Cancelable, does not project.
-      Targeted by corrective denial ("No, I didn't mean to imply...").
-      Example: "bachelor" implicates eligible/available (not just unmarried). -/
+  /-- Enrichment beyond literal truth conditions.
+      Covers both scalar implicature (category D: "possible" implicates "not
+      necessary") and connotation/register (category E: "steed" connotes
+      formality). The paper groups both under `imp` as non-truth-conditional
+      material targetable by denial.
+      Example: "It's not POSSIBLE — it's NECESSARY" (29b). -/
   | implicature
   deriving DecidableEq, Repr, BEq, Inhabited
 
 -- ════════════════════════════════════════════════════
 -- § Layered Propositions
 -- ════════════════════════════════════════════════════
-
-/-- A proposition tagged with its content layer.
-    The basic building block of layered semantic representations. -/
-structure Layered (W : Type*) where
-  layer : ContentLayer
-  content : W → Bool
 
 /-- A full layered proposition: content at each layer.
 
@@ -82,9 +87,9 @@ structure LayeredProp (W : Type*) where
   presupposition : W → Bool
   /-- At-issue/assertoric content. -/
   atIssue : W → Bool
-  /-- Implicature content (pragmatic enrichment). Trivially true by default,
-      reflecting the fact that most utterances don't carry conventional
-      implicatures relevant to their truth conditions. -/
+  /-- Implicature content (enrichment beyond truth conditions). Trivially
+      true by default: most utterances carry no relevant implicature, just
+      as `PrProp.ofBProp` sets presupposition to `λ _ => true`. -/
   implicature : W → Bool := λ _ => true
 
 /-- Access a layer's content by its tag. -/
@@ -92,12 +97,6 @@ def LayeredProp.get {W : Type*} (lp : LayeredProp W) : ContentLayer → (W → B
   | .presupposition => lp.presupposition
   | .atIssue => lp.atIssue
   | .implicature => lp.implicature
-
-/-- Decompose a layered proposition into its tagged components. -/
-def LayeredProp.layers {W : Type*} (lp : LayeredProp W) : List (Layered W) :=
-  [ ⟨.presupposition, lp.presupposition⟩
-  , ⟨.atIssue, lp.atIssue⟩
-  , ⟨.implicature, lp.implicature⟩ ]
 
 -- ════════════════════════════════════════════════════
 -- § Bridge to PrProp
@@ -140,7 +139,7 @@ theorem LayeredProp.roundtrip_prprop {W : Type*} (p : PrProp W) :
     Off(φ, K) from @cite{van-der-sandt-maier-2003}: the offensive layers are
     those whose content is inconsistent with the correction context. In
     propositional denial, only `fr` is offensive; in presuppositional denial,
-    `pr` is offensive; in implicature denial, `imp` is offensive. -/
+    `pr` (and `fr`) are offensive; in implicature denial, `imp` is offensive. -/
 def isOffensive {W : Type*} (φ : LayeredProp W) (l : ContentLayer)
     (correction : W → Bool) (worlds : List W) : Bool :=
   !(worlds.any λ w => φ.get l w && correction w)
@@ -162,5 +161,97 @@ theorem consistent_iff_not_offensive {W : Type*} (φ : LayeredProp W)
     (l : ContentLayer) (correction : W → Bool) (worlds : List W) :
     isConsistent φ l correction worlds = !isOffensive φ l correction worlds := by
   simp only [isConsistent, isOffensive, Bool.not_not]
+
+-- ════════════════════════════════════════════════════
+-- § Worked Examples: Off in Action
+-- ════════════════════════════════════════════════════
+
+/-! ### Example 1: King of France (30)
+
+"The king of France is bald" has:
+- `pr`: France has a king (definite presupposition)
+- `fr`: The king is bald (at-issue content)
+- `imp`: trivially true (no implicature)
+
+Two corrections disambiguate the denial:
+- "He has a full head of hair" → propositional denial (only `fr` offensive)
+- "France does not have a king" → presuppositional denial (`pr` and `fr` both offensive)
+-/
+
+private inductive KFWorld | kingBald | kingHairy | noKing1 | noKing2
+  deriving DecidableEq, BEq, Repr
+
+private def kfPresup : KFWorld → Bool
+  | .kingBald | .kingHairy => true | _ => false
+
+private def kfAssert : KFWorld → Bool
+  | .kingBald => true | _ => false
+
+private def kfProp : LayeredProp KFWorld :=
+  { presupposition := kfPresup, atIssue := kfAssert }
+
+private def kfWorlds : List KFWorld := [.kingBald, .kingHairy, .noKing1, .noKing2]
+
+/-- Propositional denial: correction "he has hair" conflicts with `fr` only.
+
+    The presupposition (king exists) is consistent with the correction
+    (world `kingHairy` satisfies both), so `pr` is NOT offensive. But no
+    world is both bald and hairy, so `fr` IS offensive.
+
+    Corresponds to the standard propositional-denial reading of (30). -/
+theorem kf_propositional_denial :
+    offensiveLayers kfProp (λ w => w == .kingHairy) kfWorlds = [.atIssue] := by
+  native_decide
+
+/-- Presuppositional denial: correction "no king exists" conflicts with
+    both `pr` and `fr`.
+
+    No world has both "king exists" and "no king exists," so `pr` is
+    offensive. No world is both "bald" and "no king," so `fr` is ALSO
+    offensive — the assertion "falls with" the presupposition.
+
+    Corresponds to (30b): "The king of France is NOT bald — France does
+    not have a king." -/
+theorem kf_presuppositional_denial :
+    offensiveLayers kfProp (λ w => w == .noKing1 || w == .noKing2) kfWorlds
+    = [.presupposition, .atIssue] := by
+  native_decide
+
+/-! ### Example 2: Possibility → Necessity (29)
+
+"It is possible that the pope is right" has:
+- `pr`: trivially true
+- `fr`: ◇p (it is possible)
+- `imp`: ¬□p (not necessary — the scalar implicature of "possible")
+
+Correction: "It is NECESSARY that the pope is right" (□p).
+Only `imp` is offensive: ◇p is consistent with □p (necessity entails
+possibility), but ¬□p contradicts □p.
+-/
+
+private inductive ModalW | possNotNec | nec
+  deriving DecidableEq, BEq, Repr
+
+private def modalProp : LayeredProp ModalW :=
+  { presupposition := λ _ => true
+  , atIssue := λ _ => true         -- ◇p holds in both worlds
+  , implicature := λ              -- ¬□p: "merely possible, not necessary"
+      | .possNotNec => true
+      | .nec => false }
+
+private def modalWorlds : List ModalW := [.possNotNec, .nec]
+
+/-- Implicature denial: correction "it is necessary" conflicts with `imp` only.
+
+    The presupposition (trivially true) and at-issue content (◇p) are both
+    consistent with the correction (□p entails ◇p). Only the scalar
+    implicature (¬□p) conflicts.
+
+    Corresponds to (29b): "It is not POSSIBLE, it is NECESSARY that the
+    pope is right." -/
+theorem modal_implicature_denial :
+    offensiveLayers modalProp (λ w => w == .nec) modalWorlds
+    = [.implicature] := by
+  native_decide
 
 end Core.Semantics.ContentLayer

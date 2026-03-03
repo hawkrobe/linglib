@@ -509,7 +509,7 @@ def s2Config (weights : S2Weights) : RSA.RSAConfigData Utterance HeartState wher
 -- §3c. S2 Predictions
 -- ============================================================================
 
-set_option maxHeartbeats 80000000 in
+set_option maxHeartbeats 8000000 in
 /-- Under "both" goals at h0, S2 prefers "not terrible" over "terrible".
     This is the paper's main finding: dual goals produce negation. -/
 theorem both_h0_prefers_negation :
@@ -517,7 +517,7 @@ theorem both_h0_prefers_negation :
     (s2Config bothWeights).S2Utility .h0 .terrible := by
   rsa_predict
 
-set_option maxHeartbeats 80000000 in
+set_option maxHeartbeats 8000000 in
 /-- Under "informative" goals at h0, S2 prefers "terrible" over "not terrible".
     Direct speech dominates when the speaker prioritizes informativity. -/
 theorem informative_h0_prefers_direct :
@@ -525,7 +525,7 @@ theorem informative_h0_prefers_direct :
     (s2Config informativeWeights).S2Utility .h0 .notTerrible := by
   rsa_predict
 
-set_option maxHeartbeats 80000000 in
+set_option maxHeartbeats 8000000 in
 /-- Under "kind" goals at h0, S2 prefers "not terrible" over "terrible".
     The social and presentational weights favor indirect speech. -/
 theorem kind_h0_prefers_negation :

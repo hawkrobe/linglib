@@ -33,8 +33,8 @@ contributes presuppositional, at-issue, or implicature content. This
 enables a unified treatment of denial: the same negation operator targets
 different layers depending on the correction context.
 
-See `Core.ContentLayer` for the layer type and `Phenomena.Negation.Denial`
-for empirical denial data.
+See `Core.Semantics.ContentLayer` for the layer type and
+`Phenomena.Negation.Denial` for empirical denial data.
 
 -/
 
@@ -202,5 +202,29 @@ theorem LDRS.offensive_surviving_partition {E : Type*} (k : LDRS E)
   | cons hd tl ih =>
     simp only [List.filter]
     cases offLayers.contains hd.layer <;> simp_all <;> omega
+
+-- ════════════════════════════════════════════════════
+-- § Assertion vs Denial: Monotonicity
+-- ════════════════════════════════════════════════════
+
+/-! The paper's deepest architectural claim: assertion is monotonic
+    (merge only adds conditions), while denial is non-monotonic (surviving
+    conditions are a subset of the original). Standard DRT update is
+    monotonic; denial is the ONLY operation that removes information from
+    the discourse context. -/
+
+/-- Assertion (merge) is monotonic: the result has at least as many
+    conditions as the original LDRS. -/
+theorem merge_monotonic {E : Type*} (k1 k2 : LDRS E) :
+    k1.conditions.length ≤ (k1.merge k2).conditions.length := by
+  simp only [LDRS.merge, List.length_append]
+  omega
+
+/-- Denial (surviving conditions) is non-monotonic: the result has at most
+    as many conditions as the original LDRS. -/
+theorem denial_nonmonotonic {E : Type*} (k : LDRS E)
+    (offLayers : List ContentLayer) :
+    (k.survivingConditions offLayers).length ≤ k.conditions.length := by
+  exact List.length_filter_le _ _
 
 end Semantics.Dynamic.DRT
