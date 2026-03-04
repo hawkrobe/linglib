@@ -32,6 +32,7 @@ import Linglib.Core.Semantics.ContentLayer
 import Linglib.Core.Agent.ProductOfExperts
 import Linglib.Core.Partition
 import Linglib.Core.PolarityPartition
+import Linglib.Core.PropertyDomain
 import Linglib.Core.Polyhedral
 import Linglib.Core.ModalIndefinite
 import Linglib.Core.Discourse.QUD
@@ -702,6 +703,7 @@ import Linglib.Phenomena.WordOrder.Studies.SagWasowBender2003
 import Linglib.Phenomena.WordOrder.Studies.Adger2003
 import Linglib.Phenomena.WordOrder.Studies.Pollock1989
 import Linglib.Phenomena.WordOrder.Studies.Hudson1984
+import Linglib.Phenomena.WordOrder.Studies.SchlotterbeckWang2023
 import Linglib.Theories.Syntax.DependencyGrammar.LongDistance
 -- Theories: Dynamic Semantics
 -- Theories: Dynamic Semantics — Core

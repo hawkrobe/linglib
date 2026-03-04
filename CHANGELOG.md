@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.227.92] - 2026-03-03
+
+### Changed
+- **Replace `dimension : String` with structured `Dimension` type**: new `Core.PropertyDomain` module with `PropertyDomain` enum (color, size, material, sensory, evaluative, psychological, state) and `Dimension` struct (name + domain). Updated `GradableAdjEntry.dimension`, `AdjModifierEntry.dimension`, and `MAlternativeSet.dimension` from raw strings to typed `Dimension`. Added `PropertyDomain.noiseDiscrimination` connecting adjective domains to RSA noise parameters. Replaced `KursatDegen2021.PropertyType` with `Core.PropertyDomain`. 8 files modified, 1 new.
+
 ## [0.227.91] - 2026-03-03
 
 ### Changed

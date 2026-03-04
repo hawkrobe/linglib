@@ -1,6 +1,7 @@
 import Mathlib.Data.Rat.Defs
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.Ring
+import Linglib.Core.PropertyDomain
 
 /-!
 # Unified Noise Theory for RSA
@@ -183,5 +184,17 @@ theorem product_discrimination_monotone
   have h_sum := add_nonneg (mul_nonneg h1 h2) (mul_nonneg h3 h_size_nonneg.2)
   rw [← key] at h_sum
   linarith
+
+-- ════════════════════════════════════════════════════
+-- PropertyDomain → Noise Parameters
+-- ════════════════════════════════════════════════════
+
+/-- Map a `PropertyDomain` to its established noise discrimination value.
+    Returns `none` for domains without empirically grounded noise params. -/
+def Core.PropertyDomain.noiseDiscrimination : Core.PropertyDomain → Option ℚ
+  | .color    => some colorDiscrimination    -- 0.98
+  | .size     => some sizeDiscrimination     -- 0.60
+  | .material => some materialDiscrimination -- 0.40
+  | _         => none
 
 end RSA.Noise

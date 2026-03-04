@@ -19,6 +19,7 @@ Both share scale type and antonym information, but serve different grammatical f
 -/
 
 import Linglib.Core.Lexical.Word
+import Linglib.Core.PropertyDomain
 import Linglib.Theories.Morphology.Core.Exponence
 import Linglib.Theories.Semantics.Lexical.Adjective.Theory
 
@@ -48,7 +49,7 @@ structure AdjModifierEntry where
   /-- Scale boundedness (from @cite{kennedy-2007}) -/
   scaleType : Boundedness := .open_
   /-- What dimension is being measured? -/
-  dimension : String := ""
+  dimension : Core.Dimension
   /-- Antonym form (if any) -/
   antonymForm : Option String := none
   /-- Antonym relation: contrary (gap) vs contradictory (no gap) -/
@@ -66,7 +67,7 @@ def tall : AdjModifierEntry :=
   , formComp := some "taller"
   , formSuper := some "tallest"
   , scaleType := .open_
-  , dimension := "height"
+  , dimension := .height
   , antonymForm := some "short"
   , antonymRelation := some .contrary }
 
@@ -75,7 +76,7 @@ def short : AdjModifierEntry :=
   , formComp := some "shorter"
   , formSuper := some "shortest"
   , scaleType := .open_
-  , dimension := "height"
+  , dimension := .height
   , antonymForm := some "tall"
   , antonymRelation := some .contrary
   , isNegativePole := true }
@@ -89,7 +90,7 @@ def happy : AdjModifierEntry :=
   , formComp := some "happier"
   , formSuper := some "happiest"
   , scaleType := .open_
-  , dimension := "happiness"
+  , dimension := .happiness
   , antonymForm := some "unhappy"
   , antonymRelation := some .contrary }
 
@@ -98,7 +99,7 @@ def unhappy : AdjModifierEntry :=
   , formComp := some "unhappier"
   , formSuper := some "unhappiest"
   , scaleType := .open_
-  , dimension := "happiness"
+  , dimension := .happiness
   , antonymForm := some "happy"
   , antonymRelation := some .contrary
   , isNegativePole := true }
@@ -108,7 +109,7 @@ def sad : AdjModifierEntry :=
   , formComp := some "sadder"
   , formSuper := some "saddest"
   , scaleType := .open_
-  , dimension := "happiness"
+  , dimension := .happiness
   , antonymForm := some "happy"
   , antonymRelation := some .contrary
   , isNegativePole := true }
@@ -122,7 +123,7 @@ def expensive : AdjModifierEntry :=
   , formComp := some "more expensive"
   , formSuper := some "most expensive"
   , scaleType := .open_
-  , dimension := "price"
+  , dimension := .price
   , antonymForm := some "cheap"
   , antonymRelation := some .contrary }
 
@@ -131,7 +132,7 @@ def cheap : AdjModifierEntry :=
   , formComp := some "cheaper"
   , formSuper := some "cheapest"
   , scaleType := .open_
-  , dimension := "price"
+  , dimension := .price
   , antonymForm := some "expensive"
   , antonymRelation := some .contrary
   , isNegativePole := true }
@@ -145,7 +146,7 @@ def good : AdjModifierEntry :=
   , formComp := some "better"
   , formSuper := some "best"
   , scaleType := .open_
-  , dimension := "quality"
+  , dimension := .quality
   , antonymForm := some "bad"
   , antonymRelation := some .contrary }
 
@@ -154,7 +155,7 @@ def bad : AdjModifierEntry :=
   , formComp := some "worse"
   , formSuper := some "worst"
   , scaleType := .open_
-  , dimension := "quality"
+  , dimension := .quality
   , antonymForm := some "good"
   , antonymRelation := some .contrary
   , isNegativePole := true }
@@ -168,7 +169,7 @@ def smart : AdjModifierEntry :=
   , formComp := some "smarter"
   , formSuper := some "smartest"
   , scaleType := .open_
-  , dimension := "intelligence"
+  , dimension := .intelligence
   , antonymForm := some "dumb"
   , antonymRelation := some .contrary }
 
@@ -181,7 +182,7 @@ def hot : AdjModifierEntry :=
   , formComp := some "hotter"
   , formSuper := some "hottest"
   , scaleType := .open_
-  , dimension := "temperature"
+  , dimension := .temperature
   , antonymForm := some "cold"
   , antonymRelation := some .contrary }
 
@@ -190,7 +191,7 @@ def cold : AdjModifierEntry :=
   , formComp := some "colder"
   , formSuper := some "coldest"
   , scaleType := .open_
-  , dimension := "temperature"
+  , dimension := .temperature
   , antonymForm := some "hot"
   , antonymRelation := some .contrary
   , isNegativePole := true }
@@ -204,7 +205,7 @@ def full : AdjModifierEntry :=
   , formComp := some "fuller"
   , formSuper := some "fullest"
   , scaleType := .closed
-  , dimension := "fullness"
+  , dimension := .fullness
   , antonymForm := some "empty"
   , antonymRelation := some .contradictory }  -- No gap for closed scales
 
@@ -213,7 +214,7 @@ def empty_ : AdjModifierEntry :=
   , formComp := some "emptier"
   , formSuper := some "emptiest"
   , scaleType := .closed
-  , dimension := "fullness"
+  , dimension := .fullness
   , antonymForm := some "full"
   , antonymRelation := some .contradictory
   , isNegativePole := true }
@@ -223,7 +224,7 @@ def wet : AdjModifierEntry :=
   , formComp := some "wetter"
   , formSuper := some "wettest"
   , scaleType := .lowerBounded
-  , dimension := "wetness"
+  , dimension := .wetness
   , antonymForm := some "dry"
   , antonymRelation := some .contradictory }
 
@@ -232,7 +233,7 @@ def dry : AdjModifierEntry :=
   , formComp := some "drier"
   , formSuper := some "driest"
   , scaleType := .upperBounded
-  , dimension := "wetness"
+  , dimension := .wetness
   , antonymForm := some "wet"
   , antonymRelation := some .contradictory
   , isNegativePole := true }
@@ -244,11 +245,12 @@ def dry : AdjModifierEntry :=
 def dead : AdjModifierEntry :=
   { form := "dead"
   , scaleType := .closed
-  , dimension := "alive" }
+  , dimension := .alive }
 
 def pregnant : AdjModifierEntry :=
   { form := "pregnant"
-  , scaleType := .closed }
+  , scaleType := .closed
+  , dimension := .pregnancy }
 
 -- ============================================================================
 -- Conversion to Word

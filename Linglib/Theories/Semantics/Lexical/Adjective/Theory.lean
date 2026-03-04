@@ -41,6 +41,7 @@ See also `Degree.Granularity` for granularity-sensitive degree morphology.
 
 import Linglib.Theories.Semantics.Montague.Basic
 import Linglib.Core.Scales.Scale
+import Linglib.Core.PropertyDomain
 import Linglib.Theories.Semantics.Lexical.Adjective.MLScale
 import Linglib.Theories.Semantics.Degree.Core
 
@@ -159,7 +160,7 @@ The actual threshold is NOT part of the lexical entry — it's contextual.
 structure GradableAdjEntry where
   form : String
   scaleType : Boundedness
-  dimension : String
+  dimension : Core.Dimension
   antonymForm : Option String := none
   antonymRelation : Option AntonymRelation := none
   deriving Repr

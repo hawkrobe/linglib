@@ -39,6 +39,7 @@ From @cite{horn-1984}, @cite{rett-2015}:
 import Linglib.Theories.Pragmatics.NeoGricean.Core.Basic
 import Linglib.Theories.Pragmatics.NeoGricean.Core.Markedness
 import Linglib.Core.Scales.HornScale
+import Linglib.Core.PropertyDomain
 import Linglib.Theories.Semantics.Montague.Derivation
 import Linglib.Theories.Semantics.Lexical.Adjective.Theory
 import Mathlib.Data.Rat.Defs
@@ -413,8 +414,8 @@ structure MAlternativeSet where
   marked : String
   /-- The unmarked (cheaper) form -/
   unmarked : String
-  /-- The dimension they share (e.g., "height") -/
-  dimension : String
+  /-- The dimension they share (e.g., .height) -/
+  dimension : Core.Dimension
   /-- The cost difference between forms -/
   costDifference : ℚ
   /-- Construction where they're equivalent -/

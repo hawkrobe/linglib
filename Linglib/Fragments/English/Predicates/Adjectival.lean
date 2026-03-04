@@ -25,7 +25,7 @@ abbrev AdjectivalPredicateEntry := GradableAdjEntry
 def tall : AdjectivalPredicateEntry where
   form := "tall"
   scaleType := .open_
-  dimension := "height"
+  dimension := .height
   antonymForm := some "short"
   antonymRelation := some .contrary
 
@@ -33,7 +33,7 @@ def tall : AdjectivalPredicateEntry where
 def short : AdjectivalPredicateEntry where
   form := "short"
   scaleType := .open_
-  dimension := "height"
+  dimension := .height
   antonymForm := some "tall"
   antonymRelation := some .contrary
 
@@ -48,7 +48,7 @@ For the 2-place attitude predicate "x is happy that p", see
 def happy : AdjectivalPredicateEntry where
   form := "happy"
   scaleType := .open_
-  dimension := "happiness"
+  dimension := .happiness
   antonymForm := some "unhappy"
   antonymRelation := some .contrary
 
@@ -56,7 +56,7 @@ def happy : AdjectivalPredicateEntry where
 def unhappy : AdjectivalPredicateEntry where
   form := "unhappy"
   scaleType := .open_
-  dimension := "happiness"
+  dimension := .happiness
   antonymForm := some "happy"
   antonymRelation := some .contrary
 
@@ -64,7 +64,7 @@ def unhappy : AdjectivalPredicateEntry where
 def sad : AdjectivalPredicateEntry where
   form := "sad"
   scaleType := .open_
-  dimension := "happiness"
+  dimension := .happiness
   antonymForm := some "happy"
   antonymRelation := some .contrary
 
@@ -73,7 +73,7 @@ def sad : AdjectivalPredicateEntry where
 def full : AdjectivalPredicateEntry where
   form := "full"
   scaleType := .closed
-  dimension := "fullness"
+  dimension := .fullness
   antonymForm := some "empty"
   antonymRelation := some .contradictory  -- Closed scales often contradictory
 
@@ -81,7 +81,7 @@ def full : AdjectivalPredicateEntry where
 def empty : AdjectivalPredicateEntry where
   form := "empty"
   scaleType := .closed
-  dimension := "fullness"
+  dimension := .fullness
   antonymForm := some "full"
   antonymRelation := some .contradictory
 
@@ -90,7 +90,7 @@ def empty : AdjectivalPredicateEntry where
 def hot : AdjectivalPredicateEntry where
   form := "hot"
   scaleType := .open_
-  dimension := "temperature"
+  dimension := .temperature
   antonymForm := some "cold"
   antonymRelation := some .contrary
 
@@ -98,7 +98,7 @@ def hot : AdjectivalPredicateEntry where
 def cold : AdjectivalPredicateEntry where
   form := "cold"
   scaleType := .open_
-  dimension := "temperature"
+  dimension := .temperature
   antonymForm := some "hot"
   antonymRelation := some .contrary
 
@@ -107,7 +107,7 @@ def cold : AdjectivalPredicateEntry where
 def expensive : AdjectivalPredicateEntry where
   form := "expensive"
   scaleType := .open_
-  dimension := "cost"
+  dimension := .cost
   antonymForm := some "cheap"
   antonymRelation := some .contrary
 
@@ -115,7 +115,7 @@ def expensive : AdjectivalPredicateEntry where
 def cheap : AdjectivalPredicateEntry where
   form := "cheap"
   scaleType := .open_
-  dimension := "cost"
+  dimension := .cost
   antonymForm := some "expensive"
   antonymRelation := some .contrary
 
@@ -123,7 +123,7 @@ def cheap : AdjectivalPredicateEntry where
 def wet : AdjectivalPredicateEntry where
   form := "wet"
   scaleType := .lowerBounded
-  dimension := "wetness"
+  dimension := .wetness
   antonymForm := some "dry"
   antonymRelation := some .contradictory
 
@@ -131,7 +131,7 @@ def wet : AdjectivalPredicateEntry where
 def dry : AdjectivalPredicateEntry where
   form := "dry"
   scaleType := .upperBounded
-  dimension := "wetness"
+  dimension := .wetness
   antonymForm := some "wet"
   antonymRelation := some .contradictory
 
@@ -140,7 +140,7 @@ def dry : AdjectivalPredicateEntry where
 def clean : AdjectivalPredicateEntry where
   form := "clean"
   scaleType := .closed
-  dimension := "cleanliness"
+  dimension := .cleanliness
   antonymForm := some "dirty"
   antonymRelation := some .contradictory
 
@@ -148,7 +148,7 @@ def clean : AdjectivalPredicateEntry where
 def dirty : AdjectivalPredicateEntry where
   form := "dirty"
   scaleType := .closed
-  dimension := "cleanliness"
+  dimension := .cleanliness
   antonymForm := some "clean"
   antonymRelation := some .contradictory
 
@@ -156,7 +156,7 @@ def dirty : AdjectivalPredicateEntry where
 def straight : AdjectivalPredicateEntry where
   form := "straight"
   scaleType := .closed
-  dimension := "straightness"
+  dimension := .straightness
   antonymForm := some "bent"
   antonymRelation := some .contradictory
 
@@ -164,7 +164,7 @@ def straight : AdjectivalPredicateEntry where
 def flat : AdjectivalPredicateEntry where
   form := "flat"
   scaleType := .closed
-  dimension := "flatness"
+  dimension := .flatness
   antonymForm := some "bumpy"
   antonymRelation := some .contradictory
 
@@ -172,7 +172,7 @@ def flat : AdjectivalPredicateEntry where
 def open_ : AdjectivalPredicateEntry where
   form := "open"
   scaleType := .closed
-  dimension := "openness"
+  dimension := .openness
   antonymForm := some "closed"
   antonymRelation := some .contradictory
 
@@ -180,7 +180,7 @@ def open_ : AdjectivalPredicateEntry where
 def long : AdjectivalPredicateEntry where
   form := "long"
   scaleType := .open_
-  dimension := "length"
+  dimension := .length
   antonymForm := some "short"
   antonymRelation := some .contrary
 
@@ -188,7 +188,7 @@ def long : AdjectivalPredicateEntry where
 def wide : AdjectivalPredicateEntry where
   form := "wide"
   scaleType := .open_
-  dimension := "width"
+  dimension := .width
   antonymForm := some "narrow"
   antonymRelation := some .contrary
 
@@ -196,7 +196,7 @@ def wide : AdjectivalPredicateEntry where
 def cool : AdjectivalPredicateEntry where
   form := "cool"
   scaleType := .open_
-  dimension := "temperature"
+  dimension := .temperature
   antonymForm := some "warm"
   antonymRelation := some .contrary
 
@@ -204,7 +204,7 @@ def cool : AdjectivalPredicateEntry where
 def warm : AdjectivalPredicateEntry where
   form := "warm"
   scaleType := .open_
-  dimension := "temperature"
+  dimension := .temperature
   antonymForm := some "cool"
   antonymRelation := some .contrary
 

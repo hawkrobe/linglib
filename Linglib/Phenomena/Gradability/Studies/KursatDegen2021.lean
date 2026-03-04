@@ -1,3 +1,4 @@
+import Linglib.Core.PropertyDomain
 import Linglib.Theories.Pragmatics.RSA.Core.Noise
 import Linglib.Theories.Pragmatics.RSA.Implementations.DegenEtAl2020
 import Linglib.Theories.Pragmatics.RSA.Implementations.WaldonDegen2021
@@ -74,12 +75,9 @@ namespace Phenomena.Gradability.Studies.KursatDegen2021
 -- § Property Types
 -- ============================================================================
 
-/-- Property types tested across experiments. -/
-inductive PropertyType where
-  | color     -- e.g., "the blue cup"
-  | material  -- e.g., "the wooden cup"
-  | size      -- e.g., "the big cup" (not the focus, but in the Noise module)
-  deriving DecidableEq, BEq, Repr
+/-- Property types tested across experiments — re-exported from
+    `Core.PropertyDomain` for local use. -/
+abbrev PropertyType := Core.PropertyDomain
 
 -- ============================================================================
 -- § Regression Results
@@ -219,11 +217,14 @@ theorem csrsa_size_params_match_noise :
 
 /-- Map property types to RSA Noise discrimination values (noise gap =
     onMatch − onMismatch). Larger gap → the feature provides a cleaner
-    signal to the L0 listener via the cs-RSA φ function. -/
+    signal to the L0 listener via the cs-RSA φ function.
+    Delegates to `PropertyDomain.noiseDiscrimination` for the three
+    parameterized domains. -/
 def propertyToDiscrimination : PropertyType → ℚ
   | .color => RSA.Noise.colorDiscrimination
   | .size => RSA.Noise.sizeDiscrimination
   | .material => RSA.Noise.materialDiscrimination
+  | _ => 0  -- domains without established noise params
 
 -- ============================================================================
 -- § Step 3: Ordering prediction — color gap > material gap
