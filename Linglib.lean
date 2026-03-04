@@ -725,6 +725,7 @@ import Linglib.Phenomena.WordOrder.Studies.Adger2003
 import Linglib.Phenomena.WordOrder.Studies.Pollock1989
 import Linglib.Phenomena.WordOrder.Studies.Hudson1984
 import Linglib.Phenomena.WordOrder.Studies.SchlotterbeckWang2023
+import Linglib.Phenomena.WordOrder.Studies.ColeHermon2008
 import Linglib.Theories.Syntax.DependencyGrammar.LongDistance
 -- Theories: Dynamic Semantics
 -- Theories: Dynamic Semantics — Core
@@ -852,6 +853,8 @@ import Linglib.Theories.Syntax.Minimalism.CombinationSchemata
 import Linglib.Theories.Syntax.Minimalism.RelativeClauses
 import Linglib.Theories.Syntax.Minimalism.Core.Structure
 import Linglib.Theories.Syntax.Minimalism.Core.Basic
+import Linglib.Theories.Syntax.Minimalism.Core.Derivation
+import Linglib.Theories.Syntax.Minimalism.Core.EPP
 import Linglib.Theories.Syntax.Minimalism.Core.Voice
 import Linglib.Theories.Syntax.Minimalism.Core.Applicative
 import Linglib.Theories.Syntax.Minimalism.Core.SmallClause

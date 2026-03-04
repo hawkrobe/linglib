@@ -32,6 +32,7 @@ Harizanov argues this is HEAD-TO-SPECIFIER movement:
 -/
 
 import Linglib.Theories.Syntax.Minimalism.Formal.Constraints.HMC
+import Linglib.Theories.Syntax.Minimalism.Core.Derivation
 
 namespace Minimalism.Phenomena.HeadMovement.BulgarianLHM
 
@@ -46,19 +47,20 @@ Each item has a category (V, N, D, T) and selectional requirements.
 
 /-- The participle "pročeli" (read): category V, selects a D (object).
     @cite{harizanov-gribanova-2019} -/
-def verbProceli : LIToken := ⟨.simple .V [.D], 201⟩
+def verbProceli : LIToken := ⟨.simple .V [.D] (phonForm := "pročeli"), 201⟩
 
 /-- The auxiliary "bjaha" (be.3p.pst): category T, selects V -/
-def auxBjaha : LIToken := ⟨.simple .T [.V], 206⟩
+def auxBjaha : LIToken := ⟨.simple .T [.V] (phonForm := "bjaha"), 206⟩
 
-/-- Determiner: category D, selects N -/
+/-- Determiner: category D, selects N (no independent phonForm — Bulgarian
+    uses suffixed definite articles). -/
 def detBg : LIToken := ⟨.simple .D [.N], 204⟩
 
 /-- "studentite" (the students): category N -/
-def nounStudentite : LIToken := ⟨.simple .N [], 202⟩
+def nounStudentite : LIToken := ⟨.simple .N [] (phonForm := "studentite"), 202⟩
 
 /-- "statijata" (the article): category N -/
-def nounStatijata : LIToken := ⟨.simple .N [], 203⟩
+def nounStatijata : LIToken := ⟨.simple .N [] (phonForm := "statijata"), 203⟩
 
 /-! ## Part 2: Syntactic Structure BEFORE Movement
 
@@ -268,5 +270,45 @@ theorem bulgarian_lhm_is_head_to_spec :
 theorem bulgarian_lhm_violates_hmc_positional :
     violatesHMC_positional bulgarianLHM tpAfterLHM derivedSpecPosition :=
   head_to_spec_violates_hmc_positional bulgarianLHM_h2s_positional
+
+-- ============================================================================
+-- Part 8: Derivation
+-- ============================================================================
+
+/-! ## Part 8: Step-by-step Derivation
+
+Express the tree construction as a `Derivation`, gaining `stageAt` and
+`phonYield` for free. The Movement/maximality proofs above use copy theory
+(Parts 2–7); here we use trace theory for the derivational perspective. -/
+
+/-- Bulgarian LHM as a step-by-step derivation.
+
+    Steps (bottom-up):
+    1. EM-R DPobj  → `[VP V DPobj]`
+    2. EM-L DPsubj → `[V' DPsubj [VP V DPobj]]`
+    3. EM-L T      → `[T' T [V' DPsubj [VP V DPobj]]]`
+    4. IM V        → `[TP V [T' T [V' DPsubj [VP trace DPobj]]]]` -/
+def bulgarianDerivation : Derivation :=
+  { initial := theVerb
+    steps := [
+      .emR dpStatijata,       -- [VP V DPobj]
+      .emL dpStudentite,      -- [V' DPsubj VP]
+      .emL (.leaf auxBjaha),  -- [T' T V']
+      .im theVerb 0           -- [TP V [T' T [V' DPsubj [VP trace DPobj]]]]
+    ] }
+
+/-- The derivation yields the fronted word order:
+    "Pročeli bjaha studentite statijata." -/
+theorem bulgarian_phonYield :
+    bulgarianDerivation.final.phonYield =
+      ["pročeli", "bjaha", "studentite", "statijata"] := by native_decide
+
+/-- Pre-movement tree (stage 3) equals `tBarBefore`. -/
+theorem derivation_stage3_eq_tBarBefore :
+    bulgarianDerivation.stageAt 3 = tBarBefore := by native_decide
+
+/-- The derivation has exactly one movement (V to Spec-TP). -/
+theorem bulgarian_one_movement :
+    bulgarianDerivation.movedItems.length = 1 := by native_decide
 
 end Minimalism.Phenomena.HeadMovement.BulgarianLHM

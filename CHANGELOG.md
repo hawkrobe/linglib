@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.228.5] - 2026-03-03
+
+### Changed
+- **Derivations.lean migration**: All 9 English derivations converted from manual `merge`/`SyntacticObject` to `Derivation` structures with step-by-step EM operations. Added `phonYield` verification theorems for all derivations. Updated downstream files (`Chomsky1995.lean`, `MinimalismSubcategorization.lean`) to use `.final.phonYield`.
+
+### Added
+- **BulgarianLHM derivation** (Part 8): 4-step `Derivation` (3 EM + 1 IM) with trace for Bulgarian participle fronting. Added phonForms to all LITokens. Proves `bulgarian_phonYield` ("pročeli bjaha studentite statijata"), `derivation_stage3_eq_tBarBefore` (connects derivation stage to existing tree), `bulgarian_one_movement`. Existing Movement/HMC proofs preserved unchanged.
+- **Workspace↔Derivation bridge** (`Workspace.lean`): `workspaceStageAt` (intermediate workspace state after k steps), `FullDerivation.resultTree`, `FullDerivation.agreesWithDerivation` connecting the workspace model to core `Derivation`.
+
 ## [0.228.4] - 2026-03-03
 
 ### Changed

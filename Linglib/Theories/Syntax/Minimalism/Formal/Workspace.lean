@@ -22,6 +22,7 @@ and @cite{adger-2003} Chapter 3.
 
 import Linglib.Core.Grammar
 import Linglib.Theories.Syntax.Minimalism.Core.Agree
+import Linglib.Theories.Syntax.Minimalism.Core.Derivation
 
 namespace Minimalism
 
@@ -283,7 +284,27 @@ structure FullDerivation where
 def executeSteps (n : Numeration) (steps : List DerivationStep) : Option DerivationState :=
   steps.foldlM (λ s step => applyStep s step) (DerivationState.init n)
 
--- Part 10: Example: Building "the cat"
+-- Part 10: Bridge to Core Derivation
+
+/-- Intermediate workspace state after the first `k` steps.
+
+    Analogous to `Derivation.stageAt` but for the workspace model.
+    Returns `none` if any step in the prefix fails. -/
+def workspaceStageAt (n : Numeration) (steps : List DerivationStep) (k : Nat) :
+    Option DerivationState :=
+  executeSteps n (steps.take k)
+
+/-- Extract the final syntactic object from a completed derivation. -/
+def FullDerivation.resultTree (fd : FullDerivation) : Option SyntacticObject :=
+  fd.final.workspace.getResult
+
+/-- A workspace `FullDerivation` agrees with a core `Derivation` when both
+    produce the same final tree. This connects the feature-driven workspace
+    model to the step-by-step tree-building model. -/
+def FullDerivation.agreesWithDerivation (fd : FullDerivation) (d : Derivation) : Prop :=
+  fd.resultTree = some d.final
+
+-- Part 11: Example: Building "the cat"
 
 /-- Example: Numeration for "the cat" -/
 def theCatNumeration : Numeration :=

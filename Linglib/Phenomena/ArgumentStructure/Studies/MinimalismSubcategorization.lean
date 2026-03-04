@@ -32,8 +32,8 @@ theorem models_ditransitive :
   native_decide
 
 /-- Verify the phonological yield of derivations matches expected word order -/
-example : john_sleeps.phonYield = ["John", "sleeps"] := rfl
+example : john_sleeps.final.phonYield = ["John", "sleeps"] := by native_decide
 
-example : john_devours_pizza.phonYield = ["John", "devours", "pizza"] := by native_decide
+example : john_devours_pizza.final.phonYield = ["John", "devours", "pizza"] := by native_decide
 
 end Phenomena.ArgumentStructure.Studies.MinimalismSubcategorization

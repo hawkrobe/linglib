@@ -1,5 +1,7 @@
 import Linglib.Phenomena.FillerGap.TobaBatak
 import Linglib.Theories.Syntax.Minimalism.Core.Position
+import Linglib.Theories.Syntax.Minimalism.Core.Derivation
+import Linglib.Phenomena.WordOrder.Studies.ColeHermon2008
 
 /-!
 # Minimalism Bridge: Toba Batak Extraction Restriction @cite{erlewine-2018}
@@ -159,5 +161,120 @@ theorem nonDP_unrestricted :
     ∀ v : Fragments.TobaBatak.Voice,
       predictExtraction v .adjunct = .grammatical := by
   intro v; rfl
+
+-- ============================================================================
+-- § 5: Cross-Austronesian Bridge — @cite{cole-hermon-2008}
+-- ============================================================================
+
+/-- VP-raising (@cite{cole-hermon-2008}, Toba Batak) and predicate fronting
+    (@cite{erlewine-2018}, Toba Batak) share the same core prediction:
+    the predicate phrase moves above the subject, yielding V-initial
+    surface order.
+
+    Both analyses predict:
+    1. The predicate c-commands the subject at surface structure
+    2. Only the subject (pivot) can subsequently Ā-extract
+    3. Non-DP adjuncts extract freely (not subject to Case licensing)
+
+    The key parametric difference:
+    - @cite{cole-hermon-2008}: VP moves to Spec,TP; subject stranded in Spec,vP
+    - @cite{erlewine-2018}: vP moves to Spec,CP; subject stranded in Spec,TP -/
+theorem predicate_fronting_yields_vi_order :
+    Phenomena.WordOrder.Studies.ColeHermon2008.tobaBatakVOS.final.phonYield.head?
+      = some "mangatuk" := by native_decide
+
+-- ============================================================================
+-- § 6: vP-to-Spec,CP Derivation — @cite{erlewine-2018} §4.2
+-- ============================================================================
+
+/-! ## vP-to-Spec,CP analysis
+
+@cite{erlewine-2018}'s analysis differs structurally from @cite{cole-hermon-2008}:
+- Cole & Hermon: VP → Spec,TP (5 steps: 4 EM + 1 IM)
+- Erlewine: Subj → Spec,TP **then** vP → Spec,CP (7 steps: 5 EM + 2 IM)
+
+Both derive the same VOS surface order, but the derived tree is structurally
+different: Erlewine's has an additional CP layer, and the fronted constituent
+is vP (containing a subject trace) rather than bare VP. -/
+
+open Phenomena.WordOrder.Studies.ColeHermon2008 (v_mangatuk n_biangi n_dakdanakan vp tobaBatakVOS)
+open Minimalism
+
+/-- Little v (Erlewine's analysis, unique ID). -/
+def v_head_e := mkLeaf .v [.V] 101
+
+/-- T head (Erlewine's analysis, unique ID). -/
+def t_head_e := mkLeaf .T [.v] 102
+
+/-- C head bearing [PROBE:FOC] (Erlewine's analysis, unique ID). -/
+def c_head_e := mkLeaf .C [.T] 103
+
+/-- The vP after subject extraction: `[vP tSubj [v' v [VP V Obj]]]`.
+
+    The trace marks where the subject DP originated before moving to
+    Spec,TP. -/
+def vP_traced : SyntacticObject := .node (mkTrace 0) (.node v_head_e vp)
+
+/-- Erlewine's vP-to-Spec,CP derivation for Toba Batak VOS.
+
+    Steps (bottom-up):
+    1. EM-R Obj  → `[VP V Obj]`
+    2. EM-L v    → `[v' v VP]`
+    3. EM-L Subj → `[vP Subj [v' v VP]]`
+    4. EM-L T    → `[TP T [vP Subj [v' v VP]]]`
+    5. IM Subj   → `[TP Subj [T' T [vP tSubj [v' v VP]]]]`
+    6. EM-L C    → `[CP C [TP Subj [T' T [vP tSubj [v' v VP]]]]]`
+    7. IM vP     → `[CP [vP tSubj v VP] [C' C [TP Subj [T' T tvP]]]]` -/
+def erlewineDerivation : Derivation :=
+  { initial := v_mangatuk
+    steps := [
+      .emR n_biangi,        -- [VP V Obj]
+      .emL v_head_e,        -- [v' v VP]
+      .emL n_dakdanakan,    -- [vP Subj [v' v VP]]
+      .emL t_head_e,        -- [TP T [vP Subj [v' v VP]]]
+      .im n_dakdanakan 0,   -- [TP Subj [T' T [vP tSubj [v' v VP]]]]
+      .emL c_head_e,        -- [CP C [TP Subj [T' T [vP tSubj [v' v VP]]]]]
+      .im vP_traced 1       -- [CP [vP tSubj v VP] [C' C [TP Subj [T' T tvP]]]]
+    ] }
+
+/-- Erlewine's derivation yields VOS word order. -/
+theorem erlewine_yields_vos :
+    erlewineDerivation.final.phonYield = ["mangatuk", "biangi", "dakdanakan"] := by
+  native_decide
+
+/-- Both analyses agree on VOS surface order despite different structural heights. -/
+theorem cole_erlewine_agree_on_order :
+    tobaBatakVOS.final.phonYield = erlewineDerivation.final.phonYield := by
+  native_decide
+
+/-- Erlewine has TWO movements (Subj → Spec,TP + vP → Spec,CP) vs
+    Cole & Hermon's ONE (VP → Spec,TP). -/
+theorem erlewine_two_movements :
+    erlewineDerivation.movedItems.length = 2 := by native_decide
+
+/-- Different derived structures despite the same word order. -/
+theorem different_derived_structure :
+    tobaBatakVOS.final.shape ≠ erlewineDerivation.final.shape := by decide
+
+/-- Fronted vP c-commands the subject in Erlewine's derived tree.
+
+    The fronted vP is in Spec,CP; its sister C' dominates the subject in
+    Spec,TP. This yields the same binding prediction as Cole & Hermon's
+    VP-in-Spec,TP analysis: the predicate phrase c-commands the subject. -/
+theorem vP_ccommands_subject_erlewine :
+    cCommandsIn erlewineDerivation.final vP_traced n_dakdanakan := by
+  -- Compute the final tree: [CP [vP tSubj v VP] [C' C [TP Subj [T' T tvP]]]]
+  have h_final : erlewineDerivation.final =
+    .node vP_traced (.node c_head_e (.node n_dakdanakan (.node t_head_e (mkTrace 1)))) := by
+    native_decide
+  rw [h_final]
+  -- vP_traced's sister is C', which dominates n_dakdanakan
+  exact ⟨.node c_head_e (.node n_dakdanakan (.node t_head_e (mkTrace 1))),
+         ⟨_, self_mem_subterms _, Or.inl rfl, Or.inr rfl, by decide⟩,
+         Or.inr (contains.trans _ _ _ (Or.inr rfl) (contains.imm _ _ (Or.inl rfl)))⟩
+
+/-- Same VP base in both analyses (stage after first merge). -/
+theorem same_vp :
+    tobaBatakVOS.stageAt 1 = erlewineDerivation.stageAt 1 := by native_decide
 
 end Phenomena.FillerGap.Studies.Erlewine2018

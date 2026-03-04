@@ -19,6 +19,6 @@ theorem models_svo_word_order :
   native_decide
 
 /-- Verify the phonological yield of a derivation matches expected word order -/
-example : john_sees_mary.phonYield = ["John", "sees", "Mary"] := rfl
+example : john_sees_mary.final.phonYield = ["John", "sees", "Mary"] := by native_decide
 
 end Phenomena.WordOrder.Studies.Chomsky1995
