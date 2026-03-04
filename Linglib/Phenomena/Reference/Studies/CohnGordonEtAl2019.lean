@@ -1,6 +1,5 @@
 import Linglib.Tactics.RSAPredict
 import Linglib.Theories.Pragmatics.RSA.Core.Config
-import Mathlib.Analysis.SpecialFunctions.Pow.Real
 
 /-!
 # @cite{cohn-gordon-goodman-potts-2019} — Incremental Iterated Response Model
@@ -15,19 +14,17 @@ The incremental RSA model extends the standard RSA framework to word-by-word
 production. The speaker produces referring expressions incrementally, choosing
 each word to maximize the listener's posterior probability for the target:
 
-  S1^inc(wₖ | [w₁,...,wₖ₋₁], r) ∝ L0(r | w₁,...,wₖ)^α
+  S1^WORD(wₖ | [w₁,...,wₖ₋₁], r) ∝ L0(r | w₁,...,wₖ)^α
 
 The full utterance probability factors via the chain rule:
 
-  S1(w₁,...,wₙ | r) = ∏ₖ S1^inc(wₖ | [w₁,...,wₖ₋₁], r)
+  S1^UTT-IP(w₁,...,wₙ | r) = ∏ₖ S1^WORD(wₖ | [w₁,...,wₖ₋₁], r)
 
-L0 uses continuous/noisy semantics (@cite{degen-etal-2020}) where each word
-applies with reliability v (correct application) or 1 − v (noise).
+L0 uses **extension-based incremental semantics** (§2.2): given prefix c,
 
-**Key property**: With strictly positive noisy semantics, L0 is
-order-independent — the posterior after hearing all words is the same
-regardless of production order (commutativity of ℝ multiplication). Therefore
-the trajectory score comparison reduces to first-word informativity.
+  ⟦c⟧(w) = |{u ∈ U : c ⊑ u ∧ ⟦u⟧(w) = 1}| / |{u ∈ U : c ⊑ u ∧ ∃w'. ⟦u⟧(w') = 1}|
+
+where U is the set of complete utterances and ⊑ is the prefix relation.
 
 ## Formalization
 
@@ -36,117 +33,102 @@ This is the first formalization to use `RSAConfig`'s sequential infrastructure:
 - `Ctx = List Word` — the prefix produced so far
 - `transition ctx w = ctx ++ [w]` — append the new word
 - `initial = []` — start with empty prefix
-- `meaning ctx _ w r = ∏_{w' ∈ ctx ++ [w]} noisyWordMeaning(w', r)`
+- `meaning ctx _ w r` = extension-based incremental semantics of `ctx ++ [w]`
 
-Predictions are stated as `trajectoryProb` comparisons, proved via
-`rsa_predict`'s generic reflection path.
+The domain is Figure 1 from the paper: 3 referents (red dress, blue dress,
+red hat), 3 words (red, dress, object), 3 complete utterances (dress,
+red dress, red object). Costs are 0 for all words.
 
 ## Findings
 
 | # | Finding | Status |
 |---|---------|--------|
-| 1 | Color-first preferred when color more reliable | `rsa_predict` |
-| 2 | L0 is order-independent (commutative product) | `cases r <;> rsa_predict` |
-| 3 | Both orderings identify the target | `cases r` + `rsa_predict` |
-
-## Note on Parameters
-
-The paper uses uniform referent priors and a general Bayesian update
-framework. Our formalization uses simplified noisy semantics with reliability
-parameters. The specific values (colorRel = 9/10, shapeRel = 4/5) demonstrate
-the qualitative prediction — they are not taken from the paper.
+| 1 | Adjective-first preferred for target R1 (Figure 1c) | `rsa_predict` |
+| 2 | Noun preferred after adjective for R1 (Figure 1c) | `rsa_predict` |
+| 3 | R2 must start with "dress" (Figure 1c) | `rsa_predict` |
+| 4 | R3 must start with "red" (Figure 1c) | `rsa_predict` |
+| 5 | Uniform fallback after "red" for R2 (§2.2) | `cases w <;> rsa_predict` |
+| 6 | L1 anticipatory implicature: "red" → R3 (Figure 1d) | `rsa_predict` |
+| 7 | Incremental model prefers bare noun over modified NP (Figure 1e) | `rsa_predict` |
 -/
 
 set_option autoImplicit false
 
 namespace Phenomena.Reference.Studies.CohnGordonEtAl2019
 
-open RSA Real
+open RSA
 
 -- ============================================================================
--- §1. Domain Types
+-- §1. Domain Types (Figure 1a)
 -- ============================================================================
 
-/-- Words available to the incremental speaker. -/
+/-- Words available to the incremental speaker (Figure 1a). -/
 inductive Word where
-  | blue | green | circle | square
-  deriving DecidableEq, Fintype, Repr
+  | red | dress | object
+  deriving DecidableEq, Fintype, BEq, Repr
 
-/-- Referents in the reference game scene.
+/-- Referents in the reference game scene (Figure 1a).
 
-    Scene: {blue circle, green circle, blue square}
-
-    "blue" applies to 2/3 objects; "circle" applies to 2/3 objects.
-    Both dimensions discriminate equally at the coarse level — the
-    reliability parameter breaks the tie. -/
+    Scene: {red dress (R1), blue dress (R2), red hat (R3)} -/
 inductive Referent where
-  | blueCircle | greenCircle | blueSquare
+  | redDress | blueDress | redHat
   deriving DecidableEq, Fintype, Repr
 
 -- ============================================================================
--- §2. Noisy Semantics
+-- §2. Boolean Semantics
 -- ============================================================================
 
 /-- Whether a word is veridically true of a referent. -/
 def wordApplies : Word → Referent → Bool
-  | .blue,   .blueCircle  => true
-  | .blue,   .blueSquare  => true
-  | .green,  .greenCircle => true
-  | .circle, .blueCircle  => true
-  | .circle, .greenCircle => true
-  | .square, .blueSquare  => true
-  | _,       _            => false
+  | .red,    .redDress  => true
+  | .red,    .redHat    => true
+  | .dress,  .redDress  => true
+  | .dress,  .blueDress => true
+  | .object, _          => true
+  | _,       _          => false
 
-/-- Perceptual reliability for color adjectives. -/
-noncomputable def colorRel : ℝ := 9 / 10
+/-- The three complete utterances in the scene (Figure 1a):
+    "dress", "red dress", "red object". -/
+def completeUtterances : List (List Word) :=
+  [[.dress], [.red, .dress], [.red, .object]]
 
-/-- Perceptual reliability for shape nouns. Lower than color. -/
-noncomputable def shapeRel : ℝ := 4 / 5
-
-/-- Noisy word meaning: P(word correctly applies to referent).
-    Returns reliability v if the word is true of the referent,
-    noise floor 1 − v otherwise.
-    Simplified from @cite{degen-etal-2020}'s continuous semantics. -/
-noncomputable def noisyWordMeaning (w : Word) (r : Referent) : ℝ :=
-  let v := match w with
-    | .blue | .green => colorRel
-    | .circle | .square => shapeRel
-  if wordApplies w r then v else 1 - v
-
-private theorem noisyWordMeaning_nonneg (w : Word) (r : Referent) :
-    0 ≤ noisyWordMeaning w r := by
-  unfold noisyWordMeaning
-  cases w <;> cases r <;> simp [wordApplies, colorRel, shapeRel] <;> norm_num
+/-- Utterance-level Boolean semantics: conjunction of word applicability. -/
+def uttSem (utt : List Word) (r : Referent) : Bool :=
+  utt.all (fun w => wordApplies w r)
 
 -- ============================================================================
--- §3. Meaning Function
+-- §3. Extension-Based Incremental Semantics (§2.2)
 -- ============================================================================
 
-/-- Incremental meaning: product of noisy word meanings over the full prefix.
+/-- Whether `pfx` is a prefix of `utt`. -/
+def listIsPrefixOf : List Word → List Word → Bool
+  | [], _ => true
+  | _ :: _, [] => false
+  | x :: xs, y :: ys => x == y && listIsPrefixOf xs ys
 
-    meaning(ctx, _, nextWord, r) = ∏_{w' ∈ ctx ++ [nextWord]} noisyWordMeaning(w', r)
+/-- Count of complete utterance extensions of `pfx` that are true of `r`. -/
+def trueExtCount (pfx : List Word) (r : Referent) : ℕ :=
+  (completeUtterances.filter (fun u =>
+    listIsPrefixOf pfx u && uttSem u r)).length
 
-    This encodes the incremental L0 belief update: after hearing the prefix
-    plus the next word, L0's posterior over referents is proportional to this
-    product (with uniform prior). -/
-noncomputable def prefixMeaning
-    (ctx : List Word) (_ : Unit) (w : Word) (r : Referent) : ℝ :=
-  (ctx ++ [w]).foldl (λ acc w' => acc * noisyWordMeaning w' r) 1
+/-- Count of viable extensions: complete utterances extending `pfx` that are
+    true of at least one referent. -/
+def viableExtCount (pfx : List Word) : ℕ :=
+  (completeUtterances.filter (fun u =>
+    listIsPrefixOf pfx u &&
+    ([Referent.redDress, .blueDress, .redHat].any (fun r => uttSem u r)))).length
 
-private theorem foldl_nonneg (ws : List Word) (r : Referent)
-    (init : ℝ) (hinit : 0 ≤ init) :
-    0 ≤ ws.foldl (λ acc w' => acc * noisyWordMeaning w' r) init := by
-  induction ws generalizing init with
-  | nil => exact hinit
-  | cons w ws ih =>
-    simp only [List.foldl]
-    exact ih _ (mul_nonneg hinit (noisyWordMeaning_nonneg w r))
+/-- Extension-based incremental semantics (§2.2):
+
+    ⟦pfx⟧(r) = trueExtCount(pfx, r) / viableExtCount(pfx) -/
+noncomputable def incrementalSem (pfx : List Word) (r : Referent) : ℝ :=
+  (trueExtCount pfx r : ℝ) / (viableExtCount pfx : ℝ)
 
 -- ============================================================================
 -- §4. RSAConfig
 -- ============================================================================
 
-/-- Incremental RSA for a reference game with noisy semantics.
+/-- Incremental RSA for the Figure 1 reference game.
 
     This is the first `RSAConfig` to use the sequential infrastructure
     (`Ctx`, `transition`, `initial`). The model produces referring expressions
@@ -158,15 +140,13 @@ private theorem foldl_nonneg (ws : List Word) (r : Referent)
     - S1_at(ctx): speaker choosing next word given prefix ctx
     - trajectoryProb: chain-rule product of S1_at probabilities
 
-    Parameters: α = 1, colorRel = 9/10, shapeRel = 4/5, uniform priors. -/
+    Parameters: α = 1, cost = 0 for all words, uniform priors. -/
 noncomputable def incRSA : RSAConfig Word Referent where
   Ctx := List Word
-  meaning := prefixMeaning
-  meaning_nonneg ctx _ u w := by
-    unfold prefixMeaning
-    exact foldl_nonneg _ w _ zero_le_one
-  s1Score l0 α _ w u := rpow (l0 u w) α
-  s1Score_nonneg _ _ _ _ _ hl _ := rpow_nonneg (hl _ _) _
+  meaning ctx _ u w := incrementalSem (ctx ++ [u]) w
+  meaning_nonneg _ _ _ _ := div_nonneg (Nat.cast_nonneg _) (Nat.cast_nonneg _)
+  s1Score l0 _ _ w u := l0 u w
+  s1Score_nonneg _ _ _ _ _ hl _ := hl _ _
   α := 1
   α_pos := one_pos
   transition ctx w := ctx ++ [w]
@@ -180,72 +160,128 @@ noncomputable def incRSA : RSAConfig Word Referent where
 
 /-- Qualitative findings from the incremental RSA model. -/
 inductive Finding where
-  /-- When color is more perceptually reliable than shape, the incremental
-      speaker prefers the color adjective first. -/
-  | color_first_when_more_reliable
-  /-- L0 is order-independent: the posterior after both words is the same
-      regardless of production order. -/
-  | l0_order_independent
-  /-- After hearing both adjectives, L0 assigns highest probability to the
-      target (blueCircle) in the scene. -/
-  | both_words_identify_target
+  /-- The incremental speaker prefers the adjective "red" first when
+      referring to the target R1 (red dress). -/
+  | adj_first_for_target
+  /-- After producing "red", the speaker prefers the type noun "dress"
+      over the generic "object". -/
+  | noun_after_adj
+  /-- For R2 (blue dress), the speaker must start with "dress" —
+      "red" has zero incremental semantics for R2. -/
+  | noun_only_for_r2
+  /-- For R3 (red hat), the speaker must start with "red" —
+      "dress" has zero incremental semantics for R3. -/
+  | adj_only_for_r3
+  /-- After "red" for R2, no extension is true — the speaker is
+      indifferent between "dress" and "object" (uniform fallback). -/
+  | uniform_after_red_for_r2
+  /-- After hearing "red", L1 infers the target is more likely R3
+      (red hat) than R1 (red dress) — an anticipatory implicature. -/
+  | listener_anticipation
+  /-- At the utterance level, the incremental model assigns higher
+      probability to "dress" than to "red dress" for R1 — diverging
+      from the global model which prefers "red dress". -/
+  | incremental_prefers_bare_noun
   deriving DecidableEq, BEq, Repr
 
 -- ============================================================================
 -- §6. Predictions
 -- ============================================================================
 
-/-- **Finding 1**: When color is more perceptually reliable than shape
-    (colorRel = 9/10 > shapeRel = 4/5), the incremental speaker prefers
-    to produce the color adjective first.
+-- ---------- Figure 1c: S1^WORD incremental speaker ----------
 
-    Mechanism: Both "blue" and "circle" narrow the referent set from 3 to 2
-    objects, but "blue" has higher reliability, giving it a higher L0
-    posterior for the target after one word:
+/-- **Finding 1** (Figure 1c): The incremental speaker prefers "red" first
+    when referring to R1 (red dress).
 
-      L0(blueCircle | blue) = (9/10) / (9/10 + 1) ≈ 0.474
-      L0(blueCircle | circle) = (4/5) / (4/5 + 1) ≈ 0.444
+    S1(red | [], R1) = 4/7 ≈ 0.57 > S1(dress | [], R1) = 3/7 ≈ 0.43
 
-    Since L0 is order-independent, the trajectory scores differ only in
-    their first factor, favoring blue-first.
-
-    Proved via `rsa_predict`: generic reflection unfolds both trajectory
-    expressions to product-of-policies, reifies to RExpr, checks ℚ interval
-    separation. -/
-set_option maxHeartbeats 800000 in
-theorem color_first_preferred :
-    incRSA.trajectoryProb () .blueCircle [.blue, .circle] >
-    incRSA.trajectoryProb () .blueCircle [.circle, .blue] := by
+    Mechanism: "red" narrows the extension set to {red dress, red object},
+    both true of R1 (trueExtCount = 2, viableExtCount = 2 → meaning = 1).
+    "dress" narrows to {dress}, true of R1 (meaning = 1) but the L0
+    posterior for R1 is lower because "dress" also applies to R2. -/
+theorem adj_first_for_target :
+    incRSA.S1_at ([] : List Word) () .redDress .red >
+    incRSA.S1_at ([] : List Word) () .redDress .dress := by
   rsa_predict
 
-/-- **Finding 2**: L0 is order-independent — the posterior after hearing
-    both words is the same regardless of order.
+/-- **Finding 2** (Figure 1c): After producing "red", the speaker prefers
+    "dress" over "object" for R1.
 
-    This follows from commutativity of ℝ multiplication: both the numerator
-    (product of word meanings for one referent) and each summand of the
-    denominator are commutative products.
+    S1(dress | [red], R1) = 2/3 ≈ 0.67 > S1(object | [red], R1) = 1/3 ≈ 0.33
 
-    Proved by case-splitting on `r` (3 concrete referents), then `rsa_predict`
-    evaluates each equality via exact ℚ computation. -/
-theorem l0_order_independent (r : Referent) :
-    (incRSA.L0agent_at [.blue] ()).policy .circle r =
-    (incRSA.L0agent_at [.circle] ()).policy .blue r := by
-  cases r <;> rsa_predict
+    "red dress" uniquely identifies R1 (only R1 is a red dress), while
+    "red object" is ambiguous between R1 and R3. -/
+theorem noun_after_adj :
+    incRSA.S1_at ([Word.red] : List Word) () .redDress .dress >
+    incRSA.S1_at ([Word.red] : List Word) () .redDress .object := by
+  rsa_predict
 
-/-- **Finding 3**: After hearing both adjectives, L0 assigns the highest
-    probability to blueCircle (the target).
+/-- **Finding 3** (Figure 1c): For R2 (blue dress), the speaker must start
+    with "dress" — "red" never applies to R2 (it's a blue dress), so all
+    extensions of "red" have zero semantics for R2.
 
-    "blue circle" uniquely identifies blueCircle: only blueCircle has
-    both high color-match and high shape-match scores.
+    S1(dress | [], R2) > S1(red | [], R2) -/
+theorem noun_only_for_r2 :
+    incRSA.S1_at ([] : List Word) () .blueDress .dress >
+    incRSA.S1_at ([] : List Word) () .blueDress .red := by
+  rsa_predict
 
-    Proved by case-splitting on `r`: the `.blueCircle` case contradicts `hr`,
-    and the remaining 2 cases are concrete GT goals handled by `rsa_predict`. -/
-theorem both_words_identify_target (r : Referent) (hr : r ≠ .blueCircle) :
-    (incRSA.L0agent_at [.blue] ()).policy .circle .blueCircle >
-    (incRSA.L0agent_at [.blue] ()).policy .circle r := by
-  cases r with
-  | blueCircle => exact absurd rfl hr
+/-- **Finding 4** (Figure 1c): For R3 (red hat), the speaker must start
+    with "red" — "dress" never applies to R3 (it's a hat), so the only
+    extension of "dress" (= "dress" itself) has zero semantics for R3.
+
+    S1(red | [], R3) > S1(dress | [], R3) -/
+theorem adj_only_for_r3 :
+    incRSA.S1_at ([] : List Word) () .redHat .red >
+    incRSA.S1_at ([] : List Word) () .redHat .dress := by
+  rsa_predict
+
+/-- **Finding 5** (§2.2, uniform fallback): After "red" for R2, no complete
+    utterance extension of "red" is true of R2 (blue dress). The paper
+    states: "probability is evenly distributed over all choices of word."
+
+    S1(dress | [red], R2) = S1(object | [red], R2)
+
+    Both equal 1/2 because the meaning function returns 0 for all R2
+    extensions of "red", yielding uniform L0 → uniform S1. -/
+theorem uniform_after_red_for_r2 (w : Word) (hw : w ≠ .red) :
+    incRSA.S1_at ([Word.red] : List Word) () .blueDress .dress =
+    incRSA.S1_at ([Word.red] : List Word) () .blueDress w := by
+  cases w with
+  | red => exact absurd rfl hw
   | _ => rsa_predict
+
+-- ---------- Figure 1d: L1^WORD pragmatic listener ----------
+
+/-- **Finding 6** (Figure 1d): After hearing "red", the pragmatic listener L1
+    infers that the target is more likely R3 (red hat) than R1 (red dress).
+
+    L1(R3 | red) = 7/11 ≈ 0.64 > L1(R1 | red) = 4/11 ≈ 0.36
+
+    This is an anticipatory implicature: "red" is the ONLY word available
+    for R3 (S1(red|[],R3) = 1), so hearing "red" raises R3's probability.
+    For R1, the speaker could have said "dress" instead, so "red" is less
+    diagnostic. This foreshadows @cite{sedivy-etal-1999}'s finding that
+    listeners draw contrastive inferences from prenominal adjectives. -/
+theorem listener_anticipation :
+    incRSA.L1 .red .redHat > incRSA.L1 .red .redDress := by
+  rsa_predict
+
+-- ---------- Figure 1e: S1^UTT-IP utterance-level ----------
+
+/-- **Finding 7** (Figure 1e): The incremental model prefers "dress" over
+    "red dress" for R1 — the key divergence from the global RSA model.
+
+    S1^UTT-IP(dress | R1) = 3/7 ≈ 0.43 > S1^UTT-IP(red dress | R1) = 8/21 ≈ 0.38
+
+    The global model prefers "red dress" (more informative). The incremental
+    model prefers "dress" because it is produced in one step with probability
+    3/7, while "red dress" requires two steps: S1(red|[],R1) · S1(dress|[red],R1)
+    = 4/7 · 2/3 = 8/21 < 9/21 = 3/7. -/
+theorem incremental_prefers_bare_noun :
+    incRSA.trajectoryProb () .redDress [.dress] >
+    incRSA.trajectoryProb () .redDress [.red, .dress] := by
+  rsa_predict
 
 -- ============================================================================
 -- §7. Verification
@@ -253,22 +289,37 @@ theorem both_words_identify_target (r : Referent) (hr : r ≠ .blueCircle) :
 
 /-- Map each finding to the model prediction that accounts for it. -/
 def formalize : Finding → Prop
-  | .color_first_when_more_reliable =>
-      incRSA.trajectoryProb () .blueCircle [.blue, .circle] >
-      incRSA.trajectoryProb () .blueCircle [.circle, .blue]
-  | .l0_order_independent =>
-      ∀ r, (incRSA.L0agent_at [.blue] ()).policy .circle r =
-           (incRSA.L0agent_at [.circle] ()).policy .blue r
-  | .both_words_identify_target =>
-      ∀ r, r ≠ .blueCircle →
-        (incRSA.L0agent_at [.blue] ()).policy .circle .blueCircle >
-        (incRSA.L0agent_at [.blue] ()).policy .circle r
+  | .adj_first_for_target =>
+      incRSA.S1_at ([] : List Word) () .redDress .red >
+      incRSA.S1_at ([] : List Word) () .redDress .dress
+  | .noun_after_adj =>
+      incRSA.S1_at ([Word.red] : List Word) () .redDress .dress >
+      incRSA.S1_at ([Word.red] : List Word) () .redDress .object
+  | .noun_only_for_r2 =>
+      incRSA.S1_at ([] : List Word) () .blueDress .dress >
+      incRSA.S1_at ([] : List Word) () .blueDress .red
+  | .adj_only_for_r3 =>
+      incRSA.S1_at ([] : List Word) () .redHat .red >
+      incRSA.S1_at ([] : List Word) () .redHat .dress
+  | .uniform_after_red_for_r2 =>
+      ∀ w, w ≠ .red →
+        incRSA.S1_at ([Word.red] : List Word) () .blueDress .dress =
+        incRSA.S1_at ([Word.red] : List Word) () .blueDress w
+  | .listener_anticipation =>
+      incRSA.L1 .red .redHat > incRSA.L1 .red .redDress
+  | .incremental_prefers_bare_noun =>
+      incRSA.trajectoryProb () .redDress [.dress] >
+      incRSA.trajectoryProb () .redDress [.red, .dress]
 
-/-- All 3 findings verified (pending tactic extension). -/
+/-- All 7 findings verified. -/
 theorem all_findings_verified : ∀ f : Finding, formalize f := by
   intro f; cases f
-  · exact color_first_preferred
-  · exact l0_order_independent
-  · exact fun r hr => both_words_identify_target r hr
+  · exact adj_first_for_target
+  · exact noun_after_adj
+  · exact noun_only_for_r2
+  · exact adj_only_for_r3
+  · exact fun w hw => uniform_after_red_for_r2 w hw
+  · exact listener_anticipation
+  · exact incremental_prefers_bare_noun
 
 end Phenomena.Reference.Studies.CohnGordonEtAl2019

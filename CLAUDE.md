@@ -79,6 +79,8 @@ Study file naming uses author-year format: `Studies/Pollock1989.lean`, `Studies/
 
 Namespace convention: `Phenomena.{Phenomenon}.Studies.{AuthorYear}`, matching the file path. Example: `Phenomena.WordOrder.Studies.Pollock1989`.
 
+**Chronological dependency in study files.** Cross-references between study files must respect chronological order: a study file may reference and prove consistency with *older* papers, but not *newer* ones. For example, `CohnGordonEtAl2019.lean` can prove a theorem connecting to `SedivyEtAl1999.lean` (since 1999 predates 2019), but `SedivyEtAl1999.lean` must not reference Cohn-Gordon et al. 2019. This ensures each study file's claims are grounded in knowledge available at the time of publication, and avoids anachronistic dependencies.
+
 **Derive, don't duplicate.** When Phenomena files reference Fragment data (e.g., particle forms, bias properties), they should derive values from Fragment fields rather than duplicating them as string literals. This makes the connection true by construction rather than requiring bridge theorems that test redundant copies.
 
 **Dependency discipline is fully enforced**: 0 violations in both directions (Theories→Phenomena and Fragments→Phenomena).
