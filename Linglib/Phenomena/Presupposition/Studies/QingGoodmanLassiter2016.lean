@@ -63,7 +63,6 @@ Qing/Warstadt argue "common ground" is appropriate because:
 -/
 
 import Linglib.Theories.Pragmatics.RSA.Implementations.QingEtAl2016
-import Linglib.Theories.Pragmatics.RSA.Implementations.ScontrasTonhauser2025
 import Linglib.Phenomena.Presupposition.Studies.Warstadt2022
 import Linglib.Theories.Semantics.Dynamic.State
 

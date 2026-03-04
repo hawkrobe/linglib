@@ -1151,7 +1151,6 @@ import Linglib.Theories.Pragmatics.RSA.Implementations.HawkinsGweonGoodman2021
 import Linglib.Phenomena.Gradability.Studies.Nouwen2024RSA
 
 import Linglib.Theories.Pragmatics.RSA.Implementations.QingEtAl2016
-import Linglib.Theories.Pragmatics.RSA.Implementations.ScontrasTonhauser2025
 import Linglib.Theories.Pragmatics.RSA.Implementations.ScopeFreezing
 import Linglib.Theories.Pragmatics.RSA.Implementations.SumersEtAl2023
 import Linglib.Theories.Pragmatics.RSA.Implementations.TesslerFranke2020
