@@ -302,4 +302,25 @@ def mkRatExpr (q : ℚ) : MetaM Expr := do
     let denExpr ← mkAppOptM ``Nat.cast #[mkConst ``Rat, none, mkRawNatLit q.den]
     mkAppM ``HDiv.hDiv #[numExpr, denExpr]
 
+-- ============================================================================
+-- Native Bool Evaluation
+-- ============================================================================
+
+/-- Evaluate a closed `Bool` expression via native code compilation.
+    Returns `some true` or `some false` on success, `none` if compilation fails
+    (e.g., expression has free variables or references uncompiled defs).
+
+    This is much faster than `whnf` for complex Bool computations (e.g.,
+    Innocent Exclusion exhaustification) because it bypasses the kernel
+    reducer's `maxRecDepth` limit and runs compiled code. -/
+private unsafe def tryEvalBoolUnsafe (e : Expr) : MetaM (Option Bool) := do
+  try
+    let result ← evalExpr Bool (mkConst ``Bool) e
+    return some result
+  catch _ =>
+    return none
+
+@[implemented_by tryEvalBoolUnsafe]
+opaque tryEvalBool (e : Expr) : MetaM (Option Bool)
+
 end Linglib.Tactics.RSAPredict

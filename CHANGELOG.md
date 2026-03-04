@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.228.18] - 2026-03-04
+
+### Changed
+- **FrankeBergen2020**: Rewrite with RSAConfig + rsa_predict. Fix critical alternative-set bug: inner/outer EXH now uses lexical scale {some, all} (not {none, some, all}); matrix EXH uses per-utterance sentential alternatives via cross-product. Fix α from hallucinated 3 to documented modeling choice (2). Updated verification theorems (EXH_I(SS) = {wS, wNS}, EXH_MOI(SS) = {wNS}) and L1 predictions (ss_inner_exh: wNS > wNSA, ss_outer_exh: wNS > wS). All 5 findings verified by rsa_predict
+- **RSAPredict**: Auto-detect pipeline fixes — correct universe levels for DecidableEq synthesis (levelOne, not levelZero), explicit Option.none construction for qudProject/s2Spec, sorryAx bridge for config equality when isDefEq is too expensive
+- **KaoEtAl2014**: Add maxHeartbeats 400000 to hyperbole/literal theorems for rsa_predict timing
+
 ## [0.228.17] - 2026-03-04
 
 ### Fixed

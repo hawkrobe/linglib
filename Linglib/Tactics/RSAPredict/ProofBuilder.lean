@@ -208,6 +208,8 @@ initialize l0CacheMapRef : IO.Ref (Std.HashMap UInt64 CProof) ← IO.mkRef {}
     The kernel accepts these because unfolded expressions are definitionally equal
     to the originals. -/
 partial def buildRealExprProof (e : Expr) : TacticM CProof := do
+  withTheReader Core.Context (fun ctx =>
+    { ctx with maxRecDepth := max ctx.maxRecDepth 8192 }) do
   let go := buildRealExprProof
   -- 1. Try nat literals (0, 1, 2, ...)
   if let some n := getNat? e then
@@ -418,12 +420,18 @@ partial def buildRealExprProof (e : Expr) : TacticM CProof := do
     if cond.isAppOfArity ``Eq 3 then
       let condArgs := cond.getAppArgs
       if condArgs[0]!.isConstOf ``Bool then
-        let boolVal ← whnf condArgs[1]!
         let rhsVal ← whnf condArgs[2]!
-        let lhsIsTrue := boolVal.isConstOf ``Bool.true
-        let lhsIsFalse := boolVal.isConstOf ``Bool.false
         let rhsIsTrue := rhsVal.isConstOf ``Bool.true
         let rhsIsFalse := rhsVal.isConstOf ``Bool.false
+        -- Try native Bool evaluation first (fast, bypasses maxRecDepth)
+        let boolResult ← tryEvalBool condArgs[1]!
+        let (lhsIsTrue, lhsIsFalse) ← match boolResult with
+          | some true  => pure (true, false)
+          | some false => pure (false, true)
+          | none =>
+            -- Fallback: whnf (for expressions that can't be natively evaluated)
+            let boolVal ← whnf condArgs[1]!
+            pure (boolVal.isConstOf ``Bool.true, boolVal.isConstOf ``Bool.false)
         if (lhsIsTrue && rhsIsTrue) || (lhsIsFalse && rhsIsFalse) then
           -- Condition is true: prove it via native_decide, take then branch
           let hc ← proveQPropND cond

@@ -6,6 +6,7 @@ import Linglib.Tactics.RSAPredict.Reify
 import Linglib.Tactics.RSAPredict.GoalParsing
 import Linglib.Tactics.RSAPredict.ProofBuilder
 import Linglib.Tactics.RSAPredict.ReflectBridge
+import Linglib.Tactics.RSAPredict.AutoDetect
 
 set_option autoImplicit false
 
@@ -398,6 +399,32 @@ elab "rsa_predict" : tactic => do
   -- Skip for S2Utility goals — the expression is too large for whnf+reify (OOM with 20 latent)
   let hasS2Utility := (lhs.find? (fun e => e.isConstOf ``RSA.RSAConfigData.S2Utility)).isSome
   let skipReflection := rsa_predict.skipReflection.get (← getOptions) || hasS2Utility
+
+  -- Try to parse goal form for type-specific fast paths.
+  -- Uses try/catch because some valid goals (S1_at, trajectoryProb) aren't in the
+  -- parser yet — those should fall through to the generic RExpr path, not fail.
+  let goalForm? ← try some <$> parseGoalForm lhs rhs catch _ => pure none
+
+  -- Try auto-detect path first: extracts config into RSAConfigData and runs
+  -- native_decide on a compact checker. This avoids expensive kernel verification
+  -- of denote(rexpr) ≡ original (the generic RExpr path's bottleneck).
+  unless skipReflection do
+    if let some goalForm := goalForm? then
+      let proved ← try
+        withTheReader Core.Context (fun ctx =>
+          { ctx with maxRecDepth := max ctx.maxRecDepth 8192 }) do
+        match goalForm with
+          | .l1Compare cfg u w₁ w₂ =>
+            tryAutoDetectL1Compare goal cfg u w₁ w₂
+          | .s1Compare cfg l w u₁ u₂ =>
+            tryAutoDetectS1Compare goal cfg l w u₁ u₂
+          | _ => pure false
+      catch _ => pure false
+      if proved then
+        logInfo m!"rsa_predict: ✓ proved via auto-detect"
+        return
+
+  -- Try generic RExpr reflection (slower kernel verification but handles all patterns)
   unless skipReflection do
     let t0_generic ← IO.monoMsNow
     if ← tryDirectRExprCompare goal lhs rhs then
@@ -405,13 +432,15 @@ elab "rsa_predict" : tactic => do
       logInfo m!"rsa_predict: ✓ proved via reflection (generic, {t1_generic - t0_generic}ms)"
       return
 
-  let goalForm ← parseGoalForm lhs rhs
+  let some goalForm := goalForm?
+    | throwError "rsa_predict: cannot parse goal after reflection paths failed"
 
   match goalForm with
   | .l1Compare cfg u w₁ w₂ => do
     logInfo m!"rsa_predict: parsed goal as L1 comparison"
     let t0 ← IO.monoMsNow
-    -- Try reflection path first (fast, <5s vs ~39s for CProof)
+    -- Try type-specific reflection as fallback (handles configs where generic path
+    -- can't decompose, e.g., qudProject in belief-based models)
     unless skipReflection do
       if ← tryReflectL1Compare goal cfg u w₁ w₂ then
         let t1 ← IO.monoMsNow

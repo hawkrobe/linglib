@@ -195,6 +195,11 @@ private def cacheReturn (cache : ReifyCache) (key : UInt64)
     Uses a hash-keyed cache to avoid redundant reification of shared subexpressions. -/
 partial def reifyToRExpr (cache : ReifyCache) (e : Expr) (depth : ℕ) :
     MetaM (Expr × MetaBounds) := do
+  -- Increase maxRecDepth for whnf calls inside the reifier.
+  -- Complex meaning functions (e.g., Innocent Exclusion exhaustification) can
+  -- require deep kernel reduction during Finset.sum unfolding.
+  withTheReader Core.Context (fun ctx =>
+    { ctx with maxRecDepth := max ctx.maxRecDepth 8192 }) do
   if depth == 0 then
     throwError "rsa_predict: max reification depth on: {← ppExpr e}"
 
@@ -401,14 +406,22 @@ partial def reifyToRExpr (cache : ReifyCache) (e : Expr) (depth : ℕ) :
                       else ⟨min bt.lo be.lo, max bt.hi be.hi⟩
         return ← cacheReturn cache key (rexpr, bounds)
       -- Bool condition: ite ((expr) = true) or ite ((expr) = false)
-      -- Transparent: whnf resolves the Bool condition
+      -- Try native evaluation first (fast, bypasses maxRecDepth), then whnf fallback
       if cArgs[0]!.isConstOf ``Bool then
-        let boolVal ← whnf cArgs[1]!
         let rhsVal ← whnf cArgs[2]!
-        let lhsIsTrue := boolVal.isConstOf ``Bool.true
-        let lhsIsFalse := boolVal.isConstOf ``Bool.false
         let rhsIsTrue := rhsVal.isConstOf ``Bool.true
         let rhsIsFalse := rhsVal.isConstOf ``Bool.false
+        -- Try native Bool evaluation (handles complex meaning functions like IE)
+        if let some boolResult ← tryEvalBool cArgs[1]! then
+          let lhsMatchesRhs := (boolResult && rhsIsTrue) || (!boolResult && rhsIsFalse)
+          if lhsMatchesRhs then
+            return ← reifyToRExpr cache thenBr (depth - 1)
+          else
+            return ← reifyToRExpr cache elseBr (depth - 1)
+        -- Fallback: whnf (for expressions that can't be natively evaluated)
+        let boolVal ← whnf cArgs[1]!
+        let lhsIsTrue := boolVal.isConstOf ``Bool.true
+        let lhsIsFalse := boolVal.isConstOf ``Bool.false
         if (lhsIsTrue && rhsIsTrue) || (lhsIsFalse && rhsIsFalse) then
           return ← reifyToRExpr cache thenBr (depth - 1)
         else if (lhsIsTrue && rhsIsFalse) || (lhsIsFalse && rhsIsTrue) then
@@ -444,8 +457,34 @@ partial def reifyToRExpr (cache : ReifyCache) (e : Expr) (depth : ℕ) :
                       else ⟨min bt.lo be.lo, max bt.hi be.hi⟩
         return ← cacheReturn cache key (rexpr, bounds)
 
-  -- Fast-path for summation forms (transparent — whnf)
+  -- Structural sum unfolding: Finset.sum Finset.univ f
+  -- Enumerate elements via getFiniteElems and apply f to each, avoiding whnf
+  -- on the summands (which would eagerly evaluate complex meaning functions).
   let fnName := fn.constName?
+  if fnName == some ``Finset.sum && args.size ≥ 6 then
+    let fBody := args[5]!
+    -- Check if the finset is Finset.univ
+    let finsetExpr := args[4]!
+    let finsetFn := finsetExpr.getAppFn
+    if finsetFn.isConstOf ``Finset.univ then
+      let T := args[0]!
+      if let some (_, elems) ← try? (getFiniteElems T) then
+        if elems.size > 0 then
+          -- Apply f to each element and reify
+          let firstApp := Expr.app fBody elems[0]!
+          let firstResult ← reifyToRExpr cache firstApp.headBeta (depth - 1)
+          let mut accRExpr := firstResult.1
+          let mut accBounds := firstResult.2
+          for i in List.range (elems.size - 1) do
+            let elemApp := Expr.app fBody elems[i + 1]!
+            let (ri, bi) ← reifyToRExpr cache elemApp.headBeta (depth - 1)
+            let rexpr := mkApp2 (mkConst ``RExpr.add) accRExpr ri
+            let bounds : MetaBounds := ⟨accBounds.lo + bi.lo, accBounds.hi + bi.hi⟩
+            accRExpr := rexpr
+            accBounds := bounds
+          return ← cacheReturn cache key (accRExpr, accBounds)
+
+  -- Fallback for other summation forms (transparent — whnf)
   if fnName == some ``Finset.sum ||
      fnName == some ``Multiset.sum ||
      fnName == some ``Multiset.fold ||
@@ -725,6 +764,8 @@ def reifyS1Scores (cfg : Expr) :
     MetaM (Expr × Expr × Expr ×
            Array Expr × Array Expr × Array Expr ×
            Array MetaBounds × Array ℚ × Array ℚ) := do
+  withTheReader Core.Context (fun ctx =>
+    { ctx with maxRecDepth := max ctx.maxRecDepth 8192 }) do
   let cfgType ← whnf (← inferType cfg)
   let cfgArgs := cfgType.getAppArgs
   unless cfgArgs.size ≥ 2 do
