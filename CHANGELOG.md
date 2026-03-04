@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.227.93] - 2026-03-03
+
+### Added
+- **Ronderos et al. (2024) — contrastive inferences by adjective type**: new study file formalizing cross-linguistic eye-tracking (N = 97) showing color and scalar adjectives elicit contrastive inferences but material adjectives do not. Connects to `PropertyDomain.noiseDiscrimination` — the discrimination ordering (color > size > material) predicts the contrastive effect ordering. Includes converging-evidence theorem with KursatDegen2021 (production ↔ comprehension). Bib entries for Ronderos et al. 2024 and Sedivy et al. 1999.
+
 ## [0.227.92] - 2026-03-03
 
 ### Changed

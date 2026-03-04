@@ -185,6 +185,8 @@ theorem product_discrimination_monotone
   rw [← key] at h_sum
   linarith
 
+end RSA.Noise
+
 -- ════════════════════════════════════════════════════
 -- PropertyDomain → Noise Parameters
 -- ════════════════════════════════════════════════════
@@ -192,9 +194,7 @@ theorem product_discrimination_monotone
 /-- Map a `PropertyDomain` to its established noise discrimination value.
     Returns `none` for domains without empirically grounded noise params. -/
 def Core.PropertyDomain.noiseDiscrimination : Core.PropertyDomain → Option ℚ
-  | .color    => some colorDiscrimination    -- 0.98
-  | .size     => some sizeDiscrimination     -- 0.60
-  | .material => some materialDiscrimination -- 0.40
+  | .color    => some RSA.Noise.colorDiscrimination    -- 0.98
+  | .size     => some RSA.Noise.sizeDiscrimination     -- 0.60
+  | .material => some RSA.Noise.materialDiscrimination -- 0.40
   | _         => none
-
-end RSA.Noise
