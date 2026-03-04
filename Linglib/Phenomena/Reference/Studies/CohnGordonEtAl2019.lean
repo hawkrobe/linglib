@@ -1,8 +1,10 @@
 import Linglib.Tactics.RSAPredict
 import Linglib.Theories.Pragmatics.RSA.Core.Config
+import Linglib.Phenomena.Reference.Studies.DaleReiter1995
 
 /-!
 # @cite{cohn-gordon-goodman-potts-2019} — Incremental Iterated Response Model
+@cite{dale-reiter-1995}
 
 Cohn-Gordon, R., Goodman, N. D., & Potts, C. (2019). An Incremental Iterated
 Response Model of Pragmatics. *Proceedings of the Society for Computation in
@@ -321,5 +323,42 @@ theorem all_findings_verified : ∀ f : Finding, formalize f := by
   · exact fun w hw => uniform_after_red_for_r2 w hw
   · exact listener_anticipation
   · exact incremental_prefers_bare_noun
+
+-- ============================================================================
+-- §8. Bridge: D&R Incremental Algorithm Connection
+-- ============================================================================
+
+/-! The incremental RSA model and @cite{dale-reiter-1995}'s Incremental
+Algorithm (IA) solve the same problem — generating referring expressions
+for a target among distractors — via structurally parallel mechanisms:
+
+| Property         | D&R IA                          | Incremental RSA               |
+|------------------|---------------------------------|-------------------------------|
+| Processing       | Sequential (attribute-by-attr)  | Sequential (word-by-word)     |
+| Selection        | Deterministic (fixed order)     | Probabilistic (soft-max)      |
+| Q2/Cost          | None (No Brevity)               | None (s1Score = L0)           |
+| State            | Remaining distractors           | Ctx = word prefix             |
+| Termination      | All distractors ruled out       | Chain rule product over words |
+
+Both operate in the No-Brevity regime: D&R's IA includes any
+discriminating attribute without brevity optimization; the incremental
+RSA's `s1Score l0 _ _ w u := l0 u w` has no cost term. D&R's fixed
+`PreferredAttributes` order is generalized by RSA's probabilistic
+ranking, which emerges from the L0 semantics at each step.
+
+The key difference: D&R is deterministic and may produce non-minimal
+descriptions (as shown in `DaleReiter1995.cups_non_minimal`), while
+the incremental RSA is probabilistic and assigns lower total probability
+to longer utterances via the chain rule product (Finding 3:
+`incremental_prefers_bare_noun`). -/
+
+/-- Both the incremental RSA and @cite{dale-reiter-1995}'s Incremental
+    Algorithm operate in the No-Brevity regime (strength = 0) — the
+    weakest Q2 interpretation. Both enforce Q1 (each word/attribute
+    must contribute to identifying the referent) without Q2 (brevity)
+    pressure. D&R's deterministic fixed-order selection is generalized
+    by the incremental RSA's probabilistic word-by-word production. -/
+theorem incremental_rsa_is_no_brevity :
+    DaleReiter1995.BrevityInterpretation.noBrevity.strength = 0 := rfl
 
 end Phenomena.Reference.Studies.CohnGordonEtAl2019

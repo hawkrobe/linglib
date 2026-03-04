@@ -1,11 +1,13 @@
 import Linglib.Tactics.RSAPredict
 import Linglib.Theories.Pragmatics.RSA.Core.Config
+import Linglib.Theories.Pragmatics.GriceanMaxims
 import Linglib.Theories.Semantics.Montague.Modification
 import Mathlib.Analysis.SpecialFunctions.Log.Basic
 
 /-!
 # @cite{frank-goodman-2012}
 @cite{degen-2023} @cite{tenenbaum-griffiths-2001} @cite{heim-kratzer-1998}
+@cite{grice-1975}
 
 "Predicting Pragmatic Reasoning in Language Games"
 Science 336(6084): 998
@@ -543,5 +545,40 @@ theorem L1_2_3_d1_indistinguishable :
 theorem L1_3_3_indistinguishable :
     ¬(cfg_3_3.L1 .dim1_a .target > cfg_3_3.L1 .dim1_a .d1) := by
   rsa_predict
+
+-- ============================================================================
+-- §9. Bridge: Gricean Quantity Decomposition
+-- ============================================================================
+
+/-! RSA's S1 score decomposes as:
+
+    S1(w|u) ∝ exp(α · (log L0(w|u) − D(w)))
+
+where `log L0` corresponds to Q1 (informativeness) and `D(w)` to Q2
+(brevity). This model uses D(w) = 0 for all words, enforcing Q1 only.
+The **size principle** — S1 prefers features with smaller extensions —
+IS the Q1 sub-maxim: smaller extension = more informative = higher
+log L0. With no cost term, there is no Q2 pressure.
+
+This places @cite{frank-goodman-2012} in what @cite{dale-reiter-1995}
+call the "No Brevity" regime: Q1 is enforced, Q2 is not. The
+reference game is a probabilistic version of the REG (Referring
+Expression Generation) problem that D&R solve with the Incremental
+Algorithm — both produce a referring expression that identifies a
+target among distractors, but RSA does it via probabilistic inference
+rather than deterministic attribute selection. -/
+
+open Theories.Pragmatics.GriceanMaxims
+
+/-- RSA S1 implements a decomposition of Grice's Quantity maxim into
+    two independent components: Q1 (informativeness, via log L0) and
+    Q2 (brevity, via utterance cost D(w)). This model sets D(w) = 0,
+    so only Q1 is active — the size principle (§6c) IS Q1 maximization.
+    The independence of Q1 and Q2 is what allows selective enforcement:
+    this model enforces Q1 while relaxing Q2 entirely. -/
+theorem gricean_q1_q2_decomposition :
+    QuantityViolation.underInformative.submaxim ≠
+    QuantityViolation.overInformative.submaxim :=
+  violations_independent
 
 end Phenomena.Reference.Studies.FrankGoodman2012

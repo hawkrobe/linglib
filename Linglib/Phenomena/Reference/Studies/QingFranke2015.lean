@@ -1,9 +1,11 @@
 import Linglib.Tactics.RSAPredict
 import Linglib.Theories.Pragmatics.RSA.Core.Config
+import Linglib.Theories.Pragmatics.GriceanMaxims
+import Linglib.Phenomena.Reference.Studies.DaleReiter1995
 
 /-!
 # @cite{qing-franke-2015}
-@cite{frank-goodman-2012}
+@cite{frank-goodman-2012} @cite{grice-1975} @cite{dale-reiter-1995}
 
 "Variations on a Bayesian Theme: Comparing Bayesian Models of Referential Reasoning"
 
@@ -902,5 +904,46 @@ theorem zeroCost_beliefGoal_eq
 10. **FG2012 bridge** (§18): `zeroCost_beliefGoal_eq` proves that belief-oriented
     scoring at zero cost recovers @cite{frank-goodman-2012}'s scoring rule.
 -/
+
+-- ============================================================================
+-- §19. Bridge: Cost = Q2 (Gricean/D&R Connection)
+-- ============================================================================
+
+/-! The cost dimension in @cite{qing-franke-2015}'s S1 score decomposition
+IS @cite{grice-1975}'s Q2 sub-maxim (brevity):
+
+    σ_b(m|t) ∝ exp(λ · (log L0(t|m) − Cost(m)))
+                        ╰── Q1 ──╯   ╰── Q2 ──╯
+
+This connects three frameworks:
+
+- @cite{grice-1975}: Q1 (be informative) and Q2 (be brief) are independent
+- @cite{dale-reiter-1995}: No-Brevity = Q2 not enforced (strength = 0)
+- @cite{qing-franke-2015}: Cost = 0 ↔ no Q2 pressure ↔ No Brevity
+
+The zero-cost ↔ cost comparison (`no_cost_symmetry` vs `cost_breaks_symmetry`)
+directly demonstrates Q2's role: it is the *tiebreaker* when Q1 (informativity)
+is equal across alternatives. For green_circle, both "circle" and "green"
+have the same L0 informativity (each applies to 2 objects), so Q1 cannot
+distinguish them. Only Q2 (cost) breaks the tie. -/
+
+open Theories.Pragmatics.GriceanMaxims
+
+/-- Q&F's cost dimension IS Grice's Q2 sub-maxim. Without cost
+    (No Brevity regime), ambiguous words with equal informativity are
+    symmetric — Q1 alone cannot break the tie. With cost (Q2 active),
+    the cheaper word wins. This maps onto @cite{dale-reiter-1995}'s
+    No-Brevity interpretation (strength = 0), the weakest Q2. -/
+theorem cost_is_q2 :
+    -- No cost = no symmetry breaking (No Brevity regime)
+    ¬(zeroCostCfg.S1 () .green_circle .circle > zeroCostCfg.S1 () .green_circle .green) ∧
+    -- With cost = symmetry breaks (Q2 pressure active)
+    costCfg.S1 () .green_circle .circle > costCfg.S1 () .green_circle .green ∧
+    -- No Brevity is the weakest Q2 interpretation
+    DaleReiter1995.BrevityInterpretation.noBrevity.strength = 0 ∧
+    -- Q1 and Q2 are independent sub-maxims
+    QuantityViolation.underInformative.submaxim ≠
+    QuantityViolation.overInformative.submaxim :=
+  ⟨no_cost_symmetry, cost_breaks_symmetry, rfl, violations_independent⟩
 
 end Phenomena.Reference.Studies.QingFranke2015
