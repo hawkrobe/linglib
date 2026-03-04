@@ -947,6 +947,180 @@ def RExpr.evalBothOpt : RExpr → QInterval × Bool
         (c (expInterval prod), vbase)
     else (⟨0, 1, by norm_num⟩, false)
 
+set_option maxHeartbeats 800000 in
+/-- Soundness of evalBothOpt. Mirrors `evalBoth_sound` — all cases except
+    `.rexp` are structurally identical; `.rexp` delegates to `evalRexpOpt`
+    which needs separate soundness reasoning. -/
+theorem RExpr.evalBothOpt_sound : ∀ (e : RExpr),
+    e.evalBothOpt.2 = true → e.evalBothOpt.1.containsReal e.denote := by
+  intro e
+  induction e with
+  | nat n =>
+    intro _
+    match n with
+    | 0 => exact QInterval.exact_zero_containsReal
+    | 1 => exact QInterval.exact_one_containsReal
+    | n + 2 => exact QInterval.exact_natCast_containsReal (n + 2)
+  | ratCast q =>
+    intro _; exact QInterval.exact_containsReal q
+  | add a b iha ihb =>
+    intro hv; dsimp only [evalBothOpt] at hv ⊢; simp only [Bool.and_eq_true] at hv
+    exact QInterval.coarsen_containsReal _
+      (QInterval.add_containsReal (iha hv.1) (ihb hv.2))
+  | mul a b iha ihb =>
+    intro hv; dsimp only [evalBothOpt, denote] at hv ⊢
+    split_ifs at hv ⊢ with h1 h2 h3 h4 <;>
+      simp only [Bool.and_eq_true] at hv <;>
+      try exact absurd rfl hv
+    · simp only [Bool.and_eq_true, beq_iff_eq] at h1
+      exact QInterval.zero_mul_containsReal (iha hv) h1.1 h1.2
+    · simp only [Bool.and_eq_true, beq_iff_eq] at h2
+      exact QInterval.mul_zero_containsReal (ihb hv.2) h2.1 h2.2
+    · exact QInterval.coarsen_containsReal _
+        (QInterval.mulNonneg_containsReal h3 h4 (iha hv.1) (ihb hv.2))
+    · exact QInterval.coarsen_containsReal _
+        (QInterval.mul_containsReal (iha hv.1) (ihb hv.2))
+    · exact QInterval.coarsen_containsReal _
+        (QInterval.mul_containsReal (iha hv.1) (ihb hv.2))
+  | div a b iha ihb =>
+    intro hv; dsimp only [evalBothOpt, denote] at hv ⊢
+    split_ifs at hv ⊢ with h1 h2 h3 <;>
+      simp only [Bool.and_eq_true] at hv <;>
+      try exact absurd rfl hv
+    · simp only [Bool.and_eq_true, beq_iff_eq] at h1
+      exact QInterval.zero_div_containsReal (iha hv.1) h1.1 h1.2
+    · exact QInterval.coarsen_containsReal _
+        (QInterval.divPos_containsReal h2 h3 (iha hv.1) (ihb hv.2))
+  | neg a iha =>
+    intro hv; exact QInterval.neg_containsReal (iha hv)
+  | sub a b iha ihb =>
+    intro hv; dsimp only [evalBothOpt] at hv ⊢; simp only [Bool.and_eq_true] at hv
+    exact QInterval.coarsen_containsReal _
+      (QInterval.sub_containsReal (iha hv.1) (ihb hv.2))
+  | rexp a iha =>
+    -- evalBothOpt.rexp delegates to evalRexpOpt, which either uses a factor
+    -- decomposition (exp-log product rewrite) or falls back to evalBoth.
+    -- TODO: Prove evalRexpOpt_sound (factor path + fallback path)
+    intro hv; sorry
+  | rlog a iha =>
+    intro hv; dsimp only [evalBothOpt, denote] at hv ⊢
+    split_ifs at hv ⊢ with h1 h2 <;>
+      try exact absurd rfl hv
+    · exact QInterval.coarsen_containsReal _ (logInterval_containsReal h1 (iha hv))
+    · simp only [Bool.and_eq_true, beq_iff_eq] at h2
+      have haz := interval_eq_zero (iha hv) h2.1 h2.2
+      rw [haz, Real.log_zero]
+      exact_mod_cast QInterval.exact_containsReal (0 : ℚ)
+  | rpow a n iha =>
+    intro hv; dsimp only [evalBothOpt] at hv ⊢
+    split_ifs at hv ⊢ with h1 h2 <;>
+      try exact absurd rfl hv
+    · have h1' : n = 0 := by simpa [beq_iff_eq] using h1
+      subst h1'; exact rpowZero_containsReal a.denote
+    · rw [rpow_denote_eq]
+      exact QInterval.coarsen_containsReal _ (rpowNat_containsReal h2 (iha hv))
+  | inv a iha =>
+    intro hv; dsimp only [evalBothOpt, denote] at hv ⊢
+    split_ifs at hv ⊢ with h1
+    · exact QInterval.coarsen_containsReal _ (QInterval.invPos_containsReal h1 (iha hv))
+  | iteZero c' t e ihc iht ihe =>
+    intro hv; dsimp only [evalBothOpt] at hv ⊢
+    split_ifs at hv ⊢ with h1 h2 <;>
+      simp only [Bool.and_eq_true] at hv <;>
+      try exact absurd rfl hv
+    · -- c = [0,0] → cond = 0 → then branch
+      simp only [Bool.and_eq_true, beq_iff_eq] at h1
+      have hzero := interval_eq_zero (ihc hv.1) h1.1 h1.2
+      unfold denote; simp [hzero]; exact iht hv.2
+    · -- 0 < c.lo → cond > 0 → else branch
+      have hcond_pos := interval_pos (ihc hv.1) h2
+      unfold denote; simp [ne_of_gt hcond_pos]; exact ihe hv.2
+    · -- can't decide: union covers both branches
+      unfold denote
+      simp only [QInterval.containsReal]
+      split
+      · constructor
+        · exact le_trans (by exact_mod_cast min_le_left _ _) (iht hv.1.2).1
+        · exact le_trans (iht hv.1.2).2 (by exact_mod_cast le_max_left _ _)
+      · constructor
+        · exact le_trans (by exact_mod_cast min_le_right _ _) (ihe hv.2).1
+        · exact le_trans (ihe hv.2).2 (by exact_mod_cast le_max_right _ _)
+  | expMulLogSub α x cost ihα ihx ihc =>
+    intro hv; dsimp only [evalBothOpt, denote] at hv ⊢
+    split_ifs at hv ⊢ with hx hint <;>
+      simp only [Bool.and_eq_true] at hv <;>
+      try exact absurd rfl hv
+    all_goals have ha := ihα hv.1.1
+    all_goals have hxx := ihx hv.1.2
+    all_goals have hc := ihc hv.2
+    all_goals have hx_pos : 0 < denote x := interval_pos hxx hx
+    -- Non-integer path
+    all_goals first
+    | exact QInterval.coarsen_containsReal _ (expInterval_containsReal
+        (QInterval.coarsen_containsReal _ (QInterval.mul_containsReal ha
+          (QInterval.coarsen_containsReal _ (QInterval.sub_containsReal
+            (QInterval.coarsen_containsReal _ (logInterval_containsReal hx hxx)) hc)))))
+    | -- Integer path: algebraic identity exp(α*(log x - c)) = x^n * exp(-αc)
+      simp only [Bool.and_eq_true, beq_iff_eq, decide_eq_true_eq] at hint
+      obtain ⟨⟨hαeq, hαden⟩, hαnn⟩ := hint
+      have hαval : denote α = ↑(α.evalBothOpt.1).lo := le_antisymm (hαeq ▸ ha.2) ha.1
+      have hαq : (α.evalBothOpt.1).lo = (↑((α.evalBothOpt.1).lo.num.toNat) : ℚ) := by
+        have h1 := Rat.num_div_den (α.evalBothOpt.1).lo
+        rw [hαden] at h1; simp at h1
+        rw [← h1]; exact_mod_cast (Int.toNat_of_nonneg hαnn).symm
+      have hαr : denote α = (↑((α.evalBothOpt.1).lo.num.toNat) : ℝ) := by
+        rw [hαval, hαq]; push_cast; rfl
+      have hident : Real.exp (denote α * (Real.log (denote x) - denote cost))
+          = (denote x) ^ ((α.evalBothOpt.1).lo.num.toNat : ℝ) *
+            Real.exp (-(denote α * denote cost)) := by
+        rw [hαr]
+        have key : ((α.evalBothOpt.1).lo.num.toNat : ℝ) *
+                   (Real.log (denote x) - denote cost) =
+                   Real.log (denote x) * ((α.evalBothOpt.1).lo.num.toNat : ℝ) +
+                   (-(((α.evalBothOpt.1).lo.num.toNat : ℝ) * denote cost)) := by ring
+        rw [key, Real.exp_add]; congr 1
+        exact (Real.rpow_def_of_pos hx_pos ((α.evalBothOpt.1).lo.num.toNat : ℝ)).symm
+      rw [hident]
+      have h_expF : (QInterval.coarsen (expInterval ((α.evalBothOpt.1).mul (cost.evalBothOpt.1)).neg)).containsReal
+          (Real.exp (-(denote α * denote cost))) :=
+        QInterval.coarsen_containsReal _ (expInterval_containsReal
+          (QInterval.neg_containsReal (QInterval.mul_containsReal ha hc)))
+      first
+      | -- rpowNat × mulNonneg
+        exact QInterval.coarsen_containsReal _ (QInterval.mulNonneg_containsReal ‹_› ‹_›
+          (rpowNat_containsReal (le_of_lt hx) hxx) h_expF)
+      | -- rpowNat × mul
+        exact QInterval.coarsen_containsReal _ (QInterval.mul_containsReal
+          (rpowNat_containsReal (le_of_lt hx) hxx) h_expF)
+      | -- n=1 × mulNonneg
+        have h_n1 : α.evalBothOpt.1.lo.num.toNat = 1 := beq_iff_eq.mp (by assumption)
+        have h_xpow : x.evalBothOpt.1.containsReal
+            (denote x ^ ((α.evalBothOpt.1).lo.num.toNat : ℝ)) := by
+          rw [show ((α.evalBothOpt.1).lo.num.toNat : ℝ) = 1 from by exact_mod_cast h_n1]
+          rw [Real.rpow_one]; exact hxx
+        exact QInterval.coarsen_containsReal _ (QInterval.mulNonneg_containsReal ‹_› ‹_› h_xpow h_expF)
+      | -- n=1 × mul
+        have h_n1 : α.evalBothOpt.1.lo.num.toNat = 1 := beq_iff_eq.mp (by assumption)
+        have h_xpow : x.evalBothOpt.1.containsReal
+            (denote x ^ ((α.evalBothOpt.1).lo.num.toNat : ℝ)) := by
+          rw [show ((α.evalBothOpt.1).lo.num.toNat : ℝ) = 1 from by exact_mod_cast h_n1]
+          rw [Real.rpow_one]; exact hxx
+        exact QInterval.coarsen_containsReal _ (QInterval.mul_containsReal h_xpow h_expF)
+      | -- n=0 × mulNonneg
+        have h_n0 : α.evalBothOpt.1.lo.num.toNat = 0 := beq_iff_eq.mp (by assumption)
+        have h_xpow : (QInterval.exact 1).containsReal
+            (denote x ^ ((α.evalBothOpt.1).lo.num.toNat : ℝ)) := by
+          rw [show ((α.evalBothOpt.1).lo.num.toNat : ℝ) = 0 from by exact_mod_cast h_n0]
+          rw [Real.rpow_zero]; exact_mod_cast QInterval.exact_containsReal 1
+        exact QInterval.coarsen_containsReal _ (QInterval.mulNonneg_containsReal ‹_› ‹_› h_xpow h_expF)
+      | -- n=0 × mul
+        have h_n0 : α.evalBothOpt.1.lo.num.toNat = 0 := beq_iff_eq.mp (by assumption)
+        have h_xpow : (QInterval.exact 1).containsReal
+            (denote x ^ ((α.evalBothOpt.1).lo.num.toNat : ℝ)) := by
+          rw [show ((α.evalBothOpt.1).lo.num.toNat : ℝ) = 0 from by exact_mod_cast h_n0]
+          rw [Real.rpow_zero]; exact_mod_cast QInterval.exact_containsReal 1
+        exact QInterval.coarsen_containsReal _ (QInterval.mul_containsReal h_xpow h_expF)
+
 /-- Combined check: eval + validity + separation in a single pass via `evalBoth`.
     Each subexpression is evaluated exactly once. -/
 def RExpr.checkGt (lhs rhs : RExpr) : Bool :=
@@ -1117,12 +1291,14 @@ def RExpr.checkNotGtOpt (lhs rhs : RExpr) : Bool :=
 /-- If `checkGtOpt` succeeds, the denotations are ordered. -/
 theorem RExpr.gt_of_checkGtOpt (lhs rhs : RExpr)
     (h : lhs.checkGtOpt rhs = true) : lhs.denote > rhs.denote := by
-  sorry
+  simp only [checkGtOpt, Bool.and_eq_true, decide_eq_true_eq] at h
+  exact QInterval.gt_of_separated (evalBothOpt_sound lhs h.1.1) (evalBothOpt_sound rhs h.1.2) h.2
 
 /-- If `checkNotGtOpt` succeeds, ¬(lhs > rhs). -/
 theorem RExpr.not_gt_of_checkNotGtOpt (lhs rhs : RExpr)
     (h : lhs.checkNotGtOpt rhs = true) : ¬(lhs.denote > rhs.denote) := by
-  sorry
+  simp only [checkNotGtOpt, Bool.and_eq_true, decide_eq_true_eq] at h
+  exact not_lt.mpr (QInterval.le_of_separated (evalBothOpt_sound lhs h.1.1) (evalBothOpt_sound rhs h.1.2) h.2)
 
 -- ============================================================================
 -- DAG-based comparison (pre-built DAG from reifier)
@@ -1192,12 +1368,94 @@ def RExpr.evalExact : RExpr → Option ℚ
   | .rlog _ => none
   | .expMulLogSub _ _ _ => none
 
+set_option maxHeartbeats 400000 in
 /-- Soundness: if evalExact returns q, then denote = (q : ℝ). -/
 theorem RExpr.evalExact_sound (e : RExpr) (q : ℚ)
     (h : e.evalExact = some q) : e.denote = (q : ℝ) := by
-  -- Proof by structural induction on e. Each case unfolds evalExact,
-  -- extracts the recursive exact values, applies IH, and uses cast lemmas.
-  sorry
+  induction e generalizing q with
+  | nat n =>
+    simp [evalExact] at h
+    cases n with
+    | zero => unfold denote; simp [← h]
+    | succ m => cases m with
+      | zero => unfold denote; simp [← h]
+      | succ k => unfold denote; rw [← h]; push_cast; rfl
+  | ratCast q' => simp [evalExact] at h; subst h; rfl
+  | add a b iha ihb =>
+    cases ha : a.evalExact with
+    | none => simp [evalExact, ha] at h
+    | some va =>
+      cases hb : b.evalExact with
+      | none => simp [evalExact, ha, hb] at h
+      | some vb =>
+        have hq : q = va + vb := by simp [evalExact, ha, hb] at h; exact h.symm
+        subst hq; unfold denote; rw [iha va ha, ihb vb hb]; push_cast; ring
+  | mul a b iha ihb =>
+    cases ha : a.evalExact with
+    | none => simp [evalExact, ha] at h
+    | some va =>
+      cases hb : b.evalExact with
+      | none => simp [evalExact, ha, hb] at h
+      | some vb =>
+        have hq : q = va * vb := by simp [evalExact, ha, hb] at h; exact h.symm
+        subst hq; unfold denote; rw [iha va ha, ihb vb hb]; push_cast; ring
+  | div a b iha ihb =>
+    cases hb : b.evalExact with
+    | none => simp [evalExact, hb] at h
+    | some vb =>
+      by_cases hvb : vb = 0
+      · simp [evalExact, hb, hvb] at h
+      · cases ha : a.evalExact with
+        | none => simp [evalExact, ha, hb] at h
+        | some va =>
+          have hq : q = va / vb := by simp [evalExact, ha, hb, hvb] at h; exact h.symm
+          subst hq; unfold denote; rw [iha va ha, ihb vb hb]; push_cast; ring
+  | neg a iha =>
+    cases ha : a.evalExact with
+    | none => simp [evalExact, ha] at h
+    | some va =>
+      have hq : q = -va := by simp [evalExact, ha] at h; exact h.symm
+      subst hq; unfold denote; rw [iha va ha]; push_cast; ring
+  | sub a b iha ihb =>
+    cases ha : a.evalExact with
+    | none => simp [evalExact, ha] at h
+    | some va =>
+      cases hb : b.evalExact with
+      | none => simp [evalExact, ha, hb] at h
+      | some vb =>
+        have hq : q = va - vb := by simp [evalExact, ha, hb] at h; exact h.symm
+        subst hq; unfold denote; rw [iha va ha, ihb vb hb]; push_cast; ring
+  | inv a iha =>
+    cases ha : a.evalExact with
+    | none => simp [evalExact, ha] at h
+    | some va =>
+      by_cases hva : va = 0
+      · simp [evalExact, ha, hva] at h
+      · have hq : q = va⁻¹ := by simp [evalExact, ha, hva] at h; exact h.symm
+        subst hq; unfold denote; rw [iha va ha]; push_cast; rfl
+  | rpow a n iha =>
+    cases ha : a.evalExact with
+    | none => simp [evalExact, ha] at h
+    | some va =>
+      by_cases hva : 0 ≤ va
+      · have hq : q = va ^ n := by simp [evalExact, ha, hva] at h; exact h.symm
+        subst hq; rw [rpow_denote_eq, iha va ha, Real.rpow_natCast]; push_cast; ring
+      · simp [evalExact, ha, hva] at h
+  | iteZero c t e ihc iht ihe =>
+    cases hc : c.evalExact with
+    | none => simp [evalExact, hc] at h
+    | some vc =>
+      unfold denote
+      by_cases hvc : vc = 0
+      · have hcd : c.denote = 0 := by rw [ihc vc hc, hvc]; simp
+        simp [hcd]
+        exact iht q (by simp [evalExact, hc, hvc] at h; exact h)
+      · have hcd : c.denote ≠ 0 := by rw [ihc vc hc]; exact_mod_cast hvc
+        simp [hcd]
+        exact ihe q (by simp [evalExact, hc, hvc] at h; exact h)
+  | rexp _ => simp [evalExact] at h
+  | rlog _ => simp [evalExact] at h
+  | expMulLogSub _ _ _ => simp [evalExact] at h
 
 /-- If both sides have the same exact ℚ value, ¬(lhs > rhs). -/
 def RExpr.checkExactNotGt (lhs rhs : RExpr) : Bool :=
@@ -1239,7 +1497,7 @@ theorem RExpr.eq_of_checkExactEq (lhs rhs : RExpr)
     checking structural match and recursing into children. This enables proving
     `exp(log(1/(0+1+1))) = exp(log(1/(1+0+1)))` — the exp/log match structurally,
     and the arithmetic children both evalExact to 1/2. -/
-partial def RExpr.checkSemanticEq (a b : RExpr) : Bool :=
+def RExpr.checkSemanticEq (a b : RExpr) : Bool :=
   -- Try exact evaluation at this node
   match a.evalExact, b.evalExact with
   | some q₁, some q₂ => q₁ == q₂
@@ -1261,13 +1519,119 @@ partial def RExpr.checkSemanticEq (a b : RExpr) : Bool :=
     | .expMulLogSub a₁ b₁ c₁, .expMulLogSub a₂ b₂ c₂ =>
       a₁.checkSemanticEq a₂ && b₁.checkSemanticEq b₂ && c₁.checkSemanticEq c₂
     | _, _ => false
+termination_by sizeOf a
 
+set_option maxHeartbeats 800000 in
 /-- Soundness of semantic equality: if checkSemanticEq returns true,
     then the two expressions denote the same real number. -/
 theorem RExpr.eq_of_checkSemanticEq (lhs rhs : RExpr)
     (h : lhs.checkSemanticEq rhs = true) :
     lhs.denote = rhs.denote := by
-  sorry
+  induction lhs generalizing rhs with
+  | nat n =>
+    rw [RExpr.checkSemanticEq.eq_def] at h; split at h
+    · rename_i q₁ q₂ hq₁ hq₂; simp only [beq_iff_eq] at h
+      rw [RExpr.evalExact_sound _ q₁ hq₁, RExpr.evalExact_sound _ q₂ hq₂, h]
+    · cases rhs with | nat n' => simp only [beq_iff_eq] at h; subst h; rfl | _ => simp at h
+  | ratCast q =>
+    rw [RExpr.checkSemanticEq.eq_def] at h; split at h
+    · rename_i q₁ q₂ hq₁ hq₂; simp only [beq_iff_eq] at h
+      rw [RExpr.evalExact_sound _ q₁ hq₁, RExpr.evalExact_sound _ q₂ hq₂, h]
+    · cases rhs <;> simp at h
+  | add a₁ a₂ ih₁ ih₂ =>
+    rw [RExpr.checkSemanticEq.eq_def] at h; split at h
+    · rename_i q₁ q₂ hq₁ hq₂; simp only [beq_iff_eq] at h
+      rw [RExpr.evalExact_sound _ q₁ hq₁, RExpr.evalExact_sound _ q₂ hq₂, h]
+    · cases rhs with
+      | add b₁ b₂ =>
+        simp only [Bool.and_eq_true] at h
+        exact congrArg₂ (· + ·) (ih₁ _ h.1) (ih₂ _ h.2)
+      | _ => simp at h
+  | mul a₁ a₂ ih₁ ih₂ =>
+    rw [RExpr.checkSemanticEq.eq_def] at h; split at h
+    · rename_i q₁ q₂ hq₁ hq₂; simp only [beq_iff_eq] at h
+      rw [RExpr.evalExact_sound _ q₁ hq₁, RExpr.evalExact_sound _ q₂ hq₂, h]
+    · cases rhs with
+      | mul b₁ b₂ =>
+        simp only [Bool.and_eq_true] at h
+        exact congrArg₂ (· * ·) (ih₁ _ h.1) (ih₂ _ h.2)
+      | _ => simp at h
+  | div a₁ a₂ ih₁ ih₂ =>
+    rw [RExpr.checkSemanticEq.eq_def] at h; split at h
+    · rename_i q₁ q₂ hq₁ hq₂; simp only [beq_iff_eq] at h
+      rw [RExpr.evalExact_sound _ q₁ hq₁, RExpr.evalExact_sound _ q₂ hq₂, h]
+    · cases rhs with
+      | div b₁ b₂ =>
+        simp only [Bool.and_eq_true] at h
+        exact congrArg₂ (· / ·) (ih₁ _ h.1) (ih₂ _ h.2)
+      | _ => simp at h
+  | sub a₁ a₂ ih₁ ih₂ =>
+    rw [RExpr.checkSemanticEq.eq_def] at h; split at h
+    · rename_i q₁ q₂ hq₁ hq₂; simp only [beq_iff_eq] at h
+      rw [RExpr.evalExact_sound _ q₁ hq₁, RExpr.evalExact_sound _ q₂ hq₂, h]
+    · cases rhs with
+      | sub b₁ b₂ =>
+        simp only [Bool.and_eq_true] at h
+        exact congrArg₂ (· - ·) (ih₁ _ h.1) (ih₂ _ h.2)
+      | _ => simp at h
+  | neg a₁ ih₁ =>
+    rw [RExpr.checkSemanticEq.eq_def] at h; split at h
+    · rename_i q₁ q₂ hq₁ hq₂; simp only [beq_iff_eq] at h
+      rw [RExpr.evalExact_sound _ q₁ hq₁, RExpr.evalExact_sound _ q₂ hq₂, h]
+    · cases rhs with
+      | neg b₁ => exact congrArg (- ·) (ih₁ _ h)
+      | _ => simp at h
+  | inv a₁ ih₁ =>
+    rw [RExpr.checkSemanticEq.eq_def] at h; split at h
+    · rename_i q₁ q₂ hq₁ hq₂; simp only [beq_iff_eq] at h
+      rw [RExpr.evalExact_sound _ q₁ hq₁, RExpr.evalExact_sound _ q₂ hq₂, h]
+    · cases rhs with
+      | inv b₁ =>
+        show a₁.denote⁻¹ = b₁.denote⁻¹
+        rw [ih₁ _ h]
+      | _ => simp at h
+  | rpow a₁ n ih₁ =>
+    rw [RExpr.checkSemanticEq.eq_def] at h; split at h
+    · rename_i q₁ q₂ hq₁ hq₂; simp only [beq_iff_eq] at h
+      rw [RExpr.evalExact_sound _ q₁ hq₁, RExpr.evalExact_sound _ q₂ hq₂, h]
+    · cases rhs with
+      | rpow b₁ m =>
+        simp only [Bool.and_eq_true, beq_iff_eq] at h
+        obtain ⟨h1, h2⟩ := h; subst h2
+        rw [rpow_denote_eq, rpow_denote_eq, ih₁ _ h1]
+      | _ => simp at h
+  | iteZero c t e ihc iht ihe =>
+    rw [RExpr.checkSemanticEq.eq_def] at h; split at h
+    · rename_i q₁ q₂ hq₁ hq₂; simp only [beq_iff_eq] at h
+      rw [RExpr.evalExact_sound _ q₁ hq₁, RExpr.evalExact_sound _ q₂ hq₂, h]
+    · cases rhs with
+      | iteZero c' t' e' =>
+        simp only [Bool.and_eq_true] at h
+        unfold denote; rw [ihc _ h.1.1, iht _ h.1.2, ihe _ h.2]
+      | _ => simp at h
+  | rexp a₁ ih₁ =>
+    rw [RExpr.checkSemanticEq.eq_def] at h; split at h
+    · rename_i q₁ q₂ hq₁ hq₂; simp only [beq_iff_eq] at h
+      rw [RExpr.evalExact_sound _ q₁ hq₁, RExpr.evalExact_sound _ q₂ hq₂, h]
+    · cases rhs with
+      | rexp b₁ => exact congrArg Real.exp (ih₁ _ h)
+      | _ => simp at h
+  | rlog a₁ ih₁ =>
+    rw [RExpr.checkSemanticEq.eq_def] at h; split at h
+    · rename_i q₁ q₂ hq₁ hq₂; simp only [beq_iff_eq] at h
+      rw [RExpr.evalExact_sound _ q₁ hq₁, RExpr.evalExact_sound _ q₂ hq₂, h]
+    · cases rhs with
+      | rlog b₁ => exact congrArg Real.log (ih₁ _ h)
+      | _ => simp at h
+  | expMulLogSub α x c ihα ihx ihc =>
+    rw [RExpr.checkSemanticEq.eq_def] at h; split at h
+    · rename_i q₁ q₂ hq₁ hq₂; simp only [beq_iff_eq] at h
+      rw [RExpr.evalExact_sound _ q₁ hq₁, RExpr.evalExact_sound _ q₂ hq₂, h]
+    · cases rhs with
+      | expMulLogSub α' x' c' =>
+        simp only [Bool.and_eq_true] at h
+        unfold denote; rw [ihα _ h.1.1, ihx _ h.1.2, ihc _ h.2]
+      | _ => simp at h
 
 /-- If semantically equal, neither side is strictly greater. -/
 theorem RExpr.not_gt_of_checkSemanticEq (lhs rhs : RExpr)
