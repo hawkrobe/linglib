@@ -102,22 +102,16 @@ def uttSem (utt : List Word) (r : Referent) : Bool :=
 -- §3. Extension-Based Incremental Semantics (§2.2)
 -- ============================================================================
 
-/-- Whether `pfx` is a prefix of `utt`. -/
-def listIsPrefixOf : List Word → List Word → Bool
-  | [], _ => true
-  | _ :: _, [] => false
-  | x :: xs, y :: ys => x == y && listIsPrefixOf xs ys
-
 /-- Count of complete utterance extensions of `pfx` that are true of `r`. -/
 def trueExtCount (pfx : List Word) (r : Referent) : ℕ :=
   (completeUtterances.filter (fun u =>
-    listIsPrefixOf pfx u && uttSem u r)).length
+    pfx.isPrefixOf u && uttSem u r)).length
 
 /-- Count of viable extensions: complete utterances extending `pfx` that are
     true of at least one referent. -/
 def viableExtCount (pfx : List Word) : ℕ :=
   (completeUtterances.filter (fun u =>
-    listIsPrefixOf pfx u &&
+    pfx.isPrefixOf u &&
     ([Referent.redDress, .blueDress, .redHat].any (fun r => uttSem u r)))).length
 
 /-- Extension-based incremental semantics (§2.2):

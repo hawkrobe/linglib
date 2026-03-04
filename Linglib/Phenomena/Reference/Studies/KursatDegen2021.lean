@@ -284,9 +284,9 @@ analogue of the color/material asymmetry tested in Exp 2. -/
     observed in Exp 2. -/
 theorem incremental_model_predicts_color_asymmetry :
     Phenomena.Reference.Studies.WaldonDegen2021.englishSS.trajectoryProb ()
-      .smallBlue [.small, .blue, .pin] >
+      .smallBlue [.small, .blue, .pin, .stop] >
     Phenomena.Reference.Studies.WaldonDegen2021.englishCS.trajectoryProb ()
-      .smallBlue [.small, .blue, .pin] :=
+      .smallBlue [.small, .blue, .pin, .stop] :=
   Phenomena.Reference.Studies.WaldonDegen2021.prediction1_english_asymmetry
 
 -- ============================================================================

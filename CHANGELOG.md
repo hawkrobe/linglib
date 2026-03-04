@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.228.9] - 2026-03-04
+
+### Changed
+- **WaldonDegen2021 audit**: Added `.stop` token to fix postnominal stopping bug — without it, Spanish word order forced continuation (P(small|[pin,blue])=1) instead of modeling the stop-vs-continue decision. Added per-word cost C=0.1/adjective matching the paper's S1 formula. Added Prediction 4 (English total > Spanish total). Replaced `listIsPrefixOf` with stdlib `List.isPrefixOf`, inlined `boolToRat`, added scene-filter cardinality theorems.
+- **CohnGordonEtAl2019**: Replaced duplicate `listIsPrefixOf` with `List.isPrefixOf`.
+- **KursatDegen2021**: Updated trajectory references for stop token.
+
+## [0.228.8] - 2026-03-04
+
+### Changed
+- **SchlotterbeckWang2023 RSAConfig migration**: Rewrote from self-contained file (only `Mathlib.Data.Rat.Defs`, all `native_decide`) to RSAConfig pattern. Now uses `mkIncRSA` factory, `trajectoryProb`/`S1_at` predictions proved via `rsa_predict`, noise bridge via `RSA.Core.Noise`. Eliminated `Size`/`Color` type indirection (direct pattern matching). Generalized `prefix_meaning_swap` to arbitrary word pairs. Added `prefix_meaning_swap3`, `prefix_meaning_product` (PoE decomposition), `lexContinuousQ_pos` (strict positivity). Fixed hallucinated "Proposition 1" reference. Documented simplifications (P_Lang, S1^{inc_utt}, bias b, Gaussian+binomial perception) and psychophysics connection (`Core.Agent.Psychophysics` Weber fractions).
+
 ## [0.228.7] - 2026-03-03
 
 ### Added

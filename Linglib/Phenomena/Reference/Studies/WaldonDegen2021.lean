@@ -44,6 +44,7 @@ different `RSAConfig` instances (language × scene).
 | 1 | English color/size asymmetry: SS > CS | `rsa_predict` |
 | 2 | Cross-linguistic: English SS > Spanish SS | `rsa_predict` |
 | 3 | Spanish flip: CS > SS for redundant size | `rsa_predict` |
+| 4 | Overall: English total > Spanish total | `rsa_predict` |
 
 ## Connections
 
@@ -64,9 +65,13 @@ open RSA
 -- ============================================================================
 
 /-- Words available to the incremental speaker: two color adjectives,
-    two size adjectives, and a noun ("pin"). -/
+    two size adjectives, a noun ("pin"), and an explicit stop token.
+    The stop token models the speaker's choice to end the utterance;
+    without it, postnominal word orders lack a way to represent the
+    stopping decision after the noun (cf. English where "pin" naturally
+    terminates utterances). -/
 inductive Word where
-  | blue | red | big | small | pin
+  | blue | red | big | small | pin | stop
   deriving DecidableEq, Fintype, BEq, Repr
 
 /-- Referents in the 2×2 reference game: big/small × blue/red. -/
@@ -85,6 +90,7 @@ def wordApplies : Word → Referent → Bool
   | .big,   .bigBlue | .big,   .bigRed    => true
   | .small, .smallBlue | .small, .smallRed => true
   | .pin,   _          => true
+  | .stop,  _          => true
   | _,      _          => false
 
 -- ============================================================================
@@ -96,7 +102,7 @@ def wordApplies : Word → Referent → Bool
 def semanticValueQ : Word → ℚ
   | .blue | .red   => 19/20
   | .big  | .small => 4/5
-  | .pin           => 1
+  | .pin | .stop   => 1
 
 /-- Continuous lexical interpretation L^C(r, i).
     Returns v^i if true, (1 - v^i) if false. -/
@@ -115,17 +121,25 @@ def uttContinuousQ (r : Referent) (u : List Word) : ℚ :=
 def uttBoolTrue (u : List Word) (r : Referent) : Bool :=
   u.all (fun w => wordApplies w r)
 
-/-- All grammatical English (prenominal) utterances. -/
+/-- All grammatical English (prenominal) utterances, each terminated
+    by `.stop`. In English the noun always comes last before stop,
+    so "pin" naturally precedes the stopping decision. -/
 def allUttsEng : List (List Word) :=
-  [[.blue, .pin], [.red, .pin], [.big, .pin], [.small, .pin],
-   [.small, .blue, .pin], [.small, .red, .pin],
-   [.big, .blue, .pin], [.big, .red, .pin]]
+  [[.blue, .pin, .stop], [.red, .pin, .stop],
+   [.big, .pin, .stop], [.small, .pin, .stop],
+   [.small, .blue, .pin, .stop], [.small, .red, .pin, .stop],
+   [.big, .blue, .pin, .stop], [.big, .red, .pin, .stop]]
 
-/-- All grammatical Spanish (postnominal) utterances. -/
+/-- All grammatical Spanish (postnominal) utterances, each terminated
+    by `.stop`. The stop token is critical here: after `[pin, blue]`,
+    the S1 chooses between `.stop` (2-word non-redundant) and `.small`
+    (continuing to the 3-word redundant utterance). Without `.stop`,
+    the model forces continuation whenever valid extensions exist. -/
 def allUttsSpn : List (List Word) :=
-  [[.pin, .blue], [.pin, .red], [.pin, .big], [.pin, .small],
-   [.pin, .blue, .small], [.pin, .red, .small],
-   [.pin, .blue, .big], [.pin, .red, .big]]
+  [[.pin, .blue, .stop], [.pin, .red, .stop],
+   [.pin, .big, .stop], [.pin, .small, .stop],
+   [.pin, .blue, .small, .stop], [.pin, .red, .small, .stop],
+   [.pin, .blue, .big, .stop], [.pin, .red, .big, .stop]]
 
 /-- Scene-filtered utterances: only those Boolean-true of at least one
     scene member (Figure 1). This yields 7 utterances per scene. -/
@@ -136,14 +150,18 @@ def sceneFilter (utts : List (List Word)) (scene : Referent → Bool) :
       scene r && uttBoolTrue u r
 
 -- ============================================================================
--- §5. Extension-Based Continuous Meaning
+-- §5. Production Cost
 -- ============================================================================
 
-/-- Whether `pfx` is a prefix of `utt`. -/
-def listIsPrefixOf : List Word → List Word → Bool
-  | [], _ => true
-  | _ :: _, [] => false
-  | x :: xs, y :: ys => x == y && listIsPrefixOf xs ys
+/-- Per-word production cost (Section 4): each adjective incurs cost 0.1.
+    Pin and stop have zero cost (noun and utterance boundary). -/
+def wordCostQ : Word → ℚ
+  | .pin | .stop => 0
+  | _ => 1/10
+
+-- ============================================================================
+-- §6. Extension-Based Continuous Meaning
+-- ============================================================================
 
 /-- Incremental continuous meaning: average continuous semantics over
     all grammatical completions of prefix.
@@ -151,7 +169,7 @@ def listIsPrefixOf : List Word → List Word → Bool
     X^C(c, i, r) = Σ_{u ⊒ c+i} ⟦u⟧^C(r) / |{u : u ⊒ c+i}| -/
 def continuousMeaningQ (utts : List (List Word)) (scene : Referent → Bool)
     (pfx : List Word) (r : Referent) : ℚ :=
-  let exts := (sceneFilter utts scene).filter (listIsPrefixOf pfx)
+  let exts := (sceneFilter utts scene).filter (pfx.isPrefixOf)
   if exts.isEmpty then 0
   else exts.foldl (fun acc u => acc + uttContinuousQ r u) 0 / exts.length
 
@@ -191,7 +209,7 @@ noncomputable def continuousMeaning (utts : List (List Word))
   (continuousMeaningQ utts scene pfx r : ℝ)
 
 -- ============================================================================
--- §6. Scenes
+-- §7. Scenes
 -- ============================================================================
 
 /-- Size-sufficient scene: {big_blue, big_red, small_blue}.
@@ -207,15 +225,20 @@ def csScene : Referent → Bool
   | _ => false
 
 -- ============================================================================
--- §7. RSAConfig (Parameterized by Language and Scene)
+-- §8. RSAConfig (Parameterized by Language and Scene)
 -- ============================================================================
 
 /-- CI-RSA configuration parameterized by utterance set and scene.
 
     - L0 uses extension-based continuous meaning, returning 0 for
       referents outside the scene
-    - S1 uses `rpow`-based scoring with α = 7
-    - Cost is omitted (it cancels in the trajectory comparisons) -/
+    - S1 uses `rpow`-based scoring with α = 7 and per-word cost C(i)
+    - S1(i|c,r) ∝ L0(r|c,i)^α · exp(−α · C(i))  (Section 4)
+
+    Note: v^color = 0.95 here, matching the paper's fitted values.
+    This differs from the @cite{degen-etal-2020} value of v^color = 0.99
+    used in `RSA.Core.Noise`, because the two papers fit different
+    experimental datasets. -/
 noncomputable def mkCIRSA (utts : List (List Word)) (scene : Referent → Bool) :
     RSAConfig Word Referent where
   Ctx := List Word
@@ -225,8 +248,9 @@ noncomputable def mkCIRSA (utts : List (List Word)) (scene : Referent → Bool) 
     split
     · exact Rat.cast_nonneg.mpr (continuousMeaningQ_nonneg _ _ _ _)
     · exact le_refl _
-  s1Score l0 α _ w u := Real.rpow (l0 u w) α
-  s1Score_nonneg _ _ _ _ _ hl _ := Real.rpow_nonneg (hl _ _) _
+  s1Score l0 α _ w u := Real.rpow (l0 u w) α * Real.exp (-α * (wordCostQ u : ℝ))
+  s1Score_nonneg _ _ _ _ _ hl _ :=
+    mul_nonneg (Real.rpow_nonneg (hl _ _) _) (Real.exp_pos _).le
   α := 7
   α_pos := by norm_num
   transition ctx w := ctx ++ [w]
@@ -247,11 +271,20 @@ noncomputable def spanishSS := mkCIRSA allUttsSpn ssScene
 noncomputable def spanishCS := mkCIRSA allUttsSpn csScene
 
 -- ============================================================================
--- §8. Predictions
+-- §9. Scene-Filter Cardinality
+-- ============================================================================
+
+theorem ss_eng_has_7_utts : (sceneFilter allUttsEng ssScene).length = 7 := by native_decide
+theorem cs_eng_has_7_utts : (sceneFilter allUttsEng csScene).length = 7 := by native_decide
+theorem ss_spn_has_7_utts : (sceneFilter allUttsSpn ssScene).length = 7 := by native_decide
+theorem cs_spn_has_7_utts : (sceneFilter allUttsSpn csScene).length = 7 := by native_decide
+
+-- ============================================================================
+-- §10. Predictions
 -- ============================================================================
 
 -- **Prediction 1**: English color/size asymmetry.
--- P(small blue pin | English, SS) > P(small blue pin | English, CS)
+-- P(small blue pin stop | English, SS) > P(small blue pin stop | English, CS)
 -- In the size-sufficient scene, color is redundant but speakers use it
 -- more than they use redundant size in the color-sufficient scene.
 -- This follows from v^color > v^size: the continuous meaning of color
@@ -259,24 +292,24 @@ noncomputable def spanishCS := mkCIRSA allUttsSpn csScene
 -- target when color words are used.
 set_option maxHeartbeats 8000000 in
 theorem prediction1_english_asymmetry :
-    englishSS.trajectoryProb () .smallBlue [.small, .blue, .pin] >
-    englishCS.trajectoryProb () .smallBlue [.small, .blue, .pin] := by
+    englishSS.trajectoryProb () .smallBlue [.small, .blue, .pin, .stop] >
+    englishCS.trajectoryProb () .smallBlue [.small, .blue, .pin, .stop] := by
   rsa_predict
 
 -- **Prediction 2**: Cross-linguistic variation.
--- P(small blue pin | English, SS) > P(pin blue small | Spanish, SS)
+-- P(small blue pin stop | English, SS) > P(pin blue small stop | Spanish, SS)
 -- English prenominal order produces more redundant color than Spanish
 -- postnominal order. In English, the adjective comes first and
 -- immediately narrows the referent set; in Spanish, the noun comes
 -- first and the adjective is less incrementally informative.
 set_option maxHeartbeats 8000000 in
 theorem prediction2_cross_linguistic :
-    englishSS.trajectoryProb () .smallBlue [.small, .blue, .pin] >
-    spanishSS.trajectoryProb () .smallBlue [.pin, .blue, .small] := by
+    englishSS.trajectoryProb () .smallBlue [.small, .blue, .pin, .stop] >
+    spanishSS.trajectoryProb () .smallBlue [.pin, .blue, .small, .stop] := by
   rsa_predict
 
 -- **Prediction 3** (novel): Spanish flip.
--- P(pin blue small | Spanish, CS) > P(pin blue small | Spanish, SS)
+-- P(pin blue small stop | Spanish, CS) > P(pin blue small stop | Spanish, SS)
 -- In Spanish postnominal order, the asymmetry reverses: redundant
 -- size (in CS) exceeds redundant color (in SS). The noun is produced
 -- first, and post-nominal size in CS is more incrementally informative
@@ -284,12 +317,12 @@ theorem prediction2_cross_linguistic :
 -- different extension sets.
 set_option maxHeartbeats 8000000 in
 theorem prediction3_spanish_flip :
-    spanishCS.trajectoryProb () .smallBlue [.pin, .blue, .small] >
-    spanishSS.trajectoryProb () .smallBlue [.pin, .blue, .small] := by
+    spanishCS.trajectoryProb () .smallBlue [.pin, .blue, .small, .stop] >
+    spanishSS.trajectoryProb () .smallBlue [.pin, .blue, .small, .stop] := by
   rsa_predict
 
 -- ============================================================================
--- §9. Semantic Properties
+-- §11. Semantic Properties
 -- ============================================================================
 
 /-- Color adjectives have higher reliability than size adjectives.
@@ -305,11 +338,8 @@ theorem semantic_values_positive :
   intro w; cases w <;> norm_num [semanticValueQ]
 
 -- ============================================================================
--- §10. Noise Theory Connection
+-- §12. Noise Theory Connection
 -- ============================================================================
-
-/-- Helper to convert Bool to ℚ for the noise channel. -/
-private def boolToRat (b : Bool) : ℚ := if b then 1 else 0
 
 /-- `lexContinuousQ` is an instance of the unified noise channel from
     `RSA.Core.Noise`. The continuous lexical semantics L^C(r, i) is
@@ -321,8 +351,23 @@ private def boolToRat (b : Bool) : ℚ := if b then 1 else 0
 theorem lexContinuous_as_noiseChannel (r : Referent) (w : Word) :
     lexContinuousQ r w =
     RSA.Noise.noiseChannel (semanticValueQ w) (1 - semanticValueQ w)
-      (boolToRat (wordApplies w r)) := by
-  simp only [lexContinuousQ, RSA.Noise.noiseChannel, boolToRat]
+      (if wordApplies w r then 1 else 0 : ℚ) := by
+  simp only [lexContinuousQ, RSA.Noise.noiseChannel]
   split <;> ring
+
+-- ============================================================================
+-- §13. Prediction 4: Overall Cross-Linguistic Redundancy
+-- ============================================================================
+
+-- **Prediction 4**: Overall cross-linguistic redundancy (Section 4).
+-- Across SS and CS scenes, CI-RSA predicts lower overall redundant
+-- modification probability in Spanish-postnom. than in English.
+set_option maxHeartbeats 16000000 in
+theorem prediction4_overall_redundancy :
+    englishSS.trajectoryProb () .smallBlue [.small, .blue, .pin, .stop] +
+    englishCS.trajectoryProb () .smallBlue [.small, .blue, .pin, .stop] >
+    spanishSS.trajectoryProb () .smallBlue [.pin, .blue, .small, .stop] +
+    spanishCS.trajectoryProb () .smallBlue [.pin, .blue, .small, .stop] := by
+  rsa_predict
 
 end Phenomena.Reference.Studies.WaldonDegen2021
