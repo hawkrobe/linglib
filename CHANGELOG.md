@@ -1,5 +1,26 @@
 # Changelog
 
+## [0.228.4] - 2026-03-03
+
+### Changed
+- **WaldonDegen2021 rewrite**: Rewrote using `RSAConfig` + `rsa_predict` following CohnGordon template. All 3 predictions (English color/size asymmetry, cross-linguistic English>Spanish, Spanish flip) now proved via `rsa_predict` reflection (~150-290ms each). Parameterized `mkCIRSA` constructor for language × scene combinations. Corrected utterance filtering from target-filtered to scene-filtered per paper Figure 1.
+
+### Fixed
+- **rsa_predict ℚ→ℝ cast bug**: `extractRatFromCauchy` fallback path was preserving original un-reduced ℚ expressions in `RExpr.ratCast` nodes, leaking noncomputable references into `native_decide` compilation. Now uses canonical `mkRatExpr` form instead.
+
+## [0.228.3] - 2026-03-03
+
+### Added
+- **Erlewine 2018 vP-to-Spec,CP derivation** (§6 of `Erlewine2018.lean`): 7-step derivation (5 EM + 2 IM) modeling Erlewine's predicate-fronting analysis where vP moves to Spec,CP after subject raises to Spec,TP. 6 verification theorems: same VOS order as Cole & Hermon (`cole_erlewine_agree_on_order`), two movements vs one (`erlewine_two_movements`), different derived structure (`different_derived_structure`), vP c-commands subject (`vP_ccommands_subject_erlewine`), same VP base (`same_vp`).
+
+## [0.228.2] - 2026-03-03
+
+### Added
+- **Derivation type** (`Theories/Syntax/Minimalism/Core/Derivation.lean`): `SyntacticObject.replace`, `Step` (emL/emR/im), `Derivation` structure with `final`, `stageAt`, `movedItems`. Verification theorems: `stageAt_zero`, `stageAt_length`, `replace_self`.
+- **EPP strategies** (`Theories/Syntax/Minimalism/Core/EPP.lean`): `EPPStrategy` inductive (subjectRaising/vpRaising/expletive/none), `WordOrderParameter` structure with English, Toba Batak, Irish instances.
+- **Cole & Hermon 2008** (`Phenomena/WordOrder/Studies/ColeHermon2008.lean`): VP-raising derivation for Toba Batak VOS vs subject-raising for English SVO. Proves word order (`toba_batak_is_vos`, `english_is_svo`), same base shape (`same_base_shape`), and backward binding c-command (`vp_ccommands_subject`).
+- **Erlewine 2018 bridge**: `predicate_fronting_yields_vi_order` connecting Cole & Hermon's VP-raising to Erlewine's predicate-fronting analysis (both Toba Batak).
+
 ## [0.228.1] - 2026-03-03
 
 ### Fixed

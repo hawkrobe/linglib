@@ -1,3 +1,5 @@
+import Linglib.Tactics.RSAPredict
+import Linglib.Theories.Pragmatics.RSA.Core.Config
 import Linglib.Theories.Pragmatics.RSA.Core.Noise
 
 /-!
@@ -6,330 +8,321 @@ import Linglib.Theories.Pragmatics.RSA.Core.Noise
 
 Waldon, B. & Degen, J. (2021). Modeling cross-linguistic production of
 referring expressions. *Proceedings of the Society for Computation in
-Linguistics (SCiL)* 4, 206-215.
+Linguistics (SCiL)* 4, 206–215.
 
-## Overview
+## The Model
 
 CI-RSA synthesizes two RSA extensions:
 1. **Incremental RSA** (@cite{cohn-gordon-goodman-potts-2019}): Word-by-word production
+   via the chain rule S1(u|r) = ∏ₖ S1(wₖ | [w₁,...,wₖ₋₁], r)
 2. **Continuous semantics** (@cite{degen-etal-2020}): Noisy adjective reliability
+   L^C(r, i) = v^i if i true of r, else 1 - v^i
 
-## Key Equations
+The incremental meaning function averages continuous semantics over
+grammatical completions of the current prefix:
 
-**Continuous lexical semantics** (v^i = reliability of item i):
-  L^C(r, i) = v^i if i true of r, else 1 - v^i
+  X^C(c, i, r) = Σ_{u ⊒ c+i} ⟦u⟧^C(r) / |{u : u ⊒ c+i}|
 
-**String interpretation** (average over continuations):
-  X^C(c, i, r) = Sum_{u continues c+i} [[u]]^C(r) / |continuations|
+The utterance set is scene-filtered: only utterances Boolean-true of at
+least one scene member are included (Figure 1).
 
-**Incremental listener**:
-  L0^INCR(r | c, i) proportional to X^C(c, i, r) * P(r)
+## Formalization
 
-**Incremental speaker**:
-  S1^INCR(i | c, r) proportional to exp(alpha * (log L0^INCR(r | c, i) - C(i)))
+This builds on `RSAConfig`'s sequential infrastructure (following
+@cite{cohn-gordon-goodman-potts-2019}), adding:
+- Continuous (ℚ-valued) meaning instead of Boolean extension-counting
+- `rpow`-based s1Score with α = 7
+- Scene-parameterized configs for cross-condition comparisons
 
-**Full utterance** (chain rule):
-  S1(u | r) = Prod_j S1^INCR(i_j | [i_1...i_{j-1}], r)
+The three predictions are trajectory probability comparisons across
+different `RSAConfig` instances (language × scene).
 
 ## Predictions
 
-1. **Color/size asymmetry**: Redundant color > redundant size (English)
-2. **Cross-linguistic**: English > Spanish-postnom. in redundant color
-3. **Novel**: Spanish should flip (redundant size > redundant color)
+| # | Prediction | Status |
+|---|-----------|--------|
+| 1 | English color/size asymmetry: SS > CS | `rsa_predict` |
+| 2 | Cross-linguistic: English SS > Spanish SS | `rsa_predict` |
+| 3 | Spanish flip: CS > SS for redundant size | `rsa_predict` |
 
 ## Connections
 
-- **Continuous semantics**: Shares theoretical foundation with
-  `RSA.ContinuousSemantics` (@cite{degen-etal-2020}). Both use noisy adjective
-  semantics where v^color > v^size, explaining redundant modification.
-
-- **Noise theory**: The lexContinuous function instantiates the unified
-  noise channel from `RSA.Core.Noise`. See `lexContinuous_as_noiseChannel`.
-
-- **Word order**: Captures cross-linguistic variation in adjective ordering
-  (prenominal English vs postnominal Spanish).
+- **Noise theory**: `lexContinuousQ` instantiates the unified noise channel
+  from `RSA.Core.Noise`. See `lexContinuous_as_noiseChannel`.
+- **Incremental RSA**: Extends @cite{cohn-gordon-goodman-potts-2019} with
+  continuous semantics and cross-linguistic word order variation.
 -/
 
-namespace RSA.Implementations.WaldonDegen2021
+set_option autoImplicit false
 
+namespace Phenomena.Reference.Studies.WaldonDegen2021
 
-/-- Features for reference game objects. -/
-inductive Feature where
-  | big | small | blue | red
-  deriving DecidableEq, Repr, BEq
+open RSA
 
-/-- A referent has size and color features. -/
-structure Referent where
-  size : Feature   -- big or small
-  color : Feature  -- blue or red
-  deriving DecidableEq, Repr, BEq
+-- ============================================================================
+-- §1. Domain Types
+-- ============================================================================
 
-def bigBlue : Referent := ⟨.big, .blue⟩
-def bigRed : Referent := ⟨.big, .red⟩
-def smallBlue : Referent := ⟨.small, .blue⟩
-def smallRed : Referent := ⟨.small, .red⟩
-
-/-- Size-sufficient scene: {big_blue, big_red, small_blue}, target = small_blue -/
-def ssScene : List Referent := [bigBlue, bigRed, smallBlue]
-
-/-- Color-sufficient scene: {small_red, big_red, small_blue}, target = small_blue -/
-def csScene : List Referent := [smallRed, bigRed, smallBlue]
-
-
-/-- Lexical items in referring expressions. -/
-inductive LexItem where
+/-- Words available to the incremental speaker: two color adjectives,
+    two size adjectives, and a noun ("pin"). -/
+inductive Word where
   | blue | red | big | small | pin
-  | start | stop  -- Boundary markers
-  deriving DecidableEq, Repr, BEq
+  deriving DecidableEq, Fintype, BEq, Repr
 
-/-- An utterance is an ordered sequence of lexical items. -/
-abbrev Utterance := List LexItem
+/-- Referents in the 2×2 reference game: big/small × blue/red. -/
+inductive Referent where
+  | bigBlue | bigRed | smallBlue | smallRed
+  deriving DecidableEq, Fintype, Repr
 
-/-- Check if lexical item is true of referent. -/
-def itemTrueOf (i : LexItem) (r : Referent) : Bool :=
-  match i with
-  | .blue => r.color == .blue
-  | .red => r.color == .red
-  | .big => r.size == .big
-  | .small => r.size == .small
-  | .pin => true
-  | .start | .stop => true
+-- ============================================================================
+-- §2. Boolean Semantics
+-- ============================================================================
 
-/-- Discrete utterance meaning: conjunction of item meanings. -/
-def uttTrueOf (u : Utterance) (r : Referent) : Bool :=
-  u.all (itemTrueOf · r)
+/-- Whether a word is veridically true of a referent. -/
+def wordApplies : Word → Referent → Bool
+  | .blue,  .bigBlue | .blue,  .smallBlue => true
+  | .red,   .bigRed  | .red,   .smallRed  => true
+  | .big,   .bigBlue | .big,   .bigRed    => true
+  | .small, .smallBlue | .small, .smallRed => true
+  | .pin,   _          => true
+  | _,      _          => false
 
+-- ============================================================================
+-- §3. Continuous Semantics
+-- ============================================================================
 
-/-- Semantic reliability values v^i for lexical items.
-    Color adjectives are more reliable than size adjectives. -/
-def semanticValue (i : LexItem) : ℚ :=
-  match i with
-  | .blue | .red => 95/100      -- v^color = 0.95
-  | .big | .small => 80/100     -- v^size = 0.8
-  | .pin => 1                   -- Nouns fully reliable
-  | .start | .stop => 1
+/-- Semantic reliability values v^i. Color adjectives are more reliable
+    than size adjectives: v^color = 19/20 (0.95), v^size = 4/5 (0.8). -/
+def semanticValueQ : Word → ℚ
+  | .blue | .red   => 19/20
+  | .big  | .small => 4/5
+  | .pin           => 1
 
 /-- Continuous lexical interpretation L^C(r, i).
     Returns v^i if true, (1 - v^i) if false. -/
-def lexContinuous (r : Referent) (i : LexItem) : ℚ :=
-  let v := semanticValue i
-  if itemTrueOf i r then v else 1 - v
+def lexContinuousQ (r : Referent) (w : Word) : ℚ :=
+  if wordApplies w r then semanticValueQ w else 1 - semanticValueQ w
 
-/-- Continuous utterance meaning [[u]]^C(r) = Prod_{i in u} L^C(r, i). -/
-def uttContinuous (r : Referent) (u : Utterance) : ℚ :=
-  u.foldl (λ acc i => acc * lexContinuous r i) 1
+/-- Continuous utterance meaning ⟦u⟧^C(r) = ∏_{w ∈ u} L^C(r, w). -/
+def uttContinuousQ (r : Referent) (u : List Word) : ℚ :=
+  u.foldl (fun acc w => acc * lexContinuousQ r w) 1
 
-/-- Helper to convert Bool to ℚ for the noise channel connection. -/
-private def boolToRat (b : Bool) : ℚ := if b then 1 else 0
+-- ============================================================================
+-- §4. Utterances (Scene-Filtered)
+-- ============================================================================
 
--- Grounding: Connection to unified noise theory
+/-- Boolean utterance truth: conjunction of word applicability. -/
+def uttBoolTrue (u : List Word) (r : Referent) : Bool :=
+  u.all (fun w => wordApplies w r)
 
-/-- lexContinuous is an instance of the unified noise channel.
+/-- All grammatical English (prenominal) utterances. -/
+def allUttsEng : List (List Word) :=
+  [[.blue, .pin], [.red, .pin], [.big, .pin], [.small, .pin],
+   [.small, .blue, .pin], [.small, .red, .pin],
+   [.big, .blue, .pin], [.big, .red, .pin]]
 
-This connects @cite{waldon-degen-2021} to the unified noise theory in
-RSA.Core.Noise. The continuous lexical semantics L^C(r, i) is exactly
-the noise channel with:
-- onMatch = v^i (semantic value / reliability)
-- onMismatch = 1 - v^i
-- b = 1 if item i is true of referent r, 0 otherwise
+/-- All grammatical Spanish (postnominal) utterances. -/
+def allUttsSpn : List (List Word) :=
+  [[.pin, .blue], [.pin, .red], [.pin, .big], [.pin, .small],
+   [.pin, .blue, .small], [.pin, .red, .small],
+   [.pin, .blue, .big], [.pin, .red, .big]]
 
-Note: This uses the simplified @cite{waldon-degen-2021} parameterization
-where mismatch = 1 - match, rather than the more general
-@cite{degen-etal-2020} formulation with independent match/mismatch
-parameters.
--/
-theorem lexContinuous_as_noiseChannel (r : Referent) (i : LexItem) :
-    lexContinuous r i =
-    RSA.Noise.noiseChannel (semanticValue i) (1 - semanticValue i)
-      (boolToRat (itemTrueOf i r)) := by
-  simp only [lexContinuous, RSA.Noise.noiseChannel, boolToRat]
-  split <;> ring
+/-- Scene-filtered utterances: only those Boolean-true of at least one
+    scene member (Figure 1). This yields 7 utterances per scene. -/
+def sceneFilter (utts : List (List Word)) (scene : Referent → Bool) :
+    List (List Word) :=
+  utts.filter fun u =>
+    [Referent.bigBlue, .bigRed, .smallBlue, .smallRed].any fun r =>
+      scene r && uttBoolTrue u r
 
+-- ============================================================================
+-- §5. Extension-Based Continuous Meaning
+-- ============================================================================
 
-/-- Word order type for different languages. -/
-inductive WordOrder where
-  | prenominal      -- English: Adj Adj N
-  | postnominal     -- Spanish-postnom: N Adj Adj
-  deriving DecidableEq, Repr
+/-- Whether `pfx` is a prefix of `utt`. -/
+def listIsPrefixOf : List Word → List Word → Bool
+  | [], _ => true
+  | _ :: _, [] => false
+  | x :: xs, y :: ys => x == y && listIsPrefixOf xs ys
 
-/-- Generate all grammatical utterances for a language and scene. -/
-def grammaticalUtterances (order : WordOrder) (_scene : List Referent)
-    (target : Referent) : List Utterance :=
-  let singleAdj := match order with
-    | .prenominal => [[LexItem.blue, LexItem.pin], [LexItem.red, LexItem.pin],
-                      [LexItem.big, LexItem.pin], [LexItem.small, LexItem.pin]]
-    | .postnominal => [[LexItem.pin, LexItem.blue], [LexItem.pin, LexItem.red],
-                       [LexItem.pin, LexItem.big], [LexItem.pin, LexItem.small]]
-  let doubleAdj := match order with
-    | .prenominal =>
-      -- English: size before color (small blue pin)
-      [[LexItem.small, LexItem.blue, LexItem.pin],
-       [LexItem.small, LexItem.red, LexItem.pin],
-       [LexItem.big, LexItem.blue, LexItem.pin],
-       [LexItem.big, LexItem.red, LexItem.pin]]
-    | .postnominal =>
-      -- Spanish-postnom: color before size (pin blue small)
-      [[LexItem.pin, LexItem.blue, LexItem.small],
-       [LexItem.pin, LexItem.blue, LexItem.big],
-       [LexItem.pin, LexItem.red, LexItem.small],
-       [LexItem.pin, LexItem.red, LexItem.big]]
-  -- Filter to utterances true of target
-  (singleAdj ++ doubleAdj).filter (uttTrueOf · target)
+/-- Incremental continuous meaning: average continuous semantics over
+    all grammatical completions of prefix.
 
+    X^C(c, i, r) = Σ_{u ⊒ c+i} ⟦u⟧^C(r) / |{u : u ⊒ c+i}| -/
+def continuousMeaningQ (utts : List (List Word)) (scene : Referent → Bool)
+    (pfx : List Word) (r : Referent) : ℚ :=
+  let exts := (sceneFilter utts scene).filter (listIsPrefixOf pfx)
+  if exts.isEmpty then 0
+  else exts.foldl (fun acc u => acc + uttContinuousQ r u) 0 / exts.length
 
-/-- Get all grammatical continuations of a partial utterance. -/
-def continuations (partialUtt : Utterance) (_order : WordOrder)
-    (allUtts : List Utterance) : List Utterance :=
-  allUtts.filter λ u => partialUtt.isPrefixOf u
+private theorem continuousMeaningQ_nonneg (utts : List (List Word))
+    (scene : Referent → Bool) (pfx : List Word) (r : Referent) :
+    0 ≤ continuousMeaningQ utts scene pfx r := by
+  unfold continuousMeaningQ
+  simp only
+  split
+  · exact le_refl _
+  · apply div_nonneg
+    · suffices ∀ (l : List (List Word)) (init : ℚ), 0 ≤ init →
+          0 ≤ l.foldl (fun acc u => acc + uttContinuousQ r u) init by
+        exact this _ 0 (le_refl _)
+      intro l; induction l with
+      | nil => intro init h; exact h
+      | cons u us ih =>
+        intro init hinit; simp only [List.foldl]
+        apply ih
+        apply add_nonneg hinit
+        unfold uttContinuousQ
+        suffices ∀ (l : List Word) (init : ℚ), 0 ≤ init →
+            0 ≤ l.foldl (fun acc w => acc * lexContinuousQ r w) init by
+          exact this _ 1 one_pos.le
+        intro l2; induction l2 with
+        | nil => intro init h; exact h
+        | cons w ws ih2 =>
+          intro init hinit; simp only [List.foldl]
+          exact ih2 _ (mul_nonneg hinit (by
+            cases r <;> cases w <;>
+              simp [lexContinuousQ, wordApplies, semanticValueQ] <;> norm_num))
+    · exact Nat.cast_nonneg _
 
-/-- Incremental string interpretation X^C(c, i, r).
-    Averages continuous semantics over all grammatical completions. -/
-def stringInterpretation (context : Utterance) (nextWord : LexItem)
-    (r : Referent) (order : WordOrder) (allUtts : List Utterance) : ℚ :=
-  let partialUtt := context ++ [nextWord]
-  let conts := continuations partialUtt order allUtts
-  if conts.isEmpty then 0
-  else
-    let total := conts.foldl (λ acc u => acc + uttContinuous r u) 0
-    total / conts.length
+/-- Real-valued continuous meaning (for RSAConfig). -/
+noncomputable def continuousMeaning (utts : List (List Word))
+    (scene : Referent → Bool) (pfx : List Word) (r : Referent) : ℝ :=
+  (continuousMeaningQ utts scene pfx r : ℝ)
 
+-- ============================================================================
+-- §6. Scenes
+-- ============================================================================
 
-/-- Incremental literal listener L0^INCR(r | c, i).
-    Proportional to string meaning times prior. -/
-def l0Incremental (context : Utterance) (nextWord : LexItem)
-    (scene : List Referent) (order : WordOrder) (allUtts : List Utterance)
-    : List (Referent × ℚ) :=
-  let scores := scene.map λ r =>
-    (r, stringInterpretation context nextWord r order allUtts)
-  let total := scores.foldl (λ acc (_, s) => acc + s) 0
-  if total == 0 then scores.map λ (r, _) => (r, 0)
-  else scores.map λ (r, s) => (r, s / total)
+/-- Size-sufficient scene: {big_blue, big_red, small_blue}.
+    Target small_blue is uniquely identified by size alone. -/
+def ssScene : Referent → Bool
+  | .bigBlue | .bigRed | .smallBlue => true
+  | _ => false
 
-/-- Incremental speaker S1^INCR(i | c, r).
-    Soft-maximizes utility of next word.
+/-- Color-sufficient scene: {small_red, big_red, small_blue}.
+    Target small_blue is uniquely identified by color alone. -/
+def csScene : Referent → Bool
+  | .smallRed | .bigRed | .smallBlue => true
+  | _ => false
 
-    Note: Uses rational approximation of softmax via power series. -/
-def s1Incremental (context : Utterance) (target : Referent)
-    (scene : List Referent) (order : WordOrder) (allUtts : List Utterance)
-    (α : ℕ) (_cost : LexItem → ℚ) : List (LexItem × ℚ) :=
-  -- Get available next words
-  let availableWords : List LexItem := match context with
-    | [] => match order with
-            | .prenominal => [LexItem.blue, LexItem.red, LexItem.big, LexItem.small]
-            | .postnominal => [LexItem.pin]
-    | _ =>
-      let conts := continuations context order allUtts
-      let nextWords := conts.filterMap λ u =>
-        if context.length < u.length then u[context.length]? else none
-      (nextWords ++ [LexItem.stop]).eraseDups
-  -- Compute L0 probability for target for each word
-  let scores : List (LexItem × ℚ) := availableWords.map λ w =>
-    let l0dist := l0Incremental context w scene order allUtts
-    let l0prob := match l0dist.find? (λ p => p.1 == target) with
-      | some (_, prob) => prob
-      | none => 0
-    -- Utility proportional to (L0 prob)^alpha (simplified softmax without cost for now)
-    let score := if l0prob > 0 then l0prob ^ α else 0
-    (w, score)
-  -- Normalize
-  let total := scores.foldl (λ acc p => acc + p.2) 0
-  if total == 0 then scores.map λ (w, _) => (w, 0)
-  else scores.map λ (w, s) => (w, s / total)
+-- ============================================================================
+-- §7. RSAConfig (Parameterized by Language and Scene)
+-- ============================================================================
 
+/-- CI-RSA configuration parameterized by utterance set and scene.
 
-/-- Full utterance probability via chain rule.
-    S1(u | r) = Prod_j S1^INCR(i_j | [i_1...i_{j-1}], r) -/
-def utteranceProb (u : Utterance) (target : Referent)
-    (scene : List Referent) (order : WordOrder) (allUtts : List Utterance)
-    (α : ℕ) (cost : LexItem → ℚ) : ℚ :=
-  let rec go (context : Utterance) (remaining : Utterance) (prob : ℚ) : ℚ :=
-    match remaining with
-    | [] => prob
-    | w :: ws =>
-      let dist := s1Incremental context target scene order allUtts α cost
-      let wProb := match dist.find? (λ p => p.1 == w) with
-        | some (_, prob) => prob
-        | none => 0
-      go (context ++ [w]) ws (prob * wProb)
-  go [] u 1
+    - L0 uses extension-based continuous meaning, returning 0 for
+      referents outside the scene
+    - S1 uses `rpow`-based scoring with α = 7
+    - Cost is omitted (it cancels in the trajectory comparisons) -/
+noncomputable def mkCIRSA (utts : List (List Word)) (scene : Referent → Bool) :
+    RSAConfig Word Referent where
+  Ctx := List Word
+  meaning ctx _ u w :=
+    if scene w then continuousMeaning utts scene (ctx ++ [u]) w else 0
+  meaning_nonneg _ _ _ w := by
+    split
+    · exact Rat.cast_nonneg.mpr (continuousMeaningQ_nonneg _ _ _ _)
+    · exact le_refl _
+  s1Score l0 α _ w u := Real.rpow (l0 u w) α
+  s1Score_nonneg _ _ _ _ _ hl _ := Real.rpow_nonneg (hl _ _) _
+  α := 7
+  α_pos := by norm_num
+  transition ctx w := ctx ++ [w]
+  initial := []
+  latentPrior_nonneg _ _ := by norm_num
+  worldPrior_nonneg _ := by norm_num
 
+/-- English (prenominal) CI-RSA in size-sufficient scene. -/
+noncomputable def englishSS := mkCIRSA allUttsEng ssScene
 
-/-- Default cost function: 0.1 per adjective. -/
-def defaultCost (i : LexItem) : ℚ :=
-  match i with
-  | .blue | .red | .big | .small => 1/10
-  | _ => 0
+/-- English (prenominal) CI-RSA in color-sufficient scene. -/
+noncomputable def englishCS := mkCIRSA allUttsEng csScene
 
-/-- Compute redundant modification probability. -/
-def redundantModProb (order : WordOrder) (scene : List Referent)
-    (target : Referent) (α : ℕ) : ℚ :=
-  let allUtts := grammaticalUtterances order scene target
-  -- The redundant utterance is "small blue pin" or its translation
-  let redundantUtt := match order with
-    | .prenominal => [LexItem.small, LexItem.blue, LexItem.pin]
-    | .postnominal => [LexItem.pin, LexItem.blue, LexItem.small]
-  utteranceProb redundantUtt target scene order allUtts α defaultCost
+/-- Spanish (postnominal) CI-RSA in size-sufficient scene. -/
+noncomputable def spanishSS := mkCIRSA allUttsSpn ssScene
 
-/-- **Main Prediction 1**: English color/size asymmetry.
-    Redundant color in SS > Redundant size in CS. -/
-def englishColorSizeAsymmetry (α : ℕ) : Bool :=
-  let redundantColorSS := redundantModProb .prenominal ssScene smallBlue α
-  let redundantSizeCS := redundantModProb .prenominal csScene smallBlue α
-  redundantColorSS > redundantSizeCS
+/-- Spanish (postnominal) CI-RSA in color-sufficient scene. -/
+noncomputable def spanishCS := mkCIRSA allUttsSpn csScene
 
-/-- **Main Prediction 2**: Cross-linguistic variation.
-    English redundant color > Spanish-postnom redundant color. -/
-def crossLinguisticVariation (α : ℕ) : Bool :=
-  let englishColor := redundantModProb .prenominal ssScene smallBlue α
-  let spanishColor := redundantModProb .postnominal ssScene smallBlue α
-  englishColor > spanishColor
+-- ============================================================================
+-- §8. Predictions
+-- ============================================================================
 
-/-- **Novel Prediction**: Spanish flip.
-    In Spanish-postnom, redundant size > redundant color. -/
-def spanishFlipPrediction (α : ℕ) : Bool :=
-  let spanishColorSS := redundantModProb .postnominal ssScene smallBlue α
-  let spanishSizeCS := redundantModProb .postnominal csScene smallBlue α
-  spanishSizeCS > spanishColorSS
+-- **Prediction 1**: English color/size asymmetry.
+-- P(small blue pin | English, SS) > P(small blue pin | English, CS)
+-- In the size-sufficient scene, color is redundant but speakers use it
+-- more than they use redundant size in the color-sufficient scene.
+-- This follows from v^color > v^size: the continuous meaning of color
+-- words is more informative, so L0 assigns higher probability to the
+-- target when color words are used.
+set_option maxHeartbeats 8000000 in
+theorem prediction1_english_asymmetry :
+    englishSS.trajectoryProb () .smallBlue [.small, .blue, .pin] >
+    englishCS.trajectoryProb () .smallBlue [.small, .blue, .pin] := by
+  rsa_predict
 
--- Semantic Properties
+-- **Prediction 2**: Cross-linguistic variation.
+-- P(small blue pin | English, SS) > P(pin blue small | Spanish, SS)
+-- English prenominal order produces more redundant color than Spanish
+-- postnominal order. In English, the adjective comes first and
+-- immediately narrows the referent set; in Spanish, the noun comes
+-- first and the adjective is less incrementally informative.
+set_option maxHeartbeats 8000000 in
+theorem prediction2_cross_linguistic :
+    englishSS.trajectoryProb () .smallBlue [.small, .blue, .pin] >
+    spanishSS.trajectoryProb () .smallBlue [.pin, .blue, .small] := by
+  rsa_predict
+
+-- **Prediction 3** (novel): Spanish flip.
+-- P(pin blue small | Spanish, CS) > P(pin blue small | Spanish, SS)
+-- In Spanish postnominal order, the asymmetry reverses: redundant
+-- size (in CS) exceeds redundant color (in SS). The noun is produced
+-- first, and post-nominal size in CS is more incrementally informative
+-- than post-nominal color in SS due to the earlier noun anchoring
+-- different extension sets.
+set_option maxHeartbeats 8000000 in
+theorem prediction3_spanish_flip :
+    spanishCS.trajectoryProb () .smallBlue [.pin, .blue, .small] >
+    spanishSS.trajectoryProb () .smallBlue [.pin, .blue, .small] := by
+  rsa_predict
+
+-- ============================================================================
+-- §9. Semantic Properties
+-- ============================================================================
 
 /-- Color adjectives have higher reliability than size adjectives.
-This asymmetry drives the redundant modification predictions. -/
+    This asymmetry drives the redundant modification predictions. -/
 theorem color_more_reliable_than_size :
-    semanticValue .blue > semanticValue .big ∧
-    semanticValue .red > semanticValue .small := by
-  constructor <;> norm_num [semanticValue]
+    semanticValueQ .blue > semanticValueQ .big ∧
+    semanticValueQ .red > semanticValueQ .small := by
+  constructor <;> norm_num [semanticValueQ]
 
 /-- All semantic values are positive (required for valid probability). -/
 theorem semantic_values_positive :
-    ∀ i : LexItem, semanticValue i > 0 := by
-  intro i; cases i <;> norm_num [semanticValue]
+    ∀ w : Word, semanticValueQ w > 0 := by
+  intro w; cases w <;> norm_num [semanticValueQ]
 
--- Model Parameters from Paper
+-- ============================================================================
+-- §10. Noise Theory Connection
+-- ============================================================================
 
-/-- The paper uses α = 7 for incremental models (§4, Figure 2 caption). -/
-def α_incremental : ℕ := 7
+/-- Helper to convert Bool to ℚ for the noise channel. -/
+private def boolToRat (b : Bool) : ℚ := if b then 1 else 0
 
-/-- The paper uses α = 30 for utterance-level models (§4). -/
-def α_utterance : ℕ := 30
+/-- `lexContinuousQ` is an instance of the unified noise channel from
+    `RSA.Core.Noise`. The continuous lexical semantics L^C(r, i) is
+    exactly the noise channel with onMatch = v^i, onMismatch = 1 - v^i,
+    b = 1 if item i is true of referent r, 0 otherwise.
 
--- Verified Predictions
--- The CI-RSA model's three qualitative predictions (Figure 2),
--- verified by Lean's kernel via rational arithmetic.
+    This connects @cite{waldon-degen-2021} to the @cite{degen-etal-2020}
+    parameterization where mismatch = 1 - match. -/
+theorem lexContinuous_as_noiseChannel (r : Referent) (w : Word) :
+    lexContinuousQ r w =
+    RSA.Noise.noiseChannel (semanticValueQ w) (1 - semanticValueQ w)
+      (boolToRat (wordApplies w r)) := by
+  simp only [lexContinuousQ, RSA.Noise.noiseChannel, boolToRat]
+  split <;> ring
 
-/-- **Prediction 1**: English speakers produce redundant color (in SS scenes)
-    more than redundant size (in CS scenes). Verified at α = 7. -/
-theorem prediction1_english_asymmetry :
-    englishColorSizeAsymmetry α_incremental = true := by native_decide
-
-/-- **Prediction 2**: English speakers produce more redundant color than
-    Spanish-postnominal speakers. Verified at α = 7. -/
-theorem prediction2_cross_linguistic :
-    crossLinguisticVariation α_incremental = true := by native_decide
-
-/-- **Prediction 3 (novel)**: In Spanish-postnominal order, the asymmetry
-    flips — redundant size > redundant color. Verified at α = 7. -/
-theorem prediction3_spanish_flip :
-    spanishFlipPrediction α_incremental = true := by native_decide
-
-end RSA.Implementations.WaldonDegen2021
+end Phenomena.Reference.Studies.WaldonDegen2021

@@ -46,12 +46,12 @@ via noisy perception. The derivation proceeds in four steps:
 
 1. **Model structure**: The cs-RSA meaning function φ decomposes into
    independent per-feature noise channels (proven in DegenEtAl2020:
-   `degen_is_boolean_times_noise_full`).
+   `φ_product_of_experts`).
 
 2. **Parameterization**: Each noise channel has match/mismatch parameters
    that determine its discrimination (noise gap). The cs-RSA model's
    default color params (0.99/0.01) match the `RSA.Noise` module's
-   (proven below: `csrsa_color_params_match_noise`).
+   (proven below: `csrsa_params_match_noise`).
 
 3. **Ordering prediction**: The noise gap determines how much signal a
    modifier provides. Color's gap (0.98) exceeds material's gap (0.40),
@@ -199,10 +199,10 @@ parameter values by construction — this is structural, not coincidental
 /-- The cs-RSA φ function uses RSA.Noise parameters by construction.
     Re-exported from the study file for local use. -/
 theorem csrsa_params_match_noise :
-    DegenEtAl2020.φ .color .target = RSA.Noise.colorMatch ∧
-    DegenEtAl2020.φ .color .distractor = RSA.Noise.colorMismatch ∧
-    DegenEtAl2020.φ .size .target = RSA.Noise.sizeMatch ∧
-    DegenEtAl2020.φ .size .distractor = RSA.Noise.sizeMismatch :=
+    DegenEtAl2020.φ .blue .smallBlue = RSA.Noise.colorMatch ∧
+    DegenEtAl2020.φ .blue .bigRed = RSA.Noise.colorMismatch ∧
+    DegenEtAl2020.φ .small .smallBlue = RSA.Noise.sizeMatch ∧
+    DegenEtAl2020.φ .small .bigBlue = RSA.Noise.sizeMismatch :=
   DegenEtAl2020.φ_grounded_in_noise
 
 -- ============================================================================
@@ -283,9 +283,11 @@ analogue of the color/material asymmetry tested in Exp 2. -/
     This is the color/size version of the color/material asymmetry
     observed in Exp 2. -/
 theorem incremental_model_predicts_color_asymmetry :
-    RSA.Implementations.WaldonDegen2021.englishColorSizeAsymmetry
-      RSA.Implementations.WaldonDegen2021.α_incremental = true :=
-  RSA.Implementations.WaldonDegen2021.prediction1_english_asymmetry
+    Phenomena.Reference.Studies.WaldonDegen2021.englishSS.trajectoryProb ()
+      .smallBlue [.small, .blue, .pin] >
+    Phenomena.Reference.Studies.WaldonDegen2021.englishCS.trajectoryProb ()
+      .smallBlue [.small, .blue, .pin] :=
+  Phenomena.Reference.Studies.WaldonDegen2021.prediction1_english_asymmetry
 
 -- ============================================================================
 -- § Connection to @cite{engelhardt-etal-2006}

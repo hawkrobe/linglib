@@ -160,9 +160,10 @@ def extractRatFromCauchy (e : Expr) : MetaM (Option (ℚ × Expr)) := do
         return some (q, qE)
   -- Fallback: fAtZero may be an opaque Rat operation (Rat.mul, Rat.inv, etc.)
   -- that doesn't reduce under whnf. Use recursive ℚ extractor for the VALUE,
-  -- but preserve the ORIGINAL expression for the RExpr (kernel compatibility).
+  -- then use mkRatExpr for a canonical form (avoids leaking noncomputable refs).
   if let some q ← extractRatQ fAtZero then
-    return some (q, fAtZero)
+    let qE ← mkRatExpr q
+    return some (q, qE)
   return none
 
 -- ============================================================================
