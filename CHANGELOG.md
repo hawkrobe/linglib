@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.228.15] - 2026-03-04
+
+### Changed
+- **ScontrasTonhauser2025**: Faithful Section 3 rewrite. Expanded BeliefState from 9 to all 15 non-empty subsets of W per the paper's fn. 12. Changed to uniform belief state prior (following Qing et al. 2016). Renamed `qudProject` to `qudAggregate` to avoid shadowing `Factivity.qudProject`. Proved key structural insight: under BEL? QUD, L1_marginal(C|u) = P(C) for all u — the complement dimension washes out. Predictions reformulated: `c_qud_thinkNeg_higher` (knowNeg is evidence against C under C? QUD), `prediction_2b` (prior effect), `prediction_2c` (QUD effect) all proved by `rsa_predict`. Fixed docstring errors about experimental results (Exp 1 didn't confirm QUD effect; Exp 2 didn't test prior). Fixed `supported .prior` from `(true, true)` to `(true, false)`. Added `know_entails_bel`, `know_entails_think`, `three_of_fifteen_assume_c`
+
 ## [0.228.14] - 2026-03-04
 
 ### Added
