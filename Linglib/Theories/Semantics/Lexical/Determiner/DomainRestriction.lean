@@ -1,4 +1,5 @@
 import Linglib.Theories.Semantics.Lexical.Determiner.Quantifier
+import Linglib.Core.NestedRestriction
 
 /-!
 # Quantifier Domain Restriction
@@ -235,14 +236,13 @@ instance : OrderBot SpatialScale where
 
     Parameterized by a scale type `S` with a preorder and top element,
     enabling reuse for non-spatial heuristics. `SpatialScale` is the
-    canonical instantiation. -/
-structure DDRP (S E : Type*) [Preorder S] [OrderTop S] where
-  /-- Each scale level induces a predicate on entities. -/
-  region : S → DomainRestrictor E
-  /-- Nesting: smaller scale ⊆ larger scale. -/
-  monotone : ∀ {s₁ s₂ : S}, s₁ ≤ s₂ → ∀ e, region s₁ e = true → region s₂ e = true
-  /-- The top scale contains everything. -/
-  top_total : ∀ e, region ⊤ e = true
+    canonical instantiation.
+
+    Now an alias for `Core.NestedRestriction.NestedRestriction`, which
+    extracts the shared nesting structure used by both domain restriction
+    and comparison class inference. -/
+abbrev DDRP (S E : Type*) [Preorder S] [OrderTop S] :=
+  Core.NestedRestriction S E
 
 /-- The candidate domain restrictors: one per scale level.
     DDRPs constrain the candidate set to a small, structured menu —

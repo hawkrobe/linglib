@@ -35,6 +35,7 @@ This asymmetry emerges from pragmatic inference, not stipulation.
 -/
 
 import Linglib.Core.Scales.Scale
+import Linglib.Core.NestedRestriction
 import Mathlib.Tactic.DeriveFintype
 
 namespace RSA.TesslerGoodman2022
@@ -398,5 +399,102 @@ This explains why "tall basketball player" and "short basketball player"
 trigger different comparison class inferences - without stipulating
 different meanings for the adjective.
 -/
+
+-- ============================================================================
+-- § Comparison Class as NestedRestriction
+-- ============================================================================
+
+/-! ## Comparison Class as Nested Restriction
+
+@cite{tessler-goodman-2022}'s comparison class hierarchy is structurally a
+`NestedRestriction`: subordinate (restricted) ⊆ superordinate (unrestricted).
+This connects comparison class inference to the same nesting pattern used by
+@cite{ritchie-schiller-2024}'s domain restriction possibilities (DDRPs).
+
+The downstream applications differ — threshold derivation vs. quantifier domain
+filtering — but the nesting structure is identical: going up the scale from
+subordinate to superordinate gives a superset of the reference population.
+-/
+
+-- Order on ComparisonClass: subordinate < superordinate
+
+private def ComparisonClass.toFin : ComparisonClass → Fin 2
+  | .subordinate => 0
+  | .superordinate => 1
+
+private theorem ComparisonClass.toFin_injective :
+    Function.Injective ComparisonClass.toFin := by
+  intro a b h; cases a <;> cases b <;> simp_all [ComparisonClass.toFin]
+
+instance : LinearOrder ComparisonClass :=
+  LinearOrder.lift' ComparisonClass.toFin ComparisonClass.toFin_injective
+
+instance : OrderTop ComparisonClass where
+  top := .superordinate
+  le_top a := by cases a <;> decide
+
+/-- A reference population: which heights are typical for a given kind.
+    For each kind, `isTypical k h` returns whether height `h` is in
+    the kind's typical range (nonzero prior weight). -/
+def isTypical (k : Kind) (h : Height) : Bool :=
+  heightPriorGivenKind k h > 0
+
+/-- The comparison class hierarchy for a given kind induces a nested restriction
+    on heights: subordinate filters to heights typical of the kind, while
+    superordinate includes all heights.
+
+    This is a `NestedRestriction ComparisonClass Height`: going from subordinate
+    to superordinate widens the reference population. -/
+def compClassRestriction (k : Kind) : Core.NestedRestriction ComparisonClass Height where
+  region
+    | .subordinate => isTypical k
+    | .superordinate => λ _ => true
+  monotone {s₁ s₂} h d hr := by
+    cases s₁ <;> cases s₂ <;> simp_all
+    · exact absurd h (by decide)
+  top_total _ := rfl
+
+-- Per-kind instantiations
+
+/-- Basketball player comparison class restriction: subordinate filters to
+    heights with nonzero basketball prior (heights 2–10). -/
+def basketballRestriction : Core.NestedRestriction ComparisonClass Height :=
+  compClassRestriction .basketballPlayer
+
+/-- Jockey comparison class restriction: subordinate filters to heights with
+    nonzero jockey prior (heights 0–8). -/
+def jockeyRestriction : Core.NestedRestriction ComparisonClass Height :=
+  compClassRestriction .jockey
+
+/-- Person comparison class restriction: subordinate = superordinate (all heights
+    have nonzero prior), so restriction is vacuous. -/
+def personRestriction : Core.NestedRestriction ComparisonClass Height :=
+  compClassRestriction .person
+
+-- Bridge theorem: threshold shift direction is consistent with nesting
+
+/-- For basketball players, the subordinate threshold is higher than the
+    superordinate threshold. This is consistent with the nesting: subordinate
+    restricts to basketball players (who are tall), so "tall" requires a higher
+    bar to be informative within that restricted population. -/
+theorem basketball_threshold_shift_consistent :
+    tallThreshold .subordinate .basketballPlayer >
+    tallThreshold .superordinate .basketballPlayer := by
+  decide
+
+/-- For jockeys, the subordinate threshold is lower than the superordinate
+    threshold. Subordinate restricts to jockeys (who are short), so "tall"
+    requires a lower bar within that restricted population. -/
+theorem jockey_threshold_shift_consistent :
+    tallThreshold .subordinate .jockey <
+    tallThreshold .superordinate .jockey := by
+  decide
+
+/-- The nesting property holds: subordinate region ⊆ superordinate region.
+    This is true for all kinds by construction. -/
+theorem compClass_nesting (k : Kind) (h : Height) :
+    (compClassRestriction k).region .subordinate h = true →
+    (compClassRestriction k).region .superordinate h = true :=
+  (compClassRestriction k).subset_of_le (by decide) h
 
 end RSA.TesslerGoodman2022

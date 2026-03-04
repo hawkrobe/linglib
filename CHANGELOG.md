@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.228.7] - 2026-03-03
+
+### Added
+- **Core.NestedRestriction**: Extracted shared nesting structure from DDRP into `Core/NestedRestriction.lean`. `NestedRestriction S D` is a monotone family of predicates indexed by an ordered scale, with theorems `subset_of_le`, `forall_nesting`, `exists_nesting`, and a generic `comparisonClassRestriction` constructor.
+
+### Changed
+- **DDRP is now an alias**: `DDRP S E` is `abbrev` for `Core.NestedRestriction S E`. Zero downstream breakage — `RitchieSchiller2024` and `BarwiseCooper1981` build unchanged.
+- **TesslerGoodman2022 comparison class as NestedRestriction**: Added `LinearOrder`/`OrderTop` instances for `ComparisonClass`, `compClassRestriction` per kind, and bridge theorems connecting threshold shift direction to nesting structure.
+
 ## [0.228.5] - 2026-03-03
 
 ### Changed
