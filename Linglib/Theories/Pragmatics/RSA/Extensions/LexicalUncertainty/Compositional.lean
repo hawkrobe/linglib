@@ -30,12 +30,19 @@ predicts no difference from the weaker disjunct. But:
 
 Compositional LU derives this by tracking which refinements are available.
 
-## Status
+## Relationship to RSAConfig and PottsEtAl2016
 
-The ℚ-based RSA evaluation infrastructure (RSA.Eval, boolToRat) has been removed.
-Type definitions and structural properties (CompUtt, AtomicLexicon, CompLUScenario)
-are preserved. RSA computations need to be re-implemented using the new RSAConfig
-framework.
+The `CompLUScenario` type is conceptually subsumed by `RSAConfig` with
+`Latent := Lexicon`. The @cite{potts-etal-2016} study uses this standard
+mechanism to derive embedded SI predictions (DE blocking, UE enrichment)
+without the compositional utterance infrastructure here.
+
+This file is retained for:
+- `CompUtt`: Compositional utterance structure (atom, disj, conj, neg)
+- `AtomicLexicon`: Refinable lexica operating at the atomic level
+- `violatesHurford`: Hurford constraint checker for disjunctions
+- `EmbeddedSIPrediction`: Structured tracking of embedded SI predictions
+  (the @cite{potts-etal-2016} model demonstrates the negation case)
 
 -/
 

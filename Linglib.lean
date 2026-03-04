@@ -83,6 +83,7 @@ import Linglib.Core.Case.Syncretism
 import Linglib.Core.Case.SplitConditions
 import Linglib.Core.Case.LocalExtension
 import Linglib.Core.Relativization.Basic
+import Linglib.Core.Relativization.Extraction
 import Linglib.Core.Relativization.Hierarchy
 import Linglib.Core.Lexical.NounCategorization
 import Linglib.Core.Scales.Roundness
@@ -635,7 +636,7 @@ import Linglib.Phenomena.ScalarImplicatures.Studies.RelevanceTheory
 import Linglib.Phenomena.ScalarImplicatures.Studies.Geurts2010
 import Linglib.Phenomena.ScalarImplicatures.Studies.RSAHurford
 import Linglib.Phenomena.ScalarImplicatures.Studies.PottsEtAl2016
-import Linglib.Phenomena.ScalarImplicatures.Studies.TheoryComparison
+import Linglib.Comparisons.ScalarImplicatureTheories
 import Linglib.Phenomena.ScalarImplicatures.Studies.GoodmanStuhlmuller2013
 import Linglib.Phenomena.PhonologicalAlternation.Data
 import Linglib.Phenomena.PhonologicalAlternation.Studies.SPEDerivations

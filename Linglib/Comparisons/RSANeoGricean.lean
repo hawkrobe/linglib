@@ -41,6 +41,7 @@ import Linglib.Theories.Pragmatics.RSA.Extensions.InformationTheory.Basic
 import Linglib.Theories.Pragmatics.NeoGricean.ScalarImplicatures.Basic
 import Linglib.Core.Interface
 import Linglib.Theories.Pragmatics.RSA.Implementations.Franke2011
+import Linglib.Phenomena.ScalarImplicatures.Studies.PottsEtAl2016
 
 namespace Comparisons.RSANeoGricean
 
@@ -212,21 +213,28 @@ structure DEContextAgreement where
   scalarItem : String
   /-- NeoGricean predicts blocking -/
   neoGricean_blocks : Bool
-  /-- RSA prefers global (no local SI) -/
-  rsa_prefers_global : Bool
-  /-- Agreement -/
-  agreement : neoGricean_blocks = true → rsa_prefers_global = true
+  /-- RSA prefers global (no local SI) — a `Prop`, not a stipulated `Bool` -/
+  rsa_prefers_global : Prop
+  /-- Agreement: NeoGricean blocking implies RSA global preference -/
+  agreement : neoGricean_blocks = true → rsa_prefers_global
 
+open Phenomena.ScalarImplicatures.Studies in
 /--
 For "some" under "no one":
 - NeoGricean: Scale reversal blocks "not all"
-- RSA: Global interpretation preferred (proven in @cite{potts-etal-2016} study)
+- RSA: Global interpretation preferred (proven in @cite{potts-etal-2016})
+
+The `rsa_prefers_global` field is now a genuine `Prop` — the L1 inequality
+from the Potts model — not a stipulated `Bool`. The `agreement` field
+dispatches to the proved `de_blocking_NNN_vs_NNA` theorem.
 -/
 def some_de_agreement : DEContextAgreement where
   scalarItem := "some"
-  neoGricean_blocks := true  -- From NeoGricean.ScalarImplicatures
-  rsa_prefers_global := true -- From PottsEtAl2016 study
-  agreement := λ _ => rfl
+  neoGricean_blocks := true
+  rsa_prefers_global :=
+    PottsEtAl2016.cfg.L1 (.stmt .no .some_) .NNN >
+    PottsEtAl2016.cfg.L1 (.stmt .no .some_) .NNA
+  agreement := fun _ => PottsEtAl2016.de_blocking_NNN_vs_NNA
 
 -- Structural Comparison
 

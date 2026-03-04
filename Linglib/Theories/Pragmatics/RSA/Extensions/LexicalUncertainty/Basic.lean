@@ -24,11 +24,18 @@ The marginalization over lexica happens at L₁, not L₀:
 2. **Ignorance implicatures**: "some or all" → speaker doesn't know which
 3. **Non-convex disjunctive implicatures**: "one or three" ≠ "one or two"
 
-## Status
+## Relationship to RSAConfig
 
-The ℚ-based RSA evaluation infrastructure (RSA.Eval, boolToRat, RSAScenario) has been
-removed. Type definitions and structural properties are preserved. RSA computations
-(L0, S1, L1) need to be re-implemented using the new RSAConfig framework.
+The `LUScenario` type below is conceptually subsumed by `RSAConfig` with
+`Latent := Lexicon`. The @cite{potts-etal-2016} study demonstrates this:
+it uses standard `RSAConfig` with `Latent := Lexicon` (weak vs strong "some")
+and derives DE blocking and UE enrichment without any LU-specific infrastructure.
+
+This file is retained for:
+- The `Lexicon` type and `Refinement` infrastructure
+- The `LUScenario` structure as a reference for the LU architecture
+- The `symmetry_breaking_possible` conjecture (which could now be discharged
+  using the @cite{potts-etal-2016} model as a concrete witness via `RSAConfig`)
 
 -/
 

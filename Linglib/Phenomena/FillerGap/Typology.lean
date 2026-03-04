@@ -1,5 +1,6 @@
 import Linglib.Core.Lexical.Word
-import Linglib.Core.Interfaces.ExtractionMorphology
+import Linglib.Core.Relativization.Extraction
+import Linglib.Core.Relativization.Hierarchy
 
 /-!
 # Cross-Linguistic Typology of Relativization (WALS Chapters 122--123)
@@ -68,6 +69,8 @@ strongly prefer post-nominal, while OV languages may use pre-nominal.
 -/
 
 namespace Phenomena.FillerGap.Typology
+
+open Core
 
 -- ============================================================================
 -- Chapter 122: Relativization Strategies on Subjects
@@ -147,166 +150,6 @@ inductive OblRelStrategy where
   deriving DecidableEq, BEq, Repr
 
 -- ============================================================================
--- Relative Clause Position
--- ============================================================================
-
-/-- Position of the relative clause with respect to the head noun.
-
-    Post-nominal is the dominant type cross-linguistically; pre-nominal
-    correlates with OV word order; internally-headed and correlative
-    (double-headed) types are rare but typologically significant. -/
-inductive RelClausePosition where
-  /-- Post-nominal: RC follows the head noun. E.g., English "the man
-      [who left]", Arabic "ar-rajul [alladhi ghadara]".
-      By far the most common type. -/
-  | postNominal
-  /-- Pre-nominal: RC precedes the head noun. E.g., Japanese
-      "[ _ kaetta] hito" '[_ left] person', Chinese
-      "[ _ zou-le de] ren" '[_ left REL] person'.
-      Correlates with OV word order. -/
-  | preNominal
-  /-- Internally-headed: the head noun appears inside the RC rather
-      than external to it. E.g., Bambara "ne ye [tye ye so san]
-      tye ye" 'I saw [man PST horse buy] man PRT'. Rare. -/
-  | internallyHeaded
-  /-- Correlative (double-headed): the head noun appears both inside
-      and outside the RC. E.g., Hindi-Urdu "jo aadmii aayaa, vo
-      aadmii meraa bhaaii hai" 'which man came, that man my brother is'.
-      Also called the "left-adjoined" type. -/
-  | correlative
-  deriving DecidableEq, BEq, Repr
-
--- ============================================================================
--- @cite{keenan-comrie-1977} Accessibility Hierarchy
--- ============================================================================
-
-/-- Positions on the @cite{keenan-comrie-1977} Accessibility Hierarchy (KCAH).
-
-    The hierarchy ranks grammatical relations by their accessibility to
-    relativization. Higher positions are more accessible: more languages
-    can relativize them, and simpler strategies (gap) suffice.
-
-    Subject > DirectObject > IndirectObject > Oblique > Genitive > ObjComparison
-
-    This is one of the most robust implicational universals in syntax. -/
-inductive AHPosition where
-  /-- Subject: the most accessible position. Virtually all languages
-      with relative clauses can relativize subjects. -/
-  | subject
-  /-- Direct object: the second most accessible position. -/
-  | directObject
-  /-- Indirect object: third position. -/
-  | indirectObject
-  /-- Oblique: fourth position (instrumentals, locatives, etc.). -/
-  | oblique
-  /-- Genitive: fifth position (possessors). -/
-  | genitive
-  /-- Object of comparison: the least accessible position
-      ("the person [that I am taller than _]"). -/
-  | objComparison
-  deriving DecidableEq, BEq, Repr
-
-/-- Numeric rank of a position on the Accessibility Hierarchy.
-    Higher rank = more accessible = more languages can relativize it. -/
-def AHPosition.rank : AHPosition → Nat
-  | .subject       => 6
-  | .directObject  => 5
-  | .indirectObject => 4
-  | .oblique        => 3
-  | .genitive       => 2
-  | .objComparison  => 1
-
-/-- Position p1 is at least as accessible as p2 on the hierarchy. -/
-def AHPosition.atLeastAsAccessible (p1 p2 : AHPosition) : Bool :=
-  p1.rank >= p2.rank
-
-/-- Position p1 is strictly more accessible than p2. -/
-def AHPosition.moreAccessible (p1 p2 : AHPosition) : Bool :=
-  p1.rank > p2.rank
-
--- ============================================================================
--- All AH Positions
--- ============================================================================
-
-/-- All AH positions in descending order of accessibility. -/
-def AHPosition.all : List AHPosition :=
-  [.subject, .directObject, .indirectObject, .oblique, .genitive, .objComparison]
-
--- ============================================================================
--- Contiguity Predicate (mirrors Core.Case.Hierarchy.validInventory)
--- ============================================================================
-
-/-- Whether a list of AH positions contains at least one position at rank r. -/
-private def hasAHRank (positions : List AHPosition) (r : Nat) : Bool :=
-  positions.any fun p => p.rank == r
-
-/-- A set of AH positions forms a contiguous segment on the hierarchy:
-    for every pair of positions in the set, all intermediate ranks
-    are also represented. Mirrors `Core.validInventory` for the case
-    hierarchy (@cite{blake-1994}).
-
-    This formalizes HC₂ of @cite{keenan-comrie-1977}: "Any RC-forming
-    strategy must apply to a continuous segment of the AH." -/
-def contiguousOnAH (positions : List AHPosition) : Bool :=
-  positions.all fun p1 =>
-    positions.all fun p2 =>
-      if p2.rank > p1.rank then
-        let lo := p1.rank
-        let hi := p2.rank
-        List.range hi |>.all fun r =>
-          if r > lo && r < hi then hasAHRank positions r
-          else true
-      else true
-
-/-- The full hierarchy [SU, DO, IO, OBL, GEN, OCOMP] is contiguous. -/
-theorem full_ah_contiguous :
-    contiguousOnAH AHPosition.all = true := by native_decide
-
-/-- A single position is trivially contiguous. -/
-theorem singleton_contiguous :
-    contiguousOnAH [AHPosition.subject] = true := by native_decide
-
-/-- [SU, DO, OBL] is NOT contiguous (skips IO at rank 4). -/
-theorem su_do_obl_not_contiguous :
-    contiguousOnAH [AHPosition.subject, .directObject, .oblique] = false := by
-  native_decide
-
--- ============================================================================
--- Bridge: ExtractionTarget ↔ AHPosition
--- ============================================================================
-
-open Interfaces in
-/-- Map an extraction target to its AH position. Possessor extraction
-    corresponds to the genitive position on the AH. -/
-def extractionTargetToAH : ExtractionTarget → AHPosition
-  | .subject        => .subject
-  | .directObject   => .directObject
-  | .indirectObject => .indirectObject
-  | .oblique        => .oblique
-  | .possessor      => .genitive
-
-open Interfaces in
-/-- Map an AH position to an extraction target (partial: object of comparison
-    has no standard ExtractionTarget equivalent). -/
-def ahToExtractionTarget : AHPosition → Option ExtractionTarget
-  | .subject        => some .subject
-  | .directObject   => some .directObject
-  | .indirectObject => some .indirectObject
-  | .oblique        => some .oblique
-  | .genitive       => some .possessor
-  | .objComparison  => none
-
-open Interfaces in
-/-- Round-tripping ExtractionTarget → AH → ExtractionTarget is the identity
-    (for all targets). -/
-theorem extraction_ah_roundtrip :
-    let targets := [ExtractionTarget.subject, .directObject,
-                    .indirectObject, .oblique, .possessor]
-    targets.all (λ t => ahToExtractionTarget (extractionTargetToAH t) == some t)
-      = true := by
-  native_decide
-
--- ============================================================================
 -- WALS Aggregate Distribution Data
 -- ============================================================================
 
@@ -354,49 +197,6 @@ theorem ch122_total : WALSCount.totalOf ch122Counts = 824 := by native_decide
 theorem ch123_total : WALSCount.totalOf ch123Counts = 624 := by native_decide
 
 -- ============================================================================
--- Accessibility Hierarchy Verification
--- ============================================================================
-
-/-- The hierarchy is strictly ordered: each position is more accessible
-    than the one below it. -/
-theorem ah_strictly_ordered :
-    AHPosition.moreAccessible .subject .directObject = true ∧
-    AHPosition.moreAccessible .directObject .indirectObject = true ∧
-    AHPosition.moreAccessible .indirectObject .oblique = true ∧
-    AHPosition.moreAccessible .oblique .genitive = true ∧
-    AHPosition.moreAccessible .genitive .objComparison = true := by
-  native_decide
-
-/-- Subject is the most accessible position (rank 6). -/
-theorem subject_most_accessible :
-    AHPosition.rank .subject = 6 := by native_decide
-
-/-- Object of comparison is the least accessible position (rank 1). -/
-theorem objComparison_least_accessible :
-    AHPosition.rank .objComparison = 1 := by native_decide
-
-/-- Accessibility is reflexive: every position is at least as accessible
-    as itself. -/
-theorem ah_reflexive :
-    let positions := [AHPosition.subject, .directObject, .indirectObject,
-                      .oblique, .genitive, .objComparison]
-    positions.all (λ p => p.atLeastAsAccessible p) = true := by
-  native_decide
-
-/-- Accessibility is transitive: if p1 >= p2 and p2 >= p3 then p1 >= p3.
-    Verified for all triples in the hierarchy. -/
-theorem ah_transitive :
-    let positions := [AHPosition.subject, .directObject, .indirectObject,
-                      .oblique, .genitive, .objComparison]
-    positions.all (λ p1 =>
-      positions.all (λ p2 =>
-        positions.all (λ p3 =>
-          if p1.atLeastAsAccessible p2 && p2.atLeastAsAccessible p3
-          then p1.atLeastAsAccessible p3
-          else true))) = true := by
-  native_decide
-
--- ============================================================================
 -- Language Profile Structure
 -- ============================================================================
 
@@ -418,7 +218,7 @@ structure RelativizationProfile where
   /-- Ch 123: Strategy for relativizing obliques. -/
   oblStrategy : OblRelStrategy
   /-- Position of relative clause with respect to head noun. -/
-  rcPosition : RelClausePosition
+  rcPosition : RCPosition
   /-- Lowest position on the AH that can be relativized.
       If a language can relativize obliques, this is.oblique or lower;
       if it can only relativize subjects, this is.subject. -/

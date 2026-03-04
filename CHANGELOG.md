@@ -1,5 +1,29 @@
 # Changelog
 
+## [0.227.99] - 2026-03-03
+
+### Added
+- **PottsEtAl2016 Finding/formalize/all_findings_verified**: 6-constructor `Finding` enum mapping each DE blocking and UE enrichment prediction to its proved `cfg.L1` inequality.
+- **PottsEtAl2016 quantifier grounding**: `outer_every_grounded` and `outer_no_grounded` theorems connecting the study's outer quantifiers to `RSA.Domains.Quantity.meaning 3`.
+- **PottsEtAl2016 cross-study connections**: `matches_someAllBlocking` theorem connecting to `ScalarImplicatures.Basic.someAllBlocking`; docstring cross-references to `Geurts2010` and `EmbeddedSIPrediction`.
+- **RSANeoGricean real DE agreement**: `DEContextAgreement.rsa_prefers_global` refactored from `Bool` to `Prop`; `some_de_agreement` now uses `PottsEtAl2016.de_blocking_NNN_vs_NNA` as the actual proof.
+- **RSA DE blocking coverage**: `RSATheory.predictsDEBlocking` updated from `false` to `true`; `CapturesDEBlockingPattern RSA.RSATheory` instance added.
+
+### Changed
+- **TheoryComparison → ScalarImplicatureTheories**: moved from `Phenomena/ScalarImplicatures/Studies/` to `Comparisons/` (it's a cross-theory comparison, not a study).
+- **ScalarImplicatureTheories**: updated all theorems and coverage reports for RSA's new DE blocking capability.
+- **LexicalUncertainty docstrings**: `Basic.lean` and `Compositional.lean` now document that `LUScenario`/`CompLUScenario` are subsumed by `RSAConfig` with `Latent := Lexicon`.
+
+## [0.227.98] - 2026-03-03
+
+### Added
+- **General PRC proof** (`prc_from_hc2`): theorem in `Core/Relativization/Hierarchy.lean` proving that the Primary Relativization Constraint follows logically from HC₂ (contiguity) + being a primary strategy (covering subjects). Universally quantified over arbitrary position lists — not just a sample check. Helper lemmas: `ah_rank_injective`, `hasAHRank_implies_any`, `contiguous_intermediate`. Complemented by `prc_all_primary_segments` verifying all 6 canonical primary segments.
+- **`Core/Relativization/Extraction.lean`**: bridge module connecting `ExtractionTarget` (5 positions) to `AHPosition` (6 positions). Moved from `Phenomena/FillerGap/Typology.lean` to `Core/` so the connection is available to any downstream consumer. Adds `ah_extraction_roundtrip`, `objComparison_no_extraction_target`, and `non_ocomp_have_extraction_target` theorems.
+- **Cross-system connection theorems** in `KeenanComrie1977.lean`: `KCProfile.lowestCovered` function derives the lowest relativizable position from multi-strategy data. Per-language agreement theorems verify consistency between Table 1 (KCProfile) and WALS (RelativizationProfile) for all 7 shared languages. Master theorem `kc_at_least_as_detailed_as_wals` proves Table 1 is strictly more detailed than WALS Ch 123.
+
+### Changed
+- `Typology.lean` now imports `Core.Relativization.Extraction` instead of defining bridge functions inline.
+
 ## [0.227.97] - 2026-03-03
 
 ### Added

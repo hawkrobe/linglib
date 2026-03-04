@@ -187,21 +187,20 @@ instance : ImplicatureTheory RSATheory where
     else
       none
 
-  -- These flags reflect model incompleteness, not theoretical predictions.
-  -- A complete RSA model with compositional semantics could potentially
-  -- derive DE blocking and task effects. See header comment for details.
+  -- DE blocking is now derived via compositional lexical uncertainty
+  -- (@cite{potts-etal-2016}). Task effect still incomplete.
 
-  predictsDEBlocking := false  -- Model incomplete: can't represent embedded contexts
+  predictsDEBlocking := true   -- Derived via PottsEtAl2016 lexical uncertainty model
 
   predictsTaskEffect := false  -- Model incomplete: no QUD/attention mechanism
 
   predictedBaselineRate := 50  -- RSA predicts ~50% for "some but not all"
 
--- Theorems (Reflecting Model Incompleteness)
+-- Theorems
 
-/-- Current RSA model doesn't handle DE contexts (model incomplete, not wrong) -/
-theorem rsa_de_not_modeled :
-    ImplicatureTheory.predictsDEBlocking (T := RSATheory) = false := rfl
+/-- RSA derives DE blocking via @cite{potts-etal-2016} lexical uncertainty model -/
+theorem rsa_de_modeled :
+    ImplicatureTheory.predictsDEBlocking (T := RSATheory) = true := rfl
 
 /-- Current RSA model doesn't handle task effects (model incomplete) -/
 theorem rsa_task_effect_not_modeled :

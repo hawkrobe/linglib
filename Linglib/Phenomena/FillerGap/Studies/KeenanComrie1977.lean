@@ -1,4 +1,12 @@
 import Linglib.Phenomena.FillerGap.Typology
+import Linglib.Fragments.English.Relativization
+import Linglib.Fragments.Welsh.Relativization
+import Linglib.Fragments.Arabic.Relativization
+import Linglib.Fragments.Hebrew.Relativization
+import Linglib.Fragments.TobaBatak.Relativization
+import Linglib.Fragments.Korean.Relativization
+import Linglib.Fragments.Finnish.Relativization
+import Linglib.Fragments.Malagasy.Relativization
 
 /-!
 # Keenan & Comrie (1977) @cite{keenan-comrie-1977}
@@ -38,15 +46,19 @@ case marking) is the primary parameter distinguishing strategies.
 
 ## Data
 
-Table 1 profiles are encoded with per-strategy, per-position accessibility
-data. We include a representative subset covering the key patterns:
-single-strategy (English, Malagasy), gap-to-resumptive split (Welsh, Hebrew,
-Arabic, Toba Batak), and multi-strategy with prenominal RCs (Korean, Finnish).
+Table 1 profiles are **derived from fragment data** — each language's
+`RelClauseMarker` list (encoding actual linguistic markers: particles,
+pronouns, verbal suffixes) is converted to `StrategyEntry` records.
+This ensures the study file stays consistent with the fragment layer
+by construction. We cover the key patterns: gap-to-resumptive split
+(Welsh, Hebrew, Arabic, Toba Batak), multi-strategy with prenominal
+RCs (Korean, Finnish), and single-strategy (Malagasy).
 -/
 
 namespace Phenomena.FillerGap.Studies.KeenanComrie1977
 
 open Phenomena.FillerGap.Typology
+open Core
 
 -- ============================================================================
 -- § 1: Strategy Entry (Table 1 data format)
@@ -59,7 +71,7 @@ open Phenomena.FillerGap.Typology
     bears case marking (±case), and which AH positions it covers. -/
 structure StrategyEntry where
   /-- Position of relative clause with respect to head noun -/
-  rcPosition : RelClausePosition
+  rcPosition : RCPosition
   /-- +case: the relative element (pronoun, relative pronoun) bears case
       marking for its role inside the RC. -case: no case-marked element
       in NP_rel (gap/deletion). -/
@@ -90,10 +102,23 @@ def StrategyEntry.coveredPositions (s : StrategyEntry) : List AHPosition :=
 def StrategyEntry.isPrimary (s : StrategyEntry) : Bool := s.su
 
 /-- HC₂: Does this strategy cover a contiguous segment of the AH?
-    Uses `contiguousOnAH` from `Typology.lean`, which mirrors the
-    contiguity check in `Core.Case.Hierarchy.validInventory`. -/
+    Uses `contiguousOnAH` from `Core.Relativization.Hierarchy`, which mirrors
+    the contiguity check in `Core.Case.Hierarchy.validInventory`. -/
 def StrategyEntry.isContinuous (s : StrategyEntry) : Bool :=
   contiguousOnAH s.coveredPositions
+
+/-- Convert a fragment's `RelClauseMarker` to a Table 1 `StrategyEntry`.
+    The marker's `bearsCaseMarking` maps to ±case, and its `positions`
+    list determines per-position coverage. -/
+def RelClauseMarker.toStrategyEntry (m : RelClauseMarker) : StrategyEntry :=
+  { rcPosition := m.rcPosition
+  , plusCase := m.bearsCaseMarking
+  , su := m.covers .subject
+  , do_ := m.covers .directObject
+  , io := m.covers .indirectObject
+  , obl := m.covers .oblique
+  , gen := m.covers .genitive
+  , ocomp := m.covers .objComparison }
 
 -- ============================================================================
 -- § 2: Language Profile
@@ -133,127 +158,83 @@ def KCProfile.satisfiesPRC (p : KCProfile) : Bool :=
         else true
     else true
 
+/-- Build a `KCProfile` from a language name and its fragment marker list. -/
+def mkProfile (name : String) (markers : List RelClauseMarker)
+    (notes : String := "") : KCProfile :=
+  { language := name
+  , strategies := markers.map RelClauseMarker.toStrategyEntry
+  , notes := notes }
+
 -- ============================================================================
--- § 3: Table 1 Data (Representative Subset)
+-- § 3: Table 1 Data (Derived from Fragments)
 -- ============================================================================
 
--- The following data is from @cite{keenan-comrie-1977} Table 1 (pp. 76–79).
--- Languages explicitly discussed in the paper's text (§1.3) are marked;
--- others are read from the table. We include only positions clearly marked
--- + or - in the table; marginal cases (+/-, ?) are noted in comments.
+-- The following data is derived from fragment Relativization.lean files,
+-- which encode actual linguistic markers (particles, pronouns, suffixes).
+-- The conversion `RelClauseMarker.toStrategyEntry` maps each marker to
+-- its Table 1 representation. Languages discussed in §1.3 are noted.
 
-/-- English: one -case strategy covering all AH positions.
-    Postnominal RC with gap in NP_rel. -/
+/-- English: two strategies derived from `Fragments.English.relMarkers`.
+    -case: complementizer *that*/∅, gap, covers SU/DO.
+    +case: relative pronoun *who/whom/which/whose*, covers IO–OCOMP. -/
 def english : KCProfile :=
-  { language := "English"
-  , strategies :=
-      [ { rcPosition := .postNominal, plusCase := false
-        , su := true, do_ := true, io := true
-        , obl := true, gen := true, ocomp := true } ]
-  , notes := "Single gap strategy covers all positions" }
+  mkProfile "English" Fragments.English.relMarkers
+    "-case that/∅ for SU/DO; +case who/whom for IO–OCOMP"
 
-/-- Welsh: two strategies (discussed §1.3.2).
-    Primary (-case): gap with particle *a*, covers SU and DO.
-    Secondary (+case): pronoun retention with particle *y*, covers IO–OCOMP. -/
+/-- Welsh: two strategies derived from `Fragments.Welsh.relMarkers` (§1.3.2).
+    -case: particle *a*, gap, covers SU/DO.
+    +case: particle *y*, resumptive pronoun, covers IO–OCOMP. -/
 def welsh : KCProfile :=
-  { language := "Welsh"
-  , strategies :=
-      [ { rcPosition := .postNominal, plusCase := false
-        , su := true, do_ := true, io := false
-        , obl := false, gen := false, ocomp := false }
-      , { rcPosition := .postNominal, plusCase := true
-        , su := false, do_ := false, io := true
-        , obl := true, gen := true, ocomp := true } ]
-  , notes := "Gap+a for SU/DO; pronoun retention+y for IO–OCOMP (§1.3.2)" }
+  mkProfile "Welsh" Fragments.Welsh.relMarkers
+    "Gap+a for SU/DO; pronoun retention+y for IO–OCOMP (§1.3.2)"
 
-/-- Arabic (Classical): two strategies (discussed §1.3.2).
-    Primary (-case): gap, covers SU only.
-    Secondary (+case): pronoun retention, covers DO–OCOMP. -/
+/-- Arabic: two strategies derived from `Fragments.Arabic.relMarkers` (§1.3.2).
+    -case: *alladhi*, gap, covers SU only.
+    +case: resumptive pronoun, covers DO–OCOMP. -/
 def arabic : KCProfile :=
-  { language := "Arabic (Classical)"
-  , strategies :=
-      [ { rcPosition := .postNominal, plusCase := false
-        , su := true, do_ := false, io := false
-        , obl := false, gen := false, ocomp := false }
-      , { rcPosition := .postNominal, plusCase := true
-        , su := false, do_ := true, io := true
-        , obl := true, gen := true, ocomp := true } ]
-  , notes := "Gap for SU only; resumptive pronoun for DO–OCOMP (§1.3.2)" }
+  mkProfile "Arabic (Classical)" Fragments.Arabic.relMarkers
+    "Gap for SU only; resumptive pronoun for DO–OCOMP (§1.3.2)"
 
-/-- Hebrew: two strategies (discussed §1.3.2).
-    Primary (-case): gap, covers SU and DO.
-    Secondary (+case): pronoun retention, covers DO–OCOMP.
+/-- Hebrew: two strategies derived from `Fragments.Hebrew.relMarkers` (§1.3.2).
+    -case: complementizer *she-*, gap, covers SU/DO.
+    +case: *she-* + resumptive pronoun, covers DO–OCOMP.
     DO is shared between both strategies. -/
 def hebrew : KCProfile :=
-  { language := "Hebrew"
-  , strategies :=
-      [ { rcPosition := .postNominal, plusCase := false
-        , su := true, do_ := true, io := false
-        , obl := false, gen := false, ocomp := false }
-      , { rcPosition := .postNominal, plusCase := true
-        , su := false, do_ := true, io := true
-        , obl := true, gen := true, ocomp := true } ]
-  , notes := "Gap for SU/DO; resumptive for DO–OCOMP; DO covered by both" }
+  mkProfile "Hebrew" Fragments.Hebrew.relMarkers
+    "Gap for SU/DO; resumptive for DO–OCOMP; DO covered by both"
 
-/-- Toba Batak: two strategies (discussed §1.3.2).
-    Primary (-case): gap, covers SU only.
-    Secondary (+case): pronoun retention, covers IO–GEN.
-    DO cannot be relativized by either strategy — a genuine gap in AH
-    coverage, noted explicitly in the paper. -/
+/-- Toba Batak: two strategies derived from `Fragments.TobaBatak.relMarkers`
+    (§1.3.2). -case: gap, covers SU only.
+    +case: resumptive pronoun, covers IO/OBL/GEN.
+    DO cannot be relativized by either strategy — a genuine gap. -/
 def tobaBatak : KCProfile :=
-  { language := "Toba Batak"
-  , strategies :=
-      [ { rcPosition := .postNominal, plusCase := false
-        , su := true, do_ := false, io := false
-        , obl := false, gen := false, ocomp := false }
-      , { rcPosition := .postNominal, plusCase := true
-        , su := false, do_ := false, io := true
-        , obl := true, gen := true, ocomp := false } ]
-  , notes := "Gap for SU; resumptive for IO–GEN; DO unreachable by either " ++
-             "strategy (genuine gap, discussed §1.3.2)" }
+  mkProfile "Toba Batak" Fragments.TobaBatak.relMarkers
+    ("Gap for SU; resumptive for IO–GEN; DO unreachable by either " ++
+     "strategy (genuine gap, discussed §1.3.2)")
 
-/-- Korean: two strategies.
-    Primary (-case): prenominal gap, covers SU–OBL.
-    Secondary (+case): prenominal, covers GEN only. -/
+/-- Korean: two strategies derived from `Fragments.Korean.relMarkers`.
+    -case: adnominal suffix *-(n)ɨn, -n, -l*, gap, covers SU–OBL.
+    +case: genitive marker *-uy*, covers GEN only. -/
 def korean : KCProfile :=
-  { language := "Korean"
-  , strategies :=
-      [ { rcPosition := .preNominal, plusCase := false
-        , su := true, do_ := true, io := true
-        , obl := true, gen := false, ocomp := false }
-      , { rcPosition := .preNominal, plusCase := true
-        , su := false, do_ := false, io := false
-        , obl := false, gen := true, ocomp := false } ]
-  , notes := "-case gap covers SU–OBL; +case covers GEN only" }
+  mkProfile "Korean" Fragments.Korean.relMarkers
+    "-case gap covers SU–OBL; +case covers GEN only"
 
-/-- Finnish: two strategies.
-    Primary (+case): postnominal relative pronoun *joka* (declines for
-    case), covers SU–GEN. OCOMP does not exist as a distinct category.
-    Secondary (-case): prenominal participial, covers SU–DO. -/
+/-- Finnish: two strategies derived from `Fragments.Finnish.relMarkers`.
+    +case: relative pronoun *joka* (declines for case), covers SU–GEN.
+    -case: prenominal participial, covers SU/DO.
+    OCOMP does not exist as a distinct category in Finnish. -/
 def finnish : KCProfile :=
-  { language := "Finnish"
-  , strategies :=
-      [ { rcPosition := .postNominal, plusCase := true
-        , su := true, do_ := true, io := true
-        , obl := true, gen := true, ocomp := false }
-      , { rcPosition := .preNominal, plusCase := false
-        , su := true, do_ := true, io := false
-        , obl := false, gen := false, ocomp := false } ]
-  , notes := "+case joka covers SU–GEN; -case participial covers SU–DO; " ++
-             "OCOMP does not exist as distinct category" }
+  mkProfile "Finnish" Fragments.Finnish.relMarkers
+    ("+case joka covers SU–GEN; -case participial covers SU–DO; " ++
+     "OCOMP does not exist as distinct category")
 
-/-- Malagasy: one -case strategy covering SU only.
-    Predicate-initial Austronesian language; only the pivot (subject)
-    can be relativized; voice alternation required to relativize
-    underlying non-subjects. -/
+/-- Malagasy: one strategy derived from `Fragments.Malagasy.relMarkers`.
+    -case: gap, covers SU only. Voice alternation required for
+    non-subject relativization. -/
 def malagasy : KCProfile :=
-  { language := "Malagasy"
-  , strategies :=
-      [ { rcPosition := .postNominal, plusCase := false
-        , su := true, do_ := false, io := false
-        , obl := false, gen := false, ocomp := false } ]
-  , notes := "Only pivot (subject) relativizable; voice alternation " ++
-             "for non-SU; Austronesian extraction restriction" }
+  mkProfile "Malagasy" Fragments.Malagasy.relMarkers
+    ("Only pivot (subject) relativizable; voice alternation " ++
+     "for non-SU; Austronesian extraction restriction")
 
 /-- All Table 1 profiles in our sample. -/
 def allProfiles : List KCProfile :=
@@ -364,9 +345,10 @@ theorem toba_batak_hc2 :
 -- § 8: Per-Profile Verification
 -- ============================================================================
 
-/-- English covers all 6 AH positions with one strategy. -/
+/-- English covers all 6 AH positions across two strategies:
+    -case (that/∅) covers SU/DO (2), +case (who/whom) covers IO–OCOMP (4). -/
 theorem english_full_coverage :
-    (english.strategies.map (·.coveredPositions.length)) = [6] := by native_decide
+    (english.strategies.map (·.coveredPositions.length)) = [2, 4] := by native_decide
 
 /-- Welsh splits at the DO/IO boundary: -case covers SU–DO, +case covers
     IO–OCOMP. Verified by checking coverage of each strategy. -/
@@ -419,5 +401,92 @@ theorem welsh_covers_ocomp_via_plus_case :
 
 /-- Sample size: 8 languages from Table 1. -/
 theorem sample_size : allProfiles.length = 8 := by native_decide
+
+-- ============================================================================
+-- § 10: Cross-System Connection (KCProfile ↔ RelativizationProfile)
+-- ============================================================================
+
+-- The two representations encode complementary views of the same data:
+-- KCProfile (Table 1): multi-strategy, per-position coverage
+-- RelativizationProfile (WALS): single-row summary, lowestRelativizable
+--
+-- The following theorems verify agreement between the two systems
+-- for languages that appear in both.
+
+/-- Lowest AH position covered by any strategy in a KCProfile.
+    Returns the position with the smallest rank that is covered by
+    at least one strategy. Returns `.subject` if nothing else matches. -/
+def KCProfile.lowestCovered (p : KCProfile) : AHPosition :=
+  let covers (pos : AHPosition) := p.strategies.any (·.covers pos)
+  if covers .objComparison then .objComparison
+  else if covers .genitive then .genitive
+  else if covers .oblique then .oblique
+  else if covers .indirectObject then .indirectObject
+  else if covers .directObject then .directObject
+  else .subject
+
+/-- English: KCProfile covers all 6 positions (lowestCovered = OCOMP),
+    matching `Typology.english.lowestRelativizable = .objComparison`. -/
+theorem english_kc_matches_wals :
+    english.lowestCovered = .objComparison ∧
+    Typology.english.lowestRelativizable = .objComparison := by native_decide
+
+/-- Welsh: KCProfile covers down to OCOMP (via +case strategy),
+    though WALS records `.oblique` (Ch 123 only asks about obliques). -/
+theorem welsh_kc_covers_deeper_than_wals :
+    welsh.lowestCovered = .objComparison ∧
+    Typology.welsh.lowestRelativizable = .oblique ∧
+    AHPosition.moreAccessible .oblique .objComparison = true := by native_decide
+
+/-- Korean: KCProfile covers SU-OBL + GEN, lowest = GEN.
+    WALS records `.oblique` (doesn't track GEN). -/
+theorem korean_kc_covers_deeper_than_wals :
+    korean.lowestCovered = .genitive ∧
+    Typology.korean.lowestRelativizable = .oblique := by native_decide
+
+/-- Malagasy: both systems agree — subjects only. -/
+theorem malagasy_kc_matches_wals :
+    malagasy.lowestCovered = .subject ∧
+    Typology.malagasy.lowestRelativizable = .subject := by native_decide
+
+/-- Finnish: KCProfile covers SU-GEN (via joka), WALS records `.oblique`.
+    Both agree that Finnish covers at least obliques. -/
+theorem finnish_kc_matches_wals :
+    finnish.lowestCovered = .genitive ∧
+    Typology.finnish.lowestRelativizable = .oblique := by native_decide
+
+/-- Hebrew: KCProfile covers all positions via +case (DO-OCOMP).
+    WALS records `.oblique`. -/
+theorem hebrew_kc_covers_deeper_than_wals :
+    hebrew.lowestCovered = .objComparison ∧
+    Typology.hebrew.lowestRelativizable = .oblique := by native_decide
+
+/-- Arabic: KCProfile covers all positions (SU via gap, DO-OCOMP via resumptive).
+    WALS records `.oblique`. -/
+theorem arabic_kc_covers_deeper_than_wals :
+    arabic.lowestCovered = .objComparison ∧
+    Typology.arabic.lowestRelativizable = .oblique := by native_decide
+
+/-- **Systematic coverage agreement**: for every language in our sample
+    that also appears in the WALS typology, the KCProfile covers at
+    least as much as the WALS profile indicates. The WALS profile never
+    claims a language can relativize a position that Table 1 doesn't
+    cover — Table 1 is strictly more detailed. -/
+theorem kc_at_least_as_detailed_as_wals :
+    -- English
+    english.lowestCovered.rank ≤ Typology.english.lowestRelativizable.rank ∧
+    -- Welsh
+    welsh.lowestCovered.rank ≤ Typology.welsh.lowestRelativizable.rank ∧
+    -- Korean
+    korean.lowestCovered.rank ≤ Typology.korean.lowestRelativizable.rank ∧
+    -- Malagasy
+    malagasy.lowestCovered.rank ≤ Typology.malagasy.lowestRelativizable.rank ∧
+    -- Finnish
+    finnish.lowestCovered.rank ≤ Typology.finnish.lowestRelativizable.rank ∧
+    -- Hebrew
+    hebrew.lowestCovered.rank ≤ Typology.hebrew.lowestRelativizable.rank ∧
+    -- Arabic
+    arabic.lowestCovered.rank ≤ Typology.arabic.lowestRelativizable.rank := by
+  native_decide
 
 end Phenomena.FillerGap.Studies.KeenanComrie1977

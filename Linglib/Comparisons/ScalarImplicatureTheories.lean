@@ -8,21 +8,19 @@ Compares NeoGricean and RSA theories using the ImplicatureTheory interface.
 ### Where Theories Agree
 - Both derive scalar implicatures for "some" (predicted baseline > 0)
 - Both treat "all" as top of scale (no implicature)
+- Both predict DE blocking (RSA via @cite{potts-etal-2016} lexical uncertainty)
 
 ### Where Theories Differ
 
 | Aspect | NeoGricean | RSA (current) | RSA Status |
 |--------|------------|---------------|------------|
 | Simple SI | ✅ Derives | ✅ Derives | Complete |
-| DE blocking | ✅ Models | ❌ N/A | **Incomplete** |
+| DE blocking | ✅ Models | ✅ Models | Complete (@cite{potts-etal-2016}) |
 | Task effect | ✅ Models | ❌ N/A | **Incomplete** |
 | Baseline rate | 35% | 50% | Different prediction |
 
-**Important**: RSA's gaps are due to **model incompleteness**, not theoretical
-limitations. The current RSA formalization only handles simple sentences in a
-toy world. It cannot represent embedded contexts (DE environments) or task
-manipulations (QUD changes). A compositional RSA model could potentially
-derive these effects.
+**Important**: RSA's remaining gap (task effect) is due to **model incompleteness**,
+not theoretical limitations. The current RSA formalization lacks QUD manipulation.
 
 ### Empirical Fit (where comparable)
 @cite{geurts-pouscoulous-2009} verification task: 34% SI rate
@@ -35,7 +33,7 @@ import Linglib.Core.Interface
 import Linglib.Theories.Pragmatics.NeoGricean.ScalarImplicatures.Basic
 import Linglib.Theories.Pragmatics.RSA.ScalarImplicatures.Basic
 
-namespace Phenomena.ScalarImplicatures.Studies.TheoryComparison
+namespace Comparisons.ScalarImplicatureTheories
 
 open Interfaces
 
@@ -69,20 +67,20 @@ theorem both_no_implicature_all :
 
 -- Part 2: Where Theories Diverge
 
-/-- NeoGricean predicts DE blocking, RSA doesn't -/
+/-- NeoGricean predicts DE blocking -/
 theorem neogricean_predicts_de_blocking :
     ImplicatureTheory.predictsDEBlocking (T := NeoGricean.NeoGriceanTheory) = true := by
   native_decide
 
-/-- RSA model incomplete: doesn't handle DE contexts -/
-theorem rsa_de_incomplete :
-    ImplicatureTheory.predictsDEBlocking (T := RSA.RSATheory) = false := by
+/-- RSA predicts DE blocking (via @cite{potts-etal-2016} lexical uncertainty) -/
+theorem rsa_predicts_de_blocking :
+    ImplicatureTheory.predictsDEBlocking (T := RSA.RSATheory) = true := by
   native_decide
 
-/-- NeoGricean models DE, RSA incomplete (not a theoretical disagreement) -/
-theorem neogricean_de_complete_rsa_incomplete :
+/-- Both theories now predict DE blocking -/
+theorem both_predict_de_blocking :
     ImplicatureTheory.predictsDEBlocking (T := NeoGricean.NeoGriceanTheory) = true ∧
-    ImplicatureTheory.predictsDEBlocking (T := RSA.RSATheory) = false := by
+    ImplicatureTheory.predictsDEBlocking (T := RSA.RSATheory) = true := by
   native_decide
 
 /-- NeoGricean predicts task effect (contextualism) -/
@@ -142,11 +140,11 @@ theorem neogricean_closer_to_geurts_data :
 
 -- Part 4: Using Interface Functions
 
-/-- Agreement check using interface function -/
-theorem theories_disagree_on_de :
+/-- Both theories now agree on DE blocking -/
+theorem theories_agree_on_de :
     theoriesAgreeOnDEPrediction
       (T1 := NeoGricean.NeoGriceanTheory)
-      (T2 := RSA.RSATheory) = false := by
+      (T2 := RSA.RSATheory) = true := by
   native_decide
 
 /-- Agreement check on task effect -/
@@ -220,8 +218,8 @@ def rsaFullCoverage : TheoryCoverage :=
       , status := .complete
       , notes := "L1 assigns higher prob to some-not-all worlds" }
     , { phenomenon := .deBlocking
-      , status := .incomplete
-      , notes := "Model can't represent embedded contexts yet" }
+      , status := .complete
+      , notes := "Derived via lexical uncertainty (@cite{potts-etal-2016})" }
     , { phenomenon := .taskEffect
       , status := .incomplete
       , notes := "Model lacks QUD manipulation" }
@@ -248,7 +246,7 @@ def rsaFullCoverage : TheoryCoverage :=
 -- [referenceGames, knowledgeCancellation, exhaustivity, freeChoice]
 
 #eval rsaFullCoverage.incompletePhenomena
--- [deBlocking, taskEffect, exhaustivity]
+-- [taskEffect, exhaustivity]
 
 #eval rsaFullCoverage.outOfScopePhenomena
 -- [freeChoice]
@@ -307,9 +305,9 @@ theorem neogricean_captures_de_blocking :
     (testDEBlocking (T := NeoGricean.NeoGriceanTheory) someAllDEBlocking).isMatch = true := by
   native_decide
 
-/-- RSA model incomplete for DE blocking (can't represent embedded contexts) -/
-theorem rsa_de_blocking_incomplete :
-    (testDEBlocking (T := RSA.RSATheory) someAllDEBlocking).isMatch = false := by
+/-- RSA captures DE blocking (via @cite{potts-etal-2016} lexical uncertainty) -/
+theorem rsa_captures_de_blocking :
+    (testDEBlocking (T := RSA.RSATheory) someAllDEBlocking).isMatch = true := by
   native_decide
 
 /-- NeoGricean matches task effect pattern -/
@@ -350,6 +348,11 @@ instance : CapturesDEBlockingPattern NeoGricean.NeoGriceanTheory where
   testCase := someAllDEBlocking
   theoryMatchesData := by native_decide
 
+/-- RSA captures DE blocking pattern (via @cite{potts-etal-2016}) -/
+instance : CapturesDEBlockingPattern RSA.RSATheory where
+  testCase := someAllDEBlocking
+  theoryMatchesData := by native_decide
+
 -- Part 9: Summary
 
 /-
@@ -360,23 +363,23 @@ instance : CapturesDEBlockingPattern NeoGricean.NeoGriceanTheory where
 | Aspect | NeoGricean | RSA | RSA Status |
 |--------|------------|-----|------------|
 | Simple SI derivation | ✅ | ✅ | Complete |
-| DE blocking | ✅ Models | ❌ | **Incomplete** |
+| DE blocking | ✅ Models | ✅ Models | Complete (@cite{potts-etal-2016}) |
 | Task effect | ✅ Models | ❌ | **Incomplete** |
 | Baseline rate | 35% | 50% | Different |
 
-### Why RSA is Incomplete (Not Wrong)
+### RSA DE Blocking Coverage
 
-The current RSA formalization uses a toy `CookieWorld` model that:
-- Has only 4 world states (0, 1, 2, or 3 people ate cookies)
-- Has only 3 utterances ("none", "some", "all")
-- Cannot represent embedded sentences like "No one ate some cookies"
-- Has no notion of context polarity or QUD manipulation
+The @cite{potts-etal-2016} lexical uncertainty model derives DE blocking by
+marginalizing over lexica (weak vs strong "some"). Under "no", the strong
+lexicon widens the true-world set, making the utterance less informative;
+L1 therefore prefers the weak lexicon, yielding the global reading (NNN).
+See `PottsEtAl2016.de_blocking_NNN_vs_NNA` et al. for the formal proofs.
 
-A **complete** RSA model would need:
-1. Compositional semantics over sentence structure
-2. Context-sensitive literal listener (L0 changes in DE)
-3. QUD-sensitive pragmatic reasoning
-4. Recursive alternatives in embedded contexts
+### Remaining RSA Gap: Task Effects
+
+The current RSA formalization lacks QUD manipulation, so it cannot
+model task effects. A complete RSA model would need QUD-sensitive
+pragmatic reasoning.
 
 ### Empirical Fit (where comparable)
 
@@ -388,32 +391,17 @@ A **complete** RSA model would need:
 Note: RSA's 50% baseline comes from a simple model; a more sophisticated
 RSA with proper priors might predict differently.
 
-### Linking Functions Used
-
-- `testDEBlocking`: Tests theory against `DEBlockingTestCase`
-- `testTaskEffect`: Tests theory against `TaskEffectTestCase`
-- `closerToObservedRate`: Compares two theories to observed data
-- `CapturesTaskEffectData`: Typeclass proving theory matches task effect
-- `CapturesDEBlockingPattern`: Typeclass proving theory handles DE blocking
-
 ### What This Comparison Shows
 
-1. **NeoGricean is more complete**: It explicitly models DE blocking and
-   task effects, matching @cite{geurts-pouscoulous-2009} findings.
+1. **Both theories model DE blocking**: NeoGricean via scale reversal,
+   RSA via lexical uncertainty (@cite{potts-etal-2016}).
 
-2. **RSA needs extension**: The current model only handles simple cases.
-   Extending it to embedded contexts is a research direction.
+2. **NeoGricean still ahead on task effects**: It models QUD/task
+   manipulation, which RSA's current formalization lacks.
 
 3. **Different strengths**: RSA excels at reference games and ad-hoc
    implicatures (see FrankGoodman2012, GoodmanStuhlmuller2013) where
    NeoGricean is less applicable.
-
-### Future Work
-
-To make RSA comparable on DE blocking and task effects:
-1. Implement compositional RSA over sentence meanings
-2. Add context polarity to the semantic backend
-3. Model QUD effects on pragmatic reasoning
 -/
 
-end Phenomena.ScalarImplicatures.Studies.TheoryComparison
+end Comparisons.ScalarImplicatureTheories
