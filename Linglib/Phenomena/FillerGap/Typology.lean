@@ -1,12 +1,13 @@
 import Linglib.Core.Lexical.Word
+import Linglib.Core.Interfaces.ExtractionMorphology
 
 /-!
 # Cross-Linguistic Typology of Relativization (WALS Chapters 122--123)
 @cite{comrie-1989} @cite{de-vries-2002} @cite{keenan-comrie-1977} @cite{hawkins-1987} @cite{comrie-2013}
 
 Cross-linguistic data on relative clause formation strategies from two WALS
-chapters by @cite{comrie-2013}, supplemented with the Keenan-Comrie
-Accessibility Hierarchy.
+chapters by @cite{comrie-2013}, supplemented with the
+@cite{keenan-comrie-1977} Accessibility Hierarchy.
 
 ## Ch 122: Relativization on Subjects
 
@@ -19,7 +20,7 @@ inside the relative clause) and mixed strategies.
 
 Sample: 824 languages. Gap strategy is the most common for subject
 relativization (326/824 = 39.6%), reflecting the high accessibility of the
-subject position on the Keenan-Comrie hierarchy.
+subject position on the @cite{keenan-comrie-1977} hierarchy.
 
 ## Ch 123: Relativization on Obliques
 
@@ -32,18 +33,25 @@ Sample: 824 languages. The most common pattern is that obliques cannot be
 relativized (293/824 = 35.6%), reflecting the low position of obliques on
 the accessibility hierarchy.
 
-## Keenan-Comrie Accessibility Hierarchy
+## @cite{keenan-comrie-1977} Accessibility Hierarchy
 
 The Accessibility Hierarchy ranks grammatical
 positions by their accessibility to relativization:
 
   Subject > Direct Object > Indirect Object > Oblique > Genitive > Object of Comparison
 
-The hierarchy makes two key predictions:
-1. **Implicational universal**: If a language can relativize position N, it
-   can relativize all positions higher than N on the hierarchy.
-2. **Strategy preservation**: A strategy used at position N can also be used
-   at all positions above N (the Primary strategy constraint).
+The paper states three Hierarchy Constraints (HCs):
+1. **HC₁**: A language must be able to relativize subjects.
+2. **HC₂ (Continuity)**: Any RC-forming strategy must apply to a continuous
+   segment of the AH.
+3. **HC₃ (Cut-off)**: Strategies that apply at one point of the AH may in
+   principle cease to apply at any lower point.
+
+From these, the **Primary Relativization Constraint** follows: if a language's
+primary strategy can apply to a low position on the AH, it can also apply to
+all higher positions. Non-primary strategies need not satisfy this — they may
+cover a continuous segment that excludes subjects (e.g., the +case strategy
+covering IO-OBL-GEN-OCOMP but not SU-DO in Welsh and Arabic).
 
 The hierarchy is one of the most robust typological universals in syntax,
 supported by data from hundreds of languages. It correlates with processing
@@ -109,7 +117,7 @@ inductive SubjRelStrategy where
 /-- WALS Ch 123: Strategy used to relativize oblique positions (instrumental,
     locative, etc.), or whether obliques can be relativized at all.
 
-    Obliques are low on the Keenan-Comrie Accessibility Hierarchy, and many
+    Obliques are low on the @cite{keenan-comrie-1977} Accessibility Hierarchy, and many
     languages that freely relativize subjects cannot relativize obliques.
     Those that can often use a different strategy than for subjects
     (typically shifting from gap to pronoun retention or relative pronoun). -/
@@ -169,10 +177,10 @@ inductive RelClausePosition where
   deriving DecidableEq, BEq, Repr
 
 -- ============================================================================
--- Keenan-Comrie Accessibility Hierarchy
+-- @cite{keenan-comrie-1977} Accessibility Hierarchy
 -- ============================================================================
 
-/-- Positions on the Keenan-Comrie Accessibility Hierarchy (KCAH).
+/-- Positions on the @cite{keenan-comrie-1977} Accessibility Hierarchy (KCAH).
 
     The hierarchy ranks grammatical relations by their accessibility to
     relativization. Higher positions are more accessible: more languages
@@ -215,6 +223,88 @@ def AHPosition.atLeastAsAccessible (p1 p2 : AHPosition) : Bool :=
 /-- Position p1 is strictly more accessible than p2. -/
 def AHPosition.moreAccessible (p1 p2 : AHPosition) : Bool :=
   p1.rank > p2.rank
+
+-- ============================================================================
+-- All AH Positions
+-- ============================================================================
+
+/-- All AH positions in descending order of accessibility. -/
+def AHPosition.all : List AHPosition :=
+  [.subject, .directObject, .indirectObject, .oblique, .genitive, .objComparison]
+
+-- ============================================================================
+-- Contiguity Predicate (mirrors Core.Case.Hierarchy.validInventory)
+-- ============================================================================
+
+/-- Whether a list of AH positions contains at least one position at rank r. -/
+private def hasAHRank (positions : List AHPosition) (r : Nat) : Bool :=
+  positions.any fun p => p.rank == r
+
+/-- A set of AH positions forms a contiguous segment on the hierarchy:
+    for every pair of positions in the set, all intermediate ranks
+    are also represented. Mirrors `Core.validInventory` for the case
+    hierarchy (@cite{blake-1994}).
+
+    This formalizes HC₂ of @cite{keenan-comrie-1977}: "Any RC-forming
+    strategy must apply to a continuous segment of the AH." -/
+def contiguousOnAH (positions : List AHPosition) : Bool :=
+  positions.all fun p1 =>
+    positions.all fun p2 =>
+      if p2.rank > p1.rank then
+        let lo := p1.rank
+        let hi := p2.rank
+        List.range hi |>.all fun r =>
+          if r > lo && r < hi then hasAHRank positions r
+          else true
+      else true
+
+/-- The full hierarchy [SU, DO, IO, OBL, GEN, OCOMP] is contiguous. -/
+theorem full_ah_contiguous :
+    contiguousOnAH AHPosition.all = true := by native_decide
+
+/-- A single position is trivially contiguous. -/
+theorem singleton_contiguous :
+    contiguousOnAH [AHPosition.subject] = true := by native_decide
+
+/-- [SU, DO, OBL] is NOT contiguous (skips IO at rank 4). -/
+theorem su_do_obl_not_contiguous :
+    contiguousOnAH [AHPosition.subject, .directObject, .oblique] = false := by
+  native_decide
+
+-- ============================================================================
+-- Bridge: ExtractionTarget ↔ AHPosition
+-- ============================================================================
+
+open Interfaces in
+/-- Map an extraction target to its AH position. Possessor extraction
+    corresponds to the genitive position on the AH. -/
+def extractionTargetToAH : ExtractionTarget → AHPosition
+  | .subject        => .subject
+  | .directObject   => .directObject
+  | .indirectObject => .indirectObject
+  | .oblique        => .oblique
+  | .possessor      => .genitive
+
+open Interfaces in
+/-- Map an AH position to an extraction target (partial: object of comparison
+    has no standard ExtractionTarget equivalent). -/
+def ahToExtractionTarget : AHPosition → Option ExtractionTarget
+  | .subject        => some .subject
+  | .directObject   => some .directObject
+  | .indirectObject => some .indirectObject
+  | .oblique        => some .oblique
+  | .genitive       => some .possessor
+  | .objComparison  => none
+
+open Interfaces in
+/-- Round-tripping ExtractionTarget → AH → ExtractionTarget is the identity
+    (for all targets). -/
+theorem extraction_ah_roundtrip :
+    let targets := [ExtractionTarget.subject, .directObject,
+                    .indirectObject, .oblique, .possessor]
+    targets.all (λ t => ahToExtractionTarget (extractionTargetToAH t) == some t)
+      = true := by
+  native_decide
 
 -- ============================================================================
 -- WALS Aggregate Distribution Data

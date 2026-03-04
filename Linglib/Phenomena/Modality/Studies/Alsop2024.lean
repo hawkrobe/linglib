@@ -206,8 +206,8 @@ theorem permission_correspondence :
 noncomputable def cfg (worldPr : FCIState → ℝ) (hp : ∀ w, 0 ≤ worldPr w) :
     RSA.RSAConfig Utterance FCIState where
   Latent := Interp
-  meaning i u w := if interpMeaning i u w then 1 else 0
-  meaning_nonneg _ _ _ := by split <;> positivity
+  meaning _ i u w := if interpMeaning i u w then 1 else 0
+  meaning_nonneg _ _ _ _ := by split <;> positivity
   s1Score l0 α _i w u := rpow (l0 u w) α
   s1Score_nonneg _ _ _ _ u hl _ := rpow_nonneg (hl u _) _
   α := 2
@@ -277,8 +277,8 @@ theorem every_permBoth :
     strong (2 states), S1 cannot discriminate exclusiveness states. -/
 noncomputable def weakOnlyCfg : RSA.RSAConfig Utterance FCIState where
   Latent := Interp
-  meaning _i u w := if weakMeaning u w then 1 else 0
-  meaning_nonneg _ _ _ := by split <;> positivity
+  meaning _ _i u w := if weakMeaning u w then 1 else 0
+  meaning_nonneg _ _ _ _ := by split <;> positivity
   s1Score l0 α _i w u := rpow (l0 u w) α
   s1Score_nonneg _ _ _ _ u hl _ := rpow_nonneg (hl u _) _
   α := 2
@@ -338,8 +338,8 @@ def interpMeaningNeg : Interp → UtteranceNeg → FCIState → Bool
 /-- RSAConfig for the extended model with negation. -/
 noncomputable def negCfg : RSA.RSAConfig UtteranceNeg FCIState where
   Latent := Interp
-  meaning i u w := if interpMeaningNeg i u w then 1 else 0
-  meaning_nonneg _ _ _ := by split <;> positivity
+  meaning _ i u w := if interpMeaningNeg i u w then 1 else 0
+  meaning_nonneg _ _ _ _ := by split <;> positivity
   s1Score l0 α _i w u := rpow (l0 u w) α
   s1Score_nonneg _ _ _ _ u hl _ := rpow_nonneg (hl u _) _
   α := 2

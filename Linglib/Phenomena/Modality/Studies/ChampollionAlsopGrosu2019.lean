@@ -198,8 +198,8 @@ theorem I2_a_singleton : ∀ w, I2 .a w = true ↔ w = .onlyA := by
 noncomputable def cfg (worldPr : FCState → ℝ) (hp : ∀ w, 0 ≤ worldPr w) :
     RSA.RSAConfig Utterance FCState where
   Latent := Interp
-  meaning i u w := if interpMeaning i u w then 1 else 0
-  meaning_nonneg _ _ _ := by split <;> positivity
+  meaning _ i u w := if interpMeaning i u w then 1 else 0
+  meaning_nonneg _ _ _ _ := by split <;> positivity
   s1Score l0 α _i w u := rpow (l0 u w) α
   s1Score_nonneg _ _ _ _ u hl _ := rpow_nonneg (hl u _) _
   α := 2
@@ -331,8 +331,8 @@ def interpMeaningNull : Interp → UtteranceWithNull → FCState → Bool
     interpretations). -/
 noncomputable def nullCfg : RSA.RSAConfig UtteranceWithNull FCState where
   Latent := Interp
-  meaning i u w := if interpMeaningNull i u w then 1 else 0
-  meaning_nonneg _ _ _ := by split <;> positivity
+  meaning _ i u w := if interpMeaningNull i u w then 1 else 0
+  meaning_nonneg _ _ _ _ := by split <;> positivity
   s1Score l0 α _i w u := rpow (l0 u w) α
   s1Score_nonneg _ _ _ _ u hl _ := rpow_nonneg (hl u _) _
   α := 2

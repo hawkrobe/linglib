@@ -164,7 +164,7 @@ def tryDirectRExprCompare (goal : MVarId) (lhsExpr rhsExpr : Expr) : TacticM Boo
   let (rhsRExpr, rhsBounds) ← reifyToRExpr persistentReifyCache rhsExpr maxDepth
 
   unless lhsBounds.lo > rhsBounds.hi do
-    logInfo m!"rsa_predict: [direct] bounds don't separate"
+    logInfo m!"rsa_predict: [direct] bounds don't separate (lhs=[{lhsBounds.lo}, {lhsBounds.hi}] rhs=[{rhsBounds.lo}, {rhsBounds.hi}])"
     return false
 
   let cacheAfter ← persistentReifyCache.get

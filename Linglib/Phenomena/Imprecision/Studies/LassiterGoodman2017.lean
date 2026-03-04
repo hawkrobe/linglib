@@ -241,8 +241,8 @@ noncomputable def mkThresholdCfg
     (prior : Height → ℝ) (hp : ∀ h, 0 ≤ prior h) :
     RSA.RSAConfig Utterance Height where
   Latent := Threshold
-  meaning θ u h := if meaning u θ h then prior h else 0
-  meaning_nonneg θ u h := by split <;> [exact hp h; exact le_refl 0]
+  meaning _ θ u h := if meaning u θ h then prior h else 0
+  meaning_nonneg _ θ u h := by split <;> [exact hp h; exact le_refl 0]
   s1Score := beliefScore
   s1Score_nonneg := beliefScore_nonneg
   α := 4

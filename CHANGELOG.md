@@ -1,5 +1,32 @@
 # Changelog
 
+## [0.227.96] - 2026-03-03
+
+### Added
+- **Keenan & Comrie (1977) — Accessibility Hierarchy formalization**: new study file `Studies/KeenanComrie1977.lean` formalizing the three Hierarchy Constraints (HC₁: languages must relativize subjects; HC₂: each strategy covers a contiguous AH segment; HC₃: strategies may cut off at any lower point) and the derived Primary Relativization Constraint. Multi-strategy `StrategyEntry`/`KCProfile` types encode Table 1 data for 8 languages (English, Welsh, Arabic, Hebrew, Toba Batak, Korean, Finnish, Malagasy). 15+ verification theorems including Toba Batak's genuine DO gap (consistent with HC₂ since the gap is between strategies, not within one).
+- **`contiguousOnAH` predicate** in `Typology.lean`: mirrors `Core.Case.Hierarchy.validInventory` for the Accessibility Hierarchy — checks that a set of AH positions forms a contiguous segment.
+- **ExtractionTarget ↔ AHPosition bridge** in `Typology.lean`: `extractionTargetToAH`/`ahToExtractionTarget` connecting the extraction morphology interface to the Accessibility Hierarchy, with round-trip verification theorem.
+
+### Fixed
+- **Strategy preservation claim corrected** in `Typology.lean` docstring: the original text incorrectly stated "a strategy used at position N can also be used at all positions above N" — the paper's HC₂ is about contiguity of segments, and the Primary Relativization Constraint applies only to primary strategies. Docstring now accurately describes HC₁/HC₂/HC₃ and the PRC.
+- **Citation hygiene**: all inline "Keenan-Comrie" references in `Typology.lean` and `ExtractionMorphology.lean` now use `@cite{keenan-comrie-1977}`.
+
+## [0.227.95] - 2026-03-03
+
+### Added
+- **Engelhardt et al. (2006) — Gricean Maxim of Quantity**: new study file formalizing three experiments on over-description. Exp 1 (N = 24): speakers over-describe 31% of the time. Exp 2 (N = 72): over-descriptions not penalized in judgments, but under-descriptions are. Exp 3 (N = 48): over-descriptions cause implicit processing costs (531ms vs 489ms first-pass, F₁(1,47) = 9.31; 14.6% vs 7.3% regressions, F₁(1,47) = 17.74). Reuses `SedivyEtAl1999.AnovaResult`. Cross-study theorems linking to KursatDegen2021 (production convergence) and SedivyEtAl1999 (complementary eye-tracking). Key theorem: `moderately_gricean` — speakers violate Quantity, listeners are explicitly tolerant but implicitly sensitive.
+- **Deepened cross-study connections**: RonderosEtAl2024 now imports SedivyEtAl1999 — `agrees_with_sedivy_on_scalar` references Sedivy's ANOVA data directly; `two_routes` theorem moved here from Sedivy (it's the synthesis of both papers' contributions). ComparisonClass.lean now imports PropertyDomain — `AdjectiveType.ofDomain` connects RGA/AGA to `requiresComparisonClass`, with per-example verification theorems. KursatDegen2021 gains `propertyToDiscrimination_canonical` connecting to `PropertyDomain.noiseDiscrimination`.
+
+## [0.227.94] - 2026-03-03
+
+### Added
+- **Sedivy et al. (1999) — contrastive inferences from scalar adjectives**: new study file formalizing the foundational contrastive-inference eye-tracking experiments. Three experiments (N = 24, 24, 20) show scalar/size adjectives trigger contrastive inferences via competitor and contrast-object fixation measures. Bridge theorems connect to `PropertyDomain.requiresComparisonClass` (the comparison-class mechanism) and `RSA.Noise` discrimination (the perceptual mechanism).
+- **`PropertyDomain.requiresComparisonClass`**: new function classifying which property domains require comparison-class computation for interpretation (size, evaluative, psychological, sensory → true; color, material, state → false). Connects Sedivy's semantic-restrictiveness mechanism to the PropertyDomain infrastructure.
+- **Cross-study theorems in Ronderos et al. (2024)**: `agrees_with_sedivy_on_scalar` (both find scalar triggers inference) and `disagrees_with_sedivy_on_color` (Ronderos finds color triggers inference via perceptual discrimination, contra Sedivy's comparison-class prediction).
+
+### Changed
+- **Move contrastive-inference studies to Reference/**: moved KursatDegen2021, RonderosEtAl2024 from `Phenomena/Gradability/Studies/` to `Phenomena/Reference/Studies/` — these are about adjective pragmatics in referential contexts, not gradable adjective semantics. Updated namespaces and Linglib.lean imports.
+
 ## [0.227.93] - 2026-03-03
 
 ### Added

@@ -1,3 +1,5 @@
+import Linglib.Core.PropertyDomain
+
 /-
 # Comparison Class: Empirical Data
 
@@ -396,5 +398,36 @@ def mainGeneralizations : ComparisonClassGeneralizations :=
   , developmentallyStable := true
   , rgaMoreContextSensitive := true
   }
+
+-- ============================================================================
+-- § Bridge: Connection to PropertyDomain
+-- ============================================================================
+
+/-- Map `PropertyDomain` to `AdjectiveType`: domains that require
+    comparison-class computation are RGA; others are AGA. -/
+def AdjectiveType.ofDomain (d : Core.PropertyDomain) : AdjectiveType :=
+  if d.requiresComparisonClass then .RGA else .AGA
+
+/-- Size domain → RGA (e.g., "big", "tall"). -/
+theorem size_is_rga : AdjectiveType.ofDomain .size = .RGA := rfl
+
+/-- State domain → AGA (e.g., "wet", "full"). -/
+theorem state_is_aga : AdjectiveType.ofDomain .state = .AGA := rfl
+
+/-- The empirical observation that RGA thresholds shift with comparison
+    class is predicted by `requiresComparisonClass = true` for the size
+    domain. -/
+theorem rga_threshold_shift_predicted :
+    bigRGA.thresholdShifts = true ∧
+    Core.PropertyDomain.requiresComparisonClass .size = true :=
+  ⟨rfl, rfl⟩
+
+/-- The empirical observation that AGA thresholds do NOT shift is
+    predicted by `requiresComparisonClass = false` for the state
+    domain. -/
+theorem aga_no_threshold_shift_predicted :
+    wetAGA.thresholdShifts = false ∧
+    Core.PropertyDomain.requiresComparisonClass .state = false :=
+  ⟨rfl, rfl⟩
 
 end Phenomena.Gradability.ComparisonClass

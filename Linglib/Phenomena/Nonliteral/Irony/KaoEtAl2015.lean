@@ -202,9 +202,9 @@ open RSA in
     (hw : ∀ s, 0 ≤ wp s) (hg : ∀ g, 0 ≤ gp g) :
     RSAConfig Weather World where
   Latent := Goal
-  meaning := meaning
+  meaning := fun _ => meaning
   meaning_nonneg := by
-    intro q u ⟨st, v, a⟩; simp only [meaning]
+    intro _ q u ⟨st, v, a⟩; simp only [meaning]
     split <;> (try exact le_refl 0)
     cases st <;> cases v <;> cases a <;> simp [affectPrior]
   s1Score l0 α q w u :=

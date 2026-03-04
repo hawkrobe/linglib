@@ -392,8 +392,6 @@ import Linglib.Phenomena.Gradability.Data
 import Linglib.Phenomena.Gradability.ComparisonClass
 import Linglib.Phenomena.Gradability.Studies.Rett2015
 import Linglib.Phenomena.Gradability.Studies.CarianiSantorioWellwood2024
-import Linglib.Phenomena.Gradability.Studies.KursatDegen2021
-import Linglib.Phenomena.Gradability.Studies.RonderosEtAl2024
 import Linglib.Phenomena.Gradability.Studies.Nouwen2024
 import Linglib.Phenomena.Gradability.Vagueness
 -- Phenomena: Comparison (extracted from Gradability/)
@@ -437,6 +435,7 @@ import Linglib.Phenomena.FillerGap.Compare
 import Linglib.Phenomena.FillerGap.OblExtraction
 import Linglib.Phenomena.FillerGap.Studies.Erlewine2016
 import Linglib.Phenomena.FillerGap.Studies.ElkinsImanishiCoon2026
+import Linglib.Phenomena.FillerGap.Studies.KeenanComrie1977
 import Linglib.Phenomena.Nonliteral.Irony.KaoEtAl2015
 import Linglib.Phenomena.Nonliteral.Irony.Studies.SpinosoDiPiano2025
 import Linglib.Phenomena.Nonliteral.Studies.RelevanceTheory
@@ -574,12 +573,17 @@ import Linglib.Phenomena.Questions.Compare
 import Linglib.Phenomena.Questions.Studies.TurkHirschInce2026
 import Linglib.Phenomena.Questions.Studies.Xiang2022
 import Linglib.Phenomena.Reference.Studies.AnandNevins2004
+import Linglib.Phenomena.Reference.Studies.CohnGordonEtAl2019
+import Linglib.Phenomena.Reference.Studies.EngelhardtEtAl2006
 import Linglib.Phenomena.Reference.DirectReference
 import Linglib.Phenomena.Reference.Studies.FrankGoodman2012
 import Linglib.Phenomena.Reference.Studies.HawkinsGweonGoodman2021
 import Linglib.Phenomena.Reference.Studies.SikosEtAl2021
 import Linglib.Phenomena.Reference.Studies.Percus2000
 import Linglib.Phenomena.Reference.Studies.QingFranke2015
+import Linglib.Phenomena.Reference.Studies.KursatDegen2021
+import Linglib.Phenomena.Reference.Studies.RonderosEtAl2024
+import Linglib.Phenomena.Reference.Studies.SedivyEtAl1999
 import Linglib.Phenomena.ScalarImplicatures.Basic
 import Linglib.Phenomena.ScalarImplicatures.Studies.BaleEtAl2025
 import Linglib.Phenomena.ScalarImplicatures.Studies.CremersWilcoxSpector2023
@@ -767,6 +771,8 @@ import Linglib.Theories.Pragmatics.DecisionTheoretic.ScalarImplicature
 import Linglib.Theories.Pragmatics.DecisionTheoretic.But
 import Linglib.Theories.Pragmatics.DecisionTheoretic.Even
 import Linglib.Theories.Pragmatics.DecisionTheoretic.Also
+-- Theories: Gricean Pragmatics
+import Linglib.Theories.Pragmatics.GriceanMaxims
 -- Theories: Relevance Theory (Sperber & Wilson)
 import Linglib.Theories.Pragmatics.RelevanceTheory.CognitiveEnvironment
 import Linglib.Theories.Pragmatics.RelevanceTheory.CognitiveEffects

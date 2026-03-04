@@ -72,8 +72,8 @@ inductive ExtractionMarkingStrategy where
 
 /-- The grammatical position from which extraction occurs.
 
-    This intersects with the Keenan-Comrie Accessibility Hierarchy (see
-    `FillerGap/Typology.lean`), but is defined independently because
+    This intersects with the @cite{keenan-comrie-1977} Accessibility Hierarchy
+    (see `FillerGap/Typology.lean`), but is defined independently because
     extraction morphology may make finer distinctions than relativization. -/
 inductive ExtractionTarget where
   /-- Subject (ergative/nominative) extraction -/

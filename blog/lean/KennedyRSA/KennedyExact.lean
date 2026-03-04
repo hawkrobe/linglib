@@ -88,8 +88,8 @@ open RSA in
     exact count differs from the stated numeral. -/
 noncomputable abbrev gsCfgK (m : Nat) (a : Access) : RSAConfig KennedyUtt WorldState where
   Latent := Obs × KennedyInterp
-  meaning ol u w := if kennedyMeaning m ol.2 u w then 1 else 0
-  meaning_nonneg _ _ _ := by split <;> positivity
+  meaning _ ol u w := if kennedyMeaning m ol.2 u w then 1 else 0
+  meaning_nonneg _ _ _ _ := by split <;> positivity
   s1Score l0 α ol _w u :=
     if qualityOk (kennedyMeaning m ol.2) ol.1 u then
       Real.exp (α * ∑ s : WorldState, speakerBelief ol.1 s * Real.log (l0 u s))

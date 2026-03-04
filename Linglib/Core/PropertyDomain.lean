@@ -84,4 +84,27 @@ def Dimension.pregnancy : Dimension := ⟨"pregnancy", .state⟩
 def Dimension.color : Dimension := ⟨"color", .color⟩
 def Dimension.material : Dimension := ⟨"material", .material⟩
 
+-- ═══════════════════════════════════════════
+-- Domain Properties
+-- ═══════════════════════════════════════════
+
+/-- Whether adjectives in this domain typically require comparison-class
+    computation for interpretation. Size, evaluative, psychological, and
+    sensory domains contain relative gradable adjectives (RGAs) interpreted
+    relative to a contextually-determined standard. Color, material, and
+    state domains contain adjectives with more stable meanings.
+
+    This distinction is theoretically significant: @cite{sedivy-etal-1999}
+    showed that comparison-class-dependent (scalar) adjectives trigger
+    contrastive inferences in referential contexts, while non-dependent
+    (color) adjectives do not. -/
+def PropertyDomain.requiresComparisonClass : PropertyDomain → Bool
+  | .size          => true   -- tall, short, big, wide, ...
+  | .evaluative    => true   -- expensive, good, ...
+  | .psychological => true   -- smart, ...
+  | .sensory       => true   -- hot, cold, ...
+  | .color         => false  -- yellow, red, ...
+  | .material      => false  -- wooden, metal, ...
+  | .state         => false  -- full, wet, dead, ...
+
 end Core

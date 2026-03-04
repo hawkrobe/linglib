@@ -282,8 +282,8 @@ def utteranceMeaning (scale : SpatialScale) : Utterance → World → Bool
     step: given the DDRP candidates, which one did the speaker intend? -/
 noncomputable def domainRestrictionRSA : RSA.RSAConfig Utterance World where
   Latent := SpatialScale
-  meaning scale u w := if utteranceMeaning scale u w then 1 else 0
-  meaning_nonneg _ _ _ := by split <;> norm_num
+  meaning _ scale u w := if utteranceMeaning scale u w then 1 else 0
+  meaning_nonneg _ _ _ _ := by split <;> norm_num
   s1Score := λ l0 α _ w u => (l0 u w) ^ α
   s1Score_nonneg _ _ _ _ _ h_nn h_pos := by
     exact Real.rpow_nonneg (h_nn _ _) _
@@ -296,14 +296,14 @@ noncomputable def domainRestrictionRSA : RSA.RSAConfig Utterance World where
     a given scale, L0's score is positive. -/
 theorem l0_reflects_every (s : SpatialScale) (w : World)
     (h : everyBottleEmpty s w = true) :
-    domainRestrictionRSA.meaning s .everyEmpty w = 1 := by
+    domainRestrictionRSA.meaning () s .everyEmpty w = 1 := by
   simp [domainRestrictionRSA, utteranceMeaning, h]
 
 /-- L0 correctly reflects literal semantics: when ⟦every⟧ is false under
     a given scale, L0's score is zero. -/
 theorem l0_reflects_every_false (s : SpatialScale) (w : World)
     (h : everyBottleEmpty s w = false) :
-    domainRestrictionRSA.meaning s .everyEmpty w = 0 := by
+    domainRestrictionRSA.meaning () s .everyEmpty w = 0 := by
   simp [domainRestrictionRSA, utteranceMeaning, h]
 
 -- ============================================================================

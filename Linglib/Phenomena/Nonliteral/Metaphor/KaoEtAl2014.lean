@@ -158,9 +158,9 @@ noncomputable def qudProject (q : Goal) (f : World → ℝ) (w : World) : ℝ :=
 noncomputable def cfg (goalPrior : Goal → ℝ) (hp : ∀ g, 0 ≤ goalPrior g) :
     RSA.RSAConfig Cat World where
   Latent := Goal
-  meaning := meaning
+  meaning := fun _ => meaning
   meaning_nonneg := by
-    intro q u ⟨c, a, b, d⟩; simp only [meaning]
+    intro _ q u ⟨c, a, b, d⟩; simp only [meaning]
     split <;> (try exact le_refl 0)
     cases c <;> cases a <;> cases b <;> cases d <;> simp [featurePrior]
   s1Score l0 α q w u := rpow (qudProject q (l0 u) w) α

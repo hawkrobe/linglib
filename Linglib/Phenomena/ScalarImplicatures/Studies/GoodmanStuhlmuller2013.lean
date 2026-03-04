@@ -418,8 +418,8 @@ noncomputable def gsCfg {U : Type*} [Fintype U]
     (meaning : U → WorldState → Bool) (a : Access) : RSAConfig U WorldState where
   Latent := Obs
   -- P_lex(s | w) ∝ ⟦w⟧(s) — literal interpretation
-  meaning _obs u w := if meaning u w then 1 else 0
-  meaning_nonneg _ _ _ := by split <;> positivity
+  meaning _ _obs u w := if meaning u w then 1 else 0
+  meaning_nonneg _ _ _ _ := by split <;> positivity
   -- Eq. 2+3: S1(w | o, a) ∝ exp(α · Σ_s P(s|o,a) · ln P_lex(s|w))
   s1Score l0 α obs _w u :=
     if qualityOk meaning obs u then

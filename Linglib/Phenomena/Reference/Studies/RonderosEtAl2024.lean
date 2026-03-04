@@ -1,5 +1,6 @@
 import Linglib.Core.PropertyDomain
 import Linglib.Theories.Pragmatics.RSA.Core.Noise
+import Linglib.Phenomena.Reference.Studies.SedivyEtAl1999
 
 /-!
 # @cite{ronderos-etal-2024}
@@ -47,7 +48,7 @@ paper text (§3.1–§3.4). SE is not reported for target-advantage or
 baseline analyses and is omitted here.
 -/
 
-namespace Phenomena.Gradability.Studies.RonderosEtAl2024
+namespace Phenomena.Reference.Studies.RonderosEtAl2024
 
 -- ============================================================================
 -- § Adjective Types
@@ -321,4 +322,83 @@ theorem converging_evidence_with_kursat_degen :
     RSA.Noise.materialDiscrimination < RSA.Noise.colorDiscrimination := by
   refine ⟨by decide, ?_, ?_⟩ <;> native_decide
 
-end Phenomena.Gradability.Studies.RonderosEtAl2024
+-- ============================================================================
+-- § Bridge: Cross-Study Comparison with @cite{sedivy-etal-1999}
+-- ============================================================================
+
+/-- Agreement with @cite{sedivy-etal-1999}: both studies find that
+    scalar adjectives (size domain) trigger contrastive inferences.
+    This study replicates the core Sedivy finding cross-linguistically. -/
+theorem agrees_with_sedivy_on_scalar :
+    -- This study: scalar triggers contrastive inference
+    targetAdv_scalar.significant ∧
+    -- Sedivy: scalar triggers across all 3 experiments
+    SedivyEtAl1999.exp1_competitor_contrast.significant ∧
+    SedivyEtAl1999.exp2_competitor_contrast.significant ∧
+    SedivyEtAl1999.exp3_competitor_contrast.significant ∧
+    -- Shared domain: scalar → size → requires comparison class
+    AdjType.toDomain .scalar = .size ∧
+    SedivyEtAl1999.adjDomain = .size ∧
+    Core.PropertyDomain.requiresComparisonClass .size = true :=
+  ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
+
+/-- Disagreement with Sedivy (2003, 2004): this study finds that color
+    adjectives DO trigger contrastive inferences (β = 0.24, p < 0.05),
+    while Sedivy's later work argued color adjectives are used
+    descriptively and do not trigger contrastive interpretations.
+
+    The two-route model resolves this: @cite{sedivy-etal-1999}'s
+    comparison-class mechanism predicts color should NOT trigger
+    (it doesn't require comparison class), but the perceptual
+    discrimination mechanism predicts it SHOULD trigger (color has
+    the highest discrimination at 0.98). The disagreement suggests
+    that perceptual salience can override the semantic-restrictiveness
+    prediction. -/
+theorem disagrees_with_sedivy_on_color :
+    -- This study: color DOES trigger contrastive inference
+    targetAdv_color.significant ∧
+    -- Color does NOT require comparison class (Sedivy's mechanism predicts no inference)
+    Core.PropertyDomain.requiresComparisonClass .color = false ∧
+    -- But color HAS high discrimination (perceptual mechanism predicts inference)
+    Core.PropertyDomain.noiseDiscrimination .color = some RSA.Noise.colorDiscrimination ∧
+    RSA.Noise.colorDiscrimination > RSA.Noise.sizeDiscrimination := by
+  refine ⟨rfl, rfl, rfl, ?_⟩; native_decide
+
+-- ============================================================================
+-- § Bridge: Two Routes to Contrastive Inference
+-- ============================================================================
+
+/-- Two independent mechanisms can drive contrastive inference:
+
+    1. **Semantic restrictiveness** (@cite{sedivy-etal-1999}): adjectives
+       requiring comparison-class computation are pragmatically marked,
+       triggering inference. Predicts: size YES, color NO, material NO.
+       Confirmed by @cite{sedivy-etal-1999} across 3 experiments.
+
+    2. **Perceptual discrimination** (@cite{ronderos-etal-2024}): high
+       discrimination provides a strong pragmatic signal, enabling
+       inference even for non-restrictive adjectives. Predicts: color YES
+       (high discrimination despite no comparison class), material NO
+       (low discrimination AND no comparison class).
+
+    Together these explain the full pattern: size triggers inference via
+    route 1, color triggers inference via route 2, material fails both. -/
+theorem two_routes :
+    -- Route 1: Semantic restrictiveness (Sedivy's mechanism)
+    SedivyEtAl1999.adjDomain = .size ∧
+    Core.PropertyDomain.requiresComparisonClass .size = true ∧
+    SedivyEtAl1999.exp1_competitor_contrast.significant ∧
+    -- Route 2: Perceptual discrimination (this study)
+    -- Color triggers despite NOT requiring comparison class
+    Core.PropertyDomain.requiresComparisonClass .color = false ∧
+    Core.PropertyDomain.noiseDiscrimination .color = some RSA.Noise.colorDiscrimination ∧
+    targetAdv_color.significant ∧
+    -- Material: fails both routes
+    Core.PropertyDomain.requiresComparisonClass .material = false ∧
+    Core.PropertyDomain.noiseDiscrimination .material = some RSA.Noise.materialDiscrimination ∧
+    ¬targetAdv_material.significant ∧
+    -- Discrimination ordering: color >> material
+    RSA.Noise.colorDiscrimination > RSA.Noise.materialDiscrimination := by
+  refine ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, by decide, ?_⟩; native_decide
+
+end Phenomena.Reference.Studies.RonderosEtAl2024

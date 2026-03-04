@@ -244,9 +244,9 @@ noncomputable def qudProject (q : Goal) (f : World → ℝ) (w : World) : ℝ :=
 /-- @cite{kao-etal-2014-hyperbole} hyperbole model, parametric in item. -/
 noncomputable def cfg (item : Item) : RSA.RSAConfig PriceState World where
   Latent := Goal
-  meaning := meaning
+  meaning := fun _ => meaning
   meaning_nonneg := by
-    intro q u ⟨s, a⟩; simp only [meaning]
+    intro _ q u ⟨s, a⟩; simp only [meaning]
     split <;> (try exact le_refl 0)
     cases s <;> cases a <;> simp [affectPrior]
   s1Score l0 α q w u :=

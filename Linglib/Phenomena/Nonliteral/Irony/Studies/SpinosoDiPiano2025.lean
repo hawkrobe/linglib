@@ -191,8 +191,8 @@ theorem rhetoricalMeaning_swap (u : Utterance) (w : Weather) :
     (wp : Weather → ℝ) (hw : ∀ s, 0 ≤ wp s) :
     RSA.RSAConfig Utterance Weather where
   Latent := Strategy
-  meaning r u w := if rhetoricalMeaning r u w then 1 else 0
-  meaning_nonneg _ _ _ := by split <;> positivity
+  meaning _ r u w := if rhetoricalMeaning r u w then 1 else 0
+  meaning_nonneg _ _ _ _ := by split <;> positivity
   s1Score l0 α _r w u := rpow (l0 u w) α
   s1Score_nonneg _ _ _ _ u hl _ := rpow_nonneg (hl u _) _
   α := 1
@@ -341,7 +341,7 @@ theorem L1_score_zero_of_no_match (wp : Weather → ℝ) (hw : ∀ s, 0 ≤ wp s
     (u : Utterance) (w : Weather)
     (h_lit : u.toWeather ≠ w) (h_iron : opposite u.toWeather ≠ w) :
     (cfg wp hw).L1agent.score u w = 0 := by
-  have hm : ∀ l : Strategy, (cfg wp hw).meaning l u w = 0 := by
+  have hm : ∀ l : Strategy, (cfg wp hw).meaning () l u w = 0 := by
     intro l
     show (if rhetoricalMeaning l u w then (1 : ℝ) else 0) = 0
     have : rhetoricalMeaning l u w = false := by
@@ -374,9 +374,9 @@ theorem L1_score_zero_of_no_match (wp : Weather → ℝ) (hw : ∀ s, 0 ≤ wp s
 private theorem L0_literal_totalScore_eq (wp : Weather → ℝ) (hw : ∀ s, 0 ≤ wp s)
     (u : Utterance) :
     ((cfg wp hw).L0agent .literal).totalScore u =
-    (cfg wp hw).meaning .literal u u.toWeather := by
-  show ∑ w : Weather, (cfg wp hw).meaning .literal u w =
-       (cfg wp hw).meaning .literal u u.toWeather
+    (cfg wp hw).meaning () .literal u u.toWeather := by
+  show ∑ w : Weather, (cfg wp hw).meaning () .literal u w =
+       (cfg wp hw).meaning () .literal u u.toWeather
   rw [Finset.sum_eq_single u.toWeather]
   · intro b _ hb
     show (if rhetoricalMeaning .literal u b then (1 : ℝ) else 0) = 0
@@ -387,7 +387,7 @@ private theorem L0_literal_totalScore_eq (wp : Weather → ℝ) (hw : ∀ s, 0 �
 
 private theorem meaning_literal_match (wp : Weather → ℝ) (hw : ∀ s, 0 ≤ wp s)
     (u : Utterance) :
-    (cfg wp hw).meaning .literal u u.toWeather = 1 := by
+    (cfg wp hw).meaning () .literal u u.toWeather = 1 := by
   show (if rhetoricalMeaning .literal u u.toWeather then (1 : ℝ) else 0) = 1
   have : rhetoricalMeaning .literal u u.toWeather = true := by
     cases u <;> simp [rhetoricalMeaning, Utterance.toWeather] <;> decide
@@ -398,7 +398,7 @@ private theorem L0_literal_policy_one (wp : Weather → ℝ) (hw : ∀ s, 0 ≤ 
     ((cfg wp hw).L0agent .literal).policy u u.toWeather = 1 := by
   apply Core.RationalAction.policy_eq_one_of_totalScore_eq
   · exact L0_literal_totalScore_eq wp hw u
-  · show 0 < (cfg wp hw).meaning .literal u u.toWeather
+  · show 0 < (cfg wp hw).meaning () .literal u u.toWeather
     rw [meaning_literal_match]; exact one_pos
 
 private theorem S1_literal_totalScore_eq (wp : Weather → ℝ) (hw : ∀ s, 0 ≤ wp s)
@@ -409,7 +409,7 @@ private theorem S1_literal_totalScore_eq (wp : Weather → ℝ) (hw : ∀ s, 0 �
        rpow (((cfg wp hw).L0agent .literal).policy u u.toWeather) 1
   rw [Finset.sum_eq_single u]
   · intro u' _ hne
-    have hm : (cfg wp hw).meaning .literal u' u.toWeather = 0 := by
+    have hm : (cfg wp hw).meaning () .literal u' u.toWeather = 0 := by
       show (if rhetoricalMeaning .literal u' u.toWeather then (1 : ℝ) else 0) = 0
       have : rhetoricalMeaning .literal u' u.toWeather = false := by
         cases u <;> cases u' <;> simp_all [rhetoricalMeaning, Utterance.toWeather] <;> decide
@@ -435,9 +435,9 @@ private theorem S1_literal_one (wp : Weather → ℝ) (hw : ∀ s, 0 ≤ wp s)
 private theorem L0_ironic_totalScore_eq (wp : Weather → ℝ) (hw : ∀ s, 0 ≤ wp s)
     (u : Utterance) :
     ((cfg wp hw).L0agent .ironic).totalScore u =
-    (cfg wp hw).meaning .ironic u (opposite u.toWeather) := by
-  show ∑ w : Weather, (cfg wp hw).meaning .ironic u w =
-       (cfg wp hw).meaning .ironic u (opposite u.toWeather)
+    (cfg wp hw).meaning () .ironic u (opposite u.toWeather) := by
+  show ∑ w : Weather, (cfg wp hw).meaning () .ironic u w =
+       (cfg wp hw).meaning () .ironic u (opposite u.toWeather)
   rw [Finset.sum_eq_single (opposite u.toWeather)]
   · intro b _ hb
     show (if rhetoricalMeaning .ironic u b then (1 : ℝ) else 0) = 0
@@ -449,7 +449,7 @@ private theorem L0_ironic_totalScore_eq (wp : Weather → ℝ) (hw : ∀ s, 0 �
 
 private theorem meaning_ironic_match (wp : Weather → ℝ) (hw : ∀ s, 0 ≤ wp s)
     (u : Utterance) :
-    (cfg wp hw).meaning .ironic u (opposite u.toWeather) = 1 := by
+    (cfg wp hw).meaning () .ironic u (opposite u.toWeather) = 1 := by
   show (if rhetoricalMeaning .ironic u (opposite u.toWeather) then (1 : ℝ) else 0) = 1
   have : rhetoricalMeaning .ironic u (opposite u.toWeather) = true := by
     cases u <;> simp [rhetoricalMeaning, Utterance.toWeather, opposite] <;> decide
@@ -460,7 +460,7 @@ private theorem L0_ironic_policy_one (wp : Weather → ℝ) (hw : ∀ s, 0 ≤ w
     ((cfg wp hw).L0agent .ironic).policy u (opposite u.toWeather) = 1 := by
   apply Core.RationalAction.policy_eq_one_of_totalScore_eq
   · exact L0_ironic_totalScore_eq wp hw u
-  · show 0 < (cfg wp hw).meaning .ironic u (opposite u.toWeather)
+  · show 0 < (cfg wp hw).meaning () .ironic u (opposite u.toWeather)
     rw [meaning_ironic_match]; exact one_pos
 
 private theorem S1_ironic_totalScore_eq (wp : Weather → ℝ) (hw : ∀ s, 0 ≤ wp s)
@@ -471,7 +471,7 @@ private theorem S1_ironic_totalScore_eq (wp : Weather → ℝ) (hw : ∀ s, 0 �
        rpow (((cfg wp hw).L0agent .ironic).policy u (opposite u.toWeather)) 1
   rw [Finset.sum_eq_single u]
   · intro u' _ hne
-    have hm : (cfg wp hw).meaning .ironic u' (opposite u.toWeather) = 0 := by
+    have hm : (cfg wp hw).meaning () .ironic u' (opposite u.toWeather) = 0 := by
       show (if rhetoricalMeaning .ironic u' (opposite u.toWeather) then (1 : ℝ) else 0) = 0
       have : rhetoricalMeaning .ironic u' (opposite u.toWeather) = false := by
         cases u <;> cases u' <;>
@@ -498,7 +498,7 @@ private theorem S1_ironic_one (wp : Weather → ℝ) (hw : ∀ s, 0 ≤ wp s)
 private theorem S1_ironic_at_literal_zero (wp : Weather → ℝ) (hw : ∀ s, 0 ≤ wp s)
     (u : Utterance) (hne : u.toWeather ≠ opposite u.toWeather) :
     (cfg wp hw).S1 .ironic u.toWeather u = 0 := by
-  have hm : (cfg wp hw).meaning .ironic u u.toWeather = 0 := by
+  have hm : (cfg wp hw).meaning () .ironic u u.toWeather = 0 := by
     show (if rhetoricalMeaning .ironic u u.toWeather then (1 : ℝ) else 0) = 0
     have : rhetoricalMeaning .ironic u u.toWeather = false := by
       cases u <;> simp_all [rhetoricalMeaning, Utterance.toWeather, opposite] <;> decide
@@ -513,7 +513,7 @@ private theorem S1_ironic_at_literal_zero (wp : Weather → ℝ) (hw : ∀ s, 0 
 private theorem S1_literal_at_ironic_zero (wp : Weather → ℝ) (hw : ∀ s, 0 ≤ wp s)
     (u : Utterance) (hne : u.toWeather ≠ opposite u.toWeather) :
     (cfg wp hw).S1 .literal (opposite u.toWeather) u = 0 := by
-  have hm : (cfg wp hw).meaning .literal u (opposite u.toWeather) = 0 := by
+  have hm : (cfg wp hw).meaning () .literal u (opposite u.toWeather) = 0 := by
     show (if rhetoricalMeaning .literal u (opposite u.toWeather) then (1 : ℝ) else 0) = 0
     have : rhetoricalMeaning .literal u (opposite u.toWeather) = false := by
       cases u <;> simp_all [rhetoricalMeaning, Utterance.toWeather, opposite] <;> decide

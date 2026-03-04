@@ -215,8 +215,8 @@ noncomputable def cfg
     (qudPr : QUD5 → ℝ) (hqp : ∀ q, 0 ≤ qudPr q) :
     RSA.RSAConfig Utt JumpOutcome4 where
   Latent := Latent10
-  meaning lat u w := if uttMeaning nr lat.scope u w then 1 else 0
-  meaning_nonneg _ _ _ := by split <;> positivity
+  meaning _ lat u w := if uttMeaning nr lat.scope u w then 1 else 0
+  meaning_nonneg _ _ _ _ := by split <;> positivity
   s1Score l0 α lat w u := rpow (qudProject lat.qud (l0 u) w) α
   s1Score_nonneg _ _ _ _ u hl _ :=
     rpow_nonneg (qudProject_nonneg (fun w => hl u w)) _

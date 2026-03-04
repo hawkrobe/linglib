@@ -2,10 +2,11 @@ import Linglib.Core.PropertyDomain
 import Linglib.Theories.Pragmatics.RSA.Core.Noise
 import Linglib.Theories.Pragmatics.RSA.Implementations.DegenEtAl2020
 import Linglib.Theories.Pragmatics.RSA.Implementations.WaldonDegen2021
+import Linglib.Phenomena.Reference.Studies.EngelhardtEtAl2006
 
 /-!
 # @cite{kursat-degen-2021}
-@cite{degen-etal-2020} @cite{waldon-degen-2021}
+@cite{degen-etal-2020} @cite{waldon-degen-2021} @cite{engelhardt-etal-2006}
 
 Perceptual difficulty differences predict asymmetry in redundant
 modification with color and material adjectives. *Proceedings of the
@@ -69,7 +70,7 @@ parameters. The full S1 redundancy prediction requires the incremental
 model of @cite{waldon-degen-2021}.
 -/
 
-namespace Phenomena.Gradability.Studies.KursatDegen2021
+namespace Phenomena.Reference.Studies.KursatDegen2021
 
 -- ============================================================================
 -- § Property Types
@@ -226,6 +227,14 @@ def propertyToDiscrimination : PropertyType → ℚ
   | .material => RSA.Noise.materialDiscrimination
   | _ => 0  -- domains without established noise params
 
+/-- The local `propertyToDiscrimination` agrees with the canonical
+    `PropertyDomain.noiseDiscrimination` for all parameterized domains. -/
+theorem propertyToDiscrimination_canonical :
+    Core.PropertyDomain.noiseDiscrimination .color = some (propertyToDiscrimination .color) ∧
+    Core.PropertyDomain.noiseDiscrimination .size = some (propertyToDiscrimination .size) ∧
+    Core.PropertyDomain.noiseDiscrimination .material = some (propertyToDiscrimination .material) :=
+  ⟨rfl, rfl, rfl⟩
+
 -- ============================================================================
 -- § Step 3: Ordering prediction — color gap > material gap
 -- ============================================================================
@@ -285,4 +294,24 @@ theorem incremental_model_predicts_color_asymmetry :
       RSA.Implementations.WaldonDegen2021.α_incremental = true :=
   RSA.Implementations.WaldonDegen2021.prediction1_english_asymmetry
 
-end Phenomena.Gradability.Studies.KursatDegen2021
+-- ============================================================================
+-- § Connection to @cite{engelhardt-etal-2006}
+-- ============================================================================
+
+/-- Both this study and @cite{engelhardt-etal-2006} show that speakers
+    produce unnecessary modifiers. @cite{engelhardt-etal-2006} Exp 1
+    finds a 31% overall over-description rate; this study's Exp 2
+    further shows the rate varies by property type (β = 2.32: color >
+    material). The noise model explains this variation: high-discrimination
+    properties (color) provide more signal, so the S1 speaker has more
+    reason to include them even when not strictly necessary. -/
+theorem converging_production_with_engelhardt :
+    -- Engelhardt: speakers over-describe 31% of the time
+    EngelhardtEtAl2006.exp1_target_1ref.modified > 0 ∧
+    -- This study: color used redundantly more than material (significant)
+    exp2_redundancy.significant ∧ exp2_redundancy.beta > 0 ∧
+    -- Theory: color discrimination > material discrimination
+    propertyToDiscrimination .color > propertyToDiscrimination .material := by
+  refine ⟨?_, rfl, ?_, ?_⟩ <;> native_decide
+
+end Phenomena.Reference.Studies.KursatDegen2021

@@ -141,8 +141,8 @@ open RSA Real in
 
     With D(w) = 0 and α = 1 (Luce choice rule). -/
 noncomputable def cfg : RSAConfig Feature Object where
-  meaning _ u w := if u.appliesTo w then 1 else 0              -- ⟦w⟧(o)  (Eq. S3)
-  meaning_nonneg _ _ _ := by split <;> norm_num
+  meaning _ _ u w := if u.appliesTo w then 1 else 0              -- ⟦w⟧(o)  (Eq. S3)
+  meaning_nonneg _ _ _ _ := by split <;> norm_num
   -- Eq. S1+S2: e^{α · log L0(rₛ|w)}, with D(w) = 0
   s1Score l0 α _ w u :=
     if l0 u w = 0 then 0
@@ -416,8 +416,8 @@ open RSA Real in
     All contexts share: SM Eq. S1 (e^{α·log L0}), α = 1, uniform priors, D(w) = 0. -/
 noncomputable def mkRefGame (applies : Dim2Feature → Obj3 → Bool) :
     RSAConfig Dim2Feature Obj3 where
-  meaning _ u w := if applies u w then 1 else 0
-  meaning_nonneg _ _ _ := by split <;> norm_num
+  meaning _ _ u w := if applies u w then 1 else 0
+  meaning_nonneg _ _ _ _ := by split <;> norm_num
   s1Score l0 α _ w u :=
     if l0 u w = 0 then 0
     else exp (α * log (l0 u w))

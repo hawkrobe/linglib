@@ -484,8 +484,8 @@ noncomputable def w_c : ℝ := 24/25
       else exp(α · ((1−β)·log L0(w|r) + β·E_D[V(D,r)] − w_c·C(r))) -/
 noncomputable def cfg : RSAConfig Response World where
   Latent := Unit
-  meaning _ r w := if responseTruth r w then 1 else 0
-  meaning_nonneg _ _ _ := by split <;> norm_num
+  meaning _ _ r w := if responseTruth r w then 1 else 0
+  meaning_nonneg _ _ _ _ := by split <;> norm_num
   s1Score l0 α _ w r :=
     let info := l0 r w
     if info = 0 then 0

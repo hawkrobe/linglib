@@ -125,8 +125,8 @@ Meaning: Boolean expression semantics (1 if expression applies, 0 otherwise).
 World prior: uniform over causal worlds.
 S1 score: belief-based (rpow): score = L0(w|u)^α. -/
 noncomputable def cfg : RSAConfig CausalExpression CausalWorld where
-  meaning _ u cw := if expressionMeaning cw u then 1 else 0
-  meaning_nonneg _ _ _ := by split <;> positivity
+  meaning _ _ u cw := if expressionMeaning cw u then 1 else 0
+  meaning_nonneg _ _ _ _ := by split <;> positivity
   s1Score l0 α _ w u := rpow (l0 u w) α
   s1Score_nonneg _ _ _ _ _ hl _ := rpow_nonneg (hl _ _) _
   α := 1

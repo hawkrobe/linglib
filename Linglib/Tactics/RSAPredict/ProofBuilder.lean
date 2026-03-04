@@ -580,7 +580,8 @@ def buildL0PolicyCProof (cfg l u : Expr)
     (allWElems : Array Expr) (wIdx : ℕ) : TacticM CProof := do
   let mut meaningProofs : Array CProof := #[]
   for w' in allWElems do
-    let mExpr ← mkAppM ``RSA.RSAConfig.meaning #[cfg, l, u, w']
+    let initial ← mkAppM ``RSA.RSAConfig.initial #[cfg]
+    let mExpr ← mkAppM ``RSA.RSAConfig.meaning #[cfg, initial, l, u, w']
     let q ← extractRat mExpr
     meaningProofs := meaningProofs.push (← buildLeaf q mExpr)
   let totalProof ← buildChainAdd meaningProofs
