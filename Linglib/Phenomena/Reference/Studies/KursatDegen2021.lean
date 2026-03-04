@@ -1,7 +1,7 @@
 import Linglib.Core.PropertyDomain
 import Linglib.Theories.Pragmatics.RSA.Core.Noise
-import Linglib.Theories.Pragmatics.RSA.Implementations.DegenEtAl2020
-import Linglib.Theories.Pragmatics.RSA.Implementations.WaldonDegen2021
+import Linglib.Phenomena.Reference.Studies.DegenEtAl2020
+import Linglib.Phenomena.Reference.Studies.WaldonDegen2021
 import Linglib.Phenomena.Reference.Studies.EngelhardtEtAl2006
 
 /-!
@@ -191,26 +191,19 @@ theorem difficulty_predicts_redundancy :
 -- ============================================================================
 
 /-! The cs-RSA model's meaning function φ (@cite{degen-etal-2020}) is a
-product of independent per-feature noise channels. This decomposition is
-proven in `DegenEtAl2020.degen_is_boolean_times_noise_full`. Each feature
-contributes via `RSA.Noise.noiseChannel(onMatch, onMismatch, b)` where
-`b ∈ {0, 1}` indicates whether the feature matches. -/
+product of independent per-feature noise channels (proven in
+`DegenEtAl2020.φ_product_of_experts`). The φ function uses `RSA.Noise`
+parameter values by construction — this is structural, not coincidental
+(proven in `DegenEtAl2020.φ_grounded_in_noise`). -/
 
-open RSA.ContinuousSemantics in
-/-- The cs-RSA default color parameters are identical to the unified
-    `RSA.Noise` module's color parameters. This means the noise
-    channel theory applies directly to the cs-RSA model. -/
-theorem csrsa_color_params_match_noise :
-    defaultParams.colorMatch = RSA.Noise.colorMatch ∧
-    defaultParams.colorMismatch = RSA.Noise.colorMismatch :=
-  ⟨rfl, rfl⟩
-
-open RSA.ContinuousSemantics in
-/-- The cs-RSA default size parameters match the Noise module's. -/
-theorem csrsa_size_params_match_noise :
-    defaultParams.sizeMatch = RSA.Noise.sizeMatch ∧
-    defaultParams.sizeMismatch = RSA.Noise.sizeMismatch :=
-  ⟨rfl, rfl⟩
+/-- The cs-RSA φ function uses RSA.Noise parameters by construction.
+    Re-exported from the study file for local use. -/
+theorem csrsa_params_match_noise :
+    DegenEtAl2020.φ .color .target = RSA.Noise.colorMatch ∧
+    DegenEtAl2020.φ .color .distractor = RSA.Noise.colorMismatch ∧
+    DegenEtAl2020.φ .size .target = RSA.Noise.sizeMatch ∧
+    DegenEtAl2020.φ .size .distractor = RSA.Noise.sizeMismatch :=
+  DegenEtAl2020.φ_grounded_in_noise
 
 -- ============================================================================
 -- § Step 2: Noise gap determines feature discrimination

@@ -589,6 +589,7 @@ import Linglib.Phenomena.Questions.Studies.Xiang2022
 import Linglib.Phenomena.Reference.Studies.AnandNevins2004
 import Linglib.Phenomena.Reference.Studies.CohnGordonEtAl2019
 import Linglib.Phenomena.Reference.Studies.DaleReiter1995
+import Linglib.Phenomena.Reference.Studies.DegenEtAl2020
 import Linglib.Phenomena.Reference.Studies.EngelhardtEtAl2006
 import Linglib.Phenomena.Reference.DirectReference
 import Linglib.Phenomena.Reference.Studies.FrankGoodman2012
@@ -1123,7 +1124,6 @@ import Linglib.Theories.Pragmatics.RSA.Core.Noise
 import Linglib.Theories.Pragmatics.RSA.Core.Priors
 import Linglib.Theories.Pragmatics.RSA.Core.Softmax.Limits
 import Linglib.Theories.Pragmatics.RSA.Core.SpeakerDiscrimination
-import Linglib.Theories.Pragmatics.RSA.Implementations.DegenEtAl2020
 import Linglib.Theories.Pragmatics.RSA.Quantities
 import Linglib.Theories.Pragmatics.RSA.Extensions.ArgumentativeStrength
 import Linglib.Theories.Pragmatics.RSA.Extensions.NoncooperativeCommunication
@@ -1155,7 +1155,7 @@ import Linglib.Theories.Pragmatics.RSA.Implementations.TesslerFranke2020
 import Linglib.Theories.Pragmatics.RSA.Implementations.TesslerGoodman2019
 import Linglib.Theories.Pragmatics.RSA.Implementations.TesslerGoodman2022
 import Linglib.Theories.Pragmatics.RSA.Implementations.VanTielEtAl2021
-import Linglib.Theories.Pragmatics.RSA.Implementations.WaldonDegen2021
+import Linglib.Phenomena.Reference.Studies.WaldonDegen2021
 import Linglib.Theories.Pragmatics.RSA.Questions.Basic
 import Linglib.Theories.Pragmatics.RSA.Questions.PolarQuestions
 import Linglib.Theories.Pragmatics.RSA.Questions.ResponseSelection

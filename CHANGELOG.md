@@ -13,11 +13,25 @@
 - **End-to-end derivation chain** (`Phenomena/FillerGap/TobaBatak.lean`): 3 theorems connecting extraction datums → ExtractionProfile → AH bridge → RelClauseMarkers. `extractable_positions_are_relativizable` would have caught the old `.directObject` error.
 - **Linglib.lean imports**: `Fragments.TobaBatak.Basic`, `Phenomena.FillerGap.TobaBatak`, `Studies.Erlewine2018`.
 
+## [0.228.1] - 2026-03-03
+
+### Added
+- **BarwiseCooper1981 Table II per-entry verification** (§4): 6 theorems (`table_II_all`, `table_II_most`, `table_II_some`, `table_II_none`, `table_II_few`, `table_II_half`) — one per quantity word verifying strength + monotonicity direction against B&C Table II. Changing a fragment field breaks exactly one theorem.
+- **BarwiseCooper1981 duality bridge** (§8): 3 theorems (`dual_all_eq_some`, `innerNeg_all_eq_none`, `outerNeg_some_eq_none`) connecting `Core.Quantification` duality operations to fragment entries via the Square of Opposition.
+- **BarwiseCooper1981 `strong_implies_increasing`**: replaces `strong_implies_monotone` — now verifies monotonicity *direction* (`.increasing`), not just existence (`!= .nonMonotone`).
+
+### Fixed
+- **Hallucinated citations in BarwiseCooper1981**: "Conjecture 1" → "conservativity conjecture" (B&C don't number it); "B&C Theorem C4" → "B&C §4.6" on there-insertion (C4 is about intersection condition); "P&W Ch.6 Fact 1/7" → content descriptions (unverifiable fact numbers).
+- **WaldonDegen2021 import path**: `KursatDegen2021.lean` and `Linglib.lean` updated for file rename from `Implementations/` to `Phenomena/Reference/Studies/`.
+
+### Removed
+- **`weak_monotone_determiners`**: deleted tautological theorem (labeled "U8" but only tested that determiners are monotone-or-not, which is trivially true for all values of the `Monotonicity` enum).
+
 ## [0.228.0] - 2026-03-03
 
 ### Added
 - **DomainRestriction: `conservative_domain_restricted`**: general GQ theorem proving conservativity is preserved under domain restriction by any predicate C. Generalizes the specific `every_restricted_conservative`.
-- **BarwiseCooper1981 → DomainRestriction bridge**: `domain_restriction_preserves_conservativity` theorem applying `conservative_domain_restricted` + `conservativity_universal` to show all 6 English quantity words remain conservative under any domain restrictor. Connects B&C's Conjecture 1 to Ritchie & Schiller (2024) DDRPs.
+- **BarwiseCooper1981 → DomainRestriction bridge**: `domain_restriction_preserves_conservativity` theorem applying `conservative_domain_restricted` + `conservativity_universal` to show all 6 English quantity words remain conservative under any domain restrictor. Connects B&C's conservativity conjecture to Ritchie & Schiller (2024) DDRPs.
 
 ## [0.227.99] - 2026-03-03
 
