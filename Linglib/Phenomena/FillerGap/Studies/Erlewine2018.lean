@@ -13,7 +13,7 @@ Minimalist analysis in @cite{erlewine-2018}.
 The extraction restriction follows from the interaction of probing
 and nominal licensing:
 
-1. **Predicate fronting** (§3.2): C bears `[PROBE:FOC]`, which attracts
+1. **Predicate fronting** (§4.2): C bears `[PROBE:FOC]`, which attracts
    the closest `[+FOC]` constituent — normally the vP — to Spec,CP,
    deriving V-initial word order. The subject/pivot is stranded in
    Spec,TP after vP fronts.
@@ -24,7 +24,7 @@ and nominal licensing:
    available Case licensor — the derivation crashes. Therefore only the
    pivot (already Case-licensed by T) can be Ā-extracted.
 
-3. **Non-DP extraction is unrestricted** (§4.6): Since the restriction
+3. **Non-DP extraction is unrestricted** (§4.3): Since the restriction
    is about nominal licensing, non-DP constituents (adverbs, PPs) can
    freely front to Spec,CP regardless of voice.
 
@@ -59,7 +59,7 @@ open Fragments.TobaBatak
       because only the pivot is Case-licensed (by T's [PROBE:D] in
       Spec,TP) before Ā-extraction (§2–4).
     - Non-DP adjuncts: always grammatical, because adjuncts don't need
-      Case licensing (§4.6). -/
+      Case licensing (§4.3). -/
 def predictExtraction (voice : Fragments.TobaBatak.Voice) (extractee : Interfaces.Extractee) :
     ExtractionJudgment :=
   match extractee with
@@ -101,12 +101,12 @@ theorem bridge_ov_oblique :
     predictExtraction .ov (.dpArg .oblique) = .ungrammatical ∧
     ovObliqueExtraction.judgment = .ungrammatical := ⟨rfl, rfl⟩
 
-/-- AV + adjunct: no Case needed → freely extractable (§4.6). -/
+/-- AV + adjunct: no Case needed → freely extractable (§4.3). -/
 theorem bridge_av_adjunct :
     predictExtraction .av .adjunct = .grammatical ∧
     avAdjunctExtraction.judgment = .grammatical := ⟨rfl, rfl⟩
 
-/-- OV + adjunct: no Case needed → freely extractable (§4.6). -/
+/-- OV + adjunct: no Case needed → freely extractable (§4.3). -/
 theorem bridge_ov_adjunct :
     predictExtraction .ov .adjunct = .grammatical ∧
     ovAdjunctExtraction.judgment = .grammatical := ⟨rfl, rfl⟩
@@ -154,7 +154,7 @@ theorem structural_grounding :
 
 /-- The nominal licensing analysis predicts non-DPs extract freely:
     since non-DPs don't need Case, the Case-based restriction doesn't
-    apply. This is the distinguishing prediction of §4.6. -/
+    apply. This is the distinguishing prediction of §4.3. -/
 theorem nonDP_unrestricted :
     ∀ v : Fragments.TobaBatak.Voice,
       predictExtraction v .adjunct = .grammatical := by

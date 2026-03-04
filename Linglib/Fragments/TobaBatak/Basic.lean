@@ -88,12 +88,12 @@ def ExtractionDatum.extractsPivot (d : ExtractionDatum) : Bool :=
 /-- AV + agent extraction: grammatical (agent is pivot in AV). -/
 def avAgentExtraction : ExtractionDatum :=
   { voice := .av, extracted := .dpArg .agent, judgment := .grammatical
-    description := "AV + agent (pivot): 'Ise mang-uhor buku i?' (Who bought the book?)" }
+    description := "AV + agent (pivot): 'Ise man-uhor buku i?' (Who bought the book?) [= (1a)/(7a)]" }
 
 /-- AV + patient extraction: ungrammatical (patient is not pivot in AV). -/
 def avPatientExtraction : ExtractionDatum :=
   { voice := .av, extracted := .dpArg .patient, judgment := .ungrammatical
-    description := "AV + patient (non-pivot): *'Aha mang-uhor si Poltak?' (*What did Poltak buy?)" }
+    description := "AV + patient (non-pivot): *'Aha man-uhor si Poltak?' (*What did Poltak buy?) [= (1a)/(8a)]" }
 
 /-- AV + oblique extraction: ungrammatical (oblique is never pivot). -/
 def avObliqueExtraction : ExtractionDatum :=
@@ -103,12 +103,12 @@ def avObliqueExtraction : ExtractionDatum :=
 /-- OV + patient extraction: grammatical (patient is pivot in OV). -/
 def ovPatientExtraction : ExtractionDatum :=
   { voice := .ov, extracted := .dpArg .patient, judgment := .grammatical
-    description := "OV + patient (pivot): 'Aha di-uhor si Poltak?' (What did Poltak buy?)" }
+    description := "OV + patient (pivot): 'Aha di-tuhor si Poltak?' (What did Poltak buy?) [= (2b)/(8b)]" }
 
 /-- OV + agent extraction: ungrammatical (agent is not pivot in OV). -/
 def ovAgentExtraction : ExtractionDatum :=
   { voice := .ov, extracted := .dpArg .agent, judgment := .ungrammatical
-    description := "OV + agent (non-pivot): *'Ise di-uhor buku i?' (*Who bought the book?)" }
+    description := "OV + agent (non-pivot): *'Ise di-tuhor buku i?' (*Who bought the book?) [= (7b)]" }
 
 /-- OV + oblique extraction: ungrammatical (oblique is never pivot). -/
 def ovObliqueExtraction : ExtractionDatum :=
@@ -118,12 +118,12 @@ def ovObliqueExtraction : ExtractionDatum :=
 /-- AV + adjunct extraction: grammatical (adjuncts don't need Case). -/
 def avAdjunctExtraction : ExtractionDatum :=
   { voice := .av, extracted := .adjunct, judgment := .grammatical
-    description := "AV + adjunct: 'Andigan mang-ida si Poltak si Ria?' (When did Poltak see Ria?) (§4.6, (36))" }
+    description := "AV + adjunct: 'Andigan si Poltak man-uhor buku?' (When did Poltak buy a book?) [= (1b)]" }
 
 /-- OV + adjunct extraction: grammatical (adjuncts don't need Case). -/
 def ovAdjunctExtraction : ExtractionDatum :=
   { voice := .ov, extracted := .adjunct, judgment := .grammatical
-    description := "OV + adjunct: manner/temporal adverb extraction in OV — unrestricted (§4.6)" }
+    description := "OV + adjunct: non-DP extraction unrestricted regardless of voice [= (9)/(35)]" }
 
 /-- All monoclausal extraction data. -/
 def extractionData : List ExtractionDatum :=

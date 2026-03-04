@@ -84,7 +84,7 @@ theorem ov_oblique_ungrammatical :
     ovObliqueExtraction.extractsPivot = false := ⟨rfl, rfl⟩
 
 -- ============================================================================
--- § 2b: Per-Datum Verification (Adjuncts, §4.6)
+-- § 2b: Per-Datum Verification (Adjuncts)
 -- ============================================================================
 
 /-- AV + adjunct: grammatical (adjuncts don't need Case). -/
@@ -109,7 +109,7 @@ theorem dp_extraction_iff_pivot :
   native_decide
 
 /-- For non-DP adjuncts: extraction is always grammatical regardless
-    of voice, because adjuncts don't need Case licensing (§4.6). -/
+    of voice, because adjuncts don't need Case licensing (§4.3). -/
 theorem adjunct_always_grammatical :
     extractionData.all (λ d =>
       match d.extracted with
