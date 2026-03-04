@@ -59,9 +59,10 @@ open BigOperators Core Core.BToM
 
 /-- Unified RSA configuration.
 
-Two orthogonal choices determine the model:
+Three orthogonal choices determine the model:
 1. `s1Score` — what S1 computes (inline scoring rule)
 2. `Latent` — what L1 marginalizes over (generic type, default `Unit`)
+3. `Ctx` — sequential context for incremental models (default `Unit` for one-shot)
 
 S1 is a RationalAction whose score is computed by `s1Score`.
 The score function absorbs α, so S1 is not restricted to softmax form —
@@ -70,18 +71,34 @@ false utterances (rpow(0, α) = 0 for α > 0).
 
 The `s1Score` field takes a `Latent` parameter so that latent variables
 can enter at the S1 level (e.g., QUD projection in @cite{kao-etal-2014-hyperbole})
-rather than being forced into `meaning`. -/
+rather than being forced into `meaning`.
+
+## Sequential RSA
+
+For incremental/sequential models (@cite{cohn-gordon-goodman-potts-2019},
+@cite{waldon-degen-2021}), set `Ctx` to a context type (e.g., `List LexItem`),
+provide `transition` and `initial`, and make `meaning` depend on context.
+One-shot RSA is the special case `Ctx = Unit` with trivial transition.
+
+The sequential API (`S1_at`, `trajectoryProb`) computes word-by-word
+production probabilities and chains them via the product rule. The one-shot
+API (`L0agent`, `S1agent`, `L1agent`) always uses `initial` as context. -/
 structure RSAConfig (U W : Type*) [Fintype U] [Fintype W] where
+  /-- Context type for sequential models. Default `Unit` for one-shot. -/
+  Ctx : Type := Unit
   /-- Latent variable type (default Unit for basic scenarios). -/
   Latent : Type := Unit
   /-- Fintype instance for Latent. -/
   [latentFintype : Fintype Latent]
-  /-- Literal semantics φ(l, u, w) ≥ 0.
+  /-- Literal semantics φ(ctx, l, u, w) ≥ 0.
       This is L0's score function. Any prior the paper wants in L0
-      should be baked in here (e.g. `prior(w) · ⟦u⟧(w)`). -/
-  meaning : Latent → U → W → ℝ
+      should be baked in here (e.g. `prior(w) · ⟦u⟧(w)`).
+      The `ctx` parameter supports sequential models where meaning
+      depends on discourse context. For one-shot models (Ctx = Unit),
+      simply ignore it with `_`. -/
+  meaning : Ctx → Latent → U → W → ℝ
   /-- Meaning values are non-negative. -/
-  meaning_nonneg : ∀ l u w, 0 ≤ meaning l u w
+  meaning_nonneg : ∀ c l u w, 0 ≤ meaning c l u w
   /-- S1 scoring rule: computes the pragmatic speaker's score.
 
       Takes L0's normalized posterior, the rationality parameter α,
@@ -115,6 +132,11 @@ structure RSAConfig (U W : Type*) [Fintype U] [Fintype W] where
   worldPrior : W → ℝ := fun _ => 1
   /-- World prior is non-negative. -/
   worldPrior_nonneg : ∀ w, 0 ≤ worldPrior w
+  /-- Context transition function. Maps current context and chosen utterance
+      to the next context. Default: constant (one-shot, context never changes). -/
+  transition : Ctx → U → Ctx := fun c _ => c
+  /-- Initial context for sequential production. Default: `()` for one-shot. -/
+  initial : Ctx := by exact ()
 
 attribute [instance] RSAConfig.latentFintype
 
@@ -126,20 +148,29 @@ variable {U W : Type*} [Fintype U] [Fintype W]
 
 namespace RSAConfig
 
-/-- L0 as a RationalAction (one per latent value).
+/-- L0 at a specific context (for sequential models).
+
+Scores each world w by meaning(ctx, l, u, w). For one-shot models,
+use `L0agent` which fixes ctx = initial. -/
+noncomputable def L0agent_at (cfg : RSAConfig U W) (ctx : cfg.Ctx) (l : cfg.Latent) :
+    RationalAction U W where
+  score u w := cfg.meaning ctx l u w
+  score_nonneg u w := cfg.meaning_nonneg ctx l u w
+
+/-- L0 as a RationalAction (one per latent value), at initial context.
 
 L0 is the literal listener: given utterance u, score each world w by
-meaning(l, u, w). The policy gives the normalized posterior L0(w|u, l).
+meaning(initial, l, u, w). The policy gives the normalized posterior L0(w|u, l).
 
 The meaning function IS the score — any prior the paper wants in L0
 is baked into `meaning`, not applied separately. This keeps L0 fixed
 under iterated prior updates at L1. -/
 noncomputable def L0agent (cfg : RSAConfig U W) (l : cfg.Latent) :
     RationalAction U W where
-  score u w := cfg.meaning l u w
-  score_nonneg u w := cfg.meaning_nonneg l u w
+  score u w := cfg.meaning cfg.initial l u w
+  score_nonneg u w := cfg.meaning_nonneg cfg.initial l u w
 
-/-- L0 posterior: P(w|u, l) = meaning(l,u,w) / Σ_w' meaning(l,u,w'). -/
+/-- L0 posterior: P(w|u, l) = meaning(initial,l,u,w) / Σ_w' meaning(initial,l,u,w'). -/
 noncomputable def L0 (cfg : RSAConfig U W) (l : cfg.Latent) (u : U) (w : W) : ℝ :=
   (cfg.L0agent l).policy u w
 
@@ -147,7 +178,17 @@ noncomputable def L0 (cfg : RSAConfig U W) (l : cfg.Latent) (u : U) (w : W) : �
 -- S1: Pragmatic Speaker
 -- ============================================================================
 
-/-- S1 as a RationalAction.
+/-- S1 at a specific context (for sequential models).
+
+Uses L0_at(ctx) as the literal listener, so the speaker's informativity
+computation reflects the context-dependent meaning. -/
+noncomputable def S1agent_at (cfg : RSAConfig U W) (ctx : cfg.Ctx) (l : cfg.Latent) :
+    RationalAction W U where
+  score w u := cfg.s1Score (cfg.L0agent_at ctx l).policy cfg.α l w u
+  score_nonneg _ _ := cfg.s1Score_nonneg _ _ _ _ _
+    (fun u' w' => (cfg.L0agent_at ctx l).policy_nonneg u' w') cfg.α_pos
+
+/-- S1 as a RationalAction, at initial context.
 
 S1's score is computed by `s1Score`, which takes L0's normalized posterior,
 the rationality parameter α, and the latent variable value. The score
@@ -165,9 +206,14 @@ noncomputable def S1agent (cfg : RSAConfig U W) (l : cfg.Latent) :
   score_nonneg _ _ := cfg.s1Score_nonneg _ _ _ _ _
     (fun u' w' => (cfg.L0agent l).policy_nonneg u' w') cfg.α_pos
 
-/-- S1 policy: P(u|w, l) = s1Score(L0, α, w, u) / Σ_u' s1Score(L0, α, w, u'). -/
+/-- S1 policy at initial context: P(u|w, l). -/
 noncomputable def S1 (cfg : RSAConfig U W) (l : cfg.Latent) (w : W) (u : U) : ℝ :=
   (cfg.S1agent l).policy w u
+
+/-- S1 policy at a specific context. -/
+noncomputable def S1_at (cfg : RSAConfig U W) (ctx : cfg.Ctx) (l : cfg.Latent)
+    (w : W) (u : U) : ℝ :=
+  (cfg.S1agent_at ctx l).policy w u
 
 theorem S1_nonneg (cfg : RSAConfig U W) (l : cfg.Latent) (w : W) (u : U) :
     0 ≤ cfg.S1 l w u :=
@@ -265,6 +311,85 @@ noncomputable def S2 (cfg : RSAConfig U W) (w : W) (u : U) : ℝ :=
 theorem S2_nonneg (cfg : RSAConfig U W) (w : W) (u : U) :
     0 ≤ cfg.S2 w u :=
   cfg.S2agent.policy_nonneg w u
+
+-- ============================================================================
+-- Sequential RSA: Trajectory Probabilities
+-- ============================================================================
+
+/-- S1 probability of producing utterance `u` in context `ctx`, for world `w`
+    and latent value `l`. This is one step of the sequential chain rule. -/
+noncomputable def S1_at_nonneg (cfg : RSAConfig U W) (ctx : cfg.Ctx)
+    (l : cfg.Latent) (w : W) (u : U) : 0 ≤ cfg.S1_at ctx l w u :=
+  (cfg.S1agent_at ctx l).policy_nonneg w u
+
+/-- Trajectory probability starting from an arbitrary context. -/
+noncomputable def trajectoryProbFrom (cfg : RSAConfig U W)
+    (ctx : cfg.Ctx) (l : cfg.Latent) (w : W) : List U → ℝ
+  | [] => 1
+  | u :: us => cfg.S1_at ctx l w u *
+               cfg.trajectoryProbFrom (cfg.transition ctx u) l w us
+
+/-- Trajectory probability: the probability that S1 produces the sequence
+    `traj = [u₁, u₂, ..., uₙ]` word-by-word, starting from `initial`.
+
+    S1(traj | w, l) = ∏ⱼ S1_at(ctxⱼ, l, w, uⱼ)
+
+    where ctx₀ = initial and ctxⱼ₊₁ = transition(ctxⱼ, uⱼ).
+
+    This is the chain rule for incremental production
+    (@cite{cohn-gordon-goodman-potts-2019}, @cite{waldon-degen-2021}). -/
+noncomputable def trajectoryProb (cfg : RSAConfig U W)
+    (l : cfg.Latent) (w : W) (traj : List U) : ℝ :=
+  cfg.trajectoryProbFrom cfg.initial l w traj
+
+theorem trajectoryProbFrom_nil (cfg : RSAConfig U W) (ctx : cfg.Ctx)
+    (l : cfg.Latent) (w : W) :
+    cfg.trajectoryProbFrom ctx l w [] = 1 := rfl
+
+theorem trajectoryProbFrom_cons (cfg : RSAConfig U W) (ctx : cfg.Ctx)
+    (l : cfg.Latent) (w : W) (u : U) (us : List U) :
+    cfg.trajectoryProbFrom ctx l w (u :: us) =
+    cfg.S1_at ctx l w u * cfg.trajectoryProbFrom (cfg.transition ctx u) l w us := rfl
+
+theorem trajectoryProbFrom_nonneg (cfg : RSAConfig U W) (ctx : cfg.Ctx)
+    (l : cfg.Latent) (w : W) (traj : List U) :
+    0 ≤ cfg.trajectoryProbFrom ctx l w traj := by
+  induction traj generalizing ctx with
+  | nil => exact one_pos.le
+  | cons u us ih =>
+    exact mul_nonneg (cfg.S1_at_nonneg ctx l w u) (ih (cfg.transition ctx u))
+
+-- ============================================================================
+-- §4b. Action-Oriented Listener (L1_action)
+-- ============================================================================
+
+/-- Action-oriented listener: applies a second softmax to L1 beliefs.
+
+    ρ_a(w | u) = softmax(L1(u, ·), α_L)(w)
+
+    Models a listener who soft-maximizes over Bayesian beliefs rather than
+    reporting beliefs directly (@cite{qing-franke-2015}). Provides an additional
+    degree of freedom (α_L) for fitting listener data. -/
+noncomputable def L1_action (cfg : RSAConfig U W) (αL : ℝ) (u : U) (w : W) : ℝ :=
+  softmax (cfg.L1 u) αL w
+
+/-- The action-oriented listener always assigns positive probability. -/
+theorem L1_action_pos [Nonempty W] (cfg : RSAConfig U W) (αL : ℝ) (u : U) (w : W) :
+    0 < cfg.L1_action αL u w :=
+  softmax_pos _ _ _
+
+/-- The action-oriented listener produces a valid probability distribution. -/
+theorem L1_action_sum_eq_one [Nonempty W] (cfg : RSAConfig U W) (αL : ℝ) (u : U) :
+    ∑ w : W, cfg.L1_action αL u w = 1 :=
+  softmax_sum_eq_one _ _
+
+/-- Higher α_L sharpens the action-oriented listener's distribution:
+    if L1 prefers w₁ over w₂, ρ_a amplifies this preference. -/
+theorem L1_action_amplifies [Nonempty W] (cfg : RSAConfig U W)
+    {αL : ℝ} (hα : 0 < αL) (u : U) (w₁ w₂ : W)
+    (h : cfg.L1 u w₁ > cfg.L1 u w₂) :
+    cfg.L1_action αL u w₁ > cfg.L1_action αL u w₂ :=
+  softmax_strict_mono _ hα _ _ h
 
 end RSAConfig
 

@@ -77,43 +77,36 @@ private def powQInterval (p : ℚ) (α : ℚ) : QInterval :=
 
 /-- Compute S1 score as QInterval, dispatching on the scoring specification.
 
-    For `beliefBased` / `qudBelief`: exact when α ∈ ℕ (lo = hi = L0^α),
+    For `beliefBased`: exact when α ∈ ℕ (lo = hi = L0^α),
       otherwise exp(α · log L0) via interval arithmetic.
-    For `qudAction` / `beliefAction`: exact base × Padé exp discount.
+    For `beliefAction`: exact base × Padé exp discount.
     For `actionBased`: Padé exp directly.
-    For `beliefWeighted`: full interval pipeline (sum of log intervals). -/
+    For `beliefWeighted`: full interval pipeline (sum of log intervals).
+
+    The `qudProj` parameter applies QUD projection to L0 before scoring:
+    when `some project`, L0(w|u) becomes Σ_{w'∼w} L0(w'|u). -/
 def evalS1Score {U W L : Type*} [Fintype W] [DecidableEq W] [DecidableEq L]
     (spec : S1ScoreSpec U W L)
     (meaning : L → U → W → ℚ) (α : ℚ)
-    (l : L) (w : W) (u : U) : QInterval :=
+    (l : L) (w : W) (u : U)
+    (qudProj : Option (W → L → ℕ) := none) : QInterval :=
+  -- Effective L0 at point w, after optional QUD projection
+  let rawL0 := evalL0Exact meaning l u
+  let p := match qudProj with
+    | none => rawL0 w
+    | some project => (Finset.univ.filter (fun w' => project w' l = project w l)).sum rawL0
   match spec with
   | .beliefBased =>
-    powQInterval (evalL0Exact meaning l u w) α
-  | .qudBelief project =>
-    let l0 : W → ℚ := evalL0Exact meaning l u
-    let projected := (Finset.univ.filter (fun w' => project w' l = project w l)).sum l0
-    powQInterval projected α
-  | .qudAction cost project =>
-    let l0 : W → ℚ := evalL0Exact meaning l u
-    let projected := (Finset.univ.filter (fun w' => project w' l = project w l)).sum l0
-    if projected = 0 then QInterval.exact 0
-    else
-      -- exp(α·(log proj - cost u)) = proj^α · exp(-α·cost u)
-      let base := powQInterval projected α
-      let discount := expPoint (-(α * cost u))
-      base.mul discount
+    powQInterval p α
   | .beliefAction cost =>
-    let p := evalL0Exact meaning l u w
     if p = 0 then QInterval.exact 0
     else
       let base := powQInterval p α
       let discount := expPoint (-(α * cost u))
       base.mul discount
   | .actionBased cost =>
-    let p := evalL0Exact meaning l u w
     expPoint (α * (p - cost u))
   | .weightedBeliefAction infWeight bonus =>
-    let p := evalL0Exact meaning l u w
     if hp : 0 < p then
       -- exp(α · (infWeight · log(L0) + bonus(u)))
       let logBase := logPoint p hp
@@ -138,7 +131,6 @@ def evalS1Score {U W L : Type*} [Fintype W] [DecidableEq W] [DecidableEq L]
       expInterval scaled
     else QInterval.exact 0
   | .combinedUtility terms _ =>
-    let p := evalL0Exact meaning l u w
     -- Gate only when a logInformativity term has nonzero weight for this latent
     let hasActiveLog := terms.any fun t => match t with
       | .logInformativity weight => weight l != 0
@@ -172,9 +164,10 @@ def evalS1Policy {U W L : Type*} [Fintype U] [Fintype W]
     [DecidableEq U] [DecidableEq W] [DecidableEq L]
     (spec : S1ScoreSpec U W L)
     (meaning : L → U → W → ℚ) (α : ℚ)
-    (l : L) (w : W) (u : U) : QInterval :=
-  let myScore := evalS1Score spec meaning α l w u
-  let total := sumFinset fun u' => evalS1Score spec meaning α l w u'
+    (l : L) (w : W) (u : U)
+    (qudProj : Option (W → L → ℕ) := none) : QInterval :=
+  let myScore := evalS1Score spec meaning α l w u qudProj
+  let total := sumFinset fun u' => evalS1Score spec meaning α l w u' qudProj
   -- Sole-utterance shortcut: if total = myScore (all others are [0,0]),
   -- policy = score/score = 1.
   if myScore.lo > 0 && total.lo == myScore.lo && total.hi == myScore.hi then
@@ -197,7 +190,7 @@ def evalL1Score {U W : Type*} [Fintype U] [Fintype W]
     [DecidableEq U] [DecidableEq W]
     (d : RSAConfigData U W) (u : U) (w : W) : QInterval :=
   let latentSum := sumFinset fun (l : d.Latent) =>
-    let s1pol := evalS1Policy d.s1Spec d.meaning d.α l w u
+    let s1pol := evalS1Policy d.s1Spec d.meaning d.α l w u d.qudProject
     QInterval.scaleNonneg (d.latentPrior w l) s1pol (d.latentPrior_nonneg w l)
   QInterval.scaleNonneg (d.worldPrior w) latentSum (d.worldPrior_nonneg w)
 
@@ -226,16 +219,16 @@ def checkL1ScoreNotGt {U W : Type*} [Fintype U] [Fintype W]
 def checkS1PolicyGt {U W : Type*} [Fintype U] [Fintype W]
     [DecidableEq U] [DecidableEq W]
     (d : RSAConfigData U W) (l : d.Latent) (w : W) (u₁ u₂ : U) : Bool :=
-  let b₁ := evalS1Score d.s1Spec d.meaning d.α l w u₁
-  let b₂ := evalS1Score d.s1Spec d.meaning d.α l w u₂
+  let b₁ := evalS1Score d.s1Spec d.meaning d.α l w u₁ d.qudProject
+  let b₂ := evalS1Score d.s1Spec d.meaning d.α l w u₂ d.qudProject
   b₂.hi < b₁.lo
 
 /-- Check that S1 policy for (l,w,u₁) is NOT strictly greater than for (l,w,u₂). -/
 def checkS1PolicyNotGt {U W : Type*} [Fintype U] [Fintype W]
     [DecidableEq U] [DecidableEq W]
     (d : RSAConfigData U W) (l : d.Latent) (w : W) (u₁ u₂ : U) : Bool :=
-  let b₁ := evalS1Score d.s1Spec d.meaning d.α l w u₁
-  let b₂ := evalS1Score d.s1Spec d.meaning d.α l w u₂
+  let b₁ := evalS1Score d.s1Spec d.meaning d.α l w u₁ d.qudProject
+  let b₂ := evalS1Score d.s1Spec d.meaning d.α l w u₂ d.qudProject
   b₁.hi ≤ b₂.lo
 
 -- ============================================================================
@@ -255,10 +248,10 @@ theorem evalL0Exact_sound (d : RSAConfigData U W) (l : d.Latent) (u : U) (w : W)
 -- Soundness: S1 Score
 -- ============================================================================
 
-/-- S1 score interval contains the ℝ S1 score. -/
+/-- S1 score interval contains the ℝ S1 score (after effectiveL0 projection). -/
 theorem evalS1Score_sound (d : RSAConfigData U W) (l : d.Latent) (w : W) (u : U) :
-    (evalS1Score d.s1Spec d.meaning d.α l w u).containsReal
-      (d.s1Spec.toS1Score (d.toRSAConfig.L0agent l).policy (↑d.α) l w u) := by
+    (evalS1Score d.s1Spec d.meaning d.α l w u d.qudProject).containsReal
+      ((d.toRSAConfig.S1agent l).score w u) := by
   sorry
 
 -- ============================================================================
@@ -267,7 +260,7 @@ theorem evalS1Score_sound (d : RSAConfigData U W) (l : d.Latent) (w : W) (u : U)
 
 /-- S1 policy interval contains the ℝ S1 policy. -/
 theorem evalS1Policy_sound (d : RSAConfigData U W) (l : d.Latent) (w : W) (u : U) :
-    (evalS1Policy d.s1Spec d.meaning d.α l w u).containsReal
+    (evalS1Policy d.s1Spec d.meaning d.α l w u d.qudProject).containsReal
       (d.toRSAConfig.S1 l w u) := by
   sorry
 
@@ -325,8 +318,8 @@ theorem s1_gt_of_check (d : RSAConfigData U W)
     d.toRSAConfig.S1 l w u₁ > d.toRSAConfig.S1 l w u₂ := by
   have h1 := evalS1Score_sound d l w u₁
   have h2 := evalS1Score_sound d l w u₂
-  have hsep : (evalS1Score d.s1Spec d.meaning d.α l w u₂).hi <
-              (evalS1Score d.s1Spec d.meaning d.α l w u₁).lo :=
+  have hsep : (evalS1Score d.s1Spec d.meaning d.α l w u₂ d.qudProject).hi <
+              (evalS1Score d.s1Spec d.meaning d.α l w u₁ d.qudProject).lo :=
     of_decide_eq_true h
   have hgt := QInterval.gt_of_separated h1 h2 hsep
   exact (d.toRSAConfig.S1agent l).policy_gt_of_score_gt w u₁ u₂ hgt
@@ -338,8 +331,8 @@ theorem s1_not_gt_of_check (d : RSAConfigData U W)
     ¬(d.toRSAConfig.S1 l w u₁ > d.toRSAConfig.S1 l w u₂) := by
   have h1 := evalS1Score_sound d l w u₁
   have h2 := evalS1Score_sound d l w u₂
-  have hsep : (evalS1Score d.s1Spec d.meaning d.α l w u₁).hi ≤
-              (evalS1Score d.s1Spec d.meaning d.α l w u₂).lo :=
+  have hsep : (evalS1Score d.s1Spec d.meaning d.α l w u₁ d.qudProject).hi ≤
+              (evalS1Score d.s1Spec d.meaning d.α l w u₂ d.qudProject).lo :=
     of_decide_eq_true h
   have hle := QInterval.le_of_separated h1 h2 hsep
   exact (d.toRSAConfig.S1agent l).policy_not_gt_of_score_le w u₁ u₂ hle
@@ -433,7 +426,7 @@ def evalS2Score {U W : Type*} [Fintype U] [Fintype W]
         else (QInterval.exact weight).mul ⟨0, 1, by norm_num⟩
       | .logLatentMarginal weight target =>
         let latentScore := (sumFinset fun (w' : W) =>
-          let s1pol := evalS1Policy d.s1Spec d.meaning d.α target w' u
+          let s1pol := evalS1Policy d.s1Spec d.meaning d.α target w' u d.qudProject
           let scaled := QInterval.scaleNonneg (d.latentPrior w' target) s1pol
             (d.latentPrior_nonneg w' target)
           QInterval.scaleNonneg (d.worldPrior w') scaled

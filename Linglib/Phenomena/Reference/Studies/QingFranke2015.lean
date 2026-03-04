@@ -220,7 +220,7 @@ theorem beliefGoalScore_nonneg (cost : Utterance → ℝ) :
     The speaker maximizes the raw probability that the listener picks the correct
     referent, rather than log-probability. Unlike beliefGoalScore, this gives
     nonzero score even for false utterances (exp(-λ·C) > 0 when y=0).
-    The paper notes (Footnote 7) that model comparison restricts to truthful
+    The paper notes (Footnote 13) that model comparison restricts to truthful
     predictions; here the model comparison theorems (§13) only compare
     utterances that are true of the target object, so no gating is needed. -/
 noncomputable def actionGoalScore (cost : Utterance → ℝ) :
@@ -261,8 +261,8 @@ noncomputable def mkConfig
       (∀ u' w', 0 ≤ l0 u' w') → 0 < α → 0 ≤ s1 l0 α l w u)
     (listenerPrior : Object → ℝ) (lp_nn : ∀ w, 0 ≤ listenerPrior w) :
     RSAConfig Utterance Object where
-  meaning _ u w := if u.appliesTo w then speakerPrior w else 0
-  meaning_nonneg _ _ w := by
+  meaning _ _ u w := if u.appliesTo w then speakerPrior w else 0
+  meaning_nonneg _ _ _ w := by
     split
     · exact sp_nn w
     · exact le_refl 0
@@ -341,42 +341,8 @@ noncomputable def costCfg : RSAConfig Utterance Object :=
 noncomputable def salienceCfg : RSAConfig Utterance Object :=
   σ_bU (adjCost (1/2)) saliencePrior saliencePrior_nonneg
 
--- ============================================================================
--- §9. Action-Oriented Listener (Listener Dimension)
--- ============================================================================
-
-/-- Action-oriented listener: ρ_a(t|m) ∝ exp(α_L · ρ_b(t|m)) [Eq. 14].
-
-    Applies a second softmax to the belief-oriented L1 posterior. This models a
-    listener who soft-maximizes over Bayesian beliefs rather than reporting beliefs
-    directly. Provides an additional degree of freedom (α_L) for fitting listener
-    data — the best overall model in the paper uses ρ_a.
-
-    The RSAConfig API doesn't directly support this, so it's defined as a composable
-    extension, demonstrating that the API is open for extension without modification. -/
-noncomputable def L1_action {U W : Type*} [Fintype U] [Fintype W]
-    (cfg : RSAConfig U W) (αL : ℝ) (u : U) (w : W) : ℝ :=
-  softmax (cfg.L1 u) αL w
-
-/-- The action-oriented listener always assigns positive probability. -/
-theorem L1_action_pos {U W : Type*} [Fintype U] [Fintype W] [Nonempty W]
-    (cfg : RSAConfig U W) (αL : ℝ) (u : U) (w : W) :
-    0 < L1_action cfg αL u w :=
-  softmax_pos _ _ _
-
-/-- The action-oriented listener produces a valid probability distribution. -/
-theorem L1_action_sum_eq_one {U W : Type*} [Fintype U] [Fintype W] [Nonempty W]
-    (cfg : RSAConfig U W) (αL : ℝ) (u : U) :
-    ∑ w : W, L1_action cfg αL u w = 1 :=
-  softmax_sum_eq_one _ _
-
-/-- Higher α_L sharpens the action-oriented listener's distribution:
-    if L1 prefers w₁ over w₂, ρ_a amplifies this preference. -/
-theorem L1_action_amplifies {U W : Type*} [Fintype U] [Fintype W] [Nonempty W]
-    (cfg : RSAConfig U W) {αL : ℝ} (hα : 0 < αL) (u : U) (w₁ w₂ : W)
-    (h : cfg.L1 u w₁ > cfg.L1 u w₂) :
-    L1_action cfg αL u w₁ > L1_action cfg αL u w₂ :=
-  softmax_strict_mono _ hα _ _ h
+-- §9. Action-oriented listener ρ_a is now `RSAConfig.L1_action` in Config.lean.
+-- Use `cfg.L1_action αL u w` via dot notation (open RSA provides namespace).
 
 -- ============================================================================
 -- §10. Structural Properties

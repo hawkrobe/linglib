@@ -16,9 +16,8 @@ The pipeline tracks lower and upper bounds as separate ℚ values, avoiding
 `Finset.toList` (which is noncomputable). All summation uses `Finset.sum`
 over ℚ, which is computable.
 
-For `beliefBased` and `qudBelief` patterns (α ∈ ℕ), bounds are **exact**:
-lo = hi throughout. For patterns with `exp`/`log`, bounds have width from
-Padé approximation.
+For `beliefBased` (α ∈ ℕ), bounds are **exact**: lo = hi throughout.
+For patterns with `exp`/`log`, bounds have width from Padé approximation.
 -/
 
 namespace RSA.Verify
@@ -115,35 +114,31 @@ def computeL0Rat {U W L : Type*} [Fintype W]
 
 /-- Compute S1 score bounds, dispatching on the scoring specification.
 
-    For `beliefBased` / `qudBelief`: exact (lo = hi = L0^α).
-    For `qudAction` / `beliefAction`: algebraic rewrite
+    For `beliefBased`: exact (lo = hi = L0^α).
+    For `beliefAction`: algebraic rewrite
       `exp(α·(log x - c)) = x^α · exp(-α·c)`, exact base + Padé discount.
     For `actionBased`: Padé `exp` directly.
-    For `beliefWeighted`: full interval pipeline. -/
+    For `beliefWeighted`: full interval pipeline.
+
+    The `qudProj` parameter applies QUD projection to L0 before scoring:
+    when `some project`, L0(w|u) becomes Σ_{w'∼w} L0(w'|u). -/
 def computeS1ScoreBounds {U W L : Type*} [Fintype W] [DecidableEq W] [DecidableEq L]
     (spec : S1ScoreSpec U W L)
     (meaning : L → U → W → ℚ) (α : ℚ)
-    (l : L) (w : W) (u : U) : Bounds :=
+    (l : L) (w : W) (u : U)
+    (qudProj : Option (W → L → ℕ) := none) : Bounds :=
+  -- Effective L0 at point w, after optional QUD projection
+  let rawL0 := computeL0Rat meaning l u
+  let p := match qudProj with
+    | none => rawL0 w
+    | some project => (Finset.univ.filter (fun w' => project w' l = project w l)).sum rawL0
   match spec with
   | .beliefBased =>
-    powBounds (computeL0Rat meaning l u w) α
-  | .qudBelief project =>
-    let l0 : W → ℚ := computeL0Rat meaning l u
-    let projected := (Finset.univ.filter (fun w' => project w' l = project w l)).sum l0
-    powBounds projected α
-  | .qudAction cost project =>
-    let l0 : W → ℚ := computeL0Rat meaning l u
-    let projected := (Finset.univ.filter (fun w' => project w' l = project w l)).sum l0
-    if projected = 0 then Bounds.zero
-    else
-      -- exp(α·(log projected - cost u)) = projected^α · exp(-α · cost u)
-      (powBounds projected α).mul (expBounds (-(α * cost u)))
+    powBounds p α
   | .beliefAction cost =>
-    let p := computeL0Rat meaning l u w
     if p = 0 then Bounds.zero
     else (powBounds p α).mul (expBounds (-(α * cost u)))
   | .weightedBeliefAction infWeight bonus =>
-    let p := computeL0Rat meaning l u w
     if p = 0 then Bounds.zero
     else
       -- exp(α · (γ · log(p) + bonus(u)))
@@ -155,25 +150,23 @@ def computeS1ScoreBounds {U W L : Type*} [Fintype W] [DecidableEq W] [DecidableE
       let argBounds : Bounds := ⟨α * (logBnds.lo + bonus u), α * (logBnds.hi + bonus u)⟩
       expIntervalBounds argBounds
   | .actionBased cost =>
-    let p := computeL0Rat meaning l u w
     expBounds (α * (p - cost u))
   | .beliefWeighted belief quality =>
     if quality l u then
       let argLo := Finset.univ.sum fun s =>
-        let p := computeL0Rat meaning l u s
+        let ps := computeL0Rat meaning l u s
         let bq := belief l s
-        if hp : 0 < p then bq * (logPoint p hp).lo
+        if hp : 0 < ps then bq * (logPoint ps hp).lo
         else bq * (-1000)
       let argHi := Finset.univ.sum fun s =>
-        let p := computeL0Rat meaning l u s
+        let ps := computeL0Rat meaning l u s
         let bq := belief l s
-        if hp : 0 < p then bq * (logPoint p hp).hi
+        if hp : 0 < ps then bq * (logPoint ps hp).hi
         else bq * (-1000)
       let scaled : Bounds := ⟨α * argLo, α * argHi⟩
       expIntervalBounds scaled
     else Bounds.zero
   | .combinedUtility terms _ =>
-    let p := computeL0Rat meaning l u w
     let hasActiveLog := terms.any fun t => match t with
       | .logInformativity weight => weight l != 0
       | _ => false
@@ -202,11 +195,12 @@ def computeS1PolicyBounds {U W L : Type*} [Fintype U] [Fintype W]
     [DecidableEq U] [DecidableEq W] [DecidableEq L]
     (spec : S1ScoreSpec U W L)
     (meaning : L → U → W → ℚ) (α : ℚ)
-    (l : L) (w : W) (u : U) : Bounds :=
-  let myScore := computeS1ScoreBounds spec meaning α l w u
+    (l : L) (w : W) (u : U)
+    (qudProj : Option (W → L → ℕ) := none) : Bounds :=
+  let myScore := computeS1ScoreBounds spec meaning α l w u qudProj
   -- Total bounds: lo of total = Σ lo_i, hi of total = Σ hi_i
-  let totalLo := Finset.univ.sum fun u' => (computeS1ScoreBounds spec meaning α l w u').lo
-  let totalHi := Finset.univ.sum fun u' => (computeS1ScoreBounds spec meaning α l w u').hi
+  let totalLo := Finset.univ.sum fun u' => (computeS1ScoreBounds spec meaning α l w u' qudProj).lo
+  let totalHi := Finset.univ.sum fun u' => (computeS1ScoreBounds spec meaning α l w u' qudProj).hi
   -- Sole-utterance shortcut: if total = myScore (all others are [0,0]),
   -- policy = score/score = 1. Avoids divPos interval widening from Padé.
   if myScore.lo > 0 && totalLo == myScore.lo && totalHi == myScore.hi then
@@ -227,10 +221,10 @@ def computeL1ScoreBounds {U W : Type*} [Fintype U] [Fintype W]
     (d : RSAConfigData U W) (u : U) (w : W) : Bounds :=
   let latentSumLo := Finset.univ.sum fun (l : d.Latent) =>
     d.latentPrior w l *
-      (computeS1PolicyBounds d.s1Spec d.meaning d.α l w u).lo
+      (computeS1PolicyBounds d.s1Spec d.meaning d.α l w u d.qudProject).lo
   let latentSumHi := Finset.univ.sum fun (l : d.Latent) =>
     d.latentPrior w l *
-      (computeS1PolicyBounds d.s1Spec d.meaning d.α l w u).hi
+      (computeS1PolicyBounds d.s1Spec d.meaning d.α l w u d.qudProject).hi
   ⟨d.worldPrior w * latentSumLo, d.worldPrior w * latentSumHi⟩
 
 -- ============================================================================
@@ -274,21 +268,28 @@ def checkL1ScoreNotGt {U W : Type*} [Fintype U] [Fintype W]
       - Equal cost: cancel exp → L0 comparison (ℚ exact)
       - Dominance: L0₁ ≥ L0₂ ∧ c₁ ≤ c₂ with one strict → score₁ > score₂
       - General: compare `L0₁^α / L0₂^α` against `expBounds(α·(c₁-c₂))`
-    - **qudAction**: same as actionBased but on projected L0.
-    - **beliefBased/qudBelief**: already exact (no exp), no shortcut needed.
-    - **beliefWeighted**: no simple shortcut, fall back to intervals. -/
+    - **beliefBased**: already exact (no exp), no shortcut needed.
+    - **beliefWeighted**: no simple shortcut, fall back to intervals.
+
+    The `qudProj` parameter applies QUD projection to L0 values. -/
 def trySymbolicS1ScoreGt {U W L : Type*} [Fintype W] [DecidableEq W] [DecidableEq L]
     (spec : S1ScoreSpec U W L)
     (meaning : L → U → W → ℚ) (α : ℚ)
-    (l : L) (w : W) (u₁ u₂ : U) : Bool :=
+    (l : L) (w : W) (u₁ u₂ : U)
+    (qudProj : Option (W → L → ℕ) := none) : Bool :=
+  let effectiveP (u : U) : ℚ := match qudProj with
+    | none => computeL0Rat meaning l u w
+    | some project =>
+      let rawL0 := computeL0Rat meaning l u
+      (Finset.univ.filter (fun w' => project w' l = project w l)).sum rawL0
   match spec with
   | .actionBased cost =>
-    let p₁ := computeL0Rat meaning l u₁ w
-    let p₂ := computeL0Rat meaning l u₂ w
+    let p₁ := effectiveP u₁
+    let p₂ := effectiveP u₂
     p₁ - cost u₁ > p₂ - cost u₂
   | .beliefAction cost =>
-    let p₁ := computeL0Rat meaning l u₁ w
-    let p₂ := computeL0Rat meaning l u₂ w
+    let p₁ := effectiveP u₁
+    let p₂ := effectiveP u₂
     let c₁ := cost u₁; let c₂ := cost u₂
     if p₁ = 0 then false
     else if p₂ = 0 then true
@@ -303,18 +304,9 @@ def trySymbolicS1ScoreGt {U W L : Type*} [Fintype W] [DecidableEq W] [DecidableE
         let expB := expBounds (α * (c₁ - c₂))
         l0Ratio > expB.hi
       else false
-  | .qudAction cost project =>
-    let l0 : W → ℚ := computeL0Rat meaning l u₁
-    let proj₁ := (Finset.univ.filter (fun w' => project w' l = project w l)).sum l0
-    let l0₂ : W → ℚ := computeL0Rat meaning l u₂
-    let proj₂ := (Finset.univ.filter (fun w' => project w' l = project w l)).sum l0₂
-    if proj₁ = 0 && proj₂ = 0 then false
-    else if proj₂ = 0 then proj₁ > 0
-    else if proj₁ = 0 then false
-    else proj₁ - cost u₁ > proj₂ - cost u₂
-  | .weightedBeliefAction infWeight bonus =>
-    let p₁ := computeL0Rat meaning l u₁ w
-    let p₂ := computeL0Rat meaning l u₂ w
+  | .weightedBeliefAction _infWeight bonus =>
+    let p₁ := effectiveP u₁
+    let p₂ := effectiveP u₂
     let b₁ := bonus u₁; let b₂ := bonus u₂
     if p₁ = 0 then false
     else if p₂ = 0 then true
@@ -329,15 +321,21 @@ def trySymbolicS1ScoreGt {U W L : Type*} [Fintype W] [DecidableEq W] [DecidableE
 def trySymbolicS1ScoreNotGt {U W L : Type*} [Fintype W] [DecidableEq W] [DecidableEq L]
     (spec : S1ScoreSpec U W L)
     (meaning : L → U → W → ℚ) (α : ℚ)
-    (l : L) (w : W) (u₁ u₂ : U) : Bool :=
+    (l : L) (w : W) (u₁ u₂ : U)
+    (qudProj : Option (W → L → ℕ) := none) : Bool :=
+  let effectiveP (u : U) : ℚ := match qudProj with
+    | none => computeL0Rat meaning l u w
+    | some project =>
+      let rawL0 := computeL0Rat meaning l u
+      (Finset.univ.filter (fun w' => project w' l = project w l)).sum rawL0
   match spec with
   | .actionBased cost =>
-    let p₁ := computeL0Rat meaning l u₁ w
-    let p₂ := computeL0Rat meaning l u₂ w
+    let p₁ := effectiveP u₁
+    let p₂ := effectiveP u₂
     p₁ - cost u₁ ≤ p₂ - cost u₂
   | .beliefAction cost =>
-    let p₁ := computeL0Rat meaning l u₁ w
-    let p₂ := computeL0Rat meaning l u₂ w
+    let p₁ := effectiveP u₁
+    let p₂ := effectiveP u₂
     let c₁ := cost u₁; let c₂ := cost u₂
     if p₁ = 0 then true
     else if p₂ = 0 then false
@@ -351,17 +349,9 @@ def trySymbolicS1ScoreNotGt {U W L : Type*} [Fintype W] [DecidableEq W] [Decidab
         let expB := expBounds (α * (c₁ - c₂))
         l0Ratio ≤ expB.lo
       else false
-  | .qudAction cost project =>
-    let l0 : W → ℚ := computeL0Rat meaning l u₁
-    let proj₁ := (Finset.univ.filter (fun w' => project w' l = project w l)).sum l0
-    let l0₂ : W → ℚ := computeL0Rat meaning l u₂
-    let proj₂ := (Finset.univ.filter (fun w' => project w' l = project w l)).sum l0₂
-    if proj₁ = 0 then true
-    else if proj₂ = 0 then false
-    else proj₁ - cost u₁ ≤ proj₂ - cost u₂
   | .weightedBeliefAction _infWeight bonus =>
-    let p₁ := computeL0Rat meaning l u₁ w
-    let p₂ := computeL0Rat meaning l u₂ w
+    let p₁ := effectiveP u₁
+    let p₂ := effectiveP u₂
     let b₁ := bonus u₁; let b₂ := bonus u₂
     if p₁ = 0 then true
     else if p₂ = 0 then false
@@ -385,11 +375,11 @@ def checkS1PolicyGt {U W : Type*} [Fintype U] [Fintype W]
     [DecidableEq U] [DecidableEq W]
     (d : RSAConfigData U W) (l : d.Latent) (w : W) (u₁ u₂ : U) : Bool :=
   -- Try symbolic comparison first (exact ℚ, no interval approximation)
-  if trySymbolicS1ScoreGt d.s1Spec d.meaning d.α l w u₁ u₂ then true
+  if trySymbolicS1ScoreGt d.s1Spec d.meaning d.α l w u₁ u₂ d.qudProject then true
   else
     -- Fall back to interval comparison
-    let b₁ := computeS1ScoreBounds d.s1Spec d.meaning d.α l w u₁
-    let b₂ := computeS1ScoreBounds d.s1Spec d.meaning d.α l w u₂
+    let b₁ := computeS1ScoreBounds d.s1Spec d.meaning d.α l w u₁ d.qudProject
+    let b₂ := computeS1ScoreBounds d.s1Spec d.meaning d.α l w u₂ d.qudProject
     b₂.hi < b₁.lo
 
 /-- Check that S1 score for (l,w,u₁) is NOT strictly greater than for (l,w,u₂).
@@ -398,10 +388,10 @@ def checkS1PolicyGt {U W : Type*} [Fintype U] [Fintype W]
 def checkS1PolicyNotGt {U W : Type*} [Fintype U] [Fintype W]
     [DecidableEq U] [DecidableEq W]
     (d : RSAConfigData U W) (l : d.Latent) (w : W) (u₁ u₂ : U) : Bool :=
-  if trySymbolicS1ScoreNotGt d.s1Spec d.meaning d.α l w u₁ u₂ then true
+  if trySymbolicS1ScoreNotGt d.s1Spec d.meaning d.α l w u₁ u₂ d.qudProject then true
   else
-    let b₁ := computeS1ScoreBounds d.s1Spec d.meaning d.α l w u₁
-    let b₂ := computeS1ScoreBounds d.s1Spec d.meaning d.α l w u₂
+    let b₁ := computeS1ScoreBounds d.s1Spec d.meaning d.α l w u₁ d.qudProject
+    let b₂ := computeS1ScoreBounds d.s1Spec d.meaning d.α l w u₂ d.qudProject
     b₁.hi ≤ b₂.lo
 
 -- ============================================================================
@@ -642,11 +632,11 @@ def computeL1NormBounds {U W : Type*} [Fintype U] [Fintype W]
   let lo := Finset.univ.sum fun (w : W) =>
     d.worldPrior w * (Finset.univ.sum fun (l : d.Latent) =>
       d.latentPrior w l *
-        (computeS1PolicyBounds d.s1Spec d.meaning d.α l w u).lo)
+        (computeS1PolicyBounds d.s1Spec d.meaning d.α l w u d.qudProject).lo)
   let hi := Finset.univ.sum fun (w : W) =>
     d.worldPrior w * (Finset.univ.sum fun (l : d.Latent) =>
       d.latentPrior w l *
-        (computeS1PolicyBounds d.s1Spec d.meaning d.α l w u).hi)
+        (computeS1PolicyBounds d.s1Spec d.meaning d.α l w u d.qudProject).hi)
   ⟨lo, hi⟩
 
 /-- Compute L1 state marginal bounds: P_L1(w|u) = L1_score(u,w) / Σ_w' L1_score(u,w').
@@ -664,10 +654,10 @@ def computeL1LatentMarginalBounds {U W : Type*} [Fintype U] [Fintype W]
     (d : RSAConfigData U W) (u : U) (l : d.Latent) : Bounds :=
   let lo := Finset.univ.sum fun (w : W) =>
     d.worldPrior w * (d.latentPrior w l *
-      (computeS1PolicyBounds d.s1Spec d.meaning d.α l w u).lo)
+      (computeS1PolicyBounds d.s1Spec d.meaning d.α l w u d.qudProject).lo)
   let hi := Finset.univ.sum fun (w : W) =>
     d.worldPrior w * (d.latentPrior w l *
-      (computeS1PolicyBounds d.s1Spec d.meaning d.α l w u).hi)
+      (computeS1PolicyBounds d.s1Spec d.meaning d.α l w u d.qudProject).hi)
   let norm := computeL1NormBounds d u
   Bounds.divPos ⟨lo, hi⟩ norm
 
@@ -682,11 +672,11 @@ private def computeS2UtilityBounds {U W : Type*} [Fintype U] [Fintype W]
   let l1ScoreLo : W → ℚ := fun w' =>
     d.worldPrior w' * (Finset.univ.sum fun (l : d.Latent) =>
       d.latentPrior w' l *
-        (computeS1PolicyBounds d.s1Spec d.meaning d.α l w' u).lo)
+        (computeS1PolicyBounds d.s1Spec d.meaning d.α l w' u d.qudProject).lo)
   let l1ScoreHi : W → ℚ := fun w' =>
     d.worldPrior w' * (Finset.univ.sum fun (l : d.Latent) =>
       d.latentPrior w' l *
-        (computeS1PolicyBounds d.s1Spec d.meaning d.α l w' u).hi)
+        (computeS1PolicyBounds d.s1Spec d.meaning d.α l w' u d.qudProject).hi)
   -- Step 2: Norm = Σ_w' l1Score(w')
   let normLo := Finset.univ.sum l1ScoreLo
   let normHi := Finset.univ.sum l1ScoreHi
@@ -718,10 +708,10 @@ private def computeS2UtilityBounds {U W : Type*} [Fintype U] [Fintype W]
     | .logLatentMarginal weight target =>
       let latLo := Finset.univ.sum fun (w' : W) =>
         d.worldPrior w' * (d.latentPrior w' target *
-          (computeS1PolicyBounds d.s1Spec d.meaning d.α target w' u).lo)
+          (computeS1PolicyBounds d.s1Spec d.meaning d.α target w' u d.qudProject).lo)
       let latHi := Finset.univ.sum fun (w' : W) =>
         d.worldPrior w' * (d.latentPrior w' target *
-          (computeS1PolicyBounds d.s1Spec d.meaning d.α target w' u).hi)
+          (computeS1PolicyBounds d.s1Spec d.meaning d.α target w' u d.qudProject).hi)
       let latCoarse := (⟨latLo, latHi⟩ : Bounds).coarsen 30
       let marg := (Bounds.divPos latCoarse normCoarse).coarsen 30
       (Bounds.exact weight).mul (logBoundsFast marg)

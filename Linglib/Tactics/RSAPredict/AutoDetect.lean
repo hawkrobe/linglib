@@ -35,11 +35,10 @@ open Lean Meta Elab Tactic
 -- Detected Pattern
 -- ============================================================================
 
-/-- Detected S1 score pattern. Each variant corresponds to an `S1ScoreSpec` constructor. -/
+/-- Detected S1 score pattern. Each variant corresponds to an `S1ScoreSpec` constructor.
+    QUD projection is handled orthogonally via `RSAConfigData.qudProject`. -/
 inductive DetectedPattern where
   | beliefBased
-  | qudBelief
-  | qudAction
   | beliefAction
   | weightedBeliefAction
   | actionBased
@@ -69,10 +68,8 @@ partial def containsConstName (name : Name) : Expr → Bool
 /-- Detect the S1ScoreSpec variant by inspecting the reduced s1Score expression.
 
     Strategy: reduce `cfg.s1Score` to whnf and look for signature constants:
-    - `Real.rpow` without `Finset.filter` → beliefBased
-    - `Real.rpow` with `Finset.filter` → qudBelief
-    - `Real.exp` + `Real.log` + `Finset.filter` → qudAction
-    - `Real.exp` + `Real.log` without `Finset.filter` → beliefAction
+    - `Real.rpow` → beliefBased (QUD projection is orthogonal, via `qudProject`)
+    - `Real.exp` + `Real.log` → beliefAction (filter from QUD is handled separately)
     - `Real.exp` without `Real.log` → actionBased
     - `Finset.sum` inside `Real.exp` argument (weighted sum) → beliefWeighted -/
 def detectScorePattern (cfg : Expr) : MetaM (Option DetectedPattern) := do
@@ -82,16 +79,12 @@ def detectScorePattern (cfg : Expr) : MetaM (Option DetectedPattern) := do
   let hasRpow := containsConstName ``Real.rpow reduced
   let hasExp := containsConstName ``Real.exp reduced
   let hasLog := containsConstName ``Real.log reduced
-  let hasFilter := containsConstName ``Finset.filter reduced
 
   -- Dispatch based on signature
   if hasRpow then
-    if hasFilter then return some .qudBelief
-    else return some .beliefBased
+    return some .beliefBased
   else if hasExp then
     if hasLog then
-      if hasFilter then return some .qudAction
-      else
         -- Distinguish beliefAction (gated log) from beliefWeighted (sum of logs)
         -- beliefWeighted has a Finset.sum INSIDE the exp argument
         -- For now, check if there's an ite at the outermost level
@@ -122,7 +115,8 @@ def extractMeaningValues (cfg : Expr) (allLElems allUElems allWElems : Array Exp
   for l in allLElems do
     for u in allUElems do
       for w in allWElems do
-        let meaningExpr ← mkAppM ``RSA.RSAConfig.meaning #[cfg, l, u, w]
+        let initial ← mkAppM ``RSA.RSAConfig.initial #[cfg]
+        let meaningExpr ← mkAppM ``RSA.RSAConfig.meaning #[cfg, initial, l, u, w]
         try
           let q ← extractRat meaningExpr
           values := values.push q
@@ -571,7 +565,7 @@ def buildConfigData (U W L : Expr)
       let qualityFn ← buildBinaryBoolFn L U allLElems allUElems qv
       mkAppOptM ``RSA.S1ScoreSpec.beliefWeighted #[U, W, L, beliefFn, qualityFn]
     | _ => do
-      -- TODO: implement qudBelief, qudAction, combinedUtility
+      -- TODO: implement combinedUtility
       return none
 
   -- Build α as ℚ (cast from ℕ)
@@ -783,8 +777,6 @@ def tryAutoDetectL1Compare (goal : MVarId) (cfg u w₁ w₂ : Expr) : TacticM Bo
 
   let patternName := match pattern with
     | .beliefBased => "beliefBased"
-    | .qudBelief => "qudBelief"
-    | .qudAction => "qudAction"
     | .beliefAction => "beliefAction"
     | .weightedBeliefAction => "weightedBeliefAction"
     | .actionBased => "actionBased"
@@ -816,7 +808,7 @@ def tryAutoDetectL1Compare (goal : MVarId) (cfg u w₁ w₂ : Expr) : TacticM Bo
 
   -- Extract cost for action-based patterns
   let (pattern, costVals) ← match pattern with
-    | .beliefAction | .actionBased | .qudAction => do
+    | .beliefAction | .actionBased => do
       let cv ← extractCostFromScore cfg U W L allUElems allWElems allLElems pattern
       -- Downgrade to beliefBased when all costs are zero.
       -- beliefAction with zero cost is algebraically L0^α (= beliefBased),
@@ -910,8 +902,7 @@ def tryAutoDetectL1NotGt (goal : MVarId) (cfg u w₁ w₂ : Expr) : TacticM Bool
     return false
 
   let patternName := match pattern with
-    | .beliefBased => "beliefBased" | .qudBelief => "qudBelief"
-    | .qudAction => "qudAction" | .beliefAction => "beliefAction"
+    | .beliefBased => "beliefBased" | .beliefAction => "beliefAction"
     | .weightedBeliefAction => "weightedBeliefAction"
     | .actionBased => "actionBased" | .beliefWeighted => "beliefWeighted"
     | .combinedUtility .. => "combinedUtility"
@@ -932,7 +923,7 @@ def tryAutoDetectL1NotGt (goal : MVarId) (cfg u w₁ w₂ : Expr) : TacticM Bool
     return false
 
   let (pattern, costVals) ← match pattern with
-    | .beliefAction | .actionBased | .qudAction => do
+    | .beliefAction | .actionBased => do
       let cv ← extractCostFromScore cfg U W L allUElems allWElems allLElems pattern
       match cv with
       | some costs =>
@@ -1008,7 +999,7 @@ private def buildS1ConfigData (cfg : Expr) :
     return none
 
   let (pattern, costVals) ← match pattern with
-    | .beliefAction | .actionBased | .qudAction => do
+    | .beliefAction | .actionBased => do
       let cv ← extractCostFromScore cfg U W L allUElems allWElems allLElems pattern
       match cv with
       | some costs =>
@@ -1141,7 +1132,7 @@ def tryAutoDetectL1ScoreGt (goal : MVarId) (cfg u₁ w₁ u₂ w₂ : Expr) : Ta
     return false
 
   let (pattern, costVals) ← match pattern with
-    | .beliefAction | .actionBased | .qudAction => do
+    | .beliefAction | .actionBased => do
       let cv ← extractCostFromScore cfg U W L allUElems allWElems allLElems pattern
       match cv with
       | some costs =>
