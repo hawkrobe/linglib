@@ -52,6 +52,25 @@ def parseL1Policy (e : Expr) : MetaM (Option (Expr × Expr × Expr)) := do
   return none
 
 /-- Extract RSA config and arguments from a policy expression.
+    Returns (cfg, l, u, w) where the expression is `cfg.L0 l u w`. -/
+def parseL0Policy (e : Expr) : MetaM (Option (Expr × Expr × Expr × Expr)) := do
+  -- Try to unfold to cfg.L0agent(l).policy u w
+  if let some (ra, u, w) := ← unfoldToPolicy e then
+    -- Check if ra is cfg.L0agent l
+    let mut raC := ra
+    for _ in List.range 5 do
+      let fn := raC.getAppFn
+      let args := raC.getAppArgs
+      if fn.isConstOf ``RSA.RSAConfig.L0agent && args.size ≥ 6 then
+        let cfg := args[4]!
+        let l := args[5]!
+        return some (cfg, l, u, w)
+      if let some ra' ← unfoldDefinition? raC then
+        raC := ra'.headBeta
+      else break
+  return none
+
+/-- Extract RSA config and arguments from a policy expression.
     Returns (cfg, l, w, u) where the expression is `cfg.S1 l w u`. -/
 def parseS1Policy (e : Expr) : MetaM (Option (Expr × Expr × Expr × Expr)) := do
   -- Try to unfold to cfg.S1agent(l).policy w u
@@ -123,9 +142,13 @@ inductive GoalForm where
   | s2Compare (cfg : Expr) (w₁ w₂ u : Expr)
   /-- d.S2Utility w u₁ > d.S2Utility w u₂ -/
   | s2UtilityCompare (d : Expr) (w u₁ u₂ : Expr)
+  /-- cfg.L0 l u w₁ > cfg.L0 l u w₂ -/
+  | l0Compare (cfg l u w₁ w₂ : Expr)
+  /-- (ws₁.map (cfg.L0 l u)).sum > (ws₂.map (cfg.L0 l u)).sum (L0 marginal) -/
+  | l0Marginal (cfg l u : Expr) (ws₁ ws₂ : Array Expr)
 
 -- ============================================================================
--- L1_marginal Parsing
+-- L1_marginal / L0_marginal Parsing
 -- ============================================================================
 
 /-- Try to parse an expression as `cfg.L1_marginal u P`.
@@ -152,6 +175,36 @@ def parseL1Marginal (e : Expr) : MetaM (Option (Expr × Expr × Array Expr)) := 
         if pw'.isConstOf ``Bool.true then
           matching := matching.push w
       return some (cfg, u, matching)
+    if let some e' ← unfoldDefinition? current then
+      current := e'.headBeta
+    else break
+  return none
+
+/-- Try to parse an expression as `cfg.L0_marginal l u P`.
+    If successful, evaluates `P w` for each `w : W` at meta level,
+    returning `(cfg, l, u, #[w₁, w₂,...])` for matching worlds. -/
+def parseL0Marginal (e : Expr) : MetaM (Option (Expr × Expr × Expr × Array Expr)) := do
+  let mut current := e
+  for _ in List.range 5 do
+    let fn := current.getAppFn
+    let args := current.getAppArgs
+    if fn.isConstOf ``RSA.RSAConfig.L0_marginal && args.size ≥ 8 then
+      -- args layout: U, W, instFintypeU, instFintypeW, cfg, l, u, P
+      let W := args[1]!
+      let cfg := args[4]!
+      let l := args[5]!
+      let u := args[6]!
+      let P := args[7]!
+      -- Enumerate all W elements
+      let (_, allWElems) ← Linglib.Tactics.RSAPredict.getFiniteElems W
+      -- Evaluate P w for each w
+      let mut matching : Array Expr := #[]
+      for w in allWElems do
+        let pw := mkApp P w
+        let pw' ← whnf pw
+        if pw'.isConstOf ``Bool.true then
+          matching := matching.push w
+      return some (cfg, l, u, matching)
     if let some e' ← unfoldDefinition? current then
       current := e'.headBeta
     else break
@@ -258,6 +311,45 @@ partial def collectL1SummandsAnyU (e : Expr) :
   return none
 
 -- ============================================================================
+-- L0 Summand Collection
+-- ============================================================================
+
+/-- Collect L0 policy summands from an expression.
+    Returns (cfg, l, u, ws) where ws are the world arguments, or none.
+    Handles L0_marginal, single L0 terms, nested HAdd, and Finset.sum. -/
+partial def collectL0Summands (e : Expr) : MetaM (Option (Expr × Expr × Expr × Array Expr)) := do
+  -- Try L0_marginal first (most specific)
+  if let some (cfg, l, u, ws) ← parseL0Marginal e then
+    return some (cfg, l, u, ws)
+  -- Try single L0 term
+  if let some (cfg, l, u, w) ← parseL0Policy e then
+    return some (cfg, l, u, #[w])
+  -- Try HAdd of L0 terms
+  if isAppOfMin e ``HAdd.hAdd 6 then
+    let a := e.getAppArgs[4]!
+    let b := e.getAppArgs[5]!
+    if let some (cfg1, l1, u1, ws1) ← collectL0Summands a then
+      if let some (cfg2, l2, u2, ws2) ← collectL0Summands b then
+        if (← isDefEq cfg1 cfg2) && (← isDefEq l1 l2) && (← isDefEq u1 u2) then
+          return some (cfg1, l1, u1, ws1 ++ ws2)
+  -- Try Finset.sum: unfold and recurse
+  let fn := e.getAppFn
+  if fn.constName? == some ``Finset.sum ||
+     fn.constName? == some ``Multiset.sum ||
+     fn.constName? == some ``Multiset.fold ||
+     fn.constName? == some ``List.foldr ||
+     fn.constName? == some ``List.foldl ||
+     fn.constName? == some ``List.sum ||
+     fn.constName? == some ``Quot.lift then
+    let e' ← whnf e
+    if !e.equal e' then
+      return ← collectL0Summands e'
+  -- Try unfolding
+  if let some e' ← unfoldDefinition? e then
+    return ← collectL0Summands e'.headBeta
+  return none
+
+-- ============================================================================
 -- Main Goal Parser
 -- ============================================================================
 
@@ -270,6 +362,12 @@ def parseGoalForm (lhs rhs : Expr) : MetaM GoalForm := do
         return .l1Compare cfg u w₁ w₂
       else
         return .l1CrossConfig cfg u #[w₁] cfg₂ u₂ #[w₂]
+
+  -- Path A2: Both sides are cfg.L0 l u w
+  if let some (cfg, l, u, w₁) ← parseL0Policy lhs then
+    if let some (cfg₂, _l₂, _u₂, w₂) ← parseL0Policy rhs then
+      if ← isDefEq cfg cfg₂ then
+        return .l0Compare cfg l u w₁ w₂
 
   -- Path B: cfg.L1_latent u l₁ > cfg.L1_latent u l₂
   if let some (cfg, u, l₁) ← parseL1Latent lhs then
@@ -294,6 +392,12 @@ def parseGoalForm (lhs rhs : Expr) : MetaM GoalForm := do
     if let some (cfg₂, w₂, _u₂) ← parseS2Policy rhs then
       if ← isDefEq cfg cfg₂ then
         return .s2Compare cfg w₁ w₂ u
+
+  -- Path E: sums of L0 terms (L0 marginal)
+  if let some (cfg1, l1, u1, ws1) ← collectL0Summands lhs then
+    if let some (cfg2, _l2, _u2, ws2) ← collectL0Summands rhs then
+      if ← isDefEq cfg1 cfg2 then
+        return .l0Marginal cfg1 l1 u1 ws1 ws2
 
   -- Path C/D: sums of L1 terms
   if let some (cfg1, groups1) ← collectL1SummandsAnyU lhs then
@@ -323,10 +427,12 @@ def parseGoalForm (lhs rhs : Expr) : MetaM GoalForm := do
 
   throwError "rsa_predict: cannot parse goal. Expected one of:\n\
     • cfg.L1 u w₁ > cfg.L1 u w₂\n\
+    • cfg.L0 l u w₁ > cfg.L0 l u w₂\n\
     • cfg.L1_latent u l₁ > cfg.L1_latent u l₂\n\
     • cfg.S1 l w u₁ > cfg.S1 l w u₂\n\
     • cfg.S2 w₁ u > cfg.S2 w₂ u\n\
     • d.S2Utility w u₁ > d.S2Utility w u₂\n\
+    • cfg.L0_marginal l u P₁ > cfg.L0_marginal l u P₂\n\
     • Σ ... cfg.L1 u ... > Σ ... cfg.L1 u ...\n\
     • (cfg.L1 u₁ w₁ + ...) > (cfg.L1 u₂ w₃ + ...)\n\
     • (cfg₁.L1 u₁ w₁ + ...) > (cfg₂.L1 u₂ w₃ + ...)"

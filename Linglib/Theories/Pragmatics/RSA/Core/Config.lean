@@ -174,6 +174,12 @@ noncomputable def L0agent (cfg : RSAConfig U W) (l : cfg.Latent) :
 noncomputable def L0 (cfg : RSAConfig U W) (l : cfg.Latent) (u : U) (w : W) : ℝ :=
   (cfg.L0agent l).policy u w
 
+/-- L0 marginal: P(P|u, l) = Σ_{w : P(w)} L0(w|u, l).
+    Sums the L0 posterior over worlds satisfying a Bool predicate. -/
+noncomputable def L0_marginal (cfg : RSAConfig U W) (l : cfg.Latent) (u : U)
+    (P : W → Bool) : ℝ :=
+  ∑ w ∈ Finset.univ.filter (fun w => P w = true), cfg.L0 l u w
+
 -- ============================================================================
 -- S1: Pragmatic Speaker
 -- ============================================================================

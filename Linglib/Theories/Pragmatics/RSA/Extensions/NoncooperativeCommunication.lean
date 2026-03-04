@@ -1,5 +1,4 @@
 import Linglib.Theories.Pragmatics.RSA.Extensions.ArgumentativeStrength
-import Linglib.Theories.Pragmatics.RSA.Implementations.BarnettEtAl2022
 import Linglib.Theories.Pragmatics.RSA.Core.CombinedUtility
 import Mathlib.Data.Rat.Defs
 import Mathlib.Tactic.Ring
@@ -53,7 +52,6 @@ namespace RSA.NoncooperativeCommunication
 
 open RSA.ArgumentativeStrength
 open RSA.CombinedUtility
-open RSA.Implementations.BarnettEtAl2022
 
 
 -- ============================================================
@@ -86,26 +84,18 @@ def orientationOf (goalWeight : ℚ) : SpeakerOrientation :=
 -- Section 3: Bridge — @cite{barnett-griffiths-hawkins-2022}
 -- ============================================================
 
-/-- Barnett et al.'s Eq. 6 is literally goalOrientedUtility (via the
-`eq6` abbreviation in BarnettEtAl2022). -/
-theorem barnett_eq6_is_goalOriented (uEpi uPers β : ℚ) :
-    eq6 uEpi uPers β = goalOrientedUtility uEpi uPers β := rfl
-
-/-- Transitivity: Barnett eq6 → goalOriented → combinedWeighted.
-All three representations are literally the same function. -/
+/-- goalOrientedUtility and combinedWeighted are literally the same function
+(up to the (1,β) scaling). -/
 theorem barnett_goalOriented_combinedWeighted (uEpi uPers β : ℚ) :
-    eq6 uEpi uPers β = goalOrientedUtility uEpi uPers β ∧
     goalOrientedUtility uEpi uPers β = combinedWeighted 1 β uEpi uPers :=
-  ⟨rfl, goalOriented_eq_combinedWeighted uEpi uPers β⟩
+  goalOriented_eq_combinedWeighted uEpi uPers β
 
-/-- All representations agree at β=0: cooperative RSA. -/
+/-- Both representations agree at β=0: cooperative RSA. -/
 theorem all_cooperative_at_zero (uEpi uGoal : ℚ) :
     goalOrientedUtility uEpi uGoal 0 = uEpi ∧
-    eq6 uEpi uGoal 0 = uEpi ∧
     combinedWeighted 1 0 uEpi uGoal = uEpi := by
-  refine ⟨?_, ?_, ?_⟩
+  refine ⟨?_, ?_⟩
   · exact goalOriented_cooperative uEpi uGoal
-  · exact goalOriented_cooperative uEpi uGoal  -- eq6 = goalOrientedUtility
   · unfold combinedWeighted; ring
 
 
@@ -340,12 +330,12 @@ theorem fullModel_standard (uEpi uGoal l1Post l0Post : ℚ) :
 /-- Barnett et al.'s Eq. 6 (additive: U + β·V) is a scaled version of the
 convex `combined` form used in `fullModel`:
 
-  eq6 uEpi uGoal β = (1+β) · combined(β/(1+β), uEpi, uGoal)
+  goalOrientedUtility uEpi uGoal β = (1+β) · combined(β/(1+β), uEpi, uGoal)
 
 Since scaling by (1+β) > 0 preserves ranking, the additive and convex
 parameterizations are strategically equivalent. -/
-theorem barnett_eq6_via_combined (uEpi uGoal β : ℚ) (hβ : 0 ≤ β) :
-    eq6 uEpi uGoal β = (1 + β) * combined (betaToLam β) uEpi uGoal :=
+theorem barnett_goalOrientedUtility_via_combined (uEpi uGoal β : ℚ) (hβ : 0 ≤ β) :
+    goalOrientedUtility uEpi uGoal β = (1 + β) * combined (betaToLam β) uEpi uGoal :=
   goalOriented_eq_scaled_combined uEpi uGoal β hβ
 
 

@@ -21,6 +21,8 @@ The `rsa_predict` tactic proves ℝ comparison goals on RSA models by:
 
 ## Supported Goal Forms
 
+- `cfg.L0 l u w₁ > cfg.L0 l u w₂` — L0 world comparison
+- `cfg.L0_marginal l u P₁ > cfg.L0_marginal l u P₂` — L0 marginal comparison
 - `cfg.L1 u w₁ > cfg.L1 u w₂` — L1 world comparison
 - `cfg.L1_latent u l₁ > cfg.L1_latent u l₂` — latent variable inference
 - `Σ cfg.L1 u wᵢ > Σ cfg.L1 u wⱼ` — marginal comparison (same utterance)
@@ -132,6 +134,8 @@ register_option rsa_predict.skipReflection : Bool := {
 /-- `rsa_predict` proves RSA prediction goals by level-aware interval arithmetic.
 
     Supported goal forms:
+    - `cfg.L0 l u w₁ > cfg.L0 l u w₂` — L0 world comparison
+    - `cfg.L0_marginal l u P₁ > cfg.L0_marginal l u P₂` — L0 marginal comparison
     - `cfg.L1 u w₁ > cfg.L1 u w₂` — L1 world comparison
     - `¬(cfg.L1 u w₁ > cfg.L1 u w₂)` — L1 non-strict (implicature canceled)
     - `cfg.L1_latent u l₁ > cfg.L1_latent u l₂` — latent inference
@@ -143,6 +147,7 @@ register_option rsa_predict.skipReflection : Bool := {
     - `cfg.L1 u w₁ = cfg.L1 u w₂` — L1 equality (score symmetry)
     - `Σ s, cfg.L1 u (s, a₁) > Σ s, cfg.L1 u (s, a₂)` — marginal comparison
     - `cfg.L1_marginal u P₁ > cfg.L1_marginal u P₂` — marginal via predicate
+    - `cfg.L0_marginal l u P₁ > cfg.L0_marginal l u P₂` — L0 marginal via predicate
     - `cfg.L1 u₁ w₁ +... > cfg.L1 u₂ w₃ +...` — cross-utterance sum
     - `cfg₁.L1 u₁ w₁ +... > cfg₂.L1 u₂ w₃ +...` — cross-config sum -/
 elab "rsa_predict" : tactic => do
@@ -947,5 +952,72 @@ elab "rsa_predict" : tactic => do
       #[s2Agent, w₁, w₂, u, htot1Pos, htot2Pos, hcross]
     assignWithCastFallback goal proof
     logInfo m!"rsa_predict: ✓ proved via compositional proof (S2 cross-world)"
+
+  | .l0Compare cfg l u w₁ w₂ => do
+    logInfo m!"rsa_predict: parsed goal as L0 comparison"
+    let cfgType ← whnf (← inferType cfg)
+    let W := cfgType.getAppArgs[1]!
+    let (_, allWElems) ← getFiniteElems W
+    let w1Idx ← findElemIdx allWElems w₁
+    let w2Idx ← findElemIdx allWElems w₂
+    let score1 ← buildL0PolicyCProof cfg l u allWElems w1Idx
+    let score2 ← buildL0PolicyCProof cfg l u allWElems w2Idx
+    logInfo m!"rsa_predict: L0(u, w₁) ∈ [{score1.lo}, {score1.hi}]"
+    logInfo m!"rsa_predict: L0(u, w₂) ∈ [{score2.lo}, {score2.hi}]"
+    unless score2.hi < score1.lo do
+      throwError "rsa_predict: L0 scores not separated: w₂.hi = {score2.hi} ≥ w₁.lo = {score1.lo}"
+    let hi2E ← mkAppM ``QInterval.hi #[score2.iExpr]
+    let lo1E ← mkAppM ``QInterval.lo #[score1.iExpr]
+    let sepProof ← proveQPropND (← mkAppM ``LT.lt #[hi2E, lo1E])
+    let hgt ← mkAppM ``QInterval.gt_of_separated #[score1.proof, score2.proof, sepProof]
+    let l0Agent ← mkAppM ``RSA.RSAConfig.L0agent #[cfg, l]
+    let proof ← mkAppM ``Core.RationalAction.policy_gt_of_score_gt #[l0Agent, u, w₁, w₂, hgt]
+    assignWithCastFallback goal proof
+    logInfo m!"rsa_predict: ✓ proved via compositional proof (L0 comparison)"
+
+  | .l0Marginal cfg l u ws₁ ws₂ => do
+    logInfo m!"rsa_predict: parsed goal as L0 marginal ({ws₁.size} vs {ws₂.size} worlds)"
+    let cfgType ← whnf (← inferType cfg)
+    let W := cfgType.getAppArgs[1]!
+    let (_, allWElems) ← getFiniteElems W
+    -- Build L0 policy CProofs for all worlds
+    let mut allL0Proofs : Array CProof := #[]
+    for wIdx in List.range allWElems.size do
+      allL0Proofs := allL0Proofs.push (← buildL0PolicyCProof cfg l u allWElems wIdx)
+    -- Sum total L0 scores (for policy_list_sum_gt)
+    let totalProof ← buildChainAdd allL0Proofs
+    -- Sum scores for each side
+    let mut side1 : Array CProof := #[]
+    for w in ws₁ do
+      let wIdx ← findElemIdx allWElems w
+      side1 := side1.push allL0Proofs[wIdx]!
+    let sum1 ← buildChainAdd side1
+    let mut side2 : Array CProof := #[]
+    for w in ws₂ do
+      let wIdx ← findElemIdx allWElems w
+      side2 := side2.push allL0Proofs[wIdx]!
+    let sum2 ← buildChainAdd side2
+    logInfo m!"rsa_predict: L0 marginal₁ ∈ [{sum1.lo}, {sum1.hi}]"
+    logInfo m!"rsa_predict: L0 marginal₂ ∈ [{sum2.lo}, {sum2.hi}]"
+    unless sum2.hi < sum1.lo do
+      throwError "rsa_predict: L0 marginal scores not separated: hi₂ = {sum2.hi} ≥ lo₁ = {sum1.lo}"
+    -- Prove score-sum separation
+    let hi2E ← mkAppM ``QInterval.hi #[sum2.iExpr]
+    let lo1E ← mkAppM ``QInterval.lo #[sum1.iExpr]
+    let sepProof ← proveQPropND (← mkAppM ``LT.lt #[hi2E, lo1E])
+    let hgt ← mkAppM ``QInterval.gt_of_separated #[sum1.proof, sum2.proof, sepProof]
+    -- Prove totalScore > 0
+    let l0Agent ← mkAppM ``RSA.RSAConfig.L0agent #[cfg, l]
+    let zeroQ ← mkAppOptM ``OfNat.ofNat #[mkConst ``Rat, mkRawNatLit 0, none]
+    let totLo ← mkAppM ``QInterval.lo #[totalProof.iExpr]
+    let htotLoPos ← proveQPropND (← mkAppM ``LT.lt #[zeroQ, totLo])
+    let htotPos ← mkAppM ``QInterval.pos_of_lo_pos #[totalProof.proof, htotLoPos]
+    -- Apply policy_list_sum_gt
+    let ws1ListExpr ← mkListLit W ws₁.toList
+    let ws2ListExpr ← mkListLit W ws₂.toList
+    let proof ← mkAppM ``Core.RationalAction.policy_list_sum_gt
+      #[l0Agent, u, ws1ListExpr, ws2ListExpr, hgt, htotPos]
+    assignWithCastFallback goal proof
+    logInfo m!"rsa_predict: ✓ proved via compositional proof (L0 marginal)"
 
 end Linglib.Tactics

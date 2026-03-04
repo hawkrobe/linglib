@@ -242,7 +242,15 @@ theorem evalL0Exact_sound (d : RSAConfigData U W) (l : d.Latent) (u : U) (w : W)
     (↑(evalL0Exact d.meaning l u w) : ℝ) = (d.toRSAConfig.L0agent l).policy u w := by
   simp only [evalL0Exact, RSAConfigData.toRSAConfig, RSAConfig.L0agent]
   simp only [RationalAction.policy, RationalAction.totalScore]
-  sorry  -- TODO: cast distribution proof
+  conv_rhs =>
+    rw [show (∑ a : W, (↑(d.meaning l u a) : ℝ)) = ↑(Finset.univ.sum (d.meaning l u))
+        from by push_cast; rfl]
+  by_cases h : Finset.univ.sum (d.meaning l u) = 0
+  · simp [h]
+  · have hne : (↑(Finset.univ.sum (d.meaning l u)) : ℝ) ≠ 0 := by exact_mod_cast h
+    simp only [h, hne, ↓reduceIte]
+    push_cast
+    rfl
 
 -- ============================================================================
 -- Soundness: S1 Score

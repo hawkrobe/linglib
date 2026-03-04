@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.228.10] - 2026-03-04
+
+### Added
+- **rsa_predict L0 support**: Added `L0_marginal` to RSAConfig, with `parseL0Marginal`, `parseL0Policy` goal parsing and L0 dispatch in rsa_predict tactic
+- **BarnettEtAl2022**: Migrated from `Theories/Pragmatics/RSA/Implementations/` to `Phenomena/ScalarImplicatures/Studies/` with RSAConfig + rsa_predict. Consolidated `WeakEvidenceEffect.lean` experimental data into single study file. 5 rsa_predict theorems (3 L0, 2 L1), L0 monotonicity, argumentative strength bridge, model-predicts-interaction end-to-end theorem. Fixed hallucinated `pragmaticMixWeight` (0.99 → 0.97 per appendix), fabricated literal group CIs, inconsistent response offset. Removed standalone Q RSA reimplementation per RSAConfig-only policy
+
+### Changed
+- **NoncooperativeCommunication**: Replaced `eq6` alias with direct `goalOrientedUtility` calls, removed import of old BarnettEtAl2022 implementation
+- **QInterval**: Rewrote `truncDown`/`truncUp` using `Int.floor`/`Int.ceil` with soundness lemmas
+
+### Removed
+- `Theories/Pragmatics/RSA/Implementations/BarnettEtAl2022.lean` (migrated to Phenomena)
+- `Phenomena/ScalarImplicatures/WeakEvidenceEffect.lean` (consolidated into study file)
+
 ## [0.228.9] - 2026-03-04
 
 ### Changed

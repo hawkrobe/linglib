@@ -40,6 +40,7 @@ import Linglib.Core.Discourse.AtIssueness
 import Linglib.Core.Interface
 import Linglib.Core.StructuralEquationModel
 import Linglib.Core.CausalBayesNet
+import Linglib.Core.NestedRestriction
 import Linglib.Core.Root
 import Linglib.Core.RootDimensions
 import Linglib.Theories.Semantics.Lexical.Verb.VerbEntry
@@ -602,6 +603,7 @@ import Linglib.Phenomena.Reference.Studies.RonderosEtAl2024
 import Linglib.Phenomena.Reference.Studies.SedivyEtAl1999
 import Linglib.Phenomena.ScalarImplicatures.Basic
 import Linglib.Phenomena.ScalarImplicatures.Studies.BaleEtAl2025
+import Linglib.Phenomena.ScalarImplicatures.Studies.BarnettEtAl2022
 import Linglib.Phenomena.ScalarImplicatures.Studies.CremersWilcoxSpector2023
 import Linglib.Phenomena.ScalarImplicatures.Studies.GeurtsPouscoulous2009
 import Linglib.Phenomena.ScalarImplicatures.Studies.MeyerFeiman2021
@@ -634,7 +636,6 @@ import Linglib.Phenomena.WordOrder.VerbPosition
 import Linglib.Phenomena.WordOrder.Gradience
 import Linglib.Phenomena.WordOrder.Studies.HahnDegenFutrell2021
 import Linglib.Phenomena.TenseAspect.Studies.Rouillard2026
-import Linglib.Phenomena.ScalarImplicatures.WeakEvidenceEffect
 import Linglib.Phenomena.ScalarImplicatures.Studies.Horn1972
 import Linglib.Phenomena.ScalarImplicatures.Studies.RelevanceTheory
 import Linglib.Phenomena.ScalarImplicatures.Studies.Geurts2010
@@ -1137,7 +1138,6 @@ import Linglib.Theories.Pragmatics.RSA.Extensions.InformationTheory.UtilityDynam
 import Linglib.Theories.Pragmatics.RSA.Extensions.InformationTheory.UtilityNonMonotonicity
 import Linglib.Theories.Pragmatics.RSA.Extensions.LexicalUncertainty.Basic
 import Linglib.Theories.Pragmatics.RSA.Extensions.LexicalUncertainty.Compositional
-import Linglib.Theories.Pragmatics.RSA.Implementations.BarnettEtAl2022
 import Linglib.Theories.Pragmatics.RSA.Implementations.BellerGerstenberg2025
 import Linglib.Theories.Pragmatics.RSA.Implementations.BergenGoodman2015
 import Linglib.Theories.Pragmatics.RSA.Implementations.CremersWilcoxSpector2023
