@@ -3,7 +3,9 @@ import Linglib.Theories.Semantics.Lexical.Determiner.Quantifier
 /-!
 # Quantifier Domain Restriction
 
-@cite{ritchie-schiller-2024} @cite{bach-1994} @cite{cutting-vishton-1995} @cite{previc-1998} @cite{stanley-szab-2000} @cite{von-fintel-1994}Ritchie, H. & Schiller, K. (2024). Default Domain Restriction Possibilities. @cite{barwise-cooper-1981}
+@cite{ritchie-schiller-2024} @cite{bach-1994} @cite{cutting-vishton-1995} @cite{previc-1998} @cite{stanley-szab-2000} @cite{von-fintel-1994} @cite{barwise-cooper-1981}
+
+@cite{ritchie-schiller-2024}: Default Domain Restriction Possibilities.
 *Semantics & Pragmatics* 17, Article 13: 1–49.
 
 ## Core Idea
@@ -159,6 +161,24 @@ theorem every_restricted_spectator {m : Model} [FiniteModel m]
   simp only [every_restricted, every_sem]
   congr 1; funext x
   cases hC : C x <;> cases hR : R x <;> simp_all
+
+open Core.Quantification (Conservative GQ) in
+/-- Conservativity is preserved under domain restriction: if Q is conservative,
+    then Q restricted by any domain predicate C is also conservative.
+    Generalizes `every_restricted_conservative` from `every_sem` to any
+    conservative GQ. This is the formal justification for the DDRP
+    infrastructure: @cite{barwise-cooper-1981}'s conservativity universal
+    guarantees that C-intersection preserves the fundamental GQ property. -/
+theorem conservative_domain_restricted {E : Type*}
+    {Q : GQ E} {C : DomainRestrictor E}
+    (hQ : Conservative Q) :
+    Conservative (λ R S => Q (λ x => C x && R x) S) := by
+  intro R S
+  show Q (λ x => C x && R x) S = Q (λ x => C x && R x) (λ x => R x && S x)
+  have h1 := hQ (λ x => C x && R x) S
+  have h2 := hQ (λ x => C x && R x) (λ x => R x && S x)
+  rw [h1, h2]
+  congr 1; funext x; cases C x <;> cases R x <;> cases S x <;> rfl
 
 -- ============================================================================
 -- §5. Spatial Scale & DDRP

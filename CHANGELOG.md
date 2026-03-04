@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.228.0] - 2026-03-03
+
+### Added
+- **DomainRestriction: `conservative_domain_restricted`**: general GQ theorem proving conservativity is preserved under domain restriction by any predicate C. Generalizes the specific `every_restricted_conservative`.
+- **BarwiseCooper1981 → DomainRestriction bridge**: `domain_restriction_preserves_conservativity` theorem applying `conservative_domain_restricted` + `conservativity_universal` to show all 6 English quantity words remain conservative under any domain restrictor. Connects B&C's Conjecture 1 to Ritchie & Schiller (2024) DDRPs.
+
 ## [0.227.99] - 2026-03-03
 
 ### Added

@@ -1,5 +1,6 @@
 import Linglib.Core.Empirical
 import Linglib.Fragments.English.Determiners
+import Linglib.Theories.Semantics.Lexical.Determiner.DomainRestriction
 
 /-!
 # Quantifier Universals Bridge
@@ -34,6 +35,8 @@ to the GQ property predicates in `Core.Quantification` and
 - **Concrete denotations**: `Semantics.Lexical.Determiner.Quantifier` —
   `every_sem`, `some_sem`, `no_sem`, `most_sem`, `few_sem`, `half_sem`
 - **Fragment entries**: `Fragments.English.Determiners.QuantityWord.gqDenotation`
+- **Domain restriction**: `Semantics.Lexical.Determiner.DomainRestriction` —
+  `DomainRestrictor`, `DDRP`, `conservative_domain_restricted`
 - **Impossibility theorems**: `Core.Quantification.NumberTreeGQ` —
   `no_asymmetric`, `no_strict_partial_order`, `no_euclidean`
 - **Counting formula**: `Core.Quantification.conservativeQuantifierCount`
@@ -47,6 +50,8 @@ open Core.Quantification (Conservative QuantityInvariant LeftAntiAdditive
   PositiveStrong ScopeUpwardMono QSymmetric)
 open Semantics.Montague (Model)
 open Semantics.Lexical.Determiner.Quantifier (FiniteModel)
+open Semantics.Lexical.Determiner.DomainRestriction (DomainRestrictor
+  conservative_domain_restricted)
 
 -- ============================================================================
 -- @cite{barwise-cooper-1981}: Conservativity is (near-)universal
@@ -335,5 +340,30 @@ theorem positive_strong_determiners_upward_monotone :
      `all_inferential_bridge`, `some_inferential_bridge`, `none_inferential_bridge`
 
    TODO: State as a theorem characterizing the Square from inferential conditions. -/
+
+-- ============================================================================
+-- §7. Conservativity Enables Domain Restriction
+-- @cite{barwise-cooper-1981} + @cite{ritchie-schiller-2024}
+-- ============================================================================
+
+/-- Conservativity universally enables domain restriction: all 6 English
+    quantity words remain conservative under any domain restrictor C.
+
+    This connects @cite{barwise-cooper-1981}'s Conjecture 1 (all simple
+    determiners are conservative) to @cite{ritchie-schiller-2024}'s DDRPs.
+    Domain restriction via C-intersection is well-defined for the entire
+    English determiner system because every lexicalized determiner is
+    conservative.
+
+    Cross-references:
+    - `conservative_domain_restricted` (general GQ theorem)
+    - `DDRP` structure (nested spatial regions → candidate restrictors)
+    - `RitchieSchiller2024.lean` (full RSA model with DDRPs) -/
+theorem domain_restriction_preserves_conservativity :
+    ∀ (q : QuantityWord) (m : Model) [FiniteModel m]
+      (C : DomainRestrictor m.Entity),
+    Conservative (λ R S => q.gqDenotation m (λ x => C x && R x) S) := by
+  intro q m inst C
+  exact conservative_domain_restricted (conservativity_universal q m)
 
 end Phenomena.Quantification.Bridge
