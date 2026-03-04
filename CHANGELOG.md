@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.227.97] - 2026-03-03
+
+### Added
+- **Dale & Reiter (1995) — Incremental Algorithm for REG**: new study file formalizing the four Brevity interpretations (Full Brevity, Greedy Heuristic, Local Brevity, No Brevity) of Grice's Q2 maxim, and the Incremental Algorithm (Figure 6). `REGAttribute` maps modifier attributes to `PropertyDomain`. Worked example (§4.4, kennel domain) verified via `native_decide`. Non-minimality example (cups) demonstrates that the IA can produce globally redundant descriptions depending on preference order. Linking theorems connect preference ordering to RSA noise discrimination (colour > size > material).
+- **Cross-study chain: Gricean Maxims → D&R → RSA**: Engelhardt (2006) gains `supports_noBrevity` theorem connecting over-description data to D&R's No-Brevity interpretation. KursatDegen (2021) gains `discrimination_predicts_preference` connecting noise ordering to D&R's `PreferredAttributes`.
+
 ## [0.227.96] - 2026-03-03
 
 ### Added

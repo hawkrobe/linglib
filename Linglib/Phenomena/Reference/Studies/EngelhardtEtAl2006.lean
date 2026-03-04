@@ -1,9 +1,10 @@
 import Linglib.Theories.Pragmatics.GriceanMaxims
 import Linglib.Phenomena.Reference.Studies.SedivyEtAl1999
+import Linglib.Phenomena.Reference.Studies.DaleReiter1995
 
 /-!
 # @cite{engelhardt-etal-2006}
-@cite{sedivy-etal-1999} @cite{grice-1975}
+@cite{sedivy-etal-1999} @cite{grice-1975} @cite{dale-reiter-1995}
 
 Do Speakers and Listeners Observe the Gricean Maxim of Quantity?
 *Journal of Memory and Language* 54(4), 554–573.
@@ -257,5 +258,30 @@ theorem moderately_gricean :
     exp3_headNoun_firstPass.anova.significant ∧
     exp3_postNoun_regressions.anova.significant := by
   refine ⟨?_, by decide, rfl, rfl, rfl⟩; native_decide
+
+-- ============================================================================
+-- § Bridge: Support for No-Brevity (Dale & Reiter 1995)
+-- ============================================================================
+
+/-- @cite{dale-reiter-1995} argue that Q2 should be interpreted as
+    "No Brevity" — speakers use a fixed preference order and include
+    any discriminating attribute without optimizing for brevity.
+    This study provides direct empirical support:
+
+    1. Speakers over-describe 31% of the time (Q2 violated in production)
+    2. Over-descriptions are not penalized in judgment (Q2 tolerated)
+    3. Under-descriptions ARE penalized (Q1 enforced)
+
+    This matches the No-Brevity regime: Q1 is enforced, Q2 is not. -/
+theorem supports_noBrevity :
+    -- Production: speakers over-describe (consistent with No-Brevity)
+    exp1_target_1ref.modified > 0.2 ∧
+    -- Judgment: over-description not penalized (Q2 not enforced)
+    ¬exp2_target_1ref.significant ∧
+    -- Judgment: under-description penalized (Q1 enforced)
+    exp2_target_2ref.significant ∧
+    -- No Brevity is the weakest Q2 interpretation
+    DaleReiter1995.BrevityInterpretation.noBrevity.strength = 0 := by
+  refine ⟨?_, by decide, rfl, rfl⟩; native_decide
 
 end Phenomena.Reference.Studies.EngelhardtEtAl2006

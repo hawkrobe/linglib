@@ -314,4 +314,27 @@ theorem converging_production_with_engelhardt :
     propertyToDiscrimination .color > propertyToDiscrimination .material := by
   refine ⟨?_, rfl, ?_, ?_⟩ <;> native_decide
 
+-- ============================================================================
+-- § Connection to @cite{dale-reiter-1995}
+-- ============================================================================
+
+/-- @cite{dale-reiter-1995}'s Incremental Algorithm uses a fixed
+    `PreferredAttributes` list. This study's Exp 2 data — colour used
+    redundantly more than material (β = 2.32) — suggests the preference
+    ordering should track discrimination: higher-discrimination
+    properties (colour) are preferred over lower ones (material).
+
+    The noise discrimination ordering (colour > size > material) from
+    `RSA.Noise` provides exactly this ranking, connecting D&R's
+    preference-based REG to RSA's noise-based semantics. -/
+theorem discrimination_predicts_preference :
+    -- Noise ordering: colour > size > material
+    propertyToDiscrimination .color > propertyToDiscrimination .size ∧
+    propertyToDiscrimination .size > propertyToDiscrimination .material ∧
+    -- Empirical: colour used redundantly more than material
+    exp2_redundancy.significant ∧ exp2_redundancy.beta > 0 ∧
+    -- D&R's No-Brevity is the weakest Q2 interpretation
+    DaleReiter1995.BrevityInterpretation.noBrevity.strength = 0 := by
+  refine ⟨by native_decide, by native_decide, rfl, ?_, rfl⟩; native_decide
+
 end Phenomena.Reference.Studies.KursatDegen2021
