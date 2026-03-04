@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.228.17] - 2026-03-04
+
+### Fixed
+- **ScontrasTonhauser2025**: Proved `bel_qud_marginal_eq_prior_high` and `bel_qud_marginal_eq_prior_low` (removed `sorry`). These are structural identity proofs that under BEL? QUD, L1_marginal(C|u) = P(C) for all utterances — the complement dimension washes out because S1 scores are BEL-invariant
+
 ## [0.228.16] - 2026-03-04
 
 ### Changed
