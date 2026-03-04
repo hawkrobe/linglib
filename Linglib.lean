@@ -82,6 +82,8 @@ import Linglib.Core.Case.Hierarchy
 import Linglib.Core.Case.Syncretism
 import Linglib.Core.Case.SplitConditions
 import Linglib.Core.Case.LocalExtension
+import Linglib.Core.Relativization.Basic
+import Linglib.Core.Relativization.Hierarchy
 import Linglib.Core.Lexical.NounCategorization
 import Linglib.Core.Scales.Roundness
 import Linglib.Core.Scales.EpistemicScale.Defs
@@ -122,6 +124,7 @@ import Linglib.Tactics.NonnegOfForall
 import Linglib.Tactics.RSAPredict
 import Linglib.Tactics.OntSort
 -- Fragments
+import Linglib.Fragments.Arabic.Relativization
 import Linglib.Fragments.Dutch.Nouns
 import Linglib.Fragments.Dutch.Particles
 import Linglib.Fragments.English.Determiners
@@ -142,6 +145,7 @@ import Linglib.Fragments.English.TemporalDeictic
 import Linglib.Fragments.English.TemporalExpressions
 import Linglib.Fragments.English.Conditionals
 import Linglib.Fragments.English.Phonology
+import Linglib.Fragments.English.Relativization
 import Linglib.Fragments.Bulgarian.Evidentials
 import Linglib.Fragments.Czech.Case
 import Linglib.Fragments.Czech.Determiners
@@ -161,6 +165,7 @@ import Linglib.Fragments.Greek.Case
 import Linglib.Fragments.Greek.TemporalConnectives
 import Linglib.Fragments.Greek.TemporalDeictic
 import Linglib.Fragments.Hebrew.TemporalDeictic
+import Linglib.Fragments.Hebrew.Relativization
 import Linglib.Fragments.HindiUrdu.Particles
 import Linglib.Fragments.Hungarian.Case
 import Linglib.Fragments.Hungarian.Coordination
@@ -172,6 +177,7 @@ import Linglib.Fragments.Finnish.Negation
 import Linglib.Fragments.Finnish.Predicates
 import Linglib.Fragments.Finnish.TemporalConnectives
 import Linglib.Fragments.Finnish.VowelHarmony
+import Linglib.Fragments.Finnish.Relativization
 import Linglib.Fragments.French.Nouns
 import Linglib.Fragments.French.Predicates
 import Linglib.Fragments.Irish.Coordination
@@ -209,6 +215,7 @@ import Linglib.Fragments.Basque.Pronouns
 import Linglib.Fragments.Basque.Agreement
 import Linglib.Fragments.Magahi.Pronouns
 import Linglib.Fragments.Korean.Pronouns
+import Linglib.Fragments.Korean.Relativization
 import Linglib.Fragments.Japanese.Pronouns
 import Linglib.Fragments.Tamil.Case
 import Linglib.Fragments.Tamil.Pronouns
@@ -249,6 +256,9 @@ import Linglib.Fragments.Kaqchikel.Agreement
 import Linglib.Fragments.Kiche.ExtractionMorphology
 import Linglib.Fragments.Chuj.VerbBuilding
 import Linglib.Fragments.Chuj.ModalIndefinites
+import Linglib.Fragments.Malagasy.Relativization
+import Linglib.Fragments.TobaBatak.Relativization
+import Linglib.Fragments.Welsh.Relativization
 -- Phenomena
 import Linglib.Phenomena.Causatives.Studies.SpalekMcNally.Data
 import Linglib.Phenomena.TenseAspect.Studies.AlstottAravind2026
@@ -574,6 +584,7 @@ import Linglib.Phenomena.Questions.Studies.TurkHirschInce2026
 import Linglib.Phenomena.Questions.Studies.Xiang2022
 import Linglib.Phenomena.Reference.Studies.AnandNevins2004
 import Linglib.Phenomena.Reference.Studies.CohnGordonEtAl2019
+import Linglib.Phenomena.Reference.Studies.DaleReiter1995
 import Linglib.Phenomena.Reference.Studies.EngelhardtEtAl2006
 import Linglib.Phenomena.Reference.DirectReference
 import Linglib.Phenomena.Reference.Studies.FrankGoodman2012
@@ -1131,7 +1142,7 @@ import Linglib.Theories.Pragmatics.RSA.Implementations.HardingGerstenbergIcard20
 import Linglib.Theories.Pragmatics.RSA.Implementations.HawkinsEtAl2025
 import Linglib.Theories.Pragmatics.RSA.Implementations.HawkinsGweonGoodman2021
 import Linglib.Phenomena.Gradability.Studies.Nouwen2024RSA
-import Linglib.Theories.Pragmatics.RSA.Implementations.PottsEtAl2016
+
 import Linglib.Theories.Pragmatics.RSA.Implementations.QingEtAl2016
 import Linglib.Theories.Pragmatics.RSA.Implementations.ScontrasTonhauser2025
 import Linglib.Theories.Pragmatics.RSA.Implementations.ScopeFreezing

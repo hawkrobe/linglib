@@ -220,12 +220,12 @@ structure DEContextAgreement where
 /--
 For "some" under "no one":
 - NeoGricean: Scale reversal blocks "not all"
-- RSA: Global interpretation preferred (proven in PottsLU)
+- RSA: Global interpretation preferred (proven in @cite{potts-etal-2016} study)
 -/
 def some_de_agreement : DEContextAgreement where
   scalarItem := "some"
   neoGricean_blocks := true  -- From NeoGricean.ScalarImplicatures
-  rsa_prefers_global := true -- From RSA.PottsLU
+  rsa_prefers_global := true -- From PottsEtAl2016 study
   agreement := λ _ => rfl
 
 -- Structural Comparison
