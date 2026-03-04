@@ -139,12 +139,14 @@ def extractionData : List ExtractionDatum :=
 def tbExtractionProfile : Interfaces.ExtractionProfile :=
   { language := "Toba Batak"
     strategy := .structuralRestriction
-    markedPositions := [.subject, .directObject]
+    markedPositions := [.subject]
     distinguishesPosition := true
-    notes := "Only the pivot (voice-determined) can be extracted; " ++
-             "restriction derived from predicate fronting + " ++
-             "nominal licensing: non-pivot DPs in Spec,CP lack " ++
-             "a Case licensor (Erlewine 2018, §4)" }
+    notes := "Only the pivot (= surface subject) can be extracted; " ++
+             "voice alternation (AV/OV) determines which thematic " ++
+             "role occupies the pivot, but the extractable structural " ++
+             "position is always subject. Restriction derived from " ++
+             "predicate fronting + nominal licensing: non-pivot DPs " ++
+             "in Spec,CP lack a Case licensor (@cite{erlewine-2018}, §4)" }
 
 -- ============================================================================
 -- § 6: Voice System Profile
@@ -160,7 +162,7 @@ def tbVoiceSystem : Interfaces.VoiceSystemProfile :=
   { language := "Toba Batak"
     voices := [ ⟨"Actor Voice", .agent⟩, ⟨"Object Voice", .patient⟩ ]
     symmetry := .symmetrical
-    notes := "Two-way symmetrical system (Erlewine 2018)" }
+    notes := "Two-way symmetrical system (@cite{erlewine-2018})" }
 
 theorem tb_voice_system_symmetrical :
     tbVoiceSystem.symmetry = .symmetrical := rfl

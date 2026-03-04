@@ -1,4 +1,6 @@
 import Linglib.Fragments.TobaBatak.Basic
+import Linglib.Fragments.TobaBatak.Relativization
+import Linglib.Core.Relativization.Extraction
 
 /-!
 # Toba Batak Extraction Restriction @cite{erlewine-2018}
@@ -135,5 +137,69 @@ theorem tb_strategy :
 /-- TB distinguishes extracted positions via voice (which role is pivot). -/
 theorem tb_distinguishes :
     tbExtractionProfile.distinguishesPosition = true := rfl
+
+-- ============================================================================
+-- § 5: End-to-End Derivation Chain
+-- ============================================================================
+
+/-! ### Extraction data → ExtractionProfile → AH → Relativization
+
+Connects three independent data sources through the AH bridge:
+1. Individual extraction datums (from @cite{erlewine-2018})
+2. The ExtractionProfile summary (markedPositions)
+3. RelClauseMarkers (from @cite{keenan-comrie-1977})
+
+If any link is wrong — e.g., listing `.directObject` as extractable when
+relativization markers don't cover DO — the chain breaks.
+
+Note: the extraction data uses `ArgumentRole` (agent, patient) while the
+ExtractionProfile and AH use `ExtractionTarget` (subject, directObject).
+Voice promotion means the patient's *default* position is DO, but its
+*surface* extraction position is always subject (the pivot). The chain
+must go through the ExtractionProfile, which encodes this fact. -/
+
+/-- Link 1→2: The ExtractionProfile's marked positions are exactly the
+    positions for which some voice makes a DP argument grammatically
+    extractable. Only `.subject` qualifies (the pivot position). -/
+theorem profile_matches_data :
+    tbExtractionProfile.markedPositions.all (λ pos =>
+      extractionData.any (λ d =>
+        match d.extracted with
+        | .dpArg role => role.defaultPosition == pos ∧
+                         d.judgment == .grammatical ∧
+                         d.extractsPivot
+        | .adjunct => false)) = true := by
+  native_decide
+
+/-- Link 2→3: Every extractable position (ExtractionTarget) maps to an
+    AH position that is covered by some Toba Batak relativization
+    marker. Would have failed with the old `[.subject, .directObject]`
+    because `.directObject` maps to `AHPosition.directObject`, which
+    no marker covers. -/
+theorem extractable_positions_are_relativizable :
+    tbExtractionProfile.markedPositions.all (λ et =>
+      let ahPos := Core.extractionTargetToAH et
+      relMarkers.any (·.covers ahPos)) = true := by
+  native_decide
+
+/-- Full chain (all three links as a single conjunction):
+    (1) every grammatical DP extraction extracts the pivot,
+    (2) the pivot position (subject) is in `markedPositions`, and
+    (3) every marked position maps to a relativizable AH position.
+    Connects @cite{erlewine-2018}'s extraction data through the
+    ExtractionProfile to @cite{keenan-comrie-1977}'s markers. -/
+theorem extraction_profile_relativization_chain :
+    -- Link 1: grammatical DP extraction ↔ pivot
+    (extractionData.all (λ d =>
+      match d.extracted with
+      | .dpArg _ => d.extractsPivot == (d.judgment == .grammatical)
+      | .adjunct => true)) ∧
+    -- Link 2: pivot position (subject) is in markedPositions
+    (tbExtractionProfile.marks .subject) ∧
+    -- Link 3: every marked position is relativizable via AH
+    (tbExtractionProfile.markedPositions.all (λ et =>
+      let ahPos := Core.extractionTargetToAH et
+      relMarkers.any (·.covers ahPos))) := by
+  native_decide
 
 end Phenomena.FillerGap.TobaBatak
