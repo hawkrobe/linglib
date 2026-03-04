@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.228.1] - 2026-03-03
+
+### Fixed
+- **TB ExtractionProfile**: `markedPositions` corrected from `[.subject, .directObject]` to `[.subject]` — verified against Erlewine 2018 (Language 94:662–697) that extraction always occurs from subject/pivot position; voice promotion changes thematic role, not structural extraction site.
+- **Hallucinated §4.6 references**: 10 occurrences across 3 files replaced with correct sections (§4.2 for predicate fronting, §4.3 for nominal licensing / adjunct exemption). The paper has §4.1–§4.4, no §4.6.
+- **Hallucinated example**: `avAdjunctExtraction` description replaced fabricated "Andigan mang-ida si Poltak si Ria?" with paper's actual (1b) "Andigan si Poltak man-uhor buku?".
+- **Morphophonology**: "mang-uhor" → "man-uhor" (maN-+tuhor nasal substitution), "di-uhor" → "di-tuhor" (passive attaches to full root). 4 description strings corrected.
+- **Inline citations**: "Erlewine 2018" → `@cite{erlewine-2018}` in `notes` fields.
+
+### Added
+- **End-to-end derivation chain** (`Phenomena/FillerGap/TobaBatak.lean`): 3 theorems connecting extraction datums → ExtractionProfile → AH bridge → RelClauseMarkers. `extractable_positions_are_relativizable` would have caught the old `.directObject` error.
+- **Linglib.lean imports**: `Fragments.TobaBatak.Basic`, `Phenomena.FillerGap.TobaBatak`, `Studies.Erlewine2018`.
+
 ## [0.228.0] - 2026-03-03
 
 ### Added
