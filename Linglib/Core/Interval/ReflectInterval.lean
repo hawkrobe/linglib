@@ -333,25 +333,10 @@ def RExpr.evalBoth : RExpr → QInterval × Bool
     else (⟨0, 1, by norm_num⟩, false)
 
 -- ============================================================================
--- evalBoth soundness
+-- Shared helpers for eval_sound and evalBoth_sound
 -- ============================================================================
 
-/-- Soundness of the merged eval+validity check. If `evalBoth` returns
-    `(I, true)`, then `I` contains the real denotation. This mirrors
-    `eval_sound` but avoids the redundant subexpression evaluation that
-    plagues the separate `evalValid` + `eval` approach. -/
-theorem RExpr.evalBoth_sound : ∀ (e : RExpr),
-    e.evalBoth.2 = true → e.evalBoth.1.containsReal e.denote := by
-  -- Structurally identical to eval_sound. Each case unfolds evalBoth,
-  -- destructures the pair, and applies interval lemmas.
-  -- The expMulLogSub case uses the same algebraic identity.
-  sorry
-
--- ============================================================================
--- Soundness: eval_sound
--- ============================================================================
-
-/-- Helper: the three-branch mul pattern in eval always contains v1 * v2. -/
+/-- Helper: the three-branch mul pattern always contains v1 * v2. -/
 private theorem mul_branch_containsReal {a b : QInterval} {v1 v2 : ℝ}
     (h1 : a.containsReal v1) (h2 : b.containsReal v2) :
     (if h₁ : 0 ≤ a.lo then
@@ -374,6 +359,196 @@ private theorem interval_eq_zero {I : QInterval} {x : ℝ}
 private theorem interval_pos {I : QInterval} {x : ℝ}
     (hx : I.containsReal x) (hlo : 0 < I.lo) : 0 < x :=
   lt_of_lt_of_le (by exact_mod_cast hlo) hx.1
+
+/-- rpow denote reduces to rpow for all n, bridging the 3-pattern match. -/
+private theorem rpow_denote_eq (a : RExpr) (n : ℕ) :
+    (a.rpow n).denote = a.denote ^ (↑n : ℝ) := by
+  cases n with
+  | zero => exact congr_arg (Real.rpow a.denote) Nat.cast_zero.symm
+  | succ m => cases m with
+    | zero => exact congr_arg (Real.rpow a.denote) Nat.cast_one.symm
+    | succ _ => rfl
+
+-- ============================================================================
+-- evalBoth soundness
+-- ============================================================================
+
+set_option maxHeartbeats 800000 in
+/-- Soundness of the merged eval+validity check. If `evalBoth` returns
+    `(I, true)`, then `I` contains the real denotation. This mirrors
+    `eval_sound` but avoids the redundant subexpression evaluation that
+    plagues the separate `evalValid` + `eval` approach. -/
+theorem RExpr.evalBoth_sound : ∀ (e : RExpr),
+    e.evalBoth.2 = true → e.evalBoth.1.containsReal e.denote := by
+  intro e
+  induction e with
+  | nat n =>
+    intro _
+    match n with
+    | 0 => exact QInterval.exact_zero_containsReal
+    | 1 => exact QInterval.exact_one_containsReal
+    | n + 2 => exact QInterval.exact_natCast_containsReal (n + 2)
+  | ratCast q =>
+    intro _; exact QInterval.exact_containsReal q
+  | add a b iha ihb =>
+    intro hv; dsimp only [evalBoth] at hv ⊢; simp only [Bool.and_eq_true] at hv
+    exact QInterval.coarsen_containsReal _
+      (QInterval.add_containsReal (iha hv.1) (ihb hv.2))
+  | mul a b iha ihb =>
+    intro hv; dsimp only [evalBoth, denote] at hv ⊢
+    split_ifs at hv ⊢ with h1 h2 h3 h4 <;>
+      simp only [Bool.and_eq_true] at hv <;>
+      try exact absurd rfl hv
+    · simp only [Bool.and_eq_true, beq_iff_eq] at h1
+      exact QInterval.zero_mul_containsReal (iha hv.1) h1.1 h1.2
+    · simp only [Bool.and_eq_true, beq_iff_eq] at h2
+      exact QInterval.mul_zero_containsReal (ihb hv.2) h2.1 h2.2
+    · exact QInterval.coarsen_containsReal _
+        (QInterval.mulNonneg_containsReal h3 h4 (iha hv.1) (ihb hv.2))
+    · exact QInterval.coarsen_containsReal _
+        (QInterval.mul_containsReal (iha hv.1) (ihb hv.2))
+    · exact QInterval.coarsen_containsReal _
+        (QInterval.mul_containsReal (iha hv.1) (ihb hv.2))
+  | div a b iha ihb =>
+    intro hv; dsimp only [evalBoth, denote] at hv ⊢
+    split_ifs at hv ⊢ with h1 h2 h3 <;>
+      simp only [Bool.and_eq_true] at hv <;>
+      try exact absurd rfl hv
+    · simp only [Bool.and_eq_true, beq_iff_eq] at h1
+      exact QInterval.zero_div_containsReal (iha hv.1) h1.1 h1.2
+    · exact QInterval.coarsen_containsReal _
+        (QInterval.divPos_containsReal h2 h3 (iha hv.1) (ihb hv.2))
+  | neg a iha =>
+    intro hv; exact QInterval.neg_containsReal (iha hv)
+  | sub a b iha ihb =>
+    intro hv; dsimp only [evalBoth] at hv ⊢; simp only [Bool.and_eq_true] at hv
+    exact QInterval.coarsen_containsReal _
+      (QInterval.sub_containsReal (iha hv.1) (ihb hv.2))
+  | rexp a iha =>
+    intro hv
+    exact QInterval.coarsen_containsReal _ (expInterval_containsReal (iha hv))
+  | rlog a iha =>
+    intro hv; dsimp only [evalBoth, denote] at hv ⊢
+    split_ifs at hv ⊢ with h1 h2 <;>
+      try exact absurd rfl hv
+    · exact QInterval.coarsen_containsReal _ (logInterval_containsReal h1 (iha hv))
+    · simp only [Bool.and_eq_true, beq_iff_eq] at h2
+      have haz := interval_eq_zero (iha hv) h2.1 h2.2
+      rw [haz, Real.log_zero]
+      exact_mod_cast QInterval.exact_containsReal (0 : ℚ)
+  | rpow a n iha =>
+    intro hv; dsimp only [evalBoth] at hv ⊢
+    split_ifs at hv ⊢ with h1 h2 <;>
+      try exact absurd rfl hv
+    · have h1' : n = 0 := by simpa [beq_iff_eq] using h1
+      subst h1'; exact rpowZero_containsReal a.denote
+    · rw [rpow_denote_eq]
+      exact QInterval.coarsen_containsReal _ (rpowNat_containsReal h2 (iha hv))
+  | inv a iha =>
+    intro hv; dsimp only [evalBoth, denote] at hv ⊢
+    split_ifs at hv ⊢ with h1
+    · exact QInterval.coarsen_containsReal _ (QInterval.invPos_containsReal h1 (iha hv))
+  | iteZero c' t e ihc iht ihe =>
+    intro hv; dsimp only [evalBoth] at hv ⊢
+    split_ifs at hv ⊢ with h1 h2 <;>
+      simp only [Bool.and_eq_true] at hv <;>
+      try exact absurd rfl hv
+    · -- c = [0,0] → cond = 0 → then branch
+      simp only [Bool.and_eq_true, beq_iff_eq] at h1
+      have hzero := interval_eq_zero (ihc hv.1) h1.1 h1.2
+      unfold denote; simp [hzero]; exact iht hv.2
+    · -- 0 < c.lo → cond > 0 → else branch
+      have hcond_pos := interval_pos (ihc hv.1) h2
+      unfold denote; simp [ne_of_gt hcond_pos]; exact ihe hv.2
+    · -- can't decide: union covers both branches
+      unfold denote
+      simp only [QInterval.containsReal]
+      split
+      · constructor
+        · exact le_trans (by exact_mod_cast min_le_left _ _) (iht hv.1.2).1
+        · exact le_trans (iht hv.1.2).2 (by exact_mod_cast le_max_left _ _)
+      · constructor
+        · exact le_trans (by exact_mod_cast min_le_right _ _) (ihe hv.2).1
+        · exact le_trans (ihe hv.2).2 (by exact_mod_cast le_max_right _ _)
+  | expMulLogSub α x cost ihα ihx ihc =>
+    intro hv; dsimp only [evalBoth, denote] at hv ⊢
+    split_ifs at hv ⊢ with hx hint <;>
+      simp only [Bool.and_eq_true] at hv <;>
+      try exact absurd rfl hv
+    all_goals have ha := ihα hv.1.1
+    all_goals have hxx := ihx hv.1.2
+    all_goals have hc := ihc hv.2
+    all_goals have hx_pos : 0 < denote x := interval_pos hxx hx
+    -- Non-integer path
+    all_goals first
+    | exact QInterval.coarsen_containsReal _ (expInterval_containsReal
+        (QInterval.coarsen_containsReal _ (QInterval.mul_containsReal ha
+          (QInterval.coarsen_containsReal _ (QInterval.sub_containsReal
+            (QInterval.coarsen_containsReal _ (logInterval_containsReal hx hxx)) hc)))))
+    | -- Integer path: algebraic identity exp(α*(log x - c)) = x^n * exp(-αc)
+      simp only [Bool.and_eq_true, beq_iff_eq, decide_eq_true_eq] at hint
+      obtain ⟨⟨hαeq, hαden⟩, hαnn⟩ := hint
+      have hαval : denote α = ↑(α.evalBoth.1).lo := le_antisymm (hαeq ▸ ha.2) ha.1
+      have hαq : (α.evalBoth.1).lo = (↑((α.evalBoth.1).lo.num.toNat) : ℚ) := by
+        have h1 := Rat.num_div_den (α.evalBoth.1).lo
+        rw [hαden] at h1; simp at h1
+        rw [← h1]; exact_mod_cast (Int.toNat_of_nonneg hαnn).symm
+      have hαr : denote α = (↑((α.evalBoth.1).lo.num.toNat) : ℝ) := by
+        rw [hαval, hαq]; push_cast; rfl
+      have hident : Real.exp (denote α * (Real.log (denote x) - denote cost))
+          = (denote x) ^ ((α.evalBoth.1).lo.num.toNat : ℝ) *
+            Real.exp (-(denote α * denote cost)) := by
+        rw [hαr]
+        have key : ((α.evalBoth.1).lo.num.toNat : ℝ) *
+                   (Real.log (denote x) - denote cost) =
+                   Real.log (denote x) * ((α.evalBoth.1).lo.num.toNat : ℝ) +
+                   (-(((α.evalBoth.1).lo.num.toNat : ℝ) * denote cost)) := by ring
+        rw [key, Real.exp_add]; congr 1
+        exact (Real.rpow_def_of_pos hx_pos ((α.evalBoth.1).lo.num.toNat : ℝ)).symm
+      rw [hident]
+      have h_expF : (QInterval.coarsen (expInterval ((α.evalBoth.1).mul (cost.evalBoth.1)).neg)).containsReal
+          (Real.exp (-(denote α * denote cost))) :=
+        QInterval.coarsen_containsReal _ (expInterval_containsReal
+          (QInterval.neg_containsReal (QInterval.mul_containsReal ha hc)))
+      first
+      | -- rpowNat × mulNonneg
+        exact QInterval.coarsen_containsReal _ (QInterval.mulNonneg_containsReal ‹_› ‹_›
+          (rpowNat_containsReal (le_of_lt hx) hxx) h_expF)
+      | -- rpowNat × mul
+        exact QInterval.coarsen_containsReal _ (QInterval.mul_containsReal
+          (rpowNat_containsReal (le_of_lt hx) hxx) h_expF)
+      | -- n=1 × mulNonneg
+        have h_n1 : α.evalBoth.1.lo.num.toNat = 1 := beq_iff_eq.mp (by assumption)
+        have h_xpow : x.evalBoth.1.containsReal
+            (denote x ^ ((α.evalBoth.1).lo.num.toNat : ℝ)) := by
+          rw [show ((α.evalBoth.1).lo.num.toNat : ℝ) = 1 from by exact_mod_cast h_n1]
+          rw [Real.rpow_one]; exact hxx
+        exact QInterval.coarsen_containsReal _ (QInterval.mulNonneg_containsReal ‹_› ‹_› h_xpow h_expF)
+      | -- n=1 × mul
+        have h_n1 : α.evalBoth.1.lo.num.toNat = 1 := beq_iff_eq.mp (by assumption)
+        have h_xpow : x.evalBoth.1.containsReal
+            (denote x ^ ((α.evalBoth.1).lo.num.toNat : ℝ)) := by
+          rw [show ((α.evalBoth.1).lo.num.toNat : ℝ) = 1 from by exact_mod_cast h_n1]
+          rw [Real.rpow_one]; exact hxx
+        exact QInterval.coarsen_containsReal _ (QInterval.mul_containsReal h_xpow h_expF)
+      | -- n=0 × mulNonneg
+        have h_n0 : α.evalBoth.1.lo.num.toNat = 0 := beq_iff_eq.mp (by assumption)
+        have h_xpow : (QInterval.exact 1).containsReal
+            (denote x ^ ((α.evalBoth.1).lo.num.toNat : ℝ)) := by
+          rw [show ((α.evalBoth.1).lo.num.toNat : ℝ) = 0 from by exact_mod_cast h_n0]
+          rw [Real.rpow_zero]; exact_mod_cast QInterval.exact_containsReal 1
+        exact QInterval.coarsen_containsReal _ (QInterval.mulNonneg_containsReal ‹_› ‹_› h_xpow h_expF)
+      | -- n=0 × mul
+        have h_n0 : α.evalBoth.1.lo.num.toNat = 0 := beq_iff_eq.mp (by assumption)
+        have h_xpow : (QInterval.exact 1).containsReal
+            (denote x ^ ((α.evalBoth.1).lo.num.toNat : ℝ)) := by
+          rw [show ((α.evalBoth.1).lo.num.toNat : ℝ) = 0 from by exact_mod_cast h_n0]
+          rw [Real.rpow_zero]; exact_mod_cast QInterval.exact_containsReal 1
+        exact QInterval.coarsen_containsReal _ (QInterval.mul_containsReal h_xpow h_expF)
+
+-- ============================================================================
+-- Soundness: eval_sound
+-- ============================================================================
 
 set_option maxHeartbeats 800000 in
 /-- Soundness of interval evaluation by reflection.

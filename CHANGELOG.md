@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.228.14] - 2026-03-04
+
+### Added
+- **ReflectInterval**: Proved `evalBoth_sound` — full soundness for merged eval+validity. Key fixes: `rpow_denote_eq` helper bridges 3-pattern denote match via `Nat.cast_zero/one`; iteZero uses `unfold denote` after `split_ifs` to avoid cross-product; expMulLogSub integer path handles all n-branch × mul-branch combinations
+
 ## [0.228.13] - 2026-03-04
 
 ### Fixed
