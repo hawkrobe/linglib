@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.228.16] - 2026-03-04
+
+### Changed
+- **Bibliography**: DOI hyperlinked to title, merged source/cited-in into single deduplicated "in:" list, added sort toggle (A-Z / newest), added URL hash state persistence for role/tag/search/sort, added `/` keyboard shortcut for search
+
 ## [0.228.15] - 2026-03-04
 
 ### Changed

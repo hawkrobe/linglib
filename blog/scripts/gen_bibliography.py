@@ -216,13 +216,9 @@ def html_escape(text: str) -> str:
             .replace('"', "&quot;"))
 
 
-def source_link_html(path: str) -> str:
-    p = path.strip()
-    return f'<a href="{REPO}/{p}">source</a>'
-
-
-def cited_in_link_html(path: str) -> str:
-    rel = path.removeprefix("Linglib/")
+def lean_file_link(path: str) -> str:
+    """Create a named link to a Lean file. Accepts both 'Linglib/...' and bare paths."""
+    rel = path.strip().removeprefix("Linglib/")
     short = rel.removesuffix(".lean").rsplit("/", 1)[-1]
     return f'<a href="{REPO}/{rel}">{html_escape(short)}</a>'
 
@@ -253,6 +249,7 @@ def render_entry_html(entry: dict, cited_by: dict[str, list[str]]) -> str:
         authors += " (eds.)"
     year = entry.get("year", "")
     title = entry.get("title", "")
+    doi = entry.get("doi", "")
     venue = format_venue(entry)
     role = entry.get("role", "cited")
     sources_raw = entry.get("sources", "")
@@ -262,24 +259,41 @@ def render_entry_html(entry: dict, cited_by: dict[str, list[str]]) -> str:
 
     # Build the entry HTML
     parts = []
-    parts.append(f'<div class="bib-entry" data-key="{html_escape(key)}" data-role="{html_escape(role)}" data-tag="{html_escape(tag)}">')
+    parts.append(f'<div class="bib-entry" data-key="{html_escape(key)}" data-role="{html_escape(role)}" data-tag="{html_escape(tag)}" data-year="{html_escape(year)}">')
 
-    # Main citation line
-    citation = f'<strong>{html_escape(authors)}</strong> ({html_escape(year)}). {html_escape(title)}.'
+    # Main citation line — hyperlink title to DOI if available
+    title_escaped = html_escape(title)
+    if doi:
+        title_html = f'<a href="https://doi.org/{html_escape(doi)}" class="bib-title-link">{title_escaped}</a>'
+    else:
+        title_html = title_escaped
+    citation = f'<strong>{html_escape(authors)}</strong> ({html_escape(year)}). {title_html}.'
     if venue:
         citation += f' <em>{html_escape(venue)}</em>.'
     parts.append(f'<p class="bib-citation">{citation}</p>')
 
-    # Metadata line: badge + source links + cited-in links
+    # Metadata line: badge + deduplicated file links
     badge = ROLE_BADGE.get(role, role)
     meta = f'<span class="bib-badge bib-badge-{html_escape(role)}">{html_escape(badge)}</span>'
-    for s in sources:
-        meta += f' · {source_link_html(s)}'
 
+    # Merge sources and cited-in into one deduplicated list of named file links
+    # Normalize all paths to "Linglib/"-relative for dedup
+    seen_paths: set[str] = set()
+    all_links: list[str] = []
+    for s in sources:
+        rel = s.strip().removeprefix("Linglib/")
+        if rel and rel != "crossref" and rel not in seen_paths:
+            seen_paths.add(rel)
+            all_links.append(lean_file_link(rel))
     cite_files = cited_by.get(key, [])
-    if cite_files:
-        cite_links = ", ".join(cited_in_link_html(f) for f in sorted(cite_files))
-        meta += f'<br>cited in: {cite_links}'
+    for f in sorted(cite_files):
+        rel = f.removeprefix("Linglib/")
+        if rel not in seen_paths:
+            seen_paths.add(rel)
+            all_links.append(lean_file_link(rel))
+
+    if all_links:
+        meta += f'<br>in: {", ".join(all_links)}'
 
     parts.append(f'<p class="bib-meta">{meta}</p>')
     parts.append('</div>')
@@ -419,6 +433,29 @@ SEARCH_HTML = """\
   border-color: var(--primary);
   color: var(--theme);
 }
+.bib-title-link {
+  color: var(--primary);
+  text-decoration: none;
+}
+.bib-title-link:hover {
+  text-decoration: underline;
+}
+.bib-sort-btn {
+  padding: 3px 10px;
+  font-size: 0.82em;
+  border: 1.5px solid var(--border);
+  border-radius: 5px;
+  background: var(--entry);
+  color: var(--secondary);
+  cursor: pointer;
+  transition: all 0.15s;
+  font-family: inherit;
+  line-height: 1.4;
+  margin-left: auto;
+}
+.bib-sort-btn:hover {
+  border-color: var(--secondary);
+}
 </style>
 
 <div class="bib-toolbar">
@@ -426,9 +463,10 @@ SEARCH_HTML = """\
          placeholder="Search by author, title, year, or source path..."
          autocomplete="off" spellcheck="false">
   <div class="bib-role-filters">
-    <button class="bib-role-btn active" data-role="formalized" id="bibRoleFormalized">formalized</button>
-    <button class="bib-role-btn active" data-role="foundational" id="bibRoleFoundational">foundational</button>
-    <button class="bib-role-btn" data-role="cited" id="bibRoleCited">cited</button>
+    <button class="bib-role-btn active" data-role="formalized">formalized</button>
+    <button class="bib-role-btn active" data-role="foundational">foundational</button>
+    <button class="bib-role-btn" data-role="cited">cited</button>
+    <button class="bib-sort-btn" id="bibSortBtn">A-Z</button>
   </div>
   <div class="bib-tag-filters" id="bibTagFilters"></div>
   <div class="bib-search-status" id="bibSearchStatus"></div>
@@ -465,13 +503,16 @@ def search_script(
 
   var input = document.getElementById("bibSearchInput");
   var status = document.getElementById("bibSearchStatus");
-  var allEntries = document.querySelectorAll(".bib-entry");
+  var sortBtn = document.getElementById("bibSortBtn");
+  var entryContainer = document.querySelector(".post-content");
+  var allEntries = Array.from(document.querySelectorAll(".bib-entry"));
   var roleButtons = document.querySelectorAll(".bib-role-btn");
   var tagContainer = document.getElementById("bibTagFilters");
 
   // --- State ---
   var activeRoles = new Set(["formalized", "foundational"]);
   var activeTags = new Set();  // empty = show all tags
+  var sortMode = "az";  // "az" or "year"
 
   // --- Build role button labels ---
   roleButtons.forEach(function(btn) {{
@@ -497,9 +538,34 @@ def search_script(
         activeTags.add(tag);
         this.classList.add("active");
       }}
+      updateURL();
       applyFilters();
     }});
     tagContainer.appendChild(btn);
+  }});
+
+  // --- Sorting ---
+  function sortEntries() {{
+    var sorted = allEntries.slice();
+    if (sortMode === "year") {{
+      sorted.sort(function(a, b) {{
+        return (b.dataset.year || "").localeCompare(a.dataset.year || "");
+      }});
+      sortBtn.textContent = "newest";
+    }} else {{
+      sorted.sort(function(a, b) {{
+        return (a.dataset.key || "").localeCompare(b.dataset.key || "");
+      }});
+      sortBtn.textContent = "A\\u2013Z";
+    }}
+    // Re-append in new order (moves DOM nodes without recreating)
+    sorted.forEach(function(el) {{ entryContainer.appendChild(el); }});
+  }}
+
+  sortBtn.addEventListener("click", function() {{
+    sortMode = (sortMode === "az") ? "year" : "az";
+    sortEntries();
+    updateURL();
   }});
 
   // --- Filtering ---
@@ -551,6 +617,7 @@ def search_script(
         activeRoles.add(role);
         this.classList.add("active");
       }}
+      updateURL();
       applyFilters();
     }});
   }});
@@ -559,14 +626,81 @@ def search_script(
   var debounceTimer;
   input.addEventListener("input", function() {{
     clearTimeout(debounceTimer);
-    debounceTimer = setTimeout(applyFilters, 150);
+    debounceTimer = setTimeout(function() {{
+      updateURL();
+      applyFilters();
+    }}, 150);
   }});
 
   input.addEventListener("search", function() {{
-    if (!this.value) applyFilters();
+    if (!this.value) {{
+      updateURL();
+      applyFilters();
+    }}
   }});
 
-  // --- Initial filter ---
+  // --- URL state ---
+  function updateURL() {{
+    var params = new URLSearchParams();
+    var roles = Array.from(activeRoles).sort();
+    // Only encode roles if not the default (formalized+foundational)
+    var isDefaultRoles = (roles.length === 2 && roles[0] === "formalized" && roles[1] === "foundational");
+    if (!isDefaultRoles) params.set("role", roles.join(","));
+    if (activeTags.size > 0) params.set("tag", Array.from(activeTags).sort().join(","));
+    var q = input.value.trim();
+    if (q) params.set("q", q);
+    if (sortMode !== "az") params.set("sort", sortMode);
+    var hash = params.toString();
+    history.replaceState(null, "", hash ? "#" + hash : location.pathname);
+  }}
+
+  function loadFromURL() {{
+    var hash = location.hash.replace(/^#/, "");
+    if (!hash) return;
+    var params = new URLSearchParams(hash);
+
+    if (params.has("role")) {{
+      activeRoles = new Set(params.get("role").split(",").filter(Boolean));
+      roleButtons.forEach(function(btn) {{
+        if (activeRoles.has(btn.dataset.role)) {{
+          btn.classList.add("active");
+        }} else {{
+          btn.classList.remove("active");
+        }}
+      }});
+    }}
+
+    if (params.has("tag")) {{
+      activeTags = new Set(params.get("tag").split(",").filter(Boolean));
+      tagContainer.querySelectorAll(".bib-tag-btn").forEach(function(btn) {{
+        if (activeTags.has(btn.dataset.tag)) {{
+          btn.classList.add("active");
+        }}
+      }});
+    }}
+
+    if (params.has("q")) {{
+      input.value = params.get("q");
+    }}
+
+    if (params.get("sort") === "year") {{
+      sortMode = "year";
+    }}
+  }}
+
+  // --- Keyboard shortcut: / to focus search ---
+  document.addEventListener("keydown", function(e) {{
+    if (e.key === "/" && document.activeElement !== input &&
+        document.activeElement.tagName !== "INPUT" &&
+        document.activeElement.tagName !== "TEXTAREA") {{
+      e.preventDefault();
+      input.focus();
+    }}
+  }});
+
+  // --- Initialize ---
+  loadFromURL();
+  sortEntries();
   applyFilters();
 }})();
 </script>
