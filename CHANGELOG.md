@@ -1,5 +1,23 @@
 # Changelog
 
+## [0.228.13] - 2026-03-04
+
+### Fixed
+- **ReflectInterval**: Proved `eval_sound` expMulLogSub case — the last sorry in the core soundness theorem. Integer α path uses algebraic identity `exp(α*(log x - c)) = x^α * exp(-αc)` via `rpow_def_of_pos`; non-integer path composes interval containment lemmas. Added `mul_branch_containsReal` helper for the three-branch mul pattern
+
+## [0.228.12] - 2026-03-04
+
+### Changed
+- **ScontrasTonhauser2025**: Migrated to RSAConfig + rsa_predict. Consolidated from two files (Implementations + Phenomena) into single self-contained study file. BeliefState (9 values) as latent, QUD as config parameter, world prior baked into L0 meaning. 3 rsa_predict theorems (know > think projection, high > low prior, BEL? > C? QUD). Added cPos/cNeg utterances for full 6-utterance set. Model–data conjunction tying RSA predictions to experimental effect directions
+
+### Removed
+- `Theories/Pragmatics/RSA/Implementations/ScontrasTonhauser2025.lean` (migrated to Phenomena)
+
+## [0.228.11] - 2026-03-04
+
+### Changed
+- **FrankeBergen2020**: Full rewrite with RSAConfig + rsa_predict. 7-world representation (alien type subsets), 8 grammatical parses as latent variables (GI-RSA), Innocent Exclusion exhaustification over full Aristotelian scale {none, some, all}. 5 rsa_predict theorems (L1 inner/outer exhaustification for SS, AA identification, AS inner exh, parse preference). Removed old AlienWorld structure, NeoGricean.Exhaustivity dependency, bridge namespace, sorry stubs
+
 ## [0.228.10] - 2026-03-04
 
 ### Added

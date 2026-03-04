@@ -351,6 +351,20 @@ theorem RExpr.evalBoth_sound : ∀ (e : RExpr),
 -- Soundness: eval_sound
 -- ============================================================================
 
+/-- Helper: the three-branch mul pattern in eval always contains v1 * v2. -/
+private theorem mul_branch_containsReal {a b : QInterval} {v1 v2 : ℝ}
+    (h1 : a.containsReal v1) (h2 : b.containsReal v2) :
+    (if h₁ : 0 ≤ a.lo then
+       if h₂ : 0 ≤ b.lo then c (a.mulNonneg b h₁ h₂)
+       else c (a.mul b)
+     else c (a.mul b)).containsReal (v1 * v2) := by
+  split
+  · rename_i h₁; split
+    · rename_i h₂
+      exact QInterval.coarsen_containsReal _ (QInterval.mulNonneg_containsReal h₁ h₂ h1 h2)
+    · exact QInterval.coarsen_containsReal _ (QInterval.mul_containsReal h1 h2)
+  · exact QInterval.coarsen_containsReal _ (QInterval.mul_containsReal h1 h2)
+
 /-- Key lemma: if interval proves x = 0, then x = 0. -/
 private theorem interval_eq_zero {I : QInterval} {x : ℝ}
     (hx : I.containsReal x) (hlo : I.lo = 0) (hhi : I.hi = 0) : x = 0 :=
@@ -361,6 +375,7 @@ private theorem interval_pos {I : QInterval} {x : ℝ}
     (hx : I.containsReal x) (hlo : 0 < I.lo) : 0 < x :=
   lt_of_lt_of_le (by exact_mod_cast hlo) hx.1
 
+set_option maxHeartbeats 800000 in
 /-- Soundness of interval evaluation by reflection.
 
 Every well-formed `RExpr` (one where `evalValid = true`) evaluates to a
@@ -545,11 +560,63 @@ theorem RExpr.eval_sound : ∀ (e : RExpr), e.evalValid = true →
     intro hv
     simp only [evalValid, Bool.and_eq_true, decide_eq_true_eq] at hv
     obtain ⟨⟨⟨hva, hvx⟩, hvc⟩, hxpos⟩ := hv
+    have ihα := eval_sound α hva
+    have ihx := eval_sound x hvx
+    have ihc := eval_sound cost hvc
     simp only [eval, denote]
-    -- The algebraic identity exp(α*(log(x)-c)) = x^α * exp(-α*c) is sound
-    -- because eval_sound for sub-expressions gives bounding intervals, and
-    -- interval arithmetic preserves containment through rpow, exp, mul, neg.
-    sorry
+    split
+    · rename_i hx
+      split
+      · -- Integer α path: α is a non-negative integer
+        rename_i hint
+        simp only [Bool.and_eq_true, beq_iff_eq, decide_eq_true_eq] at hint
+        obtain ⟨⟨hαeq, hαden⟩, hαnn⟩ := hint
+        have hx_pos : 0 < denote x := interval_pos ihx hx
+        have hαval : denote α = ↑(eval α).lo :=
+          le_antisymm (hαeq ▸ ihα.2) ihα.1
+        have hαq : (eval α).lo = (↑((eval α).lo.num.toNat) : ℚ) := by
+          have h1 := Rat.num_div_den (eval α).lo
+          rw [hαden] at h1; simp at h1
+          rw [← h1]; exact_mod_cast (Int.toNat_of_nonneg hαnn).symm
+        have hαr : denote α = (↑((eval α).lo.num.toNat) : ℝ) := by
+          rw [hαval, hαq]; push_cast; rfl
+        have hident : Real.exp (denote α * (Real.log (denote x) - denote cost))
+            = (denote x) ^ ((eval α).lo.num.toNat : ℝ) *
+              Real.exp (-(denote α * denote cost)) := by
+          rw [hαr]
+          have key : ((eval α).lo.num.toNat : ℝ) *
+                     (Real.log (denote x) - denote cost) =
+                     Real.log (denote x) * ((eval α).lo.num.toNat : ℝ) +
+                     (-(((eval α).lo.num.toNat : ℝ) * denote cost)) := by ring
+          rw [key, Real.exp_add]
+          congr 1
+          exact (Real.rpow_def_of_pos hx_pos ((eval α).lo.num.toNat : ℝ)).symm
+        rw [hident]
+        have h_expF : (c (expInterval ((eval α).mul (eval cost)).neg)).containsReal
+            (Real.exp (-(denote α * denote cost))) :=
+          QInterval.coarsen_containsReal _ (expInterval_containsReal
+            (QInterval.neg_containsReal (QInterval.mul_containsReal ihα ihc)))
+        have h_xpow : ((if (eval α).lo.num.toNat == 0 then QInterval.exact 1
+                        else if (eval α).lo.num.toNat == 1 then eval x
+                        else rpowNat (eval x) ((eval α).lo.num.toNat) (le_of_lt hx)
+                       ) : QInterval).containsReal
+                       ((denote x) ^ ((eval α).lo.num.toNat : ℝ)) := by
+          split
+          · rename_i hn0; simp only [beq_iff_eq] at hn0
+            have h0 : ((eval α).lo.num.toNat : ℝ) = 0 := by exact_mod_cast hn0
+            rw [h0, Real.rpow_zero]
+            exact_mod_cast QInterval.exact_containsReal 1
+          · split
+            · rename_i _ hn1; simp [beq_iff_eq] at hn1
+              simp only [hn1, Nat.cast_one]; rw [Real.rpow_one]; exact ihx
+            · exact rpowNat_containsReal (le_of_lt hx) ihx
+        exact mul_branch_containsReal h_xpow h_expF
+      · -- Non-integer α path
+        exact QInterval.coarsen_containsReal _ (expInterval_containsReal
+          (QInterval.coarsen_containsReal _ (QInterval.mul_containsReal ihα
+            (QInterval.coarsen_containsReal _ (QInterval.sub_containsReal
+              (QInterval.coarsen_containsReal _ (logInterval_containsReal hx ihx)) ihc)))))
+    · exact absurd hxpos ‹_›
 
 -- ============================================================================
 -- Separation theorem for reflected expressions
