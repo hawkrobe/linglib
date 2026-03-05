@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.228.31] - 2026-03-05
+
+### Changed
+- **Tactics/RSAPredict**: Try RExpr reflection before auto-detect — persistent cache makes reflection <1s on warm cache vs auto-detect's ~16s per theorem. 2.7x aggregate speedup across 21 study files (175s → 64s); Hyperbole 4.1x (70s → 17s), FrankeBergen2020 8.3x, GoodmanStuhlmuller2013 8.7x
+- **KaoEtAl2014 (Hyperbole)**: First theorem needs `maxHeartbeats 1600000` for cold-cache reification; subsequent theorems reduced back to 400000
+
 ## [0.228.30] - 2026-03-05
 
 ### Fixed

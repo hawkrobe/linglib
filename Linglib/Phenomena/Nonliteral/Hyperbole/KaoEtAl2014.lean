@@ -274,7 +274,7 @@ noncomputable abbrev kettleCfg := cfg .electricKettle
 
 -- Hyperbole: "$10,000" for an electric kettle
 
-set_option maxHeartbeats 400000 in
+set_option maxHeartbeats 1600000 in
 /-- At the modal price ($10K), notable affect > no affect.
     The speaker saying "$10K" about a kettle signals frustration. -/
 theorem hyperbole_affect_at_modal :
@@ -282,7 +282,7 @@ theorem hyperbole_affect_at_modal :
     kettleCfg.L1 .s10000 (.s10000, .none) := by
   rsa_predict
 
-set_option maxHeartbeats 800000 in
+set_option maxHeartbeats 400000 in
 /-- Marginal: notable affect dominates overall for "$10K".
     Σ_s L1(s, notable | "$10K") > Σ_s L1(s, none | "$10K"). -/
 theorem hyperbole_affect :
@@ -306,7 +306,7 @@ theorem literal_correct :
     kettleCfg.L1 .s50 (.s500, .none) := by
   rsa_predict
 
-set_option maxHeartbeats 800000 in
+set_option maxHeartbeats 400000 in
 /-- Literal utterances are not interpreted hyperbolically. -/
 theorem literal_not_hyperbolic :
     kettleCfg.L1 .s50 (.s50, .none) >

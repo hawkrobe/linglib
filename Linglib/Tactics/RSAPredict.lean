@@ -405,9 +405,20 @@ elab "rsa_predict" : tactic => do
   -- parser yet — those should fall through to the generic RExpr path, not fail.
   let goalForm? ← try some <$> parseGoalForm lhs rhs catch _ => pure none
 
-  -- Try auto-detect path first: extracts config into RSAConfigData and runs
-  -- native_decide on a compact checker. This avoids expensive kernel verification
-  -- of denote(rexpr) ≡ original (the generic RExpr path's bottleneck).
+  -- Try generic RExpr reflection first: persistent cache makes this fast for
+  -- all theorems after the first (~0.4s warm vs ~18s cold). Auto-detect
+  -- re-evaluates from scratch every time (~16s each), so reflection-first
+  -- saves ~16s per subsequent theorem via cache hits.
+  unless skipReflection do
+    let t0_generic ← IO.monoMsNow
+    if ← tryDirectRExprCompare goal lhs rhs then
+      let t1_generic ← IO.monoMsNow
+      logInfo m!"rsa_predict: ✓ proved via reflection (generic, {t1_generic - t0_generic}ms)"
+      return
+
+  -- Auto-detect fallback: extracts config into RSAConfigData and runs
+  -- native_decide on a compact checker. Used when RExpr reflection can't
+  -- handle the expression (e.g., missing reifier cases).
   unless skipReflection do
     if let some goalForm := goalForm? then
       let proved ← try
@@ -423,14 +434,6 @@ elab "rsa_predict" : tactic => do
       if proved then
         logInfo m!"rsa_predict: ✓ proved via auto-detect"
         return
-
-  -- Try generic RExpr reflection (slower kernel verification but handles all patterns)
-  unless skipReflection do
-    let t0_generic ← IO.monoMsNow
-    if ← tryDirectRExprCompare goal lhs rhs then
-      let t1_generic ← IO.monoMsNow
-      logInfo m!"rsa_predict: ✓ proved via reflection (generic, {t1_generic - t0_generic}ms)"
-      return
 
   let some goalForm := goalForm?
     | throwError "rsa_predict: cannot parse goal after reflection paths failed"
