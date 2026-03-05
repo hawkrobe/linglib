@@ -457,20 +457,24 @@ partial def reifyToRExpr (cache : ReifyCache) (e : Expr) (depth : ℕ) :
                       else ⟨min bt.lo be.lo, max bt.hi be.hi⟩
         return ← cacheReturn cache key (rexpr, bounds)
 
-  -- Structural sum unfolding: Finset.sum Finset.univ f
+  -- Structural sum unfolding: Finset.sum Finset.univ f  and
+  -- Finset.sum (Finset.filter p Finset.univ) f
   -- Enumerate elements via getFiniteElems and apply f to each, avoiding whnf
   -- on the summands (which would eagerly evaluate complex meaning functions).
+  -- The filter variant evaluates the predicate at meta-time via the DecidablePred
+  -- instance, including only elements where the predicate holds. This avoids the
+  -- expensive Multiset/Quotient whnf fallback that Finset.filter would otherwise
+  -- trigger (e.g., qudProject in KaoEtAl2014 Hyperbole: 15s → <1s).
   let fnName := fn.constName?
   if fnName == some ``Finset.sum && args.size ≥ 6 then
     let fBody := args[5]!
-    -- Check if the finset is Finset.univ
     let finsetExpr := args[4]!
     let finsetFn := finsetExpr.getAppFn
+    -- Case 1: Finset.sum Finset.univ f — sum over all elements
     if finsetFn.isConstOf ``Finset.univ then
       let T := args[0]!
       if let some (_, elems) ← try? (getFiniteElems T) then
         if elems.size > 0 then
-          -- Apply f to each element and reify
           let firstApp := Expr.app fBody elems[0]!
           let firstResult ← reifyToRExpr cache firstApp.headBeta (depth - 1)
           let mut accRExpr := firstResult.1
@@ -483,6 +487,67 @@ partial def reifyToRExpr (cache : ReifyCache) (e : Expr) (depth : ℕ) :
             accRExpr := rexpr
             accBounds := bounds
           return ← cacheReturn cache key (accRExpr, accBounds)
+    -- Case 2: Finset.sum (Finset.filter p decInst Finset.univ) f
+    -- Evaluate filter predicate at meta-time, sum only matching elements.
+    if finsetFn.isConstOf ``Finset.filter then
+      let filterArgs := finsetExpr.getAppArgs
+      -- Finset.filter : {α} → (p : α → Prop) → [DecidablePred p] → Finset α → Finset α
+      -- filterArgs: [α, p, decidablePredInst, innerFinset]
+      if filterArgs.size ≥ 4 then
+        let innerFinset := filterArgs[3]!
+        if innerFinset.getAppFn.isConstOf ``Finset.univ then
+          let T := args[0]!
+          if let some (_, elems) ← try? (getFiniteElems T) then
+            if elems.size > 0 then
+              let _predExpr := filterArgs[1]!  -- unused but kept for debugging
+              let decPredInst := filterArgs[2]!
+              -- Filter elements at meta-time: evaluate (decPredInst elem) and
+              -- check if it reduces to Decidable.isTrue or Decidable.isFalse
+              let mut filteredElems : Array Expr := #[]
+              for elem in elems do
+                let decApp := Expr.app decPredInst elem
+                let reduced ← withReducible do reduce decApp
+                let reducedFn := reduced.getAppFn
+                if reducedFn.isConstOf ``isTrue || reducedFn.isConstOf ``Decidable.isTrue then
+                  filteredElems := filteredElems.push elem
+                else if reducedFn.isConstOf ``isFalse || reducedFn.isConstOf ``Decidable.isFalse then
+                  pure ()  -- skip
+                else
+                  -- Can't decide statically — try full reduce
+                  let fullReduced ← reduce decApp
+                  let fullFn := fullReduced.getAppFn
+                  if fullFn.isConstOf ``isTrue || fullFn.isConstOf ``Decidable.isTrue then
+                    filteredElems := filteredElems.push elem
+                  else
+                    -- Predicate couldn't be evaluated; fall through to whnf path
+                    filteredElems := #[]  -- signal failure
+                    break
+              if filteredElems.size > 0 then
+                let firstApp := Expr.app fBody filteredElems[0]!
+                let firstResult ← reifyToRExpr cache firstApp.headBeta (depth - 1)
+                let mut accRExpr := firstResult.1
+                let mut accBounds := firstResult.2
+                for i in List.range (filteredElems.size - 1) do
+                  let elemApp := Expr.app fBody filteredElems[i + 1]!
+                  let (ri, bi) ← reifyToRExpr cache elemApp.headBeta (depth - 1)
+                  let rexpr := mkApp2 (mkConst ``RExpr.add) accRExpr ri
+                  let bounds : MetaBounds := ⟨accBounds.lo + bi.lo, accBounds.hi + bi.hi⟩
+                  accRExpr := rexpr
+                  accBounds := bounds
+                return ← cacheReturn cache key (accRExpr, accBounds)
+              else if filteredElems.size == 0 then
+                -- Empty filter result — sum is 0
+                -- Check if this is genuinely empty (all elements filtered out)
+                -- vs the break-out case above
+                let allFiltered ← elems.allM fun elem => do
+                  let decApp := Expr.app decPredInst elem
+                  let reduced ← reduce decApp
+                  let reducedFn := reduced.getAppFn
+                  return reducedFn.isConstOf ``isFalse || reducedFn.isConstOf ``Decidable.isFalse
+                if allFiltered then
+                  -- Genuinely empty: sum is 0
+                  let zeroExpr := mkApp (mkConst ``RExpr.nat) (mkRawNatLit 0)
+                  return ← cacheReturn cache key (zeroExpr, ⟨0, 0⟩)
 
   -- Fallback for other summation forms (transparent — whnf)
   if fnName == some ``Finset.sum ||

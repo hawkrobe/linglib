@@ -284,10 +284,37 @@ theorem L1_latent_eq_policy (cfg : RSAConfig U W) (u : U) (l : cfg.Latent) :
     cfg.L1_latent u l = (cfg.L1_latent_agent u).policy () l := by
   simp only [L1_latent, L1_latent_agent, RationalAction.policy, RationalAction.totalScore]
 
+/-- Score ordering implies L1_latent ordering. Denominator cancellation
+    for latent comparisons: since `L1_latent u l = L1_latent_agent.policy () l`,
+    comparing L1_latent reduces to comparing L1_latent_agent scores.
+
+    Used by `rsa_predict` to eliminate the shared normalization constant
+    when comparing `L1_latent u l₁ > L1_latent u l₂`. -/
+theorem L1_latent_gt_of_score_gt (cfg : RSAConfig U W) (u : U)
+    (l₁ l₂ : cfg.Latent)
+    (h : (cfg.L1_latent_agent u).score () l₁ > (cfg.L1_latent_agent u).score () l₂) :
+    cfg.L1_latent u l₁ > cfg.L1_latent u l₂ := by
+  rw [L1_latent_eq_policy, L1_latent_eq_policy]
+  exact RationalAction.policy_gt_of_score_gt _ () l₁ l₂ h
+
 /-- L1 marginal: P(P|u) = Σ_{w : P(w)} L1(w|u).
     Sums the L1 posterior over worlds satisfying a Bool predicate. -/
 noncomputable def L1_marginal (cfg : RSAConfig U W) (u : U) (P : W → Bool) : ℝ :=
   ∑ w ∈ Finset.univ.filter (fun w => P w = true), cfg.L1 u w
+
+/-- Score-sum ordering implies L1_marginal ordering. Denominator cancellation
+    for marginal comparisons: since all L1(u,w) share the same totalScore(u),
+    comparing marginal sums reduces to comparing score sums.
+
+    Used by `rsa_predict` to eliminate the shared normalization constant
+    when comparing `L1_marginal u P > L1_marginal u Q`. -/
+theorem L1_marginal_gt_of_score_sum_gt (cfg : RSAConfig U W) (u : U)
+    (P Q : W → Bool)
+    (h : (Finset.univ.filter (fun w => P w = true)).sum (cfg.L1agent.score u) >
+         (Finset.univ.filter (fun w => Q w = true)).sum (cfg.L1agent.score u)) :
+    cfg.L1_marginal u P > cfg.L1_marginal u Q := by
+  unfold L1_marginal L1
+  exact RationalAction.finset_sum_policy_gt_of_sum_score_gt cfg.L1agent u _ _ h
 
 -- ============================================================================
 -- S2: Pragmatic Speaker (endorsement)

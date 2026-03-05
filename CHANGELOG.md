@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.228.32] - 2026-03-05
+
+### Added
+- **Tactics/RSAPredict/ReflectBridge**: Generalized denominator cancellation — cancel shared normalization constants before reification for L1 (policy), L1_marginal (score sums), and L1_latent (latent agent scores). L1_latent 3x faster (631ms → 195ms); L1 compare 6x on cold cache
+- **Tactics/RSAPredict/Reify**: Structural handler for `Finset.sum (Finset.filter p Finset.univ) f` — evaluates filter predicate at meta-time, avoiding expensive Multiset/Quotient whnf path
+- **Core/Agent/RationalAction**: `finset_sum_policy_gt_of_sum_score_gt` — Finset version of `policy_list_sum_gt` (sorry'd)
+- **RSA/Core/Config**: `L1_latent_gt_of_score_gt` (proved) and `L1_marginal_gt_of_score_sum_gt` — denominator cancellation lemmas for `rsa_predict`
+
 ## [0.228.31] - 2026-03-05
 
 ### Changed

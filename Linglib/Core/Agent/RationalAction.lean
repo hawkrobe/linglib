@@ -183,6 +183,20 @@ theorem RationalAction.policy_list_sum_gt (ra : RationalAction S A) (s : S)
   rw [hconv, hconv]
   exact div_lt_div_of_pos_right h htot
 
+/-- Finset-sum ordering implies policy-sum ordering when both sides share the
+    same state (same denominator). Like `policy_list_sum_gt` but for Finset.sum.
+
+    Derives totalScore positivity from the score ordering itself, so no extra
+    hypothesis is needed: if Σ_{F₁} score > Σ_{F₂} score ≥ 0, then some score
+    is positive, so totalScore > 0.
+
+    Used by `rsa_predict` for denominator cancellation in marginal comparisons. -/
+theorem RationalAction.finset_sum_policy_gt_of_sum_score_gt
+    (ra : RationalAction S A) (s : S) (F₁ F₂ : Finset A)
+    (h : F₁.sum (ra.score s) > F₂.sum (ra.score s)) :
+    F₁.sum (ra.policy s) > F₂.sum (ra.policy s) := by
+  sorry
+
 -- ============================================================================
 -- §1a. Luce's Choice Axiom (IIA)
 -- ============================================================================

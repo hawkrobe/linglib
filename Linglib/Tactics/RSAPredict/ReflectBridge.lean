@@ -3,6 +3,7 @@ import Linglib.Core.Interval.RSAVerify
 import Linglib.Core.Interval.ReflectInterval
 import Linglib.Tactics.RSAPredict.Helpers
 import Linglib.Tactics.RSAPredict.Reify
+import Linglib.Tactics.RSAPredict.GoalParsing
 
 set_option autoImplicit false
 
@@ -152,16 +153,160 @@ private def nativeDecideProof (propType : Expr) : TacticM Expr := do
   setGoals savedGoals
   return mvar
 
+/-- Detect L1_marginal in an expression, returning (cfg, u, P) without
+    evaluating the predicate. Lighter than `parseL1Marginal`. -/
+private def detectL1Marginal (e : Expr) : MetaM (Option (Expr × Expr × Expr)) := do
+  let mut current := e
+  for _ in List.range 5 do
+    if current.getAppFn.isConstOf ``RSA.RSAConfig.L1_marginal then
+      let args := current.getAppArgs
+      if args.size ≥ 7 then
+        return some (args[4]!, args[5]!, args[6]!)
+    if let some e' ← unfoldDefinition? current then
+      current := e'.headBeta
+    else break
+  return none
+
+/-- Detect L1_latent in an expression, returning (cfg, u, l). -/
+private def detectL1Latent (e : Expr) : MetaM (Option (Expr × Expr × Expr)) := do
+  let mut current := e
+  for _ in List.range 5 do
+    if current.getAppFn.isConstOf ``RSA.RSAConfig.L1_latent then
+      let args := current.getAppArgs
+      if args.size ≥ 7 then
+        return some (args[4]!, args[5]!, args[6]!)
+    if let some e' ← unfoldDefinition? current then
+      current := e'.headBeta
+    else break
+  return none
+
+/-- Unfold an expression until we reach a `Finset.sum` head. -/
+private def unfoldToFinsetSum (e : Expr) : MetaM (Option Expr) := do
+  let mut current := e
+  for _ in List.range 10 do
+    if current.getAppFn.isConstOf ``Finset.sum && current.getAppArgs.size ≥ 5 then
+      return some current
+    if let some e' ← unfoldDefinition? current then
+      current := e'.headBeta
+    else break
+  return none
+
+/-- Cancel shared L1 denominator in marginal comparisons.
+    L1_marginal cfg u P = Σ_{w∈P} L1agent.policy u w
+    → reduce to Σ_{w∈P} L1agent.score u w > Σ_{w∈Q} L1agent.score u w -/
+private def tryMarginalDenomCancel (goal : MVarId) (lhsExpr rhsExpr : Expr) :
+    TacticM (Option (MVarId × Expr × Expr)) := do
+  let some (cfgL, uL, pL) ← detectL1Marginal lhsExpr | return none
+  let some (cfgR, uR, pR) ← detectL1Marginal rhsExpr | return none
+  unless ← isDefEq cfgL cfgR do return none
+  unless ← isDefEq uL uR do return none
+  -- Unfold L1_marginal to Finset.sum form
+  let some lhsSum ← unfoldToFinsetSum lhsExpr | return none
+  let some rhsSum ← unfoldToFinsetSum rhsExpr | return none
+  let lhsArgs := lhsSum.getAppArgs
+  let rhsArgs := rhsSum.getAppArgs
+  -- Build score function: fun w => L1agent.score u w
+  let W := lhsArgs[0]!
+  let l1agent ← mkAppM ``RSA.RSAConfig.L1agent #[cfgL]
+  let scoreFn ← withLocalDecl `w BinderInfo.default W fun w => do
+    let body ← mkAppM ``Core.RationalAction.score #[l1agent, uL, w]
+    mkLambdaFVars #[w] body
+  -- Build score sum expressions by replacing summand function (arg[4])
+  let scoreSumLhs := mkAppN lhsSum.getAppFn (lhsArgs.set! 4 scoreFn)
+  let scoreSumRhs := mkAppN rhsSum.getAppFn (rhsArgs.set! 4 scoreFn)
+  let scoreGoalType ← mkAppM ``GT.gt #[scoreSumLhs, scoreSumRhs]
+  let scoreGoal ← mkFreshExprMVar scoreGoalType
+  -- Proof: L1_marginal_gt_of_score_sum_gt cfg u P Q hScore
+  let proof ← mkAppM ``RSA.RSAConfig.L1_marginal_gt_of_score_sum_gt
+    #[cfgL, uL, pL, pR, scoreGoal]
+  goal.assign proof
+  return some (scoreGoal.mvarId!, scoreSumLhs, scoreSumRhs)
+
+/-- Cancel shared denominator in L1_latent comparisons.
+    L1_latent cfg u l = L1_latent_agent.policy () l
+    → reduce to L1_latent_agent.score () l₁ > L1_latent_agent.score () l₂ -/
+private def tryLatentDenomCancel (goal : MVarId) (lhsExpr rhsExpr : Expr) :
+    TacticM (Option (MVarId × Expr × Expr)) := do
+  let some (cfgL, uL, l₁) ← detectL1Latent lhsExpr | return none
+  let some (cfgR, uR, l₂) ← detectL1Latent rhsExpr | return none
+  unless ← isDefEq cfgL cfgR do return none
+  unless ← isDefEq uL uR do return none
+  -- Build L1_latent_agent score expressions
+  let latentAgent ← mkAppM ``RSA.RSAConfig.L1_latent_agent #[cfgL, uL]
+  let unitVal := mkConst ``Unit.unit
+  let scoreLhs ← mkAppM ``Core.RationalAction.score #[latentAgent, unitVal, l₁]
+  let scoreRhs ← mkAppM ``Core.RationalAction.score #[latentAgent, unitVal, l₂]
+  let scoreGoalType ← mkAppM ``GT.gt #[scoreLhs, scoreRhs]
+  let scoreGoal ← mkFreshExprMVar scoreGoalType
+  -- Proof: L1_latent_gt_of_score_gt cfg u l₁ l₂ hScore
+  let proof ← mkAppM ``RSA.RSAConfig.L1_latent_gt_of_score_gt
+    #[cfgL, uL, l₁, l₂, scoreGoal]
+  goal.assign proof
+  return some (scoreGoal.mvarId!, scoreLhs, scoreRhs)
+
+/-- Try to cancel shared denominators in RSA comparison goals.
+
+    Supported patterns:
+    1. **Direct policy**: `policy ra s a₁ > policy ra s a₂` → `score s a₁ > score s a₂`
+    2. **L1_marginal**: `L1_marginal cfg u P > L1_marginal cfg u Q` → score sums
+    3. **L1_latent**: `L1_latent cfg u l₁ > L1_latent cfg u l₂` → latent agent scores
+
+    Returns `some (scoreGoal, scoreLhs, scoreRhs)` on success, where
+    `scoreGoal` is a new MVarId for the score comparison. -/
+private def tryDenominatorCancel (goal : MVarId) (lhsExpr rhsExpr : Expr) :
+    TacticM (Option (MVarId × Expr × Expr)) := do
+  -- Pattern 1: Direct policy comparison (L1, S1, L0, S2)
+  if let some (raL, sL, aL) ← unfoldToPolicy lhsExpr then
+    if let some (raR, sR, aR) ← unfoldToPolicy rhsExpr then
+      if (← isDefEq raL raR) && (← isDefEq sL sR) then
+        let scoreLhs ← mkAppM ``Core.RationalAction.score #[raL, sL, aL]
+        let scoreRhs ← mkAppM ``Core.RationalAction.score #[raR, sR, aR]
+        let scoreGoalType ← mkAppM ``GT.gt #[scoreLhs, scoreRhs]
+        let scoreGoal ← mkFreshExprMVar scoreGoalType
+        let proof ← mkAppM ``Core.RationalAction.policy_gt_of_score_gt
+          #[raL, sL, aL, aR, scoreGoal]
+        goal.assign proof
+        return some (scoreGoal.mvarId!, scoreLhs, scoreRhs)
+  -- Pattern 2: L1_marginal comparison (sum of policies with shared denominator)
+  if let some result ← tryMarginalDenomCancel goal lhsExpr rhsExpr then
+    return some result
+  -- Pattern 3: L1_latent comparison (inline division with shared denominator)
+  if let some result ← tryLatentDenomCancel goal lhsExpr rhsExpr then
+    return some result
+  return none
+
 /-- Direct RExpr reification for `lhs > rhs` goals.
     Builds a shared DAG at meta-time from the RExpr `Expr` structure,
     then runs `native_decide` on the compact `checkGtDAG` (O(unique nodes)
     instead of O(tree nodes)). Falls back to tree-based `checkGtOpt`
-    if DAG construction fails. -/
+    if DAG construction fails.
+
+    When both sides are `policy ra s a₁/a₂` with the same `ra` and `s`,
+    applies denominator cancellation first via `policy_gt_of_score_gt`,
+    reducing the goal to a score comparison that skips the shared
+    normalization constant. -/
 def tryDirectRExprCompare (goal : MVarId) (lhsExpr rhsExpr : Expr) : TacticM Bool := do
   let t0 ← IO.monoMsNow
+
+  -- Denominator cancellation: if both sides share the same policy denominator,
+  -- reduce to a score comparison (roughly halves the expression tree).
+  let cancelResult ← try
+    tryDenominatorCancel goal lhsExpr rhsExpr
+  catch _ => pure none
+  let mut activeGoal := goal
+  let mut activeLhs := lhsExpr
+  let mut activeRhs := rhsExpr
+  let mut denomNote := ""
+  if let some (scoreGoal, scoreLhs, scoreRhs) := cancelResult then
+    logInfo m!"rsa_predict: [direct] denominator cancelled (score-level comparison)"
+    activeGoal := scoreGoal
+    activeLhs := scoreLhs
+    activeRhs := scoreRhs
+    denomNote := " [denom-cancelled]"
+
   let cacheBefore ← persistentReifyCache.get
-  let (lhsRExpr, lhsBounds) ← reifyToRExpr persistentReifyCache lhsExpr maxDepth
-  let (rhsRExpr, rhsBounds) ← reifyToRExpr persistentReifyCache rhsExpr maxDepth
+  let (lhsRExpr, lhsBounds) ← reifyToRExpr persistentReifyCache activeLhs maxDepth
+  let (rhsRExpr, rhsBounds) ← reifyToRExpr persistentReifyCache activeRhs maxDepth
 
   unless lhsBounds.lo > rhsBounds.hi do
     logInfo m!"rsa_predict: [direct] bounds don't separate (lhs=[{lhsBounds.lo}, {lhsBounds.hi}] rhs=[{rhsBounds.lo}, {rhsBounds.hi}])"
@@ -169,7 +314,7 @@ def tryDirectRExprCompare (goal : MVarId) (lhsExpr rhsExpr : Expr) : TacticM Boo
 
   let cacheAfter ← persistentReifyCache.get
   let t1 ← IO.monoMsNow
-  logInfo m!"rsa_predict: [direct] reified ({t1 - t0}ms, cache {cacheBefore.size}→{cacheAfter.size})"
+  logInfo m!"rsa_predict: [direct] reified ({t1 - t0}ms, cache {cacheBefore.size}→{cacheAfter.size}){denomNote}"
 
   try
     -- Build shared DAG at meta-time (O(unique sub-expressions), not O(tree nodes))
@@ -190,7 +335,7 @@ def tryDirectRExprCompare (goal : MVarId) (lhsExpr rhsExpr : Expr) : TacticM Boo
     --   checkGtDAG dag li ri = true → lhs.denote > rhs.denote
     let proof := mkAppN (mkConst ``gt_of_checkGtDAG)
       #[lhsRExpr, rhsRExpr, dagArrayExpr, mkRawNatLit lhsIdx, mkRawNatLit rhsIdx, hcheck]
-    goal.assign proof
+    activeGoal.assign proof
 
     let t3 ← IO.monoMsNow
     logInfo m!"rsa_predict: [direct] assigned ({t3 - t0}ms)"
@@ -203,7 +348,7 @@ def tryDirectRExprCompare (goal : MVarId) (lhsExpr rhsExpr : Expr) : TacticM Boo
       let checkType ← mkEq checkExpr (mkConst ``Bool.true)
       let hcheck ← nativeDecideProof checkType
       let proof := mkApp3 (mkConst ``RExpr.gt_of_checkGtOpt) lhsRExpr rhsRExpr hcheck
-      goal.assign proof
+      activeGoal.assign proof
       let t3 ← IO.monoMsNow
       logInfo m!"rsa_predict: [direct] assigned via tree fallback ({t3 - t0}ms)"
       return true
