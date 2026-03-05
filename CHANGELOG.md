@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.228.27] - 2026-03-05
+
+### Added
+- **Core/Discourse/InformationStructure**: Add `DiscourseStatus.rank : Fin 3` (given < new < focused) for reuse across extraction-acceptability and focus-comparison theories
+- **Data.lean**: Add `FGDConstruction` (whQuestion/relativeClause/topicalization) and `ExtractionPosition` (subject/object) types — IS-neutral shared infrastructure for cross-constructional island studies
+- **Studies/CartnerEtAl2026**: Formalize Cartner et al. (2026) subject island invariance across constructions. Original FBC (Abeillé et al. 2020) + revised FBC (Winckel et al. 2025) as predicates; `both_fbcs_same_predictions`; `subjectIS_uniform` / `fillerIS_varies` structural theorems; DD scores (3 experiments × 2 positions); FBC falsified for RC and TOP; 3/2-bound invariance; HPDI overlap; explicit BCI (direct backgroundedness) distinction — paper's §8 "results do not contradict" BCI; `DiscourseIslandTheory` enum; bridge to `constraintSource .subject = .syntactic`; end-to-end `argument_chain` (17 conjuncts)
+- **references.bib**: Add `cartner-et-al-2026`, `abeille-et-al-2020`, `winckel-et-al-2025`, `sprouse-2007`, `sprouse-et-al-2012`, `cattell-1976`
+
+## [0.228.26] - 2026-03-04
+
+### Added
+- **Studies/PrasertsonSmithCulbertson2026**: Formalize Prasertsom, Smith & Culbertson (2026) — domain-general categorisation explains animacy-colour asymmetry in noun classification. Table 6 conditional entropy, Table 2 corpus compactness, Table 3 classifier accuracy, Experiments 1–3 data. End-to-end `argument_chain` theorem connecting typological observation → predictive power → compactness → learnability → sorting bias. Bridge to `Core.Prominence.AnimacyLevel` (Silverstein hierarchy).
+- **Core/Lexical/NounCategorization**: Add `.colour` to `SemanticParameter` (perceptually salient but unattested in noun categorization); add `SemanticParameter.all` enumeration
+- **references.bib**: Add `prasertsom-smith-culbertson-2026` entry
+
 ## [0.228.25] - 2026-03-04
 
 ### Added

@@ -183,6 +183,14 @@ inductive DiscourseStatus where
   | new
   deriving DecidableEq, Repr, BEq
 
+/-- Ordinal rank: given < new < focused.
+    Used by extraction-acceptability theories (@cite{lu-degen-2025}) and
+    focus-comparison constraints (@cite{winckel-et-al-2025}). -/
+def DiscourseStatus.rank : DiscourseStatus → Fin 3
+  | .given   => 0
+  | .new     => 1
+  | .focused => 2
+
 /-- Map gradient at-issueness to discourse status.
 
     High at-issueness content is foregrounded (new or focused);

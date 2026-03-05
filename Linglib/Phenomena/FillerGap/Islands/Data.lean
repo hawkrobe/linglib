@@ -193,6 +193,37 @@ def constraintStrength : ConstraintType → ConstraintStrength
   | .sententialSubject => .strong
   | .mannerOfSpeaking => .weak      -- Ameliorated by prosodic focus (@cite{lu-degen-2025})
 
+-- ============================================================================
+-- Filler-Gap Dependency Construction Types
+-- ============================================================================
+
+/-- The three canonical filler-gap dependency constructions in English.
+Each shares the abstract mechanism of movement (a filler displaced from a gap)
+but differs in information-structural profile (@cite{abeille-et-al-2020}).
+
+The distinction matters for testing whether island effects are
+construction-specific (as @cite{abeille-et-al-2020} claim) or
+construction-general (as @cite{cartner-et-al-2026} argue). -/
+inductive FGDConstruction where
+  /-- Wh-questions: "Which driver did Stephanie explain _ had already
+  questioned the driver?" -/
+  | whQuestion
+  /-- Relative clauses: "I noticed [the investigator that Stephanie
+  explained _ had already questioned the driver]." -/
+  | relativeClause
+  /-- Topicalization: "That investigator, Stephanie explained _ had already
+  questioned the driver." -/
+  | topicalization
+  deriving DecidableEq, Repr, BEq
+
+/-- Extraction position within the embedded clause.
+The subject/object asymmetry is the core empirical target of subject island
+research (@cite{ross-1967}, @cite{cattell-1976}, @cite{chomsky-1973}). -/
+inductive ExtractionPosition where
+  | subject
+  | object
+  deriving DecidableEq, Repr, BEq
+
 /-- Source of an island constraint: what mechanism produces it.
 Distinguishes structural accounts (subjacency), processing accounts
 (memory load), and discourse accounts (information structure). -/

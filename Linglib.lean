@@ -458,6 +458,7 @@ import Linglib.Phenomena.FillerGap.Studies.Erlewine2016
 import Linglib.Phenomena.FillerGap.Studies.Erlewine2018
 import Linglib.Phenomena.FillerGap.Studies.ElkinsImanishiCoon2026
 import Linglib.Phenomena.FillerGap.Studies.KeenanComrie1977
+import Linglib.Phenomena.FillerGap.Islands.Studies.CartnerEtAl2026
 import Linglib.Phenomena.Nonliteral.Irony.KaoEtAl2015
 import Linglib.Phenomena.Nonliteral.Irony.Studies.SpinosoDiPiano2025
 import Linglib.Phenomena.Nonliteral.Studies.RelevanceTheory
@@ -665,6 +666,7 @@ import Linglib.Phenomena.Agreement.Studies.CCGAgreement
 import Linglib.Phenomena.Agreement.Studies.Scott2023
 import Linglib.Phenomena.Agreement.DifferentialIndexing
 import Linglib.Phenomena.Agreement.Studies.Aissen2003
+import Linglib.Phenomena.Agreement.Studies.PrasertsonSmithCulbertson2026
 import Linglib.Phenomena.Coordination.Studies.Steedman2000
 import Linglib.Theories.Syntax.CCG.CrossSerial
 -- CCGDerivations moved to Studies/Steedman2000
