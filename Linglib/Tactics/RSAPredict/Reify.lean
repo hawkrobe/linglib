@@ -181,6 +181,15 @@ private def cacheReturn (cache : ReifyCache) (key : UInt64)
   cache.modify fun m => m.insert key result
   return result
 
+/-- Module-scope filter result cache for `Finset.filter` evaluations.
+    For predicates of the form `fun x => f(x) = c` (constant-RHS equality),
+    caches which elements pass the filter, keyed by `(hash f, hash reduced_c)`.
+    This deduplicates filter evaluations for qudProject equivalence classes:
+    worlds with `project(w₁, q) = project(w₂, q)` share the same filter result,
+    avoiding redundant `reduce` calls (20 per filter × ~300 duplicate filters). -/
+initialize persistentFilterCache : IO.Ref (Std.HashMap UInt64 (Array Expr)) ←
+  IO.mkRef ∅
+
 /-- Proof-free RExpr reifier for rsa_predict.
     Produces `(rexprExpr, bounds)`. The kernel verifies `denote(rexprExpr) ≡ e`
     by iota-reducing `denote`, eliminating the need for congruence proof trees.
@@ -499,30 +508,66 @@ partial def reifyToRExpr (cache : ReifyCache) (e : Expr) (depth : ℕ) :
           let T := args[0]!
           if let some (_, elems) ← try? (getFiniteElems T) then
             if elems.size > 0 then
-              let _predExpr := filterArgs[1]!  -- unused but kept for debugging
+              let predExpr := filterArgs[1]!
               let decPredInst := filterArgs[2]!
-              -- Filter elements at meta-time: evaluate (decPredInst elem) and
-              -- check if it reduces to Decidable.isTrue or Decidable.isFalse
+              -- Filter-result caching: for predicates fun x => f(x) = c where
+              -- c is constant (no bound variable), cache the filtered elements
+              -- by (hash f, hash reduced_c). This deduplicates filter evaluations
+              -- for qudProject: worlds in the same equivalence class produce the
+              -- same filter result but have different predicate expressions.
+              let mut filterCacheKey? : Option UInt64 := none
+              if predExpr.isLambda then
+                let predBody := predExpr.bindingBody!
+                if predBody.isAppOfArity ``Eq 3 then
+                  let eqArgs := predBody.getAppArgs
+                  let rhs := eqArgs[2]!
+                  if !rhs.hasLooseBVars then
+                    let rhsReduced ← whnf rhs
+                    filterCacheKey? :=
+                      some (hash (eqArgs[1]!) * 6364136223846793005 + hash rhsReduced)
+              -- Check filter cache
               let mut filteredElems : Array Expr := #[]
-              for elem in elems do
-                let decApp := Expr.app decPredInst elem
-                let reduced ← withReducible do reduce decApp
-                let reducedFn := reduced.getAppFn
-                if reducedFn.isConstOf ``isTrue || reducedFn.isConstOf ``Decidable.isTrue then
-                  filteredElems := filteredElems.push elem
-                else if reducedFn.isConstOf ``isFalse || reducedFn.isConstOf ``Decidable.isFalse then
-                  pure ()  -- skip
-                else
-                  -- Can't decide statically — try full reduce
-                  let fullReduced ← reduce decApp
-                  let fullFn := fullReduced.getAppFn
-                  if fullFn.isConstOf ``isTrue || fullFn.isConstOf ``Decidable.isTrue then
+              let mut filterEvaluated := false
+              if let some fck := filterCacheKey? then
+                if let some cached := (← persistentFilterCache.get).get? fck then
+                  filteredElems := cached
+                  filterEvaluated := true
+              -- Evaluate filter at meta-time if not cached
+              if !filterEvaluated then
+                let mut filterOk := true
+                for elem in elems do
+                  let decApp := Expr.app decPredInst elem
+                  -- Use whnf (faster than reduce for simple Decidable evaluations)
+                  let reduced ← whnf decApp
+                  let reducedFn := reduced.getAppFn
+                  if reducedFn.isConstOf ``isTrue || reducedFn.isConstOf ``Decidable.isTrue then
                     filteredElems := filteredElems.push elem
+                  else if reducedFn.isConstOf ``isFalse || reducedFn.isConstOf ``Decidable.isFalse then
+                    pure ()  -- skip
                   else
-                    -- Predicate couldn't be evaluated; fall through to whnf path
-                    filteredElems := #[]  -- signal failure
-                    break
+                    -- whnf didn't resolve — try full reduce
+                    let fullReduced ← reduce decApp
+                    let fullFn := fullReduced.getAppFn
+                    if fullFn.isConstOf ``isTrue || fullFn.isConstOf ``Decidable.isTrue then
+                      filteredElems := filteredElems.push elem
+                    else
+                      -- Predicate couldn't be evaluated; fall through to whnf path
+                      filteredElems := #[]  -- signal failure
+                      filterOk := false
+                      break
+                -- Cache filter result on success
+                if filterOk then
+                  if let some fck := filterCacheKey? then
+                    persistentFilterCache.modify fun m => m.insert fck filteredElems
               if filteredElems.size > 0 then
+                -- Equivalence-class dedup: cache by (fBody, filtered elements).
+                -- Different filter predicates selecting the same elements with the
+                -- same summand function produce the same result. Deduplicates e.g.
+                -- qudProject calls for worlds in the same QUD equivalence class.
+                let filterKey := filteredElems.foldl
+                  (fun (h : UInt64) elem => h * 31 + hash elem) (hash fBody)
+                if let some result := (← cache.get).get? filterKey then
+                  return ← cacheReturn cache key result
                 let firstApp := Expr.app fBody filteredElems[0]!
                 let firstResult ← reifyToRExpr cache firstApp.headBeta (depth - 1)
                 let mut accRExpr := firstResult.1
@@ -534,17 +579,23 @@ partial def reifyToRExpr (cache : ReifyCache) (e : Expr) (depth : ℕ) :
                   let bounds : MetaBounds := ⟨accBounds.lo + bi.lo, accBounds.hi + bi.hi⟩
                   accRExpr := rexpr
                   accBounds := bounds
+                cache.modify fun m => m.insert filterKey (accRExpr, accBounds)
                 return ← cacheReturn cache key (accRExpr, accBounds)
               else if filteredElems.size == 0 then
                 -- Empty filter result — sum is 0
-                -- Check if this is genuinely empty (all elements filtered out)
-                -- vs the break-out case above
-                let allFiltered ← elems.allM fun elem => do
-                  let decApp := Expr.app decPredInst elem
-                  let reduced ← reduce decApp
-                  let reducedFn := reduced.getAppFn
-                  return reducedFn.isConstOf ``isFalse || reducedFn.isConstOf ``Decidable.isFalse
-                if allFiltered then
+                -- If from cache, we know it's genuinely empty.
+                -- Otherwise check if genuinely empty vs break-out failure.
+                let genuinelyEmpty ← if filterEvaluated then pure true
+                  else elems.allM fun elem => do
+                    let decApp := Expr.app decPredInst elem
+                    let reduced ← whnf decApp
+                    let reducedFn := reduced.getAppFn
+                    if reducedFn.isConstOf ``isFalse || reducedFn.isConstOf ``Decidable.isFalse then
+                      return true
+                    let fullReduced ← reduce decApp
+                    let fullFn := fullReduced.getAppFn
+                    return fullFn.isConstOf ``isFalse || fullFn.isConstOf ``Decidable.isFalse
+                if genuinelyEmpty then
                   -- Genuinely empty: sum is 0
                   let zeroExpr := mkApp (mkConst ``RExpr.nat) (mkRawNatLit 0)
                   return ← cacheReturn cache key (zeroExpr, ⟨0, 0⟩)

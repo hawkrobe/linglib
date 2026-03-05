@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.228.35] - 2026-03-05
+
+### Changed
+- **RSAPredict/Reify**: Filter-level caching for `Finset.filter` evaluations — caches filtered element sets for constant-RHS equality predicates (`fun x => f(x) = c`), deduplicating qudProject equivalence-class filter evaluations (~10-15% speedup on L1_marginal)
+- **RSAPredict/Reify**: Use `whnf` instead of `reduce` for filter predicate evaluation (faster for simple `Decidable` evaluations like `Nat.decEq`)
+- **RSAPredict/Reify**: Equivalence-class dedup for reification results — sums over identical filtered element sets with the same summand skip redundant reification
+
 ## [0.228.34] - 2026-03-05
 
 ### Added
