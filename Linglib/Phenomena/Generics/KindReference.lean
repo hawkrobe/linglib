@@ -594,6 +594,106 @@ def firemenAvailable : BPInterpDatum :=
   , notes := "Implicit locative argument"
   }
 
+-- English BP Ambiguity: Kind vs Property (@cite{guerrini-2026}, diagram (145))
+
+/-- Denotation type for bare nominal expressions. -/
+inductive NominalDenotation where
+  /-- Denotes a kind (individual concept, type e) -/
+  | kind
+  /-- Denotes a property (type ⟨e,t⟩) -/
+  | property
+  deriving Repr, DecidableEq, BEq
+
+/-- English bare plural denotation ambiguity datum.
+
+@cite{guerrini-2026} argues that English BPs are systematically
+ambiguous between kind and property denotation. The kind reading
+feeds Distributive/Cumulative Kind Predication; the property reading
+feeds Bona Fide Generic LFs or low-scoped existential LFs (via DPP).
+
+Italian disambiguates: definite plurals = kind only;
+bare plurals = property only. -/
+structure BPDenotationDatum where
+  language : String
+  form : String
+  denotation : NominalDenotation
+  available : Bool
+  lfConsequence : String
+  notes : String
+
+def englishBPKind : BPDenotationDatum :=
+  { language := "English"
+  , form := "bare plural"
+  , denotation := .kind
+  , available := true
+  , lfConsequence := "Distributive/cumulative kind predication; Bona Fide Generic"
+  , notes := "Kind denotation via covert ∩ (Chierchia 1998)" }
+
+def englishBPProperty : BPDenotationDatum :=
+  { language := "English"
+  , form := "bare plural"
+  , denotation := .property
+  , available := true
+  , lfConsequence := "Bona Fide Generic; low-scoped existential (DPP)"
+  , notes := "Property denotation — the 'weak indefinite' reading" }
+
+def italianDefPlKind : BPDenotationDatum :=
+  { language := "Italian"
+  , form := "definite plural"
+  , denotation := .kind
+  , available := true
+  , lfConsequence := "Distributive/cumulative kind predication; Bona Fide Generic"
+  , notes := "Kind denotation via overt D (i leoni, gli LLM)" }
+
+def italianDefPlProperty : BPDenotationDatum :=
+  { language := "Italian"
+  , form := "definite plural"
+  , denotation := .property
+  , available := false
+  , lfConsequence := "N/A"
+  , notes := "Italian definite plurals cannot denote properties for kind pred." }
+
+def italianBarePlKind : BPDenotationDatum :=
+  { language := "Italian"
+  , form := "bare plural"
+  , denotation := .kind
+  , available := false
+  , lfConsequence := "N/A"
+  , notes := "Italian bare plurals cannot denote kinds (no covert ∩)" }
+
+def italianBarePlProperty : BPDenotationDatum :=
+  { language := "Italian"
+  , form := "bare plural"
+  , denotation := .property
+  , available := true
+  , lfConsequence := "Bona Fide Generic; low-scoped existential (DPP)"
+  , notes := "Property denotation only — existential in episodics" }
+
+def bpDenotationData : List BPDenotationDatum :=
+  [ englishBPKind, englishBPProperty
+  , italianDefPlKind, italianDefPlProperty
+  , italianBarePlKind, italianBarePlProperty ]
+
+-- English BPs are ambiguous (both denotations available)
+#guard bpDenotationData.filter (fun d => d.language == "English")
+      |>.all (·.available)
+
+-- Italian definite plurals: kind only
+#guard bpDenotationData.filter (fun d => d.language == "Italian" &&
+         d.form == "definite plural" && d.denotation == .kind)
+      |>.all (·.available)
+#guard bpDenotationData.filter (fun d => d.language == "Italian" &&
+         d.form == "definite plural" && d.denotation == .property)
+      |>.all (!·.available)
+
+-- Italian bare plurals: property only
+#guard bpDenotationData.filter (fun d => d.language == "Italian" &&
+         d.form == "bare plural" && d.denotation == .kind)
+      |>.all (!·.available)
+#guard bpDenotationData.filter (fun d => d.language == "Italian" &&
+         d.form == "bare plural" && d.denotation == .property)
+      |>.all (·.available)
+
 -- Aggregate Data
 
 def crossLingData : List CrossLingDatum :=

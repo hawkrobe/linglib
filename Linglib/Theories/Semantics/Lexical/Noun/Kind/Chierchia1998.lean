@@ -232,6 +232,25 @@ def languageFamily : NominalMapping → String
   | .argAndPred => "English, German, Slavic (bare argument languages)"
   | .predOnly => "French, Italian, Spanish (Romance languages)"
 
+/-- Whether a nominal can denote a kind, given the language's mapping parameter
+    and whether an overt determiner (D) is present.
+
+    - [+arg] languages: nouns can denote kinds without D (covert ∩ available)
+    - [-arg, +pred] languages: D is required to map predicates to arguments;
+      without D, nouns remain predicates (properties) -/
+def canDenoteKind (mapping : NominalMapping) (hasD : Bool) : Bool :=
+  match mapping with
+  | .argOnly    => true   -- all nouns are kinds; ∩ is trivially available
+  | .argAndPred => true   -- covert ∩ available (for plurals/mass; see downDefinedFor)
+  | .predOnly   => hasD   -- needs overt D to become argumental
+
+/-- Whether a nominal can denote a property, given the mapping parameter. -/
+def canDenoteProperty (mapping : NominalMapping) : Bool :=
+  match mapping with
+  | .argOnly    => false  -- nouns are kinds, not predicates
+  | .argAndPred => true   -- nouns can be predicates
+  | .predOnly   => true   -- nouns are predicates by default
+
 -- Mass/Count Distinction
 
 /--

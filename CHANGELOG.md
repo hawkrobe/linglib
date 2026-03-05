@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.228.33] - 2026-03-05
+
+### Added
+- **Phenomena/Generics/Studies/Guerrini2026**: Formalize Guerrini (2026) "Distributive Kind Predication" — structural ambiguity between Bona Fide Genericity (Gen) and Distributive Kind Predication (DIST on kind extension). Bridge definition composing Chierchia1998 kinds with Križ & Spector DIST. Tables 1 & 3, episodic data, Italian subjunctive diagnostic, cross-linguistic genericity data
+- **Guerrini2026 §8a**: Three proved theorems connecting DKP to Tessler & Goodman (2019) threshold semantics — DKP true entails generic true at all thresholds; DKP gap is threshold-sensitive; concrete witness where parses disagree (70% prevalence: DKP gap but BFG true)
+- **Chierchia1998**: `canDenoteKind`/`canDenoteProperty` — derive kind/property denotation availability from the Nominal Mapping Parameter
+- **KindReference**: `BPDenotationDatum` cross-linguistic bare plural denotation data (English/Italian); `NominalDenotation` type (renamed from `BPDenotationType`)
+- **Fragments/Italian/Nouns §9a**: Kind vs property denotation derived from `canDenoteKind italianMapping` — theorems not stipulative Bool flags
+
+### Changed
+- **Guerrini2026 §5**: `canDenote` now derived from `canDenoteKind`/`hasD` instead of a 6-case match table — Italian definite plural kind-only and bare plural property-only follow from Chierchia's parameters
+- **Guerrini2026**: Removed unused T&G import (now re-added with actual theorem references); removed redundant `NominalDenotation` (uses KindReference's); removed one-constructor `SingularIndefLF`
+- **Guerrini2026 §2**: Added `kindExtensionFinset` bridging `Kind.concept : Set Atom` to `Finset Atom` via `Classical.dec`, and `distributiveKindPredOfKind` composing the full Kind→DIST pipeline
+
 ## [0.228.32] - 2026-03-05
 
 ### Added

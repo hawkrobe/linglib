@@ -404,6 +404,7 @@ import Linglib.Phenomena.Generics.BarePlurals
 import Linglib.Phenomena.Generics.Data
 import Linglib.Phenomena.Generics.KindReference
 import Linglib.Phenomena.Generics.Compare
+import Linglib.Phenomena.Generics.Studies.Guerrini2026
 import Linglib.Phenomena.Gender.Typology
 import Linglib.Phenomena.Gradability.Adjectives
 import Linglib.Phenomena.Gradability.Data
