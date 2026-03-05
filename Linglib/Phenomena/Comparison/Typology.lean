@@ -1,4 +1,5 @@
 import Linglib.Core.Lexical.Word
+import Linglib.Core.Case.Basic
 
 /-!
 # Comparative Construction Typology (WALS Chapter 121)
@@ -83,48 +84,11 @@ inductive ComparativeType where
 -- Stassen 1985 Fine-grained Typology (@cite{stassen-1985} Ch 2)
 -- ============================================================================
 
-/-- Case assignment of the standard NP (@cite{stassen-1985} §2.2.1).
+-- Case assignment parameters (`CaseAssignment`, `FixedCaseEncoding`) are
+-- imported from `Core.Case.Basic`. The spatial triad (ablative, allative,
+-- locative) reuses `Core.Case` values rather than defining a parallel type.
 
-    The primary typological parameter: is the case form of the standard NP
-    determined by the case form of the comparee NP (derived), or does the
-    standard NP receive a fixed case form regardless of the comparee (fixed)? -/
-inductive CaseAssignment where
-  /-- Derived case: standard NP's case parallels the comparee NP's case.
-      The two NPs have structural parallelism. -/
-  | derived
-  /-- Fixed case: standard NP receives one specific oblique case form
-      independent of the comparee NP's grammatical function. -/
-  | fixed
-  deriving DecidableEq, BEq, Repr
-
-/-- For fixed-case comparatives, how the standard NP is syntactically
-    encoded (@cite{stassen-1985} §2.2.2). -/
-inductive FixedCaseEncoding where
-  /-- Standard NP is direct object of a transitive exceed-verb
-      ('surpass', 'exceed'). -/
-  | directObject
-  /-- Standard NP is constituent of an adverbial phrase with a
-      spatial/locational marker. -/
-  | adverbial
-  deriving DecidableEq, BEq, Repr
-
-/-- For adverbial comparatives, which spatial relation the standard marker
-    originally encodes (@cite{stassen-1985} §2.2.3-4).
-
-    The localistic hypothesis: comparative markers derive from spatial
-    expressions. The three-way spatial distinction generates the three
-    subtypes of adverbial comparatives. -/
-inductive SpatialRelation where
-  /-- Separative: marker means 'from', encoding movement away from the
-      standard. Example: Japanese 'yori', Turkish ablative '-dan'. -/
-  | separative
-  /-- Allative: marker means 'to', encoding movement toward the standard.
-      Example: Maasai 'to', Breton 'for'. -/
-  | allative
-  /-- Locative: marker means 'at/on', encoding spatial contact.
-      Example: Chuckchee '-on', Salinan 'in'. -/
-  | locative
-  deriving DecidableEq, BEq, Repr
+open Core (CaseAssignment FixedCaseEncoding)
 
 /-- The six comparative construction types of @cite{stassen-1985} Ch 2.
 
@@ -172,12 +136,15 @@ def ComparativeType1985.fixedEncoding :
   | .separative | .allative | .locative => some .adverbial
   | .conjoined | .particle => none
 
-/-- Spatial relation (only meaningful for adverbial types). -/
-def ComparativeType1985.spatialRelation :
-    ComparativeType1985 → Option SpatialRelation
-  | .separative => some .separative
-  | .allative => some .allative
-  | .locative => some .locative
+/-- Spatial case of the standard marker (only meaningful for adverbial types).
+
+    Maps to the `Core.Case` values that correspond to Stassen's spatial
+    triad: ablative (separative), allative, locative. -/
+def ComparativeType1985.spatialCase :
+    ComparativeType1985 → Option Core.Case
+  | .separative => some .abl
+  | .allative => some .all
+  | .locative => some .loc
   | _ => none
 
 -- ============================================================================

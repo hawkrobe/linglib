@@ -110,6 +110,7 @@ import Linglib.Core.Continuation
 import Linglib.Core.Lexical.PersonCategory
 import Linglib.Core.Lexical.MorphRule
 import Linglib.Core.InformationTheory
+import Linglib.Core.Inheritance
 import Linglib.Theories.Morphology.Core.Circumfix
 import Linglib.Theories.Morphology.Core.Exponence
 import Linglib.Theories.Morphology.Core.ScaleFromParadigm
@@ -695,6 +696,7 @@ import Linglib.Theories.Syntax.DependencyGrammar.Core.Projection
 import Linglib.Theories.Syntax.DependencyGrammar.Core.Dominance
 import Linglib.Theories.Syntax.DependencyGrammar.Core.LexicalRules
 import Linglib.Theories.Syntax.DependencyGrammar.Core.Nominal
+import Linglib.Theories.Syntax.DependencyGrammar.Core.NetworkIntegration
 import Linglib.Theories.Syntax.DependencyGrammar.Formal.HeadCriteria
 import Linglib.Theories.Syntax.DependencyGrammar.Formal.DependencyLength
 import Linglib.Theories.Syntax.DependencyGrammar.Formal.HarmonicOrder

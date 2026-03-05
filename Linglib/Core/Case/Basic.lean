@@ -114,4 +114,43 @@ def Case.inAllCases (c : Case) : Bool :=
 theorem Case.allCases_complete (c : Case) : c.inAllCases = true := by
   cases c <;> native_decide
 
+-- ============================================================================
+-- § 4: Case Assignment Mode
+-- ============================================================================
+
+/-- How case is assigned to an NP in a given construction.
+
+    This parameter originates from @cite{stassen-1985} §2.2.1 on comparative
+    constructions, but applies generally to any multi-NP construction: is the
+    case of one NP determined by the case of another (derived), or does it
+    receive a fixed case form regardless of context (fixed)? -/
+inductive CaseAssignment where
+  /-- Derived case: NP's case parallels another NP's case.
+      The two NPs show structural parallelism. -/
+  | derived
+  /-- Fixed case: NP receives a specific oblique case form
+      independent of other NPs' grammatical functions. -/
+  | fixed
+  deriving DecidableEq, BEq, Repr
+
+/-- For fixed-case NPs, what syntactic role the NP occupies.
+
+    This distinguishes direct-object encoding (NP is governed by a verb)
+    from adverbial encoding (NP is part of an adverbial/PP phrase). -/
+inductive FixedCaseEncoding where
+  /-- NP is direct object of a transitive verb. -/
+  | directObject
+  /-- NP is constituent of an adverbial phrase. -/
+  | adverbial
+  deriving DecidableEq, BEq, Repr
+
+/-- The three spatial cases that serve as adverbial markers cross-linguistically.
+
+    These are a subset of the full `Case` inventory. Many constructions
+    (comparison, possession, benefaction) borrow their markers from spatial
+    case forms — the localistic hypothesis (@cite{stassen-1985} §2.2.3). -/
+def Case.spatialTriad : List Case := [.abl, .all, .loc]
+
+theorem Case.spatialTriad_length : Case.spatialTriad.length = 3 := by native_decide
+
 end Core

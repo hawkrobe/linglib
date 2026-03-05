@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.228.22] - 2026-03-04
+
+### Added
+- **NetworkIntegration**: Add Core/NetworkIntegration.lean connecting Core/Inheritance to DependencyGrammar. Word classes and argument structures live in a WG inheritance network; resolveArgStr derives ArgStr via default inheritance
+- **Hudson1984**: Add WG network grounding section with 6 theorems connecting network-derived arg structures to existing satisfiesArgStr predicates
+
+### Changed
+- **NetworkIntegration**: Fix inversion model to match Hudson 1984 pp. 117-118 — inversion via subtype inheritance (interrogative_auxiliary isA auxiliary with subject/right override), not fabricated visitor-suppression mechanism. Remove WGRole, suppressVisitors, flipDir
+- **Hudson1984**: Update docstrings and summary to accurately describe Hudson's subtype-inheritance analysis of SAI
+
 ## [0.228.21] - 2026-03-04
 
 ### Added
