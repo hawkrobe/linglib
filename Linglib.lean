@@ -642,6 +642,7 @@ import Linglib.Phenomena.WordOrder.Basic
 import Linglib.Phenomena.WordOrder.SubjectAuxInversion
 import Linglib.Phenomena.WordOrder.Typology
 import Linglib.Phenomena.WordOrder.VerbPosition
+import Linglib.Phenomena.WordOrder.V2
 import Linglib.Phenomena.WordOrder.Gradience
 import Linglib.Phenomena.WordOrder.Studies.HahnDegenFutrell2021
 import Linglib.Phenomena.TenseAspect.Studies.Rouillard2026
@@ -738,6 +739,7 @@ import Linglib.Phenomena.WordOrder.Studies.Pollock1989
 import Linglib.Phenomena.WordOrder.Studies.Hudson1984
 import Linglib.Phenomena.WordOrder.Studies.SchlotterbeckWang2023
 import Linglib.Phenomena.WordOrder.Studies.ColeHermon2008
+import Linglib.Phenomena.WordOrder.Studies.Westergaard2009
 import Linglib.Theories.Syntax.DependencyGrammar.LongDistance
 -- Theories: Dynamic Semantics
 -- Theories: Dynamic Semantics — Core

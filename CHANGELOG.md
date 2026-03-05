@@ -10,7 +10,7 @@
 
 ### Added
 - **Phenomena/WordOrder/V2.lean**: Theory-neutral V2 data — Norwegian (Tromsø) clause-type variation, cross-Germanic contrasts (German, English, Belfast English, Danish)
-- **Phenomena/WordOrder/Studies/Westergaard2009.lean**: Formalize micro-cue model — `ForceHead` enum (7 clause-type heads), `MicroCueProfile` (verb movement per head), 6 language profiles from Table 3.1, bridge theorems to SAI and V2 data, information-structure conditioning of "optional" V2, economy ordering
+- **Phenomena/WordOrder/Studies/Westergaard2009.lean**: Formalize micro-parameter model — `ForceHead` enum (7 clause-type heads), `V2Profile` (verb movement per head), `MicroCue` (observable input templates), 6 language profiles from Table 3.1, bridge theorems to SAI/V2 data/GermanicV2, information-structure conditioning of "optional" V2
 
 ## [0.228.35] - 2026-03-05
 
