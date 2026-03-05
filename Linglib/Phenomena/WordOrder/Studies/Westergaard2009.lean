@@ -1,5 +1,4 @@
 import Linglib.Phenomena.WordOrder.V2
-import Linglib.Phenomena.WordOrder.VerbPosition
 import Linglib.Phenomena.WordOrder.Typology
 import Linglib.Phenomena.WordOrder.SubjectAuxInversion
 import Linglib.Theories.Syntax.Minimalism.Formal.ExtendedProjection.Basic
@@ -462,35 +461,7 @@ theorem german_decl_v2_bridge :
     german.verbMovement .Decl = true := by decide
 
 -- ============================================================================
--- § 9  Bridge to VerbPosition Data
--- ============================================================================
-
-/-! `VerbPosition.lean` records the same German root/embedded alternation as
-    `V2.lean` but in a different structure (`GermanV2Data`). The two encodings
-    must agree: both record V2 in root clauses and verb-final in embedded. -/
-
-open Phenomena.WordOrder.VerbPosition in
-open Phenomena.WordOrder.V2 in
-/-- VerbPosition's root-clause sentence matches V2.lean's German declarative. -/
-theorem verbposition_v2_root_agree :
-    germanExample.rootClause = de_decl.sentence := rfl
-
-open Phenomena.WordOrder.VerbPosition in
-open Phenomena.WordOrder.V2 in
-/-- VerbPosition and V2.lean agree that German root clauses are V2. -/
-theorem verbposition_v2_root_status :
-    germanExample.v2InRoot = true ∧
-    de_decl.v2Status = .obligatory := by decide
-
-open Phenomena.WordOrder.VerbPosition in
-open Phenomena.WordOrder.V2 in
-/-- VerbPosition and V2.lean agree that German embedded clauses are verb-final. -/
-theorem verbposition_v2_embedded_status :
-    germanExample.verbFinalInEmbedded = true ∧
-    de_emb.v2Status = .impossible := by decide
-
--- ============================================================================
--- § 10  Bridge to Typology
+-- § 9  Bridge to Typology
 -- ============================================================================
 
 /-! WALS classifies German as having "no dominant order" (`Typology.lean`).
@@ -519,7 +490,7 @@ theorem english_svo_explained :
     stdEnglish.verbMovement .Fin  = false := by decide
 
 -- ============================================================================
--- § 11  Information Structure and "Optional" V2
+-- § 10  Information Structure and "Optional" V2
 -- ============================================================================
 
 /-! In Tromsø *wh*-questions with monosyllabic *wh*-words, V2 vs. non-V2
@@ -549,7 +520,7 @@ theorem given_predicts_nonV2 : tromsøWhV2Preference .given = .impossible := rfl
 theorem new_predicts_V2 : tromsøWhV2Preference .new = .obligatory := rfl
 
 -- ============================================================================
--- § 12  Economy
+-- § 11  Economy
 -- ============================================================================
 
 /-! @cite{westergaard-2009}'s structural economy (p. 4):

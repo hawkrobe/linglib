@@ -641,7 +641,6 @@ import Linglib.Phenomena.TenseAspect.Studies.Izvorski1997
 import Linglib.Phenomena.WordOrder.Basic
 import Linglib.Phenomena.WordOrder.SubjectAuxInversion
 import Linglib.Phenomena.WordOrder.Typology
-import Linglib.Phenomena.WordOrder.VerbPosition
 import Linglib.Phenomena.WordOrder.V2
 import Linglib.Phenomena.WordOrder.Gradience
 import Linglib.Phenomena.WordOrder.Studies.HahnDegenFutrell2021
