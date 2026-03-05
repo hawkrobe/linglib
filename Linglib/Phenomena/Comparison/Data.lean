@@ -1,3 +1,5 @@
+import Linglib.Phenomena.Comparison.Typology
+
 /-!
 # Comparison Constructions: Overview
 @cite{heim-2001} @cite{kennedy-2007} @cite{klein-1980} @cite{schwarzschild-2008} @cite{stassen-2013} @cite{wellwood-2015}
@@ -18,6 +20,7 @@ categories (nominal, verbal, adjectival — @cite{wellwood-2015}).
 ```
 Comparison/
 ├── Data.lean — this file: cross-construction overview
+├── Typology.lean — WALS 121 cross-linguistic typology + Stassen 1985
 ├── Comparative/
 │ ├── Data.lean — basic comparative judgments, phrasal vs. clausal
 │ ├── Differential.lean — "3 inches taller", factor phrases
@@ -29,13 +32,23 @@ Comparison/
 ├── DegreeQuestion/
 │ └── Data.lean — "how tall", negative islands, modal obviation
 ├── CrossCategorial.lean — construction-level Wellwood-style parallels
-├── Typology.lean — WALS 121 cross-linguistic typology (from Gradability/)
-└── Studies/Kennedy2007Typology.lean — typology–fragment bridge (from Gradability/)
+└── Studies/
+    ├── Kennedy2007.lean — degree semantics bridge
+    └── Kennedy2007Typology.lean — typology–fragment bridge
 ```
 
+## Typological types
+
+Cross-linguistic comparative construction types (`ComparativeType`,
+`ComparativeType1985`) and their parameters (`CaseAssignment`,
+`FixedCaseEncoding`, `DegreeWordType`, `SuperlativeStrategy`) are defined
+in `Typology.lean` and re-exported here.
 -/
 
 namespace Phenomena.Comparison
+
+-- Re-export typological types for convenience
+open Phenomena.Comparison.Typology
 
 -- ════════════════════════════════════════════════════
 -- § 1. Comparison Construction Types
@@ -52,22 +65,7 @@ inductive ComparisonConstruction where
   deriving DecidableEq, BEq, Repr
 
 -- ════════════════════════════════════════════════════
--- § 2. Comparative Strategy
--- ════════════════════════════════════════════════════
-
-/-- How the standard of comparison is introduced syntactically.
-    These strategies may co-occur within a single language. -/
-inductive ComparativeStrategy where
-  | phrasalThan   -- "taller than Bill" — DP complement of *than*
-  | clausalThan   -- "taller than Bill is" — CP complement of *than*
-  | exceed        -- "surpass Bill in height" — exceed predicate
-  | conjoined     -- "Bill is tall, Mary is taller" — juxtaposition
-  | locational    -- "tall from Bill" — locative marker (many languages)
-  | particle      -- degree word + standard marker
-  deriving DecidableEq, BEq, Repr
-
--- ════════════════════════════════════════════════════
--- § 3. Comparison Domain (Cross-Categorial)
+-- § 2. Comparison Domain (Cross-Categorial)
 -- ════════════════════════════════════════════════════
 
 /-- What is being compared — the syntactic category of the gradable
@@ -83,10 +81,16 @@ inductive ComparisonDomain where
   deriving DecidableEq, BEq, Repr
 
 -- ════════════════════════════════════════════════════
--- § 4. Degree Morphology
+-- § 3. Degree Morphology
 -- ════════════════════════════════════════════════════
 
-/-- How degree comparison is morphologically encoded. -/
+/-- How degree comparison is morphologically realized in a given form.
+
+    This is orthogonal to `DegreeWordType` (in `Typology.lean`), which
+    classifies whether a *language* has degree marking at all.
+    `DegreeMorphology` classifies a specific *form*: English "taller" is
+    synthetic, "more tall" is analytic, "better" is suppletive — all in
+    a language that `DegreeWordType` classifies as `.hasDegreeWord`. -/
 inductive DegreeMorphology where
   | synthetic   -- "-er"/"-est" (English, German)
   | analytic    -- "more"/"most" (English, French)
