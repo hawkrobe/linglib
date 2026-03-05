@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.228.30] - 2026-03-05
+
+### Fixed
+- **KaoEtAl2014 (Hyperbole)**: Increase `maxHeartbeats` from 400000 to 800000 for `hyperbole_affect` and `literal_not_hyperbolic` (auto-detect path ~17s)
+- **Core/Lexical/NounCategorization**: Add `.colour` to `SemanticParameter` — perceptually salient but unattested in noun categorization systems (needed by PrasertsonSmithCulbertson2026)
+
 ## [0.228.29] - 2026-03-05
 
 ### Fixed

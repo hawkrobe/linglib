@@ -88,6 +88,8 @@ inductive SemanticParameter where
   | quanta           -- quantity/measure
   -- Social
   | socialStatus     -- honorific, kin, age
+  -- Perceptual (salient but unattested in noun categorization)
+  | colour           -- perceptually salient but no attested classifier system uses it
   deriving DecidableEq, Repr, BEq
 
 -- ============================================================================
