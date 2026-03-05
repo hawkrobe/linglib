@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.228.29] - 2026-03-05
+
+### Fixed
+- **Tactics/RSAPredict**: Revert broken simp preprocessing changes (0.228.28) that caused 7 regressions across study files. Restore persistent reify cache, Bool whnf fallback, maxRecDepth wrapper, and DAG-based native_decide path from 0.228.18
+- **Tactics/RSAPredict/FinsetExpand**: Remove unused file (FrankeBergen2020 works via auto-detect without it)
+
 ## [0.228.28] - 2026-03-05
 
 ### Changed

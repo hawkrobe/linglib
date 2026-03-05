@@ -3,7 +3,6 @@ import Linglib.Core.Interval.RSAVerify
 import Linglib.Core.Interval.ReflectInterval
 import Linglib.Tactics.RSAPredict.Helpers
 import Linglib.Tactics.RSAPredict.Reify
-import Linglib.Tactics.RSAPredict.FinsetExpand
 
 set_option autoImplicit false
 
@@ -37,10 +36,12 @@ open Linglib.Interval
 -- Persistent Reification Cache
 -- ============================================================================
 
--- Note: cross-theorem caching via IO.Ref doesn't work because Lean 4
--- elaborates theorems in parallel (IO.Ref is racily shared across threads).
--- Each invocation creates a fresh local cache instead. Within a single theorem,
--- LHS/RHS reification shares sub-expressions via the local cache.
+/-- Module-scope reification cache shared across all `rsa_predict` invocations
+    within a file. The first theorem pays the full reification cost; subsequent
+    theorems for the same model get cache hits on shared sub-expressions
+    (L0 policies, S1 scores, belief distributions, etc.). -/
+initialize persistentReifyCache : IO.Ref (Std.HashMap UInt64 (Expr × MetaBounds)) ←
+  IO.mkRef ∅
 
 -- ============================================================================
 -- Meta-Level DAG Builder
@@ -139,180 +140,86 @@ private def buildSharedDAG (lhsRExpr rhsRExpr : Expr) :
   return (buildDAGArrayExpr dagNodes, lhsIdx, rhsIdx)
 
 -- ============================================================================
--- Let-Bound RExpr Builder (for fast LCNF compilation in native_decide)
--- ============================================================================
-
-/-- State for building let-bound RExpr expressions. Entries are stored in
-    topological order (leaves first). Each entry's value uses `bvar` references
-    to earlier entries. -/
-private abbrev LetDAGState := Array Expr × Std.HashMap UInt64 ℕ
-
-/-- Walk an RExpr `Expr` to build a let-bound representation. Returns the
-    let-DAG index of the expression. Children are processed first, ensuring
-    topological order. Shared sub-expressions (by `Expr.hash`) get a single
-    let binding, making LCNF compilation O(unique nodes) instead of O(tree). -/
-private partial def rexprToLetDAGAux (ref : IO.Ref LetDAGState) (e : Expr) : MetaM ℕ := do
-  let key := e.hash
-  let (_, seen) ← ref.get
-  if let some idx := seen.get? key then return idx
-
-  let fn := e.getAppFn
-  let args := e.getAppArgs
-  let some name := fn.constName?
-    | throwError "rsa_predict: let-DAG builder: non-const head in RExpr: {fn}"
-
-  -- Process children first (may add entries), THEN determine this node's index.
-  -- Helper: bvar reference to child index `ci` from depth `d`.
-  let mkRef (d ci : ℕ) : Expr := mkBVar (d - ci - 1)
-
-  let value ← match name with
-    | ``RExpr.nat | ``RExpr.ratCast => pure e  -- leaf, no children
-    | ``RExpr.neg => do
-      let ci ← rexprToLetDAGAux ref args[0]!
-      let d := (← ref.get).1.size
-      pure (mkApp (mkConst ``RExpr.neg) (mkRef d ci))
-    | ``RExpr.rexp => do
-      let ci ← rexprToLetDAGAux ref args[0]!
-      let d := (← ref.get).1.size
-      pure (mkApp (mkConst ``RExpr.rexp) (mkRef d ci))
-    | ``RExpr.rlog => do
-      let ci ← rexprToLetDAGAux ref args[0]!
-      let d := (← ref.get).1.size
-      pure (mkApp (mkConst ``RExpr.rlog) (mkRef d ci))
-    | ``RExpr.inv => do
-      let ci ← rexprToLetDAGAux ref args[0]!
-      let d := (← ref.get).1.size
-      pure (mkApp (mkConst ``RExpr.inv) (mkRef d ci))
-    | ``RExpr.add => do
-      let ai ← rexprToLetDAGAux ref args[0]!
-      let bi ← rexprToLetDAGAux ref args[1]!
-      let d := (← ref.get).1.size
-      pure (mkApp2 (mkConst ``RExpr.add) (mkRef d ai) (mkRef d bi))
-    | ``RExpr.mul => do
-      let ai ← rexprToLetDAGAux ref args[0]!
-      let bi ← rexprToLetDAGAux ref args[1]!
-      let d := (← ref.get).1.size
-      pure (mkApp2 (mkConst ``RExpr.mul) (mkRef d ai) (mkRef d bi))
-    | ``RExpr.div => do
-      let ai ← rexprToLetDAGAux ref args[0]!
-      let bi ← rexprToLetDAGAux ref args[1]!
-      let d := (← ref.get).1.size
-      pure (mkApp2 (mkConst ``RExpr.div) (mkRef d ai) (mkRef d bi))
-    | ``RExpr.sub => do
-      let ai ← rexprToLetDAGAux ref args[0]!
-      let bi ← rexprToLetDAGAux ref args[1]!
-      let d := (← ref.get).1.size
-      pure (mkApp2 (mkConst ``RExpr.sub) (mkRef d ai) (mkRef d bi))
-    | ``RExpr.rpow => do
-      let ai ← rexprToLetDAGAux ref args[0]!
-      let d := (← ref.get).1.size
-      pure (mkApp2 (mkConst ``RExpr.rpow) (mkRef d ai) args[1]!)  -- ℕ exponent literal
-    | ``RExpr.iteZero => do
-      let ci ← rexprToLetDAGAux ref args[0]!
-      let ti ← rexprToLetDAGAux ref args[1]!
-      let ei ← rexprToLetDAGAux ref args[2]!
-      let d := (← ref.get).1.size
-      pure (mkApp3 (mkConst ``RExpr.iteZero) (mkRef d ci) (mkRef d ti) (mkRef d ei))
-    | ``RExpr.expMulLogSub => do
-      let ai ← rexprToLetDAGAux ref args[0]!
-      let xi ← rexprToLetDAGAux ref args[1]!
-      let ci ← rexprToLetDAGAux ref args[2]!
-      let d := (← ref.get).1.size
-      pure (mkApp3 (mkConst ``RExpr.expMulLogSub) (mkRef d ai) (mkRef d xi) (mkRef d ci))
-    | _ => throwError "rsa_predict: let-DAG builder: unknown RExpr: {name}"
-
-  let (entries, seen) ← ref.get
-  let idx := entries.size
-  ref.set (entries.push value, seen.insert key idx)
-  return idx
-
-/-- Build a let-bound `checkFn lhs rhs` expression from two RExpr Exprs.
-    The result is wrapped in nested `Expr.letE` bindings so that LCNF sees
-    ~1K nodes (O(unique sub-expressions)) instead of ~28M (O(tree)).
-    Kernel verification is still efficient: zeta-reduction preserves Expr
-    sharing via `instantiate1`, so `denote` reduction is O(unique nodes). -/
-private def buildLetBoundCheck (checkFnName : Name) (lhsRExpr rhsRExpr : Expr) :
-    MetaM Expr := do
-  let ref ← IO.mkRef ((#[], {}) : LetDAGState)
-  let lhsIdx ← rexprToLetDAGAux ref lhsRExpr
-  let rhsIdx ← rexprToLetDAGAux ref rhsRExpr
-  let (entries, _) ← ref.get
-  let n := entries.size
-  -- Body: checkFn (bvar lhsOffset) (bvar rhsOffset)
-  let body := mkApp2 (mkConst checkFnName)
-    (mkBVar (n - lhsIdx - 1)) (mkBVar (n - rhsIdx - 1))
-  -- Wrap in nested letE (outermost = entry 0, innermost = entry n-1)
-  let rexprType := mkConst ``RExpr
-  let mut result := body
-  for i in [:n] do
-    let j := n - 1 - i  -- build from innermost to outermost
-    result := Expr.letE `r rexprType entries[j]! result false
-  return result
-
--- ============================================================================
 -- Direct RExpr Pipeline
 -- ============================================================================
 
+/-- Prove a Prop via `native_decide`. Returns the proof term. -/
+private def nativeDecideProof (propType : Expr) : TacticM Expr := do
+  let mvar ← mkFreshExprMVar propType
+  let savedGoals ← getGoals
+  setGoals [mvar.mvarId!]
+  evalTactic (← `(tactic| native_decide))
+  setGoals savedGoals
+  return mvar
+
 /-- Direct RExpr reification for `lhs > rhs` goals.
-    Reifies both sides to RExpr, wraps in let-bindings for fast LCNF compilation
-    (O(unique nodes) instead of O(tree nodes)), then runs `native_decide` on the
-    compact `checkGtOpt`. When Finset.sum is encountered during reification,
-    builds bridge proofs: Finset.sum Finset.univ f = (l.map f).sum, so the kernel
-    verifies denote(rexpr) ≡ (l.map f).sum (fast) instead of ≡ Finset.sum (slow). -/
+    Builds a shared DAG at meta-time from the RExpr `Expr` structure,
+    then runs `native_decide` on the compact `checkGtDAG` (O(unique nodes)
+    instead of O(tree nodes)). Falls back to tree-based `checkGtOpt`
+    if DAG construction fails. -/
 def tryDirectRExprCompare (goal : MVarId) (lhsExpr rhsExpr : Expr) : TacticM Bool := do
   let t0 ← IO.monoMsNow
-
-  -- Phase 1: Reify both sides. The reifier records Finset.sum sites it encounters.
-  let localCache ← IO.mkRef ({} : ReifyCacheData)
-  let (lhsRExpr, lhsBounds) ← reifyToRExpr localCache lhsExpr maxDepth
-  let (rhsRExpr, rhsBounds) ← reifyToRExpr localCache rhsExpr maxDepth
+  let cacheBefore ← persistentReifyCache.get
+  let (lhsRExpr, lhsBounds) ← reifyToRExpr persistentReifyCache lhsExpr maxDepth
+  let (rhsRExpr, rhsBounds) ← reifyToRExpr persistentReifyCache rhsExpr maxDepth
 
   unless lhsBounds.lo > rhsBounds.hi do
     logInfo m!"rsa_predict: [direct] bounds don't separate (lhs=[{lhsBounds.lo}, {lhsBounds.hi}] rhs=[{rhsBounds.lo}, {rhsBounds.hi}])"
     return false
 
-  -- Phase 2: Build bridge proofs for Finset.sum sites found during reification.
-  let finsetSites := (← localCache.get).finsetSumSites
-  let useBridge := finsetSites.size > 0
-
-  let (lhsExpandProof?, rhsExpandProof?) ← if useBridge then do
-    let lhsP? ← expandFinsetSums lhsExpr
-    let rhsP? ← expandFinsetSums rhsExpr
-    pure (lhsP?.2, rhsP?.2)
-  else
-    pure (none, none)
+  let cacheAfter ← persistentReifyCache.get
+  let t1 ← IO.monoMsNow
+  logInfo m!"rsa_predict: [direct] reified ({t1 - t0}ms, cache {cacheBefore.size}→{cacheAfter.size})"
 
   try
-    -- Phase 3: Prove via native_decide on let-bound checkGtOpt.
-    let letCheckExpr ← buildLetBoundCheck ``RExpr.checkGtOpt lhsRExpr rhsRExpr
-    let letCheckType ← mkEq letCheckExpr (mkConst ``Bool.true)
-    let hcheck ← nativeDecideProof letCheckType
+    -- Build shared DAG at meta-time (O(unique sub-expressions), not O(tree nodes))
+    let (dagArrayExpr, lhsIdx, rhsIdx) ← buildSharedDAG lhsRExpr rhsRExpr
+    let t1b ← IO.monoMsNow
+    logInfo m!"rsa_predict: [direct] DAG built ({t1b - t1}ms)"
 
-    -- Phase 4: Build proof term.
-    let h_gt := mkApp3 (mkConst ``RExpr.gt_of_checkGtOpt) lhsRExpr rhsRExpr hcheck
+    -- native_decide on checkGtDAG: evaluates only ~1K unique DAG nodes
+    let checkExpr := mkApp3 (mkConst ``checkGtDAG) dagArrayExpr
+      (mkRawNatLit lhsIdx) (mkRawNatLit rhsIdx)
+    let checkType ← mkEq checkExpr (mkConst ``Bool.true)
+    let hcheck ← nativeDecideProof checkType
 
-    if lhsExpandProof?.isSome || rhsExpandProof?.isSome then
-      let h_lhs := lhsExpandProof?.getD (← mkAppM ``Eq.refl #[lhsExpr])
-      let h_rhs := rhsExpandProof?.getD (← mkAppM ``Eq.refl #[rhsExpr])
-      let proof ← mkAppM ``gt_of_eq_gt_eq #[h_lhs, h_rhs, h_gt]
-      goal.assign proof
-    else
-      goal.assign h_gt
+    let t2 ← IO.monoMsNow
+    logInfo m!"rsa_predict: [direct] native_decide ({t2 - t1b}ms)"
+
+    -- gt_of_checkGtDAG : (lhs rhs : RExpr) → (dag : Array DAGNode) → (li ri : ℕ) →
+    --   checkGtDAG dag li ri = true → lhs.denote > rhs.denote
+    let proof := mkAppN (mkConst ``gt_of_checkGtDAG)
+      #[lhsRExpr, rhsRExpr, dagArrayExpr, mkRawNatLit lhsIdx, mkRawNatLit rhsIdx, hcheck]
+    goal.assign proof
 
     let t3 ← IO.monoMsNow
-    logInfo m!"rsa_predict: [direct] proved ({t3 - t0}ms)"
+    logInfo m!"rsa_predict: [direct] assigned ({t3 - t0}ms)"
     return true
   catch e =>
-    logInfo m!"rsa_predict: [direct] failed: {e.toMessageData}"
-    return false
+    -- Fallback to tree-based checkGtOpt (for small models or DAG builder failures)
+    logInfo m!"rsa_predict: [direct] DAG path failed: {e.toMessageData}, trying tree fallback"
+    try
+      let checkExpr ← mkAppM ``RExpr.checkGtOpt #[lhsRExpr, rhsRExpr]
+      let checkType ← mkEq checkExpr (mkConst ``Bool.true)
+      let hcheck ← nativeDecideProof checkType
+      let proof := mkApp3 (mkConst ``RExpr.gt_of_checkGtOpt) lhsRExpr rhsRExpr hcheck
+      goal.assign proof
+      let t3 ← IO.monoMsNow
+      logInfo m!"rsa_predict: [direct] assigned via tree fallback ({t3 - t0}ms)"
+      return true
+    catch e2 =>
+      logInfo m!"rsa_predict: [direct] tree fallback also failed: {e2.toMessageData}"
+      return false
 
 /-- Direct RExpr reification for `not (lhs > rhs)` goals.
     Assigns proofs directly — the kernel verifies denote ≡ original. -/
 def tryDirectRExprNotGt (goal : MVarId) (lhsExpr rhsExpr : Expr) : TacticM Bool := do
   let t0 ← IO.monoMsNow
-  let localCache ← IO.mkRef ({} : ReifyCacheData)
-  let (lhsRExpr, lhsBounds) ← reifyToRExpr localCache lhsExpr maxDepth
-  let (rhsRExpr, rhsBounds) ← reifyToRExpr localCache rhsExpr maxDepth
+  let (lhsRExpr, lhsBounds) ← reifyToRExpr persistentReifyCache lhsExpr maxDepth
+  let (rhsRExpr, rhsBounds) ← reifyToRExpr persistentReifyCache rhsExpr maxDepth
+
+  let t1 ← IO.monoMsNow
+  logInfo m!"rsa_predict: [direct/not-gt] reified ({t1 - t0}ms)"
 
   try
     -- Fast path: structurally equal RExpr → ¬(x > x) by irrefl
@@ -324,10 +231,11 @@ def tryDirectRExprNotGt (goal : MVarId) (lhsExpr rhsExpr : Expr) : TacticM Bool 
         lhsRExpr rhsRExpr denoteCongr
       goal.assign proof
       let t2 ← IO.monoMsNow
-      logInfo m!"rsa_predict: [direct/not-gt] proved via structural equality ({t2 - t0}ms)"
+      logInfo m!"rsa_predict: [direct/not-gt] assigned via structural equality ({t2 - t0}ms)"
       return true
 
-    -- Exact ℚ evaluation path
+    -- Exact ℚ evaluation path: for pure arithmetic RExpr (no exp/log),
+    -- evaluate both to exact ℚ and check ¬(>).
     let exactCheckExpr ← mkAppM ``RExpr.checkExactNotGt #[lhsRExpr, rhsRExpr]
     let exactCheckType ← mkEq exactCheckExpr (mkConst ``Bool.true)
     if let some hexact ← try? (nativeDecideProof exactCheckType) then
@@ -335,10 +243,11 @@ def tryDirectRExprNotGt (goal : MVarId) (lhsExpr rhsExpr : Expr) : TacticM Bool 
         lhsRExpr rhsRExpr hexact
       goal.assign proof
       let t2 ← IO.monoMsNow
-      logInfo m!"rsa_predict: [direct/not-gt] proved via exact ℚ ({t2 - t0}ms)"
+      logInfo m!"rsa_predict: [direct/not-gt] assigned via exact ℚ ({t2 - t0}ms)"
       return true
 
-    -- Semantic equality path
+    -- Semantic equality path: handles exp/log cases by structural match
+    -- with recursive evalExact on arithmetic subtrees
     let semCheckExpr ← mkAppM ``RExpr.checkSemanticEq #[lhsRExpr, rhsRExpr]
     let semCheckType ← mkEq semCheckExpr (mkConst ``Bool.true)
     if let some hsem ← try? (nativeDecideProof semCheckType) then
@@ -346,22 +255,39 @@ def tryDirectRExprNotGt (goal : MVarId) (lhsExpr rhsExpr : Expr) : TacticM Bool 
         lhsRExpr rhsRExpr hsem
       goal.assign proof
       let t2 ← IO.monoMsNow
-      logInfo m!"rsa_predict: [direct/not-gt] proved via semantic equality ({t2 - t0}ms)"
+      logInfo m!"rsa_predict: [direct/not-gt] assigned via semantic equality ({t2 - t0}ms)"
       return true
 
-    -- Interval separation path
+    -- Interval separation path: need lhs.eval.hi ≤ rhs.eval.lo
     unless lhsBounds.hi ≤ rhsBounds.lo do
+      logInfo m!"rsa_predict: [direct/not-gt] bounds don't prove le, exact ℚ not available"
       return false
 
-    let letCheckExpr ← buildLetBoundCheck ``RExpr.checkNotGtOpt lhsRExpr rhsRExpr
-    let letCheckType ← mkEq letCheckExpr (mkConst ``Bool.true)
-    let hcheck ← nativeDecideProof letCheckType
+    -- Try DAG-based interval check first
+    let dagOk ← try
+      let (dagArrayExpr, lhsIdx, rhsIdx) ← buildSharedDAG lhsRExpr rhsRExpr
+      let checkExpr := mkApp3 (mkConst ``checkNotGtDAG) dagArrayExpr
+        (mkRawNatLit lhsIdx) (mkRawNatLit rhsIdx)
+      let checkType ← mkEq checkExpr (mkConst ``Bool.true)
+      let hcheck ← nativeDecideProof checkType
+      let proof := mkAppN (mkConst ``not_gt_of_checkNotGtDAG)
+        #[lhsRExpr, rhsRExpr, dagArrayExpr, mkRawNatLit lhsIdx, mkRawNatLit rhsIdx, hcheck]
+      goal.assign proof
+      let t2 ← IO.monoMsNow
+      logInfo m!"rsa_predict: [direct/not-gt] assigned via DAG interval ({t2 - t0}ms)"
+      pure true
+    catch _ => pure false
+    if dagOk then return true
 
+    -- Fallback to tree-based checkNotGtOpt
+    let checkExpr ← mkAppM ``RExpr.checkNotGtOpt #[lhsRExpr, rhsRExpr]
+    let checkType ← mkEq checkExpr (mkConst ``Bool.true)
+    let hcheck ← nativeDecideProof checkType
     let proof := mkApp3 (mkConst ``RExpr.not_gt_of_checkNotGtOpt)
       lhsRExpr rhsRExpr hcheck
     goal.assign proof
-    let t3 ← IO.monoMsNow
-    logInfo m!"rsa_predict: [direct/not-gt] proved ({t3 - t0}ms)"
+    let t2 ← IO.monoMsNow
+    logInfo m!"rsa_predict: [direct/not-gt] assigned via interval fallback ({t2 - t0}ms)"
     return true
   catch e =>
     logInfo m!"rsa_predict: [direct/not-gt] failed: {e.toMessageData}"
@@ -375,9 +301,11 @@ def tryDirectRExprNotGt (goal : MVarId) (lhsExpr rhsExpr : Expr) : TacticM Bool 
     Tries structural equality first (same RExpr), then exact ℚ evaluation. -/
 def tryDirectRExprEq (goal : MVarId) (lhsExpr rhsExpr : Expr) : TacticM Bool := do
   let t0 ← IO.monoMsNow
-  let localCache ← IO.mkRef ({} : ReifyCacheData)
-  let (lhsRExpr, _) ← reifyToRExpr localCache lhsExpr maxDepth
-  let (rhsRExpr, _) ← reifyToRExpr localCache rhsExpr maxDepth
+  let (lhsRExpr, _) ← reifyToRExpr persistentReifyCache lhsExpr maxDepth
+  let (rhsRExpr, _) ← reifyToRExpr persistentReifyCache rhsExpr maxDepth
+
+  let t1 ← IO.monoMsNow
+  logInfo m!"rsa_predict: [direct/eq] reified ({t1 - t0}ms)"
 
   try
     -- Fast path: structurally equal RExpr → congrArg denote
@@ -387,7 +315,7 @@ def tryDirectRExprEq (goal : MVarId) (lhsExpr rhsExpr : Expr) : TacticM Bool := 
       let proof ← mkAppM ``congrArg #[denoteFn, heq]
       goal.assign proof
       let t2 ← IO.monoMsNow
-      logInfo m!"rsa_predict: [direct/eq] proved via structural equality ({t2 - t0}ms)"
+      logInfo m!"rsa_predict: [direct/eq] assigned via structural equality ({t2 - t0}ms)"
       return true
 
     -- Exact ℚ evaluation path
@@ -397,19 +325,21 @@ def tryDirectRExprEq (goal : MVarId) (lhsExpr rhsExpr : Expr) : TacticM Bool := 
       let proof := mkApp3 (mkConst ``RExpr.eq_of_checkExactEq) lhsRExpr rhsRExpr hcheck
       goal.assign proof
       let t2 ← IO.monoMsNow
-      logInfo m!"rsa_predict: [direct/eq] proved via exact ℚ ({t2 - t0}ms)"
+      logInfo m!"rsa_predict: [direct/eq] assigned via exact ℚ ({t2 - t0}ms)"
       return true
 
-    -- Semantic equality path
+    -- Semantic equality path: handles exp/log cases by structural match
+    -- with recursive evalExact on arithmetic subtrees
     let semCheckExpr ← mkAppM ``RExpr.checkSemanticEq #[lhsRExpr, rhsRExpr]
     let semCheckType ← mkEq semCheckExpr (mkConst ``Bool.true)
     if let some hsem ← try? (nativeDecideProof semCheckType) then
       let proof := mkApp3 (mkConst ``RExpr.eq_of_checkSemanticEq) lhsRExpr rhsRExpr hsem
       goal.assign proof
       let t2 ← IO.monoMsNow
-      logInfo m!"rsa_predict: [direct/eq] proved via semantic equality ({t2 - t0}ms)"
+      logInfo m!"rsa_predict: [direct/eq] assigned via semantic equality ({t2 - t0}ms)"
       return true
 
+    logInfo m!"rsa_predict: [direct/eq] no equality strategy succeeded"
     return false
   catch e =>
     logInfo m!"rsa_predict: [direct/eq] failed: {e.toMessageData}"

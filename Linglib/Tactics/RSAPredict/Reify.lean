@@ -173,19 +173,12 @@ def extractRatFromCauchy (e : Expr) : MetaM (Option (ℚ × Expr)) := do
 def maxDepth : ℕ := 200
 
 /-- Memoization cache for reifyToRExpr, keyed on Expr structural hash.
-    Stores `(rexprExpr, bounds)`. Also records Finset.sum sites encountered
-    during reification, for building bridge proofs. -/
-structure ReifyCacheData where
-  cache : Std.HashMap UInt64 (Expr × MetaBounds) := {}
-  /-- Finset.sum expressions encountered during reification.
-      Each is a `Finset.sum Finset.univ f` subexpression to be expanded later. -/
-  finsetSumSites : Array Expr := #[]
-
-abbrev ReifyCache := IO.Ref ReifyCacheData
+    Stores `(rexprExpr, bounds)`. -/
+abbrev ReifyCache := IO.Ref (Std.HashMap UInt64 (Expr × MetaBounds))
 /-- Store result in cache and return it. -/
 private def cacheReturn (cache : ReifyCache) (key : UInt64)
     (result : Expr × MetaBounds) : MetaM (Expr × MetaBounds) := do
-  cache.modify fun d => { d with cache := d.cache.insert key result }
+  cache.modify fun m => m.insert key result
   return result
 
 /-- Proof-free RExpr reifier for rsa_predict.
@@ -202,6 +195,11 @@ private def cacheReturn (cache : ReifyCache) (key : UInt64)
     Uses a hash-keyed cache to avoid redundant reification of shared subexpressions. -/
 partial def reifyToRExpr (cache : ReifyCache) (e : Expr) (depth : ℕ) :
     MetaM (Expr × MetaBounds) := do
+  -- Increase maxRecDepth for whnf calls inside the reifier.
+  -- Complex meaning functions (e.g., Innocent Exclusion exhaustification) can
+  -- require deep kernel reduction during Finset.sum unfolding.
+  withTheReader Core.Context (fun ctx =>
+    { ctx with maxRecDepth := max ctx.maxRecDepth 8192 }) do
   if depth == 0 then
     throwError "rsa_predict: max reification depth on: {← ppExpr e}"
 
@@ -211,7 +209,7 @@ partial def reifyToRExpr (cache : ReifyCache) (e : Expr) (depth : ℕ) :
 
   -- Cache lookup
   let key := hash e
-  if let some result := (← cache.get).cache.get? key then
+  if let some result := (← cache.get).get? key then
     return result
 
   -- Natural literal (leaf — kernel verifies e ≡ denote(nat n))
@@ -408,18 +406,25 @@ partial def reifyToRExpr (cache : ReifyCache) (e : Expr) (depth : ℕ) :
                       else ⟨min bt.lo be.lo, max bt.hi be.hi⟩
         return ← cacheReturn cache key (rexpr, bounds)
       -- Bool condition: ite ((expr) = true) or ite ((expr) = false)
-      -- Evaluated via compiled code (tryEvalBool), not whnf, so the result
-      -- is deterministic and independent of maxRecDepth.
+      -- Try native evaluation first (fast, bypasses maxRecDepth), then whnf fallback
       if cArgs[0]!.isConstOf ``Bool then
         let rhsVal ← whnf cArgs[2]!
         let rhsIsTrue := rhsVal.isConstOf ``Bool.true
         let rhsIsFalse := rhsVal.isConstOf ``Bool.false
-        let some boolResult ← tryEvalBool cArgs[1]!
-          | throwError "rsa_predict: cannot evaluate Bool condition: {← ppExpr cArgs[1]!}"
-        let lhsMatchesRhs := (boolResult && rhsIsTrue) || (!boolResult && rhsIsFalse)
-        if lhsMatchesRhs then
+        -- Try native Bool evaluation (handles complex meaning functions like IE)
+        if let some boolResult ← tryEvalBool cArgs[1]! then
+          let lhsMatchesRhs := (boolResult && rhsIsTrue) || (!boolResult && rhsIsFalse)
+          if lhsMatchesRhs then
+            return ← reifyToRExpr cache thenBr (depth - 1)
+          else
+            return ← reifyToRExpr cache elseBr (depth - 1)
+        -- Fallback: whnf (for expressions that can't be natively evaluated)
+        let boolVal ← whnf cArgs[1]!
+        let lhsIsTrue := boolVal.isConstOf ``Bool.true
+        let lhsIsFalse := boolVal.isConstOf ``Bool.false
+        if (lhsIsTrue && rhsIsTrue) || (lhsIsFalse && rhsIsFalse) then
           return ← reifyToRExpr cache thenBr (depth - 1)
-        else
+        else if (lhsIsTrue && rhsIsFalse) || (lhsIsFalse && rhsIsTrue) then
           return ← reifyToRExpr cache elseBr (depth - 1)
     -- Transparent: whnf fallback
     let e' ← whnf e
@@ -452,63 +457,34 @@ partial def reifyToRExpr (cache : ReifyCache) (e : Expr) (depth : ℕ) :
                       else ⟨min bt.lo be.lo, max bt.hi be.hi⟩
         return ← cacheReturn cache key (rexpr, bounds)
 
-  -- Fast Finset.sum handler: enumerate elements directly, skip Multiset infrastructure.
-  -- Builds a right-fold: f(a₀) + (f(a₁) + (... + 0)) matching List.sum (= foldr (+) 0).
-  -- Records the Finset.sum site so the caller can build bridge proofs:
-  --   Finset.sum Finset.univ f = (l.map f).sum  (via finset_sum_eq_list_map_sum)
-  -- The kernel verifies denote(rexpr) ≡ (l.map f).sum via simple iota-reduction.
+  -- Structural sum unfolding: Finset.sum Finset.univ f
+  -- Enumerate elements via getFiniteElems and apply f to each, avoiding whnf
+  -- on the summands (which would eagerly evaluate complex meaning functions).
   let fnName := fn.constName?
-  if fnName == some ``Finset.sum && args.size ≥ 5 then
-    let α := args[0]!     -- element type (ι)
-    let f := args[4]!     -- summand function (ι → M)
-    let s := args[3]!     -- finset (Finset ι)
-    let elems? ← try
-      -- Check if s is Finset.univ or Finset.filter ... Finset.univ
-      let sW ← withReducible (whnf s)
-      let sFn := sW.getAppFn
-      let sArgs := sW.getAppArgs
-      if sFn.isConstOf ``Finset.univ then
-        -- Sum over all elements: ∑ x, f x — record for bridge proof
-        let (listExpr, elems) ← getFiniteElems α
-        cache.modify fun d => { d with finsetSumSites := d.finsetSumSites.push e }
-        pure (some (elems, some listExpr))
-      else if sFn.isConstOf ``Finset.filter && sArgs.size ≥ 4 then
-        -- Filtered sum: ∑ x ∈ Finset.univ.filter P, f x
-        let innerFinset := sArgs[3]!
-        if innerFinset.getAppFn.isConstOf ``Finset.univ then
-          let predProp := sArgs[1]!  -- (fun x => P x = true)
-          let (_, allElems) ← getFiniteElems α
-          let mut filtered : Array Expr := #[]
-          for elem in allElems do
-            let propApplied := (mkApp predProp elem).headBeta
-            -- Use decide to evaluate the filter predicate as Bool
-            let boolExpr ← mkAppM ``decide #[propApplied]
-            let some b ← tryEvalBool boolExpr | pure ()
-            if b then filtered := filtered.push elem
-          pure (some (filtered, none))
-        else pure none
-      else pure none
-    catch _ => pure none
-    if let some (elems, _listExpr?) := elems? then
-      -- Build right-fold: f(a₀) + (f(a₁) + (... + 0)) matching List.sum
-      let mut reifiedElems : Array (Expr × MetaBounds) := #[]
-      for elem in elems do
-        let fApp := (mkApp f elem).headBeta
-        let rb ← reifyToRExpr cache fApp (depth - 1)
-        reifiedElems := reifiedElems.push rb
-      -- Fold from right: start with 0, prepend each element
-      let mut sumRExpr := mkApp (mkConst ``RExpr.nat) (mkRawNatLit 0)
-      let mut sumBounds : MetaBounds := ⟨0, 0⟩
-      for i in [:reifiedElems.size] do
-        let j := reifiedElems.size - 1 - i
-        let (r, b) := reifiedElems[j]!
-        sumRExpr := mkApp2 (mkConst ``RExpr.add) r sumRExpr
-        sumBounds := ⟨b.lo + sumBounds.lo, b.hi + sumBounds.hi⟩
-      return ← cacheReturn cache key (sumRExpr, sumBounds)
+  if fnName == some ``Finset.sum && args.size ≥ 6 then
+    let fBody := args[5]!
+    -- Check if the finset is Finset.univ
+    let finsetExpr := args[4]!
+    let finsetFn := finsetExpr.getAppFn
+    if finsetFn.isConstOf ``Finset.univ then
+      let T := args[0]!
+      if let some (_, elems) ← try? (getFiniteElems T) then
+        if elems.size > 0 then
+          -- Apply f to each element and reify
+          let firstApp := Expr.app fBody elems[0]!
+          let firstResult ← reifyToRExpr cache firstApp.headBeta (depth - 1)
+          let mut accRExpr := firstResult.1
+          let mut accBounds := firstResult.2
+          for i in List.range (elems.size - 1) do
+            let elemApp := Expr.app fBody elems[i + 1]!
+            let (ri, bi) ← reifyToRExpr cache elemApp.headBeta (depth - 1)
+            let rexpr := mkApp2 (mkConst ``RExpr.add) accRExpr ri
+            let bounds : MetaBounds := ⟨accBounds.lo + bi.lo, accBounds.hi + bi.hi⟩
+            accRExpr := rexpr
+            accBounds := bounds
+          return ← cacheReturn cache key (accRExpr, accBounds)
 
-  -- Summation fallback via whnf (for non-Finset.sum summation patterns).
-  -- Uses increased maxRecDepth because complex meaning functions (e.g., Innocent
-  -- Exclusion exhaustification) can require deep kernel reduction here.
+  -- Fallback for other summation forms (transparent — whnf)
   if fnName == some ``Finset.sum ||
      fnName == some ``Multiset.sum ||
      fnName == some ``Multiset.fold ||
@@ -516,8 +492,7 @@ partial def reifyToRExpr (cache : ReifyCache) (e : Expr) (depth : ℕ) :
      fnName == some ``List.foldl ||
      fnName == some ``List.sum ||
      fnName == some ``Quot.lift then
-    let e' ← withTheReader Core.Context (fun ctx =>
-      { ctx with maxRecDepth := max ctx.maxRecDepth 8192 }) (whnf e)
+    let e' ← whnf e
     if !e.equal e' then
       return ← reifyToRExpr cache e' (depth - 1)
 
@@ -820,7 +795,7 @@ def reifyS1Scores (cfg : Expr) :
       lpValues := lpValues.push (← extractRat lpExpr)
 
   -- Warm up cache: pre-compute all L0 values
-  let reifyCache ← IO.mkRef ({} : ReifyCacheData)
+  let reifyCache ← IO.mkRef (∅ : Std.HashMap UInt64 (Expr × MetaBounds))
   for l in allLElems do
     let l0agent ← mkAppM ``RSA.RSAConfig.L0agent #[cfg, l]
     for u in allUElems do
