@@ -81,6 +81,14 @@ private abbrev kicked := Fragments.English.Predicates.Verbal.kick.toWordPast
 -- Passive "kicked" (past participle + passive valence change)
 private abbrev kicked_pass := Fragments.English.Predicates.Verbal.kick.toWordPastPart.asPassive
 
+/-- "kicked" - transitive verb as a DG lexical entry.
+    Features derived from Fragment kick.toWordPast. -/
+private def lex_kicked : LexEntry :=
+  { form := kicked.form
+    cat := .VERB
+    features := kicked.features
+    argStr := argStr_VN }
+
 -- ============================================================================
 -- §2: Fragment Grounding Theorems
 -- The Fragment's complementType determines the DG valence.

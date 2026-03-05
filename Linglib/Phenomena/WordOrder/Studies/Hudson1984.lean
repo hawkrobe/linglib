@@ -24,48 +24,86 @@ rule that flips a direction. It is simply a different word class — a
 subtype of `auxiliary` — with its own word-order specification that
 overrides the inherited default.
 
+## End-to-end chain
+
+```
+ClauseType → wordClassForClauseType → englishAuxNet → resolveArgStr → satisfiesArgStr
+```
+
+Each tree is licensed (or rejected) by the network, connecting:
+- SAI empirical data (SubjectAuxInversion.lean: ex01, ex02, ex04, ex05)
+- WG inheritance network (NetworkIntegration.lean: englishAuxNet)
+- Licensing predicate (Basic.lean: satisfiesArgStr)
+- Fragment lexicon (English/FunctionWords, English/Nouns, etc.)
+- Lexical rules (LexicalRules.lean: auxInversionRule)
+
 Reference: @cite{hudson-1990}, @cite{gibson-2025}
 -/
 
 namespace Phenomena.WordOrder.Studies.Hudson1984
 
-open DepGrammar
+open DepGrammar DepGrammar.WG
+
+-- ============================================================================
+-- Words from the Fragment Lexicon
+-- ============================================================================
 
 private abbrev what := Fragments.English.Pronouns.what.toWord
 private abbrev can := Fragments.English.FunctionWords.can.toWord
 private abbrev john := Fragments.English.Nouns.john.toWordSg
 private abbrev eat := Fragments.English.Predicates.Verbal.eat.toWordPl
 private abbrev pizza := Fragments.English.Nouns.pizza.toWordSg
+private abbrev sleep := Fragments.English.Predicates.Verbal.sleep.toWordPl
 
 -- ============================================================================
--- Licensing via Argument Structure
+-- Lexical Entries (derived from Fragment)
 -- ============================================================================
 
-/-- License a sentence based on clause type and word order.
-    Uses shared `auxPrecedesSubject`/`subjectPrecedesAux` from Core. -/
-def depGrammarLicenses (ws : List Word) (ct : ClauseType) : Bool :=
-  match ct with
-  | .matrixQuestion => auxPrecedesSubject ws
-  | .declarative => subjectPrecedesAux ws || !ws.any (·.cat == .AUX)
-  | .embeddedQuestion => subjectPrecedesAux ws
-  | .echo => true
+/-- "can" - modal auxiliary (non-inverted).
+    Features derived from Fragment FunctionWords.can. -/
+private def lex_can : LexEntry :=
+  { form := can.form
+    cat := .AUX
+    features := can.features
+    argStr := argStr_Aux }
+
+/-- "can" - modal auxiliary (inverted, derived by lexical rule) -/
+private def lex_can_inv : LexEntry :=
+  auxInversionRule.transform lex_can
 
 -- ============================================================================
--- Example Trees
+-- Example Trees: Intransitive (can + sleep)
+-- ============================================================================
+
+/-- "John can sleep" - declarative (subject left of aux)
+    John ←subj─ can ─aux→ sleep -/
+def johnCanSleepTree : DepTree :=
+  { words := [john, can, sleep]
+    deps := [⟨1, 0, .nsubj⟩, ⟨1, 2, .aux⟩]
+    rootIdx := 1 }
+
+/-- "Can John sleep?" - interrogative (subject right of aux)
+    can ─subj→ John
+     └──aux→ sleep -/
+def canJohnSleepTree : DepTree :=
+  { words := [can, john, sleep]
+    deps := [⟨0, 1, .nsubj⟩, ⟨0, 2, .aux⟩]
+    rootIdx := 0 }
+
+-- ============================================================================
+-- Example Trees: Transitive (can + eat)
 -- ============================================================================
 
 /-- "What can John eat?" - Matrix wh-question (inverted)
     what ←obj─ can ─subj→ John
-               └─aux→ eat
--/
+               └─aux→ eat -/
 def whatCanJohnEatTree : DepTree :=
   { words := [what, can, john, eat]
     deps := [⟨1, 2, .nsubj⟩, ⟨1, 3, .aux⟩, ⟨3, 0, .obj⟩]
     rootIdx := 1 }
 
 /-- "*What John can eat?" - Ungrammatical as matrix question
-    what ←obj─ eat ←aux─ can ←subj─ John
--/
+    what ←obj─ eat ←aux─ can ←subj─ John -/
 def whatJohnCanEatTree : DepTree :=
   { words := [what, john, can, eat]
     deps := [⟨2, 1, .nsubj⟩, ⟨2, 3, .aux⟩, ⟨3, 0, .obj⟩]
@@ -73,66 +111,202 @@ def whatJohnCanEatTree : DepTree :=
 
 /-- "Can John eat pizza?" - Matrix yes-no question (inverted)
     can ─subj→ John
-     └─aux→ eat ─obj→ pizza
--/
+     └─aux→ eat ─obj→ pizza -/
 def canJohnEatPizzaTree : DepTree :=
   { words := [can, john, eat, pizza]
     deps := [⟨0, 1, .nsubj⟩, ⟨0, 2, .aux⟩, ⟨2, 3, .obj⟩]
     rootIdx := 0 }
 
 /-- "*John can eat pizza?" - Ungrammatical as matrix question
-    John ←subj─ can ─aux→ eat ─obj→ pizza
--/
+    John ←subj─ can ─aux→ eat ─obj→ pizza -/
 def johnCanEatPizzaTree : DepTree :=
   { words := [john, can, eat, pizza]
     deps := [⟨1, 0, .nsubj⟩, ⟨1, 2, .aux⟩, ⟨2, 3, .obj⟩]
     rootIdx := 1 }
 
 -- ============================================================================
--- Licensing Theorems
+-- §1: Network Licensing (core chain)
+-- Each tree is licensed/rejected via wgLicenses = ClauseType → network → satisfiesArgStr
 -- ============================================================================
 
-/-- "What can John eat?" is licensed as a matrix question -/
-theorem pair1_grammatical :
-    depGrammarLicenses [what, can, john, eat] .matrixQuestion = true := rfl
+/-! ### Intransitive trees (can + sleep) -/
 
-/-- "What John can eat?" is NOT licensed as a matrix question -/
-theorem pair1_ungrammatical :
-    depGrammarLicenses [what, john, can, eat] .matrixQuestion = false := rfl
+/-- "Can John sleep?" is licensed as a matrix question via the network. -/
+theorem wg_licenses_inverted_question :
+    wgLicenses englishAuxNet canJohnSleepTree 0 .matrixQuestion = true := by
+  native_decide
+
+/-- "Can John sleep?" is rejected as a declarative. -/
+theorem wg_rejects_inverted_as_declarative :
+    wgLicenses englishAuxNet canJohnSleepTree 0 .declarative = false := by
+  native_decide
+
+/-- "John can sleep" is licensed as a declarative via the network. -/
+theorem wg_licenses_declarative :
+    wgLicenses englishAuxNet johnCanSleepTree 1 .declarative = true := by
+  native_decide
+
+/-- "John can sleep" is rejected as a matrix question. -/
+theorem wg_rejects_declarative_as_question :
+    wgLicenses englishAuxNet johnCanSleepTree 1 .matrixQuestion = false := by
+  native_decide
+
+/-! ### Wh-question trees (what can John eat) -/
+
+/-- "What can John eat?" is licensed as a matrix question. -/
+theorem wg_licenses_wh_question :
+    wgLicenses englishAuxNet whatCanJohnEatTree 1 .matrixQuestion = true := by
+  native_decide
+
+/-- "*What John can eat?" is rejected as a matrix question. -/
+theorem wg_rejects_wh_noninverted :
+    wgLicenses englishAuxNet whatJohnCanEatTree 2 .matrixQuestion = false := by
+  native_decide
+
+/-! ### Yes-no question trees (can John eat pizza) -/
+
+/-- "Can John eat pizza?" is licensed as a matrix question. -/
+theorem wg_licenses_yn_question :
+    wgLicenses englishAuxNet canJohnEatPizzaTree 0 .matrixQuestion = true := by
+  native_decide
+
+/-- "*John can eat pizza?" is rejected as a matrix question. -/
+theorem wg_rejects_yn_noninverted :
+    wgLicenses englishAuxNet johnCanEatPizzaTree 1 .matrixQuestion = false := by
+  native_decide
 
 -- ============================================================================
--- Proofs for Pair 2: Matrix yes-no question
+-- §2: Lexical-Rule ↔ Network Equivalence
+-- The lexical rule auxInversionRule.transform produces an argStr with the
+-- same depType+dir as the network-derived interrogative_auxiliary.
 -- ============================================================================
 
-/-- "Can John eat pizza?" is licensed as a matrix question -/
-theorem pair2_grammatical :
-    depGrammarLicenses [can, john, eat, pizza] .matrixQuestion = true := rfl
+/-- The lexical rule's inverted argStr has the same depType+dir projection
+as the network-derived interrogative auxiliary argStr. -/
+theorem lexrule_matches_network :
+    (auxInversionRule.transform lex_can).argStr.slots.map (λ s => (s.depType, s.dir)) =
+    (resolveArgStr englishAuxNet "interrogative_auxiliary").slots.map (λ s => (s.depType, s.dir)) := by
+  native_decide
 
-/-- "John can eat pizza?" is NOT licensed as a matrix question -/
-theorem pair2_ungrammatical :
-    depGrammarLicenses [john, can, eat, pizza] .matrixQuestion = false := rfl
+/-- Auxiliary inversion rule applies to non-inverted auxiliaries. -/
+theorem aux_inv_applies :
+    auxInversionRule.applies lex_can = true := rfl
+
+/-- Auxiliary inversion sets the inv feature. -/
+theorem aux_inv_sets_inv :
+    lex_can_inv.inv = true := rfl
+
+/-- Auxiliary inversion moves subject from left to right. -/
+theorem aux_inv_moves_subj :
+    lex_can.argStr.slots.head?.map (·.dir) = some .left ∧
+    lex_can_inv.argStr.slots.head?.map (·.dir) = some .right :=
+  ⟨rfl, rfl⟩
 
 -- ============================================================================
--- Connection to Argument Structure Analysis
+-- §3: Slot-Projection Equivalence (network ↔ manual argStr)
+-- satisfiesArgStr only checks depType and dir; the manual argStr_Aux/AuxInv
+-- carry extra metadata (required, cat) that is functionally irrelevant.
 -- ============================================================================
 
-/-- The inverted tree satisfies the inverted argument structure -/
-theorem inverted_tree_satisfies_inv_argstr :
-    satisfiesArgStr canJohnSleepTree 0 argStr_AuxInv = true := rfl
+/-- Network-derived auxiliary slots agree with manual argStr_Aux on
+depType and dir (the fields satisfiesArgStr checks). -/
+theorem network_aux_slots_match_manual :
+    (resolveArgStr englishAuxNet "auxiliary").slots.map (λ s => (s.depType, s.dir)) =
+    argStr_Aux.slots.map (λ s => (s.depType, s.dir)) := by native_decide
 
-/-- The non-inverted tree satisfies the non-inverted argument structure -/
-theorem noninverted_tree_satisfies_argstr :
-    satisfiesArgStr johnCanSleepTree 1 argStr_Aux = true := rfl
+/-- Same for the interrogative (inverted) auxiliary. -/
+theorem network_inv_aux_slots_match_manual :
+    (resolveArgStr englishAuxNet "interrogative_auxiliary").slots.map (λ s => (s.depType, s.dir)) =
+    argStr_AuxInv.slots.map (λ s => (s.depType, s.dir)) := by native_decide
+
+-- ============================================================================
+-- §4: Fragment → Network Chain
+-- The Fragment's valence maps to the same depType+dir as the network.
+-- ============================================================================
+
+/-- valenceToArgStr .transitive has the same depType+dir projection as the
+network-derived transitive word class. -/
+theorem fragment_transitive_matches_network :
+    (valenceToArgStr .transitive).map (·.slots.map (λ s => (s.depType, s.dir))) =
+    some ((resolveArgStr englishAuxNet "transitive").slots.map (λ s => (s.depType, s.dir))) := by
+  native_decide
+
+-- ============================================================================
+-- §5: SAI Data Connection
+-- Our trees correspond to SAI empirical data (ex01, ex02, ex04, ex05).
+-- ============================================================================
+
+open Phenomena.WordOrder.SubjectAuxInversion in
+/-- Map SAI contexts to whether they require inversion. -/
+def saiContextRequiresInversion : SAIContext → Bool
+  | .matrixWh => true
+  | .matrixYN => true
+  | .embedded => false
+  | .echo => false
+  | .negativeInversion => true
+  | .conditionalInversion => true
+  | .exclamative => true
+  | .soNeither => true
+  | .embeddedDialectal => true  -- dialectally, yes
+  | .sententialNegation => false
+  | .verbRaising => false
+  | .tagQuestion => true
+  | .vpEllipsis => false
+  | .emphatic => false
+
+open Phenomena.WordOrder.SubjectAuxInversion
+
+-- Validate our trees against SAI data sentences and judgments.
+
+-- ex01: "What can John eat?" — grammatical matrix wh-question (inverted)
+#guard ex01.sentence == "What can John eat?"
+#guard ex01.inverted == true
+#guard ex01.acceptability == .grammatical
+#guard wgLicenses englishAuxNet whatCanJohnEatTree 1 .matrixQuestion == true
+
+-- ex02: "What John can eat?" — ungrammatical matrix wh-question (not inverted)
+#guard ex02.sentence == "What John can eat?"
+#guard ex02.inverted == false
+#guard ex02.acceptability == .ungrammatical
+#guard wgLicenses englishAuxNet whatJohnCanEatTree 2 .matrixQuestion == false
+
+-- ex04: "Can John eat pizza?" — grammatical polar question (inverted)
+#guard ex04.sentence == "Can John eat pizza?"
+#guard ex04.inverted == true
+#guard ex04.acceptability == .grammatical
+#guard wgLicenses englishAuxNet canJohnEatPizzaTree 0 .matrixQuestion == true
+
+-- ex05: "John can eat pizza?" — ungrammatical polar question (not inverted)
+#guard ex05.sentence == "John can eat pizza?"
+#guard ex05.inverted == false
+#guard ex05.acceptability == .ungrammatical
+#guard wgLicenses englishAuxNet johnCanEatPizzaTree 1 .matrixQuestion == false
 
 /-
-The Dependency Grammar analysis correctly predicts:
+## Summary: End-to-End Derivation Chain
 
-| Sentence              | ClauseType     | Licensed? | Reason                    |
-|-----------------------|----------------|-----------|---------------------------|
-| What can John eat?    | matrixQuestion | ✓         | aux < subj (inverted)     |
-| What John can eat?    | matrixQuestion | ✗         | subj < aux (not inverted) |
-| Can John eat pizza?   | matrixQuestion | ✓         | aux < subj (inverted)     |
-| John can eat pizza?   | matrixQuestion | ✗         | subj < aux (not inverted) |
+```
+SAI data (ex01..ex05)
+    ↕ sentence/judgment validation (#guard)
+ClauseType (.matrixQuestion / .declarative)
+    ↓ wordClassForClauseType
+Word class ("interrogative_auxiliary" / "auxiliary")
+    ↓ resolveArgStr (default inheritance in englishAuxNet)
+ArgStr (nsubj/right + aux/right  or  nsubj/left + aux/right)
+    ↓ satisfiesArgStr
+Licensed ✓ / Rejected ✗
+```
+
+The DG analysis correctly predicts:
+
+| Sentence              | ClauseType     | Licensed? | SAI datum |
+|-----------------------|----------------|-----------|-----------|
+| Can John sleep?       | matrixQuestion | ✓         | —         |
+| John can sleep        | declarative    | ✓         | —         |
+| What can John eat?    | matrixQuestion | ✓         | ex01      |
+| *What John can eat?   | matrixQuestion | ✗         | ex02      |
+| Can John eat pizza?   | matrixQuestion | ✓         | ex04      |
+| *John can eat pizza?  | matrixQuestion | ✗         | ex05      |
 
 The key insight from @cite{hudson-1984} (pp. 117-118): inversion is captured
 by treating the interrogative auxiliary as a subtype of auxiliary with a
@@ -140,68 +314,5 @@ different subject-position specification. The subject follows the auxiliary
 because that is what the interrogative_auxiliary word class says — not
 because a lexical rule has flipped a direction.
 -/
-
--- ============================================================================
--- WG Network Grounding
--- ============================================================================
-
-/-! ### Grounding in Hudson's inheritance network
-
-The lexical-rule analysis above stipulates separate `argStr_Aux` and
-`argStr_AuxInv` frames. In @cite{hudson-1984}'s Word Grammar, these are not
-independent stipulations — they arise from a single word-class taxonomy
-via default inheritance:
-
-1. `verb` specifies that the subject precedes (slot 0 = nsubj/left)
-2. `auxiliary` isA `verb`, inheriting subject/left
-3. `interrogative_auxiliary` isA `auxiliary`, locally overriding the
-   subject's direction to right (subject follows)
-
-The interrogative auxiliary's argument structure is *derived* from the
-taxonomy, not stipulated. The theorems below prove this connection. -/
-
-open DepGrammar.WG
-
-/-- The network-derived auxiliary argStr (declarative) has the same
-subject and main-verb slots as the manually defined `argStr_Aux`. -/
-theorem network_aux_matches_argStr_Aux :
-    (resolveArgStr englishAuxNet "auxiliary").slots =
-      [{ depType := .nsubj, dir := .left },
-       { depType := .aux, dir := .right }] := by native_decide
-
-/-- The network-derived interrogative auxiliary argStr has the same slots
-as the manually defined inverted `argStr_AuxInv`. Inversion follows from
-subtype inheritance: `interrogative_auxiliary` locally overrides the
-subject direction from left to right. -/
-theorem network_interrog_aux_matches_argStr_AuxInv :
-    (resolveArgStr englishAuxNet "interrogative_auxiliary").slots =
-      [{ depType := .nsubj, dir := .right },
-       { depType := .aux, dir := .right }] := by native_decide
-
-/-- The inverted tree satisfies the network-derived interrogative auxiliary
-arg structure (connecting the network model to `satisfiesArgStr`). -/
-theorem inverted_tree_satisfies_network_argstr :
-    satisfiesArgStr canJohnSleepTree 0
-      (resolveArgStr englishAuxNet "interrogative_auxiliary") = true := by
-  native_decide
-
-/-- The non-inverted tree satisfies the network-derived (non-interrogative)
-auxiliary arg structure. -/
-theorem noninverted_tree_satisfies_network_argstr :
-    satisfiesArgStr johnCanSleepTree 1
-      (resolveArgStr englishAuxNet "auxiliary") = true := by native_decide
-
-/-- The non-inverted tree does NOT satisfy the interrogative auxiliary's
-arg structure — the subject is on the wrong side. -/
-theorem noninverted_tree_rejects_interrogative :
-    satisfiesArgStr johnCanSleepTree 1
-      (resolveArgStr englishAuxNet "interrogative_auxiliary") = false := by
-  native_decide
-
-/-- The inverted tree does NOT satisfy the non-interrogative auxiliary's
-arg structure. -/
-theorem inverted_tree_rejects_declarative :
-    satisfiesArgStr canJohnSleepTree 0
-      (resolveArgStr englishAuxNet "auxiliary") = false := by native_decide
 
 end Phenomena.WordOrder.Studies.Hudson1984

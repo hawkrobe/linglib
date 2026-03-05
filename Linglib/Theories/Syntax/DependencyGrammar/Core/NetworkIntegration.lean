@@ -1,4 +1,5 @@
 import Linglib.Core.Inheritance
+import Linglib.Core.Grammar
 import Linglib.Theories.Syntax.DependencyGrammar.Core.Basic
 
 /-!
@@ -43,7 +44,6 @@ inductive WGNode where
 In @cite{hudson-1984}'s terms, these are the named relations that connect
 word-class nodes to their syntactic properties. -/
 inductive WGRel where
-  | category                -- maps word class → UPOS category node
   | argSlot (idx : Nat)     -- the idx-th argument slot (target = depRel)
   | slotDir (idx : Nat)     -- direction for slot idx (target = Dir)
   deriving Repr, DecidableEq, BEq
@@ -219,5 +219,24 @@ theorem network_interrogative_aux_argStr :
     (resolveArgStr englishAuxNet "interrogative_auxiliary").slots =
       [{ depType := .nsubj, dir := .right },
        { depType := .aux, dir := .right }] := by native_decide
+
+-- ============================================================================
+-- Clause-Type → Word-Class Mapping and Network Licensing
+-- ============================================================================
+
+/-- Map clause type to the word class that licenses the auxiliary in that
+context. Matrix questions require an interrogative auxiliary (subject follows);
+all other clause types use the default auxiliary (subject precedes). -/
+def wordClassForClauseType : ClauseType → String
+  | .matrixQuestion => "interrogative_auxiliary"
+  | _ => "auxiliary"
+
+/-- License a dependency tree via the WG network: look up the word class
+for the clause type, resolve its argument structure from the network, and
+check the tree satisfies it. This is the end-to-end chain:
+`ClauseType → wordClass → network → argStr → satisfiesArgStr`. -/
+def wgLicenses (net : WGNetwork) (t : DepTree) (auxIdx : Nat)
+    (ct : ClauseType) : Bool :=
+  satisfiesArgStr t auxIdx (resolveArgStr net (wordClassForClauseType ct))
 
 end DepGrammar.WG
