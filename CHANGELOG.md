@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.228.38] - 2026-03-05
+
+### Added
+- **Westergaard2009**: Bridge theorems to VerbPosition (German root/embedded agreement) and Typology (German `noDominant` explained by +Decl°/+Fin° split, English SVO explained by −Decl°/−Fin°)
+
 ## [0.228.37] - 2026-03-05
 
 ### Removed

@@ -1,4 +1,6 @@
 import Linglib.Phenomena.WordOrder.V2
+import Linglib.Phenomena.WordOrder.VerbPosition
+import Linglib.Phenomena.WordOrder.Typology
 import Linglib.Phenomena.WordOrder.SubjectAuxInversion
 import Linglib.Theories.Syntax.Minimalism.Formal.ExtendedProjection.Basic
 import Linglib.Theories.Syntax.Minimalism.HeadMovement.GermanicV2
@@ -460,7 +462,64 @@ theorem german_decl_v2_bridge :
     german.verbMovement .Decl = true := by decide
 
 -- ============================================================================
--- § 9  Information Structure and "Optional" V2
+-- § 9  Bridge to VerbPosition Data
+-- ============================================================================
+
+/-! `VerbPosition.lean` records the same German root/embedded alternation as
+    `V2.lean` but in a different structure (`GermanV2Data`). The two encodings
+    must agree: both record V2 in root clauses and verb-final in embedded. -/
+
+open Phenomena.WordOrder.VerbPosition in
+open Phenomena.WordOrder.V2 in
+/-- VerbPosition's root-clause sentence matches V2.lean's German declarative. -/
+theorem verbposition_v2_root_agree :
+    germanExample.rootClause = de_decl.sentence := rfl
+
+open Phenomena.WordOrder.VerbPosition in
+open Phenomena.WordOrder.V2 in
+/-- VerbPosition and V2.lean agree that German root clauses are V2. -/
+theorem verbposition_v2_root_status :
+    germanExample.v2InRoot = true ∧
+    de_decl.v2Status = .obligatory := by decide
+
+open Phenomena.WordOrder.VerbPosition in
+open Phenomena.WordOrder.V2 in
+/-- VerbPosition and V2.lean agree that German embedded clauses are verb-final. -/
+theorem verbposition_v2_embedded_status :
+    germanExample.verbFinalInEmbedded = true ∧
+    de_emb.v2Status = .impossible := by decide
+
+-- ============================================================================
+-- § 10  Bridge to Typology
+-- ============================================================================
+
+/-! WALS classifies German as having "no dominant order" (`Typology.lean`).
+    Westergaard's micro-parameters explain *why*: German has +Decl° (V2 in
+    root declaratives) but also +Fin° (V-to-I in embedded clauses, yielding
+    verb-final surface order due to SOV base). This split makes the "basic"
+    order indeterminate — SVO on the surface in root clauses, SOV underlyingly
+    and in embedded clauses. -/
+
+open Phenomena.WordOrder.Typology in
+/-- German's "no dominant order" classification in WALS is consistent with
+    a micro-parameter profile that has BOTH +Decl° (V2 in roots → surface SVO)
+    AND +Fin° (V-to-I in embedded → surface SOV). -/
+theorem german_noDominant_explained :
+    germanV2.basicOrder = .noDominant ∧
+    german.verbMovement .Decl = true ∧
+    german.verbMovement .Fin  = true := by decide
+
+open Phenomena.WordOrder.Typology in
+/-- English is classified as SVO in WALS. This is consistent with −Decl°
+    (no verb movement in declaratives → surface SVO with SVO base order)
+    and −Fin° (no V-to-I in embedded clauses → embedded order also SVO). -/
+theorem english_svo_explained :
+    english.basicOrder = .svo ∧
+    stdEnglish.verbMovement .Decl = false ∧
+    stdEnglish.verbMovement .Fin  = false := by decide
+
+-- ============================================================================
+-- § 11  Information Structure and "Optional" V2
 -- ============================================================================
 
 /-! In Tromsø *wh*-questions with monosyllabic *wh*-words, V2 vs. non-V2
@@ -490,7 +549,7 @@ theorem given_predicts_nonV2 : tromsøWhV2Preference .given = .impossible := rfl
 theorem new_predicts_V2 : tromsøWhV2Preference .new = .obligatory := rfl
 
 -- ============================================================================
--- § 10  Economy
+-- § 12  Economy
 -- ============================================================================
 
 /-! @cite{westergaard-2009}'s structural economy (p. 4):
