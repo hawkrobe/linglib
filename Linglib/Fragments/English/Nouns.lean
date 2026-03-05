@@ -9,7 +9,7 @@ English NP structure. Bare plurals/mass nouns OK, bare singulars blocked.
 
 namespace Fragments.English.Nouns
 
-open Semantics.Lexical.Noun.Kind.Chierchia1998 (BlockingPrinciple)
+open Semantics.Lexical.Noun.Kind.Chierchia1998 (BlockingPrinciple NominalMapping)
 
 
 /-- A lexical entry for an English noun.
@@ -94,14 +94,17 @@ def withDet (n : NounEntry) (det : String) (num : NPNumber := .sg) : NP :=
   { noun := n, number := num, isBare := false, determiner := some det }
 
 
-/--
-English has articles that block covert type shifts:
-- "the" blocks ι (iota, definite description)
-- "a/some" blocks ∃ for singulars
-- Nothing blocks ∩ (kind formation)
+/-- English is a [+arg, +pred] language (@cite{chierchia-1998}):
+    nouns can denote both arguments (kinds) and predicates (properties).
+    Bare plurals can be kind-denoting without overt D. -/
+def englishMapping : NominalMapping := .argAndPred
 
-Result: bare singulars cannot occur as arguments.
--/
+/-- English has articles that block covert type shifts:
+    - "the" blocks ι (iota, definite description)
+    - "a/some" blocks ∃ for singulars
+    - Nothing blocks ∩ (kind formation)
+
+    Result: bare singulars cannot occur as arguments. -/
 def englishBlocking : BlockingPrinciple :=
   { determiners := ["the", "a", "some", "every", "no"]
   , iotaBlocked := true

@@ -3,6 +3,7 @@ import Linglib.Theories.Semantics.Lexical.Noun.Kind.Generics
 import Linglib.Theories.Semantics.Lexical.Plural.Distributivity
 import Linglib.Theories.Pragmatics.RSA.Implementations.TesslerGoodman2019
 import Linglib.Phenomena.Generics.KindReference
+import Linglib.Phenomena.Generics.Studies.Longobardi2001
 
 /-! # Guerrini (2026): Distributive Kind Predication
 @cite{guerrini-2026}
@@ -933,5 +934,65 @@ theorem table1_from_lf_structure :
     (lfAvailable .italianBarePlural .distributiveKindPred = false) ∧
     (lfAvailable .italianBarePlural .cumulativeKindPred = false) := by
   exact ⟨⟨.bonaFideGeneric, rfl, rfl⟩, ⟨.distributiveKindPred, rfl, rfl⟩, rfl, rfl, rfl⟩
+
+-- ============================================================================
+-- Bridge to Longobardi (2001)
+-- ============================================================================
+
+section Longobardi2001Bridge
+
+open Phenomena.Generics.Studies.Longobardi2001 (DPParameter bnCanBeReferential
+  toNominalMapping romance english GenericType)
+
+/-- @cite{longobardi-2001}'s referential BN reading corresponds to DKP/CKP
+    parses: both require kind denotation. The bridge is through Chierchia's
+    `canDenoteKind`, which both papers use.
+
+    English BPs: `canDenote .englishBarePlural .kind = true` (Guerrini)
+    ↔ `bnCanBeReferential english = true` (Longobardi)
+
+    Italian bare plurals: `canDenote .italianBarePlural .kind = false` (Guerrini)
+    ↔ `bnCanBeReferential romance = false` (Longobardi) -/
+theorem referential_iff_longobardi_kind :
+    bnCanBeReferential english =
+      canDenote .englishBarePlural .kind ∧
+    bnCanBeReferential romance =
+      canDenote .italianBarePlural .kind := ⟨rfl, rfl⟩
+
+/-- @cite{longobardi-2001}'s quantificational-only BN = only BFG parse.
+    DKP/CKP require kind denotation, which `strongD` blocks for BNs.
+
+    English BPs: all three LFs (BFG + DKP + CKP)
+    Italian bare plurals: BFG only -/
+theorem quantificational_only_iff_bfg_only :
+    lfAvailable .englishBarePlural .distributiveKindPred = true ∧
+    lfAvailable .englishBarePlural .cumulativeKindPred = true ∧
+    lfAvailable .italianBarePlural .distributiveKindPred = false ∧
+    lfAvailable .italianBarePlural .cumulativeKindPred = false := ⟨rfl, rfl, rfl, rfl⟩
+
+/-- End-to-end chain from @cite{longobardi-2001}'s `strongD` to Table 1:
+
+    1. `strongD = true` (Romance) → `bnCanBeReferential = false`
+    2. → `canDenoteKind (.predOnly) false = false` (Chierchia)
+    3. → `canDenote .italianBarePlural .kind = false` (Guerrini)
+    4. → `lfAvailable .italianBarePlural .distributiveKindPred = false`
+    5. → accidental generalizations unavailable (only BFG → law-like)
+    6. → `table1 .singularIndefinite .accidental = false` -/
+theorem strongd_to_table1 :
+    romance.strongD = true ∧
+    toNominalMapping romance = .predOnly ∧
+    canDenoteKind .predOnly false = false ∧
+    canDenote .italianBarePlural .kind = false ∧
+    lfAvailable .italianBarePlural .distributiveKindPred = false ∧
+    table1 .singularIndefinite .accidental = false := ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
+
+/-- @cite{longobardi-2001}'s `GenericType` aligns with `GenFlavor`:
+    indefinite generics are law-like (BFG); definite generics can be
+    accidental (DKP). -/
+theorem generic_type_matches_longobardi_flavor :
+    lfFlavor .bonaFideGeneric = .lawLike ∧
+    lfFlavor .distributiveKindPred = .accidental := ⟨rfl, rfl⟩
+
+end Longobardi2001Bridge
 
 end Phenomena.Generics.Studies.Guerrini2026

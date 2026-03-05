@@ -1,5 +1,25 @@
 # Changelog
 
+## [0.228.43] - 2026-03-05
+
+### Added
+- **Fragments/Greek/Nouns.lean**: Greek nominal fragment with `greekMapping := .predOnly`, blocking principle, bare plural/singular licensing
+- **Fragments/English/Nouns.lean**: Add `englishMapping := .argAndPred` (was missing despite importing Chierchia1998)
+
+### Changed
+- **Longobardi2001.lean**: Bridge to all three fragments (Italian, English, Greek) with `all_fragment_mappings` proving `DPParameter` predicts each fragment's independently-declared `NominalMapping`. Add `pnRequiresArticle` using both parameters (makes `transparentAlpha` non-decorative), I-level class A/B split data, S-level adverb example (6c), remove dead imports, fix section reference, replace fragile `containsSubstr` guards with direct datum checks
+
+## [0.228.41] - 2026-03-05
+
+### Changed
+- Move Longobardi2001↔Guerrini2026 bridge theorems to Guerrini2026.lean (chronological direction: 2026 references 2001, not vice versa). Add `referential_iff_longobardi_kind`, `quantificational_only_iff_bfg_only`, `strongd_to_table1`, `generic_type_matches_longobardi_flavor`
+- Fix `containsSubstr` usage in Longobardi2001.lean (use free function, not dot notation)
+
+## [0.228.40] - 2026-03-05
+
+### Added
+- **Phenomena/Generics/Studies/Longobardi2001.lean**: Formalize Longobardi (2001) — unified parametric theory of bare nouns and proper names. `ArgumentType` (referential/quantificational), `DPParameter` (strongD × transparentAlpha), four language types (Romance/English/Greek/Celtic), typological generalization linking PN syntax to BN semantics, Italian BN/definite generic data, anaphoric binding diagnostic, generalization (5) natural class, Greek evidence, bridge theorems to Chierchia1998 (NominalMapping derivation), Carlson1977 (kind reference), Italian fragment, and KindReference data
+
 ## [0.228.39] - 2026-03-05
 
 ### Added

@@ -166,6 +166,7 @@ import Linglib.Fragments.German.Conditionals
 import Linglib.Fragments.Georgian.Coordination
 import Linglib.Fragments.Georgian.Agreement
 import Linglib.Fragments.Greek.Case
+import Linglib.Fragments.Greek.Nouns
 import Linglib.Fragments.Greek.TemporalConnectives
 import Linglib.Fragments.Greek.TemporalDeictic
 import Linglib.Fragments.Hebrew.TemporalDeictic
@@ -406,6 +407,7 @@ import Linglib.Phenomena.Generics.Data
 import Linglib.Phenomena.Generics.KindReference
 import Linglib.Phenomena.Generics.Compare
 import Linglib.Phenomena.Generics.Studies.Guerrini2026
+import Linglib.Phenomena.Generics.Studies.Longobardi2001
 import Linglib.Phenomena.Gender.Typology
 import Linglib.Phenomena.Gradability.Adjectives
 import Linglib.Phenomena.Gradability.Data
