@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.228.24] - 2026-03-04
+
+### Changed
+- **Studies/Stassen1985**: Rewrite to faithfully replicate the book's actual universals (§5.2, pp. 106-108). Add `ChainingStrategy` (balancing/deranking), `DerankedConditionality` (conditional/absolute), `ChainingLanguageType` with 16 language assignments. State Universals 1A/1B, 2A/2B as typed implications; verify each over the sample. Remove fabricated `isDeranking` (confused Stassen's concept with Sarvasy & Aikhenvald's MedialMorphProfile) and fabricated "No-SR corollary" (not in the book). Add bridge to ClauseChaining/Data (medial verb form consistency)
+
+### Fixed
+- **Comparison/Typology**: Fix Turkish `standardMarker` from `"-dan/-den (ablative)"` to `"-dan/-den"` to match Fragment entry and enable bridge theorem
+
 ## [0.228.23] - 2026-03-04
 
 ### Added
