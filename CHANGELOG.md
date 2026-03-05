@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.228.28] - 2026-03-05
+
+### Changed
+- **Tactics/RSAPredict**: Add simp-based preprocessing that unfolds L1/L1_latent/policy before reflection, converting kernel-unfriendly Finset.sum (Multiset/Quotient) into kernel-friendly explicit additions. All 5 FrankeBergen2020 theorems now prove via `rsa_predict` without manual simp.
+- **Tactics/RSAPredict/FinsetExpand**: New file with bridge theorems for top-level Finset.sum expansion (`finset_sum_eq_list_map_sum`)
+- **Tactics/RSAPredict/Reify**: Use `ReifyCacheData` struct (cache + Finset.sum site tracking); build right-fold RExpr matching `List.sum`
+- **Tactics/RSAPredict/ReflectBridge**: Clean up debug logging; use `ReifyCacheData`
+- **FrankeBergen2020**: Add `maxHeartbeats 1600000` for `ss_parse_pref` (L1_latent case, 18s)
+
 ## [0.228.27] - 2026-03-05
 
 ### Added

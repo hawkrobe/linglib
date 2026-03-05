@@ -155,11 +155,17 @@ elab "rsa_predict" : tactic => do
   let goal ← getMainGoal
   let goalType ← goal.getType
 
-  -- Try native_decide first (handles ℚ, Bool, finite types)
-  try
-    evalTactic (← `(tactic| native_decide))
-    return
-  catch _ => pure ()
+  -- Try native_decide for decidable goals (ℚ, Bool, finite types).
+  -- Skip for ℝ comparisons — no Decidable instance exists, and the failed
+  -- synthesis search wastes heartbeats on complex goals.
+  let isRealGoal := goalType.getAppArgs.any (·.isConstOf ``Real) ||
+    (goalType.isForall && goalType.bindingBody!.isConstOf ``False &&
+      goalType.bindingDomain!.getAppArgs.any (·.isConstOf ``Real))
+  unless isRealGoal do
+    try
+      evalTactic (← `(tactic| native_decide))
+      return
+    catch _ => pure ()
 
   -- ¬(_ > _): detect as P → False (Not is @[reducible], so whnf reduces @Not P)
   let goalTypeWhnf ← whnf goalType
@@ -392,8 +398,35 @@ elab "rsa_predict" : tactic => do
   unless fn.isConstOf ``GT.gt && args.size ≥ 4 do
     throwError "rsa_predict: expected goal of the form `_ > _`, `_ = _`, or `¬(_ > _)`, got: {← ppExpr goalType}"
 
-  let lhs := args[2]!
-  let rhs := args[3]!
+  let (goal, lhs, rhs) ← do
+    let lhs0 := args[2]!
+    let rhs0 := args[3]!
+    -- Preprocess: if the goal contains RSA definitions that hide Finset.sum,
+    -- unfold them using simp. This converts kernel-unfriendly Finset.sum
+    -- (Multiset/Quotient) into kernel-friendly explicit additions.
+    let needsUnfold := (lhs0.find? fun e =>
+      e.isConstOf ``RSA.RSAConfig.L1 ||
+      e.isConstOf ``RSA.RSAConfig.L1_latent ||
+      e.isConstOf ``Core.RationalAction.policy).isSome
+    if needsUnfold then
+      let t0 ← IO.monoMsNow
+      let unfoldStx ← `(tactic| simp only [RSA.RSAConfig.L1, RSA.RSAConfig.L1_latent,
+        Core.RationalAction.policy])
+      let savedGoals ← getGoals
+      setGoals [goal]
+      evalTactic unfoldStx
+      let newGoals ← getGoals
+      setGoals savedGoals
+      if let some newGoal := newGoals[0]? then
+        let newGoalType ← newGoal.getType
+        let newArgs := newGoalType.getAppArgs
+        let t1 ← IO.monoMsNow
+        logInfo m!"rsa_predict: [preprocess] unfolded L1/policy ({t1 - t0}ms)"
+        pure (newGoal, newArgs[2]!, newArgs[3]!)
+      else
+        pure (goal, lhs0, rhs0)
+    else
+      pure (goal, lhs0, rhs0)
 
   -- Try generic direct RExpr approach on raw goal (handles all patterns)
   -- Skip for S2Utility goals — the expression is too large for whnf+reify (OOM with 20 latent)
@@ -405,9 +438,22 @@ elab "rsa_predict" : tactic => do
   -- parser yet — those should fall through to the generic RExpr path, not fail.
   let goalForm? ← try some <$> parseGoalForm lhs rhs catch _ => pure none
 
-  -- Try auto-detect path first: extracts config into RSAConfigData and runs
-  -- native_decide on a compact checker. This avoids expensive kernel verification
-  -- of denote(rexpr) ≡ original (the generic RExpr path's bottleneck).
+  -- Try generic RExpr reflection first: reifies both sides to RExpr, uses DAG
+  -- for fast native_decide, then assigns tree-based proof (kernel-efficient via
+  -- structural recursion + Expr sharing in RExpr.denote).
+  unless skipReflection do
+    let t0_generic ← IO.monoMsNow
+    let genericOk ← try tryDirectRExprCompare goal lhs rhs catch _ => pure false
+    if genericOk then
+      let t1_generic ← IO.monoMsNow
+      logInfo m!"rsa_predict: ✓ proved via reflection (generic, {t1_generic - t0_generic}ms)"
+      return
+
+  -- Try auto-detect as fallback: extracts config into RSAConfigData and runs
+  -- native_decide on a compact checker. Handles configs where the generic RExpr
+  -- path fails (e.g., complex meaning functions, qudProject).
+  -- Note: auto-detect's native_decide compiles the full L0→S1→L1 pipeline via
+  -- LCNF, which is slow for large models due to Finset.sum infrastructure.
   unless skipReflection do
     if let some goalForm := goalForm? then
       let proved ← try
@@ -423,14 +469,6 @@ elab "rsa_predict" : tactic => do
       if proved then
         logInfo m!"rsa_predict: ✓ proved via auto-detect"
         return
-
-  -- Try generic RExpr reflection (slower kernel verification but handles all patterns)
-  unless skipReflection do
-    let t0_generic ← IO.monoMsNow
-    if ← tryDirectRExprCompare goal lhs rhs then
-      let t1_generic ← IO.monoMsNow
-      logInfo m!"rsa_predict: ✓ proved via reflection (generic, {t1_generic - t0_generic}ms)"
-      return
 
   let some goalForm := goalForm?
     | throwError "rsa_predict: cannot parse goal after reflection paths failed"

@@ -380,6 +380,7 @@ theorem as_inner_exh :
     giConfig.L1 .as_ .wS > giConfig.L1 .as_ .wA := by
   rsa_predict
 
+set_option maxHeartbeats 1600000 in
 /-- Full exhaustification is preferred: L1 assigns more probability to the
     fully exhaustified parse (MOI) than to the literal parse for SS. -/
 theorem ss_parse_pref :
