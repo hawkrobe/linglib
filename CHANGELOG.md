@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.228.39] - 2026-03-05
+
+### Added
+- **Phenomena/Imperatives/Studies/RuytenbeekEtAl2017.lean**: Formalize Ruytenbeek, Ostashchenko & Kissine (2017) — French eye-tracking evidence that directive force arises from shared deontic semantics, not sentence type. Corpus data (Frantext conventionalization rates), Study 1/2 RT and response-type data, fixation duration data (Figs. 5/8), `directiveCompatible` predicate grounded in `Assert.primaryFlavor`, bridge theorems to French modal fragment and Assert.lean
+- **Fragments/French/Modals.lean**: French modal auxiliaries *pouvoir* ('can'), *devoir* ('must'), *falloir* ('one must'), and impersonal *il est possible de*. Force-flavor pairs, bridge to Assert.lean imperative–deontic link and Italian cognate fragment
+
 ## [0.228.38] - 2026-03-05
 
 ### Added

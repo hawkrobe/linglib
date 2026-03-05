@@ -182,6 +182,7 @@ import Linglib.Fragments.Finnish.Predicates
 import Linglib.Fragments.Finnish.TemporalConnectives
 import Linglib.Fragments.Finnish.VowelHarmony
 import Linglib.Fragments.Finnish.Relativization
+import Linglib.Fragments.French.Modals
 import Linglib.Fragments.French.Nouns
 import Linglib.Fragments.French.Predicates
 import Linglib.Fragments.Irish.Coordination
@@ -432,6 +433,7 @@ import Linglib.Phenomena.Comparison.Studies.Stassen1985
 import Linglib.Phenomena.Comparison.Studies.Wellwood2015.Data
 import Linglib.Phenomena.Nonliteral.Humor.Studies.KaoEtAl2016
 import Linglib.Phenomena.Nonliteral.Hyperbole.KaoEtAl2014
+import Linglib.Phenomena.Imperatives.Studies.RuytenbeekEtAl2017
 import Linglib.Phenomena.Imperatives.Studies.SumersEtAl2023
 import Linglib.Phenomena.Imperatives.Typology
 -- Phenomena: Implicit Causality (Solstad & Bott 2022, 2024)
