@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.228.34] - 2026-03-05
+
+### Added
+- **Guerrini2026 §11**: Compositional connection to theory layer — `evalBFG` bridges BFG parse to `traditionalGEN` from Generics.lean; `parses_use_different_operators` and `table1_from_lf_structure` prove BFG=GEN, DKP=DIST structurally
+- **Guerrini2026**: `lfFlavor` mapping (BFG→law-like, DKP/CKP→accidental) — the paper's central explanatory claim formalized as a function
+- **Guerrini2026 §7a**: Italian episodic disambiguation (§5.4) — definite plurals get near-universal readings (DKP), bare plurals get only existential (DPP); `italian_episodic_disambiguation` and `italian_episodic_from_denotation` theorems
+- **Guerrini2026**: Enhanced `singular_no_accidental` with full derivation chain (∩ undefined → no kind → accidental LFs require DKP/CKP → law-like only)
+
+### Changed
+- **Guerrini2026**: Unified `KindPluralLF` and `GeneralizationLF` into single 3-constructor type; eliminated redundant type definition
+- **Guerrini2026 §5**: `canDenote` property logic now principled — uses NominalMapping match (`argOnly→false`, `argAndPred→true`, `predOnly→!hasD`) instead of bare `!hasD` hack
+- **Guerrini2026 §9**: Subjunctive section updated to use unified `GeneralizationLF` with CKP case (subjunctive blocks both DKP and CKP)
+- **Guerrini2026 §7**: Fixed episodic data notes — existential readings via DPP (property → ∃), not DKP; near-universal readings via DKP (kind → DIST)
+
 ## [0.228.33] - 2026-03-05
 
 ### Added

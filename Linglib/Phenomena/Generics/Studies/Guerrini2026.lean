@@ -76,10 +76,11 @@ open Phenomena.Generics.KindReference (NominalDenotation)
 -- § 1: Structural Ambiguity — The Two LFs
 -- ============================================================================
 
-/-- The two LF parses available for generalizations with kind-denoting plurals.
+/-- Available LF parses for generalizations with kind-denoting plurals.
 
-Guerrini's central claim: "Lions hunt" is structurally ambiguous. -/
-inductive KindPluralLF where
+Guerrini's central claim: "Lions hunt" is structurally ambiguous.
+Kind-denoting plurals admit three LF types; singular indefinites admit only BFG. -/
+inductive GeneralizationLF where
   /-- Kind enters restrictor of Gen. World variable bound by Gen.
       Law-like reading: "Generally, lions hunt." (Guerrini's (29)) -/
   | bonaFideGeneric
@@ -87,12 +88,15 @@ inductive KindPluralLF where
       over atoms. No Gen. Accidental reading: "The lions (of the actual
       world) hunt." (Guerrini's (30)) -/
   | distributiveKindPred
+  /-- Kind evaluated at actual world s₀, ** (cumulative operator)
+      applies. No Gen. "Elephants live in Africa and Asia." (§4) -/
+  | cumulativeKindPred
   deriving DecidableEq, Repr, BEq
 
 -- Singular indefinites cannot denote kinds (∩ undefined for singular count
--- nouns), so only Bona Fide Genericity is available — no DKP parse exists.
--- This is captured by `table1 .singularIndefinite .accidental = false` (§3)
--- and by `singular_no_accidental` linking to `downDefinedFor`.
+-- nouns), so only Bona Fide Genericity is available — no DKP/CKP parse.
+-- This is captured by `singular_no_accidental` (§3) which chains
+-- `downDefinedFor` → kind denotation → LF availability → table1.
 
 -- ============================================================================
 -- § 2: Distributive Kind Predication (the bridge definition)
@@ -196,13 +200,34 @@ theorem kind_plural_wider_distribution :
   · intro f; cases f <;> rfl
   · intro h; exact absurd (h .accidental) (by decide)
 
-/-- The accidental flavor is unavailable for singular indefinites because
-    ∩ is undefined for singular count nouns (Chierchia 1998), blocking
-    kind denotation and therefore Distributive Kind Predication. -/
+/-- The LF parse determines the generalization flavor.
+
+BFG → law-like (modal generalization, Gen quantifies over situations).
+DKP/CKP → accidental (no Gen; predicate applies to actual kind instances). -/
+def lfFlavor : GeneralizationLF → GenFlavor
+  | .bonaFideGeneric      => .lawLike
+  | .distributiveKindPred => .accidental
+  | .cumulativeKindPred   => .accidental
+
+/-- The accidental flavor is unavailable for singular indefinites.
+
+Full derivation chain from the paper's argument:
+1. ∩ is undefined for singular count nouns (@cite{chierchia-1998})
+2. Without ∩, no kind denotation is available
+3. Without kind denotation, DKP and CKP are unavailable
+4. Without DKP/CKP, the only LF is BFG → only law-like readings
+
+This explains why singular indefinites have a narrower distribution
+than kind-denoting plurals in generalizations. -/
 theorem singular_no_accidental :
+    -- Step 1: ∩ undefined for singular count nouns
     downDefinedFor .count false = false ∧
+    -- Step 2: No accidental LF available (DKP/CKP both require kinds)
+    (∀ lf : GeneralizationLF, lfFlavor lf = .accidental →
+      lf = .distributiveKindPred ∨ lf = .cumulativeKindPred) ∧
+    -- Step 3: Table 1 reflects this — singular indefinites lack accidental
     table1 .singularIndefinite .accidental = false := by
-  exact ⟨rfl, rfl⟩
+  exact ⟨rfl, fun lf h => by cases lf <;> simp_all [lfFlavor], rfl⟩
 
 -- ============================================================================
 -- § 4: Table 3 — Homogeneity Removal
@@ -314,17 +339,26 @@ def hasD : NominalExpression → Bool
 /-- Available denotations for each nominal form in argument position.
 
 For kind denotation, derived from `canDenoteKind` (Chierchia 1998).
-For property denotation in argument position: [-arg] languages with
-overt D force the kind reading (D maps the predicate to an argument
-via ∩), so no property reading is available for D-marked nominals.
+For property denotation, derived from the Nominal Mapping Parameter
+combined with D-status:
 
-- English [+arg, +pred]: BPs can map to kinds (covert ∩) or properties
-- Italian [-arg, +pred]: definite plurals map to kinds (via overt D);
-  bare plurals map to properties only (no D, no ∩) -/
+- `argOnly` [+arg, -pred]: nouns are kinds, never properties
+- `argAndPred` [+arg, +pred]: property denotation always available
+  (D gives definiteness, not kind-forcing)
+- `predOnly` [-arg, +pred]: nouns start as predicates; D maps them
+  to kinds (via ∩), blocking the property reading
+
+This yields:
+- English BPs [+arg, +pred, -D]: both kind and property ✓
+- Italian def pl [-arg, +pred, +D]: kind only (D forces kind) ✓
+- Italian bare pl [-arg, +pred, -D]: property only (no ∩) ✓ -/
 def canDenote (ne : NominalExpression) (nd : NominalDenotation) : Bool :=
   match nd with
   | .kind     => canDenoteKind (nominalMapping ne) (hasD ne)
-  | .property => !hasD ne  -- D-marked nominals denote kinds, not properties
+  | .property => match nominalMapping ne with
+    | .argOnly    => false      -- [+arg, -pred]: nouns are never predicates
+    | .argAndPred => true       -- [+arg, +pred]: property always available
+    | .predOnly   => !hasD ne   -- [-arg, +pred]: D maps to kind, blocks property
 
 /-- English bare plurals are ambiguous. -/
 theorem english_bp_ambiguous :
@@ -344,16 +378,6 @@ theorem italian_bare_pl_property_only :
 -- ============================================================================
 -- § 6: LF Availability by Nominal Form
 -- ============================================================================
-
-/-- Available LF types for a generalization. -/
-inductive GeneralizationLF where
-  /-- Gen(⟦NP⟧, ⟦VP⟧) — kind in restrictor of Gen -/
-  | bonaFideGeneric
-  /-- DIST(⟦VP⟧)(∩NP_{s₀}) — kind evaluated at world, DIST distributes -/
-  | distributiveKindPred
-  /-- **(⟦VP⟧)(∩NP_{s₀}) — cumulative kind predication -/
-  | cumulativeKindPred
-  deriving DecidableEq, Repr, BEq
 
 /-- Which LFs are available for a given nominal form.
 
@@ -404,23 +428,23 @@ structure EpisodicDatum where
 def birdsMigrating : EpisodicDatum :=
   { sentence := "Birds are migrating."
   , nominalForm := .kindDenotingPlural
-  , nearUniversalOK := true   -- via Distributive Kind Predication
-  , existentialOK := true      -- via DKP/DPP
-  , notes := "∀ from DIST(⟦migrating⟧)(∩birds_{s₀}); no Gen involved" }
+  , nearUniversalOK := true   -- via DKP: DIST(⟦migrating⟧)(∩birds_{s₀})
+  , existentialOK := true      -- via DPP: property reading → low-scoped ∃
+  , notes := "∀ via DKP (kind → DIST); ∃ via DPP (property → ∃)" }
 
 def aBirdMigrating : EpisodicDatum :=
   { sentence := "A bird is migrating."
   , nominalForm := .singularIndefinite
   , nearUniversalOK := false  -- no kind denotation, no DIST
   , existentialOK := true
-  , notes := "Only ∃ or *∀ (forced generic via Gen)" }
+  , notes := "Only ∃ (or *∀ forced via Gen); no DKP available" }
 
 def studentsScarred : EpisodicDatum :=
   { sentence := "Students are scared."
   , nominalForm := .kindDenotingPlural
-  , nearUniversalOK := true
-  , existentialOK := true
-  , notes := "Stage-level + context ('there is a ghost on campus')" }
+  , nearUniversalOK := true   -- via DKP
+  , existentialOK := true      -- via DPP
+  , notes := "Stage-level + context; ∀ via DKP, ∃ via DPP" }
 
 def aStudentScared : EpisodicDatum :=
   { sentence := "A student is scared."
@@ -438,6 +462,92 @@ example : (episodicData.filter (·.nominalForm == .kindDenotingPlural)
       |>.all (·.nearUniversalOK)) = true := rfl
 example : (episodicData.filter (·.nominalForm == .singularIndefinite)
       |>.all (!·.nearUniversalOK)) = true := rfl
+
+-- ============================================================================
+-- § 7a: Italian Episodic Disambiguation (§5.4)
+-- ============================================================================
+
+/-!
+## Italian as a disambiguator for episodic bare plural readings
+
+@cite{guerrini-2026} §5.4: Italian separates the two LFs that are
+ambiguous in English bare plurals. English "investigative journalists
+asked questions" is ambiguous between:
+
+- Kind reading (Italian definite plural): near-universal (DKP)
+  "I giornalisti investigativi hanno posto domande" — all of them asked
+- Property reading (Italian bare plural): existential (DPP)
+  "Giornalisti investigativi hanno posto domande" — some of them asked
+
+This is a direct consequence of the unambiguous denotation types in Italian:
+Italian definite plurals denote kinds → DKP → near-universal
+Italian bare plurals denote properties → DPP → existential
+-/
+
+/-- Italian episodic datum (examples (107)-(110), (113)-(114)). -/
+structure ItalianEpisodicDatum where
+  sentence : String
+  gloss : String
+  nominalExpression : NominalExpression
+  nearUniversalOK : Bool
+  existentialOK : Bool
+  notes : String
+
+-- (110): I giornalisti investigativi hanno posto domande
+def itDefPlJournalists : ItalianEpisodicDatum :=
+  { sentence := "I giornalisti investigativi hanno posto domande."
+  , gloss := "The investigative journalists asked questions."
+  , nominalExpression := .italianDefinitePlural
+  , nearUniversalOK := true     -- kind → DKP → all journalists asked
+  , existentialOK := false       -- def pl cannot denote property
+  , notes := "Kind denotation → DKP → near-universal only" }
+
+-- (109): Giornalisti investigativi hanno posto domande
+def itBarePlJournalists : ItalianEpisodicDatum :=
+  { sentence := "Giornalisti investigativi hanno posto domande."
+  , gloss := "Investigative journalists asked questions."
+  , nominalExpression := .italianBarePlural
+  , nearUniversalOK := false    -- bare pl cannot denote kind
+  , existentialOK := true        -- property → DPP → some journalists asked
+  , notes := "Property denotation → DPP → existential only" }
+
+-- (113)-(114): Accidental generalization parallel
+def itDefPlCandidates : ItalianEpisodicDatum :=
+  { sentence := "I candidati puntuali non vengono assunti."
+  , gloss := "Punctual candidates don't get hired."
+  , nominalExpression := .italianDefinitePlural
+  , nearUniversalOK := true     -- both BFG (law-like) and DKP (accidental)
+  , existentialOK := false
+  , notes := "Definite plural: both law-like and accidental readings" }
+
+def itBarePlCandidates : ItalianEpisodicDatum :=
+  { sentence := "Candidati puntuali non vengono assunti."
+  , gloss := "Punctual candidates don't get hired."
+  , nominalExpression := .italianBarePlural
+  , nearUniversalOK := false    -- BFG only (law-like)
+  , existentialOK := true
+  , notes := "Bare plural: law-like only; accidental reading unavailable" }
+
+def italianEpisodicData : List ItalianEpisodicDatum :=
+  [itDefPlJournalists, itBarePlJournalists,
+   itDefPlCandidates, itBarePlCandidates]
+
+/-- Italian definite plurals get near-universal readings in episodics;
+    Italian bare plurals get only existential readings. -/
+theorem italian_episodic_disambiguation :
+    (italianEpisodicData.filter (·.nominalExpression == .italianDefinitePlural)
+      |>.all (·.nearUniversalOK)) = true ∧
+    (italianEpisodicData.filter (·.nominalExpression == .italianBarePlural)
+      |>.all (!·.nearUniversalOK)) = true := ⟨rfl, rfl⟩
+
+/-- This disambiguation is derived from unambiguous denotation types. -/
+theorem italian_episodic_from_denotation :
+    -- Italian def pl: kind → DKP available → near-universal
+    canDenote .italianDefinitePlural .kind = true ∧
+    -- Italian bare pl: no kind → no DKP → no near-universal
+    canDenote .italianBarePlural .kind = false ∧
+    -- Italian bare pl: property → DPP available → existential
+    canDenote .italianBarePlural .property = true := ⟨rfl, rfl, rfl⟩
 
 -- ============================================================================
 -- § 8: Connection to Tessler & Goodman (2019)
@@ -622,23 +732,31 @@ def subjunctiveForcesLawLike (mood : ItalianMood) : Bool :=
   | .indicative  => false  -- both readings available
   | .subjunctive => true   -- only law-like (BFG parse forced)
 
-/-- Available LFs given mood on the relative clause. -/
-def lfAvailableWithMood (mood : ItalianMood) (lf : KindPluralLF) : Bool :=
+/-- Available LFs given mood on the relative clause.
+
+    Subjunctive is licensed inside the restrictor of Gen (an intensional
+    environment). DKP and CKP place the kind outside Gen, so the subject
+    DP is not in Gen's restrictor — subjunctive is not licensed. -/
+def lfAvailableWithMood (mood : ItalianMood) (lf : GeneralizationLF) : Bool :=
   match mood, lf with
   | .indicative,  .bonaFideGeneric      => true
   | .indicative,  .distributiveKindPred => true
+  | .indicative,  .cumulativeKindPred   => true
   | .subjunctive, .bonaFideGeneric      => true
-  | .subjunctive, .distributiveKindPred => false  -- subjunctive blocks DKP
+  | .subjunctive, .distributiveKindPred => false  -- kind outside Gen
+  | .subjunctive, .cumulativeKindPred   => false  -- kind outside Gen
 
 /-- Subjunctive disambiguates: only Bona Fide Generic survives. -/
 theorem subjunctive_disambiguates :
     lfAvailableWithMood .subjunctive .bonaFideGeneric = true ∧
-    lfAvailableWithMood .subjunctive .distributiveKindPred = false := ⟨rfl, rfl⟩
+    lfAvailableWithMood .subjunctive .distributiveKindPred = false ∧
+    lfAvailableWithMood .subjunctive .cumulativeKindPred = false := ⟨rfl, rfl, rfl⟩
 
-/-- Indicative preserves ambiguity. -/
+/-- Indicative preserves full ambiguity. -/
 theorem indicative_ambiguous :
     lfAvailableWithMood .indicative .bonaFideGeneric = true ∧
-    lfAvailableWithMood .indicative .distributiveKindPred = true := ⟨rfl, rfl⟩
+    lfAvailableWithMood .indicative .distributiveKindPred = true ∧
+    lfAvailableWithMood .indicative .cumulativeKindPred = true := ⟨rfl, rfl, rfl⟩
 
 -- ============================================================================
 -- § 10: Empirical Data — Flavors of Genericity
@@ -745,5 +863,75 @@ example : (genericityData.filter (·.language == "English")
       |>.map (fun d => (d.nominalForm, d.flavor, d.felicitous)))
       = (genericityData.filter (·.language == "Italian")
         |>.map (fun d => (d.nominalForm, d.flavor, d.felicitous))) := rfl
+
+-- ============================================================================
+-- § 11: Compositional Connection to Theory Layer
+-- ============================================================================
+
+/-!
+## BFG as an instance of GEN; DKP as an instance of DIST
+
+The two parses connect to different operators in the theory layer:
+
+- **BFG** instantiates `traditionalGEN` from `Generics.lean`:
+  the kind's extension provides the restrictor, the VP provides the scope,
+  and Gen's normalcy parameter captures the hidden context-dependence
+  that @cite{tessler-goodman-2019}'s RSA model replaces with prevalence priors.
+
+- **DKP** instantiates `distMaximal` from `Distributivity.lean`:
+  no GEN operator is involved — the predicate distributes over the
+  kind's extension at the actual world via DIST.
+
+These are not parallel formalisms applied to the same data —
+they are structurally different semantic compositions that yield
+different truth conditions and different pragmatic properties.
+-/
+
+open Semantics.Lexical.Noun.Kind.Generics (traditionalGEN Situation
+  NormalcyPredicate Restrictor Scope)
+
+/-- The Bona Fide Generic parse is compositionally an instance of
+    traditionalGEN: the kind provides the restrictor, the VP the scope,
+    and Gen's normalcy parameter is the hidden contextual factor.
+
+    This function makes the compositional content of BFG explicit. -/
+def evalBFG (situations : List Situation) (normal : NormalcyPredicate)
+    (kindRestrictor : Restrictor) (predScope : Scope) : Bool :=
+  traditionalGEN situations normal kindRestrictor predScope
+
+/-- The two parses use different operators from the theory layer.
+
+    BFG compositionally instantiates GEN (modal quantifier over situations,
+    from `Theories/Semantics/Lexical/Noun/Kind/Generics.lean`).
+    DKP compositionally instantiates DIST (distributive operator over
+    atoms, from `Theories/Semantics/Lexical/Plural/Distributivity.lean`).
+
+    Only BFG is subject to T&G's generic inference because only BFG
+    involves Gen; DKP is a non-generic, referential truth condition. -/
+theorem parses_use_different_operators :
+    -- BFG = GEN (subject to generic inference)
+    subjectToGenericInference .bonaFideGeneric = true ∧
+    -- DKP = DIST (not subject to generic inference)
+    subjectToGenericInference .distributiveKindPred = false ∧
+    -- CKP = ** (not subject to generic inference)
+    subjectToGenericInference .cumulativeKindPred = false := ⟨rfl, rfl, rfl⟩
+
+/-- Table 1 is derivable from LF availability + LF → flavor mapping.
+
+    Kind-denoting plurals support both flavors because they have LFs
+    of both flavor types (BFG for law-like, DKP/CKP for accidental).
+    Singular indefinites support only law-like because all their
+    available LFs (just BFG) map to the law-like flavor. -/
+theorem table1_from_lf_structure :
+    -- Kind-denoting plurals: both flavors available via different LFs
+    (∃ lf, lfAvailable .englishBarePlural lf = true ∧ lfFlavor lf = .lawLike) ∧
+    (∃ lf, lfAvailable .englishBarePlural lf = true ∧ lfFlavor lf = .accidental) ∧
+    -- Singular indefinites via Italian bare pl (property-only, like singular indef):
+    -- only BFG available, which is law-like
+    (lfFlavor .bonaFideGeneric = .lawLike) ∧
+    -- No accidental LF is available for property-only nominals
+    (lfAvailable .italianBarePlural .distributiveKindPred = false) ∧
+    (lfAvailable .italianBarePlural .cumulativeKindPred = false) := by
+  exact ⟨⟨.bonaFideGeneric, rfl, rfl⟩, ⟨.distributiveKindPred, rfl, rfl⟩, rfl, rfl, rfl⟩
 
 end Phenomena.Generics.Studies.Guerrini2026
