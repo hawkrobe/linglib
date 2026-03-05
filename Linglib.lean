@@ -83,6 +83,7 @@ import Linglib.Core.Case.Hierarchy
 import Linglib.Core.Case.Syncretism
 import Linglib.Core.Case.SplitConditions
 import Linglib.Core.Case.LocalExtension
+import Linglib.Core.Case.ComparativeEntry
 import Linglib.Core.Relativization.Basic
 import Linglib.Core.Relativization.Extraction
 import Linglib.Core.Relativization.Hierarchy
@@ -187,10 +188,12 @@ import Linglib.Fragments.Irish.Coordination
 import Linglib.Fragments.Latin.Case
 import Linglib.Fragments.Latin.Coordination
 import Linglib.Fragments.Japanese.Case
+import Linglib.Fragments.Japanese.Comparison
 import Linglib.Fragments.Japanese.Determiners
 import Linglib.Fragments.Japanese.Classifiers
 import Linglib.Fragments.Japanese.Nouns
 import Linglib.Fragments.Korean.Case
+import Linglib.Fragments.Korean.Comparison
 import Linglib.Fragments.Korean.Evidentials
 import Linglib.Fragments.Korean.MedialVerbs
 import Linglib.Fragments.Korean.Predicates
@@ -209,6 +212,7 @@ import Linglib.Fragments.Mandarin.TemporalDeictic
 import Linglib.Fragments.Mandarin.AspectComparison
 import Linglib.Fragments.Mandarin.Predicates
 import Linglib.Fragments.Turkish.Case
+import Linglib.Fragments.Turkish.Comparison
 import Linglib.Fragments.Turkish.MedialVerbs
 import Linglib.Fragments.Turkish.Predicates
 import Linglib.Fragments.Turkish.QuestionParticles
@@ -422,6 +426,7 @@ import Linglib.Phenomena.Comparison.DegreeQuestion.Data
 import Linglib.Phenomena.Comparison.CrossCategorial
 import Linglib.Phenomena.Comparison.Typology
 import Linglib.Phenomena.Comparison.Studies.Kennedy2007Typology
+import Linglib.Phenomena.Comparison.Studies.Stassen1985
 import Linglib.Phenomena.Comparison.Studies.Wellwood2015.Data
 import Linglib.Phenomena.Nonliteral.Humor.Studies.KaoEtAl2016
 import Linglib.Phenomena.Nonliteral.Hyperbole.KaoEtAl2014

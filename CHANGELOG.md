@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.228.23] - 2026-03-04
+
+### Added
+- **Core/Case/ComparativeEntry**: Shared `ComparativeEntry` structure for Fragment comparison data, parameterized by `Core.Case` types
+- **Fragments/Japanese/Comparison**: Japanese comparative entry (separative, *yori*, ablative)
+- **Fragments/Korean/Comparison**: Korean comparative entry (separative, *-boda*, ablative)
+- **Fragments/Turkish/Comparison**: Turkish comparative entry (separative, `-dan`/`-den`, ablative)
+- **Studies/Stassen1985**: Chaining universals connecting Comparison/Typology ↔ ClauseChaining/Data. Deranking universal, localistic hypothesis, Fragment bridge theorems, three-layer consistency proofs (Fragment ↔ Typology ↔ ClauseChaining)
+
 ## [0.228.22] - 2026-03-04
 
 ### Added
