@@ -10,6 +10,15 @@ identifies five major construction types attested across a sample of 167
 languages, classified by how the standard of comparison (the entity being
 compared to) is encoded.
 
+The WALS 2013 typology simplifies @cite{stassen-1985}'s original six-type
+classification. Stassen 1985 (based on 110 languages) distinguishes three
+subtypes within "locational": **separative** (standard marked 'from'/ablative),
+**allative** (standard marked 'to'/goal), and **locative** (standard marked
+'at'/contact). This finer distinction is crucial to the book's explanatory
+hypothesis connecting comparative types to temporal chaining constructions
+(formalized in `Studies/Stassen1985.lean`). The WALS 2013 typology also adds
+the "mixed" category not present in the 1985 system.
+
 The typology intersects with two further dimensions:
 - **Degree word typology**: whether a language has an overt
   degree word like English "more" or achieves comparison morphologically or
@@ -69,6 +78,107 @@ inductive ComparativeType where
       without a clear dominant strategy. -/
   | mixed
   deriving DecidableEq, BEq, Repr
+
+-- ============================================================================
+-- Stassen 1985 Fine-grained Typology (@cite{stassen-1985} Ch 2)
+-- ============================================================================
+
+/-- Case assignment of the standard NP (@cite{stassen-1985} §2.2.1).
+
+    The primary typological parameter: is the case form of the standard NP
+    determined by the case form of the comparee NP (derived), or does the
+    standard NP receive a fixed case form regardless of the comparee (fixed)? -/
+inductive CaseAssignment where
+  /-- Derived case: standard NP's case parallels the comparee NP's case.
+      The two NPs have structural parallelism. -/
+  | derived
+  /-- Fixed case: standard NP receives one specific oblique case form
+      independent of the comparee NP's grammatical function. -/
+  | fixed
+  deriving DecidableEq, BEq, Repr
+
+/-- For fixed-case comparatives, how the standard NP is syntactically
+    encoded (@cite{stassen-1985} §2.2.2). -/
+inductive FixedCaseEncoding where
+  /-- Standard NP is direct object of a transitive exceed-verb
+      ('surpass', 'exceed'). -/
+  | directObject
+  /-- Standard NP is constituent of an adverbial phrase with a
+      spatial/locational marker. -/
+  | adverbial
+  deriving DecidableEq, BEq, Repr
+
+/-- For adverbial comparatives, which spatial relation the standard marker
+    originally encodes (@cite{stassen-1985} §2.2.3-4).
+
+    The localistic hypothesis: comparative markers derive from spatial
+    expressions. The three-way spatial distinction generates the three
+    subtypes of adverbial comparatives. -/
+inductive SpatialRelation where
+  /-- Separative: marker means 'from', encoding movement away from the
+      standard. Example: Japanese 'yori', Turkish ablative '-dan'. -/
+  | separative
+  /-- Allative: marker means 'to', encoding movement toward the standard.
+      Example: Maasai 'to', Breton 'for'. -/
+  | allative
+  /-- Locative: marker means 'at/on', encoding spatial contact.
+      Example: Chuckchee '-on', Salinan 'in'. -/
+  | locative
+  deriving DecidableEq, BEq, Repr
+
+/-- The six comparative construction types of @cite{stassen-1985} Ch 2.
+
+    These are finer than the WALS 2013 types (`ComparativeType`): the three
+    adverbial subtypes (separative, allative, locative) are collapsed into
+    a single "locational" category in WALS. The six types form a hierarchy
+    based on case assignment and syntactic encoding:
+
+    ```
+                        Comparative
+                       /            \
+                Derived case    Fixed case
+               /        \       /        \
+          Conjoined  Particle  Exceed  Adverbial
+                                      /    |    \
+                                   Sep   All   Loc
+    ``` -/
+inductive ComparativeType1985 where
+  | separative | allative | locative | exceed | conjoined | particle
+  deriving DecidableEq, BEq, Repr
+
+/-- Map @cite{stassen-1985} types to the coarser WALS 2013 types.
+
+    The key coarsening: separative, allative, and locative all become
+    "locational". This loses the spatial-relation distinction that drives
+    Stassen's explanatory universals connecting comparison to temporal
+    chaining. -/
+def ComparativeType1985.toWALS : ComparativeType1985 → ComparativeType
+  | .separative => .locational
+  | .allative   => .locational
+  | .locative   => .locational
+  | .exceed     => .exceed
+  | .conjoined  => .conjoined
+  | .particle   => .particle
+
+/-- Case assignment for each 1985 type. -/
+def ComparativeType1985.caseAssignment : ComparativeType1985 → CaseAssignment
+  | .conjoined | .particle => .derived
+  | _ => .fixed
+
+/-- Fixed-case encoding (only meaningful for fixed-case types). -/
+def ComparativeType1985.fixedEncoding :
+    ComparativeType1985 → Option FixedCaseEncoding
+  | .exceed => some .directObject
+  | .separative | .allative | .locative => some .adverbial
+  | .conjoined | .particle => none
+
+/-- Spatial relation (only meaningful for adverbial types). -/
+def ComparativeType1985.spatialRelation :
+    ComparativeType1985 → Option SpatialRelation
+  | .separative => some .separative
+  | .allative => some .allative
+  | .locative => some .locative
+  | _ => none
 
 -- ============================================================================
 -- Degree Word Typology (@cite{beck-2009})
@@ -857,5 +967,126 @@ theorem sample_no_superlative :
 theorem no_comparative_no_superlative :
     let noDedicated := allLanguages.filter (·.hasType .conjoined)
     noDedicated.all (λ p => p.superlative == .none) = true := by native_decide
+
+-- ============================================================================
+-- Stassen 1985 Type Assignments (@cite{stassen-1985} Ch 2)
+-- ============================================================================
+
+-- Languages classified by their 1985 type, verified against the language
+-- lists in §2.3.1-5 and §2.4. Only languages appearing in both our sample
+-- and Stassen's 110-language sample are included.
+
+-- §2.3.1 Separative: standard marked 'from'/ablative (p. 40 list)
+def japanese1985 : ComparativeType1985 := .separative
+def korean1985 : ComparativeType1985 := .separative
+def turkish1985 : ComparativeType1985 := .separative
+def hindiUrdu1985 : ComparativeType1985 := .separative
+def arabic1985 : ComparativeType1985 := .separative  -- "Arabic (Classical)"
+
+-- §2.3.3 Locative: standard marked 'at/on'/contact (p. 42 list)
+def navajo1985 : ComparativeType1985 := .locative  -- "Navaho" in the 1985 list
+
+-- §2.3.4 Exceed: standard is direct object of exceed-verb (p. 43 list)
+def mandarin1985 : ComparativeType1985 := .exceed
+def yoruba1985 : ComparativeType1985 := .exceed
+def swahili1985 : ComparativeType1985 := .exceed
+def thai1985 : ComparativeType1985 := .exceed
+
+-- §2.4 Particle: comparative particle marks standard NP (p. 47 list)
+def english1985 : ComparativeType1985 := .particle
+def russian1985 : ComparativeType1985 := .particle
+def finnish1985 : ComparativeType1985 := .particle  -- primary; secondary separative
+def latin1985 : ComparativeType1985 := .particle  -- primary; secondary separative
+def french1985 : ComparativeType1985 := .particle
+
+-- Not verified from 1985 book: German (not in p. 47 list, though likely
+-- particle as SAE), Tagalog (not in 110-language sample), Martuthunira
+-- (not in sample).
+
+-- ============================================================================
+-- Structural Properties of the 1985 Hierarchy
+-- ============================================================================
+
+/-- The three adverbial types all collapse to locational under WALS. -/
+theorem adverbial_collapse :
+    ComparativeType1985.separative.toWALS = .locational ∧
+    ComparativeType1985.allative.toWALS = .locational ∧
+    ComparativeType1985.locative.toWALS = .locational :=
+  ⟨rfl, rfl, rfl⟩
+
+/-- Derived-case types never map to locational. -/
+theorem derived_case_not_locational (t : ComparativeType1985)
+    (h : t.caseAssignment = .derived) : t.toWALS ≠ .locational := by
+  cases t <;> simp_all [ComparativeType1985.caseAssignment,
+    ComparativeType1985.toWALS]
+
+/-- Fixed-case types never map to particle. -/
+theorem fixed_case_not_particle (t : ComparativeType1985)
+    (h : t.caseAssignment = .fixed) : t.toWALS ≠ .particle := by
+  cases t <;> simp_all [ComparativeType1985.caseAssignment,
+    ComparativeType1985.toWALS]
+
+/-- Every adverbial type is fixed-case (by construction). -/
+theorem adverbial_is_fixed (t : ComparativeType1985)
+    (h : t.fixedEncoding = some .adverbial) :
+    t.caseAssignment = .fixed := by
+  cases t <;> simp_all [ComparativeType1985.fixedEncoding,
+    ComparativeType1985.caseAssignment]
+
+-- ============================================================================
+-- 1985 ↔ WALS Consistency
+-- ============================================================================
+
+-- For most languages, the 1985 type maps to the existing WALS type.
+
+theorem japanese_consistent :
+    japanese1985.toWALS = japanese.comparativeType := by native_decide
+theorem korean_consistent :
+    korean1985.toWALS = korean.comparativeType := by native_decide
+theorem turkish_consistent :
+    turkish1985.toWALS = turkish.comparativeType := by native_decide
+theorem hindiUrdu_consistent :
+    hindiUrdu1985.toWALS = hindiUrdu.comparativeType := by native_decide
+theorem arabic_consistent :
+    arabic1985.toWALS = arabic.comparativeType := by native_decide
+theorem mandarin_consistent :
+    mandarin1985.toWALS = mandarin.comparativeType := by native_decide
+theorem yoruba_consistent :
+    yoruba1985.toWALS = yoruba.comparativeType := by native_decide
+theorem swahili_consistent :
+    swahili1985.toWALS = swahili.comparativeType := by native_decide
+theorem thai_consistent :
+    thai1985.toWALS = thai.comparativeType := by native_decide
+theorem english_consistent :
+    english1985.toWALS = english.comparativeType := by native_decide
+theorem russian_consistent :
+    russian1985.toWALS = russian.comparativeType := by native_decide
+theorem french_consistent :
+    french1985.toWALS = french.comparativeType := by native_decide
+
+-- ============================================================================
+-- 1985 ↔ WALS Discrepancies
+-- ============================================================================
+
+-- Three languages show classification differences between the 1985 book
+-- and the current WALS-based profiles:
+--
+-- 1. Finnish: particle in 1985 (p. 47 list), locational in WALS 2013.
+--    Stassen may have reclassified Finnish between editions, or the WALS
+--    classification emphasizes the partitive-case standard marker over
+--    the comparative particle.
+--
+-- 2. Latin: particle-primary in 1985 (p. 47, with quam), mixed in WALS
+--    2013 (because ablative comparative is also productive). The 1985
+--    system distinguished primary vs secondary options; WALS uses "mixed".
+--
+-- 3. Navajo: locative in 1985 (p. 42 "Navaho"), conjoined in WALS 2013.
+--    This is a genuine reclassification between the two works. The 1985
+--    classification was based on locative spatial marking; the 2013
+--    classification may emphasize the clause-level structure.
+--
+-- These discrepancies are documented rather than suppressed. The
+-- consistency theorems above cover only the 12 languages where both
+-- systems agree.
 
 end Phenomena.Comparison.Typology

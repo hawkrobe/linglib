@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.228.21] - 2026-03-04
+
+### Added
+- **Comparison/Typology**: Add Stassen 1985 fine-grained typology (separative/allative/locative/exceed/conjoined/particle) alongside existing WALS 2013 types. Case-assignment hierarchy derives the six types from two parameters: derived vs fixed case, and spatial relation of standard marker. `toWALS` mapping connects 1985→2013. 16 languages classified from verified book data; 12 consistency theorems; 3 discrepancies documented (Finnish, Latin, Navajo)
+- **Comparison/Typology**: Structural property theorems for the 1985 hierarchy: derived-case types never map to locational, fixed-case types never map to particle, adverbial types are always fixed-case
+
+### Fixed
+- **Bibliography**: Fix `stassen-1985` entry — remove bogus JSTOR review DOI, complete author name (Leon), add publisher (Basil Blackwell), add ISBN (0-631-14058-1), correct subfield tag (typology, not semantics/compositional)
+
 ## [0.228.18] - 2026-03-04
 
 ### Changed
