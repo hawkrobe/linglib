@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.228.25] - 2026-03-04
+
+### Added
+- **Studies/Fine1975**: Formalize Fine (1975) supervaluationism — specification spaces, supervaluation operator, D/I operators, penumbral connection theorems (excluded middle, non-contradiction, comparative entailment), Sorites resolution, classical tautology validity. All 8 theorems fully proved. Verification theorems connect to Vagueness.lean data.
+- **references.bib**: Add `edgington-1997` entry
+
+### Fixed
+- **Vagueness.lean**: Convert raw inline citations to `@cite{key}` format; fix `@cite{edgington-1995}` → `@cite{edgington-1997}` (wrong paper)
+
 ## [0.228.24] - 2026-03-04
 
 ### Changed

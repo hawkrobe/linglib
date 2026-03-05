@@ -411,6 +411,7 @@ import Linglib.Phenomena.Gradability.ComparisonClass
 import Linglib.Phenomena.Gradability.Studies.Rett2015
 import Linglib.Phenomena.Gradability.Studies.CarianiSantorioWellwood2024
 import Linglib.Phenomena.Gradability.Studies.Nouwen2024
+import Linglib.Phenomena.Gradability.Studies.Fine1975
 import Linglib.Phenomena.Gradability.Vagueness
 -- Phenomena: Comparison (extracted from Gradability/)
 import Linglib.Phenomena.Comparison.Data

@@ -23,11 +23,11 @@ Vagueness arises from degree semantics + threshold uncertainty:
 
 ## Key References
 
-- Fine, K. (1975). Vagueness, truth and logic.
-- Williamson, T. (1994). Vagueness.
-- Edgington, D. (1997). Vagueness by degrees.
-- Keefe, R. (2000). Theories of Vagueness.
-- Lassiter, D. & Goodman, N. (2017). Adjectival vagueness in a Bayesian model.
+- @cite{fine-1975}
+- @cite{williamson-1994}
+- @cite{edgington-1997}
+- @cite{keefe-2000}
+- @cite{lassiter-goodman-2017}
 -/
 
 import Linglib.Phenomena.Gradability.Data
@@ -109,7 +109,7 @@ Empirical observations:
 - People reject the conclusion (the absurd case)
 - People show gradient acceptance as cases approach the threshold
 
-Source: @cite{edgington-1995}, @cite{lassiter-goodman-2017} Section 5
+Source: @cite{edgington-1997}, @cite{lassiter-goodman-2017} Section 5
 -/
 structure SoritesDatum where
   adjective : String
@@ -360,7 +360,7 @@ For N = 762 (mm from 7'4\" to 4'10\"):
 The paradox dissolves: the argument is valid but unsound.
 Each premise is probably true, but the conjunction is probably false.
 
-Source: @cite{edgington-1995}, @cite{lassiter-goodman-2017} Section 5
+Source: @cite{edgington-1997}, @cite{lassiter-goodman-2017} Section 5
 -/
 structure ProbabilisticSoritesData where
   predicate : String
