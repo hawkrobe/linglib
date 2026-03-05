@@ -976,17 +976,6 @@ def buildL1PolicyFromScores (cfg u w : Expr) (allWElems : Array Expr)
   else
     throwError "rsa_predict: L1 policy proof failed: total.lo={totalProof.lo}, score≠0"
 
-/-- Build CProof for cfg.L1 u w = cfg.L1agent.policy u w (the normalized L1 policy).
-    Computes L1 scores for ALL worlds, sums them, then divides. -/
-def buildL1PolicyCProof (cfg u w : Expr)
-    (allUElems allWElems allLElems : Array Expr)
-    (wpValues lpValues : Array ℚ) (αNat : ℕ) (isBeliefBased : Bool)
-    (s1Cache : Option S1Cache := none)
-    (leafCache : Option LeafCache := none) : TacticM CProof := do
-  let (allScoreProofs, totalProof) ← buildAllL1ScoreCProofs cfg u
-    allUElems allWElems allLElems wpValues lpValues αNat isBeliefBased s1Cache leafCache
-  buildL1PolicyFromScores cfg u w allWElems allScoreProofs totalProof
-
 /-- Build CProof for (cfg.L1_latent_agent u).score l =
     Σ_w worldPrior(w) · latentPrior(w,l) · S1(l,w,u). -/
 def buildL1LatentScoreCProof (cfg u l : Expr)

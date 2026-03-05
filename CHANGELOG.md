@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.228.37] - 2026-03-05
+
+### Removed
+- **ReflectInterval**: Remove ~100 lines of dead code from old congruence proof tree approach (11 congruence lemmas, 3 bridge theorems, 2 ite resolution lemmas, 5 zero/positive check definitions)
+- **ProofBuilder**: Remove unused `buildL1PolicyCProof` (superseded by `buildAllL1ScoreCProofs` + `buildL1PolicyFromScores`)
+
+## [0.228.36] - 2026-03-05
+
+### Added
+- **Phenomena/WordOrder/V2.lean**: Theory-neutral V2 data — Norwegian (Tromsø) clause-type variation, cross-Germanic contrasts (German, English, Belfast English, Danish)
+- **Phenomena/WordOrder/Studies/Westergaard2009.lean**: Formalize micro-cue model — `ForceHead` enum (7 clause-type heads), `MicroCueProfile` (verb movement per head), 6 language profiles from Table 3.1, bridge theorems to SAI and V2 data, information-structure conditioning of "optional" V2, economy ordering
+
 ## [0.228.35] - 2026-03-05
 
 ### Changed
