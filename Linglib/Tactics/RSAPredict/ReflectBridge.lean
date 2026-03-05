@@ -4,6 +4,7 @@ import Linglib.Core.Interval.ReflectInterval
 import Linglib.Tactics.RSAPredict.Helpers
 import Linglib.Tactics.RSAPredict.Reify
 import Linglib.Tactics.RSAPredict.GoalParsing
+import Linglib.Tactics.RSAPredict.AlgebraicReify
 
 set_option autoImplicit false
 
@@ -304,6 +305,11 @@ def tryDirectRExprCompare (goal : MVarId) (lhsExpr rhsExpr : Expr) : TacticM Boo
     activeRhs := scoreRhs
     denomNote := " [denom-cancelled]"
 
+  -- Pre-seed cache with L0/S1 values (fast path for RSAConfig models)
+  let _ ← try
+    tryPreseedRSACache persistentReifyCache activeLhs activeRhs
+  catch _ => pure false
+
   let cacheBefore ← persistentReifyCache.get
   let (lhsRExpr, lhsBounds) ← reifyToRExpr persistentReifyCache activeLhs maxDepth
   let (rhsRExpr, rhsBounds) ← reifyToRExpr persistentReifyCache activeRhs maxDepth
@@ -360,6 +366,8 @@ def tryDirectRExprCompare (goal : MVarId) (lhsExpr rhsExpr : Expr) : TacticM Boo
     Assigns proofs directly — the kernel verifies denote ≡ original. -/
 def tryDirectRExprNotGt (goal : MVarId) (lhsExpr rhsExpr : Expr) : TacticM Bool := do
   let t0 ← IO.monoMsNow
+  -- Pre-seed cache with L0/S1 values if this is an RSA expression
+  let _ ← try tryPreseedRSACache persistentReifyCache lhsExpr rhsExpr catch _ => pure false
   let (lhsRExpr, lhsBounds) ← reifyToRExpr persistentReifyCache lhsExpr maxDepth
   let (rhsRExpr, rhsBounds) ← reifyToRExpr persistentReifyCache rhsExpr maxDepth
 

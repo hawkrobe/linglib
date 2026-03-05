@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.228.44] - 2026-03-05
+
+### Added
+- **AlgebraicReify.lean**: Cache-seeded RSA reification — pre-seeds reification cache with L0 policy and S1 score values before generic reifier runs, cutting rsa_predict reification time ~13x on KaoEtAl2014 Metaphor (15s → 1.1s) and giving large speedups on subsequent theorems via warm cache
+
 ## [0.228.43] - 2026-03-05
 
 ### Added
