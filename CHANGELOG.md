@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.228.53] - 2026-03-06
+
+### Added
+- **Phenomena/Plurals/Studies/TieuKrizChemla2019.lean**: Formalize Tieu, Križ & Chemla (2019) children's acquisition of homogeneity. Three child groups (EXI/−SI, HOM/+SI, HOM/−SI), Magri prediction falsification, developmental trajectory, bridges to Homogeneity.lean and Magri2014.lean
+
+### Changed
+- **Phenomena/Plurals/Studies/Magri2014.lean**: Move from `Theories/Pragmatics/NeoGricean/Implementations/` to `Phenomena/Plurals/Studies/`. Refactor: fix mutual entailment in `entails`, add `outerExcludable` verification, `dualMeaning`, bridge theorems to Homogeneity.lean and Multiplicity.lean
+
 ## [0.228.52] - 2026-03-05
 
 ### Added

@@ -537,6 +537,7 @@ import Linglib.Phenomena.Plurals.Compare
 import Linglib.Phenomena.Plurals.Studies.Champollion2017
 import Linglib.Phenomena.Plurals.Multiplicity
 import Linglib.Phenomena.Plurals.Studies.TieuEtAl2020
+import Linglib.Phenomena.Plurals.Studies.TieuKrizChemla2019
 import Linglib.Phenomena.Polarity.Basic
 import Linglib.Phenomena.Polarity.DisjunctionIgnorance
 import Linglib.Phenomena.Polarity.Exceptives
@@ -1138,7 +1139,7 @@ import Linglib.Theories.Pragmatics.NeoGricean.Exhaustivity.EFCIClosure
 import Linglib.Theories.Pragmatics.NeoGricean.Exhaustivity.Interface
 import Linglib.Theories.Pragmatics.NeoGricean.Implementations.BarLevFox2020
 import Linglib.Theories.Pragmatics.NeoGricean.Implementations.FoxSpector2018
-import Linglib.Theories.Pragmatics.NeoGricean.Implementations.Magri2014
+import Linglib.Phenomena.Plurals.Studies.Magri2014
 import Linglib.Theories.Pragmatics.NeoGricean.Implementations.MontagueExhaustivity
 import Linglib.Theories.Pragmatics.NeoGricean.Implementations.Spector2007
 import Linglib.Theories.Pragmatics.NeoGricean.NegationScope
