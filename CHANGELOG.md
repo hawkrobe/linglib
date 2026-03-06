@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.228.50] - 2026-03-05
+
+### Added
+- **Theories/Semantics/Reference/MinimalPronoun.lean**: Minimal pronoun theory (Kratzer 2009, Safir 2014, Landau 2015) — `BVAContext`, `VocabItem`, `MinPronInventory` with Elsewhere Condition, `OCSignature` (Landau 2013), `BVASyncretism` typology
+- **Fragments/Mixtec/SMPM/Basic.lean**: San Martín Peras Mixtec fragment — aspect system, pronoun paradigm (6 genders), three-way clause typology, 31 complement-taking predicates
+- **Phenomena/Control/Studies/Ostrove2026.lean**: Formalize Ostrove (2026) obligatorily overt PRO — clause type verification, OC diagnostics, Wurmbrand bridge, 4-language vocabulary inventories, syncretism typology (table 92), implicational universal, end-to-end chain from inventory to universal
+
+### Changed
+- **blog/data/references.bib**: Add 9 bibliography entries (ostrove-2026 with verified DOI, plus kratzer-2009, safir-2014, landau-2013/2015/2018, dechaine-manfredi-1994, black-1994, ostrove-2022)
+
 ## [0.228.49] - 2026-03-05
 
 ### Changed
