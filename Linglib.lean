@@ -31,6 +31,7 @@ import Linglib.Core.Semantics.Presupposition
 import Linglib.Core.Semantics.ContentLayer
 import Linglib.Core.Agent.ProductOfExperts
 import Linglib.Core.Partition
+import Linglib.Core.Polarity
 import Linglib.Core.PolarityPartition
 import Linglib.Core.PropertyDomain
 import Linglib.Core.Polyhedral
@@ -265,6 +266,7 @@ import Linglib.Fragments.Spanish.PersonFeatures
 import Linglib.Fragments.Mam.VoiceSystem
 import Linglib.Fragments.Mam.Agreement
 import Linglib.Fragments.Mam.ExtractionMorphology
+import Linglib.Fragments.Mixtec.SMPM.Basic
 import Linglib.Fragments.Kaqchikel.AgentFocus
 import Linglib.Fragments.Kaqchikel.Agreement
 import Linglib.Fragments.Kiche.ExtractionMorphology
@@ -364,6 +366,7 @@ import Linglib.Phenomena.Complementation.Attitudes.ConjunctionDistribution.Data
 import Linglib.Phenomena.Complementation.Studies.Noonan2007
 import Linglib.Phenomena.Complementation.Typology
 import Linglib.Phenomena.Complementation.Studies.Cacchioli2025
+import Linglib.Phenomena.Control.Studies.Ostrove2026
 import Linglib.Fragments.Tigrinya.ClausePrefixes
 import Linglib.Phenomena.Constructions.Studies.FillmoreKayOConnor1988
 import Linglib.Phenomena.Constructions.Studies.GoldbergShirtz2025
@@ -531,6 +534,8 @@ import Linglib.Phenomena.Plurals.Studies.HaslingerEtAl2025
 import Linglib.Phenomena.Plurals.Studies.QingEtAl2025
 import Linglib.Phenomena.Plurals.Compare
 import Linglib.Phenomena.Plurals.Studies.Champollion2017
+import Linglib.Phenomena.Plurals.Multiplicity
+import Linglib.Phenomena.Plurals.Studies.TieuEtAl2020
 import Linglib.Phenomena.Polarity.Basic
 import Linglib.Phenomena.Polarity.DisjunctionIgnorance
 import Linglib.Phenomena.Polarity.Exceptives
@@ -914,6 +919,7 @@ import Linglib.Theories.Semantics.Degree.Granularity
 import Linglib.Theories.Semantics.Lexical.Adjective.Intensification
 import Linglib.Theories.Semantics.Lexical.Adjective.Theory
 import Linglib.Theories.Semantics.Reference.Binding
+import Linglib.Theories.Semantics.Reference.MinimalPronoun
 import Linglib.Theories.Semantics.Montague.Basic
 import Linglib.Theories.Semantics.Montague.Composition
 import Linglib.Theories.Semantics.Montague.Conjunction

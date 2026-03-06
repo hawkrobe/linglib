@@ -1,3 +1,5 @@
+import Linglib.Core.Polarity
+
 /-
 # Homogeneity: Empirical Data
 
@@ -23,13 +25,9 @@ Homogeneity is characterized by non-complementary truth conditions:
 namespace Phenomena.Plurals.Homogeneity
 
 
-/--
-Polarity of a sentence (for homogeneity asymmetry).
--/
-inductive Polarity where
-  | positive
-  | negative
-  deriving Repr, DecidableEq
+-- Re-export Core.Polarity so downstream files that import Homogeneity
+-- continue to see Phenomena.Plurals.Homogeneity.Polarity.
+export Core (Polarity)
 
 /--
 Judgment type for homogeneity scenarios.
