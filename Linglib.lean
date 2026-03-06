@@ -110,6 +110,7 @@ import Linglib.Core.Path
 import Linglib.Core.Continuation
 import Linglib.Core.Lexical.PersonCategory
 import Linglib.Core.Lexical.MorphRule
+import Linglib.Core.Lexical.Binominal
 import Linglib.Core.InformationTheory
 import Linglib.Core.Inheritance
 import Linglib.Theories.Morphology.Core.Circumfix
@@ -129,11 +130,13 @@ import Linglib.Tactics.RSAPredict
 import Linglib.Tactics.OntSort
 -- Fragments
 import Linglib.Fragments.Arabic.Relativization
+import Linglib.Fragments.Dutch.Binominals
 import Linglib.Fragments.Dutch.Nouns
 import Linglib.Fragments.Dutch.Particles
 import Linglib.Fragments.English.Determiners
 import Linglib.Fragments.English.FunctionWords
 import Linglib.Fragments.English.MeasurePhrases
+import Linglib.Fragments.English.Binominals
 import Linglib.Fragments.English.NumeralModifiers
 import Linglib.Fragments.English.Lexicon
 import Linglib.Fragments.English.Modifiers.Adjectives
@@ -183,6 +186,7 @@ import Linglib.Fragments.Finnish.Predicates
 import Linglib.Fragments.Finnish.TemporalConnectives
 import Linglib.Fragments.Finnish.VowelHarmony
 import Linglib.Fragments.Finnish.Relativization
+import Linglib.Fragments.French.Binominals
 import Linglib.Fragments.French.Modals
 import Linglib.Fragments.French.Nouns
 import Linglib.Fragments.French.Predicates
@@ -247,6 +251,7 @@ import Linglib.Fragments.Ukrainian.QuestionParticles
 import Linglib.Fragments.Tagalog.TemporalConnectives
 import Linglib.Fragments.Italian.DiscourseParticles
 import Linglib.Fragments.Italian.Predicates
+import Linglib.Fragments.Italian.Binominals
 import Linglib.Fragments.Italian.Nouns
 import Linglib.Fragments.Italian.Determiners
 import Linglib.Fragments.Italian.Pronouns
@@ -938,6 +943,7 @@ import Linglib.Theories.Interfaces.SyntaxSemantics.SyntaxInterface
 import Linglib.Theories.Interfaces.SyntaxSemantics.Borer2005
 import Linglib.Theories.Interfaces.SyntaxSemantics.Linking
 import Linglib.Theories.Semantics.Montague.Modification
+import Linglib.Theories.Semantics.Lexical.Noun.Binominal
 import Linglib.Theories.Semantics.Lexical.Noun.GradableNouns
 import Linglib.Theories.Semantics.Lexical.Noun.Kind.Carlson1977
 import Linglib.Theories.Semantics.Lexical.Noun.Kind.Chierchia1998
@@ -1170,7 +1176,7 @@ import Linglib.Theories.Pragmatics.RSA.Implementations.QingEtAl2016
 import Linglib.Theories.Pragmatics.RSA.Implementations.ScopeFreezing
 import Linglib.Theories.Pragmatics.RSA.Implementations.SumersEtAl2023
 import Linglib.Theories.Pragmatics.RSA.Implementations.TesslerFranke2020
-import Linglib.Theories.Pragmatics.RSA.Implementations.TesslerGoodman2019
+import Linglib.Phenomena.Generics.Studies.TesslerGoodman2019
 import Linglib.Theories.Pragmatics.RSA.Implementations.TesslerGoodman2022
 import Linglib.Theories.Pragmatics.RSA.Implementations.VanTielEtAl2021
 import Linglib.Phenomena.Reference.Studies.WaldonDegen2021

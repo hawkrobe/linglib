@@ -1,4 +1,5 @@
 import Linglib.Core.Lexical.Word
+import Linglib.Core.Lexical.Binominal
 
 /-!
 # NP-Ellipsis in Spanish Binominals @cite{saab-2026}
@@ -28,21 +29,18 @@ NP-ellipsis distinguishes pseudo-partitive/quantificational (which share
 a primeval genitive structure with Num[E]) from qualitative (which have
 an equative structure lacking Num[E]).
 
+`BinominalType` and its core structural properties (`licensesNPE`, `hasNumE`)
+are defined in `Core.Lexical.Binominal`. This file adds ellipsis-specific
+data (genitive sources, agreement, concrete examples).
 -/
 
 namespace Phenomena.Ellipsis.NPEllipsis
 
--- ═══════════════════════════════════════════════════════════════
--- § 1: Binominal Classification
--- ═══════════════════════════════════════════════════════════════
+open Core.Lexical.Binominal
 
-/-- The three types of Spanish binominal construction (@cite{saab-2026} §2).
-    All surface with *de* but differ in internal structure. -/
-inductive BinominalType where
-  | pseudoPartitive   -- *un grupo de estudiantes* (group nouns)
-  | quantificational  -- *un montón de estudiantes* (quantity nouns)
-  | qualitative       -- *una mierda de departamento* (expressive nouns)
-  deriving DecidableEq, BEq, Repr
+-- ═══════════════════════════════════════════════════════════════
+-- § 1: Genitive Structure
+-- ═══════════════════════════════════════════════════════════════
 
 /-- The structural source of the genitive *de* (@cite{saab-2026} §4). -/
 inductive GenitiveSource where
@@ -51,38 +49,13 @@ inductive GenitiveSource where
   deriving DecidableEq, BEq, Repr
 
 /-- Map binominal type to its genitive source. -/
-def BinominalType.genitiveSource : BinominalType → GenitiveSource
+def genitiveSource : BinominalType → GenitiveSource
   | .pseudoPartitive  => .primeval
   | .quantificational => .primeval
   | .qualitative      => .equative
 
 -- ═══════════════════════════════════════════════════════════════
--- § 2: NP-Ellipsis Data
--- ═══════════════════════════════════════════════════════════════
-
-/-- Does this binominal type license NP-ellipsis?
-    @cite{saab-2026} §3: pseudo-partitive and quantificational yes;
-    qualitative no. -/
-def BinominalType.licensesNPE : BinominalType → Bool
-  | .pseudoPartitive  => true
-  | .quantificational => true
-  | .qualitative      => false
-
-/-- Does the Num head in this structure carry [E]?
-    @cite{saab-2026} §4: Num[E] is present iff the complement of Num
-    is a standard nP (not an EquP with an indexical empty noun). -/
-def BinominalType.hasNumE : BinominalType → Bool
-  | .pseudoPartitive  => true
-  | .quantificational => true
-  | .qualitative      => false
-
-/-- Core result: NP-ellipsis is licensed iff Num has [E]. -/
-theorem npe_iff_numE (b : BinominalType) :
-    b.licensesNPE = b.hasNumE := by
-  cases b <;> rfl
-
--- ═══════════════════════════════════════════════════════════════
--- § 3: Agreement Data
+-- § 2: Agreement Data
 -- ═══════════════════════════════════════════════════════════════
 
 /-- Agreement number on the verb in binominal constructions.
@@ -100,7 +73,7 @@ inductive AgreementController where
   deriving DecidableEq, BEq, Repr
 
 /-- In all three types, Num controls agreement. -/
-def BinominalType.agreementController : BinominalType → AgreementController
+def agreementController : BinominalType → AgreementController
   | .pseudoPartitive  => .num
   | .quantificational => .num
   | .qualitative      => .num
@@ -108,18 +81,18 @@ def BinominalType.agreementController : BinominalType → AgreementController
 /-- The agreement number on the verb for each type.
     Pseudo-partitive/quantificational: Num inherits plural from complement NP.
     Qualitative: Num gets singular from the expressive noun. -/
-def BinominalType.verbAgreement : BinominalType → AgreementNumber
+def verbAgreement : BinominalType → AgreementNumber
   | .pseudoPartitive  => .plural
   | .quantificational => .plural
   | .qualitative      => .singular
 
 /-- Agreement controller is uniformly Num across all three types. -/
 theorem agreement_from_num (b : BinominalType) :
-    b.agreementController = .num := by
+    agreementController b = .num := by
   cases b <;> rfl
 
 -- ═══════════════════════════════════════════════════════════════
--- § 4: Concrete Examples
+-- § 3: Concrete Examples
 -- ═══════════════════════════════════════════════════════════════
 
 /-- An NP-ellipsis datum: a Spanish binominal sentence with its
@@ -218,14 +191,14 @@ theorem maravilla_npe_blocked :
     maravillaDeMujer.binominalType.licensesNPE := rfl
 
 -- ═══════════════════════════════════════════════════════════════
--- § 5: Structural Properties
+-- § 4: Structural Properties
 -- ═══════════════════════════════════════════════════════════════
 
 /-- Qualitative binominals contain an indexical empty noun whose
     reference is contextually determined (like a pronoun). This
     is why NP-ellipsis fails: the empty noun cannot be recovered
     from the antecedent. -/
-def BinominalType.hasIndexicalEmptyNoun : BinominalType → Bool
+def hasIndexicalEmptyNoun : BinominalType → Bool
   | .pseudoPartitive  => false
   | .quantificational => false
   | .qualitative      => true
@@ -233,7 +206,7 @@ def BinominalType.hasIndexicalEmptyNoun : BinominalType → Bool
 /-- Qualitative binominals contain an equative phrase (EquP)
     establishing a predication relation between the expressive
     noun and the referent. -/
-def BinominalType.hasEquP : BinominalType → Bool
+def hasEquP : BinominalType → Bool
   | .pseudoPartitive  => false
   | .quantificational => false
   | .qualitative      => true
@@ -242,13 +215,13 @@ def BinominalType.hasEquP : BinominalType → Bool
     if the ellipsis site would include an unrecoverable element,
     NP-ellipsis is blocked. -/
 theorem indexical_blocks_numE (b : BinominalType) :
-    b.hasIndexicalEmptyNoun = true → b.hasNumE = false := by
-  cases b <;> simp [BinominalType.hasIndexicalEmptyNoun, BinominalType.hasNumE]
+    hasIndexicalEmptyNoun b = true → b.hasNumE = false := by
+  cases b <;> simp [hasIndexicalEmptyNoun, BinominalType.hasNumE]
 
 /-- Primeval genitive ↔ Num[E] ↔ NP-ellipsis licensed.
     The three properties are coextensive across binominal types. -/
 theorem primeval_iff_npe (b : BinominalType) :
-    (b.genitiveSource == .primeval) = b.licensesNPE := by
+    (genitiveSource b == .primeval) = b.licensesNPE := by
   cases b <;> rfl
 
 end Phenomena.Ellipsis.NPEllipsis

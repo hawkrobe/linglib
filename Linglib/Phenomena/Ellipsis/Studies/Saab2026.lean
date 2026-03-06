@@ -24,6 +24,7 @@ namespace Phenomena.Ellipsis.Studies.Saab2026
 
 open Minimalism
 open Minimalism.Sluicing
+open Core.Lexical.Binominal
 open Phenomena.Ellipsis.NPEllipsis
 
 -- ═══════════════════════════════════════════════════════════════

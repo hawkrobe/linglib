@@ -1,4 +1,4 @@
-import Linglib.Phenomena.Ellipsis.NPEllipsis
+import Linglib.Core.Lexical.Binominal
 
 /-!
 # Spanish Binominal Nouns @cite{saab-2026}
@@ -18,7 +18,7 @@ and thereby the availability of NP-ellipsis.
 
 namespace Fragments.Spanish.Binominals
 
-open Phenomena.Ellipsis.NPEllipsis
+open Core.Lexical.Binominal
 
 /-- A Spanish binominal noun entry. -/
 structure BinominalNoun where

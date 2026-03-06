@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.228.45] - 2026-03-05
+
+### Added
+- **Core/Lexical/Binominal.lean**: Cross-linguistic binominal NP classification — `BinominalType` (three-way: pseudo-partitive/quantificational/qualitative) and `OfBinominalType` (six-way: N+PP/head-classifier/pseudo-partitive/evaluative/EM/BI per Ten Wolde 2023), grammaticalization cline with head-switching and bleaching theorems, Spanish↔English type mapping
+- **Theories/Semantics/Lexical/Noun/Binominal.lean**: Cross-linguistic binominal semantics — `ebnpSemantics` (evaluative BNP denotation via GradableNoun), `quantizingToOfBinominal` bridge, end-to-end worked example
+- **Fragments/English/Binominals.lean**: English binominal N₁ noun entries (hell, beast, cake, whale, bitch, nub, breeze, husk, snake, idiot, angel, gem) with semantic classes per Table 2.1, CxG constructional network with metaphorical links per Figs 8.7–8.13
+- **Fragments/French/Binominals.lean**: French *de*-binominal entries (verre, morceau, tas, groupe, idiot, imbécile, monstre)
+- **Fragments/Italian/Binominals.lean**: Italian *di*-binominal entries (bicchiere, pezzo, gruppo, mucchio, idiota, mostro, tesoro)
+- **Fragments/Dutch/Binominals.lean**: Dutch *van*-binominal entries (glas, stuk, groep, hoop, beer, schat, ramp)
+- **Theories/Syntax/ConstructionGrammar/Basic.lean**: Add `.metaphorical` and `.subpart` to `InheritanceMode`
+
+### Changed
+- **Core/Lexical/Binominal.lean**: Extract `BinominalType` from `Phenomena/Ellipsis/NPEllipsis.lean` into Core, fixing Fragments→Phenomena dependency violation in `Fragments/Spanish/Binominals.lean`
+- **Phenomena/Ellipsis/NPEllipsis.lean**: Import `BinominalType` from Core; ellipsis-specific properties (genitive source, agreement, examples) remain here
+- **Fragments/Spanish/Binominals.lean**: Import from `Core.Lexical.Binominal` instead of `Phenomena.Ellipsis.NPEllipsis`
+
 ## [0.228.44] - 2026-03-05
 
 ### Added

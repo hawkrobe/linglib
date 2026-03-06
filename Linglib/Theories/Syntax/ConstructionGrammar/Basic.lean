@@ -28,13 +28,18 @@ inductive Specificity where
   | fullyAbstract
   deriving Repr, DecidableEq, BEq
 
-/-- Inheritance mode between constructions.
+/-- Inheritance mode between constructions (@cite{goldberg-1995} Ch. 3).
 
-Normal inheritance allows overriding of inherited defaults;
-complete inheritance requires strict preservation of all properties. -/
+@cite{goldberg-1995} distinguishes four inheritance link types:
+- **Normal** (taxonomic): child inherits defaults, may override
+- **Complete**: all properties inherited strictly
+- **Metaphorical**: source → target via metaphorical mapping
+- **Subpart**: child is a proper subpart of parent's structure -/
 inductive InheritanceMode where
-  | normal    -- defaults, child can override (most CxG links)
-  | complete  -- all properties inherited strictly
+  | normal        -- taxonomic; child can override defaults
+  | complete      -- all properties inherited strictly
+  | metaphorical  -- metaphorical extension (e.g., head-classifier → EBNP)
+  | subpart       -- child is a structural subpart of parent
   deriving Repr, DecidableEq, BEq
 
 /-- A construction: a learned pairing of form and function.
