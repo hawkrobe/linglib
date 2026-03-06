@@ -214,15 +214,18 @@ def RExpr.evalValid : RExpr → Bool
 -- tryExtractLogProduct: pattern-match sum-of-integer-logs
 -- ============================================================================
 
-/-- Extract `(xᵢ, nᵢ)` pairs from a sum-of-integer-logs `RExpr`.
-    Returns `none` if the expression doesn't match the pattern `Σ nᵢ · log(xᵢ)`. -/
-def RExpr.tryExtractLogProduct : RExpr → Option (List (RExpr × ℕ))
+/-- Extract `(xᵢ, bᵢ)` pairs from a sum-of-weighted-logs `RExpr`.
+    Returns `none` if the expression doesn't match the pattern `Σ bᵢ · log(xᵢ)`.
+    Coefficients `bᵢ` are rational (not just integer), enabling exact evaluation
+    when log arguments coincide and coefficients sum to an integer (e.g.,
+    `1/3 · log(x) + 1/3 · log(x) + 1/3 · log(x)` → `x^1` exactly). -/
+def RExpr.tryExtractLogProduct : RExpr → Option (List (RExpr × ℚ))
   | .mul coeff (.rlog x) =>
     let iv := coeff.eval
-    if iv.lo == iv.hi && iv.lo.den == 1 && decide (0 ≤ iv.lo) then
-      let n := iv.lo.num.toNat
-      if n == 0 then some []  -- zero coefficient, skip the log
-      else some [(x, n)]
+    if iv.lo == iv.hi && decide (0 ≤ iv.lo) then
+      let b := iv.lo
+      if b == 0 then some []  -- zero coefficient, skip the log
+      else some [(x, b)]
     else none
   | .rlog x => some [(x, 1)]
   | .add a b => do
@@ -823,9 +826,37 @@ instance (lhs rhs : RExpr) : Decidable (lhs.eval.hi ≤ rhs.eval.lo) :=
 -- evalRexpOpt: exp-log rewrite optimization
 -- ============================================================================
 
-/-- Optimized evaluation for `rexp` nodes: detects `exp(α · Σ nᵢ·log(xᵢ))`
-    and computes `Π xᵢ^(α·nᵢ)` using exact rational arithmetic, avoiding
-    Padé exp/log approximations that produce enormous rationals. -/
+/-- Group `(x_rexpr, coeff)` pairs by exact value of the log argument,
+    summing coefficients within each group. Uses `eval` point intervals
+    to identify equal arguments (if `eval` gives a point `[q, q]`, the
+    argument is exact). Entries with non-exact arguments are kept as
+    singletons. Returns `(x_rexpr, total_coeff)` pairs. -/
+private def groupLogFactors (factors : List (RExpr × ℚ)) :
+    List (RExpr × ℚ) :=
+  factors.foldl (init := ([] : List (RExpr × ℚ))) fun acc (x, b) =>
+    let xIv := x.eval
+    if xIv.lo == xIv.hi then
+      -- Exact value — try to merge with existing group
+      let q := xIv.lo
+      let (found, acc') := acc.foldl (init := (false, [])) fun (found, result) (gExpr, gCoeff) =>
+        if !found then
+          let gIv := gExpr.eval
+          if gIv.lo == gIv.hi && gIv.lo == q then
+            (true, (gExpr, gCoeff + b) :: result)
+          else
+            (found, (gExpr, gCoeff) :: result)
+        else
+          (found, (gExpr, gCoeff) :: result)
+      if found then acc'.reverse
+      else acc ++ [(x, b)]
+    else
+      acc ++ [(x, b)]
+
+/-- Optimized evaluation for `rexp` nodes: detects `exp(α · Σ bᵢ·log(xᵢ))`
+    and computes `Π xᵢ^(α·bᵢ)` using exact rational arithmetic when possible,
+    avoiding Padé exp/log approximations that produce enormous rationals.
+    Groups factors with equal log arguments and sums their coefficients,
+    so `exp(1/3·log(x) + 1/3·log(x) + 1/3·log(x))` becomes `x^1` exactly. -/
 def RExpr.evalRexpOpt (inner : RExpr) : QInterval × Bool :=
   let αOpt : Option ℕ := match inner with
     | .mul (.nat α) _ => some α
@@ -835,17 +866,36 @@ def RExpr.evalRexpOpt (inner : RExpr) : QInterval × Bool :=
     | _ => inner
   match body.tryExtractLogProduct with
   | some factors =>
-    let α := αOpt.getD 1
-    factors.foldl (fun (acc_iv, acc_valid) (x_rexpr, n) =>
+    let α : ℚ := αOpt.getD 1
+    -- Group factors by log argument value, summing coefficients
+    let grouped := groupLogFactors factors
+    grouped.foldl (fun (acc_iv, acc_valid) (x_rexpr, totalCoeff) =>
       let (x_iv, x_valid) := x_rexpr.evalBoth
-      let exp := α * n
-      let powered := x_iv.powNat exp
-      let combined :=
-        if h₁ : 0 ≤ acc_iv.lo then
-          if h₂ : 0 ≤ powered.lo then c (acc_iv.mulNonneg powered h₁ h₂)
+      let exp := α * totalCoeff
+      -- If total exponent is a nonneg integer, use exact powNat
+      if exp.den == 1 && decide (0 ≤ exp) then
+        let n := exp.num.toNat
+        let powered := x_iv.powNat n
+        let combined :=
+          if h₁ : 0 ≤ acc_iv.lo then
+            if h₂ : 0 ≤ powered.lo then c (acc_iv.mulNonneg powered h₁ h₂)
+            else c (acc_iv.mul powered)
           else c (acc_iv.mul powered)
-        else c (acc_iv.mul powered)
-      (combined, acc_valid && x_valid && (exp == 0 || decide (0 ≤ x_iv.lo)))
+        (combined, acc_valid && x_valid && (n == 0 || decide (0 ≤ x_iv.lo)))
+      else
+        -- Non-integer exponent: fall back to expInterval on this factor
+        let logIv :=
+          if h : 0 < x_iv.lo then c (logInterval x_iv h)
+          else ⟨-1000, 1000, by norm_num⟩
+        let expQ := QInterval.exact exp
+        let inner := c (expQ.mul logIv)
+        let factorIv := c (expInterval inner)
+        let combined :=
+          if h₁ : 0 ≤ acc_iv.lo then
+            if h₂ : 0 ≤ factorIv.lo then c (acc_iv.mulNonneg factorIv h₁ h₂)
+            else c (acc_iv.mul factorIv)
+          else c (acc_iv.mul factorIv)
+        (combined, acc_valid && x_valid && decide (0 < x_iv.lo))
     ) (QInterval.exact 1, true)
   | none =>
     let (iv, valid) := inner.evalBoth

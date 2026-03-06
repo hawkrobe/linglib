@@ -427,10 +427,10 @@ def tryDirectRExprNotGt (goal : MVarId) (lhsExpr rhsExpr : Expr) : TacticM Bool 
       logInfo m!"rsa_predict: [direct/not-gt] assigned via semantic equality ({t2 - t0}ms)"
       return true
 
-    -- Interval separation path: need lhs.eval.hi ≤ rhs.eval.lo
-    unless lhsBounds.hi ≤ rhsBounds.lo do
-      logInfo m!"rsa_predict: [direct/not-gt] bounds don't prove le, exact ℚ not available"
-      return false
+    -- Interval separation: try kernel-level checks (DAG then tree).
+    -- The kernel evaluator has exp-log product grouping that can give exact
+    -- intervals even when meta-level bounds (from expPoint/logPoint) have width.
+    -- native_decide on false=true fails instantly, so trying is cheap.
 
     -- Try DAG-based interval check first
     let dagOk ← try

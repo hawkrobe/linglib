@@ -229,6 +229,20 @@ partial def reifyToRExpr (cache : ReifyCache) (e : Expr) (depth : ℕ) :
   let fn := e.getAppFn
   let args := e.getAppArgs
 
+  -- Nat.cast: @Nat.cast ℝ _ n → RExpr.ratCast (n : ℚ)
+  -- Direct recognition avoids unfolding the cast chain (ℕ → ℤ → ℚ → ℝ),
+  -- which would produce nested additions ((0+1)+1 for 2, etc.).
+  -- Uses ratCast uniformly: Rat.cast (n : ℚ) ≡ Nat.cast n on ℝ (by rfl for all n),
+  -- and ratCast.denote has no pattern-matching branches (unlike nat.denote which
+  -- has special cases for 0/1 that the kernel must reduce past).
+  if (fn.isConstOf ``Nat.cast || fn.isConstOf ``NatCast.natCast) && args.size ≥ 3 then
+    let nReduced ← whnf args[2]!
+    if let some n := nReduced.rawNatLit? then
+      let q : ℚ := n
+      let qE ← mkRatExpr q
+      let rexpr := mkApp (mkConst ``RExpr.ratCast) qE
+      return ← cacheReturn cache key (rexpr, ⟨q, q⟩)
+
   -- Cauchy-form ℝ literal: Real.ofCauchy wraps a constant Cauchy sequence
   -- from a ℚ→ℝ cast. Use RExpr.ratCast so denote produces Rat.cast,
   -- matching the goal expression. (RExpr.nat would produce Nat.cast which

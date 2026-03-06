@@ -1,3 +1,4 @@
+import Linglib.Core.Distributions
 import Linglib.Tactics.RSAPredict
 import Linglib.Theories.Pragmatics.RSA.Core.Config
 import Linglib.Theories.Pragmatics.RSA.Quantities
@@ -360,24 +361,23 @@ def obsCompatible (obs : Obs) (s : WorldState) : Bool :=
 /-- P(obs | access, world). Hypergeometric probability of observing k successes
     when sampling n from 3 total with K successes:
     P(k | N=3, K, n) = C(K,k) · C(3−K, n−k) / C(3,n).
-    Defined as a match table for `extractRat` compatibility. -/
+    Instantiates `Core.Distributions.hypergeometric` for N=3. -/
 noncomputable def obsPriorTable (a : Access) (w : WorldState) (obs : Obs) : ℝ :=
   if obs.access != a then 0 else
-  match a, w, obs with
-  -- access=1: C(K,k) · C(3-K,1-k) / C(3,1)
-  | .a1, .s0, .o0a1 => 1     | .a1, .s0, .o1a1 => 0
-  | .a1, .s1, .o0a1 => 2/3   | .a1, .s1, .o1a1 => 1/3
-  | .a1, .s2, .o0a1 => 1/3   | .a1, .s2, .o1a1 => 2/3
-  | .a1, .s3, .o0a1 => 0     | .a1, .s3, .o1a1 => 1
-  -- access=2: C(K,k) · C(3-K,2-k) / C(3,2)
-  | .a2, .s0, .o0a2 => 1     | .a2, .s0, .o1a2 => 0     | .a2, .s0, .o2a2 => 0
-  | .a2, .s1, .o0a2 => 1/3   | .a2, .s1, .o1a2 => 2/3   | .a2, .s1, .o2a2 => 0
-  | .a2, .s2, .o0a2 => 0     | .a2, .s2, .o1a2 => 2/3   | .a2, .s2, .o2a2 => 1/3
-  | .a2, .s3, .o0a2 => 0     | .a2, .s3, .o1a2 => 0     | .a2, .s3, .o2a2 => 1
-  -- access=3: deterministic (full knowledge)
-  | .a3, .s0, .o0a3 => 1     | .a3, .s1, .o1a3 => 1
-  | .a3, .s2, .o2a3 => 1     | .a3, .s3, .o3a3 => 1
-  | _, _, _ => 0
+  ↑(Nat.choose w.toNat obs.count * Nat.choose (3 - w.toNat) (obs.sampleSize - obs.count)) /
+  ↑(Nat.choose 3 obs.sampleSize)
+
+/-- The observation model is an instance of the general hypergeometric
+    from `Core.Distributions` (N=3). The ℝ-arithmetic form is used
+    for `rsa_predict` compatibility; this theorem witnesses the equivalence. -/
+theorem obsPriorTable_eq_hypergeometric (a : Access) (w : WorldState) (obs : Obs)
+    (h : obs.access = a) :
+    obsPriorTable a w obs =
+    ↑(Core.Distributions.hypergeometric 3 w.toNat obs.sampleSize obs.count) := by
+  unfold obsPriorTable Core.Distributions.hypergeometric
+  subst h
+  have : (obs.access != obs.access) = false := by cases obs.access <;> rfl
+  rw [this]; simp [Rat.cast_div, Rat.cast_natCast]
 
 /-- Speaker's posterior over world states given observation:
     P(state | obs) ∝ P(obs | state, access) · P(state).
@@ -437,7 +437,7 @@ noncomputable def gsCfg {U : Type*} [Fintype U]
     unfold obsPriorTable
     split
     · exact le_refl 0
-    · (repeat' split) <;> positivity
+    · apply div_nonneg <;> exact_mod_cast Nat.zero_le _
   worldPrior_nonneg _ := by positivity
 
 -- ============================================================================

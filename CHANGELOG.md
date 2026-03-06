@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.228.55] - 2026-03-06
+
+### Changed
+- **Core/Interval/ReflectInterval.lean**: Extend `tryExtractLogProduct` from integer to rational coefficients; add `groupLogFactors` to merge log terms with equal arguments, enabling exact `powNat` when coefficients sum to an integer. Eliminates exp/log interval widening for RSA models where beliefs sum to 1
+- **Tactics/RSAPredict/ReflectBridge.lean**: Remove meta-level bounds guard before DAG/tree interval checks, letting the kernel-level evaluator (with log-product grouping) handle equal-value cases that meta-level `expPoint` bounds can't separate
+- **Tactics/RSAPredict/Reify.lean**: Add `Nat.cast` → `RExpr.ratCast` reification, avoiding kernel cast-chain unfolding for `Nat.cast (Nat.choose ...)` patterns
+- **Phenomena/ScalarImplicatures/Studies/GoodmanStuhlmuller2013.lean**: Refactor `obsPriorTable` from match table to hypergeometric formula (`Nat.choose`); remove `maxHeartbeats 400000` override from `some_partial_canceled` (no longer needed with log-product grouping)
+
 ## [0.228.54] - 2026-03-06
 
 ### Changed
