@@ -189,7 +189,7 @@ Same 50% prevalence, different judgments:
 - "Robins lay eggs" true -- 50% is high relative to prior
 - "Robins are female" false -- 50% is expected given prior
 
-See `Theories/RSA/Implementations/TesslerGoodman2019.lean` for the
+See `Phenomena/Generics/Studies/TesslerGoodman2019.lean` for the
 full RSA implementation with prevalence priors.
 -/
 

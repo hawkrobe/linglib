@@ -1,5 +1,26 @@
 # Changelog
 
+## [0.228.47] - 2026-03-05
+
+### Changed
+- **Phenomena/Generics/Studies/TesslerGoodman2019.lean**: Complete rewrite matching the paper — mixture-of-Betas priors (`mixturePrior`), marginalize-then-exponentiate architecture (`thresholdCount` analytically marginalizes θ), S1 endorsement predictions (the paper's primary model) replacing L1 interpretation predictions
+
+### Fixed
+- **Comparisons/GenericSemantics.lean**, **Theories/Semantics/Lexical/Noun/Kind/Generics.lean**: Fix stale path references to moved TesslerGoodman2019
+
+## [0.228.46] - 2026-03-05
+
+### Added
+- **Phenomena/Plurals/Multiplicity.lean**: Theory-neutral multiplicity inference data — monotonicity pattern (UE vs DE), parallels with scalar implicatures, competing theoretical predictions (ambiguity vs implicature vs homogeneity), singular context predictions discriminating the three approaches
+- **Phenomena/Plurals/Studies/TieuEtAl2020.lean**: Formalize Tieu, Bill, Romoli & Crain (2020) — all three experiments (TVJ task, within-subjects SI comparison, ternary judgment), Uniformity Prediction, Experiment 3 polarity asymmetry in singular contexts, cross-directory bridge theorems connecting `Plurals/` to `ScalarImplicatures/` via shared DE blocking pattern and Horn scale structure
+- **Core/Scales/HornScale.lean**: Add `Number` namespace with singular/plural Horn scale (`numberScale`), proving singular is the stronger alternative to plural
+
+### Fixed
+- **references.bib**: Fix `tieu-etal-2019` → `tieu-etal-2020` — title was "plural predication" (hallucinated, actual: "plural meanings"), year was 2019 (actual: 2020), DOI was wrong, volume was wrong (192 → 205)
+- **Phenomena/Plurals/NonMaximality.lean**: Citation `@cite{tieu-etal-2019}` pointed to wrong paper entirely — the finding described (French children, homogeneity acquisition) is from Tieu, Križ & Chemla (2019), not Tieu, Bill, Romoli & Crain. Fixed to `@cite{tieu-kriz-chemla-2019}`
+- **Phenomena/Imprecision/Basic.lean**: Convert inline citation for Tieu/Križ/Chemla to `@cite{tieu-kriz-chemla-2019}` format
+- Add 5 missing bib entries: `tieu-kriz-chemla-2019`, `sauerland-2003`, `zweig-2009`, `kriz-2017`, `farkas-de-swart-2010`
+
 ## [0.228.45] - 2026-03-05
 
 ### Added

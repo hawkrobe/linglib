@@ -33,7 +33,7 @@ The `normal` parameter is doing all the work, but it's:
 - Threshold is uncertain, inferred pragmatically
 - Prior over prevalence varies by property
 
-See `Theories/RSA/Implementations/TesslerGoodman2019.lean` for the RSA account
+See `Phenomena/Generics/Studies/TesslerGoodman2019.lean` for the RSA account
 and `Theories/Comparisons/GenericSemantics.lean` for the formal comparison.
 
 -/
@@ -300,7 +300,7 @@ def normalDogSituation : NormalcyPredicate := λ s =>
 ## Related Theory
 
 - `Theories/Montague/Lexicon/Kinds.lean` - Kind reference, bare plurals, DKP
-- `Theories/RSA/Implementations/TesslerGoodman2019.lean` - RSA treatment of generics
+- `Phenomena/Generics/Studies/TesslerGoodman2019.lean` - RSA treatment of generics
 
 ## Empirical Data
 
