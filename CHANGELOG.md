@@ -8,6 +8,16 @@
 ### Fixed
 - **Comparisons/GenericSemantics.lean**, **Theories/Semantics/Lexical/Noun/Kind/Generics.lean**: Fix stale path references to moved TesslerGoodman2019
 
+## [0.228.48] - 2026-03-05
+
+### Added
+- **Core/Polarity.lean**: Canonical sentence polarity type (`Core.Polarity`: `.positive`/`.negative`) — extracted from `Phenomena/Plurals/Homogeneity.lean` to eliminate cross-phenomenon import dependency
+
+### Changed
+- **Phenomena/Plurals/Homogeneity.lean**: Replace local `Polarity` definition with `export Core (Polarity)` re-export
+- **Phenomena/Plurals/Multiplicity.lean**: Import `Core.Polarity` instead of `Homogeneity`
+- **Phenomena/Plurals/Studies/TieuEtAl2020.lean**: Use `Core.Polarity` instead of `Homogeneity.Polarity`
+
 ## [0.228.46] - 2026-03-05
 
 ### Added

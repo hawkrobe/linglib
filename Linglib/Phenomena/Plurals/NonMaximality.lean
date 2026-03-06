@@ -317,11 +317,12 @@ def existentialStronglyRelevant : StrongRelevanceDatum :=
 
 
 /--
-Non-maximality patterns are stable across development.
+Homogeneity acquisition in plural definites.
 
-Children show adult-like sensitivity to context for non-maximal readings.
+Children show sensitivity to homogeneity gaps, preferring existential
+interpretations over universal ones for plural definites.
 
-Source: @cite{tieu-etal-2019}, mentioned in dissertation
+Source: @cite{tieu-kriz-chemla-2019}
 -/
 structure DevelopmentalDatum where
   /-- Age group -/
@@ -332,7 +333,7 @@ structure DevelopmentalDatum where
   finding : String
   deriving Repr
 
-def tieuEtAlFinding : DevelopmentalDatum :=
+def tieuKrizChemlaFinding : DevelopmentalDatum :=
   { ageGroup := "French-speaking children"
   , construction := "Plural definites"
   , finding := "Children often interpret existentially; adult-like homogeneous reading found but not non-homogeneous 'all' reading"
