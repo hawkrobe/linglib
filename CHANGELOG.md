@@ -1,5 +1,23 @@
 # Changelog
 
+## [0.228.57] - 2026-03-06
+
+### Changed
+- **Theories/Semantics/Modality/KnowledgeProbability.lean**: Fix critical bug in `commonProbKnowledge` — was using naive `(E_G^b)^n` iteration which FH94 Section 5 explicitly rejects; now uses correct `F_G^b` operator (`probCKIter`). Fix KripkeKP docstring tuple, CONS/UNIF/SDP docstring accuracy vs FH94 paper definitions, W7 docstring wording. Add `probCKIter_monotone` conjecture
+
+## [0.228.56] - 2026-03-06
+
+### Added
+- **Theories/Semantics/Modality/KnowledgeProbability.lean**: Formalize Fagin & Halpern (1994) Kripke probability structures (`KripkeKP`), structural conditions (CONS, OBJ, UNIF, SDP), knowledge-probability bridge (`knows_implies_prob_one`), probabilistic group operators (`everyoneProbably`, `commonProbKnowledge`), and UNIF-based introspection
+
+### Changed
+- **Theories/Semantics/Modality/EpistemicLogic.lean**: Extracted from Core/CommonGround.lean (multi-agent epistemic operators: knows, believes, common/distributed knowledge, KnowledgeBeliefFrame)
+- **Theories/Semantics/Modality/EpistemicProbability.lean**: Renamed from Epistemic.lean; fix stale self-reference in docstring
+- **Core/Semantics/CommonGround.lean**: Remove multi-agent section (moved to EpistemicLogic.lean), keep framework-agnostic context management
+- **Comparisons/KratzerEpistemicRSA.lean**: Add note about FH94 direct KripkeKP path as alternative to Kratzer→Holliday-Icard pipeline
+- **Phenomena/Modality/Studies/HerbstrittFranke2019.lean**: Fix stale `Modality.Epistemic` → `Modality.EpistemicProbability` references in docstrings
+- **blog/data/references.bib**: Add `fagin-halpern-1994` entry; fix DOI on `fagin-vardi-1995` (was incorrectly using the 1994 JACM paper's DOI)
+
 ## [0.228.55] - 2026-03-06
 
 ### Changed
