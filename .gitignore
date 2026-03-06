@@ -33,3 +33,9 @@ CLAUDE.md
 blog/.hugo_build.lock
 blog/public/
 blog/scripts/__pycache__/
+
+# Playwright MCP artifacts
+.playwright-mcp/
+
+# Python cache
+__pycache__/
