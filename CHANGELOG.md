@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.228.63] - 2026-03-06
+
+### Added
+- **Phenomena/ArgumentStructure/Typology.lean**: Formalize Nordlinger (2023) reciprocal typology — `RecipStrategy` (Evans 2008 morphosyntactic strategy: bipartiteNP, recipPronoun, recipClitic, verbalAffix, verbalAuxiliary, lexical, compoundVerb), `RecipValency` (Maslova 2008 bivalent/monovalent), `RecipFormation` (Siloni 2012 lexical/syntactic), `RecipProfile` structure with 12 cross-linguistic profiles, nominal→bivalent and verbal-affix→monovalent correlation theorems, Siloni's discontinuity prediction theorem, 7 WALS grounding theorems, 6 ValenceProfile cross-validation theorems
+- **Phenomena/Anaphora/Coreference.lean**: Reciprocal coreference pattern (`reciprocalPattern`), reciprocal coreference data (c-command, plural antecedent, reciprocal-reflexive distribution), add to `coreferenceData` list
+- **Fragments/Japanese/Pronouns.lean**: Add reciprocal pronoun `otagai` (互い 'each other'), formally distinct from reflexive `jibun`
+- **blog/data/references.bib**: Add 7 reciprocal typology papers (Dalrymple et al. 1998, Evans 2008, Evans et al. 2011, Siloni 2008, Siloni 2012, König & Kokutani 2006, Hurst 2012)
+
+### Changed
+- **Phenomena/ArgumentStructure/Typology.lean**: Rename `ReciprocalType.noNonIconic` → `.noDedicated` (eliminates confusing double negative); fix `ReciprocityType.exhaustive` for `.radial` (`false` → `true`, radial IS participant-exhaustive); fix exhaustive docstring to clarify participant-exhaustive semantics; remove duplicate `open Fragments.English.Pronouns`; connect `ReciprocityType` with property theorems (exhaustive-symmetric types, directional types, melee nonexhaustive); ground `english_profile_grounded` in both ValenceProfile and RecipProfile
+- **Phenomena/ArgumentStructure/Typology.lean**: Add `ReciprocityType` property theorems, `englishReciprocityTypes` list
+
 ## [0.228.62] - 2026-03-06
 
 ### Added

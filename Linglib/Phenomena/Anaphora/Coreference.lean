@@ -115,11 +115,48 @@ def complementaryDistributionData : PhenomenonData := {
   ]
 }
 
+-- ============================================================================
+-- Reciprocal Coreference Data
+-- ============================================================================
+
+private def sam : Word := ⟨"Sam", .PROPN, { number := some .sg, person := some .third }⟩
+private def pat : Word := ⟨"Pat", .PROPN, { number := some .sg, person := some .third }⟩
+private def and_ : Word := ⟨"and", .CCONJ, {}⟩
+private def saw : Word := ⟨"saw", .VERB, { valence := some .transitive }⟩
+private def eachOther : Word := ⟨"each other", .PRON, { person := some .third, number := some .pl }⟩
+
+/-- Reciprocals require a plural/coordinated antecedent and local binding. -/
+def reciprocalCoreferenceData : PhenomenonData := {
+  name := "Reciprocal Coreference"
+  generalization := "Reciprocals require a c-commanding plural antecedent in the local domain"
+  pairs := [
+    -- Coordinated antecedent required
+    { grammatical := [sam, and_, pat, saw, eachOther]
+      ungrammatical := [eachOther, saw, sam, and_, pat]
+      clauseType := .declarative
+      description := "Reciprocal needs c-commanding antecedent"
+      citation := some "Dalrymple et al. (1998)" },
+
+    -- Reciprocal vs reflexive complementary distribution
+    { grammatical := [sam, and_, pat, saw, eachOther]
+      ungrammatical := [sam, and_, pat, saw, themselves]  -- awkward as reciprocal reading
+      clauseType := .declarative
+      description := "Reciprocal preferred for symmetric reading with coordinated subject" },
+
+    -- Plural antecedent requirement
+    { grammatical := [they, see, eachOther]
+      ungrammatical := [john, sees, eachOther]  -- singular antecedent fails
+      clauseType := .declarative
+      description := "Reciprocal requires plural antecedent" }
+  ]
+}
+
 def coreferenceData : List PhenomenonData := [
   reflexiveCoreferenceData,
   pronominalDisjointReferenceData,
   referentialExpressionFreedomData,
-  complementaryDistributionData
+  complementaryDistributionData,
+  reciprocalCoreferenceData
 ]
 
 /-- Types of anaphoric expressions. -/
@@ -161,6 +198,14 @@ def namePattern : CoreferencePattern := {
   anaphorType := .name
   requiresAntecedent := false
   antecedentDomain := none
+}
+
+/-- Reciprocal coreference pattern: requires a local, plural,
+    c-commanding antecedent (coordinated NP or plural NP). -/
+def reciprocalPattern : CoreferencePattern := {
+  anaphorType := .reciprocal
+  requiresAntecedent := true
+  antecedentDomain := some .local_
 }
 
 #eval wordsToString [john, sees, himself]

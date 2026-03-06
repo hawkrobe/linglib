@@ -62,13 +62,24 @@ def karera : PronounEntry :=
   { form := "karera", script := some "彼ら", person := some .third, number := some .pl }
 
 -- ============================================================================
+-- Reciprocal Pronoun
+-- ============================================================================
+
+/-- 互い *otagai* — reciprocal pronoun 'each other, one another'.
+    Formally distinct from the reflexive *jibun* (自分). This is an
+    NP/argument reciprocal strategy (reciprocal pronoun), unlike
+    languages that mark reciprocity on the verb. -/
+def otagai : PronounEntry :=
+  { form := "otagai", script := some "互い", person := some .third, number := some .pl }
+
+-- ============================================================================
 -- Pronoun Lists
 -- ============================================================================
 
 def secondPersonPronouns : List PronounEntry := [kimi, anata]
 
 def allPronouns : List PronounEntry :=
-  [watashi, boku, watashitachi] ++ secondPersonPronouns ++ [kare, kanojo, karera]
+  [watashi, boku, watashitachi] ++ secondPersonPronouns ++ [kare, kanojo, karera, otagai]
 
 -- ============================================================================
 -- Allocutive Particles (SAP-layer)
