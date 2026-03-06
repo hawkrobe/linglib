@@ -159,24 +159,34 @@ def Normalized {W E : Type*} (kp : KripkeKP W E) : Prop :=
 def Nonnegative {W E : Type*} (kp : KripkeKP W E) : Prop :=
   ∀ (i : E) (w : W) (φ : BProp W), 0 ≤ kp.worldCredence i w φ
 
-/-- Measure monotonicity for world-dependent credence: if φ ⊆ ψ
-    (pointwise), then credence in φ is at most credence in ψ.
+/-- Measure monotonicity for world-dependent credence: each agent's
+    credence function at each world is `Monotone` (from Mathlib) under
+    the pointwise Bool ordering on `BProp W`.
+
+    Since `Bool` is ordered `false ≤ true`, `φ ≤ ψ` in `W → Bool`
+    means `∀ v, φ v = true → ψ v = true` — i.e., set inclusion.
+    So `Monotone (wcr i w)` says: if φ ⊆ ψ then P(φ) ≤ P(ψ).
 
     This is a standard property of probability measures, following from
     nonnegativity + additivity (W1 + W3 of @cite{fagin-halpern-1994}).
+    It is the hypothesis needed for `probCKIter_monotone`.
 
-    This is the world-dependent generalization of `isProbabilistic`
-    from `EpistemicThreshold.lean`, which handles only the
-    conjunction-elimination special case (P(φ ∧ ψ) ≤ P(φ)). Full
-    measure monotonicity subsumes conjunction elimination and is the
-    hypothesis needed for `probCKIter_monotone`. -/
+    By reducing to Mathlib's `Monotone`, this connects to the same
+    abstract notion used throughout linglib:
+
+    - `IsUpwardEntailing = Monotone` (`Entailment/Polarity.lean`)
+    - `ScopeUpwardMono ↔ ∀ R, Monotone (q R)` (`Core/Quantification.lean`)
+    - `IsSumHom.monotone : Monotone f` (`Core/Mereology.lean`)
+    - `MeasureMonotone ↔ ∀ i w, Monotone (wcr i w)` (this definition)
+
+    The world-independent special case `isProbabilistic` from
+    `EpistemicThreshold.lean` is identical in structure (`∀ a, Monotone`);
+    `measureMonotone_isProbabilistic` projects to a fixed world. -/
 def MeasureMonotone {W E : Type*} (wcr : WorldCredence E W) : Prop :=
-  ∀ (i : E) (w : W) (φ ψ : BProp W),
-    (∀ v, φ v = true → ψ v = true) → wcr i w φ ≤ wcr i w ψ
+  ∀ (i : E) (w : W), Monotone (wcr i w)
 
 /-- `MeasureMonotone` implies `isProbabilistic` when projected to any
-    fixed world. Conjunction elimination is a special case of measure
-    monotonicity since `φ ∧ ψ ⊆ φ` pointwise.
+    fixed world. Both are `Monotone` — this just fixes the world parameter.
 
     This connects the FH94 probability axioms (world-dependent) to the
     LaBToM threshold semantics (world-independent via `liftCredence`). -/
@@ -184,7 +194,7 @@ theorem measureMonotone_isProbabilistic {E W : Type*}
     (wcr : WorldCredence E W) (hMono : MeasureMonotone wcr) (w : W) :
     Semantics.Attitudes.EpistemicThreshold.isProbabilistic
       (fun (i : E) (φ : BProp W) => wcr i w φ) :=
-  fun a _φ _ψ h => hMono a w _ _ h
+  fun a => hMono a w
 
 /-- Under CONS + normalization, knowledge implies probability 1.
 
@@ -284,12 +294,19 @@ theorem probCKIter_monotone {W E : Type*}
     intro i hi
     simp only [nestedThreshold, decide_eq_true_eq] at h ⊢
     have h_i := h i hi
-    have hSub : ∀ v, (φ v && probCKIter wcr group b φ (m + 1) v) = true →
-                     (φ v && probCKIter wcr group b φ m v) = true := by
-      intro v hv
-      have ⟨hφ, hF⟩ := Bool.and_eq_true_iff.mp hv
-      exact Bool.and_eq_true_iff.mpr ⟨hφ, ih v hF⟩
-    linarith [hMono i w _ _ hSub]
+    have hSub : (fun v => φ v && probCKIter wcr group b φ (m + 1) v) ≤
+                (fun v => φ v && probCKIter wcr group b φ m v) :=
+      fun v => by
+        show (φ v && probCKIter wcr group b φ (m + 1) v) ≤
+             (φ v && probCKIter wcr group b φ m v)
+        cases φ v with
+        | false => exact le_refl _
+        | true =>
+          simp only [Bool.true_and]
+          cases hF : probCKIter wcr group b φ (m + 1) v with
+          | false => exact Bool.false_le _
+          | true => exact le_of_eq (ih v hF).symm
+    linarith [hMono i w hSub]
 
 -- ============================================================================
 -- §5. Condition Hierarchy

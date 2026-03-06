@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.228.61] - 2026-03-06
+
+### Changed
+- **Theories/Semantics/Attitudes/EpistemicThreshold.lean**: Redefine `isProbabilistic` as `∀ a, Monotone (cr a)` (Mathlib), derive conjunction elimination (`isProbabilistic_conj_elim`) as a lemma
+- **Theories/Semantics/Modality/KnowledgeProbability.lean**: Add `MeasureMonotone` predicate (`∀ i w, Monotone (wcr i w)`), prove `probCKIter_monotone` (no sorry), add `Nonnegative` (W1), prove `sdp_implies_unif` and `unif_negative_introspection`, simplify `measureMonotone_isProbabilistic` bridge to trivial projection
+
 ## [0.228.60] - 2026-03-06
 
 ### Added

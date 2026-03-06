@@ -353,13 +353,34 @@ cannot happen: Pr(A, p ∧ q) ≤ Pr(A, p) always. The two theories make
 different empirical predictions about conjunction fallacy data.
 -/
 
-/-- A probabilistic credence function respects conjunction elimination:
-    Pr(A, φ ∧ ψ) ≤ Pr(A, φ). This is the axiom that separates LaBToM's
-    probabilistic credence from CSW's ordinal confidence ordering. -/
+/-- A probabilistic credence function is `Monotone` (from Mathlib) in
+    the pointwise Bool ordering on `BProp W`: if φ ⊆ ψ then
+    Pr(A, φ) ≤ Pr(A, ψ).
+
+    This is the axiom that separates LaBToM's probabilistic credence
+    from CSW's ordinal confidence ordering. CSW's ordering permits
+    conjunction fallacies (`conjunction_fallacy_compatible` in
+    `Confidence.lean`); `isProbabilistic` rules them out.
+
+    Conjunction elimination (`isProbabilistic_conj_elim`) is a
+    consequence: since `φ ∧ ψ ≤ φ` pointwise, monotonicity gives
+    `Pr(A, φ ∧ ψ) ≤ Pr(A, φ)`. In fact the two are equivalent on
+    `BProp W` (a `SemilatticeInf`), since `a ≤ b ↔ a ⊓ b = a`.
+
+    By using Mathlib's `Monotone`, this connects to the same abstract
+    notion used throughout linglib: `IsUpwardEntailing = Monotone`
+    (`Entailment/Polarity.lean`), `MeasureMonotone = ∀ i w, Monotone`
+    (`KnowledgeProbability.lean`), etc. -/
 def isProbabilistic (cr : AgentCredence E W) : Prop :=
-  ∀ (a : E) (φ ψ : BProp W),
-    (∀ w, (φ w && ψ w) = true → φ w = true) →
-    cr a (fun w => φ w && ψ w) ≤ cr a φ
+  ∀ (a : E), Monotone (cr a)
+
+/-- Conjunction elimination follows from `isProbabilistic`: since
+    `φ ∧ ψ ≤ φ` in the pointwise Bool ordering, monotonicity gives
+    `Pr(A, φ ∧ ψ) ≤ Pr(A, φ)`. -/
+theorem isProbabilistic_conj_elim (cr : AgentCredence E W)
+    (h_prob : isProbabilistic cr) (a : E) (φ ψ : BProp W) :
+    cr a (fun w => φ w && ψ w) ≤ cr a φ :=
+  h_prob a (fun {v} => Bool.and_le_left (φ v) (ψ v))
 
 /-- Probabilistic credence validates conjunction elimination for belief.
 
@@ -370,8 +391,7 @@ theorem prob_conjunction_elim (cr : AgentCredence E W)
     (h_prob : isProbabilistic cr) (θ : ℚ) (a : E) (φ ψ : BProp W)
     (h_bel : meetsThreshold cr θ a (fun w => φ w && ψ w)) :
     meetsThreshold cr θ a φ :=
-  le_trans h_bel (h_prob a φ ψ fun w h => by
-    simp only [Bool.and_eq_true] at h; exact h.1)
+  le_trans h_bel (isProbabilistic_conj_elim cr h_prob a φ ψ)
 
 -- ============================================================================
 -- §7. BToM-Derived Credence
