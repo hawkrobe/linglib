@@ -1,5 +1,6 @@
 import Linglib.Theories.Pragmatics.DecisionTheoretic.Core
 import Linglib.Theories.Pragmatics.DecisionTheoretic.But
+import Linglib.Theories.Semantics.Focus.Particles
 
 /-!
 # Decision-Theoretic Semantics: "Even" (@cite{merin-1999} §5)
@@ -77,5 +78,21 @@ theorem but_even_incompatible (ctx : DTSContext W) (a b : BProp W) :
   linarith
 
 end Predictions
+
+-- ============================================================
+-- Section 3: Bridge to Focus Particle Semantics
+-- ============================================================
+
+/-- DTS Bayes factor ordering as a likelihood ordering for focus particles.
+
+    Higher BF = more informative about the issue = less likely a priori =
+    more surprising. This connects Merin's relevance ordering to the
+    traditional EVEN presupposition framework in `Semantics.FocusParticles`.
+
+    @cite{merin-1999} subsumes @cite{francescotti-1995}'s "surprise" and
+    @cite{kay-1990}'s "informativeness" as special cases of signed relevance. -/
+def dtsLikelihood {W : Type} [Fintype W] (ctx : DTSContext W) :
+    Semantics.FocusParticles.LikelihoodOrder W :=
+  fun a b => bayesFactor ctx a > bayesFactor ctx b
 
 end Theories.DTS.Even

@@ -92,7 +92,7 @@ def partialAnswer {W : Type*} (p : W -> Bool) (q : GSQuestion W) (worlds : List 
 "Not in the drawer" satisfy P-ANS but are NOT acceptable mention-some answers.
 
 Only POSITIVE partial answers (that mention actual satisfiers) count as mention-some. -/
-def isPositivePartialAnswer {W E : Type*} [BEq E]
+def isPositivePartialAnswer {E : Type*} [BEq E]
     (answer : E) (satisfiers : List E) : Bool :=
   satisfiers.contains answer
 

@@ -1,12 +1,14 @@
 /-
 # Focus Particles: EVEN and Only
+@cite{lahiri-1998} @cite{crnic-2014} @cite{karttunen-peters-1979}
+@cite{bennett-1982} @cite{francescotti-1995}
 
 Traditional semantic treatments of focus-sensitive particles.
 
 ## EVEN and NPI Licensing
 
-@cite{lahiri-1998} @cite{crnic-2014} @cite{karttunen-peters-1979} and Crnič (2014) propose that NPIs like "anyone" are licensed
-by a covert EVEN operator that contributes:
+@cite{lahiri-1998} and @cite{crnic-2014} propose that NPIs like "anyone"
+are licensed by a covert EVEN operator that contributes:
 
 1. **Presupposition**: The focused element is the LEAST LIKELY alternative
 2. **Assertion**: The prejacent is true
@@ -25,14 +27,13 @@ This presupposition is satisfied in DE contexts (under negation):
 Local RSA derives EVEN effects from polarity-sensitive informativity:
 - In DE contexts, wider domains are MORE informative
 - RSA preference for informativity mimics EVEN's likelihood presupposition
-- No covert operator needed - it's pragmatic!
-
-See `RSAExhMonad/LocalRSA/Unification.lean` for the Local RSA account.
+- No covert operator needed — it's pragmatic!
 
 -/
 
 import Mathlib.Data.Set.Basic
 import Linglib.Core.Semantics.Proposition
+import Linglib.Core.Logic.NaturalLogic
 
 namespace Semantics.FocusParticles
 
@@ -50,7 +51,7 @@ structure FocusStructure (α : Type) where
 -- EVEN: The Traditional Account
 
 /-!
-## Covert EVEN (@cite{lahiri-1998}, Crnič 2014)
+## Covert EVEN (@cite{lahiri-1998}, @cite{crnic-2014})
 @cite{rooth-1992}
 
 EVEN has two semantic contributions:
@@ -62,19 +63,9 @@ EVEN has two semantic contributions:
 For NPI licensing, only the scalar presupposition matters.
 -/
 
-/-- Likelihood ordering over propositions (context-dependent) -/
+/-- Likelihood ordering over propositions (context-dependent).
+    `likelihood a b` holds when `a` is less likely (more surprising) than `b`. -/
 def LikelihoodOrder (World : Type) := BProp World → BProp World → Prop
-
-/-- EVEN presupposition: focused element is least likely -/
-structure EvenPresupposition where
-  /-- The prejacent (focused proposition) -/
-  prejacent : BProp World
-  /-- The alternatives (what focus evokes) -/
-  alternatives : List (BProp World)
-  /-- Likelihood ordering (from context) -/
-  likelihood : LikelihoodOrder World
-  /-- The presupposition: prejacent is least likely -/
-  presupposes : ∀ alt ∈ alternatives, likelihood prejacent alt
 
 /-- Traditional EVEN semantics -/
 structure TraditionalEven where
@@ -89,7 +80,10 @@ structure TraditionalEven where
 def TraditionalEven.assertion (even : TraditionalEven (World := World)) : BProp World :=
   even.prejacent
 
-/-- EVEN presupposes prejacent is least likely -/
+/-- EVEN presupposes prejacent is least likely.
+    This is @cite{karttunen-peters-1979}'s universal threshold: the prejacent
+    must be less likely than ALL alternatives. @cite{francescotti-1995} argues
+    this is too strong — see `EvenThreshold.most` for the revised condition. -/
 def TraditionalEven.presupposition (even : TraditionalEven (World := World)) : Prop :=
   ∀ alt ∈ even.alternatives, even.likelihood even.prejacent alt
 
@@ -122,34 +116,39 @@ satisfying EVEN's presupposition.
 = Presupposition VIOLATED
 -/
 
-/-- Whether context is downward-entailing (DE) -/
-inductive Polarity where
-  | up   -- Upward entailing
-  | down -- Downward entailing
-  deriving DecidableEq, Repr
+open Core.NaturalLogic (ContextPolarity)
 
-/-- NPI licensing condition: EVEN presupposition must be satisfiable -/
-def npiLicensed (pol : Polarity) (npiDomain : Set Entity) (regularDomain : Set Entity)
+/-- NPI licensing condition: EVEN presupposition must be satisfiable.
+    Uses `ContextPolarity` from `Core.NaturalLogic`. -/
+def npiLicensed (pol : ContextPolarity) (npiDomain : Set Entity) (regularDomain : Set Entity)
     (_hWider : regularDomain ⊆ npiDomain) : Prop :=
   match pol with
-  | .down =>
+  | .downward =>
       -- In DE: wider domain → less likely (after negation applies)
       -- So NPI (wide domain) satisfies EVEN's "least likely" presupposition
       True
-  | .up =>
+  | .upward =>
       -- In UE: wider domain → more likely
       -- NPI would violate EVEN's presupposition
+      False
+  | .nonMonotonic =>
+      -- Non-monotonic contexts (e.g., "exactly three") don't license NPIs
       False
 
 /-- NPI licensed in DE contexts -/
 theorem npi_licensed_de (npiDomain regularDomain : Set Entity)
     (hWider : regularDomain ⊆ npiDomain) :
-    npiLicensed .down npiDomain regularDomain hWider = True := rfl
+    npiLicensed .downward npiDomain regularDomain hWider = True := rfl
 
 /-- NPI unlicensed in UE contexts -/
 theorem npi_unlicensed_ue (npiDomain regularDomain : Set Entity)
     (hWider : regularDomain ⊆ npiDomain) :
-    npiLicensed .up npiDomain regularDomain hWider = False := rfl
+    npiLicensed .upward npiDomain regularDomain hWider = False := rfl
+
+/-- NPI unlicensed in non-monotonic contexts -/
+theorem npi_unlicensed_nonmon (npiDomain regularDomain : Set Entity)
+    (hWider : regularDomain ⊆ npiDomain) :
+    npiLicensed .nonMonotonic npiDomain regularDomain hWider = False := rfl
 
 -- Only: The Exhaustification Particle
 
@@ -203,41 +202,44 @@ def TraditionalOnly.trueAt (only : TraditionalOnly (World := World)) (w : World)
    - EVEN: active in DE contexts (licenses NPIs)
    - EXH: active in UE contexts (generates SIs)
 
-2. **Local RSA unifies them**:
-   - Both are informativity maximization
-   - Polarity determines which direction is "more informative"
-
-3. **Only is overt EXH**:
+2. **Only is overt EXH**:
    - Same semantic effect as covert EXH
    - But with prejacent as presupposition, not assertion
 -/
 
--- The Circularity Problem (Parallel to GEN)
+-- ============================================================
+-- Threshold Variants (@cite{francescotti-1995})
+-- ============================================================
 
-/-!
-## Problem with Covert EVEN
+/-- Threshold variants for the EVEN scalar presupposition.
+    The theoretical dispute concerns how many alternatives the prejacent
+    must exceed in unlikelihood:
+    - @cite{bennett-1982}: at least one (too weak)
+    - @cite{karttunen-peters-1979}: all (too strong)
+    - @cite{francescotti-1995}: most (correct) -/
+inductive EvenThreshold where
+  /-- S* more surprising than at least one neighbor -/
+  | existential
+  /-- S* more surprising than all neighbors -/
+  | universal
+  /-- S* more surprising than most neighbors -/
+  | most
+  deriving DecidableEq, Repr
 
-Like covert GEN, covert EVEN has circularity issues:
+/-- Count of alternatives that the prejacent exceeds under a decidable ordering. -/
+def countExceeded {α : Type} (prejacent : α) (alternatives : List α)
+    (moreSurprising : α → α → Bool) : Nat :=
+  (alternatives.filter (moreSurprising prejacent)).length
 
-1. **When is EVEN inserted?** - Only where NPIs appear
-2. **What determines likelihood?** - Stipulated to match NPI distribution
-3. **Why these alternatives?** - Chosen to give right licensing conditions
-
-The "likelihood" ordering does the work, but it's:
-- Context-dependent
-- Not independently observable
-- Essentially circular (defined to license NPIs where they appear)
-
-### Local RSA Alternative
-
-Local RSA derives EVEN effects from:
-- Polarity tracking (automatically computed)
-- Informativity comparison (domain size)
-- No stipulated likelihood ordering needed
-
-The "least likely" intuition becomes:
-"In DE contexts, wider domains have smaller extensions after negation,
-making them more informative, hence preferred."
--/
+/-- Generalized EVEN presupposition parameterized by threshold.
+    `moreSurprising a b` returns `true` when `a` is more surprising
+    (less likely) than `b`. -/
+def evenPresupWith {α : Type} (prejacent : α) (alternatives : List α)
+    (moreSurprising : α → α → Bool) (threshold : EvenThreshold) : Bool :=
+  let n := countExceeded prejacent alternatives moreSurprising
+  match threshold with
+  | .existential => decide (n > 0)
+  | .universal => decide (n = alternatives.length)
+  | .most => decide (n * 2 > alternatives.length)
 
 end Semantics.FocusParticles

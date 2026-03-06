@@ -26,6 +26,13 @@ FinAddMeasure
 RSAConfig.worldPrior
 ```
 
+An alternative, more direct path is provided by @cite{fagin-halpern-1994}'s
+`KripkeKP` (see `Modality/KnowledgeProbability.lean`): a Kripke probability
+structure packages both the accessibility relation and the probability
+assignment. Under CONS, knowledge and probability-1 belief coincide
+(`knows_implies_prob_one`), giving a single structure that serves both
+the epistemic logic layer and the RSA prior.
+
 §1 and §2 are definitions (no sorry). §3–§4 are conjectures (sorry)
 that state what additional conditions are needed to traverse the full
 pipeline.

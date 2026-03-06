@@ -22,7 +22,7 @@ the modal frame conditions:
   belief worlds without being true.
 
 This file constructs a concrete 2-world model demonstrating the asymmetry,
-connecting `KnowledgeBeliefFrame` (from `CommonGround.lean`) through
+connecting `KnowledgeBeliefFrame` (from `EpistemicLogic.lean`) through
 `doxOfAccessRel` (from `BeliefEmbedding.lean`) to `presupFiltered`
 (from `LocalContext.lean`).
 
@@ -32,7 +32,7 @@ namespace Phenomena.Presupposition.Studies.Heim1992
 
 open Core.Presupposition (PrProp)
 open Core.CommonGround (ContextSet)
-open Core.CommonGround.MultiAgent (KnowledgeBeliefFrame)
+open Semantics.Modality.EpistemicLogic (KnowledgeBeliefFrame)
 open Core.ModalLogic (Refl Serial Eucl Trans)
 open Semantics.Presupposition.LocalContext (presupFiltered)
 open Semantics.Presupposition.BeliefEmbedding

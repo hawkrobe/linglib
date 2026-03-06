@@ -47,6 +47,7 @@ OLE = no (Class B, Class D): Presupposition attributed to speaker
 import Linglib.Core.Semantics.CommonGround
 import Linglib.Core.Semantics.Presupposition
 import Linglib.Theories.Semantics.Presupposition.LocalContext
+import Linglib.Theories.Semantics.Modality.EpistemicLogic
 
 namespace Semantics.Presupposition.BeliefEmbedding
 
@@ -286,7 +287,7 @@ theorem belief_filtering_condition (blc : BeliefLocalCtx W Agent) (p : PrProp W)
 ### Bridging Bool-valued and Prop-valued Accessibility
 @cite{hintikka-1969}
 
-`CommonGround.MultiAgent` uses Bool-valued `AgentAccessRel W E = E → W → W → Bool`.
+`EpistemicLogic` uses Bool-valued `AgentAccessRel W E = E → W → W → Bool`.
 `BeliefEmbedding` uses Prop-valued `DoxasticAccessibility W E = E → W → ContextSet W`
 where `ContextSet W = W → Prop`.
 
@@ -297,7 +298,7 @@ converts `R i w v = true` (Bool) to `Dox i w v` (Prop).
 section BoolPropBridge
 
 open Core.ModalLogic (AgentAccessRel)
-open Core.CommonGround.MultiAgent (KnowledgeBeliefFrame)
+open Semantics.Modality.EpistemicLogic (KnowledgeBeliefFrame)
 
 variable {W E : Type*}
 

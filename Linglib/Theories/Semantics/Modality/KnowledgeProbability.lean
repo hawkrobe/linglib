@@ -31,8 +31,11 @@ probability operators (`EpistemicProbability.lean`) by defining
    @cite{fagin-halpern-1994}'s `F_G^b` operator (Section 5), NOT the
    naive iteration `(E_G^b)^n`.
 
-5. **UNIF and introspection**: uniformity yields positive introspection
-   for probabilistic beliefs — the agent *knows* their own credences.
+5. **Condition hierarchy**: `sdp_implies_unif` under S5 — proves
+   FH94's observation that W7 + W10 imply W9.
+
+6. **UNIF and introspection**: uniformity yields both positive and
+   negative introspection for probabilistic beliefs (axiom W9).
 
 ## Connection to the Kratzer Pipeline
 
@@ -51,7 +54,7 @@ set_option autoImplicit false
 namespace Semantics.Modality.KnowledgeProbability
 
 open Core.Proposition (BProp FiniteWorlds)
-open Core.ModalLogic (AgentAccessRel kripkeEval)
+open Core.ModalLogic (AgentAccessRel AccessRel kripkeEval)
 open Semantics.Modality.EpistemicLogic (knows everyoneKnows)
 open Semantics.Modality.EpistemicProbability (WorldCredence nestedThreshold)
 
@@ -151,6 +154,38 @@ def SDP {W E : Type*} (kp : KripkeKP W E) : Prop :=
 def Normalized {W E : Type*} (kp : KripkeKP W E) : Prop :=
   ∀ (i : E) (w : W), kp.worldCredence i w (fun _ => true) = 1
 
+/-- Nonnegativity: credences are non-negative.
+    This is @cite{fagin-halpern-1994}'s axiom W1. -/
+def Nonnegative {W E : Type*} (kp : KripkeKP W E) : Prop :=
+  ∀ (i : E) (w : W) (φ : BProp W), 0 ≤ kp.worldCredence i w φ
+
+/-- Measure monotonicity for world-dependent credence: if φ ⊆ ψ
+    (pointwise), then credence in φ is at most credence in ψ.
+
+    This is a standard property of probability measures, following from
+    nonnegativity + additivity (W1 + W3 of @cite{fagin-halpern-1994}).
+
+    This is the world-dependent generalization of `isProbabilistic`
+    from `EpistemicThreshold.lean`, which handles only the
+    conjunction-elimination special case (P(φ ∧ ψ) ≤ P(φ)). Full
+    measure monotonicity subsumes conjunction elimination and is the
+    hypothesis needed for `probCKIter_monotone`. -/
+def MeasureMonotone {W E : Type*} (wcr : WorldCredence E W) : Prop :=
+  ∀ (i : E) (w : W) (φ ψ : BProp W),
+    (∀ v, φ v = true → ψ v = true) → wcr i w φ ≤ wcr i w ψ
+
+/-- `MeasureMonotone` implies `isProbabilistic` when projected to any
+    fixed world. Conjunction elimination is a special case of measure
+    monotonicity since `φ ∧ ψ ⊆ φ` pointwise.
+
+    This connects the FH94 probability axioms (world-dependent) to the
+    LaBToM threshold semantics (world-independent via `liftCredence`). -/
+theorem measureMonotone_isProbabilistic {E W : Type*}
+    (wcr : WorldCredence E W) (hMono : MeasureMonotone wcr) (w : W) :
+    Semantics.Attitudes.EpistemicThreshold.isProbabilistic
+      (fun (i : E) (φ : BProp W) => wcr i w φ) :=
+  fun a _φ _ψ h => hMono a w _ _ h
+
 /-- Under CONS + normalization, knowledge implies probability 1.
 
     K_i(φ)(w) → w_i(φ)(w) = 1
@@ -186,18 +221,6 @@ theorem knows_implies_prob_one {W E : Type*} [FiniteWorlds W]
 def everyoneProbably {W E : Type*} (wcr : WorldCredence E W)
     (group : List E) (b : ℚ) (φ : BProp W) (w : W) : Bool :=
   group.all fun i => nestedThreshold wcr b i φ w
-
-/-- Iterate "everyone probably" n times: (E_G^b)^n(φ).
-
-    This is the naive iteration operator. Note: this is NOT the correct
-    building block for probabilistic common knowledge — see `probCKIter`
-    for @cite{fagin-halpern-1994}'s F_G^b operator. The naive iteration
-    is still well-defined as a standalone operator but yields a CK
-    definition that is too weak (FH94 Section 5, counterexample). -/
-def everyoneProbablyIter {W E : Type*} (wcr : WorldCredence E W)
-    (group : List E) (b : ℚ) (φ : BProp W) : ℕ → BProp W
-  | .zero => φ
-  | .succ n => everyoneProbably wcr group b (everyoneProbablyIter wcr group b φ n)
 
 /-- @cite{fagin-halpern-1994}'s F_G^b iteration for probabilistic common
     knowledge (Section 5). Unlike the naive iteration `(E_G^b)^n`, each
@@ -236,18 +259,79 @@ def commonProbKnowledge {W E : Type*} (wcr : WorldCredence E W)
 /-- The F_G^b iterates are monotonically decreasing:
     (F_G^b)^{k+1}(φ) ⟹ (F_G^b)^k(φ).
 
-    This follows because φ ∧ X ⊆ X, and probability is monotone.
+    This follows because φ ∧ F^k ⊆ φ ∧ F^{k-1} (by induction) and
+    probability is monotone (P(A) ≤ P(B) when A ⊆ B).
     Consequently, checking C_G^b with bound n is equivalent to checking
-    just the highest level (F_G^b)^n(φ). -/
+    just the highest level (F_G^b)^n(φ).
+
+    The `MeasureMonotone` hypothesis requires that credence respects
+    set inclusion — a standard property of probability measures that
+    follows from nonnegativity + additivity (W1 + W3). -/
 theorem probCKIter_monotone {W E : Type*}
     (wcr : WorldCredence E W)
-    (group : List E) (b : ℚ) (φ : BProp W) (k : ℕ) (w : W)
-    (h : probCKIter wcr group b φ (k + 1) w = true) :
-    probCKIter wcr group b φ k w = true :=
-  sorry -- Requires: probability monotonicity (P(A ∩ B) ≤ P(A))
+    (hMono : MeasureMonotone wcr)
+    (group : List E) (b : ℚ) (φ : BProp W) :
+    ∀ (k : ℕ) (w : W), probCKIter wcr group b φ (k + 1) w = true →
+      probCKIter wcr group b φ k w = true := by
+  intro k
+  induction k with
+  | zero => intros; rfl
+  | succ m ih =>
+    intro w h
+    unfold probCKIter at h ⊢
+    unfold everyoneProbably at h ⊢
+    rw [List.all_eq_true] at h ⊢
+    intro i hi
+    simp only [nestedThreshold, decide_eq_true_eq] at h ⊢
+    have h_i := h i hi
+    have hSub : ∀ v, (φ v && probCKIter wcr group b φ (m + 1) v) = true →
+                     (φ v && probCKIter wcr group b φ m v) = true := by
+      intro v hv
+      have ⟨hφ, hF⟩ := Bool.and_eq_true_iff.mp hv
+      exact Bool.and_eq_true_iff.mpr ⟨hφ, ih v hF⟩
+    linarith [hMono i w _ _ hSub]
 
 -- ============================================================================
--- §5. Boolean-Probabilistic Bridge
+-- §5. Condition Hierarchy
+-- ============================================================================
+
+/-- Under S5 (reflexive + Euclidean), accessible worlds from w and w'
+    coincide whenever w' is accessible from w. This is the key property
+    that makes S5 relations equivalence relations: accessibility classes
+    are either identical or disjoint. -/
+private theorem s5_access_eq {W : Type*} {R : AccessRel W}
+    (hRefl : Core.ModalLogic.Refl R) (hEucl : Core.ModalLogic.Eucl R)
+    {w w' : W} (hAcc : R w w' = true) :
+    ∀ v, R w v = R w' v := by
+  have hSymm := Core.ModalLogic.refl_eucl_symm hRefl hEucl
+  have hTrans := Core.ModalLogic.refl_eucl_trans hRefl hEucl
+  intro v
+  cases hR : R w v <;> cases hR' : R w' v
+  · rfl
+  · exact absurd (hTrans w w' v hAcc hR') (by simp [hR])
+  · exact absurd (hTrans w' w v (hSymm w w' hAcc) hR) (by simp [hR'])
+  · rfl
+
+/-- SDP implies UNIF under S5 accessibility.
+
+    @cite{fagin-halpern-1994} notes (p. 351) that CONS + SDP together
+    imply UNIF. Under S5 (reflexive + Euclidean), if w' is accessible
+    from w then w and w' have the same accessible worlds, so SDP with
+    i = j directly gives UNIF.
+
+    This is the semantic content of the paper's observation that
+    W7 + W10 imply W9 (CONS + SDP axioms imply the UNIF axiom). -/
+theorem sdp_implies_unif {W E : Type*}
+    (kp : KripkeKP W E)
+    (hSDP : SDP kp)
+    (hS5 : ∀ i, Core.ModalLogic.Refl (kp.accessRel i) ∧
+                  Core.ModalLogic.Eucl (kp.accessRel i)) :
+    UNIF kp := by
+  intro i w w' hAcc φ
+  exact hSDP i i w w' (s5_access_eq (hS5 i).1 (hS5 i).2 hAcc) φ
+
+-- ============================================================================
+-- §6. Boolean-Probabilistic Bridge
 -- ============================================================================
 
 /-- Under CONS + normalization, Boolean everyone-knows implies
@@ -265,7 +349,7 @@ theorem everyoneKnows_implies_everyoneProbOne {W E : Type*} [FiniteWorlds W]
     (EpistemicLogic.everyoneKnows_implies_knows kp.accessRel group φ w i hi h)]
 
 -- ============================================================================
--- §6. UNIF and Introspection
+-- §7. UNIF and Introspection
 -- ============================================================================
 
 /-- Under UNIF, the threshold operator is stable across accessible worlds:
@@ -308,5 +392,24 @@ theorem unif_positive_introspection {W E : Type*} [FiniteWorlds W]
   intro v hv
   rw [← unif_threshold_stable kp hUNIF i θ φ w v (List.mem_filter.mp hv).2]
   exact h
+
+/-- Under UNIF, probabilistic belief is negatively introspective:
+    if the agent assigns probability < θ to φ, the agent *knows* this.
+
+    ¬(w_i(φ) ≥ θ) → K_i(¬(w_i(φ) ≥ θ))
+
+    Together with `unif_positive_introspection`, this completes
+    @cite{fagin-halpern-1994}'s axiom W9: under UNIF, every
+    i-probability formula or its negation is known by agent i. -/
+theorem unif_negative_introspection {W E : Type*} [FiniteWorlds W]
+    (kp : KripkeKP W E) (hUNIF : UNIF kp)
+    (i : E) (θ : ℚ) (φ : BProp W) (w : W)
+    (h : nestedThreshold kp.worldCredence θ i φ w = false) :
+    knows kp.accessRel i (fun v => !(nestedThreshold kp.worldCredence θ i φ v)) w = true := by
+  unfold knows kripkeEval
+  rw [List.all_eq_true]
+  intro v hv
+  have := unif_threshold_stable kp hUNIF i θ φ w v (List.mem_filter.mp hv).2
+  simp [← this, h]
 
 end Semantics.Modality.KnowledgeProbability

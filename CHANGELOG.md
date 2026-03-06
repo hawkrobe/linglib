@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.228.60] - 2026-03-06
+
+### Added
+- **Phenomena/Modality/Studies/HerbstrittFranke2019.lean**: Formalize Herbstritt & Franke (2019) — RSA model for simple/complex probability expressions with Hellinger distance speaker utility, hypergeometric observation model, threshold semantics (Table 6/9 parameters), 8 production/interpretation predictions (sorry: rsa_predict lacks sqrt), empirical data (Tables 6, 7, 9, 10), strict/non-strict threshold equivalence theorem
+- **Core/Distributions.lean**: Hypergeometric distribution (shared by Goodman & Stuhlmüller 2013 and Herbstritt & Franke 2019)
+- **Core/Divergence.lean**: Hellinger distance, KL divergence, Bhattacharyya coefficient, KL-to-surprisal derivation, expected log-likelihood decomposition
+- **Theories/Semantics/Modality/EpistemicProbability.lean**: Nested threshold semantics (WorldCredence, nestedThreshold, complexExpression) following Fagin & Halpern (1994), with bridge to flat threshold semantics and standard probability expression thresholds
+- **Theories/Semantics/Modality/EpistemicLogic.lean**: Epistemic logic (knows, common knowledge, everyone-knows) for KnowledgeProbability
+- **Fragments/English/FocusParticles.lean**: English focus particle lexical entries
+- **Phenomena/Focus/Studies/Francescotti1995.lean**: Formalize Francescotti (1995) focus particle analysis
+
+### Changed
+- **Theories/Semantics/Modality/KnowledgeProbability.lean**: Add condition hierarchy (sdp_implies_unif), negative introspection, uses new EpistemicProbability module
+- **Comparisons/KratzerEpistemicRSA.lean**: Add KripkeKP alternative path documentation
+- **Core/Semantics/CommonGround.lean**: Refactor, extract epistemic logic content to EpistemicLogic.lean
+
 ## [0.228.59] - 2026-03-06
 
 ### Added
