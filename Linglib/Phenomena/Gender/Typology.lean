@@ -1,4 +1,7 @@
 import Linglib.Core.Lexical.Word
+import Linglib.Core.WALS.Features.F30A
+import Linglib.Core.WALS.Features.F31A
+import Linglib.Core.WALS.Features.F32A
 
 /-!
 # Gender and Noun Class Typology (WALS Chapters 30--32)
@@ -47,18 +50,12 @@ on all higher targets.
 namespace Phenomena.Gender.Typology
 
 -- ============================================================================
--- WALSCount Infrastructure
+-- WALS Generated Data References
 -- ============================================================================
 
-/-- A single row in a WALS distribution table: a label and a language count. -/
-structure WALSCount where
-  label : String
-  count : Nat
-  deriving Repr, DecidableEq, BEq
-
-/-- Sum of all counts in a WALS distribution. -/
-def WALSCount.totalOf (cs : List WALSCount) : Nat :=
-  cs.foldl (λ acc c => acc + c.count) 0
+private abbrev ch30 := Core.WALS.F30A.allData
+private abbrev ch31 := Core.WALS.F31A.allData
+private abbrev ch32 := Core.WALS.F32A.allData
 
 -- ============================================================================
 -- Chapter 30: Number of Genders
@@ -97,16 +94,8 @@ def GenderCount.contains (gc : GenderCount) (n : Nat) : Bool :=
   | .four     => n == 4
   | .fivePlus => n >= 5
 
-/-- WALS Chapter 30 distribution (@cite{corbett-2013}, 257-language sample). -/
-def ch30Distribution : List WALSCount :=
-  [ ⟨"None (no gender)",   145⟩
-  , ⟨"Two genders",         50⟩
-  , ⟨"Three genders",       26⟩
-  , ⟨"Four genders",        12⟩
-  , ⟨"Five or more genders", 24⟩ ]
-
-/-- Chapter 30 total sample size. -/
-theorem ch30_total : WALSCount.totalOf ch30Distribution = 257 := by native_decide
+/-- Chapter 30 total sample size (from generated data). -/
+theorem ch30_total : ch30.length = 257 := by native_decide
 
 -- ============================================================================
 -- Chapter 31: Sex-based and Non-sex-based Gender Systems
@@ -128,14 +117,8 @@ inductive GenderBasis where
 
 instance : Inhabited GenderBasis := ⟨.noGender⟩
 
-/-- WALS Chapter 31 distribution (@cite{corbett-2013b}, 254-language sample). -/
-def ch31Distribution : List WALSCount :=
-  [ ⟨"No gender",            145⟩
-  , ⟨"Sex-based",             84⟩
-  , ⟨"Non-sex-based",         25⟩ ]
-
-/-- Chapter 31 total sample size. -/
-theorem ch31_total : WALSCount.totalOf ch31Distribution = 254 := by native_decide
+/-- Chapter 31 total sample size (from generated data). -/
+theorem ch31_total : ch31.length = 257 := by native_decide
 
 -- ============================================================================
 -- Chapter 32: Systems of Gender Assignment
@@ -161,14 +144,8 @@ inductive AssignmentSystem where
 
 instance : Inhabited AssignmentSystem := ⟨.noGender⟩
 
-/-- WALS Chapter 32 distribution (@cite{corbett-2013c}, 256-language sample). -/
-def ch32Distribution : List WALSCount :=
-  [ ⟨"No gender",                  145⟩
-  , ⟨"Semantic",                    53⟩
-  , ⟨"Semantic and formal",         58⟩ ]
-
 /-- Chapter 32 total sample size. -/
-theorem ch32_total : WALSCount.totalOf ch32Distribution = 256 := by native_decide
+theorem ch32_total : ch32.length = 257 := by native_decide
 
 -- ============================================================================
 -- Distribution Verification
@@ -176,22 +153,41 @@ theorem ch32_total : WALSCount.totalOf ch32Distribution = 256 := by native_decid
 
 /-- Ch 30: Languages with no gender are the modal category. -/
 theorem ch30_no_gender_modal :
-    ch30Distribution.head? = some ⟨"None (no gender)", 145⟩ := by native_decide
+    let noGender := (ch30.filter (·.value == .none)).length
+    noGender > (ch30.filter (·.value == .two)).length ∧
+    noGender > (ch30.filter (·.value == .three)).length ∧
+    noGender > (ch30.filter (·.value == .four)).length ∧
+    noGender > (ch30.filter (·.value == .fiveOrMore)).length := by
+  exact ⟨by native_decide, by native_decide, by native_decide, by native_decide⟩
 
 /-- Ch 30: Among gender-bearing languages, 2-gender systems are most common. -/
-theorem ch30_two_most_common : (50 > 26) ∧ (50 > 12) ∧ (50 > 24) := by native_decide
+theorem ch30_two_most_common :
+    (ch30.filter (·.value == .two)).length >
+    (ch30.filter (·.value == .three)).length ∧
+    (ch30.filter (·.value == .two)).length >
+    (ch30.filter (·.value == .four)).length ∧
+    (ch30.filter (·.value == .two)).length >
+    (ch30.filter (·.value == .fiveOrMore)).length := by
+  exact ⟨by native_decide, by native_decide, by native_decide⟩
 
 /-- Ch 31: Sex-based systems far outnumber non-sex-based ones. -/
-theorem ch31_sex_based_dominant : (84 > 25) = true := by native_decide
+theorem ch31_sex_based_dominant :
+    (ch31.filter (·.value == .sexBased)).length >
+    (ch31.filter (·.value == .nonSexBased)).length := by native_decide
 
 /-- Ch 32: Semantic-and-formal assignment slightly outnumbers semantic-only. -/
-theorem ch32_mixed_slightly_more : (58 > 53) = true := by native_decide
+theorem ch32_mixed_slightly_more :
+    (ch32.filter (·.value == .semanticAndFormal)).length >
+    (ch32.filter (·.value == .semantic)).length := by native_decide
 
 /-- Ch 32: No purely formal assignment system is attested.
     This is Corbett's key generalization: formal assignment always
-    supplements a semantic core, never replaces it. -/
+    supplements a semantic core, never replaces it.
+    WALS F32A has only three categories: noGender, semantic,
+    and semanticAndFormal — no "formal only" category exists. -/
 theorem ch32_no_purely_formal :
-    ch32Distribution.all (λ w => w.label != "Formal only") = true := by native_decide
+    ch32.all (λ d => d.value == .noGender || d.value == .semantic ||
+                     d.value == .semanticAndFormal) := by native_decide
 
 -- ============================================================================
 -- Agreement Targets

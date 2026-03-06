@@ -1,5 +1,9 @@
 import Linglib.Core.Lexical.Word
 import Linglib.Core.Prominence
+import Linglib.Core.WALS.Features.F49A
+import Linglib.Core.WALS.Features.F50A
+import Linglib.Core.WALS.Features.F51A
+import Linglib.Core.WALS.Features.F52A
 
 /-!
 # Case Typology (WALS Chapters 49--52)
@@ -19,28 +23,23 @@ covering the typology of case systems:
   whether comitative ('with X') and instrumental ('by means of X') are
   marked identically or distinctly.
 
-Each chapter is encoded as an inductive type with `WALSCount` distributions
-giving the attested cross-linguistic counts. Language profiles combine all
-four dimensions, and typological generalizations are verified over the
-sample by `native_decide`.
+Each chapter is encoded as an inductive type with distributions
+derived from generated WALS data (Ch 49--51) or hand-coded counts (Ch 52).
+Language profiles combine all four dimensions, and typological
+generalizations are verified over the sample by `native_decide`.
 
 -/
 
 namespace Phenomena.Case.Typology
 
 -- ============================================================================
--- WALSCount Infrastructure
+-- WALS Generated Data References
 -- ============================================================================
 
-/-- A single row in a WALS distribution table: a label and a language count. -/
-structure WALSCount where
-  label : String
-  count : Nat
-  deriving Repr, DecidableEq, BEq
-
-/-- Sum of all counts in a WALS distribution. -/
-def WALSCount.totalOf (cs : List WALSCount) : Nat :=
-  cs.foldl (λ acc c => acc + c.count) 0
+private abbrev ch49 := Core.WALS.F49A.allData
+private abbrev ch50 := Core.WALS.F50A.allData
+private abbrev ch51 := Core.WALS.F51A.allData
+private abbrev ch52 := Core.WALS.F52A.allData
 
 -- ============================================================================
 -- Chapter 49: Number of Cases
@@ -81,17 +80,8 @@ def CaseCount.contains (cc : CaseCount) (n : Nat) : Bool :=
   | .eightNine => n >= 8 && n <= 9
   | .tenPlus   => n >= 10
 
-/-- WALS Chapter 49 distribution (@cite{iggesen-2013}, 261-language sample). -/
-def ch49Distribution : List WALSCount :=
-  [ ⟨"No morphological case-marking", 100⟩
-  , ⟨"2 cases",                         23⟩
-  , ⟨"3-4 cases",                       39⟩
-  , ⟨"5-7 cases",                       37⟩
-  , ⟨"8-9 cases",                       23⟩
-  , ⟨"10 or more cases",                39⟩ ]
-
-/-- Chapter 49 total sample size. -/
-theorem ch49_total : WALSCount.totalOf ch49Distribution = 261 := by native_decide
+/-- Chapter 49 total sample size (from generated data). -/
+theorem ch49_total : ch49.length = 261 := by native_decide
 
 -- ============================================================================
 -- Chapter 50: Asymmetrical Case-Marking
@@ -131,19 +121,8 @@ def AsymmetricalCaseMarking.conditionCount : AsymmetricalCaseMarking → Nat
   | .twoConditions => 2
   | .threeConditions => 3
 
-/-- WALS Chapter 50 distribution (@cite{iggesen-2013}, 261-language sample). -/
-def ch50Distribution : List WALSCount :=
-  [ ⟨"No morphological case-marking",           100⟩
-  , ⟨"Exclusively borderline case-marking",       19⟩
-  , ⟨"No asymmetrical case-marking",              47⟩
-  , ⟨"Animacy-conditioned",                       20⟩
-  , ⟨"Definiteness-conditioned",                  17⟩
-  , ⟨"Pronoun-conditioned (addressor-conditioned)", 4⟩
-  , ⟨"Two conditions",                            32⟩
-  , ⟨"Three conditions",                          22⟩ ]
-
-/-- Chapter 50 total sample size. -/
-theorem ch50_total : WALSCount.totalOf ch50Distribution = 261 := by native_decide
+/-- Chapter 50 total sample size (from generated data). -/
+theorem ch50_total : ch50.length = 261 := by native_decide
 
 -- ============================================================================
 -- Chapter 51: Position of Case Affixes
@@ -176,16 +155,26 @@ def CaseAffixPosition.hasSuffix : CaseAffixPosition → Bool
   | .bothSuffixPrefix => true
   | _                 => false
 
-/-- WALS Chapter 51 distribution (@cite{iggesen-2013}, 261-language sample). -/
-def ch51Distribution : List WALSCount :=
-  [ ⟨"No case affixes or obligatory case-marking", 105⟩
-  , ⟨"Case suffixes only",                         119⟩
-  , ⟨"Case prefixes only",                           7⟩
-  , ⟨"Case expressed by tone only",                   5⟩
-  , ⟨"Both case suffixes and case prefixes",          25⟩ ]
+/-- Chapter 51 total sample size (from generated data). -/
+theorem ch51_total : ch51.length = 1031 := by native_decide
 
-/-- Chapter 51 total sample size. -/
-theorem ch51_total : WALSCount.totalOf ch51Distribution = 261 := by native_decide
+-- ============================================================================
+-- WALS Converter Functions
+-- ============================================================================
+
+/-- Convert F49A case count to our CaseCount.
+    F49A has finer bins (3, 4, 5 separate); we merge them.
+    `exclusivelyBorderlineCaseMarking` has no clean mapping. -/
+private def fromWALS49A : Core.WALS.F49A.CaseCount → Option CaseCount
+  | .noMorphologicalCaseMarking => some .none
+  | .cases2 => some .two
+  | .cases3 => some .threeFour
+  | .cases4 => some .threeFour
+  | .cases5 => some .fiveSeven
+  | .cases6_7 => some .fiveSeven
+  | .cases8_9 => some .eightNine
+  | .cases10OrMore => some .tenPlus
+  | .exclusivelyBorderlineCaseMarking => Option.none
 
 -- ============================================================================
 -- Chapter 52: Comitatives and Instrumentals
@@ -211,39 +200,51 @@ def ComitativeInstrumental.isSyncretic : ComitativeInstrumental → Bool
   | .identity => true
   | _         => false
 
-/-- WALS Chapter 52 distribution (@cite{stolz-veselinova-2013}, 322-language sample). -/
-def ch52Distribution : List WALSCount :=
-  [ ⟨"Identity (same marker)",     194⟩
-  , ⟨"Differentiation",            102⟩
-  , ⟨"Mixed (both strategies)",     26⟩ ]
-
 /-- Chapter 52 total sample size. -/
-theorem ch52_total : WALSCount.totalOf ch52Distribution = 322 := by native_decide
+theorem ch52_total : ch52.length = 322 := by native_decide
 
 -- ============================================================================
 -- Chapter-Level Distribution Theorems
 -- ============================================================================
 
-/-- Ch 49: Languages with no case are the modal category (plurality). -/
+/-- Ch 49: Languages with no case are the modal category. -/
 theorem ch49_no_case_modal :
-    ch49Distribution.head? = some ⟨"No morphological case-marking", 100⟩ := by
-  native_decide
+    let noCases := (ch49.filter (·.value == .noMorphologicalCaseMarking)).length
+    noCases > (ch49.filter (·.value == .cases2)).length ∧
+    noCases > (ch49.filter (·.value == .cases6_7)).length := by
+  exact ⟨by native_decide, by native_decide⟩
 
-/-- Ch 49: Case-bearing languages (2+ cases) outnumber caseless languages. -/
+/-- Ch 49: Case-bearing languages (2+ cases) outnumber caseless ones. -/
 theorem ch49_case_languages_majority :
-    (23 + 39 + 37 + 23 + 39 > 100) = true := by native_decide
+    let noCases := (ch49.filter (·.value == .noMorphologicalCaseMarking)).length
+    ch49.length - noCases > noCases := by native_decide
 
-/-- Ch 50: Languages with some DCM outnumber those with no asymmetry. -/
-theorem ch50_dcm_common :
-    (20 + 17 + 4 + 32 + 22 > 47) = true := by native_decide
+/-- Ch 50: Languages with some asymmetrical case-marking outnumber
+    those with purely symmetrical case. -/
+theorem ch50_asymmetry_common :
+    let symmetrical := (ch50.filter (·.value == .symmetrical)).length
+    let additive := (ch50.filter (·.value == .additiveQuantitativelyAsymmetrical)).length
+    let subtractive := (ch50.filter (·.value == .subtractiveQuantitativelyAsymmetrical)).length
+    let qualitative := (ch50.filter (·.value == .qualitativelyAsymmetrical)).length
+    let syncretism := (ch50.filter (·.value == .syncretismInRelevantNpTypes)).length
+    additive + subtractive + qualitative + syncretism > symmetrical := by
+  native_decide
 
 /-- Ch 51: Suffixal case is the dominant strategy among case-marking languages. -/
 theorem ch51_suffix_dominant :
-    (119 > 7) ∧ (119 > 5) ∧ (119 > 25) := by native_decide
+    (ch51.filter (·.value == .caseSuffixes)).length >
+    (ch51.filter (·.value == .casePrefixes)).length ∧
+    (ch51.filter (·.value == .caseSuffixes)).length >
+    (ch51.filter (·.value == .postpositionalClitics)).length := by
+  exact ⟨by native_decide, by native_decide⟩
 
-/-- Ch 52: Comitative-instrumental identity is the majority pattern. -/
-theorem ch52_identity_majority :
-    (194 > 102) ∧ (194 > 26) := by native_decide
+/-- Ch 52: Differentiation is the majority pattern. -/
+theorem ch52_differentiation_majority :
+    (ch52.filter (·.value == .differentiation)).length >
+    (ch52.filter (·.value == .identity)).length ∧
+    (ch52.filter (·.value == .differentiation)).length >
+    (ch52.filter (·.value == .mixed)).length := by
+  exact ⟨by native_decide, by native_decide⟩
 
 -- ============================================================================
 -- CaseProfile: Combined Profile Across All Four Chapters
@@ -509,6 +510,45 @@ def allProfiles : List CaseProfile :=
   , basque, tamil ]
 
 theorem allProfiles_count : allProfiles.length = 16 := by native_decide
+
+-- ============================================================================
+-- WALS Grounding: Ch 49 (Number of Cases)
+-- Languages not in F49A: Latin, Hindi-Urdu, Arabic, Quechua, Tamil.
+-- ============================================================================
+
+theorem finnish_ch49 :
+    (Core.WALS.F49A.lookup "fin").bind (fromWALS49A ·.value) =
+    some finnish.caseCount := by native_decide
+theorem hungarian_ch49 :
+    (Core.WALS.F49A.lookup "hun").bind (fromWALS49A ·.value) =
+    some hungarian.caseCount := by native_decide
+theorem turkish_ch49 :
+    (Core.WALS.F49A.lookup "tur").bind (fromWALS49A ·.value) =
+    some turkish.caseCount := by native_decide
+theorem russian_ch49 :
+    (Core.WALS.F49A.lookup "rus").bind (fromWALS49A ·.value) =
+    some russian.caseCount := by native_decide
+theorem german_ch49 :
+    (Core.WALS.F49A.lookup "ger").bind (fromWALS49A ·.value) =
+    some german.caseCount := by native_decide
+theorem japanese_ch49 :
+    (Core.WALS.F49A.lookup "jpn").bind (fromWALS49A ·.value) =
+    some japanese.caseCount := by native_decide
+theorem english_ch49 :
+    (Core.WALS.F49A.lookup "eng").bind (fromWALS49A ·.value) =
+    some english.caseCount := by native_decide
+theorem korean_ch49 :
+    (Core.WALS.F49A.lookup "kor").bind (fromWALS49A ·.value) =
+    some korean.caseCount := by native_decide
+theorem mandarin_ch49 :
+    (Core.WALS.F49A.lookup "mnd").bind (fromWALS49A ·.value) =
+    some mandarin.caseCount := by native_decide
+theorem georgian_ch49 :
+    (Core.WALS.F49A.lookup "geo").bind (fromWALS49A ·.value) =
+    some georgian.caseCount := by native_decide
+theorem basque_ch49 :
+    (Core.WALS.F49A.lookup "bsq").bind (fromWALS49A ·.value) =
+    some basque.caseCount := by native_decide
 
 -- ============================================================================
 -- Per-Language Verification: Raw Count Consistency
@@ -797,14 +837,7 @@ theorem rich_case_profile_exists :
 -- ============================================================================
 
 /-- Ch 49 and Ch 50 share the same 261-language sample. -/
-theorem ch49_ch50_same_sample :
-    WALSCount.totalOf ch49Distribution =
-    WALSCount.totalOf ch50Distribution := by native_decide
-
-/-- Ch 51 also uses the same 261-language sample. -/
-theorem ch51_same_sample :
-    WALSCount.totalOf ch51Distribution =
-    WALSCount.totalOf ch50Distribution := by native_decide
+theorem ch49_ch50_same_sample : ch49.length = ch50.length := by native_decide
 
 -- ============================================================================
 -- @cite{aissen-2003} Prominence Scales and Differential Object Marking

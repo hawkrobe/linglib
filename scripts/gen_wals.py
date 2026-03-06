@@ -291,17 +291,49 @@ def load_parameters():
     return params
 
 
+def feature_name_to_enum(name):
+    """Convert a WALS feature name to a Lean enum type name.
+
+    Examples:
+        "Consonant Inventories" → "ConsonantInventories"
+        "The Velar Nasal" → "VelarNasal"
+        "M-T Pronouns" → "MtPronouns"
+    """
+    s = name.strip()
+    # Remove leading articles
+    s = re.sub(r'^(The|A|An)\s+', '', s)
+    # Remove parenthetical qualifiers
+    s = re.sub(r'\s*\(.*?\)', '', s)
+    # Remove quotes
+    s = s.replace("'", "").replace("'", "").replace('"', '')
+    # Replace punctuation/separators with spaces
+    s = re.sub(r'[^a-zA-Z0-9\s]', ' ', s)
+    # PascalCase
+    words = s.split()
+    if not words:
+        return "Unknown"
+    result = ''.join(w.capitalize() for w in words)
+    # Ensure starts with letter
+    if result and result[0].isdigit():
+        result = "V" + result
+    return result
+
+
 def resolve_feature(feature_id, codes, params):
-    """Resolve a feature config — from FEATURES if curated, else auto-generate."""
+    """Resolve a feature config — from FEATURES if curated, else auto-generate.
+
+    Features not in FEATURES or AUTO_FEATURES are fully auto-generated
+    from parameters.csv and codes.csv.
+    """
     if feature_id in FEATURES:
         return FEATURES[feature_id]
 
-    if feature_id not in AUTO_FEATURES:
-        return None
-
-    auto = AUTO_FEATURES[feature_id]
+    auto = AUTO_FEATURES.get(feature_id)
     param = params.get(feature_id, {})
     feat_codes = codes.get(feature_id, {})
+
+    if not feat_codes:
+        return None  # No codes at all — skip
 
     # Auto-generate values from codes.csv
     values = {}
@@ -315,11 +347,19 @@ def resolve_feature(feature_id, codes, params):
         seen_ctors.add(ctor)
         values[num] = (ctor, label)
 
+    # Determine enum name: from AUTO_FEATURES if present, else derived from feature name
+    if auto:
+        enum_name = auto["enum"]
+        author = auto.get("author", "wals-2013")
+    else:
+        enum_name = feature_name_to_enum(param.get("name", feature_id))
+        author = "wals-2013"
+
     return {
         "name": param.get("name", feature_id),
         "chapter": param.get("chapter", 0),
-        "enum": auto["enum"],
-        "author": auto.get("author", "wals-2013"),
+        "enum": enum_name,
+        "author": author,
         "values": values,
     }
 
@@ -539,24 +579,26 @@ def generate_languages(langs, used_ids):
 
 
 def main():
-    all_known = {**{k: None for k in FEATURES}, **{k: None for k in AUTO_FEATURES}}
-    feature_ids = sys.argv[1:] if len(sys.argv) > 1 else sorted(all_known.keys(),
-        key=lambda x: (int(re.match(r'\d+', x).group()), x))
-
     # Load codes.csv and parameters.csv for auto-generation
     codes = load_codes()
     params = load_parameters()
+
+    if len(sys.argv) > 1:
+        feature_ids = sys.argv[1:]
+    else:
+        # Generate ALL features found in parameters.csv
+        feature_ids = sorted(params.keys(),
+            key=lambda x: (int(re.match(r'\d+', x).group()), x))
 
     # Validate and resolve
     resolved = {}
     for fid in feature_ids:
         cfg = resolve_feature(fid, codes, params)
         if cfg is None:
-            print(f"Error: unknown feature {fid}.")
-            print(f"  Configured: {', '.join(sorted(FEATURES.keys()))}")
-            print(f"  Auto: {', '.join(sorted(AUTO_FEATURES.keys()))}")
-            sys.exit(1)
+            print(f"Warning: skipping {fid} (no codes found).")
+            continue
         resolved[fid] = cfg
+    feature_ids = list(resolved.keys())
 
     print(f"Loading WALS data from {DATA}")
     langs = load_languages()

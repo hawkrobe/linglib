@@ -1,4 +1,8 @@
 import Linglib.Core.Lexical.Word
+import Linglib.Core.WALS.Features.F112A
+import Linglib.Core.WALS.Features.F113A
+import Linglib.Core.WALS.Features.F114A
+import Linglib.Core.WALS.Features.F115A
 
 /-!
 # Cross-Linguistic Typology of Negation (WALS Chapters 112--115)
@@ -13,11 +17,6 @@ morpheme type: negative affix, negative particle, negative auxiliary verb,
 negative word of unclear status, variation between word and affix, and
 double (bipartite) negation requiring two co-occurring markers.
 
-Sample: 1011 languages. Negative particles are the most common strategy
-(477/1011 = 47.2%), followed by negative affixes (339/1011 = 33.5%).
-Negative auxiliary verbs are rare (45/1011 = 4.5%), concentrated in
-northern Eurasia (Finland to western Siberia).
-
 ## Ch 113: Symmetric and Asymmetric Standard Negation
 
 Whether negation changes clause structure beyond adding a negative marker.
@@ -25,26 +24,17 @@ Symmetric negation adds only the negator; asymmetric negation introduces
 further structural changes (e.g., changes in finiteness, verb paradigm,
 or tense-aspect marking). Three types: Sym only, Asy only, or both.
 
-Sample: 297 languages. Most languages show both symmetric and asymmetric
-negation (130/297), followed by symmetric only (114/297).
-
 ## Ch 114: Subtypes of Asymmetric Standard Negation
 
 For languages with asymmetric negation, what structural domain is affected:
 finiteness (A/Fin), reality status (A/NonReal), or other grammatical
 categories (A/Cat). Languages may combine subtypes.
 
-Sample: 297 languages (114 symmetric = non-assignable).
-
 ## Ch 115: Negative Indefinite Pronouns and Predicate Negation
 
 How negative indefinites ('nobody', 'nothing') interact with clausal
 negation. Whether they co-occur with predicate negation (negative concord,
 the dominant pattern worldwide) or preclude it.
-
-Sample: 206 languages. Co-occurrence with predicate negation overwhelmingly
-dominant (170/206 = 82.5%). Preclusion concentrated in Western Europe and
-Mesoamerica.
 
 -/
 
@@ -164,13 +154,12 @@ inductive AsymmetrySubtype where
 inductive NegIndefiniteStrategy where
   /-- Negative indefinites co-occur with predicate negation (negative concord).
       'Nobody NEG came' = 'Nobody came'.
-      The dominant pattern worldwide (170/206 = 82.5%).
+      The dominant pattern worldwide.
       (e.g., Russian `nikto ne prisel` 'nobody NEG came'). -/
   | cooccur
   /-- Negative indefinites preclude predicate negation.
       The indefinite alone carries the negation.
-      (e.g., German `Niemand kam` 'Nobody came', *`Niemand kam nicht`).
-      Rare: 11/206 languages. -/
+      (e.g., German `Niemand kam` 'Nobody came', *`Niemand kam nicht`). -/
   | preclude
   /-- Mixed behavior: some negative indefinites co-occur with negation,
       others preclude it (e.g., position-dependent as in Spanish:
@@ -184,74 +173,53 @@ inductive NegIndefiniteStrategy where
   deriving DecidableEq, BEq, Repr
 
 -- ============================================================================
--- WALS Distribution Data (Aggregate Counts)
+-- WALS Converter Functions
 -- ============================================================================
 
-/-- A single row in a WALS frequency table: a category label and its count. -/
-structure WALSCount where
-  label : String
-  count : Nat
-  deriving Repr, DecidableEq, BEq
+private def fromWALS112A : Core.WALS.F112A.NegativeMorphemeType → NegMorphemeType
+  | .negativeAffix => .affix
+  | .negativeParticle => .particle
+  | .negativeAuxiliaryVerb => .auxVerb
+  | .negativeWordUnclearIfVerbOrParticle => .wordUnclear
+  | .variationBetweenNegativeWordAndAffix => .variation
+  | .doubleNegation => .doubleNeg
 
-/-- Chapter 112 distribution: negative morpheme types (N = 1011). -/
-def ch112Counts : List WALSCount :=
-  [ ⟨"Negative affix", 339⟩
-  , ⟨"Negative particle", 477⟩
-  , ⟨"Negative auxiliary verb", 45⟩
-  , ⟨"Negative word, unclear if verb or particle", 65⟩
-  , ⟨"Variation between negative word and affix", 19⟩
-  , ⟨"Double negation", 66⟩ ]
+private def fromWALS113A : Core.WALS.F113A.NegationSymmetry → NegSymmetry
+  | .symmetric => .symmetric
+  | .asymmetric => .asymmetric
+  | .both => .both
 
-/-- Chapter 113 distribution: symmetric vs asymmetric negation (N = 297). -/
-def ch113Counts : List WALSCount :=
-  [ ⟨"Symmetric only (Type Sym)", 114⟩
-  , ⟨"Asymmetric only (Type Asy)", 53⟩
-  , ⟨"Both symmetric and asymmetric (Type SymAsy)", 130⟩ ]
+private def fromWALS114A : Core.WALS.F114A.AsymmetricNegationSubtype → AsymmetrySubtype
+  | .aFin => .finiteness
+  | .aNonreal => .realityStatus
+  | .aCat => .otherCategories
+  | .aFinAndANonreal => .finAndNonReal
+  | .aFinAndACat => .finAndCat
+  | .aNonrealAndACat => .nonRealAndCat
+  | .nonAssignable => .nonAssignable
 
-/-- Chapter 114 distribution: subtypes of asymmetric negation (N = 297).
-    Note: the 114 "non-assignable" languages are those with only symmetric
-    negation (Type Sym from Ch 113). -/
-def ch114Counts : List WALSCount :=
-  [ ⟨"Subtype A/Fin (finiteness)", 40⟩
-  , ⟨"Subtype A/NonReal (reality status)", 20⟩
-  , ⟨"Subtype A/Cat (other categories)", 82⟩
-  , ⟨"Subtypes A/Fin and A/NonReal", 9⟩
-  , ⟨"Subtypes A/Fin and A/Cat", 21⟩
-  , ⟨"Subtypes A/NonReal and A/Cat", 11⟩
-  , ⟨"Non-assignable (symmetric only)", 114⟩ ]
-
-/-- Chapter 115 distribution: negative indefinites and predicate negation
-    (N = 206). -/
-def ch115Counts : List WALSCount :=
-  [ ⟨"Co-occur with predicate negation", 170⟩
-  , ⟨"Preclude predicate negation", 11⟩
-  , ⟨"Mixed behaviour", 13⟩
-  , ⟨"Negative existential construction", 12⟩ ]
+private def fromWALS115A : Core.WALS.F115A.NegativeIndefiniteType → NegIndefiniteStrategy
+  | .predicateNegationAlsoPresent => .cooccur
+  | .noPredicateNegation => .preclude
+  | .mixedBehaviour => .mixed
+  | .negativeExistentialConstruction => .negExistential
 
 -- ============================================================================
--- Aggregate Total Verification
+-- WALS Distribution Data (from generated modules)
 -- ============================================================================
 
-/-- Sum of counts in a WALS table. -/
-def WALSCount.totalOf (cs : List WALSCount) : Nat :=
-  cs.foldl (fun acc c => acc + c.count) 0
+private abbrev ch112 := Core.WALS.F112A.allData
+private abbrev ch113 := Core.WALS.F113A.allData
+private abbrev ch114 := Core.WALS.F114A.allData
+private abbrev ch115 := Core.WALS.F115A.allData
 
-/-- Ch 112 total: 1011 languages. -/
-theorem ch112_total : WALSCount.totalOf ch112Counts = 1011 := by native_decide
-
-/-- Ch 113 total: 297 languages. -/
-theorem ch113_total : WALSCount.totalOf ch113Counts = 297 := by native_decide
-
-/-- Ch 114 total: 297 languages (same sample as Ch 113). -/
-theorem ch114_total : WALSCount.totalOf ch114Counts = 297 := by native_decide
-
-/-- Ch 115 total: 206 languages. -/
-theorem ch115_total : WALSCount.totalOf ch115Counts = 206 := by native_decide
+theorem ch112_total : ch112.length = 1157 := by native_decide
+theorem ch113_total : ch113.length = 297 := by native_decide
+theorem ch114_total : ch114.length = 297 := by native_decide
+theorem ch115_total : ch115.length = 206 := by native_decide
 
 /-- Ch 113 and Ch 114 use the same sample. -/
-theorem ch113_ch114_same_sample :
-    WALSCount.totalOf ch113Counts = WALSCount.totalOf ch114Counts := by
-  native_decide
+theorem ch113_ch114_same_sample : ch113.length = ch114.length := by native_decide
 
 -- ============================================================================
 -- Language Profile Structure
@@ -286,9 +254,10 @@ structure NegationProfile where
 -- ============================================================================
 
 /--
-English: negative particle `not`; symmetric negation (adding `not` does not
-change clause structure — but note do-support is sometimes analyzed as
-asymmetric). Negative indefinites show mixed behavior: `nobody` precludes
+English: negative particle `not`; WALS classifies as both symmetric and
+asymmetric (do-support is an asymmetric structural change). A/Cat: the
+category-level change is the introduction of auxiliary `do` in negation.
+Negative indefinites show mixed behavior: `nobody` precludes
 predicate negation (`*Nobody didn't come`), but `anything` requires it
 (`I didn't see anything`).
 -/
@@ -296,11 +265,11 @@ def english : NegationProfile :=
   { language := "English"
   , iso := "eng"
   , morphemeType := .particle
-  , symmetry := .symmetric
-  , asymmetrySubtype := .nonAssignable
+  , symmetry := .both
+  , asymmetrySubtype := .otherCategories
   , negIndefinite := some .mixed
   , negMarkers := ["not"]
-  , notes := "Do-support sometimes analyzed as asymmetric; " ++
+  , notes := "WALS: SymAsy due to do-support; " ++
              "mixed indefinites: 'nobody' precludes, 'anything' co-occurs" }
 
 /--
@@ -322,8 +291,9 @@ def german : NegationProfile :=
 /--
 French: bipartite negation `ne...pas` (WALS codes as particle since
 colloquial French drops `ne`). In colloquial register, only `pas` is used.
-Negative indefinites co-occur with partial predicate negation (`ne`):
-`Je n'ai rien vu` 'I NEG have nothing seen'.
+WALS Ch 115 classifies as mixed: some negative indefinites co-occur with
+`ne` (`Je n'ai rien vu`), while `personne` can appear without `ne` in
+some registers.
 -/
 def french : NegationProfile :=
   { language := "French"
@@ -331,7 +301,7 @@ def french : NegationProfile :=
   , morphemeType := .particle
   , symmetry := .symmetric
   , asymmetrySubtype := .nonAssignable
-  , negIndefinite := some .cooccur
+  , negIndefinite := some .mixed
   , negMarkers := ["ne", "pas"]
   , negIsHead := some true  -- ne is a weak clitic (X°)
   , notes := "WALS codes as particle (ne optional in colloquial); " ++
@@ -369,8 +339,9 @@ def finnish : NegationProfile :=
              "negative auxiliary verb area stretches across northern Eurasia" }
 
 /--
-Japanese: negative suffix `-nai` (affix on verb); negation is symmetric
-(the negative form is a regular inflectional form in the paradigm).
+Japanese: negative suffix `-nai` (affix on verb). WALS classifies as
+asymmetric (A/Fin + A/Cat): the negative form involves both finiteness
+changes and different category markings.
 Negative indefinites co-occur with predicate negation:
 `dare-mo ko-nakat-ta` 'who-MO come-NEG-PST' = 'Nobody came'.
 -/
@@ -378,28 +349,33 @@ def japanese : NegationProfile :=
   { language := "Japanese"
   , iso := "jpn"
   , morphemeType := .affix
-  , symmetry := .symmetric
-  , asymmetrySubtype := .nonAssignable
+  , symmetry := .asymmetric
+  , asymmetrySubtype := .finAndCat
   , negIndefinite := some .cooccur
   , negMarkers := ["-nai", "-nakat-"]
-  , notes := "Suffix -nai; negative concord with -mo indefinites" }
+  , notes := "Suffix -nai; WALS: asymmetric A/Fin+A/Cat; " ++
+             "negative concord with -mo indefinites" }
 
 /--
 Mandarin Chinese: negative particles `bu` (general) and `mei(you)` (perfective).
-Symmetric negation. Negative word status hard to classify in isolating language.
+WALS classifies as both symmetric and asymmetric: the `bu`/`mei` distinction
+introduces an asymmetry of type A/Fin (finiteness-like distinction).
 -/
 def mandarin : NegationProfile :=
   { language := "Mandarin Chinese"
   , iso := "cmn"
   , morphemeType := .particle
-  , symmetry := .symmetric
-  , asymmetrySubtype := .nonAssignable
+  , symmetry := .both
+  , asymmetrySubtype := .finiteness
   , negIndefinite := some .cooccur
   , negMarkers := ["bu", "mei"]
-  , notes := "Two negative particles: bu (general) vs mei (perfective/existential)" }
+  , notes := "Two negative particles: bu (general) vs mei (perfective/existential); " ++
+             "WALS: SymAsy with A/Fin asymmetry" }
 
 /--
-Turkish: negative suffix `-mA-` on the verb; symmetric negation.
+Turkish: negative suffix `-mA-` on the verb. WALS classifies as both
+symmetric and asymmetric: some constructions (aorist) are symmetric while
+others show category changes (A/Cat).
 Negative indefinites co-occur with predicate negation:
 `Hic kimse gel-me-di` 'at.all person come-NEG-PST' = 'Nobody came'.
 -/
@@ -407,16 +383,19 @@ def turkish : NegationProfile :=
   { language := "Turkish"
   , iso := "tur"
   , morphemeType := .affix
-  , symmetry := .symmetric
-  , asymmetrySubtype := .nonAssignable
+  , symmetry := .both
+  , asymmetrySubtype := .otherCategories
   , negIndefinite := some .cooccur
   , negMarkers := ["-mA-"]
-  , notes := "Verbal suffix; negative concord with hic 'at all' + indefinite" }
+  , notes := "Verbal suffix; WALS: SymAsy with A/Cat; " ++
+             "negative concord with hic 'at all' + indefinite" }
 
 /--
 Czech: negative prefix `ne-` on the verb; symmetric negation. Negative
 indefinites obligatorily co-occur with predicate negation (negative concord):
 `Nikdo neprisel` 'Nobody NEG.came' = 'Nobody came'.
+Note: Czech is not in the WALS Ch 113--115 sample; Ch 112 classification
+is grounded.
 -/
 def czech : NegationProfile :=
   { language := "Czech"
@@ -426,7 +405,8 @@ def czech : NegationProfile :=
   , asymmetrySubtype := .nonAssignable
   , negIndefinite := some .cooccur
   , negMarkers := ["ne-"]
-  , notes := "Prefix ne-; obligatory negative concord (Slavic pattern)" }
+  , notes := "Prefix ne-; obligatory negative concord (Slavic pattern); " ++
+             "not in WALS Ch 113-115 sample" }
 
 /--
 Spanish: negative particle `no`; symmetric negation. Mixed behavior for
@@ -483,19 +463,22 @@ def burmese : NegationProfile :=
 /--
 Maori: negative word `kaahore`; isolating language makes it unclear whether
 the negator is a verb or particle. Classified as 'wordUnclear' per WALS.
+WALS Ch 113 classifies Maori as asymmetric with A/Fin: the negator
+functions as a (quasi-)auxiliary that changes the finiteness structure.
 -/
 def maori : NegationProfile :=
   { language := "Maori"
   , iso := "mri"
   , morphemeType := .wordUnclear
-  , symmetry := .symmetric
-  , asymmetrySubtype := .nonAssignable
+  , symmetry := .asymmetric
+  , asymmetrySubtype := .finiteness
   , negMarkers := ["kaahore"]
-  , notes := "Isolating; no verbal morphology to distinguish verb vs particle" }
+  , notes := "Isolating; WALS: asymmetric A/Fin — negator as quasi-auxiliary" }
 
 /--
 Izi (Igboid, Niger-Congo): bipartite negation with prefix and suffix on the
 verb: `to-ome-du` 'NEG-do-NEG'. Always asymmetric.
+Note: Izi is not in the WALS Ch 113--115 sample; Ch 112 is grounded.
 -/
 def izi : NegationProfile :=
   { language := "Izi"
@@ -504,34 +487,37 @@ def izi : NegationProfile :=
   , symmetry := .asymmetric
   , asymmetrySubtype := .otherCategories
   , negMarkers := ["to-", "-du"]
-  , notes := "Circumfixal double negation on verb: to-ome-du 'NEG-do-NEG'" }
+  , notes := "Circumfixal double negation on verb: to-ome-du 'NEG-do-NEG'; " ++
+             "not in WALS Ch 113-115 sample" }
 
 /--
-Kolyma Yukaghir: negative prefix `el-` on the verb; asymmetric negation
-(A/Cat: tense marking may differ under negation).
+Kolyma Yukaghir: negative prefix `el-` on the verb. WALS classifies as
+both symmetric and asymmetric, with A/Cat subtype: tense marking may
+differ under negation but not in all constructions.
 -/
 def kolYukaghir : NegationProfile :=
   { language := "Kolyma Yukaghir"
   , iso := "yux"
   , morphemeType := .affix
-  , symmetry := .asymmetric
+  , symmetry := .both
   , asymmetrySubtype := .otherCategories
   , negMarkers := ["el-"]
-  , notes := "Prefix el-; el-jaqa-te-je 'NEG-achieve-FUT-1SG'" }
+  , notes := "Prefix el-; WALS: SymAsy with A/Cat; " ++
+             "el-jaqa-te-je 'NEG-achieve-FUT-1SG'" }
 
 /--
-Rama (Chibchan; Nicaragua): variation between negative word and affix.
-Has two negative constructions: preverbal particle `aa` and verbal suffix
-`-taama`. WALS codes as 'variation'.
+Rama (Chibchan; Nicaragua): WALS Ch 112 classifies as negative particle.
+Has both symmetric and asymmetric negation (Ch 113), with A/Fin + A/Cat
+asymmetry subtype (Ch 114).
 -/
 def rama : NegationProfile :=
   { language := "Rama"
   , iso := "rma"
-  , morphemeType := .variation
+  , morphemeType := .particle
   , symmetry := .both
-  , asymmetrySubtype := .otherCategories
+  , asymmetrySubtype := .finAndCat
   , negMarkers := ["aa", "-taama"]
-  , notes := "Two constructions: preverbal particle and verbal suffix" }
+  , notes := "WALS: particle (Ch 112), SymAsy with A/Fin+A/Cat (Ch 113-114)" }
 
 /--
 Hixkaryana (Carib; Brazil): asymmetric negation of subtype A/Fin. A
@@ -552,6 +538,8 @@ def hixkaryana : NegationProfile :=
 Nelemwa (Oceanic; New Caledonia): negative indefinites use a negative
 existential construction: `kia agu i uya` 'not.exist person 3SG arrive'
 = 'Nobody came'. Classified as negExistential for Ch 115.
+Note: Nelemwa is only in the WALS Ch 115 sample; Ch 112-114 values
+are based on descriptive sources.
 -/
 def nelemwa : NegationProfile :=
   { language := "Nelemwa"
@@ -561,13 +549,211 @@ def nelemwa : NegationProfile :=
   , asymmetrySubtype := .nonAssignable
   , negIndefinite := some .negExistential
   , negMarkers := ["kia"]
-  , notes := "Negative existential for indefinites: kia agu 'not.exist person'" }
+  , notes := "Negative existential for indefinites: kia agu 'not.exist person'; " ++
+             "only in WALS Ch 115 sample" }
 
 /-- All language profiles in the sample. -/
 def allLanguages : List NegationProfile :=
   [ english, german, french, russian, finnish, japanese, mandarin, turkish
   , czech, spanish, italian, burmese, maori, izi, kolYukaghir, rama
   , hixkaryana, nelemwa ]
+
+-- ============================================================================
+-- WALS Grounding: Ch 112 (Negative Morphemes)
+-- ============================================================================
+
+theorem english_ch112 :
+    (Core.WALS.F112A.lookup "eng").map (fromWALS112A ·.value) = some english.morphemeType := by
+  native_decide
+theorem german_ch112 :
+    (Core.WALS.F112A.lookup "ger").map (fromWALS112A ·.value) = some german.morphemeType := by
+  native_decide
+theorem french_ch112 :
+    (Core.WALS.F112A.lookup "fre").map (fromWALS112A ·.value) = some french.morphemeType := by
+  native_decide
+theorem russian_ch112 :
+    (Core.WALS.F112A.lookup "rus").map (fromWALS112A ·.value) = some russian.morphemeType := by
+  native_decide
+theorem finnish_ch112 :
+    (Core.WALS.F112A.lookup "fin").map (fromWALS112A ·.value) = some finnish.morphemeType := by
+  native_decide
+theorem japanese_ch112 :
+    (Core.WALS.F112A.lookup "jpn").map (fromWALS112A ·.value) = some japanese.morphemeType := by
+  native_decide
+theorem mandarin_ch112 :
+    (Core.WALS.F112A.lookup "mnd").map (fromWALS112A ·.value) = some mandarin.morphemeType := by
+  native_decide
+theorem turkish_ch112 :
+    (Core.WALS.F112A.lookup "tur").map (fromWALS112A ·.value) = some turkish.morphemeType := by
+  native_decide
+theorem czech_ch112 :
+    (Core.WALS.F112A.lookup "cze").map (fromWALS112A ·.value) = some czech.morphemeType := by
+  native_decide
+theorem spanish_ch112 :
+    (Core.WALS.F112A.lookup "spa").map (fromWALS112A ·.value) = some spanish.morphemeType := by
+  native_decide
+theorem italian_ch112 :
+    (Core.WALS.F112A.lookup "ita").map (fromWALS112A ·.value) = some italian.morphemeType := by
+  native_decide
+theorem burmese_ch112 :
+    (Core.WALS.F112A.lookup "brm").map (fromWALS112A ·.value) = some burmese.morphemeType := by
+  native_decide
+theorem maori_ch112 :
+    (Core.WALS.F112A.lookup "mao").map (fromWALS112A ·.value) = some maori.morphemeType := by
+  native_decide
+theorem izi_ch112 :
+    (Core.WALS.F112A.lookup "izi").map (fromWALS112A ·.value) = some izi.morphemeType := by
+  native_decide
+theorem yukaghir_ch112 :
+    (Core.WALS.F112A.lookup "yko").map (fromWALS112A ·.value) = some kolYukaghir.morphemeType := by
+  native_decide
+theorem rama_ch112 :
+    (Core.WALS.F112A.lookup "ram").map (fromWALS112A ·.value) = some rama.morphemeType := by
+  native_decide
+theorem hixkaryana_ch112 :
+    (Core.WALS.F112A.lookup "hix").map (fromWALS112A ·.value) = some hixkaryana.morphemeType := by
+  native_decide
+
+-- ============================================================================
+-- WALS Grounding: Ch 113 (Symmetric/Asymmetric)
+-- Not all languages are in Ch 113 sample (Czech, Izi, Nelemwa absent)
+-- ============================================================================
+
+theorem english_ch113 :
+    (Core.WALS.F113A.lookup "eng").map (fromWALS113A ·.value) = some english.symmetry := by
+  native_decide
+theorem german_ch113 :
+    (Core.WALS.F113A.lookup "ger").map (fromWALS113A ·.value) = some german.symmetry := by
+  native_decide
+theorem french_ch113 :
+    (Core.WALS.F113A.lookup "fre").map (fromWALS113A ·.value) = some french.symmetry := by
+  native_decide
+theorem russian_ch113 :
+    (Core.WALS.F113A.lookup "rus").map (fromWALS113A ·.value) = some russian.symmetry := by
+  native_decide
+theorem finnish_ch113 :
+    (Core.WALS.F113A.lookup "fin").map (fromWALS113A ·.value) = some finnish.symmetry := by
+  native_decide
+theorem japanese_ch113 :
+    (Core.WALS.F113A.lookup "jpn").map (fromWALS113A ·.value) = some japanese.symmetry := by
+  native_decide
+theorem mandarin_ch113 :
+    (Core.WALS.F113A.lookup "mnd").map (fromWALS113A ·.value) = some mandarin.symmetry := by
+  native_decide
+theorem turkish_ch113 :
+    (Core.WALS.F113A.lookup "tur").map (fromWALS113A ·.value) = some turkish.symmetry := by
+  native_decide
+theorem spanish_ch113 :
+    (Core.WALS.F113A.lookup "spa").map (fromWALS113A ·.value) = some spanish.symmetry := by
+  native_decide
+theorem italian_ch113 :
+    (Core.WALS.F113A.lookup "ita").map (fromWALS113A ·.value) = some italian.symmetry := by
+  native_decide
+theorem burmese_ch113 :
+    (Core.WALS.F113A.lookup "brm").map (fromWALS113A ·.value) = some burmese.symmetry := by
+  native_decide
+theorem maori_ch113 :
+    (Core.WALS.F113A.lookup "mao").map (fromWALS113A ·.value) = some maori.symmetry := by
+  native_decide
+theorem yukaghir_ch113 :
+    (Core.WALS.F113A.lookup "yko").map (fromWALS113A ·.value) = some kolYukaghir.symmetry := by
+  native_decide
+theorem rama_ch113 :
+    (Core.WALS.F113A.lookup "ram").map (fromWALS113A ·.value) = some rama.symmetry := by
+  native_decide
+theorem hixkaryana_ch113 :
+    (Core.WALS.F113A.lookup "hix").map (fromWALS113A ·.value) = some hixkaryana.symmetry := by
+  native_decide
+
+-- ============================================================================
+-- WALS Grounding: Ch 114 (Asymmetry Subtypes)
+-- Same sample as Ch 113 (Czech, Izi, Nelemwa absent)
+-- ============================================================================
+
+theorem english_ch114 :
+    (Core.WALS.F114A.lookup "eng").map (fromWALS114A ·.value) =
+    some english.asymmetrySubtype := by native_decide
+theorem german_ch114 :
+    (Core.WALS.F114A.lookup "ger").map (fromWALS114A ·.value) =
+    some german.asymmetrySubtype := by native_decide
+theorem french_ch114 :
+    (Core.WALS.F114A.lookup "fre").map (fromWALS114A ·.value) =
+    some french.asymmetrySubtype := by native_decide
+theorem russian_ch114 :
+    (Core.WALS.F114A.lookup "rus").map (fromWALS114A ·.value) =
+    some russian.asymmetrySubtype := by native_decide
+theorem finnish_ch114 :
+    (Core.WALS.F114A.lookup "fin").map (fromWALS114A ·.value) =
+    some finnish.asymmetrySubtype := by native_decide
+theorem japanese_ch114 :
+    (Core.WALS.F114A.lookup "jpn").map (fromWALS114A ·.value) =
+    some japanese.asymmetrySubtype := by native_decide
+theorem mandarin_ch114 :
+    (Core.WALS.F114A.lookup "mnd").map (fromWALS114A ·.value) =
+    some mandarin.asymmetrySubtype := by native_decide
+theorem turkish_ch114 :
+    (Core.WALS.F114A.lookup "tur").map (fromWALS114A ·.value) =
+    some turkish.asymmetrySubtype := by native_decide
+theorem spanish_ch114 :
+    (Core.WALS.F114A.lookup "spa").map (fromWALS114A ·.value) =
+    some spanish.asymmetrySubtype := by native_decide
+theorem italian_ch114 :
+    (Core.WALS.F114A.lookup "ita").map (fromWALS114A ·.value) =
+    some italian.asymmetrySubtype := by native_decide
+theorem burmese_ch114 :
+    (Core.WALS.F114A.lookup "brm").map (fromWALS114A ·.value) =
+    some burmese.asymmetrySubtype := by native_decide
+theorem maori_ch114 :
+    (Core.WALS.F114A.lookup "mao").map (fromWALS114A ·.value) =
+    some maori.asymmetrySubtype := by native_decide
+theorem yukaghir_ch114 :
+    (Core.WALS.F114A.lookup "yko").map (fromWALS114A ·.value) =
+    some kolYukaghir.asymmetrySubtype := by native_decide
+theorem rama_ch114 :
+    (Core.WALS.F114A.lookup "ram").map (fromWALS114A ·.value) =
+    some rama.asymmetrySubtype := by native_decide
+theorem hixkaryana_ch114 :
+    (Core.WALS.F114A.lookup "hix").map (fromWALS114A ·.value) =
+    some hixkaryana.asymmetrySubtype := by native_decide
+
+-- ============================================================================
+-- WALS Grounding: Ch 115 (Negative Indefinites)
+-- Smaller sample: Czech, Izi, Rama, Hixkaryana absent
+-- ============================================================================
+
+theorem english_ch115 :
+    (Core.WALS.F115A.lookup "eng").map (fromWALS115A ·.value) = some .mixed := by
+  native_decide
+theorem german_ch115 :
+    (Core.WALS.F115A.lookup "ger").map (fromWALS115A ·.value) = some .preclude := by
+  native_decide
+theorem french_ch115 :
+    (Core.WALS.F115A.lookup "fre").map (fromWALS115A ·.value) = some .mixed := by
+  native_decide
+theorem russian_ch115 :
+    (Core.WALS.F115A.lookup "rus").map (fromWALS115A ·.value) = some .cooccur := by
+  native_decide
+theorem finnish_ch115 :
+    (Core.WALS.F115A.lookup "fin").map (fromWALS115A ·.value) = some .cooccur := by
+  native_decide
+theorem japanese_ch115 :
+    (Core.WALS.F115A.lookup "jpn").map (fromWALS115A ·.value) = some .cooccur := by
+  native_decide
+theorem mandarin_ch115 :
+    (Core.WALS.F115A.lookup "mnd").map (fromWALS115A ·.value) = some .cooccur := by
+  native_decide
+theorem turkish_ch115 :
+    (Core.WALS.F115A.lookup "tur").map (fromWALS115A ·.value) = some .cooccur := by
+  native_decide
+theorem spanish_ch115 :
+    (Core.WALS.F115A.lookup "spa").map (fromWALS115A ·.value) = some .mixed := by
+  native_decide
+theorem italian_ch115 :
+    (Core.WALS.F115A.lookup "ita").map (fromWALS115A ·.value) = some .mixed := by
+  native_decide
+theorem nelemwa_ch115 :
+    (Core.WALS.F115A.lookup "nel").map (fromWALS115A ·.value) =
+    some .negExistential := by native_decide
 
 -- ============================================================================
 -- Helper Predicates
@@ -602,41 +788,55 @@ def countBySymmetry (langs : List NegationProfile) (s : NegSymmetry) : Nat :=
 -- Typological Generalization 1: Negative Particles Are Most Common
 -- ============================================================================
 
-/-- Ch 112: Negative particles (477) outnumber negative affixes (339). -/
-theorem particles_most_common : (477 : Nat) > 339 := by native_decide
+/-- Ch 112: Negative particles outnumber negative affixes. -/
+theorem particles_most_common :
+    (ch112.filter (·.value == .negativeParticle)).length >
+    (ch112.filter (·.value == .negativeAffix)).length := by native_decide
 
-/-- Ch 112: Negative auxiliary verbs are rare (45/1011 = 4.5%). -/
-theorem aux_verbs_rare : (45 : Nat) < 50 := by native_decide
+/-- Ch 112: Negative auxiliary verbs are rare (< 5% of sample). -/
+theorem aux_verbs_rare :
+    (ch112.filter (·.value == .negativeAuxiliaryVerb)).length * 20 <
+    ch112.length := by native_decide
 
 /-- Ch 112: Particles + affixes together account for the vast majority. -/
 theorem particles_affixes_dominant :
-    339 + 477 > (WALSCount.totalOf ch112Counts) / 2 := by
-  native_decide
+    let particles := (ch112.filter (·.value == .negativeParticle)).length
+    let affixes := (ch112.filter (·.value == .negativeAffix)).length
+    (particles + affixes) * 2 > ch112.length := by native_decide
 
 -- ============================================================================
 -- Typological Generalization 2: Symmetric Negation Is Common
 -- ============================================================================
 
-/-- Ch 113: SymAsy (130) is the most common type, followed by Sym (114).
-    Asy-only (53) is the least common: 130 > 114 > 53. -/
-theorem symasy_most_common : (130 : Nat) > 114 ∧ (114 : Nat) > 53 := by
+/-- Ch 113: SymAsy (both) is the most common type, followed by Sym.
+    Asy-only is the least common. -/
+theorem symasy_most_common :
+    let sym := (ch113.filter (·.value == .symmetric)).length
+    let asy := (ch113.filter (·.value == .asymmetric)).length
+    let both := (ch113.filter (·.value == .both)).length
+    both > sym ∧ sym > asy := by
   exact ⟨by native_decide, by native_decide⟩
 
-/-- Ch 113: Languages with at least some symmetric negation (Sym + SymAsy)
+/-- Ch 113: Languages with at least some symmetric negation (Sym + Both)
     far outnumber purely asymmetric languages. -/
 theorem symmetric_dominant :
-    -- Sym (114) + SymAsy (130) = 244 vs Asy (53)
-    114 + 130 > 53 * 4 := by
+    let sym := (ch113.filter (·.value == .symmetric)).length
+    let both := (ch113.filter (·.value == .both)).length
+    let asy := (ch113.filter (·.value == .asymmetric)).length
+    sym + both > asy * 4 := by
   native_decide
 
 -- ============================================================================
 -- Typological Generalization 3: A/Cat Is the Most Common Asymmetry Subtype
 -- ============================================================================
 
-/-- Ch 114: Among languages with a single asymmetry subtype, A/Cat (82)
-    is the most common, followed by A/Fin (40) and A/NonReal (20):
-    82 > 40 > 20. -/
-theorem acat_most_common_subtype : (82 : Nat) > 40 ∧ (40 : Nat) > 20 := by
+/-- Ch 114: Among languages with a single asymmetry subtype, A/Cat is the
+    most common, followed by A/Fin and A/NonReal. -/
+theorem acat_most_common_subtype :
+    let aCat := (ch114.filter (·.value == .aCat)).length
+    let aFin := (ch114.filter (·.value == .aFin)).length
+    let aNon := (ch114.filter (·.value == .aNonreal)).length
+    aCat > aFin ∧ aFin > aNon := by
   exact ⟨by native_decide, by native_decide⟩
 
 -- ============================================================================
@@ -644,14 +844,20 @@ theorem acat_most_common_subtype : (82 : Nat) > 40 ∧ (40 : Nat) > 20 := by
 -- ============================================================================
 
 /-- Ch 115: Co-occurrence with predicate negation (negative concord) is
-    by far the most common pattern worldwide (170/206 = 82.5%).
-    Preclusion (the "standard" Western European pattern) is typologically
-    rare (11/206 = 5.3%). Co-occurrence outnumbers preclusion by 15x. -/
-theorem neg_concord_dominant : (170 : Nat) > 11 * 15 := by native_decide
+    by far the most common pattern worldwide. Co-occurrence outnumbers
+    preclusion by more than 15x. -/
+theorem neg_concord_dominant :
+    let cooccur := (ch115.filter (·.value == .predicateNegationAlsoPresent)).length
+    let preclude := (ch115.filter (·.value == .noPredicateNegation)).length
+    cooccur > preclude * 15 := by native_decide
 
-/-- Ch 115: Preclusion of predicate negation by negative indefinites (11)
-    is the rarest of the four strategies: 11 ≤ 12 ∧ 11 ≤ 13. -/
-theorem preclusion_rarest : (11 : Nat) ≤ 13 ∧ (11 : Nat) ≤ 12 := by
+/-- Ch 115: Preclusion of predicate negation by negative indefinites is
+    the rarest of the four strategies. -/
+theorem preclusion_rarest :
+    let preclude := (ch115.filter (·.value == .noPredicateNegation)).length
+    let mixed := (ch115.filter (·.value == .mixedBehaviour)).length
+    let negEx := (ch115.filter (·.value == .negativeExistentialConstruction)).length
+    preclude ≤ mixed ∧ preclude ≤ negEx := by
   exact ⟨by native_decide, by native_decide⟩
 
 -- ============================================================================
@@ -694,14 +900,14 @@ theorem maori_word_unclear :
 -- Per-Language Verification
 -- ============================================================================
 
--- Verify selected language classifications match WALS
 theorem english_is_particle : english.morphemeType == .particle := by native_decide
-theorem english_is_symmetric : english.symmetry == .symmetric := by native_decide
+theorem english_is_both : english.symmetry == .both := by native_decide
 theorem german_precludes : german.negIndefinite == some .preclude := by native_decide
 theorem finnish_is_aux : finnish.morphemeType == .auxVerb := by native_decide
 theorem finnish_is_asymmetric : finnish.symmetry == .asymmetric := by native_decide
 theorem finnish_afin : finnish.asymmetrySubtype == .finiteness := by native_decide
 theorem japanese_is_affix : japanese.morphemeType == .affix := by native_decide
+theorem japanese_is_asymmetric : japanese.symmetry == .asymmetric := by native_decide
 theorem burmese_is_double : burmese.morphemeType == .doubleNeg := by native_decide
 theorem spanish_is_mixed : spanish.negIndefinite == some .mixed := by native_decide
 theorem italian_is_particle : italian.morphemeType == .particle := by native_decide
@@ -737,10 +943,12 @@ theorem asymmetric_implies_assignable :
     asymmetric.all (·.asymmetrySubtype != .nonAssignable) = true := by
   native_decide
 
-/-- In the WALS data, the count of non-assignable languages in Ch 114 (114)
-    exactly equals the count of symmetric-only languages in Ch 113 (114).
+/-- In the WALS data, the count of non-assignable languages in Ch 114
+    exactly equals the count of symmetric-only languages in Ch 113.
     This is a consistency check: the same set of languages. -/
-theorem ch114_nonassignable_eq_ch113_sym : (114 : Nat) = 114 := rfl
+theorem ch114_nonassignable_eq_ch113_sym :
+    (ch114.filter (·.value == .nonAssignable)).length =
+    (ch113.filter (·.value == .symmetric)).length := by native_decide
 
 -- ============================================================================
 -- Implicational Patterns
@@ -748,7 +956,7 @@ theorem ch114_nonassignable_eq_ch113_sym : (114 : Nat) = 114 := rfl
 
 /-- Negative auxiliary verbs (Ch 112) are always associated with asymmetric
     negation of subtype A/Fin: the auxiliary becomes the finite element, and
-    the lexical verb is definiticized. Finnish illustrates this perfectly:
+    the lexical verb is defiticized. Finnish illustrates this perfectly:
     `e-n tule` [NEG-1SG come.CONNEG]. In our sample, Finnish is the only
     negative auxiliary verb language, and it has A/Fin asymmetry. -/
 theorem aux_verb_implies_afin :
@@ -774,18 +982,17 @@ theorem sample_size : allLanguages.length = 18 := by native_decide
 
 /-- Morpheme type distribution in our sample. -/
 theorem sample_affix_count : countByMorphemeType allLanguages .affix = 5 := by native_decide
-theorem sample_particle_count : countByMorphemeType allLanguages .particle = 8 := by native_decide
+theorem sample_particle_count : countByMorphemeType allLanguages .particle = 9 := by native_decide
 theorem sample_auxverb_count : countByMorphemeType allLanguages .auxVerb = 1 := by native_decide
 theorem sample_double_count : countByMorphemeType allLanguages .doubleNeg = 2 := by native_decide
 theorem sample_unclear_count : countByMorphemeType allLanguages .wordUnclear = 1 := by native_decide
-theorem sample_variation_count : countByMorphemeType allLanguages .variation = 1 := by native_decide
+theorem sample_variation_count : countByMorphemeType allLanguages .variation = 0 := by native_decide
 
-/-- Symmetry distribution in our sample mirrors the WALS pattern:
-    symmetric-only languages are the most common single type. -/
+/-- Symmetry distribution in our sample. -/
 theorem sample_symmetry_counts :
-    countBySymmetry allLanguages .symmetric = 12 ∧
-    countBySymmetry allLanguages .asymmetric = 5 ∧
-    countBySymmetry allLanguages .both = 1 := by
+    countBySymmetry allLanguages .symmetric = 7 ∧
+    countBySymmetry allLanguages .asymmetric = 6 ∧
+    countBySymmetry allLanguages .both = 5 := by
   native_decide
 
 end Phenomena.Negation.Typology

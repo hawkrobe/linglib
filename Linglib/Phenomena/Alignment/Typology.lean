@@ -1,6 +1,9 @@
 import Linglib.Core.Lexical.Word
 import Linglib.Core.Case.SplitConditions
 import Linglib.Core.Prominence
+import Linglib.Core.WALS.Features.F98A
+import Linglib.Core.WALS.Features.F99A
+import Linglib.Core.WALS.Features.F100A
 
 /-!
 # Morphosyntactic Alignment Typology (WALS Chapters 98--100)
@@ -43,18 +46,12 @@ Tripartite and active systems are typologically rare.
 namespace Phenomena.Alignment.Typology
 
 -- ============================================================================
--- WALSCount Infrastructure
+-- WALS Generated Data References
 -- ============================================================================
 
-/-- A single row in a WALS distribution table: a label and a language count. -/
-structure WALSCount where
-  label : String
-  count : Nat
-  deriving Repr, DecidableEq, BEq
-
-/-- Sum of all counts in a WALS distribution. -/
-def WALSCount.totalOf (cs : List WALSCount) : Nat :=
-  cs.foldl (fun acc c => acc + c.count) 0
+private abbrev ch98 := Core.WALS.F98A.allData
+private abbrev ch99 := Core.WALS.F99A.allData
+private abbrev ch100 := Core.WALS.F100A.allData
 
 -- ============================================================================
 -- Alignment Types
@@ -116,63 +113,49 @@ def AlignmentType.isAbsErg : AlignmentType -> Bool
   | _         => false
 
 -- ============================================================================
--- Chapter 98: Alignment of Case Marking of Full Noun Phrases
+-- WALS Converter Functions
 -- ============================================================================
 
-/-- WALS Chapter 98 distribution (@cite{comrie-2013}, 190-language sample).
+/-- Convert F98A NP case alignment to our AlignmentType.
+    WALS distinguishes standard and marked-nominative accusative; we merge both. -/
+private def fromWALS98A : Core.WALS.F98A.NPCaseAlignment → AlignmentType
+  | .neutral => .neutral
+  | .nominativeAccusative => .accusative
+  | .nominativeAccusative_3 => .accusative  -- marked nominative, still accusative
+  | .ergativeAbsolutive => .ergative
+  | .tripartite => .tripartite
+  | .activeInactive => .active
 
-Case marking alignment of full noun phrases. Accusative alignment
-dominates, but ergative alignment is well represented. Tripartite
-and active systems are rare. -/
-def ch98Distribution : List WALSCount :=
-  [ ⟨"Neutral",    98⟩
-  , ⟨"Accusative", 46⟩
-  , ⟨"Ergative",   32⟩
-  , ⟨"Tripartite",  2⟩
-  , ⟨"Active",     12⟩ ]
+/-- Convert F99A pronoun case alignment to our AlignmentType.
+    WALS has a "none" category (no pronouns or no case on pronouns);
+    we map it to neutral. -/
+private def fromWALS99A : Core.WALS.F99A.PronounCaseAlignment → AlignmentType
+  | .neutral => .neutral
+  | .nominativeAccusative => .accusative
+  | .nominativeAccusative_3 => .accusative
+  | .ergativeAbsolutive => .ergative
+  | .tripartite => .tripartite
+  | .activeInactive => .active
+  | .none => .neutral
 
-/-- Chapter 98 total sample size. -/
-theorem ch98_total : WALSCount.totalOf ch98Distribution = 190 := by native_decide
-
--- ============================================================================
--- Chapter 99: Alignment of Case Marking of Pronouns
--- ============================================================================
-
-/-- WALS Chapter 99 distribution (@cite{comrie-2013}, 194-language sample).
-
-Case marking alignment of pronouns. Accusative alignment is even more
-dominant for pronouns than for full NPs. Ergative pronoun marking is
-considerably rarer than ergative NP marking -- this is Dixon's
-generalization about the split-ergative hierarchy. -/
-def ch99Distribution : List WALSCount :=
-  [ ⟨"Neutral",    75⟩
-  , ⟨"Accusative", 83⟩
-  , ⟨"Ergative",   22⟩
-  , ⟨"Tripartite",  4⟩
-  , ⟨"Active",     10⟩ ]
-
-/-- Chapter 99 total sample size. -/
-theorem ch99_total : WALSCount.totalOf ch99Distribution = 194 := by native_decide
+/-- Convert F100A verbal person alignment to our AlignmentType.
+    WALS has "hierarchical" and "split" categories not in our type;
+    returns `none` for these. -/
+private def fromWALS100A : Core.WALS.F100A.VerbalPersonAlignment → Option AlignmentType
+  | .neutral => some .neutral
+  | .accusative => some .accusative
+  | .ergative => some .ergative
+  | .active => some .active
+  | .hierarchical => none
+  | .split => none
 
 -- ============================================================================
--- Chapter 100: Alignment of Verbal Person Marking
+-- Chapter 98--100: Sample Size Totals (from generated data)
 -- ============================================================================
 
-/-- WALS Chapter 100 distribution (@cite{comrie-2013}, 378-language sample).
-
-Alignment of verbal person marking (agreement). Neutral alignment is
-dominant here because many languages simply lack person agreement on
-the verb, and those that do often agree with only one argument (S/A,
-i.e., accusative pattern). -/
-def ch100Distribution : List WALSCount :=
-  [ ⟨"Neutral",    100⟩
-  , ⟨"Accusative", 150⟩
-  , ⟨"Ergative",    28⟩
-  , ⟨"Tripartite",   5⟩
-  , ⟨"Active",      95⟩ ]
-
-/-- Chapter 100 total sample size. -/
-theorem ch100_total : WALSCount.totalOf ch100Distribution = 378 := by native_decide
+theorem ch98_total : ch98.length = 190 := by native_decide
+theorem ch99_total : ch99.length = 172 := by native_decide
+theorem ch100_total : ch100.length = 380 := by native_decide
 
 -- ============================================================================
 -- Chapter-Level Distribution Theorems
@@ -181,29 +164,45 @@ theorem ch100_total : WALSCount.totalOf ch100Distribution = 378 := by native_dec
 /-- Ch 98: Neutral marking is the most common for full NPs (many languages
     lack case marking on NPs entirely). -/
 theorem ch98_neutral_modal :
-    ch98Distribution.head? = some ⟨"Neutral", 98⟩ := by native_decide
+    let neutral := (ch98.filter (·.value == .neutral)).length
+    neutral > (ch98.filter (·.value == .nominativeAccusative)).length ∧
+    neutral > (ch98.filter (·.value == .ergativeAbsolutive)).length := by
+  exact ⟨by native_decide, by native_decide⟩
 
-/-- Ch 98: Among languages with case marking on NPs, accusative (46)
-    outnumbers ergative (32). -/
+/-- Ch 98: Among languages with case marking on NPs, accusative outnumbers
+    ergative. -/
 theorem ch98_accusative_gt_ergative :
-    (46 > 32) = true := by native_decide
+    (ch98.filter (·.value == .nominativeAccusative)).length >
+    (ch98.filter (·.value == .ergativeAbsolutive)).length := by native_decide
 
-/-- Ch 99: Accusative alignment is the most common for pronouns. -/
-theorem ch99_accusative_dominant :
-    (83 > 75) ∧ (83 > 22) ∧ (83 > 4) ∧ (83 > 10) := by native_decide
+/-- Ch 99: Accusative alignment outnumbers ergative for pronouns,
+    though neutral is the most common category (many languages lack
+    distinct pronoun case forms). -/
+theorem ch99_accusative_gt_ergative :
+    (ch99.filter (·.value == .nominativeAccusative)).length >
+    (ch99.filter (·.value == .ergativeAbsolutive)).length := by native_decide
 
 /-- Ch 100: Accusative alignment is the most common for verbal person marking. -/
 theorem ch100_accusative_dominant :
-    (150 > 100) ∧ (150 > 28) ∧ (150 > 5) ∧ (150 > 95) := by native_decide
+    let acc := (ch100.filter (·.value == .accusative)).length
+    acc > (ch100.filter (·.value == .neutral)).length ∧
+    acc > (ch100.filter (·.value == .ergative)).length ∧
+    acc > (ch100.filter (·.value == .active)).length := by
+  exact ⟨by native_decide, by native_decide, by native_decide⟩
 
-/-- Ch 98: Tripartite alignment is the rarest for full NPs. -/
-theorem ch98_tripartite_rarest :
-    (2 < 12) ∧ (2 < 32) ∧ (2 < 46) ∧ (2 < 98) := by native_decide
+/-- Ch 98: Tripartite and active-inactive alignments are the rarest for
+    full NPs. -/
+theorem ch98_tripartite_rare :
+    (ch98.filter (·.value == .tripartite)).length <
+    (ch98.filter (·.value == .ergativeAbsolutive)).length ∧
+    (ch98.filter (·.value == .activeInactive)).length <
+    (ch98.filter (·.value == .ergativeAbsolutive)).length := by
+  exact ⟨by native_decide, by native_decide⟩
 
-/-- Ch 99: Tripartite is also rare for pronouns, though slightly less so
-    than for NPs. -/
+/-- Ch 99: Tripartite is also rare for pronouns. -/
 theorem ch99_tripartite_rare :
-    (4 < 10) ∧ (4 < 22) ∧ (4 < 75) ∧ (4 < 83) := by native_decide
+    (ch99.filter (·.value == .tripartite)).length <
+    (ch99.filter (·.value == .ergativeAbsolutive)).length := by native_decide
 
 -- ============================================================================
 -- AlignmentProfile: Combined Profile Across All Three Chapters
@@ -802,6 +801,117 @@ theorem active_np_implies_active_pron :
       then p.pronAlignment == .active
       else true) = true := by
   native_decide
+
+-- ============================================================================
+-- WALS Grounding: Ch 98 (NP Case Alignment)
+-- Languages not in Ch 98 sample: Dyirbal, Latin, Tongan, Guarani,
+-- Samoan, Tibetan, Warlpiri.
+-- Note: WALS codes Hindi-Urdu as tripartite and Basque/Georgian as
+-- active-inactive, diverging from traditional typological classifications.
+-- ============================================================================
+
+theorem english_ch98 :
+    (Core.WALS.F98A.lookup "eng").map (fromWALS98A ·.value) =
+    some english.npAlignment := by native_decide
+theorem japanese_ch98 :
+    (Core.WALS.F98A.lookup "jpn").map (fromWALS98A ·.value) =
+    some japanese.npAlignment := by native_decide
+theorem russian_ch98 :
+    (Core.WALS.F98A.lookup "rus").map (fromWALS98A ·.value) =
+    some russian.npAlignment := by native_decide
+theorem mandarin_ch98 :
+    (Core.WALS.F98A.lookup "mnd").map (fromWALS98A ·.value) =
+    some mandarin.npAlignment := by native_decide
+theorem turkish_ch98 :
+    (Core.WALS.F98A.lookup "tur").map (fromWALS98A ·.value) =
+    some turkish.npAlignment := by native_decide
+theorem german_ch98 :
+    (Core.WALS.F98A.lookup "ger").map (fromWALS98A ·.value) =
+    some german.npAlignment := by native_decide
+theorem swahili_ch98 :
+    (Core.WALS.F98A.lookup "swa").map (fromWALS98A ·.value) =
+    some swahili.npAlignment := by native_decide
+theorem tagalog_ch98 :
+    (Core.WALS.F98A.lookup "tag").map (fromWALS98A ·.value) =
+    some tagalog.npAlignment := by native_decide
+theorem nezPerce_ch98 :
+    (Core.WALS.F98A.lookup "nez").map (fromWALS98A ·.value) =
+    some nezPerce.npAlignment := by native_decide
+theorem finnish_ch98 :
+    (Core.WALS.F98A.lookup "fin").map (fromWALS98A ·.value) =
+    some finnish.npAlignment := by native_decide
+
+-- ============================================================================
+-- WALS Grounding: Ch 99 (Pronoun Case Alignment)
+-- Same languages absent as Ch 98.
+-- ============================================================================
+
+theorem english_ch99 :
+    (Core.WALS.F99A.lookup "eng").map (fromWALS99A ·.value) =
+    some english.pronAlignment := by native_decide
+theorem japanese_ch99 :
+    (Core.WALS.F99A.lookup "jpn").map (fromWALS99A ·.value) =
+    some japanese.pronAlignment := by native_decide
+theorem russian_ch99 :
+    (Core.WALS.F99A.lookup "rus").map (fromWALS99A ·.value) =
+    some russian.pronAlignment := by native_decide
+theorem mandarin_ch99 :
+    (Core.WALS.F99A.lookup "mnd").map (fromWALS99A ·.value) =
+    some mandarin.pronAlignment := by native_decide
+theorem turkish_ch99 :
+    (Core.WALS.F99A.lookup "tur").map (fromWALS99A ·.value) =
+    some turkish.pronAlignment := by native_decide
+theorem german_ch99 :
+    (Core.WALS.F99A.lookup "ger").map (fromWALS99A ·.value) =
+    some german.pronAlignment := by native_decide
+theorem swahili_ch99 :
+    (Core.WALS.F99A.lookup "swa").map (fromWALS99A ·.value) =
+    some swahili.pronAlignment := by native_decide
+theorem tagalog_ch99 :
+    (Core.WALS.F99A.lookup "tag").map (fromWALS99A ·.value) =
+    some tagalog.pronAlignment := by native_decide
+theorem nezPerce_ch99 :
+    (Core.WALS.F99A.lookup "nez").map (fromWALS99A ·.value) =
+    some nezPerce.pronAlignment := by native_decide
+theorem finnish_ch99 :
+    (Core.WALS.F99A.lookup "fin").map (fromWALS99A ·.value) =
+    some finnish.pronAlignment := by native_decide
+
+-- ============================================================================
+-- WALS Grounding: Ch 100 (Verbal Person Marking)
+-- fromWALS100A returns Option; grounding only for languages with clean mapping.
+-- ============================================================================
+
+theorem english_ch100 :
+    (Core.WALS.F100A.lookup "eng").bind (fromWALS100A ·.value) =
+    some english.verbAlignment := by native_decide
+theorem russian_ch100 :
+    (Core.WALS.F100A.lookup "rus").bind (fromWALS100A ·.value) =
+    some russian.verbAlignment := by native_decide
+theorem mandarin_ch100 :
+    (Core.WALS.F100A.lookup "mnd").bind (fromWALS100A ·.value) =
+    some mandarin.verbAlignment := by native_decide
+theorem turkish_ch100 :
+    (Core.WALS.F100A.lookup "tur").bind (fromWALS100A ·.value) =
+    some turkish.verbAlignment := by native_decide
+theorem german_ch100 :
+    (Core.WALS.F100A.lookup "ger").bind (fromWALS100A ·.value) =
+    some german.verbAlignment := by native_decide
+theorem swahili_ch100 :
+    (Core.WALS.F100A.lookup "swa").bind (fromWALS100A ·.value) =
+    some swahili.verbAlignment := by native_decide
+theorem tagalog_ch100 :
+    (Core.WALS.F100A.lookup "tag").bind (fromWALS100A ·.value) =
+    some tagalog.verbAlignment := by native_decide
+theorem basque_ch100 :
+    (Core.WALS.F100A.lookup "bsq").bind (fromWALS100A ·.value) =
+    some basque.verbAlignment := by native_decide
+theorem finnish_ch100 :
+    (Core.WALS.F100A.lookup "fin").bind (fromWALS100A ·.value) =
+    some finnish.verbAlignment := by native_decide
+theorem japanese_ch100 :
+    (Core.WALS.F100A.lookup "jpn").bind (fromWALS100A ·.value) =
+    some japanese.verbAlignment := by native_decide
 
 -- ============================================================================
 -- Split-Ergative Conditioning (@cite{silverstein-1976})

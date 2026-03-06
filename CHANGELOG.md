@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.228.62] - 2026-03-06
+
+### Added
+- **Core/WALS/Features/**: Generate all 192 WALS features (up from 65) — complete coverage of phonology (1A–19A), morphology (21B–29A), gender assignment (32A), plurals (36A), pronouns/demonstratives (39A–46A, 48A), comitatives (52A), numerals/classifiers (53A–56A), possession (57A–59A), NP structure (60A–64A), imperatives (70A–73A), suppletion (79A–80A), word order variants (81B, 90B–90G, 91A–97A), person marking (101A–105A), lexical typology (129A–142A), and negation/word order (143B–144Y)
+- **Phenomena/Negation/Typology.lean**: Wire F112A–F115A with 4 converter functions, ~58 grounding theorems, upgrade 6 generalization theorems to generated data
+- **Phenomena/Alignment/Typology.lean**: Wire F98A–F100A with 3 converter functions (F100A returns Option), ~30 grounding theorems
+- **Phenomena/Case/Typology.lean**: Wire F52A (comitatives/instrumentals), fix ch52 majority theorem (differentiation=213 is majority, not identity=76)
+- **Phenomena/Gender/Typology.lean**: Wire F32A (gender assignment), rewrite distribution theorems to use generated data
+
+### Changed
+- **scripts/gen_wals.py**: Auto-discover all features from parameters.csv — features not in FEATURES/AUTO_FEATURES get auto-generated enum names from WALS labels
+- **Core/WALS/Languages.lean**: Regenerated with 2660 languages (up from ~2100)
+- **Phenomena/Negation/Typology.lean**: Fix 8 profile values to match WALS data (English/Japanese/Mandarin/Turkish/Maori/Kolyma Yukaghir/Rama/French)
+- **Phenomena/Case/Typology.lean**: Fix hand-coded ch52 counts (were 194/102/26, actual 76/213/33)
+- **Phenomena/Gender/Typology.lean**: Fix ch32 total (was 256, actual 257)
+
 ## [0.228.61] - 2026-03-06
 
 ### Changed
