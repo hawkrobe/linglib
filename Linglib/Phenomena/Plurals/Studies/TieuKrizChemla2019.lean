@@ -1,6 +1,5 @@
 import Linglib.Core.Polarity
 import Linglib.Phenomena.Plurals.Homogeneity
-import Linglib.Phenomena.Plurals.Multiplicity
 import Linglib.Phenomena.Plurals.Studies.Magri2014
 
 /-!
@@ -12,7 +11,7 @@ Children's acquisition of homogeneity in plural definite descriptions.
 
 ## Core Contribution
 
-Two experiments testing French-speaking children (ages 4--5) on their
+Two experiments testing French-speaking children (ages 4--6) on their
 interpretations of plural definite descriptions in GAP contexts (where
 some but not all individuals satisfy the predicate), alongside scalar
 implicature controls. The experiments test predictions of the scalar
@@ -46,8 +45,8 @@ implicatures are independent, with homogeneity acquired earlier.
 ## Connection to Linglib
 
 - Imports `Homogeneity.lean` for the empirical gap pattern
-- Imports `Multiplicity.lean` for `PluralTheory` classification
 - Imports `Magri2014.lean` to test the double-strengthening prediction
+  (end-to-end: inner EXH → double-EXH → ALL → falsified by HOM/−SI data)
 -/
 
 namespace Phenomena.Plurals.Studies.TieuKrizChemla2019
@@ -324,6 +323,21 @@ def exp2Finding : ThreeGroupFinding :=
   , homogeneousPlusSI := 7
   , homogeneousNoSI := 5 }
 
+/-- Cross-consistency: ThreeGroupFinding (Section 6) matches
+    BayesianGroups (Table 3). Changing either without updating the
+    other will break this theorem. -/
+theorem exp1_findings_consistent :
+    exp1Finding.homogeneousNoSI = exp1Children.homMinusSI ∧
+    exp1Finding.homogeneousPlusSI = exp1Children.homPlusSI ∧
+    exp1Finding.existentialNoSI = exp1Children.exiMinusSI := by
+  exact ⟨rfl, rfl, rfl⟩
+
+/-- Total categorized children in Experiment 2
+    (2 children gave inconsistent responses and are excluded). -/
+theorem exp2_total_categorized :
+    exp2Finding.existentialNoSI + exp2Finding.homogeneousPlusSI +
+    exp2Finding.homogeneousNoSI = 22 := by native_decide
+
 /-- The HOM/−SI group exists in BOTH experiments. -/
 theorem hom_without_si_exists_exp1 :
     exp1Finding.homogeneousNoSI > 0 := by native_decide
@@ -331,18 +345,20 @@ theorem hom_without_si_exists_exp1 :
 theorem hom_without_si_exists_exp2 :
     exp2Finding.homogeneousNoSI > 0 := by native_decide
 
-/-- The HOM/−SI group is non-trivial (not a single outlier). -/
+/-- The HOM/−SI group is non-trivial (not a single outlier).
+    Table 4 confirms this: removing HOM/−SI from the Bayesian model
+    degrades fit by Δ_elpd = 50.79 (se = 9.87), over 5 SEs. -/
 theorem hom_without_si_nontrivial :
     exp1Finding.homogeneousNoSI ≥ 5 ∧
     exp2Finding.homogeneousNoSI ≥ 5 := by native_decide
 
-/-- No child displayed the UNIVERSAL pattern in either experiment.
-    This rules out children simply assigning universal meaning to
-    the definite plural. -/
-theorem no_universal_children :
+/-- The three key groups (EXI/−SI, HOM/+SI, HOM/−SI) account for 23 of 24
+    children in Exp 1 (the remaining child was EXI/+SI). No child
+    showed the UNIVERSAL pattern in either experiment, ruling out
+    children simply assigning universal meaning to the definite plural. -/
+theorem three_groups_cover_exp1 :
     exp1Finding.existentialNoSI + exp1Finding.homogeneousPlusSI +
     exp1Finding.homogeneousNoSI = 23 := by native_decide
-    -- 23 of 24 children; 1 was EXI/+SI
 
 
 -- ============================================================
@@ -404,87 +420,48 @@ theorem unidirectional_implication :
 
 
 -- ============================================================
--- SECTION 8: Connection to Magri2014.lean
+-- SECTION 8: End-to-End Argument Against Magri2014
 -- ============================================================
 
 open Phenomena.Plurals.Studies.Magri2014 (Role exh doubleExh someMeaning
-  allMeaning exh_some exh_the)
+  allMeaning exh_some exh_the double_strengthening_yields_universal)
 
-/-!
-In @cite{magri-2014}'s theory, the "not-all" scalar implicature is
-a subcomputation of the homogeneity derivation:
+/--
+End-to-end argumentation chain connecting @cite{magri-2014}'s theory
+(formalized in `Magri2014.lean`) to the empirical data in this file.
 
-  EXH(EXH(THE)) = EXH(THE) ∧ ¬EXH(SOME)
-                                 ↑
-                         This is the "not-all" SI
+**The derivation** (examples 10-11 in the paper):
 
-The inner EXH applied to SOME yields SOME ∧ ¬ALL (the standard SI).
-The outer EXH then negates this, yielding the universal reading.
+  EXH(SOME)           = SOME ∧ ¬ALL                    -- inner EXH: the "not-all" SI
+  EXH(THE)             = THE = SOME                     -- inner EXH: vacuous (no excludable mates)
+  EXH(EXH(THE))         = SOME ∧ ¬(SOME ∧ ¬ALL) = ALL  -- outer EXH: negates the SI
 
-A child who cannot compute EXH(SOME) = SOME ∧ ¬ALL cannot perform
-the second step. Without the "not-all" SI to negate, double
-exhaustification is vacuous: EXH(EXH(THE)) = EXH(THE) = SOME.
+**The prediction**: Since `EXH(SOME) = SOME ∧ ¬ALL` is a subcomputation
+of `EXH(EXH(THE)) = ALL`, a child who cannot compute the "not-all" SI
+cannot derive the universal reading. Without the SI to negate, double
+exhaustification is vacuous: `EXH(EXH(THE)) = EXH(THE) = SOME`.
+Such children should show the *existential* pattern, not the *homogeneous* pattern.
 
-The existence of HOM/−SI children therefore requires an alternative
+**The falsification**: HOM/−SI children exist in both experiments — they
+show homogeneity without computing the SI. This requires an alternative
 source of homogeneity independent of scalar implicatures.
+
+This theorem imports three results from `Magri2014.lean` (the inner EXH
+identity, the vacuousness of single EXH for THE, and the main double-
+strengthening theorem) and combines them with the empirical data.
 -/
-
-/-- The inner EXH step that produces the "not-all" SI is precisely
-    what −SI children lack. Without it, double EXH is vacuous. -/
-theorem inner_exh_is_si (s : Magri2014.Scenario) :
-    exh .weak s = (someMeaning s && !allMeaning s) :=
-  exh_some s
-
-/-- Without the inner EXH producing a strengthened meaning for SOME,
-    the outer EXH has nothing to exclude, and EXH(THE) = THE = SOME. -/
-theorem without_si_no_strengthening (s : Magri2014.Scenario) :
-    exh .mystery s = someMeaning s :=
-  exh_the s
-
-
--- ============================================================
--- BRIDGE: Connection to Homogeneity.lean Data
--- ============================================================
-
-/-- The homogeneous pattern observed in both adults and children matches
-    the empirical gap data: in GAP scenarios, both positive and negative
-    sentences are judged "neither true nor false."
-
-    This is the same pattern documented in Homogeneity.lean's
-    switchesExample (and booksExample, conjunctionExample, etc.). -/
-theorem homogeneous_reading_matches_empirical_gap :
-    -- The homogeneous reading predicts rejection of both polarities
-    homogeneousGap.acceptPositiveGap = false ∧
-    homogeneousGap.acceptNegativeGap = false ∧
-    -- Matching the empirical judgments
-    switchesExample.positiveInGap = .neitherTrueNorFalse ∧
-    switchesExample.negativeInGap = .neitherTrueNorFalse := by
-  exact ⟨rfl, rfl, rfl, rfl⟩
-
-
--- ============================================================
--- BRIDGE: Connection to Multiplicity.lean Theory Classification
--- ============================================================
-
-open Phenomena.Plurals.Multiplicity (PluralTheory TheoryPrediction
-  implicaturePrediction)
-
-/-- The paper's findings challenge the implicature theory of plural
-    homogeneity. While the implicature account predicts that children
-    who compute fewer SIs should also show fewer homogeneous readings,
-    the data show the opposite: homogeneity can exist without SI.
-
-    This does not refute the implicature THEORY of multiplicity
-    (which concerns bare plurals, not definite descriptions), but
-    it does challenge @cite{magri-2014}'s extension of the implicature
-    mechanism to homogeneity specifically. -/
-theorem implicature_theory_challenged :
-    -- Magri's theory predicts SI is prerequisite for homogeneity
-    magriPrediction.siPrerequisite = true ∧
-    -- But children show homogeneity without SI
+theorem magri_derivation_requires_si :
+    -- (1) Inner EXH of SOME yields the standard "not-all" SI
+    (∀ s, exh .weak s = (someMeaning s && !allMeaning s)) ∧
+    -- (2) Inner EXH of THE is vacuous: THE stays SOME
+    (∀ s, exh .mystery s = someMeaning s) ∧
+    -- (3) Double-EXH uses the SI to derive ALL (the main theorem)
+    (∀ s, s.total ≥ 1 → doubleExh .mystery s = allMeaning s) ∧
+    -- (4) But HOM/−SI children show homogeneity WITHOUT the SI
     exp1Finding.homogeneousNoSI > 0 ∧
     exp2Finding.homogeneousNoSI > 0 := by
-  exact ⟨rfl, by native_decide, by native_decide⟩
+  exact ⟨exh_some, exh_the, double_strengthening_yields_universal,
+         by native_decide, by native_decide⟩
 
 
 -- ============================================================
@@ -521,20 +498,24 @@ def stageOrder : DevelopmentalStage → Nat
   | .homogeneous => 1
   | .adult       => 2
 
-/-- The three child groups map to developmental stages. -/
-def groupToStage : ParticipantGroup → DevelopmentalStage
-  | ⟨.existential, false⟩ => .existential
-  | ⟨.homogeneous, false⟩ => .homogeneous
-  | ⟨.homogeneous, true⟩  => .adult
-  | _                      => .adult  -- other groups not attested
+/-- The three attested child groups map to developmental stages.
+    Returns `none` for groups not attested in children (UNI/±SI,
+    EXI/+SI with only 1 child). -/
+def groupToStage : ParticipantGroup → Option DevelopmentalStage
+  | ⟨.existential, false⟩ => some .existential
+  | ⟨.homogeneous, false⟩ => some .homogeneous
+  | ⟨.homogeneous, true⟩  => some .adult
+  | _                      => none
 
-/-- The attested groups form a monotonically increasing sequence. -/
+/-- The three attested groups map to the three developmental stages,
+    and the stages form a monotonically increasing sequence. -/
 theorem attested_groups_ordered :
-    stageOrder (groupToStage exiMinusSI) ≤
-    stageOrder (groupToStage homMinusSI) ∧
-    stageOrder (groupToStage homMinusSI) ≤
-    stageOrder (groupToStage homPlusSI) := by
-  exact ⟨by native_decide, by native_decide⟩
+    groupToStage exiMinusSI = some .existential ∧
+    groupToStage homMinusSI = some .homogeneous ∧
+    groupToStage homPlusSI  = some .adult ∧
+    stageOrder .existential ≤ stageOrder .homogeneous ∧
+    stageOrder .homogeneous ≤ stageOrder .adult := by
+  exact ⟨rfl, rfl, rfl, by native_decide, by native_decide⟩
 
 
 end Phenomena.Plurals.Studies.TieuKrizChemla2019

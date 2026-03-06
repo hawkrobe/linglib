@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.228.54] - 2026-03-06
+
+### Changed
+- **Phenomena/Plurals/Studies/TieuKrizChemla2019.lean**: Refactor for deeper integration. Add end-to-end `magri_derivation_requires_si` theorem importing three Magri2014 results. Add cross-consistency `exp1_findings_consistent`, `exp2_total_categorized`. Remove redundant duplicate theorems and unused Multiplicity imports. Fix `groupToStage` to return `Option`, fix docstring ages, rename `no_universal_children`
+
 ## [0.228.53] - 2026-03-06
 
 ### Added
