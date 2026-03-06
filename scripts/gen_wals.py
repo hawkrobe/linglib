@@ -11,6 +11,10 @@ Examples:
 Reads from:  data/wals-v2020.4/*.csv
 Writes to:   Linglib/Core/WALS/Features/F{ID}.lean
              Linglib/Core/WALS/Languages.lean
+
+Features can be configured in FEATURES (manually curated constructor names)
+or auto-generated from codes.csv (AUTO_FEATURES). AUTO_FEATURES need only
+an enum name; constructor names are derived from the WALS value labels.
 """
 
 import csv
@@ -23,9 +27,58 @@ ROOT = Path(__file__).resolve().parent.parent
 DATA = ROOT / "data" / "wals-v2020.4"
 OUT  = ROOT / "Linglib" / "Core" / "WALS"
 
-# ── Feature configuration ───────────────────────────────────────────────────
-# Maps WALS feature ID → (Lean enum name, { WALS code number → Lean constructor })
-# Constructor names are manually curated for readability.
+# ── Helpers for auto-generating Lean constructor names ─────────────────────
+
+def name_to_constructor(name):
+    """Convert a WALS value name to a valid Lean constructor name.
+
+    Examples:
+        "SOV" → "sov"
+        "No dominant order" → "noDominantOrder"
+        "Definite word distinct from demonstrative" → "definiteWordDistinctFromDemonstrative"
+        "6-7 cases" → "cases6_7"
+        "10 or more cases" → "cases10OrMore"
+        "Negative affix" → "negativeAffix"
+    """
+    s = name.strip()
+
+    # Handle leading numbers: "10 or more cases" → "cases10OrMore", "6-7 cases" → "cases6_7"
+    m = re.match(r'^(\d+)\s+or\s+more\s+(.+)', s)
+    if m:
+        num, rest = m.group(1), m.group(2)
+        rest_id = name_to_constructor(rest)
+        return f"{rest_id}{num}OrMore"
+
+    m = re.match(r'^(\d+)(?:\s*[-–]\s*(\d+))?\s+(.+)', s)
+    if m:
+        num1, num2, rest = m.group(1), m.group(2), m.group(3)
+        rest_id = name_to_constructor(rest)
+        if num2:
+            return f"{rest_id}{num1}_{num2}"
+        return f"{rest_id}{num1}"
+
+    # Remove parenthetical qualifiers
+    s = re.sub(r'\s*\(.*?\)', '', s)
+    # Remove quotes
+    s = s.replace("'", "").replace("'", "").replace('"', '')
+    # Replace punctuation/separators with spaces
+    s = re.sub(r'[^a-zA-Z0-9\s]', ' ', s)
+    # Split into words and camelCase
+    words = s.split()
+    if not words:
+        return "unknown"
+    result = words[0].lower() + ''.join(w.capitalize() for w in words[1:])
+    # Ensure it starts with a letter
+    if result and result[0].isdigit():
+        result = "v" + result
+    return result
+
+
+# ── Feature configuration ─────────────────────────────────────────────────
+# FEATURES: manually curated constructor names (highest quality).
+# AUTO_FEATURES: auto-generated constructors from WALS labels.
+# Both produce identical output; the only difference is how constructor
+# names are determined.
 
 FEATURES = {
     "106A": {
@@ -127,6 +180,149 @@ FEATURES = {
     },
 }
 
+# Auto-generated features: enum name + optional author override.
+# Constructor names are derived from WALS value labels in codes.csv.
+AUTO_FEATURES = {
+    # ── Word Order (Ch 81–90) ──────────────────────────────────────────
+    "81A": {"enum": "BasicWordOrder",      "author": "dryer-2013a"},
+    "82A": {"enum": "SubjectVerbOrder",    "author": "dryer-2013a"},
+    "83A": {"enum": "ObjectVerbOrder",     "author": "dryer-2013a"},
+    "84A": {"enum": "ObjectObliqueVerbOrder", "author": "dryer-2013a"},
+    "85A": {"enum": "AdpositionNPOrder",   "author": "dryer-2013a"},
+    "86A": {"enum": "GenitiveNounOrder",   "author": "dryer-2013a"},
+    "87A": {"enum": "AdjectiveNounOrder",  "author": "dryer-2013a"},
+    "88A": {"enum": "DemonstrativeNounOrder", "author": "dryer-2013a"},
+    "89A": {"enum": "NumeralNounOrder",    "author": "dryer-2013a"},
+    "90A": {"enum": "RelClauseNounOrder",  "author": "dryer-2013a"},
+
+    # ── Articles/Determiners (Ch 37–38) ────────────────────────────────
+    "37A": {"enum": "DefiniteArticleType", "author": "dryer-2013b"},
+    "38A": {"enum": "IndefiniteArticleType", "author": "dryer-2013b"},
+
+    # ── Case (Ch 49–51) ────────────────────────────────────────────────
+    "49A": {"enum": "CaseCount",           "author": "iggesen-2013"},
+    "50A": {"enum": "AsymmetricalCaseMarking", "author": "iggesen-2013"},
+    "51A": {"enum": "CaseAffixPosition",   "author": "iggesen-2013"},
+
+    # ── Tense/Aspect (Ch 65–69) ────────────────────────────────────────
+    "65A": {"enum": "PerfectiveImperfective", "author": "dahl-2013"},
+    "66A": {"enum": "PastTenseType",       "author": "dahl-2013"},
+    "67A": {"enum": "FutureTenseType",     "author": "dahl-2013"},
+    "68A": {"enum": "PerfectType",         "author": "dahl-2013"},
+    "69A": {"enum": "TenseAspectAffixPosition", "author": "dahl-2013"},
+
+    # ── Modality/Evidentiality (Ch 74–78) ──────────────────────────────
+    "74A": {"enum": "SituationalPossibility", "author": "vanbogaert-2013"},
+    "75A": {"enum": "EpistemicPossibility", "author": "vanbogaert-2013"},
+    "76A": {"enum": "ModalOverlap",        "author": "vanbogaert-2013"},
+    "77A": {"enum": "EvidentialityDistinctions", "author": "deandradedehaanValenzuela-2013"},
+    "78A": {"enum": "EvidentialityCoding", "author": "deandradedehaanValenzuela-2013"},
+
+    # ── Negation (Ch 112–115, 143) ─────────────────────────────────────
+    "112A": {"enum": "NegativeMorphemeType", "author": "dryer-2013c"},
+    "113A": {"enum": "NegationSymmetry",   "author": "miestamo-2013"},
+    "114A": {"enum": "AsymmetricNegationSubtype", "author": "miestamo-2013"},
+    "115A": {"enum": "NegativeIndefiniteType", "author": "haspelmath-2013"},
+    "143A": {"enum": "NegVerbOrder",       "author": "dryer-2013c"},
+
+    # ── Questions (Ch 116) ─────────────────────────────────────────────
+    "116A": {"enum": "PolarQuestionType",  "author": "dryer-2013d"},
+
+    # ── Gender/Number (Ch 30–31, 33–35) ────────────────────────────────
+    "30A": {"enum": "GenderCount",         "author": "corbett-2013"},
+    "31A": {"enum": "GenderBasis",         "author": "corbett-2013"},
+    "33A": {"enum": "PluralityCoding",     "author": "haspelmath-2013b"},
+    "34A": {"enum": "PluralityOccurrence", "author": "haspelmath-2013b"},
+    "35A": {"enum": "PronounPlurality",    "author": "haspelmath-2013b"},
+
+    # ── Reflexives (Ch 47) ─────────────────────────────────────────────
+    "47A": {"enum": "IntensifierReflexive", "author": "koenig-siemund-2013"},
+
+    # ── Comparatives/Relatives (Ch 121–123) ────────────────────────────
+    "121A": {"enum": "ComparativeType",    "author": "stassen-2013"},
+    "122A": {"enum": "SubjectRelativization", "author": "comrie-2013"},
+    "123A": {"enum": "ObliqueRelativization", "author": "comrie-2013"},
+
+    # ── Morphology (Ch 20–22, 26–27) ──────────────────────────────────
+    "20A": {"enum": "FusionType",          "author": "bickel-nichols-2013"},
+    "21A": {"enum": "ExponenceType",       "author": "bickel-nichols-2013"},
+    "22A": {"enum": "InflectionalSynthesis", "author": "bickel-nichols-2013"},
+    "26A": {"enum": "PrefixSuffixPreference", "author": "dryer-2013e"},
+    "27A": {"enum": "ReduplicationType",   "author": "rubino-2013"},
+
+    # ── Alignment (Ch 98–100) ──────────────────────────────────────────
+    "98A": {"enum": "NPCaseAlignment",     "author": "comrie-2013b"},
+    "99A": {"enum": "PronounCaseAlignment", "author": "comrie-2013b"},
+    "100A": {"enum": "VerbalPersonAlignment", "author": "siewierska-2013b"},
+
+    # ── Predication (Ch 117–120) ───────────────────────────────────────
+    "117A": {"enum": "PredicativePossession", "author": "stassen-2013b"},
+    "118A": {"enum": "PredicativeAdjectiveType", "author": "stassen-2013b"},
+    "119A": {"enum": "NominalLocationalPredication", "author": "stassen-2013b"},
+    "120A": {"enum": "ZeroCopulaType",     "author": "stassen-2013b"},
+
+    # ── Complement/Adverbial Clauses (Ch 121–128) ──────────────────────
+    "124A": {"enum": "WantComplementSubject", "author": "cristofaro-2013"},
+    "125A": {"enum": "PurposeClauseType",  "author": "cristofaro-2013"},
+    "126A": {"enum": "WhenClauseType",     "author": "cristofaro-2013"},
+    "127A": {"enum": "ReasonClauseType",   "author": "cristofaro-2013"},
+    "128A": {"enum": "UtteranceComplementType", "author": "cristofaro-2013"},
+}
+
+
+def load_codes():
+    """Load WALS value codes from codes.csv."""
+    codes = defaultdict(dict)  # feature_id → {number → name}
+    with open(DATA / "codes.csv", encoding="utf-8") as f:
+        for row in csv.DictReader(f):
+            codes[row["Parameter_ID"]][int(row["Number"])] = row["Name"]
+    return codes
+
+
+def load_parameters():
+    """Load WALS feature metadata from parameters.csv."""
+    params = {}
+    with open(DATA / "parameters.csv", encoding="utf-8") as f:
+        for row in csv.DictReader(f):
+            params[row["ID"]] = {
+                "name": row["Name"],
+                "chapter": int(re.match(r'\d+', row["ID"]).group()),
+            }
+    return params
+
+
+def resolve_feature(feature_id, codes, params):
+    """Resolve a feature config — from FEATURES if curated, else auto-generate."""
+    if feature_id in FEATURES:
+        return FEATURES[feature_id]
+
+    if feature_id not in AUTO_FEATURES:
+        return None
+
+    auto = AUTO_FEATURES[feature_id]
+    param = params.get(feature_id, {})
+    feat_codes = codes.get(feature_id, {})
+
+    # Auto-generate values from codes.csv
+    values = {}
+    seen_ctors = set()
+    for num in sorted(feat_codes):
+        label = feat_codes[num]
+        ctor = name_to_constructor(label)
+        # Deduplicate constructor names
+        if ctor in seen_ctors:
+            ctor = f"{ctor}_{num}"
+        seen_ctors.add(ctor)
+        values[num] = (ctor, label)
+
+    return {
+        "name": param.get("name", feature_id),
+        "chapter": param.get("chapter", 0),
+        "enum": auto["enum"],
+        "author": auto.get("author", "wals-2013"),
+        "values": values,
+    }
+
 
 def load_languages():
     """Load WALS language metadata."""
@@ -160,22 +356,8 @@ def lean_safe_string(s):
     return s.replace("\\", "\\\\").replace('"', '\\"')
 
 
-def to_lean_id(name):
-    """Convert a language name to a valid Lean identifier."""
-    # Remove parenthetical qualifiers, keep only alphanumeric + underscore
-    s = re.sub(r"\s*\(.*?\)", "", name)
-    s = re.sub(r"[''ʼ]", "", s)
-    s = re.sub(r"[^a-zA-ZÀ-ÿ0-9]", "_", s)
-    s = re.sub(r"_+", "_", s).strip("_")
-    # Lean identifiers must start with lowercase
-    if s and s[0].isupper():
-        s = s[0].lower() + s[1:]
-    return s
-
-
-def generate_feature(feature_id, langs):
+def generate_feature(feature_id, cfg, langs):
     """Generate a Lean module for a single WALS feature."""
-    cfg = FEATURES[feature_id]
     entries = load_values(feature_id)
     entries.sort(key=lambda e: langs.get(e["language_id"], {}).get("name", ""))
 
@@ -185,7 +367,7 @@ def generate_feature(feature_id, langs):
         counts[e["value"]] += 1
 
     lines = []
-    fid_clean = feature_id.replace("A", "A").replace("B", "B")
+    fid_clean = feature_id
 
     # Module docstring
     lines.append(f'/-!')
@@ -220,20 +402,38 @@ def generate_feature(feature_id, langs):
     lines.append(f'  deriving Repr, BEq, DecidableEq')
     lines.append(f'')
 
-    # Data
-    lines.append(f'/-- Complete WALS {feature_id} dataset ({len(entries)} languages). -/')
-    lines.append(f'def allData : List Datapoint :=')
-
-    for i, entry in enumerate(entries):
-        lang = langs.get(entry["language_id"], {})
-        name = lean_safe_string(lang.get("name", "?"))
-        iso = lang.get("iso", "")
-        wals_code = entry["language_id"]
-        ctor, _ = cfg["values"][entry["value"]]
-        prefix = "  [" if i == 0 else "  ,"
-        lines.append(f'{prefix} {{ walsCode := "{wals_code}", language := "{name}", iso := "{iso}", value := .{ctor} }}')
-
-    lines.append(f'  ]')
+    # Data — split into chunks of 500 for large features to avoid maxRecDepth
+    CHUNK = 500
+    if len(entries) <= CHUNK:
+        lines.append(f'/-- Complete WALS {feature_id} dataset ({len(entries)} languages). -/')
+        lines.append(f'def allData : List Datapoint :=')
+        for i, entry in enumerate(entries):
+            lang = langs.get(entry["language_id"], {})
+            name = lean_safe_string(lang.get("name", "?"))
+            iso = lang.get("iso", "")
+            wals_code = entry["language_id"]
+            ctor, _ = cfg["values"][entry["value"]]
+            prefix = "  [" if i == 0 else "  ,"
+            lines.append(f'{prefix} {{ walsCode := "{wals_code}", language := "{name}", iso := "{iso}", value := .{ctor} }}')
+        lines.append(f'  ]')
+    else:
+        n_chunks = (len(entries) + CHUNK - 1) // CHUNK
+        for ci in range(n_chunks):
+            chunk = entries[ci * CHUNK : (ci + 1) * CHUNK]
+            lines.append(f'private def allData_{ci} : List Datapoint :=')
+            for i, entry in enumerate(chunk):
+                lang = langs.get(entry["language_id"], {})
+                name = lean_safe_string(lang.get("name", "?"))
+                iso = lang.get("iso", "")
+                wals_code = entry["language_id"]
+                ctor, _ = cfg["values"][entry["value"]]
+                prefix = "  [" if i == 0 else "  ,"
+                lines.append(f'{prefix} {{ walsCode := "{wals_code}", language := "{name}", iso := "{iso}", value := .{ctor} }}')
+            lines.append(f'  ]')
+            lines.append(f'')
+        chunk_refs = ' ++ '.join(f'allData_{i}' for i in range(n_chunks))
+        lines.append(f'/-- Complete WALS {feature_id} dataset ({len(entries)} languages). -/')
+        lines.append(f'def allData : List Datapoint := {chunk_refs}')
     lines.append(f'')
 
     # Count verification theorems
@@ -268,9 +468,18 @@ def generate_feature(feature_id, langs):
 
 
 def generate_languages(langs, used_ids):
-    """Generate the shared Languages module."""
+    """Generate the shared Languages module.
+
+    Splits the language list into chunks of 500 to avoid Lean's
+    maxRecDepth limit on large list literals.
+    """
     # Only include languages that appear in at least one generated feature
-    used_langs = {lid: langs[lid] for lid in sorted(used_ids) if lid in langs}
+    sorted_langs = sorted(
+        ((lid, langs[lid]) for lid in sorted(used_ids) if lid in langs),
+        key=lambda x: x[1]["name"]
+    )
+    total = len(sorted_langs)
+    CHUNK = 500
 
     lines = []
     lines.append('/-!')
@@ -279,7 +488,7 @@ def generate_languages(langs, used_ids):
     lines.append('Auto-generated from WALS v2020.4 CLDF data.')
     lines.append('**Do not edit by hand** — regenerate with `python3 scripts/gen_wals.py`.')
     lines.append('')
-    lines.append(f'{len(used_langs)} languages referenced across generated features.')
+    lines.append(f'{total} languages referenced across generated features.')
     lines.append('-/')
     lines.append('')
     lines.append('namespace Core.WALS')
@@ -293,21 +502,31 @@ def generate_languages(langs, used_ids):
     lines.append('  genus : String')
     lines.append('  deriving Repr, BEq, DecidableEq')
     lines.append('')
-    lines.append(f'/-- All languages referenced in generated WALS features ({len(used_langs)}). -/')
-    lines.append('def languages : List Language :=')
 
-    for i, (lid, lang) in enumerate(sorted(used_langs.items(), key=lambda x: x[1]["name"])):
-        name = lean_safe_string(lang["name"])
-        iso = lang["iso"]
-        family = lean_safe_string(lang["family"])
-        genus = lean_safe_string(lang["genus"])
-        prefix = "  [" if i == 0 else "  ,"
-        lines.append(
-            f'{prefix} {{ walsCode := "{lid}", name := "{name}", iso := "{iso}", '
-            f'family := "{family}", genus := "{genus}" }}'
-        )
+    # Split into chunks
+    chunks = []
+    for start in range(0, total, CHUNK):
+        chunk = sorted_langs[start:start + CHUNK]
+        chunks.append(chunk)
 
-    lines.append('  ]')
+    for ci, chunk in enumerate(chunks):
+        lines.append(f'private def languages_{ci} : List Language :=')
+        for i, (lid, lang) in enumerate(chunk):
+            name = lean_safe_string(lang["name"])
+            iso = lang["iso"]
+            family = lean_safe_string(lang["family"])
+            genus = lean_safe_string(lang["genus"])
+            prefix = "  [" if i == 0 else "  ,"
+            lines.append(
+                f'{prefix} {{ walsCode := "{lid}", name := "{name}", iso := "{iso}", '
+                f'family := "{family}", genus := "{genus}" }}'
+            )
+        lines.append('  ]')
+        lines.append('')
+
+    lines.append(f'/-- All languages referenced in generated WALS features ({total}). -/')
+    chunk_refs = ' ++ '.join(f'languages_{i}' for i in range(len(chunks)))
+    lines.append(f'def languages : List Language := {chunk_refs}')
     lines.append('')
     lines.append('/-- Look up a language by WALS code. -/')
     lines.append('def findLanguage (code : String) : Option Language :=')
@@ -320,24 +539,36 @@ def generate_languages(langs, used_ids):
 
 
 def main():
-    feature_ids = sys.argv[1:] if len(sys.argv) > 1 else list(FEATURES.keys())
+    all_known = {**{k: None for k in FEATURES}, **{k: None for k in AUTO_FEATURES}}
+    feature_ids = sys.argv[1:] if len(sys.argv) > 1 else sorted(all_known.keys(),
+        key=lambda x: (int(re.match(r'\d+', x).group()), x))
 
-    # Validate
+    # Load codes.csv and parameters.csv for auto-generation
+    codes = load_codes()
+    params = load_parameters()
+
+    # Validate and resolve
+    resolved = {}
     for fid in feature_ids:
-        if fid not in FEATURES:
-            print(f"Error: unknown feature {fid}. Known: {', '.join(FEATURES.keys())}")
+        cfg = resolve_feature(fid, codes, params)
+        if cfg is None:
+            print(f"Error: unknown feature {fid}.")
+            print(f"  Configured: {', '.join(sorted(FEATURES.keys()))}")
+            print(f"  Auto: {', '.join(sorted(AUTO_FEATURES.keys()))}")
             sys.exit(1)
+        resolved[fid] = cfg
 
     print(f"Loading WALS data from {DATA}")
     langs = load_languages()
     print(f"  {len(langs)} languages loaded")
+    print(f"  {len(resolved)} features to generate")
 
     used_language_ids = set()
 
     for fid in feature_ids:
-        cfg = FEATURES[fid]
+        cfg = resolved[fid]
         print(f"Generating {fid}: {cfg['name']}...")
-        content = generate_feature(fid, langs)
+        content = generate_feature(fid, cfg, langs)
 
         # Collect used language IDs
         entries = load_values(fid)

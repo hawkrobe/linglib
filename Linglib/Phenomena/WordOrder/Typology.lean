@@ -1,4 +1,7 @@
 import Linglib.Core.Lexical.Word
+import Linglib.Core.WALS.Features.F81A
+import Linglib.Core.WALS.Features.F82A
+import Linglib.Core.WALS.Features.F83A
 
 /-!
 # Word-Order Typology (@cite{dryer-haspelmath-2013} / WALS)
@@ -228,18 +231,22 @@ theorem all_exceptions_single_word :
     singleWordExceptions.all isSingleWordDependent = true := by native_decide
 
 -- ============================================================================
--- WALS Aggregate Count Type (local definition)
+-- WALS Distribution Data — derived from generated modules
 -- ============================================================================
+-- Full per-language data lives in Core.WALS.Features.F{81A,82A,83A}.
+-- Aggregate counts are derived from the generated data by filtering.
 
-/-- A single row in a WALS frequency table: a category label and its count. -/
-structure WALSCount where
-  label : String
-  count : Nat
-  deriving Repr, DecidableEq, BEq
+/-- Ch 81 total: 1376 languages. -/
+theorem ch81_total : Core.WALS.F81A.allData.length = 1376 :=
+  Core.WALS.F81A.total_count
 
-/-- Sum of counts in a WALS table. -/
-def WALSCount.totalOf (cs : List WALSCount) : Nat :=
-  cs.foldl (λ acc c => acc + c.count) 0
+/-- Ch 82 total: 1496 languages. -/
+theorem ch82_total : Core.WALS.F82A.allData.length = 1496 :=
+  Core.WALS.F82A.total_count
+
+/-- Ch 83 total: 1518 languages. -/
+theorem ch83_total : Core.WALS.F83A.allData.length = 1518 :=
+  Core.WALS.F83A.total_count
 
 -- ============================================================================
 -- Chapter 81: Basic Order of Subject, Object, and Verb
@@ -253,89 +260,22 @@ def WALSCount.totalOf (cs : List WALSCount) : Nat :=
     Warlpiri, or V2 languages like German where underlying order is debated)
     are classified as "no dominant order."
 
-    Sample: 1377 languages (the largest single-chapter sample in WALS).
-
-    Key finding: SOV (565) and SVO (488) together account for 76.5% of
-    languages; object-initial orders (OVS + OSV) are vanishingly rare (15).
+    Key finding: SOV and SVO together account for >76% of languages;
+    object-initial orders (OVS + OSV) are vanishingly rare.
     This asymmetry is one of the most robust typological generalizations:
     subjects overwhelmingly precede objects. -/
 inductive BasicOrder where
-  /-- Subject-Object-Verb (e.g., Japanese, Turkish, Hindi-Urdu, Korean).
-      The most common basic order worldwide (565/1377 = 41.0%). -/
-  | sov
-  /-- Subject-Verb-Object (e.g., English, Mandarin, Russian, Swahili).
-      The second most common basic order (488/1377 = 35.4%). -/
-  | svo
-  /-- Verb-Subject-Object (e.g., Arabic, Irish, Tagalog, Welsh).
-      The third most common order (95/1377 = 6.9%). -/
-  | vso
-  /-- Verb-Object-Subject (e.g., Malagasy, Tzotzil).
-      Rare: 25/1377 = 1.8%. Concentrated in Austronesian and Mayan. -/
-  | vos
-  /-- Object-Verb-Subject (e.g., Hixkaryana). Extremely rare: 11/1377 = 0.8%.
-      Mostly Cariban languages of South America. -/
-  | ovs
-  /-- Object-Subject-Verb (e.g., Nadeb, Wik Ngathana). The rarest attested
-      order: 4/1377 = 0.3%. Some analyses question whether any language
-      genuinely has OSV as its basic order. -/
-  | osv
-  /-- No single dominant order: either free word order (Warlpiri), or the
-      dominant order is unclear / disputed (German V2). 189/1377 = 13.7%. -/
-  | noDominant
+  | sov | svo | vso | vos | ovs | osv | noDominant
   deriving DecidableEq, BEq, Repr
-
-/-- Chapter 81 distribution: basic order of S, O, V (N = 1377).
-    Counts from @cite{dryer-haspelmath-2013}, WALS Online. -/
-def ch81Counts : List WALSCount :=
-  [ ⟨"SOV", 565⟩
-  , ⟨"SVO", 488⟩
-  , ⟨"VSO", 95⟩
-  , ⟨"VOS", 25⟩
-  , ⟨"OVS", 11⟩
-  , ⟨"OSV", 4⟩
-  , ⟨"No dominant order", 189⟩ ]
-
-/-- Ch 81 total: 1377 languages. -/
-theorem ch81_total : WALSCount.totalOf ch81Counts = 1377 := by native_decide
 
 -- ============================================================================
 -- Chapter 82: Order of Subject and Verb
 -- ============================================================================
 
-/-- WALS Ch 82: Binary classification of S-V order.
-
-    Collapses the six-way classification to just the relative order of
-    subject and verb. Languages where the subject typically precedes the
-    verb (SOV, SVO) are SV; languages where the verb typically precedes the
-    subject (VSO, VOS) are VS. Languages with no dominant S-V order include
-    free word-order languages and some OVS/OSV languages.
-
-    Sample: 1377 languages. SV is overwhelmingly dominant (1048/1377 = 76.1%),
-    reflecting the near-universal tendency for subjects to precede verbs. -/
+/-- WALS Ch 82: Binary classification of S-V order. -/
 inductive SVOrder where
-  /-- Subject precedes verb (SOV, SVO, and most OVS/OSV languages).
-      1048/1377 = 76.1%. -/
-  | sv
-  /-- Verb precedes subject (VSO, VOS). 197/1377 = 14.3%. -/
-  | vs
-  /-- No dominant S-V order. 132/1377 = 9.6%. -/
-  | noDominant
+  | sv | vs | noDominant
   deriving DecidableEq, BEq, Repr
-
-/-- Chapter 82 distribution: order of subject and verb (N = 1377).
-    Counts from @cite{dryer-haspelmath-2013}, WALS Online. -/
-def ch82Counts : List WALSCount :=
-  [ ⟨"SV", 1048⟩
-  , ⟨"VS", 197⟩
-  , ⟨"No dominant order", 132⟩ ]
-
-/-- Ch 82 total: 1377 languages (same sample as Ch 81). -/
-theorem ch82_total : WALSCount.totalOf ch82Counts = 1377 := by native_decide
-
-/-- Chapters 81 and 82 use the same sample. -/
-theorem ch81_ch82_same_sample :
-    WALSCount.totalOf ch81Counts = WALSCount.totalOf ch82Counts := by
-  native_decide
 
 -- ============================================================================
 -- Chapter 83: Order of Object and Verb
@@ -347,29 +287,10 @@ theorem ch81_ch82_same_sample :
     precedes the verb (OV = head-final VP) or follows it (VO = head-initial VP).
     This single parameter correlates with adposition order, genitive order,
     relative clause order, and subordinator order — the head-direction
-    generalization formalized in the cross-tabulations above.
-
-    Sample: 1370 languages. The near-even split (713 OV vs 488 VO) contrasts
-    with the strong SV preference in Ch 82, suggesting that the OV/VO
-    parameter is genuinely free to vary across languages. -/
+    generalization formalized in the cross-tabulations above. -/
 inductive OVOrder where
-  /-- Object precedes verb (SOV, OVS, OSV). 713/1370 = 52.0%. -/
-  | ov
-  /-- Verb precedes object (SVO, VSO, VOS). 488/1370 = 35.6%. -/
-  | vo
-  /-- No dominant O-V order. 169/1370 = 12.3%. -/
-  | noDominant
+  | ov | vo | noDominant
   deriving DecidableEq, BEq, Repr
-
-/-- Chapter 83 distribution: order of object and verb (N = 1370).
-    Counts from @cite{dryer-haspelmath-2013}, WALS Online. -/
-def ch83Counts : List WALSCount :=
-  [ ⟨"OV", 713⟩
-  , ⟨"VO", 488⟩
-  , ⟨"No dominant order", 169⟩ ]
-
-/-- Ch 83 total: 1370 languages. -/
-theorem ch83_total : WALSCount.totalOf ch83Counts = 1370 := by native_decide
 
 -- ============================================================================
 -- Basic Order Language Profiles
@@ -583,7 +504,7 @@ def hixkaryana : BasicOrderProfile :=
   { language := "Hixkaryana"
   , iso := "hix"
   , basicOrder := .ovs
-  , svOrder := .sv
+  , svOrder := .vs
   , ovOrder := .ov
   , notes := "OVS; first demonstrated by Derbyshire (1977); Cariban" }
 
@@ -637,78 +558,65 @@ def countBySVOrder (langs : List BasicOrderProfile) (o : SVOrder) : Nat :=
 def countByOVOrder (langs : List BasicOrderProfile) (o : OVOrder) : Nat :=
   (langs.filter (·.ovOrder == o)).length
 
-/-- Extract the WALS count for a given label from a count list. -/
-def WALSCount.forLabel (cs : List WALSCount) (lbl : String) : Nat :=
-  match cs.find? (·.label == lbl) with
-  | some c => c.count
-  | none   => 0
-
 -- ============================================================================
 -- Typological Generalizations
 -- ============================================================================
 
-/-- Generalization 1: SOV is the most common basic order.
-    SOV (565) > SVO (488) > VSO (95) > VOS (25) > OVS (11) > OSV (4). -/
+-- Abbreviations for WALS filter counts
+private abbrev ch81 := Core.WALS.F81A.allData
+private abbrev ch82 := Core.WALS.F82A.allData
+private abbrev ch83 := Core.WALS.F83A.allData
+
+/-- Generalization 1: SOV is the most common basic order. -/
 theorem sov_most_common :
-    WALSCount.forLabel ch81Counts "SOV" > WALSCount.forLabel ch81Counts "SVO" := by
-  native_decide
+    (ch81.filter (·.value == .sov)).length >
+    (ch81.filter (·.value == .svo)).length := by native_decide
 
-/-- Generalization 2: SOV + SVO together account for the majority of languages
-    with a dominant order (1053 out of 1188 = 88.6%). -/
-theorem sov_svo_majority :
-    565 + 488 > (WALSCount.totalOf ch81Counts - 189) / 2 := by
-  native_decide
-
-/-- SOV + SVO together exceed 75% of all sampled languages. -/
+/-- Generalization 2: SOV + SVO together exceed 75% of all sampled languages. -/
 theorem sov_svo_majority_overall :
-    (565 + 488) * 4 > WALSCount.totalOf ch81Counts * 3 := by
-  native_decide
+    let sov := (ch81.filter (·.value == .sov)).length
+    let svo := (ch81.filter (·.value == .svo)).length
+    (sov + svo) * 4 > ch81.length * 3 := by native_decide
 
-/-- Generalization 3: Object-before-verb orders (SOV + OVS + OSV = 580)
-    slightly outnumber object-after-verb orders (SVO + VSO + VOS = 608)
-    when "no dominant order" is excluded. But OV dominance is clearer in
-    Chapter 83 (713 OV vs 488 VO). -/
-theorem ov_vs_vo_ch81 :
-    let ov := 565 + 11 + 4   -- SOV + OVS + OSV = 580
-    let vo := 488 + 95 + 25  -- SVO + VSO + VOS = 608
-    vo > ov := by
-  native_decide
-
-/-- In Chapter 83's dedicated count, OV (713) outnumbers VO (488). -/
+/-- Generalization 3: In Ch 83, OV slightly outnumbers VO. -/
 theorem ov_dominant_ch83 :
-    WALSCount.forLabel ch83Counts "OV" > WALSCount.forLabel ch83Counts "VO" := by
-  native_decide
+    (ch83.filter (·.value == .ov)).length >
+    (ch83.filter (·.value == .vo)).length := by native_decide
 
-/-- Generalization 4: Subject-first orders (SOV + SVO = 1053) far outnumber
-    verb-first orders (VSO + VOS = 120). Subjects precede objects and verbs
-    in the overwhelming majority of languages. -/
+/-- Generalization 4: Subject-first orders (SOV + SVO) far outnumber
+    verb-first orders (VSO + VOS). -/
 theorem subject_first_dominant :
-    (565 + 488) > (95 + 25) * 8 := by
-  native_decide
+    let sf := (ch81.filter (·.value == .sov)).length +
+              (ch81.filter (·.value == .svo)).length
+    let vf := (ch81.filter (·.value == .vso)).length +
+              (ch81.filter (·.value == .vos)).length
+    sf > vf * 8 := by native_decide
 
-/-- Generalization 5: Object-initial orders (OVS + OSV = 15) are extremely
-    rare — less than 1.1% of the sample. -/
+/-- Generalization 5: Object-initial orders (OVS + OSV) are extremely
+    rare — less than 2% of the sample. -/
 theorem object_initial_rare :
-    (11 + 4) * 100 < WALSCount.totalOf ch81Counts * 2 := by
-  native_decide
+    let oi := (ch81.filter (·.value == .ovs)).length +
+              (ch81.filter (·.value == .osv)).length
+    oi * 100 < ch81.length * 2 := by native_decide
 
 /-- Generalization 6 (Greenberg's Universal 1): In declarative sentences with
     nominal subject and object, the subject almost always precedes the object.
-
-    Of the 1188 languages with a dominant order, 1148 (= SOV + SVO + VSO = 96.6%)
-    have subject before object. Only 40 (= VOS + OVS + OSV = 3.4%) have object
-    before subject. This is one of the strongest typological universals. -/
+    SOV + SVO + VSO (subject before object) vastly outnumber
+    VOS + OVS + OSV (object before subject). -/
 theorem greenberg_universal_1 :
-    let subj_before_obj := 565 + 488 + 95  -- SOV + SVO + VSO = 1148
-    let obj_before_subj := 25 + 11 + 4     -- VOS + OVS + OSV = 40
-    subj_before_obj > obj_before_subj * 28 := by
-  native_decide
+    let subj_before_obj := (ch81.filter (·.value == .sov)).length +
+                           (ch81.filter (·.value == .svo)).length +
+                           (ch81.filter (·.value == .vso)).length
+    let obj_before_subj := (ch81.filter (·.value == .vos)).length +
+                           (ch81.filter (·.value == .ovs)).length +
+                           (ch81.filter (·.value == .osv)).length
+    subj_before_obj > obj_before_subj * 28 := by native_decide
 
-/-- Generalization 7: SV overwhelmingly dominates VS in Ch 82 (1048 vs 197).
+/-- Generalization 7: SV overwhelmingly dominates VS in Ch 82.
     SV languages outnumber VS languages by more than 5 to 1. -/
 theorem sv_dominant :
-    WALSCount.forLabel ch82Counts "SV" > WALSCount.forLabel ch82Counts "VS" * 5 := by
-  native_decide
+    (ch82.filter (·.value == .sv)).length >
+    (ch82.filter (·.value == .vs)).length * 5 := by native_decide
 
 /-- Generalization 8: Cross-chapter consistency — all SOV languages in our
     sample have OV order (Ch 83) and SV order (Ch 82). -/
@@ -804,5 +712,114 @@ theorem sample_vos_count : countByBasicOrder basicOrderProfiles .vos = 2 := by n
 theorem sample_ovs_count : countByBasicOrder basicOrderProfiles .ovs = 1 := by native_decide
 theorem sample_osv_count : countByBasicOrder basicOrderProfiles .osv = 0 := by native_decide
 theorem sample_noDom_count : countByBasicOrder basicOrderProfiles .noDominant = 2 := by native_decide
+
+-- ============================================================================
+-- WALS Grounding: Profile values match generated WALS data
+-- ============================================================================
+
+/-- Convert WALS 81A value to our BasicOrder type. -/
+private def fromWALS81A : Core.WALS.F81A.BasicWordOrder → BasicOrder
+  | .sov => .sov | .svo => .svo | .vso => .vso
+  | .vos => .vos | .ovs => .ovs | .osv => .osv
+  | .noDominantOrder => .noDominant
+
+/-- Convert WALS 82A value to our SVOrder type. -/
+private def fromWALS82A : Core.WALS.F82A.SubjectVerbOrder → SVOrder
+  | .sv => .sv | .vs => .vs | .noDominantOrder => .noDominant
+
+/-- Convert WALS 83A value to our OVOrder type. -/
+private def fromWALS83A : Core.WALS.F83A.ObjectVerbOrder → OVOrder
+  | .ov => .ov | .vo => .vo | .noDominantOrder => .noDominant
+
+/-- For each profile whose language is in WALS Ch 81A, prove its basic order
+    matches the WALS data. Languages not in the WALS sample (Malagasy, Quechua)
+    are excluded — their profiles are ungrounded assertions. -/
+
+-- Ch 81A grounding (basic word order)
+theorem japanese_order_wals :
+    (Core.WALS.F81A.lookup "jpn").map (fromWALS81A ·.value) = some japanese.basicOrder := by
+  native_decide
+theorem turkish_order_wals :
+    (Core.WALS.F81A.lookup "tur").map (fromWALS81A ·.value) = some turkish.basicOrder := by
+  native_decide
+theorem hindiUrdu_order_wals :
+    (Core.WALS.F81A.lookup "hin").map (fromWALS81A ·.value) = some hindiUrdu.basicOrder := by
+  native_decide
+theorem korean_order_wals :
+    (Core.WALS.F81A.lookup "kor").map (fromWALS81A ·.value) = some korean.basicOrder := by
+  native_decide
+theorem basque_order_wals :
+    (Core.WALS.F81A.lookup "bsq").map (fromWALS81A ·.value) = some basque.basicOrder := by
+  native_decide
+theorem english_order_wals :
+    (Core.WALS.F81A.lookup "eng").map (fromWALS81A ·.value) = some english.basicOrder := by
+  native_decide
+theorem mandarin_order_wals :
+    (Core.WALS.F81A.lookup "mnd").map (fromWALS81A ·.value) = some mandarinChinese.basicOrder := by
+  native_decide
+theorem russian_order_wals :
+    (Core.WALS.F81A.lookup "rus").map (fromWALS81A ·.value) = some russian.basicOrder := by
+  native_decide
+theorem swahili_order_wals :
+    (Core.WALS.F81A.lookup "swa").map (fromWALS81A ·.value) = some swahili.basicOrder := by
+  native_decide
+theorem indonesian_order_wals :
+    (Core.WALS.F81A.lookup "ind").map (fromWALS81A ·.value) = some indonesian.basicOrder := by
+  native_decide
+theorem arabic_order_wals :
+    (Core.WALS.F81A.lookup "ams").map (fromWALS81A ·.value) = some arabicMSA.basicOrder := by
+  native_decide
+theorem irish_order_wals :
+    (Core.WALS.F81A.lookup "iri").map (fromWALS81A ·.value) = some irish.basicOrder := by
+  native_decide
+theorem tagalog_order_wals :
+    (Core.WALS.F81A.lookup "tag").map (fromWALS81A ·.value) = some tagalog.basicOrder := by
+  native_decide
+theorem welsh_order_wals :
+    (Core.WALS.F81A.lookup "wec").map (fromWALS81A ·.value) = some welsh.basicOrder := by
+  native_decide
+theorem tzotzil_order_wals :
+    (Core.WALS.F81A.lookup "tzo").map (fromWALS81A ·.value) = some tzotzil.basicOrder := by
+  native_decide
+theorem hixkaryana_order_wals :
+    (Core.WALS.F81A.lookup "hix").map (fromWALS81A ·.value) = some hixkaryana.basicOrder := by
+  native_decide
+theorem german_order_wals :
+    (Core.WALS.F81A.lookup "ger").map (fromWALS81A ·.value) = some germanV2.basicOrder := by
+  native_decide
+theorem warlpiri_order_wals :
+    (Core.WALS.F81A.lookup "wrl").map (fromWALS81A ·.value) = some warlpiri.basicOrder := by
+  native_decide
+
+-- Ch 82A grounding (subject-verb order)
+theorem japanese_sv_wals :
+    (Core.WALS.F82A.lookup "jpn").map (fromWALS82A ·.value) = some japanese.svOrder := by
+  native_decide
+theorem english_sv_wals :
+    (Core.WALS.F82A.lookup "eng").map (fromWALS82A ·.value) = some english.svOrder := by
+  native_decide
+theorem arabic_sv_wals :
+    (Core.WALS.F82A.lookup "ams").map (fromWALS82A ·.value) = some arabicMSA.svOrder := by
+  native_decide
+theorem hixkaryana_sv_wals :
+    (Core.WALS.F82A.lookup "hix").map (fromWALS82A ·.value) = some hixkaryana.svOrder := by
+  native_decide
+theorem warlpiri_sv_wals :
+    (Core.WALS.F82A.lookup "wrl").map (fromWALS82A ·.value) = some warlpiri.svOrder := by
+  native_decide
+
+-- Ch 83A grounding (object-verb order)
+theorem japanese_ov_wals :
+    (Core.WALS.F83A.lookup "jpn").map (fromWALS83A ·.value) = some japanese.ovOrder := by
+  native_decide
+theorem english_ov_wals :
+    (Core.WALS.F83A.lookup "eng").map (fromWALS83A ·.value) = some english.ovOrder := by
+  native_decide
+theorem german_ov_wals :
+    (Core.WALS.F83A.lookup "ger").map (fromWALS83A ·.value) = some germanV2.ovOrder := by
+  native_decide
+theorem warlpiri_ov_wals :
+    (Core.WALS.F83A.lookup "wrl").map (fromWALS83A ·.value) = some warlpiri.ovOrder := by
+  native_decide
 
 end Phenomena.WordOrder.Typology

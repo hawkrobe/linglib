@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.228.59] - 2026-03-06
+
+### Added
+- **Core/WALS/Features/**: Extend WALS pipeline from 8 to 65 features covering word order (81A–90A), articles (37A–38A), case (49A–51A), tense/aspect (65A–69A), modality/evidentiality (74A–78A), negation (112A–115A, 143A), questions (116A), gender/number (30A–35A), reflexives (47A), comparatives/relatives (121A–123A), morphology (20A–22A, 26A–27A), alignment (98A–100A), predication (117A–120A), and complement clauses (124A–128A)
+- **Phenomena/WordOrder/Typology.lean**: 27 WALS grounding theorems (18 for Ch 81A, 5 for Ch 82A, 4 for Ch 83A) proving per-language profiles match generated data
+
+### Changed
+- **scripts/gen_wals.py**: Add `AUTO_FEATURES` for auto-generating Lean constructors from WALS value labels; add list chunking (500 per chunk) for features with >500 languages to avoid Lean maxRecDepth limits
+- **Phenomena/WordOrder/Typology.lean**: Fix Hixkaryana svOrder (`.sv` → `.vs` — OVS has verb before subject); replace hand-coded `WALSCount` aggregate data with generated WALS module references; upgrade 7 generalization theorems to derive counts from generated data
+- **data/README.md**: Document organization pattern for future raw data sources
+
 ## [0.228.58] - 2026-03-06
 
 ### Added
