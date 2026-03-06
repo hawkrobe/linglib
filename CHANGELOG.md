@@ -14,9 +14,6 @@
 ### Removed
 - **Theories/Pragmatics/RSA/Implementations/{BarnettEtAl2022,ScontrasTonhauser2025,TesslerGoodman2019}.lean**: Moved to Phenomena/ per dependency discipline (study files belong in Phenomena/Studies/, not Theories/)
 
-### Changed
-- **CLAUDE.md**: Clarify git convention on AI attribution
-
 ## [0.228.63] - 2026-03-06
 
 ### Added
