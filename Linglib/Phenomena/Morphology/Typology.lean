@@ -1,4 +1,9 @@
 import Mathlib.Data.Rat.Defs
+import Linglib.Core.WALS.Features.F20A
+import Linglib.Core.WALS.Features.F21A
+import Linglib.Core.WALS.Features.F22A
+import Linglib.Core.WALS.Features.F26A
+import Linglib.Core.WALS.Features.F27A
 
 /-!
 # Morphological Typology: Paradigm Complexity
@@ -23,6 +28,12 @@ across all ten languages.
 -/
 
 namespace Phenomena.Morphology.Typology
+
+private abbrev ch20 := Core.WALS.F20A.allData
+private abbrev ch21 := Core.WALS.F21A.allData
+private abbrev ch22 := Core.WALS.F22A.allData
+private abbrev ch26 := Core.WALS.F26A.allData
+private abbrev ch27 := Core.WALS.F27A.allData
 
 -- ============================================================================
 -- §1. Language Data Records
@@ -424,6 +435,61 @@ def ch27Distribution : List WALSCount :=
 /-- Ch 27 total: 368 languages. -/
 theorem ch27_total :
     ch27Distribution.foldl (λ acc c => acc + c.count) 0 = 368 := by native_decide
+
+-- ============================================================================
+-- §4.7 WALS Converter Functions
+-- ============================================================================
+
+/-- Convert WALS 20A fusion type to the local three-way `Fusion` classification.
+    Returns `none` for mixed categories (tonal/isolating+concatenative) that
+    do not map cleanly to the coarser local type. -/
+private def fromWALS20A : Core.WALS.F20A.FusionType → Option Fusion
+  | .exclusivelyConcatenative => some .concatenative
+  | .exclusivelyIsolating     => some .isolating
+  | .exclusivelyTonal         => some .nonlinear
+  | .ablautConcatenative      => some .nonlinear
+  | .tonalIsolating           => none  -- mixed: no clean mapping
+  | .tonalConcatenative       => none  -- mixed: no clean mapping
+  | .isolatingConcatenative   => none  -- mixed: no clean mapping
+
+/-- Convert WALS 21A exponence type to the local `Exponence` classification.
+    Returns `none` for `noCase`, since WALS 21A specifically evaluates the
+    exponence of *case formatives* — a language without case provides no
+    information about its overall exponence pattern. -/
+private def fromWALS21A : Core.WALS.F21A.ExponenceType → Option Exponence
+  | .monoexponentialCase  => some .monoexponential
+  | .caseNumber           => some .polyexponential
+  | .caseReferentiality   => some .polyexponential
+  | .caseTam              => some .polyexponential
+  | .noCase               => none  -- no case = no information about exponence
+
+/-- Convert WALS 22A inflectional synthesis to the local three-way
+    `VerbSynthesis` classification. -/
+private def fromWALS22A : Core.WALS.F22A.InflectionalSynthesis → VerbSynthesis
+  | .categoryPerWord0_1    => .low
+  | .categoriesPerWord2_3  => .low
+  | .categoriesPerWord4_5  => .moderate
+  | .categoriesPerWord6_7  => .moderate
+  | .categoriesPerWord8_9  => .high
+  | .categoriesPerWord10_11 => .high
+  | .categoriesPerWord12_13 => .high
+
+/-- Convert WALS 26A prefix/suffix preference to the local `PrefixSuffix`
+    classification. This is a direct 1-to-1 mapping. -/
+private def fromWALS26A : Core.WALS.F26A.PrefixSuffixPreference → PrefixSuffix
+  | .littleAffixation             => .littleAffixation
+  | .stronglySuffixing            => .stronglySuffixing
+  | .weaklySuffixing              => .weaklySuffixing
+  | .equalPrefixingAndSuffixing   => .equalPrefixSuffix
+  | .weaklyPrefixing              => .weaklyPrefixing
+  | .strongPrefixing              => .stronglyPrefixing
+
+/-- Convert WALS 27A reduplication type to the local `Reduplication`
+    classification. This is a direct 1-to-1 mapping. -/
+private def fromWALS27A : Core.WALS.F27A.ReduplicationType → Reduplication
+  | .productiveFullAndPartialReduplication => .productiveFull
+  | .fullReduplicationOnly                => .fullOnly
+  | .noProductiveReduplication            => .noProductive
 
 -- ============================================================================
 -- §5. MorphProfile Structure
@@ -1101,5 +1167,166 @@ theorem little_affixation_iff_isolating :
     allMorphProfiles.all (λ p =>
       (p.prefixSuffix == .littleAffixation) == p.isIsolating) = true := by
   native_decide
+
+-- ============================================================================
+-- §15. WALS Grounding: Per-Language Verification
+-- ============================================================================
+
+/-!
+## WALS Grounding
+
+Per-language grounding theorems verify that our `MorphProfile` values are
+consistent with WALS generated data where a language appears in the WALS
+sample and the mapping from WALS categories to local types is unambiguous.
+
+Not all profile×chapter combinations can be grounded:
+- WALS 20A evaluates the fusion of *selected inflectional formatives*, which
+  can differ from a language's overall morphological type (e.g., Russian's
+  selected formatives are concatenative even though the system is broadly
+  fusional). We ground only where the two notions coincide.
+- WALS 21A evaluates *case* exponence specifically. Languages without case
+  (noCase) provide no information about overall exponence, so those are
+  skipped.
+- Arabic (MSA) and Quechua (Cusco) are absent from most WALS chapters;
+  Arabic (Egyptian) appears under code "aeg" but is a different variety.
+-/
+
+-- --------------------------------------------------------------------------
+-- §15.1 Chapter 20A: Fusion (only languages where WALS agrees with profile)
+-- --------------------------------------------------------------------------
+
+theorem english_ch20 :
+    (Core.WALS.F20A.lookup "eng").bind (fromWALS20A ·.value) =
+    some englishMorph.fusion := by native_decide
+theorem japanese_ch20 :
+    (Core.WALS.F20A.lookup "jpn").bind (fromWALS20A ·.value) =
+    some japaneseMorph.fusion := by native_decide
+theorem turkish_ch20 :
+    (Core.WALS.F20A.lookup "tur").bind (fromWALS20A ·.value) =
+    some turkishMorph.fusion := by native_decide
+theorem finnish_ch20 :
+    (Core.WALS.F20A.lookup "fin").bind (fromWALS20A ·.value) =
+    some finnishMorph.fusion := by native_decide
+theorem swahili_ch20 :
+    (Core.WALS.F20A.lookup "swa").bind (fromWALS20A ·.value) =
+    some swahiliMorph.fusion := by native_decide
+theorem hindi_ch20 :
+    (Core.WALS.F20A.lookup "hin").bind (fromWALS20A ·.value) =
+    some hindiMorph.fusion := by native_decide
+theorem tagalog_ch20 :
+    (Core.WALS.F20A.lookup "tag").bind (fromWALS20A ·.value) =
+    some tagalogMorph.fusion := by native_decide
+theorem hungarian_ch20 :
+    (Core.WALS.F20A.lookup "hun").bind (fromWALS20A ·.value) =
+    some hungarianMorph.fusion := by native_decide
+theorem korean_ch20 :
+    (Core.WALS.F20A.lookup "kor").bind (fromWALS20A ·.value) =
+    some koreanMorph.fusion := by native_decide
+
+-- --------------------------------------------------------------------------
+-- §15.2 Chapter 22A: Verb Synthesis
+-- --------------------------------------------------------------------------
+
+theorem english_ch22 :
+    (Core.WALS.F22A.lookup "eng").map (fromWALS22A ·.value) =
+    some englishMorph.verbSynthesis := by native_decide
+theorem mandarin_ch22 :
+    (Core.WALS.F22A.lookup "mnd").map (fromWALS22A ·.value) =
+    some mandarinMorph.verbSynthesis := by native_decide
+theorem japanese_ch22 :
+    (Core.WALS.F22A.lookup "jpn").map (fromWALS22A ·.value) =
+    some japaneseMorph.verbSynthesis := by native_decide
+theorem turkish_ch22 :
+    (Core.WALS.F22A.lookup "tur").map (fromWALS22A ·.value) =
+    some turkishMorph.verbSynthesis := by native_decide
+theorem russian_ch22 :
+    (Core.WALS.F22A.lookup "rus").map (fromWALS22A ·.value) =
+    some russianMorph.verbSynthesis := by native_decide
+theorem georgian_ch22 :
+    (Core.WALS.F22A.lookup "geo").map (fromWALS22A ·.value) =
+    some georgianMorph.verbSynthesis := by native_decide
+theorem indonesian_ch22 :
+    (Core.WALS.F22A.lookup "ind").map (fromWALS22A ·.value) =
+    some indonesianMorph.verbSynthesis := by native_decide
+theorem korean_ch22 :
+    (Core.WALS.F22A.lookup "kor").map (fromWALS22A ·.value) =
+    some koreanMorph.verbSynthesis := by native_decide
+theorem spanish_ch22 :
+    (Core.WALS.F22A.lookup "spa").map (fromWALS22A ·.value) =
+    some spanishMorph.verbSynthesis := by native_decide
+theorem hungarian_ch22 :
+    (Core.WALS.F22A.lookup "hun").map (fromWALS22A ·.value) =
+    some hungarianMorph.verbSynthesis := by native_decide
+theorem thai_ch22 :
+    (Core.WALS.F22A.lookup "tha").map (fromWALS22A ·.value) =
+    some thaiMorph.verbSynthesis := by native_decide
+
+-- --------------------------------------------------------------------------
+-- §15.3 Chapter 26A: Prefixing vs Suffixing
+-- --------------------------------------------------------------------------
+
+theorem japanese_ch26 :
+    (Core.WALS.F26A.lookup "jpn").map (fromWALS26A ·.value) =
+    some japaneseMorph.prefixSuffix := by native_decide
+theorem turkish_ch26 :
+    (Core.WALS.F26A.lookup "tur").map (fromWALS26A ·.value) =
+    some turkishMorph.prefixSuffix := by native_decide
+theorem finnish_ch26 :
+    (Core.WALS.F26A.lookup "fin").map (fromWALS26A ·.value) =
+    some finnishMorph.prefixSuffix := by native_decide
+theorem swahili_ch26 :
+    (Core.WALS.F26A.lookup "swa").map (fromWALS26A ·.value) =
+    some swahiliMorph.prefixSuffix := by native_decide
+theorem hindi_ch26 :
+    (Core.WALS.F26A.lookup "hin").map (fromWALS26A ·.value) =
+    some hindiMorph.prefixSuffix := by native_decide
+theorem georgian_ch26 :
+    (Core.WALS.F26A.lookup "geo").map (fromWALS26A ·.value) =
+    some georgianMorph.prefixSuffix := by native_decide
+theorem korean_ch26 :
+    (Core.WALS.F26A.lookup "kor").map (fromWALS26A ·.value) =
+    some koreanMorph.prefixSuffix := by native_decide
+theorem hungarian_ch26 :
+    (Core.WALS.F26A.lookup "hun").map (fromWALS26A ·.value) =
+    some hungarianMorph.prefixSuffix := by native_decide
+theorem thai_ch26 :
+    (Core.WALS.F26A.lookup "tha").map (fromWALS26A ·.value) =
+    some thaiMorph.prefixSuffix := by native_decide
+
+-- --------------------------------------------------------------------------
+-- §15.4 Chapter 27A: Reduplication
+-- --------------------------------------------------------------------------
+
+theorem english_ch27 :
+    (Core.WALS.F27A.lookup "eng").map (fromWALS27A ·.value) =
+    some englishMorph.reduplication := by native_decide
+theorem finnish_ch27 :
+    (Core.WALS.F27A.lookup "fin").map (fromWALS27A ·.value) =
+    some finnishMorph.reduplication := by native_decide
+theorem russian_ch27 :
+    (Core.WALS.F27A.lookup "rus").map (fromWALS27A ·.value) =
+    some russianMorph.reduplication := by native_decide
+theorem swahili_ch27 :
+    (Core.WALS.F27A.lookup "swa").map (fromWALS27A ·.value) =
+    some swahiliMorph.reduplication := by native_decide
+theorem german_ch27 :
+    (Core.WALS.F27A.lookup "ger").map (fromWALS27A ·.value) =
+    some germanMorph.reduplication := by native_decide
+theorem spanish_ch27 :
+    (Core.WALS.F27A.lookup "spa").map (fromWALS27A ·.value) =
+    some spanishMorph.reduplication := by native_decide
+theorem tagalog_ch27 :
+    (Core.WALS.F27A.lookup "tag").map (fromWALS27A ·.value) =
+    some tagalogMorph.reduplication := by native_decide
+
+-- --------------------------------------------------------------------------
+-- §15.5 WALS Dataset Size Verification
+-- --------------------------------------------------------------------------
+
+theorem ch20_size : ch20.length = 165 := by native_decide
+theorem ch21_size : ch21.length = 162 := by native_decide
+theorem ch22_size : ch22.length = 145 := by native_decide
+theorem ch26_size : ch26.length = 969 := by native_decide
+theorem ch27_size : ch27.length = 368 := by native_decide
 
 end Phenomena.Morphology.Typology

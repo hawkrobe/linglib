@@ -429,4 +429,236 @@ theorem unif_negative_introspection {W E : Type*} [FiniteWorlds W]
   have := unif_threshold_stable kp hUNIF i θ φ w v (List.mem_filter.mp hv).2
   simp [← this, h]
 
+-- ============================================================================
+-- §8. Axiom W5 (Null Empty)
+-- ============================================================================
+
+/-- The empty proposition has credence 0.
+    This is @cite{fagin-halpern-1994}'s axiom W5: w_i(false) = 0.
+    In standard probability, P(∅) = 0 follows from normalization +
+    additivity. We state it separately since `WorldCredence` does not
+    include additivity as a structural axiom. -/
+def NullEmpty {W E : Type*} (kp : KripkeKP W E) : Prop :=
+  ∀ (i : E) (w : W), kp.worldCredence i w (fun _ => false) = 0
+
+-- ============================================================================
+-- §9. Miller's Principle
+-- ============================================================================
+
+/-- Miller's principle: w_i(φ) ≥ b · w_i(w_i(φ) ≥ b).
+
+    @cite{fagin-halpern-1994} (p. 352): under UNIF, this axiom connecting
+    higher-order probabilities to first-order probabilities holds. It says
+    that the agent's credence in φ is at least b times the agent's credence
+    that the agent's credence in φ is at least b.
+
+    Under UNIF, the i-probability formula (w_i(φ) ≥ b) is constant within
+    each information cell (by `unif_threshold_stable`), so the inner
+    credence w_i(w_i(φ) ≥ b) is either 0 or 1:
+
+    - If w_i(φ) ≥ b: the formula is true everywhere in the cell, so
+      w_i(w_i(φ) ≥ b) = 1 (by CONS + Normalized), and RHS = b ≤ w_i(φ). ✓
+    - If w_i(φ) < b: the formula is false everywhere in the cell, so
+      w_i(w_i(φ) ≥ b) = 0 (by CONS + NullEmpty), and RHS = 0 ≤ w_i(φ). ✓
+
+    Miller's principle completely characterizes uniform structures
+    (@cite{fagin-halpern-1994}, citing Halpern 1991). It is the
+    probabilistic analogue of the KD45 introspection axioms. -/
+theorem miller_principle {W E : Type*}
+    (kp : KripkeKP W E)
+    (hUNIF : UNIF kp) (hCONS : CONS kp)
+    (hNorm : Normalized kp) (hNull : NullEmpty kp)
+    (hNonneg : Nonnegative kp)
+    (i : E) (b : ℚ) (φ : BProp W) (w : W) :
+    kp.worldCredence i w φ ≥
+      b * kp.worldCredence i w (nestedThreshold kp.worldCredence b i φ) := by
+  cases h : nestedThreshold kp.worldCredence b i φ w with
+  | false =>
+    -- threshold is false at w, hence at all accessible worlds (UNIF)
+    have hAgree : ∀ v, kp.accessRel i w v = true →
+        nestedThreshold kp.worldCredence b i φ v = (fun _ => false) v := by
+      intro v hv
+      have := unif_threshold_stable kp hUNIF i b φ w v hv
+      simp only [h] at this; exact this.symm
+    rw [hCONS i w _ _ hAgree, hNull i w, mul_zero]
+    exact hNonneg i w φ
+  | true =>
+    -- threshold is true at w, hence at all accessible worlds (UNIF)
+    have hAgree : ∀ v, kp.accessRel i w v = true →
+        nestedThreshold kp.worldCredence b i φ v = (fun _ => true) v := by
+      intro v hv
+      have := unif_threshold_stable kp hUNIF i b φ w v hv
+      simp only [h] at this; exact this.symm
+    rw [hCONS i w _ _ hAgree, hNorm i w, mul_one]
+    simp only [nestedThreshold, decide_eq_true_eq] at h
+    linarith
+
+-- ============================================================================
+-- §10. Lemma 5.1: C_G^b is the Greatest Pre-Fixed-Point
+-- ============================================================================
+
+/-- **Lemma 5.1** (@cite{fagin-halpern-1994}, Section 5):
+    C_G^b(φ) is the greatest fixed-point solution of
+    X ⟺ E_G^b(φ ∧ X).
+
+    This theorem proves the "greatest" direction: if ψ is a
+    pre-fixed-point of the operator X ↦ E_G^b(φ ∧ X), meaning
+    ψ(w) → E_G^b(φ ∧ ψ)(w), then ψ ≤ (F_G^b)^k(φ) for all k.
+
+    Together with the trivial observation that `probCKIter` is itself
+    a fixed point (by definition), this characterizes `commonProbKnowledge`
+    as the greatest pre-fixed-point.
+
+    The proof is by induction on k. The base case (k=0) is trivial since
+    (F_G^b)⁰ = true. The inductive step uses `MeasureMonotone`: since
+    ψ ≤ (F_G^b)^k (by IH), we have φ ∧ ψ ≤ φ ∧ (F_G^b)^k, and
+    monotonicity of credence gives E_G^b(φ ∧ ψ) ≤ E_G^b(φ ∧ (F_G^b)^k)
+    = (F_G^b)^{k+1}. Combined with the pre-fixed-point hypothesis
+    ψ ≤ E_G^b(φ ∧ ψ), we get ψ ≤ (F_G^b)^{k+1}. -/
+theorem probCK_greatest_prefixedpoint {W E : Type*}
+    (wcr : WorldCredence E W) (hMono : MeasureMonotone wcr)
+    (group : List E) (b : ℚ) (φ ψ : BProp W)
+    (hPFP : ∀ w, ψ w = true →
+      everyoneProbably wcr group b (fun v => φ v && ψ v) w = true) :
+    ∀ k w, ψ w = true → probCKIter wcr group b φ k w = true := by
+  intro k
+  induction k with
+  | zero => intros; rfl
+  | succ m ih =>
+    intro w hψ
+    unfold probCKIter everyoneProbably
+    rw [List.all_eq_true]
+    intro i hi
+    simp only [nestedThreshold, decide_eq_true_eq]
+    have hSub : (fun v => φ v && ψ v) ≤
+                (fun v => φ v && probCKIter wcr group b φ m v) :=
+      fun v => by
+        show (φ v && ψ v) ≤ (φ v && probCKIter wcr group b φ m v)
+        cases φ v with
+        | false => exact le_refl _
+        | true =>
+          simp only [Bool.true_and]
+          cases hψv : ψ v with
+          | false => exact Bool.false_le _
+          | true => exact le_of_eq (ih v hψv).symm
+    have hPFP_i : wcr i w (fun v => φ v && ψ v) ≥ b := by
+      have := hPFP w hψ
+      unfold everyoneProbably at this
+      have := List.all_eq_true.mp this i hi
+      simp only [nestedThreshold, decide_eq_true_eq] at this
+      exact this
+    linarith [hMono i w hSub]
+
+-- ============================================================================
+-- §11. Figure 1 Counterexample: Naive Iteration ≠ F_G^b
+-- ============================================================================
+
+/-! ### Figure 1 Counterexample
+
+@cite{fagin-halpern-1994} (Section 5) shows that the "obvious" definition
+of probabilistic common knowledge C_G^b as the infinite conjunction
+E_G^b φ ∧ (E_G^b)² φ ∧ ··· is **incorrect**. Their 4-state counterexample
+(Figure 1) demonstrates a structure where the naive iteration succeeds at
+all levels but the correct F_G^b-based definition fails.
+
+The structure M has states s₁, s₂, s₃, s₄ (encoded as Fin 4 = 0, 1, 2, 3):
+- Agent 1 partitions worlds into {s₁,s₂} | {s₃,s₄}
+- Agent 2 partitions worlds into {s₁,s₃} | {s₂,s₄}
+- p = true at s₂ and s₃ (false at s₁ and s₄)
+- Probability: uniform within first cell, all mass on s₄ in second cell
+
+At s₁:
+- E_G^{1/2} p holds (both agents assign probability 1/2 to p)
+- The naive (E_G^{1/2})^k p holds for all k (stabilizes at {s₁})
+- But p is FALSE at s₁, so p ∧ E_G^{1/2} p = ∅
+- Therefore (F_G^{1/2})² p = E_G^{1/2}(∅) = false
+- The correct C_G^{1/2} p is false at s₁ -/
+
+section Figure1
+
+/-- Proposition p from Figure 1: true at s₂ (1) and s₃ (2). -/
+private def fig1P : BProp (Fin 4) := fun w =>
+  match w.val with
+  | 1 | 2 => true
+  | _ => false
+
+/-- Figure 1 credence function (SDP structure).
+    Agent 0 at s₁,s₂: uniform on {s₁, s₂}
+    Agent 0 at s₃,s₄: mass 1 on s₄
+    Agent 1 at s₁,s₃: uniform on {s₁, s₃}
+    Agent 1 at s₂,s₄: mass 1 on s₄ -/
+private def fig1Credence : WorldCredence (Fin 2) (Fin 4) :=
+  fun agent world φ =>
+    let b (w : Fin 4) : ℚ := if φ w then 1 else 0
+    match agent.val, world.val with
+    | 0, 0 | 0, 1 => 1/2 * b 0 + 1/2 * b 1
+    | 0, _ => b 3
+    | _, 0 | _, 2 => 1/2 * b 0 + 1/2 * b 2
+    | _, _ => b 3
+
+private def fig1Group : List (Fin 2) := [0, 1]
+
+/-- Naive iteration (E_G^b)^k: just iterates everyoneProbably without
+    conjoining φ at each level. This is the **incorrect** definition
+    that @cite{fagin-halpern-1994} shows fails for probabilistic CK.
+    Compare with `probCKIter` which uses the correct F_G^b operator. -/
+def naiveIter {W E : Type*} (wcr : WorldCredence E W)
+    (group : List E) (b : ℚ) (φ : BProp W) : ℕ → BProp W
+  | .zero => φ
+  | .succ n => everyoneProbably wcr group b (naiveIter wcr group b φ n)
+
+/-- At s₁, the naive iteration succeeds at level 1: E_G^{1/2} p is true. -/
+theorem fig1_naive_level1 :
+    naiveIter fig1Credence fig1Group (1/2) fig1P 1 0 = true := by native_decide
+
+/-- At s₁, the naive iteration succeeds at level 2: (E_G^{1/2})² p is true. -/
+theorem fig1_naive_level2 :
+    naiveIter fig1Credence fig1Group (1/2) fig1P 2 0 = true := by native_decide
+
+/-- The naive iteration stabilizes after level 1 (pointwise on all worlds). -/
+private theorem fig1_naive_stable :
+    ∀ w : Fin 4,
+      naiveIter fig1Credence fig1Group (1/2) fig1P 2 w =
+      naiveIter fig1Credence fig1Group (1/2) fig1P 1 w := by native_decide
+
+/-- All naive levels ≥ 1 agree pointwise with level 1. -/
+private theorem fig1_naive_eq_one :
+    ∀ k, naiveIter fig1Credence fig1Group (1/2) fig1P (k + 1) =
+         naiveIter fig1Credence fig1Group (1/2) fig1P 1 := by
+  intro k
+  induction k with
+  | zero => rfl
+  | succ m ih =>
+    show everyoneProbably fig1Credence fig1Group (1/2)
+      (naiveIter fig1Credence fig1Group (1/2) fig1P (m + 1)) =
+      naiveIter fig1Credence fig1Group (1/2) fig1P 1
+    rw [ih]
+    exact funext fig1_naive_stable
+
+/-- The naive iteration succeeds at s₁ for ALL levels k ≥ 1.
+    Since levels 1 and 2 agree pointwise, all higher levels also agree. -/
+theorem fig1_naive_all_levels :
+    ∀ k, naiveIter fig1Credence fig1Group (1/2) fig1P (k + 1) 0 = true := by
+  intro k
+  rw [show naiveIter fig1Credence fig1Group (1/2) fig1P (k + 1) =
+          naiveIter fig1Credence fig1Group (1/2) fig1P 1 from fig1_naive_eq_one k]
+  native_decide
+
+/-- At s₁, the CORRECT F_G^{1/2} iteration fails at level 2.
+    This is because p ∧ E_G^{1/2} p = ∅ (p is false at s₁,
+    the only world where E_G^{1/2} p holds). -/
+theorem fig1_correct_level2_false :
+    probCKIter fig1Credence fig1Group (1/2) fig1P 2 0 = false := by native_decide
+
+/-- **The core counterexample**: the naive iteration succeeds at s₁ where
+    the correct F_G^b-based definition fails. This proves that the
+    definitions are genuinely different and justifies FH94's use of the
+    F_G^b operator for probabilistic common knowledge. -/
+theorem fig1_naive_vs_correct :
+    (∀ k, naiveIter fig1Credence fig1Group (1/2) fig1P (k + 1) 0 = true) ∧
+    probCKIter fig1Credence fig1Group (1/2) fig1P 2 0 = false :=
+  ⟨fig1_naive_all_levels, fig1_correct_level2_false⟩
+
+end Figure1
+
 end Semantics.Modality.KnowledgeProbability

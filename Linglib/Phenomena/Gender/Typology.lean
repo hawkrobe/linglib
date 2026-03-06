@@ -1070,4 +1070,207 @@ theorem sample_diversity :
     (allProfiles.filter (λ p => p.genderCount != .none)).length >= 5 := by
   native_decide
 
+-- ============================================================================
+-- WALS Converter Functions
+-- ============================================================================
+
+/-- Convert WALS F30A gender count to our GenderCount type. -/
+private def fromWALS30A : Core.WALS.F30A.GenderCount → GenderCount
+  | .none       => .none
+  | .two        => .two
+  | .three      => .three
+  | .four       => .four
+  | .fiveOrMore => .fivePlus
+
+/-- Convert WALS F31A gender basis to our GenderBasis type. -/
+private def fromWALS31A : Core.WALS.F31A.GenderBasis → GenderBasis
+  | .noGender    => .noGender
+  | .sexBased    => .sexBased
+  | .nonSexBased => .nonSexBased
+
+/-- Convert WALS F32A assignment system to our AssignmentSystem type. -/
+private def fromWALS32A : Core.WALS.F32A.SystemsOfGenderAssignment → AssignmentSystem
+  | .noGender          => .noGender
+  | .semantic          => .semanticOnly
+  | .semanticAndFormal => .semanticAndFormal
+
+-- ============================================================================
+-- WALS Grounding Theorems
+-- ============================================================================
+
+/-! Per-language grounding theorems verify that each profile's field values
+agree with the corresponding WALS chapter data via the converter functions.
+
+Languages with known discrepancies between our profile classifications and WALS
+are skipped on the discrepant chapter:
+- **English**: WALS F30A records 3 genders (pronominal he/she/it), but our
+  profile treats English as genderless (no gender agreement on nouns/adjectives).
+- **Georgian**: WALS F30A records no gender, but our profile follows analyses
+  that posit 4 categories (rational/non-rational × older masc/fem trace).
+- **Dyirbal**: WALS F31A records sex-based, but our profile classifies the
+  system as non-sex-based (the 4-way system includes edibility/natural-force
+  categories beyond biological sex). -/
+
+section WALSGrounding
+
+-- ── Chapter 30 (genderCount) ─────────────────────────────────────────────
+
+theorem mandarin_ch30 :
+    (Core.WALS.F30A.lookup "mnd").map (fromWALS30A ·.value) = some mandarin.genderCount := by
+  native_decide
+
+theorem turkish_ch30 :
+    (Core.WALS.F30A.lookup "tur").map (fromWALS30A ·.value) = some turkish.genderCount := by
+  native_decide
+
+theorem finnish_ch30 :
+    (Core.WALS.F30A.lookup "fin").map (fromWALS30A ·.value) = some finnish.genderCount := by
+  native_decide
+
+theorem french_ch30 :
+    (Core.WALS.F30A.lookup "fre").map (fromWALS30A ·.value) = some french.genderCount := by
+  native_decide
+
+theorem spanish_ch30 :
+    (Core.WALS.F30A.lookup "spa").map (fromWALS30A ·.value) = some spanish.genderCount := by
+  native_decide
+
+theorem hindiUrdu_ch30 :
+    (Core.WALS.F30A.lookup "hin").map (fromWALS30A ·.value) = some hindiUrdu.genderCount := by
+  native_decide
+
+theorem hebrew_ch30 :
+    (Core.WALS.F30A.lookup "heb").map (fromWALS30A ·.value) = some hebrew.genderCount := by
+  native_decide
+
+theorem german_ch30 :
+    (Core.WALS.F30A.lookup "ger").map (fromWALS30A ·.value) = some german.genderCount := by
+  native_decide
+
+theorem russian_ch30 :
+    (Core.WALS.F30A.lookup "rus").map (fromWALS30A ·.value) = some russian.genderCount := by
+  native_decide
+
+theorem dyirbal_ch30 :
+    (Core.WALS.F30A.lookup "dyi").map (fromWALS30A ·.value) = some dyirbal.genderCount := by
+  native_decide
+
+theorem swahili_ch30 :
+    (Core.WALS.F30A.lookup "swa").map (fromWALS30A ·.value) = some swahili.genderCount := by
+  native_decide
+
+theorem zulu_ch30 :
+    (Core.WALS.F30A.lookup "zul").map (fromWALS30A ·.value) = some zulu.genderCount := by
+  native_decide
+
+theorem fula_ch30 :
+    (Core.WALS.F30A.lookup "fgu").map (fromWALS30A ·.value) = some fula.genderCount := by
+  native_decide
+
+-- ── Chapter 31 (basis) ───────────────────────────────────────────────────
+
+theorem mandarin_ch31 :
+    (Core.WALS.F31A.lookup "mnd").map (fromWALS31A ·.value) = some mandarin.basis := by
+  native_decide
+
+theorem turkish_ch31 :
+    (Core.WALS.F31A.lookup "tur").map (fromWALS31A ·.value) = some turkish.basis := by
+  native_decide
+
+theorem finnish_ch31 :
+    (Core.WALS.F31A.lookup "fin").map (fromWALS31A ·.value) = some finnish.basis := by
+  native_decide
+
+theorem french_ch31 :
+    (Core.WALS.F31A.lookup "fre").map (fromWALS31A ·.value) = some french.basis := by
+  native_decide
+
+theorem spanish_ch31 :
+    (Core.WALS.F31A.lookup "spa").map (fromWALS31A ·.value) = some spanish.basis := by
+  native_decide
+
+theorem hindiUrdu_ch31 :
+    (Core.WALS.F31A.lookup "hin").map (fromWALS31A ·.value) = some hindiUrdu.basis := by
+  native_decide
+
+theorem hebrew_ch31 :
+    (Core.WALS.F31A.lookup "heb").map (fromWALS31A ·.value) = some hebrew.basis := by
+  native_decide
+
+theorem german_ch31 :
+    (Core.WALS.F31A.lookup "ger").map (fromWALS31A ·.value) = some german.basis := by
+  native_decide
+
+theorem russian_ch31 :
+    (Core.WALS.F31A.lookup "rus").map (fromWALS31A ·.value) = some russian.basis := by
+  native_decide
+
+theorem swahili_ch31 :
+    (Core.WALS.F31A.lookup "swa").map (fromWALS31A ·.value) = some swahili.basis := by
+  native_decide
+
+theorem zulu_ch31 :
+    (Core.WALS.F31A.lookup "zul").map (fromWALS31A ·.value) = some zulu.basis := by
+  native_decide
+
+theorem fula_ch31 :
+    (Core.WALS.F31A.lookup "fgu").map (fromWALS31A ·.value) = some fula.basis := by
+  native_decide
+
+-- ── Chapter 32 (assignment) ──────────────────────────────────────────────
+
+theorem mandarin_ch32 :
+    (Core.WALS.F32A.lookup "mnd").map (fromWALS32A ·.value) = some mandarin.assignment := by
+  native_decide
+
+theorem turkish_ch32 :
+    (Core.WALS.F32A.lookup "tur").map (fromWALS32A ·.value) = some turkish.assignment := by
+  native_decide
+
+theorem finnish_ch32 :
+    (Core.WALS.F32A.lookup "fin").map (fromWALS32A ·.value) = some finnish.assignment := by
+  native_decide
+
+theorem french_ch32 :
+    (Core.WALS.F32A.lookup "fre").map (fromWALS32A ·.value) = some french.assignment := by
+  native_decide
+
+theorem spanish_ch32 :
+    (Core.WALS.F32A.lookup "spa").map (fromWALS32A ·.value) = some spanish.assignment := by
+  native_decide
+
+theorem hindiUrdu_ch32 :
+    (Core.WALS.F32A.lookup "hin").map (fromWALS32A ·.value) = some hindiUrdu.assignment := by
+  native_decide
+
+theorem hebrew_ch32 :
+    (Core.WALS.F32A.lookup "heb").map (fromWALS32A ·.value) = some hebrew.assignment := by
+  native_decide
+
+theorem german_ch32 :
+    (Core.WALS.F32A.lookup "ger").map (fromWALS32A ·.value) = some german.assignment := by
+  native_decide
+
+theorem russian_ch32 :
+    (Core.WALS.F32A.lookup "rus").map (fromWALS32A ·.value) = some russian.assignment := by
+  native_decide
+
+theorem dyirbal_ch32 :
+    (Core.WALS.F32A.lookup "dyi").map (fromWALS32A ·.value) = some dyirbal.assignment := by
+  native_decide
+
+theorem swahili_ch32 :
+    (Core.WALS.F32A.lookup "swa").map (fromWALS32A ·.value) = some swahili.assignment := by
+  native_decide
+
+theorem zulu_ch32 :
+    (Core.WALS.F32A.lookup "zul").map (fromWALS32A ·.value) = some zulu.assignment := by
+  native_decide
+
+theorem fula_ch32 :
+    (Core.WALS.F32A.lookup "fgu").map (fromWALS32A ·.value) = some fula.assignment := by
+  native_decide
+
+end WALSGrounding
+
 end Phenomena.Gender.Typology

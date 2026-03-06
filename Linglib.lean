@@ -864,6 +864,7 @@ import Linglib.Phenomena.ScalarImplicatures.Studies.RSAHurford
 import Linglib.Phenomena.ScalarImplicatures.Studies.PottsEtAl2016
 import Linglib.Comparisons.ScalarImplicatureTheories
 import Linglib.Phenomena.ScalarImplicatures.Studies.GoodmanStuhlmuller2013
+import Linglib.Phenomena.Phonology.Typology
 import Linglib.Phenomena.PhonologicalAlternation.Data
 import Linglib.Phenomena.PhonologicalAlternation.Studies.SPEDerivations
 import Linglib.Phenomena.PhonologicalAlternation.Studies.Clements1985

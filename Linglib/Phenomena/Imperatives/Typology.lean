@@ -1,4 +1,8 @@
 import Linglib.Core.Lexical.Word
+import Linglib.Core.WALS.Features.F70A
+import Linglib.Core.WALS.Features.F71A
+import Linglib.Core.WALS.Features.F72A
+import Linglib.Core.WALS.Features.F73A
 
 /-!
 # Cross-Linguistic Typology of Imperatives (WALS Chapters 70--73)
@@ -928,5 +932,240 @@ theorem sample_optative_absent_count :
 /-- Every language in our sample has a Ch 73 classification. -/
 theorem sample_all_have_optative_data :
     allLanguages.all (·.optative != none) = true := by native_decide
+
+-- ============================================================================
+-- WALS Converter Functions
+-- ============================================================================
+
+/-- Convert F70A (morphological imperative number distinction) to
+    `MorphImpType`. F70A tracks whether 2nd-person imperatives distinguish
+    singular vs plural; it does not encode whether the paradigm extends to
+    other persons (`secondAndOther`). We can only reliably identify
+    `noMorphological` (when F70A = noSecondPersonImperatives) and distinguish
+    it from the presence of some morphological imperative. Returns `none`
+    when the F70A value indicates a morphological imperative exists but
+    does not determine whether it extends beyond 2nd person. -/
+private def fromWALS70A : Core.WALS.F70A.MorphologicalImperative → Option MorphImpType
+  | .noSecondPersonImperatives => some .noMorphological
+  | _ => none
+
+/-- Convert F71A (prohibitive type) to `ProhibitiveType`. The mapping is
+    one-to-one between WALS 71A categories and our four-way classification. -/
+private def fromWALS71A : Core.WALS.F71A.Prohibitive → ProhibitiveType
+  | .normalImperativeNormalNegative => .normalImpNormalNeg
+  | .normalImperativeSpecialNegative => .normalImpSpecialNeg
+  | .specialImperativeNormalNegative => .specialImpNormalNeg
+  | .specialImperativeSpecialNegative => .specialImpSpecialNeg
+
+/-- Convert F72A (imperative-hortative systems) to `ImpHortSystem`. The
+    WALS v2020.4 coding uses `maximalSystem` / `minimalSystem` /
+    `bothTypesOfSystem` / `neitherTypeOfSystem`. Only two values map cleanly:
+    `neitherTypeOfSystem` → `imperativeOnly`, `maximalSystem` → `allThree`.
+    The other two are ambiguous and return `none`. -/
+private def fromWALS72A : Core.WALS.F72A.ImperativeHortativeSystems → Option ImpHortSystem
+  | .neitherTypeOfSystem => some .imperativeOnly
+  | .maximalSystem => some .allThree
+  | _ => none
+
+/-- Convert F73A (optative presence) to `OptativePresence`. One-to-one. -/
+private def fromWALS73A : Core.WALS.F73A.Optative → OptativePresence
+  | .inflectionalOptativePresent => .present
+  | .inflectionalOptativeAbsent => .absent
+
+-- ============================================================================
+-- WALS Data Abbreviations
+-- ============================================================================
+
+private abbrev ch70 := Core.WALS.F70A.allData
+private abbrev ch71 := Core.WALS.F71A.allData
+private abbrev ch72 := Core.WALS.F72A.allData
+private abbrev ch73 := Core.WALS.F73A.allData
+
+-- ============================================================================
+-- WALS Dataset Size Verification
+-- ============================================================================
+
+theorem ch70_wals_total : ch70.length = 548 := by native_decide
+theorem ch71_wals_total : ch71.length = 496 := by native_decide
+theorem ch72_wals_total : ch72.length = 375 := by native_decide
+theorem ch73_wals_total : ch73.length = 319 := by native_decide
+
+-- ============================================================================
+-- WALS Grounding: Ch 70 (Morphological Imperative)
+--
+-- F70A tracks number distinctions in the 2nd-person imperative, not the
+-- person-extension distinction (secondOnly vs secondAndOther). We can only
+-- ground the `noMorphological` value via `noSecondPersonImperatives`.
+-- Languages like English, Georgian, and Hungarian are coded differently in
+-- F70A than in our profile (different categorization criteria), so they are
+-- omitted.
+-- ============================================================================
+
+theorem mandarin_ch70 :
+    (Core.WALS.F70A.lookup "mnd").map (fromWALS70A ·.value) =
+    some (some mandarin.morphImp) := by
+  native_decide
+
+-- ============================================================================
+-- WALS Grounding: Ch 71 (Prohibitive)
+--
+-- The F71A four-way classification maps one-to-one to our ProhibitiveType.
+-- Grounding theorems cover languages where both the WALS code exists and
+-- the value agrees with our profile. Finnish (WALS: normalImp+specialNeg
+-- vs profile: specialImp+normalNeg), Swahili (WALS: specialImp+specialNeg
+-- vs profile: specialImp+normalNeg), Hungarian (WALS: normalImp+specialNeg
+-- vs profile: normalImp+normalNeg), and Korean (WALS: normalImp+specialNeg
+-- vs profile: normalImp+normalNeg) are omitted due to coding disagreements
+-- between WALS v2020.4 and our profiles.
+-- ============================================================================
+
+theorem english_ch71 :
+    (Core.WALS.F71A.lookup "eng").map (fromWALS71A ·.value) =
+    some english.prohibitive := by
+  native_decide
+
+theorem japanese_ch71 :
+    (Core.WALS.F71A.lookup "jpn").map (fromWALS71A ·.value) =
+    some japanese.prohibitive := by
+  native_decide
+
+theorem mandarin_ch71 :
+    (Core.WALS.F71A.lookup "mnd").map (fromWALS71A ·.value) =
+    some mandarin.prohibitive := by
+  native_decide
+
+theorem turkish_ch71 :
+    (Core.WALS.F71A.lookup "tur").map (fromWALS71A ·.value) =
+    some turkish.prohibitive := by
+  native_decide
+
+theorem russian_ch71 :
+    (Core.WALS.F71A.lookup "rus").map (fromWALS71A ·.value) =
+    some russian.prohibitive := by
+  native_decide
+
+theorem hindiUrdu_ch71 :
+    (Core.WALS.F71A.lookup "hin").map (fromWALS71A ·.value) =
+    some hindiUrdu.prohibitive := by
+  native_decide
+
+theorem tagalog_ch71 :
+    (Core.WALS.F71A.lookup "tag").map (fromWALS71A ·.value) =
+    some tagalog.prohibitive := by
+  native_decide
+
+theorem italian_ch71 :
+    (Core.WALS.F71A.lookup "ita").map (fromWALS71A ·.value) =
+    some italian.prohibitive := by
+  native_decide
+
+-- ============================================================================
+-- WALS Grounding: Ch 72 (Imperative-Hortative Systems)
+--
+-- F72A uses maximal/minimal/both/neither, which partially maps to our
+-- four-way system. `neitherTypeOfSystem` → `imperativeOnly` and
+-- `maximalSystem` → `allThree` are the clean mappings. Languages where
+-- WALS and our profile disagree (Georgian, Hindi-Urdu, Hungarian, Korean,
+-- Italian) are omitted.
+-- ============================================================================
+
+theorem english_ch72 :
+    (Core.WALS.F72A.lookup "eng").map (fromWALS72A ·.value) =
+    some (some english.impHortSystem) := by
+  native_decide
+
+theorem japanese_ch72 :
+    (Core.WALS.F72A.lookup "jpn").map (fromWALS72A ·.value) =
+    some (some japanese.impHortSystem) := by
+  native_decide
+
+theorem mandarin_ch72 :
+    (Core.WALS.F72A.lookup "mnd").map (fromWALS72A ·.value) =
+    some (some mandarin.impHortSystem) := by
+  native_decide
+
+theorem turkish_ch72 :
+    (Core.WALS.F72A.lookup "tur").map (fromWALS72A ·.value) =
+    some (some turkish.impHortSystem) := by
+  native_decide
+
+theorem finnish_ch72 :
+    (Core.WALS.F72A.lookup "fin").map (fromWALS72A ·.value) =
+    some (some finnish.impHortSystem) := by
+  native_decide
+
+theorem russian_ch72 :
+    (Core.WALS.F72A.lookup "rus").map (fromWALS72A ·.value) =
+    some (some russian.impHortSystem) := by
+  native_decide
+
+theorem swahili_ch72 :
+    (Core.WALS.F72A.lookup "swa").map (fromWALS72A ·.value) =
+    some (some swahili.impHortSystem) := by
+  native_decide
+
+theorem tagalog_ch72 :
+    (Core.WALS.F72A.lookup "tag").map (fromWALS72A ·.value) =
+    some (some tagalog.impHortSystem) := by
+  native_decide
+
+-- ============================================================================
+-- WALS Grounding: Ch 73 (Optative)
+--
+-- F73A is a binary feature (present/absent) with a clean one-to-one mapping.
+-- Turkish (WALS: absent vs profile: present) and Tagalog (WALS: present vs
+-- profile: absent) are omitted due to coding disagreements. Italian, Ancient
+-- Greek, Arabic (MSA), Quechua (Cuzco), and Latin are not in the F73A sample.
+-- ============================================================================
+
+theorem english_ch73 :
+    (Core.WALS.F73A.lookup "eng").map (fromWALS73A ·.value) =
+    some (english.optative.getD .absent) := by
+  native_decide
+
+theorem japanese_ch73 :
+    (Core.WALS.F73A.lookup "jpn").map (fromWALS73A ·.value) =
+    some (japanese.optative.getD .absent) := by
+  native_decide
+
+theorem mandarin_ch73 :
+    (Core.WALS.F73A.lookup "mnd").map (fromWALS73A ·.value) =
+    some (mandarin.optative.getD .absent) := by
+  native_decide
+
+theorem finnish_ch73 :
+    (Core.WALS.F73A.lookup "fin").map (fromWALS73A ·.value) =
+    some (finnish.optative.getD .absent) := by
+  native_decide
+
+theorem russian_ch73 :
+    (Core.WALS.F73A.lookup "rus").map (fromWALS73A ·.value) =
+    some (russian.optative.getD .absent) := by
+  native_decide
+
+theorem georgian_ch73 :
+    (Core.WALS.F73A.lookup "geo").map (fromWALS73A ·.value) =
+    some (georgian.optative.getD .absent) := by
+  native_decide
+
+theorem hindiUrdu_ch73 :
+    (Core.WALS.F73A.lookup "hin").map (fromWALS73A ·.value) =
+    some (hindiUrdu.optative.getD .absent) := by
+  native_decide
+
+theorem hungarian_ch73 :
+    (Core.WALS.F73A.lookup "hun").map (fromWALS73A ·.value) =
+    some (hungarian.optative.getD .absent) := by
+  native_decide
+
+theorem korean_ch73 :
+    (Core.WALS.F73A.lookup "kor").map (fromWALS73A ·.value) =
+    some (korean.optative.getD .absent) := by
+  native_decide
+
+theorem swahili_ch73 :
+    (Core.WALS.F73A.lookup "swa").map (fromWALS73A ·.value) =
+    some (swahili.optative.getD .absent) := by
+  native_decide
 
 end Phenomena.Imperatives.Typology

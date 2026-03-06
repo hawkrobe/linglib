@@ -1,5 +1,22 @@
 # Changelog
 
+## [0.228.64] - 2026-03-06
+
+### Added
+- **Theories/Semantics/Modality/KnowledgeProbability.lean**: Complete Fagin & Halpern (1994) formalization — `NullEmpty` predicate (axiom W5), `miller_principle` theorem (higher-order/first-order probability connection under UNIF+CONS), `probCK_greatest_prefixedpoint` (Lemma 5.1: greatest pre-fixed-point characterization of probabilistic common knowledge), Figure 1 counterexample (`naiveIter`, `fig1_naive_vs_correct` proving naive (E_G^b)^k iteration diverges from correct F_G^b operator)
+- **Phenomena/Imperatives/Typology.lean**: Wire WALS F70A–F73A with converter functions and grounding theorems
+- **Phenomena/Morphology/Typology.lean**: Wire WALS F20A–F27A with converter functions and grounding theorems
+- **Phenomena/Plurals/Typology.lean**: Wire WALS F33A–F36A with converter functions and grounding theorems
+- **Phenomena/TenseAspect/Typology.lean**: Wire WALS features with converter functions and grounding theorems
+- **Phenomena/Gender/Typology.lean**: Additional WALS grounding theorems
+- **Phenomena/Phonology/Typology.lean**: Add to Linglib.lean imports
+
+### Removed
+- **Theories/Pragmatics/RSA/Implementations/{BarnettEtAl2022,ScontrasTonhauser2025,TesslerGoodman2019}.lean**: Moved to Phenomena/ per dependency discipline (study files belong in Phenomena/Studies/, not Theories/)
+
+### Changed
+- **CLAUDE.md**: Clarify git convention on AI attribution
+
 ## [0.228.63] - 2026-03-06
 
 ### Added

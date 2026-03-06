@@ -319,7 +319,7 @@ New bib entries are high-risk for hallucinated metadata. Every field — title, 
 ## Git Conventions
 
 - Use one-line commit messages (no multi-line body)
-- No co-author tags or Claude branding in commits
+- **Never add `Co-Authored-By` trailers, `🤖` tags, or any AI attribution to commit messages** — commits should look like normal human commits
 - **Update `CHANGELOG.md` before committing/pushing new work** — bump the version and describe changes
 - **Versioning**: Use `0.MAJOR.MINOR` — bump the minor version (third number) for incremental additions and refactoring within a development phase; reserve bumping the major version (second number) for significant milestones (e.g., new theoretical framework, major architectural change). Example: after 0.213.0, the next versions are 0.213.1, 0.213.2, ..., not 0.214.0
 

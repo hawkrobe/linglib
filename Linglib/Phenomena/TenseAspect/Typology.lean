@@ -1,4 +1,9 @@
 import Linglib.Core.Lexical.Word
+import Linglib.Core.WALS.Features.F65A
+import Linglib.Core.WALS.Features.F66A
+import Linglib.Core.WALS.Features.F67A
+import Linglib.Core.WALS.Features.F68A
+import Linglib.Core.WALS.Features.F69A
 
 /-!
 # Cross-Linguistic Typology of Tense and Aspect (WALS Chapters 65--69)
@@ -35,6 +40,16 @@ Asian languages consistently lack morphological tense-aspect marking.
 -/
 
 namespace Phenomena.TenseAspect.Typology
+
+-- ============================================================================
+-- WALS Data Abbreviations
+-- ============================================================================
+
+private abbrev ch65 := Core.WALS.F65A.allData
+private abbrev ch66 := Core.WALS.F66A.allData
+private abbrev ch67 := Core.WALS.F67A.allData
+private abbrev ch68 := Core.WALS.F68A.allData
+private abbrev ch69 := Core.WALS.F69A.allData
 
 -- ============================================================================
 -- Types: WALS Chapter 65 — Perfective/Imperfective Aspect
@@ -148,6 +163,42 @@ def TAAffixPosition.hasAffixes : TAAffixPosition → Bool
   | .noInflection => false
 
 -- ============================================================================
+-- WALS Converter Functions
+-- ============================================================================
+
+/-- Convert WALS 65A enum to local `AspectMarking`. -/
+private def fromWALS65A : Core.WALS.F65A.PerfectiveImperfective → AspectMarking
+  | .grammaticalMarking => .grammatical
+  | .noGrammaticalMarking => .none
+
+/-- Convert WALS 66A enum to local `PastMarking`. -/
+private def fromWALS66A : Core.WALS.F66A.PastTenseType → PastMarking
+  | .presentNoRemotenessDistinctions => .marked
+  | .present23RemotenessDistinctions => .markedRemoteness2_3
+  | .present4OrMoreRemotenessDistinctions => .markedRemoteness4plus
+  | .noPastTense => .none
+
+/-- Convert WALS 67A enum to local `FutureMarking`. -/
+private def fromWALS67A : Core.WALS.F67A.FutureTenseType → FutureMarking
+  | .inflectionalFutureExists => .inflectional
+  | .noInflectionalFuture => .none
+
+/-- Convert WALS 68A enum to local `PerfectType`. -/
+private def fromWALS68A : Core.WALS.F68A.PerfectType → PerfectType
+  | .fromPossessive => .fromPossessive
+  | .fromFinishAlready => .fromFinishAlready
+  | .otherPerfect => .other
+  | .noPerfect => .none
+
+/-- Convert WALS 69A enum to local `TAAffixPosition`. -/
+private def fromWALS69A : Core.WALS.F69A.TenseAspectAffixPosition → TAAffixPosition
+  | .tenseAspectPrefixes => .prefixing
+  | .tenseAspectSuffixes => .suffixing
+  | .tenseAspectTone => .tonal
+  | .mixedType => .mixed
+  | .noTenseAspectInflection => .noInflection
+
+-- ============================================================================
 -- Language Profile Structure
 -- ============================================================================
 
@@ -172,82 +223,94 @@ structure TAProfile where
   deriving Repr, DecidableEq, BEq
 
 -- ============================================================================
--- WALS Aggregate Distribution Data
+-- WALS Aggregate Distribution Data (derived from generated modules)
 -- ============================================================================
 
-/-- WALS Ch 65 distribution: perfective/imperfective aspect (222 languages). -/
+/-- WALS Ch 65 distribution: perfective/imperfective aspect. -/
 structure Ch65Counts where
-  grammatical : Nat    -- 101
-  noMarking : Nat      -- 121
+  grammatical : Nat
+  noMarking : Nat
   deriving Repr, DecidableEq, BEq
 
-def ch65 : Ch65Counts := { grammatical := 101, noMarking := 121 }
+def ch65Dist : Ch65Counts :=
+  { grammatical := (ch65.filter (·.value == .grammaticalMarking)).length
+  , noMarking := (ch65.filter (·.value == .noGrammaticalMarking)).length }
 
-/-- WALS Ch 66 distribution: past tense (222 languages). -/
+/-- WALS Ch 66 distribution: past tense. -/
 structure Ch66Counts where
-  markedNoRemoteness : Nat     -- 94
-  markedRemoteness2_3 : Nat    -- 38
-  markedRemoteness4plus : Nat  -- 2
-  noMarking : Nat              -- 88
+  markedNoRemoteness : Nat
+  markedRemoteness2_3 : Nat
+  markedRemoteness4plus : Nat
+  noMarking : Nat
   deriving Repr, DecidableEq, BEq
 
-def ch66 : Ch66Counts :=
-  { markedNoRemoteness := 94, markedRemoteness2_3 := 38
-  , markedRemoteness4plus := 2, noMarking := 88 }
+def ch66Dist : Ch66Counts :=
+  { markedNoRemoteness := (ch66.filter (·.value == .presentNoRemotenessDistinctions)).length
+  , markedRemoteness2_3 := (ch66.filter (·.value == .present23RemotenessDistinctions)).length
+  , markedRemoteness4plus := (ch66.filter (·.value == .present4OrMoreRemotenessDistinctions)).length
+  , noMarking := (ch66.filter (·.value == .noPastTense)).length }
 
-/-- WALS Ch 67 distribution: inflectional future (222 languages). -/
+/-- WALS Ch 67 distribution: inflectional future. -/
 structure Ch67Counts where
-  inflectional : Nat   -- 110
-  noInflectional : Nat -- 112
+  inflectional : Nat
+  noInflectional : Nat
   deriving Repr, DecidableEq, BEq
 
-def ch67 : Ch67Counts := { inflectional := 110, noInflectional := 112 }
+def ch67Dist : Ch67Counts :=
+  { inflectional := (ch67.filter (·.value == .inflectionalFutureExists)).length
+  , noInflectional := (ch67.filter (·.value == .noInflectionalFuture)).length }
 
-/-- WALS Ch 68 distribution: the perfect (222 languages). -/
+/-- WALS Ch 68 distribution: the perfect. -/
 structure Ch68Counts where
-  fromPossessive : Nat      -- 7
-  fromFinishAlready : Nat   -- 21
-  otherPerfect : Nat        -- 80
-  noPerfect : Nat           -- 114
+  fromPossessive : Nat
+  fromFinishAlready : Nat
+  otherPerfect : Nat
+  noPerfect : Nat
   deriving Repr, DecidableEq, BEq
 
-def ch68 : Ch68Counts :=
-  { fromPossessive := 7, fromFinishAlready := 21
-  , otherPerfect := 80, noPerfect := 114 }
+def ch68Dist : Ch68Counts :=
+  { fromPossessive := (ch68.filter (·.value == .fromPossessive)).length
+  , fromFinishAlready := (ch68.filter (·.value == .fromFinishAlready)).length
+  , otherPerfect := (ch68.filter (·.value == .otherPerfect)).length
+  , noPerfect := (ch68.filter (·.value == .noPerfect)).length }
 
-/-- WALS Ch 69 distribution: position of tense-aspect affixes (1062 languages). -/
+/-- WALS Ch 69 distribution: position of tense-aspect affixes. -/
 structure Ch69Counts where
-  prefixing : Nat    -- 150
-  suffixing : Nat    -- 629
-  tonal : Nat        -- 11
-  mixed : Nat        -- 133
-  noInflection : Nat -- 139
+  prefixing : Nat
+  suffixing : Nat
+  tonal : Nat
+  mixed : Nat
+  noInflection : Nat
   deriving Repr, DecidableEq, BEq
 
-def ch69 : Ch69Counts :=
-  { prefixing := 150, suffixing := 629, tonal := 11, mixed := 133, noInflection := 139 }
+def ch69Dist : Ch69Counts :=
+  { prefixing := (ch69.filter (·.value == .tenseAspectPrefixes)).length
+  , suffixing := (ch69.filter (·.value == .tenseAspectSuffixes)).length
+  , tonal := (ch69.filter (·.value == .tenseAspectTone)).length
+  , mixed := (ch69.filter (·.value == .mixedType)).length
+  , noInflection := (ch69.filter (·.value == .noTenseAspectInflection)).length }
 
 -- ============================================================================
--- Aggregate Data Verification
+-- Aggregate Data Verification (derived from WALS generated data)
 -- ============================================================================
 
 /-- Ch 65 sample size: 222 languages. -/
-example : ch65.grammatical + ch65.noMarking = 222 := by native_decide
+theorem ch65_total : ch65Dist.grammatical + ch65Dist.noMarking = 222 := by native_decide
 
 /-- Ch 66 sample size: 222 languages. -/
-example : ch66.markedNoRemoteness + ch66.markedRemoteness2_3 +
-          ch66.markedRemoteness4plus + ch66.noMarking = 222 := by native_decide
+theorem ch66_total : ch66Dist.markedNoRemoteness + ch66Dist.markedRemoteness2_3 +
+          ch66Dist.markedRemoteness4plus + ch66Dist.noMarking = 222 := by native_decide
 
 /-- Ch 67 sample size: 222 languages. -/
-example : ch67.inflectional + ch67.noInflectional = 222 := by native_decide
+theorem ch67_total : ch67Dist.inflectional + ch67Dist.noInflectional = 222 := by native_decide
 
 /-- Ch 68 sample size: 222 languages. -/
-example : ch68.fromPossessive + ch68.fromFinishAlready +
-          ch68.otherPerfect + ch68.noPerfect = 222 := by native_decide
+theorem ch68_total : ch68Dist.fromPossessive + ch68Dist.fromFinishAlready +
+          ch68Dist.otherPerfect + ch68Dist.noPerfect = 222 := by native_decide
 
-/-- Ch 69 sample size: 1062 languages. -/
-example : ch69.prefixing + ch69.suffixing + ch69.tonal +
-          ch69.mixed + ch69.noInflection = 1062 := by native_decide
+/-- Ch 69 sample size: 1131 languages. -/
+theorem ch69_total : ch69Dist.prefixing + ch69Dist.suffixing + ch69Dist.tonal +
+          ch69Dist.mixed + ch69Dist.noInflection = 1131 := by native_decide
 
 -- ============================================================================
 -- Language Data: Typologically Diverse Sample
@@ -484,15 +547,275 @@ example : lango.affixPosition = .tonal := by native_decide
 example : quechua.past = .markedRemoteness2_3 := by native_decide
 
 -- ============================================================================
+-- WALS Grounding: Ch 65 (Perfective/Imperfective Aspect)
+-- Languages where profile.aspect matches WALS 65A data.
+-- Mismatches (eng, jpn, swa, yor): profile uses linguistically-informed
+-- classifications that may disagree with WALS's operationalization.
+-- ============================================================================
+
+theorem russian_ch65 :
+    (Core.WALS.F65A.lookup "rus").map (fromWALS65A ·.value) = some russian.aspect := by
+  native_decide
+theorem french_ch65 :
+    (Core.WALS.F65A.lookup "fre").map (fromWALS65A ·.value) = some french.aspect := by
+  native_decide
+theorem spanish_ch65 :
+    (Core.WALS.F65A.lookup "spa").map (fromWALS65A ·.value) = some spanish.aspect := by
+  native_decide
+theorem finnish_ch65 :
+    (Core.WALS.F65A.lookup "fin").map (fromWALS65A ·.value) = some finnish.aspect := by
+  native_decide
+theorem turkish_ch65 :
+    (Core.WALS.F65A.lookup "tur").map (fromWALS65A ·.value) = some turkish.aspect := by
+  native_decide
+theorem korean_ch65 :
+    (Core.WALS.F65A.lookup "kor").map (fromWALS65A ·.value) = some korean.aspect := by
+  native_decide
+theorem mandarin_ch65 :
+    (Core.WALS.F65A.lookup "mnd").map (fromWALS65A ·.value) = some mandarin.aspect := by
+  native_decide
+theorem vietnamese_ch65 :
+    (Core.WALS.F65A.lookup "vie").map (fromWALS65A ·.value) = some vietnamese.aspect := by
+  native_decide
+theorem thai_ch65 :
+    (Core.WALS.F65A.lookup "tha").map (fromWALS65A ·.value) = some thai.aspect := by
+  native_decide
+theorem indonesian_ch65 :
+    (Core.WALS.F65A.lookup "ind").map (fromWALS65A ·.value) = some indonesian.aspect := by
+  native_decide
+theorem hindi_ch65 :
+    (Core.WALS.F65A.lookup "hin").map (fromWALS65A ·.value) = some hindi.aspect := by
+  native_decide
+theorem arabic_ch65 :
+    (Core.WALS.F65A.lookup "aeg").map (fromWALS65A ·.value) = some arabic.aspect := by
+  native_decide
+theorem tagalog_ch65 :
+    (Core.WALS.F65A.lookup "tag").map (fromWALS65A ·.value) = some tagalog.aspect := by
+  native_decide
+theorem lango_ch65 :
+    (Core.WALS.F65A.lookup "lan").map (fromWALS65A ·.value) = some lango.aspect := by
+  native_decide
+
+-- ============================================================================
+-- WALS Grounding: Ch 66 (The Past Tense)
+-- Mismatch: Lango (WALS: noPastTense, profile: .marked).
+-- ============================================================================
+
+theorem english_ch66 :
+    (Core.WALS.F66A.lookup "eng").map (fromWALS66A ·.value) = some english.past := by
+  native_decide
+theorem russian_ch66 :
+    (Core.WALS.F66A.lookup "rus").map (fromWALS66A ·.value) = some russian.past := by
+  native_decide
+theorem french_ch66 :
+    (Core.WALS.F66A.lookup "fre").map (fromWALS66A ·.value) = some french.past := by
+  native_decide
+theorem spanish_ch66 :
+    (Core.WALS.F66A.lookup "spa").map (fromWALS66A ·.value) = some spanish.past := by
+  native_decide
+theorem finnish_ch66 :
+    (Core.WALS.F66A.lookup "fin").map (fromWALS66A ·.value) = some finnish.past := by
+  native_decide
+theorem turkish_ch66 :
+    (Core.WALS.F66A.lookup "tur").map (fromWALS66A ·.value) = some turkish.past := by
+  native_decide
+theorem japanese_ch66 :
+    (Core.WALS.F66A.lookup "jpn").map (fromWALS66A ·.value) = some japanese.past := by
+  native_decide
+theorem korean_ch66 :
+    (Core.WALS.F66A.lookup "kor").map (fromWALS66A ·.value) = some korean.past := by
+  native_decide
+theorem mandarin_ch66 :
+    (Core.WALS.F66A.lookup "mnd").map (fromWALS66A ·.value) = some mandarin.past := by
+  native_decide
+theorem vietnamese_ch66 :
+    (Core.WALS.F66A.lookup "vie").map (fromWALS66A ·.value) = some vietnamese.past := by
+  native_decide
+theorem thai_ch66 :
+    (Core.WALS.F66A.lookup "tha").map (fromWALS66A ·.value) = some thai.past := by
+  native_decide
+theorem indonesian_ch66 :
+    (Core.WALS.F66A.lookup "ind").map (fromWALS66A ·.value) = some indonesian.past := by
+  native_decide
+theorem swahili_ch66 :
+    (Core.WALS.F66A.lookup "swa").map (fromWALS66A ·.value) = some swahili.past := by
+  native_decide
+theorem yoruba_ch66 :
+    (Core.WALS.F66A.lookup "yor").map (fromWALS66A ·.value) = some yoruba.past := by
+  native_decide
+theorem hindi_ch66 :
+    (Core.WALS.F66A.lookup "hin").map (fromWALS66A ·.value) = some hindi.past := by
+  native_decide
+theorem arabic_ch66 :
+    (Core.WALS.F66A.lookup "aeg").map (fromWALS66A ·.value) = some arabic.past := by
+  native_decide
+theorem tagalog_ch66 :
+    (Core.WALS.F66A.lookup "tag").map (fromWALS66A ·.value) = some tagalog.past := by
+  native_decide
+
+-- ============================================================================
+-- WALS Grounding: Ch 67 (The Future Tense)
+-- Mismatches: Korean (WALS: noInflectionalFuture, profile: .inflectional),
+--   Swahili (WALS: inflectionalFutureExists, profile: .none),
+--   Arabic (WALS: inflectionalFutureExists, profile: .none),
+--   Tagalog (WALS: inflectionalFutureExists, profile: .none).
+-- ============================================================================
+
+theorem english_ch67 :
+    (Core.WALS.F67A.lookup "eng").map (fromWALS67A ·.value) = some english.future := by
+  native_decide
+theorem russian_ch67 :
+    (Core.WALS.F67A.lookup "rus").map (fromWALS67A ·.value) = some russian.future := by
+  native_decide
+theorem french_ch67 :
+    (Core.WALS.F67A.lookup "fre").map (fromWALS67A ·.value) = some french.future := by
+  native_decide
+theorem spanish_ch67 :
+    (Core.WALS.F67A.lookup "spa").map (fromWALS67A ·.value) = some spanish.future := by
+  native_decide
+theorem finnish_ch67 :
+    (Core.WALS.F67A.lookup "fin").map (fromWALS67A ·.value) = some finnish.future := by
+  native_decide
+theorem turkish_ch67 :
+    (Core.WALS.F67A.lookup "tur").map (fromWALS67A ·.value) = some turkish.future := by
+  native_decide
+theorem japanese_ch67 :
+    (Core.WALS.F67A.lookup "jpn").map (fromWALS67A ·.value) = some japanese.future := by
+  native_decide
+theorem mandarin_ch67 :
+    (Core.WALS.F67A.lookup "mnd").map (fromWALS67A ·.value) = some mandarin.future := by
+  native_decide
+theorem vietnamese_ch67 :
+    (Core.WALS.F67A.lookup "vie").map (fromWALS67A ·.value) = some vietnamese.future := by
+  native_decide
+theorem thai_ch67 :
+    (Core.WALS.F67A.lookup "tha").map (fromWALS67A ·.value) = some thai.future := by
+  native_decide
+theorem indonesian_ch67 :
+    (Core.WALS.F67A.lookup "ind").map (fromWALS67A ·.value) = some indonesian.future := by
+  native_decide
+theorem hindi_ch67 :
+    (Core.WALS.F67A.lookup "hin").map (fromWALS67A ·.value) = some hindi.future := by
+  native_decide
+theorem yoruba_ch67 :
+    (Core.WALS.F67A.lookup "yor").map (fromWALS67A ·.value) = some yoruba.future := by
+  native_decide
+theorem lango_ch67 :
+    (Core.WALS.F67A.lookup "lan").map (fromWALS67A ·.value) = some lango.future := by
+  native_decide
+
+-- ============================================================================
+-- WALS Grounding: Ch 68 (The Perfect)
+-- Mismatches: Turkish (WALS: noPerfect, profile: .other),
+--   Vietnamese (WALS: otherPerfect, profile: .none),
+--   Thai (WALS: fromFinishAlready, profile: .none),
+--   Indonesian (WALS: fromFinishAlready, profile: .none),
+--   Lango (WALS: noPerfect, profile: .other).
+-- ============================================================================
+
+theorem english_ch68 :
+    (Core.WALS.F68A.lookup "eng").map (fromWALS68A ·.value) = some english.perfect := by
+  native_decide
+theorem russian_ch68 :
+    (Core.WALS.F68A.lookup "rus").map (fromWALS68A ·.value) = some russian.perfect := by
+  native_decide
+theorem french_ch68 :
+    (Core.WALS.F68A.lookup "fre").map (fromWALS68A ·.value) = some french.perfect := by
+  native_decide
+theorem spanish_ch68 :
+    (Core.WALS.F68A.lookup "spa").map (fromWALS68A ·.value) = some spanish.perfect := by
+  native_decide
+theorem finnish_ch68 :
+    (Core.WALS.F68A.lookup "fin").map (fromWALS68A ·.value) = some finnish.perfect := by
+  native_decide
+theorem japanese_ch68 :
+    (Core.WALS.F68A.lookup "jpn").map (fromWALS68A ·.value) = some japanese.perfect := by
+  native_decide
+theorem korean_ch68 :
+    (Core.WALS.F68A.lookup "kor").map (fromWALS68A ·.value) = some korean.perfect := by
+  native_decide
+theorem mandarin_ch68 :
+    (Core.WALS.F68A.lookup "mnd").map (fromWALS68A ·.value) = some mandarin.perfect := by
+  native_decide
+theorem swahili_ch68 :
+    (Core.WALS.F68A.lookup "swa").map (fromWALS68A ·.value) = some swahili.perfect := by
+  native_decide
+theorem yoruba_ch68 :
+    (Core.WALS.F68A.lookup "yor").map (fromWALS68A ·.value) = some yoruba.perfect := by
+  native_decide
+theorem hindi_ch68 :
+    (Core.WALS.F68A.lookup "hin").map (fromWALS68A ·.value) = some hindi.perfect := by
+  native_decide
+theorem arabic_ch68 :
+    (Core.WALS.F68A.lookup "aeg").map (fromWALS68A ·.value) = some arabic.perfect := by
+  native_decide
+theorem tagalog_ch68 :
+    (Core.WALS.F68A.lookup "tag").map (fromWALS68A ·.value) = some tagalog.perfect := by
+  native_decide
+
+-- ============================================================================
+-- WALS Grounding: Ch 69 (Position of Tense-Aspect Affixes)
+-- Mismatches: Russian (WALS: mixedType, profile: .suffixing),
+--   Mandarin (WALS: tenseAspectSuffixes, profile: .noInflection),
+--   Arabic (WALS: mixedType, profile: .suffixing).
+-- ============================================================================
+
+theorem english_ch69 :
+    (Core.WALS.F69A.lookup "eng").map (fromWALS69A ·.value) = some english.affixPosition := by
+  native_decide
+theorem french_ch69 :
+    (Core.WALS.F69A.lookup "fre").map (fromWALS69A ·.value) = some french.affixPosition := by
+  native_decide
+theorem spanish_ch69 :
+    (Core.WALS.F69A.lookup "spa").map (fromWALS69A ·.value) = some spanish.affixPosition := by
+  native_decide
+theorem finnish_ch69 :
+    (Core.WALS.F69A.lookup "fin").map (fromWALS69A ·.value) = some finnish.affixPosition := by
+  native_decide
+theorem turkish_ch69 :
+    (Core.WALS.F69A.lookup "tur").map (fromWALS69A ·.value) = some turkish.affixPosition := by
+  native_decide
+theorem japanese_ch69 :
+    (Core.WALS.F69A.lookup "jpn").map (fromWALS69A ·.value) = some japanese.affixPosition := by
+  native_decide
+theorem korean_ch69 :
+    (Core.WALS.F69A.lookup "kor").map (fromWALS69A ·.value) = some korean.affixPosition := by
+  native_decide
+theorem vietnamese_ch69 :
+    (Core.WALS.F69A.lookup "vie").map (fromWALS69A ·.value) = some vietnamese.affixPosition := by
+  native_decide
+theorem thai_ch69 :
+    (Core.WALS.F69A.lookup "tha").map (fromWALS69A ·.value) = some thai.affixPosition := by
+  native_decide
+theorem indonesian_ch69 :
+    (Core.WALS.F69A.lookup "ind").map (fromWALS69A ·.value) = some indonesian.affixPosition := by
+  native_decide
+theorem swahili_ch69 :
+    (Core.WALS.F69A.lookup "swa").map (fromWALS69A ·.value) = some swahili.affixPosition := by
+  native_decide
+theorem yoruba_ch69 :
+    (Core.WALS.F69A.lookup "yor").map (fromWALS69A ·.value) = some yoruba.affixPosition := by
+  native_decide
+theorem hindi_ch69 :
+    (Core.WALS.F69A.lookup "hin").map (fromWALS69A ·.value) = some hindi.affixPosition := by
+  native_decide
+theorem tagalog_ch69 :
+    (Core.WALS.F69A.lookup "tag").map (fromWALS69A ·.value) = some tagalog.affixPosition := by
+  native_decide
+theorem lango_ch69 :
+    (Core.WALS.F69A.lookup "lan").map (fromWALS69A ·.value) = some lango.affixPosition := by
+  native_decide
+
+-- ============================================================================
 -- Generalization 1: Most languages have some past tense marking
 -- ============================================================================
 
 /-- Total languages with past marking in Ch 66. -/
 def ch66TotalWithPast : Nat :=
-  ch66.markedNoRemoteness + ch66.markedRemoteness2_3 + ch66.markedRemoteness4plus
+  ch66Dist.markedNoRemoteness + ch66Dist.markedRemoteness2_3 + ch66Dist.markedRemoteness4plus
 
 /-- A majority (134/222 = 60%) of WALS Ch 66 languages have past marking. -/
-theorem past_marking_majority : ch66TotalWithPast > ch66.noMarking := by
+theorem past_marking_majority : ch66TotalWithPast > ch66Dist.noMarking := by
   native_decide
 
 /-- Past marking total = 134 languages. -/
@@ -502,22 +825,22 @@ example : ch66TotalWithPast = 134 := by native_decide
 -- Generalization 2: Suffixing is overwhelmingly more common than prefixing
 -- ============================================================================
 
-/-- Suffixes outnumber prefixes by more than 4:1 (629 vs 150). -/
-theorem suffix_dominant_over_prefix : ch69.suffixing > 4 * ch69.prefixing := by
+/-- Suffixes outnumber prefixes by more than 4:1 (667 vs 153). -/
+theorem suffix_dominant_over_prefix : ch69Dist.suffixing > 4 * ch69Dist.prefixing := by
   native_decide
 
 /-- Suffixing is the most common T/A strategy overall. -/
 theorem suffix_most_common :
-    ch69.suffixing > ch69.prefixing ∧
-    ch69.suffixing > ch69.tonal ∧
-    ch69.suffixing > ch69.mixed ∧
-    ch69.suffixing > ch69.noInflection := by
+    ch69Dist.suffixing > ch69Dist.prefixing ∧
+    ch69Dist.suffixing > ch69Dist.tonal ∧
+    ch69Dist.suffixing > ch69Dist.mixed ∧
+    ch69Dist.suffixing > ch69Dist.noInflection := by
   native_decide
 
 /-- Suffixes account for more than half of all languages in Ch 69. -/
 theorem suffix_absolute_majority :
-    ch69.suffixing * 2 > ch69.prefixing + ch69.suffixing + ch69.tonal +
-                       ch69.mixed + ch69.noInflection := by
+    ch69Dist.suffixing * 2 > ch69Dist.prefixing + ch69Dist.suffixing + ch69Dist.tonal +
+                       ch69Dist.mixed + ch69Dist.noInflection := by
   native_decide
 
 -- ============================================================================
@@ -587,9 +910,9 @@ theorem se_asian_isolating_cluster :
 /-- Inflectional future is approximately 50/50 in Ch 67 (110 vs 112).
     Neither value constitutes a strong majority. -/
 theorem future_near_even_split :
-    ch67.inflectional + ch67.noInflectional = 222 ∧
-    ch67.inflectional > 100 ∧
-    ch67.noInflectional > 100 := by
+    ch67Dist.inflectional + ch67Dist.noInflectional = 222 ∧
+    ch67Dist.inflectional > 100 ∧
+    ch67Dist.noInflectional > 100 := by
   native_decide
 
 -- ============================================================================
@@ -599,12 +922,12 @@ theorem future_near_even_split :
 /-- 'Have'-perfects (from possessive constructions) are extremely rare
     cross-linguistically — only 7 out of 222 languages. They are
     restricted almost exclusively to western Europe. -/
-theorem have_perfect_rare : ch68.fromPossessive < 10 := by
+theorem have_perfect_rare : ch68Dist.fromPossessive < 10 := by
   native_decide
 
 /-- Most languages lack a distinct perfect category entirely. -/
-theorem no_perfect_majority : ch68.noPerfect > ch68.fromPossessive +
-    ch68.fromFinishAlready + ch68.otherPerfect := by
+theorem no_perfect_majority : ch68Dist.noPerfect > ch68Dist.fromPossessive +
+    ch68Dist.fromFinishAlready + ch68Dist.otherPerfect := by
   native_decide
 
 -- ============================================================================
@@ -626,8 +949,8 @@ theorem aspect_languages_mostly_have_past :
 -- Generalization 8: Tone as T/A strategy is rare and mostly African
 -- ============================================================================
 
-/-- Tone as the primary tense-aspect strategy is extremely rare (11/1062). -/
-theorem tone_ta_rare : ch69.tonal < 15 := by
+/-- Tone as the primary tense-aspect strategy is extremely rare (13/1131). -/
+theorem tone_ta_rare : ch69Dist.tonal < 15 := by
   native_decide
 
 /-- In our sample, only Lango uses tone as the primary T/A strategy. -/
@@ -643,11 +966,11 @@ theorem tone_in_sample :
     134 with past marking). Languages with 4+ degrees of remoteness are
     extremely rare (only 2: Yagua being the richest with 5 degrees). -/
 theorem remoteness_uncommon :
-    ch66.markedNoRemoteness > ch66.markedRemoteness2_3 +
-                               ch66.markedRemoteness4plus := by
+    ch66Dist.markedNoRemoteness > ch66Dist.markedRemoteness2_3 +
+                               ch66Dist.markedRemoteness4plus := by
   native_decide
 
-theorem extreme_remoteness_very_rare : ch66.markedRemoteness4plus = 2 := by
+theorem extreme_remoteness_very_rare : ch66Dist.markedRemoteness4plus = 2 := by
   native_decide
 
 -- ============================================================================
@@ -657,7 +980,7 @@ theorem extreme_remoteness_very_rare : ch66.markedRemoteness4plus = 2 := by
 /-- Perfects from 'finish'/'already' are more common than 'have'-perfects
     (21 vs 7), concentrated in South-East Asia and West Africa. -/
 theorem finish_perfect_more_common_than_have :
-    ch68.fromFinishAlready > ch68.fromPossessive := by
+    ch68Dist.fromFinishAlready > ch68Dist.fromPossessive := by
   native_decide
 
 /-- In our sample, Yoruba exemplifies the 'finish/already' perfect

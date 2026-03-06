@@ -20,6 +20,7 @@ namespace Minimalism.Phenomena.Coreference
 /-- Types of nominal expressions for coreference -/
 inductive NominalType where
   | reflexive
+  | reciprocal
   | pronoun
   | rExpression
   deriving Repr, DecidableEq
@@ -32,6 +33,8 @@ def isNominalCat (c : UD.UPOS) : Bool :=
 def classifyNominal (w : Word) : Option NominalType :=
   if w.form ∈ ["himself", "herself", "themselves", "myself", "yourself", "ourselves"] then
     some .reflexive
+  else if w.form ∈ ["each other", "one another"] then
+    some .reciprocal
   else if w.form ∈ ["he", "she", "they", "him", "her", "them", "it"] then
     some .pronoun
   else if isNominalCat w.cat then
