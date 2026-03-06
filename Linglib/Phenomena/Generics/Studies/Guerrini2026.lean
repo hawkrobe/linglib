@@ -1,7 +1,7 @@
 import Linglib.Theories.Semantics.Lexical.Noun.Kind.Chierchia1998
 import Linglib.Theories.Semantics.Lexical.Noun.Kind.Generics
 import Linglib.Theories.Semantics.Lexical.Plural.Distributivity
-import Linglib.Theories.Pragmatics.RSA.Implementations.TesslerGoodman2019
+import Linglib.Phenomena.Generics.Studies.TesslerGoodman2019
 import Linglib.Phenomena.Generics.KindReference
 import Linglib.Phenomena.Generics.Studies.Longobardi2001
 
@@ -43,7 +43,7 @@ so DIST never applies, and they are limited to Bona Fide Genericity.
 ## Connection to Tessler & Goodman (2019)
 
 @cite{tessler-goodman-2019}'s threshold semantics for generics
-(see `Theories/Pragmatics/RSA/Implementations/TesslerGoodman2019.lean`)
+(see `Phenomena/Generics/Studies/TesslerGoodman2019.lean`)
 applies to the **Bona Fide Generic** parse: prevalence-based inference
 determines whether the Gen-quantified generalization is judged true.
 But on the **Distributive Kind Predication** parse, there is no Gen —
@@ -614,7 +614,8 @@ section DKPPrevalence
 
 variable {Atom W : Type} [DecidableEq Atom] [Fintype Atom]
 
-open RSA.TesslerGoodman2019 (genericMeaning Threshold)
+open Phenomena.Generics.Studies.TesslerGoodman2019 (genericMeaning GenThreshold Prevalence)
+open Core.Scale (deg thr)
 
 /-- Prevalence of P among atoms in an extension at world w.
 
@@ -654,12 +655,12 @@ theorem dkp_false_iff_prevalence_zero (P : Atom → W → Bool) (ext : Finset At
 /-- DKP true implies T&G generic meaning is true at every threshold.
 
     If DKP gives 'true' (all actual instances of the kind satisfy P),
-    then prevalence = 1 (= `.p10`), which exceeds every threshold in
-    T&G's model (max threshold = 0.9). The DKP parse is a *stronger*
-    truth condition than any threshold-based generic: it entails the
-    BFG parse at all thresholds. -/
+    then prevalence = 100%, which exceeds every threshold in
+    T&G's model. The DKP parse is a *stronger* truth condition
+    than any threshold-based generic: it entails the BFG parse
+    at all thresholds. -/
 theorem dkp_true_implies_generic_true_all_thresholds :
-    ∀ θ : Threshold, genericMeaning θ .p10 = true := by
+    ∀ θ : GenThreshold, genericMeaning θ (prevPct 100) = true := by
   native_decide
 
 /-- DKP gap is exactly the domain where T&G does real work.
@@ -676,10 +677,10 @@ theorem dkp_true_implies_generic_true_all_thresholds :
     judgment. Guerrini's contribution is showing this inference applies
     only to the BFG parse, not the DKP parse. -/
 theorem dkp_gap_is_threshold_sensitive :
-    -- prevalence 0.7 exceeds threshold 0.6
-    genericMeaning .t6 .p7 = true ∧
-    -- but prevalence 0.7 does not exceed threshold 0.8
-    genericMeaning .t8 .p7 = false := by
+    -- prevalence 70% exceeds threshold 60%
+    genericMeaning (thrPct 60) (prevPct 70) = true ∧
+    -- but prevalence 70% does not exceed threshold 80%
+    genericMeaning (thrPct 80) (prevPct 70) = false := by
   native_decide
 
 /-- The two parses can disagree: DKP gap with BFG true.
@@ -699,8 +700,8 @@ theorem parses_can_disagree :
       -- DKP: gap (not all, not none)
       allSatisfy P ext (0 : Fin 1) = false ∧
       noneSatisfy P ext (0 : Fin 1) = false ∧
-      -- BFG: true at threshold 0.6 with prevalence 0.7
-      genericMeaning .t6 .p7 = true) := by
+      -- BFG: true at threshold 60% with prevalence 70%
+      genericMeaning (thrPct 60) (prevPct 70) = true) := by
   refine ⟨fun a _ => decide (a.val < 7), Finset.univ, Finset.univ_nonempty, ?_, ?_, ?_⟩
   · native_decide
   · native_decide

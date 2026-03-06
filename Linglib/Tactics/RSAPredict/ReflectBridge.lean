@@ -314,13 +314,29 @@ def tryDirectRExprCompare (goal : MVarId) (lhsExpr rhsExpr : Expr) : TacticM Boo
   let (lhsRExpr, lhsBounds) ← reifyToRExpr persistentReifyCache activeLhs maxDepth
   let (rhsRExpr, rhsBounds) ← reifyToRExpr persistentReifyCache activeRhs maxDepth
 
-  unless lhsBounds.lo > rhsBounds.hi do
-    logInfo m!"rsa_predict: [direct] bounds don't separate (lhs=[{lhsBounds.lo}, {lhsBounds.hi}] rhs=[{rhsBounds.lo}, {rhsBounds.hi}])"
-    return false
-
   let cacheAfter ← persistentReifyCache.get
   let t1 ← IO.monoMsNow
   logInfo m!"rsa_predict: [direct] reified ({t1 - t0}ms, cache {cacheBefore.size}→{cacheAfter.size}){denomNote}"
+
+  -- Exact ℚ evaluation path: when both sides are pure arithmetic (no exp/log),
+  -- evaluate to exact ℚ and compare. This handles cases where interval arithmetic
+  -- loses precision due to enormous intermediate values (e.g., Beta(1,50) cross-
+  -- normalization producing 60+ digit rationals that rpow interval bounds can't track).
+  let exactOk ← try
+    let exactCheckExpr ← mkAppM ``RExpr.checkExactGt #[lhsRExpr, rhsRExpr]
+    let exactCheckType ← mkEq exactCheckExpr (mkConst ``Bool.true)
+    let hexact ← nativeDecideProof exactCheckType
+    let proof := mkApp3 (mkConst ``RExpr.gt_of_checkExactGt) lhsRExpr rhsRExpr hexact
+    activeGoal.assign proof
+    let t2 ← IO.monoMsNow
+    logInfo m!"rsa_predict: [direct] assigned via exact ℚ ({t2 - t0}ms)"
+    pure true
+  catch _ => pure false
+  if exactOk then return true
+
+  unless lhsBounds.lo > rhsBounds.hi do
+    logInfo m!"rsa_predict: [direct] bounds don't separate (lhs=[{lhsBounds.lo}, {lhsBounds.hi}] rhs=[{rhsBounds.lo}, {rhsBounds.hi}])"
+    return false
 
   try
     -- Build shared DAG at meta-time (O(unique sub-expressions), not O(tree nodes))

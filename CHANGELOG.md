@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.228.51] - 2026-03-05
+
+### Added
+- **Core/Interval/ReflectInterval.lean**: `checkExactGt` — exact ℚ comparison for `rsa_predict` gt goals, mirroring existing `checkExactNotGt`. Fixes interval arithmetic failures on models with large intermediate values (e.g., Beta(1,50) cross-normalization)
+- **Tactics/RSAPredict/ReflectBridge.lean**: Exact ℚ fallback in `tryDirectRExprCompare` — when interval bounds don't separate, tries `checkExactGt` before giving up
+
+### Changed
+- **Phenomena/Generics/Studies/TesslerGoodman2019.lean**: Add `prevPct`/`thrPct` macros to eliminate magic numbers (`deg 18` → `prevPct 90`); all 6 endorsement theorems now prove without `sorry` via exact ℚ path
+- **Phenomena/Generics/Studies/Guerrini2026.lean**: Update T&G references to use `prevPct`/`thrPct` (scale changed from `Degree 10` to `Degree 20`)
+
 ## [0.228.50] - 2026-03-05
 
 ### Added

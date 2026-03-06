@@ -1475,6 +1475,24 @@ theorem RExpr.not_gt_of_checkExactNotGt (lhs rhs : RExpr)
     exact_mod_cast h
   · exact absurd h (by simp)
 
+/-- If lhs evaluates to a strictly greater ℚ than rhs, lhs.denote > rhs.denote. -/
+def RExpr.checkExactGt (lhs rhs : RExpr) : Bool :=
+  match lhs.evalExact, rhs.evalExact with
+  | some q₁, some q₂ => decide (q₁ > q₂)
+  | _, _ => false
+
+/-- Soundness of exact (>) check. -/
+theorem RExpr.gt_of_checkExactGt (lhs rhs : RExpr)
+    (h : lhs.checkExactGt rhs = true) :
+    lhs.denote > rhs.denote := by
+  unfold checkExactGt at h
+  split at h
+  · rename_i q₁ q₂ hq₁ hq₂
+    simp only [decide_eq_true_eq] at h
+    rw [evalExact_sound lhs q₁ hq₁, evalExact_sound rhs q₂ hq₂]
+    exact_mod_cast h
+  · exact absurd h (by simp)
+
 /-- Check exact equality: both sides evaluate to the same ℚ. -/
 def RExpr.checkExactEq (lhs rhs : RExpr) : Bool :=
   match lhs.evalExact, rhs.evalExact with
