@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.228.49] - 2026-03-05
+
+### Changed
+- **Theories/Semantics/Presupposition/OntologicalPreconditions.lean**: Unify local `Polarity` (`.affirmed`/`.negated`) with `Core.Polarity` (`.positive`/`.negative`)
+- **Core/Scales/HornScale.lean**: Add `Polarity.toMonotonicity` bridge — positive↦upward, negative↦downward (the Ladusaw/Fauconnier connection)
+
 ## [0.228.47] - 2026-03-05
 
 ### Changed

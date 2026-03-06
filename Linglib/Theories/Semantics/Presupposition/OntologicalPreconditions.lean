@@ -35,6 +35,7 @@ and thus can't be "allowed for" independently.
 
 -/
 
+import Linglib.Core.Polarity
 import Linglib.Core.Semantics.Presupposition
 import Linglib.Theories.Semantics.Lexical.Verb.ChangeOfState.Theory
 import Linglib.Theories.Semantics.Lexical.Verb.Aspect
@@ -126,13 +127,8 @@ This contrasts with an assertion-only view where sentences are just truth condit
 Under assertion-only, there's no structural reason for shared presuppositions.
 -/
 
-/--
-Polarity: whether we affirm or deny that the event occurred.
--/
-inductive Polarity where
-  | affirmed   -- "John stopped smoking"
-  | negated    -- "John didn't stop smoking"
-  deriving DecidableEq, Repr, BEq
+-- Sentence polarity from Core — .positive = affirmed, .negative = negated
+open Core (Polarity)
 
 /--
 A sentence that refers to an event type and makes a claim about it.
@@ -163,8 +159,8 @@ The assertion made by a sentence depends on polarity.
 -/
 def EventSentence.assertion (s : EventSentence W) : W → Bool :=
   match s.polarity with
-  | .affirmed => s.eventType.consequence
-  | .negated => λ w => !s.eventType.consequence w
+  | .positive => s.eventType.consequence
+  | .negative => λ w => !s.eventType.consequence w
 
 /--
 The presupposition comes from aboutness, not from the assertion.
@@ -178,13 +174,13 @@ def EventSentence.presupposition (s : EventSentence W) : W → Bool :=
 Construct an affirmative sentence about an event type.
 -/
 def affirmative (e : EventPhase W) : EventSentence W :=
-  { eventType := e, polarity := .affirmed }
+  { eventType := e, polarity := .positive }
 
 /--
 Construct a negative sentence about an event type.
 -/
 def negative (e : EventPhase W) : EventSentence W :=
-  { eventType := e, polarity := .negated }
+  { eventType := e, polarity := .negative }
 
 /--
 Affirmative and negative sentences have the same aboutness.
