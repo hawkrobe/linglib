@@ -296,7 +296,7 @@
   subfield  = {pragmatics/rsa},
   validated = {true},
   role      = {formalized},
-  sources   = {Theories/Pragmatics/RSA/Implementations/TesslerFranke2020.lean}
+  sources   = {Phenomena/Negation/Studies/TesslerFranke2020.lean;Phenomena/Negation/FlexibleNegation.lean;Theories/Semantics/Lexical/Adjective/Theory.lean}
 }
 
 @article{tessler-goodman-2019,
@@ -1665,15 +1665,18 @@
   sources   = {Theories/Pragmatics/DecisionTheoretic/Even.lean}
 }
 % REF: Francescotti, R. (1995). Even: The conventional implicature approach reconsidered.
-@misc{francescotti-1995,
-  author    = {Francescotti, R},
+@article{francescotti-1995,
+  author    = {Francescotti, Robert M.},
   year      = {1995},
-  title     = {Even: The conventional implicature approach reconsidered},
+  title     = {Even: The Conventional Implicature Approach Reconsidered},
+  journal   = {Linguistics and Philosophy},
+  volume    = {18},
+  pages     = {153--173},
   doi       = {10.1007/bf00985215},
   subfield  = {pragmatics/assertion},
-  role      = {cited},
+  role      = {formalized},
   validated = {true},
-  sources   = {Theories/Pragmatics/DecisionTheoretic/Even.lean}
+  sources   = {Theories/Pragmatics/DecisionTheoretic/Even.lean, Phenomena/Focus/Studies/Francescotti1995.lean}
 }
 % REF: Gunlogson, C. (2003). *True to Form*. Routledge.
 @book{gunlogson-2003,
@@ -8086,17 +8089,7 @@
   validated = {true},
   sources   = {Theories/Semantics/Lexical/Numeral/Polysemy.lean}
 }
-% REF: Tessler & Franke (2020). Not unreasonable: Why two negatives don't make a positive.
-@misc{tessler-franke-2020,
-  author    = {Tessler and Franke},
-  year      = {2020},
-  title     = {Not unreasonable: Why two negatives don't make a positive},
-  doi       = {10.31234/osf.io/tqjr2},
-  subfield  = {semantics/lexical},
-  role      = {cited},
-  validated = {true},
-  sources   = {Phenomena/Negation/FlexibleNegation.lean;Theories/Pragmatics/RSA/Implementations/TesslerFranke2020.lean;Theories/Semantics/Lexical/Adjective/Theory.lean}
-}
+% REMOVED: tessler-franke-2020 was a duplicate of tessler-franke-2019 (same DOI, same paper)
 % REF: Cariani, F., Santorio, P. & Wellwood, A. (2023). Positive gradable adjective ascriptions without positive morphemes. SuB
 @inproceedings{cariani-wellwood-2023,
   author    = {Cariani, Fabrizio and Santorio, Paolo and Wellwood, Alexis},
@@ -8414,6 +8407,19 @@
   validated = {true},
   sources   = {Phenomena/Questions/NandaoQs.lean}
 }
+% REF: Bennett, J. (1982). Even If.
+@article{bennett-1982,
+  author    = {Bennett, Jonathan},
+  year      = {1982},
+  title     = {Even If},
+  journal   = {Linguistics and Philosophy},
+  volume    = {5},
+  pages     = {403--418},
+  subfield  = {pragmatics/assertion},
+  role      = {cited},
+  validated = {true},
+  sources   = {Theories/Semantics/Focus/Particles.lean}
+}
 % REF: Bennett & Belnap (1990). Conditional Assertion and Restricted Quantification.
 @article{bennett-belnap-1990,
   author    = {Bennett, Jonathan and Belnap, Nuel},
@@ -8531,6 +8537,20 @@
   doi       = {10.3765/salt.v20i0.2547},
   validated = {true},
   sources   = {Theories/Semantics/Questions/EconomyOddness.lean}
+}
+% REF: Magri, G. (2014). An account for the homogeneity effects triggered by plural definites and conjunction based on double strengthening.
+@incollection{magri-2014,
+  author    = {Magri, Giorgio},
+  year      = {2014},
+  title     = {An account for the homogeneity effects triggered by plural definites and conjunction based on double strengthening},
+  booktitle = {Pragmatics, Semantics and the Case of Scalar Implicatures},
+  editor    = {Pistoia Reda, Salvatore},
+  publisher = {Palgrave Macmillan},
+  pages     = {99--145},
+  subfield  = {semantics/pragmatics},
+  role      = {formalized},
+  validated = {true},
+  sources   = {Theories/Pragmatics/NeoGricean/Implementations/Magri2014.lean}
 }
 % REF: Spector, B. (2014). Scalar implicatures, blindness and common knowledge.
 @misc{spector-2014,

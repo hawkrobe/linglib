@@ -68,7 +68,7 @@ Types of negation for gradable adjectives.
 References:
 - @cite{cruse-1986}. Lexical Semantics.
 - @cite{horn-1989}. A Natural History of Negation.
-- @cite{tessler-franke-2020}. Not unreasonable.
+- @cite{tessler-franke-2019}. Not unreasonable.
 -/
 inductive NegationType where
   | contradictory

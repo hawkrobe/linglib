@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.228.52] - 2026-03-05
+
+### Added
+- **Phenomena/Negation/Studies/TesslerFranke2020.lean**: Migrate Tessler & Franke (2019) to ℝ-valued RSAConfig with `rsa_predict`. Uses exact `exp(-cost)` matching the paper's equations. 6 verified predictions: `happy_implies_high`, `unhappy_implies_low`, `not_happy_implies_low`, `not_unhappy_above_negative`, `not_unhappy_prefers_gap`, `not_unhappy_more_positive_than_not_happy`
+
+### Changed
+- **blog/data/references.bib**: Consolidate duplicate `tessler-franke-2019`/`tessler-franke-2020` entries (same DOI), update source paths
+
+### Removed
+- **Theories/Pragmatics/RSA/Implementations/TesslerFranke2020.lean**: Superseded by `Phenomena/Negation/Studies/TesslerFranke2020.lean`
+
 ## [0.228.51] - 2026-03-05
 
 ### Added

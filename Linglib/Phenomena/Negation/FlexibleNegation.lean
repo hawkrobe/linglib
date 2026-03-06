@@ -2,7 +2,7 @@
 # Flexible Negation: Empirical Data
 @cite{cruse-1986} @cite{horn-1989} @cite{kennedy-mcnally-2005}
 
-@cite{tessler-franke-2020} "Not unreasonable: Why two negatives don't make a positive"
+@cite{tessler-franke-2019} "Not unreasonable: Why two negatives don't make a positive"
 -/
 
 import Mathlib.Data.Rat.Defs
@@ -56,7 +56,7 @@ The key insight: both morphological (un-) and syntactic (not) negation
 can receive either contradictory OR contrary interpretations.
 The interpretation is pragmatically determined.
 
-Source: @cite{tessler-franke-2020}
+Source: @cite{tessler-franke-2019}
 -/
 inductive NegationMarker where
   /-- Syntactic negation: "not happy" -/
@@ -72,7 +72,7 @@ A judgment about the interpretation of a negated form.
 Captures the empirical observation that negated forms can be
 interpreted as contradictory or contrary, with varying strength.
 
-Source: @cite{tessler-franke-2020} experiments
+Source: @cite{tessler-franke-2019} experiments
 -/
 structure FlexibleNegationDatum where
   /-- The base (positive) adjective -/
@@ -96,7 +96,7 @@ structure FlexibleNegationDatum where
 Intuition: "unhappy" means positively unhappy (below a low threshold),
 not just "not happy" (anything at or below the happy threshold).
 
-Source: @cite{tessler-franke-2020} Experiment 1
+Source: @cite{tessler-franke-2019} Experiment 1
 -/
 def unhappy_contrary : FlexibleNegationDatum :=
   { adjective := "happy"
@@ -116,7 +116,7 @@ Intuition: "not happy" can mean either:
 
 The costly form (2 words) licenses the marked (contradictory) reading.
 
-Source: @cite{tessler-franke-2020} Experiment 1
+Source: @cite{tessler-franke-2019} Experiment 1
 -/
 def not_happy_ambiguous : FlexibleNegationDatum :=
   { adjective := "happy"
@@ -138,7 +138,7 @@ Why? If "unhappy" is contrary (x < θ_neg), then:
 - "happy" = x > θ_pos where θ_pos > θ_neg
 - Gap region: θ_neg ≤ x ≤ θ_pos is "not unhappy" but NOT "happy"
 
-Source: @cite{tessler-franke-2020} Section 1
+Source: @cite{tessler-franke-2019} Section 1
 -/
 def not_unhappy_not_happy : FlexibleNegationDatum :=
   { adjective := "happy"
@@ -179,7 +179,7 @@ Data capturing the non-equivalence pattern: "not un-X" ≠ "X".
 This is the central empirical claim: double negation doesn't cancel out
 when the inner negation is contrary.
 
-Source: @cite{tessler-franke-2020}, @cite{horn-1989}
+Source: @cite{tessler-franke-2019}, @cite{horn-1989}
 -/
 structure DoubleNegationDatum where
   /-- The positive adjective -/
@@ -201,7 +201,7 @@ Someone in the gap region (neither happy nor unhappy) is:
 - "not unhappy" ✓ (they're not below θ_neg)
 - "happy" ✗ (they're not above θ_pos)
 
-Source: @cite{tessler-franke-2020}
+Source: @cite{tessler-franke-2019}
 -/
 def happy_double_neg : DoubleNegationDatum :=
   { positive := "happy"
@@ -240,7 +240,7 @@ Shorter/simpler forms are cheaper to produce, creating:
 
 This follows Horn's Division of Pragmatic Labor.
 
-Source: @cite{horn-1984}, @cite{tessler-franke-2020}
+Source: @cite{horn-1984}, @cite{tessler-franke-2019}
 -/
 structure CostAsymmetryDatum where
   /-- Shorter/cheaper form -/
@@ -261,7 +261,7 @@ structure CostAsymmetryDatum where
 The cheaper "unhappy" gets the default (contrary) reading.
 The costlier "not happy" is available for the marked (contradictory) reading.
 
-Source: @cite{tessler-franke-2020}
+Source: @cite{tessler-franke-2019}
 -/
 def unhappy_vs_not_happy : CostAsymmetryDatum :=
   { cheapForm := "unhappy"
@@ -285,7 +285,7 @@ For contrary pairs like happy/unhappy, there are TWO thresholds:
 
 This is the key semantic insight that explains the non-equivalence.
 
-Source: @cite{tessler-franke-2020}, @cite{kennedy-2007}
+Source: @cite{tessler-franke-2019}, @cite{kennedy-2007}
 -/
 structure TwoThresholdModel where
   /-- The positive adjective -/
@@ -308,7 +308,7 @@ The happiness scale has two thresholds creating three regions:
 - Gap: θ_neg ≤ degree ≤ θ_pos (neither/ambivalent)
 - Happy: degree > θ_pos (clearly happy)
 
-Source: @cite{tessler-franke-2020}
+Source: @cite{tessler-franke-2019}
 -/
 def happyUnhappyThresholds : TwoThresholdModel :=
   { positive := "happy"
@@ -327,7 +327,7 @@ Predictions that a theory of flexible negation should satisfy.
 
 These are the empirical targets for the RSA implementation.
 
-Source: @cite{tessler-franke-2020}
+Source: @cite{tessler-franke-2019}
 -/
 structure FlexibleNegationPrediction where
   /-- Name of the prediction -/

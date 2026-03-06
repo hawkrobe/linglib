@@ -135,6 +135,7 @@ import Linglib.Fragments.Dutch.Binominals
 import Linglib.Fragments.Dutch.Nouns
 import Linglib.Fragments.Dutch.Particles
 import Linglib.Fragments.English.Determiners
+import Linglib.Fragments.English.FocusParticles
 import Linglib.Fragments.English.FunctionWords
 import Linglib.Fragments.English.MeasurePhrases
 import Linglib.Fragments.English.Binominals
@@ -973,6 +974,7 @@ import Linglib.Theories.Semantics.Entailment.StrawsonEntailment
 import Linglib.Theories.Semantics.Polarity.CzechNegation
 import Linglib.Theories.Semantics.Focus.BackgroundedIslands
 import Linglib.Phenomena.Focus.Studies.DeoThomas2025
+import Linglib.Phenomena.Focus.Studies.Francescotti1995
 import Linglib.Theories.Semantics.Focus.Interpretation
 import Linglib.Theories.Semantics.Focus.Particles
 import Linglib.Theories.Semantics.Presupposition.BeliefEmbedding
@@ -1136,6 +1138,7 @@ import Linglib.Theories.Pragmatics.NeoGricean.Exhaustivity.EFCIClosure
 import Linglib.Theories.Pragmatics.NeoGricean.Exhaustivity.Interface
 import Linglib.Theories.Pragmatics.NeoGricean.Implementations.BarLevFox2020
 import Linglib.Theories.Pragmatics.NeoGricean.Implementations.FoxSpector2018
+import Linglib.Theories.Pragmatics.NeoGricean.Implementations.Magri2014
 import Linglib.Theories.Pragmatics.NeoGricean.Implementations.MontagueExhaustivity
 import Linglib.Theories.Pragmatics.NeoGricean.Implementations.Spector2007
 import Linglib.Theories.Pragmatics.NeoGricean.NegationScope
@@ -1181,7 +1184,7 @@ import Linglib.Phenomena.Gradability.Studies.Nouwen2024RSA
 import Linglib.Theories.Pragmatics.RSA.Implementations.QingEtAl2016
 import Linglib.Theories.Pragmatics.RSA.Implementations.ScopeFreezing
 import Linglib.Theories.Pragmatics.RSA.Implementations.SumersEtAl2023
-import Linglib.Theories.Pragmatics.RSA.Implementations.TesslerFranke2020
+import Linglib.Phenomena.Negation.Studies.TesslerFranke2020
 import Linglib.Phenomena.Generics.Studies.TesslerGoodman2019
 import Linglib.Theories.Pragmatics.RSA.Implementations.TesslerGoodman2022
 import Linglib.Theories.Pragmatics.RSA.Implementations.VanTielEtAl2021

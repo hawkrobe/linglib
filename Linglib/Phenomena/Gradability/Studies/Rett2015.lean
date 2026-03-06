@@ -3,7 +3,7 @@ import Linglib.Theories.Semantics.Lexical.Adjective.Theory
 
 /-!
 # Evaluativity: Empirical Patterns
-@cite{rett-2015} @cite{lassiter-goodman-2017} @cite{tessler-franke-2020}
+@cite{rett-2015} @cite{lassiter-goodman-2017} @cite{tessler-franke-2019}
 
 Evaluativity distribution across adjectival constructions. Positive constructions
 are evaluative, comparatives are not, equatives show asymmetry.
