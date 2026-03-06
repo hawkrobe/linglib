@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.228.58] - 2026-03-06
+
+### Added
+- **data/wals-v2020.4/**: Raw WALS CLDF data (values.csv, codes.csv, languages.csv, parameters.csv) checked into repo for reproducibility
+- **data/README.md**: Provenance, license, and regeneration instructions for raw data sources
+- **scripts/gen_wals.py**: Generator script: WALS CLDF CSVs → Lean 4 modules with enums, per-language data, count verification theorems, and lookup functions
+- **Core/WALS/Features/F{106A,107A,108A,108B,109A,109B,110A,111A}.lean**: Generated WALS data modules (chapters 106–111) with `native_decide`-verified counts
+- **Core/WALS/Languages.lean**: Generated language metadata (554 languages across all features)
+- **Fragments/English/Pronouns.lean**: Add `PronounType.reciprocal` variant, `eachOther` and `oneAnother` entries
+
+### Changed
+- **Phenomena/ArgumentStructure/Typology.lean**: Fix 6 hand-coded reciprocal type errors (Russian, French, Indonesian, Turkish, Modern Greek, Lango) caught by WALS cross-validation; replace hand-coded `WALSCount` aggregate data with re-exports from generated WALS modules; add 15 `*_reciprocal_wals` grounding theorems proving profile values match generated WALS data; upgrade 5 generalization theorems to derive from generated data; add `fromWALS106A` converter, `ReciprocityType` enum, Fragment connection theorems, polysemy cross-validation from Nordlinger (2023); fix all `@cite{}` violations
+- **Theories/Syntax/CCG/Core/FromFragments.lean**: Add `.reciprocal => NP` case to `pronounToCat` for new `PronounType.reciprocal`
+- **blog/data/references.bib**: Add `nordlinger-2023` entry
+
 ## [0.228.57] - 2026-03-06
 
 ### Changed

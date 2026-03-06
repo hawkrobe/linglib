@@ -18,6 +18,7 @@ Type of pronoun.
 inductive PronounType where
   | personal    -- I, you, he, she, it, we, they
   | reflexive   -- myself, yourself, himself, herself, itself, ourselves, themselves
+  | reciprocal  -- each other, one another
   | wh          -- who, what, which, where, when, why, how
   | relative    -- who, which, that (in relative clauses)
   | demonstrative -- this, that (pronominal use)
@@ -78,6 +79,13 @@ def yourselves : PronounEntry := { form := "yourselves", pronounType := .reflexi
 def themselves : PronounEntry := { form := "themselves", pronounType := .reflexive, person := some .third, number := some .pl }
 
 -- ============================================================================
+-- Reciprocal Pronouns
+-- ============================================================================
+
+def eachOther : PronounEntry := { form := "each other", pronounType := .reciprocal }
+def oneAnother : PronounEntry := { form := "one another", pronounType := .reciprocal }
+
+-- ============================================================================
 -- Wh-Pronouns
 -- ============================================================================
 
@@ -117,6 +125,7 @@ def allPronouns : List PronounEntry := [
   i, me, we, us, you, you_pl,
   he, him, she, her, it, they, them,
   myself, yourself, himself, herself, itself, ourselves, yourselves, themselves,
+  eachOther, oneAnother,
   who, whom, what, which, where_, when_, why, how
 ]
 

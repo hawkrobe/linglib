@@ -66,6 +66,7 @@ def pronounToCat (p : PronounEntry) : Cat :=
   match p.pronounType with
   | .personal => NP
   | .reflexive => NP
+  | .reciprocal => NP      -- "each other", "one another"
   | .wh => NP              -- Simplified: wh-words as NP (can be type-raised)
   | .relative => NP / S    -- Relative pronouns: (NP/S) or similar
   | .demonstrative => NP

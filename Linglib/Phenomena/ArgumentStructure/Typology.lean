@@ -1,25 +1,32 @@
 import Linglib.Core.Lexical.Word
+import Linglib.Core.WALS.Features.F106A
+import Linglib.Core.WALS.Features.F107A
+import Linglib.Core.WALS.Features.F108A
+import Linglib.Core.WALS.Features.F108B
+import Linglib.Core.WALS.Features.F111A
 import Linglib.Fragments.Finnish.Predicates
+import Linglib.Fragments.English.Pronouns
 
 /-!
 # Cross-Linguistic Typology of Valence and Voice (WALS Chapters 106--111)
 @cite{maslova-nedjalkov-2013} @cite{polinsky-2013} @cite{siewierska-2013} @cite{song-2013}
+@cite{nordlinger-2023}
 
 Typological data on valence-changing and voice constructions, drawn from
 WALS (World Atlas of Language Structures) chapters 106--111:
 
-- **Ch 106** (Maslova & Nedjalkov): Reciprocal constructions and their
+- **Ch 106** (@cite{maslova-nedjalkov-2013}): Reciprocal constructions and their
   relationship to reflexives. 175 languages.
-- **Ch 107** (Siewierska): Passive constructions -- presence/absence across
+- **Ch 107** (@cite{siewierska-2013}): Passive constructions -- presence/absence across
   373 languages. Passives occur in 44% of sampled languages, concentrated
   in Eurasia and Africa.
-- **Ch 108** (Polinsky): Antipassive constructions -- detransitivizing
+- **Ch 108** (@cite{polinsky-2013}): Antipassive constructions -- detransitivizing
   operations that demote the patient. 194 languages.
-- **Ch 109** (Polinsky): Applicative constructions -- valence-increasing
+- **Ch 109** (@cite{polinsky-2013}): Applicative constructions -- valence-increasing
   operations adding an applied object. 183 languages.
-- **Ch 110** (Song): Periphrastic causative constructions -- sequential vs
+- **Ch 110** (@cite{song-2013}): Periphrastic causative constructions -- sequential vs
   purposive types. 118 languages.
-- **Ch 111** (Song): Nonperiphrastic causative constructions -- morphological
+- **Ch 111** (@cite{song-2013}): Nonperiphrastic causative constructions -- morphological
   vs compound types. 310 languages.
 
 This module focuses on Ch 106--109 (reciprocals, passives, antipassives,
@@ -32,21 +39,25 @@ here for cross-reference.
 namespace Phenomena.ArgumentStructure.Typology
 
 -- ============================================================================
--- Ch 106: Reciprocal Constructions (Maslova & Nedjalkov)
+-- Ch 106: Reciprocal Constructions (@cite{maslova-nedjalkov-2013})
 -- ============================================================================
 
 /-- WALS Ch 106: How reciprocal situations are encoded relative to reflexives.
 
-    - `noNonIconic`: No non-iconic reciprocal constructions; reciprocals
-      always involve verb repetition (e.g. Cantonese, Amele, Godié).
-    - `distinctFromReflexive`: All reciprocal constructions are formally
-      distinct from reflexive constructions (e.g. English "each other" vs
-      "themselves"; Kolyma Yukaghir `n'e-`).
-    - `mixed`: Both reflexive and non-reflexive reciprocal constructions
-      coexist (e.g. German, Hixkaryana). Common in Europe.
-    - `identicalToReflexive`: Reciprocal and reflexive constructions use
-      the same form (e.g. Wari' `refl/recp`, Imbabura Quechua `-ri`,
-      Lithuanian `-si`). -/
+    The four values follow @cite{maslova-nedjalkov-2013}'s classification:
+
+    - `noNonIconic`: "There are no non-iconic reciprocal constructions" —
+      the language lacks a dedicated grammatical reciprocal marker.
+    - `distinctFromReflexive`: "All reciprocal constructions are formally
+      distinct from reflexive constructions" (e.g. English "each other" vs
+      "themselves").
+    - `mixed`: "There are both reflexive and non-reflexive reciprocal
+      constructions" — the language has both a reflexive-identical strategy
+      and a formally distinct one (e.g. German "sich" + "einander").
+      Common in Europe.
+    - `identicalToReflexive`: "The reciprocal and reflexive constructions
+      are formally identical" (e.g. Imbabura Quechua "-ri",
+      West Greenlandic "-ssin-"). -/
 inductive ReciprocalType where
   | noNonIconic
   | distinctFromReflexive
@@ -55,7 +66,7 @@ inductive ReciprocalType where
   deriving DecidableEq, BEq, Repr
 
 -- ============================================================================
--- Ch 107: Passive Constructions (Siewierska)
+-- Ch 107: Passive Constructions (@cite{siewierska-2013})
 -- ============================================================================
 
 /-- WALS Ch 107: Whether a language has passive constructions.
@@ -76,7 +87,7 @@ inductive PassivePresence where
   deriving DecidableEq, BEq, Repr
 
 -- ============================================================================
--- Ch 108: Antipassive Constructions (Polinsky)
+-- Ch 108: Antipassive Constructions (@cite{polinsky-2013})
 -- ============================================================================
 
 /-- WALS Ch 108: Antipassive construction type.
@@ -120,7 +131,7 @@ inductive AlignmentType where
   deriving DecidableEq, BEq, Repr
 
 -- ============================================================================
--- Ch 109: Applicative Constructions (Polinsky)
+-- Ch 109: Applicative Constructions (@cite{polinsky-2013})
 -- ============================================================================
 
 /-- WALS Ch 109: Transitivity of the base verb for applicative formation.
@@ -184,82 +195,22 @@ def NonperiphrCausativeType.hasMorphological : NonperiphrCausativeType -> Bool
   | _                  => false
 
 -- ============================================================================
--- WALS Distribution Data (aggregate counts from chapter summaries)
+-- WALS Distribution Data — derived from generated modules
 -- ============================================================================
+-- Full per-language data lives in Core.WALS.Features.F{106A..111A}.
+-- These theorems re-derive aggregate counts from the generated data, ensuring
+-- the numbers in our generalizations below stay in sync with the source.
 
-/-- Aggregate count from a WALS chapter. -/
-structure WALSCount where
-  chapter : Nat
-  label : String
-  count : Nat
-  deriving Repr, DecidableEq, BEq
-
-/-- WALS Ch 106: Reciprocal constructions (175 languages). -/
-def reciprocalCounts : List WALSCount :=
-  [ { chapter := 106, label := "No non-iconic reciprocals",           count := 16 }
-  , { chapter := 106, label := "Distinct from reflexive",             count := 99 }
-  , { chapter := 106, label := "Mixed (both reflexive and non-refl)", count := 16 }
-  , { chapter := 106, label := "Identical to reflexive",              count := 44 } ]
-
-/-- WALS Ch 107: Passive constructions (373 languages). -/
-def passiveCounts : List WALSCount :=
-  [ { chapter := 107, label := "Present", count := 162 }
-  , { chapter := 107, label := "Absent",  count := 211 } ]
-
-/-- WALS Ch 108: Antipassive constructions (194 languages). -/
-def antipassiveCounts : List WALSCount :=
-  [ { chapter := 108, label := "Implicit patient",  count := 18 }
-  , { chapter := 108, label := "Oblique patient",   count := 30 }
-  , { chapter := 108, label := "No antipassive",    count := 146 } ]
-
-/-- WALS Ch 108 inset: Antipassive productivity (186 languages). -/
-def antipassiveProductivityCounts : List WALSCount :=
-  [ { chapter := 108, label := "Productive",           count := 24 }
-  , { chapter := 108, label := "Partially productive",  count := 14 }
-  , { chapter := 108, label := "Not productive",        count := 2 }
-  , { chapter := 108, label := "No antipassive",        count := 146 } ]
-
-/-- WALS Ch 109: Applicative constructions (183 languages). -/
-def applicativeCounts : List WALSCount :=
-  [ { chapter := 109, label := "Benefactive; both bases",         count := 16 }
-  , { chapter := 109, label := "Benefactive; transitive only",    count := 4 }
-  , { chapter := 109, label := "Benefactive+other; both bases",   count := 49 }
-  , { chapter := 109, label := "Benefactive+other; trans only",   count := 2 }
-  , { chapter := 109, label := "Non-benefactive; both bases",     count := 9 }
-  , { chapter := 109, label := "Non-benefactive; trans only",     count := 1 }
-  , { chapter := 109, label := "Non-benefactive; intrans only",   count := 2 }
-  , { chapter := 109, label := "No applicative",                  count := 100 } ]
-
-/-- WALS Ch 110: Periphrastic causative constructions (118 languages). -/
-def periphrasticCausativeCounts : List WALSCount :=
-  [ { chapter := 110, label := "Sequential only",  count := 35 }
-  , { chapter := 110, label := "Purposive only",   count := 68 }
-  , { chapter := 110, label := "Both",             count := 15 } ]
-
-/-- WALS Ch 111: Nonperiphrastic causative constructions (310 languages). -/
-def nonperiphrCausativeCounts : List WALSCount :=
-  [ { chapter := 111, label := "Neither morph nor compound",   count := 23 }
-  , { chapter := 111, label := "Morphological only",           count := 254 }
-  , { chapter := 111, label := "Compound only",                count := 9 }
-  , { chapter := 111, label := "Both morph and compound",      count := 24 } ]
-
--- ============================================================================
--- Aggregate count verification
--- ============================================================================
-
-private def sumCounts (cs : List WALSCount) : Nat :=
-  cs.foldl (· + ·.count) 0
-
-theorem reciprocal_total : sumCounts reciprocalCounts = 175 := by native_decide
-theorem passive_total : sumCounts passiveCounts = 373 := by native_decide
-theorem antipassive_total : sumCounts antipassiveCounts = 194 := by native_decide
-theorem antipassive_productivity_total :
-    sumCounts antipassiveProductivityCounts = 186 := by native_decide
-theorem applicative_total : sumCounts applicativeCounts = 183 := by native_decide
-theorem periphrastic_causative_total :
-    sumCounts periphrasticCausativeCounts = 118 := by native_decide
-theorem nonperiphr_causative_total :
-    sumCounts nonperiphrCausativeCounts = 310 := by native_decide
+theorem reciprocal_total : Core.WALS.F106A.allData.length = 175 :=
+  Core.WALS.F106A.total_count
+theorem passive_total : Core.WALS.F107A.allData.length = 373 :=
+  Core.WALS.F107A.total_count
+theorem antipassive_total : Core.WALS.F108A.allData.length = 194 :=
+  Core.WALS.F108A.total_count
+theorem antipassive_productivity_total : Core.WALS.F108B.allData.length = 186 := by
+  exact Core.WALS.F108B.total_count
+theorem nonperiphr_causative_total : Core.WALS.F111A.allData.length = 310 :=
+  Core.WALS.F111A.total_count
 
 -- ============================================================================
 -- Language Profiles
@@ -319,14 +270,15 @@ def japanese : ValenceProfile :=
   , applicative := .noApplicative
   , causative := .morphologicalOnly }
 
-/-- Turkish: reciprocal-reflexive polysemy (mixed type: both reflexive
-    reciprocal and distinct reciprocal forms), passive ("-Il"),
-    no antipassive (accusative), no applicative,
+/-- Turkish: reciprocal distinct from reflexive — "birbirine" (reciprocal)
+    is formally distinct from "kendi" (reflexive). WALS Ch 106 codes Turkish
+    as Value 2 (distinct from reflexive).
+    Passive ("-Il"), no antipassive (accusative), no applicative,
     morphological causative "-dUr". -/
 def turkish : ValenceProfile :=
   { language := "Turkish"
   , iso := "tur"
-  , reciprocal := .mixed
+  , reciprocal := .distinctFromReflexive
   , passive := .present
   , antipassive := .noAntipassive
   , alignment := .accusative
@@ -348,7 +300,9 @@ def swahili : ValenceProfile :=
 
 /-- Dyirbal (Pama-Nyungan, Australia): no non-iconic reciprocal,
     no passive, dedicated antipassive with oblique patient,
-    ergative alignment, no applicative, morphological causative. -/
+    ergative alignment, no applicative, morphological causative.
+    NOTE: Dyirbal is NOT in WALS Ch 106 sample (175 languages).
+    Reciprocal type inferred from descriptive grammar — UNVERIFIED. -/
 def dyirbal : ValenceProfile :=
   { language := "Dyirbal"
   , iso := "dbl"
@@ -373,40 +327,46 @@ def chukchi : ValenceProfile :=
   , applicative := .noApplicative
   , causative := .morphologicalOnly }
 
-/-- Indonesian: reciprocal identical to reflexive ("saling" / reduplication),
-    passive ("di-"), no antipassive, no applicative,
+/-- Indonesian: reciprocal distinct from reflexive — "saling" (reciprocal)
+    is formally different from "diri sendiri" (reflexive). WALS Ch 106
+    codes Indonesian as Value 2 (distinct from reflexive).
+    Passive ("di-"), no antipassive, no applicative,
     morphological causative. -/
 def indonesian : ValenceProfile :=
   { language := "Indonesian"
   , iso := "ind"
-  , reciprocal := .identicalToReflexive
+  , reciprocal := .distinctFromReflexive
   , passive := .present
   , antipassive := .noAntipassive
   , alignment := .accusative
   , applicative := .noApplicative
   , causative := .morphologicalOnly }
 
-/-- French: reciprocal identical to reflexive ("se" for both),
-    periphrastic passive ("etre + past participle"), no antipassive,
+/-- French: mixed reciprocal type — both reflexive-identical "se" and
+    distinct "l'un l'autre" ('each other'). WALS Ch 106 codes French as
+    Value 3 (mixed).
+    Periphrastic passive ("être + past participle"), no antipassive,
     no applicative, compound causative ("faire + INF"). -/
 def french : ValenceProfile :=
   { language := "French"
   , iso := "fra"
-  , reciprocal := .identicalToReflexive
+  , reciprocal := .mixed
   , passive := .present
   , antipassive := .noAntipassive
   , alignment := .accusative
   , applicative := .noApplicative
   , causative := .compoundOnly }
 
-/-- Russian: reciprocal identical to reflexive ("-sja" / "drug druga"),
-    passive (synthetic "-sja" + periphrastic), no antipassive,
+/-- Russian: mixed reciprocal type — both reflexive-identical "-sja"/"-s'"
+    and distinct "drug druga" ('each other'). WALS Ch 106 codes Russian as
+    Value 3 (mixed), parallel to German ("sich" + "einander").
+    Passive (synthetic "-sja" + periphrastic), no antipassive,
     no applicative, morphological causative (zero-derivation, e.g.
     "lomat'-sja" anticausative). -/
 def russian : ValenceProfile :=
   { language := "Russian"
   , iso := "rus"
-  , reciprocal := .identicalToReflexive
+  , reciprocal := .mixed
   , passive := .present
   , antipassive := .noAntipassive
   , alignment := .accusative
@@ -415,7 +375,10 @@ def russian : ValenceProfile :=
 
 /-- Arabic (Modern Standard): reciprocal via Form VI (tafaa`ala),
     passive via internal vowel change (kutiba), no antipassive,
-    no applicative, morphological causative (Form IV 'af`ala). -/
+    no applicative, morphological causative (Form IV 'af`ala).
+    NOTE: MSA is NOT in WALS Ch 106 sample; Arabic (Egyptian) is
+    listed as Value 2 (distinct from reflexive). Coding inferred
+    from MSA grammar — UNVERIFIED against WALS. -/
 def arabic : ValenceProfile :=
   { language := "Arabic"
   , iso := "arb"
@@ -454,7 +417,10 @@ def westGreenlandic : ValenceProfile :=
 
 /-- Kinyarwanda (Bantu, Rwanda): reciprocal distinct ("-ana"),
     passive ("-w-"), no antipassive, applicative ("-ir-" / "-er-"
-    benefactive + other from both bases), morphological causative. -/
+    benefactive + other from both bases), morphological causative.
+    NOTE: Kinyarwanda is NOT in WALS Ch 106 sample. Reciprocal type
+    inferred from Bantu morphology (cf. Swahili, Zulu = Value 2) —
+    UNVERIFIED against WALS. -/
 def kinyarwanda : ValenceProfile :=
   { language := "Kinyarwanda"
   , iso := "kin"
@@ -465,14 +431,15 @@ def kinyarwanda : ValenceProfile :=
   , applicative := .applicative .bothBases .benefactiveAndOther
   , causative := .morphologicalOnly }
 
-/-- Lango (Nilotic, Uganda): reciprocal distinct,
-    passive absent, antipassive with oblique patient (accusative
-    alignment -- one of the accusative-language antipassives),
+/-- Lango (Nilotic, Uganda): reciprocal identical to reflexive.
+    WALS Ch 106 codes Lango as Value 4 (identical to reflexive).
+    Passive absent, antipassive with oblique patient (accusative
+    alignment — one of the accusative-language antipassives),
     no applicative, morphological causative. -/
 def lango : ValenceProfile :=
   { language := "Lango"
   , iso := "laj"
-  , reciprocal := .distinctFromReflexive
+  , reciprocal := .identicalToReflexive
   , passive := .absent
   , antipassive := .obliquePatient
   , alignment := .accusative
@@ -496,7 +463,9 @@ def chamorro : ValenceProfile :=
 /-- Halkomelem (Salishan, Canada): reciprocal distinct,
     passive present, antipassive with oblique patient,
     ergative alignment, applicative (benefactive + other,
-    both bases), morphological causative. -/
+    both bases), morphological causative.
+    NOTE: Halkomelem is NOT in WALS Ch 106 sample.
+    Reciprocal type inferred from Salishan grammar — UNVERIFIED. -/
 def halkomelem : ValenceProfile :=
   { language := "Halkomelem"
   , iso := "hur"
@@ -507,14 +476,16 @@ def halkomelem : ValenceProfile :=
   , applicative := .applicative .bothBases .benefactiveAndOther
   , causative := .morphologicalOnly }
 
-/-- Modern Greek: reciprocal identical to reflexive,
-    passive present ("periphrastic with nonactive morphology"),
+/-- Modern Greek: mixed reciprocal type — both nonactive voice morphology
+    (identical to reflexive) and distinct reciprocal constructions.
+    WALS Ch 106 codes Modern Greek as Value 3 (mixed).
+    Passive present ("periphrastic with nonactive morphology"),
     no antipassive, no applicative, NEITHER morphological
     nor compound causative (relies on periphrastic causative). -/
 def modernGreek : ValenceProfile :=
   { language := "Modern Greek"
   , iso := "ell"
-  , reciprocal := .identicalToReflexive
+  , reciprocal := .mixed
   , passive := .present
   , antipassive := .noAntipassive
   , alignment := .accusative
@@ -579,6 +550,67 @@ example : modernGreek.causative = .neither := by native_decide
 example : finnish.passive = .present := by native_decide
 example : finnish.causative = .morphologicalOnly := by native_decide
 
+-- ============================================================================
+-- WALS Grounding: Profile reciprocal types match generated WALS data
+-- ============================================================================
+
+/-- Helper: convert WALS 106A value to our ReciprocalType. -/
+private def fromWALS106A : Core.WALS.F106A.ReciprocalType → ReciprocalType
+  | .noReciprocalConstruction => .noNonIconic
+  | .distinctFromReflexive    => .distinctFromReflexive
+  | .mixed                    => .mixed
+  | .identicalToReflexive     => .identicalToReflexive
+
+/-- For each profile whose language IS in WALS Ch 106, prove its reciprocal
+    type matches the WALS data. This eliminates transcription errors by
+    construction: if the profile disagrees with WALS, the theorem fails. -/
+
+theorem english_reciprocal_wals :
+    (Core.WALS.F106A.lookup "eng").map (fromWALS106A ·.value) = some english.reciprocal := by
+  native_decide
+theorem japanese_reciprocal_wals :
+    (Core.WALS.F106A.lookup "jpn").map (fromWALS106A ·.value) = some japanese.reciprocal := by
+  native_decide
+theorem turkish_reciprocal_wals :
+    (Core.WALS.F106A.lookup "tur").map (fromWALS106A ·.value) = some turkish.reciprocal := by
+  native_decide
+theorem swahili_reciprocal_wals :
+    (Core.WALS.F106A.lookup "swa").map (fromWALS106A ·.value) = some swahili.reciprocal := by
+  native_decide
+theorem chukchi_reciprocal_wals :
+    (Core.WALS.F106A.lookup "chk").map (fromWALS106A ·.value) = some chukchi.reciprocal := by
+  native_decide
+theorem indonesian_reciprocal_wals :
+    (Core.WALS.F106A.lookup "ind").map (fromWALS106A ·.value) = some indonesian.reciprocal := by
+  native_decide
+theorem french_reciprocal_wals :
+    (Core.WALS.F106A.lookup "fre").map (fromWALS106A ·.value) = some french.reciprocal := by
+  native_decide
+theorem russian_reciprocal_wals :
+    (Core.WALS.F106A.lookup "rus").map (fromWALS106A ·.value) = some russian.reciprocal := by
+  native_decide
+theorem hindi_reciprocal_wals :
+    (Core.WALS.F106A.lookup "hin").map (fromWALS106A ·.value) = some hindi.reciprocal := by
+  native_decide
+theorem westGreenlandic_reciprocal_wals :
+    (Core.WALS.F106A.lookup "grw").map (fromWALS106A ·.value) = some westGreenlandic.reciprocal := by
+  native_decide
+theorem lango_reciprocal_wals :
+    (Core.WALS.F106A.lookup "lan").map (fromWALS106A ·.value) = some lango.reciprocal := by
+  native_decide
+theorem chamorro_reciprocal_wals :
+    (Core.WALS.F106A.lookup "cha").map (fromWALS106A ·.value) = some chamorro.reciprocal := by
+  native_decide
+theorem modernGreek_reciprocal_wals :
+    (Core.WALS.F106A.lookup "grk").map (fromWALS106A ·.value) = some modernGreek.reciprocal := by
+  native_decide
+theorem german_reciprocal_wals :
+    (Core.WALS.F106A.lookup "ger").map (fromWALS106A ·.value) = some german.reciprocal := by
+  native_decide
+theorem finnish_reciprocal_wals :
+    (Core.WALS.F106A.lookup "fin").map (fromWALS106A ·.value) = some finnish.reciprocal := by
+  native_decide
+
 /-- Finnish impersonal "passive" has semantic content (existential closure
     over agent) — derived from the Fragment's voice head. -/
 theorem finnish_passive_has_semantics :
@@ -597,8 +629,8 @@ theorem finnish_passive_no_agent :
     Although a minority, passives are widespread enough that most
     language families include at least some passive-bearing members. -/
 theorem passives_substantial_minority :
-    let present := 162
-    let total := 373
+    let present := (Core.WALS.F107A.allData.filter (·.value == .present)).length
+    let total := Core.WALS.F107A.allData.length
     -- More than a third of languages have passives
     present * 3 > total := by native_decide
 
@@ -617,12 +649,13 @@ theorem majority_of_sample_has_passive :
 
 /-- In the WALS Ch 108 data, antipassives occur in both accusative and
     ergative languages, but the correlation with ergativity is strong.
-    @cite{polinsky-2013} lists 30 ergative languages with antipassives vs
-    17 accusative languages (Table 1). -/
-theorem antipassive_ergative_association :
-    let ergativeWithAP := 30
-    let accusativeWithAP := 17
-    ergativeWithAP > accusativeWithAP := by native_decide
+    @cite{polinsky-2013}: more languages have oblique-patient antipassives
+    than implicit-patient antipassives, and the majority have no antipassive. -/
+theorem antipassive_distribution :
+    let oblique := (Core.WALS.F108A.allData.filter (·.value == .obliquePatient)).length
+    let implicit := (Core.WALS.F108A.allData.filter (·.value == .implicitPatient)).length
+    let none_ := (Core.WALS.F108A.allData.filter (·.value == .noAntipassive)).length
+    oblique > implicit ∧ none_ > oblique + implicit := by native_decide
 
 /-- In our sample: every ergative language has an antipassive,
     but not all accusative languages do. -/
@@ -646,10 +679,10 @@ theorem most_accusative_lack_antipassive :
     Only 23 languages use neither morphological nor compound causatives.
     This dwarfs periphrastic causatives in frequency. -/
 theorem morphological_causative_dominant :
-    let morphOnly := 254
-    let both := 24
-    let total := 310
-    -- Morphological causatives in 278/310 languages
+    let morphOnly := (Core.WALS.F111A.allData.filter (·.value == .morphologicalOnly)).length
+    let both := (Core.WALS.F111A.allData.filter (·.value == .both)).length
+    let total := Core.WALS.F111A.allData.length
+    -- Morphological causatives in >80% of languages
     (morphOnly + both) * 10 > total * 8 := by native_decide
 
 /-- In our sample, all but two languages have a morphological or compound
@@ -698,8 +731,8 @@ def causativeMorphExamples : List CausativeMorphologyExample :=
   , { language := "Swahili",    morpheme := "-ish-/-esh-",   position := "suffix" }
   , { language := "Hindi",      morpheme := "-aa/-vaa",      position := "suffix" }
   , { language := "Korean",     morpheme := "-i/-hi/-li/-ki", position := "suffix" }
-, { language := "Finnish", morpheme := "-tta-/-ttä-", position := "suffix" }
-, { language := "Hungarian", morpheme := "-tat-/-tet-",   position := "suffix" }
+  , { language := "Finnish",    morpheme := "-tta-/-ttä-",   position := "suffix" }
+  , { language := "Hungarian",  morpheme := "-tat-/-tet-",   position := "suffix" }
   , { language := "Abkhaz",     morpheme := "r-",            position := "prefix" }
   , { language := "Lepcha",     morpheme := "-y-",           position := "infix" }
   , { language := "Georgian",   morpheme := "a-...-ineb",    position := "circumfix" } ]
@@ -714,22 +747,19 @@ theorem suffixing_dominates_causatives :
 -- Reciprocal typology: Eurasian patterns
 -- ============================================================================
 
-/-- WALS Ch 106 notes a clear areal pattern: non-reflexive reciprocals
-    (value 2, "distinct from reflexive") are overwhelmingly dominant in
-    Eurasia. The mixed type (value 3) is common in Europe (about half of
-    European languages) but very rare elsewhere.
-
-    In our sample, no Eurasian language has reciprocals that are ONLY
-    identical to reflexives -- they all have at least a distinct option
-    (value 2 or 3). -/
+/-- WALS Ch 106 notes a clear areal pattern: Value 1 (no non-iconic
+    reciprocal constructions) is concentrated in Oceania, Southeast Asia,
+    and parts of Africa. Every Eurasian language in the sample has at
+    least one productive grammatical reciprocal construction (Value 2, 3,
+    or 4). -/
 def isEurasian (p : ValenceProfile) : Bool :=
   p.iso == "eng" || p.iso == "deu" || p.iso == "fra" || p.iso == "rus" ||
   p.iso == "ell" || p.iso == "tur" || p.iso == "hin" || p.iso == "jpn" ||
   p.iso == "arb"
 
-/-- Eurasian languages in our sample never have reciprocals that are
-    exclusively iconic (value 1). -/
-theorem eurasian_has_nonIconic_reciprocals :
+/-- Every Eurasian language in our sample has a productive grammatical
+    reciprocal construction (i.e., none are Value 1). -/
+theorem eurasian_all_have_productive_reciprocal :
     let eurasians := allProfiles.filter isEurasian
     eurasians.all fun p => p.reciprocal != .noNonIconic := by native_decide
 
@@ -883,5 +913,105 @@ example : samplePassiveCount .absent = 3 := by native_decide
 example : sampleAntipassiveCount .obliquePatient = 6 := by native_decide
 example : sampleAntipassiveCount .noAntipassive = 13 := by native_decide
 example : sampleApplicativeCount = 4 := by native_decide
+
+-- ============================================================================
+-- Polysemy Cross-Validation (@cite{nordlinger-2023})
+-- ============================================================================
+
+/-- @cite{nordlinger-2023} (p. 88) reports that of the 175 languages in
+    @cite{maslova-nedjalkov-2013}'s sample, polysemous reflexive/reciprocal
+    constructions are present in 60 (34%). In WALS terms, polysemy corresponds
+    to Values 3 (mixed) and 4 (identical to reflexive). -/
+theorem polysemy_count :
+    let mixed := (Core.WALS.F106A.allData.filter (·.value == .mixed)).length
+    let identical := (Core.WALS.F106A.allData.filter (·.value == .identicalToReflexive)).length
+    mixed + identical = 60 := by native_decide
+
+/-- 60 out of 175 = 34.3%. -/
+theorem polysemy_percentage :
+    let polysemous := (Core.WALS.F106A.allData.filter
+        (fun d => d.value == .mixed || d.value == .identicalToReflexive)).length
+    let total := Core.WALS.F106A.allData.length
+    -- More than a third but less than half
+    polysemous * 3 > total ∧ polysemous * 2 < total := by native_decide
+
+-- ============================================================================
+-- Semantic Reciprocity Types (@cite{nordlinger-2023}, §4)
+-- ============================================================================
+
+/-- Semantic type of reciprocal relation.
+
+    @cite{nordlinger-2023} (§4) summarizes the semantic typology from
+    Dalrymple et al. (1998) and Evans et al. (2011), distinguishing six
+    types of mutual relation that reciprocal constructions can encode:
+
+    - `strong`: every participant reciprocates with every other
+      ("The members of this family love one another.")
+    - `pairwise`: participants are paired off
+      ("The people at the dinner party were married to one another.")
+    - `chain`: sequential, each with the next
+      ("The graduating students followed one another up onto the stage.")
+    - `radial`: one central participant reciprocates with all others
+      ("The teacher and her pupils intimidated one another.")
+    - `melee`: widespread but not exhaustive reciprocation
+      ("The drunks in the pub were punching one another.")
+    - `ring`: circular chain, last links back to first
+      ("The children chased each other round in a ring.") -/
+inductive ReciprocityType where
+  | strong
+  | pairwise
+  | chain
+  | radial
+  | melee
+  | ring
+  deriving DecidableEq, BEq, Repr
+
+/-- Whether a reciprocity type requires exhaustive participation
+    (every member of the group is involved). -/
+def ReciprocityType.exhaustive : ReciprocityType → Bool
+  | .strong   => true
+  | .pairwise => true
+  | .chain    => true
+  | .radial   => false
+  | .melee    => false
+  | .ring     => true
+
+/-- Whether a reciprocity type is symmetric: within each active pair,
+    if A acts on B then B acts on A. Chain and ring are directional
+    (A follows B does not entail B follows A). Radial IS symmetric —
+    the teacher intimidates each pupil AND each pupil intimidates the
+    teacher — it just doesn't cover all pairs. -/
+def ReciprocityType.symmetric : ReciprocityType → Bool
+  | .strong   => true
+  | .pairwise => true
+  | .chain    => false
+  | .radial   => true
+  | .melee    => true
+  | .ring     => false
+
+-- ============================================================================
+-- Fragment Connection: English Reciprocal-Reflexive Distinction
+-- ============================================================================
+
+open Fragments.English.Pronouns in
+
+/-- English reciprocal forms ("each other", "one another") are formally
+    distinct from reflexive forms ("themselves", etc.) — derived from
+    the Fragment's pronoun entries rather than stipulated in the profile. -/
+theorem english_reciprocal_distinct_from_reflexive :
+    eachOther.pronounType ≠ PronounType.reflexive ∧
+    oneAnother.pronounType ≠ PronounType.reflexive := by
+  exact ⟨by decide, by decide⟩
+
+open Fragments.English.Pronouns in
+
+/-- The English ValenceProfile's `distinctFromReflexive` coding is
+    grounded in the Fragment: English has reciprocal pronouns that are
+    categorically different from reflexive pronouns. -/
+theorem english_profile_grounded :
+    english.reciprocal = .distinctFromReflexive ∧
+    eachOther.pronounType = .reciprocal ∧
+    eachOther.pronounType ≠ PronounType.reflexive := by
+  exact ⟨rfl, rfl, by decide⟩
 
 end Phenomena.ArgumentStructure.Typology

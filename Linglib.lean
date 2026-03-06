@@ -113,6 +113,8 @@ import Linglib.Core.Lexical.PersonCategory
 import Linglib.Core.Lexical.MorphRule
 import Linglib.Core.Lexical.Binominal
 import Linglib.Core.InformationTheory
+import Linglib.Core.Distributions
+import Linglib.Core.Divergence
 import Linglib.Core.Inheritance
 import Linglib.Theories.Morphology.Core.Circumfix
 import Linglib.Theories.Morphology.Core.Exponence
@@ -126,6 +128,15 @@ import Linglib.Core.Interval.QInterval
 import Linglib.Core.Interval.PadeExp
 import Linglib.Core.Interval.RpowInterval
 import Linglib.Core.Interval.LogInterval
+import Linglib.Core.WALS.Languages
+import Linglib.Core.WALS.Features.F106A
+import Linglib.Core.WALS.Features.F107A
+import Linglib.Core.WALS.Features.F108A
+import Linglib.Core.WALS.Features.F108B
+import Linglib.Core.WALS.Features.F109A
+import Linglib.Core.WALS.Features.F109B
+import Linglib.Core.WALS.Features.F110A
+import Linglib.Core.WALS.Features.F111A
 import Linglib.Tactics.NonnegOfForall
 import Linglib.Tactics.RSAPredict
 import Linglib.Tactics.OntSort
@@ -503,6 +514,7 @@ import Linglib.Phenomena.Modality.Studies.FreeChoiceFarsi
 import Linglib.Phenomena.Modality.Studies.Khoo2015
 import Linglib.Phenomena.Modality.Typology
 import Linglib.Phenomena.Modality.Studies.ImelGuoST2026
+import Linglib.Phenomena.Modality.Studies.HerbstrittFranke2019
 import Linglib.Theories.Semantics.Dynamic.Systems.BSML.Basic
 import Linglib.Theories.Semantics.Dynamic.Systems.BSML.FreeChoice
 import Linglib.Phenomena.Modality.Studies.Aloni2022
@@ -1065,6 +1077,9 @@ import Linglib.Theories.Semantics.Modality.Disjunction
 import Linglib.Theories.Semantics.Modality.BiasedPQ
 import Linglib.Theories.Semantics.Modality.Kratzer
 import Linglib.Theories.Semantics.Modality.PhillipsBrown
+import Linglib.Theories.Semantics.Modality.EpistemicLogic
+import Linglib.Theories.Semantics.Modality.EpistemicProbability
+import Linglib.Theories.Semantics.Modality.KnowledgeProbability
 import Linglib.Theories.Semantics.Modality.ProbabilityOrdering
 import Linglib.Theories.Semantics.Modality.SatisfactionOrdering
 import Linglib.Theories.Semantics.Modality.Ability
