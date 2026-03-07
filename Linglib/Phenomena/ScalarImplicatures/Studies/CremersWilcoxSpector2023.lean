@@ -47,11 +47,15 @@ L1(w_ab | A) > P(w_ab) iff log(P(w_ab)) - log(P(w_a)) > c(A∧¬B) - c(A∧B)
 | 1 | Baseline RSA | Yes (biased prior) | ✓ |
 | 2 | wRSA | Yes (can be) | — |
 | 3 | BwRSA | Yes (can be) | — |
-| 4 | svRSA | No (QUD blocks) | — |
-| 5 | FREE-LU | Yes (at L1) | — |
-| 6 | EXH-LU | No (EXH blocks) | ✓ |
-| 7 | RSA-LI1 | No (EXH blocks) | — |
-| 8 | RSA-LI2 | No (EXH blocks) | — |
+| 4 | svRSA1 | No (QUD blocks) | — |
+| 5 | svRSA2 | No (QUD blocks) | — |
+| 6 | FREE-LU | Yes (at L1) | — |
+| 7 | EXH-LU | No (EXH blocks) | ✓ |
+| 8 | RSA-LI1 | No (EXH blocks) | — |
+| 9 | RSA-LI2 | No (EXH blocks) | — |
+
+RSA-LI (Models 8–9) is essentially GI-RSA from @cite{franke-bergen-2020},
+formalized in `FrankeBergen2020.lean` using the same IE infrastructure.
 -/
 
 set_option autoImplicit false
@@ -173,7 +177,8 @@ def parseMeaning : CWSParse → CWSWorld → CWSUtterance → Bool
 
     The full condition from Eq. 6b is:
     `L1(w_ab|A) > P(w_ab) iff log(P(w_ab)) - log(P(w_a)) > c(A∧¬B) - c(A∧B)`
-    (log-odds exceeds cost difference, under beliefAction scoring with λ = 1).
+    (log-odds exceeds cost difference; this holds for all λ > 0 since λ
+    scales both exponents and the logistic function is monotone).
 
     With equal costs (`c(A∧¬B) = c(A∧B)`), this simplifies to `P(w_ab) > P(w_a)`:
     any prior bias toward w_ab triggers anti-exhaustivity. -/
@@ -208,7 +213,7 @@ noncomputable def baselineBiased : RSA.RSAConfig CWSUtterance CWSWorld where
   worldPrior_nonneg := fun w => by cases w <;> positivity
   latentPrior_nonneg := fun _ _ => le_of_lt one_pos
 
-/-- EXH-LU RSA (Model 6) with biased prior.
+/-- EXH-LU RSA (Model 7) with biased prior.
     Parse is a latent variable; meaning under each parse is determined
     by Innocent Exclusion. Under the exh parse, EXH(A) = A ∧ ¬B is
     false in w_ab, blocking anti-exhaustivity. -/
