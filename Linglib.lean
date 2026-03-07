@@ -354,6 +354,7 @@ import Linglib.Fragments.Bulgarian.Evidentials
 import Linglib.Fragments.Czech.Case
 import Linglib.Fragments.Czech.Determiners
 import Linglib.Fragments.Czech.Particles
+import Linglib.Fragments.Czech.Reciprocals
 import Linglib.Fragments.Farsi.Determiners
 import Linglib.Fragments.Farsi.Phonology
 import Linglib.Fragments.German.Case
@@ -363,18 +364,21 @@ import Linglib.Fragments.German.PolarityMarking
 import Linglib.Fragments.German.Predicates
 import Linglib.Fragments.German.Predicates.Modal
 import Linglib.Fragments.German.Conditionals
+import Linglib.Fragments.German.Reciprocals
 import Linglib.Fragments.Georgian.Coordination
 import Linglib.Fragments.Georgian.Agreement
 import Linglib.Fragments.Greek.Case
 import Linglib.Fragments.Greek.Nouns
 import Linglib.Fragments.Greek.TemporalConnectives
 import Linglib.Fragments.Greek.TemporalDeictic
+import Linglib.Fragments.Greek.Reciprocals
 import Linglib.Fragments.Hebrew.TemporalDeictic
 import Linglib.Fragments.Hebrew.Relativization
 import Linglib.Fragments.HindiUrdu.Particles
 import Linglib.Fragments.Hungarian.Case
 import Linglib.Fragments.Hungarian.Coordination
 import Linglib.Fragments.Hungarian.DiscourseParticles
+import Linglib.Fragments.Hungarian.Reciprocals
 import Linglib.Fragments.Finnish.Case
 import Linglib.Fragments.Finnish.ConsonantGradation
 import Linglib.Fragments.Finnish.Infinitives
@@ -387,6 +391,7 @@ import Linglib.Fragments.French.Binominals
 import Linglib.Fragments.French.Modals
 import Linglib.Fragments.French.Nouns
 import Linglib.Fragments.French.Predicates
+import Linglib.Fragments.French.Reciprocals
 import Linglib.Fragments.Irish.Coordination
 import Linglib.Fragments.Latin.Case
 import Linglib.Fragments.Latin.Coordination
@@ -414,6 +419,7 @@ import Linglib.Fragments.Mandarin.Particles
 import Linglib.Fragments.Mandarin.TemporalDeictic
 import Linglib.Fragments.Mandarin.AspectComparison
 import Linglib.Fragments.Mandarin.Predicates
+import Linglib.Fragments.Mandarin.Reciprocals
 import Linglib.Fragments.Turkish.Case
 import Linglib.Fragments.Turkish.Comparison
 import Linglib.Fragments.Turkish.MedialVerbs
@@ -437,6 +443,7 @@ import Linglib.Fragments.Punjabi.Pronouns
 import Linglib.Fragments.Russian.Case
 import Linglib.Fragments.Russian.DiscourseParticles
 import Linglib.Fragments.Russian.TemporalDeictic
+import Linglib.Fragments.Russian.Reciprocals
 import Linglib.Fragments.Serbian.Case
 import Linglib.Fragments.Serbian.TemporalConnectives
 import Linglib.Fragments.Slovenian.Case
@@ -447,6 +454,10 @@ import Linglib.Fragments.Ukrainian.Case
 import Linglib.Fragments.Ukrainian.QuestionParticles
 import Linglib.Fragments.Tagalog.TemporalConnectives
 import Linglib.Fragments.Italian.DiscourseParticles
+import Linglib.Fragments.Swahili.Reciprocals
+import Linglib.Fragments.Wambaya.Reciprocals
+import Linglib.Fragments.Icelandic.Reciprocals
+import Linglib.Fragments.Chichewa.Reciprocals
 import Linglib.Fragments.Italian.Predicates
 import Linglib.Fragments.Italian.Binominals
 import Linglib.Fragments.Italian.Nouns
@@ -814,6 +825,7 @@ import Linglib.Phenomena.Reference.Studies.DaleReiter1995
 import Linglib.Phenomena.Reference.Studies.DegenEtAl2020
 import Linglib.Phenomena.Reference.Studies.EngelhardtEtAl2006
 import Linglib.Phenomena.Reference.DirectReference
+import Linglib.Phenomena.Reference.Typology
 import Linglib.Phenomena.Reference.Studies.FrankGoodman2012
 import Linglib.Phenomena.Reference.Studies.HawkinsGweonGoodman2021
 import Linglib.Phenomena.Reference.Studies.SikosEtAl2021

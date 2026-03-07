@@ -1,7 +1,11 @@
 import Linglib.Core.Lexical.Word
+import Linglib.Core.WALS.Features.F53A
+import Linglib.Core.WALS.Features.F54A
+import Linglib.Core.WALS.Features.F55A
+import Linglib.Core.WALS.Features.F131A
 
 /-!
-# Cross-Linguistic Typology of Numeral Systems (WALS Chapters 53--56)
+# Cross-Linguistic Typology of Numeral Systems (WALS Chapters 53--56, 131)
 @cite{aikhenvald-2000} @cite{greenberg-1978} @cite{sanches-slobin-1973} @cite{stolz-veselinova-2013}
 
 Typological data on four dimensions of numeral morphology and syntax, drawn from
@@ -37,6 +41,20 @@ and the relationship between conjunctions and universal quantification.
 -/
 
 namespace Phenomena.Numerals.Typology
+
+-- ============================================================================
+-- WALS Data Abbreviations
+-- ============================================================================
+
+private abbrev ch53  := Core.WALS.F53A.allData
+private abbrev ch54  := Core.WALS.F54A.allData
+private abbrev ch55  := Core.WALS.F55A.allData
+private abbrev ch131 := Core.WALS.F131A.allData
+
+theorem ch53_total : ch53.length = 321 := by native_decide
+theorem ch54_total : ch54.length = 251 := by native_decide
+theorem ch55_total : ch55.length = 400 := by native_decide
+theorem ch131_total : ch131.length = 196 := by native_decide
 
 -- ============================================================================
 -- Chapter 53: Ordinal Numerals (Stolz & Veselinova)
@@ -224,6 +242,74 @@ inductive PluralMarking where
   | none                 -- no grammatical plural on nouns (e.g., Mandarin, Japanese)
   deriving DecidableEq, BEq, Repr
 
+/-- The base of a language's numeral system (WALS Ch 131, Comrie).
+
+    Most languages worldwide use a decimal (base-10) system. Vigesimal (base-20)
+    systems are the most common alternative, concentrated in Mesoamerica, West
+    Africa, and the Caucasus. Many "vigesimal" systems are actually hybrid,
+    using base-20 for higher numerals and base-10 within each score. -/
+inductive NumeralBase where
+  | decimal              -- base 10 (e.g., English, Mandarin, Swahili)
+  | vigesimal            -- pure base 20 (e.g., Ainu, Chukchi)
+  | hybridVigesimalDecimal -- mixed base-20/base-10 (e.g., French, Basque, Georgian)
+  | otherBase            -- base 5, 6, or other (rare)
+  | bodyPartSystem       -- extended body-part counting system (e.g., Eipo)
+  | restricted           -- restricted numeral system (few numerals, no productive base)
+  deriving DecidableEq, BEq, Repr
+
+-- ============================================================================
+-- WALS Converter Functions
+-- ============================================================================
+
+/-- Convert WALS 53A ordinal numeral values to our coarser OrdinalFormation type.
+    WALS distinguishes eight subtypes; we collapse them into five categories.
+    - "One-th, two-th, three-th" → allFromCardinals (fully regular)
+    - "First, two-th, three-th" → firstSuppletion (only "first" suppletive)
+    - "First, two, three" → firstSuppletion (only "first" suppletive, rest bare)
+    - "First, second, three-th" → firstSecondSuppletion
+    - "First/one-th, two-th, three-th" → various (mixed strategy for "first")
+    - "One, two, three" → various (bare cardinals used as ordinals)
+    - "Various" → various
+    - "None" → noOrdinals -/
+private def fromWALS53A : Core.WALS.F53A.OrdinalNumerals → OrdinalFormation
+  | .none => .noOrdinals
+  | .oneTwoThree => .various
+  | .firstTwoThree => .firstSuppletion
+  | .oneThTwoThThreeTh => .allFromCardinals
+  | .firstOneThTwoThThreeTh => .various
+  | .firstTwoThThreeTh => .firstSuppletion
+  | .firstSecondThreeTh => .firstSecondSuppletion
+  | .various => .various
+
+/-- Convert WALS 54A distributive numeral values to our DistributiveNumeral type.
+    WALS distinguishes seven subtypes; we collapse word-level and mixed strategies
+    into `.markedByOtherMeans`. -/
+private def fromWALS54A : Core.WALS.F54A.DistributiveNumerals → DistributiveNumeral
+  | .noDistributiveNumerals => .noDistributive
+  | .markedByReduplication => .markedByReduplication
+  | .markedByPrefix => .markedByPrefix
+  | .markedBySuffix => .markedBySuffix
+  | .markedByPrecedingWord => .markedByOtherMeans
+  | .markedByFollowingWord => .markedByOtherMeans
+  | .markedByMixedOrOtherStrategies => .markedByOtherMeans
+
+/-- Convert WALS 55A numeral classifier values to our ClassifierStatus type.
+    The mapping is one-to-one: absent, optional, obligatory. -/
+private def fromWALS55A : Core.WALS.F55A.NumeralClassifiers → ClassifierStatus
+  | .absent => .absent
+  | .optional => .optional
+  | .obligatory => .obligatory
+
+/-- Convert WALS 131A numeral base values to our NumeralBase type.
+    The mapping is one-to-one. -/
+private def fromWALS131A : Core.WALS.F131A.NumeralBases → NumeralBase
+  | .decimal => .decimal
+  | .pureVigesimal => .vigesimal
+  | .hybridVigesimalDecimal => .hybridVigesimalDecimal
+  | .otherBase => .otherBase
+  | .extendedBodyPartSystem => .bodyPartSystem
+  | .restricted => .restricted
+
 /-- A language's numeral typology profile across all four WALS dimensions. -/
 structure NumeralProfile where
   language : String
@@ -241,6 +327,8 @@ structure NumeralProfile where
   region : Region
   /-- Plural marking on common nouns (for Sanches-Slobin) -/
   pluralMarking : PluralMarking
+  /-- Ch 131: Numeral base (optional; not all languages surveyed). -/
+  numeralBase : Option NumeralBase := Option.none
   deriving Repr, BEq, DecidableEq
 
 -- ============================================================================
@@ -797,5 +885,261 @@ theorem suppletion_frequency_matches_hierarchy :
     ch53Distribution.firstSuppletion > ch53Distribution.firstSecondSuppletion ∧
     ch53Distribution.firstSecondSuppletion > ch53Distribution.allFromCardinals := by
   native_decide
+
+-- ============================================================================
+-- WALS Grounding: Ch 53 (Ordinal Numerals)
+-- Only for languages where fromWALS53A matches the existing profile value.
+-- ============================================================================
+
+theorem english_ch53 :
+    (Core.WALS.F53A.lookup "eng").map (fromWALS53A ·.value) = some english.ordinal := by
+  native_decide
+theorem bengali_ch53 :
+    (Core.WALS.F53A.lookup "ben").map (fromWALS53A ·.value) = some bengali.ordinal := by
+  native_decide
+theorem burmese_ch53 :
+    (Core.WALS.F53A.lookup "brm").map (fromWALS53A ·.value) = some burmese.ordinal := by
+  native_decide
+theorem finnish_ch53 :
+    (Core.WALS.F53A.lookup "fin").map (fromWALS53A ·.value) = some finnish.ordinal := by
+  native_decide
+theorem georgian_ch53 :
+    (Core.WALS.F53A.lookup "geo").map (fromWALS53A ·.value) = some georgian.ordinal := by
+  native_decide
+theorem japanese_ch53 :
+    (Core.WALS.F53A.lookup "jpn").map (fromWALS53A ·.value) = some japanese.ordinal := by
+  native_decide
+theorem mandarin_ch53 :
+    (Core.WALS.F53A.lookup "mnd").map (fromWALS53A ·.value) = some mandarin.ordinal := by
+  native_decide
+theorem russian_ch53 :
+    (Core.WALS.F53A.lookup "rus").map (fromWALS53A ·.value) = some russian.ordinal := by
+  native_decide
+theorem indonesian_ch53 :
+    (Core.WALS.F53A.lookup "ind").map (fromWALS53A ·.value) = some indonesian.ordinal := by
+  native_decide
+
+-- ============================================================================
+-- WALS Grounding: Ch 54 (Distributive Numerals)
+-- ============================================================================
+
+theorem english_ch54 :
+    (Core.WALS.F54A.lookup "eng").map (fromWALS54A ·.value) = some english.distributive := by
+  native_decide
+theorem bengali_ch54 :
+    (Core.WALS.F54A.lookup "ben").map (fromWALS54A ·.value) = some bengali.distributive := by
+  native_decide
+theorem finnish_ch54 :
+    (Core.WALS.F54A.lookup "fin").map (fromWALS54A ·.value) = some finnish.distributive := by
+  native_decide
+theorem hindi_ch54 :
+    (Core.WALS.F54A.lookup "hin").map (fromWALS54A ·.value) = some hindi.distributive := by
+  native_decide
+theorem hungarian_ch54 :
+    (Core.WALS.F54A.lookup "hun").map (fromWALS54A ·.value) = some hungarian.distributive := by
+  native_decide
+theorem indonesian_ch54 :
+    (Core.WALS.F54A.lookup "ind").map (fromWALS54A ·.value) = some indonesian.distributive := by
+  native_decide
+theorem korean_ch54 :
+    (Core.WALS.F54A.lookup "kor").map (fromWALS54A ·.value) = some korean.distributive := by
+  native_decide
+theorem mandarin_ch54 :
+    (Core.WALS.F54A.lookup "mnd").map (fromWALS54A ·.value) = some mandarin.distributive := by
+  native_decide
+theorem thai_ch54 :
+    (Core.WALS.F54A.lookup "tha").map (fromWALS54A ·.value) = some thai.distributive := by
+  native_decide
+theorem turkish_ch54 :
+    (Core.WALS.F54A.lookup "tur").map (fromWALS54A ·.value) = some turkish.distributive := by
+  native_decide
+theorem vietnamese_ch54 :
+    (Core.WALS.F54A.lookup "vie").map (fromWALS54A ·.value) = some vietnamese.distributive := by
+  native_decide
+
+-- ============================================================================
+-- WALS Grounding: Ch 55 (Numeral Classifiers)
+-- ============================================================================
+
+theorem english_ch55 :
+    (Core.WALS.F55A.lookup "eng").map (fromWALS55A ·.value) = some english.classifier := by
+  native_decide
+theorem burmese_ch55 :
+    (Core.WALS.F55A.lookup "brm").map (fromWALS55A ·.value) = some burmese.classifier := by
+  native_decide
+theorem finnish_ch55 :
+    (Core.WALS.F55A.lookup "fin").map (fromWALS55A ·.value) = some finnish.classifier := by
+  native_decide
+theorem georgian_ch55 :
+    (Core.WALS.F55A.lookup "geo").map (fromWALS55A ·.value) = some georgian.classifier := by
+  native_decide
+theorem hindi_ch55 :
+    (Core.WALS.F55A.lookup "hin").map (fromWALS55A ·.value) = some hindi.classifier := by
+  native_decide
+theorem japanese_ch55 :
+    (Core.WALS.F55A.lookup "jpn").map (fromWALS55A ·.value) = some japanese.classifier := by
+  native_decide
+theorem mandarin_ch55 :
+    (Core.WALS.F55A.lookup "mnd").map (fromWALS55A ·.value) = some mandarin.classifier := by
+  native_decide
+theorem russian_ch55 :
+    (Core.WALS.F55A.lookup "rus").map (fromWALS55A ·.value) = some russian.classifier := by
+  native_decide
+theorem swahili_ch55 :
+    (Core.WALS.F55A.lookup "swa").map (fromWALS55A ·.value) = some swahili.classifier := by
+  native_decide
+theorem tagalog_ch55 :
+    (Core.WALS.F55A.lookup "tag").map (fromWALS55A ·.value) = some tagalog.classifier := by
+  native_decide
+theorem thai_ch55 :
+    (Core.WALS.F55A.lookup "tha").map (fromWALS55A ·.value) = some thai.classifier := by
+  native_decide
+theorem tzeltal_ch55 :
+    (Core.WALS.F55A.lookup "tze").map (fromWALS55A ·.value) = some tzeltal.classifier := by
+  native_decide
+theorem turkish_ch55 :
+    (Core.WALS.F55A.lookup "tur").map (fromWALS55A ·.value) = some turkish.classifier := by
+  native_decide
+theorem vietnamese_ch55 :
+    (Core.WALS.F55A.lookup "vie").map (fromWALS55A ·.value) = some vietnamese.classifier := by
+  native_decide
+theorem yoruba_ch55 :
+    (Core.WALS.F55A.lookup "yor").map (fromWALS55A ·.value) = some yoruba.classifier := by
+  native_decide
+
+-- ============================================================================
+-- WALS Grounding: Ch 131 (Numeral Bases)
+-- Not all languages in our sample are covered in Ch 131.
+-- ============================================================================
+
+theorem english_ch131 :
+    (Core.WALS.F131A.lookup "eng").map (fromWALS131A ·.value) = some .decimal := by
+  native_decide
+theorem japanese_ch131 :
+    (Core.WALS.F131A.lookup "jpn").map (fromWALS131A ·.value) = some .decimal := by
+  native_decide
+theorem mandarin_ch131 :
+    (Core.WALS.F131A.lookup "mnd").map (fromWALS131A ·.value) = some .decimal := by
+  native_decide
+theorem hindi_ch131 :
+    (Core.WALS.F131A.lookup "hin").map (fromWALS131A ·.value) = some .decimal := by
+  native_decide
+theorem russian_ch131 :
+    (Core.WALS.F131A.lookup "rus").map (fromWALS131A ·.value) = some .decimal := by
+  native_decide
+theorem finnish_ch131 :
+    (Core.WALS.F131A.lookup "fin").map (fromWALS131A ·.value) = some .decimal := by
+  native_decide
+theorem turkish_ch131 :
+    (Core.WALS.F131A.lookup "tur").map (fromWALS131A ·.value) = some .decimal := by
+  native_decide
+theorem hungarian_ch131 :
+    (Core.WALS.F131A.lookup "hun").map (fromWALS131A ·.value) = some .decimal := by
+  native_decide
+theorem korean_ch131 :
+    (Core.WALS.F131A.lookup "kor").map (fromWALS131A ·.value) = some .decimal := by
+  native_decide
+theorem thai_ch131 :
+    (Core.WALS.F131A.lookup "tha").map (fromWALS131A ·.value) = some .decimal := by
+  native_decide
+theorem vietnamese_ch131 :
+    (Core.WALS.F131A.lookup "vie").map (fromWALS131A ·.value) = some .decimal := by
+  native_decide
+theorem indonesian_ch131 :
+    (Core.WALS.F131A.lookup "ind").map (fromWALS131A ·.value) = some .decimal := by
+  native_decide
+theorem swahili_ch131 :
+    (Core.WALS.F131A.lookup "swa").map (fromWALS131A ·.value) = some .decimal := by
+  native_decide
+theorem burmese_ch131 :
+    (Core.WALS.F131A.lookup "brm").map (fromWALS131A ·.value) = some .decimal := by
+  native_decide
+theorem tagalog_ch131 :
+    (Core.WALS.F131A.lookup "tag").map (fromWALS131A ·.value) = some .decimal := by
+  native_decide
+theorem georgian_ch131 :
+    (Core.WALS.F131A.lookup "geo").map (fromWALS131A ·.value) =
+      some .hybridVigesimalDecimal := by
+  native_decide
+theorem yoruba_ch131 :
+    (Core.WALS.F131A.lookup "yor").map (fromWALS131A ·.value) = some .vigesimal := by
+  native_decide
+
+-- ============================================================================
+-- WALS-Derived Distribution Counts
+-- ============================================================================
+
+/-- Ch 53 distribution from WALS data: firstSuppletion count (WALS "First, two-th,
+    three-th" + "First, two, three" both map to firstSuppletion). -/
+theorem ch53_firstSuppletion_count :
+    (ch53.filter (fun d => fromWALS53A d.value == .firstSuppletion)).length = 122 := by
+  native_decide
+
+theorem ch53_firstSecondSuppletion_count :
+    (ch53.filter (fun d => fromWALS53A d.value == .firstSecondSuppletion)).length = 61 := by
+  native_decide
+
+theorem ch53_allFromCardinals_count :
+    (ch53.filter (fun d => fromWALS53A d.value == .allFromCardinals)).length = 41 := by
+  native_decide
+
+theorem ch53_noOrdinals_count :
+    (ch53.filter (fun d => fromWALS53A d.value == .noOrdinals)).length = 33 := by
+  native_decide
+
+theorem ch53_various_count :
+    (ch53.filter (fun d => fromWALS53A d.value == .various)).length = 64 := by
+  native_decide
+
+/-- Ch 53: Mapped categories are exhaustive — all 321 languages are accounted for. -/
+theorem ch53_exhaustive : 122 + 61 + 41 + 33 + 64 = ch53.length := by native_decide
+
+/-- Ch 54 distribution from WALS data: reduplication is the most common strategy. -/
+theorem ch54_reduplication_count :
+    (ch54.filter (fun d => fromWALS54A d.value == .markedByReduplication)).length = 85 := by
+  native_decide
+
+theorem ch54_noDistributive_count :
+    (ch54.filter (fun d => fromWALS54A d.value == .noDistributive)).length = 62 := by
+  native_decide
+
+theorem ch54_suffix_count :
+    (ch54.filter (fun d => fromWALS54A d.value == .markedBySuffix)).length = 32 := by
+  native_decide
+
+theorem ch54_prefix_count :
+    (ch54.filter (fun d => fromWALS54A d.value == .markedByPrefix)).length = 23 := by
+  native_decide
+
+theorem ch54_otherMeans_count :
+    (ch54.filter (fun d => fromWALS54A d.value == .markedByOtherMeans)).length = 49 := by
+  native_decide
+
+/-- Ch 54: Mapped categories are exhaustive — all 251 languages are accounted for. -/
+theorem ch54_exhaustive : 85 + 62 + 32 + 23 + 49 = ch54.length := by native_decide
+
+/-- Ch 55 distribution from WALS data: all three categories match exactly. -/
+theorem ch55_absent_count :
+    (ch55.filter (fun d => fromWALS55A d.value == .absent)).length =
+    ch55Distribution.absent := by native_decide
+
+theorem ch55_optional_count :
+    (ch55.filter (fun d => fromWALS55A d.value == .optional)).length =
+    ch55Distribution.optional := by native_decide
+
+theorem ch55_obligatory_count :
+    (ch55.filter (fun d => fromWALS55A d.value == .obligatory)).length =
+    ch55Distribution.obligatory := by native_decide
+
+/-- Ch 131: Decimal is the dominant numeral base worldwide. -/
+theorem ch131_decimal_dominant :
+    (ch131.filter (fun d => fromWALS131A d.value == .decimal)).length >
+    ch131.length / 2 := by native_decide
+
+/-- Ch 131: Pure vigesimal and hybrid vigesimal-decimal together. -/
+theorem ch131_vigesimal_nonnegligible :
+    (ch131.filter (fun d =>
+      fromWALS131A d.value == .vigesimal ||
+      fromWALS131A d.value == .hybridVigesimalDecimal)).length > 20 := by native_decide
 
 end Phenomena.Numerals.Typology

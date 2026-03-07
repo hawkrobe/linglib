@@ -1,3 +1,6 @@
+import Linglib.Core.WALS.Features.F110A
+import Linglib.Core.WALS.Features.F111A
+
 /-!
 # Cross-Linguistic Causative Typology
 @cite{song-1996}
@@ -170,5 +173,200 @@ theorem koreanKeHa_not_implicative :
     koreanKeHa.constructionType.isImplicative = false := rfl
 theorem vataLe_implicative :
     vataLe.constructionType.isImplicative = true := rfl
+
+-- ============================================================================
+-- WALS Abbreviations
+-- ============================================================================
+
+private abbrev ch110 := Core.WALS.F110A.allData
+private abbrev ch111 := Core.WALS.F111A.allData
+
+-- ============================================================================
+-- WALS Converter Functions
+-- ============================================================================
+
+/-- Map WALS 110A periphrastic causative type to Song's construction type.
+
+    - `sequentialOnly` → AND (two clauses, sequential, implicative)
+    - `purposiveOnly` → PURP (two clauses, purposive, non-implicative)
+    - `both` → no single mapping (language has both) -/
+private def fromWALS110A : Core.WALS.F110A.PeriphrasticCausativeType →
+    Option CausativeConstructionType
+  | .sequentialOnly => some .and_
+  | .purposiveOnly => some .purp
+  | .both => none
+
+/-- Map WALS 111A nonperiphrastic causative type to whether the language
+    has COMPACT causatives.
+
+    - `morphologicalOnly` → has morphological (suffix) compact causatives
+    - `compoundOnly` → has compound compact causatives
+    - `both` → has both morphological and compound
+    - `neither` → no nonperiphrastic causatives
+
+    Returns `some true` if the language has any nonperiphrastic causatives,
+    `some false` if it has neither, and the morphology type when determinable. -/
+private def fromWALS111A_hasCompact : Core.WALS.F111A.NonperiphrCausativeType → Bool
+  | .neither => false
+  | .morphologicalOnly => true
+  | .compoundOnly => true
+  | .both => true
+
+/-- Map WALS 111A to a `CausativeMorphology` when a unique mapping exists.
+
+    - `morphologicalOnly` → `.suffix` (bound morpheme)
+    - `compoundOnly` → `.freeMorpheme` (compound = free morpheme in tight unit)
+    - `both`, `neither` → no unique mapping -/
+private def fromWALS111A_morphology :
+    Core.WALS.F111A.NonperiphrCausativeType → Option CausativeMorphology
+  | .morphologicalOnly => some .suffix
+  | .compoundOnly => some .freeMorpheme
+  | .neither => none
+  | .both => none
+
+-- ============================================================================
+-- WALS Grounding: Ch 110A (Periphrastic Causatives)
+-- Languages in both our data and the F110A sample: English, Turkish, Korean
+-- ============================================================================
+
+/-- English periphrastic causatives are sequential (AND-type) per WALS 110A. -/
+theorem english_ch110 :
+    (Core.WALS.F110A.lookup "eng").map (λ dp => fromWALS110A dp.value) =
+      some (some CausativeConstructionType.and_) := by
+  native_decide
+
+/-- Turkish periphrastic causatives are purposive (PURP-type) per WALS 110A. -/
+theorem turkish_ch110 :
+    (Core.WALS.F110A.lookup "tur").map (λ dp => fromWALS110A dp.value) =
+      some (some CausativeConstructionType.purp) := by
+  native_decide
+
+/-- Korean periphrastic causatives are purposive (PURP-type) per WALS 110A,
+    consistent with the `-ke ha-` construction being PURP in Song's typology. -/
+theorem korean_ch110 :
+    (Core.WALS.F110A.lookup "kor").map (λ dp => fromWALS110A dp.value) =
+      some (some CausativeConstructionType.purp) := by
+  native_decide
+
+/-- Korean's WALS 110A classification matches our datum's construction type. -/
+theorem korean_ch110_matches_datum :
+    (Core.WALS.F110A.lookup "kor").map (λ dp => fromWALS110A dp.value) =
+      some (some koreanKeHa.constructionType) := by
+  native_decide
+
+-- ============================================================================
+-- WALS Grounding: Ch 111A (Nonperiphrastic Causatives)
+-- Languages in both our data and the F111A sample:
+--   English, Turkish, Japanese, French, Korean
+-- ============================================================================
+
+/-- English has nonperiphrastic (compact) causatives per WALS 111A. -/
+theorem english_ch111 :
+    (Core.WALS.F111A.lookup "eng").map (λ dp => fromWALS111A_hasCompact dp.value) =
+      some true := by
+  native_decide
+
+/-- English nonperiphrastic causatives are morphological per WALS 111A
+    (corresponding to lexical causatives like *kill*). -/
+theorem english_ch111_morphology :
+    (Core.WALS.F111A.lookup "eng").map (λ dp => fromWALS111A_morphology dp.value) =
+      some (some CausativeMorphology.suffix) := by
+  native_decide
+
+/-- Turkish has nonperiphrastic (compact) causatives per WALS 111A. -/
+theorem turkish_ch111 :
+    (Core.WALS.F111A.lookup "tur").map (λ dp => fromWALS111A_hasCompact dp.value) =
+      some true := by
+  native_decide
+
+/-- Turkish nonperiphrastic causatives are morphological (suffix `-dür`) per WALS 111A,
+    matching our datum. -/
+theorem turkish_ch111_morphology :
+    (Core.WALS.F111A.lookup "tur").map (λ dp => fromWALS111A_morphology dp.value) =
+      some turkishDur.morphology := by
+  native_decide
+
+/-- Japanese has nonperiphrastic (compact) causatives per WALS 111A. -/
+theorem japanese_ch111 :
+    (Core.WALS.F111A.lookup "jpn").map (λ dp => fromWALS111A_hasCompact dp.value) =
+      some true := by
+  native_decide
+
+/-- Japanese nonperiphrastic causatives are morphological (suffix `-(s)ase`) per WALS 111A,
+    matching our datum. -/
+theorem japanese_ch111_morphology :
+    (Core.WALS.F111A.lookup "jpn").map (λ dp => fromWALS111A_morphology dp.value) =
+      some japaneseAse.morphology := by
+  native_decide
+
+/-- French has nonperiphrastic (compact) causatives per WALS 111A.
+    WALS classifies French as `both` (morphological and compound). -/
+theorem french_ch111 :
+    (Core.WALS.F111A.lookup "fre").map (λ dp => fromWALS111A_hasCompact dp.value) =
+      some true := by
+  native_decide
+
+/-- Korean has nonperiphrastic (compact) causatives per WALS 111A,
+    in addition to the periphrastic `-ke ha-` construction. -/
+theorem korean_ch111 :
+    (Core.WALS.F111A.lookup "kor").map (λ dp => fromWALS111A_hasCompact dp.value) =
+      some true := by
+  native_decide
+
+/-- Korean nonperiphrastic causatives are morphological per WALS 111A. -/
+theorem korean_ch111_morphology :
+    (Core.WALS.F111A.lookup "kor").map (λ dp => fromWALS111A_morphology dp.value) =
+      some (some CausativeMorphology.suffix) := by
+  native_decide
+
+-- ============================================================================
+-- WALS Distribution Theorems
+-- ============================================================================
+
+/-- WALS 110A total: 118 languages with periphrastic causative data. -/
+theorem ch110_total : ch110.length = 118 := by native_decide
+
+/-- WALS 111A total: 310 languages with nonperiphrastic causative data. -/
+theorem ch111_total : ch111.length = 310 := by native_decide
+
+/-- WALS 110A: 35 languages have sequential-only periphrastic causatives. -/
+theorem ch110_sequentialOnly :
+    (ch110.filter (·.value == .sequentialOnly)).length = 35 := by native_decide
+
+/-- WALS 110A: 68 languages have purposive-only periphrastic causatives. -/
+theorem ch110_purposiveOnly :
+    (ch110.filter (·.value == .purposiveOnly)).length = 68 := by native_decide
+
+/-- WALS 110A: 15 languages have both sequential and purposive. -/
+theorem ch110_both :
+    (ch110.filter (·.value == .both)).length = 15 := by native_decide
+
+/-- WALS 111A: 254 languages have morphological-only nonperiphrastic causatives. -/
+theorem ch111_morphologicalOnly :
+    (ch111.filter (·.value == .morphologicalOnly)).length = 254 := by native_decide
+
+/-- WALS 111A: 9 languages have compound-only nonperiphrastic causatives. -/
+theorem ch111_compoundOnly :
+    (ch111.filter (·.value == .compoundOnly)).length = 9 := by native_decide
+
+/-- WALS 111A: 24 languages have both morphological and compound. -/
+theorem ch111_both :
+    (ch111.filter (·.value == .both)).length = 24 := by native_decide
+
+/-- WALS 111A: 23 languages have neither morphological nor compound. -/
+theorem ch111_neither :
+    (ch111.filter (·.value == .neither)).length = 23 := by native_decide
+
+/-- Purposive periphrastic causatives (PURP-type) are the dominant pattern
+    cross-linguistically, outnumbering sequential (AND-type) roughly 2:1. -/
+theorem purp_dominates_and :
+    (ch110.filter (·.value == .purposiveOnly)).length >
+    (ch110.filter (·.value == .sequentialOnly)).length := by native_decide
+
+/-- Morphological causatives overwhelmingly dominate nonperiphrastic strategies:
+    254 out of 310 languages (82%) have morphological-only. -/
+theorem morphological_dominates :
+    (ch111.filter (·.value == .morphologicalOnly)).length * 100 / ch111.length ≥ 81 := by
+  native_decide
 
 end Phenomena.Causatives.Typology

@@ -104,6 +104,18 @@ def reflexiveLicensed (clause : SimpleClause) : Bool :=
       phiAgree clause.subject obj
     | _ => true
 
+/-- Reciprocals must be locally c-commanded by a plural antecedent. -/
+def reciprocalLicensed (clause : SimpleClause) : Bool :=
+  match clause.object with
+  | none => false
+  | some obj =>
+    match classifyNominal obj with
+    | some .reciprocal =>
+      subjectCCommandsObject clause &&
+      sameLocalDomain clause &&
+      clause.subject.features.number == some .pl
+    | _ => true
+
 /-- Principle B: Pronouns must be free locally -/
 def pronounLocallyFree (clause : SimpleClause) : Bool :=
   match clause.object with
@@ -133,12 +145,14 @@ def grammaticalForCoreference (ws : List Word) : Bool :=
   | some clause =>
     match classifyNominal clause.subject with
     | some .reflexive => false
+    | some .reciprocal => false
     | _ =>
       match clause.object with
       | none => true
       | some obj =>
         match classifyNominal obj with
         | some .reflexive => reflexiveLicensed clause
+        | some .reciprocal => reciprocalLicensed clause
         | some .pronoun => false
         | _ => true
 def reflexiveLicensedInSentence (ws : List Word) : Bool :=
@@ -166,6 +180,11 @@ def computeCoreferenceStatus (clause : SimpleClause) (i j : Nat) : Interfaces.Co
         if subjectCCommandsObject clause && sameLocalDomain clause && phiAgree clause.subject obj
         then .obligatory
         else .blocked
+      | some .reciprocal =>
+        if subjectCCommandsObject clause && sameLocalDomain clause &&
+           clause.subject.features.number == some .pl
+        then .obligatory
+        else .blocked
       | some .pronoun =>
         if subjectCCommandsObject clause && sameLocalDomain clause
         then .blocked
@@ -175,6 +194,7 @@ def computeCoreferenceStatus (clause : SimpleClause) (i j : Nat) : Interfaces.Co
   else if i == 2 && j == 0 then
     match classifyNominal clause.subject with
     | some .reflexive => .blocked
+    | some .reciprocal => .blocked
     | some .pronoun => .possible
     | _ => .possible
   else
@@ -186,12 +206,14 @@ instance : Interfaces.CoreferenceTheory MinimalismTheory where
   grammaticalForCoreference := λ clause =>
     match classifyNominal clause.subject with
     | some .reflexive => false
+    | some .reciprocal => false
     | _ =>
       match clause.object with
       | none => true
       | some obj =>
         match classifyNominal obj with
         | some .reflexive => reflexiveLicensed clause
+        | some .reciprocal => reciprocalLicensed clause
         | some .pronoun => false
         | _ => true
 

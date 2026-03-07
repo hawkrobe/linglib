@@ -1,6 +1,8 @@
 import Linglib.Core.Lexical.Word
 import Linglib.Core.Relativization.Extraction
 import Linglib.Core.Relativization.Hierarchy
+import Linglib.Core.WALS.Features.F122A
+import Linglib.Core.WALS.Features.F123A
 
 /-!
 # Cross-Linguistic Typology of Relativization (WALS Chapters 122--123)
@@ -150,6 +152,38 @@ inductive OblRelStrategy where
   deriving DecidableEq, BEq, Repr
 
 -- ============================================================================
+-- WALS Data Abbreviations
+-- ============================================================================
+
+private abbrev ch122 := Core.WALS.F122A.allData
+private abbrev ch123 := Core.WALS.F123A.allData
+
+-- ============================================================================
+-- WALS Converter Functions
+-- ============================================================================
+
+/-- Convert WALS 122A subject relativization values to profile types.
+    WALS 122A does not distinguish a "mixed" category, so languages classified
+    as `.mixed` in our profiles (English, Arabic, Yoruba) cannot be grounded
+    via this converter. -/
+private def fromWALS122A : Core.WALS.F122A.SubjectRelativization → SubjRelStrategy
+  | .relativePronoun => .relativePronoun
+  | .nonReduction => .nonReduction
+  | .pronounRetention => .pronounRetention
+  | .gap => .gap
+
+/-- Convert WALS 123A oblique relativization values to profile types.
+    WALS 123A `.notPossible` maps to `.notRelativizable`.
+    WALS 123A does not distinguish a "mixed" category, so languages classified
+    as `.mixed` in our profiles cannot be grounded via this converter. -/
+private def fromWALS123A : Core.WALS.F123A.ObliqueRelativization → OblRelStrategy
+  | .relativePronoun => .relativePronoun
+  | .nonReduction => .nonReduction
+  | .pronounRetention => .pronounRetention
+  | .gap => .gap
+  | .notPossible => .notRelativizable
+
+-- ============================================================================
 -- WALS Aggregate Distribution Data
 -- ============================================================================
 
@@ -190,11 +224,11 @@ def ch123Counts : List WALSCount :=
 -- Aggregate Total Verification
 -- ============================================================================
 
-/-- Ch 122 total: 824 languages. -/
-theorem ch122_total : WALSCount.totalOf ch122Counts = 824 := by native_decide
+/-- Ch 122 total: 824 languages (hand-coded aggregate counts). -/
+theorem ch122Counts_total : WALSCount.totalOf ch122Counts = 824 := by native_decide
 
-/-- Ch 123 total: 624 languages. -/
-theorem ch123_total : WALSCount.totalOf ch123Counts = 624 := by native_decide
+/-- Ch 123 total: 624 languages (hand-coded aggregate counts). -/
+theorem ch123Counts_total : WALSCount.totalOf ch123Counts = 624 := by native_decide
 
 -- ============================================================================
 -- Language Profile Structure
@@ -618,6 +652,109 @@ example : tagalog.lowestRelativizable == .subject := by native_decide
 example : english.lowestRelativizable == .objComparison := by native_decide
 example : hebrew.subjStrategy == .gap := by native_decide
 example : hebrew.oblStrategy == .pronounRetention := by native_decide
+
+-- ============================================================================
+-- WALS Count Verification
+-- ============================================================================
+
+theorem ch122_total : ch122.length = 166 := by native_decide
+theorem ch123_total : ch123.length = 112 := by native_decide
+
+-- ============================================================================
+-- WALS Grounding: Chapter 122 (Subject Relativization)
+-- ============================================================================
+
+-- Languages where WALS 122A value directly matches the profile's subjStrategy.
+-- English, Arabic, Yoruba are excluded: WALS has no "mixed" category, so their
+-- WALS values (relativePronoun, gap, pronounRetention respectively) do not
+-- match the profile's .mixed classification.
+
+theorem german_ch122 :
+    (Core.WALS.F122A.lookup "ger").map (fromWALS122A ·.value) = some german.subjStrategy := by
+  native_decide
+theorem french_ch122 :
+    (Core.WALS.F122A.lookup "fre").map (fromWALS122A ·.value) = some french.subjStrategy := by
+  native_decide
+theorem russian_ch122 :
+    (Core.WALS.F122A.lookup "rus").map (fromWALS122A ·.value) = some russian.subjStrategy := by
+  native_decide
+theorem hebrew_ch122 :
+    (Core.WALS.F122A.lookup "heb").map (fromWALS122A ·.value) = some hebrew.subjStrategy := by
+  native_decide
+theorem japanese_ch122 :
+    (Core.WALS.F122A.lookup "jpn").map (fromWALS122A ·.value) = some japanese.subjStrategy := by
+  native_decide
+theorem korean_ch122 :
+    (Core.WALS.F122A.lookup "kor").map (fromWALS122A ·.value) = some korean.subjStrategy := by
+  native_decide
+theorem mandarin_ch122 :
+    (Core.WALS.F122A.lookup "mnd").map (fromWALS122A ·.value) = some mandarin.subjStrategy := by
+  native_decide
+theorem turkish_ch122 :
+    (Core.WALS.F122A.lookup "tur").map (fromWALS122A ·.value) = some turkish.subjStrategy := by
+  native_decide
+theorem bambara_ch122 :
+    (Core.WALS.F122A.lookup "bam").map (fromWALS122A ·.value) = some bambara.subjStrategy := by
+  native_decide
+theorem swahili_ch122 :
+    (Core.WALS.F122A.lookup "swa").map (fromWALS122A ·.value) = some swahili.subjStrategy := by
+  native_decide
+theorem tagalog_ch122 :
+    (Core.WALS.F122A.lookup "tag").map (fromWALS122A ·.value) = some tagalog.subjStrategy := by
+  native_decide
+theorem malagasy_ch122 :
+    (Core.WALS.F122A.lookup "mal").map (fromWALS122A ·.value) = some malagasy.subjStrategy := by
+  native_decide
+theorem finnish_ch122 :
+    (Core.WALS.F122A.lookup "fin").map (fromWALS122A ·.value) = some finnish.subjStrategy := by
+  native_decide
+
+-- ============================================================================
+-- WALS Grounding: Chapter 123 (Oblique Relativization)
+-- ============================================================================
+
+-- Languages where WALS 123A value directly matches the profile's oblStrategy.
+-- English is excluded (WALS=relativePronoun, profile=mixed).
+-- Hindi-Urdu is excluded (WALS=nonReduction, profile=relativePronoun).
+-- Bambara is excluded (WALS=nonReduction, profile=notRelativizable).
+-- Swahili is excluded (WALS=notPossible, profile=pronounRetention).
+
+theorem german_ch123 :
+    (Core.WALS.F123A.lookup "ger").map (fromWALS123A ·.value) = some german.oblStrategy := by
+  native_decide
+theorem french_ch123 :
+    (Core.WALS.F123A.lookup "fre").map (fromWALS123A ·.value) = some french.oblStrategy := by
+  native_decide
+theorem russian_ch123 :
+    (Core.WALS.F123A.lookup "rus").map (fromWALS123A ·.value) = some russian.oblStrategy := by
+  native_decide
+theorem arabic_ch123 :
+    (Core.WALS.F123A.lookup "aeg").map (fromWALS123A ·.value) = some arabic.oblStrategy := by
+  native_decide
+theorem hebrew_ch123 :
+    (Core.WALS.F123A.lookup "heb").map (fromWALS123A ·.value) = some hebrew.oblStrategy := by
+  native_decide
+theorem japanese_ch123 :
+    (Core.WALS.F123A.lookup "jpn").map (fromWALS123A ·.value) = some japanese.oblStrategy := by
+  native_decide
+theorem korean_ch123 :
+    (Core.WALS.F123A.lookup "kor").map (fromWALS123A ·.value) = some korean.oblStrategy := by
+  native_decide
+theorem mandarin_ch123 :
+    (Core.WALS.F123A.lookup "mnd").map (fromWALS123A ·.value) = some mandarin.oblStrategy := by
+  native_decide
+theorem turkish_ch123 :
+    (Core.WALS.F123A.lookup "tur").map (fromWALS123A ·.value) = some turkish.oblStrategy := by
+  native_decide
+theorem tagalog_ch123 :
+    (Core.WALS.F123A.lookup "tag").map (fromWALS123A ·.value) = some tagalog.oblStrategy := by
+  native_decide
+theorem malagasy_ch123 :
+    (Core.WALS.F123A.lookup "mal").map (fromWALS123A ·.value) = some malagasy.oblStrategy := by
+  native_decide
+theorem finnish_ch123 :
+    (Core.WALS.F123A.lookup "fin").map (fromWALS123A ·.value) = some finnish.oblStrategy := by
+  native_decide
 
 -- ============================================================================
 -- Sample Size

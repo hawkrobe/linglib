@@ -1,3 +1,9 @@
+import Linglib.Core.WALS.Features.F124A
+import Linglib.Core.WALS.Features.F125A
+import Linglib.Core.WALS.Features.F126A
+import Linglib.Core.WALS.Features.F127A
+import Linglib.Core.WALS.Features.F128A
+
 /-! # Complementation Typology
 
 Cross-linguistic data on complement types, complement-taking predicates (CTPs),
@@ -23,6 +29,16 @@ Key contributions:
 WALS data on the cross-linguistic distribution of subordination structures:
 - **Ch 94**: Order of Adverbial Subordinator and Clause
 - **Ch 95**: Relationship between OV Order and Adposition Order
+
+## Part III: Complementation Strategies (WALS Chapters 124--128)
+@cite{cristofaro-2013}
+
+WALS data on complement clause types across five subordination domains:
+- **Ch 124A**: 'Want' Complement Subjects (283 languages)
+- **Ch 125A**: Purpose Clauses — balanced vs deranked (170 languages)
+- **Ch 126A**: 'When' Clauses — balanced vs deranked (174 languages)
+- **Ch 127A**: Reason Clauses — balanced vs deranked (169 languages)
+- **Ch 128A**: Utterance Complement Clauses — balanced vs deranked (143 languages)
 
 Additional dimensions beyond WALS:
 - Complementizer position (initial, final, none)
@@ -1595,5 +1611,712 @@ theorem sub_suffix_implies_ov :
               p.subordinatorOrder == .initialSuffix)
     suffixLangs.all (·.isOV) = true := by
   native_decide
+
+-- ============================================================================
+-- Part III: Complementation Strategies (WALS Chapters 124--128)
+-- ============================================================================
+
+/-! ## R. WALS Complementation Enums
+
+@cite{cristofaro-2013}'s balanced/deranked typology classifies complement
+clauses by how much they resemble main clauses. "Balanced" means the
+complement retains main-clause morphology; "deranked" means it uses
+reduced/non-finite forms; "balanced/deranked" means both strategies exist.
+
+This maps naturally to the Noonan complement type hierarchy:
+- Balanced ≈ indicative/subjunctive (finite)
+- Deranked ≈ infinitive/nominalized/participle (non-finite)
+-/
+
+/-- Cristofaro's balanced/deranked typology for complement clauses
+    (shared across WALS Chapters 125A--128A). -/
+inductive BalancedDeranked where
+  | balanced        -- Complement retains main-clause morphology
+  | balancedDeranked -- Both balanced and deranked strategies exist
+  | deranked        -- Complement uses reduced/non-finite forms
+  deriving DecidableEq, BEq, Repr
+
+/-- Cristofaro's 'want' complement subject typology (WALS Ch 124A).
+    Captures whether desiderative CTPs leave the complement subject
+    implicit or express it overtly — plus the desiderative affix/particle
+    alternative where 'want' is not a separate verb at all. -/
+inductive WantCompStrategy where
+  | subjectImplicit   -- Complement subject left implicit (equi-like)
+  | subjectOvert      -- Complement subject expressed overtly
+  | both              -- Both construction types exist
+  | desidAffix        -- Desiderative verbal affix (no separate verb)
+  | desidParticle     -- Desiderative particle (no separate verb)
+  deriving DecidableEq, BEq, Repr
+
+-- ============================================================================
+-- WALS Converter Functions
+-- ============================================================================
+
+private def fromWALS124A : Core.WALS.F124A.WantComplementSubject → WantCompStrategy
+  | .subjectIsLeftImplicit => .subjectImplicit
+  | .subjectIsExpressedOvertly => .subjectOvert
+  | .bothConstructionTypesExist => .both
+  | .desiderativeVerbalAffix => .desidAffix
+  | .desiderativeParticle => .desidParticle
+
+private def fromWALS125A : Core.WALS.F125A.PurposeClauseType → BalancedDeranked
+  | .balanced => .balanced
+  | .balancedDeranked => .balancedDeranked
+  | .deranked => .deranked
+
+private def fromWALS126A : Core.WALS.F126A.WhenClauseType → BalancedDeranked
+  | .balanced => .balanced
+  | .balancedDeranked => .balancedDeranked
+  | .deranked => .deranked
+
+private def fromWALS127A : Core.WALS.F127A.ReasonClauseType → BalancedDeranked
+  | .balanced => .balanced
+  | .balancedDeranked => .balancedDeranked
+  | .deranked => .deranked
+
+private def fromWALS128A : Core.WALS.F128A.UtteranceComplementType → BalancedDeranked
+  | .balanced => .balanced
+  | .balancedDeranked => .balancedDeranked
+  | .deranked => .deranked
+
+-- ============================================================================
+-- WALS Distribution Data (from generated modules)
+-- ============================================================================
+
+private abbrev ch124 := Core.WALS.F124A.allData
+private abbrev ch125 := Core.WALS.F125A.allData
+private abbrev ch126 := Core.WALS.F126A.allData
+private abbrev ch127 := Core.WALS.F127A.allData
+private abbrev ch128 := Core.WALS.F128A.allData
+
+theorem ch124_total : ch124.length = 283 := by native_decide
+theorem ch125_total : ch125.length = 170 := by native_decide
+theorem ch126_total : ch126.length = 174 := by native_decide
+theorem ch127_total : ch127.length = 169 := by native_decide
+theorem ch128_total : ch128.length = 143 := by native_decide
+
+-- ============================================================================
+-- Complementation Profile Structure
+-- ============================================================================
+
+/-! ## S. Complementation Profile
+
+A language's complementation profile across WALS Chapters 124A--128A,
+capturing how the language handles complement clauses across five
+subordination domains. Fields are optional because not every language
+appears in every WALS chapter's sample.
+-/
+
+/-- A language's complementation profile across WALS Chapters 124A--128A. -/
+structure ComplementationProfile where
+  /-- Language name. -/
+  language : String
+  /-- WALS code. -/
+  walsCode : String
+  /-- Ch 124A: 'want' complement subject strategy. -/
+  wantComp : Option WantCompStrategy := none
+  /-- Ch 125A: purpose clause type (balanced/deranked). -/
+  purposeClause : Option BalancedDeranked := none
+  /-- Ch 126A: 'when' clause type (balanced/deranked). -/
+  whenClause : Option BalancedDeranked := none
+  /-- Ch 127A: reason clause type (balanced/deranked). -/
+  reasonClause : Option BalancedDeranked := none
+  /-- Ch 128A: utterance complement clause type (balanced/deranked). -/
+  utteranceComp : Option BalancedDeranked := none
+  /-- Notes on the complementation system. -/
+  notes : String := ""
+  deriving Repr, BEq, DecidableEq
+
+/-! ## T. Language Complementation Profiles
+
+Profiles for languages already in the subordination sample, grounded
+against WALS Chapters 124A--128A where coverage exists.
+-/
+
+/-- English: implicit 'want' complement subject (equi/PRO);
+    balanced+deranked in purpose, 'when', and reason clauses;
+    balanced utterance complements. -/
+def compEnglish : ComplementationProfile :=
+  { language := "English"
+  , walsCode := "eng"
+  , wantComp := some .subjectImplicit
+  , purposeClause := some .balancedDeranked
+  , whenClause := some .balancedDeranked
+  , reasonClause := some .balancedDeranked
+  , utteranceComp := some .balanced
+  , notes := "Equi-deletion with 'want'; both finite and non-finite purpose/when/reason" }
+
+/-- Japanese: desiderative verbal affix (-tai);
+    balanced+deranked purpose and 'when' clauses;
+    balanced reason and utterance complements. -/
+def compJapanese : ComplementationProfile :=
+  { language := "Japanese"
+  , walsCode := "jpn"
+  , wantComp := some .desidAffix
+  , purposeClause := some .balancedDeranked
+  , whenClause := some .balancedDeranked
+  , reasonClause := some .balanced
+  , utteranceComp := some .balanced
+  , notes := "Desiderative suffix -tai; no independent 'want' CTP in this sense" }
+
+/-- Turkish: implicit 'want' complement subject;
+    deranked purpose and 'when' clauses;
+    balanced+deranked reason and utterance complements. -/
+def compTurkish : ComplementationProfile :=
+  { language := "Turkish"
+  , walsCode := "tur"
+  , wantComp := some .subjectImplicit
+  , purposeClause := some .deranked
+  , whenClause := some .deranked
+  , reasonClause := some .balancedDeranked
+  , utteranceComp := some .balancedDeranked
+  , notes := "Strongly deranked (nominalized) across clause types" }
+
+/-- Hindi: implicit 'want' complement subject;
+    balanced+deranked 'when' and reason clauses;
+    balanced utterance complements.
+    Not in the F125A sample. -/
+def compHindi : ComplementationProfile :=
+  { language := "Hindi"
+  , walsCode := "hin"
+  , wantComp := some .subjectImplicit
+  , purposeClause := none
+  , whenClause := some .balancedDeranked
+  , reasonClause := some .balancedDeranked
+  , utteranceComp := some .balanced
+  , notes := "Not in WALS Ch 125A sample" }
+
+/-- Mandarin: implicit 'want' complement subject;
+    balanced purpose, 'when', reason, and utterance clauses. -/
+def compMandarin : ComplementationProfile :=
+  { language := "Mandarin"
+  , walsCode := "mnd"
+  , wantComp := some .subjectImplicit
+  , purposeClause := some .balanced
+  , whenClause := some .balanced
+  , reasonClause := some .balanced
+  , utteranceComp := some .balanced
+  , notes := "Isolating language: complements are uniformly balanced (finite)" }
+
+/-- Korean: implicit 'want' complement subject;
+    balanced purpose, 'when', reason, and utterance clauses. -/
+def compKorean : ComplementationProfile :=
+  { language := "Korean"
+  , walsCode := "kor"
+  , wantComp := some .subjectImplicit
+  , purposeClause := some .balanced
+  , whenClause := some .balanced
+  , reasonClause := some .balanced
+  , utteranceComp := some .balanced
+  , notes := "Balanced despite being agglutinative SOV" }
+
+/-- German: implicit 'want' complement subject;
+    balanced+deranked purpose and 'when' clauses;
+    balanced reason clauses.
+    Not in the F128A sample. -/
+def compGerman : ComplementationProfile :=
+  { language := "German"
+  , walsCode := "ger"
+  , wantComp := some .subjectImplicit
+  , purposeClause := some .balancedDeranked
+  , whenClause := some .balancedDeranked
+  , reasonClause := some .balanced
+  , utteranceComp := none
+  , notes := "Not in WALS Ch 128A sample" }
+
+/-- Russian: implicit 'want' complement subject;
+    balanced+deranked purpose, 'when', and reason clauses;
+    balanced utterance complements. -/
+def compRussian : ComplementationProfile :=
+  { language := "Russian"
+  , walsCode := "rus"
+  , wantComp := some .subjectImplicit
+  , purposeClause := some .balancedDeranked
+  , whenClause := some .balancedDeranked
+  , reasonClause := some .balancedDeranked
+  , utteranceComp := some .balanced
+  , notes := "Mixed balanced/deranked across subordinate clause types" }
+
+/-- Persian: overt 'want' complement subject;
+    deranked purpose clauses; balanced 'when', reason, and utterance clauses. -/
+def compPersian : ComplementationProfile :=
+  { language := "Persian"
+  , walsCode := "prs"
+  , wantComp := some .subjectOvert
+  , purposeClause := some .deranked
+  , whenClause := some .balanced
+  , reasonClause := some .balanced
+  , utteranceComp := some .balanced
+  , notes := "Overt complement subjects with 'want' (no equi-deletion)" }
+
+/-- Irish: not in the F124A sample;
+    balanced+deranked purpose, 'when', and reason clauses;
+    balanced utterance complements. -/
+def compIrish : ComplementationProfile :=
+  { language := "Irish"
+  , walsCode := "iri"
+  , wantComp := none
+  , purposeClause := some .balancedDeranked
+  , whenClause := some .balancedDeranked
+  , reasonClause := some .balancedDeranked
+  , utteranceComp := some .balanced
+  , notes := "Not in WALS Ch 124A sample" }
+
+/-- Basque: not in the F124A sample;
+    deranked purpose clauses; balanced+deranked 'when' and reason clauses;
+    balanced utterance complements. -/
+def compBasque : ComplementationProfile :=
+  { language := "Basque"
+  , walsCode := "bsq"
+  , wantComp := none
+  , purposeClause := some .deranked
+  , whenClause := some .balancedDeranked
+  , reasonClause := some .balancedDeranked
+  , utteranceComp := some .balanced
+  , notes := "Not in WALS Ch 124A sample; deranked purpose clauses like Turkish" }
+
+/-- Yoruba: implicit 'want' complement subject;
+    balanced purpose, 'when', reason, and utterance clauses. -/
+def compYoruba : ComplementationProfile :=
+  { language := "Yoruba"
+  , walsCode := "yor"
+  , wantComp := some .subjectImplicit
+  , purposeClause := some .balanced
+  , whenClause := some .balanced
+  , reasonClause := some .balanced
+  , utteranceComp := some .balanced
+  , notes := "Uniformly balanced (serial verb language)" }
+
+/-- Tagalog: implicit 'want' complement subject;
+    deranked purpose clauses; balanced+deranked 'when' and reason clauses;
+    balanced utterance complements. -/
+def compTagalog : ComplementationProfile :=
+  { language := "Tagalog"
+  , walsCode := "tag"
+  , wantComp := some .subjectImplicit
+  , purposeClause := some .deranked
+  , whenClause := some .balancedDeranked
+  , reasonClause := some .balancedDeranked
+  , utteranceComp := some .balanced
+  , notes := "V-initial Austronesian; deranked purpose clauses" }
+
+/-- Navajo: overt 'want' complement subject.
+    Only in the F124A sample. -/
+def compNavajo : ComplementationProfile :=
+  { language := "Navajo"
+  , walsCode := "nav"
+  , wantComp := some .subjectOvert
+  , purposeClause := none
+  , whenClause := none
+  , reasonClause := none
+  , utteranceComp := none
+  , notes := "Only in WALS Ch 124A sample; overt complement subjects" }
+
+/-- Swahili: balanced utterance complements.
+    Only in the F128A sample among these chapters. -/
+def compSwahili : ComplementationProfile :=
+  { language := "Swahili"
+  , walsCode := "swa"
+  , wantComp := none
+  , purposeClause := none
+  , whenClause := none
+  , reasonClause := none
+  , utteranceComp := some .balanced
+  , notes := "Only in WALS Ch 128A sample" }
+
+/-- Arabic (Gulf): balanced+deranked across purpose, 'when', reason,
+    and utterance clause types.
+    Not in the F124A sample under this code; Egyptian Arabic uses "aeg". -/
+def compArabic : ComplementationProfile :=
+  { language := "Arabic (Gulf)"
+  , walsCode := "arg"
+  , wantComp := none
+  , purposeClause := some .balancedDeranked
+  , whenClause := some .balancedDeranked
+  , reasonClause := some .balancedDeranked
+  , utteranceComp := some .balancedDeranked
+  , notes := "Gulf Arabic; Egyptian Arabic (aeg) in Ch 124A has overt comp subjects" }
+
+/-- Finnish: implicit 'want' complement subject;
+    balanced+deranked purpose, 'when', and reason clauses;
+    balanced+deranked utterance complements. -/
+def compFinnish : ComplementationProfile :=
+  { language := "Finnish"
+  , walsCode := "fin"
+  , wantComp := some .subjectImplicit
+  , purposeClause := some .balancedDeranked
+  , whenClause := some .balancedDeranked
+  , reasonClause := some .balancedDeranked
+  , utteranceComp := some .balancedDeranked
+  , notes := "Negative auxiliary language; balanced+deranked across clause types" }
+
+/-- Spanish: implicit 'want' complement subject;
+    deranked purpose clauses; balanced+deranked 'when' and reason clauses;
+    balanced+deranked utterance complements. -/
+def compSpanish : ComplementationProfile :=
+  { language := "Spanish"
+  , walsCode := "spa"
+  , wantComp := some .subjectImplicit
+  , purposeClause := some .deranked
+  , whenClause := some .balancedDeranked
+  , reasonClause := some .balancedDeranked
+  , utteranceComp := some .balancedDeranked
+  , notes := "Deranked purpose (infinitive 'para + INF'); subjunctive complements" }
+
+/-- French: implicit 'want' complement subject;
+    deranked purpose clauses; balanced+deranked 'when' and reason clauses;
+    balanced+deranked utterance complements. -/
+def compFrench : ComplementationProfile :=
+  { language := "French"
+  , walsCode := "fre"
+  , wantComp := some .subjectImplicit
+  , purposeClause := some .deranked
+  , whenClause := some .balancedDeranked
+  , reasonClause := some .balancedDeranked
+  , utteranceComp := some .balancedDeranked
+  , notes := "Deranked purpose (infinitive 'pour + INF'); subjunctive complements" }
+
+/-! ## U. Complementation Profile Collections -/
+
+def allCompProfiles : List ComplementationProfile :=
+  [ compEnglish, compJapanese, compTurkish, compHindi, compMandarin
+  , compKorean, compGerman, compRussian, compPersian, compIrish
+  , compBasque, compYoruba, compTagalog, compNavajo, compSwahili
+  , compArabic, compFinnish, compSpanish, compFrench ]
+
+/-- Complementation profile sample size. -/
+theorem comp_profile_count : allCompProfiles.length = 19 := by native_decide
+
+-- ============================================================================
+-- WALS Grounding: Ch 124A ('Want' Complement Subjects)
+-- ============================================================================
+
+/-! ## V. WALS Grounding Theorems
+
+Per-language theorems proving that each `ComplementationProfile` field
+matches the corresponding WALS chapter's data via the converter function.
+-/
+
+theorem english_ch124 :
+    (Core.WALS.F124A.lookup "eng").map (fromWALS124A ·.value) = compEnglish.wantComp := by
+  native_decide
+theorem japanese_ch124 :
+    (Core.WALS.F124A.lookup "jpn").map (fromWALS124A ·.value) = compJapanese.wantComp := by
+  native_decide
+theorem turkish_ch124 :
+    (Core.WALS.F124A.lookup "tur").map (fromWALS124A ·.value) = compTurkish.wantComp := by
+  native_decide
+theorem hindi_ch124 :
+    (Core.WALS.F124A.lookup "hin").map (fromWALS124A ·.value) = compHindi.wantComp := by
+  native_decide
+theorem mandarin_ch124 :
+    (Core.WALS.F124A.lookup "mnd").map (fromWALS124A ·.value) = compMandarin.wantComp := by
+  native_decide
+theorem korean_ch124 :
+    (Core.WALS.F124A.lookup "kor").map (fromWALS124A ·.value) = compKorean.wantComp := by
+  native_decide
+theorem german_ch124 :
+    (Core.WALS.F124A.lookup "ger").map (fromWALS124A ·.value) = compGerman.wantComp := by
+  native_decide
+theorem russian_ch124 :
+    (Core.WALS.F124A.lookup "rus").map (fromWALS124A ·.value) = compRussian.wantComp := by
+  native_decide
+theorem persian_ch124 :
+    (Core.WALS.F124A.lookup "prs").map (fromWALS124A ·.value) = compPersian.wantComp := by
+  native_decide
+theorem yoruba_ch124 :
+    (Core.WALS.F124A.lookup "yor").map (fromWALS124A ·.value) = compYoruba.wantComp := by
+  native_decide
+theorem tagalog_ch124 :
+    (Core.WALS.F124A.lookup "tag").map (fromWALS124A ·.value) = compTagalog.wantComp := by
+  native_decide
+theorem navajo_ch124 :
+    (Core.WALS.F124A.lookup "nav").map (fromWALS124A ·.value) = compNavajo.wantComp := by
+  native_decide
+theorem finnish_ch124 :
+    (Core.WALS.F124A.lookup "fin").map (fromWALS124A ·.value) = compFinnish.wantComp := by
+  native_decide
+theorem spanish_ch124 :
+    (Core.WALS.F124A.lookup "spa").map (fromWALS124A ·.value) = compSpanish.wantComp := by
+  native_decide
+theorem french_ch124 :
+    (Core.WALS.F124A.lookup "fre").map (fromWALS124A ·.value) = compFrench.wantComp := by
+  native_decide
+
+-- ============================================================================
+-- WALS Grounding: Ch 125A (Purpose Clauses)
+-- ============================================================================
+
+theorem english_ch125 :
+    (Core.WALS.F125A.lookup "eng").map (fromWALS125A ·.value) = compEnglish.purposeClause := by
+  native_decide
+theorem japanese_ch125 :
+    (Core.WALS.F125A.lookup "jpn").map (fromWALS125A ·.value) = compJapanese.purposeClause := by
+  native_decide
+theorem turkish_ch125 :
+    (Core.WALS.F125A.lookup "tur").map (fromWALS125A ·.value) = compTurkish.purposeClause := by
+  native_decide
+theorem mandarin_ch125 :
+    (Core.WALS.F125A.lookup "mnd").map (fromWALS125A ·.value) = compMandarin.purposeClause := by
+  native_decide
+theorem korean_ch125 :
+    (Core.WALS.F125A.lookup "kor").map (fromWALS125A ·.value) = compKorean.purposeClause := by
+  native_decide
+theorem german_ch125 :
+    (Core.WALS.F125A.lookup "ger").map (fromWALS125A ·.value) = compGerman.purposeClause := by
+  native_decide
+theorem russian_ch125 :
+    (Core.WALS.F125A.lookup "rus").map (fromWALS125A ·.value) = compRussian.purposeClause := by
+  native_decide
+theorem persian_ch125 :
+    (Core.WALS.F125A.lookup "prs").map (fromWALS125A ·.value) = compPersian.purposeClause := by
+  native_decide
+theorem irish_ch125 :
+    (Core.WALS.F125A.lookup "iri").map (fromWALS125A ·.value) = compIrish.purposeClause := by
+  native_decide
+theorem basque_ch125 :
+    (Core.WALS.F125A.lookup "bsq").map (fromWALS125A ·.value) = compBasque.purposeClause := by
+  native_decide
+theorem yoruba_ch125 :
+    (Core.WALS.F125A.lookup "yor").map (fromWALS125A ·.value) = compYoruba.purposeClause := by
+  native_decide
+theorem tagalog_ch125 :
+    (Core.WALS.F125A.lookup "tag").map (fromWALS125A ·.value) = compTagalog.purposeClause := by
+  native_decide
+theorem finnish_ch125 :
+    (Core.WALS.F125A.lookup "fin").map (fromWALS125A ·.value) = compFinnish.purposeClause := by
+  native_decide
+theorem spanish_ch125 :
+    (Core.WALS.F125A.lookup "spa").map (fromWALS125A ·.value) = compSpanish.purposeClause := by
+  native_decide
+theorem french_ch125 :
+    (Core.WALS.F125A.lookup "fre").map (fromWALS125A ·.value) = compFrench.purposeClause := by
+  native_decide
+theorem arabic_ch125 :
+    (Core.WALS.F125A.lookup "arg").map (fromWALS125A ·.value) = compArabic.purposeClause := by
+  native_decide
+
+-- ============================================================================
+-- WALS Grounding: Ch 126A ('When' Clauses)
+-- ============================================================================
+
+theorem english_ch126 :
+    (Core.WALS.F126A.lookup "eng").map (fromWALS126A ·.value) = compEnglish.whenClause := by
+  native_decide
+theorem japanese_ch126 :
+    (Core.WALS.F126A.lookup "jpn").map (fromWALS126A ·.value) = compJapanese.whenClause := by
+  native_decide
+theorem turkish_ch126 :
+    (Core.WALS.F126A.lookup "tur").map (fromWALS126A ·.value) = compTurkish.whenClause := by
+  native_decide
+theorem hindi_ch126 :
+    (Core.WALS.F126A.lookup "hin").map (fromWALS126A ·.value) = compHindi.whenClause := by
+  native_decide
+theorem mandarin_ch126 :
+    (Core.WALS.F126A.lookup "mnd").map (fromWALS126A ·.value) = compMandarin.whenClause := by
+  native_decide
+theorem korean_ch126 :
+    (Core.WALS.F126A.lookup "kor").map (fromWALS126A ·.value) = compKorean.whenClause := by
+  native_decide
+theorem german_ch126 :
+    (Core.WALS.F126A.lookup "ger").map (fromWALS126A ·.value) = compGerman.whenClause := by
+  native_decide
+theorem russian_ch126 :
+    (Core.WALS.F126A.lookup "rus").map (fromWALS126A ·.value) = compRussian.whenClause := by
+  native_decide
+theorem persian_ch126 :
+    (Core.WALS.F126A.lookup "prs").map (fromWALS126A ·.value) = compPersian.whenClause := by
+  native_decide
+theorem irish_ch126 :
+    (Core.WALS.F126A.lookup "iri").map (fromWALS126A ·.value) = compIrish.whenClause := by
+  native_decide
+theorem basque_ch126 :
+    (Core.WALS.F126A.lookup "bsq").map (fromWALS126A ·.value) = compBasque.whenClause := by
+  native_decide
+theorem yoruba_ch126 :
+    (Core.WALS.F126A.lookup "yor").map (fromWALS126A ·.value) = compYoruba.whenClause := by
+  native_decide
+theorem tagalog_ch126 :
+    (Core.WALS.F126A.lookup "tag").map (fromWALS126A ·.value) = compTagalog.whenClause := by
+  native_decide
+theorem finnish_ch126 :
+    (Core.WALS.F126A.lookup "fin").map (fromWALS126A ·.value) = compFinnish.whenClause := by
+  native_decide
+theorem spanish_ch126 :
+    (Core.WALS.F126A.lookup "spa").map (fromWALS126A ·.value) = compSpanish.whenClause := by
+  native_decide
+theorem french_ch126 :
+    (Core.WALS.F126A.lookup "fre").map (fromWALS126A ·.value) = compFrench.whenClause := by
+  native_decide
+theorem arabic_ch126 :
+    (Core.WALS.F126A.lookup "arg").map (fromWALS126A ·.value) = compArabic.whenClause := by
+  native_decide
+
+-- ============================================================================
+-- WALS Grounding: Ch 127A (Reason Clauses)
+-- ============================================================================
+
+theorem english_ch127 :
+    (Core.WALS.F127A.lookup "eng").map (fromWALS127A ·.value) = compEnglish.reasonClause := by
+  native_decide
+theorem japanese_ch127 :
+    (Core.WALS.F127A.lookup "jpn").map (fromWALS127A ·.value) = compJapanese.reasonClause := by
+  native_decide
+theorem turkish_ch127 :
+    (Core.WALS.F127A.lookup "tur").map (fromWALS127A ·.value) = compTurkish.reasonClause := by
+  native_decide
+theorem hindi_ch127 :
+    (Core.WALS.F127A.lookup "hin").map (fromWALS127A ·.value) = compHindi.reasonClause := by
+  native_decide
+theorem mandarin_ch127 :
+    (Core.WALS.F127A.lookup "mnd").map (fromWALS127A ·.value) = compMandarin.reasonClause := by
+  native_decide
+theorem korean_ch127 :
+    (Core.WALS.F127A.lookup "kor").map (fromWALS127A ·.value) = compKorean.reasonClause := by
+  native_decide
+theorem german_ch127 :
+    (Core.WALS.F127A.lookup "ger").map (fromWALS127A ·.value) = compGerman.reasonClause := by
+  native_decide
+theorem russian_ch127 :
+    (Core.WALS.F127A.lookup "rus").map (fromWALS127A ·.value) = compRussian.reasonClause := by
+  native_decide
+theorem persian_ch127 :
+    (Core.WALS.F127A.lookup "prs").map (fromWALS127A ·.value) = compPersian.reasonClause := by
+  native_decide
+theorem irish_ch127 :
+    (Core.WALS.F127A.lookup "iri").map (fromWALS127A ·.value) = compIrish.reasonClause := by
+  native_decide
+theorem basque_ch127 :
+    (Core.WALS.F127A.lookup "bsq").map (fromWALS127A ·.value) = compBasque.reasonClause := by
+  native_decide
+theorem yoruba_ch127 :
+    (Core.WALS.F127A.lookup "yor").map (fromWALS127A ·.value) = compYoruba.reasonClause := by
+  native_decide
+theorem tagalog_ch127 :
+    (Core.WALS.F127A.lookup "tag").map (fromWALS127A ·.value) = compTagalog.reasonClause := by
+  native_decide
+theorem finnish_ch127 :
+    (Core.WALS.F127A.lookup "fin").map (fromWALS127A ·.value) = compFinnish.reasonClause := by
+  native_decide
+theorem spanish_ch127 :
+    (Core.WALS.F127A.lookup "spa").map (fromWALS127A ·.value) = compSpanish.reasonClause := by
+  native_decide
+theorem french_ch127 :
+    (Core.WALS.F127A.lookup "fre").map (fromWALS127A ·.value) = compFrench.reasonClause := by
+  native_decide
+theorem arabic_ch127 :
+    (Core.WALS.F127A.lookup "arg").map (fromWALS127A ·.value) = compArabic.reasonClause := by
+  native_decide
+
+-- ============================================================================
+-- WALS Grounding: Ch 128A (Utterance Complement Clauses)
+-- Not all languages are in the Ch 128A sample (German, Navajo absent)
+-- ============================================================================
+
+theorem english_ch128 :
+    (Core.WALS.F128A.lookup "eng").map (fromWALS128A ·.value) = compEnglish.utteranceComp := by
+  native_decide
+theorem japanese_ch128 :
+    (Core.WALS.F128A.lookup "jpn").map (fromWALS128A ·.value) = compJapanese.utteranceComp := by
+  native_decide
+theorem turkish_ch128 :
+    (Core.WALS.F128A.lookup "tur").map (fromWALS128A ·.value) = compTurkish.utteranceComp := by
+  native_decide
+theorem hindi_ch128 :
+    (Core.WALS.F128A.lookup "hin").map (fromWALS128A ·.value) = compHindi.utteranceComp := by
+  native_decide
+theorem mandarin_ch128 :
+    (Core.WALS.F128A.lookup "mnd").map (fromWALS128A ·.value) = compMandarin.utteranceComp := by
+  native_decide
+theorem korean_ch128 :
+    (Core.WALS.F128A.lookup "kor").map (fromWALS128A ·.value) = compKorean.utteranceComp := by
+  native_decide
+theorem russian_ch128 :
+    (Core.WALS.F128A.lookup "rus").map (fromWALS128A ·.value) = compRussian.utteranceComp := by
+  native_decide
+theorem persian_ch128 :
+    (Core.WALS.F128A.lookup "prs").map (fromWALS128A ·.value) = compPersian.utteranceComp := by
+  native_decide
+theorem irish_ch128 :
+    (Core.WALS.F128A.lookup "iri").map (fromWALS128A ·.value) = compIrish.utteranceComp := by
+  native_decide
+theorem basque_ch128 :
+    (Core.WALS.F128A.lookup "bsq").map (fromWALS128A ·.value) = compBasque.utteranceComp := by
+  native_decide
+theorem yoruba_ch128 :
+    (Core.WALS.F128A.lookup "yor").map (fromWALS128A ·.value) = compYoruba.utteranceComp := by
+  native_decide
+theorem tagalog_ch128 :
+    (Core.WALS.F128A.lookup "tag").map (fromWALS128A ·.value) = compTagalog.utteranceComp := by
+  native_decide
+theorem swahili_ch128 :
+    (Core.WALS.F128A.lookup "swa").map (fromWALS128A ·.value) = compSwahili.utteranceComp := by
+  native_decide
+theorem finnish_ch128 :
+    (Core.WALS.F128A.lookup "fin").map (fromWALS128A ·.value) = compFinnish.utteranceComp := by
+  native_decide
+theorem spanish_ch128 :
+    (Core.WALS.F128A.lookup "spa").map (fromWALS128A ·.value) = compSpanish.utteranceComp := by
+  native_decide
+theorem french_ch128 :
+    (Core.WALS.F128A.lookup "fre").map (fromWALS128A ·.value) = compFrench.utteranceComp := by
+  native_decide
+theorem arabic_ch128 :
+    (Core.WALS.F128A.lookup "arg").map (fromWALS128A ·.value) = compArabic.utteranceComp := by
+  native_decide
+
+-- ============================================================================
+-- WALS Distribution Counts (generated from data)
+-- ============================================================================
+
+/-! ## W. WALS Distribution Verification
+
+Counts derived from the WALS generated data modules, replacing hand-coded
+distribution numbers.
+-/
+
+/-- Ch 124A: 'subject is left implicit' is the most common strategy. -/
+theorem ch124_implicit_most_common :
+    (ch124.filter (·.value == .subjectIsLeftImplicit)).length = 144 := by native_decide
+
+/-- Ch 124A: desiderative verbal affix is the second most common. -/
+theorem ch124_desid_affix_count :
+    (ch124.filter (·.value == .desiderativeVerbalAffix)).length = 45 := by native_decide
+
+/-- Ch 125A: deranked purpose clauses are the most common. -/
+theorem ch125_deranked_most_common :
+    (ch125.filter (·.value == .deranked)).length = 102 := by native_decide
+
+/-- Ch 125A: balanced purpose clauses. -/
+theorem ch125_balanced_count :
+    (ch125.filter (·.value == .balanced)).length = 38 := by native_decide
+
+/-- Ch 128A: balanced utterance complements dominate. -/
+theorem ch128_balanced_dominant :
+    (ch128.filter (·.value == .balanced)).length = 114 := by native_decide
+
+/-- Ch 128A: deranked utterance complements are rare. -/
+theorem ch128_deranked_rare :
+    (ch128.filter (·.value == .deranked)).length = 11 := by native_decide
+
+/-! ## X. Cross-Chapter Generalizations
+
+Typological generalizations connecting complementation strategies across
+WALS chapters 124A--128A.
+-/
+
+/-- Utterance complements (Ch 128A) are overwhelmingly balanced: 'say/tell'
+    complements tend to retain main-clause morphology cross-linguistically.
+    This confirms the typological observation that reporting clauses resist
+    deranking. -/
+theorem utterance_comps_mostly_balanced :
+    (ch128.filter (·.value == .balanced)).length >
+    (ch128.filter (·.value == .deranked)).length * 10 := by native_decide
+
+/-- Purpose clauses (Ch 125A) favor deranking more than utterance complements
+    (Ch 128A). This reflects the irrealis orientation of purpose clauses. -/
+theorem purpose_more_deranked_than_utterance :
+    (ch125.filter (·.value == .deranked)).length >
+    (ch128.filter (·.value == .deranked)).length := by native_decide
 
 end Phenomena.Complementation.Typology

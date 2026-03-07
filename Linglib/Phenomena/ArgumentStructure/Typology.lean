@@ -6,6 +6,7 @@ import Linglib.Core.WALS.Features.F108B
 import Linglib.Core.WALS.Features.F111A
 import Linglib.Fragments.Finnish.Predicates
 import Linglib.Fragments.English.Pronouns
+import Linglib.Core.Lexical.MorphRule
 
 /-!
 # Cross-Linguistic Typology of Valence and Voice (WALS Chapters 106--111)
@@ -1374,6 +1375,85 @@ def englishReciprocityTypes : List ReciprocityType :=
 
 theorem english_expresses_all_types :
     englishReciprocityTypes.length = 6 := rfl
+
+-- ============================================================================
+-- Swahili Reciprocal MorphRule (@cite{nordlinger-2023}, §3)
+-- ============================================================================
+
+open Core.Morphology in
+/-- Swahili reciprocal suffix "-an-" as a `MorphRule`.
+
+    Realizes valence reduction: transitive → intransitive. The reciprocal
+    suffix removes the object argument, making the verb monovalent
+    (the participants are encoded in a plural subject).
+
+    Example: "pend-" (love) → "pend-an-" (love each other)
+    @cite{nordlinger-2023} ex. 3. -/
+def swahiliReciprocalRule : MorphRule Bool :=
+  { category := .valence
+  , value := "reciprocal"
+  , formRule := fun stem => stem ++ "an"
+  , featureRule := fun f => { f with valence := some .intransitive }
+  , semEffect := id
+  }
+
+open Core.Morphology in
+/-- The Swahili reciprocal suffix is a valence-changing operation. -/
+theorem swahili_recip_is_valence :
+    swahiliReciprocalRule.category = .valence := rfl
+
+open Core.Morphology in
+/-- The Swahili reciprocal suffix reduces transitivity. -/
+theorem swahili_recip_reduces_valence :
+    (swahiliReciprocalRule.featureRule { valence := some .transitive }).valence
+      = some .intransitive := rfl
+
+-- ============================================================================
+-- Reciprocal Marker Polysemy (@cite{nordlinger-2023}, §4.2)
+-- ============================================================================
+
+/-- Extended readings of reciprocal markers beyond core reciprocal meaning.
+
+    @cite{nordlinger-2023} (§4.2) notes that reciprocal markers are often
+    polysemous, expressing related but non-reciprocal meanings. These
+    extended uses include collective, sociative, and iterative readings,
+    in addition to the reflexive overlap captured by WALS Ch 106. -/
+inductive RecipMarkerPolysemy where
+  | reciprocal   -- core mutual action reading
+  | reflexive    -- same-participant reading (overlap with reflexives)
+  | collective   -- joint action, no mutual entailment ("they gathered")
+  | sociative    -- joint/associative action ("they walked together")
+  | iterative    -- repeated action ("they kept hitting")
+  deriving DecidableEq, BEq, Repr
+
+/-- Polysemy pattern: which extended readings a language's reciprocal
+    marker(s) can express. -/
+structure RecipPolysemyPattern where
+  language : String
+  readings : List RecipMarkerPolysemy
+  deriving Repr
+
+/-- Russian "drug druga": reciprocal only (no collective/sociative). -/
+def polysemy_russian : RecipPolysemyPattern :=
+  { language := "Russian", readings := [.reciprocal] }
+
+/-- French "se": reciprocal + reflexive + collective.
+    "Les enfants se sont rassemblés" (collective, no mutual action). -/
+def polysemy_french : RecipPolysemyPattern :=
+  { language := "French", readings := [.reciprocal, .reflexive, .collective] }
+
+/-- Wambaya "nyurrunyurru": reciprocal + reflexive (identical forms). -/
+def polysemy_wambaya : RecipPolysemyPattern :=
+  { language := "Wambaya", readings := [.reciprocal, .reflexive] }
+
+/-- Swahili "-an-": reciprocal + sociative + collective. -/
+def polysemy_swahili : RecipPolysemyPattern :=
+  { language := "Swahili", readings := [.reciprocal, .sociative, .collective] }
+
+/-- Languages with reciprocal-reflexive identity show reflexive polysemy. -/
+theorem reflexive_polysemy_tracks_wals :
+    polysemy_wambaya.readings.any (· == .reflexive) = true ∧
+    rp_wambaya.reflexiveRelation = .identicalToReflexive := ⟨rfl, rfl⟩
 
 -- ============================================================================
 -- Fragment Connection: English Reciprocal-Reflexive Distinction

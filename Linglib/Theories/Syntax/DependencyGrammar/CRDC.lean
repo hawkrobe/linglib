@@ -276,6 +276,27 @@ def reflexiveLicensed (clause : ValencyClause) : Bool :=
       crdcSatisfied config && phiAgree clause.subject obj
     | _ => true
 
+/-- Reciprocal licensing under CRDC
+
+    A reciprocal must be:
+    1. A conjunct valent in some valency frame
+    2. Preceded by a full valent in that frame
+    3. The full valent must be plural -/
+def reciprocalLicensed (clause : ValencyClause) : Bool :=
+  match clause.object with
+  | none => false
+  | some obj =>
+    match classifyNominal obj with
+    | some .reciprocal =>
+      let config : CRDCConfig := {
+        frame := clause.frame
+        antecedentIdx := 0
+        anaphorIdx := 1
+      }
+      crdcSatisfied config &&
+      clause.subject.features.number == some .pl
+    | _ => true
+
 /-- Pronoun constraint under CRDC
 
     A pronoun as conjunct valent cannot corefer with the full valent
@@ -290,16 +311,17 @@ def grammaticalForCoreference (ws : List Word) : Bool :=
   match parseValencyClause ws with
   | none => false
   | some clause =>
-    -- Reflexive in subject position: no preceding full valent to bind it
     match classifyNominal clause.subject with
     | some .reflexive => false
+    | some .reciprocal => false
     | _ =>
       match clause.object with
       | none => true
       | some obj =>
         match classifyNominal obj with
         | some .reflexive => reflexiveLicensed clause
-        | some .pronoun => false  -- Pronoun coreference blocked locally
+        | some .reciprocal => reciprocalLicensed clause
+        | some .pronoun => false
         | _ => true
 
 -- ============================================================================
@@ -336,6 +358,11 @@ def pronounCoreferenceBlocked (ws : List Word) : Bool :=
 #eval reflexiveLicensedInSentence [john, sees, herself]     -- false (gender)
 #eval reflexiveLicensedInSentence [they, see, himself]      -- false (number)
 
+-- Reciprocal coreference: requires plural antecedent
+#guard grammaticalForCoreference [they, see, eachOther]
+#guard !grammaticalForCoreference [eachOther, see, them]
+#guard !grammaticalForCoreference [john, sees, eachOther]
+
 -- Pronoun coreference blocked:
 #eval pronounCoreferenceBlocked [john, sees, him]           -- true
 #eval pronounCoreferenceBlocked [mary, sees, her]           -- true
@@ -368,6 +395,15 @@ def computeCoreferenceStatus (clause : ValencyClause) (i j : Nat) : Interfaces.C
         if crdcSatisfied config && phiAgree clause.subject obj
         then .obligatory
         else .blocked
+      | some .reciprocal =>
+        let config : CRDCConfig := {
+          frame := clause.frame
+          antecedentIdx := 0
+          anaphorIdx := 1
+        }
+        if crdcSatisfied config && clause.subject.features.number == some .pl
+        then .obligatory
+        else .blocked
       | some .pronoun => .blocked
       | some .rExpression => .possible
       | none => .unspecified
@@ -375,6 +411,7 @@ def computeCoreferenceStatus (clause : ValencyClause) (i j : Nat) : Interfaces.C
     -- Object-subject: object is conjunct, cannot bind subject
     match classifyNominal clause.subject with
     | some .reflexive => .blocked
+    | some .reciprocal => .blocked
     | some .pronoun => .possible
     | _ => .possible
   else
@@ -388,12 +425,14 @@ instance : Interfaces.CoreferenceTheory CRDCTheory where
   grammaticalForCoreference := λ clause =>
     match classifyNominal clause.subject with
     | some .reflexive => false
+    | some .reciprocal => false
     | _ =>
       match clause.object with
       | none => true
       | some obj =>
         match classifyNominal obj with
         | some .reflexive => reflexiveLicensed clause
+        | some .reciprocal => reciprocalLicensed clause
         | some .pronoun => false
         | _ => true
 

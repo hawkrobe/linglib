@@ -1,5 +1,6 @@
 import Linglib.Core.Lexical.Word
 import Linglib.Core.Case.Basic
+import Linglib.Core.WALS.Features.F121A
 
 /-!
 # Comparative Construction Typology (WALS Chapter 121)
@@ -202,37 +203,46 @@ inductive SuperlativeStrategy where
   deriving DecidableEq, BEq, Repr
 
 -- ============================================================================
--- WALS Distribution Data
+-- WALS Converter Function
 -- ============================================================================
 
-/-- A single row in a WALS frequency table: a category label and its count. -/
-structure WALSCount where
-  label : String
-  count : Nat
-  deriving Repr, DecidableEq, BEq
+/-- Map WALS 121A enum values to the local `ComparativeType`.
 
-/-- Sum of counts in a WALS table. -/
-def WALSCount.totalOf (cs : List WALSCount) : Nat :=
-  cs.foldl (λ acc c => acc + c.count) 0
-
-/-- Chapter 121 distribution: comparative construction types (N = 167).
-
-    Values from @cite{stassen-2013}, WALS Online feature 121A.
-    The locational type is most frequent, followed by particle.
-    Conjoined comparatives are by far the rarest single type. -/
-def ch121Counts : List WALSCount :=
-  [ ⟨"Locational", 47⟩
-  , ⟨"Exceed", 29⟩
-  , ⟨"Conjoined", 10⟩
-  , ⟨"Particle", 57⟩
-  , ⟨"Mixed", 24⟩ ]
+    The generated WALS data (v2020.4) uses four categories; the "mixed" type
+    is not represented as a separate WALS value. Languages in the WALS dataset
+    are assigned to whichever single type best characterizes them. -/
+private def fromWALS121A : Core.WALS.F121A.ComparativeType → ComparativeType
+  | .locational => .locational
+  | .exceed     => .exceed
+  | .conjoined  => .conjoined
+  | .particle   => .particle
 
 -- ============================================================================
--- Aggregate Total Verification
+-- WALS Distribution Data (from generated module)
 -- ============================================================================
 
-/-- Ch 121 total: 167 languages. -/
-theorem ch121_total : WALSCount.totalOf ch121Counts = 167 := by native_decide
+private abbrev ch121 := Core.WALS.F121A.allData
+
+/-- Ch 121 total: 167 languages in the generated WALS dataset. -/
+theorem ch121_total : ch121.length = 167 := by native_decide
+
+/-- Ch 121A per-type counts from the generated WALS v2020.4 data. -/
+theorem ch121_locational_count :
+    (ch121.filter (·.value == .locational)).length = 78 := by native_decide
+theorem ch121_exceed_count :
+    (ch121.filter (·.value == .exceed)).length = 33 := by native_decide
+theorem ch121_conjoined_count :
+    (ch121.filter (·.value == .conjoined)).length = 34 := by native_decide
+theorem ch121_particle_count :
+    (ch121.filter (·.value == .particle)).length = 22 := by native_decide
+
+/-- Per-type counts sum to sample total. -/
+theorem ch121_counts_sum :
+    (ch121.filter (·.value == .locational)).length +
+    (ch121.filter (·.value == .exceed)).length +
+    (ch121.filter (·.value == .conjoined)).length +
+    (ch121.filter (·.value == .particle)).length =
+    ch121.length := by native_decide
 
 -- ============================================================================
 -- Comparative Profile Structure
@@ -630,17 +640,29 @@ def countByType (langs : List ComparativeProfile) (t : ComparativeType) : Nat :=
 -- Typological Generalization 1: Locational is Most Common Worldwide
 -- ============================================================================
 
-/-- In the WALS data, locational comparatives (47) and particle comparatives
-    (57) are the two most common types. Together they account for 104/167
-    (62%) of languages. -/
+/-- In the WALS data, locational and particle comparatives together account
+    for more than half of the 167-language sample. -/
 theorem locational_and_particle_dominant :
-    47 + 57 > WALSCount.totalOf ch121Counts / 2 := by native_decide
+    let loc := (ch121.filter (·.value == .locational)).length
+    let par := (ch121.filter (·.value == .particle)).length
+    loc + par > ch121.length / 2 := by native_decide
 
-/-- Conjoined comparatives (10) are the rarest single type in WALS Ch 121.
-    They are outnumbered by every other single type. -/
-theorem conjoined_rarest :
-    (10 : Nat) < 29 ∧ (10 : Nat) < 47 ∧ (10 : Nat) < 57 := by
-  exact ⟨by native_decide, by native_decide, by native_decide⟩
+/-- Locational comparatives are the most common single type in WALS Ch 121. -/
+theorem locational_most_common :
+    let loc := (ch121.filter (·.value == .locational)).length
+    let exc := (ch121.filter (·.value == .exceed)).length
+    let con := (ch121.filter (·.value == .conjoined)).length
+    let par := (ch121.filter (·.value == .particle)).length
+    loc > exc ∧ loc > con ∧ loc > par := by native_decide
+
+/-- Particle comparatives are the rarest single type in WALS Ch 121
+    (in the v2020.4 data, which lacks a separate "mixed" category). -/
+theorem particle_rarest :
+    let loc := (ch121.filter (·.value == .locational)).length
+    let exc := (ch121.filter (·.value == .exceed)).length
+    let con := (ch121.filter (·.value == .conjoined)).length
+    let par := (ch121.filter (·.value == .particle)).length
+    par < loc ∧ par < exc ∧ par < con := by native_decide
 
 -- ============================================================================
 -- Typological Generalization 2: Particle Concentrates in Europe (SAE)
@@ -778,6 +800,55 @@ theorem locational_languages_count :
 theorem locational_has_standard_marker :
     locationalLanguages.all (λ p => p.standardMarker != "") = true := by
   native_decide
+
+-- ============================================================================
+-- WALS Grounding: Ch 121A (Comparative Constructions)
+-- Languages whose profile comparative type matches the WALS F121A data.
+-- German, Latin, Tagalog, and Martuthunira are absent from the WALS sample.
+-- Finnish and Navajo are documented discrepancies (see end of file).
+-- ============================================================================
+
+theorem english_ch121 :
+    (Core.WALS.F121A.lookup "eng").map (fromWALS121A ·.value) =
+    some english.comparativeType := by native_decide
+theorem japanese_ch121 :
+    (Core.WALS.F121A.lookup "jpn").map (fromWALS121A ·.value) =
+    some japanese.comparativeType := by native_decide
+theorem mandarin_ch121 :
+    (Core.WALS.F121A.lookup "mnd").map (fromWALS121A ·.value) =
+    some mandarin.comparativeType := by native_decide
+theorem korean_ch121 :
+    (Core.WALS.F121A.lookup "kor").map (fromWALS121A ·.value) =
+    some korean.comparativeType := by native_decide
+theorem turkish_ch121 :
+    (Core.WALS.F121A.lookup "tur").map (fromWALS121A ·.value) =
+    some turkish.comparativeType := by native_decide
+theorem yoruba_ch121 :
+    (Core.WALS.F121A.lookup "yor").map (fromWALS121A ·.value) =
+    some yoruba.comparativeType := by native_decide
+theorem hindiUrdu_ch121 :
+    (Core.WALS.F121A.lookup "hin").map (fromWALS121A ·.value) =
+    some hindiUrdu.comparativeType := by native_decide
+theorem russian_ch121 :
+    (Core.WALS.F121A.lookup "rus").map (fromWALS121A ·.value) =
+    some russian.comparativeType := by native_decide
+theorem swahili_ch121 :
+    (Core.WALS.F121A.lookup "swa").map (fromWALS121A ·.value) =
+    some swahili.comparativeType := by native_decide
+theorem thai_ch121 :
+    (Core.WALS.F121A.lookup "tha").map (fromWALS121A ·.value) =
+    some thai.comparativeType := by native_decide
+theorem arabic_ch121 :
+    (Core.WALS.F121A.lookup "ams").map (fromWALS121A ·.value) =
+    some arabic.comparativeType := by native_decide
+theorem french_ch121 :
+    (Core.WALS.F121A.lookup "fre").map (fromWALS121A ·.value) =
+    some french.comparativeType := by native_decide
+
+-- Discrepancy: Finnish is .particle in WALS F121A but .locational in our profile
+-- (Stassen may have reclassified; WALS 2013 emphasizes partitive-case standard).
+-- Discrepancy: Navajo is .locational in WALS F121A but .conjoined in our profile
+-- (genuine reclassification between 1985 and 2013 editions).
 
 -- ============================================================================
 -- Per-Language Verification

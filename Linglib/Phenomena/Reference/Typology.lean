@@ -1,4 +1,9 @@
 import Linglib.Core.Lexical.Word
+import Linglib.Core.WALS.Features.F37A
+import Linglib.Core.WALS.Features.F38A
+import Linglib.Core.WALS.Features.F41A
+import Linglib.Core.WALS.Features.F42A
+import Linglib.Core.WALS.Features.F43A
 
 /-!
 # Cross-Linguistic Typology of Articles and Demonstratives (WALS)
@@ -555,6 +560,60 @@ def allLanguages : List ArticleDemProfile :=
   , danish, hausa, basque ]
 
 -- ============================================================================
+-- WALS Converter Functions
+-- ============================================================================
+
+private abbrev ch37 := Core.WALS.F37A.allData
+private abbrev ch38 := Core.WALS.F38A.allData
+private abbrev ch41 := Core.WALS.F41A.allData
+private abbrev ch42 := Core.WALS.F42A.allData
+private abbrev ch43 := Core.WALS.F43A.allData
+
+private def fromWALS37A : Core.WALS.F37A.DefiniteArticleType → DefiniteArticleType
+  | .definiteWordDistinctFromDemonstrative => .definiteWord
+  | .demonstrativeWordUsedAsDefiniteArticle => .demonstrativeUsed
+  | .definiteAffix => .definiteAffix
+  | .noDefiniteButIndefiniteArticle => .noDefButIndef
+  | .noDefiniteOrIndefiniteArticle => .noArticle
+
+private def fromWALS38A : Core.WALS.F38A.IndefiniteArticleType → IndefiniteArticleType
+  | .indefiniteWordDistinctFromOne => .indefiniteWord
+  | .indefiniteWordSameAsOne => .numeralOne
+  | .indefiniteAffix => .indefiniteAffix
+  | .noIndefiniteButDefiniteArticle => .noIndefButDef
+  | .noDefiniteOrIndefiniteArticle => .noArticle
+
+private def fromWALS41A : Core.WALS.F41A.DistanceContrastsInDemonstratives → DemDistanceSystem
+  | .noDistanceContrast => .noContrast
+  | .twoWayContrast => .twoWay
+  | .threeWayContrast => .threeWay
+  | .fourWayContrast => .fourWay
+  | .fiveWayContrast => .fiveOrMore
+
+private def fromWALS42A : Core.WALS.F42A.PronominalAndAdnominalDemonstratives → DemFormRelation
+  | .identical => .sameForms
+  | .differentStem => .differentStems
+  | .differentInflection => .differentInflection
+
+private def fromWALS43A : Core.WALS.F43A.ThirdPersonPronounsAndDemonstratives → PronounDemRelation
+  | .unrelated => .unrelated
+  | .relatedForAllDemonstratives => .relatedAll
+  | .relatedToRemoteDemonstratives => .relatedRemote
+  | .relatedToNonRemoteDemonstratives => .relatedNonRemote
+  | .relatedByGenderMarkers => .relatedGender
+  | .relatedForNonHumanReference => .relatedNonhuman
+
+-- ============================================================================
+-- WALS Data Totals
+-- ============================================================================
+
+theorem ch37_total : ch37.length = 620 := by native_decide
+theorem ch38_total : ch38.length = 534 := by native_decide
+theorem ch41_total : ch41.length = 234 := by native_decide
+theorem ch42_total : ch42.length = 201 := by native_decide
+theorem ch43_total : ch43.length = 225 := by native_decide
+
+-- ============================================================================
 -- WALS Distribution Data: Aggregate Counts
 -- ============================================================================
 
@@ -719,6 +778,82 @@ example : walsPronounDem.relatedRemote = 18 := by native_decide
 example : walsPronounDem.relatedNonRemote = 14 := by native_decide
 example : walsPronounDem.relatedGender = 24 := by native_decide
 example : walsPronounDem.relatedNonhuman = 17 := by native_decide
+
+-- ============================================================================
+-- WALS-Generated Distribution Counts
+-- ============================================================================
+
+/-- Ch 37 distribution counts derived from WALS generated data (n = 620). -/
+def walsDefArticle_generated : DefiniteArticleCounts :=
+  { definiteWord := (ch37.filter (·.value == .definiteWordDistinctFromDemonstrative)).length
+  , demonstrativeUsed := (ch37.filter (·.value == .demonstrativeWordUsedAsDefiniteArticle)).length
+  , definiteAffix := (ch37.filter (·.value == .definiteAffix)).length
+  , noDefButIndef := (ch37.filter (·.value == .noDefiniteButIndefiniteArticle)).length
+  , noArticle := (ch37.filter (·.value == .noDefiniteOrIndefiniteArticle)).length }
+
+set_option maxHeartbeats 400000 in
+theorem walsDefArticle_generated_total : walsDefArticle_generated.total = 620 := by native_decide
+
+/-- Ch 38 distribution counts derived from WALS generated data (n = 534). -/
+def walsIndefArticle_generated : IndefiniteArticleCounts :=
+  { indefiniteWord := (ch38.filter (·.value == .indefiniteWordDistinctFromOne)).length
+  , numeralOne := (ch38.filter (·.value == .indefiniteWordSameAsOne)).length
+  , indefiniteAffix := (ch38.filter (·.value == .indefiniteAffix)).length
+  , noIndefButDef := (ch38.filter (·.value == .noIndefiniteButDefiniteArticle)).length
+  , noArticle := (ch38.filter (·.value == .noDefiniteOrIndefiniteArticle)).length }
+
+set_option maxHeartbeats 400000 in
+theorem walsIndefArticle_generated_total : walsIndefArticle_generated.total = 534 := by native_decide
+
+/-- Ch 41 distribution counts derived from WALS generated data (n = 234). -/
+def walsDemDistance_generated : DemDistanceCounts :=
+  { noContrast := (ch41.filter (·.value == .noDistanceContrast)).length
+  , twoWay := (ch41.filter (·.value == .twoWayContrast)).length
+  , threeWay := (ch41.filter (·.value == .threeWayContrast)).length
+  , fourWay := (ch41.filter (·.value == .fourWayContrast)).length
+  , fiveOrMore := (ch41.filter (·.value == .fiveWayContrast)).length }
+
+theorem walsDemDistance_generated_total : walsDemDistance_generated.total = 234 := by native_decide
+
+/-- Ch 42 distribution counts derived from WALS generated data (n = 201). -/
+def walsDemForm_generated : DemFormCounts :=
+  { sameForms := (ch42.filter (·.value == .identical)).length
+  , differentStems := (ch42.filter (·.value == .differentStem)).length
+  , differentInflection := (ch42.filter (·.value == .differentInflection)).length }
+
+theorem walsDemForm_generated_total : walsDemForm_generated.total = 201 := by native_decide
+
+/-- Ch 43 distribution counts derived from WALS generated data (n = 225). -/
+def walsPronounDem_generated : PronounDemCounts :=
+  { unrelated := (ch43.filter (·.value == .unrelated)).length
+  , relatedAll := (ch43.filter (·.value == .relatedForAllDemonstratives)).length
+  , relatedRemote := (ch43.filter (·.value == .relatedToRemoteDemonstratives)).length
+  , relatedNonRemote := (ch43.filter (·.value == .relatedToNonRemoteDemonstratives)).length
+  , relatedGender := (ch43.filter (·.value == .relatedByGenderMarkers)).length
+  , relatedNonhuman := (ch43.filter (·.value == .relatedForNonHumanReference)).length }
+
+theorem walsPronounDem_generated_total : walsPronounDem_generated.total = 225 := by native_decide
+
+-- ============================================================================
+-- Generated ↔ Hand-Coded Consistency (where they agree)
+-- ============================================================================
+
+/-- Ch 42 generated counts match hand-coded exactly. -/
+theorem ch42_generated_matches_handcoded :
+    walsDemForm_generated.sameForms = walsDemForm.sameForms ∧
+    walsDemForm_generated.differentStems = walsDemForm.differentStems ∧
+    walsDemForm_generated.differentInflection = walsDemForm.differentInflection := by
+  native_decide
+
+/-- Ch 43 generated counts match hand-coded exactly. -/
+theorem ch43_generated_matches_handcoded :
+    walsPronounDem_generated.unrelated = walsPronounDem.unrelated ∧
+    walsPronounDem_generated.relatedAll = walsPronounDem.relatedAll ∧
+    walsPronounDem_generated.relatedRemote = walsPronounDem.relatedRemote ∧
+    walsPronounDem_generated.relatedNonRemote = walsPronounDem.relatedNonRemote ∧
+    walsPronounDem_generated.relatedGender = walsPronounDem.relatedGender ∧
+    walsPronounDem_generated.relatedNonhuman = walsPronounDem.relatedNonhuman := by
+  native_decide
 
 -- ============================================================================
 -- Generalization 1: Two-way demonstrative systems are the most common
@@ -1078,5 +1213,190 @@ theorem all_stages_attested :
     stages.any (· == .definiteWord) = true ∧
     stages.any (· == .definiteAffix) = true := by
   native_decide
+
+-- ============================================================================
+-- WALS Grounding: Ch 37 (Definite Articles)
+-- Languages whose hand-coded defArticle matches the WALS F37A value.
+-- Not all 17 sample languages appear in F37A; some (Japanese, Hausa,
+-- Basque) have values reflecting linguistically-informed choices that
+-- differ from WALS coding; those are omitted here.
+-- ============================================================================
+
+theorem english_ch37 :
+    (Core.WALS.F37A.lookup "eng").map (fromWALS37A ·.value) =
+    english.defArticle := by native_decide
+theorem french_ch37 :
+    (Core.WALS.F37A.lookup "fre").map (fromWALS37A ·.value) =
+    french.defArticle := by native_decide
+theorem german_ch37 :
+    (Core.WALS.F37A.lookup "ger").map (fromWALS37A ·.value) =
+    german.defArticle := by native_decide
+theorem finnish_ch37 :
+    (Core.WALS.F37A.lookup "fin").map (fromWALS37A ·.value) =
+    finnish.defArticle := by native_decide
+theorem hungarian_ch37 :
+    (Core.WALS.F37A.lookup "hun").map (fromWALS37A ·.value) =
+    hungarian.defArticle := by native_decide
+theorem korean_ch37 :
+    (Core.WALS.F37A.lookup "kor").map (fromWALS37A ·.value) =
+    korean.defArticle := by native_decide
+theorem russian_ch37 :
+    (Core.WALS.F37A.lookup "rus").map (fromWALS37A ·.value) =
+    russian.defArticle := by native_decide
+theorem turkish_ch37 :
+    (Core.WALS.F37A.lookup "tur").map (fromWALS37A ·.value) =
+    turkish.defArticle := by native_decide
+theorem arabic_ch37 :
+    (Core.WALS.F37A.lookup "aeg").map (fromWALS37A ·.value) =
+    arabic.defArticle := by native_decide
+theorem danish_ch37 :
+    (Core.WALS.F37A.lookup "dsh").map (fromWALS37A ·.value) =
+    danish.defArticle := by native_decide
+theorem swahili_ch37 :
+    (Core.WALS.F37A.lookup "swa").map (fromWALS37A ·.value) =
+    swahili.defArticle := by native_decide
+
+-- ============================================================================
+-- WALS Grounding: Ch 38 (Indefinite Articles)
+-- Not all languages appear in F38A (Mandarin, Tagalog, Swahili, Latin
+-- absent). Some hand-coded values reflect linguistically-informed choices
+-- that differ from WALS coding.
+-- ============================================================================
+
+theorem english_ch38 :
+    (Core.WALS.F38A.lookup "eng").map (fromWALS38A ·.value) =
+    english.indefArticle := by native_decide
+theorem german_ch38 :
+    (Core.WALS.F38A.lookup "ger").map (fromWALS38A ·.value) =
+    german.indefArticle := by native_decide
+theorem finnish_ch38 :
+    (Core.WALS.F38A.lookup "fin").map (fromWALS38A ·.value) =
+    finnish.indefArticle := by native_decide
+theorem korean_ch38 :
+    (Core.WALS.F38A.lookup "kor").map (fromWALS38A ·.value) =
+    korean.indefArticle := by native_decide
+theorem russian_ch38 :
+    (Core.WALS.F38A.lookup "rus").map (fromWALS38A ·.value) =
+    russian.indefArticle := by native_decide
+theorem turkish_ch38 :
+    (Core.WALS.F38A.lookup "tur").map (fromWALS38A ·.value) =
+    turkish.indefArticle := by native_decide
+theorem arabic_ch38 :
+    (Core.WALS.F38A.lookup "aeg").map (fromWALS38A ·.value) =
+    arabic.indefArticle := by native_decide
+
+-- ============================================================================
+-- WALS Grounding: Ch 41 (Distance Contrasts in Demonstratives)
+-- Not all languages in our sample appear in F41A (Danish, Latin absent).
+-- French and Swahili have values reflecting linguistically-informed choices
+-- that differ from WALS coding.
+-- ============================================================================
+
+theorem english_ch41 :
+    (Core.WALS.F41A.lookup "eng").map (fromWALS41A ·.value) =
+    english.demDistance := by native_decide
+theorem german_ch41 :
+    (Core.WALS.F41A.lookup "ger").map (fromWALS41A ·.value) =
+    german.demDistance := by native_decide
+theorem japanese_ch41 :
+    (Core.WALS.F41A.lookup "jpn").map (fromWALS41A ·.value) =
+    japanese.demDistance := by native_decide
+theorem mandarin_ch41 :
+    (Core.WALS.F41A.lookup "mnd").map (fromWALS41A ·.value) =
+    mandarin.demDistance := by native_decide
+theorem turkish_ch41 :
+    (Core.WALS.F41A.lookup "tur").map (fromWALS41A ·.value) =
+    turkish.demDistance := by native_decide
+theorem arabic_ch41 :
+    (Core.WALS.F41A.lookup "aeg").map (fromWALS41A ·.value) =
+    arabic.demDistance := by native_decide
+theorem finnish_ch41 :
+    (Core.WALS.F41A.lookup "fin").map (fromWALS41A ·.value) =
+    finnish.demDistance := by native_decide
+theorem hungarian_ch41 :
+    (Core.WALS.F41A.lookup "hun").map (fromWALS41A ·.value) =
+    hungarian.demDistance := by native_decide
+theorem russian_ch41 :
+    (Core.WALS.F41A.lookup "rus").map (fromWALS41A ·.value) =
+    russian.demDistance := by native_decide
+theorem korean_ch41 :
+    (Core.WALS.F41A.lookup "kor").map (fromWALS41A ·.value) =
+    korean.demDistance := by native_decide
+theorem basque_ch41 :
+    (Core.WALS.F41A.lookup "bsq").map (fromWALS41A ·.value) =
+    basque.demDistance := by native_decide
+theorem hausa_ch41 :
+    (Core.WALS.F41A.lookup "hau").map (fromWALS41A ·.value) =
+    hausa.demDistance := by native_decide
+theorem tagalog_ch41 :
+    (Core.WALS.F41A.lookup "tag").map (fromWALS41A ·.value) =
+    tagalog.demDistance := by native_decide
+
+-- ============================================================================
+-- WALS Grounding: Ch 42 (Pronominal and Adnominal Demonstratives)
+-- Not all languages appear in F42A (Danish, Latin absent). German and
+-- Japanese have values reflecting linguistically-informed choices that
+-- differ from WALS coding.
+-- ============================================================================
+
+theorem english_ch42 :
+    (Core.WALS.F42A.lookup "eng").map (fromWALS42A ·.value) =
+    english.demFormType := by native_decide
+theorem french_ch42 :
+    (Core.WALS.F42A.lookup "fre").map (fromWALS42A ·.value) =
+    french.demFormType := by native_decide
+theorem mandarin_ch42 :
+    (Core.WALS.F42A.lookup "mnd").map (fromWALS42A ·.value) =
+    mandarin.demFormType := by native_decide
+theorem turkish_ch42 :
+    (Core.WALS.F42A.lookup "tur").map (fromWALS42A ·.value) =
+    turkish.demFormType := by native_decide
+theorem arabic_ch42 :
+    (Core.WALS.F42A.lookup "aeg").map (fromWALS42A ·.value) =
+    arabic.demFormType := by native_decide
+theorem finnish_ch42 :
+    (Core.WALS.F42A.lookup "fin").map (fromWALS42A ·.value) =
+    finnish.demFormType := by native_decide
+theorem hungarian_ch42 :
+    (Core.WALS.F42A.lookup "hun").map (fromWALS42A ·.value) =
+    hungarian.demFormType := by native_decide
+theorem russian_ch42 :
+    (Core.WALS.F42A.lookup "rus").map (fromWALS42A ·.value) =
+    russian.demFormType := by native_decide
+theorem korean_ch42 :
+    (Core.WALS.F42A.lookup "kor").map (fromWALS42A ·.value) =
+    korean.demFormType := by native_decide
+theorem basque_ch42 :
+    (Core.WALS.F42A.lookup "bsq").map (fromWALS42A ·.value) =
+    basque.demFormType := by native_decide
+theorem hausa_ch42 :
+    (Core.WALS.F42A.lookup "hau").map (fromWALS42A ·.value) =
+    hausa.demFormType := by native_decide
+theorem tagalog_ch42 :
+    (Core.WALS.F42A.lookup "tag").map (fromWALS42A ·.value) =
+    tagalog.demFormType := by native_decide
+theorem swahili_ch42 :
+    (Core.WALS.F42A.lookup "swa").map (fromWALS42A ·.value) =
+    swahili.demFormType := by native_decide
+
+-- ============================================================================
+-- WALS Grounding: Ch 43 (Third Person Pronouns and Demonstratives)
+-- Not all languages appear in F43A (Danish, Latin, Russian, Swahili
+-- absent). Several languages have hand-coded values that differ from
+-- WALS coding (see per-language docstrings for rationale).
+-- ============================================================================
+
+theorem japanese_ch43 :
+    (Core.WALS.F43A.lookup "jpn").map (fromWALS43A ·.value) =
+    japanese.pronDemRelation := by native_decide
+theorem turkish_ch43 :
+    (Core.WALS.F43A.lookup "tur").map (fromWALS43A ·.value) =
+    turkish.pronDemRelation := by native_decide
+theorem basque_ch43 :
+    (Core.WALS.F43A.lookup "bsq").map (fromWALS43A ·.value) =
+    basque.pronDemRelation := by native_decide
+theorem tagalog_ch43 :
+    (Core.WALS.F43A.lookup "tag").map (fromWALS43A ·.value) =
+    tagalog.pronDemRelation := by native_decide
 
 end Phenomena.Reference.Typology

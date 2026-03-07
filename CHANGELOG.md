@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.228.65] - 2026-03-06
+
+### Added
+- **Phenomena/Copulas/Typology.lean**: Wire WALS F117A–F120A with 3 converters and grounding theorems (predicate adjectives, nominal/locational predication, zero copula)
+- **Phenomena/Modality/Typology.lean**: Wire WALS F74A–F78A with 2 converters and 50 grounding theorems (situational/epistemic possibility, modal overlap, evidentiality)
+- **Phenomena/Reference/Typology.lean**: Wire WALS F37A–F43A with 5 converters and 48 grounding theorems (definite/indefinite articles, demonstratives, 3rd person pronouns)
+- **Phenomena/Complementation/Typology.lean**: Wire WALS F124A–F128A with 5 converters, ComplementationProfile structure, 82 grounding theorems, 8 distribution theorems
+- **Phenomena/Possession/Typology.lean**: Wire WALS F57A–F59A with 3 converters and grounding theorems (possessive affixes, obligatory possession, possessive classification)
+- **Phenomena/Numerals/Typology.lean**: Wire WALS F53A–F55A/F131A with converters and grounding theorems (ordinal numerals, distributive numerals, numeral classifiers)
+- **Phenomena/Causatives/Typology.lean**: Wire WALS F110A/F111A with converters and grounding theorems
+- **Phenomena/Comparison/Typology.lean**: Wire WALS F121A with converter and 12 grounding theorems
+- **Phenomena/FillerGap/Typology.lean**: Wire WALS F122A/F123A with 2 converters and 25 grounding theorems
+- **Phenomena/Questions/Typology.lean**: Wire WALS F92A/F93A/F116A with 3 converters and 14 grounding theorems
+- **Phenomena/ArgumentStructure/Typology.lean**: Additional WALS grounding theorems
+- **Theories/Syntax/*/Coreference.lean**: Reciprocal licensing in Minimalism, HPSG, DependencyGrammar (CRDC)
+
 ## [0.228.64] - 2026-03-06
 
 ### Added

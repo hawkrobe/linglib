@@ -1,7 +1,10 @@
 import Linglib.Core.Lexical.Word
+import Linglib.Core.WALS.Features.F57A
+import Linglib.Core.WALS.Features.F58A
+import Linglib.Core.WALS.Features.F59A
 
 /-!
-# Cross-Linguistic Typology of Possession (WALS Chapters 58--59)
+# Cross-Linguistic Typology of Possession (WALS Chapters 57--59)
 @cite{aikhenvald-2013} @cite{heine-1997} @cite{nichols-1986} @cite{nichols-bickel-2013} @cite{stassen-2009}
 
 Typological data on possessive constructions across languages, drawn from
@@ -205,6 +208,65 @@ inductive AdnominalPossession where
   deriving DecidableEq, BEq, Repr
 
 -- ============================================================================
+-- Position of Pronominal Possessive Affixes (WALS Ch 57)
+-- ============================================================================
+
+/-- WALS Ch 57: Position of pronominal possessive affixes on the noun.
+
+    Whether a language uses prefixes, suffixes, both, or no affixes to mark
+    pronominal possession on the possessed noun. This feature cross-cuts the
+    head-marking vs dependent-marking distinction: a language can use
+    possessive affixes on the head (head-marking) while also having
+    a genitive case on the dependent (double-marking). -/
+inductive PossessiveAffixPosition where
+  /-- Possessive prefixes on the possessed noun.
+      (e.g., Swahili class-agreement prefixes, many Bantu and Papuan languages) -/
+  | prefixes
+  /-- Possessive suffixes on the possessed noun.
+      (e.g., Turkish -im, -in, -i; Hungarian -m, -d, -ja; Finnish -ni, -si) -/
+  | suffixes
+  /-- Both prefixes and suffixes used for possessive marking.
+      (e.g., some languages use prefixes for one person and suffixes for another) -/
+  | both
+  /-- No possessive affixes: possession marked by independent words or clitics.
+      (e.g., English my, your; Japanese no; Mandarin de) -/
+  | none
+  deriving DecidableEq, BEq, Repr
+
+-- ============================================================================
+-- WALS Converter Functions
+-- ============================================================================
+
+private abbrev ch57 := Core.WALS.F57A.allData
+private abbrev ch58 := Core.WALS.F58A.allData
+private abbrev ch59 := Core.WALS.F59A.allData
+
+/-- Convert WALS 57A enum to our PossessiveAffixPosition. -/
+private def fromWALS57A : Core.WALS.F57A.PositionOfPronominalPossessiveAffixes →
+    PossessiveAffixPosition
+  | .possessivePrefixes => .prefixes
+  | .possessiveSuffixes => .suffixes
+  | .prefixesAndSuffixes => .both
+  | .noPossessiveAffixes => .none
+
+/-- Convert WALS 58A enum to our ObligatoryPossession.
+    Returns `Option` since our type has `.unclear` which WALS does not encode. -/
+private def fromWALS58A : Core.WALS.F58A.ObligatoryPossessiveInflection →
+    ObligatoryPossession
+  | .exists => .exists_
+  | .absent => .noObligatory
+
+/-- Convert WALS 59A enum to our PossessiveClassification.
+    WALS distinguishes "3-5 classes" from "more than 5"; we collapse both
+    into `.threeOrMore`. -/
+private def fromWALS59A : Core.WALS.F59A.PossessiveClassification →
+    PossessiveClassification
+  | .noPossessiveClassification => .noClassification
+  | .twoClasses => .twoWay
+  | .threeToFiveClasses => .threeOrMore
+  | .moreThanFiveClasses => .threeOrMore
+
+-- ============================================================================
 -- WALS Distribution Data (Aggregate Counts)
 -- ============================================================================
 
@@ -256,6 +318,60 @@ theorem ch58_ch59_same_sample :
   native_decide
 
 -- ============================================================================
+-- WALS-Derived Distribution Verification
+-- ============================================================================
+
+/-- Ch 57 total: 902 languages. -/
+theorem ch57_wals_total : ch57.length = 902 := by native_decide
+
+/-- Ch 58 total from WALS generated data: 244 languages. -/
+theorem ch58_wals_total : ch58.length = 244 := by native_decide
+
+/-- Ch 59 total from WALS generated data: 243 languages.
+    Note: Ch 59 has 243 languages (one fewer than Ch 58 — Panare is in Ch 58
+    but not Ch 59). -/
+theorem ch59_wals_total : ch59.length = 243 := by native_decide
+
+/-- Ch 57 value distribution from WALS data. -/
+theorem ch57_distribution :
+    (ch57.filter (·.value == .possessivePrefixes)).length = 255 ∧
+    (ch57.filter (·.value == .possessiveSuffixes)).length = 355 ∧
+    (ch57.filter (·.value == .prefixesAndSuffixes)).length = 32 ∧
+    (ch57.filter (·.value == .noPossessiveAffixes)).length = 260 := by
+  exact ⟨by native_decide, by native_decide, by native_decide, by native_decide⟩
+
+/-- Ch 58 value distribution from WALS data. -/
+theorem ch58_distribution :
+    (ch58.filter (·.value == .exists)).length = 43 ∧
+    (ch58.filter (·.value == .absent)).length = 201 := by
+  exact ⟨by native_decide, by native_decide⟩
+
+/-- Ch 59 value distribution from WALS data. -/
+theorem ch59_distribution :
+    (ch59.filter (·.value == .noPossessiveClassification)).length = 125 ∧
+    (ch59.filter (·.value == .twoClasses)).length = 94 ∧
+    (ch59.filter (·.value == .threeToFiveClasses)).length = 20 ∧
+    (ch59.filter (·.value == .moreThanFiveClasses)).length = 4 := by
+  exact ⟨by native_decide, by native_decide, by native_decide, by native_decide⟩
+
+/-- Ch 57: Possessive suffixes are the most common affix position. -/
+theorem ch57_suffixes_most_common :
+    (ch57.filter (·.value == .possessiveSuffixes)).length >
+    (ch57.filter (·.value == .possessivePrefixes)).length := by native_decide
+
+/-- Ch 58: Languages without obligatory possession vastly outnumber those with it
+    in the WALS data (201 vs 43). -/
+theorem ch58_no_obligatory_majority_wals :
+    (ch58.filter (·.value == .absent)).length >
+    (ch58.filter (·.value == .exists)).length * 4 := by native_decide
+
+/-- Ch 59: No possessive classification is the most common pattern in
+    the WALS data (125/243), followed by two-way (94/243). -/
+theorem ch59_no_classification_plurality_wals :
+    (ch59.filter (·.value == .noPossessiveClassification)).length >
+    (ch59.filter (·.value == .twoClasses)).length := by native_decide
+
+-- ============================================================================
 -- Language Profile Structure
 -- ============================================================================
 
@@ -276,6 +392,8 @@ structure PossessionProfile where
   predicativeStrategy : PredicativePossession
   /-- Primary strategy for adnominal possession ("my book"). -/
   adnominalStrategy : AdnominalPossession
+  /-- Ch 57: Position of pronominal possessive affixes, if attested. -/
+  affixPosition : Option PossessiveAffixPosition := .none
   /-- Illustrative possessive forms or constructions. -/
   examples : List String := []
   /-- Notes on the possession system. -/
@@ -301,6 +419,7 @@ def english : PossessionProfile :=
   , possessiveClassification := .noClassification
   , predicativeStrategy := .haveVerb
   , adnominalStrategy := .dependentMarking
+  , affixPosition := some .none
   , examples := ["I have a book", "John's book", "the book of John"]
   , notes := "Genitive clitic -'s on possessor; of-phrase alternative" }
 
@@ -320,6 +439,7 @@ def russian : PossessionProfile :=
   , possessiveClassification := .noClassification
   , predicativeStrategy := .locational
   , adnominalStrategy := .dependentMarking
+  , affixPosition := some .none
   , examples := ["u menja est' kniga", "kniga Ivana"]
   , notes := "Locational: u + GEN + est'; adnominal: NP-GEN" }
 
@@ -339,6 +459,7 @@ def japanese : PossessionProfile :=
   , possessiveClassification := .noClassification
   , predicativeStrategy := .topic
   , adnominalStrategy := .dependentMarking
+  , affixPosition := some .none
   , examples := ["watashi-ni-wa hon-ga aru", "Tanaka-no hon"]
   , notes := "Topic-comment: possessor-DAT-TOP possessum-NOM aru/iru; " ++
              "genitive no for all adnominal possession" }
@@ -362,6 +483,7 @@ def turkish : PossessionProfile :=
   , possessiveClassification := .noClassification
   , predicativeStrategy := .locational
   , adnominalStrategy := .doubleMarking
+  , affixPosition := some .suffixes
   , examples := ["(benim) kitab-im var", "Ali-nin kitab-i"]
   , notes := "var/yok existential predicate; GEN on possessor + " ++
              "possessive suffix on head (double-marking)" }
@@ -382,6 +504,7 @@ def hindiUrdu : PossessionProfile :=
   , possessiveClassification := .noClassification
   , predicativeStrategy := .genitiveDative
   , adnominalStrategy := .dependentMarking
+  -- Hindi not in WALS Ch 57 sample
   , examples := ["mere paas kitaab hai", "Raam kaa ghar"]
   , notes := "Postposition paas 'near' for predicative; " ++
              "kaa/ke/kii agreeing genitive postposition for adnominal" }
@@ -403,6 +526,7 @@ def mandarin : PossessionProfile :=
   , possessiveClassification := .noClassification
   , predicativeStrategy := .haveVerb
   , adnominalStrategy := .dependentMarking
+  , affixPosition := some .none
   , examples := ["wo you yi-ben shu", "wo de shu", "wo mama"]
   , notes := "Have-verb you; de marks adnominal possession but " ++
              "drops with inalienable/close relations (wo mama)" }
@@ -424,6 +548,7 @@ def finnish : PossessionProfile :=
   , possessiveClassification := .noClassification
   , predicativeStrategy := .locational
   , adnominalStrategy := .dependentMarking
+  , affixPosition := some .suffixes
   , examples := ["minu-lla on kirja", "Matin kirja"]
   , notes := "Adessive -lla for locational predicative possession; " ++
              "genitive + optional possessive suffix on head" }
@@ -445,6 +570,7 @@ def hungarian : PossessionProfile :=
   , possessiveClassification := .noClassification
   , predicativeStrategy := .locational
   , adnominalStrategy := .headMarking
+  , affixPosition := some .suffixes
   , examples := ["nekem van konyvem", "Janos kalap-ja"]
   , notes := "Dative possessor + van 'exists' + head-marked possessum; " ++
              "possessive suffixes obligatory on relational nouns" }
@@ -465,6 +591,7 @@ def irish : PossessionProfile :=
   , possessiveClassification := .noClassification
   , predicativeStrategy := .genitiveDative
   , adnominalStrategy := .dependentMarking
+  , affixPosition := some .none
   , examples := ["ta leabhar agam", "teach an fhir"]
   , notes := "Celtic at-possession: ta X ag-PRON 'is X at-PRON'; " ++
              "genitive case on possessor in adnominal constructions" }
@@ -486,6 +613,7 @@ def swahili : PossessionProfile :=
   , possessiveClassification := .noClassification
   , predicativeStrategy := .comitative
   , adnominalStrategy := .headMarking
+  , affixPosition := some .suffixes
   , examples := ["nina kitabu", "kitabu ch-angu"]
   , notes := "Comitative na- for predicative possession; " ++
              "noun-class agreement on possessive for adnominal" }
@@ -505,6 +633,7 @@ def korean : PossessionProfile :=
   , possessiveClassification := .noClassification
   , predicativeStrategy := .locational
   , adnominalStrategy := .dependentMarking
+  -- Korean not in WALS Ch 57 sample
   , examples := ["na-ege chaek-i iss-da", "Yeonghui-ui chaek"]
   , notes := "Dative possessor + existential iss-da; " ++
              "genitive -ui for adnominal possession" }
@@ -526,6 +655,7 @@ def arabic : PossessionProfile :=
   , possessiveClassification := .noClassification
   , predicativeStrategy := .genitiveDative
   , adnominalStrategy := .juxtaposition
+  , affixPosition := some .suffixes
   , examples := ["indi kitaab", "kitaabu l-waladi"]
   , notes := "Preposition inda for predicative; construct state (idaafa) " ++
              "for adnominal -- juxtaposition with reduced head vowel" }
@@ -549,6 +679,7 @@ def quechua : PossessionProfile :=
   , possessiveClassification := .twoWay
   , predicativeStrategy := .haveVerb
   , adnominalStrategy := .doubleMarking
+  , affixPosition := some .none  -- WALS Quechua (Imbabura): no possessive affixes
   , examples := ["Hwan-pa wasi-n ka-n", "mama-y", "Hwan-pa wasi-n"]
   , notes := "Possessive suffixes obligatory on kinship/body-part nouns; " ++
              "-yuq 'having' for predicative; GEN + POSS double-marking" }
@@ -569,6 +700,7 @@ def yoruba : PossessionProfile :=
   , possessiveClassification := .noClassification
   , predicativeStrategy := .haveVerb
   , adnominalStrategy := .juxtaposition
+  , affixPosition := some .none
   , examples := ["mo ni iwe", "iwe mi"]
   , notes := "Have-verb ni; juxtaposition for adnominal (possessum-possessor)" }
 
@@ -588,6 +720,7 @@ def georgian : PossessionProfile :=
   , possessiveClassification := .noClassification
   , predicativeStrategy := .locational
   , adnominalStrategy := .doubleMarking
+  , affixPosition := some .none
   , examples := ["me m-akvs cigni", "kac-is saxl-i"]
   , notes := "Dative experiencer + verb agreeing with possessum; " ++
              "genitive on possessor in adnominal constructions" }
@@ -613,6 +746,7 @@ def hawaiian : PossessionProfile :=
   , possessiveClassification := .twoWay
   , predicativeStrategy := .locational
   , adnominalStrategy := .dependentMarking
+  , affixPosition := some .none
   , examples := ["ko'u makuahine (o-class)", "ka'u puke (a-class)"]
   , notes := "Classic Oceanic alienable/inalienable: a-class (alienable) " ++
              "vs o-class (inalienable body parts, kinship, clothing, land)" }
@@ -637,6 +771,7 @@ def fijian : PossessionProfile :=
   , possessiveClassification := .threeOrMore
   , predicativeStrategy := .locational
   , adnominalStrategy := .headMarking
+  , affixPosition := some .suffixes
   , examples := ["na liga-qu (body-part)", "na ke-qu kakana (food)",
                  "na me-qu ti (drink)", "na no-qu vale (house)"]
   , notes := "Four-way possessive classification: direct (body/kin), " ++
@@ -722,6 +857,147 @@ theorem turkish_double : turkish.adnominalStrategy == .doubleMarking := by nativ
 theorem arabic_juxtaposition : arabic.adnominalStrategy == .juxtaposition := by native_decide
 theorem yoruba_juxtaposition : yoruba.adnominalStrategy == .juxtaposition := by native_decide
 theorem quechua_double : quechua.adnominalStrategy == .doubleMarking := by native_decide
+
+-- ============================================================================
+-- WALS Grounding: Ch 57 (Position of Pronominal Possessive Affixes)
+-- Hindi and Korean are not in the Ch 57 sample.
+-- ============================================================================
+
+theorem english_ch57 :
+    (Core.WALS.F57A.lookup "eng").map (fromWALS57A ·.value) =
+    english.affixPosition := by native_decide
+theorem russian_ch57 :
+    (Core.WALS.F57A.lookup "rus").map (fromWALS57A ·.value) =
+    russian.affixPosition := by native_decide
+theorem japanese_ch57 :
+    (Core.WALS.F57A.lookup "jpn").map (fromWALS57A ·.value) =
+    japanese.affixPosition := by native_decide
+theorem turkish_ch57 :
+    (Core.WALS.F57A.lookup "tur").map (fromWALS57A ·.value) =
+    turkish.affixPosition := by native_decide
+theorem mandarin_ch57 :
+    (Core.WALS.F57A.lookup "mnd").map (fromWALS57A ·.value) =
+    mandarin.affixPosition := by native_decide
+theorem finnish_ch57 :
+    (Core.WALS.F57A.lookup "fin").map (fromWALS57A ·.value) =
+    finnish.affixPosition := by native_decide
+theorem hungarian_ch57 :
+    (Core.WALS.F57A.lookup "hun").map (fromWALS57A ·.value) =
+    hungarian.affixPosition := by native_decide
+theorem irish_ch57 :
+    (Core.WALS.F57A.lookup "iri").map (fromWALS57A ·.value) =
+    irish.affixPosition := by native_decide
+theorem swahili_ch57 :
+    (Core.WALS.F57A.lookup "swa").map (fromWALS57A ·.value) =
+    swahili.affixPosition := by native_decide
+theorem arabic_ch57 :
+    (Core.WALS.F57A.lookup "aeg").map (fromWALS57A ·.value) =
+    arabic.affixPosition := by native_decide
+theorem quechua_ch57 :
+    (Core.WALS.F57A.lookup "qim").map (fromWALS57A ·.value) =
+    quechua.affixPosition := by native_decide
+theorem yoruba_ch57 :
+    (Core.WALS.F57A.lookup "yor").map (fromWALS57A ·.value) =
+    yoruba.affixPosition := by native_decide
+theorem georgian_ch57 :
+    (Core.WALS.F57A.lookup "geo").map (fromWALS57A ·.value) =
+    georgian.affixPosition := by native_decide
+theorem hawaiian_ch57 :
+    (Core.WALS.F57A.lookup "haw").map (fromWALS57A ·.value) =
+    hawaiian.affixPosition := by native_decide
+theorem fijian_ch57 :
+    (Core.WALS.F57A.lookup "fij").map (fromWALS57A ·.value) =
+    fijian.affixPosition := by native_decide
+
+-- ============================================================================
+-- WALS Grounding: Ch 58 (Obligatory Possessive Inflection)
+-- Turkish, Hungarian, and Quechua profile values disagree with WALS coding;
+-- grounding theorems cover only the matching languages.
+-- Irish, Arabic, Hawaiian, and Fijian use different WALS language codes.
+-- ============================================================================
+
+theorem english_ch58 :
+    (Core.WALS.F58A.lookup "eng").map (fromWALS58A ·.value) =
+    some english.obligatoryPossession := by native_decide
+theorem russian_ch58 :
+    (Core.WALS.F58A.lookup "rus").map (fromWALS58A ·.value) =
+    some russian.obligatoryPossession := by native_decide
+theorem japanese_ch58 :
+    (Core.WALS.F58A.lookup "jpn").map (fromWALS58A ·.value) =
+    some japanese.obligatoryPossession := by native_decide
+theorem hindi_ch58 :
+    (Core.WALS.F58A.lookup "hin").map (fromWALS58A ·.value) =
+    some hindiUrdu.obligatoryPossession := by native_decide
+theorem mandarin_ch58 :
+    (Core.WALS.F58A.lookup "mnd").map (fromWALS58A ·.value) =
+    some mandarin.obligatoryPossession := by native_decide
+theorem finnish_ch58 :
+    (Core.WALS.F58A.lookup "fin").map (fromWALS58A ·.value) =
+    some finnish.obligatoryPossession := by native_decide
+theorem swahili_ch58 :
+    (Core.WALS.F58A.lookup "swa").map (fromWALS58A ·.value) =
+    some swahili.obligatoryPossession := by native_decide
+theorem korean_ch58 :
+    (Core.WALS.F58A.lookup "kor").map (fromWALS58A ·.value) =
+    some korean.obligatoryPossession := by native_decide
+theorem arabic_ch58 :
+    (Core.WALS.F58A.lookup "aeg").map (fromWALS58A ·.value) =
+    some arabic.obligatoryPossession := by native_decide
+theorem yoruba_ch58 :
+    (Core.WALS.F58A.lookup "yor").map (fromWALS58A ·.value) =
+    some yoruba.obligatoryPossession := by native_decide
+theorem georgian_ch58 :
+    (Core.WALS.F58A.lookup "geo").map (fromWALS58A ·.value) =
+    some georgian.obligatoryPossession := by native_decide
+theorem fijian_ch58 :
+    (Core.WALS.F58A.lookup "fij").map (fromWALS58A ·.value) =
+    some fijian.obligatoryPossession := by native_decide
+
+-- ============================================================================
+-- WALS Grounding: Ch 59 (Possessive Classification)
+-- Fijian, Quechua, and Hawaiian profile values disagree with WALS coding;
+-- grounding theorems cover only the matching languages.
+-- ============================================================================
+
+theorem english_ch59 :
+    (Core.WALS.F59A.lookup "eng").map (fromWALS59A ·.value) =
+    some english.possessiveClassification := by native_decide
+theorem russian_ch59 :
+    (Core.WALS.F59A.lookup "rus").map (fromWALS59A ·.value) =
+    some russian.possessiveClassification := by native_decide
+theorem japanese_ch59 :
+    (Core.WALS.F59A.lookup "jpn").map (fromWALS59A ·.value) =
+    some japanese.possessiveClassification := by native_decide
+theorem turkish_ch59 :
+    (Core.WALS.F59A.lookup "tur").map (fromWALS59A ·.value) =
+    some turkish.possessiveClassification := by native_decide
+theorem hindi_ch59 :
+    (Core.WALS.F59A.lookup "hin").map (fromWALS59A ·.value) =
+    some hindiUrdu.possessiveClassification := by native_decide
+theorem mandarin_ch59 :
+    (Core.WALS.F59A.lookup "mnd").map (fromWALS59A ·.value) =
+    some mandarin.possessiveClassification := by native_decide
+theorem finnish_ch59 :
+    (Core.WALS.F59A.lookup "fin").map (fromWALS59A ·.value) =
+    some finnish.possessiveClassification := by native_decide
+theorem hungarian_ch59 :
+    (Core.WALS.F59A.lookup "hun").map (fromWALS59A ·.value) =
+    some hungarian.possessiveClassification := by native_decide
+theorem swahili_ch59 :
+    (Core.WALS.F59A.lookup "swa").map (fromWALS59A ·.value) =
+    some swahili.possessiveClassification := by native_decide
+theorem korean_ch59 :
+    (Core.WALS.F59A.lookup "kor").map (fromWALS59A ·.value) =
+    some korean.possessiveClassification := by native_decide
+theorem arabic_ch59 :
+    (Core.WALS.F59A.lookup "aeg").map (fromWALS59A ·.value) =
+    some arabic.possessiveClassification := by native_decide
+theorem yoruba_ch59 :
+    (Core.WALS.F59A.lookup "yor").map (fromWALS59A ·.value) =
+    some yoruba.possessiveClassification := by native_decide
+theorem georgian_ch59 :
+    (Core.WALS.F59A.lookup "geo").map (fromWALS59A ·.value) =
+    some georgian.possessiveClassification := by native_decide
 
 -- ============================================================================
 -- Typological Generalization 1: No Classification Is the Most Common Pattern

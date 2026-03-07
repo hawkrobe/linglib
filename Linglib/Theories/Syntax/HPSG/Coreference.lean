@@ -21,6 +21,7 @@ private abbrev themselves := Fragments.English.Pronouns.themselves.toWord
 private abbrev him := Fragments.English.Pronouns.him.toWord
 private abbrev her := Fragments.English.Pronouns.her.toWord
 private abbrev them := Fragments.English.Pronouns.them.toWord
+private abbrev eachOther := Fragments.English.Pronouns.eachOther.toWord
 
 namespace HPSG.Coreference
 
@@ -144,6 +145,18 @@ def reflexiveLicensed (clause : SimpleClause) : Bool :=
       phiAgree clause.subject obj
     | _ => true
 
+/-- Reciprocals must be locally o-commanded by a plural antecedent. -/
+def reciprocalLicensed (clause : SimpleClause) : Bool :=
+  match clause.object with
+  | none => false
+  | some obj =>
+    match classifyNominal obj with
+    | some .reciprocal =>
+      oCommands .subject .directObject &&
+      sameLocalDomain clause &&
+      clause.subject.features.number == some .pl
+    | _ => true
+
 /-- Principle B (HPSG): a pronoun must NOT be locally o-commanded by a coindexed element. -/
 def pronounLocallyFree (clause : SimpleClause) : Bool :=
   match clause.object with
@@ -175,17 +188,18 @@ def grammaticalForCoreference (ws : List Word) : Bool :=
   match parseSimpleClause ws with
   | none => false
   | some clause =>
-    -- Check reflexive in subject position (always bad - no o-commanding antecedent)
     match classifyNominal clause.subject with
-    | some .reflexive => false  -- Reflexive in subject has no less-oblique antecedent
+    | some .reflexive => false
+    | some .reciprocal => false
     | _ =>
       match clause.object with
       | none => true
       | some obj =>
         match classifyNominal obj with
-        | some .reflexive => reflexiveLicensed clause  -- Reflexive must be o-commanded
-        | some .pronoun => false  -- Pronoun in object with local subject = coreference blocked
-        | _ => true  -- R-expressions, etc.
+        | some .reflexive => reflexiveLicensed clause
+        | some .reciprocal => reciprocalLicensed clause
+        | some .pronoun => false
+        | _ => true
 
 /-- Check if reflexive is licensed in a sentence -/
 def reflexiveLicensedInSentence (ws : List Word) : Bool :=
@@ -214,6 +228,11 @@ def pronounCoreferenceBlocked (ws : List Word) : Bool :=
 -- Agreement mismatches
 #guard !reflexiveLicensedInSentence [john, sees, herself]    -- ✗ gender mismatch
 #guard !reflexiveLicensedInSentence [they, see, himself]     -- ✗ number mismatch
+
+-- Reciprocal coreference: requires plural antecedent
+#guard grammaticalForCoreference [they, see, eachOther]      -- ✓ plural antecedent
+#guard !grammaticalForCoreference [eachOther, see, them]     -- ✗ reciprocal in subject
+#guard !grammaticalForCoreference [john, sees, eachOther]    -- ✗ singular antecedent
 
 -- Pronominal disjoint reference (Principle B)
 #guard pronounCoreferenceBlocked [john, sees, him]           -- ✓
@@ -254,7 +273,13 @@ theorem reflexive_pairs_captured :
      grammaticalForCoreference [john, sees, herself] = false) ∧
     -- Pair 5: agreement - they see themselves vs they see himself
     (grammaticalForCoreference [they, see, themselves] = true ∧
-     grammaticalForCoreference [they, see, himself] = false) := by
+     grammaticalForCoreference [they, see, himself] = false) ∧
+    -- Pair 6: reciprocal - they see each other vs each other see them
+    (grammaticalForCoreference [they, see, eachOther] = true ∧
+     grammaticalForCoreference [eachOther, see, them] = false) ∧
+    -- Pair 7: reciprocal requires plural antecedent
+    (grammaticalForCoreference [they, see, eachOther] = true ∧
+     grammaticalForCoreference [john, sees, eachOther] = false) := by
   native_decide
 
 -- ============================================================================
@@ -324,6 +349,11 @@ def computeCoreferenceStatus (clause : SimpleClause) (i j : Nat) : Interfaces.Co
         if oCommands .subject .directObject && sameLocalDomain clause && phiAgree clause.subject obj
         then .obligatory
         else .blocked
+      | some .reciprocal =>
+        if oCommands .subject .directObject && sameLocalDomain clause &&
+           clause.subject.features.number == some .pl
+        then .obligatory
+        else .blocked
       | some .pronoun =>
         if oCommands .subject .directObject && sameLocalDomain clause
         then .blocked
@@ -334,6 +364,7 @@ def computeCoreferenceStatus (clause : SimpleClause) (i j : Nat) : Interfaces.Co
     -- Object-subject: object doesn't o-command subject
     match classifyNominal clause.subject with
     | some .reflexive => .blocked
+    | some .reciprocal => .blocked
     | some .pronoun => .possible
     | _ => .possible
   else
@@ -347,12 +378,14 @@ instance : Interfaces.CoreferenceTheory HPSGTheory where
   grammaticalForCoreference := λ clause =>
     match classifyNominal clause.subject with
     | some .reflexive => false
+    | some .reciprocal => false
     | _ =>
       match clause.object with
       | none => true
       | some obj =>
         match classifyNominal obj with
         | some .reflexive => reflexiveLicensed clause
+        | some .reciprocal => reciprocalLicensed clause
         | some .pronoun => false
         | _ => true
 

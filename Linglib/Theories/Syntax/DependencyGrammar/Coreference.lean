@@ -68,6 +68,18 @@ def reflexiveLicensed (clause : SimpleClause) : Bool :=
       phiAgree clause.subject obj
     | _ => true
 
+/-- Reciprocals must be d-commanded by a plural antecedent in the local domain. -/
+def reciprocalLicensed (clause : SimpleClause) : Bool :=
+  match clause.object with
+  | none => false
+  | some obj =>
+    match classifyNominal obj with
+    | some .reciprocal =>
+      subjectDCommandsObject clause &&
+      sameLocalDomain clause &&
+      clause.subject.features.number == some .pl
+    | _ => true
+
 /-- A pronoun must not be d-commanded by a coreferent antecedent locally. -/
 def pronounLocallyFree (clause : SimpleClause) : Bool :=
   match clause.object with
@@ -99,17 +111,18 @@ def grammaticalForCoreference (ws : List Word) : Bool :=
   match parseSimpleClause ws with
   | none => false
   | some clause =>
-    -- Check reflexive in subject position (always bad - no d-commanding antecedent)
     match classifyNominal clause.subject with
-    | some .reflexive => false  -- Reflexive in subject has no d-commanding antecedent
+    | some .reflexive => false
+    | some .reciprocal => false
     | _ =>
       match clause.object with
       | none => true
       | some obj =>
         match classifyNominal obj with
-        | some .reflexive => reflexiveLicensed clause  -- Reflexive must be d-commanded
-        | some .pronoun => false  -- Pronoun in object with local subject = coreference blocked
-        | _ => true  -- R-expressions, etc.
+        | some .reflexive => reflexiveLicensed clause
+        | some .reciprocal => reciprocalLicensed clause
+        | some .pronoun => false
+        | _ => true
 
 /-- Check if reflexive is licensed in a sentence -/
 def reflexiveLicensedInSentence (ws : List Word) : Bool :=
@@ -147,6 +160,11 @@ def pronounCoreferenceBlocked (ws : List Word) : Bool :=
 -- Pair 5: they see themselves ✓ vs they see himself ✗ (number)
 #eval reflexiveLicensedInSentence [they, see, themselves]   -- true ✓
 #eval reflexiveLicensedInSentence [they, see, himself]      -- false ✓
+
+-- Reciprocal coreference: requires plural antecedent
+#guard grammaticalForCoreference [they, see, eachOther]
+#guard !grammaticalForCoreference [eachOther, see, them]
+#guard !grammaticalForCoreference [john, sees, eachOther]
 
 -- pronominalDisjointReferenceData pairs:
 -- Pronouns resist local coreference
@@ -222,6 +240,11 @@ def computeCoreferenceStatus (clause : SimpleClause) (i j : Nat) : Interfaces.Co
         if subjectDCommandsObject clause && sameLocalDomain clause && phiAgree clause.subject obj
         then .obligatory
         else .blocked
+      | some .reciprocal =>
+        if subjectDCommandsObject clause && sameLocalDomain clause &&
+           clause.subject.features.number == some .pl
+        then .obligatory
+        else .blocked
       | some .pronoun =>
         if subjectDCommandsObject clause && sameLocalDomain clause
         then .blocked
@@ -232,6 +255,7 @@ def computeCoreferenceStatus (clause : SimpleClause) (i j : Nat) : Interfaces.Co
     -- Object doesn't d-command subject
     match classifyNominal clause.subject with
     | some .reflexive => .blocked
+    | some .reciprocal => .blocked
     | some .pronoun => .possible
     | _ => .possible
   else
@@ -245,12 +269,14 @@ instance : Interfaces.CoreferenceTheory DepGrammarTheory where
   grammaticalForCoreference := λ clause =>
     match classifyNominal clause.subject with
     | some .reflexive => false
+    | some .reciprocal => false
     | _ =>
       match clause.object with
       | none => true
       | some obj =>
         match classifyNominal obj with
         | some .reflexive => reflexiveLicensed clause
+        | some .reciprocal => reciprocalLicensed clause
         | some .pronoun => false
         | _ => true
 

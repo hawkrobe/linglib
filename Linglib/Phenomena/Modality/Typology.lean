@@ -1,11 +1,35 @@
 import Linglib.Core.Lexical.Word
+import Linglib.Core.WALS.Features.F74A
+import Linglib.Core.WALS.Features.F75A
+import Linglib.Core.WALS.Features.F76A
+import Linglib.Core.WALS.Features.F77A
+import Linglib.Core.WALS.Features.F78A
 
 /-!
-# Cross-Linguistic Typology of Evidentiality (WALS Chapters 77--78)
+# Cross-Linguistic Typology of Modality and Evidentiality (WALS Chapters 74--78)
 @cite{aikhenvald-2004} @cite{de-haan-1999} @cite{willett-1988} @cite{de-haan-2013}
+@cite{vanbogaert-2013} @cite{deandradedehaanValenzuela-2013}
 
-Cross-linguistic data on grammatical evidentiality from the World Atlas of
-Language Structures, covering two parameters:
+Cross-linguistic data on modality and evidentiality from the World Atlas of
+Language Structures, covering five parameters:
+
+- **Ch 74: Situational Possibility**: How situational (root, dynamic)
+  possibility ('can', 'be able to') is expressed --- verbal constructions,
+  affixes on verbs, or other markers. Verbal constructions (modal verbs) are
+  the dominant strategy (158/234 = 68%).
+
+- **Ch 75: Epistemic Possibility**: How epistemic possibility ('may',
+  'might', 'perhaps') is expressed. Unlike situational possibility, affixes
+  on verbs (84/240 = 35%) and other strategies (91/240 = 38%) together
+  outweigh verbal constructions (65/240 = 27%).
+
+- **Ch 76: Overlap between Situational and Epistemic Modal Marking**: Whether
+  the same morpheme(s) express both situational and epistemic modality. Most
+  languages show no overlap (105/207 = 51%), meaning they use distinct forms
+  for root vs epistemic possibility. Some overlap for either possibility or
+  necessity (66/207 = 32%), and fewer overlap for both (36/207 = 17%).
+
+Cross-linguistic data on grammatical evidentiality, covering two parameters:
 
 - **Ch 77: Semantic Distinctions of Evidentiality**: How many
   and which evidential distinctions a language grammaticalizes. Evidentials
@@ -180,6 +204,124 @@ theorem ch78_total : WALSCount.totalOf ch78Counts = 191 := by native_decide
     without grammatical evidentials. -/
 theorem ch78_subset_of_ch77 :
     WALSCount.totalOf ch78Counts < WALSCount.totalOf ch77Counts := by
+  native_decide
+
+-- ============================================================================
+-- WALS Data Abbreviations
+-- ============================================================================
+
+private abbrev ch74 := Core.WALS.F74A.allData
+private abbrev ch75 := Core.WALS.F75A.allData
+private abbrev ch76 := Core.WALS.F76A.allData
+private abbrev ch77 := Core.WALS.F77A.allData
+private abbrev ch78 := Core.WALS.F78A.allData
+
+-- ============================================================================
+-- WALS Sample Size Verification
+-- ============================================================================
+
+theorem ch74_total : ch74.length = 234 := by native_decide
+theorem ch75_total : ch75.length = 240 := by native_decide
+theorem ch76_total : ch76.length = 207 := by native_decide
+theorem ch77_wals_total : ch77.length = 418 := by native_decide
+theorem ch78_wals_total : ch78.length = 418 := by native_decide
+
+/-- Ch 77 and Ch 78 use the same sample in WALS v2020.4. -/
+theorem ch77_ch78_same_sample : ch77.length = ch78.length := by native_decide
+
+-- ============================================================================
+-- WALS Converter Functions
+-- ============================================================================
+
+/-- Convert WALS 77A enum to local `EvidentialSystem`.
+
+    **Note**: WALS 77A has only 3 values; it collapses the "three or more"
+    and "direct and indirect" categories into a single `directAndIndirect`.
+    Our local `EvidentialSystem` makes a finer 4-way distinction (adding
+    `threeOrMore`), so `directAndIndirect` in WALS could correspond to
+    either `directAndIndirect` or `threeOrMore` here. Grounding theorems
+    are only written for languages where the WALS value unambiguously
+    determines the local value. -/
+private def fromWALS77A : Core.WALS.F77A.EvidentialityDistinctions → EvidentialSystem
+  | .noGrammaticalEvidentials => .noGrammatical
+  | .indirectOnly => .indirectOnly
+  | .directAndIndirect => .directAndIndirect
+
+/-- Convert WALS 78A enum to local `EvidentialCoding`.
+
+    **Note**: WALS 78A has a richer enum than the local type. We map:
+    - `noGrammaticalEvidentials` → `notApplicable`
+    - `verbalAffixOrClitic` → `verbalAffix` (WALS collapses affix and clitic)
+    - `partOfTheTenseSystem` → `partOfTAM`
+    - `separateParticle` → `particle`
+    - `modalMorpheme` → `particle` (closest local category)
+    - `mixed` → `partOfTAM` (no exact local match; best-effort) -/
+private def fromWALS78A : Core.WALS.F78A.EvidentialityCoding → EvidentialCoding
+  | .noGrammaticalEvidentials => .notApplicable
+  | .verbalAffixOrClitic => .verbalAffix
+  | .partOfTheTenseSystem => .partOfTAM
+  | .separateParticle => .particle
+  | .modalMorpheme => .particle
+  | .mixed => .partOfTAM
+
+-- ============================================================================
+-- WALS-Derived Distribution Verification (Ch 74--76)
+-- ============================================================================
+
+/-- Ch 74: Verbal constructions are the dominant strategy for situational
+    possibility (158/234 = 68%). -/
+theorem ch74_verbal_dominant :
+    (ch74.filter (·.value == .verbalConstructions)).length >
+    (ch74.filter (·.value == .affixesOnVerbs)).length ∧
+    (ch74.filter (·.value == .verbalConstructions)).length >
+    (ch74.filter (·.value == .otherKindsOfMarkers)).length := by
+  native_decide
+
+/-- Ch 75: The three coding strategies for epistemic possibility are more
+    evenly distributed than for situational possibility. -/
+theorem ch75_more_even_distribution :
+    let verbal := (ch75.filter (·.value == .verbalConstructions)).length
+    let affixes := (ch75.filter (·.value == .affixesOnVerbs)).length
+    let other := (ch75.filter (·.value == .other)).length
+    -- No single category has more than 40% of the sample
+    verbal * 5 < ch75.length * 2 ∧
+    affixes * 5 < ch75.length * 2 ∧
+    other * 5 < ch75.length * 2 := by
+  native_decide
+
+/-- Ch 76: Most languages show no overlap between situational and epistemic
+    modal marking (105/207 = 51%). -/
+theorem ch76_no_overlap_majority :
+    (ch76.filter (·.value == .noOverlap)).length >
+    (ch76.filter (·.value == .overlapForEitherPossibilityOrNecessity)).length ∧
+    (ch76.filter (·.value == .noOverlap)).length >
+    (ch76.filter (·.value == .overlapForBothPossibilityAndNecessity)).length := by
+  native_decide
+
+-- ============================================================================
+-- WALS-Derived Distribution Verification (Ch 77--78)
+-- ============================================================================
+
+/-- Ch 77 (WALS): Languages without grammatical evidentials form the largest
+    single category. -/
+theorem ch77_wals_no_evidentials_largest :
+    (ch77.filter (·.value == .noGrammaticalEvidentials)).length >
+    (ch77.filter (·.value == .indirectOnly)).length ∧
+    (ch77.filter (·.value == .noGrammaticalEvidentials)).length >
+    (ch77.filter (·.value == .directAndIndirect)).length := by
+  native_decide
+
+/-- Ch 78 (WALS): Verbal affix/clitic is the most common coding strategy
+    among languages with evidentials. -/
+theorem ch78_wals_affix_dominant :
+    (ch78.filter (·.value == .verbalAffixOrClitic)).length >
+    (ch78.filter (·.value == .separateParticle)).length ∧
+    (ch78.filter (·.value == .verbalAffixOrClitic)).length >
+    (ch78.filter (·.value == .partOfTheTenseSystem)).length ∧
+    (ch78.filter (·.value == .verbalAffixOrClitic)).length >
+    (ch78.filter (·.value == .modalMorpheme)).length ∧
+    (ch78.filter (·.value == .verbalAffixOrClitic)).length >
+    (ch78.filter (·.value == .mixed)).length := by
   native_decide
 
 -- ============================================================================
@@ -527,6 +669,211 @@ theorem sample_size : allLanguages.length = 18 := by native_decide
 
 example : finnish.system = .noGrammatical := by native_decide
 example : finnish.coding = .notApplicable := by native_decide
+
+-- ============================================================================
+-- WALS Grounding: Ch 74A (Situational Possibility)
+-- Languages in our sample present in the F74A dataset.
+-- ============================================================================
+
+theorem english_ch74 :
+    (Core.WALS.F74A.lookup "eng").map (·.value) = some .verbalConstructions := by
+  native_decide
+theorem german_ch74 :
+    (Core.WALS.F74A.lookup "ger").map (·.value) = some .verbalConstructions := by
+  native_decide
+theorem french_ch74 :
+    (Core.WALS.F74A.lookup "fre").map (·.value) = some .verbalConstructions := by
+  native_decide
+theorem japanese_ch74 :
+    (Core.WALS.F74A.lookup "jpn").map (·.value) = some .affixesOnVerbs := by
+  native_decide
+theorem mandarin_ch74 :
+    (Core.WALS.F74A.lookup "mnd").map (·.value) = some .verbalConstructions := by
+  native_decide
+theorem korean_ch74 :
+    (Core.WALS.F74A.lookup "kor").map (·.value) = some .otherKindsOfMarkers := by
+  native_decide
+theorem turkish_ch74 :
+    (Core.WALS.F74A.lookup "tur").map (·.value) = some .affixesOnVerbs := by
+  native_decide
+theorem finnish_ch74 :
+    (Core.WALS.F74A.lookup "fin").map (·.value) = some .verbalConstructions := by
+  native_decide
+theorem georgian_ch74 :
+    (Core.WALS.F74A.lookup "geo").map (·.value) = some .verbalConstructions := by
+  native_decide
+theorem abkhaz_ch74 :
+    (Core.WALS.F74A.lookup "abk").map (·.value) = some .verbalConstructions := by
+  native_decide
+theorem aymara_ch74 :
+    (Core.WALS.F74A.lookup "aym").map (·.value) = some .verbalConstructions := by
+  native_decide
+theorem westGreenlandic_ch74 :
+    (Core.WALS.F74A.lookup "grw").map (·.value) = some .affixesOnVerbs := by
+  native_decide
+
+-- ============================================================================
+-- WALS Grounding: Ch 75A (Epistemic Possibility)
+-- ============================================================================
+
+theorem english_ch75 :
+    (Core.WALS.F75A.lookup "eng").map (·.value) = some .verbalConstructions := by
+  native_decide
+theorem german_ch75 :
+    (Core.WALS.F75A.lookup "ger").map (·.value) = some .verbalConstructions := by
+  native_decide
+theorem french_ch75 :
+    (Core.WALS.F75A.lookup "fre").map (·.value) = some .verbalConstructions := by
+  native_decide
+theorem japanese_ch75 :
+    (Core.WALS.F75A.lookup "jpn").map (·.value) = some .other := by
+  native_decide
+theorem mandarin_ch75 :
+    (Core.WALS.F75A.lookup "mnd").map (·.value) = some .verbalConstructions := by
+  native_decide
+theorem korean_ch75 :
+    (Core.WALS.F75A.lookup "kor").map (·.value) = some .other := by
+  native_decide
+theorem turkish_ch75 :
+    (Core.WALS.F75A.lookup "tur").map (·.value) = some .affixesOnVerbs := by
+  native_decide
+theorem finnish_ch75 :
+    (Core.WALS.F75A.lookup "fin").map (·.value) = some .verbalConstructions := by
+  native_decide
+theorem georgian_ch75 :
+    (Core.WALS.F75A.lookup "geo").map (·.value) = some .other := by
+  native_decide
+theorem abkhaz_ch75 :
+    (Core.WALS.F75A.lookup "abk").map (·.value) = some .verbalConstructions := by
+  native_decide
+theorem aymara_ch75 :
+    (Core.WALS.F75A.lookup "aym").map (·.value) = some .other := by
+  native_decide
+theorem westGreenlandic_ch75 :
+    (Core.WALS.F75A.lookup "grw").map (·.value) = some .affixesOnVerbs := by
+  native_decide
+
+-- ============================================================================
+-- WALS Grounding: Ch 76A (Modal Overlap)
+-- ============================================================================
+
+theorem english_ch76 :
+    (Core.WALS.F76A.lookup "eng").map (·.value) =
+    some .overlapForBothPossibilityAndNecessity := by native_decide
+theorem german_ch76 :
+    (Core.WALS.F76A.lookup "ger").map (·.value) =
+    some .overlapForBothPossibilityAndNecessity := by native_decide
+theorem french_ch76 :
+    (Core.WALS.F76A.lookup "fre").map (·.value) =
+    some .overlapForBothPossibilityAndNecessity := by native_decide
+theorem japanese_ch76 :
+    (Core.WALS.F76A.lookup "jpn").map (·.value) =
+    some .overlapForEitherPossibilityOrNecessity := by native_decide
+theorem mandarin_ch76 :
+    (Core.WALS.F76A.lookup "mnd").map (·.value) =
+    some .overlapForBothPossibilityAndNecessity := by native_decide
+theorem korean_ch76 :
+    (Core.WALS.F76A.lookup "kor").map (·.value) =
+    some .overlapForEitherPossibilityOrNecessity := by native_decide
+theorem turkish_ch76 :
+    (Core.WALS.F76A.lookup "tur").map (·.value) =
+    some .overlapForBothPossibilityAndNecessity := by native_decide
+theorem finnish_ch76 :
+    (Core.WALS.F76A.lookup "fin").map (·.value) =
+    some .overlapForBothPossibilityAndNecessity := by native_decide
+theorem georgian_ch76 :
+    (Core.WALS.F76A.lookup "geo").map (·.value) =
+    some .overlapForEitherPossibilityOrNecessity := by native_decide
+theorem abkhaz_ch76 :
+    (Core.WALS.F76A.lookup "abk").map (·.value) =
+    some .overlapForEitherPossibilityOrNecessity := by native_decide
+theorem aymara_ch76 :
+    (Core.WALS.F76A.lookup "aym").map (·.value) = some .noOverlap := by
+  native_decide
+theorem westGreenlandic_ch76 :
+    (Core.WALS.F76A.lookup "grw").map (·.value) =
+    some .overlapForBothPossibilityAndNecessity := by native_decide
+
+-- ============================================================================
+-- WALS Grounding: Ch 77A (Semantic Distinctions of Evidentiality)
+--
+-- WALS 77A has 3 values; our `EvidentialSystem` has 4 (adding `threeOrMore`).
+-- Grounding theorems are written only for languages where the WALS 77A value
+-- unambiguously matches the local profile after conversion via `fromWALS77A`.
+--
+-- Matching languages: English (noGrammatical), Mandarin (noGrammatical),
+--   Turkish (directAndIndirect), Bulgarian (directAndIndirect),
+--   West Greenlandic (indirectOnly).
+--
+-- NOT grounded (classificatory divergence between WALS and our profiles):
+--   French, German, Japanese, Korean, Finnish — WALS says indirectOnly,
+--     our profile says noGrammatical (different theoretical criteria).
+--   Georgian — WALS says directAndIndirect, our profile says indirectOnly.
+--   Abkhaz — WALS says indirectOnly, our profile says directAndIndirect.
+-- NOT grounded (ambiguous mapping):
+--   Quechua, Aymara, Tuyuca, Kashaya, Tariana — our profile says threeOrMore,
+--     WALS maps both directAndIndirect and threeOrMore to directAndIndirect.
+-- ============================================================================
+
+theorem english_ch77 :
+    (Core.WALS.F77A.lookup "eng").map (fromWALS77A ·.value) =
+    some english.system := by native_decide
+theorem mandarin_ch77 :
+    (Core.WALS.F77A.lookup "mnd").map (fromWALS77A ·.value) =
+    some mandarin.system := by native_decide
+theorem turkish_ch77 :
+    (Core.WALS.F77A.lookup "tur").map (fromWALS77A ·.value) =
+    some turkish.system := by native_decide
+theorem bulgarian_ch77 :
+    (Core.WALS.F77A.lookup "bul").map (fromWALS77A ·.value) =
+    some bulgarian.system := by native_decide
+theorem westGreenlandic_ch77 :
+    (Core.WALS.F77A.lookup "grw").map (fromWALS77A ·.value) =
+    some westGreenlandic.system := by native_decide
+
+-- ============================================================================
+-- WALS Grounding: Ch 78A (Coding of Evidentiality)
+--
+-- Matching languages after conversion via `fromWALS78A`:
+--   English (notApplicable), Mandarin (notApplicable),
+--   Turkish (partOfTAM), Bulgarian (partOfTAM).
+--
+-- NOT grounded (WALS 78A categories differ from local profile):
+--   Abkhaz — WALS says verbalAffixOrClitic, profile says partOfTAM.
+--   Georgian — WALS says mixed, profile says partOfTAM (fromWALS78A maps
+--     mixed→partOfTAM, but Georgian's WALS 77A also diverges).
+--   Finnish — WALS says modalMorpheme, profile says notApplicable.
+--   French, German — WALS says modalMorpheme, profile says notApplicable.
+--   Japanese, Korean — WALS says verbalAffixOrClitic, profile says notApplicable.
+-- ============================================================================
+
+theorem english_ch78 :
+    (Core.WALS.F78A.lookup "eng").map (fromWALS78A ·.value) =
+    some english.coding := by native_decide
+theorem mandarin_ch78 :
+    (Core.WALS.F78A.lookup "mnd").map (fromWALS78A ·.value) =
+    some mandarin.coding := by native_decide
+theorem turkish_ch78 :
+    (Core.WALS.F78A.lookup "tur").map (fromWALS78A ·.value) =
+    some turkish.coding := by native_decide
+theorem bulgarian_ch78 :
+    (Core.WALS.F78A.lookup "bul").map (fromWALS78A ·.value) =
+    some bulgarian.coding := by native_decide
+
+-- Additional Ch 78A grounding for languages in WALS but with values
+-- not directly tied to our profile (raw WALS value verification):
+theorem tuyuca_ch78_raw :
+    (Core.WALS.F78A.lookup "tuy").map (·.value) =
+    some .partOfTheTenseSystem := by native_decide
+theorem tariana_ch78_raw :
+    (Core.WALS.F78A.lookup "tar").map (·.value) =
+    some .partOfTheTenseSystem := by native_decide
+theorem kashaya_ch78_raw :
+    (Core.WALS.F78A.lookup "ksh").map (·.value) =
+    some .verbalAffixOrClitic := by native_decide
+theorem westGreenlandic_ch78_raw :
+    (Core.WALS.F78A.lookup "grw").map (·.value) =
+    some .verbalAffixOrClitic := by native_decide
 
 -- ============================================================================
 -- Typological Generalization 1: Most Languages Lack Grammatical Evidentials
