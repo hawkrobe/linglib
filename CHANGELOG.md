@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.228.76] - 2026-03-06
+
+### Fixed
+- **Entailments.lean**: Close all 6 sorry's for Holliday & Icard 2013 invalidity counterexamples (I1–I3 for measure and FA semantics) using uniform measure on Fin 3; FA counterexamples derived from measure via `toSystemFA`
+
 ## [0.228.75] - 2026-03-06
 
 ### Fixed
