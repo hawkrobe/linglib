@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.228.83] - 2026-03-06
+
+### Changed
+- **EpistemicScale/FinsetBridge**: Phase 2+3 — add `geFS` (Finset-native `ge`), `geFS_additive`/`geFS_trans`/`geFS_mono` (FA axioms with decidable subset/sdiff), and 5 derivation combinators (`ngeFS_of_trans_left`, `ngeFS_of_trans_right`, `ngeFS_of_mono_left`, `ngeFS_of_mono_right`, `ngeFS_via_hpos`) covering all ¬geFS derivation patterns in the 88 chamber proofs
+
 ## [0.228.82] - 2026-03-06
 
 ### Changed
