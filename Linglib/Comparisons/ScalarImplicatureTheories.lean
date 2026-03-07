@@ -238,18 +238,6 @@ def rsaFullCoverage : TheoryCoverage :=
     ]
   }
 
--- Evaluate at compile time to see coverage
-#eval neogriceanFullCoverage.incompletePhenomena
--- [] (nothing incomplete - either complete or out of scope)
-
-#eval neogriceanFullCoverage.outOfScopePhenomena
--- [referenceGames, knowledgeCancellation, exhaustivity, freeChoice]
-
-#eval rsaFullCoverage.incompletePhenomena
--- [taskEffect, exhaustivity]
-
-#eval rsaFullCoverage.outOfScopePhenomena
--- [freeChoice]
 
 /-- NeoGricean has no incomplete phenomena (but some out of scope) -/
 theorem neogricean_no_incomplete :
@@ -277,8 +265,6 @@ def neogriceanCoverage : CoverageSummary :=
 def rsaCoverage : CoverageSummary :=
   coverageSummary RSA.RSATheory
 
-#eval neogriceanCoverage
-#eval rsaCoverage
 
 -- Part 7: Linking to Empirical Data Types
 

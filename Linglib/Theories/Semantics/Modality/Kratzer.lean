@@ -693,6 +693,7 @@ def KratzerTheory (params : KratzerParams) : ModalTheory where
     let best := bestWorlds params.base params.ordering w
     match force with
     | .necessity => best.all p
+    | .weakNecessity => best.all p
     | .possibility => best.any p
 
 -- Standard parameter configurations

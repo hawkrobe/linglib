@@ -449,9 +449,9 @@ theorem johnSeesHimself_commands :
   · native_decide
   · native_decide
 
-#eval cCommand johnSeesHimself.subjAddr johnSeesHimself.objAddr  -- true
-#eval oCommand johnSeesHimself.argSt "John" "himself"            -- true
-#eval dCommand johnSeesHimself.depGraph "John" "himself"         -- true
+#guard cCommand johnSeesHimself.subjAddr johnSeesHimself.objAddr
+#guard oCommand johnSeesHimself.argSt "John" "himself"
+#guard dCommand johnSeesHimself.depGraph "John" "himself"
 
 -- C.4: Connection to B&P Framework
 
@@ -579,7 +579,7 @@ def totalPairsTested : Nat :=
     pronominalDisjointReferenceData.pairs.length)
     complementaryDistributionData.pairs.length
 
-#eval totalPairsTested  -- 9 pairs
+#guard totalPairsTested == 9
 
 -- PART E: SPECIFIC COMMAND RELATIONS (B&P INSTANTIATIONS)
 

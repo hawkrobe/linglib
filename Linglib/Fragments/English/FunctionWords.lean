@@ -133,7 +133,7 @@ def shall : AuxEntry where
   negForm := some "shan't"; negIrregular := true   -- [ʃænt] not *[ʃælnt]
 def should : AuxEntry where
   form := "should"; auxType := .modal; tense := some .Past
-  modalMeaning := cp [.necessity] [.deontic, .epistemic]
+  modalMeaning := cp [.weakNecessity] [.deontic, .epistemic]
   negForm := some "shouldn't"
 def may : AuxEntry where
   form := "may"; auxType := .modal
@@ -168,6 +168,7 @@ def need : AuxEntry where
   negForm := some "needn't"
 def ought : AuxEntry where
   form := "ought"; auxType := .modal
+  modalMeaning := cp [.weakNecessity] [.deontic, .epistemic]
   negForm := some "oughtn't"
 
 -- Do-support

@@ -595,17 +595,7 @@ theorem meaning_preservation_derives_kind_preference :
 -- "The lion is a predator" - singular kind (taxonomic)
 #check SingularKind.mk "lion" .taxonomic
 
--- Meaning preservation: ∩ > ∃
-#eval morePreferred .down .exists  -- true
-
--- Available shifts for English bare plural
-#eval availableShifts {
-  number := .pl
-  downDefined := true
-  iotaBlocked := true
-  existsBlocked := true
-  instantiationAccessible := true
-}  -- [.down]
+#guard morePreferred .down .exists
 
 -- French requires definite for kinds
 #check romanceKindRef.definitePluralKinds  -- true

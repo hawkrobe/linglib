@@ -18,28 +18,6 @@ open DepGrammar.Nominal
 open Phenomena.Anaphora.Coreference
 
 -- ============================================================================
--- Tests
--- ============================================================================
-
--- reflexiveCoreferenceData pairs:
-#eval reflexiveLicensedInSentence [john, sees, himself]     -- true
-#eval grammaticalForCoreference [himself, sees, john]       -- false
-
-#eval reflexiveLicensedInSentence [mary, sees, herself]     -- true
-#eval grammaticalForCoreference [herself, sees, mary]       -- false
-
-#eval reflexiveLicensedInSentence [they, see, themselves]   -- true
-#eval grammaticalForCoreference [themselves, see, them]     -- false
-
--- Agreement violations:
-#eval reflexiveLicensedInSentence [john, sees, herself]     -- false (gender)
-#eval reflexiveLicensedInSentence [they, see, himself]      -- false (number)
-
--- Pronoun coreference blocked:
-#eval pronounCoreferenceBlocked [john, sees, him]           -- true
-#eval pronounCoreferenceBlocked [mary, sees, her]           -- true
-
--- ============================================================================
 -- Capturing Phenomena Data
 -- ============================================================================
 

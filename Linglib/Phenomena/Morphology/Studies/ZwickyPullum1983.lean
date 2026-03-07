@@ -305,10 +305,10 @@ private def kripkeT : ModalTheory where
   citation := ""
   eval := λ force p w =>
     match force, w with
-    | .necessity, .w0 => p .w1 && p .w2
-    | .necessity, .w1 => p .w1
-    | .necessity, .w2 => p .w2
-    | .necessity, .w3 => p .w3
+    | .necessity, .w0 | .weakNecessity, .w0 => p .w1 && p .w2
+    | .necessity, .w1 | .weakNecessity, .w1 => p .w1
+    | .necessity, .w2 | .weakNecessity, .w2 => p .w2
+    | .necessity, .w3 | .weakNecessity, .w3 => p .w3
     | .possibility, .w0 => p .w1 || p .w2
     | .possibility, .w1 => p .w1
     | .possibility, .w2 => p .w2

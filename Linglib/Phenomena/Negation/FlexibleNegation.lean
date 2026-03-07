@@ -6,6 +6,7 @@
 -/
 
 import Mathlib.Data.Rat.Defs
+import Linglib.Core.PropertyDomain
 
 /-!
 
@@ -31,23 +32,7 @@ This file captures the empirical patterns around flexible negation, where:
 namespace Phenomena.Negation.FlexibleNegation
 
 
-/--
-Types of negation based on their logical relationship.
-
-From traditional logic (Square of Opposition) and lexical semantics:
-- **Contradictories**: Cannot both be true AND cannot both be false
-  (exactly one must hold)
-- **Contraries**: Cannot both be true BUT can both be false
-  (gap where neither holds)
-
-Source: @cite{cruse-1986}, @cite{horn-1989}
--/
-inductive NegationType where
-  /-- Contradictory: complement (no gap). ¬(x > θ) = x ≤ θ -/
-  | contradictory
-  /-- Contrary: polar opposite with gap. x < θ₂ where θ₂ < θ₁ -/
-  | contrary
-  deriving Repr, DecidableEq, BEq
+open Core (NegationType)
 
 /--
 Negation markers in English and their flexibility.

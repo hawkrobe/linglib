@@ -33,51 +33,54 @@ namespace Phenomena.Modality.ModalConcord.LiuRotter2025.Bridge
 
 open Phenomena.Modality.ModalConcord.LiuRotter2025
 open Fragments.English.FunctionWords
-open Core.ModalLogic (ModalForce ModalItem ConcordType)
+open Core.ModalLogic (ModalForce ModalItem ConcordType ConcordType.fromModalForce)
 open Core.Register (SocialIndex)
 
 /-! ## Section A: Semantic overlap via ModalItem
 
-Each aux-adverb pair from the stimuli shares force when projected to
-`ModalItem`. The `sharesForce` operation lives in `Core/ModalLogic.lean`
-and works generically across any modal items. -/
+Each aux-adverb pair from the stimuli shares concord-compatible force when
+projected to `ModalItem`. Both necessity and weak necessity map to the same
+concord class (necessity-type), so *should* (weak necessity) concords with
+*definitely* (necessity). -/
 
 -- Necessity pairs
 
-/-- *must* + *certainly* share necessity force. -/
+/-- *must* + *certainly* share necessity-type concord force. -/
 theorem must_certainly_share :
-    must.toModalItem.sharesForce certainly.toModalItem = true := by native_decide
+    must.toModalItem.sharesConcordForce certainly.toModalItem = true := by native_decide
 
-/-- *should* + *definitely* share necessity force. -/
+/-- *should* + *definitely* share necessity-type concord force.
+    *should* is weak necessity, *definitely* is strong necessity — both are
+    necessity-type for concord purposes. -/
 theorem should_definitely_share :
-    should.toModalItem.sharesForce definitely.toModalItem = true := by native_decide
+    should.toModalItem.sharesConcordForce definitely.toModalItem = true := by native_decide
 
-/-- *have to* + *necessarily* share necessity force. -/
+/-- *have to* + *necessarily* share necessity-type concord force. -/
 theorem haveTo_necessarily_share :
-    haveTo.toModalItem.sharesForce necessarily.toModalItem = true := by native_decide
+    haveTo.toModalItem.sharesConcordForce necessarily.toModalItem = true := by native_decide
 
 -- Possibility pairs
 
 /-- *may* + *possibly* share possibility force. -/
 theorem may_possibly_share :
-    may.toModalItem.sharesForce possibly.toModalItem = true := by native_decide
+    may.toModalItem.sharesConcordForce possibly.toModalItem = true := by native_decide
 
 /-- *might* + *perhaps* share possibility force. -/
 theorem might_perhaps_share :
-    might.toModalItem.sharesForce perhaps.toModalItem = true := by native_decide
+    might.toModalItem.sharesConcordForce perhaps.toModalItem = true := by native_decide
 
 /-- *could* + *potentially* share possibility force. -/
 theorem could_potentially_share :
-    could.toModalItem.sharesForce potentially.toModalItem = true := by native_decide
+    could.toModalItem.sharesConcordForce potentially.toModalItem = true := by native_decide
 
-/-- **All six stimulus pairs share force**. -/
+/-- **All six stimulus pairs share concord-compatible force**. -/
 theorem all_pairs_share_force :
-    must.toModalItem.sharesForce certainly.toModalItem = true ∧
-    should.toModalItem.sharesForce definitely.toModalItem = true ∧
-    haveTo.toModalItem.sharesForce necessarily.toModalItem = true ∧
-    may.toModalItem.sharesForce possibly.toModalItem = true ∧
-    might.toModalItem.sharesForce perhaps.toModalItem = true ∧
-    could.toModalItem.sharesForce potentially.toModalItem = true := by
+    must.toModalItem.sharesConcordForce certainly.toModalItem = true ∧
+    should.toModalItem.sharesConcordForce definitely.toModalItem = true ∧
+    haveTo.toModalItem.sharesConcordForce necessarily.toModalItem = true ∧
+    may.toModalItem.sharesConcordForce possibly.toModalItem = true ∧
+    might.toModalItem.sharesConcordForce perhaps.toModalItem = true ∧
+    could.toModalItem.sharesConcordForce potentially.toModalItem = true := by
   refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> native_decide
 
 -- Register variants
@@ -99,10 +102,12 @@ possibility MC weakens — can be encoded as a function from modal
 force to predicted direction. -/
 
 /-- Predicted commitment effect of concord given modal force.
-    `true` = strengthening (MC > SM), `false` = weakening (MC < SM). -/
+    `true` = strengthening (MC > SM), `false` = weakening (MC < SM).
+    Both necessity and weak necessity concord strengthen. -/
 def concordStrengthens : ModalForce → Bool
-  | .necessity  => true
-  | .possibility => false
+  | .necessity     => true
+  | .weakNecessity => true
+  | .possibility   => false
 
 /-- The data matches the force-based prediction for necessity. -/
 theorem necessity_matches_prediction :

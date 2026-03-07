@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.228.68] - 2026-03-06
+
+### Changed
+- **#eval → #guard cleanup**: Replace all ~110 `#eval` instances across 30+ files with machine-checked `#guard` assertions or drop inspection-only evals. Bool-valued → `#guard`, Nat/ℚ-valued → `#guard x == n`, Cat/structure printing → dropped
+- **ModalForce.weakNecessity**: Add weak necessity (ought/should) to ModalForce enum, fix forward-reference in sharesConcordForce, update downstream modality files
+
 ## [0.228.67] - 2026-03-06
 
 ### Added

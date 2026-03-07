@@ -462,8 +462,6 @@ def simpleDisjunctionClosure : ClosureStatus := .closed
 /-- FC disjunction is not closed -/
 def fcDisjunctionClosure : ClosureStatus := .notClosed
 
-#eval closurePrediction simpleDisjunctionClosure  -- "Exclusive-or..."
-#eval closurePrediction fcDisjunctionClosure      -- "Free choice..."
 
 -- ============================================================================
 -- SECTION 7: Empirical Predictions
@@ -559,9 +557,9 @@ def allPredictBasicFC : Bool := coffeeOrTea.isPragmaticInference
 def allPredictRoss : Bool := postOrBurn.pragmaticallyFelicitous = false
 def allPredictCancellation : Bool := explicitCancellation.felicitous
 
-#eval allPredictBasicFC       -- true
-#eval allPredictRoss          -- true
-#eval allPredictCancellation  -- true
+#guard allPredictBasicFC
+#guard allPredictRoss
+#guard allPredictCancellation
 
 -- ============================================================================
 -- Summary

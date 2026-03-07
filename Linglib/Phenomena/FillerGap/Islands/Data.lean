@@ -409,6 +409,6 @@ theorem best_island_lt_baseline :
 
 -- Tests
 
-#eval wordsToString [what, did, john, buy]                    -- "what did John buy"
-#eval wordsToString [what, do_, you, wonder, who, bought]    -- "*what do you wonder who bought"
-#eval wordsToString [what, did, john, buy, and_, sell]       -- "what did John buy and sell" (ATB)
+#guard wordsToString [what, did, john, buy] == "what did John buy"
+#guard wordsToString [what, do_, you, wonder, who, bought] == "what do you wonder who bought"
+#guard wordsToString [what, did, john, buy, and_, sell] == "what did John buy and sell"

@@ -54,20 +54,14 @@ Processing difficulty correlates with the number of combinatory operations.
 Non-constituent coordination requires MORE operations than standard sentences.
 -/
 
--- Standard sentence: 1 operation (backward application)
-#eval john_sleeps.opCount  -- 1
-
--- Standard coordination: 3 operations (2 backward apps + 1 coordination)
 def john_sleeps_and_mary_sleeps : DerivStep :=
   .coord
     (.bapp (.lex ⟨"John", NP⟩) (.lex ⟨"sleeps", IV⟩))
     (.bapp (.lex ⟨"Mary", NP⟩) (.lex ⟨"sleeps", IV⟩))
 
-#eval john_sleeps_and_mary_sleeps.opCount  -- 3
-
--- Non-constituent coordination: 8 operations
--- (2 type-raises + 2 compositions + 1 coordination + 1 application + 2 implicit)
-#eval john_likes_and_mary_hates_beans.opCount  -- 8
+#guard john_sleeps.opCount == 1
+#guard john_sleeps_and_mary_sleeps.opCount == 3
+#guard john_likes_and_mary_hates_beans.opCount == 8
 
 -- THEOREM: CCG predicts non-constituent coordination is harder to process
 theorem nonConstituentCoord_harder_than_standard :

@@ -286,9 +286,9 @@ def ccgAccuracy : Nat :=
 def processingAccuracy : Nat :=
   countCorrect allComparisons (λ p => p.processing == .harder)
 
-#eval minimalismAccuracy   -- 3/4 (misses heavy NP)
-#eval ccgAccuracy          -- 3/4 (misses heavy NP)
-#eval processingAccuracy   -- 4/4
+#guard minimalismAccuracy == 3
+#guard ccgAccuracy == 3
+#guard processingAccuracy == 4
 
 -- Ordering Predictions (via shared infrastructure)
 

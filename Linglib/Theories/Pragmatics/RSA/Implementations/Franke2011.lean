@@ -920,13 +920,10 @@ def scalarGame : InterpGame where
     | .all, .someNotAll => false
   prior := λ _ => 1 / 2  -- Uniform prior
 
--- L₀ for "some" is uniform over both states
-#eval (L0 scalarGame).respond .some_ .someNotAll  -- Expected: 1/2
-#eval (L0 scalarGame).respond .some_ .all         -- Expected: 1/2
-
--- L₀ for "all" concentrates on the all-state
-#eval (L0 scalarGame).respond .all .all           -- Expected: 1
-#eval (L0 scalarGame).respond .all .someNotAll    -- Expected: 0
+#guard (L0 scalarGame).respond .some_ .someNotAll == 1/2
+#guard (L0 scalarGame).respond .some_ .all == 1/2
+#guard (L0 scalarGame).respond .all .all == 1
+#guard (L0 scalarGame).respond .all .someNotAll == 0
 
 /-!
 ## Free Choice Disjunction (Franke Section 3.3)

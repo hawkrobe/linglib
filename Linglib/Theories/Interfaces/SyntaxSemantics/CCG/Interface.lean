@@ -41,14 +41,6 @@ def catToTy : Cat → Ty
   | .rslash x y => catToTy y ⇒ catToTy x
   | .lslash x y => catToTy y ⇒ catToTy x
 
--- Verify the type correspondence
-#eval catToTy S            -- t
-#eval catToTy NP           -- e
-#eval catToTy N            -- e ⇒ t
-#eval catToTy IV           -- e ⇒ t (same as N, both are properties)
-#eval catToTy TV           -- e ⇒ e ⇒ t (relations)
-#eval catToTy Det          -- (e ⇒ t) ⇒ e (simplified)
-
 -- Semantic Lexicon
 
 /-- A CCG lexical entry with semantics -/
@@ -94,7 +86,7 @@ def sleeps_sem' : toyModel.interpTy (catToTy IV) := ToyLexicon.sleeps_sem
 def john_sleeps_sem : toyModel.interpTy (catToTy S) :=
   sleeps_sem' john_sem'
 
-#eval john_sleeps_sem  -- true
+#guard john_sleeps_sem
 
 -- Example: "John sees Mary"
 
@@ -119,14 +111,14 @@ def sees_mary_sem : toyModel.interpTy (catToTy IV) :=
 def john_sees_mary_sem : toyModel.interpTy (catToTy S) :=
   sees_mary_sem john_sem'  -- function application
 
-#eval john_sees_mary_sem  -- true
+#guard john_sees_mary_sem
 
 -- Example: "Mary sees John"
 
 def mary_sees_john_sem : toyModel.interpTy (catToTy S) :=
   (sees_sem' john_sem') mary_sem'
 
-#eval mary_sees_john_sem  -- true
+#guard mary_sees_john_sem
 
 -- Example: "John eats pizza"
 
@@ -136,7 +128,7 @@ def pizza_sem' : toyModel.interpTy (catToTy NP) := ToyEntity.pizza
 def john_eats_pizza_sem : toyModel.interpTy (catToTy S) :=
   (eats_sem' pizza_sem') john_sem'
 
-#eval john_eats_pizza_sem  -- true
+#guard john_eats_pizza_sem
 
 -- Truth Conditions from CCG Derivations
 
@@ -445,14 +437,6 @@ def getMeaning (result : Option (Interp toyModel)) : Option Bool :=
   | some ⟨.atom .S, m⟩ => some m
   | _ => none
 
--- "John sleeps" interpretation
-#eval getMeaning (john_sleeps.interp toySemLexicon)
--- Expected: some true
-
--- "John sees Mary" interpretation
-#eval getMeaning (john_sees_mary.interp toySemLexicon)
--- Expected: some true
-
 /-- Interpretation of "John sleeps" produces correct truth value -/
 theorem john_sleeps_interp_correct :
     getMeaning (john_sleeps.interp toySemLexicon) = some true := by
@@ -471,13 +455,7 @@ Type-raised "John":
 -/
 def john_typeraised : DerivStep := .ftr (.lex ⟨"John", NP⟩) S
 
--- Test type-raising produces correct category
-#eval john_typeraised.cat
--- Expected: some (S / (S \ NP))
-
--- Test type-raising interpretation works (check it's not none)
-#eval (john_typeraised.interp toySemLexicon).isSome
--- Expected: true
+#guard (john_typeraised.interp toySemLexicon).isSome
 
 /--
 "John sees Mary" via type-raising:
@@ -493,10 +471,6 @@ Note: Type-raised subject uses FORWARD application (it's S/(S\NP), seeking S\NP 
 -/
 def john_sees_mary_via_tr : DerivStep :=
   .fapp john_typeraised (.fapp (.lex ⟨"sees", TV⟩) (.lex ⟨"Mary", NP⟩))
-
--- Full derivation still works
-#eval getMeaning (john_sees_mary_via_tr.interp toySemLexicon)
--- Expected: some true
 
 /-- Type-raised derivation produces correct truth value -/
 theorem john_sees_mary_via_tr_correct :
@@ -520,13 +494,7 @@ This is the constituent that can coordinate with "Mary hates" in
 def john_likes_composed : DerivStep :=
   .fcomp john_typeraised (.lex ⟨"likes", TV⟩)
 
--- Test composition produces correct category
-#eval john_likes_composed.cat
--- Expected: some (S / NP)
-
--- Test composition interpretation works (check it's not none)
-#eval (john_likes_composed.interp toySemLexicon).isSome
--- Expected: true
+#guard (john_likes_composed.interp toySemLexicon).isSome
 
 -- NON-CONSTITUENT COORDINATION SEMANTICS
 
@@ -550,17 +518,8 @@ coordinated S/NP applies pointwise to the argument.
 -- Re-import the derivations from Basic (they're in the CCG namespace)
 -- john_tr, john_likes, mary_tr, mary_hates, john_likes_and_mary_hates, john_likes_and_mary_hates_beans
 
--- Test: Coordination interpretation succeeds
-#eval (john_likes_and_mary_hates.interp toySemLexicon).isSome
--- Expected: true (S/NP)
-
--- Test: Full coordination sentence interpretation succeeds
-#eval (john_likes_and_mary_hates_beans.interp toySemLexicon).isSome
--- Expected: true
-
--- Test: Coordination produces truth value
-#eval getMeaning (john_likes_and_mary_hates_beans.interp toySemLexicon)
--- Expected: some false (in toy model, likes=hates=sees, and nobody "sees" pizza)
+#guard (john_likes_and_mary_hates.interp toySemLexicon).isSome
+#guard (john_likes_and_mary_hates_beans.interp toySemLexicon).isSome
 
 /--
 **THE COORDINATION SEMANTICS THEOREM**

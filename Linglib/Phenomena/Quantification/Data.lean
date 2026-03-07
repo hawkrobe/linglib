@@ -297,8 +297,8 @@ def frozenCount : Nat :=
 def ambiguousCount : Nat :=
   allExamples.filter (·.observed == .ambiguous) |>.length
 
-#eval frozenCount      -- 9
-#eval ambiguousCount   -- 6
+#guard frozenCount == 9
+#guard ambiguousCount == 6
 
 end ScopeFreezing
 

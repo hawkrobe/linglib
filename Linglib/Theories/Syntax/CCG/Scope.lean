@@ -84,7 +84,7 @@ def everyHorse_inverse : DerivStep :=
   let everyHorse_tr := DerivStep.ftr (.lex ⟨"every horse", NP⟩) S
   .fcomp everyHorse_tr (.lex ⟨"didn't jump", IV⟩)
 
-#eval analyzeDerivation everyHorse_surface  -- directApp
-#eval analyzeDerivation everyHorse_inverse  -- composed
+#guard analyzeDerivation everyHorse_surface == .directApp
+#guard analyzeDerivation everyHorse_inverse == .composed
 
 end CCG.Scope

@@ -176,6 +176,54 @@ def open_ : AdjectivalPredicateEntry where
   antonymForm := some "closed"
   antonymRelation := some .contradictory
 
+/-- "large" — open scale, contrary to "small" -/
+def large : AdjectivalPredicateEntry where
+  form := "large"
+  scaleType := .open_
+  dimension := .generalSize
+  antonymForm := some "small"
+  antonymRelation := some .contrary
+
+/-- "small" — open scale, contrary to "large" -/
+def small : AdjectivalPredicateEntry where
+  form := "small"
+  scaleType := .open_
+  dimension := .generalSize
+  antonymForm := some "large"
+  antonymRelation := some .contrary
+
+/-- "gigantic" — open scale, contrary to "tiny", informationally stronger than "large" -/
+def gigantic : AdjectivalPredicateEntry where
+  form := "gigantic"
+  scaleType := .open_
+  dimension := .generalSize
+  antonymForm := some "tiny"
+  antonymRelation := some .contrary
+
+/-- "tiny" — open scale, contrary to "gigantic", informationally stronger than "small" -/
+def tiny : AdjectivalPredicateEntry where
+  form := "tiny"
+  scaleType := .open_
+  dimension := .generalSize
+  antonymForm := some "gigantic"
+  antonymRelation := some .contrary
+
+/-- "pristine" — closed scale, contrary to "filthy" (extreme absolute: gap exists) -/
+def pristine : AdjectivalPredicateEntry where
+  form := "pristine"
+  scaleType := .closed
+  dimension := .cleanliness
+  antonymForm := some "filthy"
+  antonymRelation := some .contrary
+
+/-- "filthy" — closed scale, contrary to "pristine" (extreme absolute: gap exists) -/
+def filthy : AdjectivalPredicateEntry where
+  form := "filthy"
+  scaleType := .closed
+  dimension := .cleanliness
+  antonymForm := some "pristine"
+  antonymRelation := some .contrary
+
 /-- "long" — open scale, contrary to "short" (length dimension) -/
 def long : AdjectivalPredicateEntry where
   form := "long"
@@ -217,6 +265,8 @@ def allEntries : List (AdjectivalPredicateEntry) := [
   expensive, cheap,
   wet, dry,
   clean, dirty, straight, flat, open_,
+  large, small, gigantic, tiny,
+  pristine, filthy,
   long, wide, cool, warm
 ]
 

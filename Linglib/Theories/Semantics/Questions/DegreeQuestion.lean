@@ -152,10 +152,12 @@ theorem existentialModal_preserves_upMono
     - "You're only required to read more than 30 books" ✓
     - "*You're only allowed to smoke more than 30 cigarettes" ✗ -/
 def obviatesMaxViolation : ModalForce → Bool
-  | .necessity => true
-  | .possibility => false
+  | .necessity     => true
+  | .weakNecessity => true
+  | .possibility   => false
 
 theorem necessity_obviates : obviatesMaxViolation .necessity = true := rfl
+theorem weakNecessity_obviates : obviatesMaxViolation .weakNecessity = true := rfl
 theorem possibility_fails : obviatesMaxViolation .possibility = false := rfl
 
 end Semantics.Questions.DegreeQuestion

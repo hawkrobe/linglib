@@ -183,7 +183,7 @@ theorem empty_satisfies_iff : satisfiesIFF [] = true := by
 
 /-! ## Language-Level Measures -/
 
-/-- A modal expression datum: a form paired with its meaning in the 2×3 space. -/
+/-- A modal expression datum: a form paired with its meaning in the 3×3 space. -/
 structure ModalExpression where
   form : String
   meaning : List ForceFlavor

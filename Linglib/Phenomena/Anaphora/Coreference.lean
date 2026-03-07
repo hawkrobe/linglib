@@ -208,8 +208,4 @@ def reciprocalPattern : CoreferencePattern := {
   antecedentDomain := some .local_
 }
 
-#eval wordsToString [john, sees, himself]
-#eval wordsToString [mary, sees, herself]
-#eval wordsToString [they, see, themselves]
-
 end Phenomena.Anaphora.Coreference

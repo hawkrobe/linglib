@@ -86,16 +86,10 @@ def extendedLexicon : SemLexicon toyModel := λ word cat =>
 def ccgTruth (d : DerivStep) : Option Bool :=
   getMeaning (d.interp extendedLexicon)
 
--- Verify derivations parse correctly
-#eval ccg_john_sleeps.cat       -- some S
-#eval ccg_mary_sleeps.cat       -- some S
-#eval ccg_john_sees_mary.cat    -- some S
-
--- Verify truth values
-#eval ccgTruth ccg_john_sleeps      -- some true
-#eval ccgTruth ccg_mary_sleeps      -- some false
-#eval ccgTruth ccg_john_sees_mary   -- some true
-#eval ccgTruth ccg_mary_sees_john   -- some true
+#guard ccgTruth ccg_john_sleeps == some true
+#guard ccgTruth ccg_mary_sleeps == some false
+#guard ccgTruth ccg_john_sees_mary == some true
+#guard ccgTruth ccg_mary_sees_john == some true
 
 -- Pipeline Theorems: CCG Matches Empirical Truth Judgments
 

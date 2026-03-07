@@ -211,11 +211,11 @@ Generate all binary trees with exactly n leaves.
 def allTreesWithLeaves (n : Nat) : List BinTree :=
   allTreesWithLeavesAux n n
 
-#eval (allTreesWithLeaves 1).length  -- 1: just leaf
-#eval (allTreesWithLeaves 2).length  -- 1: node leaf leaf
-#eval (allTreesWithLeaves 3).length  -- 2: ((ab)c) or (a(bc))
-#eval (allTreesWithLeaves 4).length  -- 5
-#eval (allTreesWithLeaves 5).length  -- 14
+#guard (allTreesWithLeaves 1).length == 1   -- just leaf
+#guard (allTreesWithLeaves 2).length == 1   -- node leaf leaf
+#guard (allTreesWithLeaves 3).length == 2   -- ((ab)c) or (a(bc))
+#guard (allTreesWithLeaves 4).length == 5
+#guard (allTreesWithLeaves 5).length == 14
 
 -- Catalan Numbers
 
@@ -244,17 +244,17 @@ Count bracketings directly (matches Catalan structure).
 def countBracketings (n : Nat) : Nat :=
   countBracketingsAux n n
 
-#eval catalan 0  -- 1
-#eval catalan 1  -- 1
-#eval catalan 2  -- 2
-#eval catalan 3  -- 5
-#eval catalan 4  -- 14
+#guard catalan 0 == 1
+#guard catalan 1 == 1
+#guard catalan 2 == 2
+#guard catalan 3 == 5
+#guard catalan 4 == 14
 
-#eval countBracketings 1  -- 1
-#eval countBracketings 2  -- 1
-#eval countBracketings 3  -- 2
-#eval countBracketings 4  -- 5
-#eval countBracketings 5  -- 14
+#guard countBracketings 1 == 1
+#guard countBracketings 2 == 1
+#guard countBracketings 3 == 2
+#guard countBracketings 4 == 5
+#guard countBracketings 5 == 14
 
 -- Catalan Counts Bracketings
 

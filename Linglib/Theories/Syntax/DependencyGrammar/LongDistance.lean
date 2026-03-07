@@ -228,9 +228,9 @@ def ex_johnWondersWhatMarySaw : DepTree :=
 -- Tests
 -- ============================================================================
 
-#eval isLDWellFormed ex_whatDidJohnSee [(0, 3, .objGap)]       -- true
-#eval isLDWellFormed ex_whoSawMary []                           -- true
-#eval isLDWellFormed ex_theBookThatJohnRead [(1, 4, .objGap)]  -- true
+#guard isLDWellFormed ex_whatDidJohnSee [(0, 3, .objGap)]
+#guard isLDWellFormed ex_whoSawMary []
+#guard isLDWellFormed ex_theBookThatJohnRead [(1, 4, .objGap)]
 
 -- ============================================================================
 -- Proofs

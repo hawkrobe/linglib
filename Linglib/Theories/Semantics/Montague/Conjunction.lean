@@ -133,8 +133,8 @@ def happy_sem : toyModel.interpTy (.fn .e .t) :=
 def tall_and_happy : toyModel.interpTy (.fn .e .t) :=
   genConj (.fn .e .t) toyModel tall_sem happy_sem
 
-#eval tall_and_happy ToyEntity.john   -- true
-#eval tall_and_happy ToyEntity.mary   -- false
+#guard tall_and_happy ToyEntity.john
+#guard !tall_and_happy ToyEntity.mary
 
 theorem tall_and_happy_is_pointwise :
     tall_and_happy = λ x => tall_sem x && happy_sem x := rfl

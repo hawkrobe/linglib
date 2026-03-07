@@ -179,17 +179,7 @@ def scalarImplicatures {α : Type} [BEq α] [Repr α] (s : Scale α) (x : α) : 
 -- Examples
 -- ============================================================================
 
-#eval someAll.alternatives QuantExpr.some_
--- Expected: [all]
-
-#eval someMostAll.alternatives QuantExpr.some_
--- Expected: [most, all]
-
-#eval someAll.weaker QuantExpr.some_ QuantExpr.all
--- Expected: true
-
-#eval numerals 5
--- Expected: Scale with items [1, 2, 3, 4, 5]
+#guard someAll.weaker QuantExpr.some_ QuantExpr.all
 
 -- ============================================================================
 -- Scale Closure Properties (@cite{chierchia-2013}, @cite{spector-2016})

@@ -129,7 +129,7 @@ def turkishObs : List Observation := [korkTr, umTr, endiselenTr]
 def allObservations : List Observation :=
   englishObs ++ mandarinObs ++ japaneseObs ++ turkishObs
 
-#eval allObservations.length  -- Expected: 17
+#guard allObservations.length == 17
 
 -- Linking to Fragments (for verification)
 

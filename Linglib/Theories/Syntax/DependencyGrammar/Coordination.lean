@@ -148,9 +148,9 @@ def ex_rnr_enhanced : DepGraph :=
 -- Tests
 -- ============================================================================
 
-#eval checkCatMatch ex_johnAndMarySleep          -- true
-#eval checkCatMatch ex_johnSleepsAndMarySleeps   -- true
-#eval checkArgStrMatch ex_johnSeesAndHearsMary   -- true
+#guard checkCatMatch ex_johnAndMarySleep
+#guard checkCatMatch ex_johnSleepsAndMarySleeps
+#guard checkArgStrMatch ex_johnSeesAndHearsMary
 
 -- ============================================================================
 -- Proofs

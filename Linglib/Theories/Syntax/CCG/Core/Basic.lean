@@ -94,8 +94,6 @@ def backwardTypeRaise (x : Cat) (t : Cat) : Cat :=
 def NPsubj : Cat := forwardTypeRaise NP S
 def NPobj : Cat := backwardTypeRaise NP S
 
-#eval NPsubj
-
 end TypeRaising
 
 /-- Coordination: X conj X => X. -/
@@ -173,23 +171,18 @@ section Examples
 def john_sleeps : DerivStep :=
   .bapp (.lex ⟨"John", NP⟩) (.lex ⟨"sleeps", IV⟩)
 
-#eval john_sleeps.cat
 def sees_mary : DerivStep :=
   .fapp (.lex ⟨"sees", TV⟩) (.lex ⟨"Mary", NP⟩)
 
 def john_sees_mary : DerivStep :=
   .bapp (.lex ⟨"John", NP⟩) sees_mary
 
-#eval sees_mary.cat
-#eval john_sees_mary.cat
 def the_cat : DerivStep :=
   .fapp (.lex ⟨"the", Det⟩) (.lex ⟨"cat", N⟩)
 
 def the_cat_sleeps : DerivStep :=
   .bapp the_cat (.lex ⟨"sleeps", IV⟩)
 
-#eval the_cat.cat
-#eval the_cat_sleeps.cat
 def big_cat : DerivStep :=
   .fapp (.lex ⟨"big", AdjAttr⟩) (.lex ⟨"cat", N⟩)
 
@@ -198,10 +191,6 @@ def the_big_cat : DerivStep :=
 
 def the_big_cat_sleeps : DerivStep :=
   .bapp the_big_cat (.lex ⟨"sleeps", IV⟩)
-
-#eval big_cat.cat
-#eval the_big_cat.cat
-#eval the_big_cat_sleeps.cat
 
 /-- Check if a derivation yields category S. -/
 def derivesS (d : DerivStep) : Bool :=
@@ -240,21 +229,15 @@ section NonConstituentCoordination
 
 def john_tr : DerivStep := .ftr (.lex ⟨"John", NP⟩) S
 
-#eval john_tr.cat
 def john_likes : DerivStep := .fcomp john_tr (.lex ⟨"likes", TV⟩)
 
-#eval john_likes.cat
 def mary_tr : DerivStep := .ftr (.lex ⟨"Mary", NP⟩) S
 def mary_hates : DerivStep := .fcomp mary_tr (.lex ⟨"hates", TV⟩)
 
-#eval mary_hates.cat
 def john_likes_and_mary_hates : DerivStep := .coord john_likes mary_hates
 
-#eval john_likes_and_mary_hates.cat
 def john_likes_and_mary_hates_beans : DerivStep :=
   .fapp john_likes_and_mary_hates (.lex ⟨"beans", NP⟩)
-
-#eval john_likes_and_mary_hates_beans.cat
 
 example : derivesS john_likes_and_mary_hates_beans = true := rfl
 

@@ -887,11 +887,11 @@ end NumberTreeGQ
 def conservativeQuantifierCount (n : Nat) : Nat :=
   2 ^ ((n + 1) * (n + 2) / 2)
 
-#eval conservativeQuantifierCount 0  -- 2 (always-true + always-false)
-#eval conservativeQuantifierCount 1  -- 8
-#eval conservativeQuantifierCount 2  -- 64
-#eval conservativeQuantifierCount 3  -- 1024
-#eval conservativeQuantifierCount 4  -- 32768
+#guard conservativeQuantifierCount 0 == 2
+#guard conservativeQuantifierCount 1 == 8
+#guard conservativeQuantifierCount 2 == 64
+#guard conservativeQuantifierCount 3 == 1024
+#guard conservativeQuantifierCount 4 == 32768
 
 -- ============================================================================
 -- §12 — Conservative GQ Lattice (@cite{elliott-2025})

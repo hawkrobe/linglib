@@ -113,14 +113,14 @@ def johnBelievesMary_deDicto : toyIModel.interpTy .t :=
   let marySleeps : toyIModel.interpTy Ty.prop := λ w => sleeps w .mary
   believe .john marySleeps
 
-#eval johnBelievesMary_deDicto  -- false
+#guard !johnBelievesMary_deDicto
 
 /-- "John believes John sleeps" (de dicto) -/
 def johnBelievesJohnSleeps : toyIModel.interpTy .t :=
   let johnSleeps : toyIModel.interpTy Ty.prop := λ w => sleeps w .john
   believe .john johnSleeps
 
-#eval johnBelievesJohnSleeps  -- true
+#guard johnBelievesJohnSleeps
 
 /-- Proposition: "John ate some cookies" (simplified) -/
 def someCookies : toyIModel.interpTy Ty.prop := λ _ => true
@@ -137,8 +137,7 @@ def maryBelievesSome : toyIModel.interpTy .t := believe .mary someCookies
 /-- "Mary believes John ate all cookies" -/
 def maryBelievesAll : toyIModel.interpTy .t := believe .mary allCookies
 
-#eval maryBelievesSome  -- true
-#eval maryBelievesAll   -- depends on Mary's accessible worlds
+#guard maryBelievesSome
 
 /-- Belief is intensional: co-extensional expressions can differ under belief. -/
 theorem belief_intensional :

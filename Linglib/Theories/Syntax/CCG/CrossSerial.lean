@@ -210,19 +210,13 @@ Piet combines with the embedded (via the argument passed through composition).
 -- (S\NP)/(S\NP) >B (S\NP)/NP = (S\NP)/NP
 def zag_comp_zwemmen : ExtDerivStep := .fcomp zag_lex zwemmen_vr
 
-#eval zag_comp_zwemmen.cat  -- Should be (S\NP)/NP
-
 -- Step 2: (zag zwemmen) + Piet via forward application
 -- (S\NP)/NP + NP = S\NP
 def zag_zwemmen_piet : ExtDerivStep := .fapp zag_comp_zwemmen piet_lex
 
-#eval zag_zwemmen_piet.cat  -- Should be S\NP
-
 -- Step 3: Jan + (zag zwemmen Piet) via backward application
 -- NP + S\NP = S
 def jan_zag_zwemmen_piet : ExtDerivStep := .bapp jan_lex zag_zwemmen_piet
-
-#eval jan_zag_zwemmen_piet.cat  -- Should be S
 
 -- Derivation: "Jan Piet Marie zag helpen zwemmen" (3 NPs, 3 Vs)
 
@@ -258,13 +252,9 @@ def helpen_zwemmen_simple : ExtDerivStep :=
 def zag_helpen_zwemmen : ExtDerivStep :=
   .fapp zag_lex helpen_zwemmen_simple
 
-#eval zag_helpen_zwemmen.cat  -- S\NP
-
 -- Jan provides the subject: NP + S\NP = S
 def jan_piet_marie_zag_helpen_zwemmen_deriv : ExtDerivStep :=
   .bapp jan_lex zag_helpen_zwemmen
-
-#eval jan_piet_marie_zag_helpen_zwemmen_deriv.cat  -- S ✓
 
 -- Generative Capacity: Beyond CFG
 

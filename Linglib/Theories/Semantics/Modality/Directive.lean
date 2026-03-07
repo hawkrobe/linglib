@@ -211,4 +211,24 @@ theorem weak_eq_strong_no_secondary (f : ModalBase) (g : OrderingSource)
   unfold weakNecessity strongNecessity necessity bestWorlds combineOrdering emptyBackground
   simp only [List.append_nil]
 
+/-! ## Bridge: Kratzer semantics ↔ typological force
+
+The typological `ModalForce.weakNecessity` corresponds to Kratzer's
+`necessity` evaluated with a refined ordering source (g ∪ g'). Strong
+necessity is `necessity` with the primary ordering source alone. The
+entailment chain □ → □w → ◇ is the semantic content of
+`ModalForce.atLeastAsStrong`. -/
+
+/-- Strong necessity under Kratzer params IS `ModalForce.necessity`. -/
+theorem strongNecessity_is_necessity (f : ModalBase) (g : OrderingSource)
+    (p : BProp World) (w : World) :
+    strongNecessity f g p w = (KratzerTheory ⟨f, g⟩).eval .necessity p w := rfl
+
+/-- Weak necessity under Kratzer params with refinement IS
+    `ModalForce.weakNecessity` evaluated under combined ordering. -/
+theorem weakNecessity_is_weakForce (f : ModalBase) (g g' : OrderingSource)
+    (p : BProp World) (w : World) :
+    weakNecessity f g g' p w =
+    (KratzerTheory ⟨f, combineOrdering g g'⟩).eval .weakNecessity p w := rfl
+
 end Semantics.Modality.Directive

@@ -157,7 +157,7 @@ def strengthEffect : Bool :=
   -- Strong < 0.35, Weak > 0.65
   strongMean < 35/100 && weakMean > 65/100
 
-#eval strengthEffect  -- Should be true
+#guard strengthEffect
 
 -- Control Conditions
 
@@ -222,10 +222,9 @@ def theoryFit (t : Theory) : ℚ :=
     | .presupFailure => if observed < 1/2 then (1 : ℚ)/2 else 0  -- Might pattern as rejection
   predictions.foldl (·+·) (0 : ℚ) / (predictions.length : ℚ)
 
--- Compute theory fits
-#eval theoryFit .selectional  -- 3/4
-#eval theoryFit .universal    -- 4/4 = 1 (but this is misleading - see note below)
-#eval theoryFit .homogeneity  -- 1/4
+#guard theoryFit .selectional == 3/4
+#guard theoryFit .universal == 1
+#guard theoryFit .homogeneity == 1/4
 
 /-!
 **Note on scoring**: The simple true/false matching gives universal a high score,
@@ -336,9 +335,9 @@ def selectionalTheorySucceeds : Bool :=
   let noPred := theoreticalPrediction .selectional .no
   everyPred == .indeterminate && somePred == .true_ && noPred == .false_
 
-#eval universalTheoryFails       -- true
-#eval homogeneityTheoryFails     -- true
-#eval selectionalTheorySucceeds  -- true
+#guard universalTheoryFails
+#guard homogeneityTheoryFails
+#guard selectionalTheorySucceeds
 
 -- Connections to Other Phenomena
 

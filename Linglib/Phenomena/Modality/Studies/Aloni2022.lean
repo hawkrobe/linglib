@@ -105,38 +105,13 @@ def wideScopeDisj : BSMLFormula :=
 -- Computational Verification
 -- ============================================================================
 
--- Verify: the enriched formula supports free choice inference
-#eval support deonticModel (enrich mayHaveCoffeeOrTea) freeChoiceTeam
-
--- The free choice consequences
-#eval support deonticModel mayCoffee freeChoiceTeam
-#eval support deonticModel mayTea freeChoiceTeam
-
--- Verify NARROW-SCOPE FC
-#eval
-  let enriched := enrich mayHaveCoffeeOrTea
-  let supEnriched := support deonticModel enriched freeChoiceTeam
-  let supCoffee := support deonticModel mayCoffee freeChoiceTeam
-  let supTea := support deonticModel mayTea freeChoiceTeam
-  (supEnriched, supCoffee, supTea)  -- Expect: (true, true, true)
-
--- Verify DUAL PROHIBITION
-#eval
-  let enrichedProhib := enrich prohibition
-  let supProhib := support restrictiveModel enrichedProhib prohibitionTeam
-  let supNotCoffee := support restrictiveModel notMayCoffee prohibitionTeam
-  let supNotTea := support restrictiveModel notMayTea prohibitionTeam
-  (supProhib, supNotCoffee, supNotTea)  -- Expect: (true, true, true)
-
--- Verify WIDE-SCOPE FC
-#eval
-  let enrichedWide := enrich wideScopeDisj
-  let supWide := support deonticModel enrichedWide freeChoiceTeam
-  let supCoffee := support deonticModel mayCoffee freeChoiceTeam
-  let supTea := support deonticModel mayTea freeChoiceTeam
-  (supWide, supCoffee, supTea)  -- Expect: (true, true, true)
-
--- Verify indisputability
-#eval deonticModel.isIndisputable freeChoiceTeam  -- Expect: true
+#guard support deonticModel (enrich mayHaveCoffeeOrTea) freeChoiceTeam
+#guard support deonticModel mayCoffee freeChoiceTeam
+#guard support deonticModel mayTea freeChoiceTeam
+#guard support restrictiveModel (enrich prohibition) prohibitionTeam
+#guard support restrictiveModel notMayCoffee prohibitionTeam
+#guard support restrictiveModel notMayTea prohibitionTeam
+#guard support deonticModel (enrich wideScopeDisj) freeChoiceTeam
+#guard deonticModel.isIndisputable freeChoiceTeam
 
 end Phenomena.Modality.Studies.Aloni2022

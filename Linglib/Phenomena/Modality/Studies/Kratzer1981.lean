@@ -120,8 +120,8 @@ theorem must_is_necessity : epistemicForce must = some .necessity := rfl
 /-- The epistemic force of `might` is possibility (derived from Fragment). -/
 theorem might_is_possibility : epistemicForce might = some .possibility := rfl
 
-/-- The epistemic force of `should` is necessity (derived from Fragment). -/
-theorem should_is_necessity : epistemicForce should = some .necessity := rfl
+/-- The epistemic force of `should` is weak necessity (derived from Fragment). -/
+theorem should_is_weakNecessity : epistemicForce should = some .weakNecessity := rfl
 
 /-- The epistemic force of `may` is possibility (derived from Fragment). -/
 theorem may_is_possibility : epistemicForce may = some .possibility := rfl
@@ -130,11 +130,11 @@ theorem may_is_possibility : epistemicForce may = some .possibility := rfl
 -- §4. Within-Force Ordering
 -- ============================================================================
 
-/-! Within the same force, thresholds still order: must > should (both □),
-    may > might = could (all ◇). This captures scalar differences within
-    a force category that Kratzer's binary force distinction cannot express. -/
+/-! Thresholds decrease monotonically with force: must (□) > should (□w) >
+    may (◇) > might = could (◇). The □ > □w gap is captured by the 3-way
+    `ModalForce` distinction; the within-◇ gap remains a scalar difference. -/
 
-/-- Among necessity modals: must > should. Both are □ but `must` is stronger. -/
+/-- □ > □w: must (strong necessity) > should (weak necessity). -/
 theorem must_gt_should : EpistemicEntry.must_.θ > EpistemicEntry.should_.θ := by
   show (4 : ℚ)/5 < 19/20; norm_num
 

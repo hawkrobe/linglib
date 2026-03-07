@@ -37,13 +37,13 @@ def makeString_anbncndn (n : Nat) : FourString :=
   List.replicate n .a ++ List.replicate n .b ++
   List.replicate n .c ++ List.replicate n .d
 
-#eval isInLanguage_anbncndn []
-#eval isInLanguage_anbncndn (makeString_anbncndn 0)
-#eval isInLanguage_anbncndn (makeString_anbncndn 1)
-#eval isInLanguage_anbncndn (makeString_anbncndn 2)
-#eval isInLanguage_anbncndn (makeString_anbncndn 3)
-#eval isInLanguage_anbncndn [.a, .b, .c]
-#eval isInLanguage_anbncndn [.a, .a, .b, .c, .c, .d]
+#guard isInLanguage_anbncndn []
+#guard isInLanguage_anbncndn (makeString_anbncndn 0)
+#guard isInLanguage_anbncndn (makeString_anbncndn 1)
+#guard isInLanguage_anbncndn (makeString_anbncndn 2)
+#guard isInLanguage_anbncndn (makeString_anbncndn 3)
+#guard !isInLanguage_anbncndn [.a, .b, .c]
+#guard !isInLanguage_anbncndn [.a, .a, .b, .c, .c, .d]
 
 /-- The CFL pumping property for languages over FourSymbol.
     Every context-free language has this property (pumping lemma).
@@ -292,7 +292,7 @@ def isInLanguage_anbnc (w : List ThreeSymbol) : Bool :=
 def makeString_anbnc (n : Nat) : List ThreeSymbol :=
   List.replicate n .a ++ List.replicate n .b ++ List.replicate n .c
 
-#eval isInLanguage_anbnc (makeString_anbnc 3)
+#guard isInLanguage_anbnc (makeString_anbnc 3)
 
 /-- The CFL pumping property for languages over ThreeSymbol. -/
 def HasPumpingProperty3 (inLang : List ThreeSymbol → Bool) : Prop :=

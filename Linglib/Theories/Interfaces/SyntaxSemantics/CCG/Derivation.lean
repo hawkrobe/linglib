@@ -101,13 +101,6 @@ def some_student_sleeps_sem : Derivation toyModel :=
 
 -- Verification
 
--- Verify the derivations via #eval
-#eval getWords ccg_john_sleeps           -- ["John", "sleeps"]
-#eval getWords ccg_some_student_sleeps   -- ["some", "student", "sleeps"]
-
-#eval john_sleeps_sem.surface            -- ["John", "sleeps"]
-#eval some_student_sleeps_sem.surface    -- ["some", "student", "sleeps"]
-
 -- Notes
 
 /-

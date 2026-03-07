@@ -68,10 +68,12 @@ FORCE × NUMBER interaction: β = 0.56, SE = 0.17, t = 3.31, p = .001. -/
 /-- Speaker commitment ratings (7-point Likert, 1=not at all certain,
     7=completely certain). -/
 def commitmentRating : Condition → LikertRating
-  | ⟨.necessity, .single⟩   => ⟨449/100, 131/100⟩  -- M=4.49, SD=1.31
-  | ⟨.necessity, .concord⟩  => ⟨499/100, 121/100⟩  -- M=4.99, SD=1.21
-  | ⟨.possibility, .single⟩  => ⟨384/100, 138/100⟩  -- M=3.84, SD=1.38
-  | ⟨.possibility, .concord⟩ => ⟨337/100, 149/100⟩  -- M=3.37, SD=1.49
+  | ⟨.necessity, .single⟩      => ⟨449/100, 131/100⟩  -- M=4.49, SD=1.31
+  | ⟨.necessity, .concord⟩     => ⟨499/100, 121/100⟩  -- M=4.99, SD=1.21
+  | ⟨.weakNecessity, .single⟩  => ⟨449/100, 131/100⟩  -- not tested separately
+  | ⟨.weakNecessity, .concord⟩ => ⟨499/100, 121/100⟩  -- not tested separately
+  | ⟨.possibility, .single⟩    => ⟨384/100, 138/100⟩  -- M=3.84, SD=1.38
+  | ⟨.possibility, .concord⟩   => ⟨337/100, 149/100⟩  -- M=3.37, SD=1.49
 
 /-! ### Key Experiment 1 empirical generalizations -/
 

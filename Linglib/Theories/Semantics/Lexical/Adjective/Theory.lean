@@ -54,26 +54,9 @@ open Core.Scale (Boundedness Degree Threshold Degree.toNat Threshold.toNat
 -- Negation Types: Contradictory vs. Contrary
 -- ════════════════════════════════════════════════════
 
-/--
-Types of negation for gradable adjectives.
-
-**Contradictories** (e.g., "happy" / "not happy"):
-- Cannot both be true AND cannot both be false
-- Exactly one must hold for any degree
-
-**Contraries** (e.g., "happy" / "unhappy"):
-- Cannot both be true BUT can both be false
-- Gap region where neither holds
-
-References:
-- @cite{cruse-1986}. Lexical Semantics.
-- @cite{horn-1989}. A Natural History of Negation.
-- @cite{tessler-franke-2019}. Not unreasonable.
--/
-inductive NegationType where
-  | contradictory
-  | contrary
-  deriving Repr, DecidableEq, BEq
+/-- Antonymy type: contradictory (no gap) vs contrary (gap).
+    Canonical definition in `Core.PropertyDomain`. -/
+abbrev NegationType := Core.NegationType
 
 -- Two-Threshold Model for Contrary Antonyms
 
@@ -146,6 +129,30 @@ def notContraryNegMeaning {max : Nat} (d : Degree max) (tp : ThresholdPair max) 
 
 /-- The relation between a positive form and its antonym. -/
 abbrev AntonymRelation := NegationType
+
+-- ════════════════════════════════════════════════════
+-- Informational Strength
+-- ════════════════════════════════════════════════════
+
+/--
+Informational strength of a gradable adjective within its scale.
+
+Weak adjectives (e.g., "large", "clean") occupy a broader region of the scale.
+Strong adjectives (e.g., "gigantic", "pristine") occupy a narrower, more
+extreme region.
+
+A strong adjective entails its weak counterpart on the same pole:
+"x is gigantic" ⟹ "x is large", but not vice versa.
+
+This distinction is orthogonal to scale structure (relative vs absolute)
+and polarity (positive vs negative).
+
+Source: @cite{alexandropoulou-gotzner-2024}, @cite{horn-1972}
+-/
+inductive InformationalStrength where
+  | weak    -- large, small, clean, dirty
+  | strong  -- gigantic, tiny, pristine, filthy
+  deriving Repr, DecidableEq, BEq
 
 -- ════════════════════════════════════════════════════
 -- Adjective Lexical Entry

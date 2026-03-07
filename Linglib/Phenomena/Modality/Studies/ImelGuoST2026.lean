@@ -6,11 +6,11 @@ import Linglib.Phenomena.Modality.GermanModals
 # Cross-Linguistic Modal Typology
 
 Empirical modal inventories from 27 languages (17 families) mapped to the
-2×3 force-flavor meaning space, following Imel, Guo, & @cite{imel-guo-steinert-threlkeld-2026}.
+3×3 force-flavor meaning space, following Imel, Guo, & @cite{imel-guo-steinert-threlkeld-2026}.
 
-## Mapping conventions (raw typological data → 2×3 grid)
+## Mapping conventions (raw typological data → 3×3 grid)
 
-* Force: weak → `.possibility`, strong → `.necessity`, weak necessity → `.necessity`
+* Force: weak → `.possibility`, strong → `.necessity`, weak necessity → `.weakNecessity`
 * Flavor: epistemic → `.epistemic`, deontic → `.deontic`,
   circumstantial → `.circumstantial`, teleological → `.circumstantial`
 * Bouletic, reportative, ability, intentional flavors are outside the 2×3 space
@@ -29,11 +29,14 @@ namespace Phenomena.Modality.Typology
 open Core.ModalLogic (ModalForce ModalFlavor ForceFlavor)
 open Semantics.Modality.Typology (ModalExpression ModalInventory satisfiesIFF)
 
-/-! ## Abbreviations for the six meaning points -/
+/-! ## Abbreviations for the nine meaning points -/
 
 private abbrev ne := ForceFlavor.mk .necessity .epistemic
 private abbrev nd := ForceFlavor.mk .necessity .deontic
 private abbrev nc := ForceFlavor.mk .necessity .circumstantial
+private abbrev nwe := ForceFlavor.mk .weakNecessity .epistemic
+private abbrev nwd := ForceFlavor.mk .weakNecessity .deontic
+private abbrev nwc := ForceFlavor.mk .weakNecessity .circumstantial
 private abbrev pe := ForceFlavor.mk .possibility .epistemic
 private abbrev pd := ForceFlavor.mk .possibility .deontic
 private abbrev pc := ForceFlavor.mk .possibility .circumstantial

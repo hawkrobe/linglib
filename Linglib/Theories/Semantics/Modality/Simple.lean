@@ -24,6 +24,7 @@ def Simple (R : World → World → Bool) : ModalTheory where
     let accessible := allWorlds'.filter (R w)
     match force with
     | .necessity => accessible.all p
+    | .weakNecessity => accessible.all p
     | .possibility => accessible.any p
 
 section AccessibilityRelations
@@ -123,10 +124,10 @@ end Duality
 
 section Examples
 
-#eval SimpleUniversal.eval .necessity raining .w0  -- false
-#eval SimpleUniversal.eval .possibility raining .w0  -- true
-#eval SimpleReflexive.eval .necessity raining .w0  -- true
-#eval SimpleReflexive.eval .necessity raining .w2  -- false
+#guard !SimpleUniversal.eval .necessity raining .w0
+#guard SimpleUniversal.eval .possibility raining .w0
+#guard SimpleReflexive.eval .necessity raining .w0
+#guard !SimpleReflexive.eval .necessity raining .w2
 
 /-- Consistency (□p -> ◇p) holds with universal accessibility. -/
 theorem simple_universal_consistent_raining :

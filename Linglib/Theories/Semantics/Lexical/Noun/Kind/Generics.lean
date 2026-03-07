@@ -284,17 +284,9 @@ def dogBarks : Scope := λ s =>
 def normalDogSituation : NormalcyPredicate := λ s =>
   s.id != 2  -- Sleeping is not "normal" for purposes of barking
 
--- "Dogs bark" is true under traditional GEN with appropriate normalcy
-#eval traditionalGEN dogSituations normalDogSituation isDogSituation dogBarks
--- true
-
--- Prevalence is 4/5 = 0.8
-#eval prevalence dogSituations isDogSituation dogBarks
--- 4/5
-
--- Threshold generic with θ = 0.5 also gives true
-#eval thresholdGeneric dogSituations isDogSituation dogBarks (1/2)
--- true
+#guard traditionalGEN dogSituations normalDogSituation isDogSituation dogBarks
+#guard prevalence dogSituations isDogSituation dogBarks == 4/5
+#guard thresholdGeneric dogSituations isDogSituation dogBarks (1/2)
 
 /-!
 ## Related Theory

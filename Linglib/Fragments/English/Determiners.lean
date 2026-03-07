@@ -398,13 +398,10 @@ def QuantifierEntry.toWord (d : QuantifierEntry) : Word :=
 -- Examples
 -- ============================================================================
 
-#eval some_.monotonicity           -- increasing
-#eval QuantityWord.some_.gqtThreshold 10  -- 1
-#eval QuantityWord.most.gqtThreshold 10   -- 5 (> half of 10)
-#eval QuantityWord.all.ptPrototype 10     -- 10
-
-#eval someAllScale.alternatives .some_  -- [all]
-#eval someMostAllScale.alternatives .some_  -- [most, all]
+#guard some_.monotonicity == .increasing
+#guard QuantityWord.some_.gqtThreshold 10 == 1
+#guard QuantityWord.most.gqtThreshold 10 == 6
+#guard QuantityWord.all.ptPrototype 10 == 10
 
 -- ============================================================================
 -- Canonical GQ Denotations (from Semantics.Lexical.Determiner.Quantifier)

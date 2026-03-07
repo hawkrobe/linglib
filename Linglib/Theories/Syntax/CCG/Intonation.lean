@@ -311,11 +311,6 @@ def fred_ate_phrase : ProsodicDeriv := .boundary fred_ate .LH_pct
 def the_beans : ProsodicDeriv := .fapp (.lex the_null) (.lex beans_H)
 def the_beans_phrase : ProsodicDeriv := .boundary the_beans .LL_pct
 
--- Check categories
-#eval fred_tr.prosodicCat        -- Sθ/(Sθ\NPθ)
-#eval fred_ate.prosodicCat       -- Sθ/NPθ (theme: "Fred ate _")
-#eval fred_ate_phrase.prosodicCat -- Sφ/NPφ
-
 -- Example: "(ANNA married) (MANNY)" from Steedman Ch. 5
 
 def anna_L : ProsodicLexEntry := ⟨"Anna", NP, .L_plus_H_star⟩

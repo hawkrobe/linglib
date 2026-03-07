@@ -21,9 +21,18 @@ open Core.Proposition (FiniteWorlds)
 
 /-! ## Operators -/
 
-/-- Modal force: necessity (□) or possibility (◇). -/
+/-- Modal force: necessity (□), weak necessity (□w), or possibility (◇).
+    @cite{von-fintel-iatridou-2008}, @cite{agha-jeretic-et-al-2026}.
+
+    Weak necessity ("ought", "should") is the same ∀ quantifier as strong
+    necessity but over a refined (smaller) set of best worlds. It sits
+    between □ and ◇ in strength: □φ → □wφ → ◇φ.
+
+    Weak necessity has no clean dual in this 3-point space: domain refinement
+    weakens ∀ but strengthens ∃ (§2.4 of @cite{agha-jeretic-et-al-2026}). -/
 inductive ModalForce where
   | necessity
+  | weakNecessity
   | possibility
   deriving DecidableEq, BEq, Repr, Inhabited
 
@@ -32,13 +41,17 @@ instance : LawfulBEq ModalForce where
   rfl {a} := by cases a <;> decide
 
 instance : ToString ModalForce where
-  toString | .necessity => "□" | .possibility => "◇"
+  toString | .necessity => "□" | .weakNecessity => "□w" | .possibility => "◇"
 
+/-- Classical dual: □ ↔ ◇. Weak necessity maps to possibility (no clean dual
+    exists in the 3-point space; this is the closest approximation). -/
 def ModalForce.dual : ModalForce → ModalForce
   | .necessity => .possibility
+  | .weakNecessity => .possibility
   | .possibility => .necessity
 
-@[simp] theorem ModalForce.dual_dual (f : ModalForce) : f.dual.dual = f := by cases f <;> rfl
+@[simp] theorem ModalForce.dual_dual_necessity : ModalForce.necessity.dual.dual = .necessity := rfl
+@[simp] theorem ModalForce.dual_dual_possibility : ModalForce.possibility.dual.dual = .possibility := rfl
 
 /-! ## Frames and Accessibility -/
 
@@ -53,6 +66,7 @@ def kripkeEval {W : Type*} [FiniteWorlds W] (R : AccessRel W) (force : ModalForc
   let accessible := FiniteWorlds.worlds.filter (R w)
   match force with
   | .necessity => accessible.all p
+  | .weakNecessity => accessible.all p  -- same ∀, different R in practice
   | .possibility => accessible.any p
 
 theorem duality {W : Type*} [FiniteWorlds W] (R : AccessRel W) (p : BProp W) (w : W) :
@@ -317,12 +331,13 @@ instance : ToString ModalFlavor where
 def ModalFlavor.all : List ModalFlavor := [.epistemic, .deontic, .circumstantial]
 
 /-- All modal forces. -/
-def ModalForce.all : List ModalForce := [.necessity, .possibility]
+def ModalForce.all : List ModalForce := [.necessity, .weakNecessity, .possibility]
 
 /-- A force-flavor pair: one point in the modal semantic space P.
-    |P| = |Force| × |Flavor| = 2 × 3 = 6.
+    |P| = |Force| × |Flavor| = 3 × 3 = 9.
 
-    Imel, Guo, & @cite{imel-guo-steinert-threlkeld-2026}: modal meanings are subsets of P. -/
+    Imel, Guo, & @cite{imel-guo-steinert-threlkeld-2026}: modal meanings are subsets of P.
+    Extended to 3×3 following @cite{agha-jeretic-et-al-2026}. -/
 structure ForceFlavor where
   force : ModalForce
   flavor : ModalFlavor
@@ -338,11 +353,11 @@ instance : LawfulBEq ForceFlavor where
 instance : ToString ForceFlavor where
   toString ff := s!"({ff.force},{ff.flavor})"
 
-/-- All six points in the modal semantic space. -/
+/-- All nine points in the modal semantic space. -/
 def ForceFlavor.universe : List ForceFlavor :=
   ModalForce.all.flatMap fun fo => ModalFlavor.all.map fun fl => ⟨fo, fl⟩
 
-theorem ForceFlavor.universe_length : ForceFlavor.universe.length = 6 := by native_decide
+theorem ForceFlavor.universe_length : ForceFlavor.universe.length = 9 := by native_decide
 
 /-- The Cartesian product of forces and flavors. Infrastructure for constructing
     modal meanings; no theoretical commitment (just list operations). -/
@@ -370,8 +385,7 @@ structure ModalItem where
   deriving Repr, BEq
 
 /-- Two modal items share force if at least one ForceFlavor pair in each
-    has the same force. This is the structural precondition for modal
-    concord. -/
+    has the same force (exact match). -/
 def ModalItem.sharesForce (a b : ModalItem) : Bool :=
   a.meaning.any fun ff1 => b.meaning.any fun ff2 => ff1.force == ff2.force
 
@@ -397,10 +411,42 @@ inductive ConcordType where
   | modalPossibility   -- ◇◇ → ◇ (possibility modal concord)
   deriving DecidableEq, BEq, Repr
 
-/-- Map modal force to the corresponding concord type. -/
+/-- Map modal force to the corresponding concord type.
+    Weak necessity patterns with necessity for concord purposes (both are ∀ quantifiers). -/
 def ConcordType.fromModalForce : ModalForce → ConcordType
-  | .necessity  => .modalNecessity
-  | .possibility => .modalPossibility
+  | .necessity     => .modalNecessity
+  | .weakNecessity => .modalNecessity
+  | .possibility   => .modalPossibility
+
+/-- Two modal items share concord-compatible force: both necessity and weak
+    necessity map to the same concord class (necessity-type). This is the
+    structural precondition for modal concord. -/
+def ModalItem.sharesConcordForce (a b : ModalItem) : Bool :=
+  a.meaning.any fun ff1 => b.meaning.any fun ff2 =>
+    ConcordType.fromModalForce ff1.force == ConcordType.fromModalForce ff2.force
+
+/-- Strength ordering on modal force: □ ≥ □w ≥ ◇.
+    `f₁.atLeastAsStrong f₂` iff an f₁-claim is at least as strong as an f₂-claim.
+    @cite{von-fintel-iatridou-2008}: must φ → ought φ → can φ. -/
+def ModalForce.atLeastAsStrong : ModalForce → ModalForce → Bool
+  | .necessity, _ => true
+  | .weakNecessity, .weakNecessity | .weakNecessity, .possibility => true
+  | .possibility, .possibility => true
+  | _, _ => false
+
+theorem ModalForce.atLeastAsStrong_refl (f : ModalForce) :
+    f.atLeastAsStrong f = true := by cases f <;> rfl
+
+theorem ModalForce.atLeastAsStrong_trans (f₁ f₂ f₃ : ModalForce)
+    (h₁ : f₁.atLeastAsStrong f₂ = true) (h₂ : f₂.atLeastAsStrong f₃ = true) :
+    f₁.atLeastAsStrong f₃ = true := by
+  cases f₁ <;> cases f₂ <;> cases f₃ <;> simp_all [atLeastAsStrong]
+
+theorem ModalForce.necessity_strongest (f : ModalForce) :
+    ModalForce.necessity.atLeastAsStrong f = true := by cases f <;> rfl
+
+theorem ModalForce.possibility_weakest (f : ModalForce) :
+    f.atLeastAsStrong .possibility = true := by cases f <;> rfl
 
 /-! ## Modal Decomposability
 

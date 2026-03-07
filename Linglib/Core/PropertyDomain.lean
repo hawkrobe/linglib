@@ -50,6 +50,33 @@ instance : DecidableEq Dimension :=
 instance : Inhabited Dimension := ⟨⟨"", .state⟩⟩
 
 -- ═══════════════════════════════════════════
+-- Antonymy Type
+-- ═══════════════════════════════════════════
+
+/--
+Types of antonymy for gradable adjective pairs.
+
+**Contradictories** (e.g., "clean" / "dirty"):
+- Cannot both be true AND cannot both be false
+- Negation of one entails the other: not clean ⟹ dirty
+- No extension gap between the two standards
+
+**Contraries** (e.g., "tall" / "short", "large" / "small"):
+- Cannot both be true BUT can both be false
+- Negation of one does NOT entail the other: not large ⟹/⟹ small
+- Extension gap between the two standards
+
+References:
+- @cite{cruse-1986}. Lexical Semantics.
+- @cite{horn-1989}. A Natural History of Negation.
+- @cite{kennedy-2007}. Vagueness and Grammar.
+-/
+inductive NegationType where
+  | contradictory
+  | contrary
+  deriving Repr, DecidableEq, BEq
+
+-- ═══════════════════════════════════════════
 -- Smart Constructors
 -- ═══════════════════════════════════════════
 
@@ -79,6 +106,9 @@ def Dimension.flatness : Dimension := ⟨"flatness", .state⟩
 def Dimension.openness : Dimension := ⟨"openness", .state⟩
 def Dimension.alive : Dimension := ⟨"alive", .state⟩
 def Dimension.pregnancy : Dimension := ⟨"pregnancy", .state⟩
+
+-- General size dimension (large/small/gigantic/tiny)
+def Dimension.generalSize : Dimension := ⟨"size", .size⟩
 
 -- Perceptual domain (for RSA noise connection)
 def Dimension.color : Dimension := ⟨"color", .color⟩

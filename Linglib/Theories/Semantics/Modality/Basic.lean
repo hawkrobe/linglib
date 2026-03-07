@@ -50,6 +50,10 @@ def ModalTheory.necessity (T : ModalTheory) (p : Proposition) (w : World) : Bool
 def ModalTheory.possibility (T : ModalTheory) (p : Proposition) (w : World) : Bool :=
   T.eval .possibility p w
 
+/-- Weak necessity operator: □wφ is true at w. -/
+def ModalTheory.weakNecessity (T : ModalTheory) (p : Proposition) (w : World) : Bool :=
+  T.eval .weakNecessity p w
+
 /-- Consistency check: □p -> ◇p. -/
 def ModalTheory.necessityEntailsPossibility (T : ModalTheory) (p : Proposition) (w : World) : Bool :=
   !T.necessity p w || T.possibility p w

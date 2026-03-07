@@ -138,8 +138,7 @@ def johnSmokesActivity : Activity := λ t =>
 def normalOccasions : Characteristic := λ t =>
   t.id ∈ [0, 1, 2, 3, 4, 5, 6, 7]
 
-#eval frequency occasions johnSmokesActivity
-#eval thresholdHabitual occasions johnSmokesActivity (1/2)
+#guard thresholdHabitual occasions johnSmokesActivity (1/2)
 
 /-- Unified structure for GEN/HAB elimination. -/
 structure ThresholdQuantifier where

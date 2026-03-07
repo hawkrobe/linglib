@@ -340,36 +340,8 @@ def pronounCoreferenceBlocked (ws : List Word) : Bool :=
   | none => false
   | some _ => true  -- Always blocked locally under CRDC
 
--- ============================================================================
--- Part 10: Tests
--- ============================================================================
-
--- reflexiveCoreferenceData pairs:
-#eval reflexiveLicensedInSentence [john, sees, himself]     -- true
-#eval grammaticalForCoreference [himself, sees, john]       -- false
-
-#eval reflexiveLicensedInSentence [mary, sees, herself]     -- true
-#eval grammaticalForCoreference [herself, sees, mary]       -- false
-
-#eval reflexiveLicensedInSentence [they, see, themselves]   -- true
-#eval grammaticalForCoreference [themselves, see, them]     -- false
-
--- Agreement violations:
-#eval reflexiveLicensedInSentence [john, sees, herself]     -- false (gender)
-#eval reflexiveLicensedInSentence [they, see, himself]      -- false (number)
-
--- Reciprocal coreference: requires plural antecedent
-#guard grammaticalForCoreference [they, see, eachOther]
-#guard !grammaticalForCoreference [eachOther, see, them]
-#guard !grammaticalForCoreference [john, sees, eachOther]
-
--- Pronoun coreference blocked:
-#eval pronounCoreferenceBlocked [john, sees, him]           -- true
-#eval pronounCoreferenceBlocked [mary, sees, her]           -- true
-
--- Phenomenon data verification (capturesCoreferenceData, reflexiveCoreferenceData,
--- complementaryDistributionData, pronominalDisjointReferenceData) is in the bridge
--- file: Phenomena.Anaphora.DG_CRDCBridge.lean
+-- Binding theory tests are verified by native_decide theorems in
+-- Phenomena.Anaphora.Studies.OsborneLi2023
 
 -- ============================================================================
 -- Part 13: CoreferenceTheory Interface Implementation

@@ -32,7 +32,9 @@ def divergingWorlds (T₁ T₂ : ModalTheory) (f : ModalForce) (p : Proposition)
 
 /-- Do two theories agree on all modal forces for proposition `p`? -/
 def theoriesAgreeOnProposition (T₁ T₂ : ModalTheory) (p : Proposition) : Bool :=
-  theoriesAgreeOn T₁ T₂ .necessity p && theoriesAgreeOn T₁ T₂ .possibility p
+  theoriesAgreeOn T₁ T₂ .necessity p &&
+  theoriesAgreeOn T₁ T₂ .weakNecessity p &&
+  theoriesAgreeOn T₁ T₂ .possibility p
 
 end ComparisonFunctions
 

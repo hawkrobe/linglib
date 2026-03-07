@@ -133,24 +133,23 @@ open ToyLexicon
 def everyStudentSleeps : toyModel.interpTy .t :=
   every_sem toyModel student_sem sleeps_sem
 
-#eval everyStudentSleeps  -- false
+#guard !everyStudentSleeps
 
 def someStudentSleeps : toyModel.interpTy .t :=
   some_sem toyModel student_sem sleeps_sem
 
-#eval someStudentSleeps  -- true
+#guard someStudentSleeps
 
 def noStudentSleeps : toyModel.interpTy .t :=
   no_sem toyModel student_sem sleeps_sem
 
-#eval noStudentSleeps  -- false
+#guard !noStudentSleeps
 
 def everyStudentLaughs : toyModel.interpTy .t :=
   every_sem toyModel student_sem laughs_sem
 
-#eval everyStudentLaughs  -- true
-
-#eval some_sem toyModel student_sem laughs_sem  -- true
+#guard everyStudentLaughs
+#guard some_sem toyModel student_sem laughs_sem
 
 def everyPersonSleeps : toyModel.interpTy .t :=
   every_sem toyModel person_sem sleeps_sem
@@ -158,8 +157,8 @@ def everyPersonSleeps : toyModel.interpTy .t :=
 def somePersonSleeps : toyModel.interpTy .t :=
   some_sem toyModel person_sem sleeps_sem
 
-#eval everyPersonSleeps  -- false
-#eval somePersonSleeps   -- true
+#guard !everyPersonSleeps
+#guard somePersonSleeps
 
 end Examples
 
