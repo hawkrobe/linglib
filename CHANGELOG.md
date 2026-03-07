@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.228.86] - 2026-03-07
+
+### Added
+- **Kriz2016.lean**: Add `isHomogeneous` (Definition 2), `all_not_homogeneous`, `bare_plural_homogeneous`, `all_exceptions_unmentionable` (§4.1), `bare_profs_homogeneous`, `smith_exception_unmentionable`; import and bridge to `Homogeneity.lean` (Section 9: `all_is_homogeneity_remover`, `homogeneous_gap_yields_neither`, `all_gap_yields_false`, `switches_gap_is_neither`, `switches_all_on_clearly_true`)
+
+### Changed
+- **Kriz2016.lean**: Rename `halfSmiled` → `onlyLeeSmiled`, make `smiled` function fully explicit (no catch-all patterns)
+
 ## [0.228.85] - 2026-03-07
 
 ### Added

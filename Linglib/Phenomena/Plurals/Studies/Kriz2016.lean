@@ -1,6 +1,7 @@
 import Linglib.Theories.Semantics.Lexical.Plural.Distributivity
 import Linglib.Core.Semantics.Kleene
 import Linglib.Phenomena.Plurals.NonMaximality
+import Linglib.Phenomena.Plurals.Homogeneity
 
 /-!
 # Križ (2016): Homogeneity, Non-Maximality, and All
@@ -28,6 +29,7 @@ to exploit.
 ## Key Definitions
 
 - **Positive/negative extension**: ⟦S⟧⁺ = {w | S true at w}, ⟦S⟧⁻ = {w | S false at w}
+- **Homogeneous sentence**: ⟦S⟧⁺ ∪ ⟦S⟧⁻ ≠ W (the gap is non-empty)
 - **Sufficient Truth**: S is "true enough" at w wrt issue I iff ∃w' ∈ ⟦S⟧⁺ s.t. w ≈_I w'
 - **Addressing an Issue**: S may address I only if no cell overlaps both ⟦S⟧⁺ and ⟦S⟧⁻
 - **Communicated Content**: the set of worlds indistinguishable (under I) from ⟦S⟧⁺
@@ -81,6 +83,11 @@ theorem posExt_negExt_disjoint (S : SentenceTV W) :
     Set.mem_empty_iff_false]
   exact ⟨λ ⟨h₁, h₂⟩ => by rw [h₁] at h₂; exact absurd h₂ (by decide), False.elim⟩
 
+/-- A sentence is homogeneous if its extension gap is non-empty (Definition 2).
+Homogeneity is the source of non-maximal readings: the gap creates worlds
+that are neither true nor false, which the pragmatic mechanism can exploit. -/
+def isHomogeneous (S : SentenceTV W) : Prop := gapExt S ≠ ∅
+
 -- ============================================================================
 -- Section 2: Plural Predication as Sentence Extension
 -- ============================================================================
@@ -101,6 +108,23 @@ theorem all_no_gap (P : Atom → W → Bool) (x : Finset Atom) :
   ext w; simp only [gapExt, allPluralTV, Set.mem_setOf_eq, Set.mem_empty_iff_false,
     iff_false]
   split <;> simp
+
+omit [DecidableEq Atom] in
+/-- `all` removes homogeneity: the `all`-sentence is never homogeneous.
+Corresponds to `HomogeneityRemover.all` in `Homogeneity.lean`. -/
+theorem all_not_homogeneous (P : Atom → W → Bool) (x : Finset Atom) :
+    ¬isHomogeneous (allPluralTV P x) :=
+  fun h => h (all_no_gap P x)
+
+omit [DecidableEq Atom] in
+/-- A bare plural is homogeneous whenever a gap-world exists: the existence
+of a world where some-but-not-all atoms satisfy P makes the sentence
+homogeneous, enabling non-maximal readings via Sufficient Truth. -/
+theorem bare_plural_homogeneous (P : Atom → W → Bool) (x : Finset Atom)
+    (w : W) (hGap : barePluralTV P x w = .gap) :
+    isHomogeneous (barePluralTV P x) := by
+  intro h; rw [Set.eq_empty_iff_forall_notMem] at h
+  exact h w hGap
 
 /-- Positive extensions agree: bare plural and `all`-sentence are true
 in the same worlds. -/
@@ -205,6 +229,18 @@ theorem all_prevents_nonmax (q : QUD W) (P : Atom → W → Bool) (x : Finset At
   cases h_eq : allSatisfy P x w with
   | true => rfl
   | false => exact absurd (show allPluralTV P x w = .false by simp [allPluralTV, h_eq]) h.1
+
+omit [DecidableEq Atom] in
+/-- Unmentionability of exceptions (§4.1): if the `all`-sentence is usable
+at w, there are no exceptions to mention. "#Although all the professors
+smiled, Smith didn't" is contradictory — `all` forces literal truth, so any
+exception makes the sentence false, and false sentences cannot be used. -/
+theorem all_exceptions_unmentionable (q : QUD W) (P : Atom → W → Bool)
+    (x : Finset Atom) (w : W) (a : Atom) (ha : a ∈ x)
+    (h : usable q (allPluralTV P x) w) : P a w = true := by
+  have := all_prevents_nonmax q P x w h
+  simp only [allSatisfy, decide_eq_true_eq] at this
+  exact this a ha
 
 -- ============================================================================
 -- Section 5: Communicated Content
@@ -350,7 +386,7 @@ Three professors attend Sue's talk; the predicate is "smiled."
 |----------------|-------|-------|-----|-------------|-------|
 | allSmiled      | ✓     | ✓     | ✓   | TRUE        | true  |
 | smithNeutral   | ✗     | ✓     | ✓   | GAP         | false |
-| halfSmiled     | ✗     | ✗     | ✓   | GAP         | false |
+| onlyLeeSmiled  | ✗     | ✗     | ✓   | GAP         | false |
 | noneSmiled     | ✗     | ✗     | ✗   | FALSE       | false |
 
 Two QUDs:
@@ -366,7 +402,7 @@ Predictions:
 section FiniteModel
 
 inductive ProfWorld where
-  | allSmiled | smithNeutral | halfSmiled | noneSmiled
+  | allSmiled | smithNeutral | onlyLeeSmiled | noneSmiled
   deriving DecidableEq, Repr
 
 inductive Prof where
@@ -374,7 +410,7 @@ inductive Prof where
   deriving DecidableEq, Repr
 
 instance : Fintype ProfWorld where
-  elems := {.allSmiled, .smithNeutral, .halfSmiled, .noneSmiled}
+  elems := {.allSmiled, .smithNeutral, .onlyLeeSmiled, .noneSmiled}
   complete := by intro x; cases x <;> simp
 
 instance : Fintype Prof where
@@ -383,12 +419,18 @@ instance : Fintype Prof where
 
 /-- Did this professor smile in this world? -/
 def smiled : Prof → ProfWorld → Bool
-  | _, .allSmiled => true
-  | _, .noneSmiled => false
-  | .smith, _ => false
-  | .jones, .smithNeutral => true
-  | .jones, .halfSmiled => false
-  | .lee, _ => true
+  | .smith, .allSmiled      => true
+  | .smith, .smithNeutral   => false
+  | .smith, .onlyLeeSmiled  => false
+  | .smith, .noneSmiled     => false
+  | .jones, .allSmiled      => true
+  | .jones, .smithNeutral   => true
+  | .jones, .onlyLeeSmiled  => false
+  | .jones, .noneSmiled     => false
+  | .lee,   .allSmiled      => true
+  | .lee,   .smithNeutral   => true
+  | .lee,   .onlyLeeSmiled  => true
+  | .lee,   .noneSmiled     => false
 
 /-- All three professors. -/
 def profs : Finset Prof := Finset.univ
@@ -400,7 +442,7 @@ inductive Reception where | positive | mixed | negative
 def receptionGrade : ProfWorld → Reception
   | .allSmiled => .positive
   | .smithNeutral => .positive
-  | .halfSmiled => .mixed
+  | .onlyLeeSmiled => .mixed
   | .noneSmiled => .negative
 
 /-- Coarse QUD: "Was Sue's talk well-received?"
@@ -419,11 +461,17 @@ theorem bare_allSmiled :
 theorem bare_smithNeutral :
     barePluralTV smiled profs .smithNeutral = .gap := by native_decide
 
-theorem bare_halfSmiled :
-    barePluralTV smiled profs .halfSmiled = .gap := by native_decide
+theorem bare_onlyLeeSmiled :
+    barePluralTV smiled profs .onlyLeeSmiled = .gap := by native_decide
 
 theorem bare_noneSmiled :
     barePluralTV smiled profs .noneSmiled = .false := by native_decide
+
+/-- The bare plural sentence about the professors IS homogeneous —
+smithNeutral is in the extension gap. -/
+theorem bare_profs_homogeneous :
+    isHomogeneous (barePluralTV smiled profs) :=
+  bare_plural_homogeneous smiled profs .smithNeutral (by native_decide)
 
 -- End-to-end predictions
 
@@ -458,6 +506,14 @@ theorem all_not_usable_smithNeutral (q : QUD ProfWorld)
   have := all_prevents_nonmax q smiled profs .smithNeutral h
   revert this; native_decide
 
+/-- Concrete instance of `all_exceptions_unmentionable`: Smith's exception
+cannot be mentioned because Smith did smile in every world where the
+`all`-sentence is usable. -/
+theorem smith_exception_unmentionable (q : QUD ProfWorld) (w : ProfWorld)
+    (h : usable q (allPluralTV smiled profs) w) :
+    smiled .smith w = true :=
+  all_exceptions_unmentionable q smiled profs w .smith (by simp [profs]) h
+
 /-- Communicated content under the coarse QUD includes the gap-world
 smithNeutral — the non-maximal reading is communicated. -/
 theorem coarse_communicates_gap :
@@ -475,7 +531,7 @@ theorem fine_does_not_communicate_gap :
 end FiniteModel
 
 -- ============================================================================
--- Section 8: Connection to Empirical Data
+-- Section 8: Connection to Empirical Data (NonMaximality.lean)
 -- ============================================================================
 
 /-! The finite model captures the same pattern as the theory-neutral data
@@ -508,5 +564,44 @@ open Phenomena.Plurals.NonMaximality in
 which is the precondition for non-maximal readings. -/
 theorem coarse_issue_irrelevant :
     switchesNonMaximality.nonMaximalContext.allSomeDistinctionRelevant = false := rfl
+
+-- ============================================================================
+-- Section 9: Connection to Homogeneity Data (Homogeneity.lean)
+-- ============================================================================
+
+/-! Bridge to the theory-neutral homogeneity data in `Homogeneity.lean`.
+The data records `all` as a homogeneity remover and specifies that gap
+scenarios yield `.neitherTrueNorFalse` for homogeneous sentences but
+`.clearlyFalse` for `all`-sentences. The structural theorems `all_no_gap`
+and `all_not_homogeneous` prove this mechanism, and the finite model
+demonstrates it concretely via `bare_profs_homogeneous`. -/
+
+open Phenomena.Plurals.Homogeneity in
+/-- The homogeneity data lists `all` as a remover. -/
+theorem all_is_homogeneity_remover :
+    allRemovesHomogeneity.remover = .all := rfl
+
+open Phenomena.Plurals.Homogeneity in
+/-- Gap scenarios yield `.neitherTrueNorFalse` for homogeneous sentences:
+the signature of the extension gap that enables non-maximal readings. -/
+theorem homogeneous_gap_yields_neither :
+    allRemovesHomogeneity.homogeneousJudgment = .neitherTrueNorFalse := rfl
+
+open Phenomena.Plurals.Homogeneity in
+/-- Adding `all` makes the gap-scenario sentence clearly false — the gap
+is absorbed into the negative extension. -/
+theorem all_gap_yields_false :
+    allRemovesHomogeneity.preciseJudgment = .clearlyFalse := rfl
+
+open Phenomena.Plurals.Homogeneity in
+/-- The switches datum records homogeneity in the gap: positive sentence
+is neither true nor false when some-but-not-all switches are on. -/
+theorem switches_gap_is_neither :
+    switchesExample.positiveInGap = .neitherTrueNorFalse := rfl
+
+open Phenomena.Plurals.Homogeneity in
+/-- Outside the gap, judgments are clear: all switches on → clearly true. -/
+theorem switches_all_on_clearly_true :
+    switchesExample.positiveInAll = .clearlyTrue := rfl
 
 end Phenomena.Plurals.Studies.Kriz2016
