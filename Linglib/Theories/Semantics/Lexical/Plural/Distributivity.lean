@@ -24,6 +24,7 @@ This parallels how QUDs partition propositions in `Core/QUD.lean`.
 import Mathlib.Data.Finset.Basic
 import Mathlib.Data.Finset.Powerset
 import Linglib.Core.Discourse.QUD
+import Linglib.Core.Semantics.Kleene
 
 namespace Semantics.Lexical.Plural.Distributivity
 
@@ -762,5 +763,34 @@ def classifyOperator (forcesDistributivity : Bool) (usesTolerance : Bool)
   | true, true => .distNonMax
   | false, false => .nonDistMax
   | false, true => .nonDistNonMax
+
+-- Bridge: TruthValue ↔ Core.Kleene.TVal
+
+section TruthValueBridge
+
+open Core.Kleene
+
+/-- Convert plural TruthValue to general trivalent TVal. -/
+def TruthValue.toTVal : TruthValue → TVal
+  | .true => TVal.tt
+  | .false => TVal.ff
+  | .gap => TVal.unk
+
+/-- Convert general TVal to plural TruthValue. -/
+def TruthValue.ofTVal : TVal → TruthValue
+  | some Bool.true => .true
+  | some Bool.false => .false
+  | none => .gap
+
+instance : Coe TruthValue TVal where
+  coe := TruthValue.toTVal
+
+@[simp] theorem TruthValue.ofTVal_toTVal : ∀ v : TruthValue, ofTVal v.toTVal = v
+  | .true => rfl | .false => rfl | .gap => rfl
+
+@[simp] theorem TruthValue.toTVal_ofTVal : ∀ v : TVal, (TruthValue.ofTVal v).toTVal = v
+  | some Bool.true => rfl | some Bool.false => rfl | none => rfl
+
+end TruthValueBridge
 
 end Semantics.Lexical.Plural.Distributivity

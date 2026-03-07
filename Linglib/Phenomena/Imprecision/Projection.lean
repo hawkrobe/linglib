@@ -257,7 +257,7 @@ def exactlyOneTruthConditions : EmbeddedTruthConditions :=
 /--
 Plurals in restrictor vs nuclear scope behave differently.
 
-Source: @cite{mayr-sudo-2022}, Križ (2015)
+Source: @cite{kriz-2016}
 -/
 structure RestrictorScopeDatum where
   /-- Sentence -/

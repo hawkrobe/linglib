@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.228.85] - 2026-03-07
+
+### Added
+- **Kriz2016.lean**: Formalize Križ 2016 "Homogeneity, Non-Maximality, and All" — Sufficient Truth, Addressing, communicated content, `all_prevents_nonmax`, bivalent-communicated-eq-posExt bridge theorem, and concrete 4-world finite model with end-to-end usability proofs
+- **Distributivity.lean**: TruthValue ↔ Core.Kleene.TVal bridge (Coe instance, roundtrip simp lemmas)
+
+### Changed
+- Rename `all_negExt_superset` → `all_negExt_eq` (was proving equality, not superset)
+- Replace hallucinated `mayr-sudo-2022` bib entry with verified `kriz-2016`
+- Fix `Projection.lean` citation from fabricated `@cite{mayr-sudo-2022}` to `@cite{kriz-2016}`
+
 ## [0.228.84] - 2026-03-06
 
 ### Added

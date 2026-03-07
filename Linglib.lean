@@ -755,6 +755,7 @@ import Linglib.Phenomena.Plurals.Studies.Champollion2017
 import Linglib.Phenomena.Plurals.Multiplicity
 import Linglib.Phenomena.Plurals.Studies.TieuEtAl2020
 import Linglib.Phenomena.Plurals.Studies.TieuKrizChemla2019
+import Linglib.Phenomena.Plurals.Studies.Kriz2016
 import Linglib.Phenomena.Polarity.Basic
 import Linglib.Phenomena.Polarity.DisjunctionIgnorance
 import Linglib.Phenomena.Polarity.Exceptives
@@ -1397,7 +1398,6 @@ import Linglib.Theories.Pragmatics.RSA.Extensions.LexicalUncertainty.Basic
 import Linglib.Theories.Pragmatics.RSA.Extensions.LexicalUncertainty.Compositional
 import Linglib.Theories.Pragmatics.RSA.Implementations.BellerGerstenberg2025
 import Linglib.Theories.Pragmatics.RSA.Implementations.BergenGoodman2015
-import Linglib.Theories.Pragmatics.RSA.Implementations.CremersWilcoxSpector2023
 import Linglib.Theories.Pragmatics.RSA.Implementations.CumminsFranke2021
 import Linglib.Theories.Pragmatics.RSA.Implementations.EgreEtAl2023
 import Linglib.Theories.Pragmatics.RSA.Implementations.Franke2011
