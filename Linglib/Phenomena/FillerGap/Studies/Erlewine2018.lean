@@ -190,7 +190,7 @@ theorem predicate_fronting_yields_vi_order :
 /-! ## vP-to-Spec,CP analysis
 
 @cite{erlewine-2018}'s analysis differs structurally from @cite{cole-hermon-2008}:
-- Cole & Hermon: VP → Spec,TP (5 steps: 4 EM + 1 IM)
+- @cite{cole-hermon-2008}: VP → Spec,TP (5 steps: 4 EM + 1 IM)
 - Erlewine: Subj → Spec,TP **then** vP → Spec,CP (7 steps: 5 EM + 2 IM)
 
 Both derive the same VOS surface order, but the derived tree is structurally
@@ -248,7 +248,7 @@ theorem cole_erlewine_agree_on_order :
   native_decide
 
 /-- Erlewine has TWO movements (Subj → Spec,TP + vP → Spec,CP) vs
-    Cole & Hermon's ONE (VP → Spec,TP). -/
+    @cite{cole-hermon-2008}'s ONE (VP → Spec,TP). -/
 theorem erlewine_two_movements :
     erlewineDerivation.movedItems.length = 2 := by native_decide
 
@@ -259,7 +259,7 @@ theorem different_derived_structure :
 /-- Fronted vP c-commands the subject in Erlewine's derived tree.
 
     The fronted vP is in Spec,CP; its sister C' dominates the subject in
-    Spec,TP. This yields the same binding prediction as Cole & Hermon's
+    Spec,TP. This yields the same binding prediction as @cite{cole-hermon-2008}'s
     VP-in-Spec,TP analysis: the predicate phrase c-commands the subject. -/
 theorem vP_ccommands_subject_erlewine :
     cCommandsIn erlewineDerivation.final vP_traced n_dakdanakan := by

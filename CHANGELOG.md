@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.228.75] - 2026-03-06
+
+### Fixed
+- **ColeHermon2008.lean**: Fix hallucinated backward-binding docstring (paper shows DO *cannot* bind subject, Table 1 Type C); correct module docstring to describe the paper's three arguments (word order, extraction, binding); document simplification vs. the paper's full VoiceP analysis
+- **Erlewine2018.lean**: Fix 3 raw inline citations → `@cite{cole-hermon-2008}`
+- **references.bib**: Add DOI for Cole & Hermon (2008)
+
+### Added
+- **ColeHermon2008.lean**: Extraction restriction predictions (§7: object frozen inside fronted VP, subject stranded outside), binding asymmetries from Table 1 (§8: 4 binding datums with acceptability types), integration bridges to `Fragments.TobaBatak` extraction profile (§9)
+- **Basic.lean**: Centralize `cCommandsInB` (Boolean c-command check) alongside `containsB`, removing local private definition from ColeHermon2008
+
 ## [0.228.74] - 2026-03-06
 
 ### Changed

@@ -499,6 +499,21 @@ def cCommandsIn (root x y : SyntacticObject) : Prop :=
 def asymCCommandsIn (root x y : SyntacticObject) : Prop :=
   cCommandsIn root x y ∧ ¬cCommandsIn root y x
 
+-- Part 5d: Boolean C-command (for decidability)
+
+/-- Boolean c-command check: does `x` c-command `y` in tree `root`?
+
+    Searches all subterms of `root` for a parent node whose children
+    include `x` and some sibling `z` where `z` equals or contains `y`.
+    Mirrors `cCommandsIn` but is decidable by computation. -/
+def cCommandsInB (root x y : SyntacticObject) : Bool :=
+  (subterms root).any λ parent =>
+    match parent with
+    | .node a b =>
+      (a == x && x != y && (b == y || containsB b y)) ||
+      (b == x && x != y && (a == y || containsB a y))
+    | .leaf _ => false
+
 /-! ## Tree Shape — abstract geometry ignoring terminal labels -/
 
 /-- Abstract tree geometry: the shape of a `SyntacticObject` with all
