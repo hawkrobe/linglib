@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.228.71] - 2026-03-06
+
+### Added
+- **AghaJeretic2022 study file**: Formalize Agha & Jeretič (2022) "Weak Necessity Modals as Homogeneous Pluralities of Worlds" (SALT 32) — trivalent `shouldEval` using `Core.Kleene.TVal`, homogeneity data for modals vs plural definites, homogeneity removal by *necessarily*, QUD-sensitive exception tolerance, X operator deriving `should` from `must`, 7 cross-linguistic morphological patterns, critique of domain restriction, scopelessness data, indeterminate response patterns, 5-property parallel summary
+
+### Changed
+- **references.bib**: Upgrade `agha-jeretic-2022` from `role = cited` to `role = formalized`, add pages and new sources path
+
 ## [0.228.70] - 2026-03-06
 
 ### Added

@@ -711,6 +711,7 @@ import Linglib.Phenomena.Modality.Studies.FreeChoiceFarsi
 import Linglib.Phenomena.Modality.Studies.Khoo2015
 import Linglib.Phenomena.Modality.Typology
 import Linglib.Phenomena.Modality.Studies.ImelGuoST2026
+import Linglib.Phenomena.Modality.Studies.AghaJeretic2022
 import Linglib.Phenomena.Modality.Studies.AghaJeretic2026
 import Linglib.Phenomena.Modality.Studies.HerbstrittFranke2019
 import Linglib.Theories.Semantics.Dynamic.Systems.BSML.Basic
@@ -1134,7 +1135,7 @@ import Linglib.Theories.Semantics.Degree.Granularity
 import Linglib.Theories.Semantics.Lexical.Adjective.Intensification
 import Linglib.Theories.Semantics.Lexical.Adjective.Theory
 import Linglib.Theories.Semantics.Reference.Binding
-import Linglib.Theories.Semantics.Reference.MinimalPronoun
+import Linglib.Theories.Syntax.Minimalism.MinimalPronoun
 import Linglib.Theories.Semantics.Montague.Basic
 import Linglib.Theories.Semantics.Montague.Composition
 import Linglib.Theories.Semantics.Montague.Conjunction
