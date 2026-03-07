@@ -1,5 +1,5 @@
 import Linglib.Core.Lexical.Word
-import Linglib.Core.Narrog.DeonticNecessity
+import Linglib.Core.Modality.DeonticNecessity
 import Linglib.Core.WALS.Features.F74A
 import Linglib.Core.WALS.Features.F75A
 import Linglib.Core.WALS.Features.F76A
@@ -1177,13 +1177,13 @@ only 62 of 200 languages (31%) grammaticalize it. See
 `Rubinstein2014.lean` for the full typological data and implications
 for the comparative analysis of weak necessity.
 
-Data imported from `Core.Narrog.DeonticNecessity`. -/
+Data imported from `Core.Modality.DeonticNecessity`. -/
 
-open Core.Narrog.DeonticNecessity in
+open Core.Modality.DeonticNecessity in
 /-- Only 62 of 200 languages grammaticalize weak deontic necessity (31%). -/
 theorem weak_deontic_rarity : countOf .weak = 62 := by native_decide
 
-open Core.Narrog.DeonticNecessity in
+open Core.Modality.DeonticNecessity in
 /-- Strong deontic necessity (60 languages) is slightly less common than
     weak (62), showing that the strong/weak split itself is not universal. -/
 theorem strong_deontic_count : countOf .strong = 60 := by native_decide

@@ -1,4 +1,4 @@
-import Linglib.Core.Narrog.DeonticNecessity
+import Linglib.Core.Modality.DeonticNecessity
 import Linglib.Theories.Semantics.Modality.Kratzer
 import Linglib.Theories.Semantics.Modality.Directive
 import Linglib.Fragments.English.FunctionWords
@@ -596,9 +596,9 @@ casts doubt on the universality of weak necessity as a grammatical category,
 and supports Rubinstein's claim that it surfaces through evaluative
 comparison when dedicated grammatical means are absent.
 
-Data imported from `Core.Narrog.DeonticNecessity`. -/
+Data imported from `Core.Modality.DeonticNecessity`. -/
 
-open Core.Narrog.DeonticNecessity in
+open Core.Modality.DeonticNecessity in
 /-- Only 62 of 200 surveyed languages grammaticalize weak deontic necessity.
     The total exceeds 200 because some languages have modals of multiple types. -/
 theorem weak_rarity : countOf .weak = 62 := by native_decide

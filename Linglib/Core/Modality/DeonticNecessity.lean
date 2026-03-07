@@ -27,7 +27,7 @@ diverse sample of 200 languages (@cite{narrog-2010} appendix;
   only aggregate counts are available.
 -/
 
-namespace Core.Narrog.DeonticNecessity
+namespace Core.Modality.DeonticNecessity
 
 -- ============================================================================
 -- §1. Deontic Necessity Type Classification
@@ -137,4 +137,8 @@ theorem neutral_count : countOf .neutral = 22 := by native_decide
 /-- Indeterminate: 32 languages. -/
 theorem indeterminate_count : countOf .indeterminate = 32 := by native_decide
 
-end Core.Narrog.DeonticNecessity
+/-- POT markers are more common than NEC markers cross-linguistically.
+    @cite{narrog-2010} p. 406: 156 vs 131. -/
+theorem pot_more_common_than_nec : languagesWithPot > languagesWithNec := by native_decide
+
+end Core.Modality.DeonticNecessity

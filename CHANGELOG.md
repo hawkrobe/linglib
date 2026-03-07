@@ -1,5 +1,48 @@
 # Changelog
 
+## [0.228.93] - 2026-03-07
+
+### Fixed
+- **Narrog.lean**: Fix change #3 target volitivity (was `.nonVolitive`, should be `.volitive` per Narrog p. 397: "changes #1 through #3, go ... from non-volitive to volitive")
+- **Narrog.lean**: Rename `ModalFlavor.volitivity` to `toVolitivity` (dot notation on external type doesn't resolve across namespaces)
+
+### Added
+- **Narrog.lean**: Add `nonvolitive_to_volitive_changes` theorem (3 changes go nonVolitive→volitive, the paper's "unexpected" direction)
+- **Narrog.lean**: Add `directionality_via_subjectivity` end-to-end theorem (speaker-orientation directionality holds through the SubjectivityLevel bridge)
+- **DeonticNecessity.lean**: Add `pot_more_common_than_nec` theorem (POT markers > NEC markers, Narrog p. 406)
+- **Narrog2010.lean**: Add `abbreviated_total` theorem (verify 35+13+4=52 for abbreviated form)
+- **YoonEtAl2020.lean**: Add `socialGoalSubjectivityLevel` bridge connecting RSA social utility to `SubjectivityLevel.intersubjective`
+- **references.bib**: Add `traugott-dasher-2002` (Regularity in Semantic Change, CUP) and `traugott-2010` ((Inter)subjectivity and (inter)subjectification: A reassessment)
+
+## [0.228.92] - 2026-03-07
+
+### Added
+- **Narrog.lean**: Add `Performativity` type (performative vs descriptive), `NarrogPosition` 3D space (volitivity × orientation × performativity), derived `isFaceThreatening`, canonical positions (`strongObligation`, `weakObligation`, `epistemicAssessment`, etc.)
+- **Narrog.lean**: Add `NarrogRegion.toModalFlavor` bridge (Narrog map → Kratzer flavor classification), `toModalFlavor_consistent_volitivity` and `modalFlavor_roundtrip` theorems
+- **Narrog.lean**: Add `performativity_invisible_to_traugott` theorem formalizing Narrog (2012)'s critique of Traugott's subjectivity cline
+- **Narrog2010.lean**: Add `toNarrogPosition` mapping deontic necessity types to 3D positions, `face_threat_from_performativity` theorem deriving the strong/weak asymmetry from performativity alone, `face_threat_predicts_avoidance` connecting face-threat to Japanese 2nd-person avoidance
+
+### Changed
+- **Core/Narrog/ → Core/Modality/**: Rename `Core.Narrog.DeonticNecessity` → `Core.Modality.DeonticNecessity` (content-based naming, not author-based)
+- **Core/ModalIndefinite.lean → Core/Modality/ModalIndefinite.lean**: Consolidate modality infrastructure under `Core/Modality/`
+- **Narrog2010.lean**: Replace stipulated `FaceThreatLevel` with face-threat derived from `NarrogPosition.isFaceThreatening` — face-threat now follows from the 3D semantic position, not from a per-type mapping
+- **Narrog.lean**: Fix `toSubjectivityLevel` docstring to note Narrog (2012)'s critique of Traugott's cline as oversimplification
+
+## [0.228.91] - 2026-03-07
+
+### Changed
+- **Nouwen2024RSA.lean**: Fix journal name (was "Linguistics and Philosophy", correct: "Semantics and Pragmatics"); fix model description (simultaneous, not sequential); fix stale figure references
+- **Nouwen2024RSA.lean**: Add bridge theorems (`meaning_grounded_horribly`, `meaning_grounded_pleasantly`) proving local ℕ-valued measures agree with theory-layer `Intensification.intensifiedMeaning` for all inputs
+- **Nouwen2024RSA.lean**: Rewrite `muUsual` as proper `EvaluativeMeasure 10` structure tied to theory layer
+- **Nouwen2024.lean**: Remove incorrect `@cite{zwicky-1970}` (that paper is about Sanskrit phonology)
+
+### Removed
+- **Nouwen2024RSA.lean**: Delete unused sequential-model code (`JointState`, `allJointStates`, `jointPrior`, `adverbUpdate`, `normalizeHeightDist`, `constant_eval_uniform_update`, `bare_prior_ratios_preserved`, `horrible_max_at_h10`, `pleasant_max_at_h5`, `horrible_pleasant_complement`)
+- **Nouwen2024RSA.lean**: Remove unused `Mathlib.Tactic.Ring` import
+
+### Fixed
+- **references.bib**: Fix `nouwen-2024` `sources` field (was nonexistent path, now points to actual files)
+
 ## [0.228.90] - 2026-03-07
 
 ### Changed

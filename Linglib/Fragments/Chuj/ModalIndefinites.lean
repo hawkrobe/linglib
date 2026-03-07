@@ -1,4 +1,4 @@
-import Linglib.Core.ModalIndefinite
+import Linglib.Core.Modality.ModalIndefinite
 
 /-!
 # Chuj Modal Indefinite Fragment

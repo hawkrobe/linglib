@@ -35,7 +35,7 @@ import Linglib.Core.Polarity
 import Linglib.Core.PolarityPartition
 import Linglib.Core.PropertyDomain
 import Linglib.Core.Polyhedral
-import Linglib.Core.ModalIndefinite
+import Linglib.Core.Modality.ModalIndefinite
 import Linglib.Core.Discourse.QUD
 import Linglib.Core.Discourse.AtIssueness
 import Linglib.Core.Interface
@@ -128,7 +128,8 @@ import Linglib.Core.Interval.QInterval
 import Linglib.Core.Interval.PadeExp
 import Linglib.Core.Interval.RpowInterval
 import Linglib.Core.Interval.LogInterval
-import Linglib.Core.Narrog.DeonticNecessity
+import Linglib.Core.Modality.DeonticNecessity
+import Linglib.Core.Subjectivity
 import Linglib.Core.WALS.Languages
 import Linglib.Core.WALS.Features.F1A
 import Linglib.Core.WALS.Features.F2A
@@ -720,6 +721,7 @@ import Linglib.Phenomena.Modality.Studies.ImelGuoST2026
 import Linglib.Phenomena.Modality.Studies.AghaJeretic2022
 import Linglib.Phenomena.Modality.Studies.AghaJeretic2026
 import Linglib.Phenomena.Modality.Studies.Rubinstein2014
+import Linglib.Phenomena.Modality.Studies.Narrog2010
 import Linglib.Phenomena.Modality.Studies.HerbstrittFranke2019
 import Linglib.Theories.Semantics.Dynamic.Systems.BSML.Basic
 import Linglib.Theories.Semantics.Dynamic.Systems.BSML.FreeChoice
@@ -1303,6 +1305,7 @@ import Linglib.Theories.Semantics.Modality.Typology
 import Linglib.Theories.Semantics.Modality.Inertia
 import Linglib.Theories.Semantics.Modality.EventRelativity
 import Linglib.Theories.Semantics.Modality.ModalIndefinites
+import Linglib.Theories.Semantics.Modality.Narrog
 import Linglib.Theories.Semantics.Mood.Basic
 import Linglib.Theories.Semantics.Reference.Basic
 import Linglib.Theories.Semantics.Reference.Kaplan

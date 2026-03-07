@@ -1,4 +1,4 @@
-import Linglib.Core.ModalIndefinite
+import Linglib.Core.Modality.ModalIndefinite
 
 /-!
 # Modal Indefinites: Cross-Linguistic Data
