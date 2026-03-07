@@ -56,6 +56,7 @@ private abbrev herself := Fragments.English.Pronouns.herself.toWord
 private abbrev themselves := Fragments.English.Pronouns.themselves.toWord
 private abbrev him := Fragments.English.Pronouns.him.toWord
 private abbrev them := Fragments.English.Pronouns.them.toWord
+private abbrev eachOther := Fragments.English.Pronouns.eachOther.toWord
 
 /-- Check each pair individually for reflexiveCoreferenceData -/
 theorem reflexive_pairs_captured :
@@ -74,6 +75,15 @@ theorem reflexive_pairs_captured :
     -- Pair 5: agreement - they see themselves vs they see himself
     (grammaticalForCoreference [they, see, themselves] = true ∧
      grammaticalForCoreference [they, see, himself] = false) := by
+  native_decide
+
+/-- HPSG captures the parseable reciprocal pair: plural antecedent
+    required, singular antecedent blocked. (Pairs 1-2 of
+    reciprocalCoreferenceData use 5-word coordinated sentences that
+    exceed the simple clause parser.) -/
+theorem reciprocal_plural_antecedent :
+    grammaticalForCoreference [they, see, eachOther] = true ∧
+    grammaticalForCoreference [john, sees, eachOther] = false := by
   native_decide
 
 end Phenomena.Anaphora.Studies.HPSGCoreference

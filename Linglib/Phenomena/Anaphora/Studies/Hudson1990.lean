@@ -94,4 +94,11 @@ theorem reflexive_pairs_captured :
      grammaticalForCoreference [they, see, himself] = false) := by
   native_decide
 
+/-- DG d-command captures the parseable reciprocal pair: plural antecedent
+    required, singular antecedent blocked. -/
+theorem reciprocal_plural_antecedent :
+    grammaticalForCoreference [they, see, eachOther] = true ∧
+    grammaticalForCoreference [john, sees, eachOther] = false := by
+  native_decide
+
 end Phenomena.Anaphora.Studies.Hudson1990

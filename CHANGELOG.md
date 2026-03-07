@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.228.66] - 2026-03-06
+
+### Added
+- **Binding theory reciprocal support**: Add `.reciprocal` to `NominalType` across Minimalism, HPSG, DG d-command, and CRDC binding theories. Reciprocals require locally bound plural antecedent. All four theories agree (verified in CommandRelations.lean cross-theory comparison)
+- **Phenomena/ArgumentStructure/Typology.lean**: `RecipMarkerPolysemy` (reciprocal, reflexive, collective, sociative, iterative), `RecipPolysemyPattern` for 4 languages, Swahili `-ana` `MorphRule` instance with valence-reduction theorems
+- **Phenomena/Anaphora/Studies/**: `reciprocal_plural_antecedent` theorems in all 4 study files (HPSG, Minimalism, Hudson 1990, Osborne & Li 2023)
+- **Fragments/*/Reciprocals.lean**: Reciprocal entries for 11 languages (Russian, Swahili, Hungarian, French, Greek, German, Mandarin, Wambaya, Icelandic, Chicheŵa, Czech) using `PronounEntry`, `MorphRule`, or `CompoundRecip` as appropriate to each strategy type
+
 ## [0.228.65] - 2026-03-06
 
 ### Added

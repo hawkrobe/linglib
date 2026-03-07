@@ -59,6 +59,7 @@ private abbrev themselves := Fragments.English.Pronouns.themselves.toWord
 private abbrev him := Fragments.English.Pronouns.him.toWord
 private abbrev her := Fragments.English.Pronouns.her.toWord
 private abbrev them := Fragments.English.Pronouns.them.toWord
+private abbrev eachOther := Fragments.English.Pronouns.eachOther.toWord
 
 namespace Comparisons.CommandRelations
 
@@ -543,6 +544,9 @@ def testSentences : List (List Word) :=
   , [they, see, himself]   -- agreement violation
   , [john, sees, him]      -- pronoun
   , [mary, sees, her]      -- pronoun
+  , [they, see, eachOther]    -- reciprocal (plural antecedent)
+  , [eachOther, see, them]    -- reciprocal in subject
+  , [john, sees, eachOther]   -- reciprocal (singular antecedent)
   ]
 
 /-- All four theories are pairwise equivalent on test sentences -/

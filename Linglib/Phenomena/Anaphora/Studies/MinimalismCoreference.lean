@@ -56,6 +56,7 @@ private abbrev herself := Fragments.English.Pronouns.herself.toWord
 private abbrev themselves := Fragments.English.Pronouns.themselves.toWord
 private abbrev him := Fragments.English.Pronouns.him.toWord
 private abbrev them := Fragments.English.Pronouns.them.toWord
+private abbrev eachOther := Fragments.English.Pronouns.eachOther.toWord
 
 /-- Check each pair individually for reflexiveCoreferenceData -/
 theorem reflexive_pairs_captured :
@@ -69,6 +70,13 @@ theorem reflexive_pairs_captured :
      grammaticalForCoreference [john, sees, herself] = false) ∧
     (grammaticalForCoreference [they, see, themselves] = true ∧
      grammaticalForCoreference [they, see, himself] = false) := by
+  native_decide
+
+/-- Minimalism captures the parseable reciprocal pair: plural antecedent
+    required, singular antecedent blocked. -/
+theorem reciprocal_plural_antecedent :
+    grammaticalForCoreference [they, see, eachOther] = true ∧
+    grammaticalForCoreference [john, sees, eachOther] = false := by
   native_decide
 
 end Phenomena.Anaphora.Studies.MinimalismCoreference
