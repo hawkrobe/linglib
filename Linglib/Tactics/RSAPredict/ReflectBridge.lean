@@ -291,6 +291,7 @@ def tryDirectRExprCompare (goal : MVarId) (lhsExpr rhsExpr : Expr) : TacticM Boo
 
   -- Denominator cancellation: if both sides share the same policy denominator,
   -- reduce to a score comparison (roughly halves the expression tree).
+  -- Safe to assign goal here since we've committed to the reflection path.
   let cancelResult ← try
     tryDenominatorCancel goal lhsExpr rhsExpr
   catch _ => pure none
@@ -357,6 +358,7 @@ def tryDirectRExprCompare (goal : MVarId) (lhsExpr rhsExpr : Expr) : TacticM Boo
     --   checkGtDAG dag li ri = true → lhs.denote > rhs.denote
     let proof := mkAppN (mkConst ``gt_of_checkGtDAG)
       #[lhsRExpr, rhsRExpr, dagArrayExpr, mkRawNatLit lhsIdx, mkRawNatLit rhsIdx, hcheck]
+
     activeGoal.assign proof
 
     let t3 ← IO.monoMsNow

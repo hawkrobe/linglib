@@ -247,7 +247,7 @@ def extractBeliefAndQuality (cfg : Expr)
           | some b => pure b
           | none => do
             let reduced ← withTheReader Core.Context
-              (fun ctx => { ctx with maxRecDepth := max ctx.maxRecDepth 8192 })
+              (fun ctx => { ctx with maxRecDepth := min (max ctx.maxRecDepth 8192) 8192 })
               (whnf specialized)
             pure (reduced.isConstOf ``Bool.true)
         qualityVals := qualityVals.push isTrue
@@ -733,15 +733,14 @@ private def proveConfigEq (d cfg : Expr) : TacticM (Option Expr) := do
   let dToRSA ← mkAppM ``RSA.RSAConfigData.toRSAConfig #[d]
   let eqType ← mkEq dToRSA cfg
   let eqMVar ← mkFreshExprMVar eqType
-  -- Try fast definitional equality
-  if ← isDefEq dToRSA cfg then
+  -- Try fast definitional equality (bounded to avoid maxRecDepth/stack overflow)
+  let isEq ← try isDefEq dToRSA cfg catch _ => pure false
+  if isEq then
     eqMVar.mvarId!.assign (← mkEqRefl dToRSA)
     return some (← instantiateMVars eqMVar)
-  -- For complex configs (e.g., with exhaustification), isDefEq is too expensive.
-  -- Since native_decide already verified correctness of the ℚ computation,
-  -- use sorryAx for the bridge equality (matches the pattern used for
-  -- proof obligations in RSAConfigData).
-  return some (mkSorryProof (← mkEq dToRSA cfg))
+  -- For complex configs, isDefEq can't establish d.toRSAConfig = cfg.
+  -- Return none to bail to CProof, which produces kernel-verifiable proofs.
+  return none
 
 -- ============================================================================
 -- Full Auto-Detect Pipeline
@@ -844,9 +843,9 @@ def tryAutoDetectL1Compare (goal : MVarId) (cfg u w₁ w₂ : Expr) : TacticM Bo
   let t1 ← IO.monoMsNow
   logInfo m!"rsa_predict: [auto-detect] RSAConfigData built ({t1 - t0}ms)"
 
-  -- native_decide on checkL1ScoreGt d u w₁ u w₂ = true
+  -- native_decide on checkL1ScoreGtOpt d u w₁ u w₂ = true
   try
-    let checkExpr ← mkAppM ``RSA.Verify.checkL1ScoreGt #[d, u, w₁, u, w₂]
+    let checkExpr ← mkAppM ``RSA.Verify.checkL1ScoreGtOpt #[d, u, w₁, u, w₂]
     let trueExpr := mkConst ``Bool.true
     let eqType ← mkEq checkExpr trueExpr
     let eqMVar ← mkFreshExprMVar eqType
@@ -868,13 +867,13 @@ def tryAutoDetectL1Compare (goal : MVarId) (cfg u w₁ w₂ : Expr) : TacticM Bo
     let some h_eq ← proveConfigEq d cfg | do
       logInfo m!"rsa_predict: [auto-detect] config equality proof failed"
       return false
-    let proof ← mkAppM ``RSA.Verify.l1_gt_of_check_ext #[cfg, d, h_eq, u, w₁, w₂, eqMVar]
+    let proof ← mkAppM ``RSA.Verify.l1_gt_of_checkOpt_ext #[cfg, d, h_eq, u, w₁, w₂, eqMVar]
     goal.assign (← instantiateMVars proof)
     let t3 ← IO.monoMsNow
     logInfo m!"rsa_predict: [auto-detect] ✓ succeeded ({t3 - t0}ms)"
     return true
-  catch e =>
-    logInfo m!"rsa_predict: [auto-detect] failed: {e.toMessageData}"
+  catch _ =>
+    logInfo m!"rsa_predict: [auto-detect] failed (exception in native_decide/bridge)"
     return false
 
 /-- Tier 2 pipeline for ¬(L1 gt). -/
@@ -950,7 +949,7 @@ def tryAutoDetectL1NotGt (goal : MVarId) (cfg u w₁ w₂ : Expr) : TacticM Bool
     return false
 
   try
-    let checkExpr ← mkAppM ``RSA.Verify.checkL1ScoreNotGt #[d, u, w₁, u, w₂]
+    let checkExpr ← mkAppM ``RSA.Verify.checkL1ScoreNotGtOpt #[d, u, w₁, u, w₂]
     let trueExpr := mkConst ``Bool.true
     let eqType ← mkEq checkExpr trueExpr
     let eqMVar ← mkFreshExprMVar eqType
@@ -966,7 +965,7 @@ def tryAutoDetectL1NotGt (goal : MVarId) (cfg u w₁ w₂ : Expr) : TacticM Bool
     let some h_eq ← proveConfigEq d cfg | do
       logInfo m!"rsa_predict: [auto-detect/¬L1] config equality proof failed"
       return false
-    let proof ← mkAppM ``RSA.Verify.l1_not_gt_of_check_ext #[cfg, d, h_eq, u, w₁, w₂, eqMVar]
+    let proof ← mkAppM ``RSA.Verify.l1_not_gt_of_checkOpt_ext #[cfg, d, h_eq, u, w₁, w₂, eqMVar]
     goal.assign (← instantiateMVars proof)
     logInfo m!"rsa_predict: [auto-detect/¬L1] ✓ succeeded"
     return true
@@ -1155,7 +1154,7 @@ def tryAutoDetectL1ScoreGt (goal : MVarId) (cfg u₁ w₁ u₂ w₂ : Expr) : Ta
       meaningVals wpVals lpVals αNat pattern costVals beliefVals qualityVals | return false
 
   try
-    let checkExpr ← mkAppM ``RSA.Verify.checkL1ScoreGt #[d, u₁, w₁, u₂, w₂]
+    let checkExpr ← mkAppM ``RSA.Verify.checkL1ScoreGtOpt #[d, u₁, w₁, u₂, w₂]
     let trueExpr := mkConst ``Bool.true
     let eqType ← mkEq checkExpr trueExpr
     let eqMVar ← mkFreshExprMVar eqType
@@ -1168,7 +1167,7 @@ def tryAutoDetectL1ScoreGt (goal : MVarId) (cfg u₁ w₁ u₂ w₂ : Expr) : Ta
       return false
     setGoals savedGoals
     let some h_eq ← proveConfigEq d cfg | return false
-    let proof ← mkAppM ``RSA.Verify.l1_score_gt_of_check_ext #[cfg, d, h_eq, u₁, w₁, u₂, w₂, eqMVar]
+    let proof ← mkAppM ``RSA.Verify.l1_score_gt_of_checkOpt_ext #[cfg, d, h_eq, u₁, w₁, u₂, w₂, eqMVar]
     goal.assign (← instantiateMVars proof)
     logInfo m!"rsa_predict: [auto-detect/score] ✓ succeeded"
     return true

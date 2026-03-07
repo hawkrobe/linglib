@@ -411,7 +411,12 @@ elab "rsa_predict" : tactic => do
   -- saves ~16s per subsequent theorem via cache hits.
   unless skipReflection do
     let t0_generic ← IO.monoMsNow
-    if ← tryDirectRExprCompare goal lhs rhs then
+    let reflectOk ← try
+      tryDirectRExprCompare goal lhs rhs
+    catch e =>
+      logInfo m!"rsa_predict: [direct] reflection failed, trying fallbacks: {e.toMessageData}"
+      pure false
+    if reflectOk then
       let t1_generic ← IO.monoMsNow
       logInfo m!"rsa_predict: ✓ proved via reflection (generic, {t1_generic - t0_generic}ms)"
       return
@@ -423,7 +428,7 @@ elab "rsa_predict" : tactic => do
     if let some goalForm := goalForm? then
       let proved ← try
         withTheReader Core.Context (fun ctx =>
-          { ctx with maxRecDepth := max ctx.maxRecDepth 8192 }) do
+          { ctx with maxRecDepth := min (max ctx.maxRecDepth 8192) 8192 }) do
         match goalForm with
           | .l1Compare cfg u w₁ w₂ =>
             tryAutoDetectL1Compare goal cfg u w₁ w₂

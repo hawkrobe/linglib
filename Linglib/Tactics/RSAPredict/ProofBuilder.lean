@@ -209,7 +209,7 @@ initialize l0CacheMapRef : IO.Ref (Std.HashMap UInt64 CProof) ← IO.mkRef {}
     to the originals. -/
 partial def buildRealExprProof (e : Expr) : TacticM CProof := do
   withTheReader Core.Context (fun ctx =>
-    { ctx with maxRecDepth := max ctx.maxRecDepth 8192 }) do
+    { ctx with maxRecDepth := min (max ctx.maxRecDepth 8192) 8192 }) do
   let go := buildRealExprProof
   -- 1. Try nat literals (0, 1, 2, ...)
   if let some n := getNat? e then
@@ -657,7 +657,7 @@ def buildS1ScoreCProof (cfg l w u : Expr)
       let s1Agent ← mkAppM ``RSA.RSAConfig.S1agent #[cfg, l]
       let scoreExpr ← mkAppM ``Core.RationalAction.score #[s1Agent, w, u]
       let ok ← withNewMCtxDepth do
-        withTheReader Core.Context (fun ctx => { ctx with maxRecDepth := max ctx.maxRecDepth 8192 }) do
+        withTheReader Core.Context (fun ctx => { ctx with maxRecDepth := min (max ctx.maxRecDepth 8192) 8192 }) do
           try
             let proofType ← inferType proof
             let expectedType ← mkAppM ``QInterval.containsReal #[l0Proof.iExpr, scoreExpr]
@@ -791,7 +791,7 @@ def buildAllS1ScoreCProofs (cfg : Expr)
       let scoreExpr ← mkAppM ``Core.RationalAction.score
         #[s1Agent, allWElems[wIdx]!, allUElems[uIdx]!]
       withNewMCtxDepth do
-        withTheReader Core.Context (fun ctx => { ctx with maxRecDepth := max ctx.maxRecDepth 8192 }) do
+        withTheReader Core.Context (fun ctx => { ctx with maxRecDepth := min (max ctx.maxRecDepth 8192) 8192 }) do
           try isDefEq scoreExpr zeroR catch _ => return false
   let mut cache : S1Cache := #[]
   let mut idx : ℕ := 0

@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.228.88] - 2026-03-07
+
+### Added
+- **Nouwen2024RSA.lean**: All 4 Goldilocks predictions verified via `rsa_predict` (100 latent states, CProof path)
+
+### Fixed
+- **rsa_predict**: Cap internal `maxRecDepth` at 8192 to prevent C stack overflow when user sets large values (7 call sites)
+- **rsa_predict**: Auto-detect `proveConfigEq` no longer uses `sorryAx` fallback — returns `none` to bail to CProof
+- **rsa_predict**: Wrap reflection path in try/catch so kernel type mismatches fall through to auto-detect/CProof
+- **rsa_predict**: Robust catch handler in auto-detect (avoids pretty-print failures on error context)
+
 ## [0.228.87] - 2026-03-07
 
 ### Changed

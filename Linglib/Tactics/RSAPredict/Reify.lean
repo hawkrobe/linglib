@@ -170,7 +170,7 @@ def extractRatFromCauchy (e : Expr) : MetaM (Option (ℚ × Expr)) := do
 -- Recursive Reifier
 -- ============================================================================
 
-def maxDepth : ℕ := 200
+def maxDepth : ℕ := 500
 
 /-- Memoization cache for reifyToRExpr, keyed on Expr structural hash.
     Stores `(rexprExpr, bounds)`. -/
@@ -207,8 +207,10 @@ partial def reifyToRExpr (cache : ReifyCache) (e : Expr) (depth : ℕ) :
   -- Increase maxRecDepth for whnf calls inside the reifier.
   -- Complex meaning functions (e.g., Innocent Exclusion exhaustification) can
   -- require deep kernel reduction during Finset.sum unfolding.
+  -- Cap at 8192 to avoid C stack overflow when the user sets maxRecDepth to large
+  -- values (e.g., 131072) — macOS stack limit is 8MB ≈ 40K frames.
   withTheReader Core.Context (fun ctx =>
-    { ctx with maxRecDepth := max ctx.maxRecDepth 8192 }) do
+    { ctx with maxRecDepth := min (max ctx.maxRecDepth 8192) 8192 }) do
   if depth == 0 then
     throwError "rsa_predict: max reification depth on: {← ppExpr e}"
 
@@ -895,7 +897,7 @@ def reifyS1Scores (cfg : Expr) :
            Array Expr × Array Expr × Array Expr ×
            Array MetaBounds × Array ℚ × Array ℚ) := do
   withTheReader Core.Context (fun ctx =>
-    { ctx with maxRecDepth := max ctx.maxRecDepth 8192 }) do
+    { ctx with maxRecDepth := min (max ctx.maxRecDepth 8192) 8192 }) do
   let cfgType ← whnf (← inferType cfg)
   let cfgArgs := cfgType.getAppArgs
   unless cfgArgs.size ≥ 2 do
