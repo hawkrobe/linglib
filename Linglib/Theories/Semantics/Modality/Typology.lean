@@ -378,4 +378,63 @@ theorem decomposition_eq_satisfiesIFF (m : ModalItem) :
   generalize satisfiesIFF m.meaning = b
   cases b <;> decide
 
+/-! ## Corollaries: Decomposability via the Bridge
+
+The equivalence `decomposition_eq_satisfiesIFF` transfers results freely between
+the Core structural classifier (`ModalItem.decomposition`) and the typological
+universal (`satisfiesIFF`). The following corollaries make this transfer explicit. -/
+
+/-- Any Kratzer modal — whose meaning is a Cartesian product of forces and
+    flavors — is decomposable. Follows from @cite{kratzer-1981}'s independent
+    parameterization: `cartesianProduct_satisfies_iff` + bridge. -/
+theorem cartesianProduct_decomposable
+    (form : String) (fos : List ModalForce) (fls : List ModalFlavor) :
+    ({ form, meaning := cartesianProduct fos fls } : ModalItem).decomposition
+      == .decomposable := by
+  rw [decomposition_eq_satisfiesIFF]
+  exact cartesianProduct_satisfies_iff fos fls
+
+/-- SAV modals are decomposable: if a modal varies on at most one axis,
+    it is decomposable. Follows from `sav_implies_iff` + bridge. -/
+theorem sav_implies_decomposable (m : ModalItem)
+    (h : satisfiesSAV m.meaning = true) :
+    (m.decomposition == .decomposable) = true := by
+  rw [decomposition_eq_satisfiesIFF]
+  exact sav_implies_iff m.meaning h
+
+/-- Singleton meanings are decomposable, derived from the IFF universal
+    rather than finite case analysis. -/
+theorem singleton_decomposable (form : String) (ff : ForceFlavor) :
+    ({ form, meaning := [ff] } : ModalItem).decomposition
+      == .decomposable := by
+  rw [decomposition_eq_satisfiesIFF]
+  exact singleton_satisfies_iff ff
+
+/-- Empty meanings are decomposable. -/
+theorem empty_decomposable (form : String) :
+    ({ form, meaning := [] } : ModalItem).decomposition
+      == .decomposable := by
+  rw [decomposition_eq_satisfiesIFF]
+  exact empty_satisfies_iff
+
+/-- A modal is unitary iff its meaning fails IFF. The contrapositive of
+    `decomposition_eq_satisfiesIFF`. -/
+theorem unitary_iff_not_iff (m : ModalItem) :
+    m.isUnitary = !satisfiesIFF m.meaning := by
+  unfold ModalItem.isUnitary
+  have h := decomposition_eq_satisfiesIFF m
+  have : ∀ d : ModalDecomposition, (d == .unitary) = !(d == .decomposable) := by
+    intro d; cases d <;> decide
+  rw [this, h]
+
+/-- `ModalInventory.allIFF` is equivalent to checking that every expression
+    is decomposable. Connects the typological survey predicate to the
+    Kratzer-theoretic structural classifier. -/
+theorem allIFF_eq_all_decomposable (inv : ModalInventory) :
+    inv.allIFF = inv.expressions.all
+      fun e => (e.toModalItem.decomposition == .decomposable) := by
+  unfold ModalInventory.allIFF
+  congr 1; ext e
+  exact (decomposition_eq_satisfiesIFF e.toModalItem).symm
+
 end Semantics.Modality.Typology
