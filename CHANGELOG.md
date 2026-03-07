@@ -2,6 +2,12 @@
 
 ## [0.228.73] - 2026-03-06
 
+### Changed
+- **Wurmbrand.lean**: Add episodic interpretation predictions (Table 3), complement size hierarchy (wollP/TP/vP), woll–class connection, `expect`/`seem` ambiguous verbs, genuine bridge theorems; fix `hasAgreeBasedSOT` to `false`; refine third class docstring to "nonpropositional/no attitude holder"
+- **TenseTheories.lean**: Merge standalone Agree inventory into `semantic_vs_syntactic_divide`; update docstrings for Wurmbrand's orthogonal role
+
+## [0.228.72] - 2026-03-06
+
 ### Added
 - **Iconological Semantics theory**: `Theories/Semantics/Iconic/Basic.lean` — static/dynamic viewpoints, dynamic projection, classifier predicates with logical + iconic content
 - **Iconicity phenomenon**: `Phenomena/Iconicity/Basic.lean` — classifier direction, relative motion readings, traveling shot effect

@@ -261,11 +261,11 @@ theorem ogihara_grounds_zero_tense :
 theorem evalTimeIndex_grounds_klecha :
     Klecha.name = "Klecha 2016" := rfl
 
-/-- All nine theories interpret tense differently. The six semantic theories
+/-- All theories interpret tense differently. The semantic theories
     share the `TensePronoun` type but give it different interpretations;
-    the two syntactic theories (Zeijlstra, Wurmbrand) operate at a different
-    level entirely (feature checking, not semantic denotation). -/
-theorem all_nine_theories_distinct :
+    @cite{zeijlstra-2012} operates at narrow syntax (Agree);
+    @cite{wurmbrand-2014} classifies infinitival tense orthogonally. -/
+theorem all_theories_pairwise_distinct :
     Abusch.name ≠ VonStechow.name ∧
     VonStechow.name ≠ KratzerTense.name ∧
     KratzerTense.name ≠ Ogihara.name ∧
@@ -279,22 +279,8 @@ theorem all_nine_theories_distinct :
 
 
 -- ════════════════════════════════════════════════════════════════
--- § 6. Extended Coverage: Agree-Based SOT
+-- § 6. Semantic vs Syntactic Divide
 -- ════════════════════════════════════════════════════════════════
-
-/-- Only Zeijlstra and Wurmbrand use Agree-based SOT. The six semantic
-    theories all have `hasAgreeBasedSOT = false` (default). -/
-theorem only_syntactic_theories_use_agree :
-    Zeijlstra.hasAgreeBasedSOT = true ∧
-    Wurmbrand.hasAgreeBasedSOT = true ∧
-    Abusch.hasAgreeBasedSOT = false ∧
-    VonStechow.hasAgreeBasedSOT = false ∧
-    KratzerTense.hasAgreeBasedSOT = false ∧
-    Ogihara.hasAgreeBasedSOT = false ∧
-    Klecha.hasAgreeBasedSOT = false ∧
-    Deal.hasAgreeBasedSOT = false ∧
-    Sharvit.hasAgreeBasedSOT = false :=
-  ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
 
 /-- Sharvit is the only theory with a dedicated simultaneous tense.
     Other theories derive the simultaneous reading from binding (Abusch),
@@ -309,17 +295,29 @@ theorem only_sharvit_has_simultaneous_tense :
     Ogihara.simultaneousMechanism ≠ Sharvit.simultaneousMechanism := by
   simp [Sharvit, Abusch, KratzerTense, Ogihara]
 
-/-- The semantic vs syntactic divide: six theories operate at LF
-    (semantic denotation), two operate at narrow syntax (Agree).
-    None of the semantic theories use Agree; none of the syntactic
-    theories posit temporal de re or ULC. -/
+/-- The semantic vs syntactic divide.
+
+    Eight theories operate at LF (semantic denotation); only
+    @cite{zeijlstra-2012} uses syntactic Agree for SOT.
+    @cite{wurmbrand-2014} is a syntactic approach to infinitival
+    tense classification but does not present an Agree-based SOT
+    mechanism — it is compatible with both semantic and syntactic SOT.
+
+    - Only Zeijlstra uses Agree-based SOT
+    - None of the non-Agree theories posit temporal de re or ULC
+      as part of an Agree system
+    - Wurmbrand's contribution is orthogonal: infinitival tense
+      classification, not SOT mechanism -/
 theorem semantic_vs_syntactic_divide :
-    -- Semantic theories don't use Agree
-    (Abusch.hasAgreeBasedSOT = false ∧ KratzerTense.hasAgreeBasedSOT = false) ∧
-    -- Syntactic theories don't use temporal de re or ULC
+    -- Only Zeijlstra uses Agree
+    Zeijlstra.hasAgreeBasedSOT = true ∧
+    -- All others (including Wurmbrand) do not
+    (Abusch.hasAgreeBasedSOT = false ∧ KratzerTense.hasAgreeBasedSOT = false ∧
+     Wurmbrand.hasAgreeBasedSOT = false) ∧
+    -- Zeijlstra and Wurmbrand don't posit temporal de re or ULC
     (Zeijlstra.hasTemporalDeRe = false ∧ Zeijlstra.hasULC = false) ∧
     (Wurmbrand.hasTemporalDeRe = false ∧ Wurmbrand.hasULC = false) :=
-  ⟨⟨rfl, rfl⟩, ⟨rfl, rfl⟩, ⟨rfl, rfl⟩⟩
+  ⟨rfl, ⟨rfl, rfl, rfl⟩, ⟨rfl, rfl⟩, ⟨rfl, rfl⟩⟩
 
 
 -- ════════════════════════════════════════════════════════════════
