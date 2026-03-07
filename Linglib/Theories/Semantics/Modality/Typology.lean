@@ -278,11 +278,91 @@ Both reduce to: ∀ fo ∈ forces(m), ∀ fl ∈ flavors(m), ⟨fo, fl⟩ ∈ m.
 
 open Core.ModalLogic (ModalItem ModalDecomposition)
 
+/-- `eraseDups` preserves list membership.
+    Required because Lean 4 core lacks this lemma for `BEq`-based `eraseDups`. -/
+private theorem mem_eraseDups {α : Type*} [BEq α] [LawfulBEq α] {a : α} :
+    ∀ (l : List α), a ∈ l.eraseDups ↔ a ∈ l
+  | [] => by constructor <;> simp [List.eraseDups, List.eraseDupsBy, List.eraseDupsBy.loop]
+  | hd :: tl => by
+    rw [List.eraseDups_cons, List.mem_cons, List.mem_cons]
+    constructor
+    · rintro (rfl | h)
+      · left; rfl
+      · right
+        have h' := (mem_eraseDups (tl.filter (fun b => !(b == hd)))).mp h
+        exact (List.mem_filter.mp h').1
+    · rintro (rfl | h)
+      · left; rfl
+      · by_cases heq : (a == hd) = true
+        · left; exact eq_of_beq heq
+        · right
+          exact (mem_eraseDups (tl.filter (fun b => !(b == hd)))).mpr
+            (List.mem_filter.mpr ⟨h, by simp [heq]⟩)
+termination_by l => l.length
+decreasing_by all_goals simp +arith; exact List.length_filter_le _ _
+
+/-- The Cartesian-product containment check used by `ModalItem.decomposition`
+    computes the same Boolean as `satisfiesIFF`. Both reduce to: every
+    combination of attested forces and attested flavors is itself attested. -/
+private theorem cart_all_eq_satisfiesIFF (S : List ForceFlavor) :
+    (ForceFlavor.cartesianProduct
+      ((S.map ForceFlavor.force).eraseDups)
+      ((S.map ForceFlavor.flavor).eraseDups)).all (S.contains ·) =
+    satisfiesIFF S := by
+  apply Bool.eq_iff_iff.mpr
+  constructor
+  · -- Forward: all cart elements contained → satisfiesIFF
+    intro hAll
+    show satisfiesIFF S = true
+    unfold satisfiesIFF
+    simp only [List.all_eq_true, List.any_eq_true, Bool.and_eq_true]
+    intro ⟨fo₁, fl₁⟩ h₁ ⟨fo₂, fl₂⟩ h₂
+    have hfo₁ : fo₁ ∈ (S.map ForceFlavor.force).eraseDups :=
+      (mem_eraseDups _).mpr (List.mem_map.mpr ⟨⟨fo₁, fl₁⟩, h₁, rfl⟩)
+    have hfl₂ : fl₂ ∈ (S.map ForceFlavor.flavor).eraseDups :=
+      (mem_eraseDups _).mpr (List.mem_map.mpr ⟨⟨fo₂, fl₂⟩, h₂, rfl⟩)
+    have hInCart := (mem_cartesianProduct ⟨fo₁, fl₂⟩
+        ((S.map ForceFlavor.force).eraseDups)
+        ((S.map ForceFlavor.flavor).eraseDups)).mpr ⟨hfo₁, hfl₂⟩
+    have hContains := List.all_eq_true.mp hAll ⟨fo₁, fl₂⟩ hInCart
+    have hmem : ⟨fo₁, fl₂⟩ ∈ S := by
+      have ⟨a', ha', hbeq⟩ := List.contains_iff_exists_mem_beq.mp hContains
+      exact eq_of_beq hbeq ▸ ha'
+    exact ⟨⟨fo₁, fl₂⟩, hmem, beq_self_eq_true fo₁, beq_self_eq_true fl₂⟩
+  · -- Backward: satisfiesIFF → all cart elements contained
+    intro hIFF
+    unfold satisfiesIFF at hIFF
+    rw [List.all_eq_true]
+    intro pair hInCart
+    have ⟨hfo, hfl⟩ := (mem_cartesianProduct pair _ _).mp hInCart
+    have hfo' := (mem_eraseDups _).mp hfo
+    have hfl' := (mem_eraseDups _).mp hfl
+    rw [List.mem_map] at hfo' hfl'
+    obtain ⟨⟨fo_w, fl_w⟩, hw_fo_mem, hw_fo_eq⟩ := hfo'
+    obtain ⟨⟨fo_v, fl_v⟩, hw_fl_mem, hw_fl_eq⟩ := hfl'
+    simp at hw_fo_eq hw_fl_eq
+    have h₁ := List.all_eq_true.mp hIFF ⟨fo_w, fl_w⟩ hw_fo_mem
+    have h₂ := List.all_eq_true.mp h₁ ⟨fo_v, fl_v⟩ hw_fl_mem
+    rw [hw_fo_eq, hw_fl_eq] at h₂
+    rw [List.any_eq_true] at h₂
+    obtain ⟨witness, hw_mem, hw_eq⟩ := h₂
+    rw [Bool.and_eq_true] at hw_eq
+    have ⟨hf_beq, hfl_beq⟩ := hw_eq
+    have hmem_pair : pair ∈ S := by
+      have heq : witness = pair := by
+        cases witness with | mk wf wfl =>
+        cases pair with | mk pf pfl =>
+        simp at hf_beq hfl_beq
+        exact congr_arg₂ ForceFlavor.mk hf_beq hfl_beq
+      rw [← heq]; exact hw_mem
+    exact List.contains_iff_exists_mem_beq.mpr ⟨pair, hmem_pair, beq_self_eq_true pair⟩
+
+set_option maxHeartbeats 400000 in
 /-- `ModalItem.decomposition` agrees with `satisfiesIFF`:
     a modal is decomposable iff its meaning satisfies IFF.
 
-    TODO: Structural proof. Both sides reduce to checking that
-    `m.meaning` is closed under force-flavor recombination:
+    Both sides reduce to checking that `m.meaning` is closed under
+    force-flavor recombination:
     - Forward: if the Cartesian product of projected forces/flavors
       is contained in `m.meaning`, then for any two pairs `(fo₁, fl₁)`
       and `(fo₂, fl₂)` in `m.meaning`, `(fo₁, fl₂)` is in the product
@@ -293,6 +373,9 @@ open Core.ModalLogic (ModalItem ModalDecomposition)
       By IFF closure, `(fo, fl) ∈ m.meaning`. -/
 theorem decomposition_eq_satisfiesIFF (m : ModalItem) :
     (m.decomposition == .decomposable) = satisfiesIFF m.meaning := by
-  sorry
+  unfold ModalItem.decomposition
+  simp only [cart_all_eq_satisfiesIFF]
+  generalize satisfiesIFF m.meaning = b
+  cases b <;> decide
 
 end Semantics.Modality.Typology
