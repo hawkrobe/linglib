@@ -136,15 +136,23 @@ def getSLASH (basic : DepTree) (enhanced : DepGraph) (nodeIdx : Nat) : SLASH :=
 -- ============================================================================
 
 /-- A long-distance dependency tree is well-formed if:
-    1. Basic tree structure is well-formed
+    1. Structural constraints (unique heads, acyclicity, projectivity, agreement)
     2. No island violations
-    3. Fillers are wh-words or fronted -/
+    3. Fillers are wh-words, fronted, or relative clause heads
+    Note: `checkVerbSubcat` is omitted because LD trees inherently have
+    argument gaps (the whole point of long-distance dependencies). -/
 def isLDWellFormed (t : DepTree) (gaps : List (Nat × Nat × GapType)) : Bool :=
-  isWellFormed t &&
+  hasUniqueHeads t &&
+  isAcyclic t &&
+  isProjective t &&
+  checkSubjVerbAgr t &&
+  checkDetNounAgr t &&
   checkNoIslandViolation t gaps &&
   gaps.all λ (fillerIdx, _, _) =>
     match t.words[fillerIdx]? with
-    | some w => w.features.wh || fillerIdx < t.rootIdx
+    | some w => w.features.wh || fillerIdx < t.rootIdx ||
+                -- Relative clause: filler is the head noun of an acl relation
+                t.deps.any (fun d => d.headIdx == fillerIdx && d.depType == .acl)
     | none => false
 
 -- ============================================================================
