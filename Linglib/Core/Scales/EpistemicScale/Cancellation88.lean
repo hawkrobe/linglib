@@ -3050,4 +3050,10 @@ theorem fa_cancellation_fin4 (sys : EpistemicSystemFA (Fin 4)) :
         · exact fa_cancellation_fin4_allpos sys h0 h1 h2 h3
 
 
+/-- **Theorem 8a for Fin 4**: every FA system on 4 elements is representable.
+    Proof via Scott cancellation — see `Cancellation.lean` for the framework. -/
+theorem theorem8a_fin4 (sys : EpistemicSystemFA (Fin 4)) :
+    ∃ (m : FinAddMeasure (Fin 4)), ∀ A B, sys.ge A B ↔ m.inducedGe A B :=
+  cancellation_implies_representable sys (fa_cancellation_fin4 sys)
+
 end Core.Scale

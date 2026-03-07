@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.228.79] - 2026-03-06
+
+### Changed
+- **EpistemicScale/**: Restructure directory — slim `Defs.lean` (895→311 lines) to axioms/structures/semantics only; extract KPS counterexample, null reduction, transport, Fin 0/1/2/3 representability into new `Representability.lean`; absorb `Fin4.lean` one-liner into `Cancellation88.lean`; delete `Fin3.lean` and `Fin4.lean` (12→11 files)
+
+## [0.228.78] - 2026-03-06
+
+### Added
+- **Rubinstein2014.lean**: Formalize Rubinstein 2014 "On Necessity and Comparison" — the third competing analysis of weak necessity (comparative semantics). Priority reconceptualization (negotiable vs non-negotiable), favored worlds via Frank 1996 compatibility-restricted union, strong/weak necessity with entailment proof, bridge theorems to Kratzer.lean and Directive.lean, evaluative comparative natural class (ought/should/better/preferable/worthwhile), neg-raising–negotiability connection, Hebrew data (no lexical weak necessity), Narrog 2012 typology, comparison capability asymmetry
+
 ## [0.228.77] - 2026-03-06
 
 ### Added

@@ -1,4 +1,4 @@
-import Linglib.Core.Scales.EpistemicScale.Fin3
+import Linglib.Core.Scales.EpistemicScale.Representability
 import Linglib.Core.Polyhedral
 import Mathlib.Algebra.BigOperators.Group.Finset.Piecewise
 import Mathlib.Algebra.BigOperators.Field
