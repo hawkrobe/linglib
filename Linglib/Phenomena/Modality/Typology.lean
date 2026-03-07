@@ -1,4 +1,5 @@
 import Linglib.Core.Lexical.Word
+import Linglib.Core.Narrog.DeonticNecessity
 import Linglib.Core.WALS.Features.F74A
 import Linglib.Core.WALS.Features.F75A
 import Linglib.Core.WALS.Features.F76A
@@ -1162,5 +1163,29 @@ theorem americas_all_complex_evidentials :
 theorem americas_all_verbal_affix :
     americas.all (·.coding == .verbalAffix) = true := by
   native_decide
+
+-- ============================================================================
+-- Deontic Necessity Subtypes (Narrog 2010, 2012)
+-- ============================================================================
+
+/-! ## Deontic necessity is not universally split into strong and weak
+
+Narrog (2010, 2012; cited in @cite{rubinstein-2014} Table 1) surveys
+200 genealogically diverse languages for grammaticalized deontic necessity.
+The sample reveals that weak deontic necessity is rarer than strong:
+only 62 of 200 languages (31%) grammaticalize it. See
+`Rubinstein2014.lean` for the full typological data and implications
+for the comparative analysis of weak necessity.
+
+Data imported from `Core.Narrog.DeonticNecessity`. -/
+
+open Core.Narrog.DeonticNecessity in
+/-- Only 62 of 200 languages grammaticalize weak deontic necessity (31%). -/
+theorem weak_deontic_rarity : countOf .weak = 62 := by native_decide
+
+open Core.Narrog.DeonticNecessity in
+/-- Strong deontic necessity (60 languages) is slightly less common than
+    weak (62), showing that the strong/weak split itself is not universal. -/
+theorem strong_deontic_count : countOf .strong = 60 := by native_decide
 
 end Phenomena.Modality.Typology

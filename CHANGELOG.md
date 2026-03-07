@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.228.84] - 2026-03-06
+
+### Added
+- **Core/Narrog/DeonticNecessity.lean**: Single-source-of-truth data module for Narrog (2010, 2012) deontic necessity typology — `DeonticNecessityType` enum, aggregate counts (Table 4/6.6), area-level NEC/POT presence data (Table 3/6.5), derived counts with consistency checks (area totals = 200, NEC = 131, POT = 156)
+
+### Changed
+- **Typology.lean**: Replace hard-coded `DeonticNecessityType` and `narrogDeonticCounts` with imports from `Core.Narrog.DeonticNecessity`
+- **Rubinstein2014.lean**: Replace hard-coded `DeonticNecessityCount`/`narrogTypology` with imports from `Core.Narrog.DeonticNecessity`
+- Add `narrog-2010` and `narrog-2012` bibliography entries to `references.bib`
+
 ## [0.228.83] - 2026-03-06
 
 ### Changed
