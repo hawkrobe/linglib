@@ -1,5 +1,4 @@
 import Linglib.Theories.Semantics.Lexical.Plural.Distributivity
-import Linglib.Core.Semantics.Kleene
 import Linglib.Phenomena.Plurals.NonMaximality
 import Linglib.Phenomena.Plurals.Homogeneity
 
@@ -50,6 +49,7 @@ and adding "all" blocks non-maximal use entirely.
 
 namespace Phenomena.Plurals.Studies.Kriz2016
 
+open Core.Duality (Truth3)
 open Semantics.Lexical.Plural.Distributivity
 
 variable {Atom W : Type*} [DecidableEq Atom]
@@ -59,7 +59,7 @@ variable {Atom W : Type*} [DecidableEq Atom]
 -- ============================================================================
 
 /-- A trivalent sentence denotation: maps worlds to truth values. -/
-abbrev SentenceTV (W : Type*) := W → TruthValue
+abbrev SentenceTV (W : Type*) := W → Truth3
 
 /-- Positive extension: worlds where the sentence is true. -/
 def posExt (S : SentenceTV W) : Set W := {w | S w = .true}
@@ -351,12 +351,12 @@ theorem all_addressing_iff_relevant (q : QUD W) (P : Atom → W → Bool)
     simp only [bivalentPred, allPluralTV] at this
     split_ifs at this with h₁ h₂
     · simp_all
-    · simp at this
-    · simp at this
+    · exact absurd this (by decide)
+    · exact absurd this (by decide)
     · simp_all
-  · simp only [bivalentPred, allPluralTV]
-    have := h w₁ w₂ hEquiv
-    split_ifs with h₁ h₂ <;> simp_all
+  · have := h w₁ w₂ hEquiv
+    simp only [bivalentPred, allPluralTV]
+    congr 1; split_ifs with h₁ h₂ <;> (first | rfl | simp_all)
 
 omit [DecidableEq Atom] [Fintype W] [DecidableEq W] in
 /-- The gap enables non-maximal use: if the bare plural has a gap at w

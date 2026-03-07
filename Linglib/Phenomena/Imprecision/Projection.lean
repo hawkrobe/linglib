@@ -19,6 +19,11 @@ Different embedding operators show different patterns for:
 
 The `no` vs `not every` asymmetry is particularly important.
 
+## Related
+
+- `Plurals/Studies/Kriz2016.lean` - @cite{kriz-2016}'s Addressing constraint
+  derives when homogeneous sentences are usable under a given issue.
+
 -/
 
 namespace Phenomena.Imprecision.Projection

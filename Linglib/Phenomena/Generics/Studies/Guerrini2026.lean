@@ -1,6 +1,7 @@
 import Linglib.Theories.Semantics.Lexical.Noun.Kind.Chierchia1998
 import Linglib.Theories.Semantics.Lexical.Noun.Kind.Generics
 import Linglib.Theories.Semantics.Lexical.Plural.Distributivity
+import Linglib.Core.Logic.Truth3
 import Linglib.Phenomena.Generics.Studies.TesslerGoodman2019
 import Linglib.Phenomena.Generics.KindReference
 import Linglib.Phenomena.Generics.Studies.Longobardi2001
@@ -69,7 +70,8 @@ namespace Phenomena.Generics.Studies.Guerrini2026
 
 open Semantics.Lexical.Noun.Kind.Chierchia1998 (NominalMapping Kind canDenoteKind
   canDenoteProperty downDefinedFor)
-open Semantics.Lexical.Plural.Distributivity (distMaximal TruthValue pluralTruthValue
+open Core.Duality (Truth3)
+open Semantics.Lexical.Plural.Distributivity (distMaximal pluralTruthValue
   allSatisfy noneSatisfy)
 open Phenomena.Generics.KindReference (NominalDenotation)
 
@@ -147,7 +149,7 @@ polarity reversals and exception tolerance.
 def distributiveKindPredTV
     (kindExtension : W → Finset Atom)
     (P : Atom → W → Bool)
-    (s₀ : W) : TruthValue :=
+    (s₀ : W) : Truth3 :=
   pluralTruthValue P (kindExtension s₀) s₀
 
 /-- Distributive Kind Predication composed directly from a `Kind` value.

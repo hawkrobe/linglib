@@ -1,4 +1,4 @@
-import Linglib.Core.Semantics.Kleene
+import Linglib.Core.Logic.Truth3
 import Linglib.Phenomena.Plurals.Homogeneity
 import Linglib.Theories.Semantics.Modality.Directive
 import Linglib.Fragments.English.FunctionWords
@@ -62,7 +62,7 @@ semantics), and extends it to explain the neg-raising asymmetry between
 
 namespace Phenomena.Modality.Studies.AghaJeretic2022
 
-open Core.Kleene (TVal Prop3)
+open Core.Duality (Truth3)
 open Phenomena.Plurals.Homogeneity (HomogeneityJudgment HomogeneityDatum
   HomogeneityRemover HomogeneityRemovalDatum conditionalExample)
 
@@ -75,7 +75,7 @@ open Phenomena.Plurals.Homogeneity (HomogeneityJudgment HomogeneityDatum
 *should* gets trivalent semantics via plural predication over worlds, while
 *must* remains bivalent (standard ∀ quantification).
 
-We model the modal domain as a `List World` and use `Core.Kleene.TVal`
+We model the modal domain as a `List World` and use `Core.Duality.Truth3`
 for the three-valued output. -/
 
 variable {World : Type}
@@ -83,18 +83,18 @@ variable {World : Type}
 /-- Strong necessity: standard ∀ quantification over the modal domain.
     Bivalent — always true or false, never indeterminate.
     `must_D := λp. ∀w ∈ D. p(w)` -/
-def mustEval (domain : List World) (p : World → Bool) : TVal :=
-  TVal.ofBool (domain.all p)
+def mustEval (domain : List World) (p : World → Bool) : Truth3 :=
+  Truth3.ofBool (domain.all p)
 
 /-- Weak necessity: trivalent plural predication over the modal domain.
     Returns tt if all worlds satisfy p, ff if none do, unk otherwise.
     `should_D := ⊕D` — the prejacent is predicated of the plurality
     of worlds, yielding homogeneity. -/
-def shouldEval (domain : List World) (p : World → Bool) : TVal :=
-  if domain.isEmpty then TVal.ff
-  else if domain.all p then TVal.tt
-  else if domain.all (fun w => !p w) then TVal.ff
-  else TVal.unk
+def shouldEval (domain : List World) (p : World → Bool) : Truth3 :=
+  if domain.isEmpty then Truth3.false
+  else if domain.all p then Truth3.true
+  else if domain.all (fun w => !p w) then Truth3.false
+  else Truth3.indet
 
 -- ============================================================================
 -- §2. Core Properties of the Trivalent Semantics
@@ -104,33 +104,33 @@ def shouldEval (domain : List World) (p : World → Bool) : TVal :=
 
 /-- `must` never returns the indeterminate value. -/
 theorem must_bivalent (domain : List World) (p : World → Bool) :
-    mustEval domain p = TVal.tt ∨ mustEval domain p = TVal.ff := by
-  unfold mustEval TVal.ofBool
+    mustEval domain p = Truth3.true ∨ mustEval domain p = Truth3.false := by
+  unfold mustEval Truth3.ofBool
   cases domain.all p <;> simp
 
 /-! ### should is homogeneous: it can return ★ -/
 
 /-- In a mixed domain, `should` returns ★ (indeterminate). -/
 theorem should_mixed :
-    shouldEval [true, false] id = TVal.unk := by native_decide
+    shouldEval [true, false] id = Truth3.indet := by native_decide
 
 /-- In a uniform-true domain, `should` returns tt. -/
 theorem should_all_true :
-    shouldEval [true, true, true] id = TVal.tt := by native_decide
+    shouldEval [true, true, true] id = Truth3.true := by native_decide
 
 /-- In a uniform-false domain, `should` returns ff. -/
 theorem should_all_false :
-    shouldEval [false, false] id = TVal.ff := by native_decide
+    shouldEval [false, false] id = Truth3.false := by native_decide
 
 /-- `must` returns ff in the mixed case (no gap). -/
 theorem must_mixed :
-    mustEval [true, false] id = TVal.ff := by native_decide
+    mustEval [true, false] id = Truth3.false := by native_decide
 
 /-- When positive, `should` and `must` agree. -/
 theorem should_must_agree_positive (domain : List World) (p : World → Bool)
     (h : domain.all p = true) (hne : domain.isEmpty = false) :
     shouldEval domain p = mustEval domain p := by
-  simp [shouldEval, mustEval, TVal.ofBool, h, hne]
+  simp [shouldEval, mustEval, Truth3.ofBool, h, hne]
 
 -- ============================================================================
 -- §3. Negation Symmetry (the formal core of homogeneity)
@@ -167,8 +167,8 @@ private theorem list_all_neg_false_of_pos {α : Type} {l : List α} {p : α → 
 /-- If `shouldEval D p = tt`, then `shouldEval D (¬p) = ff`.
     No overlap between positive and negative extensions of the plurality. -/
 theorem shouldEval_tt_neg_ff (domain : List World) (p : World → Bool)
-    (h : shouldEval domain p = TVal.tt) :
-    shouldEval domain (fun w => !(p w)) = TVal.ff := by
+    (h : shouldEval domain p = Truth3.true) :
+    shouldEval domain (fun w => !(p w)) = Truth3.false := by
   unfold shouldEval at h ⊢
   split at h
   · exact absurd h (by decide)
@@ -183,8 +183,8 @@ theorem shouldEval_tt_neg_ff (domain : List World) (p : World → Bool)
 /-- If `shouldEval D p = ff` (non-empty D), then `shouldEval D (¬p) = tt`.
     Symmetric: universal denial of p means universal affirmation of ¬p. -/
 theorem shouldEval_ff_neg_tt (domain : List World) (p : World → Bool)
-    (h : shouldEval domain p = TVal.ff) (hne : domain.isEmpty = false) :
-    shouldEval domain (fun w => !(p w)) = TVal.tt := by
+    (h : shouldEval domain p = Truth3.false) (hne : domain.isEmpty = false) :
+    shouldEval domain (fun w => !(p w)) = Truth3.true := by
   unfold shouldEval at h ⊢
   split at h
   · rename_i he; exact absurd he (by simp [hne])
@@ -199,8 +199,8 @@ theorem shouldEval_ff_neg_tt (domain : List World) (p : World → Bool)
 /-- If `shouldEval D p = unk`, then `shouldEval D (¬p) = unk`.
     The gap is symmetric under negation — the core homogeneity property. -/
 theorem shouldEval_unk_symmetric (domain : List World) (p : World → Bool)
-    (h : shouldEval domain p = TVal.unk) :
-    shouldEval domain (fun w => !(p w)) = TVal.unk := by
+    (h : shouldEval domain p = Truth3.indet) :
+    shouldEval domain (fun w => !(p w)) = Truth3.indet := by
   unfold shouldEval at h ⊢
   split at h
   · exact absurd h (by decide)
@@ -304,11 +304,11 @@ def necessarilyRemovesModalHomogeneity : HomogeneityRemovalDatum :=
 
 /-- `shouldEval` with homogeneity removal (= explicit quantifier insertion)
     reduces to `mustEval` — the gap disappears. -/
-def shouldWithRemoval (domain : List World) (p : World → Bool) : TVal :=
+def shouldWithRemoval (domain : List World) (p : World → Bool) : Truth3 :=
   mustEval domain p
 
 theorem removal_eliminates_gap :
-    shouldWithRemoval [true, false] id = TVal.ff := by native_decide
+    shouldWithRemoval [true, false] id = Truth3.false := by native_decide
 
 -- ============================================================================
 -- §6. Exception Tolerance (§3.3)
@@ -464,7 +464,7 @@ theorem existential_multiple_minimal_witnesses :
 
 /-- X applied to must yields the domain itself (= should's denotation).
     The resulting plurality is then subject to plural predication semantics. -/
-def applyX (domain : List World) (p : World → Bool) : TVal :=
+def applyX (domain : List World) (p : World → Bool) : Truth3 :=
   shouldEval domain p
 
 /-- X(must) = should. -/
@@ -574,20 +574,20 @@ open Semantics.Modality.Kratzer (ModalBase OrderingSource)
 open Core.Proposition (BProp)
 
 /-- `Directive.weakNecessity` is bivalent: it returns Bool, so wrapping
-    in TVal can only yield tt or ff — never unk. -/
+    in Truth3 can only yield true or false — never indet. -/
 theorem directive_bivalent
     (f : ModalBase) (g g' : OrderingSource)
     (p : BProp Semantics.Attitudes.Intensional.World)
     (w : Semantics.Attitudes.Intensional.World) :
-    TVal.ofBool (weakNecessity f g g' p w) = TVal.tt ∨
-    TVal.ofBool (weakNecessity f g g' p w) = TVal.ff := by
-  cases weakNecessity f g g' p w <;> simp [TVal.ofBool]
+    Truth3.ofBool (weakNecessity f g g' p w) = Truth3.true ∨
+    Truth3.ofBool (weakNecessity f g g' p w) = Truth3.false := by
+  cases weakNecessity f g g' p w <;> simp [Truth3.ofBool]
 
 end DirectiveBridge
 
 /-- `shouldEval` CAN return unk — the gap that domain restriction misses. -/
 theorem shouldEval_can_gap :
-    ∃ (D : List Bool) (p : Bool → Bool), shouldEval D p = TVal.unk :=
+    ∃ (D : List Bool) (p : Bool → Bool), shouldEval D p = Truth3.indet :=
   ⟨[true, false], id, by native_decide⟩
 
 /-- The mismatch: domain restriction predicts existential followups are

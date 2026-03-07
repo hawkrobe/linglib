@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.228.87] - 2026-03-07
+
+### Changed
+- **Unify trivalent truth into `Core/Logic/Truth3.lean`**: Collapse `Core.Semantics.TruthValue`, `Core.Kleene.TVal`, and locally-defined `TruthValue` types into `Core.Duality.Truth3`. Add `Truth3.gap` abbreviation, `ofBool`/`isDefined`/`toBoolOrFalse`, Weak Kleene ops (`joinWeak`/`meetWeak`), `metaAssert`, `Prop3`, and full Strong Kleene theorem library. Extract `Truth3` from `Duality.lean` into its own file. Delete `Core/Semantics/TruthValue.lean` and `Core/Semantics/Kleene.lean`. Update 8 consumer files
+- **Plurals/Basic.lean**: Fix stale cross-references (`Imprecision/Homogeneity.lean` → `Homogeneity.lean`, add Kriz2016 and Projection.lean)
+- **Imprecision/Projection.lean**: Add cross-reference to `Plurals/Studies/Kriz2016.lean`
+
 ## [0.228.86] - 2026-03-07
 
 ### Added

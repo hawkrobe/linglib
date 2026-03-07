@@ -24,7 +24,7 @@ This parallels how QUDs partition propositions in `Core/QUD.lean`.
 import Mathlib.Data.Finset.Basic
 import Mathlib.Data.Finset.Powerset
 import Linglib.Core.Discourse.QUD
-import Linglib.Core.Semantics.Kleene
+import Linglib.Core.Logic.Truth3
 
 namespace Semantics.Lexical.Plural.Distributivity
 
@@ -152,14 +152,9 @@ def someSatisfy (P : Atom → W → Bool) (x : Finset Atom) (w : W) : Bool :=
 def noneSatisfy (P : Atom → W → Bool) (x : Finset Atom) (w : W) : Bool :=
   decide (∀ a ∈ x, P a w = false)
 
--- Part 2: Trivalent Truth Values
+-- Part 2: Trivalent Truth Values (Core.Duality.Truth3)
 
-/-- Trivalent truth value for homogeneous predicates -/
-inductive TruthValue where
-  | true   -- All candidates true
-  | false  -- All candidates false
-  | gap    -- Some true, some false (undefined)
-  deriving DecidableEq, Repr
+open Core.Duality (Truth3)
 
 /--
 The trivalent truth value for plural predication "the Xs are P".
@@ -170,7 +165,7 @@ The trivalent truth value for plural predication "the Xs are P".
 
 This is the core of @cite{kriz-spector-2021} Section 2.
 -/
-def pluralTruthValue (P : Atom → W → Bool) (x : Finset Atom) (w : W) : TruthValue :=
+def pluralTruthValue (P : Atom → W → Bool) (x : Finset Atom) (w : W) : Truth3 :=
   if allSatisfy P x w then .true
   else if noneSatisfy P x w then .false
   else .gap
@@ -288,7 +283,7 @@ theorem pluralTruthValue_neg (P : Atom → W → Bool) (x : Finset Atom) (w : W)
     match pluralTruthValue P x w with
     | .true => .false
     | .false => .true
-    | .gap => .gap := by
+    | .indet => .indet := by
   -- Case split on the value of pluralTruthValue P x w
   cases h : pluralTruthValue P x w
   -- Case .true: allSatisfy P holds, so noneSatisfy ¬P holds, giving .false
@@ -763,34 +758,5 @@ def classifyOperator (forcesDistributivity : Bool) (usesTolerance : Bool)
   | true, true => .distNonMax
   | false, false => .nonDistMax
   | false, true => .nonDistNonMax
-
--- Bridge: TruthValue ↔ Core.Kleene.TVal
-
-section TruthValueBridge
-
-open Core.Kleene
-
-/-- Convert plural TruthValue to general trivalent TVal. -/
-def TruthValue.toTVal : TruthValue → TVal
-  | .true => TVal.tt
-  | .false => TVal.ff
-  | .gap => TVal.unk
-
-/-- Convert general TVal to plural TruthValue. -/
-def TruthValue.ofTVal : TVal → TruthValue
-  | some Bool.true => .true
-  | some Bool.false => .false
-  | none => .gap
-
-instance : Coe TruthValue TVal where
-  coe := TruthValue.toTVal
-
-@[simp] theorem TruthValue.ofTVal_toTVal : ∀ v : TruthValue, ofTVal v.toTVal = v
-  | .true => rfl | .false => rfl | .gap => rfl
-
-@[simp] theorem TruthValue.toTVal_ofTVal : ∀ v : TVal, (TruthValue.ofTVal v).toTVal = v
-  | some Bool.true => rfl | some Bool.false => rfl | none => rfl
-
-end TruthValueBridge
 
 end Semantics.Lexical.Plural.Distributivity

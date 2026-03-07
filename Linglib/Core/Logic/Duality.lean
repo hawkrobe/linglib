@@ -1,6 +1,4 @@
-import Mathlib.Order.Basic
-import Mathlib.Order.Lattice
-import Mathlib.Order.BoundedOrder.Basic
+import Linglib.Core.Logic.Truth3
 
 /-!
 # Duality
@@ -11,7 +9,6 @@ Universal vs existential operators formalized as a Galois connection.
 ## Main definitions
 
 - `DualityType`: existential vs universal classification
-- `Truth3`: three-valued truth (Kleene strong)
 - `aggregate`: aggregate list by duality type
 
 For GQ-level duality operations (outer negation, inner negation, dual) see
@@ -45,86 +42,6 @@ def DualityType.dual : DualityType → DualityType
 theorem dual_involutive (d : DualityType) : d.dual.dual = d := by
   cases d <;> rfl
 
-/-- Three-valued truth. -/
-inductive Truth3 where
-  | true
-  | false
-  | indet
-  deriving Repr, DecidableEq, BEq, Inhabited
-
-namespace Truth3
-
-/-- Kleene strong negation. -/
-def neg : Truth3 → Truth3
-  | .true => .false
-  | .false => .true
-  | .indet => .indet
-
-/-- Existential aggregation. -/
-def join : Truth3 → Truth3 → Truth3
-  | .true, _ => .true
-  | _, .true => .true
-  | .false, .false => .false
-  | _, _ => .indet
-
-/-- Universal aggregation. -/
-def meet : Truth3 → Truth3 → Truth3
-  | .false, _ => .false
-  | _, .false => .false
-  | .true, .true => .true
-  | _, _ => .indet
-
-/-- Lattice ordering: false < indet < true. -/
-def le : Truth3 → Truth3 → Bool
-  | .false, _ => Bool.true
-  | .indet, .indet => Bool.true
-  | .indet, .true => Bool.true
-  | .true, .true => Bool.true
-  | _, _ => Bool.false
-
-instance : LE Truth3 where
-  le a b := le a b = Bool.true
-
-
-instance : Preorder Truth3 where
-  le a b := le a b = Bool.true
-  le_refl a := by cases a <;> rfl
-  le_trans a b c hab hbc := by cases a <;> cases b <;> cases c <;> trivial
-
-instance : PartialOrder Truth3 where
-  le_antisymm a b hab hba := by cases a <;> cases b <;> trivial
-
-instance : SemilatticeSup Truth3 where
-  sup := join
-  le_sup_left a b := by cases a <;> cases b <;> rfl
-  le_sup_right a b := by cases a <;> cases b <;> rfl
-  sup_le a b c hac hbc := by cases a <;> cases b <;> cases c <;> trivial
-
-instance : SemilatticeInf Truth3 where
-  inf := meet
-  inf_le_left a b := by cases a <;> cases b <;> rfl
-  inf_le_right a b := by cases a <;> cases b <;> rfl
-  le_inf a b c hab hac := by cases a <;> cases b <;> cases c <;> trivial
-
-instance : Lattice Truth3 where
-  __ := inferInstanceAs (SemilatticeSup Truth3)
-  __ := inferInstanceAs (SemilatticeInf Truth3)
-
-instance : Bot Truth3 := ⟨.false⟩
-instance : Top Truth3 := ⟨.true⟩
-
-instance : OrderBot Truth3 where
-  bot_le a := by cases a <;> rfl
-
-instance : OrderTop Truth3 where
-  le_top a := by cases a <;> rfl
-
-instance : BoundedOrder Truth3 where
-  __ := inferInstanceAs (OrderBot Truth3)
-  __ := inferInstanceAs (OrderTop Truth3)
-
-end Truth3
-
 /-- Aggregate a list according to duality type. -/
 def aggregate (d : DualityType) (l : List Truth3) : Truth3 :=
   match d with
@@ -136,11 +53,6 @@ def existsAny (l : List Truth3) : Truth3 := aggregate .existential l
 
 /-- Universal aggregation: true only if ALL true. -/
 def forallAll (l : List Truth3) : Truth3 := aggregate .universal l
-
-@[simp] theorem Truth3.sup_true (a : Truth3) : a ⊔ .true = .true := by cases a <;> rfl
-@[simp] theorem Truth3.true_sup (a : Truth3) : Truth3.true ⊔ a = .true := by cases a <;> rfl
-@[simp] theorem Truth3.inf_false (a : Truth3) : a ⊓ .false = .false := by cases a <;> rfl
-@[simp] theorem Truth3.false_inf (a : Truth3) : Truth3.false ⊓ a = .false := by cases a <;> rfl
 
 theorem foldl_sup_of_true (l : List Truth3) : l.foldl (· ⊔ ·) Truth3.true = .true := by
   induction l with

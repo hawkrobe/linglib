@@ -1,4 +1,4 @@
-import Linglib.Core.Semantics.Kleene
+import Linglib.Core.Logic.Truth3
 import Linglib.Core.Semantics.Proposition
 
 /-!
@@ -15,7 +15,7 @@ project through logical operators.
 
 namespace Core.Presupposition
 
-open Core.Kleene
+open Core.Duality
 open Core.Proposition
 
 /-- A presuppositional proposition: assertion + presupposition. -/
@@ -31,7 +31,7 @@ variable {W : Type*}
 
 /-- Evaluate a presuppositional proposition to three-valued truth. -/
 def eval (p : PrProp W) : Prop3 W := λ w =>
-  if p.presup w then TVal.ofBool (p.assertion w) else TVal.unk
+  if p.presup w then Truth3.ofBool (p.assertion w) else .indet
 
 /-- A PrProp is defined at w iff its presupposition holds at w. -/
 def isDefinedAt (p : PrProp W) (w : W) : Prop := p.presup w = true
@@ -42,8 +42,10 @@ def definedWorlds (p : PrProp W) : W -> Prop := λ w => p.presup w = true
 /-- Evaluation is defined iff presupposition holds. -/
 theorem eval_isDefined (p : PrProp W) (w : W) :
     (p.eval w).isDefined = p.presup w := by
-  simp only [eval, TVal.isDefined]
-  cases hp : p.presup w <;> simp [TVal.ofBool, Option.isSome]
+  simp only [eval]
+  cases hp : p.presup w
+  · simp [Truth3.isDefined]
+  · cases p.assertion w <;> simp [Truth3.ofBool, Truth3.isDefined]
 
 /-- Classical negation of a presuppositional proposition. -/
 def neg (p : PrProp W) : PrProp W :=
@@ -148,31 +150,31 @@ theorem ofBProp_assertion (p : BProp W) (w : W) : (ofBProp p).assertion w = p w 
 
 /-- Negation evaluation. -/
 theorem eval_neg (p : PrProp W) (w : W) :
-    (neg p).eval w = TVal.neg (p.eval w) := by
+    (neg p).eval w = Truth3.neg (p.eval w) := by
   simp only [eval, neg]
   split
-  · simp [TVal.neg_ofBool]
+  · simp [Truth3.neg_ofBool]
   · rfl
 
 /-- Classical conjunction evaluation (both defined). -/
 theorem eval_and (p q : PrProp W) (w : W)
     (hp : p.presup w = true) (hq : q.presup w = true) :
-    (and p q).eval w = TVal.and (p.eval w) (q.eval w) := by
-  simp only [eval, and, hp, hq, Bool.true_and, ite_true, TVal.and_ofBool]
+    (and p q).eval w = Truth3.meet (p.eval w) (q.eval w) := by
+  simp only [eval, and, hp, hq, Bool.true_and, ite_true, Truth3.meet_ofBool]
 
 /-- Filtering implication when antecedent false: result is true. -/
 theorem eval_impFilter_antecedent_false (p q : PrProp W) (w : W)
     (hp : p.presup w = true) (ha : p.assertion w = false) :
-    (impFilter p q).eval w = TVal.tt := by
+    (impFilter p q).eval w = .true := by
   simp only [eval, impFilter, hp, ha, Bool.true_and, Bool.not_false, Bool.true_or,
-             TVal.ofBool, TVal.tt, ite_true]
+             Truth3.ofBool, ite_true]
 
 /-- Filtering implication when antecedent true: depends on consequent. -/
 theorem eval_impFilter_antecedent_true (p q : PrProp W) (w : W)
     (hp : p.presup w = true) (ha : p.assertion w = true) (hq : q.presup w = true) :
-    (impFilter p q).eval w = TVal.ofBool (q.assertion w) := by
+    (impFilter p q).eval w = Truth3.ofBool (q.assertion w) := by
   simp only [eval, impFilter, hp, ha, hq, Bool.true_and, Bool.not_true, Bool.false_or,
-             TVal.ofBool, ite_true]
+             Truth3.ofBool, ite_true]
 
 /-- Strong entailment: p entails q at all worlds where both are defined. -/
 def strongEntails (p q : PrProp W) : Prop :=

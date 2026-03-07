@@ -35,12 +35,13 @@ Ramotowska et al. find experimental support for the SELECTIONAL theory.
 
 import Linglib.Theories.Semantics.Conditionals.Basic
 import Linglib.Core.StructuralEquationModel
-import Linglib.Core.Logic.Duality
+import Linglib.Core.Logic.Truth3
 
 namespace Semantics.Conditionals.Counterfactual
 
 open Semantics.Conditionals
 open Core.StructuralEquationModel
+open Core.Duality (Truth3)
 
 
 /--
@@ -111,36 +112,7 @@ This predicts:
   some students' closest study-worlds have passing, others don't
 -/
 
-/-- Truth value in three-valued logic. -/
-inductive TruthValue where
-  | true
-  | false
-  | indeterminate
-  deriving Repr, DecidableEq, BEq, Inhabited
-
-namespace TruthValue
-
-/-- Negation in three-valued logic. -/
-def neg : TruthValue → TruthValue
-  | .true => .false
-  | .false => .true
-  | .indeterminate => .indeterminate
-
-/-- Conjunction in three-valued logic (Kleene strong). -/
-def and : TruthValue → TruthValue → TruthValue
-  | .true, .true => .true
-  | .false, _ => .false
-  | _, .false => .false
-  | _, _ => .indeterminate
-
-/-- Disjunction in three-valued logic (Kleene strong). -/
-def or : TruthValue → TruthValue → TruthValue
-  | .true, _ => .true
-  | _, .true => .true
-  | .false, .false => .false
-  | _, _ => .indeterminate
-
-end TruthValue
+-- Three-valued truth from Core.Duality.Truth3 (.gap = .indet abbreviation)
 
 /--
 Selectional counterfactual semantics (Stalnaker + supervaluation).
@@ -148,7 +120,7 @@ Selectional counterfactual semantics (Stalnaker + supervaluation).
 Returns a three-valued truth value based on agreement across selection functions.
 -/
 def selectionalCounterfactual {W : Type*} [DecidableEq W]
-    (closer : W → W → W → Bool) (domain : List W) (A B : W → Bool) (w : W) : TruthValue :=
+    (closer : W → W → W → Bool) (domain : List W) (A B : W → Bool) (w : W) : Truth3 :=
   let closest := closestWorldsB closer domain w (domain.filter A)
   match closest with
   | [] => .true  -- Vacuously true
@@ -157,34 +129,34 @@ def selectionalCounterfactual {W : Type*} [DecidableEq W]
     let allFalse := closest.all (!B ·)
     if allTrue then .true
     else if allFalse then .false
-    else .indeterminate
+    else .gap
 
 /--
 Conditional Excluded Middle (CEM) holds for selectional semantics.
 
-(A □→ B) ∨ (A □→ ¬B) is always true or indeterminate, never false.
+(A □→ B) ∨ (A □→ ¬B) is always true or gap, never false.
 
 Proof sketch:
 1. Empty closest: both vacuously true → or = true
 2. All B: φ = true → or = true
 3. All ¬B: ψ = true → or = true
-4. Mixed: both indeterminate → or = indeterminate
+4. Mixed: both gap → or = gap
 -/
 theorem cem_selectional {W : Type*} [DecidableEq W]
     (closer : W → W → W → Bool) (domain : List W) (A B : W → Bool) (w : W) :
     let φ := selectionalCounterfactual closer domain A B w
     let ψ := selectionalCounterfactual closer domain A (!B ·) w
-    TruthValue.or φ ψ ≠ .false := by
+    Truth3.join φ ψ ≠ .false := by
   simp only [selectionalCounterfactual]
   intro h
   -- CEM: at least one of φ, ψ is not .false
-  -- The only way TruthValue.or x y = .false is when x = .false and y = .false
+  -- The only way Truth3.join x y = .false is when x = .false and y = .false
   -- But if x = .false (for B), then all closest satisfy ¬B, so y = .true (for ¬B)
   match hc : closestWorldsB closer domain w (domain.filter A) with
-  | [] => simp [hc, TruthValue.or] at h
+  | [] => simp [hc, Truth3.join] at h
   | _::_ =>
     simp only [hc] at h
-    split_ifs at h with h1 h2 h3 h4 <;> simp [TruthValue.or] at h
+    split_ifs at h with h1 h2 h3 h4 <;> simp [Truth3.join] at h
     -- After all splits, we get contradictions from assuming both are .false
     all_goals (first | exact h | exact h.1 | exact h.2 | contradiction)
 
@@ -331,31 +303,31 @@ For a list of three-valued results:
 This directly explains the strength effect: conjunctive operators (strong)
 are fragile under heterogeneity, disjunctive operators (weak) are robust.
 -/
-def projectTruthValues (proj : ProjectionType) (results : List TruthValue) : TruthValue :=
+def projectTruthValues (proj : ProjectionType) (results : List Truth3) : Truth3 :=
   match proj with
   | .conjunctive =>
     if results.all (· == .true) then .true
     else if results.any (· == .false) then .false
-    else .indeterminate
+    else .gap
   | .disjunctive =>
     if results.any (· == .true) then .true
     else if results.all (· == .false) then .false
-    else .indeterminate
+    else .gap
 
 /--
 Strength effect as projection duality.
 
 Strong quantifiers use conjunctive projection; weak use disjunctive.
 -/
-theorem strength_is_projection_duality (q : String) (results : List TruthValue) :
+theorem strength_is_projection_duality (q : String) (results : List Truth3) :
     (q = "every" ∨ q = "no" → projectTruthValues (quantifierProjection q) results =
       if results.all (· == .true) then .true
       else if results.any (· == .false) then .false
-      else .indeterminate) ∧
+      else .gap) ∧
     (q = "some" ∨ q = "not-every" → projectTruthValues (quantifierProjection q) results =
       if results.any (· == .true) then .true
       else if results.all (· == .false) then .false
-      else .indeterminate) := by
+      else .gap) := by
   constructor <;> intro h <;> cases h <;> simp_all [quantifierProjection, projectTruthValues]
 
 /--
@@ -363,7 +335,7 @@ Conjunctive projection is fragile: one false element yields false.
 
 When any element is false, conjunctive projection cannot return true.
 -/
-theorem conjunctive_fragile (results : List TruthValue)
+theorem conjunctive_fragile (results : List Truth3)
     (h : results.any (· == .false)) :
     projectTruthValues .conjunctive results ≠ .true := by
   unfold projectTruthValues
@@ -372,7 +344,7 @@ theorem conjunctive_fragile (results : List TruthValue)
   split_ifs with h1 h2
   · -- Case: all true - but we have x with x == .false
     have hxt := List.all_eq_true.mp h1 x hx_mem
-    -- hxt and hx_false contradict for any TruthValue
+    -- hxt and hx_false contradict for any Truth3
     revert hxt hx_false
     cases x <;> decide
   · decide
@@ -383,7 +355,7 @@ Disjunctive projection is robust: one true element yields true.
 
 When any element is true, disjunctive projection returns true.
 -/
-theorem disjunctive_robust (results : List TruthValue)
+theorem disjunctive_robust (results : List Truth3)
     (h : results.any (· == .true)) :
     projectTruthValues .disjunctive results = .true := by
   unfold projectTruthValues
@@ -444,41 +416,15 @@ The Ramotowska et al. finding that strength determines counterfactual
 judgments is thus a reflection of deep categorical structure in semantics.
 -/
 
-/-- The three-valued truth lattice ordering: false < indeterminate < true -/
-def TruthValue.le : TruthValue → TruthValue → Bool
-  | .false, _ => Bool.true
-  | .indeterminate, .indeterminate => Bool.true
-  | .indeterminate, .true => Bool.true
-  | .true, .true => Bool.true
-  | _, _ => Bool.false
-
-/-- Meet (infimum) in the truth value lattice. -/
-def TruthValue.meet : TruthValue → TruthValue → TruthValue
-  | .true, .true => .true
-  | .true, .indeterminate => .indeterminate
-  | .true, .false => .false
-  | .indeterminate, .true => .indeterminate
-  | .indeterminate, .indeterminate => .indeterminate
-  | .indeterminate, .false => .false
-  | .false, _ => .false
-
-/-- Join (supremum) in the truth value lattice. -/
-def TruthValue.join : TruthValue → TruthValue → TruthValue
-  | .false, .false => .false
-  | .false, .indeterminate => .indeterminate
-  | .false, .true => .true
-  | .indeterminate, .false => .indeterminate
-  | .indeterminate, .indeterminate => .indeterminate
-  | .indeterminate, .true => .true
-  | .true, _ => .true
+-- Truth3.le, .meet, .join provided by Core.Duality.Truth3
 
 /-- Conjunctive projection computes the meet: meet(., false,.) = false -/
-example : TruthValue.meet .true .false = .false := rfl
-example : TruthValue.meet .true .indeterminate = .indeterminate := rfl
+example : Truth3.meet .true .false = .false := rfl
+example : Truth3.meet .true .gap = .gap := rfl
 
 /-- Disjunctive projection computes the join: join(., true,.) = true -/
-example : TruthValue.join .false .true = .true := rfl
-example : TruthValue.join .false .indeterminate = .indeterminate := rfl
+example : Truth3.join .false .true = .true := rfl
+example : Truth3.join .false .gap = .gap := rfl
 
 -- PART 5c: Connection to Core.Duality
 
@@ -501,19 +447,6 @@ general principle, which also explains:
 - NPI licensing
 - Free choice inferences
 -/
-
-/-- Convert our TruthValue to Core.Duality.Truth3. -/
-def TruthValue.toDuality : TruthValue → Core.Duality.Truth3
-  | .true => .true
-  | .false => .false
-  | .indeterminate => .indet
-
-/-- Convert Core.Duality.Truth3 to our TruthValue. -/
-def TruthValue.fromDuality : Core.Duality.Truth3 → TruthValue
-  | .true => .true
-  | .false => .false
-  | .indet => .indeterminate
-
 
 /-!
 ## Quantifier Embedding
@@ -545,11 +478,11 @@ over these truth values.
 -/
 structure QuantifiedCounterfactualResult where
   /-- Individual results before quantification -/
-  individualResults : List TruthValue
+  individualResults : List Truth3
   /-- The quantifier used -/
   quantifier : String
   /-- Final result after quantification -/
-  result : TruthValue
+  result : Truth3
   deriving Repr
 
 /--
@@ -559,10 +492,10 @@ TRUE iff all individual counterfactuals are true.
 FALSE iff some individual counterfactual is false.
 INDETERMINATE otherwise.
 -/
-def everySelectional (results : List TruthValue) : TruthValue :=
+def everySelectional (results : List Truth3) : Truth3 :=
   if results.all (· == .true) then .true
   else if results.any (· == .false) then .false
-  else .indeterminate
+  else .gap
 
 /--
 Evaluate "some d: if d were A, d would be B" under selectional semantics.
@@ -571,10 +504,10 @@ TRUE iff some individual counterfactual is true.
 FALSE iff all individual counterfactuals are false.
 INDETERMINATE otherwise.
 -/
-def someSelectional (results : List TruthValue) : TruthValue :=
+def someSelectional (results : List Truth3) : Truth3 :=
   if results.any (· == .true) then .true
   else if results.all (· == .false) then .false
-  else .indeterminate
+  else .gap
 
 /--
 Evaluate "no d: if d were A, d would be B" under selectional semantics.
@@ -583,10 +516,10 @@ TRUE iff all individual counterfactuals are false.
 FALSE iff some individual counterfactual is true.
 INDETERMINATE otherwise.
 -/
-def noSelectional (results : List TruthValue) : TruthValue :=
+def noSelectional (results : List Truth3) : Truth3 :=
   if results.all (· == .false) then .true
   else if results.any (· == .true) then .false
-  else .indeterminate
+  else .gap
 
 /--
 Quantifier strength determines response pattern.
@@ -603,7 +536,7 @@ Proof sketch:
 - "some": Since some result is true, `someSelectional` returns `.true`.
 - "no": Since some result is true, not all are false, so `noSelectional` returns `.false`.
 -/
-theorem strength_determines_pattern (results : List TruthValue)
+theorem strength_determines_pattern (results : List Truth3)
     (h_mixed : results.any (· == .true) ∧ results.any (· == .false)) :
     everySelectional results = .false ∧
     someSelectional results = .true ∧
@@ -622,7 +555,7 @@ theorem strength_determines_pattern (results : List TruthValue)
       cases x with
       | true => exact absurd hx_eq (by decide)
       | false => exact absurd hx_true (by decide)
-      | indeterminate => exact absurd hx_eq (by decide)
+      | indet => exact absurd hx_eq (by decide)
     · rfl
   constructor
   · -- some: has true element → first branch
@@ -637,7 +570,7 @@ theorem strength_determines_pattern (results : List TruthValue)
       cases x with
       | true => exact absurd hx_false (by decide)
       | false => exact absurd hx_eq (by decide)
-      | indeterminate => exact absurd hx_eq (by decide)
+      | indet => exact absurd hx_eq (by decide)
     · rfl
 
 

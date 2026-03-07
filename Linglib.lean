@@ -8,7 +8,7 @@ and their interfaces. See README.md for documentation links.
 import Linglib.Core.Lexical.Word
 import Linglib.Core.Grammar
 import Linglib.Core.Lexical.Pronouns
-import Linglib.Core.Semantics.Kleene
+import Linglib.Core.Logic.Truth3
 import Linglib.Core.Empirical
 import Linglib.Core.Semantics.Proposition
 import Linglib.Core.Lexical.UD
@@ -325,6 +325,7 @@ import Linglib.Core.WALS.Features.F144Y
 import Linglib.Tactics.NonnegOfForall
 import Linglib.Tactics.RSAPredict
 import Linglib.Tactics.OntSort
+import Linglib.Tactics.NgeFS
 -- Fragments
 import Linglib.Fragments.Arabic.Relativization
 import Linglib.Fragments.ASL.Classifiers

@@ -1,4 +1,4 @@
-import Linglib.Core.Semantics.Kleene
+import Linglib.Core.Logic.Truth3
 import Linglib.Core.Scales.Scale
 import Linglib.Theories.Semantics.Lexical.Adjective.Theory
 import Linglib.Phenomena.Gradability.Vagueness
@@ -17,7 +17,7 @@ A precisification of a vague gradable predicate is a choice of threshold.
 A **specification space** is a set of admissible thresholds — the different
 ways the predicate could be made precise. Super-truth is universal
 quantification over this set, mapping Bool-valued threshold semantics
-to three-valued (`TVal`) outputs.
+to three-valued (`Truth3`) outputs.
 
 ## Structure
 
@@ -25,7 +25,7 @@ to three-valued (`TVal`) outputs.
 - § 2: The D (definitely) operator
 - § 3: Penumbral connection theorems (§ 2 of the paper, pp. 270–271)
 - § 4: Sorites resolution (§ 4, pp. 285–286)
-- § 5: Bridge — `inGapRegion` ↔ `TVal.unk`
+- § 5: Bridge — `inGapRegion` ↔ `Truth3.indet`
 
 ## Scope
 
@@ -47,7 +47,7 @@ thresholds. (Neither paper states this connection explicitly.) See
 
 namespace Phenomena.Gradability.Studies.Fine1975
 
-open Core.Kleene (TVal)
+open Core.Duality (Truth3)
 open Core.Scale (Degree Threshold Degree.toNat Threshold.toNat)
 open Semantics.Lexical.Adjective (ThresholdPair inGapRegion)
 
@@ -68,14 +68,14 @@ abbrev SpecSpace (max : Nat) := Finset (Threshold max)
 
     Uses decidable bounded quantification over Finset.
     Empty specification spaces yield `tt` (vacuous universal). -/
-def superTrue {max : Nat} (p : Threshold max → Bool) (S : SpecSpace max) : TVal :=
-  if ∀ θ ∈ S, p θ = true then TVal.tt
-  else if ∀ θ ∈ S, p θ = false then TVal.ff
-  else TVal.unk
+def superTrue {max : Nat} (p : Threshold max → Bool) (S : SpecSpace max) : Truth3 :=
+  if ∀ θ ∈ S, p θ = true then Truth3.true
+  else if ∀ θ ∈ S, p θ = false then Truth3.false
+  else Truth3.indet
 
 /-- Supervaluation of a degree predicate: fix a degree, vary the threshold. -/
 def superTrueAt {max : Nat} (meaning : Degree max → Threshold max → Bool)
-    (d : Degree max) (S : SpecSpace max) : TVal :=
+    (d : Degree max) (S : SpecSpace max) : Truth3 :=
   superTrue (meaning d) S
 
 -- ════════════════════════════════════════════════════
@@ -99,7 +99,7 @@ def indefinite {max : Nat} (p : Threshold max → Bool)
 
 theorem definitely_iff_supertrue {max : Nat} (p : Threshold max → Bool)
     (S : SpecSpace max) :
-    definitely p S = true ↔ superTrue p S = TVal.tt := by
+    definitely p S = true ↔ superTrue p S = Truth3.true := by
   unfold definitely superTrue
   constructor
   · intro h; rw [decide_eq_true_eq] at h; exact if_pos h
@@ -107,12 +107,12 @@ theorem definitely_iff_supertrue {max : Nat} (p : Threshold max → Bool)
     by_contra hc; rw [decide_eq_true_eq] at hc
     rw [if_neg hc] at h; split at h <;> cases h
 
-/-- The indefiniteness operator corresponds to `TVal.unk` under
+/-- The indefiniteness operator corresponds to `Truth3.indet` under
     supervaluation: A is indefinite iff it is neither super-true nor
     super-false. Requires non-empty S to exclude the vacuous case. -/
 theorem indefinite_iff_superunk {max : Nat} (p : Threshold max → Bool)
     (S : SpecSpace max) (hne : S.Nonempty) :
-    indefinite p S = true ↔ superTrue p S = TVal.unk := by
+    indefinite p S = true ↔ superTrue p S = Truth3.indet := by
   unfold indefinite definitely superTrue
   simp only [Bool.and_eq_true, Bool.not_eq_true_eq_eq_false, decide_eq_false_iff_not]
   constructor
@@ -146,7 +146,7 @@ theorem indefinite_iff_superunk {max : Nat} (p : Threshold max → Bool)
     of penumbral connection" (p. 278). -/
 theorem excluded_middle_supertrue {max : Nat} (p : Threshold max → Bool)
     (S : SpecSpace max) :
-    superTrue (fun θ => p θ || !p θ) S = TVal.tt := by
+    superTrue (fun θ => p θ || !p θ) S = Truth3.true := by
   unfold superTrue
   exact if_pos (fun θ _ => by cases p θ <;> simp)
 
@@ -157,7 +157,7 @@ theorem excluded_middle_supertrue {max : Nat} (p : Threshold max → Bool)
     admissible precisification exists). -/
 theorem non_contradiction_superfalse {max : Nat} (p : Threshold max → Bool)
     (S : SpecSpace max) (hne : S.Nonempty) :
-    superTrue (fun θ => p θ && !p θ) S = TVal.ff := by
+    superTrue (fun θ => p θ && !p θ) S = Truth3.false := by
   unfold superTrue
   have hnt : ¬(∀ θ ∈ S, (p θ && !p θ) = true) := by
     obtain ⟨θ₀, hθ₀⟩ := hne
@@ -174,8 +174,8 @@ theorem non_contradiction_superfalse {max : Nat} (p : Threshold max → Bool)
 theorem comparative_entailment {max : Nat}
     (d₁ d₂ : Degree max) (S : SpecSpace max)
     (hgt : d₂.toNat < d₁.toNat)
-    (hd₂ : superTrueAt (fun d θ => decide (d.toNat > θ.toNat)) d₂ S = TVal.tt) :
-    superTrueAt (fun d θ => decide (d.toNat > θ.toNat)) d₁ S = TVal.tt := by
+    (hd₂ : superTrueAt (fun d θ => decide (d.toNat > θ.toNat)) d₂ S = Truth3.true) :
+    superTrueAt (fun d θ => decide (d.toNat > θ.toNat)) d₁ S = Truth3.true := by
   unfold superTrueAt superTrue at *
   have h : ∀ θ ∈ S, decide (d₂.toNat > θ.toNat) = true := by
     by_contra hc; push_neg at hc
@@ -211,14 +211,14 @@ theorem tolerance_fails_at_boundary {max : Nat}
   fun h => hd' (h hd)
 
 -- ════════════════════════════════════════════════════
--- § 5. Bridge: Gap Region ↔ TVal.unk
+-- § 5. Bridge: Gap Region ↔ Truth3.indet
 -- ════════════════════════════════════════════════════
 
 /-! The `inGapRegion` function in `Adjective.Theory` computes whether a
     degree falls between two thresholds (the "borderline" zone for contrary
     antonyms). A `ThresholdPair` with `neg ≤ pos` is a two-element
     specification space `{neg, pos}`, and the gap region is exactly the
-    set of degrees that receive `TVal.unk` under supervaluation.
+    set of degrees that receive `Truth3.indet` under supervaluation.
 
     This makes the implicit connection between the adjective theory's
     computational concept and the Kleene truth-value concept explicit. -/
@@ -281,7 +281,7 @@ theorem definitelyOperator_eliminates :
 theorem classical_tautology_supervalid {max : Nat}
     (p : Threshold max → Bool)
     (htaut : ∀ θ, p θ = true) (S : SpecSpace max) :
-    superTrue p S = TVal.tt := by
+    superTrue p S = Truth3.true := by
   unfold superTrue
   exact if_pos (fun θ _ => htaut θ)
 

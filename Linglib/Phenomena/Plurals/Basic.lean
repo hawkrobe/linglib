@@ -13,9 +13,9 @@ non-maximality, and bare plurals.
 
 ## Related Files
 
-For detailed homogeneity and non-maximality data, see `Imprecision/`:
-- `Imprecision/Homogeneity.lean` - Truth-value gaps in plural definites
-- `Imprecision/NonMaximality.lean` - Context-dependent weakening
+- `Homogeneity.lean` - Truth-value gaps in plural definites
+- `NonMaximality.lean` - Context-dependent weakening
+- `Imprecision/Projection.lean` - Homogeneity projection under quantifiers
 
 For bare plural phenomena, see:
 - `BarePlurals/Data.lean` - Bare plural interpretation
@@ -23,6 +23,7 @@ For bare plural phenomena, see:
 
 ## Studies
 
+- `Studies/Kriz2016.lean` - @cite{kriz-2016} Homogeneity, Non-Maximality, and All
 - `Studies/HaslingerEtAl2025.lean` - Distributivity ≠ Maximality
 
 -/
@@ -31,8 +32,10 @@ namespace Phenomena.Plurals
 
 -- This file serves as documentation and cross-reference hub.
 -- Core plural phenomenon patterns are documented in related modules:
--- - Imprecision/Homogeneity.lean
--- - Imprecision/NonMaximality.lean
+-- - Homogeneity.lean
+-- - NonMaximality.lean
+-- - Imprecision/Projection.lean
+-- - Studies/Kriz2016.lean
 -- - Studies/HaslingerEtAl2025.lean
 
 end Phenomena.Plurals

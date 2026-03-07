@@ -18,7 +18,7 @@ local contexts all predict the disjunction is never false.
 ## Bridge Theorems
 
 This module proves failure theorems against three existing linglib modules:
-- `Core.Kleene.TVal.or` (Strong Kleene): disjunction is never false
+- `Core.Duality.Truth3.join` (Strong Kleene): disjunction is never false
 - `Core.Presupposition.PrProp.or` (classical): disjunction is never defined
 - `Core.Presupposition.PrProp.orFilter` (filtering): wrong presupposition
 
@@ -27,11 +27,10 @@ It then shows `PrProp.orFlex` (flexible accommodation) handles both observations
 -/
 
 import Linglib.Core.Semantics.Presupposition
-import Linglib.Core.Semantics.Kleene
 
 namespace Phenomena.Presupposition.Studies.Yagi2025
 
-open Core.Kleene
+open Core.Duality
 open Core.Presupposition
 open Core.Proposition
 
@@ -110,7 +109,7 @@ def skDisj : Prop3 W :=
 /-- Strong Kleene never produces false for this disjunction.
 Because presuppositions conflict, at least one disjunct is always undefined,
 so the table never reaches the 0 ∨ 0 = 0 row. -/
-theorem strong_kleene_never_false : ∀ w, skDisj w ≠ TVal.ff := by
+theorem strong_kleene_never_false : ∀ w, skDisj w ≠ .false := by
   intro w; cases w <;> native_decide
 
 
@@ -160,19 +159,19 @@ theorem flex_correct_presup :
 /-- Complete truth table: flexible accommodation predicts the right
 value at every world. -/
 theorem flex_truth_table :
-    flexDisj.eval W.kingOpens = TVal.tt ∧
-    flexDisj.eval W.kingDoesnt = TVal.ff ∧
-    flexDisj.eval W.presidentConducts = TVal.tt ∧
-    flexDisj.eval W.presidentDoesnt = TVal.ff := by
+    flexDisj.eval W.kingOpens = .true ∧
+    flexDisj.eval W.kingDoesnt = .false ∧
+    flexDisj.eval W.presidentConducts = .true ∧
+    flexDisj.eval W.presidentDoesnt = .false := by
   refine ⟨?_, ?_, ?_, ?_⟩ <;>
     simp [flexDisj, PrProp.orFlex, PrProp.eval, kingOpensParl, presConductsCeremony,
-      hasKing, hasPresident, TVal.ofBool, TVal.tt, TVal.ff]
+      hasKing, hasPresident, Truth3.ofBool]
 
 /-- Flexible accommodation is always defined (never undefined). -/
-theorem flex_always_defined : ∀ w, flexDisj.eval w ≠ TVal.unk := by
+theorem flex_always_defined : ∀ w, flexDisj.eval w ≠ .indet := by
   intro w
   cases w <;> simp [flexDisj, PrProp.orFlex, PrProp.eval, kingOpensParl, presConductsCeremony,
-    hasKing, hasPresident, TVal.ofBool, TVal.unk]
+    hasKing, hasPresident, Truth3.ofBool]
 
 
 -- ══════════════════════════════════════════════════════════
@@ -188,10 +187,10 @@ def metaAssertDisj : Prop3 W :=
 
 /-- Meta-assertion allows falsity (unlike Strong Kleene). -/
 theorem metaAssert_allows_falsity :
-    metaAssertDisj W.kingDoesnt = TVal.ff := by
-  simp [metaAssertDisj, Prop3.or, Prop3.metaAssert, TVal.metaAssert,
+    metaAssertDisj W.kingDoesnt = .false := by
+  simp [metaAssertDisj, Prop3.or, Prop3.metaAssert, Truth3.metaAssert,
     PrProp.eval, kingOpensParl, presConductsCeremony, hasKing, hasPresident,
-    TVal.or, TVal.ofBool, TVal.ff]
+    Truth3.join, Truth3.ofBool]
 
 /-- But meta-assertion loses the presupposition: the disjunction is false
 even when neither presupposition holds (if we had such a world). More
@@ -200,9 +199,9 @@ not the expected p ∨ q. -/
 theorem metaAssert_loses_presup :
     -- At kingDoesnt, the meta-asserted disjunction is simply false (value 0),
     -- indistinguishable from a world where neither head of state exists.
-    metaAssertDisj W.kingDoesnt = TVal.ff := by
-  simp [metaAssertDisj, Prop3.or, Prop3.metaAssert, TVal.metaAssert,
+    metaAssertDisj W.kingDoesnt = .false := by
+  simp [metaAssertDisj, Prop3.or, Prop3.metaAssert, Truth3.metaAssert,
     PrProp.eval, kingOpensParl, presConductsCeremony, hasKing, hasPresident,
-    TVal.or, TVal.ofBool, TVal.ff]
+    Truth3.join, Truth3.ofBool]
 
 end Phenomena.Presupposition.Studies.Yagi2025
