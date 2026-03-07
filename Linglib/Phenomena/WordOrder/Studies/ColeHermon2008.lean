@@ -388,4 +388,215 @@ theorem voice_determines_pivot :
     Fragments.TobaBatak.Voice.av.pivotRole = .agent ∧
     Fragments.TobaBatak.Voice.ov.pivotRole = .patient := ⟨rfl, rfl⟩
 
+-- ============================================================================
+-- § 10: Boolean C-Command Consistency
+-- ============================================================================
+
+/-- Sanity check: `cCommandsInB` agrees with the structured `cCommandsIn`
+    proof in `vp_ccommands_subject`. -/
+theorem vp_ccommands_subject_bool :
+    cCommandsInB tobaBatakVOS.final vp n_dakdanakan = true := by
+  native_decide
+
+-- ============================================================================
+-- § 11: Toba Batak SVO via the VOS Hypothesis (§5 of the paper)
+-- ============================================================================
+
+/-! ### The VOS Hypothesis
+
+@cite{cole-hermon-2008} §5: SVO order is common in Toba Batak (~1/3 of
+sentences). Two competing analyses:
+
+- **SVO Hypothesis**: SVO sentences have underlying SVO and VoiceP never
+  raises. Predicts different extraction restrictions for SVO vs VOS.
+- **VOS Hypothesis**: ALL clauses go through a VOS stage; SVO results
+  from the subject raising past the fronted VoiceP to a higher specifier.
+  Predicts the SAME extraction restrictions for SVO and VOS.
+
+The data confirm the VOS Hypothesis: extraction from SVO clauses shows
+the same freezing effects as VOS (examples 85–88). Direct objects cannot
+be wh-fronted regardless of surface word order.
+
+The derivation extends `tobaBatakVOS` with one more step: subject raises
+to Spec,FP (a higher functional projection), past the fronted VP.
+
+This analysis connects to the claim in §6 that linear order within Merge
+is irrelevant — only c-command matters. This is precisely the content of
+the Linear Correspondence Axiom (LCA) formalized in
+`Theories.Syntax.Minimalism.Formal.Linearization.LCA`.
+-/
+
+/-- F head (higher functional projection above TP). -/
+def f_head := mkLeaf .C [.T] 6
+
+/-- Toba Batak SVO via the VOS Hypothesis.
+
+    Steps 1–5 are identical to `tobaBatakVOS` (yielding VOS at stage 5).
+    Then:
+    6. EM-L F → `[FP F [TP VP [T' T [vP Subj [v' v tVP]]]]]`
+    7. IM Subj → `[FP Subj [F' F [TP VP [T' T [vP tSubj [v' v tVP]]]]]]`
+
+    The subject raises past the fronted VP, yielding S-V-O surface order. -/
+def tobaBatakSVO : Derivation :=
+  { initial := v_mangatuk
+    steps := [
+      .emR n_biangi,
+      .emL v_head,
+      .emL n_dakdanakan,
+      .emL t_head,
+      .im vp 0,
+      .emL f_head,
+      .im n_dakdanakan 1
+    ] }
+
+/-- The VOS Hypothesis derives SVO surface order. -/
+theorem toba_batak_svo_order :
+    tobaBatakSVO.final.phonYield = ["dakdanakan", "mangatuk", "biangi"] := by
+  native_decide
+
+/-- SVO goes through VOS: at stage 5 (before subject-raising), the
+    intermediate tree has VOS order — the same as `tobaBatakVOS.final`. -/
+theorem svo_passes_through_vos :
+    (tobaBatakSVO.stageAt 5).phonYield = tobaBatakVOS.final.phonYield := by
+  native_decide
+
+/-- The VOS Hypothesis predicts identical extraction restrictions for SVO:
+    the DO is still inside the fronted VP, regardless of whether the
+    subject subsequently raises past it. -/
+theorem svo_same_extraction_as_vos :
+    containsB vp n_biangi = true ∧
+    containsB vp n_dakdanakan = false := ⟨rfl, rfl⟩
+
+/-- SVO requires two movement steps (VP-raising + subject-raising). -/
+theorem svo_has_two_movements :
+    tobaBatakSVO.movedItems.length = 2 := by native_decide
+
+-- ============================================================================
+-- § 12: English Passive Derivation (§7 of the paper)
+-- ============================================================================
+
+/-! ### English passives and the agent-as-adjunct analysis
+
+@cite{cole-hermon-2008} §7 extends the VP-raising analysis to English
+passives, predicting why English and Toba Batak differ on passive binding.
+
+The key structural difference: in TB, the passive agent is an *argument*
+generated in Spec,vP (high position, c-commands patient in VP). In
+English, the passive agent is an *adjunct* (by-phrase, low position
+inside VP, does not c-command patient).
+
+Consequence:
+- **TB passive**: agent c-commands patient at the base stage →
+  reconstruction allows agent to bind reflexive patient (Type A).
+  Patient raised to surface subject also c-commands agent (Type B).
+- **English passive**: agent never c-commands patient → agent cannot
+  bind reflexive patient (example 96: "*himself was injured by the boy").
+  Patient raised to subject c-commands agent → patient can bind reflexive
+  agent (example 95: "the boy was injured by himself").
+
+We model the English passive with the agent as a low complement of V
+(representing the by-phrase adjunct) and the patient as specifier of VP
+(following Larson 1988), with no external argument in Spec,vP.
+-/
+
+def v_injured     := mkLeafPhon .V [] "was-injured" 21
+def n_boy         := mkLeafPhon .N [] "the-boy" 22
+def n_by_himself  := mkLeafPhon .N [] "by-himself" 23
+def v_head_pass   := mkLeaf .v [.V] 24
+def t_head_pass   := mkLeaf .T [.v] 25
+
+/-- The passive VP: `[VP patient [V' V agent-PP]]`. -/
+def vp_passive : SyntacticObject := .node n_boy (.node v_injured n_by_himself)
+
+/-- English passive derivation (trees 97–100 of the paper).
+
+    Steps:
+    1. EM-R agent-PP → `[V' V agent]`
+    2. EM-L patient  → `[VP patient [V' V agent]]`
+    3. EM-L v        → `[v' v VP]` (no external argument — passive)
+    4. EM-L T        → `[TP T [vP v VP]]`
+    5. IM patient    → `[TP patient [T' T [vP v [VP t [V' V agent]]]]]` -/
+def englishPassive : Derivation :=
+  { initial := v_injured
+    steps := [
+      .emR n_by_himself,
+      .emL n_boy,
+      .emL v_head_pass,
+      .emL t_head_pass,
+      .im n_boy 0
+    ] }
+
+/-- English passive yields patient-verb-agent surface order. -/
+theorem english_passive_order :
+    englishPassive.final.phonYield = ["the-boy", "was-injured", "by-himself"] := by
+  native_decide
+
+-- ============================================================================
+-- § 13: Cross-Linguistic Binding Contrast (§7 of the paper)
+-- ============================================================================
+
+/-! ### TB vs English passive binding
+
+The same theory (c-command based binding + optional reconstruction)
+with different structural parameters (agent-as-argument vs
+agent-as-adjunct) correctly predicts the cross-linguistic contrast:
+
+| Pattern                        | Toba Batak | English |
+|--------------------------------|------------|---------|
+| Agent antecedes patient refl.  | ✓ (Type A) | ✗ (96) |
+| Patient antecedes agent refl.  | ✓ (Type B) | ✓ (95) |
+
+Both predictions follow from c-command in the derived tree:
+- TB agent (Spec,vP) c-commands patient (VP) at base → reconstruction
+- English agent (low PP) does not c-command patient at any stage
+- Both: patient (raised to Spec,TP/FP) c-commands agent
+
+The formalization verifies the c-command predictions computationally
+using `cCommandsInB` over the derived trees.
+-/
+
+/-- In the English passive, the patient (raised to Spec,TP) c-commands
+    the by-phrase agent. This is why "The boy was injured by himself" is
+    grammatical: the patient can bind a reflexive in the agent position. -/
+theorem english_passive_patient_ccommands_agent :
+    cCommandsInB englishPassive.final n_boy n_by_himself = true := by
+  native_decide
+
+/-- In the English passive, the by-phrase agent does NOT c-command the
+    patient. This is why "*Himself was injured by the boy" is
+    ungrammatical: the agent (low adjunct inside VP) cannot bind a
+    reflexive in subject position. -/
+theorem english_passive_agent_not_ccommands_patient :
+    cCommandsInB englishPassive.final n_by_himself n_boy = false := by
+  native_decide
+
+/-- In the TB active **base structure** (pre-movement, stage 4), the
+    subject c-commands the object. This is the structural basis for
+    Type A binding (active subject → DO refl).
+
+    Binding is evaluated at the pre-movement stage: the base tree is
+    `[TP T [vP Subj [v' v [VP V Obj]]]]`, where Subj's sister (v')
+    contains the object. After VP-raising, the object moves to a
+    different branch; reconstruction restores the base c-command. -/
+theorem tb_active_subject_ccommands_object_at_base :
+    cCommandsInB (tobaBatakVOS.stageAt 4) n_dakdanakan n_biangi = true := by
+  native_decide
+
+/-- Cross-linguistic contrast verified: same c-command theory, different
+    structural parameters, different binding predictions.
+
+    The conjunction links four c-command checks across two languages:
+    1. TB active (base): subject c-commands object (Type A binding)
+    2. TB active (derived): object does not c-command subject (Type C)
+    3. English passive (derived): patient c-commands agent (ex. 95)
+    4. English passive (derived): agent does not c-command patient (ex. 96) -/
+theorem cross_linguistic_binding_contrast :
+    -- TB active (base stage for binding, derived stage for anti-binding)
+    cCommandsInB (tobaBatakVOS.stageAt 4) n_dakdanakan n_biangi = true ∧
+    cCommandsInB tobaBatakVOS.final n_biangi n_dakdanakan = false ∧
+    -- English passive (derived tree)
+    cCommandsInB englishPassive.final n_boy n_by_himself = true ∧
+    cCommandsInB englishPassive.final n_by_himself n_boy = false :=
+  ⟨rfl, rfl, rfl, rfl⟩
+
 end Phenomena.WordOrder.Studies.ColeHermon2008

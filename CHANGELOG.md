@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.228.77] - 2026-03-06
+
+### Added
+- **ColeHermon2008.lean**: TB SVO derivation via VOS Hypothesis (§5: subject raises past fronted VP), English passive derivation (§7: agent-as-adjunct), cross-linguistic binding contrast theorem (§7: TB vs English passive c-command predictions verified computationally), Boolean c-command consistency check
+
 ## [0.228.76] - 2026-03-06
 
 ### Fixed
