@@ -8,10 +8,13 @@ import Linglib.Core.WALS.Features.F7A
 import Linglib.Core.WALS.Features.F8A
 import Linglib.Core.WALS.Features.F9A
 import Linglib.Core.WALS.Features.F10A
+import Linglib.Core.WALS.Features.F10B
 import Linglib.Core.WALS.Features.F11A
 import Linglib.Core.WALS.Features.F12A
 import Linglib.Core.WALS.Features.F13A
 import Linglib.Core.WALS.Features.F14A
+import Linglib.Core.WALS.Features.F15A
+import Linglib.Core.WALS.Features.F16A
 import Linglib.Core.WALS.Features.F17A
 import Linglib.Core.WALS.Features.F18A
 import Linglib.Core.WALS.Features.F19A
@@ -28,18 +31,20 @@ the World Atlas of Language Structures (WALS), covering:
   specific consonant types (uvulars, glottalized consonants, laterals, the
   velar nasal, uncommon consonants like clicks and labial-velars).
 
-- **Vowel features** (Ch 10--11): Vowel nasalization contrasts and
-  front rounded vowels.
+- **Vowel features** (Ch 10--11): Vowel nasalization contrasts,
+  nasal vowels in West Africa (Ch 10B), and front rounded vowels.
 
 - **Syllable structure** (Ch 12): Simple, moderately complex, or complex.
 
 - **Prosody** (Ch 13--17): Tone systems, fixed vs. free stress location,
-  and rhythmic type (trochaic vs. iambic).
+  weight-sensitive stress (Ch 15A), weight factors (Ch 16A), and
+  rhythmic type (trochaic vs. iambic).
 
 The 19 WALS features are captured in a single `PhonProfile` structure.
-Chapters 5, 15, and 16 are omitted from the profile as they are
-sub-classifications of Ch 4 and Ch 14 respectively, but their generated
-data is available for distribution theorems.
+Chapters 5, 10B, 15, and 16 are omitted from the profile as they are
+sub-classifications of other chapters, but their generated data is
+available via converter functions, grounding theorems, and distribution
+theorems.
 -/
 
 namespace Phenomena.Phonology
@@ -57,12 +62,15 @@ private abbrev ch6  := Core.WALS.F6A.allData
 private abbrev ch7  := Core.WALS.F7A.allData
 private abbrev ch8  := Core.WALS.F8A.allData
 private abbrev ch9  := Core.WALS.F9A.allData
-private abbrev ch10 := Core.WALS.F10A.allData
-private abbrev ch11 := Core.WALS.F11A.allData
+private abbrev ch10  := Core.WALS.F10A.allData
+private abbrev ch10b := Core.WALS.F10B.allData
+private abbrev ch11  := Core.WALS.F11A.allData
 private abbrev ch12 := Core.WALS.F12A.allData
 private abbrev ch13 := Core.WALS.F13A.allData
-private abbrev ch14 := Core.WALS.F14A.allData
-private abbrev ch17 := Core.WALS.F17A.allData
+private abbrev ch14  := Core.WALS.F14A.allData
+private abbrev ch15  := Core.WALS.F15A.allData
+private abbrev ch16  := Core.WALS.F16A.allData
+private abbrev ch17  := Core.WALS.F17A.allData
 private abbrev ch18 := Core.WALS.F18A.allData
 private abbrev ch19 := Core.WALS.F19A.allData
 
@@ -112,6 +120,14 @@ inductive VelarNasalStatus where
   | initial | noInitial | absent
   deriving DecidableEq, BEq, Repr
 
+/-- Nasal vowel contrast type in West Africa (WALS Ch 10B).
+Areal sub-feature of Ch 10A, covering 40 West African languages. -/
+inductive NasalVowelWA where
+  | noContrast
+  | twoWayNoSpreading | twoWaySpreading
+  | fourWayNoSpreading | fourWaySpreading
+  deriving DecidableEq, BEq, Repr
+
 /-- Front rounded vowel inventory (WALS Ch 11). -/
 inductive FrontRounded where
   | none | highAndMid | highOnly | midOnly
@@ -130,6 +146,22 @@ inductive ToneSystem where
 /-- Fixed stress location (WALS Ch 14). -/
 inductive StressLocation where
   | noFixed | initial | second | third | antepenultimate | penultimate | ultimate
+  deriving DecidableEq, BEq, Repr
+
+/-- Weight-sensitive stress pattern (WALS Ch 15A).
+Sub-feature of Ch 14A, classifying how stress interacts with syllable weight. -/
+inductive WeightStress where
+  | leftEdge | leftOriented
+  | rightEdge | rightOriented
+  | unbounded | combinedRightUnbounded
+  | notPredictable | fixedNoWeight
+  deriving DecidableEq, BEq, Repr
+
+/-- Weight factor in weight-sensitive stress (WALS Ch 16A).
+Sub-feature of Ch 14A, classifying what makes a syllable heavy. -/
+inductive WeightFactor where
+  | noWeight | longVowel | codaConsonant | longVowelOrCoda
+  | prominence | lexicalStress | combined
   deriving DecidableEq, BEq, Repr
 
 /-- Rhythmic type (WALS Ch 17). -/
@@ -206,6 +238,13 @@ private def fromWALS9A : Core.WALS.F9A.VelarNasal → VelarNasalStatus
   | .noInitialVelarNasal => .noInitial
   | .noVelarNasal        => .absent
 
+private def fromWALS10B : Core.WALS.F10B.NasalVowelsInWestAfrica → NasalVowelWA
+  | .noNasalVsOralVowelContrast                                  => .noContrast
+  | .twoWayNasalVsOralVowelContrastWithoutNasalSpreading         => .twoWayNoSpreading
+  | .twoWayNasalVsOralVowelContrastWithNasalSpreading            => .twoWaySpreading
+  | .fourWayNasalVsOralVowelContrastWithoutNasalSpreading        => .fourWayNoSpreading
+  | .fourWayNasalVsOralVowelContrastWithNasalSpreading           => .fourWaySpreading
+
 private def fromWALS11A : Core.WALS.F11A.FrontRoundedVowels → FrontRounded
   | .none       => .none
   | .highAndMid => .highAndMid
@@ -230,6 +269,25 @@ private def fromWALS14A : Core.WALS.F14A.FixedStressLocations → StressLocation
   | .antepenultimate => .antepenultimate
   | .penultimate     => .penultimate
   | .ultimate        => .ultimate
+
+private def fromWALS15A : Core.WALS.F15A.WeightSensitiveStress → WeightStress
+  | .leftEdgeFirstOrSecond           => .leftEdge
+  | .leftOrientedOneOfTheFirstThree  => .leftOriented
+  | .rightEdgeUltimateOrPenultimate  => .rightEdge
+  | .rightOrientedOneOfTheLastThree  => .rightOriented
+  | .unboundedStressCanBeAnywhere    => .unbounded
+  | .combinedRightEdgeAndUnbounded   => .combinedRightUnbounded
+  | .notPredictable                  => .notPredictable
+  | .fixedStress                     => .fixedNoWeight
+
+private def fromWALS16A : Core.WALS.F16A.WeightFactorsInWeightSensitiveStressSystems → WeightFactor
+  | .noWeight                  => .noWeight
+  | .longVowel                 => .longVowel
+  | .codaConsonant             => .codaConsonant
+  | .longVowelOrCodaConsonant  => .longVowelOrCoda
+  | .prominence                => .prominence
+  | .lexicalStress             => .lexicalStress
+  | .combined                  => .combined
 
 private def fromWALS17A : Core.WALS.F17A.RhythmTypes → RhythmType
   | .trochaic                       => .trochaic
@@ -952,6 +1010,134 @@ theorem french_ch17 :
 end Ch14_17
 
 -- ============================================================================
+-- WALS Grounding Theorems — Ch 15A: Weight-Sensitive Stress
+-- ============================================================================
+
+section Ch15
+
+theorem english_ch15 :
+    (Core.WALS.F15A.lookup "eng").map (fromWALS15A ·.value) = some .rightOriented := by
+  native_decide
+
+theorem german_ch15 :
+    (Core.WALS.F15A.lookup "ger").map (fromWALS15A ·.value) = some .rightOriented := by
+  native_decide
+
+theorem finnish_ch15 :
+    (Core.WALS.F15A.lookup "fin").map (fromWALS15A ·.value) = some .fixedNoWeight := by
+  native_decide
+
+theorem turkish_ch15 :
+    (Core.WALS.F15A.lookup "tur").map (fromWALS15A ·.value) = some .unbounded := by
+  native_decide
+
+theorem russian_ch15 :
+    (Core.WALS.F15A.lookup "rus").map (fromWALS15A ·.value) = some .unbounded := by
+  native_decide
+
+theorem french_ch15 :
+    (Core.WALS.F15A.lookup "fre").map (fromWALS15A ·.value) = some .rightEdge := by
+  native_decide
+
+theorem spanish_ch15 :
+    (Core.WALS.F15A.lookup "spa").map (fromWALS15A ·.value) = some .rightEdge := by
+  native_decide
+
+theorem mandarin_ch15 :
+    (Core.WALS.F15A.lookup "mnd").map (fromWALS15A ·.value) = some .notPredictable := by
+  native_decide
+
+theorem hindi_ch15 :
+    (Core.WALS.F15A.lookup "hin").map (fromWALS15A ·.value) = some .rightOriented := by
+  native_decide
+
+theorem georgian_ch15 :
+    (Core.WALS.F15A.lookup "geo").map (fromWALS15A ·.value) = some .fixedNoWeight := by
+  native_decide
+
+theorem hungarian_ch15 :
+    (Core.WALS.F15A.lookup "hun").map (fromWALS15A ·.value) = some .fixedNoWeight := by
+  native_decide
+
+theorem swahili_ch15 :
+    (Core.WALS.F15A.lookup "swa").map (fromWALS15A ·.value) = some .fixedNoWeight := by
+  native_decide
+
+theorem maori_ch15 :
+    (Core.WALS.F15A.lookup "mao").map (fromWALS15A ·.value) = some .unbounded := by
+  native_decide
+
+theorem zulu_ch15 :
+    (Core.WALS.F15A.lookup "zul").map (fromWALS15A ·.value) = some .fixedNoWeight := by
+  native_decide
+
+end Ch15
+
+-- ============================================================================
+-- WALS Grounding Theorems — Ch 16A: Weight Factors
+-- ============================================================================
+
+section Ch16
+
+theorem english_ch16 :
+    (Core.WALS.F16A.lookup "eng").map (fromWALS16A ·.value) = some .longVowelOrCoda := by
+  native_decide
+
+theorem german_ch16 :
+    (Core.WALS.F16A.lookup "ger").map (fromWALS16A ·.value) = some .codaConsonant := by
+  native_decide
+
+theorem finnish_ch16 :
+    (Core.WALS.F16A.lookup "fin").map (fromWALS16A ·.value) = some .noWeight := by
+  native_decide
+
+theorem turkish_ch16 :
+    (Core.WALS.F16A.lookup "tur").map (fromWALS16A ·.value) = some .lexicalStress := by
+  native_decide
+
+theorem russian_ch16 :
+    (Core.WALS.F16A.lookup "rus").map (fromWALS16A ·.value) = some .lexicalStress := by
+  native_decide
+
+theorem french_ch16 :
+    (Core.WALS.F16A.lookup "fre").map (fromWALS16A ·.value) = some .prominence := by
+  native_decide
+
+theorem spanish_ch16 :
+    (Core.WALS.F16A.lookup "spa").map (fromWALS16A ·.value) = some .combined := by
+  native_decide
+
+theorem mandarin_ch16 :
+    (Core.WALS.F16A.lookup "mnd").map (fromWALS16A ·.value) = some .lexicalStress := by
+  native_decide
+
+theorem hindi_ch16 :
+    (Core.WALS.F16A.lookup "hin").map (fromWALS16A ·.value) = some .longVowelOrCoda := by
+  native_decide
+
+theorem georgian_ch16 :
+    (Core.WALS.F16A.lookup "geo").map (fromWALS16A ·.value) = some .noWeight := by
+  native_decide
+
+theorem hungarian_ch16 :
+    (Core.WALS.F16A.lookup "hun").map (fromWALS16A ·.value) = some .longVowel := by
+  native_decide
+
+theorem swahili_ch16 :
+    (Core.WALS.F16A.lookup "swa").map (fromWALS16A ·.value) = some .noWeight := by
+  native_decide
+
+theorem maori_ch16 :
+    (Core.WALS.F16A.lookup "mao").map (fromWALS16A ·.value) = some .longVowel := by
+  native_decide
+
+theorem zulu_ch16 :
+    (Core.WALS.F16A.lookup "zul").map (fromWALS16A ·.value) = some .noWeight := by
+  native_decide
+
+end Ch16
+
+-- ============================================================================
 -- WALS Grounding Theorems — Ch 18A--19A: Marked Segments
 -- ============================================================================
 
@@ -1045,10 +1231,34 @@ theorem ch18_all_present_dominant :
 -- Sample sizes
 -- ============================================================================
 
-theorem ch1_total  : ch1.length  = 563 := by native_decide
-theorem ch2_total  : ch2.length  = 564 := by native_decide
-theorem ch3_total  : ch3.length  = 564 := by native_decide
-theorem ch12_total : ch12.length = 486 := by native_decide
-theorem ch13_total : ch13.length = 527 := by native_decide
+/-- Ch 10B: Half of the surveyed West African languages lack nasal vowel
+    contrasts entirely. -/
+theorem ch10b_no_contrast_half :
+    (ch10b.filter (·.value == .noNasalVsOralVowelContrast)).length = ch10b.length / 2 := by
+  native_decide
+
+/-- Ch 15A: Fixed stress (no weight-sensitivity) is the majority pattern. -/
+theorem ch15_fixed_majority :
+    (ch15.filter (·.value == .fixedStress)).length > ch15.length / 2 := by
+  native_decide
+
+/-- Ch 16A: More than half of languages show no syllable-weight effects
+    on stress. -/
+theorem ch16_no_weight_majority :
+    (ch16.filter (·.value == .noWeight)).length > ch16.length / 2 := by
+  native_decide
+
+-- ============================================================================
+-- Sample sizes
+-- ============================================================================
+
+theorem ch1_total   : ch1.length   = 563 := by native_decide
+theorem ch2_total   : ch2.length   = 564 := by native_decide
+theorem ch3_total   : ch3.length   = 564 := by native_decide
+theorem ch10b_total : ch10b.length =  40 := by native_decide
+theorem ch12_total  : ch12.length  = 486 := by native_decide
+theorem ch13_total  : ch13.length  = 527 := by native_decide
+theorem ch15_total  : ch15.length  = 500 := by native_decide
+theorem ch16_total  : ch16.length  = 500 := by native_decide
 
 end Phenomena.Phonology

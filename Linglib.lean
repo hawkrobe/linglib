@@ -669,6 +669,7 @@ import Linglib.Phenomena.Imprecision.Studies.BeltramaSchwarz2024
 import Linglib.Phenomena.Imprecision.Studies.BeltramaSoltBurnett2022
 import Linglib.Phenomena.Imprecision.Studies.LassiterGoodman2017
 import Linglib.Phenomena.Imprecision.Projection
+import Linglib.Phenomena.LexicalTypology.Typology
 import Linglib.Phenomena.FillerGap.Islands.Data
 import Linglib.Phenomena.FillerGap.Islands.MannerOfSpeaking
 import Linglib.Phenomena.FillerGap.Compare
@@ -759,6 +760,7 @@ import Linglib.Phenomena.Politeness.Studies.YoonEtAl2020
 import Linglib.Phenomena.Polysemy.Data
 import Linglib.Phenomena.Polysemy.Studies.Gotham2017
 import Linglib.Phenomena.Possession.Typology
+import Linglib.Phenomena.Pronouns.Typology
 import Linglib.Phenomena.PsychVerbs.Data
 import Linglib.Phenomena.PsychVerbs.Studies.BellettiRizzi1988
 import Linglib.Phenomena.PsychVerbs.Studies.Kim2024

@@ -4,6 +4,17 @@ import Linglib.Core.WALS.Features.F21A
 import Linglib.Core.WALS.Features.F22A
 import Linglib.Core.WALS.Features.F26A
 import Linglib.Core.WALS.Features.F27A
+import Linglib.Core.WALS.Features.F23A
+import Linglib.Core.WALS.Features.F24A
+import Linglib.Core.WALS.Features.F25A
+import Linglib.Core.WALS.Features.F25B
+import Linglib.Core.WALS.Features.F28A
+import Linglib.Core.WALS.Features.F29A
+import Linglib.Core.WALS.Features.F21B
+import Linglib.Core.WALS.Features.F62A
+import Linglib.Core.WALS.Features.F79A
+import Linglib.Core.WALS.Features.F79B
+import Linglib.Core.WALS.Features.F80A
 
 /-!
 # Morphological Typology: Paradigm Complexity
@@ -34,6 +45,17 @@ private abbrev ch21 := Core.WALS.F21A.allData
 private abbrev ch22 := Core.WALS.F22A.allData
 private abbrev ch26 := Core.WALS.F26A.allData
 private abbrev ch27 := Core.WALS.F27A.allData
+private abbrev ch23 := Core.WALS.F23A.allData
+private abbrev ch24 := Core.WALS.F24A.allData
+private abbrev ch25a := Core.WALS.F25A.allData
+private abbrev ch25b := Core.WALS.F25B.allData
+private abbrev ch28 := Core.WALS.F28A.allData
+private abbrev ch29 := Core.WALS.F29A.allData
+private abbrev ch21b := Core.WALS.F21B.allData
+private abbrev ch62 := Core.WALS.F62A.allData
+private abbrev ch79a := Core.WALS.F79A.allData
+private abbrev ch79b := Core.WALS.F79B.allData
+private abbrev ch80 := Core.WALS.F80A.allData
 
 -- ============================================================================
 -- §1. Language Data Records
@@ -42,7 +64,7 @@ private abbrev ch27 := Core.WALS.F27A.allData
 /-- Summary statistics for a language's morphological paradigm system,
     as reported in published studies.
 
-    Fields correspond to Tables 2–3 of @cite{ackerman-malouf-2013}. -/
+    Fields correspond to Tables 2--3 of @cite{ackerman-malouf-2013}. -/
 structure LanguageData where
   /-- Language name -/
   name : String
@@ -52,9 +74,9 @@ structure LanguageData where
   numClasses : Nat
   /-- Number of paradigm cells -/
   numCells : Nat
-  /-- Average conditional entropy H̄(Cᵢ|Cⱼ) in bits (I-complexity) -/
+  /-- Average conditional entropy H(Ci|Cj) in bits (I-complexity) -/
   avgCondEntropy : ℚ
-  /-- Maximum cell entropy max H(Cᵢ) in bits -/
+  /-- Maximum cell entropy max H(Ci) in bits -/
   maxCellEntropy : ℚ
   deriving Repr
 
@@ -114,10 +136,10 @@ def chinantec : LanguageData where
   avgCondEntropy := 426 / 1000  -- 0.426
   maxCellEntropy := 4266 / 1000  -- 4.266
 
-/-- Chiquihuitlán Mazatec (Oto-Manguean; Oaxaca, Mexico).
-    109 classes, 4 cells. The paper's primary case study (§4). -/
+/-- Chiquihuitlan Mazatec (Oto-Manguean; Oaxaca, Mexico).
+    109 classes, 4 cells. The paper's primary case study (section 4). -/
 def mazatec : LanguageData where
-  name := "Chiquihuitlán Mazatec"
+  name := "Chiquihuitlan Mazatec"
   family := "Oto-Manguean"
   numClasses := 109
   numCells := 4
@@ -203,8 +225,17 @@ Sources:
   formatives. WALS Online. Ch. 21.
 - Bickel, B. & Nichols, J. (2013c). Inflectional synthesis of the verb.
   WALS Online. Ch. 22.
-- Nichols, J. & Bickel, B. (2013a). Locus of marking: whole-language
+- Nichols, J. & Bickel, B. (2013a). Locus of marking in the clause.
+  WALS Online. Ch. 23.
+- Nichols, J. & Bickel, B. (2013b). Locus of marking in possessive NPs.
+  WALS Online. Ch. 24.
+- Nichols, J. & Bickel, B. (2013c). Locus of marking: whole-language
   typology. WALS Online. Ch. 25.
+- Nichols, J. & Bickel, B. (2013d). Zero marking of A and P arguments.
+  WALS Online. Ch. 25B.
+- Baerman, M. & Brown, D. (2013a). Case syncretism. WALS Online. Ch. 28.
+- Baerman, M. & Brown, D. (2013b). Syncretism in verbal person/number
+  marking. WALS Online. Ch. 29.
 - Dryer, M. S. (2013). Prefixing vs. suffixing in inflectional morphology.
   WALS Online. Ch. 26.
 - Rubino, C. (2013). Reduplication. WALS Online. Ch. 27.
@@ -437,7 +468,377 @@ theorem ch27_total :
     ch27Distribution.foldl (λ acc c => acc + c.count) 0 = 368 := by native_decide
 
 -- ============================================================================
--- §4.7 WALS Converter Functions
+-- §4.7 Chapter 23: Locus of Marking in the Clause
+-- ============================================================================
+
+/-- WALS Ch 23: Where grammatical relations are marked in clausal syntax.
+
+    Clause-level marking addresses whether the subject/object relation is
+    indicated on the head (verb agreement), the dependent (case marking on
+    nouns), both, or neither. -/
+inductive LocusClause where
+  /-- Head marking: grammatical relations marked on the verb
+      (agreement markers). Example: Abkhaz, Mohawk. -/
+  | headMarking
+  /-- Dependent marking: grammatical relations marked on the noun
+      (case markers). Example: Japanese, Finnish. -/
+  | dependentMarking
+  /-- Double marking: both head and dependent are marked.
+      Example: Georgian, Basque. -/
+  | doubleMarking
+  /-- No marking: grammatical relations not morphologically marked
+      in the clause. Example: Thai, Vietnamese. -/
+  | noMarking
+  /-- Other: does not fit neatly into the above categories. -/
+  | other
+  deriving DecidableEq, BEq, Repr
+
+/-- WALS Chapter 23 distribution (N = 236). -/
+def ch23Distribution : List WALSCount :=
+  [ ⟨"Head marking", 71⟩
+  , ⟨"Dependent marking", 63⟩
+  , ⟨"Double marking", 58⟩
+  , ⟨"No marking", 42⟩
+  , ⟨"Other", 2⟩ ]
+
+/-- Ch 23 total: 236 languages. -/
+theorem ch23_total :
+    ch23Distribution.foldl (λ acc c => acc + c.count) 0 = 236 := by native_decide
+
+-- ============================================================================
+-- §4.8 Chapter 24: Locus of Marking in Possessive Noun Phrases
+-- ============================================================================
+
+/-- WALS Ch 24: Where grammatical relations are marked in possessive NPs.
+
+    Languages differ in whether the possessive relation is marked on the
+    possessum (head marking, e.g., Hungarian haz-am 'house-my'), on the
+    possessor (dependent marking, e.g., English John's), on both, or on
+    neither. -/
+inductive LocusPossessive where
+  /-- Head marking: possession marked on the possessum. -/
+  | headMarking
+  /-- Dependent marking: possession marked on the possessor. -/
+  | dependentMarking
+  /-- Double marking: both possessor and possessum are marked. -/
+  | doubleMarking
+  /-- No marking: possession not morphologically marked. -/
+  | noMarking
+  /-- Other: does not fit neatly into the above categories. -/
+  | other
+  deriving DecidableEq, BEq, Repr
+
+/-- WALS Chapter 24 distribution (N = 236). -/
+def ch24Distribution : List WALSCount :=
+  [ ⟨"Head marking", 78⟩
+  , ⟨"Dependent marking", 98⟩
+  , ⟨"Double marking", 22⟩
+  , ⟨"No marking", 32⟩
+  , ⟨"Other", 6⟩ ]
+
+/-- Ch 24 total: 236 languages. -/
+theorem ch24_total :
+    ch24Distribution.foldl (λ acc c => acc + c.count) 0 = 236 := by native_decide
+
+-- ============================================================================
+-- §4.9 Chapter 25A: Locus of Marking: Whole-Language Typology
+-- ============================================================================
+
+/-- WALS Ch 25A: Whole-language locus-of-marking classification combining
+    clause-level and NP-level patterns.
+
+    Languages consistent in both domains get a simple label; those with
+    mixed patterns are classified as "inconsistent or other". -/
+inductive WholeLanguageMarking where
+  /-- Consistently head-marking in both clause and NP. -/
+  | headMarking
+  /-- Consistently dependent-marking in both clause and NP. -/
+  | dependentMarking
+  /-- Consistently double-marking in both clause and NP. -/
+  | doubleMarking
+  /-- Consistently zero-marking in both clause and NP. -/
+  | zeroMarking
+  /-- Inconsistent or other: clause and NP patterns differ. -/
+  | inconsistentOrOther
+  deriving DecidableEq, BEq, Repr
+
+/-- WALS Chapter 25A distribution (N = 236). -/
+def ch25aDistribution : List WALSCount :=
+  [ ⟨"Head-marking", 47⟩
+  , ⟨"Dependent-marking", 46⟩
+  , ⟨"Double-marking", 16⟩
+  , ⟨"Zero-marking", 6⟩
+  , ⟨"Inconsistent or other", 121⟩ ]
+
+/-- Ch 25A total: 236 languages. -/
+theorem ch25a_total :
+    ch25aDistribution.foldl (λ acc c => acc + c.count) 0 = 236 := by native_decide
+
+-- ============================================================================
+-- §4.10 Chapter 25B: Zero Marking of A and P Arguments
+-- ============================================================================
+
+/-- WALS Ch 25B: Whether a language has zero marking (no overt case or
+    agreement) for both the A (agent-like) and P (patient-like) arguments
+    of a transitive clause. -/
+inductive ZeroMarkingAP where
+  /-- Both A and P arguments are zero-marked. -/
+  | zeroMarking
+  /-- At least one of A and P is overtly marked. -/
+  | nonZeroMarking
+  deriving DecidableEq, BEq, Repr
+
+/-- WALS Chapter 25B distribution (N = 235). -/
+def ch25bDistribution : List WALSCount :=
+  [ ⟨"Zero-marking", 16⟩
+  , ⟨"Non-zero marking", 219⟩ ]
+
+/-- Ch 25B total: 235 languages. -/
+theorem ch25b_total :
+    ch25bDistribution.foldl (λ acc c => acc + c.count) 0 = 235 := by native_decide
+
+-- ============================================================================
+-- §4.11 Chapter 28: Case Syncretism
+-- ============================================================================
+
+/-- WALS Ch 28: Whether a language exhibits syncretism (neutralization of
+    case distinctions) in its nominal case system. -/
+inductive CaseSyncretism where
+  /-- No case marking: the language lacks morphological case entirely. -/
+  | noCaseMarking
+  /-- Core cases only: syncretism limited to core grammatical cases. -/
+  | coreCasesOnly
+  /-- Core and non-core: syncretism spans both core and peripheral cases. -/
+  | coreAndNonCore
+  /-- No syncretism: the language has case but no syncretic forms. -/
+  | noSyncretism
+  deriving DecidableEq, BEq, Repr
+
+/-- WALS Chapter 28 distribution (N = 198). -/
+def ch28Distribution : List WALSCount :=
+  [ ⟨"No case marking", 123⟩
+  , ⟨"Core cases only", 18⟩
+  , ⟨"Core and non-core", 22⟩
+  , ⟨"No syncretism", 35⟩ ]
+
+/-- Ch 28 total: 198 languages. -/
+theorem ch28_total :
+    ch28Distribution.foldl (λ acc c => acc + c.count) 0 = 198 := by native_decide
+
+-- ============================================================================
+-- §4.12 Chapter 29: Syncretism in Verbal Person/Number Marking
+-- ============================================================================
+
+/-- WALS Ch 29: Whether a language exhibits syncretism in its verbal
+    person/number agreement paradigm. -/
+inductive VerbalSyncretism where
+  /-- No subject person/number marking on the verb. -/
+  | noSubjectMarking
+  /-- Syncretic: some person/number cells share the same verb form. -/
+  | syncretic
+  /-- Not syncretic: all person/number cells have distinct forms. -/
+  | notSyncretic
+  deriving DecidableEq, BEq, Repr
+
+/-- WALS Chapter 29 distribution (N = 198). -/
+def ch29Distribution : List WALSCount :=
+  [ ⟨"No subject person/number marking", 57⟩
+  , ⟨"Syncretic", 60⟩
+  , ⟨"Not syncretic", 81⟩ ]
+
+/-- Ch 29 total: 198 languages. -/
+theorem ch29_total :
+    ch29Distribution.foldl (λ acc c => acc + c.count) 0 = 198 := by native_decide
+
+-- ============================================================================
+-- §4.13 Chapter 21B: Exponence of Tense-Aspect-Mood Inflection
+-- ============================================================================
+
+/-- WALS Ch 21B: What categories co-occur with tense-aspect-mood in a single
+    inflectional formative.
+
+    @cite{bickel-nichols-2013b} classify languages by whether TAM inflection
+    is monoexponential (the TAM formative expresses only TAM) or bundles TAM
+    with other categories such as agreement, diathesis, polarity, or
+    construct state. Some languages lack TAM inflection entirely. -/
+inductive TAMExponence where
+  /-- Monoexponential TAM: the TAM formative expresses only TAM. -/
+  | monoexponential
+  /-- TAM bundled with agreement. -/
+  | tamAgreement
+  /-- TAM bundled with agreement and diathesis. -/
+  | tamAgreementDiathesis
+  /-- TAM bundled with agreement and construct state. -/
+  | tamAgreementConstruct
+  /-- TAM bundled with polarity. -/
+  | tamPolarity
+  /-- No TAM inflection. -/
+  | noTam
+  deriving DecidableEq, BEq, Repr
+
+/-- WALS Chapter 21B distribution (N = 160). -/
+def ch21bDistribution : List WALSCount :=
+  [ ⟨"Monoexponential TAM", 127⟩
+  , ⟨"TAM+agreement", 19⟩
+  , ⟨"TAM+agreement+diathesis", 4⟩
+  , ⟨"TAM+agreement+construct", 1⟩
+  , ⟨"TAM+polarity", 5⟩
+  , ⟨"No TAM", 4⟩ ]
+
+/-- Ch 21B total: 160 languages. -/
+theorem ch21b_total :
+    ch21bDistribution.foldl (λ acc c => acc + c.count) 0 = 160 := by native_decide
+
+-- ============================================================================
+-- §4.14 Chapter 62A: Action Nominal Constructions
+-- ============================================================================
+
+/-- WALS Ch 62: How a language constructs action nominals (nominalizations
+    of verbs that denote events or actions).
+
+    Languages differ in whether the arguments of the underlying verb retain
+    their clausal form (sentential), take possessive marking (possessive-
+    accusative, ergative-possessive, double-possessive), or whether action
+    nominals are absent or restricted. -/
+inductive ActionNominal where
+  /-- Sentential: arguments keep clausal marking. -/
+  | sentential
+  /-- Possessive-Accusative: subject is possessive, object is accusative. -/
+  | possessiveAccusative
+  /-- Ergative-Possessive: subject is ergative/genitive, object is possessive. -/
+  | ergativePossessive
+  /-- Double-Possessive: both subject and object are possessive. -/
+  | doublePossessive
+  /-- Other construction type. -/
+  | other
+  /-- Mixed: multiple construction types coexist. -/
+  | mixed
+  /-- Restricted: action nominals exist but are severely limited. -/
+  | restricted
+  /-- No action nominals. -/
+  | noActionNominals
+  deriving DecidableEq, BEq, Repr
+
+/-- WALS Chapter 62A distribution (N = 168). -/
+def ch62Distribution : List WALSCount :=
+  [ ⟨"Sentential", 25⟩
+  , ⟨"Possessive-Accusative", 29⟩
+  , ⟨"Ergative-Possessive", 21⟩
+  , ⟨"Double-Possessive", 7⟩
+  , ⟨"Other", 6⟩
+  , ⟨"Mixed", 14⟩
+  , ⟨"Restricted", 24⟩
+  , ⟨"No action nominals", 42⟩ ]
+
+/-- Ch 62 total: 168 languages. -/
+theorem ch62_total :
+    ch62Distribution.foldl (λ acc c => acc + c.count) 0 = 168 := by native_decide
+
+-- ============================================================================
+-- §4.15 Chapter 79A: Suppletion According to Tense and Aspect
+-- ============================================================================
+
+/-- WALS Ch 79A: Whether a language has suppletive verb forms conditioned
+    by tense, aspect, or both.
+
+    Suppletion is the replacement of a stem by a phonologically unrelated
+    form in a paradigm cell (e.g., English go/went). Languages vary in
+    whether suppletion is triggered by tense distinctions, aspect
+    distinctions, both, or neither. -/
+inductive SuppletionTA where
+  /-- Suppletion conditioned by tense. -/
+  | tense
+  /-- Suppletion conditioned by aspect. -/
+  | aspect
+  /-- Suppletion conditioned by both tense and aspect. -/
+  | tenseAndAspect
+  /-- No suppletion according to tense or aspect. -/
+  | none
+  deriving DecidableEq, BEq, Repr
+
+/-- WALS Chapter 79A distribution (N = 193). -/
+def ch79aDistribution : List WALSCount :=
+  [ ⟨"Tense", 36⟩
+  , ⟨"Aspect", 10⟩
+  , ⟨"Tense and aspect", 24⟩
+  , ⟨"None", 123⟩ ]
+
+/-- Ch 79A total: 193 languages. -/
+theorem ch79a_total :
+    ch79aDistribution.foldl (λ acc c => acc + c.count) 0 = 193 := by native_decide
+
+-- ============================================================================
+-- §4.16 Chapter 79B: Suppletion in Imperatives and Hortatives
+-- ============================================================================
+
+/-- WALS Ch 79B: Whether a language has suppletive verb forms specifically
+    in imperative or hortative paradigm cells.
+
+    Some languages have verbs whose imperative form is unrelated to the
+    indicative stem (e.g., Spanish ir 'go' but ve 'go.IMP'). -/
+inductive SuppletionImperative where
+  /-- A regular and a suppletive form alternate. -/
+  | alternating
+  /-- Suppletion in imperative forms. -/
+  | imperative
+  /-- Suppletion in hortative forms. -/
+  | hortative
+  /-- Suppletion in both imperative and hortative. -/
+  | imperativeAndHortative
+  /-- No suppletive imperatives reported. -/
+  | none
+  deriving DecidableEq, BEq, Repr
+
+/-- WALS Chapter 79B distribution (N = 193). -/
+def ch79bDistribution : List WALSCount :=
+  [ ⟨"Regular and suppletive alternate", 8⟩
+  , ⟨"Imperative", 29⟩
+  , ⟨"Hortative", 2⟩
+  , ⟨"Imperative and Hortative", 1⟩
+  , ⟨"None", 153⟩ ]
+
+/-- Ch 79B total: 193 languages. -/
+theorem ch79b_total :
+    ch79bDistribution.foldl (λ acc c => acc + c.count) 0 = 193 := by native_decide
+
+-- ============================================================================
+-- §4.17 Chapter 80A: Verbal Number and Suppletion
+-- ============================================================================
+
+/-- WALS Ch 80A: Whether a language has verbal number marking (distinct verb
+    forms for singular vs plural events or participants) and whether such
+    pairs involve suppletion.
+
+    Verbal number is distinct from subject/object agreement: it marks the
+    number of events (pluractional) or participants on the verb stem itself,
+    often via completely different roots. -/
+inductive VerbalNumber where
+  /-- No verbal number. -/
+  | none
+  /-- Singular-plural verb pairs without suppletion. -/
+  | pairsNoSuppletion
+  /-- Singular-plural verb pairs with suppletion. -/
+  | pairsSuppletion
+  /-- Singular-dual-plural triples without suppletion. -/
+  | triplesNoSuppletion
+  /-- Singular-dual-plural triples with suppletion. -/
+  | triplesSuppletion
+  deriving DecidableEq, BEq, Repr
+
+/-- WALS Chapter 80A distribution (N = 193). -/
+def ch80Distribution : List WALSCount :=
+  [ ⟨"None", 159⟩
+  , ⟨"Singular-plural pairs, no suppletion", 12⟩
+  , ⟨"Singular-plural pairs, suppletion", 15⟩
+  , ⟨"Singular-dual-plural triples, no suppletion", 5⟩
+  , ⟨"Singular-dual-plural triples, suppletion", 2⟩ ]
+
+/-- Ch 80 total: 193 languages. -/
+theorem ch80_total :
+    ch80Distribution.foldl (λ acc c => acc + c.count) 0 = 193 := by native_decide
+
+-- ============================================================================
+-- §4.18 WALS Converter Functions
 -- ============================================================================
 
 /-- Convert WALS 20A fusion type to the local three-way `Fusion` classification.
@@ -454,7 +855,7 @@ private def fromWALS20A : Core.WALS.F20A.FusionType → Option Fusion
 
 /-- Convert WALS 21A exponence type to the local `Exponence` classification.
     Returns `none` for `noCase`, since WALS 21A specifically evaluates the
-    exponence of *case formatives* — a language without case provides no
+    exponence of *case formatives* -- a language without case provides no
     information about its overall exponence pattern. -/
 private def fromWALS21A : Core.WALS.F21A.ExponenceType → Option Exponence
   | .monoexponentialCase  => some .monoexponential
@@ -491,13 +892,118 @@ private def fromWALS27A : Core.WALS.F27A.ReduplicationType → Reduplication
   | .fullReduplicationOnly                => .fullOnly
   | .noProductiveReduplication            => .noProductive
 
+/-- Convert WALS 23A locus-of-marking-in-clause to the local `LocusClause`
+    classification. This is a direct 1-to-1 mapping. -/
+private def fromWALS23A : Core.WALS.F23A.LocusOfMarkingInTheClause → LocusClause
+  | .headMarking      => .headMarking
+  | .dependentMarking => .dependentMarking
+  | .doubleMarking    => .doubleMarking
+  | .noMarking        => .noMarking
+  | .other            => .other
+
+/-- Convert WALS 24A locus-of-marking-in-possessive-NP to the local
+    `LocusPossessive` classification. This is a direct 1-to-1 mapping. -/
+private def fromWALS24A :
+    Core.WALS.F24A.LocusOfMarkingInPossessiveNounPhrases → LocusPossessive
+  | .headMarking      => .headMarking
+  | .dependentMarking => .dependentMarking
+  | .doubleMarking    => .doubleMarking
+  | .noMarking        => .noMarking
+  | .other            => .other
+
+/-- Convert WALS 25A whole-language locus-of-marking typology to the local
+    `WholeLanguageMarking` classification. This is a direct 1-to-1 mapping. -/
+private def fromWALS25A :
+    Core.WALS.F25A.LocusOfMarkingWholeLanguageTypology → WholeLanguageMarking
+  | .headMarking         => .headMarking
+  | .dependentMarking    => .dependentMarking
+  | .doubleMarking       => .doubleMarking
+  | .zeroMarking         => .zeroMarking
+  | .inconsistentOrOther => .inconsistentOrOther
+
+/-- Convert WALS 25B zero-marking-of-A-and-P-arguments to the local
+    `ZeroMarkingAP` classification. This is a direct 1-to-1 mapping. -/
+private def fromWALS25B :
+    Core.WALS.F25B.ZeroMarkingOfAAndPArguments → ZeroMarkingAP
+  | .zeroMarking    => .zeroMarking
+  | .nonZeroMarking => .nonZeroMarking
+
+/-- Convert WALS 28A case syncretism to the local `CaseSyncretism`
+    classification. This is a direct 1-to-1 mapping. -/
+private def fromWALS28A : Core.WALS.F28A.CaseSyncretism → CaseSyncretism
+  | .noCaseMarking  => .noCaseMarking
+  | .coreCasesOnly  => .coreCasesOnly
+  | .coreAndNonCore => .coreAndNonCore
+  | .noSyncretism   => .noSyncretism
+
+/-- Convert WALS 29A syncretism in verbal person/number marking to the local
+    `VerbalSyncretism` classification. This is a direct 1-to-1 mapping. -/
+private def fromWALS29A :
+    Core.WALS.F29A.SyncretismInVerbalPersonNumberMarking → VerbalSyncretism
+  | .noSubjectPersonNumberMarking => .noSubjectMarking
+  | .syncretic                    => .syncretic
+  | .notSyncretic                 => .notSyncretic
+
+/-- Convert WALS 21B TAM exponence to the local `TAMExponence`
+    classification. This is a direct 1-to-1 mapping. -/
+private def fromWALS21B :
+    Core.WALS.F21B.ExponenceOfTenseAspectMoodInflection → TAMExponence
+  | .monoexponentialTam      => .monoexponential
+  | .tamAgreement            => .tamAgreement
+  | .tamAgreementDiathesis   => .tamAgreementDiathesis
+  | .tamAgreementConstruct   => .tamAgreementConstruct
+  | .tamPolarity             => .tamPolarity
+  | .noTam                   => .noTam
+
+/-- Convert WALS 62A action nominal constructions to the local `ActionNominal`
+    classification. This is a direct 1-to-1 mapping. -/
+private def fromWALS62A :
+    Core.WALS.F62A.ActionNominalConstructions → ActionNominal
+  | .sentential           => .sentential
+  | .possessiveAccusative => .possessiveAccusative
+  | .ergativePossessive   => .ergativePossessive
+  | .doublePossessive     => .doublePossessive
+  | .other                => .other
+  | .mixed                => .mixed
+  | .restricted           => .restricted
+  | .noActionNominals     => .noActionNominals
+
+/-- Convert WALS 79A suppletion-by-tense-and-aspect to the local
+    `SuppletionTA` classification. This is a direct 1-to-1 mapping. -/
+private def fromWALS79A :
+    Core.WALS.F79A.SuppletionAccordingToTenseAndAspect → SuppletionTA
+  | .tense          => .tense
+  | .aspect         => .aspect
+  | .tenseAndAspect => .tenseAndAspect
+  | .none           => .none
+
+/-- Convert WALS 79B suppletion-in-imperatives to the local
+    `SuppletionImperative` classification. This is a direct 1-to-1 mapping. -/
+private def fromWALS79B :
+    Core.WALS.F79B.SuppletionInImperativesAndHortatives → SuppletionImperative
+  | .aRegularAndASuppletiveFormAlternate => .alternating
+  | .imperative                          => .imperative
+  | .hortative                           => .hortative
+  | .imperativeAndHortative              => .imperativeAndHortative
+  | .none                                => .none
+
+/-- Convert WALS 80A verbal number and suppletion to the local
+    `VerbalNumber` classification. This is a direct 1-to-1 mapping. -/
+private def fromWALS80A :
+    Core.WALS.F80A.VerbalNumberAndSuppletion → VerbalNumber
+  | .none                                    => .none
+  | .singularPluralPairsNoSuppletion         => .pairsNoSuppletion
+  | .singularPluralPairsSuppletion           => .pairsSuppletion
+  | .singularDualPluralTriplesNoSuppletion   => .triplesNoSuppletion
+  | .singularDualPluralTriplesSuppletion     => .triplesSuppletion
+
 -- ============================================================================
 -- §5. MorphProfile Structure
 -- ============================================================================
 
 /-- A language's morphological mechanism profile, combining dimensions from
-    WALS Chapters 20--27. This captures the core "morphological type" of a
-    language across six cross-cutting dimensions. -/
+    WALS Chapters 20--29. This captures the core "morphological type" of a
+    language across multiple cross-cutting dimensions. -/
 structure MorphProfile where
   /-- Language name -/
   language : String
@@ -515,6 +1021,28 @@ structure MorphProfile where
   prefixSuffix : PrefixSuffix
   /-- Ch 27: Productive reduplication -/
   reduplication : Reduplication
+  /-- Ch 23: Locus of marking in the clause (optional) -/
+  locusClause : Option LocusClause := none
+  /-- Ch 24: Locus of marking in possessive NP (optional) -/
+  locusPossessive : Option LocusPossessive := none
+  /-- Ch 25A: Whole-language marking typology (optional) -/
+  wholeLanguageMarking : Option WholeLanguageMarking := none
+  /-- Ch 25B: Zero marking of A and P arguments (optional) -/
+  zeroMarkingAP : Option ZeroMarkingAP := none
+  /-- Ch 28: Case syncretism (optional) -/
+  caseSyncretism : Option CaseSyncretism := none
+  /-- Ch 29: Syncretism in verbal person/number marking (optional) -/
+  verbalSyncretism : Option VerbalSyncretism := none
+  /-- Ch 21B: Exponence of TAM inflection (optional) -/
+  tamExponence : Option TAMExponence := none
+  /-- Ch 62A: Action nominal constructions (optional) -/
+  actionNominal : Option ActionNominal := none
+  /-- Ch 79A: Suppletion according to tense and aspect (optional) -/
+  suppletionTA : Option SuppletionTA := none
+  /-- Ch 79B: Suppletion in imperatives and hortatives (optional) -/
+  suppletionImperative : Option SuppletionImperative := none
+  /-- Ch 80A: Verbal number and suppletion (optional) -/
+  verbalNumber : Option VerbalNumber := none
   deriving Repr, DecidableEq, BEq
 
 -- ============================================================================
@@ -535,7 +1063,18 @@ def englishMorph : MorphProfile :=
   , verbSynthesis := .low
   , locus := .dependentMarking
   , prefixSuffix := .weaklySuffixing
-  , reduplication := .noProductive }
+  , reduplication := .noProductive
+  , locusClause := some .dependentMarking
+  , locusPossessive := some .dependentMarking
+  , wholeLanguageMarking := some .dependentMarking
+  , zeroMarkingAP := some .nonZeroMarking
+  , caseSyncretism := some .coreCasesOnly
+  , verbalSyncretism := some .syncretic
+  , tamExponence := some .monoexponential
+  , actionNominal := some .mixed
+  , suppletionTA := some .tense
+  , suppletionImperative := some .none
+  , verbalNumber := some .none }
 
 /-- Mandarin Chinese: isolating, no inflectional formatives, zero verb
     synthesis, zero/no-dominant marking (word order encodes relations),
@@ -549,7 +1088,18 @@ def mandarinMorph : MorphProfile :=
   , verbSynthesis := .low
   , locus := .zeroMarking
   , prefixSuffix := .littleAffixation
-  , reduplication := .noProductive }
+  , reduplication := .noProductive
+  , locusClause := some .dependentMarking
+  , locusPossessive := some .dependentMarking
+  , wholeLanguageMarking := some .dependentMarking
+  , zeroMarkingAP := some .nonZeroMarking
+  , caseSyncretism := some .noCaseMarking
+  , verbalSyncretism := some .noSubjectMarking
+  , tamExponence := some .monoexponential
+  , actionNominal := some .noActionNominals
+  , suppletionTA := some .none
+  , suppletionImperative := some .none
+  , verbalNumber := some .none }
 
 /-- Japanese: concatenative/agglutinative, monoexponential (each suffix
     carries one meaning: -ta past, -nai negation, -reru passive),
@@ -564,7 +1114,18 @@ def japaneseMorph : MorphProfile :=
   , verbSynthesis := .moderate
   , locus := .dependentMarking
   , prefixSuffix := .stronglySuffixing
-  , reduplication := .noProductive }
+  , reduplication := .noProductive
+  , locusClause := some .dependentMarking
+  , locusPossessive := some .dependentMarking
+  , wholeLanguageMarking := some .dependentMarking
+  , zeroMarkingAP := some .nonZeroMarking
+  , caseSyncretism := some .noCaseMarking
+  , verbalSyncretism := some .noSubjectMarking
+  , tamExponence := some .monoexponential
+  , actionNominal := some .doublePossessive
+  , suppletionTA := some .none
+  , suppletionImperative := some .none
+  , verbalNumber := some .none }
 
 /-- Turkish: concatenative/agglutinative, monoexponential, moderate verb
     synthesis (person, number, tense, aspect, mood, voice, negation),
@@ -578,7 +1139,18 @@ def turkishMorph : MorphProfile :=
   , verbSynthesis := .moderate
   , locus := .dependentMarking
   , prefixSuffix := .stronglySuffixing
-  , reduplication := .noProductive }
+  , reduplication := .noProductive
+  , locusClause := some .dependentMarking
+  , locusPossessive := some .doubleMarking
+  , wholeLanguageMarking := some .inconsistentOrOther
+  , zeroMarkingAP := some .nonZeroMarking
+  , caseSyncretism := some .noSyncretism
+  , verbalSyncretism := some .notSyncretic
+  , tamExponence := some .monoexponential
+  , actionNominal := some .possessiveAccusative
+  , suppletionTA := some .tense
+  , suppletionImperative := some .none
+  , verbalNumber := some .none }
 
 /-- Finnish: concatenative/agglutinative, monoexponential (15-case system
     with segmentable suffixes), moderate verb synthesis (person, number,
@@ -592,7 +1164,18 @@ def finnishMorph : MorphProfile :=
   , verbSynthesis := .moderate
   , locus := .dependentMarking
   , prefixSuffix := .stronglySuffixing
-  , reduplication := .noProductive }
+  , reduplication := .noProductive
+  , locusClause := some .dependentMarking
+  , locusPossessive := some .doubleMarking
+  , wholeLanguageMarking := some .inconsistentOrOther
+  , zeroMarkingAP := some .nonZeroMarking
+  , caseSyncretism := some .coreAndNonCore
+  , verbalSyncretism := some .notSyncretic
+  , tamExponence := some .monoexponential
+  , actionNominal := some .doublePossessive
+  , suppletionTA := some .none
+  , suppletionImperative := some .imperative
+  , verbalNumber := some .none }
 
 /-- Russian: nonlinear/fusional (portmanteau case+number+gender endings,
     stem ablaut in conjugation), polyexponential (-ov = gen+pl), moderate
@@ -607,7 +1190,18 @@ def russianMorph : MorphProfile :=
   , verbSynthesis := .moderate
   , locus := .dependentMarking
   , prefixSuffix := .weaklySuffixing
-  , reduplication := .noProductive }
+  , reduplication := .noProductive
+  , locusClause := some .dependentMarking
+  , locusPossessive := some .dependentMarking
+  , wholeLanguageMarking := some .dependentMarking
+  , zeroMarkingAP := some .nonZeroMarking
+  , caseSyncretism := some .coreAndNonCore
+  , verbalSyncretism := some .notSyncretic
+  , tamExponence := some .monoexponential
+  , actionNominal := some .ergativePossessive
+  , suppletionTA := some .tenseAndAspect
+  , suppletionImperative := some .imperative
+  , verbalNumber := some .none }
 
 /-- Swahili (Bantu): concatenative with some fusion in noun classes,
     monoexponential (each prefix/suffix slot has one function), high verb
@@ -623,7 +1217,18 @@ def swahiliMorph : MorphProfile :=
   , verbSynthesis := .high
   , locus := .headMarking
   , prefixSuffix := .weaklyPrefixing
-  , reduplication := .productiveFull }
+  , reduplication := .productiveFull
+  , locusClause := some .headMarking
+  , locusPossessive := some .dependentMarking
+  , wholeLanguageMarking := some .inconsistentOrOther
+  , zeroMarkingAP := some .nonZeroMarking
+  , caseSyncretism := some .noCaseMarking
+  , verbalSyncretism := some .syncretic
+  , tamExponence := some .monoexponential
+  , actionNominal := some .possessiveAccusative
+  , suppletionTA := some .none
+  , suppletionImperative := some .imperative
+  , verbalNumber := some .none }
 
 /-- Arabic (MSA): nonlinear/fusional (root-and-pattern morphology, ablaut,
     templatic derivation), polyexponential (vowel pattern encodes voice +
@@ -656,7 +1261,18 @@ def hindiMorph : MorphProfile :=
   , verbSynthesis := .moderate
   , locus := .dependentMarking
   , prefixSuffix := .stronglySuffixing
-  , reduplication := .noProductive }
+  , reduplication := .noProductive
+  , locusClause := some .doubleMarking
+  , locusPossessive := some .dependentMarking
+  , wholeLanguageMarking := some .inconsistentOrOther
+  , zeroMarkingAP := some .nonZeroMarking
+  , caseSyncretism := some .coreAndNonCore
+  , verbalSyncretism := some .syncretic
+  , tamExponence := some .tamAgreement
+  , actionNominal := some .possessiveAccusative
+  , suppletionTA := some .tenseAndAspect
+  , suppletionImperative := some .none
+  , verbalNumber := some .none }
 
 /-- Tagalog (Austronesian): concatenative (affixal voice/focus system),
     monoexponential, moderate verb synthesis (voice, aspect, mood),
@@ -672,7 +1288,18 @@ def tagalogMorph : MorphProfile :=
   , verbSynthesis := .moderate
   , locus := .headMarking
   , prefixSuffix := .weaklyPrefixing
-  , reduplication := .productiveFull }
+  , reduplication := .productiveFull
+  , locusClause := some .doubleMarking
+  , locusPossessive := some .other
+  , wholeLanguageMarking := some .inconsistentOrOther
+  , zeroMarkingAP := some .nonZeroMarking
+  , caseSyncretism := some .noCaseMarking
+  , verbalSyncretism := some .noSubjectMarking
+  , tamExponence := some .monoexponential
+  , actionNominal := some .possessiveAccusative
+  , suppletionTA := some .none
+  , suppletionImperative := some .none
+  , verbalNumber := some .none }
 
 /-- Quechua (Cusco): concatenative/agglutinative (long suffixal chains
     with transparent morpheme boundaries), monoexponential, high verb
@@ -703,7 +1330,18 @@ def hungarianMorph : MorphProfile :=
   , verbSynthesis := .moderate
   , locus := .dependentMarking
   , prefixSuffix := .stronglySuffixing
-  , reduplication := .noProductive }
+  , reduplication := .noProductive
+  , locusClause := some .dependentMarking
+  , locusPossessive := some .headMarking
+  , wholeLanguageMarking := some .inconsistentOrOther
+  , zeroMarkingAP := some .nonZeroMarking
+  , caseSyncretism := some .noSyncretism
+  , verbalSyncretism := some .notSyncretic
+  , tamExponence := some .monoexponential
+  , actionNominal := some .restricted
+  , suppletionTA := some .tense
+  , suppletionImperative := some .alternating
+  , verbalNumber := some .none }
 
 /-- Georgian (Kartvelian): nonlinear/fusional (complex verb morphology
     with stem changes, screeve alternations), polyexponential (verb
@@ -720,7 +1358,18 @@ def georgianMorph : MorphProfile :=
   , verbSynthesis := .high
   , locus := .doubleMarking
   , prefixSuffix := .weaklySuffixing
-  , reduplication := .noProductive }
+  , reduplication := .noProductive
+  , locusClause := some .doubleMarking
+  , locusPossessive := some .dependentMarking
+  , wholeLanguageMarking := some .inconsistentOrOther
+  , zeroMarkingAP := some .nonZeroMarking
+  , caseSyncretism := some .coreAndNonCore
+  , verbalSyncretism := some .notSyncretic
+  , tamExponence := some .tamAgreement
+  , actionNominal := some .ergativePossessive
+  , suppletionTA := some .tenseAndAspect
+  , suppletionImperative := some .imperative
+  , verbalNumber := some .pairsNoSuppletion }
 
 /-- Thai: isolating (grammatical categories expressed analytically with
     particles and serial verbs), no inflectional formatives, zero verb
@@ -735,7 +1384,18 @@ def thaiMorph : MorphProfile :=
   , verbSynthesis := .low
   , locus := .zeroMarking
   , prefixSuffix := .littleAffixation
-  , reduplication := .noProductive }
+  , reduplication := .noProductive
+  , locusClause := some .noMarking
+  , locusPossessive := some .dependentMarking
+  , wholeLanguageMarking := some .inconsistentOrOther
+  , zeroMarkingAP := some .zeroMarking
+  , caseSyncretism := some .noCaseMarking
+  , verbalSyncretism := some .noSubjectMarking
+  , tamExponence := some .monoexponential
+  , actionNominal := some .mixed
+  , suppletionTA := some .none
+  , suppletionImperative := some .none
+  , verbalNumber := some .none }
 
 /-- Indonesian (Austronesian): concatenative (prefixes, suffixes, circumfixes
     on verbs: meN-, ber-, -kan, -i), monoexponential, moderate verb synthesis
@@ -751,7 +1411,18 @@ def indonesianMorph : MorphProfile :=
   , verbSynthesis := .moderate
   , locus := .headMarking
   , prefixSuffix := .weaklyPrefixing
-  , reduplication := .productiveFull }
+  , reduplication := .productiveFull
+  , locusClause := some .noMarking
+  , locusPossessive := some .noMarking
+  , wholeLanguageMarking := some .zeroMarking
+  , zeroMarkingAP := some .zeroMarking
+  , caseSyncretism := some .noCaseMarking
+  , verbalSyncretism := some .noSubjectMarking
+  , tamExponence := some .monoexponential
+  , actionNominal := some .ergativePossessive
+  , suppletionTA := some .none
+  , suppletionImperative := some .none
+  , verbalNumber := some .none }
 
 /-- Korean: concatenative/agglutinative (transparent suffix chains on
     verbs: -si honorific, -ess past, -keyss future, -ta declarative),
@@ -766,7 +1437,18 @@ def koreanMorph : MorphProfile :=
   , verbSynthesis := .moderate
   , locus := .dependentMarking
   , prefixSuffix := .stronglySuffixing
-  , reduplication := .noProductive }
+  , reduplication := .noProductive
+  , locusClause := some .dependentMarking
+  , locusPossessive := some .dependentMarking
+  , wholeLanguageMarking := some .dependentMarking
+  , zeroMarkingAP := some .nonZeroMarking
+  , caseSyncretism := some .noCaseMarking
+  , verbalSyncretism := some .noSubjectMarking
+  , tamExponence := some .monoexponential
+  , actionNominal := some .sentential
+  , suppletionTA := some .none
+  , suppletionImperative := some .none
+  , verbalNumber := some .none }
 
 /-- German: nonlinear/fusional (ablaut in strong verbs: singen/sang/gesungen,
     umlaut in plurals: Mutter/Muetter), polyexponential (adjective endings
@@ -782,7 +1464,18 @@ def germanMorph : MorphProfile :=
   , verbSynthesis := .moderate
   , locus := .dependentMarking
   , prefixSuffix := .weaklySuffixing
-  , reduplication := .noProductive }
+  , reduplication := .noProductive
+  , locusClause := some .dependentMarking
+  , locusPossessive := some .dependentMarking
+  , wholeLanguageMarking := some .dependentMarking
+  , zeroMarkingAP := some .nonZeroMarking
+  , caseSyncretism := some .coreAndNonCore
+  , verbalSyncretism := some .syncretic
+  , tamExponence := some .monoexponential
+  , actionNominal := some .ergativePossessive
+  , suppletionTA := some .tense
+  , suppletionImperative := some .none
+  , verbalNumber := some .none }
 
 /-- Spanish: nonlinear/fusional (stem changes in conjugation: contar/cuento,
     dormir/duermo), polyexponential (verb endings bundle person+number+tense+
@@ -798,7 +1491,18 @@ def spanishMorph : MorphProfile :=
   , verbSynthesis := .moderate
   , locus := .doubleMarking
   , prefixSuffix := .weaklySuffixing
-  , reduplication := .noProductive }
+  , reduplication := .noProductive
+  , locusClause := some .doubleMarking
+  , locusPossessive := some .dependentMarking
+  , wholeLanguageMarking := some .inconsistentOrOther
+  , zeroMarkingAP := some .nonZeroMarking
+  , caseSyncretism := some .coreAndNonCore
+  , verbalSyncretism := some .syncretic
+  , tamExponence := some .tamAgreement
+  , actionNominal := some .ergativePossessive
+  , suppletionTA := some .tenseAndAspect
+  , suppletionImperative := some .imperative
+  , verbalNumber := some .none }
 
 end MorphLanguageData
 
@@ -1179,7 +1883,7 @@ Per-language grounding theorems verify that our `MorphProfile` values are
 consistent with WALS generated data where a language appears in the WALS
 sample and the mapping from WALS categories to local types is unambiguous.
 
-Not all profile×chapter combinations can be grounded:
+Not all profile x chapter combinations can be grounded:
 - WALS 20A evaluates the fusion of *selected inflectional formatives*, which
   can differ from a language's overall morphological type (e.g., Russian's
   selected formatives are concatenative even though the system is broadly
@@ -1320,7 +2024,289 @@ theorem tagalog_ch27 :
     some tagalogMorph.reduplication := by native_decide
 
 -- --------------------------------------------------------------------------
--- §15.5 WALS Dataset Size Verification
+-- §15.5 Chapter 23A: Locus of Marking in the Clause
+-- --------------------------------------------------------------------------
+
+theorem english_ch23 :
+    (Core.WALS.F23A.lookup "eng").map (fromWALS23A ·.value) =
+    some (.dependentMarking : LocusClause) := by native_decide
+theorem mandarin_ch23 :
+    (Core.WALS.F23A.lookup "mnd").map (fromWALS23A ·.value) =
+    some (.dependentMarking : LocusClause) := by native_decide
+theorem japanese_ch23 :
+    (Core.WALS.F23A.lookup "jpn").map (fromWALS23A ·.value) =
+    some (.dependentMarking : LocusClause) := by native_decide
+theorem turkish_ch23 :
+    (Core.WALS.F23A.lookup "tur").map (fromWALS23A ·.value) =
+    some (.dependentMarking : LocusClause) := by native_decide
+theorem finnish_ch23 :
+    (Core.WALS.F23A.lookup "fin").map (fromWALS23A ·.value) =
+    some (.dependentMarking : LocusClause) := by native_decide
+theorem russian_ch23 :
+    (Core.WALS.F23A.lookup "rus").map (fromWALS23A ·.value) =
+    some (.dependentMarking : LocusClause) := by native_decide
+theorem swahili_ch23 :
+    (Core.WALS.F23A.lookup "swa").map (fromWALS23A ·.value) =
+    some (.headMarking : LocusClause) := by native_decide
+theorem hindi_ch23 :
+    (Core.WALS.F23A.lookup "hin").map (fromWALS23A ·.value) =
+    some (.doubleMarking : LocusClause) := by native_decide
+theorem tagalog_ch23 :
+    (Core.WALS.F23A.lookup "tag").map (fromWALS23A ·.value) =
+    some (.doubleMarking : LocusClause) := by native_decide
+theorem hungarian_ch23 :
+    (Core.WALS.F23A.lookup "hun").map (fromWALS23A ·.value) =
+    some (.dependentMarking : LocusClause) := by native_decide
+theorem georgian_ch23 :
+    (Core.WALS.F23A.lookup "geo").map (fromWALS23A ·.value) =
+    some (.doubleMarking : LocusClause) := by native_decide
+theorem thai_ch23 :
+    (Core.WALS.F23A.lookup "tha").map (fromWALS23A ·.value) =
+    some (.noMarking : LocusClause) := by native_decide
+theorem indonesian_ch23 :
+    (Core.WALS.F23A.lookup "ind").map (fromWALS23A ·.value) =
+    some (.noMarking : LocusClause) := by native_decide
+theorem korean_ch23 :
+    (Core.WALS.F23A.lookup "kor").map (fromWALS23A ·.value) =
+    some (.dependentMarking : LocusClause) := by native_decide
+theorem german_ch23 :
+    (Core.WALS.F23A.lookup "ger").map (fromWALS23A ·.value) =
+    some (.dependentMarking : LocusClause) := by native_decide
+theorem spanish_ch23 :
+    (Core.WALS.F23A.lookup "spa").map (fromWALS23A ·.value) =
+    some (.doubleMarking : LocusClause) := by native_decide
+
+-- --------------------------------------------------------------------------
+-- §15.6 Chapter 24A: Locus of Marking in Possessive NP
+-- --------------------------------------------------------------------------
+
+theorem english_ch24 :
+    (Core.WALS.F24A.lookup "eng").map (fromWALS24A ·.value) =
+    some (.dependentMarking : LocusPossessive) := by native_decide
+theorem mandarin_ch24 :
+    (Core.WALS.F24A.lookup "mnd").map (fromWALS24A ·.value) =
+    some (.dependentMarking : LocusPossessive) := by native_decide
+theorem japanese_ch24 :
+    (Core.WALS.F24A.lookup "jpn").map (fromWALS24A ·.value) =
+    some (.dependentMarking : LocusPossessive) := by native_decide
+theorem turkish_ch24 :
+    (Core.WALS.F24A.lookup "tur").map (fromWALS24A ·.value) =
+    some (.doubleMarking : LocusPossessive) := by native_decide
+theorem finnish_ch24 :
+    (Core.WALS.F24A.lookup "fin").map (fromWALS24A ·.value) =
+    some (.doubleMarking : LocusPossessive) := by native_decide
+theorem russian_ch24 :
+    (Core.WALS.F24A.lookup "rus").map (fromWALS24A ·.value) =
+    some (.dependentMarking : LocusPossessive) := by native_decide
+theorem swahili_ch24 :
+    (Core.WALS.F24A.lookup "swa").map (fromWALS24A ·.value) =
+    some (.dependentMarking : LocusPossessive) := by native_decide
+theorem hindi_ch24 :
+    (Core.WALS.F24A.lookup "hin").map (fromWALS24A ·.value) =
+    some (.dependentMarking : LocusPossessive) := by native_decide
+theorem tagalog_ch24 :
+    (Core.WALS.F24A.lookup "tag").map (fromWALS24A ·.value) =
+    some (.other : LocusPossessive) := by native_decide
+theorem hungarian_ch24 :
+    (Core.WALS.F24A.lookup "hun").map (fromWALS24A ·.value) =
+    some (.headMarking : LocusPossessive) := by native_decide
+theorem georgian_ch24 :
+    (Core.WALS.F24A.lookup "geo").map (fromWALS24A ·.value) =
+    some (.dependentMarking : LocusPossessive) := by native_decide
+theorem thai_ch24 :
+    (Core.WALS.F24A.lookup "tha").map (fromWALS24A ·.value) =
+    some (.dependentMarking : LocusPossessive) := by native_decide
+theorem indonesian_ch24 :
+    (Core.WALS.F24A.lookup "ind").map (fromWALS24A ·.value) =
+    some (.noMarking : LocusPossessive) := by native_decide
+theorem korean_ch24 :
+    (Core.WALS.F24A.lookup "kor").map (fromWALS24A ·.value) =
+    some (.dependentMarking : LocusPossessive) := by native_decide
+theorem german_ch24 :
+    (Core.WALS.F24A.lookup "ger").map (fromWALS24A ·.value) =
+    some (.dependentMarking : LocusPossessive) := by native_decide
+theorem spanish_ch24 :
+    (Core.WALS.F24A.lookup "spa").map (fromWALS24A ·.value) =
+    some (.dependentMarking : LocusPossessive) := by native_decide
+
+-- --------------------------------------------------------------------------
+-- §15.7 Chapter 25A: Whole-Language Marking Typology
+-- --------------------------------------------------------------------------
+
+theorem english_ch25a :
+    (Core.WALS.F25A.lookup "eng").map (fromWALS25A ·.value) =
+    some (.dependentMarking : WholeLanguageMarking) := by native_decide
+theorem mandarin_ch25a :
+    (Core.WALS.F25A.lookup "mnd").map (fromWALS25A ·.value) =
+    some (.dependentMarking : WholeLanguageMarking) := by native_decide
+theorem japanese_ch25a :
+    (Core.WALS.F25A.lookup "jpn").map (fromWALS25A ·.value) =
+    some (.dependentMarking : WholeLanguageMarking) := by native_decide
+theorem russian_ch25a :
+    (Core.WALS.F25A.lookup "rus").map (fromWALS25A ·.value) =
+    some (.dependentMarking : WholeLanguageMarking) := by native_decide
+theorem korean_ch25a :
+    (Core.WALS.F25A.lookup "kor").map (fromWALS25A ·.value) =
+    some (.dependentMarking : WholeLanguageMarking) := by native_decide
+theorem german_ch25a :
+    (Core.WALS.F25A.lookup "ger").map (fromWALS25A ·.value) =
+    some (.dependentMarking : WholeLanguageMarking) := by native_decide
+theorem indonesian_ch25a :
+    (Core.WALS.F25A.lookup "ind").map (fromWALS25A ·.value) =
+    some (.zeroMarking : WholeLanguageMarking) := by native_decide
+
+-- --------------------------------------------------------------------------
+-- §15.8 Chapter 25B: Zero Marking of A and P Arguments
+-- --------------------------------------------------------------------------
+
+theorem english_ch25b :
+    (Core.WALS.F25B.lookup "eng").map (fromWALS25B ·.value) =
+    some (.nonZeroMarking : ZeroMarkingAP) := by native_decide
+theorem mandarin_ch25b :
+    (Core.WALS.F25B.lookup "mnd").map (fromWALS25B ·.value) =
+    some (.nonZeroMarking : ZeroMarkingAP) := by native_decide
+theorem japanese_ch25b :
+    (Core.WALS.F25B.lookup "jpn").map (fromWALS25B ·.value) =
+    some (.nonZeroMarking : ZeroMarkingAP) := by native_decide
+theorem turkish_ch25b :
+    (Core.WALS.F25B.lookup "tur").map (fromWALS25B ·.value) =
+    some (.nonZeroMarking : ZeroMarkingAP) := by native_decide
+theorem finnish_ch25b :
+    (Core.WALS.F25B.lookup "fin").map (fromWALS25B ·.value) =
+    some (.nonZeroMarking : ZeroMarkingAP) := by native_decide
+theorem russian_ch25b :
+    (Core.WALS.F25B.lookup "rus").map (fromWALS25B ·.value) =
+    some (.nonZeroMarking : ZeroMarkingAP) := by native_decide
+theorem swahili_ch25b :
+    (Core.WALS.F25B.lookup "swa").map (fromWALS25B ·.value) =
+    some (.nonZeroMarking : ZeroMarkingAP) := by native_decide
+theorem hindi_ch25b :
+    (Core.WALS.F25B.lookup "hin").map (fromWALS25B ·.value) =
+    some (.nonZeroMarking : ZeroMarkingAP) := by native_decide
+theorem thai_ch25b :
+    (Core.WALS.F25B.lookup "tha").map (fromWALS25B ·.value) =
+    some (.zeroMarking : ZeroMarkingAP) := by native_decide
+theorem indonesian_ch25b :
+    (Core.WALS.F25B.lookup "ind").map (fromWALS25B ·.value) =
+    some (.zeroMarking : ZeroMarkingAP) := by native_decide
+theorem korean_ch25b :
+    (Core.WALS.F25B.lookup "kor").map (fromWALS25B ·.value) =
+    some (.nonZeroMarking : ZeroMarkingAP) := by native_decide
+theorem german_ch25b :
+    (Core.WALS.F25B.lookup "ger").map (fromWALS25B ·.value) =
+    some (.nonZeroMarking : ZeroMarkingAP) := by native_decide
+theorem spanish_ch25b :
+    (Core.WALS.F25B.lookup "spa").map (fromWALS25B ·.value) =
+    some (.nonZeroMarking : ZeroMarkingAP) := by native_decide
+
+-- --------------------------------------------------------------------------
+-- §15.9 Chapter 28A: Case Syncretism
+-- --------------------------------------------------------------------------
+
+theorem english_ch28 :
+    (Core.WALS.F28A.lookup "eng").map (fromWALS28A ·.value) =
+    some (.coreCasesOnly : CaseSyncretism) := by native_decide
+theorem japanese_ch28 :
+    (Core.WALS.F28A.lookup "jpn").map (fromWALS28A ·.value) =
+    some (.noCaseMarking : CaseSyncretism) := by native_decide
+theorem turkish_ch28 :
+    (Core.WALS.F28A.lookup "tur").map (fromWALS28A ·.value) =
+    some (.noSyncretism : CaseSyncretism) := by native_decide
+theorem finnish_ch28 :
+    (Core.WALS.F28A.lookup "fin").map (fromWALS28A ·.value) =
+    some (.coreAndNonCore : CaseSyncretism) := by native_decide
+theorem russian_ch28 :
+    (Core.WALS.F28A.lookup "rus").map (fromWALS28A ·.value) =
+    some (.coreAndNonCore : CaseSyncretism) := by native_decide
+theorem swahili_ch28 :
+    (Core.WALS.F28A.lookup "swa").map (fromWALS28A ·.value) =
+    some (.noCaseMarking : CaseSyncretism) := by native_decide
+theorem hindi_ch28 :
+    (Core.WALS.F28A.lookup "hin").map (fromWALS28A ·.value) =
+    some (.coreAndNonCore : CaseSyncretism) := by native_decide
+theorem hungarian_ch28 :
+    (Core.WALS.F28A.lookup "hun").map (fromWALS28A ·.value) =
+    some (.noSyncretism : CaseSyncretism) := by native_decide
+theorem georgian_ch28 :
+    (Core.WALS.F28A.lookup "geo").map (fromWALS28A ·.value) =
+    some (.coreAndNonCore : CaseSyncretism) := by native_decide
+theorem thai_ch28 :
+    (Core.WALS.F28A.lookup "tha").map (fromWALS28A ·.value) =
+    some (.noCaseMarking : CaseSyncretism) := by native_decide
+theorem indonesian_ch28 :
+    (Core.WALS.F28A.lookup "ind").map (fromWALS28A ·.value) =
+    some (.noCaseMarking : CaseSyncretism) := by native_decide
+theorem korean_ch28 :
+    (Core.WALS.F28A.lookup "kor").map (fromWALS28A ·.value) =
+    some (.noCaseMarking : CaseSyncretism) := by native_decide
+theorem mandarin_ch28 :
+    (Core.WALS.F28A.lookup "mnd").map (fromWALS28A ·.value) =
+    some (.noCaseMarking : CaseSyncretism) := by native_decide
+theorem german_ch28 :
+    (Core.WALS.F28A.lookup "ger").map (fromWALS28A ·.value) =
+    some (.coreAndNonCore : CaseSyncretism) := by native_decide
+theorem spanish_ch28 :
+    (Core.WALS.F28A.lookup "spa").map (fromWALS28A ·.value) =
+    some (.coreAndNonCore : CaseSyncretism) := by native_decide
+theorem tagalog_ch28 :
+    (Core.WALS.F28A.lookup "tag").map (fromWALS28A ·.value) =
+    some (.noCaseMarking : CaseSyncretism) := by native_decide
+
+-- --------------------------------------------------------------------------
+-- §15.10 Chapter 29A: Syncretism in Verbal Person/Number Marking
+-- --------------------------------------------------------------------------
+
+theorem english_ch29 :
+    (Core.WALS.F29A.lookup "eng").map (fromWALS29A ·.value) =
+    some (.syncretic : VerbalSyncretism) := by native_decide
+theorem japanese_ch29 :
+    (Core.WALS.F29A.lookup "jpn").map (fromWALS29A ·.value) =
+    some (.noSubjectMarking : VerbalSyncretism) := by native_decide
+theorem turkish_ch29 :
+    (Core.WALS.F29A.lookup "tur").map (fromWALS29A ·.value) =
+    some (.notSyncretic : VerbalSyncretism) := by native_decide
+theorem finnish_ch29 :
+    (Core.WALS.F29A.lookup "fin").map (fromWALS29A ·.value) =
+    some (.notSyncretic : VerbalSyncretism) := by native_decide
+theorem russian_ch29 :
+    (Core.WALS.F29A.lookup "rus").map (fromWALS29A ·.value) =
+    some (.notSyncretic : VerbalSyncretism) := by native_decide
+theorem swahili_ch29 :
+    (Core.WALS.F29A.lookup "swa").map (fromWALS29A ·.value) =
+    some (.syncretic : VerbalSyncretism) := by native_decide
+theorem hindi_ch29 :
+    (Core.WALS.F29A.lookup "hin").map (fromWALS29A ·.value) =
+    some (.syncretic : VerbalSyncretism) := by native_decide
+theorem hungarian_ch29 :
+    (Core.WALS.F29A.lookup "hun").map (fromWALS29A ·.value) =
+    some (.notSyncretic : VerbalSyncretism) := by native_decide
+theorem georgian_ch29 :
+    (Core.WALS.F29A.lookup "geo").map (fromWALS29A ·.value) =
+    some (.notSyncretic : VerbalSyncretism) := by native_decide
+theorem thai_ch29 :
+    (Core.WALS.F29A.lookup "tha").map (fromWALS29A ·.value) =
+    some (.noSubjectMarking : VerbalSyncretism) := by native_decide
+theorem indonesian_ch29 :
+    (Core.WALS.F29A.lookup "ind").map (fromWALS29A ·.value) =
+    some (.noSubjectMarking : VerbalSyncretism) := by native_decide
+theorem korean_ch29 :
+    (Core.WALS.F29A.lookup "kor").map (fromWALS29A ·.value) =
+    some (.noSubjectMarking : VerbalSyncretism) := by native_decide
+theorem mandarin_ch29 :
+    (Core.WALS.F29A.lookup "mnd").map (fromWALS29A ·.value) =
+    some (.noSubjectMarking : VerbalSyncretism) := by native_decide
+theorem german_ch29 :
+    (Core.WALS.F29A.lookup "ger").map (fromWALS29A ·.value) =
+    some (.syncretic : VerbalSyncretism) := by native_decide
+theorem spanish_ch29 :
+    (Core.WALS.F29A.lookup "spa").map (fromWALS29A ·.value) =
+    some (.syncretic : VerbalSyncretism) := by native_decide
+theorem tagalog_ch29 :
+    (Core.WALS.F29A.lookup "tag").map (fromWALS29A ·.value) =
+    some (.noSubjectMarking : VerbalSyncretism) := by native_decide
+
+-- --------------------------------------------------------------------------
+-- §15.11 WALS Dataset Size Verification
 -- --------------------------------------------------------------------------
 
 theorem ch20_size : ch20.length = 165 := by native_decide
@@ -1328,5 +2314,423 @@ theorem ch21_size : ch21.length = 162 := by native_decide
 theorem ch22_size : ch22.length = 145 := by native_decide
 theorem ch26_size : ch26.length = 969 := by native_decide
 theorem ch27_size : ch27.length = 368 := by native_decide
+theorem ch23_size : ch23.length = 236 := by native_decide
+theorem ch24_size : ch24.length = 236 := by native_decide
+theorem ch25a_size : ch25a.length = 236 := by native_decide
+theorem ch25b_size : ch25b.length = 235 := by native_decide
+theorem ch28_size : ch28.length = 198 := by native_decide
+theorem ch29_size : ch29.length = 198 := by native_decide
+
+-- --------------------------------------------------------------------------
+-- §15.12 WALS Distribution Count Verification
+-- --------------------------------------------------------------------------
+
+-- Ch 23 distribution counts
+theorem ch23_count_headMarking :
+    (ch23.filter (·.value == .headMarking)).length = 71 := by native_decide
+theorem ch23_count_dependentMarking :
+    (ch23.filter (·.value == .dependentMarking)).length = 63 := by native_decide
+theorem ch23_count_doubleMarking :
+    (ch23.filter (·.value == .doubleMarking)).length = 58 := by native_decide
+theorem ch23_count_noMarking :
+    (ch23.filter (·.value == .noMarking)).length = 42 := by native_decide
+theorem ch23_count_other :
+    (ch23.filter (·.value == .other)).length = 2 := by native_decide
+
+-- Ch 24 distribution counts
+theorem ch24_count_headMarking :
+    (ch24.filter (·.value == .headMarking)).length = 78 := by native_decide
+theorem ch24_count_dependentMarking :
+    (ch24.filter (·.value == .dependentMarking)).length = 98 := by native_decide
+theorem ch24_count_doubleMarking :
+    (ch24.filter (·.value == .doubleMarking)).length = 22 := by native_decide
+theorem ch24_count_noMarking :
+    (ch24.filter (·.value == .noMarking)).length = 32 := by native_decide
+theorem ch24_count_other :
+    (ch24.filter (·.value == .other)).length = 6 := by native_decide
+
+-- Ch 25A distribution counts
+theorem ch25a_count_headMarking :
+    (ch25a.filter (·.value == .headMarking)).length = 47 := by native_decide
+theorem ch25a_count_dependentMarking :
+    (ch25a.filter (·.value == .dependentMarking)).length = 46 := by native_decide
+theorem ch25a_count_doubleMarking :
+    (ch25a.filter (·.value == .doubleMarking)).length = 16 := by native_decide
+theorem ch25a_count_zeroMarking :
+    (ch25a.filter (·.value == .zeroMarking)).length = 6 := by native_decide
+theorem ch25a_count_inconsistentOrOther :
+    (ch25a.filter (·.value == .inconsistentOrOther)).length = 121 := by native_decide
+
+-- Ch 25B distribution counts
+theorem ch25b_count_zeroMarking :
+    (ch25b.filter (·.value == .zeroMarking)).length = 16 := by native_decide
+theorem ch25b_count_nonZeroMarking :
+    (ch25b.filter (·.value == .nonZeroMarking)).length = 219 := by native_decide
+
+-- Ch 28 distribution counts
+theorem ch28_count_noCaseMarking :
+    (ch28.filter (·.value == .noCaseMarking)).length = 123 := by native_decide
+theorem ch28_count_coreCasesOnly :
+    (ch28.filter (·.value == .coreCasesOnly)).length = 18 := by native_decide
+theorem ch28_count_coreAndNonCore :
+    (ch28.filter (·.value == .coreAndNonCore)).length = 22 := by native_decide
+theorem ch28_count_noSyncretism :
+    (ch28.filter (·.value == .noSyncretism)).length = 35 := by native_decide
+
+-- Ch 29 distribution counts
+theorem ch29_count_noSubjectMarking :
+    (ch29.filter (·.value == .noSubjectPersonNumberMarking)).length = 57 := by
+  native_decide
+theorem ch29_count_syncretic :
+    (ch29.filter (·.value == .syncretic)).length = 60 := by native_decide
+theorem ch29_count_notSyncretic :
+    (ch29.filter (·.value == .notSyncretic)).length = 81 := by native_decide
+
+-- --------------------------------------------------------------------------
+-- §15.13 Chapter 21B: Exponence of TAM Inflection
+-- --------------------------------------------------------------------------
+
+theorem english_ch21b :
+    (Core.WALS.F21B.lookup "eng").map (fromWALS21B ·.value) =
+    some (.monoexponential : TAMExponence) := by native_decide
+theorem mandarin_ch21b :
+    (Core.WALS.F21B.lookup "mnd").map (fromWALS21B ·.value) =
+    some (.monoexponential : TAMExponence) := by native_decide
+theorem japanese_ch21b :
+    (Core.WALS.F21B.lookup "jpn").map (fromWALS21B ·.value) =
+    some (.monoexponential : TAMExponence) := by native_decide
+theorem turkish_ch21b :
+    (Core.WALS.F21B.lookup "tur").map (fromWALS21B ·.value) =
+    some (.monoexponential : TAMExponence) := by native_decide
+theorem finnish_ch21b :
+    (Core.WALS.F21B.lookup "fin").map (fromWALS21B ·.value) =
+    some (.monoexponential : TAMExponence) := by native_decide
+theorem russian_ch21b :
+    (Core.WALS.F21B.lookup "rus").map (fromWALS21B ·.value) =
+    some (.monoexponential : TAMExponence) := by native_decide
+theorem swahili_ch21b :
+    (Core.WALS.F21B.lookup "swa").map (fromWALS21B ·.value) =
+    some (.monoexponential : TAMExponence) := by native_decide
+theorem hindi_ch21b :
+    (Core.WALS.F21B.lookup "hin").map (fromWALS21B ·.value) =
+    some (.tamAgreement : TAMExponence) := by native_decide
+theorem tagalog_ch21b :
+    (Core.WALS.F21B.lookup "tag").map (fromWALS21B ·.value) =
+    some (.monoexponential : TAMExponence) := by native_decide
+theorem hungarian_ch21b :
+    (Core.WALS.F21B.lookup "hun").map (fromWALS21B ·.value) =
+    some (.monoexponential : TAMExponence) := by native_decide
+theorem georgian_ch21b :
+    (Core.WALS.F21B.lookup "geo").map (fromWALS21B ·.value) =
+    some (.tamAgreement : TAMExponence) := by native_decide
+theorem thai_ch21b :
+    (Core.WALS.F21B.lookup "tha").map (fromWALS21B ·.value) =
+    some (.monoexponential : TAMExponence) := by native_decide
+theorem indonesian_ch21b :
+    (Core.WALS.F21B.lookup "ind").map (fromWALS21B ·.value) =
+    some (.monoexponential : TAMExponence) := by native_decide
+theorem korean_ch21b :
+    (Core.WALS.F21B.lookup "kor").map (fromWALS21B ·.value) =
+    some (.monoexponential : TAMExponence) := by native_decide
+theorem german_ch21b :
+    (Core.WALS.F21B.lookup "ger").map (fromWALS21B ·.value) =
+    some (.monoexponential : TAMExponence) := by native_decide
+theorem spanish_ch21b :
+    (Core.WALS.F21B.lookup "spa").map (fromWALS21B ·.value) =
+    some (.tamAgreement : TAMExponence) := by native_decide
+
+-- --------------------------------------------------------------------------
+-- §15.14 Chapter 62A: Action Nominal Constructions
+-- --------------------------------------------------------------------------
+
+theorem english_ch62 :
+    (Core.WALS.F62A.lookup "eng").map (fromWALS62A ·.value) =
+    some (.mixed : ActionNominal) := by native_decide
+theorem mandarin_ch62 :
+    (Core.WALS.F62A.lookup "mnd").map (fromWALS62A ·.value) =
+    some (.noActionNominals : ActionNominal) := by native_decide
+theorem japanese_ch62 :
+    (Core.WALS.F62A.lookup "jpn").map (fromWALS62A ·.value) =
+    some (.doublePossessive : ActionNominal) := by native_decide
+theorem turkish_ch62 :
+    (Core.WALS.F62A.lookup "tur").map (fromWALS62A ·.value) =
+    some (.possessiveAccusative : ActionNominal) := by native_decide
+theorem finnish_ch62 :
+    (Core.WALS.F62A.lookup "fin").map (fromWALS62A ·.value) =
+    some (.doublePossessive : ActionNominal) := by native_decide
+theorem russian_ch62 :
+    (Core.WALS.F62A.lookup "rus").map (fromWALS62A ·.value) =
+    some (.ergativePossessive : ActionNominal) := by native_decide
+theorem swahili_ch62 :
+    (Core.WALS.F62A.lookup "swa").map (fromWALS62A ·.value) =
+    some (.possessiveAccusative : ActionNominal) := by native_decide
+theorem hindi_ch62 :
+    (Core.WALS.F62A.lookup "hin").map (fromWALS62A ·.value) =
+    some (.possessiveAccusative : ActionNominal) := by native_decide
+theorem tagalog_ch62 :
+    (Core.WALS.F62A.lookup "tag").map (fromWALS62A ·.value) =
+    some (.possessiveAccusative : ActionNominal) := by native_decide
+theorem hungarian_ch62 :
+    (Core.WALS.F62A.lookup "hun").map (fromWALS62A ·.value) =
+    some (.restricted : ActionNominal) := by native_decide
+theorem georgian_ch62 :
+    (Core.WALS.F62A.lookup "geo").map (fromWALS62A ·.value) =
+    some (.ergativePossessive : ActionNominal) := by native_decide
+theorem thai_ch62 :
+    (Core.WALS.F62A.lookup "tha").map (fromWALS62A ·.value) =
+    some (.mixed : ActionNominal) := by native_decide
+theorem indonesian_ch62 :
+    (Core.WALS.F62A.lookup "ind").map (fromWALS62A ·.value) =
+    some (.ergativePossessive : ActionNominal) := by native_decide
+theorem korean_ch62 :
+    (Core.WALS.F62A.lookup "kor").map (fromWALS62A ·.value) =
+    some (.sentential : ActionNominal) := by native_decide
+theorem german_ch62 :
+    (Core.WALS.F62A.lookup "ger").map (fromWALS62A ·.value) =
+    some (.ergativePossessive : ActionNominal) := by native_decide
+theorem spanish_ch62 :
+    (Core.WALS.F62A.lookup "spa").map (fromWALS62A ·.value) =
+    some (.ergativePossessive : ActionNominal) := by native_decide
+
+-- --------------------------------------------------------------------------
+-- §15.15 Chapter 79A: Suppletion According to Tense and Aspect
+-- --------------------------------------------------------------------------
+
+theorem english_ch79a :
+    (Core.WALS.F79A.lookup "eng").map (fromWALS79A ·.value) =
+    some (.tense : SuppletionTA) := by native_decide
+theorem mandarin_ch79a :
+    (Core.WALS.F79A.lookup "mnd").map (fromWALS79A ·.value) =
+    some (.none : SuppletionTA) := by native_decide
+theorem japanese_ch79a :
+    (Core.WALS.F79A.lookup "jpn").map (fromWALS79A ·.value) =
+    some (.none : SuppletionTA) := by native_decide
+theorem turkish_ch79a :
+    (Core.WALS.F79A.lookup "tur").map (fromWALS79A ·.value) =
+    some (.tense : SuppletionTA) := by native_decide
+theorem finnish_ch79a :
+    (Core.WALS.F79A.lookup "fin").map (fromWALS79A ·.value) =
+    some (.none : SuppletionTA) := by native_decide
+theorem russian_ch79a :
+    (Core.WALS.F79A.lookup "rus").map (fromWALS79A ·.value) =
+    some (.tenseAndAspect : SuppletionTA) := by native_decide
+theorem swahili_ch79a :
+    (Core.WALS.F79A.lookup "swa").map (fromWALS79A ·.value) =
+    some (.none : SuppletionTA) := by native_decide
+theorem hindi_ch79a :
+    (Core.WALS.F79A.lookup "hin").map (fromWALS79A ·.value) =
+    some (.tenseAndAspect : SuppletionTA) := by native_decide
+theorem tagalog_ch79a :
+    (Core.WALS.F79A.lookup "tag").map (fromWALS79A ·.value) =
+    some (.none : SuppletionTA) := by native_decide
+theorem hungarian_ch79a :
+    (Core.WALS.F79A.lookup "hun").map (fromWALS79A ·.value) =
+    some (.tense : SuppletionTA) := by native_decide
+theorem georgian_ch79a :
+    (Core.WALS.F79A.lookup "geo").map (fromWALS79A ·.value) =
+    some (.tenseAndAspect : SuppletionTA) := by native_decide
+theorem thai_ch79a :
+    (Core.WALS.F79A.lookup "tha").map (fromWALS79A ·.value) =
+    some (.none : SuppletionTA) := by native_decide
+theorem indonesian_ch79a :
+    (Core.WALS.F79A.lookup "ind").map (fromWALS79A ·.value) =
+    some (.none : SuppletionTA) := by native_decide
+theorem korean_ch79a :
+    (Core.WALS.F79A.lookup "kor").map (fromWALS79A ·.value) =
+    some (.none : SuppletionTA) := by native_decide
+theorem german_ch79a :
+    (Core.WALS.F79A.lookup "ger").map (fromWALS79A ·.value) =
+    some (.tense : SuppletionTA) := by native_decide
+theorem spanish_ch79a :
+    (Core.WALS.F79A.lookup "spa").map (fromWALS79A ·.value) =
+    some (.tenseAndAspect : SuppletionTA) := by native_decide
+
+-- --------------------------------------------------------------------------
+-- §15.16 Chapter 79B: Suppletion in Imperatives and Hortatives
+-- --------------------------------------------------------------------------
+
+theorem english_ch79b :
+    (Core.WALS.F79B.lookup "eng").map (fromWALS79B ·.value) =
+    some (.none : SuppletionImperative) := by native_decide
+theorem mandarin_ch79b :
+    (Core.WALS.F79B.lookup "mnd").map (fromWALS79B ·.value) =
+    some (.none : SuppletionImperative) := by native_decide
+theorem japanese_ch79b :
+    (Core.WALS.F79B.lookup "jpn").map (fromWALS79B ·.value) =
+    some (.none : SuppletionImperative) := by native_decide
+theorem turkish_ch79b :
+    (Core.WALS.F79B.lookup "tur").map (fromWALS79B ·.value) =
+    some (.none : SuppletionImperative) := by native_decide
+theorem finnish_ch79b :
+    (Core.WALS.F79B.lookup "fin").map (fromWALS79B ·.value) =
+    some (.imperative : SuppletionImperative) := by native_decide
+theorem russian_ch79b :
+    (Core.WALS.F79B.lookup "rus").map (fromWALS79B ·.value) =
+    some (.imperative : SuppletionImperative) := by native_decide
+theorem swahili_ch79b :
+    (Core.WALS.F79B.lookup "swa").map (fromWALS79B ·.value) =
+    some (.imperative : SuppletionImperative) := by native_decide
+theorem hindi_ch79b :
+    (Core.WALS.F79B.lookup "hin").map (fromWALS79B ·.value) =
+    some (.none : SuppletionImperative) := by native_decide
+theorem tagalog_ch79b :
+    (Core.WALS.F79B.lookup "tag").map (fromWALS79B ·.value) =
+    some (.none : SuppletionImperative) := by native_decide
+theorem hungarian_ch79b :
+    (Core.WALS.F79B.lookup "hun").map (fromWALS79B ·.value) =
+    some (.alternating : SuppletionImperative) := by native_decide
+theorem georgian_ch79b :
+    (Core.WALS.F79B.lookup "geo").map (fromWALS79B ·.value) =
+    some (.imperative : SuppletionImperative) := by native_decide
+theorem thai_ch79b :
+    (Core.WALS.F79B.lookup "tha").map (fromWALS79B ·.value) =
+    some (.none : SuppletionImperative) := by native_decide
+theorem indonesian_ch79b :
+    (Core.WALS.F79B.lookup "ind").map (fromWALS79B ·.value) =
+    some (.none : SuppletionImperative) := by native_decide
+theorem korean_ch79b :
+    (Core.WALS.F79B.lookup "kor").map (fromWALS79B ·.value) =
+    some (.none : SuppletionImperative) := by native_decide
+theorem german_ch79b :
+    (Core.WALS.F79B.lookup "ger").map (fromWALS79B ·.value) =
+    some (.none : SuppletionImperative) := by native_decide
+theorem spanish_ch79b :
+    (Core.WALS.F79B.lookup "spa").map (fromWALS79B ·.value) =
+    some (.imperative : SuppletionImperative) := by native_decide
+
+-- --------------------------------------------------------------------------
+-- §15.17 Chapter 80A: Verbal Number and Suppletion
+-- --------------------------------------------------------------------------
+
+theorem english_ch80 :
+    (Core.WALS.F80A.lookup "eng").map (fromWALS80A ·.value) =
+    some (.none : VerbalNumber) := by native_decide
+theorem mandarin_ch80 :
+    (Core.WALS.F80A.lookup "mnd").map (fromWALS80A ·.value) =
+    some (.none : VerbalNumber) := by native_decide
+theorem japanese_ch80 :
+    (Core.WALS.F80A.lookup "jpn").map (fromWALS80A ·.value) =
+    some (.none : VerbalNumber) := by native_decide
+theorem turkish_ch80 :
+    (Core.WALS.F80A.lookup "tur").map (fromWALS80A ·.value) =
+    some (.none : VerbalNumber) := by native_decide
+theorem finnish_ch80 :
+    (Core.WALS.F80A.lookup "fin").map (fromWALS80A ·.value) =
+    some (.none : VerbalNumber) := by native_decide
+theorem russian_ch80 :
+    (Core.WALS.F80A.lookup "rus").map (fromWALS80A ·.value) =
+    some (.none : VerbalNumber) := by native_decide
+theorem swahili_ch80 :
+    (Core.WALS.F80A.lookup "swa").map (fromWALS80A ·.value) =
+    some (.none : VerbalNumber) := by native_decide
+theorem hindi_ch80 :
+    (Core.WALS.F80A.lookup "hin").map (fromWALS80A ·.value) =
+    some (.none : VerbalNumber) := by native_decide
+theorem tagalog_ch80 :
+    (Core.WALS.F80A.lookup "tag").map (fromWALS80A ·.value) =
+    some (.none : VerbalNumber) := by native_decide
+theorem hungarian_ch80 :
+    (Core.WALS.F80A.lookup "hun").map (fromWALS80A ·.value) =
+    some (.none : VerbalNumber) := by native_decide
+theorem georgian_ch80 :
+    (Core.WALS.F80A.lookup "geo").map (fromWALS80A ·.value) =
+    some (.pairsNoSuppletion : VerbalNumber) := by native_decide
+theorem thai_ch80 :
+    (Core.WALS.F80A.lookup "tha").map (fromWALS80A ·.value) =
+    some (.none : VerbalNumber) := by native_decide
+theorem indonesian_ch80 :
+    (Core.WALS.F80A.lookup "ind").map (fromWALS80A ·.value) =
+    some (.none : VerbalNumber) := by native_decide
+theorem korean_ch80 :
+    (Core.WALS.F80A.lookup "kor").map (fromWALS80A ·.value) =
+    some (.none : VerbalNumber) := by native_decide
+theorem german_ch80 :
+    (Core.WALS.F80A.lookup "ger").map (fromWALS80A ·.value) =
+    some (.none : VerbalNumber) := by native_decide
+theorem spanish_ch80 :
+    (Core.WALS.F80A.lookup "spa").map (fromWALS80A ·.value) =
+    some (.none : VerbalNumber) := by native_decide
+
+-- --------------------------------------------------------------------------
+-- §15.18 WALS Dataset Size Verification (new chapters)
+-- --------------------------------------------------------------------------
+
+theorem ch21b_size : ch21b.length = 160 := by native_decide
+theorem ch62_size : ch62.length = 168 := by native_decide
+theorem ch79a_size : ch79a.length = 193 := by native_decide
+theorem ch79b_size : ch79b.length = 193 := by native_decide
+theorem ch80_size : ch80.length = 193 := by native_decide
+
+-- --------------------------------------------------------------------------
+-- §15.19 WALS Distribution Count Verification (new chapters)
+-- --------------------------------------------------------------------------
+
+-- Ch 21B distribution counts
+theorem ch21b_count_monoexponentialTam :
+    (ch21b.filter (·.value == .monoexponentialTam)).length = 127 := by native_decide
+theorem ch21b_count_tamAgreement :
+    (ch21b.filter (·.value == .tamAgreement)).length = 19 := by native_decide
+theorem ch21b_count_tamAgreementDiathesis :
+    (ch21b.filter (·.value == .tamAgreementDiathesis)).length = 4 := by native_decide
+theorem ch21b_count_tamAgreementConstruct :
+    (ch21b.filter (·.value == .tamAgreementConstruct)).length = 1 := by native_decide
+theorem ch21b_count_tamPolarity :
+    (ch21b.filter (·.value == .tamPolarity)).length = 5 := by native_decide
+theorem ch21b_count_noTam :
+    (ch21b.filter (·.value == .noTam)).length = 4 := by native_decide
+
+-- Ch 62A distribution counts
+theorem ch62_count_sentential :
+    (ch62.filter (·.value == .sentential)).length = 25 := by native_decide
+theorem ch62_count_possessiveAccusative :
+    (ch62.filter (·.value == .possessiveAccusative)).length = 29 := by native_decide
+theorem ch62_count_ergativePossessive :
+    (ch62.filter (·.value == .ergativePossessive)).length = 21 := by native_decide
+theorem ch62_count_doublePossessive :
+    (ch62.filter (·.value == .doublePossessive)).length = 7 := by native_decide
+theorem ch62_count_other :
+    (ch62.filter (·.value == .other)).length = 6 := by native_decide
+theorem ch62_count_mixed :
+    (ch62.filter (·.value == .mixed)).length = 14 := by native_decide
+theorem ch62_count_restricted :
+    (ch62.filter (·.value == .restricted)).length = 24 := by native_decide
+theorem ch62_count_noActionNominals :
+    (ch62.filter (·.value == .noActionNominals)).length = 42 := by native_decide
+
+-- Ch 79A distribution counts
+theorem ch79a_count_tense :
+    (ch79a.filter (·.value == .tense)).length = 36 := by native_decide
+theorem ch79a_count_aspect :
+    (ch79a.filter (·.value == .aspect)).length = 10 := by native_decide
+theorem ch79a_count_tenseAndAspect :
+    (ch79a.filter (·.value == .tenseAndAspect)).length = 24 := by native_decide
+theorem ch79a_count_none :
+    (ch79a.filter (·.value == .none)).length = 123 := by native_decide
+
+-- Ch 79B distribution counts
+theorem ch79b_count_alternating :
+    (ch79b.filter (·.value == .aRegularAndASuppletiveFormAlternate)).length = 8 := by
+  native_decide
+theorem ch79b_count_imperative :
+    (ch79b.filter (·.value == .imperative)).length = 29 := by native_decide
+theorem ch79b_count_hortative :
+    (ch79b.filter (·.value == .hortative)).length = 2 := by native_decide
+theorem ch79b_count_imperativeAndHortative :
+    (ch79b.filter (·.value == .imperativeAndHortative)).length = 1 := by native_decide
+theorem ch79b_count_none :
+    (ch79b.filter (·.value == .none)).length = 153 := by native_decide
+
+-- Ch 80A distribution counts
+theorem ch80_count_none :
+    (ch80.filter (·.value == .none)).length = 159 := by native_decide
+theorem ch80_count_pairsNoSuppletion :
+    (ch80.filter (·.value == .singularPluralPairsNoSuppletion)).length = 12 := by native_decide
+theorem ch80_count_pairsSuppletion :
+    (ch80.filter (·.value == .singularPluralPairsSuppletion)).length = 15 := by native_decide
+theorem ch80_count_triplesNoSuppletion :
+    (ch80.filter (·.value == .singularDualPluralTriplesNoSuppletion)).length = 5 := by
+  native_decide
+theorem ch80_count_triplesSuppletion :
+    (ch80.filter (·.value == .singularDualPluralTriplesSuppletion)).length = 2 := by native_decide
 
 end Phenomena.Morphology.Typology

@@ -3,21 +3,28 @@ import Linglib.Core.WALS.Features.F106A
 import Linglib.Core.WALS.Features.F107A
 import Linglib.Core.WALS.Features.F108A
 import Linglib.Core.WALS.Features.F108B
+import Linglib.Core.WALS.Features.F109A
+import Linglib.Core.WALS.Features.F109B
+import Linglib.Core.WALS.Features.F105A
 import Linglib.Core.WALS.Features.F111A
 import Linglib.Fragments.Finnish.Predicates
 import Linglib.Fragments.English.Pronouns
 import Linglib.Core.Lexical.MorphRule
 
 /-!
-# Cross-Linguistic Typology of Valence and Voice (WALS Chapters 106--111)
+# Cross-Linguistic Typology of Valence and Voice (WALS Chapters 105--111)
 @cite{maslova-nedjalkov-2013} @cite{polinsky-2013} @cite{siewierska-2013} @cite{song-2013}
+@cite{haspelmath-2013}
 @cite{nordlinger-2023} @cite{evans-2008} @cite{evans-et-al-2011}
 @cite{dalrymple-et-al-1998} @cite{siloni-2008} @cite{siloni-2012}
 @cite{konig-kokutani-2006} @cite{hurst-2012}
 
 Typological data on valence-changing and voice constructions, drawn from
-WALS (World Atlas of Language Structures) chapters 106--111:
+WALS (World Atlas of Language Structures) chapters 105--111:
 
+- **Ch 105** (@cite{haspelmath-2013}): Ditransitive constructions ('give') --
+  how R (recipient) and T (theme) align with monotransitive P (patient).
+  378 languages.
 - **Ch 106** (@cite{maslova-nedjalkov-2013}): Reciprocal constructions and their
   relationship to reflexives. 175 languages.
 - **Ch 107** (@cite{siewierska-2013}): Passive constructions -- presence/absence across
@@ -32,8 +39,8 @@ WALS (World Atlas of Language Structures) chapters 106--111:
 - **Ch 111** (@cite{song-2013}): Nonperiphrastic causative constructions -- morphological
   vs compound types. 310 languages.
 
-This module focuses on Ch 106--109 (reciprocals, passives, antipassives,
-applicatives). Causative typology (Ch 110--111) is covered in
+This module focuses on Ch 105--109 (ditransitives, reciprocals, passives,
+antipassives, applicatives). Causative typology (Ch 110--111) is covered in
 `Phenomena.Causatives.Typology`; only aggregate WALS counts are recorded
 here for cross-reference.
 
@@ -227,6 +234,28 @@ inductive AlignmentType where
   deriving DecidableEq, BEq, Repr
 
 -- ============================================================================
+-- Ch 105: Ditransitive Constructions: The Verb 'Give' (@cite{haspelmath-2013})
+-- ============================================================================
+
+/-- WALS Ch 105: How ditransitive verbs (prototypically 'give') encode
+    the recipient (R) and theme (T) arguments relative to the monotransitive
+    patient (P).
+
+    - `indirectObject`: R is treated differently from P (R gets a
+      preposition or dative case: "give the book TO Mary").
+    - `doubleObject`: R is treated the same as P (both bare NPs:
+      "give Mary the book").
+    - `secondaryObject`: T is treated differently from P (T gets
+      special marking: Ainu, Lakhota).
+    - `mixed`: More than one construction type is available. -/
+inductive DitransitiveType where
+  | indirectObject
+  | doubleObject
+  | secondaryObject
+  | mixed
+  deriving DecidableEq, BEq, Repr
+
+-- ============================================================================
 -- Ch 109: Applicative Constructions (@cite{polinsky-2013})
 -- ============================================================================
 
@@ -307,6 +336,97 @@ theorem antipassive_productivity_total : Core.WALS.F108B.allData.length = 186 :=
   exact Core.WALS.F108B.total_count
 theorem nonperiphr_causative_total : Core.WALS.F111A.allData.length = 310 :=
   Core.WALS.F111A.total_count
+
+-- ---- F105A: Ditransitive Constructions ----
+
+private abbrev f105a := Core.WALS.F105A.allData
+
+theorem ditransitive_total : f105a.length = 378 :=
+  Core.WALS.F105A.total_count
+
+/-- Convert WALS 105A value to our DitransitiveType. -/
+private def fromWALS105A : Core.WALS.F105A.DitransitiveConstructionsTheVerbGive → DitransitiveType
+  | .indirectObjectConstruction  => .indirectObject
+  | .doubleObjectConstruction    => .doubleObject
+  | .secondaryObjectConstruction => .secondaryObject
+  | .mixed                       => .mixed
+
+theorem f105a_count_indirectObject :
+    (f105a.filter (·.value == .indirectObjectConstruction)).length = 189 := by native_decide
+theorem f105a_count_doubleObject :
+    (f105a.filter (·.value == .doubleObjectConstruction)).length = 84 := by native_decide
+theorem f105a_count_secondaryObject :
+    (f105a.filter (·.value == .secondaryObjectConstruction)).length = 65 := by native_decide
+theorem f105a_count_mixed :
+    (f105a.filter (·.value == .mixed)).length = 40 := by native_decide
+
+-- ---- F109A: Applicative Constructions ----
+
+private abbrev f109a := Core.WALS.F109A.allData
+
+theorem applicative_total : f109a.length = 183 :=
+  Core.WALS.F109A.total_count
+
+/-- Convert WALS 109A value to our ApplicativeType.
+    The WALS enum encodes base-transitivity and semantic role together;
+    we decompose into `ApplicativeBase` x `AppliedObjectRole`. -/
+private def fromWALS109A : Core.WALS.F109A.ApplicativeType → ApplicativeType
+  | .benefactiveBothBases         => .applicative .bothBases .benefactiveOnly
+  | .benefactiveTransOnly         => .applicative .transitiveOnly .benefactiveOnly
+  | .benefactiveAndOtherBothBases => .applicative .bothBases .benefactiveAndOther
+  | .benefactiveAndOtherTransOnly => .applicative .transitiveOnly .benefactiveAndOther
+  | .nonBenefactiveBothBases      => .applicative .bothBases .nonbenefactiveOnly
+  | .nonBenefactiveTransOnly      => .applicative .transitiveOnly .nonbenefactiveOnly
+  | .nonBenefactiveIntransOnly    => .applicative .intransitiveOnly .nonbenefactiveOnly
+  | .noApplicative                => .noApplicative
+
+theorem f109a_count_benefactiveBothBases :
+    (f109a.filter (·.value == .benefactiveBothBases)).length = 16 := by native_decide
+theorem f109a_count_benefactiveTransOnly :
+    (f109a.filter (·.value == .benefactiveTransOnly)).length = 4 := by native_decide
+theorem f109a_count_benefactiveAndOtherBothBases :
+    (f109a.filter (·.value == .benefactiveAndOtherBothBases)).length = 49 := by native_decide
+theorem f109a_count_benefactiveAndOtherTransOnly :
+    (f109a.filter (·.value == .benefactiveAndOtherTransOnly)).length = 2 := by native_decide
+theorem f109a_count_nonBenefactiveBothBases :
+    (f109a.filter (·.value == .nonBenefactiveBothBases)).length = 9 := by native_decide
+theorem f109a_count_nonBenefactiveTransOnly :
+    (f109a.filter (·.value == .nonBenefactiveTransOnly)).length = 1 := by native_decide
+theorem f109a_count_nonBenefactiveIntransOnly :
+    (f109a.filter (·.value == .nonBenefactiveIntransOnly)).length = 2 := by native_decide
+theorem f109a_count_noApplicative :
+    (f109a.filter (·.value == .noApplicative)).length = 100 := by native_decide
+
+-- ---- F109B: Other Roles of Applied Objects ----
+
+private abbrev f109b := Core.WALS.F109B.allData
+
+theorem applied_object_role_total : f109b.length = 183 :=
+  Core.WALS.F109B.total_count
+
+/-- Convert WALS 109B value to an optional AppliedObjectRole.
+    Returns `none` for languages without applicative constructions,
+    since there is no applied object whose role could be classified.
+    Instrument, locative, and instrument-and-locative all map to
+    `.nonbenefactiveOnly`; the finer distinction is preserved in the
+    WALS source data. -/
+private def fromWALS109B : Core.WALS.F109B.AppliedObjectRole → Option AppliedObjectRole
+  | .instrument            => some .nonbenefactiveOnly
+  | .locative              => some .nonbenefactiveOnly
+  | .instrumentAndLocative => some .nonbenefactiveOnly
+  | .onlyBenefactive       => some .benefactiveOnly
+  | .noApplicative         => none
+
+theorem f109b_count_instrument :
+    (f109b.filter (·.value == .instrument)).length = 17 := by native_decide
+theorem f109b_count_locative :
+    (f109b.filter (·.value == .locative)).length = 18 := by native_decide
+theorem f109b_count_instrumentAndLocative :
+    (f109b.filter (·.value == .instrumentAndLocative)).length = 12 := by native_decide
+theorem f109b_count_onlyBenefactive :
+    (f109b.filter (·.value == .onlyBenefactive)).length = 36 := by native_decide
+theorem f109b_count_noApplicative :
+    (f109b.filter (·.value == .noApplicative)).length = 100 := by native_decide
 
 -- ============================================================================
 -- Language Profiles
@@ -705,6 +825,153 @@ theorem german_reciprocal_wals :
   native_decide
 theorem finnish_reciprocal_wals :
     (Core.WALS.F106A.lookup "fin").map (fromWALS106A ·.value) = some finnish.reciprocal := by
+  native_decide
+
+-- ============================================================================
+-- WALS Grounding: F105A Ditransitive Constructions
+-- ============================================================================
+
+/-- Per-language grounding: WALS 105A ditransitive type for profile languages.
+    Every profile language appears in the 378-language F105A dataset. -/
+
+theorem english_ditransitive_wals :
+    (Core.WALS.F105A.lookup "eng").map (fromWALS105A ·.value) = some DitransitiveType.mixed := by
+  native_decide
+theorem japanese_ditransitive_wals :
+    (Core.WALS.F105A.lookup "jpn").map (fromWALS105A ·.value) = some DitransitiveType.indirectObject := by
+  native_decide
+theorem turkish_ditransitive_wals :
+    (Core.WALS.F105A.lookup "tur").map (fromWALS105A ·.value) = some DitransitiveType.indirectObject := by
+  native_decide
+theorem swahili_ditransitive_wals :
+    (Core.WALS.F105A.lookup "swa").map (fromWALS105A ·.value) = some DitransitiveType.doubleObject := by
+  native_decide
+theorem dyirbal_ditransitive_wals :
+    (Core.WALS.F105A.lookup "dyi").map (fromWALS105A ·.value) = some DitransitiveType.mixed := by
+  native_decide
+theorem chukchi_ditransitive_wals :
+    (Core.WALS.F105A.lookup "chk").map (fromWALS105A ·.value) = some DitransitiveType.indirectObject := by
+  native_decide
+theorem indonesian_ditransitive_wals :
+    (Core.WALS.F105A.lookup "ind").map (fromWALS105A ·.value) = some DitransitiveType.mixed := by
+  native_decide
+theorem french_ditransitive_wals :
+    (Core.WALS.F105A.lookup "fre").map (fromWALS105A ·.value) = some DitransitiveType.indirectObject := by
+  native_decide
+theorem russian_ditransitive_wals :
+    (Core.WALS.F105A.lookup "rus").map (fromWALS105A ·.value) = some DitransitiveType.indirectObject := by
+  native_decide
+theorem hindi_ditransitive_wals :
+    (Core.WALS.F105A.lookup "hin").map (fromWALS105A ·.value) = some DitransitiveType.indirectObject := by
+  native_decide
+theorem westGreenlandic_ditransitive_wals :
+    (Core.WALS.F105A.lookup "grw").map (fromWALS105A ·.value) = some DitransitiveType.secondaryObject := by
+  native_decide
+theorem kinyarwanda_ditransitive_wals :
+    (Core.WALS.F105A.lookup "kin").map (fromWALS105A ·.value) = some DitransitiveType.doubleObject := by
+  native_decide
+theorem lango_ditransitive_wals :
+    (Core.WALS.F105A.lookup "lan").map (fromWALS105A ·.value) = some DitransitiveType.mixed := by
+  native_decide
+theorem chamorro_ditransitive_wals :
+    (Core.WALS.F105A.lookup "cha").map (fromWALS105A ·.value) = some DitransitiveType.secondaryObject := by
+  native_decide
+theorem halkomelem_ditransitive_wals :
+    (Core.WALS.F105A.lookup "hli").map (fromWALS105A ·.value) = some DitransitiveType.secondaryObject := by
+  native_decide
+theorem modernGreek_ditransitive_wals :
+    (Core.WALS.F105A.lookup "grk").map (fromWALS105A ·.value) = some DitransitiveType.indirectObject := by
+  native_decide
+theorem german_ditransitive_wals :
+    (Core.WALS.F105A.lookup "ger").map (fromWALS105A ·.value) = some DitransitiveType.indirectObject := by
+  native_decide
+theorem finnish_ditransitive_wals :
+    (Core.WALS.F105A.lookup "fin").map (fromWALS105A ·.value) = some DitransitiveType.indirectObject := by
+  native_decide
+
+-- ============================================================================
+-- WALS Grounding: F109A Applicative Type
+-- ============================================================================
+
+/-- Per-language grounding: profile applicative types that match WALS 109A.
+    Languages whose profiles disagree with WALS (Dyirbal, Indonesian,
+    West Greenlandic, Lango, Chamorro) are omitted -- their profile values
+    are based on other sources or use a different classification. -/
+
+theorem english_applicative_wals :
+    (Core.WALS.F109A.lookup "eng").map (fromWALS109A ·.value) = some english.applicative := by
+  native_decide
+theorem japanese_applicative_wals :
+    (Core.WALS.F109A.lookup "jpn").map (fromWALS109A ·.value) = some japanese.applicative := by
+  native_decide
+theorem turkish_applicative_wals :
+    (Core.WALS.F109A.lookup "tur").map (fromWALS109A ·.value) = some turkish.applicative := by
+  native_decide
+theorem swahili_applicative_wals :
+    (Core.WALS.F109A.lookup "swa").map (fromWALS109A ·.value) = some swahili.applicative := by
+  native_decide
+theorem chukchi_applicative_wals :
+    (Core.WALS.F109A.lookup "chk").map (fromWALS109A ·.value) = some chukchi.applicative := by
+  native_decide
+theorem french_applicative_wals :
+    (Core.WALS.F109A.lookup "fre").map (fromWALS109A ·.value) = some french.applicative := by
+  native_decide
+theorem russian_applicative_wals :
+    (Core.WALS.F109A.lookup "rus").map (fromWALS109A ·.value) = some russian.applicative := by
+  native_decide
+theorem hindi_applicative_wals :
+    (Core.WALS.F109A.lookup "hin").map (fromWALS109A ·.value) = some hindi.applicative := by
+  native_decide
+theorem halkomelem_applicative_wals :
+    (Core.WALS.F109A.lookup "hli").map (fromWALS109A ·.value) = some halkomelem.applicative := by
+  native_decide
+theorem modernGreek_applicative_wals :
+    (Core.WALS.F109A.lookup "grk").map (fromWALS109A ·.value) = some modernGreek.applicative := by
+  native_decide
+theorem german_applicative_wals :
+    (Core.WALS.F109A.lookup "ger").map (fromWALS109A ·.value) = some german.applicative := by
+  native_decide
+theorem finnish_applicative_wals :
+    (Core.WALS.F109A.lookup "fin").map (fromWALS109A ·.value) = some finnish.applicative := by
+  native_decide
+
+-- ============================================================================
+-- WALS Grounding: F109B Applied Object Roles
+-- ============================================================================
+
+/-- Per-language grounding: WALS 109B applied-object roles for profile
+    languages without applicatives. For these languages, F109B records
+    `.noApplicative`, and our converter returns `none`. -/
+
+theorem english_appliedRole_wals :
+    (Core.WALS.F109B.lookup "eng").map (fromWALS109B ·.value) = some none := by
+  native_decide
+theorem japanese_appliedRole_wals :
+    (Core.WALS.F109B.lookup "jpn").map (fromWALS109B ·.value) = some none := by
+  native_decide
+theorem turkish_appliedRole_wals :
+    (Core.WALS.F109B.lookup "tur").map (fromWALS109B ·.value) = some none := by
+  native_decide
+theorem chukchi_appliedRole_wals :
+    (Core.WALS.F109B.lookup "chk").map (fromWALS109B ·.value) = some none := by
+  native_decide
+theorem french_appliedRole_wals :
+    (Core.WALS.F109B.lookup "fre").map (fromWALS109B ·.value) = some none := by
+  native_decide
+theorem russian_appliedRole_wals :
+    (Core.WALS.F109B.lookup "rus").map (fromWALS109B ·.value) = some none := by
+  native_decide
+theorem hindi_appliedRole_wals :
+    (Core.WALS.F109B.lookup "hin").map (fromWALS109B ·.value) = some none := by
+  native_decide
+theorem modernGreek_appliedRole_wals :
+    (Core.WALS.F109B.lookup "grk").map (fromWALS109B ·.value) = some none := by
+  native_decide
+theorem german_appliedRole_wals :
+    (Core.WALS.F109B.lookup "ger").map (fromWALS109B ·.value) = some none := by
+  native_decide
+theorem finnish_appliedRole_wals :
+    (Core.WALS.F109B.lookup "fin").map (fromWALS109B ·.value) = some none := by
   native_decide
 
 /-- Finnish impersonal "passive" has semantic content (existential closure

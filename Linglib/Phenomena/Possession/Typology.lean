@@ -1,6 +1,7 @@
 import Linglib.Core.Lexical.Word
 import Linglib.Core.WALS.Features.F57A
 import Linglib.Core.WALS.Features.F58A
+import Linglib.Core.WALS.Features.F58B
 import Linglib.Core.WALS.Features.F59A
 
 /-!
@@ -239,6 +240,7 @@ inductive PossessiveAffixPosition where
 
 private abbrev ch57 := Core.WALS.F57A.allData
 private abbrev ch58 := Core.WALS.F58A.allData
+private abbrev ch58b := Core.WALS.F58B.allData
 private abbrev ch59 := Core.WALS.F59A.allData
 
 /-- Convert WALS 57A enum to our PossessiveAffixPosition. -/
@@ -255,6 +257,31 @@ private def fromWALS58A : Core.WALS.F58A.ObligatoryPossessiveInflection →
     ObligatoryPossession
   | .exists => .exists_
   | .absent => .noObligatory
+
+/-- WALS Ch 58B: Number of possessive nouns.
+
+    How many nouns in the language function as possessive markers
+    (i.e., nouns whose primary grammatical function is to express possession,
+    such as English "property" used as a possessive classifier).
+    Most languages have none; a small number have one or more. -/
+inductive NumberOfPossessiveNouns where
+  /-- No possessive nouns reported. -/
+  | noneReported
+  /-- Exactly one possessive noun. -/
+  | one
+  /-- Two to four possessive nouns. -/
+  | twoToFour
+  /-- Five or more possessive nouns. -/
+  | fiveOrMore
+  deriving DecidableEq, BEq, Repr
+
+/-- Convert WALS 58B enum to our NumberOfPossessiveNouns. -/
+private def fromWALS58B : Core.WALS.F58B.NumberOfPossessiveNouns →
+    NumberOfPossessiveNouns
+  | .noneReported => .noneReported
+  | .one => .one
+  | .twoToFour => .twoToFour
+  | .fiveOrMore => .fiveOrMore
 
 /-- Convert WALS 59A enum to our PossessiveClassification.
     WALS distinguishes "3-5 classes" from "more than 5"; we collapse both
@@ -312,6 +339,22 @@ theorem ch58_total : WALSCount.totalOf ch58Counts = 244 := by native_decide
 /-- Ch 59 total: 244 languages. -/
 theorem ch59_total : WALSCount.totalOf ch59Counts = 244 := by native_decide
 
+/-- Chapter 58B distribution: number of possessive nouns (N = 243).
+
+    Values from WALS:
+    - None reported: 233
+    - One: 3
+    - Two to four: 4
+    - Five or more: 3 -/
+def ch58bCounts : List WALSCount :=
+  [ ⟨"None reported", 233⟩
+  , ⟨"One", 3⟩
+  , ⟨"Two to four", 4⟩
+  , ⟨"Five or more", 3⟩ ]
+
+/-- Ch 58B total: 243 languages. -/
+theorem ch58b_total : WALSCount.totalOf ch58bCounts = 243 := by native_decide
+
 /-- Ch 58 and Ch 59 use the same sample size. -/
 theorem ch58_ch59_same_sample :
     WALSCount.totalOf ch58Counts = WALSCount.totalOf ch59Counts := by
@@ -353,6 +396,24 @@ theorem ch59_distribution :
     (ch59.filter (·.value == .threeToFiveClasses)).length = 20 ∧
     (ch59.filter (·.value == .moreThanFiveClasses)).length = 4 := by
   exact ⟨by native_decide, by native_decide, by native_decide, by native_decide⟩
+
+/-- Ch 58B total from WALS generated data: 243 languages. -/
+theorem ch58b_wals_total : ch58b.length = 243 := by native_decide
+
+/-- Ch 58B value distribution from WALS data. -/
+theorem ch58b_distribution :
+    (ch58b.filter (·.value == .noneReported)).length = 233 ∧
+    (ch58b.filter (·.value == .one)).length = 3 ∧
+    (ch58b.filter (·.value == .twoToFour)).length = 4 ∧
+    (ch58b.filter (·.value == .fiveOrMore)).length = 3 := by
+  exact ⟨by native_decide, by native_decide, by native_decide, by native_decide⟩
+
+/-- Ch 58B: The vast majority of languages have no possessive nouns (233/243). -/
+theorem ch58b_none_reported_dominant :
+    (ch58b.filter (·.value == .noneReported)).length >
+    (ch58b.filter (·.value == .one)).length +
+    (ch58b.filter (·.value == .twoToFour)).length +
+    (ch58b.filter (·.value == .fiveOrMore)).length := by native_decide
 
 /-- Ch 57: Possessive suffixes are the most common affix position. -/
 theorem ch57_suffixes_most_common :
@@ -998,6 +1059,57 @@ theorem yoruba_ch59 :
 theorem georgian_ch59 :
     (Core.WALS.F59A.lookup "geo").map (fromWALS59A ·.value) =
     some georgian.possessiveClassification := by native_decide
+
+-- ============================================================================
+-- WALS Grounding: Ch 58B (Number of Possessive Nouns)
+-- Irish and Hawaiian are not in the Ch 58B sample.
+-- ============================================================================
+
+theorem english_ch58b :
+    (Core.WALS.F58B.lookup "eng").map (fromWALS58B ·.value) =
+    some NumberOfPossessiveNouns.noneReported := by native_decide
+theorem russian_ch58b :
+    (Core.WALS.F58B.lookup "rus").map (fromWALS58B ·.value) =
+    some NumberOfPossessiveNouns.noneReported := by native_decide
+theorem japanese_ch58b :
+    (Core.WALS.F58B.lookup "jpn").map (fromWALS58B ·.value) =
+    some NumberOfPossessiveNouns.noneReported := by native_decide
+theorem turkish_ch58b :
+    (Core.WALS.F58B.lookup "tur").map (fromWALS58B ·.value) =
+    some NumberOfPossessiveNouns.noneReported := by native_decide
+theorem hindi_ch58b :
+    (Core.WALS.F58B.lookup "hin").map (fromWALS58B ·.value) =
+    some NumberOfPossessiveNouns.noneReported := by native_decide
+theorem mandarin_ch58b :
+    (Core.WALS.F58B.lookup "mnd").map (fromWALS58B ·.value) =
+    some NumberOfPossessiveNouns.noneReported := by native_decide
+theorem finnish_ch58b :
+    (Core.WALS.F58B.lookup "fin").map (fromWALS58B ·.value) =
+    some NumberOfPossessiveNouns.noneReported := by native_decide
+theorem hungarian_ch58b :
+    (Core.WALS.F58B.lookup "hun").map (fromWALS58B ·.value) =
+    some NumberOfPossessiveNouns.noneReported := by native_decide
+theorem swahili_ch58b :
+    (Core.WALS.F58B.lookup "swa").map (fromWALS58B ·.value) =
+    some NumberOfPossessiveNouns.noneReported := by native_decide
+theorem korean_ch58b :
+    (Core.WALS.F58B.lookup "kor").map (fromWALS58B ·.value) =
+    some NumberOfPossessiveNouns.noneReported := by native_decide
+theorem arabic_ch58b :
+    (Core.WALS.F58B.lookup "aeg").map (fromWALS58B ·.value) =
+    some NumberOfPossessiveNouns.noneReported := by native_decide
+theorem quechua_ch58b :
+    (Core.WALS.F58B.lookup "qim").map (fromWALS58B ·.value) =
+    some NumberOfPossessiveNouns.noneReported := by native_decide
+theorem yoruba_ch58b :
+    (Core.WALS.F58B.lookup "yor").map (fromWALS58B ·.value) =
+    some NumberOfPossessiveNouns.noneReported := by native_decide
+theorem georgian_ch58b :
+    (Core.WALS.F58B.lookup "geo").map (fromWALS58B ·.value) =
+    some NumberOfPossessiveNouns.noneReported := by native_decide
+theorem fijian_ch58b :
+    (Core.WALS.F58B.lookup "fij").map (fromWALS58B ·.value) =
+    some NumberOfPossessiveNouns.twoToFour := by native_decide
 
 -- ============================================================================
 -- Typological Generalization 1: No Classification Is the Most Common Pattern

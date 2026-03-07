@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.228.67] - 2026-03-06
+
+### Added
+- **Complete WALS coverage**: All 192 WALS features now wired into Typology files — zero orphans
+- **Phenomena/Pronouns/Typology.lean**: New file, WALS F39A/F40A/F44A–F48A (7 features), 103 grounding theorems, 15 language profiles
+- **Phenomena/LexicalTypology/Typology.lean**: New file, WALS F129A–F142A (16 features), 195 theorems, body-part/colour/pronominal-root/tea typology
+- **Phenomena/Coordination/Typology.lean**: Wire WALS F56A/F63A/F64A, 37 grounding theorems
+- **Phenomena/Negation/Typology.lean**: Wire WALS F143A–G + F144A–Y (32 features), 220 theorems
+- **Phenomena/WordOrder/Typology.lean**: Wire WALS F84A–F97A + F81B/F90B–G/F60A/F61A (21 features total)
+- **Phenomena/Morphology/Typology.lean**: Wire WALS F23A–F25B/F28A–F29A + F21B/F62A/F79A–B/F80A (11 features total), 84+80 grounding theorems
+- **Phenomena/Phonology/Typology.lean**: Wire WALS F10B/F15A/F16A, 28 grounding theorems
+- **Phenomena/Agreement/Typology.lean**: Wire WALS F101A–F104A, 19 grounding theorems
+- **Phenomena/ArgumentStructure/Typology.lean**: Wire WALS F105A/F109A/F109B, 40 grounding theorems
+- **Phenomena/Possession/Typology.lean**: Wire WALS F58B
+- **Phenomena/Pronouns/Typology.lean**: Wire WALS F39B (Pama-Nyungan areal sub-feature)
+
 ## [0.228.66] - 2026-03-06
 
 ### Added

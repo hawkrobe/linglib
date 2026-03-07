@@ -1,7 +1,12 @@
-/-
+import Linglib.Phenomena.Coordination.Studies.BillEtAl2025
+import Linglib.Core.WALS.Features.F56A
+import Linglib.Core.WALS.Features.F63A
+import Linglib.Core.WALS.Features.F64A
+
+/-!
 # Cross-Linguistic Typology of Coordination
 
-Two complementary typological frameworks for coordination:
+Three complementary typological perspectives on coordination:
 
 ## 1. Structural Typology
 
@@ -9,14 +14,40 @@ Classifies coordination by overt form:
 - **Syndesis**: asyndetic (A B), monosyndetic (A co-B), bisyndetic (co-A co-B)
 - **Coordinator position**: prepositive (co-A) vs postpositive (A-co)
 - **Universal gap**: the pattern co-A B is unattested (@cite{stassen-2000}, n=260)
-- **Diachronic sources**: comitative ("with") → monosyndetic J;
-  additive focus particle ("also") → bisyndetic MU
+- **Diachronic sources**: comitative ("with") -> monosyndetic J;
+  additive focus particle ("also") -> bisyndetic MU
 
 ## 2. Semantic Decomposition (@cite{mitrovic-sauerland-2014}, @cite{mitrovic-sauerland-2016})
 
 Classifies by underlying semantic structure:
-- J (set intersection) + MU (subset/additive) + ☉ (type-shifter)
+- J (set intersection) + MU (subset/additive) + type-shifter
 - Languages vary in which pieces are overtly realized
+
+## 3. WALS Typological Features (Chapters 56, 63, 64)
+
+Three WALS features capture cross-linguistic variation in coordination:
+
+### Ch 56: Conjunctions and Universal Quantifiers (@cite{wals-2013})
+Whether a language's conjunction marker ("and") is formally similar to
+its universal quantifier ("all/every"). Three values:
+- **Formally different**: "and" and "all" are unrelated forms (40/116)
+- **Formally similar, without interrogative**: "and"/"all" are similar
+  but the interrogative ("what/who") is different (33/116)
+- **Formally similar, with interrogative**: "and"/"all"/"wh" are all
+  formally similar (43/116)
+
+### Ch 63: Noun Phrase Conjunction (@cite{wals-2013})
+Whether a language's NP conjunction marker ("and") is the same as its
+comitative marker ("with"). Two values:
+- **'And' different from 'with'**: distinct forms (131/234)
+- **'And' identical to 'with'**: same form for both (103/234)
+
+### Ch 64: Nominal and Verbal Conjunction (@cite{wals-2013})
+Whether a language uses the same marker for NP conjunction ("A and B")
+and VP/clausal conjunction ("sang and danced"). Three values:
+- **Identity**: same marker for both (161/301)
+- **Differentiation**: different markers (125/301)
+- **Both expressed by juxtaposition**: no overt marker for either (15/301)
 
 ## Connection
 
@@ -28,9 +59,10 @@ Haspelmath's structural categories map onto M&S's semantic pieces:
 The MU particle in conjunction is typically the SAME morpheme as the
 language's additive/focus particle, confirming the diachronic link.
 
+The WALS Ch 63 feature (and = with) connects directly to the diachronic
+comitative source: languages where "and" IS "with" are precisely those
+where the comitative-to-coordinator grammaticalization is still transparent.
 -/
-
-import Linglib.Phenomena.Coordination.Studies.BillEtAl2025
 
 namespace Phenomena.Coordination.Typology
 
@@ -636,5 +668,583 @@ theorem predict_acquisition_asymmetry
     -- (This is what Georgian shows and what no current theory derives.)
     -- TODO: State a real prediction (e.g., J-MU processing cost > J-only cost)
     True := trivial
+
+-- ============================================================================
+-- WALS Coordination Features (Chapters 56, 63, 64)
+-- ============================================================================
+
+-- ============================================================================
+-- Chapter 56: Conjunctions and Universal Quantifiers
+-- ============================================================================
+
+/-- WALS Ch 56: Whether a language's conjunction marker is formally similar
+    to its universal quantifier and/or interrogative pronoun.
+
+    This captures a deep typological pattern: in many languages, "and",
+    "all/every", and "what/who" share morphological material, suggesting
+    a common semantic core (set-theoretic operations over individuals). -/
+inductive ConjQuantRelation where
+  /-- Conjunction and universal quantifier are formally unrelated.
+      Example: English "and" vs "every/all". -/
+  | formallyDifferent
+  /-- Conjunction and universal quantifier share formal material, but
+      the interrogative pronoun is different.
+      Example: English "every" ~ "and" similarity is marginal; Hungarian
+      "es" (and) ~ "minden" (every) share no form but the quantifier
+      and interrogative are linked. -/
+  | similarNoInterrogative
+  /-- Conjunction, universal quantifier, and interrogative pronoun all
+      share formal material.
+      Example: Japanese "mo" serves as conjunction particle ("A-mo B-mo"),
+      universal quantifier ("dare-mo" = everyone), and is related to
+      the interrogative "dare" (who). -/
+  | similarWithInterrogative
+  deriving DecidableEq, BEq, Repr
+
+-- ============================================================================
+-- Chapter 63: Noun Phrase Conjunction
+-- ============================================================================
+
+/-- WALS Ch 63: Whether a language's NP coordinator ("and") is formally
+    identical to its comitative adposition ("with").
+
+    This is directly relevant to the diachronic source of coordinators:
+    languages where "and" = "with" are those where the comitative-to-
+    coordinator grammaticalization pathway is still transparent. -/
+inductive ConjComitativeRelation where
+  /-- The conjunction marker and comitative marker are different forms.
+      Example: English "and" (conjunction) vs "with" (comitative). -/
+  | andDifferentFromWith
+  /-- The conjunction marker and comitative marker are the same form.
+      Example: Japanese "to" serves as both comitative ("with") and
+      conjunction ("and"); Swahili "na" means both "and" and "with". -/
+  | andIdenticalToWith
+  deriving DecidableEq, BEq, Repr
+
+-- ============================================================================
+-- Chapter 64: Nominal and Verbal Conjunction
+-- ============================================================================
+
+/-- WALS Ch 64: Whether a language uses the same conjunction marker for
+    NP coordination ("cats and dogs") and VP/clausal coordination
+    ("sang and danced").
+
+    Languages that differentiate may use distinct markers, or may use
+    overt coordination for one but juxtaposition for the other. -/
+inductive NomVerbalConjRelation where
+  /-- Same conjunction marker for NP and VP coordination.
+      Example: English "and" in both "cats and dogs" and "sang and danced". -/
+  | identity
+  /-- Different conjunction markers for NP and VP coordination.
+      Example: Japanese "to" for NPs ("inu to neko") but different
+      strategies for VP conjunction. -/
+  | differentiation
+  /-- Both NP and VP coordination are expressed by juxtaposition (no
+      overt marker for either).
+      Example: some Australian and South American languages. -/
+  | bothJuxtaposition
+  deriving DecidableEq, BEq, Repr
+
+-- ============================================================================
+-- WALS Converter Functions
+-- ============================================================================
+
+/-- Map WALS F56A to our `ConjQuantRelation`. -/
+private def fromWALS56A : Core.WALS.F56A.ConjunctionsAndUniversalQuantifiers → ConjQuantRelation
+  | .formallyDifferent => .formallyDifferent
+  | .formallySimilarWithoutInterrogative => .similarNoInterrogative
+  | .formallySimilarWithInterrogative => .similarWithInterrogative
+
+/-- Map WALS F63A to our `ConjComitativeRelation`. -/
+private def fromWALS63A : Core.WALS.F63A.NounPhraseConjunction → ConjComitativeRelation
+  | .andDifferentFromWith => .andDifferentFromWith
+  | .andIdenticalToWith => .andIdenticalToWith
+
+/-- Map WALS F64A to our `NomVerbalConjRelation`. -/
+private def fromWALS64A : Core.WALS.F64A.NominalAndVerbalConjunction → NomVerbalConjRelation
+  | .identity => .identity
+  | .differentiation => .differentiation
+  | .bothExpressedByJuxtaposition => .bothJuxtaposition
+
+-- ============================================================================
+-- Coordination Profile Structure
+-- ============================================================================
+
+/-- A language's coordination typology profile across WALS Chapters 56, 63, 64. -/
+structure CoordinationProfile where
+  /-- Language name. -/
+  language : String
+  /-- ISO 639-3 code. -/
+  iso : String := ""
+  /-- Language family. -/
+  family : String := ""
+  /-- Ch 56: Relationship between conjunction and universal quantifier. -/
+  conjQuant : Option ConjQuantRelation := none
+  /-- Ch 63: Whether "and" = "with". -/
+  conjComitative : Option ConjComitativeRelation := none
+  /-- Ch 64: Whether NP and VP conjunction use the same marker. -/
+  nomVerbalConj : Option NomVerbalConjRelation := none
+  /-- Notes on the coordination system. -/
+  walsNotes : String := ""
+  deriving Repr
+
+-- ============================================================================
+-- Language Profiles
+-- ============================================================================
+
+/--
+English (Indo-European, Germanic).
+Ch 56: "and" and "every/all" are formally similar without interrogative link.
+Ch 63: "and" is different from "with".
+Ch 64: Same "and" for NP and VP coordination (identity).
+-/
+def englishWALS : CoordinationProfile :=
+  { language := "English"
+  , iso := "eng"
+  , family := "Indo-European"
+  , conjQuant := some .similarNoInterrogative
+  , conjComitative := some .andDifferentFromWith
+  , nomVerbalConj := some .identity
+  , walsNotes := "'and' for both NP and VP coordination; " ++
+                 "'and' differs from comitative 'with'" }
+
+/--
+German (Indo-European, Germanic).
+Ch 56: Not in WALS F56A sample.
+Ch 63: Not in WALS F63A sample.
+Ch 64: Same "und" for NP and VP coordination (identity).
+-/
+def germanWALS : CoordinationProfile :=
+  { language := "German"
+  , iso := "deu"
+  , family := "Indo-European"
+  , conjQuant := none
+  , conjComitative := none
+  , nomVerbalConj := some .identity
+  , walsNotes := "'und' for both NP and VP coordination; " ++
+                 "absent from F56A and F63A WALS samples" }
+
+/--
+French (Indo-European, Romance).
+Ch 56: "et" (and) and "tout/chaque" (all/every) are formally different.
+Ch 63: "et" (and) is different from "avec" (with).
+Ch 64: Same "et" for NP and VP coordination (identity).
+-/
+def frenchWALS : CoordinationProfile :=
+  { language := "French"
+  , iso := "fra"
+  , family := "Indo-European"
+  , conjQuant := some .formallyDifferent
+  , conjComitative := some .andDifferentFromWith
+  , nomVerbalConj := some .identity
+  , walsNotes := "'et' for both NP and VP; formally distinct from " ++
+                 "'avec' (with) and 'tout/chaque' (all/every)" }
+
+/--
+Spanish (Indo-European, Romance).
+Ch 56: Not in WALS F56A sample.
+Ch 63: "y" (and) is different from "con" (with).
+Ch 64: Same "y" for NP and VP coordination (identity).
+-/
+def spanishWALS : CoordinationProfile :=
+  { language := "Spanish"
+  , iso := "spa"
+  , family := "Indo-European"
+  , conjQuant := none
+  , conjComitative := some .andDifferentFromWith
+  , nomVerbalConj := some .identity
+  , walsNotes := "'y' for both NP and VP; distinct from 'con' (with); " ++
+                 "absent from F56A WALS sample" }
+
+/--
+Russian (Indo-European, Slavic).
+Ch 56: Not in WALS F56A sample.
+Ch 63: "i" (and) is different from "s" (with).
+Ch 64: Same "i" for NP and VP coordination (identity).
+-/
+def russianWALS : CoordinationProfile :=
+  { language := "Russian"
+  , iso := "rus"
+  , family := "Indo-European"
+  , conjQuant := none
+  , conjComitative := some .andDifferentFromWith
+  , nomVerbalConj := some .identity
+  , walsNotes := "'i' for both NP and VP coordination; distinct from " ++
+                 "'s' (with); absent from F56A WALS sample" }
+
+/--
+Japanese (Japonic).
+Ch 56: Conjunction "mo", universal quantifier "mo" (dare-mo = everyone),
+  and interrogative "dare" (who) are all formally similar.
+Ch 63: "to" (and) is identical to "to" (with/comitative).
+Ch 64: NP and VP conjunction use different strategies (differentiation).
+  NP: "A to B" or "A mo B mo"; VP: different connective strategies.
+-/
+def japaneseWALS : CoordinationProfile :=
+  { language := "Japanese"
+  , iso := "jpn"
+  , family := "Japonic"
+  , conjQuant := some .similarWithInterrogative
+  , conjComitative := some .andIdenticalToWith
+  , nomVerbalConj := some .differentiation
+  , walsNotes := "'mo' links conjunction, universal quantifier, and " ++
+                 "interrogative; 'to' serves as both and/with; " ++
+                 "NP vs VP conjunction use different strategies" }
+
+/--
+Mandarin Chinese (Sino-Tibetan).
+Ch 56: Conjunction, quantifier, and interrogative are formally similar.
+Ch 63: "he" or "gen" (and) is identical to comitative "gen/he" (with).
+Ch 64: NP and VP conjunction use different strategies (differentiation).
+  NP: "A he B"; VP: different connective or serial verb.
+-/
+def mandarinWALS : CoordinationProfile :=
+  { language := "Mandarin"
+  , iso := "cmn"
+  , family := "Sino-Tibetan"
+  , conjQuant := some .similarWithInterrogative
+  , conjComitative := some .andIdenticalToWith
+  , nomVerbalConj := some .differentiation
+  , walsNotes := "NP conjunction 'he/gen' doubles as comitative; " ++
+                 "VP coordination uses different strategies; " ++
+                 "conjunction-quantifier-interrogative formally linked" }
+
+/--
+Korean (Koreanic).
+Ch 56: Not in WALS F56A sample.
+Ch 63: Conjunction marker is different from comitative.
+Ch 64: NP and VP conjunction use different markers (differentiation).
+-/
+def koreanWALS : CoordinationProfile :=
+  { language := "Korean"
+  , iso := "kor"
+  , family := "Koreanic"
+  , conjQuant := none
+  , conjComitative := some .andDifferentFromWith
+  , nomVerbalConj := some .differentiation
+  , walsNotes := "NP conjunction '-(i)rang, -(g)wa' differs from " ++
+                 "comitative; VP uses different connective strategies; " ++
+                 "absent from F56A WALS sample" }
+
+/--
+Turkish (Turkic).
+Ch 56: "ve" (and) and "her" (every) are formally different.
+Ch 63: "ve" (and) is different from "ile" (with).
+Ch 64: Same conjunction for NP and VP coordination (identity).
+-/
+def turkishWALS : CoordinationProfile :=
+  { language := "Turkish"
+  , iso := "tur"
+  , family := "Turkic"
+  , conjQuant := some .formallyDifferent
+  , conjComitative := some .andDifferentFromWith
+  , nomVerbalConj := some .identity
+  , walsNotes := "'ve' for both NP and VP coordination; formally " ++
+                 "distinct from 'ile' (with) and 'her' (every)" }
+
+/--
+Finnish (Uralic).
+Ch 56: Conjunction and universal quantifier formally similar with
+  interrogative link.
+Ch 63: "ja" (and) is different from comitative case marker.
+Ch 64: Same "ja" for NP and VP coordination (identity).
+-/
+def finnishWALS : CoordinationProfile :=
+  { language := "Finnish"
+  , iso := "fin"
+  , family := "Uralic"
+  , conjQuant := some .similarWithInterrogative
+  , conjComitative := some .andDifferentFromWith
+  , nomVerbalConj := some .identity
+  , walsNotes := "'ja' for both NP and VP; comitative expressed by " ++
+                 "case suffix, not 'ja'; conjunction-quantifier-" ++
+                 "interrogative formally linked" }
+
+/--
+Hungarian (Uralic).
+Ch 56: Conjunction and universal quantifier formally similar without
+  interrogative link.
+Ch 63: "es" (and) is different from comitative "-val, -vel" (with).
+Ch 64: Same "es" for NP and VP coordination (identity).
+-/
+def hungarianWALS : CoordinationProfile :=
+  { language := "Hungarian"
+  , iso := "hun"
+  , family := "Uralic"
+  , conjQuant := some .similarNoInterrogative
+  , conjComitative := some .andDifferentFromWith
+  , nomVerbalConj := some .identity
+  , walsNotes := "'es' for both NP and VP; distinct from comitative " ++
+                 "case suffix '-val, -vel'; conjunction and quantifier " ++
+                 "formally similar but interrogative is different" }
+
+/--
+Hindi (Indo-European, Indo-Aryan).
+Ch 56: Conjunction, universal quantifier, and interrogative formally similar.
+Ch 63: "aur" (and) is different from "ke saath" (with).
+Ch 64: Same "aur" for NP and VP coordination (identity).
+-/
+def hindiWALS : CoordinationProfile :=
+  { language := "Hindi"
+  , iso := "hin"
+  , family := "Indo-European"
+  , conjQuant := some .similarWithInterrogative
+  , conjComitative := some .andDifferentFromWith
+  , nomVerbalConj := some .identity
+  , walsNotes := "'aur' for both NP and VP coordination; distinct from " ++
+                 "comitative 'ke saath'; conjunction-quantifier-" ++
+                 "interrogative formally linked" }
+
+/--
+Arabic (Egyptian) (Afro-Asiatic, Semitic).
+Ch 56: Not in WALS F56A sample.
+Ch 63: "wa/wi" (and) is different from "ma'a" (with).
+Ch 64: Same conjunction for NP and VP coordination (identity).
+-/
+def arabicWALS : CoordinationProfile :=
+  { language := "Arabic (Egyptian)"
+  , iso := "arz"
+  , family := "Afro-Asiatic"
+  , conjQuant := none
+  , conjComitative := some .andDifferentFromWith
+  , nomVerbalConj := some .identity
+  , walsNotes := "'wa/wi' for both NP and VP coordination; distinct " ++
+                 "from comitative 'ma'a'; absent from F56A WALS sample" }
+
+/--
+Swahili (Niger-Congo, Bantu).
+Ch 56: Not in WALS F56A sample.
+Ch 63: "na" serves as both conjunction ("and") and comitative ("with").
+Ch 64: Not in WALS F64A sample.
+-/
+def swahiliWALS : CoordinationProfile :=
+  { language := "Swahili"
+  , iso := "swh"
+  , family := "Niger-Congo"
+  , conjQuant := none
+  , conjComitative := some .andIdenticalToWith
+  , nomVerbalConj := none
+  , walsNotes := "'na' serves as both 'and' and 'with'; classic " ++
+                 "comitative=conjunction pattern; absent from F56A " ++
+                 "and F64A WALS samples" }
+
+/--
+Tagalog (Austronesian).
+Ch 56: Conjunction, universal quantifier, and interrogative formally similar.
+Ch 63: "at" (and) is different from "kasama" (with).
+Ch 64: Same conjunction for NP and VP coordination (identity).
+-/
+def tagalogWALS : CoordinationProfile :=
+  { language := "Tagalog"
+  , iso := "tgl"
+  , family := "Austronesian"
+  , conjQuant := some .similarWithInterrogative
+  , conjComitative := some .andDifferentFromWith
+  , nomVerbalConj := some .identity
+  , walsNotes := "'at' for both NP and VP coordination; distinct from " ++
+                 "comitative; conjunction-quantifier-interrogative " ++
+                 "formally linked" }
+
+/-- All WALS coordination profiles in the sample. -/
+def allWALSProfiles : List CoordinationProfile :=
+  [ englishWALS, germanWALS, frenchWALS, spanishWALS, russianWALS
+  , japaneseWALS, mandarinWALS, koreanWALS, turkishWALS, finnishWALS
+  , hungarianWALS, hindiWALS, arabicWALS, swahiliWALS, tagalogWALS ]
+
+-- ============================================================================
+-- WALS Data Abbreviations
+-- ============================================================================
+
+private abbrev ch56 := Core.WALS.F56A.allData
+private abbrev ch63 := Core.WALS.F63A.allData
+private abbrev ch64 := Core.WALS.F64A.allData
+
+-- ============================================================================
+-- Per-Language WALS Grounding Theorems
+-- ============================================================================
+
+-- F56A grounding (9 languages present)
+theorem english_f56a :
+    (Core.WALS.F56A.lookup "eng").map (fromWALS56A ·.value) =
+    englishWALS.conjQuant := by native_decide
+theorem french_f56a :
+    (Core.WALS.F56A.lookup "fre").map (fromWALS56A ·.value) =
+    frenchWALS.conjQuant := by native_decide
+theorem japanese_f56a :
+    (Core.WALS.F56A.lookup "jpn").map (fromWALS56A ·.value) =
+    japaneseWALS.conjQuant := by native_decide
+theorem mandarin_f56a :
+    (Core.WALS.F56A.lookup "mnd").map (fromWALS56A ·.value) =
+    mandarinWALS.conjQuant := by native_decide
+theorem turkish_f56a :
+    (Core.WALS.F56A.lookup "tur").map (fromWALS56A ·.value) =
+    turkishWALS.conjQuant := by native_decide
+theorem finnish_f56a :
+    (Core.WALS.F56A.lookup "fin").map (fromWALS56A ·.value) =
+    finnishWALS.conjQuant := by native_decide
+theorem hungarian_f56a :
+    (Core.WALS.F56A.lookup "hun").map (fromWALS56A ·.value) =
+    hungarianWALS.conjQuant := by native_decide
+theorem hindi_f56a :
+    (Core.WALS.F56A.lookup "hin").map (fromWALS56A ·.value) =
+    hindiWALS.conjQuant := by native_decide
+theorem tagalog_f56a :
+    (Core.WALS.F56A.lookup "tag").map (fromWALS56A ·.value) =
+    tagalogWALS.conjQuant := by native_decide
+
+-- F63A grounding (14 languages present; German absent)
+theorem english_f63a :
+    (Core.WALS.F63A.lookup "eng").map (fromWALS63A ·.value) =
+    englishWALS.conjComitative := by native_decide
+theorem french_f63a :
+    (Core.WALS.F63A.lookup "fre").map (fromWALS63A ·.value) =
+    frenchWALS.conjComitative := by native_decide
+theorem spanish_f63a :
+    (Core.WALS.F63A.lookup "spa").map (fromWALS63A ·.value) =
+    spanishWALS.conjComitative := by native_decide
+theorem russian_f63a :
+    (Core.WALS.F63A.lookup "rus").map (fromWALS63A ·.value) =
+    russianWALS.conjComitative := by native_decide
+theorem japanese_f63a :
+    (Core.WALS.F63A.lookup "jpn").map (fromWALS63A ·.value) =
+    japaneseWALS.conjComitative := by native_decide
+theorem mandarin_f63a :
+    (Core.WALS.F63A.lookup "mnd").map (fromWALS63A ·.value) =
+    mandarinWALS.conjComitative := by native_decide
+theorem korean_f63a :
+    (Core.WALS.F63A.lookup "kor").map (fromWALS63A ·.value) =
+    koreanWALS.conjComitative := by native_decide
+theorem turkish_f63a :
+    (Core.WALS.F63A.lookup "tur").map (fromWALS63A ·.value) =
+    turkishWALS.conjComitative := by native_decide
+theorem finnish_f63a :
+    (Core.WALS.F63A.lookup "fin").map (fromWALS63A ·.value) =
+    finnishWALS.conjComitative := by native_decide
+theorem hungarian_f63a :
+    (Core.WALS.F63A.lookup "hun").map (fromWALS63A ·.value) =
+    hungarianWALS.conjComitative := by native_decide
+theorem hindi_f63a :
+    (Core.WALS.F63A.lookup "hin").map (fromWALS63A ·.value) =
+    hindiWALS.conjComitative := by native_decide
+theorem arabic_f63a :
+    (Core.WALS.F63A.lookup "aeg").map (fromWALS63A ·.value) =
+    arabicWALS.conjComitative := by native_decide
+theorem swahili_f63a :
+    (Core.WALS.F63A.lookup "swa").map (fromWALS63A ·.value) =
+    swahiliWALS.conjComitative := by native_decide
+theorem tagalog_f63a :
+    (Core.WALS.F63A.lookup "tag").map (fromWALS63A ·.value) =
+    tagalogWALS.conjComitative := by native_decide
+
+-- F64A grounding (14 languages present; Swahili absent)
+theorem english_f64a :
+    (Core.WALS.F64A.lookup "eng").map (fromWALS64A ·.value) =
+    englishWALS.nomVerbalConj := by native_decide
+theorem german_f64a :
+    (Core.WALS.F64A.lookup "ger").map (fromWALS64A ·.value) =
+    germanWALS.nomVerbalConj := by native_decide
+theorem french_f64a :
+    (Core.WALS.F64A.lookup "fre").map (fromWALS64A ·.value) =
+    frenchWALS.nomVerbalConj := by native_decide
+theorem spanish_f64a :
+    (Core.WALS.F64A.lookup "spa").map (fromWALS64A ·.value) =
+    spanishWALS.nomVerbalConj := by native_decide
+theorem russian_f64a :
+    (Core.WALS.F64A.lookup "rus").map (fromWALS64A ·.value) =
+    russianWALS.nomVerbalConj := by native_decide
+theorem japanese_f64a :
+    (Core.WALS.F64A.lookup "jpn").map (fromWALS64A ·.value) =
+    japaneseWALS.nomVerbalConj := by native_decide
+theorem mandarin_f64a :
+    (Core.WALS.F64A.lookup "mnd").map (fromWALS64A ·.value) =
+    mandarinWALS.nomVerbalConj := by native_decide
+theorem korean_f64a :
+    (Core.WALS.F64A.lookup "kor").map (fromWALS64A ·.value) =
+    koreanWALS.nomVerbalConj := by native_decide
+theorem turkish_f64a :
+    (Core.WALS.F64A.lookup "tur").map (fromWALS64A ·.value) =
+    turkishWALS.nomVerbalConj := by native_decide
+theorem finnish_f64a :
+    (Core.WALS.F64A.lookup "fin").map (fromWALS64A ·.value) =
+    finnishWALS.nomVerbalConj := by native_decide
+theorem hungarian_f64a :
+    (Core.WALS.F64A.lookup "hun").map (fromWALS64A ·.value) =
+    hungarianWALS.nomVerbalConj := by native_decide
+theorem hindi_f64a :
+    (Core.WALS.F64A.lookup "hin").map (fromWALS64A ·.value) =
+    hindiWALS.nomVerbalConj := by native_decide
+theorem arabic_f64a :
+    (Core.WALS.F64A.lookup "aeg").map (fromWALS64A ·.value) =
+    arabicWALS.nomVerbalConj := by native_decide
+theorem tagalog_f64a :
+    (Core.WALS.F64A.lookup "tag").map (fromWALS64A ·.value) =
+    tagalogWALS.nomVerbalConj := by native_decide
+
+-- ============================================================================
+-- WALS Distribution Count Theorems
+-- ============================================================================
+
+/-- F56A total: 116 languages. -/
+theorem wals_f56a_total : ch56.length = 116 := by native_decide
+
+/-- F56A distribution: conjunctions and universal quantifiers. -/
+theorem wals_f56a_formallyDifferent :
+    (ch56.filter (·.value == .formallyDifferent)).length = 40 := by native_decide
+theorem wals_f56a_similarNoInterrogative :
+    (ch56.filter (·.value == .formallySimilarWithoutInterrogative)).length = 33 := by native_decide
+theorem wals_f56a_similarWithInterrogative :
+    (ch56.filter (·.value == .formallySimilarWithInterrogative)).length = 43 := by native_decide
+
+/-- F63A total: 234 languages. -/
+theorem wals_f63a_total : ch63.length = 234 := by native_decide
+
+/-- F63A distribution: noun phrase conjunction. -/
+theorem wals_f63a_andDifferentFromWith :
+    (ch63.filter (·.value == .andDifferentFromWith)).length = 131 := by native_decide
+theorem wals_f63a_andIdenticalToWith :
+    (ch63.filter (·.value == .andIdenticalToWith)).length = 103 := by native_decide
+
+/-- F64A total: 301 languages. -/
+theorem wals_f64a_total : ch64.length = 301 := by native_decide
+
+/-- F64A distribution: nominal and verbal conjunction. -/
+theorem wals_f64a_identity :
+    (ch64.filter (·.value == .identity)).length = 161 := by native_decide
+theorem wals_f64a_differentiation :
+    (ch64.filter (·.value == .differentiation)).length = 125 := by native_decide
+theorem wals_f64a_juxtaposition :
+    (ch64.filter (·.value == .bothExpressedByJuxtaposition)).length = 15 := by native_decide
+
+-- ============================================================================
+-- WALS Profile Sample Statistics
+-- ============================================================================
+
+/-- Number of WALS coordination profiles in our sample. -/
+theorem wals_profile_count : allWALSProfiles.length = 15 := by native_decide
+
+-- ============================================================================
+-- WALS Typological Generalizations
+-- ============================================================================
+
+/-- F63A: "and" being different from "with" is the majority pattern (131 > 103). -/
+theorem and_with_different_is_majority : (131 : Nat) > 103 := by native_decide
+
+/-- F64A: Identity of NP and VP conjunction is the majority pattern (161/301). -/
+theorem nom_verbal_identity_is_majority : (161 : Nat) > 125 ∧ (161 : Nat) > 15 := by
+  exact ⟨by native_decide, by native_decide⟩
+
+/-- F56A: Formal similarity between conjunction and universal quantifier
+    (with or without interrogative) is the majority pattern: 33 + 43 = 76 > 40. -/
+theorem conj_quant_similarity_majority : (33 : Nat) + 43 > 40 := by native_decide
+
+/-- F64A: Juxtaposition for both NP and VP conjunction is rare (15/301 = 5%). -/
+theorem juxtaposition_rare : (15 : Nat) * 20 < 301 := by native_decide
+
+/-- F63A connects to diachronic source: languages where "and" = "with"
+    (103/234 = 44%) are those with transparent comitative-to-coordinator
+    grammaticalization. This is a substantial minority but not the majority. -/
+theorem comitative_source_substantial_minority :
+    (103 : Nat) * 2 < 234 ∧ (103 : Nat) * 3 > 234 := by
+  exact ⟨by native_decide, by native_decide⟩
 
 end Phenomena.Coordination.Typology

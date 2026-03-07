@@ -2,6 +2,27 @@ import Linglib.Core.Lexical.Word
 import Linglib.Core.WALS.Features.F81A
 import Linglib.Core.WALS.Features.F82A
 import Linglib.Core.WALS.Features.F83A
+import Linglib.Core.WALS.Features.F84A
+import Linglib.Core.WALS.Features.F85A
+import Linglib.Core.WALS.Features.F86A
+import Linglib.Core.WALS.Features.F87A
+import Linglib.Core.WALS.Features.F88A
+import Linglib.Core.WALS.Features.F89A
+import Linglib.Core.WALS.Features.F90A
+import Linglib.Core.WALS.Features.F91A
+import Linglib.Core.WALS.Features.F94A
+import Linglib.Core.WALS.Features.F95A
+import Linglib.Core.WALS.Features.F96A
+import Linglib.Core.WALS.Features.F97A
+import Linglib.Core.WALS.Features.F81B
+import Linglib.Core.WALS.Features.F90B
+import Linglib.Core.WALS.Features.F90C
+import Linglib.Core.WALS.Features.F90D
+import Linglib.Core.WALS.Features.F90E
+import Linglib.Core.WALS.Features.F90F
+import Linglib.Core.WALS.Features.F90G
+import Linglib.Core.WALS.Features.F60A
+import Linglib.Core.WALS.Features.F61A
 
 /-!
 # Word-Order Typology (@cite{dryer-haspelmath-2013} / WALS)
@@ -566,6 +587,27 @@ def countByOVOrder (langs : List BasicOrderProfile) (o : OVOrder) : Nat :=
 private abbrev ch81 := Core.WALS.F81A.allData
 private abbrev ch82 := Core.WALS.F82A.allData
 private abbrev ch83 := Core.WALS.F83A.allData
+private abbrev ch84 := Core.WALS.F84A.allData
+private abbrev ch85 := Core.WALS.F85A.allData
+private abbrev ch86 := Core.WALS.F86A.allData
+private abbrev ch87 := Core.WALS.F87A.allData
+private abbrev ch88 := Core.WALS.F88A.allData
+private abbrev ch89 := Core.WALS.F89A.allData
+private abbrev ch90 := Core.WALS.F90A.allData
+private abbrev ch91 := Core.WALS.F91A.allData
+private abbrev ch94 := Core.WALS.F94A.allData
+private abbrev ch95 := Core.WALS.F95A.allData
+private abbrev ch96 := Core.WALS.F96A.allData
+private abbrev ch97 := Core.WALS.F97A.allData
+private abbrev ch81B := Core.WALS.F81B.allData
+private abbrev ch90B := Core.WALS.F90B.allData
+private abbrev ch90C := Core.WALS.F90C.allData
+private abbrev ch90D := Core.WALS.F90D.allData
+private abbrev ch90E := Core.WALS.F90E.allData
+private abbrev ch90F := Core.WALS.F90F.allData
+private abbrev ch90G := Core.WALS.F90G.allData
+private abbrev ch60 := Core.WALS.F60A.allData
+private abbrev ch61 := Core.WALS.F61A.allData
 
 /-- Generalization 1: SOV is the most common basic order. -/
 theorem sov_most_common :
@@ -821,5 +863,1280 @@ theorem german_ov_wals :
 theorem warlpiri_ov_wals :
     (Core.WALS.F83A.lookup "wrl").map (fromWALS83A ·.value) = some warlpiri.ovOrder := by
   native_decide
+
+-- ============================================================================
+-- Chapter 84: Order of Object, Oblique, and Verb
+-- ============================================================================
+
+/-- Ch 84 total: 500 languages. -/
+theorem ch84_total : ch84.length = 500 :=
+  Core.WALS.F84A.total_count
+
+/-- Convert WALS 84A value to a pair of head-direction options for O-V and X-V.
+    The six-way classification encodes relative order of Object (O), Oblique (X),
+    and Verb (V). Returns `none` for "no dominant order" since no single direction
+    can be assigned. -/
+private def fromWALS84A : Core.WALS.F84A.ObjectObliqueVerbOrder → Option (OVOrder × OVOrder)
+  | .vox => some (.vo, .vo)   -- V before both O and X
+  | .xvo => some (.vo, .vo)   -- X before V, V before O (both VO-ish)
+  | .xov => some (.ov, .ov)   -- X before O before V (both OV-ish)
+  | .oxv => some (.ov, .ov)   -- O before X before V (both OV-ish)
+  | .ovx => some (.ov, .vo)   -- O before V, V before X (mixed)
+  | .noDominantOrder => none
+
+-- Distribution counts for Ch 84
+theorem ch84_count_vox :
+    (ch84.filter (·.value == .vox)).length = 210 := by native_decide
+theorem ch84_count_xov :
+    (ch84.filter (·.value == .xov)).length = 48 := by native_decide
+theorem ch84_count_ovx :
+    (ch84.filter (·.value == .ovx)).length = 45 := by native_decide
+theorem ch84_count_oxv :
+    (ch84.filter (·.value == .oxv)).length = 27 := by native_decide
+theorem ch84_count_xvo :
+    (ch84.filter (·.value == .xvo)).length = 3 := by native_decide
+theorem ch84_count_noDominantOrder :
+    (ch84.filter (·.value == .noDominantOrder)).length = 167 := by native_decide
+
+-- Per-language grounding: Ch 84A
+-- Note: Hindi, Korean, Russian, Swahili, Tagalog are absent from Ch 84A.
+theorem english_ch84 :
+    (Core.WALS.F84A.lookup "eng").map (·.value) = some .vox := by native_decide
+theorem japanese_ch84 :
+    (Core.WALS.F84A.lookup "jpn").map (·.value) = some .xov := by native_decide
+theorem turkish_ch84 :
+    (Core.WALS.F84A.lookup "tur").map (·.value) = some .xov := by native_decide
+theorem basque_ch84 :
+    (Core.WALS.F84A.lookup "bsq").map (·.value) = some .xov := by native_decide
+theorem mandarin_ch84 :
+    (Core.WALS.F84A.lookup "mnd").map (·.value) = some .xvo := by native_decide
+theorem arabic_ch84 :
+    (Core.WALS.F84A.lookup "ams").map (·.value) = some .vox := by native_decide
+theorem irish_ch84 :
+    (Core.WALS.F84A.lookup "iri").map (·.value) = some .vox := by native_decide
+theorem indonesian_ch84 :
+    (Core.WALS.F84A.lookup "ind").map (·.value) = some .vox := by native_decide
+theorem malagasy_ch84 :
+    (Core.WALS.F84A.lookup "mal").map (·.value) = some .vox := by native_decide
+theorem tzotzil_ch84 :
+    (Core.WALS.F84A.lookup "tzo").map (·.value) = some .vox := by native_decide
+theorem hixkaryana_ch84 :
+    (Core.WALS.F84A.lookup "hix").map (·.value) = some .ovx := by native_decide
+theorem german_ch84 :
+    (Core.WALS.F84A.lookup "ger").map (·.value) = some .noDominantOrder := by native_decide
+theorem welsh_ch84 :
+    (Core.WALS.F84A.lookup "wel").map (·.value) = some .vox := by native_decide
+theorem warlpiri_ch84 :
+    (Core.WALS.F84A.lookup "wrl").map (·.value) = some .noDominantOrder := by native_decide
+
+-- ============================================================================
+-- Chapter 85: Order of Adposition and Noun Phrase
+-- ============================================================================
+
+/-- WALS Ch 85: Order of adposition and NP. Maps to HeadDirection:
+    prepositions are head-initial, postpositions are head-final.
+    Inpositions, "no adpositions", and "no dominant order" have no clean mapping. -/
+private def fromWALS85A : Core.WALS.F85A.AdpositionNPOrder → Option HeadDirection
+  | .prepositions => some .headInitial
+  | .postpositions => some .headFinal
+  | .inpositions => none
+  | .noDominantOrder => none
+  | .noAdpositions => none
+
+/-- Ch 85 total: 1184 languages. -/
+theorem ch85_total : ch85.length = 1184 :=
+  Core.WALS.F85A.total_count
+
+-- Distribution counts for Ch 85
+theorem ch85_count_postpositions :
+    (ch85.filter (·.value == .postpositions)).length = 577 := by native_decide
+theorem ch85_count_prepositions :
+    (ch85.filter (·.value == .prepositions)).length = 511 := by native_decide
+theorem ch85_count_inpositions :
+    (ch85.filter (·.value == .inpositions)).length = 8 := by native_decide
+theorem ch85_count_noDominantOrder :
+    (ch85.filter (·.value == .noDominantOrder)).length = 58 := by native_decide
+theorem ch85_count_noAdpositions :
+    (ch85.filter (·.value == .noAdpositions)).length = 30 := by native_decide
+
+-- Per-language grounding: Ch 85A
+-- Note: Warlpiri is absent from Ch 85A.
+theorem english_ch85 :
+    (Core.WALS.F85A.lookup "eng").map (·.value) = some .prepositions := by native_decide
+theorem japanese_ch85 :
+    (Core.WALS.F85A.lookup "jpn").map (·.value) = some .postpositions := by native_decide
+theorem turkish_ch85 :
+    (Core.WALS.F85A.lookup "tur").map (·.value) = some .postpositions := by native_decide
+theorem hindiUrdu_ch85 :
+    (Core.WALS.F85A.lookup "hin").map (·.value) = some .postpositions := by native_decide
+theorem korean_ch85 :
+    (Core.WALS.F85A.lookup "kor").map (·.value) = some .postpositions := by native_decide
+theorem basque_ch85 :
+    (Core.WALS.F85A.lookup "bsq").map (·.value) = some .postpositions := by native_decide
+-- Mandarin is "no dominant order" in Ch 85A (mixed pre/postpositions)
+theorem mandarin_ch85 :
+    (Core.WALS.F85A.lookup "mnd").map (·.value) = some .noDominantOrder := by native_decide
+theorem russian_ch85 :
+    (Core.WALS.F85A.lookup "rus").map (·.value) = some .prepositions := by native_decide
+theorem swahili_ch85 :
+    (Core.WALS.F85A.lookup "swa").map (·.value) = some .prepositions := by native_decide
+theorem indonesian_ch85 :
+    (Core.WALS.F85A.lookup "ind").map (·.value) = some .prepositions := by native_decide
+theorem arabic_ch85 :
+    (Core.WALS.F85A.lookup "ams").map (·.value) = some .prepositions := by native_decide
+theorem irish_ch85 :
+    (Core.WALS.F85A.lookup "iri").map (·.value) = some .prepositions := by native_decide
+theorem malagasy_ch85 :
+    (Core.WALS.F85A.lookup "mal").map (·.value) = some .prepositions := by native_decide
+theorem tzotzil_ch85 :
+    (Core.WALS.F85A.lookup "tzo").map (·.value) = some .prepositions := by native_decide
+theorem hixkaryana_ch85 :
+    (Core.WALS.F85A.lookup "hix").map (·.value) = some .postpositions := by native_decide
+theorem welsh_ch85 :
+    (Core.WALS.F85A.lookup "wel").map (·.value) = some .prepositions := by native_decide
+theorem german_ch85 :
+    (Core.WALS.F85A.lookup "ger").map (·.value) = some .prepositions := by native_decide
+
+-- ============================================================================
+-- Chapter 86: Order of Genitive and Noun
+-- ============================================================================
+
+/-- WALS Ch 86: Genitive-Noun vs Noun-Genitive order.
+    Maps to HeadDirection: Gen-N is head-final (possessor precedes head noun),
+    N-Gen is head-initial (head noun precedes possessor). -/
+private def fromWALS86A : Core.WALS.F86A.GenitiveNounOrder → Option HeadDirection
+  | .genitiveNoun => some .headFinal
+  | .nounGenitive => some .headInitial
+  | .noDominantOrder => none
+
+/-- Ch 86 total: 1249 languages. -/
+theorem ch86_total : ch86.length = 1249 :=
+  Core.WALS.F86A.total_count
+
+-- Distribution counts for Ch 86
+theorem ch86_count_genitiveNoun :
+    (ch86.filter (·.value == .genitiveNoun)).length = 685 := by native_decide
+theorem ch86_count_nounGenitive :
+    (ch86.filter (·.value == .nounGenitive)).length = 468 := by native_decide
+theorem ch86_count_noDominantOrder :
+    (ch86.filter (·.value == .noDominantOrder)).length = 96 := by native_decide
+
+-- Per-language grounding: Ch 86A
+-- Note: Warlpiri is absent from Ch 86A.
+theorem japanese_ch86 :
+    (Core.WALS.F86A.lookup "jpn").map (·.value) = some .genitiveNoun := by native_decide
+theorem turkish_ch86 :
+    (Core.WALS.F86A.lookup "tur").map (·.value) = some .genitiveNoun := by native_decide
+theorem hindiUrdu_ch86 :
+    (Core.WALS.F86A.lookup "hin").map (·.value) = some .genitiveNoun := by native_decide
+theorem korean_ch86 :
+    (Core.WALS.F86A.lookup "kor").map (·.value) = some .genitiveNoun := by native_decide
+theorem basque_ch86 :
+    (Core.WALS.F86A.lookup "bsq").map (·.value) = some .genitiveNoun := by native_decide
+-- English is "no dominant order" in Ch 86A (both "John's book" and "book of John")
+theorem english_ch86 :
+    (Core.WALS.F86A.lookup "eng").map (·.value) = some .noDominantOrder := by native_decide
+theorem mandarin_ch86 :
+    (Core.WALS.F86A.lookup "mnd").map (·.value) = some .genitiveNoun := by native_decide
+theorem russian_ch86 :
+    (Core.WALS.F86A.lookup "rus").map (·.value) = some .nounGenitive := by native_decide
+theorem swahili_ch86 :
+    (Core.WALS.F86A.lookup "swa").map (·.value) = some .nounGenitive := by native_decide
+theorem indonesian_ch86 :
+    (Core.WALS.F86A.lookup "ind").map (·.value) = some .nounGenitive := by native_decide
+theorem arabic_ch86 :
+    (Core.WALS.F86A.lookup "ams").map (·.value) = some .nounGenitive := by native_decide
+theorem irish_ch86 :
+    (Core.WALS.F86A.lookup "iri").map (·.value) = some .nounGenitive := by native_decide
+theorem tagalog_ch86 :
+    (Core.WALS.F86A.lookup "tag").map (·.value) = some .nounGenitive := by native_decide
+theorem malagasy_ch86 :
+    (Core.WALS.F86A.lookup "mal").map (·.value) = some .nounGenitive := by native_decide
+theorem tzotzil_ch86 :
+    (Core.WALS.F86A.lookup "tzo").map (·.value) = some .nounGenitive := by native_decide
+theorem hixkaryana_ch86 :
+    (Core.WALS.F86A.lookup "hix").map (·.value) = some .genitiveNoun := by native_decide
+theorem welsh_ch86 :
+    (Core.WALS.F86A.lookup "wel").map (·.value) = some .nounGenitive := by native_decide
+theorem german_ch86 :
+    (Core.WALS.F86A.lookup "ger").map (·.value) = some .nounGenitive := by native_decide
+
+-- ============================================================================
+-- Chapter 87: Order of Adjective and Noun
+-- ============================================================================
+
+/-- WALS Ch 87: Adjective-Noun vs Noun-Adjective order.
+    Maps to HeadDirection: Adj-N is head-final (modifier precedes head),
+    N-Adj is head-initial (head precedes modifier).
+    "No dominant order" and "only internally-headed relative clauses" map to none. -/
+private def fromWALS87A : Core.WALS.F87A.AdjectiveNounOrder → Option HeadDirection
+  | .adjectiveNoun => some .headFinal
+  | .nounAdjective => some .headInitial
+  | .noDominantOrder => none
+  | .onlyInternallyHeadedRelativeClauses => none
+
+/-- Ch 87 total: 1367 languages. -/
+theorem ch87_total : ch87.length = 1367 :=
+  Core.WALS.F87A.total_count
+
+-- Distribution counts for Ch 87
+theorem ch87_count_adjectiveNoun :
+    (ch87.filter (·.value == .adjectiveNoun)).length = 373 := by native_decide
+theorem ch87_count_nounAdjective :
+    (ch87.filter (·.value == .nounAdjective)).length = 879 := by native_decide
+theorem ch87_count_noDominantOrder :
+    (ch87.filter (·.value == .noDominantOrder)).length = 110 := by native_decide
+theorem ch87_count_onlyIHRC :
+    (ch87.filter (·.value == .onlyInternallyHeadedRelativeClauses)).length = 5 := by native_decide
+
+-- N-Adj order dominates cross-linguistically (one of Gibson's single-word exceptions)
+theorem nounAdj_dominant_ch87 :
+    (ch87.filter (·.value == .nounAdjective)).length >
+    (ch87.filter (·.value == .adjectiveNoun)).length * 2 := by native_decide
+
+-- Per-language grounding: Ch 87A
+-- Note: Warlpiri has Noun-Adjective despite being SOV (a single-word exception).
+theorem english_ch87 :
+    (Core.WALS.F87A.lookup "eng").map (·.value) = some .adjectiveNoun := by native_decide
+theorem japanese_ch87 :
+    (Core.WALS.F87A.lookup "jpn").map (·.value) = some .adjectiveNoun := by native_decide
+theorem turkish_ch87 :
+    (Core.WALS.F87A.lookup "tur").map (·.value) = some .adjectiveNoun := by native_decide
+theorem hindiUrdu_ch87 :
+    (Core.WALS.F87A.lookup "hin").map (·.value) = some .adjectiveNoun := by native_decide
+theorem korean_ch87 :
+    (Core.WALS.F87A.lookup "kor").map (·.value) = some .adjectiveNoun := by native_decide
+-- Basque has Noun-Adjective despite being SOV (a single-word exception)
+theorem basque_ch87 :
+    (Core.WALS.F87A.lookup "bsq").map (·.value) = some .nounAdjective := by native_decide
+theorem mandarin_ch87 :
+    (Core.WALS.F87A.lookup "mnd").map (·.value) = some .adjectiveNoun := by native_decide
+theorem russian_ch87 :
+    (Core.WALS.F87A.lookup "rus").map (·.value) = some .adjectiveNoun := by native_decide
+theorem swahili_ch87 :
+    (Core.WALS.F87A.lookup "swa").map (·.value) = some .nounAdjective := by native_decide
+theorem indonesian_ch87 :
+    (Core.WALS.F87A.lookup "ind").map (·.value) = some .nounAdjective := by native_decide
+theorem arabic_ch87 :
+    (Core.WALS.F87A.lookup "ams").map (·.value) = some .nounAdjective := by native_decide
+theorem irish_ch87 :
+    (Core.WALS.F87A.lookup "iri").map (·.value) = some .nounAdjective := by native_decide
+-- Tagalog is "no dominant order" for Adj-N in Ch 87A
+theorem tagalog_ch87 :
+    (Core.WALS.F87A.lookup "tag").map (·.value) = some .noDominantOrder := by native_decide
+theorem malagasy_ch87 :
+    (Core.WALS.F87A.lookup "mal").map (·.value) = some .nounAdjective := by native_decide
+theorem hixkaryana_ch87 :
+    (Core.WALS.F87A.lookup "hix").map (·.value) = some .nounAdjective := by native_decide
+theorem warlpiri_ch87 :
+    (Core.WALS.F87A.lookup "wrl").map (·.value) = some .nounAdjective := by native_decide
+theorem welsh_ch87 :
+    (Core.WALS.F87A.lookup "wel").map (·.value) = some .nounAdjective := by native_decide
+theorem german_ch87 :
+    (Core.WALS.F87A.lookup "ger").map (·.value) = some .adjectiveNoun := by native_decide
+
+-- ============================================================================
+-- Chapter 88: Order of Demonstrative and Noun
+-- ============================================================================
+
+/-- WALS Ch 88: Demonstrative-Noun vs Noun-Demonstrative order.
+    Maps to HeadDirection: Dem-N is head-final (modifier precedes head),
+    N-Dem is head-initial (head precedes modifier).
+    Affixal, "both sides", and "mixed" values map to none. -/
+private def fromWALS88A : Core.WALS.F88A.DemonstrativeNounOrder → Option HeadDirection
+  | .demonstrativeNoun => some .headFinal
+  | .nounDemonstrative => some .headInitial
+  | .demonstrativePrefix => none
+  | .demonstrativeSuffix => none
+  | .demonstrativeBeforeAndAfterNoun => none
+  | .mixed => none
+
+/-- Ch 88 total: 1225 languages. -/
+theorem ch88_total : ch88.length = 1225 :=
+  Core.WALS.F88A.total_count
+
+-- Distribution counts for Ch 88
+theorem ch88_count_demonstrativeNoun :
+    (ch88.filter (·.value == .demonstrativeNoun)).length = 542 := by native_decide
+theorem ch88_count_nounDemonstrative :
+    (ch88.filter (·.value == .nounDemonstrative)).length = 562 := by native_decide
+theorem ch88_count_demonstrativePrefix :
+    (ch88.filter (·.value == .demonstrativePrefix)).length = 9 := by native_decide
+theorem ch88_count_demonstrativeSuffix :
+    (ch88.filter (·.value == .demonstrativeSuffix)).length = 28 := by native_decide
+theorem ch88_count_demonstrativeBeforeAndAfterNoun :
+    (ch88.filter (·.value == .demonstrativeBeforeAndAfterNoun)).length = 17 := by native_decide
+theorem ch88_count_mixed :
+    (ch88.filter (·.value == .mixed)).length = 67 := by native_decide
+
+-- Dem-N vs N-Dem is roughly balanced (another single-word exception: demonstratives
+-- are single words, so head direction is less predictive)
+theorem demN_roughly_balanced_ch88 :
+    let demN := (ch88.filter (·.value == .demonstrativeNoun)).length
+    let nDem := (ch88.filter (·.value == .nounDemonstrative)).length
+    demN * 10 > nDem * 9 := by native_decide
+
+-- Per-language grounding: Ch 88A
+-- Note: Warlpiri, Hixkaryana are absent from Ch 88A.
+theorem english_ch88 :
+    (Core.WALS.F88A.lookup "eng").map (·.value) = some .demonstrativeNoun := by native_decide
+theorem japanese_ch88 :
+    (Core.WALS.F88A.lookup "jpn").map (·.value) = some .demonstrativeNoun := by native_decide
+theorem turkish_ch88 :
+    (Core.WALS.F88A.lookup "tur").map (·.value) = some .demonstrativeNoun := by native_decide
+theorem hindiUrdu_ch88 :
+    (Core.WALS.F88A.lookup "hin").map (·.value) = some .demonstrativeNoun := by native_decide
+theorem korean_ch88 :
+    (Core.WALS.F88A.lookup "kor").map (·.value) = some .demonstrativeNoun := by native_decide
+-- Basque has Noun-Demonstrative despite being SOV (a single-word exception)
+theorem basque_ch88 :
+    (Core.WALS.F88A.lookup "bsq").map (·.value) = some .nounDemonstrative := by native_decide
+theorem mandarin_ch88 :
+    (Core.WALS.F88A.lookup "mnd").map (·.value) = some .demonstrativeNoun := by native_decide
+theorem russian_ch88 :
+    (Core.WALS.F88A.lookup "rus").map (·.value) = some .demonstrativeNoun := by native_decide
+theorem swahili_ch88 :
+    (Core.WALS.F88A.lookup "swa").map (·.value) = some .nounDemonstrative := by native_decide
+theorem indonesian_ch88 :
+    (Core.WALS.F88A.lookup "ind").map (·.value) = some .nounDemonstrative := by native_decide
+theorem arabic_ch88 :
+    (Core.WALS.F88A.lookup "ams").map (·.value) = some .demonstrativeNoun := by native_decide
+theorem irish_ch88 :
+    (Core.WALS.F88A.lookup "iri").map (·.value) = some .nounDemonstrative := by native_decide
+-- Tagalog is "mixed" in Ch 88A
+theorem tagalog_ch88 :
+    (Core.WALS.F88A.lookup "tag").map (·.value) = some .mixed := by native_decide
+-- Malagasy is "demonstrative before and after noun" in Ch 88A
+theorem malagasy_ch88 :
+    (Core.WALS.F88A.lookup "mal").map (·.value) = some .demonstrativeBeforeAndAfterNoun := by
+  native_decide
+theorem welsh_ch88 :
+    (Core.WALS.F88A.lookup "wel").map (·.value) = some .nounDemonstrative := by native_decide
+theorem german_ch88 :
+    (Core.WALS.F88A.lookup "ger").map (·.value) = some .demonstrativeNoun := by native_decide
+
+-- ============================================================================
+-- Chapter 89: Order of Numeral and Noun
+-- ============================================================================
+
+/-- WALS Ch 89: Numeral-Noun vs Noun-Numeral order.
+    Maps to HeadDirection: Num-N is head-final (modifier precedes head),
+    N-Num is head-initial (head precedes modifier).
+    "No dominant order" and "numeral only modifies verb" map to none. -/
+private def fromWALS89A : Core.WALS.F89A.NumeralNounOrder → Option HeadDirection
+  | .numeralNoun => some .headFinal
+  | .nounNumeral => some .headInitial
+  | .noDominantOrder => none
+  | .numeralOnlyModifiesVerb => none
+
+/-- Ch 89 total: 1154 languages. -/
+theorem ch89_total : ch89.length = 1154 :=
+  Core.WALS.F89A.total_count
+
+-- Distribution counts for Ch 89
+theorem ch89_count_numeralNoun :
+    (ch89.filter (·.value == .numeralNoun)).length = 479 := by native_decide
+theorem ch89_count_nounNumeral :
+    (ch89.filter (·.value == .nounNumeral)).length = 608 := by native_decide
+theorem ch89_count_noDominantOrder :
+    (ch89.filter (·.value == .noDominantOrder)).length = 65 := by native_decide
+theorem ch89_count_numeralOnlyModifiesVerb :
+    (ch89.filter (·.value == .numeralOnlyModifiesVerb)).length = 2 := by native_decide
+
+-- Per-language grounding: Ch 89A
+-- Note: Warlpiri is absent from Ch 89A.
+-- Notably, most profile languages have Numeral-Noun regardless of basic order,
+-- because numerals are typically single words (another single-word exception pattern).
+theorem english_ch89 :
+    (Core.WALS.F89A.lookup "eng").map (·.value) = some .numeralNoun := by native_decide
+theorem japanese_ch89 :
+    (Core.WALS.F89A.lookup "jpn").map (·.value) = some .numeralNoun := by native_decide
+theorem turkish_ch89 :
+    (Core.WALS.F89A.lookup "tur").map (·.value) = some .numeralNoun := by native_decide
+theorem hindiUrdu_ch89 :
+    (Core.WALS.F89A.lookup "hin").map (·.value) = some .numeralNoun := by native_decide
+theorem korean_ch89 :
+    (Core.WALS.F89A.lookup "kor").map (·.value) = some .numeralNoun := by native_decide
+theorem basque_ch89 :
+    (Core.WALS.F89A.lookup "bsq").map (·.value) = some .numeralNoun := by native_decide
+theorem mandarin_ch89 :
+    (Core.WALS.F89A.lookup "mnd").map (·.value) = some .numeralNoun := by native_decide
+theorem russian_ch89 :
+    (Core.WALS.F89A.lookup "rus").map (·.value) = some .numeralNoun := by native_decide
+-- Swahili has Noun-Numeral (head-initial, consistent with SVO)
+theorem swahili_ch89 :
+    (Core.WALS.F89A.lookup "swa").map (·.value) = some .nounNumeral := by native_decide
+theorem indonesian_ch89 :
+    (Core.WALS.F89A.lookup "ind").map (·.value) = some .numeralNoun := by native_decide
+theorem arabic_ch89 :
+    (Core.WALS.F89A.lookup "ams").map (·.value) = some .numeralNoun := by native_decide
+theorem irish_ch89 :
+    (Core.WALS.F89A.lookup "iri").map (·.value) = some .numeralNoun := by native_decide
+theorem tagalog_ch89 :
+    (Core.WALS.F89A.lookup "tag").map (·.value) = some .numeralNoun := by native_decide
+-- Malagasy has Noun-Numeral (head-initial, consistent with VOS)
+theorem malagasy_ch89 :
+    (Core.WALS.F89A.lookup "mal").map (·.value) = some .nounNumeral := by native_decide
+theorem hixkaryana_ch89 :
+    (Core.WALS.F89A.lookup "hix").map (·.value) = some .numeralNoun := by native_decide
+theorem welsh_ch89 :
+    (Core.WALS.F89A.lookup "wel").map (·.value) = some .numeralNoun := by native_decide
+theorem german_ch89 :
+    (Core.WALS.F89A.lookup "ger").map (·.value) = some .numeralNoun := by native_decide
+
+-- ============================================================================
+-- Chapter 90: Order of Relative Clause and Noun
+-- ============================================================================
+
+/-- WALS Ch 90: Relative clause-Noun vs Noun-Relative clause order.
+    Maps to HeadDirection: RelCl-N is head-final, N-RelCl is head-initial.
+    Internally headed, correlative, adjoined, doubly headed, and mixed map to none. -/
+private def fromWALS90A : Core.WALS.F90A.RelClauseNounOrder → Option HeadDirection
+  | .relativeClauseNoun => some .headFinal
+  | .nounRelativeClause => some .headInitial
+  | .internallyHeaded => none
+  | .correlative => none
+  | .adjoined => none
+  | .doublyHeaded => none
+  | .mixed => none
+
+/-- Ch 90 total: 824 languages. -/
+theorem ch90_total : ch90.length = 824 :=
+  Core.WALS.F90A.total_count
+
+-- Distribution counts for Ch 90
+theorem ch90_count_nounRelClause :
+    (ch90.filter (·.value == .nounRelativeClause)).length = 579 := by native_decide
+theorem ch90_count_relClauseNoun :
+    (ch90.filter (·.value == .relativeClauseNoun)).length = 141 := by native_decide
+theorem ch90_count_internallyHeaded :
+    (ch90.filter (·.value == .internallyHeaded)).length = 24 := by native_decide
+theorem ch90_count_correlative :
+    (ch90.filter (·.value == .correlative)).length = 7 := by native_decide
+theorem ch90_count_adjoined :
+    (ch90.filter (·.value == .adjoined)).length = 8 := by native_decide
+theorem ch90_count_doublyHeaded :
+    (ch90.filter (·.value == .doublyHeaded)).length = 1 := by native_decide
+theorem ch90_count_mixed :
+    (ch90.filter (·.value == .mixed)).length = 64 := by native_decide
+
+-- N-RelCl strongly dominates (relative clauses are recursive phrases, not single words)
+theorem nounRelCl_dominant_ch90 :
+    (ch90.filter (·.value == .nounRelativeClause)).length >
+    (ch90.filter (·.value == .relativeClauseNoun)).length * 4 := by native_decide
+
+-- Per-language grounding: Ch 90A
+-- Note: Arabic (MSA), Tzotzil are absent from Ch 90A.
+theorem english_ch90 :
+    (Core.WALS.F90A.lookup "eng").map (·.value) = some .nounRelativeClause := by native_decide
+theorem japanese_ch90 :
+    (Core.WALS.F90A.lookup "jpn").map (·.value) = some .relativeClauseNoun := by native_decide
+theorem turkish_ch90 :
+    (Core.WALS.F90A.lookup "tur").map (·.value) = some .relativeClauseNoun := by native_decide
+-- Hindi uses correlative relative clauses (special strategy, not simply prenominal or postnominal)
+theorem hindiUrdu_ch90 :
+    (Core.WALS.F90A.lookup "hin").map (·.value) = some .correlative := by native_decide
+theorem korean_ch90 :
+    (Core.WALS.F90A.lookup "kor").map (·.value) = some .relativeClauseNoun := by native_decide
+theorem basque_ch90 :
+    (Core.WALS.F90A.lookup "bsq").map (·.value) = some .relativeClauseNoun := by native_decide
+-- Mandarin has RelCl-N (prenominal relative clauses, head-final, disharmonic with SVO)
+theorem mandarin_ch90 :
+    (Core.WALS.F90A.lookup "mnd").map (·.value) = some .relativeClauseNoun := by native_decide
+theorem russian_ch90 :
+    (Core.WALS.F90A.lookup "rus").map (·.value) = some .nounRelativeClause := by native_decide
+theorem swahili_ch90 :
+    (Core.WALS.F90A.lookup "swa").map (·.value) = some .nounRelativeClause := by native_decide
+theorem indonesian_ch90 :
+    (Core.WALS.F90A.lookup "ind").map (·.value) = some .nounRelativeClause := by native_decide
+theorem irish_ch90 :
+    (Core.WALS.F90A.lookup "iri").map (·.value) = some .nounRelativeClause := by native_decide
+theorem tagalog_ch90 :
+    (Core.WALS.F90A.lookup "tag").map (·.value) = some .nounRelativeClause := by native_decide
+theorem malagasy_ch90 :
+    (Core.WALS.F90A.lookup "mal").map (·.value) = some .nounRelativeClause := by native_decide
+theorem hixkaryana_ch90 :
+    (Core.WALS.F90A.lookup "hix").map (·.value) = some .nounRelativeClause := by native_decide
+-- Warlpiri uses adjoined relative clauses
+theorem warlpiri_ch90 :
+    (Core.WALS.F90A.lookup "wrl").map (·.value) = some .adjoined := by native_decide
+theorem welsh_ch90 :
+    (Core.WALS.F90A.lookup "wel").map (·.value) = some .nounRelativeClause := by native_decide
+theorem german_ch90 :
+    (Core.WALS.F90A.lookup "ger").map (·.value) = some .nounRelativeClause := by native_decide
+
+-- ============================================================================
+-- Chapter 91: Order of Degree Word and Adjective
+-- ============================================================================
+
+/-- WALS Ch 91: Degree word-Adjective vs Adjective-Degree word order.
+    Maps to HeadDirection: DegW-Adj is head-final (modifier precedes head adjective
+    in the functional sense), Adj-DegW is head-initial.
+    "No dominant order" maps to none. -/
+private def fromWALS91A : Core.WALS.F91A.OrderOfDegreeWordAndAdjective → Option HeadDirection
+  | .degreeWordAdjective => some .headFinal
+  | .adjectiveDegreeWord => some .headInitial
+  | .noDominantOrder => none
+
+/-- Ch 91 total: 481 languages. -/
+theorem ch91_total : ch91.length = 481 :=
+  Core.WALS.F91A.total_count
+
+-- Distribution counts for Ch 91
+theorem ch91_count_degreeWordAdjective :
+    (ch91.filter (·.value == .degreeWordAdjective)).length = 227 := by native_decide
+theorem ch91_count_adjectiveDegreeWord :
+    (ch91.filter (·.value == .adjectiveDegreeWord)).length = 192 := by native_decide
+theorem ch91_count_noDominantOrder :
+    (ch91.filter (·.value == .noDominantOrder)).length = 62 := by native_decide
+
+-- Per-language grounding: Ch 91A
+-- Note: Warlpiri, Irish, Tzotzil, Swahili, Tagalog, Malagasy are absent from Ch 91A.
+theorem english_ch91 :
+    (Core.WALS.F91A.lookup "eng").map (·.value) = some .degreeWordAdjective := by native_decide
+theorem japanese_ch91 :
+    (Core.WALS.F91A.lookup "jpn").map (·.value) = some .degreeWordAdjective := by native_decide
+theorem turkish_ch91 :
+    (Core.WALS.F91A.lookup "tur").map (·.value) = some .degreeWordAdjective := by native_decide
+theorem hindiUrdu_ch91 :
+    (Core.WALS.F91A.lookup "hin").map (·.value) = some .degreeWordAdjective := by native_decide
+theorem korean_ch91 :
+    (Core.WALS.F91A.lookup "kor").map (·.value) = some .degreeWordAdjective := by native_decide
+theorem basque_ch91 :
+    (Core.WALS.F91A.lookup "bsq").map (·.value) = some .degreeWordAdjective := by native_decide
+theorem mandarin_ch91 :
+    (Core.WALS.F91A.lookup "mnd").map (·.value) = some .degreeWordAdjective := by native_decide
+theorem russian_ch91 :
+    (Core.WALS.F91A.lookup "rus").map (·.value) = some .degreeWordAdjective := by native_decide
+-- Arabic has Adjective-Degree word order (Adj-DegW)
+theorem arabic_ch91 :
+    (Core.WALS.F91A.lookup "ams").map (·.value) = some .adjectiveDegreeWord := by native_decide
+theorem hixkaryana_ch91 :
+    (Core.WALS.F91A.lookup "hix").map (·.value) = some .adjectiveDegreeWord := by native_decide
+-- Welsh is "no dominant order" for degree word and adjective
+theorem welsh_ch91 :
+    (Core.WALS.F91A.lookup "wel").map (·.value) = some .noDominantOrder := by native_decide
+theorem german_ch91 :
+    (Core.WALS.F91A.lookup "ger").map (·.value) = some .degreeWordAdjective := by native_decide
+theorem indonesian_ch91 :
+    (Core.WALS.F91A.lookup "ind").map (·.value) = some .degreeWordAdjective := by native_decide
+
+-- ============================================================================
+-- Chapter 94: Order of Adverbial Subordinator and Clause
+-- ============================================================================
+
+-- WALS Ch 94: Adverbial subordinator position relative to the clause.
+-- No clean mapping to HeadDirection since this involves clause-level ordering
+-- with multiple structural strategies (word vs suffix). We use the raw WALS type.
+
+/-- Ch 94 total: 659 languages. -/
+theorem ch94_total : ch94.length = 659 :=
+  Core.WALS.F94A.total_count
+
+-- Distribution counts for Ch 94
+theorem ch94_count_initialSubordinatorWord :
+    (ch94.filter (·.value == .initialSubordinatorWord)).length = 398 := by native_decide
+theorem ch94_count_finalSubordinatorWord :
+    (ch94.filter (·.value == .finalSubordinatorWord)).length = 96 := by native_decide
+theorem ch94_count_internalSubordinatorWord :
+    (ch94.filter (·.value == .internalSubordinatorWord)).length = 8 := by native_decide
+theorem ch94_count_subordinatingSuffix :
+    (ch94.filter (·.value == .subordinatingSuffix)).length = 64 := by native_decide
+theorem ch94_count_mixed :
+    (ch94.filter (·.value == .mixed)).length = 93 := by native_decide
+
+-- Initial subordinator words are the most common strategy
+theorem initial_subordinator_dominant_ch94 :
+    (ch94.filter (·.value == .initialSubordinatorWord)).length >
+    (ch94.filter (·.value == .finalSubordinatorWord)).length * 4 := by native_decide
+
+-- Per-language grounding: Ch 94A
+-- Note: Basque, Japanese, Warlpiri, Mandarin are absent from Ch 94A.
+theorem english_ch94 :
+    (Core.WALS.F94A.lookup "eng").map (·.value) =
+    some .initialSubordinatorWord := by native_decide
+theorem hindiUrdu_ch94 :
+    (Core.WALS.F94A.lookup "hin").map (·.value) =
+    some .initialSubordinatorWord := by native_decide
+theorem korean_ch94 :
+    (Core.WALS.F94A.lookup "kor").map (·.value) =
+    some .finalSubordinatorWord := by native_decide
+theorem russian_ch94 :
+    (Core.WALS.F94A.lookup "rus").map (·.value) =
+    some .initialSubordinatorWord := by native_decide
+theorem swahili_ch94 :
+    (Core.WALS.F94A.lookup "swa").map (·.value) =
+    some .initialSubordinatorWord := by native_decide
+theorem indonesian_ch94 :
+    (Core.WALS.F94A.lookup "ind").map (·.value) =
+    some .initialSubordinatorWord := by native_decide
+theorem arabic_ch94 :
+    (Core.WALS.F94A.lookup "ams").map (·.value) =
+    some .initialSubordinatorWord := by native_decide
+theorem irish_ch94 :
+    (Core.WALS.F94A.lookup "iri").map (·.value) =
+    some .initialSubordinatorWord := by native_decide
+theorem tagalog_ch94 :
+    (Core.WALS.F94A.lookup "tag").map (·.value) =
+    some .initialSubordinatorWord := by native_decide
+theorem malagasy_ch94 :
+    (Core.WALS.F94A.lookup "mal").map (·.value) =
+    some .initialSubordinatorWord := by native_decide
+theorem tzotzil_ch94 :
+    (Core.WALS.F94A.lookup "tzo").map (·.value) =
+    some .initialSubordinatorWord := by native_decide
+theorem hixkaryana_ch94 :
+    (Core.WALS.F94A.lookup "hix").map (·.value) =
+    some .finalSubordinatorWord := by native_decide
+theorem welsh_ch94 :
+    (Core.WALS.F94A.lookup "wel").map (·.value) =
+    some .initialSubordinatorWord := by native_decide
+theorem german_ch94 :
+    (Core.WALS.F94A.lookup "ger").map (·.value) =
+    some .initialSubordinatorWord := by native_decide
+-- Turkish is "mixed" in Ch 94A (both subordinating suffixes and initial words)
+theorem turkish_ch94 :
+    (Core.WALS.F94A.lookup "tur").map (·.value) =
+    some .mixed := by native_decide
+
+-- ============================================================================
+-- Chapter 95: Relationship between Order of OV and Adposition-NP
+-- ============================================================================
+
+-- WALS Ch 95: Cross-tabulation of O-V order with adposition order.
+-- This is the "harmonic pair" test for VO/Prep vs OV/Postp.
+
+/-- Ch 95 total: 1142 languages. -/
+theorem ch95_total : ch95.length = 1142 :=
+  Core.WALS.F95A.total_count
+
+-- Distribution counts for Ch 95
+theorem ch95_count_ovAndPostpositions :
+    (ch95.filter (·.value == .ovAndPostpositions)).length = 472 := by native_decide
+theorem ch95_count_ovAndPrepositions :
+    (ch95.filter (·.value == .ovAndPrepositions)).length = 14 := by native_decide
+theorem ch95_count_voAndPostpositions :
+    (ch95.filter (·.value == .voAndPostpositions)).length = 42 := by native_decide
+theorem ch95_count_voAndPrepositions :
+    (ch95.filter (·.value == .voAndPrepositions)).length = 456 := by native_decide
+theorem ch95_count_other :
+    (ch95.filter (·.value == .other)).length = 158 := by native_decide
+
+-- Harmonic pairs (OV+Postp, VO+Prep) vastly outnumber disharmonic (OV+Prep, VO+Postp)
+theorem ch95_harmonic_dominant :
+    let harmonic := (ch95.filter (·.value == .ovAndPostpositions)).length +
+                    (ch95.filter (·.value == .voAndPrepositions)).length
+    let disharmonic := (ch95.filter (·.value == .ovAndPrepositions)).length +
+                       (ch95.filter (·.value == .voAndPostpositions)).length
+    harmonic > disharmonic * 16 := by native_decide
+
+-- Per-language grounding: Ch 95A
+theorem english_ch95 :
+    (Core.WALS.F95A.lookup "eng").map (·.value) = some .voAndPrepositions := by native_decide
+theorem japanese_ch95 :
+    (Core.WALS.F95A.lookup "jpn").map (·.value) = some .ovAndPostpositions := by native_decide
+theorem turkish_ch95 :
+    (Core.WALS.F95A.lookup "tur").map (·.value) = some .ovAndPostpositions := by native_decide
+theorem hindiUrdu_ch95 :
+    (Core.WALS.F95A.lookup "hin").map (·.value) = some .ovAndPostpositions := by native_decide
+theorem korean_ch95 :
+    (Core.WALS.F95A.lookup "kor").map (·.value) = some .ovAndPostpositions := by native_decide
+theorem basque_ch95 :
+    (Core.WALS.F95A.lookup "bsq").map (·.value) = some .ovAndPostpositions := by native_decide
+-- Mandarin is "other" in Ch 95A (SVO but mixed adpositions)
+theorem mandarin_ch95 :
+    (Core.WALS.F95A.lookup "mnd").map (·.value) = some .other := by native_decide
+theorem russian_ch95 :
+    (Core.WALS.F95A.lookup "rus").map (·.value) = some .voAndPrepositions := by native_decide
+theorem swahili_ch95 :
+    (Core.WALS.F95A.lookup "swa").map (·.value) = some .voAndPrepositions := by native_decide
+theorem indonesian_ch95 :
+    (Core.WALS.F95A.lookup "ind").map (·.value) = some .voAndPrepositions := by native_decide
+theorem arabic_ch95 :
+    (Core.WALS.F95A.lookup "ams").map (·.value) = some .voAndPrepositions := by native_decide
+theorem irish_ch95 :
+    (Core.WALS.F95A.lookup "iri").map (·.value) = some .voAndPrepositions := by native_decide
+theorem malagasy_ch95 :
+    (Core.WALS.F95A.lookup "mal").map (·.value) = some .voAndPrepositions := by native_decide
+theorem tzotzil_ch95 :
+    (Core.WALS.F95A.lookup "tzo").map (·.value) = some .voAndPrepositions := by native_decide
+theorem hixkaryana_ch95 :
+    (Core.WALS.F95A.lookup "hix").map (·.value) = some .ovAndPostpositions := by native_decide
+-- German is "other" in Ch 95A (mixed OV/VO with prepositions)
+theorem german_ch95 :
+    (Core.WALS.F95A.lookup "ger").map (·.value) = some .other := by native_decide
+-- Warlpiri is "other" in Ch 95A (no dominant OV order)
+theorem warlpiri_ch95 :
+    (Core.WALS.F95A.lookup "wrl").map (·.value) = some .other := by native_decide
+theorem welsh_ch95 :
+    (Core.WALS.F95A.lookup "wel").map (·.value) = some .voAndPrepositions := by native_decide
+
+-- ============================================================================
+-- Chapter 96: Relationship between Order of OV and Relative Clause-Noun
+-- ============================================================================
+
+-- WALS Ch 96: Cross-tabulation of O-V order with relative clause order.
+-- Another harmonic pair test: OV+RelN vs VO+NRel.
+
+/-- Ch 96 total: 879 languages. -/
+theorem ch96_total : ch96.length = 879 :=
+  Core.WALS.F96A.total_count
+
+-- Distribution counts for Ch 96
+theorem ch96_count_ovAndReln :
+    (ch96.filter (·.value == .ovAndReln)).length = 132 := by native_decide
+theorem ch96_count_ovAndNrel :
+    (ch96.filter (·.value == .ovAndNrel)).length = 113 := by native_decide
+theorem ch96_count_voAndReln :
+    (ch96.filter (·.value == .voAndReln)).length = 5 := by native_decide
+theorem ch96_count_voAndNrel :
+    (ch96.filter (·.value == .voAndNrel)).length = 416 := by native_decide
+theorem ch96_count_other :
+    (ch96.filter (·.value == .other)).length = 213 := by native_decide
+
+-- VO+NRel strongly dominates VO+RelN (relative clauses are recursive, so head
+-- direction matters). OV languages are more mixed due to the N-RelCl strategy.
+theorem ch96_voNRel_dominant :
+    (ch96.filter (·.value == .voAndNrel)).length >
+    (ch96.filter (·.value == .voAndReln)).length * 80 := by native_decide
+
+-- Per-language grounding: Ch 96A
+-- Note: Arabic (MSA), Tzotzil are absent from Ch 96A.
+theorem english_ch96 :
+    (Core.WALS.F96A.lookup "eng").map (·.value) = some .voAndNrel := by native_decide
+theorem japanese_ch96 :
+    (Core.WALS.F96A.lookup "jpn").map (·.value) = some .ovAndReln := by native_decide
+theorem turkish_ch96 :
+    (Core.WALS.F96A.lookup "tur").map (·.value) = some .ovAndReln := by native_decide
+-- Hindi is "other" in Ch 96A (correlative relative clauses are neither pre- nor postnominal)
+theorem hindiUrdu_ch96 :
+    (Core.WALS.F96A.lookup "hin").map (·.value) = some .other := by native_decide
+theorem korean_ch96 :
+    (Core.WALS.F96A.lookup "kor").map (·.value) = some .ovAndReln := by native_decide
+theorem basque_ch96 :
+    (Core.WALS.F96A.lookup "bsq").map (·.value) = some .ovAndReln := by native_decide
+-- Mandarin is VO+RelN (disharmonic: SVO with prenominal relative clauses)
+theorem mandarin_ch96 :
+    (Core.WALS.F96A.lookup "mnd").map (·.value) = some .voAndReln := by native_decide
+theorem russian_ch96 :
+    (Core.WALS.F96A.lookup "rus").map (·.value) = some .voAndNrel := by native_decide
+theorem swahili_ch96 :
+    (Core.WALS.F96A.lookup "swa").map (·.value) = some .voAndNrel := by native_decide
+theorem indonesian_ch96 :
+    (Core.WALS.F96A.lookup "ind").map (·.value) = some .voAndNrel := by native_decide
+theorem irish_ch96 :
+    (Core.WALS.F96A.lookup "iri").map (·.value) = some .voAndNrel := by native_decide
+theorem tagalog_ch96 :
+    (Core.WALS.F96A.lookup "tag").map (·.value) = some .voAndNrel := by native_decide
+theorem malagasy_ch96 :
+    (Core.WALS.F96A.lookup "mal").map (·.value) = some .voAndNrel := by native_decide
+theorem hixkaryana_ch96 :
+    (Core.WALS.F96A.lookup "hix").map (·.value) = some .ovAndNrel := by native_decide
+-- German is "other" in Ch 96A (mixed OV/VO status)
+theorem german_ch96 :
+    (Core.WALS.F96A.lookup "ger").map (·.value) = some .other := by native_decide
+-- Warlpiri is "other" in Ch 96A (adjoined relative clauses, no dominant OV)
+theorem warlpiri_ch96 :
+    (Core.WALS.F96A.lookup "wrl").map (·.value) = some .other := by native_decide
+theorem welsh_ch96 :
+    (Core.WALS.F96A.lookup "wel").map (·.value) = some .voAndNrel := by native_decide
+
+-- ============================================================================
+-- Chapter 97: Relationship between Order of OV and Adjective-Noun
+-- ============================================================================
+
+-- WALS Ch 97: Cross-tabulation of O-V order with adjective-noun order.
+-- Unlike Ch 95 and 96, this pairing shows weaker correlation because
+-- adjectives are typically single words (a single-word exception).
+
+/-- Ch 97 total: 1316 languages. -/
+theorem ch97_total : ch97.length = 1316 :=
+  Core.WALS.F97A.total_count
+
+-- Distribution counts for Ch 97
+theorem ch97_count_ovAndAdjn :
+    (ch97.filter (·.value == .ovAndAdjn)).length = 216 := by native_decide
+theorem ch97_count_ovAndNadj :
+    (ch97.filter (·.value == .ovAndNadj)).length = 332 := by native_decide
+theorem ch97_count_voAndAdjn :
+    (ch97.filter (·.value == .voAndAdjn)).length = 114 := by native_decide
+theorem ch97_count_voAndNadj :
+    (ch97.filter (·.value == .voAndNadj)).length = 456 := by native_decide
+theorem ch97_count_other :
+    (ch97.filter (·.value == .other)).length = 198 := by native_decide
+
+-- OV languages split between AdjN and NAdj (weak correlation, single-word exception).
+-- This contrasts with Ch 95 where OV+Prep is nearly absent.
+theorem ch97_ov_split :
+    let ovAdjN := (ch97.filter (·.value == .ovAndAdjn)).length
+    let ovNAdj := (ch97.filter (·.value == .ovAndNadj)).length
+    ovNAdj > ovAdjN := by native_decide
+
+-- Per-language grounding: Ch 97A
+theorem english_ch97 :
+    (Core.WALS.F97A.lookup "eng").map (·.value) = some .voAndAdjn := by native_decide
+theorem japanese_ch97 :
+    (Core.WALS.F97A.lookup "jpn").map (·.value) = some .ovAndAdjn := by native_decide
+theorem turkish_ch97 :
+    (Core.WALS.F97A.lookup "tur").map (·.value) = some .ovAndAdjn := by native_decide
+theorem hindiUrdu_ch97 :
+    (Core.WALS.F97A.lookup "hin").map (·.value) = some .ovAndAdjn := by native_decide
+theorem korean_ch97 :
+    (Core.WALS.F97A.lookup "kor").map (·.value) = some .ovAndAdjn := by native_decide
+-- Basque is OV+NAdj (disharmonic for Adj-N, consistent with single-word exception)
+theorem basque_ch97 :
+    (Core.WALS.F97A.lookup "bsq").map (·.value) = some .ovAndNadj := by native_decide
+-- Mandarin is VO+AdjN (disharmonic: SVO with prenominal adjectives)
+theorem mandarin_ch97 :
+    (Core.WALS.F97A.lookup "mnd").map (·.value) = some .voAndAdjn := by native_decide
+theorem russian_ch97 :
+    (Core.WALS.F97A.lookup "rus").map (·.value) = some .voAndAdjn := by native_decide
+theorem swahili_ch97 :
+    (Core.WALS.F97A.lookup "swa").map (·.value) = some .voAndNadj := by native_decide
+theorem indonesian_ch97 :
+    (Core.WALS.F97A.lookup "ind").map (·.value) = some .voAndNadj := by native_decide
+theorem arabic_ch97 :
+    (Core.WALS.F97A.lookup "ams").map (·.value) = some .voAndNadj := by native_decide
+theorem irish_ch97 :
+    (Core.WALS.F97A.lookup "iri").map (·.value) = some .voAndNadj := by native_decide
+-- Tagalog is "other" in Ch 97A (no dominant Adj-N order)
+theorem tagalog_ch97 :
+    (Core.WALS.F97A.lookup "tag").map (·.value) = some .other := by native_decide
+theorem malagasy_ch97 :
+    (Core.WALS.F97A.lookup "mal").map (·.value) = some .voAndNadj := by native_decide
+theorem hixkaryana_ch97 :
+    (Core.WALS.F97A.lookup "hix").map (·.value) = some .ovAndNadj := by native_decide
+-- German is "other" in Ch 97A (mixed OV/VO)
+theorem german_ch97 :
+    (Core.WALS.F97A.lookup "ger").map (·.value) = some .other := by native_decide
+-- Warlpiri is "other" in Ch 97A (no dominant OV order)
+theorem warlpiri_ch97 :
+    (Core.WALS.F97A.lookup "wrl").map (·.value) = some .other := by native_decide
+theorem welsh_ch97 :
+    (Core.WALS.F97A.lookup "wel").map (·.value) = some .voAndNadj := by native_decide
+
+-- ============================================================================
+-- Chapter 81B: Languages with two Dominant Orders of Subject, Object, and Verb
+-- ============================================================================
+
+-- WALS Ch 81B catalogs languages where two basic word orders co-occur as
+-- dominant patterns. SOV-or-SVO is the most common dual-order combination,
+-- consistent with the general dominance of subject-first orders.
+
+/-- Ch 81B total: 67 languages. -/
+theorem ch81B_total : ch81B.length = 67 :=
+  Core.WALS.F81B.total_count
+
+-- Distribution counts for Ch 81B
+theorem ch81B_count_sovOrSvo :
+    (ch81B.filter (·.value == .sovOrSvo)).length = 29 := by native_decide
+theorem ch81B_count_vsoOrVos :
+    (ch81B.filter (·.value == .vsoOrVos)).length = 14 := by native_decide
+theorem ch81B_count_svoOrVso :
+    (ch81B.filter (·.value == .svoOrVso)).length = 13 := by native_decide
+theorem ch81B_count_svoOrVos :
+    (ch81B.filter (·.value == .svoOrVos)).length = 8 := by native_decide
+theorem ch81B_count_sovOrOvs :
+    (ch81B.filter (·.value == .sovOrOvs)).length = 3 := by native_decide
+
+-- SOV-or-SVO is the most common dual-order pattern
+theorem ch81B_sovOrSvo_most_common :
+    (ch81B.filter (·.value == .sovOrSvo)).length >
+    (ch81B.filter (·.value == .vsoOrVos)).length := by native_decide
+
+-- Per-language grounding: Ch 81B
+-- Hungarian, German are in our profile set and appear in Ch 81B.
+-- (German is classified as SOV-or-SVO in Ch 81B, consistent with V2 analysis.)
+theorem german_ch81B :
+    (Core.WALS.F81B.lookup "ger").map (·.value) = some .sovOrSvo := by native_decide
+theorem hungarian_ch81B :
+    (Core.WALS.F81B.lookup "hun").map (·.value) = some .sovOrSvo := by native_decide
+
+-- ============================================================================
+-- Chapter 90B: Prenominal relative clauses
+-- ============================================================================
+
+-- WALS Ch 90B sub-feature: classifies languages that have prenominal (RelN)
+-- relative clauses, distinguishing dominant RelN from mixed strategies.
+
+/-- Ch 90B total: 191 languages. -/
+theorem ch90B_total : ch90B.length = 191 :=
+  Core.WALS.F90B.total_count
+
+-- Distribution counts for Ch 90B
+theorem ch90B_count_relativeClauseNounDominant :
+    (ch90B.filter (·.value == .relativeClauseNounDominant)).length = 141 := by native_decide
+theorem ch90B_count_relnOrNrel :
+    (ch90B.filter (·.value == .relnOrNrel)).length = 29 := by native_decide
+theorem ch90B_count_relnOrInternallyHeaded :
+    (ch90B.filter (·.value == .relnOrInternallyHeaded)).length = 15 := by native_decide
+theorem ch90B_count_relnOrCorrelative :
+    (ch90B.filter (·.value == .relnOrCorrelative)).length = 5 := by native_decide
+theorem ch90B_count_relnOrDoubleHeaded :
+    (ch90B.filter (·.value == .relnOrDoubleHeaded)).length = 1 := by native_decide
+
+-- Dominant-only prenominal (RelN) is the majority among languages with this strategy
+theorem ch90B_dominant_relN_majority :
+    (ch90B.filter (·.value == .relativeClauseNounDominant)).length >
+    ch90B.length / 2 := by native_decide
+
+-- Per-language grounding: Ch 90B
+-- Japanese, Korean, Turkish, Mandarin, Basque all have dominant prenominal RelCl.
+-- Hungarian has RelN-or-NRel (mixed).
+theorem japanese_ch90B :
+    (Core.WALS.F90B.lookup "jpn").map (·.value) =
+    some .relativeClauseNounDominant := by native_decide
+theorem korean_ch90B :
+    (Core.WALS.F90B.lookup "kor").map (·.value) =
+    some .relativeClauseNounDominant := by native_decide
+theorem turkish_ch90B :
+    (Core.WALS.F90B.lookup "tur").map (·.value) =
+    some .relativeClauseNounDominant := by native_decide
+theorem mandarin_ch90B :
+    (Core.WALS.F90B.lookup "mnd").map (·.value) =
+    some .relativeClauseNounDominant := by native_decide
+theorem basque_ch90B :
+    (Core.WALS.F90B.lookup "bsq").map (·.value) =
+    some .relativeClauseNounDominant := by native_decide
+theorem hungarian_ch90B :
+    (Core.WALS.F90B.lookup "hun").map (·.value) =
+    some .relnOrNrel := by native_decide
+
+-- ============================================================================
+-- Chapter 90C: Postnominal relative clauses
+-- ============================================================================
+
+-- WALS Ch 90C sub-feature: classifies languages that have postnominal (NRel)
+-- relative clauses. This is the largest Ch 90 sub-feature (620 languages),
+-- reflecting the cross-linguistic dominance of postnominal relative clauses.
+
+/-- Ch 90C total: 620 languages. -/
+theorem ch90C_total : ch90C.length = 620 :=
+  Core.WALS.F90C.total_count
+
+-- Distribution counts for Ch 90C
+theorem ch90C_count_nounRelativeClauseDominant :
+    (ch90C.filter (·.value == .nounRelativeClauseDominant)).length = 579 := by native_decide
+theorem ch90C_count_nrelOrReln :
+    (ch90C.filter (·.value == .nrelOrReln)).length = 31 := by native_decide
+theorem ch90C_count_nrelOrInternallyHeaded :
+    (ch90C.filter (·.value == .nrelOrInternallyHeaded)).length = 8 := by native_decide
+theorem ch90C_count_nrelOrCorrelative :
+    (ch90C.filter (·.value == .nrelOrCorrelative)).length = 2 := by native_decide
+
+-- Dominant-only postnominal (NRel) is overwhelmingly the majority
+theorem ch90C_dominant_nRel_majority :
+    (ch90C.filter (·.value == .nounRelativeClauseDominant)).length >
+    ch90C.length * 9 / 10 := by native_decide
+
+-- Per-language grounding: Ch 90C
+-- English, Russian, Swahili, Indonesian, Irish, Welsh, German, Hixkaryana,
+-- Tagalog, Malagasy all have dominant postnominal RelCl.
+-- Hungarian has NRel-or-RelN (mixed).
+theorem english_ch90C :
+    (Core.WALS.F90C.lookup "eng").map (·.value) =
+    some .nounRelativeClauseDominant := by native_decide
+theorem russian_ch90C :
+    (Core.WALS.F90C.lookup "rus").map (·.value) =
+    some .nounRelativeClauseDominant := by native_decide
+theorem swahili_ch90C :
+    (Core.WALS.F90C.lookup "swa").map (·.value) =
+    some .nounRelativeClauseDominant := by native_decide
+theorem indonesian_ch90C :
+    (Core.WALS.F90C.lookup "ind").map (·.value) =
+    some .nounRelativeClauseDominant := by native_decide
+theorem irish_ch90C :
+    (Core.WALS.F90C.lookup "iri").map (·.value) =
+    some .nounRelativeClauseDominant := by native_decide
+theorem welsh_ch90C :
+    (Core.WALS.F90C.lookup "wel").map (·.value) =
+    some .nounRelativeClauseDominant := by native_decide
+theorem german_ch90C :
+    (Core.WALS.F90C.lookup "ger").map (·.value) =
+    some .nounRelativeClauseDominant := by native_decide
+theorem hixkaryana_ch90C :
+    (Core.WALS.F90C.lookup "hix").map (·.value) =
+    some .nounRelativeClauseDominant := by native_decide
+theorem tagalog_ch90C :
+    (Core.WALS.F90C.lookup "tag").map (·.value) =
+    some .nounRelativeClauseDominant := by native_decide
+theorem malagasy_ch90C :
+    (Core.WALS.F90C.lookup "mal").map (·.value) =
+    some .nounRelativeClauseDominant := by native_decide
+theorem hungarian_ch90C :
+    (Core.WALS.F90C.lookup "hun").map (·.value) =
+    some .nrelOrReln := by native_decide
+
+-- ============================================================================
+-- Chapter 90D: Internally-headed relative clauses
+-- ============================================================================
+
+-- WALS Ch 90D sub-feature: classifies languages that have internally-headed
+-- relative clauses. Japanese and Korean have this strategy as a nondominant type.
+
+/-- Ch 90D total: 63 languages. -/
+theorem ch90D_total : ch90D.length = 63 :=
+  Core.WALS.F90D.total_count
+
+-- Distribution counts for Ch 90D
+theorem ch90D_count_internallyHeadedRelativeClauseDominant :
+    (ch90D.filter (·.value == .internallyHeadedRelativeClauseDominant)).length = 24 := by native_decide
+theorem ch90D_count_internallyHeadedOrReln :
+    (ch90D.filter (·.value == .internallyHeadedOrReln)).length = 15 := by native_decide
+theorem ch90D_count_internallyHeadedOrNrel :
+    (ch90D.filter (·.value == .internallyHeadedOrNrel)).length = 8 := by native_decide
+theorem ch90D_count_internallyHeadedOrCorrelative :
+    (ch90D.filter (·.value == .internallyHeadedOrCorrelative)).length = 1 := by native_decide
+theorem ch90D_count_internallyHeadedOrDoubleHeaded :
+    (ch90D.filter (·.value == .internallyHeadedOrDoubleHeaded)).length = 1 := by native_decide
+theorem ch90D_count_internallyHeadedOccursAsNondominantType :
+    (ch90D.filter (·.value == .internallyHeadedOccursAsNondominantType)).length = 10 := by native_decide
+theorem ch90D_count_internallyHeadedExists :
+    (ch90D.filter (·.value == .internallyHeadedExists)).length = 4 := by native_decide
+
+-- Per-language grounding: Ch 90D
+-- Japanese and Korean have internally-headed as a nondominant type.
+-- Tagalog also has internally-headed as a nondominant type.
+theorem japanese_ch90D :
+    (Core.WALS.F90D.lookup "jpn").map (·.value) =
+    some .internallyHeadedOccursAsNondominantType := by native_decide
+theorem korean_ch90D :
+    (Core.WALS.F90D.lookup "kor").map (·.value) =
+    some .internallyHeadedOccursAsNondominantType := by native_decide
+theorem tagalog_ch90D :
+    (Core.WALS.F90D.lookup "tag").map (·.value) =
+    some .internallyHeadedOccursAsNondominantType := by native_decide
+
+-- ============================================================================
+-- Chapter 90E: Correlative relative clauses
+-- ============================================================================
+
+-- WALS Ch 90E sub-feature: classifies languages that have correlative relative
+-- clauses. Hindi is the canonical example with dominant correlative strategy.
+
+/-- Ch 90E total: 23 languages. -/
+theorem ch90E_total : ch90E.length = 23 :=
+  Core.WALS.F90E.total_count
+
+-- Distribution counts for Ch 90E
+theorem ch90E_count_correlativeRelativeClauseDominant :
+    (ch90E.filter (·.value == .correlativeRelativeClauseDominant)).length = 7 := by native_decide
+theorem ch90E_count_correlativeOrReln :
+    (ch90E.filter (·.value == .correlativeOrReln)).length = 7 := by native_decide
+theorem ch90E_count_correlativeOrNrel :
+    (ch90E.filter (·.value == .correlativeOrNrel)).length = 2 := by native_decide
+theorem ch90E_count_correlativeOrInternallyHeaded :
+    (ch90E.filter (·.value == .correlativeOrInternallyHeaded)).length = 1 := by native_decide
+theorem ch90E_count_correlativeOrAdjoined :
+    (ch90E.filter (·.value == .correlativeOrAdjoined)).length = 2 := by native_decide
+theorem ch90E_count_correlativeAsNondominantType :
+    (ch90E.filter (·.value == .correlativeAsNondominantType)).length = 3 := by native_decide
+theorem ch90E_count_correlativeExists :
+    (ch90E.filter (·.value == .correlativeExists)).length = 1 := by native_decide
+
+-- Per-language grounding: Ch 90E
+-- Hindi has dominant correlative relative clauses (consistent with Ch 90A coding).
+theorem hindiUrdu_ch90E :
+    (Core.WALS.F90E.lookup "hin").map (·.value) =
+    some .correlativeRelativeClauseDominant := by native_decide
+
+-- ============================================================================
+-- Chapter 90F: Adjoined relative clauses
+-- ============================================================================
+
+-- WALS Ch 90F sub-feature: classifies languages that have adjoined relative
+-- clauses. Warlpiri is the canonical example (dominant adjoined strategy).
+
+/-- Ch 90F total: 10 languages. -/
+theorem ch90F_total : ch90F.length = 10 :=
+  Core.WALS.F90F.total_count
+
+-- Distribution counts for Ch 90F
+theorem ch90F_count_adjoinedRelativeClauseDominant :
+    (ch90F.filter (·.value == .adjoinedRelativeClauseDominant)).length = 8 := by native_decide
+theorem ch90F_count_adjoinedOrCorrelative :
+    (ch90F.filter (·.value == .adjoinedOrCorrelative)).length = 2 := by native_decide
+
+-- Per-language grounding: Ch 90F
+-- Warlpiri has dominant adjoined relative clauses (consistent with Ch 90A coding).
+theorem warlpiri_ch90F :
+    (Core.WALS.F90F.lookup "wrl").map (·.value) =
+    some .adjoinedRelativeClauseDominant := by native_decide
+
+-- ============================================================================
+-- Chapter 90G: Double-headed relative clauses
+-- ============================================================================
+
+-- WALS Ch 90G sub-feature: classifies languages that have double-headed
+-- relative clauses. Only 5 languages in the sample; none overlap with our profiles.
+
+/-- Ch 90G total: 5 languages. -/
+theorem ch90G_total : ch90G.length = 5 :=
+  Core.WALS.F90G.total_count
+
+-- Distribution counts for Ch 90G
+theorem ch90G_count_doubleHeadedDominant :
+    (ch90G.filter (·.value == .doubleHeadedDominant)).length = 1 := by native_decide
+theorem ch90G_count_doubleHeadedOrReln :
+    (ch90G.filter (·.value == .doubleHeadedOrReln)).length = 1 := by native_decide
+theorem ch90G_count_doubleHeadedOrInternallyHeaded :
+    (ch90G.filter (·.value == .doubleHeadedOrInternallyHeaded)).length = 1 := by native_decide
+theorem ch90G_count_doubleHeadedAsNondominantType :
+    (ch90G.filter (·.value == .doubleHeadedAsNondominantType)).length = 2 := by native_decide
+
+-- ============================================================================
+-- Chapter 60: Genitives, Adjectives and Relative Clauses
+-- ============================================================================
+
+-- WALS Ch 60A classifies the degree of formal differentiation between
+-- genitives, adjectives, and relative clauses within a language. "Highly
+-- differentiated" means the three categories have clearly distinct syntax;
+-- "weakly differentiated" means they overlap significantly.
+
+/-- Ch 60 total: 138 languages. -/
+theorem ch60_total : ch60.length = 138 :=
+  Core.WALS.F60A.total_count
+
+-- Distribution counts for Ch 60
+theorem ch60_count_weaklyDifferentiated :
+    (ch60.filter (·.value == .weaklyDifferentiated)).length = 15 := by native_decide
+theorem ch60_count_genitivesAndAdjectivesCollapsed :
+    (ch60.filter (·.value == .genitivesAndAdjectivesCollapsed)).length = 8 := by native_decide
+theorem ch60_count_genitivesAndRelativeClausesCollapsed :
+    (ch60.filter (·.value == .genitivesAndRelativeClausesCollapsed)).length = 2 := by native_decide
+theorem ch60_count_adjectivesAndRelativeClausesCollapsed :
+    (ch60.filter (·.value == .adjectivesAndRelativeClausesCollapsed)).length = 33 := by native_decide
+theorem ch60_count_moderatelyDifferentiatedInOtherWays :
+    (ch60.filter (·.value == .moderatelyDifferentiatedInOtherWays)).length = 3 := by native_decide
+theorem ch60_count_highlyDifferentiated :
+    (ch60.filter (·.value == .highlyDifferentiated)).length = 77 := by native_decide
+
+-- "Highly differentiated" is the majority value
+theorem ch60_highlyDifferentiated_majority :
+    (ch60.filter (·.value == .highlyDifferentiated)).length >
+    ch60.length / 2 := by native_decide
+
+-- Per-language grounding: Ch 60A
+-- English, Hindi, Basque, Korean, Russian, Turkish, Hungarian are highly differentiated.
+-- Japanese has genitives and adjectives collapsed.
+-- Mandarin, Indonesian are weakly differentiated.
+-- Tagalog, Malagasy have adjectives and relative clauses collapsed.
+theorem english_ch60 :
+    (Core.WALS.F60A.lookup "eng").map (·.value) =
+    some .highlyDifferentiated := by native_decide
+theorem japanese_ch60 :
+    (Core.WALS.F60A.lookup "jpn").map (·.value) =
+    some .genitivesAndAdjectivesCollapsed := by native_decide
+theorem turkish_ch60 :
+    (Core.WALS.F60A.lookup "tur").map (·.value) =
+    some .highlyDifferentiated := by native_decide
+theorem hindiUrdu_ch60 :
+    (Core.WALS.F60A.lookup "hin").map (·.value) =
+    some .highlyDifferentiated := by native_decide
+theorem korean_ch60 :
+    (Core.WALS.F60A.lookup "kor").map (·.value) =
+    some .highlyDifferentiated := by native_decide
+theorem basque_ch60 :
+    (Core.WALS.F60A.lookup "bsq").map (·.value) =
+    some .highlyDifferentiated := by native_decide
+theorem mandarin_ch60 :
+    (Core.WALS.F60A.lookup "mnd").map (·.value) =
+    some .weaklyDifferentiated := by native_decide
+theorem russian_ch60 :
+    (Core.WALS.F60A.lookup "rus").map (·.value) =
+    some .highlyDifferentiated := by native_decide
+theorem indonesian_ch60 :
+    (Core.WALS.F60A.lookup "ind").map (·.value) =
+    some .weaklyDifferentiated := by native_decide
+theorem tagalog_ch60 :
+    (Core.WALS.F60A.lookup "tag").map (·.value) =
+    some .adjectivesAndRelativeClausesCollapsed := by native_decide
+theorem malagasy_ch60 :
+    (Core.WALS.F60A.lookup "mal").map (·.value) =
+    some .adjectivesAndRelativeClausesCollapsed := by native_decide
+theorem hungarian_ch60 :
+    (Core.WALS.F60A.lookup "hun").map (·.value) =
+    some .highlyDifferentiated := by native_decide
+
+-- ============================================================================
+-- Chapter 61: Adjectives without Nouns
+-- ============================================================================
+
+-- WALS Ch 61A classifies how a language forms headless adjective phrases
+-- (e.g., "the tall one" in English). Some languages use bare adjectives,
+-- others require overt morphological or syntactic marking.
+
+/-- Ch 61 total: 124 languages. -/
+theorem ch61_total : ch61.length = 124 :=
+  Core.WALS.F61A.total_count
+
+-- Distribution counts for Ch 61
+theorem ch61_count_notWithoutNoun :
+    (ch61.filter (·.value == .notWithoutNoun)).length = 1 := by native_decide
+theorem ch61_count_withoutMarking :
+    (ch61.filter (·.value == .withoutMarking)).length = 73 := by native_decide
+theorem ch61_count_markedByPrefix :
+    (ch61.filter (·.value == .markedByPrefix)).length = 7 := by native_decide
+theorem ch61_count_markedBySuffix :
+    (ch61.filter (·.value == .markedBySuffix)).length = 13 := by native_decide
+theorem ch61_count_markedByPrecedingWord :
+    (ch61.filter (·.value == .markedByPrecedingWord)).length = 18 := by native_decide
+theorem ch61_count_markedByFollowingWord :
+    (ch61.filter (·.value == .markedByFollowingWord)).length = 7 := by native_decide
+theorem ch61_count_markedByMixedOrOtherStrategies :
+    (ch61.filter (·.value == .markedByMixedOrOtherStrategies)).length = 5 := by native_decide
+
+-- "Without marking" is the majority strategy for headless adjective phrases
+theorem ch61_withoutMarking_majority :
+    (ch61.filter (·.value == .withoutMarking)).length >
+    ch61.length / 2 := by native_decide
+
+-- Per-language grounding: Ch 61A
+-- English, Hindi, Korean, Mandarin use "marked by following word" (e.g., "one").
+-- Japanese uses "mixed or other strategies".
+-- Turkish, Basque, Russian, Swahili, Tagalog, Hungarian use "without marking".
+-- Indonesian, Irish, Malagasy use "marked by preceding word".
+theorem english_ch61 :
+    (Core.WALS.F61A.lookup "eng").map (·.value) =
+    some .markedByFollowingWord := by native_decide
+theorem japanese_ch61 :
+    (Core.WALS.F61A.lookup "jpn").map (·.value) =
+    some .markedByMixedOrOtherStrategies := by native_decide
+theorem turkish_ch61 :
+    (Core.WALS.F61A.lookup "tur").map (·.value) =
+    some .withoutMarking := by native_decide
+theorem hindiUrdu_ch61 :
+    (Core.WALS.F61A.lookup "hin").map (·.value) =
+    some .markedByFollowingWord := by native_decide
+theorem korean_ch61 :
+    (Core.WALS.F61A.lookup "kor").map (·.value) =
+    some .markedByFollowingWord := by native_decide
+theorem basque_ch61 :
+    (Core.WALS.F61A.lookup "bsq").map (·.value) =
+    some .withoutMarking := by native_decide
+theorem mandarin_ch61 :
+    (Core.WALS.F61A.lookup "mnd").map (·.value) =
+    some .markedByFollowingWord := by native_decide
+theorem russian_ch61 :
+    (Core.WALS.F61A.lookup "rus").map (·.value) =
+    some .withoutMarking := by native_decide
+theorem swahili_ch61 :
+    (Core.WALS.F61A.lookup "swa").map (·.value) =
+    some .withoutMarking := by native_decide
+theorem indonesian_ch61 :
+    (Core.WALS.F61A.lookup "ind").map (·.value) =
+    some .markedByPrecedingWord := by native_decide
+theorem irish_ch61 :
+    (Core.WALS.F61A.lookup "iri").map (·.value) =
+    some .markedByPrecedingWord := by native_decide
+theorem tagalog_ch61 :
+    (Core.WALS.F61A.lookup "tag").map (·.value) =
+    some .withoutMarking := by native_decide
+theorem malagasy_ch61 :
+    (Core.WALS.F61A.lookup "mal").map (·.value) =
+    some .markedByPrecedingWord := by native_decide
+theorem hungarian_ch61 :
+    (Core.WALS.F61A.lookup "hun").map (·.value) =
+    some .withoutMarking := by native_decide
 
 end Phenomena.WordOrder.Typology
