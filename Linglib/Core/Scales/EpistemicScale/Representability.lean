@@ -989,42 +989,9 @@ private theorem theorem8a_fin3_0null (sys : EpistemicSystemFA (Fin 3))
           -- ¬ge {0} {1,2}: if yes, trans with mono {1,2}⊇{2}: ge {0} {2}. OK that's fine, not a contradiction.
           -- Better: ge {0} {1,2} + ge {1,2} {0,2} ↔ ge {1} {0} (h10 true). So ge {0} {0,2}.
           -- ge {0} {0,2} ↔ ge ∅ {2} (additivity). hn2 (¬). Contradiction!
-          have hng_0_12 : ¬sys.ge {(0 : Fin 3)} ({1, 2} : Set _) := fun h => by
-            have h1 : sys.ge {(0 : Fin 3)} ({0, 2} : Set _) := by
-              have hge_12_02 : sys.ge ({1, 2} : Set (Fin 3)) ({0, 2} : Set _) := by
-                rw [sys.additive ({1, 2} : Set (Fin 3)) {0, 2}]
-                rw [show ({1, 2} : Set (Fin 3)) \ {0, 2} = {1} from by ext x; fin_cases x <;> simp_all]
-                rw [show ({0, 2} : Set (Fin 3)) \ {1, 2} = {0} from by ext x; fin_cases x <;> simp_all]
-                exact h10
-              exact sys.trans _ _ _ h hge_12_02
-            rw [sys.additive {0} {0, 2}] at h1
-            rw [show ({0} : Set (Fin 3)) \ {0, 2} = ∅ from by ext x; fin_cases x <;> simp_all] at h1
-            rw [show ({0, 2} : Set (Fin 3)) \ {0} = {2} from by ext x; fin_cases x <;> simp_all] at h1
-            exact hn2 h1
-          have hng_1_02 : ¬sys.ge {(1 : Fin 3)} ({0, 2} : Set _) := fun h => by
-            have h1 : sys.ge {(1 : Fin 3)} ({1, 2} : Set _) := by
-              have hge_02_12 : sys.ge ({0, 2} : Set (Fin 3)) ({1, 2} : Set _) := by
-                rw [sys.additive ({0, 2} : Set (Fin 3)) {1, 2}]
-                rw [show ({0, 2} : Set (Fin 3)) \ {1, 2} = {0} from by ext x; fin_cases x <;> simp_all]
-                rw [show ({1, 2} : Set (Fin 3)) \ {0, 2} = {1} from by ext x; fin_cases x <;> simp_all]
-                exact h01
-              exact sys.trans _ _ _ h hge_02_12
-            rw [sys.additive {1} {1, 2}] at h1
-            rw [show ({1} : Set (Fin 3)) \ {1, 2} = ∅ from by ext x; fin_cases x <;> simp_all] at h1
-            rw [show ({1, 2} : Set (Fin 3)) \ {1} = {2} from by ext x; fin_cases x <;> simp_all] at h1
-            exact hn2 h1
-          have hng_2_01 : ¬sys.ge {(2 : Fin 3)} ({0, 1} : Set _) := fun h => by
-            have h1 : sys.ge {(2 : Fin 3)} ({0, 2} : Set _) := by
-              have hge_01_02 : sys.ge ({0, 1} : Set (Fin 3)) ({0, 2} : Set _) := by
-                rw [sys.additive ({0, 1} : Set (Fin 3)) {0, 2}]
-                rw [show ({0, 1} : Set (Fin 3)) \ {0, 2} = {1} from by ext x; fin_cases x <;> simp_all]
-                rw [show ({0, 2} : Set (Fin 3)) \ {0, 1} = {2} from by ext x; fin_cases x <;> simp_all]
-                exact h12
-              exact sys.trans _ _ _ h hge_01_02
-            rw [sys.additive {2} {0, 2}] at h1
-            rw [show ({2} : Set (Fin 3)) \ {0, 2} = ∅ from by ext x; fin_cases x <;> simp_all] at h1
-            rw [show ({0, 2} : Set (Fin 3)) \ {2} = {0} from by ext x; fin_cases x <;> simp_all] at h1
-            exact hn0 h1
+          have hng_0_12 := nge_0_12 sys h10 hn2
+          have hng_1_02 := nge_1_02 sys h01 hn2
+          have hng_2_01 := nge_2_01 sys h12 hn0
           refine ⟨measure_fin3 (1/3) (1/3) (by linarith) (by linarith) (by linarith),
             reduce_to_disjoint sys _ (fin3_dispatch sys (1/3) (1/3) (by linarith) (by linarith) (by linarith)
               (mf3_empty ..) (mf3_s0 ..) (mf3_s1 ..) (mf3_s2 ..)
@@ -1061,42 +1028,9 @@ private theorem theorem8a_fin3_0null (sys : EpistemicSystemFA (Fin 3))
           have hge_12_0 : sys.ge ({1, 2} : Set (Fin 3)) {0} :=
             sys.trans _ _ _ (sys.mono _ _ (Set.singleton_subset_iff.mpr (Set.mem_insert (1 : Fin 3) ({2} : Set _)))) h10
           -- Singleton-vs-pair: same derivation as all-tied
-          have hng_0_12 : ¬sys.ge {(0 : Fin 3)} ({1, 2} : Set _) := fun h => by
-            have h1 : sys.ge {(0 : Fin 3)} ({0, 2} : Set _) := by
-              have hge_12_02 : sys.ge ({1, 2} : Set (Fin 3)) ({0, 2} : Set _) := by
-                rw [sys.additive ({1, 2} : Set (Fin 3)) {0, 2}]
-                rw [show ({1, 2} : Set (Fin 3)) \ {0, 2} = {1} from by ext x; fin_cases x <;> simp_all]
-                rw [show ({0, 2} : Set (Fin 3)) \ {1, 2} = {0} from by ext x; fin_cases x <;> simp_all]
-                exact h10
-              exact sys.trans _ _ _ h hge_12_02
-            rw [sys.additive {0} {0, 2}] at h1
-            rw [show ({0} : Set (Fin 3)) \ {0, 2} = ∅ from by ext x; fin_cases x <;> simp_all] at h1
-            rw [show ({0, 2} : Set (Fin 3)) \ {0} = {2} from by ext x; fin_cases x <;> simp_all] at h1
-            exact hn2 h1
-          have hng_1_02 : ¬sys.ge {(1 : Fin 3)} ({0, 2} : Set _) := fun h => by
-            have h1 : sys.ge {(1 : Fin 3)} ({1, 2} : Set _) := by
-              have hge_02_12 : sys.ge ({0, 2} : Set (Fin 3)) ({1, 2} : Set _) := by
-                rw [sys.additive ({0, 2} : Set (Fin 3)) {1, 2}]
-                rw [show ({0, 2} : Set (Fin 3)) \ {1, 2} = {0} from by ext x; fin_cases x <;> simp_all]
-                rw [show ({1, 2} : Set (Fin 3)) \ {0, 2} = {1} from by ext x; fin_cases x <;> simp_all]
-                exact h01
-              exact sys.trans _ _ _ h hge_02_12
-            rw [sys.additive {1} {1, 2}] at h1
-            rw [show ({1} : Set (Fin 3)) \ {1, 2} = ∅ from by ext x; fin_cases x <;> simp_all] at h1
-            rw [show ({1, 2} : Set (Fin 3)) \ {1} = {2} from by ext x; fin_cases x <;> simp_all] at h1
-            exact hn2 h1
-          have hng_2_01 : ¬sys.ge {(2 : Fin 3)} ({0, 1} : Set _) := fun h => by
-            have h1 : sys.ge {(2 : Fin 3)} ({0, 2} : Set _) := by
-              have hge_01_02 : sys.ge ({0, 1} : Set (Fin 3)) ({0, 2} : Set _) := by
-                rw [sys.additive ({0, 1} : Set (Fin 3)) {0, 2}]
-                rw [show ({0, 1} : Set (Fin 3)) \ {0, 2} = {1} from by ext x; fin_cases x <;> simp_all]
-                rw [show ({0, 2} : Set (Fin 3)) \ {0, 1} = {2} from by ext x; fin_cases x <;> simp_all]
-                exact h12
-              exact sys.trans _ _ _ h hge_01_02
-            rw [sys.additive {2} {0, 2}] at h1
-            rw [show ({2} : Set (Fin 3)) \ {0, 2} = ∅ from by ext x; fin_cases x <;> simp_all] at h1
-            rw [show ({0, 2} : Set (Fin 3)) \ {2} = {0} from by ext x; fin_cases x <;> simp_all] at h1
-            exact hn0 h1
+          have hng_0_12 := nge_0_12 sys h10 hn2
+          have hng_1_02 := nge_1_02 sys h01 hn2
+          have hng_2_01 := nge_2_01 sys h12 hn0
           refine ⟨measure_fin3 (2/5) (2/5) (by linarith) (by linarith) (by linarith),
             reduce_to_disjoint sys _ (fin3_dispatch sys (2/5) (2/5) (by linarith) (by linarith) (by linarith)
               (mf3_empty ..) (mf3_s0 ..) (mf3_s1 ..) (mf3_s2 ..)

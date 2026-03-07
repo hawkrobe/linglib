@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.228.82] - 2026-03-06
+
+### Changed
+- **EpistemicScale/**: Phase 0+1 of Finset-native reformulation — deduplicate 6 inlined ¬ge proofs in Representability.lean's first 2 ordering cases with helper calls (2277→2211 lines); add `FinsetBridge.lean` with `set_sdiff_fin` tactic and `set_sdiff_eq_of_finset` bridge lemma for proving Set (Fin n) difference equalities via decidable Finset operations
+
+## [0.228.81] - 2026-03-06
+
+### Fixed
+- **Rubinstein2014.lean**: Fix DOI (papq.12044 → papq.12047), fix Horn citation (1978 → 1989 for Table 2), add missing `good` (positive evaluative form) and `need` (negative evidence, fails Tests 1&2) to natural class data, add tax report worked example (§3.3 ex. 45–51) demonstrating should→have-to promotion, add FunctionWords bridge theorems verifying fragment force classifications, add `goodCapability` for positive/comparative asymmetry
+
+## [0.228.80] - 2026-03-06
+
+### Changed
+- **FrankeBergen2020**: Audit against PDF — move from `Quantification/Studies/` to `ScalarImplicatures/Studies/` (paper is about scalar implicature, not quantification per se); fix misattributed `@cite{franke-bergen-2020}` in FlexibleNegation.lean (contradictory/contrary negation is Horn/Cruse, not Franke & Bergen); fix reversed author order "Bergen & Franke" → "Franke & Bergen" in CompositionalRSA.lean; trim 71 lines of boilerplate (RSAModel/ModelResult/Finding enums, trivial self-checking theorems); replace local IE implementation with shared `applyIEBool` from Exhaustivity/Basic.lean; add `table1_ss` theorem verifying full SS truth table across lit/I/OI/MOI parses against Table 1; fix footnote 7 wording; regenerate bibliography
+- **Exhaustivity/Basic.lean**: Add decidable IE section (`isSatBool`, `entailsBool`, `sublists`, `ieIndicesBool`, `applyIEBool`) — computable Bool-based Innocent Exclusion for finite types, usable by `native_decide` and `rsa_predict`, complementing the `Prop'`-based `exhIE` specification
+
 ## [0.228.79] - 2026-03-06
 
 ### Changed

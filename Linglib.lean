@@ -92,6 +92,7 @@ import Linglib.Core.Lexical.NounCategorization
 import Linglib.Core.Scales.Roundness
 import Linglib.Core.Scales.EpistemicScale.Defs
 import Linglib.Core.Scales.EpistemicScale.Entailments
+import Linglib.Core.Scales.EpistemicScale.FinsetBridge
 import Linglib.Core.Scales.EpistemicScale.Conditional
 import Linglib.Core.Scales.EpistemicScale.Cancellation
 import Linglib.Core.Scales.EpistemicScale.Cancellation88
@@ -800,7 +801,6 @@ import Linglib.Phenomena.Quantification.Data
 import Linglib.Phenomena.Quantification.Examples
 import Linglib.Phenomena.Quantification.Typology
 import Linglib.Phenomena.Quantification.Studies.BarwiseCooper1981
-import Linglib.Phenomena.Quantification.Studies.FrankeBergen2020
 import Linglib.Phenomena.Quantification.Studies.ScontrasPearl2021
 import Linglib.Phenomena.Quantification.Studies.ScontrasPearl2021RSA
 import Linglib.Phenomena.Quantification.Studies.ScontrasPearl2021TwoNot
@@ -844,6 +844,7 @@ import Linglib.Phenomena.Reference.Studies.KursatDegen2021
 import Linglib.Phenomena.Reference.Studies.RonderosEtAl2024
 import Linglib.Phenomena.Reference.Studies.SedivyEtAl1999
 import Linglib.Phenomena.ScalarImplicatures.Basic
+import Linglib.Phenomena.ScalarImplicatures.Studies.FrankeBergen2020
 import Linglib.Phenomena.ScalarImplicatures.Studies.BaleEtAl2025
 import Linglib.Phenomena.ScalarImplicatures.Studies.BarnettEtAl2022
 import Linglib.Phenomena.ScalarImplicatures.Studies.CremersWilcoxSpector2023
