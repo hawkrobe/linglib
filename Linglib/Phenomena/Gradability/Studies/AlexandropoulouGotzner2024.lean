@@ -54,23 +54,17 @@ set_option autoImplicit false
 namespace Phenomena.Gradability.Studies.AlexandropoulouGotzner2024
 
 open Core (NegationType)
-open Core.Scale (Boundedness Degree Threshold ThresholdPair
+open Core.Scale (Boundedness Degree Threshold
   Degree.toNat Threshold.toNat deg thr)
 open Semantics.Lexical.Adjective (GradableAdjEntry InformationalStrength
-  inGapRegion positiveMeaning' contraryNegMeaning)
+  ThresholdPair inGapRegion positiveMeaning' contraryNegMeaning)
 open Fragments.English.Predicates.Adjectival
   (large small gigantic tiny clean dirty pristine filthy)
+open Phenomena.Gradability (AdjectiveClass)
 
 -- ============================================================================
 -- § 1. Experimental Design
 -- ============================================================================
-
-/-- Kennedy's two-way adjective classification relevant to negation behavior.
-    Derived from `antonymRelation` on fragment entries. -/
-inductive AdjClass where
-  | relative  -- open scale, contrary antonyms, extension gap
-  | absolute  -- closed scale, contradictory antonyms, no gap
-  deriving Repr, DecidableEq, BEq
 
 /-- Evaluative polarity: whether the adjective denotes a desirable property. -/
 inductive EvaluativePolarity where
@@ -78,11 +72,12 @@ inductive EvaluativePolarity where
   | negative  -- small, dirty (undesirable)
   deriving Repr, DecidableEq, BEq
 
-/-- Derive adjective class from fragment entry's antonym relation. -/
-def classifyAdj (entry : GradableAdjEntry) : AdjClass :=
+/-- Derive adjective class from fragment entry's antonym relation.
+    Uses the 2-way `isRelative` coarsening of Kennedy's 3-way classification. -/
+def classifyAdj (entry : GradableAdjEntry) : Bool :=
   match entry.antonymRelation with
-  | some .contrary => .relative
-  | _              => .absolute
+  | some .contrary => true   -- relative: contrary antonyms, extension gap
+  | _              => false  -- absolute: contradictory antonyms, no gap
 
 /-- An adjective condition in the 2×2×2 design. -/
 structure Condition where
@@ -103,24 +98,25 @@ structure AdjQuadruple where
   weakNeg    : GradableAdjEntry
   strongPos  : GradableAdjEntry
   strongNeg  : GradableAdjEntry
-  adjClass   : AdjClass
+  /-- True if the quadruple's adjectives are relative (contrary antonyms). -/
+  isRelative : Bool
   deriving Repr
 
 /-- Size scale quadruple (Experiment 1). -/
 def sizeQuad : AdjQuadruple where
-  weakPos   := large
-  weakNeg   := small
-  strongPos := gigantic
-  strongNeg := tiny
-  adjClass  := .relative
+  weakPos    := large
+  weakNeg    := small
+  strongPos  := gigantic
+  strongNeg  := tiny
+  isRelative := true
 
 /-- Cleanliness scale quadruple (Experiment 2). -/
 def cleanlinessQuad : AdjQuadruple where
-  weakPos   := clean
-  weakNeg   := dirty
-  strongPos := pristine
-  strongNeg := filthy
-  adjClass  := .absolute
+  weakPos    := clean
+  weakNeg    := dirty
+  strongPos  := pristine
+  strongNeg  := filthy
+  isRelative := false
 
 -- ============================================================================
 -- § 3. Extension Gap: The Structural Precondition
@@ -128,26 +124,26 @@ def cleanlinessQuad : AdjQuadruple where
 
 /-- Relative adjectives have contrary antonyms → extension gap exists. -/
 theorem relative_has_gap :
-    classifyAdj large = .relative ∧
-    classifyAdj small = .relative := by
+    classifyAdj large = true ∧
+    classifyAdj small = true := by
   simp [classifyAdj, large, small]
 
 /-- Absolute adjectives have contradictory antonyms → no extension gap. -/
 theorem absolute_no_gap :
-    classifyAdj clean = .absolute ∧
-    classifyAdj dirty = .absolute := by
+    classifyAdj clean = false ∧
+    classifyAdj dirty = false := by
   simp [classifyAdj, clean, dirty]
 
 /-- Strong relative adjectives are also contrary (gap between gigantic/tiny). -/
 theorem strong_relative_has_gap :
-    classifyAdj gigantic = .relative ∧
-    classifyAdj tiny = .relative := by
+    classifyAdj gigantic = true ∧
+    classifyAdj tiny = true := by
   simp [classifyAdj, gigantic, tiny]
 
 /-- Strong absolute adjectives are contrary too (gap between pristine/filthy). -/
 theorem strong_absolute_has_gap :
-    classifyAdj pristine = .relative ∧
-    classifyAdj filthy = .relative := by
+    classifyAdj pristine = true ∧
+    classifyAdj filthy = true := by
   simp [classifyAdj, pristine, filthy]
 
 -- ============================================================================
@@ -259,15 +255,13 @@ theorem no_gap_implies_symmetric_negation
     {max : Nat} (θ : Threshold max) (d : Degree max) :
     -- Contradictory negation: complement of "positive" = "negative"
     (¬ (θ : Degree max) < d) ↔ d ≤ (θ : Degree max) := by
-  constructor
-  · intro h; omega
-  · intro h h'; omega
+  simp only [not_lt]
 
 /-- Contrary antonyms (with gap) allow degrees that are neither
     positive nor negative — the gap region. -/
 theorem gap_allows_middling
     {max : Nat} (tp : ThresholdPair max) (d : Degree max)
-    (h_in_gap : inGapRegion d tp = true) :
+    (_h_in_gap : inGapRegion d tp = true) :
     -- Degree is not in the positive region
     positiveMeaning' d tp = false ∨
     -- (The gap condition itself guarantees this, but we state it
@@ -302,8 +296,8 @@ theorem strong_absolute_adjs_contrary :
 
 /-- Relative and absolute quadruples share scale structure within class. -/
 theorem quadruple_class_consistency :
-    sizeQuad.adjClass = .relative ∧
-    cleanlinessQuad.adjClass = .absolute := by
+    sizeQuad.isRelative = true ∧
+    cleanlinessQuad.isRelative = false := by
   constructor <;> rfl
 
 /-- All adjectives in the size quadruple share the same dimension. -/
@@ -357,7 +351,7 @@ def notSmallCost : PeriphrasticCost where
     statement mode), not weaker. If complexity-based competition (Krifka 2007)
     were the mechanism, removing competition should weaken the asymmetry. -/
 structure CompetitionFinding where
-  adjClass : AdjClass
+  isRelative : Bool
   asymmetryWithCompetition : Bool
   asymmetryWithoutCompetition : Bool
   asymmetryStrongerWithout : Bool
@@ -366,7 +360,7 @@ structure CompetitionFinding where
 /-- Experiment 1 result: relative adjective asymmetry persists and
     strengthens without overt competition. -/
 def experiment1Finding : CompetitionFinding where
-  adjClass := .relative
+  isRelative := true
   asymmetryWithCompetition := true
   asymmetryWithoutCompetition := true
   asymmetryStrongerWithout := true
@@ -374,7 +368,7 @@ def experiment1Finding : CompetitionFinding where
 /-- Experiment 2 result: absolute adjective symmetry is unaffected
     by competition. -/
 def experiment2Finding : CompetitionFinding where
-  adjClass := .absolute
+  isRelative := false
   asymmetryWithCompetition := false
   asymmetryWithoutCompetition := false
   asymmetryStrongerWithout := false
@@ -396,7 +390,7 @@ open Phenomena.Negation.FlexibleNegation
 /-- The two-threshold model in FlexibleNegation and `ThresholdPair` in
     Adjective.Theory are the same structure — both model extension gaps
     between contrary antonyms. This bridge connects them. -/
-def flexNegToThresholdPair (m : TwoThresholdModel) (s : RelativeScale) :
+def flexNegToThresholdPair (_m : TwoThresholdModel) (s : RelativeScale) :
     ThresholdPair 4 :=
   ⟨s.θ_pos, s.θ_neg, s.gap⟩
 

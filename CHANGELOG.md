@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.228.69] - 2026-03-06
+
+### Fixed
+- **AlexandropoulouGotzner2024 build**: Fix ThresholdPair namespace (Semantics.Lexical.Adjective, not Core.Scale), replace omega with simp on Degree/Threshold wrapper types
+
+### Changed
+- **Unify AdjectiveClass**: Replace local `AdjClass` inductive in study file with `AdjectiveClass.isRelative` coarsening from `Data.lean`; add `AdjectiveClass.isRelative` to `Phenomena/Gradability/Data.lean`
+
 ## [0.228.68] - 2026-03-06
 
 ### Changed

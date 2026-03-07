@@ -163,6 +163,12 @@ inductive AdjectiveClass where
   | absoluteMinimum      -- wet, bent, open (threshold = min of scale)
   deriving Repr, DecidableEq, BEq
 
+/-- Coarse 2-way classification: relative vs absolute.
+    Collapses absoluteMaximum and absoluteMinimum. -/
+def AdjectiveClass.isRelative : AdjectiveClass → Bool
+  | .relativeGradable => true
+  | _                 => false
+
 /--
 Data capturing Kennedy's adjective typology predictions.
 
