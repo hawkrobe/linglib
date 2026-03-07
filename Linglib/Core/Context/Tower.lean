@@ -44,6 +44,7 @@ inductive ShiftLabel where
   | perspective -- full perspective shift (FID: agent + time + world)
   | quotation   -- direct quotation
   | clauseChain -- clause chain scope (final verb TAM scopes over medial clauses)
+  | roleShift   -- sign language Role Shift (viewpoint + perspective shift)
   | generic     -- unclassified shift
   deriving DecidableEq, Repr, BEq, Inhabited
 

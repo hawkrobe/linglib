@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.228.73] - 2026-03-06
+
+### Added
+- **Iconological Semantics theory**: `Theories/Semantics/Iconic/Basic.lean` — static/dynamic viewpoints, dynamic projection, classifier predicates with logical + iconic content
+- **Iconicity phenomenon**: `Phenomena/Iconicity/Basic.lean` — classifier direction, relative motion readings, traveling shot effect
+- **SchlenkerEtAl2026 study file**: Formalize Schlenker, Lamberton & Lamberton (2026) "Traveling Shots in Language" — dynamic viewpoints for ASL classifiers, Role Shift as monster (integrated with `Monsters.lean`), restrictive vs liberal theory, traveling shot condition with `no_travelingShot_static` and `restrictive_no_travelingShot` theorems, empirical paradigms (7, 13, 19)
+- **ASL fragment**: `Fragments/ASL/Classifiers.lean` — first sign language fragment; TREE-cl, POLE-cl, PERSON-cl, VEHICLE-cl, WALL-cl, RECTANGLE-cl, CORNER-cl classifier entries
+- **ShiftLabel.roleShift**: new shift label for sign language Role Shift in `Core/Context/Tower.lean`
+- **references.bib**: Add `schlenker-2017a`, `schlenker-lamberton-2024`, `schlenker-lamberton-lamberton-2026`
+
 ## [0.228.71] - 2026-03-06
 
 ### Added

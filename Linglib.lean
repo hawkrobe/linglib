@@ -326,6 +326,7 @@ import Linglib.Tactics.RSAPredict
 import Linglib.Tactics.OntSort
 -- Fragments
 import Linglib.Fragments.Arabic.Relativization
+import Linglib.Fragments.ASL.Classifiers
 import Linglib.Fragments.Dutch.Binominals
 import Linglib.Fragments.Dutch.Nouns
 import Linglib.Fragments.Dutch.Particles
@@ -670,6 +671,9 @@ import Linglib.Phenomena.Imprecision.Studies.BeltramaSchwarz2024
 import Linglib.Phenomena.Imprecision.Studies.BeltramaSoltBurnett2022
 import Linglib.Phenomena.Imprecision.Studies.LassiterGoodman2017
 import Linglib.Phenomena.Imprecision.Projection
+-- Phenomena: Iconicity (sign language classifier predicates, viewpoints)
+import Linglib.Phenomena.Iconicity.Basic
+import Linglib.Phenomena.Iconicity.Studies.SchlenkerEtAl2026
 import Linglib.Phenomena.LexicalTypology.Typology
 import Linglib.Phenomena.FillerGap.Islands.Data
 import Linglib.Phenomena.FillerGap.Islands.MannerOfSpeaking
@@ -1214,6 +1218,8 @@ import Linglib.Theories.Semantics.Lexical.Verb.ChangeOfState.Theory
 import Linglib.Theories.Semantics.Lexical.Verb.Habituals
 import Linglib.Theories.Semantics.Lexical.Verb.SelectionalPreferences
 import Linglib.Theories.Semantics.Lexical.Verb.ViewpointAspect
+-- Theories: Semantics.Iconic (Iconological Semantics for sign language)
+import Linglib.Theories.Semantics.Iconic.Basic
 -- Theories: Semantics.Events (neo-Davidsonian)
 import Linglib.Theories.Semantics.Events.Basic
 import Linglib.Theories.Semantics.Events.DegreeEvents
