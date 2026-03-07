@@ -172,11 +172,17 @@ def extractRatFromCauchy (e : Expr) : MetaM (Option (ℚ × Expr)) := do
 
 def maxDepth : ℕ := 500
 
-/-- Memoization cache for reifyToRExpr, keyed on Expr structural hash.
-    Stores `(rexprExpr, bounds)`. -/
-abbrev ReifyCache := IO.Ref (Std.HashMap UInt64 (Expr × MetaBounds))
+/-- Memoization cache for reifyToRExpr, keyed on `Expr` (structural equality).
+    Stores `(rexprExpr, bounds)`.
+
+    Using `Expr` as key (not `UInt64` hash) ensures collision safety: two
+    expressions with the same hash but different structure are correctly
+    distinguished by `HashMap`'s `BEq Expr` check. Without this, the preseed
+    path could populate cache entries that collide with organically-reached
+    sub-expressions, causing `denote(rexpr) ≢ e` kernel failures. -/
+abbrev ReifyCache := IO.Ref (Std.HashMap Expr (Expr × MetaBounds))
 /-- Store result in cache and return it. -/
-private def cacheReturn (cache : ReifyCache) (key : UInt64)
+private def cacheReturn (cache : ReifyCache) (key : Expr)
     (result : Expr × MetaBounds) : MetaM (Expr × MetaBounds) := do
   cache.modify fun m => m.insert key result
   return result
@@ -218,8 +224,8 @@ partial def reifyToRExpr (cache : ReifyCache) (e : Expr) (depth : ℕ) :
   if e.isLet then
     return ← reifyToRExpr cache (e.letBody!.instantiate1 e.letValue!) (depth - 1)
 
-  -- Cache lookup
-  let key := hash e
+  -- Cache lookup (keyed on Expr structural equality, not just hash)
+  let key := e
   if let some result := (← cache.get).get? key then
     return result
 
@@ -581,7 +587,7 @@ partial def reifyToRExpr (cache : ReifyCache) (e : Expr) (depth : ℕ) :
                 -- same summand function produce the same result. Deduplicates e.g.
                 -- qudProject calls for worlds in the same QUD equivalence class.
                 let filterKey := filteredElems.foldl
-                  (fun (h : UInt64) elem => h * 31 + hash elem) (hash fBody)
+                  (fun acc elem => mkApp acc elem) fBody
                 if let some result := (← cache.get).get? filterKey then
                   return ← cacheReturn cache key result
                 let firstApp := Expr.app fBody filteredElems[0]!
@@ -927,7 +933,7 @@ def reifyS1Scores (cfg : Expr) :
       lpValues := lpValues.push (← extractRat lpExpr)
 
   -- Warm up cache: pre-compute all L0 values
-  let reifyCache ← IO.mkRef (∅ : Std.HashMap UInt64 (Expr × MetaBounds))
+  let reifyCache ← IO.mkRef (∅ : Std.HashMap Expr (Expr × MetaBounds))
   for l in allLElems do
     let l0agent ← mkAppM ``RSA.RSAConfig.L0agent #[cfg, l]
     for u in allUElems do

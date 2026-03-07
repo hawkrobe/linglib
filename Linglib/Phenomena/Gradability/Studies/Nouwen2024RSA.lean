@@ -319,14 +319,12 @@ peaks at extremes, so L1 hearing "horribly warm" concentrates probability
 on extreme heights (Figure 7). Heights near the norm (h=5) have
 μ_horrible = 0 and cannot satisfy the evaluative positive form at any θ_e. -/
 
-set_option rsa_predict.skipReflection true in
 set_option maxRecDepth 8192 in
 set_option maxHeartbeats 16000000 in
 theorem horribly_shifts_upward :
     nouwenCfg.L1 .horribly_warm (deg 8) > nouwenCfg.L1 .horribly_warm (deg 4) := by
   rsa_predict
 
-set_option rsa_predict.skipReflection true in
 set_option maxRecDepth 8192 in
 set_option maxHeartbeats 16000000 in
 theorem horribly_implies_warm :
@@ -340,14 +338,12 @@ peaks at the norm (h=5), so L1 hearing "pleasantly warm" concentrates
 probability on moderate heights (Figure 8). Extreme heights (h=9,10) have
 low μ_pleasant and cannot satisfy the evaluative positive form. -/
 
-set_option rsa_predict.skipReflection true in
 set_option maxRecDepth 8192 in
 set_option maxHeartbeats 16000000 in
 theorem pleasantly_prefers_moderate :
     nouwenCfg.L1 .pleasantly_warm (deg 6) > nouwenCfg.L1 .pleasantly_warm (deg 9) := by
   rsa_predict
 
-set_option rsa_predict.skipReflection true in
 set_option maxRecDepth 8192 in
 set_option maxHeartbeats 16000000 in
 theorem pleasantly_implies_warm :

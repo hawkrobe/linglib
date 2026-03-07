@@ -42,7 +42,7 @@ open Linglib.Interval
     within a file. The first theorem pays the full reification cost; subsequent
     theorems for the same model get cache hits on shared sub-expressions
     (L0 policies, S1 scores, belief distributions, etc.). -/
-initialize persistentReifyCache : IO.Ref (Std.HashMap UInt64 (Expr × MetaBounds)) ←
+initialize persistentReifyCache : IO.Ref (Std.HashMap Expr (Expr × MetaBounds)) ←
   IO.mkRef ∅
 
 -- ============================================================================
@@ -306,10 +306,11 @@ def tryDirectRExprCompare (goal : MVarId) (lhsExpr rhsExpr : Expr) : TacticM Boo
     activeRhs := scoreRhs
     denomNote := " [denom-cancelled]"
 
-  -- Pre-seed cache with L0/S1 values (fast path for RSAConfig models)
-  let _ ← try
-    tryPreseedRSACache persistentReifyCache activeLhs activeRhs
-  catch _ => pure false
+  -- NOTE: preseed (tryPreseedRSACache) disabled — organic cache warming from
+  -- the first theorem is faster because it reifies only needed sub-expressions.
+  -- Preseed reifies all (L,U,W) triples (22K for Nouwen, 4400 for LG2017) even
+  -- when only a subset is needed for the specific utterance comparison.
+  -- The persistent cache across theorems provides the same sharing benefit.
 
   let cacheBefore ← persistentReifyCache.get
   let (lhsRExpr, lhsBounds) ← reifyToRExpr persistentReifyCache activeLhs maxDepth
@@ -384,10 +385,8 @@ def tryDirectRExprCompare (goal : MVarId) (lhsExpr rhsExpr : Expr) : TacticM Boo
     Assigns proofs directly — the kernel verifies denote ≡ original. -/
 def tryDirectRExprNotGt (goal : MVarId) (lhsExpr rhsExpr : Expr) : TacticM Bool := do
   let t0 ← IO.monoMsNow
-  -- Pre-seed cache with L0/S1 values if this is an RSA expression
-  let _ ← try tryPreseedRSACache persistentReifyCache lhsExpr rhsExpr catch _ => pure false
-  let (lhsRExpr, lhsBounds) ← reifyToRExpr persistentReifyCache lhsExpr maxDepth
-  let (rhsRExpr, rhsBounds) ← reifyToRExpr persistentReifyCache rhsExpr maxDepth
+  let (lhsRExpr, _lhsBounds) ← reifyToRExpr persistentReifyCache lhsExpr maxDepth
+  let (rhsRExpr, _rhsBounds) ← reifyToRExpr persistentReifyCache rhsExpr maxDepth
 
   let t1 ← IO.monoMsNow
   logInfo m!"rsa_predict: [direct/not-gt] reified ({t1 - t0}ms)"

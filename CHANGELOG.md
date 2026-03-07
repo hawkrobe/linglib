@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.228.89] - 2026-03-07
+
+### Fixed
+- **rsa_predict**: Fix reification cache hash collision bug — `ReifyCache` now uses `Expr` keys (structural equality) instead of `UInt64` hash, preventing `denote(rexpr) ≢ e` kernel failures when preseed entries collide with organic sub-expressions
+- **rsa_predict**: Disable preseed (`tryPreseedRSACache`) — organic cache warming from first theorem is faster (6s vs 19s for Nouwen) since it reifies only needed sub-expressions
+
+### Changed
+- **Nouwen2024RSA.lean**: All 4 theorems now use fast reflection path (~6s + ~1s + ~2.5s + ~0.5s) instead of CProof (~40s each)
+
 ## [0.228.88] - 2026-03-07
 
 ### Added
