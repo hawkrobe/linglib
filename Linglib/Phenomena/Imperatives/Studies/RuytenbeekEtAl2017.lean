@@ -57,7 +57,7 @@ type receiving directive illocutionary force.
 
 namespace Phenomena.Imperatives.Studies.RuytenbeekEtAl2017
 
-open Core.ModalLogic (ModalFlavor ModalForce)
+open Core.Modality (ModalFlavor ModalForce)
 open Core.Discourse (IllocutionaryMood)
 open Semantics.Modality.Assert (primaryFlavor SpeechActType)
 open Minimalism.Phenomena.SpeechActs (SAPMood)
@@ -630,7 +630,7 @@ theorem fragment_force_explains_study2 :
 /-- The fragment's force-flavor pair for *devoir* includes deontic
     necessity — the same combination as the imperative speech act. -/
 theorem devoir_matches_imperative_speech_act :
-    (⟨.necessity, .deontic⟩ : Core.ModalLogic.ForceFlavor) ∈
+    (⟨.necessity, .deontic⟩ : Core.Modality.ForceFlavor) ∈
     devoir.forceFlavors ∧
     primaryFlavor .imperative = .deontic := by
   exact ⟨by decide, rfl⟩

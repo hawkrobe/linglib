@@ -2,7 +2,7 @@ import Mathlib.Data.Finset.Basic
 import Mathlib.Order.Lattice
 import Mathlib.Order.BoundedOrder.Basic
 import Linglib.Core.Semantics.Proposition
-import Linglib.Core.Register
+import Linglib.Core.Modality.ModalTypes
 
 /-!
 # Modal Logic
@@ -11,54 +11,15 @@ import Linglib.Core.Register
 Kripke semantics for normal modal logics. Formalizes frames, frame conditions,
 correspondence theorems, and the lattice of normal modal logics.
 
-Linguistic interpretations belong in `Theories/Montague/Modal/`.
-
+Modal typological types (`ModalForce`, `ModalFlavor`, `ForceFlavor`, etc.)
+live in `Core.Modality` (`Core/Modality/ModalTypes.lean`).
+Linguistic interpretations belong in `Theories/Semantics/Modality/`.
 -/
 
 namespace Core.ModalLogic
 
 open Core.Proposition (FiniteWorlds)
-
-/-! ## Operators -/
-
-/-- Modal force: necessity (□), weak necessity (□w), or possibility (◇).
-    @cite{von-fintel-iatridou-2008}, @cite{agha-jeretic-2026}.
-
-    Weak necessity ("ought", "should") sits between □ and ◇ in strength:
-    □φ → □wφ → ◇φ. The nature of this intermediate force is debated:
-
-    - @cite{von-fintel-iatridou-2008}: same ∀ quantifier as strong necessity
-      but over a refined (smaller) set of best worlds (domain restriction).
-    - Rubinstein (2014): fundamentally comparative meaning.
-    - @cite{agha-jeretic-2022}: non-quantificational (plural predication).
-
-    Weak necessity has no clean dual in this 3-point space: domain refinement
-    weakens ∀ but strengthens ∃ (@cite{agha-jeretic-2026} §2.4). -/
-inductive ModalForce where
-  | necessity
-  | weakNecessity
-  | possibility
-  deriving DecidableEq, BEq, Repr, Inhabited
-
-instance : LawfulBEq ModalForce where
-  eq_of_beq {a b} h := by cases a <;> cases b <;> first | rfl | exact absurd h (by decide)
-  rfl {a} := by cases a <;> decide
-
-instance : ToString ModalForce where
-  toString | .necessity => "□" | .weakNecessity => "□w" | .possibility => "◇"
-
-/-- Classical dual: □ ↔ ◇. Weak necessity maps to possibility as a
-    stipulated default — no theoretically motivated dual for □w exists
-    in this 3-point space (@cite{agha-jeretic-2026} §2.4: "the notion
-    of a possibility counterpart to weak necessity has not received
-    much attention"). -/
-def ModalForce.dual : ModalForce → ModalForce
-  | .necessity => .possibility
-  | .weakNecessity => .possibility
-  | .possibility => .necessity
-
-@[simp] theorem ModalForce.dual_dual_necessity : ModalForce.necessity.dual.dual = .necessity := rfl
-@[simp] theorem ModalForce.dual_dual_possibility : ModalForce.possibility.dual.dual = .possibility := rfl
+open Core.Modality (ModalForce)
 
 /-! ## Frames and Accessibility -/
 
@@ -309,197 +270,5 @@ theorem universalR_S5 {W : Type*} :
 
 theorem identityR_refl {W : Type*} [DecidableEq W] : Refl (identityR (W := W)) :=
   fun w => by simp [identityR]
-
-/-! ## Modal Flavors and the Modal Semantic Space
-
-Theory-neutral vocabulary for cross-linguistic modal typology.
-A modal's meaning is a set of force-flavor pairs (Imel, Guo, & @cite{imel-guo-steinert-threlkeld-2026}).
-
-* @cite{kratzer-1981}. The Notional Category of Modality.
-* Imel, Guo, & @cite{imel-guo-steinert-threlkeld-2026}. An Efficient Communication Analysis of Modal Typology.
--/
-
-/-- Modal flavor: the contextual source of modality.
-    Theory-neutral: avoids commitment to how flavor is semantically encoded.
-    Teleological is subsumed under circumstantial (both concern facts/abilities). -/
-inductive ModalFlavor where
-  | epistemic       -- Evidence/knowledge
-  | deontic         -- Norms/rules
-  | circumstantial  -- Facts/abilities (subsumes teleological)
-  deriving DecidableEq, BEq, Repr, Inhabited
-
-instance : LawfulBEq ModalFlavor where
-  eq_of_beq {a b} h := by cases a <;> cases b <;> first | rfl | exact absurd h (by decide)
-  rfl {a} := by cases a <;> decide
-
-instance : ToString ModalFlavor where
-  toString | .epistemic => "e" | .deontic => "d" | .circumstantial => "c"
-
-/-- All modal flavors. -/
-def ModalFlavor.all : List ModalFlavor := [.epistemic, .deontic, .circumstantial]
-
-/-- All modal forces. -/
-def ModalForce.all : List ModalForce := [.necessity, .weakNecessity, .possibility]
-
-/-- A force-flavor pair: one point in the modal semantic space P.
-    |P| = |Force| × |Flavor| = 3 × 3 = 9.
-
-    Imel, Guo, & @cite{imel-guo-steinert-threlkeld-2026}: modal meanings are subsets of P.
-    Their original database uses a 2×3 space (necessity/possibility × 3 flavors);
-    we extend to 3×3 by adding weak necessity as a distinct force value,
-    following @cite{agha-jeretic-2026}'s treatment of weak necessity as a
-    category intermediate between □ and ◇. -/
-structure ForceFlavor where
-  force : ModalForce
-  flavor : ModalFlavor
-  deriving DecidableEq, BEq, Repr
-
-instance : LawfulBEq ForceFlavor where
-  eq_of_beq {a b} h := by
-    cases a with | mk f1 fl1 => cases b with | mk f2 fl2 =>
-    cases f1 <;> cases f2 <;> cases fl1 <;> cases fl2 <;>
-      first | rfl | exact absurd h (by decide)
-  rfl {a} := by cases a with | mk f fl => cases f <;> cases fl <;> decide
-
-instance : ToString ForceFlavor where
-  toString ff := s!"({ff.force},{ff.flavor})"
-
-/-- All nine points in the modal semantic space. -/
-def ForceFlavor.universe : List ForceFlavor :=
-  ModalForce.all.flatMap fun fo => ModalFlavor.all.map fun fl => ⟨fo, fl⟩
-
-theorem ForceFlavor.universe_length : ForceFlavor.universe.length = 9 := by native_decide
-
-/-- The Cartesian product of forces and flavors. Infrastructure for constructing
-    modal meanings; no theoretical commitment (just list operations). -/
-def ForceFlavor.cartesianProduct (fos : List ModalForce) (fls : List ModalFlavor) :
-    List ForceFlavor :=
-  fos.flatMap fun fo => fls.map fun fl => ⟨fo, fl⟩
-
-/-! ## Modal Item
-
-A shared type for any expression carrying modal meaning (auxiliary, adverb,
-or typological entry). Unifies the semantic core across syntactic categories. -/
-
-/-- A modal item: the shared core of any expression carrying modal meaning.
-
-    Unifies `AuxEntry.{form, modalMeaning, register}`,
-    `ModalAdvEntry.{form, modalMeaning, register}`, and
-    `ModalExpression.{form, meaning}` under a common type.
-
-    This enables generic operations (e.g., `sharesForce`, concord checks)
-    that work across syntactic categories. -/
-structure ModalItem where
-  form : String
-  meaning : List ForceFlavor
-  register : Core.Register.Level := .neutral
-  deriving Repr, BEq
-
-/-- Two modal items share force if at least one ForceFlavor pair in each
-    has the same force (exact match). -/
-def ModalItem.sharesForce (a b : ModalItem) : Bool :=
-  a.meaning.any fun ff1 => b.meaning.any fun ff2 => ff1.force == ff2.force
-
-/-- Two modal items share flavor if at least one ForceFlavor pair in each
-    has the same flavor. -/
-def ModalItem.sharesFlavor (a b : ModalItem) : Bool :=
-  a.meaning.any fun ff1 => b.meaning.any fun ff2 => ff1.flavor == ff2.flavor
-
-/-- Two modal items are register variants if they differ in register. -/
-def ModalItem.areRegisterVariants (a b : ModalItem) : Bool :=
-  Core.Register.areVariants a.register b.register
-
-/-! ## Concord Types
-
-Classification of concord phenomena by what logical type is doubled.
-Concord = grammatical doubling that yields a single reading rather
-than the compositionally expected doubled reading. -/
-
-/-- Classification of concord phenomena by what logical type is doubled. -/
-inductive ConcordType where
-  | negation           -- ¬¬ → ¬ (negative concord)
-  | modalNecessity     -- □□ → □ (necessity modal concord)
-  | modalPossibility   -- ◇◇ → ◇ (possibility modal concord)
-  deriving DecidableEq, BEq, Repr
-
-/-- Map modal force to the corresponding concord type.
-    Weak necessity patterns with necessity for concord purposes (both are ∀ quantifiers). -/
-def ConcordType.fromModalForce : ModalForce → ConcordType
-  | .necessity     => .modalNecessity
-  | .weakNecessity => .modalNecessity
-  | .possibility   => .modalPossibility
-
-/-- Two modal items share concord-compatible force: both necessity and weak
-    necessity map to the same concord class (necessity-type). This is the
-    structural precondition for modal concord. -/
-def ModalItem.sharesConcordForce (a b : ModalItem) : Bool :=
-  a.meaning.any fun ff1 => b.meaning.any fun ff2 =>
-    ConcordType.fromModalForce ff1.force == ConcordType.fromModalForce ff2.force
-
-/-- Strength ordering on modal force: □ ≥ □w ≥ ◇.
-    `f₁.atLeastAsStrong f₂` iff an f₁-claim is at least as strong as an f₂-claim.
-    @cite{von-fintel-iatridou-2008}: must φ → ought φ → can φ. -/
-def ModalForce.atLeastAsStrong : ModalForce → ModalForce → Bool
-  | .necessity, _ => true
-  | .weakNecessity, .weakNecessity | .weakNecessity, .possibility => true
-  | .possibility, .possibility => true
-  | _, _ => false
-
-theorem ModalForce.atLeastAsStrong_refl (f : ModalForce) :
-    f.atLeastAsStrong f = true := by cases f <;> rfl
-
-theorem ModalForce.atLeastAsStrong_trans (f₁ f₂ f₃ : ModalForce)
-    (h₁ : f₁.atLeastAsStrong f₂ = true) (h₂ : f₂.atLeastAsStrong f₃ = true) :
-    f₁.atLeastAsStrong f₃ = true := by
-  cases f₁ <;> cases f₂ <;> cases f₃ <;> simp_all [atLeastAsStrong]
-
-theorem ModalForce.necessity_strongest (f : ModalForce) :
-    ModalForce.necessity.atLeastAsStrong f = true := by cases f <;> rfl
-
-theorem ModalForce.possibility_weakest (f : ModalForce) :
-    f.atLeastAsStrong .possibility = true := by cases f <;> rfl
-
-/-! ## Modal Decomposability
-
-@cite{werner-2006}, @cite{condoravdi-2002}: some modals resist the standard
-force × flavor decomposition. "Will" and other temporal-modal elements
-do not factor cleanly into a modal force and a conversational background
-flavor. This annotation distinguishes decomposable modals (standard
-Kratzerian analysis) from unitary ones. -/
-
-/-- Whether a modal meaning decomposes into independent force and flavor
-    dimensions or is a unitary, non-decomposable operator. -/
-inductive ModalDecomposition where
-  | decomposable  -- ⟦m⟧ = fo(m) × fl(m)
-  | unitary       -- ⟦m⟧ ≠ fo(m) × fl(m)
-  deriving DecidableEq, BEq, Repr
-
-/-- Classify a modal item by whether its meaning set equals the Cartesian
-    product of its force and flavor projections. A modal is decomposable
-    iff every combination of its attested forces and flavors is also
-    attested — the two dimensions are independent. -/
-def ModalItem.decomposition (m : ModalItem) : ModalDecomposition :=
-  let forces := (m.meaning.map (·.force)).eraseDups
-  let flavors := (m.meaning.map (·.flavor)).eraseDups
-  if (ForceFlavor.cartesianProduct forces flavors).all (m.meaning.contains ·) then
-    .decomposable
-  else
-    .unitary
-
-/-- A modal item is unitary (non-decomposable into force × flavor). -/
-def ModalItem.isUnitary (m : ModalItem) : Bool :=
-  m.decomposition == .unitary
-
-/-- Singleton meanings are trivially decomposable: a modal with exactly
-    one force-flavor pair always satisfies IFF. -/
-theorem singleton_decomposable (ff : ForceFlavor) :
-    (({ form := "m", meaning := [ff] } : ModalItem)).isUnitary = false := by
-  cases ff with | mk f fl => cases f <;> cases fl <;> native_decide
-
-/-- A non-IFF meaning is unitary: necessity-epistemic + possibility-deontic
-    without the cross-product pairs. -/
-theorem cross_cutting_is_unitary :
-    (({ form := "m", meaning := [⟨.necessity, .epistemic⟩, ⟨.possibility, .deontic⟩] } : ModalItem)).isUnitary = true := by
-  native_decide
 
 end Core.ModalLogic

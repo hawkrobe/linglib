@@ -72,7 +72,7 @@ the circumstantial one.
 namespace Phenomena.Modality.Studies.Hacquard2010
 
 open Semantics.Modality.EventRelativity
-open Core.ModalLogic (ModalFlavor)
+open Core.Modality (ModalFlavor)
 
 -- ============================================================================
 -- Part I: Italian Restructuring

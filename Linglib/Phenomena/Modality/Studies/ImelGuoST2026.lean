@@ -26,7 +26,7 @@ https://clmbr.shane.st/modal-typology/
 
 namespace Phenomena.Modality.Typology
 
-open Core.ModalLogic (ModalForce ModalFlavor ForceFlavor)
+open Core.Modality (ModalForce ModalFlavor ForceFlavor)
 open Semantics.Modality.Typology (ModalExpression ModalInventory satisfiesIFF)
 
 /-! ## Abbreviations for the nine meaning points -/

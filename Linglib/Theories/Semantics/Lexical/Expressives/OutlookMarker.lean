@@ -36,7 +36,7 @@ but share properties of both — specifically:
 namespace Semantics.Lexical.Expressives.OutlookMarker
 
 open Core.Presupposition (PrProp)
-open Core.ModalLogic (ModalFlavor)
+open Core.Modality (ModalFlavor)
 open Semantics.Lexical.Expressives (TwoDimProp CIExprProperties)
 
 

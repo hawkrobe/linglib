@@ -25,7 +25,7 @@ namespace Phenomena.Modality.PracticalReasoningBridge
 
 open Semantics.Attitudes.Intensional (World allWorlds)
 open Semantics.Modality.Kratzer
-open Core.ModalLogic (ModalFlavor)
+open Core.Modality (ModalFlavor)
 
 /-! ## Propositions -/
 

@@ -41,7 +41,7 @@ namespace Phenomena.Modality.ModalConcord.Bridge
 
 open Phenomena.Modality.ModalConcord
 open Fragments.English.FunctionWords
-open Core.ModalLogic (ModalForce ModalFlavor ForceFlavor)
+open Core.Modality (ModalForce ModalFlavor ForceFlavor)
 open Core.Register (Level areVariants)
 open Semantics.Modality.Typology (satisfiesIFF satisfiesSAV)
 

@@ -33,7 +33,7 @@ namespace Phenomena.Modality.ModalConcord.LiuRotter2025.Bridge
 
 open Phenomena.Modality.ModalConcord.LiuRotter2025
 open Fragments.English.FunctionWords
-open Core.ModalLogic (ModalForce ModalItem ConcordType ConcordType.fromModalForce)
+open Core.Modality (ModalForce ModalItem ConcordType ConcordType.fromModalForce)
 open Core.Register (SocialIndex)
 
 /-! ## Section A: Semantic overlap via ModalItem

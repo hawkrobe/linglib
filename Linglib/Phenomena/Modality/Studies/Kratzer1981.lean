@@ -32,7 +32,7 @@ namespace Phenomena.Modality.EpistemicThresholdBridge
 
 open Fragments.English.FunctionWords
 open Semantics.Attitudes.EpistemicThreshold (EpistemicEntry)
-open Core.ModalLogic (ModalForce ModalFlavor ForceFlavor)
+open Core.Modality (ModalForce ModalFlavor ForceFlavor)
 
 -- ============================================================================
 -- §1. Fragment → Theory Mapping

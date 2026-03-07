@@ -297,6 +297,30 @@ theorem empty_ordering_emptyBackground (f : ModalBase) (w : World) :
   unfold emptyBackground
   exact empty_ordering_simple f w
 
+/-- The best worlds among a given set, ranked by an ordering.
+    Unlike `bestWorlds` which computes accessible worlds from a modal base,
+    `bestAmong` takes a precomputed world list. This is needed when the
+    domain has already been restricted (e.g., by promoted priorities in
+    @cite{rubinstein-2014}'s favored worlds). -/
+def bestAmong (worlds : List World) (ordering : List (BProp World)) : List World :=
+  worlds.filter λ w' =>
+    worlds.all λ w'' => atLeastAsGoodAs ordering w' w''
+
+/-- With empty ordering, all worlds are best (Kratzer's theorem 2). -/
+theorem bestAmong_empty (worlds : List World) :
+    bestAmong worlds [] = worlds := by
+  unfold bestAmong
+  rw [List.filter_eq_self]
+  intro w _
+  rw [List.all_eq_true]
+  intro w' _
+  exact (empty_ordering_all_equivalent w w').1
+
+/-- bestAmong is a subset of the input worlds. -/
+theorem bestAmong_sub (worlds : List World) (ordering : List (BProp World)) :
+    ∀ w, w ∈ bestAmong worlds ordering → w ∈ worlds :=
+  λ _ hw => List.mem_of_mem_filter hw
+
 /--
 **Simple f-necessity** (Kratzer p. 32): p is true at ALL accessible worlds.
 
@@ -610,7 +634,7 @@ Each flavor structure maps to the theory-neutral `ModalFlavor` enum from
 `Core.ModalLogic`, bridging Kratzer's parameterized semantics to the
 typological meaning space (Imel, Guo, & @cite{imel-guo-steinert-threlkeld-2026}). -/
 
-open Core.ModalLogic (ModalFlavor)
+open Core.Modality (ModalFlavor)
 
 /-- Epistemic modality maps to the epistemic flavor tag. -/
 def EpistemicFlavor.flavorTag : ModalFlavor := .epistemic

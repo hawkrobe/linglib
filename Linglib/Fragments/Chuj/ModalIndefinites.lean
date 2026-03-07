@@ -29,7 +29,7 @@ This connection is proved in `Phenomena/ModalIndefinites/Bridge/KratzerAnchoring
 namespace Fragments.Chuj.ModalIndefinites
 
 open Core.ModalIndefinite
-open Core.ModalLogic (ModalFlavor)
+open Core.Modality (ModalFlavor)
 
 
 -- ════════════════════════════════════════════════════

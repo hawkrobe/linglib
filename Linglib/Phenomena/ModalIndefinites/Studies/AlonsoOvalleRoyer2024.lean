@@ -39,7 +39,7 @@ namespace Phenomena.ModalIndefinites.Studies.AlonsoOvalleRoyer2024
 
 open Semantics.Modality.EventRelativity
 open Phenomena.ModalIndefinites.Data
-open Core.ModalLogic (ModalFlavor)
+open Core.Modality (ModalFlavor)
 
 
 -- ════════════════════════════════════════════════════

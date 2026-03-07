@@ -8,7 +8,10 @@ import Linglib.Fragments.English.FunctionWords
 
 A handbook chapter surveying modal force phenomena:
 - §1: Possibility vs necessity (standard ∀/∃ over possible worlds)
-- §2: Weak necessity modals (ought, should) — three competing analyses
+- §2: Weak necessity modals (ought, should) — three competing analyses:
+  (1) domain restriction (@cite{von-fintel-iatridou-2008}, `Directive.lean`),
+  (2) non-quantificational (@cite{agha-jeretic-2022}, `AghaJeretic2022.lean`),
+  (3) comparative semantics (@cite{rubinstein-2014}, `Rubinstein2014.lean`)
 - §3: Variable force modals — four cross-linguistic patterns
 - §4: Covert variable force (conditionals, generics, imperatives)
 
@@ -37,7 +40,7 @@ neg-raising asymmetries between *should* and *must*.
 
 namespace Phenomena.Modality.Studies.AghaJeretic2026
 
-open Core.ModalLogic (ModalForce ModalFlavor ForceFlavor ModalItem)
+open Core.Modality (ModalForce ModalFlavor ForceFlavor ModalItem)
 open Semantics.Modality.Directive
 open Fragments.English.FunctionWords
 

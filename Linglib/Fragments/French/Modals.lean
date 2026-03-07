@@ -41,7 +41,7 @@ in position-sensitive flavor selection (@cite{hacquard-2006}).
 
 namespace Fragments.French.Modals
 
-open Core.ModalLogic (ModalForce ModalFlavor ForceFlavor)
+open Core.Modality (ModalForce ModalFlavor ForceFlavor)
 open Semantics.Modality.Assert (primaryFlavor)
 open Core.Discourse (IllocutionaryMood)
 

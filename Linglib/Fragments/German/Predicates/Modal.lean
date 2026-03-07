@@ -27,7 +27,7 @@ Reference: Kratzer, A. (1981). The Notional Category of Modality.
 
 namespace Fragments.German.Predicates.Modal
 
-open Core.ModalLogic (ForceFlavor ModalForce ModalFlavor)
+open Core.Modality (ForceFlavor ModalForce ModalFlavor)
 
 /-- German modal verb entry. -/
 structure GermanModalEntry where

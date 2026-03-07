@@ -44,7 +44,7 @@ subjectivity cline fails to distinguish (§2.4, ch. 3).
 
 namespace Semantics.Modality.Narrog
 
-open Core.ModalLogic (ModalFlavor)
+open Core.Modality (ModalFlavor)
 open Core.Subjectivity (SubjectivityLevel Performativity)
 
 -- ============================================================================

@@ -36,6 +36,7 @@ import Linglib.Core.PolarityPartition
 import Linglib.Core.PropertyDomain
 import Linglib.Core.Polyhedral
 import Linglib.Core.Modality.ModalIndefinite
+import Linglib.Core.Modality.ModalTypes
 import Linglib.Core.Discourse.QUD
 import Linglib.Core.Discourse.AtIssueness
 import Linglib.Core.Interface

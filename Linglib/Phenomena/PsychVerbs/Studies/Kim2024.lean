@@ -45,7 +45,7 @@ namespace Phenomena.PsychVerbs.Studies.Kim2024
 
 open Semantics.Causation.PsychCausation
 open Semantics.Modality.EventRelativity
-open Core.ModalLogic (ModalFlavor)
+open Core.Modality (ModalFlavor)
 
 
 -- ════════════════════════════════════════════════════

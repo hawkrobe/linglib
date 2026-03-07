@@ -37,7 +37,7 @@ friendliness, warmth). The social meaning mirrors the commitment direction.
 namespace Phenomena.Modality.ModalConcord.LiuRotter2025
 
 open Phenomena.Modality.ModalConcord (LikertRating)
-open Core.ModalLogic (ModalForce)
+open Core.Modality (ModalForce)
 
 /-! ## Experimental design -/
 

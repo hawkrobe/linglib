@@ -20,7 +20,7 @@ Following @cite{alonso-ovalle-royer-2024}:
 
 namespace Core.ModalIndefinite
 
-open Core.ModalLogic (ModalFlavor)
+open Core.Modality (ModalFlavor)
 
 
 -- ════════════════════════════════════════════════════

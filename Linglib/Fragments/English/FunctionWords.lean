@@ -70,7 +70,7 @@ def CompEntry.toWord (c : CompEntry) : Word :=
 -- ============================================================================
 
 section Auxiliaries
-open Core.ModalLogic (ForceFlavor ModalForce ModalFlavor)
+open Core.Modality (ForceFlavor ModalForce ModalFlavor)
 open Core.Register (Level)
 
 /-- Auxiliary type -/
@@ -165,6 +165,7 @@ def dare : AuxEntry where
   negForm := some "daren't"
 def need : AuxEntry where
   form := "need"; auxType := .modal
+  modalMeaning := cp [.necessity] [.deontic, .circumstantial]
   negForm := some "needn't"
 def ought : AuxEntry where
   form := "ought"; auxType := .modal
@@ -229,7 +230,7 @@ def AuxEntry.toWord (a : AuxEntry) : Word :=
   }
 
 /-- Project to the shared modal item core (form + meaning + register). -/
-def AuxEntry.toModalItem (a : AuxEntry) : Core.ModalLogic.ModalItem where
+def AuxEntry.toModalItem (a : AuxEntry) : Core.Modality.ModalItem where
   form := a.form
   meaning := a.modalMeaning
   register := a.register
@@ -241,7 +242,7 @@ end Auxiliaries
 -- ============================================================================
 
 section ModalAdverbs
-open Core.ModalLogic (ForceFlavor ModalForce ModalFlavor)
+open Core.Modality (ForceFlavor ModalForce ModalFlavor)
 open Core.Register (Level)
 
 /-- Modal adverb entry: an adverb expressing modal force and flavor
@@ -261,7 +262,7 @@ def ModalAdvEntry.toWord (a : ModalAdvEntry) : Word :=
   { form := a.form, cat := .ADV, features := {} }
 
 /-- Project to the shared modal item core (form + meaning + register). -/
-def ModalAdvEntry.toModalItem (a : ModalAdvEntry) : Core.ModalLogic.ModalItem where
+def ModalAdvEntry.toModalItem (a : ModalAdvEntry) : Core.Modality.ModalItem where
   form := a.form
   meaning := a.modalMeaning
   register := a.register

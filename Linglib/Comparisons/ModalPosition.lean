@@ -41,7 +41,7 @@ cannot be epistemic. No dedicated functional heads are needed.
 namespace Comparisons.ModalPosition
 
 open Semantics.Modality.EventRelativity
-open Core.ModalLogic (ModalFlavor)
+open Core.Modality (ModalFlavor)
 
 
 -- ════════════════════════════════════════════════════

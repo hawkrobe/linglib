@@ -77,6 +77,6 @@ theorem empty_inertia_is_simple (circ : ModalBase) (prop : BProp World) (w : Wor
 /-- Inertial modality maps to the circumstantial flavor tag.
     Both inertial and teleological modality concern what happens given
     the facts — they differ only in ordering source, not modal base. -/
-def InertialParams.flavorTag : Core.ModalLogic.ModalFlavor := .circumstantial
+def InertialParams.flavorTag : Core.Modality.ModalFlavor := .circumstantial
 
 end Semantics.Modality.Inertia

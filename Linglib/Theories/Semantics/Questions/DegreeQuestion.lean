@@ -50,7 +50,7 @@ and discrete–dense divergence theorems are in `Core.Scale` (§ 6 of
 namespace Semantics.Questions.DegreeQuestion
 
 open Core.Scale
-open Core.ModalLogic (ModalForce)
+open Core.Modality (ModalForce)
 
 variable {α W : Type*} [LinearOrder α]
 

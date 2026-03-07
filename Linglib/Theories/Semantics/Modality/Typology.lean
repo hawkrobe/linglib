@@ -22,7 +22,7 @@ Single Axis of Variability (SAV) universal from cross-linguistic modal typology.
 
 namespace Semantics.Modality.Typology
 
-open Core.ModalLogic (ModalForce ModalFlavor ForceFlavor)
+open Core.Modality (ModalForce ModalFlavor ForceFlavor)
 
 /-! ## Modal Meaning Projections -/
 
@@ -191,7 +191,7 @@ structure ModalExpression where
 
 /-- Project to the shared modal item core. Register defaults to neutral
     since typological surveys don't annotate register. -/
-def ModalExpression.toModalItem (e : ModalExpression) : Core.ModalLogic.ModalItem where
+def ModalExpression.toModalItem (e : ModalExpression) : Core.Modality.ModalItem where
   form := e.form
   meaning := e.meaning
 
@@ -276,7 +276,7 @@ compute the same property through different algorithms:
 
 Both reduce to: ∀ fo ∈ forces(m), ∀ fl ∈ flavors(m), ⟨fo, fl⟩ ∈ m. -/
 
-open Core.ModalLogic (ModalItem ModalDecomposition)
+open Core.Modality (ModalItem ModalDecomposition)
 
 /-- `eraseDups` preserves list membership.
     Required because Lean 4 core lacks this lemma for `BEq`-based `eraseDups`. -/

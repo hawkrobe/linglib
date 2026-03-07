@@ -1,5 +1,23 @@
 # Changelog
 
+## [0.228.95] - 2026-03-07
+
+### Added
+- **Nouwen2024RSA.lean**: Cross-utterance Goldilocks predictions — "horribly warm" dominates "warm" at extremes, "pleasantly warm" dominates at moderate heights, and horribly/pleasantly cross-comparison
+- **Nouwen2024RSA.lean**: Sequential dual-threshold model (Nouwen 2024's key innovation) — evaluative step feeds adjective step via RSAConfig composition; sequential Goldilocks predictions via `rsa_predict`
+- **RationalAction.lean**: `policy_gt_cross_of_cross_gt` lemma — derives totalScore positivity from cross-product inequality for cross-stimulus comparisons
+
+### Fixed
+- **GoalParsing.lean**: Fix cross-utterance L1 goal classification — `L1 u₁ w > L1 u₂ w` was misclassified as same-utterance `.l1Compare` (ignoring rhs utterance)
+- **ReflectBridge.lean**: Add cross-stimulus denominator cancellation (Pattern 1b) — reduces `policy(s₁,a) > policy(s₂,a)` to cross-product score comparison via `policy_gt_cross_of_cross_gt`
+- **ReflectBridge.lean**: Add DAG size check — skip `native_decide` for DAGs >20K nodes (prevents stack overflow in compiler), fall back to tree-based checker
+
+## [0.228.94] - 2026-03-07
+
+### Changed
+- **Core/Logic/ModalLogic.lean**: Split linguistic typology types (`ModalForce`, `ModalFlavor`, `ForceFlavor`, `ModalItem`, `ConcordType`, `ModalDecomposition`) into new `Core/Modality/ModalTypes.lean` (namespace `Core.Modality`); `Core/Logic/ModalLogic.lean` retains only Kripke semantics (frames, axioms, correspondence, lattice)
+- **~35 downstream files**: Update `open Core.ModalLogic (ModalFlavor ...)` → `open Core.Modality (ModalFlavor ...)` and FQ references
+
 ## [0.228.93] - 2026-03-07
 
 ### Fixed

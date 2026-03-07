@@ -17,8 +17,8 @@ open Semantics.Attitudes.Intensional
 
 section CoreTypes
 
-/-- Modal force: necessity (□) or possibility (◇). Reuses `Core.ModalLogic.ModalForce`. -/
-abbrev ModalForce := Core.ModalLogic.ModalForce
+/-- Modal force: necessity (□) or possibility (◇). Reuses `Core.Modality.ModalForce`. -/
+abbrev ModalForce := Core.Modality.ModalForce
 
 /-- A proposition is a function from worlds to truth values. -/
 abbrev Proposition := BProp World

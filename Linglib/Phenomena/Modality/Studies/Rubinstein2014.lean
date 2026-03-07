@@ -78,7 +78,7 @@ open Semantics.Modality.Kratzer
 open Semantics.Modality.Directive
 open Semantics.Attitudes.Intensional (World)
 open Core.Proposition (BProp)
-open Core.ModalLogic (ModalForce)
+open Core.Modality (ModalForce)
 
 -- ============================================================================
 -- §1. Priority Reconceptualization (§3.2)

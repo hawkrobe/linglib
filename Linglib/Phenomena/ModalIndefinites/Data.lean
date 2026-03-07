@@ -29,7 +29,7 @@ choice).
 
 namespace Phenomena.ModalIndefinites.Data
 
-open Core.ModalLogic (ModalFlavor)
+open Core.Modality (ModalFlavor)
 open Core.ModalIndefinite
 
 
