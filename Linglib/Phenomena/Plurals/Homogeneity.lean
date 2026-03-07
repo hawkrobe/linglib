@@ -250,11 +250,12 @@ def hamletExample : UpwardHomogeneityDatum :=
 Elements that remove homogeneity gaps.
 -/
 inductive HomogeneityRemover where
-  | all           -- "all the doors"
-  | both          -- "both Ann and Bert"
-  | every         -- "every door"
-  | each          -- "each door"
-  | completely    -- "completely blue"
+  | all           -- "all the doors" (nominal domain)
+  | both          -- "both Ann and Bert" (nominal domain)
+  | every         -- "every door" (nominal domain)
+  | each          -- "each door" (nominal domain)
+  | completely    -- "completely blue" (degree domain)
+  | necessarily   -- "necessarily" (modal domain; @cite{agha-jeretic-2022})
   deriving Repr, DecidableEq
 
 /--

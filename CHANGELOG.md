@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.228.74] - 2026-03-06
+
+### Changed
+- **AghaJeretic2022.lean**: Fix negation symmetry proofs (structured `split`/`rename_i` replacing broken `simp` chains), fix witness set formalization with GQ-theoretic `universalQ`/`existentialQ` (Barwise & Cooper 1981 witness sets instead of predicate-level evaluation), fix `list_all_neg_false_of_pos` helper lemma
+
 ## [0.228.73] - 2026-03-06
 
 ### Changed
