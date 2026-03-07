@@ -22,14 +22,18 @@ open Core.Proposition (FiniteWorlds)
 /-! ## Operators -/
 
 /-- Modal force: necessity (□), weak necessity (□w), or possibility (◇).
-    @cite{von-fintel-iatridou-2008}, @cite{agha-jeretic-et-al-2026}.
+    @cite{von-fintel-iatridou-2008}, @cite{agha-jeretic-2026}.
 
-    Weak necessity ("ought", "should") is the same ∀ quantifier as strong
-    necessity but over a refined (smaller) set of best worlds. It sits
-    between □ and ◇ in strength: □φ → □wφ → ◇φ.
+    Weak necessity ("ought", "should") sits between □ and ◇ in strength:
+    □φ → □wφ → ◇φ. The nature of this intermediate force is debated:
+
+    - @cite{von-fintel-iatridou-2008}: same ∀ quantifier as strong necessity
+      but over a refined (smaller) set of best worlds (domain restriction).
+    - Rubinstein (2014): fundamentally comparative meaning.
+    - @cite{agha-jeretic-2022}: non-quantificational (plural predication).
 
     Weak necessity has no clean dual in this 3-point space: domain refinement
-    weakens ∀ but strengthens ∃ (§2.4 of @cite{agha-jeretic-et-al-2026}). -/
+    weakens ∀ but strengthens ∃ (@cite{agha-jeretic-2026} §2.4). -/
 inductive ModalForce where
   | necessity
   | weakNecessity
@@ -43,8 +47,11 @@ instance : LawfulBEq ModalForce where
 instance : ToString ModalForce where
   toString | .necessity => "□" | .weakNecessity => "□w" | .possibility => "◇"
 
-/-- Classical dual: □ ↔ ◇. Weak necessity maps to possibility (no clean dual
-    exists in the 3-point space; this is the closest approximation). -/
+/-- Classical dual: □ ↔ ◇. Weak necessity maps to possibility as a
+    stipulated default — no theoretically motivated dual for □w exists
+    in this 3-point space (@cite{agha-jeretic-2026} §2.4: "the notion
+    of a possibility counterpart to weak necessity has not received
+    much attention"). -/
 def ModalForce.dual : ModalForce → ModalForce
   | .necessity => .possibility
   | .weakNecessity => .possibility
@@ -66,7 +73,8 @@ def kripkeEval {W : Type*} [FiniteWorlds W] (R : AccessRel W) (force : ModalForc
   let accessible := FiniteWorlds.worlds.filter (R w)
   match force with
   | .necessity => accessible.all p
-  | .weakNecessity => accessible.all p  -- same ∀, different R in practice
+  | .weakNecessity => accessible.all p  -- same ∀; the caller passes a
+      -- different (refined) R to model weak necessity — see Directive.lean
   | .possibility => accessible.any p
 
 theorem duality {W : Type*} [FiniteWorlds W] (R : AccessRel W) (p : BProp W) (w : W) :
@@ -337,7 +345,10 @@ def ModalForce.all : List ModalForce := [.necessity, .weakNecessity, .possibilit
     |P| = |Force| × |Flavor| = 3 × 3 = 9.
 
     Imel, Guo, & @cite{imel-guo-steinert-threlkeld-2026}: modal meanings are subsets of P.
-    Extended to 3×3 following @cite{agha-jeretic-et-al-2026}. -/
+    Their original database uses a 2×3 space (necessity/possibility × 3 flavors);
+    we extend to 3×3 by adding weak necessity as a distinct force value,
+    following @cite{agha-jeretic-2026}'s treatment of weak necessity as a
+    category intermediate between □ and ◇. -/
 structure ForceFlavor where
   force : ModalForce
   flavor : ModalFlavor

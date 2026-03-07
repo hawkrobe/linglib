@@ -24,7 +24,9 @@ def Simple (R : World → World → Bool) : ModalTheory where
     let accessible := allWorlds'.filter (R w)
     match force with
     | .necessity => accessible.all p
-    | .weakNecessity => accessible.all p
+    | .weakNecessity => accessible.all p  -- same ∀; weak necessity differs
+      -- from strong necessity in which R is passed, not in the quantifier
+      -- (von Fintel & Iatridou 2008: domain restriction via refined ordering)
     | .possibility => accessible.any p
 
 section AccessibilityRelations

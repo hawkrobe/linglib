@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.228.70] - 2026-03-06
+
+### Added
+- **AghaJeretic2026 study file**: Formalize Agha & Jeretič (2026) "Modal Force" — entailment asymmetry tests, English modal force classification, variable force typology (4 patterns × 3 environments), EXH strengthening analysis, neg-raising asymmetry data
+
+### Fixed
+- **ModalForce docstring accuracy**: Acknowledge three competing analyses of weak necessity (vFI 2008 domain restriction, Rubinstein 2014 comparative, Agha & Jeretič 2022 plural predication) instead of presenting one as definitive
+- **ForceFlavor docstring**: Fix over-attribution of 3×3 meaning space to Agha et al. 2026; clarify it extends Imel et al.'s 2×3 scheme
+- **ModalForce.dual docstring**: Note that weak necessity → possibility mapping is a stipulated default, not theoretically motivated
+- **Weak necessity comments**: Add explanatory comments to `kripkeEval`, `Simple`, and `KratzerTheory` explaining why weak necessity uses the same ∀ (difference is in the R/ordering, not the quantifier)
+- **Missing bib entries**: Add `agha-jeretic-2026` and `agha-jeretic-2022` to references.bib
+
 ## [0.228.69] - 2026-03-06
 
 ### Fixed

@@ -693,7 +693,9 @@ def KratzerTheory (params : KratzerParams) : ModalTheory where
     let best := bestWorlds params.base params.ordering w
     match force with
     | .necessity => best.all p
-    | .weakNecessity => best.all p
+    | .weakNecessity => best.all p  -- same ∀ over best worlds; weak necessity
+      -- is modeled by passing a refined ordering (g ∪ g') that shrinks the
+      -- best-world set — see Directive.lean for the full implementation
     | .possibility => best.any p
 
 -- Standard parameter configurations
