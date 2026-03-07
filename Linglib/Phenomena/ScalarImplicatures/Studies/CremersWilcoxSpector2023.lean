@@ -1,94 +1,98 @@
-/-
+import Mathlib.Data.Rat.Defs
+import Linglib.Theories.Pragmatics.NeoGricean.Exhaustivity.Basic
+import Linglib.Theories.Pragmatics.RSA.Core.Config
+import Linglib.Tactics.RSAPredict
+
+/-!
 # @cite{cremers-wilcox-spector-2023}: Exhaustivity and Anti-Exhaustivity in RSA
 
-Empirical data and domain types for RSA exhaustivity models.
+"Exhaustivity and Anti-Exhaustivity in the RSA Framework: Testing the
+Effect of Prior Beliefs." Cognitive Science 47(5), e13286.
 
-## Anti-Exhaustivity
+## The Symmetry Problem
 
-In baseline RSA, hearing "A" can increase belief in w_ab (where A and B are both true)
-when priors are biased. This "anti-exhaustive" behavior contradicts human interpretation.
+In baseline RSA, hearing "A" can *increase* belief in w_ab (where both A
+and B are true) when priors are biased toward w_ab. This "anti-exhaustive"
+behavior contradicts human interpretation — humans always exhaust "A" to
+mean "A and not B."
+
+## Key Result
+
+Models with grammatical exhaustification (EXH-LU, RSA-LI) block
+anti-exhaustivity regardless of prior bias. The EXH parse makes A false
+in w_ab, so S1 never uses A to convey w_ab under that parse. The prior
+bias is overridden by the structural asymmetry in meaning.
 
 ## Domain
 
-Two worlds:
-- `w_a`: A true, B false (A ∧ ¬B)
-- `w_ab`: A and B both true (A ∧ B)
+- **Worlds**: w_a (only A true), w_ab (A and B both true)
+- **Utterances**: A (cost 0), A∧B (cost c), A∧¬B (cost c)
+- **Parses** (EXH-LU): literal (A true in both worlds) vs exh (A true only in w_a)
 
-Three utterances:
-- `A` with cost 0 (base utterance)
-- `A∧B` with cost c_AB
-- `A∧¬B` with cost c_A¬B
+## Anti-Exhaustivity Condition (Eq. 6b)
 
-## Anti-Exhaustivity Condition (Equation 6)
+L1(w_ab | A) > P(w_ab) iff log(P(w_ab)) - log(P(w_a)) > c(A∧¬B) - c(A∧B)
 
-L1(w_ab | A) > P(w_ab) iff prior(w_ab) / prior(w_a) > c_A¬B / c_AB
+## Formalized Predictions
 
-## Model Comparison
+| Theorem | Model | Prior | Prediction |
+|---------|-------|-------|------------|
+| `baseline_biased_antiexhaustive` | Baseline | 3:1 biased | L1(w_ab\|A) > L1(w_a\|A) |
+| `exhlu_blocks_antiexhaustivity` | EXH-LU | 3:1 biased | L1(w_a\|A) > L1(w_ab\|A) |
 
-| # | Model | Description |
-|---|-------|-------------|
-| 1 | Baseline RSA | Standard RSA with costs |
-| 2 | wRSA | Wonky speaker (non-cooperative) |
-| 3 | BwRSA | Bayesian wonky inference |
-| 4 | svRSA | Supervaluationist QUD semantics |
-| 5 | FREE-LU | Lexical uncertainty (4 lexica) |
-| 6 | EXH-LU | Exhaustification + LU |
-| 7-8 | RSA-LI | Lexical Intentions variants |
+## Model Comparison (paper covers 9 models; we formalize baseline + EXH-LU)
 
+| # | Model | Anti-exhaustive? | Formalized? |
+|---|-------|-----------------|-------------|
+| 1 | Baseline RSA | Yes (biased prior) | ✓ |
+| 2 | wRSA | Yes (can be) | — |
+| 3 | BwRSA | Yes (can be) | — |
+| 4 | svRSA | No (QUD blocks) | — |
+| 5 | FREE-LU | Yes (at L1) | — |
+| 6 | EXH-LU | No (EXH blocks) | ✓ |
+| 7 | RSA-LI1 | No (EXH blocks) | — |
+| 8 | RSA-LI2 | No (EXH blocks) | — |
 -/
 
-import Mathlib.Data.Rat.Defs
+set_option autoImplicit false
 
 namespace Phenomena.ScalarImplicatures.Studies.CremersWilcoxSpector2023
 
--- World Model
+-- ============================================================================
+-- §1. Domain Types
+-- ============================================================================
 
 /-- Two-world model for exhaustivity.
-
     - `w_a`: A true, B false (A ∧ ¬B)
     - `w_ab`: A and B both true (A ∧ B)
 
-    Note: No w_b (B without A) or w_none (neither) because we condition on A being true.
-    The listener knows A is true; the question is whether B is also true. -/
+    No w_b or w_none because we condition on A being true.
+    The question is whether B is also true. -/
 inductive CWSWorld where
-  | w_a : CWSWorld   -- Only A is true
-  | w_ab : CWSWorld  -- Both A and B are true
+  | w_a : CWSWorld
+  | w_ab : CWSWorld
   deriving DecidableEq, BEq, Repr, Inhabited
 
-/-- All worlds -/
-def allWorlds : List CWSWorld := [.w_a, .w_ab]
+instance : Fintype CWSWorld where
+  elems := {.w_a, .w_ab}
+  complete := fun x => by cases x <;> simp
 
-theorem allWorlds_length : allWorlds.length = 2 := rfl
-
--- Utterance Types
-
-/-- Three utterances in the minimal exhaustivity domain.
-
-    - `A`: Simple assertion (cost 0)
-    - `AandB`: Explicit conjunction (cost c_AB)
-    - `AandNotB`: Explicit negative (cost c_A¬B) -/
+/-- Three utterances in the minimal exhaustivity domain. -/
 inductive CWSUtterance where
-  | A : CWSUtterance        -- "A"
-  | AandB : CWSUtterance    -- "A and B"
-  | AandNotB : CWSUtterance -- "A and not B"
+  | A : CWSUtterance
+  | AandB : CWSUtterance
+  | AandNotB : CWSUtterance
   deriving DecidableEq, BEq, Repr, Inhabited
 
-/-- All utterances -/
-def allUtterances : List CWSUtterance := [.A, .AandB, .AandNotB]
+instance : Fintype CWSUtterance where
+  elems := {.A, .AandB, .AandNotB}
+  complete := fun x => by cases x <;> simp
 
-theorem allUtterances_length : allUtterances.length = 3 := rfl
+-- ============================================================================
+-- §2. Literal Semantics
+-- ============================================================================
 
-/-- String representation -/
-def CWSUtterance.toString : CWSUtterance → String
-  | .A => "A"
-  | .AandB => "A∧B"
-  | .AandNotB => "A∧¬B"
-
-instance : ToString CWSUtterance := ⟨CWSUtterance.toString⟩
-
--- Literal Semantics
-
-/-- Literal truth: which utterance is true in which world -/
+/-- Literal truth: which utterance is true in which world. -/
 def literalTruth : CWSWorld → CWSUtterance → Bool
   | .w_a, .A => true
   | .w_a, .AandB => false
@@ -97,279 +101,151 @@ def literalTruth : CWSWorld → CWSUtterance → Bool
   | .w_ab, .AandB => true
   | .w_ab, .AandNotB => false
 
-/-- A is true in both worlds -/
+/-- A is true in both worlds. -/
 theorem A_true_everywhere : ∀ w, literalTruth w .A = true := by
   intro w; cases w <;> rfl
 
-/-- A∧B only true in w_ab -/
+/-- A∧B only true in w_ab. -/
 theorem AandB_only_in_wab : literalTruth .w_a .AandB = false ∧ literalTruth .w_ab .AandB = true := by
   constructor <;> rfl
 
-/-- A∧¬B only true in w_a -/
+/-- A∧¬B only true in w_a. -/
 theorem AandNotB_only_in_wa : literalTruth .w_a .AandNotB = true ∧ literalTruth .w_ab .AandNotB = false := by
   constructor <;> rfl
 
--- Cost Structure
+-- ============================================================================
+-- §3. Exhaustification (Innocent Exclusion)
+-- ============================================================================
 
-/-- Cost parameters for utterances.
+open NeoGricean.Exhaustivity (applyIEBool)
 
-    Following the paper:
-    - c(A) = 0 (base utterance)
-    - c(A∧B) = c_AB
-    - c(A∧¬B) = c_A¬B
+/-- All worlds for IE enumeration. -/
+def allWorlds : List CWSWorld := [.w_a, .w_ab]
 
-    Anti-exhaustivity depends on the ratio c_A¬B / c_AB. -/
-structure CWSCosts where
-  /-- Cost of "A∧B" -/
-  c_AB : ℚ
-  /-- Cost of "A∧¬B" -/
-  c_AnotB : ℚ
-  /-- Costs must be positive -/
-  hAB_pos : 0 < c_AB
-  hAnotB_pos : 0 < c_AnotB
+/-- Alternatives for each utterance: A has scale-mate A∧B. -/
+def alternatives (u : CWSUtterance) : List (CWSWorld → Bool) :=
+  match u with
+  | .A => [fun w => literalTruth w .A, fun w => literalTruth w .AandB]
+  | _ => [fun w => literalTruth w u]
 
-/-- Get cost of an utterance -/
-def CWSCosts.cost (c : CWSCosts) : CWSUtterance → ℚ
-  | .A => 0
-  | .AandB => c.c_AB
-  | .AandNotB => c.c_AnotB
+/-- Exhaustified meaning derived via Innocent Exclusion.
+    IE negates A∧B (the non-entailed stronger alternative to A),
+    giving EXH(A) = A ∧ ¬(A∧B) = A ∧ ¬B. -/
+def exhMeaning (w : CWSWorld) (u : CWSUtterance) : Bool :=
+  applyIEBool allWorlds (fun w' => literalTruth w' u) (alternatives u) w
 
-/-- Default costs: equal cost for both conjunctions -/
-def defaultCosts : CWSCosts where
-  c_AB := 1
-  c_AnotB := 1
-  hAB_pos := by decide
-  hAnotB_pos := by decide
-
--- Prior Structure
-
-/-- Prior probability over worlds.
-
-    Must be a valid probability distribution:
-    - Non-negative
-    - Sum to 1 -/
-structure CWSPrior where
-  /-- P(w_a) -/
-  p_wa : ℚ
-  /-- P(w_ab) -/
-  p_wab : ℚ
-  /-- Non-negative -/
-  hwa_nonneg : 0 ≤ p_wa
-  hwab_nonneg : 0 ≤ p_wab
-  /-- Sum to 1 -/
-  hsum : p_wa + p_wab = 1
-
-/-- Get prior probability of a world -/
-def CWSPrior.prob (prior : CWSPrior) : CWSWorld → ℚ
-  | .w_a => prior.p_wa
-  | .w_ab => prior.p_wab
-
-/-- Uniform prior -/
-def uniformPrior : CWSPrior where
-  p_wa := 1/2
-  p_wab := 1/2
-  hwa_nonneg := by native_decide
-  hwab_nonneg := by native_decide
-  hsum := by native_decide
-
--- Anti-Exhaustivity Condition (Equation 6)
-
-/-- The anti-exhaustivity condition from @cite{cremers-wilcox-spector-2023}, Equation 6.
-
-    In baseline RSA:
-    L1(w_ab | A) > P(w_ab) iff P(w_ab) / P(w_a) > c(A∧¬B) / c(A∧B)
-
-    When the prior ratio exceeds the cost ratio, the listener's posterior
-    on w_ab given "A" increases relative to the prior. This is "anti-exhaustive"
-    because normally we expect "A" (without "and B") to suggest not B. -/
-def antiExhaustivityCondition (prior : CWSPrior) (costs : CWSCosts) : Prop :=
-  prior.p_wab / prior.p_wa > costs.c_AnotB / costs.c_AB
-
-/-- Check if anti-exhaustivity condition holds (decidable version) -/
-def antiExhaustivityHolds (prior : CWSPrior) (costs : CWSCosts) : Bool :=
-  prior.p_wab / prior.p_wa > costs.c_AnotB / costs.c_AB
-
-/-- With uniform prior and equal costs, no anti-exhaustivity -/
-theorem uniform_equal_no_antiexh :
-    antiExhaustivityHolds uniformPrior defaultCosts = false := by
-  native_decide
-
-/-- Strong bias towards w_ab with equal costs triggers anti-exhaustivity.
-    Example: P(w_ab) = 3/4, P(w_a) = 1/4, so ratio = 3 > 1 = cost ratio -/
-def stronglyBiasedPrior : CWSPrior where
-  p_wa := 1/4
-  p_wab := 3/4
-  hwa_nonneg := by native_decide
-  hwab_nonneg := by native_decide
-  hsum := by native_decide
-
-theorem strongly_biased_triggers_antiexh :
-    antiExhaustivityHolds stronglyBiasedPrior defaultCosts = true := by
-  native_decide
-
--- Exhaustified Semantics (for EXH-LU model)
-
-/-- EXH positions for the CWS domain.
-
-    Since utterances are simple (not nested quantifiers), we only have
-    matrix-level EXH. But we model it for consistency with the interface. -/
-inductive CWSExhPosition where
-  | matrix : CWSExhPosition  -- EXH at matrix level
-  deriving DecidableEq, BEq, Repr
-
-/-- Parse = whether EXH is applied -/
-inductive CWSParse where
-  | literal : CWSParse  -- No EXH
-  | exh : CWSParse      -- EXH applied
-  deriving DecidableEq, BEq, Repr, Inhabited
-
-/-- All parses -/
-def allParses : List CWSParse := [.literal, .exh]
-
-/-- Exhaustified meaning of "A".
-
-    EXH(A) = A ∧ ¬B (strengthened meaning)
-
-    Under exhaustification, "A" means "only A" = A ∧ ¬B.
-    This eliminates anti-exhaustivity because EXH(A) is only true in w_a. -/
-def exhMeaning : CWSWorld → CWSUtterance → Bool
-  | w, .A => literalTruth w .AandNotB  -- EXH(A) = A ∧ ¬B
-  | w, u => literalTruth w u           -- Others unchanged
-
-/-- EXH(A) is only true in w_a -/
+/-- EXH(A) is only true in w_a — derived from IE, not stipulated. -/
 theorem exhA_only_in_wa : exhMeaning .w_a .A = true ∧ exhMeaning .w_ab .A = false := by
-  constructor <;> rfl
+  constructor <;> native_decide
 
--- Lexica for FREE-LU (Model 5)
+/-- EXH(A∧B) unchanged: A∧B has no stronger alternative. -/
+theorem exhAB_unchanged : ∀ w, exhMeaning w .AandB = literalTruth w .AandB := by
+  native_decide
 
-/-- Four lexica for FREE-LU model.
-
-    The listener doesn't know which lexicon the speaker is using:
-    - `strong_both`: A means A∧¬B, A∧B means exactly A∧B
-    - `strong_A`: A means A∧¬B (exhaustive), others literal
-    - `strong_AB`: A∧B means exactly A∧B (exclusive), others literal
-    - `weak`: All meanings are literal (inclusive) -/
-inductive CWSLexicon where
-  | strong_both : CWSLexicon
-  | strong_A : CWSLexicon
-  | strong_AB : CWSLexicon
-  | weak : CWSLexicon
-  deriving DecidableEq, BEq, Repr, Inhabited
-
-/-- All lexica -/
-def allLexica : List CWSLexicon := [.strong_both, .strong_A, .strong_AB, .weak]
-
-theorem allLexica_length : allLexica.length = 4 := rfl
-
-/-- Meaning under each lexicon -/
-def lexiconMeaning : CWSLexicon → CWSWorld → CWSUtterance → Bool
-  | .strong_both, w, .A => literalTruth w .AandNotB
-  | .strong_both, w, u => literalTruth w u
-  | .strong_A, w, .A => literalTruth w .AandNotB
-  | .strong_A, w, u => literalTruth w u
-  | .strong_AB, w, u => literalTruth w u
-  | .weak, w, u => literalTruth w u
-
--- QUDs for svRSA (Model 4)
-
-/-- QUDs for supervaluationist RSA: full vs coarse resolution -/
-inductive CWSQUD
-  | full
-  | coarse
-  deriving DecidableEq, BEq, Repr, Inhabited
-
-/-- QUD equivalence: when are two worlds equivalent under a QUD? -/
-def qudEquiv : CWSQUD → CWSWorld → CWSWorld → Bool
-  | .full, w1, w2 => w1 == w2
-  | .coarse, _, _ => true
-
--- Wonky Goals for wRSA/BwRSA (Models 2-3)
-
-/-- Speaker goal types for Bayesian wonky RSA (BwRSA, Model 3).
-
-    - `informative`: Standard cooperative speaker who aims to inform
-    - `wonky`: Non-cooperative speaker who doesn't distinguish worlds
-
-    In wRSA (Model 2), wonkiness is a mixture parameter, not Bayesian inference.
-    In BwRSA (Model 3), the listener reasons about which goal the speaker has. -/
-inductive WonkyGoal where
-  | informative : WonkyGoal
-  | wonky : WonkyGoal
-  deriving DecidableEq, BEq, Repr, Inhabited
-
-/-- All wonky goals -/
-def allWonkyGoals : List WonkyGoal := [.informative, .wonky]
-
-theorem allWonkyGoals_length : allWonkyGoals.length = 2 := rfl
-
--- Model Parameters
-
-/-- Configuration for a specific RSA model instance -/
-structure CWSConfig where
-  /-- Prior over worlds -/
-  prior : CWSPrior
-  /-- Utterance costs -/
-  costs : CWSCosts
-  /-- Rationality parameter -/
-  alpha : ℕ := 1
-
-/-- Default configuration: uniform prior, equal costs -/
-def defaultConfig : CWSConfig where
-  prior := uniformPrior
-  costs := defaultCosts
-
-/-- Anti-exhaustivity-inducing configuration -/
-def antiExhConfig : CWSConfig where
-  prior := stronglyBiasedPrior
-  costs := defaultCosts
-
--- Key Theoretical Claims
-
-/-- Baseline RSA can be anti-exhaustive under biased priors.
-
-    Cremers et al. identify that human listeners
-    do not become anti-exhaustive even with strong prior bias. -/
-def baselineAntiExhaustivityClaim : String :=
-  "In baseline RSA with biased priors, L1(w_ab | A) > P(w_ab). " ++
-  "This 'anti-exhaustive' interpretation is not observed in humans."
-
-/-- EXH blocks anti-exhaustivity by strengthening the meaning.
-
-    When EXH is inserted, "A" means "A ∧ ¬B", which is false in w_ab.
-    This forces L1(w_ab | A) = 0, eliminating anti-exhaustivity. -/
-def exhBlocksAntiExhaustivityClaim : String :=
-  "Grammatical EXH strengthens 'A' to 'A ∧ ¬B', which is false in w_ab. " ++
-  "This blocks anti-exhaustive interpretations regardless of prior bias."
+/-- EXH(A∧¬B) unchanged: A∧¬B has no stronger alternative. -/
+theorem exhAnotB_unchanged : ∀ w, exhMeaning w .AandNotB = literalTruth w .AandNotB := by
+  native_decide
 
 -- ============================================================================
--- RSA Bridge: Structural Definitions
+-- §4. Parse-Dependent Meaning
 -- ============================================================================
 
-/-! Parse-dependent meaning, wonky goal projection, and structural
-verification theorems. -/
+/-- Parse = whether EXH is applied. -/
+inductive CWSParse where
+  | literal : CWSParse
+  | exh : CWSParse
+  deriving DecidableEq, BEq, Repr, Inhabited
 
-/-- Meaning with parse-dependent exhaustification.
-    - literal parse: literal semantics
-    - exh parse: exhaustified semantics (EXH(A) = A ∧ ¬B) -/
+instance : Fintype CWSParse where
+  elems := {.literal, .exh}
+  complete := fun x => by cases x <;> simp
+
+/-- Meaning with parse-dependent exhaustification. -/
 def parseMeaning : CWSParse → CWSWorld → CWSUtterance → Bool
   | .literal, w, u => literalTruth w u
   | .exh, w, u => exhMeaning w u
 
-/-- BwRSA goal projection: how goals partition worlds.
-    - informative: Full partition (distinguish all worlds)
-    - wonky: Trivial partition (all worlds equivalent) -/
-def wonkyGoalProject : WonkyGoal → CWSWorld → CWSWorld → Bool
-  | .informative, w1, w2 => w1 == w2
-  | .wonky, _, _ => true
+-- ============================================================================
+-- §5. Anti-Exhaustivity Condition (Eq. 6b)
+-- ============================================================================
 
-theorem utterance_count : allUtterances.length = 3 := rfl
-theorem world_count : allWorlds.length = 2 := rfl
-theorem parse_count : allParses.length = 2 := rfl
-theorem lexica_count : allLexica.length = 4 := rfl
-theorem wonky_goals_count : allWonkyGoals.length = 2 := rfl
+/-- Equal-cost anti-exhaustivity condition (simplified from Eq. 6b).
 
-/-- EXH blocks anti-exhaustivity because EXH(A) = A ∧ ¬B is false in w_ab. -/
+    The full condition from Eq. 6b is:
+    `L1(w_ab|A) > P(w_ab) iff log(P(w_ab)) - log(P(w_a)) > c(A∧¬B) - c(A∧B)`
+    (log-odds exceeds cost difference, under beliefAction scoring with λ = 1).
+
+    With equal costs (`c(A∧¬B) = c(A∧B)`), this simplifies to `P(w_ab) > P(w_a)`:
+    any prior bias toward w_ab triggers anti-exhaustivity. -/
+def antiExhaustivityHolds_equalCosts (p_wab p_wa : ℚ) : Bool :=
+  p_wab > p_wa
+
+/-- With uniform prior, no anti-exhaustivity. -/
+theorem uniform_no_antiexh :
+    antiExhaustivityHolds_equalCosts (1/2) (1/2) = false := by native_decide
+
+/-- With 3:1 bias, anti-exhaustivity is triggered. -/
+theorem biased_triggers_antiexh :
+    antiExhaustivityHolds_equalCosts (3/4) (1/4) = true := by native_decide
+
+-- ============================================================================
+-- §6. RSA Configurations
+-- ============================================================================
+
+open Real (rpow rpow_nonneg)
+
+/-- Baseline RSA (Model 1) with biased prior.
+    No EXH, literal semantics only.
+    Prior 1:3 in favor of w_ab (both A and B true). -/
+noncomputable def baselineBiased : RSA.RSAConfig CWSUtterance CWSWorld where
+  meaning _ _ u w := if literalTruth w u then 1 else 0
+  meaning_nonneg _ _ _ _ := by split <;> positivity
+  s1Score l0 α _ w u := rpow (l0 u w) α
+  s1Score_nonneg _ _ _ _ u hl _ := rpow_nonneg (hl u _) _
+  α := 2
+  α_pos := by positivity
+  worldPrior := fun | .w_a => 1 | .w_ab => 3
+  worldPrior_nonneg := fun w => by cases w <;> positivity
+  latentPrior_nonneg := fun _ _ => le_of_lt one_pos
+
+/-- EXH-LU RSA (Model 6) with biased prior.
+    Parse is a latent variable; meaning under each parse is determined
+    by Innocent Exclusion. Under the exh parse, EXH(A) = A ∧ ¬B is
+    false in w_ab, blocking anti-exhaustivity. -/
+noncomputable def exhLUBiased : RSA.RSAConfig CWSUtterance CWSWorld where
+  Latent := CWSParse
+  meaning _ p u w := if parseMeaning p w u then 1 else 0
+  meaning_nonneg _ _ _ _ := by split <;> positivity
+  s1Score l0 α _ w u := rpow (l0 u w) α
+  s1Score_nonneg _ _ _ _ u hl _ := rpow_nonneg (hl u _) _
+  α := 2
+  α_pos := by positivity
+  worldPrior := fun | .w_a => 1 | .w_ab => 3
+  worldPrior_nonneg := fun w => by cases w <;> positivity
+  latentPrior_nonneg := fun _ _ => le_of_lt one_pos
+
+-- ============================================================================
+-- §7. Predictions
+-- ============================================================================
+
+/-- Baseline RSA with biased prior is anti-exhaustive: hearing "A"
+    makes the listener MORE confident in w_ab (both true) than w_a.
+    This contradicts human behavior — humans always exhaust "A"
+    to mean "A and not B." -/
+theorem baseline_biased_antiexhaustive :
+    baselineBiased.L1 .A .w_ab > baselineBiased.L1 .A .w_a := by
+  rsa_predict
+
+/-- EXH-LU blocks anti-exhaustivity: even with 3:1 biased prior,
+    L1 correctly infers w_a from "A" because the exhaustified parse
+    (EXH(A) = A ∧ ¬B) kills w_ab. The EXH parse contributes zero
+    speaker probability for A in w_ab, overriding the prior bias. -/
+theorem exhlu_blocks_antiexhaustivity :
+    exhLUBiased.L1 .A .w_a > exhLUBiased.L1 .A .w_ab := by
+  rsa_predict
+
+/-- EXH(A) is false in w_ab — the structural basis for blocking. -/
 theorem exh_meaning_blocks_wab :
     exhMeaning .w_ab .A = false := by rfl
 
-end CremersWilcoxSpector2023
+end Phenomena.ScalarImplicatures.Studies.CremersWilcoxSpector2023

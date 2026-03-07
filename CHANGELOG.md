@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.228.90] - 2026-03-07
+
+### Changed
+- **CremersWilcoxSpector2023**: Rewrite to use RSAConfig + `rsa_predict` — two configs (baseline, EXH-LU) with biased prior, two `rsa_predict` theorems proving anti-exhaustivity and its blocking
+- **CremersWilcoxSpector2023**: Fix incorrect Eq. 6b formula (was ratio-vs-ratio, paper uses log-odds-vs-cost-difference); rename to `antiExhaustivityHolds_equalCosts` with corrected docstring
+
+### Removed
+- **Implementations/CremersWilcoxSpector2023.lean**: Delete orphaned 25-line stub (no external dependents)
+
 ## [0.228.89] - 2026-03-07
 
 ### Fixed
