@@ -3,6 +3,7 @@ import Linglib.Core.Interval.RSAEval
 import Linglib.Core.Interval.RSAVerify
 import Linglib.Tactics.RSAPredict
 import Linglib.Core.Semantics.GradedProposition
+import Linglib.Core.Subjectivity
 
 /-!
 # @cite{yoon-etal-2020} — Polite Speech Emerges From Competing Social Goals
@@ -540,5 +541,24 @@ theorem kind_h0_prefers_negation :
     (s2Config kindWeights).S2Utility .h0 .notTerrible >
     (s2Config kindWeights).S2Utility .h0 .terrible := by
   sorry
+
+-- ============================================================================
+-- §4. Bridge to Subjectivity Cline
+-- ============================================================================
+
+/-- The S1/S2 politeness model instantiates Traugott's intersubjectivity:
+    the speaker attends to the addressee's face/self-image.
+
+    When phi < 1, the speaker trades informativity for social value,
+    i.e. the utterance is shaped by attention to the addressee -- the
+    defining characteristic of @cite{traugott-dasher-2002}'s intersubjective
+    level. The S2 model adds a second layer: the speaker also manages
+    how *kind* they appear, which is doubly intersubjective.
+
+    @cite{narrog-2010} §4.2 connects this to modality: strong obligation
+    is face-threatening precisely because it is performative and volitive,
+    making the speaker's imposition on the addressee maximally salient. -/
+def socialGoalSubjectivityLevel : Core.Subjectivity.SubjectivityLevel :=
+  .intersubjective
 
 end Phenomena.Politeness.Studies.YoonEtAl2020
