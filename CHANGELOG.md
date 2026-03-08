@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.229.12] - 2026-03-07
+
+### Changed
+- **Symmetry.lean**: Close `symmetric_not_ie` sorry — symmetric alternatives are never innocently excludable. Structured proof via 11 private helpers: `sym_witness` (find world where s true, s₂ false), `singleton_consistent` ({i₂} is a consistent exclusion), `exists_maximal_extension` (finite Zorn: every consistent set extends to an MCE), `ie_imp_in_all_mce` (IE membership implies universal MCE membership), etc. Zero sorries remaining in Symmetry.lean
+
 ## [0.229.11] - 2026-03-07
 
 ### Added

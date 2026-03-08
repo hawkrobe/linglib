@@ -44,7 +44,7 @@ to that paper.
 
 namespace NeoGricean.Symmetry
 
-open NeoGricean.Exhaustivity.Fox2007 hiding sublists
+open NeoGricean.Exhaustivity.Fox2007
 
 
 -- ============================================================
@@ -125,6 +125,212 @@ theorem both_excluded_inconsistent {W : Type} (domain : List W)
   simp [BEq.beq] at ha
   cases s₁ w <;> cases s₂ w <;> simp_all
 
+-- ── Private helpers for symmetric_not_ie ──────────────────
+
+private theorem list_self_contains (l : List Nat) :
+    l.all (fun i => l.contains i) = true := by
+  rw [List.all_eq_true]
+  intro x hx
+  exact List.contains_iff_mem.mpr hx
+
+private theorem list_contains_trans (a b c : List Nat)
+    (hab : a.all (fun i => b.contains i) = true)
+    (hbc : b.all (fun i => c.contains i) = true) :
+    a.all (fun i => c.contains i) = true := by
+  rw [List.all_eq_true] at hab hbc ⊢
+  intro x hx
+  exact hbc x (List.contains_iff_mem.mp (hab x hx))
+
+private theorem exists_max_length (l : List (List Nat)) (hl : l ≠ []) :
+    ∃ m ∈ l, ∀ t ∈ l, t.length ≤ m.length := by
+  induction l with
+  | nil => exact absurd rfl hl
+  | cons x xs ih =>
+    by_cases hxs : xs = []
+    · subst hxs
+      exact ⟨x, List.mem_cons_self, fun t ht => by
+        simp [List.mem_cons] at ht; subst ht; exact Nat.le_refl _⟩
+    · obtain ⟨m, hm, hmax⟩ := ih hxs
+      by_cases h : x.length ≥ m.length
+      · exact ⟨x, List.mem_cons_self, fun t ht => by
+          cases List.mem_cons.mp ht with
+          | inl h' => subst h'; exact Nat.le_refl _
+          | inr h' => exact Nat.le_trans (hmax t h') h⟩
+      · exact ⟨m, List.mem_cons_of_mem x hm, fun t ht => by
+          cases List.mem_cons.mp ht with
+          | inl h' => subst h'; omega
+          | inr h' => exact hmax t h'⟩
+
+private theorem mce_consistent {W : Type} (domain : List W)
+    (p : W → Bool) (alts : List (W → Bool))
+    (M : List Nat) (hM : M ∈ maxConsistentExclusions domain p alts) :
+    exclusionConsistent domain p alts M = true := by
+  unfold maxConsistentExclusions at hM
+  exact (List.mem_filter.mp (List.mem_filter.mp hM).1).2
+
+private theorem exists_maximal_extension
+    (consistent : List (List Nat))
+    (E : List Nat) (hE : E ∈ consistent) :
+    ∃ M ∈ consistent.filter (fun s =>
+      !consistent.any fun t =>
+        decide (t.length > s.length) && s.all fun i => t.contains i),
+    E.all (fun i => M.contains i) = true := by
+  have hE_ext : E ∈ consistent.filter (fun T => E.all (fun i => T.contains i)) :=
+    List.mem_filter.mpr ⟨hE, list_self_contains E⟩
+  obtain ⟨M, hM_ext, hM_max⟩ := exists_max_length _
+    (List.ne_nil_of_mem hE_ext)
+  have ⟨hM_con, hM_sup⟩ := List.mem_filter.mp hM_ext
+  have hM_not_dominated : consistent.any (fun t =>
+      decide (t.length > M.length) && M.all (fun i => t.contains i)) = false := by
+    rw [Bool.eq_false_iff]
+    intro habs
+    rw [List.any_eq_true] at habs
+    obtain ⟨T, hT_con, hT_prop⟩ := habs
+    rw [Bool.and_eq_true_iff] at hT_prop
+    obtain ⟨hT_len, hT_sub⟩ := hT_prop
+    have hT_ext : T ∈ consistent.filter (fun T' => E.all (fun i => T'.contains i)) :=
+      List.mem_filter.mpr ⟨hT_con, list_contains_trans E M T hM_sup hT_sub⟩
+    have := hM_max T hT_ext
+    simp [decide_eq_true_eq] at hT_len
+    omega
+  exact ⟨M, List.mem_filter.mpr ⟨hM_con, by
+    simp only [Bool.not_eq_true']; exact hM_not_dominated⟩, hM_sup⟩
+
+private theorem ie_imp_in_all_mce {W : Type} (domain : List W)
+    (p : W → Bool) (alts : List (W → Bool)) (i : Nat)
+    (h : (ieIndices domain p alts).contains i = true) :
+    ∀ M ∈ maxConsistentExclusions domain p alts, M.contains i = true := by
+  unfold ieIndices at h
+  intro M hM
+  match hmces : maxConsistentExclusions domain p alts with
+  | [] =>
+    rw [hmces] at hM
+    exact absurd hM List.not_mem_nil
+  | first :: rest =>
+    rw [hmces] at hM
+    simp only [hmces] at h
+    have hi_filtered := List.contains_iff_mem.mp h
+    have ⟨hi_first, hi_pred⟩ := List.mem_filter.mp hi_filtered
+    cases List.mem_cons.mp hM with
+    | inl heq => subst heq; exact List.contains_iff_mem.mpr hi_first
+    | inr hrest =>
+      rw [List.all_eq_true] at hi_pred
+      exact hi_pred M hrest
+
+private theorem nil_mem_sublists (xs : List Nat) :
+    [] ∈ sublists xs := by
+  induction xs with
+  | nil => unfold sublists; exact List.mem_cons_self
+  | cons x xs ih =>
+    unfold sublists
+    rw [List.mem_append]
+    exact Or.inl ih
+
+private theorem singleton_mem_sublists
+    (i : Nat) (xs : List Nat) (h : i ∈ xs) :
+    [i] ∈ sublists xs := by
+  induction xs with
+  | nil => exact absurd h List.not_mem_nil
+  | cons x xs ih =>
+    unfold sublists
+    rw [List.mem_append]
+    cases List.mem_cons.mp h with
+    | inl heq =>
+      right
+      subst heq
+      exact List.mem_map_of_mem (nil_mem_sublists xs)
+    | inr hmem =>
+      left
+      exact ih hmem
+
+private theorem sym_witness {W : Type} (domain : List W)
+    (s s₁ s₂ : W → Bool)
+    (hsym : isSymmetric domain s s₁ s₂ = true)
+    (h_sat₁ : domain.any s₁ = true) :
+    ∃ w ∈ domain, s w = true ∧ s₂ w = false := by
+  unfold isSymmetric at hsym
+  have ⟨ha, hb⟩ := Bool.and_eq_true_iff.mp hsym
+  rw [List.all_eq_true] at ha hb
+  rw [List.any_eq_true] at h_sat₁
+  obtain ⟨w, hw, hs₁w⟩ := h_sat₁
+  specialize ha w hw
+  specialize hb w hw
+  simp [BEq.beq] at ha hb
+  refine ⟨w, hw, ?_, ?_⟩
+  · rw [← ha, hs₁w]; simp
+  · cases hs₂ : s₂ w with
+    | false => rfl
+    | true => exfalso; simp [hs₁w, hs₂] at hb
+
+private theorem sym_nonweaker {W : Type} (domain : List W)
+    (s s₁ s₂ : W → Bool) (alts : List (W → Bool))
+    (i₂ : Nat) (hsym : isSymmetric domain s s₁ s₂ = true)
+    (hi₂ : alts[i₂]? = some s₂)
+    (h_sat₁ : domain.any s₁ = true)
+    (h_bound : i₂ < alts.length) :
+    i₂ ∈ nonWeakerIndices domain s alts := by
+  unfold nonWeakerIndices
+  rw [List.mem_filter]
+  refine ⟨List.mem_range.mpr h_bound, ?_⟩
+  simp only [hi₂]
+  rw [List.any_eq_true]
+  obtain ⟨w, hw, hsw, hs₂w⟩ := sym_witness domain s s₁ s₂ hsym h_sat₁
+  exact ⟨w, hw, by rw [Bool.and_eq_true_iff]; exact ⟨hsw, by simp [hs₂w]⟩⟩
+
+private theorem singleton_consistent {W : Type} (domain : List W)
+    (s s₁ s₂ : W → Bool) (alts : List (W → Bool))
+    (i₂ : Nat) (hsym : isSymmetric domain s s₁ s₂ = true)
+    (hi₂ : alts[i₂]? = some s₂)
+    (h_sat₁ : domain.any s₁ = true) :
+    exclusionConsistent domain s alts [i₂] = true := by
+  unfold exclusionConsistent
+  rw [List.any_eq_true]
+  obtain ⟨w, hw, hsw, hs₂w⟩ := sym_witness domain s s₁ s₂ hsym h_sat₁
+  refine ⟨w, hw, ?_⟩
+  rw [Bool.and_eq_true_iff]
+  constructor
+  · exact hsw
+  · rw [List.all_eq_true]
+    intro q hq
+    simp [List.filterMap, hi₂] at hq
+    rw [hq, hs₂w]; rfl
+
+private theorem exists_mce_containing {W : Type} (domain : List W)
+    (s s₁ s₂ : W → Bool) (alts : List (W → Bool))
+    (i₂ : Nat) (hsym : isSymmetric domain s s₁ s₂ = true)
+    (hi₂ : alts[i₂]? = some s₂)
+    (h_sat₁ : domain.any s₁ = true)
+    (h_bound : i₂ < alts.length) :
+    ∃ M ∈ maxConsistentExclusions domain s alts, M.contains i₂ = true := by
+  have h_nw := sym_nonweaker domain s s₁ s₂ alts i₂ hsym hi₂ h_sat₁ h_bound
+  have h_in_consistent : [i₂] ∈ (sublists (nonWeakerIndices domain s alts)).filter
+      (exclusionConsistent domain s alts) :=
+    List.mem_filter.mpr ⟨singleton_mem_sublists i₂ _ h_nw,
+      singleton_consistent domain s s₁ s₂ alts i₂ hsym hi₂ h_sat₁⟩
+  obtain ⟨M, hM_max, hM_sup⟩ := exists_maximal_extension _ [i₂] h_in_consistent
+  exact ⟨M, hM_max, by
+    rw [List.all_eq_true] at hM_sup
+    exact hM_sup i₂ List.mem_cons_self⟩
+
+private theorem isSymmetric_comm {W : Type} (domain : List W)
+    (s s₁ s₂ : W → Bool)
+    (hsym : isSymmetric domain s s₁ s₂ = true) :
+    isSymmetric domain s s₂ s₁ = true := by
+  unfold isSymmetric at hsym ⊢
+  have ⟨ha, hb⟩ := Bool.and_eq_true_iff.mp hsym
+  rw [Bool.and_eq_true_iff]
+  constructor
+  · rw [List.all_eq_true] at ha ⊢
+    intro w hw; specialize ha w hw
+    simp [BEq.beq] at ha ⊢
+    rw [Bool.or_comm]; exact ha
+  · rw [List.all_eq_true] at hb ⊢
+    intro w hw; specialize hb w hw
+    simp at hb ⊢
+    exact Or.comm.mp hb
+
+-- ── Main theorem ──────────────────────────────────────────
+
 /-- **General principle**: symmetric alternatives are never innocently
     excludable. If S₁, S₂ partition S's denotation and both appear in
     the alternative set, then neither is in I-E.
@@ -137,20 +343,47 @@ theorem both_excluded_inconsistent {W : Type} (domain : List W)
     each appears in some MCE but not all. Hence neither is in
     I-E = ⋂MCEs.
 
-    TODO: the proof requires showing that the list-based
-    `maxConsistentExclusions` produces MCEs that witness this
-    separation — specifically, that individual excludability
-    (`h_sat₁`/`h_sat₂`) extends to maximal exclusion sets. -/
+    The proof establishes that `{i₂}` is a consistent exclusion set
+    (using `sym_witness`), extends it to a maximal consistent exclusion
+    (via `exists_maximal_extension`), and observes that this MCE
+    cannot contain `i₁` (by `both_excluded_inconsistent`). The
+    symmetric argument shows an MCE containing `i₁` but not `i₂`. -/
 theorem symmetric_not_ie {W : Type} (domain : List W)
     (s s₁ s₂ : W → Bool) (alts : List (W → Bool))
-    (i₁ i₂ : Nat) (h_ne : i₁ ≠ i₂)
+    (i₁ i₂ : Nat) (_h_ne : i₁ ≠ i₂)
     (hsym : isSymmetric domain s s₁ s₂ = true)
     (hi₁ : alts[i₁]? = some s₁) (hi₂ : alts[i₂]? = some s₂)
     (h_sat₁ : domain.any s₁ = true)
     (h_sat₂ : domain.any s₂ = true) :
     let ie := ieIndices domain s alts
     ie.contains i₁ = false ∧ ie.contains i₂ = false := by
-  sorry
+  intro ie
+  have hsym' := isSymmetric_comm domain s s₁ s₂ hsym
+  have h_bound₁ := (List.getElem?_eq_some_iff.mp hi₁).1
+  have h_bound₂ := (List.getElem?_eq_some_iff.mp hi₂).1
+  constructor
+  · -- ie.contains i₁ = false: the MCE containing i₂ witnesses absence
+    rw [Bool.eq_false_iff]
+    intro h_in_ie
+    have h_all := ie_imp_in_all_mce domain s alts i₁ h_in_ie
+    obtain ⟨M, hM_mce, hM_i₂⟩ := exists_mce_containing domain s s₁ s₂ alts i₂
+      hsym hi₂ h_sat₁ h_bound₂
+    have hM_i₁ := h_all M hM_mce
+    exact absurd (mce_consistent domain s alts M hM_mce)
+      (Bool.eq_false_iff.mp (both_excluded_inconsistent domain s s₁ s₂ alts i₁ i₂ M
+        hsym hi₁ hi₂
+        (List.contains_iff_mem.mp hM_i₁) (List.contains_iff_mem.mp hM_i₂)))
+  · -- ie.contains i₂ = false: the MCE containing i₁ witnesses absence
+    rw [Bool.eq_false_iff]
+    intro h_in_ie
+    have h_all := ie_imp_in_all_mce domain s alts i₂ h_in_ie
+    obtain ⟨M, hM_mce, hM_i₁⟩ := exists_mce_containing domain s s₂ s₁ alts i₁
+      hsym' hi₁ h_sat₂ h_bound₁
+    have hM_i₂ := h_all M hM_mce
+    exact absurd (mce_consistent domain s alts M hM_mce)
+      (Bool.eq_false_iff.mp (both_excluded_inconsistent domain s s₁ s₂ alts i₁ i₂ M
+        hsym hi₁ hi₂
+        (List.contains_iff_mem.mp hM_i₁) (List.contains_iff_mem.mp hM_i₂)))
 
 
 -- ============================================================
