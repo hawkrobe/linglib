@@ -25,6 +25,19 @@ Every subsequent theory of alternatives is shaped by this problem:
 - @cite{breheny-et-al-2018} show that none of these fully solve
   the problem (indirect SIs, gradable adjectives, too many/few
   lexical alternatives remain problematic)
+- @cite{fox-spector-2018}'s **economy condition** constrains where
+  `exh` can be inserted (not vacuous, not weakening), which interacts
+  with symmetry: symmetric alternatives make `exh` vacuous (see
+  `symmetric_exhB_vacuous`), so economy would block uninformative
+  exhaustification rather than producing wrong results
+- **RSA** (@cite{frank-goodman-2012}, @cite{franke-2011}) **dissolves**
+  rather than solves the symmetry problem: the utterance space is
+  specified directly (typically simple lexical items), and utterance
+  cost penalizes complex expressions like "some but not all." Even
+  without cost, Bayesian inference at finite rationality α handles
+  symmetric alternatives gracefully — the symmetry problem only
+  re-emerges in the categorical limit α → ∞ where RSA collapses
+  to `exh` (see `Comparisons.RSANeoGricean`)
 
 This file defines the core concepts — `isSymmetric`, complement
 equivalence, and inconsistency of joint exclusion — as theory-neutral
