@@ -38,6 +38,8 @@ to that paper.
 - `symmetric_complement`: S ∧ ¬S₁ = S₂ when symmetric
 - `both_excluded_inconsistent`: excluding both contradicts S
 - `symmetric_not_ie`: symmetric alternatives are never in I-E
+- `exhB_vacuous_of_ie_empty`: exhB = identity when I-E is empty
+- `symmetric_exhB_vacuous`: exhB is vacuous when only symmetric alts
 - `RelevanceClosure`: closure under ¬ and ∧ (condition 50)
 - `context_cannot_break_symmetry`: C preserves symmetry (constraint 28)
 -/
@@ -387,7 +389,110 @@ theorem symmetric_not_ie {W : Type} (domain : List W)
 
 
 -- ============================================================
--- SECTION 4: Relevance Closure and Constraint 28
+-- SECTION 4: Vacuity Corollary
+-- ============================================================
+
+/-- When `ieIndices` returns the empty list, `exhB` reduces to the
+    prejacent — no alternatives are excluded. -/
+theorem exhB_vacuous_of_ie_empty {W : Type} (domain : List W)
+    (alts : List (W → Bool)) (p : W → Bool)
+    (h : ieIndices domain p alts = []) :
+    ∀ w, exhB domain alts p w = p w := by
+  intro w
+  simp [exhB, h, Bool.and_true]
+
+-- ── Helpers for symmetric_exhB_vacuous ───────────────────────
+
+private theorem mem_of_mem_sublists
+    (x : Nat) (xs : List Nat) (l : List Nat)
+    (hl : l ∈ sublists xs) (hx : x ∈ l) : x ∈ xs := by
+  induction xs generalizing l with
+  | nil =>
+    simp [sublists] at hl
+    subst hl
+    exact absurd hx List.not_mem_nil
+  | cons y ys ih =>
+    simp only [sublists] at hl
+    rw [List.mem_append] at hl
+    cases hl with
+    | inl h_left => exact List.mem_cons_of_mem y (ih l h_left hx)
+    | inr h_right =>
+      rw [List.mem_map] at h_right
+      obtain ⟨l', hl', heq⟩ := h_right
+      subst heq
+      cases List.mem_cons.mp hx with
+      | inl heq => subst heq; exact List.mem_cons_self
+      | inr hmem => exact List.mem_cons_of_mem y (ih l' hl' hmem)
+
+private theorem mce_elem_in_nw {W : Type} (domain : List W)
+    (p : W → Bool) (alts : List (W → Bool))
+    (M : List Nat) (i : Nat)
+    (hM : M ∈ maxConsistentExclusions domain p alts)
+    (hi : i ∈ M) :
+    i ∈ nonWeakerIndices domain p alts := by
+  unfold maxConsistentExclusions at hM
+  have hM_con := (List.mem_filter.mp hM).1
+  have hM_sub := (List.mem_filter.mp hM_con).1
+  exact mem_of_mem_sublists i (nonWeakerIndices domain p alts) M hM_sub hi
+
+private theorem ie_elem_in_nw {W : Type} (domain : List W)
+    (p : W → Bool) (alts : List (W → Bool))
+    (i : Nat)
+    (h : i ∈ ieIndices domain p alts) :
+    i ∈ nonWeakerIndices domain p alts := by
+  unfold ieIndices at h
+  match hmces : maxConsistentExclusions domain p alts with
+  | [] => rw [hmces] at h; exact absurd h List.not_mem_nil
+  | first :: rest =>
+    rw [hmces] at h
+    have hi_first := (List.mem_filter.mp h).1
+    have hfirst_mce : first ∈ maxConsistentExclusions domain p alts := by
+      rw [hmces]; exact List.mem_cons_self
+    exact mce_elem_in_nw domain p alts first i hfirst_mce hi_first
+
+-- ── Main corollary ──────────────────────────────────────────
+
+/-- **Vacuity corollary**: when the symmetric pair are the *only*
+    non-weaker alternatives, `exhB` is the identity —
+    exhaustification is vacuous.
+
+    This is the general principle underlying the concrete
+    `FoxKatzir2011.symmetry_problem`: with both symmetric
+    alternatives present and no other non-weaker alternatives,
+    I-E is empty, so `exh` does nothing. -/
+theorem symmetric_exhB_vacuous {W : Type} (domain : List W)
+    (s s₁ s₂ : W → Bool) (alts : List (W → Bool))
+    (i₁ i₂ : Nat) (h_ne : i₁ ≠ i₂)
+    (hsym : isSymmetric domain s s₁ s₂ = true)
+    (hi₁ : alts[i₁]? = some s₁) (hi₂ : alts[i₂]? = some s₂)
+    (h_sat₁ : domain.any s₁ = true) (h_sat₂ : domain.any s₂ = true)
+    (h_only : ∀ j, j ∈ nonWeakerIndices domain s alts →
+      j = i₁ ∨ j = i₂) :
+    ∀ w, exhB domain alts s w = s w := by
+  have ⟨h_not₁, h_not₂⟩ := symmetric_not_ie domain s s₁ s₂ alts i₁ i₂
+    h_ne hsym hi₁ hi₂ h_sat₁ h_sat₂
+  have h_ie_empty : ieIndices domain s alts = [] := by
+    match h_eq : ieIndices domain s alts with
+    | [] => rfl
+    | j :: _ =>
+      exfalso
+      have hj : j ∈ ieIndices domain s alts := by
+        rw [h_eq]; exact List.mem_cons_self
+      have h_nw := ie_elem_in_nw domain s alts j hj
+      cases h_only j h_nw with
+      | inl heq =>
+        subst heq
+        exact absurd (List.contains_iff_mem.mpr hj)
+          (Bool.eq_false_iff.mp h_not₁)
+      | inr heq =>
+        subst heq
+        exact absurd (List.contains_iff_mem.mpr hj)
+          (Bool.eq_false_iff.mp h_not₂)
+  exact exhB_vacuous_of_ie_empty domain alts s h_ie_empty
+
+
+-- ============================================================
+-- SECTION 5: Relevance Closure and Constraint 28
 -- ============================================================
 
 /-!

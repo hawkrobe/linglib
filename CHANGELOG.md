@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.229.14] - 2026-03-07
+
+### Added
+- **Symmetry.lean**: Vacuity corollary — `exhB_vacuous_of_ie_empty` (exhB = identity when I-E is empty), `symmetric_exhB_vacuous` (when symmetric pair are the only non-weaker alternatives, exhB is the identity). Helpers: `mem_of_mem_sublists`, `mce_elem_in_nw`, `ie_elem_in_nw`
+
+### Changed
+- **StructuralAlternatives.lean**: Close `category_preservation` sorry — structural operations preserve absence of categories not in the substitution source. Induction on `ReflTransGen`/`StructOp` with 4 private helpers (`containsCatList_false_of_mem`, `containsCatList_eraseIdx`, `containsCatList_set`, `structOp_preserves_no_cat`). Also closes `symmetry_problem_solved` sorry (Katzir's solution to the symmetry problem). 1 sorry remaining (`horn_alternatives_are_structural`)
+
+## [0.229.13] - 2026-03-07
+
+### Added
+- **RankingBridge.lean**: RSA–ranking limit bridge (`Theories/Pragmatics/RSA/Core/`). `rankToScore` (κ → softmax scores), `softmax_concentrates_unique` (softmax → point mass on rank-0 world as α→∞), `rankEntails_iff_minRank_lt` (ranking entailment ↔ minimum-rank comparison), `minRank_worlds_satisfy` (minimum-rank φ-worlds satisfy σ under ranking entailment), `rankToPrior` (exponential prior from rankings). 0 sorry, 12 theorems
+- **GoldszmidtPearl1996.lean** §9: RSA bridge — `κz_softmax_concentrates` (κ^z softmax → point mass on birdFlies), `minRank_birds_fly` (minimum-rank birds fly), `minRank_penguins_dont_fly` (minimum-rank penguins don't fly). System Z entailment = infinite-rationality RSA limit, demonstrated concretely for the Tweety scenario
+
 ## [0.229.12] - 2026-03-07
 
 ### Changed

@@ -360,6 +360,83 @@ theorem source_lacks_conjp :
     (substitutionSource exLexicon someSentence).all
       (fun t => !t.containsCat .ConjP) = true := by rfl
 
+-- ── Private helpers for category_preservation ──────────────────
+
+private theorem containsCatList_false_of_mem {W : Type} (c : SynCat)
+    (cs : List (ParseTree W)) (t : ParseTree W)
+    (h : ParseTree.containsCat.containsCatList c cs = false)
+    (ht : t ∈ cs) :
+    t.containsCat c = false := by
+  induction cs with
+  | nil => exact absurd ht List.not_mem_nil
+  | cons x xs ih =>
+    simp only [ParseTree.containsCat.containsCatList, Bool.or_eq_false_iff] at h
+    cases List.mem_cons.mp ht with
+    | inl heq => subst heq; exact h.1
+    | inr hmem => exact ih h.2 hmem
+
+private theorem containsCatList_eraseIdx {W : Type} (c : SynCat)
+    (cs : List (ParseTree W)) (i : Nat) (hi : i < cs.length)
+    (h : ParseTree.containsCat.containsCatList c cs = false) :
+    ParseTree.containsCat.containsCatList c (cs.eraseIdx i) = false := by
+  induction cs generalizing i with
+  | nil => simp at hi
+  | cons x xs ih =>
+    simp only [ParseTree.containsCat.containsCatList, Bool.or_eq_false_iff] at h
+    cases i with
+    | zero => simp [List.eraseIdx]; exact h.2
+    | succ n =>
+      have hn : n < xs.length := by simp [List.length] at hi; omega
+      simp only [List.eraseIdx, ParseTree.containsCat.containsCatList, Bool.or_eq_false_iff]
+      exact ⟨h.1, ih n hn h.2⟩
+
+private theorem containsCatList_set {W : Type} (c : SynCat)
+    (cs : List (ParseTree W)) (i : Nat) (hi : i < cs.length)
+    (t : ParseTree W)
+    (h_cs : ParseTree.containsCat.containsCatList c cs = false)
+    (h_t : t.containsCat c = false) :
+    ParseTree.containsCat.containsCatList c (cs.set i t) = false := by
+  induction cs generalizing i with
+  | nil => simp at hi
+  | cons x xs ih =>
+    simp only [ParseTree.containsCat.containsCatList, Bool.or_eq_false_iff] at h_cs
+    cases i with
+    | zero =>
+      simp only [List.set, ParseTree.containsCat.containsCatList, Bool.or_eq_false_iff]
+      exact ⟨h_t, h_cs.2⟩
+    | succ n =>
+      have hn : n < xs.length := by simp [List.length] at hi; omega
+      simp only [List.set, ParseTree.containsCat.containsCatList, Bool.or_eq_false_iff]
+      exact ⟨h_cs.1, ih n hn h_cs.2⟩
+
+private theorem structOp_preserves_no_cat {W : Type}
+    (source : List (ParseTree W)) (c : SynCat)
+    (φ ψ : ParseTree W)
+    (h_source : ∀ s ∈ source, s.containsCat c = false)
+    (h_φ : φ.containsCat c = false)
+    (h_step : StructOp source φ ψ) :
+    ψ.containsCat c = false := by
+  induction h_step with
+  | subst _ h_src => exact h_source _ h_src
+  | @delete cat cs i =>
+    unfold ParseTree.containsCat at h_φ ⊢
+    simp only [Bool.or_eq_false_iff] at h_φ ⊢
+    exact ⟨h_φ.1, containsCatList_eraseIdx c cs i i.isLt h_φ.2⟩
+  | @contract cat cs child h_mem _ =>
+    unfold ParseTree.containsCat at h_φ
+    simp only [Bool.or_eq_false_iff] at h_φ
+    exact containsCatList_false_of_mem c cs child h_φ.2 h_mem
+  | @inChild cat cs i ψ_child _ ih =>
+    unfold ParseTree.containsCat at h_φ ⊢
+    simp only [Bool.or_eq_false_iff] at h_φ ⊢
+    constructor
+    · exact h_φ.1
+    · exact containsCatList_set c cs i i.isLt ψ_child h_φ.2
+        (ih (containsCatList_false_of_mem c cs (cs.get i) h_φ.2
+          (List.get_mem cs i)))
+
+-- ── Main invariant ──────────────────────────────────────────────
+
 /-- Key invariant: structural operations preserve absence of a category
 when that category does not appear in the substitution source.
 
@@ -370,7 +447,9 @@ contains `c`. This is because:
 - Deletion removes material (can't introduce `c`)
 - Contraction promotes a subtree (which also lacks `c` by hypothesis)
 
-TODO: Full induction proof on `StructOp` and `ReflTransGen`. -/
+Proof by induction on `ReflTransGen`, reducing to the single-step
+`structOp_preserves_no_cat` which case-splits on the four `StructOp`
+constructors. -/
 theorem category_preservation {W : Type}
     (source : List (ParseTree W)) (c : SynCat)
     (φ ψ : ParseTree W)
@@ -378,7 +457,11 @@ theorem category_preservation {W : Type}
     (h_φ : φ.containsCat c = false)
     (h_reach : atMostAsComplex source ψ φ) :
     ψ.containsCat c = false := by
-  sorry
+  unfold atMostAsComplex at h_reach
+  induction h_reach with
+  | refl => exact h_φ
+  | tail _ h_last ih =>
+    exact structOp_preserves_no_cat source c _ _ h_source ih h_last
 
 /-- The symmetric alternative φ'' is NOT a structural alternative to φ.
 
@@ -397,7 +480,9 @@ theorem symmetry_problem_solved :
   have h_preserved := category_preservation
     (substitutionSource exLexicon someSentence) .ConjP
     someSentence someButNotAllSentence
-    (by intro s hs; sorry) -- source_lacks_conjp proves this computationally
+    (by intro s hs
+        have := List.all_eq_true.mp source_lacks_conjp s hs
+        simp at this; exact this)
     (by rfl)
     h
   exact absurd symmetric_has_conjp (by rw [h_preserved]; decide)
