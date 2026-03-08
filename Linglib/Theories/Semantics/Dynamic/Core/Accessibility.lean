@@ -248,7 +248,54 @@ theorem update_projDref_ne {E : Type*} (g : Assign E) (n m : Nat) (e : E) (h : n
   simp [projDref, Assign.update, h.symm]
 
 -- ════════════════════════════════════════════════════════════════
--- § 7. Merging Lemma
+-- § 7. Structural Lemmas for DRS Composition
+-- ════════════════════════════════════════════════════════════════
+
+private theorem dseq_id_right {S : Type*} (D : DRS S) :
+    dseq D (λ i j => i = j) = D := by
+  funext i j; simp only [dseq, eq_iff_iff]
+  exact ⟨λ ⟨_, h, rfl⟩ => h, λ h => ⟨j, h, rfl⟩⟩
+
+private theorem id_dseq {S : Type*} (D : DRS S) :
+    dseq (λ i j => i = j) D = D := by
+  funext i j; simp only [dseq, eq_iff_iff]
+  exact ⟨λ ⟨_, rfl, h⟩ => h, λ h => ⟨i, rfl, h⟩⟩
+
+/-- `interpConds` distributes over list concatenation. -/
+theorem interpConds_append {E : Type*} (rels : RelInterp E)
+    (cs1 cs2 : List DRSExpr) :
+    interp.interpConds rels (cs1 ++ cs2) =
+    dseq (interp.interpConds rels cs1) (interp.interpConds rels cs2) := by
+  induction cs1 with
+  | nil => simp only [List.nil_append, interp.interpConds]; rw [id_dseq]
+  | cons c cs1 ih => simp only [List.cons_append, interp.interpConds]; rw [ih, dseq_assoc]
+
+/-- The dref introduction foldl distributes through `dseq`:
+`foldl f A drefs = dseq A (foldl f id drefs)`. -/
+private theorem foldl_dseq_shift {E : Type*} (A : DRS (Assign E)) (drefs : List Nat) :
+    List.foldl (λ D n => dseq D (λ i j => ∃ e : E, j = Assign.update i n e)) A drefs =
+    dseq A (List.foldl (λ D n => dseq D (λ i j => ∃ e : E, j = Assign.update i n e))
+      (λ i j => i = j) drefs) := by
+  induction drefs generalizing A with
+  | nil => simp only [List.foldl]; rw [dseq_id_right]
+  | cons d ds ih =>
+    simp only [List.foldl]; rw [ih]
+    conv_rhs => rw [ih]
+    rw [dseq_assoc, id_dseq]
+
+/-- Dref introduction over concatenation = sequencing of introductions. -/
+theorem foldl_append_introduce {E : Type*} (drefs1 drefs2 : List Nat) :
+    List.foldl (λ D n => dseq D (λ i j => ∃ e : E, j = Assign.update i n e))
+      (λ i j => i = j) (drefs1 ++ drefs2) =
+    dseq
+      (List.foldl (λ D n => dseq D (λ i j => ∃ e : E, j = Assign.update i n e))
+        (λ i j => i = j) drefs1)
+      (List.foldl (λ D n => dseq D (λ i j => ∃ e : E, j = Assign.update i n e))
+        (λ i j => i = j) drefs2) := by
+  rw [List.foldl_append, foldl_dseq_shift]
+
+-- ════════════════════════════════════════════════════════════════
+-- § 8. Merging Lemma
 -- ════════════════════════════════════════════════════════════════
 
 /-- Merging Lemma (@cite{muskens-1996}, p. 150).
@@ -259,20 +306,28 @@ sequencing two boxes equals a single merged box:
   `⟦[x₁...xₙ|γ₁,...,γₘ]; [x'₁...x'ₖ|δ₁,...,δq]⟧`
   `= ⟦[x₁...xₙx'₁...x'ₖ|γ₁,...,γₘ,δ₁,...,δq]⟧`
 
-This is used throughout §III.4 to simplify compositional derivations
-(e.g., merging (10) and (11) into (12), reducing (21) to (22)).
+This is used throughout §III.4 to simplify compositional derivations.
 
--- TODO: The proof requires showing that random assignments for fresh
--- drefs commute with tests that don't mention those drefs. -/
+The proof reduces (via `foldl_append_introduce`, `interpConds_append`,
+and `dseq_assoc`) to showing that condition tests commute with fresh
+dref introductions. This commuting step requires a mutual induction
+on `DRSExpr` proving that `interp rels c` is semantically invariant
+under `Assign.update` at slots not mentioned in `c`. -/
 theorem mergingLemma {E : Type*} (rels : RelInterp E)
     (drefs1 drefs2 : List Nat) (conds1 conds2 : List DRSExpr)
     (hfresh : ∀ n ∈ drefs2, ∀ c ∈ conds1, occurs n c = false) :
     interp rels (.seq (.box drefs1 conds1) (.box drefs2 conds2)) =
     interp rels (.box (drefs1 ++ drefs2) (conds1 ++ conds2)) := by
+  simp only [interp]
+  rw [foldl_append_introduce, interpConds_append, dseq_assoc, dseq_assoc]
+  congr 1
+  -- Remaining: show interpConds rels conds1 commutes with intro drefs2
+  -- under the freshness hypothesis. This requires semantic invariance
+  -- of conditions under Assign.update at fresh slots.
   sorry
 
 -- ════════════════════════════════════════════════════════════════
--- § 8. Proposition 1 and Truth-Condition Extraction
+-- § 9. Proposition 1
 -- ════════════════════════════════════════════════════════════════
 
 /-- Proposition 1 (@cite{muskens-1996}, p. 174).
@@ -284,28 +339,79 @@ on the input assignment.
 This bridges syntactic properness (`Accessibility.isProper`) with
 semantic properness (`WeakestPrecondition.isProper`).
 
--- TODO: The proof requires induction on DRSExpr, showing that `interp`
--- only reads registers through drefs that are introduced by boxes
--- or tested in conditions (never "leaked" as free). -/
+The proof requires induction on `DRSExpr`, showing that `interp`
+only reads registers through drefs that are either (1) introduced
+by enclosing boxes or (2) universally quantified over by the wp
+calculus. When all occurring drefs are accessible (properness),
+the wp truth condition is closed and hence state-independent. -/
 theorem proposition_1 {E : Type*} [Nonempty E] (rels : RelInterp E) (K : DRSExpr)
     (hproper : isProper K = true) :
     WeakestPrecondition.isProper (interp rels K) := by
   sorry
 
-/-- Truth conditions of "A man adores a woman" extracted via `wp`.
+-- ════════════════════════════════════════════════════════════════
+-- § 10. Compositional Derivation and Truth-Condition Extraction
+-- ════════════════════════════════════════════════════════════════
 
-`wp(⟦[u₁ u₂ | man u₁, woman u₂, u₁ adores u₂]⟧, ⊤)(g)`
-`= ∃ e₁ e₂, man(e₁) ∧ woman(e₂) ∧ adores(e₁, e₂)`
+/-- Compositional derivation of "a¹ man adores a² woman".
 
-for any input assignment `g`. This demonstrates the full pipeline:
-syntactic DRS → semantic interpretation → wp truth-condition extraction,
-yielding the expected first-order formula (24) from @cite{muskens-1996} p. 159.
+The T₀–T₅ rules (@cite{muskens-1996}, pp. 165–167) produce a sequence
+of two boxes. The derivation tree (39) yields:
 
--- TODO: Proof by unfolding `interp`, `dseq`, `test`, `Assign.update`, `wp`. -/
+  `[u₁ | man u₁] ; [u₂ | woman u₂, u₁ adores u₂]`
+
+The first box introduces the subject's dref and checks the restrictor;
+the second introduces the object's dref and checks both the object
+restrictor and the VP relation. This is the pre-merge form — what
+falls out of function application (T₂) and sequencing (T₃) before
+T₅ REDUCTION collapses the boxes. -/
+def exManAdoresWoman_compositional : DRSExpr :=
+  .seq (.box [1] [.atom 0 [1]])
+       (.box [2] [.atom 1 [2], .atom 2 [1, 2]])
+
+/-- T₅ REDUCTION: the merging lemma collapses the compositional
+derivation into the standard single-box DRS.
+
+The sequenced boxes merge because dref 2 (introduced by the second
+box) does not occur free in any condition of the first box (`man u₁`
+only mentions dref 1). -/
+theorem exManAdoresWoman_merge {E : Type*} (rels : RelInterp E) :
+    interp rels exManAdoresWoman_compositional = interp rels exManAdoresWoman :=
+  mergingLemma rels [1] [2] [.atom 0 [1]] [.atom 1 [2], .atom 2 [1, 2]]
+    (by intro n hn c hc
+        simp only [List.mem_cons, List.mem_nil_iff, or_false] at hn hc
+        subst hn; subst hc; native_decide)
+
+/-- Truth conditions via the compositional route.
+
+Full pipeline: compositional derivation (T₀–T₄) → T₅ REDUCTION
+(merging lemma) → wp truth-condition extraction, yielding the
+expected first-order formula from @cite{muskens-1996}:
+
+  `∃ e₁ e₂, man(e₁) ∧ woman(e₂) ∧ adores(e₁, e₂)` -/
 theorem exManAdoresWoman_truthConditions {E : Type*} (rels : RelInterp E)
     (g : Assign E) :
-    WeakestPrecondition.wp (interp rels exManAdoresWoman) (λ _ => True) g ↔
+    WeakestPrecondition.wp (interp rels exManAdoresWoman_compositional) (λ _ => True) g ↔
     ∃ e₁ e₂ : E, rels 0 [e₁] ∧ rels 1 [e₂] ∧ rels 2 [e₁, e₂] := by
-  sorry
+  rw [exManAdoresWoman_merge]
+  simp only [exManAdoresWoman, interp, interp.interpConds,
+    WeakestPrecondition.wp, dseq, test, List.foldl, and_true, List.map]
+  constructor
+  · intro h
+    obtain ⟨j, g₁, hintro, hconds⟩ := h
+    obtain ⟨g₂, hg₂, e₂, rfl⟩ := hintro
+    obtain ⟨g₃, rfl, e₁, rfl⟩ := hg₂
+    obtain ⟨g₄, ⟨rfl, hR₁⟩, hrest⟩ := hconds
+    obtain ⟨g₅, ⟨rfl, hR₂⟩, hrest2⟩ := hrest
+    obtain ⟨g₆, ⟨rfl, hR₃⟩, rfl⟩ := hrest2
+    simp [Assign.update] at hR₁ hR₂ hR₃
+    exact ⟨e₁, e₂, hR₁, hR₂, hR₃⟩
+  · intro ⟨e₁, e₂, hR₁, hR₂, hR₃⟩
+    let g' := (g.update 1 e₁).update 2 e₂
+    use g', g'
+    exact ⟨⟨g.update 1 e₁, ⟨g, rfl, e₁, rfl⟩, e₂, rfl⟩,
+      g', ⟨rfl, by simp [g', Assign.update]; exact hR₁⟩,
+      g', ⟨rfl, by simp [g', Assign.update]; exact hR₂⟩,
+      g', ⟨rfl, by simp [g', Assign.update]; exact hR₃⟩, rfl⟩
 
 end Semantics.Dynamic.Core.Accessibility
