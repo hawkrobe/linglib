@@ -1,7 +1,5 @@
-import Linglib.Core.Scales.EpistemicScale.CancellationChambers1
-import Linglib.Core.Scales.EpistemicScale.CancellationChambers2
-import Linglib.Core.Scales.EpistemicScale.CancellationChambers3
-import Linglib.Core.Scales.EpistemicScale.CancellationChambers4
+import Linglib.Core.Scales.EpistemicScale.CancellationChambers
+import Linglib.Core.Scales.EpistemicScale.CancellationHelpers
 
 /-!
 # Fin 4 cancellation: dispatch + allpos + main theorem

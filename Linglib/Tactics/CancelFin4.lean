@@ -1,4 +1,4 @@
-import Linglib.Core.Scales.EpistemicScale.CancellationHelpers
+import Linglib.Core.Scales.EpistemicScale.Cancellation
 import Linglib.Tactics.NgeFS
 
 /-!
