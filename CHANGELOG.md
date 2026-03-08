@@ -1,5 +1,45 @@
 # Changelog
 
+## [0.229.10] - 2026-03-07
+
+### Added
+- **Symmetry.lean**: Extract symmetric alternatives into `NeoGricean/Core/Symmetry.lean` — theory-neutral infrastructure for the symmetry problem. `isSymmetric`, `symmetric_complement` (proved), `both_excluded_inconsistent` (proved), `symmetric_not_ie` (sorry), `RelevanceClosure`, `context_cannot_break_symmetry`. The concept predates any single paper (Kroch 1972, Horn 1972) and is used implicitly throughout the exhaustification literature
+- **references.bib**: Added `kroch-1972`, `breheny-et-al-2018`
+
+### Changed
+- **FoxKatzir2011.lean**: Now imports `Symmetry.lean` instead of defining symmetry inline; retains only paper-specific content (worked examples, Katzir bridge, unified F(S,C))
+- **references.bib**: `fox-katzir-2011` sources updated; `horn-1972` sources updated
+
+## [0.229.9] - 2026-03-07
+
+### Added
+- **SystemZ.lean**: Core System Z infrastructure for constructing minimal ranking functions from default rules. `DefaultRule`, `KnowledgeBase`, `tolerated` (Def. 3), `admissible` (Def. 2), `zRankValue`/`zRanking` (Def. 12: κ^z minimal ranking), `rankEntails` (Def. 7: consequence relation). ~55 lines of new theory
+- **GoldszmidtPearl1996.lean**: Formalize Goldszmidt & Pearl 1996 on the Tweety Triangle. Tolerance stratification (Z-priorities: r₁=0, r₂=r₃=1), κ^z rank values verified, per-rule admissibility, entailment queries (penguin_birds_dont_fly, birds_fly, birds_not_typically_penguins), specificity result bridging to Veltman 1996, connected ordering → Rational Monotonicity. 0 sorry, 16 theorems
+- **Plausibility.lean**: Extract `PlausibilityOrder`, `PreferentialConsequence`, `rationalMonotonicity` from BeliefRevision.lean into `Core/Order/Plausibility.lean` — their natural home alongside `NormalityOrder`
+
+### Changed
+- **RankingFunction.lean**: Import changed from `BeliefRevision` to `Core.Order.Plausibility` + `Mathlib.Data.Finset.Lattice.Fold`, fixing backwards import direction where RankingFunction pulled in all of AGM just for PlausibilityOrder
+- **BeliefRevision.lean**: Removed §2–§3 (~110 lines) now in Plausibility.lean; imports Plausibility.lean instead
+- **TweetyNixon.lean**: Added `Fintype` instance and `BEq` deriving for `TweetyWorld` (needed by System Z)
+- **references.bib**: Added `goldszmidt-pearl-1996` (formalized)
+
+## [0.229.8] - 2026-03-07
+
+### Added
+- **FoxKatzir2011.lean**: Formalize Fox & Katzir 2011 "On the Characterization of Alternatives." `isSymmetric` (def 12: partitioning alternatives), `symmetric_not_ie` (general: symmetric alts never in I-E, sorry), `RelevanceClosure` (condition 50), `context_cannot_break_symmetry` (constraint 28), `symmetry_problem` (exh vacuous with full symmetric alts, correct with Horn-restricted alts), `f_breaks_symmetry` (bridge to Katzir 2007), `formalAlternatives` (def 37: unified F(S,C) with context). 2 sorry, 7 theorems
+
+### Changed
+- **references.bib**: `fox-katzir-2011` upgraded from `cited` to `formalized`
+
+## [0.229.7] - 2026-03-07
+
+### Added
+- **RankingFunction.lean**: `rankProp_dichotomy` (Theorem 2a: κ(A) = 0 ∨ κ(Ā) = 0), `rankProp_union` (Theorem 2b: κ(A ∪ B) = min(κ(A), κ(B)), sorry). Fundamental ranking axiomatics from @cite{spohn-1988}
+- **Spohn1988.lean**: §7 bridge section — `priorWeight` (compatible probability weights), `weight_rank_compatible` (ordering preservation), `sunny_warm_independent` (independence verification)
+
+### Changed
+- **RankingFunction.lean**: Deleted 4 debt items — `condition` (sentinel-based, replaced by `conditionα`), `conditionα_commutes_aPart` (trivially proved wrong thing), `independent_iff_additive` (`Iff.rfl`), `toPropositionGe` (stub). C1–C4 postulates restated using `conditionα` with firmness parameters α, β
+
 ## [0.229.6] - 2026-03-07
 
 ### Added

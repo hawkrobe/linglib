@@ -1,4 +1,5 @@
-import Linglib.Core.Logic.BeliefRevision
+import Linglib.Core.Order.Plausibility
+import Mathlib.Data.Finset.Lattice.Fold
 
 /-!
 # Ranking Functions and Iterated Belief Revision
@@ -63,7 +64,7 @@ for the conditioning-mode classification.
 
 namespace Core.Logic.Ranking
 
-open Core.Logic.BeliefRevision (PlausibilityOrder PreferentialConsequence rationalMonotonicity)
+open Core.Order (PlausibilityOrder PreferentialConsequence rationalMonotonicity)
 
 -- ══════════════════════════════════════════════════════════════════════
 -- § 1. Ranking Functions
@@ -118,15 +119,19 @@ theorem rankProp_dichotomy [Fintype W] (κ : RankingFunction W)
     (hφ : ∃ w, φ w) (hNφ : ∃ w, ¬φ w) :
     κ.rankProp φ hφ = 0 ∨ κ.rankProp (fun w => ¬φ w) hNφ = 0 := by
   obtain ⟨w₀, hw₀⟩ := κ.normalized
-  unfold rankProp
   by_cases hφw₀ : φ w₀
   · left
-    have hle := (Finset.inf'_le κ.rank
-      (Finset.mem_filter.mpr ⟨Finset.mem_univ w₀, hφw₀⟩)).trans (le_of_eq hw₀)
+    have : κ.rankProp φ hφ ≤ 0 := by
+      unfold rankProp
+      exact (Finset.inf'_le κ.rank
+        (Finset.mem_filter.mpr ⟨Finset.mem_univ w₀, hφw₀⟩)).trans (le_of_eq hw₀)
     omega
   · right
-    have hle := (Finset.inf'_le κ.rank
-      (Finset.mem_filter.mpr ⟨Finset.mem_univ w₀, hφw₀⟩)).trans (le_of_eq hw₀)
+    have : κ.rankProp (fun w => ¬φ w) hNφ ≤ 0 := by
+      unfold rankProp
+      have hmem : w₀ ∈ Finset.univ.filter (fun w => ¬φ w) :=
+        Finset.mem_filter.mpr ⟨Finset.mem_univ w₀, hφw₀⟩
+      exact (Finset.inf'_le κ.rank hmem).trans (le_of_eq hw₀)
     omega
 
 /-- @cite{spohn-1988}, Theorem 2(b): The rank of a disjunction is

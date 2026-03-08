@@ -1,3 +1,5 @@
+import Mathlib.Data.Fintype.Basic
+
 /-!
 # Default Reasoning: Classic Examples
 
@@ -29,7 +31,12 @@ inductive TweetyWorld : Type where
   | birdNoFly      -- bird, not penguin, doesn't fly
   | penguinFlies   -- penguin (hence bird), flies
   | penguinNoFly   -- penguin (hence bird), doesn't fly
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Repr, BEq
+
+instance : Fintype TweetyWorld :=
+  ⟨⟨[TweetyWorld.birdFlies, TweetyWorld.birdNoFly,
+     TweetyWorld.penguinFlies, TweetyWorld.penguinNoFly], by decide⟩,
+   fun w => by cases w <;> decide⟩
 
 open TweetyWorld
 

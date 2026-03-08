@@ -1123,6 +1123,34 @@
 % ══════════════════════════════════════════════════════════════════════════════
 %  pragmatics/neogricean
 
+@article{breheny-et-al-2018,
+  author    = {Breheny, Richard and Klinedinst, Nathan and Romoli, Jacopo and Sudo, Yasutada},
+  year      = {2018},
+  title     = {The Symmetry Problem: Current Theories and Prospects},
+  journal   = {Natural Language Semantics},
+  volume    = {26},
+  number    = {2},
+  pages     = {85--110},
+  doi       = {10.1007/s11050-017-9141-z},
+  subfield  = {pragmatics/neogricean},
+  validated = {true},
+  role      = {cited},
+  sources   = {Theories/Pragmatics/NeoGricean/Core/Symmetry.lean}
+}
+
+@techreport{kroch-1972,
+  author      = {Kroch, Anthony S.},
+  year        = {1972},
+  title       = {Lexical and Inferred Meanings for Some Time Adverbs},
+  institution = {MIT Research Laboratory of Electronics},
+  number      = {QPR No. 104},
+  pages       = {260--266},
+  subfield    = {pragmatics/neogricean},
+  validated   = {true},
+  role        = {cited},
+  sources     = {Theories/Pragmatics/NeoGricean/Core/Symmetry.lean}
+}
+
 @phdthesis{horn-1972,
   author    = {Horn, Laurence R.},
   year      = {1972},
@@ -1131,7 +1159,7 @@
   subfield  = {pragmatics/neogricean},
   validated = {true},
   role      = {foundational},
-  sources   = {Core/Scales/HornScale.lean;Theories/Pragmatics/NeoGricean/Core/Alternatives.lean}
+  sources   = {Core/Scales/HornScale.lean;Theories/Pragmatics/NeoGricean/Core/Alternatives.lean;Theories/Pragmatics/NeoGricean/Core/Symmetry.lean}
 }
 
 @incollection{horn-1984,
@@ -1159,8 +1187,8 @@
   doi       = {10.1007/s11050-010-9065-3},
   subfield  = {pragmatics/neogricean},
   validated = {true},
-  role      = {cited},
-  sources   = {Theories/Pragmatics/NeoGricean/Core/Alternatives.lean;Core/Discourse/InformationStructure.lean}
+  role      = {formalized},
+  sources   = {Theories/Pragmatics/NeoGricean/Core/FoxKatzir2011.lean;Theories/Pragmatics/NeoGricean/Core/Symmetry.lean;Theories/Pragmatics/NeoGricean/Core/Alternatives.lean;Core/Discourse/InformationStructure.lean}
 }
 
 @article{spector-2016,
@@ -2591,6 +2619,21 @@
   role      = {formalized},
   validated = {true},
   sources   = {Core/Logic/RankingFunction.lean;Core/Scales/EpistemicScale/Conditional.lean;Phenomena/DefaultReasoning/Studies/Spohn1988.lean}
+}
+% REF: Goldszmidt & Pearl (1996). Qualitative Probabilities for Default Reasoning.
+@article{goldszmidt-pearl-1996,
+  author    = {Goldszmidt, Moisés and Pearl, Judea},
+  year      = {1996},
+  title     = {Qualitative Probabilities for Default Reasoning, Belief Revision, and Causal Modeling},
+  journal   = {Artificial Intelligence},
+  volume    = {84},
+  number    = {1--2},
+  pages     = {57--112},
+  doi       = {10.1016/0004-3702(95)00090-9},
+  subfield  = {logic},
+  role      = {formalized},
+  validated = {true},
+  sources   = {Core/Logic/SystemZ.lean;Phenomena/DefaultReasoning/Studies/GoldszmidtPearl1996.lean}
 }
 % REF: Barwise (1989). The Situation in Logic.
 @book{barwise-1989,

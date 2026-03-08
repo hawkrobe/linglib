@@ -21,7 +21,9 @@ import Linglib.Core.Semantics.Intension
 import Linglib.Core.Logic.ModalLogic
 import Linglib.Core.Logic.BeliefRevision
 import Linglib.Core.Order.Normality
+import Linglib.Core.Order.Plausibility
 import Linglib.Core.Logic.RankingFunction
+import Linglib.Core.Logic.SystemZ
 import Linglib.Core.Register
 import Linglib.Core.SocialMeaning
 import Linglib.Core.Conjectures
@@ -576,6 +578,7 @@ import Linglib.Phenomena.Conditionals.Studies.Mizuno2024
 import Linglib.Phenomena.Conditionals.Studies.ZaniCiardelliSanfelici2026
 import Linglib.Phenomena.DefaultReasoning.TweetyNixon
 import Linglib.Phenomena.DefaultReasoning.Studies.Spohn1988
+import Linglib.Phenomena.DefaultReasoning.Studies.GoldszmidtPearl1996
 import Linglib.Phenomena.DefaultReasoning.Studies.Veltman1996
 import Linglib.Phenomena.Complementation.Attitudes.ConjunctionDistribution.Data
 import Linglib.Phenomena.Complementation.Studies.Noonan2007
@@ -1365,7 +1368,9 @@ import Linglib.Theories.Pragmatics.NeoGricean.Core.Alternatives
 import Linglib.Theories.Pragmatics.NeoGricean.Core.Basic
 import Linglib.Theories.Pragmatics.NeoGricean.Core.Competence
 import Linglib.Theories.Pragmatics.NeoGricean.Core.Markedness
+import Linglib.Theories.Pragmatics.NeoGricean.Core.FoxKatzir2011
 import Linglib.Theories.Pragmatics.NeoGricean.Core.StructuralAlternatives
+import Linglib.Theories.Pragmatics.NeoGricean.Core.Symmetry
 import Linglib.Theories.Pragmatics.NeoGricean.Evaluativity
 import Linglib.Theories.Pragmatics.NeoGricean.Exhaustivity.Basic
 import Linglib.Theories.Pragmatics.NeoGricean.Exhaustivity.Chierchia2004
