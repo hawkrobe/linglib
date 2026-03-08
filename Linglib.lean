@@ -575,6 +575,7 @@ import Linglib.Phenomena.Conditionals.Studies.Iatridou2000
 import Linglib.Phenomena.Conditionals.Studies.Mizuno2024
 import Linglib.Phenomena.Conditionals.Studies.ZaniCiardelliSanfelici2026
 import Linglib.Phenomena.DefaultReasoning.TweetyNixon
+import Linglib.Phenomena.DefaultReasoning.Studies.Spohn1988
 import Linglib.Phenomena.DefaultReasoning.Studies.Veltman1996
 import Linglib.Phenomena.Complementation.Attitudes.ConjunctionDistribution.Data
 import Linglib.Phenomena.Complementation.Studies.Noonan2007
@@ -1364,12 +1365,14 @@ import Linglib.Theories.Pragmatics.NeoGricean.Core.Alternatives
 import Linglib.Theories.Pragmatics.NeoGricean.Core.Basic
 import Linglib.Theories.Pragmatics.NeoGricean.Core.Competence
 import Linglib.Theories.Pragmatics.NeoGricean.Core.Markedness
+import Linglib.Theories.Pragmatics.NeoGricean.Core.StructuralAlternatives
 import Linglib.Theories.Pragmatics.NeoGricean.Evaluativity
 import Linglib.Theories.Pragmatics.NeoGricean.Exhaustivity.Basic
 import Linglib.Theories.Pragmatics.NeoGricean.Exhaustivity.Chierchia2004
 import Linglib.Theories.Pragmatics.NeoGricean.Exhaustivity.Chierchia2013
 import Linglib.Theories.Pragmatics.NeoGricean.Exhaustivity.EFCI
 import Linglib.Theories.Pragmatics.NeoGricean.Exhaustivity.EFCIClosure
+import Linglib.Theories.Pragmatics.NeoGricean.Exhaustivity.Fox2007
 import Linglib.Theories.Pragmatics.NeoGricean.Exhaustivity.Interface
 import Linglib.Theories.Pragmatics.NeoGricean.Implementations.BarLevFox2020
 import Linglib.Theories.Pragmatics.NeoGricean.Implementations.FoxSpector2018
@@ -1413,7 +1416,7 @@ import Linglib.Theories.Pragmatics.RSA.Implementations.GrusdtLassiterFranke2022
 import Linglib.Theories.Pragmatics.RSA.Implementations.HardingGerstenbergIcard2025
 import Linglib.Theories.Pragmatics.RSA.Implementations.HawkinsEtAl2025
 import Linglib.Theories.Pragmatics.RSA.Implementations.HawkinsGweonGoodman2021
-import Linglib.Phenomena.Gradability.Studies.Nouwen2024RSA
+-- Nouwen2024RSA merged into Nouwen2024
 
 import Linglib.Theories.Pragmatics.RSA.Implementations.QingEtAl2016
 import Linglib.Theories.Pragmatics.RSA.Implementations.ScopeFreezing

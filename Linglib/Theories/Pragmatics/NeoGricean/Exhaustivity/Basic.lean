@@ -2119,4 +2119,68 @@ def exhIEII : Prop' World := λ w =>
   (∀ q, isInnocentlyExcludable ALT φ q → ¬q w) ∧
   (∀ r, isInnocentlyIncludable ALT φ r → r w)
 
+-- ============================================================================
+-- SECTION: Decidable IE for finite types
+-- ============================================================================
+
+/-!
+## Decidable Innocent Exclusion
+
+The `exhIE` above is a specification: it quantifies over all `Set (Prop' World)`,
+so it cannot be evaluated computationally. The functions below implement the same
+algorithm over `[Fintype World]` types using `Bool`-valued meanings and explicit
+subset enumeration. This makes them usable by `native_decide` and `rsa_predict`.
+-/
+
+section Decidable
+
+variable {W : Type}
+
+/-- Satisfiability check over an explicit list of worlds. -/
+def isSatBool (worlds : List W) (f : W → Bool) : Bool :=
+  worlds.any f
+
+/-- Pointwise entailment over an explicit list of worlds. -/
+def entailsBool (worlds : List W) (f g : W → Bool) : Bool :=
+  worlds.all λ w => !f w || g w
+
+/-- All sublists (subsets) of a list of indices. -/
+def sublists : List Nat → List (List Nat)
+  | [] => [[]]
+  | a :: as => let ss := sublists as; (ss.map (a :: ·)) ++ ss
+
+/-- Innocent Exclusion over `Bool`-valued meanings: find indices of alternatives
+    that appear in every maximal consistent exclusion set.
+    `worlds` must enumerate all inhabitants of `W`. -/
+def ieIndicesBool (worlds : List W) (prejacent : W → Bool)
+    (alts : List (W → Bool)) : List Nat :=
+  let indices := List.range alts.length
+  let nonEnt := indices.filter λ i =>
+    match alts[i]? with
+    | some alt => !entailsBool worlds prejacent alt
+    | _ => false
+  let subsets := sublists nonEnt
+  let consistent := subsets.filter λ s =>
+    isSatBool worlds λ w => prejacent w && s.all λ i =>
+      match alts[i]? with
+      | some alt => !alt w
+      | _ => true
+  let maximal := consistent.filter λ s =>
+    !consistent.any λ t =>
+      s.length < t.length && s.all λ i => t.contains i
+  if maximal.isEmpty then []
+  else nonEnt.filter λ i => maximal.all λ m => m.contains i
+
+/-- Apply Innocent Exclusion: conjoin prejacent with negations of IE alternatives.
+    `worlds` must enumerate all inhabitants of `W`. -/
+def applyIEBool (worlds : List W) (prejacent : W → Bool)
+    (alts : List (W → Bool)) : W → Bool :=
+  let ie := ieIndicesBool worlds prejacent alts
+  λ w => prejacent w && ie.all λ i =>
+    match alts[i]? with
+    | some alt => !alt w
+    | _ => true
+
+end Decidable
+
 end NeoGricean.Exhaustivity

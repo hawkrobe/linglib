@@ -41,7 +41,7 @@ namespace Semantics.Conditionals.Counterfactual
 
 open Semantics.Conditionals
 open Core.StructuralEquationModel
-open Core.Duality (Truth3 ProjectionType)
+open Core.Duality (Truth3 ProjectionType dist)
 
 
 /--
@@ -615,5 +615,35 @@ theorem causal_counterfactual_necessity (dyn : CausalDynamics) (s : Situation)
     (cause effect : Variable) :
     causalCounterfactual dyn s cause effect =
     Core.StructuralEquationModel.developsToTrue dyn (s.extend cause true) effect := rfl
+
+/-- `(l.map f).all id = l.all f`: mapping then checking identity is the
+    same as checking f directly. -/
+private theorem all_map_id {α : Type*} (f : α → Bool) (l : List α) :
+    (l.map f).all id = l.all f := by
+  induction l with
+  | nil => rfl
+  | cons h t ih => simp [List.map_cons, List.all_cons, id, ih]
+
+/-- `(l.map f).all (!·) = l.all (!f ·)`. -/
+private theorem all_map_not {α : Type*} (f : α → Bool) (l : List α) :
+    (l.map f).all (!·) = l.all (fun x => !(f x)) := by
+  induction l with
+  | nil => rfl
+  | cons h t ih => simp [List.map_cons, List.all_cons, ih]
+
+/-- Selectional counterfactual = `dist` applied to closest worlds mapped
+    through B. This shows the selectional theory
+    (@cite{ramotowska-santorio-2025}) uses the same distributivity
+    operator as DIST_π (@cite{santorio-2018}). -/
+theorem selectional_eq_dist {W : Type*} [DecidableEq W]
+    (closer : W → W → W → Bool) (domain : List W)
+    (A B : W → Bool) (w : W) :
+    selectionalCounterfactual closer domain A B w =
+    dist ((closestWorldsB closer domain w (domain.filter A)).map B) := by
+  unfold selectionalCounterfactual dist
+  simp only [all_map_id, all_map_not]
+  cases closestWorldsB closer domain w (domain.filter A) with
+  | nil => rfl
+  | cons _ _ => rfl
 
 end Semantics.Conditionals.Counterfactual

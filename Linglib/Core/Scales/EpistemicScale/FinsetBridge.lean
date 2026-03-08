@@ -68,7 +68,7 @@ macro "set_sdiff_fin" : tactic =>
 variable {n : ℕ}
 
 /-- Finset-native comparison: `sys.geFS A B` means `sys.ge ↑A ↑B`. -/
-def EpistemicSystemFA.geFS (sys : EpistemicSystemFA (Fin n))
+@[reducible] def EpistemicSystemFA.geFS (sys : EpistemicSystemFA (Fin n))
     (A B : Finset (Fin n)) : Prop := sys.ge ↑A ↑B
 
 /-- Additivity in Finset land: `geFS A B ↔ geFS (A \ B) (B \ A)`.
@@ -150,5 +150,115 @@ theorem ngeFS_via_hpos (sys : EpistemicSystemFA (Fin n))
   have := (sys.geFS_additive A B).mp h
   rw [hAB, hBA] at this
   exact hpos this
+
+-- ── Set-land derivation combinators for ¬ge ──────
+
+/-- ¬ge A B from ¬ge A C and ge B C (transitivity on the right). -/
+theorem nge_of_trans_right_set (sys : EpistemicSystemFA (Fin n))
+    {A B C : Set (Fin n)}
+    (hng : ¬sys.ge A C) (hge : sys.ge B C) :
+    ¬sys.ge A B :=
+  fun h => hng (sys.trans _ _ _ h hge)
+
+/-- ¬ge A B from ¬ge C B and ge C A (transitivity on the left). -/
+theorem nge_of_trans_left_set (sys : EpistemicSystemFA (Fin n))
+    {A B C : Set (Fin n)}
+    (hng : ¬sys.ge C B) (hge : sys.ge C A) :
+    ¬sys.ge A B :=
+  fun h => hng (sys.trans _ _ _ hge h)
+
+/-- ¬ge A B from ¬ge A C where C ⊆ B (monotonicity on the right).
+    Subset check closed by `intro x hx; fin_cases x <;> simp_all`. -/
+theorem nge_of_mono_right_set (sys : EpistemicSystemFA (Fin n))
+    {A C B : Set (Fin n)}
+    (hng : ¬sys.ge A C) (h : C ⊆ B) :
+    ¬sys.ge A B :=
+  nge_of_trans_right_set sys hng (sys.mono C B h)
+
+/-- ¬ge A B from ¬ge C B where A ⊆ C (monotonicity on the left). -/
+theorem nge_of_mono_left_set (sys : EpistemicSystemFA (Fin n))
+    {C B A : Set (Fin n)}
+    (hng : ¬sys.ge C B) (h : A ⊆ C) :
+    ¬sys.ge A B :=
+  nge_of_trans_left_set sys hng (sys.mono A C h)
+
+/-- ¬ge A B via positivity: if additivity reduces to ge ∅ {i},
+    and hpos says ¬ge ∅ {i}, contradiction. -/
+theorem nge_via_hpos_set (sys : EpistemicSystemFA (Fin n))
+    {A B : Set (Fin n)} (i : Fin n)
+    (hpos : ¬sys.ge ∅ {i})
+    (hAB : A \ B = ∅) (hBA : B \ A = {i}) :
+    ¬sys.ge A B := fun h => by
+  have := (sys.additive A B).mp h
+  rw [hAB, hBA] at this
+  exact hpos this
+
+/-- ¬ge A B via positivity (∀-quantified hpos variant): if A ⊆ B (i.e., A\B = ∅),
+    additivity gives ge ∅ (B\A), and ge_empty_contra derives contradiction
+    from hpos. Takes the full `∀ i, ¬ge ∅ {i}` to avoid metavar issues in
+    tactic search. -/
+theorem nge_via_hpos_all (sys : EpistemicSystemFA (Fin n))
+    {A B : Set (Fin n)}
+    (hpos : ∀ i : Fin n, ¬sys.ge ∅ {i})
+    (hAB : A \ B = ∅) (hBA_ne : (B \ A).Nonempty) :
+    ¬sys.ge A B := fun h => by
+  have h1 := (sys.additive A B).mp h
+  rw [hAB] at h1
+  obtain ⟨x, hx⟩ := hBA_ne
+  exact hpos x (sys.trans _ _ _ h1 (sys.mono _ _ (Set.singleton_subset_iff.mpr hx)))
+
+/-- ¬ge A B when there exists C with ge C A and C ⊆ B: trans gives ge C B,
+    additive gives ge (C\B) (B\C) = ge ∅ (B\C), contradicting positivity.
+    Combines trans + additive + positivity in one step. -/
+theorem nge_of_trans_overlap (sys : EpistemicSystemFA (Fin n))
+    (hpos : ∀ i : Fin n, ¬sys.ge ∅ {i})
+    {A B C : Set (Fin n)}
+    (hge : sys.ge C A) (hCB : C \ B = ∅) (hBCne : (B \ C).Nonempty)
+    : ¬sys.ge A B := fun h => by
+  have h1 := sys.trans _ _ _ hge h  -- ge C B
+  have h2 := (sys.additive C B).mp h1
+  rw [hCB] at h2  -- ge ∅ (B\C)
+  obtain ⟨x, hx⟩ := hBCne
+  exact hpos x (sys.trans _ _ _ h2 (sys.mono _ _ (Set.singleton_subset_iff.mpr hx)))
+
+/-- ¬ge A B from ¬ge C B when ge C A follows from additivity:
+    ge (C\A) (A\C) → ge C A (by additive.mpr) → trans with assumed ge A B → ge C B →
+    contradiction with ¬ge C B. -/
+theorem nge_of_additive_trans_left (sys : EpistemicSystemFA (Fin n))
+    {A B C D E : Set (Fin n)}
+    (hng : ¬sys.ge C B)
+    (hge_de : sys.ge D E)
+    (hd : C \ A = D) (he : A \ C = E)
+    : ¬sys.ge A B :=
+  fun h => hng (sys.trans _ _ _ ((sys.additive C A).mpr (by rw [hd, he]; exact hge_de)) h)
+
+/-- ¬ge A B from ¬ge (A\B) (B\A) via the additive axiom (mp direction).
+    If ge A B held, additive.mp would give ge (A\B) (B\A), contradiction. -/
+theorem nge_of_additive_mp (sys : EpistemicSystemFA (Fin n))
+    {A B D E : Set (Fin n)}
+    (hng : ¬sys.ge D E)
+    (hd : A \ B = D) (he : B \ A = E)
+    : ¬sys.ge A B :=
+  fun h => by
+    have := (sys.additive A B).mp h
+    rw [hd, he] at this
+    exact hng this
+
+/-- ¬ge A B via double additive: use additive.mpr to get ge C A from ge (C\A) (A\C),
+    then trans with assumed ge A B gives ge C B, then additive.mp on ge C B gives
+    ge (C\B) (B\C), which contradicts ¬ge (C\B) (B\C). -/
+theorem nge_of_double_additive (sys : EpistemicSystemFA (Fin n))
+    {A B C D1 E1 D2 E2 : Set (Fin n)}
+    (hge_d1e1 : sys.ge D1 E1)
+    (hd1 : C \ A = D1) (he1 : A \ C = E1)
+    (hng_d2e2 : ¬sys.ge D2 E2)
+    (hd2 : C \ B = D2) (he2 : B \ C = E2)
+    : ¬sys.ge A B :=
+  fun h => by
+    have hca : sys.ge C A := (sys.additive C A).mpr (by rw [hd1, he1]; exact hge_d1e1)
+    have hcb := sys.trans _ _ _ hca h
+    have hred := (sys.additive C B).mp hcb
+    rw [hd2, he2] at hred
+    exact hng_d2e2 hred
 
 end Core.Scale

@@ -636,7 +636,7 @@ without stipulating EXH. EXH then emerges as the α → ∞ limit of local RSA.
 /-!
 ## @cite{franke-bergen-2020}: Global Intentions Model
 
-Bergen & Franke's "Global Intentions" (GI) model provides machinery for
+Franke & Bergen's "Global Intentions" (GI) model provides machinery for
 reasoning over where EXH applies.
 
 ### The GI Architecture

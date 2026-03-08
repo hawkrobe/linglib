@@ -746,7 +746,7 @@
   subfield  = {pragmatics/rsa},
   validated = {true},
   role      = {formalized},
-  sources   = {Phenomena/Gradability/Studies/Nouwen2024RSA.lean, Phenomena/Gradability/Studies/Nouwen2024.lean, Theories/Semantics/Lexical/Adjective/Intensification.lean}
+  sources   = {Phenomena/Gradability/Studies/Nouwen2024.lean, Theories/Semantics/Lexical/Adjective/Intensification.lean}
 }
 
 @article{potts-etal-2016,
@@ -1287,10 +1287,10 @@
   editor    = {Sauerland, Uli and Stateva, Penka},
   publisher = {Palgrave Macmillan},
   doi       = {10.1057/9780230210752_4},
-    subfield  = {pragmatics/neogricean},
+  subfield  = {pragmatics/neogricean},
   validated = {true},
-  role      = {cited},
-  sources   = {Theories/Pragmatics/RSA/Core/CompositionalRSA.lean}
+  role      = {formalized},
+  sources   = {Theories/Pragmatics/NeoGricean/Exhaustivity/Fox2007.lean, Theories/Pragmatics/RSA/Core/CompositionalRSA.lean}
 }
 
 @incollection{chierchia-fox-spector-2012,
@@ -2579,7 +2579,7 @@
 }
 % REF: Spohn, W. (1988). Ordinal Conditional Functions: A Dynamic Theory of Epistemic States. In W.L. Harper & B. Skyrms (Eds.)
 @incollection{spohn-1988,
-  author    = {Spohn, W},
+  author    = {Spohn, Wolfgang},
   year      = {1988},
   title     = {Ordinal Conditional Functions: A Dynamic Theory of Epistemic States},
   booktitle = {Causation in Decision, Belief Change, and Statistics II},
@@ -2587,10 +2587,10 @@
   publisher = {Kluwer},
   pages     = {105--134},
   doi       = {10.1007/978-94-009-2865-7_6},
-  subfield  = {semantics/compositional},
-  role      = {cited},
+  subfield  = {logic},
+  role      = {formalized},
   validated = {true},
-  sources   = {Core/Logic/RankingFunction.lean}
+  sources   = {Core/Logic/RankingFunction.lean;Core/Scales/EpistemicScale/Conditional.lean;Phenomena/DefaultReasoning/Studies/Spohn1988.lean}
 }
 % REF: Barwise (1989). The Situation in Logic.
 @book{barwise-1989,
@@ -8659,12 +8659,15 @@
   author    = {Katzir, R},
   year      = {2007},
   title     = {Structurally-defined alternatives},
-  journal   = {L&P 30.},
+  journal   = {Linguistics and Philosophy},
+  volume    = {30},
+  number    = {6},
+  pages     = {669--690},
   doi       = {10.1007/s10988-008-9029-y},
-  subfield  = {semantics/questions},
-  role      = {cited},
+  subfield  = {pragmatics/neogricean},
+  role      = {formalized},
   validated = {true},
-  sources   = {Phenomena/Imprecision/FormMeaning.lean;Theories/Pragmatics/NeoGricean/Constraints/Wang2025.lean;Theories/Semantics/Questions/EconomyOddness.lean}
+  sources   = {Theories/Pragmatics/NeoGricean/Core/StructuralAlternatives.lean;Phenomena/Imprecision/FormMeaning.lean;Theories/Pragmatics/NeoGricean/Constraints/Wang2025.lean;Theories/Semantics/Questions/EconomyOddness.lean}
 }
 % REF: Groenendijk & Roelofsen (2009). Inquisitive Semantics and Pragmatics.
 @misc{groenendijk-roelofsen-2009,

@@ -164,6 +164,37 @@ theorem RationalAction.policy_gt_cross (ra : RationalAction S A) (s₁ s₂ : S)
   simp only [policy, ne_of_gt h_pos₁, ne_of_gt h_pos₂, ↓reduceIte]
   exact (div_lt_div_iff₀ h_pos₂ h_pos₁).mpr h_cross
 
+/-- Cross-state policy comparison with positivity derived from the cross-product.
+
+    Like `policy_gt_cross` but derives the `totalScore > 0` conditions from the
+    cross-product inequality itself: if `score(s₁,a) * total(s₂) > score(s₂,a) * total(s₁) ≥ 0`,
+    then `score(s₁,a) * total(s₂) > 0`, so both `score(s₁,a) > 0` and `total(s₂) > 0`.
+    And `score(s₁,a) ≤ total(s₁)`, so `total(s₁) > 0`.
+
+    Used by `rsa_predict` for cross-utterance L1 comparisons where the two sides
+    have different normalization constants. -/
+theorem RationalAction.policy_gt_cross_of_cross_gt (ra : RationalAction S A)
+    (s₁ s₂ : S) (a : A)
+    (h_cross : ra.score s₁ a * ra.totalScore s₂ > ra.score s₂ a * ra.totalScore s₁) :
+    ra.policy s₁ a > ra.policy s₂ a := by
+  have h_rhs_nonneg : 0 ≤ ra.score s₂ a * ra.totalScore s₁ :=
+    mul_nonneg (ra.score_nonneg s₂ a)
+      (Finset.sum_nonneg fun b _ => ra.score_nonneg s₁ b)
+  have h_lhs_pos : 0 < ra.score s₁ a * ra.totalScore s₂ :=
+    lt_of_le_of_lt h_rhs_nonneg h_cross
+  have h_tot2_nonneg : (0 : ℝ) ≤ ra.totalScore s₂ :=
+    Finset.sum_nonneg fun b _ => ra.score_nonneg s₂ b
+  have h_score1_pos : 0 < ra.score s₁ a :=
+    (mul_pos_iff.mp h_lhs_pos).elim (fun ⟨h, _⟩ => h)
+      (fun ⟨h, _⟩ => absurd h (not_lt.mpr (ra.score_nonneg s₁ a)))
+  have h_tot2_pos : 0 < ra.totalScore s₂ :=
+    (mul_pos_iff.mp h_lhs_pos).elim (fun ⟨_, h⟩ => h)
+      (fun ⟨_, h⟩ => absurd h (not_lt.mpr h_tot2_nonneg))
+  have h_tot1_pos : 0 < ra.totalScore s₁ :=
+    lt_of_lt_of_le h_score1_pos
+      (Finset.single_le_sum (fun b _ => ra.score_nonneg s₁ b) (Finset.mem_univ a))
+  exact ra.policy_gt_cross s₁ s₂ a h_tot1_pos h_tot2_pos h_cross
+
 /-- Score-sum ordering implies policy-sum ordering when both sides share the same
     state (same denominator). Used by `rsa_predict` for marginal L1 comparisons
     where the worlds being summed differ but the utterance and config are shared. -/

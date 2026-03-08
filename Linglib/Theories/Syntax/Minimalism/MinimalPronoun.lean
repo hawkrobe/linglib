@@ -29,7 +29,7 @@ language-specific contextual allomorphs applied postsyntactically.
    in vocabulary item inventories
 -/
 
-namespace Semantics.Reference.MinimalPronoun
+namespace Syntax.Minimalism.MinimalPronoun
 
 -- ════════════════════════════════════════════════════════════════
 -- § 1: Licensing Contexts
@@ -180,4 +180,107 @@ def syncretismFromInventory {Form : Type} [BEq Form]
   controlledEqReferential := inv.realize .controlledSubject == inv.elsewhere
   boundVarEqReferential := inv.realize .boundVariable == inv.elsewhere
 
-end Semantics.Reference.MinimalPronoun
+-- ════════════════════════════════════════════════════════════════
+-- § 5: Standard Surface Forms
+-- ════════════════════════════════════════════════════════════════
+
+/-- Standard surface form categories for bound variable anaphora.
+
+    These are the cross-linguistically attested exponence options for
+    minimal pronouns. Each vocabulary item maps a BVA context to one
+    of these forms. -/
+inductive PronForm where
+  /-- Silent (null PRO) -/
+  | null
+  /-- Overt pronoun (φ-matching clitic or full form) -/
+  | pronoun
+  /-- Reflexive anaphor (English *-self*, SMPM *mí* + pronoun) -/
+  | reflexive
+  deriving DecidableEq, BEq, Repr
+
+-- ════════════════════════════════════════════════════════════════
+-- § 6: Copy Control Typology
+-- ════════════════════════════════════════════════════════════════
+
+/-- Types of copy control (@cite{polinsky-potsdam-2006},
+    @cite{ostrove-2026} §5).
+
+    Copy control: the subject of a control clause is a phonologically
+    overt copy of its controller. Four subtypes are distinguished by
+    the nature of the copy and its distribution. -/
+inductive CopyControlType where
+  /-- Full copy: PRO is a full DP copy of the controller.
+      Attested in San Lucas Quievaní Zapotec, Copala Triqui. -/
+  | fullCopy
+  /-- Logophoric pronominal: PRO is a pronoun, occurs only in
+      attitude reports. Attested in Gengbe, Mandarin. -/
+  | logophoricPronominal
+  /-- Scope-sensitive pronominal: PRO is a pronoun, triggered by
+      scope-taking operators (focus). Attested in Italian, Hungarian,
+      European Portuguese. -/
+  | scopeSensitivePronominal
+  /-- Obligatory pronominal: PRO is an overt clitic pronoun in all
+      control contexts, showing the full OC signature. Attested in
+      SMPM, Gã, Büli. -/
+  | obligatoryPronominal
+  deriving DecidableEq, BEq, Repr
+
+/-- Properties distinguishing copy control types. -/
+structure CopyControlProfile where
+  controlType : CopyControlType
+  /-- Does the copy show the full OC signature (bound variable, exhaustive)? -/
+  showsOC : Bool
+  /-- Is the copy restricted to attitude report contexts? -/
+  attitudeOnly : Bool
+  /-- Does the copy require a scope-taking operator (focus, only)? -/
+  requiresScopeOperator : Bool
+  /-- Can the copy bear focus? -/
+  copyCanBearFocus : Bool
+  deriving DecidableEq, BEq, Repr
+
+/-- Profile for each copy control type. -/
+def copyControlProfile : CopyControlType → CopyControlProfile
+  | .fullCopy => ⟨.fullCopy, false, false, false, true⟩
+  | .logophoricPronominal => ⟨.logophoricPronominal, false, true, false, true⟩
+  | .scopeSensitivePronominal => ⟨.scopeSensitivePronominal, false, false, true, true⟩
+  | .obligatoryPronominal => ⟨.obligatoryPronominal, true, false, false, false⟩
+
+-- ════════════════════════════════════════════════════════════════
+-- § 7: Exempt Anaphors
+-- ════════════════════════════════════════════════════════════════
+
+/-- Exempt anaphors (@cite{pollard-sag-1994}): reflexive forms used
+    outside their canonical binding domain (Condition A domain).
+
+    Key constraint: exempt anaphors cannot have quantified antecedents.
+    This is used in @cite{ostrove-2026} §6 to argue for base-generation
+    over movement in control. -/
+structure ExemptAnaphorProfile where
+  /-- Exempt anaphors available in this language -/
+  hasExemptAnaphors : Bool
+  /-- Can exempt anaphors have quantified antecedents? -/
+  allowsQuantifiedAntecedent : Bool
+  deriving DecidableEq, BEq, Repr
+
+/-- The two analyses of obligatory control derivation. -/
+inductive ControlDerivation where
+  /-- Controller base-generated in matrix; PRO base-generated in
+      embedded clause. Two distinct syntactic positions, linked by
+      variable binding. -/
+  | baseGeneration
+  /-- Controller enters derivation in embedded subject position and
+      moves to matrix position. One DP, two copies. -/
+  | movement
+  deriving DecidableEq, BEq, Repr
+
+/-- Movement predicts exempt anaphors are UNAVAILABLE with quantified
+    controllers (because the copy in embedded position would be a QP,
+    violating the exempt anaphor constraint).
+
+    Base-generation predicts exempt anaphors ARE available (the pronoun
+    in embedded position is a genuine pronoun, not a copy of the QP). -/
+def predictsExemptWithQuantifiedController : ControlDerivation → Bool
+  | .baseGeneration => true
+  | .movement       => false
+
+end Syntax.Minimalism.MinimalPronoun

@@ -356,12 +356,15 @@ partial def collectL0Summands (e : Expr) : MetaM (Option (Expr × Expr × Expr �
 /-- Parse the goal into a GoalForm. -/
 def parseGoalForm (lhs rhs : Expr) : MetaM GoalForm := do
   -- Path A: Both sides are cfg.L1 u w
-  if let some (cfg, u, w₁) ← parseL1Policy lhs then
+  if let some (cfg, u₁, w₁) ← parseL1Policy lhs then
     if let some (cfg₂, u₂, w₂) ← parseL1Policy rhs then
       if ← isDefEq cfg cfg₂ then
-        return .l1Compare cfg u w₁ w₂
+        if ← isDefEq u₁ u₂ then
+          return .l1Compare cfg u₁ w₁ w₂
+        else
+          return .l1CrossUtterance cfg u₁ #[w₁] u₂ #[w₂]
       else
-        return .l1CrossConfig cfg u #[w₁] cfg₂ u₂ #[w₂]
+        return .l1CrossConfig cfg u₁ #[w₁] cfg₂ u₂ #[w₂]
 
   -- Path A2: Both sides are cfg.L0 l u w
   if let some (cfg, l, u, w₁) ← parseL0Policy lhs then

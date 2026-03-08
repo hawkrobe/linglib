@@ -1,5 +1,51 @@
 # Changelog
 
+## [0.229.6] - 2026-03-07
+
+### Added
+- **Fox2007.lean**: Formalize Fox 2007 "Free Choice and the Theory of Scalar Implicatures." Self-contained computable innocent exclusion algorithm: `nonWeakerIndices`, `exclusionConsistent`, `maxConsistentExclusions`, `ieIndices`, `exhB`. Simple disjunction (p∨q → ExOR via `disj_exh_eq_exor`). Chierchia's puzzle: `exh` correctly excludes `ah` and `r∧ah` without negating `r` (`chierchia_puzzle_ie`). Free choice via double exhaustification (`free_choice`: Exh²(◇(p∨q)) = ◇p∧◇q∧¬◇(p∧q)). 0 sorry, 15 theorems
+- **AlternativeSensitive.lean**: Fox–Santorio duality section (§9): `disj_minStable_sets`, `fox_maxExcl_sets`, `stability_exclusion_duality`, `ie_from_stability` — computationally verifies that minimal stable subsets ↔ maximal consistent exclusions (footnote 40, p. 540 of Santorio 2018)
+- **FreeChoice.lean**: `fox2007_derives_fc` — Fox 2007 added to theory comparison (entry #1)
+
+### Changed
+- **references.bib**: `fox-2007` upgraded from `cited` to `formalized`, sources updated
+
+## [0.229.5] - 2026-03-07
+
+### Added
+- **RankingFunction.lean**: `aPart` (Def. 5: A-part extraction), `conditionα` (Def. 6: A,α-conditionalization with firmness parameter), `ranking_connected` (total ordering), `conditionα_commutes` (Theorem 4), `independent` (Def. 8: ordinal independence), `toPropositionGe` (bridge to epistemic scale). Docstring now documents §7 probability parallel
+- **Spohn1988.lean**: Study file demonstrating evidence strength (weak vs strong α), commutativity (Theorem 4 verified on 4-world instance), connection to NormalityOrder. First downstream consumer of RankingFunction
+
+### Fixed
+- **RankingFunction.lean**: Docstring corrected — Spohn uses ordinals (Def. 4), ℕ is a simplification (Note 16), not the original formulation. Structure docstring updated to cite Def. 4 explicitly
+- **references.bib**: `spohn-1988` subfield `semantics/compositional` → `logic`, author `W` → `Wolfgang`, role `cited` → `formalized`, sources field now includes Conditional.lean and Spohn1988.lean
+
+## [0.229.4] - 2026-03-07
+
+### Added
+- **AlternativeSensitive.lean**: Stability algorithm (§IV.2, p. 540): `satisfiable`, `isStable`, `isMinimalStable`, `conjunctiveClosure`. Full truthmaker definition `IsTruthmakerOf` combining stability + entailment. Otto/Anna worked example (pp. 535–537) with 10 verified theorems: stability checks (`oa_singleton_not_stable`, `oa_otto_stable`, `oa_anna_stable`, `oa_conj_not_stable`), minimality (`oa_otto_minimal`, `oa_anna_minimal`), closure identification (`oa_otto_closure_eq`, `oa_anna_closure_eq`), full truthmakers (`oa_otto_is_truthmaker`, `oa_anna_is_truthmaker`)
+
+### Changed
+- **AlternativeSensitive.lean**: Now imports `StructuralAlternatives.lean` (structural connection, not just docstring reference). Truthmaker section restructured: `IsTruthmaker` retained as entailment condition, `IsTruthmakerOf` added as full definition chaining stability + entailment
+
+## [0.229.3] - 2026-03-07
+
+### Added
+- **StructuralAlternatives.lean**: Formalize Katzir 2007 — structurally-defined alternatives. `ParseTree` type with `SynCat` labels, `StructOp` inductive (substitution/deletion/contraction/recursive), `atMostAsComplex` (≲), `equalComplexity` (∼), `strictlyLessComplex` (<) from def 19, `structuralAlternatives` (A_str, def 20), `substitutionSource` (def 41: lexicon ∪ subtrees). Examples: some/all substitution with `some_all_equal_complexity`, or/and with L/R derivation (`left_disjunct_is_alternative`, `right_disjunct_is_alternative`), deletion (`deletion_produces_alternative`). `symmetry_problem_solved` via category preservation. `violatesConversationalPrinciple` (def 21), `atLeastAsGoodAs` (def 23, bridge to Katzir & Singh 2015)
+
+### Changed
+- **references.bib**: `katzir-2007` upgraded from `cited` to `formalized`, fixed journal metadata (L&P 30 → Linguistics and Philosophy 30(6):669–690)
+- **AlternativeSensitive.lean**: Updated truthmaker section to reference new StructuralAlternatives formalization
+
+## [0.229.2] - 2026-03-07
+
+### Added
+- **AlternativeSensitive.lean**: `dcr_is_existential_homogeneity` (DCR = homogeneity ≠ FALSE, dual of SDA theorem), `antecedent_strengthening_fails` (Constraint #1), `spain_dcr_true`, `sle_fails` alias for `hyperintensional` (Constraint #3). All three constraints from Santorio 2018 pp. 513–514 now formalized
+- **Counterfactual.lean**: `selectional_eq_dist` bridge theorem — selectional counterfactual = `dist` applied to closest worlds, connecting Ramotowska et al. to Santorio's DIST_π
+
+### Fixed
+- **AlternativeSensitive.lean**: `IsTruthmaker` docstring corrected (was "iff p entails S", now accurately describes it as condition (ii) of paper's definition). Spain example attributed to McKay & van Inwagen. Hyperintensionality section now uses paper's "SLE" terminology
+
 ## [0.229.1] - 2026-03-07
 
 ### Changed

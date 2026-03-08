@@ -1,4 +1,5 @@
 import Linglib.Theories.Pragmatics.NeoGricean.Implementations.BarLevFox2020
+import Linglib.Theories.Pragmatics.NeoGricean.Exhaustivity.Fox2007
 import Linglib.Phenomena.Modality.Studies.ChampollionAlsopGrosu2019
 import Linglib.Phenomena.Modality.Studies.Alsop2024
 import Linglib.Theories.Semantics.Dynamic.Effects.Bilateral.FreeChoice
@@ -22,11 +23,12 @@ Pragmatically: ◇(A ∨ B) → ◇A ∧ ◇B (free choice!)
 
 ## Theories Compared
 
-1. **@cite{bar-lev-fox-2020}**: Innocent Inclusion (II) + Innocent Exclusion (IE)
-2. **@cite{champollion-alsop-grosu-2019}**: RSA with semantic uncertainty (disjunction)
-3. **@cite{alsop-2024}**: RSA with Global Intentions (universal *any*)
-4. **@cite{aloni-2022}**: BSML - Bilateral State-based Modal Logic (team semantics)
-5. **@cite{elliott-sudo-2025}**: BUS - Bilateral Update Semantics (dynamic)
+1. **@cite{fox-2007}**: Double exhaustification (Exh²) with Innocent Exclusion
+2. **@cite{bar-lev-fox-2020}**: Innocent Inclusion (II) + Innocent Exclusion (IE)
+3. **@cite{champollion-alsop-grosu-2019}**: RSA with semantic uncertainty (disjunction)
+4. **@cite{alsop-2024}**: RSA with Global Intentions (universal *any*)
+5. **@cite{aloni-2022}**: BSML - Bilateral State-based Modal Logic (team semantics)
+6. **@cite{elliott-sudo-2025}**: BUS - Bilateral Update Semantics (dynamic)
 
 -/
 
@@ -34,6 +36,7 @@ namespace Comparisons.FreeChoice
 
 open Phenomena.Modality.FreeChoice
 open NeoGricean.Exhaustivity
+open NeoGricean.Exhaustivity.Fox2007
 open NeoGricean.FreeChoice
 open RSA.FreeChoice
 open RSA.FCIAny
@@ -72,6 +75,31 @@ theorem fci_is_pragmatic : coffeeOrTea.isSemanticEntailment = false := rfl
 
 /-- FCI is captured pragmatically -/
 theorem fci_is_captured : coffeeOrTea.isPragmaticInference = true := rfl
+
+-- ============================================================================
+-- SECTION 1b: @cite{fox-2007} - Double Exhaustification
+-- ============================================================================
+
+/-!
+## @cite{fox-2007}: Free Choice via Recursive Exhaustification
+
+The original grammatical account: recursive application of `exh`
+(the covert exhaustivity operator) derives FC without Innocent Inclusion.
+
+- **Layer 1**: Exh(C)(◇(p∨q)) = ◇(p∨q) ∧ ¬◇(p∧q)
+- **Layer 2**: Exh²(◇(p∨q)) = ◇p ∧ ◇q ∧ ¬◇(p∧q) — free choice!
+
+See `Exhaustivity/Fox2007.lean` for the computable algorithm and
+full derivation.
+-/
+
+/-- Fox 2007: FC is derived via double exhaustification (Exh²).
+    Re-exports the verified computation from `Fox2007.lean`. -/
+theorem fox2007_derives_fc :
+    ∀ w : Fox2007.ModalW,
+      Fox2007.exhB Fox2007.mDomain Fox2007.layer2Alts Fox2007.layer1Result w =
+      (Fox2007.diamP w && Fox2007.diamQ w && !Fox2007.diamPandQ w) :=
+  Fox2007.free_choice
 
 -- ============================================================================
 -- SECTION 2: @cite{bar-lev-fox-2020} - Innocent Inclusion

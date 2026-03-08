@@ -17,7 +17,7 @@ This file captures the empirical patterns around flexible negation, where:
   either contradictory or contrary
 
 ## Key Distinction
-@cite{franke-bergen-2020}
+@cite{cruse-1986} @cite{horn-1989}
 
 **Contradictory negation**: P and ¬P partition the space
 - "not happy" (contradictory) = x ≤ θ (complement of x > θ)

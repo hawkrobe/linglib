@@ -217,4 +217,45 @@ def allowsProDrop : Bool := false
     nominal/adjectival predicates (2a–c). -/
 def predicateInitial : Bool := true
 
+-- ════════════════════════════════════════════════════════════════
+-- § 7: Reflexive and Binding Data
+-- ════════════════════════════════════════════════════════════════
+
+/-- SMPM reflexive anaphors are formed with the definite article *mí*
+    plus a clitic pronoun (71). Only locally bound — without *mí*, only
+    a noncoreferential interpretation is available (72).
+
+    Examples:
+    - *Xini Juân mí =rà ini yùtátá.* 'Juan saw himself in the mirror.'
+    - *Saá kâ'àn María xa'ǎ mí =ñá.* 'María always talks about herself.' -/
+def reflexiveFormation : String := "mí + clitic pronoun"
+
+/-- Quantified nominals can locally bind reflexive anaphors (73).
+    - *Tá'iin'iin =nà bálí xìni mí =nà ini yùtátá.*
+      'Every child saw themselves in the mirror.' -/
+def quantifiersBindReflexives : Bool := true
+
+/-- Exempt anaphors (reflexive forms used outside canonical binding domain)
+    CANNOT have quantified antecedents (75, 78).
+    - \**Tá'iin'iin tsǐnà tsìi ndò'ò mí =rí.* 'Each dog bit its own tail.'
+    - \**Ni'iin =ná bálí ní- xìni táta mí =ná.* 'No girl saw her own father.' -/
+def exemptAnaphorAllowsQuantifiedAntecedent : Bool := false
+
+/-- Exempt anaphors occur as possessors (74) but are restricted:
+    they cannot have quantified antecedents.
+    - *Tsìi tsǐnà ndò'ò {=rí, mí =rí}.* 'The dog bit {its, its own} tail.'
+    - *Xìni María táta {=ñá, mí =ñá}.* 'María saw {her, her own} father.' -/
+def exemptAnaphorsAsPossessors : Bool := true
+
+/-- *Ná* is a morpheme used in tensed subjunctives to force disjoint
+    reference when the embedded subject does not match the matrix subject
+    in φ-features (18b–d). It is optional with nonpronominal subjects (18d).
+    *Ná* does NOT occur with untensed subjunctives (19). -/
+def naDisjointReferenceMarker : Bool := true
+
+/-- Clitic left-dislocation in SMPM is NOT island-sensitive (80–82):
+    it is available out of adjunct islands and wh-islands.
+    This argues against a movement analysis of left-dislocation. -/
+def cliticLeftDislocationIslandSensitive : Bool := false
+
 end Fragments.Mixtec.SMPM

@@ -411,12 +411,6 @@ def tryDirectRExprCompare (goal : MVarId) (lhsExpr rhsExpr : Expr) : TacticM Boo
     activeRhs := scoreRhs
     denomNote := " [denom-cancelled]"
 
-  -- NOTE: preseed (tryPreseedRSACache) disabled — organic cache warming from
-  -- the first theorem is faster because it reifies only needed sub-expressions.
-  -- Preseed reifies all (L,U,W) triples (22K for Nouwen, 4400 for LG2017) even
-  -- when only a subset is needed for the specific utterance comparison.
-  -- The persistent cache across theorems provides the same sharing benefit.
-
   let cacheBefore ← persistentReifyCache.get
   let (lhsRExpr, lhsBounds) ← reifyToRExpr persistentReifyCache activeLhs maxDepth
   let (rhsRExpr, rhsBounds) ← reifyToRExpr persistentReifyCache activeRhs maxDepth
