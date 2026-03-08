@@ -261,4 +261,27 @@ theorem nge_of_double_additive (sys : EpistemicSystemFA (Fin n))
     rw [hd2, he2] at hred
     exact hng_d2e2 hred
 
+/-- ge B A via one additive step + one trans step: derive ge B C from
+    ge (B\C) (C\B) via additive.mpr, then chain with ge C A in context. -/
+theorem ge_of_additive_trans (sys : EpistemicSystemFA (Fin n))
+    {B C A D E : Set (Fin n)}
+    (hge_de : sys.ge D E)
+    (hd : B \ C = D) (he : C \ B = E)
+    (hge_ca : sys.ge C A)
+    : sys.ge B A :=
+  sys.trans _ _ _ ((sys.additive B C).mpr (by rw [hd, he]; exact hge_de)) hge_ca
+
+/-- ge B A via two additive steps through bridge set C:
+    ge B C from ge (B\C) (C\B), ge C A from ge (C\A) (A\C). -/
+theorem ge_of_double_additive_pos (sys : EpistemicSystemFA (Fin n))
+    {B C A D1 E1 D2 E2 : Set (Fin n)}
+    (hge_d1e1 : sys.ge D1 E1)
+    (hd1 : B \ C = D1) (he1 : C \ B = E1)
+    (hge_d2e2 : sys.ge D2 E2)
+    (hd2 : C \ A = D2) (he2 : A \ C = E2)
+    : sys.ge B A :=
+  sys.trans _ _ _
+    ((sys.additive B C).mpr (by rw [hd1, he1]; exact hge_d1e1))
+    ((sys.additive C A).mpr (by rw [hd2, he2]; exact hge_d2e2))
+
 end Core.Scale

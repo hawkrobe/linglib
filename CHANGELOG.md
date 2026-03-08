@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.229.11] - 2026-03-07
+
+### Added
+- **CancelFin4.lean**: `solve_cancellation` tactic auto-computes lt_pairs/eq_pairs from integer weights, pre-derives all ¬ge and ge facts via multi-pass fixpoint (saturate_singleton_ge + nge_double_additive + ge_via_additive + nge_close), then applies `cancellation_from_pairs`. Reduces each chamber proof from ~80 lines to 1 line (`solve_cancellation w0 w1 w2 w3`)
+- **NgeFS.lean**: `nge_double_additive` tactic (derives ¬ge via double additive with computed bridge set C), `ge_via_additive` tactic (derives ge via additive+trans or double-additive chains), `saturate_singleton_ge` tactic (transitive closure of singleton ge facts), Expr extraction helpers for Set (Fin 4)
+- **FinsetBridge.lean**: `ge_of_additive_trans` and `ge_of_double_additive_pos` helper lemmas for positive additive chain reasoning
+
 ## [0.229.10] - 2026-03-07
 
 ### Added
@@ -13,8 +20,8 @@
 ## [0.229.9] - 2026-03-07
 
 ### Added
-- **SystemZ.lean**: Core System Z infrastructure for constructing minimal ranking functions from default rules. `DefaultRule`, `KnowledgeBase`, `tolerated` (Def. 3), `admissible` (Def. 2), `zRankValue`/`zRanking` (Def. 12: κ^z minimal ranking), `rankEntails` (Def. 7: consequence relation). ~55 lines of new theory
-- **GoldszmidtPearl1996.lean**: Formalize Goldszmidt & Pearl 1996 on the Tweety Triangle. Tolerance stratification (Z-priorities: r₁=0, r₂=r₃=1), κ^z rank values verified, per-rule admissibility, entailment queries (penguin_birds_dont_fly, birds_fly, birds_not_typically_penguins), specificity result bridging to Veltman 1996, connected ordering → Rational Monotonicity. 0 sorry, 16 theorems
+- **SystemZ.lean**: Core System Z infrastructure for constructing minimal ranking functions from default rules. `DefaultRule`, `KnowledgeBase`, `tolerated` (Def. 3), `admissible` (Def. 2), `zRankValue`/`zRanking` (Def. 12: κ^z minimal ranking), `rankEntails` (Def. 7), `pEntails` (Def. 8: universal over admissible rankings), `pEntails_implies_rankEntails`. ~70 lines of new theory
+- **GoldszmidtPearl1996.lean**: Formalize Goldszmidt & Pearl 1996 on 3-rule subset of Example 17. Tolerance stratification (Z-priorities: r₁=0, r₂=r₃=1), κ^z rank values, `κz_admissible` (assembled), z-entailment queries, specificity, Bool/Prop bridge lemmas (`isBirdB_iff` etc.), cross-study Veltman bridge (`gp_derives_veltman_specificity`). 0 sorry, 21 theorems
 - **Plausibility.lean**: Extract `PlausibilityOrder`, `PreferentialConsequence`, `rationalMonotonicity` from BeliefRevision.lean into `Core/Order/Plausibility.lean` — their natural home alongside `NormalityOrder`
 
 ### Changed
