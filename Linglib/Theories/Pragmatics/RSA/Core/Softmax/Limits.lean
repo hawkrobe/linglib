@@ -10,8 +10,8 @@ import Mathlib.Topology.Algebra.InfiniteSum.Real
 # Softmax Function: Limit Behavior
 
 §1. Pointwise limits: α → 0 (uniform), α → ∞ (argmax), α → -∞ (argmin).
-§2. Bayesian inversion: `bayesSoftmax_tendsto_one` — when a softmax agent
-    concentrates, Bayesian inversion concentrates on the uniquely optimal state.
+§2. BToM observer: `softmaxObserver_tendsto_one` — an observer watching a
+    softmax agent concentrates on the uniquely optimal state as α → ∞.
     This is the RSA–exhaustivity bridge: L1 at α → ∞ computes exh.
 -/
 
@@ -324,7 +324,7 @@ theorem softmax_negligible [Nonempty ι] (s : ι → ℝ)
     _ < ε := hexp_lt
 
 -- ============================================================================
--- §2. Bayesian Inversion of Softmax (Exhaustivity Limit)
+-- §2. BToM Observer Inference (Exhaustivity Limit)
 -- ============================================================================
 
 /-- If action j has strictly higher score than i, softmax(i, α) → 0 as α → ∞.
@@ -348,40 +348,41 @@ theorem tendsto_softmax_infty_not_max [Nonempty ι] (s : ι → ℝ)
 
 variable {σ : Type*} [Fintype σ] [DecidableEq σ]
 
-/-- Bayesian posterior of a softmax agent.
+/-- Observer posterior for a softmax agent: BToM inference about the state.
 
+    An observer sees a softmax agent choose action i, and infers the state:
     P(s | i, α) = softmax(score(·,s), α)(i) · prior(s) / Σ_{s'} ...
 
-    In RSA: this is L1(w | u, α) with score = informativity, prior = worldPrior.
-    The definition is parameterized by α so we can take limits. -/
-noncomputable def bayesSoftmax [Nonempty ι]
+    In RSA: the pragmatic listener L1 observes the speaker's utterance u and
+    infers the world w. This is `L1(w | u)` parameterized by α for limits. -/
+noncomputable def softmaxObserver [Nonempty ι]
     (score : ι → σ → ℝ) (prior : σ → ℝ) (α : ℝ) (i : ι) (s : σ) : ℝ :=
   softmax (fun j => score j s) α i * prior s /
   ∑ s' : σ, softmax (fun j => score j s') α i * prior s'
 
-/-- Bayesian inversion of softmax concentrates on the uniquely optimal state.
+/-- BToM inference about a softmax agent concentrates on the optimal state.
 
-    If action i₀ is the unique best action at state s₀ (highest score), and is
-    not the best at any other state, then the Bayesian posterior P(s₀ | i₀, α) → 1
-    as α → ∞.
+    An observer watches a softmax agent and infers the hidden state.
+    If action i₀ is the unique best action at state s₀, and is not the best
+    at any other state, the observer's posterior P(s₀ | i₀, α) → 1 as α → ∞.
 
-    **RSA–exhaustivity bridge**: when utterance u is the most informative true
-    utterance only at world w₀, the pragmatic listener L1 assigns probability 1
-    to w₀ in the high-rationality limit. This IS the exhaustivity operator:
-    L1 at α → ∞ computes exh(u).
+    **RSA–exhaustivity bridge**: the pragmatic listener (L1) observes a softmax
+    speaker (S1) and does Bayesian inversion. At α → ∞, L1 concentrates on
+    worlds where the heard utterance was the speaker's uniquely optimal choice.
+    This IS the exhaustivity operator: L1 at α → ∞ computes exh(u).
 
     For a simple scale {some, all} with worlds {someNotAll, all}:
     - "all" is more informative at the "all" world → S1 says "all" there
     - "some" is the only true utterance at "someNotAll" → S1 says "some" there
     - L1 hearing "some" → concentrates on "someNotAll" → exh(some) = some ∧ ¬all -/
-theorem bayesSoftmax_tendsto_one [Nonempty ι] [Nonempty σ]
+theorem softmaxObserver_tendsto_one [Nonempty ι] [Nonempty σ]
     (score : ι → σ → ℝ) (prior : σ → ℝ)
     (i₀ : ι) (s₀ : σ)
     (h_opt : ∀ j, j ≠ i₀ → score j s₀ < score i₀ s₀)
     (h_nonopt : ∀ s, s ≠ s₀ → ∃ j, score i₀ s < score j s)
     (h_prior : 0 < prior s₀) :
-    Tendsto (fun α => bayesSoftmax score prior α i₀ s₀) atTop (nhds 1) := by
-  simp only [bayesSoftmax]
+    Tendsto (fun α => softmaxObserver score prior α i₀ s₀) atTop (nhds 1) := by
+  simp only [softmaxObserver]
   -- Step 1: numerator → prior(s₀)
   have hnum : Tendsto (fun α => softmax (fun j => score j s₀) α i₀ * prior s₀)
       atTop (nhds (1 * prior s₀)) :=
