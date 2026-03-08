@@ -153,4 +153,22 @@ def rankEntails (κ : RankingFunction W) (φ σ : W → Bool) : Prop :=
   ∀ w : W, (φ w && !σ w) = true →
     ∃ v : W, (φ v && σ v) = true ∧ κ.rank v < κ.rank w
 
+/-- @cite{goldszmidt-pearl-1996}, Definition 8 (p. 66). σ is
+    **p-entailed** by φ given Δ iff φ ⊨_κ σ holds in every consequence
+    relation ⊨_κ induced by an admissible ranking κ.
+
+    p-entailment is conservative: it only draws conclusions that are
+    safe across ALL admissible rankings. z-entailment (Definition 13)
+    is bolder, using only the unique minimal ranking κ^z. Every
+    p-entailed conclusion is z-entailed but not vice versa (Table 2). -/
+def pEntails (Δ : KnowledgeBase W) (φ σ : W → Bool) : Prop :=
+  ∀ κ : RankingFunction W, admissible κ Δ → rankEntails κ φ σ
+
+/-- p-entailment implies z-entailment: if φ ⊨_p σ then φ ⊨_{κ^z} σ,
+    since κ^z is one particular admissible ranking. -/
+theorem pEntails_implies_rankEntails {Δ : KnowledgeBase W}
+    {κ : RankingFunction W} (hadm : admissible κ Δ)
+    {φ σ : W → Bool} (h : pEntails Δ φ σ) : rankEntails κ φ σ :=
+  h κ hadm
+
 end Core.Logic.SystemZ

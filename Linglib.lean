@@ -1400,6 +1400,7 @@ import Linglib.Theories.Pragmatics.RSA.Core.EmbeddedSI
 import Linglib.Theories.Pragmatics.RSA.Core.Model
 import Linglib.Theories.Pragmatics.RSA.Core.Noise
 import Linglib.Theories.Pragmatics.RSA.Core.Priors
+import Linglib.Theories.Pragmatics.RSA.Core.RankingBridge
 import Linglib.Theories.Pragmatics.RSA.Core.Softmax.Limits
 import Linglib.Theories.Pragmatics.RSA.Core.SpeakerDiscrimination
 import Linglib.Theories.Pragmatics.RSA.Quantities

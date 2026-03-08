@@ -11,7 +11,7 @@
 ## [0.229.13] - 2026-03-07
 
 ### Added
-- **RankingBridge.lean**: RSA–ranking limit bridge (`Theories/Pragmatics/RSA/Core/`). `rankToScore` (κ → softmax scores), `softmax_concentrates_unique` (softmax → point mass on rank-0 world as α→∞), `rankEntails_iff_minRank_lt` (ranking entailment ↔ minimum-rank comparison), `minRank_worlds_satisfy` (minimum-rank φ-worlds satisfy σ under ranking entailment), `rankToPrior` (exponential prior from rankings). 0 sorry, 12 theorems
+- **RankingBridge.lean**: RSA–ranking limit bridge (`Theories/Pragmatics/RSA/Core/`). `rankToScore` (κ → softmax scores), `softmax_concentrates_unique` (softmax → point mass on rank-0 world as α→∞), `rankEntails_iff_minRank_lt` (ranking entailment ↔ minimum-rank comparison), `minRank_worlds_satisfy` (minimum-rank φ-worlds satisfy σ under ranking entailment), `rankToPrior` (exponential prior from rankings). Tropical semiring §6: exact homomorphism via Mathlib's `Tropical ℕ` — `exp_tropical_mul` (ε^{a×b} = ε^a·ε^b), `exp_tropical_add` (ε^{a+b} = max(ε^a,ε^b)), `independent_iff_tropical_mul` (ranking independence = tropical multiplicativity), `softmax_eq_tropical_ratio` (softmax = ε^κ / Σε^κ with ε=exp(-α)). 0 sorry, 16 theorems
 - **GoldszmidtPearl1996.lean** §9: RSA bridge — `κz_softmax_concentrates` (κ^z softmax → point mass on birdFlies), `minRank_birds_fly` (minimum-rank birds fly), `minRank_penguins_dont_fly` (minimum-rank penguins don't fly). System Z entailment = infinite-rationality RSA limit, demonstrated concretely for the Tweety scenario
 
 ## [0.229.12] - 2026-03-07

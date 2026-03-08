@@ -236,7 +236,12 @@ theorem weak_evidence_revises :
     The exact homomorphism requires nonstandard probability (§7 uses
     infinitesimal i with P(A) ~ i^{κ(A)}). For finite distributions,
     the **ordering** is preserved: worlds with higher probability have
-    lower rank. We verify this concretely. -/
+    lower rank. We verify this concretely.
+
+    See `Theories.Pragmatics.RSA.RankingBridge` for the formal
+    connection: `rankToPrior κ w = exp(-κ(w))` gives the exponential
+    prior, and `softmax_concentrates_unique` proves that softmax
+    with ranking scores concentrates on rank-0 worlds as α → ∞. -/
 
 /-- Probability weights compatible with the prior ranking.
     w(x) = 2^(max_rank - κ(x)), so higher rank → lower weight.
