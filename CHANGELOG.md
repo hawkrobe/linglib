@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.229.24] - 2026-03-08
+
+### Fixed
+- **references.bib**: Fix `magri-2009` — title was hallucinated ("Individual-level predicates and mandatory scalar implicatures" → "A theory of individual-level predicates based on blind mandatory scalar implicatures"), DOI pointed to wrong paper (Cambridge book chapter → Springer journal article `10.1007/s11050-009-9042-x`), entry type `@misc` → `@article`, add journal/volume/number/pages metadata
+
 ## [0.229.23] - 2026-03-08
 
 ### Changed
