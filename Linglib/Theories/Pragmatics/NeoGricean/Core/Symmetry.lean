@@ -9,15 +9,19 @@ alternative A of an assertion S, the sentence S ∧ ¬A is also stronger
 than S and yields the *opposite* implicature. A theory of alternatives
 must explain why A enters the alternative set but S ∧ ¬A does not.
 
-The problem was identified in the early 1970s (@cite{kroch-1972},
-@cite{horn-1972}) and has shaped every subsequent theory:
+The problem emerged in the early 1970s: @cite{horn-1972} established
+the Gricean derivation of scalar implicatures, and @cite{kroch-1972}
+discussed the same reasoning for quantifiers, creating the conditions
+for recognizing that symmetric alternatives pose a fundamental obstacle.
+Every subsequent theory of alternatives is shaped by this problem:
 
-- @cite{katzir-2007} solves it via **structural complexity**: S ∧ ¬A is
-  structurally more complex than S, so it is excluded from F(S)
-- @cite{fox-2007} solves it via **innocent exclusion**: symmetric
-  alternatives appear in different MCEs, so neither is in I-E
+- @cite{katzir-2007} addresses it via **structural complexity**: S ∧ ¬A
+  is structurally more complex than S, so it is excluded from F(S)
+- @cite{fox-2007}'s **innocent exclusion** correctly handles symmetric
+  alternatives (they land in different MCEs, so neither is in I-E),
+  but the problem of which alternatives *enter the set* remains
 - @cite{fox-katzir-2011} show that **contextual restriction cannot
-  break symmetry** — only formal alternatives F can
+  break symmetry** — only the formal alternative set F can
 - @cite{breheny-et-al-2018} show that none of these fully solve
   the problem (indirect SIs, gradable adjectives, too many/few
   lexical alternatives remain problematic)
@@ -51,8 +55,9 @@ open NeoGricean.Exhaustivity.Fox2007 hiding sublists
     partition S's denotation: their union equals S and they are
     mutually exclusive.
 
-    Formalized from @cite{fox-katzir-2011} definition 12, but the
-    concept originates with @cite{kroch-1972} and @cite{horn-1972}.
+    Formalized from @cite{fox-katzir-2011} definition 12. The
+    underlying problem was recognized in the early 1970s
+    (@cite{horn-1972}, @cite{kroch-1972}).
 
     Note: this is stricter than mere non-innocent-excludability.
     Disjuncts p, q of p∨q are often mutually compatible (p ∩ q ≠ ∅)

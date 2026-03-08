@@ -34,6 +34,16 @@ in `Exhaustivity/Basic.lean` (@cite{spector-2016}). The definitions are:
 - `chierchia_puzzle_ie`: `exh` resolves Chierchia's puzzle (§4)
 - `free_choice`: Exh²(◇(p∨q)) = ◇p ∧ ◇q ∧ ¬◇(p∧q) (§7.2)
 
+## Connection to the Symmetry Problem
+
+Innocent exclusion was designed to handle **symmetric alternatives**
+(see `Symmetry.lean`): when S₁, S₂ partition S's denotation, excluding
+both is inconsistent, so they land in different MCEs and neither is in
+I-E. This correctly predicts that `exh` is vacuous when the alternative
+set contains both symmetric partners (`FoxKatzir2011.symmetry_problem`).
+The problem of *which alternatives enter the set* is addressed by
+@cite{katzir-2007}'s structural complexity (`StructuralAlternatives.lean`).
+
 ## Duality with Santorio 2018
 
 Fox's innocent exclusion is the **dual** of @cite{santorio-2018}'s
