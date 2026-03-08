@@ -1,5 +1,4 @@
-import Linglib.Theories.Semantics.Conditionals.Counterfactual
-import Linglib.Core.Logic.Truth3
+import Linglib.Theories.Semantics.Conditionals.AlternativeSensitive
 import Linglib.Phenomena.Plurals.Studies.TieuKrizChemla2019
 import Mathlib.Data.Rat.Defs
 
@@ -37,8 +36,9 @@ The DCR→SDA trajectory supports homogeneity-based accounts
 
 ## Connection to Linglib
 
-- DAC readings formalized as alternative-sensitive conditionals reusing
-  `closestWorldsB` from `Counterfactual.lean`
+- DAC readings use the alternative-sensitive conditional semantics from
+  `AlternativeSensitive.lean` (@cite{santorio-2018}): `homogeneityEval`,
+  `sdaEval`, `dcrEval`
 - SDA/DCR correspond to conjunctive/disjunctive `ProjectionType`
 - Developmental trajectory parallels @cite{tieu-kriz-chemla-2019}'s
   existential→homogeneous shift
@@ -46,8 +46,9 @@ The DCR→SDA trajectory supports homogeneity-based accounts
 
 namespace Phenomena.Conditionals.Studies.ZaniCiardelliSanfelici2026
 
-open Core.Duality (Truth3)
-open Semantics.Conditionals.Counterfactual (closestWorldsB ProjectionType)
+open Core.Duality (Truth3 ProjectionType)
+open Semantics.Conditionals.AlternativeSensitive
+open Semantics.Conditionals.Counterfactual (closestWorldsB)
 
 
 -- ============================================================
@@ -74,45 +75,12 @@ theorem ar_entails_dcr : DACReading.ar.strength ≥ DACReading.dcr.strength := b
 
 
 -- ============================================================
--- SECTION 2: Alternative-Sensitive Conditional Semantics
+-- SECTION 2: DAC Readings ↔ Projection Types
 -- ============================================================
 
-/-- Evaluate each alternative antecedent against the conditional separately.
-    Returns a Bool per alternative: true iff all closest antecedent-worlds
-    satisfy the consequent (Lewis semantics applied per-alternative). -/
-def altConditionalResults {W : Type*} [DecidableEq W]
-    (closer : W → W → W → Bool) (domain : List W)
-    (alts : List (W → Bool)) (C : W → Bool) (w : W) : List Bool :=
-  alts.map λ A =>
-    let closest := closestWorldsB closer domain w (domain.filter A)
-    closest.isEmpty || closest.all C
-
-/-- SDA reading: conjunction of simplifications. -/
-def sdaEval {W : Type*} [DecidableEq W]
-    (closer : W → W → W → Bool) (domain : List W)
-    (alts : List (W → Bool)) (C : W → Bool) (w : W) : Bool :=
-  (altConditionalResults closer domain alts C w).all id
-
-/-- DCR reading: disjunction of simplifications. -/
-def dcrEval {W : Type*} [DecidableEq W]
-    (closer : W → W → W → Bool) (domain : List W)
-    (alts : List (W → Bool)) (C : W → Bool) (w : W) : Bool :=
-  (altConditionalResults closer domain alts C w).any id
-
-/-- Homogeneity-based reading (@cite{santorio-2018}, @cite{cariani-goldstein-2020}):
-    three-valued. True iff all alternatives lead to C, false iff none do,
-    gap otherwise.
-
-    ⟦if A, C⟧ʷ = 1 if ∀p ∈ Alt(A) : min_w(p) ⊆ C
-                  0 if ∀p ∈ Alt(A) : min_w(p) ⊆ C̄
-                  undefined otherwise -/
-def homogeneityEval {W : Type*} [DecidableEq W]
-    (closer : W → W → W → Bool) (domain : List W)
-    (alts : List (W → Bool)) (C : W → Bool) (w : W) : Truth3 :=
-  let results := altConditionalResults closer domain alts C w
-  if results.all id then .true
-  else if results.all (!·) then .false
-  else .gap
+-- Alternative-sensitive conditional semantics (altConditionalResults,
+-- sdaEval, dcrEval, homogeneityEval, lewisDAC) are imported from
+-- Theories/Semantics/Conditionals/AlternativeSensitive.lean
 
 /-- SDA = conjunctive projection over alternatives.
     DCR = disjunctive projection over alternatives.
@@ -123,49 +91,13 @@ def dacProjection : DACReading → ProjectionType
   | .dcr => .disjunctive
   | .ar  => .disjunctive
 
-/-- The homogeneity reading with universal resolution yields SDA. -/
-theorem sda_is_universal_homogeneity {W : Type*} [DecidableEq W]
-    (closer : W → W → W → Bool) (domain : List W)
-    (alts : List (W → Bool)) (C : W → Bool) (w : W) :
-    sdaEval closer domain alts C w =
-    (homogeneityEval closer domain alts C w == .true) := by
-  unfold sdaEval homogeneityEval
-  cases h : (altConditionalResults closer domain alts C w).all id
-  case false => simp [h]; split_ifs <;> rfl
-  case true => simp [h]; rfl
-
-
--- ============================================================
--- SECTION 3: Lewis Semantics and SDA
--- ============================================================
-
-/-- Lewis's semantics: disjunction is Boolean (A ∪ B), not
-    alternative-generating ({A, B}). Under Boolean disjunction,
-    "if A or B, C" is evaluated against min_w(A ∪ B).
-
-    When A and B are equally realistic, min_w(A ∪ B) = min_w(A) ∪ min_w(B)
-    and SDA is validated. When one disjunct is more realistic,
-    min_w(A ∪ B) = min_w(A) and only that simplification follows. -/
-def lewisDAC {W : Type*} [DecidableEq W]
-    (closer : W → W → W → Bool) (domain : List W)
-    (A B C : W → Bool) (w : W) : Bool :=
-  let disj := λ v => A v || B v
-  let closest := closestWorldsB closer domain w (domain.filter disj)
-  closest.isEmpty || closest.all C
-
 /-- `List.all id` on a two-element list is conjunction. -/
 private theorem all_id_pair (a b : Bool) : [a, b].all id = (a && b) := by
   cases a <;> cases b <;> rfl
 
-/-- Lewis validates SDA when disjuncts are equally realistic:
-    min_w(A ∪ B) = min_w(A) ∪ min_w(B). But this is a contingent
-    property of the similarity ordering, not a logical validity.
-
-    The alternative-sensitive semantics validates SDA universally:
+/-- Alternative semantics validates SDA universally (for two alternatives):
     "if {A,B}, C" ≡ ∀p ∈ {A,B}. min_w(p) ⊆ C ≡ (if A, C) ∧ (if B, C).
-
-    This is the core distinction: SDA is LOGICALLY VALID under
-    alternative semantics but only CONTINGENTLY valid under Lewis. -/
+    Under Lewis, SDA is only contingently valid. -/
 theorem alt_semantics_validates_sda {W : Type*} [DecidableEq W]
     (closer : W → W → W → Bool) (domain : List W)
     (A B C : W → Bool) (w : W) :

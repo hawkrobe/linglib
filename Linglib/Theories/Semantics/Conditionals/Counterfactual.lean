@@ -41,7 +41,7 @@ namespace Semantics.Conditionals.Counterfactual
 
 open Semantics.Conditionals
 open Core.StructuralEquationModel
-open Core.Duality (Truth3)
+open Core.Duality (Truth3 ProjectionType)
 
 
 /--
@@ -279,11 +279,7 @@ The selectional theory captures this because three-valued logic with
 supervaluation naturally implements this projection duality.
 -/
 
-/-- Projection type: how semantic values combine through an operator. -/
-inductive ProjectionType where
-  | conjunctive  -- Universal-like: all must succeed
-  | disjunctive  -- Existential-like: one must succeed
-  deriving Repr, DecidableEq
+-- ProjectionType is now defined in Core.Duality (Core/Logic/Truth3.lean)
 
 /-- Quantifier strength corresponds to projection type. -/
 def quantifierProjection : String → ProjectionType

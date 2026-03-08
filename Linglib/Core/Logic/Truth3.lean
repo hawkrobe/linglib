@@ -247,6 +247,31 @@ theorem metaAssert_of_defined (v : Truth3) (h : v.isDefined = Bool.true) : metaA
 
 end Truth3
 
+/-- How truth values aggregate through an operator.
+    Conjunctive (universal-like): all must succeed.
+    Disjunctive (existential-like): one must succeed. -/
+inductive ProjectionType where
+  | conjunctive
+  | disjunctive
+  deriving Repr, DecidableEq
+
+/-- Distributivity operator with homogeneity presupposition.
+    TRUE if all satisfy, FALSE if none satisfy, GAP if mixed.
+
+    Shared structure of DIST (for plural individuals) and
+    DIST_π (for conditional alternatives, @cite{santorio-2018}). -/
+def dist (results : List Bool) : Truth3 :=
+  if results.all id then .true
+  else if results.all (!·) then .false
+  else .gap
+
+/-- `dist` on a homogeneous true list. -/
+@[simp] theorem dist_nil : dist [] = .true := rfl
+
+/-- `dist` agrees with `Truth3.ofBool` on singletons. -/
+theorem dist_singleton (b : Bool) : dist [b] = Truth3.ofBool b := by
+  cases b <;> rfl
+
 /-- Three-valued propositions: functions from worlds to Truth3. -/
 abbrev Prop3 (W : Type*) := W → Truth3
 

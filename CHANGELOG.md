@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.229.0] - 2026-03-07
+
+### Added
+- **AlternativeSensitive.lean**: Formalize Santorio 2018 — alternative-sensitive conditional semantics with DIST_π, `homogeneityEval` as `dist` over per-alternative results, SDA/DCR readings as universal/existential resolutions. Spain counterexample (SDA optional without DIST_π), hyperintensionality theorem (logically equivalent antecedents with different alternatives yield different truth values), `IsTruthmaker` type
+- **Truth3.lean**: `ProjectionType` (moved from Counterfactual), generic `dist` operator (shared structure of DIST for individuals and DIST_π for conditionals)
+
+### Changed
+- **ZaniCiardelliSanfelici2026.lean**: Import `altConditionalResults`/`sdaEval`/`dcrEval`/`homogeneityEval`/`lewisDAC` from `AlternativeSensitive.lean` instead of defining inline — ZCS is now a consumer of Santorio's theory, not a re-implementer
+- **Counterfactual.lean**: `ProjectionType` moved to `Core/Logic/Truth3.lean`
+
 ## [0.228.98] - 2026-03-07
 
 ### Fixed

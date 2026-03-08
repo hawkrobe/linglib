@@ -328,6 +328,7 @@ import Linglib.Tactics.NonnegOfForall
 import Linglib.Tactics.RSAPredict
 import Linglib.Tactics.OntSort
 import Linglib.Tactics.NgeFS
+import Linglib.Tactics.CancelFin4
 -- Fragments
 import Linglib.Fragments.Arabic.Relativization
 import Linglib.Fragments.ASL.Classifiers
@@ -1277,6 +1278,7 @@ import Linglib.Theories.Semantics.Causation.Resultatives
 import Linglib.Theories.Semantics.Causation.PsychCausation
 import Linglib.Theories.Semantics.Causation.PsychCausalLink
 import Linglib.Phenomena.PsychVerbs.Studies.HartshorneEtAl2016
+import Linglib.Theories.Semantics.Conditionals.AlternativeSensitive
 import Linglib.Theories.Semantics.Conditionals.Assertability
 import Linglib.Theories.Semantics.Conditionals.Basic
 import Linglib.Theories.Semantics.Conditionals.ConditionalType
