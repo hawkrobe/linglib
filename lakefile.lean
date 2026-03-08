@@ -6,7 +6,7 @@ package linglib where
   leanOptions := #[⟨`autoImplicit, false⟩]
 
 require mathlib from git
-  "https://github.com/leanprover-community/mathlib4"
+  "https://github.com/leanprover-community/mathlib4" @ "v4.28.0"
 
 -- Documentation generator
 require «doc-gen4» from git

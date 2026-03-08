@@ -54,7 +54,7 @@ def depsToSimpleGraph (n : Nat) (deps : List Dependency) : SimpleGraph (Fin n) w
   symm := by
     intro i j ⟨hne, d, hd, hor⟩
     exact ⟨hne.symm, d, hd, hor.elim Or.inr Or.inl⟩
-  loopless := by intro i ⟨hne, _⟩; exact absurd rfl hne
+  loopless := ⟨fun i ⟨hne, _⟩ => absurd rfl hne⟩
 
 /-- Convert a DepTree to a mathlib SimpleGraph on its node set. -/
 def DepTree.asSimpleGraph (t : DepTree) : SimpleGraph (Fin t.words.length) :=
