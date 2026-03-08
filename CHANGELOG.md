@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.228.98] - 2026-03-07
+
+### Fixed
+- **ZaniCiardelliSanfelici2026.lean**: Merge duplicate `AgeGroupRates` into `PatternRates`, add `ar_marginal_at_all_ages` theorem, add `halfTrueRefusalRate` (9.6% "half true" refusals as evidence for homogeneity gap)
+
 ## [0.228.97] - 2026-03-07
 
 ### Fixed

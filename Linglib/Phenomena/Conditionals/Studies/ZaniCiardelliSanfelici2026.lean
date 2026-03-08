@@ -316,14 +316,7 @@ theorem mode_nonsignificant :
 /-- Per-age-group pattern rates (from Figure 4 bar chart annotations).
     This is the paper's core developmental data.
     Values are approximate (read from bar chart, not tabulated in paper). -/
-structure AgeGroupRates where
-  sda : ℚ
-  dcr : ℚ
-  ar : ℚ
-  other : ℚ
-  deriving Repr
-
-def ratesByAge : AgeGroup → AgeGroupRates
+def ratesByAge : AgeGroup → PatternRates
   | .age4  => { sda := 344/10, dcr := 312/10, ar := 0,     other := 344/10 }
   | .age5  => { sda := 330/10, dcr := 196/10, ar := 9/10,  other := 464/10 }
   | .age6  => { sda := 357/10, dcr := 259/10, ar := 18/10, other := 366/10 }
@@ -355,6 +348,30 @@ theorem dcr_decreases_from_age7 :
 theorem sda_dominates_dcr_at_all_ages :
     ∀ g : AgeGroup, (ratesByAge g).sda ≥ (ratesByAge g).dcr := by
   intro g; cases g <;> native_decide
+
+/-- AR is marginal (< 5%) at every age group. This rules out Lewis's
+    prediction that AR should be common in younger children. -/
+theorem ar_marginal_at_all_ages :
+    ∀ g : AgeGroup, (ratesByAge g).ar < 5 := by
+  intro g; cases g <;> native_decide
+
+
+-- ============================================================
+-- SECTION 7c: "Half True" Refusals — Evidence for Homogeneity Gap
+-- ============================================================
+
+/-- 9.6% of children refused to judge DACs as true or false, saying
+    they were "half true and half false." This is direct behavioral
+    evidence for the truth-value gap predicted by homogeneity theory:
+    when one simplification is true and the other false, the DAC
+    lacks a definite truth value.
+
+    10 children showed this pattern consistently across all 4 scenarios;
+    6 more did so in at least one scenario. -/
+def halfTrueRefusalRate : ℚ := 96/10
+
+/-- The refusal rate is substantial — nearly 1 in 10 children. -/
+theorem halfTrue_nontrivial : halfTrueRefusalRate > 5 := by native_decide
 
 
 -- ============================================================
