@@ -1,5 +1,41 @@
 # Changelog
 
+## [0.229.31] - 2026-03-08
+
+### Added
+- **Magri2009.lean §6**: Context characterization theorem — `oddness_iff_mixed_excluded` proves (∀ ctx) that oddness of "sometimes" on the ⟨sometimes, always⟩ scale equals `!ctx .sometimesOnly`; universally quantified over all context functions, not just ILP/SLP; proof factors abstract ctx into 8 concrete cases via `funext`/`simp`/`native_decide`; corollaries `ilp_rules_out_mixed` and `slp_admits_mixed`
+- **Magri2009.lean §7**: Bare plural subject restriction (paper §4.2) — independent `BPSWorld`/`BPSReading` types modeling the ∃-BPS reading of "Firemen are tall"; `bpsScenario` (ILP) and `bpsSLPScenario` (SLP) with oddness proofs; `bps_meaning_matches_qadverb` and `bps_context_matches_qadverb` prove isomorphism to the Q-adverb scenario, formalizing Magri's reduction (p. 275)
+- **Magri2009.lean §8**: Universal quantifier rescue (paper §4.3, Fox 1995) — `universalRescueScenario` models "Jewish women related to every Jewish man" where distributed witnesses make all worlds CK-compatible; `rescue_context_equals_slp` proves rescue context = SLP context; `three_way_contrast` proves the full triangle (ILP odd, SLP fine, rescue fine) with shared semantics and differing only in mixed-world CK status
+
+### Changed
+- **Magri2009.lean**: Fix MH section reference — §3.2.5 → §3.2.2 (item (33)) where the MH is defined; §3.2.5 is the discussion, not the definition
+
+## [0.229.30] - 2026-03-08
+
+### Added
+- **Carlson1977.lean §8**: Scopelessness contrast theorems — `bare_plural_narrow_scope_only` (constants force P ∧ ¬P → ⊥), `bare_plural_stage_level_contradiction` (instantiated for R), `quantified_np_non_contradictory` and `quantified_np_stage_level_non_contradictory` (constructive witnesses showing quantifiers allow different values in each conjunct)
+- **Magri2009.lean**: Import Carlson1977, define `ilpHomogeneity` mapping `PredicateLevel` → CK context; `tall_context_from_ilp` proves `tallScenario.context` matches ILP homogeneity; add SLP contrast scenario (`availableScenario`) with `available_sometimes_not_odd`; `predicate_level_determines_oddness` shows ILP → odd, SLP → fine; `ilp_homogeneity_necessary_and_sufficient` proves same semantics + different PredicateLevel → different oddness (context `≠` via `sometimesOnly`, blindOdd `≠` via native_decide)
+- **Longobardi2001.lean**: Open Carlson1977, add §14 bridge theorems (`referential_bn_semantics`, `kind_level_via_carlson`, `existential_via_carlson`) connecting `ArgumentType.referential` to `barePluralTranslation`/`genericDerivation`/`existentialDerivation`; add §19 `predicateLevelToEnvironment` mapping `PredicateLevel` → `BNEnvironment`, `carlson_longobardi_integration` proving the full predicate-level → environment → generic-availability chain
+
+## [0.229.29] - 2026-03-08
+
+### Changed
+- **Carlson1977.lean**: Remove hallucinated Gn operator — Carlson 1977 does NOT introduce a GEN/Gn operator; habitual "Dogs run" = run'(d) (direct kind predication). Gn comes from later work (Krifka et al. 1995). Delete `habitualGeneric` definition
+- **Carlson1977.lean**: Fix section numbers — sorted ontology is in the paper's §4 ("Towards a Solution"), not §3
+- **Carlson1977.lean**: Fix cross-reference — `Comparisons/GenericSemantics.lean` → `Phenomena/Generics/Compare.lean` for Carlson/Chierchia/Krifka comparison
+- **Carlson1977.lean**: Fix §8 examples — "Cats are here" shows full stage-level formula with R (not misleading `here'(CATS)`); opacity example uses paper's actual sentence 132 ("Max believes dogs are here"), not hallucinated sponge example; "Dogs bark" = `bark'(DOGS)` (direct kind predication), not Gn-wrapped formula
+
+## [0.229.28] - 2026-03-08
+
+### Added
+- **Carlson1977.lean**: `EntitySort` inductive (stage/individual/kind) and `CarlsonModel` structure with sorted realization relation R — `R_domain` constrains source to stages, `R_range` constrains target to individuals/kinds
+- **Carlson1977.lean**: Non-trivial theorems derived from model constraints: `kind_cannot_realize`, `individual_cannot_realize`, `R_no_chain` (no stages of stages), `stage_witness_is_stage`, `differentiated_scope_witnesses_are_stages`
+
+### Changed
+- **Carlson1977.lean**: Rewrite module docstring — add `@cite{carlson-1977}`, fix `Theories/Comparisons/` → `Comparisons/` path, remove incorrect `@cite{dowty-1972}` attribution for stage/individual distinction (Milsark and Siegel only)
+- **Carlson1977.lean**: Delete dead code — `IsOrdinaryIndividual` (placeholder `True` field), `BarePluralEntry` (dead `isKind` field), `KindDenotation`, `QuantifiedNP`/`BarePluralNP`, `someNPTranslation`, `Belief`/`beliefContext`, `PredicateEntry`, `stageLevelExamples`/`individualLevelExamples`, `stageOf`, `IsKind`; drop Mathlib imports (no longer needed)
+- **references.bib**: Change `carlson-1977` from `@phdthesis` ("Reference to Kinds in English") to `@article` ("A Unified Analysis of the English Bare Plural", L&P 1(3): 413--457, doi:10.1007/BF00353456). Remove `dowty-1972` (only cited in Carlson1977, now removed)
+
 ## [0.229.27] - 2026-03-08
 
 ### Added

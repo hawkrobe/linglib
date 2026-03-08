@@ -20,15 +20,15 @@ Instead of DRS boxes, CDRT uses:
 - Dynamic propositions: relations between states
 - Compositional combination rules
 
-## Type System
+## Type System (Table 1, p. 155)
 
 | Type | Meaning |
 |------|---------|
 | e | Entities |
 | t | Truth values |
 | s | States (registers/assignments) |
-| s → t | Dynamic propositions |
-| (s → t) → s → t | Sentence meanings |
+| π | Registers (discourse referents) |
+| s(st) | Box meanings (binary relations on states) |
 
 -/
 

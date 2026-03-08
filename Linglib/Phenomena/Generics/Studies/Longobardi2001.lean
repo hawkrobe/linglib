@@ -45,6 +45,8 @@ into a 2×2 parametric space that also predicts PN syntax.
 namespace Phenomena.Generics.Studies.Longobardi2001
 
 open Semantics.Lexical.Noun.Kind.Chierchia1998 (NominalMapping canDenoteKind)
+open Semantics.Lexical.Noun.Kind.Carlson1977 (PredicateLevel barePluralTranslation
+  genericDerivation existentialDerivation RealizationRel stageLevelPred)
 
 -- ============================================================================
 -- § 1: Argument Type — Referential vs Quantificational
@@ -667,7 +669,10 @@ theorem greek_bn_cannot_denote_kind :
     Longobardi refines this: English BNs are AMBIGUOUS between
     kind-referential (Carlson's analysis) and quantificational
     (like Romance BNs). The referential reading is the one that
-    behaves like proper names — rigid, scopeless, opaque-only. -/
+    behaves like proper names — rigid, scopeless, opaque-only.
+
+    When a BN is referential, its semantics is @cite{carlson-1977}'s
+    `barePluralTranslation`: λP.P{k}. -/
 theorem english_bn_referential_is_carlson :
     .referential ∈ bnArgumentTypes english := by
   simp [bnArgumentTypes, bnCanBeReferential, english]
@@ -677,6 +682,34 @@ theorem english_bn_referential_is_carlson :
 theorem romance_bn_never_referential :
     .referential ∉ bnArgumentTypes romance := by
   simp [bnArgumentTypes, bnCanBeReferential, romance]
+
+/-- Referential BNs denote kinds via @cite{carlson-1977}'s λP.P{k}.
+
+    The bare plural "dogs" denotes the kind d; applying any predicate P
+    just evaluates P at d — no quantificational structure. This is what
+    makes referential BNs scopeless and opaque-only: proper names don't
+    take scope. -/
+theorem referential_bn_semantics (Entity : Type) (k : Entity) (P : Entity → Bool) :
+    barePluralTranslation k P = P k := rfl
+
+/-- Kind-level predicates apply directly to a referential BN via
+    @cite{carlson-1977}'s `genericDerivation`. This is why English BNs
+    (which can be referential) appear with kind-level predicates
+    ("Dogs are extinct") while Italian BNs (always quantificational) cannot. -/
+theorem kind_level_via_carlson (Entity : Type) (k : Entity) (P : Entity → Bool) :
+    genericDerivation k P = P k := rfl
+
+/-- Existential readings of referential BNs arise via
+    @cite{carlson-1977}'s `existentialDerivation`: the predicate
+    introduces ∃ over stages, not the NP.
+
+    "Dogs are in the yard" = ∃y[R(y,d) ∧ in-yard'(y)]
+
+    The existential is part of the predicate semantics, which is
+    why it always takes narrowest scope. -/
+theorem existential_via_carlson (Entity : Type) (R : RealizationRel Entity)
+    (k : Entity) (P : Entity → Bool) :
+    existentialDerivation R k P = stageLevelPred Entity R P k := rfl
 
 -- ============================================================================
 -- § 15: Bridge to Fragment Data
@@ -845,5 +878,56 @@ theorem contrast_environments :
   | characterizing => simp [bnGenericAvailable] at h
   | episodic => left; rfl
   | kindLevel => right; rfl
+
+-- ============================================================================
+-- § 19: Bridge to Carlson (1977) — Predicate Level ↔ BN Environment
+-- ============================================================================
+
+/-- Maps @cite{carlson-1977}'s `PredicateLevel` to Longobardi's
+    `BNEnvironment` for the purpose of determining whether referential
+    (kind) denotation is needed.
+
+    - Individual-level predicates (properties) create characterizing
+      environments where quantificational Gen suffices
+    - Stage-level predicates (states) in episodic aspect create
+      environments where only referential BNs get generic readings -/
+def predicateLevelToEnvironment : PredicateLevel → BNEnvironment
+  | .individualLevel => .characterizing
+  | .stageLevel       => .episodic
+
+/-- Individual-level predicates yield characterizing environments
+    where both English and Italian BNs get generic readings. -/
+theorem ilp_yields_characterizing :
+    predicateLevelToEnvironment .individualLevel = .characterizing := rfl
+
+/-- Stage-level predicates in episodic aspect yield environments where
+    only referential BNs (English) get generic readings. Italian BNs
+    are stuck with the existential reading. -/
+theorem slp_episodic_needs_referential :
+    bnGenericAvailable english (predicateLevelToEnvironment .stageLevel) = true ∧
+    bnGenericAvailable romance (predicateLevelToEnvironment .stageLevel) = false :=
+  ⟨rfl, rfl⟩
+
+/-- The full chain: @cite{carlson-1977}'s `PredicateLevel` determines
+    `BNEnvironment`, which together with @cite{longobardi-2001}'s
+    `DPParameter` determines whether a generic reading is available.
+
+    | PredicateLevel    | Environment    | English BN Gen | Italian BN Gen |
+    |-------------------|----------------|----------------|----------------|
+    | individualLevel   | characterizing | yes            | yes            |
+    | stageLevel        | episodic       | yes            | no             |
+    | (kind-level pred) | kindLevel      | yes            | no             |
+
+    The Italian/English contrast arises only in non-characterizing
+    environments — exactly where @cite{carlson-1977}'s referential
+    kind-denotation is needed. -/
+theorem carlson_longobardi_integration :
+    -- Individual-level: both languages get Gen
+    (bnGenericAvailable english (predicateLevelToEnvironment .individualLevel) = true) ∧
+    (bnGenericAvailable romance (predicateLevelToEnvironment .individualLevel) = true) ∧
+    -- Stage-level (episodic): only English gets Gen (via referential kind denotation)
+    (bnGenericAvailable english (predicateLevelToEnvironment .stageLevel) = true) ∧
+    (bnGenericAvailable romance (predicateLevelToEnvironment .stageLevel) = false) :=
+  ⟨rfl, rfl, rfl, rfl⟩
 
 end Phenomena.Generics.Studies.Longobardi2001

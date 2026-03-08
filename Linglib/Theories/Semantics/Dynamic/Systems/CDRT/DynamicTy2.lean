@@ -1,7 +1,7 @@
 /-
 # CDRT Embedding into Dynamic Ty2
 
-CDRT IS Dynamic Ty2 - Muskens created both.
+CDRT IS Dynamic Ty2 - @cite{muskens-1996} created both.
 The embedding is essentially definitional.
 
 -/

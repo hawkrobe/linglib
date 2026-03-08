@@ -7,10 +7,10 @@ type-logical foundation into which ALL dynamic semantic systems embed.
 
 ## Core Idea
 
-"Instead of modeling discourse referents as atomic entities (variables)
+Instead of modeling discourse referents as atomic entities (variables)
 and info states as functions taking dref's as arguments (i.e. variable
 assignments), we model info states as atomic entities (of type s) and
-dref's as functions taking info states as arguments."
+dref's as functions taking info states as arguments.
 
 ## Type System
 

@@ -128,8 +128,9 @@ For Unit-world states, this gives an isomorphism between PLA and Core:
   PLAInfoState E ≃ InfoState Unit E
 ```
 
-This is the formal content of Muskens's claim that DPL (and PLA) embed
+This is the formal content of @cite{muskens-1996}'s claim that DPL embeds
 into CDRT: the "worldless" setting is just the W = Unit case.
+The PLA embedding follows analogously via @cite{dekker-2012}'s elaboration.
 
 ## Bilateral Extension
 

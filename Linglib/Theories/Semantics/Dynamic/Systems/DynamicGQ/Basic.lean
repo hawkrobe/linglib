@@ -5,7 +5,7 @@ import Linglib.Core.Mereology
 # Pointwise Dynamic Generalized Quantifiers
 @cite{brasoveanu-2007} @cite{charlow-2021}
 
-Muskens/Brasoveanu-style dynamic GQ operators defined over the pointwise
+@cite{muskens-1996}/@cite{brasoveanu-2007}-style dynamic GQ operators defined over the pointwise
 `DRS S := S → S → Prop` type. These correspond to @cite{charlow-2021} §2.
 
 The key operators:
