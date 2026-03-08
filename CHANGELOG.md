@@ -1,5 +1,25 @@
 # Changelog
 
+## [0.229.27] - 2026-03-08
+
+### Added
+- **Magri2009.lean §5**: Q-adverb example "#Sometimes, John is tall" — formalizes paper's main ILP contribution (§4.1, ex. (3)/(72b)) with ILP homogeneity, `FelicityCondition` predictions, connects to `PredicateLevel` from Carlson1977
+
+### Changed
+- **Magri2009.lean**: Add BH/MH terminology to `strengthened` and `blindOdd` docstrings. Note `strongerAlts` is a simplification of @cite{fox-2007}'s innocently excludable alternatives Excl(φ)
+- **KatzirSingh2015.lean**: Add descriptive `name` parameters to all `QUD.ofDecEq id` calls. Expand `badQuestion` docstring explaining why identity QUD is correct for minimal world types
+
+## [0.229.26] - 2026-03-08
+
+### Added
+- **KatzirSingh2015.lean §12**: Explicit question rescue (wife scenario) — K&S predicts rescue via Answer Condition bypass; Spector predicts oddness persists (genuine divergence, K&S §2.2)
+- **KatzirSingh2015.lean §13**: `SpectorInput` + `FelicityCondition` instance for @cite{spector-2014} No Trivial Alternatives
+- **KatzirSingh2015.lean §14**: Bridge to empirical Hurford data (`hurfordViolations`, `hurfordRescuedCases` from `Basic.lean`)
+- **KatzirSingh2015.lean §15**: Three-way comparison (K&S ↔ Magri ↔ Spector) on Italian warmth — all agree on "some" oddness, disagree on "all"
+
+### Changed
+- **Magri2009.lean**: Enforce chronological dependency — remove K&S 2015 import and all cross-paper bridge theorems (Magri 2009 must not reference later papers). Cross-theory comparisons now live in KatzirSingh2015.lean §15
+
 ## [0.229.25] - 2026-03-08
 
 ### Added

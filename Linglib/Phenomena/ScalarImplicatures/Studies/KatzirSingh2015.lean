@@ -1,6 +1,8 @@
 import Linglib.Core.Discourse.QUD
 import Linglib.Core.Interfaces.Felicity
 import Linglib.Core.Semantics.Proposition
+import Linglib.Phenomena.ScalarImplicatures.Basic
+import Linglib.Phenomena.ScalarImplicatures.Studies.Magri2009
 import Linglib.Theories.Semantics.Questions.Partition
 
 /-!
@@ -59,7 +61,14 @@ variable {W U : Type*} (s : Scenario W U)
 def cWorlds : List W := s.worlds.filter s.context
 
 /-- Question Condition violation (K&S def 7–8): the QUD is trivially settled
-by CK — all context-compatible worlds give the same answer. -/
+by CK — all context-compatible worlds give the same answer.
+
+All scenarios use `QUD.ofDecEq id` (the identity/finest partition), which
+makes `sameAnswer w v = decide (w = v)`. This is correct for minimal world
+types where each constructor directly encodes a distinct answer to the
+relevant question. For richer world types where multiple worlds give the
+same QUD answer, a coarser QUD (e.g., `QUD.ofDecEq someProjection`) would
+be needed. -/
 def badQuestion : Bool :=
   s.cWorlds.all λ w => s.cWorlds.all λ v => s.qud.sameAnswer w v
 
@@ -194,7 +203,7 @@ def italianWarmthScenario : Scenario ItalyWorld ItalyUtt where
     | all_,  allWarm => true  | all_,  noneWarm => false
   complexity | some_ => 1 | all_ => 1
   context    | allWarm => true | noneWarm => false
-  qud := QUD.ofDecEq id
+  qud := QUD.ofDecEq id (name := "warm country?")
   utterances := [some_, all_]
   worlds     := [allWarm, noneWarm]
 
@@ -256,7 +265,7 @@ def gradeScenario : Scenario GradeWorld GradeUtt where
     | all_,  allA => true | all_,  someNotAll => false | all_,  noneA => false
   complexity | some_ => 1 | all_ => 1
   context | allA => true | someNotAll => false | noneA => true
-  qud := QUD.ofDecEq id
+  qud := QUD.ofDecEq id (name := "what grade did Kim give?")
   utterances := [some_, all_]
   worlds     := [allA, someNotAll, noneA]
 
@@ -327,7 +336,7 @@ def hurfordScenario : Scenario VisitWorld VisitUtt where
     | franceOrParis, neither   => false
   complexity | france => 1 | franceOrParis => 2
   context := λ _ => true
-  qud := QUD.ofDecEq id
+  qud := QUD.ofDecEq id (name := "where did John visit?")
   utterances := [france, franceOrParis]
   worlds     := [parisOnly, franceNotParis, neither]
 
@@ -387,7 +396,7 @@ def deScenario : Scenario DEWorld DEUtt where
   complexity | some_ => 1 | all_ => 1
   -- CK rules out w2 (same as grade: CK makes some/all equivalent)
   context | w1 => true | w2 => false | w3 => true
-  qud := QUD.ofDecEq id
+  qud := QUD.ofDecEq id (name := "A to some or all?")
   utterances := [some_, all_]
   worlds     := [w1, w2, w3]
 
@@ -466,7 +475,7 @@ def maxPresupScenario : Scenario SunWorld SunUtt where
   complexity | aSun => 1 | theSun => 1
   -- CK: exactly one sun
   context | oneShining => true | oneNotShining => true | manySuns => false
-  qud := QUD.ofDecEq id
+  qud := QUD.ofDecEq id (name := "is the sun shining?")
   utterances := [aSun, theSun]
   worlds     := [oneShining, oneNotShining, manySuns]
 
@@ -567,13 +576,13 @@ open DEWorld in
 /-- Original DE discourse context (w2 ruled out by CK). -/
 def deDiscourseOriginal : DiscourseContext DEWorld where
   context | w1 => true | w2 => false | w3 => true
-  qud     := QUD.ofDecEq id
+  qud     := QUD.ofDecEq id (name := "A to some or all? (DE)")
 
 open DEWorld in
 /-- Alternative discourse context: all worlds CK-compatible. -/
 def deDiscourseOpen : DiscourseContext DEWorld where
   context := λ _ => true
-  qud     := QUD.ofDecEq id
+  qud     := QUD.ofDecEq id (name := "A to some or all? (open CK)")
 
 /-- The composed scenario matches the original `deScenario`. -/
 theorem compose_matches_de :
@@ -621,5 +630,262 @@ theorem ks_italian_some_odd :
 /-- K&S predicts "some" in grade scenario is odd (via Answer Condition). -/
 theorem ks_grade_some_odd :
     Interfaces.isOdd (KSInput.mk gradeScenario .some_) = true := by native_decide
+
+-- ═══════════════════════════════════════════════════════════════════════
+-- §12  Explicit Question Rescue (K&S §2.2)
+-- ═══════════════════════════════════════════════════════════════════════
+
+/-! K&S predict that an explicit question neutralizes the Question Condition.
+
+(3a)  # John has one wife — odd (no explicit question)
+(11a) (How many wives does John have?) John has one wife — OK
+
+The explicit question makes the QUD a "good question" (K&S (7))
+regardless of whether CK settles it. Oddness then depends solely on
+the Answer Condition. Since "one wife" is not needlessly inferior
+(all alternatives are CK-incompatible), the sentence is felicitous.
+
+This is a genuine prediction difference with @cite{spector-2014}:
+Spector predicts oddness persists because the triviality of alternatives
+is unchanged by the explicit question (K&S §2.2, p. 327). -/
+
+section ExplicitQuestionRescue
+
+inductive WifeWorld where
+  | oneWife | twoWives | noWife
+  deriving DecidableEq, BEq, Repr
+
+inductive WifeUtt where
+  | one | two | zero
+  deriving DecidableEq, BEq, Repr
+
+open WifeWorld WifeUtt in
+/-- Semantic model for "John has N wives" (shared across discourse contexts). -/
+def wifeModel : SemanticModel WifeWorld WifeUtt where
+  meaning
+    | one,  oneWife => true  | one,  twoWives => false | one,  noWife => false
+    | two,  oneWife => false | two,  twoWives => true  | two,  noWife => false
+    | zero, oneWife => false | zero, twoWives => false | zero, noWife => true
+  complexity | one => 1 | two => 1 | zero => 1
+  worlds := [oneWife, twoWives, noWife]
+  utterances := [one, two, zero]
+
+open WifeWorld in
+/-- Discourse context: CK = monogamous society (John has exactly one wife). -/
+def wifeContextCK : DiscourseContext WifeWorld where
+  context | oneWife => true | twoWives => false | noWife => false
+  qud := QUD.ofDecEq id (name := "how many wives?")
+
+def wifeScenario : Scenario WifeWorld WifeUtt :=
+  Scenario.mk' wifeModel wifeContextCK
+
+/-- QUD trivially settled by CK (everyone knows John has one wife). -/
+theorem wife_badQuestion :
+    wifeScenario.badQuestion = true := by native_decide
+
+/-- "One wife" is NOT needlessly inferior: the alternatives ("two wives",
+"zero wives") are CK-incompatible and semantically independent, so
+neither is strictly better. -/
+theorem wife_one_not_inferior :
+    wifeScenario.needlesslyInferior .one = false := by native_decide
+
+/-- Without explicit question: "John has one wife" is odd.
+K&S (3a): the QUD is trivially settled → Question Condition violated. -/
+theorem wife_one_odd :
+    wifeScenario.isOdd .one = true := by native_decide
+
+/-- K&S prediction with explicit question (K&S (11a)):
+
+When "How many wives does John have?" is explicitly asked, the Question
+Condition is satisfied (the question is good by K&S (7) — all participants
+are committed to settling it). Oddness depends solely on the Answer
+Condition. Since "one wife" is not needlessly inferior, the sentence
+becomes felicitous.
+
+Formally: `isOdd = badQuestion ∨ needlesslyInferior`. The explicit
+question eliminates `badQuestion`, leaving only `needlesslyInferior`,
+which is `false`. -/
+theorem wife_rescue_answer_condition :
+    wifeScenario.needlesslyInferior .one = false := by native_decide
+
+/-- @cite{spector-2014} disagrees: "John has one wife" remains odd even
+with the explicit question. All alternatives are trivial in CK:
+- "two wives" is a C-contradiction (incompatible with CK)
+- "zero wives" is a C-contradiction (incompatible with CK)
+Since ALL alternatives are trivial, Spector's No Trivial Alternatives
+condition (K&S (5)) is violated regardless of whether a question was asked.
+Triviality is a property of the alternatives in context, not of the discourse. -/
+theorem spector_wife_still_odd :
+    allAlternativesTrivial [WifeWorld.oneWife, .twoWives, .noWife]
+      (λ w => w == .oneWife)
+      (wifeScenario.meaning .one)
+      [wifeScenario.meaning .two, wifeScenario.meaning .zero] = true := by native_decide
+
+/-- K&S vs Spector divergence on explicit question rescue:
+- K&S: Answer Condition alone → "one wife" is fine (not needlessly inferior)
+- Spector: all alternatives trivial → still odd (explicit question irrelevant)
+This is the core empirical test case between the two theories. -/
+theorem ks_spector_diverge_wife :
+    wifeScenario.needlesslyInferior .one = false ∧
+    allAlternativesTrivial [WifeWorld.oneWife, .twoWives, .noWife]
+      (λ w => w == .oneWife)
+      (wifeScenario.meaning .one)
+      [wifeScenario.meaning .two, wifeScenario.meaning .zero] = true := by
+  exact ⟨by native_decide, by native_decide⟩
+
+end ExplicitQuestionRescue
+
+-- ═══════════════════════════════════════════════════════════════════════
+-- §13  Spector 2014 FelicityCondition
+-- ═══════════════════════════════════════════════════════════════════════
+
+/-- Input for @cite{spector-2014} No Trivial Alternatives felicity checking.
+
+Unlike K&S's `Scenario`, Spector's mechanism needs only the utterance
+meaning, its alternatives, context, and worlds — no QUD or complexity. -/
+structure SpectorInput (W : Type*) where
+  /-- Utterance meaning. -/
+  meaning : W → Bool
+  /-- Meanings of scalar alternatives. -/
+  alternatives : List (W → Bool)
+  /-- Context set. -/
+  context : W → Bool
+  /-- World enumeration. -/
+  worlds : List W
+
+open Interfaces in
+/-- @cite{spector-2014} as a `FelicityCondition`: an utterance is odd when
+all its alternatives are trivial in context (C-contradiction, C-tautology,
+or C-equivalent to the utterance). K&S (4)–(5). -/
+instance {W : Type*} : FelicityCondition (SpectorInput W) where
+  name := "Spector 2014"
+  check := λ s =>
+    if allAlternativesTrivial s.worlds s.context s.meaning s.alternatives then
+      { status := .odd, source := some .unspecified }
+    else
+      { status := .felicitous }
+
+/-- Spector predicts "some Italians" is odd (all alternatives trivial). -/
+theorem spector_italian_some_odd :
+    Interfaces.isOdd (SpectorInput.mk
+      (italianWarmthScenario.meaning .some_)
+      [italianWarmthScenario.meaning .all_]
+      (λ w => w == .allWarm)
+      [.allWarm, .noneWarm]) = true := by native_decide
+
+/-- K&S and Spector agree on "some Italians" via the `FelicityCondition` interface. -/
+theorem ks_spector_agree_italian_some :
+    Interfaces.isOdd (KSInput.mk italianWarmthScenario .some_) =
+    Interfaces.isOdd (SpectorInput.mk
+      (italianWarmthScenario.meaning .some_)
+      [italianWarmthScenario.meaning .all_]
+      (λ w => w == .allWarm)
+      [.allWarm, .noneWarm]) := by native_decide
+
+-- ═══════════════════════════════════════════════════════════════════════
+-- §14  Bridge to Empirical Hurford Data
+-- ═══════════════════════════════════════════════════════════════════════
+
+/-! K&S's Hurford scenario (§5, K&S (22)) models entailing disjunctions
+as needlessly complex answers. This bridges to the empirical Hurford
+data in `ScalarImplicatures.Basic`, showing the theory accounts for
+the observed infelicity judgments.
+
+The rescue cases (K&S (24): "some or all", "possible or necessary") require
+embedded exhaustification + a grammatical knowledge operator (K&S §3.3.2,
+citing Meyer 2013). This additional machinery is beyond the scope of the
+current formalization. -/
+
+open Phenomena.ScalarImplicatures in
+/-- K&S's theoretical prediction matches the empirical Hurford data:
+- Theory: entailing disjunctions are needlessly complex → odd
+- Data: `hurfordViolations` are all infelicitous
+
+The theoretical mechanism (Answer Condition: `betterThan .france .franceOrParis`)
+produces the same verdict as the empirical observation. -/
+theorem ks_hurford_matches_empirical :
+    -- Theory: "France or Paris" is odd (needlessly complex)
+    hurfordScenario.isOdd .franceOrParis = true ∧
+    -- Data: all empirical Hurford violations are infelicitous
+    hurfordViolations.all (·.felicitous == false) = true := by
+  exact ⟨by native_decide, by native_decide⟩
+
+open Phenomena.ScalarImplicatures in
+/-- The theoretical mechanism: "France" ≺ "France or Paris" because
+"France" is simpler (complexity 1 < 2) and semantically equivalent
+(Paris ⊆ France). This is the same entailment pattern observed in
+the empirical Hurford data: each violation has B ⊆ A or A ⊆ B. -/
+theorem ks_hurford_mechanism :
+    -- Semantic equivalence
+    hurfordScenario.semEntails .france .franceOrParis = true ∧
+    hurfordScenario.semEntails .franceOrParis .france = true ∧
+    -- "France" is strictly better (simpler + equivalent)
+    hurfordScenario.betterThan .france .franceOrParis = true ∧
+    -- The simpler form is fine
+    hurfordScenario.isOdd .france = false := by
+  exact ⟨by native_decide, by native_decide, by native_decide, by native_decide⟩
+
+open Phenomena.ScalarImplicatures in
+/-- Empirical prediction: rescued Hurford cases are felicitous.
+K&S argues rescue requires embedded exhaustification (K&S §3.3.2, (24)):
+exh(some) breaks the entailment, so "some or all" ≠ "all" semantically.
+The data confirms this: all rescued cases are felicitous. -/
+theorem hurford_rescued_match_data :
+    hurfordRescuedCases.all (·.felicitous == true) = true := by native_decide
+
+-- ═══════════════════════════════════════════════════════════════════════
+-- §15  Three-Way Comparison: K&S ↔ Magri ↔ Spector
+-- ═══════════════════════════════════════════════════════════════════════
+
+/-! Three competing theories of oddness on the Italian warmth example:
+
+| Sentence                  | Magri 2009 | K&S 2015 | Spector 2014 |
+|---------------------------|:----------:|:--------:|:------------:|
+| # Some Italians…          | ODD        | ODD      | ODD          |
+| All Italians…             | ok         | ODD      | ODD          |
+
+All three agree on "some". The disagreement on "all" reveals:
+- **@cite{magri-2009}** is the most targeted: only oddness when a blind
+  implicature contradicts CK. "All" generates no implicature, so it's fine.
+- **K&S** casts the widest net via the Question Condition: ANY utterance
+  addressing a trivially settled QUD is odd.
+- **@cite{spector-2014}** predicts oddness via triviality: "all" is a
+  C-tautology (entailed by CK), so the only alternative is trivial → odd. -/
+
+section ThreeWayComparison
+
+open Magri2009
+
+/-- Three-way agreement on "some Italians come from a warm country":
+all three theories predict oddness, via different mechanisms. -/
+theorem three_way_agree_some :
+    -- Magri: odd (blind implicature ¬all contradicts CK)
+    italianScenario.blindOdd .some_ = true ∧
+    -- K&S: odd (QUD trivially settled by CK)
+    italianWarmthScenario.isOdd .some_ = true ∧
+    -- Spector: odd (sole alternative is trivial)
+    allAlternativesTrivial
+      [Magri2009.ItalyWorld₃.allWarm, .someNotAll, .noneWarm]
+      (λ w => w == .allWarm)
+      (italianScenario.meaning .all_)
+      [italianScenario.meaning .some_] = true := by
+  exact ⟨by native_decide, by native_decide, by native_decide⟩
+
+/-- Three-way comparison on "all Italians come from a warm country":
+Magri says fine; K&S and Spector both say odd. -/
+theorem three_way_disagree_all :
+    -- Magri: fine (no implicature generated)
+    italianScenario.blindOdd .all_ = false ∧
+    -- K&S: odd (Question Condition violated)
+    italianWarmthScenario.isOdd .all_ = true ∧
+    -- Spector: odd (sole alternative is trivial)
+    allAlternativesTrivial
+      [Magri2009.ItalyWorld₃.allWarm, .someNotAll, .noneWarm]
+      (λ w => w == .allWarm)
+      (italianScenario.meaning .all_)
+      [italianScenario.meaning .some_] = true := by
+  exact ⟨by native_decide, by native_decide, by native_decide⟩
+
+end ThreeWayComparison
 
 end Phenomena.ScalarImplicatures.Studies.KatzirSingh2015

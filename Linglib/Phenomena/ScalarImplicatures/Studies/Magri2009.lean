@@ -1,5 +1,5 @@
 import Linglib.Core.Interfaces.Felicity
-import Linglib.Phenomena.ScalarImplicatures.Studies.KatzirSingh2015
+import Mathlib.Tactic.TypeStar
 
 /-!
 # Blind Mandatory Scalar Implicatures
@@ -7,38 +7,39 @@ import Linglib.Phenomena.ScalarImplicatures.Studies.KatzirSingh2015
 
 @cite{magri-2009}. Natural Language Semantics 17(3): 245–297.
 
-The grammar computes scalar implicatures **blindly** — without access to
-common knowledge (CK). When the strengthened meaning (literal + negation of
-stronger alternatives) contradicts CK, the utterance is odd.
+Two hypotheses form the core of the paper:
 
-## Core Mechanism
+1. **Blindness Hypothesis (BH)** (§3.2.2): The exhaustivity operator EXH
+   computes the strengthened meaning using *logical* entailment (→_W),
+   not entailment given common knowledge (→_{W_ck}). That is, whether
+   an alternative is excludable is determined without consulting CK.
 
-1. Compute strengthened meaning: ⟦S⟧_str = ⟦S⟧ ∧ ∀a ∈ ALT, ¬⟦a⟧
-2. Check CK compatibility: is ⟦S⟧_str true at any CK-compatible world?
-3. If no → oddness (blind implicature contradicts common knowledge)
+2. **Mismatch Hypothesis (MH)** (§3.2.5): If the blind strengthened meaning
+   EXH(φ) is a contradiction given common knowledge (EXH(φ) ∩ W_ck = ∅),
+   then φ sounds odd.
 
-## Key Example
+## Introductory Example
 
-"# Some Italians come from a warm country"
+"# Some Italians come from a warm country" (ex. (2))
 - Literal: some Italians come from a warm country
-- Strengthened (blind): some BUT NOT ALL Italians come from a warm country
+- Strengthened (blind, via BH): some BUT NOT ALL Italians come from a warm country
 - CK: Italy is warm → all Italians come from a warm country
-- Strengthened ∩ CK = ∅ → odd
+- Strengthened ∩ CK = ∅ → odd (via MH)
 
-## Comparison with @cite{katzir-singh-2015}
+## Application to Individual-Level Predicates
 
-K&S explain the same oddness via Question Condition (QUD trivially settled
-by CK). Both theories predict "some" is odd. They **disagree** on "all":
-K&S predicts "all" is odd too (QUD trivially settled for all utterances),
-while Magri predicts "all" is fine (no stronger alternative to negate).
+The paper's main contribution (§4) derives properties of individual-level
+predicates (ILPs) from BH + MH via assumption (70): ILPs are
+**homogeneous** — if an i-predicate holds at any time in W_ck, it holds at
+all times. This homogeneity makes blind strengthening systematically
+contradict CK for i-predicate constructions.
 
-## Connection to Individual-Level Predicates
+Key applications: "#Sometimes, John is tall" (§4.1), bare plural subject
+restrictions (§4.2), embedding under universal quantifiers (§4.3), and
+German word order (§4.5). See §5 below for the Q-adverb formalization.
 
-@cite{magri-2009}'s key insight: individual-level predicates (ILPs) like
-"come from a warm country" systematically trigger this pattern because
-their truth is stable across times/situations, making blind strengthening
-more likely to contradict CK. This connects to the ILP/SLP distinction
-formalized in `Semantics.Lexical.Noun.Kind.Carlson1977`.
+The ILP/SLP distinction connects to `PredicateLevel` in
+`Semantics.Lexical.Noun.Kind.Carlson1977`.
 -/
 
 namespace Phenomena.ScalarImplicatures.Studies.Magri2009
@@ -49,14 +50,20 @@ namespace Phenomena.ScalarImplicatures.Studies.Magri2009
 
 /-- A scenario for blind scalar implicature computation.
 
-Unlike K&S's `Scenario` (which uses a QUD and complexity ordering),
-Magri's mechanism only needs literal meanings, scalar alternatives,
-and common knowledge. No question-based or economy-based reasoning. -/
+@cite{magri-2009}'s mechanism needs only literal meanings, scalar
+alternatives, and common knowledge — no QUD or complexity ordering. -/
 structure BlindScenario (W U : Type*) where
   /-- Literal meaning of each utterance at each world. -/
   meaning : U → W → Bool
   /-- Stronger scalar alternatives for each utterance.
-      For ⟨some, all⟩: strongerAlts(some) = [all], strongerAlts(all) = []. -/
+      For ⟨some, all⟩: strongerAlts(some) = [all], strongerAlts(all) = [].
+
+      This is a simplification of @cite{fox-2007}'s innocently excludable
+      alternatives Excl(φ, Alt). For the ⟨some, all⟩ scale, Excl reduces to
+      the set of logically stronger alternatives, so `strongerAlts` is
+      equivalent. For richer alternative sets (e.g., with disjunction),
+      Excl involves a maximal-consistency computation that this field
+      does not capture. -/
   strongerAlts : U → List U
   /-- Common knowledge: which worlds are CK-compatible. -/
   context : W → Bool
@@ -72,8 +79,9 @@ def cWorlds : List W := s.worlds.filter s.context
 
 /-- Strengthened meaning: literal ∧ negation of all stronger alternatives.
 
-Computed **blindly** — without consulting common knowledge. This is the
-core of @cite{magri-2009}: the grammar strengthens automatically,
+Implements the **Blindness Hypothesis** (BH): EXH computes the
+strengthened meaning using logical entailment over W, not entailment
+given common knowledge W_ck. The grammar strengthens automatically,
 even when the result contradicts what speaker and hearer both know. -/
 def strengthened (u : U) (w : W) : Bool :=
   s.meaning u w && (s.strongerAlts u).all (λ a => !s.meaning a w)
@@ -81,8 +89,9 @@ def strengthened (u : U) (w : W) : Bool :=
 /-- Blind oddness: the utterance has scalar alternatives and the
 strengthened meaning is false at every CK-compatible world.
 
-The blind implicature (¬alt) combined with the literal meaning
-yields a proposition incompatible with common knowledge → oddness. -/
+Implements the **Mismatch Hypothesis** (MH): if EXH(φ) ∩ W_ck = ∅
+(the blind strengthened meaning contradicts common knowledge), then
+φ sounds odd. -/
 def blindOdd (u : U) : Bool :=
   !(s.strongerAlts u).isEmpty &&
   s.cWorlds.all (λ w => !s.strengthened u w)
@@ -95,9 +104,9 @@ end BlindScenario
 
 /-! "# Some Italians come from a warm country" (@cite{magri-2009})
 
-Three worlds are needed (unlike K&S's two-world model) because the
-strengthened meaning "some but not all" requires a world where some
-but not all Italians come from a warm country.
+Three worlds are needed because the strengthened meaning "some but not
+all" requires a world where some but not all Italians come from a warm
+country.
 
 CK: Italy is a warm country → all Italians come from a warm country.
 Only `allWarm` is CK-compatible. -/
@@ -179,33 +188,92 @@ theorem magri_italian_all_ok :
     Interfaces.isOdd (MagriInput.mk italianScenario .all_) = false := by native_decide
 
 -- ═══════════════════════════════════════════════════════════════════════
--- §5  Bridge: Magri ↔ K&S
+-- §5  Individual-Level Predicates: Q-Adverbs (§4.1)
 -- ═══════════════════════════════════════════════════════════════════════
 
-/-! @cite{magri-2009} and @cite{katzir-singh-2015} make different
-predictions for the Italian warmth scenario. They agree that "some"
-is odd, but disagree about "all". -/
+/-! @cite{magri-2009} ex. (3)/(72b): "# Sometimes, John is tall"
 
-/-- Both theories agree: "some Italians come from a warm country" is odd. -/
-theorem magri_ks_agree_some_odd :
-    italianScenario.blindOdd .some_ = true ∧
-    KatzirSingh2015.italianWarmthScenario.isOdd .some_ = true := by
-  exact ⟨by native_decide, by native_decide⟩
+The paper's main contribution derives oddness of Q-adverbs with
+individual-level predicates (ILPs) from BH + MH. The key assumption
+is **ILP homogeneity** (assumption (70)): if an i-predicate holds of
+an individual at any time in W_ck, it holds at all times. This rules
+out mixed worlds (tall at some times but not all) from the common
+ground.
 
-/-- The theories **disagree** on "all Italians come from a warm country":
+- Literal: at some times, John is tall
+- Strengthened (blind, via BH): at some but NOT ALL times, John is tall
+- CK: "tall" is an ILP → homogeneity → John is either always tall
+  or never tall. The "sometimes but not always" world is CK-incompatible.
+- Strengthened ∩ CK = ∅ → odd (via MH)
 
-- **Magri**: NOT odd — "all" has no stronger alternative, so no blind
-  implicature is generated, and the literal meaning is CK-compatible.
-- **K&S**: Odd — the QUD "Do all Italians come from a warm country?"
-  is trivially settled by CK, so ANY assertion addressing it is odd.
+Contrast with the stage-level predicate "# Sometimes, John is available":
+since availability can genuinely vary over time, the "sometimes but not
+always" world is CK-compatible → strengthened meaning is satisfiable → OK.
 
-This is a genuine empirical prediction difference. Intuitively, "All
-Italians come from a warm country" is uninformative but not # odd in
-the way "Some Italians come from a warm country" is, which favors
-Magri's more targeted mechanism. -/
-theorem magri_ks_disagree_all :
-    italianScenario.blindOdd .all_ = false ∧
-    KatzirSingh2015.italianWarmthScenario.isOdd .all_ = true := by
-  exact ⟨by native_decide, by native_decide⟩
+The ILP/SLP distinction is formalized in `PredicateLevel` from
+`Semantics.Lexical.Noun.Kind.Carlson1977`. -/
+
+section QAdverb
+
+inductive TallWorld where
+  | alwaysTall   -- tall at all times (CK-compatible: ILP homogeneity)
+  | sometimesOnly -- tall at some but not all times (NOT CK-compatible)
+  | neverTall    -- tall at no time (CK-compatible: ILP homogeneity)
+  deriving DecidableEq, BEq, Repr
+
+inductive QAdvUtt where
+  | sometimes_ | always_
+  deriving DecidableEq, BEq, Repr
+
+open TallWorld QAdvUtt in
+/-- @cite{magri-2009} §4.1: Q-adverbs with individual-level predicates.
+
+"Sometimes" and "always" form a ⟨sometimes, always⟩ scale analogous to
+⟨some, all⟩. ILP homogeneity (assumption (70)) rules out `sometimesOnly`
+from the common ground. -/
+def tallScenario : BlindScenario TallWorld QAdvUtt where
+  meaning
+    | sometimes_, alwaysTall => true   -- at some times = yes (all ⊆ some)
+    | sometimes_, sometimesOnly => true
+    | sometimes_, neverTall => false
+    | always_,    alwaysTall => true
+    | always_,    sometimesOnly => false
+    | always_,    neverTall => false
+  strongerAlts
+    | sometimes_ => [always_]  -- "always" is stronger on the ⟨sometimes, always⟩ scale
+    | always_    => []
+  -- ILP homogeneity: only homogeneous worlds are CK-compatible
+  context
+    | alwaysTall => true | sometimesOnly => false | neverTall => true
+  worlds := [alwaysTall, sometimesOnly, neverTall]
+
+/-- Strengthened "sometimes" at alwaysTall is false:
+sometimes(alwaysTall) ∧ ¬always(alwaysTall) = true ∧ false = false. -/
+theorem tall_sometimes_strengthened_false :
+    tallScenario.strengthened .sometimes_ .alwaysTall = false := by native_decide
+
+/-- Strengthened "sometimes" at neverTall is also false:
+sometimes(neverTall) = false. -/
+theorem tall_sometimes_strengthened_false_never :
+    tallScenario.strengthened .sometimes_ .neverTall = false := by native_decide
+
+/-- @cite{magri-2009} prediction: "# Sometimes, John is tall" is odd.
+The blind implicature "not always" contradicts ILP homogeneity. -/
+theorem tall_sometimes_blind_odd :
+    tallScenario.blindOdd .sometimes_ = true := by native_decide
+
+/-- "Always, John is tall" is fine: no stronger alternative exists. -/
+theorem tall_always_not_odd :
+    tallScenario.blindOdd .always_ = false := by native_decide
+
+/-- FelicityCondition prediction: "sometimes tall" is odd. -/
+theorem magri_tall_sometimes_odd :
+    Interfaces.isOdd (MagriInput.mk tallScenario .sometimes_) = true := by native_decide
+
+/-- FelicityCondition prediction: "always tall" is fine. -/
+theorem magri_tall_always_ok :
+    Interfaces.isOdd (MagriInput.mk tallScenario .always_) = false := by native_decide
+
+end QAdverb
 
 end Phenomena.ScalarImplicatures.Studies.Magri2009
