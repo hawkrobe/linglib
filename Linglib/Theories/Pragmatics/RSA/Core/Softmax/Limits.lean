@@ -9,7 +9,10 @@ import Mathlib.Topology.Algebra.InfiniteSum.Real
 /-!
 # Softmax Function: Limit Behavior
 
-α → 0: uniform, α → ∞: argmax, α → -∞: argmin.
+§1. Pointwise limits: α → 0 (uniform), α → ∞ (argmax), α → -∞ (argmin).
+§2. Bayesian inversion: `bayesSoftmax_tendsto_one` — when a softmax agent
+    concentrates, Bayesian inversion concentrates on the uniquely optimal state.
+    This is the RSA–exhaustivity bridge: L1 at α → ∞ computes exh.
 -/
 
 namespace Softmax
@@ -319,5 +322,93 @@ theorem softmax_negligible [Nonempty ι] (s : ι → ℝ)
   calc softmax s α j ≤ exp (-α * (s i_max - s j)) := hbound
     _ ≤ exp (-α * gap) := hexp_mono
     _ < ε := hexp_lt
+
+-- ============================================================================
+-- §2. Bayesian Inversion of Softmax (Exhaustivity Limit)
+-- ============================================================================
+
+/-- If action j has strictly higher score than i, softmax(i, α) → 0 as α → ∞.
+    Weaker than `tendsto_softmax_infty_unique_max`: does not require a unique
+    maximum, just that i is beaten by some j. -/
+theorem tendsto_softmax_infty_not_max [Nonempty ι] (s : ι → ℝ)
+    (i j : ι) (hij : s i < s j) :
+    Tendsto (fun α => softmax s α i) atTop (nhds 0) := by
+  have hratio := softmax_ratio_tendsto_zero s i j hij
+  have hbound : ∀ α, softmax s α i ≤ softmax s α i / softmax s α j := by
+    intro α
+    have h1 : softmax s α j ≤ 1 := softmax_le_one s α j
+    have hpos : 0 < softmax s α j := softmax_pos s α j
+    have hinv : 1 ≤ 1 / softmax s α j := (one_le_div hpos).mpr h1
+    calc softmax s α i = softmax s α i * 1 := by ring
+      _ ≤ softmax s α i * (1 / softmax s α j) :=
+          mul_le_mul_of_nonneg_left hinv (softmax_nonneg s α i)
+      _ = softmax s α i / softmax s α j := by ring
+  exact tendsto_of_tendsto_of_tendsto_of_le_of_le tendsto_const_nhds hratio
+    (fun α => softmax_nonneg s α i) hbound
+
+variable {σ : Type*} [Fintype σ] [DecidableEq σ]
+
+/-- Bayesian posterior of a softmax agent.
+
+    P(s | i, α) = softmax(score(·,s), α)(i) · prior(s) / Σ_{s'} ...
+
+    In RSA: this is L1(w | u, α) with score = informativity, prior = worldPrior.
+    The definition is parameterized by α so we can take limits. -/
+noncomputable def bayesSoftmax [Nonempty ι]
+    (score : ι → σ → ℝ) (prior : σ → ℝ) (α : ℝ) (i : ι) (s : σ) : ℝ :=
+  softmax (fun j => score j s) α i * prior s /
+  ∑ s' : σ, softmax (fun j => score j s') α i * prior s'
+
+/-- Bayesian inversion of softmax concentrates on the uniquely optimal state.
+
+    If action i₀ is the unique best action at state s₀ (highest score), and is
+    not the best at any other state, then the Bayesian posterior P(s₀ | i₀, α) → 1
+    as α → ∞.
+
+    **RSA–exhaustivity bridge**: when utterance u is the most informative true
+    utterance only at world w₀, the pragmatic listener L1 assigns probability 1
+    to w₀ in the high-rationality limit. This IS the exhaustivity operator:
+    L1 at α → ∞ computes exh(u).
+
+    For a simple scale {some, all} with worlds {someNotAll, all}:
+    - "all" is more informative at the "all" world → S1 says "all" there
+    - "some" is the only true utterance at "someNotAll" → S1 says "some" there
+    - L1 hearing "some" → concentrates on "someNotAll" → exh(some) = some ∧ ¬all -/
+theorem bayesSoftmax_tendsto_one [Nonempty ι] [Nonempty σ]
+    (score : ι → σ → ℝ) (prior : σ → ℝ)
+    (i₀ : ι) (s₀ : σ)
+    (h_opt : ∀ j, j ≠ i₀ → score j s₀ < score i₀ s₀)
+    (h_nonopt : ∀ s, s ≠ s₀ → ∃ j, score i₀ s < score j s)
+    (h_prior : 0 < prior s₀) :
+    Tendsto (fun α => bayesSoftmax score prior α i₀ s₀) atTop (nhds 1) := by
+  simp only [bayesSoftmax]
+  -- Step 1: numerator → prior(s₀)
+  have hnum : Tendsto (fun α => softmax (fun j => score j s₀) α i₀ * prior s₀)
+      atTop (nhds (1 * prior s₀)) :=
+    (tendsto_softmax_infty_at_max _ i₀ h_opt).mul tendsto_const_nhds
+  rw [one_mul] at hnum
+  -- Step 2: each term in the sum converges
+  have hterm : ∀ s : σ, Tendsto (fun α => softmax (fun j => score j s) α i₀ * prior s)
+      atTop (nhds (if s = s₀ then prior s₀ else 0)) := by
+    intro s
+    by_cases hs : s = s₀
+    · rw [if_pos hs, hs]; exact hnum
+    · rw [if_neg hs]
+      obtain ⟨j, hj⟩ := h_nonopt s hs
+      have : Tendsto (fun α => softmax (fun k => score k s) α i₀) atTop (nhds 0) :=
+        tendsto_softmax_infty_not_max _ i₀ j hj
+      have := this.mul tendsto_const_nhds (b := prior s)
+      simp only [zero_mul] at this
+      exact this
+  -- Step 3: denominator → prior(s₀)
+  have hden : Tendsto (fun α => ∑ s : σ, softmax (fun j => score j s) α i₀ * prior s)
+      atTop (nhds (prior s₀)) := by
+    have h := tendsto_finset_sum Finset.univ (fun s _ => hterm s)
+    simp only [Finset.sum_ite_eq', Finset.mem_univ, ite_true] at h
+    exact h
+  -- Step 4: ratio → prior(s₀) / prior(s₀) = 1
+  have h1 : prior s₀ / prior s₀ = 1 := div_self (ne_of_gt h_prior)
+  rw [← h1]
+  exact hnum.div hden (ne_of_gt h_prior)
 
 end Softmax

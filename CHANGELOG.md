@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.229.19] - 2026-03-08
+
+### Added
+- **Softmax/Limits.lean** §2: RSA–exhaustivity bridge. `tendsto_softmax_infty_not_max` (softmax(i) → 0 when any j beats i — weaker than unique-max). `bayesSoftmax` definition (Bayesian posterior parameterized by α). `bayesSoftmax_tendsto_one` — Bayesian inversion of softmax concentrates on the uniquely optimal state as α → ∞. This is the general theorem: RSA L1 at α → ∞ computes the exhaustivity operator exh
+
 ## [0.229.18] - 2026-03-07
 
 ### Added
