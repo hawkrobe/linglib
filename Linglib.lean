@@ -572,6 +572,7 @@ import Linglib.Phenomena.Conditionals.Studies.SubordinateFuture
 import Linglib.Phenomena.Conditionals.Studies.EvcenBaleBarner2026
 import Linglib.Phenomena.Conditionals.Studies.Iatridou2000
 import Linglib.Phenomena.Conditionals.Studies.Mizuno2024
+import Linglib.Phenomena.Conditionals.Studies.ZaniCiardelliSanfelici2026
 import Linglib.Phenomena.DefaultReasoning.TweetyNixon
 import Linglib.Phenomena.DefaultReasoning.Studies.Veltman1996
 import Linglib.Phenomena.Complementation.Attitudes.ConjunctionDistribution.Data

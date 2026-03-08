@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.228.97] - 2026-03-07
+
+### Fixed
+- **ZaniCiardelliSanfelici2026.lean**: Fix hallucinated author name (Andrea→Eleonora), add missing `tieu-etal-2015` bib entry, fix aggregate rates to exact rationals from paper, add per-age-group developmental trajectory (Figure 4) with monotonicity theorems, complete `ModeRates` with all four categories, remove unused `projectTruthValues` import
+
+## [0.228.96] - 2026-03-07
+
+### Added
+- **ZaniCiardelliSanfelici2026.lean**: Formalize SDA acquisition study — three DAC readings (SDA/DCR/AR), alternative-sensitive conditional semantics via `closestWorldsB`, developmental DCR→SDA parallel to Tieu et al. 2019 EXI→HOM, Lewis/exhaustification falsification theorems
+
 ## [0.228.95] - 2026-03-07
 
 ### Added
