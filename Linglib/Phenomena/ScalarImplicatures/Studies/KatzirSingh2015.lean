@@ -63,12 +63,12 @@ def cWorlds : List W := s.worlds.filter s.context
 /-- Question Condition violation (K&S def 7–8): the QUD is trivially settled
 by CK — all context-compatible worlds give the same answer.
 
-All scenarios use `QUD.ofDecEq id` (the identity/finest partition), which
-makes `sameAnswer w v = decide (w = v)`. This is correct for minimal world
-types where each constructor directly encodes a distinct answer to the
-relevant question. For richer world types where multiple worlds give the
-same QUD answer, a coarser QUD (e.g., `QUD.ofDecEq someProjection`) would
-be needed. -/
+Each scenario defines its QUD via a content-specific projection function
+(e.g., `warmthAnswer`, `gradeAnswer`) that maps worlds to semantically
+meaningful answer types. For minimal world types, these projections happen
+to be injective (each world encodes a distinct answer), but making the
+question explicit ensures the model extends correctly to richer world
+types where multiple worlds could give the same answer. -/
 def badQuestion : Bool :=
   s.cWorlds.all λ w => s.cWorlds.all λ v => s.qud.sameAnswer w v
 
@@ -196,6 +196,10 @@ inductive ItalyUtt where
   | some_ | all_
   deriving DecidableEq, BEq, Repr
 
+/-- "Do Italians come from a warm country?" — a yes/no question. -/
+def warmthAnswer : ItalyWorld → Bool
+  | .allWarm => true | .noneWarm => false
+
 open ItalyWorld ItalyUtt in
 def italianWarmthScenario : Scenario ItalyWorld ItalyUtt where
   meaning
@@ -203,7 +207,7 @@ def italianWarmthScenario : Scenario ItalyWorld ItalyUtt where
     | all_,  allWarm => true  | all_,  noneWarm => false
   complexity | some_ => 1 | all_ => 1
   context    | allWarm => true | noneWarm => false
-  qud := QUD.ofDecEq id (name := "warm country?")
+  qud := QUD.ofDecEq warmthAnswer (name := "warm country?")
   utterances := [some_, all_]
   worlds     := [allWarm, noneWarm]
 
@@ -258,6 +262,11 @@ inductive GradeUtt where
   | some_ | all_
   deriving DecidableEq, BEq, Repr
 
+/-- "How many of Kim's students got an A?" — answer encoded as
+(some-got-A, all-got-A) truth values on the ⟨some, all⟩ scale. -/
+def gradeAnswer : GradeWorld → Bool × Bool
+  | .allA => (true, true) | .someNotAll => (true, false) | .noneA => (false, false)
+
 open GradeWorld GradeUtt in
 def gradeScenario : Scenario GradeWorld GradeUtt where
   meaning
@@ -265,7 +274,7 @@ def gradeScenario : Scenario GradeWorld GradeUtt where
     | all_,  allA => true | all_,  someNotAll => false | all_,  noneA => false
   complexity | some_ => 1 | all_ => 1
   context | allA => true | someNotAll => false | noneA => true
-  qud := QUD.ofDecEq id (name := "what grade did Kim give?")
+  qud := QUD.ofDecEq gradeAnswer (name := "what grade did Kim give?")
   utterances := [some_, all_]
   worlds     := [allA, someNotAll, noneA]
 
@@ -323,6 +332,11 @@ inductive VisitUtt where
   | france | franceOrParis
   deriving DecidableEq, BEq, Repr
 
+/-- "Did John visit France?" — a yes/no question. Genuinely coarser than
+identity: `parisOnly` and `franceNotParis` collapse (both → visited). -/
+def visitAnswer : VisitWorld → Bool
+  | .parisOnly => true | .franceNotParis => true | .neither => false
+
 open VisitWorld VisitUtt in
 /-- Hurford alternatives: the disjunction vs. its simple equivalent.
 "Paris" is excluded from utterance alternatives because the Hurford
@@ -336,7 +350,7 @@ def hurfordScenario : Scenario VisitWorld VisitUtt where
     | franceOrParis, neither   => false
   complexity | france => 1 | franceOrParis => 2
   context := λ _ => true
-  qud := QUD.ofDecEq id (name := "where did John visit?")
+  qud := QUD.ofDecEq visitAnswer (name := "visited France?")
   utterances := [france, franceOrParis]
   worlds     := [parisOnly, franceNotParis, neither]
 
@@ -384,6 +398,11 @@ inductive DEUtt where
   | some_ | all_
   deriving DecidableEq, BEq, Repr
 
+/-- "A to some or all?" in DE — answer encoded as
+(some_DE, all_DE) truth values. -/
+def deAnswer : DEWorld → Bool × Bool
+  | .w1 => (true, true) | .w2 => (false, true) | .w3 => (false, false)
+
 open DEWorld DEUtt in
 /-- DE scenario: "some" version is stronger (narrower truth set).
 In UE, ⟦all⟧ ⊆ ⟦some⟧; in DE, this reverses to ⟦some⟧_DE ⊆ ⟦all⟧_DE. -/
@@ -396,7 +415,7 @@ def deScenario : Scenario DEWorld DEUtt where
   complexity | some_ => 1 | all_ => 1
   -- CK rules out w2 (same as grade: CK makes some/all equivalent)
   context | w1 => true | w2 => false | w3 => true
-  qud := QUD.ofDecEq id (name := "A to some or all?")
+  qud := QUD.ofDecEq deAnswer (name := "A to some or all?")
   utterances := [some_, all_]
   worlds     := [w1, w2, w3]
 
@@ -464,6 +483,12 @@ inductive SunUtt where
   | aSun | theSun
   deriving DecidableEq, BEq, Repr
 
+/-- "Is the sun shining?" — presupposition-sensitive answer.
+`manySuns` is a presupposition failure (uniqueness violated), distinct
+from both yes and no. -/
+def sunAnswer : SunWorld → Option Bool
+  | .oneShining => some true | .oneNotShining => some false | .manySuns => none
+
 open SunWorld SunUtt in
 def maxPresupScenario : Scenario SunWorld SunUtt where
   meaning
@@ -475,7 +500,7 @@ def maxPresupScenario : Scenario SunWorld SunUtt where
   complexity | aSun => 1 | theSun => 1
   -- CK: exactly one sun
   context | oneShining => true | oneNotShining => true | manySuns => false
-  qud := QUD.ofDecEq id (name := "is the sun shining?")
+  qud := QUD.ofDecEq sunAnswer (name := "is the sun shining?")
   utterances := [aSun, theSun]
   worlds     := [oneShining, oneNotShining, manySuns]
 
@@ -576,13 +601,13 @@ open DEWorld in
 /-- Original DE discourse context (w2 ruled out by CK). -/
 def deDiscourseOriginal : DiscourseContext DEWorld where
   context | w1 => true | w2 => false | w3 => true
-  qud     := QUD.ofDecEq id (name := "A to some or all? (DE)")
+  qud     := QUD.ofDecEq deAnswer (name := "A to some or all? (DE)")
 
 open DEWorld in
 /-- Alternative discourse context: all worlds CK-compatible. -/
 def deDiscourseOpen : DiscourseContext DEWorld where
   context := λ _ => true
-  qud     := QUD.ofDecEq id (name := "A to some or all? (open CK)")
+  qud     := QUD.ofDecEq deAnswer (name := "A to some or all? (open CK)")
 
 /-- The composed scenario matches the original `deScenario`. -/
 theorem compose_matches_de :
@@ -670,11 +695,15 @@ def wifeModel : SemanticModel WifeWorld WifeUtt where
   worlds := [oneWife, twoWives, noWife]
   utterances := [one, two, zero]
 
+/-- "How many wives does John have?" — answer is a count. -/
+def wifeCount : WifeWorld → Nat
+  | .oneWife => 1 | .twoWives => 2 | .noWife => 0
+
 open WifeWorld in
 /-- Discourse context: CK = monogamous society (John has exactly one wife). -/
 def wifeContextCK : DiscourseContext WifeWorld where
   context | oneWife => true | twoWives => false | noWife => false
-  qud := QUD.ofDecEq id (name := "how many wives?")
+  qud := QUD.ofDecEq wifeCount (name := "how many wives?")
 
 def wifeScenario : Scenario WifeWorld WifeUtt :=
   Scenario.mk' wifeModel wifeContextCK

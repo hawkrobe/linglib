@@ -6,8 +6,8 @@
 - **Magri2009.lean §5**: Q-adverb example "#Sometimes, John is tall" — formalizes paper's main ILP contribution (§4.1, ex. (3)/(72b)) with ILP homogeneity, `FelicityCondition` predictions, connects to `PredicateLevel` from Carlson1977
 
 ### Changed
-- **Magri2009.lean**: Add BH/MH terminology to `strengthened` and `blindOdd` docstrings. Note `strongerAlts` is a simplification of @cite{fox-2007}'s innocently excludable alternatives Excl(φ)
-- **KatzirSingh2015.lean**: Add descriptive `name` parameters to all `QUD.ofDecEq id` calls. Expand `badQuestion` docstring explaining why identity QUD is correct for minimal world types
+- **Magri2009.lean**: Replace hand-rolled `strongerAlts` with `alternatives` + @cite{fox-2007}'s `exhB`/`ieIndices` for innocent exclusion. Add BH/MH terminology to `strengthened` and `blindOdd` docstrings. Drop `Mathlib.Tactic.TypeStar` import (use `Type` to match Fox2007 universe)
+- **KatzirSingh2015.lean**: Replace `QUD.ofDecEq id` with content-specific projections (`warmthAnswer`, `gradeAnswer`, `visitAnswer`, `deAnswer`, `sunAnswer`, `wifeCount`) — Hurford's `visitAnswer` is genuinely coarser than identity (collapses parisOnly/franceNotParis)
 
 ## [0.229.26] - 2026-03-08
 

@@ -1,5 +1,5 @@
 import Linglib.Core.Interfaces.Felicity
-import Mathlib.Tactic.TypeStar
+import Linglib.Theories.Pragmatics.NeoGricean.Exhaustivity.Fox2007
 
 /-!
 # Blind Mandatory Scalar Implicatures
@@ -44,6 +44,8 @@ The ILP/SLP distinction connects to `PredicateLevel` in
 
 namespace Phenomena.ScalarImplicatures.Studies.Magri2009
 
+open NeoGricean.Exhaustivity.Fox2007 (exhB ieIndices)
+
 -- ═══════════════════════════════════════════════════════════════════════
 -- §1  Blind Strengthening Framework
 -- ═══════════════════════════════════════════════════════════════════════
@@ -52,19 +54,15 @@ namespace Phenomena.ScalarImplicatures.Studies.Magri2009
 
 @cite{magri-2009}'s mechanism needs only literal meanings, scalar
 alternatives, and common knowledge — no QUD or complexity ordering. -/
-structure BlindScenario (W U : Type*) where
+structure BlindScenario (W U : Type) where
   /-- Literal meaning of each utterance at each world. -/
   meaning : U → W → Bool
-  /-- Stronger scalar alternatives for each utterance.
-      For ⟨some, all⟩: strongerAlts(some) = [all], strongerAlts(all) = [].
-
-      This is a simplification of @cite{fox-2007}'s innocently excludable
-      alternatives Excl(φ, Alt). For the ⟨some, all⟩ scale, Excl reduces to
-      the set of logically stronger alternatives, so `strongerAlts` is
-      equivalent. For richer alternative sets (e.g., with disjunction),
-      Excl involves a maximal-consistency computation that this field
-      does not capture. -/
-  strongerAlts : U → List U
+  /-- All scalar alternatives for each utterance.
+      @cite{fox-2007}'s innocent exclusion algorithm (`ieIndices`) determines
+      which alternatives are excludable — weaker alternatives (e.g., "some"
+      when the prejacent is "all") are automatically filtered out by the
+      non-weaker check (NW). -/
+  alternatives : U → List U
   /-- Common knowledge: which worlds are CK-compatible. -/
   context : W → Bool
   /-- Exhaustive world enumeration. -/
@@ -72,28 +70,29 @@ structure BlindScenario (W U : Type*) where
 
 namespace BlindScenario
 
-variable {W U : Type*} (s : BlindScenario W U)
+variable {W U : Type} (s : BlindScenario W U)
 
 /-- CK-compatible worlds. -/
 def cWorlds : List W := s.worlds.filter s.context
 
-/-- Strengthened meaning: literal ∧ negation of all stronger alternatives.
+/-- Strengthened meaning via @cite{fox-2007}'s exhaustivity operator.
 
 Implements the **Blindness Hypothesis** (BH): EXH computes the
 strengthened meaning using logical entailment over W, not entailment
 given common knowledge W_ck. The grammar strengthens automatically,
 even when the result contradicts what speaker and hearer both know. -/
 def strengthened (u : U) (w : W) : Bool :=
-  s.meaning u w && (s.strongerAlts u).all (λ a => !s.meaning a w)
+  exhB s.worlds ((s.alternatives u).map s.meaning) (s.meaning u) w
 
-/-- Blind oddness: the utterance has scalar alternatives and the
-strengthened meaning is false at every CK-compatible world.
+/-- Blind oddness: the exhaustivity operator produced a non-vacuous
+implicature, yet the strengthened meaning is false at every CK world.
 
 Implements the **Mismatch Hypothesis** (MH): if EXH(φ) ∩ W_ck = ∅
 (the blind strengthened meaning contradicts common knowledge), then
 φ sounds odd. -/
 def blindOdd (u : U) : Bool :=
-  !(s.strongerAlts u).isEmpty &&
+  let ie := ieIndices s.worlds (s.meaning u) ((s.alternatives u).map s.meaning)
+  !ie.isEmpty &&
   s.cWorlds.all (λ w => !s.strengthened u w)
 
 end BlindScenario
@@ -126,9 +125,9 @@ def italianScenario : BlindScenario ItalyWorld₃ ItalyUtt where
   meaning
     | some_, allWarm => true  | some_, someNotAll => true  | some_, noneWarm => false
     | all_,  allWarm => true  | all_,  someNotAll => false | all_,  noneWarm => false
-  strongerAlts
-    | some_ => [all_]  -- "all" is the stronger scalar alternative
-    | all_  => []      -- no stronger alternative on the ⟨some, all⟩ scale
+  alternatives
+    | some_ => [all_]  -- ⟨some, all⟩ scale partner
+    | all_  => [some_]
   context
     | allWarm => true | someNotAll => false | noneWarm => false
   worlds := [allWarm, someNotAll, noneWarm]
@@ -164,14 +163,14 @@ theorem italian_all_not_odd :
 -- ═══════════════════════════════════════════════════════════════════════
 
 /-- Input for @cite{magri-2009} felicity checking. -/
-structure MagriInput (W U : Type*) where
+structure MagriInput (W U : Type) where
   scenario : BlindScenario W U
   utterance : U
 
 open Interfaces in
 /-- @cite{magri-2009} as a `FelicityCondition`: an utterance is odd when
 its blind strengthened meaning contradicts common knowledge. -/
-instance {W U : Type*} : FelicityCondition (MagriInput W U) where
+instance {W U : Type} : FelicityCondition (MagriInput W U) where
   name := "Magri 2009"
   check := λ ⟨s, u⟩ =>
     if s.blindOdd u then
@@ -239,9 +238,9 @@ def tallScenario : BlindScenario TallWorld QAdvUtt where
     | always_,    alwaysTall => true
     | always_,    sometimesOnly => false
     | always_,    neverTall => false
-  strongerAlts
-    | sometimes_ => [always_]  -- "always" is stronger on the ⟨sometimes, always⟩ scale
-    | always_    => []
+  alternatives
+    | sometimes_ => [always_]  -- ⟨sometimes, always⟩ scale partner
+    | always_    => [sometimes_]
   -- ILP homogeneity: only homogeneous worlds are CK-compatible
   context
     | alwaysTall => true | sometimesOnly => false | neverTall => true
