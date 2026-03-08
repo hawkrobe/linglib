@@ -7,14 +7,16 @@ import Mathlib.Tactic.NormNum
 /-!
 # Epistemic Threshold Semantics
 
-@cite{ying-zhi-xuan-wong-mansinghka-tenenbaum-2025} @cite{baker-jara-ettinger-saxe-tenenbaum-2017} @cite{cariani-santorio-wellwood-2024} @cite{kennedy-2007} @cite{lassiter-goodman-2017} @cite{hintikka-1962}Epistemic vocabulary — attitude verbs (`believes`, `knows`), modal verbs
+@cite{ying-zhi-xuan-wong-mansinghka-tenenbaum-2025} @cite{baker-jara-ettinger-saxe-tenenbaum-2017} @cite{cariani-santorio-wellwood-2024} @cite{kennedy-2007} @cite{lassiter-goodman-2017} @cite{hintikka-1962}
+
+Epistemic vocabulary — attitude verbs (`believes`, `knows`), modal verbs
 (`might`, `must`), and modal adjectives (`likely`, `certain`) — denotes
 **threshold functions over agent credence** Pr(A, φ).
 
 ## The Core Idea
 
 Every epistemic expression reduces to a comparison of the agent's credence
-against a threshold (Table 1):
+against a threshold (Table 1(a)):
 
     believes(A, φ) ⟺ Pr(A, φ) ≥ θ_believes
     knows_that(A, φ) ⟺ believes(A, φ) ∧ φ
@@ -123,8 +125,9 @@ structure EpistemicEntry where
 
 /-! Standard epistemic thresholds (@cite{ying-zhi-xuan-wong-mansinghka-tenenbaum-2025}, Table 1(b)).
 
-These are the best-fit values from LaBToM's comparison against human
-judgments on the Badges and BigToM datasets. The ordering is the
+These are the best-fit values from LaBToM's grid-search parameter
+fitting against human plausibility ratings in a Doors, Keys, & Gems
+gridworld experiment (§4.5, Table B1). The ordering is the
 theoretical commitment; the specific values are empirical fits:
 
   must/certain (0.95) > should (0.80) > believes (0.75) >
@@ -423,14 +426,14 @@ then evaluating the ELoT formula against the inferred credences.
 
 See `BToMModel.beliefExpectation` in `Core.BToM` for the generic
 belief-weighted sum, and `L1_eq_btom_worldMarginal` in
-`RSA.Core.BToMGrounding` for the RSA-BToM identity.
+`RSA.Core.Config` for the RSA-BToM identity.
 -/
 
 open Core.BToM in
 /-- Agent credence derived from BToM belief-marginal inference.
 
     Given a BToM model with belief type `B` and an evaluation function
-    `eval : B → BProp W → ℚ` that computes how belief state `b` rates
+    `eval : B → BProp W → F` that computes how belief state `b` rates
     proposition `φ`, the observer estimates the agent's credence after
     observing action `a`:
 
@@ -441,14 +444,78 @@ open Core.BToM in
 
     When `B = W` and `eval b φ = if φ b then 1 else 0` (the RSA-BToM
     bridge's perfect-knowledge assumption), this reduces to the L1
-    listener's expected truth-value under their world posterior. -/
+    listener's expected truth-value under their world posterior.
+
+    Polymorphic in `F` so it composes with both ℚ-valued (exact
+    computation) and ℝ-valued (RSAConfig.toBToM) models. -/
 noncomputable def btomCredence
+    {F : Type*} [CommSemiring F]
     {A P B D S M W : Type*}
     [Fintype P] [Fintype B] [Fintype D] [Fintype S] [Fintype M] [Fintype W]
-    (model : BToMModel ℚ A P B D S M W)
-    (eval : B → BProp W → ℚ)
-    (a : A) (φ : BProp W) : ℚ :=
+    (model : BToMModel F A P B D S M W)
+    (eval : B → BProp W → F)
+    (a : A) (φ : BProp W) : F :=
   model.beliefExpectation (λ b => eval b φ) a
+
+section IdentityPerception
+open Core.BToM
+
+variable {F : Type*} [CommSemiring F] [DecidableEq W]
+variable {A D S M : Type*}
+  [Fintype W] [Fintype D] [Fintype S] [Fintype M]
+
+/-- For BToM models with identity perception and identity belief
+    (Percept = Belief = World with delta-function maps), the belief
+    marginal equals the world marginal.
+
+    This is the structural identity underlying the RSA-BToM bridge:
+    when the agent has perfect perception (`P(p|w) = δ(p=w)`) and
+    perfect belief formation (`P(b|p) = δ(b=p)`), inferring the
+    agent's belief state is the same as inferring the world state.
+
+    Proof: both sums reduce to the same expression after collapsing
+    the delta functions via `Finset.sum_ite_eq'`. The perception and
+    belief deltas force `p = w` and `b = p`, so `b = w`, and the
+    remaining sum over `D × S × M` is identical in both cases.
+
+    TODO: formalize the delta-sum collapse step. The proof requires
+    showing that `Σ_p (if p = w then 1 else 0) * f(p) = f(w)` in a
+    `CommSemiring`, which needs careful handling of `ite` with `mul`. -/
+theorem identity_belief_eq_world_marginal
+    (model : BToMModel F A W W D S M W)
+    (h_percept : ∀ w p, model.perceptModel w p = if p = w then 1 else 0)
+    (h_belief : ∀ p b, model.beliefModel p b = if b = p then 1 else 0)
+    (a : A) (b : W) :
+    model.beliefMarginal a b = model.worldMarginal a b := by
+  sorry
+
+/-- For identity-perception BToM models, `btomCredence` is the
+    world-marginal-weighted evaluation of φ.
+
+    This connects the abstract `btomCredence` to concrete RSA
+    inference: when the BToM model has identity perception/belief
+    (as in `RSAConfig.toBToM`), computing agent credence via BToM
+    belief marginals is the same as computing the L1 listener's
+    expected truth-value.
+
+        btomCredence(model, eval, a, φ)
+          = Σ_b beliefMarginal(a, b) · eval(b, φ)
+          = Σ_w worldMarginal(a, w) · eval(w, φ)    [by identity_belief_eq_world_marginal]
+
+    The second line is exactly the L1 listener's posterior expectation
+    (via `L1_eq_btom_worldMarginal` in `RSA.Core.Config`). -/
+theorem btomCredence_eq_world_expectation
+    (model : BToMModel F A W W D S M W)
+    (h_percept : ∀ w p, model.perceptModel w p = if p = w then 1 else 0)
+    (h_belief : ∀ p b, model.beliefModel p b = if b = p then 1 else 0)
+    (eval : W → BProp W → F) (a : A) (φ : BProp W) :
+    btomCredence model eval a φ =
+    ∑ w : W, model.worldMarginal a w * eval w φ := by
+  simp only [btomCredence, BToMModel.beliefExpectation]
+  congr 1; ext b
+  rw [identity_belief_eq_world_marginal model h_percept h_belief]
+
+end IdentityPerception
 
 -- ============================================================================
 -- §8. Degree-Threshold Bridge
@@ -684,5 +751,207 @@ theorem antonymy_from_polarity (cr : AgentCredence E W)
     exact ⟨θ, hφ, not_le.mp hψ⟩
   · intro ⟨θ, hφ, hψ⟩
     exact ⟨θ, hφ, not_le.mpr hψ⟩
+
+-- ============================================================================
+-- §11. Quantified Operators (Table 1(a))
+-- ============================================================================
+
+/-!
+### Operators with Quantification over Entities
+
+Table 1(a) includes operators that quantify over a context-restricted
+domain of entities: `knows_about`, `certain_about`, `uncertain_about`,
+and `most_sup`. These handle sentences like *"The player knows which
+box has the key"* (knows_about) or *"The player is uncertain about
+what's in box 3"* (uncertain_about).
+
+These are parameterized by an entity type `X` (the quantification domain)
+and a context set `C : X → Prop` restricting the domain.
+-/
+
+variable {X : Type*}
+
+/-- `knows_about(A, C, φ)` = `∃x. C(x) ∧ knows_that(A, φ(x))`.
+
+    The agent knows, for some contextually relevant entity x, that φ(x).
+    Table 1(a): Type ε, Arg Types `A, Φ/O, Φ/O`. -/
+def knowsAbout (cr : AgentCredence E W) (a : E)
+    (C : X → Prop) (φ : X → BProp W) (w : W) : Prop :=
+  ∃ x, C x ∧ holdsAt cr .knows_ a (φ x) w
+
+/-- `certain_about(A, C, φ)` = `∃x. C(x) ∧ Pr(A, φ(x)) ≥ θ_certain`.
+
+    The agent is certain, for some contextually relevant entity, that φ holds.
+    Table 1(a). -/
+def certainAbout (cr : AgentCredence E W) (a : E)
+    (C : X → Prop) (φ : X → BProp W) : Prop :=
+  ∃ x, C x ∧ meetsThreshold cr EpistemicEntry.certain_.θ a (φ x)
+
+/-- `uncertain_about(A, C, φ)` = `∀x. C(x) → Pr(A, φ(x)) < θ_uncertain`.
+
+    The agent is uncertain about φ for ALL contextually relevant entities.
+    Note the universal quantification — this is the dual of `certain_about`'s
+    existential.
+    Table 1(a). -/
+def uncertainAbout (cr : AgentCredence E W) (a : E)
+    (C : X → Prop) (φ : X → BProp W) : Prop :=
+  ∀ x, C x → failsThreshold cr EpistemicEntry.uncertain_.θ a (φ x)
+
+/-- `most_sup(P, O, C, φ)`: the degree of φ(O) is at least as great as
+    the degree of φ(x) for every x in the context set C.
+
+    "The player believes the key is *most likely* to be in box 1" means
+    credence in "key in box 1" ≥ credence in "key in box x" for all
+    relevant boxes x.
+    Table 1(a). -/
+def mostSup (cr : AgentCredence E W) (a : E)
+    (o : X) (C : X → Prop) (φ : X → BProp W) : Prop :=
+  ∀ x, C x → cr a (φ x) ≤ cr a (φ o)
+
+-- ── Entailments for quantified operators ──
+
+/-- `knows_about` entails `knows_that` for any witness. -/
+theorem knowsAbout_entails_knowsThat (cr : AgentCredence E W)
+    (a : E) (C : X → Prop) (φ : X → BProp W) (w : W) (x : X) (hC : C x) :
+    holdsAt cr .knows_ a (φ x) w → knowsAbout cr a C φ w :=
+  fun h => ⟨x, hC, h⟩
+
+/-- `certain_about` entails that the agent believes the witness proposition. -/
+theorem certainAbout_entails_believes (cr : AgentCredence E W)
+    (a : E) (C : X → Prop) (φ : X → BProp W)
+    (h : certainAbout cr a C φ) :
+    ∃ x, C x ∧ meetsThreshold cr EpistemicEntry.believes_.θ a (φ x) := by
+  obtain ⟨x, hC, hcr⟩ := h
+  exact ⟨x, hC, le_trans (by norm_num : (3 : ℚ)/4 ≤ 19/20) hcr⟩
+
+/-- `uncertain_about` and `certain_about` are incompatible: if the agent is
+    uncertain about all C-entities, there is no C-entity about which the
+    agent is certain. -/
+theorem uncertainAbout_contradicts_certainAbout (cr : AgentCredence E W)
+    (a : E) (C : X → Prop) (φ : X → BProp W)
+    (h_unc : uncertainAbout cr a C φ)
+    (h_cert : certainAbout cr a C φ) : False := by
+  obtain ⟨x, hC, hcr⟩ := h_cert
+  have h_fail := h_unc x hC
+  simp only [failsThreshold, EpistemicEntry.uncertain_] at h_fail
+  simp only [meetsThreshold, EpistemicEntry.certain_] at hcr
+  linarith
+
+-- ============================================================================
+-- §12. Modal Embedding (Table 1(a))
+-- ============================================================================
+
+/-!
+### Compositional Modal Embedding
+
+The key compositional device from Table 1(a): `believes_modal(A, M) = M(A)`.
+When a belief verb embeds a modal, the modal's threshold determines the
+evaluation, not the belief verb's.
+
+*"A believes it might rain"* = `believes_modal(A, might(rain))`
+= `might(rain)(A)` = `Pr(A, rain) ≥ θ_might`.
+
+This uses `θ_might` (0.20), not `θ_believes` (0.75), because the
+compositional lowering rule passes through the modal operator rather
+than the attitude verb. The result is a genuine compositional semantics:
+the meaning of the complex expression is determined by its parts.
+-/
+
+/-- Modal embedding: `believes_modal(A, M)` = `M(A)`.
+
+    `M` is a modal property of agents (e.g., `fun a => meetsThreshold cr θ_might a φ`).
+    Applying `believesModal` to it just evaluates M at agent A — the
+    modal's threshold wins.
+    Table 1(a): Type ε, Arg Types `A, ε/A`, Definition `M(A)`. -/
+def believesModal (M : E → Prop) (a : E) : Prop := M a
+
+/-- The compositional lowering: "A believes might(φ)" uses θ_might, not θ_believes.
+
+    This is the formal content of the paper's compositional semantics:
+    when a belief verb embeds a modal, the result is evaluated at the
+    modal's threshold. The belief verb contributes nothing beyond
+    agent projection. -/
+theorem believesModal_lowers_to_modal_threshold (cr : AgentCredence E W)
+    (a : E) (φ : BProp W) :
+    believesModal (fun a' => meetsThreshold cr EpistemicEntry.might_.θ a' φ) a ↔
+    meetsThreshold cr EpistemicEntry.might_.θ a φ := by
+  rfl
+
+/-- More generally, `believesModal` is transparent: `believesModal M a ↔ M a`. -/
+theorem believesModal_transparent (M : E → Prop) (a : E) :
+    believesModal M a ↔ M a := by
+  rfl
+
+-- ============================================================================
+-- §13. Unification Theorems
+-- ============================================================================
+
+/-!
+### Formal Bridges to Doxastic.lean and Confidence.lean
+
+The claimed unification (§1) of three formalizations is backed by
+structural theorems:
+
+1. **Doxastic bridge**: at θ = 1, threshold semantics recovers universal
+   quantification (the Hintikka limit).
+
+2. **Confidence bridge**: probabilistic credence induces a preorder that
+   validates CSW's upward monotonicity but rules out their conjunction
+   fallacy.
+-/
+
+/-- **Doxastic bridge**: at threshold 1, `meetsThreshold` requires maximal
+    credence (cr ≥ 1).
+
+    Since credence is a probability in [0, 1], this is equivalent to
+    cr = 1, which corresponds to truth at ALL accessible worlds in
+    Hintikka's semantics (`Doxastic.boxAt`). This justifies calling
+    Boolean accessibility "the θ → 1 limit of threshold semantics."
+
+    The bridge is structural, not definitional: `Doxastic.lean` uses
+    `List`-based universal quantification while this module uses ℚ-valued
+    credence. The two coincide when the credence function assigns 1
+    iff φ holds universally. -/
+theorem threshold_one_requires_max_credence (cr : AgentCredence E W)
+    (a : E) (φ : BProp W) :
+    meetsThreshold cr 1 a φ ↔ 1 ≤ cr a φ := by
+  rfl
+
+/-- **Confidence bridge**: the credence ordering on propositions is a
+    preorder (reflexive and transitive).
+
+    This mirrors the preorder axioms of CSW's confidence ordering
+    (`Confidence.lean`), showing that probabilistic credence induces
+    the same algebraic structure. The key difference is that probabilistic
+    credence additionally validates conjunction elimination
+    (`isProbabilistic_conj_elim`), which CSW's ordering does not
+    (`conjunction_fallacy_compatible`). -/
+theorem credence_ordering_is_preorder (cr : AgentCredence E W) (a : E) :
+    (∀ φ : BProp W, cr a φ ≤ cr a φ) ∧
+    (∀ φ ψ χ : BProp W, cr a φ ≤ cr a ψ → cr a ψ ≤ cr a χ → cr a φ ≤ cr a χ) :=
+  ⟨fun _ => le_refl _, fun _ _ _ h₁ h₂ => le_trans h₁ h₂⟩
+
+/-- Probabilistic credence validates conjunction elimination for `meetsThreshold`,
+    but CSW's non-probabilistic ordering does not. This is the key empirical
+    divergence between the two theories.
+
+    Formally: under `isProbabilistic`, if `meetsThreshold cr θ a (φ ∧ ψ)` then
+    `meetsThreshold cr θ a φ`. Under CSW's ordering, this can fail
+    (conjunction fallacy). -/
+theorem probabilistic_conjunction_elim_for_all_thresholds
+    (cr : AgentCredence E W) (h_prob : isProbabilistic cr)
+    (a : E) (φ ψ : BProp W) (θ : ℚ) :
+    meetsThreshold cr θ a (fun w => φ w && ψ w) →
+    meetsThreshold cr θ a φ :=
+  fun h => le_trans h (isProbabilistic_conj_elim cr h_prob a φ ψ)
+
+/-- `meetsThreshold` and `failsThreshold` are exhaustive: for any
+    credence and threshold, exactly one holds. This is excluded middle
+    on the linear order ℚ. -/
+theorem threshold_exhaustive (cr : AgentCredence E W) (θ : ℚ)
+    (a : E) (φ : BProp W) :
+    meetsThreshold cr θ a φ ∨ failsThreshold cr θ a φ := by
+  simp only [meetsThreshold, failsThreshold, ge_iff_le]
+  exact le_or_gt θ (cr a φ)
 
 end Semantics.Attitudes.EpistemicThreshold

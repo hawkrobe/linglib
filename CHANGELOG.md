@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.229.15] - 2026-03-07
+
+### Changed
+- **EpistemicThreshold.lean**: Audit and strengthen Ying et al. 2025 formalization. Fix hallucinated dataset name ("Badges and BigToM" → Doors, Keys, & Gems gridworld), fix stale cross-reference (BToMGrounding → Config), fix missing newline in docstring, fix "Table 1" → "Table 1(a)". Generalize `btomCredence` from `ℚ` to polymorphic `[CommSemiring F]` for ℝ compatibility. Add `IdentityPerception` section with `identity_belief_eq_world_marginal` (sorry) and `btomCredence_eq_world_expectation`. Add §11 quantified operators (`knowsAbout`, `certainAbout`, `uncertainAbout`, `mostSup`) with entailment theorems. Add §12 modal embedding (`believesModal`, `believesModal_lowers_to_modal_threshold`). Add §13 unification theorems (`threshold_one_requires_max_credence`, `credence_ordering_is_preorder`, `probabilistic_conjunction_elim_for_all_thresholds`, `threshold_exhaustive`). Remove unused parameter from `certainAbout_entails_believes`
+- **references.bib**: Fix `sources` path for Ying et al. 2025 (`Core/BToM.lean` → `Core/Agent/BToM.lean`), add `Theories/Semantics/Modality/EpistemicProbability.lean` to sources
+
 ## [0.229.14] - 2026-03-07
 
 ### Added
