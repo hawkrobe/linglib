@@ -40,8 +40,8 @@ restrictions (§4.2), embedding under universal quantifiers (§4.3), and
 German word order (§4.5). See §5 below for the Q-adverb formalization.
 
 The ILP/SLP distinction is @cite{carlson-1977}'s `PredicateLevel`:
-individual-level predicates trigger ILP homogeneity, while stage-level
-predicates do not.
+individual-level predicates trigger homogeneity (assumption (70)), while
+stage-level predicates do not.
 -/
 
 namespace Phenomena.ScalarImplicatures.Studies.Magri2009
@@ -197,7 +197,7 @@ theorem magri_italian_all_ok :
 
 The paper's main contribution derives oddness of Q-adverbs with
 individual-level predicates (ILPs) from BH + MH. The key assumption
-is **ILP homogeneity** (assumption (70)): if an i-predicate holds of
+**homogeneity** (assumption (70)): if an i-predicate holds of
 an individual at any time in W_ck, it holds at all times. This rules
 out mixed worlds (tall at some times but not all) from the common
 ground.
@@ -219,9 +219,9 @@ individual-level → homogeneity → oddness; stage-level → no homogeneity →
 section QAdverb
 
 inductive TallWorld where
-  | alwaysTall   -- tall at all times (CK-compatible: ILP homogeneity)
+  | alwaysTall   -- tall at all times (CK-compatible: homogeneity (70))
   | sometimesOnly -- tall at some but not all times (NOT CK-compatible)
-  | neverTall    -- tall at no time (CK-compatible: ILP homogeneity)
+  | neverTall    -- tall at no time (CK-compatible: homogeneity (70))
   deriving DecidableEq, BEq, Repr
 
 inductive QAdvUtt where
@@ -232,7 +232,7 @@ open TallWorld QAdvUtt in
 /-- @cite{magri-2009} §4.1: Q-adverbs with individual-level predicates.
 
 "Sometimes" and "always" form a ⟨sometimes, always⟩ scale analogous to
-⟨some, all⟩. ILP homogeneity (assumption (70)) rules out `sometimesOnly`
+⟨some, all⟩. Homogeneity (assumption (70)) rules out `sometimesOnly`
 from the common ground. -/
 def tallScenario : BlindScenario TallWorld QAdvUtt where
   meaning
@@ -245,7 +245,7 @@ def tallScenario : BlindScenario TallWorld QAdvUtt where
   alternatives
     | sometimes_ => [always_]  -- ⟨sometimes, always⟩ scale partner
     | always_    => [sometimes_]
-  -- ILP homogeneity: only homogeneous worlds are CK-compatible
+  -- Homogeneity (70): only homogeneous worlds are CK-compatible
   context
     | alwaysTall => true | sometimesOnly => false | neverTall => true
   worlds := [alwaysTall, sometimesOnly, neverTall]
@@ -261,7 +261,7 @@ theorem tall_sometimes_strengthened_false_never :
     tallScenario.strengthened .sometimes_ .neverTall = false := by native_decide
 
 /-- @cite{magri-2009} prediction: "# Sometimes, John is tall" is odd.
-The blind implicature "not always" contradicts ILP homogeneity. -/
+The blind implicature "not always" contradicts homogeneity (70). -/
 theorem tall_sometimes_blind_odd :
     tallScenario.blindOdd .sometimes_ = true := by native_decide
 
@@ -278,19 +278,20 @@ theorem magri_tall_always_ok :
     Interfaces.isOdd (MagriInput.mk tallScenario .always_) = false := by native_decide
 
 -- ═══════════════════════════════════════════════════════════════════════
--- §5.1  ILP Homogeneity from PredicateLevel
+-- §5.1  Homogeneity from PredicateLevel
 -- ═══════════════════════════════════════════════════════════════════════
 
-/-- ILP homogeneity determines which worlds are CK-compatible.
+/-- Homogeneity determines which worlds are CK-compatible.
 
-@cite{magri-2009} assumption (70): individual-level predicates are
-homogeneous — the predicate holds at all times or no time.
+@cite{magri-2009} assumption (70): if an i-predicate holds of an individual
+at any time in a CK-compatible world, it holds at all times within that
+individual's lifespan. This makes the predicate "homogeneous."
 
 This maps @cite{carlson-1977}'s `PredicateLevel` to a CK context:
 - Individual-level → only homogeneous worlds are CK-compatible
 - Stage-level → all worlds are CK-compatible (the predicate can
   genuinely vary over time) -/
-def ilpHomogeneity : PredicateLevel → (TallWorld → Bool)
+def homogeneity : PredicateLevel → (TallWorld → Bool)
   | .individualLevel => fun w => match w with
     | .alwaysTall => true | .sometimesOnly => false | .neverTall => true
   | .stageLevel => fun _ => true
@@ -298,7 +299,7 @@ def ilpHomogeneity : PredicateLevel → (TallWorld → Bool)
 /-- The context function of `tallScenario` is exactly what ILP
 homogeneity predicts for individual-level predicates. -/
 theorem tall_context_from_ilp :
-    tallScenario.context = ilpHomogeneity .individualLevel := by
+    tallScenario.context = homogeneity .individualLevel := by
   ext w; cases w <;> rfl
 
 -- ═══════════════════════════════════════════════════════════════════════
@@ -310,20 +311,20 @@ open TallWorld QAdvUtt in
 
 Same literal semantics and scale as the tall scenario, but CK admits
 all worlds because availability is stage-level — it CAN genuinely
-vary over time. The ILP homogeneity assumption does not apply. -/
+vary over time. The homogeneity assumption (70) does not apply. -/
 def availableScenario : BlindScenario TallWorld QAdvUtt where
   meaning := tallScenario.meaning
   alternatives := tallScenario.alternatives
-  context := ilpHomogeneity .stageLevel
+  context := homogeneity .stageLevel
   worlds := tallScenario.worlds
 
 /-- The context of `availableScenario` matches stage-level homogeneity:
 all worlds are CK-compatible. -/
 theorem available_context_from_slp :
-    availableScenario.context = ilpHomogeneity .stageLevel := rfl
+    availableScenario.context = homogeneity .stageLevel := rfl
 
 /-- "Sometimes, John is available" is NOT odd.
-Stage-level predicates don't trigger ILP homogeneity, so `sometimesOnly`
+Stage-level predicates don't trigger homogeneity (70), so `sometimesOnly`
 is CK-compatible and the strengthened meaning is satisfiable. -/
 theorem available_sometimes_not_odd :
     availableScenario.blindOdd .sometimes_ = false := by native_decide
@@ -332,13 +333,13 @@ theorem available_sometimes_not_odd :
 individual-level + "sometimes" → odd; stage-level + "sometimes" → fine.
 
 This is the structural prediction: @cite{carlson-1977}'s `PredicateLevel`
-feeds into @cite{magri-2009}'s blindness mechanism via ILP homogeneity. -/
+feeds into @cite{magri-2009}'s blindness mechanism via homogeneity (70). -/
 theorem predicate_level_determines_oddness :
     tallScenario.blindOdd .sometimes_ = true ∧
     availableScenario.blindOdd .sometimes_ = false := ⟨by native_decide, by native_decide⟩
 
 -- ═══════════════════════════════════════════════════════════════════════
--- §5.3  ILP Homogeneity Is Necessary and Sufficient
+-- §5.3  Homogeneity Is Necessary and Sufficient
 -- ═══════════════════════════════════════════════════════════════════════
 
 /-- The tall and available scenarios share literal semantics, alternatives,
@@ -353,14 +354,14 @@ for individual-level (tall) but CK-compatible for stage-level (available). -/
 theorem contexts_differ_at_sometimesOnly :
     tallScenario.context .sometimesOnly ≠
     availableScenario.context .sometimesOnly := by
-  simp [tallScenario, availableScenario, ilpHomogeneity]
+  simp [tallScenario, availableScenario, homogeneity]
 
-/-- ILP homogeneity is necessary and sufficient for Q-adverb oddness.
+/-- Homogeneity (70) is necessary and sufficient for Q-adverb oddness.
 
 The two scenarios have identical literal semantics, identical scale
 structure, and identical worlds. The ONLY difference is the CK context,
 which is determined by @cite{carlson-1977}'s `PredicateLevel` via
-`ilpHomogeneity`. Yet this single difference flips the oddness prediction:
+`homogeneity`. Yet this single difference flips the oddness prediction:
 
 - Individual-level ("tall"): context rules out `sometimesOnly` →
   strengthened meaning contradicts CK → odd
@@ -370,7 +371,7 @@ which is determined by @cite{carlson-1977}'s `PredicateLevel` via
 This proves that @cite{carlson-1977}'s predicate-level classification
 is doing genuine explanatory work in @cite{magri-2009}'s system:
 it is the SOLE factor determining oddness for Q-adverb sentences. -/
-theorem ilp_homogeneity_necessary_and_sufficient :
+theorem homogeneity_necessary_and_sufficient :
     -- Same semantics
     tallScenario.meaning = availableScenario.meaning ∧
     tallScenario.alternatives = availableScenario.alternatives ∧
@@ -382,8 +383,8 @@ theorem ilp_homogeneity_necessary_and_sufficient :
   refine ⟨rfl, rfl, rfl, ?_, ?_⟩
   · intro h
     have := congrFun h .sometimesOnly
-    simp [tallScenario, availableScenario, ilpHomogeneity] at this
-  · simp [tallScenario, availableScenario, ilpHomogeneity,
+    simp [tallScenario, availableScenario, homogeneity] at this
+  · simp [tallScenario, availableScenario, homogeneity,
           BlindScenario.blindOdd, BlindScenario.strengthened,
           BlindScenario.cWorlds]
     native_decide
@@ -396,7 +397,7 @@ end QAdverb
 
 /-! ### Context characterization theorem
 
-The existing proofs show that *specific* context functions (ILP homogeneity,
+The existing proofs show that *specific* context functions (homogeneity,
 stage-level) produce or prevent oddness. But what characterizes the oddness-
 producing contexts in general?
 
@@ -409,7 +410,7 @@ excluded from CK.
 This theorem is universally quantified over all possible context functions,
 not just the two tested above. It explains *why* @cite{carlson-1977}'s
 predicate-level classification does the right work: individual-level predicates
-produce oddness precisely because ILP homogeneity rules out the mixed world. -/
+produce oddness precisely because homogeneity rules out the mixed world. -/
 
 section ContextCharacterization
 
@@ -438,13 +439,13 @@ theorem oddness_iff_mixed_excluded (ctx : TallWorld → Bool) :
     rw [hfun]; native_decide
   }
 
-/-- ILP homogeneity produces oddness because it rules out the mixed world. -/
+/-- Homogeneity (70) produces oddness because it rules out the mixed world. -/
 theorem ilp_rules_out_mixed :
-    (ilpHomogeneity .individualLevel) .sometimesOnly = false := rfl
+    (homogeneity .individualLevel) .sometimesOnly = false := rfl
 
 /-- SLP permits "sometimes" because it admits the mixed world. -/
 theorem slp_admits_mixed :
-    (ilpHomogeneity .stageLevel) .sometimesOnly = true := rfl
+    (homogeneity .stageLevel) .sometimesOnly = true := rfl
 
 end ContextCharacterization
 
@@ -467,7 +468,7 @@ But the BPS of the i-predicate *tall* lacks the existential reading (84b):
 the SAME abstract structure as "#Sometimes, John is tall" (§4.1). This is
 because existential BPs always take narrowest scope (@cite{carlson-1977},
 p. 16), making narrow-scope ∃ over times equivalent to "sometimes." The GEN
-alternative plays the role of "always." ILP homogeneity rules out the partial
+alternative plays the role of "always." Homogeneity (70) rules out the partial
 world, so the strengthened meaning contradicts CK.
 
 We model this with independent types and prove the meaning table is
@@ -500,10 +501,12 @@ inductive BPSReading where
 open BPSWorld BPSReading in
 /-- @cite{magri-2009} §4.2: bare plural existential reading of an ILP.
 
-- `existential_` (φ): "for some time in the restrictor, ∃ fireman who is tall"
-- `generic_` (ψ): "there exists a fireman who is tall throughout his lifespan"
+- `existential_` (φ', (92b)): ∃_t[C̄(t)][∃x(fireman(x) ∧ tall(x,t))]
+  "for some time t in C̄, there exists a fireman who is tall at t"
+- `generic_` (φ, (91b)): GEN_t[C̄(t)][∃x(fireman(x) ∧ tall(x,t))]
+  "for generically all times t in C̄, there exists a fireman who is tall at t"
 
-ILP homogeneity (70) rules out `partialOnly`: if fireman d is tall at
+Homogeneity (70) rules out `partialOnly`: if fireman d is tall at
 any time, d is tall at ALL times within his lifespan. -/
 def bpsScenario : BlindScenario BPSWorld BPSReading where
   meaning
@@ -516,14 +519,14 @@ def bpsScenario : BlindScenario BPSWorld BPSReading where
   alternatives
     | existential_ => [generic_]    -- ⟨∃-BPS, GEN-BPS⟩ Horn scale
     | generic_     => [existential_]
-  -- ILP homogeneity (70): partialOnly is CK-incompatible
+  -- Homogeneity (70): partialOnly is CK-incompatible
   context
     | allThroughout => true | partialOnly => false | noneTall => true
   worlds := [allThroughout, partialOnly, noneTall]
 
 /-- The ∃-BPS reading of ILP "Firemen are tall" is odd.
 Blind strengthening derives "∃ fireman tall at some times BUT no fireman
-tall throughout" — contradicting ILP homogeneity (70). -/
+tall throughout" — contradicting homogeneity (70). -/
 theorem bps_existential_ilp_odd :
     bpsScenario.blindOdd .existential_ = true := by native_decide
 
@@ -535,7 +538,7 @@ open BPSWorld BPSReading in
 /-- Stage-level counterpart: ∃-BPS reading of "Firemen are available."
 
 Same meaning structure, but all worlds CK-compatible because
-availability can genuinely vary over time (no ILP homogeneity). -/
+availability can genuinely vary over time (no homogeneity). -/
 def bpsSLPScenario : BlindScenario BPSWorld BPSReading where
   meaning := bpsScenario.meaning
   alternatives := bpsScenario.alternatives
@@ -563,7 +566,7 @@ theorem bps_meaning_matches_qadverb :
                       | .noneTall => .neverTall) := by
   intro u w; cases u <;> cases w <;> rfl
 
-/-- The context functions match: ILP homogeneity rules out the same
+/-- The context functions match: homogeneity rules out the same
 "mixed" world in both scenarios. -/
 theorem bps_context_matches_qadverb :
     ∀ (w : BPSWorld),
@@ -594,7 +597,7 @@ generic operator AND the universal quantifier *every Jewish man*. This creates
 a "distributed witnesses" world — woman a₁ related to man b₁, a₂ to b₂ —
 where EXH(φ) = φ ∧ ¬ψ is satisfiable.
 
-Under ILP homogeneity, "related" is permanent: once a₁ is related to b₁, she
+Under homogeneity, "related" is permanent: once a₁ is related to b₁, she
 always is. But this doesn't prevent different women from being related to
 different men. The distributed-witnesses world is CK-compatible, so the
 strengthened meaning is not vacuous at CK worlds → not odd.
@@ -621,7 +624,7 @@ The three worlds under the correspondence:
 - `sometimesOnly` → "distributed": different women for different men (φ ∧ ¬ψ)
 - `neverTall` → "none": some man has no related woman (¬φ ∧ ¬ψ)
 
-All worlds are CK-compatible because ILP homogeneity for "related" (each
+All worlds are CK-compatible because homogeneity for "related" (each
 woman-man relationship is permanent) is compatible with distributed
 witnesses. -/
 def universalRescueScenario : BlindScenario TallWorld QAdvUtt where
@@ -656,7 +659,7 @@ theorem rescue_context_equals_slp :
 
 | Scenario      | Context type    | Mixed world CK? | Odd?  |
 |---------------|-----------------|------------------|-------|
-| ILP Q-adverb  | ILP homogeneity | No               | Yes   |
+| ILP Q-adverb  | Homogeneity (70) | No               | Yes   |
 | SLP Q-adverb  | All worlds      | Yes              | No    |
 | ILP + ∀       | All worlds      | Yes              | No    |
 

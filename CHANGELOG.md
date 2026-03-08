@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.229.32] - 2026-03-08
+
+### Changed
+- **Magri2009.lean**: Rename `ilpHomogeneity` → `homogeneity`, `ilp_homogeneity_necessary_and_sufficient` → `homogeneity_necessary_and_sufficient`; replace all "ILP homogeneity" with "homogeneity" in docstrings (the paper says "homogeneous," not "ILP homogeneous")
+- **Magri2009.lean**: Fix `generic_` description in `bpsScenario` to match paper's (91b) — GEN_t[C̄(t)][∃x(fireman(x) ∧ tall(x,t))], not "∃ fireman tall throughout lifespan"
+
 ## [0.229.31] - 2026-03-08
 
 ### Added
@@ -14,7 +20,7 @@
 
 ### Added
 - **Carlson1977.lean §8**: Scopelessness contrast theorems — `bare_plural_narrow_scope_only` (constants force P ∧ ¬P → ⊥), `bare_plural_stage_level_contradiction` (instantiated for R), `quantified_np_non_contradictory` and `quantified_np_stage_level_non_contradictory` (constructive witnesses showing quantifiers allow different values in each conjunct)
-- **Magri2009.lean**: Import Carlson1977, define `ilpHomogeneity` mapping `PredicateLevel` → CK context; `tall_context_from_ilp` proves `tallScenario.context` matches ILP homogeneity; add SLP contrast scenario (`availableScenario`) with `available_sometimes_not_odd`; `predicate_level_determines_oddness` shows ILP → odd, SLP → fine; `ilp_homogeneity_necessary_and_sufficient` proves same semantics + different PredicateLevel → different oddness (context `≠` via `sometimesOnly`, blindOdd `≠` via native_decide)
+- **Magri2009.lean**: Import Carlson1977, define `homogeneity` mapping `PredicateLevel` → CK context; `tall_context_from_ilp` proves `tallScenario.context` matches homogeneity (70); add SLP contrast scenario (`availableScenario`) with `available_sometimes_not_odd`; `predicate_level_determines_oddness` shows ILP → odd, SLP → fine; `homogeneity_necessary_and_sufficient` proves same semantics + different PredicateLevel → different oddness (context `≠` via `sometimesOnly`, blindOdd `≠` via native_decide)
 - **Longobardi2001.lean**: Open Carlson1977, add §14 bridge theorems (`referential_bn_semantics`, `kind_level_via_carlson`, `existential_via_carlson`) connecting `ArgumentType.referential` to `barePluralTranslation`/`genericDerivation`/`existentialDerivation`; add §19 `predicateLevelToEnvironment` mapping `PredicateLevel` → `BNEnvironment`, `carlson_longobardi_integration` proving the full predicate-level → environment → generic-availability chain
 
 ## [0.229.29] - 2026-03-08
