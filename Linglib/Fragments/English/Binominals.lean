@@ -233,7 +233,8 @@ def ofBinominalNetwork : Constructicon where
   links :=
     [ -- Metaphorical: N+PP → Head-Classifier (Fig 8.7)
       { parent := "N+PP", child := "Head-Classifier"
-        mode := .metaphorical
+        mode := .normal
+        linkType := some .metaphorical
         sharedProperties := ["[Det][N][of] frame", "N₁ heads"]
         overriddenProperties := ["PP classifies → of is linker", "no Det₂"] }
     , -- Taxonomic: N+PP → Pseudo-partitive
@@ -243,17 +244,20 @@ def ofBinominalNetwork : Constructicon where
         overriddenProperties := ["head: N₁ → N₂"] }
     , -- Metaphorical: Head-Classifier → EBNP (Fig 8.9)
       { parent := "Head-Classifier", child := "Evaluative BNP"
-        mode := .metaphorical
+        mode := .normal
+        linkType := some .metaphorical
         sharedProperties := ["N₁ classifies/evaluates N₂"]
         overriddenProperties := ["head: N₁ → N₂", "N₁ evaluative"] }
     , -- Metaphorical: EBNP → EM (Fig 8.11)
       { parent := "Evaluative BNP", child := "Evaluative Modifier"
-        mode := .metaphorical
+        mode := .normal
+        linkType := some .metaphorical
         sharedProperties := ["N₂ is semantic head", "N₁ evaluative"]
         overriddenProperties := ["N₁ frozen singular", "N₁ semantics bleached"] }
     , -- Metaphorical: EM → BI (Fig 8.13)
       { parent := "Evaluative Modifier", child := "Binominal Intensifier"
-        mode := .metaphorical
+        mode := .normal
+        linkType := some .metaphorical
         sharedProperties := ["[N₁ of a] chunk", "N₁ nonreferential"]
         overriddenProperties := ["[N of a] shifts into AdjP", "N₁ intensifies Adj"] }
     ]

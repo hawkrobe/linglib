@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.229.23] - 2026-03-08
+
+### Changed
+- **ConstructionGrammar/Basic.lean**: Split `InheritanceMode` into two orthogonal types matching @cite{goldberg-1995} §3.3: `InheritanceMode` (normal/complete — how info flows) and `LinkType` (polysemy/metaphorical/subpart/instance — what semantic relation holds). Add `linkType` field to `InheritanceLink`
+- **ConstructionGrammar/ArgumentStructure.lean**: Add conative construction (5th ASC from @cite{goldberg-1995} p. 3–4). Add `PolysemyFamily` structure enforcing shared syntax by construction (`rfl` theorems for slot sharing). Refactor ditransitive polysemy network (6 senses, I_P links, pp. 75–77) to use `PolysemyFamily`. Add caused-motion → intransitive-motion subpart link (I_S, p. 78), caused-motion → resultative metaphorical link (I_M, pp. 81–84). All four Goldberg link types now instantiated
+- **GoldbergShirtz2025.lean**: Type PAL→subtype links as I_I (instance)
+- **GoldbergJackendoff2004.lean**: Type resultative subconstruction links as I_I (instance). Fix unbalanced parenthesis and unverified page range in docstring
+- **VoiceTheta.lean**: Fix garbled `@cite{goldberg-1995}` placement (was mid-sentence, now in header cite list)
+- **Binominals.lean**: Migrate `mode := .metaphorical` → `mode := .normal, linkType := some .metaphorical`
+
 ## [0.229.22] - 2026-03-08
 
 ### Changed

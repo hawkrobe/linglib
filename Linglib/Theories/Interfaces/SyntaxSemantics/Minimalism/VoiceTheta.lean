@@ -6,7 +6,9 @@ import Linglib.Theories.Interfaces.SyntaxSemantics.Linking
 /-!
 # Severing Account of θ-Role Assignment
 
-@cite{kratzer-1996} @cite{schaefer-2008} @cite{alexiadou-schfer-2015} @cite{levin-2004} @cite{schfer-2008}The **severing** account holds that the Voice head — @cite{goldberg-1995}
+@cite{kratzer-1996} @cite{schaefer-2008} @cite{alexiadou-schfer-2015} @cite{levin-2004} @cite{goldberg-1995}
+
+The **severing** account holds that the Voice head —
 not the verb root — determines which theta role the external argument
 gets. The verb root is category-neutral; argument structure comes from
 the functional sequence.

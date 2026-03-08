@@ -5,7 +5,7 @@ import Linglib.Theories.Semantics.Lexical.Verb.Aspect
 # @cite{goldberg-jackendoff-2004}: The English Resultative as a Family of Constructions
 @cite{goldberg-jackendoff-2004}
 
-Formalization of the core claims from @cite{goldberg-jackendoff-2004}:532–568).
+Formalization of the core claims from @cite{goldberg-jackendoff-2004}.
 
 ## Key claims
 
@@ -500,21 +500,25 @@ def resultativeInheritance : List InheritanceLink :=
   [ { parent := "Resultative"
     , child := "Resultative-CausativeProperty"
     , mode := .normal
+    , linkType := some .instance
     , sharedProperties := ["dual-subevent", "FAR", "semantic-coherence"]
     , overriddenProperties := ["transitivity: transitive", "RP: AdjP"] }
   , { parent := "Resultative"
     , child := "Resultative-CausativePath"
     , mode := .normal
+    , linkType := some .instance
     , sharedProperties := ["dual-subevent", "FAR", "semantic-coherence"]
     , overriddenProperties := ["transitivity: transitive", "RP: PP"] }
   , { parent := "Resultative"
     , child := "Resultative-NoncausativeProperty"
     , mode := .normal
+    , linkType := some .instance
     , sharedProperties := ["dual-subevent", "FAR", "semantic-coherence"]
     , overriddenProperties := ["transitivity: intransitive", "RP: AdjP", "no CAUSE"] }
   , { parent := "Resultative"
     , child := "Resultative-NoncausativePath"
     , mode := .normal
+    , linkType := some .instance
     , sharedProperties := ["dual-subevent", "FAR", "semantic-coherence"]
     , overriddenProperties := ["transitivity: intransitive", "RP: PP", "no CAUSE"] } ]
 

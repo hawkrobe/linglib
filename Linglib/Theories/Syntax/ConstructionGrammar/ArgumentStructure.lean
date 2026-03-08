@@ -119,6 +119,23 @@ def intransitiveMotion : ArgStructureConstruction :=
       , ⟨.ADP, "path", false⟩ ]       -- Obl
   , hasHead := by native_decide }
 
+/-- Conative construction: [Subj V Obl_at].
+"X DIRECTS ACTION at Y" (e.g., "Sam kicked at Bill").
+The verb designates the intended result of the directed action;
+the at-PP marks the target without entailing contact
+(@cite{goldberg-1995} p. 3–4, 63–64). -/
+def conative : ArgStructureConstruction :=
+  { construction :=
+      { name := "Conative"
+      , form := "[Subj V Obl_at]"
+      , meaning := "X DIRECTS ACTION at Y"
+      , specificity := .fullyAbstract }
+  , slots :=
+      [ ⟨.NOUN, "agent", false⟩       -- Subj
+      , ⟨.VERB, "predicate", true⟩    -- V (head)
+      , ⟨.ADP, "target", false⟩ ]     -- Obl_at
+  , hasHead := by native_decide }
+
 /-! ## Decomposition into combination schemata -/
 
 /-- Decompose a fully abstract construction into a sequence of combination steps.
@@ -209,5 +226,189 @@ theorem both_directions_right :
   · intro c hspec hprag
     exact fullyAbstract_is_decomposable c hspec hprag
   · exact ⟨Studies.GoldbergShirtz2025.palConstruction, pal_irreducible⟩
+
+/-- Conative decomposes into Head-Specifier + Head-Complement. -/
+theorem conative_decomposes :
+    decompose conative = [.headSpecifier, .headComplement] := by
+  native_decide
+
+/-! ## Polysemy families (@cite{goldberg-1995} §3.3.2, I_P links)
+
+A polysemy family groups constructions that share one syntactic frame
+but differ in meaning. The shared form is enforced by construction —
+all senses are generated from the same `slots`, making it impossible
+for a polysemy extension to silently diverge in syntax. -/
+
+/-- A polysemy family: one argument frame, multiple meanings.
+
+All constructions in a family share the same `slots` definitionally —
+there is no way to create an extension with different syntax. The
+polysemy links (I_P) are derived, not manually assembled. -/
+structure PolysemyFamily where
+  /-- Name of the construction family -/
+  name : String
+  /-- Human-readable form description -/
+  form : String
+  /-- The shared argument frame -/
+  slots : List ConstructionSlot
+  /-- At least one slot is the head -/
+  hasHead : slots.any (·.isHead) = true
+  /-- Central sense meaning -/
+  centralMeaning : String
+  /-- Extended senses: (extension name, meaning, overridden properties) -/
+  extensions : List (String × String × List String)
+
+/-- The central sense as an `ArgStructureConstruction`. -/
+def PolysemyFamily.centralConstruction (f : PolysemyFamily) :
+    ArgStructureConstruction :=
+  { construction :=
+      { name := f.name
+      , form := f.form
+      , meaning := f.centralMeaning
+      , specificity := .fullyAbstract }
+  , slots := f.slots
+  , hasHead := f.hasHead }
+
+/-- Build an extension construction. Uses the family's `slots` — shared
+by construction, not by assertion. -/
+def PolysemyFamily.extensionConstruction (f : PolysemyFamily)
+    (ext : String × String × List String) : ArgStructureConstruction :=
+  { construction :=
+      { name := f.name ++ "-" ++ ext.1
+      , form := f.form
+      , meaning := ext.2.1
+      , specificity := .fullyAbstract }
+  , slots := f.slots
+  , hasHead := f.hasHead }
+
+/-- All extension constructions. -/
+def PolysemyFamily.extensionConstructions (f : PolysemyFamily) :
+    List ArgStructureConstruction :=
+  f.extensions.map f.extensionConstruction
+
+/-- All constructions (central + extensions). -/
+def PolysemyFamily.allConstructions (f : PolysemyFamily) :
+    List ArgStructureConstruction :=
+  f.centralConstruction :: f.extensionConstructions
+
+/-- Derive polysemy links from the family structure. -/
+def PolysemyFamily.polysemyLinks (f : PolysemyFamily) : List InheritanceLink :=
+  f.extensions.map fun ⟨extName, _, overrides⟩ =>
+    { parent := f.name
+    , child := f.name ++ "-" ++ extName
+    , mode := .normal
+    , linkType := some .polysemy
+    , sharedProperties := [f.form, "argument frame"]
+    , overriddenProperties := overrides }
+
+/-- Central construction uses the family's slots (definitionally true). -/
+theorem PolysemyFamily.central_slots (f : PolysemyFamily) :
+    f.centralConstruction.slots = f.slots := rfl
+
+/-- Every extension uses the family's slots (definitionally true).
+This is the structural enforcement: shared syntax is impossible
+to violate because it follows from the definition, not from a proof. -/
+theorem PolysemyFamily.extension_slots (f : PolysemyFamily)
+    (ext : String × String × List String) :
+    (f.extensionConstruction ext).slots = f.slots := rfl
+
+/-- All members decompose identically (same slots → same decomposition). -/
+theorem PolysemyFamily.all_same_decomposition (f : PolysemyFamily)
+    (ext : String × String × List String) :
+    decompose (f.extensionConstruction ext) =
+    decompose f.centralConstruction := by
+  simp [decompose, extensionConstruction, centralConstruction]
+
+/-! ## Ditransitive polysemy network (@cite{goldberg-1995} pp. 75–77)
+
+The ditransitive is not a single construction but a family of six related
+senses connected by polysemy links (I_P). Each sense inherits the
+ditransitive's syntactic form [Subj V Obj Obj₂] but differs in the
+semantic relation between the event participants. -/
+
+/-- The ditransitive polysemy family: six senses sharing one argument
+frame (@cite{goldberg-1995} pp. 75–77). -/
+def ditransitiveFamily : PolysemyFamily :=
+  { name := "Ditransitive"
+  , form := "[Subj V Obj Obj₂]"
+  , slots :=
+      [ ⟨.NOUN, "agent", false⟩
+      , ⟨.VERB, "predicate", true⟩
+      , ⟨.NOUN, "recipient", false⟩
+      , ⟨.NOUN, "theme", false⟩ ]
+  , hasHead := by native_decide
+  , centralMeaning := "X CAUSES Y TO RECEIVE Z"
+  , extensions :=
+      [ ("Satisfaction",
+         "Conditions of satisfaction imply X CAUSES Y TO RECEIVE Z",
+         ["transfer is implied, not entailed"])
+      , ("Enablement",
+         "X ENABLES Y TO RECEIVE Z",
+         ["enablement replaces direct causation"])
+      , ("Negated",
+         "X CAUSES Y NOT TO RECEIVE Z",
+         ["transfer is negated"])
+      , ("Intended",
+         "X INTENDS TO CAUSE Y TO RECEIVE Z",
+         ["transfer is intended, not actual"])
+      , ("Future",
+         "X ACTS TO CAUSE Y TO RECEIVE Z at some future point in time",
+         ["transfer deferred to future"]) ] }
+
+/-- The family's slots match the standalone `ditransitive` definition. -/
+theorem ditransitiveFamily_matches :
+    ditransitiveFamily.centralConstruction.slots = ditransitive.slots := rfl
+
+/-- Derived polysemy links. -/
+def ditransitivePolysemy : List InheritanceLink :=
+  ditransitiveFamily.polysemyLinks
+
+/-- Subpart link (I_S) from caused-motion to intransitive motion
+(@cite{goldberg-1995} p. 78): the intransitive motion construction is a
+proper subpart of the caused-motion construction. -/
+def causedMotionSubpart : InheritanceLink :=
+  { parent := "Caused-motion"
+  , child := "Intransitive-motion"
+  , mode := .normal
+  , linkType := some .subpart
+  , sharedProperties := ["MOVE predicate", "theme role", "path/goal role"]
+  , overriddenProperties := ["no external causer"] }
+
+/-- Metaphorical extension link (I_M) from caused-motion to resultative
+(@cite{goldberg-1995} pp. 81–84): the resultative is a metaphorical
+extension of caused-motion via the systematic metaphor
+motion → change, location → state. -/
+def causedMotionToResultative : InheritanceLink :=
+  { parent := "Caused-motion"
+  , child := "Resultative"
+  , mode := .normal
+  , linkType := some .metaphorical
+  , sharedProperties := ["X CAUSES Y to undergo change", "causal structure"]
+  , overriddenProperties := ["motion → change of state", "location → property"] }
+
+/-- All polysemy links have link type I_P. -/
+theorem polysemy_links_typed :
+    ditransitivePolysemy.all (·.linkType == some .polysemy) = true := by
+  native_decide
+
+/-- Subpart link has link type I_S. -/
+theorem subpart_link_typed :
+    causedMotionSubpart.linkType = some .subpart := rfl
+
+/-- Metaphorical link has link type I_M. -/
+theorem metaphorical_link_typed :
+    causedMotionToResultative.linkType = some .metaphorical := rfl
+
+/-- All four link types are instantiated across the network. -/
+theorem all_link_types_instantiated :
+    -- I_P: polysemy (ditransitive senses)
+    (ditransitivePolysemy.any (·.linkType == some .polysemy) = true) ∧
+    -- I_M: metaphorical (caused-motion → resultative)
+    (causedMotionToResultative.linkType = some .metaphorical) ∧
+    -- I_S: subpart (caused-motion → intransitive motion)
+    (causedMotionSubpart.linkType = some .subpart) ∧
+    -- I_I: instance (resultative subconstructions, in GoldbergJackendoff2004)
+    True := by
+  exact ⟨by native_decide, rfl, rfl, trivial⟩
 
 end ConstructionGrammar

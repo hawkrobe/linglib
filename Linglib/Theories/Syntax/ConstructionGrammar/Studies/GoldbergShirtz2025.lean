@@ -108,6 +108,7 @@ def palConstructicon : Constructicon :=
       , adjNModification ]
   , links :=
       [ -- PAL inherits from NN compound (stress, no plural on modifier)
+        -- General taxonomic inheritance (no specific Goldberg 1995 link type)
         { parent := "NN compound"
         , child := "PAL"
         , mode := .normal
@@ -121,28 +122,32 @@ def palConstructicon : Constructicon :=
         , sharedProperties := ["prenominal modifier position"
                               , "restricts head noun denotation"]
         , overriddenProperties := ["modifier is phrasal, not A⁰"] }
-      , -- Subtypes inherit from PAL
+      , -- Subtypes are instances of PAL (I_I links)
         { parent := "PAL"
         , child := "must-VERB"
         , mode := .normal
+        , linkType := some .instance
         , sharedProperties := ["familiarity presupposition"
                               , "phrase-in-word-slot form"]
         , overriddenProperties := ["partially lexically specified"] }
       , { parent := "PAL"
         , child := "a simple ⟨PAL⟩"
         , mode := .normal
+        , linkType := some .instance
         , sharedProperties := ["familiarity presupposition"
                               , "phrase-in-word-slot form"]
         , overriddenProperties := ["includes determiner and 'simple'"] }
       , { parent := "PAL"
         , child := "Don't PAL me"
         , mode := .normal
+        , linkType := some .instance
         , sharedProperties := ["familiarity presupposition"
                               , "phrase-in-word-slot form"]
         , overriddenProperties := ["PAL fills V slot, not modifier slot"] }
       , { parent := "PAL"
         , child := "the old ⟨PAL⟩ N"
         , mode := .normal
+        , linkType := some .instance
         , sharedProperties := ["familiarity presupposition"
                               , "phrase-in-word-slot form"]
         , overriddenProperties := ["includes 'the old'"] } ] }
