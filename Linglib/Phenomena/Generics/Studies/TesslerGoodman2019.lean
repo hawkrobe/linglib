@@ -1,6 +1,7 @@
 import Linglib.Theories.Semantics.Degree.Core
 import Linglib.Tactics.RSAPredict
 import Linglib.Theories.Pragmatics.RSA.Core.Config
+import Linglib.Theories.Pragmatics.RSA.Core.Softmax.Limits
 import Linglib.Phenomena.Generics.Data
 import Mathlib.Data.Rat.Defs
 import Mathlib.Analysis.SpecialFunctions.Pow.Real
@@ -461,13 +462,78 @@ theorem asymmetry_same_prevalence :
     Phenomena.Generics.laysEggsVsIsFemale.prevalence = 1/2 := rfl
 
 -- ============================================================================
--- § 9. Connection to Ranking Bridge
+-- § 9. Infinite-Rationality Limit: Generics as Categorical Defaults
 -- ============================================================================
 
-/-! The conditional softmax limit theorem
-    (`RankingBridge.condProb_tendsto_one`) implies that as α → ∞, this
-    model's endorsement rates sharpen to 0 or 1 — generics become
-    categorical defaults. Wiring this formally requires bridging
-    `rpow(l0, α)` to `exp(α * log l0)` (TODO). -/
+/-! As α → ∞, the endorsement model sharpens to a categorical decision:
+    endorsed generics get probability 1, non-endorsed get probability 0.
+    The bridge is `rpow(l0, α) = exp(α · log l0)` — the endorsement model
+    IS softmax over log-L0 scores. -/
+
+open Core Real BigOperators Finset Filter Topology
+
+instance : Nonempty Utterance := ⟨.generic⟩
+
+/-- L0 score for utterance u at prevalence p (unnormalized). -/
+noncomputable def l0Score (prior : Prevalence → ℝ) (u : Utterance) (p : Prevalence) : ℝ :=
+  prior p * (thresholdCount u p : ℝ)
+
+/-- Log-L0 score: the softmax utility for the endorsement model.
+    S1(u|p) = rpow(l0(u,p), α) = exp(α · logL0(u,p)), so the
+    endorsement model IS softmax over log-L0 scores. -/
+noncomputable def logL0Score (prior : Prevalence → ℝ) (u : Utterance)
+    (p : Prevalence) : ℝ :=
+  log (l0Score prior u p)
+
+/-- rpow(l0, α) = exp(α * logL0) when l0 > 0. -/
+theorem rpow_eq_softmax_score (prior : Prevalence → ℝ) (u : Utterance)
+    (p : Prevalence) (α : ℝ) (hl0 : 0 < l0Score prior u p) :
+    (l0Score prior u p) ^ α = exp (α * logL0Score prior u p) := by
+  rw [logL0Score, rpow_def_of_pos hl0, mul_comm]
+
+/-- The endorsement rate equals softmax over log-L0 scores.
+    The endorsement model IS a 2-action softmax. -/
+theorem endorsement_eq_softmax (prior : Prevalence → ℝ) (p : Prevalence) (α : ℝ)
+    (hg : 0 < l0Score prior .generic p)
+    (hs : 0 < l0Score prior .silent p) :
+    (l0Score prior .generic p) ^ α /
+      ((l0Score prior .generic p) ^ α + (l0Score prior .silent p) ^ α) =
+    softmax (fun u : Utterance => logL0Score prior u p) α .generic := by
+  simp only [softmax]
+  rw [rpow_eq_softmax_score _ _ _ _ hg]
+  congr 1
+  have hsum : ∀ (f : Utterance → ℝ), ∑ j : Utterance, f j = f .generic + f .silent := by
+    intro f
+    have : (Finset.univ : Finset Utterance) = {.generic, .silent} := by decide
+    rw [this, Finset.sum_pair (by decide)]
+  rw [hsum, ← rpow_eq_softmax_score _ _ _ _ hg, ← rpow_eq_softmax_score _ _ _ _ hs]
+
+/-- When l0_gen > l0_sil (endorsed generic), the endorsement rate → 1
+    as α → ∞. Direct corollary of `Softmax.tendsto_softmax_infty_at_max`. -/
+theorem endorsement_tendsto_one (prior : Prevalence → ℝ) (p : Prevalence)
+    (hs : 0 < l0Score prior .silent p)
+    (h : l0Score prior .silent p < l0Score prior .generic p) :
+    Tendsto (fun α => softmax (fun u : Utterance => logL0Score prior u p) α .generic)
+      atTop (nhds 1) := by
+  apply Softmax.tendsto_softmax_infty_at_max
+  intro j hj
+  cases j with
+  | generic => exact absurd rfl hj
+  | silent => exact Real.log_lt_log hs h
+
+/-- When l0_gen < l0_sil (non-endorsed generic), the endorsement rate → 0. -/
+theorem endorsement_tendsto_zero (prior : Prevalence → ℝ) (p : Prevalence)
+    (hg : 0 < l0Score prior .generic p)
+    (h : l0Score prior .generic p < l0Score prior .silent p) :
+    Tendsto (fun α => softmax (fun u : Utterance => logL0Score prior u p) α .generic)
+      atTop (nhds 0) := by
+  have hlim := Softmax.tendsto_softmax_infty_unique_max
+    (fun u : Utterance => logL0Score prior u p) .silent
+    (by intro j hj; cases j with
+      | generic => exact Real.log_lt_log hg h
+      | silent => exact absurd rfl hj) .generic
+  simp only [show Utterance.generic = Utterance.silent ↔ False from by decide,
+    ite_false] at hlim
+  exact hlim
 
 end Phenomena.Generics.Studies.TesslerGoodman2019
