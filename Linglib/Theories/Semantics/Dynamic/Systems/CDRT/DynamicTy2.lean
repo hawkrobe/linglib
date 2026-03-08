@@ -64,4 +64,12 @@ theorem trueAt_eq_closure {E : Type*} (φ : DProp E) (i : Register E) :
     φ.true_at i ↔ closure (toDRS φ) i := by
   simp only [DProp.true_at, closure, toDRS]
 
+theorem ddisj_eq_test_ddisj {E : Type*} (φ ψ : DProp E) :
+    toDRS (DProp.ddisj φ ψ) = test (ddisj (toDRS φ) (toDRS ψ)) := by
+  ext i o
+  simp only [toDRS, DProp.ddisj, test, ddisj, eq_iff_iff]
+  constructor
+  · intro ⟨heq, hex⟩; exact ⟨heq, by rw [← heq]; exact hex⟩
+  · intro ⟨heq, hex⟩; exact ⟨heq, by rw [heq]; exact hex⟩
+
 end Semantics.Dynamic.CDRT

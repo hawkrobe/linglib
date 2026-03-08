@@ -203,6 +203,34 @@ def properName [AssignmentStructure S E] (u : S → E) (e : E) : DRS S :=
 end ProperNames
 
 
+/-!
+## Axioms AX2–AX4: Variable vs Constant Registers
+@cite{muskens-1996} p. 156
+
+AX1 is captured by `AssignmentStructure.extend` above. The remaining axioms:
+
+- **AX2** (`VAR(u)`): classifies registers as *variable* (unspecific) or *constant* (specific).
+  In the formalization, variable drefs are arbitrary `S → E` functions; constant drefs
+  are `specificDref e = λ _ => e`.
+
+- **AX3** (`uₙ ≠ uₘ`): distinct variable registers are distinct as functions.
+  This is ensured by `extend_other`: updating one dref preserves others.
+
+- **AX4** (`∀i v(Tom)(i) = tom`): constant registers return the same value in all states.
+  This is `specificDref_constant` below.
+-/
+
+/-- AX4: Specific (constant) drefs return the same value regardless of state. -/
+theorem specificDref_constant {S E : Type*} (e : E) (i j : S) :
+    specificDref (S := S) e i = specificDref e j := rfl
+
+/-- Specific drefs are invariant under `extend` (consequence of AX1 + AX4). -/
+theorem specificDref_extend_invariant {S E : Type*} [AssignmentStructure S E]
+    (e : E) (u : S → E) (d : E) (i : S) (h : specificDref e ≠ u) :
+    specificDref e (AssignmentStructure.extend i u d) = e := by
+  exact AssignmentStructure.extend_other i u (specificDref e) d h.symm
+
+
 section Truth
 
 variable {S : Type*}

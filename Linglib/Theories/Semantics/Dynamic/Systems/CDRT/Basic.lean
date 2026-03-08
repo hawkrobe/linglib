@@ -101,6 +101,17 @@ Dynamic implication: if φ succeeds, ψ must succeed.
 def DProp.impl {E : Type*} (φ ψ : DProp E) : DProp E :=
   λ i o => i = o ∧ ∀ k, φ i k → ∃ m, ψ k m
 
+/--
+Dynamic disjunction: φ or ψ.
+
+⟦φ or ψ⟧(i, o) iff i = o ∧ (∃k. ⟦φ⟧(i, k) ∨ ⟦ψ⟧(i, k))
+
+Disjunction is a test: it checks whether either disjunct is satisfiable
+without changing state. Corresponds to SEM2 (@cite{muskens-1996}, p. 148).
+-/
+def DProp.ddisj {E : Type*} (φ ψ : DProp E) : DProp E :=
+  λ i o => i = o ∧ (∃ k, φ i k ∨ ψ i k)
+
 -- Compositional Semantics
 
 /--
