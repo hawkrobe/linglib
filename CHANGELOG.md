@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.229.1] - 2026-03-07
+
+### Changed
+- **ReflectBridge.lean**: Dead-expression elimination in DAG builder — when meta-level bounds prove an iteZero condition is resolved, mul/div/expMulLogSub operand is zero, or add operand is zero, skip recursing into dead sub-trees. Cross-utterance DAG: 7169 → 2326 nodes (67% reduction), enabling native_decide path (was falling back to slow tree traversal). Cross-utterance total time: ~72s → ~23s
+
 ## [0.229.0] - 2026-03-07
 
 ### Added

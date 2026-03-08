@@ -58,8 +58,14 @@ private abbrev DAGMetaState := Array Expr × Std.HashMap UInt64 ℕ
 
 /-- Walk an RExpr `Expr` to build a DAG at meta-time. On cache hit (same
     `Expr.hash`), returns the existing DAG index without recursing — this is
-    where the 28.8M → 1,245 reduction happens. -/
-private partial def rexprExprToDAGAux (ref : IO.Ref DAGMetaState) (e : Expr) : MetaM ℕ := do
+    where the 28.8M → 1,245 reduction happens.
+
+    The `boundsMap` maps RExpr `Expr` hashes to their meta-level bounds from
+    the reifier. Used to eliminate dead `iteZero` branches: when bounds prove
+    the condition is definitely nonzero (or zero), we skip recursing into the
+    dead branch, avoiding adding its unique sub-nodes to the DAG. -/
+private partial def rexprExprToDAGAux (ref : IO.Ref DAGMetaState)
+    (boundsMap : Std.HashMap UInt64 MetaBounds) (e : Expr) : MetaM ℕ := do
   let key := e.hash
   let (_, seen) ← ref.get
   if let some idx := seen.get? key then return idx
@@ -69,51 +75,92 @@ private partial def rexprExprToDAGAux (ref : IO.Ref DAGMetaState) (e : Expr) : M
   let some name := fn.constName?
     | throwError "rsa_predict: DAG builder: non-const head in RExpr: {fn}"
 
+  let rec go := rexprExprToDAGAux ref boundsMap
+  let getBounds (e : Expr) : Option MetaBounds := boundsMap.get? e.hash
+  let isZero (e : Expr) : Bool := match getBounds e with
+    | some b => b.lo == 0 && b.hi == 0
+    | none => false
+
+  -- Dead-expression elimination using meta-level bounds.
+  -- The RExpr tree is unchanged (kernel proof still works); only the DAG
+  -- used for interval evaluation is simplified. Each optimization is sound
+  -- because the simplified DAG produces the same interval as the full one.
+
+  -- iteZero: when bounds resolve the condition, skip the dead branch
+  if name == ``RExpr.iteZero then
+    if let some bc := getBounds args[0]! then
+      if bc.lo > 0 then return ← go args[2]!       -- condition ≠ 0 → else
+      else if bc.lo == 0 && bc.hi == 0 then return ← go args[1]!  -- condition = 0 → then
+
+  -- mul-by-zero: 0 * y = 0, x * 0 = 0 — skip recursing into the non-zero operand
+  if name == ``RExpr.mul then
+    if isZero args[0]! || isZero args[1]! then
+      let zeroExpr := mkApp (mkConst ``RExpr.nat) (mkRawNatLit 0)
+      return ← go zeroExpr
+
+  -- add-of-zero: 0 + y = y, x + 0 = x — skip the add node entirely
+  if name == ``RExpr.add then
+    if isZero args[0]! then return ← go args[1]!
+    if isZero args[1]! then return ← go args[0]!
+
+  -- div-with-zero-numerator: 0 / y = 0
+  if name == ``RExpr.div then
+    if isZero args[0]! then
+      let zeroExpr := mkApp (mkConst ``RExpr.nat) (mkRawNatLit 0)
+      return ← go zeroExpr
+
+  -- expMulLogSub-with-zero-base: x^α * exp(-α*c) = 0 when x = 0
+  if name == ``RExpr.expMulLogSub then
+    if isZero args[1]! then
+      let zeroExpr := mkApp (mkConst ``RExpr.nat) (mkRawNatLit 0)
+      return ← go zeroExpr
+
   let dagNodeExpr ← match name with
     | ``RExpr.nat => pure (mkApp (mkConst ``DAGNode.nat) args[0]!)
     | ``RExpr.ratCast => pure (mkApp (mkConst ``DAGNode.ratCast) args[0]!)
     | ``RExpr.add => do
       pure (mkApp2 (mkConst ``DAGNode.add)
-        (mkRawNatLit (← rexprExprToDAGAux ref args[0]!))
-        (mkRawNatLit (← rexprExprToDAGAux ref args[1]!)))
+        (mkRawNatLit (← go args[0]!))
+        (mkRawNatLit (← go args[1]!)))
     | ``RExpr.mul => do
       pure (mkApp2 (mkConst ``DAGNode.mul)
-        (mkRawNatLit (← rexprExprToDAGAux ref args[0]!))
-        (mkRawNatLit (← rexprExprToDAGAux ref args[1]!)))
+        (mkRawNatLit (← go args[0]!))
+        (mkRawNatLit (← go args[1]!)))
     | ``RExpr.div => do
       pure (mkApp2 (mkConst ``DAGNode.div)
-        (mkRawNatLit (← rexprExprToDAGAux ref args[0]!))
-        (mkRawNatLit (← rexprExprToDAGAux ref args[1]!)))
+        (mkRawNatLit (← go args[0]!))
+        (mkRawNatLit (← go args[1]!)))
     | ``RExpr.neg => do
       pure (mkApp (mkConst ``DAGNode.neg)
-        (mkRawNatLit (← rexprExprToDAGAux ref args[0]!)))
+        (mkRawNatLit (← go args[0]!)))
     | ``RExpr.sub => do
       pure (mkApp2 (mkConst ``DAGNode.sub)
-        (mkRawNatLit (← rexprExprToDAGAux ref args[0]!))
-        (mkRawNatLit (← rexprExprToDAGAux ref args[1]!)))
+        (mkRawNatLit (← go args[0]!))
+        (mkRawNatLit (← go args[1]!)))
     | ``RExpr.rexp => do
       pure (mkApp (mkConst ``DAGNode.rexp)
-        (mkRawNatLit (← rexprExprToDAGAux ref args[0]!)))
+        (mkRawNatLit (← go args[0]!)))
     | ``RExpr.rlog => do
       pure (mkApp (mkConst ``DAGNode.rlog)
-        (mkRawNatLit (← rexprExprToDAGAux ref args[0]!)))
+        (mkRawNatLit (← go args[0]!)))
     | ``RExpr.rpow => do
       pure (mkApp2 (mkConst ``DAGNode.rpow)
-        (mkRawNatLit (← rexprExprToDAGAux ref args[0]!))
+        (mkRawNatLit (← go args[0]!))
         args[1]!)  -- exponent is a ℕ literal, not a sub-expression
     | ``RExpr.inv => do
       pure (mkApp (mkConst ``DAGNode.inv)
-        (mkRawNatLit (← rexprExprToDAGAux ref args[0]!)))
+        (mkRawNatLit (← go args[0]!)))
     | ``RExpr.iteZero => do
+      -- Reached here = bounds didn't resolve the branch, keep full node
       pure (mkApp3 (mkConst ``DAGNode.iteZero)
-        (mkRawNatLit (← rexprExprToDAGAux ref args[0]!))
-        (mkRawNatLit (← rexprExprToDAGAux ref args[1]!))
-        (mkRawNatLit (← rexprExprToDAGAux ref args[2]!)))
+        (mkRawNatLit (← go args[0]!))
+        (mkRawNatLit (← go args[1]!))
+        (mkRawNatLit (← go args[2]!)))
     | ``RExpr.expMulLogSub => do
       pure (mkApp3 (mkConst ``DAGNode.expMulLogSub)
-        (mkRawNatLit (← rexprExprToDAGAux ref args[0]!))
-        (mkRawNatLit (← rexprExprToDAGAux ref args[1]!))
-        (mkRawNatLit (← rexprExprToDAGAux ref args[2]!)))
+        (mkRawNatLit (← go args[0]!))
+        (mkRawNatLit (← go args[1]!))
+        (mkRawNatLit (← go args[2]!)))
     | _ => throwError "rsa_predict: DAG builder: unknown RExpr constructor: {name}"
 
   let (dagNodes, seen) ← ref.get
@@ -121,25 +168,64 @@ private partial def rexprExprToDAGAux (ref : IO.Ref DAGMetaState) (e : Expr) : M
   ref.set (dagNodes.push dagNodeExpr, seen.insert key idx)
   return idx
 
-/-- Build a Lean `Expr` representing `Array DAGNode` from the DAG node Exprs. -/
-private def buildDAGArrayExpr (dagNodes : Array Expr) : Expr :=
+/-- Build a Lean `Expr` representing `Array DAGNode` from the DAG node Exprs.
+    For large arrays (>1000 nodes), chunks the List into segments of 64 elements
+    concatenated with `List.append` to avoid stack overflow in `native_decide`.
+    A flat 7169-element List.cons chain has Expr depth 7169, which overflows the
+    native code compiler's stack. Chunking reduces max depth to ~176. -/
+private def buildDAGArrayExpr (dagNodes : Array Expr) : Expr := Id.run do
   let dagNodeType := mkConst ``DAGNode
   let nil := mkApp (mkConst ``List.nil [Level.zero]) dagNodeType
-  let listExpr := dagNodes.foldr
-    (fun elem rest => mkApp3 (mkConst ``List.cons [Level.zero]) dagNodeType elem rest)
+  let n := dagNodes.size
+  -- For small DAGs, use a flat list (no overhead)
+  if n ≤ 1000 then
+    let listExpr := dagNodes.foldr
+      (fun elem rest => mkApp3 (mkConst ``List.cons [Level.zero]) dagNodeType elem rest)
+      nil
+    return mkApp2 (mkConst ``Array.mk [Level.zero]) dagNodeType listExpr
+  -- Chunk into segments of 64 elements, then concatenate right-to-left.
+  -- Each chunk: List.cons depth ≤ 64. Append chain: depth ≤ numChunks.
+  -- Total max evaluation depth: ~64 + numChunks ≈ 176 for 7169 nodes.
+  let chunkSize := 64
+  let numChunks := (n + chunkSize - 1) / chunkSize
+  let mut chunks : Array Expr := #[]
+  for ci in List.range numChunks do
+    let start := ci * chunkSize
+    let stop := min ((ci + 1) * chunkSize) n
+    let mut chunkList := nil
+    -- Build chunk list right-to-left (foldr order)
+    let mut j := stop
+    while j > start do
+      j := j - 1
+      chunkList := mkApp3 (mkConst ``List.cons [Level.zero]) dagNodeType dagNodes[j]! chunkList
+    chunks := chunks.push chunkList
+  -- Right-fold: c₁ ++ (c₂ ++ (... ++ cN))
+  let combinedList := chunks.foldr
+    (fun chunk rest => mkApp3 (mkConst ``List.append [Level.zero]) dagNodeType chunk rest)
     nil
-  mkApp2 (mkConst ``Array.mk [Level.zero]) dagNodeType listExpr
+  return mkApp2 (mkConst ``Array.mk [Level.zero]) dagNodeType combinedList
 
 /-- Build a shared DAG from two RExpr Exprs. The second call inherits the
     dedup state from the first, so cross-side sharing is captured.
-    Returns `(dagArrayExpr, lhsIdx, rhsIdx)`. -/
-private def buildSharedDAG (lhsRExpr rhsRExpr : Expr) :
-    MetaM (Expr × ℕ × ℕ) := do
+
+    The `reifyCache` provides meta-level bounds for iteZero dead-branch
+    elimination: when the condition's bounds definitively resolve the branch,
+    the dead sub-tree is never added to the DAG.
+
+    Returns `(dagArrayExpr, lhsIdx, rhsIdx, nodeCount)`. -/
+private def buildSharedDAG (lhsRExpr rhsRExpr : Expr)
+    (reifyCache : Std.HashMap Expr (Expr × MetaBounds)) :
+    MetaM (Expr × ℕ × ℕ × ℕ) := do
+  -- Build reverse map: RExpr Expr hash → MetaBounds
+  -- This lets the DAG builder look up bounds for iteZero conditions
+  let mut boundsMap : Std.HashMap UInt64 MetaBounds := {}
+  for (_, (rexpr, bounds)) in reifyCache.toList do
+    boundsMap := boundsMap.insert rexpr.hash bounds
   let ref ← IO.mkRef ((#[], {}) : DAGMetaState)
-  let lhsIdx ← rexprExprToDAGAux ref lhsRExpr
-  let rhsIdx ← rexprExprToDAGAux ref rhsRExpr
+  let lhsIdx ← rexprExprToDAGAux ref boundsMap lhsRExpr
+  let rhsIdx ← rexprExprToDAGAux ref boundsMap rhsRExpr
   let (dagNodes, _) ← ref.get
-  return (buildDAGArrayExpr dagNodes, lhsIdx, rhsIdx)
+  return (buildDAGArrayExpr dagNodes, lhsIdx, rhsIdx, dagNodes.size)
 
 -- ============================================================================
 -- Direct RExpr Pipeline
@@ -259,15 +345,34 @@ private def tryDenominatorCancel (goal : MVarId) (lhsExpr rhsExpr : Expr) :
   -- Pattern 1: Direct policy comparison (L1, S1, L0, S2)
   if let some (raL, sL, aL) ← unfoldToPolicy lhsExpr then
     if let some (raR, sR, aR) ← unfoldToPolicy rhsExpr then
-      if (← isDefEq raL raR) && (← isDefEq sL sR) then
-        let scoreLhs ← mkAppM ``Core.RationalAction.score #[raL, sL, aL]
-        let scoreRhs ← mkAppM ``Core.RationalAction.score #[raR, sR, aR]
-        let scoreGoalType ← mkAppM ``GT.gt #[scoreLhs, scoreRhs]
-        let scoreGoal ← mkFreshExprMVar scoreGoalType
-        let proof ← mkAppM ``Core.RationalAction.policy_gt_of_score_gt
-          #[raL, sL, aL, aR, scoreGoal]
-        goal.assign proof
-        return some (scoreGoal.mvarId!, scoreLhs, scoreRhs)
+      if (← isDefEq raL raR) then
+        if (← isDefEq sL sR) then
+          -- Pattern 1a: same stimulus → cancel shared denominator
+          let scoreLhs ← mkAppM ``Core.RationalAction.score #[raL, sL, aL]
+          let scoreRhs ← mkAppM ``Core.RationalAction.score #[raR, sR, aR]
+          let scoreGoalType ← mkAppM ``GT.gt #[scoreLhs, scoreRhs]
+          let scoreGoal ← mkFreshExprMVar scoreGoalType
+          let proof ← mkAppM ``Core.RationalAction.policy_gt_of_score_gt
+            #[raL, sL, aL, aR, scoreGoal]
+          goal.assign proof
+          return some (scoreGoal.mvarId!, scoreLhs, scoreRhs)
+        else if (← isDefEq aL aR) then
+          -- Pattern 1b: same action, different stimuli → cross-product
+          -- policy(s₁,a) > policy(s₂,a) ← score(s₁,a)*total(s₂) > score(s₂,a)*total(s₁)
+          -- Positivity of both totalScores is derived from the cross-product itself.
+          logInfo m!"rsa_predict: [denom] cross-stimulus detected, reducing to cross-product"
+          let scoreLhs ← mkAppM ``Core.RationalAction.score #[raL, sL, aL]
+          let scoreRhs ← mkAppM ``Core.RationalAction.score #[raR, sR, aR]
+          let totalLhs ← mkAppM ``Core.RationalAction.totalScore #[raL, sL]
+          let totalRhs ← mkAppM ``Core.RationalAction.totalScore #[raR, sR]
+          let crossLhs ← mkAppM ``HMul.hMul #[scoreLhs, totalRhs]
+          let crossRhs ← mkAppM ``HMul.hMul #[scoreRhs, totalLhs]
+          let crossGoalType ← mkAppM ``GT.gt #[crossLhs, crossRhs]
+          let crossGoal ← mkFreshExprMVar crossGoalType
+          let proof ← mkAppM ``Core.RationalAction.policy_gt_cross_of_cross_gt
+            #[raL, sL, sR, aL, crossGoal]
+          goal.assign proof
+          return some (crossGoal.mvarId!, crossLhs, crossRhs)
   -- Pattern 2: L1_marginal comparison (sum of policies with shared denominator)
   if let some result ← tryMarginalDenomCancel goal lhsExpr rhsExpr then
     return some result
@@ -321,9 +426,7 @@ def tryDirectRExprCompare (goal : MVarId) (lhsExpr rhsExpr : Expr) : TacticM Boo
   logInfo m!"rsa_predict: [direct] reified ({t1 - t0}ms, cache {cacheBefore.size}→{cacheAfter.size}){denomNote}"
 
   -- Exact ℚ evaluation path: when both sides are pure arithmetic (no exp/log),
-  -- evaluate to exact ℚ and compare. This handles cases where interval arithmetic
-  -- loses precision due to enormous intermediate values (e.g., Beta(1,50) cross-
-  -- normalization producing 60+ digit rationals that rpow interval bounds can't track).
+  -- evaluate to exact ℚ and compare. Skip for cross-utterance (too large).
   let exactOk ← try
     let exactCheckExpr ← mkAppM ``RExpr.checkExactGt #[lhsRExpr, rhsRExpr]
     let exactCheckType ← mkEq exactCheckExpr (mkConst ``Bool.true)
@@ -340,23 +443,29 @@ def tryDirectRExprCompare (goal : MVarId) (lhsExpr rhsExpr : Expr) : TacticM Boo
     logInfo m!"rsa_predict: [direct] bounds don't separate (lhs=[{lhsBounds.lo}, {lhsBounds.hi}] rhs=[{rhsBounds.lo}, {rhsBounds.hi}])"
     return false
 
-  try
-    -- Build shared DAG at meta-time (O(unique sub-expressions), not O(tree nodes))
-    let (dagArrayExpr, lhsIdx, rhsIdx) ← buildSharedDAG lhsRExpr rhsRExpr
-    let t1b ← IO.monoMsNow
-    logInfo m!"rsa_predict: [direct] DAG built ({t1b - t1}ms)"
+  -- Build shared DAG at meta-time (O(unique sub-expressions), not O(tree nodes)).
+  -- Dead-expression elimination (iteZero resolution, mul-by-zero, add-of-zero,
+  -- div/expMulLogSub-with-zero) prunes unreachable sub-trees from the DAG using
+  -- meta-level bounds, without changing the RExpr tree used by the kernel proof.
+  let (dagArrayExpr, lhsIdx, rhsIdx, dagSize) ←
+    buildSharedDAG lhsRExpr rhsRExpr cacheAfter
+  let t1b ← IO.monoMsNow
 
-    -- native_decide on checkGtDAG: evaluates only ~1K unique DAG nodes
+  try
+    -- Skip native_decide on large DAGs (>5K nodes) — native_decide fails
+    -- on large inline array literals (stack overflow in the native code
+    -- compiler). The tree fallback handles these via checkGtOpt.
+    if dagSize > 5000 then
+      throw (Exception.error Syntax.missing m!"DAG too large ({dagSize} nodes)")
+
     let checkExpr := mkApp3 (mkConst ``checkGtDAG) dagArrayExpr
       (mkRawNatLit lhsIdx) (mkRawNatLit rhsIdx)
     let checkType ← mkEq checkExpr (mkConst ``Bool.true)
     let hcheck ← nativeDecideProof checkType
 
     let t2 ← IO.monoMsNow
-    logInfo m!"rsa_predict: [direct] native_decide ({t2 - t1b}ms)"
+    logInfo m!"rsa_predict: [direct] DAG ({dagSize} nodes, {t1b - t1}ms build, {t2 - t1b}ms native_decide)"
 
-    -- gt_of_checkGtDAG : (lhs rhs : RExpr) → (dag : Array DAGNode) → (li ri : ℕ) →
-    --   checkGtDAG dag li ri = true → lhs.denote > rhs.denote
     let proof := mkAppN (mkConst ``gt_of_checkGtDAG)
       #[lhsRExpr, rhsRExpr, dagArrayExpr, mkRawNatLit lhsIdx, mkRawNatLit rhsIdx, hcheck]
 
@@ -433,19 +542,23 @@ def tryDirectRExprNotGt (goal : MVarId) (lhsExpr rhsExpr : Expr) : TacticM Bool 
     -- intervals even when meta-level bounds (from expPoint/logPoint) have width.
     -- native_decide on false=true fails instantly, so trying is cheap.
 
-    -- Try DAG-based interval check first
+    -- Try DAG-based interval check first (skip for large DAGs)
     let dagOk ← try
-      let (dagArrayExpr, lhsIdx, rhsIdx) ← buildSharedDAG lhsRExpr rhsRExpr
-      let checkExpr := mkApp3 (mkConst ``checkNotGtDAG) dagArrayExpr
-        (mkRawNatLit lhsIdx) (mkRawNatLit rhsIdx)
-      let checkType ← mkEq checkExpr (mkConst ``Bool.true)
-      let hcheck ← nativeDecideProof checkType
-      let proof := mkAppN (mkConst ``not_gt_of_checkNotGtDAG)
-        #[lhsRExpr, rhsRExpr, dagArrayExpr, mkRawNatLit lhsIdx, mkRawNatLit rhsIdx, hcheck]
-      goal.assign proof
-      let t2 ← IO.monoMsNow
-      logInfo m!"rsa_predict: [direct/not-gt] assigned via DAG interval ({t2 - t0}ms)"
-      pure true
+      let notGtCache ← persistentReifyCache.get
+      let (dagArrayExpr, lhsIdx, rhsIdx, dagSize) ←
+        buildSharedDAG lhsRExpr rhsRExpr notGtCache
+      if dagSize > 20000 then pure false
+      else do
+        let checkExpr := mkApp3 (mkConst ``checkNotGtDAG) dagArrayExpr
+          (mkRawNatLit lhsIdx) (mkRawNatLit rhsIdx)
+        let checkType ← mkEq checkExpr (mkConst ``Bool.true)
+        let hcheck ← nativeDecideProof checkType
+        let proof := mkAppN (mkConst ``not_gt_of_checkNotGtDAG)
+          #[lhsRExpr, rhsRExpr, dagArrayExpr, mkRawNatLit lhsIdx, mkRawNatLit rhsIdx, hcheck]
+        goal.assign proof
+        let t2 ← IO.monoMsNow
+        logInfo m!"rsa_predict: [direct/not-gt] assigned via DAG interval ({t2 - t0}ms)"
+        pure true
     catch _ => pure false
     if dagOk then return true
 
