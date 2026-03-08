@@ -34,7 +34,7 @@ open Linglib.Interval
     Returns the cfg Expr if found. Handles:
     - Direct: `RationalAction.score (L1agent cfg) u w`
     - Marginal: `Finset.sum finset (fun w => score (L1agent cfg) u w)` -/
-private partial def findL1AgentCfg (e : Expr) (depth : ℕ := 20) : MetaM (Option Expr) := do
+partial def findL1AgentCfg (e : Expr) (depth : ℕ := 20) : MetaM (Option Expr) := do
   if depth == 0 then return none
   let mut current := e
   for _ in List.range 10 do
@@ -48,6 +48,12 @@ private partial def findL1AgentCfg (e : Expr) (depth : ℕ := 20) : MetaM (Optio
         let ra := args[3]!
         if let some cfg ← findL1AgentCfg ra (depth - 1) then
           return some cfg
+    -- Check for HMul — look inside operands (cross-utterance pattern)
+    if fn.isConstOf ``HMul.hMul && args.size ≥ 6 then
+      if let some cfg ← findL1AgentCfg args[4]! (depth - 1) then
+        return some cfg
+      if let some cfg ← findL1AgentCfg args[5]! (depth - 1) then
+        return some cfg
     -- Check for Finset.sum — look inside the lambda body
     if fn.isConstOf ``Finset.sum && args.size ≥ 5 then
       let fBody := args[args.size - 1]!

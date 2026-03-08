@@ -5,6 +5,7 @@ import Linglib.Tactics.RSAPredict.Helpers
 import Linglib.Tactics.RSAPredict.Reify
 import Linglib.Tactics.RSAPredict.GoalParsing
 import Linglib.Tactics.RSAPredict.AlgebraicReify
+import Linglib.Tactics.RSAPredict.RSABuilder
 
 set_option autoImplicit false
 
@@ -412,12 +413,23 @@ def tryDirectRExprCompare (goal : MVarId) (lhsExpr rhsExpr : Expr) : TacticM Boo
     denomNote := " [denom-cancelled]"
 
   let cacheBefore ← persistentReifyCache.get
-  let (lhsRExpr, lhsBounds) ← reifyToRExpr persistentReifyCache activeLhs maxDepth
-  let (rhsRExpr, rhsBounds) ← reifyToRExpr persistentReifyCache activeRhs maxDepth
+
+  -- Try the RSA builder first (bottom-up construction, bypasses unfoldDefinition? chain)
+  let builderResult ← try
+    tryRSABuild persistentReifyCache activeLhs activeRhs
+  catch _ => pure none
+
+  let (lhsRExpr, lhsBounds, rhsRExpr, rhsBounds) ← match builderResult with
+    | some (lr, lb, rr, rb) => pure (lr, lb, rr, rb)
+    | none => do
+      let (lr, lb) ← reifyToRExpr persistentReifyCache activeLhs maxDepth
+      let (rr, rb) ← reifyToRExpr persistentReifyCache activeRhs maxDepth
+      pure (lr, lb, rr, rb)
 
   let cacheAfter ← persistentReifyCache.get
   let t1 ← IO.monoMsNow
-  logInfo m!"rsa_predict: [direct] reified ({t1 - t0}ms, cache {cacheBefore.size}→{cacheAfter.size}){denomNote}"
+  let builderNote := if builderResult.isSome then " [builder]" else ""
+  logInfo m!"rsa_predict: [direct] reified ({t1 - t0}ms, cache {cacheBefore.size}→{cacheAfter.size}){denomNote}{builderNote}"
 
   -- Exact ℚ evaluation path: when both sides are pure arithmetic (no exp/log),
   -- evaluate to exact ℚ and compare. Skip for cross-utterance (too large).

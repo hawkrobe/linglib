@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.229.21] - 2026-03-08
+
+### Added
+- **RSABuilder.lean**: Bottom-up RExpr builder for RSA expressions. Constructs RExpr trees directly from the RSA layer structure (L0→S1→L1) instead of tracing the Lean expression tree top-down via ~31K `unfoldDefinition?` calls. Persistent cross-theorem cache (`persistentBuildCache`) avoids rebuilding layers when the same RSAConfig is reused. First theorem: 28.7s → 3.1s (9x); cached within-utterance theorems: 3.2s → 0.2s (16x); cached cross-utterance: 5.3s → 1.0-2.3s (2-5x)
+
+### Changed
+- **Nouwen2024.lean**: Remove `maxHeartbeats 400000` override (no longer needed with builder speedup)
+
 ## [0.229.20] - 2026-03-08
 
 ### Added

@@ -480,7 +480,6 @@ redistribute probability mass relative to the bare adjective. "Horribly warm"
 assigns MORE probability to extreme heights than "warm" does; "pleasantly warm"
 assigns MORE to moderate heights than "warm" does. -/
 
-set_option maxHeartbeats 400000 in
 /-- At extreme heights, "horribly warm" assigns more probability than "warm". -/
 theorem horribly_above_bare_at_extreme :
     nouwenCfg.L1 .horribly_warm (deg 9) > nouwenCfg.L1 .bare_warm (deg 9) := by
