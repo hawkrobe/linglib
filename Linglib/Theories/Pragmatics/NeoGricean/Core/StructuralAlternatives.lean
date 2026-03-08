@@ -44,7 +44,7 @@ structural operations. For φ = "John ate some of the cake":
 - **Fills truthmaker gap**: `AlternativeSensitive.lean`'s `IsTruthmaker`
   requires ALT_S computed via structural alternative generation
 - **Economy connection**: @cite{katzir-singh-2015}'s complexity ordering
-  in `EconomyOddness.lean` is based on structural complexity (def 19)
+  in `KatzirSingh2015.lean` is based on structural complexity (def 19)
 -/
 
 namespace NeoGricean.StructuralAlternatives
@@ -653,7 +653,7 @@ from A_str(φ) because it requires more structure than φ provides.
 
 The at-least-as-good-as relation (def 23, p. 680) combines structural
 complexity (≲) with semantic entailment (⊆). This is the same relation
-formalized in `EconomyOddness.lean` as `atLeastAsGood`, where complexity
+formalized in `KatzirSingh2015.lean` as `atLeastAsGood`, where complexity
 is an abstract ℕ parameter — the structural complexity defined here
 gives that parameter its intended content. -/
 def violatesConversationalPrinciple {W World : Type}
@@ -677,10 +677,10 @@ def violatesConversationalPrinciple {W World : Type}
 
 This combines structural complexity (from def 19) with semantic
 entailment. It is the relation that @cite{katzir-singh-2015} use as
-the basis for the Answer Condition in `EconomyOddness.lean`, where
+the basis for the Answer Condition in `KatzirSingh2015.lean`, where
 it appears as `Scenario.atLeastAsGood`.
 
-The key insight: in `EconomyOddness.lean`, complexity is an abstract
+The key insight: in `KatzirSingh2015.lean`, complexity is an abstract
 `ℕ` parameter. Here, structural complexity gives that parameter its
 intended content — the number of structural operations needed. -/
 def atLeastAsGoodAs {W World : Type}

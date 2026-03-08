@@ -1,9 +1,16 @@
 # Changelog
 
-## [0.229.24] - 2026-03-08
+## [0.229.25] - 2026-03-08
+
+### Added
+- **Phenomena/ScalarImplicatures/Studies/Magri2009.lean**: Formalize @cite{magri-2009} blind mandatory scalar implicatures — `BlindScenario`, blind strengthening, CK contradiction oddness. Italian warmth example with 3-world model. `FelicityCondition` instance. Bridge theorems showing Magri and K&S agree on "some" oddness but disagree on "all" (genuine prediction difference)
+
+### Changed
+- **EconomyOddness.lean → KatzirSingh2015.lean**: Move from `Theories/Semantics/Questions/` to `Phenomena/ScalarImplicatures/Studies/` (it contains empirical data + theoretical analysis, belongs in Phenomena per conventions). Rename `magriScenario` → `italianWarmthScenario` (it's Magri's *example* analyzed by K&S's *mechanism*). Fix section title. Add `FelicityCondition` instance (`KSInput` wrapper). Update namespace to `Phenomena.ScalarImplicatures.Studies.KatzirSingh2015`
+- **StructuralAlternatives.lean**: Update cross-references from `EconomyOddness.lean` to `KatzirSingh2015.lean`
 
 ### Fixed
-- **references.bib**: Fix `magri-2009` — title was hallucinated ("Individual-level predicates and mandatory scalar implicatures" → "A theory of individual-level predicates based on blind mandatory scalar implicatures"), DOI pointed to wrong paper (Cambridge book chapter → Springer journal article `10.1007/s11050-009-9042-x`), entry type `@misc` → `@article`, add journal/volume/number/pages metadata
+- **references.bib**: Fix `magri-2009` — title was hallucinated ("Individual-level predicates and mandatory scalar implicatures" → "A theory of individual-level predicates based on blind mandatory scalar implicatures"), DOI pointed to wrong paper (Cambridge book chapter → Springer journal article `10.1007/s11050-009-9042-x`), entry type `@misc` → `@article`, add journal/volume/number/pages metadata. Update `sources` fields for `magri-2009` and `katzir-singh-2015` to reflect new file paths
 
 ## [0.229.23] - 2026-03-08
 

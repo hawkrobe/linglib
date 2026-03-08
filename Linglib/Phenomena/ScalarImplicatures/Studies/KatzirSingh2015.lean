@@ -1,4 +1,5 @@
 import Linglib.Core.Discourse.QUD
+import Linglib.Core.Interfaces.Felicity
 import Linglib.Core.Semantics.Proposition
 import Linglib.Theories.Semantics.Questions.Partition
 
@@ -28,7 +29,7 @@ stated globally but oddness persists in embedded constituents.
 
 -/
 
-namespace Semantics.Questions.EconomyOddness
+namespace Phenomena.ScalarImplicatures.Studies.KatzirSingh2015
 
 -- ═══════════════════════════════════════════════════════════════════════
 -- §1  Core K&S Definitions
@@ -161,10 +162,14 @@ def allAlternativesTrivial (φ : W → Bool) (alts : List (W → Bool)) : Bool :
 end Triviality
 
 -- ═══════════════════════════════════════════════════════════════════════
--- §3  Magri/Spector Oddness — Question Condition
+-- §3  Italian Warmth Oddness — Question Condition
 -- ═══════════════════════════════════════════════════════════════════════
 
 /-! K&S ex. (1)–(2): "# Some/All Italians come from a warm country"
+
+The example is due to @cite{magri-2009}, who explains the oddness via
+blind mandatory scalar implicatures (see `Magri2009.lean`). K&S offer
+an alternative explanation: the QUD is trivially settled by CK.
 
 CK: Italy is a warm country. Since all Italians come from Italy,
 the QUD "Do [some/all] Italians come from a warm country?" is
@@ -172,7 +177,7 @@ trivially settled → Question Condition violation.
 
 Both K&S and @cite{spector-2014} predict oddness here (§1.2). -/
 
-section MagriSpector
+section ItalianWarmth
 
 inductive ItalyWorld where
   | allWarm  | noneWarm
@@ -183,7 +188,7 @@ inductive ItalyUtt where
   deriving DecidableEq, BEq, Repr
 
 open ItalyWorld ItalyUtt in
-def magriScenario : Scenario ItalyWorld ItalyUtt where
+def italianWarmthScenario : Scenario ItalyWorld ItalyUtt where
   meaning
     | some_, allWarm => true  | some_, noneWarm => false
     | all_,  allWarm => true  | all_,  noneWarm => false
@@ -194,29 +199,29 @@ def magriScenario : Scenario ItalyWorld ItalyUtt where
   worlds     := [allWarm, noneWarm]
 
 /-- Contextual equivalence: some ↔ all (CK makes them interchangeable). -/
-theorem magri_contextEquiv :
-    magriScenario.contextEquiv .some_ .all_ = true := by native_decide
+theorem italianWarmth_contextEquiv :
+    italianWarmthScenario.contextEquiv .some_ .all_ = true := by native_decide
 
 /-- QUD trivially settled by CK → Question Condition violated. -/
-theorem magri_badQuestion :
-    magriScenario.badQuestion = true := by native_decide
+theorem italianWarmth_badQuestion :
+    italianWarmthScenario.badQuestion = true := by native_decide
 
 /-- K&S prediction: "some" is odd. -/
-theorem magri_some_odd :
-    magriScenario.isOdd .some_ = true := by native_decide
+theorem italianWarmth_some_odd :
+    italianWarmthScenario.isOdd .some_ = true := by native_decide
 
 /-- K&S prediction: "all" is odd. -/
-theorem magri_all_odd :
-    magriScenario.isOdd .all_ = true := by native_decide
+theorem italianWarmth_all_odd :
+    italianWarmthScenario.isOdd .all_ = true := by native_decide
 
 /-- Bridge: @cite{spector-2014} makes the same prediction (all alternatives trivial). -/
-theorem spector_agrees_magri :
+theorem spector_agrees_italianWarmth :
     allAlternativesTrivial [ItalyWorld.allWarm, .noneWarm]
       (λ w => w == .allWarm)
-      (magriScenario.meaning .some_)
-      [magriScenario.meaning .all_] = true := by native_decide
+      (italianWarmthScenario.meaning .some_)
+      [italianWarmthScenario.meaning .all_] = true := by native_decide
 
-end MagriSpector
+end ItalianWarmth
 
 -- ═══════════════════════════════════════════════════════════════════════
 -- §4  Needlessly Weak Answers — Answer Condition
@@ -496,18 +501,18 @@ end MaxPresup
 -- ═══════════════════════════════════════════════════════════════════════
 
 /-- The Question Condition and Answer Condition are independent:
-- Magri: Question Condition violated, Answer Condition irrelevant
+- Italian warmth: Question Condition violated, Answer Condition irrelevant
 - Grade: Question Condition satisfied, Answer Condition violated
 This shows neither condition subsumes the other. -/
 theorem conditions_independent :
-    -- Question Condition violated (Magri)
-    magriScenario.badQuestion = true ∧
+    -- Question Condition violated (Italian warmth)
+    italianWarmthScenario.badQuestion = true ∧
     -- Question Condition satisfied (Grade)
     gradeScenario.badQuestion = false ∧
     -- Answer Condition violated (Grade: "some" needlessly weak)
     gradeScenario.needlesslyInferior .some_ = true ∧
-    -- Answer Condition satisfied (Magri: neither is inferior to the other)
-    magriScenario.needlesslyInferior .some_ = false := by
+    -- Answer Condition satisfied (Italian warmth: neither is inferior)
+    italianWarmthScenario.needlesslyInferior .some_ = false := by
   exact ⟨by native_decide, by native_decide, by native_decide, by native_decide⟩
 
 -- ═══════════════════════════════════════════════════════════════════════
@@ -518,9 +523,9 @@ theorem conditions_independent :
 `needlesslyInferior` on all 5 scenarios. This confirms the truth gap
 doesn't affect the existing examples. -/
 
-theorem strict_agrees_magri :
-    magriScenario.needlesslyInferiorStrict .some_ =
-    magriScenario.needlesslyInferior .some_ := by native_decide
+theorem strict_agrees_italianWarmth :
+    italianWarmthScenario.needlesslyInferiorStrict .some_ =
+    italianWarmthScenario.needlesslyInferior .some_ := by native_decide
 
 theorem strict_agrees_grade :
     gradeScenario.needlesslyInferiorStrict .some_ =
@@ -587,4 +592,34 @@ theorem compose_open_context :
 
 end Composability
 
-end Semantics.Questions.EconomyOddness
+-- ═══════════════════════════════════════════════════════════════════════
+-- §11  FelicityCondition Instance
+-- ═══════════════════════════════════════════════════════════════════════
+
+/-- Input for K&S felicity checking: a scenario paired with an utterance. -/
+structure KSInput (W U : Type*) where
+  scenario : Scenario W U
+  utterance : U
+
+open Interfaces in
+/-- K&S economy as a `FelicityCondition`: an utterance is odd if the
+Question Condition or Answer Condition is violated. -/
+instance {W U : Type*} : FelicityCondition (KSInput W U) where
+  name := "Katzir & Singh 2015"
+  check := λ ⟨s, u⟩ =>
+    if s.badQuestion then
+      { status := .odd, source := some .questionCondition }
+    else if s.needlesslyInferior u then
+      { status := .odd, source := some .answerCondition }
+    else
+      { status := .felicitous }
+
+/-- K&S predicts "some Italians" is odd (via Question Condition). -/
+theorem ks_italian_some_odd :
+    Interfaces.isOdd (KSInput.mk italianWarmthScenario .some_) = true := by native_decide
+
+/-- K&S predicts "some" in grade scenario is odd (via Answer Condition). -/
+theorem ks_grade_some_odd :
+    Interfaces.isOdd (KSInput.mk gradeScenario .some_) = true := by native_decide
+
+end Phenomena.ScalarImplicatures.Studies.KatzirSingh2015

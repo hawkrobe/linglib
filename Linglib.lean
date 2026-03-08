@@ -1339,7 +1339,8 @@ import Linglib.Theories.Syntax.Minimalism.Tense.Wurmbrand
 import Linglib.Theories.Semantics.Questions.Answerhood
 import Linglib.Theories.Semantics.Questions.Basic
 import Linglib.Theories.Semantics.Questions.Coordination
-import Linglib.Theories.Semantics.Questions.EconomyOddness
+import Linglib.Phenomena.ScalarImplicatures.Studies.KatzirSingh2015
+import Linglib.Phenomena.ScalarImplicatures.Studies.Magri2009
 import Linglib.Theories.Semantics.Questions.EntropyNPIs
 import Linglib.Theories.Semantics.Questions.Exhaustivity
 import Linglib.Theories.Semantics.Questions.GSVanRooyBridge
