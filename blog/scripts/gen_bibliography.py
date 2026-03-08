@@ -272,12 +272,7 @@ def render_entry_html(entry: dict, cited_by: dict[str, list[str]]) -> str:
         citation += f' <em>{html_escape(venue)}</em>.'
     parts.append(f'<p class="bib-citation">{citation}</p>')
 
-    # Metadata line: badge + deduplicated file links
-    badge = ROLE_BADGE.get(role, role)
-    meta = f'<span class="bib-badge bib-badge-{html_escape(role)}">{html_escape(badge)}</span>'
-
-    # Merge sources and cited-in into one deduplicated list of named file links
-    # Normalize all paths to "Linglib/"-relative for dedup
+    # Deduplicated file links (role is indicated by left border, not a badge)
     seen_paths: set[str] = set()
     all_links: list[str] = []
     for s in sources:
@@ -293,9 +288,7 @@ def render_entry_html(entry: dict, cited_by: dict[str, list[str]]) -> str:
             all_links.append(lean_file_link(rel))
 
     if all_links:
-        meta += f'<br>in: {", ".join(all_links)}'
-
-    parts.append(f'<p class="bib-meta">{meta}</p>')
+        parts.append(f'<p class="bib-meta">{", ".join(all_links)}</p>')
     parts.append('</div>')
     return "\n".join(parts)
 
@@ -377,33 +370,29 @@ SEARCH_HTML = """\
 }
 .bib-entry {
   margin-bottom: 1em;
+  padding-left: 12px;
+  border-left: 3px solid transparent;
+}
+.bib-entry[data-role="formalized"] {
+  border-left-color: #22c55e;
+}
+.bib-entry[data-role="foundational"] {
+  border-left-color: #a78bfa;
 }
 .bib-entry.bib-hidden {
   display: none;
 }
 .bib-citation {
-  margin: 0 0 2px;
+  margin: 0;
   line-height: 1.5;
 }
 .bib-meta {
-  margin: 0;
-  font-size: 0.88em;
+  margin: 2px 0 0;
+  font-size: 0.85em;
   color: var(--secondary);
-  line-height: 1.5;
+  line-height: 1.4;
 }
 .bib-meta a {
-  color: var(--secondary);
-}
-.bib-badge {
-  font-weight: 600;
-}
-.bib-badge-formalized {
-  color: #22c55e;
-}
-.bib-badge-foundational {
-  color: #a78bfa;
-}
-.bib-badge-cited {
   color: var(--secondary);
 }
 .bib-tag-filters {
