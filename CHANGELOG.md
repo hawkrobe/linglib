@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.229.20] - 2026-03-08
+
+### Added
+- **Comparisons/ExhaustivityLimit.lean**: Concrete proof that RSA L1 at α → ∞ recovers Fox 2007's exh for ⟨some, all⟩. Belief-based speaker S1 with rpow scoring on two utterances (weak/strong) and two worlds (weakOnly/both). `s1_weak_weakOnly` (= 1 exactly for α > 0), `s1_weak_both_tendsto_zero` (→ 0 via rpow_luce_eq_softmax + softmax limits), `l1_weak_weakOnly_tendsto_one` (L1 concentrates on ¬all worlds). Fox connection: `scale_ie` (innocent exclusion = {strong}), `exh_weak` (exh(some) = some ∧ ¬all), matching L1 limit
+
 ## [0.229.19] - 2026-03-08
 
 ### Added

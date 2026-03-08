@@ -99,10 +99,10 @@ import Linglib.Core.Scales.EpistemicScale.FinsetBridge
 import Linglib.Core.Scales.EpistemicScale.Conditional
 import Linglib.Core.Scales.EpistemicScale.Cancellation
 import Linglib.Core.Scales.EpistemicScale.Cancellation88
-import Linglib.Core.Scales.EpistemicScale.CancellationChambers1
-import Linglib.Core.Scales.EpistemicScale.CancellationChambers2
-import Linglib.Core.Scales.EpistemicScale.CancellationChambers3
-import Linglib.Core.Scales.EpistemicScale.CancellationChambers4
+import Linglib.Core.Scales.EpistemicScale.CancellationChambers1New
+import Linglib.Core.Scales.EpistemicScale.CancellationChambers2New
+import Linglib.Core.Scales.EpistemicScale.CancellationChambers3New
+import Linglib.Core.Scales.EpistemicScale.CancellationChambers4New
 import Linglib.Core.Scales.EpistemicScale.CancellationHelpers
 import Linglib.Core.Scales.EpistemicScale.Representability
 import Linglib.Core.Mereology
@@ -927,6 +927,7 @@ import Linglib.Theories.Syntax.CCG.Scope
 import Linglib.Theories.Syntax.CCG.Intonation
 -- Comparisons (pure metatheory)
 import Linglib.Comparisons.CommandRelations
+import Linglib.Comparisons.ExhaustivityLimit
 import Linglib.Comparisons.GenericSemantics
 import Linglib.Comparisons.Mueller2013
 import Linglib.Comparisons.Partee1973
@@ -1380,7 +1381,7 @@ import Linglib.Theories.Pragmatics.NeoGricean.Exhaustivity.EFCIClosure
 import Linglib.Theories.Pragmatics.NeoGricean.Exhaustivity.Fox2007
 import Linglib.Theories.Pragmatics.NeoGricean.Exhaustivity.Interface
 import Linglib.Theories.Pragmatics.NeoGricean.Implementations.BarLevFox2020
-import Linglib.Theories.Pragmatics.NeoGricean.Implementations.FoxSpector2018
+import Linglib.Theories.Pragmatics.NeoGricean.Core.FoxSpector2018
 import Linglib.Phenomena.Plurals.Studies.Magri2014
 import Linglib.Theories.Pragmatics.NeoGricean.Implementations.MontagueExhaustivity
 import Linglib.Theories.Pragmatics.NeoGricean.Implementations.Spector2007
