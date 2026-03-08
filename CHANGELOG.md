@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.229.16] - 2026-03-07
+
+### Added
+- **RankingBridge.lean** §7: Conditional Softmax Limit Theorem — `condProb_tendsto_one` (P_α(σ|φ) → 1 as α→∞ under ranking entailment). Completes the RSA–ranking bridge: not just "prior concentrates on rank-0 worlds" but "posterior conditioned on φ concentrates on σ-worlds." Proof by exponential decay of rejection mass (squeeze theorem). Helper: `rankEntails_exists_sat`, `condProb` definition
+- **GoldszmidtPearl1996.lean**: `condProb_birds_fly` (P_α(flies|bird) → 1), `condProb_penguins_dont_fly` (P_α(¬flies|penguin∧bird) → 1) — concrete applications of the conditional limit theorem to the Tweety scenario
+
 ## [0.229.15] - 2026-03-07
 
 ### Changed

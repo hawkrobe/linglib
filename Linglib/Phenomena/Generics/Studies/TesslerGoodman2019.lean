@@ -460,4 +460,14 @@ different S1 endorsement rates.
 theorem asymmetry_same_prevalence :
     Phenomena.Generics.laysEggsVsIsFemale.prevalence = 1/2 := rfl
 
+-- ============================================================================
+-- § 9. Connection to Ranking Bridge
+-- ============================================================================
+
+/-! The conditional softmax limit theorem
+    (`RankingBridge.condProb_tendsto_one`) implies that as α → ∞, this
+    model's endorsement rates sharpen to 0 or 1 — generics become
+    categorical defaults. Wiring this formally requires bridging
+    `rpow(l0, α)` to `exp(α * log l0)` (TODO). -/
+
 end Phenomena.Generics.Studies.TesslerGoodman2019

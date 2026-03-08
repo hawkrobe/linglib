@@ -18,6 +18,9 @@ connection precise.
    unique rank-0 world as α → ∞.
 3. `minRank_worlds_satisfy`: Under ranking entailment, all minimum-rank
    φ-worlds satisfy σ — connecting to the softmax limit.
+4. `condProb_tendsto_one`: **Conditional Softmax Limit Theorem** —
+   P_α(σ|φ) → 1 as α → ∞ whenever κ ⊨ φ → σ. This is the central
+   result: RSA with infinite rationality = ranking entailment.
 
 ## Mathematical background
 
@@ -257,13 +260,9 @@ theorem rankToPrior_lt_iff (κ : RankingFunction W) (w v : W) :
     This is exactly what `rankEntails κ ⟦u⟧ σ` characterizes: the
     most normal worlds satisfying the utterance also satisfy σ.
 
-    The formal statement requires parameterizing RSAConfig over α
-    and taking limits, which involves infrastructure beyond the
-    current scope. The key building blocks are all in place:
-    - `softmax_concentrates_unique` (this file)
-    - `tendsto_softmax_infty_unique_max` (Softmax/Limits.lean)
-    - `rankToPrior` ordering (this file)
-    - `minRank_worlds_satisfy` (this file) -/
+    The conditional limit theorem `condProb_tendsto_one` (§7)
+    formalizes this precisely: P_α(σ|φ) → 1 as α → ∞ whenever
+    κ ⊨ φ → σ. -/
 
 /-- The softmax distribution with ranking scores is exactly the
     exponential prior (up to normalization).
@@ -369,5 +368,159 @@ theorem softmax_eq_tropical_ratio [Fintype W] [Nonempty W]
   congr 1
   · exact key (κ.rank w)
   · exact Finset.sum_congr rfl fun v _ => key (κ.rank v)
+
+-- ══════════════════════════════════════════════════════════════════════
+-- § 7. Conditional Softmax Limit Theorem
+-- ══════════════════════════════════════════════════════════════════════
+
+/-! The conditional limit theorem: as α → ∞, the conditional probability
+    P_α(σ|φ) → 1 whenever ranking entailment κ ⊨ φ → σ holds.
+
+    This completes the RSA–ranking bridge:
+    - §2 shows the *prior* concentrates on rank-0 worlds
+    - §7 shows the *posterior* (conditioned on φ) concentrates on σ-worlds
+
+    The proof uses exponential decay of non-minimal-rank worlds:
+    under ranking entailment, every φ∧¬σ world has rank strictly above
+    the minimum-rank φ∧σ world, so its softmax weight decays
+    exponentially faster, driving P(σ|φ) → 1. -/
+
+/-- rankEntails implies the existence of a φ∧σ witness. -/
+theorem rankEntails_exists_sat [Fintype W]
+    (κ : RankingFunction W) (φ σ : W → Bool)
+    (h : rankEntails κ φ σ) (hφ : ∃ w, φ w = true) :
+    ∃ w, (φ w && σ w) = true := by
+  obtain ⟨w, hw⟩ := hφ
+  cases hσ : σ w
+  · have : (φ w && !σ w) = true := by simp [hw, hσ]
+    obtain ⟨v, hv, _⟩ := h w this
+    exact ⟨v, hv⟩
+  · exact ⟨w, by simp [hw, hσ]⟩
+
+/-- Conditional probability of σ given φ under scores s at rationality α.
+    P_α(σ|φ) = Σ_{w: φ∧σ} exp(α·s(w)) / Σ_{w: φ} exp(α·s(w)) -/
+noncomputable def condProb [Fintype W] (s : W → ℝ) (α : ℝ)
+    (φ σ : W → Bool) : ℝ :=
+  (∑ w ∈ univ.filter (fun w => (φ w && σ w) = true),
+      exp (α * s w)) /
+  (∑ w ∈ univ.filter (fun w => φ w = true),
+      exp (α * s w))
+
+/-- **Conditional Softmax Limit Theorem.** Under ranking entailment
+    κ ⊨ φ → σ, the conditional probability P_α(σ|φ) converges to 1
+    as α → ∞.
+
+    This is the central theorem connecting RSA to default reasoning:
+    an RSA listener with ranking-derived scores and infinite rationality
+    draws exactly the conclusions that ranking entailment sanctions. -/
+theorem condProb_tendsto_one [Fintype W] [DecidableEq W]
+    (κ : RankingFunction W) (φ σ : W → Bool)
+    (h : rankEntails κ φ σ) (hφ : ∃ w, φ w = true) :
+    Tendsto (fun α => condProb (rankToScore κ) α φ σ) atTop (nhds 1) := by
+  have hφσ := rankEntails_exists_sat κ φ σ h hφ
+  set s := rankToScore κ with hs_def
+  set Sφ := univ.filter (fun w : W => φ w = true)
+  set Sφσ := univ.filter (fun w : W => (φ w && σ w) = true)
+  have hsub : Sφσ ⊆ Sφ := by
+    intro w; simp only [Sφσ, Sφ, mem_filter, mem_univ, true_and, Bool.and_eq_true]
+    exact And.left
+  have hD_pos : ∀ α, 0 < ∑ w ∈ Sφ, exp (α * s w) := by
+    intro α; obtain ⟨w, hw⟩ := hφ
+    exact Finset.sum_pos (fun v _ => exp_pos _) ⟨w, mem_filter.mpr ⟨mem_univ w, hw⟩⟩
+  by_cases hall : ∀ w, φ w = true → σ w = true
+  · -- Trivial: Sφσ = Sφ, condProb ≡ 1
+    have hsets : Sφσ = Sφ := by
+      ext w; simp only [Sφσ, Sφ, mem_filter, mem_univ, true_and, Bool.and_eq_true]
+      exact ⟨And.left, fun h1 => ⟨h1, hall w h1⟩⟩
+    suffices heq : ∀ α, condProb s α φ σ = 1 from by
+      simp_rw [heq]; exact tendsto_const_nhds
+    intro α
+    show (∑ w ∈ Sφσ, exp (α * s w)) / (∑ w ∈ Sφ, exp (α * s w)) = 1
+    rw [hsets]; exact div_self (ne_of_gt (hD_pos α))
+  · -- Non-trivial: exponential decay of rejection mass
+    push_neg at hall
+    set m := minRankBool κ (fun v => φ v && σ v) hφσ
+    have hSφσ_ne : Sφσ.Nonempty := by
+      obtain ⟨w, hw⟩ := hφσ; exact ⟨w, mem_filter.mpr ⟨mem_univ w, hw⟩⟩
+    obtain ⟨w₀, hw₀_mem, hw₀_eq⟩ := Finset.exists_mem_eq_inf' hSφσ_ne κ.rank
+    have hw₀_φ : w₀ ∈ Sφ := hsub hw₀_mem
+    have hgap : ∀ w, (φ w && !σ w) = true → m < κ.rank w :=
+      (rankEntails_iff_minRank_lt κ φ σ hφσ).mp h
+    have hmem_sdiff : ∀ w ∈ Sφ \ Sφσ, (φ w && !σ w) = true := by
+      intro w hw
+      rw [Finset.mem_sdiff] at hw
+      have hφw : φ w = true := by
+        simp only [Sφ, mem_filter, mem_univ, true_and] at hw; exact hw.1
+      have hnotσ : σ w ≠ true := by
+        simp only [Sφσ, mem_filter, mem_univ, true_and, Bool.and_eq_true] at hw
+        intro hσ; exact hw.2 ⟨hφw, hσ⟩
+      cases hσ : σ w
+      · simp [hφw]
+      · exact absurd hσ hnotσ
+    set R := fun α => ∑ w ∈ Sφ \ Sφσ, exp (α * s w)
+    set D := fun α => ∑ w ∈ Sφ, exp (α * s w)
+    have hdecomp : ∀ α, R α + (∑ w ∈ Sφσ, exp (α * s w)) = D α := by
+      intro α; exact Finset.sum_sdiff hsub
+    have hcond_eq : ∀ α, condProb s α φ σ = 1 - R α / D α := by
+      intro α
+      have hD_ne : D α ≠ 0 := ne_of_gt (hD_pos α)
+      show (∑ w ∈ Sφσ, exp (α * s w)) / D α = 1 - R α / D α
+      rw [show (∑ w ∈ Sφσ, exp (α * s w)) = D α - R α from by linarith [hdecomp α]]
+      rw [sub_div, div_self hD_ne]
+    have hw₀_rank : κ.rank w₀ = m := hw₀_eq.symm
+    have hscore_w₀ : s w₀ = -(↑m : ℝ) := by
+      simp only [hs_def, rankToScore, hw₀_rank]
+    have hscore_bad : ∀ w ∈ Sφ \ Sφσ, s w ≤ -(↑(m + 1) : ℝ) := by
+      intro w hw
+      simp only [hs_def, rankToScore, neg_le_neg_iff, Nat.cast_le]
+      exact hgap w (hmem_sdiff w hw)
+    set C := (Fintype.card W : ℝ)
+    have hbound : ∀ α, 0 ≤ α → R α / D α ≤ C * exp (-α) := by
+      intro α hα
+      have hR_bound : R α ≤ C * exp (α * -(↑(m + 1) : ℝ)) := by
+        calc R α ≤ ∑ _ ∈ Sφ \ Sφσ, exp (α * -(↑(m + 1) : ℝ)) := by
+              apply Finset.sum_le_sum; intro w hw
+              exact exp_le_exp.mpr (mul_le_mul_of_nonneg_left (hscore_bad w hw) hα)
+          _ = ↑(Sφ \ Sφσ).card * exp (α * -(↑(m + 1) : ℝ)) := by
+              rw [Finset.sum_const, nsmul_eq_mul]
+          _ ≤ C * exp (α * -(↑(m + 1) : ℝ)) := by
+              apply mul_le_mul_of_nonneg_right _ (le_of_lt (exp_pos _))
+              exact Nat.cast_le.mpr (Finset.card_le_univ _)
+      have hD_lower : exp (α * -(↑m : ℝ)) ≤ D α := by
+        have h1 : exp (α * s w₀) ≤ ∑ w ∈ Sφ, exp (α * s w) :=
+          Finset.single_le_sum (f := fun w => exp (α * s w))
+            (fun w _ => le_of_lt (exp_pos _)) hw₀_φ
+        linarith [show exp (α * -(↑m : ℝ)) = exp (α * s w₀) from by rw [hscore_w₀]]
+      have hexp_pos : (0 : ℝ) < exp (α * -(↑m : ℝ)) := exp_pos _
+      calc R α / D α
+          ≤ R α / exp (α * -(↑m : ℝ)) := by
+            apply div_le_div_of_nonneg_left
+              (Finset.sum_nonneg fun w _ => le_of_lt (exp_pos _))
+              hexp_pos hD_lower
+        _ ≤ (C * exp (α * -(↑(m + 1) : ℝ))) / exp (α * -(↑m : ℝ)) := by
+            apply div_le_div_of_nonneg_right hR_bound (le_of_lt hexp_pos)
+        _ = C * (exp (α * -(↑(m + 1) : ℝ)) / exp (α * -(↑m : ℝ))) := by
+            rw [mul_div_assoc]
+        _ = C * exp (α * -(↑(m + 1) : ℝ) - α * -(↑m : ℝ)) := by
+            rw [← Real.exp_sub]
+        _ = C * exp (-α) := by
+            congr 1; push_cast; ring
+    have hR_nonneg : ∀ α, 0 ≤ R α / D α :=
+      fun α => div_nonneg
+        (Finset.sum_nonneg fun w _ => le_of_lt (exp_pos _))
+        (le_of_lt (hD_pos α))
+    have hexp_zero : Tendsto (fun α => C * exp (-α)) atTop (nhds 0) := by
+      rw [show (0 : ℝ) = C * 0 from by ring]
+      exact tendsto_const_nhds.mul
+        (tendsto_exp_atBot.comp tendsto_neg_atTop_atBot)
+    have hRD_zero : Tendsto (fun α => R α / D α) atTop (nhds 0) :=
+      squeeze_zero' (Eventually.of_forall hR_nonneg)
+        (eventually_atTop.mpr ⟨0, fun α hα => hbound α hα⟩)
+        hexp_zero
+    simp_rw [hcond_eq]
+    have : Tendsto (fun α => 1 - R α / D α) atTop (nhds (1 - 0)) :=
+      tendsto_const_nhds.sub hRD_zero
+    simp only [sub_zero] at this
+    exact this
 
 end Theories.Pragmatics.RSA.RankingBridge
