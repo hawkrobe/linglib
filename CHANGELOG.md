@@ -1,9 +1,10 @@
 # Changelog
 
-## [0.229.17] - 2026-03-07
+## [0.229.18] - 2026-03-07
 
 ### Added
-- **TesslerGoodman2019.lean** §9: Wire generics to softmax limits. `endorsement_eq_softmax` (endorsement model IS softmax over log-L0 scores via rpow = exp∘log), `endorsement_tendsto_one` (endorsed generics → probability 1 as α→∞), `endorsement_tendsto_zero` (non-endorsed → 0). Helpers: `l0Score`, `logL0Score`, `rpow_eq_softmax_score`
+- **RationalAction.lean**: `rpow_luce_eq_softmax` — general identity proving Luce choice with rpow scores equals softmax over log scores. Every belief-based RSA S1 model inherits all softmax limit theorems for free
+- **TesslerGoodman2019.lean** §9: Wire generics to softmax limits via `rpow_luce_eq_softmax`. `endorsement_eq_softmax` (one-liner delegating to Core identity), `endorsement_tendsto_one` (endorsed generics → probability 1 as α→∞), `endorsement_tendsto_zero` (non-endorsed → 0)
 
 ## [0.229.16] - 2026-03-07
 

@@ -467,8 +467,10 @@ theorem asymmetry_same_prevalence :
 
 /-! As α → ∞, the endorsement model sharpens to a categorical decision:
     endorsed generics get probability 1, non-endorsed get probability 0.
-    The bridge is `rpow(l0, α) = exp(α · log l0)` — the endorsement model
-    IS softmax over log-L0 scores. -/
+
+    By `rpow_luce_eq_softmax` (Core), every rpow-based Luce choice rule IS
+    softmax over log scores. The endorsement model inherits all softmax
+    limit theorems for free. -/
 
 open Core Real BigOperators Finset Filter Topology
 
@@ -478,42 +480,20 @@ instance : Nonempty Utterance := ⟨.generic⟩
 noncomputable def l0Score (prior : Prevalence → ℝ) (u : Utterance) (p : Prevalence) : ℝ :=
   prior p * (thresholdCount u p : ℝ)
 
-/-- Log-L0 score: the softmax utility for the endorsement model.
-    S1(u|p) = rpow(l0(u,p), α) = exp(α · logL0(u,p)), so the
-    endorsement model IS softmax over log-L0 scores. -/
-noncomputable def logL0Score (prior : Prevalence → ℝ) (u : Utterance)
-    (p : Prevalence) : ℝ :=
-  log (l0Score prior u p)
-
-/-- rpow(l0, α) = exp(α * logL0) when l0 > 0. -/
-theorem rpow_eq_softmax_score (prior : Prevalence → ℝ) (u : Utterance)
-    (p : Prevalence) (α : ℝ) (hl0 : 0 < l0Score prior u p) :
-    (l0Score prior u p) ^ α = exp (α * logL0Score prior u p) := by
-  rw [logL0Score, rpow_def_of_pos hl0, mul_comm]
-
 /-- The endorsement rate equals softmax over log-L0 scores.
-    The endorsement model IS a 2-action softmax. -/
+    Immediate from `rpow_luce_eq_softmax`: the endorsement model IS softmax. -/
 theorem endorsement_eq_softmax (prior : Prevalence → ℝ) (p : Prevalence) (α : ℝ)
-    (hg : 0 < l0Score prior .generic p)
-    (hs : 0 < l0Score prior .silent p) :
-    (l0Score prior .generic p) ^ α /
-      ((l0Score prior .generic p) ^ α + (l0Score prior .silent p) ^ α) =
-    softmax (fun u : Utterance => logL0Score prior u p) α .generic := by
-  simp only [softmax]
-  rw [rpow_eq_softmax_score _ _ _ _ hg]
-  congr 1
-  have hsum : ∀ (f : Utterance → ℝ), ∑ j : Utterance, f j = f .generic + f .silent := by
-    intro f
-    have : (Finset.univ : Finset Utterance) = {.generic, .silent} := by decide
-    rw [this, Finset.sum_pair (by decide)]
-  rw [hsum, ← rpow_eq_softmax_score _ _ _ _ hg, ← rpow_eq_softmax_score _ _ _ _ hs]
+    (hl0 : ∀ u, 0 < l0Score prior u p) :
+    (l0Score prior .generic p) ^ α / ∑ u : Utterance, (l0Score prior u p) ^ α =
+    softmax (fun u : Utterance => log (l0Score prior u p)) α .generic :=
+  rpow_luce_eq_softmax (fun u => l0Score prior u p) α hl0 .generic
 
 /-- When l0_gen > l0_sil (endorsed generic), the endorsement rate → 1
     as α → ∞. Direct corollary of `Softmax.tendsto_softmax_infty_at_max`. -/
 theorem endorsement_tendsto_one (prior : Prevalence → ℝ) (p : Prevalence)
     (hs : 0 < l0Score prior .silent p)
     (h : l0Score prior .silent p < l0Score prior .generic p) :
-    Tendsto (fun α => softmax (fun u : Utterance => logL0Score prior u p) α .generic)
+    Tendsto (fun α => softmax (fun u : Utterance => log (l0Score prior u p)) α .generic)
       atTop (nhds 1) := by
   apply Softmax.tendsto_softmax_infty_at_max
   intro j hj
@@ -525,10 +505,10 @@ theorem endorsement_tendsto_one (prior : Prevalence → ℝ) (p : Prevalence)
 theorem endorsement_tendsto_zero (prior : Prevalence → ℝ) (p : Prevalence)
     (hg : 0 < l0Score prior .generic p)
     (h : l0Score prior .generic p < l0Score prior .silent p) :
-    Tendsto (fun α => softmax (fun u : Utterance => logL0Score prior u p) α .generic)
+    Tendsto (fun α => softmax (fun u : Utterance => log (l0Score prior u p)) α .generic)
       atTop (nhds 0) := by
   have hlim := Softmax.tendsto_softmax_infty_unique_max
-    (fun u : Utterance => logL0Score prior u p) .silent
+    (fun u : Utterance => log (l0Score prior u p)) .silent
     (by intro j hj; cases j with
       | generic => exact Real.log_lt_log hg h
       | silent => exact absurd rfl hj) .generic

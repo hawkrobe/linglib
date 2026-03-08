@@ -571,6 +571,26 @@ theorem softmax_exponential_family (s : ι → ℝ) (α : ℝ) (i : ι) [Nonempt
     exp_log (partitionFn_pos s α)
   rw [h]
 
+/-- Luce choice with rpow scores equals softmax over log scores.
+
+    f(i)^α / Σⱼ f(j)^α = softmax(log ∘ f, α)(i)  when all f(i) > 0.
+
+    This is the general identity connecting belief-based RSA (which uses
+    rpow) to the softmax framework (which uses exp). Every S1 model with
+    `s1Score = rpow(l0, α)` inherits all softmax limit theorems via this
+    identity: as α → ∞, rpow-based Luce choice concentrates on the
+    argmax of f, i.e., the most informative utterance. -/
+theorem rpow_luce_eq_softmax [Nonempty ι] (f : ι → ℝ) (α : ℝ)
+    (hf : ∀ i, 0 < f i) (i : ι) :
+    f i ^ α / ∑ j : ι, f j ^ α =
+    softmax (fun j => log (f j)) α i := by
+  simp only [softmax]
+  congr 1
+  · rw [rpow_def_of_pos (hf i), mul_comm]
+  · apply Finset.sum_congr rfl
+    intro j _
+    rw [rpow_def_of_pos (hf j), mul_comm]
+
 end SoftmaxBasic
 
 -- ============================================================================
