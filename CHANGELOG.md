@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.229.22] - 2026-03-08
+
+### Changed
+- **CancelFin4.lean**: Rewrite `solve_cancellation` with deterministic meta-level strategy selection (11 strategies) replacing tactic-based backtracking search. Strategies 10-11 (additive+trans compound) fix chamber 13 and other cases requiring overlapping-set intermediates
+- **CancellationChambers{1-4}New.lean**: All 88 chambers now use `solve_cancellation` with just weight vectors (no manual saturation `have` blocks)
+- **FinsetBridge.lean**: Add `nge_of_trans_superset` lemma
+- **Cancellation88.lean**: Point imports at new chamber files
+
 ## [0.229.21] - 2026-03-08
 
 ### Added

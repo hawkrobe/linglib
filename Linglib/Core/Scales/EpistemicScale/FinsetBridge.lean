@@ -284,4 +284,17 @@ theorem ge_of_double_additive_pos (sys : EpistemicSystemFA (Fin n))
     ((sys.additive B C).mpr (by rw [hd1, he1]; exact hge_d1e1))
     ((sys.additive C A).mpr (by rw [hd2, he2]; exact hge_d2e2))
 
+/-- ¬ge A B via trans to superset: if ge B C and A ⊆ C (A\C = ∅),
+    then ge A B → ge A C → ge ∅ (C\A) → contradiction with hpos. -/
+theorem nge_of_trans_superset (sys : EpistemicSystemFA (Fin n))
+    (hpos : ∀ i : Fin n, ¬sys.ge ∅ {i})
+    {A B C : Set (Fin n)}
+    (hge : sys.ge B C) (hAC : A \ C = ∅) (hCA_ne : (C \ A).Nonempty)
+    : ¬sys.ge A B := fun h => by
+  have h1 := sys.trans _ _ _ h hge  -- ge A C
+  have h2 := (sys.additive A C).mp h1
+  rw [hAC] at h2  -- ge ∅ (C\A)
+  obtain ⟨x, hx⟩ := hCA_ne
+  exact hpos x (sys.trans _ _ _ h2 (sys.mono _ _ (Set.singleton_subset_iff.mpr hx)))
+
 end Core.Scale
