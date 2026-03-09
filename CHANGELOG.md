@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.229.43] - 2026-03-08
+
+### Changed
+- **FileChange/Basic.lean**: Rewrite File Change Semantics with proper `HeimFile` structure (⟨Dom, Sat⟩ pair), partial `FCP` type (`HeimFile → Option HeimFile`), novelty/familiarity guards on `indef`/`def_`, per-element negation preserving domain, truth-as-idempotency, bridge to Core CCP infrastructure. 15 theorems (seq_assoc, id_seq/seq_id monoidal laws, atom_preserves_dom, neg_preserves_dom, atom_eliminative, true_idempotent, etc.)
+
+### Added
+- **Studies/Heim1982.lean**: Study file connecting File Change Semantics to cross-sentential anaphora data — indefinite persistence, negation blocks dref export (`neg_blocks_dref`), novelty-familiarity condition (complementarity, presupposition failure), conjunction as sequential update (monoidal structure), truth as idempotency, atomic eliminativity, concrete model examples
+
 ## [0.229.42] - 2026-03-08
 
 ### Added

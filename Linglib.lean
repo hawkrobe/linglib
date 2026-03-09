@@ -527,6 +527,7 @@ import Linglib.Phenomena.Anaphora.Studies.DGNominal
 import Linglib.Phenomena.Anaphora.Studies.HPSGCoreference
 import Linglib.Phenomena.Anaphora.Studies.MinimalismCoreference
 import Linglib.Phenomena.Anaphora.Studies.Cooper2023
+import Linglib.Phenomena.Anaphora.Studies.Heim1982
 import Linglib.Phenomena.Anaphora.Studies.KampReyle1993
 import Linglib.Phenomena.Anaphora.Studies.KeshetAbney2024
 import Linglib.Phenomena.Anaphora.Coreference
