@@ -638,6 +638,63 @@ theorem mergingLemma {E : Type*} (rels : RelInterp E)
   rw [← dseq_assoc, interpConds_comm_introChain rels conds1 drefs2 hfresh, dseq_assoc]
 
 -- ════════════════════════════════════════════════════════════════
+-- § 8b. DRS Reduction (Merging to Canonical Form)
+-- ════════════════════════════════════════════════════════════════
+
+/-! Kamp & Reyle's *DRS reduction* — the operation that collapses
+compositional `.seq (.box …) (.box …)` derivations into canonical
+single-box form. This is Muskens's T₅ rule applied iteratively.
+
+`reduce K` walks the `.seq` spine bottom-up: whenever two adjacent
+boxes satisfy the freshness precondition of the merging lemma, they
+are fused into one box. The soundness theorem says interpretation is
+invariant: `interp rels (reduce K) = interp rels K`. -/
+
+/-- Try to merge two DRS expressions. If both are boxes and the
+freshness condition is met, fuse them; otherwise leave as `.seq`. -/
+private def tryMerge : DRSExpr → DRSExpr → DRSExpr
+  | .box d1 c1, .box d2 c2 =>
+      if d2.all (fun n => c1.all (fun c => !occurs n c))
+      then .box (d1 ++ d2) (c1 ++ c2)
+      else .seq (.box d1 c1) (.box d2 c2)
+  | r1, r2 => .seq r1 r2
+
+/-- Reduce a DRS expression by iteratively merging sequential boxes.
+
+Only reduces `.seq` chains (the discourse-composition spine).
+Conditions inside boxes are left structurally intact — they don't
+contain `.seq` in well-formed DRT derivations. -/
+def reduce : DRSExpr → DRSExpr
+  | .seq K₁ K₂ => tryMerge (reduce K₁) (reduce K₂)
+  | K => K
+
+private theorem tryMerge_sound {E : Type*} (rels : RelInterp E)
+    (K₁ K₂ : DRSExpr) :
+    interp rels (tryMerge K₁ K₂) = interp rels (.seq K₁ K₂) := by
+  unfold tryMerge
+  split
+  · rename_i d1 c1 d2 c2
+    split
+    · rename_i hfresh
+      have hf : ∀ n ∈ d2, ∀ c ∈ c1, occurs n c = false := by
+        simp only [List.all_eq_true, Bool.not_eq_eq_eq_not, Bool.not_true] at hfresh
+        exact fun n hn c hc => hfresh n hn c hc
+      exact (mergingLemma rels d1 d2 c1 c2 hf).symm
+    · rfl
+  · rfl
+
+/-- DRS reduction preserves interpretation. -/
+theorem reduce_sound {E : Type*} (rels : RelInterp E) :
+    ∀ K : DRSExpr, interp rels (reduce K) = interp rels K
+  | .atom _ _ | .is _ _ | .neg _ | .disj _ _ | .impl _ _ | .box _ _ => rfl
+  | .seq K₁ K₂ => by
+      show interp rels (tryMerge (reduce K₁) (reduce K₂)) = _
+      rw [tryMerge_sound rels (reduce K₁) (reduce K₂)]
+      show dseq (interp rels (reduce K₁)) (interp rels (reduce K₂)) =
+           dseq (interp rels K₁) (interp rels K₂)
+      rw [reduce_sound rels K₁, reduce_sound rels K₂]
+
+-- ════════════════════════════════════════════════════════════════
 -- § 9. Proposition 1
 -- ════════════════════════════════════════════════════════════════
 
@@ -724,5 +781,166 @@ theorem exManAdoresWoman_truthConditions {E : Type*} (rels : RelInterp E)
       g', ⟨rfl, by simp [g', Assign.update]; exact hR₁⟩,
       g', ⟨rfl, by simp [g', Assign.update]; exact hR₂⟩,
       g', ⟨rfl, by simp [g', Assign.update]; exact hR₃⟩, rfl⟩
+
+-- ════════════════════════════════════════════════════════════════
+-- § 11. Stress Tests for the Merging Lemma
+-- ════════════════════════════════════════════════════════════════
+
+/-! Harder derivations that stress-test `reduce` across multiple
+dimensions: three-box merges, nested conditions, iterated reductions,
+and multi-sentence discourses.  Every merge theorem is a one-liner:
+`reduce_sound` handles all freshness checks automatically. -/
+
+section StressTests
+
+variable {E : Type*}
+
+-- ──────────────────────────────────────────────────────────────
+-- Test 1: Three-box merge (ditransitive)
+-- "A¹ man gives a² woman a³ book"
+-- Compositional: [u₁|man u₁]; [u₂|woman u₂]; [u₃|book u₃, gives u₁ u₂ u₃]
+-- Merged:        [u₁ u₂ u₃|man u₁, woman u₂, book u₃, gives u₁ u₂ u₃]
+-- Rels: 0=man, 1=woman, 2=book, 3=gives
+-- ──────────────────────────────────────────────────────────────
+
+def exDitransitive_compositional : DRSExpr :=
+  .seq (.seq (.box [1] [.atom 0 [1]])
+             (.box [2] [.atom 1 [2]]))
+       (.box [3] [.atom 2 [3], .atom 3 [1, 2, 3]])
+
+def exDitransitive : DRSExpr :=
+  .box [1, 2, 3] [.atom 0 [1], .atom 1 [2], .atom 2 [3], .atom 3 [1, 2, 3]]
+
+/-- Three-box merge via `reduce`. -/
+theorem exDitransitive_merge (rels : RelInterp E) :
+    interp rels exDitransitive_compositional = interp rels exDitransitive :=
+  (reduce_sound rels exDitransitive_compositional).symm
+
+/-- Truth conditions: `∃ e₁ e₂ e₃, man(e₁) ∧ woman(e₂) ∧ book(e₃) ∧ gives(e₁,e₂,e₃)` -/
+theorem exDitransitive_truthConditions (rels : RelInterp E) (g : Assign E) :
+    WeakestPrecondition.wp (interp rels exDitransitive_compositional) (λ _ => True) g ↔
+    ∃ e₁ e₂ e₃ : E, rels 0 [e₁] ∧ rels 1 [e₂] ∧ rels 2 [e₃] ∧ rels 3 [e₁, e₂, e₃] := by
+  rw [exDitransitive_merge]
+  simp only [exDitransitive, interp, interp.interpConds,
+    WeakestPrecondition.wp, dseq, test, List.foldl, and_true, List.map]
+  constructor
+  · rintro ⟨j, g₁, hintro, hconds⟩
+    obtain ⟨g₂, ⟨g₃, ⟨g₄, rfl, e₁, rfl⟩, e₂, rfl⟩, e₃, rfl⟩ := hintro
+    obtain ⟨g₅, ⟨rfl, hR₁⟩, g₆, ⟨rfl, hR₂⟩, g₇, ⟨rfl, hR₃⟩, g₈, ⟨rfl, hR₄⟩, rfl⟩ := hconds
+    simp [Assign.update] at hR₁ hR₂ hR₃ hR₄
+    exact ⟨e₁, e₂, e₃, hR₁, hR₂, hR₃, hR₄⟩
+  · rintro ⟨e₁, e₂, e₃, hR₁, hR₂, hR₃, hR₄⟩
+    let g' := ((g.update 1 e₁).update 2 e₂).update 3 e₃
+    use g', g'
+    refine ⟨⟨(g.update 1 e₁).update 2 e₂, ⟨g.update 1 e₁, ⟨g, rfl, e₁, rfl⟩, e₂, rfl⟩, e₃, rfl⟩, ?_⟩
+    exact ⟨g', ⟨rfl, by simp [g', Assign.update]; exact hR₁⟩,
+      g', ⟨rfl, by simp [g', Assign.update]; exact hR₂⟩,
+      g', ⟨rfl, by simp [g', Assign.update]; exact hR₃⟩,
+      g', ⟨rfl, by simp [g', Assign.update]; exact hR₄⟩, rfl⟩
+
+-- ──────────────────────────────────────────────────────────────
+-- Test 2: Nested negation in first box
+-- "A¹ man who doesn't smoke² meets a³ woman"
+-- Compositional: [u₁|man u₁, ¬[u₂|smoke u₂, u₂=u₁]]; [u₃|woman u₃, meets u₁ u₃]
+-- Rels: 0=man, 1=smoke, 2=woman, 3=meets
+-- ──────────────────────────────────────────────────────────────
+
+def exNegation_compositional : DRSExpr :=
+  .seq (.box [1] [.atom 0 [1], .neg (.box [2] [.atom 1 [2], .is 2 1])])
+       (.box [3] [.atom 2 [3], .atom 3 [1, 3]])
+
+def exNegation : DRSExpr :=
+  .box [1, 3] [.atom 0 [1], .neg (.box [2] [.atom 1 [2], .is 2 1]),
+               .atom 2 [3], .atom 3 [1, 3]]
+
+/-- Merge with nested negation: dref 3 is fresh in `¬[u₂|smoke u₂, u₂=u₁]`. -/
+theorem exNegation_merge (rels : RelInterp E) :
+    interp rels exNegation_compositional = interp rels exNegation :=
+  (reduce_sound rels exNegation_compositional).symm
+
+-- ──────────────────────────────────────────────────────────────
+-- Test 3: Nested implication (donkey sentence + continuation)
+-- "Every¹ farmer who owns a² donkey beats it₂.  A³ vet arrives."
+-- Rels: 0=farmer, 1=donkey, 2=owns, 3=beats, 4=vet, 5=arrives
+-- ──────────────────────────────────────────────────────────────
+
+def exDonkey_compositional : DRSExpr :=
+  .seq (.box [] [.impl
+          (.box [1, 2] [.atom 0 [1], .atom 1 [2], .atom 2 [1, 2]])
+          (.box [] [.atom 3 [1, 2]])])
+       (.box [3] [.atom 4 [3], .atom 5 [3]])
+
+def exDonkey_merged : DRSExpr :=
+  .box [3] [.impl
+          (.box [1, 2] [.atom 0 [1], .atom 1 [2], .atom 2 [1, 2]])
+          (.box [] [.atom 3 [1, 2]]),
+        .atom 4 [3], .atom 5 [3]]
+
+/-- Merge through nested implication: dref 3 is fresh in the donkey conditional. -/
+theorem exDonkey_merge (rels : RelInterp E) :
+    interp rels exDonkey_compositional = interp rels exDonkey_merged :=
+  (reduce_sound rels exDonkey_compositional).symm
+
+-- ──────────────────────────────────────────────────────────────
+-- Test 4: K&R (1.47) — relative clause with three drefs
+-- "Jones¹ owns a² book which Smith³ adores"
+-- Rels: 0=Jones, 1=book, 2=Smith, 3=adores, 4=owns
+-- ──────────────────────────────────────────────────────────────
+
+def exRelClause_compositional : DRSExpr :=
+  .seq (.box [1] [.atom 0 [1]])
+       (.box [2, 3] [.atom 1 [2], .atom 2 [3], .atom 3 [3, 2], .atom 4 [1, 2]])
+
+def exRelClause : DRSExpr :=
+  .box [1, 2, 3] [.atom 0 [1], .atom 1 [2], .atom 2 [3],
+                   .atom 3 [3, 2], .atom 4 [1, 2]]
+
+/-- K&R (1.47): merge with cross-referencing conditions. -/
+theorem exRelClause_merge (rels : RelInterp E) :
+    interp rels exRelClause_compositional = interp rels exRelClause :=
+  (reduce_sound rels exRelClause_compositional).symm
+
+-- ──────────────────────────────────────────────────────────────
+-- Test 5: Four-sentence discourse with iterated merge
+-- "A¹ cat caught a² mouse.  It₁ ate it₂.  A³ dog watched.  It₃ barked."
+-- Rels: 0=cat, 1=mouse, 2=caught, 3=ate, 4=dog, 5=watched, 6=barked
+-- ──────────────────────────────────────────────────────────────
+
+def exFourSentence_compositional : DRSExpr :=
+  .seq (.seq (.seq (.seq
+    (.box [1] [.atom 0 [1]])
+    (.box [2] [.atom 1 [2], .atom 2 [1, 2]]))
+    (.box [] [.atom 3 [1, 2]]))
+    (.box [3] [.atom 4 [3], .atom 5 [3]]))
+    (.box [] [.atom 6 [3]])
+
+def exFourSentence : DRSExpr :=
+  .box [1, 2, 3] [.atom 0 [1], .atom 1 [2], .atom 2 [1, 2],
+                   .atom 3 [1, 2], .atom 4 [3], .atom 5 [3], .atom 6 [3]]
+
+/-- Iterated merge across a 4-sentence discourse — one line via `reduce`. -/
+theorem exFourSentence_merge (rels : RelInterp E) :
+    interp rels exFourSentence_compositional = interp rels exFourSentence :=
+  (reduce_sound rels exFourSentence_compositional).symm
+
+-- ──────────────────────────────────────────────────────────────
+-- Test 6: Disjunction in first box
+-- "A¹ student [passed or failed].  A² teacher noticed."
+-- Rels: 0=student, 1=passed, 2=failed, 3=teacher, 4=noticed
+-- ──────────────────────────────────────────────────────────────
+
+def exDisjunction_compositional : DRSExpr :=
+  .seq (.box [1] [.atom 0 [1], .disj (.box [] [.atom 1 [1]]) (.box [] [.atom 2 [1]])])
+       (.box [2] [.atom 3 [2], .atom 4 [2, 1]])
+
+/-- Merge with disjunction condition: dref 2 is fresh in the disjunction. -/
+theorem exDisjunction_merge (rels : RelInterp E) :
+    interp rels exDisjunction_compositional =
+    interp rels (.box [1, 2] [.atom 0 [1],
+                   .disj (.box [] [.atom 1 [1]]) (.box [] [.atom 2 [1]]),
+                   .atom 3 [2], .atom 4 [2, 1]]) :=
+  (reduce_sound rels exDisjunction_compositional).symm
+
+end StressTests
 
 end Semantics.Dynamic.Core.Accessibility
