@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.229.85] - 2026-03-09
+
+### Added
+- **Fragments/English/Negation.lean**: English *not* particle negation (SymAsy, do-support asymmetry with lexical verbs, symmetric with modals/be/have)
+- **Fragments/Russian/Negation.lean**: Russian *не* particle negation (symmetric, obligatory negative concord with *ни-* series)
+- **Fragments/Czech/Negation.lean**: Czech *ne-* prefix negation (symmetric, obligatory negative concord with *ni-* series)
+- **Fragments/Maori/Negation.lean**: Maori *kāhore* negation (asymmetric A/Fin, quasi-auxiliary)
+- **Fragments/Hixkaryana/Negation.lean**: Hixkaryana *-hira* suffix negation (asymmetric A/Fin, deverbalization + copula finite)
+
+### Changed
+- **Miestamo2005.lean**: Expand from 9 to 14 languages; add English, Russian, Czech, Maori, Hixkaryana data + 15 WALS consistency theorems + 10 Fragment bridge theorems + 7 cross-validation theorems; updated statistics
+
 ## [0.229.84] - 2026-03-09
 
 ### Changed
