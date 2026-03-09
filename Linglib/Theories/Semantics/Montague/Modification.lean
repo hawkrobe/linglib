@@ -2,12 +2,23 @@
 # Adjective Semantics and Predicate Modification
 @cite{kamp-1975} @cite{kamp-partee-1995} @cite{parsons-1970}
 
-The adjective hierarchy:
-1. Intersective: `⟦gray cat⟧ = ⟦gray⟧ ∩ ⟦cat⟧`
-2. Subsective: `⟦skillful surgeon⟧ ⊆ ⟦surgeon⟧`
-3. Non-subsective/modal: no entailment ("alleged")
+## The Kamp Hierarchy
 
-General adjective type: `⟨⟨e,t⟩, ⟨e,t⟩⟩`. Meaning postulates constrain subclasses.
+@cite{kamp-1975} introduced the classification of adjective meanings
+as functions from properties to properties (type `⟨⟨e,t⟩,⟨e,t⟩⟩`),
+constrained by meaning postulates:
+
+1. **Intersective** (Kamp's "predicative"): `⟦gray cat⟧ = ⟦gray⟧ ∩ ⟦cat⟧`
+2. **Subsective** (Kamp's "affirmative"): `⟦skillful surgeon⟧ ⊆ ⟦surgeon⟧`
+3. **Privative**: `⟦fake gun⟧ ∩ ⟦gun⟧ = ∅`
+4. **Non-subsective/modal**: no entailment ("alleged")
+
+The full hierarchy also includes **extensional** (adjective depends only
+on the noun's extension, not intension), which requires possible worlds
+to state. See `Phenomena/Gradability/Studies/Kamp1975.lean` for the
+intensional formulation.
+
+## Predicate Modification
 
 Predicate modification (H&K Ch. 4): `⟦α β⟧ = λx. ⟦α⟧(x) ∧ ⟦β⟧(x)`,
 valid for intersective adjectives only.
@@ -53,11 +64,30 @@ def isSubsective {m : Model} (adj : AdjMeaning m) : Prop :=
   ∀ (noun : m.interpTy (.e ⇒ .t)),
     predicateToSet (adj noun) ⊆ predicateToSet noun
 
-/-- `ADJ(N)(x) ↔ P(x) ∧ N(x)` for some fixed predicate `P`. -/
+/-- `ADJ(N)(x) ↔ P(x) ∧ N(x)` for some fixed predicate `P`.
+    @cite{kamp-1975} definition (4): "predicative". -/
 def isIntersective {m : Model} (adj : AdjMeaning m) : Prop :=
   ∃ (adjPred : m.interpTy (.e ⇒ .t)),
     ∀ (noun : m.interpTy (.e ⇒ .t)),
       ∀ (x : m.Entity), adj noun x = (adjPred x && noun x)
+
+/-- `ADJ(N) ∩ N = ∅` for all nouns `N`.
+    @cite{kamp-1975} definition (5): "fake gun" is not a gun. -/
+def isPrivative {m : Model} (adj : AdjMeaning m) : Prop :=
+  ∀ (noun : m.interpTy (.e ⇒ .t)),
+    predicateToSet (adj noun) ∩ predicateToSet noun = ∅
+
+/-- Privative adjectives are not subsective. -/
+theorem privative_not_subsective {m : Model} (adj : AdjMeaning m)
+    (hp : isPrivative adj) (hne : ∃ noun, (predicateToSet (adj noun)).Nonempty) :
+    ¬isSubsective adj := by
+  intro hs
+  obtain ⟨noun, x, hx⟩ := hne
+  have hsub := hs noun hx
+  have hdisj := hp noun
+  have : x ∈ predicateToSet (adj noun) ∩ predicateToSet noun := ⟨hx, hsub⟩
+  rw [hdisj] at this
+  exact this
 
 theorem intersective_implies_subsective {m : Model} (adj : AdjMeaning m)
     (h : isIntersective adj) : isSubsective adj := by

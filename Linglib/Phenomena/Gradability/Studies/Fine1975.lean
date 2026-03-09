@@ -7,6 +7,7 @@ import Mathlib.Data.Fintype.Basic
 
 /-!
 # Fine (1975): Vagueness, Truth and Logic @cite{fine-1975}
+@cite{kamp-1975}
 
 Supervaluationism: a vague sentence is true iff true on ALL admissible
 precisifications, false iff false on ALL, and indefinite otherwise.
@@ -36,12 +37,23 @@ precisifications (`Finset (Threshold max)`), which connects directly to
 linglib's `Degree`/`Threshold` types and the RSA models (e.g.,
 `LassiterGoodman2017.lean`).
 
+## Connection to Kamp (1975)
+
+@cite{fine-1975} and @cite{kamp-1975} appeared in the same volume
+(Keenan ed., *Formal Semantics of Natural Languages*, 1975). Kamp's
+"vague model" `⟨M, S, F, p⟩` — a partial
+model M with completions S, a σ-field F, and probability measure p —
+is the probabilistic generalization of Fine's supervaluation. Fine's
+super-truth is the degenerate case where the measure is uniform and we
+check only whether the measure is 0, 1, or intermediate.
+
 ## Connection to Klein (1980)
 
 @cite{klein-1980}'s comparative — "∃ C where tall(a,C) ∧ ¬tall(b,C)" —
 can be seen as the existential dual of supervaluation: Klein quantifies
 existentially over comparison classes; Fine quantifies universally over
-thresholds. (Neither paper states this connection explicitly.) See
+thresholds. Both descend from @cite{kamp-1975}'s framework of
+quantifying over completions of a partial model. See
 `Theories/Semantics/Degree/Frameworks/Klein.lean`.
 -/
 

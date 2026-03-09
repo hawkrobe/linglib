@@ -3,11 +3,21 @@ import Linglib.Theories.Semantics.Degree.Core
 /-!
 # Klein's Delineation Approach
 @cite{burnett-2014} @cite{klein-1980} @cite{van-rooij-2011} @cite{kennedy-2007}
+@cite{kamp-1975}
 
 @cite{klein-1980} "A Semantics for Positive and Comparative Adjectives":
 a degree-free analysis where gradable adjectives are simple predicates
 (type `⟨e,t⟩`) whose extension is determined relative to a **comparison
 class** — a contextually supplied set of entities.
+
+## Lineage from Kamp (1975)
+
+Klein's comparative — `∃ C. tall(a,C) ∧ ¬tall(b,C)` — is a direct
+formalization of @cite{kamp-1975}'s definition (12): u₁ is at least as A
+as u₂ iff in every completion where u₂ is in the extension, u₁ is too.
+Kamp's "completions" become Klein's "comparison classes"; both derive
+the comparative from existential quantification over ways of making a
+vague predicate precise.
 
 ## Key Ideas
 

@@ -410,7 +410,7 @@
   subfield  = {pragmatics/rsa},
   validated = {true},
   role      = {formalized},
-  sources   = {Theories/Pragmatics/RSA/Implementations/BarnettEtAl2022.lean}
+  sources   = {Phenomena/Persuasion/Studies/BarnettEtAl2022.lean}
 }
 
 @article{beller-gerstenberg-2025,
@@ -2190,16 +2190,21 @@
   validated = {true},
   sources   = {Core/Semantics/Intension.lean;Theories/Semantics/Dynamic/Core/DynamicTy2.lean;Theories/Semantics/Intensional/Basic.lean}
 }
-% REF: Kamp (1975). Two theories about adjectives.
-@misc{kamp-1975,
-  author    = {Kamp},
+% REF: Kamp, H. (1975). Two theories about adjectives. In E. Keenan (ed.), Formal Semantics of Natural Languages, 123-155. Cambridge University Press.
+@incollection{kamp-1975,
+  author    = {Kamp, Hans},
   year      = {1975},
   title     = {Two theories about adjectives},
+  booktitle = {Formal Semantics of Natural Languages},
+  editor    = {Keenan, E.},
+  publisher = {Cambridge University Press},
+  address   = {Cambridge},
+  pages     = {123--155},
   subfield  = {semantics/compositional},
   role      = {cited},
   doi       = {10.1017/cbo9780511897696.011},
   validated = {true},
-  sources   = {Theories/Semantics/Montague/Modification.lean}
+  sources   = {Theories/Semantics/Montague/Modification.lean;Phenomena/Gradability/Adjectives.lean;Phenomena/Gradability/Studies/Kamp1975.lean}
 }
 % REF: Huddleston, R. (1976). Some theoretical issues in the description of the English verb. *Lingua* 40:331-383.
 @article{huddleston-1976,
@@ -13645,6 +13650,21 @@
   validated = {true},
   role      = {foundational},
   sources   = {Theories/Phonology/Features.lean;Theories/Phonology/RuleBased/Defs.lean;Fragments/Korean/Phonology.lean;Fragments/English/Phonology.lean;Fragments/Finnish/ConsonantGradation.lean;Theories/Morphology/Core/WordStructure.lean}
+}
+
+@article{hayes-wilson-2008,
+  author    = {Hayes, Bruce and Wilson, Colin},
+  year      = {2008},
+  title     = {A Maximum Entropy Model of Phonotactics and Phonotactic Learning},
+  journal   = {Linguistic Inquiry},
+  volume    = {39},
+  number    = {3},
+  pages     = {379--440},
+  doi       = {10.1162/ling.2008.39.3.379},
+  subfield  = {phonology},
+  validated = {true},
+  role      = {foundational},
+  sources   = {Phenomena/Phonotactics/Studies/HayesWilson2008.lean}
 }
 
 @book{goldsmith-2011,

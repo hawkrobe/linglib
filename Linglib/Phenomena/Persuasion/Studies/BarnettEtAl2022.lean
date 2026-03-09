@@ -59,7 +59,7 @@ plays the role of β. The s1Score uses precomputed L0(longer|u) values squared
 
 set_option autoImplicit false
 
-namespace Phenomena.ScalarImplicatures.Studies.BarnettEtAl2022
+namespace Phenomena.Persuasion.Studies.BarnettEtAl2022
 
 open RSA.ArgumentativeStrength
 open RSA.CombinedUtility
@@ -280,6 +280,12 @@ inductive EvidenceStrength where
   | strongest -- 9" (4" from midpoint)
   deriving DecidableEq, BEq, Repr
 
+/-- Which contestant goes first -/
+inductive FirstContestant where
+  | longBiased   -- wants judge to say "longer"
+  | shortBiased  -- wants judge to say "shorter"
+  deriving DecidableEq, BEq, Repr
+
 /-- Stick Contest design parameters -/
 structure StickContestDesign where
   nSticks : Nat            -- sticks per sample (5)
@@ -304,6 +310,19 @@ def pragmaticProportion : ℚ := 485 / 723
 def literalProportion : ℚ := 238 / 723
 
 theorem pragmatic_is_majority : pragmaticProportion > 1 / 2 := by native_decide
+
+/-- Key interaction: speaker expectations × evidence strength.
+t(718) = 5.2, p < 0.001 (p. 175) -/
+structure InteractionEffect where
+  tStatistic : ℚ
+  df : Nat
+  pLessThan : ℚ
+  deriving Repr
+
+def interactionEffect : InteractionEffect :=
+  { tStatistic := 52 / 10  -- 5.2
+    df := 718
+    pLessThan := 1 / 1000 }
 
 /-- Behavioral result for a listener group -/
 structure GroupResult where
@@ -394,23 +413,22 @@ theorem rsa_speaker_dep_best_waic :
 -- ============================================================
 
 /-- Fitted parameters for the best model (RSA speaker-dependent).
-MAP values from Appendix Fig S5; CV values from main paper Fig 3B. -/
+β̂ = 2.26 and mixture weights from main text (p. 178);
+β̄ = 2.03 and ō = −0.13 from Fig 3B caption (p. 177). -/
 structure FittedParams where
-  betaMAP : ℚ              -- MAP estimate of persuasive bias (Appendix Fig S5)
+  betaMAP : ℚ              -- MAP estimate of persuasive bias (p. 178)
   betaCV : ℚ               -- 10-fold CV average β (Fig 3B)
-  responseOffsetMAP : ℚ    -- MAP response offset (Appendix Fig S5)
   responseOffsetCV : ℚ     -- 10-fold CV average offset (Fig 3B)
-  pragmaticMixWeight : ℚ   -- MAP mixture weight for pragmatic group (Appendix Fig S5)
-  literalMixWeight : ℚ     -- MAP mixture weight for literal group (Appendix Fig S5)
+  pragmaticMixWeight : ℚ   -- mixture weight for pragmatic group (p. 178)
+  literalMixWeight : ℚ     -- mixture weight for literal group (p. 178)
   deriving Repr
 
 def bestModelParams : FittedParams :=
-  { betaMAP := 226 / 100           -- β̂ = 2.26
-    betaCV := 203 / 100            -- β̄ = 2.03
-    responseOffsetMAP := -11 / 100 -- o* = -0.11 (Appendix Fig S5)
+  { betaMAP := 226 / 100           -- β̂ = 2.26 (p. 178)
+    betaCV := 203 / 100            -- β̄ = 2.03 (Fig 3B)
     responseOffsetCV := -13 / 100  -- ō = -0.13 (Fig 3B)
-    pragmaticMixWeight := 97/100  -- p̂_z = 0.97 (J1 dominates; Appendix Fig S5)
-    literalMixWeight := 1/10 }    -- p̂_z = 0.1 (J0 dominates)
+    pragmaticMixWeight := 99/100   -- p̂_z = 0.99 (J1 dominates; p. 178)
+    literalMixWeight := 1/10 }     -- p̂_z = 0.1 (J0 dominates; p. 178)
 
 /-- β > 0 provides strong support for non-zero persuasive bias -/
 theorem beta_positive : bestModelParams.betaMAP > 0 := by native_decide
@@ -444,4 +462,4 @@ theorem model_predicts_interaction :
     literalResult.meanSlider > 49 :=
   ⟨s4_positive_argStr, weak_evidence_effect, pragmatic_backfire, literal_no_backfire⟩
 
-end Phenomena.ScalarImplicatures.Studies.BarnettEtAl2022
+end Phenomena.Persuasion.Studies.BarnettEtAl2022

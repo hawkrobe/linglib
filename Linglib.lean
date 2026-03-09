@@ -669,6 +669,7 @@ import Linglib.Phenomena.Gradability.Studies.Rett2015
 import Linglib.Phenomena.Gradability.Studies.CarianiSantorioWellwood2024
 import Linglib.Phenomena.Gradability.Studies.Nouwen2024
 import Linglib.Phenomena.Gradability.Studies.Fine1975
+import Linglib.Phenomena.Gradability.Studies.Kamp1975
 import Linglib.Phenomena.Gradability.Studies.AlexandropoulouGotzner2024
 import Linglib.Phenomena.Gradability.Vagueness
 -- Phenomena: Comparison (extracted from Gradability/)
@@ -884,7 +885,7 @@ import Linglib.Phenomena.Reference.Studies.SedivyEtAl1999
 import Linglib.Phenomena.ScalarImplicatures.Basic
 import Linglib.Phenomena.ScalarImplicatures.Studies.FrankeBergen2020
 import Linglib.Phenomena.ScalarImplicatures.Studies.BaleEtAl2025
-import Linglib.Phenomena.ScalarImplicatures.Studies.BarnettEtAl2022
+import Linglib.Phenomena.Persuasion.Studies.BarnettEtAl2022
 import Linglib.Phenomena.ScalarImplicatures.Studies.CremersWilcoxSpector2023
 import Linglib.Phenomena.ScalarImplicatures.Studies.GeurtsPouscoulous2009
 import Linglib.Phenomena.ScalarImplicatures.Studies.MeyerFeiman2021
@@ -930,6 +931,7 @@ import Linglib.Phenomena.PhonologicalAlternation.Studies.SPEDerivations
 import Linglib.Phenomena.PhonologicalAlternation.Studies.Clements1985
 import Linglib.Phenomena.PhonologicalAlternation.Studies.Storme2026
 import Linglib.Phenomena.PhonologicalAlternation.Studies.Flemming2021
+import Linglib.Phenomena.Phonotactics.Studies.HayesWilson2008
 -- Theories: CCG
 import Linglib.Theories.Syntax.CCG.Core.Basic
 import Linglib.Theories.Syntax.CCG.Core.Combinators

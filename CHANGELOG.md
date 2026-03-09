@@ -1,5 +1,32 @@
 # Changelog
 
+## [0.229.62] - 2026-03-09
+
+### Added
+- **Kamp1975.lean**: Formalize @cite{kamp-1975} "Two theories about adjectives". Intensional adjective hierarchy (predicativeK, privativeK, affirmativeK, extensionalK) with possible-worlds types; implication chain theorems (`predicativeK_implies_extensionalK`, `predicativeK_implies_affirmativeK`, `privativeK_not_affirmativeK`); bridge to `Modification.lean`'s extensional hierarchy; many-valued logic failure theorem (Strong Kleene `meet indet indet = indet` vs supervaluation); Kamp–Klein comparative lineage (`kampAtLeastAs`, `kleinMoreThan`, `kamp_strict_implies_klein`)
+- **Modification.lean**: Add `isPrivative` definition (Kamp's (5)) and `privative_not_subsective` theorem
+
+### Changed
+- **Modification.lean**: Update docstring to properly attribute adjective hierarchy to @cite{kamp-1975}, note the full four-class hierarchy (intersective, subsective, privative, non-subsective) and link to `Kamp1975.lean` for the intensional formulation
+- **Klein.lean**: Add `@cite{kamp-1975}` and document lineage — Klein's comparative is a direct formalization of Kamp's definition (12)
+- **Fine1975.lean**: Add `@cite{kamp-1975}` and document shared-volume connection — Kamp's vague model `⟨M, S, F, p⟩` is the probabilistic generalization of Fine's supervaluation
+- **references.bib**: Fix `kamp-1975` entry — add first name (Hans), change type to `@incollection`, add `booktitle`/`editor`/`publisher`/`pages` (verified from editors' note in Brill reprint), update `sources` to include `Adjectives.lean` and `Kamp1975.lean`
+
+## [0.229.61] - 2026-03-09
+
+### Added
+- **Phonotactics/Studies/HayesWilson2008.lean**: Formalize @cite{hayes-wilson-2008} MaxEnt phonotactics. Score–harmony bridge (`hwScore_eq_neg_harmony`, `exp_neg_hwScore_eq`), ganging definition and anti-ganging theorems linking to `OTLimit.ExponentiallySeparated`, 4 English onset constraints from Table (4) with SPE feature-matrix matching, score predictions verified via `native_decide` (attested onsets score lower than unattested), gradient well-formedness among ill-formed onsets
+- **references.bib**: Add `hayes-wilson-2008`
+
+## [0.229.60] - 2026-03-09
+
+### Changed
+- **BarnettEtAl2022.lean**: Audit against paper PDF — merge `WeakEvidenceEffect.lean` data into single self-contained study file, fix `pragmaticMixWeight` (0.97→0.99, matching p. 178), remove unverifiable `responseOffsetMAP` (claimed from Appendix Fig S5), add `FirstContestant` enum and `InteractionEffect` structure, use `Option ℚ` for unreported literal group CIs. Move `ScalarImplicatures/` → `Persuasion/` (weak evidence effect is about persuasive goals, not scalar implicatures)
+- **references.bib**: Fix stale `sources` path for `barnett-griffiths-hawkins-2022`
+
+### Removed
+- `Phenomena/ScalarImplicatures/WeakEvidenceEffect.lean` (merged into `Persuasion/Studies/BarnettEtAl2022.lean`)
+
 ## [0.229.59] - 2026-03-09
 
 ### Added
