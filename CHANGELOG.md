@@ -1,5 +1,24 @@
 # Changelog
 
+## [0.229.64] - 2026-03-09
+
+### Added
+- **VanRooy2003.lean**: Formalize @cite{van-rooy-2003} "Questioning to Resolve Decision Problems". Op(P) relevance-maximal satisfiers, underspecified question denotation ⟦?xPx⟧^R unifying mention-all/mention-some, Italian newspaper example (mention-some from goal DP), "Where do you live?" granularity examples (taxi driver vs census vs casual), Beatle hierarchy (scalar utility ordering), domain selection via decision-relevance, summary theorems connecting to `isMentionSome`/`isMentionAll`
+- **DecisionTheory.lean**: Add `valueSampleInfo` (VSI), `expectedVSI` (EVSI), `euv_eq_evsi` theorem (EUV=EVSI, sorry'd), `moreRelevantAnswer` and `betterQuestion` orderings
+
+### Changed
+- **references.bib**: Update `sources` for `van-rooy-2003` to include `VanRooy2003.lean` and `GSVanRooyBridge.lean`
+
+## [0.229.63] - 2026-03-09
+
+### Changed
+- **CumminsFranke2021.lean**: Move from `Theories/Pragmatics/RSA/Implementations/` to `Phenomena/Persuasion/Studies/` (study file with empirical data misplaced in Theories/). Merge `ArgumentativeFraming.lean` data. Fix heavily hallucinated REF "top M" data (examples 29–38): 8 of 10 institutions, ranks, and claimed M values were wrong. Add `ClaimType` to distinguish absolute vs percentile claims
+- **references.bib**: Fix stale `sources` paths for `cummins-franke-2021`, `macuch-silva-etal-2024`
+
+### Removed
+- `Phenomena/ScalarImplicatures/ArgumentativeFraming.lean` (merged into `Persuasion/Studies/CumminsFranke2021.lean`)
+- `Theories/Pragmatics/RSA/Implementations/CumminsFranke2021.lean` (moved to `Phenomena/Persuasion/Studies/`)
+
 ## [0.229.62] - 2026-03-09
 
 ### Added

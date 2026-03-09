@@ -33,19 +33,20 @@ approach.
 
 ## Structure
 
-- § 1: Intensional adjective hierarchy (Theory 1)
+- § 1: Intensional adjective hierarchy (Theory 1): predicativeK,
+  privativeK, affirmativeK, extensionalK with implication structure
 - § 2: Bridge to `Modification.lean`'s extensional hierarchy
 - § 3: Many-valued logic failure (motivation for Theory 2)
-- § 4: Kamp → Klein lineage theorem
+- § 4: Kamp → Klein lineage: `kampAtLeastAs` ↔ `kleinMoreThan`
 
 ## Key Insight
 
-Kamp argues that truth-functional many-valued logic *fails* for natural
-language connectives (p. 233): if `⟦φ⟧ = ½`, then `⟦φ ∧ ¬φ⟧` should
-be 0 (contradictions are false), but any truth-functional `F(∧)` that
-satisfies `F(∧)(½, ½) = 0` also forces `F(∧)(½, ½) = 0` for
-non-contradictory cases like `⟦φ ∧ φ⟧`. This motivates the move to
-supervaluation / probability over completions.
+Kamp argues (p. 233 of the Brill reprint) that truth-functional
+many-valued logic *fails* for natural language connectives: if
+`⟦φ⟧ = ½`, then `⟦φ ∧ ¬φ⟧` should be 0 (contradictions are false),
+but any truth-functional `F(∧)` satisfying `F(∧)(½, ½) = 0` also
+gives `F(∧)(½, ½) = 0` for non-contradictory `⟦φ ∧ φ⟧`. This
+motivates the move to supervaluation / probability over completions.
 -/
 
 namespace Phenomena.Gradability.Studies.Kamp1975
@@ -116,8 +117,18 @@ def isExtensionalK (adj : AdjMeaningK W E) : Prop :=
     (∀ x, N₁ w x = N₂ w x) → ∀ x, adj N₁ w x = adj N₂ w x
 
 -- ════════════════════════════════════════════════════
--- Implication Chain: predicative → extensional → affirmative
+-- Implication Structure
 -- ════════════════════════════════════════════════════
+
+/-! The implication structure is: predicative → {extensional, affirmative}.
+    Extensional and affirmative are **independent** — neither implies the
+    other in general. An adjective can be extensional without being
+    affirmative (it could map noun extensions to unrelated sets in a
+    world-independent way), and affirmative without being extensional
+    (like "skilful", which is subsective but depends on the noun's
+    intension).
+
+    Privative is incompatible with affirmative (given non-empty extension). -/
 
 /-- Predicative adjectives are extensional: if `F(N)(w) = N(w) ∩ Q(w)`,
     then the result in w depends only on N(w). -/

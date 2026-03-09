@@ -41,11 +41,11 @@ linglib's `Degree`/`Threshold` types and the RSA models (e.g.,
 
 @cite{fine-1975} and @cite{kamp-1975} appeared in the same volume
 (Keenan ed., *Formal Semantics of Natural Languages*, 1975). Kamp's
-"vague model" `⟨M, S, F, p⟩` — a partial
-model M with completions S, a σ-field F, and probability measure p —
-is the probabilistic generalization of Fine's supervaluation. Fine's
-super-truth is the degenerate case where the measure is uniform and we
-check only whether the measure is 0, 1, or intermediate.
+"vague model" `⟨M, S, F, p⟩` — a partial model M with completions S,
+a σ-field F, and probability measure p — adds a probability measure to
+the supervaluation framework. Fine's super-truth can be viewed as
+checking whether the measure is 0, 1, or strictly intermediate, though
+neither author draws this connection explicitly.
 
 ## Connection to Klein (1980)
 

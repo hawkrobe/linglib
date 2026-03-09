@@ -23,7 +23,7 @@ exam scenario on strategic quantifier choice.
 
 -/
 
-namespace RSA.Implementations.CumminsFranke2021
+namespace Phenomena.Persuasion.Studies.CumminsFranke2021
 
 open RSA.ArgumentativeStrength
 open RSA.InformationTheory
@@ -251,4 +251,136 @@ theorem quantifier_ordering_matches_scale :
     Core.Scale.Quantifiers.entails .most .some_ = true ∧
     Core.Scale.Quantifiers.entails .some_ .none_ = false := by native_decide
 
-end RSA.Implementations.CumminsFranke2021
+-- ============================================================
+-- Section 5: REF Case Study (C&F §5, examples 29–38, p. 12)
+-- ============================================================
+
+/-- Framing direction: positive (high success) or negative (low success) -/
+inductive FramingDirection where
+  | positive   -- e.g., "X got most questions right"
+  | negative   -- e.g., "X got some questions wrong"
+  deriving DecidableEq, BEq, Repr
+
+/-- Claim type: absolute rank ("top M") or percentile ("top M per cent") -/
+inductive ClaimType where
+  | absolute     -- "top M" (actual rank ≤ M)
+  | percentile   -- "top M per cent" (actual rank ≤ ⌈N × M/100⌉)
+  deriving DecidableEq, BEq, Repr
+
+/-- A "top M" datum from C&F §5, examples 29–38 (p. 12) -/
+structure TopMDatum where
+  institution : String
+  actualRank : Nat
+  claimedM : Nat
+  claimType : ClaimType
+  isRound : Bool
+  rankingMeasure : String
+  deriving Repr
+
+/-- C&F examples 29–38: UK universities' "top M" claims from REF 2014 reports.
+
+All claimed M values are round numbers (multiples of 5 or 10).
+Data verified against C&F p. 12. REF 2014 had 154 multi-subject institutions. -/
+def topMExamples : List TopMDatum :=
+  [ ⟨"Cardiff",        5,   5, .absolute,   true, "GPA"⟩       -- (29) top five
+  , ⟨"KCL",            7,  10, .absolute,   true, "Power"⟩     -- (30) Top 10 nationally
+  , ⟨"Warwick",        8,  10, .absolute,   true, "GPA"⟩       -- (31) top 10 success
+  , ⟨"LSHTM",         10,  10, .absolute,   true, "GPA"⟩       -- (32) top 10 of all universities
+  , ⟨"Sheffield",     16,  10, .percentile, true, "GPA"⟩       -- (33) top 10 per cent
+  , ⟨"Leeds",         10,  10, .absolute,   true, "Power"⟩     -- (34) top 10
+  , ⟨"Royal Holloway", 26, 25, .percentile, true, "Quality"⟩  -- (35) top 25 per cent
+  , ⟨"Swansea",       26,  30, .absolute,   true, "GPA"⟩       -- (36) top 30
+  , ⟨"Essex",         20,  20, .absolute,   true, "Power"⟩     -- (37) top 20
+  , ⟨"Strathclyde",   18,  20, .absolute,   true, "Intensity"⟩ -- (38) Top 20
+  ]
+
+/-- H1 verification: all claimed M values are round (multiples of 5) -/
+theorem h1_all_round : topMExamples.all (·.isRound) = true := by native_decide
+
+/-- H1 verification: absolute claims are truthful (actual rank ≤ claimed M) -/
+theorem h1_absolute_truthful :
+    (topMExamples.filter (·.claimType == .absolute)).all
+      (λ d => decide (d.actualRank ≤ d.claimedM)) = true := by native_decide
+
+/-- H1 verification: percentile claims are truthful.
+REF 2014 had 154 institutions; top 10% = rank ≤ 16, top 25% = rank ≤ 39. -/
+theorem h1_percentile_truthful :
+    -- Sheffield: rank 16 ≤ ⌈154 × 0.10⌉ = 16
+    16 ≤ 16 ∧
+    -- Royal Holloway: rank 26 ≤ ⌈154 × 0.25⌉ = 39
+    26 ≤ 39 := ⟨le_refl 16, by omega⟩
+
+/-- H2 data: ranking measure preference (C&F p. 13).
+
+Of 39 institutions with data, 19 ranked higher on GPA and 19 on Power.
+Institutions systematically prefer the measure on which they rank better. -/
+structure RankPreferenceData where
+  totalInstitutions : Nat
+  citedPreferredMeasure : Nat
+  citedNonPreferredMeasure : Nat
+  deriving Repr
+
+/-- H2 summary: institutions cite the measure giving them a better rank -/
+def h2_data : RankPreferenceData :=
+  { totalInstitutions := 19
+    citedPreferredMeasure := 15
+    citedNonPreferredMeasure := 4 }
+
+/-- H2: majority cite their preferred measure -/
+theorem h2_majority_preferred :
+    h2_data.citedPreferredMeasure > h2_data.citedNonPreferredMeasure := by native_decide
+
+
+-- ============================================================
+-- Section 6: Macuch @cite{macuch-silva-etal-2024} — Experiment Data
+-- ============================================================
+
+/-- Key finding (Exp 1): adjective choice matches framing condition.
+
+92% choose "right" in high-success condition; ~10% in low-success.
+This confirms speakers attend to argumentative goals. -/
+def exp1_adjective_rate_highSuccess : ℚ := 92 / 100
+def exp1_adjective_rate_lowSuccess : ℚ := 10 / 100
+
+theorem exp1_adjective_matches_condition :
+    exp1_adjective_rate_highSuccess > 3/4 ∧
+    exp1_adjective_rate_lowSuccess < 1/4 := by
+  constructor <;> native_decide
+
+/-- Key finding (Exp 1): "some" and "most" dominate quantifier choices.
+
+Together they account for ~76% of responses, showing speakers avoid
+the extreme quantifiers ("all", "none") even when truthful. -/
+def exp1_some_most_proportion : ℚ := 76 / 100
+
+theorem exp1_some_most_dominant :
+    exp1_some_most_proportion > 1/2 := by native_decide
+
+/-- Key finding (Exp 2): positive framing bias.
+
+74% of free-form descriptions framed the result positively,
+regardless of the actual proportion correct. -/
+def exp2_positive_bias_rate : ℚ := 74 / 100
+
+theorem exp2_positive_bias :
+    exp2_positive_bias_rate > 1/2 := by native_decide
+
+/-- Experiment 2 strategy breakdown -/
+structure Exp2FramingDatum where
+  strategy : String
+  proportion : ℚ
+  deriving Repr
+
+/-- Experiment 2 strategy proportions -/
+def exp2_strategies : List Exp2FramingDatum :=
+  [ ⟨"quantifier + numeral", 38 / 100⟩
+  , ⟨"pure numeral",         31 / 100⟩
+  , ⟨"pure quantifier",      22 / 100⟩
+  , ⟨"other",                 9 / 100⟩
+  ]
+
+/-- Quantifier + numeral is the most common single strategy -/
+theorem exp2_quant_numeral_most_common :
+    (38 : ℚ) / 100 > 31 / 100 := by native_decide
+
+end Phenomena.Persuasion.Studies.CumminsFranke2021

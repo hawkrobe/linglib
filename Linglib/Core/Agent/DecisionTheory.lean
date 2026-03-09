@@ -203,6 +203,52 @@ def questionMaximin {W A : Type*} [DecidableEq A]
       min m (maximinUtilityValue dp worlds actions cell)
     ) (maximinUtilityValue dp worlds actions c)
 
+/-! ### Value of Sample Information -/
+
+/-- VSI(C) = V(D|C) - EU(a⁰|C): the value of sample information from
+learning proposition C, where a⁰ is the current optimal action.
+
+Unlike UV(C) = V(D|C) - V(D), VSI is always non-negative: learning C
+before choosing can never hurt relative to the current best action
+applied within C. @cite{van-rooy-2003}, p. 742. -/
+def valueSampleInfo {W A : Type*} [Fintype W] [DecidableEq W] [DecidableEq A]
+    (dp : DecisionProblem W A) (actions : List A) (cell : Finset W) : ℚ :=
+  let bestAction := optimalAction dp actions
+  let currentActionEU := match bestAction with
+    | some a => conditionalEU dp cell a
+    | none => 0
+  valueAfterLearning dp actions cell - currentActionEU
+
+/-- EVSI(Q) = Σ P(C) · VSI(C): the expected value of sample information
+from asking question Q. @cite{van-rooy-2003}, p. 742. -/
+def expectedVSI {W A : Type*} [Fintype W] [DecidableEq W] [DecidableEq A]
+    (dp : DecisionProblem W A) (actions : List A)
+    (q : Question W) : ℚ :=
+  q.foldl (λ acc cell =>
+    let cellSet := Finset.univ.filter (fun w => cell w = true)
+    let prob := cellProbability dp cellSet
+    let vsi := valueSampleInfo dp actions cellSet
+    acc + prob * vsi
+  ) 0
+
+/-- EUV(Q) = EVSI(Q): the expected utility value of a question equals
+its expected value of sample information.
+
+@cite{van-rooy-2003}, p. 742: "The expected utility value of a question
+is equal to its expected value of sample information."
+
+Proof: Both equal Σ P(C) · V(D|C) - V(D). For EUV, each summand is
+P(C) · (V(D|C) - V(D)). For EVSI, each summand is
+P(C) · (V(D|C) - EU(a⁰|C)). The difference is
+Σ P(C) · (V(D) - EU(a⁰|C)) = V(D) - Σ P(C) · EU(a⁰|C) = V(D) - EU(a⁰) = 0.
+
+TODO: Formalize for general proper priors. -/
+theorem euv_eq_evsi {W A : Type*} [Fintype W] [DecidableEq W] [DecidableEq A]
+    (dp : DecisionProblem W A) (actions : List A)
+    (q : Question W) :
+    questionUtility dp actions q = expectedVSI dp actions q := by
+  sorry
+
 /-! ### Maximin Monotonicity
 
 Security level and maximin value are anti-monotone in the world set:
@@ -418,5 +464,33 @@ theorem binary_question_value_decomposition
                dpValue dp actions = dpValue dp actions := by
     rw [← add_mul, hSum, one_mul]
   linarith
+
+/-! ### Answer and Question Orderings
+
+@cite{van-rooy-2003}'s relevance-based orderings on answers and questions. -/
+
+/-- C >_Q D: answer C is strictly more relevant than D given question Q.
+
+@cite{van-rooy-2003}, p. 737: C >_Q D iff either
+(i) C_Q ⊂ D_Q (C partitions into strictly fewer equivalence classes), or
+(ii) C_Q = D_Q and C ⊃ D (same partition but C is logically stronger).
+
+We formalize criterion (i) via utility: C is more relevant than D for
+some DP, while D is never more relevant than C. -/
+def moreRelevantAnswer {W A : Type*} [Fintype W] [DecidableEq W] [DecidableEq A]
+    (dp : DecisionProblem W A) (actions : List A)
+    (c d : Finset W) : Bool :=
+  -- C has strictly higher utility value than D
+  utilityValue dp actions c > utilityValue dp actions d
+
+/-- Q > Q': question Q is strictly better than Q'.
+
+@cite{van-rooy-2003}, p. 743: Q > Q' iff either
+(i) EUV(Q) > EUV(Q'), or
+(ii) EUV(Q) = EUV(Q') and Q ⊐ Q' (Q is strictly finer). -/
+def betterQuestion {W A : Type*} [Fintype W] [DecidableEq W] [DecidableEq A]
+    (dp : DecisionProblem W A) (actions : List A)
+    (q q' : Question W) : Bool :=
+  questionUtility dp actions q > questionUtility dp actions q'
 
 end Core.DecisionTheory

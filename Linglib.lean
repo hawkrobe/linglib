@@ -576,7 +576,6 @@ import Linglib.Phenomena.ArgumentStructure.Studies.TheoryComparison
 import Linglib.Phenomena.ArgumentStructure.Studies.HaddicanEtAl2026
 import Linglib.Phenomena.ArgumentStructure.Studies.Collins2005
 import Linglib.Phenomena.ArgumentStructure.Studies.Kratzer1996
-import Linglib.Phenomena.ScalarImplicatures.ArgumentativeFraming
 import Linglib.Phenomena.Modality.Studies.Hacquard2006
 import Linglib.Phenomena.Modality.Studies.Hacquard2010
 import Linglib.Phenomena.TenseAspect.Studies.Zhao2025
@@ -864,6 +863,7 @@ import Linglib.Phenomena.Questions.PragmaticAnswerhood
 import Linglib.Phenomena.Questions.ScopeReadings
 import Linglib.Phenomena.Questions.SlavicPQStrategies
 import Linglib.Phenomena.Questions.Studies.HawkinsEtAl2025
+import Linglib.Phenomena.Questions.Studies.VanRooy2003
 import Linglib.Phenomena.Questions.WhComplement
 import Linglib.Phenomena.Questions.Studies.TurkHirschInce2026
 import Linglib.Phenomena.Questions.Studies.Xiang2022
@@ -1453,7 +1453,7 @@ import Linglib.Theories.Pragmatics.RSA.Extensions.LexicalUncertainty.Basic
 import Linglib.Theories.Pragmatics.RSA.Extensions.LexicalUncertainty.Compositional
 import Linglib.Theories.Pragmatics.RSA.Implementations.BellerGerstenberg2025
 import Linglib.Theories.Pragmatics.RSA.Implementations.BergenGoodman2015
-import Linglib.Theories.Pragmatics.RSA.Implementations.CumminsFranke2021
+import Linglib.Phenomena.Persuasion.Studies.CumminsFranke2021
 import Linglib.Theories.Pragmatics.RSA.Implementations.EgreEtAl2023
 import Linglib.Theories.Pragmatics.RSA.Implementations.Franke2011
 import Linglib.Theories.Pragmatics.RSA.Implementations.GrusdtLassiterFranke2022
