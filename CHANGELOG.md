@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.229.41] - 2026-03-08
+
+### Changed
+- **NormalCDF.lean**: Redefine `normalCDF` as `cdf (gaussianReal 0 1)` using Mathlib's Gaussian measure infrastructure; close all 8 sorrys (nonneg, le_one, mono, symmetry, Φ(0)=1/2, strict monotonicity, pos_gt_half, neg_lt_half)
+
 ## [0.229.40] - 2026-03-08
 
 ### Changed
