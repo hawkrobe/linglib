@@ -43,7 +43,7 @@ def short : AdjectivalPredicateEntry where
 
 Note: This is the 1-place adjectival predicate "x is happy".
 For the 2-place attitude predicate "x is happy that p", see
-`Theories/Montague/Lexicon/Attitudes/Preferential.lean`.
+`Theories/Semantics/Attitudes/Preferential.lean`.
 -/
 def happy : AdjectivalPredicateEntry where
   form := "happy"

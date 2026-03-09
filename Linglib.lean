@@ -82,6 +82,7 @@ import Linglib.Core.Prosody
 import Linglib.Core.Definiteness
 import Linglib.Core.Prominence
 import Linglib.Core.FormFrequency
+import Linglib.Core.Genericity
 import Linglib.Core.Case.Basic
 import Linglib.Core.Case.Hierarchy
 import Linglib.Core.Case.Syncretism
@@ -629,8 +630,11 @@ import Linglib.Phenomena.Generics.BarePlurals
 import Linglib.Phenomena.Generics.Data
 import Linglib.Phenomena.Generics.KindReference
 import Linglib.Phenomena.Generics.Compare
+import Linglib.Phenomena.Generics.Studies.Cohen1999
 import Linglib.Phenomena.Generics.Studies.Guerrini2026
+import Linglib.Phenomena.Generics.Studies.Krifka2013
 import Linglib.Phenomena.Generics.Studies.Longobardi2001
+import Linglib.Phenomena.Generics.Studies.Nickel2009
 import Linglib.Phenomena.Gender.Typology
 import Linglib.Phenomena.Gradability.Adjectives
 import Linglib.Phenomena.Gradability.Data
@@ -925,6 +929,7 @@ import Linglib.Theories.Syntax.CCG.Intonation
 -- Comparisons (pure metatheory)
 import Linglib.Comparisons.CommandRelations
 import Linglib.Comparisons.ExhaustivityLimit
+import Linglib.Comparisons.GenericModality
 import Linglib.Comparisons.GenericSemantics
 import Linglib.Comparisons.Mueller2013
 import Linglib.Comparisons.Partee1973
@@ -1183,6 +1188,7 @@ import Linglib.Theories.Interfaces.SyntaxSemantics.SyntaxInterface
 import Linglib.Theories.Interfaces.SyntaxSemantics.Borer2005
 import Linglib.Theories.Interfaces.SyntaxSemantics.Linking
 import Linglib.Theories.Semantics.Montague.Modification
+import Linglib.Theories.Semantics.Lexical.CovertQuantifier
 import Linglib.Theories.Semantics.Lexical.Noun.Binominal
 import Linglib.Theories.Semantics.Lexical.Noun.GradableNouns
 import Linglib.Theories.Semantics.Lexical.Noun.Kind.Carlson1977

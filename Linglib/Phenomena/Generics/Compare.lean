@@ -670,7 +670,7 @@ The key theorems from the theory files:
 - `chierchia_position_invariant`: Proves Chierchia's DKP gives same meaning regardless of position
 - `krifka_position_sensitive`: Shows Krifka's ∃-shift respects surface position
 
-See `Phenomena/KindReference/Data.lean` for the full scrambling dataset.
+See `Phenomena/Generics/KindReference.lean` for the full scrambling dataset.
 -/
 
 end Phenomena.Generics.Compare

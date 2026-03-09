@@ -603,12 +603,12 @@ theorem meaning_preservation_derives_kind_preference :
 /-!
 ## Related Theory
 
-- `Theories/Montague/Lexicon/Kinds.lean` - Chierchia's NMP, ∩/∪ operators, DKP
-- `Theories/Montague/Lexicon/Generics.lean` - GEN operator for generic readings
+- `Theories/Semantics/Lexical/Noun/Kind/Chierchia1998.lean` - Chierchia's NMP, ∩/∪ operators, DKP
+- `Theories/Semantics/Lexical/Noun/Kind/Generics.lean` - GEN operator for generic readings
 
 ## Empirical Data
 
-- `Phenomena/KindReference/Data.lean` - cross-linguistic patterns, singular kinds, scopelessness
+- `Phenomena/Generics/KindReference.lean` - cross-linguistic patterns, singular kinds, scopelessness
 -/
 
 end Semantics.Lexical.Noun.Kind.Dayal2004

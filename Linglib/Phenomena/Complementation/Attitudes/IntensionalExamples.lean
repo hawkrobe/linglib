@@ -6,7 +6,7 @@ Toy examples demonstrating intensional semantics phenomena:
 - Belief contexts and substitution failure
 - De dicto vs de re readings
 
-These examples use the infrastructure from `Theories/Montague/Verb/Attitude/Intensional.lean`.
+These examples use the infrastructure from `Theories/Semantics/Attitudes/Intensional.lean`.
 
 Reference: Montague, R. (1973). The Proper Treatment of Quantification in Ordinary English.
 -/

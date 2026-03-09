@@ -541,58 +541,8 @@ def dogMammal : TaxonomicDatum :=
   }
 
 -- Generic vs Existential (with Bare Plurals)
-
-/-- Predicate class affecting BP interpretation -/
-inductive PredicateClass where
-  /-- Individual-level: permanent properties (intelligent, tall) -/
-  | iLevel
-  /-- Stage-level with locative argument (present, available) -/
-  | sLevelLocArg
-  /-- Stage-level with locative adjunct (hungry, tired) -/
-  | sLevelLocAdj
-  deriving Repr, DecidableEq, BEq
-
-/-- Bare plural interpretation datum -/
-structure BPInterpDatum where
-  sentence : String
-  predClass : PredicateClass
-  /-- Generic reading available? -/
-  genericOK : Bool
-  /-- Existential reading available? -/
-  existentialOK : Bool
-  notes : String
-
-def boysAreBrave : BPInterpDatum :=
-  { sentence := "Boys are brave"
-  , predClass := .iLevel
-  , genericOK := true
-  , existentialOK := false
-  , notes := "I-level forces generic"
-  }
-
-def boysArePresent : BPInterpDatum :=
-  { sentence := "Boys are present"
-  , predClass := .sLevelLocArg
-  , genericOK := true
-  , existentialOK := true
-  , notes := "S-level with locative arg allows existential"
-  }
-
-def boysAreHungry : BPInterpDatum :=
-  { sentence := "Boys are hungry"
-  , predClass := .sLevelLocAdj
-  , genericOK := true
-  , existentialOK := false
-  , notes := "S-level but locative adjunct - no existential"
-  }
-
-def firemenAvailable : BPInterpDatum :=
-  { sentence := "Firemen are available"
-  , predClass := .sLevelLocArg
-  , genericOK := true
-  , existentialOK := true
-  , notes := "Implicit locative argument"
-  }
+-- See `Phenomena/Generics/BarePlurals.lean` for the full data on
+-- predicate-level effects (ILP/SLP, locative status, presuppositionality).
 
 -- English BP Ambiguity: Kind vs Property (@cite{guerrini-2026}, diagram (145))
 
@@ -714,9 +664,6 @@ def predicateData : List PredicateDatum :=
 def singularKindData : List SingularKindDatum :=
   [dodoExtinct, computerRevolutionized, lionPredator, whaleEndangered, tallLionOdd]
 
-def bpInterpData : List BPInterpDatum :=
-  [boysAreBrave, boysArePresent, boysAreHungry, firemenAvailable]
-
 -- Empirical Generalizations
 
 -- Bare plurals are scopeless
@@ -735,10 +682,6 @@ def bpInterpData : List BPInterpDatum :=
 -- English bare plurals and mass nouns are grammatical
 #guard bareSingularData.filter (λ d => d.npType == "bare pl" || d.npType == "bare mass")
       |>.all (λ d => d.grammatical)
-
--- I-level predicates block existential BP reading
-#guard bpInterpData.filter (λ d => d.predClass == .iLevel)
-      |>.all (λ d => !d.existentialOK)
 
 -- Scrambled bare plurals take wide scope (Dutch/German)
 #guard scramblingData.filter (λ d => d.position == .scrambled &&

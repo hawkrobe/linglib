@@ -28,7 +28,7 @@ Barker & Shan analyze sluicing as anaphora to a continuation:
 - SLUICEGAP is a proform of category `(DP⦵S)^(DP⦵S)`
 - This explains scope constraints: inner antecedent must take scope
 
-This connects to `Theories/Montague/Anaphora.lean`:
+This connects to `Theories/Semantics/Reference/Binding.lean`:
 - Sluicing as continuation anaphora parallels binding as duplication (W combinator)
 - Both involve "reusing" semantic material from elsewhere
 
@@ -37,7 +37,7 @@ This connects to `Theories/Montague/Anaphora.lean`:
 The antecedent clause must not resolve the sluiced interrogative's issue.
 This is a pragmatic constraint connecting to question semantics.
 
-See `Theories/Montague/Questions.lean` for partition semantics.
+See `Theories/Semantics/Questions/Partition.lean` for partition semantics.
 
 ### Case Matching as Syntactic Bookkeeping
 

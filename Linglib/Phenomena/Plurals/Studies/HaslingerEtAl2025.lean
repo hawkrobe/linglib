@@ -12,7 +12,7 @@ This demonstrates that distributivity and maximality are independent.
 
 ## Theoretical Connection
 
-The theory in `Theories/Montague/Plural/Distributivity.lean` predicts:
+The theory in `Theories/Semantics/Lexical/Plural/Distributivity.lean` predicts:
 - *jeder* uses `distMaximal` (identity tolerance)
 - *jeweils* uses `distTolerant` (context-sensitive tolerance)
 

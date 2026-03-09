@@ -115,7 +115,7 @@ def FIPApplication.description : FIPApplication → String
 
 See:
 - `Phenomena/AdditiveParticles/Data.lean` for empirical data
-- `Theories/Montague/Particle/Additive.lean` for semantic analysis
+- `Theories/Semantics/Focus/Particles.lean` for semantic analysis
 -/
 
 end Semantics.FocusInterpretation

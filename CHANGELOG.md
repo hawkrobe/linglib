@@ -1,5 +1,46 @@
 # Changelog
 
+## [0.229.35] - 2026-03-08
+
+### Added
+- **Core/Genericity.lean**: Shared vocabulary — `GenericForm` (IS/BP/DS/DP) and `GenericReading` (descriptive/definitional) for cross-file use
+- **Cohen1999.lean**: Formalize Cohen's probability-based GEN (P(Q|P) > 0.5 = threshold semantics with θ = 1/2), homogeneity constraint, rare-property and homogeneity-failure examples
+- **Nickel2009.lean**: Formalize Nickel's way-indexed normality — `nickelGEN` existentially quantifies over normality ways, handles "Elephants live in Africa and Asia" where majority-based views fail
+- **references.bib**: Add `cohen-1999a`, `nickel-2009` entries
+
+### Changed
+- **BarePlurals.lean**: Fix namespace to `Phenomena.Generics.BarePlurals`; remove duplicate `PredicateLevel`, import from Carlson1977
+- **KindReference.lean**: Remove duplicate BP interpretation data (now cross-references BarePlurals.lean)
+- **Krifka2013.lean**: Use `Core.Genericity` types (`GenericForm`, `GenericReading`) instead of local `SubjectForm`/`String`
+- **GenericModality.lean**: Move UNVERIFIED flag outside module docstring
+- **Habituals.lean**: Redefine `frequency` via `measure` from CovertQuantifier
+- **Core/Genericity.lean**: Remove dangling `@cite{cohen-2001a}` (no bib entry), remove unverified `§1.3.1.2` section number
+- **Cohen1999.lean**: Use `Core.Genericity.GenericReading`, import `Data.lean`, add `cohen_wrong_on_mosquitoes` bridge theorem connecting Cohen's prediction to shared rare-property data
+- **Nickel2009.lean**: Use `Core.Genericity.GenericReading`
+- **references.bib**: Remove unverified DOI/pages from `nickel-2009`, remove unverified publisher from `cohen-1999a`
+
+## [0.229.34] - 2026-03-08
+
+### Changed
+- **Generics.lean**: Delete dead code (`GenericTheory`, `strictUniversal`, `majorityBased`, `GenericTheory.eval`); deduplicate `prevalence` → derive from `measure` in CovertQuantifier; trim circularity section to cross-reference
+- **GenericSemantics.lean**: Replace duplicate `prevalence_nonneg`/`prevalence_le_one` proofs with one-liners deriving from CovertQuantifier's `measure_nonneg`/`measure_le_one`; replace `Mathlib.Algebra.Order.Field.Basic` import with CovertQuantifier
+- **GenericModality.lean**: Delete unused `binaryAsPreorder`; add UNVERIFIED flag to Asher & Pelletier chapter/claim reference
+- **CovertQuantifier.lean**: Add degeneracy note to `reduces_to_threshold` docstring (existential threshold is -1 or 1, not informative)
+- **Krifka2013.lean**: Fix unverified Cohen 2001a citation → remove specific section reference; add `def_invariant_world_measure` bridge theorem (any function of worlds is invariant under DEF)
+
+## [0.229.33] - 2026-03-08
+
+### Added
+- **CovertQuantifier.lean**: Shared parametric abstraction for GEN/HAB covert quantifiers — `covertQ`, `covertQ_dual`, `covertQ_equiv` (De Morgan), `measure`, `thresholdQ`, `reduces_to_threshold`; GEN and HAB are both instances with identical formal structure
+- **Krifka2013.lean**: Formalize Krifka's "Definitional Generics" (ch. 15, *Genericity* 2013) — two-index semantics (`Interp × World`), `CommonGround`, `des`/`def_` update operations, `RuleType` enum, madrigal examples with `native_decide` verification, `def_not_world_reducible` showing definitional generics cannot be reduced to prevalence thresholds
+- **GenericModality.lean**: Bridge between GEN and Kratzer modal necessity — `RestrictedUniversal` shared type, `genAsRU`/`modalAsRU` showing both are restricted universals, correspondence table
+- **references.bib**: Add `krifka-2013`, `cohen-2013`, `asher-pelletier-2013` entries for the *Genericity* book (OUP 2013)
+
+### Changed
+- **Habituals.lean**: Import CovertQuantifier, add `hab_is_covertQ` (rfl), derive `hab_formulations_equiv` from shared `covertQ_equiv`; remove `ThresholdQuantifier`/`genAsThreshold`/`habAsThreshold` redundant structures
+- **Generics.lean**: Import CovertQuantifier, add `gen_is_covertQ` (rfl), derive `gen_formulations_equiv` from shared `covertQ_equiv`; add descriptive/definitional distinction note referencing @cite{krifka-2013}
+- **GenericSemantics.lean**: Scope `gen_eliminable` docstring to descriptive generics only, add limitation note referencing @cite{krifka-2013}
+
 ## [0.229.32] - 2026-03-08
 
 ### Changed

@@ -1,17 +1,22 @@
-/-
+import Linglib.Theories.Semantics.Lexical.CovertQuantifier
+
+/-!
+# Traditional HAB Operator and Threshold Semantics
+
+@cite{carlson-1977} @cite{krifka-etal-1995} @cite{bhatt-1999}
+
 Traditional HAB operator and frequency-based threshold semantics for habituals.
 HAB quantifies over "characteristic" occasions; threshold semantics replaces this
 with observable frequency > θ, where θ is pragmatically inferred.
 
-- Carlson, G.N. (1977). Reference to Kinds in English.
-- Krifka, M. et al. (1995). Genericity: An Introduction.
-- Bhatt, R. (1999). Covert Modality in Non-finite Contexts.
+HAB is an instance of the shared covert quantifier infrastructure in
+`CovertQuantifier.lean`: `traditionalHAB = covertQ` with `D = Occasion`,
+`restriction = characteristic`, `scope = activity`.
 -/
 
-import Mathlib.Data.Rat.Defs
-import Mathlib.Tactic.Linarith
-
 namespace Semantics.Lexical.Verb.Habituals
+
+open Semantics.Lexical.CovertQuantifier
 
 section Core
 
@@ -28,7 +33,9 @@ abbrev Activity := Occasion → Bool
 /-- A characteristicness predicate (which occasions are "typical"). -/
 abbrev Characteristic := Occasion → Bool
 
-/-- Traditional HAB: `∀t. characteristic(t) → activity(t)`. -/
+/-- Traditional HAB: `∀t. characteristic(t) → activity(t)`.
+
+    This is definitionally equal to `covertQ occasions characteristic activity`. -/
 def traditionalHAB
     (occasions : List Occasion)
     (characteristic : Characteristic)
@@ -36,6 +43,14 @@ def traditionalHAB
     : Bool :=
   occasions.all λ t =>
     !characteristic t || activity t
+
+/-- HAB is an instance of the shared covert quantifier. -/
+theorem hab_is_covertQ
+    (occasions : List Occasion)
+    (characteristic : Characteristic)
+    (activity : Activity)
+    : traditionalHAB occasions characteristic activity =
+      covertQ occasions characteristic activity := rfl
 
 /-- Alternative: existential characterization of non-habitual. -/
 def traditionalHAB_existential
@@ -45,34 +60,28 @@ def traditionalHAB_existential
     : Bool :=
   !occasions.any λ t => characteristic t && !activity t
 
-/-- The two formulations are equivalent. -/
+/-- The two formulations are equivalent (derived from shared De Morgan proof). -/
 theorem hab_formulations_equiv
     (occasions : List Occasion)
     (characteristic : Characteristic)
     (activity : Activity)
     : traditionalHAB occasions characteristic activity =
       traditionalHAB_existential occasions characteristic activity := by
-  simp only [traditionalHAB, traditionalHAB_existential, List.all_eq_not_any_not]
-  congr 1
-  induction occasions with
-  | nil => rfl
-  | cons o os ih =>
-    simp only [List.any_cons]
-    rw [ih]
-    cases characteristic o <;> cases activity o <;> rfl
+  rw [hab_is_covertQ]
+  exact covertQ_equiv occasions characteristic activity
 
 end Core
 
 section Frequency
 
-/-- Frequency of an activity: proportion of occasions where it occurs. -/
+/-- Frequency of an activity: proportion of occasions where it occurs.
+
+    Defined as `measure` with trivial restriction (all occasions count). -/
 def frequency
     (occasions : List Occasion)
     (activity : Activity)
     : ℚ :=
-  let active := occasions.filter activity
-  if occasions.length = 0 then 0
-  else (active.length : ℚ) / (occasions.length : ℚ)
+  measure occasions (λ _ => true) activity
 
 /-- Threshold-based habitual: true iff frequency exceeds threshold. -/
 def thresholdHabitual
@@ -139,26 +148,6 @@ def normalOccasions : Characteristic := λ t =>
   t.id ∈ [0, 1, 2, 3, 4, 5, 6, 7]
 
 #guard thresholdHabitual occasions johnSmokesActivity (1/2)
-
-/-- Unified structure for GEN/HAB elimination. -/
-structure ThresholdQuantifier where
-  name : String
-  /-- What we measure (prevalence for GEN, frequency for HAB) -/
-  measureName : String
-  /-- The threshold (inferred pragmatically) -/
-  threshold : ℚ
-
-def genAsThreshold : ThresholdQuantifier :=
-  { name := "GEN"
-  , measureName := "prevalence"
-  , threshold := 0
-  }
-
-def habAsThreshold : ThresholdQuantifier :=
-  { name := "HAB"
-  , measureName := "frequency"
-  , threshold := 0
-  }
 
 end Examples
 

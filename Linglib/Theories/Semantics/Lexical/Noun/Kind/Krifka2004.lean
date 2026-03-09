@@ -1,5 +1,10 @@
-/-
-# Bare NPs as Properties (@cite{krifka-2003}/2004)
+import Mathlib.Data.Set.Basic
+import Mathlib.Data.Fintype.Basic
+
+/-!
+# Bare NPs as Properties
+
+@cite{krifka-2004} @cite{krifka-2003}
 
 Formalizes Krifka's analysis from "Bare NPs: Kind-referring, Indefinites,
 Both, or Neither?" (SALT 2003 / EISS5 2004).
@@ -18,9 +23,6 @@ Kind readings require topic position.
 | Kind reading | Always available | Requires topic position |
 
 -/
-
-import Mathlib.Data.Set.Basic
-import Mathlib.Data.Fintype.Basic
 
 namespace Semantics.Lexical.Noun.Kind.Krifka2004
 
@@ -77,13 +79,6 @@ structure BareSingularRestriction where
   pluralFills : Bool := true
   bareUnfilled : Bool := true
 
-/-- Bare singulars are blocked because number parameter is unfilled. -/
-theorem bare_singular_blocked (restriction : BareSingularRestriction)
-    (h : restriction.hasNumberParam = true)
-    (hBare : restriction.bareUnfilled = true) :
-    restriction.hasNumberParam = true ∧ restriction.bareUnfilled = true := by
-  exact ⟨h, hBare⟩
-
 -- Type Shifting Operations
 
 /-- ∃-shift is position-sensitive: it applies at the surface position of the
@@ -97,15 +92,6 @@ inductive TypeShift where
   | iota     -- ι shift: P → ιx.P(x)
   | down     -- ∩ shift: P → kind
   deriving DecidableEq, Repr
-
-/-- ∃ type shift: property → existential GQ. ⟦∃⟧(P) = λQ.∃x[P(x) ∧ Q(x)] -/
-def existsShift (P : Property World Atom) (w : World)
-    (VP : Individual Atom → Bool) : Bool :=
-  sorry  -- Would need domain enumeration
-
-/-- ι type shift: property → definite individual. ⟦ι⟧(P) = ιx.P(x) -/
-def iotaShift (P : Property World Atom) (w : World) : Option (Individual Atom) :=
-  none  -- Simplified: would need uniqueness check
 
 /-- ∩ (down) shift: property → kind. ∩P = λw[ιP(w)].
 Unlike Chierchia, not restricted to cumulative properties. -/
@@ -135,76 +121,6 @@ theorem kind_requires_topic :
     TypeShift.down ∈ availableInterpretations .topic ∧
     availableInterpretations .focus = [.exists_, .down] := by
   simp [availableInterpretations]
-
--- Blocking Principle (shared with Chierchia)
-
-/-- Blocking Principle: overt determiners block covert type shifts.
-"the" blocks covert ι; "a/some" blocks covert ∃ for singulars.
-(Krifka and Chierchia agree on blocking but differ on bare singular explanation.) -/
-structure BlockingPrinciple where
-  determiners : List String
-  iotaBlocked : Bool := "the" ∈ determiners
-  existsBlockedSg : Bool := "a" ∈ determiners ∨ "some" ∈ determiners
-  existsBlockedPl : Bool := false
-  downBlocked : Bool := false
-
--- Generic Sentences: GEN + Topic
-
-/-- Generic sentences arise from topic position triggering ∩, plus the GEN
-operator — not from bare plurals being lexically kind-denoting. -/
-structure GenericSentence where
-  bareNP : String
-  predicate : String
-  npPosition : InfoStructure
-  isGeneric : Bool
-
-/-- "Dogs bark" — topical bare plural → generic -/
-def dogsBark : GenericSentence :=
-  { bareNP := "dogs"
-  , predicate := "bark"
-  , npPosition := .topic
-  , isGeneric := true }
-
-/-- "Dogs are barking in my yard" — focal bare plural → existential -/
-def dogsBarking : GenericSentence :=
-  { bareNP := "dogs"
-  , predicate := "are barking in my yard"
-  , npPosition := .focus
-  , isGeneric := false }
-
--- Predictions Comparison
-
-/-- Shared and divergent predictions between Krifka and Chierchia. -/
-structure TheoryComparison where
-  barePluralOK : Bool := true
-  bareSingularOut : Bool := true
-  narrowScope : Bool := true
-  kindReadingSource : String
-
-def chierchiaPredictions : TheoryComparison :=
-  { kindReadingSource := "Lexical: bare plurals denote kinds via ∩" }
-
-def krifkaPredictions : TheoryComparison :=
-  { kindReadingSource := "Pragmatic: topic position triggers ∩ shift" }
-
--- Arguments for the Properties View
-
-/-- Modified bare plurals can scope wide:
-"Parts of that machine are everywhere" allows wide-scope ∃. -/
-structure ModifiedBarePlural where
-  np : String
-  canScopeWide : Bool
-
-def partsOfMachine : ModifiedBarePlural :=
-  { np := "parts of that machine", canScopeWide := true }
-
-/-- Generic readings are context-dependent: "Dogs bark" (generic) vs
-"Dogs are barking" (existential), same bare plural. -/
-def genericContextDependence : Bool := true
-
-/-- Cross-linguistic variation reduces to type-shift availability
-(vs. Chierchia's Nominal Mapping Parameter). -/
-def simpleTypeShiftVariation : Bool := true
 
 -- Position-Sensitive ∃-Shift
 
@@ -255,7 +171,7 @@ def krifkaDerivScrambled
     : KrifkaSent World :=
   existsShiftApply domain prop (KrifkaVP.neg vp)
 
-/-- Scrambled and unscrambled derivations yield different meanings. -/
+/-- Scrambled derivation composes ∃-shift with negated VP. -/
 theorem krifka_position_sensitive
     (domain : List Entity)
     (prop : KrifkaProp Entity World)

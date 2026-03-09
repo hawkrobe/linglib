@@ -1,3 +1,5 @@
+import Linglib.Theories.Semantics.Lexical.Noun.Kind.Carlson1977
+
 /-
 # Bare Plurals: Generic vs Existential Interpretation
 @cite{cohen-erteschik-shir-2002}
@@ -6,19 +8,13 @@ Theory-neutral data on when bare plurals receive generic vs existential readings
 
 ## Main definitions
 
-`PredicateLevel`, `LocativeStatus`, `Presuppositionality`, `BarePluralDatum`, `SLevelDatum`, `PresuppositionalDatum`, `InformationStatus`, `TopicFocusDatum`, `IncorporationDatum`
+`LocativeStatus`, `Presuppositionality`, `BarePluralDatum`, `SLevelDatum`, `PresuppositionalDatum`, `InformationStatus`, `TopicFocusDatum`, `IncorporationDatum`
 
 -/
 
-namespace Phenomena.BarePlurals
+namespace Phenomena.Generics.BarePlurals
 
--- Predicate Classification
-
-/-- Stage vs individual level predicates. -/
-inductive PredicateLevel where
-  | individual
-  | stage
-  deriving Repr, DecidableEq, BEq
+open Semantics.Lexical.Noun.Kind.Carlson1977 (PredicateLevel)
 
 /-- Locative argument vs adjunct status. -/
 inductive LocativeStatus where
@@ -48,7 +44,7 @@ structure BarePluralDatum where
 /-- "Boys are brave" - I-level predicate, generic only -/
 def boysAreBrave : BarePluralDatum :=
   { sentence := "Boys are brave"
-  , predicateLevel := .individual
+  , predicateLevel := .individualLevel
   , genericOK := true
   , existentialOK := false
   , notes := "I-level predicate forces generic. Cohen & Erteschik-Shir 2002 §2.1"
@@ -57,7 +53,7 @@ def boysAreBrave : BarePluralDatum :=
 /-- "Italians are good-looking" -/
 def italiansGoodLooking : BarePluralDatum :=
   { sentence := "Italians are good-looking"
-  , predicateLevel := .individual
+  , predicateLevel := .individualLevel
   , genericOK := true
   , existentialOK := false
   , notes := "I-level predicate. No existential: *There are good-looking Italians here"
@@ -66,7 +62,7 @@ def italiansGoodLooking : BarePluralDatum :=
 /-- "Lawyers are intelligent" -/
 def lawyersIntelligent : BarePluralDatum :=
   { sentence := "Lawyers are intelligent"
-  , predicateLevel := .individual
+  , predicateLevel := .individualLevel
   , genericOK := true
   , existentialOK := false
   , notes := "I-level predicate forces generic"
@@ -81,7 +77,7 @@ structure SLevelDatum extends BarePluralDatum where
 /-- "Boys are present" - locative argument licenses existential -/
 def boysArePresent : SLevelDatum :=
   { sentence := "Boys are present"
-  , predicateLevel := .stage
+  , predicateLevel := .stageLevel
   , genericOK := true
   , existentialOK := true  -- "There are boys here"
   , notes := "S-level with locative ARGUMENT. Cohen & Erteschik-Shir 2002 §2.2"
@@ -91,7 +87,7 @@ def boysArePresent : SLevelDatum :=
 /-- "Firemen are available" - implicit locative argument -/
 def firemenAvailable : SLevelDatum :=
   { sentence := "Firemen are available"
-  , predicateLevel := .stage
+  , predicateLevel := .stageLevel
   , genericOK := true
   , existentialOK := true
   , notes := "S-level with implicit locative argument (for some task/location)"
@@ -101,7 +97,7 @@ def firemenAvailable : SLevelDatum :=
 /-- "Soldiers arrived" - locative goal argument -/
 def soldiersArrived : SLevelDatum :=
   { sentence := "Soldiers arrived"
-  , predicateLevel := .stage
+  , predicateLevel := .stageLevel
   , genericOK := true
   , existentialOK := true  -- "Some soldiers arrived (here)"
   , notes := "Motion verb with implicit goal argument"
@@ -113,7 +109,7 @@ def soldiersArrived : SLevelDatum :=
 /-- "Boys are hungry" - S-level but locative is adjunct -/
 def boysAreHungry : SLevelDatum :=
   { sentence := "Boys are hungry"
-  , predicateLevel := .stage
+  , predicateLevel := .stageLevel
   , genericOK := true
   , existentialOK := false  -- No existential despite S-level!
   , notes := "S-level but no locative argument. Cohen & Erteschik-Shir 2002 §2.3"
@@ -123,7 +119,7 @@ def boysAreHungry : SLevelDatum :=
 /-- "Boys are hungry in the classroom" - adjunct doesn't help -/
 def boysHungryInClassroom : SLevelDatum :=
   { sentence := "Boys are hungry in the classroom"
-  , predicateLevel := .stage
+  , predicateLevel := .stageLevel
   , genericOK := true
   , existentialOK := false
   , notes := "Even with explicit locative, still adjunct - no existential"
@@ -133,7 +129,7 @@ def boysHungryInClassroom : SLevelDatum :=
 /-- "Students are tired" -/
 def studentsAreTired : SLevelDatum :=
   { sentence := "Students are tired"
-  , predicateLevel := .stage
+  , predicateLevel := .stageLevel
   , genericOK := true
   , existentialOK := false
   , notes := "S-level but locative would be adjunct"
@@ -288,4 +284,4 @@ def presuppositionalData : List PresuppositionalDatum :=
 #guard presuppositionalData.filter (λ d => d.verbType == .nonPresuppositional)
       |>.all (λ d => d.existentialOK)
 
-end Phenomena.BarePlurals
+end Phenomena.Generics.BarePlurals

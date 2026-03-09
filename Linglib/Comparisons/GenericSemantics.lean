@@ -16,63 +16,36 @@ making the observable "prevalence" sufficient.
 -/
 
 import Linglib.Theories.Semantics.Lexical.Noun.Kind.Generics
-import Mathlib.Algebra.Order.Field.Basic
-import Mathlib.Tactic.Linarith
+import Linglib.Theories.Semantics.Lexical.CovertQuantifier
 
 namespace Comparisons.GenericSemantics
 
 open Semantics.Lexical.Noun.Kind.Generics
+open Semantics.Lexical.CovertQuantifier
 
 -- Helper Lemmas for Rational Arithmetic
 
-/--
-Prevalence is always non-negative (it's a ratio of non-negative integers).
--/
+/-- Prevalence is always non-negative (derived from `measure_nonneg`). -/
 theorem prevalence_nonneg
     (situations : List Situation)
     (restrictor : Restrictor)
     (scope : Scope)
-    : prevalence situations restrictor scope ≥ 0 := by
-  simp only [prevalence]
-  by_cases h : (situations.filter restrictor).length = 0
-  · simp [h]
-  · simp only [h, ↓reduceIte]
-    apply div_nonneg
-    · exact Nat.cast_nonneg _
-    · exact Nat.cast_nonneg _
+    : prevalence situations restrictor scope ≥ 0 :=
+  measure_nonneg situations restrictor scope
 
-/--
-Prevalence is at most 1 (when restrictor situations are non-empty).
-The numerator (scope ∩ restrictor) is at most the denominator (restrictor).
--/
+/-- Prevalence is at most 1 (derived from `measure_le_one`). -/
 theorem prevalence_le_one
     (situations : List Situation)
     (restrictor : Restrictor)
     (scope : Scope)
     (hNonEmpty : (situations.filter restrictor).length > 0)
-    : prevalence situations restrictor scope ≤ 1 := by
-  simp only [prevalence]
-  have hPos : (situations.filter restrictor).length ≠ 0 := Nat.pos_iff_ne_zero.mp hNonEmpty
-  simp only [hPos, ↓reduceIte]
-  have hLenLe : (List.filter scope (List.filter restrictor situations)).length ≤
-                (List.filter restrictor situations).length :=
-    List.length_filter_le _ _
-  have hDenom : (0 : ℚ) < ↑(List.filter restrictor situations).length := by
-    rw [Nat.cast_pos]
-    exact hNonEmpty
-  calc (↑(List.filter scope (List.filter restrictor situations)).length : ℚ) /
-         ↑(List.filter restrictor situations).length
-       ≤ ↑(List.filter restrictor situations).length /
-         ↑(List.filter restrictor situations).length := by
-           apply div_le_div_of_nonneg_right
-           · exact Nat.cast_le.mpr hLenLe
-           · exact le_of_lt hDenom
-     _ = 1 := div_self (ne_of_gt hDenom)
+    : prevalence situations restrictor scope ≤ 1 :=
+  measure_le_one situations restrictor scope hNonEmpty
 
 -- Main Theorem: GEN Reduces to Threshold
 
 /--
-Traditional GEN is eliminable via threshold semantics.
+Traditional GEN is eliminable via threshold semantics for **descriptive** generics.
 
 For any normalcy predicate (the hidden parameter in GEN), there exists
 a threshold θ such that `thresholdGeneric` gives the same truth value.
@@ -84,8 +57,14 @@ Proof:
 The "normalcy" parameter is (1) not observable (covert), (2)
 context-dependent (varies by property), and (3) potentially circular
 (defined to give right results). It can be replaced by observable
-prevalence plus uncertain threshold. The RSA model then explains how the threshold is inferred pragmatically from
-priors over prevalence.
+prevalence plus uncertain threshold. The RSA model then explains how
+the threshold is inferred pragmatically from priors over prevalence.
+
+**Scope limitation** (@cite{krifka-2013}): This result applies only to descriptive
+generics (empirical generalizations like "Dogs bark"). Definitional generics
+("A madrigal is polyphonic") operate on the interpretation index, restricting
+admissible word meanings rather than possible worlds, and cannot be reduced to
+prevalence thresholds. See `Phenomena/Generics/Studies/Krifka2013.lean`.
 -/
 theorem gen_eliminable
     (situations : List Situation)

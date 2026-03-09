@@ -1,8 +1,17 @@
-/-
+import Mathlib.Data.Rat.Defs
+import Linglib.Theories.Semantics.Lexical.CovertQuantifier
+
+/-!
 # Traditional Generic Semantics (GEN Operator)
+
+@cite{tessler-goodman-2019} @cite{chierchia-1995} @cite{krifka-etal-1995}
 
 This module formalizes the traditional covert GEN operator posited for
 generic sentences like "Dogs bark", "Birds fly", etc.
+
+GEN is an instance of the shared covert quantifier infrastructure in
+`CovertQuantifier.lean`: `traditionalGEN = covertQ` with `D = Situation`,
+`restriction = normal ∧ restrictor`, `scope = scope`.
 
 ## The Traditional Account
 
@@ -20,27 +29,34 @@ Example: "Dogs bark"
 
 ## The Problem with GEN
 
-The `normal` parameter is doing all the work, but it's:
-1. Not observable (covert)
-2. Context-dependent (varies by property)
-3. Essentially circular: "normal dog situations" are stipulated to be
-   situations where dogs do the characteristic thing
+The `normal` parameter does all the explanatory work but is (1) not observable
+(covert), (2) context-dependent (varies by property), and (3) essentially
+circular (stipulated to give right results). See `CovertQuantifier.lean` for
+the shared structure and the threshold-based alternative that eliminates it.
+
+## Descriptive vs Definitional (@cite{krifka-2013})
+
+@cite{krifka-2013} distinguishes **descriptive** generics ("Dogs bark") from
+**definitional** generics ("A madrigal is polyphonic"). Only descriptive
+generics are eliminable via threshold semantics; definitional generics
+restrict the interpretation index, not the world index. See
+`Phenomena/Generics/Studies/Krifka2013.lean` for the two-index formalization.
 
 ## Comparison with RSA Treatment
 
-@cite{tessler-goodman-2019} @cite{chierchia-1995} eliminate GEN via threshold semantics:
+@cite{tessler-goodman-2019} and @cite{chierchia-1995} eliminate GEN via threshold semantics:
 - Generic is true iff prevalence exceeds threshold
 - Threshold is uncertain, inferred pragmatically
 - Prior over prevalence varies by property
 
 See `Phenomena/Generics/Studies/TesslerGoodman2019.lean` for the RSA account
-and `Theories/Comparisons/GenericSemantics.lean` for the formal comparison.
+and `Comparisons/GenericSemantics.lean` for the formal comparison.
 
 -/
 
-import Mathlib.Data.Rat.Defs
-
 namespace Semantics.Lexical.Noun.Kind.Generics
+
+open Semantics.Lexical.CovertQuantifier
 
 -- Core Types
 
@@ -80,6 +96,9 @@ Traditional GEN as a quantifier over situations.
     This is essentially a restricted universal quantifier:
       ∀s. (normal(s) ∧ restrictor(s)) → scope(s)
 
+    Equivalently, `covertQ situations (λ s => normal s && restrictor s) scope`,
+    where the restriction is the conjunction of normalcy and restrictor.
+
     The key parameters:
     - `situations`: the domain of quantification (possible cases)
     - `normal`: which situations count as "normal" (the hidden parameter!)
@@ -99,6 +118,16 @@ def traditionalGEN
     -- For all normal situations where restrictor holds, scope holds
     !(normal s && restrictor s) || scope s
 
+/-- GEN is an instance of the shared covert quantifier, with restriction =
+    normal ∧ restrictor. -/
+theorem gen_is_covertQ
+    (situations : List Situation)
+    (normal : NormalcyPredicate)
+    (restrictor : Restrictor)
+    (scope : Scope)
+    : traditionalGEN situations normal restrictor scope =
+      covertQ situations (λ s => normal s && restrictor s) scope := rfl
+
 /--
 Alternative formulation: existential test for counterexamples.
 
@@ -112,7 +141,7 @@ def traditionalGEN_existential
     : Bool :=
   !situations.any λ s => normal s && restrictor s && !scope s
 
-/-- The two formulations are equivalent -/
+/-- The two formulations are equivalent (derived from shared De Morgan proof). -/
 theorem gen_formulations_equiv
     (situations : List Situation)
     (normal : NormalcyPredicate)
@@ -120,127 +149,26 @@ theorem gen_formulations_equiv
     (scope : Scope)
     : traditionalGEN situations normal restrictor scope =
       traditionalGEN_existential situations normal restrictor scope := by
-  -- Both express: "no normal restrictor-situation fails the scope"
-  -- One as ∀s. (normal ∧ restrictor → scope)
-  -- Other as ¬∃s. (normal ∧ restrictor ∧ ¬scope)
-  -- These are logically equivalent by De Morgan
-  simp only [traditionalGEN, traditionalGEN_existential, List.all_eq_not_any_not]
-  -- Need: !any(¬(¬(n∧r)∨s)) = !any(n∧r∧¬s)
-  congr 1
-  induction situations with
-  | nil => rfl
-  | cons s ss ih =>
-    simp only [List.any_cons]
-    rw [ih]
-    -- Show: ¬(¬(n∧r)∨s) = n∧r∧¬s for head element
-    cases normal s <;> cases restrictor s <;> cases scope s <;> rfl
+  rw [gen_is_covertQ]
+  exact covertQ_equiv situations (λ s => normal s && restrictor s) scope
 
--- The GenericTheory Structure (parallel to ModalTheory)
-
-/--
-A semantic theory for generics.
-
-Different theories of generics differ primarily in how they characterize
-the "normal" situations. This structure captures what any GEN-based theory
-must provide.
-
-Comparison with ModalTheory:
-| Aspect    | ModalTheory                  | GenericTheory                |
-|-----------|------------------------------|------------------------------|
-| Quantifier| Over accessible worlds       | Over normal situations       |
-| Parameter | Accessibility R(w,w')        | Normalcy predicate normal(s) |
-| Hidden?   | Often explicit               | Usually covert               |
--/
-structure GenericTheory where
-  /-- Name of the theory -/
-  name : String
-  /-- Academic citation -/
-  citation : String
-  /-- How to determine "normal" situations given context -/
-  normalcyFunction : List Situation → NormalcyPredicate
-  /-- Whether this theory allows exceptions (quasi-universal vs strict) -/
-  allowsExceptions : Bool := true
-
-/-- Evaluate a generic under a theory -/
-def GenericTheory.eval
-    (T : GenericTheory)
-    (situations : List Situation)
-    (restrictor : Restrictor)
-    (scope : Scope)
-    : Bool :=
-  traditionalGEN situations (T.normalcyFunction situations) restrictor scope
-
--- Standard Theories
-
-/-- Strict universal GEN: all situations are "normal" -/
-def strictUniversal : GenericTheory :=
-  { name := "Strict Universal"
-  , citation := "Naive universal quantification"
-  , normalcyFunction := λ _ => λ _ => true
-  , allowsExceptions := false }
-
-/-- Majority-based GEN: "normal" = occurring more than half the time -/
-def majorityBased (restrictor : Restrictor) : GenericTheory :=
-  { name := "Majority-Based"
-  , citation := "Simple prevalence threshold"
-  , normalcyFunction := λ situations =>
-      let restrictorSits := situations.filter restrictor
-      let count := restrictorSits.length
-      λ s => restrictor s && count > 0
-  , allowsExceptions := true }
-
--- The Circularity Problem
-
-/--
-The problem with traditional GEN:
-
-The `normal` parameter does all the explanatory work but is:
-
-1. Not observable: it is covert, posited to explain judgments
-2. Context-dependent: varies with the property being predicated
-3. Essentially circular: defined to give the right results
-
-Example: Why is "Dogs bark" true despite some dogs not barking?
-- Traditional answer: Those dogs aren't in "normal" dog situations
-- But what makes a situation normal? Being one where dogs bark.
-- This is not explanatory.
-
-Example: "Mosquitoes carry malaria" is true with ~1% prevalence
-- Traditional answer: The "normal" mosquito situations are disease-carrying ones
-- But what determines this? The prior expectation for disease properties.
-- The "normalcy" is stipulated based on what we're trying to explain.
-
-The RSA/Tessler-Goodman approach replaces "normalcy" with:
-- Prevalence (observable, measurable)
-- Threshold (uncertain, inferred pragmatically)
-- Property-specific priors (explains why 1% can count as "normal" for rare properties)
--/
-structure CircularityProblem where
-  /-- The normalcy predicate is context-dependent -/
-  normalcyVaries : GenericTheory → GenericTheory → Prop :=
-    λ T1 T2 => T1.normalcyFunction ≠ T2.normalcyFunction
-  /-- The normalcy is chosen to fit judgments, not independently motivated -/
-  normalcyNotIndependent : Prop := True
-
--- Prevalence-Based Alternative (interface to T&G)
+-- Prevalence-Based Alternative
 
 /--
 Prevalence of a property within restrictor situations.
 
-This is the proportion of restrictor-situations where the scope holds.
+This is `measure` from `CovertQuantifier` specialized to situations:
+the proportion of restrictor-situations where the scope holds.
 -/
 def prevalence
     (situations : List Situation)
     (restrictor : Restrictor)
     (scope : Scope)
     : ℚ :=
-  let restrictorSits := situations.filter restrictor
-  let scopeSits := restrictorSits.filter scope
-  if restrictorSits.length = 0 then 0
-  else (scopeSits.length : ℚ) / (restrictorSits.length : ℚ)
+  measure situations restrictor scope
 
 /--
-Threshold-based generic (a la Tessler & Goodman).
+Threshold-based generic (a la @cite{tessler-goodman-2019}).
 
 The generic is true iff prevalence exceeds threshold.
 This replaces the hidden "normalcy" with observable prevalence.
@@ -254,10 +182,14 @@ def thresholdGeneric
   prevalence situations restrictor scope > threshold
 
 /-!
-GEN is eliminable via threshold semantics.
+GEN is eliminable via threshold semantics — but only for **descriptive** generics
+(@cite{krifka-2013}). Definitional generics ("A madrigal is polyphonic") restrict
+the interpretation index, not the world index, and cannot be reduced to a
+prevalence threshold.
 
-The theorem `gen_eliminable` proving this is in `Theories/Comparisons/GenericSemantics.lean`,
-which connects traditional GEN to @cite{tessler-goodman-2019} RSA approach.
+The theorem `gen_eliminable` proving eliminability for the descriptive case is in
+`Comparisons/GenericSemantics.lean`, which connects traditional GEN to
+@cite{tessler-goodman-2019} RSA approach.
 -/
 
 -- Example: Dogs Bark
@@ -291,13 +223,13 @@ def normalDogSituation : NormalcyPredicate := λ s =>
 /-!
 ## Related Theory
 
-- `Theories/Montague/Lexicon/Kinds.lean` - Kind reference, bare plurals, DKP
+- `Theories/Semantics/Lexical/Noun/Kind/Chierchia1998.lean` - Kind reference, bare plurals, DKP
 - `Phenomena/Generics/Studies/TesslerGoodman2019.lean` - RSA treatment of generics
 
 ## Empirical Data
 
 - `Phenomena/Generics/Data.lean` - prevalence asymmetries, rare property generics
-- `Phenomena/KindReference/Data.lean` - kind-level predicates, cross-linguistic patterns
+- `Phenomena/Generics/KindReference.lean` - kind-level predicates, cross-linguistic patterns
 -/
 
 end Semantics.Lexical.Noun.Kind.Generics

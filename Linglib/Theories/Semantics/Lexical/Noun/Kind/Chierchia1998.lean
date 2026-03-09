@@ -362,7 +362,7 @@ Bare plurals are scopeless because DKP introduces a LOCAL existential.
 The existential reading from DKP cannot scope out because the coercion
 applies inside the predicate abstract.
 
-See `Phenomena/KindReference/Data.lean` for empirical scope data.
+See `Phenomena/Generics/KindReference.lean` for empirical scope data.
 -/
 def dkpIsLocal : Bool := true
 
@@ -481,16 +481,16 @@ example : downDefinedFor .mass false = true := rfl
 /-!
 ## Related Theory
 
-- `Theories/Montague/Lexicon/Krifka2004.lean` - Alternative: Bare NPs as properties
-- `Theories/Montague/Lexicon/Dayal2004.lean` - Meaning Preservation, singular kinds
-- `Theories/Montague/Lexicon/Generics.lean` - GEN operator for generic readings
+- `Theories/Semantics/Lexical/Noun/Kind/Krifka2004.lean` - Alternative: Bare NPs as properties
+- `Theories/Semantics/Lexical/Noun/Kind/Dayal2004.lean` - Meaning Preservation, singular kinds
+- `Theories/Semantics/Lexical/Noun/Kind/Generics.lean` - GEN operator for generic readings
 
 ## Empirical Data
 
 For empirical patterns (cross-linguistic data, scope judgments, predicate
 class effects), see:
-- `Phenomena/KindReference/Data.lean` - unified kind reference phenomena
-- `Phenomena/BarePlurals/Data.lean` - generic vs existential readings
+- `Phenomena/Generics/KindReference.lean` - unified kind reference phenomena
+- `Phenomena/Generics/BarePlurals.lean` - generic vs existential readings
 - `Phenomena/Generics/Data.lean` - generic sentence patterns
 -/
 

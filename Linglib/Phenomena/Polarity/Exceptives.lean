@@ -27,7 +27,7 @@ The but-exceptive:
 
 See:
 - `Core/Analyticity.lean`: L-analyticity explanation
-- The semantics should go in `Theories/Montague/Lexicon/` when added
+- The semantics should go in `Theories/Semantics/` when added
 
 -/
 
