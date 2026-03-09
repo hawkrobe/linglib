@@ -157,27 +157,6 @@ theorem logisticApproxConst_eq_thurstoneLuceK :
 -- §4. Shared Softmax Embedding
 -- ============================================================================
 
-/-- Both SDT and Thurstone models approximate a `RationalAction.fromSoftmax`
-    with the same rationality parameter, under the logistic-normal
-    approximation.
-
-    For Thurstone with `σ = 1/√2` and utility = scale:
-    `P_T(a,b) = Φ((u(a)-u(b))/(σ√2)) ≈ logistic(k·(u(a)-u(b)))`
-    where `k = thurstoneLuceK(1/√2) = π/√3 = logisticApproxConst`.
-
-    For SDT with the yes/no task:
-    `hitRate = Φ(d'/2 - c) ≈ logistic(logisticApproxConst · (d'/2 - c))`
-
-    Both use the same constant `k = π/√3` and the same functional form
-    `logistic(k · Δ)` where `Δ` is the relevant scale/utility difference. -/
-theorem sdt_thurstone_shared_approx (m : SDTModel) :
-    ∃ (ε : ℝ), ε < 0.01 ∧
-    |m.asThurstonYesNo.choiceProb 0 1 -
-     logistic (logisticApproxConst * (m.d_prime / 2 - m.criterion))| ≤ ε := by
-  -- Rewrite using hitRate_eq_thurstone, then apply sdt_logistic_approx
-  rw [← m.hitRate_eq_thurstone]
-  exact sdt_logistic_approx m
-
 /-- 2AFC models with different d' can be compared via the Thurstone ordering.
 
     Since `twoAFC = Thurstone.choiceProb`, and Thurstone satisfies strong
@@ -211,7 +190,8 @@ they differ only in the noise distribution:
 The Gumbel-Luce model gives **exactly** the softmax (Luce) choice rule
 (McFadden's theorem, `mcfaddenIntegral_eq_softmax`). The Thurstone model
 gives the normal CDF. These agree up to the Gaussian-logistic approximation
-(`logistic_approx_normal`, `thurstone_luce_approximation`).
+`Φ(y·√3/π) ≈ logistic(y)` (max error ~0.023, variance matching;
+see `thurstone_luce_identity`).
 
 The constant `k = π/(σ√6)` that appears in the Thurstone-Luce approximation
 (`thurstoneLuceK`) is the scale matching between Gaussian and Gumbel noise:

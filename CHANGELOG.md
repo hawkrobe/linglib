@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.229.47] - 2026-03-09
+
+### Changed
+- **Thurstone.lean**: Delete false `logistic_approx_normal` (arguments were swapped, giving 0.23 error not 0.01) and sorry'd `thurstone_luce_approximation`/`thurstone_as_softmax`. Replace with exact `thurstone_luce_identity`: `choiceProb a b = Φ(k·d·√3/π)` (fully proved, 0 sorrys). Fix docstring identity from `π/√3` to `√3/π`
+- **SignalDetection.lean**: Delete false sorry'd `sdt_logistic_approx` (ε < 0.01 bound wrong — actual max error is 0.023 with variance matching) and `sdt_logistic_softmax_bridge`. Keep `logisticApproxConst` definition with corrected docstring
+- **GaussianChoice.lean**: Delete `sdt_thurstone_shared_approx` (depended on deleted false theorem). Update RUM unification docstring
+
 ## [0.229.46] - 2026-03-08
 
 ### Added

@@ -138,90 +138,65 @@ theorem ThurstoneCaseV.transitivity_right (m : ThurstoneCaseV Stimulus)
 -- §4. Logistic Approximation of the Normal CDF
 -- ============================================================================
 
-/-!
-## The Logistic Approximation
-
-The logistic function `1/(1 + exp(-x))` approximates `Φ(x · π/√3)` with
-maximum absolute deviation ≈ 0.01. This is the key technical fact connecting
-Thurstone's Gaussian model to Luce's exponential (softmax) model.
-
-The scaling factor `π/√3` arises from matching variances: the standard
-logistic distribution has variance `π²/3`, while the standard normal has
-variance 1. Rescaling the normal CDF argument by `π/√3` matches the
-second moments of the two distributions.
--/
-
-/-- The logistic function closely approximates the normal CDF after rescaling.
-
-    Specifically, `|Φ(x · π/√3) - logistic(x)| ≤ 0.01` for all `x`.
-    The maximum deviation of ≈ 0.0095 occurs near `|x| ≈ 1.25`.
-
-    The constant `π/√3` arises from variance matching: the logistic
-    distribution has variance `π²/3`, the standard normal has variance 1.
-    The 0.01 bound itself is a well-known numerical fact without a known
-    analytical proof — @cite{luce-1959} §2.D.2 verified it via table
-    comparison, and it is routinely confirmed by computation. -/
-theorem logistic_approx_normal (x : ℝ) :
-    |normalCDF (x * (Real.pi / Real.sqrt 3)) - logistic x| ≤ 0.01 := by
-  sorry -- TODO: numerical bound, verified computationally
-
 -- ============================================================================
--- §5. Thurstone–Luce Approximation
+-- §4. Thurstone–Luce Connection
 -- ============================================================================
 
 /-!
-## Thurstone Case V ≈ Luce Model
+## Thurstone Case V and the Luce Model
 
-Set `d = u(a) - u(b)` and `k = π / (σ · √6)`. Then:
+Set `d = u(a) - u(b)` and `k = π / (σ · √6)`. Then the exact identity:
 
-  `d / (σ√2) = k · d · (π/√3)`
+  `d / (σ√2) = k · d · (√3/π)`
 
-so the Thurstone formula becomes:
+rewrites the Thurstone formula as:
 
-  `P_T(a,b) = Φ(d / (σ√2)) = Φ(kd · (π/√3)) ≈ logistic(kd)`
+  `P_T(a,b) = Φ(d / (σ√2)) = Φ(k·d · √3/π)`
 
-where the last step applies `logistic_approx_normal`. This gives:
+Since `Φ(y · √3/π) ≈ logistic(y)` numerically (max error ~0.023 with
+variance matching; see @cite{luce-1959} §2.D.2, Table 3), this gives:
 
-  `P_T(a,b) ≈ 1/(1 + exp(-k(u(a) - u(b))))`
+  `P_T(a,b) ≈ logistic(k·d) = 1/(1 + exp(-k·(u(a) - u(b))))`
 
-which is exactly the Luce model with rationality parameter `k`.
+The constant `k = π/(σ√6)` arises from matching variances: the standard
+logistic has variance `π²/3`, while the Thurstone difference distribution
+(two i.i.d. N(0,σ²) draws) has variance `2σ²`. Setting `π²β²/3 = 2σ²`
+gives `β = σ√6/π`, so `k = 1/β = π/(σ√6)`.
+
+The Gumbel-Luce model (`GumbelLuce.lean`) gives **exactly** logistic(d/β)
+by McFadden's theorem — no approximation. The Thurstone model gives
+**exactly** Φ(d/(σ√2)). They agree up to `Φ ≈ logistic` which is a
+purely numerical fact (~0.023 max error with variance matching, ~0.009
+with the optimal constant 1.702).
 -/
 
 /-- The scaling constant connecting Thurstone and Luce:
-    `k = π / (σ · √6)` so that `(u(a)-u(b))/(σ√2) = k·(u(a)-u(b))·(π/√3)`. -/
+    `k = π / (σ · √6)` so that `(u(a)-u(b))/(σ√2) = k·(u(a)-u(b))·(√3/π)`. -/
 noncomputable def thurstoneLuceK (sigma : ℝ) : ℝ :=
   Real.pi / (sigma * Real.sqrt 6)
 
-/-- **Thurstone–Luce approximation** (@cite{luce-1959}, §2.D).
+/-- **Thurstone–Luce identity** (@cite{luce-1959}, §2.D): the Thurstone
+    choice probability equals `normalCDF` evaluated at the variance-matched
+    Luce argument scaled by `√3/π`.
 
-    With `k = π/(σ · √6)`, the Thurstone Case V probability
-    `P_T(a,b) = Φ((u(a)-u(b))/(σ√2))` and the Luce model probability
-    `P_L(a,b) = 1/(1 + exp(-k(u(a)-u(b))))` satisfy `|P_T - P_L| ≤ 0.01`.
+    `P_T(a,b) = Φ(d/(σ√2)) = Φ(k·d·√3/π)`
 
-    This is the sense in which Thurstone's Gaussian model is "approximately
-    a special case" of Luce's choice axiom. Luce's original argument is a
-    numerical table comparison (Table 3, §2.D.2) showing the two models'
-    predicted probabilities differ by less than 0.02; the 0.01 bound on
-    `|Φ(x · π/√3) - logistic(x)|` is a standard numerical fact without
-    a known analytical proof. -/
-theorem thurstone_luce_approximation (m : ThurstoneCaseV Stimulus)
+    where `k = π/(σ√6)` and `d = u(a) - u(b)`. Since `Φ(y·√3/π) ≈ logistic(y)`
+    numerically, this gives `P_T(a,b) ≈ logistic(k·d)` — the Luce model.
+
+    The approximation `Φ(y·√3/π) ≈ logistic(y)` has max error ~0.023
+    (variance matching) and is a numerical fact without analytical proof. -/
+theorem thurstone_luce_identity (m : ThurstoneCaseV Stimulus)
     (a b : Stimulus) :
-    |m.choiceProb a b -
-     logistic (thurstoneLuceK m.sigma * (m.scale a - m.scale b))| ≤ 0.01 := by
-  -- The key identity: (u(a)-u(b))/(σ√2) = k·(u(a)-u(b)) · (π/√3)
-  -- where k = π/(σ · √6), so this reduces to logistic_approx_normal.
-  sorry -- TODO: unfold thurstoneLuceK, simplify, apply logistic_approx_normal
-
-/-- The Thurstone model gives the same choice probabilities as a `RationalAction`
-    with softmax parameterization, up to the logistic approximation error.
-
-    Concretely, constructing a `RationalAction.fromSoftmax` with `utility := scale`
-    and `α := thurstoneLuceK sigma` gives a binary choice probability within
-    0.01 of the Thurstone prediction. -/
-theorem thurstone_as_softmax [Fintype Stimulus] [Nonempty Stimulus]
-    (m : ThurstoneCaseV Stimulus) (a b : Stimulus) :
-    |m.choiceProb a b -
-     logistic (thurstoneLuceK m.sigma * (m.scale a - m.scale b))| ≤ 0.01 :=
-  thurstone_luce_approximation m a b
+    m.choiceProb a b =
+    normalCDF (thurstoneLuceK m.sigma * (m.scale a - m.scale b) *
+              (Real.sqrt 3 / Real.pi)) := by
+  simp only [ThurstoneCaseV.choiceProb, thurstoneLuceK]
+  congr 1
+  have h6 : Real.sqrt 6 = Real.sqrt 2 * Real.sqrt 3 := by
+    rw [show (6 : ℝ) = 2 * 3 from by norm_num, Real.sqrt_mul (by norm_num : (0:ℝ) ≤ 2)]
+  field_simp
+  rw [h6]
+  ring
 
 end Core

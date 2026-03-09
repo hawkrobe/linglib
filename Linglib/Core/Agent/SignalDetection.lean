@@ -276,66 +276,38 @@ theorem sdt_luce_odds_ratio (d_prime x : ℝ) :
   rw [div_one]
 
 -- ============================================================================
--- §6. Logistic Approximation (Thurstone-Luce Bridge)
+-- §6. Variance-Matching Constant
 -- ============================================================================
 
 /-!
-## Logistic Approximation
+## Logistic Approximation Constant
 
-The Gaussian CDF Phi(x) is well-approximated by the logistic function:
+The SDT hit rate `Φ(d'/2 - c)` is well-approximated by `logistic(k·(d'/2-c))`
+where `k = π/√3 ≈ 1.814` is the variance-matching constant:
 
-    Phi(x) ≈ 1 / (1 + exp(-k*x)) where k ≈ π/√3 ≈ 1.702
+    `Φ(x) ≈ logistic(x · π/√3)` with max error ~0.023
 
-This means SDT choice probabilities (which involve Phi) can be approximated
-by Luce-logistic choice probabilities (which involve softmax/logistic).
+This is the Thurstone-Luce bridge for the detection context: both SDT
+(Gaussian noise) and the Gumbel-Luce model (Gumbel noise) are Random
+Utility Models. The Gumbel-Luce model gives **exactly** logistic
+probabilities (McFadden's theorem, `GumbelLuce.lean`). The Gaussian
+model gives Φ. These agree up to the numerical approximation `Φ ≈ logistic`.
 
-Specifically, if P_SDT = Phi(d'/2 - c) is the SDT hit rate, then under the
-logistic approximation:
-
-    P_SDT ≈ logistic(k * (d'/2 - c)) = 1 / (1 + exp(-k * (d'/2 - c)))
-
-This is exactly the Luce choice probability with rationality parameter k
-and utility difference (d'/2 - c).
-
-This connection is the Thurstone-Luce bridge for the detection context:
-Thurstone's discriminal process (Gaussian) and Luce's choice axiom (logistic)
-give approximately the same predictions when k = pi/sqrt(3).
+The constant `k = π/√3` equals `thurstoneLuceK(1/√2)`, unifying the SDT
+and Thurstone parameterizations (see `logisticApproxConst_eq_thurstoneLuceK`
+in `GaussianChoice.lean`).
 -/
 
-/-- The logistic approximation constant: k = pi/sqrt(3) ≈ 1.702.
-    This is the scale factor that makes the logistic CDF best approximate
-    the Gaussian CDF. -/
+/-- The logistic approximation constant: k = π/√3 ≈ 1.814.
+
+    This is the variance-matching scale factor between the normal and
+    logistic distributions: the standard logistic has variance π²/3,
+    so `Φ(x) ≈ logistic(x · π/√3)` with max error ~0.023.
+
+    Note: the optimal constant minimizing the sup-norm is ~1.702
+    (slightly smaller than π/√3). We use π/√3 because it has a clean
+    analytical derivation from variance matching and equals
+    `thurstoneLuceK(1/√2)` (see `logisticApproxConst_eq_thurstoneLuceK`). -/
 noncomputable def logisticApproxConst : ℝ := Real.pi / Real.sqrt 3
-
-/-- Under the logistic approximation, the SDT hit rate is approximately
-    logistic(k * (d'/2 - c)).
-
-    This connects SDT (Gaussian CDF) to the Luce model (logistic CDF):
-    Phi(d'/2 - c) ≈ logistic(k * (d'/2 - c))
-
-    The approximation is exact in the limit and has maximum absolute error
-    of about 0.01 across the entire range. -/
-theorem sdt_logistic_approx (m : SDTModel) :
-    ∃ (ε : ℝ), ε < 0.01 ∧
-    |m.hitRate - logistic (logisticApproxConst * (m.d_prime / 2 - m.criterion))| ≤ ε := by
-  sorry -- TODO: classical approximation result; maximum error ≈ 0.0095
-
-/-- The SDT choice probability for detection, under the logistic approximation,
-    is a softmax over two alternatives with utility difference d'.
-
-    This is the Thurstone-Luce bridge for signal detection: the Gaussian
-    model (Thurstone/SDT) and the exponential model (Luce) agree up to the
-    logistic-normal approximation. Under the approximation:
-
-    P("signal" | x) ≈ softmax([d'*x/2, -d'*x/2], k)(0)
-                     = logistic(k * d' * x)
-
-    where k = pi/sqrt(3) is the logistic approximation constant. -/
-theorem sdt_logistic_softmax_bridge (d_prime x : ℝ) :
-    ∃ (ε : ℝ), ε < 0.02 ∧
-    |(sdt_as_luce d_prime x).policy () (0 : Fin 2) -
-     softmax (λ i : Fin 2 => if i = 0 then d_prime * x / 2 else -(d_prime * x / 2))
-             logisticApproxConst (0 : Fin 2)| ≤ ε := by
-  sorry -- TODO: follows from the logistic-normal approximation
 
 end Core
