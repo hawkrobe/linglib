@@ -65,14 +65,14 @@ Replication/extension of @cite{clark-1979}, N = 25 participants.
 Probability of exhaustive-list answers: (4) ≥ (5) > (3)
 -/
 
-/-- Model predictions for exhaustive responses (Case Study 1).
-    The paper reports CS1 empirical data only via regression coefficients
-    (β = 3.39 for (5)>(3), β = 0.13 for (4)≥(5)), not exact proportions.
-    -- UNVERIFIED: exact values 12/100, 75/100, 66/100 -/
+/-- Model predictions for exhaustive responses (Case Study 1, p. 6).
+    The paper reports CS1 empirical data via regression coefficients
+    (β = 3.39 for (5)>(3), β = 0.13 for (4)≥(5)).
+    Model predictions stated on p. 6: "0.75 for (4), 0.66 for (5) and 0.12 for (3)". -/
 def cs1_model_prediction : Fin 3 → ℚ
-  | 0 => 12/100   -- Condition (3): specific item available -- UNVERIFIED
-  | 1 => 75/100   -- Condition (4): specific item unavailable -- UNVERIFIED
-  | 2 => 66/100   -- Condition (5): general question -- UNVERIFIED
+  | 0 => 12/100   -- Condition (3): specific item available (p. 6)
+  | 1 => 75/100   -- Condition (4): specific item unavailable (p. 6)
+  | 2 => 66/100   -- Condition (5): general question (p. 6)
 
 /-- Key prediction: unavailable (4) ≥ general (5) > available (3) -/
 theorem cs1_ordering :
@@ -107,23 +107,28 @@ structure CS2ResponseRates where
   otherCategory : ℚ
   deriving Repr
 
-/-- Human response rates averaged across 30 vignettes (from MCMC fitting data).
-    -- UNVERIFIED: exact proportions -/
+/-- Human response rates averaged across 30 vignettes.
+    UNVERIFIED: raw data in `data/human/case_study_2/` at
+    https://github.com/polina-tsvilodub/prior-pq uses different
+    category labels (e.g., "alternative", "fullList") that require
+    recoding to match these five categories. -/
 def cs2_human_rates : CS2ResponseRates :=
-  { competitor := 512/1000   -- UNVERIFIED
-  , taciturn := 206/1000     -- UNVERIFIED
-  , sameCategory := 168/1000 -- UNVERIFIED
-  , exhaustive := 101/1000   -- UNVERIFIED
-  , otherCategory := 14/1000 -- UNVERIFIED
+  { competitor := 512/1000   -- UNVERIFIED (recoding needed)
+  , taciturn := 206/1000     -- UNVERIFIED (recoding needed)
+  , sameCategory := 168/1000 -- UNVERIFIED (recoding needed)
+  , exhaustive := 101/1000   -- UNVERIFIED (recoding needed)
+  , otherCategory := 14/1000 -- UNVERIFIED (recoding needed)
   }
 
-/-- Model rates. -- UNVERIFIED: exact proportions -/
+/-- Model rates (p. 8): "62% for competitor, 22% for taciturn,
+    14% for same-category, < 1% for other-category and exhaustive".
+    The < 1% values are approximated as 1/100 here. -/
 def cs2_model_rates : CS2ResponseRates :=
-  { competitor := 62/100     -- UNVERIFIED
-  , taciturn := 22/100       -- UNVERIFIED
-  , sameCategory := 14/100   -- UNVERIFIED
-  , exhaustive := 1/100      -- UNVERIFIED
-  , otherCategory := 1/100   -- UNVERIFIED
+  { competitor := 62/100     -- p. 8
+  , taciturn := 22/100       -- p. 8
+  , sameCategory := 14/100   -- p. 8
+  , exhaustive := 1/100      -- p. 8: "< 1%"
+  , otherCategory := 1/100   -- p. 8: "< 1%"
   }
 
 /-- Model captures the qualitative ordering -/
@@ -174,36 +179,38 @@ structure ModelParams where
   U_fail : Option ℚ -- Utility of failure (receiving nothing); none for CS1
   deriving Repr
 
-/-- CS2 fitted parameters (Table S2). β ≈ 1 means almost pure action-relevance.
-    -- UNVERIFIED: exact parameter values -/
+/-- CS2 fitted parameters (Table S2, supplement p. 5).
+    β ≈ 1 means almost pure action-relevance. -/
 def cs2Params : ModelParams :=
-  { α_respondent := 887/100
-  , α_questioner := 373/100
-  , α_policy := 4
-  , β := 96/100
-  , w_c := 96/100
-  , U_fail := some (34/10)
+  { α_respondent := 887/100   -- α_R = 8.87
+  , α_questioner := 373/100   -- α_Q = 3.73
+  , α_policy := 4             -- α_R (policy) = 4.00
+  , β := 96/100               -- β = 0.96
+  , w_c := 96/100             -- w_c = 0.96
+  , U_fail := some (34/10)    -- U_fail = 3.40
   }
 
-/-- CS1 fitted parameters (Table S2). -- UNVERIFIED: exact parameter values -/
+/-- CS1 fitted parameters (Table S2, supplement p. 5). -/
 def cs1Params : ModelParams :=
-  { α_respondent := 5
-  , α_questioner := 3/2
-  , α_policy := 5/2
-  , β := 9/10
-  , w_c := 3/10
-  , U_fail := none
+  { α_respondent := 5          -- α_R = 5.0
+  , α_questioner := 3/2        -- α_Q = 1.5
+  , α_policy := 5/2            -- α_R (policy) = 2.5
+  , β := 9/10                  -- β = 0.9
+  , w_c := 3/10                -- w_c = 0.3
+  , U_fail := none             -- not used in CS1
   }
 
-/-- CS3 fitted parameters (Table S2). β ≈ 0.29 means mostly epistemic.
-    -- UNVERIFIED: exact parameter values -/
+/-- CS3 fitted parameters (Table S2, supplement p. 5).
+    β = 0.29 means mostly epistemic (contrast with CS2's β = 0.96).
+    NOTE: the GitHub repo (`params_case_study_3.csv`) has different values
+    from a different fitting run; we use the published supplement values. -/
 def cs3Params : ModelParams :=
-  { α_respondent := 294/100
-  , α_questioner := 589/100
-  , α_policy := 854/100
-  , β := 29/100
-  , w_c := 234/100
-  , U_fail := some (-594/100)
+  { α_respondent := 294/100    -- α_R = 2.94
+  , α_questioner := 589/100    -- α_Q = 5.89
+  , α_policy := 854/100        -- α_R (policy) = 8.54
+  , β := 29/100                -- β = 0.29
+  , w_c := 234/100             -- w_c = 2.34
+  , U_fail := some (-594/100)  -- U_fail = -5.94
   }
 
 
@@ -322,9 +329,10 @@ def responseTruth : Response → World → Bool
 -- ============================================================================
 
 /-- Action relevance V(D, r): utility of the item revealed by response r,
-    given decision problem D. Values from Table S1 of supplementary material
-    (0–100 slider scale, raw values ÷ 10). Taciturn reveals nothing:
-    V = U_fail = 3.4. Exhaustive reveals all: V = max utility for that DP.
+    given decision problem D. Taciturn reveals nothing: V = U_fail = 3.4.
+    Exhaustive reveals all: V = max utility for that DP.
+    wantTarget values from Table S1 (supplement p. 3, ÷ 10).
+    Cross-DP values from prior elicitation means (see `itemUtility`).
     NOTE: This ℝ definition is unused; `actionValueQ` (ℚ, §8) is the
     authoritative version used in theorems. -/
 noncomputable def actionValue : DP → Response → ℝ
@@ -637,8 +645,8 @@ def questionTarget : Question → FullWorld → Bool
   | .chard, w => w.hasChard
 
 /-- Utility U(w, a) for DP D: the value of choosing item a in world w.
-    Uses Table S1 values (0-100 slider scale, stored as centesimals).
-    U = item utility if available, else U_fail = 34/10.
+    Values on 0-100 slider scale (stored as centesimals).
+    U = item utility if available, else U_fail = 34/10 (Table S2).
     Actions: choose target, choose IC, choose soda, choose chard, or leave. -/
 inductive Item where
   | tea | ic | soda | chard | leave
@@ -657,7 +665,12 @@ def itemAvailable : Item → FullWorld → Bool
   | .leave, _ => true
 
 /-- Utility of choosing item `a` when you have DP `D` and item is available.
-    Values from Table S1 (÷10). If unavailable, U_fail = 34/10. -/
+    If unavailable, U_fail = 34/10. wantTarget row verified against
+    Table S1 (supplement p. 3): Target=96.18, Competitor=56.93,
+    Same=36.11, Other=23.69. Cross-DP rows (wantCompetitor, wantSameCat,
+    wantOtherCat) are from the prior elicitation experiment but not shown
+    in Table S1; values are per-scenario means from the raw data at
+    https://github.com/polina-tsvilodub/prior-pq -/
 def itemUtility (D : DP) (a : Item) (w : FullWorld) : ℚ :=
   if ¬itemAvailable a w then 34/10  -- U_fail
   else match D, a with
@@ -753,8 +766,8 @@ theorem dpPrior_consistent_with_posterior :
 -- §8. Action Value Structure
 -- ============================================================================
 
-/-- Action value V(D, r) in ℚ (Table S1, supplementary material).
-    Same values as `actionValue` but in ℚ for decidable computation. -/
+/-- Action value V(D, r) in ℚ for decidable computation.
+    Same values as `actionValue` (see `itemUtility` docstring for sources). -/
 def actionValueQ : DP → Response → ℚ
   | _, .taciturn                    => 17/5
   | .wantTarget, .mentionIC         => 5693/1000
