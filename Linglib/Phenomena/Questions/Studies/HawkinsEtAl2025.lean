@@ -21,6 +21,7 @@ import Linglib.Theories.Pragmatics.RSA.Core.Config
 import Linglib.Theories.Pragmatics.RSA.Core.Softmax.Limits
 import Linglib.Tactics.RSAPredict
 import Linglib.Core.Agent.ExperimentDesign
+import Linglib.Phenomena.Questions.Studies.VanRooy2003
 
 namespace Phenomena.Questions.Studies.HawkinsEtAl2025
 
@@ -1083,5 +1084,186 @@ responses ("No, but we have iced coffee") go beyond the polar answer, adding
 a mention response. The `responseTruth` predicate ensures mentioned items are
 truthful, connecting to G&S's requirement that answers be true in the
 actual world. -/
+
+-- ============================================================================
+-- §12. Cost-Driven Mention-Some: The Precise Conditions
+-- ============================================================================
+
+/-! ### When does cost select mention-some over mention-all?
+
+@cite{van-rooy-2003}'s value saturation shows that mention-some and
+mention-all partitions extract equal decision-relevant information.
+But the standard RSA informativity term (log L0) DOES distinguish them:
+the finer mention-all answer is more informative in the Shannon sense.
+
+PRIOR-PQ's s1Score has three components:
+
+    score(u, w) = (1−β) · log L0(w|u) + β · V(D,u) − w_c · C(u)
+                   ├─ informativity ─┤   ├ relevance ┤   ├─ cost ─┤
+
+Given value saturation (V equal), the mention-some vs mention-all
+comparison reduces to a trade-off between informativity loss and
+cost saving. The **precise boundary** is:
+
+    w_c · ΔC > (1 − β) · Δ(log L0)
+
+where ΔC = C(mention-all) − C(mention-some) > 0 (cost saving)
+and Δ(log L0) = log L0(w|ma) − log L0(w|ms) ≥ 0 (informativity gap).
+
+**Special cases** (corollaries of `priorPQ_cost_dominance`):
+
+- **β = 1** (pure action-relevance): the informativity term vanishes.
+  Any positive cost difference suffices (`pure_action_relevance`).
+  This is the Van Rooy limit — question interpretation is entirely
+  determined by the decision problem.
+
+- **β = 0** (pure informativity): cost must overcome the full
+  informativity gap. Mention-some wins only when the cost saving
+  exceeds the Shannon information gained by being more specific.
+
+- **0 < β < 1**: the informativity gap is discounted by (1−β).
+  Higher β makes it easier for cost to dominate. Hawkins's CS2
+  fitted value β = 0.96 is near the Van Rooy limit.
+
+**From score to S1**: Since `s1Score = exp(α · score)` and exp is
+strictly monotone (`exp_lt_exp`), S1(u₁|w) > S1(u₂|w) iff
+score(u₁,w) > score(u₂,w) (when both L0(w|u) > 0). So the
+score-level characterization fully determines the S1 preference. -/
+
+
+section CostDominance
+
+/-- The PRIOR-PQ score for a single (utterance, world) pair.
+
+This is the exponent in PRIOR-PQ's s1Score (when L0(w|u) > 0):
+`s1Score = exp(α · priorPQScore ...)`.
+
+The three components are explicitly separated:
+- `logInfo`: log L0(w|u), Shannon informativity
+- `actionVal`: E_D[V(D,u)], action-relevance (from DP)
+- `utterCost`: C(u), utterance cost -/
+noncomputable def priorPQScore (β w_c logInfo actionVal utterCost : ℝ) : ℝ :=
+  (1 - β) * logInfo + β * actionVal - w_c * utterCost
+
+/-- **Cost-dominance characterization** (iff).
+
+Given value saturation (equal action-relevance), one utterance scores
+higher than another **if and only if** its cost saving exceeds the
+informativity gap discounted by (1 − β).
+
+This is the **precise boundary** between mention-some and mention-all
+preference in any PRIOR-PQ style model. -/
+theorem priorPQ_cost_dominance
+    (β w_c logInfo₁ logInfo₂ V cost₁ cost₂ : ℝ) :
+    priorPQScore β w_c logInfo₁ V cost₁ > priorPQScore β w_c logInfo₂ V cost₂ ↔
+    w_c * (cost₂ - cost₁) > (1 - β) * (logInfo₂ - logInfo₁) := by
+  simp only [priorPQScore]
+  have e₁ := mul_sub w_c cost₂ cost₁
+  have e₂ := mul_sub (1 - β) logInfo₂ logInfo₁
+  constructor <;> intro h <;> linarith
+
+/-- **Score comparison lifts to S1 comparison** via exp monotonicity.
+
+Since S1(u|w) = exp(α · score(u,w)) / Z and Z is constant across
+utterances at a fixed world, S1(u₁|w) > S1(u₂|w) iff
+exp(α · score₁) > exp(α · score₂) iff score₁ > score₂. -/
+theorem exp_score_monotone (α score₁ score₂ : ℝ) (hα : α > 0) :
+    exp (α * score₁) > exp (α * score₂) ↔ score₁ > score₂ := by
+  constructor
+  · intro h
+    have := exp_lt_exp.mp h
+    exact lt_of_mul_lt_mul_of_nonneg_left this (le_of_lt hα)
+  · intro h
+    exact exp_lt_exp.mpr (mul_lt_mul_of_pos_left h hα)
+
+/-- **Combined**: S1 prefers u₁ over u₂ (at score level) iff cost-dominance holds.
+
+This chains exp monotonicity with the cost-dominance characterization:
+the S1 comparison, given value saturation, reduces to the single
+inequality `w_c · ΔC > (1 − β) · Δ(log L0)`. -/
+theorem s1_cost_dominance
+    (α β w_c logInfo₁ logInfo₂ V cost₁ cost₂ : ℝ) (hα : α > 0) :
+    exp (α * priorPQScore β w_c logInfo₁ V cost₁) >
+    exp (α * priorPQScore β w_c logInfo₂ V cost₂) ↔
+    w_c * (cost₂ - cost₁) > (1 - β) * (logInfo₂ - logInfo₁) := by
+  rw [exp_score_monotone α _ _ hα, priorPQ_cost_dominance]
+
+/-- **Corollary (β = 1)**: At pure action-relevance, informativity
+drops out entirely. Any positive cost difference suffices.
+
+This is the formal content of @cite{van-rooy-2003}'s economy argument:
+when the speaker cares only about the questioner's decision problem,
+the cheapest adequate answer always wins. The mention-some preference
+follows from value saturation alone — no parameter tuning needed. -/
+theorem pure_action_relevance
+    (w_c logInfo₁ logInfo₂ V cost₁ cost₂ : ℝ)
+    (hw : w_c > 0) (hcost : cost₁ < cost₂) :
+    priorPQScore 1 w_c logInfo₁ V cost₁ > priorPQScore 1 w_c logInfo₂ V cost₂ := by
+  rw [priorPQ_cost_dominance]
+  simp only [sub_self, zero_mul]
+  exact mul_pos hw (by linarith)
+
+/-- **Corollary (β < 1)**: At mixed action-relevance/informativity, the
+cost saving must exceed the informativity gap scaled by (1 − β).
+
+The higher β, the smaller the effective informativity gap, and the
+easier it is for cost to dominate. Hawkins's CS2 fitted β = 0.96
+means the informativity gap is discounted to 4% of its raw value. -/
+theorem mixed_action_relevance
+    (β w_c logInfo₁ logInfo₂ V cost₁ cost₂ : ℝ)
+    (hw : w_c * (cost₂ - cost₁) > (1 - β) * (logInfo₂ - logInfo₁)) :
+    priorPQScore β w_c logInfo₁ V cost₁ > priorPQScore β w_c logInfo₂ V cost₂ := by
+  rwa [priorPQ_cost_dominance]
+
+/-- **Monotonicity in β**: increasing action-relevance weight weakly
+increases the mention-some advantage (when mention-some is cheaper
+and mention-all is more informative).
+
+The advantage `score(ms) - score(ma)` = `w_c·ΔC - (1-β)·Δ(logL0)` is
+increasing in β (when `Δ(logL0) ≥ 0`). So raising β always pushes
+toward mention-some. -/
+theorem advantage_monotone_in_β
+    (β₁ β₂ w_c logInfo₁ logInfo₂ V cost₁ cost₂ : ℝ)
+    (hβ : β₁ < β₂)
+    (hinfo : logInfo₂ ≥ logInfo₁) :
+    priorPQScore β₁ w_c logInfo₁ V cost₁ - priorPQScore β₁ w_c logInfo₂ V cost₂ ≤
+    priorPQScore β₂ w_c logInfo₁ V cost₁ - priorPQScore β₂ w_c logInfo₂ V cost₂ := by
+  simp only [priorPQScore]
+  have e := mul_sub (β₂ - β₁) logInfo₂ logInfo₁
+  nlinarith [sub_pos.mpr hβ]
+
+end CostDominance
+
+
+/-! ### Concrete instance: the newspaper example
+
+The newspaper scenario from @cite{van-rooy-2003} is the β = 1 case.
+The questioner's DP fully determines the question interpretation,
+and cost selects mention-some. -/
+
+section NewspaperCostInstance
+
+open Phenomena.Questions.Studies.VanRooy2003
+
+/-- In the newspaper scenario, "At Shop A" (cost 1) is strictly
+preferred over "At Shop A and Shop B" (cost 2) for any w_c > 0.
+
+This is the β = 1 instantiation of `priorPQ_cost_dominance`:
+value saturation (`newspaper_value_saturation_A`) cancels the
+partitionValue terms, leaving the cost difference as sole discriminant. -/
+theorem newspaper_mentionSome_preferred (w_c : ℚ) (hw : w_c > 0) :
+    QUD.partitionValue newspaperDP newspaperMS_A Finset.univ [Shop.A, Shop.B] - w_c * 1 >
+    QUD.partitionValue newspaperDP newspaperGS Finset.univ [Shop.A, Shop.B] - w_c * 2 := by
+  linarith [newspaper_value_saturation_A.symm]
+
+/-- The mention-some advantage is exactly one unit of cost:
+the savings from mentioning one fewer shop. -/
+theorem newspaper_mentionSome_advantage (w_c : ℚ) :
+    (QUD.partitionValue newspaperDP newspaperMS_A Finset.univ [Shop.A, Shop.B] - w_c * 1) -
+    (QUD.partitionValue newspaperDP newspaperGS Finset.univ [Shop.A, Shop.B] - w_c * 2)
+    = w_c := by
+  linarith [newspaper_value_saturation_A.symm]
+
+end NewspaperCostInstance
 
 end Phenomena.Questions.Studies.HawkinsEtAl2025

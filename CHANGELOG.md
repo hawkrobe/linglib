@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.229.71] - 2026-03-09
+
+### Added
+- **HawkinsEtAl2025.lean §12**: Cost-dominance characterization connecting Van Rooy (2003) value saturation to PRIOR-PQ cost mechanism. `priorPQ_cost_dominance` (iff): mention-some preferred iff `w_c·ΔC > (1−β)·Δ(log L0)` — cost saving exceeds informativity gap discounted by action-relevance weight. `exp_score_monotone`: score comparison lifts to S1 via exp monotonicity. `s1_cost_dominance`: combined S1-level characterization. Corollaries: `pure_action_relevance` (β=1, Van Rooy limit), `mixed_action_relevance` (general β), `advantage_monotone_in_β` (higher β weakly favors mention-some). Newspaper concrete instance via `newspaper_value_saturation_A`
+
 ## [0.229.70] - 2026-03-09
 
 ### Added
