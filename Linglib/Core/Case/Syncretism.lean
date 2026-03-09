@@ -1,4 +1,5 @@
 import Linglib.Core.Case.Hierarchy
+import Linglib.Core.Case.Containment
 
 /-!
 # Case Syncretism @cite{blake-1994}
@@ -116,5 +117,38 @@ theorem same_tier_adjacent (c1 c2 : Case)
     (h : c1.hierarchyRank = c2.hierarchyRank) :
     hierarchyAdjacent c1 c2 = true := by
   simp [hierarchyAdjacent, h]
+
+-- ============================================================================
+-- § 5: *ABA and Syncretism (@cite{caha-2009})
+-- ============================================================================
+
+-- The *ABA constraint (@cite{caha-2009}) applies to syncretism just as
+-- it does to suppletive allomorphy: if NOM and GEN are syncretic
+-- (same form), ACC must also share that form.
+
+/-- NOM/ACC syncretism (neuter paradigms): NOM=ACC share form 0,
+    GEN and DAT have form 1. AABB pattern — contiguous. -/
+theorem neuter_syncretism_contiguous :
+    (AllomorphyPattern.mk 0 0 1 1).isContiguous = true := by native_decide
+
+/-- NOM/GEN syncretism without ACC syncretism would be an ABA pattern
+    — predicted NOT to occur by @cite{caha-2009}. -/
+theorem nom_gen_without_acc_violates_aba :
+    (AllomorphyPattern.mk 0 1 0 1).violatesABA = true := by native_decide
+
+/-- ACC/GEN syncretism with distinct NOM and DAT: ABBC — contiguous. -/
+theorem acc_gen_syncretism_contiguous :
+    (AllomorphyPattern.mk 0 1 1 2).isContiguous = true := by native_decide
+
+/-- GEN/DAT syncretism: NOM and ACC distinct from GEN=DAT.
+    AABC — contiguous. -/
+theorem gen_dat_syncretism_contiguous :
+    (AllomorphyPattern.mk 0 1 2 2).isContiguous = true := by native_decide
+
+/-- NOM/DAT syncretism (skipping ACC and GEN): ABBA — violates *ABA.
+    The containment hierarchy predicts this cannot occur: DAT contains
+    ACC, so any form shared by NOM and DAT must also be shared by ACC. -/
+theorem nom_dat_syncretism_violates_aba :
+    (AllomorphyPattern.mk 0 1 1 0).violatesABA = true := by native_decide
 
 end Core

@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.229.77] - 2026-03-09
+
+### Added
+- **Aitha2026.lean**: Formalize "The nouns that say -ni" (NLLT 44:16) — Telugu strong vs weak stem alternation with VI rules, *ABA violation, OT metrical tableau, agreement diagnostics, locality types, and end-to-end argumentation chains
+- **VocabularyInsertion.lean**: DM List 2 infrastructure — VocabItem, Elsewhere Condition, vocabularyInsertSimple, isOutwardSensitive (Bobaljik 2000 root-out directionality)
+- **Foot.lean**: Metrical phonology infrastructure — moraic trochees, FT-BIN, PARSE-SYL, ALL-FT-LEFT constraints with MetricalParse type
+- **Containment.lean**: Case containment hierarchy (Caha 2009) — 5-layer `[[[[[ NOM ] ACC ] GEN ] DAT ] P ]]`, isNonnom, AllomorphyPattern with *ABA checking
+- **Fragments/Telugu/Case.lean**: Telugu 5-case inventory, hierarchy validity, containment properties, cross-Dravidian subset theorem
+- **Syncretism.lean §5**: *ABA ↔ syncretism connection — neuter syncretism contiguous, NOM/GEN-without-ACC violates *ABA, NOM/DAT syncretism violates *ABA
+- **references.bib**: 9 entries (aitha-2026, bobaljik-2000, bobaljik-2012, embick-2010, hayes-1995, kager-2007, kiparsky-2000, krishnamurti-gwynn-1985, mcfadden-2018)
+
+### Changed
+- **Categorizer.lean**: Update docstring to reference VocabularyInsertion.lean for List 2
+
 ## [0.229.76] - 2026-03-09
 
 ### Added

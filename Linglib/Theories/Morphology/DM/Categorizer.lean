@@ -31,7 +31,7 @@ roots in DM:
 - **List 3**: Encyclopedia entries — interpretations conditioned by context
 
 This module formalizes the categorization layer and its relationship to Voice.
-List 2/3 architecture is left for future work.
+List 2 (Vocabulary Insertion) is formalized in `VocabularyInsertion.lean`.
 
 -/
 

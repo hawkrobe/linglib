@@ -461,6 +461,7 @@ import Linglib.Fragments.Korean.Morph
 import Linglib.Fragments.Japanese.Pronouns
 import Linglib.Fragments.Tamil.Case
 import Linglib.Fragments.Tamil.Pronouns
+import Linglib.Fragments.Telugu.Case
 import Linglib.Fragments.Galician.Pronouns
 import Linglib.Fragments.Hindi.Case
 import Linglib.Fragments.Hindi.Pronouns
@@ -780,6 +781,7 @@ import Linglib.Phenomena.Morphology.CategoryChanging
 import Linglib.Phenomena.Morphology.Studies.Panagiotidis2015
 import Linglib.Phenomena.Allomorphy.SlavicVerbalizer.Data
 import Linglib.Phenomena.Allomorphy.SlavicVerbalizer.Studies.Stojkovic2026
+import Linglib.Phenomena.Allomorphy.TeluguNounStems.Studies.Aitha2026
 import Linglib.Phenomena.Negation.Studies.StankovaSimik2024.Data
 import Linglib.Phenomena.Negation.Studies.Greco2020
 import Linglib.Phenomena.Negation.Denial
