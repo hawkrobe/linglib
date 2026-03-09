@@ -150,11 +150,39 @@ theorem rankProp_union [Fintype W] [DecidableEq W] (κ : RankingFunction W)
     κ.rankProp (fun w => φ w ∨ ψ w)
       (by obtain ⟨w, hw⟩ := hφ; exact ⟨w, Or.inl hw⟩) =
     min (κ.rankProp φ hφ) (κ.rankProp ψ hψ) := by
-  -- TODO: The proof uses filter_or + inf'_union, but rw fails due to
-  -- dependent types (the Nonempty proof in inf' depends on the filter set).
-  -- Approach: use Nat.le_antisymm with inf'_le for each direction,
-  -- or use simp with a custom congr lemma.
-  sorry
+  unfold rankProp
+  set Sφψ := Finset.univ.filter (fun w => φ w ∨ ψ w)
+  set Sφ := Finset.univ.filter (fun w => φ w)
+  set Sψ := Finset.univ.filter (fun w => ψ w)
+  -- Nonemptiness witnesses
+  have hSφ : (Sφ).Nonempty := by
+    obtain ⟨w, hw⟩ := hφ; exact ⟨w, Finset.mem_filter.mpr ⟨Finset.mem_univ w, hw⟩⟩
+  have hSψ : (Sψ).Nonempty := by
+    obtain ⟨w, hw⟩ := hψ; exact ⟨w, Finset.mem_filter.mpr ⟨Finset.mem_univ w, hw⟩⟩
+  have hSφψ : (Sφψ).Nonempty := by
+    obtain ⟨w, hw⟩ := hφ; exact ⟨w, Finset.mem_filter.mpr ⟨Finset.mem_univ w, Or.inl hw⟩⟩
+  apply Nat.le_antisymm
+  · -- inf'(φ ∨ ψ) ≤ min(inf'(φ), inf'(ψ))
+    -- The (φ ∨ ψ)-set is a superset of each part, so its inf' ≤ each part's inf'
+    rw [Nat.le_min]
+    constructor
+    · apply Finset.le_inf'
+      intro w hw
+      exact Finset.inf'_le κ.rank (show w ∈ Sφψ by
+        rw [Finset.mem_filter] at hw ⊢; exact ⟨hw.1, Or.inl hw.2⟩)
+    · apply Finset.le_inf'
+      intro w hw
+      exact Finset.inf'_le κ.rank (show w ∈ Sφψ by
+        rw [Finset.mem_filter] at hw ⊢; exact ⟨hw.1, Or.inr hw.2⟩)
+  · -- min(inf'(φ), inf'(ψ)) ≤ inf'(φ ∨ ψ)
+    apply Finset.le_inf'
+    intro w hw
+    rw [Finset.mem_filter] at hw
+    rcases hw.2 with hφw | hψw
+    · exact (Nat.min_le_left _ _).trans
+        (Finset.inf'_le κ.rank (show w ∈ Sφ by rw [Finset.mem_filter]; exact ⟨hw.1, hφw⟩))
+    · exact (Nat.min_le_right _ _).trans
+        (Finset.inf'_le κ.rank (show w ∈ Sψ by rw [Finset.mem_filter]; exact ⟨hw.1, hψw⟩))
 
 /-- A ranking function induces a plausibility ordering:
     w is at least as plausible as v iff κ(w) ≤ κ(v).

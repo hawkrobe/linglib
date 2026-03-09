@@ -155,17 +155,18 @@ theorem gen_formulations_equiv
 -- Prevalence-Based Alternative
 
 /--
-Prevalence of a property within restrictor situations.
+Prevalence: the proportion of restrictor-satisfying cases where scope holds.
 
-This is `measure` from `CovertQuantifier` specialized to situations:
-the proportion of restrictor-situations where the scope holds.
+Polymorphic over the domain type — works for situation-based models
+(@cite{cohen-1999a}, @cite{tessler-goodman-2019}) and entity-based models
+(@cite{nickel-2009}) alike. An alias for `measure` with a domain-specific name.
 -/
-def prevalence
-    (situations : List Situation)
-    (restrictor : Restrictor)
-    (scope : Scope)
+def prevalence {D : Type}
+    (domain : List D)
+    (restrictor : D → Bool)
+    (scope : D → Bool)
     : ℚ :=
-  measure situations restrictor scope
+  measure domain restrictor scope
 
 /--
 Threshold-based generic (a la @cite{tessler-goodman-2019}).
@@ -173,13 +174,13 @@ Threshold-based generic (a la @cite{tessler-goodman-2019}).
 The generic is true iff prevalence exceeds threshold.
 This replaces the hidden "normalcy" with observable prevalence.
 -/
-def thresholdGeneric
-    (situations : List Situation)
-    (restrictor : Restrictor)
-    (scope : Scope)
+def thresholdGeneric {D : Type}
+    (domain : List D)
+    (restrictor : D → Bool)
+    (scope : D → Bool)
     (threshold : ℚ)
     : Bool :=
-  prevalence situations restrictor scope > threshold
+  prevalence domain restrictor scope > threshold
 
 /-!
 GEN is eliminable via threshold semantics — but only for **descriptive** generics

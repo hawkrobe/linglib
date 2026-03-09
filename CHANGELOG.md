@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.229.36] - 2026-03-08
+
+### Changed
+- **Generics.lean**: Make `prevalence` and `thresholdGeneric` polymorphic over `{D : Type}` (was hardcoded to `Situation`), enabling entity-level models (Nickel2009) to reuse shared infrastructure
+- **Nickel2009.lean**: Add bears example (4 continents), `waysIncompatible` predicate, redefine `majorityGEN` via shared `thresholdGeneric`, remove redundant `#guard` calls, add 4 new theorems
+- **Guerrini2026.lean**: Close 2 sorrys — prove `dkp_true_iff_prevalence_one` and `dkp_false_iff_prevalence_zero` (DKP ↔ prevalence boundary conditions)
+- **PsychCausalLink.lean**: Close sorry — prove `dependent_excludes_persistent` (counterfactual dependence excludes persistence when closest worlds non-empty)
+- **RankingFunction.lean**: Close sorry — prove `rankProp_union` (Spohn's Theorem 2b: κ(A ∪ B) = min(κ(A), κ(B)))
+- **DRT.lean**: Unify DRS representation with canonical `DRSExpr` from `Core.Accessibility`
+
 ## [0.229.35] - 2026-03-08
 
 ### Added

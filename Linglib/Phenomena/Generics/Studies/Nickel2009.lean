@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Lexical.CovertQuantifier
+import Linglib.Theories.Semantics.Lexical.Noun.Kind.Generics
 import Linglib.Core.Genericity
 
 /-!
@@ -52,7 +52,7 @@ This is discussed in the introduction to *Genericity* (OUP 2013).
 
 namespace Phenomena.Generics.Studies.Nickel2009
 
-open Core.Genericity (GenericReading)
+open Semantics.Lexical.Noun.Kind.Generics (prevalence thresholdGeneric)
 
 -- Ways of Being Normal
 
@@ -110,20 +110,16 @@ def nickelConjunctiveGEN
 
 -- The Majority-Based View (for comparison)
 
-/-- Majority-based GEN (@cite{cohen-1999a}'s view): generic is true iff more
-    than half of the restrictor-satisfying entities satisfy the scope.
-
-    Structurally identical to `cohenGEN` in `Cohen1999.lean`: both check
-    whether prevalence exceeds 1/2. -/
+/-- Majority-based GEN (@cite{cohen-1999a}'s view): generic is true iff
+    prevalence exceeds 1/2. Structurally identical to `cohenGEN` in
+    `Cohen1999.lean` — both are `thresholdGeneric` with θ = 1/2, just
+    instantiated at different domain types (Entity here, Situation there). -/
 def majorityGEN
     (entities : List Entity)
     (restrictor : Property)
     (scope : Property)
     : Bool :=
-  let restricted := entities.filter restrictor
-  let satisfied := restricted.filter scope
-  if restricted.length = 0 then false
-  else (2 * satisfied.length : Nat) > restricted.length
+  thresholdGeneric entities restrictor scope (1/2)
 
 -- The Elephant Example
 

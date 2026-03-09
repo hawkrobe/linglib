@@ -217,7 +217,23 @@ theorem dependent_excludes_persistent {W : Type*} [DecidableEq W]
     (hNonempty : (closestWorldsB closer domain w
       (domain.filter (fun w => !causeProp w))).length > 0) :
     counterfactuallyPersistent closer domain causeProp effectProp w = false := by
-  sorry
+  simp only [counterfactuallyDependent, universalCounterfactualB] at hDep
+  simp only [counterfactuallyPersistent, universalCounterfactualB]
+  -- Extract a witness from the non-empty closest worlds
+  set cl := closestWorldsB closer domain w (domain.filter fun w => !causeProp w) with hcl
+  obtain ⟨x, xs, hcons⟩ : ∃ x xs, cl = x :: xs := by
+    match h : cl, hNonempty with
+    | a :: as, _ => exact ⟨a, as, rfl⟩
+  rw [hcons] at hDep ⊢
+  -- isEmpty is false for a cons
+  simp only [List.isEmpty_cons, Bool.false_or] at hDep ⊢
+  rw [Bool.eq_false_iff]
+  intro hall
+  rw [List.all_eq_true] at hDep hall
+  have hmem : x ∈ x :: xs := List.mem_cons_self ..
+  have h1 := hDep x hmem
+  have h2 := hall x hmem
+  simp [h2] at h1
 
 -- ════════════════════════════════════════════════════
 -- § 7. Kim §3.3: Three Properties of Maintenance
