@@ -1,8 +1,9 @@
 # Changelog
 
-## [0.229.51] - 2026-03-09
+## [0.229.52] - 2026-03-09
 
 ### Added
+- **MaxEnt.lean §5**: Close `marginal_eq_classical_when_no_systemic` sorry — one-line corollary of `marginal_eq_independent_when_uncoupled`. Restructure MaxEnt ℝ layer: define `marginalProb` through `CoupledSoftmax.marginal`, extract `systemicScore`/`systemicScoreR`, build `maxEntCoupled` from `harmonyScoreR` + `systemicScoreR`. Prove zero systemic weights ⟹ constant coupling by list induction. 0 sorrys remain in MaxEnt.lean
 - **CoupledEvaluation.lean §4**: Close `marginal_eq_independent_when_uncoupled` sorry — factorization theorem proving that when coupling score is constant, joint softmax marginals equal independent per-item softmax. Uses `softmax_add_const`, finite Fubini (`Fintype.prod_sum`), and a zero-one filter trick to encode the marginalization constraint into the product. 0 sorrys remain in CoupledEvaluation.lean
 
 ## [0.229.50] - 2026-03-09

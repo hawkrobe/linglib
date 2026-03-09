@@ -1,5 +1,5 @@
 import Linglib.Core.Logic.OT
-import Linglib.Core.Agent.RationalAction
+import Linglib.Core.Agent.CoupledEvaluation
 
 /-!
 # MaxEnt Harmonic Grammar @cite{storme-2026}
@@ -119,6 +119,19 @@ def homophonyAvoidance {n : Nat} {O : Type} [DecidableEq O]
 -- § 4: Joint Distribution with Systemic Constraints
 -- ============================================================================
 
+/-- Systemic constraint score for an output tuple (ℚ, computable).
+    This is the coupling component: `Σₖ (-wₖ · Sₖ(f))`. -/
+def systemicScore {n : Nat} {O : Type}
+    (systemicConstraints : List (SystemicConstraint n O))
+    (f : Fin n → O) : ℚ :=
+  systemicConstraints.foldl (λ acc sc => acc - sc.weight * (sc.eval f : ℚ)) 0
+
+/-- Systemic constraint score as ℝ. -/
+noncomputable def systemicScoreR {n : Nat} {O : Type}
+    (systemicConstraints : List (SystemicConstraint n O))
+    (f : Fin n → O) : ℝ :=
+  (systemicScore systemicConstraints f : ℝ)
+
 /-- Joint harmony score over the product space.
     Combines classical per-mapping scores with systemic tuple-level scores.
 
@@ -130,32 +143,26 @@ def jointHarmonyScore {n : Nat} {I O : Type}
     (classicalConstraints : List (WeightedConstraint (I × O)))
     (systemicConstraints : List (SystemicConstraint n O))
     (f : Fin n → O) : ℚ :=
-  -- Sum of classical per-mapping scores
   let classical := (List.finRange n).foldl
     (λ acc i => acc + harmonyScore classicalConstraints (inputs i, f i)) 0
-  -- Sum of systemic constraint penalties
-  let systemic := systemicConstraints.foldl
-    (λ acc sc => acc - sc.weight * (sc.eval f : ℚ)) 0
-  classical + systemic
+  classical + systemicScore systemicConstraints f
 
-/-- Joint harmony score as ℝ. -/
-noncomputable def jointHarmonyScoreR {n : Nat} {I O : Type}
+/-- MaxEnt grammar with systemic constraints as a `CoupledSoftmax`.
+
+    - `componentScore i v = harmonyScoreR(classicalConstraints, (inputs i, v))`
+    - `couplingScore f = systemicScoreR(systemicConstraints, f)`
+
+    The joint probability is `softmax(totalScore, 1)` over all `Fin n → O`
+    output tuples. The marginal at position `i` recovers the individual
+    mapping probability under systemic pressure. -/
+noncomputable def maxEntCoupled {n : Nat} {I O : Type} [Fintype O] [DecidableEq O]
     (inputs : Fin n → I)
     (classicalConstraints : List (WeightedConstraint (I × O)))
-    (systemicConstraints : List (SystemicConstraint n O))
-    (f : Fin n → O) : ℝ :=
-  (jointHarmonyScore inputs classicalConstraints systemicConstraints f : ℝ)
-
-/-- Joint probability over the product space `Fin n → O`:
-    P_joint(f) = exp(H_joint(f)) / Σ_{f'} exp(H_joint(f')).
-
-    This is softmax with α = 1 over all possible output tuples. -/
-noncomputable def jointProb {n : Nat} {I O : Type} [Fintype O]
-    (inputs : Fin n → I)
-    (classicalConstraints : List (WeightedConstraint (I × O)))
-    (systemicConstraints : List (SystemicConstraint n O))
-    (f : Fin n → O) : ℝ :=
-  softmax (jointHarmonyScoreR inputs classicalConstraints systemicConstraints) 1 f
+    (systemicConstraints : List (SystemicConstraint n O)) :
+    Core.CoupledSoftmax (Fin n) O :=
+  Core.coupledSoftmaxOfMaxEnt inputs
+    (fun p => harmonyScoreR classicalConstraints p)
+    (fun f => systemicScoreR systemicConstraints f)
 
 /-- Marginal probability: marginalize the joint distribution to get
     the probability of a specific input→output mapping.
@@ -163,36 +170,44 @@ noncomputable def jointProb {n : Nat} {I O : Type} [Fintype O]
     P_marginal(oᵢ | iᵢ) = Σ_{f : f(i) = oᵢ} P_joint(f)
 
     This is Storme's key equation: the marginal recovers individual mapping
-    probabilities that reflect systemic pressure. -/
+    probabilities that reflect systemic pressure. Defined through
+    `CoupledSoftmax.marginal` so that factorization follows from
+    `marginal_eq_independent_when_uncoupled`. -/
 noncomputable def marginalProb {n : Nat} {I O : Type} [Fintype O] [DecidableEq O]
+    [Nonempty O]
     (inputs : Fin n → I)
     (classicalConstraints : List (WeightedConstraint (I × O)))
     (systemicConstraints : List (SystemicConstraint n O))
     (i : Fin n) (o : O) : ℝ :=
-  ∑ f : Fin n → O,
-    if f i = o then
-      jointProb inputs classicalConstraints systemicConstraints f
-    else 0
+  (maxEntCoupled inputs classicalConstraints systemicConstraints).marginal i o
 
 -- ============================================================================
 -- § 5: Factorization Theorem
 -- ============================================================================
 
-/-- When systemic constraint weights are all zero, the joint distribution
-    factorizes into independent per-mapping distributions, so the marginal
-    equals the classical MaxEnt probability.
+/-- When all systemic constraint weights are zero, the systemic score
+    is zero for every output tuple. -/
+private lemma systemicScoreR_zero {n : Nat} {O : Type}
+    {systemicConstraints : List (SystemicConstraint n O)}
+    (h_zero : ∀ sc ∈ systemicConstraints, sc.weight = 0)
+    (f : Fin n → O) :
+    systemicScoreR systemicConstraints f = 0 := by
+  suffices h : systemicScore systemicConstraints f = 0 by
+    simp [systemicScoreR, h]
+  induction systemicConstraints with
+  | nil => rfl
+  | cons sc rest ih =>
+    simp only [systemicScore, List.foldl_cons]
+    have hw : sc.weight = 0 := h_zero sc (.head _)
+    rw [hw, zero_mul, sub_zero]
+    exact ih (fun sc' hsc' => h_zero sc' (.tail _ hsc'))
 
-    Proof sketch: With zero systemic weights, `jointHarmonyScore f =
-    Σᵢ harmonyScore(iᵢ, f(i))`. Since `exp(Σ) = Π exp(·)`, the joint
-    distribution factorizes: `P_joint(f) = Π P_classical(f(i) | iᵢ)`.
-    Marginalizing over all positions except `i` recovers
-    `P_classical(o | iᵢ) · Π_{j≠i} Σ_{o'} P_classical(o' | iⱼ)`, and
-    each factor `Σ_{o'} P_classical(o' | iⱼ) = 1`, leaving the classical
-    probability.
+/-- **Factorization**: when systemic constraint weights are all zero,
+    the marginal equals the classical MaxEnt probability.
 
-    TODO: formalize the factorization argument. The key step is showing
-    `exp(a + b) = exp(a) · exp(b)` lifts to `softmax` over product types
-    when the score decomposes additively. -/
+    With zero systemic weights, the coupling score is constant (= 0),
+    so `marginal_eq_independent_when_uncoupled` applies: the joint
+    factorizes and each marginal equals its independent per-item softmax. -/
 theorem marginal_eq_classical_when_no_systemic {n : Nat} {I O : Type}
     [Fintype O] [DecidableEq O] [Nonempty O]
     (inputs : Fin n → I)
@@ -201,7 +216,8 @@ theorem marginal_eq_classical_when_no_systemic {n : Nat} {I O : Type}
     (h_zero : ∀ sc ∈ systemicConstraints, sc.weight = 0)
     (i : Fin n) (o : O) :
     marginalProb inputs classicalConstraints systemicConstraints i o =
-    softmax (λ o' => harmonyScoreR classicalConstraints (inputs i, o')) 1 o := by
-  sorry
+    softmax (λ o' => harmonyScoreR classicalConstraints (inputs i, o')) 1 o :=
+  (maxEntCoupled inputs classicalConstraints systemicConstraints).marginal_eq_independent_when_uncoupled
+    ⟨0, systemicScoreR_zero h_zero⟩ i o
 
 end Theories.Phonology.HarmonicGrammar
