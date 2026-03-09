@@ -143,7 +143,7 @@ theorem rankProp_dichotomy [Fintype W] (κ : RankingFunction W)
 
     This is the ordinal analogue of P(A ∪ B) = P(A) + P(B) for
     disjoint events (and ≤ for overlapping ones). -/
-theorem rankProp_union [Fintype W] [DecidableEq W] (κ : RankingFunction W)
+theorem rankProp_union [Fintype W] (κ : RankingFunction W)
     (φ ψ : W → Prop) [DecidablePred φ] [DecidablePred ψ]
     [DecidablePred (fun w => φ w ∨ ψ w)]
     (hφ : ∃ w, φ w) (hψ : ∃ w, ψ w) :

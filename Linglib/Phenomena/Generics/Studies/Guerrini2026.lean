@@ -614,7 +614,7 @@ theorem only_bfg_has_generic_inference :
 
 section DKPPrevalence
 
-variable {Atom W : Type} [DecidableEq Atom] [Fintype Atom]
+variable {Atom W : Type}
 
 open Phenomena.Generics.Studies.TesslerGoodman2019 (genericMeaning GenThreshold Prevalence)
 open Core.Scale (deg thr)
@@ -634,7 +634,6 @@ def prevalenceAtWorld (P : Atom → W → Bool) (ext : Finset Atom) (w : W) : �
     This is the extensional, non-generic truth condition of the DKP parse:
     the generalization is "true" in the same way a referential definite plural
     statement is true — all actual instances satisfy the predicate. -/
-omit [DecidableEq Atom] [Fintype Atom] in
 theorem dkp_true_iff_prevalence_one (P : Atom → W → Bool) (ext : Finset Atom)
     (w : W) (hne : ext.Nonempty) :
     distMaximal P ext w = true ↔ prevalenceAtWorld P ext w = 1 := by
@@ -660,33 +659,37 @@ theorem dkp_true_iff_prevalence_one (P : Atom → W → Bool) (ext : Finset Atom
 
     When no atoms satisfy P, the generalization is determinately false,
     not merely gapped. -/
-omit [DecidableEq Atom] [Fintype Atom] in
 theorem dkp_false_iff_prevalence_zero (P : Atom → W → Bool) (ext : Finset Atom)
-    (w : W) (hne : ext.Nonempty) :
+    (w : W) :
     noneSatisfy P ext w = true ↔ prevalenceAtWorld P ext w = 0 := by
-  have hcard : ext.card ≠ 0 := Finset.card_ne_zero.mpr hne
-  have hcardQ : (ext.card : ℚ) ≠ 0 := Nat.cast_ne_zero.mpr hcard
-  simp only [noneSatisfy, decide_eq_true_iff, prevalenceAtWorld, hcard, ↓reduceIte]
-  constructor
-  · intro hall
-    have hfilt : ext.filter (fun a => P a w) = ∅ := by
-      rw [Finset.eq_empty_iff_forall_notMem]
+  by_cases hne : ext.Nonempty
+  · have hcard : ext.card ≠ 0 := Finset.card_ne_zero.mpr hne
+    have hcardQ : (ext.card : ℚ) ≠ 0 := Nat.cast_ne_zero.mpr hcard
+    simp only [noneSatisfy, decide_eq_true_iff, prevalenceAtWorld, hcard, ↓reduceIte]
+    constructor
+    · intro hall
+      have hfilt : ext.filter (fun a => P a w) = ∅ := by
+        rw [Finset.eq_empty_iff_forall_notMem]
+        intro a ha
+        rw [Finset.mem_filter] at ha
+        exact absurd ha.2 (by rw [hall a ha.1]; decide)
+      rw [hfilt, Finset.card_empty, Nat.cast_zero, zero_div]
+    · intro hdiv
+      have heq : ((ext.filter (fun a => P a w)).card : ℚ) = 0 := by
+        rw [div_eq_zero_iff] at hdiv; exact hdiv.resolve_right hcardQ
+      have hceq : (ext.filter (fun a => P a w)).card = 0 := by exact_mod_cast heq
+      have hfilt : ext.filter (fun a => P a w) = ∅ :=
+        Finset.card_eq_zero.mp hceq
       intro a ha
-      rw [Finset.mem_filter] at ha
-      exact absurd ha.2 (by rw [hall a ha.1]; decide)
-    rw [hfilt, Finset.card_empty, Nat.cast_zero, zero_div]
-  · intro hdiv
-    have heq : ((ext.filter (fun a => P a w)).card : ℚ) = 0 := by
-      rw [div_eq_zero_iff] at hdiv; exact hdiv.resolve_right hcardQ
-    have hceq : (ext.filter (fun a => P a w)).card = 0 := by exact_mod_cast heq
-    have hfilt : ext.filter (fun a => P a w) = ∅ :=
-      Finset.card_eq_zero.mp hceq
-    intro a ha
-    by_contra h
-    have htrue : P a w = true := by cases P a w <;> simp_all
-    have hmem : a ∈ ext.filter (fun a => P a w) := by
-      rw [Finset.mem_filter]; exact ⟨ha, htrue⟩
-    rw [hfilt] at hmem; exact absurd hmem (Finset.notMem_empty _)
+      by_contra h
+      have htrue : P a w = true := by cases P a w <;> simp_all
+      have hmem : a ∈ ext.filter (fun a => P a w) := by
+        rw [Finset.mem_filter]; exact ⟨ha, htrue⟩
+      rw [hfilt] at hmem; exact absurd hmem (Finset.notMem_empty _)
+  · -- ext = ∅: both sides trivially true
+    rw [Finset.not_nonempty_iff_eq_empty] at hne
+    subst hne
+    simp [noneSatisfy, prevalenceAtWorld]
 
 /-- DKP true implies T&G generic meaning is true at every threshold.
 
