@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.229.49] - 2026-03-09
+
+### Changed
+- **Morphology split**: Extract types and WALS helpers to `Core/Morphology/MorphProfile.lean`, per-language profiles to 18 `Fragments/*/Morph.lean` files, rewrite `Phenomena/Morphology/Typology.lean` as pure cross-linguistic theorems. Fixes WALS-derived values (German/Spanish fusion → concatenative, Mandarin prefixSuffix → stronglySuffixing, Swahili synthesis → moderate), removes broken generalizations, closes all sorrys with `native_decide`
+
 ## [0.229.48] - 2026-03-09
 
 ### Added

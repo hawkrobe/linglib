@@ -244,9 +244,9 @@ AUTO_FEATURES = {
     "123A": {"enum": "ObliqueRelativization", "author": "comrie-2013"},
 
     # ── Morphology (Ch 20–22, 26–27) ──────────────────────────────────
-    "20A": {"enum": "FusionType",          "author": "bickel-nichols-2013"},
-    "21A": {"enum": "ExponenceType",       "author": "bickel-nichols-2013"},
-    "22A": {"enum": "InflectionalSynthesis", "author": "bickel-nichols-2013"},
+    "20A": {"enum": "FusionType",          "author": "bickel-nichols-2013a"},
+    "21A": {"enum": "ExponenceType",       "author": "bickel-nichols-2013b"},
+    "22A": {"enum": "InflectionalSynthesis", "author": "bickel-nichols-2013c"},
     "26A": {"enum": "PrefixSuffixPreference", "author": "dryer-2013e"},
     "27A": {"enum": "ReduplicationType",   "author": "rubino-2013"},
 

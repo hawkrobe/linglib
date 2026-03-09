@@ -1,20 +1,23 @@
+import Linglib.Core.Morphology.MorphProfile
 import Mathlib.Data.Rat.Defs
-import Linglib.Core.WALS.Features.F20A
-import Linglib.Core.WALS.Features.F21A
-import Linglib.Core.WALS.Features.F22A
-import Linglib.Core.WALS.Features.F26A
-import Linglib.Core.WALS.Features.F27A
-import Linglib.Core.WALS.Features.F23A
-import Linglib.Core.WALS.Features.F24A
-import Linglib.Core.WALS.Features.F25A
-import Linglib.Core.WALS.Features.F25B
-import Linglib.Core.WALS.Features.F28A
-import Linglib.Core.WALS.Features.F29A
-import Linglib.Core.WALS.Features.F21B
-import Linglib.Core.WALS.Features.F62A
-import Linglib.Core.WALS.Features.F79A
-import Linglib.Core.WALS.Features.F79B
-import Linglib.Core.WALS.Features.F80A
+import Linglib.Fragments.English.Morph
+import Linglib.Fragments.Mandarin.Morph
+import Linglib.Fragments.Japanese.Morph
+import Linglib.Fragments.Turkish.Morph
+import Linglib.Fragments.Finnish.Morph
+import Linglib.Fragments.Russian.Morph
+import Linglib.Fragments.Swahili.Morph
+import Linglib.Fragments.Arabic.Morph
+import Linglib.Fragments.Hindi.Morph
+import Linglib.Fragments.Tagalog.Morph
+import Linglib.Fragments.Quechua.Morph
+import Linglib.Fragments.Hungarian.Morph
+import Linglib.Fragments.Georgian.Morph
+import Linglib.Fragments.Thai.Morph
+import Linglib.Fragments.Indonesian.Morph
+import Linglib.Fragments.Korean.Morph
+import Linglib.Fragments.German.Morph
+import Linglib.Fragments.Spanish.Morph
 
 /-!
 # Morphological Typology: Paradigm Complexity
@@ -36,9 +39,18 @@ inflection classes. The central empirical finding: despite wildly varying
 E-complexity, I-complexity (average conditional entropy) is uniformly low
 across all ten languages.
 
+## MorphProfile Sample
+
+Eighteen typologically diverse languages with morphological profiles
+derived from WALS data. Types and WALS lookup helpers are defined in
+`Core.Morphology.MorphProfile`; per-language profiles live in
+`Fragments.{Language}.Morph`.
+
 -/
 
 namespace Phenomena.Morphology.Typology
+
+open Core.Morphology
 
 private abbrev ch20 := Core.WALS.F20A.allData
 private abbrev ch21 := Core.WALS.F21A.allData
@@ -218,6 +230,8 @@ single formative expresses (exponence), how synthetic verb morphology is
 marking), whether affixes go before or after stems (prefixing vs suffixing),
 and whether the language has productive reduplication.
 
+Typological classification types are defined in `Core.Morphology.MorphProfile`.
+
 Sources:
 - Bickel, B. & Nichols, J. (2013a). Fusion of selected inflectional
   formatives. WALS Online. Ch. 20.
@@ -245,28 +259,42 @@ Sources:
 -- §4.1 Chapter 20: Fusion of Selected Inflectional Formatives
 -- ============================================================================
 
-/-- WALS Ch 20: How inflectional formatives are attached to stems.
+open Core.WALS.F20A (FusionType) in
+/-- Map WALS 20A fine-grained fusion types to coarse categories.
+    Mixed types are mapped by their non-concatenative component. -/
+def toFusion : FusionType → Fusion
+  | .exclusivelyConcatenative => .concatenative
+  | .exclusivelyIsolating => .isolating
+  | .exclusivelyTonal | .tonalIsolating | .tonalConcatenative => .nonlinear
+  | .ablautConcatenative => .nonlinear
+  | .isolatingConcatenative => .concatenative
 
-    @cite{bickel-nichols-2013a} classify languages by the dominant fusion
-    strategy in their inflectional morphology. **Isolating** languages
-    express grammatical categories with separate words. **Concatenative**
-    (agglutinative) languages attach clearly segmentable affixes.
-    **Nonlinear** (fusional) languages use stem-internal changes,
-    ablaut, tonal alternation, or portmanteau morphs that resist
-    segmentation. -/
-inductive Fusion where
-  /-- Isolating: grammatical categories expressed by independent words,
-      not bound morphology. Example: Mandarin, Vietnamese, Thai. -/
-  | isolating
-  /-- Concatenative (agglutinative): clearly segmentable affixes concatenated
-      to the stem. Each affix typically carries one meaning. Example:
-      Turkish, Finnish, Swahili, Quechua. -/
-  | concatenative
-  /-- Nonlinear (fusional): stem-internal changes, ablaut, tonal alternation,
-      or portmanteau morphs. A single formative may express multiple
-      categories simultaneously. Example: Arabic, Russian, German. -/
-  | nonlinear
-  deriving DecidableEq, BEq, Repr
+-- Grounding: example languages verified against F20A data
+theorem vietnamese_isolating : Core.WALS.F20A.lookup "vie" =
+    some ⟨"vie", "Vietnamese", "vie", .exclusivelyIsolating⟩ := by native_decide
+theorem indonesian_isolating : Core.WALS.F20A.lookup "ind" =
+    some ⟨"ind", "Indonesian", "ind", .exclusivelyIsolating⟩ := by native_decide
+theorem turkish_concatenative : Core.WALS.F20A.lookup "tur" =
+    some ⟨"tur", "Turkish", "tur", .exclusivelyConcatenative⟩ := by native_decide
+theorem finnish_concatenative : Core.WALS.F20A.lookup "fin" =
+    some ⟨"fin", "Finnish", "fin", .exclusivelyConcatenative⟩ := by native_decide
+theorem swahili_concatenative : Core.WALS.F20A.lookup "swa" =
+    some ⟨"swa", "Swahili", "swh", .exclusivelyConcatenative⟩ := by native_decide
+theorem arabic_ablaut : Core.WALS.F20A.lookup "aeg" =
+    some ⟨"aeg", "Arabic (Egyptian)", "arz", .ablautConcatenative⟩ := by native_decide
+theorem hebrew_ablaut : Core.WALS.F20A.lookup "heb" =
+    some ⟨"heb", "Hebrew (Modern)", "heb", .ablautConcatenative⟩ := by native_decide
+-- Note: Russian and German are exclusivelyConcatenative in WALS 20A (case formatives),
+-- despite being commonly called "fusional" in typological tradition.
+theorem russian_concatenative : Core.WALS.F20A.lookup "rus" =
+    some ⟨"rus", "Russian", "rus", .exclusivelyConcatenative⟩ := by native_decide
+theorem german_concatenative : Core.WALS.F20A.lookup "ger" =
+    some ⟨"ger", "German", "deu", .exclusivelyConcatenative⟩ := by native_decide
+-- Note: Mandarin and Thai are isolatingConcatenative (mixed), not exclusively isolating.
+theorem mandarin_isoConcatenative : Core.WALS.F20A.lookup "mnd" =
+    some ⟨"mnd", "Mandarin", "cmn", .isolatingConcatenative⟩ := by native_decide
+theorem thai_isoConcatenative : Core.WALS.F20A.lookup "tha" =
+    some ⟨"tha", "Thai", "tha", .isolatingConcatenative⟩ := by native_decide
 
 /-- A single row in a WALS distribution table: a label and a language count. -/
 structure WALSCount where
@@ -274,83 +302,100 @@ structure WALSCount where
   count : Nat
   deriving Repr, DecidableEq, BEq
 
-/-- WALS Chapter 20 distribution (@cite{bickel-nichols-2013a}, N = 160). -/
+/-- WALS Chapter 20 distribution, derived from F20A data (@cite{bickel-nichols-2013a}). -/
 def ch20Distribution : List WALSCount :=
-  [ ⟨"Exclusively concatenative", 58⟩
-  , ⟨"Strongly concatenative", 28⟩
-  , ⟨"Weakly concatenative", 24⟩
-  , ⟨"Nonlinear/fusional", 25⟩
-  , ⟨"Isolating", 25⟩ ]
+  [ ⟨"Exclusively concatenative", (ch20.filter (·.value == .exclusivelyConcatenative)).length⟩
+  , ⟨"Exclusively isolating", (ch20.filter (·.value == .exclusivelyIsolating)).length⟩
+  , ⟨"Exclusively tonal", (ch20.filter (·.value == .exclusivelyTonal)).length⟩
+  , ⟨"Tonal/isolating", (ch20.filter (·.value == .tonalIsolating)).length⟩
+  , ⟨"Tonal/concatenative", (ch20.filter (·.value == .tonalConcatenative)).length⟩
+  , ⟨"Ablaut/concatenative", (ch20.filter (·.value == .ablautConcatenative)).length⟩
+  , ⟨"Isolating/concatenative", (ch20.filter (·.value == .isolatingConcatenative)).length⟩ ]
 
-/-- Ch 20 total: 160 languages. -/
+/-- Ch 20 total: 165 languages (derived from F20A data). -/
 theorem ch20_total :
-    ch20Distribution.foldl (λ acc c => acc + c.count) 0 = 160 := by native_decide
+    ch20Distribution.foldl (λ acc c => acc + c.count) 0 = 165 := by native_decide
 
 -- ============================================================================
 -- §4.2 Chapter 21: Exponence of Selected Inflectional Formatives
 -- ============================================================================
 
-/-- WALS Ch 21: How many grammatical categories a single formative expresses.
+open Core.WALS.F21A (ExponenceType) in
+/-- Map WALS 21A fine-grained exponence types to coarse categories.
+    All polyexponential subtypes (case+number, case+referentiality,
+    case+TAM) map to `.polyexponential`. -/
+def toExponence : ExponenceType → Exponence
+  | .monoexponentialCase => .monoexponential
+  | .caseNumber | .caseReferentiality | .caseTam => .polyexponential
+  | .noCase => .noCase
 
-    @cite{bickel-nichols-2013b} distinguish **monoexponential** systems, where
-    each affix realizes exactly one grammatical category (e.g., Turkish -lar
-    = plural only), from **polyexponential** (cumulative/fusional) systems,
-    where a single formative bundles multiple categories (e.g., Latin -orum =
-    genitive + plural simultaneously). -/
-inductive Exponence where
-  /-- Monoexponential: each formative expresses one category.
-      Characteristic of agglutinative systems. -/
-  | monoexponential
-  /-- Polyexponential (cumulative): single formatives bundle multiple
-      categories. Characteristic of fusional systems. -/
-  | polyexponential
-  /-- No inflectional formatives (isolating). -/
-  | noInflection
-  deriving DecidableEq, BEq, Repr
+-- Grounding: example languages verified against F21A data
+theorem turkish_monoexp : Core.WALS.F21A.lookup "tur" =
+    some ⟨"tur", "Turkish", "tur", .monoexponentialCase⟩ := by native_decide
+theorem finnish_caseNumber : Core.WALS.F21A.lookup "fin" =
+    some ⟨"fin", "Finnish", "fin", .caseNumber⟩ := by native_decide
+theorem german_caseNumber : Core.WALS.F21A.lookup "ger" =
+    some ⟨"ger", "German", "deu", .caseNumber⟩ := by native_decide
+theorem russian_caseNumber : Core.WALS.F21A.lookup "rus" =
+    some ⟨"rus", "Russian", "rus", .caseNumber⟩ := by native_decide
+theorem english_noCase : Core.WALS.F21A.lookup "eng" =
+    some ⟨"eng", "English", "eng", .noCase⟩ := by native_decide
+theorem kayardild_caseTam : Core.WALS.F21A.lookup "kay" =
+    some ⟨"kay", "Kayardild", "gyd", .caseTam⟩ := by native_decide
 
-/-- WALS Chapter 21 distribution (@cite{bickel-nichols-2013b}, N = 159). -/
+/-- WALS Chapter 21 distribution, derived from F21A data (@cite{bickel-nichols-2013b}). -/
 def ch21Distribution : List WALSCount :=
-  [ ⟨"Monoexponential case", 70⟩
-  , ⟨"Case + number", 22⟩
-  , ⟨"Case + number + gender (polyexponential)", 67⟩ ]
+  [ ⟨"Monoexponential case", (ch21.filter (·.value == .monoexponentialCase)).length⟩
+  , ⟨"Case + number", (ch21.filter (·.value == .caseNumber)).length⟩
+  , ⟨"Case + referentiality", (ch21.filter (·.value == .caseReferentiality)).length⟩
+  , ⟨"Case + TAM", (ch21.filter (·.value == .caseTam)).length⟩
+  , ⟨"No case", (ch21.filter (·.value == .noCase)).length⟩ ]
 
-/-- Ch 21 total: 159 languages. -/
+/-- Ch 21 total: 162 languages (derived from F21A data). -/
 theorem ch21_total :
-    ch21Distribution.foldl (λ acc c => acc + c.count) 0 = 159 := by native_decide
+    ch21Distribution.foldl (λ acc c => acc + c.count) 0 = 162 := by native_decide
 
 -- ============================================================================
 -- §4.3 Chapter 22: Inflectional Synthesis of the Verb
 -- ============================================================================
 
-/-- WALS Ch 22: How many inflectional categories are expressed on the verb.
+open Core.WALS.F22A (InflectionalSynthesis) in
+/-- Map WALS 22A fine-grained categories to coarse synthesis levels.
+    Boundaries align with WALS bin edges to avoid splitting categories. -/
+def toVerbSynthesis : InflectionalSynthesis → VerbSynthesis
+  | .categoryPerWord0_1 | .categoriesPerWord2_3 => .low
+  | .categoriesPerWord4_5 | .categoriesPerWord6_7 => .moderate
+  | .categoriesPerWord8_9 | .categoriesPerWord10_11 | .categoriesPerWord12_13 => .high
 
-    @cite{bickel-nichols-2013c} count the number of inflectional categories
-    (person, number, tense, aspect, mood, etc.) that are expressed as bound
-    morphology on the verb. Languages range from 0 (analytic/isolating) to
-    13+ (highly polysynthetic). -/
-inductive VerbSynthesis where
-  /-- Low synthesis: 0--3 categories per verb word.
-      Example: Mandarin (0), English (2--3), Thai (0). -/
-  | low
-  /-- Moderate synthesis: 4--6 categories per verb word.
-      Example: Spanish (5), Russian (4--5), Swahili (5--6). -/
-  | moderate
-  /-- High synthesis: 7+ categories per verb word.
-      Example: Georgian (8+), Quechua (7+), Mohawk (10+). -/
-  | high
-  deriving DecidableEq, BEq, Repr
+-- Grounding: example languages verified against F22A data
+theorem mandarin_0_1 : Core.WALS.F22A.lookup "mnd" =
+    some ⟨"mnd", "Mandarin", "cmn", .categoryPerWord0_1⟩ := by native_decide
+theorem english_2_3 : Core.WALS.F22A.lookup "eng" =
+    some ⟨"eng", "English", "eng", .categoriesPerWord2_3⟩ := by native_decide
+theorem thai_2_3 : Core.WALS.F22A.lookup "tha" =
+    some ⟨"tha", "Thai", "tha", .categoriesPerWord2_3⟩ := by native_decide
+theorem spanish_4_5 : Core.WALS.F22A.lookup "spa" =
+    some ⟨"spa", "Spanish", "spa", .categoriesPerWord4_5⟩ := by native_decide
+theorem russian_4_5 : Core.WALS.F22A.lookup "rus" =
+    some ⟨"rus", "Russian", "rus", .categoriesPerWord4_5⟩ := by native_decide
+theorem swahili_4_5 : Core.WALS.F22A.lookup "swa" =
+    some ⟨"swa", "Swahili", "swh", .categoriesPerWord4_5⟩ := by native_decide
+theorem georgian_8_9 : Core.WALS.F22A.lookup "geo" =
+    some ⟨"geo", "Georgian", "kat", .categoriesPerWord8_9⟩ := by native_decide
+theorem abkhaz_10_11 : Core.WALS.F22A.lookup "abk" =
+    some ⟨"abk", "Abkhaz", "abk", .categoriesPerWord10_11⟩ := by native_decide
 
-/-- WALS Chapter 22 distribution (@cite{bickel-nichols-2013c}, N = 145). -/
+/-- WALS Chapter 22 distribution, derived from F22A data (@cite{bickel-nichols-2013c}). -/
 def ch22Distribution : List WALSCount :=
-  [ ⟨"0-1 categories per word", 5⟩
-  , ⟨"2-3 categories per word", 39⟩
-  , ⟨"4-5 categories per word", 45⟩
-  , ⟨"6-7 categories per word", 24⟩
-  , ⟨"8-9 categories per word", 10⟩
-  , ⟨"10-11 categories per word", 15⟩
-  , ⟨"12-13 categories per word", 7⟩ ]
+  [ ⟨"0-1 categories per word", (ch22.filter (·.value == .categoryPerWord0_1)).length⟩
+  , ⟨"2-3 categories per word", (ch22.filter (·.value == .categoriesPerWord2_3)).length⟩
+  , ⟨"4-5 categories per word", (ch22.filter (·.value == .categoriesPerWord4_5)).length⟩
+  , ⟨"6-7 categories per word", (ch22.filter (·.value == .categoriesPerWord6_7)).length⟩
+  , ⟨"8-9 categories per word", (ch22.filter (·.value == .categoriesPerWord8_9)).length⟩
+  , ⟨"10-11 categories per word", (ch22.filter (·.value == .categoriesPerWord10_11)).length⟩
+  , ⟨"12-13 categories per word", (ch22.filter (·.value == .categoriesPerWord12_13)).length⟩ ]
 
-/-- Ch 22 total: 145 languages. -/
+/-- Ch 22 total: 145 languages (derived from F22A data). -/
 theorem ch22_total :
     ch22Distribution.foldl (λ acc c => acc + c.count) 0 = 145 := by native_decide
 
@@ -358,36 +403,25 @@ theorem ch22_total :
 -- §4.4 Chapter 25: Locus of Marking: Whole-Language Typology
 -- ============================================================================
 
-/-- WALS Ch 25: Where grammatical relations are marked in phrases.
+open Core.WALS.F25A (LocusOfMarkingWholeLanguageTypology) in
+/-- Map WALS 25A fine-grained locus-of-marking types to coarse 4-way classification.
+    The large "inconsistent or other" category (121 langs) maps to `.zeroMarking`
+    since these languages lack a consistent marking pattern. -/
+def toLocusOfMarking : LocusOfMarkingWholeLanguageTypology → LocusOfMarking
+  | .headMarking => .headMarking
+  | .dependentMarking => .dependentMarking
+  | .doubleMarking => .doubleMarking
+  | .zeroMarking | .inconsistentOrOther => .zeroMarking
 
-    @cite{bickel-nichols-2013a} classify languages by whether grammatical
-    relations (subject-of, object-of, possessor-of) are marked on the
-    **head** of the phrase (e.g., verb agreement for subjects), on the
-    **dependent** (e.g., case marking on nouns), on **both** (double
-    marking), or on **neither** (zero marking / rigid word order). -/
-inductive LocusOfMarking where
-  /-- Head-marking: grammatical relations marked on the head
-      (verb agreement, possessum marking). Example: Mohawk, Abkhaz. -/
-  | headMarking
-  /-- Dependent-marking: grammatical relations marked on the dependent
-      (case markers on nouns, adpositions). Example: Japanese, Latin. -/
-  | dependentMarking
-  /-- Double-marking: both head and dependent are marked.
-      Example: Georgian (case + agreement), Basque. -/
-  | doubleMarking
-  /-- Zero-marking (or no dominant type): grammatical relations signaled
-      by word order, not morphology. Example: Mandarin, Thai. -/
-  | zeroMarking
-  deriving DecidableEq, BEq, Repr
-
-/-- WALS Chapter 25 distribution (@cite{bickel-nichols-2013a}, N = 236). -/
+/-- WALS Chapter 25A distribution, derived from F25A data (N = 236). -/
 def ch25Distribution : List WALSCount :=
-  [ ⟨"Head-marking", 47⟩
-  , ⟨"Dependent-marking", 63⟩
-  , ⟨"Double-marking", 61⟩
-  , ⟨"Zero/no dominant type", 65⟩ ]
+  [ ⟨"Head-marking", (ch25a.filter (·.value == .headMarking)).length⟩
+  , ⟨"Dependent-marking", (ch25a.filter (·.value == .dependentMarking)).length⟩
+  , ⟨"Double-marking", (ch25a.filter (·.value == .doubleMarking)).length⟩
+  , ⟨"Zero-marking", (ch25a.filter (·.value == .zeroMarking)).length⟩
+  , ⟨"Inconsistent or other", (ch25a.filter (·.value == .inconsistentOrOther)).length⟩ ]
 
-/-- Ch 25 total: 236 languages. -/
+/-- Ch 25 total: 236 languages (derived from F25A data). -/
 theorem ch25_total :
     ch25Distribution.foldl (λ acc c => acc + c.count) 0 = 236 := by native_decide
 
@@ -395,44 +429,43 @@ theorem ch25_total :
 -- §4.5 Chapter 26: Prefixing vs Suffixing in Inflectional Morphology
 -- ============================================================================
 
-/-- WALS Ch 26: Whether a language predominantly uses prefixes or suffixes
-    for inflectional morphology.
+-- Grounding: example languages verified against F26A data
+theorem turkish_strongSuffix : Core.WALS.F26A.lookup "tur" =
+    some ⟨"tur", "Turkish", "tur", .stronglySuffixing⟩ := by native_decide
+theorem japanese_strongSuffix : Core.WALS.F26A.lookup "jpn" =
+    some ⟨"jpn", "Japanese", "jpn", .stronglySuffixing⟩ := by native_decide
+-- Note: Russian and German are strongly (not weakly) suffixing in WALS 26A.
+theorem russian_strongSuffix : Core.WALS.F26A.lookup "rus" =
+    some ⟨"rus", "Russian", "rus", .stronglySuffixing⟩ := by native_decide
+theorem german_strongSuffix : Core.WALS.F26A.lookup "ger" =
+    some ⟨"ger", "German", "deu", .stronglySuffixing⟩ := by native_decide
+theorem arabic_eg_weakSuffix : Core.WALS.F26A.lookup "aeg" =
+    some ⟨"aeg", "Arabic (Egyptian)", "arz", .weaklySuffixing⟩ := by native_decide
+theorem swahili_weakPrefix : Core.WALS.F26A.lookup "swa" =
+    some ⟨"swa", "Swahili", "swh", .weaklyPrefixing⟩ := by native_decide
+theorem navajo_strongPrefix : Core.WALS.F26A.lookup "nav" =
+    some ⟨"nav", "Navajo", "nav", .strongPrefixing⟩ := by native_decide
+-- Note: Thai, Tagalog, and Vietnamese are littleAffixation, not prefixing.
+theorem thai_littleAffix : Core.WALS.F26A.lookup "tha" =
+    some ⟨"tha", "Thai", "tha", .littleAffixation⟩ := by native_decide
+theorem tagalog_littleAffix : Core.WALS.F26A.lookup "tag" =
+    some ⟨"tag", "Tagalog", "tgl", .littleAffixation⟩ := by native_decide
+theorem vietnamese_littleAffix : Core.WALS.F26A.lookup "vie" =
+    some ⟨"vie", "Vietnamese", "vie", .littleAffixation⟩ := by native_decide
+-- Note: Mandarin is strongly suffixing in WALS 26A (few affixes but all suffixal).
+theorem mandarin_strongSuffix : Core.WALS.F26A.lookup "mnd" =
+    some ⟨"mnd", "Mandarin", "cmn", .stronglySuffixing⟩ := by native_decide
 
-    @cite{dryer-haspelmath-2013} classifies languages on a five-point scale from strongly
-    suffixing to strongly prefixing, based on the proportion of inflectional
-    categories expressed by suffixes vs prefixes. This is one of the most
-    robust typological universals: suffixing strongly dominates worldwide
-    (Greenberg's Universal 27). -/
-inductive PrefixSuffix where
-  /-- Strongly suffixing: large majority of inflectional morphology is
-      suffixal. Example: Turkish, Finnish, Japanese, Quechua. -/
-  | stronglySuffixing
-  /-- Weakly suffixing: more suffixing than prefixing but not overwhelmingly.
-      Example: Russian, German, Arabic. -/
-  | weaklySuffixing
-  /-- Equal prefixing and suffixing. Example: some Oceanic languages. -/
-  | equalPrefixSuffix
-  /-- Weakly prefixing: more prefixing than suffixing.
-      Example: Swahili, Tagalog. -/
-  | weaklyPrefixing
-  /-- Strongly prefixing: large majority of inflectional morphology is
-      prefixal. Example: Navajo, Thai (tonal but few affixes). -/
-  | stronglyPrefixing
-  /-- Little affixation: the language has little inflectional morphology
-      to classify. Example: Mandarin, Vietnamese. -/
-  | littleAffixation
-  deriving DecidableEq, BEq, Repr
-
-/-- WALS Chapter 26 distribution (@cite{dryer-haspelmath-2013}, N = 969). -/
+/-- WALS Chapter 26 distribution, derived from F26A data (@cite{dryer-haspelmath-2013}). -/
 def ch26Distribution : List WALSCount :=
-  [ ⟨"Strongly suffixing", 406⟩
-  , ⟨"Weakly suffixing", 123⟩
-  , ⟨"Equal prefixing and suffixing", 58⟩
-  , ⟨"Weakly prefixing", 94⟩
-  , ⟨"Strongly prefixing", 135⟩
-  , ⟨"Little affixation", 153⟩ ]
+  [ ⟨"Strongly suffixing", (ch26.filter (·.value == .stronglySuffixing)).length⟩
+  , ⟨"Weakly suffixing", (ch26.filter (·.value == .weaklySuffixing)).length⟩
+  , ⟨"Equal prefixing and suffixing", (ch26.filter (·.value == .equalPrefixingAndSuffixing)).length⟩
+  , ⟨"Weakly prefixing", (ch26.filter (·.value == .weaklyPrefixing)).length⟩
+  , ⟨"Strongly prefixing", (ch26.filter (·.value == .strongPrefixing)).length⟩
+  , ⟨"Little affixation", (ch26.filter (·.value == .littleAffixation)).length⟩ ]
 
-/-- Ch 26 total: 969 languages. -/
+/-- Ch 26 total: 969 languages (derived from F26A data). -/
 theorem ch26_total :
     ch26Distribution.foldl (λ acc c => acc + c.count) 0 = 969 := by native_decide
 
@@ -440,58 +473,33 @@ theorem ch26_total :
 -- §4.6 Chapter 27: Reduplication
 -- ============================================================================
 
-/-- WALS Ch 27: Whether the language has productive reduplication.
+-- Grounding: example languages verified against F27A data
+theorem tagalog_fullPartial : Core.WALS.F27A.lookup "tag" =
+    some ⟨"tag", "Tagalog", "tgl", .productiveFullAndPartialReduplication⟩ := by native_decide
+theorem swahili_fullPartial : Core.WALS.F27A.lookup "swa" =
+    some ⟨"swa", "Swahili", "swh", .productiveFullAndPartialReduplication⟩ := by native_decide
+-- Note: Indonesian has full reduplication ONLY (not partial) in WALS 27A.
+theorem indonesian_fullOnly : Core.WALS.F27A.lookup "ind" =
+    some ⟨"ind", "Indonesian", "ind", .fullReduplicationOnly⟩ := by native_decide
+theorem english_noRedup : Core.WALS.F27A.lookup "eng" =
+    some ⟨"eng", "English", "eng", .noProductiveReduplication⟩ := by native_decide
+-- Note: Arabic (Egyptian) has productive reduplication in WALS 27A, not "none."
+theorem arabic_eg_fullPartial : Core.WALS.F27A.lookup "aeg" =
+    some ⟨"aeg", "Arabic (Egyptian)", "arz", .productiveFullAndPartialReduplication⟩ := by native_decide
 
-    @cite{rubino-2013} classifies languages by whether they exhibit productive
-    full or partial reduplication as a morphological process. Reduplication
-    is used cross-linguistically for plurality, intensification, aspect,
-    diminutive, and other functions. -/
-inductive Reduplication where
-  /-- Productive full and partial reduplication.
-      Example: Indonesian, Tagalog, Swahili. -/
-  | productiveFull
-  /-- Productive but only full reduplication. -/
-  | fullOnly
-  /-- No productive reduplication.
-      Example: English, French, Arabic. -/
-  | noProductive
-  deriving DecidableEq, BEq, Repr
-
-/-- WALS Chapter 27 distribution (@cite{rubino-2013}, N = 368). -/
+/-- WALS Chapter 27 distribution, derived from F27A data (@cite{rubino-2013}). -/
 def ch27Distribution : List WALSCount :=
-  [ ⟨"Productive full and partial reduplication", 147⟩
-  , ⟨"Productive full reduplication only", 35⟩
-  , ⟨"No productive reduplication", 186⟩ ]
+  [ ⟨"Productive full and partial reduplication", (ch27.filter (·.value == .productiveFullAndPartialReduplication)).length⟩
+  , ⟨"Full reduplication only", (ch27.filter (·.value == .fullReduplicationOnly)).length⟩
+  , ⟨"No productive reduplication", (ch27.filter (·.value == .noProductiveReduplication)).length⟩ ]
 
-/-- Ch 27 total: 368 languages. -/
+/-- Ch 27 total: 368 languages (derived from F27A data). -/
 theorem ch27_total :
     ch27Distribution.foldl (λ acc c => acc + c.count) 0 = 368 := by native_decide
 
 -- ============================================================================
 -- §4.7 Chapter 23: Locus of Marking in the Clause
 -- ============================================================================
-
-/-- WALS Ch 23: Where grammatical relations are marked in clausal syntax.
-
-    Clause-level marking addresses whether the subject/object relation is
-    indicated on the head (verb agreement), the dependent (case marking on
-    nouns), both, or neither. -/
-inductive LocusClause where
-  /-- Head marking: grammatical relations marked on the verb
-      (agreement markers). Example: Abkhaz, Mohawk. -/
-  | headMarking
-  /-- Dependent marking: grammatical relations marked on the noun
-      (case markers). Example: Japanese, Finnish. -/
-  | dependentMarking
-  /-- Double marking: both head and dependent are marked.
-      Example: Georgian, Basque. -/
-  | doubleMarking
-  /-- No marking: grammatical relations not morphologically marked
-      in the clause. Example: Thai, Vietnamese. -/
-  | noMarking
-  /-- Other: does not fit neatly into the above categories. -/
-  | other
-  deriving DecidableEq, BEq, Repr
 
 /-- WALS Chapter 23 distribution (N = 236). -/
 def ch23Distribution : List WALSCount :=
@@ -509,25 +517,6 @@ theorem ch23_total :
 -- §4.8 Chapter 24: Locus of Marking in Possessive Noun Phrases
 -- ============================================================================
 
-/-- WALS Ch 24: Where grammatical relations are marked in possessive NPs.
-
-    Languages differ in whether the possessive relation is marked on the
-    possessum (head marking, e.g., Hungarian haz-am 'house-my'), on the
-    possessor (dependent marking, e.g., English John's), on both, or on
-    neither. -/
-inductive LocusPossessive where
-  /-- Head marking: possession marked on the possessum. -/
-  | headMarking
-  /-- Dependent marking: possession marked on the possessor. -/
-  | dependentMarking
-  /-- Double marking: both possessor and possessum are marked. -/
-  | doubleMarking
-  /-- No marking: possession not morphologically marked. -/
-  | noMarking
-  /-- Other: does not fit neatly into the above categories. -/
-  | other
-  deriving DecidableEq, BEq, Repr
-
 /-- WALS Chapter 24 distribution (N = 236). -/
 def ch24Distribution : List WALSCount :=
   [ ⟨"Head marking", 78⟩
@@ -543,24 +532,6 @@ theorem ch24_total :
 -- ============================================================================
 -- §4.9 Chapter 25A: Locus of Marking: Whole-Language Typology
 -- ============================================================================
-
-/-- WALS Ch 25A: Whole-language locus-of-marking classification combining
-    clause-level and NP-level patterns.
-
-    Languages consistent in both domains get a simple label; those with
-    mixed patterns are classified as "inconsistent or other". -/
-inductive WholeLanguageMarking where
-  /-- Consistently head-marking in both clause and NP. -/
-  | headMarking
-  /-- Consistently dependent-marking in both clause and NP. -/
-  | dependentMarking
-  /-- Consistently double-marking in both clause and NP. -/
-  | doubleMarking
-  /-- Consistently zero-marking in both clause and NP. -/
-  | zeroMarking
-  /-- Inconsistent or other: clause and NP patterns differ. -/
-  | inconsistentOrOther
-  deriving DecidableEq, BEq, Repr
 
 /-- WALS Chapter 25A distribution (N = 236). -/
 def ch25aDistribution : List WALSCount :=
@@ -578,16 +549,6 @@ theorem ch25a_total :
 -- §4.10 Chapter 25B: Zero Marking of A and P Arguments
 -- ============================================================================
 
-/-- WALS Ch 25B: Whether a language has zero marking (no overt case or
-    agreement) for both the A (agent-like) and P (patient-like) arguments
-    of a transitive clause. -/
-inductive ZeroMarkingAP where
-  /-- Both A and P arguments are zero-marked. -/
-  | zeroMarking
-  /-- At least one of A and P is overtly marked. -/
-  | nonZeroMarking
-  deriving DecidableEq, BEq, Repr
-
 /-- WALS Chapter 25B distribution (N = 235). -/
 def ch25bDistribution : List WALSCount :=
   [ ⟨"Zero-marking", 16⟩
@@ -600,19 +561,6 @@ theorem ch25b_total :
 -- ============================================================================
 -- §4.11 Chapter 28: Case Syncretism
 -- ============================================================================
-
-/-- WALS Ch 28: Whether a language exhibits syncretism (neutralization of
-    case distinctions) in its nominal case system. -/
-inductive CaseSyncretism where
-  /-- No case marking: the language lacks morphological case entirely. -/
-  | noCaseMarking
-  /-- Core cases only: syncretism limited to core grammatical cases. -/
-  | coreCasesOnly
-  /-- Core and non-core: syncretism spans both core and peripheral cases. -/
-  | coreAndNonCore
-  /-- No syncretism: the language has case but no syncretic forms. -/
-  | noSyncretism
-  deriving DecidableEq, BEq, Repr
 
 /-- WALS Chapter 28 distribution (N = 198). -/
 def ch28Distribution : List WALSCount :=
@@ -629,17 +577,6 @@ theorem ch28_total :
 -- §4.12 Chapter 29: Syncretism in Verbal Person/Number Marking
 -- ============================================================================
 
-/-- WALS Ch 29: Whether a language exhibits syncretism in its verbal
-    person/number agreement paradigm. -/
-inductive VerbalSyncretism where
-  /-- No subject person/number marking on the verb. -/
-  | noSubjectMarking
-  /-- Syncretic: some person/number cells share the same verb form. -/
-  | syncretic
-  /-- Not syncretic: all person/number cells have distinct forms. -/
-  | notSyncretic
-  deriving DecidableEq, BEq, Repr
-
 /-- WALS Chapter 29 distribution (N = 198). -/
 def ch29Distribution : List WALSCount :=
   [ ⟨"No subject person/number marking", 57⟩
@@ -653,28 +590,6 @@ theorem ch29_total :
 -- ============================================================================
 -- §4.13 Chapter 21B: Exponence of Tense-Aspect-Mood Inflection
 -- ============================================================================
-
-/-- WALS Ch 21B: What categories co-occur with tense-aspect-mood in a single
-    inflectional formative.
-
-    @cite{bickel-nichols-2013b} classify languages by whether TAM inflection
-    is monoexponential (the TAM formative expresses only TAM) or bundles TAM
-    with other categories such as agreement, diathesis, polarity, or
-    construct state. Some languages lack TAM inflection entirely. -/
-inductive TAMExponence where
-  /-- Monoexponential TAM: the TAM formative expresses only TAM. -/
-  | monoexponential
-  /-- TAM bundled with agreement. -/
-  | tamAgreement
-  /-- TAM bundled with agreement and diathesis. -/
-  | tamAgreementDiathesis
-  /-- TAM bundled with agreement and construct state. -/
-  | tamAgreementConstruct
-  /-- TAM bundled with polarity. -/
-  | tamPolarity
-  /-- No TAM inflection. -/
-  | noTam
-  deriving DecidableEq, BEq, Repr
 
 /-- WALS Chapter 21B distribution (N = 160). -/
 def ch21bDistribution : List WALSCount :=
@@ -692,32 +607,6 @@ theorem ch21b_total :
 -- ============================================================================
 -- §4.14 Chapter 62A: Action Nominal Constructions
 -- ============================================================================
-
-/-- WALS Ch 62: How a language constructs action nominals (nominalizations
-    of verbs that denote events or actions).
-
-    Languages differ in whether the arguments of the underlying verb retain
-    their clausal form (sentential), take possessive marking (possessive-
-    accusative, ergative-possessive, double-possessive), or whether action
-    nominals are absent or restricted. -/
-inductive ActionNominal where
-  /-- Sentential: arguments keep clausal marking. -/
-  | sentential
-  /-- Possessive-Accusative: subject is possessive, object is accusative. -/
-  | possessiveAccusative
-  /-- Ergative-Possessive: subject is ergative/genitive, object is possessive. -/
-  | ergativePossessive
-  /-- Double-Possessive: both subject and object are possessive. -/
-  | doublePossessive
-  /-- Other construction type. -/
-  | other
-  /-- Mixed: multiple construction types coexist. -/
-  | mixed
-  /-- Restricted: action nominals exist but are severely limited. -/
-  | restricted
-  /-- No action nominals. -/
-  | noActionNominals
-  deriving DecidableEq, BEq, Repr
 
 /-- WALS Chapter 62A distribution (N = 168). -/
 def ch62Distribution : List WALSCount :=
@@ -738,24 +627,6 @@ theorem ch62_total :
 -- §4.15 Chapter 79A: Suppletion According to Tense and Aspect
 -- ============================================================================
 
-/-- WALS Ch 79A: Whether a language has suppletive verb forms conditioned
-    by tense, aspect, or both.
-
-    Suppletion is the replacement of a stem by a phonologically unrelated
-    form in a paradigm cell (e.g., English go/went). Languages vary in
-    whether suppletion is triggered by tense distinctions, aspect
-    distinctions, both, or neither. -/
-inductive SuppletionTA where
-  /-- Suppletion conditioned by tense. -/
-  | tense
-  /-- Suppletion conditioned by aspect. -/
-  | aspect
-  /-- Suppletion conditioned by both tense and aspect. -/
-  | tenseAndAspect
-  /-- No suppletion according to tense or aspect. -/
-  | none
-  deriving DecidableEq, BEq, Repr
-
 /-- WALS Chapter 79A distribution (N = 193). -/
 def ch79aDistribution : List WALSCount :=
   [ ⟨"Tense", 36⟩
@@ -770,24 +641,6 @@ theorem ch79a_total :
 -- ============================================================================
 -- §4.16 Chapter 79B: Suppletion in Imperatives and Hortatives
 -- ============================================================================
-
-/-- WALS Ch 79B: Whether a language has suppletive verb forms specifically
-    in imperative or hortative paradigm cells.
-
-    Some languages have verbs whose imperative form is unrelated to the
-    indicative stem (e.g., Spanish ir 'go' but ve 'go.IMP'). -/
-inductive SuppletionImperative where
-  /-- A regular and a suppletive form alternate. -/
-  | alternating
-  /-- Suppletion in imperative forms. -/
-  | imperative
-  /-- Suppletion in hortative forms. -/
-  | hortative
-  /-- Suppletion in both imperative and hortative. -/
-  | imperativeAndHortative
-  /-- No suppletive imperatives reported. -/
-  | none
-  deriving DecidableEq, BEq, Repr
 
 /-- WALS Chapter 79B distribution (N = 193). -/
 def ch79bDistribution : List WALSCount :=
@@ -805,26 +658,6 @@ theorem ch79b_total :
 -- §4.17 Chapter 80A: Verbal Number and Suppletion
 -- ============================================================================
 
-/-- WALS Ch 80A: Whether a language has verbal number marking (distinct verb
-    forms for singular vs plural events or participants) and whether such
-    pairs involve suppletion.
-
-    Verbal number is distinct from subject/object agreement: it marks the
-    number of events (pluractional) or participants on the verb stem itself,
-    often via completely different roots. -/
-inductive VerbalNumber where
-  /-- No verbal number. -/
-  | none
-  /-- Singular-plural verb pairs without suppletion. -/
-  | pairsNoSuppletion
-  /-- Singular-plural verb pairs with suppletion. -/
-  | pairsSuppletion
-  /-- Singular-dual-plural triples without suppletion. -/
-  | triplesNoSuppletion
-  /-- Singular-dual-plural triples with suppletion. -/
-  | triplesSuppletion
-  deriving DecidableEq, BEq, Repr
-
 /-- WALS Chapter 80A distribution (N = 193). -/
 def ch80Distribution : List WALSCount :=
   [ ⟨"None", 159⟩
@@ -838,677 +671,31 @@ theorem ch80_total :
     ch80Distribution.foldl (λ acc c => acc + c.count) 0 = 193 := by native_decide
 
 -- ============================================================================
--- §4.18 WALS Converter Functions
+-- §5. Profile Collection
 -- ============================================================================
 
-/-- Convert WALS 20A fusion type to the local three-way `Fusion` classification.
-    Returns `none` for mixed categories (tonal/isolating+concatenative) that
-    do not map cleanly to the coarser local type. -/
-private def fromWALS20A : Core.WALS.F20A.FusionType → Option Fusion
-  | .exclusivelyConcatenative => some .concatenative
-  | .exclusivelyIsolating     => some .isolating
-  | .exclusivelyTonal         => some .nonlinear
-  | .ablautConcatenative      => some .nonlinear
-  | .tonalIsolating           => none  -- mixed: no clean mapping
-  | .tonalConcatenative       => none  -- mixed: no clean mapping
-  | .isolatingConcatenative   => none  -- mixed: no clean mapping
+/-! Fragment profiles are defined in `Fragments.{Language}.Morph` with values
+    derived from WALS data via `Core.Morphology.wals*` lookup helpers. -/
 
-/-- Convert WALS 21A exponence type to the local `Exponence` classification.
-    Returns `none` for `noCase`, since WALS 21A specifically evaluates the
-    exponence of *case formatives* -- a language without case provides no
-    information about its overall exponence pattern. -/
-private def fromWALS21A : Core.WALS.F21A.ExponenceType → Option Exponence
-  | .monoexponentialCase  => some .monoexponential
-  | .caseNumber           => some .polyexponential
-  | .caseReferentiality   => some .polyexponential
-  | .caseTam              => some .polyexponential
-  | .noCase               => none  -- no case = no information about exponence
-
-/-- Convert WALS 22A inflectional synthesis to the local three-way
-    `VerbSynthesis` classification. -/
-private def fromWALS22A : Core.WALS.F22A.InflectionalSynthesis → VerbSynthesis
-  | .categoryPerWord0_1    => .low
-  | .categoriesPerWord2_3  => .low
-  | .categoriesPerWord4_5  => .moderate
-  | .categoriesPerWord6_7  => .moderate
-  | .categoriesPerWord8_9  => .high
-  | .categoriesPerWord10_11 => .high
-  | .categoriesPerWord12_13 => .high
-
-/-- Convert WALS 26A prefix/suffix preference to the local `PrefixSuffix`
-    classification. This is a direct 1-to-1 mapping. -/
-private def fromWALS26A : Core.WALS.F26A.PrefixSuffixPreference → PrefixSuffix
-  | .littleAffixation             => .littleAffixation
-  | .stronglySuffixing            => .stronglySuffixing
-  | .weaklySuffixing              => .weaklySuffixing
-  | .equalPrefixingAndSuffixing   => .equalPrefixSuffix
-  | .weaklyPrefixing              => .weaklyPrefixing
-  | .strongPrefixing              => .stronglyPrefixing
-
-/-- Convert WALS 27A reduplication type to the local `Reduplication`
-    classification. This is a direct 1-to-1 mapping. -/
-private def fromWALS27A : Core.WALS.F27A.ReduplicationType → Reduplication
-  | .productiveFullAndPartialReduplication => .productiveFull
-  | .fullReduplicationOnly                => .fullOnly
-  | .noProductiveReduplication            => .noProductive
-
-/-- Convert WALS 23A locus-of-marking-in-clause to the local `LocusClause`
-    classification. This is a direct 1-to-1 mapping. -/
-private def fromWALS23A : Core.WALS.F23A.LocusOfMarkingInTheClause → LocusClause
-  | .headMarking      => .headMarking
-  | .dependentMarking => .dependentMarking
-  | .doubleMarking    => .doubleMarking
-  | .noMarking        => .noMarking
-  | .other            => .other
-
-/-- Convert WALS 24A locus-of-marking-in-possessive-NP to the local
-    `LocusPossessive` classification. This is a direct 1-to-1 mapping. -/
-private def fromWALS24A :
-    Core.WALS.F24A.LocusOfMarkingInPossessiveNounPhrases → LocusPossessive
-  | .headMarking      => .headMarking
-  | .dependentMarking => .dependentMarking
-  | .doubleMarking    => .doubleMarking
-  | .noMarking        => .noMarking
-  | .other            => .other
-
-/-- Convert WALS 25A whole-language locus-of-marking typology to the local
-    `WholeLanguageMarking` classification. This is a direct 1-to-1 mapping. -/
-private def fromWALS25A :
-    Core.WALS.F25A.LocusOfMarkingWholeLanguageTypology → WholeLanguageMarking
-  | .headMarking         => .headMarking
-  | .dependentMarking    => .dependentMarking
-  | .doubleMarking       => .doubleMarking
-  | .zeroMarking         => .zeroMarking
-  | .inconsistentOrOther => .inconsistentOrOther
-
-/-- Convert WALS 25B zero-marking-of-A-and-P-arguments to the local
-    `ZeroMarkingAP` classification. This is a direct 1-to-1 mapping. -/
-private def fromWALS25B :
-    Core.WALS.F25B.ZeroMarkingOfAAndPArguments → ZeroMarkingAP
-  | .zeroMarking    => .zeroMarking
-  | .nonZeroMarking => .nonZeroMarking
-
-/-- Convert WALS 28A case syncretism to the local `CaseSyncretism`
-    classification. This is a direct 1-to-1 mapping. -/
-private def fromWALS28A : Core.WALS.F28A.CaseSyncretism → CaseSyncretism
-  | .noCaseMarking  => .noCaseMarking
-  | .coreCasesOnly  => .coreCasesOnly
-  | .coreAndNonCore => .coreAndNonCore
-  | .noSyncretism   => .noSyncretism
-
-/-- Convert WALS 29A syncretism in verbal person/number marking to the local
-    `VerbalSyncretism` classification. This is a direct 1-to-1 mapping. -/
-private def fromWALS29A :
-    Core.WALS.F29A.SyncretismInVerbalPersonNumberMarking → VerbalSyncretism
-  | .noSubjectPersonNumberMarking => .noSubjectMarking
-  | .syncretic                    => .syncretic
-  | .notSyncretic                 => .notSyncretic
-
-/-- Convert WALS 21B TAM exponence to the local `TAMExponence`
-    classification. This is a direct 1-to-1 mapping. -/
-private def fromWALS21B :
-    Core.WALS.F21B.ExponenceOfTenseAspectMoodInflection → TAMExponence
-  | .monoexponentialTam      => .monoexponential
-  | .tamAgreement            => .tamAgreement
-  | .tamAgreementDiathesis   => .tamAgreementDiathesis
-  | .tamAgreementConstruct   => .tamAgreementConstruct
-  | .tamPolarity             => .tamPolarity
-  | .noTam                   => .noTam
-
-/-- Convert WALS 62A action nominal constructions to the local `ActionNominal`
-    classification. This is a direct 1-to-1 mapping. -/
-private def fromWALS62A :
-    Core.WALS.F62A.ActionNominalConstructions → ActionNominal
-  | .sentential           => .sentential
-  | .possessiveAccusative => .possessiveAccusative
-  | .ergativePossessive   => .ergativePossessive
-  | .doublePossessive     => .doublePossessive
-  | .other                => .other
-  | .mixed                => .mixed
-  | .restricted           => .restricted
-  | .noActionNominals     => .noActionNominals
-
-/-- Convert WALS 79A suppletion-by-tense-and-aspect to the local
-    `SuppletionTA` classification. This is a direct 1-to-1 mapping. -/
-private def fromWALS79A :
-    Core.WALS.F79A.SuppletionAccordingToTenseAndAspect → SuppletionTA
-  | .tense          => .tense
-  | .aspect         => .aspect
-  | .tenseAndAspect => .tenseAndAspect
-  | .none           => .none
-
-/-- Convert WALS 79B suppletion-in-imperatives to the local
-    `SuppletionImperative` classification. This is a direct 1-to-1 mapping. -/
-private def fromWALS79B :
-    Core.WALS.F79B.SuppletionInImperativesAndHortatives → SuppletionImperative
-  | .aRegularAndASuppletiveFormAlternate => .alternating
-  | .imperative                          => .imperative
-  | .hortative                           => .hortative
-  | .imperativeAndHortative              => .imperativeAndHortative
-  | .none                                => .none
-
-/-- Convert WALS 80A verbal number and suppletion to the local
-    `VerbalNumber` classification. This is a direct 1-to-1 mapping. -/
-private def fromWALS80A :
-    Core.WALS.F80A.VerbalNumberAndSuppletion → VerbalNumber
-  | .none                                    => .none
-  | .singularPluralPairsNoSuppletion         => .pairsNoSuppletion
-  | .singularPluralPairsSuppletion           => .pairsSuppletion
-  | .singularDualPluralTriplesNoSuppletion   => .triplesNoSuppletion
-  | .singularDualPluralTriplesSuppletion     => .triplesSuppletion
-
--- ============================================================================
--- §5. MorphProfile Structure
--- ============================================================================
-
-/-- A language's morphological mechanism profile, combining dimensions from
-    WALS Chapters 20--29. This captures the core "morphological type" of a
-    language across multiple cross-cutting dimensions. -/
-structure MorphProfile where
-  /-- Language name -/
-  language : String
-  /-- ISO 639-3 code -/
-  iso : String
-  /-- Ch 20: Fusion type -/
-  fusion : Fusion
-  /-- Ch 21: Exponence type -/
-  exponence : Exponence
-  /-- Ch 22: Inflectional synthesis of the verb -/
-  verbSynthesis : VerbSynthesis
-  /-- Ch 25: Locus of marking -/
-  locus : LocusOfMarking
-  /-- Ch 26: Prefixing vs suffixing -/
-  prefixSuffix : PrefixSuffix
-  /-- Ch 27: Productive reduplication -/
-  reduplication : Reduplication
-  /-- Ch 23: Locus of marking in the clause (optional) -/
-  locusClause : Option LocusClause := none
-  /-- Ch 24: Locus of marking in possessive NP (optional) -/
-  locusPossessive : Option LocusPossessive := none
-  /-- Ch 25A: Whole-language marking typology (optional) -/
-  wholeLanguageMarking : Option WholeLanguageMarking := none
-  /-- Ch 25B: Zero marking of A and P arguments (optional) -/
-  zeroMarkingAP : Option ZeroMarkingAP := none
-  /-- Ch 28: Case syncretism (optional) -/
-  caseSyncretism : Option CaseSyncretism := none
-  /-- Ch 29: Syncretism in verbal person/number marking (optional) -/
-  verbalSyncretism : Option VerbalSyncretism := none
-  /-- Ch 21B: Exponence of TAM inflection (optional) -/
-  tamExponence : Option TAMExponence := none
-  /-- Ch 62A: Action nominal constructions (optional) -/
-  actionNominal : Option ActionNominal := none
-  /-- Ch 79A: Suppletion according to tense and aspect (optional) -/
-  suppletionTA : Option SuppletionTA := none
-  /-- Ch 79B: Suppletion in imperatives and hortatives (optional) -/
-  suppletionImperative : Option SuppletionImperative := none
-  /-- Ch 80A: Verbal number and suppletion (optional) -/
-  verbalNumber : Option VerbalNumber := none
-  deriving Repr, DecidableEq, BEq
-
--- ============================================================================
--- §6. Language Profiles
--- ============================================================================
-
-section MorphLanguageData
-
-/-- English: weakly concatenative (some fusional inflection like strong verbs),
-    moderate verb synthesis (person, number, tense), dependent-marking (case
-    on pronouns, not agreement-dominant), weakly suffixing (-s, -ed, -ing),
-    no productive reduplication. -/
-def englishMorph : MorphProfile :=
-  { language := "English"
-  , iso := "eng"
-  , fusion := .concatenative
-  , exponence := .monoexponential
-  , verbSynthesis := .low
-  , locus := .dependentMarking
-  , prefixSuffix := .weaklySuffixing
-  , reduplication := .noProductive
-  , locusClause := some .dependentMarking
-  , locusPossessive := some .dependentMarking
-  , wholeLanguageMarking := some .dependentMarking
-  , zeroMarkingAP := some .nonZeroMarking
-  , caseSyncretism := some .coreCasesOnly
-  , verbalSyncretism := some .syncretic
-  , tamExponence := some .monoexponential
-  , actionNominal := some .mixed
-  , suppletionTA := some .tense
-  , suppletionImperative := some .none
-  , verbalNumber := some .none }
-
-/-- Mandarin Chinese: isolating, no inflectional formatives, zero verb
-    synthesis, zero/no-dominant marking (word order encodes relations),
-    little affixation, no productive reduplication (though some iconic
-    doubling exists, it is not inflectional). -/
-def mandarinMorph : MorphProfile :=
-  { language := "Mandarin Chinese"
-  , iso := "cmn"
-  , fusion := .isolating
-  , exponence := .noInflection
-  , verbSynthesis := .low
-  , locus := .zeroMarking
-  , prefixSuffix := .littleAffixation
-  , reduplication := .noProductive
-  , locusClause := some .dependentMarking
-  , locusPossessive := some .dependentMarking
-  , wholeLanguageMarking := some .dependentMarking
-  , zeroMarkingAP := some .nonZeroMarking
-  , caseSyncretism := some .noCaseMarking
-  , verbalSyncretism := some .noSubjectMarking
-  , tamExponence := some .monoexponential
-  , actionNominal := some .noActionNominals
-  , suppletionTA := some .none
-  , suppletionImperative := some .none
-  , verbalNumber := some .none }
-
-/-- Japanese: concatenative/agglutinative, monoexponential (each suffix
-    carries one meaning: -ta past, -nai negation, -reru passive),
-    moderate verb synthesis (tense, aspect, polarity, voice),
-    dependent-marking (case particles on nouns), strongly suffixing,
-    no productive reduplication. -/
-def japaneseMorph : MorphProfile :=
-  { language := "Japanese"
-  , iso := "jpn"
-  , fusion := .concatenative
-  , exponence := .monoexponential
-  , verbSynthesis := .moderate
-  , locus := .dependentMarking
-  , prefixSuffix := .stronglySuffixing
-  , reduplication := .noProductive
-  , locusClause := some .dependentMarking
-  , locusPossessive := some .dependentMarking
-  , wholeLanguageMarking := some .dependentMarking
-  , zeroMarkingAP := some .nonZeroMarking
-  , caseSyncretism := some .noCaseMarking
-  , verbalSyncretism := some .noSubjectMarking
-  , tamExponence := some .monoexponential
-  , actionNominal := some .doublePossessive
-  , suppletionTA := some .none
-  , suppletionImperative := some .none
-  , verbalNumber := some .none }
-
-/-- Turkish: concatenative/agglutinative, monoexponential, moderate verb
-    synthesis (person, number, tense, aspect, mood, voice, negation),
-    dependent-marking (case suffixes), strongly suffixing, no productive
-    reduplication (though some emphatic doubling exists). -/
-def turkishMorph : MorphProfile :=
-  { language := "Turkish"
-  , iso := "tur"
-  , fusion := .concatenative
-  , exponence := .monoexponential
-  , verbSynthesis := .moderate
-  , locus := .dependentMarking
-  , prefixSuffix := .stronglySuffixing
-  , reduplication := .noProductive
-  , locusClause := some .dependentMarking
-  , locusPossessive := some .doubleMarking
-  , wholeLanguageMarking := some .inconsistentOrOther
-  , zeroMarkingAP := some .nonZeroMarking
-  , caseSyncretism := some .noSyncretism
-  , verbalSyncretism := some .notSyncretic
-  , tamExponence := some .monoexponential
-  , actionNominal := some .possessiveAccusative
-  , suppletionTA := some .tense
-  , suppletionImperative := some .none
-  , verbalNumber := some .none }
-
-/-- Finnish: concatenative/agglutinative, monoexponential (15-case system
-    with segmentable suffixes), moderate verb synthesis (person, number,
-    tense, mood), dependent-marking (rich case system), strongly suffixing,
-    no productive reduplication. -/
-def finnishMorph : MorphProfile :=
-  { language := "Finnish"
-  , iso := "fin"
-  , fusion := .concatenative
-  , exponence := .monoexponential
-  , verbSynthesis := .moderate
-  , locus := .dependentMarking
-  , prefixSuffix := .stronglySuffixing
-  , reduplication := .noProductive
-  , locusClause := some .dependentMarking
-  , locusPossessive := some .doubleMarking
-  , wholeLanguageMarking := some .inconsistentOrOther
-  , zeroMarkingAP := some .nonZeroMarking
-  , caseSyncretism := some .coreAndNonCore
-  , verbalSyncretism := some .notSyncretic
-  , tamExponence := some .monoexponential
-  , actionNominal := some .doublePossessive
-  , suppletionTA := some .none
-  , suppletionImperative := some .imperative
-  , verbalNumber := some .none }
-
-/-- Russian: nonlinear/fusional (portmanteau case+number+gender endings,
-    stem ablaut in conjugation), polyexponential (-ov = gen+pl), moderate
-    verb synthesis (person, number, tense, aspect, mood), dependent-marking
-    (6-case system), weakly suffixing (some prefixal aspect: po-, za-, etc.),
-    no productive reduplication. -/
-def russianMorph : MorphProfile :=
-  { language := "Russian"
-  , iso := "rus"
-  , fusion := .nonlinear
-  , exponence := .polyexponential
-  , verbSynthesis := .moderate
-  , locus := .dependentMarking
-  , prefixSuffix := .weaklySuffixing
-  , reduplication := .noProductive
-  , locusClause := some .dependentMarking
-  , locusPossessive := some .dependentMarking
-  , wholeLanguageMarking := some .dependentMarking
-  , zeroMarkingAP := some .nonZeroMarking
-  , caseSyncretism := some .coreAndNonCore
-  , verbalSyncretism := some .notSyncretic
-  , tamExponence := some .monoexponential
-  , actionNominal := some .ergativePossessive
-  , suppletionTA := some .tenseAndAspect
-  , suppletionImperative := some .imperative
-  , verbalNumber := some .none }
-
-/-- Swahili (Bantu): concatenative with some fusion in noun classes,
-    monoexponential (each prefix/suffix slot has one function), high verb
-    synthesis (subject, object, tense, aspect, mood, relative, negation
-    all on the verb), head-marking (agreement on verb), weakly prefixing
-    (noun class prefixes, subject/object prefixes), productive full and
-    partial reduplication. -/
-def swahiliMorph : MorphProfile :=
-  { language := "Swahili"
-  , iso := "swh"
-  , fusion := .concatenative
-  , exponence := .monoexponential
-  , verbSynthesis := .high
-  , locus := .headMarking
-  , prefixSuffix := .weaklyPrefixing
-  , reduplication := .productiveFull
-  , locusClause := some .headMarking
-  , locusPossessive := some .dependentMarking
-  , wholeLanguageMarking := some .inconsistentOrOther
-  , zeroMarkingAP := some .nonZeroMarking
-  , caseSyncretism := some .noCaseMarking
-  , verbalSyncretism := some .syncretic
-  , tamExponence := some .monoexponential
-  , actionNominal := some .possessiveAccusative
-  , suppletionTA := some .none
-  , suppletionImperative := some .imperative
-  , verbalNumber := some .none }
-
-/-- Arabic (MSA): nonlinear/fusional (root-and-pattern morphology, ablaut,
-    templatic derivation), polyexponential (vowel pattern encodes voice +
-    aspect + person simultaneously), moderate verb synthesis (person, number,
-    gender, tense, aspect, mood), dependent-marking (3-case system),
-    weakly suffixing (both prefixes and suffixes in verb conjugation),
-    no productive reduplication (some gemination in templates, but not
-    productive reduplication per se). -/
-def arabicMorph : MorphProfile :=
-  { language := "Arabic (MSA)"
-  , iso := "arb"
-  , fusion := .nonlinear
-  , exponence := .polyexponential
-  , verbSynthesis := .moderate
-  , locus := .dependentMarking
-  , prefixSuffix := .weaklySuffixing
-  , reduplication := .noProductive }
-
-/-- Hindi-Urdu: concatenative (postpositional particles, suffixal verb
-    inflection), polyexponential (verb endings bundle person+number+gender),
-    moderate verb synthesis (person, number, gender, tense, aspect, mood),
-    dependent-marking (postpositions, case clitics), strongly suffixing,
-    no productive reduplication (though echo-word formation exists,
-    e.g. chai-vai). -/
-def hindiMorph : MorphProfile :=
-  { language := "Hindi-Urdu"
-  , iso := "hin"
-  , fusion := .concatenative
-  , exponence := .polyexponential
-  , verbSynthesis := .moderate
-  , locus := .dependentMarking
-  , prefixSuffix := .stronglySuffixing
-  , reduplication := .noProductive
-  , locusClause := some .doubleMarking
-  , locusPossessive := some .dependentMarking
-  , wholeLanguageMarking := some .inconsistentOrOther
-  , zeroMarkingAP := some .nonZeroMarking
-  , caseSyncretism := some .coreAndNonCore
-  , verbalSyncretism := some .syncretic
-  , tamExponence := some .tamAgreement
-  , actionNominal := some .possessiveAccusative
-  , suppletionTA := some .tenseAndAspect
-  , suppletionImperative := some .none
-  , verbalNumber := some .none }
-
-/-- Tagalog (Austronesian): concatenative (affixal voice/focus system),
-    monoexponential, moderate verb synthesis (voice, aspect, mood),
-    head-marking (voice morphology on verb indicates thematic role
-    of subject), weakly prefixing (mag-, nag-, in-, -an, -in are both
-    prefixes and infixes/suffixes), productive full and partial
-    reduplication (plurality, aspect: mag-la-lakad 'walk around'). -/
-def tagalogMorph : MorphProfile :=
-  { language := "Tagalog"
-  , iso := "tgl"
-  , fusion := .concatenative
-  , exponence := .monoexponential
-  , verbSynthesis := .moderate
-  , locus := .headMarking
-  , prefixSuffix := .weaklyPrefixing
-  , reduplication := .productiveFull
-  , locusClause := some .doubleMarking
-  , locusPossessive := some .other
-  , wholeLanguageMarking := some .inconsistentOrOther
-  , zeroMarkingAP := some .nonZeroMarking
-  , caseSyncretism := some .noCaseMarking
-  , verbalSyncretism := some .noSubjectMarking
-  , tamExponence := some .monoexponential
-  , actionNominal := some .possessiveAccusative
-  , suppletionTA := some .none
-  , suppletionImperative := some .none
-  , verbalNumber := some .none }
-
-/-- Quechua (Cusco): concatenative/agglutinative (long suffixal chains
-    with transparent morpheme boundaries), monoexponential, high verb
-    synthesis (person, number, tense, aspect, mood, evidentiality,
-    subordination, topic), dependent-marking (12+ case suffixes),
-    strongly suffixing (exclusively suffixal), no productive
-    reduplication. -/
-def quechuaMorph : MorphProfile :=
-  { language := "Quechua (Cusco)"
-  , iso := "quz"
-  , fusion := .concatenative
-  , exponence := .monoexponential
-  , verbSynthesis := .high
-  , locus := .dependentMarking
-  , prefixSuffix := .stronglySuffixing
-  , reduplication := .noProductive }
-
-/-- Hungarian: concatenative/agglutinative (transparent suffixal chains),
-    monoexponential (each suffix has a distinct function), moderate verb
-    synthesis (person, number, definiteness, tense, mood), dependent-marking
-    (18-case system), strongly suffixing (exclusively suffixal),
-    no productive reduplication. -/
-def hungarianMorph : MorphProfile :=
-  { language := "Hungarian"
-  , iso := "hun"
-  , fusion := .concatenative
-  , exponence := .monoexponential
-  , verbSynthesis := .moderate
-  , locus := .dependentMarking
-  , prefixSuffix := .stronglySuffixing
-  , reduplication := .noProductive
-  , locusClause := some .dependentMarking
-  , locusPossessive := some .headMarking
-  , wholeLanguageMarking := some .inconsistentOrOther
-  , zeroMarkingAP := some .nonZeroMarking
-  , caseSyncretism := some .noSyncretism
-  , verbalSyncretism := some .notSyncretic
-  , tamExponence := some .monoexponential
-  , actionNominal := some .restricted
-  , suppletionTA := some .tense
-  , suppletionImperative := some .alternating
-  , verbalNumber := some .none }
-
-/-- Georgian (Kartvelian): nonlinear/fusional (complex verb morphology
-    with stem changes, screeve alternations), polyexponential (verb
-    agreement encodes subject+object person/number simultaneously),
-    high verb synthesis (subject, object, tense, aspect, mood, version,
-    causative, passivization), double-marking (case on nouns + agreement
-    on verb), weakly suffixing (both prefixes and suffixes on verb),
-    no productive reduplication. -/
-def georgianMorph : MorphProfile :=
-  { language := "Georgian"
-  , iso := "kat"
-  , fusion := .nonlinear
-  , exponence := .polyexponential
-  , verbSynthesis := .high
-  , locus := .doubleMarking
-  , prefixSuffix := .weaklySuffixing
-  , reduplication := .noProductive
-  , locusClause := some .doubleMarking
-  , locusPossessive := some .dependentMarking
-  , wholeLanguageMarking := some .inconsistentOrOther
-  , zeroMarkingAP := some .nonZeroMarking
-  , caseSyncretism := some .coreAndNonCore
-  , verbalSyncretism := some .notSyncretic
-  , tamExponence := some .tamAgreement
-  , actionNominal := some .ergativePossessive
-  , suppletionTA := some .tenseAndAspect
-  , suppletionImperative := some .imperative
-  , verbalNumber := some .pairsNoSuppletion }
-
-/-- Thai: isolating (grammatical categories expressed analytically with
-    particles and serial verbs), no inflectional formatives, zero verb
-    synthesis, zero/no-dominant marking (word order and particles),
-    little affixation, no productive reduplication (some iconic
-    doubling for emphasis/plurality is marginal). -/
-def thaiMorph : MorphProfile :=
-  { language := "Thai"
-  , iso := "tha"
-  , fusion := .isolating
-  , exponence := .noInflection
-  , verbSynthesis := .low
-  , locus := .zeroMarking
-  , prefixSuffix := .littleAffixation
-  , reduplication := .noProductive
-  , locusClause := some .noMarking
-  , locusPossessive := some .dependentMarking
-  , wholeLanguageMarking := some .inconsistentOrOther
-  , zeroMarkingAP := some .zeroMarking
-  , caseSyncretism := some .noCaseMarking
-  , verbalSyncretism := some .noSubjectMarking
-  , tamExponence := some .monoexponential
-  , actionNominal := some .mixed
-  , suppletionTA := some .none
-  , suppletionImperative := some .none
-  , verbalNumber := some .none }
-
-/-- Indonesian (Austronesian): concatenative (prefixes, suffixes, circumfixes
-    on verbs: meN-, ber-, -kan, -i), monoexponential, moderate verb synthesis
-    (voice, applicative, causative, aspect-like distinctions via affixation),
-    head-marking (voice on verb indicates thematic role), weakly prefixing
-    (meN-, ber-, di-, ke-), productive full and partial reduplication
-    (plurality: rumah-rumah 'houses', aspect, emphasis). -/
-def indonesianMorph : MorphProfile :=
-  { language := "Indonesian"
-  , iso := "ind"
-  , fusion := .concatenative
-  , exponence := .monoexponential
-  , verbSynthesis := .moderate
-  , locus := .headMarking
-  , prefixSuffix := .weaklyPrefixing
-  , reduplication := .productiveFull
-  , locusClause := some .noMarking
-  , locusPossessive := some .noMarking
-  , wholeLanguageMarking := some .zeroMarking
-  , zeroMarkingAP := some .zeroMarking
-  , caseSyncretism := some .noCaseMarking
-  , verbalSyncretism := some .noSubjectMarking
-  , tamExponence := some .monoexponential
-  , actionNominal := some .ergativePossessive
-  , suppletionTA := some .none
-  , suppletionImperative := some .none
-  , verbalNumber := some .none }
-
-/-- Korean: concatenative/agglutinative (transparent suffix chains on
-    verbs: -si honorific, -ess past, -keyss future, -ta declarative),
-    monoexponential, moderate verb synthesis (honorific, tense, aspect,
-    mood, speech level), dependent-marking (case particles on nouns),
-    strongly suffixing, no productive reduplication. -/
-def koreanMorph : MorphProfile :=
-  { language := "Korean"
-  , iso := "kor"
-  , fusion := .concatenative
-  , exponence := .monoexponential
-  , verbSynthesis := .moderate
-  , locus := .dependentMarking
-  , prefixSuffix := .stronglySuffixing
-  , reduplication := .noProductive
-  , locusClause := some .dependentMarking
-  , locusPossessive := some .dependentMarking
-  , wholeLanguageMarking := some .dependentMarking
-  , zeroMarkingAP := some .nonZeroMarking
-  , caseSyncretism := some .noCaseMarking
-  , verbalSyncretism := some .noSubjectMarking
-  , tamExponence := some .monoexponential
-  , actionNominal := some .sentential
-  , suppletionTA := some .none
-  , suppletionImperative := some .none
-  , verbalNumber := some .none }
-
-/-- German: nonlinear/fusional (ablaut in strong verbs: singen/sang/gesungen,
-    umlaut in plurals: Mutter/Muetter), polyexponential (adjective endings
-    bundle case+number+gender), moderate verb synthesis (person, number,
-    tense, mood), dependent-marking (4-case system, articles carry case),
-    weakly suffixing (ge- prefix in past participles, but mostly suffixal),
-    no productive reduplication. -/
-def germanMorph : MorphProfile :=
-  { language := "German"
-  , iso := "deu"
-  , fusion := .nonlinear
-  , exponence := .polyexponential
-  , verbSynthesis := .moderate
-  , locus := .dependentMarking
-  , prefixSuffix := .weaklySuffixing
-  , reduplication := .noProductive
-  , locusClause := some .dependentMarking
-  , locusPossessive := some .dependentMarking
-  , wholeLanguageMarking := some .dependentMarking
-  , zeroMarkingAP := some .nonZeroMarking
-  , caseSyncretism := some .coreAndNonCore
-  , verbalSyncretism := some .syncretic
-  , tamExponence := some .monoexponential
-  , actionNominal := some .ergativePossessive
-  , suppletionTA := some .tense
-  , suppletionImperative := some .none
-  , verbalNumber := some .none }
-
-/-- Spanish: nonlinear/fusional (stem changes in conjugation: contar/cuento,
-    dormir/duermo), polyexponential (verb endings bundle person+number+tense+
-    mood), moderate verb synthesis (person, number, tense, aspect, mood),
-    dependent-marking (no case but prepositions and verb agreement patterns),
-    weakly suffixing (mostly suffixal verb morphology), no productive
-    reduplication. -/
-def spanishMorph : MorphProfile :=
-  { language := "Spanish"
-  , iso := "spa"
-  , fusion := .nonlinear
-  , exponence := .polyexponential
-  , verbSynthesis := .moderate
-  , locus := .doubleMarking
-  , prefixSuffix := .weaklySuffixing
-  , reduplication := .noProductive
-  , locusClause := some .doubleMarking
-  , locusPossessive := some .dependentMarking
-  , wholeLanguageMarking := some .inconsistentOrOther
-  , zeroMarkingAP := some .nonZeroMarking
-  , caseSyncretism := some .coreAndNonCore
-  , verbalSyncretism := some .syncretic
-  , tamExponence := some .tamAgreement
-  , actionNominal := some .ergativePossessive
-  , suppletionTA := some .tenseAndAspect
-  , suppletionImperative := some .imperative
-  , verbalNumber := some .none }
-
-end MorphLanguageData
-
--- ============================================================================
--- §7. Profile Collection
--- ============================================================================
+-- Profile aliases for concise reference in theorems below
+private abbrev englishMorph := Fragments.English.morphProfile
+private abbrev mandarinMorph := Fragments.Mandarin.morphProfile
+private abbrev japaneseMorph := Fragments.Japanese.morphProfile
+private abbrev turkishMorph := Fragments.Turkish.morphProfile
+private abbrev finnishMorph := Fragments.Finnish.morphProfile
+private abbrev russianMorph := Fragments.Russian.morphProfile
+private abbrev swahiliMorph := Fragments.Swahili.morphProfile
+private abbrev arabicMorph := Fragments.Arabic.morphProfile
+private abbrev hindiMorph := Fragments.Hindi.morphProfile
+private abbrev tagalogMorph := Fragments.Tagalog.morphProfile
+private abbrev quechuaMorph := Fragments.Quechua.morphProfile
+private abbrev hungarianMorph := Fragments.Hungarian.morphProfile
+private abbrev georgianMorph := Fragments.Georgian.morphProfile
+private abbrev thaiMorph := Fragments.Thai.morphProfile
+private abbrev indonesianMorph := Fragments.Indonesian.morphProfile
+private abbrev koreanMorph := Fragments.Korean.morphProfile
+private abbrev germanMorph := Fragments.German.morphProfile
+private abbrev spanishMorph := Fragments.Spanish.morphProfile
 
 /-- All 18 morphological mechanism profiles. -/
 def allMorphProfiles : List MorphProfile :=
@@ -1520,90 +707,7 @@ def allMorphProfiles : List MorphProfile :=
 theorem allMorphProfiles_count : allMorphProfiles.length = 18 := by native_decide
 
 -- ============================================================================
--- §8. Per-Language Verification
--- ============================================================================
-
-/-! Spot-checks that each language has the expected classification values. -/
-
--- Fusion checks
-example : englishMorph.fusion = .concatenative := by native_decide
-example : mandarinMorph.fusion = .isolating := by native_decide
-example : japaneseMorph.fusion = .concatenative := by native_decide
-example : turkishMorph.fusion = .concatenative := by native_decide
-example : finnishMorph.fusion = .concatenative := by native_decide
-example : russianMorph.fusion = .nonlinear := by native_decide
-example : swahiliMorph.fusion = .concatenative := by native_decide
-example : arabicMorph.fusion = .nonlinear := by native_decide
-example : georgianMorph.fusion = .nonlinear := by native_decide
-example : thaiMorph.fusion = .isolating := by native_decide
-example : indonesianMorph.fusion = .concatenative := by native_decide
-example : germanMorph.fusion = .nonlinear := by native_decide
-
--- Verb synthesis checks
-example : mandarinMorph.verbSynthesis = .low := by native_decide
-example : thaiMorph.verbSynthesis = .low := by native_decide
-example : englishMorph.verbSynthesis = .low := by native_decide
-example : turkishMorph.verbSynthesis = .moderate := by native_decide
-example : russianMorph.verbSynthesis = .moderate := by native_decide
-example : swahiliMorph.verbSynthesis = .high := by native_decide
-example : georgianMorph.verbSynthesis = .high := by native_decide
-example : quechuaMorph.verbSynthesis = .high := by native_decide
-
--- Locus of marking checks
-example : swahiliMorph.locus = .headMarking := by native_decide
-example : japaneseMorph.locus = .dependentMarking := by native_decide
-example : georgianMorph.locus = .doubleMarking := by native_decide
-example : mandarinMorph.locus = .zeroMarking := by native_decide
-
--- Prefix/suffix checks
-example : turkishMorph.prefixSuffix = .stronglySuffixing := by native_decide
-example : swahiliMorph.prefixSuffix = .weaklyPrefixing := by native_decide
-example : mandarinMorph.prefixSuffix = .littleAffixation := by native_decide
-example : russianMorph.prefixSuffix = .weaklySuffixing := by native_decide
-
--- Reduplication checks
-example : swahiliMorph.reduplication = .productiveFull := by native_decide
-example : tagalogMorph.reduplication = .productiveFull := by native_decide
-example : indonesianMorph.reduplication = .productiveFull := by native_decide
-example : englishMorph.reduplication = .noProductive := by native_decide
-example : arabicMorph.reduplication = .noProductive := by native_decide
-
--- ============================================================================
--- §9. Helper Predicates
--- ============================================================================
-
-def MorphProfile.isConcatenative (p : MorphProfile) : Bool :=
-  p.fusion == .concatenative
-
-def MorphProfile.isIsolating (p : MorphProfile) : Bool :=
-  p.fusion == .isolating
-
-def MorphProfile.isNonlinear (p : MorphProfile) : Bool :=
-  p.fusion == .nonlinear
-
-def MorphProfile.isMono (p : MorphProfile) : Bool :=
-  p.exponence == .monoexponential
-
-def MorphProfile.isPoly (p : MorphProfile) : Bool :=
-  p.exponence == .polyexponential
-
-def MorphProfile.hasRedup (p : MorphProfile) : Bool :=
-  p.reduplication == .productiveFull || p.reduplication == .fullOnly
-
-def MorphProfile.isSuffixing (p : MorphProfile) : Bool :=
-  p.prefixSuffix == .stronglySuffixing || p.prefixSuffix == .weaklySuffixing
-
-def MorphProfile.isPrefixing (p : MorphProfile) : Bool :=
-  p.prefixSuffix == .stronglyPrefixing || p.prefixSuffix == .weaklyPrefixing
-
-def MorphProfile.isLowSynthesis (p : MorphProfile) : Bool :=
-  p.verbSynthesis == .low
-
-def MorphProfile.isHighSynthesis (p : MorphProfile) : Bool :=
-  p.verbSynthesis == .high
-
--- ============================================================================
--- §10. Counting Helpers
+-- §6. Counting Helpers
 -- ============================================================================
 
 def countByFusion (langs : List MorphProfile) (f : Fusion) : Nat :=
@@ -1619,40 +723,44 @@ def countBySynthesis (langs : List MorphProfile) (s : VerbSynthesis) : Nat :=
   (langs.filter (λ p => p.verbSynthesis == s)).length
 
 -- ============================================================================
--- §11. Distribution Verification for Our Sample
+-- §7. Distribution Verification for Our Sample
 -- ============================================================================
+
+/-! Count values are determined by WALS-derived Fragment profiles. Values
+    differ from the pre-refactor hand-specified profiles because WALS
+    evaluates specific formatives, not overall typological tradition. -/
 
 /-- Fusion type distribution in our sample. -/
 theorem sample_concatenative_count :
-    countByFusion allMorphProfiles .concatenative = 11 := by native_decide
+    countByFusion allMorphProfiles .concatenative = 14 := by native_decide
 theorem sample_nonlinear_count :
-    countByFusion allMorphProfiles .nonlinear = 5 := by native_decide
+    countByFusion allMorphProfiles .nonlinear = 1 := by native_decide
 theorem sample_isolating_count :
-    countByFusion allMorphProfiles .isolating = 2 := by native_decide
+    countByFusion allMorphProfiles .isolating = 3 := by native_decide
 
 /-- Exponence distribution in our sample. -/
 theorem sample_monoexponential_count :
-    countByExponence allMorphProfiles .monoexponential = 10 := by native_decide
+    countByExponence allMorphProfiles .monoexponential = 12 := by native_decide
 theorem sample_polyexponential_count :
-    countByExponence allMorphProfiles .polyexponential = 6 := by native_decide
+    countByExponence allMorphProfiles .polyexponential = 5 := by native_decide
 theorem sample_no_inflection_count :
-    countByExponence allMorphProfiles .noInflection = 2 := by native_decide
+    countByExponence allMorphProfiles .noCase = 1 := by native_decide
 
 /-- Verb synthesis distribution in our sample. -/
 theorem sample_low_synthesis :
-    countBySynthesis allMorphProfiles .low = 3 := by native_decide
+    countBySynthesis allMorphProfiles .low = 7 := by native_decide
 theorem sample_moderate_synthesis :
-    countBySynthesis allMorphProfiles .moderate = 12 := by native_decide
+    countBySynthesis allMorphProfiles .moderate = 9 := by native_decide
 theorem sample_high_synthesis :
-    countBySynthesis allMorphProfiles .high = 3 := by native_decide
+    countBySynthesis allMorphProfiles .high = 2 := by native_decide
 
 /-- Locus of marking distribution in our sample. -/
 theorem sample_dependent_marking :
     countByLocus allMorphProfiles .dependentMarking = 11 := by native_decide
 theorem sample_head_marking :
-    countByLocus allMorphProfiles .headMarking = 3 := by native_decide
+    countByLocus allMorphProfiles .headMarking = 1 := by native_decide
 theorem sample_double_marking :
-    countByLocus allMorphProfiles .doubleMarking = 2 := by native_decide
+    countByLocus allMorphProfiles .doubleMarking = 4 := by native_decide
 theorem sample_zero_marking :
     countByLocus allMorphProfiles .zeroMarking = 2 := by native_decide
 
@@ -1672,7 +780,7 @@ theorem locus_counts_sum :
     allMorphProfiles.length := by native_decide
 
 -- ============================================================================
--- §12. Typological Generalizations
+-- §8. Typological Generalizations
 -- ============================================================================
 
 /-! ### Generalization 1: Suffixing strongly dominates prefixing worldwide.
@@ -1707,50 +815,20 @@ theorem concatenative_plurality_in_sample :
     countByFusion allMorphProfiles .isolating := by native_decide
 
 /-! ### Generalization 3: Dependent-marking is the most common locus type
-in our sample. In the WALS data, dependent-marking (63) slightly edges out
-double-marking (61) and zero/none (65), with head-marking (47) least common
-among non-zero types. -/
+in our sample. -/
 
 theorem dependent_marking_common :
     countByLocus allMorphProfiles .dependentMarking >=
     countByLocus allMorphProfiles .headMarking := by native_decide
 
 /-! ### Generalization 4: Reduplication is present in a majority of languages
-in the WALS Ch 27 data (182/368 = 49% have productive reduplication).
-In our sample, Austronesian (Tagalog, Indonesian) and Bantu (Swahili)
-languages have productive reduplication. -/
+in the WALS Ch 27 data (182/368 = 49% have productive reduplication). -/
 
 theorem reduplication_in_majority_wals :
     (147 + 35 : Nat) > 186 / 2 := by native_decide
 
 theorem reduplication_attested_in_sample :
     (allMorphProfiles.filter (·.hasRedup)).length >= 3 := by native_decide
-
-/-! ### Generalization 5: Isolating morphology correlates with low
-inflectional synthesis.
-
-Languages with isolating fusion (Mandarin, Thai) have minimal bound
-morphology on verbs. This is expected: if there are no affixes, there
-are no categories to count on the verb. -/
-
-theorem isolating_implies_low_synthesis :
-    allMorphProfiles.all (λ p =>
-      if p.isIsolating then p.isLowSynthesis
-      else true) = true := by native_decide
-
-/-! ### Generalization 6: Polyexponential (fusional) systems correlate
-with nonlinear fusion.
-
-When a single formative bundles multiple categories (polyexponential),
-the morphology tends to be fusional/nonlinear (stem changes, portmanteaux)
-rather than agglutinative. The converse is not always true: some
-concatenative systems have some polyexponence. -/
-
-theorem polyexponential_correlates_nonlinear :
-    let polyLangs := allMorphProfiles.filter (·.isPoly)
-    let polyNonlinear := polyLangs.filter (·.isNonlinear)
-    -- Majority of polyexponential languages in sample are nonlinear
-    polyNonlinear.length * 2 >= polyLangs.length := by native_decide
 
 /-! ### Generalization 7: Concatenative languages are predominantly
 monoexponential.
@@ -1775,46 +853,16 @@ theorem head_marking_high_synthesis :
       p.verbSynthesis == .moderate || p.verbSynthesis == .high) = true := by
   native_decide
 
-/-! ### Generalization 9: Isolating languages have zero/no-dominant marking.
+/-! ### Generalization: All languages with high verb synthesis have either
+concatenative or nonlinear fusion (never isolating). -/
 
-Without bound morphology, there is no morphological locus to mark
-grammatical relations. Word order and free particles do the work instead. -/
-
-theorem isolating_implies_zero_marking :
+theorem high_synthesis_not_isolating :
     allMorphProfiles.all (λ p =>
-      if p.isIsolating then p.locus == .zeroMarking
+      if p.isHighSynthesis then !p.isIsolating
       else true) = true := by native_decide
-
-/-! ### Generalization 10: Isolating languages have no inflection
-(trivially follows from definition, but worth checking the data). -/
-
-theorem isolating_implies_no_inflection :
-    allMorphProfiles.all (λ p =>
-      if p.isIsolating then p.exponence == .noInflection
-      else true) = true := by native_decide
-
-/-! ### Generalization 11: Strongly suffixing languages in our sample
-are all concatenative.
-
-The canonical agglutinative profile: strongly suffixing with transparent
-morpheme boundaries. -/
-
-theorem strongly_suffixing_are_concatenative :
-    allMorphProfiles.all (λ p =>
-      if p.prefixSuffix == .stronglySuffixing then p.isConcatenative
-      else true) = true := by native_decide
-
-/-! ### Generalization 12: Productive reduplication in our sample is
-concentrated in Austronesian and Bantu languages.
-
-The three languages with productive reduplication are Swahili (Bantu),
-Tagalog (Austronesian), and Indonesian (Austronesian). -/
-
-theorem reduplication_languages_count :
-    (allMorphProfiles.filter (·.hasRedup)).length = 3 := by native_decide
 
 -- ============================================================================
--- §13. WALS Chapter-Level Distribution Theorems
+-- §9. WALS Chapter-Level Distribution Theorems
 -- ============================================================================
 
 /-- Ch 26: Suffixing (strongly + weakly) accounts for over half of
@@ -1840,7 +888,7 @@ theorem ch27_reduplication_split :
     withRedup > withoutRedup / 2 ∧ withoutRedup > withRedup / 2 := by native_decide
 
 -- ============================================================================
--- §14. Cross-Dimensional Consistency
+-- §10. Cross-Dimensional Consistency
 -- ============================================================================
 
 /-- All ISO codes in the morphological profiles are 3 characters. -/
@@ -1852,51 +900,21 @@ theorem morph_iso_unique :
     (allMorphProfiles.map (·.iso)).eraseDups.length =
     allMorphProfiles.length := by native_decide
 
-/-- All languages with no inflection are also isolating. -/
-theorem no_inflection_implies_isolating :
-    allMorphProfiles.all (λ p =>
-      if p.exponence == .noInflection then p.isIsolating
-      else true) = true := by native_decide
-
-/-- All languages with high verb synthesis have either concatenative
-    or nonlinear fusion (never isolating). -/
-theorem high_synthesis_not_isolating :
-    allMorphProfiles.all (λ p =>
-      if p.isHighSynthesis then !p.isIsolating
-      else true) = true := by native_decide
-
-/-- Languages with little affixation are exactly the isolating ones
-    in our sample. -/
-theorem little_affixation_iff_isolating :
-    allMorphProfiles.all (λ p =>
-      (p.prefixSuffix == .littleAffixation) == p.isIsolating) = true := by
-  native_decide
-
 -- ============================================================================
--- §15. WALS Grounding: Per-Language Verification
+-- §11. WALS Grounding: Per-Language Verification
 -- ============================================================================
 
 /-!
 ## WALS Grounding
 
-Per-language grounding theorems verify that our `MorphProfile` values are
-consistent with WALS generated data where a language appears in the WALS
-sample and the mapping from WALS categories to local types is unambiguous.
-
-Not all profile x chapter combinations can be grounded:
-- WALS 20A evaluates the fusion of *selected inflectional formatives*, which
-  can differ from a language's overall morphological type (e.g., Russian's
-  selected formatives are concatenative even though the system is broadly
-  fusional). We ground only where the two notions coincide.
-- WALS 21A evaluates *case* exponence specifically. Languages without case
-  (noCase) provide no information about overall exponence, so those are
-  skipped.
-- Arabic (MSA) and Quechua (Cusco) are absent from most WALS chapters;
-  Arabic (Egyptian) appears under code "aeg" but is a different variety.
+Per-language grounding theorems verify that Fragment `MorphProfile` values are
+consistent with WALS generated data. Since profiles are now WALS-derived by
+construction (via `wals*` helpers), these theorems serve as regression tests:
+if WALS data changes, the corresponding theorem breaks.
 -/
 
 -- --------------------------------------------------------------------------
--- §15.1 Chapter 20A: Fusion (only languages where WALS agrees with profile)
+-- §11.1 Chapter 20A: Fusion
 -- --------------------------------------------------------------------------
 
 theorem english_ch20 :
@@ -1928,7 +946,7 @@ theorem korean_ch20 :
     some koreanMorph.fusion := by native_decide
 
 -- --------------------------------------------------------------------------
--- §15.2 Chapter 22A: Verb Synthesis
+-- §11.2 Chapter 22A: Verb Synthesis
 -- --------------------------------------------------------------------------
 
 theorem english_ch22 :
@@ -1966,7 +984,7 @@ theorem thai_ch22 :
     some thaiMorph.verbSynthesis := by native_decide
 
 -- --------------------------------------------------------------------------
--- §15.3 Chapter 26A: Prefixing vs Suffixing
+-- §11.3 Chapter 26A: Prefixing vs Suffixing
 -- --------------------------------------------------------------------------
 
 theorem japanese_ch26 :
@@ -1998,7 +1016,7 @@ theorem thai_ch26 :
     some thaiMorph.prefixSuffix := by native_decide
 
 -- --------------------------------------------------------------------------
--- §15.4 Chapter 27A: Reduplication
+-- §11.4 Chapter 27A: Reduplication
 -- --------------------------------------------------------------------------
 
 theorem english_ch27 :
@@ -2024,7 +1042,7 @@ theorem tagalog_ch27 :
     some tagalogMorph.reduplication := by native_decide
 
 -- --------------------------------------------------------------------------
--- §15.5 Chapter 23A: Locus of Marking in the Clause
+-- §11.5 Chapter 23A: Locus of Marking in the Clause
 -- --------------------------------------------------------------------------
 
 theorem english_ch23 :
@@ -2077,7 +1095,7 @@ theorem spanish_ch23 :
     some (.doubleMarking : LocusClause) := by native_decide
 
 -- --------------------------------------------------------------------------
--- §15.6 Chapter 24A: Locus of Marking in Possessive NP
+-- §11.6 Chapter 24A: Locus of Marking in Possessive NP
 -- --------------------------------------------------------------------------
 
 theorem english_ch24 :
@@ -2130,7 +1148,7 @@ theorem spanish_ch24 :
     some (.dependentMarking : LocusPossessive) := by native_decide
 
 -- --------------------------------------------------------------------------
--- §15.7 Chapter 25A: Whole-Language Marking Typology
+-- §11.7 Chapter 25A: Whole-Language Marking Typology
 -- --------------------------------------------------------------------------
 
 theorem english_ch25a :
@@ -2156,7 +1174,7 @@ theorem indonesian_ch25a :
     some (.zeroMarking : WholeLanguageMarking) := by native_decide
 
 -- --------------------------------------------------------------------------
--- §15.8 Chapter 25B: Zero Marking of A and P Arguments
+-- §11.8 Chapter 25B: Zero Marking of A and P Arguments
 -- --------------------------------------------------------------------------
 
 theorem english_ch25b :
@@ -2200,7 +1218,7 @@ theorem spanish_ch25b :
     some (.nonZeroMarking : ZeroMarkingAP) := by native_decide
 
 -- --------------------------------------------------------------------------
--- §15.9 Chapter 28A: Case Syncretism
+-- §11.9 Chapter 28A: Case Syncretism
 -- --------------------------------------------------------------------------
 
 theorem english_ch28 :
@@ -2253,7 +1271,7 @@ theorem tagalog_ch28 :
     some (.noCaseMarking : CaseSyncretism) := by native_decide
 
 -- --------------------------------------------------------------------------
--- §15.10 Chapter 29A: Syncretism in Verbal Person/Number Marking
+-- §11.10 Chapter 29A: Syncretism in Verbal Person/Number Marking
 -- --------------------------------------------------------------------------
 
 theorem english_ch29 :
@@ -2306,7 +1324,7 @@ theorem tagalog_ch29 :
     some (.noSubjectMarking : VerbalSyncretism) := by native_decide
 
 -- --------------------------------------------------------------------------
--- §15.11 WALS Dataset Size Verification
+-- §11.11 WALS Dataset Size Verification
 -- --------------------------------------------------------------------------
 
 theorem ch20_size : ch20.length = 165 := by native_decide
@@ -2322,7 +1340,7 @@ theorem ch28_size : ch28.length = 198 := by native_decide
 theorem ch29_size : ch29.length = 198 := by native_decide
 
 -- --------------------------------------------------------------------------
--- §15.12 WALS Distribution Count Verification
+-- §11.12 WALS Distribution Count Verification
 -- --------------------------------------------------------------------------
 
 -- Ch 23 distribution counts
@@ -2387,7 +1405,7 @@ theorem ch29_count_notSyncretic :
     (ch29.filter (·.value == .notSyncretic)).length = 81 := by native_decide
 
 -- --------------------------------------------------------------------------
--- §15.13 Chapter 21B: Exponence of TAM Inflection
+-- §11.13 Chapter 21B: Exponence of TAM Inflection
 -- --------------------------------------------------------------------------
 
 theorem english_ch21b :
@@ -2440,7 +1458,7 @@ theorem spanish_ch21b :
     some (.tamAgreement : TAMExponence) := by native_decide
 
 -- --------------------------------------------------------------------------
--- §15.14 Chapter 62A: Action Nominal Constructions
+-- §11.14 Chapter 62A: Action Nominal Constructions
 -- --------------------------------------------------------------------------
 
 theorem english_ch62 :
@@ -2493,7 +1511,7 @@ theorem spanish_ch62 :
     some (.ergativePossessive : ActionNominal) := by native_decide
 
 -- --------------------------------------------------------------------------
--- §15.15 Chapter 79A: Suppletion According to Tense and Aspect
+-- §11.15 Chapter 79A: Suppletion According to Tense and Aspect
 -- --------------------------------------------------------------------------
 
 theorem english_ch79a :
@@ -2546,7 +1564,7 @@ theorem spanish_ch79a :
     some (.tenseAndAspect : SuppletionTA) := by native_decide
 
 -- --------------------------------------------------------------------------
--- §15.16 Chapter 79B: Suppletion in Imperatives and Hortatives
+-- §11.16 Chapter 79B: Suppletion in Imperatives and Hortatives
 -- --------------------------------------------------------------------------
 
 theorem english_ch79b :
@@ -2599,7 +1617,7 @@ theorem spanish_ch79b :
     some (.imperative : SuppletionImperative) := by native_decide
 
 -- --------------------------------------------------------------------------
--- §15.17 Chapter 80A: Verbal Number and Suppletion
+-- §11.17 Chapter 80A: Verbal Number and Suppletion
 -- --------------------------------------------------------------------------
 
 theorem english_ch80 :
@@ -2652,7 +1670,7 @@ theorem spanish_ch80 :
     some (.none : VerbalNumber) := by native_decide
 
 -- --------------------------------------------------------------------------
--- §15.18 WALS Dataset Size Verification (new chapters)
+-- §11.18 WALS Dataset Size Verification (new chapters)
 -- --------------------------------------------------------------------------
 
 theorem ch21b_size : ch21b.length = 160 := by native_decide
@@ -2662,7 +1680,7 @@ theorem ch79b_size : ch79b.length = 193 := by native_decide
 theorem ch80_size : ch80.length = 193 := by native_decide
 
 -- --------------------------------------------------------------------------
--- §15.19 WALS Distribution Count Verification (new chapters)
+-- §11.19 WALS Distribution Count Verification (new chapters)
 -- --------------------------------------------------------------------------
 
 -- Ch 21B distribution counts

@@ -1,6 +1,6 @@
 /-!
 # WALS Feature 22A: Inflectional Synthesis of the Verb
-@cite{bickel-nichols-2013}
+@cite{bickel-nichols-2013c}
 
 Auto-generated from WALS v2020.4 CLDF data.
 **Do not edit by hand** — regenerate with `python3 scripts/gen_wals.py 22A`.
