@@ -3,7 +3,7 @@
 ## [0.229.48] - 2026-03-09
 
 ### Added
-- **Thurstone.lean §5**: State Luce–Thurstone incompatibility (Luce 1959, Theorem 7) — for n ≥ 3 alternatives, no independent Thurstone discriminal processes can reproduce both Luce best/worst probabilities. Base case `luce_thurstone7` (n=3, 1 sorry for polynomial algebra) and general `luce_thurstone_incompatible` (fully proved via IIA reduction)
+- **Thurstone.lean §5**: Luce–Thurstone incompatibility (Luce 1959, Theorem 7) — for n ≥ 3 alternatives, no independent Thurstone discriminal processes can reproduce both Luce best/worst probabilities. Base case `luce_thurstone7` (n=3, fully proved) and general `luce_thurstone_incompatible` (proved via IIA reduction). 0 sorrys
 
 ## [0.229.47] - 2026-03-09
 

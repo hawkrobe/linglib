@@ -254,11 +254,41 @@ theorem luce_thurstone7 (v : Fin 3 → ℝ) (hv : ∀ i, 0 < v i)
   have h02 : (0 : ℝ) < v 0 + v 2 := by linarith
   have h012 : (0 : ℝ) < v 0 + v 1 + v 2 := by linarith
   have hq : (0 : ℝ) < v 0 * v 1 + v 0 * v 2 + v 1 * v 2 := by nlinarith
-  -- After clearing denominators, both sides factor through (v₀² - v₁v₂).
-  -- h_nd ensures v₀² ≠ v₁v₂, so we can cancel, getting
-  -- (v₀+v₁)(v₁+v₂)(v₀+v₂) = (v₀+v₁+v₂)(v₀v₁+v₀v₂+v₁v₂),
-  -- which expands to 2·v₀v₁v₂ = 3·v₀v₁v₂, hence v₀v₁v₂ = 0.
-  sorry
+  -- Both sides factor through (v₀² - v₁v₂):
+  --   RHS = (v₀² - v₁v₂) / ((v₀+v₁)(v₀+v₂))
+  --   LHS = (v₀² - v₁v₂)(v₁+v₂) / ((v₀+v₁+v₂)(v₀v₁+v₀v₂+v₁v₂))
+  have h_rhs : v 0 / (v 0 + v 1) + v 0 / (v 0 + v 2) - 1 =
+      (v 0 ^ 2 - v 1 * v 2) / ((v 0 + v 1) * (v 0 + v 2)) := by
+    field_simp; ring
+  have h_lhs : v 0 / (v 0 + v 1 + v 2) -
+      v 1 * v 2 / (v 0 * v 1 + v 0 * v 2 + v 1 * v 2) =
+      (v 0 ^ 2 - v 1 * v 2) * (v 1 + v 2) /
+      ((v 0 + v 1 + v 2) * (v 0 * v 1 + v 0 * v 2 + v 1 * v 2)) := by
+    field_simp; ring
+  -- h_nd implies v₀² ≠ v₁v₂
+  have h_sq_ne : v 0 ^ 2 - v 1 * v 2 ≠ 0 := by
+    intro heq
+    apply h_nd
+    have : v 0 / (v 0 + v 1) + v 0 / (v 0 + v 2) - 1 = 0 := by rw [h_rhs, heq, zero_div]
+    linarith
+  -- Clear denominators
+  rw [h_lhs, h_rhs] at h
+  rw [div_eq_div_iff (mul_pos h012 hq |>.ne') (mul_pos h01 h02 |>.ne')] at h
+  -- Cancel (v₀² - v₁v₂) from both sides
+  have h5 : (v 1 + v 2) * ((v 0 + v 1) * (v 0 + v 2)) =
+      (v 0 + v 1 + v 2) * (v 0 * v 1 + v 0 * v 2 + v 1 * v 2) := by
+    have h' : (v 0 ^ 2 - v 1 * v 2) *
+              ((v 1 + v 2) * ((v 0 + v 1) * (v 0 + v 2))) =
+              (v 0 ^ 2 - v 1 * v 2) *
+              ((v 0 + v 1 + v 2) * (v 0 * v 1 + v 0 * v 2 + v 1 * v 2)) := by
+      linarith
+    exact mul_left_cancel₀ h_sq_ne h'
+  -- (v₁+v₂)(v₀+v₁)(v₀+v₂) - (v₀+v₁+v₂)(v₀v₁+v₀v₂+v₁v₂) = -v₀v₁v₂
+  have h6 : (v 1 + v 2) * ((v 0 + v 1) * (v 0 + v 2)) -
+      (v 0 + v 1 + v 2) * (v 0 * v 1 + v 0 * v 2 + v 1 * v 2) =
+      -(v 0 * v 1 * v 2) := by ring
+  -- From h5: v₀v₁v₂ = 0, but v₀v₁v₂ > 0. Contradiction.
+  linarith [mul_pos (mul_pos h0 h1) h2]
 
 /-- **Luce–Thurstone incompatibility (general)**: the n = 3 result extends
     to any n ≥ 3 alternatives by restricting to a 3-element subset.
