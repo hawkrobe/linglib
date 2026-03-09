@@ -113,6 +113,8 @@ import Linglib.Core.Path
 import Linglib.Core.Assignment
 import Linglib.Core.Continuation
 import Linglib.Core.CylindricAlgebra
+import Linglib.Core.CylindricAlgebra.VarAssignment
+import Linglib.Core.CylindricAlgebra.DynamicSemantics
 import Linglib.Core.Lexical.PersonCategory
 import Linglib.Core.Lexical.MorphRule
 import Linglib.Core.Lexical.Binominal
