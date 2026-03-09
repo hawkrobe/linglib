@@ -281,4 +281,35 @@ theorem production_is_direct :
 theorem dependence_not_necessarily_direct :
     productionEntailsDirectness .dependence = false := rfl
 
+/-! ## Bridge to CausalProfile
+
+The structural causal model's `CausalProfile` directly determines the
+dominant causation type via its directness and necessity fields. This
+connects model-level structural properties to the production/dependence
+distinction without going through any study-specific representation. -/
+
+/-- Map a structural causal profile to the dominant causation type.
+
+- `direct = true` → P-CAUSE (production): a direct causal law implies
+  energy/force transfer.
+- `necessary = true` (without directness) → D-CAUSE (dependence):
+  counterfactual dependence without direct interaction.
+- Neither → no causal involvement. -/
+def profileCausationType (p : CausalProfile) : Option CausationType :=
+  if p.direct then some .production
+  else if p.necessary then some .dependence
+  else none
+
+/-- Production type iff direct causal connection. -/
+theorem profileCausationType_production_iff (p : CausalProfile) :
+    profileCausationType p = some .production ↔ p.direct = true := by
+  simp only [profileCausationType]
+  cases p.direct <;> simp
+
+/-- Dependence type iff necessary but not direct. -/
+theorem profileCausationType_dependence_iff (p : CausalProfile) :
+    profileCausationType p = some .dependence ↔ p.direct = false ∧ p.necessary = true := by
+  simp only [profileCausationType]
+  cases p.direct <;> cases p.necessary <;> simp
+
 end MartinRoseNichols2025

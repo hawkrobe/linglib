@@ -22,11 +22,12 @@
 ## [0.229.75] - 2026-03-09
 
 ### Added
-- **BellerGerstenberg2025.lean §13–16**: Four integration bridges connecting B&G's causal expression model to linglib's causal machinery:
-  - **HornScale** (§13): Register `⟨affected, enabled, caused⟩` as a `HornScale CausalExpression`, prove scale ordering matches semantic entailment hierarchy, derive scalar implicature alternatives matching Experiment 1C
-  - **GradedCausation** (§14): Bridge to Cao, White & Lassiter 2025 — `causalWorldToMeasures` maps B&G's S to deterministic SUF, prove consistency when both derive from the same structural model
-  - **ProductionDependence** (§15): Bridge to Martin, Rose & Nichols 2025 — `dominantCausationType` maps H→P-CAUSE, W→D-CAUSE; prove P-CAUSE + counterfactual → "caused", D-CAUSE alone → ¬"caused"
-  - **ExpressionStructural** (§16): Rewrite all four expression meanings directly in terms of `hasDirectLaw`/`causallyNecessary`/`causallySufficient`, eliminating the intermediate CausalWorld
+- **ProductionDependence.lean**: `profileCausationType` maps `CausalProfile → Option CausationType` at the theory level — direct causal law → P-CAUSE (production), necessary-but-indirect → D-CAUSE (dependence); characterization theorems `profileCausationType_production_iff` and `profileCausationType_dependence_iff`
+- **BellerGerstenberg2025.lean §13**: `HornScale CausalExpression` with `scale_grounded_in_entailment` proving scale ordering matches semantic entailment hierarchy
+- **BellerGerstenberg2025.lean §14**: End-to-end argumentation chains connecting structural causal models through `profileCausationType` to S1 pragmatic predictions:
+  - `solo_cause_chain`: solo model → P-CAUSE → "caused" true → S1 prefers "caused"
+  - `chain_cause_chain`: chain model → D-CAUSE → "caused" false, "enabled" true → S1 prefers "enabled"
+  - `overdetermination_divergence`: overdetermination model → P-CAUSE but `causeSem` (necessity) fails, witnessing where production and dependence come apart
 
 ## [0.229.74] - 2026-03-09
 
