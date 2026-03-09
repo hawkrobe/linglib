@@ -1,52 +1,22 @@
 import Linglib.Theories.Semantics.Lexical.Adjective.Theory
-import Linglib.Theories.Pragmatics.NeoGricean.Core.Markedness
 import Linglib.Fragments.English.Predicates.Adjectival
-import Linglib.Phenomena.Negation.FlexibleNegation
 import Linglib.Phenomena.Gradability.Data
 
 /-!
-# @cite{alexandropoulou-gotzner-2024} — Gradable Adjective Interpretation Under Negation
+# @cite{alexandropoulou-gotzner-2024} — Negated Gradable Adjectives
 @cite{alexandropoulou-gotzner-2024}
 
-## Overview
+Extension gap (contrary antonyms, two thresholds) is the structural
+precondition for polarity asymmetry under negation. Contradictory antonyms
+(single threshold) produce symmetric negation.
 
-Investigates how competition between alternative expressions affects the
-interpretation of negated relative and absolute gradable adjectives.
+## Load-bearing connections
 
-Two experiments (single-statement presentation mode):
-- Experiment 1: Relative adjectives (large/small, gigantic/tiny)
-- Experiment 2: Absolute adjectives (clean/dirty, pristine/filthy)
-
-## Core Findings
-
-1. **Polarity asymmetry for relative adjectives persists without overt
-   competition**: "not large" receives negative strengthening (~"small"),
-   while "not small" receives a middling interpretation (~"neither large
-   nor small"). This asymmetry is *stronger* without competition.
-
-2. **Absolute adjectives remain symmetric regardless of competition**:
-   "not clean" and "not dirty" are interpreted symmetrically under negation.
-
-3. **Relative-like interpretations of negated absolutes are not
-   competition-dependent**: "not dirty" ≠ "dirty" even without overt
-   competition — explained via Horn's division of pragmatic labor applied
-   to precision levels.
-
-## Theoretical Contribution
-
-The extension gap between antonymic relative adjectives (θ_large ≠ θ_small)
-is the structural precondition for the polarity asymmetry. Absolute adjectives
-lack this gap (not_clean ⟹ dirty), so they behave symmetrically. The data
-support @cite{horn-1989}'s face-management account of negative strengthening
-over @cite{krifka-2007}'s complexity-based account.
-
-## Formalization Strategy
-
-The key predictions follow from existing infrastructure:
-- `Core.NegationType.contrary` → extension gap → asymmetry possible
-- `Core.NegationType.contradictory` → no gap → symmetric
-- `ThresholdPair.gap_exists` models the extension gap region
-- `NeoGricean.Markedness` provides the cost asymmetry for periphrastic forms
+- `positiveMeaning'` / `contraryNegMeaning` (Theory.lean) = `positiveMeaning` /
+  `negativeMeaning` (Core.lean) applied to ThresholdPair projections (§4)
+- Three-region exhaustive partition from `ThresholdPair` (§5)
+- Contradictory complement: `positiveMeaning` ∨ `antonymMeaning` always (§6)
+- `positiveMeaning_monotone` grounds strength entailment and precision DPL (§7, §9)
 -/
 
 set_option autoImplicit false
@@ -57,230 +27,312 @@ open Core (NegationType)
 open Core.Scale (Boundedness Degree Threshold
   Degree.toNat Threshold.toNat deg thr)
 open Semantics.Lexical.Adjective (GradableAdjEntry InformationalStrength
-  ThresholdPair inGapRegion positiveMeaning' contraryNegMeaning)
+  ThresholdPair inGapRegion positiveMeaning' contraryNegMeaning
+  contradictoryNeg contraryNeg)
+open Semantics.Degree (positiveMeaning negativeMeaning antonymMeaning
+  positiveMeaning_monotone)
 open Fragments.English.Predicates.Adjectival
   (large small gigantic tiny clean dirty pristine filthy)
 open Phenomena.Gradability (AdjectiveClass)
 
 -- ============================================================================
--- § 1. Experimental Design
+-- § 1. Experimental Design & Stimuli
 -- ============================================================================
 
-/-- Evaluative polarity: whether the adjective denotes a desirable property. -/
 inductive EvaluativePolarity where
-  | positive  -- large, clean (desirable)
-  | negative  -- small, dirty (undesirable)
+  | positive | negative
   deriving Repr, DecidableEq, BEq
 
-/-- Derive adjective class from fragment entry's antonym relation.
-    Uses the 2-way `isRelative` coarsening of Kennedy's 3-way classification. -/
 def classifyAdj (entry : GradableAdjEntry) : Bool :=
   match entry.antonymRelation with
-  | some .contrary => true   -- relative: contrary antonyms, extension gap
-  | _              => false  -- absolute: contradictory antonyms, no gap
+  | some .contrary => true
+  | _              => false
 
-/-- An adjective condition in the 2×2×2 design. -/
 structure Condition where
-  adjective     : GradableAdjEntry
-  strength      : InformationalStrength
-  polarity      : EvaluativePolarity
-  negated       : Bool
+  adjective : GradableAdjEntry
+  strength  : InformationalStrength
+  polarity  : EvaluativePolarity
+  negated   : Bool
   deriving Repr
 
--- ============================================================================
--- § 2. Adjective Quadruples (Paper's Stimuli)
--- ============================================================================
-
-/-- An antonymic quadruple: weak positive, weak negative, strong positive,
-    strong negative — all sharing a scale. -/
 structure AdjQuadruple where
   weakPos    : GradableAdjEntry
   weakNeg    : GradableAdjEntry
   strongPos  : GradableAdjEntry
   strongNeg  : GradableAdjEntry
-  /-- True if the quadruple's adjectives are relative (contrary antonyms). -/
   isRelative : Bool
   deriving Repr
 
-/-- Size scale quadruple (Experiment 1). -/
 def sizeQuad : AdjQuadruple where
-  weakPos    := large
-  weakNeg    := small
-  strongPos  := gigantic
-  strongNeg  := tiny
+  weakPos := large; weakNeg := small; strongPos := gigantic; strongNeg := tiny
   isRelative := true
 
-/-- Cleanliness scale quadruple (Experiment 2). -/
 def cleanlinessQuad : AdjQuadruple where
-  weakPos    := clean
-  weakNeg    := dirty
-  strongPos  := pristine
-  strongNeg  := filthy
+  weakPos := clean; weakNeg := dirty; strongPos := pristine; strongNeg := filthy
   isRelative := false
 
 -- ============================================================================
--- § 3. Extension Gap: The Structural Precondition
+-- § 2. Scale Model
 -- ============================================================================
 
-/-- Relative adjectives have contrary antonyms → extension gap exists. -/
-theorem relative_has_gap :
-    classifyAdj large = true ∧
-    classifyAdj small = true := by
-  simp [classifyAdj, large, small]
-
-/-- Absolute adjectives have contradictory antonyms → no extension gap. -/
-theorem absolute_no_gap :
-    classifyAdj clean = false ∧
-    classifyAdj dirty = false := by
-  simp [classifyAdj, clean, dirty]
-
-/-- Strong relative adjectives are also contrary (gap between gigantic/tiny). -/
-theorem strong_relative_has_gap :
-    classifyAdj gigantic = true ∧
-    classifyAdj tiny = true := by
-  simp [classifyAdj, gigantic, tiny]
-
-/-- Strong absolute adjectives are contrary too (gap between pristine/filthy). -/
-theorem strong_absolute_has_gap :
-    classifyAdj pristine = true ∧
-    classifyAdj filthy = true := by
-  simp [classifyAdj, pristine, filthy]
-
--- ============================================================================
--- § 4. Concrete Scale Model
--- ============================================================================
-
-/-- 5-point scale (matching 1–5 Likert in the experiments). -/
 abbrev Deg5 := Degree 4
-
-/-- Thresholds on a 5-point scale. -/
 abbrev Thr5 := Threshold 4
 
-/-- A relative antonym pair with two thresholds and an extension gap.
-    Models the paper's key structural property. -/
 structure RelativeScale where
-  /-- Threshold for positive adjective (degree > θ_pos → "large") -/
   θ_pos : Thr5
-  /-- Threshold for negative adjective (degree < θ_neg → "small") -/
   θ_neg : Thr5
-  /-- The extension gap: θ_neg ≤ θ_pos -/
   gap : θ_neg ≤ θ_pos
 
-/-- Default relative scale: gap between 1 and 2. -/
 def defaultRelativeScale : RelativeScale where
-  θ_pos := thr 2
-  θ_neg := thr 1
-  gap := by decide
+  θ_pos := thr 2; θ_neg := thr 1; gap := by decide
 
-/-- Interpretation of a negated positive relative adjective.
-    "not large" = degree ≤ θ_pos. Includes gap + negative region. -/
 def notPositiveRel (d : Deg5) (s : RelativeScale) : Bool :=
   d ≤ (s.θ_pos : Degree 4)
 
-/-- Interpretation of a negated negative relative adjective.
-    "not small" = degree ≥ θ_neg. Includes gap + positive region. -/
 def notNegativeRel (d : Deg5) (s : RelativeScale) : Bool :=
   (s.θ_neg : Degree 4) ≤ d
 
 -- ============================================================================
--- § 5. Core Predictions
+-- § 3. Definitional Equivalences: Theory.lean ↔ Core.lean
 -- ============================================================================
 
-/-- **Prediction 1 (Relative asymmetry)**: "not large" overlaps with "small"
-    (negative strengthening), but "not small" does NOT overlap with "large".
+/-! The two-threshold model (Theory.lean) and single-threshold model (Core.lean)
+    define comparison operators independently. These `rfl` proofs verify that
+    the definitions agree — changing either module's definition body breaks them.
+    This is the structural backbone connecting the study to shared infrastructure
+    that @cite{tessler-franke-2019} also uses. -/
 
-    This follows from the extension gap: a degree in the gap region
-    (θ_neg ≤ d ≤ θ_pos) is "not large" but NOT "small",
-    and is "not small" but NOT "large". -/
-theorem relative_polarity_asymmetry :
-    let s := defaultRelativeScale
-    let gapDeg : Deg5 := deg 2   -- degree in the gap: θ_neg(1) ≤ 2 ≤ θ_pos(2)
-    -- "not large" is true in the gap
-    notPositiveRel gapDeg s = true ∧
-    -- "not small" is true in the gap
-    notNegativeRel gapDeg s = true ∧
-    -- The gap degree is neither "large" (> θ_pos) nor "small" (< θ_neg)
-    inGapRegion gapDeg ⟨s.θ_pos, s.θ_neg, s.gap⟩ = true := by
-  native_decide
+/-- Two-threshold positive IS single-threshold positive at θ_pos.
+    Both compute `(θ : Degree max) < d`. -/
+theorem positive'_eq_positiveMeaning {max : Nat}
+    (d : Degree max) (tp : ThresholdPair max) :
+    positiveMeaning' d tp = positiveMeaning d tp.pos := rfl
 
-/-- **Prediction 2 (Negative strengthening)**: For a low degree,
-    "not large" has the same truth value as "small" —
-    the listener strengthens "not large" to mean "small". -/
-theorem negative_strengthening :
-    let s := defaultRelativeScale
-    let lowDeg : Deg5 := deg 0
-    -- "not large" is true at low degree
-    notPositiveRel lowDeg s = true ∧
-    -- "small" (contrary negative) is also true at low degree
-    contraryNegMeaning lowDeg ⟨s.θ_pos, s.θ_neg, s.gap⟩ = true := by
-  native_decide
+/-- Two-threshold contrary negative IS single-threshold negative at θ_neg.
+    Both compute `d < (θ : Degree max)`. -/
+theorem contraryNeg_eq_negativeMeaning {max : Nat}
+    (d : Degree max) (tp : ThresholdPair max) :
+    contraryNegMeaning d tp = negativeMeaning d tp.neg := rfl
 
-/-- **Prediction 3 (Middling interpretation)**: For a gap degree,
-    "not small" is true but "large" is false — the middling reading. -/
-theorem middling_interpretation :
-    let s := defaultRelativeScale
-    let gapDeg : Deg5 := deg 2
-    -- "not small" is true in the gap
-    notNegativeRel gapDeg s = true ∧
-    -- "large" is false in the gap
-    positiveMeaning' gapDeg ⟨s.θ_pos, s.θ_neg, s.gap⟩ = false := by
-  native_decide
+/-- A&G's "not large" IS Core.lean's antonymMeaning at θ_pos.
+    Both compute `d ≤ (θ : Degree max)`. -/
+theorem notPositiveRel_eq_antonymMeaning (d : Deg5) (s : RelativeScale) :
+    notPositiveRel d s = antonymMeaning d s.θ_pos := rfl
 
-/-- **Prediction 4 (Absolute symmetry)**: For contradictory antonyms,
-    negation of one entails the other. No extension gap means no
-    polarity asymmetry.
+/-- Theory.lean's `contradictoryNeg` IS Core.lean's `antonymMeaning`.
+    Both compute `d ≤ (θ : Degree max)`. -/
+theorem contradictoryNeg_eq_antonymMeaning {max : Nat}
+    (d : Degree max) (θ : Threshold max) :
+    contradictoryNeg d θ = antonymMeaning d θ := rfl
 
-    Modeled via: if antonym relation is contradictory, then
-    "not clean" covers exactly the "dirty" region and vice versa.
-    (On a 5-point scale with single threshold at 2.) -/
-theorem absolute_symmetry :
-    let θ : Thr5 := thr 2
-    -- For contradictory pairs, "not A" covers the complement of "A"
-    -- and the complement of "A" = the extension of the antonym.
-    -- Every degree is either > θ or ≤ θ — no gap.
-    ∀ (d : Deg5),
-      (d.toNat > θ.toNat) ∨ (d.toNat ≤ θ.toNat) := by
-  intro d; omega
+/-- Theory.lean's `contraryNeg` IS Core.lean's `negativeMeaning`.
+    Both compute `d < (θ : Degree max)`. -/
+theorem contraryNeg_eq_negativeMeaning' {max : Nat}
+    (d : Degree max) (θ : Threshold max) :
+    contraryNeg d θ = negativeMeaning d θ := rfl
 
 -- ============================================================================
--- § 6. Extension Gap as Precondition
+-- § 4. Three-Region Partition
 -- ============================================================================
 
-/-- The central theoretical claim: extension gap is NECESSARY for
-    polarity asymmetry under negation.
+/-! For contrary antonyms (ThresholdPair), the scale partitions into three
+    regions: positive, gap, and negative. The gap is WHERE "not positive"
+    diverges from "negative" — the structural basis for polarity asymmetry. -/
 
-    If antonyms are contradictory (no gap), negation is symmetric:
-    every degree that is "not A" is in the extension of the antonym. -/
-theorem no_gap_implies_symmetric_negation
-    {max : Nat} (θ : Threshold max) (d : Degree max) :
-    -- Contradictory negation: complement of "positive" = "negative"
-    (¬ (θ : Degree max) < d) ↔ d ≤ (θ : Degree max) := by
-  simp only [not_lt]
+/-- Every degree falls in at least one of {positive, gap, negative}. -/
+theorem three_region_exhaustive {max : Nat}
+    (tp : ThresholdPair max) (d : Degree max) :
+    positiveMeaning' d tp = true ∨
+    inGapRegion d tp = true ∨
+    contraryNegMeaning d tp = true := by
+  simp only [positiveMeaning', inGapRegion, contraryNegMeaning,
+             decide_eq_true_eq, Bool.and_eq_true]
+  by_cases h1 : (tp.pos : Degree max) < d
+  · exact Or.inl h1
+  · by_cases h2 : d < (tp.neg : Degree max)
+    · exact Or.inr (Or.inr h2)
+    · push_neg at h1 h2
+      exact Or.inr (Or.inl ⟨h2, h1⟩)
 
-/-- Contrary antonyms (with gap) allow degrees that are neither
-    positive nor negative — the gap region is disjoint from the
-    positive region and from the contrary-negative region. -/
-theorem gap_not_positive
-    {max : Nat} (tp : ThresholdPair max) (d : Degree max)
-    (h_in_gap : inGapRegion d tp = true) :
+/-- Gap region excludes the positive region. -/
+theorem gap_not_positive {max : Nat}
+    (tp : ThresholdPair max) (d : Degree max)
+    (h : inGapRegion d tp = true) :
     positiveMeaning' d tp = false := by
   simp only [positiveMeaning', inGapRegion, Bool.and_eq_true, decide_eq_true_eq,
              decide_eq_false_iff_not, not_lt] at *
-  exact h_in_gap.2
+  exact h.2
 
-theorem gap_not_negative
-    {max : Nat} (tp : ThresholdPair max) (d : Degree max)
-    (h_in_gap : inGapRegion d tp = true) :
+/-- Gap region excludes the negative region. -/
+theorem gap_not_negative {max : Nat}
+    (tp : ThresholdPair max) (d : Degree max)
+    (h : inGapRegion d tp = true) :
     contraryNegMeaning d tp = false := by
   simp only [contraryNegMeaning, inGapRegion, Bool.and_eq_true, decide_eq_true_eq,
              decide_eq_false_iff_not, not_lt] at *
-  exact h_in_gap.1
+  exact h.1
+
+/-- Gap = "not positive" ∧ "not negative" (biconditional).
+    Connects `inGapRegion` (Theory.lean) to `positiveMeaning'` and
+    `contraryNegMeaning` (also Theory.lean, but equivalent to Core.lean
+    by §3 equivalences). -/
+theorem gap_iff_neither {max : Nat}
+    (tp : ThresholdPair max) (d : Degree max) :
+    inGapRegion d tp = true ↔
+    (positiveMeaning' d tp = false ∧ contraryNegMeaning d tp = false) := by
+  constructor
+  · exact fun h => ⟨gap_not_positive tp d h, gap_not_negative tp d h⟩
+  · intro ⟨hp, hn⟩
+    simp only [inGapRegion, positiveMeaning', contraryNegMeaning,
+               Bool.and_eq_true, decide_eq_true_eq,
+               decide_eq_false_iff_not, not_lt] at *
+    exact ⟨hn, hp⟩
 
 -- ============================================================================
--- § 7. Fragment Grounding
+-- § 5. Contradictory Complement: Why Absolutes Are Symmetric
 -- ============================================================================
 
-/-- All relative adjectives in the fragment have contrary antonyms. -/
+/-! For contradictory antonyms (single θ), positive and antonym are
+    complements: every degree satisfies exactly one. No gap is possible.
+    This is WHY absolute adjectives show symmetric negation (Exp 2). -/
+
+/-- Contradictory antonyms partition the scale with no gap. -/
+theorem contradictory_complement {max : Nat}
+    (d : Degree max) (θ : Threshold max) :
+    positiveMeaning d θ = true ∨ antonymMeaning d θ = true := by
+  simp only [positiveMeaning, antonymMeaning, decide_eq_true_eq]
+  by_cases h : (θ : Degree max) < d
+  · exact Or.inl h
+  · push_neg at h; exact Or.inr h
+
+/-- `antonymMeaning` IS the Boolean complement of `positiveMeaning`.
+    Structural basis for single-threshold symmetry. -/
+theorem contradictory_is_complement {max : Nat}
+    (d : Degree max) (θ : Threshold max) :
+    antonymMeaning d θ = !positiveMeaning d θ := by
+  simp only [antonymMeaning, positiveMeaning]
+  cases h : decide ((θ : Degree max) < d) <;> simp_all
+
+-- ============================================================================
+-- § 6. Monotonicity → Strength & Precision
+-- ============================================================================
+
+/-! `positiveMeaning_monotone` (Core.lean): higher threshold → informationally
+    stronger. This single theorem grounds BOTH:
+    1. Strong adjectives entail weak (gigantic → large)
+    2. Precision upshift entails standard (pristine-reading → clean-reading) -/
+
+/-- Strong adjectives entail weak: anything above θ_strong is above θ_weak.
+    Directly applies `positiveMeaning_monotone` from Core.lean. -/
+theorem strong_entails_weak (θ_weak θ_strong : Thr5)
+    (h_ord : θ_weak ≤ θ_strong) (d : Deg5)
+    (h_strong : positiveMeaning d θ_strong = true) :
+    positiveMeaning d θ_weak = true :=
+  positiveMeaning_monotone d θ_weak θ_strong h_ord h_strong
+
+/-- Concrete: degree 4 is positive under the weak threshold (thr 2) BECAUSE
+    it's positive under the strong threshold (thr 3) and monotonicity applies.
+    This is a genuinely load-bearing proof: it chains Core.lean's monotonicity
+    theorem through concrete threshold values. -/
+theorem gigantic_entails_large :
+    positiveMeaning (deg 4 : Deg5) (thr 2 : Thr5) = true :=
+  positiveMeaning_monotone (deg 4) (thr 2 : Thr5) (thr 3 : Thr5) (by decide) (by native_decide)
+
+/-- Precision upshift entails standard reading, by monotonicity.
+    If d satisfies "clean" at pristine precision (θ = 3), it satisfies
+    "clean" at standard precision (θ = 1). Same theorem, different reading. -/
+theorem precision_entails_standard (d : Deg5)
+    (h : positiveMeaning d (thr 3 : Thr5) = true) :
+    positiveMeaning d (thr 1 : Thr5) = true :=
+  positiveMeaning_monotone d (thr 1 : Thr5) (thr 3 : Thr5) (by decide) h
+
+-- ============================================================================
+-- § 7. Concrete Predictions (Exp 1–2)
+-- ============================================================================
+
+/-- Exp 1: "not large" at degree 0 overlaps with "small" → negative
+    strengthening. -/
+theorem negative_strengthening :
+    let s := defaultRelativeScale
+    let tp : ThresholdPair 4 := ⟨s.θ_pos, s.θ_neg, s.gap⟩
+    notPositiveRel (deg 0) s = true ∧
+    contraryNegMeaning (deg 0) tp = true := by native_decide
+
+/-- Exp 1: "not small" at degree 2 is in the gap → middling reading. -/
+theorem middling_reading :
+    let s := defaultRelativeScale
+    let tp : ThresholdPair 4 := ⟨s.θ_pos, s.θ_neg, s.gap⟩
+    notNegativeRel (deg 2) s = true ∧
+    positiveMeaning' (deg 2) tp = false ∧
+    contraryNegMeaning (deg 2) tp = false := by native_decide
+
+/-- Exp 1: Polarity asymmetry — strengthening witness AND middling witness. -/
+theorem polarity_asymmetry :
+    let s := defaultRelativeScale
+    let tp : ThresholdPair 4 := ⟨s.θ_pos, s.θ_neg, s.gap⟩
+    (∃ d : Deg5, notPositiveRel d s = true ∧ contraryNegMeaning d tp = true) ∧
+    (∃ d : Deg5, notNegativeRel d s = true ∧ positiveMeaning' d tp = false ∧
+                 contraryNegMeaning d tp = false) := by
+  exact ⟨⟨deg 0, by native_decide, by native_decide⟩,
+         ⟨deg 2, by native_decide, by native_decide, by native_decide⟩⟩
+
+/-- Exp 1: Gap witnesses contrary non-entailment (eqs. 6a-b). -/
+theorem contrary_nonentailment :
+    let s := defaultRelativeScale
+    let tp : ThresholdPair 4 := ⟨s.θ_pos, s.θ_neg, s.gap⟩
+    (∃ d : Deg5, notPositiveRel d s = true ∧ contraryNegMeaning d tp = false) ∧
+    (∃ d : Deg5, notNegativeRel d s = true ∧ positiveMeaning' d tp = false) := by
+  exact ⟨⟨deg 2, by native_decide, by native_decide⟩,
+         ⟨deg 2, by native_decide, by native_decide⟩⟩
+
+/-- Exp 1: Strength invariance — gap depends on antonym type, not threshold. -/
+theorem strength_invariance :
+    classifyAdj large = classifyAdj gigantic ∧
+    classifyAdj small = classifyAdj tiny := by
+  simp [classifyAdj, large, small, gigantic, tiny]
+
+/-- Exp 2: Absolute adjectives symmetric — `contradictory_complement` on Deg5. -/
+theorem absolute_symmetric :
+    ∀ (d : Deg5), positiveMeaning d (thr 2) = true ∨
+                  antonymMeaning d (thr 2) = true := by
+  native_decide
+
+-- ============================================================================
+-- § 8. Precision-Level DPL (§4.2)
+-- ============================================================================
+
+/-! "clean" in competition with "not clean" takes high-precision reading
+    ≈ "pristine" (θ raised from 1 to 3). This creates a gap, explaining
+    Table 7's relative-like behavior for absolutes. The entailment
+    pristine-clean → standard-clean follows from `positiveMeaning_monotone`
+    (§6). -/
+
+/-- ThresholdPair for the precision-upshifted "clean" scale:
+    θ_pos = 3 (pristine precision), θ_neg = 1 (filthy threshold). -/
+def precisionTP : ThresholdPair 4 :=
+  ⟨⟨⟨3, by omega⟩⟩, (thr 1 : Thr5), by decide⟩
+
+/-- Precision upshift creates a gap at degree 2. -/
+theorem precision_gap :
+    inGapRegion (deg 2) precisionTP = true := by native_decide
+
+/-- The precision gap is genuine: degree 2 satisfies neither positive
+    (at pristine precision) nor negative. Uses `gap_iff_neither` from §4. -/
+theorem precision_gap_is_neither :
+    positiveMeaning' (deg 2) precisionTP = false ∧
+    contraryNegMeaning (deg 2) precisionTP = false :=
+  (gap_iff_neither _ _).mp (by native_decide)
+
+/-- Precision requires shared dimension: "clean" can take "pristine"
+    precision because they measure the same thing. -/
+theorem precision_requires_shared_dimension :
+    pristine.dimension = clean.dimension := by simp [pristine, clean]
+
+-- ============================================================================
+-- § 9. Fragment Grounding
+-- ============================================================================
+
+/-- Fragment entries determine gap/no-gap classification. -/
 theorem relative_adjs_contrary :
     large.antonymRelation = some .contrary ∧
     small.antonymRelation = some .contrary ∧
@@ -288,131 +340,35 @@ theorem relative_adjs_contrary :
     tiny.antonymRelation = some .contrary := by
   simp [large, small, gigantic, tiny]
 
-/-- Weak absolute adjectives in the fragment have contradictory antonyms. -/
-theorem weak_absolute_adjs_contradictory :
+theorem absolute_weak_contradictory :
     clean.antonymRelation = some .contradictory ∧
     dirty.antonymRelation = some .contradictory := by
   simp [clean, dirty]
 
-/-- Strong absolute adjectives have contrary antonyms (gap exists). -/
-theorem strong_absolute_adjs_contrary :
+theorem absolute_strong_contrary :
     pristine.antonymRelation = some .contrary ∧
     filthy.antonymRelation = some .contrary := by
   simp [pristine, filthy]
 
-/-- Relative and absolute quadruples share scale structure within class. -/
-theorem quadruple_class_consistency :
-    sizeQuad.isRelative = true ∧
-    cleanlinessQuad.isRelative = false := by
-  constructor <;> rfl
+/-- Gap classification agrees with fragment for ALL study entries. -/
+theorem classify_agrees_with_fragment :
+    classifyAdj large = true ∧ classifyAdj small = true ∧
+    classifyAdj clean = false ∧ classifyAdj dirty = false ∧
+    classifyAdj pristine = true ∧ classifyAdj filthy = true := by
+  simp [classifyAdj, large, small, clean, dirty, pristine, filthy]
 
-/-- All adjectives in the size quadruple share the same dimension. -/
-theorem size_quad_same_dimension :
+/-- Size quadruple shares a dimension. -/
+theorem size_same_dimension :
     large.dimension = small.dimension ∧
     large.dimension = gigantic.dimension ∧
     large.dimension = tiny.dimension := by
   simp [large, small, gigantic, tiny]
 
-/-- All adjectives in the cleanliness quadruple share the same dimension. -/
-theorem cleanliness_quad_same_dimension :
+/-- Cleanliness quadruple shares a dimension. -/
+theorem cleanliness_same_dimension :
     clean.dimension = dirty.dimension ∧
     clean.dimension = pristine.dimension ∧
     clean.dimension = filthy.dimension := by
   simp [clean, dirty, pristine, filthy]
-
--- ============================================================================
--- § 8. Competition and Negative Strengthening
--- ============================================================================
-
-/-- Cost of periphrastic negation "not large" vs simple antonym "small".
-    The periphrastic form is costlier (2 words vs 1 word), which by Horn's
-    Division of Pragmatic Labor licenses a marked interpretation. -/
-structure PeriphrasticCost where
-  simpleForm : String
-  negatedForm : String
-  simpleCost : Nat
-  negatedCost : Nat
-  costDiff : negatedCost > simpleCost
-
-/-- "not large" is costlier than "small". -/
-def notLargeCost : PeriphrasticCost where
-  simpleForm := "small"
-  negatedForm := "not large"
-  simpleCost := 1
-  negatedCost := 2
-  costDiff := by omega
-
-/-- "not small" is costlier than "large". -/
-def notSmallCost : PeriphrasticCost where
-  simpleForm := "large"
-  negatedForm := "not small"
-  simpleCost := 1
-  negatedCost := 2
-  costDiff := by omega
-
-/-- A&G's key finding: negative strengthening for "not large" is driven by
-    sociological considerations (face management), not by complexity alone.
-
-    Evidence: the asymmetry is STRONGER without overt competition (single-
-    statement mode), not weaker. If complexity-based competition (Krifka 2007)
-    were the mechanism, removing competition should weaken the asymmetry. -/
-structure CompetitionFinding where
-  isRelative : Bool
-  asymmetryWithCompetition : Bool
-  asymmetryWithoutCompetition : Bool
-  asymmetryStrongerWithout : Bool
-  deriving Repr
-
-/-- Experiment 1 result: relative adjective asymmetry persists and
-    strengthens without overt competition. -/
-def experiment1Finding : CompetitionFinding where
-  isRelative := true
-  asymmetryWithCompetition := true
-  asymmetryWithoutCompetition := true
-  asymmetryStrongerWithout := true
-
-/-- Experiment 2 result: absolute adjective symmetry is unaffected
-    by competition. -/
-def experiment2Finding : CompetitionFinding where
-  isRelative := false
-  asymmetryWithCompetition := false
-  asymmetryWithoutCompetition := false
-  asymmetryStrongerWithout := false
-
-/-- The competition findings are consistent with Horn (1989) over
-    Krifka (2007): face management (R-implicature) drives the asymmetry,
-    not complexity-based reasoning that requires overt alternatives. -/
-theorem horn_over_krifka :
-    experiment1Finding.asymmetryStrongerWithout = true ∧
-    experiment2Finding.asymmetryStrongerWithout = false := by
-  constructor <;> rfl
-
--- ============================================================================
--- § 9. Bridge: FlexibleNegation ↔ Fragment Entries
--- ============================================================================
-
-open Phenomena.Negation.FlexibleNegation
-
-/-- The two-threshold model in FlexibleNegation and `ThresholdPair` in
-    Adjective.Theory are the same structure — both model extension gaps
-    between contrary antonyms. This bridge connects them. -/
-def flexNegToThresholdPair (_m : TwoThresholdModel) (s : RelativeScale) :
-    ThresholdPair 4 :=
-  ⟨s.θ_pos, s.θ_neg, s.gap⟩
-
-/-- Bridge: fragment entry antonym relation predicts FlexibleNegation behavior.
-    Contrary antonyms (relative adjectives) → two-threshold / gap model.
-    Contradictory antonyms (absolute adjectives) → single-threshold / no gap. -/
-def entryPredictsFlexNeg (entry : GradableAdjEntry) :
-    Option NegationType :=
-  entry.antonymRelation
-
-/-- Relative adjectives predict contrary (gap) flexible negation. -/
-theorem relative_predicts_contrary :
-    entryPredictsFlexNeg large = some .contrary := rfl
-
-/-- Absolute adjectives predict contradictory (no gap) flexible negation. -/
-theorem absolute_predicts_contradictory :
-    entryPredictsFlexNeg clean = some .contradictory := rfl
 
 end Phenomena.Gradability.Studies.AlexandropoulouGotzner2024
