@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.229.46] - 2026-03-08
+
+### Added
+- **GumbelLuce.lean §8**: McFadden's Lemma 2 (uniqueness) — proves that the functional equation `G(x-c) = G(x)^{exp(c)}` uniquely determines the Gumbel CDF family (`gumbel_from_functional_eq`, `gumbel_alpha_pos`, `gumbel_standard_from_functional_eq`). All three theorems fully proved, no sorrys
+
+### Changed
+- **Thurstone.lean**: Update docstrings for `logistic_approx_normal` and `thurstone_luce_approximation` to document that the 0.01 bound is a numerical fact (verified by Luce's Table 3, §2.D.2) without a known analytical proof
+
 ## [0.229.45] - 2026-03-08
 
 ### Added

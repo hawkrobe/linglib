@@ -251,4 +251,68 @@ theorem gumbelMaxProb_is_mcfaddenIntegral
     = mcfaddenIntegral u β i := by
   sorry -- TODO: change of variables t = exp(-x/β)
 
+-- ============================================================================
+-- §8. Uniqueness: Gumbel is the Only Distribution Giving Softmax
+-- ============================================================================
+
+/-!
+## McFadden's Lemma 2 (Uniqueness) @cite{mcfadden-1974}
+
+McFadden's Lemma 2 shows that the Gumbel distribution is the **only**
+i.i.d. noise distribution yielding the softmax (Luce) choice rule. The key
+step is: if the max-CDF `G` satisfies the functional equation
+
+    `G(x - c) = G(x) ^ exp(c)` for all `x, c ∈ ℝ`
+
+then `G` must be a Gumbel CDF: `G(t) = exp(-α · exp(-t))` where
+`α = -log(G(0)) > 0`.
+
+The proof sets `x = 0` and `c = -t` in the functional equation, giving
+`G(t) = G(0)^{exp(-t)}`, then rewrites `G(0)^y = exp(log(G(0)) · y)`
+using `rpow_def_of_pos`.
+-/
+
+/-- If a function G satisfies the functional equation
+    `G(x - c) = G(x) ^ exp(c)` for all `x, c ∈ ℝ`,
+    and `0 < G(0) < 1`, then G is a Gumbel CDF:
+
+    `G(t) = exp(-α · exp(-t))` where `α = -log(G(0)) > 0`.
+
+    This is the core of McFadden's Lemma 2: the functional equation
+    characterizing the max-CDF uniquely determines the Gumbel family. -/
+theorem gumbel_from_functional_eq (G : ℝ → ℝ)
+    (hG0_pos : 0 < G 0) (_hG0_lt : G 0 < 1)
+    (hfe : ∀ x c : ℝ, G (x - c) = (G x) ^ (exp c)) :
+    ∀ t : ℝ, G t = exp (-(-log (G 0)) * exp (-t)) := by
+  intro t
+  -- Set x = 0, c = -t in the functional equation
+  have h := hfe 0 (-t)
+  simp only [zero_sub, neg_neg] at h
+  -- h : G t = (G 0) ^ exp (-t)
+  rw [h, rpow_def_of_pos hG0_pos]
+  -- Goal: exp (log (G 0) * exp (-t)) = exp (-(-log (G 0)) * exp (-t))
+  congr 1; ring
+
+/-- The scale parameter α = -log(G(0)) is positive when 0 < G(0) < 1. -/
+theorem gumbel_alpha_pos (G : ℝ → ℝ)
+    (hG0_pos : 0 < G 0) (hG0_lt : G 0 < 1) :
+    0 < -log (G 0) := by
+  rw [neg_pos]
+  exact log_neg hG0_pos hG0_lt
+
+/-- When G(0) = e⁻¹ (i.e., α = 1), the functional equation gives the
+    standard Gumbel CDF: G(t) = exp(-exp(-t)). -/
+theorem gumbel_standard_from_functional_eq (G : ℝ → ℝ)
+    (hG0 : G 0 = exp (-1))
+    (hfe : ∀ x c : ℝ, G (x - c) = (G x) ^ (exp c)) :
+    ∀ t : ℝ, G t = exp (-exp (-t)) := by
+  have hG0_pos : 0 < G 0 := by rw [hG0]; exact exp_pos _
+  have hG0_lt : G 0 < 1 := by rw [hG0]; exact exp_lt_one_iff.mpr (by linarith)
+  have h := gumbel_from_functional_eq G hG0_pos hG0_lt hfe
+  intro t
+  rw [h t]
+  congr 1
+  -- Goal: -(-log (G 0)) * exp (-t) = -exp (-t)
+  rw [hG0, log_exp]; ring
+
 end Core

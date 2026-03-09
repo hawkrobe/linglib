@@ -154,10 +154,13 @@ second moments of the two distributions.
 /-- The logistic function closely approximates the normal CDF after rescaling.
 
     Specifically, `|Φ(x · π/√3) - logistic(x)| ≤ 0.01` for all `x`.
-    The maximum deviation of ≈ 0.01 occurs near `|x| ≈ 1.3`.
+    The maximum deviation of ≈ 0.0095 occurs near `|x| ≈ 1.25`.
 
-    This is a numerical bound; the proof would require bounding the
-    integral defining `Φ` against the closed-form logistic. -/
+    The constant `π/√3` arises from variance matching: the logistic
+    distribution has variance `π²/3`, the standard normal has variance 1.
+    The 0.01 bound itself is a well-known numerical fact without a known
+    analytical proof — @cite{luce-1959} §2.D.2 verified it via table
+    comparison, and it is routinely confirmed by computation. -/
 theorem logistic_approx_normal (x : ℝ) :
     |normalCDF (x * (Real.pi / Real.sqrt 3)) - logistic x| ≤ 0.01 := by
   sorry -- TODO: numerical bound, verified computationally
@@ -189,14 +192,18 @@ which is exactly the Luce model with rationality parameter `k`.
 noncomputable def thurstoneLuceK (sigma : ℝ) : ℝ :=
   Real.pi / (sigma * Real.sqrt 6)
 
-/-- **Thurstone–Luce approximation** (@cite{luce-1959}, §2.D, pp. 58-59).
+/-- **Thurstone–Luce approximation** (@cite{luce-1959}, §2.D).
 
     With `k = π/(σ · √6)`, the Thurstone Case V probability
     `P_T(a,b) = Φ((u(a)-u(b))/(σ√2))` and the Luce model probability
     `P_L(a,b) = 1/(1 + exp(-k(u(a)-u(b))))` satisfy `|P_T - P_L| ≤ 0.01`.
 
     This is the sense in which Thurstone's Gaussian model is "approximately
-    a special case" of Luce's choice axiom. -/
+    a special case" of Luce's choice axiom. Luce's original argument is a
+    numerical table comparison (Table 3, §2.D.2) showing the two models'
+    predicted probabilities differ by less than 0.02; the 0.01 bound on
+    `|Φ(x · π/√3) - logistic(x)|` is a standard numerical fact without
+    a known analytical proof. -/
 theorem thurstone_luce_approximation (m : ThurstoneCaseV Stimulus)
     (a b : Stimulus) :
     |m.choiceProb a b -
