@@ -185,4 +185,56 @@ end VPEllipsis
 
 end Continuations
 
+-- ════════════════════════════════════════════════════════════════
+-- § Cylindric Algebra Connection
+-- ════════════════════════════════════════════════════════════════
+
+/-! ### Binding as cylindric algebra substitution
+
+The connection between Heim & Kratzer's binding mechanism and
+cylindric algebra (@cite{henkin-monk-tarski-1971}):
+
+- **Binder at index n** creates `fun x => body(g[n↦x])`, the function
+  whose existential closure is cylindrification `cₙ`
+- **Bound pronoun at index n** reads `g(n)`, a register projection
+- **Binding resolution** (pronoun κ bound by binder l) = cylindric
+  substitution `σ^κ_l(φ) = fun g => φ(g[κ↦g(l)])`
+
+These are not mere analogies: H&K's assignment update `g[n↦x]` IS
+the cylindric set algebra's coordinate update, and their quantifier
+scope `∃x.φ(g[n↦x])` IS cylindrification `cₙ(φ)`. -/
+
+section CylindricAlgebra
+
+open Semantics.Montague.Variables
+
+/-- Existential quantifier scope at index n is cylindrification.
+
+`(∃n.φ)(g) = ∃x. φ(g[n↦x])` where the binder at n creates the
+scope via `interpretBinder`. -/
+theorem binder_scope_is_existsClosure {m : Model} (n : Nat)
+    (body : InterpState m → Prop) (state : InterpState m) :
+    (∃ x : m.Entity, body { state with assignment := state.assignment[n ↦ x] }) ↔
+    existsClosure n (fun g => body { state with assignment := g }) state.assignment := by
+  simp [existsClosure]
+
+/-- Binding links pronoun κ to binder l by substituting g(l) for g(κ).
+
+After binding, `g(κ) = g(l)`, which is the diagonal element `Dκl`.
+The semantic effect on a predicate φ is `φ(g[κ↦g(l)])`, which is
+cylindric substitution `σ^κ_l(φ)`. -/
+theorem binding_eq_resolve {m : Model} (κ l : Nat)
+    (φ : Assignment m → Prop) (g : Assignment m) :
+    φ (g[κ ↦ g l]) = resolve κ l φ g := rfl
+
+/-- After binding, the bound pronoun and its binder agree:
+`(g[κ↦g(l)])(κ) = (g[κ↦g(l)])(l)`. This is the diagonal condition
+`Dκl` that cylindric substitution enforces. -/
+theorem binding_establishes_diagonal {m : Model} (κ l : Nat)
+    (g : Assignment m) (h : κ ≠ l) :
+    diag κ l (g[κ ↦ g l]) := by
+  simp [diag, update_same, update_other g κ l (g l) (Ne.symm h)]
+
+end CylindricAlgebra
+
 end Semantics.Reference.Binding

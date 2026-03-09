@@ -31,10 +31,13 @@ input state rather than filtering per-element.
 -/
 
 import Linglib.Theories.Semantics.Dynamic.Core.DynProp
+import Linglib.Core.Assignment
 import Mathlib.Data.Set.Basic
 import Mathlib.Algebra.Group.Defs
 
 namespace Semantics.Dynamic.Core
+
+open _root_.Core (Assignment)
 
 
 /--
@@ -342,33 +345,12 @@ theorem updateFromSat_monotone {P φ : Type*} (sat : P → φ → Prop) (ψ : φ
 
 -- ═══ Assignment & State Infrastructure ═══
 
-/-- Variable assignment: function from indices to entities.
-
-This is the canonical assignment type used by both the CCP
-set-transformer stack and the Muskens relational stack
-(`Core.Accessibility`). -/
-abbrev Assignment (E : Type*) := Nat → E
+-- Re-export Assignment type and its namespace members so downstream code
+-- can write `Assignment E`, `Assignment.update`, `g.update n e`, etc.
+export _root_.Core (Assignment)
 
 namespace Assignment
-
-/-- Assignment update g[n↦d]. -/
-def update {E : Type*} (g : Assignment E) (n : Nat) (d : E) : Assignment E :=
-  λ m => if m = n then d else g m
-
-@[simp] theorem update_at {E : Type*} (g : Assignment E) (n : Nat) (d : E) :
-    (g.update n d) n = d := by simp [update]
-
-@[simp] theorem update_ne {E : Type*} (g : Assignment E) {n m : Nat} (d : E) (h : m ≠ n) :
-    (g.update n d) m = g m := by simp [update, h]
-
-theorem update_overwrite {E : Type*} (g : Assignment E) (n : Nat) (x y : E) :
-    (g.update n x).update n y = g.update n y := by
-  funext m; simp [update]; split <;> rfl
-
-theorem update_comm {E : Type*} (g : Assignment E) {n m : Nat} (x y : E) (h : n ≠ m) :
-    (g.update n x).update m y = (g.update m y).update n x := by
-  funext k; simp [update]; by_cases hn : k = n <;> by_cases hm : k = m <;> simp_all
-
+export _root_.Core.Assignment (update update_at update_ne update_overwrite update_comm)
 end Assignment
 
 -- ═══ Possibility & InfoState ═══

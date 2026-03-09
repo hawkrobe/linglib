@@ -2,6 +2,7 @@ import Linglib.Theories.Semantics.Dynamic.Core.DRSExpr
 import Linglib.Theories.Semantics.Dynamic.Core.DynamicTy2
 import Linglib.Theories.Semantics.Dynamic.Core.WeakestPrecondition
 import Linglib.Theories.Semantics.Dynamic.Core.CCP
+import Linglib.Core.CylindricAlgebra
 import Mathlib.Tactic.SimpRw
 
 /-!
@@ -765,68 +766,22 @@ theorem proposition_1 {E : Type*} [Nonempty E] (rels : RelInterp E) (K : DRSExpr
     exact ⟨j₁, hinterp₁⟩
 
 -- ════════════════════════════════════════════════════════════════
--- § 6. Algebraic Structure: Support and Cylindrification
+-- § 6. Cylindric Algebra Bridge
 -- ════════════════════════════════════════════════════════════════
 
 /-! ### Connection to cylindric algebras
 
-Proposition 1 is an instance of a general algebraic pattern.
-Predicates on assignments form a *cylindric set algebra*
-(@cite{henkin-monk-tarski-1971}): a Boolean algebra equipped with
-*cylindrification* operators `cₙ` (one per register) that
-existentially abstract over a single register.
+The algebraic definitions (`cylindrify`, `invariantOn`, `cylClosed`,
+`diagonal`, axioms C1–C7, substitution, derived theorems) live in
+`CylindricAlgebra.lean`. This section re-exports them and adds the
+DRT-specific bridge theorems that depend on `interp`/`closure`. -/
 
-The **support** of a predicate is the set of registers it depends on.
-A predicate is **closed** (support = ∅) iff it is invariant under all
-cylindrifications — i.e., it's a genuine proposition, not an open
-formula.
+-- Re-export cylindric algebra definitions for backward compatibility
+open _root_.Core.CylindricAlgebra
 
-`rebase_main` proves that `allBound B K` implies the truth condition
-of `K` has support ⊆ `B`. Proposition 1 is the `B = ∅` corollary:
-proper DRSs denote closed predicates. -/
-
-section CylindricStructure
+section CylindricBridge
 
 variable {E : Type*}
-
-/-- A predicate on assignments is *invariant on* `B` if it only
-depends on the values of registers in `B`: assignments that agree
-on `B` satisfy `p` identically. -/
-def invariantOn (p : Assignment E → Prop) (B : List Nat) : Prop :=
-  ∀ g₁ g₂, (∀ n ∈ B, g₁ n = g₂ n) → (p g₁ ↔ p g₂)
-
-/-- Cylindrification at register `n`: existentially quantify over
-the value at slot `n`, leaving all other slots fixed.
-
-In cylindric algebra notation, `cₙ(p)(g) = ∃e. p(g[n↦e])`. -/
-def cylindrify (n : Nat) (p : Assignment E → Prop) : Assignment E → Prop :=
-  fun g => ∃ e, p (g.update n e)
-
-/-- A predicate is *cylindrification-closed* at register `n` if
-abstracting over `n` doesn't change the predicate: `cₙ(p) = p`.
-This means `p` doesn't depend on register `n`. -/
-def cylClosed (n : Nat) (p : Assignment E → Prop) : Prop :=
-  cylindrify n p = p
-
-/-- If `p` is invariant on `B` and `n ∉ B`, then `p` is
-cylindrification-closed at `n`. Invariance on `B` implies
-`p` doesn't depend on any register outside `B`. -/
-theorem cylClosed_of_invariantOn {p : Assignment E → Prop} {B : List Nat} {n : Nat}
-    (hinv : invariantOn p B) (hn : n ∉ B) : cylClosed n p := by
-  ext g; simp only [cylindrify]; constructor
-  · rintro ⟨e, he⟩
-    exact (hinv (g.update n e) g (fun m hm => by
-      simp [Assignment.update, show m ≠ n from fun h => hn (h ▸ hm)])).mp he
-  · intro hg
-    exact ⟨g n, (hinv g (g.update n (g n)) (fun m hm => by
-      simp [Assignment.update, show m ≠ n from fun h => hn (h ▸ hm)])).mp hg⟩
-
-/-- `invariantOn p []` is equivalent to `WeakestPrecondition.isProper`:
-the predicate takes the same value everywhere. -/
-theorem invariantOn_nil_iff {p : Assignment E → Prop} :
-    invariantOn p [] ↔ ∀ g₁ g₂, p g₁ ↔ p g₂ :=
-  ⟨fun h g₁ g₂ => h g₁ g₂ (fun _ h => nomatch h),
-   fun h g₁ g₂ _ => h g₁ g₂⟩
 
 /-- The truth condition of a DRS with `allBound B K` is invariant on
 `B`: it only depends on the registers that `K` is allowed to read.
@@ -846,11 +801,7 @@ theorem allBound_invariantOn [Nonempty E] (rels : RelInterp E) (K : DRSExpr)
       (fun n hn => (hagree n hn).symm) j₂ hinterp
     exact ⟨j₁, hinterp₁⟩
 
--- ────────────────────────────────────────────────────────────────
--- § 6b. Per-register support: freshInv → cylClosed
--- ────────────────────────────────────────────────────────────────
-
-private theorem update_self (g : Assignment E) (n : Nat) : g.update n (g n) = g := by
+private theorem update_self' (g : Assignment E) (n : Nat) : g.update n (g n) = g := by
   funext m; by_cases h : m = n <;> simp [Assignment.update, h]
 
 /-- Per-register support theorem: if dref `n` does not occur in `K`,
@@ -868,54 +819,39 @@ theorem cylClosed_of_not_occurs [Nonempty E] (rels : RelInterp E) (K : DRSExpr)
     obtain ⟨k', hk', _⟩ := back g k e hk
     exact ⟨k', hk'⟩
   · rintro ⟨k, hk⟩
-    exact ⟨g n, k, by rw [update_self]; exact hk⟩
+    exact ⟨g n, k, by rw [update_self']; exact hk⟩
 
--- ────────────────────────────────────────────────────────────────
--- § 6c. Cylindric algebra axioms (C1–C4)
--- ────────────────────────────────────────────────────────────────
+/-- The DRS identity condition `is u v` denotes the diagonal element. -/
+theorem interp_is_eq_diagonal (rels : RelInterp E) (u v : Nat) :
+    closure (interp rels (.is u v)) = @diagonal E u v := by
+  ext g; simp only [closure, interp, test, diagonal]
+  exact ⟨fun ⟨_, rfl, h⟩ => h, fun h => ⟨g, rfl, h⟩⟩
 
-/-! We verify that `cylindrify` on `Assignment E → Prop` satisfies the
-cylindric set algebra axioms (@cite{henkin-monk-tarski-1971}, §1.1).
-Together with the Boolean algebra structure on `Assignment E → Prop`,
-this establishes that predicates on assignments form an
-`ω`-dimensional cylindric set algebra with base `E`. -/
+/-- **Register introduction + D under closure = cylindrification.**
 
-/-- **C1**: Cylindrification preserves the empty set. `cₙ(⊥) = ⊥`. -/
-theorem cylindrify_bot (n : Nat) :
-    cylindrify n (fun _ : Assignment E => False) = fun _ => False := by
-  ext g; simp [cylindrify]
+The DRS `[n]; D` (introduce dref `n` then continue with `D`),
+under `closure`, equals `cₙ(closure(D))`: cylindrification at `n`.
 
-/-- **C2**: Every element is below its cylindrification. `p ≤ cₙ(p)`.
+This is the DRS-level analog of the DPL theorem
+`closure(∃x.φ) = cₓ(closure(φ))`. -/
+theorem closure_introReg_seq (n : Nat) (D : DRS (Assignment E)) :
+    closure (dseq (fun g h => ∃ e : E, h = g.update n e) D) =
+    cylindrify n (closure D) := by
+  ext g; simp only [closure, dseq, cylindrify]; constructor
+  · rintro ⟨h, ⟨k, ⟨e, rfl⟩, hD⟩⟩
+    exact ⟨e, h, hD⟩
+  · rintro ⟨e, h, hD⟩
+    exact ⟨h, g.update n e, ⟨e, rfl⟩, hD⟩
 
-Proof: witness the current value at register `n`. -/
-theorem le_cylindrify (n : Nat) (p : Assignment E → Prop) (g : Assignment E) :
-    p g → cylindrify n p g :=
-  fun h => ⟨g n, by rw [update_self]; exact h⟩
+/-- Register introduction alone under closure is trivially true
+(given a nonempty entity type). `closure([n]) = ⊤`. -/
+theorem closure_introReg [Nonempty E] (n : Nat) :
+    closure (fun (g h : Assignment E) => ∃ e : E, h = g.update n e) =
+    fun _ => True := by
+  ext g; simp only [closure]; constructor
+  · intro _; trivial
+  · intro _; exact ⟨g.update n (Classical.arbitrary E), Classical.arbitrary E, rfl⟩
 
-/-- **C3**: Cylindrification distributes over conjunction with
-a cylindrified factor. `cₙ(p ∧ cₙ(q)) = cₙ(p) ∧ cₙ(q)`. -/
-theorem cylindrify_inter_cylindrify (n : Nat) (p q : Assignment E → Prop) :
-    cylindrify n (fun g => p g ∧ cylindrify n q g) =
-    fun g => cylindrify n p g ∧ cylindrify n q g := by
-  ext g; simp only [cylindrify]; constructor
-  · rintro ⟨e, hp, e', hq⟩
-    exact ⟨⟨e, hp⟩, ⟨e', by rw [Assignment.update_overwrite] at hq; exact hq⟩⟩
-  · rintro ⟨⟨e₁, hp⟩, ⟨e₂, hq⟩⟩
-    exact ⟨e₁, hp, e₂, by rw [Assignment.update_overwrite]; exact hq⟩
-
-/-- **C4**: Cylindrifications commute. `cₙ(cₘ(p)) = cₘ(cₙ(p))`. -/
-theorem cylindrify_comm (n m : Nat) (p : Assignment E → Prop) :
-    cylindrify n (cylindrify m p) = cylindrify m (cylindrify n p) := by
-  ext g; simp only [cylindrify]; constructor
-  · rintro ⟨e₁, e₂, hp⟩
-    by_cases h : n = m
-    · subst h; exact ⟨e₁, e₂, by rw [Assignment.update_overwrite] at hp ⊢; exact hp⟩
-    · exact ⟨e₂, e₁, by rw [← Assignment.update_comm g e₁ e₂ h]; exact hp⟩
-  · rintro ⟨e₂, e₁, hp⟩
-    by_cases h : n = m
-    · subst h; exact ⟨e₂, e₁, by rw [Assignment.update_overwrite] at hp ⊢; exact hp⟩
-    · exact ⟨e₁, e₂, by rw [Assignment.update_comm g e₁ e₂ h]; exact hp⟩
-
-end CylindricStructure
+end CylindricBridge
 
 end Semantics.Dynamic.Core.Accessibility

@@ -10,6 +10,7 @@ DPL relations ARE DRS meanings.
 import Linglib.Theories.Semantics.Dynamic.Core.DynamicTy2
 import Linglib.Theories.Semantics.Dynamic.DPL.Basic
 import Linglib.Theories.Semantics.Dynamic.Core.CCP
+import Linglib.Core.CylindricAlgebra
 
 namespace Semantics.Dynamic.DPL
 
@@ -65,5 +66,49 @@ theorem exists_eq {E : Type*} (x : Nat) (φ : DPLRel E) :
     toDRS (DPLRel.exists_ x φ) = λ g h => ∃ d : E, toDRS φ (extend g x d) h := by
   -- The definitions are definitionally equal (just variable renaming)
   rfl
+
+-- ════════════════════════════════════════════════════════════════
+-- § Cylindric Algebra Bridge
+-- ════════════════════════════════════════════════════════════════
+
+/-! ### DPL as a cylindric set algebra
+
+The fundamental observation of @cite{groenendijk-stokhof-1991}: DPL's
+existential quantifier IS cylindrification. DPL's identity test IS
+a diagonal element. These are not analogies — they are algebraic
+identities under `closure`. -/
+
+open Core.CylindricAlgebra
+
+/-- **DPL existential = cylindrification.**
+
+`closure(∃x.φ) = cₓ(closure(φ))`: the truth-conditional content of
+DPL's existential quantifier at variable `x` is exactly cylindrification
+at register `x`. This is the defining correspondence between DPL
+and cylindric set algebra. -/
+theorem closure_exists_eq_cylindrify {E : Type*} (x : Nat) (φ : DPLRel E) :
+    closure (toDRS (DPLRel.exists_ x φ)) =
+    cylindrify x (closure (toDRS φ)) := by
+  ext g; simp only [closure, toDRS, DPLRel.exists_, cylindrify]
+  exact ⟨fun ⟨h, d, hφ⟩ => ⟨d, h, hφ⟩, fun ⟨d, h, hφ⟩ => ⟨h, d, hφ⟩⟩
+
+/-- **DPL identity test = diagonal element.**
+
+`closure(atom(g(x) = g(y))) = Dxy`: the truth condition of the DPL
+atomic formula `x = y` is the diagonal element `Dxy` from cylindric
+algebra. -/
+theorem closure_identity_eq_diagonal {E : Type*} (x y : Nat) :
+    closure (toDRS (DPLRel.atom (fun g : Assignment E => g x = g y))) =
+    @diagonal E x y := by
+  ext g; simp only [closure, toDRS, DPLRel.atom, diagonal]
+  exact ⟨fun ⟨_, rfl, h⟩ => h, fun h => ⟨g, rfl, h⟩⟩
+
+/-- DPL negation under closure is a test for non-cylindrifiability:
+`closure(¬φ)(g)` iff no assignment update satisfies φ. -/
+theorem closure_neg_eq {E : Type*} (φ : DPLRel E) :
+    closure (toDRS (DPLRel.neg φ)) =
+    fun g => ¬ closure (toDRS φ) g := by
+  ext g; simp only [closure, toDRS, DPLRel.neg]
+  exact ⟨fun ⟨_, rfl, h⟩ => h, fun h => ⟨g, rfl, h⟩⟩
 
 end Semantics.Dynamic.DPL

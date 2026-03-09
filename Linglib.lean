@@ -110,7 +110,9 @@ import Linglib.Core.ContentIndividual
 import Linglib.Core.Agent.BToM
 import Linglib.Core.Agent.Emotion
 import Linglib.Core.Path
+import Linglib.Core.Assignment
 import Linglib.Core.Continuation
+import Linglib.Core.CylindricAlgebra
 import Linglib.Core.Lexical.PersonCategory
 import Linglib.Core.Lexical.MorphRule
 import Linglib.Core.Lexical.Binominal
@@ -925,6 +927,7 @@ import Linglib.Phenomena.PhonologicalAlternation.Data
 import Linglib.Phenomena.PhonologicalAlternation.Studies.SPEDerivations
 import Linglib.Phenomena.PhonologicalAlternation.Studies.Clements1985
 import Linglib.Phenomena.PhonologicalAlternation.Studies.Storme2026
+import Linglib.Phenomena.PhonologicalAlternation.Studies.Flemming2021
 -- Theories: CCG
 import Linglib.Theories.Syntax.CCG.Core.Basic
 import Linglib.Theories.Syntax.CCG.Core.Combinators
@@ -1016,6 +1019,7 @@ import Linglib.Theories.Syntax.DependencyGrammar.LongDistance
 import Linglib.Theories.Semantics.Dynamic.Core.CCP
 import Linglib.Theories.Semantics.Dynamic.Core.DiscourseRef
 import Linglib.Theories.Semantics.Dynamic.Core.Accessibility
+import Linglib.Theories.Semantics.Dynamic.Core.CylindricAlgebra
 import Linglib.Theories.Semantics.Dynamic.Core.DRSExpr
 import Linglib.Theories.Semantics.Dynamic.Core.DynProp
 import Linglib.Theories.Semantics.Dynamic.Core.DynamicTy2
@@ -1479,7 +1483,9 @@ import Linglib.Theories.Phonology.FeatureGeometry
 import Linglib.Theories.Phonology.Autosegmental.Defs
 import Linglib.Theories.Phonology.Syllable.Defs
 import Linglib.Theories.Phonology.RuleBased.Defs
+import Linglib.Theories.Phonology.HarmonicGrammar.Basic
 import Linglib.Theories.Phonology.HarmonicGrammar.MaxEnt
+import Linglib.Theories.Phonology.HarmonicGrammar.NoisyHG
 -- Theories: Sociolinguistics
 import Linglib.Theories.Sociolinguistics.PropertySpace
 import Linglib.Theories.Sociolinguistics.SCM

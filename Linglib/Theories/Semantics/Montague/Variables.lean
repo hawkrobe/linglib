@@ -126,4 +126,88 @@ theorem sleeps_lambda_eq : sleeps_lambda g₀ = sleeps_sem := by
 
 end Examples
 
+-- ════════════════════════════════════════════════════════════════
+-- § Cylindric Algebra Structure
+-- ════════════════════════════════════════════════════════════════
+
+/-! ### Assignments as a cylindric set algebra
+
+Heim & Kratzer's assignment functions satisfy the same algebraic axioms
+as DRT's dynamic assignments: predicates on assignments form a cylindric
+set algebra (@cite{henkin-monk-tarski-1971}). The operations:
+
+- **Existential closure** `∃n.φ(g) = ∃x.φ(g[n↦x])` = cylindrification
+- **Identity** `g(n) = g(m)` = diagonal element
+- **Lambda abstraction** `λn.φ = fun x => φ(g[n↦x])` = the integrand
+  of cylindrification
+- **Pronoun resolution** (binding n to m) = cylindric substitution
+
+This section develops these correspondences purely within the Montague
+`Assignment` type, without importing the dynamic semantics stack. -/
+
+section CylindricStructure
+
+variable {m : Model}
+
+/-- Existential closure at variable `n`:
+`(∃n.φ)(g) = ∃x. φ(g[n↦x])`.
+
+This is cylindrification on Montague assignments
+(@cite{henkin-monk-tarski-1971}, @cite{heim-kratzer-1998} Ch. 5). -/
+def existsClosure (n : Nat) (φ : Assignment m → Prop) : Assignment m → Prop :=
+  fun g => ∃ x : m.Entity, φ (g[n ↦ x])
+
+/-- Diagonal element: assignments where variables n and k agree.
+`Dnk = {g : g(n) = g(k)}`. -/
+def diag (n k : Nat) : Assignment m → Prop :=
+  fun g => g n = g k
+
+/-- **C₁**: Existential closure of False is False. -/
+theorem existsClosure_bot (n : Nat) :
+    existsClosure n (fun _ : Assignment m => False) = fun _ => False := by
+  ext g; simp [existsClosure]
+
+/-- **C₂**: φ implies its existential closure. -/
+theorem le_existsClosure (n : Nat) (φ : Assignment m → Prop) (g : Assignment m) :
+    φ g → existsClosure n φ g :=
+  fun h => ⟨g n, by rw [update_self]; exact h⟩
+
+/-- **C₅**: `Dnn = ⊤` (reflexivity of equality). -/
+theorem diag_refl (n : Nat) :
+    @diag m n n = (fun _ => True) := by
+  ext; simp [diag]
+
+/-- Pronoun resolution: setting variable κ to read from variable l.
+
+When pronoun κ is bound by a binder at index l, the semantic effect
+is `φ(g[κ↦g(l)])`. This is the cylindric algebra's direct
+substitution `σ^κ_l`. -/
+def resolve (κ l : Nat) (φ : Assignment m → Prop) : Assignment m → Prop :=
+  fun g => φ (g[κ ↦ g l])
+
+/-- **Substitution = resolution.**
+
+Algebraic substitution `cκ(Dκl · φ)` — cylindrification after
+constraining κ to equal l via the diagonal — computes the same
+predicate as direct pronoun resolution `φ(g[κ↦g(l)])`. -/
+theorem resolve_eq_existsClosure_diag (κ l : Nat) (φ : Assignment m → Prop)
+    (h : κ ≠ l) (g : Assignment m) :
+    resolve κ l φ g ↔ existsClosure κ (fun g' => diag κ l g' ∧ φ g') g := by
+  simp only [resolve, existsClosure, diag]; constructor
+  · intro hφ
+    exact ⟨g l, by simp [update_other g κ l (g l) (Ne.symm h)], hφ⟩
+  · rintro ⟨x, hd, hφ⟩
+    have : x = g l := by
+      rw [update_same, update_other g κ l x (Ne.symm h)] at hd; exact hd
+    subst this; exact hφ
+
+/-- Lambda abstraction at n is the "integrand" of existential closure:
+`∃n.φ = ∃x. (λn.φ)(g)(x)`. -/
+theorem existsClosure_eq_exists_lambda (n : Nat) (body : DenotG m .t) (g : Assignment m) :
+    existsClosure n (fun g' => body g' = true) g ↔
+    ∃ x : m.Entity, lambdaAbsG n body g x = true := by
+  simp [existsClosure, lambdaAbsG]
+
+end CylindricStructure
+
 end Semantics.Montague.Variables
