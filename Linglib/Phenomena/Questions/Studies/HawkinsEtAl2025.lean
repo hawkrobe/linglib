@@ -18,6 +18,7 @@ A respondent can infer likely decision problems from the question asked.
 
 import Mathlib.Data.Rat.Defs
 import Linglib.Theories.Pragmatics.RSA.Core.Config
+import Linglib.Theories.Pragmatics.RSA.Core.Softmax.Limits
 import Linglib.Tactics.RSAPredict
 import Linglib.Core.Agent.ExperimentDesign
 
@@ -66,11 +67,12 @@ Probability of exhaustive-list answers: (4) ≥ (5) > (3)
 
 /-- Model predictions for exhaustive responses (Case Study 1).
     The paper reports CS1 empirical data only via regression coefficients
-    (β = 3.39 for (5)>(3), β = 0.13 for (4)≥(5)), not exact proportions. -/
+    (β = 3.39 for (5)>(3), β = 0.13 for (4)≥(5)), not exact proportions.
+    -- UNVERIFIED: exact values 12/100, 75/100, 66/100 -/
 def cs1_model_prediction : Fin 3 → ℚ
-  | 0 => 12/100   -- Condition (3): specific item available
-  | 1 => 75/100   -- Condition (4): specific item unavailable
-  | 2 => 66/100   -- Condition (5): general question
+  | 0 => 12/100   -- Condition (3): specific item available -- UNVERIFIED
+  | 1 => 75/100   -- Condition (4): specific item unavailable -- UNVERIFIED
+  | 2 => 66/100   -- Condition (5): general question -- UNVERIFIED
 
 /-- Key prediction: unavailable (4) ≥ general (5) > available (3) -/
 theorem cs1_ordering :
@@ -105,21 +107,23 @@ structure CS2ResponseRates where
   otherCategory : ℚ
   deriving Repr
 
-/-- Human response rates averaged across 30 vignettes (from MCMC fitting data). -/
+/-- Human response rates averaged across 30 vignettes (from MCMC fitting data).
+    -- UNVERIFIED: exact proportions -/
 def cs2_human_rates : CS2ResponseRates :=
-  { competitor := 512/1000
-  , taciturn := 206/1000
-  , sameCategory := 168/1000
-  , exhaustive := 101/1000
-  , otherCategory := 14/1000
+  { competitor := 512/1000   -- UNVERIFIED
+  , taciturn := 206/1000     -- UNVERIFIED
+  , sameCategory := 168/1000 -- UNVERIFIED
+  , exhaustive := 101/1000   -- UNVERIFIED
+  , otherCategory := 14/1000 -- UNVERIFIED
   }
 
+/-- Model rates. -- UNVERIFIED: exact proportions -/
 def cs2_model_rates : CS2ResponseRates :=
-  { competitor := 62/100
-  , taciturn := 22/100
-  , sameCategory := 14/100
-  , exhaustive := 1/100
-  , otherCategory := 1/100
+  { competitor := 62/100     -- UNVERIFIED
+  , taciturn := 22/100       -- UNVERIFIED
+  , sameCategory := 14/100   -- UNVERIFIED
+  , exhaustive := 1/100      -- UNVERIFIED
+  , otherCategory := 1/100   -- UNVERIFIED
   }
 
 /-- Model captures the qualitative ordering -/
@@ -170,7 +174,8 @@ structure ModelParams where
   U_fail : Option ℚ -- Utility of failure (receiving nothing); none for CS1
   deriving Repr
 
-/-- CS2 fitted parameters (Table S2). β ≈ 1 means almost pure action-relevance. -/
+/-- CS2 fitted parameters (Table S2). β ≈ 1 means almost pure action-relevance.
+    -- UNVERIFIED: exact parameter values -/
 def cs2Params : ModelParams :=
   { α_respondent := 887/100
   , α_questioner := 373/100
@@ -180,7 +185,7 @@ def cs2Params : ModelParams :=
   , U_fail := some (34/10)
   }
 
-/-- CS1 fitted parameters (Table S2). -/
+/-- CS1 fitted parameters (Table S2). -- UNVERIFIED: exact parameter values -/
 def cs1Params : ModelParams :=
   { α_respondent := 5
   , α_questioner := 3/2
@@ -190,7 +195,8 @@ def cs1Params : ModelParams :=
   , U_fail := none
   }
 
-/-- CS3 fitted parameters (Table S2). β ≈ 0.29 means mostly epistemic. -/
+/-- CS3 fitted parameters (Table S2). β ≈ 0.29 means mostly epistemic.
+    -- UNVERIFIED: exact parameter values -/
 def cs3Params : ModelParams :=
   { α_respondent := 294/100
   , α_questioner := 589/100
@@ -200,50 +206,30 @@ def cs3Params : ModelParams :=
   , U_fail := some (-594/100)
   }
 
-/-- Empirically elicited utility values (Table S1, 0-100 slider scale).
-    Each row is a decision problem (what the questioner wants);
-    each column is an item type. Mean values across N=162 participants. -/
-structure CS2Utilities where
-  target_for_target : ℚ       -- wanting target → getting target
-  competitor_for_target : ℚ   -- wanting target → getting competitor
-  sameCat_for_target : ℚ      -- wanting target → getting same-category
-  otherCat_for_target : ℚ     -- wanting target → getting other-category
-  deriving Repr
 
-/-- Mean utility values from Table S1 (on 0-100 scale). -/
-def cs2_utilities : CS2Utilities :=
-  { target_for_target := 9618/100     -- 96.18
-  , competitor_for_target := 5693/100  -- 56.93
-  , sameCat_for_target := 3611/100     -- 36.11
-  , otherCat_for_target := 2369/100    -- 23.69
-  }
-
-
-end Phenomena.Questions.Studies.HawkinsEtAl2025
-
-/-! ## Bridge content (merged from RSA_HawkinsEtAl2025Bridge.lean) -/
+-- ============================================================================
+-- PRIOR-PQ RSA Model (Case Study 2: Iced Tea)
+-- ============================================================================
 
 /-!
-# PRIOR-PQ as RSAConfig @cite{hawkins-etal-2025}
-@cite{frank-goodman-2012}
-
-Hawkins, R. D., Tsvilodub, P., Bergey, C., Goodman, N. D. & Franke, M. (2025).
-"Relevant answers to polar questions." Phil. Trans. R. Soc. B 380: 20230505.
-
 ## Architectural contribution
 
 PRIOR-PQ models how respondents produce overinformative answers to polar
-questions. The **respondent IS S1** and the **questioner IS L1**:
+questions. The **respondent R₁ maps to RSAConfig.S1** and the **questioner Q
+is modeled separately** (§7 below, not as RSAConfig.L1):
 
 | PRIOR-PQ agent | RSAConfig role | Knows | Uncertain about |
 |----------------|----------------|-------|-----------------|
 | R₁ (respondent) | S1 (speaker) | world w | decision problem D |
-| Q (questioner) | L1 (listener) | DP D | world w |
+| Q (questioner) | (separate model, §7) | DP D | world w |
+
+The outer inference loop (Q → DP posterior → R₁) is NOT an RSAConfig.L1:
+RSAConfig captures R₁'s response selection, while Q's question-selection
+model lives in the multi-question formalization below (§7–§10).
 
 Decision-problem marginalization is baked into `s1Score` (Latent = Unit),
-making the model a standard RSAConfig. This shows that the same machinery
-handles both assertion-based RSA and
-question-answering RSA (this paper).
+making R₁ a standard RSAConfig. This shows that the same machinery
+handles both assertion-based RSA and question-answering RSA.
 
 ## Model equations
 
@@ -259,26 +245,16 @@ The DP posterior π(D|q) is derived from the Q model (§2(c)): asking about
 iced tea signals wanting the target item, concentrating the posterior on
 wantTarget.
 
-## Case Study 2: Iced Tea
-
-Model prediction (Table S2 fitted params, averaged over 30 items):
-  competitor 62% > taciturn 22% > same-category 14% > other-category < 1% ≈ exhaustive < 1%
-
-Human (N=162, 30 vignettes, MCMC fitting targets):
-  competitor 51% > taciturn 21% > same-category 17% > exhaustive 10% > other-category 1%
-
 ## Simplified model
 
 The RSAConfig below is a simplified abstraction: 5 responses × 8 worlds × 4 DPs,
 with pre-computed `expectedActionValue` from DP posterior weights (5:1:1:1). The
 full computational model has 30+ responses × 16 worlds and a Q₁ pipeline computing
 DP posteriors from the questioner's rationality model. Action values and fitted
-parameters (β = 24/25, w_c = 24/25) are from the paper (Table S1, S2). The DP
-posterior weights (5:1:1:1) are calibrated for the simplified model; the full model
-derives them from Q₁ (see `cs2Params` in Studies/HawkinsEtAl2025).
+parameters (β = 24/25, w_c = 24/25) are from the paper's supplementary material.
+The DP posterior weights (5:1:1:1) are calibrated for the simplified model; the
+full model derives them from Q₁.
 -/
-
-namespace RSA.PriorPQ
 
 open RSA Real BigOperators
 
@@ -347,8 +323,10 @@ def responseTruth : Response → World → Bool
 
 /-- Action relevance V(D, r): utility of the item revealed by response r,
     given decision problem D. Values from Table S1 of supplementary material
-    (0–100 slider scale, ÷ 10 for model). Taciturn reveals nothing:
-    V = U_fail = 3.4. Exhaustive reveals all: V = max utility for that DP. -/
+    (0–100 slider scale, raw values ÷ 10). Taciturn reveals nothing:
+    V = U_fail = 3.4. Exhaustive reveals all: V = max utility for that DP.
+    NOTE: This ℝ definition is unused; `actionValueQ` (ℚ, §8) is the
+    authoritative version used in theorems. -/
 noncomputable def actionValue : DP → Response → ℝ
   | _, .taciturn                    => 17/5       -- U_fail = 3.4
   | .wantTarget, .mentionIC         => 5693/1000  -- 56.93
@@ -419,8 +397,9 @@ noncomputable def w_c : ℝ := 24/25
 
 /-- PRIOR-PQ as RSAConfig.
 
-    The respondent (R₁) IS S1. The questioner (Q) IS L1.
-    Decision problems are marginalized into s1Score (Latent = Unit).
+    The respondent (R₁) IS S1. Decision-problem marginalization is
+    baked into s1Score (Latent = Unit). The questioner (Q) is modeled
+    separately in §7 below, not as RSAConfig.L1.
 
     s1Score(L0, α, w, r) =
       if L0(w|r) = 0 then 0
@@ -453,9 +432,11 @@ def w_cs2 : World := ⟨true, true, true⟩
 /-- **Prediction 1**: Competitor (iced coffee) preferred over taciturn.
 
     MentionIC wins on action-relevance (E[V] = 11123/2000 ≈ 5.56
-    vs 17/5 = 3.4). Despite lower informativity (L0 = 1/4 vs 1/8)
-    and higher cost (1 vs 0), action-relevance dominates with β = 24/25.
-    Reduces to: log 2 > −27.88 (trivially true). -/
+    vs 17/5 = 3.4). MentionIC also has higher informativity:
+    log L0(w|mentionIC) = log(1/4) > log(1/8) = log L0(w|taciturn)
+    (mentionIC narrows to 4 worlds; taciturn is consistent with all 8).
+    Despite higher cost (1 vs 0), the action-relevance advantage
+    dominates with β = 24/25. -/
 theorem cs2_competitor_gt_taciturn :
     cfg.S1 () w_cs2 .mentionIC > cfg.S1 () w_cs2 .taciturn := by
   rsa_predict
@@ -488,6 +469,16 @@ theorem cs2_competitor_gt_sameCategory :
     Pure rational comparison: 33911 > 26510. -/
 theorem cs2_sameCategory_gt_otherCategory :
     cfg.S1 () w_cs2 .mentionSoda > cfg.S1 () w_cs2 .mentionChard := by
+  rsa_predict
+
+/-- **Prediction 5**: Competitor > exhaustive.
+
+    Despite exhaustive having much higher action-relevance
+    (E[V] = 11411/1600 ≈ 7.13 vs 11123/2000 ≈ 5.56), mentionIC wins
+    because exhaustive incurs 3× the cost (3 vs 1). With w_c = 24/25,
+    the cost difference outweighs the action-relevance gain. -/
+theorem cs2_competitor_gt_exhaustive :
+    cfg.S1 () w_cs2 .mentionIC > cfg.S1 () w_cs2 .exhaustive := by
   rsa_predict
 
 -- ============================================================================
@@ -611,8 +602,6 @@ For q_tea, response r reveals information about the true world. With
 4 items and 2^4 = 16 full worlds, each response partitions worlds by
 which items are mentioned as available. -/
 
-open Phenomena.Questions.Studies.HawkinsEtAl2025
-
 /-- Questions the questioner could ask (one per item). -/
 inductive Question where
   | tea | ic | soda | chard
@@ -648,7 +637,8 @@ def questionTarget : Question → FullWorld → Bool
   | .chard, w => w.hasChard
 
 /-- Utility U(w, a) for DP D: the value of choosing item a in world w.
-    Uses Table S1 values (÷10). U = item utility if available, else U_fail.
+    Uses Table S1 values (0-100 slider scale, stored as centesimals).
+    U = item utility if available, else U_fail = 34/10.
     Actions: choose target, choose IC, choose soda, choose chard, or leave. -/
 inductive Item where
   | tea | ic | soda | chard | leave
@@ -730,25 +720,25 @@ def questionerEU (q : Question) (D : DP) : ℚ :=
     (1 : ℚ) / 16 *
     dpValueAfterAnswer D q (if questionTarget q w then .yes else .no)
 
-/-- Each DP's target question yields the highest EU.
+/-- Each DP's target question yields the strictly highest EU.
     Q(q_X|wantX) > Q(q_X|wantY) because asking about X directly
     addresses the wantX goal. -/
 theorem questionerEU_alignment :
-    -- Asking about tea is best for wantTarget
+    -- Asking about tea is strictly best for wantTarget
     (∀ D : DP, D ≠ .wantTarget →
-      questionerEU .tea .wantTarget ≥ questionerEU .tea D) ∧
-    -- Asking about IC is best for wantCompetitor
+      questionerEU .tea D < questionerEU .tea .wantTarget) ∧
+    -- Asking about IC is strictly best for wantCompetitor
     (∀ D : DP, D ≠ .wantCompetitor →
-      questionerEU .ic .wantCompetitor ≥ questionerEU .ic D) := by
+      questionerEU .ic D < questionerEU .ic .wantCompetitor) := by
   constructor <;> intro D hD <;> fin_cases D <;> simp_all <;> native_decide
 
-/-- DP posterior concentration: Q(q_tea|wantTarget) ≥ Q(q_tea|D).
+/-- DP posterior concentration: Q(q_tea|wantTarget) > Q(q_tea|D).
     Since Q is softmax and exp is monotone, this follows from
-    EU_Q(tea, wantTarget) ≥ EU_Q(tea, D). With uniform π₀,
+    EU_Q(tea, wantTarget) > EU_Q(tea, D). With uniform π₀,
     the posterior π(D|q_tea) ∝ Q(q_tea|D) concentrates on wantTarget. -/
 theorem dpPosterior_concentrates_on_wantTarget :
     ∀ D : DP, D ≠ .wantTarget →
-      questionerEU .tea .wantTarget ≥ questionerEU .tea D :=
+      questionerEU .tea D < questionerEU .tea .wantTarget :=
   questionerEU_alignment.1
 
 /-- The 5:1:1:1 weights in `dpPrior` are consistent with the derived posterior
@@ -831,4 +821,254 @@ theorem actionValueQ_diagonal_dominance :
     actionValueQ .wantOtherCat .mentionChard > actionValueQ .wantOtherCat .mentionSoda := by
   refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_⟩ <;> native_decide
 
-end RSA.PriorPQ
+-- ============================================================================
+-- §9. Van Rooy Correspondence (@cite{van-rooy-2003})
+-- ============================================================================
+
+/-! ### PRIOR-PQ's Q IS Van Rooy's rational questioner
+
+@cite{van-rooy-2003} defines the expected utility value of a question Q:
+
+    EUV(Q) = Σ_{cell ∈ Q} P(cell) · UV(cell)
+
+where UV(cell) = V(D|cell) - V(D) is the utility value of learning cell
+(`Core.DecisionTheory.utilityValue`).
+
+PRIOR-PQ's `questionerEU(q, D)` computes the expected value of asking q:
+
+    EU_Q(q, D) = Σ_w π(w) · V(D^{answer(w,q), q})
+
+Since the answer to a polar question deterministically partitions worlds
+into "yes" and "no" cells, this sum decomposes as:
+
+    EU_Q(q, D) = P(yes) · V(D|yes) + P(no) · V(D|no)
+               = EUV(Q_q, D) + V(D)
+
+where Q_q is the binary partition induced by question q.
+
+This correspondence shows that @cite{hawkins-etal-2025}'s questioner IS
+@cite{van-rooy-2003}'s rational questioner, specialized to polar questions.
+The softmax (eq. 2.3) adds probabilistic selection on top of Van Rooy's
+deterministic framework. -/
+
+/-- Map PRIOR-PQ decision problem to `Core.DecisionTheory.DecisionProblem`.
+    Uniform prior over 16 full worlds. -/
+def toCoreDP (D : DP) : Core.DecisionTheory.DecisionProblem FullWorld Item where
+  utility w a := itemUtility D a w
+  prior _ := 1 / 16
+
+/-- All items as a list for `Core.DecisionTheory` functions. -/
+def allItemsList : List Item := [.tea, .ic, .soda, .chard, .leave]
+
+/-- A polar question induces a binary partition: yes-worlds and no-worlds.
+    This is Van Rooy's question type (`List (W → Bool)`). -/
+def questionToPartition (q : Question) : List (FullWorld → Bool) :=
+  [fun w => questionTarget q w, fun w => !(questionTarget q w)]
+
+/-- The uniform prior on `toCoreDP` sums to 1. -/
+theorem toCoreDP_prior_sum (D : DP) :
+    Finset.univ.sum (toCoreDP D).prior = 1 := by
+  fin_cases D <;> native_decide
+
+/-- `questionerEU` computes the weighted sum of `valueAfterLearning`:
+    questionerEU(q, D) = Σ_{cell} P(cell) · V(D|cell).
+    This is the computational linkage between the Hawkins-specific definitions
+    (`dpValueAfterAnswer`, `questionerEU`) and `Core.DecisionTheory`'s
+    generic types (`valueAfterLearning`, `cellProbability`). -/
+theorem questionerEU_eq_weighted_value (q : Question) (D : DP) :
+    questionerEU q D =
+    let P := fun w => questionTarget q w
+    let yesCell := Finset.univ.filter (fun w => P w = true)
+    let noCell := Finset.univ.filter (fun w => (!P w) = true)
+    Core.DecisionTheory.cellProbability (toCoreDP D) yesCell *
+      Core.DecisionTheory.valueAfterLearning (toCoreDP D) allItemsList yesCell +
+    Core.DecisionTheory.cellProbability (toCoreDP D) noCell *
+      Core.DecisionTheory.valueAfterLearning (toCoreDP D) allItemsList noCell := by
+  fin_cases q <;> fin_cases D <;> native_decide
+
+/-- **Van Rooy correspondence**: PRIOR-PQ's `questionerEU` equals Van Rooy's
+    `questionUtility` plus the baseline decision problem value.
+
+        questionerEU(q, D) = EUV(Q_q, D) + V(D)
+
+    Proved in two steps:
+    1. `questionerEU` computes the weighted sum Σ P(cell)·V(D|cell)
+       (`questionerEU_eq_weighted_value`, verified by `native_decide`)
+    2. Σ P(cell)·V(D|cell) = EUV + V(D) for any binary partition
+       (`binary_question_value_decomposition`, structural algebraic identity
+       from `Core.DecisionTheory`)
+
+    This connects @cite{hawkins-etal-2025}'s Q model to
+    @cite{van-rooy-2003}'s decision-theoretic question framework. -/
+theorem vanRooy_correspondence (q : Question) (D : DP) :
+    questionerEU q D =
+    Core.DecisionTheory.questionUtility (toCoreDP D) allItemsList
+      (questionToPartition q) +
+    Core.DecisionTheory.dpValue (toCoreDP D) allItemsList := by
+  rw [questionerEU_eq_weighted_value]
+  exact Core.DecisionTheory.binary_question_value_decomposition
+    (toCoreDP D) allItemsList (fun w => questionTarget q w)
+    (toCoreDP_prior_sum D)
+
+/-- Question ordering is preserved: since `dpValue` depends only on D (not q),
+    comparing `questionerEU` across questions (same D) is equivalent to
+    comparing Van Rooy's `questionUtility`. -/
+theorem vanRooy_question_ordering (q₁ q₂ : Question) (D : DP) :
+    questionerEU q₁ D ≥ questionerEU q₂ D ↔
+    Core.DecisionTheory.questionUtility (toCoreDP D) allItemsList
+      (questionToPartition q₁) ≥
+    Core.DecisionTheory.questionUtility (toCoreDP D) allItemsList
+      (questionToPartition q₂) := by
+  simp only [vanRooy_correspondence]
+  constructor <;> intro h <;> linarith
+
+-- ============================================================================
+-- §10. α → ∞ Limit: PRIOR-PQ ↔ Van Rooy at high rationality
+-- ============================================================================
+
+/-! ### Softmax questioner at α → ∞ recovers Van Rooy's deterministic questioner
+
+@cite{van-rooy-2003}'s framework selects questions deterministically by
+argmax of `questionUtility`. @cite{hawkins-etal-2025}'s PRIOR-PQ uses a
+softmax questioner Q(q|D) = SM_{αQ}(questionerEU(q, D)), adding noise.
+
+Two mathematical facts connect them:
+
+1. **Translation invariance** (`dpPosterior_eq_vanRooy`): Since
+   `questionerEU = questionUtility + dpValue` (§9) and softmax is
+   translation-invariant, `dpValue(D)` drops out. The DP posterior using
+   `questionerEU` IS the posterior using Van Rooy's `questionUtility`,
+   for ALL α — not just in the limit.
+
+2. **Limit concentration** (`dpPosterior_tendsto_one`): By
+   `softmaxObserver_tendsto_one`, π(wantTarget | q_tea, αQ) → 1
+   as αQ → ∞. At high questioner rationality, hearing "Do you have
+   iced tea?" gives near-certain evidence that the questioner wants
+   iced tea — recovering Van Rooy's deterministic framework. -/
+
+open Softmax Filter Topology
+
+instance : Nonempty Question := ⟨.tea⟩
+instance : Nonempty DP := ⟨.wantTarget⟩
+
+/-- `questionerEU` cast to ℝ for softmax limit theorems. -/
+noncomputable def questionerEUR (q : Question) (D : DP) : ℝ :=
+  (questionerEU q D : ℝ)
+
+/-- Van Rooy's `questionUtility` cast to ℝ. -/
+noncomputable def questionUtilityR (q : Question) (D : DP) : ℝ :=
+  (Core.DecisionTheory.questionUtility (toCoreDP D) allItemsList
+    (questionToPartition q) : ℝ)
+
+/-- Baseline `dpValue` cast to ℝ (constant across questions for fixed D).
+    Named to avoid shadowing `Core.ExperimentDesign.dpValueR`. -/
+noncomputable def baselineDPValueR (D : DP) : ℝ :=
+  (Core.DecisionTheory.dpValue (toCoreDP D) allItemsList : ℝ)
+
+/-- Uniform prior over DPs (ℝ). -/
+noncomputable def dpPriorUniformR : DP → ℝ := fun _ => 1 / 4
+
+/-- Van Rooy decomposition in ℝ. -/
+theorem vanRooy_correspondence_R (q : Question) (D : DP) :
+    questionerEUR q D = questionUtilityR q D + baselineDPValueR D := by
+  simp only [questionerEUR, questionUtilityR, baselineDPValueR]
+  exact_mod_cast vanRooy_correspondence q D
+
+/-- **Translation invariance**: the DP posterior using PRIOR-PQ's `questionerEU`
+    IS the posterior using Van Rooy's `questionUtility`, for ALL α.
+
+    `dpValue(D)` is absorbed by `softmax_add_const`. -/
+theorem dpPosterior_eq_vanRooy (α : ℝ) (q : Question) (D : DP) :
+    softmaxObserver questionerEUR dpPriorUniformR α q D =
+    softmaxObserver questionUtilityR dpPriorUniformR α q D := by
+  have h : questionerEUR = fun q D => questionUtilityR q D + baselineDPValueR D :=
+    funext fun q => funext fun D => vanRooy_correspondence_R q D
+  rw [h]
+  exact softmaxObserver_add_const questionUtilityR dpPriorUniformR baselineDPValueR α q D
+
+/-- Tea is the uniquely optimal question for wantTarget (strict, ℚ). -/
+theorem tea_uniquely_optimal :
+    ∀ q : Question, q ≠ .tea →
+      questionerEU q .wantTarget < questionerEU .tea .wantTarget := by
+  intro q hq; fin_cases q <;> simp_all <;> native_decide
+
+/-- For each D ≠ wantTarget, some question strictly beats tea (ℚ). -/
+theorem tea_suboptimal_elsewhere :
+    ∀ D : DP, D ≠ .wantTarget →
+      ∃ q : Question, questionerEU .tea D < questionerEU q D := by
+  intro D hD
+  fin_cases D <;> simp_all
+  · exact ⟨.ic, by native_decide⟩
+  · exact ⟨.soda, by native_decide⟩
+  · exact ⟨.chard, by native_decide⟩
+
+/-- Strict alignment cast to ℝ. -/
+theorem tea_uniquely_optimal_R :
+    ∀ q : Question, q ≠ .tea →
+      questionerEUR q .wantTarget < questionerEUR .tea .wantTarget := by
+  intro q hq; unfold questionerEUR; exact_mod_cast tea_uniquely_optimal q hq
+
+/-- Strict non-optimality cast to ℝ. -/
+theorem tea_suboptimal_elsewhere_R :
+    ∀ D : DP, D ≠ .wantTarget →
+      ∃ q : Question, questionerEUR .tea D < questionerEUR q D := by
+  intro D hD
+  obtain ⟨q, hq⟩ := tea_suboptimal_elsewhere D hD
+  exact ⟨q, by unfold questionerEUR; exact_mod_cast hq⟩
+
+/-- **Main limit theorem**: π(wantTarget | q_tea, αQ) → 1 as αQ → ∞.
+
+    The respondent's DP posterior concentrates on `wantTarget` — the DP
+    for which asking about tea maximizes Van Rooy's `questionUtility`.
+    PRIOR-PQ's soft BToM inference recovers Van Rooy's deterministic
+    questioner in the high-rationality limit. -/
+theorem dpPosterior_tendsto_one :
+    Tendsto (fun α => softmaxObserver questionerEUR dpPriorUniformR α .tea .wantTarget)
+      atTop (nhds 1) :=
+  softmaxObserver_tendsto_one questionerEUR dpPriorUniformR .tea .wantTarget
+    tea_uniquely_optimal_R tea_suboptimal_elsewhere_R
+    (by simp [dpPriorUniformR])
+
+-- ============================================================================
+-- §11. Integration with linglib
+-- ============================================================================
+
+/-! ### Connections to other modules
+
+**Decision theory** (`Core.Agent.DecisionTheory`): The `toCoreDP` bridge (§9)
+maps PRIOR-PQ's decision problems to `Core.DecisionTheory.DecisionProblem`,
+enabling reuse of `questionUtility`, `dpValue`, and
+`binary_question_value_decomposition`. The `vanRooy_correspondence` theorem
+proves this mapping is faithful.
+
+**Experiment design** (`Core.Agent.ExperimentDesign`): The `questioner_as_experiment`
+definition (§6) constructs Q as an `optimalExperiment` instance, showing that
+question selection IS optimal experiment design. The observation model
+`r0ObservationModel` IS R₀'s literal semantics.
+
+**Relevance theories** (`Comparisons/RelevanceTheories`): The Van Rooy
+correspondence (§9) instantiates the general result that QUD-based and
+decision-theoretic relevance coincide (Blackwell bridge). PRIOR-PQ's polar
+question partition is a binary QUD; the `vanRooy_question_ordering` theorem
+shows that comparing `questionerEU` across questions reduces to comparing
+Van Rooy's `questionUtility` — exactly the ordering that
+`Comparisons.Relevance.blackwell_unifies_relevance` proves is equivalent to
+QUD refinement.
+
+**Pragmatic answerhood** (`Phenomena/Questions/PragmaticAnswerhood`): PRIOR-PQ's
+respondent R₁ selects pragmatic answers sensitive to the questioner's inferred
+decision problem. The "iced coffee" answer is pragmatically optimal because
+R₁ infers that the questioner wants the target item (via BToM over Q), making
+the competitor the most action-relevant alternative. This is a formal instance
+of G&S's observation that pragmatic answerhood depends on the questioner's
+information state — here, their decision problem replaces their factual
+information set J.
+
+**Polar answers** (`Phenomena/Questions/PolarAnswers`): The base-level respondent
+R₀ produces literal polar answers (taciturn = "No"). R₁'s overinformative
+responses ("No, but we have iced coffee") go beyond the polar answer, adding
+a mention response. The `responseTruth` predicate ensures mentioned items are
+truthful, connecting to G&S's requirement that answers be true in the
+actual world. -/
+
+end Phenomena.Questions.Studies.HawkinsEtAl2025

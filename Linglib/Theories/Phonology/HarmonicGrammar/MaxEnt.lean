@@ -1,4 +1,4 @@
-import Linglib.Core.Logic.OT
+import Linglib.Theories.Phonology.HarmonicGrammar.Basic
 import Linglib.Core.Agent.CoupledEvaluation
 
 /-!
@@ -38,27 +38,7 @@ namespace Theories.Phonology.HarmonicGrammar
 open Core.OT Core
 
 -- ============================================================================
--- § 1: Weighted Constraints
--- ============================================================================
-
-/-- A weighted constraint for MaxEnt/Harmonic Grammar.
-    Extends `NamedConstraint` with a rational-valued weight. -/
-structure WeightedConstraint (C : Type) extends NamedConstraint C where
-  /-- Constraint weight (higher = more important). -/
-  weight : ℚ
-
-/-- Harmony score: H(c) = -Σⱼ wⱼ · Cⱼ(c).
-    Negative because violations are penalized. -/
-def harmonyScore {C : Type} (constraints : List (WeightedConstraint C)) (c : C) : ℚ :=
-  constraints.foldl (λ acc con => acc - con.weight * (con.eval c : ℚ)) 0
-
-/-- Harmony score as a real number, for interfacing with `softmax`. -/
-noncomputable def harmonyScoreR {C : Type}
-    (constraints : List (WeightedConstraint C)) (c : C) : ℝ :=
-  (harmonyScore constraints c : ℝ)
-
--- ============================================================================
--- § 2: MaxEnt Grammar (Classical — Individual Mappings)
+-- § 1: MaxEnt Grammar (Classical — Individual Mappings)
 -- ============================================================================
 
 /-- A MaxEnt grammar: inputs, candidate generation, and weighted constraints.
@@ -81,7 +61,7 @@ noncomputable def MaxEntGrammar.prob {I O : Type} [Fintype O]
   softmax (λ o' => harmonyScoreR g.constraints (i, o')) 1 o
 
 -- ============================================================================
--- § 3: Systemic Constraints
+-- § 2: Systemic Constraints
 -- ============================================================================
 
 /-- A systemic constraint evaluates a *tuple* of outputs — one per input —
@@ -116,7 +96,7 @@ def homophonyAvoidance {n : Nat} {O : Type} [DecidableEq O]
     pairs.length
 
 -- ============================================================================
--- § 4: Joint Distribution with Systemic Constraints
+-- § 3: Joint Distribution with Systemic Constraints
 -- ============================================================================
 
 /-- Systemic constraint score for an output tuple (ℚ, computable).
@@ -182,7 +162,7 @@ noncomputable def marginalProb {n : Nat} {I O : Type} [Fintype O] [DecidableEq O
   (maxEntCoupled inputs classicalConstraints systemicConstraints).marginal i o
 
 -- ============================================================================
--- § 5: Factorization Theorem
+-- § 4: Factorization Theorem
 -- ============================================================================
 
 /-- When all systemic constraint weights are zero, the systemic score

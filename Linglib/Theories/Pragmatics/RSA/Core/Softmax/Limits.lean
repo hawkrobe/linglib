@@ -412,4 +412,20 @@ theorem softmaxObserver_tendsto_one [Nonempty ι] [Nonempty σ]
   rw [← h1]
   exact hnum.div hden (ne_of_gt h_prior)
 
+/-- softmaxObserver is invariant under state-dependent constant shifts.
+
+    Adding `c(s)` to all action scores at state `s` doesn't change the
+    observer's posterior, because softmax is translation-invariant
+    (`softmax_add_const`). -/
+theorem softmaxObserver_add_const [Nonempty ι]
+    (score : ι → σ → ℝ) (prior : σ → ℝ) (c : σ → ℝ)
+    (α : ℝ) (i : ι) (s : σ) :
+    softmaxObserver (fun j t => score j t + c t) prior α i s =
+    softmaxObserver score prior α i s := by
+  simp only [softmaxObserver]
+  have h : ∀ (t : σ) (k : ι), softmax (fun j => score j t + c t) α k =
+      softmax (fun j => score j t) α k :=
+    fun t k => congr_fun (softmax_add_const (fun j => score j t) α (c t)) k
+  simp_rw [h]
+
 end Softmax

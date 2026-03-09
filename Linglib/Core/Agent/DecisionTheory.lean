@@ -359,4 +359,64 @@ def mentionSomeDP {W : Type*} (satisfies : W -> Bool) : DecisionProblem W Bool w
   utility w a := if a && satisfies w then 1 else 0
   prior _ := 1
 
+/-! ### Binary Question Value Decomposition
+
+For a binary partition [P, ¬P], the probability-weighted sum of conditional
+DP values equals Van Rooy's question utility plus the baseline DP value.
+This is the structural identity connecting "the value of asking a yes/no
+question" to the decision-theoretic question framework of @cite{van-rooy-2003}. -/
+
+/-- Cell probabilities of a binary partition [P, ¬P] sum to 1
+    when the prior is a proper distribution. -/
+theorem binary_cellProb_sum
+    {W A : Type*} [Fintype W] [DecidableEq W]
+    (dp : DecisionProblem W A) (P : W → Bool)
+    (hPrior : Finset.univ.sum dp.prior = 1) :
+    cellProbability dp (Finset.univ.filter (fun w => P w = true)) +
+    cellProbability dp (Finset.univ.filter (fun w => (!P w) = true)) = 1 := by
+  simp only [cellProbability]
+  have hDisj : Disjoint
+      (Finset.univ.filter (fun w => P w = true))
+      (Finset.univ.filter (fun w => (!P w) = true)) := by
+    rw [Finset.disjoint_filter]; intro w _ h1 h2; cases P w <;> simp_all
+  have hCover : Finset.univ.filter (fun w => P w = true) ∪
+                Finset.univ.filter (fun w => (!P w) = true) = Finset.univ := by
+    ext w; simp only [Finset.mem_union, Finset.mem_filter, Finset.mem_univ, true_and]
+    cases P w <;> simp
+  calc (Finset.univ.filter (fun w => P w = true)).sum dp.prior +
+       (Finset.univ.filter (fun w => (!P w) = true)).sum dp.prior
+      = (Finset.univ.filter (fun w => P w = true) ∪
+         Finset.univ.filter (fun w => (!P w) = true)).sum dp.prior :=
+          (Finset.sum_union hDisj).symm
+    _ = Finset.univ.sum dp.prior := by rw [hCover]
+    _ = 1 := hPrior
+
+/-- **Binary question value decomposition**: for a binary partition [P, ¬P],
+
+        Σ P(cell) · V(D|cell) = EUV([P,¬P], D) + V(D)
+
+    where the LHS is the probability-weighted sum of conditional DP values,
+    EUV is `questionUtility`, and V(D) is `dpValue`.
+
+    This is the fundamental algebraic identity connecting the expected value
+    of asking a polar question to @cite{van-rooy-2003}'s question utility
+    framework. It holds for any decision problem with a proper prior. -/
+theorem binary_question_value_decomposition
+    {W A : Type*} [Fintype W] [DecidableEq W] [DecidableEq A]
+    (dp : DecisionProblem W A) (actions : List A) (P : W → Bool)
+    (hPrior : Finset.univ.sum dp.prior = 1) :
+    let yesCell := Finset.univ.filter (fun w => P w = true)
+    let noCell := Finset.univ.filter (fun w => (!P w) = true)
+    cellProbability dp yesCell * valueAfterLearning dp actions yesCell +
+    cellProbability dp noCell * valueAfterLearning dp actions noCell =
+    questionUtility dp actions [P, fun w => !P w] + dpValue dp actions := by
+  have hSum := binary_cellProb_sum dp P hPrior
+  simp only [questionUtility, utilityValue, List.foldl]
+  have key : cellProbability dp (Finset.univ.filter (fun w => P w = true)) *
+               dpValue dp actions +
+             cellProbability dp (Finset.univ.filter (fun w => (!P w) = true)) *
+               dpValue dp actions = dpValue dp actions := by
+    rw [← add_mul, hSum, one_mul]
+  linarith
+
 end Core.DecisionTheory

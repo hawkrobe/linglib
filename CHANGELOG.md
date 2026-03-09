@@ -1,5 +1,51 @@
 # Changelog
 
+## [0.229.59] - 2026-03-09
+
+### Added
+- **HarmonicGrammar/OTLimit.lean**: New file formalizing the MaxEnt → OT limit — OT is the α→∞ limit of MaxEnt. Key definitions: `otToWeighted` (convert OT ranking to exponentially weighted HG constraints), `LexStrictlyBetter` (Fin n lex dominance), `ExponentiallySeparated` (weight separation condition), `expWeights` (concrete (M+1)^(n-1-i) weights). Key theorems: `lex_imp_lower_violations` (fully proved — with exp-separated weights, lex dominance ⟹ lower weighted violations), `maxent_concentrates_on_hg_winner` (softmax_argmax_limit applied to harmony), `maxent_ot_limit` (MaxEnt(α→∞) concentrates on OT winner, combining HG–OT agreement with softmax concentration)
+
+## [0.229.58] - 2026-03-09
+
+### Changed
+- **HawkinsEtAl2025.lean**: Comprehensive audit — unify namespace (`RSA.PriorPQ` → `Phenomena.Questions.Studies.HawkinsEtAl2025`), fix informativity docstring (mentionIC has HIGHER not lower informativity), fix R₁↔S1/Q↔L1 table (Q is separate model, not RSAConfig.L1), fix itemUtility docstring (values are 0-100 scale, not ÷10), rename `dpValueR` → `baselineDPValueR` (avoid shadowing `Core.ExperimentDesign.dpValueR`), strengthen `questionerEU_alignment` from ≥ to strict <, remove dead code (`CS2Utilities`, vestigial bridge comment, `open` hack), add UNVERIFIED flags to all unverifiable parameter values
+
+### Added
+- **HawkinsEtAl2025.lean**: `cs2_competitor_gt_exhaustive` (Prediction 5: competitor beats exhaustive despite lower action-relevance, due to cost), §11 integration documentation connecting to `Core.Agent.DecisionTheory`, `Core.Agent.ExperimentDesign`, `Comparisons/RelevanceTheories`, `PragmaticAnswerhood`, and `PolarAnswers`
+
+## [0.229.57] - 2026-03-09
+
+### Added
+- **NoisyHG.lean**: `violationDiffSqSumQ` (computable ℚ version), `nhg_choiceProb_eq` (Flemming eq (15): NHG binary = Φ((H(a)−H(b))/σ_d)), `normalMaxEnt_choiceProb_eq` (eq (17): Normal MaxEnt binary = Φ((H(a)−H(b))/(ε√2))), `harmonyScore_diff` / `harmonyScoreR_diff` (harmony difference decomposition: H(a)−H(b) = −Σ wⱼ·(cⱼ(a)−cⱼ(b)))
+- **Flemming2021.lean**: McFadden bridge (`maxent_eq_gumbelRUM`), French schwa data (Table (35): 8 contexts × 6 constraints), `logit_uniformity_clash` (MaxEnt predicts uniform logit change for \*Clash pairs), `nhg_sigmaD_sq_varies` (NHG σ_d² varies 3↔4 across pairs, violating probit uniformity)
+- **references.bib**: Add `smith-pater-2020`
+
+### Changed
+- **Flemming2021.lean**: Fix mislabeled `eq12_ratio_independence` (Flemming eq (12) is the NHG tableau, not IIA) → `iia`
+
+## [0.229.56] - 2026-03-09
+
+### Added
+- **Softmax/Limits.lean**: `softmaxObserver_add_const` — BToM observer posterior is invariant under state-dependent constant shifts to action scores (generalizes `softmax_add_const` to observer inference)
+- **HawkinsEtAl2025 §10**: α → ∞ limit theorem connecting PRIOR-PQ to Van Rooy's deterministic questioner — `dpPosterior_eq_vanRooy` (translation invariance: DP posteriors identical for ALL α, not just at limit), `dpPosterior_tendsto_one` (π(wantTarget | q_tea, αQ) → 1 via `softmaxObserver_tendsto_one`), strict alignment verification (`tea_uniquely_optimal`, `tea_suboptimal_elsewhere`)
+
+## [0.229.55] - 2026-03-09
+
+### Added
+- **HarmonicGrammar/Basic.lean**: Extract `WeightedConstraint`, `harmonyScore`, `harmonyScoreR` from MaxEnt.lean as shared foundation for all stochastic HG variants (MaxEnt, NHG, Normal MaxEnt)
+- **HarmonicGrammar/NoisyHG.lean**: Formalize Noisy HG and Normal MaxEnt as Thurstone Case V models — `nhgAsThurstoneV` (context-dependent σ_d), `normalMaxEntAsThurstoneV` (constant σ_d), `logit_uniformity` (MaxEnt diagnostic), `maxent_logit_harmony`, `maxent_iia`
+- **Flemming2021.lean**: Study file for Flemming (2021) "Comparing MaxEnt and Noisy Harmonic Grammar" connecting the three HG variants to the RUM infrastructure (GumbelLuce, Thurstone, GaussianChoice)
+- **references.bib**: Add `flemming-2021`, `boersma-pater-2016`, `smolensky-legendre-2006`, `goldwater-johnson-2003`
+
+### Changed
+- **MaxEnt.lean**: Import `HarmonicGrammar.Basic` instead of `Core.Logic.OT`, remove duplicate `WeightedConstraint`/`harmonyScore`/`harmonyScoreR` definitions (now in Basic.lean)
+
+## [0.229.54] - 2026-03-09
+
+### Added
+- **Core.DecisionTheory**: `binary_question_value_decomposition` — structural algebraic identity proving Σ P(cell)·V(D|cell) = questionUtility + dpValue for any binary partition with proper prior; `binary_cellProb_sum` partition coverage lemma
+- **HawkinsEtAl2025 §9**: Van Rooy correspondence — `vanRooy_correspondence` proved via structural decomposition (step 1: computational linkage via `native_decide`, step 2: general algebraic identity from Core); `vanRooy_question_ordering` corollary
+
 ## [0.229.53] - 2026-03-09
 
 ### Added

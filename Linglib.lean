@@ -1488,6 +1488,7 @@ import Linglib.Theories.Phonology.RuleBased.Defs
 import Linglib.Theories.Phonology.HarmonicGrammar.Basic
 import Linglib.Theories.Phonology.HarmonicGrammar.MaxEnt
 import Linglib.Theories.Phonology.HarmonicGrammar.NoisyHG
+import Linglib.Theories.Phonology.HarmonicGrammar.OTLimit
 -- Theories: Sociolinguistics
 import Linglib.Theories.Sociolinguistics.PropertySpace
 import Linglib.Theories.Sociolinguistics.SCM
