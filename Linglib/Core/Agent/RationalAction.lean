@@ -226,7 +226,21 @@ theorem RationalAction.finset_sum_policy_gt_of_sum_score_gt
     (ra : RationalAction S A) (s : S) (F₁ F₂ : Finset A)
     (h : F₁.sum (ra.score s) > F₂.sum (ra.score s)) :
     F₁.sum (ra.policy s) > F₂.sum (ra.policy s) := by
-  sorry
+  have hF₂_nonneg : 0 ≤ F₂.sum (ra.score s) :=
+    Finset.sum_nonneg fun a _ => ra.score_nonneg s a
+  have hF₁_pos : 0 < F₁.sum (ra.score s) := lt_of_le_of_lt hF₂_nonneg h
+  have htot_pos : 0 < ra.totalScore s :=
+    lt_of_lt_of_le hF₁_pos (Finset.sum_le_sum_of_subset_of_nonneg
+      (Finset.subset_univ F₁) (fun a _ _ => ra.score_nonneg s a))
+  have htot_ne : ra.totalScore s ≠ 0 := ne_of_gt htot_pos
+  have hpol : ∀ a, ra.policy s a = ra.score s a / ra.totalScore s := by
+    intro a; simp only [policy, htot_ne, ↓reduceIte]
+  have hconv : ∀ (F : Finset A),
+      F.sum (ra.policy s) = F.sum (ra.score s) / ra.totalScore s := by
+    intro F; rw [show F.sum (ra.policy s) = F.sum (fun a => ra.score s a / ra.totalScore s) from
+      Finset.sum_congr rfl (fun a _ => hpol a), Finset.sum_div]
+  rw [hconv, hconv]
+  exact div_lt_div_of_pos_right h htot_pos
 
 -- ============================================================================
 -- §1a. Luce's Choice Axiom (IIA)
@@ -623,19 +637,124 @@ The parameter `k > 0` is the rationality parameter `α` in RSA.
 
 -/
 
+private theorem cauchy_g0_eq_one (g : ℝ → ℝ)
+    (hg_mul : ∀ s t, g (s + t) = g s * g t)
+    (hg_mono : StrictMono g) : g 0 = 1 := by
+  have h0 : g 0 = g 0 * g 0 := by
+    have := hg_mul 0 0; simp at this; exact this
+  have : g 0 * (g 0 - 1) = 0 := by ring_nf; linarith
+  rcases mul_eq_zero.mp this with h | h
+  · exfalso
+    have h1 : g (-1) < g 0 := hg_mono (by linarith : (-1 : ℝ) < 0)
+    have h2 : g 0 < g 1 := hg_mono (by linarith : (0 : ℝ) < 1)
+    have h3 : g (-1) * g 1 = g 0 := by
+      have := hg_mul (-1) 1; simp at this; exact this.symm
+    rw [h] at h1 h2 h3
+    linarith [mul_neg_of_neg_of_pos h1 h2]
+  · linarith
+
+private theorem cauchy_g_pos (g : ℝ → ℝ)
+    (hg_mul : ∀ s t, g (s + t) = g s * g t)
+    (hg_mono : StrictMono g) (x : ℝ) : 0 < g x := by
+  have hg0 := cauchy_g0_eq_one g hg_mul hg_mono
+  have hsq : g x = g (x / 2) * g (x / 2) := by
+    have := hg_mul (x / 2) (x / 2); rw [add_halves] at this; exact this
+  by_contra h; push_neg at h
+  have hgx_zero : g x = 0 := le_antisymm h (by rw [hsq]; exact mul_self_nonneg _)
+  have hx2_zero : g (x / 2) = 0 := by rwa [hsq, mul_self_eq_zero] at hgx_zero
+  have hg0' : g 0 = g x * g (-x) := by
+    have := hg_mul x (-x); simp at this; exact this
+  rw [hgx_zero, zero_mul] at hg0'; linarith
+
+private theorem cauchy_additive_zero (h : ℝ → ℝ)
+    (hadd : ∀ s t, h (s + t) = h s + h t) : h 0 = 0 := by
+  have := hadd 0 0; simp at this; linarith
+
+private theorem cauchy_additive_neg (h : ℝ → ℝ)
+    (hadd : ∀ s t, h (s + t) = h s + h t) (x : ℝ) : h (-x) = -h x := by
+  have : h (x + (-x)) = h x + h (-x) := hadd x (-x)
+  simp [cauchy_additive_zero h hadd] at this; linarith
+
+private theorem cauchy_additive_nat (h : ℝ → ℝ)
+    (hadd : ∀ s t, h (s + t) = h s + h t) (n : ℕ) : h n = n * h 1 := by
+  induction n with
+  | zero => simp [cauchy_additive_zero h hadd]
+  | succ k ih => rw [Nat.cast_succ, hadd, ih]; ring
+
+private theorem cauchy_additive_int (h : ℝ → ℝ)
+    (hadd : ∀ s t, h (s + t) = h s + h t) (n : ℤ) : h n = n * h 1 := by
+  cases n with
+  | ofNat k => simp [cauchy_additive_nat h hadd k]
+  | negSucc k =>
+    simp only [Int.cast_negSucc]
+    rw [cauchy_additive_neg h hadd, cauchy_additive_nat h hadd (k + 1)]
+    push_cast; ring
+
+private theorem cauchy_additive_rat (h : ℝ → ℝ)
+    (hadd : ∀ s t, h (s + t) = h s + h t) (q : ℚ) : h q = q * h 1 := by
+  have hden_pos : (0 : ℝ) < q.den := Nat.cast_pos.mpr q.pos
+  have hden_ne : (q.den : ℝ) ≠ 0 := ne_of_gt hden_pos
+  have hmul_nat : ∀ (n : ℕ) (x : ℝ), h (n * x) = n * h x := by
+    intro n x; induction n with
+    | zero => simp [cauchy_additive_zero h hadd]
+    | succ k ih => rw [Nat.cast_succ, add_mul, one_mul, hadd, ih]; ring
+  have step1 : (q.den : ℝ) * h q = h (q.num : ℤ) := by
+    rw [← hmul_nat q.den q]; congr 1; rw [Rat.cast_def]; field_simp
+  rw [cauchy_additive_int h hadd] at step1
+  have : h q = (q.num : ℝ) * h 1 / q.den := by field_simp at step1 ⊢; linarith
+  rw [this, Rat.cast_def]; field_simp
+
+private theorem cauchy_monotone_additive_linear (h : ℝ → ℝ)
+    (hadd : ∀ s t, h (s + t) = h s + h t) (hmono : StrictMono h) :
+    ∀ x, h x = x * h 1 := by
+  have h0 : h 0 = 0 := cauchy_additive_zero h hadd
+  have h1_pos : 0 < h 1 := by linarith [hmono (show (0 : ℝ) < 1 by norm_num), h0]
+  intro x
+  by_contra hne
+  rcases ne_iff_lt_or_gt.mp hne with hlt | hgt
+  · obtain ⟨q, hq1, hq2⟩ := exists_rat_btwn (show h x / h 1 < x by
+      rw [div_lt_iff₀ h1_pos]; linarith)
+    have : h x < h q := by
+      rw [cauchy_additive_rat h hadd q]
+      have := (div_lt_iff₀ h1_pos).mp hq1; linarith
+    linarith [hmono hq2]
+  · obtain ⟨q, hq1, hq2⟩ := exists_rat_btwn (show x < h x / h 1 by
+      rw [lt_div_iff₀ h1_pos]; linarith)
+    have : h q < h x := by
+      rw [cauchy_additive_rat h hadd q]
+      have := (lt_div_iff₀ h1_pos).mp hq2; linarith
+    linarith [hmono hq1]
+
 /-- **Cauchy's multiplicative functional equation** (classical):
     If `g : ℝ → ℝ` satisfies `g(s + t) = g(s) · g(t)` and is strictly
     monotone increasing, then `g(s) = exp(k · s)` for some `k > 0`.
 
-    Proof sketch: `g(0) = 1` (else `g ≡ 0`, contradicting monotonicity).
-    Set `h = log ∘ g`; then `h(s+t) = h(s) + h(t)` (additive Cauchy).
-    Monotonicity implies measurability, so `h(s) = k·s` for `k = h(1)`.
-    Strict monotonicity forces `k > 0`. -/
+    The proof reduces to the additive Cauchy equation via `log`: setting
+    `h = log ∘ g`, the multiplicative equation becomes `h(s+t) = h(s) + h(t)`.
+    The key lemma (`cauchy_monotone_additive_linear`) shows that a strictly
+    monotone additive function must be linear, by density of ℚ in ℝ:
+    `h` agrees with `x ↦ k·x` on rationals (by induction), and any
+    deviation on an irrational `x` would violate monotonicity via a
+    rational witness between `x` and `h(x)/k`. -/
 theorem cauchy_mul_exp (g : ℝ → ℝ)
     (hg_mul : ∀ s t, g (s + t) = g s * g t)
     (hg_mono : StrictMono g) :
     ∃ k : ℝ, 0 < k ∧ g 0 = 1 ∧ ∀ s, g s = Real.exp (k * s) := by
-  sorry -- TODO: classical via additive Cauchy + monotonicity → linearity
+  have hg0 := cauchy_g0_eq_one g hg_mul hg_mono
+  have hg_pos := cauchy_g_pos g hg_mul hg_mono
+  set h := fun x => log (g x) with hh_def
+  have hadd : ∀ s t, h (s + t) = h s + h t := fun s t => by
+    simp only [h]; rw [hg_mul s t, log_mul (ne_of_gt (hg_pos s)) (ne_of_gt (hg_pos t))]
+  have hmono : StrictMono h := fun a b hab => by
+    simp only [h]; exact log_lt_log (hg_pos a) (hg_mono hab)
+  have hlinear := cauchy_monotone_additive_linear h hadd hmono
+  have hk_pos : 0 < h 1 := by
+    have := hmono (show (0 : ℝ) < 1 by norm_num)
+    simp only [h] at this; rw [hg0, log_one] at this; exact this
+  refine ⟨h 1, hk_pos, hg0, fun s => ?_⟩
+  have := hlinear s
+  simp only [h] at this
+  rw [← exp_log (hg_pos s), this, mul_comm]
 
 /-- **Fechnerian uniqueness** (@cite{luce-1959}, §2.A; @cite{adams-messick-1957}):
     If a ratio scale `v` and interval scale `u` represent the same
@@ -893,28 +1012,78 @@ section SoftmaxLimit
 
 variable {ι : Type*} [Fintype ι] [Nonempty ι] [DecidableEq ι]
 
+omit [Nonempty ι] [DecidableEq ι] in
+/-- Each softmax component is bounded by `exp(α(sⱼ - s_{i_max}))`, obtained
+    by dropping all but the `i_max` term from the partition function. -/
+private theorem softmax_le_exp_diff (s : ι → ℝ) (α : ℝ) (j i_max : ι) :
+    softmax s α j ≤ exp (α * (s j - s i_max)) := by
+  simp only [softmax]
+  rw [show α * (s j - s i_max) = α * s j - α * s i_max from by ring, exp_sub]
+  exact div_le_div_of_nonneg_left (exp_pos _).le (exp_pos _)
+    (single_le_sum (f := fun k => exp (α * s k)) (fun k _ => (exp_pos _).le) (mem_univ i_max))
+
+omit [Nonempty ι] [DecidableEq ι] in
+/-- When `x < 0`, `exp(α · x) < ε` for all sufficiently large `α`. -/
+private theorem exp_mul_neg_lt (x : ℝ) (hx : x < 0) (ε : ℝ) (hε : 0 < ε)
+    (α : ℝ) (hα : α > log ε / x) : exp (α * x) < ε := by
+  calc exp (α * x) < exp (log ε) := by
+        apply exp_lt_exp.mpr
+        have := mul_lt_mul_of_neg_right hα hx
+        rwa [div_mul_cancel₀ (log ε) (ne_of_lt hx)] at this
+    _ = ε := exp_log hε
+
 /-- **Softmax → argmax limit**: as α → ∞, softmax concentrates on the unique
     maximizer. For any `i_max` with `s i_max` strictly greater than all other
     scores, `softmax(s, α)_{i_max} → 1`.
 
     This is the formal connection between MaxEnt (soft optimization) and OT
-    (hard optimization): OT is the α → ∞ limit of MaxEnt.
-
-    Proof idea: `softmax(s,α)_{i_max} = 1 / (1 + Σ_{j≠max} exp(α(sⱼ - s_max)))`.
-    Each term in the sum has `sⱼ - s_max < 0`, so `exp(α(sⱼ - s_max)) → 0`
-    as α → ∞. Hence the denominator → 1 and `softmax → 1`.
-
-    TODO: prove via Filter.Tendsto and exp_neg_mul_tendsto_zero. -/
+    (hard optimization): OT is the α → ∞ limit of MaxEnt. -/
 theorem softmax_argmax_limit (s : ι → ℝ) (i_max : ι)
     (h_max : ∀ j, j ≠ i_max → s j < s i_max) :
     ∀ ε > 0, ∃ α₀ : ℝ, ∀ α, α > α₀ → |softmax s α i_max - 1| < ε := by
-  sorry
+  intro ε hε
+  set n := Fintype.card ι
+  have hn_pos : (0 : ℝ) < n := Nat.cast_pos.mpr Fintype.card_pos
+  set εn := ε / n
+  have hεn : 0 < εn := div_pos hε hn_pos
+  let threshFn : ι → ℝ := fun j =>
+    if j = i_max then (0 : ℝ) else log εn / (s j - s i_max)
+  refine ⟨univ.sup' ⟨i_max, mem_univ _⟩ threshFn, fun α hα => ?_⟩
+  have hbound : ∀ j ≠ i_max, softmax s α j < εn := by
+    intro j hj
+    apply lt_of_le_of_lt (softmax_le_exp_diff s α j i_max)
+    apply exp_mul_neg_lt _ (sub_neg.mpr (h_max j hj)) εn hεn
+    have h1 : threshFn j ≤ univ.sup' ⟨i_max, mem_univ _⟩ threshFn :=
+      le_sup' _ (mem_univ j)
+    simp only [threshFn, hj, ↓reduceIte] at h1
+    linarith
+  have htail : 1 - softmax s α i_max = ∑ j ∈ univ.erase i_max, softmax s α j := by
+    rw [← softmax_sum_eq_one (ι := ι) s α, ← add_sum_erase _ _ (mem_univ i_max)]; ring
+  have htail_nonneg : 0 ≤ 1 - softmax s α i_max := by
+    rw [htail]; exact sum_nonneg fun j _ => le_of_lt (softmax_pos s α j)
+  have htail_strict : 1 - softmax s α i_max < ε := by
+    rw [htail]
+    rcases (univ.erase i_max : Finset ι).eq_empty_or_nonempty with hempty | ⟨j, hj⟩
+    · simp [hempty]; exact hε
+    · calc ∑ k ∈ univ.erase i_max, softmax s α k
+          < ∑ _ ∈ univ.erase i_max, εn :=
+            sum_lt_sum (fun k hk => le_of_lt (hbound k (mem_erase.mp hk).1))
+              ⟨j, hj, hbound j (mem_erase.mp hj).1⟩
+        _ ≤ ∑ (_ : ι), εn :=
+            sum_le_sum_of_subset_of_nonneg (erase_subset _ _) (fun _ _ _ => hεn.le)
+        _ = ↑n * εn := by rw [sum_const, card_univ, nsmul_eq_mul]
+        _ = ε := mul_div_cancel₀ _ (ne_of_gt hn_pos)
+  rw [abs_sub_lt_iff]; constructor <;> linarith
 
+omit [Nonempty ι] [DecidableEq ι] in
 /-- Complement of the limit: non-maximal actions get probability → 0. -/
 theorem softmax_nonmax_limit (s : ι → ℝ) (i_max : ι)
     (h_max : ∀ j, j ≠ i_max → s j < s i_max) (j : ι) (hj : j ≠ i_max) :
     ∀ ε > 0, ∃ α₀ : ℝ, ∀ α, α > α₀ → softmax s α j < ε := by
-  sorry
+  intro ε hε
+  exact ⟨log ε / (s j - s i_max), fun α hα =>
+    lt_of_le_of_lt (softmax_le_exp_diff s α j i_max)
+      (exp_mul_neg_lt _ (sub_neg.mpr (h_max j hj)) ε hε α hα)⟩
 
 end SoftmaxLimit
 
@@ -1456,16 +1625,71 @@ theorem ratio_implies_pairwiseIIA (cf : ChoiceFn A)
 
 /-- (c) → (a): Pairwise IIA implies ratio form (@cite{luce-1959}, Appendix 1).
     The ratio scale is constructed by fixing a reference element x₀ and
-    setting v(x) = P(x, {x, x₀}) / P(x₀, {x, x₀}). -/
-theorem pairwiseIIA_implies_ratio (cf : ChoiceFn A)
-    (_h : cf.hasPairwiseIIA) : cf.hasRatioScale := by
-  sorry -- TODO: construct v from pairwise probabilities and fixed reference
+    setting v(x) = P(x, {x, x₀}) / P(x₀, {x, x₀}). Requires normalization
+    (probabilities sum to 1) and strict positivity for elements in the choice set. -/
+theorem pairwiseIIA_implies_ratio [Inhabited A] (cf : ChoiceFn A)
+    (hIIA : cf.hasPairwiseIIA)
+    (hsum : ∀ (T : Finset A), T.Nonempty → ∑ a ∈ T, cf.prob T a = 1)
+    (hpos : ∀ (T : Finset A) (a : A), a ∈ T → 0 < cf.prob T a) :
+    cf.hasRatioScale := by
+  set x₀ := (default : A)
+  set v := fun a => cf.prob {a, x₀} a / cf.prob {a, x₀} x₀ with hv_def
+  have hv_pos : ∀ a, 0 < v a := fun a =>
+    div_pos (hpos _ a (mem_insert.mpr (Or.inl rfl))) (hpos _ x₀ (by simp))
+  have ratio_mul : ∀ (T : Finset A) (a b : A), a ∈ T → b ∈ T →
+      cf.prob T a * cf.prob {b, x₀} b * cf.prob {a, x₀} x₀ =
+      cf.prob T b * cf.prob {a, x₀} a * cf.prob {b, x₀} x₀ := by
+    intro T a b ha hb
+    set T' := insert x₀ T
+    have ha' : a ∈ T' := mem_insert_of_mem ha
+    have hb' : b ∈ T' := mem_insert_of_mem hb
+    have hx₀' : x₀ ∈ T' := mem_insert_self x₀ T
+    have hT := hIIA T a b ha hb
+    have hT'ab := hIIA T' a b ha' hb'
+    have hT'ax₀ := hIIA T' a x₀ ha' hx₀'
+    have hT'bx₀ := hIIA T' b x₀ hb' hx₀'
+    have hB : cf.prob T' a * cf.prob {a, x₀} x₀ * cf.prob {b, x₀} b =
+              cf.prob T' b * cf.prob {b, x₀} x₀ * cf.prob {a, x₀} a := by
+      linear_combination cf.prob {b, x₀} b * hT'ax₀ - cf.prob {a, x₀} a * hT'bx₀
+    have hA_mul : (cf.prob T a * cf.prob T' b - cf.prob T b * cf.prob T' a) *
+                  cf.prob {a, b} b = 0 := by
+      linear_combination cf.prob T' b * hT - cf.prob T b * hT'ab
+    have hA : cf.prob T a * cf.prob T' b = cf.prob T b * cf.prob T' a := by
+      rcases mul_eq_zero.mp hA_mul with h | h
+      · linarith
+      · exact absurd h (ne_of_gt (hpos _ b (by simp)))
+    have hT'b_ne : cf.prob T' b ≠ 0 := ne_of_gt (hpos T' b hb')
+    have h1 : cf.prob T' b * (cf.prob T a * cf.prob {b, x₀} b * cf.prob {a, x₀} x₀) =
+              cf.prob T' b * (cf.prob T b * cf.prob {a, x₀} a * cf.prob {b, x₀} x₀) := by
+      linear_combination cf.prob {b, x₀} b * cf.prob {a, x₀} x₀ * hA + cf.prob T b * hB
+    exact mul_left_cancel₀ hT'b_ne h1
+  refine ⟨v, hv_pos, fun T a ha => ?_⟩
+  have hT_ne : T.Nonempty := ⟨a, ha⟩
+  have hsum_v_pos : 0 < ∑ b ∈ T, v b :=
+    Finset.sum_pos (fun b _ => hv_pos b) hT_ne
+  rw [eq_div_iff (ne_of_gt hsum_v_pos)]
+  have swap : ∀ b ∈ T, cf.prob T a * v b = v a * cf.prob T b := by
+    intro b hb
+    simp only [hv_def]
+    have hrm := ratio_mul T a b ha hb
+    have hne_a : cf.prob {a, x₀} x₀ ≠ 0 := ne_of_gt (hpos _ x₀ (by simp))
+    have hne_b : cf.prob {b, x₀} x₀ ≠ 0 := ne_of_gt (hpos _ x₀ (by simp))
+    field_simp
+    linarith
+  calc cf.prob T a * ∑ b ∈ T, v b
+      = ∑ b ∈ T, cf.prob T a * v b := mul_sum T v (cf.prob T a)
+    _ = ∑ b ∈ T, v a * cf.prob T b := sum_congr rfl swap
+    _ = v a * ∑ b ∈ T, cf.prob T b := (mul_sum T (cf.prob T) (v a)).symm
+    _ = v a * 1 := by rw [hsum T hT_ne]
+    _ = v a := mul_one _
 
 /-- **Axiom 1 equivalence** (@cite{luce-1959}, Appendix 1):
-    Ratio form ↔ pairwise IIA. -/
-theorem axiom1_ratio_iff_pairwiseIIA (cf : ChoiceFn A) :
+    Ratio form ↔ pairwise IIA (under normalization and positivity). -/
+theorem axiom1_ratio_iff_pairwiseIIA [Inhabited A] (cf : ChoiceFn A)
+    (hsum : ∀ (T : Finset A), T.Nonempty → ∑ a ∈ T, cf.prob T a = 1)
+    (hpos : ∀ (T : Finset A) (a : A), a ∈ T → 0 < cf.prob T a) :
     cf.hasRatioScale ↔ cf.hasPairwiseIIA :=
-  ⟨ratio_implies_pairwiseIIA cf, pairwiseIIA_implies_ratio cf⟩
+  ⟨ratio_implies_pairwiseIIA cf, fun h => pairwiseIIA_implies_ratio cf h hsum hpos⟩
 
 end Appendix1
 
