@@ -17,29 +17,39 @@ exam scenario on strategic quantifier choice.
 
 1. **Semantic measure**: "more than 110" > "more than 100" for goal "success"
    (because "more than 110" concentrates probability mass in goal-worlds)
-2. **Pragmatic reversal**: with 90% enrichment to "approximately M", the ordering
-   flips — "more than 100" becomes pragmatically stronger
-3. **Exam scenario**: difficulty metric predicts quantifier weakening (all→most→some)
+2. **Pragmatic reversal**: with 90% enrichment, the ordering
+   flips — "more than 100" becomes pragmatically stronger (C&F Eq. 25)
+3. **REF case study**: universities use round "top M" claims and prefer
+   the ranking measure on which they score better (C&F §5)
+4. **Exam scenario**: difficulty metric predicts quantifier weakening (all→most→some)
+
+## Methodology
+
+All ordinal comparisons use Bayes factor ratios (exact ℚ arithmetic),
+which are equivalent to comparing argStr values since log is monotone.
+This avoids dependence on log approximations.
 
 -/
 
 namespace Phenomena.Persuasion.Studies.CumminsFranke2021
 
 open RSA.ArgumentativeStrength
-open RSA.InformationTheory
 open RSA.Domains.Quantity
 open Semantics.Lexical.Numeral
 
 
 -- ============================================================
--- Section 1: Modified Numeral Semantics
+-- Section 1: Modified Numeral Semantics (Grounding)
 -- ============================================================
 
 /-- "More than M" is equivalent to lower-bound meaning at M+1.
 
 moreThan(M)(n) = true ↔ n > M ↔ n ≥ M+1 = lowerBound(M+1)(n)
 
-Uses the canonical `moreThanMeaning` from Numeral.Semantics. -/
+These theorems ground the conference scenario's semantics in the
+canonical `moreThanMeaning` from Numeral.Semantics. The conference
+scenario (§2) uses probability counts directly for tractability, but
+the underlying denotation is the same. -/
 theorem moreThan_from_lowerBound_zero (n : Nat) :
     moreThanMeaning 0 n = LowerBound.meaning .one n := by
   simp [moreThanMeaning, maxMeaning, NumeralTheory.meaning, LowerBound, BareNumeral.toNat]
@@ -57,115 +67,108 @@ theorem moreThan_from_lowerBound_two (n : Nat) :
 
 
 -- ============================================================
--- Section 2: Conference Scenario (C&F §4, Eqs. 17, 25)
+-- Section 2: Conference Scenario — Semantic (C&F §4, Eq. 17, p. 7)
 -- ============================================================
 
--- Conference scenario: 0..200 attendees, uniform prior.
--- Success = "more than 120 attend"
-
-/-- Number of worlds: cardinalities 0 through 200 -/
-abbrev numWorlds : Nat := 201
-
-/-- Goal: conference is a success iff more than 120 attend -/
-def conferenceSuccess (w : Fin numWorlds) : Bool := w.val > 120
+-- Conference scenario: attendees uniformly distributed on [0, 200].
+-- Success goal G: more than 120 attend.
+-- C&F use continuous uniform, so ¬G range [0, 120] has measure 120.
 
 /-- Conference argumentative goal -/
-def conferenceGoal : ArgumentativeGoal (Fin numWorlds) :=
-  ⟨conferenceSuccess⟩
-
-/-- Number of goal worlds: 121.200 = 80 worlds -/
-def numGoalWorlds : Nat := 80
-
-/-- Number of non-goal worlds: 0.120 = 121 worlds -/
-def numNonGoalWorlds : Nat := 121
+def conferenceGoal : ArgumentativeGoal (Fin 201) :=
+  ⟨fun w => w.val > 120⟩
 
 -- Utterance: "more than 100"
 
-/-- Worlds where "more than 100" is true: 101.200 = 100 worlds -/
-def moreThan100_trueWorlds : Nat := 100
+/-- P("more than 100" | G) = 1: all goal-worlds (value > 120) satisfy value > 100. -/
+def p_mt100_givenG : ℚ := 1
 
-/-- P("more than 100" | G): among goal worlds (121.200), all 80 satisfy >100 -/
-def p_mt100_givenG : ℚ := 80 / 80  -- = 1
-
-/-- P("more than 100" | ¬G): among non-goal worlds (0.120), those >100 are 101.120 = 20 -/
-def p_mt100_givenNotG : ℚ := 20 / 121
+/-- P("more than 100" | ¬G) = 20/120 = 1/6: among ¬G worlds (value in [0, 120]),
+values > 100 span (100, 120], measure 20 out of 120. (C&F p. 7) -/
+def p_mt100_givenNotG : ℚ := 1 / 6
 
 -- Utterance: "more than 110"
 
-/-- P("more than 110" | G): among goal worlds (121.200), all 80 satisfy >110 -/
-def p_mt110_givenG : ℚ := 80 / 80  -- = 1
+/-- P("more than 110" | G) = 1: all goal-worlds satisfy value > 110. -/
+def p_mt110_givenG : ℚ := 1
 
-/-- P("more than 110" | ¬G): among non-goal worlds (0.120), those >110 are 111.120 = 10 -/
-def p_mt110_givenNotG : ℚ := 10 / 121
+/-- P("more than 110" | ¬G) = 10/120 = 1/12: among ¬G worlds,
+values > 110 span (110, 120], measure 10 out of 120. (C&F p. 7) -/
+def p_mt110_givenNotG : ℚ := 1 / 12
 
--- Semantic argumentative strength (C&F Eq. 17)
+/-- "More than 110" has a higher Bayes factor than "more than 100" for the conference goal.
 
-/-- argStr("more than 100", success) -/
-def argStr_moreThan100 : ℚ := argStr p_mt100_givenG p_mt100_givenNotG
-
-/-- argStr("more than 110", success) -/
-def argStr_moreThan110 : ℚ := argStr p_mt110_givenG p_mt110_givenNotG
-
-/-- "More than 110" is semantically stronger than "more than 100" for the conference goal.
+BF("mt110") = 1/(1/12) = 12 > BF("mt100") = 1/(1/6) = 6.
 
 This is C&F's key semantic result: the more precise (higher M) expression
-has higher argStr because it has lower P(u|¬G). -/
+has higher argStr because it has lower P(u|¬G). (C&F p. 7) -/
 theorem moreThan110_semantically_stronger :
-    argStr_moreThan110 > argStr_moreThan100 := by native_decide
+    bayesFactor p_mt110_givenG p_mt110_givenNotG >
+    bayesFactor p_mt100_givenG p_mt100_givenNotG := by native_decide
 
-/-- Both utterances have positive argumentative strength for the goal -/
+/-- Both utterances have positive argumentative strength for the goal. -/
 theorem moreThan100_supports_goal :
     hasPositiveArgStr p_mt100_givenG p_mt100_givenNotG := by native_decide
 
 theorem moreThan110_supports_goal :
     hasPositiveArgStr p_mt110_givenG p_mt110_givenNotG := by native_decide
 
--- Bayes factor comparison (ordinal, no log needed)
-theorem moreThan110_higher_bayesFactor :
-    bayesFactor p_mt110_givenG p_mt110_givenNotG >
-    bayesFactor p_mt100_givenG p_mt100_givenNotG := by native_decide
-
 
 -- ============================================================
--- Section 3: Pragmatic Enrichment (C&F Eq. 25)
+-- Section 3: Pragmatic Enrichment (C&F §4, Eq. 25, pp. 7–8)
 -- ============================================================
 
--- Pragmatic enrichment: "more than M" is assertable iff the speaker
--- believes it's approximately true (90% enrichment assumption from C&F).
--- With enrichment, "more than 100" is assertable in a wider range of non-goal
--- worlds than "more than 110", which reverses the ordering.
+-- C&F's illustrative enrichment assumptions (p. 7):
+-- • 90% probability of pragmatic enrichment
+-- • "more than 100" enriched to "not more than 150" (assertable range: (100, 150])
+-- • "more than 110" enriched to "not more than 120" (assertable range: (110, 120])
 
-/-- Assertability of "more than 100" given G: 60 out of 80 goal worlds
-(101.160 enriched range intersected with 121.200) -/
-def p_mt100_assertable_givenG : ℚ := 60 / 80
+/-- P_A("more than 100" | G):
+90% × P(value ∈ (100,150] | value ∈ (120,200]) + 10% × P(value > 100 | value ∈ (120,200])
+= 90% × 30/80 + 10% × 1 = 27/80 + 8/80 = 35/80. (C&F p. 8) -/
+def p_mt100_assertable_givenG : ℚ := 35 / 80
 
-/-- Assertability of "more than 100" given ¬G: 20 out of 121 non-goal worlds
-(enriched range 91.110 intersected with 0.120) -/
-def p_mt100_assertable_givenNotG : ℚ := 20 / 121
+/-- P_A("more than 100" | ¬G) = 1/6:
+Both enriched and literal paths give the same probability, since
+(100,150] ∩ [0,120] = (100,120] and literal >100 in [0,120] is also (100,120].
+Total: 90% × 1/6 + 10% × 1/6 = 1/6. (C&F p. 8) -/
+def p_mt100_assertable_givenNotG : ℚ := 1 / 6
 
-/-- Assertability of "more than 110" given G: 60 out of 80 goal worlds
-(111.170 enriched range intersected with 121.200) -/
-def p_mt110_assertable_givenG : ℚ := 60 / 80
+/-- P_A("more than 110" | G) = 1/10:
+90% × P(value ∈ (110,120] | value ∈ (120,200]) + 10% × P(value > 110 | value ∈ (120,200])
+= 90% × 0 + 10% × 1 = 1/10.
+The enriched range (110,120] doesn't intersect the goal range (120,200]. (C&F p. 8) -/
+def p_mt110_assertable_givenG : ℚ := 1 / 10
 
-/-- Assertability of "more than 110" given ¬G: 10 out of 121 non-goal worlds
-(enriched range 101.120 intersected with 0.120) -/
-def p_mt110_assertable_givenNotG : ℚ := 10 / 121
+/-- P_A("more than 110" | ¬G) = 1/12:
+Both paths give P(value > 110 | value ∈ [0,120]) = 10/120 = 1/12.
+Total: 90% × 1/12 + 10% × 1/12 = 1/12. (C&F p. 8) -/
+def p_mt110_assertable_givenNotG : ℚ := 1 / 12
 
-/-- pragArgStr("more than 100", success) -/
-def pragArgStr_moreThan100 : ℚ :=
-  pragArgStr p_mt100_assertable_givenG p_mt100_assertable_givenNotG
+/-- PRAGMATIC REVERSAL: "more than 100" becomes pragmatically stronger.
 
-/-- pragArgStr("more than 110", success) -/
-def pragArgStr_moreThan110 : ℚ :=
-  pragArgStr p_mt110_assertable_givenG p_mt110_assertable_givenNotG
+BF_prag("mt100") = (35/80)/(1/6) = 21/8 = 2.625
+BF_prag("mt110") = (1/10)/(1/12) = 6/5 = 1.2
 
-/-- With same assertability in G, the one with lower assertability in ¬G
-is pragmatically stronger. In this simplified model both have identical
-assertability ratios — the reversal depends on the enrichment asymmetry.
+This is C&F's central result (p. 8). Semantically mt110 > mt100, but
+pragmatically mt100 > mt110. The enrichment of "more than 110" to
+"not more than 120" makes it nearly unassertable in goal-worlds (P_A = 1/10),
+while "more than 100" enriched to "not more than 150" retains substantial
+assertability (P_A = 35/80). -/
+theorem pragmatic_reversal :
+    bayesFactor p_mt100_assertable_givenG p_mt100_assertable_givenNotG >
+    bayesFactor p_mt110_assertable_givenG p_mt110_assertable_givenNotG := by native_decide
 
-C&F's actual reversal uses a specific enrichment model where "more than 100"
-gets a wider enriched range. We verify the structural property: when
-P_a(u|¬G) increases (through wider enrichment), argStr decreases. -/
+/-- Both utterances retain positive pragmatic argumentative strength. -/
+theorem moreThan100_pragmatically_supports_goal :
+    hasPositiveArgStr p_mt100_assertable_givenG p_mt100_assertable_givenNotG := by native_decide
+
+theorem moreThan110_pragmatically_supports_goal :
+    hasPositiveArgStr p_mt110_assertable_givenG p_mt110_assertable_givenNotG := by native_decide
+
+/-- Structural theorem: when P_a(u|¬G) increases (through wider enrichment),
+the Bayes factor decreases and thus argStr decreases. This is the mechanism
+behind the pragmatic reversal. -/
 theorem wider_enrichment_weakens_argStr
     (pG : ℚ) (pNotG_narrow pNotG_wide : ℚ)
     (hG : 0 < pG) (hNarrow : 0 < pNotG_narrow) (hWide : 0 < pNotG_wide)
@@ -255,12 +258,6 @@ theorem quantifier_ordering_matches_scale :
 -- Section 5: REF Case Study (C&F §5, examples 29–38, p. 12)
 -- ============================================================
 
-/-- Framing direction: positive (high success) or negative (low success) -/
-inductive FramingDirection where
-  | positive   -- e.g., "X got most questions right"
-  | negative   -- e.g., "X got some questions wrong"
-  deriving DecidableEq, BEq, Repr
-
 /-- Claim type: absolute rank ("top M") or percentile ("top M per cent") -/
 inductive ClaimType where
   | absolute     -- "top M" (actual rank ≤ M)
@@ -290,7 +287,7 @@ def topMExamples : List TopMDatum :=
   , ⟨"Leeds",         10,  10, .absolute,   true, "Power"⟩     -- (34) top 10
   , ⟨"Royal Holloway", 26, 25, .percentile, true, "Quality"⟩  -- (35) top 25 per cent
   , ⟨"Swansea",       26,  30, .absolute,   true, "GPA"⟩       -- (36) top 30
-  , ⟨"Essex",         20,  20, .absolute,   true, "Power"⟩     -- (37) top 20
+  , ⟨"Essex",         20,  20, .absolute,   true, "Intensity"⟩ -- (37) top 20
   , ⟨"Strathclyde",   18,  20, .absolute,   true, "Intensity"⟩ -- (38) Top 20
   ]
 
@@ -312,23 +309,40 @@ theorem h1_percentile_truthful :
 
 /-- H2 data: ranking measure preference (C&F p. 13).
 
-Of 39 institutions with data, 19 ranked higher on GPA and 19 on Power.
-Institutions systematically prefer the measure on which they rank better. -/
-structure RankPreferenceData where
-  totalInstitutions : Nat
-  citedPreferredMeasure : Nat
-  citedNonPreferredMeasure : Nat
+Of 39 institutions with data, 19 ranked higher on GPA and 19 on power
+(Durham 20th on both). Institutions systematically prefer the measure
+on which they rank better. -/
+structure RankPreferenceGroup where
+  groupSize : Nat
+  citedPreferred : Nat
+  citedNonPreferred : Nat
+  citedNeither : Nat
   deriving Repr
 
-/-- H2 summary: institutions cite the measure giving them a better rank -/
-def h2_data : RankPreferenceData :=
-  { totalInstitutions := 19
-    citedPreferredMeasure := 15
-    citedNonPreferredMeasure := 4 }
+/-- GPA-preferred group: 9 cite GPA, 0 cite power, 10 cite neither.
+(p < 0.01, sign test; C&F p. 13) -/
+def h2_gpaGroup : RankPreferenceGroup :=
+  { groupSize := 19, citedPreferred := 9, citedNonPreferred := 0, citedNeither := 10 }
 
-/-- H2: majority cite their preferred measure -/
-theorem h2_majority_preferred :
-    h2_data.citedPreferredMeasure > h2_data.citedNonPreferredMeasure := by native_decide
+/-- Power-preferred group: 11 cite power, 2 cite GPA, 6 cite neither.
+(p < 0.05, sign test; C&F p. 13) -/
+def h2_powerGroup : RankPreferenceGroup :=
+  { groupSize := 19, citedPreferred := 11, citedNonPreferred := 2, citedNeither := 6 }
+
+/-- H2: in each group, more institutions cite their preferred measure
+than the non-preferred one. -/
+theorem h2_gpa_group_prefers_gpa :
+    h2_gpaGroup.citedPreferred > h2_gpaGroup.citedNonPreferred := by native_decide
+
+theorem h2_power_group_prefers_power :
+    h2_powerGroup.citedPreferred > h2_powerGroup.citedNonPreferred := by native_decide
+
+/-- H2: group counts are internally consistent. -/
+theorem h2_groups_consistent :
+    h2_gpaGroup.citedPreferred + h2_gpaGroup.citedNonPreferred + h2_gpaGroup.citedNeither
+      = h2_gpaGroup.groupSize ∧
+    h2_powerGroup.citedPreferred + h2_powerGroup.citedNonPreferred + h2_powerGroup.citedNeither
+      = h2_powerGroup.groupSize := by native_decide
 
 
 -- ============================================================
@@ -337,50 +351,62 @@ theorem h2_majority_preferred :
 
 /-- Key finding (Exp 1): adjective choice matches framing condition.
 
-92% choose "right" in high-success condition; ~10% in low-success.
-This confirms speakers attend to argumentative goals. -/
+92% choose "right" in high-success condition (β = 0.99, 95% CrI [0.96, 1.0]);
+18% in low-success (β = 0.10, 95% CrI [0.05, 0.17]).
+This confirms speakers attend to argumentative goals.
+(Macuch Silva et al. p. 505) -/
 def exp1_adjective_rate_highSuccess : ℚ := 92 / 100
-def exp1_adjective_rate_lowSuccess : ℚ := 10 / 100
+def exp1_adjective_rate_lowSuccess : ℚ := 18 / 100
 
 theorem exp1_adjective_matches_condition :
     exp1_adjective_rate_highSuccess > 3/4 ∧
     exp1_adjective_rate_lowSuccess < 1/4 := by
   constructor <;> native_decide
 
-/-- Key finding (Exp 1): "some" and "most" dominate quantifier choices.
+/-- Key finding (Exp 1): "some" and "most" dominate quantifier choices
+for referring to students, in both conditions.
 
-Together they account for ~76% of responses, showing speakers avoid
-the extreme quantifiers ("all", "none") even when truthful. -/
-def exp1_some_most_proportion : ℚ := 76 / 100
+High success: some 38% + most 40% = 78%.
+Low success: some 38% + most 36% = 74%.
+(Macuch Silva et al. p. 505) -/
+def exp1_some_most_highSuccess : ℚ := 78 / 100
+def exp1_some_most_lowSuccess : ℚ := 74 / 100
 
 theorem exp1_some_most_dominant :
-    exp1_some_most_proportion > 1/2 := by native_decide
+    exp1_some_most_highSuccess > 1/2 ∧
+    exp1_some_most_lowSuccess > 1/2 := by
+  constructor <;> native_decide
 
 /-- Key finding (Exp 2): positive framing bias.
 
-74% of free-form descriptions framed the result positively,
-regardless of the actual proportion correct. -/
+74% of free-form descriptions framed the result positively
+(across conditions). (Macuch Silva et al. p. 514) -/
 def exp2_positive_bias_rate : ℚ := 74 / 100
 
 theorem exp2_positive_bias :
     exp2_positive_bias_rate > 1/2 := by native_decide
 
-/-- Experiment 2 strategy breakdown -/
-structure Exp2FramingDatum where
+/-- Experiment 2 expression strategy breakdown (Macuch Silva et al. p. 512).
+Categories based on which referents receive quantity expressions. -/
+structure Exp2StrategyDatum where
   strategy : String
   proportion : ℚ
   deriving Repr
 
-/-- Experiment 2 strategy proportions -/
-def exp2_strategies : List Exp2FramingDatum :=
-  [ ⟨"quantifier + numeral", 38 / 100⟩
-  , ⟨"pure numeral",         31 / 100⟩
-  , ⟨"pure quantifier",      22 / 100⟩
-  , ⟨"other",                 9 / 100⟩
+/-- Experiment 2 strategy proportions.
+55% use quantity expressions for both students and questions;
+33% use a quantity expression for students only;
+9% use no quantity expression at all;
+3% use a quantity expression for questions only. -/
+def exp2_strategies : List Exp2StrategyDatum :=
+  [ ⟨"student + question quantity",  55 / 100⟩
+  , ⟨"student quantity only",        33 / 100⟩
+  , ⟨"no quantity expression",        9 / 100⟩
+  , ⟨"question quantity only",        3 / 100⟩
   ]
 
-/-- Quantifier + numeral is the most common single strategy -/
-theorem exp2_quant_numeral_most_common :
-    (38 : ℚ) / 100 > 31 / 100 := by native_decide
+/-- Dual-reference quantity expressions are the most common strategy -/
+theorem exp2_dual_quantity_most_common :
+    (55 : ℚ) / 100 > 33 / 100 := by native_decide
 
 end Phenomena.Persuasion.Studies.CumminsFranke2021

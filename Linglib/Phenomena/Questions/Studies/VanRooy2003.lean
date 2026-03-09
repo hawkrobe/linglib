@@ -135,6 +135,10 @@ inductive NewspaperWorld
   | both            -- both A and B sell
   deriving DecidableEq, BEq, Repr
 
+instance : LawfulBEq NewspaperWorld where
+  eq_of_beq {a b} h := by cases a <;> cases b <;> first | rfl | exact absurd h (by decide)
+  rfl := by intro a; cases a <;> decide
+
 instance : Fintype NewspaperWorld :=
   ⟨{.shopA_only, .shopB_only, .both}, by intro x; cases x <;> simp⟩
 
@@ -384,5 +388,215 @@ theorem newspaper_question_has_value :
     questionUtility newspaperDP [Shop.A, Shop.B]
       [λ w => sellsItalian w Shop.A, λ w => sellsItalian w Shop.B] > 0 := by
   native_decide
+
+
+/-! ## Resolution–Value Saturation
+
+The deepest mathematical connection between @cite{van-rooy-2003} and
+@cite{groenendijk-stokhof-1984}: **resolution of a question by a decision
+problem implies value saturation** — the question extracts all
+decision-relevant information, and coarsening from the G&S partition to
+Van Rooy's underspecified denotation is decision-theoretically free.
+
+### The algebraic heart
+
+Blackwell's theorem (proved in `Core.Partition`) uses sub-additivity of max:
+
+    max_a [Σ_w f(w,a)] ≤ Σ_w [max_a f(w,a)]
+
+This gives: finer partitions have higher `partitionValue`. But the
+inequality can be **tight**: if cell C has a dominant action a_dom
+(∀b, ∀w∈C: U(w,a_dom) ≥ U(w,b)), then a_dom achieves the pointwise
+maximum at every world, so max-of-sums = sum-of-maxes:
+
+    max_a [Σ_{w∈C} π(w)·U(w,a)]
+      ≥ Σ_{w∈C} π(w)·U(w,a_dom)          — choosing a = a_dom
+      = Σ_{w∈C} π(w)·max_b U(w,b)         — a_dom achieves max at each w
+      = Σ_{w∈C} [max_a π(w)·U(w,a)]       — when π ≥ 0
+      ≥ max_a [Σ_{w∈C} π(w)·U(w,a)]       — sub-additivity (Blackwell)
+
+The squeeze gives equality. Summing over cells:
+
+    partitionValue(Q) = partitionValue(Q_exact)
+
+**Resolution is exactly when Blackwell's sub-additivity inequality is
+tight at every cell.** This characterizes the "plateau" in the Blackwell
+ordering: all resolving partitions achieve the same maximal value.
+
+### Connection to Van Rooy's underspecified denotation
+
+Van Rooy's ⟦?xPx⟧^R with mention-some relevance produces cells that
+each resolve the questioner's DP. So the coarsening from G&S's three-cell
+partition (only-A, only-B, both) to Van Rooy's two-cell denotation
+(A-sells, B-sells) is decision-theoretically free: no information of
+value to the questioner is lost.
+
+This is the formal sense in which "Where can I buy an Italian newspaper?"
+need only mention one shop. -/
+
+
+/-! ### The G&S partition for the newspaper scenario -/
+
+/-- The G&S partition for "where can I buy an Italian newspaper?":
+two worlds are equivalent iff they have the same extension for
+"sells Italian newspapers." This gives three cells:
+{shopA_only}, {shopB_only}, {both}. -/
+def newspaperGS : QUD NewspaperWorld where
+  sameAnswer w v := (sellsItalian w Shop.A == sellsItalian v Shop.A) &&
+                    (sellsItalian w Shop.B == sellsItalian v Shop.B)
+  refl w := by cases w <;> native_decide
+  symm w v := by cases w <;> cases v <;> native_decide
+  trans w v u h1 h2 := by cases w <;> cases v <;> cases u <;> simp_all
+
+/-- The mention-some partition: two worlds are equivalent iff they give
+the same answer to "does SOME shop sell Italian newspapers?"
+This gives two cells: {shopA_only, shopB_only, both} vs ∅ (but all our
+worlds have a satisfier, so there's just one cell — trivial partition).
+
+For a non-trivial mention-some partition, we use a coarser grouping:
+worlds are equivalent iff they agree on whether shop A sells.
+This gives two cells: {shopA_only, both} and {shopB_only}. -/
+def newspaperMS_A : QUD NewspaperWorld where
+  sameAnswer w v := sellsItalian w Shop.A == sellsItalian v Shop.A
+  refl w := by cases w <;> native_decide
+  symm w v := by cases w <;> cases v <;> native_decide
+  trans w v u h1 h2 := by cases w <;> cases v <;> cases u <;> simp_all
+
+/-- The mention-some partition based on shop B. -/
+def newspaperMS_B : QUD NewspaperWorld where
+  sameAnswer w v := sellsItalian w Shop.B == sellsItalian v Shop.B
+  refl w := by cases w <;> native_decide
+  symm w v := by cases w <;> cases v <;> native_decide
+  trans w v u h1 h2 := by cases w <;> cases v <;> cases u <;> simp_all
+
+
+/-! ### Value saturation: concrete verification -/
+
+/-- The G&S partition (3 cells) and the mention-some-A partition (2 cells)
+achieve the **same** partitionValue for the newspaper DP.
+
+This is the concrete instance of value saturation: coarsening from the
+exhaustive partition to the mention-some partition loses nothing,
+because both resolve the DP. -/
+theorem newspaper_value_saturation_A :
+    QUD.partitionValue newspaperDP newspaperGS Finset.univ [Shop.A, Shop.B] =
+    QUD.partitionValue newspaperDP newspaperMS_A Finset.univ [Shop.A, Shop.B] := by
+  native_decide
+
+/-- Same for the shop-B mention-some partition. -/
+theorem newspaper_value_saturation_B :
+    QUD.partitionValue newspaperDP newspaperGS Finset.univ [Shop.A, Shop.B] =
+    QUD.partitionValue newspaperDP newspaperMS_B Finset.univ [Shop.A, Shop.B] := by
+  native_decide
+
+/-- Both mention-some partitions achieve the same value as the exact
+(identity) partition. This is the full value saturation: even the
+coarsest resolving partition extracts all decision-relevant information. -/
+theorem newspaper_value_saturation_exact :
+    QUD.partitionValue newspaperDP (QUD.exact (M := NewspaperWorld))
+      Finset.univ [Shop.A, Shop.B] =
+    QUD.partitionValue newspaperDP newspaperMS_A Finset.univ [Shop.A, Shop.B] := by
+  native_decide
+
+/-- Verification: the G&S partition also equals the exact partition's value.
+(Follows from the previous two, but verified independently.) -/
+theorem newspaper_GS_eq_exact :
+    QUD.partitionValue newspaperDP newspaperGS Finset.univ [Shop.A, Shop.B] =
+    QUD.partitionValue newspaperDP (QUD.exact (M := NewspaperWorld))
+      Finset.univ [Shop.A, Shop.B] := by
+  native_decide
+
+
+/-! ### Value saturation FAILS for the complete-information DP -/
+
+/-- For the complete-information DP (where knowing the exact world matters),
+the mention-some partition achieves STRICTLY LESS value than the G&S
+partition. Coarsening is no longer free — information is lost. -/
+theorem complete_info_value_NOT_saturated :
+    QUD.partitionValue (completeInformationDP (W := NewspaperWorld))
+      newspaperMS_A Finset.univ [NewspaperWorld.shopA_only, .shopB_only, .both] <
+    QUD.partitionValue (completeInformationDP (W := NewspaperWorld))
+      newspaperGS Finset.univ [NewspaperWorld.shopA_only, .shopB_only, .both] := by
+  native_decide
+
+
+/-! ### The underspecified denotation achieves value saturation -/
+
+/-- The cells of the underspecified denotation for the newspaper scenario. -/
+def newspaperUnderspecCells :=
+  underspecifiedDenotation
+    (mentionSomeRelevance sellsItalian [Shop.A, Shop.B])
+    [NewspaperWorld.shopA_only, .shopB_only, .both]
+
+/-- Every cell of the underspecified denotation (mention-some relevance)
+resolves the newspaper DP: after learning any answer, the questioner
+can act optimally.
+
+This is the bridge from Van Rooy's Op(P) construction to value saturation:
+Op(P) produces cells → cells resolve → value is saturated. -/
+theorem underspecified_all_cells_resolve :
+    newspaperUnderspecCells.all
+      (resolves newspaperDP
+        [NewspaperWorld.shopA_only, .shopB_only, .both] [Shop.A, Shop.B])
+      = true := by
+  native_decide
+
+
+/-! ### The General Theorem
+
+The concrete verifications above are instances of a general principle.
+We state it here; the proof combines Blackwell (one direction) with
+the resolution lower bound (the other direction). -/
+
+/-- **Resolution–Value Saturation Theorem** (general form).
+
+For a decision problem D with non-negative priors and utilities, and a
+partition Q where every cell resolves D:
+
+    partitionValue(Q, D) = partitionValue(Q_exact, D)
+
+Resolution marks the **plateau** in the Blackwell ordering: all resolving
+partitions achieve the maximal value, regardless of their granularity.
+
+**Proof sketch** (both directions):
+
+**(≤)** Blackwell: Q_exact refines Q, so partitionValue(Q_exact) ≥ partitionValue(Q).
+
+**(≥)** For each cell C of Q with dominant action a_dom:
+  - `max_a [Σ_{w∈C} π(w)·U(w,a)] ≥ Σ_{w∈C} π(w)·U(w,a_dom)` (choosing a_dom)
+  - `= Σ_{w∈C} π(w)·max_b U(w,b)` (a_dom achieves max at every w)
+  - `= Σ_{w∈C} max_a [π(w)·U(w,a)]` (when π ≥ 0, U ≥ 0)
+  - Summing over cells: partitionValue(Q) ≥ partitionValue(Q_exact)
+
+Combined: equality.
+
+TODO: Full Lean proof. The per-cell step requires showing foldl-max
+achieves f(a_dom) when a_dom is the greatest element. -/
+theorem resolution_value_saturation
+    {W : Type*} [Fintype W] [DecidableEq W]
+    {A : Type*} [DecidableEq A]
+    (dp : DecisionProblem W A) (q : QUD W) (actions : List A)
+    (hResolves : ∀ cell ∈ q.toCellsFinset Finset.univ,
+      ∃ a ∈ actions, ∀ b ∈ actions, ∀ w ∈ cell,
+        dp.utility w a ≥ dp.utility w b)
+    (hPrior : ∀ w, dp.prior w ≥ 0)
+    (hUtil : ∀ w a, dp.utility w a ≥ 0) :
+    QUD.partitionValue dp q Finset.univ actions =
+    QUD.partitionValue dp QUD.exact Finset.univ actions := by
+  sorry
+
+/-- **Corollary**: For a mention-some DP, the underspecified denotation
+(coarsened to a partition) achieves the same value as the full G&S
+partition. The mention-some question is decision-theoretically
+equivalent to the mention-all question.
+
+This is the mathematical core of Van Rooy's theory: the partition
+structure of a question should match the decision problem's resolution
+structure, and coarser-than-necessary partitions that still resolve
+lose nothing. -/
+theorem mentionSome_value_eq_mentionAll :
+    QUD.partitionValue newspaperDP newspaperMS_A Finset.univ [Shop.A, Shop.B] =
+    QUD.partitionValue newspaperDP newspaperGS Finset.univ [Shop.A, Shop.B] :=
+  newspaper_value_saturation_A.symm
 
 end Phenomena.Questions.Studies.VanRooy2003

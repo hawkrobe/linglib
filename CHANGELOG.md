@@ -1,5 +1,27 @@
 # Changelog
 
+## [0.229.68] - 2026-03-09
+
+### Added
+- **VanRooy2003.lean**: Resolution–Value Saturation theorems connecting Van Rooy's underspecified denotation to G&S partition semantics. Concrete `native_decide` proofs that mention-some partitions achieve the same `partitionValue` as the exhaustive G&S partition and the exact (identity) partition for goal-directed DPs. Proof that saturation FAILS for complete-information DPs (non-triviality). General theorem statement (sorry'd) with full proof sketch in docstring. Corollary `mentionSome_value_eq_mentionAll` derived from concrete verification
+
+## [0.229.67] - 2026-03-09
+
+### Fixed
+- **CumminsFranke2021.lean**: Fix all four fabricated pragmatic assertability values (§3) to match C&F pp. 7–8; add `pragmatic_reversal` theorem demonstrating the actual reversal. Fix H2 data (split into `h2_gpaGroup`/`h2_powerGroup` with correct values from p. 13). Fix Macuch Silva Exp 1 low-success adjective rate (18% not 10%). Fix Exp 2 strategy breakdown to match paper categories (p. 512). Fix Essex rankingMeasure "Power" → "Intensity" (p. 13). Switch semantic denominators from 121 (discrete) to 120 (continuous uniform, matching paper). Use Bayes factor comparisons (exact ℚ) instead of log2Approx-dependent argStr comparisons
+
+## [0.229.66] - 2026-03-09
+
+### Added
+- **Kamp1975.lean § 5**: Concrete witnesses for each class in Kamp's adjective hierarchy (`grayK` predicative, `fakeK` privative, `skillfulK` affirmative/non-extensional, `allegedK` non-subsective) with proved class-membership theorems replacing informal string-based data
+- **Partee2010.lean**: New study file formalizing @cite{partee-2010} "Privative Adjectives: Subsective plus Coercion". Core theorem `any_adj_subsective_under_selfcoercion` (any adjective is subsective when the noun is coerced to include its own extension), revised 3-class hierarchy (`RevisedClass`), Polish NP-splitting evidence (Nowak 2000)
+
+### Changed
+- **references.bib**: Fix `partee-2001` → `partee-2010` (manuscript circulated 2001, published 2010 in Brill festschrift for Kamp). Fix author to "Partee, Barbara H.", add full publication metadata (booktitle, editor, publisher, pages), update `@cite` references across codebase
+
+### Removed
+- **Adjectives.lean**: Deleted `Phenomena/Gradability/Adjectives.lean` — informal string-labeled entailment data with tautological `native_decide` "theorems". Its empirical content is now captured by proved class-membership witnesses in `Kamp1975.lean` § 5 and the formal hierarchy definitions
+
 ## [0.229.65] - 2026-03-09
 
 ### Added

@@ -308,10 +308,10 @@ theorem kamp_strict_implies_klein {E C : Type*}
     from the literature (e.g., "gray cat entails cat" ↔ `isAffirmativeK`,
     "skillful surgeon + violinist ⊬ skillful violinist" ↔ `¬isExtensionalK`).
 
-    @cite{partee-2001} argues that the privative class should be eliminated
+    @cite{partee-2010} argues that the privative class should be eliminated
     in favor of subsective + noun coercion. The witness `fakeK` below
-    models the traditional analysis; a `Partee2001.lean` study file could
-    formalize the coercion alternative. -/
+    models the traditional analysis; see `Partee2010.lean` for the
+    coercion reanalysis. -/
 
 section Witnesses
 
@@ -345,9 +345,8 @@ example : isAffirmativeK grayK := predicativeK_implies_affirmativeK gray_predica
     Models @cite{kamp-1975} definition (5). Entailment pattern:
     "fake gun" entails "not a gun".
 
-    @cite{partee-2001} argues this class should be reanalyzed as
-    subsective with noun coercion: "fake gun" ⊆ gun* where
-    gun* = real guns ∪ fake guns. -/
+    @cite{partee-2010} argues this class should be reanalyzed as
+    subsective with noun coercion — see `Partee2010.lean`. -/
 def fakeK : AdjMeaningK W2 E3 := λ N w x =>
   (match x with | .b => true | _ => false) && !N w x
 
