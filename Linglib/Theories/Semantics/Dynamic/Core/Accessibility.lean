@@ -295,6 +295,320 @@ theorem foldl_append_introduce {E : Type*} (drefs1 drefs2 : List Nat) :
   rw [List.foldl_append, foldl_dseq_shift]
 
 -- ════════════════════════════════════════════════════════════════
+-- § 7b. Freshness Invariance (FreshInv)
+-- ════════════════════════════════════════════════════════════════
+
+/-! When dref `n` does not occur in expression `K`, the DRS
+`interp rels K` is semantically invariant under `Assign.update` at
+slot `n`: updating slot `n` in both input and output preserves the
+relation (FreshFwd), and any output from an updated input factors
+through an un-updated intermediate (FreshBack). -/
+
+section FreshInv
+
+variable {E : Type*}
+
+private theorem update_comm (g : Assign E) (n m : Nat) (e₁ e₂ : E) (h : n ≠ m) :
+    (g.update n e₁).update m e₂ = (g.update m e₂).update n e₁ := by
+  funext k; simp only [Assign.update]; split <;> split <;> simp_all
+
+private theorem occursAny_false (n : Nat) (cs : List DRSExpr)
+    (h : occurs.occursAny n cs = false) : ∀ c ∈ cs, occurs n c = false := by
+  induction cs with
+  | nil => intro c hc; nomatch hc
+  | cons c cs ih =>
+    simp only [occurs.occursAny, Bool.or_eq_false_iff] at h
+    intro c' hc'
+    cases hc' with
+    | head => exact h.1
+    | tail _ hm => exact ih h.2 c' hm
+
+private theorem freshFwd_dseq {D₁ D₂ : DRS (Assign E)} {n : Nat}
+    (h₁ : ∀ g k e, D₁ g k → D₁ (g.update n e) (k.update n e))
+    (h₂ : ∀ g k e, D₂ g k → D₂ (g.update n e) (k.update n e)) :
+    ∀ g k : Assign E, ∀ e : E,
+    dseq D₁ D₂ g k → dseq D₁ D₂ (g.update n e) (k.update n e) :=
+  fun _ _ e ⟨m, hD₁, hD₂⟩ => ⟨m.update n e, h₁ _ m e hD₁, h₂ m _ e hD₂⟩
+
+private theorem freshBack_dseq {D₁ D₂ : DRS (Assign E)} {n : Nat}
+    (h₁ : ∀ g k e, D₁ (g.update n e) k → ∃ k', D₁ g k' ∧ k = k'.update n e)
+    (h₂ : ∀ g k e, D₂ (g.update n e) k → ∃ k', D₂ g k' ∧ k = k'.update n e) :
+    ∀ g k : Assign E, ∀ e : E,
+    dseq D₁ D₂ (g.update n e) k →
+    ∃ k', dseq D₁ D₂ g k' ∧ k = k'.update n e := by
+  intro g k e ⟨m, hD₁, hD₂⟩
+  obtain ⟨m', hD₁', rfl⟩ := h₁ g m e hD₁
+  obtain ⟨k', hD₂', rfl⟩ := h₂ m' k e hD₂
+  exact ⟨k', ⟨m', hD₁', hD₂'⟩, rfl⟩
+
+private theorem freshInvConds (rels : RelInterp E) (cs : List DRSExpr) (n : Nat)
+    (hfwd : ∀ c ∈ cs, ∀ g k : Assign E, ∀ e,
+      interp rels c g k → interp rels c (g.update n e) (k.update n e))
+    (hback : ∀ c ∈ cs, ∀ g k : Assign E, ∀ e,
+      interp rels c (g.update n e) k →
+      ∃ k', interp rels c g k' ∧ k = k'.update n e) :
+    (∀ g k : Assign E, ∀ e,
+      interp.interpConds rels cs g k →
+      interp.interpConds rels cs (g.update n e) (k.update n e)) ∧
+    (∀ g k : Assign E, ∀ e,
+      interp.interpConds rels cs (g.update n e) k →
+      ∃ k', interp.interpConds rels cs g k' ∧ k = k'.update n e) := by
+  induction cs with
+  | nil =>
+    simp only [interp.interpConds]
+    constructor
+    · intro g k e h; subst h; rfl
+    · intro g k e h; exact ⟨g, rfl, h.symm⟩
+  | cons c cs ih =>
+    simp only [interp.interpConds]
+    obtain ⟨ihf, ihb⟩ := ih
+      (fun c' hc' => hfwd c' (List.mem_cons_of_mem _ hc'))
+      (fun c' hc' => hback c' (List.mem_cons_of_mem _ hc'))
+    exact ⟨freshFwd_dseq (hfwd c List.mem_cons_self) ihf,
+           freshBack_dseq (hback c List.mem_cons_self) ihb⟩
+
+private theorem freshFwd_assign (n d : Nat) (hnd : n ≠ d)
+    (g k : Assign E) (e : E)
+    (h : ∃ v : E, k = g.update d v) :
+    ∃ v : E, k.update n e = (g.update n e).update d v := by
+  obtain ⟨v, rfl⟩ := h
+  exact ⟨v, update_comm g d n v e hnd.symm⟩
+
+private theorem freshBack_assign (n d : Nat) (hnd : n ≠ d)
+    (g k : Assign E) (e : E)
+    (h : ∃ v : E, k = (g.update n e).update d v) :
+    ∃ k', (∃ v : E, k' = g.update d v) ∧ k = k'.update n e := by
+  obtain ⟨v, rfl⟩ := h
+  exact ⟨g.update d v, ⟨v, rfl⟩, (update_comm g d n v e hnd.symm).symm⟩
+
+private theorem introChain_cons (d : Nat) (ds : List Nat) :
+    List.foldl (λ D n => dseq D (λ i j => ∃ e : E, j = Assign.update i n e))
+      (λ i j => i = j) (d :: ds) =
+    dseq (λ i j => ∃ e : E, j = Assign.update i d e)
+      (List.foldl (λ D n => dseq D (λ i j => ∃ e : E, j = Assign.update i n e))
+        (λ i j => i = j) ds) := by
+  simp only [List.foldl]; rw [foldl_dseq_shift, id_dseq]
+
+private theorem introFreshInv (n : Nat) (drefs : List Nat)
+    (h : ∀ d ∈ drefs, n ≠ d) :
+    (∀ g k : Assign E, ∀ e,
+      List.foldl (λ D m => dseq D (λ i j => ∃ v : E, j = i.update m v))
+        (λ i j => i = j) drefs g k →
+      List.foldl (λ D m => dseq D (λ i j => ∃ v : E, j = i.update m v))
+        (λ i j => i = j) drefs (g.update n e) (k.update n e)) ∧
+    (∀ g k : Assign E, ∀ e,
+      List.foldl (λ D m => dseq D (λ i j => ∃ v : E, j = i.update m v))
+        (λ i j => i = j) drefs (g.update n e) k →
+      ∃ k', List.foldl (λ D m => dseq D (λ i j => ∃ v : E, j = i.update m v))
+        (λ i j => i = j) drefs g k' ∧ k = k'.update n e) := by
+  induction drefs with
+  | nil =>
+    simp only [List.foldl]
+    exact ⟨fun _ _ _ h => by subst h; rfl,
+           fun g _ _ h => ⟨g, rfl, h.symm⟩⟩
+  | cons d ds ih =>
+    have hd := h d List.mem_cons_self
+    have hds := fun d' hd' => h d' (List.mem_cons_of_mem _ hd')
+    obtain ⟨ihf, ihb⟩ := ih hds
+    simp_rw [introChain_cons]
+    exact ⟨freshFwd_dseq (fun g k e h => freshFwd_assign n d hd g k e h) ihf,
+           freshBack_dseq (fun g k e h => freshBack_assign n d hd g k e h) ihb⟩
+
+set_option maxHeartbeats 800000 in
+private theorem freshInv (rels : RelInterp E) (K : DRSExpr) (n : Nat)
+    (h : occurs n K = false) :
+    (∀ g k : Assign E, ∀ e, interp rels K g k →
+      interp rels K (g.update n e) (k.update n e)) ∧
+    (∀ g k : Assign E, ∀ e, interp rels K (g.update n e) k →
+      ∃ k', interp rels K g k' ∧ k = k'.update n e) := by
+  match K with
+  | .atom rel drefs =>
+    simp only [occurs] at h
+    have hmem : n ∉ drefs := fun hm =>
+      absurd (List.contains_iff_mem.mpr hm) (Bool.eq_false_iff.mp h)
+    have mapInv : ∀ g : Assign E, ∀ e,
+        List.map (fun i => (g.update n e) i) drefs = List.map (fun i => g i) drefs :=
+      fun g e => List.map_congr_left fun i hi => by
+        simp [Assign.update]; intro heq; subst heq; exact absurd hi hmem
+    constructor
+    · intro g k e hgk
+      simp only [interp, test] at hgk ⊢
+      obtain ⟨rfl, hR⟩ := hgk
+      exact ⟨rfl, by rwa [mapInv g e]⟩
+    · intro g k e hgk
+      simp only [interp, test] at hgk ⊢
+      obtain ⟨rfl, hR⟩ := hgk
+      exact ⟨g, ⟨rfl, by rwa [← mapInv g e]⟩, rfl⟩
+  | .is u v =>
+    simp only [occurs, Bool.or_eq_false_iff] at h
+    have hu : u ≠ n := Ne.symm (by simpa using h.1)
+    have hv : v ≠ n := Ne.symm (by simpa using h.2)
+    constructor
+    · intro g k e hgk
+      simp only [interp, test] at hgk ⊢
+      obtain ⟨rfl, hR⟩ := hgk
+      exact ⟨rfl, show (g.update n e) u = (g.update n e) v by
+        simp only [Assign.update, if_neg hu, if_neg hv]; exact hR⟩
+    · intro g k e hgk
+      simp only [interp, test] at hgk ⊢
+      obtain ⟨rfl, hR⟩ := hgk
+      exact ⟨g, ⟨rfl, show g u = g v by
+        have : (g.update n e) u = (g.update n e) v := hR
+        simp only [Assign.update, if_neg hu, if_neg hv] at this; exact this⟩, rfl⟩
+  | .neg K' =>
+    simp only [occurs] at h
+    obtain ⟨fwd, back⟩ := freshInv rels K' n h
+    constructor
+    · intro g k e hgk
+      simp only [interp, test, dneg] at hgk ⊢
+      obtain ⟨rfl, hNeg⟩ := hgk
+      exact ⟨rfl, fun ⟨k, hK⟩ => hNeg ⟨_, (back g k e hK).choose_spec.1⟩⟩
+    · intro g k e hgk
+      simp only [interp, test, dneg] at hgk ⊢
+      obtain ⟨rfl, hNeg⟩ := hgk
+      exact ⟨g, ⟨rfl, fun ⟨k, hK⟩ => hNeg ⟨_, fwd g k e hK⟩⟩, rfl⟩
+  | .disj K₁ K₂ =>
+    simp only [occurs, Bool.or_eq_false_iff] at h
+    obtain ⟨fwd₁, back₁⟩ := freshInv rels K₁ n h.1
+    obtain ⟨fwd₂, back₂⟩ := freshInv rels K₂ n h.2
+    constructor
+    · intro g k e hgk
+      simp only [interp, test, ddisj] at hgk ⊢
+      obtain ⟨rfl, k, hk⟩ := hgk
+      refine ⟨rfl, ?_⟩
+      cases hk with
+      | inl hk => exact ⟨k.update n e, Or.inl (fwd₁ g k e hk)⟩
+      | inr hk => exact ⟨k.update n e, Or.inr (fwd₂ g k e hk)⟩
+    · intro g k e hgk
+      simp only [interp, test, ddisj] at hgk ⊢
+      obtain ⟨rfl, k, hk⟩ := hgk
+      refine ⟨g, ⟨rfl, ?_⟩, rfl⟩
+      cases hk with
+      | inl hk => obtain ⟨k', hk', _⟩ := back₁ g k e hk; exact ⟨k', Or.inl hk'⟩
+      | inr hk => obtain ⟨k', hk', _⟩ := back₂ g k e hk; exact ⟨k', Or.inr hk'⟩
+  | .impl K₁ K₂ =>
+    simp only [occurs, Bool.or_eq_false_iff] at h
+    obtain ⟨fwd₁, back₁⟩ := freshInv rels K₁ n h.1
+    obtain ⟨fwd₂, back₂⟩ := freshInv rels K₂ n h.2
+    constructor
+    · intro g k e hgk
+      simp only [interp, test, dimpl] at hgk ⊢
+      obtain ⟨rfl, himpl⟩ := hgk
+      refine ⟨rfl, fun h' hK₁ => ?_⟩
+      obtain ⟨h'', hK₁', rfl⟩ := back₁ g h' e hK₁
+      obtain ⟨k, hK₂⟩ := himpl h'' hK₁'
+      exact ⟨k.update n e, fwd₂ h'' k e hK₂⟩
+    · intro g k e hgk
+      simp only [interp, test, dimpl] at hgk ⊢
+      obtain ⟨rfl, himpl⟩ := hgk
+      refine ⟨g, ⟨rfl, fun h' hK₁ => ?_⟩, rfl⟩
+      obtain ⟨k, hK₂⟩ := himpl (h'.update n e) (fwd₁ g h' e hK₁)
+      obtain ⟨k', hK₂', _⟩ := back₂ h' k e hK₂
+      exact ⟨k', hK₂'⟩
+  | .seq K₁ K₂ =>
+    simp only [occurs, Bool.or_eq_false_iff] at h
+    obtain ⟨fwd₁, back₁⟩ := freshInv rels K₁ n h.1
+    obtain ⟨fwd₂, back₂⟩ := freshInv rels K₂ n h.2
+    constructor
+    · intro g k e hgk
+      simp only [interp] at hgk ⊢
+      exact freshFwd_dseq fwd₁ fwd₂ g k e hgk
+    · intro g k e hgk
+      simp only [interp] at hgk ⊢
+      exact freshBack_dseq back₁ back₂ g k e hgk
+  | .box drefs conds =>
+    simp only [occurs, Bool.or_eq_false_iff] at h
+    have hcondsList := occursAny_false n conds h.2
+    have hcFresh := fun c hc => freshInv rels c n (hcondsList c hc)
+    obtain ⟨cfwd, cback⟩ := freshInvConds rels conds n
+      (fun c hc => (hcFresh c hc).1) (fun c hc => (hcFresh c hc).2)
+    have hdrefsList : ∀ d ∈ drefs, n ≠ d := by
+      intro d hd heq; subst heq
+      exact absurd (List.contains_iff_mem.mpr hd) (Bool.eq_false_iff.mp h.1)
+    have ⟨ifwd, iback⟩ := @introFreshInv E n drefs hdrefsList
+    constructor
+    · intro g k e hgk
+      simp only [interp] at hgk ⊢
+      exact freshFwd_dseq ifwd cfwd g k e hgk
+    · intro g k e hgk
+      simp only [interp] at hgk ⊢
+      exact freshBack_dseq iback cback g k e hgk
+termination_by sizeOf K
+
+-- ════════════════════════════════════════════════════════════════
+-- § 7c. Commuting Lemma
+-- ════════════════════════════════════════════════════════════════
+
+/-- A DRS commutes with a single random assignment when FreshFwd
+and FreshBack hold for the assigned slot. -/
+private theorem drs_comm_assign (D : DRS (Assign E)) (d : Nat)
+    (hfwd : ∀ g k : Assign E, ∀ e, D g k → D (g.update d e) (k.update d e))
+    (hback : ∀ g k : Assign E, ∀ e, D (g.update d e) k →
+      ∃ k', D g k' ∧ k = k'.update d e) :
+    dseq D (λ i j => ∃ e : E, j = i.update d e) =
+    dseq (λ i j => ∃ e : E, j = i.update d e) D := by
+  funext i j; apply propext; constructor
+  · rintro ⟨h, hD, e, rfl⟩
+    exact ⟨i.update d e, ⟨e, rfl⟩, hfwd i h e hD⟩
+  · rintro ⟨h, ⟨e, rfl⟩, hD⟩
+    obtain ⟨k', hD', rfl⟩ := hback i j e hD
+    exact ⟨k', hD', e, rfl⟩
+
+private theorem interpConds_comm_assign (rels : RelInterp E)
+    (conds : List DRSExpr) (d : Nat)
+    (hfresh : ∀ c ∈ conds, occurs d c = false) :
+    dseq (interp.interpConds rels conds) (λ i j => ∃ e : E, j = i.update d e) =
+    dseq (λ i j => ∃ e : E, j = i.update d e) (interp.interpConds rels conds) := by
+  have hcFresh := fun c hc => freshInv rels c d (hfresh c hc)
+  have ⟨cfwd, cback⟩ := freshInvConds rels conds d
+    (fun c hc => (hcFresh c hc).1) (fun c hc => (hcFresh c hc).2)
+  exact drs_comm_assign _ d cfwd cback
+
+/-- `interpConds` commutes with a full dref introduction chain when
+the introduced drefs do not occur in any condition. -/
+private theorem interpConds_comm_introChain (rels : RelInterp E)
+    (conds : List DRSExpr) (drefs : List Nat)
+    (hfresh : ∀ n ∈ drefs, ∀ c ∈ conds, occurs n c = false) :
+    dseq (interp.interpConds rels conds)
+      (List.foldl (λ D n => dseq D (λ i j => ∃ e : E, j = i.update n e))
+        (λ i j => i = j) drefs) =
+    dseq (List.foldl (λ D n => dseq D (λ i j => ∃ e : E, j = i.update n e))
+        (λ i j => i = j) drefs)
+      (interp.interpConds rels conds) := by
+  induction drefs with
+  | nil => simp only [List.foldl]; rw [dseq_id_right, id_dseq]
+  | cons d ds ih =>
+    have hd : ∀ c ∈ conds, occurs d c = false := fun c hc => hfresh d List.mem_cons_self c hc
+    have hds := fun n hn c hc => hfresh n (List.mem_cons_of_mem _ hn) c hc
+    rw [introChain_cons]
+    calc dseq (interp.interpConds rels conds)
+            (dseq (λ i j => ∃ e : E, j = Assign.update i d e)
+              (List.foldl (λ D n => dseq D (λ i j => ∃ e : E, j = Assign.update i n e))
+                (λ i j => i = j) ds))
+        = dseq (dseq (interp.interpConds rels conds)
+            (λ i j => ∃ e : E, j = Assign.update i d e))
+            (List.foldl (λ D n => dseq D (λ i j => ∃ e : E, j = Assign.update i n e))
+              (λ i j => i = j) ds) := (dseq_assoc _ _ _).symm
+      _ = dseq (dseq (λ i j => ∃ e : E, j = Assign.update i d e)
+            (interp.interpConds rels conds))
+            (List.foldl (λ D n => dseq D (λ i j => ∃ e : E, j = Assign.update i n e))
+              (λ i j => i = j) ds) := by rw [interpConds_comm_assign rels conds d hd]
+      _ = dseq (λ i j => ∃ e : E, j = Assign.update i d e)
+            (dseq (interp.interpConds rels conds)
+              (List.foldl (λ D n => dseq D (λ i j => ∃ e : E, j = Assign.update i n e))
+                (λ i j => i = j) ds)) := dseq_assoc _ _ _
+      _ = dseq (λ i j => ∃ e : E, j = Assign.update i d e)
+            (dseq (List.foldl (λ D n => dseq D (λ i j => ∃ e : E, j = Assign.update i n e))
+                (λ i j => i = j) ds)
+              (interp.interpConds rels conds)) := by rw [ih hds]
+      _ = dseq (dseq (λ i j => ∃ e : E, j = Assign.update i d e)
+            (List.foldl (λ D n => dseq D (λ i j => ∃ e : E, j = Assign.update i n e))
+              (λ i j => i = j) ds))
+            (interp.interpConds rels conds) := (dseq_assoc _ _ _).symm
+
+end FreshInv
+
+-- ════════════════════════════════════════════════════════════════
 -- § 8. Merging Lemma
 -- ════════════════════════════════════════════════════════════════
 
@@ -321,10 +635,7 @@ theorem mergingLemma {E : Type*} (rels : RelInterp E)
   simp only [interp]
   rw [foldl_append_introduce, interpConds_append, dseq_assoc, dseq_assoc]
   congr 1
-  -- Remaining: show interpConds rels conds1 commutes with intro drefs2
-  -- under the freshness hypothesis. This requires semantic invariance
-  -- of conditions under Assign.update at fresh slots.
-  sorry
+  rw [← dseq_assoc, interpConds_comm_introChain rels conds1 drefs2 hfresh, dseq_assoc]
 
 -- ════════════════════════════════════════════════════════════════
 -- § 9. Proposition 1
