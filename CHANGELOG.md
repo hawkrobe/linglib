@@ -1,5 +1,40 @@
 # Changelog
 
+## [0.229.84] - 2026-03-09
+
+### Changed
+- **BergenGoodman2015.lean**: Rewrite noisy channel RSA using RSAConfig + `rsa_predict`. Noise folded into `meaning` (Eq. 6) and `s1Score` (Eqs. 7-8) via row-sum-to-1 identity. Uses paper's actual exp/log equations, not linearized approximation. 11 theorems: 6 L0 predictions, 2 L1 predictions, 3 prosody predictions — all verified by `rsa_predict` (no hand-rolled ℚ computation or `native_decide`). Parametric robustness proof retained (for any δ ≠ 0, L0 = 1)
+
+## [0.229.83] - 2026-03-09
+
+### Changed
+- **AndersonJM2006.lean**: Reframe around explananda/costs. Anderson explains argument linking (182/183 correct) at the cost of role granularity: {abs,erg} collapses agent/experiencer (34 verbs, Dowty P-Agent 5 vs 2), {abs} collapses patient/theme (12 verbs, P-Patient 3 vs 1), {erg} collapses source/stimulus (10 verbs, P-Agent 1 vs 2). Costs articulated via Dowty entailment-count divergence theorems
+
+## [0.229.82] - 2026-03-09
+
+### Added
+- **Fragments/German/Negation.lean**: German *nicht* particle negation (symmetric, 5 tense examples)
+- **Fragments/Japanese/Negation.lean**: Japanese *-nai* suffix negation (asymmetric A/Fin+A/Cat, *taberu*/*yomu* paradigms, inflection distribution)
+- **Fragments/Turkish/Negation.lean**: Turkish *-mA-* suffix negation (SymAsy, *gelmek* paradigm with aorist asymmetry)
+- **Fragments/French/Negation.lean**: French *ne...pas* bipartite negation (symmetric, Jespersen cycle, 5 tense examples, *ne*-drop)
+- **Fragments/Burmese/Negation.lean**: Burmese *ma-...-bu* circumfix negation (asymmetric A/Cat, TAM neutralization)
+- **Phenomena/Negation/Studies/Miestamo2005.lean**: Formalization of @cite{miestamo-2005}'s constructional/paradigmatic asymmetry distinction and derived/independent asymmetry source; 7-language sample with WALS consistency verification (21 cross-chapter theorems) and Fragment bridges (all negation markers Fragment-derived)
+
+## [0.229.81] - 2026-03-09
+
+### Added
+- **FeatureDecomposition.lean**: `Case.toCaseRelation` moved from study file to Core for reuse
+- **AndersonJM2006.lean**: End-to-end verification against 183 English verb entries (126 matches, 57 mismatches from Anderson's coarser theta-role inventory), `VerbCore→Scenario` bridge, `thetaToCaseRelation` reverse mapping, LocalExtension×FeatureDecomposition bridge theorem, renamed `hasErgFeature`→`hasSpatialErg`
+
+### Removed
+- Redundant theorems (`source_loc_carry_erg`, `abl_inst_share_erg` — subsumed by `extension_sources_carry_erg`)
+
+## [0.229.80] - 2026-03-09
+
+### Added
+- **Core/Case/FeatureDecomposition.lean**: Anderson's binary case-feature system ({abs}, {erg}) with CaseRelation type, cardinality-based hierarchy, feature containment, and Scenario (predicate argument structure)
+- **Phenomena/Case/Studies/AndersonJM2006.lean**: Formalization of @cite{anderson-jm-2006} with CaseRelation→ThetaRole mapping, Case→CaseRelation bridge, Anderson as LinkingTheory instance, Dowty/Blake concordance theorems, localist hypothesis ({erg} feature sharing), and NOM/ERG + ACC/ABS unification
+
 ## [0.229.79] - 2026-03-09
 
 ### Added

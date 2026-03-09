@@ -39,7 +39,7 @@ import Linglib.Core.Lexical.Word
 @cite{bergen-goodman-2015} @cite{rooth-1992}
 
 This phenomenon is modeled by @cite{bergen-goodman-2015}'s noisy channel RSA.
-See: `Theories/RSA/Implementations/BergenGoodman2015.lean`
+See `Phenomena.Ellipsis.Studies.BergenGoodman2015` for the model and proofs.
 
 The key insight: prosodic stress reduces noise rate on stressed words.
 This signals exhaustive knowledge to the listener.
@@ -208,7 +208,7 @@ Prosodic stress **reduces noise rate** on stressed words.
 - Effect emerges at higher recursion depths (pragmatic inference)
 - Stress increases exhaustive interpretation probability
 
-See: `Theories/RSA/Implementations/BergenGoodman2015.lean`
+See `Phenomena.Ellipsis.Studies.BergenGoodman2015` for proofs.
 
 ## Alternative Accounts
 

@@ -34,10 +34,8 @@ import Linglib.Core.Lexical.Word
 @cite{bergen-goodman-2015} @cite{merchant-2004} @cite{stainton-2006}
 
 This phenomenon is modeled by @cite{bergen-goodman-2015}'s noisy channel RSA.
-See: `Theories/RSA/Implementations/BergenGoodman2015.lean`
-
-The key insight: fragments are interpreted via noise inference.
-The listener reasons that words were deleted during transmission.
+See `Phenomena.Ellipsis.Studies.BergenGoodman2015` for the noisy channel RSA
+model that derives fragment interpretation from noise inference.
 
 Connection to unified noise theory: `Theories/RSA/Core/Noise.lean`
 -/
@@ -241,15 +239,13 @@ Even with very low actual noise, fragments work because:
 - Conditional on hearing a fragment, listener knows something was deleted
 - Most likely deletion recovers the correct full sentence
 
-See: `Theories/RSA/Implementations/BergenGoodman2015.lean`
+See `Phenomena.Ellipsis.Studies.BergenGoodman2015` for proofs.
 
 ### Proven Results
 
-```lean
-theorem fragment_interpretation :
-    getScore l0_bob.bobWent > getScore l0_bob.aliceWent ∧
-    getScore l0_bob.bobWent > getScore l0_bob.nobodyWent
-```
+- `EllipsisModel.l0_fragment_correct`: L0 assigns prob 1 to "Bob went"
+- `EllipsisModel.l0_fragment_robust`: works for any δ > 0 (parametric)
+- `EllipsisModel.l1_fragment_correct`: L1 also correctly interprets fragments
 
 ### Alternative Accounts
 

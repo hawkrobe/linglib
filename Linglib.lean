@@ -91,6 +91,7 @@ import Linglib.Core.Case.Syncretism
 import Linglib.Core.Case.SplitConditions
 import Linglib.Core.Case.LocalExtension
 import Linglib.Core.Case.ComparativeEntry
+import Linglib.Core.Case.FeatureDecomposition
 import Linglib.Core.Relativization.Basic
 import Linglib.Core.Relativization.Extraction
 import Linglib.Core.Relativization.Hierarchy
@@ -365,11 +366,13 @@ import Linglib.Fragments.English.Conditionals
 import Linglib.Fragments.English.Phonology
 import Linglib.Fragments.English.Relativization
 import Linglib.Fragments.English.Morph
+import Linglib.Fragments.English.Negation
 import Linglib.Fragments.Bulgarian.Evidentials
 import Linglib.Fragments.Czech.Case
 import Linglib.Fragments.Czech.Determiners
 import Linglib.Fragments.Czech.Particles
 import Linglib.Fragments.Czech.Reciprocals
+import Linglib.Fragments.Czech.Negation
 import Linglib.Fragments.Farsi.Determiners
 import Linglib.Fragments.Farsi.Phonology
 import Linglib.Fragments.German.Case
@@ -381,6 +384,7 @@ import Linglib.Fragments.German.Predicates.Modal
 import Linglib.Fragments.German.Conditionals
 import Linglib.Fragments.German.Reciprocals
 import Linglib.Fragments.German.Morph
+import Linglib.Fragments.German.Negation
 import Linglib.Fragments.Georgian.Coordination
 import Linglib.Fragments.Georgian.Morph
 import Linglib.Fragments.Georgian.Agreement
@@ -415,6 +419,7 @@ import Linglib.Fragments.French.Binominals
 import Linglib.Fragments.French.Modals
 import Linglib.Fragments.French.Nouns
 import Linglib.Fragments.French.Predicates
+import Linglib.Fragments.French.Negation
 import Linglib.Fragments.French.Reciprocals
 import Linglib.Fragments.Irish.Coordination
 import Linglib.Fragments.Jakaltek.AuxiliaryVerbs
@@ -437,6 +442,7 @@ import Linglib.Fragments.Japanese.Particles
 import Linglib.Fragments.Japanese.Predicates
 import Linglib.Fragments.Japanese.Conditionals
 import Linglib.Fragments.Japanese.Morph
+import Linglib.Fragments.Japanese.Negation
 import Linglib.Fragments.Mandarin.DiscourseParticles
 import Linglib.Fragments.Mandarin.Determiners
 import Linglib.Fragments.Mandarin.Classifiers
@@ -447,14 +453,19 @@ import Linglib.Fragments.Mandarin.AspectComparison
 import Linglib.Fragments.Mandarin.Predicates
 import Linglib.Fragments.Mandarin.Reciprocals
 import Linglib.Fragments.Mandarin.Morph
+import Linglib.Fragments.Mandarin.Negation
 import Linglib.Fragments.Turkish.Case
 import Linglib.Fragments.Turkish.Comparison
 import Linglib.Fragments.Turkish.MedialVerbs
 import Linglib.Fragments.Turkish.Predicates
 import Linglib.Fragments.Turkish.QuestionParticles
 import Linglib.Fragments.Turkish.Morph
+import Linglib.Fragments.Turkish.Negation
 import Linglib.Fragments.Manambu.MedialVerbs
 import Linglib.Fragments.Nungon.MedialVerbs
+import Linglib.Fragments.Burmese.Negation
+import Linglib.Fragments.Maori.Negation
+import Linglib.Fragments.Hixkaryana.Negation
 import Linglib.Fragments.Basque.Pronouns
 import Linglib.Fragments.Basque.Agreement
 import Linglib.Fragments.Magahi.Pronouns
@@ -476,6 +487,7 @@ import Linglib.Fragments.Russian.DiscourseParticles
 import Linglib.Fragments.Russian.TemporalDeictic
 import Linglib.Fragments.Russian.Reciprocals
 import Linglib.Fragments.Russian.Morph
+import Linglib.Fragments.Russian.Negation
 import Linglib.Fragments.Serbian.Case
 import Linglib.Fragments.Serbian.TemporalConnectives
 import Linglib.Fragments.Slovenian.Case
@@ -506,6 +518,7 @@ import Linglib.Fragments.Spanish.Clitics
 import Linglib.Fragments.Spanish.Predicates
 import Linglib.Fragments.Spanish.PersonFeatures
 import Linglib.Fragments.Spanish.Morph
+import Linglib.Fragments.Spanish.Negation
 import Linglib.Fragments.Mam.VoiceSystem
 import Linglib.Fragments.Mam.Agreement
 import Linglib.Fragments.Mam.ExtractionMorphology
@@ -542,6 +555,7 @@ import Linglib.Phenomena.Case.Studies.Aissen2003
 import Linglib.Phenomena.Case.Studies.DeHoopMalchukov2008
 import Linglib.Phenomena.Case.Studies.Haspelmath2021
 import Linglib.Phenomena.Case.Studies.Karlsson2017
+import Linglib.Phenomena.Case.Studies.AndersonJM2006
 import Linglib.Phenomena.ClauseChaining.Typology
 import Linglib.Phenomena.ClauseChaining.Data
 import Linglib.Phenomena.ClauseChaining.Studies.SarvasyAikhenvald2025
@@ -788,6 +802,7 @@ import Linglib.Phenomena.Allomorphy.SlavicVerbalizer.Studies.Stojkovic2026
 import Linglib.Phenomena.Allomorphy.TeluguNounStems.Studies.Aitha2026
 import Linglib.Phenomena.Negation.Studies.StankovaSimik2024.Data
 import Linglib.Phenomena.Negation.Studies.Greco2020
+import Linglib.Phenomena.Negation.Studies.Miestamo2005
 import Linglib.Phenomena.Negation.Denial
 import Linglib.Phenomena.Plurals.Basic
 import Linglib.Phenomena.Plurals.Homogeneity
@@ -1463,7 +1478,7 @@ import Linglib.Theories.Pragmatics.RSA.Extensions.InformationTheory.UtilityNonMo
 import Linglib.Theories.Pragmatics.RSA.Extensions.LexicalUncertainty.Basic
 import Linglib.Theories.Pragmatics.RSA.Extensions.LexicalUncertainty.Compositional
 import Linglib.Phenomena.Causation.Studies.BellerGerstenberg2025
-import Linglib.Theories.Pragmatics.RSA.Implementations.BergenGoodman2015
+import Linglib.Phenomena.Ellipsis.Studies.BergenGoodman2015
 import Linglib.Phenomena.Persuasion.Studies.CumminsFranke2021
 import Linglib.Phenomena.Persuasion.Studies.MacuchSilvaEtAl2024
 import Linglib.Theories.Pragmatics.RSA.Implementations.EgreEtAl2023
