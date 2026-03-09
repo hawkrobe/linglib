@@ -539,23 +539,229 @@ theorem reduce_sound {E : Type*} (rels : RelInterp E) :
 -- § 5. Proposition 1
 -- ════════════════════════════════════════════════════════════════
 
+/-! ### Contextual properness
+
+The syntactic `isProper` function (from `DRSExpr.lean`) has a soundness
+gap: it conflates accessibility across disjunction branches, allowing
+expressions like `[u₁|P(u₁)] ∨ [|Q(u₁)]` to pass even though `u₁` is
+free in the second disjunct. The `allBound` check defined here tracks
+bound drefs contextually and requires each disjunct to be independently
+well-bound. -/
+
+/-- Context-sensitive properness: every dref used in `K` must appear
+in the bound set `B`. -/
+def allBound : List Nat → DRSExpr → Bool
+  | bound, .atom _ drefs => drefs.all (bound.contains ·)
+  | bound, .is u v => bound.contains u && bound.contains v
+  | bound, .neg K => allBound bound K
+  | bound, .disj K₁ K₂ => allBound bound K₁ && allBound bound K₂
+  | bound, .impl K₁ K₂ => allBound bound K₁ && allBound (bound ++ adr K₁) K₂
+  | bound, .box drefs conds => allBoundConds (bound ++ drefs) conds
+  | bound, .seq K₁ K₂ => allBound bound K₁ && allBound (bound ++ adr K₁) K₂
+where
+  allBoundConds : List Nat → List DRSExpr → Bool
+    | _, [] => true
+    | bound, c :: cs => allBound bound c && allBoundConds (bound ++ adr c) cs
+
+example : allBound [] exManAdoresWoman = true := by native_decide
+example : allBound [] exDonkey = true := by native_decide
+example : allBound [] exFree = false := by native_decide
+
+section Proposition1
+
+variable {E : Type*} [Nonempty E]
+
+/-- Two assignments agree on a set of slots. -/
+private abbrev Agree (g₁ g₂ : Assignment E) (B : List Nat) : Prop :=
+  ∀ n ∈ B, g₁ n = g₂ n
+
+omit [Nonempty E] in
+private theorem agree_symm {g₁ g₂ : Assignment E} {B : List Nat}
+    (h : Agree g₁ g₂ B) : Agree g₂ g₁ B :=
+  fun n hn => (h n hn).symm
+
+omit [Nonempty E] in
+private theorem agree_of_append_left {g₁ g₂ : Assignment E} {B₁ B₂ : List Nat}
+    (h : Agree g₁ g₂ (B₁ ++ B₂)) : Agree g₁ g₂ B₁ :=
+  fun n hn => h n (List.mem_append_left _ hn)
+
+omit [Nonempty E] in
+private theorem agree_update_same {g₁ g₂ : Assignment E} {B : List Nat} {n : Nat} {e : E}
+    (h : Agree g₁ g₂ B) :
+    Agree (g₁.update n e) (g₂.update n e) (B ++ [n]) := by
+  intro m hm
+  simp only [Assignment.update]
+  split
+  · rfl
+  · rename_i hne
+    exact h m (by
+      rcases List.mem_append.mp hm with h | h
+      · exact h
+      · simp at h; exact absurd h hne)
+
+omit [Nonempty E] in
+/-- Introduction chain rebase: if two assignments agree on `B` and
+a dref introduction chain from `g₁` produces `mid₁`, then the same
+fresh values produce `mid₂` from `g₂` with agreement on `B ++ drefs`. -/
+private theorem intro_rebase (drefs : List Nat) (B : List Nat)
+    (g₁ g₂ : Assignment E) (mid₁ : Assignment E)
+    (hagree : Agree g₁ g₂ B)
+    (hintro : List.foldl (λ D n => dseq D (λ i j => ∃ e : E, j = i.update n e))
+      (λ i j => i = j) drefs g₁ mid₁) :
+    ∃ mid₂, List.foldl (λ D n => dseq D (λ i j => ∃ e : E, j = i.update n e))
+      (λ i j => i = j) drefs g₂ mid₂ ∧ Agree mid₁ mid₂ (B ++ drefs) := by
+  induction drefs generalizing B g₁ g₂ mid₁ with
+  | nil =>
+    simp only [List.foldl] at hintro ⊢
+    subst hintro
+    exact ⟨g₂, rfl, fun n hn => hagree n (by simpa using hn)⟩
+  | cons d ds ih =>
+    rw [introChain_cons] at hintro ⊢
+    simp only [dseq] at hintro ⊢
+    obtain ⟨mid₁', ⟨e₁, rfl⟩, hds₁⟩ := hintro
+    have hagree' := agree_update_same (n := d) (e := e₁) hagree
+    obtain ⟨mid₂, hds₂, hagree_out⟩ := ih (B ++ [d]) (g₁.update d e₁) (g₂.update d e₁)
+      mid₁ hagree' hds₁
+    refine ⟨mid₂, ⟨g₂.update d e₁, ⟨e₁, rfl⟩, hds₂⟩, fun n hn => ?_⟩
+    exact hagree_out n (by rw [List.append_assoc]; exact hn)
+
+omit [Nonempty E] in
+/-- Condition list rebase: if a per-condition rebase hypothesis holds,
+then `interpConds` transfers from `g₁` to `g₂` preserving agreement on `B`. -/
+private theorem rebaseConds (rels : RelInterp E) (conds : List DRSExpr)
+    (hRebase : ∀ c ∈ conds, ∀ (B : List Nat), allBound B c = true →
+      ∀ g₁ g₂ : Assignment E, Agree g₁ g₂ B →
+      ∀ j₁, interp rels c g₁ j₁ →
+      ∃ j₂, interp rels c g₂ j₂ ∧ Agree j₁ j₂ (B ++ adr c)) :
+    ∀ (B : List Nat),
+    allBound.allBoundConds B conds = true →
+    ∀ g₁ g₂ : Assignment E, Agree g₁ g₂ B →
+    ∀ j₁, interp.interpConds rels conds g₁ j₁ →
+    ∃ j₂, interp.interpConds rels conds g₂ j₂ ∧ Agree j₁ j₂ B := by
+  induction conds with
+  | nil =>
+    intro B _ g₁ g₂ hagree j₁ hinterp
+    simp only [interp.interpConds] at hinterp ⊢
+    subst hinterp
+    exact ⟨g₂, rfl, hagree⟩
+  | cons c₀ cs ih =>
+    intro B hB g₁ g₂ hagree j₁ hinterp
+    simp only [allBound.allBoundConds, Bool.and_eq_true] at hB
+    simp only [interp.interpConds, dseq] at hinterp ⊢
+    obtain ⟨mid₁, hc₁, hcs₁⟩ := hinterp
+    obtain ⟨mid₂, hc₂, hagree_mid⟩ := hRebase c₀ List.mem_cons_self B hB.1
+      g₁ g₂ hagree mid₁ hc₁
+    obtain ⟨j₂, hcs₂, hagree_j⟩ := ih
+      (fun c' hc' => hRebase c' (List.mem_cons_of_mem c₀ hc'))
+      (B ++ adr c₀) hB.2 mid₁ mid₂ hagree_mid j₁ hcs₁
+    exact ⟨j₂, ⟨mid₂, hc₂, hcs₂⟩, agree_of_append_left hagree_j⟩
+
+omit [Nonempty E] in
+private theorem rebase_main (rels : RelInterp E) (K : DRSExpr) (B : List Nat)
+    (hB : allBound B K = true) (g₁ g₂ : Assignment E) (hagree : Agree g₁ g₂ B)
+    (j₁ : Assignment E) (hinterp : interp rels K g₁ j₁) :
+    ∃ j₂, interp rels K g₂ j₂ ∧ Agree j₁ j₂ (B ++ adr K) := by
+  match K with
+  | .atom rel drefs =>
+    simp only [interp, test] at hinterp ⊢
+    obtain ⟨rfl, hR⟩ := hinterp
+    simp only [allBound, List.all_eq_true, List.contains_iff_mem] at hB
+    have : drefs.map g₁ = drefs.map g₂ :=
+      List.map_congr_left (fun n hn => hagree n (hB n hn))
+    exact ⟨g₂, ⟨rfl, this ▸ hR⟩, fun n hn => hagree n (by simpa [adr] using hn)⟩
+  | .is u v =>
+    simp only [interp, test] at hinterp ⊢
+    obtain ⟨rfl, hR⟩ := hinterp
+    simp only [allBound, Bool.and_eq_true, List.contains_iff_mem] at hB
+    exact ⟨g₂, ⟨rfl, by rw [← hagree u hB.1, ← hagree v hB.2]; exact hR⟩,
+      fun n hn => hagree n (by simpa [adr] using hn)⟩
+  | .neg K' =>
+    simp only [interp, test, dneg] at hinterp ⊢
+    obtain ⟨rfl, hNeg⟩ := hinterp
+    simp only [allBound] at hB
+    refine ⟨g₂, ⟨rfl, fun ⟨k, hk⟩ => ?_⟩, fun n hn => hagree n (by simpa [adr] using hn)⟩
+    obtain ⟨k', hk', _⟩ := rebase_main rels K' B hB g₂ g₁ (agree_symm hagree) k hk
+    exact hNeg ⟨k', hk'⟩
+  | .disj K₁ K₂ =>
+    simp only [interp, test, ddisj] at hinterp ⊢
+    obtain ⟨rfl, k, hk⟩ := hinterp
+    simp only [allBound, Bool.and_eq_true] at hB
+    refine ⟨g₂, ⟨rfl, ?_⟩, fun n hn => hagree n (by simpa [adr] using hn)⟩
+    cases hk with
+    | inl h =>
+      obtain ⟨k', hk', _⟩ := rebase_main rels K₁ B hB.1 g₁ g₂ hagree k h
+      exact ⟨k', Or.inl hk'⟩
+    | inr h =>
+      obtain ⟨k', hk', _⟩ := rebase_main rels K₂ B hB.2 g₁ g₂ hagree k h
+      exact ⟨k', Or.inr hk'⟩
+  | .impl K₁ K₂ =>
+    simp only [interp, test, dimpl] at hinterp ⊢
+    obtain ⟨rfl, himpl⟩ := hinterp
+    simp only [allBound, Bool.and_eq_true] at hB
+    refine ⟨g₂, ⟨rfl, fun h' hK₁h' => ?_⟩, fun n hn => hagree n (by simpa [adr] using hn)⟩
+    obtain ⟨h, hK₁h, hagree_h⟩ := rebase_main rels K₁ B hB.1 g₂ g₁
+      (agree_symm hagree) h' hK₁h'
+    obtain ⟨k, hK₂k⟩ := himpl h hK₁h
+    obtain ⟨k', hK₂k', _⟩ := rebase_main rels K₂ (B ++ adr K₁) hB.2 h h'
+      (agree_symm hagree_h) k hK₂k
+    exact ⟨k', hK₂k'⟩
+  | .seq K₁ K₂ =>
+    simp only [interp, dseq] at hinterp ⊢
+    obtain ⟨mid₁, hK₁, hK₂⟩ := hinterp
+    simp only [allBound, Bool.and_eq_true] at hB
+    obtain ⟨mid₂, hK₁', hagree_mid⟩ := rebase_main rels K₁ B hB.1 g₁ g₂ hagree mid₁ hK₁
+    obtain ⟨j₂, hK₂', hagree_j⟩ := rebase_main rels K₂ (B ++ adr K₁) hB.2 mid₁ mid₂
+      hagree_mid j₁ hK₂
+    refine ⟨j₂, ⟨mid₂, hK₁', hK₂'⟩, fun n hn => ?_⟩
+    rcases List.mem_append.mp hn with hB' | hadr
+    · exact hagree_j n (List.mem_append_left _ (List.mem_append_left _ hB'))
+    · simp [adr] at hadr
+      rcases hadr with h1 | h2
+      · exact hagree_j n (List.mem_append_left _ (List.mem_append_right _ h1))
+      · exact hagree_j n (List.mem_append_right _ h2)
+  | .box drefs conds =>
+    simp only [interp, dseq] at hinterp ⊢
+    obtain ⟨mid₁, hintro₁, hconds₁⟩ := hinterp
+    simp only [allBound] at hB
+    obtain ⟨mid₂, hintro₂, hagree_mid⟩ := intro_rebase drefs B g₁ g₂ mid₁ hagree hintro₁
+    have hPerCond : ∀ c ∈ conds, ∀ B' : List Nat, allBound B' c = true →
+        ∀ g₁' g₂' : Assignment E, Agree g₁' g₂' B' →
+        ∀ j₁', interp rels c g₁' j₁' →
+        ∃ j₂', interp rels c g₂' j₂' ∧ Agree j₁' j₂' (B' ++ adr c) :=
+      fun c _hc => rebase_main rels c
+    obtain ⟨j₂, hconds₂, hagree_j⟩ := rebaseConds rels conds hPerCond (B ++ drefs) hB
+      mid₁ mid₂ hagree_mid j₁ hconds₁
+    exact ⟨j₂, ⟨mid₂, hintro₂, hconds₂⟩, fun n hn => by
+      simp [adr] at hn
+      rcases hn with hB' | hdrefs
+      · exact hagree_j n (List.mem_append_left _ hB')
+      · exact hagree_j n (List.mem_append_right _ hdrefs)⟩
+termination_by K
+
+end Proposition1
+
 /-- Proposition 1 (@cite{muskens-1996}, p. 174).
 
 A syntactically proper DRS (no free discourse referents) has
 state-independent truth conditions: `wp(⟦K⟧, ⊤)` doesn't depend
 on the input assignment.
 
-This bridges syntactic properness (`Accessibility.isProper`) with
-semantic properness (`WeakestPrecondition.isProper`).
-
-The proof requires induction on `DRSExpr`, showing that `interp`
-only reads registers through drefs that are either (1) introduced
-by enclosing boxes or (2) universally quantified over by the wp
-calculus. When all occurring drefs are accessible (properness),
-the wp truth condition is closed and hence state-independent. -/
+This bridges syntactic properness (`allBound`) with semantic
+properness (`WeakestPrecondition.isProper`). The proof uses a
+rebase lemma: if all drefs in `K` are bound, then satisfaction
+can be transferred between any two assignments. -/
 theorem proposition_1 {E : Type*} [Nonempty E] (rels : RelInterp E) (K : DRSExpr)
-    (hproper : isProper K = true) :
+    (hproper : allBound [] K = true) :
     WeakestPrecondition.isProper (interp rels K) := by
-  sorry
+  intro g₁ g₂
+  constructor
+  · rintro ⟨j₁, hinterp⟩
+    obtain ⟨j₂, hinterp₂, _⟩ := rebase_main rels K [] hproper g₁ g₂
+      (fun _ h => nomatch h) j₁ hinterp
+    exact ⟨j₂, hinterp₂⟩
+  · rintro ⟨j₂, hinterp⟩
+    obtain ⟨j₁, hinterp₁, _⟩ := rebase_main rels K [] hproper g₂ g₁
+      (fun _ h => nomatch h) j₂ hinterp
+    exact ⟨j₁, hinterp₁⟩
 
 end Semantics.Dynamic.Core.Accessibility

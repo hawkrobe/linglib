@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.229.42] - 2026-03-08
+
+### Added
+- **Accessibility.lean**: Prove Proposition 1 (Muskens 1996, p. 174) — proper DRS has state-independent truth conditions. Add `allBound` contextual properness check (fixes `isProper` soundness gap for disjunctions), `rebase_main` lemma with full structural induction over all 7 DRSExpr constructors, `intro_rebase` for dref introduction chains, `rebaseConds` for condition lists
+
 ## [0.229.41] - 2026-03-08
 
 ### Changed
