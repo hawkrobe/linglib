@@ -18,13 +18,14 @@ properties (type `⟨⟨e,t⟩,⟨e,t⟩⟩`). The classification hierarchy —
 intersective, subsective, privative, extensional — is formalized in
 `Theories/Semantics/Lexical/Adjective/Classification.lean`.
 
-**Theory 2 (§ 3–7)**: Vague/graded models. The positive form of a
-gradable adjective is vague — its extension is partial. Kamp introduces
-*vague models* `⟨M, S, F, p⟩` (partial model + completions + σ-field +
+**Theory 2 (§ 3–7)**: Vague/graded models. Kamp introduces *vague
+models* `⟨M, S, F, p⟩` (partial model + completions + σ-field +
 probability measure) and derives the comparative from quantification
 over completions. This framework is the common ancestor of both
 @cite{fine-1975}'s supervaluationism and @cite{klein-1980}'s delineation
-approach.
+approach. Theory 2 is not formalized here; § 2 captures only the
+motivating argument (why truth-functional many-valued logic fails)
+and § 3 formalizes the comparative definitions that descend from it.
 
 ## Structure
 
@@ -83,6 +84,16 @@ theorem subsective_at_world {adj : AdjMeaning W E}
   intro N x hadj
   exact h (λ _ => N) w x hadj
 
+/-! `intersective_at_world` and `subsective_at_world` ARE the bridge
+    theorems connecting Classification.lean's intensional hierarchy to
+    Modification.lean's extensional one. They show that fixing a world
+    yields the extensional intersection/subsection property.
+
+    A direct type-level connection to `Modification.isIntersective` is
+    not possible because Modification is typed over `Model` (Montague's
+    `interpTy`), while Classification uses bare types `W`, `E`. The
+    mathematical content is the same: both state `∃ Q, adj N x = Q x ∧ N x`. -/
+
 end Bridge
 
 -- ════════════════════════════════════════════════════
@@ -121,6 +132,26 @@ theorem kleene_indet_and_indet :
 theorem kleene_cant_distinguish_contradiction :
     Truth3.meet .indet .indet =
     Truth3.meet .indet (Truth3.neg .indet) := by rfl
+
+/-- **Kamp's dilemma** (the actual impossibility result): no
+    truth-functional binary operator can simultaneously be
+    idempotent (`F(x,x) = x`) and make borderline contradictions
+    false (`F(½, ¬½) = 0`).
+
+    Since `¬½ = ½` in any symmetric three-valued logic, the two
+    requirements conflict: idempotence demands `F(½,½) = ½`,
+    but the contradiction requirement demands `F(½,½) = 0`.
+    This is what motivates the move to supervaluation. -/
+theorem kleene_dilemma :
+    ¬∃ (meet : Truth3 → Truth3 → Truth3),
+      (∀ x, meet x x = x) ∧
+      (meet .indet (Truth3.neg .indet) = .false) := by
+  intro ⟨meet, hidem, hcontra⟩
+  have : Truth3.neg .indet = .indet := rfl
+  rw [this] at hcontra
+  have := hidem .indet
+  rw [hcontra] at this
+  cases this
 
 -- ════════════════════════════════════════════════════
 -- § 3. Kamp → Klein Lineage

@@ -29,7 +29,7 @@ confidence ordering (CSW observation (72)).
 
 `StatesBasedEntry` extends `ComparativeScale` (from `Core.Scale`) with a
 contrast point. The background ordering is the ambient `[Preorder S]`.
-This is a competing theory to `AdjectiveTheory` in `Theory.lean`; the
+This is a competing theory to the standard threshold model in `Theory.lean`; the
 bridge theorem `statesBased_iff_kennedy` shows when they agree.
 
 -/

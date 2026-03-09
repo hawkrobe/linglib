@@ -252,9 +252,11 @@ Connects to CumminsFranke2021.lean's pragmatic enrichment model:
 - 110 (score 2) → narrower enrichment (±5, 10 total)
 - 7 (score 0) → minimal enrichment (±2, 4 total)
 
-This explains why "more than 100" has weaker argumentative strength than
-"more than 110" in C&F's pragmatic reversal: 100's wider enrichment
-admits more non-goal worlds, diluting its evidential value.
+Semantically, "more than 110" is stronger than "more than 100" (higher
+Bayes factor). But pragmatic enrichment *reverses* this: "more than 100"
+enriched to (100,150] retains assertability in goal-worlds, while
+"more than 110" enriched to (110,120] loses nearly all goal-world
+assertability. So pragmatically, "more than 100" becomes *stronger*.
 -/
 def enrichmentWidth (n : Nat) : Nat :=
   match roundnessGrade n with

@@ -16,8 +16,8 @@ constrained by meaning postulates:
 The full hierarchy also includes **extensional** (adjective depends only
 on the noun's extension, not intension), which requires possible worlds
 to state. The general intensional hierarchy is in
-`Theories/Semantics/Lexical/Adjective/Classification.lean`;
-see `Phenomena/Gradability/Studies/Kamp1975.lean` for bridge theorems.
+`Theories/Semantics/Lexical/Adjective/Classification.lean`.
+The definitions below are single-world specializations of that hierarchy.
 
 ## Predicate Modification
 

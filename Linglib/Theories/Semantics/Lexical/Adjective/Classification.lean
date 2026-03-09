@@ -19,7 +19,8 @@ properties to properties, constrained by meaning postulates.
 
     intersective → {extensional, subsective}
 
-Extensional and subsective are independent: neither implies the other.
+Extensional and subsective are independent: neither implies the other
+(§ 3 provides witnesses for both separations).
 Privative is incompatible with subsective (given non-empty extension).
 
 ## Design
@@ -28,8 +29,8 @@ The hierarchy is defined over *intensional* adjective meanings
 (`Property W E → Property W E`) parameterized by a world type `W` and
 entity type `E`. This is the most general formulation, from which
 single-world (extensional) specializations follow — see
-`Montague/Modification.lean` for the Montague-typed versions and
-`Kamp1975.lean` § 2 for bridge theorems.
+`Montague/Modification.lean` for the Montague-typed extensional versions
+and `Kamp1975.lean` § 1 for single-world specialization theorems.
 
 @cite{partee-2010} argues the privative class should be eliminated
 in favor of subsective + noun coercion; see `Partee2010.lean`.
@@ -131,6 +132,55 @@ theorem privative_not_subsective {adj : AdjMeaning W E}
   have := hp N w x hadj
   simp_all
 
+-- ════════════════════════════════════════════════════
+-- § 3. Independence: Extensional ⊥ Subsective
+-- ════════════════════════════════════════════════════
+
+/-! Neither extensional → subsective nor subsective → extensional.
+    We construct explicit witnesses for both separations. -/
+
 end Hierarchy
+
+section Independence
+
+/-- Witness: extensional but NOT subsective.
+    An adjective that ignores both the noun and intension entirely
+    (always returns true) is trivially extensional, but not subsective
+    because it returns true even when the noun returns false. -/
+private inductive W1 | w
+private inductive E1 | a
+
+private def extNotSubAdj : AdjMeaning W1 E1 := λ _N _w _x => true
+
+theorem extensional_not_implies_subsective :
+    ∃ (adj : AdjMeaning W1 E1), isExtensional adj ∧ ¬isSubsective adj :=
+  ⟨extNotSubAdj,
+   ⟨λ _ _ _ _ _ => rfl,
+    λ h => by have := h (λ _ _ => false) .w .a rfl; cases this⟩⟩
+
+/-- Witness: subsective but NOT extensional.
+    "skillful N" depends on N's intension (whether entity a is N in
+    world w₁) to determine the result in world w₂. Subsective because
+    the first conjunct is `N w x`. -/
+private inductive W2' | w₁ | w₂
+private inductive E2 | a | b
+
+private def subNotExtAdj : AdjMeaning W2' E2 := λ N w x =>
+  N w x && match x with
+    | .a => N .w₁ .a
+    | _ => false
+
+theorem subsective_not_implies_extensional :
+    ∃ (adj : AdjMeaning W2' E2), isSubsective adj ∧ ¬isExtensional adj :=
+  ⟨subNotExtAdj,
+   ⟨λ N w x h => by simp only [subNotExtAdj, Bool.and_eq_true] at h; exact h.1,
+    λ hext => by
+      let N₁ : Property W2' E2 := λ _ _ => true
+      let N₂ : Property W2' E2 := λ w x => match w, x with
+        | .w₁, .a => false | _, _ => true
+      have h := hext N₁ N₂ .w₂ (λ x => by cases x <;> rfl) .a
+      cases h⟩⟩
+
+end Independence
 
 end Semantics.Lexical.Adjective.Classification

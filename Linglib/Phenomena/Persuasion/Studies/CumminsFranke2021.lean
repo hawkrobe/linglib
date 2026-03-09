@@ -1,17 +1,15 @@
 import Linglib.Theories.Pragmatics.RSA.Extensions.ArgumentativeStrength
-import Linglib.Theories.Pragmatics.RSA.Quantities
 import Linglib.Theories.Semantics.Lexical.Numeral.Semantics
-import Linglib.Core.Scales.HornScale
 import Mathlib.Data.Rat.Defs
 
 /-!
 # @cite{cummins-franke-2021}: Argumentative Strength of Numerical Quantity
-@cite{cummins-franke-2021} @cite{macuch-silva-etal-2024}
+@cite{cummins-franke-2021}
 
 Formalizes the conference registration scenario (C&F pp. 7–8) demonstrating that
 semantic and pragmatic argumentative strength can *reverse* the ordering of
-"more than M" expressions. Also connects to Macuch @cite{macuch-silva-etal-2024}'s
-exam scenario on strategic quantifier choice.
+"more than M" expressions, and the REF 2014 case study on strategic use of
+"top M" claims (C&F §5, pp. 10–14).
 
 ## Key Results
 
@@ -21,7 +19,9 @@ exam scenario on strategic quantifier choice.
    flips — "more than 100" becomes pragmatically stronger (C&F Eq. 25)
 3. **REF case study**: universities use round "top M" claims and prefer
    the ranking measure on which they score better (C&F §5)
-4. **Exam scenario**: difficulty metric predicts quantifier weakening (all→most→some)
+
+See also `MacuchSilvaEtAl2024.lean` for the experimental follow-up on
+strategic quantifier choice in exam scenarios.
 
 ## Methodology
 
@@ -34,7 +34,6 @@ This avoids dependence on log approximations.
 namespace Phenomena.Persuasion.Studies.CumminsFranke2021
 
 open RSA.ArgumentativeStrength
-open RSA.Domains.Quantity
 open Semantics.Lexical.Numeral
 
 
@@ -180,82 +179,7 @@ theorem wider_enrichment_weakens_argStr
 
 
 -- ============================================================
--- Section 4: Exam Scenario (Macuch @cite{macuch-silva-etal-2024})
--- ============================================================
-
-/-- An exam stimulus: student got nCorrect out of nTotal questions right -/
-structure ExamStimulus where
-  nCorrect : Nat
-  nTotal : Nat
-  h_le : nCorrect ≤ nTotal
-
-/-- Proportion correct as a rational -/
-def ExamStimulus.proportion (s : ExamStimulus) : ℚ :=
-  if s.nTotal = 0 then 0
-  else ↑s.nCorrect / ↑s.nTotal
-
-/-- Compute argumentative difficulty for an exam stimulus.
-
-Difficulty for positive framing = 1 - proportion (higher proportion = easier to frame positively).
-Difficulty for negative framing = proportion (higher proportion = easier to frame negatively). -/
-def examDifficulty (s : ExamStimulus) (positive : Bool) : ArgumentativeDifficulty :=
-  let p := s.proportion
-  { proportion := p
-    isPositiveFrame := positive
-    difficulty := if positive then 1 - p else p }
-
-/-- Which quantifiers from the extended set are truthful for a given proportion?
-
-Uses the standard extended semantics from Domains.Quantities:
-- "all": true iff count = n (proportion = 1)
-- "most": true iff count > n/2 (proportion > 0.5)
-- "some": true iff count ≥ 1 (proportion > 0)
-- "none": true iff count = 0 (proportion = 0) -/
-def truthfulQuantifiers (s : ExamStimulus) : List ExtUtterance :=
-  let p := s.proportion
-  let result : List ExtUtterance := []
-  let result := if p = 0 then result ++ [.none_] else result
-  let result := if p > 0 then result ++ [.some_] else result
-  let result := if s.nCorrect * 2 > s.nTotal then result ++ [.most] else result
-  let result := if s.nCorrect = s.nTotal then result ++ [.all] else result
-  result
-
-/-- As difficulty increases (proportion moves away from extremes),
-the strongest truthful quantifier weakens: all → most → some.
-
-For positive framing with decreasing proportion:
-- proportion = 1.0: all is truthful
-- proportion = 0.7: most is strongest truthful
-- proportion = 0.3: some is strongest truthful -/
-def strongestTruthfulPositive (s : ExamStimulus) : ExtUtterance :=
-  if s.nCorrect = s.nTotal then .all
-  else if s.nCorrect * 2 > s.nTotal then .most
-  else if s.nCorrect > 0 then .some_
-  else .none_
-
--- Verify the weakening pattern with concrete examples
-
-/-- Perfect score: "all" is available -/
-theorem perfect_allows_all :
-    strongestTruthfulPositive ⟨60, 60, le_refl 60⟩ = .all := by native_decide
-
-/-- 42/60: "most" is strongest -/
-theorem fortytwo_allows_most :
-    strongestTruthfulPositive ⟨42, 60, by omega⟩ = .most := by native_decide
-
-/-- 18/60: "some" is strongest -/
-theorem eighteen_allows_some :
-    strongestTruthfulPositive ⟨18, 60, by omega⟩ = .some_ := by native_decide
-
-/-- The quantifier ordering matches the Horn scale from Core.Scale:
-none < some < most < all -/
-theorem quantifier_ordering_matches_scale :
-    Core.Scale.Quantifiers.entails .all .most = true ∧
-    Core.Scale.Quantifiers.entails .most .some_ = true ∧
-    Core.Scale.Quantifiers.entails .some_ .none_ = false := by native_decide
-
--- ============================================================
--- Section 5: REF Case Study (C&F §5, examples 29–38, p. 12)
+-- Section 4: REF Case Study (C&F §5, examples 29–38, p. 12)
 -- ============================================================
 
 /-- Claim type: absolute rank ("top M") or percentile ("top M per cent") -/
@@ -344,69 +268,5 @@ theorem h2_groups_consistent :
     h2_powerGroup.citedPreferred + h2_powerGroup.citedNonPreferred + h2_powerGroup.citedNeither
       = h2_powerGroup.groupSize := by native_decide
 
-
--- ============================================================
--- Section 6: Macuch @cite{macuch-silva-etal-2024} — Experiment Data
--- ============================================================
-
-/-- Key finding (Exp 1): adjective choice matches framing condition.
-
-92% choose "right" in high-success condition (β = 0.99, 95% CrI [0.96, 1.0]);
-18% in low-success (β = 0.10, 95% CrI [0.05, 0.17]).
-This confirms speakers attend to argumentative goals.
-(Macuch Silva et al. p. 505) -/
-def exp1_adjective_rate_highSuccess : ℚ := 92 / 100
-def exp1_adjective_rate_lowSuccess : ℚ := 18 / 100
-
-theorem exp1_adjective_matches_condition :
-    exp1_adjective_rate_highSuccess > 3/4 ∧
-    exp1_adjective_rate_lowSuccess < 1/4 := by
-  constructor <;> native_decide
-
-/-- Key finding (Exp 1): "some" and "most" dominate quantifier choices
-for referring to students, in both conditions.
-
-High success: some 38% + most 40% = 78%.
-Low success: some 38% + most 36% = 74%.
-(Macuch Silva et al. p. 505) -/
-def exp1_some_most_highSuccess : ℚ := 78 / 100
-def exp1_some_most_lowSuccess : ℚ := 74 / 100
-
-theorem exp1_some_most_dominant :
-    exp1_some_most_highSuccess > 1/2 ∧
-    exp1_some_most_lowSuccess > 1/2 := by
-  constructor <;> native_decide
-
-/-- Key finding (Exp 2): positive framing bias.
-
-74% of free-form descriptions framed the result positively
-(across conditions). (Macuch Silva et al. p. 514) -/
-def exp2_positive_bias_rate : ℚ := 74 / 100
-
-theorem exp2_positive_bias :
-    exp2_positive_bias_rate > 1/2 := by native_decide
-
-/-- Experiment 2 expression strategy breakdown (Macuch Silva et al. p. 512).
-Categories based on which referents receive quantity expressions. -/
-structure Exp2StrategyDatum where
-  strategy : String
-  proportion : ℚ
-  deriving Repr
-
-/-- Experiment 2 strategy proportions.
-55% use quantity expressions for both students and questions;
-33% use a quantity expression for students only;
-9% use no quantity expression at all;
-3% use a quantity expression for questions only. -/
-def exp2_strategies : List Exp2StrategyDatum :=
-  [ ⟨"student + question quantity",  55 / 100⟩
-  , ⟨"student quantity only",        33 / 100⟩
-  , ⟨"no quantity expression",        9 / 100⟩
-  , ⟨"question quantity only",        3 / 100⟩
-  ]
-
-/-- Dual-reference quantity expressions are the most common strategy -/
-theorem exp2_dual_quantity_most_common :
-    (55 : ℚ) / 100 > 33 / 100 := by native_decide
 
 end Phenomena.Persuasion.Studies.CumminsFranke2021

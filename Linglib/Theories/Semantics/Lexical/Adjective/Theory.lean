@@ -1,42 +1,25 @@
 /-
-# Gradable Adjective Theory Infrastructure
+# Gradable Adjective Infrastructure
 
-This module defines the `AdjectiveTheory` structure for organizing semantic
-analyses of gradable adjectives (tall, happy, expensive, etc.).
+Types and operations for gradable adjective semantics (tall, happy, expensive).
 
-## Key Issues
+## Key Components
 
-Gradable adjectives raise several semantic questions:
-
-1. **Vagueness**: What counts as "tall"? Context-dependent threshold.
-2. **Comparison**: "John is taller than Mary" — comparative morphology.
-3. **Degree modification**: "very tall", "slightly happy" — degree operators.
-4. **Antonymy**: Is "short" the contradictory or contrary of "tall"?
+- `NegationType`: Contradictory vs. contrary antonyms
+- `ThresholdPair`: Two thresholds for contrary antonyms with gap
+- `GradableAdjEntry`: Lexical entry bundling form + scale structure + antonym
+- `InformationalStrength`: Weak/strong adjective distinction
+- Negation and gap-region predicates
 
 ## Architecture
 
 Core degree types (`Degree`, `Threshold`) live in `Core.MeasurementScale`.
-This module adds adjective-specific infrastructure:
-- `NegationType`: Contradictory vs. contrary antonyms
-- `ThresholdPair`: Two thresholds for contrary antonyms with gap
-- Negation semantics functions
-- Degree modifiers
+The canonical threshold semantics (`positiveMeaning`, `negativeMeaning`) live
+in `Theories/Semantics/Degree/Core.lean`. This module adds adjective-specific
+infrastructure on top: antonymy, two-threshold models, and lexical entries.
 
-## Relationship to Degree.Core
-
-This module uses concrete `Degree max` (= `Fin (max+1)`) for computation
-in RSA models and Fragment entries. `Degree.Core` uses abstract types
-(`Entity D : Type*` with `LinearOrder D`) for framework-level theorems.
-See also `Degree.Granularity` for granularity-sensitive degree morphology.
-
-## Comparison with ModalTheory
-
-| Aspect        | ModalTheory                        | AdjectiveTheory                    |
-|---------------|------------------------------------|------------------------------------|
-| Core types    | ModalForce, Proposition            | Degree, Threshold, NegationType    |
-| Parameters    | Accessibility relation / backgrounds | Threshold(s), antonym type        |
-| Key question  | What's the modal base?             | Where's the threshold? Contrary?   |
-
+For the adjective classification hierarchy (intersective, subsective, privative,
+extensional), see `Classification.lean`.
 -/
 
 import Linglib.Theories.Semantics.Montague.Basic
@@ -154,20 +137,6 @@ inductive InformationalStrength where
   | strong  -- gigantic, tiny, pristine, filthy
   deriving Repr, DecidableEq, BEq
 
-/-- Strong adjectives entail their weak counterparts on the same pole.
-    If the strong adjective's threshold is at least as high as the weak
-    adjective's, then `positiveMeaning d θ_strong → positiveMeaning d θ_weak`.
-
-    Semantically: "gigantic" (θ_strong = 8) entails "large" (θ_weak = 5)
-    because any degree exceeding 8 also exceeds 5. -/
-theorem strong_entails_weak {max : Nat} (d : Degree max)
-    (θ_weak θ_strong : Threshold max)
-    (h_ord : θ_weak ≤ θ_strong)
-    (h_strong : Semantics.Degree.positiveMeaning d θ_strong = true) :
-    Semantics.Degree.positiveMeaning d θ_weak = true := by
-  simp only [Semantics.Degree.positiveMeaning, decide_eq_true_eq] at *
-  exact lt_of_le_of_lt h_ord h_strong
-
 -- ════════════════════════════════════════════════════
 -- Adjective Lexical Entry
 -- ════════════════════════════════════════════════════
@@ -185,80 +154,6 @@ structure GradableAdjEntry where
   antonymForm : Option String := none
   antonymRelation : Option AntonymRelation := none
   deriving Repr
-
--- ════════════════════════════════════════════════════
--- Adjective Theory
--- ════════════════════════════════════════════════════
-
-/--
-A semantic theory for gradable adjectives.
-
-1. **Single threshold** (standard): "tall" = degree > θ
-2. **Two threshold / Contrary** (Tessler & Franke): gap region
--/
-structure AdjectiveTheory (max : Nat) where
-  name : String
-  citation : String
-  supportsContrary : Bool
-  positiveMeaning : Degree max → Threshold max → Bool
-  contradictoryAntonym : Degree max → Threshold max → Bool
-  contraryAntonym : Degree max → ThresholdPair max → Bool := λ _ _ => false
-
--- Standard Theory: Single Threshold
-
-def standardTheory (max : Nat) : AdjectiveTheory max where
-  name := "Standard Threshold"
-  citation := "Kennedy (2007), Lassiter & Goodman (2017)"
-  supportsContrary := false
-  positiveMeaning := λ d θ => d.toNat > θ.toNat
-  contradictoryAntonym := λ d θ => d.toNat ≤ θ.toNat
-
--- Contrary Theory: Two Thresholds
-
-def contraryTheory (max : Nat) : AdjectiveTheory max where
-  name := "Contrary Antonyms (Two Threshold)"
-  citation := "Tessler & Franke (2020), Cruse (1986)"
-  supportsContrary := true
-  positiveMeaning := λ d θ => d.toNat > θ.toNat
-  contradictoryAntonym := λ d θ => d.toNat ≤ θ.toNat
-  contraryAntonym := λ d tp => d.toNat < tp.neg.toNat
-
--- Derived Operations
-
-def AdjectiveTheory.inGap {max : Nat} (T : AdjectiveTheory max)
-    (d : Degree max) (tp : ThresholdPair max) : Bool :=
-  if T.supportsContrary then
-    inGapRegion d tp
-  else
-    false
-
-def AdjectiveTheory.negatedAntonym {max : Nat} (T : AdjectiveTheory max)
-    (d : Degree max) (tp : ThresholdPair max) : Bool :=
-  if T.supportsContrary then
-    d.toNat ≥ tp.neg.toNat
-  else
-    T.positiveMeaning d tp.pos
-
--- Theorems
-
-theorem standard_no_gap : (standardTheory 4).supportsContrary = false := rfl
-
-theorem contrary_supports_gap : (contraryTheory 4).supportsContrary = true := rfl
-
-def exampleDegree : Degree 4 := ⟨⟨2, by omega⟩⟩
-def exampleThresholds : ThresholdPair 4 :=
-  { pos := ⟨⟨3, by omega⟩⟩, neg := ⟨⟨2, by omega⟩⟩, gap_exists := by decide }
-
-theorem example_in_gap : inGapRegion exampleDegree exampleThresholds = true := by native_decide
-
-theorem standard_double_neg_cancels :
-    (standardTheory 4).negatedAntonym exampleDegree exampleThresholds =
-    (standardTheory 4).positiveMeaning exampleDegree exampleThresholds.pos := rfl
-
-theorem contrary_double_neg_differs :
-    (contraryTheory 4).negatedAntonym exampleDegree exampleThresholds = true ∧
-    (contraryTheory 4).positiveMeaning exampleDegree exampleThresholds.pos = false := by
-  native_decide
 
 -- ════════════════════════════════════════════════════
 -- Marginality Scales Account (@cite{dinis-jacinto-2026})

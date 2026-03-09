@@ -86,6 +86,7 @@ import Linglib.Core.FormFrequency
 import Linglib.Core.Genericity
 import Linglib.Core.Case.Basic
 import Linglib.Core.Case.Hierarchy
+import Linglib.Core.Case.Containment
 import Linglib.Core.Case.Syncretism
 import Linglib.Core.Case.SplitConditions
 import Linglib.Core.Case.LocalExtension
@@ -1161,6 +1162,7 @@ import Linglib.Theories.Interfaces.SyntaxSemantics.Minimalism.CausalSourceBridge
 import Linglib.Theories.Interfaces.SyntaxSemantics.Minimalism.VoiceTheta
 import Linglib.Theories.Morphology.DM.Fission
 import Linglib.Theories.Morphology.DM.Categorizer
+import Linglib.Theories.Morphology.DM.VocabularyInsertion
 import Linglib.Theories.Morphology.Core.CliticVsAffix
 import Linglib.Theories.Morphology.WP.LCEC
 import Linglib.Theories.Syntax.Minimalism.VoiceAppl
@@ -1490,6 +1492,7 @@ import Linglib.Theories.Phonology.Features
 import Linglib.Theories.Phonology.FeatureGeometry
 import Linglib.Theories.Phonology.Autosegmental.Defs
 import Linglib.Theories.Phonology.Syllable.Defs
+import Linglib.Theories.Phonology.Syllable.Foot
 import Linglib.Theories.Phonology.RuleBased.Defs
 import Linglib.Theories.Phonology.HarmonicGrammar.Basic
 import Linglib.Theories.Phonology.HarmonicGrammar.MaxEnt

@@ -149,6 +149,18 @@ def negativeMeaning {max : Nat} (d : Degree max) (t : Threshold max) : Bool :=
 def antonymMeaning {max : Nat} (d : Degree max) (t : Threshold max) : Bool :=
   d ≤ (t : Degree max)
 
+/-- Monotonicity of `positiveMeaning` in the threshold: a higher threshold
+    is informationally stronger. If `d > θ_strong` and `θ_weak ≤ θ_strong`,
+    then `d > θ_weak`. This grounds the `InformationalStrength` distinction
+    between weak adjectives (lower θ) and strong adjectives (higher θ). -/
+theorem positiveMeaning_monotone {max : Nat} (d : Degree max)
+    (θ_weak θ_strong : Threshold max)
+    (h_ord : θ_weak ≤ θ_strong)
+    (h_strong : positiveMeaning d θ_strong = true) :
+    positiveMeaning d θ_weak = true := by
+  simp only [positiveMeaning, decide_eq_true_eq] at *
+  exact lt_of_le_of_lt h_ord h_strong
+
 -- ════════════════════════════════════════════════════
 -- § 5. Degree Modifiers (@cite{kennedy-mcnally-2005}; @cite{israel-2011})
 -- ════════════════════════════════════════════════════

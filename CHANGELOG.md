@@ -1,5 +1,33 @@
 # Changelog
 
+## [0.229.76] - 2026-03-09
+
+### Added
+- **Classification.lean §3**: Independence witnesses proving extensional ⊥ subsective (neither implies the other)
+- **Kamp1975.lean**: `kleene_dilemma` impossibility theorem — no truth-functional operator can be both idempotent and make borderline contradictions false
+- **Degree/Core.lean**: `positiveMeaning_monotone` — canonical monotonicity theorem (higher threshold is informationally stronger)
+- **AlexandropoulouGotzner2024.lean**: `gap_not_positive` and `gap_not_negative` — gap region excludes both positive and contrary-negative readings (replaces vacuous `gap_allows_middling`)
+- **references.bib**: Verified `alexandropoulou-gotzner-2024` entry (Glossa 9(1), DOI 10.16995/glossa.9919)
+
+### Changed
+- **Theory.lean**: Delete dead `AdjectiveTheory` structure, `standardTheory`, `contraryTheory`, and all derived ops (~70 lines)
+- **Classification.lean**: Fix docstring cross-references to bridge theorem locations
+- **Modification.lean**: Fix false docstring claim about bridge theorems
+- **Kamp1975.lean**: Clarify that `intersective_at_world`/`subsective_at_world` ARE the Classification↔Modification bridge; fix Theory 2 docstring to acknowledge it's not formalized
+- **Data.lean**: `areContradictories : Bool` → `negationType : Core.NegationType`
+
+### Removed
+- **Theory.lean**: `strong_entails_weak` (superseded by `Degree.positiveMeaning_monotone`)
+
+## [0.229.75] - 2026-03-09
+
+### Added
+- **BellerGerstenberg2025.lean §13–16**: Four integration bridges connecting B&G's causal expression model to linglib's causal machinery:
+  - **HornScale** (§13): Register `⟨affected, enabled, caused⟩` as a `HornScale CausalExpression`, prove scale ordering matches semantic entailment hierarchy, derive scalar implicature alternatives matching Experiment 1C
+  - **GradedCausation** (§14): Bridge to Cao, White & Lassiter 2025 — `causalWorldToMeasures` maps B&G's S to deterministic SUF, prove consistency when both derive from the same structural model
+  - **ProductionDependence** (§15): Bridge to Martin, Rose & Nichols 2025 — `dominantCausationType` maps H→P-CAUSE, W→D-CAUSE; prove P-CAUSE + counterfactual → "caused", D-CAUSE alone → ¬"caused"
+  - **ExpressionStructural** (§16): Rewrite all four expression meanings directly in terms of `hasDirectLaw`/`causallyNecessary`/`causallySufficient`, eliminating the intermediate CausalWorld
+
 ## [0.229.74] - 2026-03-09
 
 ### Changed

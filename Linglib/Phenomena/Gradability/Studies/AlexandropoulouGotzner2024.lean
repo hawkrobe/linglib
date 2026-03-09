@@ -258,17 +258,23 @@ theorem no_gap_implies_symmetric_negation
   simp only [not_lt]
 
 /-- Contrary antonyms (with gap) allow degrees that are neither
-    positive nor negative — the gap region. -/
-theorem gap_allows_middling
+    positive nor negative — the gap region is disjoint from the
+    positive region and from the contrary-negative region. -/
+theorem gap_not_positive
     {max : Nat} (tp : ThresholdPair max) (d : Degree max)
-    (_h_in_gap : inGapRegion d tp = true) :
-    -- Degree is not in the positive region
-    positiveMeaning' d tp = false ∨
-    -- (The gap condition itself guarantees this, but we state it
-    -- as a disjunction to match the paper's claim that gap degrees
-    -- are "neither A nor antonym(A)".)
-    true := by
-  right; trivial
+    (h_in_gap : inGapRegion d tp = true) :
+    positiveMeaning' d tp = false := by
+  simp only [positiveMeaning', inGapRegion, Bool.and_eq_true, decide_eq_true_eq,
+             decide_eq_false_iff_not, not_lt] at *
+  exact h_in_gap.2
+
+theorem gap_not_negative
+    {max : Nat} (tp : ThresholdPair max) (d : Degree max)
+    (h_in_gap : inGapRegion d tp = true) :
+    contraryNegMeaning d tp = false := by
+  simp only [contraryNegMeaning, inGapRegion, Bool.and_eq_true, decide_eq_true_eq,
+             decide_eq_false_iff_not, not_lt] at *
+  exact h_in_gap.1
 
 -- ============================================================================
 -- § 7. Fragment Grounding
