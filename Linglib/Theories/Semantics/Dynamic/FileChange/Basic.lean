@@ -23,7 +23,7 @@ definedness:
 
 When a precondition fails, the FCP is *undefined*, not empty.
 
-## FCP Rules (@cite{heim-1982}, Ch III §1.5)
+## FCP Rules (@cite{heim-1982}, Ch III §2.1)
 
 | Connective | FCP |
 |------------|-----|
@@ -33,9 +33,20 @@ When a precondition fails, the FCP is *undefined*, not empty.
 | if φ then ψ | F + ¬(φ ∧ ¬ψ) |
 | ∃x.φ (indefinite) | Extend Dom by x, widen Sat, then update with φ |
 
-## Truth (@cite{heim-1982}, Ch III §3)
+**Design note on atomic domain expansion.** @cite{heim-1982}'s rule (i'')
+specifies that atomic updates *expand* the domain: Dom(F + φ) = Dom(F) ∪
+{i₁,...,iₙ}. We follow the modern convention (shared by DRT and DPL) where
+domain expansion is handled solely by the indefinite operator (`indef`),
+and atomic predicates preserve the domain. This simplifies the algebra
+without affecting truth conditions, since in practice every variable
+mentioned in an atomic predicate has already been introduced by an
+indefinite or a definite.
 
-φ is true in F iff F + φ = F (truth as idempotency of update).
+## Truth (@cite{heim-1982}, Ch III §3.2, criterion (C))
+
+φ is true w.r.t. F iff F + φ is defined and Sat(F + φ) is nonempty.
+This is *not* idempotency — it is a weaker condition that builds
+existential quantification into the notion of truth itself.
 
 ## Relation to Core Infrastructure
 
@@ -66,6 +77,7 @@ This captures @cite{heim-1982}'s formal definition of a file as a
 structured pair, not merely a flat set of possibilities. The domain
 tracks which variables carry information — the key structural
 innovation over bare info states. -/
+@[ext]
 structure HeimFile (W : Type*) (E : Type*) where
   /-- Domain: the set of active discourse referent indices. -/
   dom : Set Nat
@@ -108,9 +120,20 @@ is felicitous only if x is already in the domain. -/
 def familiar (F : HeimFile W E) (x : Nat) : Prop :=
   x ∈ F.dom
 
-/-- A file is consistent (non-absurd) iff its satisfaction set is non-empty. -/
+/-- A file is consistent (non-absurd) iff its satisfaction set is non-empty.
+
+File truth in @cite{heim-1982} (Ch III §1.2): "F is true iff there
+is at least one sequence a_N such that a_N ∈ Sat(F)." -/
 def consistent (F : HeimFile W E) : Prop :=
   F.sat.Nonempty
+
+/-- Card i in F refers to entity x iff every satisfying sequence
+assigns x to position i.
+
+@cite{heim-1982} (Ch III §2.3, p. 207): "Card i in F refers to x
+iff, for all a_N ∈ Sat(F), a_i = x." -/
+def refersTo (F : HeimFile W E) (i : Nat) (x : E) : Prop :=
+  ∀ p ∈ F.sat, p.assignment i = x
 
 /-- Project to the underlying `InfoState`. -/
 def toInfoState (F : HeimFile W E) : InfoState W E := F.sat
@@ -127,7 +150,7 @@ theorem novel_iff_not_familiar (F : HeimFile W E) (x : Nat) :
 end HeimFile
 
 -- ════════════════════════════════════════════════════
--- § 2. File Change Potentials (@cite{heim-1982}, Ch III §1.5)
+-- § 2. File Change Potentials (@cite{heim-1982}, Ch III §2.1)
 -- ════════════════════════════════════════════════════
 
 namespace FCP
@@ -138,7 +161,13 @@ variable {W E : Type*}
 
 F + [P(x₁,...,xₙ)] = ⟨Dom(F), {s ∈ Sat(F) | P holds of s}⟩
 
-Domain is unchanged; only the satisfaction set shrinks. -/
+Domain is unchanged; only the satisfaction set shrinks.
+
+**Note:** @cite{heim-1982}'s rule (i'') on p. 198 specifies that atomic
+updates also expand the domain: Dom(F + φ) = Dom(F) ∪ {i₁,...,iₙ}.
+We follow the modern convention where domain expansion is handled
+by `indef` only. This is equivalent in practice because every variable
+in an atomic predicate has been previously introduced. -/
 def atom (pred : Possibility W E → Prop) : FCP W E :=
   λ F => some { dom := F.dom, sat := { p ∈ F.sat | pred p } }
 
@@ -229,27 +258,58 @@ section Truth
 
 variable {W E : Type*}
 
-/-- φ is true in F iff F + φ is defined and equals F.
+/-- φ is true w.r.t. F iff F + φ is defined and the result is
+a consistent (true) file.
 
-@cite{heim-1982}'s truth definition: truth is idempotency of
-update. A file already "knows" φ iff updating with φ changes
-nothing. -/
+This is @cite{heim-1982}'s truth criterion (C) (Ch III §3.2, p. 214):
+"A formula φ is true w.r.t. a file F if F + φ is true" — where a file
+is true iff Sat(F) ≠ ∅. Existential quantification is built into the
+notion of truth itself: indefinites need not be explicitly bound by ∃. -/
 def trueIn (F : HeimFile W E) (φ : FCP W E) : Prop :=
-  φ F = some F
-
-/-- φ is satisfiable in F iff F + φ is defined and consistent. -/
-def satisfiable (F : HeimFile W E) (φ : FCP W E) : Prop :=
   ∃ F', φ F = some F' ∧ F'.consistent
 
-/-- F entails φ iff F + φ = F (same as truth). -/
+/-- φ is false w.r.t. F iff F + φ is defined but the result is
+an inconsistent (absurd) file.
+
+@cite{heim-1982}'s criterion (C): "false w.r.t. F if F + φ is false." -/
+def falseIn (F : HeimFile W E) (φ : FCP W E) : Prop :=
+  ∃ F', φ F = some F' ∧ ¬F'.consistent
+
+/-- F supports φ iff F + φ = F (idempotency of update).
+
+This is the dynamic notion of entailment/support: F already "knows" φ
+iff updating with φ changes nothing. This is stronger than truth —
+support implies truth (when F is consistent) but not vice versa.
+
+Note: this is sometimes called "truth as idempotency" in the update
+semantics literature (@cite{veltman-1996}), but it is NOT
+@cite{heim-1982}'s truth definition, which is the weaker `trueIn`. -/
+def supports (F : HeimFile W E) (φ : FCP W E) : Prop :=
+  φ F = some F
+
+/-- F entails φ iff F supports φ (F + φ = F). -/
 def fileEntails (F : HeimFile W E) (φ : FCP W E) : Prop :=
-  trueIn F φ
+  supports F φ
 
 /-- φ semantically entails ψ iff for all files F, if F + φ is defined
-then F + φ + ψ = F + φ. -/
+then F + φ supports ψ. -/
 def fcpEntails (φ ψ : FCP W E) : Prop :=
   ∀ F : HeimFile W E, ∀ F' : HeimFile W E,
-    φ F = some F' → FCP.seq φ ψ F = φ F
+    φ F = some F' → supports F' ψ
+
+/-- φ is defined on F (the update doesn't trigger presupposition failure). -/
+def definedOn (F : HeimFile W E) (φ : FCP W E) : Prop :=
+  ∃ F', φ F = some F'
+
+/-- Truth implies definedness. -/
+theorem trueIn_definedOn (F : HeimFile W E) (φ : FCP W E)
+    (h : trueIn F φ) : definedOn F φ :=
+  ⟨h.choose, h.choose_spec.1⟩
+
+/-- Support implies truth for consistent files. -/
+theorem supports_trueIn (F : HeimFile W E) (φ : FCP W E)
+    (hsup : supports F φ) (hcons : F.consistent) : trueIn F φ :=
+  ⟨F, hsup, hcons⟩
 
 end Truth
 
@@ -312,7 +372,10 @@ theorem indef_intermediate_has_x (x : Nat) (F : HeimFile W E) :
 theorem cond_eq (φ ψ : FCP W E) :
     FCP.cond φ ψ = FCP.neg (FCP.seq φ (FCP.neg ψ)) := rfl
 
-/-- Atomic update is eliminative: Sat(F + P) ⊆ Sat(F). -/
+/-- Atomic update is eliminative: Sat(F + P) ⊆ Sat(F).
+
+This is @cite{heim-1982}'s Principle (A): information only grows
+(possibilities only decrease). -/
 theorem atom_eliminative (pred : Possibility W E → Prop)
     (F : HeimFile W E) (F' : HeimFile W E)
     (h : FCP.atom pred F = some F') :
@@ -322,11 +385,50 @@ theorem atom_eliminative (pred : Possibility W E → Prop)
   rw [← h] at hp
   exact hp.1
 
-/-- Truth is idempotency: if φ is true in F, then updating again
-does nothing. -/
-theorem true_idempotent (F : HeimFile W E) (φ : FCP W E)
-    (h : trueIn F φ) : FCP.seq φ φ F = φ F := by
-  simp only [FCP.seq, trueIn] at *
+/-- Negation is eliminative: Sat(F + ¬φ) ⊆ Sat(F). -/
+theorem neg_eliminative (φ : FCP W E) (F F' : HeimFile W E)
+    (h : FCP.neg φ F = some F') :
+    F'.sat ⊆ F.sat := by
+  simp only [FCP.neg] at h
+  split at h
+  · exact absurd h (by simp)
+  · rename_i F'' _
+    simp at h
+    intro p hp
+    rw [← h] at hp
+    exact hp.1
+
+/-- Sequential composition of eliminative FCPs is eliminative. -/
+theorem seq_eliminative (φ ψ : FCP W E)
+    (hφ : ∀ F F', φ F = some F' → F'.sat ⊆ F.sat)
+    (hψ : ∀ F F', ψ F = some F' → F'.sat ⊆ F.sat)
+    (F F' : HeimFile W E) (h : FCP.seq φ ψ F = some F') :
+    F'.sat ⊆ F.sat := by
+  simp only [FCP.seq, Option.bind] at h
+  cases hφF : φ F with
+  | none => rw [hφF] at h; exact absurd h (by simp)
+  | some F₁ =>
+    rw [hφF] at h
+    simp at h
+    intro p hp
+    exact hφ F F₁ hφF (hψ F₁ F' h hp)
+
+/-- Domain monotonicity for definite updates: when the body preserves
+the domain, so does the definite FCP. -/
+theorem def_preserves_dom (x : Nat) (body : FCP W E)
+    (hbody : ∀ G G', body G = some G' → G'.dom = G.dom)
+    (F F' : HeimFile W E) (h : FCP.def_ x body F = some F') :
+    F'.dom = F.dom := by
+  simp only [FCP.def_] at h
+  split at h
+  · exact hbody F F' h
+  · exact absurd h (by simp)
+
+/-- Support is idempotent: if F supports φ, then updating twice is
+the same as once. -/
+theorem supports_idempotent (F : HeimFile W E) (φ : FCP W E)
+    (h : supports F φ) : FCP.seq φ φ F = φ F := by
+  simp only [FCP.seq, supports] at *
   rw [h]
   simp [h]
 
@@ -350,9 +452,52 @@ theorem liftCCP_seq (u v : CCP (Possibility W E)) :
   funext F
   simp [liftCCP, FCP.seq, CCP.seq]
 
+/-- Lifted CCPs are always defined (total). -/
+theorem liftCCP_definedOn (u : CCP (Possibility W E)) (F : HeimFile W E) :
+    definedOn F (liftCCP u) :=
+  ⟨{ dom := F.dom, sat := u F.sat }, rfl⟩
+
 /-- Extract the satisfaction set from the result of an FCP. -/
 def resultSat (φ : FCP W E) (F : HeimFile W E) : Option (InfoState W E) :=
   (φ F).map (·.sat)
+
+-- ─── DynProp bridge ───
+
+/-- Lift a DRS (relational meaning) to an FCP via the relational image.
+
+This connects @cite{heim-1982}'s FCPs to the relational algebra
+in `Core.DynProp`. The resulting FCP preserves domain and is always
+defined (total). -/
+def liftDRS (R : DynProp.DRS (Possibility W E)) : FCP W E :=
+  liftCCP (lift R)
+
+/-- `liftDRS` preserves sequential composition: lifting a relational
+sequence equals sequencing lifted FCPs.
+
+This shows the FCS algebra homomorphically embeds the DynProp
+algebra — the unification underlying @cite{muskens-1996}. -/
+theorem liftDRS_seq (R₁ R₂ : DynProp.DRS (Possibility W E)) :
+    liftDRS (DynProp.dseq R₁ R₂) = FCP.seq (liftDRS R₁) (liftDRS R₂) := by
+  simp only [liftDRS]
+  rw [lift_dseq]
+  exact liftCCP_seq (lift R₁) (lift R₂)
+
+set_option linter.unusedSimpArgs false in
+/-- Atomic FCP equals lifting a test from DynProp.
+
+FCS's `atom pred` = lifting `DynProp.test (λ p => pred p)`. This
+shows atomic FCPs are exactly the relational tests, connecting
+@cite{heim-1982}'s Principle (A) to the DynProp algebra. -/
+theorem atom_eq_liftDRS_test (pred : Possibility W E → Prop) :
+    FCP.atom pred = liftDRS (DynProp.test pred) := by
+  funext F
+  simp only [FCP.atom, liftDRS, liftCCP, lift, DynProp.test]
+  congr 1
+  ext p
+  simp only [Set.mem_setOf_eq]
+  constructor
+  · intro ⟨hp, hpred⟩; exact ⟨p, hp, rfl, hpred⟩
+  · rintro ⟨i, hi, rfl, hpred⟩; exact ⟨hi, hpred⟩
 
 end Bridge
 

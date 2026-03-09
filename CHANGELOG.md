@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.229.44] - 2026-03-08
+
+### Changed
+- **FileChange/Basic.lean**: Fix truth definition — rename `trueIn` → `supports` (idempotency), add correct `trueIn` per Heim's criterion (C) (Sat(F+φ) nonempty), add `falseIn`, `definedOn`, `refersTo`. Add `@[ext]` on HeimFile. Add DynProp bridge (`liftDRS`, `liftDRS_seq`, `atom_eq_liftDRS_test`). Add `neg_eliminative`, `seq_eliminative`, `def_preserves_dom`. Docstring updates noting atomic domain expansion departure from Heim's rule (i'')
+- **Studies/Heim1982.lean**: Close `indef_adds_to_dom` sorry, replace thin wrappers with substantive analysis, add per-datum verification theorems, fix truth section to criterion (C), add eliminativity section (Principle A)
+
 ## [0.229.43] - 2026-03-08
 
 ### Changed
