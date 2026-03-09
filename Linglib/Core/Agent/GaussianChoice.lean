@@ -1,5 +1,6 @@
 import Linglib.Core.Agent.SignalDetection
 import Linglib.Core.Agent.Thurstone
+import Linglib.Core.Agent.GumbelLuce
 
 /-!
 # Gaussian Choice Bridge @cite{luce-1959}
@@ -191,5 +192,50 @@ theorem SDTModel.twoAFC_mono (m₁ m₂ : SDTModel)
   exact normalCDF_strictMono (by
     exact div_lt_div_of_pos_right h
       (Real.sqrt_pos.mpr (by norm_num : (0 : ℝ) < 2)))
+
+-- ============================================================================
+-- §5. Random Utility Model Unification
+-- ============================================================================
+
+/-!
+## RUM Unification
+
+Both Thurstone and Luce choice models are Random Utility Models (RUMs) —
+they differ only in the noise distribution:
+
+| Model       | Noise Distribution | Choice Probability | Reference |
+|-------------|--------------------|--------------------|-----------|
+| Thurstone V | Gaussian(0, σ²)   | `Φ((u_a-u_b)/(σ√2))` | `Thurstone.lean` |
+| Gumbel-Luce | Gumbel(0, β)      | `logistic((u_a-u_b)/β)` | `GumbelLuce.lean` |
+
+The Gumbel-Luce model gives **exactly** the softmax (Luce) choice rule
+(McFadden's theorem, `mcfaddenIntegral_eq_softmax`). The Thurstone model
+gives the normal CDF. These agree up to the Gaussian-logistic approximation
+(`logistic_approx_normal`, `thurstone_luce_approximation`).
+
+The constant `k = π/(σ√6)` that appears in the Thurstone-Luce approximation
+(`thurstoneLuceK`) is the scale matching between Gaussian and Gumbel noise:
+it equates the variances `σ² · 2` (Gaussian difference) and `β² · π²/3`
+(logistic/Gumbel difference).
+-/
+
+/-- **Gumbel-Luce binary = logistic (exact)**: A Gumbel RUM with utilities
+    `[d'/2, -d'/2]` and scale `β` gives choice probability `logistic(d'/β)`.
+
+    Compare with Thurstone Case V (`hitRate_eq_thurstone`), which gives
+    `Φ(d'/(σ√2))` — the same functional form but with the normal CDF
+    instead of logistic.
+
+    The two models are both RUMs; they agree when `Φ ≈ logistic`, i.e.,
+    when the variance-matched scale `β = σ√6/π` (see `thurstoneLuceK`). -/
+theorem gumbelRUM_binary_eq_logistic (d' β : ℝ) (hβ : 0 < β) :
+    mcfaddenIntegral (λ i : Fin 2 => if i = 0 then d' / 2 else -(d' / 2)) β 0
+    = logistic (d' / β) := by
+  rw [mcfaddenIntegral_binary _ hβ]
+  congr 1
+  simp only [↓reduceIte]
+  have h1 : ¬(1 : Fin 2) = (0 : Fin 2) := by decide
+  simp only [h1, ↓reduceIte]
+  ring
 
 end Core

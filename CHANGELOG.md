@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.229.45] - 2026-03-08
+
+### Added
+- **GumbelLuce.lean**: Gumbel distribution (CDF, PDF) and McFadden's theorem — i.i.d. Gumbel noise gives exactly softmax choice probabilities. Proves `integral_exp_neg_mul_Ioi_zero` (Laplace integral), `mcfaddenIntegral_eq_softmax` (algebraic core), `mcfaddenIntegral_binary` (binary = logistic). Adds `RationalAction.fromGumbelRUM` constructor. One sorry remains for the measure-theoretic change-of-variables connection
+- **GaussianChoice.lean**: Add §5 RUM Unification — connects Thurstone (Gaussian RUM) and Gumbel-Luce (Gumbel RUM) as two instances of Random Utility Models, with `gumbelRUM_binary_eq_logistic` theorem
+
 ## [0.229.44] - 2026-03-08
 
 ### Changed

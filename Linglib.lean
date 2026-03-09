@@ -64,6 +64,7 @@ import Linglib.Core.Agent.Thurstone
 import Linglib.Core.Agent.SignalDetection
 import Linglib.Core.Agent.RankOrderings
 import Linglib.Core.Agent.SemiorderRanking
+import Linglib.Core.Agent.GumbelLuce
 import Linglib.Core.Agent.GaussianChoice
 import Linglib.Core.Agent.PsychophysicalChoice
 import Linglib.Core.Agent.Learning
