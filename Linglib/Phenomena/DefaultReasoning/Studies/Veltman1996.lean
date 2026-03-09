@@ -1,5 +1,5 @@
 import Linglib.Phenomena.DefaultReasoning.TweetyNixon
-import Linglib.Theories.Semantics.Dynamic.Effects.Default.Frames
+import Linglib.Theories.Semantics.Dynamic.UpdateSemantics.Frames
 
 /-!
 # @cite{veltman-1996} Frames → Tweety/Nixon

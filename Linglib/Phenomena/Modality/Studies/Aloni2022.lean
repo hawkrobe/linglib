@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Dynamic.Systems.BSML.FreeChoice
+import Linglib.Theories.Semantics.Dynamic.BSML.FreeChoice
 
 /-!
 # @cite{aloni-2022}: BSML Applied to Permission Disjunction

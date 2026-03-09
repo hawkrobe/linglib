@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Dynamic.Effects.Epistemic.Basic
+import Linglib.Theories.Semantics.Dynamic.Epistemic.Basic
 
 /-!
 # @cite{khoo-2015}: Modal Disagreements

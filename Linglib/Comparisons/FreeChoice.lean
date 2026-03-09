@@ -2,8 +2,8 @@ import Linglib.Theories.Pragmatics.NeoGricean.Implementations.BarLevFox2020
 import Linglib.Theories.Pragmatics.NeoGricean.Exhaustivity.Fox2007
 import Linglib.Phenomena.Modality.Studies.ChampollionAlsopGrosu2019
 import Linglib.Phenomena.Modality.Studies.Alsop2024
-import Linglib.Theories.Semantics.Dynamic.Effects.Bilateral.FreeChoice
-import Linglib.Theories.Semantics.Dynamic.Systems.BSML.FreeChoice
+import Linglib.Theories.Semantics.Dynamic.Bilateral.FreeChoice
+import Linglib.Theories.Semantics.Dynamic.BSML.FreeChoice
 import Linglib.Phenomena.Modality.Studies.Aloni2022
 import Linglib.Phenomena.Modality.FreeChoice
 

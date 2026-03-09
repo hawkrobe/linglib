@@ -1,7 +1,7 @@
-import Linglib.Theories.Semantics.Dynamic.Systems.DynamicGQ.UpdateTheoretic
-import Linglib.Theories.Semantics.Dynamic.Systems.DynamicGQ.HigherOrder
-import Linglib.Theories.Semantics.Dynamic.Systems.DynamicGQ.SubtypePolymorphism
-import Linglib.Theories.Semantics.Dynamic.Systems.DynamicGQ.PostSuppositional
+import Linglib.Theories.Semantics.Dynamic.DynamicGQ.UpdateTheoretic
+import Linglib.Theories.Semantics.Dynamic.DynamicGQ.HigherOrder
+import Linglib.Theories.Semantics.Dynamic.DynamicGQ.SubtypePolymorphism
+import Linglib.Theories.Semantics.Dynamic.DynamicGQ.PostSuppositional
 import Linglib.Phenomena.Plurals.Studies.Charlow2021.Data
 
 /-!

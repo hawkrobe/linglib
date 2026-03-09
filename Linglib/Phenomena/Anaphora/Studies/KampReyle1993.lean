@@ -1,5 +1,5 @@
 import Linglib.Theories.Semantics.Dynamic.Core.Accessibility
-import Linglib.Theories.Semantics.Dynamic.Systems.DRT.Basic
+import Linglib.Theories.Semantics.Dynamic.DRT.Basic
 
 /-!
 # Kamp & Reyle (1993): From Discourse to Logic
@@ -32,7 +32,7 @@ open Semantics.Dynamic.Core.Accessibility
 open Semantics.Dynamic.Core.DynamicTy2
 open Semantics.Dynamic.Core.WeakestPrecondition
 open Semantics.Dynamic.Core.DRSExpr
-open Semantics.Dynamic.Systems.DRT
+open Semantics.Dynamic.DRT
 
 variable {E : Type*}
 

@@ -19,7 +19,7 @@ In BUS: ¬φ swaps positive/negative, so ¬¬φ = φ definitionally
 
 -- Note: PLA and BUS use different Core infrastructure that conflicts.
 -- We import PLA (the "problem" side) and state BUS facts abstractly.
-import Linglib.Theories.Semantics.Dynamic.Systems.PLA.DeepTheorems
+import Linglib.Theories.Semantics.Dynamic.PLA.DeepTheorems
 
 namespace Semantics.Dynamic.Comparisons
 

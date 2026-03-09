@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Dynamic.Systems.CDRT.Basic
+import Linglib.Theories.Semantics.Dynamic.CDRT.Basic
 import Linglib.Theories.Semantics.TypeTheoretic.Quantification
 
 /-!

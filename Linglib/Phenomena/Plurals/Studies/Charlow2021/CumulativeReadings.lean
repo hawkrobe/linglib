@@ -1,6 +1,6 @@
 import Linglib.Phenomena.Plurals.Studies.Charlow2021.Data
-import Linglib.Theories.Semantics.Dynamic.Systems.DynamicGQ.UpdateTheoretic
-import Linglib.Theories.Semantics.Dynamic.Effects.Nondeterminism.PointwiseUpdate
+import Linglib.Theories.Semantics.Dynamic.DynamicGQ.UpdateTheoretic
+import Linglib.Theories.Semantics.Dynamic.Nondeterminism.PointwiseUpdate
 
 /-!
 # @cite{charlow-2021}: Cumulative Readings Bridge

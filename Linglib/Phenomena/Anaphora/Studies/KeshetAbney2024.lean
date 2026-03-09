@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Dynamic.Systems.PIP.Phenomena
+import Linglib.Theories.Semantics.Dynamic.PIP.Phenomena
 import Linglib.Phenomena.Anaphora.ModalSubordination
 import Linglib.Phenomena.Anaphora.BathroomSentences
 import Linglib.Phenomena.Anaphora.DonkeyAnaphora

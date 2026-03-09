@@ -1,0 +1,148 @@
+import Linglib.Theories.Semantics.Dynamic.Core.Update
+
+/-!
+# File Change Semantics
+@cite{heim-1982} @cite{heim-1983}
+
+Heim's File Metaphor:
+- The context is a "file" of information about discourse referents
+- Each "file card" is a possibility: (world, assignment) pair
+- Sentences update the file by adding/removing cards
+- Indefinites "open" new file cards
+
+⟦φ⟧ : File → File (sentences are context change potentials)
+
+-/
+
+namespace Semantics.Dynamic.FileChangeSemantics
+
+open Semantics.Dynamic.Core
+open Classical
+
+/--
+A File is an information state: set of (world, assignment) pairs.
+
+This is Heim's "file metaphor" - each pair is a "file card".
+-/
+abbrev File (W : Type*) (E : Type*) := InfoState W E
+
+/--
+A File Card is a single possibility: (world, assignment).
+-/
+abbrev FileCard (W : Type*) (E : Type*) := Possibility W E
+
+/--
+Variable x is NOVEL in file f iff f doesn't constrain x.
+
+Indefinites require their variable to be novel - this prevents
+the same variable being reused inappropriately.
+-/
+def File.novel {W E : Type*} (f : File W E) (x : Nat) : Prop :=
+  f.novelAt x
+
+/--
+Variable x is FAMILIAR in file f iff f constrains x uniquely.
+
+Definites require their variable to be familiar - the discourse
+must have already established who "the X" refers to.
+-/
+def File.familiar {W E : Type*} (f : File W E) (x : Nat) : Prop :=
+  f.definedAt x
+
+/--
+Update file with proposition: eliminate cards where φ fails.
+
+f[φ] = { c ∈ f | φ(c.world) }
+-/
+def File.updateProp {W E : Type*} (f : File W E) (φ : W → Bool) : File W E :=
+  f.update φ
+
+/--
+Introduce new discourse referent (indefinite).
+
+f[x:=?] adds cards for each possible entity value of x.
+Requires x to be NOVEL (precondition).
+-/
+def File.introduce {W E : Type*} (f : File W E) (x : Nat) (dom : Set E) : File W E :=
+  f.randomAssign x dom
+
+/--
+File Change Potential (FCP): the semantic type for sentences in FCS.
+-/
+abbrev FCP (W : Type*) (E : Type*) := File W E → File W E
+
+/--
+Atomic predicate update.
+-/
+def FCP.atom {W E : Type*} (pred : W → Bool) : FCP W E :=
+  λ f => f.updateProp pred
+
+/--
+Indefinite introduction: requires novelty.
+
+This models "a man" - introduces a new discourse referent.
+-/
+def FCP.indefinite {W E : Type*} (x : Nat) (dom : Set E) (body : FCP W E) : FCP W E :=
+  λ f => body (f.introduce x dom)
+
+/--
+Definite reference: requires familiarity.
+
+This models "the man" - presupposes the referent is established.
+-/
+def FCP.definite {W E : Type*} (x : Nat) (body : FCP W E) : FCP W E :=
+  λ f => if f.familiar x then body f else ∅
+
+/--
+Conjunction: sequential file update.
+
+f[φ ∧ ψ] = f[φ][ψ]
+
+Delegates to `Core.CCP.seq`.
+-/
+def FCP.conj {W E : Type*} (φ ψ : FCP W E) : FCP W E :=
+  Core.CCP.seq φ ψ
+
+/--
+Negation: test-based (standard FCS).
+
+f[¬φ] = f if f[φ] = ∅, else ∅
+
+Note: This does NOT validate DNE.
+Delegates to `Core.CCP.neg`.
+-/
+noncomputable def FCP.neg {W E : Type*} (φ : FCP W E) : FCP W E :=
+  Core.CCP.neg φ
+
+/--
+Novelty precondition for indefinites.
+
+Attempting to introduce a non-novel variable is undefined behavior
+(typically modeled as returning ∅ or crash).
+-/
+def requiresNovelty {W E : Type*} (f : File W E) (x : Nat) : Prop :=
+  f.novel x
+
+/--
+Familiarity precondition for definites.
+-/
+def requiresFamiliarity {W E : Type*} (f : File W E) (x : Nat) : Prop :=
+  f.familiar x
+
+/-!
+### Relation to Semantics.Dynamic.Core.Basic
+
+The `Semantics.Dynamic.Core.Basic` module provides the canonical infrastructure.
+This module provides FCS-specific vocabulary as aliases:
+
+| This Module | Semantics.Dynamic.Core |
+|-------------|----------------------|
+| File | InfoState |
+| FileCard | Possibility |
+| novel | novelAt |
+| familiar | definedAt |
+| introduce | randomAssign |
+| updateProp | update |
+-/
+
+end Semantics.Dynamic.FileChangeSemantics

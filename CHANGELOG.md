@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.229.40] - 2026-03-08
+
+### Changed
+- **Dynamic/ reorganization**: Eliminate `Systems/` and `Effects/` classification layer — all frameworks now live directly under `Dynamic/` as named directories organized by intellectual contribution
+- **Split `Effects/State/Basic.lean`** into `FileChange/Basic.lean` (Heim 1982) and `UpdateSemantics/Basic.lean` (Veltman 1996)
+- **Merge `Effects/Default/` into `UpdateSemantics/`** — both are Veltman 1996 (basic update + expectation patterns)
+- **Merge `Systems/BUS/` into `Bilateral/`** — BUS extends BilateralDen; the intellectual contribution is bilateral evaluation
+- **Promote all Effects/ subdirectories** to top-level: `Nondeterminism/`, `Continuation/`, `Probability/`, `Epistemic/`
+- **Drop Systems/ wrapper** from PLA/, IntensionalCDRT/, DynamicGQ/, PIP/, CDRT/, BSML/, DRT/
+- **Fix namespaces**: `Semantics.Dynamic.Systems.DRT` → `Semantics.Dynamic.DRT`, `Semantics.Dynamic.Effects.Nondeterminism` → `Semantics.Dynamic.Nondeterminism`
+
 ## [0.229.39] - 2026-03-08
 
 ### Added
@@ -7,7 +18,7 @@
 
 ### Changed
 - **Assignment unification**: Remove duplicate `Assign E` from Accessibility.lean; canonical `Assignment E` now defined in CCP.lean and used everywhere
-- **DRT.lean → Systems/DRT/Basic.lean**: Move DRT from `Effects/State/` to `Systems/DRT/`, update namespace to `Semantics.Dynamic.Systems.DRT`
+- **DRT.lean → DRT/Basic.lean**: Move DRT from `Effects/State/` to `DRT/`, update namespace to `Semantics.Dynamic.DRT`
 - **KRModel**: Remove unused `carrier : Set E` field
 - **Accessibility.lean**: Move example derivations and stress tests to `KampReyle1993.lean` — theory file now contains only the interpretation bridge, structural lemmas, merging lemma, reduction, and Proposition 1
 
