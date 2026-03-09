@@ -1422,6 +1422,128 @@ theorem deriv_logSumExp (s : ι → ℝ) (α : ℝ) :
   intro i _
   ring
 
+-- ── Offset generalizations ──────────────────────────────────────────────
+-- These generalize logSumExp/softmax to include per-element offsets rᵢ:
+--   logSumExpOffset s r α = log Σ exp(α·sᵢ + rᵢ)
+-- This form appears when differentiating the log-partition w.r.t. a single
+-- weight wⱼ in a multi-constraint grammar, where
+--   sᵢ = contribution of constraint j to candidate i
+--   rᵢ = contribution of all other constraints (constant w.r.t. wⱼ)
+-- ────────────────────────────────────────────────────────────────────────
+
+/-- Partition function with per-element offsets: `Z(α) = Σⱼ exp(α · sⱼ + rⱼ)`. -/
+noncomputable def partitionFnOffset (s r : ι → ℝ) (α : ℝ) : ℝ :=
+  ∑ j : ι, exp (α * s j + r j)
+
+theorem partitionFnOffset_pos (s r : ι → ℝ) (α : ℝ) :
+    0 < partitionFnOffset s r α :=
+  Finset.sum_pos (fun i _ => exp_pos _) Finset.univ_nonempty
+
+/-- Log-sum-exp with offsets: `log Σ exp(α · sᵢ + rᵢ)`. -/
+noncomputable def logSumExpOffset (s r : ι → ℝ) (α : ℝ) : ℝ :=
+  log (partitionFnOffset s r α)
+
+/-- Softmax with offsets: `exp(α · sᵢ + rᵢ) / Z(α)`. -/
+noncomputable def softmaxOffset (s r : ι → ℝ) (α : ℝ) (i : ι) : ℝ :=
+  exp (α * s i + r i) / partitionFnOffset s r α
+
+/-- Derivative of offset log-partition gives weighted expected value:
+    `d/dα log(Σ exp(α·sᵢ + rᵢ)) = Σ softmaxOffset(s,r,α)ᵢ · sᵢ`. -/
+theorem hasDerivAt_logSumExpOffset (s r : ι → ℝ) (α : ℝ) :
+    HasDerivAt (logSumExpOffset s r)
+      (∑ i : ι, softmaxOffset s r α i * s i) α := by
+  unfold logSumExpOffset partitionFnOffset softmaxOffset
+  have hZ_ne : (∑ j : ι, exp (α * s j + r j)) ≠ 0 :=
+    ne_of_gt (partitionFnOffset_pos s r α)
+  have hexp : ∀ j : ι, HasDerivAt (fun a => exp (a * s j + r j))
+      (exp (α * s j + r j) * s j) α := by
+    intro j
+    have h1 : HasDerivAt (fun a => a * s j + r j) (s j) α := by
+      have := ((hasDerivAt_id α).mul_const (s j)).add_const (r j)
+      simpa using this
+    exact (Real.hasDerivAt_exp (α * s j + r j)).comp α h1
+  have hsum : HasDerivAt (fun a => ∑ j : ι, exp (a * s j + r j))
+      (∑ j : ι, exp (α * s j + r j) * s j) α :=
+    HasDerivAt.fun_sum fun j _ => hexp j
+  convert hsum.log hZ_ne using 1
+  simp only [partitionFnOffset]
+  rw [Finset.sum_div]
+  apply Finset.sum_congr rfl
+  intro i _
+  ring
+
+/-- The offset log-partition function is convex in α.
+
+Same Hölder argument as `logSumExp_convex`: the key factoring
+`exp((ax+by)·sᵢ + rᵢ) = exp(x·sᵢ + rᵢ)^a · exp(y·sᵢ + rᵢ)^b`
+holds because `a + b = 1`, absorbing the offset. -/
+theorem logSumExpOffset_convex (s r : ι → ℝ) :
+    ConvexOn ℝ Set.univ (logSumExpOffset s r) := by
+  constructor
+  · exact convex_univ
+  · intro x _ y _ a b ha hb hab
+    simp only [smul_eq_mul]
+    unfold logSumExpOffset partitionFnOffset
+    rcases eq_or_lt_of_le ha with rfl | ha_pos
+    · simp [show b = 1 from by linarith]
+    rcases eq_or_lt_of_le hb with rfl | hb_pos
+    · simp [show a = 1 from by linarith]
+    have hexp_split : ∀ i, exp ((a * x + b * y) * s i + r i) =
+        (exp (x * s i + r i)) ^ a * (exp (y * s i + r i)) ^ b := by
+      intro i
+      rw [← exp_mul, ← exp_mul, ← exp_add]
+      congr 1
+      linear_combination -(r i) * hab
+    have hpq : a⁻¹.HolderConjugate b⁻¹ := HolderConjugate.inv_inv ha_pos hb_pos hab
+    have holder := Real.inner_le_Lp_mul_Lq_of_nonneg (s := Finset.univ (α := ι)) hpq
+      (f := fun i => (exp (x * s i + r i)) ^ a)
+      (g := fun i => (exp (y * s i + r i)) ^ b)
+      (fun i _ => rpow_nonneg (le_of_lt (exp_pos _)) a)
+      (fun i _ => rpow_nonneg (le_of_lt (exp_pos _)) b)
+    conv at holder => lhs; arg 2; ext i; rw [← hexp_split]
+    have ha_ne : a ≠ 0 := ne_of_gt ha_pos
+    have hb_ne : b ≠ 0 := ne_of_gt hb_pos
+    have hsimp_f : ∀ i, ((exp (x * s i + r i)) ^ a) ^ a⁻¹ = exp (x * s i + r i) := by
+      intro i
+      rw [← rpow_mul (le_of_lt (exp_pos _)), mul_inv_cancel₀ ha_ne, rpow_one]
+    have hsimp_g : ∀ i, ((exp (y * s i + r i)) ^ b) ^ b⁻¹ = exp (y * s i + r i) := by
+      intro i
+      rw [← rpow_mul (le_of_lt (exp_pos _)), mul_inv_cancel₀ hb_ne, rpow_one]
+    simp_rw [hsimp_f, hsimp_g] at holder
+    simp only [one_div, inv_inv] at holder
+    have hZ_x : (0 : ℝ) < ∑ i : ι, exp (x * s i + r i) := partitionFnOffset_pos s r x
+    have hZ_y : (0 : ℝ) < ∑ i : ι, exp (y * s i + r i) := partitionFnOffset_pos s r y
+    have hZ_mid : 0 < ∑ j : ι, exp ((a * x + b * y) * s j + r j) :=
+      partitionFnOffset_pos s r (a * x + b * y)
+    have hlog_le := log_le_log hZ_mid holder
+    rw [log_mul (ne_of_gt (rpow_pos_of_pos hZ_x a)) (ne_of_gt (rpow_pos_of_pos hZ_y b)),
+        log_rpow hZ_x, log_rpow hZ_y] at hlog_le
+    linarith
+
+/-- The log conditional likelihood `α ↦ (α · sᵧ + rᵧ) − logSumExpOffset(s,r,α)`
+    is concave (affine minus convex). -/
+theorem logConditional_concaveOn (s r : ι → ℝ) (y : ι) :
+    ConcaveOn ℝ Set.univ
+      (fun α => (α * s y + r y) - logSumExpOffset s r α) := by
+  apply ConcaveOn.sub
+  · constructor
+    · exact convex_univ
+    · intro x _ z _ a b ha hb hab
+      simp only [smul_eq_mul]
+      nlinarith [show a * r y + b * r y = r y from by linear_combination (r y) * hab]
+  · exact logSumExpOffset_convex s r
+
+/-- The derivative of log conditional likelihood `α ↦ (α·sᵧ + rᵧ) − logSumExpOffset`
+    is the observed feature value minus the expected value:
+    `d/dα = sᵧ − Σᵢ softmaxOffset(s,r,α)ᵢ · sᵢ`. -/
+theorem hasDerivAt_logConditional (s r : ι → ℝ) (y : ι) (α : ℝ) :
+    HasDerivAt (fun w => (w * s y + r y) - logSumExpOffset s r w)
+      (s y - ∑ i : ι, softmaxOffset s r α i * s i) α := by
+  have h_affine : HasDerivAt (fun a => a * s y + r y) (s y) α := by
+    have := ((hasDerivAt_id α).mul_const (s y)).add_const (r y)
+    simpa using this
+  exact h_affine.sub (hasDerivAt_logSumExpOffset s r α)
+
 /-- Strong duality: max entropy = min free energy. -/
 theorem max_entropy_duality (s : ι → ℝ) (c : ℝ)
     (α : ℝ) (_hα : 0 < α) (h_constraint : ∑ i : ι, softmax s α i * s i = c) :

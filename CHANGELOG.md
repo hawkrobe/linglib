@@ -1,5 +1,22 @@
 # Changelog
 
+## [0.229.70] - 2026-03-09
+
+### Added
+- **RationalAction.lean**: Offset generalizations of logSumExp infrastructure — `partitionFnOffset`, `logSumExpOffset`, `softmaxOffset`, `hasDerivAt_logSumExpOffset`, `logSumExpOffset_convex`, `logConditional_concaveOn`, `hasDerivAt_logConditional`. These generalize the scalar `logSumExp(s,α) = log Σ exp(α·sᵢ)` to per-element offsets `log Σ exp(α·sᵢ + rᵢ)`, enabling per-weight differentiation of multi-constraint log-linear models
+
+### Changed
+- **GoldwaterJohnson2003.lean**: Replace `concavity_informal : True := trivial` and `gradient_is_expected_value : True := trivial` with fully proved theorems `concavity` (ConcaveOn via logConditional_concaveOn) and `gradient` (HasDerivAt via hasDerivAt_logConditional) using Mathlib's Hölder inequality, chain rule, and convexity infrastructure
+
+## [0.229.69] - 2026-03-09
+
+### Added
+- **MacuchSilvaEtAl2024.lean**: New study file formalizing @cite{macuch-silva-etal-2024} "Strategic use of English quantifiers". Argumentative difficulty metric, Exp 1 forced-choice data (adjective rates, quantifier proportions), Exp 2 free-production data (framing bias, strategy breakdown), difficulty→weakening prediction with `native_decide` verification, bridge to @cite{cummins-franke-2021} argumentative strength
+
+### Changed
+- **CumminsFranke2021.lean**: Extract Macuch Silva content (§4 exam scenario, §6 experiment data) into dedicated `MacuchSilvaEtAl2024.lean`. Remove unused imports
+- **CLAUDE.md**: Fix stale RSAScenario documentation → RSAConfig is the public API, RSAConfigData is internal
+
 ## [0.229.68] - 2026-03-09
 
 ### Added

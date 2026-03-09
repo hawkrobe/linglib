@@ -24,13 +24,15 @@ models over weighted features, differing only in what the features measure.
    which decomposes as `Σⱼ (H(yⱼ,xⱼ) − logSumExp(H(·,xⱼ)))` — the harmony
    of each observed output minus the log-partition function.
 
-3. **Concavity** (§2): Log-likelihood is concave in weights because
-   `logSumExp` is convex (`logSumExp_convex`). Concave = linear − convex.
-   This guarantees a unique global maximum.
+3. **Concavity** (§2): Log-likelihood is concave in each weight
+   (`concavity` via `logConditional_concaveOn`). The decomposition
+   `log P(y|x;w) = affine(wⱼ) − logSumExpOffset(s,r,wⱼ)` makes this
+   affine minus convex = concave, guaranteeing a unique global maximum.
 
-4. **Learning gradient = E[feature]** (§3): At the optimum, observed feature
-   counts equal expected feature counts. This is `deriv_logSumExp`
-   instantiated per-weight.
+4. **Learning gradient = E[feature]** (§3): The derivative of log-likelihood
+   w.r.t. each weight equals observed minus expected feature value
+   (`gradient` via `hasDerivAt_logConditional`). At the optimum, observed
+   feature counts equal expected feature counts.
 
 5. **Wolof data** (§4): The learned weights for a categorical grammar are
    exponentially separated (`ExponentiallySeparated wolofWeights 1`),
@@ -40,7 +42,7 @@ models over weighted features, differing only in what the features measure.
 
 namespace Phenomena.PhonologicalAlternation.Studies.GoldwaterJohnson2003
 
-open Theories.Phonology.HarmonicGrammar Core Finset
+open Theories.Phonology.HarmonicGrammar Core Finset Real
 
 -- ============================================================================
 -- § 1: MaxEnt = softmax (eq (1))
@@ -84,19 +86,19 @@ noncomputable def regularizedObjective {I O : Type} [Fintype O] [Nonempty O]
     g.constraints.foldl (fun acc c => acc + (c.weight : ℝ)^2 / (2 * σ^2)) 0
 
 /-- **Concavity of log-likelihood** (fn. 4): the log conditional likelihood
-    is concave, so there is a unique global maximum.
+    of a single observation is concave in each weight, guaranteeing a
+    unique global maximum.
 
-    Proof sketch: `log P(y|x) = H(y,x) − logSumExp(H(·,x))`.
-    The first term is linear in weights. The second is convex in weights
-    (since `logSumExp` is convex — `logSumExp_convex`). Linear minus
-    convex is concave. The L2 penalty is also concave (negative quadratic).
+    When all weights except `wⱼ` are held fixed, `log P(y|x;w)` decomposes as
+    `(wⱼ · sᵧ + rᵧ) − logSumExpOffset(s, r, wⱼ)` where `sᵢ = −cⱼ(yᵢ,x)`
+    and `rᵢ = Σₖ≠ⱼ wₖ(−cₖ(yᵢ,x))`. The first term is affine (hence concave);
+    the second is convex (`logSumExpOffset_convex`). Concave − convex = concave.
 
-    We state this as a consequence of `logSumExp_convex`. -/
-theorem concavity_informal : True := trivial
-  -- The formal statement would require multivariate convexity
-  -- (ConvexOn over weight vectors ℝⁿ rather than scalar α).
-  -- logSumExp_convex proves convexity in α; the per-weight version
-  -- follows by the same argument since H is linear in each wⱼ.
+    This is `logConditional_concaveOn` from `Core.Agent.RationalAction`. -/
+theorem concavity {ι : Type*} [Fintype ι] [Nonempty ι] (s r : ι → ℝ) (y : ι) :
+    ConcaveOn ℝ Set.univ
+      (fun wⱼ => (wⱼ * s y + r y) - logSumExpOffset s r wⱼ) :=
+  logConditional_concaveOn s r y
 
 -- ============================================================================
 -- § 3: Learning Gradient (connecting to deriv_logSumExp)
@@ -104,23 +106,21 @@ theorem concavity_informal : True := trivial
 
 /-- **Learning gradient = observed − expected** (§2, §4.2):
 
-    `∂/∂wⱼ log P(y|x) = −cⱼ(y,x) + E_P[cⱼ]`
+    `∂/∂wⱼ log P(y|x) = sᵧ − Σᵢ softmaxOffset(s,r,wⱼ)ᵢ · sᵢ`
 
-    At the maximum, `∂/∂wⱼ logPL = 0`, so observed = expected.
+    where `sᵢ = −cⱼ(yᵢ,x)` (negated violation count of constraint j on
+    candidate i) and `rᵢ = Σₖ≠ⱼ wₖ(−cₖ(yᵢ,x))` (contribution of other
+    constraints, constant w.r.t. wⱼ).
 
-    The mathematical content is `deriv_logSumExp`:
-    `d/dα logΣexp(α·sᵢ) = Σ softmax(s,α)ᵢ · sᵢ = E_softmax[s]`
+    At the maximum, this derivative is zero, so `sᵧ = E_P[s]`: the
+    observed feature value equals the expected feature value.
 
-    For MaxEnt phonology, `α` corresponds to a single weight wⱼ,
-    and `sᵢ = −cⱼ(yᵢ, x)` is the (negated) violation count of
-    constraint j on candidate i. The derivative gives the expected
-    violation count under the model distribution. -/
-theorem gradient_is_expected_value : True := trivial
-  -- The formal per-weight version would instantiate deriv_logSumExp
-  -- with s_i = H(y_i, x) viewed as a function of a single weight w_j.
-  -- Since H is linear in w_j, the chain rule gives:
-  --   d/dw_j log Z(x) = E_P[-c_j(·,x)]
-  -- and d/dw_j H(y,x) = -c_j(y,x), yielding the gradient identity.
+    This is `hasDerivAt_logConditional` from `Core.Agent.RationalAction`. -/
+theorem gradient {ι : Type*} [Fintype ι] [Nonempty ι]
+    (s r : ι → ℝ) (y : ι) (wⱼ : ℝ) :
+    HasDerivAt (fun w => (w * s y + r y) - logSumExpOffset s r w)
+      (s y - ∑ i : ι, softmaxOffset s r wⱼ i * s i) wⱼ :=
+  hasDerivAt_logConditional s r y wⱼ
 
 -- ============================================================================
 -- § 4: Wolof Data (Table 1) — Categorical Grammar
