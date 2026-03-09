@@ -1,5 +1,6 @@
 import Mathlib.Probability.Distributions.Gaussian.Real
 import Mathlib.Probability.CDF
+import Mathlib.Topology.Order.IntermediateValue
 
 /-!
 # Standard Normal CDF Infrastructure
@@ -26,7 +27,7 @@ set_option autoImplicit false
 
 namespace Core
 
-open Real MeasureTheory BigOperators Set ProbabilityTheory NNReal
+open Real MeasureTheory BigOperators Set ProbabilityTheory NNReal Filter
 
 -- ============================================================================
 -- §1. Normal PDF
@@ -138,5 +139,42 @@ theorem normalCDF_pos_gt_half {x : ℝ} (hx : 0 < x) : 1 / 2 < normalCDF x := by
 /-- For `x < 0`, `Φ(x) < 1/2`. -/
 theorem normalCDF_neg_lt_half {x : ℝ} (hx : x < 0) : normalCDF x < 1 / 2 := by
   rw [← normalCDF_zero]; exact normalCDF_strictMono hx
+
+/-- The normal CDF is injective (from strict monotonicity). -/
+theorem normalCDF_injective : Function.Injective normalCDF :=
+  normalCDF_strictMono.injective
+
+-- ============================================================================
+-- §5. Continuity and surjectivity
+-- ============================================================================
+
+/-- The CDF of an atomless probability measure is continuous. -/
+private theorem continuous_cdf_of_noAtoms (μ : Measure ℝ) [IsProbabilityMeasure μ] [NoAtoms μ] :
+    Continuous (cdf μ) := by
+  rw [continuous_iff_continuousAt]
+  intro x
+  rw [continuousAt_iff_continuous_left'_right']
+  constructor
+  · rw [(monotone_cdf μ).continuousWithinAt_Iio_iff_leftLim_eq]
+    have h_singleton : (cdf μ).measure {x} = 0 := by
+      rw [measure_cdf]; exact measure_singleton x
+    rw [StieltjesFunction.measure_singleton] at h_singleton
+    linarith [ENNReal.ofReal_eq_zero.mp h_singleton, (monotone_cdf μ).leftLim_le (le_refl x)]
+  · exact ((cdf μ).right_continuous x).mono Ioi_subset_Ici_self
+
+/-- The standard normal CDF is continuous. -/
+theorem continuous_normalCDF : Continuous normalCDF := by
+  have : NoAtoms (gaussianReal (0 : ℝ) (1 : ℝ≥0)) := noAtoms_gaussianReal std_var_ne_zero
+  exact continuous_cdf_of_noAtoms (gaussianReal 0 1)
+
+/-- The standard normal CDF is surjective onto `(0, 1)`:
+    for any `p ∈ (0, 1)`, there exists `x` with `Φ(x) = p`. -/
+theorem normalCDF_surj_Ioo (p : ℝ) (hp0 : 0 < p) (hp1 : p < 1) :
+    ∃ x : ℝ, normalCDF x = p :=
+  intermediate_value_univ₂_eventually₂ continuous_normalCDF continuous_const
+    (((tendsto_cdf_atBot (gaussianReal 0 1)).eventually (Iio_mem_nhds hp0)).mono
+      fun _ hx => le_of_lt hx)
+    (((tendsto_cdf_atTop (gaussianReal 0 1)).eventually (Ioi_mem_nhds hp1)).mono
+      fun _ hx => le_of_lt hx)
 
 end Core

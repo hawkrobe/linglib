@@ -117,16 +117,29 @@ theorem SDTModel.falseAlarmRate_le_one (m : SDTModel) : m.falseAlarmRate ≤ 1 :
 -- §3. Recovering d' from Observed Rates
 -- ============================================================================
 
-/-- Recover d' from observed hit and false alarm rates (inverse problem).
+/-- The probit function (inverse normal CDF): for `p ∈ (0, 1)`, returns
+    the unique `x` with `Φ(x) = p`. Returns 0 for out-of-range inputs.
 
-    Since H = 1 - Phi(c - d'/2) and F = 1 - Phi(c + d'/2), we have
-    Phi^{-1}(1-F) - Phi^{-1}(1-H) = (c + d'/2) - (c - d'/2) = d'.
-
-    This requires the inverse normal CDF (probit function). We define
-    it abstractly as a noncomputable function. -/
+    Existence follows from the Intermediate Value Theorem applied to the
+    continuous, strictly monotone `normalCDF` with limits 0 at -∞ and 1 at +∞. -/
 noncomputable def probit (p : ℝ) : ℝ :=
-  Classical.choose (sorry : ∃ x : ℝ, normalCDF x = p)
-  -- TODO: existence requires 0 < p < 1 and IVT on the continuous normalCDF
+  if h : 0 < p ∧ p < 1 then
+    Classical.choose (normalCDF_surj_Ioo p h.1 h.2)
+  else 0
+
+/-- Specification: `Φ(probit(p)) = p` for `p ∈ (0, 1)`. -/
+theorem probit_spec {p : ℝ} (hp0 : 0 < p) (hp1 : p < 1) :
+    normalCDF (probit p) = p := by
+  simp only [probit, hp0, hp1, and_self, dite_true]
+  exact Classical.choose_spec (normalCDF_surj_Ioo p hp0 hp1)
+
+/-- Specification: `probit(Φ(x)) = x` for all `x` (left inverse). -/
+theorem probit_normalCDF (x : ℝ) : probit (normalCDF x) = x := by
+  have hp0 : 0 < normalCDF x :=
+    lt_of_le_of_lt (normalCDF_nonneg (x - 1)) (normalCDF_strictMono (by linarith))
+  have hp1 : normalCDF x < 1 :=
+    lt_of_lt_of_le (normalCDF_strictMono (by linarith : x < x + 1)) (normalCDF_le_one (x + 1))
+  exact normalCDF_injective (probit_spec hp0 hp1)
 
 /-- Recover d' from hit and false alarm rates.
     d' = Phi^{-1}(1 - F) - Phi^{-1}(1 - H) = z(H) - z(F)
@@ -136,11 +149,19 @@ noncomputable def dPrimeFromRates (hitRate falseAlarmRate : ℝ) : ℝ :=
 
 /-- Roundtrip: recovering d' from the hit and false alarm rates of an SDT model
     returns the original d'. -/
-theorem dPrimeFromRates_roundtrip (m : SDTModel)
-    (hH : 0 < m.hitRate) (hH' : m.hitRate < 1)
-    (hF : 0 < m.falseAlarmRate) (hF' : m.falseAlarmRate < 1) :
+theorem dPrimeFromRates_roundtrip (m : SDTModel) :
     dPrimeFromRates m.hitRate m.falseAlarmRate = m.d_prime := by
-  sorry -- TODO: follows from probit being the inverse of normalCDF
+  simp only [dPrimeFromRates, SDTModel.hitRate, SDTModel.falseAlarmRate] at *
+  -- probit(1 - Φ(c - d'/2)) - probit(1 - Φ(c + d'/2))
+  -- = probit(Φ(d'/2 - c)) - probit(Φ(-d'/2 - c))     by normalCDF_neg
+  -- = (d'/2 - c) - (-d'/2 - c)                         by probit_normalCDF
+  -- = d'
+  conv_lhs =>
+    rw [show 1 - normalCDF (m.criterion - m.d_prime / 2) =
+          normalCDF (-(m.criterion - m.d_prime / 2)) from by rw [normalCDF_neg],
+        show 1 - normalCDF (m.criterion + m.d_prime / 2) =
+          normalCDF (-(m.criterion + m.d_prime / 2)) from by rw [normalCDF_neg]]
+  rw [probit_normalCDF, probit_normalCDF]; ring
 
 -- ============================================================================
 -- §4. ROC Curve
@@ -161,7 +182,10 @@ noncomputable def rocCurve (d_prime : ℝ) (falseAlarmRate : ℝ) : ℝ :=
 /-- For d' = 0, the ROC curve is the diagonal: H = F (chance performance). -/
 theorem roc_diagonal (f : ℝ) (hf : 0 < f) (hf' : f < 1) :
     rocCurve 0 f = f := by
-  sorry -- TODO: Phi(Phi^{-1}(f) + 0) = Phi(Phi^{-1}(f)) = f
+  simp only [rocCurve, sub_zero]
+  have h1f0 : 0 < 1 - f := by linarith
+  have h1f1 : 1 - f < 1 := by linarith
+  rw [probit_spec h1f0 h1f1]; ring
 
 /-- For d' > 0, the ROC curve lies above the diagonal: H > F.
 
@@ -178,18 +202,16 @@ theorem roc_above_diagonal (m : SDTModel) (hd : 0 < m.d_prime) :
     m.falseAlarmRate < m.hitRate := by
   simp only [SDTModel.hitRate, SDTModel.falseAlarmRate]
   have h : m.criterion - m.d_prime / 2 < m.criterion + m.d_prime / 2 := by linarith
-  have hm := normalCDF_mono (le_of_lt h)
-  sorry -- TODO: need strict monotonicity of normalCDF (from positive density)
+  linarith [normalCDF_strictMono h]
 
 /-- Higher d' implies higher area under the ROC curve.
 
     The area under the ROC curve (AUC) equals Phi(d'/sqrt(2)) for the
     equal-variance Gaussian model. Since Phi is increasing, higher d'
     yields higher AUC. -/
-theorem roc_area_increases_with_dprime (d₁ d₂ : ℝ) (hd₁ : 0 ≤ d₁) (hd₂ : 0 ≤ d₂)
-    (h : d₁ < d₂) :
+theorem roc_area_increases_with_dprime (d₁ d₂ : ℝ) (h : d₁ < d₂) :
     normalCDF (d₁ / Real.sqrt 2) < normalCDF (d₂ / Real.sqrt 2) := by
-  sorry -- TODO: strict monotonicity of normalCDF + d₁/sqrt(2) < d₂/sqrt(2)
+  exact normalCDF_strictMono (div_lt_div_of_pos_right h (Real.sqrt_pos.mpr (by norm_num)))
 
 -- ============================================================================
 -- §5. SDT as a Luce Model
