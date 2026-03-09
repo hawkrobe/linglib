@@ -1,4 +1,4 @@
-import Linglib.Phenomena.Gradability.Studies.Kamp1975
+import Linglib.Theories.Semantics.Lexical.Adjective.Classification
 
 /-!
 # Partee (2010): Privative Adjectives: Subsective plus Coercion @cite{partee-2010}
@@ -50,7 +50,7 @@ the Polish data argues it is.
 
 namespace Phenomena.Gradability.Studies.Partee2010
 
-open Kamp1975
+open Semantics.Lexical.Adjective.Classification
 
 -- ════════════════════════════════════════════════════
 -- § 1. Noun Coercion
@@ -81,7 +81,7 @@ def coerceNoun (N ext : Property W E) : Property W E :=
     always be dissolved by acknowledging that the noun's denotation shifts.
     The substantive claim is that this coercion is linguistically real,
     not ad hoc (see § 3). -/
-theorem any_adj_subsective_under_selfcoercion (adj : AdjMeaningK W E) :
+theorem any_adj_subsective_under_selfcoercion (adj : AdjMeaning W E) :
     ∀ (N : Property W E) (w : W) (x : E),
       adj N w x = true → coerceNoun N (adj N) w x = true := by
   intro N w x h
@@ -103,12 +103,12 @@ theorem coerceNoun_extends (N ext : Property W E) (w : W) (x : E)
 
 /-- The revised three-class hierarchy. -/
 inductive RevisedClass where
-  /-- `⟦AN⟧ = ⟦A⟧ ∩ ⟦N⟧` (Kamp's predicativeK) -/
+  /-- `⟦AN⟧ = ⟦A⟧ ∩ ⟦N⟧` (Kamp's intersective) -/
   | intersective
   /-- `⟦AN⟧ ⊆ ⟦N*⟧` — includes former "privatives" via coercion
-      (Kamp's affirmativeK, generalized) -/
+      (Kamp's subsective, generalized) -/
   | subsective
-  /-- No entailment: alleged, potential, putative (Kamp's non-affirmativeK) -/
+  /-- No entailment: alleged, potential, putative (Kamp's non-subsective) -/
   | nonSubsective
   deriving DecidableEq, Repr
 

@@ -1,3 +1,5 @@
+import Linglib.Core.PropertyDomain
+
 /-
 # Degree Phenomena: Empirical Patterns
 
@@ -111,8 +113,8 @@ structure AntonymDatum where
   negative : String
   /-- The underlying scale -/
   scale : String
-  /-- Are they contradictories (A ≡ ¬B) or contraries (can both be false)? -/
-  areContradictories : Bool
+  /-- Contradictory (A ≡ ¬B, no gap) or contrary (can both be false, gap). -/
+  negationType : Core.NegationType
   /-- Example where positive applies -/
   positiveExample : String
   /-- Example where negative applies -/
@@ -125,7 +127,7 @@ def tallShortAntonym : AntonymDatum :=
   { positive := "tall"
   , negative := "short"
   , scale := "height"
-  , areContradictories := false  -- both can be false (contraries)
+  , negationType := .contrary  -- both can be false
   , positiveExample := "7-footer is tall"
   , negativeExample := "5-footer is short"
   , neitherExample := "5'9\" person is neither clearly tall nor clearly short"
@@ -135,7 +137,7 @@ def expensiveCheapAntonym : AntonymDatum :=
   { positive := "expensive"
   , negative := "cheap"
   , scale := "price"
-  , areContradictories := false
+  , negationType := .contrary
   , positiveExample := "$1M house is expensive"
   , negativeExample := "$50K house is cheap"
   , neitherExample := "$400K house is neither clearly expensive nor cheap"

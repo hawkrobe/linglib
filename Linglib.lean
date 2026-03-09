@@ -1454,7 +1454,7 @@ import Linglib.Theories.Pragmatics.RSA.Extensions.InformationTheory.UtilityDynam
 import Linglib.Theories.Pragmatics.RSA.Extensions.InformationTheory.UtilityNonMonotonicity
 import Linglib.Theories.Pragmatics.RSA.Extensions.LexicalUncertainty.Basic
 import Linglib.Theories.Pragmatics.RSA.Extensions.LexicalUncertainty.Compositional
-import Linglib.Theories.Pragmatics.RSA.Implementations.BellerGerstenberg2025
+import Linglib.Phenomena.Causation.Studies.BellerGerstenberg2025
 import Linglib.Theories.Pragmatics.RSA.Implementations.BergenGoodman2015
 import Linglib.Phenomena.Persuasion.Studies.CumminsFranke2021
 import Linglib.Phenomena.Persuasion.Studies.MacuchSilvaEtAl2024

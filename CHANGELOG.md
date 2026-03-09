@@ -1,5 +1,28 @@
 # Changelog
 
+## [0.229.74] - 2026-03-09
+
+### Changed
+- **BellerGerstenberg2025.lean**: Migrate from `Theories/Pragmatics/RSA/Implementations/` to `Phenomena/Causation/Studies/`, fix semantics to match paper (Eqs. 4–7), add graded semantics with ν softening parameter, verify Table 1 L0/S1 computations with exact ℚ arithmetic, add experiment results (r=0.87/0.91), expand structural bridge docstring
+- **NumericalExpressions.lean**: Fix factual error about pragmatic reversal direction (C&F's reversal makes "more than 100" pragmatically *stronger*, not weaker)
+
+## [0.229.73] - 2026-03-09
+
+### Added
+- **Classification.lean**: Extract canonical type-agnostic adjective hierarchy (`Property`, `AdjMeaning`, `isIntersective`, `isSubsective`, `isPrivative`, `isExtensional` + implication theorems) from Kamp1975.lean into `Theories/Semantics/Lexical/Adjective/Classification.lean`
+- **Partee2010.lean**: Formalize @cite{partee-2010} "Privative Adjectives: Subsective plus Coercion" — `any_adj_subsective_under_selfcoercion`, `coerceNoun`, revised 3-class hierarchy, Polish NP-splitting evidence
+- **Fine1975.lean §5**: Bridge theorems `gap_implies_disagreement`, `inGapRegion_le_pos`, `inGapRegion_ge_neg` connecting `inGapRegion` to supervaluation `Truth3.indet`
+- **Theory.lean**: `strong_entails_weak` theorem for `InformationalStrength` — strong adjective (higher threshold) entails weak counterpart on the same pole
+
+### Changed
+- **Kamp1975.lean**: Rewritten to import Classification.lean; all class definitions replaced with canonical versions
+- **Intensification.lean**: Remove duplicate `positiveMeaning`; import canonical `Semantics.Degree.positiveMeaning`
+- **Data.lean**: Replace `areContradictories : Bool` with `negationType : Core.NegationType` for antonym pairs, unifying representation with Fragment entries
+- **Modification.lean**: Updated docstring to cross-reference Classification.lean
+
+### Removed
+- **Adjectives.lean**: Deleted informal string-labeled adjective data with tautological theorems; content replaced by proved witnesses in Kamp1975.lean §4
+
 ## [0.229.72] - 2026-03-09
 
 ### Added

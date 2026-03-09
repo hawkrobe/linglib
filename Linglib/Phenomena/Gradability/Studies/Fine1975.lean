@@ -240,11 +240,31 @@ theorem tolerance_fails_at_boundary {max : Nat}
 def specOfPair {max : Nat} (tp : ThresholdPair max) : SpecSpace max :=
   {tp.neg, tp.pos}
 
--- TODO: gap_implies_disagreement — prove that inGapRegion d tp = true
--- implies d > neg but d ≤ pos (as threshold values), yielding
--- disagreement across the two precisifications in specOfPair tp.
--- The proof requires unwinding the Threshold → Degree coercion
--- (via Fin.castSucc) and the LE instance on Degree.
+/-- Extract Nat-level upper bound from `inGapRegion`. -/
+theorem inGapRegion_le_pos {max : Nat} (d : Degree max) (tp : ThresholdPair max)
+    (h : inGapRegion d tp = true) : d.toNat ≤ tp.pos.toNat := by
+  simp only [inGapRegion, Bool.and_eq_true, decide_eq_true_eq] at h
+  exact h.2
+
+/-- Extract Nat-level lower bound from `inGapRegion`. -/
+theorem inGapRegion_ge_neg {max : Nat} (d : Degree max) (tp : ThresholdPair max)
+    (h : inGapRegion d tp = true) : tp.neg.toNat ≤ d.toNat := by
+  simp only [inGapRegion, Bool.and_eq_true, decide_eq_true_eq] at h
+  exact h.1
+
+/-- When a degree is strictly inside the gap (above neg, at or below pos),
+    the positive-meaning predicate disagrees across the two thresholds:
+    true at the negative threshold, false at the positive threshold.
+
+    This is the semantic content of the gap for contrary antonyms:
+    the degree is "tall" relative to the lower threshold but "not tall"
+    relative to the higher one. -/
+theorem gap_implies_disagreement {max : Nat} (d : Degree max) (tp : ThresholdPair max)
+    (h_in : inGapRegion d tp = true) (h_strict : tp.neg.toNat < d.toNat) :
+    decide (d.toNat > tp.neg.toNat) = true ∧
+    decide (d.toNat > tp.pos.toNat) = false := by
+  simp only [gt_iff_lt, decide_eq_true_eq, decide_eq_false_iff_not, not_lt]
+  exact ⟨h_strict, inGapRegion_le_pos d tp h_in⟩
 
 -- ════════════════════════════════════════════════════
 -- § 6. Verification: Vagueness.lean Data

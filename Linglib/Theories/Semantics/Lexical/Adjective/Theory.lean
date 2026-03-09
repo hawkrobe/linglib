@@ -154,6 +154,20 @@ inductive InformationalStrength where
   | strong  -- gigantic, tiny, pristine, filthy
   deriving Repr, DecidableEq, BEq
 
+/-- Strong adjectives entail their weak counterparts on the same pole.
+    If the strong adjective's threshold is at least as high as the weak
+    adjective's, then `positiveMeaning d θ_strong → positiveMeaning d θ_weak`.
+
+    Semantically: "gigantic" (θ_strong = 8) entails "large" (θ_weak = 5)
+    because any degree exceeding 8 also exceeds 5. -/
+theorem strong_entails_weak {max : Nat} (d : Degree max)
+    (θ_weak θ_strong : Threshold max)
+    (h_ord : θ_weak ≤ θ_strong)
+    (h_strong : Semantics.Degree.positiveMeaning d θ_strong = true) :
+    Semantics.Degree.positiveMeaning d θ_weak = true := by
+  simp only [Semantics.Degree.positiveMeaning, decide_eq_true_eq] at *
+  exact lt_of_le_of_lt h_ord h_strong
+
 -- ════════════════════════════════════════════════════
 -- Adjective Lexical Entry
 -- ════════════════════════════════════════════════════
