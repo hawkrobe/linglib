@@ -125,7 +125,7 @@ noncomputable def mcfaddenIntegral {ι : Type*} [Fintype ι]
     (u : ι → ℝ) (β : ℝ) (i : ι) : ℝ :=
   exp (u i / β) * ∫ t in Ioi (0 : ℝ), exp (-(∑ j : ι, exp (u j / β)) * t)
 
-/-- **McFadden's Theorem (algebraic core)** @cite{mcfadden-1974}:
+/-- **McFadden's Theorem (algebraic core)** — Lemma 1 of @cite{mcfadden-1974}:
     The McFadden integral equals softmax.
 
     For any utilities `u₁, ..., uₙ` and scale `β > 0`:
@@ -134,10 +134,12 @@ noncomputable def mcfaddenIntegral {ι : Type*} [Fintype ι]
 
     where `S = Σⱼ exp(uⱼ/β)`.
 
-    This is the algebraic content of McFadden's theorem. The probabilistic
-    interpretation — that this integral computes the choice probability under
-    i.i.d. Gumbel(0, β) noise — is a separate measure-theoretic claim
-    (see `gumbelMaxProb_is_mcfaddenIntegral`). -/
+    This is the algebraic content of McFadden's Lemma 1 (p. 111), generalized
+    from unit scale (β = 1) to arbitrary β > 0. McFadden assumes i.i.d. Weibull
+    (Gnedenko extreme value) noise with CDF `P(ε ≤ ε) = exp(-e^{-ε})` —
+    eq. (13) — and derives the softmax selection probability `P_i = e^{V_i} / Σ e^{V_j}`
+    — eq. (12). The probabilistic interpretation is formalized separately in
+    `gumbelMaxProb_is_mcfaddenIntegral`. -/
 theorem mcfaddenIntegral_eq_softmax {ι : Type*} [Fintype ι] [Nonempty ι]
     (u : ι → ℝ) {β : ℝ} (_hβ : 0 < β) (i : ι) :
     mcfaddenIntegral u β i = softmax u (1 / β) i := by
@@ -225,21 +227,22 @@ theorem RationalAction.fromGumbelRUM_policy {ι : Type*} [Fintype ι] [Nonempty 
 -- §7. Measure-Theoretic Connection
 -- ============================================================================
 
-/-- **Gumbel RUM = McFadden Integral** (measure-theoretic claim).
+/-- **Gumbel RUM = McFadden Integral** — the measure-theoretic content
+    of Lemma 1 in @cite{mcfadden-1974} (p. 111).
 
     If `ε₁, ..., εₙ` are i.i.d. Gumbel(0, β), then the probability that
     alternative `i` has the maximum random utility equals the McFadden integral:
 
     `P(uᵢ + εᵢ = max_j(uⱼ + εⱼ)) = mcfaddenIntegral u β i`
 
-    The derivation:
-    1. `P(i = max) = ∫ f(x-uᵢ) · ∏_{j≠i} F(x-uⱼ) dx`
-    2. The Gumbel CDF/PDF give: integrand = `(1/β) exp(uᵢ/β) exp(-x/β) exp(-S·exp(-x/β))`
-       where `S = Σⱼ exp(uⱼ/β)`
-    3. Change variables `t = exp(-x/β)`: integral becomes `exp(uᵢ/β) · ∫₀^∞ exp(-S·t) dt`
+    McFadden's proof (p. 111) with `Vᵢ = v(s, xᵢ)`:
+    1. From eq. (13), `F_i(ε + V_i - V_1, ..., ε + V_i - V_J)`
+       `= exp(-ε) · ∏ⱼ exp(-exp(-ε - V_i + V_j))`
+       `= exp(-ε) · exp(-exp(-ε) · Σⱼ exp(V_j - V_i))`
+    2. Substituting in eq. (3) and integrating yields eq. (12):
+       `P_i = e^{V_i} / Σⱼ e^{V_j}`
 
-    TODO: Full proof requires formalizing the product of independent Gumbel
-    measures and the change-of-variables `t = exp(-x/β)` using
+    TODO: Full proof requires the change-of-variables `t = exp(-x/β)` via
     `MeasureTheory.integral_comp_mul_deriv_Ioi`. -/
 theorem gumbelMaxProb_is_mcfaddenIntegral
     {n : ℕ} (u : Fin n → ℝ) (β : ℝ) (_hβ : 0 < β) (i : Fin n) :
