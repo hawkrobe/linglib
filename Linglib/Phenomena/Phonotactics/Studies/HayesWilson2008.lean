@@ -18,15 +18,19 @@ This is exactly `softmax(harmonyScoreR, 1)` on a finite candidate set.
 ## Key contribution: ganging
 
 The central empirical prediction distinguishing MaxEnt from OT is
-**ganging** (§1): two individually weak constraints can jointly override
+**ganging**: two individually weak constraints can jointly override
 a stronger one. This is impossible with OT's strict ranking, which
 corresponds to exponentially separated weights (`OTLimit.lean`).
+
+The `Ganging` definition and anti-ganging theorems live in `OTLimit.lean`
+alongside `ExponentiallySeparated`, since they are two sides of the same
+coin.
 
 ## English onset data
 
 We encode a subset of the learned grammar (Table (4)) and verify that
 the model assigns higher harmony (= higher MaxEnt probability via
-`exp_lt_exp`) to attested onsets than to unattested ones (§3).
+`exp_lt_exp`) to attested onsets than to unattested ones (§2).
 -/
 
 namespace Phenomena.Phonotactics.Studies.HayesWilson2008
@@ -35,59 +39,13 @@ open Theories.Phonology Theories.Phonology.HarmonicGrammar
 open Core Core.OT Finset Real
 
 -- ============================================================================
--- § 1: Ganging
--- ============================================================================
-
-/-- **Ganging**: two constraints with individual weights w₁, w₂ each weaker
-    than a third weight w₃, but jointly stronger.
-
-    This is the hallmark of weighted constraint interaction that distinguishes
-    MaxEnt/HG from OT. In OT (strict ranking), a lower-ranked constraint
-    can never override a higher-ranked one regardless of how many violations
-    accumulate. In MaxEnt, constraint effects are *additive*, so multiple
-    weak constraints can "gang up" to outweigh a strong one.
-
-    @cite{hayes-wilson-2008} §3.2: "two constraints A and B can together
-    demote the status of a form below what would be expected from violating
-    A or B alone." -/
-def Ganging (w₁ w₂ w₃ : ℚ) : Prop :=
-  0 < w₁ ∧ 0 < w₂ ∧ 0 < w₃ ∧
-  w₁ < w₃ ∧ w₂ < w₃ ∧
-  w₃ < w₁ + w₂
-
-/-- Ganging is achievable: weights (2, 2, 3) exhibit ganging. -/
-theorem ganging_example : Ganging 2 2 3 := by
-  unfold Ganging; norm_num
-
-/-- **Ganging is incompatible with OT**: if weights are exponentially
-    separated, ganging is impossible. Uses `ExponentiallySeparated`
-    from `OTLimit.lean`. -/
-theorem exponential_separation_precludes_ganging {n : Nat}
-    (w : Fin n → ℚ) (M : Nat)
-    (_hw : ExponentiallySeparated w M)
-    (k : Fin n) :
-    ¬Ganging ((univ.filter (· > k)).sum w) 0 (w k) := by
-  intro ⟨_, h0, _, _, _, _⟩
-  linarith
-
-/-- With exponentially separated weights (M = 1), each constraint
-    outweighs the total of all lower weights. Uses `ExponentiallySeparated`
-    from `OTLimit.lean`. -/
-theorem no_ganging_when_separated {n : Nat} (w : Fin n → ℚ)
-    (hw : ExponentiallySeparated w 1) (k : Fin n) :
-    (univ.filter (· > k)).sum w < w k := by
-  have h := hw.2 k
-  simp only [Nat.cast_one, one_mul] at h
-  exact h
-
--- ============================================================================
--- § 2: English Onset Constraints (Table (4) subset)
+-- § 1: English Onset Constraints (Table (4) subset)
 -- ============================================================================
 
 /-- An English onset: a list of consonants preceding the nucleus. -/
 abbrev Onset := List Segment
 
--- Natural class patterns used in the learned grammar (Table (3)/(4)).
+-- Natural class patterns used in the learned grammar.
 
 private def sonorant_pat : Segment :=
   Segment.ofSpecs [(Feature.sonorant, true)]
@@ -147,7 +105,7 @@ def onsetGrammar : List (WeightedConstraint Onset) :=
   [c1_star_son_dors, c4_star_blank_cont, c5_star_blank_voice, c6_star_son_blank]
 
 -- ============================================================================
--- § 3: Harmony Predictions (using harmonyScore from HarmonicGrammar.Basic)
+-- § 2: Harmony Predictions (using harmonyScore from HarmonicGrammar.Basic)
 -- ============================================================================
 
 open Fragments.English.Phonology in
@@ -173,7 +131,7 @@ theorem attested_higher_harmony_br_rk :
     harmonyScore onsetGrammar [r, k] < harmonyScore onsetGrammar [b, r] := by native_decide
 
 -- ============================================================================
--- § 4: MaxEnt Probability Ordering (using exp_lt_exp from Mathlib)
+-- § 3: MaxEnt Probability Ordering (using exp_lt_exp from Mathlib)
 -- ============================================================================
 
 section MaxEntProb
@@ -182,9 +140,7 @@ open Fragments.English.Phonology
 /-- **MaxEnt probability ordering**: higher harmony ⟹ higher
     `exp(harmonyScore)` ⟹ higher MaxEnt probability.
 
-    This applies `exp_lt_exp` (from Mathlib) to `harmonyScoreR`
-    (from `HarmonicGrammar.Basic`): since `exp` is strictly monotone,
-    the harmony ordering directly gives the probability ordering. -/
+    Applies `exp_lt_exp` (Mathlib) to `harmonyScoreR` (HarmonicGrammar.Basic). -/
 theorem maxent_prob_k_gt_ŋ :
     exp (harmonyScoreR onsetGrammar [ŋ]) <
     exp (harmonyScoreR onsetGrammar [k]) := by

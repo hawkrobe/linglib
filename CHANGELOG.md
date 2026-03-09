@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.229.65] - 2026-03-09
+
+### Added
+- **GoldwaterJohnson2003.lean**: Formalize @cite{goldwater-johnson-2003} MaxEnt phonology. `eq1_is_softmax` (eq (1) = `MaxEntGrammar.prob` = `softmax` by `rfl`), `logPseudoLikelihood`/`regularizedObjective` definitions, Wolof weights from Table 1, `wolof_separated` (learned categorical weights satisfy `ExponentiallySeparated` — empirical counterpart of `maxent_ot_limit`)
+
+### Changed
+- **OTLimit.lean**: Move `Ganging`, `ganging_example`, `exponential_separation_precludes_ganging`, `no_ganging_when_separated` from HayesWilson2008.lean to OTLimit.lean (alongside `ExponentiallySeparated`)
+- **HayesWilson2008.lean**: Remove ganging definitions (now imported from OTLimit), remove UNVERIFIED section number
+- **references.bib**: Update `goldwater-johnson-2003` role `cited` → `formalized`, add sources
+
 ## [0.229.64] - 2026-03-09
 
 ### Added

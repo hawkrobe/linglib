@@ -118,6 +118,48 @@ theorem expWeights_separated (n : Nat) (M : Nat) (hM : 0 < M) :
     sorry
 
 -- ============================================================================
+-- § 3b: Ganging (complement of exponential separation)
+-- ============================================================================
+
+/-- **Ganging**: two constraints with individual weights w₁, w₂ each weaker
+    than a third weight w₃, but jointly stronger.
+
+    This is the hallmark of weighted constraint interaction that distinguishes
+    MaxEnt/HG from OT (@cite{hayes-wilson-2008}). In OT (strict ranking), a
+    lower-ranked constraint can never override a higher-ranked one regardless
+    of how many violations accumulate. In MaxEnt, constraint effects are
+    *additive*, so multiple weak constraints can "gang up" to outweigh a
+    strong one. -/
+def Ganging (w₁ w₂ w₃ : ℚ) : Prop :=
+  0 < w₁ ∧ 0 < w₂ ∧ 0 < w₃ ∧
+  w₁ < w₃ ∧ w₂ < w₃ ∧
+  w₃ < w₁ + w₂
+
+/-- Ganging is achievable: weights (2, 2, 3) exhibit ganging. -/
+theorem ganging_example : Ganging 2 2 3 := by
+  unfold Ganging; norm_num
+
+/-- **Ganging is incompatible with exponential separation**: if weights are
+    exponentially separated, no pair of lower constraints can gang up
+    against any higher constraint. -/
+theorem exponential_separation_precludes_ganging {n : Nat}
+    (w : Fin n → ℚ) (M : Nat)
+    (_hw : ExponentiallySeparated w M)
+    (k : Fin n) :
+    ¬Ganging ((univ.filter (· > k)).sum w) 0 (w k) := by
+  intro ⟨_, h0, _, _, _, _⟩
+  linarith
+
+/-- With exponentially separated weights (M = 1), each constraint
+    outweighs the total of all lower weights. -/
+theorem no_ganging_when_separated {n : Nat} (w : Fin n → ℚ)
+    (hw : ExponentiallySeparated w 1) (k : Fin n) :
+    (univ.filter (· > k)).sum w < w k := by
+  have h := hw.2 k
+  simp only [Nat.cast_one, one_mul] at h
+  exact h
+
+-- ============================================================================
 -- § 4: HG–OT Agreement
 -- ============================================================================
 

@@ -294,4 +294,123 @@ theorem kamp_strict_implies_klein {E C : Type*}
   · rfl
   · exact absurd hv h₂
 
+-- ════════════════════════════════════════════════════
+-- § 5. Concrete Witnesses for Each Class
+-- ════════════════════════════════════════════════════
+
+/-! Each class in Kamp's hierarchy is non-empty. We construct explicit
+    adjective denotations that provably satisfy each definition, modeling
+    the classic examples: "gray" (predicative), "fake" (privative),
+    "skillful" (affirmative but not extensional), and "alleged"
+    (non-subsective/modal).
+
+    These are the formal counterparts of the informal entailment judgments
+    from the literature (e.g., "gray cat entails cat" ↔ `isAffirmativeK`,
+    "skillful surgeon + violinist ⊬ skillful violinist" ↔ `¬isExtensionalK`).
+
+    @cite{partee-2001} argues that the privative class should be eliminated
+    in favor of subsective + noun coercion. The witness `fakeK` below
+    models the traditional analysis; a `Partee2001.lean` study file could
+    formalize the coercion alternative. -/
+
+section Witnesses
+
+/-- Two worlds suffice to distinguish extensional from non-extensional. -/
+inductive W2 | w₁ | w₂
+
+/-- Three entities suffice for all witness constructions. -/
+inductive E3 | a | b | c
+
+/-- **"gray"**: a predicative (intersective) adjective. The extension of
+    "gray N" is `{x | gray(x)} ∩ {x | N(w)(x)}` — a fixed property
+    independent of the noun.
+
+    Models @cite{kamp-1975} definition (4). Entailment pattern:
+    "gray cat" entails both "gray" and "cat"; "gray" + "cat" entails
+    "gray cat". -/
+def grayK : AdjMeaningK W2 E3 := λ N w x =>
+  (match x with | .a => true | _ => false) && N w x
+
+theorem gray_predicativeK : isPredicativeK grayK :=
+  ⟨λ _ x => match x with | .a => true | _ => false,
+   λ N w x => by cases x <;> simp [grayK]⟩
+
+/-- "gray" is therefore also extensional and affirmative. -/
+example : isExtensionalK grayK := predicativeK_implies_extensionalK gray_predicativeK
+example : isAffirmativeK grayK := predicativeK_implies_affirmativeK gray_predicativeK
+
+/-- **"fake"**: a privative adjective (traditional analysis). "Fake N"
+    entities are never N.
+
+    Models @cite{kamp-1975} definition (5). Entailment pattern:
+    "fake gun" entails "not a gun".
+
+    @cite{partee-2001} argues this class should be reanalyzed as
+    subsective with noun coercion: "fake gun" ⊆ gun* where
+    gun* = real guns ∪ fake guns. -/
+def fakeK : AdjMeaningK W2 E3 := λ N w x =>
+  (match x with | .b => true | _ => false) && !N w x
+
+theorem fake_privativeK : isPrivativeK fakeK := by
+  intro N w x h
+  unfold fakeK at h
+  cases x <;> simp_all
+
+/-- **"skillful"**: an affirmative (subsective) adjective that is NOT
+    extensional. Being a "skillful N" depends on N's intension — what
+    counts as an N across worlds — not just who the N's are in this world.
+
+    Models @cite{kamp-1975} definition (6) without definition (7).
+    Entailment pattern: "skillful surgeon" entails "surgeon" (subsective),
+    but "skillful surgeon" + "violinist" does not entail "skillful
+    violinist" (not intersective, because not extensional). -/
+def skillfulK : AdjMeaningK W2 E3 := λ N w x =>
+  N w x && match x with
+    | .a => N .w₁ .a  -- a's skill assessment depends on N's intension
+    | _ => false
+
+theorem skillful_affirmativeK : isAffirmativeK skillfulK := by
+  intro N w x h
+  unfold skillfulK at h
+  cases x <;> simp_all
+
+theorem skillful_not_extensionalK : ¬isExtensionalK skillfulK := by
+  intro hext
+  -- N₁ and N₂ agree at w₂ but differ at w₁
+  let N₁ : Property W2 E3 := λ _ _ => true
+  let N₂ : Property W2 E3 := λ w x => match w, x with
+    | .w₁, .a => false | _, _ => true
+  have heq : ∀ x, N₁ .w₂ x = N₂ .w₂ x := by intro x; cases x <;> rfl
+  have h := hext N₁ N₂ .w₂ heq .a
+  -- skillfulK N₁ w₂ a = true (N₁ w₁ a = true)
+  -- skillfulK N₂ w₂ a = false (N₂ w₁ a = false)
+  have h₁ : skillfulK N₁ .w₂ .a = true := rfl
+  have h₂ : skillfulK N₂ .w₂ .a = false := rfl
+  rw [h₁, h₂] at h; cases h
+
+/-- **"alleged"**: a non-subsective (modal) adjective. An "alleged N"
+    may or may not be an N — the adjective creates an intensional context
+    without entailing or anti-entailing the noun.
+
+    This is the complement class in Kamp's hierarchy: adjectives like
+    "alleged", "potential", "putative" that carry no meaning postulate
+    constraining the relationship between the modified and unmodified
+    extension. -/
+def allegedK : AdjMeaningK W2 E3 := λ _N _ x =>
+  match x with | .a => true | _ => false
+
+/-- "alleged N" does not entail "N" (not affirmative). -/
+theorem alleged_not_affirmativeK : ¬isAffirmativeK allegedK := by
+  intro h
+  have := h (λ _ _ => false) .w₁ .a rfl
+  cases this
+
+/-- "alleged N" does not entail "not N" (not privative). -/
+theorem alleged_not_privativeK : ¬isPrivativeK allegedK := by
+  intro h
+  have := h (λ _ _ => true) .w₁ .a rfl
+  cases this
+
+end Witnesses
+
 end Phenomena.Gradability.Studies.Kamp1975

@@ -661,7 +661,6 @@ import Linglib.Phenomena.Generics.Studies.Krifka2013
 import Linglib.Phenomena.Generics.Studies.Longobardi2001
 import Linglib.Phenomena.Generics.Studies.Nickel2009
 import Linglib.Phenomena.Gender.Typology
-import Linglib.Phenomena.Gradability.Adjectives
 import Linglib.Phenomena.Gradability.Data
 import Linglib.Phenomena.Gradability.ComparisonClass
 import Linglib.Phenomena.Gradability.Studies.Rett2015
@@ -931,6 +930,7 @@ import Linglib.Phenomena.PhonologicalAlternation.Studies.SPEDerivations
 import Linglib.Phenomena.PhonologicalAlternation.Studies.Clements1985
 import Linglib.Phenomena.PhonologicalAlternation.Studies.Storme2026
 import Linglib.Phenomena.PhonologicalAlternation.Studies.Flemming2021
+import Linglib.Phenomena.PhonologicalAlternation.Studies.GoldwaterJohnson2003
 import Linglib.Phenomena.Phonotactics.Studies.HayesWilson2008
 -- Theories: CCG
 import Linglib.Theories.Syntax.CCG.Core.Basic
