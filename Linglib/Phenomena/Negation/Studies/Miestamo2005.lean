@@ -13,6 +13,8 @@ import Linglib.Fragments.Russian.Negation
 import Linglib.Fragments.Czech.Negation
 import Linglib.Fragments.Maori.Negation
 import Linglib.Fragments.Hixkaryana.Negation
+import Linglib.Fragments.Quechua.Negation
+import Linglib.Phenomena.AuxiliaryVerbs.NegativeAuxiliaries
 
 /-!
 # Miestamo (2005): Standard Negation
@@ -60,35 +62,8 @@ Every datum here is consistent with the coarser WALS classification:
 
 namespace Phenomena.Negation.Studies.Miestamo2005
 
-open Phenomena.Negation.Typology (NegSymmetry AsymmetrySubtype NegMorphemeType)
-
--- ============================================================================
--- § 1: Core Types
--- ============================================================================
-
-/-- Miestamo's two dimensions of asymmetry. WALS Ch 113 collapses these
-    into a single symmetric/asymmetric distinction. -/
-inductive AsymmetryDimension where
-  /-- The negative clause has a different syntactic structure than the
-      affirmative, beyond just the negation marker. E.g., Finnish neg aux
-      restructures the clause; Japanese *-nai* changes verb to i-adjective. -/
-  | constructional
-  /-- The negative paradigm has fewer formal distinctions than the
-      affirmative. E.g., Burmese *-bu* neutralizes TAM; Turkish aorist
-      uses a different marker. -/
-  | paradigmatic
-  deriving DecidableEq, Repr, BEq
-
-/-- Whether the asymmetry is derived from the negation marker type
-    or independent of it. -/
-inductive AsymmetrySource where
-  /-- The asymmetry follows structurally from the negation marker's
-      properties. A negative verb necessarily creates A/Fin. -/
-  | derived
-  /-- The asymmetry is not predictable from the marker type alone.
-      E.g., TAM neutralization in Burmese is independent of circumfixing. -/
-  | independent
-  deriving DecidableEq, Repr, BEq
+open Phenomena.Negation.Typology
+  (NegSymmetry AsymmetrySubtype NegMorphemeType AsymmetryDimension AsymmetrySource)
 
 -- ============================================================================
 -- § 2: Extended Datum
@@ -328,9 +303,26 @@ def hixkaryana : MiestamoDatum :=
       "copula becomes the finite element (A/Fin). " ++
       "Independent: affix type does not predict deverbalization." }
 
+/-- Imbabura Quechua: SymAsy with paradigmatic A/NonReal, independent.
+    Particle *mana*; suffix *-chu* marks irrealis in negative constructions.
+    Some constructions symmetric, others require *-chu*.
+    Form derived from `Fragments.Quechua.Negation.negParticle`. -/
+def imbaburaQuechua : MiestamoDatum :=
+  { language := "Quechua (Imbabura)"
+  , morphemeType := .particle
+  , symmetry := .both
+  , asymmetrySubtype := .realityStatus
+  , asymmetryDimensions := [.paradigmatic]
+  , asymmetrySource := some .independent
+  , negMarkers := [Fragments.Quechua.Negation.negParticle]
+  , asymmetryDescription := "Paradigmatic: negative requires -chu irrealis " ++
+      "suffix, a category absent from the affirmative paradigm (A/NonReal). " ++
+      "No constructional change: clause structure is preserved. " ++
+      "Independent: particle type does not predict irrealis requirement." }
+
 def allData : List MiestamoDatum :=
   [finnish, german, japanese, turkish, french, burmese, italian, spanish,
-   mandarin, english, russian, czech, maori, hixkaryana]
+   mandarin, english, russian, czech, maori, hixkaryana, imbaburaQuechua]
 
 -- ============================================================================
 -- § 4: WALS Consistency
@@ -427,6 +419,8 @@ theorem maori_morpheme_consistent :
     maori.morphemeType = Typology.maori.morphemeType := rfl
 theorem hixkaryana_morpheme_consistent :
     hixkaryana.morphemeType = Typology.hixkaryana.morphemeType := rfl
+theorem imbaburaQuechua_morpheme_consistent :
+    imbaburaQuechua.morphemeType = Typology.imbaburaQuechua.morphemeType := rfl
 
 /-- Symmetry values are consistent with WALS Typology profiles. -/
 theorem finnish_symmetry_consistent :
@@ -457,6 +451,8 @@ theorem maori_symmetry_consistent :
     maori.symmetry = Typology.maori.symmetry := rfl
 theorem hixkaryana_symmetry_consistent :
     hixkaryana.symmetry = Typology.hixkaryana.symmetry := rfl
+theorem imbaburaQuechua_symmetry_consistent :
+    imbaburaQuechua.symmetry = Typology.imbaburaQuechua.symmetry := rfl
 
 /-- Asymmetry subtypes are consistent with WALS Typology profiles. -/
 theorem finnish_subtype_consistent :
@@ -487,6 +483,8 @@ theorem maori_subtype_consistent :
     maori.asymmetrySubtype = Typology.maori.asymmetrySubtype := rfl
 theorem hixkaryana_subtype_consistent :
     hixkaryana.asymmetrySubtype = Typology.hixkaryana.asymmetrySubtype := rfl
+theorem imbaburaQuechua_subtype_consistent :
+    imbaburaQuechua.asymmetrySubtype = Typology.imbaburaQuechua.asymmetrySubtype := rfl
 
 end WALSConsistency
 
@@ -612,6 +610,14 @@ theorem hixkaryana_marker_from_fragment :
 theorem hixkaryana_marker_is_hira :
     hixkaryana.negMarkers = ["-hira"] := rfl
 
+/-- Imbabura Quechua negation particle derives from Fragment. -/
+theorem imbaburaQuechua_marker_from_fragment :
+    imbaburaQuechua.negMarkers = [Fragments.Quechua.Negation.negParticle] := rfl
+
+/-- Imbabura Quechua marker is *mana*. -/
+theorem imbaburaQuechua_marker_is_mana :
+    imbaburaQuechua.negMarkers = ["mana"] := rfl
+
 end FragmentBridges
 
 -- ============================================================================
@@ -670,7 +676,7 @@ section CrossValidation
     constructional A/Fin: categories split across neg aux and main verb. -/
 theorem finnish_split_confirms_constructional :
     let dist := Fragments.Finnish.Negation.finnishNegDistribution
-    dist.onNegAux.length > 0 ∧ dist.onMainVerb.length > 0 ∧
+    dist.onAux.length > 0 ∧ dist.onLex.length > 0 ∧
     finnish.asymmetryDimensions.contains .constructional := by
   exact ⟨by native_decide, by native_decide, by native_decide⟩
 
@@ -678,9 +684,9 @@ theorem finnish_split_confirms_constructional :
     tense moves from stem to suffix (both structural and paradigmatic change). -/
 theorem japanese_distribution_confirms_asymmetry :
     let dist := Fragments.Japanese.Negation.japaneseNegDistribution
-    dist.affirmativeOnStem.contains "tense" = true ∧
-    dist.negativeOnStem.contains "tense" = false ∧
-    dist.negativeOnSuffix.contains "tense" = true ∧
+    dist.affirmativeOnStem.contains .tense = true ∧
+    dist.negativeOnStem.contains .tense = false ∧
+    dist.negativeOnSuffix.contains .tense = true ∧
     japanese.asymmetryDimensions.contains .constructional ∧
     japanese.asymmetryDimensions.contains .paradigmatic := by
   exact ⟨by native_decide, by native_decide, by native_decide,
@@ -791,26 +797,40 @@ theorem hixkaryana_fragment_confirms_asymmetric :
     hixkaryana.asymmetryDimensions.contains .constructional := by
   exact ⟨by native_decide, by native_decide, by native_decide⟩
 
+/-- Imbabura Quechua Fragment confirms SymAsy: 1 symmetric + 2 asymmetric
+    constructions, with asymmetric = requiring -chu. -/
+theorem imbaburaQuechua_fragment_confirms_symasy :
+    (Fragments.Quechua.Negation.allExamples.filter (·.symmetric)).length = 1 ∧
+    (Fragments.Quechua.Negation.allExamples.filter (fun e => !e.symmetric)).length = 2 ∧
+    imbaburaQuechua.symmetry == .both := by
+  exact ⟨by native_decide, by native_decide, rfl⟩
+
+/-- Imbabura Quechua: -chu requirement is exactly the asymmetric constructions. -/
+theorem imbaburaQuechua_chu_is_asymmetry :
+    Fragments.Quechua.Negation.allExamples.all
+      (fun e => e.symmetric == !e.requiresChu) = true := by
+  native_decide
+
 end CrossValidation
 
 -- ============================================================================
--- § 8: Summary Statistics
+-- § 8: Summary Statistics (linglib sample)
 -- ============================================================================
 
-theorem sample_size : allData.length = 14 := by native_decide
+theorem sample_size : allData.length = 15 := by native_decide
 
 theorem symmetric_count :
     (allData.filter (·.symmetry == .symmetric)).length = 6 := by native_decide
 theorem asymmetric_count :
     (allData.filter (·.symmetry == .asymmetric)).length = 5 := by native_decide
 theorem symasy_count :
-    (allData.filter (·.symmetry == .both)).length = 3 := by native_decide
+    (allData.filter (·.symmetry == .both)).length = 4 := by native_decide
 
 theorem constructional_count :
     (allData.filter (fun d => d.asymmetryDimensions.contains .constructional)).length = 6 := by
   native_decide
 theorem paradigmatic_count :
-    (allData.filter (fun d => d.asymmetryDimensions.contains .paradigmatic)).length = 4 := by
+    (allData.filter (fun d => d.asymmetryDimensions.contains .paradigmatic)).length = 5 := by
   native_decide
 theorem both_dimensions_count :
     (allData.filter (fun d =>
@@ -821,6 +841,121 @@ theorem both_dimensions_count :
 theorem derived_count :
     (allData.filter (·.asymmetrySource == some .derived)).length = 2 := by native_decide
 theorem independent_count :
-    (allData.filter (·.asymmetrySource == some .independent)).length = 6 := by native_decide
+    (allData.filter (·.asymmetrySource == some .independent)).length = 7 := by native_decide
+
+-- ============================================================================
+-- § 9: Miestamo's 297-Language Survey Distribution
+-- ============================================================================
+
+/-- Distribution from @cite{miestamo-2005}'s full 297-language sample.
+    These are the headline empirical results of the typological survey. -/
+structure SurveyDistribution where
+  totalLanguages : Nat
+  symmetricOnly : Nat
+  asymmetricOnly : Nat
+  symAsy : Nat
+  /-- Proportion check: parts sum to whole. -/
+  complete : symmetricOnly + asymmetricOnly + symAsy = totalLanguages
+  deriving Repr
+
+/-- The 297-language distribution from @cite{miestamo-2005} Table 7.1. -/
+def miestamo297 : SurveyDistribution :=
+  { totalLanguages := 297
+  , symmetricOnly := 121
+  , asymmetricOnly := 138
+  , symAsy := 38
+  , complete := by omega }
+
+/-- Asymmetric negation is the most common type in the full sample. -/
+theorem asymmetric_plurality : miestamo297.asymmetricOnly > miestamo297.symmetricOnly := by
+  native_decide
+
+/-- SymAsy is the least common type. -/
+theorem symasy_minority :
+    miestamo297.symAsy < miestamo297.symmetricOnly ∧
+    miestamo297.symAsy < miestamo297.asymmetricOnly := by
+  exact ⟨by native_decide, by native_decide⟩
+
+/-- Symmetric + SymAsy (languages with *any* symmetric construction)
+    outnumber purely asymmetric languages. -/
+theorem symmetric_constructions_common :
+    miestamo297.symmetricOnly + miestamo297.symAsy > miestamo297.asymmetricOnly := by
+  native_decide
+
+-- ============================================================================
+-- § 10: Implicational Universals
+-- ============================================================================
+
+section Universals
+
+/-- A/NonReal asymmetry is always paradigmatic, never constructional.
+    The irrealis category is a paradigmatic distinction (a new cell in the
+    paradigm), not a structural restructuring of the clause. -/
+theorem anonreal_implies_paradigmatic :
+    (allData.filter (fun d =>
+      d.asymmetrySubtype == .realityStatus ||
+      d.asymmetrySubtype == .finAndNonReal ||
+      d.asymmetrySubtype == .nonRealAndCat)).all
+      (fun d => d.asymmetryDimensions.contains .paradigmatic) = true := by
+  native_decide
+
+/-- A/NonReal asymmetry in our sample is never constructional.
+    The clause structure is preserved; only the paradigm changes. -/
+theorem anonreal_never_constructional :
+    (allData.filter (fun d =>
+      d.asymmetrySubtype == .realityStatus)).all
+      (fun d => !d.asymmetryDimensions.contains .constructional) = true := by
+  native_decide
+
+/-- Symmetric-only negation never has paradigmatic asymmetry.
+    By definition: if the paradigm is unchanged, negation is symmetric. -/
+theorem symmetric_no_paradigmatic :
+    (allData.filter (·.symmetry == .symmetric)).all
+      (fun d => !d.asymmetryDimensions.contains .paradigmatic) = true := by
+  native_decide
+
+/-- Constructional asymmetry with a verbal negator is always derived:
+    a verb-type negator structurally entails finiteness restructuring,
+    so the asymmetry follows from the marker's properties. -/
+theorem verbal_constructional_always_derived :
+    (allData.filter (fun d =>
+      d.morphemeType == .auxVerb &&
+      d.asymmetryDimensions.contains .constructional)).all
+      (fun d => d.asymmetrySource == some .derived) = true := by
+  native_decide
+
+end Universals
+
+-- ============================================================================
+-- § 11: Bridge to Auxiliary Verb Literature
+-- ============================================================================
+
+section NegAuxBridge
+
+open Phenomena.AuxiliaryVerbs.NegativeAuxiliaries (NegStrategy)
+
+/-- Finnish is classified as negVerb in the auxiliary literature and as
+    auxVerb in the negation typology. These refer to the same phenomenon:
+    the negative element is an inflecting auxiliary verb. -/
+theorem finnish_neg_aux_cross_module :
+    Phenomena.AuxiliaryVerbs.NegativeAuxiliaries.finnish.strategy == .negVerb ∧
+    finnish.morphemeType == .auxVerb := by
+  exact ⟨rfl, rfl⟩
+
+/-- The NegStrategy→NegMorphemeType mapping is consistent with Finnish's
+    classification in both modules. -/
+theorem finnish_strategy_morpheme_consistent :
+    NegStrategy.negVerb.toNegMorphemeType = finnish.morphemeType := rfl
+
+/-- Verbal negation strategy always implies constructional asymmetry
+    in both the auxiliary literature (creates an AVC) and the negation
+    typology (derived A/Fin). -/
+theorem neg_verb_implies_avc_and_afin :
+    NegStrategy.negVerb.isVerbal = true ∧
+    finnish.asymmetryDimensions.contains .constructional ∧
+    finnish.asymmetrySource == some .derived := by
+  exact ⟨rfl, by native_decide, rfl⟩
+
+end NegAuxBridge
 
 end Phenomena.Negation.Studies.Miestamo2005

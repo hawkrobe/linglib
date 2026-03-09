@@ -194,6 +194,35 @@ inductive AsymmetrySubtype where
   deriving DecidableEq, BEq, Repr
 
 -- ============================================================================
+-- Miestamo's Asymmetry Dimensions (beyond WALS)
+-- ============================================================================
+
+/-- @cite{miestamo-2005}'s two dimensions of asymmetry. WALS Ch 113 collapses
+    these into a single symmetric/asymmetric distinction; Miestamo decomposes
+    asymmetry into two independent dimensions. -/
+inductive AsymmetryDimension where
+  /-- The negative clause has a different syntactic structure than the
+      affirmative, beyond just the negation marker. E.g., Finnish neg aux
+      restructures the clause; Japanese *-nai* changes verb to i-adjective. -/
+  | constructional
+  /-- The negative paradigm has fewer formal distinctions than the
+      affirmative. E.g., Burmese *-bu* neutralizes TAM; Turkish aorist
+      uses a different marker. -/
+  | paradigmatic
+  deriving DecidableEq, Repr, BEq
+
+/-- Whether the asymmetry is derived from the negation marker type
+    or independent of it (@cite{miestamo-2005}). -/
+inductive AsymmetrySource where
+  /-- The asymmetry follows structurally from the negation marker's
+      properties. A negative verb necessarily creates A/Fin. -/
+  | derived
+  /-- The asymmetry is not predictable from the marker type alone.
+      E.g., TAM neutralization in Burmese is independent of circumfixing. -/
+  | independent
+  deriving DecidableEq, Repr, BEq
+
+-- ============================================================================
 -- Chapter 115: Negative Indefinites and Predicate Negation
 -- ============================================================================
 
@@ -753,11 +782,29 @@ def nelemwa : NegationProfile :=
   , notes := "Negative existential for indefinites: kia agu 'not.exist person'; " ++
              "only in WALS Ch 115 sample" }
 
+/--
+Imbabura Quechua: negative particle `mana` with optional irrealis suffix
+`-chu`. WALS classifies as SymAsy with A/NonReal: some constructions are
+symmetric (particle alone), others require `-chu` irrealis marking on the
+verb. The A/NonReal asymmetry is paradigmatic — the negative obligatorily
+includes an irrealis category absent from the affirmative.
+-/
+def imbaburaQuechua : NegationProfile :=
+  { language := "Quechua (Imbabura)"
+  , iso := "qvi"
+  , morphemeType := .particle
+  , symmetry := .both
+  , asymmetrySubtype := .realityStatus
+  , negIndefinite := some .cooccur
+  , negMarkers := ["mana"]
+  , notes := "A/NonReal: -chu irrealis suffix required in some negative " ++
+             "constructions; paradigmatic asymmetry (no constructional change)" }
+
 /-- All language profiles in the sample. -/
 def allLanguages : List NegationProfile :=
   [ english, german, french, russian, finnish, japanese, mandarin, turkish
   , czech, spanish, italian, burmese, maori, izi, kolYukaghir, rama
-  , hixkaryana, nelemwa ]
+  , hixkaryana, nelemwa, imbaburaQuechua ]
 
 -- ============================================================================
 -- WALS Grounding: Ch 112 (Negative Morphemes)
@@ -814,6 +861,9 @@ theorem rama_ch112 :
 theorem hixkaryana_ch112 :
     (Core.WALS.F112A.lookup "hix").map (fromWALS112A ·.value) = some hixkaryana.morphemeType := by
   native_decide
+theorem imbaburaQuechua_ch112 :
+    (Core.WALS.F112A.lookup "qim").map (fromWALS112A ·.value) =
+    some imbaburaQuechua.morphemeType := by native_decide
 
 -- ============================================================================
 -- WALS Grounding: Ch 113 (Symmetric/Asymmetric)
@@ -865,6 +915,9 @@ theorem rama_ch113 :
 theorem hixkaryana_ch113 :
     (Core.WALS.F113A.lookup "hix").map (fromWALS113A ·.value) = some hixkaryana.symmetry := by
   native_decide
+theorem imbaburaQuechua_ch113 :
+    (Core.WALS.F113A.lookup "qim").map (fromWALS113A ·.value) =
+    some imbaburaQuechua.symmetry := by native_decide
 
 -- ============================================================================
 -- WALS Grounding: Ch 114 (Asymmetry Subtypes)
@@ -916,6 +969,9 @@ theorem rama_ch114 :
 theorem hixkaryana_ch114 :
     (Core.WALS.F114A.lookup "hix").map (fromWALS114A ·.value) =
     some hixkaryana.asymmetrySubtype := by native_decide
+theorem imbaburaQuechua_ch114 :
+    (Core.WALS.F114A.lookup "qim").map (fromWALS114A ·.value) =
+    some imbaburaQuechua.asymmetrySubtype := by native_decide
 
 -- ============================================================================
 -- WALS Grounding: Ch 115 (Negative Indefinites)
@@ -955,6 +1011,9 @@ theorem italian_ch115 :
 theorem nelemwa_ch115 :
     (Core.WALS.F115A.lookup "nel").map (fromWALS115A ·.value) =
     some .negExistential := by native_decide
+theorem imbaburaQuechua_ch115 :
+    (Core.WALS.F115A.lookup "qim").map (fromWALS115A ·.value) =
+    some .cooccur := by native_decide
 
 -- ============================================================================
 -- Helper Predicates
@@ -1179,11 +1238,11 @@ theorem finnish_neg_aux_representative :
 -- ============================================================================
 
 /-- Number of languages in our sample. -/
-theorem sample_size : allLanguages.length = 18 := by native_decide
+theorem sample_size : allLanguages.length = 19 := by native_decide
 
 /-- Morpheme type distribution in our sample. -/
 theorem sample_affix_count : countByMorphemeType allLanguages .affix = 5 := by native_decide
-theorem sample_particle_count : countByMorphemeType allLanguages .particle = 9 := by native_decide
+theorem sample_particle_count : countByMorphemeType allLanguages .particle = 10 := by native_decide
 theorem sample_auxverb_count : countByMorphemeType allLanguages .auxVerb = 1 := by native_decide
 theorem sample_double_count : countByMorphemeType allLanguages .doubleNeg = 2 := by native_decide
 theorem sample_unclear_count : countByMorphemeType allLanguages .wordUnclear = 1 := by native_decide
@@ -1193,7 +1252,7 @@ theorem sample_variation_count : countByMorphemeType allLanguages .variation = 0
 theorem sample_symmetry_counts :
     countBySymmetry allLanguages .symmetric = 7 ∧
     countBySymmetry allLanguages .asymmetric = 6 ∧
-    countBySymmetry allLanguages .both = 5 := by
+    countBySymmetry allLanguages .both = 6 := by
   native_decide
 
 -- ============================================================================

@@ -400,6 +400,7 @@ import Linglib.Fragments.HindiUrdu.Particles
 import Linglib.Fragments.Thai.Morph
 import Linglib.Fragments.Indonesian.Morph
 import Linglib.Fragments.Quechua.Morph
+import Linglib.Fragments.Quechua.Negation
 import Linglib.Fragments.Hungarian.Case
 import Linglib.Fragments.Hungarian.Coordination
 import Linglib.Fragments.Hungarian.DiscourseParticles
@@ -603,6 +604,7 @@ import Linglib.Phenomena.TenseAspect.Studies.Rothstein2004
 import Linglib.Phenomena.AuxiliaryVerbs.Diagnostics
 import Linglib.Phenomena.AuxiliaryVerbs.NegativeAuxiliaries
 import Linglib.Phenomena.AuxiliaryVerbs.Selection
+import Linglib.Phenomena.AuxiliaryVerbs.Studies.Anderson2006
 import Linglib.Phenomena.AuxiliaryVerbs.Studies.Sorace2000
 import Linglib.Phenomena.AuxiliaryVerbs.Typology
 import Linglib.Phenomena.Plurals.Studies.Charlow2021.Data
