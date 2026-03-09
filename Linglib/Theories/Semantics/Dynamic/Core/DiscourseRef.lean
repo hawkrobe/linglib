@@ -31,7 +31,7 @@ This separation enables anaphora to indefinites under negation:
 
 -/
 
-import Linglib.Theories.Semantics.Dynamic.Core.Basic
+import Linglib.Theories.Semantics.Dynamic.Core.CCP
 import Mathlib.Data.Fintype.Basic
 
 namespace Semantics.Dynamic.Core

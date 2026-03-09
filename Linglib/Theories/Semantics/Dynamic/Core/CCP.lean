@@ -15,8 +15,22 @@ Abstract foundations shared by PLA, DRT, DPL, CDRT, and other dynamic semantics 
 - `CCP` forms a `Monoid` (composition + identity)
 - Support and Content form a Galois connection
 
+## Relationship to `DynProp`
+
+The relational type `DRS S = S → S → Prop` (@cite{groenendijk-stokhof-1991},
+@cite{muskens-1996}) is the primary dynamic semantic type. `CCP S` is the
+derived set-transformer view, connected via `lift`/`lower`:
+
+- `lift R σ = { j | ∃ i ∈ σ, R i j }` (relational image)
+- `lower φ i j = j ∈ φ {i}` (singleton test)
+
+The `IsDistributive` CCPs — those that process elements independently —
+are exactly the image of `lift`. Non-distributive operations like
+`CCP.neg` and `CCP.might` are genuinely new: they test the *whole*
+input state rather than filtering per-element.
 -/
 
+import Linglib.Theories.Semantics.Dynamic.Core.DynProp
 import Mathlib.Data.Set.Basic
 import Mathlib.Algebra.Group.Defs
 
@@ -57,7 +71,7 @@ def absurd : CCP P := λ _ => ∅
 /-- Sequential composition of CCPs -/
 def seq (u v : CCP P) : CCP P := λ s => v (u s)
 
-infixl:70 " ;; " => seq
+scoped infixl:70 " ;; " => seq
 
 -- Monoid laws
 theorem seq_assoc (u v w : CCP P) : (u ;; v) ;; w = u ;; (v ;; w) := rfl
@@ -142,7 +156,7 @@ theorem eliminative_id {P : Type*} : IsEliminative (CCP.id : CCP P) :=
 /-- Sequential composition preserves eliminativity -/
 theorem eliminative_seq {P : Type*} (u v : CCP P)
     (hu : IsEliminative u) (hv : IsEliminative v) :
-    IsEliminative (u ;; v) := λ s _ hp =>
+    IsEliminative (u.seq v) := λ s _ hp =>
   hu s (hv (u s) hp)
 
 
@@ -328,7 +342,11 @@ theorem updateFromSat_monotone {P φ : Type*} (sat : P → φ → Prop) (ψ : φ
 
 -- ═══ Assignment & State Infrastructure ═══
 
-/-- Variable assignment: function from indices to entities. -/
+/-- Variable assignment: function from indices to entities.
+
+This is the canonical assignment type used by both the CCP
+set-transformer stack and the Muskens relational stack
+(`Core.Accessibility`). -/
 abbrev Assignment (E : Type*) := Nat → E
 
 namespace Assignment
@@ -353,7 +371,177 @@ theorem update_comm {E : Type*} (g : Assignment E) {n m : Nat} (x y : E) (h : n 
 
 end Assignment
 
-/-- State: set of world-assignment pairs. -/
+-- ═══ Possibility & InfoState ═══
+
+/-- A possibility: world paired with variable assignment.
+
+This is the concrete state type for world-sensitive dynamic semantics
+(DPL, DRT, CDRT, PLA). The assignment field uses `Assignment E`
+from the CCP infrastructure. -/
+structure Possibility (W : Type*) (E : Type*) where
+  world : W
+  assignment : Assignment E
+
+namespace Possibility
+
+variable {W E : Type*}
+
+/-- Two possibilities agree on all variables in a set. -/
+def agreeOn (p q : Possibility W E) (vars : Set Nat) : Prop :=
+  ∀ x ∈ vars, p.assignment x = q.assignment x
+
+/-- Same world, possibly different assignment. -/
+def sameWorld (p q : Possibility W E) : Prop := p.world = q.world
+
+/-- Extend an assignment at a single variable, using `Assignment.update`. -/
+def extend (p : Possibility W E) (x : Nat) (e : E) : Possibility W E :=
+  { p with assignment := p.assignment.update x e }
+
+@[simp]
+theorem extend_at (p : Possibility W E) (x : Nat) (e : E) :
+    (p.extend x e).assignment x = e := by simp [extend]
+
+@[simp]
+theorem extend_other (p : Possibility W E) (x y : Nat) (e : E) (h : y ≠ x) :
+    (p.extend x e).assignment y = p.assignment y := by simp [extend, h]
+
+@[simp]
+theorem extend_world (p : Possibility W E) (x : Nat) (e : E) :
+    (p.extend x e).world = p.world := rfl
+
+end Possibility
+
+
+/-- Information state: set of possibilities.
+
+This is `InfoStateOf (Possibility W E)` — a specialization of the
+generic `InfoStateOf` to world-assignment possibilities. -/
+abbrev InfoState (W : Type*) (E : Type*) := Set (Possibility W E)
+
+namespace InfoState
+
+variable {W E : Type*}
+
+/-- The trivial state: all possibilities. -/
+def univ : InfoState W E := Set.univ
+
+/-- The absurd state: no possibilities. -/
+def empty : InfoState W E := (∅ : Set (Possibility W E))
+
+/-- State is consistent (non-empty). -/
+def consistent (s : InfoState W E) : Prop := s.Nonempty
+
+/-- State is trivial (all possibilities). -/
+def trivial (s : InfoState W E) : Prop := s = Set.univ
+
+/-- Variable x is defined in state s iff all possibilities agree on x's value. -/
+def definedAt (s : InfoState W E) (x : Nat) : Prop :=
+  ∀ p q : Possibility W E, p ∈ s → q ∈ s → p.assignment x = q.assignment x
+
+/-- The set of defined variables in a state. -/
+def definedVars (s : InfoState W E) : Set Nat :=
+  { x | s.definedAt x }
+
+/-- Variable x is novel in state s iff x is not defined. -/
+def novelAt (s : InfoState W E) (x : Nat) : Prop := ¬s.definedAt x
+
+/-- In a consistent state, novel means assignments actually disagree. -/
+theorem novelAt_iff_disagree (s : InfoState W E) (x : Nat) (hs : s.consistent) :
+    s.novelAt x ↔ ∃ p q : Possibility W E, p ∈ s ∧ q ∈ s ∧ p.assignment x ≠ q.assignment x := by
+  constructor
+  · intro h
+    simp only [novelAt, definedAt] at h
+    push_neg at h
+    exact h
+  · intro ⟨p, q, hp, hq, hne⟩
+    simp only [novelAt, definedAt]
+    push_neg
+    exact ⟨p, q, hp, hq, hne⟩
+
+/-- Project to the set of worlds in the state. -/
+def worlds (s : InfoState W E) : Set W :=
+  { w | ∃ p ∈ s, p.world = w }
+
+/-- Filter state by a world predicate. -/
+def filterWorlds (s : InfoState W E) (pred : W → Bool) : InfoState W E :=
+  { p ∈ s | pred p.world }
+
+/-- Filter state by an assignment predicate. -/
+def filterAssign (s : InfoState W E) (pred : (Nat → E) → Bool) : InfoState W E :=
+  { p ∈ s | pred p.assignment }
+
+end InfoState
+
+
+/-- Context extends InfoState with metadata. -/
+structure Context (W : Type*) (E : Type*) where
+  state : InfoState W E
+  definedVars : Set Nat := ∅
+  domain : Set E := Set.univ
+
+namespace Context
+
+variable {W E : Type*}
+
+/-- Empty context with all possibilities. -/
+def initial : Context W E where
+  state := InfoState.univ
+  definedVars := ∅
+
+/-- Context is consistent iff its state is. -/
+def consistent (c : Context W E) : Prop := c.state.consistent
+
+/-- Mark a variable as defined. -/
+def introduce (c : Context W E) (x : Nat) : Context W E :=
+  { c with definedVars := c.definedVars ∪ {x} }
+
+/-- Narrow the state. -/
+def narrow (c : Context W E) (s : InfoState W E) : Context W E :=
+  { c with state := c.state ∩ s }
+
+end Context
+
+
+/-- State subsistence: s subsists in s' iff every possibility in s has a descendant in s'. -/
+def InfoState.subsistsIn {W E : Type*} (s s' : InfoState W E) : Prop :=
+  ∀ p ∈ s, ∃ p' ∈ s', p.world = p'.world ∧
+    ∀ x, s.definedAt x → p.assignment x = p'.assignment x
+
+notation:50 s " ⪯ " s' => InfoState.subsistsIn s s'
+
+namespace InfoState
+
+variable {W E : Type*}
+
+/-- Subsistence is reflexive. -/
+theorem subsistsIn_refl (s : InfoState W E) : s ⪯ s := by
+  intro p hp
+  exact ⟨p, hp, rfl, λ _ _ => rfl⟩
+
+/-- Subset implies subsistence. -/
+theorem subset_subsistsIn {s s' : InfoState W E} (h : s ⊆ s') : s ⪯ s' := by
+  intro p hp
+  exact ⟨p, h hp, rfl, λ _ _ => rfl⟩
+
+/-- State s supports proposition φ iff φ holds at all worlds in s. -/
+def supports (s : InfoState W E) (φ : W → Bool) : Prop :=
+  ∀ p ∈ s, φ p.world
+
+notation:50 s " ⊫ " φ => InfoState.supports s φ
+
+/-- Support is preserved by subset. -/
+theorem supports_mono {s s' : InfoState W E} (h : s ⊆ s')
+    (φ : W → Bool) (hsupp : s' ⊫ φ) : s ⊫ φ := by
+  intro p hp
+  exact hsupp p (h hp)
+
+end InfoState
+
+
+/-- State: set of world-assignment pairs.
+
+Isomorphic to `InfoState W E` but uses a flat product instead of the
+`Possibility` structure. Prefer `InfoState` for new code. -/
 abbrev State (W E : Type*) := Set (W × Assignment E)
 
 /-- State-level CCP: context change potential over world-assignment states.
@@ -416,5 +604,101 @@ theorem might_not_isDistributive :
       subst hx_mem
       exact absurd hx_val (by decide)
   · exact hmem_i
+
+-- ═══ Relational ↔ CCP Correspondence ═══
+
+/-! The relational type `DRS S = S → S → Prop` from `DynProp` is the
+primary dynamic semantic type. Every `DRS` gives rise to a distributive
+`CCP` via the relational image (`lift`), and every distributive CCP
+arises this way (`lower`). The round-trip is the identity in both
+directions (for distributive CCPs).
+
+Non-distributive CCP operations (`neg`, `might`, `must`) test the
+*whole* input state and have no direct `DRS` counterpart — they are
+genuine additions of the set-transformer perspective. -/
+
+section RelationalBridge
+
+open DynProp
+
+variable {S : Type*}
+
+/-- Lift a relational DRS meaning to a CCP (set transformer).
+
+This is the relational image: given input state `σ`, collect all
+outputs reachable from any element of `σ`. The resulting CCP is
+always distributive (`lift_isDistributive`). -/
+def lift (R : DRS S) : CCP S :=
+  λ σ => { j | ∃ i ∈ σ, R i j }
+
+/-- Lower a CCP to a relational DRS meaning.
+
+`lower φ i j` holds iff `j` is in the output of the singleton `{i}`.
+This is the inverse of `lift` for distributive CCPs. -/
+def lower (φ : CCP S) : DRS S :=
+  λ i j => j ∈ φ {i}
+
+/-- Lifting preserves sequential composition:
+`lift (R₁ ⨟ R₂) = lift R₁ ;; lift R₂`. -/
+theorem lift_dseq (R₁ R₂ : DRS S) :
+    lift (dseq R₁ R₂) = CCP.seq (lift R₁) (lift R₂) := by
+  funext σ; ext k; simp only [lift, CCP.seq, dseq, Set.mem_setOf_eq]
+  constructor
+  · rintro ⟨i, hi, j, hR₁, hR₂⟩
+    exact ⟨j, ⟨i, hi, hR₁⟩, hR₂⟩
+  · rintro ⟨j, ⟨i, hi, hR₁⟩, hR₂⟩
+    exact ⟨i, hi, j, hR₁, hR₂⟩
+
+/-- Lifting a test produces a per-element filter:
+`lift (test C) σ = { i ∈ σ | C i }`. -/
+theorem lift_test (C : Condition S) :
+    lift (DynProp.test C) = λ σ => { i ∈ σ | C i } := by
+  funext σ; ext j; simp only [lift, DynProp.test, Set.mem_setOf_eq]
+  constructor
+  · rintro ⟨i, hi, rfl, hC⟩; exact ⟨hi, hC⟩
+  · rintro ⟨hj, hC⟩; exact ⟨j, hj, rfl, hC⟩
+
+/-- Lifted CCPs are always distributive. -/
+theorem lift_isDistributive (R : DRS S) : IsDistributive (lift R) := by
+  intro σ; ext j; simp only [lift, Set.mem_setOf_eq]
+  constructor
+  · rintro ⟨i, hi, hR⟩
+    refine ⟨i, hi, i, ?_, hR⟩; exact rfl
+  · rintro ⟨i, hi, i', hi', hR⟩
+    refine ⟨i, hi, ?_⟩; rwa [hi'] at hR
+
+/-- Round-trip: `lower (lift R) = R`. The relational type loses no
+information when lifted and lowered. -/
+theorem lower_lift (R : DRS S) : lower (lift R) = R := by
+  funext i j; simp only [lower, lift, Set.mem_setOf_eq, eq_iff_iff]
+  constructor
+  · rintro ⟨i', hi', hR⟩; rwa [hi'] at hR
+  · intro hR; exact ⟨i, rfl, hR⟩
+
+/-- Round-trip: `lift (lower φ) = φ` for distributive CCPs.
+Distributive CCPs are exactly the relational images. -/
+theorem lift_lower (φ : CCP S) (hd : IsDistributive φ) :
+    lift (lower φ) = φ := by
+  funext σ; ext j; simp only [lift, lower, Set.mem_setOf_eq]
+  rw [hd σ]
+  simp only [Set.mem_setOf_eq]
+
+/-- `lift (test C)` is eliminative: it only removes elements. -/
+theorem lift_test_isEliminative (C : Condition S) :
+    IsEliminative (lift (DynProp.test C)) := by
+  rw [lift_test]; intro σ j ⟨hj, _⟩; exact hj
+
+/-- `updateFromSat` is the lifting of `test` applied to a satisfaction
+relation. This connects the CCP-native `updateFromSat` to the
+primary relational algebra. -/
+theorem updateFromSat_eq_lift_test {P φ : Type*} (sat : P → φ → Prop) (ψ : φ) :
+    updateFromSat sat ψ = lift (DynProp.test (λ p => sat p ψ)) := by
+  funext σ; ext p
+  simp only [updateFromSat, lift, DynProp.test, Set.mem_setOf_eq]
+  constructor
+  · rintro ⟨hp, hsat⟩; exact ⟨p, hp, rfl, hsat⟩
+  · rintro ⟨i, hi, rfl, hsat⟩; exact ⟨hi, hsat⟩
+
+end RelationalBridge
 
 end Semantics.Dynamic.Core

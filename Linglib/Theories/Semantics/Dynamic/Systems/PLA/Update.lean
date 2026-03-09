@@ -27,6 +27,7 @@ namespace Semantics.Dynamic.PLA
 -- We use Core.CCP infrastructure directly via qualified names
 
 open Classical
+open Semantics.Dynamic.Core.CCP
 
 
 /--

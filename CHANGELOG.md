@@ -1,5 +1,33 @@
 # Changelog
 
+## [0.229.39] - 2026-03-08
+
+### Added
+- **Studies/KampReyle1993.lean**: End-to-end DRS anaphora study connecting `Core.Accessibility` to `Phenomena/Anaphora` — existential persistence, donkey anaphora (full proof of universal reading via dynamic implication), negation blocking, multiple drefs, subordination (Def 2.1.2), concrete model evaluation, compositional derivation pipeline (T₀–T₅), and merging lemma stress tests (ditransitive, nested negation/implication, relative clause, 4-sentence discourse, disjunction)
+
+### Changed
+- **Assignment unification**: Remove duplicate `Assign E` from Accessibility.lean; canonical `Assignment E` now defined in CCP.lean and used everywhere
+- **DRT.lean → Systems/DRT/Basic.lean**: Move DRT from `Effects/State/` to `Systems/DRT/`, update namespace to `Semantics.Dynamic.Systems.DRT`
+- **KRModel**: Remove unused `carrier : Set E` field
+- **Accessibility.lean**: Move example derivations and stress tests to `KampReyle1993.lean` — theory file now contains only the interpretation bridge, structural lemmas, merging lemma, reduction, and Proposition 1
+
+## [0.229.38] - 2026-03-08
+
+### Changed
+- **CCP.lean**: Import `DynProp`, add relational↔CCP bridge — `lift`/`lower` with round-trip theorems (`lower_lift`, `lift_lower`), `lift_dseq` (composition), `lift_test` (filtering), `lift_isDistributive` (characterization), `updateFromSat_eq_lift_test` (connecting CCP's native update to the relational algebra). CCP is now the derived set-transformer view of the primary relational type. Consolidate `Basic.lean` into CCP — move `Possibility`, `InfoState`, `Context`, `supports`, `subsistsIn` and all operations; redefine `Possibility.extend` via `Assignment.update`.
+
+### Removed
+- **Core/Basic.lean**: Consolidated into `CCP.lean`. All 6 downstream importers updated.
+
+## [0.229.37] - 2026-03-08
+
+### Added
+- **Core/DRSExpr.lean**: Extract pure DRS syntax into standalone module — `DRSExpr` type, `adr`, `occurs`, `acc`, `allOccurring`, `isFree`, `isProper`, and verification examples. No semantic imports; completes the four-layer dynamic semantics architecture (DynProp → DynamicTy2 → DRSExpr → Accessibility)
+
+### Changed
+- **Accessibility.lean**: Import and re-export `DRSExpr.lean`; remove extracted syntax definitions, update docstring to describe interpretation bridge role
+- **DRT.lean**: Update docstring to reference `Core.DRSExpr` for syntax definitions
+
 ## [0.229.36] - 2026-03-08
 
 ### Changed

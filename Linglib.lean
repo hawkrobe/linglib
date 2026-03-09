@@ -527,6 +527,7 @@ import Linglib.Phenomena.Anaphora.Studies.DGNominal
 import Linglib.Phenomena.Anaphora.Studies.HPSGCoreference
 import Linglib.Phenomena.Anaphora.Studies.MinimalismCoreference
 import Linglib.Phenomena.Anaphora.Studies.Cooper2023
+import Linglib.Phenomena.Anaphora.Studies.KampReyle1993
 import Linglib.Phenomena.Anaphora.Studies.KeshetAbney2024
 import Linglib.Phenomena.Anaphora.Coreference
 import Linglib.Phenomena.Anaphora.CrossSentential
@@ -992,10 +993,10 @@ import Linglib.Phenomena.WordOrder.Studies.Westergaard2009
 import Linglib.Theories.Syntax.DependencyGrammar.LongDistance
 -- Theories: Dynamic Semantics
 -- Theories: Dynamic Semantics — Core
-import Linglib.Theories.Semantics.Dynamic.Core.Basic
 import Linglib.Theories.Semantics.Dynamic.Core.CCP
 import Linglib.Theories.Semantics.Dynamic.Core.DiscourseRef
 import Linglib.Theories.Semantics.Dynamic.Core.Accessibility
+import Linglib.Theories.Semantics.Dynamic.Core.DRSExpr
 import Linglib.Theories.Semantics.Dynamic.Core.DynProp
 import Linglib.Theories.Semantics.Dynamic.Core.DynamicTy2
 import Linglib.Theories.Semantics.Dynamic.Core.Translation
@@ -1005,7 +1006,7 @@ import Linglib.Theories.Semantics.Dynamic.Core.Update
 import Linglib.Theories.Semantics.Dynamic.Effects.State.Basic
 import Linglib.Theories.Semantics.Dynamic.Effects.State.DPL
 import Linglib.Theories.Semantics.Dynamic.Effects.State.DPLBridge
-import Linglib.Theories.Semantics.Dynamic.Effects.State.DRT
+import Linglib.Theories.Semantics.Dynamic.Systems.DRT.Basic
 import Linglib.Theories.Semantics.Dynamic.Effects.Nondeterminism.Basic
 import Linglib.Theories.Semantics.Dynamic.Effects.Nondeterminism.Charlow2019
 import Linglib.Theories.Semantics.Dynamic.Effects.Nondeterminism.PointwiseUpdate

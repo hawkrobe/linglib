@@ -10,7 +10,6 @@ anaphora to indefinites under negation.
 
 -/
 
-import Linglib.Theories.Semantics.Dynamic.Core.Basic
 import Linglib.Theories.Semantics.Dynamic.Core.Update
 import Linglib.Theories.Semantics.Dynamic.Core.DiscourseRef
 import Mathlib.Data.Set.Basic

@@ -1,5 +1,5 @@
 import Linglib.Theories.Semantics.TypeTheoretic.Core
-import Linglib.Theories.Semantics.Dynamic.Core.Basic
+import Linglib.Theories.Semantics.Dynamic.Core.CCP
 
 /-!
 # Type Theory with Records — Discourse State & Pragmatics

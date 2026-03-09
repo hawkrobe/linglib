@@ -12,7 +12,7 @@ semantics using Discourse Representation Structures (DRSs).
 ## Unified DRS Representation
 
 This module builds on the canonical `DRSExpr` type from
-`Core.Accessibility`, which captures the full recursive syntax of
+`Core.DRSExpr`, which captures the full recursive syntax of
 @cite{kamp-reyle-1993} Def 1.4.1:
 
 - `DRSExpr.box` = K&R's `⟨U, Con⟩` (universe + conditions)
@@ -21,9 +21,9 @@ This module builds on the canonical `DRSExpr` type from
 - `DRSExpr.disj` = disjunctive condition (`K₁ ∨ K₂`)
 - `DRSExpr.seq` = discourse sequencing (`K₁ ; K₂`)
 
-Syntactic operations (`adr`, `occurs`, `acc`, `isFree`, `isProper`) and
-semantic interpretation (`interp`, `mergingLemma`, `reduce`) are defined
-in `Core.Accessibility`.
+Syntactic operations (`adr`, `occurs`, `acc`, `isFree`, `isProper`) are
+defined in `Core.DRSExpr`. Semantic interpretation (`interp`,
+`mergingLemma`, `reduce`) is defined in `Core.Accessibility`.
 
 ## K&R Model Theory (Def 1.2.1)
 
@@ -45,10 +45,11 @@ contributes presuppositional, at-issue, or implicature content. This
 enables a unified treatment of denial.
 -/
 
-namespace Semantics.Dynamic.DRT
+namespace Semantics.Dynamic.Systems.DRT
 
 open Semantics.Dynamic.Core.Accessibility
 open Semantics.Dynamic.Core.DynamicTy2
+open Semantics.Dynamic.Core (Assignment)
 open Semantics.Dynamic.Core.WeakestPrecondition
 open Core.Semantics.ContentLayer
 
@@ -66,8 +67,6 @@ A model M for vocabulary V is a triple ⟨U_M, Name_M, Pred_M⟩:
 In our formalization, names and predicates are both identified by `Nat`
 indices (matching `DRSExpr`'s `atom` constructor). -/
 structure KRModel (E : Type*) where
-  /-- The universe of individuals (U_M). -/
-  carrier : Set E
   /-- Name interpretation: maps name indices to their bearers. -/
   names : Nat → E
   /-- Predicate interpretation: maps relation indices to truth on entity lists.
@@ -80,7 +79,7 @@ def KRModel.toRelInterp {E : Type*} (M : KRModel E) : RelInterp E := M.preds
 /-- A DRS K is true in model M iff there is an embedding (assignment) that
 verifies all conditions (@cite{kamp-reyle-1993} Def 1.4.5). -/
 def trueIn {E : Type*} (M : KRModel E) (K : DRSExpr) : Prop :=
-  ∃ g : Assign E, wp (interp M.preds K) (λ _ => True) g
+  ∃ g : Assignment E, wp (interp M.preds K) (λ _ => True) g
 
 -- ════════════════════════════════════════════════════
 -- § 2. Subordination (@cite{kamp-reyle-1993}, Def 2.1.2)
@@ -226,7 +225,7 @@ theorem denial_nonmonotonic (k : LDRS)
 presuppositional and implicature content must be handled separately
 by the content-layer machinery. -/
 def LDRS.interp {E : Type*} (rels : RelInterp E) (k : LDRS) :
-    DRS (Assign E) :=
+    DRS (Assignment E) :=
   Semantics.Dynamic.Core.Accessibility.interp rels k.toDRSExpr
 
 /-- Round-trip: `box → toLDRS → toDRSExpr` preserves conditions. -/
@@ -237,4 +236,4 @@ theorem toLDRS_toDRSExpr_conditions (drefs : List Nat) (conds : List DRSExpr) :
   congr 1
   exact List.map_id _
 
-end Semantics.Dynamic.DRT
+end Semantics.Dynamic.Systems.DRT

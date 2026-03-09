@@ -27,6 +27,7 @@ import Linglib.Theories.Semantics.Dynamic.Systems.PLA.Update
 namespace Semantics.Dynamic.PLA
 
 open Classical
+open Semantics.Dynamic.Core.CCP
 
 
 variable {E : Type*} [Nonempty E]
