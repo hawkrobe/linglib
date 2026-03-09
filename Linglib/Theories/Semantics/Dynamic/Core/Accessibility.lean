@@ -764,4 +764,88 @@ theorem proposition_1 {E : Type*} [Nonempty E] (rels : RelInterp E) (K : DRSExpr
       (fun _ h => nomatch h) j₂ hinterp
     exact ⟨j₁, hinterp₁⟩
 
+-- ════════════════════════════════════════════════════════════════
+-- § 6. Algebraic Structure: Support and Cylindrification
+-- ════════════════════════════════════════════════════════════════
+
+/-! ### Connection to cylindric algebras
+
+Proposition 1 is an instance of a general algebraic pattern.
+Predicates on assignments form a *cylindric set algebra*
+(@cite{henkin-monk-tarski-1971}): a Boolean algebra equipped with
+*cylindrification* operators `cₙ` (one per register) that
+existentially abstract over a single register.
+
+The **support** of a predicate is the set of registers it depends on.
+A predicate is **closed** (support = ∅) iff it is invariant under all
+cylindrifications — i.e., it's a genuine proposition, not an open
+formula.
+
+`rebase_main` proves that `allBound B K` implies the truth condition
+of `K` has support ⊆ `B`. Proposition 1 is the `B = ∅` corollary:
+proper DRSs denote closed predicates. -/
+
+section CylindricStructure
+
+variable {E : Type*}
+
+/-- A predicate on assignments is *invariant on* `B` if it only
+depends on the values of registers in `B`: assignments that agree
+on `B` satisfy `p` identically. -/
+def invariantOn (p : Assignment E → Prop) (B : List Nat) : Prop :=
+  ∀ g₁ g₂, (∀ n ∈ B, g₁ n = g₂ n) → (p g₁ ↔ p g₂)
+
+/-- Cylindrification at register `n`: existentially quantify over
+the value at slot `n`, leaving all other slots fixed.
+
+In cylindric algebra notation, `cₙ(p)(g) = ∃e. p(g[n↦e])`. -/
+def cylindrify (n : Nat) (p : Assignment E → Prop) : Assignment E → Prop :=
+  fun g => ∃ e, p (g.update n e)
+
+/-- A predicate is *cylindrification-closed* at register `n` if
+abstracting over `n` doesn't change the predicate: `cₙ(p) = p`.
+This means `p` doesn't depend on register `n`. -/
+def cylClosed (n : Nat) (p : Assignment E → Prop) : Prop :=
+  cylindrify n p = p
+
+/-- If `p` is invariant on `B` and `n ∉ B`, then `p` is
+cylindrification-closed at `n`. Invariance on `B` implies
+`p` doesn't depend on any register outside `B`. -/
+theorem cylClosed_of_invariantOn {p : Assignment E → Prop} {B : List Nat} {n : Nat}
+    (hinv : invariantOn p B) (hn : n ∉ B) : cylClosed n p := by
+  ext g; simp only [cylindrify]; constructor
+  · rintro ⟨e, he⟩
+    exact (hinv (g.update n e) g (fun m hm => by
+      simp [Assignment.update, show m ≠ n from fun h => hn (h ▸ hm)])).mp he
+  · intro hg
+    exact ⟨g n, (hinv g (g.update n (g n)) (fun m hm => by
+      simp [Assignment.update, show m ≠ n from fun h => hn (h ▸ hm)])).mp hg⟩
+
+/-- `invariantOn p []` is equivalent to `WeakestPrecondition.isProper`:
+the predicate takes the same value everywhere. -/
+theorem invariantOn_nil_iff {p : Assignment E → Prop} :
+    invariantOn p [] ↔ ∀ g₁ g₂, p g₁ ↔ p g₂ :=
+  ⟨fun h g₁ g₂ => h g₁ g₂ (fun _ h => nomatch h),
+   fun h g₁ g₂ _ => h g₁ g₂⟩
+
+/-- The truth condition of a DRS with `allBound B K` is invariant on
+`B`: it only depends on the registers that `K` is allowed to read.
+
+This is the support theorem: syntactic bound-checking (`allBound`)
+correctly over-approximates semantic support. -/
+theorem allBound_invariantOn [Nonempty E] (rels : RelInterp E) (K : DRSExpr)
+    (B : List Nat) (hB : allBound B K = true) :
+    invariantOn (closure (interp rels K)) B := by
+  intro g₁ g₂ hagree
+  constructor
+  · rintro ⟨j₁, hinterp⟩
+    obtain ⟨j₂, hinterp₂, _⟩ := rebase_main rels K B hB g₁ g₂ hagree j₁ hinterp
+    exact ⟨j₂, hinterp₂⟩
+  · rintro ⟨j₂, hinterp⟩
+    obtain ⟨j₁, hinterp₁, _⟩ := rebase_main rels K B hB g₂ g₁
+      (fun n hn => (hagree n hn).symm) j₂ hinterp
+    exact ⟨j₁, hinterp₁⟩
+
+end CylindricStructure
+
 end Semantics.Dynamic.Core.Accessibility
