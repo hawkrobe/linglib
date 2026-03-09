@@ -846,6 +846,76 @@ theorem allBound_invariantOn [Nonempty E] (rels : RelInterp E) (K : DRSExpr)
       (fun n hn => (hagree n hn).symm) j₂ hinterp
     exact ⟨j₁, hinterp₁⟩
 
+-- ────────────────────────────────────────────────────────────────
+-- § 6b. Per-register support: freshInv → cylClosed
+-- ────────────────────────────────────────────────────────────────
+
+private theorem update_self (g : Assignment E) (n : Nat) : g.update n (g n) = g := by
+  funext m; by_cases h : m = n <;> simp [Assignment.update, h]
+
+/-- Per-register support theorem: if dref `n` does not occur in `K`,
+then the truth condition of `K` is cylindrification-closed at `n`.
+
+This connects `freshInv` (§3b) to the cylindric algebra vocabulary.
+`occurs` is the per-register support checker, and `allBound` is
+the global version. -/
+theorem cylClosed_of_not_occurs [Nonempty E] (rels : RelInterp E) (K : DRSExpr)
+    (n : Nat) (h : occurs n K = false) :
+    cylClosed n (closure (interp rels K)) := by
+  obtain ⟨fwd, back⟩ := freshInv rels K n h
+  ext g; simp only [cylindrify, closure]; constructor
+  · rintro ⟨e, k, hk⟩
+    obtain ⟨k', hk', _⟩ := back g k e hk
+    exact ⟨k', hk'⟩
+  · rintro ⟨k, hk⟩
+    exact ⟨g n, k, by rw [update_self]; exact hk⟩
+
+-- ────────────────────────────────────────────────────────────────
+-- § 6c. Cylindric algebra axioms (C1–C4)
+-- ────────────────────────────────────────────────────────────────
+
+/-! We verify that `cylindrify` on `Assignment E → Prop` satisfies the
+cylindric set algebra axioms (@cite{henkin-monk-tarski-1971}, §1.1).
+Together with the Boolean algebra structure on `Assignment E → Prop`,
+this establishes that predicates on assignments form an
+`ω`-dimensional cylindric set algebra with base `E`. -/
+
+/-- **C1**: Cylindrification preserves the empty set. `cₙ(⊥) = ⊥`. -/
+theorem cylindrify_bot (n : Nat) :
+    cylindrify n (fun _ : Assignment E => False) = fun _ => False := by
+  ext g; simp [cylindrify]
+
+/-- **C2**: Every element is below its cylindrification. `p ≤ cₙ(p)`.
+
+Proof: witness the current value at register `n`. -/
+theorem le_cylindrify (n : Nat) (p : Assignment E → Prop) (g : Assignment E) :
+    p g → cylindrify n p g :=
+  fun h => ⟨g n, by rw [update_self]; exact h⟩
+
+/-- **C3**: Cylindrification distributes over conjunction with
+a cylindrified factor. `cₙ(p ∧ cₙ(q)) = cₙ(p) ∧ cₙ(q)`. -/
+theorem cylindrify_inter_cylindrify (n : Nat) (p q : Assignment E → Prop) :
+    cylindrify n (fun g => p g ∧ cylindrify n q g) =
+    fun g => cylindrify n p g ∧ cylindrify n q g := by
+  ext g; simp only [cylindrify]; constructor
+  · rintro ⟨e, hp, e', hq⟩
+    exact ⟨⟨e, hp⟩, ⟨e', by rw [Assignment.update_overwrite] at hq; exact hq⟩⟩
+  · rintro ⟨⟨e₁, hp⟩, ⟨e₂, hq⟩⟩
+    exact ⟨e₁, hp, e₂, by rw [Assignment.update_overwrite]; exact hq⟩
+
+/-- **C4**: Cylindrifications commute. `cₙ(cₘ(p)) = cₘ(cₙ(p))`. -/
+theorem cylindrify_comm (n m : Nat) (p : Assignment E → Prop) :
+    cylindrify n (cylindrify m p) = cylindrify m (cylindrify n p) := by
+  ext g; simp only [cylindrify]; constructor
+  · rintro ⟨e₁, e₂, hp⟩
+    by_cases h : n = m
+    · subst h; exact ⟨e₁, e₂, by rw [Assignment.update_overwrite] at hp ⊢; exact hp⟩
+    · exact ⟨e₂, e₁, by rw [← Assignment.update_comm g e₁ e₂ h]; exact hp⟩
+  · rintro ⟨e₂, e₁, hp⟩
+    by_cases h : n = m
+    · subst h; exact ⟨e₂, e₁, by rw [Assignment.update_overwrite] at hp ⊢; exact hp⟩
+    · exact ⟨e₁, e₂, by rw [Assignment.update_comm g e₁ e₂ h]; exact hp⟩
+
 end CylindricStructure
 
 end Semantics.Dynamic.Core.Accessibility
