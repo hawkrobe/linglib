@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.229.72] - 2026-03-09
+
+### Added
+- **Jaeger2007.lean**: Formalize @cite{jaeger-2007} "Maximum Entropy Models and Stochastic Optimality Theory". GLA=SGA theorem, convergence guarantee via logConditional_concaveOn, ganging-up example, Dutch syllable acquisition data (Table 1) with 9 syllable types, 5 constraints, violation counts, converged weights, and ranking/acquisition-order theorems
+- **Learning.lean** (§7): `sgaUpdate`, `glaUpdate`, `gla_eq_sga`, `sga_uses_correct_gradient`
+
 ## [0.229.71] - 2026-03-09
 
 ### Added

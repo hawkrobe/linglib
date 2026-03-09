@@ -932,6 +932,7 @@ import Linglib.Phenomena.PhonologicalAlternation.Studies.Clements1985
 import Linglib.Phenomena.PhonologicalAlternation.Studies.Storme2026
 import Linglib.Phenomena.PhonologicalAlternation.Studies.Flemming2021
 import Linglib.Phenomena.PhonologicalAlternation.Studies.GoldwaterJohnson2003
+import Linglib.Phenomena.PhonologicalAlternation.Studies.Jaeger2007
 import Linglib.Phenomena.Phonotactics.Studies.HayesWilson2008
 -- Theories: CCG
 import Linglib.Theories.Syntax.CCG.Core.Basic
@@ -1186,6 +1187,7 @@ import Linglib.Theories.Semantics.Degree.Frameworks.Schwarzschild
 import Linglib.Theories.Semantics.Degree.Frameworks.Rett
 import Linglib.Theories.Semantics.Degree.Granularity
 -- Theories: Semantics.Montague (Montague architecture)
+import Linglib.Theories.Semantics.Lexical.Adjective.Classification
 import Linglib.Theories.Semantics.Lexical.Adjective.Intensification
 import Linglib.Theories.Semantics.Lexical.Adjective.Theory
 import Linglib.Theories.Semantics.Reference.Binding
@@ -1455,6 +1457,7 @@ import Linglib.Theories.Pragmatics.RSA.Extensions.LexicalUncertainty.Composition
 import Linglib.Theories.Pragmatics.RSA.Implementations.BellerGerstenberg2025
 import Linglib.Theories.Pragmatics.RSA.Implementations.BergenGoodman2015
 import Linglib.Phenomena.Persuasion.Studies.CumminsFranke2021
+import Linglib.Phenomena.Persuasion.Studies.MacuchSilvaEtAl2024
 import Linglib.Theories.Pragmatics.RSA.Implementations.EgreEtAl2023
 import Linglib.Theories.Pragmatics.RSA.Implementations.Franke2011
 import Linglib.Theories.Pragmatics.RSA.Implementations.GrusdtLassiterFranke2022

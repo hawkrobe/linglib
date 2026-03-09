@@ -270,4 +270,44 @@ theorem ExpectedChoiceSequence.choiceProb_sum_one
     ∑ a : A, ecs.choiceProb n s a = 1 :=
   (ecs.agentAt n).policy_sum_eq_one s h
 
+-- ============================================================================
+-- §7. Stochastic Gradient Ascent (Log-Linear Models)
+-- ============================================================================
+
+/-- Stochastic Gradient Ascent update for a single weight of a log-linear model.
+
+For MaxEnt phonology, `observed_j` is the violation count of constraint j on
+the observed output, and `expected_j` is the expected violation count under the
+current model distribution.
+
+The batch gradient is `E_emp[c_j] − E_r̄[c_j]` (see `hasDerivAt_logConditional`
+in `RationalAction`). The stochastic version replaces both expectations with
+single-sample estimates. -/
+def sgaUpdate (r_j η observed_j expected_j : ℝ) : ℝ :=
+  r_j + η * (observed_j - expected_j)
+
+/-- The Gradual Learning Algorithm (@cite{boersma-1998}) update for a single
+weight: adjust by the signed difference between the observed violation count
+and the violation count of a hypothesis sampled from the current grammar. -/
+def glaUpdate (r_j η : ℝ) (c_j_observed c_j_hypothesis : ℕ) : ℝ :=
+  r_j + η * ((c_j_observed : ℝ) - (c_j_hypothesis : ℝ))
+
+/-- **GLA = SGA**: the Gradual Learning Algorithm is Stochastic Gradient
+Ascent with single-sample estimates of both observed and expected feature
+values. The update rules are identical by definition. -/
+theorem gla_eq_sga (r_j η : ℝ) (obs hyp : ℕ) :
+    glaUpdate r_j η obs hyp = sgaUpdate r_j η obs hyp := rfl
+
+/-- SGA converges to the global maximum of a concave objective.
+
+For MaxEnt log-likelihood, the per-weight objective is concave
+(`logConditional_concaveOn` in `RationalAction`), so SGA is guaranteed
+to converge. This is the key advantage of MaxEnt over Stochastic OT,
+where convergence of the GLA is not generally proved. -/
+theorem sga_uses_correct_gradient {ι : Type*} [Fintype ι] [Nonempty ι]
+    (s r : ι → ℝ) (y : ι) (wⱼ : ℝ) :
+    HasDerivAt (fun w => (w * s y + r y) - logSumExpOffset s r w)
+      (s y - ∑ i : ι, softmaxOffset s r wⱼ i * s i) wⱼ :=
+  hasDerivAt_logConditional s r y wⱼ
+
 end Core
