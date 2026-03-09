@@ -1,5 +1,6 @@
 import Linglib.Theories.Semantics.Dynamic.Core.Accessibility
 import Linglib.Core.Semantics.ContentLayer
+import Mathlib.Data.Set.Basic
 
 /-!
 # Discourse Representation Theory
@@ -47,6 +48,8 @@ enables a unified treatment of denial.
 namespace Semantics.Dynamic.DRT
 
 open Semantics.Dynamic.Core.Accessibility
+open Semantics.Dynamic.Core.DynamicTy2
+open Semantics.Dynamic.Core.WeakestPrecondition
 open Core.Semantics.ContentLayer
 
 -- ════════════════════════════════════════════════════
@@ -63,8 +66,8 @@ A model M for vocabulary V is a triple ⟨U_M, Name_M, Pred_M⟩:
 In our formalization, names and predicates are both identified by `Nat`
 indices (matching `DRSExpr`'s `atom` constructor). -/
 structure KRModel (E : Type*) where
-  /-- The universe of individuals. -/
-  universe : Set E
+  /-- The universe of individuals (U_M). -/
+  carrier : Set E
   /-- Name interpretation: maps name indices to their bearers. -/
   names : Nat → E
   /-- Predicate interpretation: maps relation indices to truth on entity lists.
@@ -77,7 +80,7 @@ def KRModel.toRelInterp {E : Type*} (M : KRModel E) : RelInterp E := M.preds
 /-- A DRS K is true in model M iff there is an embedding (assignment) that
 verifies all conditions (@cite{kamp-reyle-1993} Def 1.4.5). -/
 def trueIn {E : Type*} (M : KRModel E) (K : DRSExpr) : Prop :=
-  ∃ g : Assign E, WeakestPrecondition.wp (interp M.preds K) (λ _ => True) g
+  ∃ g : Assign E, wp (interp M.preds K) (λ _ => True) g
 
 -- ════════════════════════════════════════════════════
 -- § 2. Subordination (@cite{kamp-reyle-1993}, Def 2.1.2)
@@ -108,9 +111,9 @@ of immediate subordination from K₁ to K₂. This is the transitive closure
 of `ImmSubordinate`. Matches @cite{kamp-reyle-1993} Def 2.1.2(ii). -/
 inductive Subordinate : DRSExpr → DRSExpr → Prop where
   /-- One step of immediate subordination. -/
-  | imm : ImmSubordinate K₁ K₂ → Subordinate K₁ K₂
+  | imm {K₁ K₂ : DRSExpr} : ImmSubordinate K₁ K₂ → Subordinate K₁ K₂
   /-- Transitivity: if K₁ < K₃ and K₃ < K₂, then K₁ < K₂. -/
-  | trans : Subordinate K₁ K₃ → Subordinate K₃ K₂ → Subordinate K₁ K₂
+  | trans {K₁ K₂ K₃ : DRSExpr} : Subordinate K₁ K₃ → Subordinate K₃ K₂ → Subordinate K₁ K₂
 
 /-- `K₁` is *weakly subordinate* to `K₂` (written K₁ ≤ K₂) iff K₁ = K₂
 or K₁ < K₂. Matches @cite{kamp-reyle-1993} Def 2.1.2(iii). -/
@@ -223,8 +226,8 @@ theorem denial_nonmonotonic (k : LDRS)
 presuppositional and implicature content must be handled separately
 by the content-layer machinery. -/
 def LDRS.interp {E : Type*} (rels : RelInterp E) (k : LDRS) :
-    DynamicTy2.DRS (Assign E) :=
-  Accessibility.interp rels k.toDRSExpr
+    DRS (Assign E) :=
+  Semantics.Dynamic.Core.Accessibility.interp rels k.toDRSExpr
 
 /-- Round-trip: `box → toLDRS → toDRSExpr` preserves conditions. -/
 theorem toLDRS_toDRSExpr_conditions (drefs : List Nat) (conds : List DRSExpr) :

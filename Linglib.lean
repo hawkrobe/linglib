@@ -996,6 +996,7 @@ import Linglib.Theories.Semantics.Dynamic.Core.Basic
 import Linglib.Theories.Semantics.Dynamic.Core.CCP
 import Linglib.Theories.Semantics.Dynamic.Core.DiscourseRef
 import Linglib.Theories.Semantics.Dynamic.Core.Accessibility
+import Linglib.Theories.Semantics.Dynamic.Core.DynProp
 import Linglib.Theories.Semantics.Dynamic.Core.DynamicTy2
 import Linglib.Theories.Semantics.Dynamic.Core.Translation
 import Linglib.Theories.Semantics.Dynamic.Core.WeakestPrecondition

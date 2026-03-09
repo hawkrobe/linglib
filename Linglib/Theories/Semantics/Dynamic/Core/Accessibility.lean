@@ -1,5 +1,6 @@
 import Linglib.Theories.Semantics.Dynamic.Core.DynamicTy2
 import Linglib.Theories.Semantics.Dynamic.Core.WeakestPrecondition
+import Mathlib.Tactic.SimpRw
 
 /-!
 # DRS Syntax and Accessibility

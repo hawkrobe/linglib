@@ -1,9 +1,11 @@
 /-
-# Dynamic Ty2: The Unification Point for Dynamic Semantics
-@cite{gallin-1975}
+# Dynamic Ty2: Compositional Dynamic Semantics
+@cite{muskens-1996} @cite{brasoveanu-2007}
 
-Following @cite{muskens-1996} and @cite{brasoveanu-2007}, Dynamic Ty2 is the
-type-logical foundation into which ALL dynamic semantic systems embed.
+The compositional layer that @cite{muskens-1996} adds on top of the
+core dynamic algebra (defined in `Core.DRS`): discourse referents as
+functions from states (`Dref S E = S → E`), the `AssignmentStructure`
+class for random assignment, and atomic condition constructors.
 
 ## Core Idea
 
@@ -20,7 +22,7 @@ dref's as functions taking info states as arguments.
 | `e` | Individuals | `E` parameter |
 | `t` | Truth values | `Prop` |
 | `sτ` | Drefs (for static τ) | `S → τ` |
-| `s(st)` | DRS meanings | `S → S → Prop` |
+| `s(st)` | DRS meanings | `DRS S` (from `Core.DRS`) |
 
 ## Embeddings
 
@@ -31,10 +33,16 @@ dref's as functions taking info states as arguments.
 
 -/
 
-import Mathlib.Data.Set.Basic
+import Linglib.Theories.Semantics.Dynamic.Core.DynProp
 
 namespace Semantics.Dynamic.Core.DynamicTy2
 
+-- Re-export the DRS algebra so downstream code that opens DynamicTy2
+-- continues to see DRS, Condition, dseq, test, etc.
+export DynProp (DRS Condition
+  dseq test dneg dimpl ddisj closure
+  trueAt valid entails
+  dseq_assoc test_dseq dneg_dneg_test closure_closure dseq_closure)
 
 /-!
 Dynamic Ty2 is parameterized by:
@@ -47,51 +55,6 @@ they are atomic, and drefs are functions FROM assignments.
 
 /-- Discourse referent for individuals: type `se` in Dynamic Ty2 -/
 abbrev Dref (S E : Type*) := S → E
-
-/-- DRS meaning: type `s(st)` - binary relation on assignments -/
-abbrev DRS (S : Type*) := S → S → Prop
-
-/-- Condition: type `st` - property of assignments -/
-abbrev Condition (S : Type*) := S → Prop
-
-
-section Abbreviations
-
-variable {S E : Type*}
-
-/-- Dynamic negation: ~D is true at i iff no j satisfies D from i -/
-def dneg (D : DRS S) : Condition S :=
-  λ i => ¬∃ k, D i k
-
-notation "∼" D => dneg D
-
-/-- Test: lift a condition to a DRS (identity on assignments) -/
-def test (C : Condition S) : DRS S :=
-  λ i j => i = j ∧ C j
-
-notation "[" C "]" => test C
-
-/-- Dynamic conjunction (sequencing): D₁; D₂ -/
-def dseq (D₁ D₂ : DRS S) : DRS S :=
-  λ i j => ∃ h, D₁ i h ∧ D₂ h j
-
-infixl:65 " ⨟ " => dseq  -- semicolon-like
-
-/-- Dynamic implication: D₁ → D₂ -/
-def dimpl (D₁ D₂ : DRS S) : Condition S :=
-  λ i => ∀ h, D₁ i h → ∃ k, D₂ h k
-
-/-- Dynamic disjunction: D₁ ∨ D₂ -/
-def ddisj (D₁ D₂ : DRS S) : Condition S :=
-  λ i => ∃ k, D₁ i k ∨ D₂ i k
-
-/-- Anaphoric closure: !D = ∃output state -/
-def closure (D : DRS S) : Condition S :=
-  λ i => ∃ k, D i k
-
-notation "!" D => closure D
-
-end Abbreviations
 
 
 /--
@@ -229,98 +192,6 @@ theorem specificDref_extend_invariant {S E : Type*} [AssignmentStructure S E]
     (e : E) (u : S → E) (d : E) (i : S) (h : specificDref e ≠ u) :
     specificDref e (AssignmentStructure.extend i u d) = e := by
   exact AssignmentStructure.extend_other i u (specificDref e) d h.symm
-
-
-section Truth
-
-variable {S : Type*}
-
-/-- A DRS D is true relative to input i iff some output j satisfies D -/
-def trueAt (D : DRS S) (i : S) : Prop := ∃ j, D i j
-
-/-- A DRS D is valid iff true at all inputs -/
-def valid (D : DRS S) : Prop := ∀ i, trueAt D i
-
-/-- Dynamic entailment: D₁ ⊨ D₂ iff D₁; D₂ has same outputs as D₁ -/
-def entails (D₁ D₂ : DRS S) : Prop :=
-  ∀ i, (∃ j, D₁ i j) → ∀ j, D₁ i j → ∃ k, D₂ j k
-
-notation D₁ " ⊨ " D₂ => entails D₁ D₂
-
-end Truth
-
-
-section Theorems
-
-variable {S : Type*}
-
-/-- Sequencing is associative -/
-theorem dseq_assoc (D₁ D₂ D₃ : DRS S) :
-    (D₁ ⨟ D₂) ⨟ D₃ = D₁ ⨟ (D₂ ⨟ D₃) := by
-  funext i j
-  simp only [dseq, eq_iff_iff]
-  constructor
-  · intro ⟨h, ⟨h', hD₁, hD₂⟩, hD₃⟩
-    exact ⟨h', hD₁, h, hD₂, hD₃⟩
-  · intro ⟨h', hD₁, h, hD₂, hD₃⟩
-    exact ⟨h, ⟨h', hD₁, hD₂⟩, hD₃⟩
-
-/-- Test is left identity for sequencing (when condition holds everywhere) -/
-theorem test_dseq (C : Condition S) (D : DRS S) (hC : ∀ i, C i) :
-    test C ⨟ D = D := by
-  funext i j
-  simp only [dseq, test, eq_iff_iff]
-  constructor
-  · intro ⟨h, ⟨hih, _⟩, hD⟩
-    subst hih
-    exact hD
-  · intro hD
-    exact ⟨i, ⟨rfl, hC i⟩, hD⟩
-
-/-- Double negation for tests -/
-theorem dneg_dneg_test (C : Condition S) :
-    dneg (test (dneg (test C))) = C := by
-  funext i
-  simp only [dneg, test, eq_iff_iff]
-  constructor
-  · intro h
-    by_contra hC
-    apply h
-    use i
-    constructor
-    · rfl
-    · intro ⟨k, hik, hCk⟩
-      subst hik
-      exact hC hCk
-  · intro hC ⟨j, hji, hNeg⟩
-    apply hNeg
-    use i
-    exact ⟨hji.symm, hC⟩
-
-/-- Closure is idempotent -/
-theorem closure_closure (D : DRS S) :
-    closure (test (closure D)) = closure D := by
-  funext i
-  simp only [closure, test, eq_iff_iff]
-  constructor
-  · intro ⟨j, hij, k, hD⟩
-    subst hij
-    exact ⟨k, hD⟩
-  · intro ⟨k, hD⟩
-    exact ⟨i, rfl, k, hD⟩
-
-/-- Sequencing distributes over closure -/
-theorem dseq_closure (D₁ D₂ : DRS S) :
-    closure (D₁ ⨟ D₂) = λ i => ∃ h, D₁ i h ∧ closure D₂ h := by
-  funext i
-  simp only [closure, dseq, eq_iff_iff]
-  constructor
-  · intro ⟨j, h, hD₁, hD₂⟩
-    exact ⟨h, hD₁, j, hD₂⟩
-  · intro ⟨h, hD₁, j, hD₂⟩
-    exact ⟨j, h, hD₁, hD₂⟩
-
-end Theorems
 
 
 end Semantics.Dynamic.Core.DynamicTy2
