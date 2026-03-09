@@ -2,7 +2,7 @@ import Linglib.Core.Assignment
 import Mathlib.Order.BooleanAlgebra.Defs
 
 /-!
-# Cylindric Algebras: Algebraic Foundation for DRT
+# Cylindric Algebras: Algebraic Foundation for Variable-Binding Semantics
 @cite{henkin-monk-tarski-1971}
 
 Cylindric algebras, introduced by Tarski and systematically developed
@@ -13,18 +13,72 @@ operators `cκ` (existential quantification over coordinate κ) and
 *diagonal elements* `dκl` (equality between coordinates κ and l),
 satisfying axioms (C₀)–(C₇).
 
-## Connection to DRT
+Every framework in this library that binds variables — whether over
+entities, times, situations, or discourse referents — operates on
+assignments `ℕ → D` and therefore lives inside the same cylindric set
+algebra of dimension ω. The two primitive operations, cylindrification
+(`∃d. φ(g[n↦d])`) and diagonal (`g(n) = g(m)`), recur across the
+entire codebase under different names. This module provides the single
+algebraic source.
 
-Predicates on DRT assignments (`Assignment E → Prop`) form a cylindric
-set algebra of dimension ω. The correspondence:
+## Connections across the library
 
-| DRT concept | Cylindric algebra |
-|---|---|
-| Dref introduction `∃e. g[n↦e]` | Cylindrification `cₙ` |
-| Identity condition `g(κ) = g(l)` | Diagonal element `dκl` |
-| Properness (no free drefs) | Empty support (closed element) |
-| Variable substitution `[v/u]` | `cκ(dκl · x)` (HMT §1.5) |
-| Merging lemma (freshness) | Support/dimension theory (HMT §1.6) |
+### Proved bridges (`Core/CylindricAlgebra/`)
+
+The bridge modules in `Core/CylindricAlgebra/` prove algebraic identities
+(not analogies) between framework-specific operations and cylindric ops.
+
+| Framework | Operation | = Cylindric | Bridge |
+|---|---|---|---|
+| VarAssignment | `∃ d, p (updateVar g n d)` | `cylindrify n p g` | `VarAssignment.lean` |
+| VarAssignment | `lookupVar n g = lookupVar m g` | `diagonal n m g` | `VarAssignment.lean` |
+| CDRT (@cite{muskens-1996}) | `closure (new n ;; φ)` | `cylindrify n (closure φ)` | `DynamicSemantics.lean` |
+| CDRT | `eq' (dref n) (dref m)` | `diagonal n m` | `DynamicSemantics.lean` |
+| Charlow (@cite{charlow-2019}) | `staticExists x body` | `cylindrify x body` | `DynamicSemantics.lean` |
+| Charlow | `dynamicExists x body` | `cylindrify x body` | `DynamicSemantics.lean` |
+| DRS/Accessibility | `closure (introReg n ;; D)` | `cylindrify n (closure D)` | `Accessibility.lean` |
+
+### Unproved connections (same algebra, bridges not yet formalized)
+
+These frameworks use `Assignment.update` or `VarAssignment.updateVar`
+internally, so their quantificational operations are instances of
+cylindrification by the same argument — the bridge theorems just haven't
+been written yet.
+
+| Framework | Its existential | Cylindric reading |
+|---|---|---|
+| DPL (@cite{groenendijk-stokhof-1991}) | `DPLRel.exists_ x φ` | `cylindrify x (closure φ)` |
+| PLA (@cite{dekker-2012}) | `exists_ i φ` | `cylindrify i (⟦φ⟧)` |
+| DynamicGQ (@cite{chierchia-1995}) | `{p \| ∃ x, P x ∧ p.2 = q.2.update v x}` | `cylindrify v P` |
+| Bilateral Update (@cite{aloni-2022}) | `exists_ x domain φ` | `cylindrify x (domain ∩ φ)` |
+| PIP (@cite{keshet-abney-2024}) | `exists_ v domain body` | `cylindrify v (domain ∩ body)` |
+| File Change (@cite{heim-1982}) | indefinite extends Dom, widens Sat | `cylindrify n (⟦φ⟧)` |
+| Kamp & Reyle DRS (@cite{kamp-reyle-1993}) | `box [n] [conds]` | `cylindrify n (interp conds)` |
+| IntensionalCDRT (@cite{hofmann-2025}) | intensional `new n ;; φ` | `cylindrify n (closure φ)` |
+
+### Same algebra, different base type
+
+These frameworks instantiate `VarAssignment D` at a non-entity domain.
+The cylindric axioms (C1–C7) hold for any `D`; only the base type differs.
+
+| Framework | Domain `D` | Its binder | Cylindric reading |
+|---|---|---|---|
+| @cite{partee-1973} tense | `Time` | `λt. φ(g[n↦t])` | `cylindrify n φ` over temporal assignments |
+| @cite{percus-2000} situations | `Situation` | `λs. φ(g[n↦s])` | `cylindrify n φ` over situation assignments |
+| @cite{heim-kratzer-1998} | `Entity` | `λx. φ(g[n↦x])` | `cylindrify n φ` over entity assignments |
+| @cite{abusch-1997} tense | `Time` | temporal `updateVar` | `cylindrify n φ` over temporal assignments |
+
+### Structural parallels (not assignment-based)
+
+These are not instances of assignment cylindrification but share the same
+algebraic shape. Formalizing these would require showing they satisfy C0–C7
+over a different carrier.
+
+| Framework | Analogue of cylindrify | Notes |
+|---|---|---|
+| Team Semantics | `{s[x↦d] \| s ∈ T, d ∈ D}` | Powerset lifting of cylindrify |
+| Update Semantics (@cite{veltman-1996}) | state elimination | Weaker — no diagonal |
+| Continuation semantics | `shift`/`reset` scope | Different algebraic structure |
 
 ## Structure
 
