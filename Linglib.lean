@@ -384,6 +384,7 @@ import Linglib.Fragments.German.Morph
 import Linglib.Fragments.Georgian.Coordination
 import Linglib.Fragments.Georgian.Morph
 import Linglib.Fragments.Georgian.Agreement
+import Linglib.Fragments.Gorum.AuxiliaryVerbs
 import Linglib.Fragments.Greek.Case
 import Linglib.Fragments.Greek.Nouns
 import Linglib.Fragments.Greek.TemporalConnectives
@@ -400,6 +401,7 @@ import Linglib.Fragments.Hungarian.Coordination
 import Linglib.Fragments.Hungarian.DiscourseParticles
 import Linglib.Fragments.Hungarian.Reciprocals
 import Linglib.Fragments.Hungarian.Morph
+import Linglib.Fragments.Doyayo.AuxiliaryVerbs
 import Linglib.Fragments.Finnish.Case
 import Linglib.Fragments.Finnish.ConsonantGradation
 import Linglib.Fragments.Finnish.Infinitives
@@ -415,6 +417,7 @@ import Linglib.Fragments.French.Nouns
 import Linglib.Fragments.French.Predicates
 import Linglib.Fragments.French.Reciprocals
 import Linglib.Fragments.Irish.Coordination
+import Linglib.Fragments.Jakaltek.AuxiliaryVerbs
 import Linglib.Fragments.Latin.Case
 import Linglib.Fragments.Latin.Coordination
 import Linglib.Fragments.Japanese.Case
@@ -477,6 +480,7 @@ import Linglib.Fragments.Serbian.Case
 import Linglib.Fragments.Serbian.TemporalConnectives
 import Linglib.Fragments.Slovenian.Case
 import Linglib.Fragments.Slovenian.QuestionParticles
+import Linglib.Fragments.Pipil.AuxiliaryVerbs
 import Linglib.Fragments.Polish.Case
 import Linglib.Fragments.Polish.QuestionParticles
 import Linglib.Fragments.Ukrainian.Case
@@ -1474,7 +1478,7 @@ import Linglib.Theories.Pragmatics.RSA.Implementations.ScopeFreezing
 import Linglib.Theories.Pragmatics.RSA.Implementations.SumersEtAl2023
 import Linglib.Phenomena.Negation.Studies.TesslerFranke2020
 import Linglib.Phenomena.Generics.Studies.TesslerGoodman2019
-import Linglib.Theories.Pragmatics.RSA.Implementations.TesslerGoodman2022
+import Linglib.Phenomena.Gradability.Studies.TesslerGoodman2022
 import Linglib.Theories.Pragmatics.RSA.Implementations.VanTielEtAl2021
 import Linglib.Phenomena.Reference.Studies.WaldonDegen2021
 import Linglib.Theories.Pragmatics.RSA.ScalarImplicatures.Basic

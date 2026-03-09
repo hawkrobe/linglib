@@ -1,5 +1,40 @@
 # Changelog
 
+## [0.229.79] - 2026-03-09
+
+### Added
+- **Fragments/Doyayo/AuxiliaryVerbs.lean**: Authoritative AVC Fragment for Doyayo (split pattern), verified against @cite{anderson-2006} (Wiering & Wiering 1994: 75)
+- **Fragments/Gorum/AuxiliaryVerbs.lean**: Authoritative AVC Fragment for Gorum (doubled pattern), verified against @cite{anderson-2006} (Aze 1973: 279)
+- **Fragments/Jakaltek/AuxiliaryVerbs.lean**: Authoritative AVC Fragment for Jakaltek (split pattern), verified against @cite{anderson-2006} (Craig 1977: 60)
+- **Fragments/Pipil/AuxiliaryVerbs.lean**: Authoritative AVC Fragment for Pipil (lex-headed + split patterns), verified against @cite{anderson-2006} (Campbell 1985: 139)
+
+### Fixed
+- **Typology.lean**: Fix 4 hallucinated cross-linguistic forms and classifications:
+  - Doyayo: `mà jâ` (hallucinated) → `hi¹ gi²-s-i¹-mi²-ge-³ wàà⁵-ko⁵`; lexHeaded → split
+  - Gorum: `kidis-t-an-a` (hallucinated) → `miŋ ne-gaʔ-ru ne-laʔ-ru`
+  - Jakaltek: `x-Ø-ach w-ilwi` (inaccurate) → `šk-ach w-ila`
+  - Pipil: `ni-k-miktia-ya` (hallucinated) → `te: weli-k ni-k-namaka`; splitDoubled → split
+- **Typology.lean**: Derive all 4 cross-linguistic data from authoritative Fragment files (forms are true by construction)
+- **NegativeAuxiliaries.lean**: Derive Finnish form from `Fragments.Finnish.Negation.negParadigm` instead of stipulating
+- **PolarityStress.lean**: Convert raw inline citations (Höhle 1992, Romero & Han 2004, Rooth 1992) to `@cite{}` format
+- **references.bib**: Fix anderson-2006 entry — subfield `semantics/compositional` → `typology`; add series, publisher, full author name; add Fragment sources
+
+## [0.229.78] - 2026-03-09
+
+### Added
+- **TesslerGoodman2022.lean**: Migrate from RSA/Implementations → Phenomena/Gradability/Studies and complete rewrite with 12 proved predictions
+  - 8 S1 endorsement theorems (polarity × expectations at speaker level)
+  - 4 L1_latent comparison class inference theorems (Eq. 1 — the paper's main prediction)
+  - 2 cross-study bridge theorems proving height priors identical to @cite{lassiter-goodman-2017}
+  - 2 semantic grounding theorems connecting thresholdCount to positiveMeaning/negativeMeaning
+  - First RSA model with `Latent = ComparisonClass` (categorical latent, not threshold)
+- **references.bib**: Add `lassiter-goodman-2013` (SALT 23, DOI verified)
+
+### Changed
+- **TesslerGoodman2022.lean**: Import LassiterGoodman2017 for structural dependency; flat comparison class prior (was 60:40 sub:super, which broke L1 predictions); documented simplifications (α=1, no costs, 2 categories)
+- **ComparisonClass.lean**: Fix raw inline citations → proper `@cite{}` module docstring
+- **references.bib**: Fix stale `lassiter-goodman-2017` sources path (was Phenomena/Gradability/Imprecision/)
+
 ## [0.229.77] - 2026-03-09
 
 ### Added

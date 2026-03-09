@@ -284,7 +284,7 @@
   subfield  = {pragmatics/rsa},
   validated = {true},
   role      = {formalized},
-  sources   = {Phenomena/Gradability/Imprecision/Studies/LassiterGoodman2017.lean}
+  sources   = {Phenomena/Imprecision/Studies/LassiterGoodman2017.lean}
 }
 
 @misc{tessler-franke-2019,
@@ -311,7 +311,7 @@
   subfield  = {pragmatics/rsa},
   validated = {true},
   role      = {formalized},
-  sources   = {Theories/Pragmatics/RSA/Implementations/TesslerGoodman2019.lean}
+  sources   = {Phenomena/Generics/Studies/TesslerGoodman2019.lean}
 }
 
 @article{tessler-goodman-2022,
@@ -326,7 +326,7 @@
   subfield  = {pragmatics/rsa},
   validated = {true},
   role      = {formalized},
-  sources   = {Theories/Pragmatics/RSA/Implementations/TesslerGoodman2022.lean}
+  sources   = {Phenomena/Gradability/Studies/TesslerGoodman2022.lean}
 }
 
 @inproceedings{scontras-tonhauser-2025,
@@ -2232,10 +2232,10 @@
   volume    = {40},
   pages     = {331--383},
   doi       = {10.1016/0024-3841(76)90084-x},
-  subfield  = {semantics/compositional},
+  subfield  = {syntax},
   role      = {cited},
   validated = {true},
-  sources   = {Phenomena/AuxiliaryVerbs/Diagnostics.lean;Phenomena/AuxiliaryVerbs/Typology.lean}
+  sources   = {Phenomena/AuxiliaryVerbs/Diagnostics.lean}
 }
 % REF: Napoli, D. J. & Nespor, M. (1976). Negatives in comparatives.
 @misc{napoli-nespor-1976,
@@ -3614,16 +3614,30 @@
   validated = {true},
   sources   = {Phenomena/Comparison/Comparative/Differential.lean;Theories/Semantics/Degree/Differential.lean}
 }
+% REF: Anderson, J. M. (2006). Modern Grammars of Case: A Retrospective. OUP.
+@book{anderson-jm-2006,
+  author    = {Anderson, John M.},
+  year      = {2006},
+  title     = {Modern Grammars of Case: A Retrospective},
+  publisher = {Oxford University Press},
+  isbn      = {9780199297108},
+  subfield  = {syntax/case},
+  role      = {formalized},
+  validated = {true},
+  sources   = {Core/Case/FeatureDecomposition.lean;Phenomena/Case/Studies/AndersonJM2006.lean}
+}
 % REF: Anderson, G. D. S. (2006). Auxiliary Verb Constructions. OUP. §1.7.2.
 @book{anderson-2006,
-  author    = {Anderson, G. D. S},
+  author    = {Anderson, Gregory D. S.},
   year      = {2006},
   title     = {Auxiliary Verb Constructions},
+  series    = {Oxford Studies in Typology and Linguistic Theory},
+  publisher = {Oxford University Press},
   doi       = {10.1093/acprof:oso/9780199280315.001.0001},
-  subfield  = {semantics/compositional},
+  subfield  = {typology},
   role      = {cited},
   validated = {true},
-  sources   = {Phenomena/AuxiliaryVerbs/NegativeAuxiliaries.lean;Phenomena/AuxiliaryVerbs/Typology.lean}
+  sources   = {Phenomena/AuxiliaryVerbs/NegativeAuxiliaries.lean;Phenomena/AuxiliaryVerbs/Typology.lean;Fragments/Doyayo/AuxiliaryVerbs.lean;Fragments/Gorum/AuxiliaryVerbs.lean;Fragments/Jakaltek/AuxiliaryVerbs.lean;Fragments/Pipil/AuxiliaryVerbs.lean}
 }
 % REF: Heim, I. (2006). Little. In *Proceedings of SALT 16*.
 @incollection{heim-2006,

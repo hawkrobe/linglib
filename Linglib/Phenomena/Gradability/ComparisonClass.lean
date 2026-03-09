@@ -1,7 +1,8 @@
 import Linglib.Core.PropertyDomain
 
-/-
+/-!
 # Comparison Class: Empirical Data
+@cite{tessler-goodman-2022} @cite{tessler-goodman-2019} @cite{weicker-schulz-2024}
 
 Theory-neutral empirical patterns for comparison class inference with
 gradable adjectives.
@@ -13,15 +14,6 @@ gradable adjectives.
 2. **Linguistic vs Visual Cues**: Taxonomic labels dominate visual context
 3. **RGA vs AGA Distinction**: Relative vs absolute gradable adjectives differ
    in comparison class sensitivity
-
-## Key References
-
-- Tessler, M. H. & Goodman, N. D. (2019). The Language of Generalization. Psych Review.
-- Tessler, M. H. & Goodman, N. D. (2022). "Warm (for Winter)": Comparison Class
-  Understanding Is an Embedded Probabilistic Inference.
-- Weicker, L. & Schulz, P. (2024). Linguistic versus visual information in comparison
-  class determination: Children's and adults' interpretation of gradable adjectives.
-  Glossa: a journal of general linguistics 9(1).
 -/
 
 namespace Phenomena.Gradability.ComparisonClass
