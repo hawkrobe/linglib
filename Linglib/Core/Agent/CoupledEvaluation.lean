@@ -1,4 +1,5 @@
 import Linglib.Core.Agent.RationalAction
+import Mathlib.Algebra.BigOperators.Field
 
 /-!
 # Coupled Evaluation: Softmax over Product Spaces
@@ -140,6 +141,14 @@ noncomputable def CoupledSoftmax.independentProb [Nonempty V]
 -- § 4: Factorization Theorem
 -- ============================================================================
 
+private lemma sum_ite_div {κ : Type*} [Fintype κ] {P : κ → Prop} [DecidablePred P]
+    {a : κ → ℝ} {Z : ℝ} :
+    ∑ x : κ, (if P x then a x / Z else 0) =
+    (∑ x : κ, if P x then a x else 0) / Z := by
+  rw [Finset.sum_div]
+  apply sum_congr rfl; intro x _
+  split_ifs <;> simp
+
 /-- **Factorization theorem**: when coupling is constant (no genuine coupling),
     the marginal probability equals the independent per-item softmax.
 
@@ -148,7 +157,7 @@ noncomputable def CoupledSoftmax.independentProb [Nonempty V]
     - @cite{bergen-levy-goodman-2016}: single lexicon ⟹ L1 = standard posterior
     - BToM: delta-function latent prior ⟹ marginal = direct inference
 
-    ### Proof sketch
+    ### Proof
 
     When `couplingScore f = c` for all `f`:
 
@@ -160,17 +169,62 @@ noncomputable def CoupledSoftmax.independentProb [Nonempty V]
     4. Marginalizing: `marginal(i, v) = softmax(componentScore(i, ·))(v) ·
        Π_{j≠i} Σ_{v'} softmax(componentScore(j, ·))(v') = softmax(·)(v) · 1`
 
-    Step 3 uses the finite Fubini theorem:
+    Step 3 uses the finite Fubini theorem (`Fintype.prod_sum`):
     `Σ_{f : I → V} Πᵢ g(i, f(i)) = Πᵢ (Σ_v g(i, v))`.
 
-    TODO: formalize via `softmax_add_const` (step 2), `Real.exp_add` (step 3),
-    and the finite product-sum interchange (step 3→4). -/
+    The filter `[f(i) = v]` is encoded into the product via a zero/one trick:
+    define `g(j, w) = (j = i ? (w = v ? exp(s_i(v)) : 0) : exp(s_j(w)))`, so that
+    when `f(i) ≠ v` the product vanishes (Fubini still applies), and when
+    `f(i) = v` the product equals `∏_j exp(s_j(f(j)))`. -/
 theorem CoupledSoftmax.marginal_eq_independent_when_uncoupled [Nonempty V]
     (cs : CoupledSoftmax I V)
     (h_const : ∃ c, ∀ f, cs.couplingScore f = c)
     (i : I) (v : V) :
     cs.marginal i v = cs.independentProb i v := by
-  sorry
+  obtain ⟨c, hc⟩ := h_const
+  set comp := cs.componentScore with hcomp
+  -- Step 1: Remove coupling constant from jointProb
+  have h_joint : cs.jointProb = softmax (fun f : I → V => ∑ j, comp j (f j)) 1 := by
+    show softmax cs.totalScore 1 = _
+    have h_ts : cs.totalScore = fun f => (∑ j, comp j (f j)) + c := by
+      funext f; simp [CoupledSoftmax.totalScore, ← hcomp, hc]
+    rw [h_ts, softmax_add_const]
+  -- Step 2: Unfold to exp/sum form
+  simp only [marginal, independentProb, h_joint, softmax, one_mul]
+  simp_rw [exp_sum univ]
+  rw [sum_ite_div]
+  -- Step 3: Compute numerator via filter trick + Fubini
+  have h_filter : ∀ f : I → V,
+      (if f i = v then ∏ j : I, exp (comp j (f j)) else 0) =
+      ∏ j : I, (if j = i then (if f j = v then exp (comp i v) else 0)
+                else exp (comp j (f j))) := by
+    intro f; by_cases hfv : f i = v
+    · rw [if_pos hfv]; apply prod_congr rfl; intro j _
+      by_cases hji : j = i
+      · rw [hji, if_pos rfl, if_pos hfv, hfv]
+      · rw [if_neg hji]
+    · rw [if_neg hfv]; symm; exact prod_eq_zero (mem_univ i) (by simp [hfv])
+  simp_rw [h_filter]
+  rw [← Fintype.prod_sum (fun (j : I) (w : V) =>
+    if j = i then (if w = v then exp (comp i v) else 0)
+    else exp (comp j w))]
+  rw [← mul_prod_erase univ
+    (fun j => ∑ w : V, if j = i then
+      (if w = v then exp (comp i v) else 0) else exp (comp j w))
+    (mem_univ i)]
+  have h_sum_i : (∑ w : V, if (i : I) = i then
+      (if w = v then exp (comp i v) else 0) else exp (comp i w)) = exp (comp i v) := by
+    simp [sum_ite_eq']
+  have h_sum_ne : ∀ j ∈ univ.erase i,
+      (∑ w : V, if j = i then (if w = v then exp (comp i v) else 0)
+        else exp (comp j w)) = ∑ w : V, exp (comp j w) := by
+    intro j hj; simp [ne_of_mem_erase hj]
+  rw [h_sum_i, prod_congr rfl h_sum_ne]
+  -- Step 4: Apply Fubini to denominator and cancel
+  rw [← Fintype.prod_sum (fun (j : I) (w : V) => exp (comp j w))]
+  rw [← mul_prod_erase univ (fun j => ∑ w : V, exp (comp j w)) (mem_univ i)]
+  exact mul_div_mul_right _ _ (ne_of_gt (prod_pos (fun j _ =>
+    sum_pos (fun w _ => exp_pos _) ⟨Classical.arbitrary V, mem_univ _⟩)))
 
 -- ============================================================================
 -- § 5: Coupling Detector

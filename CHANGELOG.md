@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.229.51] - 2026-03-09
+
+### Added
+- **CoupledEvaluation.lean §4**: Close `marginal_eq_independent_when_uncoupled` sorry — factorization theorem proving that when coupling score is constant, joint softmax marginals equal independent per-item softmax. Uses `softmax_add_const`, finite Fubini (`Fintype.prod_sum`), and a zero-one filter trick to encode the marginalization constraint into the product. 0 sorrys remain in CoupledEvaluation.lean
+
 ## [0.229.50] - 2026-03-09
 
 ### Added
